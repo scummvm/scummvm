@@ -669,6 +669,8 @@ void Scheduler::screenActions(const int screenNum) {
 /**
  * Maze mode is enabled.  Check to see whether hero has crossed the maze
  * bounding box, if so, go to the next room
+ *
+ * Note that north and south boundaries are different in DOS and Windows.
  */
 void Scheduler::processMaze(const int x1, const int x2, const int y1, const int y2) {
 	debugC(1, kDebugSchedule, "processMaze");
@@ -687,14 +689,14 @@ void Scheduler::processMaze(const int x1, const int x2, const int y1, const int 
 		_actListArr[_alNewscrIndex][0]._a2._y = _vm->_hero->_y;
 		_vm->_route->resetRoute();
 		insertActionList(_alNewscrIndex);
-	} else if (y1 < _vm->_maze._y1 - kShiftSize) {
+	} else if (y1 < _vm->_maze._y1) {
 		// Exit north
 		_actListArr[_alNewscrIndex][3]._a8._screenIndex = *_vm->_screenPtr - _vm->_maze._size;
 		_actListArr[_alNewscrIndex][0]._a2._x = _vm->_maze._x3;
 		_actListArr[_alNewscrIndex][0]._a2._y = _vm->_maze._y2 - kShiftSize - (y2 - y1);
 		_vm->_route->resetRoute();
 		insertActionList(_alNewscrIndex);
-	} else if (y2 > _vm->_maze._y2 - kShiftSize / 2) {
+	} else if (y2 > _vm->_maze._y2) {
 		// Exit south
 		_actListArr[_alNewscrIndex][3]._a8._screenIndex = *_vm->_screenPtr + _vm->_maze._size;
 		_actListArr[_alNewscrIndex][0]._a2._x = _vm->_maze._x4;
@@ -1671,4 +1673,45 @@ void Scheduler_v1w::runScheduler() {
 
 	_vm->getGameStatus()._tick++;                     // Accessed elsewhere via getTicks()
 }
+
+/**
+ * Maze mode is enabled.  Check to see whether hero has crossed the maze
+ * bounding box, if so, go to the next room
+ *
+ * Note that north and south boundaries are different in DOS and Windows.
+ */
+void Scheduler_v1w::processMaze(const int x1, const int x2, const int y1, const int y2) {
+	debugC(1, kDebugSchedule, "processMaze");
+
+	if (x1 < _vm->_maze._x1) {
+		// Exit west
+		_actListArr[_alNewscrIndex][3]._a8._screenIndex = *_vm->_screenPtr - 1;
+		_actListArr[_alNewscrIndex][0]._a2._x = _vm->_maze._x2 - kShiftSize - (x2 - x1);
+		_actListArr[_alNewscrIndex][0]._a2._y = _vm->_hero->_y;
+		_vm->_route->resetRoute();
+		insertActionList(_alNewscrIndex);
+	} else if (x2 > _vm->_maze._x2) {
+		// Exit east
+		_actListArr[_alNewscrIndex][3]._a8._screenIndex = *_vm->_screenPtr + 1;
+		_actListArr[_alNewscrIndex][0]._a2._x = _vm->_maze._x1 + kShiftSize;
+		_actListArr[_alNewscrIndex][0]._a2._y = _vm->_hero->_y;
+		_vm->_route->resetRoute();
+		insertActionList(_alNewscrIndex);
+	} else if (y1 < _vm->_maze._y1 - kShiftSize) {
+		// Exit north
+		_actListArr[_alNewscrIndex][3]._a8._screenIndex = *_vm->_screenPtr - _vm->_maze._size;
+		_actListArr[_alNewscrIndex][0]._a2._x = _vm->_maze._x3;
+		_actListArr[_alNewscrIndex][0]._a2._y = _vm->_maze._y2 - kShiftSize - (y2 - y1);
+		_vm->_route->resetRoute();
+		insertActionList(_alNewscrIndex);
+	} else if (y2 > _vm->_maze._y2 - kShiftSize / 2) {
+		// Exit south
+		_actListArr[_alNewscrIndex][3]._a8._screenIndex = *_vm->_screenPtr + _vm->_maze._size;
+		_actListArr[_alNewscrIndex][0]._a2._x = _vm->_maze._x4;
+		_actListArr[_alNewscrIndex][0]._a2._y = _vm->_maze._y1 + kShiftSize;
+		_vm->_route->resetRoute();
+		insertActionList(_alNewscrIndex);
+	}
+}
+
 } // End of namespace Hugo
