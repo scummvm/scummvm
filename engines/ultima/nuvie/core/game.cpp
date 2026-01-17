@@ -233,7 +233,10 @@ bool Game::loadGame(Script *s) {
 	//obj_manager->loadObjs();
 
 	ConsoleAddInfo("Loading map data.");
-	game_map->loadMap(tile_manager, obj_manager);
+	if (game_map->loadMap(tile_manager, obj_manager) == false) {
+		error("failed to load the map data");
+		game->quit();
+	}
 	egg_manager->set_obj_manager(obj_manager);
 
 	ConsoleAddInfo("Loading actor data.");

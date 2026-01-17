@@ -393,25 +393,44 @@ bool Map::loadMap(TileManager *tm, ObjManager *om) {
 	NuvieIOFileRead map_file;
 	NuvieIOFileRead chunks_file;
 
+	int errors = 0;
+
 	uint8 i;
 
 	tile_manager = tm;
 	obj_manager = om;
 
 	config_get_path(config, "map", filename);
-	if (map_file.open(filename) == false)
-		return false;
+	if (map_file.open(filename) == false) {
+		warning("%s: File MAP cannot be opened", __func__);
+		errors++;
+	}
 
 	config_get_path(config, "chunks", filename);
-	if (chunks_file.open(filename) == false)
+	if (chunks_file.open(filename) == false) {
+		warning("%s: File CHUNKS cannot be opened", __func__);
+		errors++;
+	}
+
+	if (errors > 0)
 		return false;
 
 	unsigned char *map_data = map_file.readAll();
-	if (map_data == nullptr)
-		return false;
+	if (map_data == nullptr) {
+		warning("%s: File MAP read failed", __func__);
+		errors++;
+	}
 
 	unsigned char *chunk_data = chunks_file.readAll();
-	if (chunk_data == nullptr)
+	if (chunk_data == nullptr) {
+		warning("%s: File CHUNKS read failed", __func__);
+		errors++;
+	}
+
+	map_file.close();
+	chunks_file.close();
+
+	if (errors > 0)
 		return false;
 
 	unsigned char *map_ptr = map_data;
