@@ -1,9 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
   <string name="app_name">ScummVM</string>
+  <string name="app_name_debug">ScummVM (tryb debugowania)</string>
   <string name="app_desc">Silnik graficzny gier przygodowych</string>
   <string name="ok">OK</string>
   <string name="quit">Zakończ</string>
+  <string name="no_log_file_title">Błąd pliku dziennika</string>
+  <string name="no_log_file">Nie można odczytać lub utworzyć pliku dziennika ScummVM!</string>
   <string name="no_config_file_title">Błąd pliku konfiguracyjnego</string>
   <string name="no_config_file">Nie można odczytać lub utworzyć pliku konfiguracyjnego ScummVM!</string>
   <string name="no_save_path_title">Błąd ścieżki zapisów</string>
@@ -22,4 +25,10 @@
   <string name="customkeyboardview_popup_close">Zamknij okno</string>
   <string name="saf_request_prompt">Wybierz katalog główny *root* swojej fizycznej karty SD. Jest to wymagane, aby ScummVM mógł uzyskać dostęp do tej ścieżki: </string>
   <string name="saf_revoke_done">Uprawnienia dostępu do pamięci masowej dla ScummVM zostały unieważnione!</string>
+  <string name="ini_parsing_error">Nie można przetworzyć pliku konfiguracyjnego</string>
+  <string name="shortcut_creator_title">Uruchom grę</string>
+  <string name="shortcut_creator_search_game">Znajdź grę</string>
+  <string name="shortcut_creator_game_item_icon">Ikona gry</string>
+  <string name="shortcut_creator_customize_game_name_hint">Etykieta skrótu</string>
+  <string name="shortcut_creator_customize_game_icon_description">Ikona skrótu</string>
 </resources>

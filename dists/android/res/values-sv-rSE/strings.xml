@@ -1,14 +1,34 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-  <string name="app_name">Avsluta ScummVM</string>
+  <string name="app_name">ScummVM</string>
+  <string name="app_name_debug">ScummVM (felsökning)</string>
+  <string name="app_desc">Grafisk äventyrsspelmotor</string>
   <string name="ok">OK</string>
   <string name="quit">Avsluta</string>
-  <string name="no_save_path_title">Sparsökväg:</string>
-  <string name="no_icons_path_title">Ikon sökväg:</string>
-  <string name="keyboard_toggle_btn_desc">Virtuellt tangentbord</string>
+  <string name="no_log_file_title">Loggfilsfel</string>
+  <string name="no_log_file">Kan inte läsa ScummVM-loggfil eller skapa en ny!</string>
+  <string name="no_config_file_title">Fel i konfigurationsfil</string>
+  <string name="no_config_file">Kan inte läsa konfigurationsfilen för ScummVM eller skapa en ny!</string>
+  <string name="no_save_path_title">Fel i sparningssökväg</string>
+  <string name="no_save_path_configured">Kan inte skapa eller komma åt standardsökväg för sparningar!</string>
+  <string name="no_icons_path_title">Fel i ikonsökväg</string>
+  <string name="no_icons_path_configured">Kan inte skapa eller komma åt standardsökväg för ikoner och shaders!</string>
+  <string name="bad_explicit_save_path_configured">Kan inte komma åt den globalt inställda sökvägen! Återställ till standard i ScummVM-inställningarna</string>
+  <string name="keyboard_toggle_btn_desc">Växla virtuellt tangentbord</string>
   <string name="customkeyboardview_keycode_alt">Alt</string>
   <string name="customkeyboardview_keycode_cancel">Avbryt</string>
-  <string name="customkeyboardview_keycode_delete">Radera</string>
+  <string name="customkeyboardview_keycode_delete">Ta bort</string>
+  <string name="customkeyboardview_keycode_done">Klar</string>
+  <string name="customkeyboardview_keycode_mode_change">Lägesändring</string>
+  <string name="customkeyboardview_keycode_shift">Skift</string>
   <string name="customkeyboardview_keycode_enter">Enter</string>
-  <string name="customkeyboardview_popup_close">Stäng</string>
+  <string name="customkeyboardview_popup_close">Stäng popup</string>
+  <string name="saf_request_prompt">Välj *roten* för ditt externa (fysiska) SD-kort. Detta krävs för att ScummVM ska kunna komma åt denna sökväg: </string>
+  <string name="saf_revoke_done">Storage Access Framework-rättigheter för ScummVM har återkallats!</string>
+  <string name="ini_parsing_error">Konfigurationsfilen kunde inte tolkas</string>
+  <string name="shortcut_creator_title">Kör ett spel</string>
+  <string name="shortcut_creator_search_game">Sök efter ett spel</string>
+  <string name="shortcut_creator_game_item_icon">Spelikon</string>
+  <string name="shortcut_creator_customize_game_name_hint">Genvägsetikett</string>
+  <string name="shortcut_creator_customize_game_icon_description">Genvägsikon</string>
 </resources>

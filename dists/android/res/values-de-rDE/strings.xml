@@ -1,9 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
   <string name="app_name">ScummVM</string>
+  <string name="app_name_debug">ScummVM (debug)</string>
   <string name="app_desc">Spiele-Engine für Grafik-Adventures</string>
   <string name="ok">OK</string>
   <string name="quit">Beenden</string>
+  <string name="no_log_file_title">Fehler in Log-Datei</string>
+  <string name="no_log_file">Fehler beim Lesen oder Erstellen der ScummVM-Logdatei!</string>
   <string name="no_config_file_title">Fehler in Konfigurationsdatei</string>
   <string name="no_config_file">Fehler beim Lesen oder Erstellen der ScummVM-Konfigurationsdatei!</string>
   <string name="no_save_path_title">Speicherpfad-Fehler</string>
@@ -22,4 +25,10 @@
   <string name="customkeyboardview_popup_close">Popup schließen</string>
   <string name="saf_request_prompt">Bitte wähle das *Stammverzeichnis* deiner externen SD-Karte. Dies wird von ScummVM für den Zugriff auf folgenden Pfad benötigt: </string>
   <string name="saf_revoke_done">Die Storage Access Framework Permissions für ScummVM wurden widerrufen!</string>
+  <string name="ini_parsing_error">Die Konfigurationsdatei konnte nicht gelesen werden</string>
+  <string name="shortcut_creator_title">Ein Spiel starten</string>
+  <string name="shortcut_creator_search_game">Ein Spiel suchen</string>
+  <string name="shortcut_creator_game_item_icon">Spiel-Icon</string>
+  <string name="shortcut_creator_customize_game_name_hint">Shortcut-Bezeichnung</string>
+  <string name="shortcut_creator_customize_game_icon_description">Verknüpfungs-Icon</string>
 </resources>

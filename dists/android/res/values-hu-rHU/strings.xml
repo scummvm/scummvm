@@ -1,23 +1,34 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
   <string name="app_name">ScummVM</string>
+  <string name="app_name_debug">ScummVM (debug)</string>
   <string name="app_desc">Grafikus kalandjáték motor</string>
   <string name="ok">OK</string>
   <string name="quit">Kilépés</string>
+  <string name="no_log_file_title">Napló Fájl Hiba</string>
+  <string name="no_log_file">Nem olvasható a ScummVM napló fájl, és nem is készíthető új!</string>
   <string name="no_config_file_title">Konfigurációs fájl hiba</string>
-  <string name="no_config_file">Nem lehet olvasni a ScummVM konfigurációs fájlt, vagy nem lehet újat létrehozni!</string>
-  <string name="no_save_path_title">Mentési útvonal hiba</string>
-  <string name="no_save_path_configured">Nem lehet létrehozni vagy elérni az alapértelmezett mentési útvonalat!</string>
-  <string name="no_icons_path_title">Ikon útvonal hiba</string>
-  <string name="no_icons_path_configured">Nem lehet létrehozni vagy elérni az alapértelmezett ikonokat és árnyékolók elérési útját!</string>
-  <string name="bad_explicit_save_path_configured">Nem érhető el a globálisan beállított mentési útvonal! Kérjük, állítsa vissza az alapértelmezett beállításokat a ScummVM beállítások közül</string>
-  <string name="keyboard_toggle_btn_desc">Virtuális billentyűzet váltása</string>
+  <string name="no_config_file">Nem olvasható a ScummVM konfigurációs fájl, és nem is készíthető új!</string>
+  <string name="no_save_path_title">Mentési Útvonal Hiba</string>
+  <string name="no_save_path_configured">Nem lehet létrehozni vagy hozzáférni az alapértelmezett mentési útvonalat!</string>
+  <string name="no_icons_path_title">Ikon Útvonal Hiba</string>
+  <string name="no_icons_path_configured">Nem lehet létrehozni vagy hozzáférni az alapértelmezett ikonok és shaderek elérési útját!</string>
+  <string name="bad_explicit_save_path_configured">Nem érhető el az átfogó mentési útvonal! Kérem térjen vissza az alapbeállításra a ScummVM Opciókban</string>
+  <string name="keyboard_toggle_btn_desc">Virtuális billentyűzet bekapcsolása</string>
   <string name="customkeyboardview_keycode_alt">Alt</string>
   <string name="customkeyboardview_keycode_cancel">Mégse</string>
-  <string name="customkeyboardview_keycode_delete">Töröl</string>
+  <string name="customkeyboardview_keycode_delete">Törlés</string>
   <string name="customkeyboardview_keycode_done">Kész</string>
-  <string name="customkeyboardview_keycode_mode_change">Mód csere</string>
+  <string name="customkeyboardview_keycode_mode_change">Mód módosítás</string>
   <string name="customkeyboardview_keycode_shift">Shift</string>
   <string name="customkeyboardview_keycode_enter">Enter</string>
   <string name="customkeyboardview_popup_close">Felugró ablak bezárása</string>
+  <string name="saf_request_prompt">Kérem válassza ki a külső (fizikai) SD kártya *gyökérét*. A ScummVM-nek szüksége van erre, hogy hozzáférjen ehhez az elérési úthoz: </string>
+  <string name="saf_revoke_done">A ScummVM-hez tartozó Tárhely Hozzáférés Keretrendszer jogosultságok visszavonásra kerültek!</string>
+  <string name="ini_parsing_error">Nem elemezhető a konfigurációs fájl</string>
+  <string name="shortcut_creator_title">Egy játék indítása</string>
+  <string name="shortcut_creator_search_game">Játék keresése</string>
+  <string name="shortcut_creator_game_item_icon">Játék ikon</string>
+  <string name="shortcut_creator_customize_game_name_hint">Parancsikon elnevezés</string>
+  <string name="shortcut_creator_customize_game_icon_description">Parancsikon ikonja</string>
 </resources>

@@ -1,9 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
   <string name="app_name">ScummVM</string>
+  <string name="app_name_debug">ScummVM（调试）</string>
   <string name="app_desc">图形冒险游戏引擎</string>
   <string name="ok">确认</string>
   <string name="quit">退出</string>
+  <string name="no_log_file_title">日志文件错误</string>
+  <string name="no_log_file">无法读取 ScummVM 日志文件，请考虑新建一个！</string>
   <string name="no_config_file_title">配置文件错误</string>
   <string name="no_config_file">无法读取 ScummVM 配置文件，请考虑新建一个！</string>
   <string name="no_save_path_title">保存路径错误</string>
@@ -22,4 +25,10 @@
   <string name="customkeyboardview_popup_close">关闭弹出窗口</string>
   <string name="saf_request_prompt">请选择外部（物理）SD 卡的 *根目录*。ScummVM 需要此目录以访问 SD 卡： </string>
   <string name="saf_revoke_done">ScummVM 存储访问框架的权限被撤回了！</string>
+  <string name="ini_parsing_error">无法解析配置文件</string>
+  <string name="shortcut_creator_title">运行游戏</string>
+  <string name="shortcut_creator_search_game">搜索游戏</string>
+  <string name="shortcut_creator_game_item_icon">游戏图标</string>
+  <string name="shortcut_creator_customize_game_name_hint">快捷方式标签</string>
+  <string name="shortcut_creator_customize_game_icon_description">快捷方式图标</string>
 </resources>
