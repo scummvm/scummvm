@@ -111,6 +111,7 @@ public:
 	int getVariable(const Common::String &name) const;
 
 	void executeTest(int idx);
+	void scheduleTest(int idx);
 	void end();
 	void wait(float seconds);
 
@@ -176,6 +177,7 @@ private:
 	int _nextWarp = -1;
 	int _prevWarp = -1;
 	int _hoverIndex = -1;
+	int _nextTest = -1;
 
 	struct KeyCodeHash : public Common::UnaryFunction<Common::KeyCode, uint> {
 		uint operator()(Common::KeyCode val) const { return static_cast<uint>(val); }

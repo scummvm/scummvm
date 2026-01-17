@@ -351,6 +351,11 @@ Graphics::Surface *PhoenixVREngine::loadCursor(const Common::String &path) {
 	return s;
 }
 
+void PhoenixVREngine::scheduleTest(int idx) {
+	debug("schedule test %d for execution", idx);
+	_nextTest = idx;
+}
+
 void PhoenixVREngine::executeTest(int idx) {
 	debug("execute test %d", idx);
 	auto test = _warp->getTest(idx);
@@ -395,7 +400,7 @@ void PhoenixVREngine::tickTimer(float dt) {
 			if (_timer <= 0) {
 				debug("timer trigger");
 				killTimer();
-				executeTest(99);
+				scheduleTest(99);
 			}
 		}
 	}
@@ -468,6 +473,12 @@ void PhoenixVREngine::tick(float dt) {
 		else
 			warning("no default script!");
 		_loading = false;
+	}
+
+	if (_nextTest >= 0) {
+		auto nextTest = _nextTest;
+		_nextTest = -1;
+		executeTest(nextTest);
 	}
 
 	_vr.render(_screen, _angleX.angle(), _angleY.angle(), _fov, _showRegions ? _regSet.get() : nullptr);

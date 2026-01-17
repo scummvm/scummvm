@@ -152,7 +152,7 @@ struct ChangeCurseur : public Script::Command {
 	ChangeCurseur(const Common::Array<Common::String> &args) : cursor(atoi(args[0].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		debug("changecurseur %d", cursor);
-		g_engine->executeTest(cursor);
+		g_engine->scheduleTest(cursor);
 	}
 };
 
