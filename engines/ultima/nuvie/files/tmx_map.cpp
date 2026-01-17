@@ -189,6 +189,10 @@ bool TMXMap::exportMapLevel(uint8 level) {
 	NuvieIOFileWrite tmx;
 	uint16 width = map->get_width(level);
 	mapdata = map->get_map_data(level);
+
+	if (!mapdata)
+		return false;
+
 	Common::String level_string = Common::String::format("%d", level); // 'nn\0'
 	Common::Path filename;
 	build_path(savedir, savename + "_" + Std::string(level_string.c_str()) + ".tmx", filename);

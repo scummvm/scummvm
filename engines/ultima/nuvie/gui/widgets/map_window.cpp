@@ -1308,6 +1308,10 @@ void MapWindow::generateTmpMap() {
 	m_ViewableMapTiles.clear();
 
 	const byte *map_ptr = map->get_map_data(cur_level);
+
+	if (!map_ptr)
+		return;
+
 	uint16 pitch = map->get_width(cur_level);
 
 	if (enable_blacking == false) {

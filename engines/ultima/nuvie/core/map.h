@@ -167,7 +167,7 @@ public:
 	Actor *get_actor(uint16 x, uint16 y, uint8 z, bool inc_surrounding_objs = true);
 
 	bool loadMap(TileManager *tm, ObjManager *om);
-	byte *get_map_data(uint8 level);
+	byte *get_map_data(const uint8 level);
 	uint16 *get_roof_data(uint8 level);
 	const Tile *get_tile(uint16 x, uint16 y, uint8 level, bool original_tile = false);
 	uint16 get_width(uint8 level) const;
