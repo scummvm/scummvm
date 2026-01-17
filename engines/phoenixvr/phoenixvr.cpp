@@ -470,7 +470,7 @@ void PhoenixVREngine::tick(float dt) {
 		_loading = false;
 	}
 
-	_vr.render(_screen, _angleX.angle(), _angleY.angle(), _fov);
+	_vr.render(_screen, _angleX.angle(), _angleY.angle(), _fov, _showRegions ? _regSet.get() : nullptr);
 
 	Graphics::Surface *cursor = nullptr;
 	auto &cursors = _cursors[_warpIdx];
@@ -544,6 +544,8 @@ Common::Error PhoenixVREngine::run() {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN: {
+				if (event.kbd.keycode == Common::KeyCode::KEYCODE_r)
+					_showRegions = !_showRegions;
 				if (_prevWarp != -1)
 					break;
 				int code = -1;

@@ -33,6 +33,7 @@ class Screen;
 } // namespace Graphics
 
 namespace PhoenixVR {
+class RegionSet;
 class VR {
 	Common::ScopedPtr<Graphics::Surface> _pic;
 	bool _vr = false;
@@ -45,7 +46,7 @@ public:
 	VR &operator=(VR &&) noexcept = default;
 
 	static VR loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStream &s);
-	void render(Graphics::Screen *screen, float ax, float ay, float fov);
+	void render(Graphics::Screen *screen, float ax, float ay, float fov, RegionSet *regSet);
 	bool isVR() const { return _vr; }
 	void playAnimation(const Common::String &name);
 	Graphics::Surface &getSurface() { return *_pic; }

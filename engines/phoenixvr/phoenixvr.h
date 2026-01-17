@@ -207,6 +207,7 @@ private:
 	AngleY _angleY;
 	Audio::Mixer *_mixer;
 	bool _loading = false;
+	bool _showRegions = false;
 
 	static constexpr byte kPaused = 2;
 	static constexpr byte kActive = 4;

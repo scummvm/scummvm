@@ -33,6 +33,9 @@ Common::String toString() const {
 END_POINT_TYPE(float, PointF)
 
 BEGIN_RECT_TYPE(float, RectF, PointF);
+Common::Rect toRect() const {
+	return Common::Rect(left, top, right, bottom);
+}
 Common::String toString() const {
 	return Common::String::format("%g, %g, %g, %g", left, top, right, bottom);
 }

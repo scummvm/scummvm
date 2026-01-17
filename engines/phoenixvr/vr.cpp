@@ -30,7 +30,9 @@
 #include "graphics/yuv_to_rgb.h"
 #include "image/bmp.h"
 #include "math/vector3d.h"
+#include "phoenixvr/angle.h"
 #include "phoenixvr/dct_tables.h"
+#include "phoenixvr/region_set.h"
 #include "video/4xm_utils.h"
 
 namespace PhoenixVR {
@@ -345,7 +347,7 @@ void VR::playAnimation(const Common::String &name) {
 	unpack(*_pic, data + offset, huffSize, acPtr, dcPtr - acPtr, dcPtr, dcEnd - dcPtr, quality, &prefixData);
 }
 
-void VR::render(Graphics::Screen *screen, float ax, float ay, float fov) {
+void VR::render(Graphics::Screen *screen, float ax, float ay, float fov, RegionSet *regSet) {
 	if (!_pic) {
 		screen->clear();
 		return;
@@ -356,6 +358,10 @@ void VR::render(Graphics::Screen *screen, float ax, float ay, float fov) {
 		Common::Rect src(_pic->getRect());
 		Common::Rect::getBlitRect(dst, src, screen->getBounds());
 		screen->copyRectToSurface(*_pic, dst.x, dst.y, src);
+		if (regSet) {
+			for (auto &rect : regSet->getRegions())
+				screen->drawRoundRect(rect.toRect().toRect(), 4, _pic->format.RGBToColor(255, 255, 255), false);
+		}
 	} else {
 		auto w = g_system->getWidth();
 		auto h = g_system->getHeight();
@@ -371,12 +377,28 @@ void VR::render(Graphics::Screen *screen, float ax, float ay, float fov) {
 		Vector3d up = Vector3d::crossProduct(forward, right); // already normalized
 
 		// camera projection
+		static constexpr float kPi2 = M_PI * 2;
 		float gx = tanf(fov / 2.0f), gy = gx * h / w;
 		Vector3d incrementX = right * (2 * gx / w);
 		Vector3d incrementY = up * (2 * gy / h);
 		Vector3d start = forward - right * gx - up * gy;
 		Vector3d line = start;
+		float regX, regY, regDX = 0, regDY = 0;
+		if (regSet) {
+			regY = ay - fov / 2;
+			regDX = fov / w;
+			regDY = fov / h;
+			if (regY < 0)
+				regY += M_PI * 2;
+		}
 		for (int dstY = 0; dstY != h; ++dstY, line += incrementY) {
+			if (regSet) {
+				regX = ax - fov / 2;
+				if (regX < 0)
+					regX += kPi2;
+				if (regX >= kPi2)
+					regX -= kPi2;
+			}
 			Vector3d pixel = line;
 			for (int dstX = 0; dstX != w; ++dstX, pixel += incrementX) {
 				Vector3d ray = pixel.getNormalized();
@@ -389,7 +411,28 @@ void VR::render(Graphics::Screen *screen, float ax, float ay, float fov) {
 				srcY &= 0xff;
 				srcY += (tileId << 8);
 				auto color = _pic->getPixel(srcX, srcY);
+				if (regSet) {
+					regX += regDX;
+					if (regX >= kPi2)
+						regX -= kPi2;
+					for (auto &reg : regSet->getRegions()) {
+						if (reg.contains3D(regX, M_PI * 2 - regY)) {
+							byte r, g, b;
+							_pic->format.colorToRGB(color, r, g, b);
+							static constexpr int kGlow = 15;
+							auto dr = MIN(255 - r, kGlow), db = MIN(255 - b, kGlow);
+							r += dr;
+							b += db;
+							color = screen->format.RGBToColor(r, g, b);
+						}
+					}
+				}
 				screen->setPixel(dstX, dstY, color);
+			}
+			if (regSet) {
+				regY += regDY;
+				if (regY >= kPi2)
+					regY -= kPi2;
 			}
 		}
 		screen->addDirtyRect(screen->getBounds());

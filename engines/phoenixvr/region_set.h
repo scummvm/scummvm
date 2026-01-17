@@ -50,6 +50,7 @@ class RegionSet {
 public:
 	RegionSet(const Common::String &fname);
 	uint size() const { return _regions.size(); }
+	const Common::Array<Region> &getRegions() const { return _regions; }
 	const Region &getRegion(uint idx) const {
 		return _regions[idx];
 	}
