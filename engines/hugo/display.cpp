@@ -537,17 +537,24 @@ void Screen::displayPromptText() {
 	_vm->_system->copyRectToScreen(&_frontBuffer[r.top * 320], 320, r.left, r.top, r.width(), r.height());
 }
 
+/**
+ * Display diamond in Hugo1 DOS introduction
+ *
+ * x,y: upper left of diamond.
+ * color1: left color.
+ * color2: right color.
+ */
 void Screen::drawShape(const int x, const int y, const int color1, const int color2) {
 	for (int i = 0; i < kShapeSize; i++) {
-		for (int j = 0; j < i; j++) {
-			_backBuffer[320 * (y + i) + (x + kShapeSize + j - i)] = color1;
-			_frontBuffer[320 * (y + i) + (x + kShapeSize + j - i)] = color1;
-			_backBuffer[320 * (y + i) + (x + kShapeSize + j)] = color2;
-			_frontBuffer[320 * (y + i) + (x + kShapeSize + j)] = color2;
-			_backBuffer[320 * (y + (2 * kShapeSize - 1) - i) + (x + kShapeSize + j - i)] = color1;
-			_frontBuffer[320 * (y + (2 * kShapeSize - 1) - i) + (x + kShapeSize + j - i)] = color1;
-			_backBuffer[320 * (y + (2 * kShapeSize - 1) - i) + (x + kShapeSize + j)] = color2;
-			_frontBuffer[320 * (y + (2 * kShapeSize - 1) - i) + (x + kShapeSize + j)] = color2;
+		const int top = y + i;
+		const int bottom = y + (kShapeSize * 2) - 2 - i;
+		for (int j = 0; j <= i; j++) {
+			const int left  = x + kShapeSize - 1 - j;
+			const int right = x + kShapeSize + j;
+			_frontBuffer[320 * top + left] = color1;
+			_frontBuffer[320 * top + right] = color2;
+			_frontBuffer[320 * bottom + left] = color1;
+			_frontBuffer[320 * bottom + right] = color2;
 		}
 	}
 }
