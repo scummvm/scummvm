@@ -45,6 +45,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Ton-Wiedergabeprobleme in Mickey's Space Adventure auf PS3, Wii und weiteren
      Big-Endian-Plattformen korrigiert.
 
+ AGS:
+   - Erkennungs-Datenbank aktualisiert.
+
  Buried:
    - Unterstützung für Tastenkürzel hinzugefügt.
 
@@ -81,6 +84,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Gob:
    - Unterstützung für Text-to-speech hinzugefügt.
+
+ Grim:
+   - Unterstützung für die von Fans erstellte polnische Übersetzung von Grim Fandango hinzugefügt.
 
  Hugo:
    - Unterstützung für Text-to-speech hinzugefügt.
@@ -254,6 +260,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Wintermute:
    - Der 3D-Renderer wird jetzt auch standardmäßig für 2D-Spiele genutzt.
    - Unterstützung für Text-to-speech hinzugefügt.
+   - Unterstützung für mehrere Fan-Übersetzungen hinzugefügt.
 
  Desktop-Portierungen:
    - Die Benutzer können das Ändern der Größe des ScummVM-Fensters jetzt deaktivieren (mit Strg+R).
