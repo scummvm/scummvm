@@ -38,6 +38,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  ADL:
    - Added Text-to-Speech support.
 
+ AGS:
+   - Updated detection tables.
+
  AGI:
    - Added Text-to-Speech support.
    - Added support for SQ2 French translation.
@@ -80,6 +83,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Gob:
    - Added Text-to-Speech support.
+
+ Grim:
+    - Added support for the fantranslated Polish version of Grim Fandango.
 
  Hugo:
    - Added Text-to-Speech support.
@@ -259,6 +265,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  Wintermute:
    - 3D renderer enabled by default for 2D games.
    - Added Text-to-Speech support.
+   - Added support for several fan translations.
 
  Desktop ports:
    - Allow the user to disable manual resizing of the ScummVM window (using Ctrl+R).
