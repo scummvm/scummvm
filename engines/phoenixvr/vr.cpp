@@ -357,7 +357,6 @@ void VR::render(Graphics::Screen *screen, float ax, float ay, float fov) {
 		Common::Rect::getBlitRect(dst, src, screen->getBounds());
 		screen->copyRectToSurface(*_pic, dst.x, dst.y, src);
 	} else {
-		screen->clear();
 		auto w = g_system->getWidth();
 		auto h = g_system->getHeight();
 
@@ -393,6 +392,7 @@ void VR::render(Graphics::Screen *screen, float ax, float ay, float fov) {
 				screen->setPixel(dstX, dstY, color);
 			}
 		}
+		screen->addDirtyRect(screen->getBounds());
 	}
 }
 
