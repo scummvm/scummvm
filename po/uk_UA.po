@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-16 01:06+0000\n"
-"PO-Revision-Date: 2026-01-09 17:13+0000\n"
+"PO-Revision-Date: 2026-01-17 17:38+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -8263,15 +8263,15 @@ msgstr ""
 
 #: engines/darkseed/dialogs.cpp:127
 msgid "CD version SFX only"
-msgstr ""
+msgstr "Тільки SFX версії для CD"
 
 #: engines/darkseed/dialogs.cpp:131
 msgid "CD + extra floppy SFX"
-msgstr ""
+msgstr "CD + додаткові SFX з дискети"
 
 #: engines/darkseed/dialogs.cpp:135
 msgid "Floppy version SFX only"
-msgstr ""
+msgstr "Тільки SFX версії для дискет"
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:42 engines/dragons/metaengine.cpp:135
@@ -8336,7 +8336,7 @@ msgstr "Підвищити яскравість графіки для симул
 
 #: engines/director/metaengine.cpp:81
 msgid "Force true color"
-msgstr ""
+msgstr "Примусово true color"
 
 #: engines/director/metaengine.cpp:82
 msgid "Use true color graphics mode, even if the game is not designed for it"
@@ -8356,7 +8356,7 @@ msgstr "Перемикання інвентаря лідера"
 #. I18N: (Game name: Dungeon Master) The game has multi-choice dialogs. If there is only one choice, then this action can be used to select it.
 #: engines/dm/metaengine.cpp:144
 msgid "Select dialog choice (only works if there is a single choice)"
-msgstr ""
+msgstr "Вибрати варіант з діалога (працює лише за наявності одного варіанта)"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 1.
 #: engines/dm/metaengine.cpp:151
@@ -8396,7 +8396,7 @@ msgstr "Стрейфувати направо"
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. The champions can be put to sleep. This action wakes up the sleeping champion.
 #: engines/dm/metaengine.cpp:247
 msgid "Wake up champion"
-msgstr ""
+msgstr "Розбудити героя"
 
 #: engines/draci/metaengine.cpp:68 engines/prince/metaengine.cpp:64
 msgid "Enable Text to Speech for Missing Voiceovers"
@@ -8687,7 +8687,7 @@ msgstr "Викинути"
 
 #: engines/efh/metaengine.cpp:437
 msgid "Equip"
-msgstr ""
+msgstr "Вдягти"
 
 #: engines/efh/metaengine.cpp:442 engines/queen/metaengine.cpp:274
 #: engines/saga/metaengine.cpp:384 engines/scumm/help.cpp:124
@@ -8704,11 +8704,11 @@ msgstr "Інфо"
 
 #: engines/efh/metaengine.cpp:452
 msgid "Passive skills"
-msgstr ""
+msgstr "Пасивні вміння"
 
 #: engines/efh/metaengine.cpp:457
 msgid "Trade"
-msgstr ""
+msgstr "Торгівля"
 
 #: engines/efh/metaengine.cpp:467
 msgid "Exit status menu"
@@ -8720,7 +8720,7 @@ msgstr "Вийти з підменю"
 
 #: engines/efh/metaengine.cpp:493
 msgid "Leave"
-msgstr ""
+msgstr "Вийти"
 
 #: engines/efh/metaengine.cpp:500 engines/efh/metaengine.cpp:536
 msgid "Status"
@@ -8728,7 +8728,7 @@ msgstr "Статус"
 
 #: engines/efh/metaengine.cpp:518
 msgid "Defend"
-msgstr ""
+msgstr "Захищати"
 
 #. I18N: Run is a movement type
 #. I18N: Action in In Cold Blood
@@ -8814,7 +8814,7 @@ msgstr "Програти звук тип 10"
 
 #: engines/efh/metaengine.cpp:657
 msgid "Play sound type 9"
-msgstr ""
+msgstr "Відтворити звук типу 9"
 
 #: engines/efh/metaengine.cpp:662
 msgid "Play sound type 16"
@@ -8895,11 +8895,11 @@ msgstr "Вмикає подорожування за допомогою каме
 
 #: engines/freescape/metaengine.cpp:141
 msgid "Smoother movement"
-msgstr ""
+msgstr "Плавніший рух"
 
 #: engines/freescape/metaengine.cpp:142
 msgid "Use smoother movements instead of discrete steps"
-msgstr ""
+msgstr "Використовувати плавніші рухи замість дискретних кроків"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:63 engines/mm/mm1/metaengine.cpp:79
@@ -9631,7 +9631,7 @@ msgstr "Мапа клавіш вступу"
 
 #: engines/hypno/metaengine.cpp:134
 msgid "Primary shoot"
-msgstr ""
+msgstr "Освновний вистріл"
 
 #: engines/hypno/metaengine.cpp:140
 msgid "Secondary shoot"
@@ -9666,22 +9666,22 @@ msgstr "Пропустити рівень (Чіт)"
 #: engines/hypno/metaengine.cpp:180 engines/hypno/metaengine.cpp:278
 #: engines/hypno/metaengine.cpp:329
 msgid "Kill player"
-msgstr ""
+msgstr "Вбити гравця"
 
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Chump is the easy mode.
 #: engines/hypno/metaengine.cpp:205
 msgid "Chump"
-msgstr ""
+msgstr "Баран"
 
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Punk is the medium mode.
 #: engines/hypno/metaengine.cpp:212
 msgid "Punk"
-msgstr ""
+msgstr "Панк"
 
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Badass is the hard mode.
 #: engines/hypno/metaengine.cpp:219
 msgid "Badass"
-msgstr ""
+msgstr "Крутелик"
 
 #. I18N: (Game name: Soldier Boyz) This makes the player restart from the last checkpoint.
 #: engines/hypno/metaengine.cpp:232
@@ -9695,7 +9695,7 @@ msgstr "Територію спочатку"
 
 #: engines/hypno/metaengine.cpp:245
 msgid "Begin new mission"
-msgstr ""
+msgstr "Розпочати нову місію"
 
 #: engines/hypno/metaengine.cpp:313
 msgid "Pause keymappings"
@@ -10116,11 +10116,11 @@ msgstr "Підняти звук у грі"
 
 #: engines/lab/metaengine.cpp:185
 msgid "Lower the sound volume"
-msgstr ""
+msgstr "Зменшити гучність звуку"
 
 #: engines/lab/metaengine.cpp:216
 msgid "Interact with object with chosen action"
-msgstr ""
+msgstr "Взаємодіяти з об'єктом обраною дією"
 
 #: engines/lab/metaengine.cpp:221
 msgid "Take object"
@@ -10136,11 +10136,11 @@ msgstr "Відкрити двері або об'єкт"
 
 #: engines/lab/metaengine.cpp:239
 msgid "Close door or object"
-msgstr ""
+msgstr "Зачинити двері або предмет"
 
 #: engines/lab/metaengine.cpp:245
 msgid "Look at object close-up"
-msgstr ""
+msgstr "Розглянути предмет крупним планом"
 
 #: engines/lab/metaengine.cpp:251
 msgid "Switch to inventory display"
@@ -10152,15 +10152,15 @@ msgstr "Перемістити фокус на інтерактивний об'�
 
 #: engines/lab/metaengine.cpp:292 engines/lab/metaengine.cpp:352
 msgid "Start dropping virtual bread crumbs"
-msgstr ""
+msgstr "Почати скидати віртуальні хлібні крихти"
 
 #: engines/lab/metaengine.cpp:298 engines/lab/metaengine.cpp:359
 msgid "Follow virtual bread crumbs"
-msgstr ""
+msgstr "Йти за віртуальними хлібними крихтами"
 
 #: engines/lab/metaengine.cpp:304 engines/lab/metaengine.cpp:366
 msgid "Run while following virtual bread crumbs"
-msgstr ""
+msgstr "Бігти за віртуальними хлібними крихтами"
 
 #: engines/lab/metaengine.cpp:311
 msgid "Switch to main display"
@@ -10184,7 +10184,7 @@ msgstr "Наступний елемент інвентаря"
 
 #: engines/lab/metaengine.cpp:373
 msgid "Exit map display"
-msgstr ""
+msgstr "Вийти з відображення мапи"
 
 #: engines/lab/metaengine.cpp:379
 msgid "Up one level"
@@ -10303,6 +10303,9 @@ msgid ""
 "original .exe file. Otherwise, it will use lower resolution cursors from the "
 "data files."
 msgstr ""
+"Якщо вибрано, гра використовуватиме курсори миші Windows, що входять до "
+"оригінального .exe-файлу. В іншому випадку використовуватиме курсори з "
+"нижчою роздільною здатністю з файлів даних."
 
 #: engines/made/metaengine.cpp:158
 msgid "Cursor up"
@@ -10673,12 +10676,14 @@ msgstr "Найкраще"
 
 #: engines/mohawk/dialogs.cpp:456
 msgid "Fix audio pops/clicks"
-msgstr ""
+msgstr "Виправити звукові тріски/клацання"
 
 #: engines/mohawk/dialogs.cpp:457
 msgid ""
 "Reduces audible pops at the end of some sound effects (Non Myst/Riven only)."
 msgstr ""
+"Зменшує чутні потріскування в кінці деяких звукових ефектів (лише не для "
+"Myst/Riven)."
 
 #: engines/mohawk/metaengine.cpp:291
 msgid "Myst ME support not compiled in"
@@ -11109,7 +11114,7 @@ msgstr "Пропустити частину роліка"
 #. I18N: (Game name: The Neverhood) The game has multiple cutscenes, and this action skips the entire scene.
 #: engines/neverhood/metaengine.cpp:221
 msgid "Skip entire scene (works only in some scenes)"
-msgstr ""
+msgstr "Пропустити всю сцену (працює лише в деяких сценах)"
 
 #. I18N: (Game name: The Neverhood) This action confirms the selected save or entered new save name in the save file management menus.
 #: engines/neverhood/metaengine.cpp:228
@@ -11287,7 +11292,7 @@ msgstr "Пропустити ходіння"
 #. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action skips the walking animation and also prevents the interaction, instead instantly placing the player next to the target.
 #: engines/pink/metaengine.cpp:151
 msgid "Skip walk and cancel interaction"
-msgstr ""
+msgstr "Пропустити ходіння та скасувати взаємодію"
 
 #. I18N: (Game Name: Pink Panther) This action fully skips the current running sequence (cutscene, dialog, interaction, etc).
 #: engines/pink/metaengine.cpp:158
@@ -11349,7 +11354,7 @@ msgstr "Підсвітити області рішень"
 
 #: engines/private/metaengine.cpp:51
 msgid "Highlight clickable areas in decision scenes."
-msgstr ""
+msgstr "Підсвітити клікабельні області в сценах прийняття рішень."
 
 #: engines/private/metaengine.cpp:136 engines/trecision/metaengine.cpp:137
 msgid "Skip video"
@@ -13280,10 +13285,8 @@ msgid "Movie keymappings"
 msgstr "Мапа клавіш відео"
 
 #: engines/sherlock/metaengine.cpp:349
-#, fuzzy
-#| msgid "Use Selected Object"
 msgid "Skip / Deselect verb"
-msgstr "Використати обраний об'єкт"
+msgstr "Пропустити / Скасувати вибір дієслова"
 
 #: engines/sherlock/metaengine.cpp:450
 msgid "Setup"
@@ -13317,65 +13320,45 @@ msgid "Last page"
 msgstr "Остання сторінка"
 
 #: engines/sherlock/metaengine.cpp:578
-#, fuzzy
-#| msgid "Move left"
 msgid "Scroll left"
-msgstr "Рухатись наліво"
+msgstr "Прокрутка наліво"
 
 #: engines/sherlock/metaengine.cpp:584
-#, fuzzy
-#| msgid "Move right"
 msgid "Scroll right"
-msgstr "Рухатись направо"
+msgstr "Прокрутка направо"
 
 #: engines/sherlock/metaengine.cpp:649 engines/sherlock/metaengine.cpp:936
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select option"
-msgstr "Вибрати Актора 1"
+msgstr "Обрати варіант"
 
 #: engines/sherlock/metaengine.cpp:685 engines/ultima/nuvie/metaengine.cpp:99
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle music"
-msgstr "Перемкнути звук"
+msgstr "Перемкнути музику"
 
 #: engines/sherlock/metaengine.cpp:690
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle portraits"
-msgstr "Перемкнути режим бою"
+msgstr "Перемкнути портрети"
 
 #: engines/sherlock/metaengine.cpp:695
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change font style"
-msgstr "Змінити розмір шрифта"
+msgstr "Змінити стиль шрифта"
 
 #: engines/sherlock/metaengine.cpp:700
-#, fuzzy
-#| msgid "Toggle sound effect on/off"
 msgid "Toggle sound effects"
-msgstr "Перемикання звукових ефектів"
+msgstr "Перемнути звукові ефекти"
 
 #: engines/sherlock/metaengine.cpp:705
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle windows mode"
-msgstr "Перемикання швидкого режиму"
+msgstr "Перемкнути режим вікон"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an auto-help feature, this action is used to change the auto-help location between left and right
 #: engines/sherlock/metaengine.cpp:711
-#, fuzzy
-#| msgid "Change game options"
 msgid "Change auto-help location"
-msgstr "Змінити налаштування гри"
+msgstr "Змінити розташування авто-допомоги"
 
 #: engines/sherlock/metaengine.cpp:716
-#, fuzzy
-#| msgid "Enable cheats"
 msgid "Toggle voices"
-msgstr "Ввімкнути чіти"
+msgstr "Перемкнути голоси"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade by pixel"
 #: engines/sherlock/metaengine.cpp:724
@@ -13384,23 +13367,17 @@ msgstr ""
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade directly"
 #: engines/sherlock/metaengine.cpp:730
-#, fuzzy
-#| msgid "Create directory"
 msgid "Fade directly"
-msgstr "Створення каталогу"
+msgstr "Прямий перехід"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode
 #: engines/sherlock/metaengine.cpp:736
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change fade mode"
-msgstr "Змінити режим"
+msgstr "Змінити режим переходу"
 
 #: engines/sherlock/metaengine.cpp:778
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Journal search keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш пошуку у журналі"
 
 #: engines/sherlock/metaengine.cpp:781
 #, fuzzy
