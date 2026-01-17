@@ -1,0 +1,2103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="boflib">
+			<UniqueIdentifier>77894EED-E6E5-4B91-BDC7-94CFB0760748</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj">
+			<UniqueIdentifier>5E322AF7-D856-4ECE-9513-C6EB0329C398</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\archeroids">
+			<UniqueIdentifier>7CF20904-3EAE-4917-80C0-0A9BF9D72462</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\artparts">
+			<UniqueIdentifier>967E9D17-4A62-40C3-AFE7-B5774426AD6D</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\barbershop">
+			<UniqueIdentifier>E3567795-BE48-4B2D-B401-F95B270D0907</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\battlefish">
+			<UniqueIdentifier>BA3463FC-F5E5-417C-834B-BD837906BF00</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\beacon">
+			<UniqueIdentifier>4A2725C7-C545-4D14-A763-0E37BE9DBD7A</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\crypt">
+			<UniqueIdentifier>79FCCDFD-43E3-4625-AF96-2DD70C21CB19</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\dfa">
+			<UniqueIdentifier>37CF75D9-5B86-4BA7-8F3F-2D1FF8825F57</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\fuge">
+			<UniqueIdentifier>3D5D17C4-8F55-488D-8D7D-E2553C174A0D</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\garfunkle">
+			<UniqueIdentifier>02490091-EE15-46D2-83D7-B28953893930</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\gfx">
+			<UniqueIdentifier>FBFB174E-2C3B-4450-9DF8-965C35C67489</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\hnplibs">
+			<UniqueIdentifier>200322C3-041B-4A8F-AE87-EE9D474886B6</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\libs">
+			<UniqueIdentifier>7615EE72-8F0B-4D8D-B790-BF99ECC1B40E</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\life">
+			<UniqueIdentifier>81D219B6-D112-4C09-A1C6-EFCAAFF9F28D</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\mankala">
+			<UniqueIdentifier>5B154F1E-8720-45C9-BE05-B4F138A8FA0E</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\mazedoom">
+			<UniqueIdentifier>9875E710-4D62-4E78-8332-B00286984BD1</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\metagame">
+			<UniqueIdentifier>0B3719E2-E2BA-4176-8CED-125C2DCEC430</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\metagame\bgen">
+			<UniqueIdentifier>D9F09571-126D-4D37-AEDB-D6F81918CF28</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\metagame\demo">
+			<UniqueIdentifier>5E9BBF13-D8A1-4EF6-88BE-3A11D56A0462</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\metagame\frame">
+			<UniqueIdentifier>09184E89-A8E2-4290-9A8A-E88DA120E082</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\metagame\grand_tour">
+			<UniqueIdentifier>72E31C64-470B-4F03-B44B-AC8C776A1DDE</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\metagame\gtl">
+			<UniqueIdentifier>3A3045F8-76F0-4A91-ABF3-0BBAC7573871</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\metagame\saves">
+			<UniqueIdentifier>7292067B-69B7-4F4B-91CC-ED99B8141E3D</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\metagame\zoom">
+			<UniqueIdentifier>65B77182-A86F-4F51-9066-F33C0FD77132</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\novacancy">
+			<UniqueIdentifier>2D3A53C9-44A1-4D2C-B7F3-02E098B6A0DF</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\packrat">
+			<UniqueIdentifier>CC46532D-D1B7-44C4-9100-9017B9361AD8</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\pdq">
+			<UniqueIdentifier>F6BACA80-330B-4B0F-96B8-7A6DE73EDEBE</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\peggle">
+			<UniqueIdentifier>22C1674F-AC94-4925-A61D-E8041AAFE91E</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\poker">
+			<UniqueIdentifier>8EAE60BF-60A2-4150-9953-4F5D79057A3F</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\riddles">
+			<UniqueIdentifier>8145DF6F-5107-4FC2-9810-E4737C772EA5</UniqueIdentifier>
+		</Filter>
+		<Filter Include="hodjnpodj\wordsearch">
+			<UniqueIdentifier>0D5D65ED-E1C2-4E78-805B-7607595AC64E</UniqueIdentifier>
+		</Filter>
+		<Filter Include="mfc">
+			<UniqueIdentifier>D0934BBD-5B2E-4958-AFA8-0F8AB824D1DA</UniqueIdentifier>
+		</Filter>
+		<Filter Include="mfc\gfx">
+			<UniqueIdentifier>078F784D-1FF8-41A0-B36B-F0778DF9931C</UniqueIdentifier>
+		</Filter>
+		<Filter Include="mfc\libs">
+			<UniqueIdentifier>262C92E0-AC06-4E5F-8D7F-184C49374B17</UniqueIdentifier>
+		</Filter>
+		<Filter Include="spacebar">
+			<UniqueIdentifier>7AE99AB3-4D8B-4A54-AF58-153F00F6FCEE</UniqueIdentifier>
+		</Filter>
+		<Filter Include="spacebar\baglib">
+			<UniqueIdentifier>278ACC40-6168-4C83-A7A9-937839200A5F</UniqueIdentifier>
+		</Filter>
+		<Filter Include="spacebar\boflib">
+			<UniqueIdentifier>91C0352E-C7DD-4685-A4CE-3E32C71740D3</UniqueIdentifier>
+		</Filter>
+		<Filter Include="spacebar\boflib\gfx">
+			<UniqueIdentifier>7383F9B9-CEE3-4C39-9BDA-22B0765B8B39</UniqueIdentifier>
+		</Filter>
+		<Filter Include="spacebar\boflib\gui">
+			<UniqueIdentifier>C4203D84-046D-47E7-8A95-B7E144A03A2F</UniqueIdentifier>
+		</Filter>
+		<Filter Include="spacebar\dialogs">
+			<UniqueIdentifier>E0D3AF99-249D-4C63-A711-41543A7FC2B6</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\bagel\boflib\cache.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\cursor_data.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\error.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\event_loop.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\file_functions.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\llist.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\log.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\misc.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\palette.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\queue.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\sound.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\string.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\boflib\string_functions.cpp">
+			<Filter>boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\archeroids\init.cpp">
+			<Filter>hodjnpodj\archeroids</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\archeroids\main.cpp">
+			<Filter>hodjnpodj\archeroids</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\archeroids\usercfg.cpp">
+			<Filter>hodjnpodj\archeroids</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\artparts\artparts.cpp">
+			<Filter>hodjnpodj\artparts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\artparts\init.cpp">
+			<Filter>hodjnpodj\artparts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\artparts\optndlg.cpp">
+			<Filter>hodjnpodj\artparts</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\barbershop\animate.cpp">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\barbershop\barb.cpp">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\barbershop\board.cpp">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\barbershop\card.cpp">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\barbershop\deck.cpp">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\barbershop\init.cpp">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\barbershop\jay.cpp">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\barbershop\logic.cpp">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\barbershop\main.cpp">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\barbershop\paint.cpp">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\barbershop\stack.cpp">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\barbershop\stats.cpp">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\barbershop\undo.cpp">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\barbershop\usercfg.cpp">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\battlefish\bfish.cpp">
+			<Filter>hodjnpodj\battlefish</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\battlefish\init.cpp">
+			<Filter>hodjnpodj\battlefish</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\battlefish\usercfg.cpp">
+			<Filter>hodjnpodj\battlefish</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\beacon\beacon.cpp">
+			<Filter>hodjnpodj\beacon</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\beacon\init.cpp">
+			<Filter>hodjnpodj\beacon</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\beacon\optndlg.cpp">
+			<Filter>hodjnpodj\beacon</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\crypt\crypt.cpp">
+			<Filter>hodjnpodj\crypt</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\crypt\init.cpp">
+			<Filter>hodjnpodj\crypt</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\crypt\main.cpp">
+			<Filter>hodjnpodj\crypt</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\crypt\optn.cpp">
+			<Filter>hodjnpodj\crypt</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\crypt\pnt_gram.cpp">
+			<Filter>hodjnpodj\crypt</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\crypt\rec.cpp">
+			<Filter>hodjnpodj\crypt</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\crypt\stats.cpp">
+			<Filter>hodjnpodj\crypt</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\dfa\dfa.cpp">
+			<Filter>hodjnpodj\dfa</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\dfa\init.cpp">
+			<Filter>hodjnpodj\dfa</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\dfa\msgdlg.cpp">
+			<Filter>hodjnpodj\dfa</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\dfa\optdlg.cpp">
+			<Filter>hodjnpodj\dfa</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\fuge\fuge.cpp">
+			<Filter>hodjnpodj\fuge</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\fuge\init.cpp">
+			<Filter>hodjnpodj\fuge</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\fuge\usercfg.cpp">
+			<Filter>hodjnpodj\fuge</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\garfunkle\garfunkle.cpp">
+			<Filter>hodjnpodj\garfunkle</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\garfunkle\init.cpp">
+			<Filter>hodjnpodj\garfunkle</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\garfunkle\note.cpp">
+			<Filter>hodjnpodj\garfunkle</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\garfunkle\optndlg.cpp">
+			<Filter>hodjnpodj\garfunkle</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\gfx\bold_font.cpp">
+			<Filter>hodjnpodj\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\gfx\palette.cpp">
+			<Filter>hodjnpodj\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\hnplibs\audiocfg.cpp">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\hnplibs\bitmaps.cpp">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\hnplibs\button.cpp">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\hnplibs\cbofdlg.cpp">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\hnplibs\cmessbox.cpp">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\hnplibs\dibapi.cpp">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\hnplibs\dibdoc.cpp">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\hnplibs\dibfile.cpp">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\hnplibs\lzss.cpp">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\hnplibs\mainmenu.cpp">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\hnplibs\rules.cpp">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\hnplibs\sprite.cpp">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\hnplibs\text.cpp">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\libs\vector.cpp">
+			<Filter>hodjnpodj\libs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\life\game.cpp">
+			<Filter>hodjnpodj\life</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\life\grid.cpp">
+			<Filter>hodjnpodj\life</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\life\init.cpp">
+			<Filter>hodjnpodj\life</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\life\life.cpp">
+			<Filter>hodjnpodj\life</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\life\usercfg.cpp">
+			<Filter>hodjnpodj\life</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\mankala\bgenut.cpp">
+			<Filter>hodjnpodj\mankala</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\mankala\btimeut.cpp">
+			<Filter>hodjnpodj\mankala</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\mankala\init.cpp">
+			<Filter>hodjnpodj\mankala</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\mankala\mnk.cpp">
+			<Filter>hodjnpodj\mankala</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\mankala\mnklog.cpp">
+			<Filter>hodjnpodj\mankala</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\mankala\mnkopt.cpp">
+			<Filter>hodjnpodj\mankala</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\mankala\mnkui.cpp">
+			<Filter>hodjnpodj\mankala</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\mazedoom\init.cpp">
+			<Filter>hodjnpodj\mazedoom</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\mazedoom\mod.cpp">
+			<Filter>hodjnpodj\mazedoom</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\mazedoom\optndlg.cpp">
+			<Filter>hodjnpodj\mazedoom</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\backpack.cpp">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\bbt.cpp">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\bdbg.cpp">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\bgb.cpp">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\bgenut.cpp">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\bsutl.cpp">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\btimeut.cpp">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\c1btndlg.cpp">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\c2btndlg.cpp">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\invent.cpp">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\item.cpp">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\mgstat.cpp">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\note.cpp">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\notebook.cpp">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\demo\app.cpp">
+			<Filter>hodjnpodj\metagame\demo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\demo\hodjpodj_demo.cpp">
+			<Filter>hodjnpodj\metagame\demo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\frame\app.cpp">
+			<Filter>hodjnpodj\metagame\frame</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\frame\hodjpodj.cpp">
+			<Filter>hodjnpodj\metagame\frame</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\frame\maindlg.cpp">
+			<Filter>hodjnpodj\metagame\frame</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\frame\movytmpl.cpp">
+			<Filter>hodjnpodj\metagame\frame</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\frame\msudlg.cpp">
+			<Filter>hodjnpodj\metagame\frame</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\grand_tour\dialogs.cpp">
+			<Filter>hodjnpodj\metagame\grand_tour</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\grand_tour\grand_tour.cpp">
+			<Filter>hodjnpodj\metagame\grand_tour</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\grand_tour\init.cpp">
+			<Filter>hodjnpodj\metagame\grand_tour</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\citemdlg.cpp">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\cmapdlg.cpp">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\cturndlg.cpp">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\encount.cpp">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\gtl.cpp">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\gtlcmp.cpp">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\gtlcpl.cpp">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\gtldoc.cpp">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\gtlfrm.cpp">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\gtllex.cpp">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\gtlmanp.cpp">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\gtlmgm.cpp">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\gtlmve.cpp">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\gtlui.cpp">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\gtlview.cpp">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\init.cpp">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\optdlg.cpp">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\pawn.cpp">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\rules.cpp">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\spinner.cpp">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\store.cpp">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\saves\restdlg.cpp">
+			<Filter>hodjnpodj\metagame\saves</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\saves\savedlg.cpp">
+			<Filter>hodjnpodj\metagame\saves</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\saves\savegame.cpp">
+			<Filter>hodjnpodj\metagame\saves</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\saves\savegame_info.cpp">
+			<Filter>hodjnpodj\metagame\saves</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\zoom\init.cpp">
+			<Filter>hodjnpodj\metagame\zoom</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\metagame\zoom\zoommap.cpp">
+			<Filter>hodjnpodj\metagame\zoom</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\novacancy\init.cpp">
+			<Filter>hodjnpodj\novacancy</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\novacancy\main.cpp">
+			<Filter>hodjnpodj\novacancy</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\packrat\init.cpp">
+			<Filter>hodjnpodj\packrat</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\packrat\msgdlg.cpp">
+			<Filter>hodjnpodj\packrat</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\packrat\optdlg.cpp">
+			<Filter>hodjnpodj\packrat</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\packrat\packrat.cpp">
+			<Filter>hodjnpodj\packrat</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\pdq\game.cpp">
+			<Filter>hodjnpodj\pdq</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\pdq\guess.cpp">
+			<Filter>hodjnpodj\pdq</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\pdq\init.cpp">
+			<Filter>hodjnpodj\pdq</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\pdq\main.cpp">
+			<Filter>hodjnpodj\pdq</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\pdq\usercfg.cpp">
+			<Filter>hodjnpodj\pdq</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\peggle\game.cpp">
+			<Filter>hodjnpodj\peggle</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\peggle\gameinit.cpp">
+			<Filter>hodjnpodj\peggle</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\peggle\init.cpp">
+			<Filter>hodjnpodj\peggle</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\peggle\options.cpp">
+			<Filter>hodjnpodj\peggle</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\peggle\optndlg.cpp">
+			<Filter>hodjnpodj\peggle</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\peggle\optsub.cpp">
+			<Filter>hodjnpodj\peggle</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\poker\amtdlg.cpp">
+			<Filter>hodjnpodj\poker</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\poker\c1btndlg.cpp">
+			<Filter>hodjnpodj\poker</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\poker\init.cpp">
+			<Filter>hodjnpodj\poker</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\poker\optdlg.cpp">
+			<Filter>hodjnpodj\poker</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\poker\poffsdlg.cpp">
+			<Filter>hodjnpodj\poker</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\poker\poker.cpp">
+			<Filter>hodjnpodj\poker</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\poker\uwondlg.cpp">
+			<Filter>hodjnpodj\poker</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\riddles\init.cpp">
+			<Filter>hodjnpodj\riddles</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\riddles\riddles.cpp">
+			<Filter>hodjnpodj\riddles</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\riddles\usercfg.cpp">
+			<Filter>hodjnpodj\riddles</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\wordsearch\c1btndlg.cpp">
+			<Filter>hodjnpodj\wordsearch</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\wordsearch\clongdlg.cpp">
+			<Filter>hodjnpodj\wordsearch</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\wordsearch\init.cpp">
+			<Filter>hodjnpodj\wordsearch</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\wordsearch\msgdlg.cpp">
+			<Filter>hodjnpodj\wordsearch</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\wordsearch\optdlg.cpp">
+			<Filter>hodjnpodj\wordsearch</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\wordsearch\wordlist.cpp">
+			<Filter>hodjnpodj\wordsearch</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\wordsearch\wordsearch.cpp">
+			<Filter>hodjnpodj\wordsearch</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\console.cpp">
+			<Filter>hodjnpodj</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\hodjnpodj\hodjnpodj.cpp">
+			<Filter>hodjnpodj</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\gfx\blitter.cpp">
+			<Filter>mfc\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\gfx\cursor.cpp">
+			<Filter>mfc\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\gfx\dialog_template.cpp">
+			<Filter>mfc\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\gfx\fonts.cpp">
+			<Filter>mfc\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\gfx\palette_map.cpp">
+			<Filter>mfc\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\gfx\surface.cpp">
+			<Filter>mfc\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\gfx\text_render.cpp">
+			<Filter>mfc\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\libs\event_loop.cpp">
+			<Filter>mfc\libs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\libs\events.cpp">
+			<Filter>mfc\libs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\libs\resources.cpp">
+			<Filter>mfc\libs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\libs\settings.cpp">
+			<Filter>mfc\libs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\afx.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\bitmap.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\bitmap_button.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\brush.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\button.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\cmd_target.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\dc.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\dialog.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\doc_manager.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\doc_template.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\document.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\edit.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\file.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\font.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\frame_wnd.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\gdi_object.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\global_functions.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\ifstream.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\joystickapi.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\listbox.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\menu.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\object.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\paint_dc.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\palette.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\pen.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\rgn.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\scroll_view.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\scrollbar.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\single_doc_template.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\static.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\string.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\view.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\win_app.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\win_thread.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\wingdi.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\mfc\wnd.cpp">
+			<Filter>mfc</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\area_object.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\bagel.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\base_pda.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\bmp_object.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\button_object.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\character_object.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\chat_wnd.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\command_object.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\cursor.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\dev_dlg.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\dossier_object.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\event_sdev.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\exam.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\expression.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\expression_object.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\fmovie.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\help.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\ifstream.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\inv.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\link_object.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\log_msg.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\master_win.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\menu_dlg.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\moo.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\movie_object.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\object.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\paint_table.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\pan_bitmap.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\pan_window.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\parse_object.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\pda.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\rp_object.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\save_game_file.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\sound_object.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\sprite_object.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\storage_dev_bmp.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\storage_dev_win.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\text_object.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\time_object.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\var.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\variable_object.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\wield.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\baglib\zoom_pda.cpp">
+			<Filter>spacebar\baglib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\boflib\gfx\bitmap.cpp">
+			<Filter>spacebar\boflib\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\boflib\gfx\cursor.cpp">
+			<Filter>spacebar\boflib\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\boflib\gfx\sprite.cpp">
+			<Filter>spacebar\boflib\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\boflib\gfx\text.cpp">
+			<Filter>spacebar\boflib\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\boflib\gui\button.cpp">
+			<Filter>spacebar\boflib\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\boflib\gui\dialog.cpp">
+			<Filter>spacebar\boflib\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\boflib\gui\edit_text.cpp">
+			<Filter>spacebar\boflib\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\boflib\gui\list_box.cpp">
+			<Filter>spacebar\boflib\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\boflib\gui\movie.cpp">
+			<Filter>spacebar\boflib\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\boflib\gui\scroll_bar.cpp">
+			<Filter>spacebar\boflib\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\boflib\gui\text_box.cpp">
+			<Filter>spacebar\boflib\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\boflib\gui\window.cpp">
+			<Filter>spacebar\boflib\gui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\boflib\app.cpp">
+			<Filter>spacebar\boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\boflib\crc.cpp">
+			<Filter>spacebar\boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\boflib\dat_file.cpp">
+			<Filter>spacebar\boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\boflib\debug.cpp">
+			<Filter>spacebar\boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\boflib\file.cpp">
+			<Filter>spacebar\boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\boflib\options.cpp">
+			<Filter>spacebar\boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\boflib\res.cpp">
+			<Filter>spacebar\boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\boflib\timer.cpp">
+			<Filter>spacebar\boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\boflib\vector.cpp">
+			<Filter>spacebar\boflib</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\console.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\dialogs\credits_dialog.cpp">
+			<Filter>spacebar\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\dialogs\next_cd_dialog.cpp">
+			<Filter>spacebar\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\dialogs\opt_window.cpp">
+			<Filter>spacebar\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\dialogs\quit_dialog.cpp">
+			<Filter>spacebar\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\dialogs\restart_dialog.cpp">
+			<Filter>spacebar\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\dialogs\restore_dialog.cpp">
+			<Filter>spacebar\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\dialogs\save_dialog.cpp">
+			<Filter>spacebar\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\dialogs\start_dialog.cpp">
+			<Filter>spacebar\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\bib_odds_wnd.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\bibble_window.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\computer.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\filter.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\full_wnd.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\main_link_object.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\main_window.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\master_win.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\nav_window.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\slot_wnd.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\spacebar.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\sraf_computer.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\thud.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\spacebar\vid_wnd.cpp">
+			<Filter>spacebar</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bagel\bagel.cpp" />
+		<ClCompile Include="..\..\engines\bagel\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\bagel\music.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\bagel\boflib\cache.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\cursor_data.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\error.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\event_loop.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\file_functions.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\llist.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\log.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\misc.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\object.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\palette.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\point.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\queue.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\rect.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\size.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\sound.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\stdinc.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\string.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\boflib\string_functions.h">
+			<Filter>boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\archeroids\init.h">
+			<Filter>hodjnpodj\archeroids</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\archeroids\main.h">
+			<Filter>hodjnpodj\archeroids</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\archeroids\usercfg.h">
+			<Filter>hodjnpodj\archeroids</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\artparts\artparts.h">
+			<Filter>hodjnpodj\artparts</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\artparts\globals.h">
+			<Filter>hodjnpodj\artparts</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\artparts\init.h">
+			<Filter>hodjnpodj\artparts</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\artparts\optndlg.h">
+			<Filter>hodjnpodj\artparts</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\artparts\resource.h">
+			<Filter>hodjnpodj\artparts</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\barbershop\animate.h">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\barbershop\barb.h">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\barbershop\board.h">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\barbershop\card.h">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\barbershop\deck.h">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\barbershop\init.h">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\barbershop\logic.h">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\barbershop\main.h">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\barbershop\paint.h">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\barbershop\resource.h">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\barbershop\stack.h">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\barbershop\stats.h">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\barbershop\undo.h">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\barbershop\usercfg.h">
+			<Filter>hodjnpodj\barbershop</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\battlefish\bfish.h">
+			<Filter>hodjnpodj\battlefish</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\battlefish\init.h">
+			<Filter>hodjnpodj\battlefish</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\battlefish\usercfg.h">
+			<Filter>hodjnpodj\battlefish</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\beacon\beacon.h">
+			<Filter>hodjnpodj\beacon</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\beacon\globals.h">
+			<Filter>hodjnpodj\beacon</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\beacon\init.h">
+			<Filter>hodjnpodj\beacon</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\beacon\optndlg.h">
+			<Filter>hodjnpodj\beacon</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\beacon\resource.h">
+			<Filter>hodjnpodj\beacon</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\crypt\crypt.h">
+			<Filter>hodjnpodj\crypt</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\crypt\globals.h">
+			<Filter>hodjnpodj\crypt</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\crypt\init.h">
+			<Filter>hodjnpodj\crypt</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\crypt\main.h">
+			<Filter>hodjnpodj\crypt</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\crypt\optn.h">
+			<Filter>hodjnpodj\crypt</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\crypt\pnt_gram.h">
+			<Filter>hodjnpodj\crypt</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\crypt\rec.h">
+			<Filter>hodjnpodj\crypt</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\crypt\resource.h">
+			<Filter>hodjnpodj\crypt</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\crypt\stats.h">
+			<Filter>hodjnpodj\crypt</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\crypt\stdafx.h">
+			<Filter>hodjnpodj\crypt</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\dfa\dfa.h">
+			<Filter>hodjnpodj\dfa</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\dfa\dialogs.h">
+			<Filter>hodjnpodj\dfa</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\dfa\errors.h">
+			<Filter>hodjnpodj\dfa</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\dfa\globals.h">
+			<Filter>hodjnpodj\dfa</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\dfa\init.h">
+			<Filter>hodjnpodj\dfa</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\dfa\resource.h">
+			<Filter>hodjnpodj\dfa</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\fuge\fuge.h">
+			<Filter>hodjnpodj\fuge</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\fuge\init.h">
+			<Filter>hodjnpodj\fuge</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\fuge\resource.h">
+			<Filter>hodjnpodj\fuge</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\fuge\usercfg.h">
+			<Filter>hodjnpodj\fuge</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\garfunkle\garfunkle.h">
+			<Filter>hodjnpodj\garfunkle</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\garfunkle\init.h">
+			<Filter>hodjnpodj\garfunkle</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\garfunkle\note.h">
+			<Filter>hodjnpodj\garfunkle</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\garfunkle\optndlg.h">
+			<Filter>hodjnpodj\garfunkle</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\garfunkle\resource.h">
+			<Filter>hodjnpodj\garfunkle</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\gfx\bold_font.h">
+			<Filter>hodjnpodj\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\gfx\palette.h">
+			<Filter>hodjnpodj\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\hnplibs\audiocfg.h">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\hnplibs\bitmaps.h">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\hnplibs\button.h">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\hnplibs\cbofdlg.h">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\hnplibs\cmessbox.h">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\hnplibs\dibapi.h">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\hnplibs\dibdoc.h">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\hnplibs\gamedll.h">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\hnplibs\lzss.h">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\hnplibs\mainmenu.h">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\hnplibs\menures.h">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\hnplibs\rules.h">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\hnplibs\sprite.h">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\hnplibs\stdafx.h">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\hnplibs\stdinc.h">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\hnplibs\text.h">
+			<Filter>hodjnpodj\hnplibs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\libs\array.h">
+			<Filter>hodjnpodj\libs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\libs\dialog_unit.h">
+			<Filter>hodjnpodj\libs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\libs\macros.h">
+			<Filter>hodjnpodj\libs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\libs\stdinc.h">
+			<Filter>hodjnpodj\libs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\libs\vector.h">
+			<Filter>hodjnpodj\libs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\life\game.h">
+			<Filter>hodjnpodj\life</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\life\globals.h">
+			<Filter>hodjnpodj\life</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\life\grid.h">
+			<Filter>hodjnpodj\life</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\life\init.h">
+			<Filter>hodjnpodj\life</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\life\life.h">
+			<Filter>hodjnpodj\life</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\life\resource.h">
+			<Filter>hodjnpodj\life</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\life\usercfg.h">
+			<Filter>hodjnpodj\life</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\mankala\bgen.h">
+			<Filter>hodjnpodj\mankala</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\mankala\bgenut.h">
+			<Filter>hodjnpodj\mankala</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\mankala\btimeut.h">
+			<Filter>hodjnpodj\mankala</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\mankala\init.h">
+			<Filter>hodjnpodj\mankala</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\mankala\mnk.h">
+			<Filter>hodjnpodj\mankala</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\mankala\mnkopt.h">
+			<Filter>hodjnpodj\mankala</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\mankala\resource.h">
+			<Filter>hodjnpodj\mankala</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\mazedoom\globals.h">
+			<Filter>hodjnpodj\mazedoom</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\mazedoom\init.h">
+			<Filter>hodjnpodj\mazedoom</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\mazedoom\mazegen.h">
+			<Filter>hodjnpodj\mazedoom</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\mazedoom\mod.h">
+			<Filter>hodjnpodj\mazedoom</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\mazedoom\optndlg.h">
+			<Filter>hodjnpodj\mazedoom</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\mazedoom\resource.h">
+			<Filter>hodjnpodj\mazedoom</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\backpack.h">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\bbt.h">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\bdbg.h">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\bfc.h">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\bgb.h">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\bgen.h">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\bgenut.h">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\bsutl.h">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\btimeut.h">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\c1btndlg.h">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\c2btndlg.h">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\invent.h">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\item.h">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\mgstat.h">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\note.h">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\notebook.h">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\notelist.h">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\bgen\stdafx.h">
+			<Filter>hodjnpodj\metagame\bgen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\demo\app.h">
+			<Filter>hodjnpodj\metagame\demo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\demo\hodjpodj_demo.h">
+			<Filter>hodjnpodj\metagame\demo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\frame\app.h">
+			<Filter>hodjnpodj\metagame\frame</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\frame\dialogs.h">
+			<Filter>hodjnpodj\metagame\frame</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\frame\hodjpodj.h">
+			<Filter>hodjnpodj\metagame\frame</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\frame\movytmpl.h">
+			<Filter>hodjnpodj\metagame\frame</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\frame\resource.h">
+			<Filter>hodjnpodj\metagame\frame</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\grand_tour\dialogs.h">
+			<Filter>hodjnpodj\metagame\grand_tour</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\grand_tour\grand_tour.h">
+			<Filter>hodjnpodj\metagame\grand_tour</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\grand_tour\gtstruct.h">
+			<Filter>hodjnpodj\metagame\grand_tour</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\grand_tour\init.h">
+			<Filter>hodjnpodj\metagame\grand_tour</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\grand_tour\resource.h">
+			<Filter>hodjnpodj\metagame\grand_tour</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\citemdlg.h">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\cmapdlg.h">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\cturndlg.h">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\encount.h">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\gamedll.h">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\gtl.h">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\gtldat.h">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\gtldoc.h">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\gtlfrm.h">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\gtlview.h">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\init.h">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\mgm.h">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\optdlg.h">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\pawn.h">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\resource.h">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\rules.h">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\spinner.h">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\gtl\store.h">
+			<Filter>hodjnpodj\metagame\gtl</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\saves\restdlg.h">
+			<Filter>hodjnpodj\metagame\saves</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\saves\savedlg.h">
+			<Filter>hodjnpodj\metagame\saves</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\saves\savegame.h">
+			<Filter>hodjnpodj\metagame\saves</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\saves\savegame_info.h">
+			<Filter>hodjnpodj\metagame\saves</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\zoom\init.h">
+			<Filter>hodjnpodj\metagame\zoom</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\zoom\resource.h">
+			<Filter>hodjnpodj\metagame\zoom</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\metagame\zoom\zoommap.h">
+			<Filter>hodjnpodj\metagame\zoom</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\novacancy\dimens.h">
+			<Filter>hodjnpodj\novacancy</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\novacancy\init.h">
+			<Filter>hodjnpodj\novacancy</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\novacancy\main.h">
+			<Filter>hodjnpodj\novacancy</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\packrat\dialogs.h">
+			<Filter>hodjnpodj\packrat</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\packrat\globals.h">
+			<Filter>hodjnpodj\packrat</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\packrat\init.h">
+			<Filter>hodjnpodj\packrat</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\packrat\packrat.h">
+			<Filter>hodjnpodj\packrat</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\packrat\resource.h">
+			<Filter>hodjnpodj\packrat</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\pdq\game.h">
+			<Filter>hodjnpodj\pdq</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\pdq\guess.h">
+			<Filter>hodjnpodj\pdq</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\pdq\init.h">
+			<Filter>hodjnpodj\pdq</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\pdq\main.h">
+			<Filter>hodjnpodj\pdq</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\pdq\usercfg.h">
+			<Filter>hodjnpodj\pdq</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\peggle\game.h">
+			<Filter>hodjnpodj\peggle</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\peggle\game2.h">
+			<Filter>hodjnpodj\peggle</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\peggle\gameinit.h">
+			<Filter>hodjnpodj\peggle</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\peggle\init.h">
+			<Filter>hodjnpodj\peggle</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\peggle\options.h">
+			<Filter>hodjnpodj\peggle</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\peggle\optndlg.h">
+			<Filter>hodjnpodj\peggle</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\peggle\optres.h">
+			<Filter>hodjnpodj\peggle</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\peggle\resource.h">
+			<Filter>hodjnpodj\peggle</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\peggle\traceres.h">
+			<Filter>hodjnpodj\peggle</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\poker\c1btndlg.h">
+			<Filter>hodjnpodj\poker</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\poker\dialogs.h">
+			<Filter>hodjnpodj\poker</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\poker\init.h">
+			<Filter>hodjnpodj\poker</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\poker\options.h">
+			<Filter>hodjnpodj\poker</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\poker\optres.h">
+			<Filter>hodjnpodj\poker</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\poker\poker.h">
+			<Filter>hodjnpodj\poker</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\poker\resource.h">
+			<Filter>hodjnpodj\poker</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\poker\traceres.h">
+			<Filter>hodjnpodj\poker</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\riddles\init.h">
+			<Filter>hodjnpodj\riddles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\riddles\resource.h">
+			<Filter>hodjnpodj\riddles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\riddles\riddles.h">
+			<Filter>hodjnpodj\riddles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\riddles\usercfg.h">
+			<Filter>hodjnpodj\riddles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\wordsearch\c1btndlg.h">
+			<Filter>hodjnpodj\wordsearch</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\wordsearch\clongdlg.h">
+			<Filter>hodjnpodj\wordsearch</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\wordsearch\dialogs.h">
+			<Filter>hodjnpodj\wordsearch</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\wordsearch\globals.h">
+			<Filter>hodjnpodj\wordsearch</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\wordsearch\init.h">
+			<Filter>hodjnpodj\wordsearch</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\wordsearch\resource.h">
+			<Filter>hodjnpodj\wordsearch</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\wordsearch\wordlist.h">
+			<Filter>hodjnpodj\wordsearch</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\wordsearch\wordsearch.h">
+			<Filter>hodjnpodj\wordsearch</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\console.h">
+			<Filter>hodjnpodj</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\globals.h">
+			<Filter>hodjnpodj</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\hodjnpodj\hodjnpodj.h">
+			<Filter>hodjnpodj</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\gfx\blitter.h">
+			<Filter>mfc\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\gfx\cursor.h">
+			<Filter>mfc\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\gfx\dialog_template.h">
+			<Filter>mfc\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\gfx\fonts.h">
+			<Filter>mfc\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\gfx\palette_map.h">
+			<Filter>mfc\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\gfx\surface.h">
+			<Filter>mfc\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\gfx\text_render.h">
+			<Filter>mfc\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\keyboard.h">
+			<Filter>mfc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\libs\array.h">
+			<Filter>mfc\libs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\libs\event_loop.h">
+			<Filter>mfc\libs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\libs\events.h">
+			<Filter>mfc\libs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\libs\list.h">
+			<Filter>mfc\libs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\libs\resources.h">
+			<Filter>mfc\libs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\libs\settings.h">
+			<Filter>mfc\libs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\afx.h">
+			<Filter>mfc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\afxext.h">
+			<Filter>mfc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\afxmsg.h">
+			<Filter>mfc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\afxres.h">
+			<Filter>mfc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\afxstr.h">
+			<Filter>mfc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\afxwin.h">
+			<Filter>mfc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\atltime.h">
+			<Filter>mfc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\atltypes.h">
+			<Filter>mfc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\global_functions.h">
+			<Filter>mfc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\ifstream.h">
+			<Filter>mfc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\joystickapi.h">
+			<Filter>mfc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\mfc.h">
+			<Filter>mfc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\minwindef.h">
+			<Filter>mfc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\win_hand.h">
+			<Filter>mfc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\wingdi.h">
+			<Filter>mfc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\mfc\winnt.h">
+			<Filter>mfc</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\area_object.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\bagel.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\base_pda.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\bmp_object.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\button_object.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\character_object.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\chat_wnd.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\command_object.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\cursor.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\dev_dlg.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\dossier_object.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\event_sdev.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\exam.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\expression.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\expression_object.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\fmovie.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\help.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\ifstream.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\inv.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\link_object.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\log_msg.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\master_win.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\menu_dlg.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\moo.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\movie_object.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\object.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\paint_table.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\pan_bitmap.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\pan_window.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\parse_object.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\pda.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\res.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\rp_object.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\save_game_file.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\sound_object.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\sprite_object.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\storage_dev_bmp.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\storage_dev_win.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\text_object.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\thing_object.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\time_object.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\var.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\variable_object.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\wield.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\baglib\zoom_pda.h">
+			<Filter>spacebar\baglib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\gfx\bitmap.h">
+			<Filter>spacebar\boflib\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\gfx\cursor.h">
+			<Filter>spacebar\boflib\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\gfx\sprite.h">
+			<Filter>spacebar\boflib\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\gfx\text.h">
+			<Filter>spacebar\boflib\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\gui\button.h">
+			<Filter>spacebar\boflib\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\gui\dialog.h">
+			<Filter>spacebar\boflib\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\gui\edit_text.h">
+			<Filter>spacebar\boflib\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\gui\list_box.h">
+			<Filter>spacebar\boflib\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\gui\movie.h">
+			<Filter>spacebar\boflib\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\gui\scroll_bar.h">
+			<Filter>spacebar\boflib\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\gui\text_box.h">
+			<Filter>spacebar\boflib\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\gui\window.h">
+			<Filter>spacebar\boflib\gui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\app.h">
+			<Filter>spacebar\boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\array.h">
+			<Filter>spacebar\boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\crc.h">
+			<Filter>spacebar\boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\dat_file.h">
+			<Filter>spacebar\boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\debug.h">
+			<Filter>spacebar\boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\events.h">
+			<Filter>spacebar\boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\file.h">
+			<Filter>spacebar\boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\fixed.h">
+			<Filter>spacebar\boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\list.h">
+			<Filter>spacebar\boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\options.h">
+			<Filter>spacebar\boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\res.h">
+			<Filter>spacebar\boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\std_keys.h">
+			<Filter>spacebar\boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\timer.h">
+			<Filter>spacebar\boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\vector.h">
+			<Filter>spacebar\boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\boflib\vhash_table.h">
+			<Filter>spacebar\boflib</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\computer.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\console.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\dialogs\credits_dialog.h">
+			<Filter>spacebar\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\dialogs\next_cd_dialog.h">
+			<Filter>spacebar\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\dialogs\opt_window.h">
+			<Filter>spacebar\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\dialogs\quit_dialog.h">
+			<Filter>spacebar\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\dialogs\restart_dialog.h">
+			<Filter>spacebar\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\dialogs\restore_dialog.h">
+			<Filter>spacebar\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\dialogs\save_dialog.h">
+			<Filter>spacebar\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\dialogs\start_dialog.h">
+			<Filter>spacebar\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\bib_odds_wnd.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\bibble_window.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\filter.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\full_wnd.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\game_defs.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\main_link_object.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\main_window.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\master_win.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\nav_window.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\slot_wnd.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\spacebar.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\sraf_computer.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\sraf_file.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\sraf_msg.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\thud.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\spacebar\vid_wnd.h">
+			<Filter>spacebar</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bagel\afxwin.h" />
+		<ClInclude Include="..\..\engines\bagel\bagel.h" />
+		<ClInclude Include="..\..\engines\bagel\detection.h" />
+		<ClInclude Include="..\..\engines\bagel\detection_tables.h" />
+		<ClInclude Include="..\..\engines\bagel\metaengine.h" />
+		<ClInclude Include="..\..\engines\bagel\music.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\bagel\module.mk" />
+	</ItemGroup>
+</Project>

@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="data">
+			<UniqueIdentifier>3FD86330-B4A8-4E69-B6A2-A76F07B54E29</UniqueIdentifier>
+		</Filter>
+		<Filter Include="game">
+			<UniqueIdentifier>4B3128B6-9492-4FCE-A6A7-2F79C6551E17</UniqueIdentifier>
+		</Filter>
+		<Filter Include="gfx">
+			<UniqueIdentifier>47F2A5AF-7AB1-4FF1-A62C-EBE5ED97EAAC</UniqueIdentifier>
+		</Filter>
+		<Filter Include="utils">
+			<UniqueIdentifier>FAA6525D-04AA-4DBD-8844-FBDC523FA33B</UniqueIdentifier>
+		</Filter>
+		<Filter Include="views">
+			<UniqueIdentifier>01BD2074-6216-4EFA-BC26-C5673FDFD621</UniqueIdentifier>
+		</Filter>
+		<Filter Include="views\dialogs">
+			<UniqueIdentifier>36039EE9-2408-4312-89B3-801AB4320650</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\got\data\actor.cpp">
+			<Filter>data</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\data\highscores.cpp">
+			<Filter>data</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\data\level.cpp">
+			<Filter>data</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\data\sd_data.cpp">
+			<Filter>data</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\data\setup.cpp">
+			<Filter>data</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\data\thorinfo.cpp">
+			<Filter>data</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\game\back.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\game\boss1.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\game\boss2.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\game\boss3.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\game\init.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\game\main.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\game\move.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\game\move_patterns.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\game\object.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\game\script.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\game\shot_movement.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\game\shot_pattern.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\game\special_tile.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\game\status.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\gfx\font.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\gfx\gfx_chunks.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\gfx\gfx_pics.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\gfx\gfx_surface.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\gfx\image.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\gfx\palette.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\utils\compression.cpp">
+			<Filter>utils</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\utils\file.cpp">
+			<Filter>utils</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\utils\res_archive.cpp">
+			<Filter>utils</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\credits.cpp">
+			<Filter>views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\dialogs\ask.cpp">
+			<Filter>views\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\dialogs\dialog.cpp">
+			<Filter>views\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\dialogs\high_scores.cpp">
+			<Filter>views\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\dialogs\main_menu.cpp">
+			<Filter>views\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\dialogs\options_menu.cpp">
+			<Filter>views\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\dialogs\quit.cpp">
+			<Filter>views\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\dialogs\quit_game.cpp">
+			<Filter>views\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\dialogs\save_game.cpp">
+			<Filter>views\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\dialogs\say.cpp">
+			<Filter>views\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\dialogs\select_game.cpp">
+			<Filter>views\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\dialogs\select_item.cpp">
+			<Filter>views\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\dialogs\select_option.cpp">
+			<Filter>views\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\dialogs\select_scroll.cpp">
+			<Filter>views\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\dialogs\select_slow.cpp">
+			<Filter>views\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\dialogs\set_music.cpp">
+			<Filter>views\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\dialogs\set_sound.cpp">
+			<Filter>views\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\dialogs\skill_level.cpp">
+			<Filter>views\dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\game.cpp">
+			<Filter>views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\game_content.cpp">
+			<Filter>views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\game_status.cpp">
+			<Filter>views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\opening.cpp">
+			<Filter>views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\part_title.cpp">
+			<Filter>views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\splash_screen.cpp">
+			<Filter>views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\story.cpp">
+			<Filter>views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\title_background.cpp">
+			<Filter>views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\views\view.cpp">
+			<Filter>views</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\got\console.cpp" />
+		<ClCompile Include="..\..\engines\got\events.cpp" />
+		<ClCompile Include="..\..\engines\got\got.cpp" />
+		<ClCompile Include="..\..\engines\got\messages.cpp" />
+		<ClCompile Include="..\..\engines\got\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\got\musicdriver.cpp" />
+		<ClCompile Include="..\..\engines\got\musicdriver_adlib.cpp" />
+		<ClCompile Include="..\..\engines\got\musicparser.cpp" />
+		<ClCompile Include="..\..\engines\got\sound.cpp" />
+		<ClCompile Include="..\..\engines\got\vars.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\got\data\actor.h">
+			<Filter>data</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\data\defines.h">
+			<Filter>data</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\data\flags.h">
+			<Filter>data</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\data\highscores.h">
+			<Filter>data</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\data\level.h">
+			<Filter>data</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\data\sd_data.h">
+			<Filter>data</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\data\setup.h">
+			<Filter>data</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\data\thorinfo.h">
+			<Filter>data</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\game\back.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\game\boss1.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\game\boss2.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\game\boss3.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\game\init.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\game\main.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\game\move.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\game\move_patterns.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\game\object.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\game\script.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\game\shot_movement.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\game\shot_pattern.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\game\special_tile.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\game\status.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\gfx\font.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\gfx\gfx_chunks.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\gfx\gfx_pics.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\gfx\gfx_surface.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\gfx\image.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\gfx\palette.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\utils\compression.h">
+			<Filter>utils</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\utils\file.h">
+			<Filter>utils</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\utils\res_archive.h">
+			<Filter>utils</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\credits.h">
+			<Filter>views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\dialogs\ask.h">
+			<Filter>views\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\dialogs\dialog.h">
+			<Filter>views\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\dialogs\high_scores.h">
+			<Filter>views\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\dialogs\main_menu.h">
+			<Filter>views\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\dialogs\options_menu.h">
+			<Filter>views\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\dialogs\quit.h">
+			<Filter>views\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\dialogs\quit_game.h">
+			<Filter>views\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\dialogs\save_game.h">
+			<Filter>views\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\dialogs\say.h">
+			<Filter>views\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\dialogs\select_game.h">
+			<Filter>views\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\dialogs\select_item.h">
+			<Filter>views\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\dialogs\select_option.h">
+			<Filter>views\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\dialogs\select_scroll.h">
+			<Filter>views\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\dialogs\select_slow.h">
+			<Filter>views\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\dialogs\set_music.h">
+			<Filter>views\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\dialogs\set_sound.h">
+			<Filter>views\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\dialogs\skill_level.h">
+			<Filter>views\dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\game.h">
+			<Filter>views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\game_content.h">
+			<Filter>views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\game_status.h">
+			<Filter>views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\opening.h">
+			<Filter>views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\part_title.h">
+			<Filter>views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\splash_screen.h">
+			<Filter>views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\story.h">
+			<Filter>views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\title_background.h">
+			<Filter>views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\view.h">
+			<Filter>views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\views\views.h">
+			<Filter>views</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\got\console.h" />
+		<ClInclude Include="..\..\engines\got\detection.h" />
+		<ClInclude Include="..\..\engines\got\detection_tables.h" />
+		<ClInclude Include="..\..\engines\got\events.h" />
+		<ClInclude Include="..\..\engines\got\got.h" />
+		<ClInclude Include="..\..\engines\got\messages.h" />
+		<ClInclude Include="..\..\engines\got\metaengine.h" />
+		<ClInclude Include="..\..\engines\got\musicdriver.h" />
+		<ClInclude Include="..\..\engines\got\musicdriver_adlib.h" />
+		<ClInclude Include="..\..\engines\got\musicparser.h" />
+		<ClInclude Include="..\..\engines\got\sound.h" />
+		<ClInclude Include="..\..\engines\got\vars.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\got\module.mk" />
+	</ItemGroup>
+</Project>

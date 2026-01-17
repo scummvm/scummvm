@@ -1,0 +1,1186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="castmember">
+			<UniqueIdentifier>996C5867-4375-4629-8C90-CDB7DD245201</UniqueIdentifier>
+		</Filter>
+		<Filter Include="debugger">
+			<UniqueIdentifier>EEC14572-3E19-4D25-9563-E57D5BD02C70</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo">
+			<UniqueIdentifier>C781DCA4-13D7-41AC-9D55-D4DA8AFDB73F</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\lingodec">
+			<UniqueIdentifier>168B54C8-EB6A-4E53-B0AD-98B29565D4C3</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xlibs">
+			<UniqueIdentifier>E6D0925B-1568-4D79-87BA-34C5EFA6E33B</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xlibs\a">
+			<UniqueIdentifier>99ECD1F7-D712-41F9-98A8-769CC24437BC</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xlibs\b">
+			<UniqueIdentifier>B8CEC530-0250-4852-91A8-05210C57FD47</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xlibs\c">
+			<UniqueIdentifier>1D35AEBB-DA6B-4737-B56A-1273CBB61A19</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xlibs\d">
+			<UniqueIdentifier>6A32DDB2-25DD-462E-82BA-6D068CA0ADB6</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xlibs\e">
+			<UniqueIdentifier>D15C9588-3CC1-4213-87B7-F396224BEC9E</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xlibs\f">
+			<UniqueIdentifier>833DE2FA-673F-4F03-9E93-ADC21678FE34</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xlibs\g">
+			<UniqueIdentifier>E6C66CAF-7B8E-4900-B8B8-BD68FDD7AD5A</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xlibs\h">
+			<UniqueIdentifier>91C72C6D-8073-428C-8D6B-76B7F7951CBD</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xlibs\i">
+			<UniqueIdentifier>7224684E-0A7A-4743-B684-B0A264E24C69</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xlibs\j">
+			<UniqueIdentifier>85A7FA4B-E2B0-49BE-BD93-5F34D8DA8A0C</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xlibs\l">
+			<UniqueIdentifier>2FEF2C7C-B969-402E-99AD-63E91FFAAB0F</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xlibs\m">
+			<UniqueIdentifier>0DD01342-491E-40CF-A85D-9052469A17A1</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xlibs\o">
+			<UniqueIdentifier>FCABE240-9EB6-4419-9381-E23DE94C55E7</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xlibs\p">
+			<UniqueIdentifier>9A704349-BD1F-44D2-B929-8D11AF7304CC</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xlibs\q">
+			<UniqueIdentifier>977BD29D-E9EF-4E5D-BFDA-434D6F43D1DC</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xlibs\r">
+			<UniqueIdentifier>9BABF563-14EA-4174-83BB-6100570614CE</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xlibs\s">
+			<UniqueIdentifier>695C7E8D-1F55-44C5-97AC-0F9199CE7C64</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xlibs\t">
+			<UniqueIdentifier>85250C14-5D78-4EB2-BE4B-93B01FE3F6EE</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xlibs\u">
+			<UniqueIdentifier>3D94DE9D-9907-42B2-BDCD-217BD501402E</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xlibs\v">
+			<UniqueIdentifier>354911B3-64F9-48BC-941A-D4F16AB3864A</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xlibs\w">
+			<UniqueIdentifier>4AE7FE5B-61A8-4931-86C9-3C1B66076AAD</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xlibs\x">
+			<UniqueIdentifier>779060AF-0E95-4B74-B47C-BC98D182B2C7</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xlibs\y">
+			<UniqueIdentifier>CD8116D7-337F-4EFB-BCC2-D61D34C4BD3D</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xtras">
+			<UniqueIdentifier>C33287BD-24BE-4FDA-AB5F-DD34D6AC6830</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xtras\a">
+			<UniqueIdentifier>41EDF6AB-98C4-46F1-8834-EDB2582A567D</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xtras\b">
+			<UniqueIdentifier>C532845A-C104-408B-B957-CE6545E190BA</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xtras\d">
+			<UniqueIdentifier>8DD1459E-B353-42DA-B69D-09AE78B60057</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xtras\m">
+			<UniqueIdentifier>CC3E2849-776C-4C0B-99EC-4525F82291E3</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xtras\r">
+			<UniqueIdentifier>4AE409DD-62CE-44B3-8B07-FC35B81E0BB3</UniqueIdentifier>
+		</Filter>
+		<Filter Include="lingo\xtras\s">
+			<UniqueIdentifier>BE679F6E-4313-4E7F-B215-6EEFF593EF6F</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\director\castmember\bitmap.cpp">
+			<Filter>castmember</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\castmember\castmember.cpp">
+			<Filter>castmember</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\castmember\digitalvideo.cpp">
+			<Filter>castmember</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\castmember\filmloop.cpp">
+			<Filter>castmember</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\castmember\movie.cpp">
+			<Filter>castmember</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\castmember\palette.cpp">
+			<Filter>castmember</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\castmember\richtext.cpp">
+			<Filter>castmember</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\castmember\script.cpp">
+			<Filter>castmember</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\castmember\shape.cpp">
+			<Filter>castmember</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\castmember\sound.cpp">
+			<Filter>castmember</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\castmember\text.cpp">
+			<Filter>castmember</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\castmember\transition.cpp">
+			<Filter>castmember</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\castmember\xtra.cpp">
+			<Filter>castmember</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\debugger\debugtools.cpp">
+			<Filter>debugger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\debugger\dt-cast.cpp">
+			<Filter>debugger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\debugger\dt-controlpanel.cpp">
+			<Filter>debugger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\debugger\dt-lists.cpp">
+			<Filter>debugger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\debugger\dt-save-state.cpp">
+			<Filter>debugger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\debugger\dt-score.cpp">
+			<Filter>debugger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\debugger\dt-script-d2.cpp">
+			<Filter>debugger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\debugger\dt-script-d4.cpp">
+			<Filter>debugger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\debugger\dt-scripts.cpp">
+			<Filter>debugger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\lingodec\ast.cpp">
+			<Filter>lingo\lingodec</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\lingodec\codewritervisitor.cpp">
+			<Filter>lingo\lingodec</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\lingodec\context.cpp">
+			<Filter>lingo\lingodec</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\lingodec\handler.cpp">
+			<Filter>lingo\lingodec</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\lingodec\names.cpp">
+			<Filter>lingo\lingodec</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\lingodec\script.cpp">
+			<Filter>lingo\lingodec</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\a\aiff.cpp">
+			<Filter>lingo\xlibs\a</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\a\applecdxobj.cpp">
+			<Filter>lingo\xlibs\a</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\a\askuser.cpp">
+			<Filter>lingo\xlibs\a</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\b\backdrop.cpp">
+			<Filter>lingo\xlibs\b</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\b\barakeobj.cpp">
+			<Filter>lingo\xlibs\b</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\b\batqt.cpp">
+			<Filter>lingo\xlibs\b</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\b\bimxobj.cpp">
+			<Filter>lingo\xlibs\b</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\b\blitpict.cpp">
+			<Filter>lingo\xlibs\b</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\c\cdromxobj.cpp">
+			<Filter>lingo\xlibs\c</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\c\closebleedwindowxcmd.cpp">
+			<Filter>lingo\xlibs\c</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\c\colorcursorxobj.cpp">
+			<Filter>lingo\xlibs\c</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\c\colorxobj.cpp">
+			<Filter>lingo\xlibs\c</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\c\consumer.cpp">
+			<Filter>lingo\xlibs\c</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\c\cursorxobj.cpp">
+			<Filter>lingo\xlibs\c</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\d\darkenscreen.cpp">
+			<Filter>lingo\xlibs\d</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\d\dateutil.cpp">
+			<Filter>lingo\xlibs\d</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\d\developerStack.cpp">
+			<Filter>lingo\xlibs\d</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\d\dialogsxobj.cpp">
+			<Filter>lingo\xlibs\d</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\d\dirutil.cpp">
+			<Filter>lingo\xlibs\d</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\d\dllglue.cpp">
+			<Filter>lingo\xlibs\d</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\d\dpwavi.cpp">
+			<Filter>lingo\xlibs\d</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\d\dpwqtw.cpp">
+			<Filter>lingo\xlibs\d</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\d\draw.cpp">
+			<Filter>lingo\xlibs\d</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\e\ednox.cpp">
+			<Filter>lingo\xlibs\e</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\e\eventq.cpp">
+			<Filter>lingo\xlibs\e</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\f\fadegammadownxcmd.cpp">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\f\fadegammaupxcmd.cpp">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\f\fadegammaxcmd.cpp">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\f\fedracul.cpp">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\f\feimasks.cpp">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\f\feiprefs.cpp">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\f\fileexists.cpp">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\f\fileio.cpp">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\f\findereventsxcmd.cpp">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\f\findfolder.cpp">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\f\findsys.cpp">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\f\findwin.cpp">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\f\flushxobj.cpp">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\f\fplayxobj.cpp">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\f\fsutil.cpp">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\g\genutils.cpp">
+			<Filter>lingo\xlibs\g</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\g\getscreenrectsxfcn.cpp">
+			<Filter>lingo\xlibs\g</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\g\getscreensizexfcn.cpp">
+			<Filter>lingo\xlibs\g</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\g\getsoundinlevel.cpp">
+			<Filter>lingo\xlibs\g</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\g\gpid.cpp">
+			<Filter>lingo\xlibs\g</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\h\henry.cpp">
+			<Filter>lingo\xlibs\h</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\h\hitmap.cpp">
+			<Filter>lingo\xlibs\h</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\i\inixobj.cpp">
+			<Filter>lingo\xlibs\i</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\i\instobj.cpp">
+			<Filter>lingo\xlibs\i</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\i\iscd.cpp">
+			<Filter>lingo\xlibs\i</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\i\ispippin.cpp">
+			<Filter>lingo\xlibs\i</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\j\jitdraw3.cpp">
+			<Filter>lingo\xlibs\j</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\j\jwxini.cpp">
+			<Filter>lingo\xlibs\j</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\l\labeldrvxobj.cpp">
+			<Filter>lingo\xlibs\l</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\l\listdev.cpp">
+			<Filter>lingo\xlibs\l</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\m\maniacbg.cpp">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\m\mapnavigatorxobj.cpp">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\m\memcheckxobj.cpp">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\m\memoryxobj.cpp">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\m\misc.cpp">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\m\miscx.cpp">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\m\mmaskxobj.cpp">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\m\mmovie.cpp">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\m\moovxobj.cpp">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\m\movemousejp.cpp">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\m\movemousexobj.cpp">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\m\movieidxxobj.cpp">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\m\movutils.cpp">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\m\msfile.cpp">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\m\mystisle.cpp">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\o\openbleedwindowxcmd.cpp">
+			<Filter>lingo\xlibs\o</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\o\orthoplayxobj.cpp">
+			<Filter>lingo\xlibs\o</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\p\paco.cpp">
+			<Filter>lingo\xlibs\p</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\p\palxobj.cpp">
+			<Filter>lingo\xlibs\p</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\p\panel.cpp">
+			<Filter>lingo\xlibs\p</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\p\pharaohs.cpp">
+			<Filter>lingo\xlibs\p</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\p\popupmenuxobj.cpp">
+			<Filter>lingo\xlibs\p</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\p\porta.cpp">
+			<Filter>lingo\xlibs\p</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\p\prefpath.cpp">
+			<Filter>lingo\xlibs\p</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\p\printomatic.cpp">
+			<Filter>lingo\xlibs\p</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\p\processxobj.cpp">
+			<Filter>lingo\xlibs\p</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\p\putcurs.cpp">
+			<Filter>lingo\xlibs\p</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\q\qtcatmovieplayerxobj.cpp">
+			<Filter>lingo\xlibs\q</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\q\qtmovie.cpp">
+			<Filter>lingo\xlibs\q</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\q\qtvr.cpp">
+			<Filter>lingo\xlibs\q</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\q\quicktime.cpp">
+			<Filter>lingo\xlibs\q</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\r\registercomponent.cpp">
+			<Filter>lingo\xlibs\r</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\r\remixxcmd.cpp">
+			<Filter>lingo\xlibs\r</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\s\serialportxobj.cpp">
+			<Filter>lingo\xlibs\s</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\s\smallutil.cpp">
+			<Filter>lingo\xlibs\s</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\s\soundjam.cpp">
+			<Filter>lingo\xlibs\s</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\s\spacemgr.cpp">
+			<Filter>lingo\xlibs\s</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\s\stagetc.cpp">
+			<Filter>lingo\xlibs\s</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\s\syscolor.cpp">
+			<Filter>lingo\xlibs\s</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\t\tengu.cpp">
+			<Filter>lingo\xlibs\t</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\u\unittest.cpp">
+			<Filter>lingo\xlibs\u</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\v\valkyrie.cpp">
+			<Filter>lingo\xlibs\v</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\v\versions.cpp">
+			<Filter>lingo\xlibs\v</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\v\videodiscxobj.cpp">
+			<Filter>lingo\xlibs\v</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\v\vmisonxfcn.cpp">
+			<Filter>lingo\xlibs\v</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\v\vmpresent.cpp">
+			<Filter>lingo\xlibs\v</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\v\volumelist.cpp">
+			<Filter>lingo\xlibs\v</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\v\voyagerxsound.cpp">
+			<Filter>lingo\xlibs\v</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\w\widgetxobj.cpp">
+			<Filter>lingo\xlibs\w</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\w\window.cpp">
+			<Filter>lingo\xlibs\w</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\w\wininfo.cpp">
+			<Filter>lingo\xlibs\w</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\w\winxobj.cpp">
+			<Filter>lingo\xlibs\w</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\x\xcmdglue.cpp">
+			<Filter>lingo\xlibs\x</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\x\xio.cpp">
+			<Filter>lingo\xlibs\x</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\x\xplayanim.cpp">
+			<Filter>lingo\xlibs\x</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\x\xplaypacoxfcn.cpp">
+			<Filter>lingo\xlibs\x</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\x\xsoundxfcn.cpp">
+			<Filter>lingo\xlibs\x</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\x\xwin.cpp">
+			<Filter>lingo\xlibs\x</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xlibs\y\yasix.cpp">
+			<Filter>lingo\xlibs\y</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xtras\a\audio.cpp">
+			<Filter>lingo\xtras\a</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xtras\b\budapi.cpp">
+			<Filter>lingo\xtras\b</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xtras\d\displayres.cpp">
+			<Filter>lingo\xtras\d</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xtras\m\mui.cpp">
+			<Filter>lingo\xtras\m</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xtras\r\registryreader.cpp">
+			<Filter>lingo\xtras\r</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xtras\s\smacker.cpp">
+			<Filter>lingo\xtras\s</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xtras\directsound.cpp">
+			<Filter>lingo\xtras</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xtras\filextra.cpp">
+			<Filter>lingo\xtras</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xtras\keypoll.cpp">
+			<Filter>lingo\xtras</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xtras\masterapp.cpp">
+			<Filter>lingo\xtras</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xtras\openurl.cpp">
+			<Filter>lingo\xtras</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xtras\oscheck.cpp">
+			<Filter>lingo\xtras</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xtras\qtvrxtra.cpp">
+			<Filter>lingo\xtras</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xtras\rtk.cpp">
+			<Filter>lingo\xtras</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xtras\scrnutil.cpp">
+			<Filter>lingo\xtras</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xtras\timextra.cpp">
+			<Filter>lingo\xtras</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\xtras\xsound.cpp">
+			<Filter>lingo\xtras</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\lingo-builtins.cpp">
+			<Filter>lingo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\lingo-bytecode.cpp">
+			<Filter>lingo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\lingo-code.cpp">
+			<Filter>lingo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\lingo-codegen.cpp">
+			<Filter>lingo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\lingo-events.cpp">
+			<Filter>lingo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\lingo-funcs.cpp">
+			<Filter>lingo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\lingo-gr.cpp">
+			<Filter>lingo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\lingo-lex.cpp">
+			<Filter>lingo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\lingo-mci.cpp">
+			<Filter>lingo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\lingo-object.cpp">
+			<Filter>lingo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\lingo-patcher.cpp">
+			<Filter>lingo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\lingo-preprocessor.cpp">
+			<Filter>lingo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\lingo-the.cpp">
+			<Filter>lingo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\lingo-utils.cpp">
+			<Filter>lingo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\lingo\lingo.cpp">
+			<Filter>lingo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\director\archive-save.cpp" />
+		<ClCompile Include="..\..\engines\director\archive.cpp" />
+		<ClCompile Include="..\..\engines\director\cast.cpp" />
+		<ClCompile Include="..\..\engines\director\channel.cpp" />
+		<ClCompile Include="..\..\engines\director\cursor.cpp" />
+		<ClCompile Include="..\..\engines\director\debugger.cpp" />
+		<ClCompile Include="..\..\engines\director\director.cpp" />
+		<ClCompile Include="..\..\engines\director\events.cpp" />
+		<ClCompile Include="..\..\engines\director\fonts.cpp" />
+		<ClCompile Include="..\..\engines\director\frame.cpp" />
+		<ClCompile Include="..\..\engines\director\game-quirks.cpp" />
+		<ClCompile Include="..\..\engines\director\graphics.cpp" />
+		<ClCompile Include="..\..\engines\director\images.cpp" />
+		<ClCompile Include="..\..\engines\director\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\director\movie.cpp" />
+		<ClCompile Include="..\..\engines\director\picture.cpp" />
+		<ClCompile Include="..\..\engines\director\resource.cpp" />
+		<ClCompile Include="..\..\engines\director\rte.cpp" />
+		<ClCompile Include="..\..\engines\director\score.cpp" />
+		<ClCompile Include="..\..\engines\director\sound.cpp" />
+		<ClCompile Include="..\..\engines\director\sprite.cpp" />
+		<ClCompile Include="..\..\engines\director\stxt.cpp" />
+		<ClCompile Include="..\..\engines\director\tests.cpp" />
+		<ClCompile Include="..\..\engines\director\transitions.cpp" />
+		<ClCompile Include="..\..\engines\director\types.cpp" />
+		<ClCompile Include="..\..\engines\director\util.cpp" />
+		<ClCompile Include="..\..\engines\director\window.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\director\castmember\bitmap.h">
+			<Filter>castmember</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\castmember\castmember.h">
+			<Filter>castmember</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\castmember\digitalvideo.h">
+			<Filter>castmember</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\castmember\filmloop.h">
+			<Filter>castmember</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\castmember\movie.h">
+			<Filter>castmember</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\castmember\palette.h">
+			<Filter>castmember</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\castmember\richtext.h">
+			<Filter>castmember</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\castmember\script.h">
+			<Filter>castmember</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\castmember\shape.h">
+			<Filter>castmember</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\castmember\sound.h">
+			<Filter>castmember</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\castmember\text.h">
+			<Filter>castmember</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\castmember\transition.h">
+			<Filter>castmember</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\castmember\xtra.h">
+			<Filter>castmember</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\debugger\debugtools.h">
+			<Filter>debugger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\debugger\dt-internal.h">
+			<Filter>debugger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\debugger\imgui_memory_editor.h">
+			<Filter>debugger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\lingodec\ast.h">
+			<Filter>lingo\lingodec</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\lingodec\codewritervisitor.h">
+			<Filter>lingo\lingodec</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\lingodec\context.h">
+			<Filter>lingo\lingodec</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\lingodec\enums.h">
+			<Filter>lingo\lingodec</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\lingodec\handler.h">
+			<Filter>lingo\lingodec</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\lingodec\names.h">
+			<Filter>lingo\lingodec</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\lingodec\resolver.h">
+			<Filter>lingo\lingodec</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\lingodec\script.h">
+			<Filter>lingo\lingodec</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\a\aiff.h">
+			<Filter>lingo\xlibs\a</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\a\applecdxobj.h">
+			<Filter>lingo\xlibs\a</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\a\askuser.h">
+			<Filter>lingo\xlibs\a</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\b\backdrop.h">
+			<Filter>lingo\xlibs\b</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\b\barakeobj.h">
+			<Filter>lingo\xlibs\b</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\b\batqt.h">
+			<Filter>lingo\xlibs\b</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\b\bimxobj.h">
+			<Filter>lingo\xlibs\b</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\b\blitpict.h">
+			<Filter>lingo\xlibs\b</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\c\cdromxobj.h">
+			<Filter>lingo\xlibs\c</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\c\closebleedwindowxcmd.h">
+			<Filter>lingo\xlibs\c</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\c\colorcursorxobj.h">
+			<Filter>lingo\xlibs\c</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\c\colorxobj.h">
+			<Filter>lingo\xlibs\c</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\c\consumer.h">
+			<Filter>lingo\xlibs\c</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\c\cursorxobj.h">
+			<Filter>lingo\xlibs\c</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\d\darkenscreen.h">
+			<Filter>lingo\xlibs\d</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\d\dateutil.h">
+			<Filter>lingo\xlibs\d</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\d\developerStack.h">
+			<Filter>lingo\xlibs\d</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\d\dialogsxobj.h">
+			<Filter>lingo\xlibs\d</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\d\dirutil.h">
+			<Filter>lingo\xlibs\d</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\d\dllglue.h">
+			<Filter>lingo\xlibs\d</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\d\dpwavi.h">
+			<Filter>lingo\xlibs\d</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\d\dpwqtw.h">
+			<Filter>lingo\xlibs\d</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\d\draw.h">
+			<Filter>lingo\xlibs\d</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\e\ednox.h">
+			<Filter>lingo\xlibs\e</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\e\eventq.h">
+			<Filter>lingo\xlibs\e</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\f\fadegammadownxcmd.h">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\f\fadegammaupxcmd.h">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\f\fadegammaxcmd.h">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\f\fedracul.h">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\f\feimasks.h">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\f\feiprefs.h">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\f\fileexists.h">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\f\fileio.h">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\f\findereventsxcmd.h">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\f\findfolder.h">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\f\findsys.h">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\f\findwin.h">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\f\flushxobj.h">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\f\fplayxobj.h">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\f\fsutil.h">
+			<Filter>lingo\xlibs\f</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\g\genutils.h">
+			<Filter>lingo\xlibs\g</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\g\getscreenrectsxfcn.h">
+			<Filter>lingo\xlibs\g</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\g\getscreensizexfcn.h">
+			<Filter>lingo\xlibs\g</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\g\getsoundinlevel.h">
+			<Filter>lingo\xlibs\g</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\g\gpid.h">
+			<Filter>lingo\xlibs\g</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\h\henry.h">
+			<Filter>lingo\xlibs\h</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\h\hitmap.h">
+			<Filter>lingo\xlibs\h</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\i\inixobj.h">
+			<Filter>lingo\xlibs\i</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\i\instobj.h">
+			<Filter>lingo\xlibs\i</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\i\iscd.h">
+			<Filter>lingo\xlibs\i</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\i\ispippin.h">
+			<Filter>lingo\xlibs\i</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\j\jitdraw3.h">
+			<Filter>lingo\xlibs\j</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\j\jwxini.h">
+			<Filter>lingo\xlibs\j</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\l\labeldrvxobj.h">
+			<Filter>lingo\xlibs\l</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\l\listdev.h">
+			<Filter>lingo\xlibs\l</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\m\maniacbg.h">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\m\mapnavigatorxobj.h">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\m\memcheckxobj.h">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\m\memoryxobj.h">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\m\misc.h">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\m\miscx.h">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\m\mmaskxobj.h">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\m\mmovie.h">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\m\moovxobj.h">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\m\movemousejp.h">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\m\movemousexobj.h">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\m\movieidxxobj.h">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\m\movutils.h">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\m\msfile.h">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\m\mystisle.h">
+			<Filter>lingo\xlibs\m</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\o\openbleedwindowxcmd.h">
+			<Filter>lingo\xlibs\o</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\o\orthoplayxobj.h">
+			<Filter>lingo\xlibs\o</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\p\paco.h">
+			<Filter>lingo\xlibs\p</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\p\palxobj.h">
+			<Filter>lingo\xlibs\p</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\p\panel.h">
+			<Filter>lingo\xlibs\p</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\p\pharaohs.h">
+			<Filter>lingo\xlibs\p</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\p\popupmenuxobj.h">
+			<Filter>lingo\xlibs\p</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\p\porta.h">
+			<Filter>lingo\xlibs\p</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\p\prefpath.h">
+			<Filter>lingo\xlibs\p</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\p\printomatic.h">
+			<Filter>lingo\xlibs\p</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\p\processxobj.h">
+			<Filter>lingo\xlibs\p</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\p\putcurs.h">
+			<Filter>lingo\xlibs\p</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\q\qtcatmovieplayerxobj.h">
+			<Filter>lingo\xlibs\q</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\q\qtmovie.h">
+			<Filter>lingo\xlibs\q</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\q\qtvr.h">
+			<Filter>lingo\xlibs\q</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\q\quicktime.h">
+			<Filter>lingo\xlibs\q</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\r\registercomponent.h">
+			<Filter>lingo\xlibs\r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\r\remixxcmd.h">
+			<Filter>lingo\xlibs\r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\s\serialportxobj.h">
+			<Filter>lingo\xlibs\s</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\s\smallutil.h">
+			<Filter>lingo\xlibs\s</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\s\soundjam.h">
+			<Filter>lingo\xlibs\s</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\s\spacemgr.h">
+			<Filter>lingo\xlibs\s</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\s\stagetc.h">
+			<Filter>lingo\xlibs\s</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\s\syscolor.h">
+			<Filter>lingo\xlibs\s</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\t\tengu.h">
+			<Filter>lingo\xlibs\t</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\u\unittest.h">
+			<Filter>lingo\xlibs\u</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\v\valkyrie.h">
+			<Filter>lingo\xlibs\v</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\v\versions.h">
+			<Filter>lingo\xlibs\v</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\v\videodiscxobj.h">
+			<Filter>lingo\xlibs\v</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\v\vmisonxfcn.h">
+			<Filter>lingo\xlibs\v</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\v\vmpresent.h">
+			<Filter>lingo\xlibs\v</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\v\volumelist.h">
+			<Filter>lingo\xlibs\v</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\v\voyagerxsound.h">
+			<Filter>lingo\xlibs\v</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\w\widgetxobj.h">
+			<Filter>lingo\xlibs\w</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\w\window.h">
+			<Filter>lingo\xlibs\w</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\w\wininfo.h">
+			<Filter>lingo\xlibs\w</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\w\winxobj.h">
+			<Filter>lingo\xlibs\w</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\x\xcmdglue.h">
+			<Filter>lingo\xlibs\x</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\x\xio.h">
+			<Filter>lingo\xlibs\x</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\x\xplayanim.h">
+			<Filter>lingo\xlibs\x</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\x\xplaypacoxfcn.h">
+			<Filter>lingo\xlibs\x</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\x\xsoundxfcn.h">
+			<Filter>lingo\xlibs\x</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\x\xwin.h">
+			<Filter>lingo\xlibs\x</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xlibs\y\yasix.h">
+			<Filter>lingo\xlibs\y</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xtras\a\audio.h">
+			<Filter>lingo\xtras\a</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xtras\b\budapi.h">
+			<Filter>lingo\xtras\b</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xtras\d\displayres.h">
+			<Filter>lingo\xtras\d</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xtras\m\mui.h">
+			<Filter>lingo\xtras\m</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xtras\r\registryreader.h">
+			<Filter>lingo\xtras\r</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xtras\s\smacker.h">
+			<Filter>lingo\xtras\s</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xtras\directsound.h">
+			<Filter>lingo\xtras</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xtras\filextra.h">
+			<Filter>lingo\xtras</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xtras\keypoll.h">
+			<Filter>lingo\xtras</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xtras\masterapp.h">
+			<Filter>lingo\xtras</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xtras\openurl.h">
+			<Filter>lingo\xtras</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xtras\oscheck.h">
+			<Filter>lingo\xtras</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xtras\qtvrxtra.h">
+			<Filter>lingo\xtras</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xtras\rtk.h">
+			<Filter>lingo\xtras</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xtras\scrnutil.h">
+			<Filter>lingo\xtras</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xtras\timextra.h">
+			<Filter>lingo\xtras</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\xtras\xsound.h">
+			<Filter>lingo\xtras</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\lingo-ast.h">
+			<Filter>lingo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\lingo-builtins.h">
+			<Filter>lingo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\lingo-bytecode.h">
+			<Filter>lingo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\lingo-code.h">
+			<Filter>lingo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\lingo-codegen.h">
+			<Filter>lingo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\lingo-gr.h">
+			<Filter>lingo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\lingo-object.h">
+			<Filter>lingo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\lingo-the.h">
+			<Filter>lingo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\lingo-utils.h">
+			<Filter>lingo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\lingo\lingo.h">
+			<Filter>lingo</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\director\archive.h" />
+		<ClInclude Include="..\..\engines\director\blank-score.h" />
+		<ClInclude Include="..\..\engines\director\cast.h" />
+		<ClInclude Include="..\..\engines\director\channel.h" />
+		<ClInclude Include="..\..\engines\director\cursor.h" />
+		<ClInclude Include="..\..\engines\director\debugger.h" />
+		<ClInclude Include="..\..\engines\director\detection.h" />
+		<ClInclude Include="..\..\engines\director\detection_paths.h" />
+		<ClInclude Include="..\..\engines\director\detection_tables.h" />
+		<ClInclude Include="..\..\engines\director\director.h" />
+		<ClInclude Include="..\..\engines\director\frame.h" />
+		<ClInclude Include="..\..\engines\director\graphics-data.h" />
+		<ClInclude Include="..\..\engines\director\images.h" />
+		<ClInclude Include="..\..\engines\director\movie.h" />
+		<ClInclude Include="..\..\engines\director\palette-fade.h" />
+		<ClInclude Include="..\..\engines\director\picture.h" />
+		<ClInclude Include="..\..\engines\director\rte.h" />
+		<ClInclude Include="..\..\engines\director\score.h" />
+		<ClInclude Include="..\..\engines\director\sound.h" />
+		<ClInclude Include="..\..\engines\director\sprite.h" />
+		<ClInclude Include="..\..\engines\director\spriteinfo.h" />
+		<ClInclude Include="..\..\engines\director\stxt.h" />
+		<ClInclude Include="..\..\engines\director\types.h" />
+		<ClInclude Include="..\..\engines\director\util.h" />
+		<ClInclude Include="..\..\engines\director\window.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\director\module.mk" />
+	</ItemGroup>
+</Project>

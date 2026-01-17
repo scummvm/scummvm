@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|Win32">
+			<Configuration>ASan</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|x64">
+			<Configuration>ASan</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|arm64">
+			<Configuration>Debug</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="ASan|arm64">
+			<Configuration>ASan</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|arm64">
+			<Configuration>LLVM</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|arm64">
+			<Configuration>Release</Configuration>
+			<Platform>arm64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{29D31631-32AF-4BF6-855C-B1FAF12E741C}</ProjectGuid>
+		<RootNamespace>darkseed</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath14)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath14)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v140</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v140</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2014</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v140</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v140</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v140</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2014</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v140</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v140</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ASan|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v140</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2014</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v140</PlatformToolset>
+		<CharacterSet>Unicode</CharacterSet>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx86.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasex64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugx64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Releasearm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='ASan|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_ASanarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVMarm64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debugarm64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\darkseed\adlib_dsf.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\adlib_worx.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\animation.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\anm.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\big5font.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\console.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\cursor.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\cutscene.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\darkseed.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\debugconsole.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\dialogs.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\gamefont.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\img.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\inventory.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\kidpic.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\kofont.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\langtext.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\menu.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\midiparser_sbr.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\morph.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\music.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\nsp.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\objects.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\pal.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\pic.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\player.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\room.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\sound.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\sprites.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\titlefont.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\tostext.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\usecode.cpp" />
+		<ClCompile Include="..\..\engines\darkseed\zhmenufont.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\darkseed\adlib_dsf.h" />
+		<ClInclude Include="..\..\engines\darkseed\adlib_worx.h" />
+		<ClInclude Include="..\..\engines\darkseed\animation.h" />
+		<ClInclude Include="..\..\engines\darkseed\anm.h" />
+		<ClInclude Include="..\..\engines\darkseed\big5font.h" />
+		<ClInclude Include="..\..\engines\darkseed\console.h" />
+		<ClInclude Include="..\..\engines\darkseed\cursor.h" />
+		<ClInclude Include="..\..\engines\darkseed\cutscene.h" />
+		<ClInclude Include="..\..\engines\darkseed\darkseed.h" />
+		<ClInclude Include="..\..\engines\darkseed\debugconsole.h" />
+		<ClInclude Include="..\..\engines\darkseed\detection.h" />
+		<ClInclude Include="..\..\engines\darkseed\detection_tables.h" />
+		<ClInclude Include="..\..\engines\darkseed\dialogs.h" />
+		<ClInclude Include="..\..\engines\darkseed\gamefont.h" />
+		<ClInclude Include="..\..\engines\darkseed\img.h" />
+		<ClInclude Include="..\..\engines\darkseed\inventory.h" />
+		<ClInclude Include="..\..\engines\darkseed\kidpic.h" />
+		<ClInclude Include="..\..\engines\darkseed\kofont.h" />
+		<ClInclude Include="..\..\engines\darkseed\langtext.h" />
+		<ClInclude Include="..\..\engines\darkseed\menu.h" />
+		<ClInclude Include="..\..\engines\darkseed\metaengine.h" />
+		<ClInclude Include="..\..\engines\darkseed\midiparser_sbr.h" />
+		<ClInclude Include="..\..\engines\darkseed\morph.h" />
+		<ClInclude Include="..\..\engines\darkseed\music.h" />
+		<ClInclude Include="..\..\engines\darkseed\nsp.h" />
+		<ClInclude Include="..\..\engines\darkseed\object_name_tables.h" />
+		<ClInclude Include="..\..\engines\darkseed\objects.h" />
+		<ClInclude Include="..\..\engines\darkseed\pal.h" />
+		<ClInclude Include="..\..\engines\darkseed\pic.h" />
+		<ClInclude Include="..\..\engines\darkseed\player.h" />
+		<ClInclude Include="..\..\engines\darkseed\room.h" />
+		<ClInclude Include="..\..\engines\darkseed\sound.h" />
+		<ClInclude Include="..\..\engines\darkseed\sprites.h" />
+		<ClInclude Include="..\..\engines\darkseed\titlefont.h" />
+		<ClInclude Include="..\..\engines\darkseed\tostext.h" />
+		<ClInclude Include="..\..\engines\darkseed\usecode.h" />
+		<ClInclude Include="..\..\engines\darkseed\usecode_tos_tables.h" />
+		<ClInclude Include="..\..\engines\darkseed\zhmenufont.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\darkseed\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

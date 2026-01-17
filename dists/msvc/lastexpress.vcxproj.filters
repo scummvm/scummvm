@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="characters">
+			<UniqueIdentifier>EFEFD4C1-C8A9-4BEF-AD52-84398DDF010F</UniqueIdentifier>
+		</Filter>
+		<Filter Include="characters\demo">
+			<UniqueIdentifier>D445E14F-2236-42D7-BA06-5572625CEC24</UniqueIdentifier>
+		</Filter>
+		<Filter Include="data">
+			<UniqueIdentifier>DDE21FC5-80A8-4928-8ECA-A89278D5E00D</UniqueIdentifier>
+		</Filter>
+		<Filter Include="fight">
+			<UniqueIdentifier>3DBAC7F6-152B-4C60-9042-E56C907CFEC3</UniqueIdentifier>
+		</Filter>
+		<Filter Include="game">
+			<UniqueIdentifier>B152BC39-F350-4609-84B4-673D16A22402</UniqueIdentifier>
+		</Filter>
+		<Filter Include="menu">
+			<UniqueIdentifier>9FAF5ED9-76AA-4D60-BC38-D1F645C45400</UniqueIdentifier>
+		</Filter>
+		<Filter Include="sound">
+			<UniqueIdentifier>DCBF4A58-4751-42AD-8F40-92203CD2526B</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\lastexpress\characters\demo\demo_abbot.cpp">
+			<Filter>characters\demo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\demo\demo_anna.cpp">
+			<Filter>characters\demo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\demo\demo_august.cpp">
+			<Filter>characters\demo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\demo\demo_cond2.cpp">
+			<Filter>characters\demo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\demo\demo_francois.cpp">
+			<Filter>characters\demo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\demo\demo_ivo.cpp">
+			<Filter>characters\demo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\demo\demo_madame.cpp">
+			<Filter>characters\demo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\demo\demo_master.cpp">
+			<Filter>characters\demo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\demo\demo_monsieur.cpp">
+			<Filter>characters\demo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\demo\demo_rebecca.cpp">
+			<Filter>characters\demo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\demo\demo_tablea.cpp">
+			<Filter>characters\demo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\demo\demo_tableb.cpp">
+			<Filter>characters\demo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\demo\demo_tablec.cpp">
+			<Filter>characters\demo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\demo\demo_tabled.cpp">
+			<Filter>characters\demo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\demo\demo_tablee.cpp">
+			<Filter>characters\demo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\demo\demo_tablef.cpp">
+			<Filter>characters\demo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\demo\demo_tatiana.cpp">
+			<Filter>characters\demo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\demo\demo_vesna.cpp">
+			<Filter>characters\demo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\demo\demo_waiter1.cpp">
+			<Filter>characters\demo</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\abbot.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\alexei.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\alouan.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\anna.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\august.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\clerk.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\cond1.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\cond2.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\cook.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\francois.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\hadija.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\headwait.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\ivo.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\kahina.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\kronos.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\madame.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\mahmud.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\master.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\max.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\milos.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\mitchell.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\monsieur.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\police.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\rebecca.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\salko.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\sophie.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\tablea.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\tableb.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\tablec.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\tabled.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\tablee.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\tablef.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\tatiana.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\trainm.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\vassili.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\vesna.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\waiter1.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\waiter2.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\characters\yasmin.cpp">
+			<Filter>characters</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\data\archive.cpp">
+			<Filter>data</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\data\cvcrfile.cpp">
+			<Filter>data</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\data\gold_archive.cpp">
+			<Filter>data</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\data\sprites.cpp">
+			<Filter>data</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\fight\fight.cpp">
+			<Filter>fight</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\fight\fighter.cpp">
+			<Filter>fight</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\fight\fighter_cath.cpp">
+			<Filter>fight</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\fight\opponent.cpp">
+			<Filter>fight</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\fight\opponent_ivo.cpp">
+			<Filter>fight</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\fight\opponent_milos.cpp">
+			<Filter>fight</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\fight\opponent_salko.cpp">
+			<Filter>fight</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\fight\opponent_vesna1.cpp">
+			<Filter>fight</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\fight\opponent_vesna2.cpp">
+			<Filter>fight</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\game\action.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\game\beetle.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\game\credits.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\game\events.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\game\logic.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\game\navigation.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\game\nis.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\game\otis.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\game\savegame.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\game\vcr.cpp">
+			<Filter>game</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\menu\clock.cpp">
+			<Filter>menu</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\menu\menu.cpp">
+			<Filter>menu</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\sound\driver.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\sound\mixer.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\sound\slot.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\sound\sound.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\sound\subtitle.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\lastexpress\debug.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\graphics.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\lastexpress.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\memory.cpp" />
+		<ClCompile Include="..\..\engines\lastexpress\metaengine.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\lastexpress\data\archive.h">
+			<Filter>data</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\lastexpress\data\cvcrfile.h">
+			<Filter>data</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\lastexpress\data\gold_archive.h">
+			<Filter>data</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\lastexpress\data\sprites.h">
+			<Filter>data</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\lastexpress\fight\fight.h">
+			<Filter>fight</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\lastexpress\fight\fighter.h">
+			<Filter>fight</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\lastexpress\game\beetle.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\lastexpress\game\events.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\lastexpress\game\logic.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\lastexpress\game\nis.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\lastexpress\game\otis.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\lastexpress\game\savegame.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\lastexpress\game\vcr.h">
+			<Filter>game</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\lastexpress\menu\clock.h">
+			<Filter>menu</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\lastexpress\menu\menu.h">
+			<Filter>menu</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\lastexpress\sound\slot.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\lastexpress\sound\sound.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\lastexpress\sound\subtitle.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\lastexpress\debug.h" />
+		<ClInclude Include="..\..\engines\lastexpress\graphics.h" />
+		<ClInclude Include="..\..\engines\lastexpress\helpers.h" />
+		<ClInclude Include="..\..\engines\lastexpress\lastexpress.h" />
+		<ClInclude Include="..\..\engines\lastexpress\memory.h" />
+		<ClInclude Include="..\..\engines\lastexpress\shared.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\lastexpress\module.mk" />
+	</ItemGroup>
+</Project>

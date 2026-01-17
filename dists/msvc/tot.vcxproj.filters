@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="decoder">
+			<UniqueIdentifier>91C5AF97-4CD7-4D88-84FC-6F3E770324B8</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\tot\chrono.cpp" />
+		<ClCompile Include="..\..\engines\tot\console.cpp" />
+		<ClCompile Include="..\..\engines\tot\cutscenes.cpp" />
+		<ClCompile Include="..\..\engines\tot\debug.cpp" />
+		<ClCompile Include="..\..\engines\tot\decoder\TotFlicDecoder.cpp">
+			<Filter>decoder</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\tot\anims.cpp" />
+		<ClCompile Include="..\..\engines\tot\dialog.cpp" />
+		<ClCompile Include="..\..\engines\tot\engine.cpp" />
+		<ClCompile Include="..\..\engines\tot\events.cpp" />
+		<ClCompile Include="..\..\engines\tot\forest.cpp" />
+		<ClCompile Include="..\..\engines\tot\graphics.cpp" />
+		<ClCompile Include="..\..\engines\tot\metaengine.cpp" />
+		<ClCompile Include="..\..\engines\tot\midi.cpp" />
+		<ClCompile Include="..\..\engines\tot\mouse.cpp" />
+		<ClCompile Include="..\..\engines\tot\resources.cpp" />
+		<ClCompile Include="..\..\engines\tot\saveload.cpp" />
+		<ClCompile Include="..\..\engines\tot\sound.cpp" />
+		<ClCompile Include="..\..\engines\tot\tot.cpp" />
+		<ClCompile Include="..\..\engines\tot\util.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\tot\chrono.h" />
+		<ClInclude Include="..\..\engines\tot\console.h" />
+		<ClInclude Include="..\..\engines\tot\debug.h" />
+		<ClInclude Include="..\..\engines\tot\decoder\TotFlicDecoder.h">
+			<Filter>decoder</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\tot\anims.h" />
+		<ClInclude Include="..\..\engines\tot\detection.h" />
+		<ClInclude Include="..\..\engines\tot\detection_tables.h" />
+		<ClInclude Include="..\..\engines\tot\dialog.h" />
+		<ClInclude Include="..\..\engines\tot\events.h" />
+		<ClInclude Include="..\..\engines\tot\forest.h" />
+		<ClInclude Include="..\..\engines\tot\graphics.h" />
+		<ClInclude Include="..\..\engines\tot\metaengine.h" />
+		<ClInclude Include="..\..\engines\tot\midi.h" />
+		<ClInclude Include="..\..\engines\tot\mouse.h" />
+		<ClInclude Include="..\..\engines\tot\sound.h" />
+		<ClInclude Include="..\..\engines\tot\statics.h" />
+		<ClInclude Include="..\..\engines\tot\tot.h" />
+		<ClInclude Include="..\..\engines\tot\types.h" />
+		<ClInclude Include="..\..\engines\tot\util.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\tot\module.mk" />
+	</ItemGroup>
+</Project>
