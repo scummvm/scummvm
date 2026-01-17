@@ -1,7 +1,7 @@
 Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
-#### 3.0.0 (xx.xx.xxxx)
+#### 2026.1.0 (31.01.2026)
 
  Neue Spiele:
    - Unterstützung für Dark Seed hinzugefügt.
