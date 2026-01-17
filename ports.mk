@@ -709,7 +709,7 @@ endif
 	@echo Creating Code::Blocks project files...
 	@cd $(srcdir)/dists/codeblocks && $(PWD)/devtools/create_project/create_project ../.. --codeblocks >/dev/null && git add -f engines/*.h *.workspace *.cbp
 	@echo Creating MSVC project files...
-	@cd $(srcdir)/dists/msvc && $(PWD)/devtools/create_project/create_project ../.. --msvc-version 12 --msvc >/dev/null && git add -f engines/*.h *.sln *.vcxproj *.vcxproj.filters *.props
+	@cd $(srcdir)/dists/msvc && $(PWD)/devtools/create_project/create_project ../.. --msvc-version 14 --msvc >/dev/null && git add -f engines/*.h *.sln *.vcxproj *.vcxproj.filters *.props
 	@echo
 	@echo All is done.
 	@echo Now run
