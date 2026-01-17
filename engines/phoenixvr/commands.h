@@ -518,6 +518,7 @@ struct GoToWarp : public Script::Command {
 
 	void exec(Script::ExecutionContext &ctx) const override {
 		g_engine->goToWarp(warp);
+		ctx.running = false; // terminate script after warp
 	}
 };
 
