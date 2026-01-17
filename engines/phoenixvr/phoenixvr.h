@@ -168,6 +168,7 @@ private:
 	void tick(float dt);
 	void tickTimer(float dt);
 	void loadNextScript();
+	void renderVR();
 
 private:
 	Common::Point _mousePos, _mouseRel;

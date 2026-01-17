@@ -142,6 +142,7 @@ void PhoenixVREngine::end() {
 
 void PhoenixVREngine::wait(float seconds) {
 	debug("wait %gs", seconds);
+	renderVR();
 	auto begin = g_system->getMillis();
 	unsigned millis = seconds * 1000;
 	Graphics::FrameLimiter limiter(g_system, kFPSLimit);
@@ -406,6 +407,10 @@ void PhoenixVREngine::tickTimer(float dt) {
 	}
 }
 
+void PhoenixVREngine::renderVR() {
+	_vr.render(_screen, _angleX.angle(), _angleY.angle(), _fov, _showRegions ? _regSet.get() : nullptr);
+}
+
 void PhoenixVREngine::tick(float dt) {
 	tickTimer(dt);
 
@@ -481,7 +486,7 @@ void PhoenixVREngine::tick(float dt) {
 		executeTest(nextTest);
 	}
 
-	_vr.render(_screen, _angleX.angle(), _angleY.angle(), _fov, _showRegions ? _regSet.get() : nullptr);
+	renderVR();
 
 	Graphics::Surface *cursor = nullptr;
 	auto &cursors = _cursors[_warpIdx];
