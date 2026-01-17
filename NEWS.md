@@ -85,8 +85,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added Text-to-Speech support.
 
  Grim:
-    - Added support for the fantranslated Polish version of Grim Fandango.
-
+ - Added support for the fantranslated Polish version of Grim Fandango.
+ 
  Hugo:
    - Added Text-to-Speech support.
    - Fixed unrecognized commands, missing points, and graphics glitches
