@@ -1160,10 +1160,6 @@ void Scheduler::insertAction(Act *action) {
 	case AGSCHEDULE:
 		curEvent->_localActionFl = false;               // Lasts over a new screen
 		break;
-	// Workaround: When dying, switch to storyMode in order to block the keyboard.
-	case GAMEOVER:
-		_vm->getGameStatus()._storyModeFl = true;
-		// fall through
 	default:
 		curEvent->_localActionFl = true;                // Rest are for current screen only
 		break;

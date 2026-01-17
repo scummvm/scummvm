@@ -393,10 +393,6 @@ void HugoEngine::initMachine() {
 void HugoEngine::runMachine() {
 	Status &gameStatus = getGameStatus();
 
-	// Don't process if gameover
-	if (gameStatus._gameOverFl)
-		return;
-
 	_curTime = g_system->getMillis();
 	// Process machine once every tick
 	while (_curTime - _lastTime < (uint32)(1000 / getTPS())) {
@@ -426,13 +422,19 @@ void HugoEngine::runMachine() {
 			_screen->showCursor();
 		}
 		_parser->charHandler();                     // Process user cmd input
-		_object->moveObjects();                     // Process object movement
-		_scheduler->runScheduler();                 // Process any actions
-		_screen->displayList(kDisplayRestore);      // Restore previous background
-		_object->updateImages();                    // Draw into _frontBuffer, compile display list
-		_screen->drawStatusText();
-		_screen->drawPromptText();
-		_screen->displayList(kDisplayDisplay);      // Blit the display list to screen
+		if (!gameStatus._gameOverFl) {
+			_object->moveObjects();                 // Process object movement
+			_scheduler->runScheduler();             // Process any actions
+			_screen->displayList(kDisplayRestore);  // Restore previous background
+			_object->updateImages();                // Draw into _frontBuffer, compile display list
+			_screen->drawStatusText();
+			_screen->drawPromptText();
+			_screen->displayList(kDisplayDisplay);  // Blit the display list to screen
+		} else {
+			// game over: update status and prompt
+			_screen->displayStatusText();           // Draw to _frontBuffer, copy to screen
+			_screen->displayPromptText();           // Draw to _frontBuffer, copy to screen
+		}
 		_sound->checkMusic();
 		break;
 	case kViewInvent:                               // Accessing inventory
