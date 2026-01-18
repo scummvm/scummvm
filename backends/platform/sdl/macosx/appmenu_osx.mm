@@ -201,10 +201,15 @@ static void openFromBundle(NSString *file, NSString *subdir = nil) {
 }
 
 - (void)openUserManual {
+	NSString *bundlePath = [[NSBundle mainBundle] resourcePath];
+
 	// If present locally in the bundle, open that file.
-	if ([[NSFileManager defaultManager] respondsToSelector:@selector(contentsOfDirectoryAtPath:error:)]) {
-		NSString *bundlePath = [[NSBundle mainBundle] resourcePath];
-		NSArray *dirContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:bundlePath error:nil];
+#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
+	NSArray *dirContents = [[NSFileManager defaultManager] directoryContentsAtPath:bundlePath];
+#else
+	NSArray *dirContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:bundlePath error:nil];
+#endif
+	if (dirContents != nil) {
 		NSEnumerator *dirEnum = [dirContents objectEnumerator];
 		NSString *file;
 
