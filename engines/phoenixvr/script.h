@@ -45,8 +45,11 @@ inline int fromAngle(float a) {
 } // namespace
 class Script {
 public:
+	struct Scope;
 	struct ExecutionContext {
 		bool running = true;
+		bool subroutine = false;
+		const Scope *scope = nullptr;
 	};
 	struct Command {
 		virtual ~Command() = default;
@@ -56,7 +59,20 @@ public:
 
 	struct Scope : public Script::Command {
 		Common::Array<CommandPtr> commands;
-		void exec(ExecutionContext &ctx) const;
+
+		struct Label {
+			Common::String name;
+			uint offset;
+		};
+		Common::Array<Label> labels;
+
+		const Label *findLabel(const Common::String &name) const {
+			auto it = Common::find_if(labels.begin(), labels.end(), [&](const Label &label) { return label.name.equalsIgnoreCase(name); });
+			return it != labels.end() ? &*it : nullptr;
+		}
+
+		void exec(ExecutionContext &ctx) const override;
+		void exec(ExecutionContext &ctx, uint offset) const;
 	};
 	using ScopePtr = Common::SharedPtr<Scope>;
 

@@ -213,6 +213,8 @@ public:
 			expect('=');
 			auto value = nextInt();
 			return CommandPtr(new Set(Common::move(var), value));
+		} else if (keyword("gosub")) {
+			return CommandPtr(new GoSub(nextWord()));
 		} else if (keyword("return")) {
 			return CommandPtr{new Return()};
 		} else if (keyword("end")) {
@@ -225,11 +227,18 @@ public:
 } // namespace
 
 void Script::Scope::exec(ExecutionContext &ctx) const {
-	for (auto &cmd : commands) {
+	exec(ctx, 0);
+}
+
+void Script::Scope::exec(ExecutionContext &ctx, uint offset) const {
+	auto oldScope = ctx.scope;
+	ctx.scope = this;
+	for (uint i = offset, n = commands.size(); i < n; ++i) {
 		if (!ctx.running)
 			break;
-		cmd->exec(ctx);
+		commands[i]->exec(ctx);
 	}
+	ctx.scope = oldScope;
 }
 
 Script::TestPtr Script::Warp::getTest(int idx) const {
@@ -310,6 +319,12 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 					commands.push_back(Common::move(_pluginScope));
 					_pluginScope.reset();
 				}
+			} else if (p.maybe("label")) {
+				if (_pluginScope)
+					error("no labels in plugin scope allowed");
+				auto name = p.nextWord();
+				auto offset = _currentTest->scope.commands.size();
+				_currentTest->scope.labels.push_back({Common::move(name), offset});
 			} else {
 				if (_pluginScope) {
 					auto name = p.nextWord();

@@ -428,6 +428,20 @@ struct Set : public Script::Command {
 	}
 };
 
+struct GoSub : public Script::Command {
+	Common::String label;
+	GoSub(const Common::String &l) : label(l) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		debug("gosub %s", label.c_str());
+		assert(ctx.scope);
+		auto *labelPtr = ctx.scope->findLabel(label);
+		assert(labelPtr);
+		Script::ExecutionContext sub = {};
+		sub.subroutine = true;
+		ctx.scope->exec(sub, labelPtr->offset);
+	}
+};
+
 struct End : public Script::Command {
 	End() {}
 	void exec(Script::ExecutionContext &ctx) const override {
@@ -441,7 +455,12 @@ struct Return : public Script::Command {
 	Return() {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		ctx.running = false;
-		g_engine->returnToWarp();
+		if (ctx.subroutine) {
+			debug("return to caller");
+		} else {
+			debug("return to previous warp");
+			g_engine->returnToWarp();
+		}
 	}
 };
 
