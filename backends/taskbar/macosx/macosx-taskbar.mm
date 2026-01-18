@@ -253,7 +253,7 @@ void MacOSXTaskbarManager::addRecent(const Common::String &name, const Common::S
 			NSDictionary *oldDict = [newArray objectAtIndex:i];
 			if (oldDict == nil)
 				continue;
-			NSString *oldGame = [oldDict valueForKey:@"game"];
+			NSString *oldGame = [oldDict objectForKey:@"game"];
 			if (oldGame != nil && [oldGame isEqualToString:(NSString*)gameName]) {
 				[newArray removeObjectAtIndex:i];
 				break;
