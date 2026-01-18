@@ -3,6 +3,10 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2026.1.1 (2026-XX-XX)
 
+MM:
+	- Fixed M&M1 memory corruption on exit
+	- Fixed M&M1 display issues/corruption getting items from treasure chests
+	- Fixed M&M1 showing incorrect name for attacking monsters in combat
 
 #### 2026.1.0 (2026-01-31)
 
