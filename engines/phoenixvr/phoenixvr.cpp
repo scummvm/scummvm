@@ -551,12 +551,14 @@ void PhoenixVREngine::tick(float dt) {
 
 	Graphics::Surface *cursor = nullptr;
 	auto &cursors = _cursors[_warpIdx];
+	bool anyMatched = false;
 	for (int i = 0, n = cursors.size(); i != n; ++i) {
 		auto *region = getRegion(i);
 		if (!region)
 			continue;
 
 		if (_vr.isVR() ? region->contains3D(currentVRPos()) : region->contains2D(_mousePos.x, _mousePos.y)) {
+			anyMatched = true;
 			auto test = _warp->getTest(i);
 			if (test && test->hover == 1 && _hoverIndex < 0) {
 				debug("executing hover test %d", i);
@@ -565,9 +567,9 @@ void PhoenixVREngine::tick(float dt) {
 			}
 
 			auto &name = cursors[i];
-			cursor = loadCursor(name);
-			if (!cursor)
-				cursor = loadCursor(_defaultCursor[1]);
+			if (!cursor) {
+				cursor = loadCursor(name);
+			}
 		} else if (i == _hoverIndex) {
 			debug("leaving hover region");
 			auto leave = _warp->getTest(i + 1);
@@ -578,7 +580,7 @@ void PhoenixVREngine::tick(float dt) {
 		}
 	}
 	if (!cursor)
-		cursor = loadCursor(_defaultCursor[0]);
+		cursor = loadCursor(anyMatched ? _defaultCursor[1] : _defaultCursor[0]);
 	if (cursor) {
 		paint(*cursor, _mousePos - Common::Point(cursor->w / 2, cursor->h / 2));
 	}
