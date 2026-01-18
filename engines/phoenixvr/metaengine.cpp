@@ -93,7 +93,7 @@ SaveStateDescriptor PhoenixVRMetaEngine::querySaveMetaInfos(const char *target, 
 	desc.setSaveSlot(slotIdx);
 	desc.setDeletableFlag(true);
 	desc.setDescription(state.game + " " + state.info);
-	desc.setThumbnail(state.getThumbnail(g_system->getOverlayFormat(), 160));
+	desc.setThumbnail(state.getThumbnail(Graphics::BlendBlit::getSupportedPixelFormat(), 160));
 	return desc;
 }
 
