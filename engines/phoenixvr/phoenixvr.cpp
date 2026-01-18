@@ -411,6 +411,23 @@ void PhoenixVREngine::renderVR() {
 	_vr.render(_screen, _angleX.angle(), _angleY.angle(), _fov, _showRegions ? _regSet.get() : nullptr);
 }
 
+void PhoenixVREngine::saveVariables() {
+	debug("SaveVariable() - saving variable state");
+	_variableSnapshot.resize(_variableOrder.size());
+	for (uint i = 0, n = _variableOrder.size(); i != n; ++i) {
+		_variableSnapshot[i] = _variables.getVal(_variableOrder[i]);
+	}
+}
+
+void PhoenixVREngine::loadVariables() {
+	debug("LoadVariable() - loading variable state");
+	assert(_variableSnapshot.size() == _variableOrder.size());
+	for (uint i = 0, n = _variableOrder.size(); i != n; ++i) {
+		_variables.setVal(_variableOrder[i], _variableSnapshot[i]);
+	}
+	_variableSnapshot.clear();
+}
+
 void PhoenixVREngine::tick(float dt) {
 	tickTimer(dt);
 

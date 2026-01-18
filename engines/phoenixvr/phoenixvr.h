@@ -157,6 +157,9 @@ public:
 		return _loading;
 	}
 
+	void saveVariables();
+	void loadVariables();
+
 private:
 	static Common::String removeDrive(const Common::String &path);
 	Graphics::Surface *loadSurface(const Common::String &path);
@@ -186,6 +189,7 @@ private:
 
 	Common::Array<Common::String> _lockKey;
 	Common::Array<Common::String> _variableOrder;
+	Common::Array<int> _variableSnapshot;
 	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
 	struct Sound {
 		Audio::SoundHandle handle;

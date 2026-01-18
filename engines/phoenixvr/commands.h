@@ -322,7 +322,14 @@ struct RolloverSecretaire : public Script::Command {
 struct SaveVariable : public Script::Command {
 	SaveVariable(const Common::Array<Common::String> &args) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("SaveVariable()");
+		g_engine->saveVariables();
+	}
+};
+
+struct LoadVariable : public Script::Command {
+	LoadVariable(const Common::Array<Common::String> &args) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		g_engine->loadVariables();
 	}
 };
 
@@ -340,6 +347,7 @@ struct SaveVariable : public Script::Command {
 	E(LoadSave_Set_Context_Label)    \
 	E(LoadSave_Draw_Slot)            \
 	E(LoadSave_Test_Slot)            \
+	E(LoadVariable)                  \
 	E(MultiCD_Set_Transition_Script) \
 	E(MultiCD_Set_Next_Script)       \
 	E(PauseTimer)                    \
