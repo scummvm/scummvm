@@ -255,6 +255,12 @@ public:
 	#undef MESSAGE
 };
 
+class ViewsBase {
+public:
+	ViewsBase() {}
+	virtual ~ViewsBase() {}
+};
+
 /**
  * Main events and view manager
  */
