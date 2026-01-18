@@ -977,8 +977,6 @@ void Renderer::renderRectangle(const Math::Vector3d &originalOrigin, const Math:
 	Math::Vector3d size = originalSize;
 	Math::Vector3d origin = originalOrigin;
 
-	//enableCulling(false);
-
 	if (size.x() > 0 && size.y() > 0 && size.z() > 0) {
 		/* According to https://www.shdon.com/freescape/
 		If the bounding box is has all non-zero dimensions
@@ -1018,6 +1016,8 @@ void Renderer::renderRectangle(const Math::Vector3d &originalOrigin, const Math:
 		origin.z() += offset;
 	}
 
+	bool isHorizontal = (size.y() == 0);
+
 	for (int i = 0; i < 2; i++) {
 
 		color = (*colours)[i];
@@ -1045,7 +1045,8 @@ void Renderer::renderRectangle(const Math::Vector3d &originalOrigin, const Math:
 			}
 
 			vertices.clear();
-			if (i == 0) {
+			bool useFlippedWinding = (i == 0) || (isHorizontal && i == 1);
+			if (useFlippedWinding) {
 				vertices.push_back(origin);
 				vertices.push_back(Math::Vector3d(origin.x() + d2x, origin.y() + d2y, origin.z() + d2z));
 				vertices.push_back(Math::Vector3d(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z()));
@@ -1065,11 +1066,12 @@ void Renderer::renderRectangle(const Math::Vector3d &originalOrigin, const Math:
 			}
 		}
 	}
-
-	//enableCulling(true);
 }
 
-void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<float> *originalOrdinates, Common::Array<uint8> *colours, Common::Array<uint8> *ecolours, float offset) {
+void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size,
+							 const Common::Array<float> *originalOrdinates, Common::Array<uint8> *colours,
+							 Common::Array<uint8> *ecolours, float offset) {
+
 	Common::Array<float> *ordinates = new Common::Array<float>(*originalOrdinates);
 
 	uint8 r1, g1, b1, r2, g2, b2;
@@ -1081,7 +1083,7 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 
 	uint color = 0;
 	uint ecolor = 0;
-	//enableCulling(false);
+	bool isPlanar = (size.x() == 0 || size.y() == 0 || size.z() == 0);
 	if (ordinates->size() == 6) { // Line
 		color = (*colours)[0];
 		ecolor = ecolours ? (*ecolours)[0] : 0;
@@ -1139,9 +1141,10 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 		if (getRGBAt(color, ecolor, r1, g1, b1, r2, g2, b2, stipple)) {
 			setStippleData(stipple);
 			useColor(r1, g1, b1);
-			for (uint i = 0; i < ordinates->size(); i = i + 3) {
-				vertices.push_back(Math::Vector3d((*ordinates)[i], (*ordinates)[i + 1], (*ordinates)[i + 2]));
-			}
+			// reverse winding
+			for (int k = ordinates->size(); k > 0; k = k - 3)
+				vertices.push_back(Math::Vector3d((*ordinates)[k - 3], (*ordinates)[k - 2], (*ordinates)[k - 1]));
+
 			renderFace(vertices);
 			if (r1 != r2 || g1 != g2 || b1 != b2) {
 				useStipple(true);
@@ -1157,9 +1160,10 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 		if (getRGBAt(color, ecolor, r1, g1, b1, r2, g2, b2, stipple)) {
 			setStippleData(stipple);
 			useColor(r1, g1, b1);
-			for (int i = ordinates->size(); i > 0; i = i - 3) {
-				vertices.push_back(Math::Vector3d((*ordinates)[i - 3], (*ordinates)[i - 2], (*ordinates)[i - 1]));
-			}
+			// forward winding
+			for (uint k = 0; k < ordinates->size(); k = k + 3)
+				vertices.push_back(Math::Vector3d((*ordinates)[k], (*ordinates)[k + 1], (*ordinates)[k + 2]));
+
 			renderFace(vertices);
 			if (r1 != r2 || g1 != g2 || b1 != b2) {
 				useStipple(true);
@@ -1170,7 +1174,6 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 		}
 	}
 
-	//enableCulling(true);
 	delete(ordinates);
 }
 
