@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-17 20:38+0000\n"
-"PO-Revision-Date: 2025-07-02 00:36+0000\n"
+"PO-Revision-Date: 2026-01-18 21:22+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.12.2\n"
+"X-Generator: Weblate 5.15.1\n"
 "X-Language-name: Suomi\n"
 
 #: audio/mac_plugin.cpp:30
@@ -4369,32 +4369,22 @@ msgid "Right mouse button"
 msgstr "Oikea hiirennappi"
 
 #: backends/keymapper/hardware-input.cpp:246
-#, fuzzy
-#| msgid "Middle Mouse Button"
 msgid "Middle mouse button"
 msgstr "Keskimmäinen hiirrennappi"
 
 #: backends/keymapper/hardware-input.cpp:247
-#, fuzzy
-#| msgid "Mouse Wheel Up"
 msgid "Mouse wheel up"
 msgstr "Hiirenrulla ylös"
 
 #: backends/keymapper/hardware-input.cpp:248
-#, fuzzy
-#| msgid "Mouse Wheel Down"
 msgid "Mouse wheel down"
 msgstr "Hiirenrulla alas"
 
 #: backends/keymapper/hardware-input.cpp:249
-#, fuzzy
-#| msgid "X1 Mouse Button"
 msgid "X1 mouse button"
 msgstr "X1 hiirennappi"
 
 #: backends/keymapper/hardware-input.cpp:250
-#, fuzzy
-#| msgid "X2 Mouse Button"
 msgid "X2 mouse button"
 msgstr "X2 hiirennappi"
 
@@ -4415,32 +4405,22 @@ msgid "Joy Y"
 msgstr "Joy Y"
 
 #: backends/keymapper/hardware-input.cpp:259
-#, fuzzy
-#| msgid "Joy Back"
 msgid "Joy back"
-msgstr "Joy Taakse"
+msgstr "Joy taakse"
 
 #: backends/keymapper/hardware-input.cpp:260
-#, fuzzy
-#| msgid "Joy Guide"
 msgid "Joy guide"
-msgstr "Joy Ohje"
+msgstr "Joy ohje"
 
 #: backends/keymapper/hardware-input.cpp:261
-#, fuzzy
-#| msgid "Joy Start"
 msgid "Joy start"
-msgstr "Joy Aloita"
+msgstr "Joy aloita"
 
 #: backends/keymapper/hardware-input.cpp:262
-#, fuzzy
-#| msgid "Left Stick"
 msgid "Left stick"
 msgstr "Vasen hattu"
 
 #: backends/keymapper/hardware-input.cpp:263
-#, fuzzy
-#| msgid "Right Stick"
 msgid "Right stick"
 msgstr "Oikea hattu"
 
@@ -4453,68 +4433,46 @@ msgid "Right shoulder"
 msgstr "Oikea olka"
 
 #: backends/keymapper/hardware-input.cpp:266
-#, fuzzy
-#| msgid "D-pad Up"
 msgid "D-pad up"
 msgstr "D-pad ylös"
 
 #: backends/keymapper/hardware-input.cpp:267
-#, fuzzy
-#| msgid "D-pad Down"
 msgid "D-pad down"
 msgstr "D-pad alas"
 
 #: backends/keymapper/hardware-input.cpp:268
-#, fuzzy
-#| msgid "D-pad Left"
 msgid "D-pad left"
 msgstr "D-pad vasemmalle"
 
 #: backends/keymapper/hardware-input.cpp:269
-#, fuzzy
-#| msgid "D-pad Right"
 msgid "D-pad right"
 msgstr "D-pad oikealle"
 
 #: backends/keymapper/hardware-input.cpp:270
-#, fuzzy
-#| msgid "D-pad Center"
 msgid "D-pad center"
 msgstr "D-pad keskiö"
 
 #: backends/keymapper/hardware-input.cpp:275
-#, fuzzy
-#| msgid "Left Trigger"
 msgid "Left trigger"
 msgstr "Vasen liipaisin"
 
 #: backends/keymapper/hardware-input.cpp:276
-#, fuzzy
-#| msgid "Right Trigger"
 msgid "Right trigger"
 msgstr "Oikea liipaisin"
 
 #: backends/keymapper/hardware-input.cpp:277
-#, fuzzy
-#| msgid "Left Stick X"
 msgid "Left stick X"
 msgstr "Vasemman hatun X"
 
 #: backends/keymapper/hardware-input.cpp:278
-#, fuzzy
-#| msgid "Left Stick Y"
 msgid "Left stick Y"
 msgstr "Vasemman hatun Y"
 
 #: backends/keymapper/hardware-input.cpp:279
-#, fuzzy
-#| msgid "Right Stick X"
 msgid "Right stick X"
 msgstr "Oikean hatun X"
 
 #: backends/keymapper/hardware-input.cpp:280
-#, fuzzy
-#| msgid "Right Stick Y"
 msgid "Right stick Y"
 msgstr "Oikean hatun Y"
 
@@ -6335,14 +6293,10 @@ msgid "Default keymappings"
 msgstr "Näppäinten oletuskartoitukset"
 
 #: engines/access/metaengine.cpp:202
-#, fuzzy
-#| msgid "Move / Interact / Skip dialog"
 msgid "Move / Interact / Skip"
-msgstr "Liiku / Käytä / Ohita dialogi"
+msgstr "Liiku / Käytä / Ohita"
 
 #: engines/access/metaengine.cpp:214 engines/sherlock/metaengine.cpp:483
-#, fuzzy
-#| msgid "Skip video"
 msgid "Skip movie"
 msgstr "Ohita video"
 
@@ -6512,7 +6466,7 @@ msgstr "Tavarat"
 
 #: engines/access/metaengine.cpp:327 engines/ultima/ultima4/metaengine.cpp:51
 msgid "Climb"
-msgstr ""
+msgstr "Kiipeä"
 
 #: engines/access/metaengine.cpp:337 engines/bbvs/metaengine.cpp:142
 #: engines/freescape/games/castle/castle.cpp:298
@@ -7212,10 +7166,8 @@ msgid "Old OpenGL detected, some graphical errors will occur."
 msgstr ""
 
 #: engines/alcachofa/metaengine.cpp:40
-#, fuzzy
-#| msgid "Music Quality:"
 msgid "High Quality"
-msgstr "Musiikin laatu:"
+msgstr "Korkea laatu"
 
 #: engines/alcachofa/metaengine.cpp:41
 #, fuzzy
@@ -7225,7 +7177,7 @@ msgstr "Kytke äänitehoste päälle/pois"
 
 #: engines/alcachofa/metaengine.cpp:51
 msgid "32 Bits"
-msgstr ""
+msgstr "32 bittiä"
 
 #: engines/alcachofa/metaengine.cpp:52
 msgid "Whether to render the game in 16-bit color"
@@ -7816,10 +7768,8 @@ msgstr "Intron näppäinkartoitukset"
 #: engines/chamber/metaengine.cpp:71 engines/chamber/metaengine.cpp:77
 #: engines/dm/metaengine.cpp:130 engines/private/metaengine.cpp:130
 #: engines/sherlock/metaengine.cpp:1187
-#, fuzzy
-#| msgid "Select / Interact / Move"
 msgid "Select / Interact"
-msgstr "Valitse / Käytä / Liiku"
+msgstr "Valitse / Käytä"
 
 #. I18N: This action refers to the control key on the keyboard.
 #: engines/buried/metaengine.cpp:148
@@ -7845,16 +7795,12 @@ msgid "Look down"
 msgstr "Katso alas"
 
 #: engines/buried/metaengine.cpp:204
-#, fuzzy
-#| msgid "Look at"
 msgid "Look left"
-msgstr "Katso"
+msgstr "Katso vasemmalle"
 
 #: engines/buried/metaengine.cpp:211
-#, fuzzy
-#| msgid "Look at"
 msgid "Look right"
-msgstr "Katso"
+msgstr "Katso oikealle"
 
 #: engines/buried/metaengine.cpp:218 engines/dm/metaengine.cpp:196
 #: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:510
@@ -7917,10 +7863,8 @@ msgstr ""
 
 #. I18N: Shows a summary of collected points in the game.
 #: engines/buried/metaengine.cpp:285
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show points"
-msgstr "Näytä vinkit"
+msgstr "Näytä pisteet"
 
 #: engines/buried/saveload.cpp:80
 msgid ""
@@ -8558,14 +8502,10 @@ msgstr "Intron näppäinkartoitukset"
 
 #: engines/drascula/metaengine.cpp:212 engines/sherlock/metaengine.cpp:343
 #: engines/tetraedge/metaengine.cpp:92
-#, fuzzy
-#| msgid "Move / Interact"
 msgid "Move / Interact / Select"
-msgstr "Liiku / Käytä"
+msgstr "Liiku / Käytä / Valitse"
 
 #: engines/drascula/metaengine.cpp:235 engines/tot/metaengine.cpp:129
-#, fuzzy
-#| msgid "Pickup"
 msgid "Pick"
 msgstr "Poimi"
 
@@ -8576,16 +8516,12 @@ msgid "Reset selected verb"
 msgstr "Käytä valittua esinettä"
 
 #: engines/drascula/metaengine.cpp:272 engines/tot/metaengine.cpp:159
-#, fuzzy
-#| msgid "Touch Controls"
 msgid "Volume controls"
-msgstr "Kosketuskontrollit"
+msgstr "Äänenvoimakkuuskontrollit"
 
 #: engines/drascula/metaengine.cpp:279
-#, fuzzy
-#| msgid "Saved games"
 msgid "Save / load game"
-msgstr "Tallennetut pelit"
+msgstr "Tallenna / lataa peli"
 
 #: engines/drascula/metaengine.cpp:292
 #, fuzzy
@@ -8643,88 +8579,60 @@ msgstr ""
 "Tekstistä puheeksi -toiminto esineille, asetuksille ja raamattulainaukselle"
 
 #: engines/efh/metaengine.cpp:235
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 1"
-msgstr "Valitse näyttelijä 1"
+msgstr "Valitse vaihtoehto 1"
 
 #: engines/efh/metaengine.cpp:236
-#, fuzzy
-#| msgid "Select actor 2"
 msgid "Select option 2"
-msgstr "Valitse näyttelijä 2"
+msgstr "Valitse vaihtoehto 2"
 
 #: engines/efh/metaengine.cpp:237
-#, fuzzy
-#| msgid "Select actor 3"
 msgid "Select option 3"
-msgstr "Valitse näyttelijä 3"
+msgstr "Valitse vaihtoehto 3"
 
 #: engines/efh/metaengine.cpp:238
-#, fuzzy
-#| msgid "Select actor 4"
 msgid "Select option 4"
-msgstr "Valitse näyttelijä 4"
+msgstr "Valitse vaihtoehto 4"
 
 #: engines/efh/metaengine.cpp:239
-#, fuzzy
-#| msgid "Select actor 5"
 msgid "Select option 5"
-msgstr "Valitse näyttelijä 5"
+msgstr "Valitse vaihtoehto 5"
 
 #: engines/efh/metaengine.cpp:240
-#, fuzzy
-#| msgid "Select Actor 6"
 msgid "Select option 6"
-msgstr "Valitse näyttelijä 6"
+msgstr "Valitse vaihtoehto 6"
 
 #: engines/efh/metaengine.cpp:241
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 7"
-msgstr "Valitse näyttelijä 1"
+msgstr "Valitse vaihtoehto 7"
 
 #: engines/efh/metaengine.cpp:242
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 8"
-msgstr "Valitse näyttelijä 1"
+msgstr "Valitse vaihtoehto 8"
 
 #: engines/efh/metaengine.cpp:243
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 9"
-msgstr "Valitse näyttelijä 1"
+msgstr "Valitse vaihtoehto 9"
 
 #: engines/efh/metaengine.cpp:244
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 10"
-msgstr "Valitse näyttelijä 1"
+msgstr "Valitse vaihtoehto 10"
 
 #: engines/efh/metaengine.cpp:245
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 11"
-msgstr "Valitse näyttelijä 1"
+msgstr "Valitse vaihtoehto 11"
 
 #: engines/efh/metaengine.cpp:246
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 12"
-msgstr "Valitse näyttelijä 1"
+msgstr "Valitse vaihtoehto 12"
 
 #: engines/efh/metaengine.cpp:247
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 13"
-msgstr "Valitse näyttelijä 1"
+msgstr "Valitse vaihtoehto 13"
 
 #: engines/efh/metaengine.cpp:248
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 14"
-msgstr "Valitse näyttelijä 1"
+msgstr "Valitse vaihtoehto 14"
 
 #: engines/efh/metaengine.cpp:257 engines/hypno/metaengine.cpp:312
 #: engines/sludge/keymapper_tables.h:35 engines/supernova/metaengine.cpp:218
@@ -8878,7 +8786,7 @@ msgstr "Lopeta peli"
 
 #: engines/efh/metaengine.cpp:493
 msgid "Leave"
-msgstr ""
+msgstr "Poistu"
 
 #: engines/efh/metaengine.cpp:500 engines/efh/metaengine.cpp:536
 #, fuzzy
@@ -8908,24 +8816,18 @@ msgstr "Katso tähtikuvioita"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:550
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select character 1"
-msgstr "Valitse näyttelijä 1"
+msgstr "Valitse hahmo 1"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:557
-#, fuzzy
-#| msgid "Select actor 2"
 msgid "Select character 2"
-msgstr "Valitse näyttelijä 2"
+msgstr "Valitse hahmo 2"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:564
-#, fuzzy
-#| msgid "Select actor 3"
 msgid "Select character 3"
-msgstr "Valitse näyttelijä 3"
+msgstr "Valitse hahmo 3"
 
 #: engines/efh/metaengine.cpp:570
 #, fuzzy
@@ -8934,34 +8836,24 @@ msgid "Cancel character selection"
 msgstr "Peruuta toiminto"
 
 #: engines/efh/metaengine.cpp:577
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 1"
-msgstr "Valitse indeksi"
+msgstr "Valitse vihollinen 1"
 
 #: engines/efh/metaengine.cpp:583
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 2"
-msgstr "Valitse indeksi"
+msgstr "Valitse vihollinen 2"
 
 #: engines/efh/metaengine.cpp:589
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 3"
-msgstr "Valitse indeksi"
+msgstr "Valitse vihollinen 3"
 
 #: engines/efh/metaengine.cpp:595
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 4"
-msgstr "Valitse indeksi"
+msgstr "Valitse vihollinen 4"
 
 #: engines/efh/metaengine.cpp:601
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 5"
-msgstr "Valitse indeksi"
+msgstr "Valitse vihollinen 5"
 
 #: engines/efh/metaengine.cpp:607
 #, fuzzy
@@ -9118,8 +9010,6 @@ msgid "Change mode"
 msgstr "Vaihda tilaa"
 
 #: engines/freescape/movement.cpp:106
-#, fuzzy
-#| msgid "Info Menu"
 msgid "Info menu"
 msgstr "Infovalikko"
 
@@ -9915,7 +9805,7 @@ msgstr "Uudelleenkäynnistä animaatio"
 
 #: engines/hypno/metaengine.cpp:245
 msgid "Begin new mission"
-msgstr ""
+msgstr "Aloita uusi tehtävä"
 
 #: engines/hypno/metaengine.cpp:313
 #, fuzzy
