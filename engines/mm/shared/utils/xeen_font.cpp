@@ -70,7 +70,7 @@ void XeenFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32
 
 	const uint16 *src = &_data[chr * FONT_HEIGHT];
 	for (int yCtr = 0; yCtr < FONT_HEIGHT; ++yCtr, ++src) {
-		if ((y + yCtr) < 0 || (y + yCtr) > dst->h)
+		if ((y + yCtr) < 0 || (y + yCtr) >= dst->h)
 			continue;
 
 		uint16 srcVal = *src;
