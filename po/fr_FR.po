@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-17 20:38+0000\n"
-"PO-Revision-Date: 2026-01-10 12:22+0000\n"
+"PO-Revision-Date: 2026-01-18 21:22+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1680,12 +1680,12 @@ msgid "Unknown Year"
 msgstr "Année inconnue"
 
 #: gui/launcher.cpp:1434 gui/launcher.cpp:1810
-#, fuzzy
-#| msgid "Do you really want to remove this game configuration?"
 msgid ""
 "Do you really want to remove the following game configurations?\n"
 "\n"
-msgstr "Voulez-vous vraiment supprimer cette configuration de jeu ?"
+msgstr ""
+"Voulez-vous vraiment supprimer les configurations de jeu suivantes ?\n"
+"\n"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1615 gui/widgets/groupedlist.cpp:81
@@ -9630,14 +9630,12 @@ msgid "Glowstick"
 msgstr "Bâton lumineux"
 
 #: engines/hugo/metaengine.cpp:45
-#, fuzzy
-#| msgid "Easy mouse interface"
 msgid "Use Windows interface"
-msgstr "Interface souris simple"
+msgstr "Utiliser l'interface Windows"
 
 #: engines/hugo/metaengine.cpp:46
 msgid "Use mouse and toolbar from Windows version"
-msgstr ""
+msgstr "Utilise la souris et la barre d'outils de la version Windows"
 
 #: engines/hugo/metaengine.cpp:148
 msgid "User help"
@@ -10008,24 +10006,31 @@ msgid ""
 "- Correct projectile weapon damage (per AD&D 2nd Edition rules)\n"
 "- Elves get +1 to hit with swords and bows (per official game manual)"
 msgstr ""
+"- Elimine les erreurs d'arrondi liées au gain de PV\n"
+"- Corrige les dégâts des armes à projectiles (suivant les règles AD&D 2e "
+"édition)\n"
+"- Les elfes obtiennent +1 pour toucher avec une épée ou un arc (suivant le "
+"manuel officiel du jeu)"
 
 #: engines/kyra/metaengine.cpp:175
 msgid "Fix Ileria and Beohram NPCs"
-msgstr ""
+msgstr "Corriger les PNJ Ileria et Beohram"
 
 #: engines/kyra/metaengine.cpp:176
 msgid "Make Ileria a female and Beohram a paladin"
-msgstr ""
+msgstr "Fait d'Ileria une femme et de Beohram un paladin"
 
 #: engines/kyra/metaengine.cpp:187
 msgid "Enhanced thrown weapon reload"
-msgstr ""
+msgstr "Rechargement avancé des armes de jet"
 
 #: engines/kyra/metaengine.cpp:188
 msgid ""
 "Thrown weapons (daggers, darts, spears...) get replaced from belt and "
 "backpack inventory slots, with thrown weapons only"
 msgstr ""
+"Les armes de jet (dagues, dards, lances...) sont remplacées dans les "
+"emplacements de la ceinture et du sac à dos par des armes de jet uniquement"
 
 #: engines/kyra/metaengine.cpp:279
 msgid "Lands of Lore support is not compiled in"
@@ -15089,71 +15094,59 @@ msgstr "Le fichier de données ultima.dat correct n'a pas été trouvé"
 
 #: engines/ultima/ultima0/metaengine.cpp:49
 msgid "Swing"
-msgstr ""
+msgstr "Basculer"
 
 #: engines/ultima/ultima0/metaengine.cpp:50
 msgid "Throw"
-msgstr ""
+msgstr "Lancer"
 
 #: engines/ultima/ultima0/metaengine.cpp:51
 msgid "Food"
-msgstr ""
+msgstr "Nourriture"
 
 #: engines/ultima/ultima0/metaengine.cpp:52
 msgid "Rapier"
-msgstr ""
+msgstr "Rapière"
 
 #: engines/ultima/ultima0/metaengine.cpp:53
 msgid "Axe"
-msgstr ""
+msgstr "Hache"
 
 #: engines/ultima/ultima0/metaengine.cpp:54
 msgid "Shield"
-msgstr ""
+msgstr "Bouclier"
 
 #: engines/ultima/ultima0/metaengine.cpp:55
 msgid "Bow & Arrow"
-msgstr ""
+msgstr "Arc et flèches"
 
 #: engines/ultima/ultima0/metaengine.cpp:56
 msgid "Magic Amulet"
-msgstr ""
+msgstr "Amulette magique"
 
 #: engines/ultima/ultima0/metaengine.cpp:57
-#, fuzzy
-#| msgid "Select option 1"
 msgid "Amulet Option 1"
-msgstr "Sélectionner option 1"
+msgstr "Amulette Option 1"
 
 #: engines/ultima/ultima0/metaengine.cpp:58
-#, fuzzy
-#| msgid "Select option 2"
 msgid "Amulet Option 2"
-msgstr "Sélectionner option 2"
+msgstr "Amulette Option 2"
 
 #: engines/ultima/ultima0/metaengine.cpp:59
-#, fuzzy
-#| msgid "Select option 3"
 msgid "Amulet Option 3"
-msgstr "Sélectionner option 3"
+msgstr "Amulette Option 3"
 
 #: engines/ultima/ultima0/metaengine.cpp:60
-#, fuzzy
-#| msgid "Select option 4"
 msgid "Amulet Option 4"
-msgstr "Sélectionner option 4"
+msgstr "Amulette Option 4"
 
 #: engines/ultima/ultima0/metaengine.cpp:65
-#, fuzzy
-#| msgid "Crawl North"
 msgid "North"
-msgstr "Ramper vers le Nord"
+msgstr "Nord"
 
 #: engines/ultima/ultima0/metaengine.cpp:66
-#, fuzzy
-#| msgid "Crawl South"
 msgid "South"
-msgstr "Ramper vers le Sud"
+msgstr "Sud"
 
 #: engines/ultima/ultima0/metaengine.cpp:67
 msgid "West"
@@ -15165,34 +15158,26 @@ msgstr "Est"
 
 #: engines/ultima/ultima0/metaengine.cpp:69
 #: engines/ultima/ultima0/metaengine.cpp:83
-#, fuzzy
-#| msgid "Enter Text"
 msgid "Enter/Exit"
-msgstr "Entrer texte"
+msgstr "Entrer/Sortir"
 
 #: engines/ultima/ultima0/metaengine.cpp:72
 #: engines/ultima/ultima0/metaengine.cpp:86
-#, fuzzy
-#| msgid "Wait"
 msgid "Pass/Wait"
-msgstr "Attendre"
+msgstr "Passer/Attendre"
 
 #: engines/ultima/ultima0/metaengine.cpp:73
 #: engines/ultima/ultima0/metaengine.cpp:87
-#, fuzzy
-#| msgid "Minimize"
 msgid "Minimap"
-msgstr "Placer dans le Dock"
+msgstr "Mini carte"
 
 #: engines/ultima/ultima0/metaengine.cpp:78
 msgid "Move Forward"
 msgstr "Avancer"
 
 #: engines/ultima/ultima0/metaengine.cpp:79
-#, fuzzy
-#| msgid "Turn on"
 msgid "Turn Around"
-msgstr "Allumer"
+msgstr "Se retourner"
 
 #: engines/ultima/ultima0/metaengine.cpp:80
 msgid "Turn Left"
@@ -15207,29 +15192,23 @@ msgstr "Tourner vers la Droite"
 #: engines/ultima/ultima0/metaengine.cpp:111
 #: engines/ultima/ultima0/metaengine.cpp:117
 #: engines/ultima/ultima0/metaengine.cpp:123
-#, fuzzy
-#| msgid "Bind Keys"
 msgid "Basic Keys"
-msgstr "Affecter les touches"
+msgstr "Touches de base"
 
 #: engines/ultima/ultima0/metaengine.cpp:99
 #: engines/ultima/ultima0/metaengine.cpp:112
-#, fuzzy
-#| msgid "Game Keys"
 msgid "Menu Keys"
-msgstr "Touches du jeu"
+msgstr "Touches de menus"
 
 #: engines/ultima/ultima0/metaengine.cpp:100
 #: engines/ultima/ultima0/metaengine.cpp:118
-#, fuzzy
-#| msgid "General Keys"
 msgid "Overworld Keys"
-msgstr "Touches principales"
+msgstr "Touches du monde extérieur"
 
 #: engines/ultima/ultima0/metaengine.cpp:101
 #: engines/ultima/ultima0/metaengine.cpp:124
 msgid "Dungeon Keys"
-msgstr ""
+msgstr "Touches des donjons"
 
 #: engines/ultima/ultima4/metaengine.cpp:43
 #: engines/ultima/ultima4/metaengine.cpp:130
@@ -16267,22 +16246,21 @@ msgstr ""
 "l'exécution de jeux 2D"
 
 #: engines/wintermute/metaengine.cpp:94
-#, fuzzy
-#| msgid "Use English speech"
 msgid "Use Italian speech pack"
-msgstr "Utiliser les voix anglaises"
+msgstr "Utiliser le pack de voix italiennes"
 
 #: engines/wintermute/metaengine.cpp:95
 msgid "Use Italian dubbing instead of the default English one"
-msgstr ""
+msgstr "Utilise le doublage italien à la place du doublage anglais par défaut"
 
 #: engines/wintermute/metaengine.cpp:106
 msgid "Run SD version (1280x800)"
-msgstr ""
+msgstr "Exécuter la version SD (1280x800)"
 
 #: engines/wintermute/metaengine.cpp:107
 msgid "Run the legacy SD version, which is better for small screens"
 msgstr ""
+"Exécute la version SD d'origine, qui est mieux adaptée aux petits écrans"
 
 #: engines/wintermute/metaengine.cpp:148
 msgid "FoxTail support is not compiled in"
