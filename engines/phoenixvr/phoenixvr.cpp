@@ -460,15 +460,30 @@ void PhoenixVREngine::rollover(Common::Rect dstRect, int textId, int size, bool 
 	auto &text = _textes.getVal(textId);
 	debug("rollover %s, %s font size: %d, bold: %d, color: %02x", dstRect.toString().c_str(), text.c_str(), size, bold, color);
 
-	auto textH = font->getFontHeight();
-	auto textW = font->getStringWidth(text);
+	Common::Array<Common::String> lines;
+	font->wordWrapText(text, dstRect.width(), lines, Graphics::kWordWrapDefault);
+
+	auto fontH = font->getFontHeight();
+	int textW = 0;
+	Common::Array<int> widths(lines.size());
+	for (uint i = 0, n = lines.size(); i != n; ++i) {
+		auto w = font->getStringWidth(lines[i]);
+		widths[i] = w;
+		textW = MAX(textW, w);
+	}
+
+	auto numLines = static_cast<int>(lines.size());
+	auto textH = fontH * numLines;
 	debug("text %dx%d", textW, textH);
 	_text.reset(new Graphics::ManagedSurface(textW, textH, _screen->format));
 	_text->clear();
 	byte r, g, b;
 	_rgb565.colorToRGB(color, r, g, b);
 	auto textColor = _text->format.RGBToColor(r, g, b);
-	font->drawAlphaString(_text.get(), text, 0, 0, textW, textColor, Graphics::kTextAlignLeft);
+	for (int i = 0; i != numLines; ++i) {
+		int dw = (textW - widths[i]) / 2;
+		font->drawAlphaString(_text.get(), lines[i], dw, i * fontH, textW, textColor, Graphics::kTextAlignLeft);
+	}
 	_textRect = dstRect;
 }
 
