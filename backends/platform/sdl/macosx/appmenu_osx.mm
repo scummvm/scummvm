@@ -58,8 +58,8 @@ enum {
 #endif
 #endif
 
-// Apple added setAppleMenu in 10.5 and removed it in 10.6.
-// But as the method still exists we declare it ourselves here.
+// Apple removed setAppleMenu from the header files in 10.4,
+// but as the method still exists we declare it ourselves here.
 // Yes, this works :)
 @interface NSApplication(MissingFunction)
 - (void)setAppleMenu:(NSMenu *)menu;
