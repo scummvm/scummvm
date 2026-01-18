@@ -274,6 +274,18 @@ MM:
    - Added Text-to-Speech support.
    - Added support for several fan translations.
 
+ ZVision:
+   - Added support for widescreen displays
+   - Added high quality panorama option (uses bilinear filtering)
+   - Improved directionality of 3D sound
+   - Improved accuracy of volume scaling
+   - Enabled high performance audiovisual effects in Zork Nemesis
+   - Improved behaviour of draggable lever controls
+   - Fixed bug causing audio to cut out after long periods of continuous gameplay
+   - Fixed bug causing some audio not to play in certain locations after restoring a saved game
+   - Fixed bug causing music puzzles not to play all notes when using MT-32
+   - Fixed various gameplay script bugs in Nemesis and Grand Inquisitor
+
  Desktop ports:
    - Allow the user to disable manual resizing of the ScummVM window (using Ctrl+R).
    - Add support for building with SDL3 (although SDL2 is still used by default).
