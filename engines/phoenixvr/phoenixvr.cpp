@@ -876,6 +876,7 @@ void PhoenixVREngine::loadSaveSlot(int idx) {
 	}
 	auto state = GameState::load(*slot);
 
+	killTimer();
 	setNextScript(state.script);
 	// keep it alive until loading finishes.
 	auto currentScript = Common::move(_script);
