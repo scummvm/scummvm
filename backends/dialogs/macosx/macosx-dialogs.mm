@@ -38,6 +38,7 @@
 #include <AppKit/NSButton.h>
 #include <Foundation/NSString.h>
 #include <Foundation/NSURL.h>
+#include <Foundation/NSThread.h>
 #include <Foundation/NSAutoreleasePool.h>
 
 // From the 10.6 SDK:
