@@ -47,7 +47,7 @@ struct GameState {
 	static GameState load(Common::SeekableReadStream &stream);
 	void save(Common::SeekableWriteStream &stream) const;
 
-	Graphics::Surface *getThumbnail(const Graphics::PixelFormat &fmt);
+	Graphics::Surface *getThumbnail(const Graphics::PixelFormat &fmt, int newWidth = 0);
 };
 } // namespace PhoenixVR
 

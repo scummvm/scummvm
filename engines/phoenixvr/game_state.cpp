@@ -54,12 +54,19 @@ void GameState::save(Common::SeekableWriteStream &stream) const {
 	stream.write(state.data(), state.size());
 }
 
-Graphics::Surface *GameState::getThumbnail(const Graphics::PixelFormat &fmt) {
+Graphics::Surface *GameState::getThumbnail(const Graphics::PixelFormat &fmt, int newWidth) {
 	Graphics::PixelFormat rgb565(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	Graphics::Surface th;
 	th.init(thumbWidth, thumbHeight, thumbnail.size() / thumbHeight, thumbnail.data(), rgb565);
 	Graphics::Surface *src = th.convertTo(fmt);
 	src->flipVertical(src->getRect());
+	if (newWidth > 0) {
+		int newHeight = newWidth * src->h / src->w;
+		auto *scaled = src->scale(newWidth, newHeight, true);
+		src->free();
+		delete src;
+		return scaled;
+	}
 	return src;
 }
 
