@@ -261,7 +261,7 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 		bool signMaxA = maxA >= 0;
 		bool signMinB = minB >= 0;
 		bool signMaxB = maxB >= 0;
-		if (minA >= maxB) { // A is clearly "greater" than B (L9c9b_one_object_clearly_further_than_the_other)
+		if (minA >= maxB - 0.5f) { // A is clearly "greater" than B (L9c9b_one_object_clearly_further_than_the_other)
 			if (signMinA != signMaxB) // A covers 0 (L9ce6_first_object_is_closer)
 				return 1; // A is closer
 			if (signMinB != signMaxB) // B covers 0 (L9cec_second_object_is_closer)
@@ -282,7 +282,7 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 				if (maxA > maxB) return 2; // B closer
 				return 1; // A closer
 			}
-		} else if (minB >= maxA) { // B is clearly "greater" than A
+		} else if (minB >= maxA - 0.5f) { // B is clearly "greater" than A
 			if (signMinB != signMaxB) // B covers 0 (L9cec_second_object_is_closer)
 				return 2; // B is closer
 			if (signMinA != signMaxA) // A covers 0 (L9ce6_first_object_is_closer)
