@@ -127,6 +127,7 @@ void PhoenixVREngine::loadNextScript() {
 		declareVariable(var);
 
 	int numWarps = _script->numWarps();
+	_cursors.clear();
 	_cursors.resize(numWarps);
 	for (int i = 0; i != numWarps; ++i) {
 		auto warp = _script->getWarp(i);
