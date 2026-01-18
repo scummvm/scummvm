@@ -44,6 +44,9 @@
 // use this feature at run-time on 10.5+.
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
 typedef id NSDockTilePtr;
+@interface NSApplication(MissingFunction)
+- (NSDockTilePtr)dockTile;
+@end
 #else
 #include <AppKit/NSDockTile.h>
 typedef NSDockTile * NSDockTilePtr;
