@@ -257,13 +257,12 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 
 	// Corresponds to L9c66 in assembly (bounding_box_axis_loop)
 	auto checkAxis = [](float minA, float maxA, float minB, float maxB) -> int {
+		bool signMinA = minA >= 0;
+		bool signMaxA = maxA >= 0;
+		bool signMinB = minB >= 0;
+		bool signMaxB = maxB >= 0;
 		if (minA >= maxB) { // A is clearly "greater" than B (L9c9b_one_object_clearly_further_than_the_other)
-			bool signMinA = minA >= 0;
-			bool signMaxA = maxA >= 0;
-			bool signMinB = minB >= 0;
-			bool signMaxB = maxB >= 0;
-
-			if (signMinA != signMaxA) // A covers 0 (L9ce6_first_object_is_closer)
+			if (signMinA != signMaxB) // A covers 0 (L9ce6_first_object_is_closer)
 				return 1; // A is closer
 			if (signMinB != signMaxB) // B covers 0 (L9cec_second_object_is_closer)
 				return 2; // B is closer
@@ -284,11 +283,6 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 				return 1; // A closer
 			}
 		} else if (minB >= maxA) { // B is clearly "greater" than A
-			bool signMinB = minB >= 0;
-			bool signMaxB = maxB >= 0;
-			bool signMinA = minA >= 0;
-			bool signMaxA = maxA >= 0;
-
 			if (signMinB != signMaxB) // B covers 0 (L9cec_second_object_is_closer)
 				return 2; // B is closer
 			if (signMinA != signMaxA) // A covers 0 (L9ce6_first_object_is_closer)
@@ -351,6 +345,21 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 				if (result == 0x02 || result == 0x08 || result == 0x20 ||
 					result == 0x0A || result == 0x22 || result == 0x28 || result == 0x2A)
 					keepOrder = true; // A before B
+
+				if (result == 0) {
+					bool aInFront = minA.z() < 0;
+					bool bInFront = minB.z() < 0;
+					// if signs differ that means one object is positive in the z axis i.e. not visible in the camera
+					if (aInFront != bInFront) {
+						// one is visible, one is behind us.
+						// we want the one behind the camera (positive Z) to be drawn first
+						// so the visible object draws on top of it
+						// the one with the larger Z (positive) should come first
+						if (minA.z() > minB.z()) {
+							keepOrder = true;
+						}
+					}
+				}
 
 				if (!keepOrder) {
 					// Swap objects (L9d2c_flip_objects_loop)
