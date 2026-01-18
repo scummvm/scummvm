@@ -429,6 +429,10 @@ void PhoenixVREngine::saveVariables() {
 
 void PhoenixVREngine::loadVariables() {
 	debug("LoadVariable() - loading variable state");
+	if (_variableSnapshot.empty()) {
+		debug("skipping, no snapshot");
+		return;
+	}
 	assert(_variableSnapshot.size() == _variableOrder.size());
 	for (uint i = 0, n = _variableOrder.size(); i != n; ++i) {
 		_variables.setVal(_variableOrder[i], _variableSnapshot[i]);
