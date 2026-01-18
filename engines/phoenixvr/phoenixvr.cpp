@@ -175,7 +175,10 @@ void PhoenixVREngine::wait(float seconds) {
 
 void PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
 	debug("gotowarp %s, save prev: %d", warp.c_str(), savePrev);
-	_nextWarp = _script->getWarp(warp);
+	if (warp != "N3M09L03W515E1.vr") // typo in Script4.lst
+		_nextWarp = _script->getWarp(warp);
+	else
+		_nextWarp = _script->getWarp("N3M09L03W51E1.vr");
 	_hoverIndex = -1;
 	_text.reset();
 	if (savePrev) {
