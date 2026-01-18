@@ -92,10 +92,10 @@ public:
 	};
 
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return true;
+		return getVariable("E_Canload") != 0;
 	}
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return false;
+		return getVariable("E_Cansave") != 0;
 	}
 
 	// Script API
