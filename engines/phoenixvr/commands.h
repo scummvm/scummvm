@@ -301,12 +301,21 @@ struct LoadSave_Set_Context_Label : public Script::Command {
 	}
 };
 
+struct Rollover : public Script::Command {
+	int arg;
+
+	Rollover(const Common::Array<Common::String> &args) : arg(atoi(args[0].c_str())) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		g_engine->rollover({57, 427, 409, 480}, arg, 14, 1, 0);
+	}
+};
+
 struct RolloverMalette : public Script::Command {
 	int arg;
 
 	RolloverMalette(const Common::Array<Common::String> &args) : arg(atoi(args[0].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("RolloverMalette %d", arg);
+		g_engine->rollover({251, 346, 522, 394}, arg, 18, 1, 0xD698);
 	}
 };
 
@@ -315,7 +324,7 @@ struct RolloverSecretaire : public Script::Command {
 
 	RolloverSecretaire(const Common::Array<Common::String> &args) : arg(atoi(args[0].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("RolloverSecretaire %d", arg);
+		g_engine->rollover({216, 367, 536, 430}, arg, 12, 1, 0xFFFF);
 	}
 };
 
@@ -354,6 +363,7 @@ struct LoadVariable : public Script::Command {
 	E(Play_AnimBloc)                 \
 	E(Play_AnimBloc_Number)          \
 	E(Play_Movie)                    \
+	E(Rollover)                      \
 	E(RolloverMalette)               \
 	E(RolloverSecretaire)            \
 	E(SaveVariable)                  \

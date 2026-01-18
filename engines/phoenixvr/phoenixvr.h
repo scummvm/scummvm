@@ -43,6 +43,10 @@
 #include "phoenixvr/script.h"
 #include "phoenixvr/vr.h"
 
+namespace Graphics {
+class Font;
+}
+
 namespace PhoenixVR {
 
 struct PhoenixVRGameDescription;
@@ -160,6 +164,8 @@ public:
 	void saveVariables();
 	void loadVariables();
 
+	void rollover(Common::Rect dstRect, int textId, int size, bool bold, uint16_t color);
+
 private:
 	static Common::String removeDrive(const Common::String &path);
 	Graphics::Surface *loadSurface(const Common::String &path);
@@ -224,6 +230,15 @@ private:
 	Common::String _contextScript;
 	Common::String _contextLabel;
 	Common::Array<byte> _capturedState;
+
+	Common::HashMap<int, Common::String> _textes;
+
+	Common::ScopedPtr<Graphics::Font> _font12;
+	Common::ScopedPtr<Graphics::Font> _font14;
+	Common::ScopedPtr<Graphics::Font> _font18;
+
+	Common::ScopedPtr<Graphics::ManagedSurface> _text;
+	Common::Rect _textRect;
 };
 
 extern PhoenixVREngine *g_engine;

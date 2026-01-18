@@ -31,6 +31,8 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "engines/util.h"
+#include "graphics/font.h"
+#include "graphics/fonts/ttf.h"
 #include "graphics/framelimiter.h"
 #include "graphics/surface.h"
 #include "image/pcx.h"
@@ -175,6 +177,7 @@ void PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
 	debug("gotowarp %s, save prev: %d", warp.c_str(), savePrev);
 	_nextWarp = _script->getWarp(warp);
 	_hoverIndex = -1;
+	_text.reset();
 	if (savePrev) {
 		assert(_warpIdx >= 0);
 		_prevWarp = _warpIdx;
@@ -409,6 +412,11 @@ void PhoenixVREngine::tickTimer(float dt) {
 
 void PhoenixVREngine::renderVR() {
 	_vr.render(_screen, _angleX.angle(), _angleY.angle(), _fov, _showRegions ? _regSet.get() : nullptr);
+	if (_text) {
+		int16 x = _textRect.left + (_textRect.width() - _text->w) / 2;
+		int16 y = _textRect.top + (_textRect.height() - _text->h) / 2;
+		_screen->blitFrom(*_text, {x, y});
+	}
 }
 
 void PhoenixVREngine::saveVariables() {
@@ -426,6 +434,38 @@ void PhoenixVREngine::loadVariables() {
 		_variables.setVal(_variableOrder[i], _variableSnapshot[i]);
 	}
 	_variableSnapshot.clear();
+}
+
+void PhoenixVREngine::rollover(Common::Rect dstRect, int textId, int size, bool bold, uint16_t color) {
+	Graphics::Font *font = nullptr;
+	if (size < 14)
+		font = _font12.get();
+	else if (size < 18)
+		font = _font14.get();
+	else
+		font = _font18.get();
+
+	if (!font)
+		return;
+
+	if (!_textes.contains(textId)) {
+		debug("rollover reset");
+		_text.reset();
+		return;
+	}
+	auto &text = _textes.getVal(textId);
+	debug("rollover %s, %s font size: %d, bold: %d, color: %02x", dstRect.toString().c_str(), text.c_str(), size, bold, color);
+
+	auto textH = font->getFontHeight();
+	auto textW = font->getStringWidth(text);
+	debug("text %dx%d", textW, textH);
+	_text.reset(new Graphics::ManagedSurface(textW, textH, _screen->format));
+	_text->clear();
+	byte r, g, b;
+	_rgb565.colorToRGB(color, r, g, b);
+	auto textColor = _text->format.RGBToColor(r, g, b);
+	font->drawAlphaString(_text.get(), text, 0, 0, textW, textColor, Graphics::kTextAlignLeft);
+	_textRect = dstRect;
 }
 
 void PhoenixVREngine::tick(float dt) {
@@ -542,6 +582,13 @@ void PhoenixVREngine::tick(float dt) {
 
 Common::Error PhoenixVREngine::run() {
 	initGraphics(640, 480, &_pixelFormat);
+#ifdef USE_FREETYPE2
+	static const Common::String family("NotoSerif-Bold.ttf");
+	_font12.reset(Graphics::loadTTFFontFromArchive(family, 12));
+	_font14.reset(Graphics::loadTTFFontFromArchive(family, 14));
+	_font18.reset(Graphics::loadTTFFontFromArchive(family, 18));
+#endif
+
 	_screen = new Graphics::Screen();
 	_screenCenter = _screen->getBounds().center();
 	{
@@ -556,6 +603,26 @@ Common::Error PhoenixVREngine::run() {
 			declareVariable(var);
 			_variableOrder.push_back(Common::move(var));
 		}
+	}
+	{
+		Common::File textes;
+		if (!textes.open(Common::Path("textes.txt")))
+			error("can't read textes.txt");
+		while (!textes.eos()) {
+			auto text = textes.readLine();
+			if (text.empty() || text[0] != '*')
+				continue;
+			uint pos = 1;
+			while (pos < text.size() && Common::isSpace(text[pos]))
+				++pos;
+			int textId = atoi(text.c_str() + pos);
+			while (pos < text.size() && Common::isDigit(text[pos]))
+				++pos;
+			while (pos < text.size() && Common::isSpace(text[pos]))
+				++pos;
+			_textes.setVal(textId, text.substr(pos));
+		}
+		debug("loaded %u textes", _textes.size());
 	}
 	setNextScript("script.lst");
 
