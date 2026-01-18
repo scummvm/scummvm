@@ -45,7 +45,7 @@ struct GameState {
 	Common::Array<byte> state;
 
 	static GameState load(Common::SeekableReadStream &stream);
-	void save(Common::SeekableWriteStream &stream) const;
+	void save(Common::WriteStream &stream) const;
 
 	Graphics::Surface *getThumbnail(const Graphics::PixelFormat &fmt, int newWidth = 0);
 };

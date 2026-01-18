@@ -34,7 +34,7 @@ GameState GameState::load(Common::SeekableReadStream &stream) {
 	return state;
 }
 
-void GameState::save(Common::SeekableWriteStream &stream) const {
+void GameState::save(Common::WriteStream &stream) const {
 	auto writeString = [&](const Common::String &str) {
 		stream.writeUint32LE(str.size() + 1);
 		stream.writeString(str);

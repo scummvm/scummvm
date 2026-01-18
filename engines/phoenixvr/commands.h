@@ -278,7 +278,9 @@ struct LoadSave_Load : public Script::Command {
 	LoadSave_Load(const Common::Array<Common::String> &args) : slot(atoi(args[0].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		debug("LoadSave_Load %d", slot);
-		g_engine->loadSaveSlot(slot);
+		auto err = g_engine->loadGameState(slot);
+		if (err.getCode() != Common::ErrorCode::kNoError)
+			error("loading state failed %d", slot);
 	}
 };
 
@@ -288,7 +290,9 @@ struct LoadSave_Save : public Script::Command {
 	LoadSave_Save(const Common::Array<Common::String> &args) : slot(atoi(args[0].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		debug("LoadSave_Save %d", slot);
-		g_engine->saveSaveSlot(slot);
+		auto err = g_engine->saveGameState(slot, {});
+		if (err.getCode() != Common::ErrorCode::kNoError)
+			error("saving state failed %d", slot);
 	}
 };
 

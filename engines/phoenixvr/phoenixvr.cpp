@@ -653,12 +653,13 @@ Common::Error PhoenixVREngine::run() {
 	// Set the engine's debugger console
 	setDebugger(new Console());
 
-#if 0
 	// If a savegame was selected from the launcher, load it
 	int saveSlot = ConfMan.getInt("save_slot");
-	if (saveSlot != -1)
-		(void)loadGameState(saveSlot);
-#endif
+	if (saveSlot != -1) {
+		auto r = loadGameState(saveSlot);
+		if (r.getCode() != Common::ErrorCode::kNoError)
+			return r;
+	}
 
 	Common::Event event;
 
@@ -868,12 +869,7 @@ void PhoenixVREngine::captureContext() {
 	debug("captured %u bytes of state", _capturedState.size());
 }
 
-void PhoenixVREngine::loadSaveSlot(int idx) {
-	Common::ScopedPtr<Common::InSaveFile> slot(_saveFileMan->openForLoading(getSaveStateName(idx)));
-	if (!slot) {
-		warning("loadSaveSlot: invalid save slot %d", idx);
-		return;
-	}
+Common::Error PhoenixVREngine::loadGameStream(Common::SeekableReadStream *slot) {
 	auto state = GameState::load(*slot);
 
 	killTimer();
@@ -965,14 +961,10 @@ void PhoenixVREngine::loadSaveSlot(int idx) {
 	}
 
 	_loading = true;
+	return Common::kNoError;
 }
 
-void PhoenixVREngine::saveSaveSlot(int idx) {
-	Common::ScopedPtr<Common::OutSaveFile> slot(_saveFileMan->openForSaving(getSaveStateName(idx)));
-	if (!slot) {
-		warning("saveSaveSlot: invalid save slot %d", idx);
-		return;
-	}
+Common::Error PhoenixVREngine::saveGameStream(Common::WriteStream *slot, bool isAutosave) {
 	GameState state;
 	state.script = _contextScript;
 	state.game = _contextLabel;
@@ -1016,6 +1008,7 @@ void PhoenixVREngine::saveSaveSlot(int idx) {
 	_capturedState.clear();
 
 	state.save(*slot);
+	return Common::kNoError;
 }
 
 void PhoenixVREngine::drawSlot(int idx, int face, int x, int y) {
