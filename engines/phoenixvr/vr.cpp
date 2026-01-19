@@ -108,7 +108,7 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 		int16 ac[64] = {};
 		int8 dc8 = dcBs.readUInt(8);
 		auto *iquant = channel ? quant.quantCbCr : quant.quantY;
-		ac[0] = iquant[0] * dc8 + 0x80 * 8 * 8;
+		ac[0] = iquant[0] * dc8;
 		for (uint idx = 1; idx < 64;) {
 			auto b = decoded[decodedOffset++];
 			if (b == 0x00) {
@@ -132,7 +132,7 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 		const auto *src = ac;
 		for (unsigned h = 8; h--; dst += planePitch - 8) {
 			for (unsigned w = 8; w--;) {
-				int v = *src++;
+				int v = *src++ + 128;
 				v = clip(v);
 				*dst++ = v;
 			}
