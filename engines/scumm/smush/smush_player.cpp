@@ -432,6 +432,18 @@ void SmushPlayer::handleFetch(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFetch()");
 	assert(subSize >= 6);
 
+	// For RA2 Handler 25, skip FTCH because the frame buffer only contains the
+	// par4=5 base background without the overlays (par4=4, 6, 7) that were drawn
+	// immediately in frame 0. Restoring would erase those overlays and make
+	// enemies invisible since they draw on top of the erased areas.
+	if (_vm->_game.id == GID_REBEL2 && _insane != nullptr) {
+		InsaneRebel2 *rebel2 = static_cast<InsaneRebel2 *>(_insane);
+		if (rebel2->getHandler() == 25) {
+			debug("SmushPlayer::handleFetch: Skipping FTCH for Handler 25 - preserving overlays");
+			return;
+		}
+	}
+
 	if (_frameBuffer != nullptr) {
 		memcpy(_dst, _frameBuffer, _width * _height);
 	}
