@@ -264,6 +264,74 @@ public:
 					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 					  int16 par1, int16 par2, int16 par3, int16 par4) override;
 
+	// ======================= Rendering Helper Functions =======================
+	// These are extracted from procPostRendering for better readability
+
+	// Fill status bar background area (FUN_004288c0 equivalent)
+	void renderStatusBarBackground(byte *renderBitmap, int pitch, int width, int height,
+								   int videoWidth, int videoHeight, int statusBarY);
+
+	// Draw NUT-based HUD overlays for Handler 0x26/0x19 turret modes
+	void renderTurretHudOverlays(byte *renderBitmap, int pitch, int width, int height, int32 curFrame);
+
+	// Draw embedded SAN HUD overlays from IACT chunks
+	void renderEmbeddedHudOverlays(byte *renderBitmap, int pitch, int width, int height);
+
+	// Draw DISPFONT.NUT status bar sprites (FUN_0041c012 equivalent)
+	void renderStatusBarSprites(byte *renderBitmap, int pitch, int width, int height,
+								int statusBarY, int32 curFrame);
+
+	// Draw Handler 7 ship sprite (space flight - FLY sprites)
+	void renderHandler7Ship(byte *renderBitmap, int pitch, int width, int height);
+
+	// Draw Handler 8 ship sprite (third-person vehicle - POV sprites)
+	void renderHandler8Ship(byte *renderBitmap, int pitch, int width, int height);
+
+	// Draw fallback ship using embedded HUD frame
+	void renderFallbackShip(byte *renderBitmap, int pitch, int width, int height);
+
+	// Draw enemy indicator brackets and erase destroyed enemy areas
+	void renderEnemyOverlays(byte *renderBitmap, int pitch, int width, int height, int videoWidth);
+
+	// Draw explosion animations from 5-slot system
+	void renderExplosions(byte *renderBitmap, int pitch, int width, int height);
+
+	// Draw laser shot beams and impacts
+	void renderLaserShots(byte *renderBitmap, int pitch, int width, int height);
+
+	// Update target lock state and draw crosshair/reticle
+	void renderCrosshair(byte *renderBitmap, int pitch, int width, int height);
+
+	// Reset enemy active flags and collision zones at frame end
+	void frameEndCleanup();
+
+	// ======================= Opcode 6 Helper Functions =======================
+	// Handler-specific setup extracted from iactRebel2Opcode6
+
+	// Handler 8 (third-person vehicle) setup - FUN_00401234 case 4
+	void opcode6Handler8Setup(int16 par3, int16 par4);
+
+	// Handler 7 (space flight) setup - FUN_0040c3cc case 4
+	void opcode6Handler7Setup(int16 par3, int16 par4);
+
+	// Calculate view offsets based on level type (lines 182-213)
+	void opcode6CalcViewOffsets();
+
+	// ======================= Opcode 8 Helper Functions =======================
+	// Resource loading extracted from iactRebel2Opcode8
+
+	// Load Handler 7 FLY NUT sprites from IACT data
+	bool loadHandler7FlySprites(Common::SeekableReadStream &b, int64 remaining, int16 par4);
+
+	// Load turret HUD overlay NUT from ANIM data
+	bool loadTurretHudOverlay(byte *animData, int32 size, int16 par3);
+
+	// Load Handler 8 ship POV NUT sprites from ANIM data
+	bool loadHandler8ShipSprites(byte *animData, int32 size, int16 par3);
+
+	// Load Level 2 background from embedded ANIM
+	bool loadLevel2Background(byte *animData, int32 size, byte *renderBitmap);
+
 	// Override procSKIP to disable Full Throttle's conditional frame skip mechanism
 	// RA2 uses a different system for conditional frames via IACT opcodes
 	void procSKIP(int32 subSize, Common::SeekableReadStream &b) override;

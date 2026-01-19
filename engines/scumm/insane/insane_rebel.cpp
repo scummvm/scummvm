@@ -3172,14 +3172,65 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// background persists. FOBJ sprites (enemies) are then decoded on top by SMUSH.
 	// We do NOT redraw the background here as that would overwrite FOBJ content.
 
-	// ============================================================
-	// STEP 0: Fill status bar background (FUN_004288c0 equivalent)
-	// ============================================================
-	// Clear the status bar area at Y=180-199 with background color
+	// --- HUD Drawing Order (from FUN_004089ab assembly analysis) ---
+	// 1. FUN_004288c0: Fill status bar background at Y=0xb4 (180)
+	// 2. FUN_004089ab: Draw turret overlays, targeting reticle, crosshair
+	// 3. FUN_0041c012: Draw status bar sprites LAST (on top)
+
+	// STEP 0: Fill status bar background (FUN_004288c0)
+	renderStatusBarBackground(renderBitmap, pitch, width, height, videoWidth, videoHeight, statusBarY);
+
+	// STEP 1A: Draw NUT-based HUD overlays for Handler 0x26/0x19 (FUN_004089ab lines 195-226)
+	renderTurretHudOverlays(renderBitmap, pitch, width, height, curFrame);
+
+	// STEP 1B: Draw embedded SAN HUD overlays (from IACT chunks)
+	renderEmbeddedHudOverlays(renderBitmap, pitch, width, height);
+
+	// STEP 2: Draw DISPFONT.NUT status bar sprites (FUN_0041c012)
+	renderStatusBarSprites(renderBitmap, pitch, width, height, statusBarY, curFrame);
+
+	// Ship rendering (FUN_00401ccf for Handler 8, FUN_0040d836 for Handler 7)
+	debug("Rebel2 Ship Check: handler=%d shipSprite=%p flyShipSprite=%p shipLevelMode=%d numSprites=%d/%d",
+		_rebelHandler, (void*)_shipSprite, (void*)_flyShipSprite, _shipLevelMode,
+		_shipSprite ? _shipSprite->getNumChars() : 0,
+		_flyShipSprite ? _flyShipSprite->getNumChars() : 0);
+
+	renderHandler7Ship(renderBitmap, pitch, width, height);
+	renderHandler8Ship(renderBitmap, pitch, width, height);
+	renderFallbackShip(renderBitmap, pitch, width, height);
+
+	// Enemy indicators and destroyed enemy area erase
+	renderEnemyOverlays(renderBitmap, pitch, width, height, videoWidth);
+
+	// Explosion animations (FUN_409FBC)
+	renderExplosions(renderBitmap, pitch, width, height);
+
+	// Laser shot beams and impacts
+	renderLaserShots(renderBitmap, pitch, width, height);
+
+	// Collision zone visualization (debug - for Handler 7/8 pilot modes)
+	if (_rebelHandler == 7 || _rebelHandler == 8) {
+		drawCollisionZones(renderBitmap, pitch, width, height, 0);
+	}
+
+	// Crosshair/reticle (FUN_004089ab, FUN_0040d836)
+	renderCrosshair(renderBitmap, pitch, width, height);
+
+	// HUD score/lives rendering (FUN_0041c012)
+	renderScoreHUD(renderBitmap, pitch, width, height, 0);
+
+	// Frame end cleanup: reset enemy active flags and collision zones (FUN_403240)
+	frameEndCleanup();
+}
+
+// ======================= Rendering Helper Functions =======================
+// These are extracted from procPostRendering for better readability
+
+void InsaneRebel2::renderStatusBarBackground(byte *renderBitmap, int pitch, int width, int height,
+											 int videoWidth, int videoHeight, int statusBarY) {
+	// Fill status bar background (FUN_004288c0 equivalent)
 	// Original assembly: FUN_004288c0(local_8, 0, 0, 0xb4, 0x140, 0x14, 4)
 	// This fills width=320, height=20 starting at Y=180 with color index 4
-	// Status bar is ALWAYS shown during gameplay (_rebelHandler != 0)
-	// Hidden during cinematics/intros when _rebelHandler == 0 (handled by early return above)
 	const byte statusBarBgColor = 4;
 
 	for (int y = statusBarY; y < videoHeight; y++) {
@@ -3191,795 +3242,607 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			renderBitmap[destY * pitch + destX] = statusBarBgColor;
 		}
 	}
-	
-	// ============================================================
-	// STEP 1A: Draw NUT-based HUD overlays for Handler 0x26/0x19 (turret modes)
-	// ============================================================
-	// For turret handlers, the HUD overlay is loaded as a NUT file via IACT opcode 8
-	// and contains animated frames for blinking cockpit lights.
-	//
+}
+
+void InsaneRebel2::renderTurretHudOverlays(byte *renderBitmap, int pitch, int width, int height, int32 curFrame) {
+	// Draw NUT-based HUD overlays for Handler 0x26/0x19 (turret modes)
 	// From FUN_004089ab disassembly (lines 195-226):
 	// - DAT_0047fe78 (_hudOverlayNut): Primary HUD overlay with 6 animation frames
 	// - Position formula (low-res):
 	//   X = 160 + (mouseOffsetX >> 4) - (width / 2) - spriteOffsetX
 	//   Y = 182 - (mouseOffsetY >> 4) - height - spriteOffsetY
 	// - Animation: spriteIndex = (frameCounter / 2) % 6
-	//
-	// The mouse offset creates a subtle parallax effect as the view pans.
-	if ((_rebelHandler == 0x26 || _rebelHandler == 0x19) && _hudOverlayNut && _hudOverlayNut->getNumChars() > 0) {
-		// Calculate mouse offset (clamped to -127..127)
-		// These match DAT_0047a7e0/DAT_0047a7e2 in the original
-		int mouseOffsetX = (_vm->_mouse.x - 160);  // Relative to screen center
-		int mouseOffsetY = (_vm->_mouse.y - 100);  // Relative to screen center
-		if (mouseOffsetX > 127) mouseOffsetX = 127;
-		if (mouseOffsetX < -127) mouseOffsetX = -127;
-		if (mouseOffsetY > 127) mouseOffsetY = 127;
-		if (mouseOffsetY < -127) mouseOffsetY = -127;
 
-		// Animation frame cycling: (frameCounter / 2) % 6
-		// This creates a 12-frame cycle (each sprite shown for 2 video frames)
-		int numSprites = _hudOverlayNut->getNumChars();
-		int animFrameCount = MIN(numSprites, 6);  // Use up to 6 frames for animation
-		int animFrame = 0;
-		if (animFrameCount > 0) {
-			animFrame = (curFrame / 2) % animFrameCount;
-		}
+	if ((_rebelHandler != 0x26 && _rebelHandler != 0x19) || !_hudOverlayNut || _hudOverlayNut->getNumChars() <= 0)
+		return;
 
-		// Get sprite dimensions and offset
-		// NUT format stores sprite offsets that affect positioning
-		int spriteW = _hudOverlayNut->getCharWidth(animFrame);
-		int spriteH = _hudOverlayNut->getCharHeight(animFrame);
+	// Calculate mouse offset (clamped to -127..127)
+	int mouseOffsetX = (_vm->_mouse.x - 160);
+	int mouseOffsetY = (_vm->_mouse.y - 100);
+	if (mouseOffsetX > 127) mouseOffsetX = 127;
+	if (mouseOffsetX < -127) mouseOffsetX = -127;
+	if (mouseOffsetY > 127) mouseOffsetY = 127;
+	if (mouseOffsetY < -127) mouseOffsetY = -127;
 
-		// Position calculation from assembly (low-res mode):
-		// X = 0xa0 (160) + (mouseOffsetX >> 4) - (width / 2) - offsetX
-		// Y = 0xb6 (182) - (mouseOffsetY >> 4) - height - offsetY
-		// Note: The sprite offset is embedded in the NUT data; for simplicity we use 0
-		int spriteOffsetX = 0;  // Could be extracted from NUT if needed
-		int spriteOffsetY = 0;
-
-		int hudX = 160 + (mouseOffsetX >> 4) - (spriteW / 2) - spriteOffsetX;
-		int hudY = 182 - (mouseOffsetY >> 4) - spriteH - spriteOffsetY;
-
-		// Apply view offset for scrolling background
-		hudX += _viewX;
-		hudY += _viewY;
-
-		// Draw the HUD overlay:
-		// From FUN_004089ab: Sprite 0 is ALWAYS drawn first (base cockpit)
-		// Then if animation frame != 0, draw the animation frame on top (blinking lights)
-		renderNutSprite(renderBitmap, pitch, width, height, hudX, hudY, _hudOverlayNut, 0);
-
-		// Draw animation overlay frame if not frame 0
-		// Animation frames 1-5 contain the blinking light states
-		if (animFrame != 0 && animFrame < numSprites) {
-			renderNutSprite(renderBitmap, pitch, width, height, hudX, hudY, _hudOverlayNut, animFrame);
-		}
-
-		debug(5, "Rebel2 HUD: Drawing NUT overlay frame %d/%d at (%d,%d) mouseOffset=(%d,%d)",
-			  animFrame, numSprites, hudX, hudY, mouseOffsetX, mouseOffsetY);
+	// Animation frame cycling: (frameCounter / 2) % 6
+	int numSprites = _hudOverlayNut->getNumChars();
+	int animFrameCount = MIN(numSprites, 6);
+	int animFrame = 0;
+	if (animFrameCount > 0) {
+		animFrame = (curFrame / 2) % animFrameCount;
 	}
+
+	// Get sprite dimensions
+	int spriteW = _hudOverlayNut->getCharWidth(animFrame);
+	int spriteH = _hudOverlayNut->getCharHeight(animFrame);
+
+	// Position calculation from assembly (low-res mode)
+	int spriteOffsetX = 0;
+	int spriteOffsetY = 0;
+	int hudX = 160 + (mouseOffsetX >> 4) - (spriteW / 2) - spriteOffsetX;
+	int hudY = 182 - (mouseOffsetY >> 4) - spriteH - spriteOffsetY;
+
+	// Apply view offset for scrolling background
+	hudX += _viewX;
+	hudY += _viewY;
+
+	// Draw base cockpit (sprite 0 always drawn first)
+	renderNutSprite(renderBitmap, pitch, width, height, hudX, hudY, _hudOverlayNut, 0);
+
+	// Draw animation overlay frame if not frame 0
+	if (animFrame != 0 && animFrame < numSprites) {
+		renderNutSprite(renderBitmap, pitch, width, height, hudX, hudY, _hudOverlayNut, animFrame);
+	}
+
+	debug(5, "Rebel2 HUD: Drawing NUT overlay frame %d/%d at (%d,%d) mouseOffset=(%d,%d)",
+		  animFrame, numSprites, hudX, hudY, mouseOffsetX, mouseOffsetY);
 
 	// Draw secondary HUD overlay if present (DAT_0047fe80)
-	if ((_rebelHandler == 0x26 || _rebelHandler == 0x19) && _hudOverlay2Nut && _hudOverlay2Nut->getNumChars() > 0) {
-		// Similar positioning to primary overlay
-		int mouseOffsetX = (_vm->_mouse.x - 160);
-		int mouseOffsetY = (_vm->_mouse.y - 100);
-		if (mouseOffsetX > 127) mouseOffsetX = 127;
-		if (mouseOffsetX < -127) mouseOffsetX = -127;
-		if (mouseOffsetY > 127) mouseOffsetY = 127;
-		if (mouseOffsetY < -127) mouseOffsetY = -127;
-
-		int spriteW = _hudOverlay2Nut->getCharWidth(0);
-		int spriteH = _hudOverlay2Nut->getCharHeight(0);
-
-		int hudX = 160 + (mouseOffsetX >> 4) - (spriteW / 2);
-		int hudY = 182 - (mouseOffsetY >> 4) - spriteH;
-
-		hudX += _viewX;
-		hudY += _viewY;
-
-		renderNutSprite(renderBitmap, pitch, width, height, hudX, hudY, _hudOverlay2Nut, 0);
+	if (_hudOverlay2Nut && _hudOverlay2Nut->getNumChars() > 0) {
+		int spr2W = _hudOverlay2Nut->getCharWidth(0);
+		int spr2H = _hudOverlay2Nut->getCharHeight(0);
+		int hud2X = 160 + (mouseOffsetX >> 4) - (spr2W / 2) + _viewX;
+		int hud2Y = 182 - (mouseOffsetY >> 4) - spr2H + _viewY;
+		renderNutSprite(renderBitmap, pitch, width, height, hud2X, hud2Y, _hudOverlay2Nut, 0);
 	}
+}
 
-	// ============================================================
-	// STEP 1B: Draw embedded SAN HUD overlays (from IACT chunks)
-	// ============================================================
+void InsaneRebel2::renderEmbeddedHudOverlays(byte *renderBitmap, int pitch, int width, int height) {
+	// Draw embedded SAN HUD overlays (from IACT chunks)
 	// For Handler 7 (Level 3): HUD elements are scattered across the screen
-	//   - Each frame has its own renderX/renderY position from FOBJ left/top
-	//   - userId 1-11 are different HUD elements
-	//   - userIds at the same position are direction variants (select one based on direction)
 	// For turret handlers: slots 1-2 form a two-part cockpit overlay
-	//   - userId 1: Left piece at X=0
-	//   - userId 2: Right piece at X=slot1Width
-	// These are drawn BEFORE the status bar so status bar appears on top
-
-	// For Handler 7 ship direction: identify ship frames at same position
-	// Level 3 has userId 1 and 2 at position (162, 105) - these are direction variants
-	// We select one based on the current direction to simulate ship turning
 
 	for (int hudSlot = 1; hudSlot < 16; hudSlot++) {
 		EmbeddedSanFrame &frame = _rebelEmbeddedHud[hudSlot];
-		if (frame.valid && frame.pixels && frame.width > 0 && frame.height > 0) {
-			// Skip frames at position (0,0) with small dimensions - these are likely animation patches
-			// that need special handling (userId=3: 11x26, userId=4: 17x53 in Level 1)
-			// TODO: Investigate how these are used in the original assembly
-			if (frame.renderX == 0 && frame.renderY == 0 && frame.width < 50 && frame.height < 60) {
-				debug(3, "Rebel2: Skipping small embedded frame at (0,0): slot=%d size=%dx%d",
-					hudSlot, frame.width, frame.height);
-				continue;
-			}
+		if (!frame.valid || !frame.pixels || frame.width <= 0 || frame.height <= 0)
+			continue;
 
-			int destX, destY;
-
-			// For Handler 7: Check if this is a ship direction frame
-			// Ship frames are at the same position - skip all but the selected one
-			if (_rebelHandler == 7) {
-				// Collect all frame IDs in this position group (may not be consecutive)
-				int groupMembers[16];
-				int groupCount = 0;
-
-				for (int id = 1; id < 16; id++) {
-					EmbeddedSanFrame &g = _rebelEmbeddedHud[id];
-					if (g.valid && g.renderX == frame.renderX && g.renderY == frame.renderY &&
-						g.width == frame.width && g.height == frame.height) {
-						groupMembers[groupCount++] = id;
-					}
-				}
-
-				// If there's more than one frame in this group, select based on direction
-				if (groupCount > 1) {
-					// Map direction index (0-34) to group index (0 to groupCount-1)
-					int selectedOffset = _shipDirectionIndex % groupCount;
-					int selectedId = groupMembers[selectedOffset];
-
-					// Check if selected frame has pixels, if not find one that does
-					EmbeddedSanFrame &selectedFrame = _rebelEmbeddedHud[selectedId];
-					int nonZero = 0;
-					for (int i = 0; i < selectedFrame.width * selectedFrame.height; i++) {
-						if (selectedFrame.pixels[i] != 0) nonZero++;
-					}
-
-					if (nonZero == 0) {
-						// Selected frame is empty, find another with pixels
-						for (int i = 0; i < groupCount; i++) {
-							EmbeddedSanFrame &altFrame = _rebelEmbeddedHud[groupMembers[i]];
-							int altNonZero = 0;
-							for (int j = 0; j < altFrame.width * altFrame.height; j++) {
-								if (altFrame.pixels[j] != 0) altNonZero++;
-							}
-							if (altNonZero > 0) {
-								selectedId = groupMembers[i];
-								break;
-							}
-						}
-					}
-
-					// Only render if this is the selected frame
-					if (hudSlot != selectedId) {
-						continue;  // Skip this frame, render the selected one instead
-					}
-				}
-			}
-
-			// Use the stored render position from the embedded ANIM data
-			// The renderX/renderY are set from FOBJ's left/top values
-			destX = frame.renderX;
-			destY = frame.renderY;
-
-			// For Handler 0x26 (turret) and 0x19 (mixed): Embedded ANIM frame positioning
-			// From FUN_00407fcb assembly lines 389-391: screen dimensions are 320x200 (0x140 x 0xc8)
-			// Unlike NUT overlays (which use 0xb6=182 base with mouse parallax), embedded ANIM
-			// frames use screen height (200) as the base for bottom-aligned positioning.
-			// Formula: X = 160 - width/2 - fobj_left, Y = 200 - height - fobj_top
-			if ((_rebelHandler == 0x26 || _rebelHandler == 0x19) && (hudSlot == 1 || hudSlot == 2)) {
-				// X: centered horizontally, adjusted by FOBJ left offset
-				destX = 160 - frame.width / 2 - frame.renderX;
-				// Y: screen height (0xc8=200) - height - fobj_top for bottom-aligned cockpit
-				destY = 200 - frame.height - frame.renderY;
-			}
-
-			// For Handler 7 (space flight): HUD cockpit overlays use FOBJ position directly
-			// From FUN_0040d836: The clip region is 320x170 (0x140 x 0xaa)
-			// Large cockpit frames (hudSlot 1/2) need centering like turret handler
-			if (_rebelHandler == 7 && (hudSlot == 1 || hudSlot == 2) && frame.width > 100) {
-				// Large cockpit frame - center horizontally, position at bottom
-				destX = 160 - frame.width / 2 - frame.renderX;
-				// Position above status bar area (170 is render height for Handler 7)
-				destY = 170 - frame.height - frame.renderY;
-			} else if (_rebelHandler == 7 && destX > 100 && destY > 50) {
-				// Ship sprite in center of screen - apply position offset
-				int16 offsetX = (_shipPosX - 160) / 8;
-				int16 offsetY = (_shipPosY - 100) / 8;
-				destX += offsetX;
-				destY += offsetY;
-			}
-
-			// Apply View Offset for all HUD elements
-			destX += _viewX;
-			destY += _viewY;
-
-			// Debug: log embedded frame render dimensions
-			debug(3, "Rebel2: Rendering embedded HUD slot=%d size=%dx%d at (%d,%d) screen=%dx%d",
-				hudSlot, frame.width, frame.height, destX, destY, pitch, height);
-
-			// Draw frame with transparency (pixel 0 and 231 = transparent, matching NUT rendering)
-			for (int y = 0; y < frame.height && (destY + y) < height; y++) {
-				for (int x = 0; x < frame.width && (destX + x) < pitch; x++) {
-					byte pixel = frame.pixels[y * frame.width + x];
-					if (pixel != 0 && pixel != 231) {  // Skip transparent pixels (0 and 231/0xE7)
-						int fx = destX + x;
-						int fy = destY + y;
-						if (fx >= 0 && fy >= 0) {
-							renderBitmap[fy * pitch + fx] = pixel;
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	// ============================================================
-	// STEP 2: Draw DISPFONT.NUT status bar sprites (FUN_0041c012 equivalent)
-	// ============================================================
-	// DISPFONT.NUT contains status bar elements - drawn ON TOP of cockpit overlay
-	// From assembly FUN_0041c012:
-	//   - Sprite 1: Status bar background frame (full width, drawn at 0,0)
-	//   - Sprites 2-5: Difficulty stars (1-4 stars, drawn at 0,0)
-	//   - Sprite 6: Damage bar fill (drawn with clip rect X=0x3f, Y=9, W=64, H=6)
-	//   - Sprite 7: Damage alert (flashing red when damage critical)
-	// Status bar is ALWAYS drawn during gameplay (_rebelHandler != 0)
-	if (_smush_cockpitNut) {
-		// Draw status bar background frame (sprite 1) at (0, statusBarY)
-		// This sprite is the full-width status bar background
-		if (_smush_cockpitNut->getNumChars() > 1) {
-			renderNutSprite(renderBitmap, pitch, width, height, _viewX, statusBarY + _viewY, _smush_cockpitNut, 1);
-		}
-		
-		// Draw difficulty indicator (sprites 2-5 based on difficulty level 0-3)
-		// Sprite index = difficulty + 2; capped at 4 max difficulty (sprite 5)
-		// Assembly draws at (0,0) in buffer - same position as sprite 1
-		int difficulty = 0;  // TODO: Read from game state (DAT_0047a7fa)
-		if (difficulty > 3) difficulty = 3;
-		int difficultySprite = difficulty + 2;  // sprites 2, 3, 4, or 5
-		if (_smush_cockpitNut->getNumChars() > difficultySprite) {
-			renderNutSprite(renderBitmap, pitch, width, height, _viewX, statusBarY + _viewY, _smush_cockpitNut, difficultySprite);
-		}
-		
-// Draw damage bar (sprite 6) 
-			// Assembly uses clip rect: X=0x3f(63), Y=0x9(9), W=0x40(64), H=0x6(6)
-			// The width is scaled based on accumulated damage value (0..255)
-			// For now, draw at position (0, statusBarY) - sprite has internal positioning
-			if (_smush_cockpitNut->getNumChars() > 6) {
-				// Calculate width based on damage value.
-				// Damage range: 0..255 where 255 = full (Width 64)
-				int drawWidth = (64 * _playerDamage) / 255;
-			if (drawWidth < 0) drawWidth = 0;
-			if (drawWidth > 64) drawWidth = 64;
-			
-			// We need to draw a partial sprite or use a clip rect.
-			// smlayer_drawSomething supports scaling/clip?
-			// The current implementation of smlayer_drawSomething just draws the whole sprite.
-			// We can pass a "frame" or clip rect if we modify the function or use a lower level draw.
-			// For now, let's just draw the full sprite if damage < 255, to verify it appears.
-			// Ideally we should implement clipping.
-			
-			// NOTE: smlayer_drawSomething calls `_smush_cockpitNut->draw(...)`
-			// We can't easily clip without modifying NutRenderer or using a custom draw loop.
-			// Let's implement a custom draw loop for the damage bar here since it's simple.
-			
-			// Sprite 6 data (we need to copy a CLIP rect from within this sprite)
-			const byte *src = _smush_cockpitNut->getCharData(6);
-			int sw = _smush_cockpitNut->getCharWidth(6);
-			int sh = _smush_cockpitNut->getCharHeight(6);
-			// Clip rect inside the sprite (from assembly): X=63, Y=9, W=64, H=6
-			const int clipX = 63;
-			const int clipY = 9;
-			const int clipW = 64;
-			const int clipH = 6;
-			
-			// Draw clipped width
-			if (src && sw > 0 && sh > 0) {
-				// Clamp drawWidth to the clip width and ensure we don't read past sprite bounds
-				int maxClipW = sw - clipX;
-				if (maxClipW < 0) maxClipW = 0;
-				int drawW = drawWidth;
-				if (drawW > clipW) drawW = clipW;
-				if (drawW > maxClipW) drawW = maxClipW;
-				if (drawW > 0) {
-					int drawH = clipH;
-					if (drawH > (sh - clipY)) drawH = sh - clipY;
-					if (drawH < 0) drawH = 0;
-					for (int y = 0; y < drawH; y++) {
-						for (int x = 0; x < drawW; x++) {
-							// Render to (clipX + x + viewX, statusBarY + clipY + y + viewY)
-							int destX = clipX + x + _viewX;
-							int destY = statusBarY + clipY + y + _viewY;
-							if (destX >= 0 && destX < pitch && destY >= 0 && destY < height) {
-								byte pixel = src[(clipY + y) * sw + (clipX + x)];
-								if (pixel != 0) {
-									renderBitmap[destY * pitch + destX] = pixel;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		// Draw damage alert overlay (sprite 7) when damage is critical (> 0xAA = 170)
-		// Only draws when frame counter bit 3 is clear (every 8 frames)
-		if (_smush_cockpitNut->getNumChars() > 7) {
-			if (_playerDamage > 170 && ((curFrame & 8) == 0)) {
-				// Draw overlay sprite 7 at same general region (sx, sy)
-				renderNutSprite(renderBitmap, pitch, width, height, 63 + _viewX, statusBarY + 9 + _viewY, _smush_cockpitNut, 7);
-			}
-		}
-		
-		// Draw lives indicator - assembly shows at X=0xa8 (168), Y=7
-		// Uses sprite 1 again with different clip rect
-		// TODO: Implement lives rendering
-
-		// Draw score - uses FUN_00434cb0 (text rendering) at X=0x101(257)
-		// TODO: Implement score rendering
-	}
-
-	// ============================================================
-	// HANDLER 8 SHIP RENDERING (FUN_00401ccf equivalent)
-	// ============================================================
-	// For third-person vehicle missions (Handler 8), draw the player's ship sprite
-	// The ship position is calculated from _shipPosX/_shipPosY
-	//
-	// From FUN_00401ccf disassembly (lines 87-95):
-	// - Ship is drawn when DAT_0047e010 != NULL AND DAT_0043e000 != 5
-	// - Position offset X: (DAT_0043e006 - 0xa0) >> 3 = (shipPosX - 160) >> 3
-	// - Position offset Y: (DAT_0043e008 - 0x28) >> 2 = (shipPosY - 40) >> 2
-	// - Sprite index: param_5 & 1 (0 = normal, 1 = firing)
-	//
-	// The crosshair is drawn at lines 128-135 with base position:
-	// - Low-res: X = offset + 0xa0 (160), Y = offset + 0x69 (105)
-	// - High-res: X = offset*2 + 0x140 (320), Y = offset*2 + 0xd2 (210)
-	//
-	// The ship sprite is drawn using the same offset calculation but passed directly
-	// to FUN_004236e0. The rendering function treats these as screen coordinates.
-	debug("Rebel2 Ship Check: handler=%d shipSprite=%p flyShipSprite=%p shipLevelMode=%d numSprites=%d/%d",
-		_rebelHandler, (void*)_shipSprite, (void*)_flyShipSprite, _shipLevelMode,
-		_shipSprite ? _shipSprite->getNumChars() : 0,
-		_flyShipSprite ? _flyShipSprite->getNumChars() : 0);
-
-	// Handler 7 Ship Rendering (Space Flight - FLY sprites)
-	// Handler 7 uses _flyShipSprite (FLY001) with 35 direction frames (5x7 grid)
-	// Different from Handler 8's POV sprites
-	if (_rebelHandler == 7 && _flyShipSprite && _shipLevelMode != 5) {
-		// Handler 7 position calculation from FUN_0040d836 lines 173-175
-		// Draw position: (transformedX - 0xd4, transformedY - 0x82)
-		// where transformedX/Y come from FUN_0041c720 transformation
-		// For simplicity, we calculate based on ship direction
-
-		// Base position calculation (simplified from assembly)
-		// The ship is drawn at a fixed position offset by direction
-		int baseX = 160;  // Screen center X
-		int baseY = 105;  // Screen center Y (0x69)
-
-		// Add small offset based on ship position for "flight feel"
-		int16 posOffsetX = (_flyShipScreenX - 160) / 10;
-		int16 posOffsetY = (_flyShipScreenY - 100) / 10;
-
-		int shipScreenX = baseX + posOffsetX;
-		int shipScreenY = baseY + posOffsetY;
-
-		int numSprites = _flyShipSprite->getNumChars();
-		int spriteIndex = _shipDirectionIndex;
-
-		// Validate sprite index
-		if (spriteIndex < 0) spriteIndex = 0;
-		if (spriteIndex >= numSprites) spriteIndex = numSprites - 1;
-
-		// Get sprite dimensions and center it
-		int spriteW = _flyShipSprite->getCharWidth(spriteIndex);
-		int spriteH = _flyShipSprite->getCharHeight(spriteIndex);
-		int drawX = shipScreenX - spriteW / 2 + _viewX;
-		int drawY = shipScreenY - spriteH / 2 + _viewY;
-
-		// Draw the ship sprite (DAT_0047fee8 / FLY001)
-		renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _flyShipSprite, spriteIndex);
-
-		// Draw laser overlay if firing and laser sprite loaded (FLY002)
-		if (_shipFiring && _flyLaserSprite && _flyLaserSprite->getNumChars() > 0) {
-			// Laser sprite uses same direction index for frame animation
-			int laserIndex = spriteIndex % _flyLaserSprite->getNumChars();
-			renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _flyLaserSprite, laserIndex);
-		}
-
-		// Draw targeting overlay if loaded (FLY003) - goes at crosshair position
-		if (_flyTargetSprite && _flyTargetSprite->getNumChars() > 0) {
-			// Draw targeting reticle at ship position
-			int targetW = _flyTargetSprite->getCharWidth(0);
-			int targetH = _flyTargetSprite->getCharHeight(0);
-			int targetX = shipScreenX - targetW / 2 + _viewX;
-			int targetY = shipScreenY - targetH / 2 + _viewY;
-			renderNutSprite(renderBitmap, pitch, width, height, targetX, targetY, _flyTargetSprite, 0);
-		}
-
-		debug("Rebel2 Handler7: Ship drawn at (%d,%d) screenPos=(%d,%d) sprite=%d/%d dir=(%d,%d) idx=%d",
-			drawX, drawY, shipScreenX, shipScreenY, spriteIndex, numSprites,
-			_shipDirectionH, _shipDirectionV, _shipDirectionIndex);
-	}
-
-	// Handler 8 Ship Rendering (Third-Person Vehicle - POV sprites)
-	// Handler 8 uses _shipSprite (POV001) with position-based offset
-	else if (_rebelHandler == 8 && _shipSprite && _shipLevelMode != 5) {
-		// Calculate display offset from raw ship position (FUN_00401ccf lines 88-89)
-		// The shift operations create a dampened movement effect
-		int16 displayOffsetX = (_shipPosX - 0xa0) >> 3;  // (shipPosX - 160) >> 3
-		int16 displayOffsetY = (_shipPosY - 0x28) >> 2;  // (shipPosY - 40) >> 2
-
-		// Base screen position from crosshair calculation (FUN_00401ccf lines 128-129)
-		// Low-res mode: base X = 0xa0 (160), base Y = 0x69 (105)
-		int shipScreenX = 0xa0 + displayOffsetX;  // 160 + offset
-		int shipScreenY = 0x69 + displayOffsetY;  // 105 + offset
-
-		int numSprites = _shipSprite->getNumChars();
-		int spriteIndex = 0;
-
-		// Select sprite based on direction when multiple sprites are available
-		// The ship sprite sheet is organized as a grid of direction sprites:
-		// - 35 sprites (5x7): Full direction grid
-		// - 25 sprites (5x5): Reduced grid
-		// - 5 sprites: Horizontal direction only
-		// - 2 sprites: Normal (0) and firing (1)
-		// - 1 sprite: Static ship
-		if (numSprites >= 35) {
-			spriteIndex = _shipDirectionH * 7 + _shipDirectionV;
-			if (spriteIndex >= numSprites) spriteIndex = numSprites - 1;
-		} else if (numSprites >= 25) {
-			int vDir5 = (_shipDirectionV * 5) / 7;
-			spriteIndex = _shipDirectionH * 5 + vDir5;
-			if (spriteIndex >= numSprites) spriteIndex = numSprites - 1;
-		} else if (numSprites >= 5) {
-			spriteIndex = _shipDirectionH;
-			if (spriteIndex >= numSprites) spriteIndex = numSprites - 1;
-		} else if (numSprites == 2) {
-			spriteIndex = _shipFiring ? 1 : 0;
-		}
-
-		// Get sprite dimensions and center it at the calculated position
-		int spriteW = _shipSprite->getCharWidth(spriteIndex);
-		int spriteH = _shipSprite->getCharHeight(spriteIndex);
-		int drawX = shipScreenX - spriteW / 2 + _viewX;
-		int drawY = shipScreenY - spriteH / 2 + _viewY;
-
-		// Draw the primary ship sprite (DAT_0047e010)
-		renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _shipSprite, spriteIndex);
-
-		// Draw secondary ship sprite if available (DAT_0047e028)
-		if (_shipSprite2 && _shipSprite2->getNumChars() > spriteIndex) {
-			renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _shipSprite2, spriteIndex);
-		}
-
-		debug("Rebel2 Handler8: Ship drawn at screen(%d,%d) raw(%d,%d) offset(%d,%d) sprite=%d/%d dir=(%d,%d)",
-			drawX, drawY, _shipPosX, _shipPosY, displayOffsetX, displayOffsetY,
-			spriteIndex, numSprites, _shipDirectionH, _shipDirectionV);
-	}
-
-	// Fallback: Use embedded HUD frame as ship sprite
-	else if ((_rebelHandler == 7 || _rebelHandler == 8) && _shipLevelMode != 5) {
-		// Fallback: Use embedded HUD frame as ship sprite (Level 3 style)
-		// userId=11 contains the ship sprite strip
-		EmbeddedSanFrame &shipFrame = _rebelEmbeddedHud[11];
-		if (shipFrame.valid && shipFrame.pixels && shipFrame.width > 0 && shipFrame.height > 0) {
-			// Calculate display offset from raw ship position
-			int16 displayOffsetX = (_shipPosX - 0xa0) >> 3;
-			int16 displayOffsetY = (_shipPosY - 0x28) >> 2;
-			int shipScreenX = 0xa0 + displayOffsetX;
-			int shipScreenY = 0x69 + displayOffsetY;
-
-			// Check if this is a sprite strip (multiple directions in one image)
-			// 205 width / 5 directions = 41 pixels per direction
-			int spriteW = shipFrame.width;
-			int spriteH = shipFrame.height;
-			int srcX = 0;
-			int srcY = 0;
-			int numHorizontal = 1;
-			int numVertical = 1;
-
-			// Detect sprite strip layout - look for common patterns
-			if (spriteW >= 200 && spriteW % 5 == 0) {
-				// 5 horizontal directions (like 205 = 41 * 5)
-				numHorizontal = 5;
-				spriteW = shipFrame.width / 5;
-			}
-			if (spriteH >= 350 && spriteH % 7 == 0) {
-				// 7 vertical directions
-				numVertical = 7;
-				spriteH = shipFrame.height / 7;
-			}
-
-			// Select sprite from strip based on direction
-			int hDir = _shipDirectionH;
-			int vDir = _shipDirectionV;
-			if (hDir >= numHorizontal) hDir = numHorizontal - 1;
-			if (vDir >= numVertical) vDir = numVertical - 1;
-			srcX = hDir * spriteW;
-			srcY = vDir * spriteH;
-
-			// Draw position (centered)
-			int drawX = shipScreenX - spriteW / 2 + _viewX;
-			int drawY = shipScreenY - spriteH / 2 + _viewY;
-
-			// Blit from embedded HUD to render buffer
-			for (int y = 0; y < spriteH && (drawY + y) < height; y++) {
-				if (drawY + y < 0) continue;
-				for (int x = 0; x < spriteW && (drawX + x) < width; x++) {
-					if (drawX + x < 0) continue;
-					int srcIdx = (srcY + y) * shipFrame.width + (srcX + x);
-					byte pixel = shipFrame.pixels[srcIdx];
-					// Skip transparent pixels (0 and 231)
-					if (pixel != 0 && pixel != 231) {
-						int dstIdx = (drawY + y) * pitch + (drawX + x);
-						renderBitmap[dstIdx] = pixel;
-					}
-				}
-			}
-
-			debug("Rebel2: Ship (embedded HUD) at screen(%d,%d) strip=(%d,%d) of (%dx%d) dir=(%d,%d)",
-				drawX, drawY, srcX, srcY, numHorizontal, numVertical, _shipDirectionH, _shipDirectionV);
-		}
-	}
-
-	Common::List<enemy>::iterator it;
-	for (it = _enemies.begin(); it != _enemies.end(); ++it) {
-		// Skip destroyed enemies (explosion handled by 5-slot system)
-		if (it->destroyed) continue;
-
-		// Skip inactive enemies or those disabled by IACT bit
-		if (!it->active || isBitSet(it->id)) continue;
-
-		Common::Rect r = it->rect;
-
-		// Check if enemy rect is visible within the current view area
-		// (matching FUN_00428b90 clip logic: reject lines entirely outside clip rect)
-		// The visible area in video coordinates is the current scroll viewport
-		Common::Rect viewRect(_viewX, _viewY, _viewX + videoWidth, _viewY + videoHeight);
-
-		// If enemy rect doesn't intersect the view area at all, skip drawing
-		if (r.right <= viewRect.left || r.left >= viewRect.right ||
-		    r.bottom <= viewRect.top || r.top >= viewRect.bottom) {
+		// Skip small frames at (0,0) - likely animation patches
+		if (frame.renderX == 0 && frame.renderY == 0 && frame.width < 50 && frame.height < 60) {
+			debug(3, "Rebel2: Skipping small embedded frame at (0,0): slot=%d size=%dx%d",
+				hudSlot, frame.width, frame.height);
 			continue;
 		}
 
-		// Draw Green Indicators (Corner Brackets) for Easy (0) and Medium (1) difficulty
-		// Hard (2) mode does not show indicators (matching FUN_00425d30(4) check)
-		if (_difficulty < 2) {
-			const byte color = 5; // Green color index for brackets
-			drawCornerBrackets(renderBitmap, pitch, width, height, r.left, r.top, r.width(), r.height(), color);
+		// For Handler 7: handle direction-based frame selection
+		if (_rebelHandler == 7) {
+			int groupMembers[16];
+			int groupCount = 0;
+
+			for (int id = 1; id < 16; id++) {
+				EmbeddedSanFrame &g = _rebelEmbeddedHud[id];
+				if (g.valid && g.renderX == frame.renderX && g.renderY == frame.renderY &&
+					g.width == frame.width && g.height == frame.height) {
+					groupMembers[groupCount++] = id;
+				}
+			}
+
+			if (groupCount > 1) {
+				int selectedOffset = _shipDirectionIndex % groupCount;
+				int selectedId = groupMembers[selectedOffset];
+
+				// Verify selected frame has pixels
+				EmbeddedSanFrame &selectedFrame = _rebelEmbeddedHud[selectedId];
+				int nonZero = 0;
+				for (int i = 0; i < selectedFrame.width * selectedFrame.height; i++) {
+					if (selectedFrame.pixels[i] != 0) nonZero++;
+				}
+
+				if (nonZero == 0) {
+					for (int i = 0; i < groupCount; i++) {
+						EmbeddedSanFrame &altFrame = _rebelEmbeddedHud[groupMembers[i]];
+						int altNonZero = 0;
+						for (int j = 0; j < altFrame.width * altFrame.height; j++) {
+							if (altFrame.pixels[j] != 0) altNonZero++;
+						}
+						if (altNonZero > 0) {
+							selectedId = groupMembers[i];
+							break;
+						}
+					}
+				}
+
+				if (hudSlot != selectedId)
+					continue;
+			}
+		}
+
+		// Calculate destination position
+		int destX = frame.renderX;
+		int destY = frame.renderY;
+
+		// Handler 0x26/0x19 turret positioning
+		if ((_rebelHandler == 0x26 || _rebelHandler == 0x19) && (hudSlot == 1 || hudSlot == 2)) {
+			destX = 160 - frame.width / 2 - frame.renderX;
+			destY = 200 - frame.height - frame.renderY;
+		}
+
+		// Handler 7 large cockpit frame positioning
+		if (_rebelHandler == 7 && (hudSlot == 1 || hudSlot == 2) && frame.width > 100) {
+			destX = 160 - frame.width / 2 - frame.renderX;
+			destY = 170 - frame.height - frame.renderY;
+		} else if (_rebelHandler == 7 && destX > 100 && destY > 50) {
+			int16 offsetX = (_shipPosX - 160) / 8;
+			int16 offsetY = (_shipPosY - 100) / 8;
+			destX += offsetX;
+			destY += offsetY;
+		}
+
+		destX += _viewX;
+		destY += _viewY;
+
+		debug(3, "Rebel2: Rendering embedded HUD slot=%d size=%dx%d at (%d,%d)",
+			hudSlot, frame.width, frame.height, destX, destY);
+
+		// Draw frame with transparency (pixel 0 and 231 = transparent)
+		for (int y = 0; y < frame.height && (destY + y) < height; y++) {
+			for (int x = 0; x < frame.width && (destX + x) < pitch; x++) {
+				byte pixel = frame.pixels[y * frame.width + x];
+				if (pixel != 0 && pixel != 231) {
+					int fx = destX + x;
+					int fy = destY + y;
+					if (fx >= 0 && fy >= 0) {
+						renderBitmap[fy * pitch + fx] = pixel;
+					}
+				}
+			}
 		}
 	}
+}
 
-	// Draw 5-slot Explosion System
-	if (_smush_iconsNut) {
-		for (int i = 0; i < 5; i++) {
-			if (_explosions[i].active) {
-				if (_explosions[i].counter <= 0) {
-					_explosions[i].active = false;
-					continue;
-				}
+void InsaneRebel2::renderStatusBarSprites(byte *renderBitmap, int pitch, int width, int height,
+										  int statusBarY, int32 curFrame) {
+	// Draw DISPFONT.NUT status bar sprites (FUN_0041c012 equivalent)
+	// DISPFONT.NUT contains:
+	//   Sprite 1: Status bar background frame
+	//   Sprites 2-5: Difficulty stars (1-4)
+	//   Sprite 6: Damage bar fill (with clip rect X=63, Y=9, W=64, H=6)
+	//   Sprite 7: Damage alert (flashing red when critical)
 
-				// Determine base sprite index based on scale (FUN_409FBC logic)
-				int baseIndex;
-				if (_explosions[i].scale < 11) {
-					baseIndex = 9;  // Small/Medium transition
-				} else if (_explosions[i].scale < 21) {
-					baseIndex = 19; // Medium/Large transition
-				} else {
-					baseIndex = 29; // Large/XL transition
-				}
-				
-				// Formula: Base + (12 - Counter)
-				// Counter goes 10 -> 1.
-				// Frame goes Base+2 -> Base+11.
-				int spriteIndex = baseIndex + (12 - _explosions[i].counter);
-				
-				if (_smush_iconsNut->getNumChars() > spriteIndex) {
-					int ew = _smush_iconsNut->getCharWidth(spriteIndex);
-					int eh = _smush_iconsNut->getCharHeight(spriteIndex);
-					int cx = _explosions[i].x - ew / 2;
-					int cy = _explosions[i].y - eh / 2;
-					
-					// Draw explosion
-					renderNutSprite(renderBitmap, pitch, width, height, cx, cy, _smush_iconsNut, spriteIndex);
-				}
+	if (!_smush_cockpitNut)
+		return;
 
-				_explosions[i].counter--;
+	// Sprite 1: Status bar background
+	if (_smush_cockpitNut->getNumChars() > 1) {
+		renderNutSprite(renderBitmap, pitch, width, height, _viewX, statusBarY + _viewY, _smush_cockpitNut, 1);
+	}
+
+	// Difficulty indicator (sprites 2-5)
+	int difficulty = 0;  // TODO: Read from game state
+	if (difficulty > 3) difficulty = 3;
+	int difficultySprite = difficulty + 2;
+	if (_smush_cockpitNut->getNumChars() > difficultySprite) {
+		renderNutSprite(renderBitmap, pitch, width, height, _viewX, statusBarY + _viewY, _smush_cockpitNut, difficultySprite);
+	}
+
+	// Damage bar (sprite 6) with clipped width
+	if (_smush_cockpitNut->getNumChars() > 6) {
+		int drawWidth = (64 * _playerDamage) / 255;
+		if (drawWidth < 0) drawWidth = 0;
+		if (drawWidth > 64) drawWidth = 64;
+
+		const byte *src = _smush_cockpitNut->getCharData(6);
+		int sw = _smush_cockpitNut->getCharWidth(6);
+		int sh = _smush_cockpitNut->getCharHeight(6);
+
+		// Clip rect inside sprite: X=63, Y=9, W=64, H=6
+		const int clipX = 63, clipY = 9, clipW = 64, clipH = 6;
+
+		if (src && sw > 0 && sh > 0) {
+			int maxClipW = sw - clipX;
+			if (maxClipW < 0) maxClipW = 0;
+			int drawW = MIN(drawWidth, MIN(clipW, maxClipW));
+			int drawH = MIN(clipH, sh - clipY);
+			if (drawH < 0) drawH = 0;
+
+			for (int y = 0; y < drawH; y++) {
+				for (int x = 0; x < drawW; x++) {
+					int destX = clipX + x + _viewX;
+					int destY = statusBarY + clipY + y + _viewY;
+					if (destX >= 0 && destX < pitch && destY >= 0 && destY < height) {
+						byte pixel = src[(clipY + y) * sw + (clipX + x)];
+						if (pixel != 0) {
+							renderBitmap[destY * pitch + destX] = pixel;
+						}
+					}
+				}
 			}
 		}
 	}
 
-	// Draw Laser Shots
-	// Gun Positions (Approximate for Turret Mode / Default):
-	// Left: (10, 190), Right: (310, 190) - Adjusted for low-res
-	const int GUN_LEFT_X = 10;
-	const int GUN_LEFT_Y = 190;
-	const int GUN_RIGHT_X = 310;
-	const int GUN_RIGHT_Y = 190;
+	// Damage alert overlay (sprite 7) when damage > 170 and flashing
+	if (_smush_cockpitNut->getNumChars() > 7) {
+		if (_playerDamage > 170 && ((curFrame & 8) == 0)) {
+			renderNutSprite(renderBitmap, pitch, width, height, 63 + _viewX, statusBarY + 9 + _viewY, _smush_cockpitNut, 7);
+		}
+	}
+}
+
+void InsaneRebel2::renderHandler7Ship(byte *renderBitmap, int pitch, int width, int height) {
+	// Handler 7 Ship Rendering (Space Flight - FLY sprites)
+	// Uses _flyShipSprite (FLY001) with 35 direction frames (5x7 grid)
+
+	if (_rebelHandler != 7 || !_flyShipSprite || _shipLevelMode == 5)
+		return;
+
+	// Base position at screen center with direction offset
+	int baseX = 160;
+	int baseY = 105;
+	int16 posOffsetX = (_flyShipScreenX - 160) / 10;
+	int16 posOffsetY = (_flyShipScreenY - 100) / 10;
+	int shipScreenX = baseX + posOffsetX;
+	int shipScreenY = baseY + posOffsetY;
+
+	int numSprites = _flyShipSprite->getNumChars();
+	int spriteIndex = _shipDirectionIndex;
+	if (spriteIndex < 0) spriteIndex = 0;
+	if (spriteIndex >= numSprites) spriteIndex = numSprites - 1;
+
+	// Center sprite at position
+	int spriteW = _flyShipSprite->getCharWidth(spriteIndex);
+	int spriteH = _flyShipSprite->getCharHeight(spriteIndex);
+	int drawX = shipScreenX - spriteW / 2 + _viewX;
+	int drawY = shipScreenY - spriteH / 2 + _viewY;
+
+	renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _flyShipSprite, spriteIndex);
+
+	// Laser overlay if firing
+	if (_shipFiring && _flyLaserSprite && _flyLaserSprite->getNumChars() > 0) {
+		int laserIndex = spriteIndex % _flyLaserSprite->getNumChars();
+		renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _flyLaserSprite, laserIndex);
+	}
+
+	// Targeting overlay
+	if (_flyTargetSprite && _flyTargetSprite->getNumChars() > 0) {
+		int targetW = _flyTargetSprite->getCharWidth(0);
+		int targetH = _flyTargetSprite->getCharHeight(0);
+		int targetX = shipScreenX - targetW / 2 + _viewX;
+		int targetY = shipScreenY - targetH / 2 + _viewY;
+		renderNutSprite(renderBitmap, pitch, width, height, targetX, targetY, _flyTargetSprite, 0);
+	}
+
+	debug("Rebel2 Handler7: Ship at (%d,%d) sprite=%d/%d dir=(%d,%d) idx=%d",
+		drawX, drawY, spriteIndex, numSprites, _shipDirectionH, _shipDirectionV, _shipDirectionIndex);
+}
+
+void InsaneRebel2::renderHandler8Ship(byte *renderBitmap, int pitch, int width, int height) {
+	// Handler 8 Ship Rendering (Third-Person Vehicle - POV sprites)
+	// Uses _shipSprite (POV001) with position-based offset
+
+	if (_rebelHandler != 8 || !_shipSprite || _shipLevelMode == 5)
+		return;
+
+	// Calculate display offset from raw ship position (FUN_00401ccf lines 88-89)
+	int16 displayOffsetX = (_shipPosX - 0xa0) >> 3;
+	int16 displayOffsetY = (_shipPosY - 0x28) >> 2;
+
+	// Base screen position (low-res: X=160, Y=105)
+	int shipScreenX = 0xa0 + displayOffsetX;
+	int shipScreenY = 0x69 + displayOffsetY;
+
+	int numSprites = _shipSprite->getNumChars();
+	int spriteIndex = 0;
+
+	// Select sprite based on direction and sprite count
+	if (numSprites >= 35) {
+		spriteIndex = _shipDirectionH * 7 + _shipDirectionV;
+		if (spriteIndex >= numSprites) spriteIndex = numSprites - 1;
+	} else if (numSprites >= 25) {
+		int vDir5 = (_shipDirectionV * 5) / 7;
+		spriteIndex = _shipDirectionH * 5 + vDir5;
+		if (spriteIndex >= numSprites) spriteIndex = numSprites - 1;
+	} else if (numSprites >= 5) {
+		spriteIndex = _shipDirectionH;
+		if (spriteIndex >= numSprites) spriteIndex = numSprites - 1;
+	} else if (numSprites == 2) {
+		spriteIndex = _shipFiring ? 1 : 0;
+	}
+
+	// Center sprite at position
+	int spriteW = _shipSprite->getCharWidth(spriteIndex);
+	int spriteH = _shipSprite->getCharHeight(spriteIndex);
+	int drawX = shipScreenX - spriteW / 2 + _viewX;
+	int drawY = shipScreenY - spriteH / 2 + _viewY;
+
+	renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _shipSprite, spriteIndex);
+
+	// Secondary ship sprite
+	if (_shipSprite2 && _shipSprite2->getNumChars() > spriteIndex) {
+		renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _shipSprite2, spriteIndex);
+	}
+
+	debug("Rebel2 Handler8: Ship at (%d,%d) raw(%d,%d) offset(%d,%d) sprite=%d/%d dir=(%d,%d)",
+		drawX, drawY, _shipPosX, _shipPosY, displayOffsetX, displayOffsetY,
+		spriteIndex, numSprites, _shipDirectionH, _shipDirectionV);
+}
+
+void InsaneRebel2::renderFallbackShip(byte *renderBitmap, int pitch, int width, int height) {
+	// Fallback: Use embedded HUD frame as ship sprite (Level 3 style)
+	// userId=11 contains the ship sprite strip
+
+	if ((_rebelHandler != 7 && _rebelHandler != 8) || _shipLevelMode == 5)
+		return;
+
+	// Skip if we have proper sprites
+	if (_rebelHandler == 7 && _flyShipSprite)
+		return;
+	if (_rebelHandler == 8 && _shipSprite)
+		return;
+
+	EmbeddedSanFrame &shipFrame = _rebelEmbeddedHud[11];
+	if (!shipFrame.valid || !shipFrame.pixels || shipFrame.width <= 0 || shipFrame.height <= 0)
+		return;
+
+	// Calculate display offset
+	int16 displayOffsetX = (_shipPosX - 0xa0) >> 3;
+	int16 displayOffsetY = (_shipPosY - 0x28) >> 2;
+	int shipScreenX = 0xa0 + displayOffsetX;
+	int shipScreenY = 0x69 + displayOffsetY;
+
+	// Detect sprite strip layout
+	int spriteW = shipFrame.width;
+	int spriteH = shipFrame.height;
+	int srcX = 0, srcY = 0;
+	int numHorizontal = 1, numVertical = 1;
+
+	if (spriteW >= 200 && spriteW % 5 == 0) {
+		numHorizontal = 5;
+		spriteW = shipFrame.width / 5;
+	}
+	if (spriteH >= 350 && spriteH % 7 == 0) {
+		numVertical = 7;
+		spriteH = shipFrame.height / 7;
+	}
+
+	int hDir = MIN((int)_shipDirectionH, numHorizontal - 1);
+	int vDir = MIN((int)_shipDirectionV, numVertical - 1);
+	srcX = hDir * spriteW;
+	srcY = vDir * spriteH;
+
+	int drawX = shipScreenX - spriteW / 2 + _viewX;
+	int drawY = shipScreenY - spriteH / 2 + _viewY;
+
+	// Blit from embedded HUD
+	for (int y = 0; y < spriteH && (drawY + y) < height; y++) {
+		if (drawY + y < 0) continue;
+		for (int x = 0; x < spriteW && (drawX + x) < width; x++) {
+			if (drawX + x < 0) continue;
+			int srcIdx = (srcY + y) * shipFrame.width + (srcX + x);
+			byte pixel = shipFrame.pixels[srcIdx];
+			if (pixel != 0 && pixel != 231) {
+				int dstIdx = (drawY + y) * pitch + (drawX + x);
+				renderBitmap[dstIdx] = pixel;
+			}
+		}
+	}
+
+	debug("Rebel2: Ship (fallback) at (%d,%d) strip=(%d,%d) of (%dx%d) dir=(%d,%d)",
+		drawX, drawY, srcX, srcY, numHorizontal, numVertical, _shipDirectionH, _shipDirectionV);
+}
+
+void InsaneRebel2::renderEnemyOverlays(byte *renderBitmap, int pitch, int width, int height, int videoWidth) {
+	// Draw enemy indicator brackets and erase destroyed enemy areas
+
+	// Erase destroyed enemies' areas (fill with black)
+	for (Common::List<enemy>::iterator it = _enemies.begin(); it != _enemies.end(); ++it) {
+		if (it->destroyed) {
+			Common::Rect r = it->rect;
+			if (r.left < 0) r.left = 0;
+			if (r.top < 0) r.top = 0;
+			if (r.right > width) r.right = width;
+			if (r.bottom > height) r.bottom = height;
+
+			for (int y = r.top; y < r.bottom; y++) {
+				for (int x = r.left; x < r.right; x++) {
+					renderBitmap[y * pitch + x] = 0;
+				}
+			}
+		}
+	}
+
+	// Draw green brackets for active enemies (Easy/Medium difficulty only)
+	if (_difficulty >= 2)
+		return;
+
+	Common::Rect viewRect(_viewX, _viewY, _viewX + videoWidth, _viewY + 200);
+
+	for (Common::List<enemy>::iterator it = _enemies.begin(); it != _enemies.end(); ++it) {
+		if (it->destroyed || !it->active || isBitSet(it->id))
+			continue;
+
+		Common::Rect r = it->rect;
+		if (r.right <= viewRect.left || r.left >= viewRect.right ||
+		    r.bottom <= viewRect.top || r.top >= viewRect.bottom)
+			continue;
+
+		const byte color = 5;  // Green
+		drawCornerBrackets(renderBitmap, pitch, width, height, r.left, r.top, r.width(), r.height(), color);
+	}
+}
+
+void InsaneRebel2::renderExplosions(byte *renderBitmap, int pitch, int width, int height) {
+	// Draw explosion animations from 5-slot system
+
+	if (!_smush_iconsNut)
+		return;
+
+	for (int i = 0; i < 5; i++) {
+		if (!_explosions[i].active)
+			continue;
+
+		if (_explosions[i].counter <= 0) {
+			_explosions[i].active = false;
+			continue;
+		}
+
+		// Determine base sprite index based on scale (FUN_409FBC logic)
+		int baseIndex;
+		if (_explosions[i].scale < 11) {
+			baseIndex = 9;   // Small/Medium
+		} else if (_explosions[i].scale < 21) {
+			baseIndex = 19;  // Medium/Large
+		} else {
+			baseIndex = 29;  // Large/XL
+		}
+
+		// Formula: Base + (12 - Counter)
+		int spriteIndex = baseIndex + (12 - _explosions[i].counter);
+
+		if (_smush_iconsNut->getNumChars() > spriteIndex) {
+			int ew = _smush_iconsNut->getCharWidth(spriteIndex);
+			int eh = _smush_iconsNut->getCharHeight(spriteIndex);
+			int cx = _explosions[i].x - ew / 2;
+			int cy = _explosions[i].y - eh / 2;
+			renderNutSprite(renderBitmap, pitch, width, height, cx, cy, _smush_iconsNut, spriteIndex);
+		}
+
+		_explosions[i].counter--;
+	}
+}
+
+void InsaneRebel2::renderLaserShots(byte *renderBitmap, int pitch, int width, int height) {
+	// Draw laser shot beams and impacts
+
+	if (!_smush_iconsNut || _smush_iconsNut->getNumChars() <= 0)
+		return;
+
+	// Gun positions (approximate for turret mode)
+	const int GUN_LEFT_X = 10, GUN_LEFT_Y = 190;
+	const int GUN_RIGHT_X = 310, GUN_RIGHT_Y = 190;
 
 	for (int i = 0; i < 2; i++) {
-		if (_shots[i].active) {
-			if (_shots[i].counter <= 0) {
-				_shots[i].active = false;
-				continue;
-			}
-			
-			// Use Sprite 0 from CPITIMAG.NUT as the laser texture (15x15 projectile)
-			// Confirmed by info.md: indexes 0-4 are laser/projectile
-			if (_smush_iconsNut && _smush_iconsNut->getNumChars() > 0) {
-				// Calculate progress
-				int maxProgress = 4; // Max duration from table (supposedly)
-				int progress = maxProgress - _shots[i].counter;
+		if (!_shots[i].active)
+			continue;
 
-				// Draw Beams depending on Level Type
-				// Scene 1 (LevelType 1) has 3 beams: Right, Middle, Left
-				if (_rebelLevelType <= 1) { // Default or Type 1
-					// Right Beam: Origin(310, 170), Thickness 8, LengthFac 12
-					drawLaserBeam(renderBitmap, pitch, width, height, 
-						310 + _viewX, 170 + _viewY, 
-						_shots[i].x, _shots[i].y, 
-						progress, maxProgress, 8, 12, _smush_iconsNut, 0);
-
-					// Middle Beam: Origin(160, 380), Thickness 5, LengthFac 8
-					// Note: 380 is virtual origin below screen
-					drawLaserBeam(renderBitmap, pitch, width, height, 
-						160 + _viewX, 380 + _viewY, 
-						_shots[i].x, _shots[i].y, 
-						progress, maxProgress, 5, 8, _smush_iconsNut, 0);
-
-					// Left Beam: Origin(10, 170), Thickness 8, LengthFac 12
-					drawLaserBeam(renderBitmap, pitch, width, height, 
-						10 + _viewX, 170 + _viewY, 
-						_shots[i].x, _shots[i].y, 
-						progress, maxProgress, 8, 12, _smush_iconsNut, 0);
-						
-				} else {
-					// Fallback for other levels (2 beams)
-					drawLaserBeam(renderBitmap, pitch, width, height, 
-						GUN_LEFT_X + _viewX, GUN_LEFT_Y + _viewY, 
-						_shots[i].x, _shots[i].y, 
-						progress, maxProgress, 8, 12, _smush_iconsNut, 0);
-
-					drawLaserBeam(renderBitmap, pitch, width, height, 
-						GUN_RIGHT_X + _viewX, GUN_RIGHT_Y + _viewY, 
-						_shots[i].x, _shots[i].y, 
-						progress, maxProgress, 8, 12, _smush_iconsNut, 0);
-				}
-
-				// Draw Projectile Impact
-				// Using Sprite 0 (small flash) or similar at impact point
-				renderNutSprite(renderBitmap, pitch, width, height, _shots[i].x - 7, _shots[i].y - 7, _smush_iconsNut, 0);
-			}
-			
-			_shots[i].counter--;
-		}
-	}
-
-	// ============================================================
-	// COLLISION ZONE VISUALIZATION (for debugging Level 3 pilot mode)
-	// ============================================================
-	// Draw collision zones as wireframe quadrilaterals when in Handler 7 (space flight)
-	// or Handler 8 (ground vehicle) modes. This helps verify parsing is correct.
-	// The zones are drawn BEFORE the crosshair so they appear under the UI.
-	if (_rebelHandler == 7 || _rebelHandler == 8) {
-		drawCollisionZones(renderBitmap, pitch, width, height, 0);
-	}
-
-	// ============================================================
-	// TARGET LOCK DETECTION (DAT_00443676 equivalent)
-	// ============================================================
-	// In retail: When crosshair is over an active enemy, set target lock timer to 7
-	// This triggers the animated crosshair cycling for Handler 0x26 (turret)
-	// Check from FUN_40A2E0 lines 127-143
-	{
-		Common::Point worldMousePos(_vm->_mouse.x + _viewX, _vm->_mouse.y + _viewY);
-		bool targetLocked = false;
-
-		for (Common::List<enemy>::iterator enemyIt = _enemies.begin(); enemyIt != _enemies.end(); ++enemyIt) {
-			if (enemyIt->active && !enemyIt->destroyed && enemyIt->rect.contains(worldMousePos)) {
-				targetLocked = true;
-				break;
-			}
+		if (_shots[i].counter <= 0) {
+			_shots[i].active = false;
+			continue;
 		}
 
-		// Update target lock timer
-		if (targetLocked) {
-			_targetLockTimer = 7;  // Set to 7 when over target (retail behavior)
-		} else if (_targetLockTimer > 0) {
-			_targetLockTimer--;  // Count down when not over target
+		int maxProgress = 4;
+		int progress = maxProgress - _shots[i].counter;
+
+		// Draw beams based on level type
+		if (_rebelLevelType <= 1) {
+			// Type 1: 3 beams (Right, Middle, Left)
+			drawLaserBeam(renderBitmap, pitch, width, height,
+				310 + _viewX, 170 + _viewY, _shots[i].x, _shots[i].y,
+				progress, maxProgress, 8, 12, _smush_iconsNut, 0);
+
+			drawLaserBeam(renderBitmap, pitch, width, height,
+				160 + _viewX, 380 + _viewY, _shots[i].x, _shots[i].y,
+				progress, maxProgress, 5, 8, _smush_iconsNut, 0);
+
+			drawLaserBeam(renderBitmap, pitch, width, height,
+				10 + _viewX, 170 + _viewY, _shots[i].x, _shots[i].y,
+				progress, maxProgress, 8, 12, _smush_iconsNut, 0);
+		} else {
+			// Other levels: 2 beams
+			drawLaserBeam(renderBitmap, pitch, width, height,
+				GUN_LEFT_X + _viewX, GUN_LEFT_Y + _viewY, _shots[i].x, _shots[i].y,
+				progress, maxProgress, 8, 12, _smush_iconsNut, 0);
+
+			drawLaserBeam(renderBitmap, pitch, width, height,
+				GUN_RIGHT_X + _viewX, GUN_RIGHT_Y + _viewY, _shots[i].x, _shots[i].y,
+				progress, maxProgress, 8, 12, _smush_iconsNut, 0);
 		}
+
+		// Impact flash
+		renderNutSprite(renderBitmap, pitch, width, height,
+			_shots[i].x - 7, _shots[i].y - 7, _smush_iconsNut, 0);
+
+		_shots[i].counter--;
 	}
+}
 
-	// Draw Crosshair/Reticle cursor
-	// Sprite indices based on handler type (from original game disassembly FUN_004089ab, FUN_0040d836, etc):
-	// - Handler 8 (third-person vehicle): Index 0x2E (46)
-	// - Handler 7 (space flight): Index 0x2F (47)
-	// - Handler 0x19 (mixed/turret view): Index 0x2F (47)
-	// - Handler 0x26 (full turret): Index varies by levelType and animation
-	//
-	// For Handler 0x26 (turret), the crosshair sprite formula from FUN_004089ab line 192-193:
-	//   (-(ushort)(DAT_004436de == 5) & 0x30) + local_28
-	// where local_28 is an animation offset (0-3) based on target lock timer (DAT_00443676)
-	//
-	// When DAT_00443676 == 0 (no target locked): local_28 = 0
-	// When DAT_00443676 != 0: local_28 = 3 - (DAT_0047fe98 & 3) -- animated cycling
-	if (_smush_iconsNut) {
-		int reticleIndex;
-		switch (_rebelHandler) {
-		case 7:   // Space flight - uses crosshair sprite 0x2F (47)
-			reticleIndex = 47;
-			break;
-		case 0x19: // Mixed/turret view - uses crosshair sprite 0x2F (47)
-			reticleIndex = 47;
-			break;
-		case 0x26: { // Full turret mode - animated crosshair
-			// Calculate animation offset based on target lock state
-			// In retail: DAT_00443676 is the "target lock timer" (set to 7 when targeting)
-			// DAT_0047fe98 is a per-frame counter incremented each frame
-			static int turretAnimCounter = 0;
-			turretAnimCounter++;
+void InsaneRebel2::renderCrosshair(byte *renderBitmap, int pitch, int width, int height) {
+	// Update target lock state and draw crosshair/reticle
 
-			int animOffset;
-			// Use actual target lock timer (DAT_00443676 equivalent)
-			if (_targetLockTimer == 0) {
-				animOffset = 0;  // No target - use static crosshair
-			} else {
-				animOffset = 3 - (turretAnimCounter & 3);  // Cycles 3, 2, 1, 0
-			}
+	// Target lock detection (DAT_00443676 equivalent)
+	Common::Point worldMousePos(_vm->_mouse.x + _viewX, _vm->_mouse.y + _viewY);
+	bool targetLocked = false;
 
-			// If levelType == 5, use sprites 0x30-0x33 (48-51)
-			// Otherwise use sprites 0-3 (basic targeting reticle)
-			if (_rebelLevelType == 5) {
-				reticleIndex = 0x30 + animOffset;  // 48-51
-			} else {
-				reticleIndex = animOffset;  // 0-3
-			}
+	for (Common::List<enemy>::iterator it = _enemies.begin(); it != _enemies.end(); ++it) {
+		if (it->active && !it->destroyed && it->rect.contains(worldMousePos)) {
+			targetLocked = true;
 			break;
 		}
-		case 8:   // Ground vehicle - uses crosshair sprite 0x2E (46)
-		default:
-			reticleIndex = 46;
-			break;
-		}
+	}
 
-		if (_smush_iconsNut->getNumChars() > reticleIndex) {
-			int cw = _smush_iconsNut->getCharWidth(reticleIndex);
-			int ch = _smush_iconsNut->getCharHeight(reticleIndex);
-			// Center the crosshair on mouse position (in world coordinates)
-			renderNutSprite(renderBitmap, pitch, width, height, _vm->_mouse.x - cw / 2 + _viewX, _vm->_mouse.y - ch / 2 + _viewY, _smush_iconsNut, reticleIndex);
+	if (targetLocked) {
+		_targetLockTimer = 7;
+	} else if (_targetLockTimer > 0) {
+		_targetLockTimer--;
+	}
+
+	// Draw crosshair
+	if (!_smush_iconsNut)
+		return;
+
+	int reticleIndex;
+	switch (_rebelHandler) {
+	case 7:    // Space flight
+	case 0x19: // Mixed/turret
+		reticleIndex = 47;
+		break;
+	case 0x26: { // Full turret - animated crosshair
+		static int turretAnimCounter = 0;
+		turretAnimCounter++;
+
+		int animOffset = (_targetLockTimer == 0) ? 0 : 3 - (turretAnimCounter & 3);
+
+		if (_rebelLevelType == 5) {
+			reticleIndex = 0x30 + animOffset;
+		} else {
+			reticleIndex = animOffset;
+		}
+		break;
+	}
+	case 8:    // Ground vehicle
+	default:
+		reticleIndex = 46;
+		break;
+	}
+
+	if (_smush_iconsNut->getNumChars() > reticleIndex) {
+		int cw = _smush_iconsNut->getCharWidth(reticleIndex);
+		int ch = _smush_iconsNut->getCharHeight(reticleIndex);
+		renderNutSprite(renderBitmap, pitch, width, height,
+			_vm->_mouse.x - cw / 2 + _viewX, _vm->_mouse.y - ch / 2 + _viewY,
+			_smush_iconsNut, reticleIndex);
+	}
+}
+
+void InsaneRebel2::frameEndCleanup() {
+	// Reset enemy active flags and collision zones at frame end
+	// The original game rebuilds lists from scratch each frame
+
+	for (Common::List<enemy>::iterator it = _enemies.begin(); it != _enemies.end(); ++it) {
+		if (!it->destroyed) {
+			it->active = false;
 		}
 	}
 
-	// ============================================================
-	// HUD SCORE/LIVES RENDERING (FUN_0041c012 equivalent)
-	// ============================================================
-	// Render score and lives counter on the status bar
-	// This is called after all other rendering so it appears on top
-	renderScoreHUD(renderBitmap, pitch, width, height, 0);
-
-	// ============================================================
-	// FRAME END RESET: Clear active flags for all enemies (FUN_403240 equivalent)
-	// ============================================================
-	// The original game rebuilds the object list from scratch each frame:
-	// - FUN_4033CF (IACT processing) adds objects to DAT_0043fb00 list
-	// - FUN_4092D9 iterates only over objects in the current frame's list
-	// - FUN_403240 (called at frame end) resets DAT_0047ee74 = 0 (clears list counter)
-	//
-	// We achieve the same by marking all non-destroyed enemies inactive at frame end.
-	// The next frame's IACT opcode 4 (enemyUpdate) will re-activate them if present.
-	for (Common::List<enemy>::iterator resetIt = _enemies.begin(); resetIt != _enemies.end(); ++resetIt) {
-		if (!resetIt->destroyed) {
-			resetIt->active = false;
-		}
-	}
-
-	// Reset collision zone counters for next frame (DAT_0047ee74/DAT_0047ee78 = 0)
-	// The zones are rebuilt from IACT opcode 5 chunks each frame
 	resetCollisionZones();
 }
 
