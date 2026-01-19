@@ -1463,423 +1463,456 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 
 void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStream &b, int32 chunkSize, int16 par2, int16 par3, int16 par4) {
 	// Opcode 8: HUD/Ship resource loading
-	// Based on FUN_41CADB case 6 (switch on *local_14 - 2 == 6, meaning opcode 8)
+	// Dispatches to handler-specific loading functions based on current handler and parameters.
 	//
-	// For Handler 0x26 (turret) - par3 determines HUD slot:
-	// case 1: DAT_00482240 - Primary HUD overlay (GRD001)
-	// case 2: DAT_00482238 - Secondary HUD graphics (GRD002)
-	// case 4: DAT_00482268 - Ship cockpit frame (GRD010)
-	// case 5: DAT_0048226c - Mask buffer (GRD011)
-	// case 6: DAT_00482250 - Explosion overlay (GRD003)
-	// case 7: DAT_00482248 - Damage indicator (GRD004)
-	// case 10: DAT_00482258 - Additional effects (GRD005)
-	// case 12/13: DAT_00482260 - High-res HUD alternative (GRD007)
+	// Handler-specific routing (based on retail disassembly):
+	//   Handler 7 (FUN_0040c3cc):  FLY NUT sprites via par4 (1, 2, 3, 11)
+	//   Handler 8 (FUN_00401234):  POV NUT sprites via par3 (1, 3, 6, 7) or background via par4=5
+	//   Handler 0x26 (FUN_00407fcb): Turret HUD NUT via par3 (1-4)
+	//   Handler 0x19: Mixed turret mode, similar to 0x26
 	//
-	// For Handler 8 (third-person vehicle) - par3 determines ship sprite slot (FUN_00401234):
-	// case 1: DAT_0047e010 - Primary ship sprite (POV001)
-	// case 3: DAT_0047e028 - Secondary ship sprite (POV004)
-	// case 6: DAT_0047e020 - Ship overlay 1 (POV002)
-	// case 7: DAT_0047e018 - Ship overlay 2 (POV003)
-	//
-	// cases 21-47: Sound loading (both handlers)
+	// Sound loading: par3 in range 21-47
 
-	debug("Rebel2 IACT Opcode 8: handler=%d par2=%d par3=%d par4=%d (gameState=%d)", _rebelHandler, par2, par3, par4, _gameState);
+	debug("Rebel2 IACT Opcode 8: handler=%d par2=%d par3=%d par4=%d (gameState=%d)",
+		_rebelHandler, par2, par3, par4, _gameState);
 
 	int64 startPos = b.pos();
 	int64 remaining = (chunkSize > 0) ? chunkSize : (b.size() - startPos);
 
-	// Handler 7 FLY NUT loading - fixed offset format (FUN_0040c3cc case 6)
-	// IACT structure after par1-par4 (we're at offset +8):
-	//   +0-5 (6 bytes): additional header
-	//   +6-9 (4 bytes): NUT data size (little-endian)
-	//   +10+: NUT data
-	// Assembly: param_5[7] = size at offset 14, param_5+9 = data at offset 18
-	// Since we've read 8 bytes (par1-par4), that's offset +6 and +10 from current pos
-	//
-	// IMPORTANT: The assembly switches on param_5[3] which is the 4th short (bytes 6-7)
-	// In SMUSH handleIACT, this corresponds to userId (par4), NOT unknown (par3)!
-	// So we use par4 for the FLY slot selection.
+	// ===== Handler 7: FLY NUT Loading (Space Flight) =====
+	// FUN_0040c3cc case 6: par4 determines FLY sprite slot
 	bool isHandler7FLY = (_rebelHandler == 7 && (par4 == 1 || par4 == 2 || par4 == 3 || par4 == 11));
-
 	if (isHandler7FLY && remaining >= 14) {
-		// Read additional header and size from fixed offset
-		// Based on FUN_0040c3cc assembly:
-		//   param_5[7] = size at offset 14 (we're at offset 8, so read 6+4 bytes)
-		//   param_5+9 = data at offset 18
-		byte header[10];
-		if (b.read(header, 10) == 10) {
-			// Debug: dump all header bytes
-			debug("Rebel2 Opcode 8 Handler7: header bytes: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
-				header[0], header[1], header[2], header[3], header[4],
-				header[5], header[6], header[7], header[8], header[9]);
-
-			// Size is at offset 14 from IACT start = bytes 6-9 of our header buffer
-			// Try both endianness
-			uint32 nutSizeLE = READ_LE_UINT32(header + 6);
-			uint32 nutSizeBE = READ_BE_UINT32(header + 6);
-			debug("Rebel2 Opcode 8 Handler7: par4=%d sizesLE=%u sizeBE=%u remaining=%lld",
-				par4, nutSizeLE, nutSizeBE, (long long)remaining);
-
-			// The assembly uses direct memory read on x86 which is LE
-			uint32 nutSize = nutSizeLE;
-
-			if (nutSize > 0 && nutSize <= (uint32)(remaining - 10)) {
-				byte *nutData = (byte *)malloc(nutSize);
-				if (nutData) {
-					int bytesRead = b.read(nutData, nutSize);
-					debug("Rebel2 Opcode 8 Handler7: Read %d/%u bytes of NUT data, first 16: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
-						bytesRead, nutSize,
-						bytesRead > 0 ? nutData[0] : 0, bytesRead > 1 ? nutData[1] : 0,
-						bytesRead > 2 ? nutData[2] : 0, bytesRead > 3 ? nutData[3] : 0,
-						bytesRead > 4 ? nutData[4] : 0, bytesRead > 5 ? nutData[5] : 0,
-						bytesRead > 6 ? nutData[6] : 0, bytesRead > 7 ? nutData[7] : 0,
-						bytesRead > 8 ? nutData[8] : 0, bytesRead > 9 ? nutData[9] : 0,
-						bytesRead > 10 ? nutData[10] : 0, bytesRead > 11 ? nutData[11] : 0,
-						bytesRead > 12 ? nutData[12] : 0, bytesRead > 13 ? nutData[13] : 0,
-						bytesRead > 14 ? nutData[14] : 0, bytesRead > 15 ? nutData[15] : 0);
-
-					// Verify we read the expected amount
-					if (bytesRead != (int)nutSize) {
-						warning("Rebel2 Opcode 8 Handler7: Short read! Got %d expected %u", bytesRead, nutSize);
-					}
-
-					// Verify ANIM header
-					if (bytesRead >= 8) {
-						uint32 animTag = READ_BE_UINT32(nutData);
-						uint32 animSize = READ_BE_UINT32(nutData + 4);
-						debug("Rebel2 Opcode 8 Handler7: ANIM tag=%08X size=%u (expected %08X, size should be ~%d)",
-							animTag, animSize, MKTAG('A','N','I','M'), bytesRead - 8);
-						if (animTag != MKTAG('A','N','I','M')) {
-							warning("Rebel2 Opcode 8 Handler7: No ANIM tag! Data may be corrupted");
-						}
-						if ((int32)animSize > bytesRead - 8) {
-							warning("Rebel2 Opcode 8 Handler7: ANIM size %u exceeds data %d", animSize, bytesRead - 8);
-						}
-					}
-
-					// Try loading as NUT
-					NutRenderer *newNut = new NutRenderer(_vm, nutData, bytesRead);
-					if (newNut && newNut->getNumChars() > 0) {
-						debug("Rebel2 Opcode 8 Handler7: Loaded FLY NUT par4=%d with %d sprites",
-							par4, newNut->getNumChars());
-
-						// Switch on par4 (userId) - matches assembly param_5[3]
-						switch (par4) {
-						case 1:  // FLY001 - Ship direction sprites (35 frames)
-							delete _flyShipSprite;
-							_flyShipSprite = newNut;
-							debug("Rebel2 Opcode 8: _flyShipSprite set with %d sprites", newNut->getNumChars());
-							break;
-						case 2:  // FLY003 - Targeting overlay
-							delete _flyTargetSprite;
-							_flyTargetSprite = newNut;
-							break;
-						case 3:  // FLY002 - Laser fire sprites
-							delete _flyLaserSprite;
-							_flyLaserSprite = newNut;
-							break;
-						case 11: // FLY004 - High-res alternative
-							delete _flyHiResSprite;
-							_flyHiResSprite = newNut;
-							break;
-						default:
-							delete newNut;
-							break;
-						}
-					} else {
-						debug("Rebel2 Opcode 8 Handler7: NUT load failed for par4=%d", par4);
-						delete newNut;
-					}
-					free(nutData);
-				}
-			}
+		if (loadHandler7FlySprites(b, remaining, par4)) {
+			b.seek(startPos);
+			return;
 		}
+		b.seek(startPos);
+	}
+
+	// ===== Sound Loading (par3 21-47) =====
+	if (par3 >= 21 && par3 <= 47) {
+		debug("Rebel2 Opcode 8: Sound loading subcase %d (not implemented)", par3);
+		// TODO: Implement sound loading via FUN_004118df equivalent
+		return;
+	}
+
+	// ===== Scan for embedded ANIM data =====
+	// Remaining handlers require finding ANIM tag in the stream
+	debug("Rebel2 Opcode 8: Scanning for ANIM tag (startPos=%lld remaining=%lld)",
+		(long long)startPos, (long long)remaining);
+
+	if (remaining <= 0) {
+		return;
+	}
+
+	int scanSize = (int)MIN<int64>(remaining, 65536);
+	byte *scanBuf = (byte *)malloc(scanSize);
+	if (!scanBuf) {
+		return;
+	}
+
+	int bytesRead = b.read(scanBuf, scanSize);
+	debug("Rebel2 Opcode 8: Read %d bytes for ANIM scan", bytesRead);
+
+	// Find ANIM tag
+	int animOffset = -1;
+	for (int i = 0; i + 8 <= bytesRead; ++i) {
+		if (READ_BE_UINT32(scanBuf + i) == MKTAG('A','N','I','M')) {
+			animOffset = i;
+			debug("Rebel2 Opcode 8: Found ANIM at offset %d", i);
+			break;
+		}
+	}
+
+	if (animOffset < 0) {
+		debug("Rebel2 Opcode 8: No ANIM tag found");
+		free(scanBuf);
 		b.seek(startPos);
 		return;
 	}
 
-	// For non-Handler7 or non-FLY cases, scan for ANIM tag
-	debug("Rebel2 Opcode 8: startPos=%lld chunkSize=%d remaining=%lld", (long long)startPos, chunkSize, (long long)remaining);
-	if (remaining > 0) {
-		int scanSize = (int)MIN<int64>(remaining, 65536);
-		byte *scanBuf = (byte *)malloc(scanSize);
-		if (scanBuf) {
-			int bytesRead = b.read(scanBuf, scanSize);
-			debug("Rebel2 Opcode 8: Read %d bytes, first 16: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
-				bytesRead,
-				bytesRead > 0 ? scanBuf[0] : 0, bytesRead > 1 ? scanBuf[1] : 0,
-				bytesRead > 2 ? scanBuf[2] : 0, bytesRead > 3 ? scanBuf[3] : 0,
-				bytesRead > 4 ? scanBuf[4] : 0, bytesRead > 5 ? scanBuf[5] : 0,
-				bytesRead > 6 ? scanBuf[6] : 0, bytesRead > 7 ? scanBuf[7] : 0,
-				bytesRead > 8 ? scanBuf[8] : 0, bytesRead > 9 ? scanBuf[9] : 0,
-				bytesRead > 10 ? scanBuf[10] : 0, bytesRead > 11 ? scanBuf[11] : 0,
-				bytesRead > 12 ? scanBuf[12] : 0, bytesRead > 13 ? scanBuf[13] : 0,
-				bytesRead > 14 ? scanBuf[14] : 0, bytesRead > 15 ? scanBuf[15] : 0);
+	// Extract ANIM data
+	uint32 animReportedSize = READ_BE_UINT32(scanBuf + animOffset + 4);
+	int32 animDataSize = (int)MIN<int64>((int64)animReportedSize + 8, remaining - animOffset);
+	if (animDataSize <= 0) {
+		free(scanBuf);
+		b.seek(startPos);
+		return;
+	}
 
-			// Look for ANIM tag (embedded SAN or NUT)
-			for (int i = 0; i + 8 <= bytesRead; ++i) {
-				if (READ_BE_UINT32(scanBuf + i) == MKTAG('A','N','I','M')) {
-					debug("Rebel2 Opcode 8: Found ANIM at offset %d", i);
-					int64 animStreamPos = startPos + i;
-					uint32 animReportedSize = READ_BE_UINT32(scanBuf + i + 4);
-					// Limit toCopy to remaining data in this chunk
-					int32 toCopy = (int)MIN<int64>((int64)animReportedSize + 8, remaining - i);
-					if (toCopy > 0) {
-						byte *animData = (byte *)malloc(toCopy);
-						if (animData) {
-							b.seek(animStreamPos);
-							b.read(animData, toCopy);
+	byte *animData = (byte *)malloc(animDataSize);
+	if (!animData) {
+		free(scanBuf);
+		b.seek(startPos);
+		return;
+	}
 
-							// Handler-dependent NUT loading for opcode 8:
-							//
-							// Handler 0x26/0x19 (turret) - FUN_00407fcb:
-							//   par3 == 1: Low-res primary HUD (GRD001) -> DAT_0047fe78
-							//   par3 == 2: High-res primary HUD (skip in low-res mode)
-							//   par3 == 3: Low-res secondary HUD (GRD010) -> DAT_0047fe80
-							//   par3 == 4: High-res secondary HUD (skip in low-res mode)
-							//
-							// Handler 8 (vehicle) - FUN_00401234:
-							//   par3 == 1: POV001 - Primary ship sprite -> DAT_0047e010
-							//   par3 == 3: POV004 - Secondary ship sprite -> DAT_0047e028
-							//   par3 == 6: POV002 - Ship overlay 1 -> DAT_0047e020
-							//   par3 == 7: POV003 - Ship overlay 2 -> DAT_0047e018
-							//
-							// ScummVM runs at 320x200 (low-res), so turret HUD uses par3 == 1/3 only.
-							bool loadedAsNut = false;
+	b.seek(startPos + animOffset);
+	b.read(animData, animDataSize);
 
-							// Handler 0x26/0x19 (turret modes): Load HUD overlays
-							if (_rebelHandler == 0x26 || _rebelHandler == 0x19) {
-								if (par3 == 1) {
-									// Low-res primary HUD overlay
-									NutRenderer *newNut = new NutRenderer(_vm, animData, toCopy);
-									if (newNut && newNut->getNumChars() > 0) {
-										debug("Rebel2 Opcode 8: Loaded turret HUD NUT par3=%d with %d sprites (handler=0x%x, low-res)",
-											par3, newNut->getNumChars(), _rebelHandler);
-										delete _hudOverlayNut;
-										_hudOverlayNut = newNut;
-										loadedAsNut = true;
-									} else {
-										debug("Rebel2 Opcode 8: Turret HUD NUT load failed for par3=%d", par3);
-										delete newNut;
-									}
-								} else if (par3 == 3) {
-									// Low-res secondary HUD overlay
-									NutRenderer *newNut = new NutRenderer(_vm, animData, toCopy);
-									if (newNut && newNut->getNumChars() > 0) {
-										debug("Rebel2 Opcode 8: Loaded turret HUD2 NUT par3=%d with %d sprites (handler=0x%x, low-res)",
-											par3, newNut->getNumChars(), _rebelHandler);
-										delete _hudOverlay2Nut;
-										_hudOverlay2Nut = newNut;
-										loadedAsNut = true;
-									} else {
-										debug("Rebel2 Opcode 8: Turret HUD2 NUT load failed for par3=%d", par3);
-										delete newNut;
-									}
-								} else if (par3 == 2 || par3 == 4) {
-									// High-res versions - skip in low-res mode
-									debug("Rebel2 Opcode 8: Skipping high-res HUD par3=%d (running in low-res mode)", par3);
-									loadedAsNut = true;
-								}
-							}
+	bool handled = false;
 
-							// Handler 8 (Third-Person Vehicle): Load ship sprites
-							if (!loadedAsNut && _rebelHandler == 8) {
-								bool isHandler8Par3 = (par3 == 1 || par3 == 3 || par3 == 6 || par3 == 7);
-								if (isHandler8Par3) {
-									NutRenderer *newNut = new NutRenderer(_vm, animData, toCopy);
-									if (newNut && newNut->getNumChars() > 0) {
-										debug("Rebel2 Opcode 8: Loaded ship NUT par3=%d with %d sprites (handler=%d)",
-											par3, newNut->getNumChars(), _rebelHandler);
-										loadedAsNut = true;
-
-										switch (par3) {
-										case 1:  // POV001 - Primary ship sprite
-											delete _shipSprite;
-											_shipSprite = newNut;
-											break;
-										case 3:  // POV004 - Secondary ship sprite
-											delete _shipSprite2;
-											_shipSprite2 = newNut;
-											break;
-										case 6:  // POV002 - Ship overlay 1
-											delete _shipOverlay1;
-											_shipOverlay1 = newNut;
-											break;
-										case 7:  // POV003 - Ship overlay 2
-											delete _shipOverlay2;
-											_shipOverlay2 = newNut;
-											break;
-										default:
-											delete newNut;
-											loadedAsNut = false;
-											break;
-										}
-									} else {
-										debug("Rebel2 Opcode 8: Ship NUT load failed for par3=%d", par3);
-										delete newNut;
-									}
-								}
-							}
-
-							// Handler 8/25 (Level 2): Load background
-							// par4=5 contains the background image embedded as ANIM with FOBJ codec 3
-							// FUN_00401234 case 6 switch case 5: Creates 320x200 buffer (DAT_0047e030)
-							// Handler 8 = third-person vehicle, Handler 25 (0x19) = turret/mixed view
-							// Level 2 uses handler 25 but background loading is the same mechanism
-							if (!loadedAsNut && (_rebelHandler == 8 || _rebelHandler == 25) && par4 == 5) {
-								debug("Rebel2 Opcode 8: Loading Level 2 background (par4=5, animSize=%d)", toCopy);
-
-								// Allocate background buffer if needed (320x200 = 64000 bytes)
-								if (_level2Background == nullptr) {
-									_level2Background = (byte *)malloc(320 * 200);
-									if (_level2Background) {
-										memset(_level2Background, 0, 320 * 200);
-									}
-								}
-
-								if (_level2Background) {
-									// Parse embedded ANIM to find FOBJ
-									// Structure: ANIM tag at offset 0, AHDR, then FRME with FOBJ
-									int animOffset = 0;
-									if (toCopy >= 8 && READ_BE_UINT32(animData) == MKTAG('A','N','I','M')) {
-										uint32 animSize = READ_BE_UINT32(animData + 4);
-										debug("Rebel2 Opcode 8: Found ANIM tag, size=%u", animSize);
-
-										// Skip ANIM header (8 bytes) + AHDR chunk
-										// AHDR starts at offset 8, size is at offset 12 (big endian)
-										if (toCopy >= 16 && READ_BE_UINT32(animData + 8) == MKTAG('A','H','D','R')) {
-											uint32 ahdrSize = READ_BE_UINT32(animData + 12);
-											animOffset = 8 + 8 + ahdrSize;  // After ANIM tag + AHDR
-											debug("Rebel2 Opcode 8: AHDR size=%u, FRME expected at offset %d", ahdrSize, animOffset);
-										}
-									}
-
-									// Look for FRME containing FOBJ
-									bool foundBackground = false;
-									for (int scanPos = animOffset; scanPos + 16 < toCopy && !foundBackground; scanPos++) {
-										if (READ_BE_UINT32(animData + scanPos) == MKTAG('F','R','M','E')) {
-											// Found FRME, look for FOBJ inside
-											int frmeSize = READ_BE_UINT32(animData + scanPos + 4);
-											debug("Rebel2 Opcode 8: Found FRME at %d, size=%d", scanPos, frmeSize);
-
-											for (int fobjPos = scanPos + 8; fobjPos + 18 < scanPos + 8 + frmeSize && fobjPos + 18 < toCopy; fobjPos++) {
-												if (READ_BE_UINT32(animData + fobjPos) == MKTAG('F','O','B','J')) {
-													uint32 fobjSize = READ_BE_UINT32(animData + fobjPos + 4);
-													byte *fobjData = animData + fobjPos + 8;
-
-													// FOBJ header: codec(2), x(2), y(2), w(2), h(2)
-													int16 codec = READ_LE_INT16(fobjData);
-													int16 fobjX = READ_LE_INT16(fobjData + 2);
-													int16 fobjY = READ_LE_INT16(fobjData + 4);
-													int16 fobjW = READ_LE_INT16(fobjData + 6);
-													int16 fobjH = READ_LE_INT16(fobjData + 8);
-
-													debug("Rebel2 Opcode 8: Found FOBJ at %d: codec=%d pos=(%d,%d) size=%dx%d dataSize=%u",
-														fobjPos, codec, fobjX, fobjY, fobjW, fobjH, fobjSize);
-
-													// Decode codec 3 (RLE) into background buffer
-													// Codec 3 uses bomp RLE format with line-by-line structure
-													// FOBJ header is 14 bytes: codec(2), x(2), y(2), w(2), h(2), unk(2), unk(2)
-													if (codec == 3 && fobjW > 0 && fobjH > 0 && fobjW <= 320 && fobjH <= 200) {
-														byte *rleData = fobjData + 14;  // Skip full 14-byte FOBJ header
-
-														// Use the existing smushDecodeRLE function from codec1.cpp
-														// This properly decodes BOMP RLE with line size headers
-														smushDecodeRLE(_level2Background, rleData, fobjX, fobjY, fobjW, fobjH, 320);
-
-														debug("Rebel2 Opcode 8: Decoded Level 2 background (%dx%d at %d,%d)",
-															fobjW, fobjH, fobjX, fobjY);
-														_level2BackgroundLoaded = true;
-														foundBackground = true;
-
-														// Draw background to render bitmap immediately
-														if (renderBitmap) {
-															for (int by = 0; by < 200; by++) {
-																memcpy(renderBitmap + by * 320, _level2Background + by * 320, 320);
-															}
-															debug("Rebel2 Opcode 8: Copied Level 2 background to renderBitmap");
-														}
-													}
-													break;  // Found FOBJ, stop searching
-												}
-											}
-											break;  // Found FRME, stop searching
-										}
-									}
-
-									if (!foundBackground) {
-										debug("Rebel2 Opcode 8: Failed to find/decode background FOBJ");
-									}
-								}
-								loadedAsNut = true;  // Mark as handled even if decode failed
-							}
-
-							if (!loadedAsNut) {
-								// Skip high-res turret HUD data (par3 == 2, 4) regardless of handler
-								// ScummVM runs at 320x200, so we only want low-res data (par3 == 1, 3)
-								debug("Rebel2 Opcode 8: Fallback path - handler=%d par3=%d par4=%d animSize=%d",
-									_rebelHandler, par3, par4, toCopy);
-								if (par3 == 2 || par3 == 4) {
-									debug("Rebel2 Opcode 8: SKIPPING high-res HUD par3=%d (low-res mode)", par3);
-									// Don't load anything - skip this data entirely
-								} else {
-									// Load as embedded SAN (HUD overlays)
-									// The userId parameter varies by handler type:
-									//
-									// Handler 0x26 (turret): Uses par3 for HUD slot (GRD files)
-									//   par3=1: GRD001 (Primary HUD overlay)
-									//   par3=3: GRD010 (Secondary HUD)
-									//
-									// Handler 7 (space flight): Uses par4 for userId (FLY files handled above)
-									// Other handlers: Use par4 for userId
-									//
-									// par4 values seen in Level 3:
-									//   1000 = audio track
-									//   1-11 = HUD overlay slots
-									//
-									// Note: Handler may not be set yet if opcode 8 arrives before opcode 6
-									// Use heuristics: if par3 is in valid GRD range (1-13) and par4 is >= 1000
-									// or invalid, prefer par3
-									int userId;
-									// Handler 0x19 uses par3; Handler 0x26 and others use par4
-									bool usePar3 = (_rebelHandler == 0x19);
-
-									// Heuristic: if par3 is in typical GRD slot range (1-13) and par4 is
-									// out of range (0 or >= 1000), use par3 as it's likely a turret/GRD case
-									if (!usePar3 && par3 >= 1 && par3 <= 13 && (par4 <= 0 || par4 >= 1000)) {
-										usePar3 = true;
-										debug("Rebel2 Opcode 8: Using par3 heuristic (par3=%d, par4=%d)", par3, par4);
-									}
-
-									userId = usePar3 ? par3 : par4;
-
-									// Audio tracks (userId >= 1000) are handled separately, skip them
-									if (userId > 0 && userId < 1000) {
-										debug("Rebel2 Opcode 8: Loading embedded SAN as HUD userId=%d (handler=%d, par3=%d, par4=%d)",
-											userId, _rebelHandler, par3, par4);
-										loadEmbeddedSan(userId, animData, toCopy, renderBitmap);
-									}
-								}
-							}
-							free(animData);
-						}
-					}
-					b.seek(startPos);
-					free(scanBuf);
-					return;
-				}
-			}
-
-			b.seek(startPos);
-			free(scanBuf);
+	// ===== Handler 0x26/0x19: Turret HUD Overlays =====
+	// FUN_00407fcb case 8: par3 1-4 for HUD NUT loading
+	if (!handled && (_rebelHandler == 0x26 || _rebelHandler == 0x19)) {
+		if (par3 >= 1 && par3 <= 4) {
+			handled = loadTurretHudOverlay(animData, animDataSize, par3);
 		}
 	}
 
-	// Handle sound loading cases (par3 21-47)
-	if (par3 >= 21 && par3 <= 47) {
-		debug("Rebel2 Opcode 8: Sound loading subcase %d (not implemented)", par3);
-		// TODO: Implement sound loading when needed
+	// ===== Handler 8: POV Ship Sprites or Background =====
+	// FUN_00401234 case 6: par3 for POV NUTs, par4=5 for background
+	if (!handled && _rebelHandler == 8) {
+		// Check for background loading first (par4=5)
+		if (par4 == 5) {
+			handled = loadLevel2Background(animData, animDataSize, renderBitmap);
+		}
+		// Check for POV NUT sprites
+		else if (par3 == 1 || par3 == 3 || par3 == 6 || par3 == 7) {
+			handled = loadHandler8ShipSprites(animData, animDataSize, par3);
+		}
 	}
+
+	// ===== Handler 25 (0x19): Also supports Level 2 background =====
+	if (!handled && _rebelHandler == 25 && par4 == 5) {
+		handled = loadLevel2Background(animData, animDataSize, renderBitmap);
+	}
+
+	// ===== Fallback: Embedded SAN HUD overlays =====
+	// For other cases, load as embedded SAN frame to HUD overlay slots
+	if (!handled) {
+		// Skip high-res data (par3 == 2, 4)
+		if (par3 == 2 || par3 == 4) {
+			debug("Rebel2 Opcode 8: Skipping high-res HUD par3=%d", par3);
+			handled = true;
+		} else {
+			// Determine userId: Handler 0x19 uses par3, others use par4
+			// Heuristic: if par3 is valid GRD range (1-13) and par4 is invalid, prefer par3
+			int userId;
+			bool usePar3 = (_rebelHandler == 0x19);
+			if (!usePar3 && par3 >= 1 && par3 <= 13 && (par4 <= 0 || par4 >= 1000)) {
+				usePar3 = true;
+			}
+			userId = usePar3 ? par3 : par4;
+
+			// Skip audio tracks (userId >= 1000)
+			if (userId > 0 && userId < 1000) {
+				debug("Rebel2 Opcode 8: Loading embedded SAN HUD userId=%d (handler=%d par3=%d par4=%d)",
+					userId, _rebelHandler, par3, par4);
+				loadEmbeddedSan(userId, animData, animDataSize, renderBitmap);
+				handled = true;
+			}
+		}
+	}
+
+	if (!handled) {
+		debug("Rebel2 Opcode 8: Unhandled case - handler=%d par3=%d par4=%d", _rebelHandler, par3, par4);
+	}
+
+	free(animData);
+	free(scanBuf);
+	b.seek(startPos);
+}
+
+// ======================= Opcode 8 Helper Functions =======================
+// These helper functions are extracted from the original monolithic iactRebel2Opcode8
+// to improve code readability and match the retail FUN_* function structure.
+
+bool InsaneRebel2::loadHandler7FlySprites(Common::SeekableReadStream &b, int64 remaining, int16 par4) {
+	// Handler 7 FLY NUT loading - FUN_0040c3cc case 6 (opcode 8)
+	// IACT structure after par1-par4 (we're at offset +8):
+	//   +0-5 (6 bytes): additional header
+	//   +6-9 (4 bytes): NUT data size (little-endian)
+	//   +10+: NUT data
+	//
+	// par4 values (param_5[3] - 1 in assembly):
+	//   1 -> case 0: FLY001 - Ship direction sprites (DAT_0047fee8)
+	//   2 -> case 1: FLY003 - Targeting overlay (DAT_0047fef8)
+	//   3 -> case 2: FLY002 - Laser fire sprites (DAT_0047fef0)
+	//  11 -> case 10: FLY004 - High-res alternative (DAT_0047ff00)
+
+	if (remaining < 14) {
+		return false;
+	}
+
+	// Read additional header and size from fixed offset
+	byte header[10];
+	if (b.read(header, 10) != 10) {
+		return false;
+	}
+
+	debug("Rebel2 loadHandler7FlySprites: header bytes: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
+		header[0], header[1], header[2], header[3], header[4],
+		header[5], header[6], header[7], header[8], header[9]);
+
+	// Size is at offset 14 from IACT start = bytes 6-9 of our header buffer
+	uint32 nutSize = READ_LE_UINT32(header + 6);
+	debug("Rebel2 loadHandler7FlySprites: par4=%d nutSize=%u remaining=%lld",
+		par4, nutSize, (long long)remaining);
+
+	if (nutSize == 0 || nutSize > (uint32)(remaining - 10)) {
+		return false;
+	}
+
+	byte *nutData = (byte *)malloc(nutSize);
+	if (!nutData) {
+		return false;
+	}
+
+	int bytesRead = b.read(nutData, nutSize);
+	debug("Rebel2 loadHandler7FlySprites: Read %d/%u bytes, first 16: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
+		bytesRead, nutSize,
+		bytesRead > 0 ? nutData[0] : 0, bytesRead > 1 ? nutData[1] : 0,
+		bytesRead > 2 ? nutData[2] : 0, bytesRead > 3 ? nutData[3] : 0,
+		bytesRead > 4 ? nutData[4] : 0, bytesRead > 5 ? nutData[5] : 0,
+		bytesRead > 6 ? nutData[6] : 0, bytesRead > 7 ? nutData[7] : 0,
+		bytesRead > 8 ? nutData[8] : 0, bytesRead > 9 ? nutData[9] : 0,
+		bytesRead > 10 ? nutData[10] : 0, bytesRead > 11 ? nutData[11] : 0,
+		bytesRead > 12 ? nutData[12] : 0, bytesRead > 13 ? nutData[13] : 0,
+		bytesRead > 14 ? nutData[14] : 0, bytesRead > 15 ? nutData[15] : 0);
+
+	if (bytesRead != (int)nutSize) {
+		warning("Rebel2 loadHandler7FlySprites: Short read! Got %d expected %u", bytesRead, nutSize);
+		free(nutData);
+		return false;
+	}
+
+	// Verify ANIM header
+	if (bytesRead >= 8) {
+		uint32 animTag = READ_BE_UINT32(nutData);
+		if (animTag != MKTAG('A','N','I','M')) {
+			warning("Rebel2 loadHandler7FlySprites: No ANIM tag! Data may be corrupted");
+			free(nutData);
+			return false;
+		}
+	}
+
+	// Load as NUT
+	NutRenderer *newNut = new NutRenderer(_vm, nutData, bytesRead);
+	if (!newNut || newNut->getNumChars() <= 0) {
+		debug("Rebel2 loadHandler7FlySprites: NUT load failed for par4=%d", par4);
+		delete newNut;
+		free(nutData);
+		return false;
+	}
+
+	debug("Rebel2 loadHandler7FlySprites: Loaded FLY NUT par4=%d with %d sprites",
+		par4, newNut->getNumChars());
+
+	// Assign to appropriate slot based on par4 (matches FUN_0040c3cc case 6 switch)
+	bool assigned = true;
+	switch (par4) {
+	case 1:  // FLY001 - Ship direction sprites (35 frames)
+		delete _flyShipSprite;
+		_flyShipSprite = newNut;
+		debug("Rebel2: _flyShipSprite set with %d sprites", newNut->getNumChars());
+		break;
+	case 2:  // FLY003 - Targeting overlay
+		delete _flyTargetSprite;
+		_flyTargetSprite = newNut;
+		break;
+	case 3:  // FLY002 - Laser fire sprites
+		delete _flyLaserSprite;
+		_flyLaserSprite = newNut;
+		break;
+	case 11: // FLY004 - High-res alternative
+		delete _flyHiResSprite;
+		_flyHiResSprite = newNut;
+		break;
+	default:
+		delete newNut;
+		assigned = false;
+		break;
+	}
+
+	free(nutData);
+	return assigned;
+}
+
+bool InsaneRebel2::loadTurretHudOverlay(byte *animData, int32 size, int16 par3) {
+	// Handler 0x26/0x19 turret HUD overlay loading - FUN_00407fcb case 8
+	// Resolution-dependent loading:
+	//   par3 == 1: Low-res primary HUD (DAT_0047fe78 / _hudOverlayNut)
+	//   par3 == 2: High-res primary HUD (skip in 320x200 mode)
+	//   par3 == 3: Low-res secondary HUD (DAT_0047fe80 / _hudOverlay2Nut)
+	//   par3 == 4: High-res secondary HUD (skip in 320x200 mode)
+
+	if (!animData || size <= 0) {
+		return false;
+	}
+
+	// ScummVM runs at 320x200 (low-res), skip high-res data
+	if (par3 == 2 || par3 == 4) {
+		debug("Rebel2 loadTurretHudOverlay: Skipping high-res HUD par3=%d (running in low-res mode)", par3);
+		return true;  // Successfully "handled" by skipping
+	}
+
+	if (par3 != 1 && par3 != 3) {
+		return false;  // Not a turret HUD slot
+	}
+
+	NutRenderer *newNut = new NutRenderer(_vm, animData, size);
+	if (!newNut || newNut->getNumChars() <= 0) {
+		debug("Rebel2 loadTurretHudOverlay: NUT load failed for par3=%d", par3);
+		delete newNut;
+		return false;
+	}
+
+	debug("Rebel2 loadTurretHudOverlay: Loaded turret HUD NUT par3=%d with %d sprites",
+		par3, newNut->getNumChars());
+
+	if (par3 == 1) {
+		// Low-res primary HUD overlay
+		delete _hudOverlayNut;
+		_hudOverlayNut = newNut;
+	} else {  // par3 == 3
+		// Low-res secondary HUD overlay
+		delete _hudOverlay2Nut;
+		_hudOverlay2Nut = newNut;
+	}
+
+	return true;
+}
+
+bool InsaneRebel2::loadHandler8ShipSprites(byte *animData, int32 size, int16 par3) {
+	// Handler 8 ship POV NUT loading - FUN_00401234 case 6 (opcode 8)
+	// par3 values:
+	//   1: POV001 - Primary ship sprite (DAT_0047e010 / _shipSprite)
+	//   3: POV004 - Secondary ship sprite (DAT_0047e028 / _shipSprite2)
+	//   6: POV002 - Ship overlay 1 (DAT_0047e020 / _shipOverlay1)
+	//   7: POV003 - Ship overlay 2 (DAT_0047e018 / _shipOverlay2)
+
+	if (!animData || size <= 0) {
+		return false;
+	}
+
+	// Only handle valid POV sprite slots
+	if (par3 != 1 && par3 != 3 && par3 != 6 && par3 != 7) {
+		return false;
+	}
+
+	NutRenderer *newNut = new NutRenderer(_vm, animData, size);
+	if (!newNut || newNut->getNumChars() <= 0) {
+		debug("Rebel2 loadHandler8ShipSprites: NUT load failed for par3=%d", par3);
+		delete newNut;
+		return false;
+	}
+
+	debug("Rebel2 loadHandler8ShipSprites: Loaded ship NUT par3=%d with %d sprites",
+		par3, newNut->getNumChars());
+
+	switch (par3) {
+	case 1:  // POV001 - Primary ship sprite
+		delete _shipSprite;
+		_shipSprite = newNut;
+		break;
+	case 3:  // POV004 - Secondary ship sprite
+		delete _shipSprite2;
+		_shipSprite2 = newNut;
+		break;
+	case 6:  // POV002 - Ship overlay 1
+		delete _shipOverlay1;
+		_shipOverlay1 = newNut;
+		break;
+	case 7:  // POV003 - Ship overlay 2
+		delete _shipOverlay2;
+		_shipOverlay2 = newNut;
+		break;
+	default:
+		delete newNut;
+		return false;
+	}
+
+	return true;
+}
+
+bool InsaneRebel2::loadLevel2Background(byte *animData, int32 size, byte *renderBitmap) {
+	// Level 2 background loading from embedded ANIM - FUN_00401234 case 5
+	// par4=5 contains the background image embedded as ANIM with FOBJ codec 3
+	// Creates 320x200 buffer (DAT_0047e030 / _level2Background)
+
+	if (!animData || size < 8) {
+		return false;
+	}
+
+	debug("Rebel2 loadLevel2Background: Loading Level 2 background (animSize=%d)", size);
+
+	// Allocate background buffer if needed (320x200 = 64000 bytes)
+	if (_level2Background == nullptr) {
+		_level2Background = (byte *)malloc(320 * 200);
+		if (!_level2Background) {
+			return false;
+		}
+		memset(_level2Background, 0, 320 * 200);
+	}
+
+	// Parse embedded ANIM to find FOBJ
+	// Structure: ANIM tag at offset 0, AHDR, then FRME with FOBJ
+	int animOffset = 0;
+	if (READ_BE_UINT32(animData) == MKTAG('A','N','I','M')) {
+		uint32 animSize = READ_BE_UINT32(animData + 4);
+		debug("Rebel2 loadLevel2Background: Found ANIM tag, size=%u", animSize);
+
+		// Skip ANIM header (8 bytes) + AHDR chunk
+		if (size >= 16 && READ_BE_UINT32(animData + 8) == MKTAG('A','H','D','R')) {
+			uint32 ahdrSize = READ_BE_UINT32(animData + 12);
+			animOffset = 8 + 8 + ahdrSize;  // After ANIM tag + AHDR
+			debug("Rebel2 loadLevel2Background: AHDR size=%u, FRME expected at offset %d", ahdrSize, animOffset);
+		}
+	}
+
+	// Look for FRME containing FOBJ
+	bool foundBackground = false;
+	for (int scanPos = animOffset; scanPos + 16 < size && !foundBackground; scanPos++) {
+		if (READ_BE_UINT32(animData + scanPos) == MKTAG('F','R','M','E')) {
+			int frmeSize = READ_BE_UINT32(animData + scanPos + 4);
+			debug("Rebel2 loadLevel2Background: Found FRME at %d, size=%d", scanPos, frmeSize);
+
+			for (int fobjPos = scanPos + 8; fobjPos + 18 < scanPos + 8 + frmeSize && fobjPos + 18 < size; fobjPos++) {
+				if (READ_BE_UINT32(animData + fobjPos) == MKTAG('F','O','B','J')) {
+					byte *fobjData = animData + fobjPos + 8;
+
+					// FOBJ header: codec(2), x(2), y(2), w(2), h(2)
+					int16 codec = READ_LE_INT16(fobjData);
+					int16 fobjX = READ_LE_INT16(fobjData + 2);
+					int16 fobjY = READ_LE_INT16(fobjData + 4);
+					int16 fobjW = READ_LE_INT16(fobjData + 6);
+					int16 fobjH = READ_LE_INT16(fobjData + 8);
+
+					debug("Rebel2 loadLevel2Background: Found FOBJ: codec=%d pos=(%d,%d) size=%dx%d",
+						codec, fobjX, fobjY, fobjW, fobjH);
+
+					// Decode codec 3 (RLE) into background buffer
+					if (codec == 3 && fobjW > 0 && fobjH > 0 && fobjW <= 320 && fobjH <= 200) {
+						byte *rleData = fobjData + 14;  // Skip full 14-byte FOBJ header
+						smushDecodeRLE(_level2Background, rleData, fobjX, fobjY, fobjW, fobjH, 320);
+
+						debug("Rebel2 loadLevel2Background: Decoded Level 2 background (%dx%d at %d,%d)",
+							fobjW, fobjH, fobjX, fobjY);
+						_level2BackgroundLoaded = true;
+						foundBackground = true;
+
+						// Copy to render bitmap immediately if provided
+						if (renderBitmap) {
+							for (int by = 0; by < 200; by++) {
+								memcpy(renderBitmap + by * 320, _level2Background + by * 320, 320);
+							}
+							debug("Rebel2 loadLevel2Background: Copied to renderBitmap");
+						}
+					}
+					break;
+				}
+			}
+			break;
+		}
+	}
+
+	if (!foundBackground) {
+		debug("Rebel2 loadLevel2Background: Failed to find/decode background FOBJ");
+	}
+
+	return foundBackground;
 }
 
 void InsaneRebel2::iactRebel2Opcode9(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4) {
