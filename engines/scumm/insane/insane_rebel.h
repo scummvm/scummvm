@@ -329,8 +329,11 @@ public:
 	// Load turret HUD overlay NUT from ANIM data
 	bool loadTurretHudOverlay(byte *animData, int32 size, int16 par3);
 
-	// Load Handler 8 ship POV NUT sprites from ANIM data
-	bool loadHandler8ShipSprites(byte *animData, int32 size, int16 par3);
+	// Load Handler 8 ship POV NUT sprites from ANIM data (par4 = sprite type: 1,3,6,7)
+	bool loadHandler8ShipSprites(byte *animData, int32 size, int16 par4);
+
+	// Load Handler 25 GRD NUT sprites from ANIM data (par4 = sprite type: 1,2)
+	bool loadHandler25GrdSprites(byte *animData, int32 size, int16 par4);
 
 	// Load Level 2 background from embedded ANIM
 	bool loadLevel2Background(byte *animData, int32 size, byte *renderBitmap);
@@ -597,6 +600,9 @@ public:
 	// Ship firing state (from mouse button)
 	bool _shipFiring;
 
+	// Previous mouse button state for edge detection (bit 0=left, bit 1=right, bit 2=middle)
+	uint32 _prevMouseButtons;
+
 	// Ship direction index for sprite selection (Handler 7)
 	// Calculated from ship position: horizontal * 7 + vertical
 	// horizontal: 0-4 (left to right), vertical: 0-6 (up to down)
@@ -629,6 +635,33 @@ public:
 	// Handler 7 screen position (different from Handler 8's raw positions)
 	int16 _flyShipScreenX;           // DAT_0044370e - Ship X screen position
 	int16 _flyShipScreenY;           // DAT_0044370c - Ship Y screen position
+
+	// ======================= Handler 25 (0x19) GRD Ship System =======================
+	// For mixed mode missions (Level 2 speeder bike, etc.), Handler 25 uses GRD NUT
+	// sprites loaded via IACT opcode 8. The ship is rendered based on DAT_00457900 mode.
+	//
+	// Based on FUN_0041cadb case 6 and FUN_0041db5e disassembly:
+	// - DAT_00482240: Primary ship sprite (GRD001, par4=1)
+	// - DAT_00482238: Secondary ship sprite (GRD002, par4=2)
+	// - DAT_00457900: Sprite mode (1,2,3,4) controls which sprite to draw
+	// - DAT_00457910: Ship X screen position
+	// - DAT_00457912: Ship Y screen position
+	// - DAT_00457902: Flight direction (affects GRD002 mirroring)
+	// - DAT_0045790a: Damage level (affects rendering conditions)
+
+	NutRenderer *_grd001Sprite;      // DAT_00482240 - GRD001 primary ship NUT
+	NutRenderer *_grd002Sprite;      // DAT_00482238 - GRD002 secondary ship NUT
+
+	// Handler 25 sprite mode (DAT_00457900) - set by opcode 6 par3
+	// Controls which sprite variant to draw:
+	//   1: Draw _grd001Sprite normally
+	//   2: Draw _grd001Sprite only when damaged (DAT_0045790a != 0)
+	//   3: Draw _grd001Sprite and GRD005 (DAT_00482258) overlay
+	//   4: Draw _grd001Sprite with buffer offset
+	int16 _grdSpriteMode;            // DAT_00457900
+
+	// Render Handler 25 ship sprites (called from procPostRendering)
+	void renderHandler25Ship(byte *renderBitmap, int pitch, int width, int height);
 
 	// ======================= Handler 0x26 Turret HUD Overlays =======================
 	// For turret missions (Level 1, etc.), Handler 0x26 uses NUT-based HUD overlays
