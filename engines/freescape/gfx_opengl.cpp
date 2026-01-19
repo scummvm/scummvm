@@ -79,6 +79,7 @@ void OpenGLRenderer::init() {
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CW);
+	glCullFace(GL_BACK);
 	glEnable(GL_SCISSOR_TEST);
 	setViewport(_viewport);
 	glEnable(GL_DEPTH_CLAMP);

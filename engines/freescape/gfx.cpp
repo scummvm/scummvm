@@ -1016,8 +1016,6 @@ void Renderer::renderRectangle(const Math::Vector3d &originalOrigin, const Math:
 		origin.z() += offset;
 	}
 
-	bool isHorizontal = (size.y() == 0);
-
 	for (int i = 0; i < 2; i++) {
 
 		color = (*colours)[i];
@@ -1045,7 +1043,11 @@ void Renderer::renderRectangle(const Math::Vector3d &originalOrigin, const Math:
 			}
 
 			vertices.clear();
-			bool useFlippedWinding = (i == 0) || (isHorizontal && i == 1);
+			bool useFlippedWinding = (size.x() == 0) || (size.z() == 0);
+
+			if (i == 1)
+				useFlippedWinding = !useFlippedWinding;
+
 			if (useFlippedWinding) {
 				vertices.push_back(origin);
 				vertices.push_back(Math::Vector3d(origin.x() + d2x, origin.y() + d2y, origin.z() + d2z));
@@ -1083,7 +1085,6 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 
 	uint color = 0;
 	uint ecolor = 0;
-	bool isPlanar = (size.x() == 0 || size.y() == 0 || size.z() == 0);
 	if (ordinates->size() == 6) { // Line
 		color = (*colours)[0];
 		ecolor = ecolours ? (*ecolours)[0] : 0;
