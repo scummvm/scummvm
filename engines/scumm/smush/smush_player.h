@@ -147,6 +147,7 @@ private:
 	uint32 _baseSize;
 	byte *_frameBuffer;
 	byte *_specialBuffer;
+	int _specialBufferSize;
 
 	Common::String _seekFile;
 	uint32 _startFrame;

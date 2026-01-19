@@ -254,6 +254,7 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 	_base = nullptr;
 	_frameBuffer = nullptr;
 	_specialBuffer = nullptr;
+	_specialBufferSize = 0;
 
 	_seekPos = -1;
 
@@ -952,8 +953,12 @@ void smushDecodeRA2Bomp(byte *dst, const byte *src, int left, int top, int width
 
 void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int top, int width, int height, int dataSize) {
 	if ((height == 242) && (width == 384)) {
-		if (_specialBuffer == 0)
-			_specialBuffer = (byte *)malloc(242 * 384);
+		int bufSize = 242 * 384;
+		if (_specialBuffer == nullptr || bufSize > _specialBufferSize) {
+			free(_specialBuffer);
+			_specialBuffer = (byte *)malloc(bufSize);
+			_specialBufferSize = bufSize;
+		}
 		_dst = _specialBuffer;
 	} else if (_vm->_game.id == GID_REBEL2 && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth))) {
 		// For Rebel2, check if this partial update overlaps with a destroyed enemy
@@ -961,8 +966,18 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 		if (_insane && _insane->shouldSkipFrameUpdate(left, top, width, height)) {
 			return;  // Skip this frame update
 		}
-		// Rebel2 partial frames decode directly to main video buffer at (left, top)
-		// using screen pitch - don't use _specialBuffer
+		// Rebel2 videos use frames larger than the screen (e.g., 424x260 vs 320x200).
+		// Allocate a special buffer to hold the full frame - this is needed because
+		// codecs like 37/47 write the full frame size regardless of screen size.
+		int bufSize = width * height;
+		if (_specialBuffer == nullptr || bufSize > _specialBufferSize) {
+			free(_specialBuffer);
+			_specialBuffer = (byte *)malloc(bufSize);
+			_specialBufferSize = bufSize;
+			_width = width;
+			_height = height;
+		}
+		_dst = _specialBuffer;
 	} else if ((height > _vm->_screenHeight) || (width > _vm->_screenWidth))
 		return;
 	// FT Insane uses smaller frames to draw overlays with moving objects
@@ -975,8 +990,9 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 		_width = width;
 		_height = height;
 	} else if (_vm->_game.id == GID_REBEL2 && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth))) {
-		// Do not update _width/_height here to preserve original video size
-		// if frames are partial updates
+		// Do not update _width/_height here - preserve original video size set during
+		// buffer allocation. Small overlay sprites (e.g., 8x7) need to use the background
+		// frame's pitch (424) to be drawn at the correct position in the buffer.
 	} else {
 		_width = _vm->_screenWidth;
 		_height = _vm->_screenHeight;
