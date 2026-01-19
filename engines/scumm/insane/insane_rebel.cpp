@@ -642,44 +642,6 @@ int32 InsaneRebel2::processMouse() {
 	return buttons;
 }
 
-bool InsaneRebel2::shouldSkipFrameUpdate(int left, int top, int width, int height) {
-	// Only check for Rebel2
-	if (_vm->_game.id != GID_REBEL2) {
-		return false;
-	}
-	
-	Common::Rect updateRect(left, top, left + width, top + height);
-	int updateArea = width * height;
-	
-	// Check if this update region significantly overlaps with any destroyed enemy
-	Common::List<enemy>::iterator it;
-	for (it = _enemies.begin(); it != _enemies.end(); ++it) {
-		if (it->destroyed) {
-			// Calculate the intersection of the update rect and enemy rect
-			Common::Rect enemyRect = it->rect;
-			
-			if (updateRect.intersects(enemyRect)) {
-				// Calculate the intersection area
-				int intLeft = MAX(updateRect.left, enemyRect.left);
-				int intTop = MAX(updateRect.top, enemyRect.top);
-				int intRight = MIN(updateRect.right, enemyRect.right);
-				int intBottom = MIN(updateRect.bottom, enemyRect.bottom);
-				int intArea = (intRight - intLeft) * (intBottom - intTop);
-				
-				// Require at least 70% overlap to skip the update
-				// This prevents unrelated frame updates from being incorrectly skipped
-				if (intArea * 100 >= updateArea * 70) {
-					debug("Rebel2: Skipping frame update (%d,%d %dx%d) - %d%% overlap with destroyed enemy ID=%d",
-						left, top, width, height, (intArea * 100) / updateArea, it->id);
-					return true;
-				}
-			}
-		}
-	}
-	
-	return false;
-}
-
 bool InsaneRebel2::isBitSet(int n) {
 	assert (n < 0x200);
 
@@ -699,17 +661,38 @@ void InsaneRebel2::clearBit(int n) {
 }
 
 void InsaneRebel2::procSKIP(int32 subSize, Common::SeekableReadStream &b) {
-	// Rebel Assault 2 does NOT use Full Throttle's conditional frame skip mechanism.
-	// The base Insane::procSKIP() uses _iactBits to decide whether to skip frame objects,
-	// but RA2 handles conditional content differently through IACT opcodes 2/3/4.
+	// Rebel Assault 2 uses SKIP chunks to conditionally skip the next FOBJ/PSAD chunk.
+	// The SKIP chunk contains one or two object IDs. If the bit for the object is set
+	// (i.e., the object is disabled/destroyed), skip the next chunk.
 	//
-	// By overriding this to do nothing, we prevent random frame objects from being
-	// skipped due to uninitialized _iactBits state.
+	// This is the same mechanism as Full Throttle, but RA2 uses it for enemy objects:
+	// - When an enemy is destroyed, setBit(enemy_id) is called
+	// - SKIP chunks in the video contain the enemy ID
+	// - If the bit is set, the next FOBJ (enemy sprite) is skipped
+	// - This prevents destroyed enemy sprites from being rendered
 	//
-	// If RA2 SKIP chunks need to be handled, implement RA2-specific logic here.
-	// For now, just consume the data without setting _skipNext.
-	(void)subSize;
-	(void)b;
+	// The original game's FUN_00423A50 chunk reader uses this mechanism.
+
+	int16 par1, par2;
+	_player->_skipNext = false;
+
+	assert(subSize >= 4);
+	par1 = b.readUint16LE();
+	par2 = b.readUint16LE();
+
+	if (!par2) {
+		// Single ID mode: skip next chunk if this object's bit is set (disabled)
+		if (isBitSet(par1)) {
+			_player->_skipNext = true;
+			debug("Rebel2 SKIP: ID=%d bit is set, skipping next chunk", par1);
+		}
+	} else {
+		// Dual ID mode: skip if bits are different (XOR logic)
+		if (isBitSet(par1) != isBitSet(par2)) {
+			_player->_skipNext = true;
+			debug("Rebel2 SKIP: ID=%d and ID=%d bits differ, skipping next chunk", par1, par2);
+		}
+	}
 }
 
 void InsaneRebel2::procPreRendering(byte *renderBitmap) {
@@ -3697,24 +3680,15 @@ void InsaneRebel2::renderFallbackShip(byte *renderBitmap, int pitch, int width, 
 }
 
 void InsaneRebel2::renderEnemyOverlays(byte *renderBitmap, int pitch, int width, int height, int videoWidth) {
-	// Draw enemy indicator brackets and erase destroyed enemy areas
-
-	// Erase destroyed enemies' areas (fill with black)
-	for (Common::List<enemy>::iterator it = _enemies.begin(); it != _enemies.end(); ++it) {
-		if (it->destroyed) {
-			Common::Rect r = it->rect;
-			if (r.left < 0) r.left = 0;
-			if (r.top < 0) r.top = 0;
-			if (r.right > width) r.right = width;
-			if (r.bottom > height) r.bottom = height;
-
-			for (int y = r.top; y < r.bottom; y++) {
-				for (int x = r.left; x < r.right; x++) {
-					renderBitmap[y * pitch + x] = 0;
-				}
-			}
-		}
-	}
+	// Draw enemy indicator brackets for active enemies
+	//
+	// NOTE: Do NOT fill destroyed enemy areas with black. The original game does not do this.
+	// When an enemy is destroyed:
+	// 1. setBit(enemy_id) disables the enemy in the bit table
+	// 2. clearBit(dependency_id) enables dependent objects (explosion animations)
+	// 3. SKIP chunks in the video cause enemy FOBJ sprites to be skipped (via procSKIP)
+	// 4. renderExplosions() draws the explosion animation from the 5-slot system
+	// 5. The background video shows through where the enemy was
 
 	// Draw green brackets for active enemies (Easy/Medium difficulty only)
 	if (_difficulty >= 2)
