@@ -37,6 +37,24 @@ void smushDecodeRLE(byte *dst, const byte *src, int left, int top, int width, in
 }
 
 /**
+ * Codec 3 RLE decoder that writes ALL colors including color 0 (black).
+ * Use this for background images where color 0 should NOT be treated as transparent.
+ * The standard smushDecodeRLE() treats color 0 as transparent, which is correct
+ * for overlay sprites but wrong for background images.
+ *
+ * Used by: Rebel Assault 2 Level 2 background loading (IACT opcode 8, par4=5)
+ */
+void smushDecodeRLEOpaque(byte *dst, const byte *src, int left, int top, int width, int height, int pitch) {
+	dst += top * pitch;
+	do {
+		dst += left;
+		bompDecodeLine(dst, src + 2, width, true);  // setZero = TRUE to write all colors
+		src += READ_LE_UINT16(src) + 2;
+		dst += pitch - left;
+	} while (--height);
+}
+
+/**
  * Codec 21/44: Line Update codec
  * Used for fonts (NUT files) and some embedded HUD frames.
  * Format: Each line has a 2-byte size header, then 2-byte skip, 2-byte count pairs with literal pixels.

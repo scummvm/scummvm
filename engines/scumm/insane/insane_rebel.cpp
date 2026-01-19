@@ -50,6 +50,7 @@ namespace Scumm {
 
 // External codec functions from codec1.cpp
 extern void smushDecodeRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
+extern void smushDecodeRLEOpaque(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 extern void smushDecodeUncompressed(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 
 InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
@@ -1557,9 +1558,23 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 		}
 	}
 
-	// ===== Handler 25 (0x19): Also supports Level 2 background =====
-	if (!handled && _rebelHandler == 25 && par4 == 5) {
-		handled = loadLevel2Background(animData, animDataSize, renderBitmap);
+	// ===== Handler 25 (0x19): Level 2 Background and Overlays =====
+	// FUN_0041cadb case 6 (opcode 8): Uses PAR4 for switch selection
+	//   par4=4: 350x230 corridor overlay -> DAT_00482268, draws immediately
+	//   par4=5: 320x200 background -> DAT_0048226c
+	//   par4=6: Overlay -> DAT_00482250, draws immediately
+	//   par4=7: Overlay -> DAT_00482248, draws immediately
+	if (!handled && _rebelHandler == 25) {
+		if (par4 == 5) {
+			// Background (320x200) - stored for per-frame restoration
+			handled = loadLevel2Background(animData, animDataSize, renderBitmap);
+		} else if (par4 == 4 || par4 == 6 || par4 == 7) {
+			// Overlays - draw immediately to renderBitmap
+			// These complete the visual scene along with the background
+			debug("Rebel2 Opcode 8: Handler 25 overlay par4=%d - drawing to screen", par4);
+			loadEmbeddedSan(par4, animData, animDataSize, renderBitmap);
+			handled = true;
+		}
 	}
 
 	// ===== Fallback: Embedded SAN HUD overlays =====
@@ -1867,9 +1882,12 @@ bool InsaneRebel2::loadLevel2Background(byte *animData, int32 size, byte *render
 						codec, fobjX, fobjY, fobjW, fobjH);
 
 					// Decode codec 3 (RLE) into background buffer
+					// Use smushDecodeRLEOpaque to write ALL colors including color 0 (black).
+					// The standard smushDecodeRLE treats color 0 as transparent, which causes
+					// the background to appear as a "sketch" with black pixels missing.
 					if (codec == 3 && fobjW > 0 && fobjH > 0 && fobjW <= 320 && fobjH <= 200) {
 						byte *rleData = fobjData + 14;  // Skip full 14-byte FOBJ header
-						smushDecodeRLE(_level2Background, rleData, fobjX, fobjY, fobjW, fobjH, 320);
+						smushDecodeRLEOpaque(_level2Background, rleData, fobjX, fobjY, fobjW, fobjH, 320);
 
 						debug("Rebel2 loadLevel2Background: Decoded Level 2 background (%dx%d at %d,%d)",
 							fobjW, fobjH, fobjX, fobjY);
@@ -2378,8 +2396,17 @@ void InsaneRebel2::renderEmbeddedFrame(byte *renderBitmap, const EmbeddedSanFram
 	// Skip immediate draw for handlers that render HUD during post-processing:
 	// - Handler 7/8: Ship direction sprites selected based on direction
 	// - Handler 0x26/0x19: Cockpit HUD positioned based on mouse/crosshair
+	//
+	// Exception: Handler 25 (0x19) background overlays (par4/userId=4, 6, 7) should draw immediately.
+	// These complete the visual scene and are NOT positioned by mouse/crosshair.
 	bool skipImmediateDraw = (_rebelHandler == 7 || _rebelHandler == 8 ||
 	                          _rebelHandler == 0x26 || _rebelHandler == 0x19);
+
+	// Handler 25 background overlays should draw immediately
+	if (_rebelHandler == 0x19 && (userId == 4 || userId == 6 || userId == 7)) {
+		skipImmediateDraw = false;
+		debug("Rebel2: Handler 25 background overlay userId=%d - forcing immediate draw", userId);
+	}
 
 	if (!frame.valid || !renderBitmap || skipImmediateDraw) {
 		if (skipImmediateDraw && frame.valid) {
