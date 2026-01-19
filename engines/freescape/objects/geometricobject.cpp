@@ -484,4 +484,10 @@ void GeometricObject::draw(Renderer *gfx, float offset) {
 	}
 }
 
+void GeometricObject::setColor(int idx, int color) {
+	assert(_colours);
+	assert(idx < _colours->size());
+	(*_colours)[idx] = color;
+}
+
 } // End of namespace Freescape

@@ -126,6 +126,12 @@ void EclipseEngine::loadAssetsCPCDemo() {
 	loadColorPalette();
 	swapPalette(1);
 
+	// This patch forces a solid color to the bottom of the chest in the area 5
+	// It was transparent in the original game
+	GeometricObject *obj = (GeometricObject *)_areaMap[5]->objectWithID(12);
+	assert(obj);
+	obj->setColor(2, 4);
+
 	_indicators.push_back(loadBundledImage("eclipse_ankh_indicator"));
 
 	for (auto &it : _indicators)
