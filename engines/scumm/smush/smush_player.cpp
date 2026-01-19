@@ -961,23 +961,32 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 		}
 		_dst = _specialBuffer;
 	} else if (_vm->_game.id == GID_REBEL2 && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth))) {
-		// For Rebel2, check if this partial update overlaps with a destroyed enemy
-		// If so, skip the update entirely to prevent showing the enemy sprite
+		// Skip frame updates for destroyed enemies. The enemy area is erased
+		// in procPostRendering (eraseDestroyedEnemies) before explosions are drawn.
 		if (_insane && _insane->shouldSkipFrameUpdate(left, top, width, height)) {
 			return;  // Skip this frame update
 		}
-		// Rebel2 videos use frames larger than the screen (e.g., 424x260 vs 320x200).
-		// Allocate a special buffer to hold the full frame - this is needed because
-		// codecs like 37/47 write the full frame size regardless of screen size.
+		// Rebel2 uses a special buffer for all non-matching frames.
+		// Level 1: First frame is 424x260 (background), small sprites reuse same buffer
+		// Level 2: Uses virtual screen directly (handled below when _specialBuffer stays null
+		//          because first frames are small and don't need oversized buffer)
+		// Only allocate/expand buffer for frames LARGER than current buffer or screen
 		int bufSize = width * height;
-		if (_specialBuffer == nullptr || bufSize > _specialBufferSize) {
-			free(_specialBuffer);
-			_specialBuffer = (byte *)malloc(bufSize);
-			_specialBufferSize = bufSize;
-			_width = width;
-			_height = height;
+		if (bufSize > _vm->_screenWidth * _vm->_screenHeight) {
+			// Frame is larger than screen - need special buffer
+			if (_specialBuffer == nullptr || bufSize > _specialBufferSize) {
+				free(_specialBuffer);
+				_specialBuffer = (byte *)malloc(bufSize);
+				_specialBufferSize = bufSize;
+				_width = width;
+				_height = height;
+			}
 		}
-		_dst = _specialBuffer;
+		// Use special buffer if allocated (for oversized videos like Level 1)
+		// Otherwise use virtual screen (for Level 2 small sprites)
+		if (_specialBuffer != nullptr && _specialBufferSize >= _vm->_screenWidth * _vm->_screenHeight) {
+			_dst = _specialBuffer;
+		}
 	} else if ((height > _vm->_screenHeight) || (width > _vm->_screenWidth))
 		return;
 	// FT Insane uses smaller frames to draw overlays with moving objects
