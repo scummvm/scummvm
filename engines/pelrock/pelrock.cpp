@@ -161,7 +161,7 @@ void PelrockEngine::init() {
 		gameInitialized = true;
 		loadAnims();
 		// setScreen(0, ALFRED_DOWN);
-		setScreen(3, ALFRED_RIGHT);
+		setScreen(15, ALFRED_RIGHT);
 		// setScreen(15, ALFRED_DOWN);
 		// setScreen(2, ALFRED_LEFT);
 		// alfredState.x = 576;
@@ -237,7 +237,7 @@ bool PelrockEngine::renderScene(int overlayMode) {
 
 	_chrono->updateChrono();
 	if (_chrono->_gameTick) {
-		playSoundIfNeeded();
+		// playSoundIfNeeded();
 
 		copyBackgroundToBuffer();
 
@@ -427,7 +427,7 @@ void PelrockEngine::paintDebugLayer() {
 			if (!hotspot.isEnabled || hotspot.isSprite)
 				continue;
 			drawRect(_screen, hotspot.x, hotspot.y, hotspot.w, hotspot.h, 12);
-			_smallFont->drawString(_screen, Common::String::format("HS %d", hotspot.index - _room->_currentRoomAnims.size()), hotspot.x + 2, hotspot.y + 2, 640, 12);
+			_smallFont->drawString(_screen, Common::String::format("HS %d - %d", hotspot.index - _room->_currentRoomAnims.size(), hotspot.extra), hotspot.x + 2, hotspot.y + 2, 640, 12);
 			// _smallFont->drawString(_screen, Common::String::format("x=%d", hotspot.extra), hotspot.x + 2, hotspot.y + 2 + 14, 640, 14);
 		}
 	}
@@ -562,7 +562,9 @@ void PelrockEngine::doAction(VerbIcon action, HotSpot *hotspot) {
 		break;
 	case PICKUP:
 		_alfredState.setState(ALFRED_INTERACTING);
-		pickUpAndDisable(hotspot);
+		if(_room->isPickableByExtra(hotspot->extra)) {
+			pickUpAndDisable(hotspot);
+		}
 		executeAction(PICKUP, hotspot);
 		break;
 	case OPEN:
@@ -633,6 +635,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			_currentStep++;
 			if (_currentStep >= _currentContext.movementCount) {
 				_currentStep = 0;
+				debug("Finished walking to target");
 				_alfredState.setState(ALFRED_IDLE);
 
 				if (_currentHotspot != nullptr)
@@ -640,8 +643,8 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 				drawAlfred(_res->alfredIdle[_alfredState.direction]);
 
 				if (_queuedAction.isQueued) {
-					doAction(_queuedAction.verb, &_room->_currentRoomHotspots[_queuedAction.hotspotIndex]);
 					_queuedAction.isQueued = false;
+					doAction(_queuedAction.verb, &_room->_currentRoomHotspots[_queuedAction.hotspotIndex]);
 					break;
 				}
 			}
@@ -931,9 +934,12 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 		_actionPopupState.isActive = true;
 		_actionPopupState.curFrame = 0;
 
-		_actionPopupState.isAlfredUnder = alfredUnder;
 		if (hotspotIndex != -1) {
 			_currentHotspot = &_room->_currentRoomHotspots[hotspotIndex];
+		}
+		else {
+			_actionPopupState.isAlfredUnder = alfredUnder;
+			_currentHotspot = nullptr;
 		}
 	}
 }
@@ -1218,6 +1224,19 @@ void PelrockEngine::extraScreenLoop() {
 	g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
 	free(_extraScreen);
 	_extraScreen = nullptr;
+}
+
+void PelrockEngine::walkLoop(int16 x, int16 y, AlfredDirection direction) {
+
+	_alfredState.direction = direction;
+	walkTo(x, y);
+	while(!shouldQuit() && _alfredState.animState == ALFRED_WALKING) {
+		_events->pollEvent();
+		renderScene();
+		_screen->update();
+		g_system->delayMillis(10);
+	}
+	debug("Walk loop ended");
 }
 
 void PelrockEngine::walkTo(int x, int y) {

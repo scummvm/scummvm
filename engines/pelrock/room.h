@@ -30,6 +30,21 @@
 namespace Pelrock {
 
 static const int kNumSfxPerRoom = 8;
+static const int unpickableHotspotExtras[] = {
+	308, // lamppost cable
+	65, // objects in shop
+	66,
+	67,
+	68,
+	69,
+	70,
+	71,
+	72,
+	73,
+	74,
+	6,
+	7
+};
 
 class RoomManager {
 public:
@@ -43,26 +58,46 @@ public:
 
 	/** Methods to modify room data at runtime **/
 	void addSticker(int stickerId, bool persist = true);
+	void addStickerToRoom(byte room, int stickerId);
 	void onlyPersistSticker(byte room, int stickerId);
 	void removeSticker(int index);
+	void removeSticker(byte room, int index);
 	bool hasSticker(int index);
+	bool hasSticker(byte room, int index);
 	void changeExit(int index, bool enabled, bool persist = true);
+	void changeExit(byte room, int index, bool enabled, bool persist = true);
 	void disableExit(int index, bool persist = true);
+	void disableExit(byte room, int index, bool persist = true);
 	void enableExit(int index, bool persist = true);
+	void enableExit(byte room, int index, bool persist = true);
 	void changeWalkBox(WalkBox walkbox);
+	void changeWalkbox(byte room, WalkBox walkbox);
 	void changeHotSpot(HotSpot hotspot);
-	void disableSprite(int roomNumber, int spriteIndex, bool persist = true);
+	void changeHotspot(byte room, HotSpot hotspot);
+	void disableSprite(byte roomNumber, int spriteIndex, bool persist = true);
 	void enableSprite(int spriteIndex, int zOrder, bool persist = true);
+	void enableSprite(byte roomNumber,int spriteIndex, int zOrder, bool persist = true);
 	/**
 	 * Utility function to enable or disable a hotspot, with an option to persist the change.
 	 */
 	void enableHotspot(HotSpot *hotspot, bool persist = true);
+	void enableHotspot(byte room, HotSpot *hotspot, bool persist = true);
 	void disableHotspot(HotSpot *hotspot, bool persist = true);
+	void disableHotspot(byte room, HotSpot *hotspot, bool persist = true);
+	void moveHotspot(HotSpot *hotspot, int16 newX, int16 newY, bool persist = true);
+	void moveHotspot(byte room, HotSpot *hotspot, int16 newX, int16 newY, bool persist = true);
 	void addWalkbox(WalkBox walkbox);
-	void applyDisabledChoices(int roomNumber, byte *conversationData, size_t conversationDataSize);
+	void addWalkbox(byte room, WalkBox walkbox);
+	void applyDisabledChoices(byte roomNumber, byte *conversationData, size_t conversationDataSize);
 	void applyDisabledChoice(ResetEntry entry, byte *conversationData, size_t conversationDataSize);
 	void addDisabledChoice(ChoiceOption choice);
-
+	bool isPickableByExtra(uint16 extra)  {
+		for(int i = 0; i < sizeof(unpickableHotspotExtras); i++) {
+			if (extra == unpickableHotspotExtras[i])
+				return false;
+		}
+		return true;
+	}
 	Sprite *findSpriteByIndex(byte index);
 	HotSpot *findHotspotByIndex(byte index);
 	HotSpot *findHotspotByExtra(uint16 extra);

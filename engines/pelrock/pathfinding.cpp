@@ -64,12 +64,12 @@ bool findPath(int sourceX, int sourceY, int targetX, int targetY, Common::Array<
 	Common::Point target = calculateWalkTarget(walkboxes, targetX, targetY, 2, nullptr);
 	targetX = target.x;
 	targetY = target.y;
-	debug("Startx= %d, starty= %d, destx= %d, desty= %d", startX, startY, targetX, targetY);
+	// debug("Startx= %d, starty= %d, destx= %d, desty= %d", startX, startY, targetX, targetY);
 
 	uint8_t startBox = findWalkboxForPoint(walkboxes, startX, startY);
 	uint8_t destBox = findWalkboxForPoint(walkboxes, targetX, targetY);
 
-	debug("Pathfinding from (%d, %d) in box %d to (%d, %d) in box %d\n", startX, startY, startBox, targetX, targetY, destBox);
+	// debug("Pathfinding from (%d, %d) in box %d to (%d, %d) in box %d\n", startX, startY, startBox, targetX, targetY, destBox);
 	// Check if both points are in valid walkboxes
 	if (startBox == 0xFF || destBox == 0xFF) {
 		debug("Error: Start or destination not in any walkbox\n");

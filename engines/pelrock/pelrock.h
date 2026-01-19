@@ -111,6 +111,7 @@ private:
 
 	void gameLoop();
 	void extraScreenLoop();
+	void walkLoop(int16 x, int16 y, AlfredDirection direction);
 
 	void checkMouseHover();
 	void checkMouseClick(int x, int y);
@@ -226,6 +227,7 @@ public:
 	bool renderScene(int overlayMode = OVERLAY_NONE);
 
 	void addInventoryItem(int item);
+	void buyFromStore(HotSpot *hotspot, int stickerId);
 	// Actions
 	void performActionTrigger(uint16 actionTrigger);
 	void dialogActionTrigger(uint16 actionTrigger, byte room, byte rootIndex);
@@ -257,6 +259,20 @@ public:
 	void useOnAlfred(int inventoryObject);
 	void useCardWithATM(int inventoryObject, HotSpot *hotspot);
 	void useBrickWithWindow(int inventoryObject, HotSpot *hotspot);
+	void moveCable(HotSpot *hotspot);
+	void useBrickWithShopWindow(int inventoryObject, HotSpot *hotspot);
+	void pickGuitar(HotSpot *hotspot);
+	void pickFish(HotSpot *hotspot);
+	void pickTeddyBear(HotSpot *hotspot);
+	void pickDiscs(HotSpot *hotspot);
+	void pickMonkeyBrain(HotSpot *hotspot);
+	void pickBooks(HotSpot *hotspot);
+	void pickPalette(HotSpot *hotspot);
+	void pickCandy(HotSpot *hotspot);
+	void pickConch(HotSpot *hotspot);
+	void pickHat(HotSpot *hotspot);
+	void pickCord(HotSpot *hotspot);
+	void pickAmulet(HotSpot *hotspot);
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);
 };

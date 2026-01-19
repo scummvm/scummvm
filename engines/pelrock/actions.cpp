@@ -61,6 +61,21 @@ const ActionEntry actionTable[] = {
 	{290, OPEN, &PelrockEngine::openShopDoor},
 	{290, CLOSE, &PelrockEngine::closeShopDoor},
 	{32, OPEN, &PelrockEngine::openLamppost},
+	{308, PICKUP, &PelrockEngine::moveCable}, // Lamppost cable
+
+	// Room 15
+	{65, PICKUP, &PelrockEngine::pickGuitar},
+	{66, PICKUP, &PelrockEngine::pickFish},
+	{67, PICKUP, &PelrockEngine::pickTeddyBear},
+	{68, PICKUP, &PelrockEngine::pickDiscs},
+	{69, PICKUP, &PelrockEngine::pickMonkeyBrain},
+	{70, PICKUP, &PelrockEngine::pickBooks},
+	{71, PICKUP, &PelrockEngine::pickPalette},
+	{72, PICKUP, &PelrockEngine::pickCandy},
+	{73, PICKUP, &PelrockEngine::pickConch},
+	{74, PICKUP, &PelrockEngine::pickHat},
+	{6, PICKUP, &PelrockEngine::pickCord},
+	{7, PICKUP, &PelrockEngine::pickAmulet},
 
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
@@ -79,6 +94,7 @@ const CombinationEntry combinationTable[] = {
 	{2, 281, &PelrockEngine::useCardWithATM},           // Use ATM Card with ATM
 	{62, 117, &PelrockEngine::useSpicySauceWithBurger}, // Use Spicy Sauce with Burger
 	{4, 294, &PelrockEngine::useBrickWithWindow},       // Use Brick with Window (Room 3)
+	{4, 295, &PelrockEngine::useBrickWithShopWindow},
 	// End marker
 	{WILDCARD, WILDCARD, nullptr}};
 
@@ -211,18 +227,10 @@ void PelrockEngine::closeShopDoor(HotSpot *hotspot) {
 void PelrockEngine::openLamppost(HotSpot *hotspot) {
 	debug("Opening lamppost");
 	_room->addSticker(14);
+	_room->moveHotspot(_room->findHotspotByExtra(308), 519, 363);
 }
 
 void PelrockEngine::useBrickWithWindow(int inventoryObject, HotSpot *hotspot) {
-	debug("Using brick with window - sticker 11 will be added");
-
-	// Check if window is already broken
-	if (_room->hasSticker(11)) {
-		// Window already broken, say something generic
-		_alfredState.direction = ALFRED_UP;
-		_dialog->say(_res->_ingameTexts[YA_ABIERTO_M]); // "It's already open/broken"
-		return;
-	}
 
 	// TODO: Play Alfred's throwing animation
 	// This would require adding a new special animation entry
@@ -259,7 +267,7 @@ void PelrockEngine::useBrickWithWindow(int inventoryObject, HotSpot *hotspot) {
 	// Remove brick from inventory
 	_state->removeInventoryItem(4);
 
-	int16 x = 639; // put at the very edge of the screen
+	int16 x = 639; // put at the very edge of the screen so it gets adjusted
 	int16 y = windowHotspot->y;
 	// Play the NPC dialog sequence
 	int16 dialog1y = y + 22;
@@ -276,6 +284,66 @@ void PelrockEngine::useBrickWithWindow(int inventoryObject, HotSpot *hotspot) {
 	walkTo(639, _alfredState.y);
 }
 
+void PelrockEngine::moveCable(HotSpot *hotspot) {
+	_room->addSticker(15);
+	_room->addSticker(16);
+	_room->addSticker(17);
+	_room->addStickerToRoom(4, 20); // Room 4, sticker 20
+	_state->setFlag(FLAG_CABLES_PUESTOS, true);
+}
+
+void PelrockEngine::useBrickWithShopWindow(int inventoryObject, HotSpot *hotspot) {
+	_dialog->say(_res->_ingameTexts[NOSE_ENTERARIA]);
+}
+
+void PelrockEngine::pickGuitar(HotSpot *hotspot) {
+	buyFromStore(hotspot, 38);
+}
+
+void PelrockEngine::pickFish(HotSpot *hotspot) {
+	buyFromStore(hotspot, 39);
+}
+
+void PelrockEngine::pickTeddyBear(HotSpot *hotspot) {
+	buyFromStore(hotspot, 40);
+}
+
+void PelrockEngine::pickDiscs(HotSpot *hotspot) {
+	buyFromStore(hotspot, 41);
+}
+
+void PelrockEngine::pickMonkeyBrain(HotSpot *hotspot) {
+	buyFromStore(hotspot, 42);
+}
+
+void PelrockEngine::pickBooks(HotSpot *hotspot) {
+	buyFromStore(hotspot, 43);
+}
+
+void PelrockEngine::pickPalette(HotSpot *hotspot) {
+	buyFromStore(hotspot, 44);
+}
+
+void PelrockEngine::pickCandy(HotSpot *hotspot) {
+	buyFromStore(hotspot, 45);
+}
+
+void PelrockEngine::pickConch(HotSpot *hotspot) {
+	buyFromStore(hotspot, 46);
+}
+
+void PelrockEngine::pickHat(HotSpot *hotspot) {
+	buyFromStore(hotspot, 47);
+}
+
+void PelrockEngine::pickCord(HotSpot *hotspot) {
+	buyFromStore(hotspot, 48);
+}
+
+void PelrockEngine::pickAmulet(HotSpot *hotspot) {
+	buyFromStore(hotspot, 49);
+}
+
 void PelrockEngine::openDoor(HotSpot *hotspot, int exitIndex, int sticker, bool masculine, bool stayClosed) {
 	if (_room->hasSticker(sticker)) {
 		int text = masculine == MASCULINE ? YA_ABIERTO_M : YA_ABIERTA_F;
@@ -284,6 +352,7 @@ void PelrockEngine::openDoor(HotSpot *hotspot, int exitIndex, int sticker, bool 
 	}
 	_room->enableExit(exitIndex, !stayClosed);
 	_room->addSticker(sticker, !stayClosed);
+	_sound->playSound(_room->_roomSfx[0]);
 }
 
 void PelrockEngine::closeDoor(HotSpot *hotspot, int exitIndex, int sticker, bool masculine, bool stayOpen) {
@@ -294,6 +363,7 @@ void PelrockEngine::closeDoor(HotSpot *hotspot, int exitIndex, int sticker, bool
 	}
 	_room->disableExit(exitIndex, !stayOpen);
 	_room->removeSticker(sticker);
+	_sound->playSound(_room->_roomSfx[1]);
 }
 
 void PelrockEngine::addInventoryItem(int item) {
@@ -314,6 +384,27 @@ void PelrockEngine::addInventoryItem(int item) {
 	}
 	_state->addInventoryItem(item);
 }
+
+void PelrockEngine::buyFromStore(HotSpot *hotspot, int stickerId) {
+	if(_state->hasInventoryItem(5) == false)
+	{
+		_dialog->say(_res->_ingameTexts[NOTENGODINERO]);
+		return;
+	}
+	else {
+		_room->addSticker(stickerId);
+		_room->disableHotspot(hotspot);
+		_state->addInventoryItem(hotspot->extra);
+		_currentHotspot = nullptr;
+		walkLoop(224, 283, ALFRED_LEFT);
+		_dialog->say(_res->_ingameTexts[CUESTA1000]);
+		_dialog->say(_res->_ingameTexts[AQUITIENE]);
+		_dialog->say(_res->_ingameTexts[MUYBIEN]);
+		_state->removeInventoryItem(5); // Remove 1000 pesetas bill
+	}
+}
+
+
 
 void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte rootIndex) {
 	if (actionTrigger == 328) {

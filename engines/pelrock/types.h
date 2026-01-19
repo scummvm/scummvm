@@ -470,13 +470,13 @@ struct GameStateData {
 	}
 
 	bool flagIsSet(int flagIndex) const {
-		if (flagIndex < 0 || flagIndex >= 46)
+		if (flagIndex < 0 || flagIndex >= kNumGameFlags)
 			return false;
 		return flags[flagIndex];
 	}
 
 	void setFlag(int flagIndex, bool value) {
-		if (flagIndex < 0 || flagIndex >= 46)
+		if (flagIndex < 0 || flagIndex >= kNumGameFlags)
 			return;
 		flags[flagIndex] = value;
 	}
@@ -492,6 +492,15 @@ struct GameStateData {
 				return;
 			}
 		}
+	}
+
+	bool hasInventoryItem(int id) const {
+		for (int i = 0; i < inventoryItems.size(); i++) {
+			if (inventoryItems[i] == id) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	byte *conversationRootsState = new byte[4 * 56];

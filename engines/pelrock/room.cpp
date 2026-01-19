@@ -91,8 +91,12 @@ void RoomManager::getBackground(Common::File *roomFile, int roomOffset, byte *ba
 void RoomManager::addSticker(int stickerId, bool persist) {
 	Sticker sticker = g_engine->_res->getSticker(stickerId);
 	_roomStickers.push_back(sticker);
-	if (persist)
-		g_engine->_state->stickersPerRoom[_currentRoomNumber].push_back(sticker);
+	addStickerToRoom(_currentRoomNumber, stickerId);
+}
+
+void RoomManager::addStickerToRoom(byte room, int stickerId) {
+	Sticker sticker = g_engine->_res->getSticker(stickerId);
+	g_engine->_state->stickersPerRoom[room].push_back(sticker);
 }
 
 void RoomManager::onlyPersistSticker(byte room, int stickerId) {
@@ -162,7 +166,7 @@ void RoomManager::changeHotSpot(HotSpot hotspot) {
 	g_engine->_state->roomHotSpotChanges[_currentRoomNumber].push_back({_currentRoomNumber, hotspot.innerIndex, hotspot});
 }
 
-void RoomManager::disableSprite(int roomNumber, int spriteIndex, bool persist) {
+void RoomManager::disableSprite(byte roomNumber, int spriteIndex, bool persist) {
 	if (roomNumber == _currentRoomNumber) {
 		_currentRoomAnims[spriteIndex].zOrder = 255;
 	}
@@ -182,6 +186,14 @@ void RoomManager::enableHotspot(HotSpot *hotspot, bool persist) {
 
 void RoomManager::disableHotspot(HotSpot *hotspot, bool persist) {
 	hotspot->isEnabled = false;
+	if (persist) {
+		changeHotSpot(*hotspot);
+	}
+}
+
+void RoomManager::moveHotspot(HotSpot *hotspot, int16 newX, int16 newY, bool persist) {
+	hotspot->x = newX;
+	hotspot->y = newY;
 	if (persist) {
 		changeHotSpot(*hotspot);
 	}
@@ -382,7 +394,7 @@ Common::Array<HotSpot> RoomManager::loadHotspots(byte *data, size_t size) {
 		spot.h = data[hotspotOffset + 6];
 		spot.isSprite = false;
 		spot.extra = READ_LE_INT16(data + hotspotOffset + 7);
-		// debug("Hotspot %d: type=%d x=%d y=%d w=%d h=%d extra=%d, isEnabled=%d", spot.innerIndex, spot.actionFlags, spot.x, spot.y, spot.w, spot.h, spot.extra, spot.isEnabled);
+		debug("Hotspot %d: type=%d x=%d y=%d w=%d h=%d extra=%d, isEnabled=%d", spot.innerIndex, spot.actionFlags, spot.x, spot.y, spot.w, spot.h, spot.extra, spot.isEnabled);
 		hotspots.push_back(spot);
 	}
 
@@ -744,7 +756,7 @@ void RoomManager::loadConversationData(byte *pair12data, size_t pair12size, uint
 	}
 }
 
-void RoomManager::applyDisabledChoices(int roomNumber, byte *conversationData, size_t conversationDataSize) {
+void RoomManager::applyDisabledChoices(byte roomNumber, byte *conversationData, size_t conversationDataSize) {
 	Common::Array<ResetEntry> disabledBranches = g_engine->_state->disabledBranches[roomNumber];
 	if (disabledBranches.size() == 0) {
 		return;
