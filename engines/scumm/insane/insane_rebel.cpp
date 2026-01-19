@@ -272,6 +272,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_shipTargetX = 0xa0;
 	_shipTargetY = 0x28;
 	_shipLevelMode = 0;
+	_movementRangeLimit = 127;  // DAT_0047e034 - Start at full range (shooting state)
 	_flyControlMode = 0;   // DAT_004437c0 - Start in flight-only mode (no shooting)
 	_shipFiring = false;
 	_shipDirectionH = 2;   // Start centered horizontally (0-4 range)
@@ -700,13 +701,20 @@ void InsaneRebel2::procPreRendering(byte *renderBitmap) {
 	// Call base class implementation first (handles Full Throttle state machine)
 	Insane::procPreRendering(renderBitmap);
 
-	// For Level 2 gameplay (Handler 8 or 25), restore the background BEFORE FOBJ decoding.
+	// For Level 2 gameplay (Handler 8 only), restore the background BEFORE FOBJ decoding.
 	// The tiny FOBJ sprites (7x10, 9x38 pixels) only draw new sprite positions but don't
 	// clear old ones. By restoring the full background each frame, we ensure old sprite
 	// positions are erased before new ones are drawn.
 	//
+	// NOTE: Handler 25 does NOT restore the background here because:
+	// - Handler 25 uses par4=4,6,7 overlays drawn on top of par4=5 base background
+	// - These overlays are only drawn once in frame 0
+	// - _level2Background only contains the par4=5 base, not the composited result
+	// - The video uses flag 0x08 (preserve background) to keep frame buffer intact
+	// - Enemies draw on top of the existing composited frame buffer
+	//
 	// This is called at the start of handleFrame(), before any FOBJ chunks are processed.
-	if ((_rebelHandler == 8 || _rebelHandler == 25) && _level2BackgroundLoaded && _level2Background && renderBitmap) {
+	if (_rebelHandler == 8 && _level2BackgroundLoaded && _level2Background && renderBitmap) {
 		for (int y = 0; y < 200; y++) {
 			memcpy(renderBitmap + y * 320, _level2Background + y * 320, 320);
 		}
@@ -1072,6 +1080,29 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 
 		// Skip position calculation for special modes 4 and 5
 		if (_shipLevelMode != 4 && _shipLevelMode != 5) {
+			// ===== Movement Range Transition (Covered vs Shooting) =====
+			// Based on FUN_00401234 lines 85-120:
+			// Mode 2 = "Covered" state - contract movement range to 41 (0x29)
+			// Other modes = "Shooting" state - expand movement range to 127 (0x7f)
+			// Transition happens gradually at ±10 per frame for smooth animation
+			if (_shipLevelMode == 2) {
+				// Covered state - contract movement range
+				if (_movementRangeLimit > 41) {
+					_movementRangeLimit -= 10;
+				}
+				if (_movementRangeLimit < 41) {
+					_movementRangeLimit = 41;
+				}
+			} else {
+				// Shooting state - expand movement range
+				if (_movementRangeLimit < 127) {
+					_movementRangeLimit += 10;
+				}
+				if (_movementRangeLimit > 127) {
+					_movementRangeLimit = 127;
+				}
+			}
+
 			// Calculate target position from mouse input
 			// Mouse X maps to ship horizontal tilt, Mouse Y to vertical tilt
 			// Based on FUN_00401234 lines 151-166:
@@ -1083,9 +1114,11 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 			int16 mouseOffsetX = (int16)((_vm->_mouse.x - 160) * 127 / 160);
 			int16 mouseOffsetY = (int16)((_vm->_mouse.y - 100) * 127 / 100);
 
-			// Clamp to valid range
-			if (mouseOffsetX > 127) mouseOffsetX = 127;
-			if (mouseOffsetX < -127) mouseOffsetX = -127;
+			// Clamp X offset to movement range limit (covered/shooting state)
+			// Based on FUN_00401234 lines 119-136
+			if (mouseOffsetX > _movementRangeLimit) mouseOffsetX = _movementRangeLimit;
+			if (mouseOffsetX < -_movementRangeLimit) mouseOffsetX = -_movementRangeLimit;
+			// Y offset always uses full range (±127)
 			if (mouseOffsetY > 127) mouseOffsetY = 127;
 			if (mouseOffsetY < -127) mouseOffsetY = -127;
 
@@ -1144,10 +1177,15 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		}
 
 		// Update firing state from mouse button
-		_shipFiring = (_vm->VAR(_vm->VAR_LEFTBTN_HOLD) != 0);
+		// Mode 4 (autopilot) disables shooting - FUN_00401CCF line 82-84
+		if (_shipLevelMode == 4) {
+			_shipFiring = false;
+		} else {
+			_shipFiring = (_vm->VAR(_vm->VAR_LEFTBTN_HOLD) != 0);
+		}
 
-		debug("Rebel2 Opcode 6 (Handler 8): mode=%d shipPos=(%d,%d) target=(%d,%d) firing=%d dir=(%d,%d,%d)",
-			_shipLevelMode, _shipPosX, _shipPosY, _shipTargetX, _shipTargetY, _shipFiring,
+		debug("Rebel2 Opcode 6 (Handler 8): mode=%d range=%d shipPos=(%d,%d) target=(%d,%d) firing=%d dir=(%d,%d,%d)",
+			_shipLevelMode, _movementRangeLimit, _shipPosX, _shipPosY, _shipTargetX, _shipTargetY, _shipFiring,
 			_shipDirectionH, _shipDirectionV, _shipDirectionIndex);
 
 		// Handler 8 doesn't use the same view offset logic as other handlers

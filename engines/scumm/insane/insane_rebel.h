@@ -246,6 +246,9 @@ public:
 	bool isBitSet(int n) override;
 	void setBit(int n) override;
 
+	// Get current handler ID (8, 25, 38 etc.) for SMUSH player to query
+	int getHandler() const { return _rebelHandler; }
+
 	void iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 				  int16 par1, int16 par2, int16 par3, int16 par4);
@@ -570,7 +573,16 @@ public:
 
 	// Level mode for handler 8 (different from _rebelLevelType)
 	// Set by opcode 6 par3, affects ship rendering behavior
+	// Mode 0/1/3: "Shooting" - full movement range (127)
+	// Mode 2: "Covered" - restricted movement (41) - behind cover
+	// Mode 4: "Autopilot" - no shooting, scripted movement
+	// Mode 5: "Cutscene" - ship not rendered
 	int16 _shipLevelMode;            // DAT_0043e000
+
+	// Movement range limiter for Handler 8 (Level 2 covered/shooting states)
+	// Controls horizontal movement range: 127 for shooting, 41 for covered
+	// Gradually transitions by ±10 per frame for smooth animation
+	int16 _movementRangeLimit;       // DAT_0047e034
 
 	// Control mode for Handler 7 (space flight) - DAT_004437c0
 	// Set by IACT opcode 6 par3 when handler is 7
