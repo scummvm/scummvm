@@ -275,6 +275,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_movementRangeLimit = 127;  // DAT_0047e034 - Start at full range (shooting state)
 	_flyControlMode = 0;   // DAT_004437c0 - Start in flight-only mode (no shooting)
 	_shipFiring = false;
+	_prevMouseButtons = 0; // For edge detection in mouse button handling
 	_shipDirectionH = 2;   // Start centered horizontally (0-4 range)
 	_shipDirectionV = 3;   // Start centered vertically (0-6 range)
 	_shipDirectionIndex = 2 * 7 + 3;  // Center = 17
@@ -286,6 +287,11 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_flyHiResSprite = nullptr;   // FLY004 - high-res alternative
 	_flyShipScreenX = 0xd4;      // Start at center (212) - matches DAT_00443708 default
 	_flyShipScreenY = 0x82;      // Start at center (130) - matches DAT_0044370a default
+
+	// Initialize Handler 25 GRD ship system
+	_grd001Sprite = nullptr;     // DAT_00482240 - GRD001 primary ship
+	_grd002Sprite = nullptr;     // DAT_00482238 - GRD002 secondary ship
+	_grdSpriteMode = 0;          // DAT_00457900 - sprite mode (1,2,3,4)
 
 	// Initialize Handler 0x26 turret HUD overlay system
 	_hudOverlayNut = nullptr;    // DAT_0047fe78 - Primary HUD overlay (GRD files, animated)
@@ -357,6 +363,10 @@ InsaneRebel2::~InsaneRebel2() {
 	delete _flyLaserSprite;
 	delete _flyTargetSprite;
 	delete _flyHiResSprite;
+
+	// Clean up Handler 25 GRD ship sprites
+	delete _grd001Sprite;
+	delete _grd002Sprite;
 
 	// Clean up Handler 0x26 turret HUD overlays
 	delete _hudOverlayNut;
@@ -564,11 +574,34 @@ int32 InsaneRebel2::processMouse() {
 	int32 buttons = 0;
 
 	// Get button state directly from event manager (SCUMM VARs aren't updated during SMUSH)
-	bool wasPressed = false;
-	bool isPressed = (_vm->_system->getEventManager()->getButtonState() & 1) != 0;
-	
-	// Edge detection: only trigger on button press (not hold)
-	if (isPressed && !wasPressed) {
+	// Bit 0 = left button, Bit 1 = right button, Bit 2 = middle button
+	uint32 currentButtons = _vm->_system->getEventManager()->getButtonState();
+
+	// Edge detection for buttons
+	bool leftPressed = (currentButtons & 1) != 0;
+	bool leftWasPressed = (_prevMouseButtons & 1) != 0;
+	bool rightPressed = (currentButtons & 2) != 0;
+	bool rightWasPressed = (_prevMouseButtons & 2) != 0;
+
+	// Store current state for next frame's edge detection
+	_prevMouseButtons = currentButtons;
+
+	// Update _rebelControlMode (DAT_0047a7e4) for Handler 25 covered/uncovered toggle:
+	// The original uses input throttling (every 5 frames) to prevent oscillation.
+	// We use edge detection instead - only set the control mode flag on button DOWN.
+	// - Bit 1 (value 2): Right mouse button just pressed - triggers cover entry
+	// - Bit 0 (value 1): Left mouse button just pressed - triggers cover exit
+	// When covered, any NEW button press exits cover. When uncovered, right button enters cover.
+	_rebelControlMode = 0;
+	if (rightPressed && !rightWasPressed) {
+		_rebelControlMode |= 2;  // Right button just pressed
+	}
+	if (leftPressed && !leftWasPressed) {
+		_rebelControlMode |= 1;  // Left button just pressed
+	}
+
+	// Left button: Trigger shot on button press (not hold)
+	if (leftPressed && !leftWasPressed) {
 		Common::Point mousePos(_vm->_mouse.x, _vm->_mouse.y);
 		debug("Rebel2 Click: Mouse=(%d,%d) Enemies=%d", 
 			mousePos.x, mousePos.y, _enemies.size());
@@ -640,7 +673,6 @@ int32 InsaneRebel2::processMouse() {
 			}
 		}
 	}
-	wasPressed = isPressed;
 	return buttons;
 }
 
@@ -706,17 +738,39 @@ void InsaneRebel2::procPreRendering(byte *renderBitmap) {
 	// clear old ones. By restoring the full background each frame, we ensure old sprite
 	// positions are erased before new ones are drawn.
 	//
-	// NOTE: Handler 25 does NOT restore the background here because:
-	// - Handler 25 uses par4=4,6,7 overlays drawn on top of par4=5 base background
-	// - These overlays are only drawn once in frame 0
-	// - _level2Background only contains the par4=5 base, not the composited result
-	// - The video uses flag 0x08 (preserve background) to keep frame buffer intact
-	// - Enemies draw on top of the existing composited frame buffer
-	//
 	// This is called at the start of handleFrame(), before any FOBJ chunks are processed.
 	if (_rebelHandler == 8 && _level2BackgroundLoaded && _level2Background && renderBitmap) {
 		for (int y = 0; y < 200; y++) {
 			memcpy(renderBitmap + y * 320, _level2Background + y * 320, 320);
+		}
+	}
+
+	// For Handler 25 (Level 2 speeder bike), draw the corridor overlay BEFORE FOBJ decoding.
+	// The corridor overlay (par4=4, _rebelEmbeddedHud[4]) shows the covered/uncovered state
+	// and must be drawn BEFORE enemy FOBJ frames so enemies appear ON TOP of the corridor.
+	// Position is (_rebelViewOffsetX, _rebelViewOffsetY) from FUN_0041cadb line 216.
+	if (_rebelHandler == 25 && renderBitmap) {
+		EmbeddedSanFrame &corridorOverlay = _rebelEmbeddedHud[4];
+		if (corridorOverlay.valid && corridorOverlay.pixels) {
+			int overlayX = _rebelViewOffsetX;
+			int overlayY = _rebelViewOffsetY;
+			int pitch = (_player && _player->_width > 0) ? _player->_width : 320;
+			int bufHeight = (_player && _player->_height > 0) ? _player->_height : 200;
+
+			for (int y = 0; y < corridorOverlay.height && (overlayY + y) < bufHeight; y++) {
+				for (int x = 0; x < corridorOverlay.width && (overlayX + x) < pitch; x++) {
+					byte pixel = corridorOverlay.pixels[y * corridorOverlay.width + x];
+					if (pixel != 0 && pixel != 231) {  // 0 and 231 = transparent
+						int destX = overlayX + x;
+						int destY = overlayY + y;
+						if (destX >= 0 && destY >= 0) {
+							renderBitmap[destY * pitch + destX] = pixel;
+						}
+					}
+				}
+			}
+			debug("Rebel2 procPreRendering: Corridor overlay at (%d,%d) size(%d,%d)",
+				overlayX, overlayY, corridorOverlay.width, corridorOverlay.height);
 		}
 	}
 }
@@ -1309,6 +1363,135 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		return;
 	}
 
+	// Handler 25 (0x19) specific logic (mixed mode - speeder bike)
+	// Based on FUN_0041cadb case 4 (opcode 6) lines 113-229
+	if (_rebelHandler == 25) {
+		// If par4 == 1, enable status bar and reset state (lines 114-121)
+		if (par4 == 1) {
+			_rebelStatusBarSprite = 5;
+			// Reset link tables (DAT_0045797c through DAT_0045917c)
+			for (int i = 0; i < 512; i++) {
+				_rebelLinks[i][0] = 0;
+				_rebelLinks[i][1] = 0;
+				_rebelLinks[i][2] = 0;
+			}
+			debug("Rebel2 Opcode 6 (Handler 25): Status bar enabled, state reset");
+		}
+
+		// Set sprite mode (DAT_00457900 = par4) - controls which GRD sprite to render
+		// NOTE: Original code uses local_14[3] which is par4, NOT par3!
+		// Mode 1: Uncovered, shooting position - sprite on left
+		// Mode 2: Covered, vertical shift
+		// Mode 3: Transition between covered/uncovered - sprite position depends on direction
+		// Mode 4: Alternative uncovered position - sprite on right
+		_grdSpriteMode = par4;
+
+		// Autopilot logic (lines 123-146)
+		if (!_rebelInvulnerable) {
+			if (_rebelAutopilot == 0) {
+				if ((_rebelControlMode & 2) != 0) {
+					_rebelAutopilot = 1;
+				}
+			} else {
+				if (_rebelControlMode != 0) {
+					_rebelAutopilot = 0;
+				}
+			}
+		} else {
+			// Invulnerable mode: random autopilot changes
+			if (_rebelAutopilot == 0) {
+				if (_vm->_rnd.getRandomNumber(100) == 0) {
+					_rebelAutopilot = 1;
+				}
+			} else {
+				if (_vm->_rnd.getRandomNumber(15) == 0) {
+					_rebelAutopilot = 0;
+					_rebelFlightDir = _vm->_rnd.getRandomNumber(2);
+				}
+			}
+		}
+
+		// Update damage level counter (lines 147-154)
+		if (_rebelAutopilot == 0) {
+			if (_rebelDamageLevel > 0) {
+				_rebelDamageLevel--;
+			}
+		} else {
+			if (_rebelDamageLevel < 5) {
+				_rebelDamageLevel++;
+			}
+		}
+
+		// Flight direction logic for mode 3 (lines 155-177)
+		if (_grdSpriteMode == 3) {
+			if (_rebelDamageLevel == 5) {
+				// At max damage, check for direction change input
+				// For now, use mouse X position to determine direction
+				int16 mouseX = _vm->_mouse.x;
+				if (_player && _player->_width > 320) {
+					mouseX = (mouseX * 320) / _player->_width;
+				}
+				if (mouseX > 235) {  // 0x4b + 160 = 235
+					_rebelFlightDir = 1;
+				}
+				if (mouseX < 85) {   // 160 - 0x4b = 85
+					_rebelFlightDir = 0;
+				}
+			}
+		} else {
+			_rebelFlightDir = 0;
+		}
+
+		// Calculate sprite and view offset positions based on mode (lines 182-213)
+		// DAT_0045790c = view offset X (for corridor overlay)
+		// DAT_0045790e = view offset Y (for corridor overlay)
+		// DAT_00457910 = sprite position X (relative to center)
+		// DAT_00457912 = sprite position Y (relative to center)
+		if (_grdSpriteMode == 1) {
+			// Mode 1: Uncovered, shooting - sprite shifts left as damage increases
+			_rebelViewMode1 = 0x0e;
+			_rebelViewMode2 = 0;
+			_rebelViewOffsetX = _rebelDamageLevel * -5 + -14;   // DAT_0045790c
+			_rebelViewOffset2X = _rebelDamageLevel * -22;       // DAT_00457910
+			_rebelViewOffsetY = 0;                              // DAT_0045790e
+			_rebelViewOffset2Y = 0;                             // DAT_00457912
+		} else if (_grdSpriteMode == 4) {
+			// Mode 4: Alternative uncovered - sprite shifts right
+			_rebelViewMode1 = 0x22;
+			_rebelViewMode2 = 0;
+			_rebelViewOffsetX = _rebelDamageLevel * 10 + -16;   // DAT_0045790c
+			_rebelViewOffset2X = _rebelDamageLevel * 17 + -85;  // DAT_00457910 (0x11 = 17, -0x55 = -85)
+			_rebelViewOffsetY = 0;
+			_rebelViewOffset2Y = 0;
+		} else if (_grdSpriteMode == 2) {
+			// Mode 2: Covered - vertical shift
+			_rebelViewMode1 = 0;
+			_rebelViewMode2 = 0x0e;
+			_rebelViewOffsetY = _rebelDamageLevel * -5 + -14;   // DAT_0045790e
+			_rebelViewOffset2Y = (5 - _rebelDamageLevel) * 15 + -60;  // DAT_00457912 (0xf = 15, -0x3c = -60)
+			_rebelViewOffsetX = 0;
+			_rebelViewOffset2X = 0;
+		} else if (_grdSpriteMode == 3) {
+			// Mode 3: Transition - direction-dependent horizontal shift
+			_rebelViewMode1 = 0x0f;
+			_rebelViewMode2 = 0;
+			// (-(DAT_00457902 == 0) & 6) - 3 = if dir==0: 6-3=3, else 0-3=-3
+			int16 dirMultX = (_rebelFlightDir == 0) ? 3 : -3;
+			// (-(DAT_00457902 == 0) & 0x28) - 0x14 = if dir==0: 40-20=20, else 0-20=-20
+			int16 dirMultX2 = (_rebelFlightDir == 0) ? 20 : -20;
+			_rebelViewOffsetX = dirMultX * (5 - _rebelDamageLevel) + -15;  // DAT_0045790c
+			_rebelViewOffset2X = dirMultX2 * (5 - _rebelDamageLevel);      // DAT_00457910
+			_rebelViewOffsetY = 0;
+			_rebelViewOffset2Y = 0;
+		}
+
+		debug("Rebel2 Opcode 6 (Handler 25): mode=%d damage=%d dir=%d viewOff=(%d,%d) spritePos=(%d,%d)",
+			_grdSpriteMode, _rebelDamageLevel, _rebelFlightDir,
+			_rebelViewOffsetX, _rebelViewOffsetY, _rebelViewOffset2X, _rebelViewOffset2Y);
+
+		return;
+	}
+
 	// Step 1: If par4 == 1, initialize/reset state (lines 114-121)
 	if (par4 == 1) {
 		// Draw status bar sprite 5 (FUN_0040bb87 equivalent)
@@ -1584,26 +1767,32 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 	}
 
 	// ===== Handler 8: POV Ship Sprites or Background =====
-	// FUN_00401234 case 6: par3 for POV NUTs, par4=5 for background
+	// FUN_00401234 case 6: par4 selects POV NUT type (1,3,6,7) or background (5)
+	// NOTE: par3 is always 0 for Handler 8; par4 contains the actual sprite type
 	if (!handled && _rebelHandler == 8) {
 		// Check for background loading first (par4=5)
 		if (par4 == 5) {
 			handled = loadLevel2Background(animData, animDataSize, renderBitmap);
 		}
-		// Check for POV NUT sprites
-		else if (par3 == 1 || par3 == 3 || par3 == 6 || par3 == 7) {
-			handled = loadHandler8ShipSprites(animData, animDataSize, par3);
+		// Check for POV NUT sprites (par4=1,3,6,7)
+		else if (par4 == 1 || par4 == 3 || par4 == 6 || par4 == 7) {
+			handled = loadHandler8ShipSprites(animData, animDataSize, par4);
 		}
 	}
 
-	// ===== Handler 25 (0x19): Level 2 Background and Overlays =====
+	// ===== Handler 25 (0x19): Level 2 GRD Ship Sprites and Background =====
 	// FUN_0041cadb case 6 (opcode 8): Uses PAR4 for switch selection
+	//   par4=1: GRD001 - Primary ship sprite -> DAT_00482240 / _grd001Sprite
+	//   par4=2: GRD002 - Secondary ship sprite -> DAT_00482238 / _grd002Sprite
 	//   par4=4: 350x230 corridor overlay -> DAT_00482268, draws immediately
 	//   par4=5: 320x200 background -> DAT_0048226c
 	//   par4=6: Overlay -> DAT_00482250, draws immediately
 	//   par4=7: Overlay -> DAT_00482248, draws immediately
 	if (!handled && _rebelHandler == 25) {
-		if (par4 == 5) {
+		if (par4 == 1 || par4 == 2) {
+			// GRD ship sprites - load into NutRenderer for per-frame rendering
+			handled = loadHandler25GrdSprites(animData, animDataSize, par4);
+		} else if (par4 == 5) {
 			// Background (320x200) - stored for per-frame restoration
 			handled = loadLevel2Background(animData, animDataSize, renderBitmap);
 		} else if (par4 == 4 || par4 == 6 || par4 == 7) {
@@ -1811,9 +2000,9 @@ bool InsaneRebel2::loadTurretHudOverlay(byte *animData, int32 size, int16 par3) 
 	return true;
 }
 
-bool InsaneRebel2::loadHandler8ShipSprites(byte *animData, int32 size, int16 par3) {
+bool InsaneRebel2::loadHandler8ShipSprites(byte *animData, int32 size, int16 par4) {
 	// Handler 8 ship POV NUT loading - FUN_00401234 case 6 (opcode 8)
-	// par3 values:
+	// par4 values (from IACT data offset +6, NOT par3 which is always 0):
 	//   1: POV001 - Primary ship sprite (DAT_0047e010 / _shipSprite)
 	//   3: POV004 - Secondary ship sprite (DAT_0047e028 / _shipSprite2)
 	//   6: POV002 - Ship overlay 1 (DAT_0047e020 / _shipOverlay1)
@@ -1824,21 +2013,21 @@ bool InsaneRebel2::loadHandler8ShipSprites(byte *animData, int32 size, int16 par
 	}
 
 	// Only handle valid POV sprite slots
-	if (par3 != 1 && par3 != 3 && par3 != 6 && par3 != 7) {
+	if (par4 != 1 && par4 != 3 && par4 != 6 && par4 != 7) {
 		return false;
 	}
 
 	NutRenderer *newNut = new NutRenderer(_vm, animData, size);
 	if (!newNut || newNut->getNumChars() <= 0) {
-		debug("Rebel2 loadHandler8ShipSprites: NUT load failed for par3=%d", par3);
+		debug("Rebel2 loadHandler8ShipSprites: NUT load failed for par4=%d", par4);
 		delete newNut;
 		return false;
 	}
 
-	debug("Rebel2 loadHandler8ShipSprites: Loaded ship NUT par3=%d with %d sprites",
-		par3, newNut->getNumChars());
+	debug("Rebel2 loadHandler8ShipSprites: Loaded ship NUT par4=%d with %d sprites",
+		par4, newNut->getNumChars());
 
-	switch (par3) {
+	switch (par4) {
 	case 1:  // POV001 - Primary ship sprite
 		delete _shipSprite;
 		_shipSprite = newNut;
@@ -1854,6 +2043,50 @@ bool InsaneRebel2::loadHandler8ShipSprites(byte *animData, int32 size, int16 par
 	case 7:  // POV003 - Ship overlay 2
 		delete _shipOverlay2;
 		_shipOverlay2 = newNut;
+		break;
+	default:
+		delete newNut;
+		return false;
+	}
+
+	return true;
+}
+
+bool InsaneRebel2::loadHandler25GrdSprites(byte *animData, int32 size, int16 par4) {
+	// Handler 25 GRD ship NUT loading - FUN_0041cadb case 6 (opcode 8)
+	// par4 values (from IACT data offset +6):
+	//   1: GRD001 - Primary ship sprite (DAT_00482240 / _grd001Sprite)
+	//   2: GRD002 - Secondary ship sprite (DAT_00482238 / _grd002Sprite)
+
+	if (!animData || size <= 0) {
+		return false;
+	}
+
+	// Only handle valid GRD sprite slots
+	if (par4 != 1 && par4 != 2) {
+		return false;
+	}
+
+	NutRenderer *newNut = new NutRenderer(_vm, animData, size);
+	if (!newNut || newNut->getNumChars() <= 0) {
+		debug("Rebel2 loadHandler25GrdSprites: NUT load failed for par4=%d", par4);
+		delete newNut;
+		return false;
+	}
+
+	debug("Rebel2 loadHandler25GrdSprites: Loaded GRD NUT par4=%d with %d sprites",
+		par4, newNut->getNumChars());
+
+	switch (par4) {
+	case 1:  // GRD001 - Primary ship sprite
+		delete _grd001Sprite;
+		_grd001Sprite = newNut;
+		debug("Rebel2: _grd001Sprite set with %d sprites", newNut->getNumChars());
+		break;
+	case 2:  // GRD002 - Secondary ship sprite
+		delete _grd002Sprite;
+		_grd002Sprite = newNut;
+		debug("Rebel2: _grd002Sprite set with %d sprites", newNut->getNumChars());
 		break;
 	default:
 		delete newNut;
@@ -2440,11 +2673,14 @@ void InsaneRebel2::renderEmbeddedFrame(byte *renderBitmap, const EmbeddedSanFram
 	bool skipImmediateDraw = (_rebelHandler == 7 || _rebelHandler == 8 ||
 	                          _rebelHandler == 0x26 || _rebelHandler == 0x19);
 
-	// Handler 25 background overlays should draw immediately
-	if (_rebelHandler == 0x19 && (userId == 4 || userId == 6 || userId == 7)) {
+	// Handler 25 overlays:
+	// - userId 4 (corridor overlay): Draw during procPostRendering at view offset, NOT immediately
+	// - userId 6, 7 (static overlays): Draw immediately (they don't move)
+	if (_rebelHandler == 0x19 && (userId == 6 || userId == 7)) {
 		skipImmediateDraw = false;
-		debug("Rebel2: Handler 25 background overlay userId=%d - forcing immediate draw", userId);
+		debug("Rebel2: Handler 25 static overlay userId=%d - forcing immediate draw", userId);
 	}
+	// userId 4 should NOT draw immediately - it will be drawn at view offset each frame
 
 	if (!frame.valid || !renderBitmap || skipImmediateDraw) {
 		if (skipImmediateDraw && frame.valid) {
@@ -3301,6 +3537,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 
 	renderHandler7Ship(renderBitmap, pitch, width, height);
 	renderHandler8Ship(renderBitmap, pitch, width, height);
+	renderHandler25Ship(renderBitmap, pitch, width, height);
 	renderFallbackShip(renderBitmap, pitch, width, height);
 
 	// Enemy indicators and destroyed enemy area erase
@@ -3678,6 +3915,144 @@ void InsaneRebel2::renderHandler8Ship(byte *renderBitmap, int pitch, int width, 
 	debug("Rebel2 Handler8: Ship at (%d,%d) raw(%d,%d) offset(%d,%d) sprite=%d/%d dir=(%d,%d)",
 		drawX, drawY, _shipPosX, _shipPosY, displayOffsetX, displayOffsetY,
 		spriteIndex, numSprites, _shipDirectionH, _shipDirectionV);
+}
+
+void InsaneRebel2::renderHandler25Ship(byte *renderBitmap, int pitch, int width, int height) {
+	// Handler 25 Ship Rendering (Mixed Mode - GRD sprites)
+	// Based on FUN_0041db5e disassembly (lines 202-248)
+	// Uses _grd001Sprite (GRD001) and _grd002Sprite (GRD002)
+	//
+	// The GRD sprite is drawn at position (DAT_00457910, DAT_00457912) which are
+	// offsets calculated from sprite mode and damage level, relative to screen center.
+	// In the original, these appear to be direct pixel coordinates where:
+	//   - Mode 1: sprite shifts left as damage increases (X = damage * -22)
+	//   - Mode 4: sprite shifts right as damage increases (X = damage * 17 - 85)
+	//   - Mode 2: sprite shifts vertically
+	//   - Mode 3: depends on flight direction
+	//
+	// NOTE: The corridor overlay (par4=4) is drawn in procPreRendering BEFORE enemies,
+	// not here, so that enemies appear ON TOP of the corridor.
+
+	if (_rebelHandler != 25)
+		return;
+
+	// Need at least one GRD sprite to render
+	if (!_grd001Sprite && !_grd002Sprite)
+		return;
+
+	// Base position calculation based on FUN_0041db5e disassembly:
+	// The original reads sprite internal offsets from the NUT data at +0x12 (X) and +0x14 (Y).
+	// Since NutRenderer doesn't expose these, we use the standard positioning formula:
+	// - X: center (160) + mode-based offset
+	// - Y: positioned above status bar (status bar starts at ~Y=180)
+	//
+	// From the HUD positioning formula (lines 3583-3584):
+	//   Y = 182 - (mouseOffset >> 4) - height - spriteOffsetY
+	// This means sprites are bottom-aligned relative to Y=182.
+	//
+	// For Handler 25, the sprite position offsets (DAT_00457910, DAT_00457912) are added.
+	const int baseX = 160;
+	// Base Y is calculated to keep sprite above status bar (Y=180)
+	// We'll position the center around Y=90 (middle of playable area)
+	const int baseY = 90;
+
+	// Calculate actual ship position from base + offset
+	// _rebelViewOffset2X = DAT_00457910 (sprite X offset from mode/damage)
+	// _rebelViewOffset2Y = DAT_00457912 (sprite Y offset from mode/damage)
+	int shipX = baseX + _rebelViewOffset2X;
+	int shipY = baseY + _rebelViewOffset2Y;
+
+	// Draw _grd001Sprite based on _grdSpriteMode (DAT_00457900)
+	// Mode 1, 2, 3, 4 all potentially draw _grd001Sprite
+	if (_grd001Sprite && _grd001Sprite->getNumChars() > 0) {
+		bool shouldDraw = false;
+
+		// Mode 1: Always draw (uncovered/shooting position)
+		if (_grdSpriteMode == 1) {
+			shouldDraw = true;
+		}
+		// Mode 2: Only draw when damaged (DAT_0045790a != 0) - covered position
+		else if (_grdSpriteMode == 2 && _rebelDamageLevel != 0) {
+			shouldDraw = true;
+		}
+		// Mode 3: Always draw (transition between covered/uncovered)
+		else if (_grdSpriteMode == 3) {
+			shouldDraw = true;
+		}
+		// Mode 4: Always draw (alternative uncovered position)
+		else if (_grdSpriteMode == 4) {
+			shouldDraw = true;
+		}
+
+		if (shouldDraw) {
+			// Use sprite 0 (primary frame)
+			int spriteW = _grd001Sprite->getCharWidth(0);
+			int spriteH = _grd001Sprite->getCharHeight(0);
+			// Center the sprite at the calculated position
+			int drawX = shipX - spriteW / 2;
+			int drawY = shipY - spriteH / 2;
+
+			renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _grd001Sprite, 0);
+
+			debug("Rebel2 Handler25: GRD001 at (%d,%d) base(%d,%d) offset(%d,%d) size(%d,%d) mode=%d damage=%d",
+				drawX, drawY, baseX, baseY, _rebelViewOffset2X, _rebelViewOffset2Y,
+				spriteW, spriteH, _grdSpriteMode, _rebelDamageLevel);
+		}
+	}
+
+	// _grd002Sprite (GRD002) is always drawn if it exists (from FUN_41DB5E line 230)
+	// The sprite index is calculated based on damage level and aiming position
+	// From FUN_0041db5e lines 160-168:
+	//   If damage == 0: index = yZone * 5 + xZone + 5 (aiming-based, 5-14)
+	//   If damage != 0:
+	//     If direction == 0: index = 5 - damage (0-5, covered left)
+	//     If direction != 0: index = 25 - damage (20-25, covered right)
+	if (_grd002Sprite && _grd002Sprite->getNumChars() > 0) {
+		// Calculate sprite index based on damage level and direction
+		int spriteIdx;
+		int numSprites = _grd002Sprite->getNumChars();
+
+		if (_rebelDamageLevel == 0) {
+			// Uncovered state: use aiming-based sprite selection (5-14)
+			// For now, use center position (xZone=2, yZone=0) -> 0*5+2+5 = 7
+			// TODO: Calculate actual zone from crosshair position
+			int xZone = 2;  // Center horizontal (0-4)
+			int yZone = 0;  // Top vertical (0-1)
+
+			// Direction-based mirroring (line 161-162)
+			if (_rebelFlightDir == (yZone & 1)) {
+				xZone = 4 - xZone;
+			}
+
+			spriteIdx = yZone * 5 + xZone + 5;
+		} else {
+			// Transitioning/covered state: use direction-based sprite
+			if (_rebelFlightDir == 0) {
+				// Direction 0: sprites 0-5 (covered left)
+				spriteIdx = 5 - _rebelDamageLevel;
+			} else {
+				// Direction 1: sprites 20-25 (covered right)
+				spriteIdx = 25 - _rebelDamageLevel;
+			}
+		}
+
+		// Clamp to valid range
+		if (spriteIdx < 0) spriteIdx = 0;
+		if (spriteIdx >= numSprites) spriteIdx = numSprites - 1;
+
+		int spriteW = _grd002Sprite->getCharWidth(spriteIdx);
+		int spriteH = _grd002Sprite->getCharHeight(spriteIdx);
+
+		// Position offset from GRD002 sprite header (lines 238-243 in disasm)
+		// This adds an offset from the sprite's internal positioning data
+		int drawX = shipX - spriteW / 2;
+		int drawY = shipY - spriteH / 2;
+
+		renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _grd002Sprite, spriteIdx);
+
+		debug("Rebel2 Handler25: GRD002 at (%d,%d) size(%d,%d) spriteIdx=%d damage=%d dir=%d",
+			drawX, drawY, spriteW, spriteH, spriteIdx, _rebelDamageLevel, _rebelFlightDir);
+	}
 }
 
 void InsaneRebel2::renderFallbackShip(byte *renderBitmap, int pitch, int width, int height) {
