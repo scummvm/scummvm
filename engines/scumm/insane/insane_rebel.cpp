@@ -2156,6 +2156,241 @@ void InsaneRebel2::init_enemyStruct(int id, int32 x, int32 y, int32 w, int32 h, 
 	_enemies.push_back(e);
 }
 
+// ======================= Embedded Frame Codec Decoders =======================
+// These implement the retail codec functions FUN_0042BD60, FUN_0042BBF0, FUN_0042B5F0
+
+void InsaneRebel2::decodeCodec21(byte *dst, const byte *src, int width, int height) {
+	// Codec 21/44: Line Update codec (FUN_0042BD60)
+	// Format: each line has 2-byte size header, then pairs of (skip, count+1, literal_bytes)
+	for (int row = 0; row < height; row++) {
+		int lineDataSize = READ_LE_UINT16(src);
+		src += 2;
+		const byte *lineEnd = src + lineDataSize;
+		byte *lineDst = dst + row * width;
+		int x = 0;
+
+		while (src < lineEnd && x < width) {
+			int skip = READ_LE_UINT16(src);
+			src += 2;
+			x += skip;
+			if (src >= lineEnd) break;
+
+			int count = READ_LE_UINT16(src) + 1;
+			src += 2;
+			while (count-- > 0 && x < width && src < lineEnd) {
+				lineDst[x++] = *src++;
+			}
+		}
+		src = lineEnd;
+	}
+}
+
+void InsaneRebel2::decodeCodec23(byte *dst, const byte *src, int width, int height, int dataSize) {
+	// Codec 23: Skip/Copy with embedded RLE (FUN_0042BBF0)
+	// Format: each line has 2-byte size, then pairs of (skip, runSize, RLE_data)
+	const byte *dataEnd = src + dataSize;
+
+	for (int row = 0; row < height && src < dataEnd; row++) {
+		int lineDataSize = READ_LE_UINT16(src);
+		src += 2;
+		const byte *lineEnd = src + lineDataSize;
+		byte *lineDst = dst + row * width;
+		int x = 0;
+
+		while (src < lineEnd && x < width) {
+			int skip = READ_LE_UINT16(src);
+			src += 2;
+			x += skip;
+			if (src >= lineEnd || x >= width) break;
+
+			int runSize = READ_LE_UINT16(src);
+			src += 2;
+
+			// Decode RLE within this run
+			const byte *runEnd = src + runSize;
+			while (src < runEnd && x < width) {
+				byte code = *src++;
+				int num = (code >> 1) + 1;
+				if (num > width - x) num = width - x;
+
+				if (code & 1) {
+					// RLE run
+					byte color = (src < runEnd) ? *src++ : 0;
+					for (int i = 0; i < num && x < width; i++) {
+						lineDst[x++] = color;
+					}
+				} else {
+					// Literal run
+					for (int i = 0; i < num && x < width && src < runEnd; i++) {
+						lineDst[x++] = *src++;
+					}
+				}
+			}
+			src = runEnd;
+		}
+		src = lineEnd;
+	}
+}
+
+void InsaneRebel2::decodeCodec45(byte *dst, const byte *src, int width, int height, int dataSize) {
+	// Codec 45: RA2-specific BOMP RLE with variable header (FUN_0042B5F0)
+	// May have a 6-byte sub-header starting with "01 FE"
+
+	debug("Rebel2: Codec 45 first 20 bytes: %02X %02X %02X %02X %02X %02X | %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
+		src[0], src[1], src[2], src[3], src[4], src[5], src[6], src[7],
+		src[8], src[9], src[10], src[11], src[12], src[13], src[14], src[15],
+		src[16], src[17], src[18], src[19]);
+
+	// Probe for header offset
+	int headerSkip = 0;
+	bool foundValidOffset = false;
+
+	// Check for known 6-byte header pattern: 01 FE XX XX XX XX
+	if (dataSize > 6 && src[0] == 0x01 && src[1] == 0xFE) {
+		headerSkip = 6;
+		debug("Rebel2: Codec 45 found 01 FE header, skipping 6 bytes");
+		foundValidOffset = true;
+	}
+
+	// If no known header found, probe offsets 0, 2, 4, 6 to find valid RLE start
+	if (!foundValidOffset) {
+		for (int testOffset = 0; testOffset <= 6 && testOffset + 2 <= dataSize; testOffset += 2) {
+			int testLineSize = READ_LE_UINT16(src + testOffset);
+			// A valid first line size should be: > 0, <= width*2
+			if (testLineSize > 0 && testLineSize <= width * 2 && testLineSize < dataSize - testOffset) {
+				// Validate by summing line sizes
+				int sumTest = 0;
+				int linesTest = 0;
+				const byte *testPtr = src + testOffset;
+				bool validSum = true;
+
+				while (linesTest < height && testPtr + 2 <= src + dataSize) {
+					int ls = READ_LE_UINT16(testPtr);
+					if (ls <= 0 || ls > width * 2) {
+						validSum = false;
+						break;
+					}
+					sumTest += ls + 2;
+					testPtr += ls + 2;
+					linesTest++;
+				}
+
+				// Accept if we got close to expected number of lines
+				if (validSum && linesTest >= height - 1) {
+					headerSkip = testOffset;
+					foundValidOffset = true;
+					debug("Rebel2: Codec 45 found valid RLE at offset %d (tested %d lines)", testOffset, linesTest);
+					break;
+				}
+			}
+		}
+	}
+
+	if (!foundValidOffset) {
+		debug("Rebel2: Codec 45 couldn't find valid RLE offset, using offset 0");
+	}
+
+	const byte *srcPtr = src + headerSkip;
+	const byte *dataEnd = src + dataSize;
+
+	// Check if this is per-line RLE or continuous RLE
+	int firstVal = READ_LE_UINT16(srcPtr);
+	bool perLineMode = (firstVal > 0 && firstVal <= width * 2);
+
+	if (perLineMode) {
+		debug("Rebel2: Codec 45 using per-line RLE (firstLineSize=%d)", firstVal);
+		for (int row = 0; row < height && srcPtr < dataEnd; row++) {
+			int lineSize = READ_LE_UINT16(srcPtr);
+			srcPtr += 2;
+			if (lineSize <= 0 || lineSize > (int)(dataEnd - srcPtr)) break;
+
+			const byte *lineEnd = srcPtr + lineSize;
+			byte *rowDst = dst + row * width;
+			int x = 0;
+
+			while (srcPtr < lineEnd && x < width) {
+				byte ctrl = *srcPtr++;
+				int count = (ctrl >> 1) + 1;
+				if (ctrl & 1) {
+					byte color = (srcPtr < lineEnd) ? *srcPtr++ : 0;
+					for (int i = 0; i < count && x < width; i++) rowDst[x++] = color;
+				} else {
+					for (int i = 0; i < count && x < width && srcPtr < lineEnd; i++)
+						rowDst[x++] = *srcPtr++;
+				}
+			}
+			srcPtr = lineEnd;
+		}
+	} else {
+		// Continuous BOMP RLE (no per-line headers)
+		debug("Rebel2: Codec 45 using continuous BOMP RLE");
+		for (int row = 0; row < height && srcPtr < dataEnd; row++) {
+			byte *rowDst = dst + row * width;
+			int x = 0;
+
+			while (x < width && srcPtr < dataEnd) {
+				byte ctrl = *srcPtr++;
+				int count = (ctrl >> 1) + 1;
+
+				if (ctrl & 1) {
+					// RLE fill
+					byte color = (srcPtr < dataEnd) ? *srcPtr++ : 0;
+					for (int i = 0; i < count && x < width; i++) {
+						rowDst[x++] = color;
+					}
+				} else {
+					// Literal copy
+					for (int i = 0; i < count && x < width && srcPtr < dataEnd; i++) {
+						rowDst[x++] = *srcPtr++;
+					}
+				}
+			}
+		}
+	}
+
+	// Count non-zero pixels for debug
+	int nonZero = 0;
+	for (int i = 0; i < width * height; i++) {
+		if (dst[i] != 0) nonZero++;
+	}
+	debug("Rebel2: Decoded codec 45: %dx%d, %d non-zero (%d%%)",
+		width, height, nonZero, (nonZero * 100) / (width * height));
+}
+
+void InsaneRebel2::renderEmbeddedFrame(byte *renderBitmap, const EmbeddedSanFrame &frame, int userId) {
+	// Render the decoded embedded frame to the video buffer
+	// Skip immediate draw for handlers that render HUD during post-processing:
+	// - Handler 7/8: Ship direction sprites selected based on direction
+	// - Handler 0x26/0x19: Cockpit HUD positioned based on mouse/crosshair
+	bool skipImmediateDraw = (_rebelHandler == 7 || _rebelHandler == 8 ||
+	                          _rebelHandler == 0x26 || _rebelHandler == 0x19);
+
+	if (!frame.valid || !renderBitmap || skipImmediateDraw) {
+		if (skipImmediateDraw && frame.valid) {
+			debug("Rebel2: Skipped immediate draw for Handler %d HUD %d (will render during post-processing)",
+				_rebelHandler, userId);
+		}
+		return;
+	}
+
+	int pitch = (_player && _player->_width > 0) ? _player->_width : 320;
+	int bufHeight = (_player && _player->_height > 0) ? _player->_height : 200;
+
+	for (int y = 0; y < frame.height && (frame.renderY + y) < bufHeight; y++) {
+		for (int x = 0; x < frame.width && (frame.renderX + x) < pitch; x++) {
+			byte pixel = frame.pixels[y * frame.width + x];
+			if (pixel != 0 && pixel != 231) {  // 0 and 231 = transparent
+				int destX = frame.renderX + x;
+				int destY = frame.renderY + y;
+				if (destX >= 0 && destY >= 0) {
+					renderBitmap[destY * pitch + destX] = pixel;
+				}
+			}
+		}
+	}
+	debug("Rebel2: Rendered embedded HUD %d at (%d,%d)", userId, frame.renderX, frame.renderY);
+}
+
 void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte *renderBitmap) {
 	// Validate userId - Level 3 uses slots 0-11, allow up to 15 for safety
 	if (userId < 0 || userId > 15 || !animData || size < 32) {
@@ -2247,216 +2482,30 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 						if (dataSize > 0) {
 							byte *fobjData = (byte *)malloc(dataSize);
 							stream.read(fobjData, dataSize);
-							
-							// Decode based on codec
+
+							// Decode based on codec - use extracted helper functions (FUN_0042BD60, etc.)
 							if (codec == 1 || codec == 3) {
-								// RLE use existing decoder
+								// Codec 1/3: RLE - use existing decoder (FUN_0042C590)
 								smushDecodeRLE(frame.pixels, fobjData, 0, 0, width, height, width);
 								frame.valid = true;
 								debug("Rebel2: Decoded embedded HUD (codec %d/RLE): %dx%d", codec, width, height);
 							} else if (codec == 20) {
-								// Uncompressed
+								// Codec 20: Uncompressed (FUN_0042C400)
 								smushDecodeUncompressed(frame.pixels, fobjData, 0, 0, width, height, width);
 								frame.valid = true;
 								debug("Rebel2: Decoded embedded HUD (codec 20/raw): %dx%d", width, height);
 							} else if (codec == 21 || codec == 44) {
-								// Codec 21/44: Line update codec
-								byte *srcPtr = fobjData;
-								for (int row = 0; row < height && srcPtr < fobjData + dataSize; row++) {
-									int lineDataSize = READ_LE_UINT16(srcPtr);
-									srcPtr += 2;
-									byte *lineEnd = srcPtr + lineDataSize;
-									byte *lineDst = frame.pixels + row * width;
-									int x = 0;
-									while (srcPtr < lineEnd && x < width) {
-										int skip = READ_LE_UINT16(srcPtr);
-										srcPtr += 2;
-										x += skip;
-										if (srcPtr >= lineEnd) break;
-										int count = READ_LE_UINT16(srcPtr) + 1;
-										srcPtr += 2;
-										while (count-- > 0 && x < width && srcPtr < lineEnd) {
-											lineDst[x++] = *srcPtr++;
-										}
-									}
-									srcPtr = lineEnd;
-								}
+								// Codec 21/44: Line update (FUN_0042BD60)
+								decodeCodec21(frame.pixels, fobjData, width, height);
 								frame.valid = true;
-								debug("Rebel2: Decoded embedded HUD (codec 21/line update): %dx%d", width, height);
+								debug("Rebel2: Decoded embedded HUD (codec %d/line update): %dx%d", codec, width, height);
 							} else if (codec == 45) {
-								// Codec 45: RA2-specific codec with BOMP-style RLE
-								// May have a variable-length sub-header before RLE data
-								// Common patterns: "01 FE 00 00 01 00" (6 bytes) or others
-								debug("Rebel2: Codec 45 first 20 bytes: %02X %02X %02X %02X %02X %02X | %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
-									fobjData[0], fobjData[1], fobjData[2], fobjData[3],
-									fobjData[4], fobjData[5], fobjData[6], fobjData[7],
-									fobjData[8], fobjData[9], fobjData[10], fobjData[11],
-									fobjData[12], fobjData[13], fobjData[14], fobjData[15],
-									fobjData[16], fobjData[17], fobjData[18], fobjData[19]);
-
-								// Probe multiple header offsets to find where valid RLE data starts
-								// RLE data has 2-byte line sizes that should be reasonable values
-								int headerSkip = 0;
-								bool foundValidOffset = false;
-
-								// Check common header patterns
-								if (dataSize > 6 && fobjData[0] == 0x01 && fobjData[1] == 0xFE) {
-									// Known 6-byte header: 01 FE XX XX XX XX
-									headerSkip = 6;
-									debug("Rebel2: Codec 45 found 01 FE header, skipping 6 bytes");
-									foundValidOffset = true;
-								}
-
-								// If no known header found, probe offsets 0, 2, 4, 6 to find valid RLE start
-								if (!foundValidOffset) {
-									for (int testOffset = 0; testOffset <= 6 && testOffset + 2 <= dataSize; testOffset += 2) {
-										int testLineSize = READ_LE_UINT16(fobjData + testOffset);
-										// A valid first line size should be: > 0, <= width*2 (reasonable for RLE)
-										// Also check that the total data is enough for at least height lines
-										if (testLineSize > 0 && testLineSize <= width * 2 && testLineSize < dataSize - testOffset) {
-											// Further validation: sum line sizes should roughly match data size
-											int sumTest = 0;
-											int linesTest = 0;
-											byte *testPtr = fobjData + testOffset;
-											bool validSum = true;
-
-											while (linesTest < height && testPtr + 2 <= fobjData + dataSize) {
-												int ls = READ_LE_UINT16(testPtr);
-												if (ls <= 0 || ls > width * 2) {
-													validSum = false;
-													break;
-												}
-												sumTest += ls + 2;
-												testPtr += ls + 2;
-												linesTest++;
-											}
-
-											// Accept if we got close to expected number of lines
-											if (validSum && linesTest >= height - 1) {
-												headerSkip = testOffset;
-												foundValidOffset = true;
-												debug("Rebel2: Codec 45 found valid RLE at offset %d (tested %d lines)", testOffset, linesTest);
-												break;
-											}
-										}
-									}
-								}
-
-								if (!foundValidOffset) {
-									debug("Rebel2: Codec 45 couldn't find valid RLE offset, using offset 0");
-								}
-
-								byte *srcPtr = fobjData + headerSkip;
-								byte *dataEnd = fobjData + dataSize;
-
-								// Try per-line RLE with 2-byte LE size headers
-								int firstVal = READ_LE_UINT16(srcPtr);
-								bool validPerLine = (firstVal > 0 && firstVal <= width * 2);
-
-								if (validPerLine) {
-									debug("Rebel2: Codec 45 using per-line RLE (firstLineSize=%d)", firstVal);
-									for (int row = 0; row < height && srcPtr < dataEnd; row++) {
-										int lineSize = READ_LE_UINT16(srcPtr);
-										srcPtr += 2;
-										if (lineSize <= 0 || lineSize > (int)(dataEnd - srcPtr)) break;
-
-										byte *lineEnd = srcPtr + lineSize;
-										byte *dst = frame.pixels + row * width;
-										int x = 0;
-
-										while (srcPtr < lineEnd && x < width) {
-											byte ctrl = *srcPtr++;
-											int count = (ctrl >> 1) + 1;
-											if (ctrl & 1) {
-												byte color = (srcPtr < lineEnd) ? *srcPtr++ : 0;
-												for (int i = 0; i < count && x < width; i++) dst[x++] = color;
-											} else {
-												for (int i = 0; i < count && x < width && srcPtr < lineEnd; i++)
-													dst[x++] = *srcPtr++;
-											}
-										}
-										srcPtr = lineEnd;
-									}
-								} else {
-									// Try continuous BOMP RLE (no per-line headers)
-									// Each line produces exactly 'width' pixels
-									debug("Rebel2: Codec 45 using continuous BOMP RLE");
-									for (int row = 0; row < height && srcPtr < dataEnd; row++) {
-										byte *dst = frame.pixels + row * width;
-										int x = 0;
-
-										while (x < width && srcPtr < dataEnd) {
-											byte ctrl = *srcPtr++;
-											int count = (ctrl >> 1) + 1;
-
-											if (ctrl & 1) {
-												// RLE fill
-												byte color = (srcPtr < dataEnd) ? *srcPtr++ : 0;
-												for (int i = 0; i < count && x < width; i++) {
-													dst[x++] = color;
-												}
-											} else {
-												// Literal copy
-												for (int i = 0; i < count && x < width && srcPtr < dataEnd; i++) {
-													dst[x++] = *srcPtr++;
-												}
-											}
-										}
-									}
-								}
+								// Codec 45: RA2-specific BOMP RLE (FUN_0042B5F0)
+								decodeCodec45(frame.pixels, fobjData, width, height, dataSize);
 								frame.valid = true;
-
-								// Count non-zero pixels
-								int nonZero = 0;
-								for (int i = 0; i < width * height; i++) {
-									if (frame.pixels[i] != 0) nonZero++;
-								}
-								debug("Rebel2: Decoded codec 45: %dx%d, %d non-zero (%d%%)",
-									width, height, nonZero, (nonZero * 100) / (width * height));
 							} else if (codec == 23) {
-								// Codec 23: Skip/copy with RLE in copy runs
-								// Format: each line has pairs of (skip, copy_count, RLE_data)
-								byte *srcPtr = fobjData;
-								for (int row = 0; row < height && srcPtr < fobjData + dataSize; row++) {
-									int lineDataSize = READ_LE_UINT16(srcPtr);
-									srcPtr += 2;
-									byte *lineEnd = srcPtr + lineDataSize;
-									byte *lineDst = frame.pixels + row * width;
-									int x = 0;
-
-									while (srcPtr < lineEnd && x < width) {
-										int skip = READ_LE_UINT16(srcPtr);
-										srcPtr += 2;
-										x += skip;
-										if (srcPtr >= lineEnd || x >= width) break;
-
-										int runSize = READ_LE_UINT16(srcPtr);
-										srcPtr += 2;
-
-										// Decode RLE within this run
-										byte *runEnd = srcPtr + runSize;
-										while (srcPtr < runEnd && x < width) {
-											byte code = *srcPtr++;
-											int num = (code >> 1) + 1;
-											if (num > width - x) num = width - x;
-
-											if (code & 1) {
-												// RLE run
-												byte color = (srcPtr < runEnd) ? *srcPtr++ : 0;
-												for (int i = 0; i < num && x < width; i++) {
-													lineDst[x++] = color;
-												}
-											} else {
-												// Literal run
-												for (int i = 0; i < num && x < width && srcPtr < runEnd; i++) {
-													lineDst[x++] = *srcPtr++;
-												}
-											}
-										}
-										srcPtr = runEnd;
-									}
-									srcPtr = lineEnd;
-								}
+								// Codec 23: Skip/copy with embedded RLE (FUN_0042BBF0)
+								decodeCodec23(frame.pixels, fobjData, width, height, dataSize);
 								frame.valid = true;
 								debug("Rebel2: Decoded embedded HUD (codec 23/skip-RLE): %dx%d", width, height);
 							} else {
@@ -2474,35 +2523,9 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 									userId, nonZeroPixels, (nonZeroPixels * 100) / (width * height));
 							}
 
-							// Draw immediately to renderBitmap if valid
-							// Skip immediate draw for handlers that render HUD during post-processing:
-							// - Handler 7/8: Ship direction sprites selected based on direction
-							// - Handler 0x26/0x19: Cockpit HUD positioned based on mouse/crosshair
-							bool skipImmediateDraw = (_rebelHandler == 7 || _rebelHandler == 8 ||
-							                          _rebelHandler == 0x26 || _rebelHandler == 0x19);
+							// Render the decoded frame to the video buffer
+							renderEmbeddedFrame(renderBitmap, frame, userId);
 
-							if (frame.valid && renderBitmap && !skipImmediateDraw) {
-								int pitch = (_player && _player->_width > 0) ? _player->_width : 320;
-								int bufHeight = (_player && _player->_height > 0) ? _player->_height : 200;
-
-								for (int y = 0; y < height && (frame.renderY + y) < bufHeight; y++) {
-									for (int x = 0; x < width && (frame.renderX + x) < pitch; x++) {
-										byte pixel = frame.pixels[y * width + x];
-										if (pixel != 0 && pixel != 231) {  // 0 and 231 = transparent
-											int destX = frame.renderX + x;
-											int destY = frame.renderY + y;
-											if (destX >= 0 && destY >= 0) {
-												renderBitmap[destY * pitch + destX] = pixel;
-											}
-										}
-									}
-								}
-								debug("Rebel2: Rendered embedded HUD %d at (%d,%d)", userId, frame.renderX, frame.renderY);
-							} else if (skipImmediateDraw) {
-								debug("Rebel2: Skipped immediate draw for Handler %d HUD %d (will render during post-processing)",
-									_rebelHandler, userId);
-							}
-							
 							free(fobjData);
 						}
 					}
