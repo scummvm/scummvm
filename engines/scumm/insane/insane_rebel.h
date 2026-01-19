@@ -403,6 +403,26 @@ public:
 	// userId: HUD slot (1-4), animData: raw ANIM data, size: data size, renderBitmap: current frame buffer
 	void loadEmbeddedSan(int userId, byte *animData, int32 size, byte *renderBitmap) override;
 
+	// ======================= Embedded Frame Codec Decoders =======================
+	// These functions decode different codec formats used in embedded ANIM/FOBJ data
+	// Based on retail FUN_0042C590 (codec 1), FUN_0042BD60 (codec 21), etc.
+
+	// Decode codec 21/44 (Line Update) - skip/copy pairs per line
+	// Used for fonts and some HUD frames (FUN_0042BD60)
+	void decodeCodec21(byte *dst, const byte *src, int width, int height);
+
+	// Decode codec 23 (Skip/Copy with embedded RLE) - hybrid format
+	// Used for embedded HUD frames with transparency (FUN_0042BBF0)
+	void decodeCodec23(byte *dst, const byte *src, int width, int height, int dataSize);
+
+	// Decode codec 45 (RA2-specific BOMP RLE) - variable header format
+	// Used for small animation elements and HUD pieces (FUN_0042B5F0)
+	void decodeCodec45(byte *dst, const byte *src, int width, int height, int dataSize);
+
+	// Render a decoded embedded frame to the video buffer
+	// Handles transparency (color 0 and 231) and boundary checks
+	void renderEmbeddedFrame(byte *renderBitmap, const EmbeddedSanFrame &frame, int userId);
+
 
 
 	int16 _rebelLinks[512][3]; // Dependency links: Slot 0 (Disable on death), Slot 1/2 (Enable on death)
