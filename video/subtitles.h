@@ -92,7 +92,7 @@ public:
 	void setColor(byte r, byte g, byte b);
 	void setPadding(uint16 horizontal, uint16 vertical);
 	bool drawSubtitle(uint32 timestamp, bool force = false, bool showSFX = false) const;
-	static bool isSfxFile(const Common::Path &fname);
+	bool isSfx() const;
 	bool isLoaded() const { return _loaded || _subtitleDev; }
 	virtual void clearSubtitle() const;
 
