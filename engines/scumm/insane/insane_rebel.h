@@ -395,10 +395,7 @@ public:
 	};
 	
 	EmbeddedSanFrame _rebelEmbeddedHud[16];  // HUD overlay slots (userId 0-15)
-	
-	// Check if a partial frame update should be skipped (overlaps with destroyed enemy)
-	bool shouldSkipFrameUpdate(int left, int top, int width, int height) override;
-	
+
 	// Load and decode an embedded SAN animation from IACT chunk data
 	// userId: HUD slot (1-4), animData: raw ANIM data, size: data size, renderBitmap: current frame buffer
 	void loadEmbeddedSan(int userId, byte *animData, int32 size, byte *renderBitmap) override;

@@ -460,10 +460,6 @@ public:
 
  public:
 
-	bool virtual shouldSkipFrameUpdate(int left, int top, int width, int height) { 
-		return false; 
-	};
-
 	void virtual loadEmbeddedSan(int userId, byte *animData, int32 size, byte *renderBitmap) {
 		// Nothing by default
 	};

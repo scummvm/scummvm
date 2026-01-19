@@ -961,11 +961,11 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 		}
 		_dst = _specialBuffer;
 	} else if (_vm->_game.id == GID_REBEL2 && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth))) {
-		// Skip frame updates for destroyed enemies. The enemy area is erased
-		// in procPostRendering (eraseDestroyedEnemies) before explosions are drawn.
-		if (_insane && _insane->shouldSkipFrameUpdate(left, top, width, height)) {
-			return;  // Skip this frame update
-		}
+		// Rebel2 uses SKIP chunks to conditionally skip FOBJ frames for destroyed enemies.
+		// The SKIP chunk mechanism (via procSKIP -> _skipNext) is checked at the START
+		// of handleFrameObject(), so destroyed enemy sprites are already skipped before
+		// reaching this point. No additional skip logic needed here.
+		//
 		// Rebel2 uses a special buffer for all non-matching frames.
 		// Level 1: First frame is 424x260 (background), small sprites reuse same buffer
 		// Level 2: Uses virtual screen directly (handled below when _specialBuffer stays null
