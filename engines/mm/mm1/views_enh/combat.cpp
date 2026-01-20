@@ -544,7 +544,7 @@ void Combat::clearArea(const Common::Rect &r) {
 	area.right = MIN(area.right, _innerBounds.right);
 	area.bottom = MIN(area.bottom, _innerBounds.bottom);
 
-	s.fillRect(area, 0x99);
+	s.fillRect(area, SCROLL_BG_COLOR);
 }
 
 

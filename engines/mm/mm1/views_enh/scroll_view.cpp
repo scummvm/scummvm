@@ -167,7 +167,7 @@ void ScrollView::frame() {
 void ScrollView::fill() {
 	Graphics::ManagedSurface s = getSurface();
 	s.fillRect(Common::Rect(FRAME_BORDER_SIZE, FRAME_BORDER_SIZE,
-		s.w - FRAME_BORDER_SIZE, s.h - FRAME_BORDER_SIZE), 0);
+		s.w - FRAME_BORDER_SIZE, s.h - FRAME_BORDER_SIZE), SCROLL_BG_COLOR);
 }
 
 void ScrollView::writeSymbol(int symbolId) {
