@@ -16,7 +16,7 @@
 #define SCUMMVM_REVISION
 #endif
 
-#define SCUMMVM_VERSION "2026.1.1"
+#define SCUMMVM_VERSION "2026.1.1git"
 
 #define SCUMMVM_VER_MAJOR 2026
 #define SCUMMVM_VER_MINOR 1
