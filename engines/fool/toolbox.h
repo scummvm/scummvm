@@ -128,7 +128,7 @@ public:
 	// entire content region, though it suffices to draw only the visRgn; in either case, only the parts of
 	// the window that require updating will actually be drawn on the screen. Every call to
 	// BeginUpdate must be balanced by a call to EndUpdate.
-	void BeginUpdate(Graphics::MacWindow &theWindow);
+	void BeginUpdate(WindowRecord &theWindow);
 
 	// PROCEDURE ClearMenuBar;
 	// Call ClearMenuBar to remove all menus from the menu list when you want to start afresh with all
@@ -183,7 +183,7 @@ public:
 	// PROCEDURE EndUpdate (theWindow: WindowPtr);
 	// Call EndUpdate to restore the normal visRgn of theWindow's grafPort, which was changed by
 	// BeginUpdate as described above.
-	void EndUpdate(Graphics::MacWindow &theWindow);
+	void EndUpdate(WindowRecord &theWindow);
 
 	// PROCEDURE FillOval (r: Rect; pat: Pattern);
 	// FillOval fills an oval just inside the specified rectangle with the given pattern (in patCopy mode).
@@ -296,6 +296,7 @@ public:
 	// definition; the pen mode, pattern, and size do not affect it. In fact, OpenPoly calls HidePen, so
 	// no drawing occurs on the screen while the polygon is open (unless you call ShowPen just after
 	// OpenPoly, or you called ShowPen previously without balancing it by a call to HidePen).
+	PolyHandle OpenPoly();
 
 	// PROCEDURE OpenPort (port: GrafPtr);
 	// OpenPort allocates space for the given grafPort's visRgn and clipRgn, initializes the fields of the
@@ -315,6 +316,7 @@ public:
 	// PaintPoly paints the specified polygon with the current grafPort's pen pattern and pen mode. The
 	// polygon is filled with the pnPat, according to the pattern transfer mode specified by pnMode.
 	// The pen location is not changed by this procedure.
+	void PaintPoly(PolyHandle poly);
 
 	// PROCEDURE PaintRect (r: Rect);
 	// PaintRect paints the specified rectangle with the current grafPoit's pen pattern and mode. The

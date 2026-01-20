@@ -53,6 +53,7 @@ public:
 	void sub_128_a6c(int16_t unk1, int16_t unk2);
 	void sub_128_a8c(int16_t unk);
 	void sub_128_c8a();
+	void sub_128_ccc();
 	void sub_128_de2();
 	void sub_128_e1c();
 	void sub_128_e58();
@@ -67,12 +68,18 @@ public:
 
 	void sub_130_004();
 	void sub_130_cea();
+	void sub_130_d28();
 	void sub_130_db0();
 	void sub_130_e82();
 	void sub_130_f48();
 	void sub_130_1002();
 
 	void sub_131_004();
+
+	void sub_131_4dc0();
+	void sub_131_4e48();
+	void sub_131_4e98();
+	void sub_131_4f96();
 
 private:
 	// last tick count
@@ -85,41 +92,77 @@ private:
 	int16 var_i16_12;
 	int16 var_i16_14;
 	int16 var_i16_16;
-	int16 var_i16_1c;
-	int16 var_i16_1e;
-	int16 var_i16_20;
+	RGBColor var_i16_1c;
 
 	EventRecord var_ev_22;
 
+	WindowRecord var_window_24;
+
 	Graphics::Surface *var_i32_32;
+
+	int16 var_i16_36;
 	Common::Rect var_i16_38;
-
 	Graphics::Surface *var_i32_40;
+	int16 var_i16_44;
+	Common::Rect var_i16_46;
+	Graphics::Surface *var_i32_4e;
 
-	byte *var_i32_4e;
+	int16 var_i16_52;
+	Common::Rect var_i16_54;
 
 	Common::Rect var_i16_5c;
 	Common::Rect var_i16_64;
 	Common::Rect var_i16_6c;
 
-	// 1 for prologue, 2 for finale
-	int16 var_i16_1aa;
+	int16 var_i16_74;
 
+	Common::U32String var_str_76;
+
+	int16 var_i16_176;
+	int16 var_i16_180;
 	int32 var_i32_182;
 	int16 var_i16_18c;
 	int16 var_i16_18e;
 
+	int16 var_i16_192;
+
 	int16 var_i16_1a4;
 	uint32 var_i32_1a6;
 
+	// 1 for prologue, 2 for finale
+	int16 var_i16_1aa;
+	int16 *var_i32_1ac;
+	int16 *var_i32_1b0;
+
+	int16 var_i16_1b4;
+	int16 var_i16_1b6;
 	int16 var_i16_1b8;
 	int16 var_i16_1ba;
+
+	uint32 var_i32_1c0;
+
+	Common::U32String var_i16_1c4;
+
+	uint32 var_i32_2c4;
+	int16 var_i16_2c8;
+	int16 var_i16_2ca;
+	int16 var_i16_2cc;
+	Common::U32String var_i16_2ce;
+
+	int16 var_i16_3ce;
+	int16 var_i16_3d2;
+	int16 var_i16_3d4;
+	PolyHandle var_i32_3d6;
+	int16 var_i16_3da;
+	int16 var_i16_3dc;
 	int16 var_i16_3e0;
 
-	// picture resource handles
-	Handle arr_i32_0[0x30] = { 0 };
+	int16 var_i16_3fc;
 
-	Pattern arr_i16_194[5];
+	// picture resource handles
+	Handle arr_i32_0[92] = { 0 };
+
+	Pattern arr_pat_194[5];
 
 
 	Common::Rect arr_i16_1bc;
@@ -132,9 +175,13 @@ private:
 
 	byte arr_i32_b54[SCREEN_PAGE_SIZE*12];
 
-	byte *arr_i32_41296[12];
+	Graphics::Surface arr_i32_3bca4;
+
+	Graphics::Surface arr_i32_41296[12];
 
 	int16 arr_i16_412ea[SCREEN_HEIGHT];
+	int16 arr_i16_41598[SCREEN_HEIGHT];
+	int16 arr_i16_41846[SCREEN_HEIGHT];
 
 	Common::Rect arr_i16_41af4;
 	Common::Rect arr_i16_41afc;
@@ -142,7 +189,7 @@ private:
 
 	double arr_f64_41bbe[8] = { 0 };
 
-	Common::U32String var_str_76;
+	PicHandle glob_i32_2ce;
 
 	void run();
 };
