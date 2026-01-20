@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-17 20:38+0000\n"
-"PO-Revision-Date: 2026-01-17 17:38+0000\n"
+"PO-Revision-Date: 2026-01-20 00:16+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -1662,12 +1662,12 @@ msgid "Unknown Year"
 msgstr "Рік невідомий"
 
 #: gui/launcher.cpp:1434 gui/launcher.cpp:1810
-#, fuzzy
-#| msgid "Do you really want to remove this game configuration?"
 msgid ""
 "Do you really want to remove the following game configurations?\n"
 "\n"
-msgstr "Ви дійсно хочете видалити налаштування для цієї гри?"
+msgstr ""
+"Ви дійсно хочете видалити налаштування для цієї гри?\n"
+"\n"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1615 gui/widgets/groupedlist.cpp:81
@@ -9508,10 +9508,8 @@ msgid "Glowstick"
 msgstr "Сяюча паличка"
 
 #: engines/hugo/metaengine.cpp:45
-#, fuzzy
-#| msgid "Easy mouse interface"
 msgid "Use Windows interface"
-msgstr "Простий інтерфейс для миші"
+msgstr "Використовувати інтерфейс Windows"
 
 #: engines/hugo/metaengine.cpp:46
 msgid "Use mouse and toolbar from Windows version"
@@ -13410,56 +13408,38 @@ msgid "Journal search keymappings"
 msgstr "Мапа клавіш пошуку у журналі"
 
 #: engines/sherlock/metaengine.cpp:783
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Menu scrolling keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш прокрутки меню"
 
 #: engines/sherlock/metaengine.cpp:784
-#, fuzzy
-#| msgid "Save/Load keymappings"
 msgid "save / load menu keymappings"
-msgstr "Зберегти/Прочитати мапи клавіш гри"
+msgstr "Мапв клавіш меню збережкння / завантаження"
 
 #: engines/sherlock/metaengine.cpp:785
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Save files name editing keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш редагування назв збережень"
 
 #: engines/sherlock/metaengine.cpp:786
-#, fuzzy
-#| msgid "Escape keymappings"
 msgid "Foolscap puzzle keymappings"
-msgstr "Мапа клавіш ESC"
+msgstr "Мапа клавіш у головоломці Foolscap"
 
 #: engines/sherlock/metaengine.cpp:788
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Options menu keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш меню налаштувань"
 
 #: engines/sherlock/metaengine.cpp:789
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Password entry keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш вводу паролю"
 
 #: engines/sherlock/metaengine.cpp:791
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Talk options keymappings"
-msgstr "Мапи клавіш"
+msgstr "Мапа клавіш опцій розмови"
 
 #: engines/sherlock/metaengine.cpp:793
-#, fuzzy
-#| msgid "Move left"
 msgid "Move / Examine / Select"
-msgstr "Рухатись наліво"
+msgstr "Рухатись / Розгледіти / Обрати"
 
 #: engines/sherlock/metaengine.cpp:799
-#, fuzzy
-#| msgid "Open action menu / Close menu"
 msgid "Open verb menu / close menu"
 msgstr "Відкрити меню дій / Закрити меню"
 
