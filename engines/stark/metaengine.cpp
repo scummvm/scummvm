@@ -277,7 +277,7 @@ Common::KeymapArray StarkMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_RIGHT_STICK");
 	gameKeyMap->addAction(act);
 
-	act = new Action("EXITGAME", _("Exit game"));
+	act = new Action("EXITGAME", _("Quit game"));
 	act->setCustomEngineActionEvent(kActionExitGame);
 	act->addDefaultInputMapping("A+x");
 	act->addDefaultInputMapping("A+q");
