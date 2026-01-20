@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-20 00:42+0000\n"
-"PO-Revision-Date: 2026-01-16 11:22+0000\n"
+"PO-Revision-Date: 2026-01-20 15:22+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -1536,12 +1536,12 @@ msgid "Unknown Year"
 msgstr "უცნობი წელი"
 
 #: gui/launcher.cpp:1434 gui/launcher.cpp:1810
-#, fuzzy
-#| msgid "Do you really want to overwrite the file?"
 msgid ""
 "Do you really want to remove the following game configurations?\n"
 "\n"
-msgstr "ფაილი უკვე არსებობს. გნებავთ გადააწეროთ?"
+msgstr ""
+"მართლა გნებავთ, წაშალოთ შემდეგი თამაშის კონფიგურაციები?\n"
+"\n"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1615 gui/widgets/groupedlist.cpp:81
@@ -8717,10 +8717,8 @@ msgid "Glowstick"
 msgstr "მანათებელი ჯოხი"
 
 #: engines/hugo/metaengine.cpp:45
-#, fuzzy
-#| msgid "Easy mouse interface"
 msgid "Use Windows interface"
-msgstr "ადვილი თაგუნას ინტერფეისი"
+msgstr "Windows-ის ინტერფეისის გამოყენება"
 
 #: engines/hugo/metaengine.cpp:46
 msgid "Use mouse and toolbar from Windows version"
@@ -13685,40 +13683,28 @@ msgid "Magic Amulet"
 msgstr ""
 
 #: engines/ultima/ultima0/metaengine.cpp:57
-#, fuzzy
-#| msgid "Select option 1"
 msgid "Amulet Option 1"
-msgstr "1 პარამეტრის არჩევა"
+msgstr "ამულეტის პარამეტრი 1"
 
 #: engines/ultima/ultima0/metaengine.cpp:58
-#, fuzzy
-#| msgid "Select option 2"
 msgid "Amulet Option 2"
-msgstr "2 პარამეტრის არჩევა"
+msgstr "ამულეტის პარამეტრი 2"
 
 #: engines/ultima/ultima0/metaengine.cpp:59
-#, fuzzy
-#| msgid "Select option 3"
 msgid "Amulet Option 3"
-msgstr "3 პარამეტრის არჩევა"
+msgstr "ამულეტის პარამეტრი 3"
 
 #: engines/ultima/ultima0/metaengine.cpp:60
-#, fuzzy
-#| msgid "Select option 4"
 msgid "Amulet Option 4"
-msgstr "4 პარამეტრის არჩევა"
+msgstr "ამულეტის პარამეტრი 4"
 
 #: engines/ultima/ultima0/metaengine.cpp:65
-#, fuzzy
-#| msgid "Crawl North"
 msgid "North"
-msgstr "ფორთხვა ჩრდილოეთისკენ"
+msgstr "ჩრდილოეთი"
 
 #: engines/ultima/ultima0/metaengine.cpp:66
-#, fuzzy
-#| msgid "Crawl South"
 msgid "South"
-msgstr "ფორთხვა სამხრეთისკენ"
+msgstr "სამხრეთი"
 
 #: engines/ultima/ultima0/metaengine.cpp:67
 msgid "West"
@@ -13730,34 +13716,26 @@ msgstr ""
 
 #: engines/ultima/ultima0/metaengine.cpp:69
 #: engines/ultima/ultima0/metaengine.cpp:83
-#, fuzzy
-#| msgid "Enter Text"
 msgid "Enter/Exit"
-msgstr "შეიყვანეთ ტექსტი"
+msgstr "შესვლა/გასვლა"
 
 #: engines/ultima/ultima0/metaengine.cpp:72
 #: engines/ultima/ultima0/metaengine.cpp:86
-#, fuzzy
-#| msgid "Wait"
 msgid "Pass/Wait"
-msgstr "მოითმინეთ"
+msgstr "გატარება/მოცდა"
 
 #: engines/ultima/ultima0/metaengine.cpp:73
 #: engines/ultima/ultima0/metaengine.cpp:87
-#, fuzzy
-#| msgid "Minimize"
 msgid "Minimap"
-msgstr "ჩაკეცვა"
+msgstr "მინირუკა"
 
 #: engines/ultima/ultima0/metaengine.cpp:78
 msgid "Move Forward"
 msgstr "წინ"
 
 #: engines/ultima/ultima0/metaengine.cpp:79
-#, fuzzy
-#| msgid "Turn on"
 msgid "Turn Around"
-msgstr "ჩართვა"
+msgstr "შემობრუნება"
 
 #: engines/ultima/ultima0/metaengine.cpp:80
 msgid "Turn Left"
@@ -13772,24 +13750,18 @@ msgstr "მარჯვნივ მობრუნება"
 #: engines/ultima/ultima0/metaengine.cpp:111
 #: engines/ultima/ultima0/metaengine.cpp:117
 #: engines/ultima/ultima0/metaengine.cpp:123
-#, fuzzy
-#| msgid "Game Keys"
 msgid "Basic Keys"
-msgstr "თამაშის მალსახმობები"
+msgstr "ძირითადი ღილაკები"
 
 #: engines/ultima/ultima0/metaengine.cpp:99
 #: engines/ultima/ultima0/metaengine.cpp:112
-#, fuzzy
-#| msgid "Game Keys"
 msgid "Menu Keys"
-msgstr "თამაშის მალსახმობები"
+msgstr "მენიუს ღილაკები"
 
 #: engines/ultima/ultima0/metaengine.cpp:100
 #: engines/ultima/ultima0/metaengine.cpp:118
-#, fuzzy
-#| msgid "General Keys"
 msgid "Overworld Keys"
-msgstr "ზოგადი გასაღებები"
+msgstr "Overworld-ის ღილაკები"
 
 #: engines/ultima/ultima0/metaengine.cpp:101
 #: engines/ultima/ultima0/metaengine.cpp:124
@@ -14799,10 +14771,8 @@ msgid "This setting forces ScummVM to use 2D renderer while running 2D games"
 msgstr ""
 
 #: engines/wintermute/metaengine.cpp:94
-#, fuzzy
-#| msgid "Use English speech"
 msgid "Use Italian speech pack"
-msgstr "ინგლისური საუბრის გამოყენება"
+msgstr "იტალიური საუბრის პაკეტის გამოყენება"
 
 #: engines/wintermute/metaengine.cpp:95
 msgid "Use Italian dubbing instead of the default English one"
