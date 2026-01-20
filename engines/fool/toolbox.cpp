@@ -19,9 +19,51 @@
  *
  */
 
+#include "common/system.h"
+
+#include "fool/fool.h"
 #include "fool/toolbox.h"
 
 namespace Fool {
+
+Toolbox::Toolbox() {
+	this->_frameLimiter = new Graphics::FrameLimiter(g_system, 60);
+}
+
+Toolbox::~Toolbox() {
+	delete this->_frameLimiter;
+}
+
+void Toolbox::_pumpEvents() {
+	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event)) {
+		EventRecord newRecord;
+		newRecord.when = this->TickCount();
+		switch (event.type) {
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
+			newRecord.what = kMouseDown;
+			newRecord.where = Common::Point(event.mouse.x, event.mouse.y);
+			this->_events.push(newRecord);
+			break;
+		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_RBUTTONUP:
+			newRecord.what = kMouseUp;
+			newRecord.where = Common::Point(event.mouse.x, event.mouse.y);
+			this->_events.push(newRecord);
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void Toolbox::_updateScreen() {
+	g_engine->_wm.draw();
+	this->_frameLimiter->delayBeforeSwap();
+	g_system->updateScreen();
+	this->_frameLimiter->startFrame();
+}
 
 void Toolbox::BeginUpdate(WindowRecord &theWindow) {
 	warning("STUB: Toolbox::BeginUpdate");
@@ -43,14 +85,13 @@ void Toolbox::CopyBits(const Graphics::Surface &srcBits, Graphics::Surface &dstB
 	warning("STUB: Toolbox::CopyBits");
 }
 
-uint16 Toolbox::CurResFile() {
-	warning("STUB: Toolbox::CurResFile");
-	return 0;
-}
-
 uint32 Toolbox::Delay(uint32 numTicks) {
-	warning("STUB: Toolbox::Delay");
-	return 0;
+	uint32 target = g_system->getMillis() + (numTicks * 1000 / 60);
+	while (g_system->getMillis() < target) {
+		this->_pumpEvents();
+		this->_updateScreen();
+	}
+	return (uint32)(g_system->getMillis() * 60 / 1000);
 }
 
 void Toolbox::DrawString(const Common::String &s) {
@@ -87,7 +128,15 @@ void Toolbox::GetCPixel(int16 h, int16 v, RGBColor &cPix) {
 
 bool Toolbox::GetNextEvent(uint16 eventMask, EventRecord &theEvent) {
 	warning("STUB: Toolbox::GetNextEvent");
-	return false;
+	this->_pumpEvents();
+	if (!this->_events.empty()) {
+		theEvent = this->_events.pop();
+	} else {
+		theEvent.what = kNullEvent;
+		// pretend mouse button is up
+		theEvent.modifiers = 0x80;
+	}
+	return true;
 }
 
 PicHandle Toolbox::GetPicture(uint16 picID) {
@@ -174,17 +223,10 @@ void Toolbox::PenPat(const Pattern &pat) {
 
 void Toolbox::PenSize(uint16 width, uint16 height) {
 	warning("STUB: Toolbox::PenSize");
-
 }
 
 void Toolbox::PortSize(uint16 width, uint16 height) {
 	warning("STUB: Toolbox::PortSize");
-
-}
-
-void Toolbox::ReleaseResource(Handle &handle) {
-	warning("STUB: Toolbox::ReleaseResource");
-
 }
 
 void Toolbox::SetCPixel(int16 h, int16 v, const RGBColor &cPix) {
@@ -215,13 +257,7 @@ uint16 Toolbox::StringWidth(const Common::String &s) {
 }
 
 uint32 Toolbox::TickCount() {
-	warning("STUB: Toolbox::TickCount");
-	return 0;
-}
-
-void Toolbox::UseResFile(uint16 refNum) {
-	warning("STUB: Toolbox::UseResFile");
-
+	return (uint32)(g_system->getMillis() * 60 / 1000);
 }
 
 

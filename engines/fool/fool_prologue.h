@@ -39,8 +39,8 @@ public:
 	void run();
 
 	void sub_128_004();
-	void sub_128_1ba(int16 screen_page);
-	void sub_128_1f4(int16 screen_page);
+	void sub_128_1ba(int16 screenPage);
+	void sub_128_1f4(int16 screenPage);
 	void sub_128_21e(int16 numTicks);
 	void sub_128_24a(int16 numTicks);
 	void sub_128_26c(int16 unk1, int16 unk2);
@@ -48,10 +48,10 @@ public:
 	void sub_128_2f0(int16 pattern_id, int16 top, int16 left, int16 bottom, int16 right);
 	void sub_128_354(uint16 unk1, uint16 unk2);
 	void sub_128_3ee(int16 unk1);
-	void sub_128_50a(int16 unk1, int16 unk2, int16 unk3, int16 screen_page);
-	void sub_128_610(int16 screen_page);
+	void sub_128_50a(int16 unk1, int16 unk2, int16 unk3, int16 screenPage);
+	void sub_128_610(int16 screenPage);
 	void sub_128_64a(int16 unk1);
-	void sub_128_6e4(int16 screen_page);
+	void sub_128_6e4(int16 screenPage);
 	void sub_128_800(int16_t unk1, int16_t unk2, int16_t unk3, int16_t unk4, int16_t unk5, int16_t unk6, int16_t unk7, int16_t unk8, int16_t unk9);
 	void sub_128_a6c(int16_t unk1, int16_t unk2);
 	void sub_128_a8c(int16_t unk);
@@ -193,6 +193,8 @@ private:
 	double arr_f64_41bbe[8] = { 0 };
 
 	PicHandle glob_i32_2ce;
+
+	Graphics::MacWindow *_window;
 
 };
 

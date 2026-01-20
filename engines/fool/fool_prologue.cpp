@@ -22,6 +22,7 @@
 
 #include "common/str.h"
 #include "common/str-enc.h"
+#include "graphics/macgui/macwindow.h"
 
 #include "fool/fool.h"
 #include "fool/fool_prologue.h"
@@ -38,6 +39,9 @@ Toolbox *g_toolbox;
 // and was built with a different ZBASIC compiler.
 
 void FoolPrologue::run() {
+	this->_window = new Graphics::MacWindow(g_engine->_wm.getNextId(), false, false, false, &g_engine->_wm);
+	g_engine->_wm.setBackgroundWindow(this->_window);
+
 	g_toolbox = new Toolbox();
 	g_zbasic = new ZBasic(g_toolbox);
 	g_zbasic->loadProgram(Common::Path("Prologue - Finale"));
@@ -117,15 +121,15 @@ void FoolPrologue::sub_128_004() {
 	//g_zbasic->unk4(); // exit command?
 }
 
-void FoolPrologue::sub_128_1ba(int16 screen_page) {
+void FoolPrologue::sub_128_1ba(int16 screenPage) {
 	// 128:01ba
-	this->var_i32_40 = &this->arr_i32_41296[screen_page];
+	this->var_i32_40 = &this->arr_i32_41296[screenPage];
 	g_toolbox->CopyBits(*this->var_i32_32, *this->var_i32_40, this->var_i16_38, this->var_i16_38, 0, 0);
 }
 
-void FoolPrologue::sub_128_1f4(int16 screen_page) {
+void FoolPrologue::sub_128_1f4(int16 screenPage) {
 	// 128:01f4
-	this->var_i32_40 = &this->arr_i32_41296[screen_page];
+	this->var_i32_40 = &this->arr_i32_41296[screenPage];
 	g_toolbox->SetPortBits(this->var_i32_40);
 }
 
@@ -138,7 +142,7 @@ void FoolPrologue::sub_128_21e(int16 numTicks) {
 
 void FoolPrologue::sub_128_24a(int16 numTicks) {
 	// 128:024a
-	int32_t delay = MAX<uint32>(this->var_i32_2 + numTicks + 1 - g_toolbox->TickCount(), 0);
+	uint32 delay = (uint32)MAX<int>(this->var_i32_2 + numTicks + 1 - g_toolbox->TickCount(), 0);
 	// again, polling TickCount in a loop.
 	g_toolbox->Delay(delay);
 }
@@ -210,9 +214,9 @@ void FoolPrologue::sub_128_3ee(int16 unk1) {
 
 }
 
-void FoolPrologue::sub_128_50a(int16 unk1, int16 unk2, int16 unk3, int16 screen_page) {
+void FoolPrologue::sub_128_50a(int16 unk1, int16 unk2, int16 unk3, int16 screenPage) {
 	// 128:050a
-	this->var_i32_40 = &this->arr_i32_41296[screen_page];
+	this->var_i32_40 = &this->arr_i32_41296[screenPage];
 	this->var_i16_5c.left = unk3;
 	this->var_i16_5c.right = unk2;
 	if (unk1 == 0) {
@@ -239,9 +243,9 @@ void FoolPrologue::sub_128_50a(int16 unk1, int16 unk2, int16 unk3, int16 screen_
 	}
 }
 
-void FoolPrologue::sub_128_610(int16 screen_page) {
+void FoolPrologue::sub_128_610(int16 screenPage) {
 	// 128:0610
-	this->var_i32_40 = &this->arr_i32_41296[screen_page];
+	this->var_i32_40 = &this->arr_i32_41296[screenPage];
 	g_toolbox->CopyBits(*this->var_i32_40, *this->var_i32_32, this->var_i16_38, this->var_i16_38, 0, 0);
 }
 
@@ -261,9 +265,9 @@ void FoolPrologue::sub_128_64a(int16 unk1) {
 	g_toolbox->PenNormal();
 }
 
-void FoolPrologue::sub_128_6e4(int16 screen_page) {
+void FoolPrologue::sub_128_6e4(int16 screenPage) {
 	// 128:06e4
-	this->var_i32_40 = &this->arr_i32_41296[screen_page];
+	this->var_i32_40 = &this->arr_i32_41296[screenPage];
 	for (int i = 0; i < 0x36; i++) {
 		this->var_i32_2 = g_toolbox->TickCount();
 		this->var_i16_5c.top = (SCREEN_HEIGHT/2) - (int)(i*3.33);
@@ -353,7 +357,7 @@ void FoolPrologue::sub_128_a8c(int16_t unk) {
 		if (this->var_i16_6 > 0xb5) {
 			this->var_i16_6 = 0;
 		}
-	} while (this->var_i32_2 + this->var_i16_1a4 <= g_toolbox->TickCount());
+	} while (this->var_i32_2 + this->var_i16_1a4 > g_toolbox->TickCount());
 }
 
 void FoolPrologue::sub_128_c8a() {
@@ -371,7 +375,7 @@ void FoolPrologue::sub_128_ccc() {
 	}
 	// 128:0d2a
 	for (int i=this->var_i16_18e; i<=1; i--) {
-		this->var_i16_1b6 = g_engine->getRandomNumber(i);
+		this->var_i16_1b6 = g_zbasic->rndInt(i);
 		this->arr_i16_412ea[i] = this->arr_i16_41598[this->var_i16_1b6];
 		this->var_i16_1b8 = this->var_i16_1b6 * 2 + 2;
 		g_zbasic->blockMove(this->var_i32_1ac + this->var_i16_1b8, this->var_i32_1b0 + this->var_i16_1b8, this->var_i16_1b4 - this->var_i16_1b8);
@@ -401,6 +405,8 @@ void FoolPrologue::sub_128_e58() {
 		this->var_i16_1ba = g_toolbox->GetNextEvent(0x2, this->var_ev_22);
 		if (this->var_ev_22.what == kMouseDown)
 			break;
+		// wait until next redraw
+		g_toolbox->Delay(1);
 	}
 	this->sub_128_e80();
 }
@@ -415,9 +421,13 @@ void FoolPrologue::sub_128_e80() {
 		if (this->var_ev_22.what == kDiskEvt) {
 			this->sub_128_ee0();
 		}
+		// keep looping until mouse is seen as up??
+		// see I-252
 		if ((this->var_ev_22.modifiers & 0x80) && (this->var_ev_22.what == kNullEvent)) {
 			break;
 		}
+		// wait until next redraw
+		g_toolbox->Delay(1);
 	}
 }
 
@@ -992,7 +1002,7 @@ void FoolPrologue::sub_130_004() {
 	// 130:0ce6
 	// JMP 1002
 	// g_zbasic->pushOldCodeResource(0x82);
-	this->sub_131_004();
+	//this->sub_131_004();
 }
 
 void FoolPrologue::sub_130_cea() {
@@ -1025,10 +1035,10 @@ void FoolPrologue::sub_130_db0() {
 	this->var_i16_6 = 0x1;
 	while (this->var_i16_6 <= 0xb5) {
 		// 130:0dc0
-		this->arr_i16_1e8[this->var_i16_6] = g_engine->getRandomNumber(0x264) - 0x64;
-		this->arr_i16_1e8[this->var_i16_6 + 0xfb] = g_engine->getRandomNumber(0x1ba) - 0x64;
-		this->arr_i16_1e8[this->var_i16_6 + 0x1f6] = g_engine->getRandomNumber(0x5) + 1;
-		this->arr_i16_1e8[this->var_i16_6 + 0x2f1] = g_engine->getRandomNumber(0xa) + 0x19;
+		this->arr_i16_1e8[this->var_i16_6] = g_zbasic->rndInt(0x264) - 0x64;
+		this->arr_i16_1e8[this->var_i16_6 + 0xfb] = g_zbasic->rndInt(0x1ba) - 0x64;
+		this->arr_i16_1e8[this->var_i16_6 + 0x1f6] = g_zbasic->rndInt(0x5) + 1;
+		this->arr_i16_1e8[this->var_i16_6 + 0x2f1] = g_zbasic->rndInt(0xa) + 0x19;
 		// 130:0e68
 		this->sub_130_e82();
 		this->var_i16_6 += 1;
@@ -1061,7 +1071,7 @@ void FoolPrologue::sub_130_f48() {
 			// 130:0f78
 			this->var_i16_1ba = g_zbasic->instr(this->var_i16_1ba, this->var_str_76, g_zbasic->str(21));
 			if (this->var_i16_1ba > 0) {
-				this->var_str_76.replace(this->var_i16_1ba, 1, Common::U32String("\""));
+				this->var_str_76.replace(this->var_i16_1ba-1, 1, Common::U32String("\""));
 			}
 		}
 		// 130:0fc8
@@ -1073,7 +1083,7 @@ void FoolPrologue::sub_130_f48() {
 void FoolPrologue::sub_130_1002() {
 	// 130:1002
 	// g_zbasic->pushOldCodeResource(0x82);
-	this->sub_131_004();
+	//this->sub_131_004();
 }
 
 // run finale
