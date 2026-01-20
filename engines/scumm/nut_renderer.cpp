@@ -318,8 +318,11 @@ int NutRenderer::getCharWidth(byte c) const {
 	if (c >= 0x80 && _vm->_useCJKMode)
 		return _vm->_2byteWidth + _spacing;
 
-	if (c >= _numChars)
-		error("invalid character in NutRenderer::getCharWidth : %d (%d)", c, _numChars);
+	if (c >= _numChars) {
+		// Character not in font - return 0 width (skip it)
+		// This can happen with SMUSH fonts that have limited character sets
+		return 0;
+	}
 
 	return _chars[c].width;
 }
@@ -328,8 +331,11 @@ int NutRenderer::getCharHeight(byte c) const {
 	if (c >= 0x80 && _vm->_useCJKMode)
 		return _vm->_2byteHeight;
 
-	if (c >= _numChars)
-		error("invalid character in NutRenderer::getCharHeight : %d (%d)", c, _numChars);
+	if (c >= _numChars) {
+		// Character not in font - return default font height
+		// This can happen with SMUSH fonts that have limited character sets
+		return _fontHeight;
+	}
 
 	return _chars[c].height;
 }
@@ -377,6 +383,11 @@ void NutRenderer::drawFrame(byte *dst, int c, int x, int y, int pitch) {
 }
 
 int NutRenderer::drawCharV7(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr, bool hardcodedColors, bool smushColorMode) {
+	// Character not in font - skip drawing
+	// This can happen with SMUSH fonts that have limited character sets
+	if (chr >= _numChars)
+		return 0;
+
 	if (_direction < 0)
 		x -= _chars[chr].width;
 
