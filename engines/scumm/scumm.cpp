@@ -2697,17 +2697,30 @@ Common::Error ScummEngine::go() {
 			}
 
 			if (menuResult == InsaneRebel2::kMenuContinue) {
-				// Continue: Show level selection menu
-				int levelResult = rebel->runLevelSelect();
+				// Continue: Show pilot selection screen (FUN_00414A41)
+				int pilotResult = rebel->runLevelSelect();
 
-				if (levelResult == InsaneRebel2::kLevelSelectQuit || shouldQuit()) {
+				if (pilotResult == InsaneRebel2::kLevelSelectQuit || shouldQuit()) {
 					break;
 				}
 
-				if (levelResult == InsaneRebel2::kLevelSelectPlay) {
-					// Play the selected level using the level loading system
-					int selectedLevel = rebel->_selectedLevel;
-					debug("ScummEngine: Starting level %d", selectedLevel);
+				if (pilotResult == InsaneRebel2::kLevelSelectBack) {
+					// Back to main menu
+					continue;
+				}
+
+				// Pilot selected: Show chapter selection screen (FUN_00415CF8)
+				int chapterResult = rebel->runChapterSelect();
+
+				if (chapterResult == InsaneRebel2::kChapterSelectQuit || shouldQuit()) {
+					break;
+				}
+
+				if (chapterResult == InsaneRebel2::kChapterSelectPlay) {
+					// Play the selected chapter using the level loading system
+					// Note: _selectedChapter is 0-based, runLevel expects 1-based
+					int selectedLevel = rebel->_selectedChapter + 1;
+					debug("ScummEngine: Starting chapter %d (level %d)", rebel->_selectedChapter + 1, selectedLevel);
 
 					// Run the complete level (handles BEG, gameplay, END/DIE/RETRY/OVER)
 					int result = rebel->runLevel(selectedLevel);
@@ -2719,7 +2732,7 @@ Common::Error ScummEngine::go() {
 					// After level completion or game over, return to menu
 					// Could also handle kLevelNextLevel to auto-start next level
 				}
-				// If kLevelSelectBack, loop back to main menu
+				// If kChapterSelectBack, loop back to main menu
 			}
 		}
 		return Common::kNoError;
