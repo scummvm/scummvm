@@ -31,6 +31,7 @@
 #include "common/algorithm.h"
 #include "common/translation.h"
 
+#include <AvailabilityMacros.h>
 #include <AppKit/NSNibDeclarations.h>
 #include <AppKit/NSOpenPanel.h>
 #include <AppKit/NSApplication.h>
@@ -39,7 +40,7 @@
 #include <Foundation/NSURL.h>
 #include <Foundation/NSAutoreleasePool.h>
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101400
+#if MAC_OS_X_VERSION_MIN_REQUIRED < 101400
 
     #ifndef NSControlStateValueOff
       #define NSControlStateValueOff NSOffState
