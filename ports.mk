@@ -651,11 +651,13 @@ osxsnap: bundle
 	cp $(DIST_FILES_DOCS_no-nb) ./ScummVM-snapshot/doc/no-nb/
 	mkdir ScummVM-snapshot/doc/sv
 	cp $(DIST_FILES_DOCS_se) ./ScummVM-snapshot/doc/sv/
-	$(XCODETOOLSPATH)/SetFile -t ttro -c ttxt ./ScummVM-snapshot/doc/QuickStart
-	$(XCODETOOLSPATH)/SetFile -t ttro -c ttxt ./ScummVM-snapshot/doc/*/*
-ifndef MACOSX_LEOPARD_OR_BELOW
+ifdef MACOSX_LEOPARD_OR_BELOW
+	perl -pi -e 'print "\xEF\xBB\xBF" if $$. == 1 && !/^\xEF\xBB\xBF/' ./ScummVM-snapshot/doc/*/*
+else
 	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/*/*
 endif
+	$(XCODETOOLSPATH)/SetFile -t ttro -c ttxt ./ScummVM-snapshot/doc/QuickStart
+	$(XCODETOOLSPATH)/SetFile -t ttro -c ttxt ./ScummVM-snapshot/doc/*/*
 	cp -RP $(bundle_name) ./ScummVM-snapshot/
 	cp $(srcdir)/dists/macosx/DS_Store ./ScummVM-snapshot/.DS_Store
 	cp $(srcdir)/dists/macosx/background.jpg ./ScummVM-snapshot/background.jpg
