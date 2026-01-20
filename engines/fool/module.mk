@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	fool.o \
 	fool_prologue.o \
 	toolbox.o \
+	toolbox_resman.o \
 	zbasic.o \
 	console.o \
 	messages.o \

@@ -22,9 +22,12 @@
 #ifndef FOOL_TOOLBOX_H
 #define FOOL_TOOLBOX_H
 
-#include "common/scummsys.h"
+#include "common/hashmap.h"
+#include "common/system.h"
+#include "common/macresman.h"
 #include "common/str.h"
 #include "common/ustr.h"
+#include "graphics/framelimiter.h"
 #include "graphics/macgui/macwindow.h"
 
 namespace Fool {
@@ -33,6 +36,7 @@ typedef uint32 Handle;
 typedef uint32 RgnHandle;
 typedef uint32 PicHandle;
 typedef uint32 PolyHandle;
+typedef uint32 ResType;
 
 struct Pattern {
 	uint8 data[8];
@@ -119,6 +123,52 @@ class Toolbox {
 
 public:
 	// Compatibility shim for the Macintosh Toolbox/QuickDraw API.
+	Toolbox();
+	~Toolbox();
+
+	// toolbox_resman.cpp
+
+	// FUNCTION CurResFile: INTEGER;
+	// CurResFile returns the reference number of the current resource file. You can call it when the
+	// application starts up to get the reference number of its resource file.
+	uint16 CurResFile();
+
+	// FUNCTION GetNamedResource (theType: ResType; name: Str255) : Handle;
+	// GetNamedResource is the same as GetResource (above) except that you pass a resource name
+	// instead of an ID number.
+
+	// FUNCTION GetResource (theType: ResType; theID: INTEGER) : Handle;
+	// GetResource returns a handle to the resource having the given type and ID number, reading
+	// the resource data into memory if it's not already in memory and if you haven't called
+	// SetResLoad(FALSE) (see the warning above for GetIndResource). If the resource data is already
+	// in memory, GetResource just returns the handle to the resource.
+	Handle GetResource(ResType theType, int16 theID);
+
+	// FUNCTION OpenResFile (fileName: Str255): INTEGER;
+	// OpenResFile opens the resource file having the given name and makes it the current resource file.
+	// It reads the resource map from the file into memory and returns a reference number for the file. It
+	// also reads in every resource whose resPreload attribute is set. If the resource file is already open,
+	// it doesn't make it the current resource file; it simply returns the reference number.
+	// If the file can't be opened, OpenResFile will return -1 and the ResError function will return an
+	// appropriate Operating System result code. For example, an error occurs if there's no resource file
+	// with the given name.
+	int16 OpenResFile(Common::Path &filename);
+
+	// PROCEDURE ReleaseResource (theResource: Handle);
+	// Given a handle to a resource, ReleaseResource releases the memory occupied by the resource
+	// data, if any, and replaces the handle to that resource in the resource map with NIL (see Figure 7).
+	// The given handle will no longer be recognized as a handle to a resource; if the Resource Manager
+	// is subsequendy called to get the released resource, a new handle will be allocated. Use this
+	// procedure only after you're completely through with a resource.
+	void ReleaseResource(Handle &handle);
+
+	// PROCEDURE UseResFile (refNum: INTEGER);
+	// Given the reference number of a resource file, UseResFile sets the current resource file to that
+	// file. If there's no resource file open with the given reference number, UseResFile will do nothing
+	// and the ResError function will return the result code resFNotFound. A refNum of 0 represents
+	// the system resource file.
+	void UseResFile(uint16 refNum);
+
 
 
 	// PROCEDURE BeginUpdate (theWindow: WindowPtr);
@@ -157,11 +207,6 @@ public:
 	// the dstBits.bounds coordinate system, and the srcRect coordinates are in terms of the
 	// srcBits.bounds coordinates.
 	void CopyBits(const Graphics::Surface &srcBits, Graphics::Surface &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, uint16 mode, RgnHandle maskRgn);
-
-	// FUNCTION CurResFile: INTEGER;
-	// CurResFile returns the reference number of the current resource file. You can call it when the
-	// application starts up to get the reference number of its resource file.
-	uint16 CurResFile();
 
 	// PROCEDURE Delay (numTicks: LONGINT; VAR finalTicks: LONGINT);
 	// Delay causes the system to wait for the number of ticks (sixtieths of a second) specified by numTicks, and returns in finalTicks the total number of ticks from system startup to the end of the delay.
@@ -351,14 +396,6 @@ public:
 	// merely changes the size of the "active area" of the grafPort.
 	void PortSize(uint16 width, uint16 height);
 
-	// PROCEDURE ReleaseResource (theResource: Handle);
-	// Given a handle to a resource, ReleaseResource releases the memory occupied by the resource
-	// data, if any, and replaces the handle to that resource in the resource map with NIL (see Figure 7).
-	// The given handle will no longer be recognized as a handle to a resource; if the Resource Manager
-	// is subsequendy called to get the released resource, a new handle will be allocated. Use this
-	// procedure only after you're completely through with a resource.
-	void ReleaseResource(Handle &handle);
-
 	// PROCEDURE SetCPixel (h,v: INTEGER; cPix: RGBColor);
 	// The SetCPixel function sets the pixel at the specified position to the pixel value that most
 	// closely matches the specified RGB.
@@ -390,12 +427,15 @@ public:
 	// up.
 	uint32 TickCount();
 
-	// PROCEDURE UseResFile (refNum: INTEGER);
-	// Given the reference number of a resource file, UseResFile sets the current resource file to that
-	// file. If there's no resource file open with the given reference number, UseResFile will do nothing
-	// and the ResError function will return the result code resFNotFound. A refNum of 0 represents
-	// the system resource file.
-	void UseResFile(uint16 refNum);
+private:
+	Common::HashMap<int16, Common::SharedPtr<Common::MacResManager>> _resMap;
+	int16 _nextResId = 0;
+	Graphics::FrameLimiter *_frameLimiter = nullptr;
+
+	Common::Queue<EventRecord> _events;
+
+	void _pumpEvents();
+	void _updateScreen();
 };
 
 } // namespace Fool

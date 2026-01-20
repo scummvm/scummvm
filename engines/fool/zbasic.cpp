@@ -55,15 +55,21 @@ void ZBasic::loadProgram(const Common::Path &path) {
 		}
 		switch (opcode) {
 		case kDatumNULL:
-		this->_dataTable.push_back(ZBasicDatum::newNull(offset));
+			debugN(5, "ZBasic::loadProgram: _dataTable[%d]: offset %d, NULL\n", this->_dataTable.size(), offset);
+			this->_dataTable.push_back(ZBasicDatum::newNull(offset));
 			break;
 		case kDatumINT:
 			{
 				uint8 size = scot->readByte();
+				Common::SharedPtr<ZBasicDatum> result;
 				if (size == 0) {
-				this->_dataTable.push_back(ZBasicDatum::newInt(offset, 0));
+					result = ZBasicDatum::newInt(offset, 0);
+					debugN(5, "ZBasic::loadProgram: _dataTable[%d]: offset %d, %d\n", this->_dataTable.size(), offset, result->data.i16);
+					this->_dataTable.push_back(result);
 				} else if (size == 2) {
-				this->_dataTable.push_back(ZBasicDatum::newInt(offset, scot->readSint16BE()));
+					result = ZBasicDatum::newInt(offset, scot->readSint16BE());
+					debugN(5, "ZBasic::loadProgram: _dataTable[%d]: offset %d, %d\n", this->_dataTable.size(), offset, result->data.i16);
+					this->_dataTable.push_back(result);
 				} else {
 					warning("ZBasic::loadProgram: unexpected size for int %d", size);
 					scot->skip(size);
@@ -73,10 +79,15 @@ void ZBasic::loadProgram(const Common::Path &path) {
 		case kDatumDBLINT:
 			{
 				uint8 size = scot->readByte();
+				Common::SharedPtr<ZBasicDatum> result;
 				if (size == 0) {
-				this->_dataTable.push_back(ZBasicDatum::newDblInt(offset, 0));
-				} else if (size == 2) {
-				this->_dataTable.push_back(ZBasicDatum::newDblInt(offset, scot->readSint32BE()));
+					result = ZBasicDatum::newDblInt(offset, 0);
+					debugN(5, "ZBasic::loadProgram: _dataTable[%d]: offset %d, %d\n", this->_dataTable.size(), offset, result->data.i32);
+					this->_dataTable.push_back(result);
+				} else if (size == 4) {
+					result = ZBasicDatum::newDblInt(offset, scot->readSint32BE());
+					debugN(5, "ZBasic::loadProgram: _dataTable[%d]: offset %d, %d\n", this->_dataTable.size(), offset, result->data.i32);
+					this->_dataTable.push_back(result);
 				} else {
 					warning("ZBasic::loadProgram: unexpected size for dblint %d", size);
 					scot->skip(size);
@@ -88,29 +99,37 @@ void ZBasic::loadProgram(const Common::Path &path) {
 				uint8 size = scot->readByte();
 				char *buf = (char*)calloc(size+1, 1);
 				scot->read(buf, size);
-				this->_dataTable.push_back(ZBasicDatum::newStr(offset, Common::convertToU32String(buf, Common::kMacRoman)));
+				Common::SharedPtr<ZBasicDatum> result = ZBasicDatum::newStr(offset, Common::convertToU32String(buf, Common::kMacRoman));
+				debugN(5, "ZBasic::loadProgram: _dataTable[%d]: offset %d, \"%s\"\n", this->_dataTable.size(), offset, result->data.str->encode().c_str());
+				this->_dataTable.push_back(result);
 				free(buf);
 			}
 			break;
 		case kDatumBCD:
 			{
 				scot->seek(-1);
+				debugN(5, "ZBasic::loadProgram: _dataTable[%d]: offset %d, BCD\n", this->_dataTable.size(), offset);
 				this->_dataTable.push_back(ZBasicDatum::newBcd(offset, ZBasicBCD::read(scot)));
 			}
 			break;
 		default:
 			break;
 		}
+		scot->skip(scot->pos() % 2);
 	}
 	if (hasStringTable) {
 		uint32 offset = 0;
+		scot->skip(1);
 		while (scot->pos() < scot->size()) {
 			uint8 size = scot->readByte();
 			char *buf = (char*)calloc(size+1, 1);
 			scot->read(buf, size);
-			this->_stringTable.push_back(ZBasicDatum::newStr(offset, Common::convertToU32String(buf, Common::kMacRoman)));
+			Common::SharedPtr<ZBasicDatum> result = ZBasicDatum::newStr(offset, Common::convertToU32String(buf, Common::kMacRoman));
+			debugN(5, "ZBasic::loadProgram: _stringTable[%d]: offset %d, \"%s\"\n", this->_stringTable.size(), offset, result->data.str->encode().c_str());
+			this->_stringTable.push_back(result);
 			offset += size + 1;
 			free(buf);
+			scot->skip(scot->pos() % 2);
 		}
 	}
 
@@ -143,7 +162,7 @@ void ZBasic::get(int16 x1, int16 y1, int16 x2, int16 y2, Graphics::Surface &dest
 }
 
 int16 ZBasic::instr(int16 expression, const Common::U32String &string1, const Common::U32String &string2) {
-	uint32 result =  string1.find(string2, (uint32)MAX<int16>(expression - 1, 1));
+	uint32 result =  string1.find(string2, (uint32)MAX<int16>(expression - 1, 0));
 	if (result == Common::U32String::npos)
 		return 0;
 	return (int16)(result + 1);
