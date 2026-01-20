@@ -593,9 +593,9 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
-	// REMARK: MD can has many versions, but the detection is less tricky than with SE.
+	// REMARK: MD can have many versions, but the detection is less tricky than with SE.
 	//
-	//	There seems only one master version available V1.4,
+	//	There seems only one master version available, V1.4,
 	//	with two graphic modes (EGA/VGA) and (Time/Space) saving.
 	//	So there are 4 different versions of datafile-sets for this game.
 	//
