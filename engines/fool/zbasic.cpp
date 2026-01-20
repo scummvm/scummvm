@@ -20,9 +20,9 @@
  */
 
 #include "common/macresman.h"
-
 #include "common/str-enc.h"
 #include "common/stream.h"
+
 #include "fool/fool.h"
 #include "fool/toolbox.h"
 #include "fool/zbasic.h"
@@ -148,7 +148,7 @@ int16 ZBasic::readInt() {
 	ZBasicDatum &el = _dataTable[_dataPtr];
 	_dataPtr++;
 	if (el.type != kDatumINT) {
-		warning("ZBasic::readInt: entry %d was unexpected type %d", el.type);
+		warning("ZBasic::readInt: entry %d was unexpected type %d", _dataPtr-1, el.type);
 		return 0;
 	}
 	return el.data.i16;
@@ -163,7 +163,7 @@ Common::U32String ZBasic::readStr() {
 	ZBasicDatum &el = _dataTable[_dataPtr];
 	_dataPtr++;
 	if (el.type != kDatumSTR) {
-		warning("ZBasic::readStr: entry %d was unexpected type %d", el.type);
+		warning("ZBasic::readStr: entry %d was unexpected type %d", _dataPtr-1, el.type);
 		return result;
 	}
 	result = *el.data.str;
