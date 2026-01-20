@@ -8,6 +8,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed M&M1 display issues/corruption getting items from treasure chests.
    - Fixed M&M1 showing incorrect name for attacking monsters in combat.
 
+ WAGE:
+   - Implemented combat system.
+   - Numerous visual fixes.
+   - Implemented mouse scrolling of text window.
+
 
 #### 2026.1.0 (2026-01-31)
 
