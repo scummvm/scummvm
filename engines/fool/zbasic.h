@@ -233,11 +233,20 @@ public:
 	void blockMove(void *srcptr, void *destptr, uint16 size) {
 		memmove(destptr, srcptr, size);
 	}
+	Common::U32String chr(uint16 code) {
+		return Common::U32String(code, Common::kMacRoman);
+	}
+	void close(int16 fileNo);
+	void coordinateWindow();
 	void get(int16 x1, int16 y1, int16 x2, int16 y2, Graphics::Surface &dest);
 	int16 instr(int16 expression, const Common::U32String &string1, const Common::U32String &string2);
+	int finderInfo(int16 &count, Common::U32String &var, uint32 &type, uint16 volume);
 	bool maybe();
 	uint32 mem(int16 index);
+	void openR(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo);
+	void put(int16 x, int16 y, Graphics::Surface &src);
 	void put(int16 x1, int16 y1, int16 x2, int16 y2, Graphics::Surface &src);
+	Common::Array<byte> read(int16 fileNo, uint32 length);
 	void text(int16 font, int16 size, int16 face, ZBasicTextMode mode);
 	void picture(int16 x1, int16 y1, int16 x2, int16 y2, PicHandle &src);
 	int16 rndInt(int16 max);
@@ -249,6 +258,10 @@ public:
 
 	int16 readInt();
 	Common::U32String readStr();
+
+	void unk_6(int16 unk1, int32 unk2, int16 unk3, int16 unk4);
+	void unk_20();
+	void unk_130(int16 unk1);
 
 };
 
