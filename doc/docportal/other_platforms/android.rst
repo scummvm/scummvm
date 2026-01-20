@@ -12,7 +12,7 @@ What you'll need
 
 .. note::
 
-    ScummVM has been tested to work up to Android 12.
+    ScummVM has been tested to work up to Android 16.
 
 Installing ScummVM
 ====================================
