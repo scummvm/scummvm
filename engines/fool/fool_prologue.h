@@ -33,9 +33,12 @@ namespace Fool {
 
 class FoolPrologue {
 public:
-	FoolPrologue();
-	~FoolPrologue();
+	FoolPrologue() {}
+	~FoolPrologue() {}
 
+	void run();
+
+	void sub_128_004();
 	void sub_128_1ba(int16 screen_page);
 	void sub_128_1f4(int16 screen_page);
 	void sub_128_21e(int16 numTicks);
@@ -191,7 +194,6 @@ private:
 
 	PicHandle glob_i32_2ce;
 
-	void run();
 };
 
 } // End of namespace Fool
