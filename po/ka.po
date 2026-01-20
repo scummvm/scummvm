@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-17 20:38+0000\n"
+"POT-Creation-Date: 2026-01-20 00:19+0000\n"
 "PO-Revision-Date: 2026-01-16 11:22+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -12238,9 +12238,10 @@ msgid "Go back 10 pages"
 msgstr ""
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go forward 10 pages in the journal
-#: engines/sherlock/metaengine.cpp:507
-msgid "Go ahead 10 pages"
-msgstr ""
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 10 pages in the journal
+#: engines/sherlock/metaengine.cpp:507 engines/sherlock/metaengine.cpp:895
+msgid "Go forward 10 pages"
+msgstr "გადასვლა 10 გვერდით წინ"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go to the first page of the journal
 #: engines/sherlock/metaengine.cpp:521
@@ -12347,7 +12348,9 @@ msgid "Move / Examine / Select"
 msgstr "გადაადგილება / გასინჯვა / არჩევა"
 
 #: engines/sherlock/metaengine.cpp:799
-msgid "Open verb menu / close menu"
+#, fuzzy
+#| msgid "Open verb menu / close menu"
+msgid "Open verb menu / Close menu"
 msgstr "ზმნის მენიუს გახსნა / მენიუს დახურვა"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action changes the speed of the game (walking, animations, etc.)
@@ -12378,11 +12381,6 @@ msgstr ""
 #: engines/sherlock/metaengine.cpp:888 engines/sherlock/metaengine.cpp:955
 msgid "Change selected option to the right"
 msgstr ""
-
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 10 pages in the journal
-#: engines/sherlock/metaengine.cpp:895
-msgid "Go forward 10 pages"
-msgstr "გადასვლა 10 გვერდით წინ"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 1 page in the journal
 #: engines/sherlock/metaengine.cpp:902
