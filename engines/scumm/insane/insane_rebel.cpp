@@ -318,9 +318,25 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 		_levelUnlocked[i] = (i == 0);  // Only level 1 unlocked initially
 	}
 
-	// Initialize level selection system
+	// Initialize chapter selection system (FUN_00415CF8)
+	// 17 items: 16 chapters + BACK option
+	_chapterSelection = 0;        // First chapter selected
+	_chapterItemCount = 17;       // 16 chapters + BACK
+	_selectedChapter = 0;         // Default selected chapter
+	_passwordInput = "";          // No password input
+	for (i = 0; i < 16; i++) {
+		_chapterUnlocked[i] = (i == 0);  // Only chapter 1 unlocked initially
+	}
+
+	// Initialize preview offset for chapter selection (FUN_00425170)
+	// X offset: -90 (0xffa6), Y offset: selection * -50 + 75
+	_previewOffsetX = -90;
+	_previewOffsetY = 75;  // Chapter 0: 0 * -50 + 75 = 75
+
+	// Initialize pilot selection system (FUN_00414A41)
+	// Menu structure: 6 levels + 4 options (NEW PILOT, DELETE PILOT, COPY PILOT, MAIN MENU)
 	_levelSelection = 0;          // First level selected
-	_levelItemCount = 2;          // Level 1 + MAIN MENU (will grow as more levels implemented)
+	_levelItemCount = 10;         // 6 levels + 4 options
 	_selectedLevel = 1;           // Default selected level
 
 	// Initialize menu input capture system
@@ -3408,29 +3424,63 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 
 	// Check if we're in menu mode (menu state + intro flag)
 	bool menuMode = (introPlaying && _gameState == kStateMainMenu);
-	bool levelSelectMode = (introPlaying && _gameState == kStateLevelSelect);
+	bool pilotSelectMode = (introPlaying && _gameState == kStatePilotSelect);
+	bool chapterSelectMode = (introPlaying && _gameState == kStateChapterSelect);
 
-	// Handle level selection input and rendering
-	if (levelSelectMode) {
+	// Handle pilot selection input and rendering (FUN_00414A41)
+	// This is the pilot/save slot selection screen with centered menu
+	if (pilotSelectMode) {
+		// Show the standard Windows arrow cursor
+		Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
+		CursorMan.replaceCursor(cursor);
+		delete cursor;
+		CursorMan.showMouse(true);
+
+		// Process pilot selection input - emulates FUN_00414A41 input handling
+		int selection = processLevelSelectInput();
+
+		// Draw pilot selection overlay - centered menu like main menu
+		drawLevelSelectOverlay(renderBitmap, pitch, width, height);
+
+		// If a selection was confirmed, signal video to stop
+		if (selection >= 0) {
+			debug("Rebel2: Pilot selection confirmed: %d", selection);
+			_vm->_smushVideoShouldFinish = true;
+		}
+
+		// Skip normal HUD rendering in pilot select mode
+		return;
+	}
+
+	// Handle chapter selection input and rendering (FUN_00415CF8)
+	// This is the actual level/chapter selection screen with preview and password
+	if (chapterSelectMode) {
 		// Show the standard Windows arrow cursor (same as menu)
 		Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
 		CursorMan.replaceCursor(cursor);
 		delete cursor;
 		CursorMan.showMouse(true);
 
-		// Process level selection input
-		int selection = processLevelSelectInput();
+		// Fill screen with BLACK background
+		// The original uses O_LEVEL.SAN (640x400) which has a black background.
+		// For 320x200 mode, we just fill with black (color index 0).
+		for (int y = 0; y < height; y++) {
+			memset(renderBitmap + y * pitch, 0, width);
+		}
 
-		// Draw level selection overlay
-		drawLevelSelectOverlay(renderBitmap, pitch, width, height);
+		// Process chapter selection input - emulates FUN_00415CF8 input handling
+		int selection = processChapterSelectInput();
+
+		// Draw chapter selection overlay - emulates FUN_00415CF8 rendering
+		drawChapterSelectOverlay(renderBitmap, pitch, width, height);
 
 		// If a selection was confirmed, signal video to stop
 		if (selection >= 0) {
-			debug("Rebel2: Level selection confirmed: %d", selection);
+			debug("Rebel2: Chapter selection confirmed: %d", selection);
 			_vm->_smushVideoShouldFinish = true;
 		}
 
-		// Skip normal HUD rendering in level select mode
+		// Skip normal HUD rendering in chapter select mode
 		return;
 	}
 
@@ -5067,15 +5117,15 @@ int InsaneRebel2::runMainMenu() {
 		// case 5: Credits (play O_CREDIT.SAN, then return 1)
 		// case 6: Quit (stop video, exit)
 		switch (_menuSelection) {
-		case 0:  // Start Game -> Level Selection
-			debug("Rebel2: Start Game selected - going to level selection");
-			_gameState = kStateLevelSelect;
+		case 0:  // Start Game -> Pilot Selection
+			debug("Rebel2: Start Game selected - going to pilot selection");
+			_gameState = kStatePilotSelect;
 			_menuInputActive = false;
-			return kMenuContinue;  // Go to level selection
+			return kMenuContinue;  // Go to pilot selection
 
 		case 1:  // Continue (same as Start Game for now)
-			debug("Rebel2: Continue selected - going to level selection");
-			_gameState = kStateLevelSelect;
+			debug("Rebel2: Continue selected - going to pilot selection");
+			_gameState = kStatePilotSelect;
 			_menuInputActive = false;
 			return kMenuContinue;
 
@@ -5118,51 +5168,50 @@ int InsaneRebel2::runMainMenu() {
 	return 0;
 }
 
-// ==================== Level Selection Menu ====================
-// Emulates FUN_00414A41 - Level selection menu
-// For now, only Level 1 is available. This will be expanded later.
+// ==================== Chapter Selection Screen ====================
+// Emulates FUN_00415CF8 - Chapter selection with preview and password input
+// This is the actual level/chapter selection that players see after pilot select
 
-int InsaneRebel2::runLevelSelect() {
-	// Level selection menu loop - emulates FUN_00414A41
+int InsaneRebel2::runChapterSelect() {
+	// Chapter selection screen loop - emulates FUN_00415CF8
 	// Returns:
-	//   kLevelSelectPlay (1) = Play selected level
-	//   kLevelSelectBack (0) = Return to main menu
-	//   kLevelSelectQuit (2) = Quit game
+	//   kChapterSelectPlay (5) = Play selected chapter
+	//   kChapterSelectBack (2) = Return to main menu (ESC or BACK)
+	//   kChapterSelectQuit (0) = Quit game
 
-	debug("Rebel2: Entering level selection");
+	debug("Rebel2: Entering chapter selection (FUN_00415CF8)");
 
-	// Enable menu input capture via EventObserver and clear any stale events
+	// Enable menu input capture
 	_menuInputActive = true;
 	while (!_menuEventQueue.empty()) _menuEventQueue.pop();
 
-	// Initialize level selection state
-	_levelSelection = 0;
-	_levelItemCount = 7;  // Selectable items: 6 levels + MAIN MENU
-	_selectedLevel = 1;   // Default to level 1
+	// Initialize chapter selection state
+	_chapterSelection = 0;
+	_chapterItemCount = 17;  // 16 chapters + BACK
+	_selectedChapter = 0;
+	_passwordInput = "";
 	_menuRepeatDelay = 0;
-	_gameState = kStateLevelSelect;
+	_gameState = kStateChapterSelect;
 
-	// Get the SmushPlayer
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 
-	// Level selection loop - we'll reuse the menu video as background
-	// In the original, this uses the same O_MENU_X.SAN videos
+	// Chapter selection background - emulates FUN_00415CF8 line 57
+	// Original uses O_LEVEL.SAN (640x400). We use menu video for 320x200 mode.
 	while (!_vm->shouldQuit()) {
 		_vm->_smushVideoShouldFinish = false;
 
-		// Use a menu video as background for level selection
 		Common::String menuVideo = getRandomMenuVideo();
-		debug("Rebel2: Playing level select background: %s", menuVideo.c_str());
+		debug("Rebel2: Playing chapter select background: %s", menuVideo.c_str());
 
 		// Set video flags for menu mode
 		splayer->setCurVideoFlags(0x20);
 
-		// Play the menu video - input is processed in procPostRendering
+		// Play the menu video as chapter selection background
 		splayer->play(menuVideo.c_str(), 12);
 
 		if (_vm->shouldQuit()) {
 			_menuInputActive = false;
-			return kLevelSelectQuit;
+			return kChapterSelectQuit;
 		}
 
 		// If video ended without selection, continue looping
@@ -5172,19 +5221,789 @@ int InsaneRebel2::runLevelSelect() {
 
 		_vm->_smushVideoShouldFinish = false;
 
-		debug("Rebel2: Level selection made: %d", _levelSelection);
+		debug("Rebel2: Chapter selection made: %d", _chapterSelection);
 
-		// Process level selection
-		// Menu items:
-		// 0-5: Levels 1-6 (CHAPTER 1-6)
-		// 6: MAIN MENU (back)
+		// Process chapter selection (lines 134-236 of FUN_00415CF8)
+		if (_chapterSelection == 16) {
+			// BACK selected (index 16 = 17th item)
+			debug("Rebel2: BACK to main menu selected");
+			_menuInputActive = false;
+			return kChapterSelectBack;
+		}
+
+		if (_chapterSelection >= 0 && _chapterSelection < 16) {
+			// Chapter selected
+			if (_chapterUnlocked[_chapterSelection]) {
+				// Chapter is unlocked - start it
+				_selectedChapter = _chapterSelection;
+				debug("Rebel2: Chapter %d selected (unlocked)", _selectedChapter + 1);
+				_menuInputActive = false;
+				return kChapterSelectPlay;
+			} else {
+				// Chapter is locked - check password (lines 239-257 of FUN_00415CF8)
+				// For now, just play error sound and continue
+				debug("Rebel2: Chapter %d is locked", _chapterSelection + 1);
+				continue;
+			}
+		}
+	}
+
+	_menuInputActive = false;
+	return kChapterSelectQuit;
+}
+
+int InsaneRebel2::processChapterSelectInput() {
+	// Process input for chapter selection screen
+	// Emulates input handling in FUN_00415CF8 (lines 95-133)
+	// Returns: -1 = no action, 0+ = item selected
+
+	int result = -1;
+
+	while (!_menuEventQueue.empty()) {
+		Common::Event event = _menuEventQueue.front();
+		_menuEventQueue.pop();
+
+		switch (event.type) {
+		case Common::EVENT_KEYDOWN:
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_UP:
+				// Move selection up, wrap to bottom
+				_chapterSelection--;
+				if (_chapterSelection < 0) {
+					_chapterSelection = _chapterItemCount - 1;
+				}
+				debug("ChapterSelect: Selection changed to %d (UP)", _chapterSelection);
+				break;
+
+			case Common::KEYCODE_DOWN:
+				// Move selection down, wrap to top
+				_chapterSelection++;
+				if (_chapterSelection >= _chapterItemCount) {
+					_chapterSelection = 0;
+				}
+				debug("ChapterSelect: Selection changed to %d (DOWN)", _chapterSelection);
+				break;
+
+			case Common::KEYCODE_RETURN:
+			case Common::KEYCODE_KP_ENTER:
+				if (_chapterSelection >= 0 && _chapterSelection < _chapterItemCount) {
+					result = _chapterSelection;
+					debug("ChapterSelect: Item %d selected (ENTER)", _chapterSelection);
+				}
+				break;
+
+			case Common::KEYCODE_ESCAPE:
+				// ESC = Back to main menu (same as selecting BACK)
+				result = 16;  // BACK index
+				debug("ChapterSelect: ESC pressed - back to menu");
+				break;
+
+			case Common::KEYCODE_BACKSPACE:
+				// Backspace for password input (line 107-112 of FUN_00415CF8)
+				if (!_passwordInput.empty()) {
+					_passwordInput.deleteLastChar();
+					debug("ChapterSelect: Password backspace, now: %s", _passwordInput.c_str());
+				}
+				break;
+
+			default:
+				// Printable character for password input (lines 114-121 of FUN_00415CF8)
+				if (event.kbd.ascii >= 0x20 && event.kbd.ascii <= 0x7E) {
+					if (_passwordInput.size() < 8) {
+						_passwordInput += (char)event.kbd.ascii;
+						debug("ChapterSelect: Password input: %s", _passwordInput.c_str());
+					}
+				}
+				break;
+			}
+			break;
+
+		case Common::EVENT_LBUTTONDOWN:
+			{
+				// Mouse click - check if clicking on a menu item
+				// From FUN_0041F5AE assembly (low-res 320x200):
+				// Item Y = 17 * -5 + i * 10 + 104 = 19 + i * 10
+				// Chapters 0-14 at Y = 19 + i*10
+				// FINALE (15) at Y = 19 + 15*10 = 169
+				// RETURN TO PILOTS (16) at Y = 19 + 16*10 = 179
+				int baseY = 19;
+				int itemHeight = 10;
+				int mouseY = event.mouse.y;
+
+				// Check chapters 0-14
+				for (int i = 0; i < 15; i++) {
+					int itemY = baseY + i * itemHeight;
+					if (mouseY >= itemY - 4 && mouseY < itemY + 6) {
+						_chapterSelection = i;
+						result = i;
+						debug("ChapterSelect: Chapter %d clicked at Y=%d", i + 1, mouseY);
+						break;
+					}
+				}
+
+				// Check FINALE (index 15) at Y=169
+				int finaleY = baseY + 15 * itemHeight;
+				if (mouseY >= finaleY - 4 && mouseY < finaleY + 6) {
+					_chapterSelection = 15;
+					result = 15;
+					debug("ChapterSelect: FINALE clicked");
+				}
+
+				// Check RETURN TO PILOTS (index 16) at Y=179
+				int returnY = baseY + 16 * itemHeight;
+				if (mouseY >= returnY - 4 && mouseY < returnY + 6) {
+					_chapterSelection = 16;
+					result = 16;
+					debug("ChapterSelect: RETURN TO PILOTS clicked");
+				}
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	return result;
+}
+
+// Draw preview box border - emulates FUN_004292D0 calls at lines 128-133 of FUN_00415CF8
+void InsaneRebel2::drawPreviewBox(byte *renderBitmap, int pitch, int width, int height) {
+	// Low-res (320x200) coordinates from FUN_00415CF8:
+	// Outer box: X=0xe4 (228), Y=0x49 (73), W=0x54 (84), H=0x36 (54), color=0xF8
+	// Inner box: X=0xe5 (229), Y=0x4a (74), W=0x52 (82), H=0x34 (52), color=4
+
+	// Outer border (bright)
+	int outerX = 228, outerY = 73, outerW = 84, outerH = 54;
+	byte outerColor = 0xF8;
+
+	// Draw outer box edges
+	// Top edge
+	for (int px = outerX; px < outerX + outerW && px < width; px++) {
+		if (outerY >= 0 && outerY < height && px >= 0)
+			renderBitmap[outerY * pitch + px] = outerColor;
+	}
+	// Bottom edge
+	int bottomY = outerY + outerH - 1;
+	if (bottomY < height) {
+		for (int px = outerX; px < outerX + outerW && px < width; px++) {
+			if (px >= 0)
+				renderBitmap[bottomY * pitch + px] = outerColor;
+		}
+	}
+	// Left edge
+	for (int py = outerY; py < outerY + outerH && py < height; py++) {
+		if (py >= 0 && outerX >= 0 && outerX < width)
+			renderBitmap[py * pitch + outerX] = outerColor;
+	}
+	// Right edge
+	int rightX = outerX + outerW - 1;
+	if (rightX < width) {
+		for (int py = outerY; py < outerY + outerH && py < height; py++) {
+			if (py >= 0)
+				renderBitmap[py * pitch + rightX] = outerColor;
+		}
+	}
+
+	// Inner border (dark)
+	int innerX = 229, innerY = 74, innerW = 82, innerH = 52;
+	byte innerColor = 4;
+
+	// Top edge
+	for (int px = innerX; px < innerX + innerW && px < width; px++) {
+		if (innerY >= 0 && innerY < height && px >= 0)
+			renderBitmap[innerY * pitch + px] = innerColor;
+	}
+	// Bottom edge
+	bottomY = innerY + innerH - 1;
+	if (bottomY < height) {
+		for (int px = innerX; px < innerX + innerW && px < width; px++) {
+			if (px >= 0)
+				renderBitmap[bottomY * pitch + px] = innerColor;
+		}
+	}
+	// Left edge
+	for (int py = innerY; py < innerY + innerH && py < height; py++) {
+		if (py >= 0 && innerX >= 0 && innerX < width)
+			renderBitmap[py * pitch + innerX] = innerColor;
+	}
+	// Right edge
+	rightX = innerX + innerW - 1;
+	if (rightX < width) {
+		for (int py = innerY; py < innerY + innerH && py < height; py++) {
+			if (py >= 0)
+				renderBitmap[py * pitch + rightX] = innerColor;
+		}
+	}
+}
+
+// Draw preview thumbnail content - emulates FUN_00429b40 scaled preview draw
+// Shows chapter number and unlock status inside the preview box
+void InsaneRebel2::drawPreviewThumbnail(byte *renderBitmap, int pitch, int width, int height, int chapter) {
+	// Preview area coordinates (inside the inner border)
+	// Inner box: X=230 (229+1), Y=75 (74+1), W=80 (82-2), H=50 (52-2)
+	int previewX = 230;
+	int previewY = 75;
+	int previewW = 80;
+	int previewH = 50;
+
+	// Update preview offset based on chapter selection (FUN_00425170)
+	// Y offset = chapter * -50 + 75
+	_previewOffsetY = chapter * -50 + 75;
+
+	// Determine fill color based on chapter state
+	// Unlocked: dark blue (0x10), Locked: dark gray (0x08)
+	byte fillColor = (_chapterUnlocked[chapter]) ? 0x10 : 0x08;
+
+	// Fill the preview area with background color
+	for (int py = previewY; py < previewY + previewH && py < height; py++) {
+		if (py >= 0) {
+			for (int px = previewX; px < previewX + previewW && px < width; px++) {
+				if (px >= 0)
+					renderBitmap[py * pitch + px] = fillColor;
+			}
+		}
+	}
+
+	// Draw chapter number in the center of the preview area
+	NutRenderer *font = _smush_smalfontNut;
+	if (!font) return;
+
+	char chapterStr[16];
+	if (chapter < 15) {
+		snprintf(chapterStr, sizeof(chapterStr), "CH.%d", chapter + 1);
+	} else {
+		snprintf(chapterStr, sizeof(chapterStr), "FIN");  // FINALE
+	}
+
+	// Calculate text width for centering
+	int textWidth = 0;
+	int numChars = font->getNumChars();
+	for (const char *c = chapterStr; *c; c++) {
+		int charIdx = (unsigned char)*c;
+		if (charIdx < numChars) {
+			textWidth += font->getCharWidth(charIdx);
+		}
+	}
+
+	// Center the text in the preview area
+	int textX = previewX + (previewW - textWidth) / 2;
+	int textY = previewY + previewH / 2 - 4;  // Center vertically (approx)
+
+	Common::Rect clipRect(0, 0, width, height);
+
+	// Draw the chapter text
+	int curX = textX;
+	for (const char *c = chapterStr; *c; c++) {
+		int charIdx = (unsigned char)*c;
+		if (charIdx < numChars) {
+			int charWidth = font->getCharWidth(charIdx);
+			if (curX >= 0 && curX + charWidth <= width && textY >= 0 && textY < height) {
+				font->drawCharV7(renderBitmap, clipRect, curX, textY, pitch, -1,
+				                 kStyleAlignLeft, charIdx, true, true);
+			}
+			curX += charWidth;
+		}
+	}
+
+	// Draw lock icon for locked chapters (simple "X" pattern)
+	if (!_chapterUnlocked[chapter]) {
+		byte lockColor = 0xF8;  // Bright red/orange
+		int lockX = previewX + previewW - 15;
+		int lockY = previewY + 5;
+
+		// Draw small X to indicate locked
+		for (int i = 0; i < 8; i++) {
+			if (lockX + i < width && lockY + i < height)
+				renderBitmap[(lockY + i) * pitch + lockX + i] = lockColor;
+			if (lockX + 7 - i < width && lockY + i < height)
+				renderBitmap[(lockY + i) * pitch + lockX + 7 - i] = lockColor;
+		}
+	}
+}
+
+// Draw left-aligned menu item - emulates FUN_0041F5AE with param_4=1
+void InsaneRebel2::drawLeftAlignedMenuItem(byte *renderBitmap, int pitch, int width, int height,
+                                           const char *text, int x, int y, bool selected) {
+	NutRenderer *font = _smush_smalfontNut;
+	if (!font) return;
+
+	int numFontChars = font->getNumChars();
+	Common::Rect clipRect(0, 0, width, height);
+
+	// Calculate text width for selection box
+	int textWidth = 0;
+	for (const char *c = text; *c; c++) {
+		int charIdx = (unsigned char)*c;
+		if (charIdx < numFontChars) {
+			textWidth += font->getCharWidth(charIdx);
+		}
+	}
+
+	// Draw selection box if selected
+	// Box dimensions: width = textWidth + 6, height = 10 (low-res)
+	if (selected) {
+		static int frameCounter = 0;
+		frameCounter++;
+
+		int boxWidth = textWidth + 6;
+		int boxHeight = 10;
+		int boxX = x - 3;  // Left-aligned, so box starts 3 pixels before text
+		int boxY = y - 1;
+
+		// Flashing color (emulates (-((DAT_0047a7e4 & 1) == 0) & 8U) - 0x10)
+		byte highlightColor = (frameCounter & 1) ? 0xF8 : 0xF0;
+
+		// Draw box border
+		if (boxY >= 0 && boxY < height && boxX >= 0) {
+			// Top edge
+			for (int px = boxX; px < boxX + boxWidth && px < width; px++) {
+				if (px >= 0) renderBitmap[boxY * pitch + px] = highlightColor;
+			}
+			// Bottom edge
+			int bottomY = boxY + boxHeight - 1;
+			if (bottomY < height) {
+				for (int px = boxX; px < boxX + boxWidth && px < width; px++) {
+					if (px >= 0) renderBitmap[bottomY * pitch + px] = highlightColor;
+				}
+			}
+			// Left edge
+			for (int py = boxY; py < boxY + boxHeight && py < height; py++) {
+				if (py >= 0 && boxX >= 0) renderBitmap[py * pitch + boxX] = highlightColor;
+			}
+			// Right edge
+			int rightX = boxX + boxWidth - 1;
+			if (rightX < width) {
+				for (int py = boxY; py < boxY + boxHeight && py < height; py++) {
+					if (py >= 0) renderBitmap[py * pitch + rightX] = highlightColor;
+				}
+			}
+		}
+	}
+
+	// Draw text characters
+	int curX = x;
+	for (const char *c = text; *c; c++) {
+		int charIdx = (unsigned char)*c;
+		if (charIdx < numFontChars) {
+			int charWidth = font->getCharWidth(charIdx);
+			if (curX >= 0 && curX + charWidth <= width && y >= 0 && y < height) {
+				font->drawCharV7(renderBitmap, clipRect, curX, y, pitch, -1,
+				                 kStyleAlignLeft, charIdx, true, true);
+			}
+			curX += charWidth;
+		}
+	}
+}
+
+// Draw password input field - emulates lines 106-125 of FUN_00415CF8
+void InsaneRebel2::drawPasswordInput(byte *renderBitmap, int pitch, int width, int height) {
+	// Password display position for low-res: X=30 (0x1e), Y=190 (0xbe)
+	int infoX = 30;
+	int infoY = 190;
+
+	// Build display string with cursor
+	static int frameCounter = 0;
+	frameCounter++;
+	char cursor = (frameCounter & 2) ? '_' : ' ';  // Blinking cursor
+
+	char displayText[32];
+	snprintf(displayText, sizeof(displayText), "ACCESS CODE: %s%c", _passwordInput.c_str(), cursor);
+
+	NutRenderer *font = _smush_smalfontNut;
+	if (!font) return;
+
+	int numFontChars = font->getNumChars();
+	Common::Rect clipRect(0, 0, width, height);
+
+	int curX = infoX;
+	for (const char *c = displayText; *c; c++) {
+		int charIdx = (unsigned char)*c;
+		if (charIdx < numFontChars) {
+			int charWidth = font->getCharWidth(charIdx);
+			if (curX >= 0 && curX + charWidth <= width && infoY >= 0 && infoY < height) {
+				font->drawCharV7(renderBitmap, clipRect, curX, infoY, pitch, -1,
+				                 kStyleAlignLeft, charIdx, true, true);
+			}
+			curX += charWidth;
+		}
+	}
+}
+
+// Draw score/time display - emulates lines 99-104 of FUN_00415CF8
+void InsaneRebel2::drawScoreDisplay(byte *renderBitmap, int pitch, int width, int height, int chapter) {
+	// Score display position for low-res: X=25 (0x19), Y=190 (0xbe)
+	int infoX = 25;
+	int infoY = 190;
+
+	// For now, just display a placeholder score
+	char displayText[32];
+	snprintf(displayText, sizeof(displayText), "SCORE: %d", 0);
+
+	NutRenderer *font = _smush_smalfontNut;
+	if (!font) return;
+
+	int numFontChars = font->getNumChars();
+	Common::Rect clipRect(0, 0, width, height);
+
+	int curX = infoX;
+	for (const char *c = displayText; *c; c++) {
+		int charIdx = (unsigned char)*c;
+		if (charIdx < numFontChars) {
+			int charWidth = font->getCharWidth(charIdx);
+			if (curX >= 0 && curX + charWidth <= width && infoY >= 0 && infoY < height) {
+				font->drawCharV7(renderBitmap, clipRect, curX, infoY, pitch, -1,
+				                 kStyleAlignLeft, charIdx, true, true);
+			}
+			curX += charWidth;
+		}
+	}
+}
+
+// Draw chapter selection overlay - called during O_LEVEL.SAN playback
+// FUN_00415CF8 - Chapter selection screen with preview thumbnail
+void InsaneRebel2::drawChapterSelectOverlay(byte *renderBitmap, int pitch, int width, int height) {
+	// Draw chapter selection screen overlay
+	// Emulates rendering in FUN_00415CF8
+	//
+	// Layout (320x200 mode):
+	// - Title "Chapters" at top-left using TITLFONT
+	// - 15 chapters + FINALE + RETURN TO PILOTS (17 items total)
+	// - Three preview boxes on right side
+	// - Status bar at bottom: "PILOTS: X  SCORE: Y  RANK:"
+
+	// Chapter names from original game (DAT_00457820)
+	// Format: "CHAPTER X - NAME" for unlocked, "CHAPTER X -" for locked
+	static const char *chapterNames[] = {
+		"THE DREIGHTON TRIANGLE",   // Chapter 1
+		"ASTEROID PURSUIT",         // Chapter 2
+		"ABOARD THE TERROR",        // Chapter 3
+		"TIE FIGHTER ATTACK",       // Chapter 4
+		"DREIGHTON NEBULA",         // Chapter 5
+		"CORELLIA",                 // Chapter 6
+		"SPEEDER PURSUIT",          // Chapter 7
+		"CANYON CHASE",             // Chapter 8
+		"DEATH STAR APPROACH",      // Chapter 9
+		"THE ASTEROID FIELD",       // Chapter 10
+		"INSIDE THE DEATH STAR",    // Chapter 11
+		"TRENCH RUN",               // Chapter 12
+		"THE MAIN REACTOR",         // Chapter 13
+		"ESCAPE FROM YAVIN",        // Chapter 14
+		"FINALE",                   // Chapter 15 is actually FINALE
+	};
+
+	// Frame counter for flashing selection box
+	static int frameCounter = 0;
+	frameCounter++;
+
+	NutRenderer *menuFont = _smush_smalfontNut;
+	NutRenderer *titleFont = _smush_titlefontNut;
+	if (!menuFont) return;
+
+	Common::Rect clipRect(0, 0, width, height);
+	int numFontChars = menuFont->getNumChars();
+
+	// === Draw title "Chapters" using TITLFONT ===
+	// From FUN_0041F5AE param_4=1 (left-aligned mode), low-res (320x200):
+	// Title X = 0x28 = 40, Title Y = param_3 * -5 + 0x56 = 17 * -5 + 86 = 1
+	int titleX = 40;
+	int titleY = 1;
+
+	if (titleFont) {
+		const char *titleText = "Chapters";
+		int curX = titleX;
+		int numTitleChars = titleFont->getNumChars();
+		for (const char *c = titleText; *c; c++) {
+			int charIdx = (unsigned char)*c;
+			if (charIdx < numTitleChars) {
+				int charWidth = titleFont->getCharWidth(charIdx);
+				if (curX >= 0 && curX + charWidth <= width && titleY >= 0) {
+					titleFont->drawCharV7(renderBitmap, clipRect, curX, titleY, pitch, -1,
+					                      kStyleAlignLeft, charIdx, true, true);
+				}
+				curX += charWidth;
+			}
+		}
+	}
+
+	// === Draw chapter list (left-aligned) ===
+	// From FUN_0041F5AE param_4=1 (left-aligned mode), low-res (320x200):
+	// Item X = 0x17 = 23
+	// Item Y = param_3 * -5 + local_c * 10 + 0x68 = 17 * -5 + i * 10 + 104 = 19 + i * 10
+	// Selection Box X = 0x14 = 20, Y = 18 + i * 10 (item Y - 1)
+	int itemX = 23;       // From assembly: 0x17 = 23
+	int itemBaseY = 19;   // From assembly: 17 * -5 + 104 = 19
+	int itemSpacing = 10; // From assembly: 10 pixels between items
+	int selBoxX = 20;     // From assembly: 0x14 = 20
+
+	// Draw 15 chapters (indices 0-14)
+	for (int i = 0; i < 15; i++) {
+		int itemY = itemBaseY + i * itemSpacing;
+		bool isSelected = (i == _chapterSelection);
+
+		// Build chapter string: "CHAPTER X - NAME" or "CHAPTER X -"
+		char chapterStr[64];
+		snprintf(chapterStr, sizeof(chapterStr), "CHAPTER %d - %s", i + 1,
+		         _chapterUnlocked[i] ? chapterNames[i] : "");
+
+		// Calculate text width for selection box
+		int textWidth = 0;
+		for (const char *c = chapterStr; *c; c++) {
+			int charIdx = (unsigned char)*c;
+			if (charIdx < numFontChars) {
+				textWidth += menuFont->getCharWidth(charIdx);
+			}
+		}
+
+		// Draw selection box if selected (red border)
+		// From assembly: box starts at X=0x14=20, Y = itemY - 1
+		if (isSelected) {
+			int boxWidth = textWidth + 6;  // From assembly: textWidth + 6
+			int boxHeight = 10;            // From assembly: 10 pixels
+			int boxX = selBoxX;            // From assembly: 0x14 = 20
+			int boxY = itemY - 1;          // From assembly: itemY - 1
+
+			// Flashing color from assembly: (-((DAT_0047a7e4 & 1) == 0) & 8U) - 0x10
+			// This gives -16 or -8, which are palette-relative negative offsets
+			byte boxColor = (frameCounter & 1) ? 0xF8 : 0xF0;
+
+			// Draw box border
+			if (boxY >= 0 && boxY + boxHeight <= height && boxX >= 0 && boxX + boxWidth <= width) {
+				for (int px = boxX; px < boxX + boxWidth; px++) {
+					renderBitmap[boxY * pitch + px] = boxColor;
+					renderBitmap[(boxY + boxHeight - 1) * pitch + px] = boxColor;
+				}
+				for (int py = boxY; py < boxY + boxHeight; py++) {
+					renderBitmap[py * pitch + boxX] = boxColor;
+					renderBitmap[py * pitch + boxX + boxWidth - 1] = boxColor;
+				}
+			}
+		}
+
+		// Draw chapter text
+		int curX = itemX;
+		for (const char *c = chapterStr; *c; c++) {
+			int charIdx = (unsigned char)*c;
+			if (charIdx < numFontChars) {
+				int charWidth = menuFont->getCharWidth(charIdx);
+				if (curX >= 0 && curX + charWidth <= width && itemY >= 0 && itemY < height) {
+					menuFont->drawCharV7(renderBitmap, clipRect, curX, itemY, pitch, -1,
+					                     kStyleAlignLeft, charIdx, true, true);
+				}
+				curX += charWidth;
+			}
+		}
+	}
+
+	// Draw FINALE (chapter 16 = index 15)
+	// Position: Y = 19 + 15*10 = 169
+	int finaleY = itemBaseY + 15 * itemSpacing;
+	bool finaleSelected = (_chapterSelection == 15);
+	const char *finaleStr = "FINALE     -";
+
+	int finaleWidth = 0;
+	for (const char *c = finaleStr; *c; c++) {
+		int charIdx = (unsigned char)*c;
+		if (charIdx < numFontChars) finaleWidth += menuFont->getCharWidth(charIdx);
+	}
+
+	if (finaleSelected) {
+		int boxWidth = finaleWidth + 6;
+		int boxHeight = 10;
+		int boxX = selBoxX;  // Use assembly value: 20
+		int boxY = finaleY - 1;
+		byte boxColor = (frameCounter & 1) ? 0xF8 : 0xF0;
+
+		if (boxY >= 0 && boxY + boxHeight <= height && boxX >= 0 && boxX + boxWidth <= width) {
+			for (int px = boxX; px < boxX + boxWidth; px++) {
+				renderBitmap[boxY * pitch + px] = boxColor;
+				renderBitmap[(boxY + boxHeight - 1) * pitch + px] = boxColor;
+			}
+			for (int py = boxY; py < boxY + boxHeight; py++) {
+				renderBitmap[py * pitch + boxX] = boxColor;
+				renderBitmap[py * pitch + boxX + boxWidth - 1] = boxColor;
+			}
+		}
+	}
+
+	int curX = itemX;
+	for (const char *c = finaleStr; *c; c++) {
+		int charIdx = (unsigned char)*c;
+		if (charIdx < numFontChars) {
+			int charWidth = menuFont->getCharWidth(charIdx);
+			if (curX >= 0 && curX + charWidth <= width && finaleY >= 0) {
+				menuFont->drawCharV7(renderBitmap, clipRect, curX, finaleY, pitch, -1,
+				                     kStyleAlignLeft, charIdx, true, true);
+			}
+			curX += charWidth;
+		}
+	}
+
+	// Draw "RETURN TO PILOTS" (index 16)
+	// Position: Y = 19 + 16*10 = 179
+	int returnY = itemBaseY + 16 * itemSpacing;
+	bool returnSelected = (_chapterSelection == 16);
+	const char *returnStr = "RETURN TO PILOTS";
+
+	int returnWidth = 0;
+	for (const char *c = returnStr; *c; c++) {
+		int charIdx = (unsigned char)*c;
+		if (charIdx < numFontChars) returnWidth += menuFont->getCharWidth(charIdx);
+	}
+
+	if (returnSelected) {
+		int boxWidth = returnWidth + 6;
+		int boxHeight = 10;
+		int boxX = selBoxX;  // Use assembly value: 20
+		int boxY = returnY - 1;
+		byte boxColor = (frameCounter & 1) ? 0xF8 : 0xF0;
+
+		if (boxY >= 0 && boxY + boxHeight <= height && boxX >= 0 && boxX + boxWidth <= width) {
+			for (int px = boxX; px < boxX + boxWidth; px++) {
+				renderBitmap[boxY * pitch + px] = boxColor;
+				renderBitmap[(boxY + boxHeight - 1) * pitch + px] = boxColor;
+			}
+			for (int py = boxY; py < boxY + boxHeight; py++) {
+				renderBitmap[py * pitch + boxX] = boxColor;
+				renderBitmap[py * pitch + boxX + boxWidth - 1] = boxColor;
+			}
+		}
+	}
+
+	curX = itemX;
+	for (const char *c = returnStr; *c; c++) {
+		int charIdx = (unsigned char)*c;
+		if (charIdx < numFontChars) {
+			int charWidth = menuFont->getCharWidth(charIdx);
+			if (curX >= 0 && curX + charWidth <= width && returnY >= 0) {
+				menuFont->drawCharV7(renderBitmap, clipRect, curX, returnY, pitch, -1,
+				                     kStyleAlignLeft, charIdx, true, true);
+			}
+			curX += charWidth;
+		}
+	}
+
+	// === Draw preview box on the right side ===
+	// From FUN_00415CF8 lines 128-133:
+	// Outer: X=228 (0xe4), Y=73 (0x49), W=84 (0x54), H=54 (0x36), color=0xF8
+	// Inner: X=229 (0xe5), Y=74 (0x4a), W=82 (0x52), H=52 (0x34), color=4
+	drawPreviewBox(renderBitmap, pitch, width, height);
+
+	// === Draw preview thumbnail inside the box ===
+	// Shows chapter number and unlock status for currently selected chapter
+	// Only draw for chapters 0-15 (not RETURN TO PILOTS at index 16)
+	if (_chapterSelection >= 0 && _chapterSelection < 16) {
+		drawPreviewThumbnail(renderBitmap, pitch, width, height, _chapterSelection);
+	}
+
+	// === Draw status bar at bottom ===
+	// From FUN_00415CF8 lines 101-103 (unlocked chapter score display):
+	// X = 0x19 + 0x19 = 50 (but we use 23 to align with menu items)
+	// Y = 0xbe = 190
+	int statusY = 190;
+	int statusX = 23;  // Align with menu items
+
+	char statusStr[64];
+	snprintf(statusStr, sizeof(statusStr), "PILOTS: %d  SCORE: %d  RANK:", 4, _playerScore);
+
+	curX = statusX;
+	for (const char *c = statusStr; *c; c++) {
+		int charIdx = (unsigned char)*c;
+		if (charIdx < numFontChars) {
+			int charWidth = menuFont->getCharWidth(charIdx);
+			if (curX >= 0 && curX + charWidth <= width && statusY >= 0 && statusY < height) {
+				menuFont->drawCharV7(renderBitmap, clipRect, curX, statusY, pitch, -1,
+				                     kStyleAlignLeft, charIdx, true, true);
+			}
+			curX += charWidth;
+		}
+	}
+}
+
+// ==================== Pilot Selection Menu (FUN_00414A41) ====================
+// Emulates FUN_00414A41 - Pilot/save selection menu
+// This appears before chapter selection. All options go to chapter selection except MAIN MENU.
+
+int InsaneRebel2::runLevelSelect() {
+	// Pilot selection menu loop - emulates FUN_00414A41
+	// Returns:
+	//   kLevelSelectPlay (1) = Go to chapter selection
+	//   kLevelSelectBack (0) = Return to main menu
+	//   kLevelSelectQuit (2) = Quit game
+
+	debug("Rebel2: Entering pilot selection (FUN_00414A41)");
+
+	// Enable menu input capture via EventObserver and clear any stale events
+	_menuInputActive = true;
+	while (!_menuEventQueue.empty()) _menuEventQueue.pop();
+
+	// Initialize pilot selection state
+	// Menu structure from FUN_00414A41:
+	// Items 0-5: Pilot slots (PILOT 1-6)
+	// Item 6: NEW PILOT
+	// Item 7: DELETE PILOT
+	// Item 8: COPY PILOT
+	// Item 9: MAIN MENU
+	_levelSelection = 0;
+	_levelItemCount = 10;  // Selectable items: 6 pilots + 4 options
+	_selectedLevel = 1;
+	_menuRepeatDelay = 0;
+	_gameState = kStatePilotSelect;
+
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+
+	// Pilot selection uses menu video as background (320x200 mode)
+	while (!_vm->shouldQuit()) {
+		_vm->_smushVideoShouldFinish = false;
+
+		Common::String menuVideo = getRandomMenuVideo();
+		debug("Rebel2: Playing pilot select background: %s", menuVideo.c_str());
+
+		splayer->setCurVideoFlags(0x20);
+		splayer->play(menuVideo.c_str(), 12);
+
+		if (_vm->shouldQuit()) {
+			_menuInputActive = false;
+			return kLevelSelectQuit;
+		}
+
+		if (!_vm->_smushVideoShouldFinish) {
+			continue;
+		}
+
+		_vm->_smushVideoShouldFinish = false;
+
+		debug("Rebel2: Pilot selection made: %d", _levelSelection);
+
+		// Process pilot selection - all options go to chapter selection except MAIN MENU
+		// Menu items (from FUN_00414A41):
+		// 0-5: Pilot slots
+		// 6: NEW PILOT
+		// 7: DELETE PILOT
+		// 8: COPY PILOT
+		// 9: MAIN MENU (back)
 		if (_levelSelection >= 0 && _levelSelection <= 5) {
-			// Level selected (0 = Level 1, 5 = Level 6)
+			// Pilot selected - go to chapter selection
 			_selectedLevel = _levelSelection + 1;
-			debug("Rebel2: Level %d selected", _selectedLevel);
+			debug("Rebel2: Pilot %d selected - going to chapter selection", _selectedLevel);
 			_menuInputActive = false;
 			return kLevelSelectPlay;
 		} else if (_levelSelection == 6) {
+			// NEW PILOT - go to chapter selection
+			debug("Rebel2: NEW PILOT selected - going to chapter selection");
+			_menuInputActive = false;
+			return kLevelSelectPlay;
+		} else if (_levelSelection == 7) {
+			// DELETE PILOT - go to chapter selection
+			debug("Rebel2: DELETE PILOT selected - going to chapter selection");
+			_menuInputActive = false;
+			return kLevelSelectPlay;
+		} else if (_levelSelection == 8) {
+			// COPY PILOT - go to chapter selection
+			debug("Rebel2: COPY PILOT selected - going to chapter selection");
+			_menuInputActive = false;
+			return kLevelSelectPlay;
+		} else if (_levelSelection == 9) {
 			// Main Menu (back)
 			debug("Rebel2: Back to main menu selected");
 			_menuInputActive = false;
@@ -5298,30 +6117,42 @@ void InsaneRebel2::drawLevelSelectOverlay(byte *renderBitmap, int pitch, int wid
 	// Draw level selection menu overlay
 	// Emulates FUN_0041f5ae for level selection mode
 	//
-	// From info.md - Low Resolution Coordinate Formulas:
+	// From info.md - Low Resolution Coordinate Formulas (320x200 mode):
 	// Center X = 160, Title Y = numItems * -5 + 81, Item Base Y = numItems * -5 + 104
-	// Item spacing = 10 pixels, Selection box height = 10 pixels
+	// Item spacing = 10 pixels, Selection box: width = textWidth + 6, height = 10
 
-	// Level menu items - all 6 levels plus Main Menu
-	// In the original game, this would show all unlocked levels plus options
-	static const char *levelItems[] = {
-		"SELECT CHAPTER",    // Title (index 0)
-		"CHAPTER 1",         // Level 1 (index 1) - selectable
-		"CHAPTER 2",         // Level 2 (index 2) - selectable
-		"CHAPTER 3",         // Level 3 (index 3) - selectable
-		"CHAPTER 4",         // Level 4 (index 4) - selectable
-		"CHAPTER 5",         // Level 5 (index 5) - selectable
-		"CHAPTER 6",         // Level 6 (index 6) - selectable
-		"MAIN MENU"          // Back to menu (index 7) - selectable
+	// Frame counter for flashing selection box (emulates DAT_0047a7e4)
+	static int frameCounter = 0;
+	frameCounter++;
+
+	// Pilot selection menu items - matches original structure from FUN_00414A41:
+	// Items 0-5: Pilot save slots (PILOT 1 through PILOT 6)
+	// Item 6: NEW PILOT
+	// Item 7: DELETE PILOT
+	// Item 8: COPY PILOT
+	// Item 9: MAIN MENU
+	static const char *pilotItems[] = {
+		"SELECT PILOT",      // Title (index 0) - not selectable
+		"PILOT 1",           // Pilot slot 1 (index 1) - selectable
+		"PILOT 2",           // Pilot slot 2 (index 2) - selectable
+		"PILOT 3",           // Pilot slot 3 (index 3) - selectable
+		"PILOT 4",           // Pilot slot 4 (index 4) - selectable
+		"PILOT 5",           // Pilot slot 5 (index 5) - selectable
+		"PILOT 6",           // Pilot slot 6 (index 6) - selectable
+		"NEW PILOT",         // Create new pilot (index 7) - selectable
+		"DELETE PILOT",      // Delete pilot (index 8) - selectable
+		"COPY PILOT",        // Copy pilot (index 9) - selectable
+		"MAIN MENU"          // Back to menu (index 10) - selectable
 	};
 
-	const int numItemsTotal = 8;     // Title + 7 selectable items
-	const int numSelectableItems = 7;
+	const int numItemsTotal = 11;     // Title + 10 selectable items
+	const int numSelectableItems = 10;
 
 	// Calculate positions (low-res 320x200 mode)
-	const int centerX = width / 2;
-	const int titleY = numItemsTotal * -5 + 81;      // 81 - 15 = 66
-	const int itemBaseY = numItemsTotal * -5 + 104;  // 104 - 15 = 89
+	// Formula from FUN_0041F5AE: titleY = numItems * -5 + 81, itemBaseY = numItems * -5 + 104
+	const int centerX = width / 2;  // 160 for 320 width
+	const int titleY = numSelectableItems * -5 + 81;      // 10 * -5 + 81 = 31
+	const int itemBaseY = numSelectableItems * -5 + 104;  // 10 * -5 + 104 = 54
 	const int itemSpacing = 10;
 
 	NutRenderer *font = _smush_smalfontNut;
@@ -5364,13 +6195,17 @@ void InsaneRebel2::drawLevelSelectOverlay(byte *renderBitmap, int pitch, int wid
 
 		// If highlighted, draw selection box around text
 		if (highlight) {
-			int boxWidth = textWidth + 12;
+			// Box dimensions from FUN_0041F5AE:
+			// Width = textWidth + 6 (low-res), Height = 10
+			int boxWidth = textWidth + 6;
 			int boxHeight = 10;
 			int boxX = centerX - boxWidth / 2;
-			int boxY = y - 1;
+			int boxY = y - 1;  // 1 pixel above text (itemY - 1 = numItems * -5 + idx * 10 + 103)
 
-			// Highlight color (bright color for visibility)
-			byte highlightColor = 0xF0;
+			// Flashing highlight color (emulates original behavior)
+			// Original uses palette-relative colors -8 and -16 alternating on frameCounter & 1
+			// We use bright colors that approximate the visual effect
+			byte highlightColor = (frameCounter & 1) ? 0xF8 : 0xF0;
 
 			// Draw box border (top, bottom, left, right edges)
 			if (boxY >= 0 && boxY < height && boxX >= 0 && boxX + boxWidth <= width) {
@@ -5401,26 +6236,27 @@ void InsaneRebel2::drawLevelSelectOverlay(byte *renderBitmap, int pitch, int wid
 	};
 
 	// Draw title (not selectable)
-	drawTextCentered(levelItems[0], titleY, false);
+	drawTextCentered(pilotItems[0], titleY, false);
 
 	// Draw selectable items
 	for (int i = 0; i < numSelectableItems; i++) {
 		int itemY = itemBaseY + i * itemSpacing;
 		bool isSelected = (i == _levelSelection);
-		drawTextCentered(levelItems[i + 1], itemY, isSelected);
+		drawTextCentered(pilotItems[i + 1], itemY, isSelected);
 	}
 
-	// Draw info text at bottom if a level is selected (not "MAIN MENU")
-	if (_levelSelection < numSelectableItems - 1) {
-		// Show difficulty or other info
-		// From info.md: Difficulty at X=30, Y=180
-		const char *difficultyText = "DIFFICULTY: EASY";
+	// Draw info text at bottom if a pilot slot is selected (items 0-5)
+	// From FUN_00414A41: info is shown when local_18 < local_10 (selection < num_pilots)
+	if (_levelSelection >= 0 && _levelSelection <= 5) {
+		// Show difficulty or score info for selected pilot
+		// From info.md: Info displayed at X=30, Y=180
+		const char *pilotInfoText = "DIFFICULTY: EASY";
 		int infoY = 180;
 		int infoX = 30;
 
 		// Draw left-aligned text using drawCharV7
 		int curX = infoX;
-		for (const char *c = difficultyText; *c; c++) {
+		for (const char *c = pilotInfoText; *c; c++) {
 			int charIdx = (unsigned char)*c;
 			if (charIdx < numFontChars) {
 				int charWidth = font->getCharWidth(charIdx);

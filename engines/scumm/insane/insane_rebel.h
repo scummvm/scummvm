@@ -60,13 +60,13 @@ public:
 	// ======================= Menu System =======================
 	// Main game states (emulates retail state machine from FUN_004142BD)
 	enum GameState {
-		kStateIntro = 0,      // Stage 0: Intro/Credits sequence
-		kStateMainMenu = 1,   // Stage 1: Main menu (FUN_004147B2)
-		kStateLevelSelect = 2,// Stage 2: Level selection (FUN_00414A41)
-		kStateBriefing = 3,   // Stage 3: Mission briefing (FUN_00415CF8)
-		kStateGameplay = 4,   // Stage 4: Gameplay (FUN_00416787)
-		kStateCredits = 5,    // Credits sequence
-		kStateQuit = 6        // Exit game
+		kStateIntro = 0,        // Stage 0: Intro/Credits sequence
+		kStateMainMenu = 1,     // Stage 1: Main menu (FUN_004147B2)
+		kStatePilotSelect = 2,  // Stage 2: Pilot selection (FUN_00414A41)
+		kStateChapterSelect = 3,// Stage 3: Chapter selection (FUN_00415CF8)
+		kStateGameplay = 4,     // Stage 4: Gameplay (FUN_00416787)
+		kStateCredits = 5,      // Credits sequence
+		kStateQuit = 6          // Exit game
 	};
 
 	// Menu selection results (return values from FUN_004147B2)
@@ -104,8 +104,54 @@ public:
 	// Reset menu state for fresh start
 	void resetMenu();
 
-	// ================= Level Selection Menu ====================
-	// Level selection results
+	// ================= Chapter Selection Screen (FUN_00415CF8) ====================
+	// This is the actual level/chapter selection screen with preview thumbnail
+	// Distinct from pilot selection (FUN_00414A41)
+
+	enum ChapterSelectResult {
+		kChapterSelectBack = 2,   // Return to main menu (ESC or BACK selected)
+		kChapterSelectPlay = 5,   // Play selected chapter
+		kChapterSelectQuit = 0    // Quit game
+	};
+
+	int _chapterSelection;        // Current chapter selection (0-15, or 16 for BACK)
+	int _chapterItemCount;        // Number of chapter items (17: 16 chapters + BACK)
+	int _selectedChapter;         // Final selected chapter ID (0-15)
+	Common::String _passwordInput; // Current password input string (max 8 chars)
+	bool _chapterUnlocked[16];    // Which chapters are unlocked
+
+	// Run chapter selection screen - emulates FUN_00415CF8
+	int runChapterSelect();
+
+	// Draw chapter selection overlay - called during O_LEVEL.SAN playback
+	void drawChapterSelectOverlay(byte *renderBitmap, int pitch, int width, int height);
+
+	// Process chapter select input - returns -1 (no action) or action code
+	int processChapterSelectInput();
+
+	// Draw the preview thumbnail box - emulates FUN_004292D0 calls in FUN_00415CF8
+	void drawPreviewBox(byte *renderBitmap, int pitch, int width, int height);
+
+	// Draw the preview thumbnail content - shows chapter number/status in preview area
+	void drawPreviewThumbnail(byte *renderBitmap, int pitch, int width, int height, int chapter);
+
+	// View offset for chapter preview scrolling (DAT_0047abe2/DAT_0047abe4)
+	int16 _previewOffsetX;   // X offset = -90 for chapter select
+	int16 _previewOffsetY;   // Y offset = chapter * -50 + 75
+
+	// Draw left-aligned menu text - emulates FUN_0041F5AE with param_4=1
+	void drawLeftAlignedMenuItem(byte *renderBitmap, int pitch, int width, int height,
+	                             const char *text, int x, int y, bool selected);
+
+	// Draw password input field - emulates lines 106-125 of FUN_00415CF8
+	void drawPasswordInput(byte *renderBitmap, int pitch, int width, int height);
+
+	// Draw score/time display - emulates lines 99-104 of FUN_00415CF8
+	void drawScoreDisplay(byte *renderBitmap, int pitch, int width, int height, int chapter);
+
+	// ================= Pilot Selection Menu (FUN_00414A41) ====================
+	// This is the pilot/save selection menu (separate from chapter selection)
+
 	enum LevelSelectResult {
 		kLevelSelectBack = 0,     // Return to main menu
 		kLevelSelectPlay = 1,     // Play selected level
@@ -116,13 +162,13 @@ public:
 	int _levelItemCount;          // Number of level items (levels + options)
 	int _selectedLevel;           // Final selected level ID (1-15)
 
-	// Run level selection menu - returns LevelSelectResult
+	// Run pilot selection menu - emulates FUN_00414A41
 	int runLevelSelect();
 
-	// Draw level selection overlay
+	// Draw pilot selection overlay
 	void drawLevelSelectOverlay(byte *renderBitmap, int pitch, int width, int height);
 
-	// Process level select input - returns -1 (no action) or action code
+	// Process pilot select input - returns -1 (no action) or action code
 	int processLevelSelectInput();
 
 	// ======================= Level Loading System =======================
