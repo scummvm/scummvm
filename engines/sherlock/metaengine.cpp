@@ -504,7 +504,7 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 		scalpelJournalKeymap->addAction(act);
 
 		// I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go forward 10 pages in the journal
-		act = new Action("AHEAD10", _("Go ahead 10 pages"));
+		act = new Action("AHEAD10", _("Go forward 10 pages"));
 		act->setCustomEngineActionEvent(kActionScalpelJournalAhead10);
 		act->addDefaultInputMapping(getKey(kFixedText_Journal_Ahead10, curLanguageEntry, target));
 		act->addDefaultInputMapping("JOY_RIGHT");
@@ -796,7 +796,7 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_A");
 		engineKeymap->addAction(act);
 
-		act = new Common::Action(kStandardActionRightClick, _("Open verb menu / close menu"));
+		act = new Common::Action(kStandardActionRightClick, _("Open verb menu / Close menu"));
 		act->setRightClickEvent();
 		act->addDefaultInputMapping("MOUSE_RIGHT");
 		act->addDefaultInputMapping("JOY_B");
