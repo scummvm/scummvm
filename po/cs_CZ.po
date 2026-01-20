@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-20 21:44+0000\n"
+"POT-Creation-Date: 2026-01-20 23:50+0000\n"
 "PO-Revision-Date: 2025-09-29 20:43+0000\n"
 "Last-Translator: AsciiWolf <mail@asciiwolf.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -4080,11 +4080,11 @@ msgstr "Zavádím MT-32 Emulátor"
 msgid "MT-32 emulator"
 msgstr "MT-32 emulátor"
 
-#: audio/softsynth/pcspk.cpp:254
+#: audio/softsynth/pcspk.cpp:250
 msgid "PC Speaker emulator"
 msgstr "PC Speaker emulátor"
 
-#: audio/softsynth/pcspk.cpp:273
+#: audio/softsynth/pcspk.cpp:269
 msgid "IBM PCjr emulator"
 msgstr "IBM PCjr emulátor"
 
