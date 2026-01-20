@@ -593,27 +593,82 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
-	// GOG Martian Dreams
+	// REMARK: MD can have many versions, but the detection is less tricky than with SE.
+	//
+	//	There seems only one master version available, V1.4,
+	//	with two graphic modes (EGA/VGA) and (Time/Space) saving.
+	//	So there are 4 different versions of datafile-sets for this game.
+	//
+	//	* talk.lzc   differs only by (Time/Space) installation
+	//	* tileindx.* differs only by (EGA/VGA) installation
+
+	// REMARK: The next 2 versions are unsupported!
+
+	// Martian Dreams V1.4 EGA - Space saving installation
 	{
 		{
 			"martiandreams",
-			0,
-			AD_ENTRY1s("talk.lzc", "6efafc030cb552028c564897e40d87b5", 409705),
+			"V1.4S/EGA",
+			{
+				{"talk.lzc", 0, "78fa6198a30b848a45f3c2471e3c6a4e", 240299},
+				{"tileindx.ega", 0, "ce79cdcb68f214fde732106f32f16ffc", 4096},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_UNSUPPORTED,
+			GUI_OPTIONS_MARTIAN_DREAMS
+		},
+		GAME_MARTIAN_DREAMS,
+		0
+	},
+	// Martian Dreams V1.4 EGA - Time saving installation
+	{
+		{
+			"martiandreams",
+			"V1.4T/EGA",
+			{
+				{"talk.lzc", 0, "6efafc030cb552028c564897e40d87b5", 409705},
+				{"tileindx.ega", 0, "ce79cdcb68f214fde732106f32f16ffc", 4096},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
 			GUI_OPTIONS_MARTIAN_DREAMS
 		},
 		GAME_MARTIAN_DREAMS,
 		0
 	},
 
-	// GOG Martian Dreams - Enhanced
+	// Martian Dreams - Enhanced V1.4 VGA - Space saving installation
 	{
 		{
 			"martiandreams_enh",
-			0,
-			AD_ENTRY1s("talk.lzc", "6efafc030cb552028c564897e40d87b5", 409705),
+			"V1.4S/VGA",
+			{
+				{"talk.lzc", 0, "78fa6198a30b848a45f3c2471e3c6a4e", 240299},
+				{"tileindx.vga", 0, "6af67a836ee36ec0ee7c0d96a4be81b3", 4096},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_MARTIAN_DREAMS
+		},
+		GAME_MARTIAN_DREAMS,
+		GF_VGA_ENHANCED
+	},
+	// Martian Dreams - Enhanced V1.4 VGA - Time saving installation (available on GOG)
+	{
+		{
+			"martiandreams_enh",
+			"V1.4T/VGA",
+			{
+				{"talk.lzc", 0, "6efafc030cb552028c564897e40d87b5", 409705},
+				{"tileindx.vga", 0, "6af67a836ee36ec0ee7c0d96a4be81b3", 4096},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
