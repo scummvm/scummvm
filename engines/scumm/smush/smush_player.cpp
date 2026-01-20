@@ -40,6 +40,7 @@
 #include "scumm/smush/codec37.h"
 #include "scumm/smush/codec47.h"
 #include "scumm/smush/smush_font.h"
+#include "scumm/smush/smush_multi_font.h"
 #include "scumm/smush/smush_player.h"
 
 #include "scumm/insane/insane.h"
@@ -251,6 +252,7 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 	_sf[2] = nullptr;
 	_sf[3] = nullptr;
 	_sf[4] = nullptr;
+	_multiFont = nullptr;
 	_base = nullptr;
 	_frameBuffer = nullptr;
 	_specialBuffer = nullptr;
@@ -315,6 +317,8 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 SmushPlayer::~SmushPlayer() {
 	delete _IACTchannel;
 	delete _compressedFileSoundHandle;
+	delete _multiFont;
+	_multiFont = nullptr;
 	terminateAudio();
 
 	// Free any preserved frame buffer (RA2 preserves this across videos)
@@ -836,14 +840,6 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 		color = 255;
 	}
 
-	SmushFont *sf = getFont(fontId);
-	assert(sf != nullptr);
-
-	// The hack that used to be here to prevent bug #2220 is no longer necessary and
-	// has been removed. The font renderer can handle all ^codes it encounters (font
-	// changes on the fly will be ignored for Smush texts, since our code design does
-	// not permit it and the feature isn't used anyway).
-
 	if (_vm->_language == Common::HE_ISR && !(flags & kStyleAlignCenter)) {
 		flags |= kStyleAlignRight;
 		pos_x = _width - 1 - pos_x;
@@ -861,23 +857,51 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 	// bit 7 - skip ^ codes (COMI)     0x80        (should be irrelevant for Smush, we strip these commands anyway)
 	// bit 8 - no vertical fix (COMI)  0x100       (COMI handles this in the printing method, but I haven't seen a case where it is used)
 
-	if (flg & kStyleWordWrap) {
-		// COMI has to do it all a bit different, of course. SCUMM7 games immediately render the text from here and actually use the clipping data
-		// provided by the text resource. COMI does not render directly, but enqueues a blast string (which is then drawn through the usual main
-		// loop routines). During that process the rect data will get dumped and replaced with the following default values. It's hard to tell
-		// whether this is on purpose or not (the text looks not necessarily better or worse, just different), so we follow the original...
-		if (_vm->_game.id == GID_CMI) {
-			left = top = 10;
-			width = _width - 20;
-			height = _height - 20;
+	// For Rebel Assault 2, use SmushMultiFont to support inline font switching via ^fXX codes.
+	// The original game uses a linked list of fonts and switches between them mid-string.
+	// Other games (FT, DIG, CMI) only use ^f codes at the start of strings.
+	if (_vm->_game.id == GID_REBEL2) {
+		// Create multi-font renderer on first use
+		if (!_multiFont) {
+			_multiFont = new SmushMultiFont(_vm, this, true);
 		}
-		Common::Rect clipRect(MAX<int>(0, left), MAX<int>(0, top), MIN<int>(left + width, _width), MIN<int>(top + height, _height));
-		sf->drawStringWrap(str, _dst, clipRect, pos_x, pos_y, color, flg);
+		_multiFont->setDefaultFont(fontId);
+
+		if (flg & kStyleWordWrap) {
+			Common::Rect clipRect(MAX<int>(0, left), MAX<int>(0, top), MIN<int>(left + width, _width), MIN<int>(top + height, _height));
+			_multiFont->drawStringWrap(str, _dst, clipRect, pos_x, pos_y, color, flg);
+		} else {
+			Common::Rect clipRect(0, 0, _width, _height);
+			_multiFont->drawString(str, _dst, clipRect, pos_x, pos_y, color, flg);
+		}
 	} else {
-		// Similar to the wrapped text, COMI will pass on rect coords here, which will later be lost. Unlike with the wrapped text, it will
-		// finally use the full screen dimenstions. SCUMM7 renders directly from here (see comment above), but also with the full screen.
-		Common::Rect clipRect(0, 0, _width, _height);
-		sf->drawString(str, _dst, clipRect, pos_x, pos_y, color, flg);
+		// For other games, use single font (original behavior)
+		SmushFont *sf = getFont(fontId);
+		assert(sf != nullptr);
+
+		// The hack that used to be here to prevent bug #2220 is no longer necessary and
+		// has been removed. The font renderer can handle all ^codes it encounters (font
+		// changes on the fly will be ignored for Smush texts, since our code design does
+		// not permit it and the feature isn't used anyway).
+
+		if (flg & kStyleWordWrap) {
+			// COMI has to do it all a bit different, of course. SCUMM7 games immediately render the text from here and actually use the clipping data
+			// provided by the text resource. COMI does not render directly, but enqueues a blast string (which is then drawn through the usual main
+			// loop routines). During that process the rect data will get dumped and replaced with the following default values. It's hard to tell
+			// whether this is on purpose or not (the text looks not necessarily better or worse, just different), so we follow the original...
+			if (_vm->_game.id == GID_CMI) {
+				left = top = 10;
+				width = _width - 20;
+				height = _height - 20;
+			}
+			Common::Rect clipRect(MAX<int>(0, left), MAX<int>(0, top), MIN<int>(left + width, _width), MIN<int>(top + height, _height));
+			sf->drawStringWrap(str, _dst, clipRect, pos_x, pos_y, color, flg);
+		} else {
+			// Similar to the wrapped text, COMI will pass on rect coords here, which will later be lost. Unlike with the wrapped text, it will
+			// finally use the full screen dimenstions. SCUMM7 renders directly from here (see comment above), but also with the full screen.
+			Common::Rect clipRect(0, 0, _width, _height);
+			sf->drawString(str, _dst, clipRect, pos_x, pos_y, color, flg);
+		}
 	}
 
 	free(string);

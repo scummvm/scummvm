@@ -87,6 +87,7 @@ namespace Scumm {
 
 class ScummEngine_v7;
 class SmushFont;
+class SmushMultiFont;
 class SmushMixer;
 class StringResource;
 class SmushDeltaBlocksDecoder;
@@ -97,6 +98,7 @@ class Insane;
 class SmushPlayer {
 	friend class Insane;
 	friend class InsaneRebel2;
+	friend class SmushMultiFont;
 private:
 	struct SmushAudioDispatch {
 		uint8 *headerPtr;
@@ -140,6 +142,7 @@ private:
 	int32 _shiftedDeltaPal[0x300];
 	byte _pal[0x300];
 	SmushFont *_sf[5];
+	SmushMultiFont *_multiFont;  // Multi-font renderer for inline font switching
 	StringResource *_strings;
 	SmushDeltaBlocksDecoder *_deltaBlocksCodec;
 	SmushDeltaGlyphsDecoder *_deltaGlyphsCodec;
