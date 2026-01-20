@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-20 00:24+0000\n"
+"POT-Creation-Date: 2026-01-20 00:42+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -7901,7 +7901,7 @@ msgstr ""
 msgid "Select option / Click in game"
 msgstr "Seleccionar SoundFont"
 
-#: engines/cine/metaengine.cpp:302
+#: engines/cine/metaengine.cpp:302 engines/sherlock/metaengine.cpp:799
 #, fuzzy
 msgid "Open action menu / Close menu"
 msgstr "~V~olver ao Iniciador"
@@ -8022,7 +8022,10 @@ msgid "Reply 6"
 msgstr ""
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go ahead a page (one page displays 6 items) in the inventory
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 1 page in the journal
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down by a page in the widget
 #: engines/crab/input/input.cpp:221 engines/sherlock/metaengine.cpp:591
+#: engines/sherlock/metaengine.cpp:902 engines/sherlock/metaengine.cpp:1048
 #: engines/twine/metaengine.cpp:460 engines/wintermute/keymapper_tables.h:190
 #: engines/wintermute/keymapper_tables.h:207
 #: engines/wintermute/keymapper_tables.h:638
@@ -8035,7 +8038,10 @@ msgid "Next page"
 msgstr "Seg."
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go back a page (one page displays 6 items) in the inventory
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 1 page in the journal
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up by a page in the widget
 #: engines/crab/input/input.cpp:226 engines/sherlock/metaengine.cpp:572
+#: engines/sherlock/metaengine.cpp:917 engines/sherlock/metaengine.cpp:1041
 #: engines/wintermute/keymapper_tables.h:183
 #: engines/wintermute/keymapper_tables.h:199
 #: engines/wintermute/keymapper_tables.h:630
@@ -9685,8 +9691,9 @@ msgid "Secondary shoot"
 msgstr "Rapaz 2"
 
 #: engines/hypno/metaengine.cpp:146 engines/lab/metaengine.cpp:209
-#: engines/ngi/metaengine.cpp:168 engines/teenagent/metaengine.cpp:232
-#: engines/toon/metaengine.cpp:98 engines/voyeur/metaengine.cpp:235
+#: engines/ngi/metaengine.cpp:168 engines/sherlock/metaengine.cpp:872
+#: engines/teenagent/metaengine.cpp:232 engines/toon/metaengine.cpp:98
+#: engines/voyeur/metaengine.cpp:235
 #, fuzzy
 #| msgid "Skip line"
 msgid "Skip intro"
@@ -13492,14 +13499,14 @@ msgid "Go forward 10 pages"
 msgstr "Mostrar todo"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go to the first page of the journal
-#: engines/sherlock/metaengine.cpp:521
+#: engines/sherlock/metaengine.cpp:521 engines/sherlock/metaengine.cpp:924
 #: engines/wintermute/keymapper_tables.h:965
 #, fuzzy
 msgid "First page"
 msgstr "Lanzar feitizo"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go to the last page of the journal
-#: engines/sherlock/metaengine.cpp:528
+#: engines/sherlock/metaengine.cpp:528 engines/sherlock/metaengine.cpp:931
 #: engines/wintermute/keymapper_tables.h:970
 #, fuzzy
 msgid "Last page"
@@ -13622,11 +13629,6 @@ msgstr "~O~pcións..."
 msgid "Move / Examine / Select"
 msgstr "Mover á esquerda"
 
-#: engines/sherlock/metaengine.cpp:799
-#, fuzzy
-msgid "Open verb menu / Close menu"
-msgstr "~V~olver ao Iniciador"
-
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action changes the speed of the game (walking, animations, etc.)
 #: engines/sherlock/metaengine.cpp:810
 #, fuzzy
@@ -13639,19 +13641,14 @@ msgstr "Modo Rápido"
 msgid "Open journal"
 msgstr "Mostrar todo"
 
-#: engines/sherlock/metaengine.cpp:846
+#: engines/sherlock/metaengine.cpp:846 engines/touche/metaengine.cpp:147
 #, fuzzy
-msgid "Open options"
+msgid "Open options menu"
 msgstr "~V~olver ao Iniciador"
 
 #: engines/sherlock/metaengine.cpp:862
 msgid "Exit / Close window"
 msgstr ""
-
-#: engines/sherlock/metaengine.cpp:872
-#, fuzzy
-msgid "Skip prolog"
-msgstr "Omitir liña"
 
 #: engines/sherlock/metaengine.cpp:882 engines/sherlock/metaengine.cpp:949
 msgid "Change selected option to the left"
@@ -13660,28 +13657,6 @@ msgstr ""
 #: engines/sherlock/metaengine.cpp:888 engines/sherlock/metaengine.cpp:955
 msgid "Change selected option to the right"
 msgstr ""
-
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 1 page in the journal
-#: engines/sherlock/metaengine.cpp:902
-#, fuzzy
-msgid "Go forward 1 page"
-msgstr "Mostrar todo"
-
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 1 page in the journal
-#: engines/sherlock/metaengine.cpp:917
-#, fuzzy
-msgid "Go back 1 page"
-msgstr "Mostrar todo"
-
-#: engines/sherlock/metaengine.cpp:924
-#, fuzzy
-msgid "Go to start of journal"
-msgstr "Mostrar todo"
-
-#: engines/sherlock/metaengine.cpp:931
-#, fuzzy
-msgid "Go to end of journal"
-msgstr "Mostrar todo"
 
 #: engines/sherlock/metaengine.cpp:972
 #, fuzzy
@@ -13700,18 +13675,6 @@ msgstr "Subir lista"
 #, fuzzy
 msgid "Scroll to bottom right"
 msgstr "Mover á esquerda"
-
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up by a page in the widget
-#: engines/sherlock/metaengine.cpp:1041
-#, fuzzy
-msgid "Scroll page up"
-msgstr "Subir lista"
-
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down by a page in the widget
-#: engines/sherlock/metaengine.cpp:1048
-#, fuzzy
-msgid "Scroll page down"
-msgstr "Baixar lista"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll to the end of the widget
 #: engines/sherlock/metaengine.cpp:1055
@@ -14660,11 +14623,6 @@ msgstr "Menú ~p~rincipal"
 #: engines/touche/metaengine.cpp:135
 msgid "Skip sequence / open quit dialog"
 msgstr ""
-
-#: engines/touche/metaengine.cpp:147
-#, fuzzy
-msgid "Open options menu"
-msgstr "~V~olver ao Iniciador"
 
 #. I18N: The actor walking pace is increased
 #: engines/touche/metaengine.cpp:154
@@ -17202,6 +17160,42 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Open verb menu / Close menu"
+#~ msgstr "~V~olver ao Iniciador"
+
+#, fuzzy
+#~ msgid "Open options"
+#~ msgstr "~V~olver ao Iniciador"
+
+#, fuzzy
+#~ msgid "Skip prolog"
+#~ msgstr "Omitir liña"
+
+#, fuzzy
+#~ msgid "Go forward 1 page"
+#~ msgstr "Mostrar todo"
+
+#, fuzzy
+#~ msgid "Go back 1 page"
+#~ msgstr "Mostrar todo"
+
+#, fuzzy
+#~ msgid "Go to start of journal"
+#~ msgstr "Mostrar todo"
+
+#, fuzzy
+#~ msgid "Go to end of journal"
+#~ msgstr "Mostrar todo"
+
+#, fuzzy
+#~ msgid "Scroll page up"
+#~ msgstr "Subir lista"
+
+#, fuzzy
+#~ msgid "Scroll page down"
+#~ msgstr "Baixar lista"
 
 #, fuzzy
 #~ msgid "Exit game"
