@@ -36,7 +36,6 @@
 #include "graphics/screen.h"
 
 #include "fool/detection.h"
-#include "fool/events.h"
 
 #define SCREEN_WIDTH 0x200
 #define SCREEN_HEIGHT 0x156
@@ -48,7 +47,7 @@ struct FoolGameDescription;
 
 class FoolEngine : public Engine {
 private:
-	const ADGameDescription *_gameDescription;
+	const FOOLGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 protected:
 	// Engine APIs
@@ -59,7 +58,7 @@ public:
 	Graphics::MacWindowManager _wm;
 	Graphics::MacMenu *_menu;
 
-	FoolEngine(OSystem *syst, const ADGameDescription *gameDesc);
+	FoolEngine(OSystem *syst, const FOOLGameDescription *gameDesc);
 	~FoolEngine() override;
 
 	uint32 getFeatures() const;

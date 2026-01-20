@@ -34,9 +34,20 @@ ZBasic *g_zbasic;
 Toolbox *g_toolbox;
 
 // Based on disassembly of Fool's Errand v2.0.
-// v3.0 had several features removed to improve compatibility with later versions of Mac OS.
+// v3.0 had several features removed to improve compatibility with later versions of Mac OS,
+// and was built with a different ZBASIC compiler.
 
 void FoolPrologue::run() {
+	g_toolbox = new Toolbox();
+	g_zbasic = new ZBasic(g_toolbox);
+	g_zbasic->loadProgram(Common::Path("Prologue - Finale"));
+
+	this->sub_128_004();
+	delete g_zbasic;
+	delete g_toolbox;
+}
+
+void FoolPrologue::sub_128_004() {
 
 	// 128:0004
 	g_zbasic->coordinateWindow();
@@ -46,6 +57,7 @@ void FoolPrologue::run() {
 
 	// 128:001e
 	// b54 must be the 1-bit screen buffer
+	// 41296 is an array of pointers to screen pages within the buffer
 	for (int i = 0; i < 12; i++) {
 		//this->arr_i32_41296[i] = &this->arr_i32_b54[SCREEN_PAGE_SIZE*i];
 		this->arr_i32_41296[i].create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());

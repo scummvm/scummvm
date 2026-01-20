@@ -378,12 +378,7 @@ public:
 	// PROCEDURE SetRect (VAR r: Rect; left,top,right,bottom: INTEGER);
 	// SetRect assigns the four boundary coordinates to the given rectangle. The result is a rectangle
 	// with coordinates (left,top) (right,bottom).
-	void SetRect(Common::Rect &r, int16 left, int16 top, int16 right, int16 bottom) {
-		r.left = left;
-		r.top = top;
-		r.right = right;
-		r.bottom = bottom;
-	}
+	void SetRect(Common::Rect &r, int16 left, int16 top, int16 right, int16 bottom);
 
 	// PROCEDURE StringWidth (s: Str255) : INTEGER;
 	// StringWidth returns the width of the given text string, which it calculates by adding the
