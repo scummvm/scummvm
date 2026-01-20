@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-20 00:24+0000\n"
-"PO-Revision-Date: 2026-01-20 00:16+0000\n"
+"PO-Revision-Date: 2026-01-20 00:41+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -11371,7 +11371,7 @@ msgstr "Показувати SFX субтитри"
 
 #: engines/private/metaengine.cpp:40
 msgid "Use SFX subtitles (if subtitles are enabled)."
-msgstr "Показувати субтитри для SFX (якщо cубтитри було увіменено)"
+msgstr "Показувати субтитри для SFX (якщо cубтитри було увіменено)."
 
 #: engines/private/metaengine.cpp:50
 msgid "Highlight decision areas"
@@ -13330,10 +13330,8 @@ msgstr ""
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go forward 10 pages in the journal
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 10 pages in the journal
 #: engines/sherlock/metaengine.cpp:507 engines/sherlock/metaengine.cpp:895
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go forward 10 pages"
-msgstr "Показати журнал"
+msgstr "10 сторінок вперед"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go to the first page of the journal
 #: engines/sherlock/metaengine.cpp:521
@@ -13440,23 +13438,17 @@ msgid "Move / Examine / Select"
 msgstr "Рухатись / Розгледіти / Обрати"
 
 #: engines/sherlock/metaengine.cpp:799
-#, fuzzy
-#| msgid "Open verb menu / close menu"
 msgid "Open verb menu / Close menu"
 msgstr "Відкрити меню дій / Закрити меню"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action changes the speed of the game (walking, animations, etc.)
 #: engines/sherlock/metaengine.cpp:810
-#, fuzzy
-#| msgid "Change sound"
 msgid "Change speed"
-msgstr "Змінити звук"
+msgstr "Змінити швидкість"
 
 #: engines/sherlock/metaengine.cpp:833
-#, fuzzy
-#| msgid "Show journal"
 msgid "Open journal"
-msgstr "Показати журнал"
+msgstr "Відкрити журнал"
 
 #: engines/sherlock/metaengine.cpp:846
 #, fuzzy
@@ -13465,16 +13457,12 @@ msgid "Open options"
 msgstr "Відкрити меню налаштувань"
 
 #: engines/sherlock/metaengine.cpp:862
-#, fuzzy
-#| msgid "Fit to window"
 msgid "Exit / Close window"
-msgstr "В розміри вікна"
+msgstr "Вийти / Закрити вікно"
 
 #: engines/sherlock/metaengine.cpp:872
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Skip prolog"
-msgstr "Пропустити діалог"
+msgstr "Пропустити вступ"
 
 #: engines/sherlock/metaengine.cpp:882 engines/sherlock/metaengine.cpp:949
 msgid "Change selected option to the left"
@@ -13511,24 +13499,18 @@ msgid "Go to end of journal"
 msgstr "Перейти на кінець рядку"
 
 #: engines/sherlock/metaengine.cpp:972
-#, fuzzy
-#| msgid "Skip minigame"
 msgid "Skip darts minigame"
-msgstr "Пропустити міні-гру"
+msgstr "Пропустити міні-гру дартс"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a map, this action is used to scroll to the top left of the map
 #: engines/sherlock/metaengine.cpp:983
-#, fuzzy
-#| msgid "Scroll list up"
 msgid "Scroll to top left"
-msgstr "Прокручення списку догори"
+msgstr "Прокрутити до верху-вліво"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a map, this action is used to scroll to the bottom right of the map
 #: engines/sherlock/metaengine.cpp:991
-#, fuzzy
-#| msgid "Move to bottom"
 msgid "Scroll to bottom right"
-msgstr "Рухатись до долу"
+msgstr "Прокрутити до низу-направо"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up by a page in the widget
 #: engines/sherlock/metaengine.cpp:1041
@@ -14003,10 +13985,8 @@ msgid "Perform default action"
 msgstr "Глянути на"
 
 #: engines/supernova/metaengine.cpp:244
-#, fuzzy
-#| msgid "Interpolation:"
 msgid "Instructions"
-msgstr "Інтерполяція:"
+msgstr "Інструкції"
 
 #: engines/supernova/metaengine.cpp:250
 #, fuzzy
@@ -14347,10 +14327,8 @@ msgid "Remote"
 msgstr "Видалити"
 
 #: engines/titanic/metaengine.cpp:254
-#, fuzzy
-#| msgid "Room:"
 msgid "Rooms"
-msgstr "Кімната:"
+msgstr "Кімнати"
 
 #: engines/titanic/metaengine.cpp:259
 msgid "Real life"
@@ -14381,10 +14359,8 @@ msgid "Scroll to bottom"
 msgstr "Рухатись до долу"
 
 #: engines/titanic/metaengine.cpp:291
-#, fuzzy
-#| msgid "Transitions:"
 msgid "Translation"
-msgstr "Переходи:"
+msgstr "Переклад"
 
 #: engines/titanic/metaengine.cpp:307
 msgid "Toggle between Star Map and photo of your home"
@@ -14996,11 +14972,9 @@ msgid ""
 msgstr "Ви вибрали Ransome *unbeeped* (DLC), але DLC не виявлено!"
 
 #: engines/twp/twp.cpp:1019
-#, fuzzy
-#| msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgid ""
 "This game requires OpenGL with shaders, which is not supported on your system"
-msgstr "Ця гра потребує движка FoxTail, який відсутній у збірці."
+msgstr "Ця гра потребує OpenGL з шейдерами, що не підтримується вашою системою"
 
 #: engines/twp/twp.cpp:1025
 msgid ""
@@ -15286,10 +15260,8 @@ msgid "Open door"
 msgstr "Відкрити голомапу"
 
 #: engines/ultima/ultima4/metaengine.cpp:64
-#, fuzzy
-#| msgid "Password:"
 msgid "Pass"
-msgstr "Пароль:"
+msgstr "Передати"
 
 #: engines/ultima/ultima4/metaengine.cpp:65
 msgid "Peer"
@@ -15308,10 +15280,8 @@ msgid "Ready weapon"
 msgstr "Наступна дія"
 
 #: engines/ultima/ultima4/metaengine.cpp:69
-#, fuzzy
-#| msgid "Status:"
 msgid "Stats"
-msgstr "Стан:"
+msgstr "Статистика"
 
 #: engines/ultima/ultima4/metaengine.cpp:72
 msgid "Wear armor"
@@ -15322,10 +15292,8 @@ msgid "Yell"
 msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:79
-#, fuzzy
-#| msgid "Speed:"
 msgid "Speed up"
-msgstr "Швидкість:"
+msgstr "Пришвидчити"
 
 #: engines/ultima/ultima4/metaengine.cpp:80
 #, fuzzy
@@ -15483,16 +15451,12 @@ msgid "Create transport"
 msgstr "Створення каталогу"
 
 #: engines/ultima/ultima4/metaengine.cpp:121
-#, fuzzy
-#| msgid "Debug level:"
 msgid "Up level"
-msgstr "Рівень відладки:"
+msgstr "На рівень вище"
 
 #: engines/ultima/ultima4/metaengine.cpp:122
-#, fuzzy
-#| msgid "Debug level:"
 msgid "Down level"
-msgstr "Рівень відладки:"
+msgstr "На рівень нижче"
 
 #: engines/ultima/ultima4/metaengine.cpp:123
 msgid "Grant virtue"
@@ -15604,10 +15568,8 @@ msgid "End key"
 msgstr ""
 
 #: engines/ultima/nuvie/metaengine.cpp:84
-#, fuzzy
-#| msgid "Toggle between voice/text/text and voice"
 msgid "Toggle between inventory and actor view"
-msgstr "Перемикання між озвучкою/текстом/текстом і озвучкою"
+msgstr "Перемкнути між переглядом інвентарю та акторів"
 
 #: engines/ultima/nuvie/metaengine.cpp:85
 #, fuzzy
