@@ -46,7 +46,7 @@ const ADGameDescription gameDescriptions[] = {
 	{
 		"fool",
 		"v2.0",
-		AD_ENTRY1s("The Fool's Errand", "rt:00000000000000000000000000000000", 0),
+		AD_ENTRY1s("The Fool's Errand", "rt:7319cc059fde4535a196a744761b293f", 178663),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
 		ADGF_UNSTABLE,

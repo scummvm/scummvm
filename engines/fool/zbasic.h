@@ -22,6 +22,8 @@
 #ifndef FOOL_ZBASIC_H
 #define FOOL_ZBASIC_H
 
+#include "common/memorypool.h"
+#include "common/ptr.h"
 #include "common/str.h"
 #include "common/ustr.h"
 #include "graphics/surface.h"
@@ -166,6 +168,8 @@ struct ZBasicDatum {
 		Common::U32String *str;
 	} data;
 
+	ZBasicDatum() {}
+
 	~ZBasicDatum() {
 		if (this->type == kDatumBCD) {
 			delete this->data.bcd;
@@ -176,66 +180,72 @@ struct ZBasicDatum {
 		}
 	}
 
-	static ZBasicDatum newNull(uint32 offset) {
-		ZBasicDatum result;
-		result.type = kDatumNULL;
-		result.offset = offset;
-		result.data.bcd = 0;
-		return result;
+	static Common::SharedPtr<ZBasicDatum> newNull(int32 offset) {
+		ZBasicDatum *result = new ZBasicDatum();
+		result->type = kDatumNULL;
+		result->offset = offset;
+		result->data.bcd = 0;
+		return Common::SharedPtr<ZBasicDatum>(result);
 	}
 
-	static ZBasicDatum newInt(uint32 offset, int16 value) {
-		ZBasicDatum result;
-		result.type = kDatumINT;
-		result.offset = offset;
-		result.data.i16 = value;
-		return result;
+	static Common::SharedPtr<ZBasicDatum> newInt(uint32 offset, int16 value) {
+		ZBasicDatum *result = new ZBasicDatum();
+		result->type = kDatumINT;
+		result->offset = offset;
+		result->data.i16 = value;
+		return Common::SharedPtr<ZBasicDatum>(result);
 	}
 
-	static ZBasicDatum newDblInt(uint32 offset, int32 value) {
-		ZBasicDatum result;
-		result.type = kDatumDBLINT;
-		result.offset = offset;
-		result.data.i32 = value;
-		return result;
+	static Common::SharedPtr<ZBasicDatum> newDblInt(uint32 offset, int32 value) {
+		ZBasicDatum *result = new ZBasicDatum();
+		result->type = kDatumDBLINT;
+		result->offset = offset;
+		result->data.i32 = value;
+		return Common::SharedPtr<ZBasicDatum>(result);
 	}
 
-	static ZBasicDatum newBcd(uint32 offset, const ZBasicBCD &value) {
-		ZBasicDatum result;
-		result.type = kDatumBCD;
-		result.offset = offset;
-		result.data.bcd = new ZBasicBCD(value);
-		return result;
+	static Common::SharedPtr<ZBasicDatum> newBcd(uint32 offset, const ZBasicBCD &value) {
+		ZBasicDatum *result = new ZBasicDatum();
+		result->type = kDatumBCD;
+		result->offset = offset;
+		result->data.bcd = new ZBasicBCD(value);
+		return Common::SharedPtr<ZBasicDatum>(result);
 	}
 
-	static ZBasicDatum newStr(uint32 offset, const Common::U32String &value) {
-		ZBasicDatum result;
-		result.type = kDatumSTR;
-		result.offset = offset;
-		result.data.str = new Common::U32String(value);
-		return result;
+	static Common::SharedPtr<ZBasicDatum> newStr(uint32 offset, const Common::U32String &value) {
+		ZBasicDatum *result = new ZBasicDatum();
+		result->type = kDatumSTR;
+		result->offset = offset;
+		result->data.str = new Common::U32String(value);
+		return Common::SharedPtr<ZBasicDatum>(result);
 	}
 };
 
 class ZBasic {
 
 private:
-	Common::Array<ZBasicDatum> _dataTable;
+	Common::Array<Common::SharedPtr<ZBasicDatum>> _dataTable;
 	uint32 _dataPtr;
-	Common::Array<ZBasicDatum> _stringTable;
+	Common::Array<Common::SharedPtr<ZBasicDatum>> _stringTable;
 
+	Toolbox *_toolbox;
+	Common::MemoryPool *_memPool;
 public:
+
+	ZBasic(Toolbox *toolbox) : _toolbox(toolbox) {
+		_memPool = new Common::MemoryPool(sizeof(int));
+	}
+	~ZBasic() {
+		delete _memPool;
+		_memPool = nullptr;
+	}
 
 	void loadProgram(const Common::Path &path);
 	void loadSCOT();
 
 	void bufferFlush(const Common::U32String &str);
-	void blockMove(void *srcptr, void *destptr, uint16 size) {
-		memmove(destptr, srcptr, size);
-	}
-	Common::U32String chr(uint16 code) {
-		return Common::U32String(code, Common::kMacRoman);
-	}
+	void blockMove(void *srcptr, void *destptr, uint16 size);
+	Common::U32String chr(uint16 code);
 	void close(int16 fileNo);
 	void coordinateWindow();
 	void get(int16 x1, int16 y1, int16 x2, int16 y2, Graphics::Surface &dest);
@@ -244,20 +254,18 @@ public:
 	bool maybe();
 	uint32 mem(int16 index);
 	void openR(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo);
+	void picture(int16 x1, int16 y1, int16 x2, int16 y2, PicHandle &src);
 	void put(int16 x, int16 y, Graphics::Surface &src);
 	void put(int16 x1, int16 y1, int16 x2, int16 y2, Graphics::Surface &src);
 	Common::Array<byte> read(int16 fileNo, uint32 length);
-	void text(int16 font, int16 size, int16 face, ZBasicTextMode mode);
-	void picture(int16 x1, int16 y1, int16 x2, int16 y2, PicHandle &src);
-	int16 rndInt(int16 max);
-	void window(int16 windowNumber, const Common::String &title, int16 x1, int16 y1, int16 x2, int16 y2, ZBasicWindowType type);
-
-	const Common::U32String &str(size_t index) {
-		return *_stringTable[index].data.str;
-	}
-
 	int16 readInt();
 	Common::U32String readStr();
+	int16 rndInt(int16 max);
+	void text(int16 font, int16 size, int16 face, ZBasicTextMode mode);
+	void window(int16 windowNumber, const Common::String &title, int16 x1, int16 y1, int16 x2, int16 y2, ZBasicWindowType type);
+
+	const Common::U32String &str(size_t index);
+
 
 	void unk_6(int16 unk1, int32 unk2, int16 unk3, int16 unk4);
 	void unk_20();

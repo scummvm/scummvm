@@ -28,6 +28,7 @@
 #include "graphics/palette.h"
 
 #include "fool/fool.h"
+#include "fool/fool_prologue.h"
 #include "fool/detection.h"
 #include "fool/console.h"
 
@@ -35,7 +36,7 @@ namespace Fool {
 
 FoolEngine *g_engine;
 
-FoolEngine::FoolEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
+FoolEngine::FoolEngine(OSystem *syst, const FOOLGameDescription *gameDesc) : Engine(syst),
 	_gameDescription(gameDesc), _randomSource("Fool") {
 	g_engine = this;
 
@@ -45,11 +46,11 @@ FoolEngine::~FoolEngine() {
 }
 
 uint32 FoolEngine::getFeatures() const {
-	return _gameDescription->flags;
+	return _gameDescription->desc.flags;
 }
 
 Common::String FoolEngine::getGameId() const {
-	return _gameDescription->gameId;
+	return _gameDescription->desc.gameId;
 }
 
 Common::Error FoolEngine::run() {
@@ -63,6 +64,9 @@ Common::Error FoolEngine::run() {
 
 	// Menu
 	_menu = _wm.addMenu();
+
+	FoolPrologue fp;
+	fp.run();
 
 
 	return Common::kNoError;

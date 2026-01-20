@@ -21,7 +21,6 @@
 
 #include "common/translation.h"
 
-#include "fool/metaengine.h"
 #include "fool/detection.h"
 #include "fool/fool.h"
 
@@ -44,6 +43,22 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 
 } // End of namespace Fool
 
+class FoolMetaEngine : public AdvancedMetaEngine<Fool::FOOLGameDescription> {
+public:
+	const char *getName() const override;
+
+	Common::Error createInstance(OSystem *syst, Engine **engine, const Fool::FOOLGameDescription *desc) const override;
+
+	/**
+	 * Determine whether the engine supports the specified MetaEngine feature.
+	 *
+	 * Used by e.g. the launcher to determine whether to enable the Load button.
+	 */
+	bool hasFeature(MetaEngineFeature f) const override;
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
+};
+
 const char *FoolMetaEngine::getName() const {
 	return "fool";
 }
@@ -52,7 +67,7 @@ const ADExtraGuiOptionsMap *FoolMetaEngine::getAdvancedExtraGuiOptions() const {
 	return Fool::optionsList;
 }
 
-Common::Error FoolMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Common::Error FoolMetaEngine::createInstance(OSystem *syst, Engine **engine, const Fool::FOOLGameDescription *desc) const {
 	*engine = new Fool::FoolEngine(syst, desc);
 	return Common::kNoError;
 }

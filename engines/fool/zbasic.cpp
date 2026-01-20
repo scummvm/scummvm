@@ -20,6 +20,7 @@
  */
 
 #include "common/macresman.h"
+#include "common/memorypool.h"
 #include "common/str-enc.h"
 #include "common/stream.h"
 
@@ -85,16 +86,16 @@ void ZBasic::loadProgram(const Common::Path &path) {
 		case kDatumSTR:
 			{
 				uint8 size = scot->readByte();
-				char *buf = new char[size];
+				char *buf = (char*)calloc(size+1, 1);
 				scot->read(buf, size);
-			this->_dataTable.push_back(ZBasicDatum::newStr(offset, Common::convertToU32String(buf, Common::kMacRoman)));
-				delete[] buf;
+				this->_dataTable.push_back(ZBasicDatum::newStr(offset, Common::convertToU32String(buf, Common::kMacRoman)));
+				free(buf);
 			}
 			break;
 		case kDatumBCD:
 			{
 				scot->seek(-1);
-			this->_dataTable.push_back(ZBasicDatum::newBcd(offset, ZBasicBCD::read(scot)));
+				this->_dataTable.push_back(ZBasicDatum::newBcd(offset, ZBasicBCD::read(scot)));
 			}
 			break;
 		default:
@@ -105,10 +106,11 @@ void ZBasic::loadProgram(const Common::Path &path) {
 		uint32 offset = 0;
 		while (scot->pos() < scot->size()) {
 			uint8 size = scot->readByte();
-			char *buf = new char[size];
+			char *buf = (char*)calloc(size+1, 1);
 			scot->read(buf, size);
 			this->_stringTable.push_back(ZBasicDatum::newStr(offset, Common::convertToU32String(buf, Common::kMacRoman)));
 			offset += size + 1;
+			free(buf);
 		}
 	}
 
@@ -116,11 +118,40 @@ void ZBasic::loadProgram(const Common::Path &path) {
 
 }
 
+void ZBasic::blockMove(void *srcptr, void *destptr, uint16 size) {
+	memmove(destptr, srcptr, size);
+}
+
+Common::U32String ZBasic::chr(uint16 code) {
+	return Common::U32String(code, Common::kMacRoman);
+}
+
+void ZBasic::bufferFlush(const Common::U32String &str) {
+	warning("STUB: ZBasic::bufferFlush");
+}
+
+void ZBasic::close(int16 fileNo) {
+	warning("STUB: ZBasic::close");
+}
+
+void ZBasic::coordinateWindow() {
+	warning("STUB: ZBasic::coordinateWindow");
+}
+
+void ZBasic::get(int16 x1, int16 y1, int16 x2, int16 y2, Graphics::Surface &dest) {
+	warning("STUB: ZBasic::get");
+}
+
 int16 ZBasic::instr(int16 expression, const Common::U32String &string1, const Common::U32String &string2) {
 	uint32 result =  string1.find(string2, (uint32)MAX<int16>(expression - 1, 1));
 	if (result == Common::U32String::npos)
 		return 0;
 	return (int16)(result + 1);
+}
+
+int ZBasic::finderInfo(int16 &count, Common::U32String &var, uint32 &type, uint16 volume) {
+	warning("STUB: ZBasic::finderInfo");
+	return 0;
 }
 
 bool ZBasic::maybe() {
@@ -133,11 +164,25 @@ uint32 ZBasic::mem(int16 index) {
 	return 0;
 }
 
-int16 ZBasic::rndInt(int16 max) {
-	if (max == 0)
-		return 0;
-	max = (int16)abs(MAX<int16>(max, -32767));
-	return (int16)(g_engine->getRandomNumber(max - 1) + 1);
+void ZBasic::openR(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo) {
+	warning("STUB: ZBasic::openR");
+}
+
+void ZBasic::picture(int16 x1, int16 y1, int16 x2, int16 y2, PicHandle &src) {
+	warning("STUB: ZBasic::picture");
+}
+
+void ZBasic::put(int16 x, int16 y, Graphics::Surface &src) {
+	this->put(x, y, x+src.w, y+src.h, src);
+}
+
+void ZBasic::put(int16 x1, int16 y1, int16 x2, int16 y2, Graphics::Surface &src) {
+	warning("STUB: ZBasic::put");
+}
+
+Common::Array<byte> ZBasic::read(int16 fileNo, uint32 length) {
+	warning("STUB: ZBasic::read");
+	return Common::Array<byte>();
 }
 
 int16 ZBasic::readInt() {
@@ -145,13 +190,13 @@ int16 ZBasic::readInt() {
 		warning("ZBasic::readInt: no more data left");
 		return 0;
 	}
-	ZBasicDatum &el = _dataTable[_dataPtr];
+	Common::SharedPtr<ZBasicDatum> &el = _dataTable[_dataPtr];
 	_dataPtr++;
-	if (el.type != kDatumINT) {
-		warning("ZBasic::readInt: entry %d was unexpected type %d", _dataPtr-1, el.type);
+	if (el->type != kDatumINT) {
+		warning("ZBasic::readInt: entry %d was unexpected type %d", _dataPtr-1, el->type);
 		return 0;
 	}
-	return el.data.i16;
+	return el->data.i16;
 }
 
 Common::U32String ZBasic::readStr() {
@@ -160,14 +205,47 @@ Common::U32String ZBasic::readStr() {
 		warning("ZBasic::readStr: no more data left");
 		return result;
 	}
-	ZBasicDatum &el = _dataTable[_dataPtr];
+	Common::SharedPtr<ZBasicDatum> &el = _dataTable[_dataPtr];
 	_dataPtr++;
-	if (el.type != kDatumSTR) {
-		warning("ZBasic::readStr: entry %d was unexpected type %d", _dataPtr-1, el.type);
+	if (el->type != kDatumSTR) {
+		warning("ZBasic::readStr: entry %d was unexpected type %d", _dataPtr-1, el->type);
 		return result;
 	}
-	result = *el.data.str;
+	result = *el->data.str;
 	return result;
 }
+
+int16 ZBasic::rndInt(int16 max) {
+	if (max == 0)
+		return 0;
+	max = (int16)abs(MAX<int16>(max, -32767));
+	return (int16)(g_engine->getRandomNumber(max - 1) + 1);
+}
+
+
+const Common::U32String &ZBasic::str(size_t index) {
+	return *_stringTable[index]->data.str;
+}
+
+void ZBasic::text(int16 font, int16 size, int16 face, ZBasicTextMode mode) {
+	warning("STUB: ZBasic::text");
+}
+
+void ZBasic::window(int16 windowNumber, const Common::String &title, int16 x1, int16 y1, int16 x2, int16 y2, ZBasicWindowType type) {
+	warning("STUB:: ZBasic::window");
+}
+
+void ZBasic::unk_6(int16 unk1, int32 unk2, int16 unk3, int16 unk4) {
+	warning("STUB:: ZBasic::unk_6");
+}
+
+void ZBasic::unk_20() {
+	warning("STUB: ZBasic::unk_20");
+}
+
+void ZBasic::unk_130(int16 unk1) {
+	warning("STUB: ZBasic::unk_130");
+}
+
 
 } // namespace Fool

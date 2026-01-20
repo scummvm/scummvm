@@ -26,6 +26,12 @@
 
 namespace Fool {
 
+struct FOOLGameDescription {
+	AD_GAME_DESCRIPTION_HELPERS(desc);
+
+	ADGameDescription desc;
+};
+
 enum FoolDebugChannels {
 	kDebugGraphics = 1 << 0,
 	kDebugPath     = 1 << 1,

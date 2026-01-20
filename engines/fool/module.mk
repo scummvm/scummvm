@@ -6,10 +6,8 @@ MODULE_OBJS = \
 	toolbox.o \
 	zbasic.o \
 	console.o \
-	events.o \
 	messages.o \
-	metaengine.o \
-	view1.o
+	metaengine.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_FOOL), DYNAMIC_PLUGIN)
