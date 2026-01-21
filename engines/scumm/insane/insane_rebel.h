@@ -500,6 +500,7 @@ public:
 
 	int16 _rebelLinks[512][3]; // Dependency links: Slot 0 (Disable on death), Slot 1/2 (Enable on death)
 	void clearBit(int n);
+	bool isShootingAllowed();  // FUN_0040d836/FUN_00401CCF: Check control mode before spawning shots
 
 	struct Explosion {
 		int x, y;
