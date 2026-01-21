@@ -1107,14 +1107,14 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 		tattooFilesNameKeymap->addAction(act);
 
 		// I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the save file name input field
-		act = new Action("GOSTART", _("Go to the line start"));
+		act = new Action("GOSTART", _("Go to start of line"));
 		act->setCustomEngineActionEvent(kActionTattooFilesNameStart);
 		act->addDefaultInputMapping("HOME");
 		act->addDefaultInputMapping("KP7");
 		tattooFilesNameKeymap->addAction(act);
 
 		// I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the save file name input field
-		act = new Action("GOEND", _("Go to the line end"));
+		act = new Action("GOEND", _("Go to end of line"));
 		act->setCustomEngineActionEvent(kActionTattooFilesNameEnd);
 		act->addDefaultInputMapping("END");
 		act->addDefaultInputMapping("KP1");
