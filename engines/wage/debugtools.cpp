@@ -68,6 +68,16 @@ void drawThicknessIcon(int thickness) {
 	ImGui::SetItemTooltip("Line thickness: %d", thickness);
 }
 
+void drawMissingPatternIcon() {
+	ImVec2 pos = ImGui::GetCursorScreenPos();
+	ImDrawList *dl = ImGui::GetWindowDrawList();
+	float size = 16.0f;
+
+	dl->AddLine(pos, pos + ImVec2(size, size), IM_COL32(255, 0, 0, 255));
+	dl->AddRect(pos, pos + ImVec2(size, size), IM_COL32(255, 255, 255, 255));
+	ImGui::Dummy(ImVec2(size, size));
+}
+
 ImGuiImage getImageID(Designed *d, const char *type, int steps = -1) {
 	Common::String key = Common::String::format("%s:%s:%d", d->_name.c_str(), type, steps);
 
@@ -154,21 +164,21 @@ void showDesignScriptWindow(Design *d) {
 			// draw current foreground fill pattern
 			if (op.fillType > 0) {
 				ImGuiImage patImg = getPatternImage(op.fillType);
-				if (patImg.id) {
-					showImage(patImg, 1.0f);
-					ImGui::SetItemTooltip("Foreground pattern: %d", op.fillType);
-					ImGui::SameLine();
-				}
+				if (patImg.id) showImage(patImg, 1.0f);
+				else drawMissingPatternIcon();
+
+				ImGui::SetItemTooltip("Foreground pattern: %d", op.fillType);
+				ImGui::SameLine();
 			}
 
 			// draw current border fill pattern
 			if (op.borderFillType > 0) {
 				ImGuiImage patImg = getPatternImage(op.borderFillType);
-				if (patImg.id) {
-					showImage(patImg, 1.0f);
-					ImGui::SetItemTooltip("Border pattern: %d", op.borderFillType);
-					ImGui::SameLine();
-				}
+				if (patImg.id) showImage(patImg, 1.0f);
+				else drawMissingPatternIcon();
+
+				ImGui::SetItemTooltip("Border pattern: %d", op.borderFillType);
+				ImGui::SameLine();
 			}
 
 			// draw line thickness icon
@@ -237,6 +247,19 @@ void showDesignViewer(Designed *item, const char *typeStr) {
 	}
 }
 
+void resetStepToLast(Designed *d) {
+	if (d && d->_design) {
+		// if drawOps is empty, force a paint to calculate steps
+		if (d->_design->_drawOps.empty()) {
+			Graphics::ManagedSurface tmp(1, 1, Graphics::PixelFormat::createFormatCLUT8());
+			d->_design->paint(&tmp, *g_wage->_world->_patterns, 0, 0, -1);
+		}
+		_state->_currentStep = d->_design->_drawOps.size();
+	} else {
+		_state->_currentStep = 1;
+	}
+}
+
 static void showWorld() {
 	if (!_state->_showWorld)
 		return;
@@ -275,7 +298,7 @@ static void showWorld() {
 							Common::String label = Common::String::format("%s##%d", g_wage->_world->_orderedScenes[n]->_name.c_str(), n);
 							if (ImGui::Selectable(label.c_str(), is_selected)) {
 								_state->_selectedScene = n;
-								_state->_currentStep = 1;
+								resetStepToLast(g_wage->_world->_orderedScenes[n]);
 							}
 
 							// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
@@ -335,8 +358,10 @@ static void showWorld() {
 						for (int n = 0; n < (int)g_wage->_world->_orderedObjs.size(); n++) {
 							const bool is_selected = (_state->_selectedObj == n);
 							Common::String label = Common::String::format("%s##%d", g_wage->_world->_orderedObjs[n]->_name.c_str(), n);
-							if (ImGui::Selectable(label.c_str(), is_selected))
+							if (ImGui::Selectable(label.c_str(), is_selected)) {
 								_state->_selectedObj = n;
+								resetStepToLast(g_wage->_world->_orderedObjs[n]);
+							}
 
 							// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 							if (is_selected)
@@ -369,8 +394,10 @@ static void showWorld() {
 						for (int n = 0; n < (int)g_wage->_world->_orderedChrs.size(); n++) {
 							const bool is_selected = (_state->_selectedChr == n);
 							Common::String label = Common::String::format("%s##%d", g_wage->_world->_orderedChrs[n]->_name.c_str(), n);
-							if (ImGui::Selectable(label.c_str(), is_selected))
+							if (ImGui::Selectable(label.c_str(), is_selected)) {
 								_state->_selectedChr = n;
+								resetStepToLast(g_wage->_world->_orderedChrs[n]);
+							}
 
 							// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 							if (is_selected)
@@ -387,9 +414,7 @@ static void showWorld() {
 				{ // Right pane
 					ImGui::BeginChild("ChildR", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Borders);
 
-					ImGuiImage imgID = getImageID(g_wage->_world->_orderedChrs[_state->_selectedChr], "chr");
-
-					showImage(imgID, 1.0);
+					showDesignViewer(g_wage->_world->_orderedChrs[_state->_selectedChr], "chr");
 
 					ImGui::EndChild();
 				}
