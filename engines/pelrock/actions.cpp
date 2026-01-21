@@ -77,6 +77,10 @@ const ActionEntry actionTable[] = {
 	{6, PICKUP, &PelrockEngine::pickCord},
 	{7, PICKUP, &PelrockEngine::pickAmulet},
 
+	// Room 4
+	{315, OPEN, &PelrockEngine::openPlug},
+	{316, PICKUP, &PelrockEngine::pickCables},
+
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
 	{WILDCARD, TALK, &PelrockEngine::noOpAction},   // Generic talk action
@@ -95,8 +99,88 @@ const CombinationEntry combinationTable[] = {
 	{62, 117, &PelrockEngine::useSpicySauceWithBurger}, // Use Spicy Sauce with Burger
 	{4, 294, &PelrockEngine::useBrickWithWindow},       // Use Brick with Window (Room 3)
 	{4, 295, &PelrockEngine::useBrickWithShopWindow},
+	{6, 315, &PelrockEngine::useCordWithPlug},
 	// End marker
 	{WILDCARD, WILDCARD, nullptr}};
+
+void PelrockEngine::openDoor(HotSpot *hotspot, int exitIndex, int sticker, bool masculine, bool stayClosed) {
+	if (_room->hasSticker(sticker)) {
+		int text = masculine == MASCULINE ? YA_ABIERTO_M : YA_ABIERTA_F;
+		_dialog->say(_res->_ingameTexts[text]);
+		return;
+	}
+	_room->enableExit(exitIndex, !stayClosed);
+	_room->addSticker(sticker, !stayClosed);
+	_sound->playSound(_room->_roomSfx[0]);
+}
+
+void PelrockEngine::closeDoor(HotSpot *hotspot, int exitIndex, int sticker, bool masculine, bool stayOpen) {
+	if (!_room->hasSticker(sticker)) {
+		int text = masculine == MASCULINE ? YA_CERRADO_M : YA_CERRADA_F;
+		_dialog->say(_res->_ingameTexts[text]);
+		return;
+	}
+	_room->disableExit(exitIndex, !stayOpen);
+	_room->removeSticker(sticker);
+	_sound->playSound(_room->_roomSfx[1]);
+}
+
+void PelrockEngine::addInventoryItem(int item) {
+	if (_state->inventoryItems.size() == 0) {
+		_state->selectedInventoryItem = item;
+	}
+	_flashingIcon = item;
+	int frameCounter = 0;
+	while (frameCounter < kIconFlashDuration) {
+		_events->pollEvent();
+
+		bool didRender = renderScene(OVERLAY_PICKUP_ICON);
+		_screen->update();
+		if (didRender) {
+			frameCounter++;
+		}
+		g_system->delayMillis(10);
+	}
+	_state->addInventoryItem(item);
+}
+
+void PelrockEngine::buyFromStore(HotSpot *hotspot, int stickerId) {
+	if (_state->hasInventoryItem(5) == false) {
+		_dialog->say(_res->_ingameTexts[NOTENGODINERO]);
+		return;
+	} else {
+		_room->addSticker(stickerId);
+		_room->disableHotspot(hotspot);
+		if (hotspot->extra == 69) {
+			_room->disableSprite(15, 3); // Disable monkey brain sprite
+		}
+		_state->addInventoryItem(hotspot->extra);
+		_currentHotspot = nullptr;
+		walkLoop(224, 283, ALFRED_LEFT);
+		_dialog->say(_res->_ingameTexts[CUESTA1000]);
+		_dialog->say(_res->_ingameTexts[AQUITIENE]);
+		_dialog->say(_res->_ingameTexts[MUYBIEN]);
+		_state->removeInventoryItem(5); // Remove 1000 pesetas bill
+	}
+}
+
+void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte rootIndex) {
+	if (actionTrigger == 328) {
+		debug("Disabling root %d in room %d", rootIndex, room);
+		_state->setRootDisabledState(room, rootIndex, true);
+	}
+}
+
+void PelrockEngine::noOpAction(HotSpot *hotspot) {
+}
+
+void PelrockEngine::noOpItem(int item, HotSpot *hotspot) {
+	// 154 to 169
+	debug("No-op item %d with hotspot %d", item, hotspot->extra);
+	_alfredState.direction = ALFRED_DOWN;
+	byte response = (byte)getRandomNumber(12);
+	_dialog->say(_res->_ingameTexts[154 + response]);
+}
 
 void PelrockEngine::openRoomDoor(HotSpot *hotspot) {
 	openDoor(hotspot, 0, 93, FEMININE, true);
@@ -139,7 +223,7 @@ void PelrockEngine::closeRoomDrawer(HotSpot *hotspot) {
 
 void PelrockEngine::useCardWithATM(int inventoryObject, HotSpot *hotspot) {
 	debug("Withdrawing money from ATM using card (inv obj %d)", inventoryObject);
-	if (_state->flagIsSet(FLAG_JEFE_INGRESA_PASTA)) {
+	if (_state->getFlag(FLAG_JEFE_INGRESA_PASTA)) {
 		_state->setFlag(FLAG_JEFE_INGRESA_PASTA, false);
 		addInventoryItem(75);
 	} else {
@@ -193,7 +277,7 @@ void PelrockEngine::closeKitchenDoor(HotSpot *HotSpot) {
 }
 
 void PelrockEngine::openKitchenDrawer(HotSpot *hotspot) {
-	if (!_state->flagIsSet(FLAG_JEFE_ENCARCELADO)) {
+	if (!_state->getFlag(FLAG_JEFE_ENCARCELADO)) {
 		_dialog->say(_res->_ingameTexts[QUITA_ESAS_MANOS]);
 	} else {
 		_room->addSticker(36);
@@ -212,7 +296,7 @@ void PelrockEngine::useSpicySauceWithBurger(int inventoryObject, HotSpot *hotspo
 }
 
 void PelrockEngine::openShopDoor(HotSpot *hotspot) {
-	if (!_state->flagIsSet(FLAG_TIENDA_ABIERTA)) {
+	if (!_state->getFlag(FLAG_TIENDA_ABIERTA)) {
 		_dialog->say(_res->_ingameTexts[TIENDA_CERRADA]);
 		return;
 	} else {
@@ -344,73 +428,43 @@ void PelrockEngine::pickAmulet(HotSpot *hotspot) {
 	buyFromStore(hotspot, 49);
 }
 
-void PelrockEngine::openDoor(HotSpot *hotspot, int exitIndex, int sticker, bool masculine, bool stayClosed) {
-	if (_room->hasSticker(sticker)) {
-		int text = masculine == MASCULINE ? YA_ABIERTO_M : YA_ABIERTA_F;
-		_dialog->say(_res->_ingameTexts[text]);
-		return;
-	}
-	_room->enableExit(exitIndex, !stayClosed);
-	_room->addSticker(sticker, !stayClosed);
-	_sound->playSound(_room->_roomSfx[0]);
+void PelrockEngine::openPlug(HotSpot *hotspot) {
+	_room->addSticker(18);
 }
 
-void PelrockEngine::closeDoor(HotSpot *hotspot, int exitIndex, int sticker, bool masculine, bool stayOpen) {
-	if (!_room->hasSticker(sticker)) {
-		int text = masculine == MASCULINE ? YA_CERRADO_M : YA_CERRADA_F;
-		_dialog->say(_res->_ingameTexts[text]);
-		return;
-	}
-	_room->disableExit(exitIndex, !stayOpen);
-	_room->removeSticker(sticker);
-	_sound->playSound(_room->_roomSfx[1]);
-}
-
-void PelrockEngine::addInventoryItem(int item) {
-	if (_state->inventoryItems.size() == 0) {
-		_state->selectedInventoryItem = item;
-	}
-	_flashingIcon = item;
-	int frameCounter = 0;
-	while (frameCounter < kIconFlashDuration) {
-		_events->pollEvent();
-
-		bool didRender = renderScene(OVERLAY_PICKUP_ICON);
-		_screen->update();
-		if (didRender) {
-			frameCounter++;
+void PelrockEngine::useCordWithPlug(int inventoryObject, HotSpot *hotspot) {
+	if (!_room->hasSticker(18)) {
+		_dialog->say(_res->_ingameTexts[PRIMERO_ABRIRLO]);
+	} else {
+		debug("Flag is %d", _state->getFlag(FLAG_CABLES_PUESTOS));
+		if (_state->getFlag(FLAG_CABLES_PUESTOS)) {
+			_room->addSticker(19);
+			_room->moveHotspot(_room->findHotspotByIndex(6), 391, 381);
 		}
-		g_system->delayMillis(10);
-	}
-	_state->addInventoryItem(item);
-}
-
-void PelrockEngine::buyFromStore(HotSpot *hotspot, int stickerId) {
-	if(_state->hasInventoryItem(5) == false)
-	{
-		_dialog->say(_res->_ingameTexts[NOTENGODINERO]);
-		return;
-	}
-	else {
-		_room->addSticker(stickerId);
-		_room->disableHotspot(hotspot);
-		_state->addInventoryItem(hotspot->extra);
-		_currentHotspot = nullptr;
-		walkLoop(224, 283, ALFRED_LEFT);
-		_dialog->say(_res->_ingameTexts[CUESTA1000]);
-		_dialog->say(_res->_ingameTexts[AQUITIENE]);
-		_dialog->say(_res->_ingameTexts[MUYBIEN]);
-		_state->removeInventoryItem(5); // Remove 1000 pesetas bill
 	}
 }
 
+void PelrockEngine::pickCables(HotSpot *hotspot) {
+	// Duck to pick cables
+	_res->loadAlfredSpecialAnim(2);
+	_alfredState.animState = ALFRED_SPECIAL_ANIM;
+	waitForSpecialAnimation();
 
+	// electric shock
+	int prevX = _alfredState.x;
+	_alfredState.x -= 20;
+	_res->loadAlfredSpecialAnim(3);
+	_alfredState.animState = ALFRED_SPECIAL_ANIM;
+	waitForSpecialAnimation();
+	_alfredState.x = prevX;
 
-void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte rootIndex) {
-	if (actionTrigger == 328) {
-		debug("Disabling root %d in room %d", rootIndex, room);
-		_state->setRootDisabledState(room, rootIndex, true);
-	}
+	// Stand up (reverse of duck)
+	_res->loadAlfredSpecialAnim(2, true);
+	_alfredState.animState = ALFRED_SPECIAL_ANIM;
+	waitForSpecialAnimation();
+	_room->addSticker(21);
+
+	_dialog->say(_res->_ingameTexts[RELOJ_HA_CAMBIADO]);
 }
 
 void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
@@ -424,17 +478,6 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 		_screen->update();
 		break;
 	}
-}
-
-void PelrockEngine::noOpAction(HotSpot *hotspot) {
-}
-
-void PelrockEngine::noOpItem(int item, HotSpot *hotspot) {
-	// 154 to 169
-	debug("No-op item %d with hotspot %d", item, hotspot->extra);
-	_alfredState.direction = ALFRED_DOWN;
-	byte response = (byte)getRandomNumber(12);
-	_dialog->say(_res->_ingameTexts[154 + response]);
 }
 
 void PelrockEngine::useOnAlfred(int inventoryObject) {

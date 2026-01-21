@@ -273,6 +273,9 @@ public:
 	void pickHat(HotSpot *hotspot);
 	void pickCord(HotSpot *hotspot);
 	void pickAmulet(HotSpot *hotspot);
+	void openPlug(HotSpot *hotspot);
+	void useCordWithPlug(int inventoryObject, HotSpot *hotspot);
+	void pickCables(HotSpot *hotspot);
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);
 };

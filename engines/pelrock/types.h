@@ -71,6 +71,8 @@ const int kAlfredFrameHeight = 102;
 const int kChoiceHeight = 16; // Height of each choice line in pixels
 
 const int kTalkAnimationSpeed = 2; // Frames per update
+const int kAlfredAnimationSpeed = 2; // Frames per update
+
 
 const int kAlfredIdleAnimationFrameCount = 300;
 
@@ -111,6 +113,27 @@ enum AlfredDirection {
 	ALFRED_LEFT = 1,
 	ALFRED_DOWN = 2,
 	ALFRED_UP = 3
+};
+
+struct AlfredSpecialAnim {
+	byte *animData = nullptr;
+	int w = 0;
+	int h = 0;
+	int numFrames = 0;
+	int loopCount = 0;
+	uint32 stride = 0;
+	int curFrame = 0;
+	int curLoop = 0;
+	AlfredSpecialAnim(int nF, int width, int height, int nBudas, uint32 off, int loopCount)
+		: numFrames(nF), w(width), h(height), loopCount(loopCount) {
+		stride = w * h;
+	}
+	~AlfredSpecialAnim() {
+		if (animData) {
+			delete[] animData;
+			animData = nullptr;
+		}
+	}
 };
 
 struct ActionPopupState {
@@ -433,19 +456,18 @@ struct ResetEntry {
 #define FLAG_HE_TIRADO_PIEDRA 44
 #define FLAG_HA_USADO_AGUA 45
 #define FLAG_TIENDA_ABIERTA 46
+#define FLAG_NUMERO_DE_COPAS 47
+#define FLAG_INGREDIENTES_CONSEGUIDOS 48
 
-const int kNumGameFlags = 47;
+const int kNumGameFlags = 49;
 
 struct GameStateData {
-	bool flags[kNumGameFlags];
-
-	byte NUMERO_DE_COPAS = false;
-	byte INGREDIENTES_CONSEGUIDOS = 0;
+	byte flags[kNumGameFlags];
 
 	GameState stateGame = INTRO;
 
 	Common::Array<byte> inventoryItems;
-	int16 selectedInventoryItem = 0;
+	int16 selectedInventoryItem = -1;
 
 	Common::HashMap<byte, Common::Array<Sticker>> stickersPerRoom;
 	// Common::HashMap<byte, ResetEntry> roomExitChanges;
@@ -457,6 +479,8 @@ struct GameStateData {
 
 	GameStateData() {
 		memset(conversationRootsState, 0, 4 * 56);
+		for (int i = 0; i < kNumGameFlags; i++)
+			flags[i] = 0;
 		flags[FLAG_ENTRA_EN_TIENDA_PRIMERA_VEZ] = true;
 	}
 
@@ -469,13 +493,13 @@ struct GameStateData {
 		disabledBranches[entry.room].push_back(entry);
 	}
 
-	bool flagIsSet(int flagIndex) const {
+	byte getFlag(int flagIndex) const {
 		if (flagIndex < 0 || flagIndex >= kNumGameFlags)
 			return false;
 		return flags[flagIndex];
 	}
 
-	void setFlag(int flagIndex, bool value) {
+	void setFlag(int flagIndex, byte value) {
 		if (flagIndex < 0 || flagIndex >= kNumGameFlags)
 			return;
 		flags[flagIndex] = value;

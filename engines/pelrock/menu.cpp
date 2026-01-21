@@ -269,6 +269,7 @@ void MenuManager::loadMenu() {
 	readButton(alfred7, alfred7.pos(), _savesDownArrows, _savesDown);
 	readButton(alfred7, 3214046, _questionMark, _questionMarkRect);
 
+	_menuText = _menuTexts[0];
 	alfred7.close();
 }
 

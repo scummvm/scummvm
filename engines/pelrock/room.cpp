@@ -215,6 +215,7 @@ Sprite *RoomManager::findSpriteByIndex(byte index) {
 HotSpot *RoomManager::findHotspotByIndex(byte index) {
 	for (int i = 0; i < _currentRoomHotspots.size(); i++) {
 		if (!_currentRoomHotspots[i].isSprite && _currentRoomHotspots[i].innerIndex == index) {
+			debug("Found hotspot %d at index %d, extra = %d", index, i, _currentRoomHotspots[i].extra);
 			return &_currentRoomHotspots[i];
 		}
 	}
@@ -379,6 +380,7 @@ Common::Array<HotSpot> RoomManager::loadHotspots(byte *data, size_t size) {
 			// if the hotspot has been changed, load the changed version
 			for (int j = 0; j < g_engine->_state->roomHotSpotChanges[_currentRoomNumber].size(); j++) {
 				if (g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspotIndex == spot.innerIndex) {
+					debug("Hotspot %d has been changed, loading changed version, Hotspot x=%d, y = %d, extra = %d", spot.innerIndex, g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot.x, g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot.y, g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot.extra);
 					hotspots.push_back(g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot);
 					isChanged = true;
 					break;
@@ -394,7 +396,7 @@ Common::Array<HotSpot> RoomManager::loadHotspots(byte *data, size_t size) {
 		spot.h = data[hotspotOffset + 6];
 		spot.isSprite = false;
 		spot.extra = READ_LE_INT16(data + hotspotOffset + 7);
-		debug("Hotspot %d: type=%d x=%d y=%d w=%d h=%d extra=%d, isEnabled=%d", spot.innerIndex, spot.actionFlags, spot.x, spot.y, spot.w, spot.h, spot.extra, spot.isEnabled);
+		debug("Hotspot %d: type=%d x=%d y=%d w=%d h=%d extra=%d, index =%d, isEnabled=%d", spot.innerIndex, spot.actionFlags, spot.x, spot.y, spot.w, spot.h, spot.extra, spot.innerIndex, spot.isEnabled);
 		hotspots.push_back(spot);
 	}
 

@@ -217,28 +217,46 @@ void ResourceManager::loadAlfredAnims() {
 	free(alfredCombLeftRaw);
 }
 
-void ResourceManager::loadAlfredSpecialAnim(int numAnim) {
-	_curSpecialAnim = alfredSpecialAnims[numAnim];
+void ResourceManager::loadAlfredSpecialAnim(int numAnim, bool reverse) {
+	AlfredSpecialAnimOffset offset = alfredSpecialAnims[numAnim];
 	Common::File alfred7;
 	if (!alfred7.open(Common::Path("ALFRED.7"))) {
 		error("Could not open ALFRED.7");
 		return;
 	}
 
-	alfred7.seek(_curSpecialAnim.offset, SEEK_SET);
-	_specialAnimData = new byte[_curSpecialAnim.numFrames * _curSpecialAnim.w * _curSpecialAnim.h];
-	debug("Special anim buffer size: %d", _curSpecialAnim.numFrames * _curSpecialAnim.w * _curSpecialAnim.h);
-	mergeRleBlocks(&alfred7, _curSpecialAnim.offset, _curSpecialAnim.numBudas, _specialAnimData);
-	_specialAnimCurFrame = 0;
+	alfred7.seek(offset.offset, SEEK_SET);
+	if(_currentSpecialAnim)
+		delete _currentSpecialAnim;
+	_currentSpecialAnim = new AlfredSpecialAnim(offset.numFrames, offset.w, offset.h, offset.numBudas, offset.offset, offset.loops);
+	_currentSpecialAnim->animData = new byte[offset.numFrames * offset.w * offset.h];
+	if(offset.numBudas > 0) {
+		mergeRleBlocks(&alfred7, offset.offset, offset.numBudas, _currentSpecialAnim->animData);
+	}
+	else {
+		alfred7.read(_currentSpecialAnim->animData, offset.numFrames * offset.w * offset.h);
+	}
+	if(reverse) {
+		// reverse frames for testing
+		byte *reversedData = new byte[offset.numFrames * offset.w * offset.h];
+		for(int i = 0; i < offset.numFrames; i++) {
+			extractSingleFrame(_currentSpecialAnim->animData,
+							   &reversedData[i * offset.w * offset.h],
+							   offset.numFrames - 1 - i,
+							   offset.w,
+							   offset.h);
+		}
+		delete[] _currentSpecialAnim->animData;
+		_currentSpecialAnim->animData = reversedData;
+	}
+
 	_isSpecialAnimFinished = false;
 	alfred7.close();
 }
 
 void ResourceManager::clearSpecialAnim() {
-	delete[] _specialAnimData;
-	_specialAnimData = nullptr;
-	_specialAnimCurFrame = 0;
-	_speciaAnimLoopCount = 0;
+	delete _currentSpecialAnim;
+	_currentSpecialAnim = nullptr;
 }
 
 void ResourceManager::loadInventoryItems() {

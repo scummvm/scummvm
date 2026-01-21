@@ -45,7 +45,7 @@ public:
 	void loadCursors();
 	void loadInteractionIcons();
 	void loadAlfredAnims();
-	void loadAlfredSpecialAnim(int numAnim);
+	void loadAlfredSpecialAnim(int numAnim, bool reverse = false);
 	void clearSpecialAnim();
 	void loadInventoryItems();
 	void loadAlfredResponses();
@@ -71,10 +71,11 @@ public:
 	Common::Array<Common::StringArray> _ingameTexts;
 
 	// Special anims
-	byte *_specialAnimData = nullptr;
-	int _specialAnimCurFrame = 0;
-	int _speciaAnimLoopCount = 0;
-	AlfredSpecialAnimOffset _curSpecialAnim;
+	AlfredSpecialAnim *_currentSpecialAnim = nullptr;
+	// byte *_specialAnimData = nullptr;
+	// int _specialAnimCurFrame = 0;
+	// int _speciaAnimLoopCount = 0;
+	// AlfredSpecialAnimOffset _curSpecialAnim;
 	bool _isSpecialAnimFinished = false;
 };
 

@@ -92,7 +92,8 @@ public:
 	void applyDisabledChoice(ResetEntry entry, byte *conversationData, size_t conversationDataSize);
 	void addDisabledChoice(ChoiceOption choice);
 	bool isPickableByExtra(uint16 extra)  {
-		for(int i = 0; i < sizeof(unpickableHotspotExtras); i++) {
+		int size = sizeof(unpickableHotspotExtras) / sizeof(unpickableHotspotExtras[0]);
+		for(int i = 0; i < size; i++) {
 			if (extra == unpickableHotspotExtras[i])
 				return false;
 		}
