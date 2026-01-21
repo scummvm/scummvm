@@ -365,8 +365,17 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_chapterItemCount = 17;       // 16 chapters + BACK
 	_selectedChapter = 0;         // Default selected chapter
 	_passwordInput = "";          // No password input
+
+	// Debug flag to unlock all chapters for testing
+	// Based on original debug mode (DAT_0047ab34 == 'd') from FUN_00415CF8
+	// Set to true to bypass normal unlock progression
+	_debugUnlockAll = true;  // TODO: Set to false for release, or read from ScummVM config
+
 	for (i = 0; i < 16; i++) {
-		_chapterUnlocked[i] = (i == 0);  // Only chapter 1 unlocked initially
+		// If debug unlock is enabled, unlock all chapters
+		// Otherwise only chapter 1 (index 0) is unlocked initially
+		// Original: pilotData->scores[chapter] < 0xFF means unlocked
+		_chapterUnlocked[i] = _debugUnlockAll || (i == 0);
 	}
 
 	// Initialize preview offset for chapter selection (FUN_00425170)
@@ -3675,8 +3684,12 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		CursorMan.showMouse(true);
 
 		// Fill screen with BLACK background
-		// The original uses O_LEVEL.SAN (640x400) which has a black background.
-		// For 320x200 mode, we just fill with black (color index 0).
+		// The original game plays O_LEVEL.SAN (640x400) which has a dark/black background
+		// with chapter preview thumbnails embedded. For 320x200 mode, we fill with black
+		// to match the visual appearance and overlay the UI elements.
+		// Note: O_MENU_X.SAN (320x200) doesn't contain chapter-specific preview images,
+		// those are only in O_LEVEL.SAN (640x400). We use a styled placeholder instead.
+		// From FUN_00415CF8 line 57: FUN_0041f4d0(s_OPEN_O_LEVEL_SAN_004806e0,8,0xffff,0xffff,0);
 		for (int y = 0; y < height; y++) {
 			memset(renderBitmap + y * pitch, 0, width);
 		}
@@ -4953,6 +4966,18 @@ void InsaneRebel2::resetMenu() {
 	_menuRepeatDelay = 0;
 }
 
+// Unlock all chapters for testing
+// Emulates the debug mode from original FUN_00415CF8 (lines 60-71)
+// where DAT_0047ab34 == 'd' enables level unlock via special codes
+void InsaneRebel2::unlockAllChapters() {
+	debug("Rebel2: Unlocking all chapters for testing");
+	_debugUnlockAll = true;
+	for (int i = 0; i < 16; i++) {
+		_chapterUnlocked[i] = true;
+		_levelUnlocked[i] = true;
+	}
+}
+
 Common::String InsaneRebel2::getRandomMenuVideo() {
 	// Emulates FUN_0041FDC8 - selects random menu video variant
 	//
@@ -5792,35 +5817,42 @@ void InsaneRebel2::drawPreviewBox(byte *renderBitmap, int pitch, int width, int 
 	}
 }
 
-// Draw preview thumbnail content - emulates FUN_00429b40 scaled preview draw
-// Shows chapter number and unlock status inside the preview box
+// Draw preview thumbnail content - emulates FUN_00428a10 + FUN_00429b40
+// Based on FUN_00415CF8 assembly analysis:
+//
+// The original uses O_LEVEL.SAN (640x400) with chapter previews stacked vertically.
+// Video offset (FUN_00425170) shifts which preview is visible:
+//   X offset = -90 (0xffa6)
+//   Y offset = chapter * -50 + 75
+//
+// For 320x200 mode, O_MENU_X.SAN doesn't contain chapter-specific preview images.
+// Those are only in O_LEVEL.SAN (640x400). We display a styled placeholder instead
+// with the chapter number and visual styling to match the original UI appearance.
 void InsaneRebel2::drawPreviewThumbnail(byte *renderBitmap, int pitch, int width, int height, int chapter) {
-	// Preview area coordinates (inside the inner border)
-	// Inner box: X=230 (229+1), Y=75 (74+1), W=80 (82-2), H=50 (52-2)
-	int previewX = 230;
-	int previewY = 75;
-	int previewW = 80;
-	int previewH = 50;
+	// Preview destination area coordinates (inside the inner border)
+	// From assembly: Inner box at X=230, Y=75, W=80, H=50
+	const int destX = 230;
+	const int destY = 75;
+	const int thumbW = 80;  // 0x50
+	const int thumbH = 50;  // 0x32
 
-	// Update preview offset based on chapter selection (FUN_00425170)
-	// Y offset = chapter * -50 + 75
-	_previewOffsetY = chapter * -50 + 75;
+	// Fill preview area with a dark blue gradient background
+	// This creates a styled placeholder since O_MENU_X.SAN doesn't have previews
+	for (int py = 0; py < thumbH; py++) {
+		int dy = destY + py;
+		if (dy < 0 || dy >= height) continue;
 
-	// Determine fill color based on chapter state
-	// Unlocked: dark blue (0x10), Locked: dark gray (0x08)
-	byte fillColor = (_chapterUnlocked[chapter]) ? 0x10 : 0x08;
+		// Create vertical gradient: darker at top (0x10), lighter at bottom (0x18)
+		byte bgColor = 0x10 + (py * 8 / thumbH);
 
-	// Fill the preview area with background color
-	for (int py = previewY; py < previewY + previewH && py < height; py++) {
-		if (py >= 0) {
-			for (int px = previewX; px < previewX + previewW && px < width; px++) {
-				if (px >= 0)
-					renderBitmap[py * pitch + px] = fillColor;
-			}
+		for (int px = 0; px < thumbW; px++) {
+			int dx = destX + px;
+			if (dx < 0 || dx >= width) continue;
+			renderBitmap[dy * pitch + dx] = bgColor;
 		}
 	}
 
-	// Draw chapter number in the center of the preview area
+	// Draw chapter number overlay in the center of the preview
 	NutRenderer *font = _smush_smalfontNut;
 	if (!font) return;
 
@@ -5828,7 +5860,7 @@ void InsaneRebel2::drawPreviewThumbnail(byte *renderBitmap, int pitch, int width
 	if (chapter < 15) {
 		snprintf(chapterStr, sizeof(chapterStr), "CH.%d", chapter + 1);
 	} else {
-		snprintf(chapterStr, sizeof(chapterStr), "FIN");  // FINALE
+		snprintf(chapterStr, sizeof(chapterStr), "FINALE");
 	}
 
 	// Calculate text width for centering
@@ -5842,13 +5874,27 @@ void InsaneRebel2::drawPreviewThumbnail(byte *renderBitmap, int pitch, int width
 	}
 
 	// Center the text in the preview area
-	int textX = previewX + (previewW - textWidth) / 2;
-	int textY = previewY + previewH / 2 - 4;  // Center vertically (approx)
+	int textX = destX + (thumbW - textWidth) / 2;
+	int textY = destY + thumbH / 2 - 4;
 
 	Common::Rect clipRect(0, 0, width, height);
 
-	// Draw the chapter text
-	int curX = textX;
+	// Draw text shadow (offset by 1,1)
+	int curX = textX + 1;
+	for (const char *c = chapterStr; *c; c++) {
+		int charIdx = (unsigned char)*c;
+		if (charIdx < numChars) {
+			int charWidth = font->getCharWidth(charIdx);
+			if (curX >= 0 && curX + charWidth <= width && textY + 1 >= 0 && textY + 1 < height) {
+				font->drawCharV7(renderBitmap, clipRect, curX, textY + 1, pitch, 0,
+				                 kStyleAlignLeft, charIdx, true, true);
+			}
+			curX += charWidth;
+		}
+	}
+
+	// Draw main text (bright)
+	curX = textX;
 	for (const char *c = chapterStr; *c; c++) {
 		int charIdx = (unsigned char)*c;
 		if (charIdx < numChars) {
@@ -5861,18 +5907,28 @@ void InsaneRebel2::drawPreviewThumbnail(byte *renderBitmap, int pitch, int width
 		}
 	}
 
-	// Draw lock icon for locked chapters (simple "X" pattern)
+	// Draw lock icon for locked chapters
 	if (!_chapterUnlocked[chapter]) {
-		byte lockColor = 0xF8;  // Bright red/orange
-		int lockX = previewX + previewW - 15;
-		int lockY = previewY + 5;
+		byte lockColor = 0xF8;
+		int lockX = destX + thumbW - 15;
+		int lockY = destY + 5;
 
-		// Draw small X to indicate locked
-		for (int i = 0; i < 8; i++) {
-			if (lockX + i < width && lockY + i < height)
-				renderBitmap[(lockY + i) * pitch + lockX + i] = lockColor;
-			if (lockX + 7 - i < width && lockY + i < height)
-				renderBitmap[(lockY + i) * pitch + lockX + 7 - i] = lockColor;
+		// Draw padlock shape
+		for (int i = 2; i < 6; i++) {
+			if (lockX + i < width && lockY < height && lockY >= 0)
+				renderBitmap[lockY * pitch + lockX + i] = lockColor;
+		}
+		for (int i = 1; i < 4; i++) {
+			if (lockX + 2 < width && lockY + i < height && lockY + i >= 0)
+				renderBitmap[(lockY + i) * pitch + lockX + 2] = lockColor;
+			if (lockX + 5 < width && lockY + i < height && lockY + i >= 0)
+				renderBitmap[(lockY + i) * pitch + lockX + 5] = lockColor;
+		}
+		for (int y = 0; y < 4; y++) {
+			for (int x = 1; x < 7; x++) {
+				if (lockX + x < width && lockY + 4 + y < height && lockY + 4 + y >= 0)
+					renderBitmap[(lockY + 4 + y) * pitch + lockX + x] = lockColor;
+			}
 		}
 	}
 }

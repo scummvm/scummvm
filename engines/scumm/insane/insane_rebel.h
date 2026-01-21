@@ -119,6 +119,11 @@ public:
 	int _selectedChapter;         // Final selected chapter ID (0-15)
 	Common::String _passwordInput; // Current password input string (max 8 chars)
 	bool _chapterUnlocked[16];    // Which chapters are unlocked
+	bool _debugUnlockAll;         // Debug flag to unlock all chapters for testing
+
+	// Unlock all chapters for testing (debug mode)
+	// Call this to enable access to all chapters without passwords
+	void unlockAllChapters();
 
 	// Run chapter selection screen - emulates FUN_00415CF8
 	int runChapterSelect();
