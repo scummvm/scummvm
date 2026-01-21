@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-20 23:50+0000\n"
+"POT-Creation-Date: 2026-01-21 22:17+0000\n"
 "PO-Revision-Date: 2026-01-19 18:28+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -1118,7 +1118,8 @@ msgstr "Backspace"
 msgid "Delete Character"
 msgstr "Cancella Carattere"
 
-#: gui/gui-manager.cpp:210
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the save file name input field
+#: gui/gui-manager.cpp:210 engines/sherlock/metaengine.cpp:1117
 msgid "Go to end of line"
 msgstr "Vai a fine riga"
 
@@ -1130,7 +1131,8 @@ msgstr "Seleziona fino a termine riga"
 msgid "Select to start of line"
 msgstr "Seleziona fino a inizio riga"
 
-#: gui/gui-manager.cpp:240
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the save file name input field
+#: gui/gui-manager.cpp:240 engines/sherlock/metaengine.cpp:1110
 msgid "Go to start of line"
 msgstr "Vai a inizio riga"
 
@@ -13672,18 +13674,6 @@ msgstr "Vai alla prossima pagina di salvataggi"
 msgid "Select save file"
 msgstr "Seleziona file salvataggio"
 
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the save file name input field
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the password input field
-#: engines/sherlock/metaengine.cpp:1110 engines/sherlock/metaengine.cpp:1215
-msgid "Go to the line start"
-msgstr "Vai a inizio riga"
-
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the save file name input field
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the password input field
-#: engines/sherlock/metaengine.cpp:1117 engines/sherlock/metaengine.cpp:1222
-msgid "Go to the line end"
-msgstr "Vai a fine riga"
-
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) save file name input field has 2 modes, insert and overwrite, this action toggles between them
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) save password input field has 2 modes, insert and overwrite, this action toggles between them
 #: engines/sherlock/metaengine.cpp:1124 engines/sherlock/metaengine.cpp:1229
@@ -13698,6 +13688,16 @@ msgstr "Chiudi puzzle"
 #: engines/sherlock/metaengine.cpp:1177
 msgid "Exit inventory / Close verb menu / Cancel item use action"
 msgstr "Esci dall'inventario / Chiudi menù verbi / Annulla uso di un oggetto"
+
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the password input field
+#: engines/sherlock/metaengine.cpp:1215
+msgid "Go to the line start"
+msgstr "Vai a inizio riga"
+
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the password input field
+#: engines/sherlock/metaengine.cpp:1222
+msgid "Go to the line end"
+msgstr "Vai a fine riga"
 
 #: engines/sherlock/metaengine.cpp:1239
 msgid "Select next option"
