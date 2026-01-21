@@ -25,6 +25,7 @@
 #include "common/system.h"
 #include "common/memstream.h"
 #include "common/events.h"
+#include "common/util.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/wincursor.h"
@@ -77,6 +78,16 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	// For now, use CPITIMAG since the game runs at 320x200
 	_smush_iconsNut = new NutRenderer(_vm, "SYSTM/CPITIMAG.NUT");
 	_smush_icons2Nut = nullptr;  // Not used for Rebel2
+
+	// Initialize laser texture buffer (DAT_0047fee4) from sprite 5 of CPITIMAG.NUT
+	// This is done by FUN_0040BAB0/FUN_0040BB87 in the original with sprite index 5
+	// Sprite 5 is 136x13 pixels - a wide, thin texture perfect for laser beams
+	_laserTexture.pixels = nullptr;
+	_laserTexture.width = 0;
+	_laserTexture.height = 0;
+	if (_smush_iconsNut && _smush_iconsNut->getNumChars() > 5) {
+		initLaserTexture(_smush_iconsNut, 5);
+	}
 	_smush_cockpitNut = new NutRenderer(_vm, "SYSTM/DISPFONT.NUT");
 
 	// Load SMALFONT.NUT for HUD score/lives rendering (DAT_00482200 equivalent)
@@ -246,10 +257,40 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_corridorBottomY = 200;
 	_hitCooldown = 0;
 
+	// Initialize legacy shot system (backwards compatibility)
 	for (i = 0; i < 2; i++) {
 		_shots[i].active = false;
 		_shots[i].counter = 0;
 	}
+
+	// Initialize Handler 0x26 Turret shot system (FUN_40AD63)
+	for (i = 0; i < 2; i++) {
+		_turretShots[i].counter = 0;
+		_turretShots[i].targetX = 0;
+		_turretShots[i].targetY = 0;
+		_turretShots[i].seqNum = 0;
+	}
+	_turretShotSeqCounter = 0;
+
+	// Initialize Handler 8 Vehicle shot system (FUN_402ED0)
+	for (i = 0; i < 2; i++) {
+		_vehicleShots[i].counter = 0;
+		_vehicleShots[i].targetX = 0;
+		_vehicleShots[i].targetY = 0;
+	}
+
+	// Initialize Handler 7 Space shot system (FUN_40FADF)
+	for (i = 0; i < 2; i++) {
+		_spaceShots[i].counter = 0;
+		_spaceShots[i].targetX = 0;
+		_spaceShots[i].targetY = 0;
+		_spaceShots[i].leftGunX = 0;
+		_spaceShots[i].leftGunY = 0;
+		_spaceShots[i].rightGunX = 0;
+		_spaceShots[i].rightGunY = 0;
+		_spaceShots[i].variant = 0;
+	}
+	_spaceShotDirection = 0;
 
 	for (i = 0; i < 16; i++) {
 		_rebelEmbeddedHud[i].pixels = nullptr;
@@ -387,6 +428,9 @@ InsaneRebel2::~InsaneRebel2() {
 	// Clean up Handler 0x26 turret HUD overlays
 	delete _hudOverlayNut;
 	delete _hudOverlay2Nut;
+
+	// Clean up laser texture buffer (DAT_0047fee4)
+	freeLaserTexture();
 
 	// Clean up embedded HUD overlays
 	for (int i = 0; i < 16; i++) {
@@ -910,7 +954,7 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 		}
 
 	} else if (par1 == 7) {
-		// Opcode 7: Sprite/HUD control for Handler 7 (space flight levels like Level 3)
+		// Opcode 7: Sprite/HUD control for Handler 7 (third-person ship levels like Level 3)
 		// par2 = control type (41 = sprite selection?)
 		// par3 = usually 0
 		// par4 = sprite/slot ID (0 or 5 seen in Level 3)
@@ -1110,12 +1154,12 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 	// Opcode 6: Level setup / mode switch
 	// Based on FUN_41CADB case 4 (switch on *local_14 - 2 == 4, meaning opcode 6)
 	//
-	// For Handler 8 (third-person vehicle) - FUN_00401234 case 4:
+	// For Handler 8 (third-person on foot) - FUN_00401234 case 4:
 	// - par3 sets ship level mode (DAT_0043e000)
 	// - par4 == 1 triggers status bar display and state reset
 	// - Updates ship position based on mouse input
 	//
-	// For Handler 0x26/0x19 (turret/space):
+	// For Handler 0x26/0x19 (turret/FPS):
 	// - Same par4 == 1 behavior
 	// - Different view offset calculations
 
@@ -1131,7 +1175,7 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		debug("Rebel2 Opcode 6: Setting handler=%d", par2);
 	}
 
-	// Handler 8 specific logic (third-person vehicle) - FUN_00401234 case 4
+	// Handler 8 specific logic (third-person on foot) - FUN_00401234 case 4
 	if (_rebelHandler == 8) {
 		// Set ship level mode (DAT_0043e000 = par3)
 		_shipLevelMode = par3;
@@ -1263,7 +1307,7 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		return;
 	}
 
-	// Handler 7 specific logic (space flight) - FUN_0040d836 / FUN_0040c3cc
+	// Handler 7 specific logic (third-person ship) - FUN_0040d836 / FUN_0040c3cc
 	// Used for Level 3 and similar space combat levels
 	if (_rebelHandler == 7) {
 		// Set control mode (DAT_004437c0 = par3 in FUN_40C3CC case 4)
@@ -1700,7 +1744,7 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 	int64 startPos = b.pos();
 	int64 remaining = (chunkSize > 0) ? chunkSize : (b.size() - startPos);
 
-	// ===== Handler 7: FLY NUT Loading (Space Flight) =====
+	// ===== Handler 7: FLY NUT Loading (Third-Person Ship) =====
 	// FUN_0040c3cc case 6: par4 determines FLY sprite slot
 	bool isHandler7FLY = (_rebelHandler == 7 && (par4 == 1 || par4 == 2 || par4 == 3 || par4 == 11));
 	if (isHandler7FLY && remaining >= 14) {
@@ -2899,15 +2943,97 @@ void InsaneRebel2::spawnExplosion(int x, int y, int objectHalfWidth) {
 	}
 }
 
+// Get max shot duration from level table (DAT_0047e0f0 indexed by DAT_0047a7fa/DAT_0047a7f8)
+// For now, use a reasonable default based on observed values
+int16 InsaneRebel2::getShotMaxDuration() {
+	// The original uses: DAT_0047e0f0 + DAT_0047a7fa * 0x242 + DAT_0047a7f8 * 0x22
+	// Typical values observed: 2-5 frames
+	return 4;
+}
+
+// Dispatcher - calls appropriate spawn function based on current handler
 void InsaneRebel2::spawnShot(int x, int y) {
-	// Find free shot slot (2 slots total)
+	switch (_rebelHandler) {
+	case 0x26:  // Turret
+		spawnTurretShot(x, y);
+		break;
+	case 8:     // Vehicle
+		spawnVehicleShot(x, y);
+		break;
+	case 7:     // Space combat
+		spawnSpaceShot(x, y);
+		break;
+	default:
+		// Legacy fallback
+		for (int i = 0; i < 2; i++) {
+			if (!_shots[i].active) {
+				_shots[i].active = true;
+				_shots[i].counter = getShotMaxDuration();
+				_shots[i].x = x + _viewX;
+				_shots[i].y = y + _viewY;
+				break;
+			}
+		}
+		break;
+	}
+}
+
+// Handler 0x26 Turret shot spawn (based on FUN_4089AB lines 127-140)
+void InsaneRebel2::spawnTurretShot(int x, int y) {
 	for (int i = 0; i < 2; i++) {
-		if (!_shots[i].active) {
-			_shots[i].active = true;
-			_shots[i].counter = 4; // Lasts 4 frames
-			_shots[i].x = x + _viewX;
-			_shots[i].y = y + _viewY;
+		if (_turretShots[i].counter == 0) {
+			// Play sound based on level type
+			// FUN_0041189e(-(ushort)(_rebelLevelType == 5) & 7, i + 1, 0x7f, 0, 0)
+			// Sound ID: 0 for type 5, 7 for others
+			// TODO: Play laser sound via audio system
+
+			_turretShots[i].counter = getShotMaxDuration();
+			_turretShots[i].seqNum = _turretShotSeqCounter;
+			_turretShotSeqCounter++;
+			_turretShots[i].targetX = x + _viewX;  // DAT_0044366e in original
+			_turretShots[i].targetY = y + _viewY;  // DAT_00443670 in original
+			break;
+		}
+	}
+}
+
+// Handler 8 Vehicle shot spawn (based on FUN_401CCF)
+void InsaneRebel2::spawnVehicleShot(int x, int y) {
+	for (int i = 0; i < 2; i++) {
+		if (_vehicleShots[i].counter == 0) {
 			// TODO: Play laser sound
+			_vehicleShots[i].counter = getShotMaxDuration();
+			_vehicleShots[i].targetX = x + _viewX;
+			_vehicleShots[i].targetY = y + _viewY;
+			break;
+		}
+	}
+}
+
+// Handler 7 Space combat shot spawn (based on FUN_40D836 lines 146-166)
+void InsaneRebel2::spawnSpaceShot(int x, int y) {
+	for (int i = 0; i < 2; i++) {
+		if (_spaceShots[i].counter == 0) {
+			// Play sound: FUN_0041189e(6, i + 1, 0x7f, 0, 0)
+			// TODO: Play laser sound
+
+			_spaceShots[i].counter = getShotMaxDuration();
+			_spaceShots[i].targetX = x;  // Screen coords
+			_spaceShots[i].targetY = y;
+
+			// Calculate gun positions from direction-based lookup tables
+			// In the original, these come from tables indexed by _shipDirectionIndex
+			// DAT_004437c2/DAT_00443808 for left gun, DAT_0044384e/DAT_00443894 for right gun
+			// For now, use simplified positions relative to ship
+			int shipScreenX = 160 + ((_shipPosX - 160) >> 3);
+			int shipScreenY = 105 + ((_shipPosY - 40) >> 2);
+
+			// Gun offsets (approximate from disassembly)
+			_spaceShots[i].leftGunX = shipScreenX - 28;
+			_spaceShots[i].leftGunY = shipScreenY + 10;
+			_spaceShots[i].rightGunX = shipScreenX + 28;
+			_spaceShots[i].rightGunY = shipScreenY + 10;
+			_spaceShots[i].variant = _spaceShotDirection;
 			break;
 		}
 	}
@@ -3077,61 +3203,148 @@ void drawTexturedSegment(byte *dst, int pitch, int width, int height, int param_
 }
 
 
-void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, int progress, int maxProgress, int thickness, int param_9, NutRenderer *nut, int spriteIdx) {
-	if (!nut || spriteIdx >= nut->getNumChars()) return;
+// Initialize laser texture buffer from NUT sprite (FUN_0040BAB0)
+// This pre-renders a sprite into a buffer that drawLaserBeam uses
+void InsaneRebel2::initLaserTexture(NutRenderer *nut, int spriteIdx) {
+	if (!nut || spriteIdx >= nut->getNumChars())
+		return;
 
-	// Follow original FUN_0040BBF6 math precisely
-	int texW = nut->getCharWidth(spriteIdx);
-	int texH = nut->getCharHeight(spriteIdx);
-	int param_11 = (_rebelLevelType <= 1) ? 12 : 25;
+	// Get sprite dimensions (FUN_0040BAB0 lines 13-14)
+	int16 texWidth = nut->getCharWidth(spriteIdx);
+	int16 texHeight = nut->getCharHeight(spriteIdx);
 
-	if (maxProgress == 0) maxProgress = 1;
-	int sVar7 = (param_11 * progress * 16) / maxProgress;
+	// Clamp height to max 15 pixels (FUN_0040BAB0 lines 15-17)
+	if (texHeight > 15) {
+		texHeight = 15;
+	}
 
-	int dx = x1 - x0;
-	int dy = y1 - y0;
-	int sVar6 = ((dx) * (param_11 + 1)) / param_11;
-	int sVar1 = ((dy) * (param_11 + 1)) / param_11;
+	// Free existing texture if any (FUN_0040BAB0 lines 18-20)
+	freeLaserTexture();
 
-	int sVar4 = (sVar6 + x0) - (sVar6 * 16) / (sVar7 + 16);
-	int sVar5 = (sVar1 + y0) - (sVar1 * 16) / (sVar7 + 16);
-	int sVar6_end = (sVar6 + x0) - (sVar6 * 16) / (param_9 + sVar7 + 16);
-	int sVar7_end = (sVar1 + y0) - (sVar1 * 16) / (param_9 + sVar7 + 16);
+	// Allocate new buffer (FUN_0040BAB0 line 21)
+	_laserTexture.width = texWidth;
+	_laserTexture.height = texHeight;
+	_laserTexture.pixels = (byte *)calloc(texWidth * texHeight, 1);
 
-	const byte *srcBase = nut->getCharData(spriteIdx);
-	if (!srcBase || texW <= 0 || texH <= 0) return;
+	if (!_laserTexture.pixels)
+		return;
 
-	int iVar2 = abs(sVar5 - sVar7_end);
-	int iVar3 = abs(sVar4 - sVar6_end);
+	// Render sprite into buffer (FUN_0040BAB0 lines 23-24)
+	// We copy the sprite data directly since it's already in the right format
+	const byte *srcData = nut->getCharData(spriteIdx);
+	if (srcData) {
+		int srcHeight = nut->getCharHeight(spriteIdx);
+		int copyHeight = MIN(texHeight, (int16)srcHeight);
+		memcpy(_laserTexture.pixels, srcData, texWidth * copyHeight);
+	}
 
+	debug("Rebel2: Initialized laser texture %dx%d from sprite %d", texWidth, texHeight, spriteIdx);
+}
+
+// Free laser texture buffer (FUN_0040BBD1)
+void InsaneRebel2::freeLaserTexture() {
+	free(_laserTexture.pixels);
+	_laserTexture.pixels = nullptr;
+	_laserTexture.width = 0;
+	_laserTexture.height = 0;
+}
+
+// Draw laser beam using pre-initialized texture (FUN_0040BBF6)
+// This is a direct port of the assembly function
+//
+// Parameters (matching FUN_0040bbf6):
+//   dst, pitch, width, height: destination buffer info
+//   gunX, gunY (param_3, param_4): gun/start position
+//   targetX, targetY (param_5, param_6): target/end position
+//   animFrame (param_7): current animation frame (shot counter)
+//   maxFrames (param_8): max animation frames (shot duration)
+//   widthScale (param_9): width scaling factor for perspective
+//   heightScale (param_10): height/thickness multiplier
+//   thickness (param_11): base line thickness
+void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height,
+                                  int16 gunX, int16 gunY, int16 targetX, int16 targetY,
+                                  int16 animFrame, int16 maxFrames,
+                                  int16 widthScale, int16 heightScale, int16 thickness) {
+	// Check if laser texture is initialized
+	if (!_laserTexture.pixels || _laserTexture.width <= 0 || _laserTexture.height <= 0)
+		return;
+
+	int16 texW = _laserTexture.width;
+	int16 texH = _laserTexture.height;
+	byte *texPixels = _laserTexture.pixels;
+
+	// FUN_0040BBF6 line 23: sVar7 = (thickness * animFrame * 16) / maxFrames
+	if (maxFrames == 0) maxFrames = 1;
+	int16 sVar7 = (int16)(((int)thickness * (int)animFrame * 16) / (int)maxFrames);
+
+	// FUN_0040BBF6 lines 24-25: Calculate delta with scaling
+	int16 dx = targetX - gunX;
+	int16 dy = targetY - gunY;
+	int16 sVar6 = (int16)(((int)dx * (thickness + 1)) / (int)thickness);
+	int16 sVar1 = (int16)(((int)dy * (thickness + 1)) / (int)thickness);
+
+	// FUN_0040BBF6 lines 26-29: Calculate adjusted start and end points
+	// Start point (closer to gun, adjusted by animation progress)
+	int16 startX = (sVar6 + gunX) - (int16)(((int)sVar6 * 16) / (sVar7 + 16));
+	int16 startY = (sVar1 + gunY) - (int16)(((int)sVar1 * 16) / (sVar7 + 16));
+	// End point (closer to target)
+	int16 endX = (sVar6 + gunX) - (int16)(((int)sVar6 * 16) / (widthScale + sVar7 + 16));
+	int16 endY = (sVar1 + gunY) - (int16)(((int)sVar1 * 16) / (widthScale + sVar7 + 16));
+
+	// FUN_0040BBF6 line 30: Get texture pixel pointer
+	byte *local_28 = texPixels;
+
+	// FUN_0040BBF6 lines 31-32: Calculate abs differences (FUN_004356e4 = abs)
+	int iVar2 = abs(startY - endY);  // |dy| of beam
+	int iVar3 = abs(startX - endX);  // |dx| of beam
+
+	// FUN_0040BBF6 line 33: Choose rendering path based on beam orientation
 	if (iVar2 < iVar3) {
-		// Column major case (wide)
-		iVar2 = abs(sVar4 - sVar6_end);
-		long long temp = (long long)iVar2 * (long long)texH * (long long)thickness;
-		// sVar1calc = (temp >> 3) / texW + 2
-		int sVar1calc = (int)((temp >> 3) / texW) + 2;
-		int local_24 = -sVar1calc;
-		int sVar8 = sVar1calc >> 1;
-		const byte *local_28 = srcBase;
-		for (int local_2c = 0; local_2c < sVar1calc; local_2c++) {
-			drawTexturedSegment(dst, pitch, width, height, sVar4, (sVar5 - sVar8) + local_2c,
-						 sVar6_end, (sVar7_end - sVar8) + local_2c, texW, local_28);
-			for (local_24 = texH + local_24; local_24 > 0; local_24 -= sVar1calc) {
+		// Mostly horizontal beam - draw vertical scanlines
+		// FUN_0040BBF6 lines 34-37
+		iVar2 = abs(startX - endX);
+		int temp = iVar2 * texH * heightScale;
+		int16 numLines = (int16)((temp >> 3) / texW) + 2;
+		int16 local_24 = -numLines;
+		int16 halfLines = numLines >> 1;
+
+		// FUN_0040BBF6 lines 39-46: Draw parallel lines
+		for (int16 lineIdx = 0; lineIdx < numLines; lineIdx++) {
+			// Draw one textured segment (vertical offset for this scanline)
+			drawTexturedSegment(dst, pitch, width, height,
+			                    startX, (startY - halfLines) + lineIdx,
+			                    endX, (endY - halfLines) + lineIdx,
+			                    texW, local_28);
+
+			// Advance texture pointer (step through texture rows)
+			for (local_24 = texH + local_24; local_24 > 0; local_24 -= numLines) {
 				local_28 += texW;
 			}
 		}
 	} else {
-		// Row major case (tall)
-		iVar2 = abs(sVar5 - sVar7_end);
-		int local_30 = (int)(((long long)iVar2 * (long long)texH) / texW) + 2;
-		if (texH < local_30) local_30 = texH;
-		int local_24 = -local_30;
-		const byte *local_28 = srcBase;
-		int sVar1_half = local_30 >> 1;
-		for (int local_2c = 0; local_2c < local_30; local_2c++) {
-			drawTexturedSegment(dst, pitch, width, height, (sVar4 - sVar1_half) + local_2c, sVar5,
-						 (sVar6_end - sVar1_half) + local_2c, sVar7_end, texW, local_28);
-			for (local_24 = texH + local_24; local_24 > 0; local_24 -= local_30) {
+		// Mostly vertical beam - draw horizontal scanlines
+		// FUN_0040BBF6 lines 54-56
+		iVar2 = abs(startY - endY);
+		int16 numLines = (int16)((iVar2 * texH) / texW) + 2;
+		int16 local_24 = -numLines;
+
+		// FUN_0040BBF6 lines 58-60: Clamp to texture height
+		if (texH < numLines) {
+			numLines = texH;
+		}
+
+		int16 halfLines = numLines >> 1;
+
+		// FUN_0040BBF6 lines 61-68: Draw parallel lines
+		for (int16 lineIdx = 0; lineIdx < numLines; lineIdx++) {
+			// Draw one textured segment (horizontal offset for this scanline)
+			drawTexturedSegment(dst, pitch, width, height,
+			                    (startX - halfLines) + lineIdx, startY,
+			                    (endX - halfLines) + lineIdx, endY,
+			                    texW, local_28);
+
+			// Advance texture pointer
+			for (local_24 = texH + local_24; local_24 > 0; local_24 -= numLines) {
 				local_28 += texW;
 			}
 		}
@@ -3870,7 +4083,7 @@ void InsaneRebel2::renderStatusBarSprites(byte *renderBitmap, int pitch, int wid
 }
 
 void InsaneRebel2::renderHandler7Ship(byte *renderBitmap, int pitch, int width, int height) {
-	// Handler 7 Ship Rendering (Space Flight - FLY sprites)
+	// Handler 7 Ship Rendering (Third-Person Ship - FLY sprites)
 	// Uses _flyShipSprite (FLY001) with 35 direction frames (5x7 grid)
 
 	if (_rebelHandler != 7 || !_flyShipSprite || _shipLevelMode == 5)
@@ -3917,7 +4130,7 @@ void InsaneRebel2::renderHandler7Ship(byte *renderBitmap, int pitch, int width, 
 }
 
 void InsaneRebel2::renderHandler8Ship(byte *renderBitmap, int pitch, int width, int height) {
-	// Handler 8 Ship Rendering (Third-Person Vehicle - POV sprites)
+	// Handler 8 Ship Rendering (Third-Person On Foot - POV sprites)
 	// Uses _shipSprite (POV001) with position-based offset
 
 	if (_rebelHandler != 8 || !_shipSprite || _shipLevelMode == 5)
@@ -4240,58 +4453,200 @@ void InsaneRebel2::renderExplosions(byte *renderBitmap, int pitch, int width, in
 	}
 }
 
+// Dispatcher - calls appropriate render function based on current handler
 void InsaneRebel2::renderLaserShots(byte *renderBitmap, int pitch, int width, int height) {
-	// Draw laser shot beams and impacts
+	switch (_rebelHandler) {
+	case 0x26:  // Turret - FUN_40AD63
+		renderTurretLaserShots(renderBitmap, pitch, width, height);
+		break;
+	case 8:     // Vehicle - FUN_402ED0
+		renderVehicleLaserShots(renderBitmap, pitch, width, height);
+		break;
+	case 7:     // Space combat - FUN_40FADF
+		renderSpaceLaserShots(renderBitmap, pitch, width, height);
+		break;
+	default:
+		// No laser rendering for other handlers
+		break;
+	}
+}
 
-	if (!_smush_iconsNut || _smush_iconsNut->getNumChars() <= 0)
-		return;
+// Handler 0x26 Turret laser rendering (FUN_40AD63)
+// Gun positions depend on _rebelLevelType (DAT_004436de)
+void InsaneRebel2::renderTurretLaserShots(byte *renderBitmap, int pitch, int width, int height) {
+	// Uses pre-initialized _laserTexture from sprite 5 of CPITIMAG.NUT
 
-	// Gun positions (approximate for turret mode)
-	const int GUN_LEFT_X = 10, GUN_LEFT_Y = 190;
-	const int GUN_RIGHT_X = 310, GUN_RIGHT_Y = 190;
+	int16 maxDuration = getShotMaxDuration();
 
 	for (int i = 0; i < 2; i++) {
-		if (!_shots[i].active)
+		if (_turretShots[i].counter <= 0)
 			continue;
 
-		if (_shots[i].counter <= 0) {
-			_shots[i].active = false;
+		// Calculate sound panning from target X position (FUN_004262f0 call)
+		// sVar1 = ((2 - counter) * (targetX - 160)) / 2, clamped to [-127, 127]
+		int16 pan = ((2 - _turretShots[i].counter) * (_turretShots[i].targetX - _viewX - 160)) / 2;
+		pan = CLIP<int16>(pan, -127, 127);
+		// TODO: Apply panning to sound channel i+1
+
+		int16 targetX = _turretShots[i].targetX;
+		int16 targetY = _turretShots[i].targetY;
+		int16 progress = maxDuration - _turretShots[i].counter;
+
+		// Gun positions based on level type (from FUN_40AD63 switch statement)
+		// Parameters from assembly: widthScale=0xC(12), heightScale=8, thickness=0xC(12)
+		switch (_rebelLevelType) {
+		case 1:
+			// Type 1: 3 guns (triple cannon configuration)
+			// Gun 1: (0x136, 0xaa) = (310, 170)
+			// Gun 2: (0xa0, 0x17c) = (160, 380)
+			// Gun 3: (0x0a, 0xaa) = (10, 170)
+			drawLaserBeam(renderBitmap, pitch, width, height,
+				310 + _viewX, 170 + _viewY, targetX, targetY,
+				progress, maxDuration, 12, 8, 12);
+
+			drawLaserBeam(renderBitmap, pitch, width, height,
+				160 + _viewX, 380 + _viewY, targetX, targetY,
+				progress, maxDuration, 12, 8, 12);
+
+			drawLaserBeam(renderBitmap, pitch, width, height,
+				10 + _viewX, 170 + _viewY, targetX, targetY,
+				progress, maxDuration, 12, 8, 12);
+			break;
+
+		case 2:
+		case 5:
+			// Type 2/5: 2 guns (wing cannons)
+			// Left: (0x6e, 0xe6) = (110, 230)
+			// Right: (0xd2, 0xe6) = (210, 230)
+			// Assembly uses widthScale=0x19(25) for these types
+			drawLaserBeam(renderBitmap, pitch, width, height,
+				110 + _viewX, 230 + _viewY, targetX, targetY,
+				progress, maxDuration, 25, 8, 25);
+
+			drawLaserBeam(renderBitmap, pitch, width, height,
+				210 + _viewX, 230 + _viewY, targetX, targetY,
+				progress, maxDuration, 25, 8, 25);
+			break;
+
+		case 6:
+			// Type 6: 2 guns (offscreen - cinematic effect)
+			// Gun 1: (-100, 0)
+			// Gun 2: (0, 0)
+			drawLaserBeam(renderBitmap, pitch, width, height,
+				-100 + _viewX, 0 + _viewY, targetX, targetY,
+				progress, maxDuration, 25, 8, 25);
+
+			drawLaserBeam(renderBitmap, pitch, width, height,
+				0 + _viewX, 0 + _viewY, targetX, targetY,
+				progress, maxDuration, 25, 8, 25);
+			break;
+
+		default:
+			// Default: 2 guns with alternating pattern based on shot sequence
+			// When seqNum & 1 == 0: Left (10, 50), Right (310, 130)
+			// When seqNum & 1 == 1: Left (310, 50), Right (10, 130)
+			if ((_turretShots[i].seqNum & 1) == 0) {
+				drawLaserBeam(renderBitmap, pitch, width, height,
+					10 + _viewX, 50 + _viewY, targetX, targetY,
+					progress, maxDuration, 25, 8, 25);
+
+				drawLaserBeam(renderBitmap, pitch, width, height,
+					310 + _viewX, 130 + _viewY, targetX, targetY,
+					progress, maxDuration, 25, 8, 25);
+			} else {
+				drawLaserBeam(renderBitmap, pitch, width, height,
+					310 + _viewX, 50 + _viewY, targetX, targetY,
+					progress, maxDuration, 25, 8, 25);
+
+				drawLaserBeam(renderBitmap, pitch, width, height,
+					10 + _viewX, 130 + _viewY, targetX, targetY,
+					progress, maxDuration, 25, 8, 25);
+			}
+			break;
+		}
+
+		_turretShots[i].counter--;
+	}
+}
+
+// Handler 8 Vehicle laser rendering (FUN_402ED0)
+// Gun position derived from ship position
+void InsaneRebel2::renderVehicleLaserShots(byte *renderBitmap, int pitch, int width, int height) {
+	// No NUT check needed - uses pre-initialized _laserTexture
+
+	int16 maxDuration = getShotMaxDuration();
+
+	for (int i = 0; i < 2; i++) {
+		if (_vehicleShots[i].counter <= 0)
 			continue;
-		}
 
-		int maxProgress = 4;
-		int progress = maxProgress - _shots[i].counter;
+		// Calculate sound panning
+		int16 pan = ((2 - _vehicleShots[i].counter) * (_vehicleShots[i].targetX - _viewX - 160)) / 2;
+		pan = CLIP<int16>(pan, -127, 127);
+		// TODO: Apply panning
 
-		// Draw beams based on level type
-		if (_rebelLevelType <= 1) {
-			// Type 1: 3 beams (Right, Middle, Left)
-			drawLaserBeam(renderBitmap, pitch, width, height,
-				310 + _viewX, 170 + _viewY, _shots[i].x, _shots[i].y,
-				progress, maxProgress, 8, 12, _smush_iconsNut, 0);
+		// Calculate gun position from ship position (FUN_402ED0 lines 26-36)
+		// Low-res formula:
+		// shipScreenY = ((shipPosY - 0x28) >> 2) + 0x69 = ((shipPosY - 40) >> 2) + 105
+		// shipScreenX = ((shipPosX - 0xa0) >> 3) + 0xa0 = ((shipPosX - 160) >> 3) + 160
+		// gunY = ((shipPosY - 0x28) >> 2) + 0x82 = shipScreenY + 25
+		// gunX = ((shipPosX - 0xa0) >> 3) + 0xa7 = shipScreenX + 7
+		int16 shipScreenX = ((_shipPosX - 160) >> 3) + 160;
+		int16 shipScreenY = ((_shipPosY - 40) >> 2) + 105;
+		int16 gunX = shipScreenX + 7;
+		int16 gunY = shipScreenY + 25;
 
-			drawLaserBeam(renderBitmap, pitch, width, height,
-				160 + _viewX, 380 + _viewY, _shots[i].x, _shots[i].y,
-				progress, maxProgress, 5, 8, _smush_iconsNut, 0);
+		int16 targetX = _vehicleShots[i].targetX;
+		int16 targetY = _vehicleShots[i].targetY;
+		int16 progress = maxDuration - _vehicleShots[i].counter;
 
-			drawLaserBeam(renderBitmap, pitch, width, height,
-				10 + _viewX, 170 + _viewY, _shots[i].x, _shots[i].y,
-				progress, maxProgress, 8, 12, _smush_iconsNut, 0);
-		} else {
-			// Other levels: 2 beams
-			drawLaserBeam(renderBitmap, pitch, width, height,
-				GUN_LEFT_X + _viewX, GUN_LEFT_Y + _viewY, _shots[i].x, _shots[i].y,
-				progress, maxProgress, 8, 12, _smush_iconsNut, 0);
+		// Single beam from gun to target
+		// From FUN_402ED0: widthScale=0x14(20), heightScale=8, thickness=4
+		drawLaserBeam(renderBitmap, pitch, width, height,
+			gunX + _viewX, gunY + _viewY, targetX, targetY,
+			progress, maxDuration, 20, 8, 4);
 
-			drawLaserBeam(renderBitmap, pitch, width, height,
-				GUN_RIGHT_X + _viewX, GUN_RIGHT_Y + _viewY, _shots[i].x, _shots[i].y,
-				progress, maxProgress, 8, 12, _smush_iconsNut, 0);
-		}
+		_vehicleShots[i].counter--;
+	}
+}
 
-		// Impact flash
-		renderNutSprite(renderBitmap, pitch, width, height,
-			_shots[i].x - 7, _shots[i].y - 7, _smush_iconsNut, 0);
+// Handler 7 Space combat laser rendering (FUN_40FADF)
+// Dual beams from left and right gun positions
+void InsaneRebel2::renderSpaceLaserShots(byte *renderBitmap, int pitch, int width, int height) {
+	// No NUT check needed - uses pre-initialized _laserTexture
 
-		_shots[i].counter--;
+	int16 maxDuration = getShotMaxDuration();
+
+	for (int i = 0; i < 2; i++) {
+		if (_spaceShots[i].counter <= 0)
+			continue;
+
+		// Calculate sound panning
+		int16 pan = ((_spaceShots[i].targetX - 160) * (2 - _spaceShots[i].counter)) / 2;
+		pan = CLIP<int16>(pan, -127, 127);
+		// TODO: Apply panning
+
+		int16 targetX = _spaceShots[i].targetX;
+		int16 targetY = _spaceShots[i].targetY;
+		int16 leftGunX = _spaceShots[i].leftGunX;
+		int16 leftGunY = _spaceShots[i].leftGunY;
+		int16 rightGunX = _spaceShots[i].rightGunX;
+		int16 rightGunY = _spaceShots[i].rightGunY;
+		int16 progress = maxDuration - _spaceShots[i].counter;
+
+		// Draw dual beams
+		// From FUN_40FADF: widthScale=0xC(12), heightScale=4, thickness=6
+		// Left gun beam
+		drawLaserBeam(renderBitmap, pitch, width, height,
+			leftGunX, leftGunY, targetX, targetY,
+			progress, maxDuration, 12, 4, 6);
+
+		// Right gun beam
+		drawLaserBeam(renderBitmap, pitch, width, height,
+			rightGunX, rightGunY, targetX, targetY,
+			progress, maxDuration, 12, 4, 6);
+
+		_spaceShots[i].counter--;
 	}
 }
 
@@ -4321,11 +4676,11 @@ void InsaneRebel2::renderCrosshair(byte *renderBitmap, int pitch, int width, int
 
 	int reticleIndex;
 	switch (_rebelHandler) {
-	case 7:    // Space flight
-	case 0x19: // Mixed/turret
+	case 7:    // Third-Person Ship
+	case 0x19: // FPS/Mixed
 		reticleIndex = 47;
 		break;
-	case 0x26: { // Full turret - animated crosshair
+	case 0x26: { // Turret/Cockpit - animated crosshair
 		static int turretAnimCounter = 0;
 		turretAnimCounter++;
 
@@ -4338,7 +4693,7 @@ void InsaneRebel2::renderCrosshair(byte *renderBitmap, int pitch, int width, int
 		}
 		break;
 	}
-	case 8:    // Ground vehicle
+	case 8:    // Third-Person On Foot
 	default:
 		reticleIndex = 46;
 		break;
@@ -6402,7 +6757,7 @@ bool InsaneRebel2::playLevelGameplay(int levelId) {
 
 	case 2:
 		// Level 2: Has cutscene first, then multiple parts
-		// Level 2 uses Handler 8 (third-person vehicle mode) - set before gameplay
+		// Level 2 uses Handler 8 (third-person on foot mode) - set before gameplay
 		_rebelHandler = 8;
 		// First play the cutscene
 		filename = Common::String::format("%s/%sCUT.SAN", dir.c_str(), prefix.c_str());
@@ -6452,8 +6807,8 @@ bool InsaneRebel2::playLevelGameplay(int levelId) {
 		break;
 
 	case 3:
-		// Level 3: Two gameplay phases (space flight)
-		// Level 3 uses Handler 7 (space flight mode) - FUN_0040d836/FUN_0040c3cc
+		// Level 3: Two gameplay phases (third-person ship)
+		// Level 3 uses Handler 7 (third-person ship mode) - FUN_0040d836/FUN_0040c3cc
 		_rebelHandler = 7;
 		filename = Common::String::format("%s/%sPLAY1.SAN", dir.c_str(), prefix.c_str());
 		debug("Rebel2: Playing %s", filename.c_str());

@@ -330,10 +330,10 @@ public:
 	void renderStatusBarSprites(byte *renderBitmap, int pitch, int width, int height,
 								int statusBarY, int32 curFrame);
 
-	// Draw Handler 7 ship sprite (space flight - FLY sprites)
+	// Draw Handler 7 ship sprite (third-person ship - FLY sprites)
 	void renderHandler7Ship(byte *renderBitmap, int pitch, int width, int height);
 
-	// Draw Handler 8 ship sprite (third-person vehicle - POV sprites)
+	// Draw Handler 8 ship sprite (third-person on foot - POV sprites)
 	void renderHandler8Ship(byte *renderBitmap, int pitch, int width, int height);
 
 	// Draw fallback ship using embedded HUD frame
@@ -357,10 +357,10 @@ public:
 	// ======================= Opcode 6 Helper Functions =======================
 	// Handler-specific setup extracted from iactRebel2Opcode6
 
-	// Handler 8 (third-person vehicle) setup - FUN_00401234 case 4
+	// Handler 8 (third-person on foot) setup - FUN_00401234 case 4
 	void opcode6Handler8Setup(int16 par3, int16 par4);
 
-	// Handler 7 (space flight) setup - FUN_0040c3cc case 4
+	// Handler 7 (third-person ship) setup - FUN_0040c3cc case 4
 	void opcode6Handler7Setup(int16 par3, int16 par4);
 
 	// Calculate view offsets based on level type (lines 182-213)
@@ -396,7 +396,26 @@ public:
 	// mask231: when true, color 231 is treated as transparent (legacy sprites). For laser beams set false.
 	void drawTexturedLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, NutRenderer *nut, int spriteIdx, int v, bool mask231 = true);
 
-	void drawLaserBeam(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, int progress, int maxProgress, int thickness, int param_9, NutRenderer *nut, int spriteIdx);
+	// ======================= Laser Texture Buffer (DAT_0047fee4) =======================
+	// Pre-rendered laser texture used by FUN_0040BBF6
+	// Initialized from CPITIMAG.NUT sprite 0 via initLaserTexture() (FUN_0040BAB0)
+	struct LaserTexture {
+		byte *pixels;      // Pixel data (rendered from NUT sprite)
+		int16 width;       // Texture width
+		int16 height;      // Texture height (clamped to max 15)
+	};
+	LaserTexture _laserTexture;  // DAT_0047fee4
+
+	// Initialize laser texture from NUT sprite (FUN_0040BAB0)
+	void initLaserTexture(NutRenderer *nut, int spriteIdx);
+	void freeLaserTexture();
+
+	// Draw laser beam using pre-initialized texture (FUN_0040BBF6)
+	// Parameters match the original assembly function
+	void drawLaserBeam(byte *dst, int pitch, int width, int height,
+	                   int16 gunX, int16 gunY, int16 targetX, int16 targetY,
+	                   int16 animFrame, int16 maxFrames,
+	                   int16 widthScale, int16 heightScale, int16 thickness);
 	void renderNutSprite(byte *dst, int pitch, int width, int height, int x, int y, NutRenderer *nut, int spriteIdx);
 
 	struct enemy {
@@ -418,10 +437,10 @@ public:
 	
 	// Current handler type for Rebel Assault 2 (determines crosshair sprite)
 	// Handler 0: Background only
-	// Handler 7: Space flight - uses crosshair sprite 0x2F (47)
-	// Handler 8: Third-person vehicle - uses crosshair sprite 0x2E (46)  
-	// Handler 0x19: Mixed/turret view - uses crosshair sprite 0x2F (47)
-	// Handler 0x26: Full turret - crosshair varies by level type
+	// Handler 7: Third-Person Ship - uses crosshair sprite 0x2F (47)
+	// Handler 8: Third-Person On Foot - uses crosshair sprite 0x2E (46)  
+	// Handler 0x19: FPS/Mixed view - uses crosshair sprite 0x2F (47)
+	// Handler 0x26: Turret/Cockpit - crosshair varies by level type
 	int _rebelHandler;
 	
 	// Level type from IACT opcode 6 par3 (corresponds to DAT_004436de)
@@ -577,16 +596,85 @@ public:
 	int _rebelLastCounter;         // Mirrors DAT_0047ab90 (last updated counter)
 
 
+	// ======================= Handler 0x26 Turret Shot System =======================
+	// Based on FUN_40AD63 disassembly - Turret laser rendering
+	// DAT_0044367a[2]: Shot duration counter (0=inactive)
+	// DAT_0044367e[2]: Target X position
+	// DAT_00443682[2]: Target Y position
+	// DAT_0044368a[2]: Shot sequence number (for alternating gun pattern)
+	// DAT_004436de: Level type (determines gun positions) - already have as _rebelLevelType
+
+	struct TurretShot {
+		int16 counter;     // DAT_0044367a[i] - duration counter, 0=inactive
+		int16 targetX;     // DAT_0044367e[i] - target X position
+		int16 targetY;     // DAT_00443682[i] - target Y position
+		int16 seqNum;      // DAT_0044368a[i] - shot sequence (for alternating)
+	};
+	TurretShot _turretShots[2];
+	int16 _turretShotSeqCounter;  // DAT_0047fe94 - global sequence counter
+
+	// ======================= Handler 8 Vehicle Shot System =======================
+	// Based on FUN_402ED0 disassembly - Vehicle laser rendering
+	// DAT_0043e00a[2]: Shot duration counter
+	// DAT_0043e00e[2]: Target X position
+	// DAT_0043e012[2]: Target Y position
+	// Gun position derived from ship position (_shipPosX, _shipPosY)
+
+	struct VehicleShot {
+		int16 counter;     // DAT_0043e00a[i] - duration counter, 0=inactive
+		int16 targetX;     // DAT_0043e00e[i] - target X position
+		int16 targetY;     // DAT_0043e012[i] - target Y position
+	};
+	VehicleShot _vehicleShots[2];
+
+	// ======================= Handler 7 Third-Person Ship Shot System =======================
+	// Based on FUN_40FADF disassembly - Third-Person Ship laser rendering
+	// DAT_00443750[2]: Shot duration counter
+	// DAT_00443754[2]: Target X position
+	// DAT_00443758[2]: Target Y position
+	// DAT_0044375c[2]: Left gun X position
+	// DAT_00443760[2]: Left gun Y position
+	// DAT_00443764[2]: Right gun X position
+	// DAT_00443768[2]: Right gun Y position
+	// DAT_0044376c[2]: Shot variant
+
+	struct SpaceShot {
+		int16 counter;     // DAT_00443750[i] - duration counter, 0=inactive
+		int16 targetX;     // DAT_00443754[i] - target X position
+		int16 targetY;     // DAT_00443758[i] - target Y position
+		int16 leftGunX;    // DAT_0044375c[i] - left gun X
+		int16 leftGunY;    // DAT_00443760[i] - left gun Y
+		int16 rightGunX;   // DAT_00443764[i] - right gun X
+		int16 rightGunY;   // DAT_00443768[i] - right gun Y
+		int16 variant;     // DAT_0044376c[i] - shot variant
+	};
+	SpaceShot _spaceShots[2];
+	int16 _spaceShotDirection;  // DAT_0044374e - ship direction for gun lookup
+
+	// Legacy struct for backwards compatibility
 	struct Shot {
 		bool active;
 		int counter;
 		int x, y;       // Target position
 	};
 	Shot _shots[2];
-	void spawnShot(int x, int y);
+
+	// Handler-specific shot spawning
+	void spawnTurretShot(int x, int y);    // Handler 0x26
+	void spawnVehicleShot(int x, int y);   // Handler 8
+	void spawnSpaceShot(int x, int y);     // Handler 7
+	void spawnShot(int x, int y);          // Dispatcher based on current handler
+
+	// Handler-specific laser rendering (FUN_40AD63, FUN_402ED0, FUN_40FADF)
+	void renderTurretLaserShots(byte *renderBitmap, int pitch, int width, int height);
+	void renderVehicleLaserShots(byte *renderBitmap, int pitch, int width, int height);
+	void renderSpaceLaserShots(byte *renderBitmap, int pitch, int width, int height);
+
+	// Get max shot duration from level table (DAT_0047e0f0 indexed by DAT_0047a7fa/DAT_0047a7f8)
+	int16 getShotMaxDuration();
 
 	// ======================= Handler 8 Ship System =======================
-	// For third-person vehicle missions (Levels 2, 3), the player controls a ship
+	// For third-person on foot missions (Level 2, 11), the player controls Rookie One
 	// that can turn in different directions. The ship sprite comes from
 	// NUT files loaded via IACT opcode 8.
 	//
@@ -633,7 +721,7 @@ public:
 	// Gradually transitions by ±10 per frame for smooth animation
 	int16 _movementRangeLimit;       // DAT_0047e034
 
-	// Control mode for Handler 7 (space flight) - DAT_004437c0
+	// Control mode for Handler 7 (third-person ship) - DAT_004437c0
 	// Set by IACT opcode 6 par3 when handler is 7
 	// Determines shooting capability and collision zone type:
 	//   Mode 0: Flight/avoid mode - no shooting, uses secondary zones (sub-opcode 0x0E)
@@ -661,7 +749,7 @@ public:
 	NutRenderer *loadNutFromIact(Common::SeekableReadStream &b, int dataSize);
 
 	// ======================= Handler 7 FLY Ship System =======================
-	// For space flight missions (Level 3, etc.), Handler 7 uses a 35-frame
+	// For third-person ship missions (Level 3, etc.), Handler 7 uses a 35-frame
 	// direction-based ship sprite system. The ship visually banks and turns
 	// based on player position using a 5x7 grid of sprites.
 	//
