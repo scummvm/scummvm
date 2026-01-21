@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-20 23:50+0000\n"
-"PO-Revision-Date: 2026-01-20 00:41+0000\n"
+"PO-Revision-Date: 2026-01-21 22:15+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -13485,43 +13485,31 @@ msgstr "Прокрутити до низу-направо"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll to the end of the widget
 #: engines/sherlock/metaengine.cpp:1055
-#, fuzzy
-#| msgid "Scroll list up"
 msgid "Scroll to end"
-msgstr "Прокручення списку догори"
+msgstr "Прокрутити до кінця"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll to the start of the widget
 #: engines/sherlock/metaengine.cpp:1062
-#, fuzzy
-#| msgid "Scroll list up"
 msgid "Scroll to start"
-msgstr "Прокручення списку догори"
+msgstr "Прокрутити на початок"
 
 #: engines/sherlock/metaengine.cpp:1072
-#, fuzzy
-#| msgid "Go to next dialogue"
 msgid "Go to next save file slot"
-msgstr "Перейти до наступного діалогу"
+msgstr "Перейти до наступного слоту зберігання"
 
 #: engines/sherlock/metaengine.cpp:1078
-#, fuzzy
-#| msgid "Go to start of save/load menu"
 msgid "Go to next page of save files"
-msgstr "Перейти до початку меню збереження/завантаження"
+msgstr "Перейти до нвступної сторінки збережень"
 
 #: engines/sherlock/metaengine.cpp:1083
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Select save file"
-msgstr "Виберіть тему"
+msgstr "Виберіть файл збереження"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the save file name input field
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the password input field
 #: engines/sherlock/metaengine.cpp:1110 engines/sherlock/metaengine.cpp:1215
-#, fuzzy
-#| msgid "Go to end of line"
 msgid "Go to the line start"
-msgstr "Перейти на кінець рядку"
+msgstr "Перейти на початок рядку"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the save file name input field
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the password input field
@@ -15234,7 +15222,7 @@ msgstr "Наступна дія"
 
 #: engines/ultima/ultima4/metaengine.cpp:69
 msgid "Stats"
-msgstr "Статистика"
+msgstr "Стати"
 
 #: engines/ultima/ultima4/metaengine.cpp:72
 msgid "Wear armor"
@@ -15395,7 +15383,7 @@ msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:119
 msgid "Full stats"
-msgstr ""
+msgstr "Повна статистика"
 
 #: engines/ultima/ultima4/metaengine.cpp:120
 #, fuzzy
@@ -15797,39 +15785,39 @@ msgstr ""
 
 #: engines/ultima/nuvie/metaengine.cpp:152
 msgid "Show stats for Avatar"
-msgstr ""
+msgstr "Показати статистику для Аватара"
 
 #: engines/ultima/nuvie/metaengine.cpp:153
 msgid "Show stats for party member 2"
-msgstr ""
+msgstr "Показати статистику героя №2"
 
 #: engines/ultima/nuvie/metaengine.cpp:154
 msgid "Show stats for party member 3"
-msgstr ""
+msgstr "Показати статистику героя №3"
 
 #: engines/ultima/nuvie/metaengine.cpp:155
 msgid "Show stats for party member 4"
-msgstr ""
+msgstr "Показати статистику героя №4"
 
 #: engines/ultima/nuvie/metaengine.cpp:156
 msgid "Show stats for party member 5"
-msgstr ""
+msgstr "Показати статистику героя №5"
 
 #: engines/ultima/nuvie/metaengine.cpp:157
 msgid "Show stats for party member 6"
-msgstr ""
+msgstr "Показати статистику героя №6"
 
 #: engines/ultima/nuvie/metaengine.cpp:158
 msgid "Show stats for party member 7"
-msgstr ""
+msgstr "Показати статистику героя №7"
 
 #: engines/ultima/nuvie/metaengine.cpp:159
 msgid "Show stats for party member 8"
-msgstr ""
+msgstr "Показати статистику героя №8"
 
 #: engines/ultima/nuvie/metaengine.cpp:160
 msgid "Show stats for party member 9"
-msgstr ""
+msgstr "Показати статистику героя №9"
 
 #: engines/ultima/nuvie/metaengine.cpp:161
 #, fuzzy
