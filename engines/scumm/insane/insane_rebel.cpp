@@ -670,9 +670,11 @@ int32 InsaneRebel2::processMouse() {
 	}
 
 	// Left button: Trigger shot on button press (not hold)
-	if (leftPressed && !leftWasPressed) {
+	// From FUN_0040d836 (Handler 7) line 141: shots only spawn when DAT_004437c0 == 2
+	// From FUN_00401CCF (Handler 8) line 82-84: mode 4 disables shooting
+	if (leftPressed && !leftWasPressed && isShootingAllowed()) {
 		Common::Point mousePos(_vm->_mouse.x, _vm->_mouse.y);
-		debug("Rebel2 Click: Mouse=(%d,%d) Enemies=%d", 
+		debug("Rebel2 Click: Mouse=(%d,%d) Enemies=%d",
 			mousePos.x, mousePos.y, _enemies.size());
 
 		// Spawn visual shot immediately
@@ -761,6 +763,27 @@ void InsaneRebel2::clearBit(int n) {
 	assert (n < 0x200);
 
 	_iactBits[n] = 0;
+}
+
+// Check if shooting is allowed based on current handler and control mode
+// From FUN_0040d836 (Handler 7): shooting only allowed when DAT_004437c0 == 2
+// From FUN_00401CCF (Handler 8): mode 4/5 disable shooting
+bool InsaneRebel2::isShootingAllowed() {
+	// Handler 7 (Third-Person Ship): Only mode 2 allows shooting
+	// FUN_0040d836 line 141: if (DAT_004437c0 == 2) { /* spawn shots, draw crosshair */ }
+	if (_rebelHandler == 7) {
+		return (_flyControlMode == 2);
+	}
+
+	// Handler 8 (Third-Person On Foot): Modes 4/5 disable shooting
+	// FUN_00401CCF line 82-84: if (DAT_0043e000 == 4) { param_5 = 0; }
+	// Mode 5: Ship not rendered (cutscene)
+	if (_rebelHandler == 8) {
+		return (_shipLevelMode != 4 && _shipLevelMode != 5);
+	}
+
+	// Handler 0x26 (Turret) and 0x19 (FPS): Always allow shooting when active
+	return (_rebelHandler != 0);
 }
 
 void InsaneRebel2::procSKIP(int32 subSize, Common::SeekableReadStream &b) {
@@ -4664,6 +4687,12 @@ void InsaneRebel2::renderSpaceLaserShots(byte *renderBitmap, int pitch, int widt
 }
 
 void InsaneRebel2::renderCrosshair(byte *renderBitmap, int pitch, int width, int height) {
+	// From FUN_0040d836 (Handler 7) line 167-168: crosshair only drawn when DAT_004437c0 == 2
+	// Don't draw crosshair when shooting is disabled (flight-only segments)
+	if (!isShootingAllowed()) {
+		return;
+	}
+
 	// Update target lock state and draw crosshair/reticle
 
 	// Target lock detection (DAT_00443676 equivalent)
