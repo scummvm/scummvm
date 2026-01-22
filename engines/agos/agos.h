@@ -1389,6 +1389,7 @@ public:
 	void setupGame() override;
 	void setupOpcodes() override;
 	void setupVideoOpcodes(VgaOpcodeProc *op) override;
+	void windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) override;
 
 	void executeOpcode(int opcode) override;
 
