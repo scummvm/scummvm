@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-22 22:10+0000\n"
+"POT-Creation-Date: 2026-01-22 22:45+0000\n"
 "PO-Revision-Date: 2026-01-20 15:22+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -7454,6 +7454,7 @@ msgstr "პასუხი 6"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down by a page in the widget
 #: engines/crab/input/input.cpp:221 engines/sherlock/metaengine.cpp:591
 #: engines/sherlock/metaengine.cpp:902 engines/sherlock/metaengine.cpp:1048
+#: engines/supernova/metaengine.cpp:291 engines/titanic/metaengine.cpp:271
 #: engines/twine/metaengine.cpp:460 engines/wintermute/keymapper_tables.h:190
 #: engines/wintermute/keymapper_tables.h:207
 #: engines/wintermute/keymapper_tables.h:638
@@ -7469,6 +7470,7 @@ msgstr "შემდეგი გვერდი"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up by a page in the widget
 #: engines/crab/input/input.cpp:226 engines/sherlock/metaengine.cpp:572
 #: engines/sherlock/metaengine.cpp:917 engines/sherlock/metaengine.cpp:1041
+#: engines/supernova/metaengine.cpp:285 engines/titanic/metaengine.cpp:264
 #: engines/wintermute/keymapper_tables.h:183
 #: engines/wintermute/keymapper_tables.h:199
 #: engines/wintermute/keymapper_tables.h:630
@@ -12753,14 +12755,6 @@ msgstr "ინფორმაცია"
 msgid "Text speed"
 msgstr "ტექსტის სიჩქარე"
 
-#: engines/supernova/metaengine.cpp:285
-msgid "Page up"
-msgstr "გვერდით ზემოთ"
-
-#: engines/supernova/metaengine.cpp:291
-msgid "Page down"
-msgstr "გვერდით ქვემოთ"
-
 #: engines/supernova/metaengine.cpp:321
 msgid "Go"
 msgstr "მიდი"
@@ -12909,7 +12903,8 @@ msgstr "გადასვლა / შემოწმება"
 msgid "Close inventory"
 msgstr "ინვენტარის დახურვა"
 
-#: engines/testbed/metaengine.cpp:38 engines/testbed/metaengine.cpp:39
+#. I18N: Runs tests in interactive mode
+#: engines/testbed/metaengine.cpp:39 engines/testbed/metaengine.cpp:40
 msgid "Run in interactive mode"
 msgstr "გაშვება ინტერაქტიურ რეჟიმში"
 
@@ -13019,14 +13014,6 @@ msgstr "ოთახები"
 #: engines/titanic/metaengine.cpp:259
 msgid "Real life"
 msgstr "რეალური სამყარო"
-
-#: engines/titanic/metaengine.cpp:264
-msgid "Scroll up page"
-msgstr "გვერდის მაღლა აწევა"
-
-#: engines/titanic/metaengine.cpp:271
-msgid "Scroll down page"
-msgstr "გვერდის დაბლა ჩამოწევა"
 
 #: engines/titanic/metaengine.cpp:278
 msgid "Scroll to top"
@@ -15376,6 +15363,18 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#~ msgid "Page up"
+#~ msgstr "გვერდით ზემოთ"
+
+#~ msgid "Page down"
+#~ msgstr "გვერდით ქვემოთ"
+
+#~ msgid "Scroll up page"
+#~ msgstr "გვერდის მაღლა აწევა"
+
+#~ msgid "Scroll down page"
+#~ msgstr "გვერდის დაბლა ჩამოწევა"
 
 #~ msgid "Load game state"
 #~ msgstr "თამაშის მდგომარეობის ჩატვირთვა"

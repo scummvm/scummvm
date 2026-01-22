@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-22 22:10+0000\n"
+"POT-Creation-Date: 2026-01-22 22:45+0000\n"
 "PO-Revision-Date: 2026-01-20 15:22+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -8076,6 +8076,7 @@ msgstr "리플 6"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down by a page in the widget
 #: engines/crab/input/input.cpp:221 engines/sherlock/metaengine.cpp:591
 #: engines/sherlock/metaengine.cpp:902 engines/sherlock/metaengine.cpp:1048
+#: engines/supernova/metaengine.cpp:291 engines/titanic/metaengine.cpp:271
 #: engines/twine/metaengine.cpp:460 engines/wintermute/keymapper_tables.h:190
 #: engines/wintermute/keymapper_tables.h:207
 #: engines/wintermute/keymapper_tables.h:638
@@ -8091,6 +8092,7 @@ msgstr "다음 페이지"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up by a page in the widget
 #: engines/crab/input/input.cpp:226 engines/sherlock/metaengine.cpp:572
 #: engines/sherlock/metaengine.cpp:917 engines/sherlock/metaengine.cpp:1041
+#: engines/supernova/metaengine.cpp:285 engines/titanic/metaengine.cpp:264
 #: engines/wintermute/keymapper_tables.h:183
 #: engines/wintermute/keymapper_tables.h:199
 #: engines/wintermute/keymapper_tables.h:630
@@ -13701,14 +13703,6 @@ msgstr "정보"
 msgid "Text speed"
 msgstr "텍스트 속도"
 
-#: engines/supernova/metaengine.cpp:285
-msgid "Page up"
-msgstr "페이지 위"
-
-#: engines/supernova/metaengine.cpp:291
-msgid "Page down"
-msgstr "페이지 아래"
-
 #: engines/supernova/metaengine.cpp:321
 msgid "Go"
 msgstr "가기"
@@ -13868,7 +13862,8 @@ msgstr "이동 / 검사"
 msgid "Close inventory"
 msgstr "인벤토리 닫기"
 
-#: engines/testbed/metaengine.cpp:38 engines/testbed/metaengine.cpp:39
+#. I18N: Runs tests in interactive mode
+#: engines/testbed/metaengine.cpp:39 engines/testbed/metaengine.cpp:40
 msgid "Run in interactive mode"
 msgstr "대화형 모드로 실행"
 
@@ -13981,14 +13976,6 @@ msgstr "룸"
 #: engines/titanic/metaengine.cpp:259
 msgid "Real life"
 msgstr "실제"
-
-#: engines/titanic/metaengine.cpp:264
-msgid "Scroll up page"
-msgstr "페이지 위로 스크롤"
-
-#: engines/titanic/metaengine.cpp:271
-msgid "Scroll down page"
-msgstr "페이지 아래로 스크롤"
 
 #: engines/titanic/metaengine.cpp:278
 msgid "Scroll to top"
@@ -16387,6 +16374,18 @@ msgstr ""
 "MIDI 재생을 사용할 수 없거나, 제대로 구성되지 않았습니다. 죠크 네미시스에는 "
 "MIDI 오디오가 필요한 여러 음악 퍼즐이 포함되어 있습니다.  이러한 퍼즐은 지원"
 "되는 경우 자막을 사용하여 해결할 수 있습니다. 게임을 계속 실행할까요?"
+
+#~ msgid "Page up"
+#~ msgstr "페이지 위"
+
+#~ msgid "Page down"
+#~ msgstr "페이지 아래"
+
+#~ msgid "Scroll up page"
+#~ msgstr "페이지 위로 스크롤"
+
+#~ msgid "Scroll down page"
+#~ msgstr "페이지 아래로 스크롤"
 
 #~ msgid "Load game state"
 #~ msgstr "게임 상태 불러오기"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-22 22:10+0000\n"
+"POT-Creation-Date: 2026-01-22 22:45+0000\n"
 "PO-Revision-Date: 2025-08-14 14:36+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -8265,6 +8265,7 @@ msgstr "Odpowiedź 6"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down by a page in the widget
 #: engines/crab/input/input.cpp:221 engines/sherlock/metaengine.cpp:591
 #: engines/sherlock/metaengine.cpp:902 engines/sherlock/metaengine.cpp:1048
+#: engines/supernova/metaengine.cpp:291 engines/titanic/metaengine.cpp:271
 #: engines/twine/metaengine.cpp:460 engines/wintermute/keymapper_tables.h:190
 #: engines/wintermute/keymapper_tables.h:207
 #: engines/wintermute/keymapper_tables.h:638
@@ -8280,6 +8281,7 @@ msgstr "Następna strona"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up by a page in the widget
 #: engines/crab/input/input.cpp:226 engines/sherlock/metaengine.cpp:572
 #: engines/sherlock/metaengine.cpp:917 engines/sherlock/metaengine.cpp:1041
+#: engines/supernova/metaengine.cpp:285 engines/titanic/metaengine.cpp:264
 #: engines/wintermute/keymapper_tables.h:183
 #: engines/wintermute/keymapper_tables.h:199
 #: engines/wintermute/keymapper_tables.h:630
@@ -14294,14 +14296,6 @@ msgstr "Informacja"
 msgid "Text speed"
 msgstr "Prędkość tekstu"
 
-#: engines/supernova/metaengine.cpp:285
-msgid "Page up"
-msgstr "Strona w górę"
-
-#: engines/supernova/metaengine.cpp:291
-msgid "Page down"
-msgstr "Strona w dół"
-
 #: engines/supernova/metaengine.cpp:321
 msgid "Go"
 msgstr "Idź"
@@ -14467,7 +14461,8 @@ msgstr "Ruch / Badanie"
 msgid "Close inventory"
 msgstr "Zamknij ekwipunek"
 
-#: engines/testbed/metaengine.cpp:38 engines/testbed/metaengine.cpp:39
+#. I18N: Runs tests in interactive mode
+#: engines/testbed/metaengine.cpp:39 engines/testbed/metaengine.cpp:40
 #, fuzzy
 #| msgid "Interact mode"
 msgid "Run in interactive mode"
@@ -14585,14 +14580,6 @@ msgstr "Pokoje"
 #: engines/titanic/metaengine.cpp:259
 msgid "Real life"
 msgstr "Prawdziwe życie"
-
-#: engines/titanic/metaengine.cpp:264
-msgid "Scroll up page"
-msgstr "Przewiń stronę w górę"
-
-#: engines/titanic/metaengine.cpp:271
-msgid "Scroll down page"
-msgstr "Przewiń stronę w dół"
 
 #: engines/titanic/metaengine.cpp:278
 msgid "Scroll to top"
@@ -17037,6 +17024,18 @@ msgstr ""
 "Nemesis zawiera kilka łamigłówek muzycznych, które wymagają dźwięku MIDI do "
 "rozwiązania. Te łamigłówki można również rozwiązać za pomocą napisów, jeśli "
 "są obsługiwane. Kontynuować uruchamianie gry?"
+
+#~ msgid "Page up"
+#~ msgstr "Strona w górę"
+
+#~ msgid "Page down"
+#~ msgstr "Strona w dół"
+
+#~ msgid "Scroll up page"
+#~ msgstr "Przewiń stronę w górę"
+
+#~ msgid "Scroll down page"
+#~ msgstr "Przewiń stronę w dół"
 
 #~ msgid "Load game state"
 #~ msgstr "Wczytaj stan gry"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-22 22:10+0000\n"
+"POT-Creation-Date: 2026-01-22 22:45+0000\n"
 "PO-Revision-Date: 2025-05-06 12:03+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -8406,6 +8406,7 @@ msgstr "Antwort 6"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down by a page in the widget
 #: engines/crab/input/input.cpp:221 engines/sherlock/metaengine.cpp:591
 #: engines/sherlock/metaengine.cpp:902 engines/sherlock/metaengine.cpp:1048
+#: engines/supernova/metaengine.cpp:291 engines/titanic/metaengine.cpp:271
 #: engines/twine/metaengine.cpp:460 engines/wintermute/keymapper_tables.h:190
 #: engines/wintermute/keymapper_tables.h:207
 #: engines/wintermute/keymapper_tables.h:638
@@ -8421,6 +8422,7 @@ msgstr "Nächste Seite"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up by a page in the widget
 #: engines/crab/input/input.cpp:226 engines/sherlock/metaengine.cpp:572
 #: engines/sherlock/metaengine.cpp:917 engines/sherlock/metaengine.cpp:1041
+#: engines/supernova/metaengine.cpp:285 engines/titanic/metaengine.cpp:264
 #: engines/wintermute/keymapper_tables.h:183
 #: engines/wintermute/keymapper_tables.h:199
 #: engines/wintermute/keymapper_tables.h:630
@@ -14752,18 +14754,6 @@ msgstr "Allgemeine Informationen"
 msgid "Text speed"
 msgstr "Text-Geschwindigkeit - Schnell"
 
-#: engines/supernova/metaengine.cpp:285
-#, fuzzy
-#| msgid "Rotate up"
-msgid "Page up"
-msgstr "Nach oben drehen"
-
-#: engines/supernova/metaengine.cpp:291
-#, fuzzy
-#| msgid "Rotate down"
-msgid "Page down"
-msgstr "Nach unten drehen"
-
 #: engines/supernova/metaengine.cpp:321
 #, fuzzy
 #| msgid "Good"
@@ -14943,7 +14933,8 @@ msgstr "Inventar"
 msgid "Close inventory"
 msgstr "Inventar öffnen/schließen"
 
-#: engines/testbed/metaengine.cpp:38 engines/testbed/metaengine.cpp:39
+#. I18N: Runs tests in interactive mode
+#: engines/testbed/metaengine.cpp:39 engines/testbed/metaengine.cpp:40
 #, fuzzy
 #| msgid "Interact Mode"
 msgid "Run in interactive mode"
@@ -15096,18 +15087,6 @@ msgstr "Raum:"
 #: engines/titanic/metaengine.cpp:259
 msgid "Real life"
 msgstr ""
-
-#: engines/titanic/metaengine.cpp:264
-#, fuzzy
-#| msgid "Scroll up"
-msgid "Scroll up page"
-msgstr "Nach oben scrollen"
-
-#: engines/titanic/metaengine.cpp:271
-#, fuzzy
-#| msgid "Scroll down"
-msgid "Scroll down page"
-msgstr "Nach unten scrollen"
 
 #: engines/titanic/metaengine.cpp:278
 #, fuzzy
@@ -17878,6 +17857,26 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Rotate up"
+#~ msgid "Page up"
+#~ msgstr "Nach oben drehen"
+
+#, fuzzy
+#~| msgid "Rotate down"
+#~ msgid "Page down"
+#~ msgstr "Nach unten drehen"
+
+#, fuzzy
+#~| msgid "Scroll up"
+#~ msgid "Scroll up page"
+#~ msgstr "Nach oben scrollen"
+
+#, fuzzy
+#~| msgid "Scroll down"
+#~ msgid "Scroll down page"
+#~ msgstr "Nach unten scrollen"
 
 #~ msgid "Load game state"
 #~ msgstr "Spielstand laden"

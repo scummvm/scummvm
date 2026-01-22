@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-22 22:10+0000\n"
+"POT-Creation-Date: 2026-01-22 22:45+0000\n"
 "PO-Revision-Date: 2025-03-07 00:18+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -8367,6 +8367,7 @@ msgstr "6. Válasz"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down by a page in the widget
 #: engines/crab/input/input.cpp:221 engines/sherlock/metaengine.cpp:591
 #: engines/sherlock/metaengine.cpp:902 engines/sherlock/metaengine.cpp:1048
+#: engines/supernova/metaengine.cpp:291 engines/titanic/metaengine.cpp:271
 #: engines/twine/metaengine.cpp:460 engines/wintermute/keymapper_tables.h:190
 #: engines/wintermute/keymapper_tables.h:207
 #: engines/wintermute/keymapper_tables.h:638
@@ -8382,6 +8383,7 @@ msgstr "Következő oldal"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up by a page in the widget
 #: engines/crab/input/input.cpp:226 engines/sherlock/metaengine.cpp:572
 #: engines/sherlock/metaengine.cpp:917 engines/sherlock/metaengine.cpp:1041
+#: engines/supernova/metaengine.cpp:285 engines/titanic/metaengine.cpp:264
 #: engines/wintermute/keymapper_tables.h:183
 #: engines/wintermute/keymapper_tables.h:199
 #: engines/wintermute/keymapper_tables.h:630
@@ -14634,18 +14636,6 @@ msgstr "Általános információ"
 msgid "Text speed"
 msgstr "Szöveg sebesség - Gyors"
 
-#: engines/supernova/metaengine.cpp:285
-#, fuzzy
-#| msgid "Rotate up"
-msgid "Page up"
-msgstr "Forgatás felfelé"
-
-#: engines/supernova/metaengine.cpp:291
-#, fuzzy
-#| msgid "Rotate down"
-msgid "Page down"
-msgstr "Forgatás lefelé"
-
 #: engines/supernova/metaengine.cpp:321
 #, fuzzy
 #| msgid "Good"
@@ -14820,7 +14810,8 @@ msgstr "Felszerelés"
 msgid "Close inventory"
 msgstr "Felszerelés Kinyitás/Bezárás"
 
-#: engines/testbed/metaengine.cpp:38 engines/testbed/metaengine.cpp:39
+#. I18N: Runs tests in interactive mode
+#: engines/testbed/metaengine.cpp:39 engines/testbed/metaengine.cpp:40
 #, fuzzy
 #| msgid "Interact Mode"
 msgid "Run in interactive mode"
@@ -14970,18 +14961,6 @@ msgstr "Szoba:"
 #: engines/titanic/metaengine.cpp:259
 msgid "Real life"
 msgstr ""
-
-#: engines/titanic/metaengine.cpp:264
-#, fuzzy
-#| msgid "Scroll up"
-msgid "Scroll up page"
-msgstr "Görgetés FEL"
-
-#: engines/titanic/metaengine.cpp:271
-#, fuzzy
-#| msgid "Scroll down"
-msgid "Scroll down page"
-msgstr "Görgetés LE"
 
 #: engines/titanic/metaengine.cpp:278
 #, fuzzy
@@ -17733,6 +17712,26 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Rotate up"
+#~ msgid "Page up"
+#~ msgstr "Forgatás felfelé"
+
+#, fuzzy
+#~| msgid "Rotate down"
+#~ msgid "Page down"
+#~ msgstr "Forgatás lefelé"
+
+#, fuzzy
+#~| msgid "Scroll up"
+#~ msgid "Scroll up page"
+#~ msgstr "Görgetés FEL"
+
+#, fuzzy
+#~| msgid "Scroll down"
+#~ msgid "Scroll down page"
+#~ msgstr "Görgetés LE"
 
 #~ msgid "Load game state"
 #~ msgstr "Játékállás betöltése"

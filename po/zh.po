@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-22 22:10+0000\n"
+"POT-Creation-Date: 2026-01-22 22:45+0000\n"
 "PO-Revision-Date: 2024-05-14 12:42+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -7611,6 +7611,7 @@ msgstr ""
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down by a page in the widget
 #: engines/crab/input/input.cpp:221 engines/sherlock/metaengine.cpp:591
 #: engines/sherlock/metaengine.cpp:902 engines/sherlock/metaengine.cpp:1048
+#: engines/supernova/metaengine.cpp:291 engines/titanic/metaengine.cpp:271
 #: engines/twine/metaengine.cpp:460 engines/wintermute/keymapper_tables.h:190
 #: engines/wintermute/keymapper_tables.h:207
 #: engines/wintermute/keymapper_tables.h:638
@@ -7626,6 +7627,7 @@ msgstr ""
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up by a page in the widget
 #: engines/crab/input/input.cpp:226 engines/sherlock/metaengine.cpp:572
 #: engines/sherlock/metaengine.cpp:917 engines/sherlock/metaengine.cpp:1041
+#: engines/supernova/metaengine.cpp:285 engines/titanic/metaengine.cpp:264
 #: engines/wintermute/keymapper_tables.h:183
 #: engines/wintermute/keymapper_tables.h:199
 #: engines/wintermute/keymapper_tables.h:630
@@ -13482,16 +13484,6 @@ msgstr "插值："
 msgid "Text speed"
 msgstr "文字和语音："
 
-#: engines/supernova/metaengine.cpp:285
-#, fuzzy
-msgid "Page up"
-msgstr "向下"
-
-#: engines/supernova/metaengine.cpp:291
-#, fuzzy
-msgid "Page down"
-msgstr "向下"
-
 #: engines/supernova/metaengine.cpp:321
 msgid "Go"
 msgstr ""
@@ -13647,7 +13639,8 @@ msgstr "向下"
 msgid "Close inventory"
 msgstr "特殊音效音量"
 
-#: engines/testbed/metaengine.cpp:38 engines/testbed/metaengine.cpp:39
+#. I18N: Runs tests in interactive mode
+#: engines/testbed/metaengine.cpp:39 engines/testbed/metaengine.cpp:40
 #, fuzzy
 #| msgid "Interact"
 msgid "Run in interactive mode"
@@ -13782,16 +13775,6 @@ msgstr "房间："
 #: engines/titanic/metaengine.cpp:259
 msgid "Real life"
 msgstr ""
-
-#: engines/titanic/metaengine.cpp:264
-msgid "Scroll up page"
-msgstr ""
-
-#: engines/titanic/metaengine.cpp:271
-#, fuzzy
-#| msgid "Scroll Down"
-msgid "Scroll down page"
-msgstr "往下滾動"
 
 #: engines/titanic/metaengine.cpp:278
 #, fuzzy
@@ -16372,6 +16355,19 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Page up"
+#~ msgstr "向下"
+
+#, fuzzy
+#~ msgid "Page down"
+#~ msgstr "向下"
+
+#, fuzzy
+#~| msgid "Scroll Down"
+#~ msgid "Scroll down page"
+#~ msgstr "往下滾動"
 
 #, fuzzy
 #~| msgid "Switch to the next scaler"

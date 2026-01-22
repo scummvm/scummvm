@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-22 22:10+0000\n"
+"POT-Creation-Date: 2026-01-22 22:45+0000\n"
 "PO-Revision-Date: 2026-01-18 21:22+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -8185,6 +8185,7 @@ msgstr "Vastaus 6"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down by a page in the widget
 #: engines/crab/input/input.cpp:221 engines/sherlock/metaengine.cpp:591
 #: engines/sherlock/metaengine.cpp:902 engines/sherlock/metaengine.cpp:1048
+#: engines/supernova/metaengine.cpp:291 engines/titanic/metaengine.cpp:271
 #: engines/twine/metaengine.cpp:460 engines/wintermute/keymapper_tables.h:190
 #: engines/wintermute/keymapper_tables.h:207
 #: engines/wintermute/keymapper_tables.h:638
@@ -8200,6 +8201,7 @@ msgstr "Seuraava sivu"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up by a page in the widget
 #: engines/crab/input/input.cpp:226 engines/sherlock/metaengine.cpp:572
 #: engines/sherlock/metaengine.cpp:917 engines/sherlock/metaengine.cpp:1041
+#: engines/supernova/metaengine.cpp:285 engines/titanic/metaengine.cpp:264
 #: engines/wintermute/keymapper_tables.h:183
 #: engines/wintermute/keymapper_tables.h:199
 #: engines/wintermute/keymapper_tables.h:630
@@ -14187,18 +14189,6 @@ msgstr "Tietoa"
 msgid "Text speed"
 msgstr "Tekstin nopeus"
 
-#: engines/supernova/metaengine.cpp:285
-#, fuzzy
-#| msgid "Rotate up"
-msgid "Page up"
-msgstr "Käännä ylös"
-
-#: engines/supernova/metaengine.cpp:291
-#, fuzzy
-#| msgid "Rotate down"
-msgid "Page down"
-msgstr "Käännä alas"
-
 #: engines/supernova/metaengine.cpp:321
 msgid "Go"
 msgstr "Siirry"
@@ -14370,7 +14360,8 @@ msgstr "Inventaario / Tutki"
 msgid "Close inventory"
 msgstr "Avaa / Sulje Inventaario"
 
-#: engines/testbed/metaengine.cpp:38 engines/testbed/metaengine.cpp:39
+#. I18N: Runs tests in interactive mode
+#: engines/testbed/metaengine.cpp:39 engines/testbed/metaengine.cpp:40
 #, fuzzy
 #| msgid "Interact mode"
 msgid "Run in interactive mode"
@@ -14492,14 +14483,6 @@ msgstr "Huoneet"
 #: engines/titanic/metaengine.cpp:259
 msgid "Real life"
 msgstr ""
-
-#: engines/titanic/metaengine.cpp:264
-msgid "Scroll up page"
-msgstr "Vieritä sivua ylös"
-
-#: engines/titanic/metaengine.cpp:271
-msgid "Scroll down page"
-msgstr "Vieritä sivua alas"
 
 #: engines/titanic/metaengine.cpp:278
 msgid "Scroll to top"
@@ -17037,6 +17020,22 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Rotate up"
+#~ msgid "Page up"
+#~ msgstr "Käännä ylös"
+
+#, fuzzy
+#~| msgid "Rotate down"
+#~ msgid "Page down"
+#~ msgstr "Käännä alas"
+
+#~ msgid "Scroll up page"
+#~ msgstr "Vieritä sivua ylös"
+
+#~ msgid "Scroll down page"
+#~ msgstr "Vieritä sivua alas"
 
 #~ msgid "Load game state"
 #~ msgstr "Lataa pelitallennus"

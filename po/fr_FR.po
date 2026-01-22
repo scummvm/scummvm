@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-22 22:10+0000\n"
+"POT-Creation-Date: 2026-01-22 22:45+0000\n"
 "PO-Revision-Date: 2026-01-18 21:22+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -8280,6 +8280,7 @@ msgstr "Réponse 6"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down by a page in the widget
 #: engines/crab/input/input.cpp:221 engines/sherlock/metaengine.cpp:591
 #: engines/sherlock/metaengine.cpp:902 engines/sherlock/metaengine.cpp:1048
+#: engines/supernova/metaengine.cpp:291 engines/titanic/metaengine.cpp:271
 #: engines/twine/metaengine.cpp:460 engines/wintermute/keymapper_tables.h:190
 #: engines/wintermute/keymapper_tables.h:207
 #: engines/wintermute/keymapper_tables.h:638
@@ -8295,6 +8296,7 @@ msgstr "Page suivante"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up by a page in the widget
 #: engines/crab/input/input.cpp:226 engines/sherlock/metaengine.cpp:572
 #: engines/sherlock/metaengine.cpp:917 engines/sherlock/metaengine.cpp:1041
+#: engines/supernova/metaengine.cpp:285 engines/titanic/metaengine.cpp:264
 #: engines/wintermute/keymapper_tables.h:183
 #: engines/wintermute/keymapper_tables.h:199
 #: engines/wintermute/keymapper_tables.h:630
@@ -14103,14 +14105,6 @@ msgstr "Information"
 msgid "Text speed"
 msgstr "Vitesse du texte"
 
-#: engines/supernova/metaengine.cpp:285
-msgid "Page up"
-msgstr "Page préc."
-
-#: engines/supernova/metaengine.cpp:291
-msgid "Page down"
-msgstr "Page suiv."
-
 #: engines/supernova/metaengine.cpp:321
 msgid "Go"
 msgstr "Aller"
@@ -14278,7 +14272,8 @@ msgstr "Se déplacer / Examiner"
 msgid "Close inventory"
 msgstr "Fermer l'inventaire"
 
-#: engines/testbed/metaengine.cpp:38 engines/testbed/metaengine.cpp:39
+#. I18N: Runs tests in interactive mode
+#: engines/testbed/metaengine.cpp:39 engines/testbed/metaengine.cpp:40
 msgid "Run in interactive mode"
 msgstr "Démarrer en mode interactif"
 
@@ -14395,14 +14390,6 @@ msgstr "Pièces"
 #: engines/titanic/metaengine.cpp:259
 msgid "Real life"
 msgstr "Vie réelle"
-
-#: engines/titanic/metaengine.cpp:264
-msgid "Scroll up page"
-msgstr "Haut de page"
-
-#: engines/titanic/metaengine.cpp:271
-msgid "Scroll down page"
-msgstr "Bas de page"
 
 #: engines/titanic/metaengine.cpp:278
 msgid "Scroll to top"
@@ -16840,6 +16827,18 @@ msgstr ""
 "contient plusieurs énigmes musicales qui nécessitent l'audio MIDI pour être "
 "résolues.  Ces puzzles peuvent également être résolus à l'aide de sous-"
 "titres, s'ils sont pris en charge. Continuer à lancer le jeu ?"
+
+#~ msgid "Page up"
+#~ msgstr "Page préc."
+
+#~ msgid "Page down"
+#~ msgstr "Page suiv."
+
+#~ msgid "Scroll up page"
+#~ msgstr "Haut de page"
+
+#~ msgid "Scroll down page"
+#~ msgstr "Bas de page"
 
 #~ msgid "Load game state"
 #~ msgstr "Charger la position du jeu"

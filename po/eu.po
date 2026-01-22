@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-22 22:10+0000\n"
+"POT-Creation-Date: 2026-01-22 22:45+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -8059,6 +8059,7 @@ msgstr ""
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down by a page in the widget
 #: engines/crab/input/input.cpp:221 engines/sherlock/metaengine.cpp:591
 #: engines/sherlock/metaengine.cpp:902 engines/sherlock/metaengine.cpp:1048
+#: engines/supernova/metaengine.cpp:291 engines/titanic/metaengine.cpp:271
 #: engines/twine/metaengine.cpp:460 engines/wintermute/keymapper_tables.h:190
 #: engines/wintermute/keymapper_tables.h:207
 #: engines/wintermute/keymapper_tables.h:638
@@ -8075,6 +8076,7 @@ msgstr "Aurr."
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up by a page in the widget
 #: engines/crab/input/input.cpp:226 engines/sherlock/metaengine.cpp:572
 #: engines/sherlock/metaengine.cpp:917 engines/sherlock/metaengine.cpp:1041
+#: engines/supernova/metaengine.cpp:285 engines/titanic/metaengine.cpp:264
 #: engines/wintermute/keymapper_tables.h:183
 #: engines/wintermute/keymapper_tables.h:199
 #: engines/wintermute/keymapper_tables.h:630
@@ -14130,18 +14132,6 @@ msgstr "Interpolazioa:"
 msgid "Text speed"
 msgstr "Testu-abiadura astiroago / bizkorrago"
 
-#: engines/supernova/metaengine.cpp:285
-#, fuzzy
-#| msgid "Rotate"
-msgid "Page up"
-msgstr "Biratu"
-
-#: engines/supernova/metaengine.cpp:291
-#, fuzzy
-#| msgid "Rotate"
-msgid "Page down"
-msgstr "Biratu"
-
 #: engines/supernova/metaengine.cpp:321
 msgid "Go"
 msgstr ""
@@ -14309,7 +14299,8 @@ msgstr "Inbentarioa"
 msgid "Close inventory"
 msgstr "Inbentarioa"
 
-#: engines/testbed/metaengine.cpp:38 engines/testbed/metaengine.cpp:39
+#. I18N: Runs tests in interactive mode
+#: engines/testbed/metaengine.cpp:39 engines/testbed/metaengine.cpp:40
 #, fuzzy
 #| msgid "Interact"
 msgid "Run in interactive mode"
@@ -14445,16 +14436,6 @@ msgstr "Gela:"
 #: engines/titanic/metaengine.cpp:259
 msgid "Real life"
 msgstr ""
-
-#: engines/titanic/metaengine.cpp:264
-#, fuzzy
-msgid "Scroll up page"
-msgstr "Gora"
-
-#: engines/titanic/metaengine.cpp:271
-#, fuzzy
-msgid "Scroll down page"
-msgstr "Behera"
 
 #: engines/titanic/metaengine.cpp:278
 #, fuzzy
@@ -17200,6 +17181,24 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Rotate"
+#~ msgid "Page up"
+#~ msgstr "Biratu"
+
+#, fuzzy
+#~| msgid "Rotate"
+#~ msgid "Page down"
+#~ msgstr "Biratu"
+
+#, fuzzy
+#~ msgid "Scroll up page"
+#~ msgstr "Gora"
+
+#, fuzzy
+#~ msgid "Scroll down page"
+#~ msgstr "Behera"
 
 #, fuzzy
 #~ msgid "Load game state"
