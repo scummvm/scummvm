@@ -135,26 +135,29 @@ void MenuManager::checkMouseClick(int x, int y) {
 }
 
 void MenuManager::menuLoop() {
-	_events->pollEvent();
 
-	if (_events->_leftMouseClicked) {
-		checkMouseClick(_events->_mouseX, _events->_mouseY);
-		_events->_leftMouseClicked = false;
-	} else if (_events->_rightMouseClicked) {
-		g_system->getPaletteManager()->setPalette(g_engine->_room->_roomPalette, 0, 256);
-		g_engine->_state->stateGame = GAME;
-		_events->_rightMouseClicked = false;
-		tearDown();
-	} else {
-		if (_events->_lastKeyEvent == Common::KEYCODE_b) {
-			// g_system->getPaletteManager()->setPalette(g_engine->_room->_roomPalette, 0, 256);
-			// g_engine->stateGame = GAME;
-			showButtons = !showButtons;
-			_events->_lastKeyEvent = Common::KEYCODE_INVALID;
-			// tearDown();
+	g_engine->changeCursor(DEFAULT);
+	while (!g_engine->shouldQuit() && !_events->_rightMouseClicked) {
+
+		_events->pollEvent();
+
+		if (_events->_leftMouseClicked) {
+			checkMouseClick(_events->_mouseX, _events->_mouseY);
+			_events->_leftMouseClicked = false;
 		}
-	}
 
+		drawScreen();
+		_screen->markAllDirty();
+		_screen->update();
+		g_system->delayMillis(10);
+	}
+	g_engine->_graphics->clearScreen();
+	_events->_rightMouseClicked = false;
+	g_system->getPaletteManager()->setPalette(g_engine->_room->_roomPalette, 0, 256);
+	cleanUp();
+}
+
+void MenuManager::drawScreen() {
 	memcpy(_compositeBuffer, _mainMenu, 640 * 400);
 	// memset(_compositeBuffer, 0, 640 * 400);
 	if (showButtons)
@@ -168,8 +171,6 @@ void MenuManager::menuLoop() {
 	}
 
 	drawText(g_engine->_smallFont, Common::String::format("%d,%d", _events->_mouseX, _events->_mouseY), 0, 0, 640, 13);
-	_screen->markAllDirty();
-	_screen->update();
 }
 
 void MenuManager::drawInventoryIcons() {
@@ -308,7 +309,7 @@ void MenuManager::loadMenuTexts() {
 	exe.close();
 }
 
-void MenuManager::tearDown() {
+void MenuManager::cleanUp() {
 }
 
 void MenuManager::drawButtons() {

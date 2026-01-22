@@ -482,6 +482,13 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 		_screen->markAllDirty();
 		_screen->update();
 		break;
+	case 271:
+		_dialog->say(_res->_ingameTexts[TRABAJARIA_MEJOR_SI_NO_ME_MOLESTARA]);
+		break;
+	case 270:
+		// loadExtraScreenAndPresent(9);
+		_state->stateGame = COMPUTER;
+		break;
 	}
 }
 

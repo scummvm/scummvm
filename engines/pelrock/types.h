@@ -311,12 +311,10 @@ struct ScaleCalculation {
 
 enum GameState {
 	GAME = 100,
-	MENU = 101,
-	CREDITS = 102,
-	SAVELOAD = 103,
-	SETTINGS = 104,
-	EXTRA_SCREEN = 105,
-	INTRO = 106,
+	CREDITS = 101,
+	SETTINGS = 102,
+	INTRO = 103,
+	COMPUTER = 104
 };
 
 struct HotSpotChange {

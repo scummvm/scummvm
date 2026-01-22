@@ -51,6 +51,7 @@ public:
 	MenuManager(Graphics::Screen *screen, PelrockEventManager *events, ResourceManager *res);
 	~MenuManager();
 	void menuLoop();
+	void drawScreen();
 	void drawInventoryIcons();
 	void loadMenu();
 	byte _mainMenuPalette[768] = {0};
@@ -58,7 +59,7 @@ public:
 private:
 	void checkMouseClick(int x, int y);
 	void loadMenuTexts();
-	void tearDown();
+	void cleanUp();
 	void drawButtons();
 	void drawColoredText(Graphics::ManagedSurface *surface, const Common::String &text, int x, int y, int w, Graphics::Font *font);
 	void readButton(Common::File &alfred7, uint32 offset, byte *outBuffer[2], Common::Rect rect);

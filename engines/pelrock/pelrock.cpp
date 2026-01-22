@@ -36,6 +36,7 @@
 
 #include "pelrock.h"
 #include "pelrock/actions.h"
+#include "pelrock/computer.h"
 #include "pelrock/console.h"
 #include "pelrock/detection.h"
 #include "pelrock/fonts/small_font.h"
@@ -111,31 +112,24 @@ Common::Error PelrockEngine::run() {
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
-	// Simple event handling loop
-	Graphics::FrameLimiter limiter(g_system, 60);
+	_state->stateGame = shouldPlayIntro ? INTRO : GAME;
 
-	if (shouldPlayIntro == false) {
-		_state->stateGame = GAME;
-		// stateGame = SETTINGS;
-	} else {
-		_state->stateGame = INTRO;
-		_videoManager->playIntro();
-		_state->stateGame = GAME;
-	}
-	if (!shouldQuit())
-		init();
-
+	init();
 	while (!shouldQuit()) {
-
 		if (_state->stateGame == SETTINGS) {
-			changeCursor(DEFAULT);
 			_menu->menuLoop();
+			_state->stateGame = GAME;
 		} else if (_state->stateGame == GAME) {
 			gameLoop();
 		}
-		_screen->update();
-		// limiter.delayBeforeSwap();
-		// limiter.startFrame();
+		else if (_state->stateGame == INTRO) {
+			_videoManager->playIntro();
+			_state->stateGame = GAME;
+		}
+		else if (_state->stateGame == COMPUTER) {
+			computerLoop();
+			_state->stateGame = GAME;
+		}
 	}
 
 	return Common::kNoError;
@@ -1227,9 +1221,16 @@ void PelrockEngine::pickupIconFlash() {
 }
 
 void PelrockEngine::gameLoop() {
-	_events->pollEvent();
-	checkMouse();
-	renderScene();
+
+		_events->pollEvent();
+		checkMouse();
+		renderScene();
+		_screen->update();
+}
+
+void PelrockEngine::computerLoop() {
+	Computer computer(_events);
+	computer.run();
 }
 
 void PelrockEngine::extraScreenLoop() {

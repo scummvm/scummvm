@@ -34,7 +34,7 @@ public:
 	Common::Point showOverlay(int height, byte *buf);
 	byte *grabBackgroundSlice(byte *buf, int x, int y, int w, int h);
 	void putBackgroundSlice(byte *buf, int x, int y, int w, int h, byte *slice);
-
+	void clearScreen();
 };
 
 } // End of namespace Pelrock

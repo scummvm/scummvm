@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	pelrock.o \
 	actions.o \
 	chrono.o \
+	computer.o \
 	console.o \
 	metaengine.o \
 	room.o \

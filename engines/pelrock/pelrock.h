@@ -61,10 +61,8 @@ private:
 	Common::RandomSource _randomSource;
 	VideoManager *_videoManager = nullptr;
 	SoundManager *_sound = nullptr;
-	PelrockEventManager *_events = nullptr;
 	DialogManager *_dialog = nullptr;
 	MenuManager *_menu = nullptr;
-	GraphicsManager *_graphics = nullptr;
 
 	void init();
 	void loadAnims();
@@ -103,13 +101,13 @@ private:
 	void chooseAlfredStateAndDraw();
 	void drawAlfred(byte *buf);
 	void drawNextFrame(Sprite *animSet);
-	void changeCursor(Cursor cursor);
 	void animateTalkingNPC(Sprite *animSet);
 	void pickupIconFlash();
 
 	void playSoundIfNeeded();
 
 	void gameLoop();
+	void computerLoop();
 	void extraScreenLoop();
 	void walkLoop(int16 x, int16 y, AlfredDirection direction);
 
@@ -156,10 +154,12 @@ protected:
 	Common::Error run() override;
 
 public:
+	GraphicsManager *_graphics = nullptr;
 	Graphics::Screen *_screen = nullptr;
 	ResourceManager *_res = nullptr;
 	RoomManager *_room = nullptr;
 	ChronoManager *_chrono = nullptr;
+	PelrockEventManager *_events = nullptr;
 	AlfredState _alfredState;
 	byte *_compositeBuffer = nullptr; // Working composition buffer
 
@@ -223,12 +223,14 @@ public:
 	void setScreen(int s, AlfredDirection dir);
 	void loadExtraScreenAndPresent(int screenIndex);
 	void waitForSpecialAnimation();
-	void doExtraActions(int roomNumber);
 	bool renderScene(int overlayMode = OVERLAY_NONE);
 
+	void changeCursor(Cursor cursor);
+
+	// Actions
+	void doExtraActions(int roomNumber);
 	void addInventoryItem(int item);
 	void buyFromStore(HotSpot *hotspot, int stickerId);
-	// Actions
 	void performActionTrigger(uint16 actionTrigger);
 	void dialogActionTrigger(uint16 actionTrigger, byte room, byte rootIndex);
 

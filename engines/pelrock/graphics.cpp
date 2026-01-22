@@ -69,4 +69,8 @@ void GraphicsManager::putBackgroundSlice(byte *buf, int x, int y, int w, int h, 
 	}
 }
 
+void GraphicsManager::clearScreen() {
+	memset(g_engine->_screen->getPixels(), 0, g_engine->_screen->pitch * g_engine->_screen->h);
+}
+
 } // End of namespace Pelrock
