@@ -43,7 +43,8 @@ static const int unpickableHotspotExtras[] = {
 	73,
 	74,
 	6,
-	7
+	7,
+	316, // wires
 };
 
 class RoomManager {

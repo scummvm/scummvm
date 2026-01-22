@@ -491,7 +491,7 @@ struct AlfredSpecialAnimOffset {
 	}
 };
 
-const AlfredSpecialAnimOffset alfredSpecialAnims[] = {
+static const AlfredSpecialAnimOffset alfredSpecialAnims[] = {
 	{10, 51, 102, 1, 559685, 1}, // READ BOOK
 	{10, 51, 102, 1, 578943, 1}, // READ RECIPE
 	{3, 45, 87, 0, 37000, 1}, // ELECTRIC SHOCK 1

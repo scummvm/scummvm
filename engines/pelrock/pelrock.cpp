@@ -576,7 +576,7 @@ void PelrockEngine::doAction(VerbIcon action, HotSpot *hotspot) {
 }
 
 void PelrockEngine::talkTo(HotSpot *hotspot) {
-	Sprite *animSet;
+	Sprite *animSet = nullptr;
 	for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
 		if (_room->_currentRoomAnims[i].index == hotspot->index) {
 			animSet = &_room->_currentRoomAnims[i];
@@ -696,22 +696,22 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		break;
 	}
 	case ALFRED_INTERACTING: {
+		debug("Alfred interacting frame %d/%d, direction %d", _alfredState.curFrame, interactingAnimLength, _alfredState.direction);
 		drawAlfred(_res->alfredInteractFrames[_alfredState.direction][_alfredState.curFrame]);
 		_alfredState.curFrame++;
 		if (_alfredState.curFrame >= interactingAnimLength) {
 			if (_queuedAction.isQueued) {
 				_queuedAction.isQueued = false;
+				_alfredState.setState(ALFRED_IDLE);
 				doAction(_queuedAction.verb, &_room->_currentRoomHotspots[_queuedAction.hotspotIndex]);
 				break;
 			}
-			_alfredState.setState(ALFRED_IDLE);
 		}
 		break;
 	}
 	case ALFRED_SPECIAL_ANIM: {
 
 		byte *frame = new byte[_res->_currentSpecialAnim->stride * _res->_currentSpecialAnim->numFrames];
-		debug("Drawing special anim frame %d/%d", _res->_currentSpecialAnim->curFrame, _res->_currentSpecialAnim->numFrames);
 		extractSingleFrame(_res->_currentSpecialAnim->animData,
 						   frame,
 						   _res->_currentSpecialAnim->curFrame,
@@ -915,7 +915,6 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 
 	int frameSize = sprite->stride;
 	int curFrame = animData.curFrame;
-	byte *frame = new byte[frameSize];
 	drawSpriteToBuffer(_compositeBuffer, 640, animData.animData[curFrame], x, y, w, h, 255);
 
 	// Original in the game: increment FIRST, then check (not check-then-increment)
@@ -1142,7 +1141,6 @@ Exit *PelrockEngine::isExitUnder(int x, int y) {
  */
 bool PelrockEngine::isSpriteUnder(Sprite *sprite, int x, int y) {
 	Anim &animData = sprite->animData[sprite->curAnimIndex];
-	int frameSize = animData.w * animData.h;
 	int curFrame = animData.curFrame;
 
 	int localX = x - animData.x;

@@ -434,7 +434,6 @@ void RoomManager::resetConversationStates(byte roomNumber, byte *conversationDat
 
 void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 
-	uint32_t outPos = 0;
 	_roomStickers.clear();
 	_currentRoomNumber = roomNumber;
 	int roomOffset = roomNumber * kRoomStructSize;
@@ -498,10 +497,6 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	for (int i = 0; i < _currentRoomHotspots.size(); i++) {
 		HotSpot hotspot = _currentRoomHotspots[i];
 		drawRect(g_engine->_screen, hotspot.x, hotspot.y, hotspot.w, hotspot.h, 200 + i);
-	}
-
-	for (int i = 0; i < _currentRoomExits.size(); i++) {
-		Exit exit = _currentRoomExits[i];
 	}
 
 	PaletteAnim *anim = getPaletteAnimForRoom(roomNumber);
@@ -595,8 +590,8 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 		sprite.spriteType = data[animOffset + 33];
 		sprite.actionFlags = data[animOffset + 34];
 		sprite.isHotspotDisabled = data[animOffset + 38];
-		for (int i = 0; i < disabledSprites.size(); i++) {
-			if (disabledSprites[i] == sprite.index) {
+		for (int j = 0; j < disabledSprites.size(); j++) {
+			if (disabledSprites[j] == sprite.index) {
 				sprite.zOrder = 255;
 				sprite.isHotspotDisabled = 1;
 				break;

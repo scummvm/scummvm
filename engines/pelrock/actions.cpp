@@ -445,6 +445,10 @@ void PelrockEngine::useCordWithPlug(int inventoryObject, HotSpot *hotspot) {
 }
 
 void PelrockEngine::pickCables(HotSpot *hotspot) {
+	if(_room->hasSticker(21)) {
+		_dialog->say(_res->_ingameTexts[QUELOSCOJA_SUPADRE]);
+		return;
+	}
 	// Duck to pick cables
 	_res->loadAlfredSpecialAnim(2);
 	_alfredState.animState = ALFRED_SPECIAL_ANIM;
@@ -465,6 +469,7 @@ void PelrockEngine::pickCables(HotSpot *hotspot) {
 	_room->addSticker(21);
 
 	_dialog->say(_res->_ingameTexts[RELOJ_HA_CAMBIADO]);
+	_state->setRootDisabledState(4, 0, true);
 }
 
 void PelrockEngine::performActionTrigger(uint16 actionTrigger) {

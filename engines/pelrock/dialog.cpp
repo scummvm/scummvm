@@ -357,13 +357,12 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 
 /**
  * Check if all sub-branches of the current choice level are exhausted.
- * Based on Ghidra code at LAB_00018c2d in handle_conversation_tree.
  *
  * Returns true if we should disable the current choice, which happens when:
  * - There are no FB sub-branches at higher indices, OR
  * - All FB sub-branches at higher indices already have FA (are disabled)
  *
- * F1 markers (repeatable) don't block disabling - they never get disabled.
+ * F1 markers (repeatable) never get disabled.
  */
 bool DialogManager::checkAllSubBranchesExhausted(const byte *data, uint32 dataSize, uint32 startPos, int currentChoiceLevel) {
 	uint32 pos = startPos;
@@ -440,6 +439,9 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 
 	uint32 position = 0;
 	int currentChoiceLevel = -1; // Track the current choice level
+	uint32 lastChoiceMenuPosition = 0; // Track where we last showed a choice menu
+	ChoiceOption lastSelectedChoice; // Track the last choice we selected
+	bool skipToChoices = false; // After F0, skip directly to choice parsing
 
 	// Find the speaker tree for this NPC; they are marked by 0xFE 0xXX where XX is NPC index + 1
 	bool speakerTreeOffsetFound = false;
@@ -476,12 +478,32 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 
 	// OUTER LOOP: Continue until conversation ends
 	while (position < dataSize && !g_engine->shouldQuit()) {
-		// Skip control bytes that should be ignored
+		// Skip control bytes that should be ignored (but handle F0 specially)
 		while (position < dataSize &&
 			   (conversationData[position] == CTRL_ALT_END_MARKER_1 ||
-				conversationData[position] == CTRL_ALT_END_MARKER_2 ||
-				conversationData[position] == CTRL_GO_BACK)) {
+				conversationData[position] == CTRL_ALT_END_MARKER_2)) {
 			position++;
+		}
+
+		// Handle F0 "Go Back" - return to the last choice menu position
+		// Disable the choice that led us here before rewinding
+		if (position < dataSize && conversationData[position] == CTRL_GO_BACK) {
+			debug("F0 Go Back at position %u, rewinding to lastChoiceMenuPosition %u", position, lastChoiceMenuPosition);
+
+			if (lastChoiceMenuPosition > 0) {
+				// Disable the choice that led to this F0
+				if (lastSelectedChoice.dataOffset > 0) {
+					debug("F0: Disabling choice that led here at offset %u", lastSelectedChoice.dataOffset);
+					g_engine->_room->addDisabledChoice(lastSelectedChoice);
+				}
+				position = lastChoiceMenuPosition;
+				skipToChoices = true; // Skip directly to choice parsing
+				// Jump directly to choice parsing section
+				// Don't continue - let it fall through
+			} else {
+				debug("F0: No previous choice menu, ending conversation");
+				break;
+			}
 		}
 
 		if (position >= dataSize) {
@@ -489,73 +511,81 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 			break;
 		}
 
-		// 1. Read and display current dialogue
-		Common::String text;
-		byte speakerId;
-		uint32 endPos = readTextBlock(conversationData, dataSize, position, text, speakerId);
-		Common::Array<Common::Array<Common::String>> wrappedText = wordWrap(text);
-		debug("Word wrapping %s produces %d pages", text.c_str(), wrappedText.size());
-		// Skip spurious single character artifacts
-		if (!text.empty() && text.size() > 1) {
-			displayDialogue(wrappedText, speakerId);
+		// 1. Read and display current dialogue (unless skipping to choices)
+		uint32 endPos = position; // Declare outside the if block
+		if (!skipToChoices) {
+			Common::String text;
+			byte speakerId;
+			endPos = readTextBlock(conversationData, dataSize, position, text, speakerId);
+			Common::Array<Common::Array<Common::String>> wrappedText = wordWrap(text);
+			debug("Word wrapping %s produces %d pages", text.c_str(), wrappedText.size());
+			// Skip spurious single character artifacts
+			if (!text.empty() && text.size() > 1) {
+				displayDialogue(wrappedText, speakerId);
+			}
+
+			// Move to end of text
+			position = endPos;
 		}
 
-		// Move to end of text
-		position = endPos;
-
-		// 2. Check for end of conversation
-		if (position >= dataSize) {
-			debug("Reached end of data after reading dialogue");
-			break;
-		}
-
-		byte controlByte = conversationData[position];
-
-		if (controlByte == CTRL_END_CONVERSATION) {
-			debug("End of conversation marker found");
-			break;
-		}
-
-		if (controlByte == CTRL_ACTION_TRIGGER) {
-			uint16 actionCode = conversationData[position + 1] | (conversationData[position + 2] << 8);
-			debug("Action trigger %d encountered!", actionCode);
-			g_engine->dialogActionTrigger(
-				actionCode,
-				g_engine->_room->_currentRoomNumber,
-				currentRoot);
-			break;
-		}
-
-		// Move past control byte
-		if (controlByte == CTRL_END_TEXT) {
-			position++;
+		// 2. Check for end of conversation (skip if going directly to choices)
+		if (!skipToChoices) {
 			if (position >= dataSize) {
-				debug("Reached end of data after moving past control byte");
+				debug("Reached end of data after reading dialogue");
 				break;
+			}
+
+			byte controlByte = conversationData[position];
+
+			if (controlByte == CTRL_END_CONVERSATION) {
+				debug("End of conversation marker found");
+				break;
+			}
+
+			if (controlByte == CTRL_ACTION_TRIGGER) {
+				uint16 actionCode = conversationData[position + 1] | (conversationData[position + 2] << 8);
+				debug("Action trigger %d encountered!", actionCode);
+				g_engine->dialogActionTrigger(
+					actionCode,
+					g_engine->_room->_currentRoomNumber,
+					currentRoot);
+				break;
+			}
+
+			// Move past control byte
+			if (controlByte == CTRL_END_TEXT) {
+				position++;
+				if (position >= dataSize) {
+					debug("Reached end of data after moving past control byte");
+					break;
+				}
 			}
 		}
 
 		// 3. Before parsing choices, check if we're at a choice marker
 		// Skip control bytes to peek at next meaningful byte
 		uint32 peekPos = position;
-		while (peekPos < dataSize &&
-			   (conversationData[peekPos] == CTRL_ALT_END_MARKER_1 ||
-				conversationData[peekPos] == CTRL_ALT_END_MARKER_2 ||
-				conversationData[peekPos] == CTRL_TEXT_TERMINATOR ||
-				conversationData[peekPos] == CTRL_GO_BACK)) {
-			peekPos++;
+		if (!skipToChoices) {
+			while (peekPos < dataSize &&
+				   (conversationData[peekPos] == CTRL_ALT_END_MARKER_1 ||
+					conversationData[peekPos] == CTRL_ALT_END_MARKER_2 ||
+					conversationData[peekPos] == CTRL_TEXT_TERMINATOR)) {
+				peekPos++;
+			}
+
+			// If not at a choice marker, there's more dialogue to read
+			if (peekPos < dataSize &&
+				conversationData[peekPos] != CTRL_DIALOGUE_MARKER &&
+				conversationData[peekPos] != CTRL_DIALOGUE_MARKER_ONEOFF &&
+				conversationData[peekPos] != CTRL_END_CONVERSATION &&
+				conversationData[peekPos] != CTRL_DISABLED_CHOICE) {
+				continue;
+			}
 		}
 
-		// If not at a choice marker, there's more dialogue to read
-		if (peekPos < dataSize &&
-			conversationData[peekPos] != CTRL_DIALOGUE_MARKER &&
-			conversationData[peekPos] != CTRL_DIALOGUE_MARKER_ONEOFF &&
-			conversationData[peekPos] != CTRL_END_CONVERSATION &&
-			conversationData[peekPos] != CTRL_DISABLED_CHOICE) {
-			continue;
-		}
-
-		// 4. Parse choices
+		// 4. Parse choices - save position for F0 "go back"
+		skipToChoices = false; // Reset flag
+		lastChoiceMenuPosition = position;
 		Common::Array<ChoiceOption> *choices = new Common::Array<ChoiceOption>();
 		parseChoices(conversationData, dataSize, position, choices);
 		debug("Parsed %u choices", choices->size());
@@ -569,19 +599,23 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 			continue;
 		}
 
-		// Check if we have a currentChoiceLevel and if these choices are at the next level
+		// Check if we have a currentChoiceLevel and if these choices are at the expected level
 		if (currentChoiceLevel >= 0) {
-			// We've already made a choice, check if the current choices are at the next level
-			bool foundNextLevel = false;
+			// After F0, we expect choices at the SAME level (currentChoiceLevel)
+			// Otherwise, we expect choices at the NEXT level (currentChoiceLevel + 1)
+			bool foundExpectedLevel = false;
 			for (uint i = 0; i < choices->size(); i++) {
-				if ((*choices)[i].choiceIndex == currentChoiceLevel + 1) {
-					foundNextLevel = true;
+				if ((*choices)[i].choiceIndex == currentChoiceLevel ||
+					(*choices)[i].choiceIndex == currentChoiceLevel + 1) {
+					foundExpectedLevel = true;
+					// Update currentChoiceLevel to match what we found
+					currentChoiceLevel = (*choices)[i].choiceIndex;
 					break;
 				}
 			}
 
-			if (!foundNextLevel) {
-				debug("No choices found at level %d (current is %d), ending conversation", currentChoiceLevel + 1, currentChoiceLevel);
+			if (!foundExpectedLevel) {
+				debug("No choices found at level %d or %d, ending conversation", currentChoiceLevel, currentChoiceLevel + 1);
 				break;
 			}
 		}
@@ -612,6 +646,8 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 
 		// 6. Move position to after the selected choice
 		if (selectedIndex >= 0 && selectedIndex < (int)choices->size()) {
+			// Save this choice in case we hit F0 and need to disable it
+			lastSelectedChoice = (*choices)[selectedIndex];
 			position = (*choices)[selectedIndex].dataOffset;
 			currentChoiceLevel = (*choices)[selectedIndex].choiceIndex;
 
@@ -624,8 +660,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 				displayDialogue(choiceText, ALFRED_COLOR);
 				// Only disable FB choice if all sub-branches are exhausted (Ghidra LAB_00018c2d)
 				if ((*choices)[selectedIndex].shouldDisableOnSelect) {
-					bool shouldDisable = checkAllSubBranchesExhausted(
-						conversationData, dataSize, endPos, currentChoiceLevel);
+					bool shouldDisable = checkAllSubBranchesExhausted(conversationData, dataSize, endPos, currentChoiceLevel);
 					if (shouldDisable) {
 						g_engine->_room->addDisabledChoice((*choices)[selectedIndex]);
 					}
@@ -728,7 +763,7 @@ bool DialogManager::processColorAndTrim(Common::StringArray &lines, byte &speake
 	return false;
 }
 
-bool isEndMarker(char char_byte) {
+bool isEndMarker(unsigned char char_byte) {
 	return char_byte == CTRL_END_TEXT || char_byte == CTRL_END_CONVERSATION || char_byte == CTRL_ACTION_TRIGGER || char_byte == CTRL_GO_BACK;
 }
 
@@ -801,7 +836,7 @@ Common::Array<Common::Array<Common::String>> DialogManager::wordWrap(Common::Str
 			if (trailingSpaces > 0) {
 				currentPage.push_back(lineText);
 				//  current_line = [' ' * trailing_spaces]
-				Common::String currentLine(trailingSpaces, ' ');
+				Common::String current_line(trailingSpaces, ' ');
 				charsRemaining = MAX_CHARS_PER_LINE - trailingSpaces;
 				currentLineNum += 1;
 
