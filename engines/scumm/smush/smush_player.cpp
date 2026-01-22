@@ -436,14 +436,19 @@ void SmushPlayer::handleFetch(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFetch()");
 	assert(subSize >= 6);
 
-	// For RA2 Handler 25, skip FTCH because the frame buffer only contains the
+	// For RA2 Handlers 8 and 25, skip FTCH because the frame buffer only contains the
 	// par4=5 base background without the overlays (par4=4, 6, 7) that were drawn
 	// immediately in frame 0. Restoring would erase those overlays and make
 	// enemies invisible since they draw on top of the erased areas.
+	//
+	// Handler 8 (Level 2 on-foot): Background is drawn in procPreRendering from
+	// _level2Background. FTCH would overwrite FOBJ-drawn enemies.
+	// Handler 25 (Level 2 speeder bike): Same issue with corridor overlays.
 	if (_vm->_game.id == GID_REBEL2 && _insane != nullptr) {
 		InsaneRebel2 *rebel2 = static_cast<InsaneRebel2 *>(_insane);
-		if (rebel2->getHandler() == 25) {
-			debug("SmushPlayer::handleFetch: Skipping FTCH for Handler 25 - preserving overlays");
+		int handler = rebel2->getHandler();
+		if (handler == 8 || handler == 25) {
+			debug("SmushPlayer::handleFetch: Skipping FTCH for Handler %d - preserving overlays", handler);
 			return;
 		}
 	}
@@ -1018,10 +1023,39 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 				_height = height;
 			}
 		}
-		// Use special buffer if allocated (for oversized videos like Level 1)
-		// Otherwise use virtual screen (for Level 2 small sprites)
-		if (_specialBuffer != nullptr && _specialBufferSize >= _vm->_screenWidth * _vm->_screenHeight) {
+		// Use special buffer ONLY for oversized frames that need it.
+		// Small enemy sprites (like Level 2's 9x38 stormtroopers) should draw
+		// directly to the virtual screen, not to _specialBuffer.
+		// The special buffer is only needed when the CURRENT frame is larger than screen.
+		if (bufSize > _vm->_screenWidth * _vm->_screenHeight &&
+		    _specialBuffer != nullptr && _specialBufferSize >= bufSize) {
 			_dst = _specialBuffer;
+			debug("SmushPlayer: Using _specialBuffer for oversized FOBJ %dx%d", width, height);
+		} else {
+			// For small RA2 sprites, check if we should use _specialBuffer or virtual screen.
+			//
+			// If _specialBuffer was allocated in this video (by a larger frame like Level 1's
+			// 424x260 background), small sprites should use it too so everything composites
+			// in the same buffer.
+			//
+			// If _specialBuffer is null (no large frames in this video, like Level 2), small
+			// sprites should use the virtual screen directly.
+			//
+			// This is important because release() frees _specialBuffer at the end of each video,
+			// so a new video starts with _specialBuffer = nullptr. Without this check, small
+			// sprites in Level 2 could incorrectly use a stale _specialBuffer pointer (though
+			// release() should have freed it, init() might not reset _dst if video flags are set).
+			if (_specialBuffer == nullptr) {
+				VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
+				_dst = vs->getPixels(0, 0);
+				debug("SmushPlayer: Reset _dst to virtual screen for FOBJ %dx%d at (%d,%d) _dst=%p",
+					width, height, left, top, (void*)_dst);
+			} else {
+				// Large frame was in this video, use _specialBuffer for compositing
+				_dst = _specialBuffer;
+				debug("SmushPlayer: Using _specialBuffer for small FOBJ %dx%d (compositing with large frame)",
+					width, height);
+			}
 		}
 	} else if ((height > _vm->_screenHeight) || (width > _vm->_screenWidth))
 		return;

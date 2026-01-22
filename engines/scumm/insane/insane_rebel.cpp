@@ -885,10 +885,26 @@ void InsaneRebel2::procPreRendering(byte *renderBitmap) {
 	// From FUN_00428a10: When position is negative, we skip source pixels and draw at 0.
 	// This creates a "scrolling window" effect as the character enters/exits cover.
 	if (_rebelHandler == 25 && renderBitmap) {
+		// Calculate pitch and buffer height for both corridor overlay and GRD001 rendering
+		int pitch = (_player && _player->_width > 0) ? _player->_width : 320;
+		int bufHeight = (_player && _player->_height > 0) ? _player->_height : 200;
+
+		// FIRST: Restore Level 2 background (par4=5) as the base layer
+		// This is the scene background that enemies (FOBJ) draw on top of.
+		// Without this, enemies are drawn onto black/empty buffer and appear invisible.
+		// The corridor overlay (par4=4) is a HUD frame drawn ON TOP of this background.
+		if (_level2BackgroundLoaded && _level2Background) {
+			for (int y = 0; y < MIN(200, bufHeight); y++) {
+				memcpy(renderBitmap + y * pitch, _level2Background + y * 320, MIN(320, pitch));
+			}
+			debug("Rebel2 Handler25 PRE: Restored _level2Background to renderBitmap");
+		} else {
+			debug("Rebel2 Handler25 PRE: WARNING - _level2Background NOT restored (loaded=%d ptr=%p)",
+				_level2BackgroundLoaded, (void*)_level2Background);
+		}
+
 		EmbeddedSanFrame &corridorOverlay = _rebelEmbeddedHud[4];
 		if (corridorOverlay.valid && corridorOverlay.pixels) {
-			int pitch = (_player && _player->_width > 0) ? _player->_width : 320;
-			int bufHeight = (_player && _player->_height > 0) ? _player->_height : 200;
 
 			// Calculate source offset and destination position (FUN_00428a10 lines 31-43)
 			// If position is negative, skip source pixels and draw at screen edge
@@ -951,6 +967,11 @@ void InsaneRebel2::procPreRendering(byte *renderBitmap) {
 				srcOffsetX, srcOffsetY, destX, destY, drawWidth, drawHeight,
 				corridorOverlay.width, corridorOverlay.height);
 		}
+
+		// Draw GRD001 (wall/cockpit overlay) AFTER corridor but BEFORE FOBJ enemies.
+		// This ensures enemies from FOBJ chunks draw ON TOP of the cockpit overlay.
+		// Uses width-halving logic from FUN_0041db5e lines 202-221.
+		renderHandler25ShipPre(renderBitmap, pitch, pitch, bufHeight);
 	}
 }
 
@@ -1144,14 +1165,13 @@ void InsaneRebel2::iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, 
 			_rebelLinks[parentId][1] = _rebelLinks[parentId][0];
 			_rebelLinks[parentId][0] = childId;
 
-			// Apply initial state based on parent state
-			if (!isBitSet(parentId)) {
-				setBit(childId);
-				debug("Rebel2: Linked ID=%d to Parent=%d (Slot 0). Parent Alive -> Child Disabled.", childId, parentId);
-			} else {
-				clearBit(childId);
-				debug("Rebel2: Linked ID=%d to Parent=%d (Slot 0). Parent Dead -> Child Enabled.", childId, parentId);
-			}
+			// DO NOT modify bits here! All bits are reset to CLEAR by clearBit(0) at level start.
+			// SKIP chunks use XOR logic: skip when bits DIFFER.
+			// - Both bits CLEAR (alive) -> same -> don't skip -> enemy visible
+			// - Parent SET (dead), child SET (disabled) -> same -> skip -> enemy hidden
+			// The bits are only modified when enemies are actually destroyed (setBit/clearBit
+			// calls in processMouse() enemy destruction handling).
+			debug("Rebel2: Linked ID=%d to Parent=%d (Slot 0)", childId, parentId);
 		} else {
 			debug("Rebel2: Skipping link with invalid IDs childId=%d parentId=%d", childId, parentId);
 		}
@@ -3133,6 +3153,9 @@ void InsaneRebel2::spawnShot(int x, int y) {
 	case 7:     // Space combat
 		spawnSpaceShot(x, y);
 		break;
+	case 25:    // Speeder bike - uses turret shot array with different gun position
+		spawnHandler25Shot(x, y);
+		break;
 	default:
 		// Legacy fallback
 		for (int i = 0; i < 2; i++) {
@@ -3175,6 +3198,34 @@ void InsaneRebel2::spawnVehicleShot(int x, int y) {
 			_vehicleShots[i].counter = getShotMaxDuration();
 			_vehicleShots[i].targetX = x + _viewX;
 			_vehicleShots[i].targetY = y + _viewY;
+			break;
+		}
+	}
+}
+
+// Handler 25 Speeder bike shot spawn (based on FUN_0041db5e lines 170-190)
+// Similar to turret but with character-based gun position
+void InsaneRebel2::spawnHandler25Shot(int x, int y) {
+	// Handler 25 can only shoot when uncovered (damage == 0)
+	if (_rebelDamageLevel != 0) {
+		return;  // Can't shoot while taking cover
+	}
+
+	for (int i = 0; i < 2; i++) {
+		if (_turretShots[i].counter == 0) {
+			// Play sound: FUN_0041189e(6, i + 1, 0x7f, 0, 0)
+			// TODO: Play laser sound
+
+			_turretShots[i].counter = getShotMaxDuration();
+			_turretShots[i].seqNum = _turretShotSeqCounter;
+			_turretShotSeqCounter++;
+
+			// Target position is where player clicked (screen coords)
+			_turretShots[i].targetX = x;
+			_turretShots[i].targetY = y;
+
+			debug("Rebel2 Handler25: Spawned shot %d target (%d,%d)",
+				i, _turretShots[i].targetX, _turretShots[i].targetY);
 			break;
 		}
 	}
@@ -4108,6 +4159,13 @@ void InsaneRebel2::renderEmbeddedHudOverlays(byte *renderBitmap, int pitch, int 
 		if (!frame.valid || !frame.pixels || frame.width <= 0 || frame.height <= 0)
 			continue;
 
+		// For Handler 25: Skip slot 4 (corridor overlay) here - it's already drawn
+		// in procPreRendering BEFORE FOBJ enemies. Drawing it again here (after FOBJs)
+		// would cover the enemies and make them invisible.
+		if (_rebelHandler == 25 && hudSlot == 4) {
+			continue;
+		}
+
 		// Skip small frames at (0,0) - likely animation patches
 		if (frame.renderX == 0 && frame.renderY == 0 && frame.width < 50 && frame.height < 60) {
 			debug(3, "Rebel2: Skipping small embedded frame at (0,0): slot=%d size=%dx%d",
@@ -4367,95 +4425,98 @@ void InsaneRebel2::renderHandler8Ship(byte *renderBitmap, int pitch, int width, 
 		spriteIndex, numSprites, _shipDirectionH, _shipDirectionV);
 }
 
+// Handler 25 PRE-rendering: Draw GRD001 BEFORE FOBJ decoding
+// This is called from procPreRendering so enemies draw ON TOP of GRD001
+//
+// From FUN_0041db5e disassembly (lines 202-221):
+// - Mode 1 with damage==0: Width halved (left half only, pixels 0-159)
+// - Mode 4 with damage==0: Width halved AND buffer offset (right half only, pixels 160-319)
+// - All other cases: Full width (320 pixels)
+void InsaneRebel2::renderHandler25ShipPre(byte *renderBitmap, int pitch, int width, int height) {
+	if (_rebelHandler != 25)
+		return;
+
+	if (!_grd001Sprite || _grd001Sprite->getNumChars() <= 0)
+		return;
+
+	// CRITICAL: Clip height to 180 (0xb4) to avoid drawing over status bar
+	const int clipHeight = 180;
+	int renderHeight = MIN(height, clipHeight);
+
+	// Draw _grd001Sprite based on _grdSpriteMode (DAT_00457900)
+	// Each mode has specific conditions from FUN_0041db5e:
+	bool shouldDraw = false;
+	bool useHalfWidth = false;
+	bool useRightHalf = false;
+
+	// Mode 1 (lines 202-210): Draw with width halving when uncovered
+	if (_grdSpriteMode == 1) {
+		shouldDraw = true;
+		useHalfWidth = (_rebelDamageLevel == 0);  // Half width when uncovered
+	}
+	// Mode 2 (lines 222-224): Only draw when damaged (covered)
+	else if (_grdSpriteMode == 2 && _rebelDamageLevel != 0) {
+		shouldDraw = true;
+	}
+	// Mode 3 (lines 225-228): Always draw full width
+	else if (_grdSpriteMode == 3) {
+		shouldDraw = true;
+	}
+	// Mode 4 (lines 211-221): Draw to right half when uncovered
+	else if (_grdSpriteMode == 4) {
+		shouldDraw = true;
+		useHalfWidth = (_rebelDamageLevel == 0);
+		useRightHalf = (_rebelDamageLevel == 0);
+	}
+
+	if (shouldDraw) {
+		int spriteW = _grd001Sprite->getCharWidth(0);
+		int spriteH = _grd001Sprite->getCharHeight(0);
+		int16 spriteXOffset = _grd001Sprite->getCharXOffset(0);
+		int16 spriteYOffset = _grd001Sprite->getCharYOffset(0);
+
+		int drawX = _rebelViewOffset2X + spriteXOffset;
+		int drawY = _rebelViewOffset2Y + spriteYOffset;
+
+		// Apply width-halving logic from original assembly:
+		// When damage==0 (uncovered), the original halves DAT_00482234 (buffer width)
+		// This clips the sprite to only half the screen.
+		int renderWidth = width;
+		byte *dstBitmap = renderBitmap;
+
+		if (useHalfWidth) {
+			renderWidth = width / 2;  // Clip to half width (160 pixels)
+
+			if (useRightHalf) {
+				// Mode 4: Draw to right half by offsetting the destination buffer
+				// Original: DAT_00482230 += DAT_00482234 (adds 160 to buffer start)
+				// This makes drawing appear on the right half (pixels 160-319)
+				dstBitmap = renderBitmap + (width / 2);
+			}
+		}
+
+		renderNutSprite(dstBitmap, pitch, renderWidth, renderHeight, drawX, drawY, _grd001Sprite, 0);
+
+		debug("Rebel2 Handler25 PRE: GRD001 at (%d,%d) nutOff(%d,%d) viewOff(%d,%d) size(%d,%d) mode=%d dmg=%d halfW=%d rightHalf=%d renderW=%d",
+			drawX, drawY, spriteXOffset, spriteYOffset, _rebelViewOffset2X, _rebelViewOffset2Y,
+			spriteW, spriteH, _grdSpriteMode, _rebelDamageLevel, useHalfWidth ? 1 : 0, useRightHalf ? 1 : 0, renderWidth);
+	}
+}
+
 void InsaneRebel2::renderHandler25Ship(byte *renderBitmap, int pitch, int width, int height) {
-	// Handler 25 Ship Rendering (Mixed Mode - GRD sprites)
-	// Based on FUN_0041db5e disassembly (lines 202-248)
-	// Uses _grd001Sprite (GRD001) and _grd002Sprite (GRD002)
+	// Handler 25 POST-rendering: Draw ONLY GRD002 (character sprite)
+	// GRD001 (wall/cockpit) is now drawn in renderHandler25ShipPre() during procPreRendering
+	// so that FOBJ enemies can draw ON TOP of it.
 	//
-	// The GRD sprite is drawn at position (DAT_00457910, DAT_00457912) which are
-	// offsets calculated from sprite mode and damage level, relative to screen center.
-	// In the original, these appear to be direct pixel coordinates where:
-	//   - Mode 1: sprite shifts left as damage increases (X = damage * -22)
-	//   - Mode 4: sprite shifts right as damage increases (X = damage * 17 - 85)
-	//   - Mode 2: sprite shifts vertically
-	//   - Mode 3: depends on flight direction
-	//
-	// NOTE: The corridor overlay (par4=4) is drawn in procPreRendering BEFORE enemies,
-	// not here, so that enemies appear ON TOP of the corridor.
+	// From FUN_0041db5e disassembly (lines 230-248):
+	// GRD002 is drawn LAST (after enemies) so the character appears in front.
 
 	if (_rebelHandler != 25)
 		return;
 
-	// Need at least one GRD sprite to render
-	if (!_grd001Sprite && !_grd002Sprite)
-		return;
-
 	// CRITICAL: Clip height to 180 (0xb4) to avoid drawing over status bar
-	// From FUN_0041db5e line 260: _DAT_00482236 = 0xb4 during gameplay
-	// The status bar occupies Y=180-200, and sprites must not render there
-	const int clipHeight = 180;  // Status bar boundary (0xb4)
+	const int clipHeight = 180;
 	int renderHeight = MIN(height, clipHeight);
-
-	// Base position calculation based on FUN_0041db5e disassembly:
-	// The original reads sprite internal offsets from the NUT data at +0x12 (X) and +0x14 (Y).
-	// Position calculation from FUN_0041db5e assembly:
-	//
-	// GRD001 (line 206): FUN_004236e0(..., DAT_00457910, DAT_00457912, ...)
-	//   - Raw offsets passed directly, render function applies sprite internal offsets
-	//
-	// GRD002 (lines 238-247): Position uses sprite header offsets:
-	//   - X = DAT_00457910 + sprite_internal_x_offset (NUT header +0x12)
-	//   - Y = sprite_internal_y_offset (NUT header +0x14) + DAT_00457912
-	//
-	// Since NutRenderer doesn't expose internal offsets, we simulate them:
-	// - GRD001: Draw at raw offset position (the sprite likely has built-in positioning)
-	// - GRD002: Add base position to simulate internal offsets for character sprite
-
-	// Draw _grd001Sprite based on _grdSpriteMode (DAT_00457900)
-	// Mode 1, 2, 3, 4 all potentially draw _grd001Sprite
-	if (_grd001Sprite && _grd001Sprite->getNumChars() > 0) {
-		bool shouldDraw = false;
-
-		// Mode 1: Always draw (uncovered/shooting position)
-		if (_grdSpriteMode == 1) {
-			shouldDraw = true;
-		}
-		// Mode 2: Only draw when damaged (DAT_0045790a != 0) - covered position
-		else if (_grdSpriteMode == 2 && _rebelDamageLevel != 0) {
-			shouldDraw = true;
-		}
-		// Mode 3: Always draw (transition between covered/uncovered)
-		else if (_grdSpriteMode == 3) {
-			shouldDraw = true;
-		}
-		// Mode 4: Always draw (alternative uncovered position)
-		else if (_grdSpriteMode == 4) {
-			shouldDraw = true;
-		}
-
-		if (shouldDraw) {
-			// GRD001 is drawn at (DAT_00457910, DAT_00457912) per assembly line 206
-			// FUN_004236e0 internally applies the sprite's internal offsets from NUT header
-			// Use sprite 0 (primary frame)
-			int spriteW = _grd001Sprite->getCharWidth(0);
-			int spriteH = _grd001Sprite->getCharHeight(0);
-
-			// Get sprite internal offsets from NUT header (like FUN_004236e0 does internally)
-			int16 spriteXOffset = _grd001Sprite->getCharXOffset(0);
-			int16 spriteYOffset = _grd001Sprite->getCharYOffset(0);
-
-			// Position = view offset + sprite internal offset
-			// This matches how FUN_004236e0 positions sprites using NUT header offsets
-			int drawX = _rebelViewOffset2X + spriteXOffset;
-			int drawY = _rebelViewOffset2Y + spriteYOffset;
-
-			renderNutSprite(renderBitmap, pitch, width, renderHeight, drawX, drawY, _grd001Sprite, 0);
-
-			debug("Rebel2 Handler25: GRD001 at (%d,%d) nutOffset(%d,%d) viewOffset(%d,%d) size(%d,%d) mode=%d damage=%d",
-				drawX, drawY, spriteXOffset, spriteYOffset, _rebelViewOffset2X, _rebelViewOffset2Y,
-				spriteW, spriteH, _grdSpriteMode, _rebelDamageLevel);
-		}
-	}
 
 	// _grd002Sprite (GRD002) is always drawn if it exists (from FUN_41DB5E line 230)
 	// The sprite index is calculated based on damage level and aiming position
@@ -4726,6 +4787,9 @@ void InsaneRebel2::renderLaserShots(byte *renderBitmap, int pitch, int width, in
 	case 7:     // Space combat - FUN_40FADF
 		renderSpaceLaserShots(renderBitmap, pitch, width, height);
 		break;
+	case 25:    // Speeder bike - FUN_0041f004
+		renderHandler25LaserShots(renderBitmap, pitch, width, height);
+		break;
 	default:
 		// No laser rendering for other handlers
 		break;
@@ -4831,7 +4895,8 @@ void InsaneRebel2::renderTurretLaserShots(byte *renderBitmap, int pitch, int wid
 }
 
 // Handler 8 Vehicle laser rendering (FUN_402ED0)
-// Gun position derived from ship position
+// In the original, the laser is a short muzzle flash from gun barrel toward ship center,
+// NOT a projectile traveling across the screen. The "hit" effect is handled separately.
 void InsaneRebel2::renderVehicleLaserShots(byte *renderBitmap, int pitch, int width, int height) {
 	// No NUT check needed - uses pre-initialized _laserTexture
 
@@ -4841,13 +4906,17 @@ void InsaneRebel2::renderVehicleLaserShots(byte *renderBitmap, int pitch, int wi
 		if (_vehicleShots[i].counter <= 0)
 			continue;
 
-		// Calculate sound panning
+		// Calculate sound panning from STORED target position (FUN_402ED0 lines 24-51)
+		// pan = ((2 - counter) * (targetX - 160)) / 2, clamped to [-127, 127]
 		int16 pan = ((2 - _vehicleShots[i].counter) * (_vehicleShots[i].targetX - _viewX - 160)) / 2;
 		pan = CLIP<int16>(pan, -127, 127);
 		// TODO: Apply panning
 
-		// Calculate gun position from ship position (FUN_402ED0 lines 26-36)
-		// Low-res formula:
+		// Calculate positions from CURRENT ship position (FUN_402ED0 lines 53-122)
+		// The original game draws the laser from gun position toward ship center,
+		// creating a short muzzle flash effect (7 pixels horizontal, 25 pixels vertical).
+		//
+		// Low-res formula (DAT_0047a808 < 2):
 		// shipScreenY = ((shipPosY - 0x28) >> 2) + 0x69 = ((shipPosY - 40) >> 2) + 105
 		// shipScreenX = ((shipPosX - 0xa0) >> 3) + 0xa0 = ((shipPosX - 160) >> 3) + 160
 		// gunY = ((shipPosY - 0x28) >> 2) + 0x82 = shipScreenY + 25
@@ -4857,14 +4926,14 @@ void InsaneRebel2::renderVehicleLaserShots(byte *renderBitmap, int pitch, int wi
 		int16 gunX = shipScreenX + 7;
 		int16 gunY = shipScreenY + 25;
 
-		int16 targetX = _vehicleShots[i].targetX;
-		int16 targetY = _vehicleShots[i].targetY;
 		int16 progress = maxDuration - _vehicleShots[i].counter;
 
-		// Single beam from gun to target
+		// Draw beam from gun toward ship center (muzzle flash effect)
 		// From FUN_402ED0: widthScale=0x14(20), heightScale=8, thickness=4
+		// Parameters: gunX, gunY -> shipScreenX, shipScreenY (NOT the stored target!)
 		drawLaserBeam(renderBitmap, pitch, width, height,
-			gunX + _viewX, gunY + _viewY, targetX, targetY,
+			gunX + _viewX, gunY + _viewY,
+			shipScreenX + _viewX, shipScreenY + _viewY,
 			progress, maxDuration, 20, 8, 4);
 
 		_vehicleShots[i].counter--;
@@ -4908,6 +4977,57 @@ void InsaneRebel2::renderSpaceLaserShots(byte *renderBitmap, int pitch, int widt
 			progress, maxDuration, 12, 4, 6);
 
 		_spaceShots[i].counter--;
+	}
+}
+
+// Handler 25 laser rendering (FUN_0041f004)
+// Speeder bike laser shots - draws beam from gun position to target
+void InsaneRebel2::renderHandler25LaserShots(byte *renderBitmap, int pitch, int width, int height) {
+	// FUN_0041f004 uses turret-style shot slots with view offset adjustment
+	// Only render when player is uncovered (damage == 0)
+	if (_rebelDamageLevel != 0) {
+		return;  // Can't shoot while taking cover
+	}
+
+	int16 maxDuration = getShotMaxDuration();
+
+	for (int i = 0; i < 2; i++) {
+		if (_turretShots[i].counter <= 0)
+			continue;
+
+		// Calculate sound panning from target X position (FUN_004262f0)
+		// sVar1 = ((2 - counter) * (targetX - 160)) / 2, clamped to [-127, 127]
+		int16 pan = ((2 - _turretShots[i].counter) * (_turretShots[i].targetX - 160)) / 2;
+		pan = CLIP<int16>(pan, -127, 127);
+		// TODO: Apply panning to sound channel i+1
+
+		// Target position (where player clicked)
+		int16 targetX = _turretShots[i].targetX;
+		int16 targetY = _turretShots[i].targetY;
+
+		// Gun position: In FUN_0041f004, the gun is at a fixed offset based on character sprite
+		// From FUN_0041db5e lines 178-187, the gun position is:
+		// gunX = (spriteOffset + DAT_00457910) - viewOffsetX
+		// gunY = (spriteOffset + DAT_00457912) - viewOffsetY
+		//
+		// For simplicity, use a position near the bottom-center of the screen
+		// where the character's gun would be in the speeder bike cockpit.
+		// The character is typically around (160, 150) in the cockpit view.
+		int16 gunX = 160;  // Center of screen
+		int16 gunY = 170;  // Near bottom where character sits
+
+		int16 progress = maxDuration - _turretShots[i].counter;
+
+		// From FUN_0041f004 parameters for FUN_0040bbf6:
+		// widthScale=0xC(12), heightScale=4, thickness=6
+		drawLaserBeam(renderBitmap, pitch, width, height,
+			gunX, gunY, targetX, targetY,
+			progress, maxDuration, 12, 4, 6);
+
+		_turretShots[i].counter--;
+
+		debug("Rebel2 Handler25: Laser shot %d from (%d,%d) to (%d,%d) progress=%d/%d",
+			i, gunX, gunY, targetX, targetY, progress, maxDuration);
 	}
 }
 
