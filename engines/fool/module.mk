@@ -1,6 +1,7 @@
 MODULE := engines/fool
 
 MODULE_OBJS = \
+	siphash/halfsip.o \
 	fool.o \
 	fool_prologue.o \
 	toolbox.o \
