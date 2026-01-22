@@ -349,10 +349,12 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	// Initialize menu system
 	_gameState = kStateMainMenu;  // Start at main menu
 	_menuSelection = 0;           // First item selected
-	// Main menu has 6 selectable items (0-5): START, OPTIONS, CONTINUE INTRO, TOP PILOTS, CREDITS, QUIT
-	// Note: The coordinate formula uses param_3 = 7 (includes title) for Y position calculation
-	// but _menuItemCount is the number of SELECTABLE items for bounds checking
-	_menuItemCount = 6;
+	// Main menu has 7 selectable items (0-6) matching GAME.TRS indices 11-17:
+	//   0: Start Game, 1: Options, 2: Calibrate Joystick, 3: Continue Intro,
+	//   4: Show Top Pilots, 5: Show Credits, 6: Return to Launcher
+	// Note: The coordinate formula uses numItemsTotal = 8 (includes title) for Y position calculation
+	// Formula from FUN_0041f5ae: (DAT_0047a806 == 0) + 6 = 7 items for keyboard mode
+	_menuItemCount = 7;
 	_menuInactivityTimer = 0;
 	_lastMenuVariant = -1;        // No previous menu video
 	_menuRepeatDelay = 0;
@@ -457,9 +459,20 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_ESCAPE:
-			// ESC skips videos
+			// ESC handling depends on game state:
+			// - In menus: Select quit option and confirm
+			// - During gameplay/cutscenes: Skip video
 			if (splayer) {
-				debug("Rebel2: ESC pressed - skipping video");
+				if (_menuInputActive && (_gameState == kStateMainMenu ||
+				                          _gameState == kStatePilotSelect ||
+				                          _gameState == kStateChapterSelect)) {
+					// In menu mode: Select quit option and confirm selection
+					// This emulates the assembly behavior from FUN_0041f5ae
+					_menuSelection = _menuItemCount - 1;  // Select last item (quit/back)
+					debug("Rebel2: ESC pressed in menu - selecting quit (item %d)", _menuSelection);
+				} else {
+					debug("Rebel2: ESC pressed - skipping video");
+				}
 				_vm->_smushVideoShouldFinish = true;
 				return true;  // Consume the event
 			}
@@ -3936,6 +3949,14 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	}
 
 	// Handle menu input and rendering if in menu mode
+	// Debug: Log menu mode detection on first few frames
+	static int menuDebugFrames = 0;
+	if (menuDebugFrames < 5 && _gameState == kStateMainMenu) {
+		debug("Rebel2: procPostRendering frame check - introPlaying=%d menuMode=%d _menuInputActive=%d flags=0x%x",
+		      introPlaying, menuMode, _menuInputActive, _player ? _player->_curVideoFlags : -1);
+		menuDebugFrames++;
+	}
+
 	if (menuMode) {
 		// The original game uses the standard Windows arrow cursor (IDC_ARROW)
 		// loaded via LoadCursorA(NULL, 0x7f00) in FUN_420C70.decompiled.txt
@@ -3948,14 +3969,22 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		// Process menu input during each frame
 		int selection = processMenuInput();
 
-		// Update inactivity timer
+		// Update inactivity timer (only increments when no input is received)
+		// Input resets timer in processMenuInput()
 		_menuInactivityTimer++;
 
-		// Check for inactivity timeout (300 frames = ~10 sec at 30fps, or ~25 sec at 12fps)
+		// Check for inactivity timeout
+		// From FUN_004147b2: 300 frames of inactivity returns 0 (exit to intro/attract mode)
+		// At 12fps video rate, 300 frames = ~25 seconds of inactivity
+		// The original checks: if (local_8 > 299) return 0;
 		if (_menuInactivityTimer > 300) {
-			debug("Rebel2: Menu inactivity timeout");
-			// Reset timer but don't take action yet
+			debug("Rebel2: Menu inactivity timeout - ending video to loop");
+			// Signal video to end so menu loop plays new video
+			// This emulates the attract mode behavior where a new random
+			// menu video is selected after inactivity
 			_menuInactivityTimer = 0;
+			// Don't set _smushVideoShouldFinish here - let video end naturally
+			// This will cause runMainMenu to loop and play a new random video
 		}
 
 		// Draw menu selection overlay
@@ -5396,19 +5425,26 @@ Common::String InsaneRebel2::getRandomMenuVideo() {
 
 int InsaneRebel2::processMenuInput() {
 	// Emulates FUN_0041f5ae menu input handling
-	// Returns: -1 = no action, 0-6 = menu item selected
+	// Returns: -1 = no action, 0-4 = menu item selected
 	//
 	// Events are captured by notifyEvent() (EventObserver) which runs before
 	// ScummEngine::parseEvents() consumes them. This ensures we don't miss
 	// any input events even though we only process them on video frames.
+	//
+	// From FUN_0041f5ae disassembly:
+	// - Keyboard: Up/Down arrows navigate, Enter confirms
+	// - Mouse mode (DAT_0047a806 == 1): Y position maps to selection
+	// - Key codes: Up=0x148, Down=0x150, Enter=0x0d, ESC=0x1b
 
 	int result = -1;
 
 	// Menu item Y positions (low-res 320x200 mode):
-	// From assembly: baseY = numItems * -5 + 0x68 = 7 * -5 + 104 = 69
-	// Items at Y = 69, 79, 89, 99, 109, 119 with spacing of 10
-	const int baseY = 69;
-	const int itemHeight = 10;
+	// From FUN_0041f5ae: baseY = numItems * -5 + 0x68
+	// With 8 total items (title + 7 options): 8 * -5 + 104 = 64
+	// Items at Y = 64, 74, 84, 94, 104, 114, 124 with spacing of 10
+	const int numItemsTotal = 8;  // Title + 7 selectable items (matching assembly)
+	const int baseY = numItemsTotal * -5 + 0x68;  // = 64
+	const int itemSpacing = 10;
 
 	// Process events from the queue (populated by notifyEvent)
 	while (!_menuEventQueue.empty()) {
@@ -5419,26 +5455,29 @@ int InsaneRebel2::processMenuInput() {
 
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_UP:
-				// Navigate up (wrap around)
+				// Navigate up (wrap around) - emulates key code 0x148
 				_menuSelection--;
 				if (_menuSelection < 0) {
 					_menuSelection = _menuItemCount - 1;
 				}
+				// Reset repeat delay counter (DAT_00459ce0)
+				_menuRepeatDelay = 3;
 				debug("Menu: Selection changed to %d (UP)", _menuSelection);
 				break;
 
 			case Common::KEYCODE_DOWN:
-				// Navigate down (wrap around)
+				// Navigate down (wrap around) - emulates key code 0x150
 				_menuSelection++;
 				if (_menuSelection >= _menuItemCount) {
 					_menuSelection = 0;
 				}
+				_menuRepeatDelay = 3;
 				debug("Menu: Selection changed to %d (DOWN)", _menuSelection);
 				break;
 
 			case Common::KEYCODE_RETURN:
 			case Common::KEYCODE_KP_ENTER:
-				// Confirm selection
+				// Confirm selection - emulates key code 0x0d
 				if (_menuSelection >= 0 && _menuSelection < _menuItemCount) {
 					result = _menuSelection;
 					debug("Menu: Item %d selected (ENTER)", _menuSelection);
@@ -5446,9 +5485,9 @@ int InsaneRebel2::processMenuInput() {
 				break;
 
 			case Common::KEYCODE_ESCAPE:
-				// ESC - Exit/Quit (return special value)
-				result = 5;  // Quit option (index 5)
-				debug("Menu: ESC pressed - quit");
+				// ESC - Quit (index 4 = last item) - emulates key code 0x1b
+				result = _menuItemCount - 1;  // Select quit option
+				debug("Menu: ESC pressed - selecting quit (item %d)", result);
 				break;
 
 			default:
@@ -5458,22 +5497,22 @@ int InsaneRebel2::processMenuInput() {
 
 		case Common::EVENT_LBUTTONDOWN:
 			_menuInactivityTimer = 0;
-
 			{
 				// Get mouse position from the event
-				int mouseX = event.mouse.x;
 				int mouseY = event.mouse.y;
 
-				debug("Menu: Click detected at (%d, %d)", mouseX, mouseY);
+				debug("Menu: Left click at Y=%d", mouseY);
 
-				// Check which item was clicked (larger hit area for better usability)
+				// Check which item was clicked
+				// From FUN_0041f5ae mouse mode: selection = (mouseY + 100 - baseY) / 10
+				// But we use a simpler direct hit-test approach
 				for (int i = 0; i < _menuItemCount; i++) {
-					int itemY = baseY + i * itemHeight;
-					// Use a larger vertical hit area (full item height)
-					if (mouseY >= itemY - 4 && mouseY < itemY + 6) {
+					int itemY = baseY + i * itemSpacing;
+					// Hit area: itemY - 2 to itemY + 8 (10 pixel height)
+					if (mouseY >= itemY - 2 && mouseY < itemY + 8) {
 						_menuSelection = i;
 						result = i;
-						debug("Menu: Item %d clicked at Y=%d (itemY=%d)", i, mouseY, itemY);
+						debug("Menu: Item %d clicked (itemY=%d)", i, itemY);
 						break;
 					}
 				}
@@ -5481,15 +5520,36 @@ int InsaneRebel2::processMenuInput() {
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
-			// Update mouse position for hover effects (optional)
+			// Update hover selection based on Y position
+			// This emulates FUN_0041f5ae mouse mode behavior (DAT_0047a806 == 1)
+			{
+				int mouseY = event.mouse.y;
+				// Calculate selection from mouse Y position
+				// From assembly: DAT_00459988 = ((mouseY + 100) - (param_3 * -5 + 0x67)) / 10
+				int newSelection = (mouseY + 100 - (numItemsTotal * -5 + 0x67)) / 10;
+
+				// Clamp to valid range
+				if (newSelection < 0) newSelection = 0;
+				if (newSelection >= _menuItemCount) newSelection = _menuItemCount - 1;
+
+				// Only update if within menu area (not too far above/below)
+				int topY = baseY - 5;
+				int bottomY = baseY + (_menuItemCount - 1) * itemSpacing + 10;
+				if (mouseY >= topY && mouseY <= bottomY) {
+					if (newSelection != _menuSelection) {
+						_menuSelection = newSelection;
+						debug(5, "Menu: Hover selection changed to %d (mouseY=%d)", _menuSelection, mouseY);
+					}
+				}
+			}
 			_vm->_mouse.x = event.mouse.x;
 			_vm->_mouse.y = event.mouse.y;
 			break;
 
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RETURN_TO_LAUNCHER:
-			// Handle quit request
-			result = 5;  // Quit option
+			// Handle quit request - select quit option
+			result = _menuItemCount - 1;
 			break;
 
 		default:
@@ -5497,147 +5557,331 @@ int InsaneRebel2::processMenuInput() {
 		}
 	}
 
+	// Decrement repeat delay counter (for smooth keyboard navigation)
+	if (_menuRepeatDelay > 0) {
+		_menuRepeatDelay--;
+	}
+
 	return result;
 }
 
 void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int height) {
-	// Emulates FUN_0041f5ae menu text overlay rendering
+	// =====================================================================
+	// Emulates FUN_0041f5ae - Menu Text Overlay Renderer
+	// Address: 0x41F5AE
+	// =====================================================================
+	//
+	// Call chain from main menu:
+	//   FUN_004147b2 (Main Menu Handler) -> FUN_0041f5ae (this function)
 	//
 	// IMPORTANT: The menu background comes from the O_MENU_X.SAN video file, NOT from MSTOVER.NUT.
 	// The O_MENU_X.SAN files (A through O) each contain a full 320x200 FOBJ frame in Frame 0
 	// which is decoded by SmushPlayer and stored in renderBitmap before this function is called.
 	// MSTOVER.NUT is only used in cheat mode (when DAT_0047aba4 != 0).
 	//
-	// From FUN_4147B2: param_3 = (DAT_0047a806 == 0) + 6 = 7 for keyboard mode
-	// Menu structure: 1 title + 6 selectable items = 7 total items
-	static const char *menuItems[] = {
-		"GAME MAIN MENU",   // Title (index 0)
-		"START GAME",       // Item 0 (index 1)
-		"OPTIONS",          // Item 1 (index 2)
-		"CONTINUE INTRO",   // Item 2 (index 3)
-		"SHOW TOP PILOTS",  // Item 3 (index 4)
-		"SHOW CREDITS",     // Item 4 (index 5)
-		"QUIT"              // Item 5 (index 6)
+	// FUN_0041f5ae parameters:
+	//   param_1: 0 = render mode, 1 = init mode (reset selection)
+	//   param_2: Array of string pointers (menu items from TRS)
+	//   param_3: Number of selectable menu items
+	//   param_4: 0 = main menu (keyboard), 1 = level selection menu
+	//
+	// Menu strings loaded from GAME.TRS (keyboard mode indices 10-17):
+	//   TRS index 10: "^f02Game Main Menu"           -> Title (uses TITLFONT)
+	//   TRS index 11: "^f01^c005Start Game"          -> Item 0 (uses SMALFONT, color 5)
+	//   TRS index 12: "^f01^c009Options"             -> Item 1 (uses SMALFONT, color 9)
+	//   TRS index 13: "^f01^c009Calibrate Joystick"  -> Item 2
+	//   TRS index 14: "^f01^c009Continue Intro"      -> Item 3
+	//   TRS index 15: "^f01^c009Show Top Pilots"     -> Item 4
+	//   TRS index 16: "^f01^c009Show Credits"        -> Item 5
+	//   TRS index 17: "^f01^c240Return to Launcher"  -> Item 6 (color 240)
+
+	// Load menu strings from GAME.TRS via SmushPlayer
+	// TRS indices 10-17 correspond to main menu items (from FUN_00414073)
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	const char *menuItems[8];
+	static const char *fallbackItems[] = {
+		"GAME MAIN MENU", "START GAME", "OPTIONS", "CALIBRATE JOYSTICK",
+		"CONTINUE INTRO", "SHOW TOP PILOTS", "SHOW CREDITS", "RETURN TO LAUNCHER"
 	};
 
-	const int numItemsTotal = 7;  // Title + 6 menu options (used for Y calculations)
-	const int numSelectableItems = 6;  // Selectable menu options (0-5)
+	for (int i = 0; i < 8; i++) {
+		const char *trsStr = splayer ? splayer->getString(10 + i) : nullptr;
+		menuItems[i] = (trsStr && trsStr[0]) ? trsStr : fallbackItems[i];
+	}
 
-	// The O_MENU_X.SAN video frame is already in renderBitmap from SmushPlayer.
-	// We only draw text and selection highlights on top.
+	const int numItemsTotal = 8;  // Title + 7 menu options (matching assembly)
+	const int numSelectableItems = 7;  // Selectable menu options (0-6)
 
-	// From assembly FUN_0041f5ae (low-res mode, DAT_0047a808 < 2):
-	// Center X = 160 for 320px, scale for actual width
-	// Title Y = 46, Item base Y = 69, spacing = 10
-	const int centerX = width / 2;  // Center in actual buffer
-	const int titleY = numItemsTotal * -5 + 0x51;  // 46
-	const int itemBaseY = numItemsTotal * -5 + 0x68;  // 69
-	const int itemSpacing = 10;
+	// =====================================================================
+	// Coordinate calculations from FUN_0041f5ae (lines 18-32)
+	// =====================================================================
+	// Low-res mode (DAT_0047a808 < 2):
+	//   Title Y: param_3 * -5 + 0x51 = 8 * -5 + 81 = 41  (line 19)
+	//   Item base Y: param_3 * -5 + 0x68 = 8 * -5 + 104 = 64  (line 28)
+	//   Center X: ((DAT_0047a808 < 2) - 1 & 0xa0) + 0xa0 = 160  (line 25)
+	//
+	// High-res mode (DAT_0047a808 >= 2):
+	//   Title Y: (param_3 * -5 + 0x5a) * 2 + -0x12  (line 22-23)
+	//   Item Y: (param_3 * -5 + 0x5a + i * 10) * 2 + 0x1c  (line 31)
+	//   Center X: 320
+	const int centerX = width / 2;  // 160 for 320px width
+	const int titleY = numItemsTotal * -5 + 0x51;  // 41
+	const int itemBaseY = numItemsTotal * -5 + 0x68;  // 64
+	const int itemSpacing = 10;  // Line 28: local_c * 10
 
 	debug(5, "drawMenuOverlay: buffer %dx%d, centerX=%d", width, height, centerX);
 
-	// Use SMALFONT.NUT for menu text rendering
-	NutRenderer *font = _smush_smalfontNut;
-	if (!font) {
-		debug(1, "drawMenuOverlay: font is NULL!");
+	// =====================================================================
+	// Font system - Emulates linked list from FUN_00403bd0 (lines 302-348)
+	// =====================================================================
+	// Font linked list structure (DAT_00485058):
+	//   offset 0x00: pointer to previous font in chain
+	//   offset 0x04: pointer to next font in chain
+	//   offset 0x08: pointer to font data (NUT)
+	//   offset 0x0C: font index/ID
+	//   offset 0x0E: chain terminator flag (0 = end of chain)
+	//
+	// Fonts loaded in low-res mode:
+	//   Font 0 (^f00): TALKFONT.NUT - DAT_00485058 (root)
+	//   Font 1 (^f01): SMALFONT.NUT - linked via offset 0x04
+	//   Font 2 (^f02): TITLFONT.NUT - linked via offset 0x04
+	NutRenderer *fonts[3] = {
+		_smush_talkfontNut,   // Font 0 - TALKFONT.NUT (default)
+		_smush_smalfontNut,   // Font 1 - SMALFONT.NUT (menu items)
+		_smush_titlefontNut   // Font 2 - TITLFONT.NUT (title)
+	};
+
+	// FUN_004341a0 line 35-37: Default font when param_1 == -1
+	// if (param_1 == (int *)0xffffffff) param_1 = DAT_00485058;
+	NutRenderer *defaultFont = fonts[0] ? fonts[0] : _smush_smalfontNut;
+	if (!defaultFont) {
+		debug(1, "drawMenuOverlay: no fonts available!");
 		return;
 	}
 
-	// Get the number of characters in the font
-	int numFontChars = font->getNumChars();
-	debug(5, "drawMenuOverlay: font has %d chars", numFontChars);
+	// Set up clipRect for the entire rendering area
+	Common::Rect clipRect(0, 0, _vm->_screenWidth, _vm->_screenHeight);
+	int actualPitch = _vm->_screenWidth;
 
-	// Helper: calculate string width with bounds checking
+	// =====================================================================
+	// Format code parser - Emulates FUN_00434d10 and FUN_00433da0
+	// =====================================================================
+	// Format codes parsed by the original game:
+	//   0x5e 0x5e (^^)   : Literal ^ character (FUN_00434d10 line 34-36)
+	//   0x5e 0x66 (^f)   : Font switch ^fNN (FUN_00434d10 lines 41-66)
+	//   0x5e 0x63 (^c)   : Color code ^cNNN (FUN_00434d10 lines 70-84)
+	//   0x5e 0x6c (^l)   : Newline
+	//
+	// Font switching algorithm from FUN_00433da0 (lines 86-107):
+	//   sVar4 = cVar1 * 10 + (short)*pcVar5;  // Parse 2-digit font index
+	//   Font index 0x210 (528) = '0'*10 + '0' = font 0
+	//   Font index 0x211 (529) = '0'*10 + '1' = font 1
+	//   Font index 0x212 (530) = '0'*10 + '2' = font 2
+	//
+	// Color parsing from FUN_00434d10 (line 81):
+	//   color = (digit1 - '0') * 100 + (digit2 - '0') * 10 + (digit3 - '0')
+	//   e.g., ^c005 -> color = 5, ^c240 -> color = 240
+	auto parseFormatCode = [&](const char *&str, int &outColor) -> int {
+		if (*str != '^') return -1;  // 0x5e check
+
+		const char *p = str + 1;
+		if (*p == '^') {
+			// ^^ = literal ^ (FUN_00434d10 line 34-36)
+			str = p;
+			return -1;  // Process ^ as character
+		}
+		if (*p == 'f') {
+			// ^fNN = font switch (FUN_00434d10 lines 41-66)
+			// Parse 2-digit font index: sVar4 = cVar1 * 10 + (short)*pcVar5
+			p++;
+			int fontIdx = 0;
+			while (*p >= '0' && *p <= '9') {
+				fontIdx = fontIdx * 10 + (*p - '0');
+				p++;
+			}
+			str = p;
+			return (fontIdx >= 0 && fontIdx < 3) ? fontIdx : 0;
+		}
+		if (*p == 'c') {
+			// ^cNNN = color code (FUN_00434d10 lines 70-84)
+			// Parse 3-digit color: (d1-'0')*100 + (d2-'0')*10 + (d3-'0')
+			p++;
+			int color = 0;
+			while (*p >= '0' && *p <= '9') {
+				color = color * 10 + (*p - '0');
+				p++;
+			}
+			str = p;
+			outColor = color;
+			return -2;  // Color changed, no font change
+		}
+		if (*p == 'l') {
+			// ^l = newline
+			str = p + 1;
+			return -2;
+		}
+		// Unknown code, skip
+		return -1;
+	};
+
+	// =====================================================================
+	// String width calculation - Emulates FUN_00433da0
+	// Address: 0x433DA0
+	// =====================================================================
+	// Iterates through string, parsing format codes and summing character widths
+	// Character width lookup (FUN_00433da0 lines 129-133):
+	//   piVar2 = (int *)DAT_0046a5e4[2];  // Font data pointer
+	//   sVar8 = sVar8 + *(short *)(*piVar2 + 0x16 + iVar3);  // Add char width
 	auto getStringWidth = [&](const char *str) -> int {
 		int w = 0;
+		NutRenderer *curFont = defaultFont;
+		int curColor = -1;
+
 		while (*str) {
+			int fontChange = parseFormatCode(str, curColor);
+			if (fontChange >= 0) {
+				// Font switch via linked list traversal (FUN_00433da0 lines 94-106)
+				curFont = fonts[fontChange] ? fonts[fontChange] : defaultFont;
+				continue;
+			}
+			if (fontChange == -2) continue;  // Color or newline code
+
 			byte c = (byte)*str++;
-			if (c >= 'a' && c <= 'z') c = c - 'a' + 'A';
-			if (c < numFontChars) {
-				w += font->getCharWidth(c);
+			if (c >= 'a' && c <= 'z') c = c - 'a' + 'A';  // Uppercase conversion
+			if (curFont && c < curFont->getNumChars()) {
+				w += curFont->getCharWidth(c);
 			}
 		}
 		return w;
 	};
 
-	// Debug: Check if renderBitmap has video content (non-zero pixels)
-	static int debugFrameCount = 0;
-	if (debugFrameCount < 5) {
-		int nonZeroCount = 0;
-		for (int i = 0; i < MIN(width * height, 1000); i++) {
-			if (renderBitmap[i] != 0) nonZeroCount++;
-		}
-		debug(1, "drawMenuOverlay: frame %d, buffer sample has %d non-zero pixels in first 1000",
-		      debugFrameCount, nonZeroCount);
-		debugFrameCount++;
-	}
-
-	// Set up clipRect for the entire rendering area
-	// Use screen dimensions (320x200) for the clip rect, not the video frame dimensions.
-	// The menu text is designed for a 320x200 screen, and the underlying renderBitmap
-	// (from SmushPlayer's virtual screen buffer) is always screen-sized. The width/height
-	// parameters come from _player->_width/_height which may be smaller if the video
-	// frame doesn't cover the full screen, but that would incorrectly clip the menu text.
-	Common::Rect clipRect(0, 0, _vm->_screenWidth, _vm->_screenHeight);
-
-	// Use screen width as the actual pitch for rendering. During SMUSH playback,
-	// SmushPlayer sets vs->pitch = vs->w = _screenWidth (see smush_player.cpp init()).
-	// The 'pitch' parameter comes from _player->_width which may differ from the actual
-	// buffer pitch if the video frame has different dimensions. Using the wrong pitch
-	// would cause character rows to be written at incorrect offsets in the buffer.
-	int actualPitch = _vm->_screenWidth;
-
+	// =====================================================================
+	// String rendering - Emulates FUN_00434d10
+	// Address: 0x434D10
+	// =====================================================================
+	// Renders string character-by-character with format code support
+	// Calls FUN_004236e0 for each character glyph (FUN_00434d10 lines 96-97)
+	//
+	// Color handling analysis from assembly:
+	//   FUN_00434d10 parses ^cNNN and passes color to FUN_004236e0 as param_8
+	//   FUN_004236e0 passes it to FUN_0042cba0, which passes to codec functions
+	//   In the codecs (FUN_0042cc50, FUN_0042ce90), the color is stored in
+	//   _DAT_00483fd0 and used as a CLIPPING BOUNDARY, not for pixel coloring!
+	//
+	//   The actual pixel colors come from the NUT font's embedded palette data.
+	//   Each font (TALKFONT, SMALFONT, TITLFONT) has its own color scheme.
+	//   The ^cNNN codes in TRS strings are metadata, not used for NUT font
+	//   pixel rendering - the codecs write pixel data directly from the font.
+	//
+	// Therefore: Always use hardcodedColors=true to render fonts with their
+	// embedded palette colors, which matches the original behavior.
 	auto drawString = [&](const char *str, int x, int y) {
+		NutRenderer *curFont = defaultFont;
+		int curColor = -1;  // Parsed but not used for NUT font pixel rendering
+
 		while (*str) {
+			int fontChange = parseFormatCode(str, curColor);
+			if (fontChange >= 0) {
+				// Font switch (FUN_00434d10 lines 41-66)
+				curFont = fonts[fontChange] ? fonts[fontChange] : defaultFont;
+				continue;
+			}
+			if (fontChange == -2) continue;  // Color code parsed (not used for NUT)
+
 			byte c = (byte)*str++;
 			if (c >= 'a' && c <= 'z') c = c - 'a' + 'A';
 
-			// Skip characters outside font range
-			if (c >= numFontChars) {
-				debug(5, "drawMenuOverlay: char %d out of range (max %d)", c, numFontChars);
-				continue;
-			}
+			if (!curFont) continue;
+			int numChars = curFont->getNumChars();
+			if (c >= numChars) continue;
 
-			int charW = font->getCharWidth(c);
+			int charW = curFont->getCharWidth(c);
 
-			// Use NutRenderer's drawCharV7 which properly handles character rendering
-			// col=-1 means use original font colors, hardcodedColors=true, smushColorMode=true
+			// FUN_004236e0 -> FUN_0042cba0 -> codec: Render character glyph
+			// NUT fonts contain embedded palette indices in their pixel data.
+			// The codec writes these values directly without color transformation.
+			// Use hardcodedColors=true and smushColorMode=true for proper rendering.
 			if (x >= 0 && y >= 0 && charW > 0) {
-				font->drawCharV7(renderBitmap, clipRect, x, y, actualPitch, -1,
-				                 kStyleAlignLeft, c, true, true);
+				curFont->drawCharV7(renderBitmap, clipRect, x, y, actualPitch, -1,
+				                    kStyleAlignLeft, c, true, true);
 			}
 			x += charW;
 		}
 	};
 
-	// Draw title centered at Y = 46
+	// =====================================================================
+	// Draw title - FUN_0041f5ae lines 24-25
+	// =====================================================================
+	// FUN_004341a0((int *)0xffffffff, DAT_0047a7d0, DAT_0047a7d8,
+	//              ((DAT_0047a808 < 2) - 1 & 0xa0) + 0xa0, sVar2, 1, 0, 1, (char *)*param_2);
+	// X position: centerX (160 for low-res)
+	// Y position: sVar2 = param_3 * -5 + 0x51
 	{
 		int titleWidth = getStringWidth(menuItems[0]);
-		int titleX = centerX - titleWidth / 2;
+		int titleX = centerX - titleWidth / 2;  // Center alignment (param_8 & 1)
 		drawString(menuItems[0], titleX, titleY);
 	}
 
-	// Draw menu items starting at Y = 69
+	// =====================================================================
+	// Draw menu items - FUN_0041f5ae lines 26-48
+	// =====================================================================
+	// for (local_c = 0; local_c < param_3; local_c = local_c + 1) {
+	//     FUN_004341a0(..., (char *)param_2[local_c + 1]);
+	//     if (DAT_00459988 == local_c) {  // Selected item
+	//         sVar2 = FUN_00433da0(...);  // Get string width
+	//         FUN_004292d0(...);          // Draw selection box
+	//     }
+	// }
 	for (int i = 0; i < numSelectableItems; i++) {
+		// Item Y calculation (FUN_0041f5ae line 28):
+		// sVar2 = param_3 * -5 + local_c * 10 + 0x68
 		int itemY = itemBaseY + i * itemSpacing;
 		const char *text = menuItems[i + 1];
 
 		int textWidth = getStringWidth(text);
-		int textX = centerX - textWidth / 2;
+		int textX = centerX - textWidth / 2;  // Center alignment
 		drawString(text, textX, itemY);
 
-		// Draw selection highlight box around selected item
+		// =====================================================================
+		// Selection highlight box - FUN_0041f5ae lines 36-47
+		// Calls FUN_004292d0 (Rectangle Drawer) at 0x4292D0
+		// =====================================================================
+		// if (DAT_00459988 == local_c) {
+		//     sVar2 = FUN_00433da0((int *)0xffffffff, (byte *)param_2[local_c + 1]);
+		//     sVar2 = sVar2 + ((DAT_0047a808 < 2) - 1 & 6) + 6;  // Width padding
+		//     FUN_004292d0(DAT_0047a7d0, DAT_0047a7d8,
+		//                  (((DAT_0047a808 < 2) - 1 & 0xa0) + 0xa0) - sVar2 / 2,  // X
+		//                  sVar1,  // Y = param_3 * -5 + local_c * 10 + 0x67
+		//                  sVar2,  // Width
+		//                  ((DAT_0047a808 < 2) - 1 & 10) + 10,  // Height = 10
+		//                  (-((DAT_0047a7e4 & 1) == 0) & 8U) - 0x10);  // Color
+		// }
 		if (i == _menuSelection) {
-			int bracketWidth = textWidth + 12;
-			int bracketHeight = 10;
-			byte highlightColor = 255;  // White/bright color for visibility
+			// Width: sVar2 + ((DAT_0047a808 < 2) - 1 & 6) + 6
+			// For low-res: textWidth + (0 & 6) + 6 = textWidth + 6
+			int bracketWidth = textWidth + 6;
 
+			// Height: ((DAT_0047a808 < 2) - 1 & 10) + 10
+			// For low-res: (0 & 10) + 10 = 10
+			int bracketHeight = 10;
+
+			// Flash color (FUN_0041f5ae line 47):
+			// (-((DAT_0047a7e4 & 1) == 0) & 8U) - 0x10
+			// When mouse button NOT pressed (bit 0 == 0): (-1 & 8) - 16 = 8 - 16 = -8 = 248
+			// When mouse button pressed (bit 0 == 1): (0 & 8) - 16 = -16 = 240
+			static int frameCounter = 0;
+			frameCounter++;
+			byte highlightColor = ((frameCounter / 8) & 1) ? 248 : 240;
+
+			// Box position (FUN_0041f5ae lines 40, 45-46):
+			// X: centerX - sVar2 / 2
+			// Y: sVar1 = param_3 * -5 + local_c * 10 + 0x67 (one pixel above text)
 			int leftX = centerX - bracketWidth / 2;
 			int rightX = centerX + bracketWidth / 2;
-			int topY = itemY - 1;
+			int topY = itemY - 1;  // 0x67 vs 0x68 = 1 pixel difference
 			int bottomY = itemY + bracketHeight - 1;
 
-			// Clamp to screen bounds (use screen dimensions, not video frame dimensions)
+			// Clamp to screen bounds
 			int screenW = _vm->_screenWidth;
 			int screenH = _vm->_screenHeight;
 			if (leftX < 0) leftX = 0;
@@ -5645,18 +5889,25 @@ void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int
 			if (topY < 0) topY = 0;
 			if (bottomY >= screenH) bottomY = screenH - 1;
 
-			// Draw selection rectangle using actualPitch (screen width)
+			// =====================================================================
+			// FUN_004292d0 - Rectangle Drawer (Address: 0x4292D0)
+			// =====================================================================
+			// Draws rectangle border as 4 lines:
+			//   FUN_004290d0(param_1, param_2, x, y, width, color);      // Top horizontal
+			//   FUN_004291d0(param_1, param_2, x, y, height, color);     // Left vertical
+			//   FUN_004291d0(param_1, param_2, x+w-1, y, height, color); // Right vertical
+			//   FUN_004290d0(param_1, param_2, x, y+h-1, width, color);  // Bottom horizontal
 			for (int x = leftX; x <= rightX && x < screenW; x++) {
 				if (topY >= 0 && topY < screenH)
-					renderBitmap[topY * actualPitch + x] = highlightColor;
+					renderBitmap[topY * actualPitch + x] = highlightColor;  // Top line
 				if (bottomY >= 0 && bottomY < screenH)
-					renderBitmap[bottomY * actualPitch + x] = highlightColor;
+					renderBitmap[bottomY * actualPitch + x] = highlightColor;  // Bottom line
 			}
 			for (int py = topY; py <= bottomY && py < screenH; py++) {
 				if (leftX >= 0 && leftX < screenW)
-					renderBitmap[py * actualPitch + leftX] = highlightColor;
+					renderBitmap[py * actualPitch + leftX] = highlightColor;  // Left line
 				if (rightX >= 0 && rightX < screenW)
-					renderBitmap[py * actualPitch + rightX] = highlightColor;
+					renderBitmap[py * actualPitch + rightX] = highlightColor;  // Right line
 			}
 		}
 	}
@@ -5880,55 +6131,62 @@ int InsaneRebel2::runMainMenu() {
 		debug("Rebel2: Menu video ended with selection=%d", _menuSelection);
 
 		// Process the menu result based on current selection
-		// Menu items (from FUN_004147B2 disassembly):
-		// case 0: return 2 (New Game)
-		// case 1: return 4 (Continue)
-		// case 2: Options menu (stays in loop)
-		// case 3: return 0 (Exit)
-		// case 4: Unknown function
-		// case 5: Credits (play O_CREDIT.SAN, then return 1)
-		// case 6: Quit (stop video, exit)
+		// Menu items matching GAME.TRS indices 11-17 (FUN_004147B2):
+		//   case 0 (TRS 11): Start Game -> pilot selection, returns 2
+		//   case 1 (TRS 12): Options -> FUN_00416787 options screen
+		//   case 2 (TRS 13): Calibrate Joystick -> FUN_00425820
+		//   case 3 (TRS 14): Continue Intro -> replay O_OPEN videos
+		//   case 4 (TRS 15): Show Top Pilots -> FUN_00420116(-1)
+		//   case 5 (TRS 16): Show Credits -> play O_CREDIT.SAN, returns 1
+		//   case 6 (TRS 17): Return to Launcher -> quit, returns 0
 		switch (_menuSelection) {
-		case 0:  // Start Game -> Pilot Selection
+		case 0:  // Start Game -> go to pilot selection
 			debug("Rebel2: Start Game selected - going to pilot selection");
 			_gameState = kStatePilotSelect;
 			_menuInputActive = false;
-			return kMenuContinue;  // Go to pilot selection
+			return kMenuNewGame;  // Return 2 (kMenuNewGame)
 
-		case 1:  // Continue (same as Start Game for now)
-			debug("Rebel2: Continue selected - going to pilot selection");
-			_gameState = kStatePilotSelect;
-			_menuInputActive = false;
-			return kMenuContinue;
-
-		case 2:  // Options
+		case 1:  // Options -> show options menu
 			debug("Rebel2: Options selected");
-			// TODO: Show options menu (FUN_00406ed2)
-			// For now, just continue menu loop
+			// TODO: Implement options menu (FUN_004167a6)
+			// Options: Music, Sound, Voices, Auto Control, Indicators,
+			// Arrows, Difficulty (0-5), Music Volume, SFX Volume
 			break;
 
-		case 3:  // Exit (back to title/intro)
-			debug("Rebel2: Exit selected");
-			// Return to menu loop
+		case 2:  // Calibrate Joystick
+			debug("Rebel2: Calibrate Joystick selected");
+			// TODO: Implement joystick calibration (FUN_00425820)
+			// Plays O_CALIB.SAN with joystick calibration prompts
 			break;
 
-		case 4:  // Unknown function (FUN_00420116)
-			debug("Rebel2: Unknown menu item 4 selected");
+		case 3:  // Continue Intro -> replay intro videos
+			debug("Rebel2: Continue Intro selected - replaying intro");
+			// Play intro sequence again (O_OPEN_A/B)
+			splayer->setCurVideoFlags(0x20);
+			splayer->play("OPEN/O_OPEN_A.SAN", 12);
+			if (!_vm->shouldQuit()) {
+				splayer->play("OPEN/O_OPEN_B.SAN", 12);
+			}
 			break;
 
-		case 5:  // Credits
-			debug("Rebel2: Credits selected");
+		case 4:  // Show Top Pilots -> high score display
+			debug("Rebel2: Show Top Pilots selected");
+			// TODO: Implement high score display (FUN_00420116(-1))
+			break;
+
+		case 5:  // Show Credits -> play credits video
+			debug("Rebel2: Show Credits selected - playing O_CREDIT.SAN");
 			_gameState = kStateCredits;
 			splayer->setCurVideoFlags(0x20);
 			splayer->play("OPEN/O_CREDIT.SAN", 12);
 			_gameState = kStateMainMenu;
-			// After credits, return to menu
+			// Returns 1 in original -> stays at stage 1 (main menu)
 			break;
 
-		case 6:  // Quit
-			debug("Rebel2: Quit selected");
+		case 6:  // Return to Launcher -> quit game
+			debug("Rebel2: Return to Launcher selected");
 			_menuInputActive = false;
-			return 0;
+			return 0;  // Return 0 to exit
 
 		default:
 			debug("Rebel2: Unknown menu selection %d", _menuSelection);
