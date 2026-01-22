@@ -1013,6 +1013,21 @@ uint32 MacResManager::getResLength(uint32 typeID, uint16 resID) {
 	return len;
 }
 
+uint16 MacResManager::getResID(uint32 typeID, const Common::String &fileName) {
+	for (uint32 i = 0; i < _resMap.numTypes; i++) {
+		if (_resTypes[i].id != typeID)
+			continue;
+
+		for (uint32 j = 0; j < _resTypes[i].items; j++) {
+			if (_resLists[i][j].nameOffset != -1 && fileName.equalsIgnoreCase(_resLists[i][j].name)) {
+				return _resLists[i][j].id;
+			}
+		}
+	}
+
+	return 0;
+}
+
 void MacResManager::readMap() {
 	_stream->seek(_mapOffset + 22);
 
