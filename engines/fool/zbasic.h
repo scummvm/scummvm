@@ -26,6 +26,7 @@
 #include "common/ptr.h"
 #include "common/str.h"
 #include "common/ustr.h"
+#include "graphics/macgui/macwindow.h"
 #include "graphics/surface.h"
 
 #include "fool/toolbox.h"
@@ -231,15 +232,11 @@ private:
 	Toolbox *_toolbox;
 	Common::MemoryPool *_memPool;
 	int16 _fileId = -1;
+	Graphics::MacWindow *_window;
 public:
 
-	ZBasic(Toolbox *toolbox) : _toolbox(toolbox) {
-		_memPool = new Common::MemoryPool(sizeof(int));
-	}
-	~ZBasic() {
-		delete _memPool;
-		_memPool = nullptr;
-	}
+	ZBasic(Toolbox *toolbox);
+	~ZBasic();
 
 	void loadProgram(const Common::Path &path);
 	void loadSCOT();
