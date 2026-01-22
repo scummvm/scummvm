@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-22 20:36+0000\n"
+"POT-Creation-Date: 2026-01-22 22:10+0000\n"
 "PO-Revision-Date: 2026-01-20 15:22+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -7556,7 +7556,8 @@ msgstr "단서 개인 정보 보호 전환"
 #: engines/freescape/games/eclipse/eclipse.cpp:227
 #: engines/hopkins/metaengine.cpp:236 engines/hugo/metaengine.cpp:165
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:192
-#: engines/mads/metaengine.cpp:305 engines/pegasus/pegasus.cpp:2825
+#: engines/mads/metaengine.cpp:305 engines/mohawk/myst.cpp:583
+#: engines/mohawk/riven.cpp:864 engines/pegasus/pegasus.cpp:2825
 #: engines/petka/metaengine.cpp:198 engines/prince/metaengine.cpp:243
 #: engines/saga/metaengine.cpp:442 engines/sherlock/metaengine.cpp:462
 #: engines/sherlock/metaengine.cpp:613 engines/sherlock/metaengine.cpp:823
@@ -10624,12 +10625,9 @@ msgid "The game is paused. Press any key to continue."
 msgstr "게임이 일시 정지되었습니다. 계속하려면 아무 키나 누르세요."
 
 #: engines/mohawk/myst.cpp:578 engines/mohawk/riven.cpp:859
-msgid "Load game state"
-msgstr "게임 상태 불러오기"
-
-#: engines/mohawk/myst.cpp:583 engines/mohawk/riven.cpp:864
-msgid "Save game state"
-msgstr "게임 상태 저장하기"
+#: engines/sludge/keymapper_tables.h:113 engines/sludge/keymapper_tables.h:162
+msgid "Load save"
+msgstr "저장 로드"
 
 #: engines/mohawk/myst.cpp:588 engines/mohawk/riven.cpp:869
 msgid "Show options menu"
@@ -13433,10 +13431,6 @@ msgstr "대화 속도 천천히"
 #: engines/sludge/keymapper_tables.h:101 engines/sludge/keymapper_tables.h:150
 msgid "Load auto save"
 msgstr "자동 저장 로드"
-
-#: engines/sludge/keymapper_tables.h:113 engines/sludge/keymapper_tables.h:162
-msgid "Load save"
-msgstr "저장 로드"
 
 #: engines/sludge/keymapper_tables.h:200 engines/sludge/keymapper_tables.h:435
 #: engines/sludge/keymapper_tables.h:552
@@ -16393,6 +16387,12 @@ msgstr ""
 "MIDI 재생을 사용할 수 없거나, 제대로 구성되지 않았습니다. 죠크 네미시스에는 "
 "MIDI 오디오가 필요한 여러 음악 퍼즐이 포함되어 있습니다.  이러한 퍼즐은 지원"
 "되는 경우 자막을 사용하여 해결할 수 있습니다. 게임을 계속 실행할까요?"
+
+#~ msgid "Load game state"
+#~ msgstr "게임 상태 불러오기"
+
+#~ msgid "Save game state"
+#~ msgstr "게임 상태 저장하기"
 
 #~ msgid "Go to the line start"
 #~ msgstr "줄의 시작으로 이동"

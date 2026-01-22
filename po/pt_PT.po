@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-22 20:36+0000\n"
+"POT-Creation-Date: 2026-01-22 22:10+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -7419,7 +7419,8 @@ msgstr "Ativar/desativar som"
 #: engines/freescape/games/eclipse/eclipse.cpp:227
 #: engines/hopkins/metaengine.cpp:236 engines/hugo/metaengine.cpp:165
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:192
-#: engines/mads/metaengine.cpp:305 engines/pegasus/pegasus.cpp:2825
+#: engines/mads/metaengine.cpp:305 engines/mohawk/myst.cpp:583
+#: engines/mohawk/riven.cpp:864 engines/pegasus/pegasus.cpp:2825
 #: engines/petka/metaengine.cpp:198 engines/prince/metaengine.cpp:243
 #: engines/saga/metaengine.cpp:442 engines/sherlock/metaengine.cpp:462
 #: engines/sherlock/metaengine.cpp:613 engines/sherlock/metaengine.cpp:823
@@ -10866,12 +10867,11 @@ msgid "The game is paused. Press any key to continue."
 msgstr "Jogo em Pausa. Carregue em qualquer tecla para continuar."
 
 #: engines/mohawk/myst.cpp:578 engines/mohawk/riven.cpp:859
-msgid "Load game state"
-msgstr "Carregar estado do jogo"
-
-#: engines/mohawk/myst.cpp:583 engines/mohawk/riven.cpp:864
-msgid "Save game state"
-msgstr "Guardar estado do jogo"
+#: engines/sludge/keymapper_tables.h:113 engines/sludge/keymapper_tables.h:162
+#, fuzzy
+#| msgid "Load Game"
+msgid "Load save"
+msgstr "Carregar Jogo"
 
 #: engines/mohawk/myst.cpp:588 engines/mohawk/riven.cpp:869
 msgid "Show options menu"
@@ -13836,12 +13836,6 @@ msgstr "Rato virtual lento"
 #| msgid "Unnamed autosave"
 msgid "Load auto save"
 msgstr "Auto-guardado sem nome"
-
-#: engines/sludge/keymapper_tables.h:113 engines/sludge/keymapper_tables.h:162
-#, fuzzy
-#| msgid "Load Game"
-msgid "Load save"
-msgstr "Carregar Jogo"
 
 #: engines/sludge/keymapper_tables.h:200 engines/sludge/keymapper_tables.h:435
 #: engines/sludge/keymapper_tables.h:552
@@ -17213,6 +17207,12 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#~ msgid "Load game state"
+#~ msgstr "Carregar estado do jogo"
+
+#~ msgid "Save game state"
+#~ msgstr "Guardar estado do jogo"
 
 #, fuzzy
 #~| msgid "Switch to the next scaler"

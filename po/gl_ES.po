@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-22 20:36+0000\n"
+"POT-Creation-Date: 2026-01-22 22:10+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -7458,7 +7458,8 @@ msgstr "Activar/desactivar captura de rato"
 #: engines/freescape/games/eclipse/eclipse.cpp:227
 #: engines/hopkins/metaengine.cpp:236 engines/hugo/metaengine.cpp:165
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:192
-#: engines/mads/metaengine.cpp:305 engines/pegasus/pegasus.cpp:2825
+#: engines/mads/metaengine.cpp:305 engines/mohawk/myst.cpp:583
+#: engines/mohawk/riven.cpp:864 engines/pegasus/pegasus.cpp:2825
 #: engines/petka/metaengine.cpp:198 engines/prince/metaengine.cpp:243
 #: engines/saga/metaengine.cpp:442 engines/sherlock/metaengine.cpp:462
 #: engines/sherlock/metaengine.cpp:613 engines/sherlock/metaengine.cpp:823
@@ -10859,14 +10860,10 @@ msgid "The game is paused. Press any key to continue."
 msgstr "Xogo en pausa. Pulsa calquera tecla para continuar."
 
 #: engines/mohawk/myst.cpp:578 engines/mohawk/riven.cpp:859
+#: engines/sludge/keymapper_tables.h:113 engines/sludge/keymapper_tables.h:162
 #, fuzzy
-msgid "Load game state"
+msgid "Load save"
 msgstr "Cargar partida:"
-
-#: engines/mohawk/myst.cpp:583 engines/mohawk/riven.cpp:864
-#, fuzzy
-msgid "Save game state"
-msgstr "Gardar partida:"
 
 #: engines/mohawk/myst.cpp:588 engines/mohawk/riven.cpp:869
 #, fuzzy
@@ -13812,11 +13809,6 @@ msgstr "Omitir liña"
 #, fuzzy
 msgid "Load auto save"
 msgstr "Partida gardada sen título"
-
-#: engines/sludge/keymapper_tables.h:113 engines/sludge/keymapper_tables.h:162
-#, fuzzy
-msgid "Load save"
-msgstr "Cargar partida:"
 
 #: engines/sludge/keymapper_tables.h:200 engines/sludge/keymapper_tables.h:435
 #: engines/sludge/keymapper_tables.h:552
@@ -17152,6 +17144,14 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Load game state"
+#~ msgstr "Cargar partida:"
+
+#, fuzzy
+#~ msgid "Save game state"
+#~ msgstr "Gardar partida:"
 
 #, fuzzy
 #~ msgid "Go to the line start"

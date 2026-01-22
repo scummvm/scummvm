@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-22 20:36+0000\n"
+"POT-Creation-Date: 2026-01-22 22:10+0000\n"
 "PO-Revision-Date: 2023-09-07 17:04+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -7478,7 +7478,8 @@ msgstr "Museindfangning til/fra"
 #: engines/freescape/games/eclipse/eclipse.cpp:227
 #: engines/hopkins/metaengine.cpp:236 engines/hugo/metaengine.cpp:165
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:192
-#: engines/mads/metaengine.cpp:305 engines/pegasus/pegasus.cpp:2825
+#: engines/mads/metaengine.cpp:305 engines/mohawk/myst.cpp:583
+#: engines/mohawk/riven.cpp:864 engines/pegasus/pegasus.cpp:2825
 #: engines/petka/metaengine.cpp:198 engines/prince/metaengine.cpp:243
 #: engines/saga/metaengine.cpp:442 engines/sherlock/metaengine.cpp:462
 #: engines/sherlock/metaengine.cpp:613 engines/sherlock/metaengine.cpp:823
@@ -10911,14 +10912,10 @@ msgid "The game is paused. Press any key to continue."
 msgstr "Spillet er sat på pause. Tryk på en tast for at fortsætte."
 
 #: engines/mohawk/myst.cpp:578 engines/mohawk/riven.cpp:859
+#: engines/sludge/keymapper_tables.h:113 engines/sludge/keymapper_tables.h:162
 #, fuzzy
-msgid "Load game state"
+msgid "Load save"
 msgstr "Indlæs spil"
-
-#: engines/mohawk/myst.cpp:583 engines/mohawk/riven.cpp:864
-#, fuzzy
-msgid "Save game state"
-msgstr "Gemte spil"
 
 #: engines/mohawk/myst.cpp:588 engines/mohawk/riven.cpp:869
 #, fuzzy
@@ -13895,11 +13892,6 @@ msgstr "Spring linje over"
 #, fuzzy
 msgid "Load auto save"
 msgstr "Unavngivet savegame"
-
-#: engines/sludge/keymapper_tables.h:113 engines/sludge/keymapper_tables.h:162
-#, fuzzy
-msgid "Load save"
-msgstr "Indlæs spil"
 
 #: engines/sludge/keymapper_tables.h:200 engines/sludge/keymapper_tables.h:435
 #: engines/sludge/keymapper_tables.h:552
@@ -17266,6 +17258,14 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Load game state"
+#~ msgstr "Indlæs spil"
+
+#, fuzzy
+#~ msgid "Save game state"
+#~ msgstr "Gemte spil"
 
 #, fuzzy
 #~ msgid "Go to the line start"
