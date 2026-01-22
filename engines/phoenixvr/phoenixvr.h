@@ -126,7 +126,7 @@ public:
 	void startTimer(float seconds);
 	void pauseTimer(bool pause, bool deactivate);
 	void killTimer();
-	void playAnimation(const Common::String &name, const Common::String &var);
+	void playAnimation(const Common::String &name, const Common::String &var, int varValue);
 	void setZoom(int fov) {
 		_fov = M_PI * fov / 180;
 	}

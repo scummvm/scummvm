@@ -234,8 +234,8 @@ VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStrea
 			unpack(*pic, huff, huffSize, acPtr, dcPtr - acPtr, dcPtr, dcEnd - dcPtr, quality);
 		} else if (chunkId == CHUNK_ANIMATION) {
 			auto name = s.readString(0, 32);
-			s.skip(4);
-			debug("animation %s", name.c_str());
+			auto numFrames = s.readUint32LE();
+			debug("animation %s, frames: %u", name.c_str(), numFrames);
 			while (s.pos() < chunkPos + chunkSize) {
 				auto animChunkPos = s.pos();
 				auto animChunkId = s.readUint32LE();

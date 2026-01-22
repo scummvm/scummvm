@@ -73,30 +73,31 @@ struct Play_Movie : public Script::Command {
 
 struct Play_AnimBloc : public Script::Command {
 	Common::String name;
-	Common::String block;
-	int start;
-	int stop;
+	Common::String dstVar;
+	int dstVarValue;
+	float speed; // ticks per second
 
-	Play_AnimBloc(const Common::Array<Common::String> &args) : name(args[0]), block(args[1]), start(atoi(args[2].c_str())), stop(atoi(args[3].c_str())) {}
+	Play_AnimBloc(const Common::Array<Common::String> &args) : name(args[0]), dstVar(args[1]), dstVarValue(atoi(args[2].c_str())), speed(atof(args[3].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("Play_AnimBloc %s %s %d-%d", name.c_str(), block.c_str(), start, stop);
-		g_engine->playAnimation(name, block);
+		debug("Play_AnimBloc %s %s %d, %g", name.c_str(), dstVar.c_str(), dstVarValue, speed);
+		g_engine->playAnimation(name, dstVar, dstVarValue);
 	}
 };
 
 struct Play_AnimBloc_Number : public Script::Command {
 	Common::String prefix, var;
-	Common::String block;
-	int start;
-	int stop;
+	Common::String dstVar;
+	int dstVarValue;
+	float speed;
 
 	Play_AnimBloc_Number(const Common::Array<Common::String> &args) : prefix(args[0]), var(args[1]),
-																	  block(args[2]), start(atoi(args[3].c_str())), stop(atoi(args[4].c_str())) {}
+																	  dstVar(args[2]), dstVarValue(atoi(args[3].c_str())),
+																	  speed(atof(args[4].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("Play_AnimBloc_Number %s %s %s %d-%d", prefix.c_str(), var.c_str(), block.c_str(), start, stop);
+		debug("Play_AnimBloc_Number %s %s %s %d, %g", prefix.c_str(), var.c_str(), dstVar.c_str(), dstVarValue, speed);
 		int value = g_engine->getVariable(var);
 		auto name = Common::String::format("%s%04d", prefix.c_str(), value);
-		g_engine->playAnimation(name, block);
+		g_engine->playAnimation(name, dstVar, dstVarValue);
 	}
 };
 
