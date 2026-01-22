@@ -1379,17 +1379,14 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		LauncherDialog::handleCommand(sender, kStartCmd, 0);
 		break;
 	case kListItemRemovalRequestCmd: {
+		// Use multi-removal logic for all removals (handles both single and multiple selections)
 		const Common::Array<bool> &selectedItemsBool = _list->getSelectedItemsBool();
-		// Count selected items
-		int selectedCount = 0;
-		for (int i = 0; i < (int)selectedItemsBool.size(); ++i) {
-			if (selectedItemsBool[i]) selectedCount++;
-		}
-		if (selectedCount > 1) {
-			// Multi-selection removal: show confirmation dialog with list of games
-			removeListGames(selectedItemsBool);
-		} else {
-			LauncherDialog::handleCommand(sender, kRemoveGameCmd, 0);
+		// Ensure at least one item is selected before proceeding
+		for (const auto &it : selectedItemsBool) {
+			if (it) {
+				removeListGames(selectedItemsBool);
+				break;
+			}
 		}
 		break;
 	}
@@ -1424,19 +1421,14 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	}
 	case kRemoveGameCmd: {
-		// Handle multi-selection removal
+		// Handle removal using multi-selection logic (works for single and multiple selections)
 		const Common::Array<bool> &selectedItemsBool = _list->getSelectedItemsBool();
-		// Count selected items
-		int selectedCount = 0;
-		for (int i = 0; i < (int)selectedItemsBool.size(); ++i) {
-			if (selectedItemsBool[i]) selectedCount++;
-		}
-		if (selectedCount > 1) {
-			// Multi-selection removal: show confirmation dialog with list of games
-			removeListGames(selectedItemsBool);
-		} else {
-			// Single selection removal
-			LauncherDialog::handleCommand(sender, cmd, data);
+		// Ensure at least one item is selected before proceeding
+		for (const auto &it : selectedItemsBool) {
+			if (it) {
+				removeListGames(selectedItemsBool);
+				break;
+			}
 		}
 		break;
 	}
@@ -1656,11 +1648,9 @@ void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		LauncherDialog::handleCommand(sender, kLoadGameCmd, 0);
 		break;
 	case kRemoveGameCmd:
-		// Handle multi-selection removal
-		if (_grid && _grid->getSelectedEntries().size() > 1) {
+		// Handle removal using multi-selection logic (works for single and multiple selections)
+		if (_grid && !_grid->getSelectedEntries().empty()) {
 			removeGridGames();
-		} else {
-			LauncherDialog::handleCommand(sender, cmd, data);
 		}
 		break;
 	case kItemClicked:
