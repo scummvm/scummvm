@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-21 22:17+0000\n"
+"POT-Creation-Date: 2026-01-22 20:36+0000\n"
 "PO-Revision-Date: 2026-01-17 21:16+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -1115,7 +1115,9 @@ msgid "Delete Character"
 msgstr "Borrar personaje"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the save file name input field
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the password input field
 #: gui/gui-manager.cpp:210 engines/sherlock/metaengine.cpp:1117
+#: engines/sherlock/metaengine.cpp:1222
 msgid "Go to end of line"
 msgstr "Ir al final de la línea"
 
@@ -1128,7 +1130,9 @@ msgid "Select to start of line"
 msgstr "Seleccionar hasta el principio de la línea"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the save file name input field
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the password input field
 #: gui/gui-manager.cpp:240 engines/sherlock/metaengine.cpp:1110
+#: engines/sherlock/metaengine.cpp:1215
 msgid "Go to start of line"
 msgstr "Ir al principio de la línea"
 
@@ -13720,16 +13724,6 @@ msgstr "Cerrar acertijo"
 msgid "Exit inventory / Close verb menu / Cancel item use action"
 msgstr "Salir de inventario/Cerrar menú verbos/Cancelar acción objeto"
 
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the password input field
-#: engines/sherlock/metaengine.cpp:1215
-msgid "Go to the line start"
-msgstr "Ir al principio de la línea"
-
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the password input field
-#: engines/sherlock/metaengine.cpp:1222
-msgid "Go to the line end"
-msgstr "Ir al final de la línea"
-
 #: engines/sherlock/metaengine.cpp:1239
 msgid "Select next option"
 msgstr "Seleccionar siguiente opción"
@@ -16801,6 +16795,12 @@ msgstr ""
 "que es imprescindible tener audio en MIDI para poder resolverlos.  También "
 "se podrían resolver estos acertijos con subtítulos, si están disponibles. "
 "¿Quieres seguir ejecutando el juego?"
+
+#~ msgid "Go to the line start"
+#~ msgstr "Ir al principio de la línea"
+
+#~ msgid "Go to the line end"
+#~ msgstr "Ir al final de la línea"
 
 #, fuzzy
 #~| msgid "Open verb menu / close menu"

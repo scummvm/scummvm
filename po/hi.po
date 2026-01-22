@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-21 22:17+0000\n"
+"POT-Creation-Date: 2026-01-22 20:36+0000\n"
 "PO-Revision-Date: 2024-07-11 17:47+0000\n"
 "Last-Translator: Krish <ganatrakrish2882005@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -1105,7 +1105,9 @@ msgid "Delete Character"
 msgstr "अक्षर हटाएँ"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the save file name input field
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the password input field
 #: gui/gui-manager.cpp:210 engines/sherlock/metaengine.cpp:1117
+#: engines/sherlock/metaengine.cpp:1222
 msgid "Go to end of line"
 msgstr "पंक्ति के अंत में जाएँ"
 
@@ -1122,7 +1124,9 @@ msgid "Select to start of line"
 msgstr "उस फोल्डर को चुने जिसमे गेम plugins है"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the save file name input field
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the password input field
 #: gui/gui-manager.cpp:240 engines/sherlock/metaengine.cpp:1110
+#: engines/sherlock/metaengine.cpp:1215
 msgid "Go to start of line"
 msgstr "पंक्ति के प्रारंभ में जाएँ"
 
@@ -13224,20 +13228,6 @@ msgstr "बंद करें"
 msgid "Exit inventory / Close verb menu / Cancel item use action"
 msgstr ""
 
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the password input field
-#: engines/sherlock/metaengine.cpp:1215
-#, fuzzy
-#| msgid "Go to end of line"
-msgid "Go to the line start"
-msgstr "पंक्ति के अंत में जाएँ"
-
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the password input field
-#: engines/sherlock/metaengine.cpp:1222
-#, fuzzy
-#| msgid "Go to end of line"
-msgid "Go to the line end"
-msgstr "पंक्ति के अंत में जाएँ"
-
 #: engines/sherlock/metaengine.cpp:1239
 #, fuzzy
 #| msgid "Select shader"
@@ -16563,6 +16553,16 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Go to end of line"
+#~ msgid "Go to the line start"
+#~ msgstr "पंक्ति के अंत में जाएँ"
+
+#, fuzzy
+#~| msgid "Go to end of line"
+#~ msgid "Go to the line end"
+#~ msgstr "पंक्ति के अंत में जाएँ"
 
 #, fuzzy
 #~| msgid "Go to end of line"

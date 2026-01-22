@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-21 22:17+0000\n"
+"POT-Creation-Date: 2026-01-22 20:36+0000\n"
 "PO-Revision-Date: 2026-01-10 20:50+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -1120,7 +1120,9 @@ msgid "Delete Character"
 msgstr "Suprimeix el personatge"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the save file name input field
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the password input field
 #: gui/gui-manager.cpp:210 engines/sherlock/metaengine.cpp:1117
+#: engines/sherlock/metaengine.cpp:1222
 msgid "Go to end of line"
 msgstr "Ves al final de la línia"
 
@@ -1133,7 +1135,9 @@ msgid "Select to start of line"
 msgstr "Selecciona fins al començament de la línia"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the save file name input field
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the password input field
 #: gui/gui-manager.cpp:240 engines/sherlock/metaengine.cpp:1110
+#: engines/sherlock/metaengine.cpp:1215
 msgid "Go to start of line"
 msgstr "Ves al començament de la línia"
 
@@ -12977,16 +12981,6 @@ msgstr "Tanca el trencaclosques"
 msgid "Exit inventory / Close verb menu / Cancel item use action"
 msgstr ""
 
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the password input field
-#: engines/sherlock/metaengine.cpp:1215
-msgid "Go to the line start"
-msgstr "Ves a l'inici de la línia"
-
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the password input field
-#: engines/sherlock/metaengine.cpp:1222
-msgid "Go to the line end"
-msgstr "Ves al final del camp d'entrada"
-
 #: engines/sherlock/metaengine.cpp:1239
 msgid "Select next option"
 msgstr "Selecciona l'opció següent"
@@ -16024,6 +16018,12 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#~ msgid "Go to the line start"
+#~ msgstr "Ves a l'inici de la línia"
+
+#~ msgid "Go to the line end"
+#~ msgstr "Ves al final del camp d'entrada"
 
 #, fuzzy
 #~| msgid "Open verb menu / close menu"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-21 22:17+0000\n"
+"POT-Creation-Date: 2026-01-22 20:36+0000\n"
 "PO-Revision-Date: 2026-01-20 15:22+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -1107,7 +1107,9 @@ msgid "Delete Character"
 msgstr "문자 삭제"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the save file name input field
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the password input field
 #: gui/gui-manager.cpp:210 engines/sherlock/metaengine.cpp:1117
+#: engines/sherlock/metaengine.cpp:1222
 msgid "Go to end of line"
 msgstr "줄의 끝으로 이동"
 
@@ -1120,7 +1122,9 @@ msgid "Select to start of line"
 msgstr "줄의 시작을 선택"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the save file name input field
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the password input field
 #: gui/gui-manager.cpp:240 engines/sherlock/metaengine.cpp:1110
+#: engines/sherlock/metaengine.cpp:1215
 msgid "Go to start of line"
 msgstr "줄의 시작으로 이동"
 
@@ -13362,16 +13366,6 @@ msgstr "퍼즐 닫기"
 msgid "Exit inventory / Close verb menu / Cancel item use action"
 msgstr "인벤토리 나가기 / 버브 메뉴 닫기 / 항목 사용 작업 취소"
 
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the password input field
-#: engines/sherlock/metaengine.cpp:1215
-msgid "Go to the line start"
-msgstr "줄의 시작으로 이동"
-
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the password input field
-#: engines/sherlock/metaengine.cpp:1222
-msgid "Go to the line end"
-msgstr "줄의 끝으로 이동"
-
 #: engines/sherlock/metaengine.cpp:1239
 msgid "Select next option"
 msgstr "다음 옵션 선택"
@@ -16399,6 +16393,12 @@ msgstr ""
 "MIDI 재생을 사용할 수 없거나, 제대로 구성되지 않았습니다. 죠크 네미시스에는 "
 "MIDI 오디오가 필요한 여러 음악 퍼즐이 포함되어 있습니다.  이러한 퍼즐은 지원"
 "되는 경우 자막을 사용하여 해결할 수 있습니다. 게임을 계속 실행할까요?"
+
+#~ msgid "Go to the line start"
+#~ msgstr "줄의 시작으로 이동"
+
+#~ msgid "Go to the line end"
+#~ msgstr "줄의 끝으로 이동"
 
 #, fuzzy
 #~| msgid "Open verb menu / close menu"

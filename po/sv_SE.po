@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-21 22:17+0000\n"
+"POT-Creation-Date: 2026-01-22 20:36+0000\n"
 "PO-Revision-Date: 2026-01-19 08:43+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -1116,7 +1116,9 @@ msgid "Delete Character"
 msgstr "Ta bort tecken"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the save file name input field
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the password input field
 #: gui/gui-manager.cpp:210 engines/sherlock/metaengine.cpp:1117
+#: engines/sherlock/metaengine.cpp:1222
 msgid "Go to end of line"
 msgstr "Gå till radslut"
 
@@ -1129,7 +1131,9 @@ msgid "Select to start of line"
 msgstr "Markera till radstart"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the save file name input field
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the password input field
 #: gui/gui-manager.cpp:240 engines/sherlock/metaengine.cpp:1110
+#: engines/sherlock/metaengine.cpp:1215
 msgid "Go to start of line"
 msgstr "Gå till radstart"
 
@@ -13537,16 +13541,6 @@ msgid "Exit inventory / Close verb menu / Cancel item use action"
 msgstr ""
 "Avsluta inventerier / Stäng verbmeny / Avbryt åtgärd för objektanvändning"
 
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the password input field
-#: engines/sherlock/metaengine.cpp:1215
-msgid "Go to the line start"
-msgstr "Gå till radbörjan"
-
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the password input field
-#: engines/sherlock/metaengine.cpp:1222
-msgid "Go to the line end"
-msgstr "Gå till radslut"
-
 #: engines/sherlock/metaengine.cpp:1239
 msgid "Select next option"
 msgstr "Välj nästa alternativ"
@@ -16577,6 +16571,12 @@ msgstr ""
 "Nemesis innehåller flera musikpussel som kräver MIDI-ljud för att kunna "
 "lösas. Dessa pussel kan alternativt lösas med hjälp av undertexter, om detta "
 "stöds. Vill du fortsätta spela?"
+
+#~ msgid "Go to the line start"
+#~ msgstr "Gå till radbörjan"
+
+#~ msgid "Go to the line end"
+#~ msgstr "Gå till radslut"
 
 #, fuzzy
 #~| msgid "Open verb menu / close menu"
