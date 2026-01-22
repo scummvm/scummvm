@@ -22,8 +22,7 @@
 #ifndef PHOENIXVR_VR_H
 #define PHOENIXVR_VR_H
 
-#include "common/hash-str.h"
-#include "common/hashmap.h"
+#include "common/array.h"
 #include "common/stream.h"
 #include "graphics/pixelformat.h"
 
@@ -37,18 +36,38 @@ class RegionSet;
 class VR {
 	Common::ScopedPtr<Graphics::Surface> _pic;
 	bool _vr = false;
-	Common::HashMap<Common::String, Common::Array<byte>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _animations;
+	struct Animation {
+		struct Frame {
+			Common::Array<byte> blockData;
+			void render(Graphics::Surface &pic) const;
+		};
+
+		Common::String name;
+		Common::Array<Frame> frames;
+
+		bool active = false;
+		float t = 0;
+		float speed = 25.0f;
+
+		unsigned frameIndex = 0;
+
+		Common::String variable;
+		int variableValue = 0;
+		void renderNextFrame(Graphics::Surface &pic);
+		void render(Graphics::Surface &pic, float dt);
+	};
+	Common::Array<Animation> _animations;
 
 public:
 	~VR();
 	VR() = default;
-	VR(VR &&) = default;
+	VR(VR &&) noexcept = default;
 	VR &operator=(VR &&) noexcept = default;
 
 	static VR loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStream &s);
-	void render(Graphics::Screen *screen, float ax, float ay, float fov, RegionSet *regSet);
+	void render(Graphics::Screen *screen, float ax, float ay, float fov, float dt, RegionSet *regSet);
 	bool isVR() const { return _vr; }
-	void playAnimation(const Common::String &name);
+	void playAnimation(const Common::String &name, const Common::String &variable, int value, float speed);
 	Graphics::Surface &getSurface() { return *_pic; }
 };
 } // namespace PhoenixVR

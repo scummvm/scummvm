@@ -32,6 +32,7 @@
 #include "math/vector3d.h"
 #include "phoenixvr/angle.h"
 #include "phoenixvr/dct_tables.h"
+#include "phoenixvr/phoenixvr.h"
 #include "phoenixvr/region_set.h"
 #include "video/4xm_utils.h"
 
@@ -233,21 +234,26 @@ VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStrea
 			auto *dcEnd = vrData.data() + vrData.size();
 			unpack(*pic, huff, huffSize, acPtr, dcPtr - acPtr, dcPtr, dcEnd - dcPtr, quality);
 		} else if (chunkId == CHUNK_ANIMATION) {
-			auto name = s.readString(0, 32);
+			Animation animation;
+			animation.name = s.readString(0, 32);
 			auto numFrames = s.readUint32LE();
-			debug("animation %s, frames: %u", name.c_str(), numFrames);
+			animation.frames.reserve(numFrames);
+			debug("animation %s, frames: %u", animation.name.c_str(), numFrames);
 			while (s.pos() < chunkPos + chunkSize) {
 				auto animChunkPos = s.pos();
 				auto animChunkId = s.readUint32LE();
 				auto animChunkSize = s.readUint32LE();
+				debug("animation frame at %08zx: %08x %u", animChunkPos, animChunkId, animChunkSize);
 				assert(animChunkSize >= 8);
+				Animation::Frame frame;
 				if (animChunkId == CHUNK_ANIMATION_BLOCK) {
-					auto &blockData = vr._animations[name];
-					blockData.resize(animChunkSize - 8);
-					s.read(blockData.data(), blockData.size());
+					frame.blockData.resize(animChunkSize - 8);
+					s.read(frame.blockData.data(), frame.blockData.size());
 				}
+				animation.frames.push_back(Common::move(frame));
 				s.seek(animChunkPos + animChunkSize);
 			}
+			vr._animations.push_back(Common::move(animation));
 		}
 		s.seek(chunkPos + chunkSize);
 	}
@@ -320,16 +326,13 @@ Cube toCube(float x, float y, float z) {
 
 } // namespace
 
-void VR::playAnimation(const Common::String &name) {
-	auto it = _animations.find(name);
-	if (it == _animations.end()) {
-		debug("no animation %s", name.c_str());
+void VR::Animation::Frame::render(Graphics::Surface &pic) const {
+	if (blockData.empty())
 		return;
-	}
-	if (it->_value.size() == 0)
-		return;
-	const auto *data = it->_value.data();
+	const auto *data = blockData.data();
 	auto prefixSize = READ_LE_UINT32(data);
+	if (prefixSize == 0)
+		return;
 	Common::Array<uint32> prefixData(prefixSize);
 	uint offset = 4;
 	for (uint i = 0; i != prefixSize; ++i) {
@@ -343,11 +346,49 @@ void VR::playAnimation(const Common::String &name) {
 	auto *acPtr = data + offset + huffSize + 4;
 	auto dcOffset = READ_LE_UINT32(data + offset + huffSize);
 	auto *dcPtr = data + offset + huffSize + 8 + dcOffset;
-	auto *dcEnd = data + it->_value.size();
-	unpack(*_pic, data + offset, huffSize, acPtr, dcPtr - acPtr, dcPtr, dcEnd - dcPtr, quality, &prefixData);
+	auto *dcEnd = data + blockData.size();
+	unpack(pic, data + offset, huffSize, acPtr, dcPtr - acPtr, dcPtr, dcEnd - dcPtr, quality, &prefixData);
 }
 
-void VR::render(Graphics::Screen *screen, float ax, float ay, float fov, RegionSet *regSet) {
+void VR::playAnimation(const Common::String &name, const Common::String &variable, int value, float speed) {
+	auto it = Common::find_if(_animations.begin(), _animations.end(), [&](const Animation &a) { return a.name.compareToIgnoreCase(name) == 0; });
+	if (it == _animations.end()) {
+		debug("no animation %s", name.c_str());
+		return;
+	}
+	auto &animation = *it;
+	animation.active = true;
+	animation.frameIndex = 0;
+	animation.t = 0;
+	animation.speed = speed;
+	animation.variable = variable;
+	animation.variableValue = value;
+	animation.renderNextFrame(*_pic);
+}
+
+void VR::Animation::renderNextFrame(Graphics::Surface &pic) {
+	assert(active);
+	if (frameIndex >= frames.size()) {
+		active = false;
+		g_engine->setVariable(variable, variableValue);
+	} else {
+		auto &frame = frames[frameIndex++];
+		frame.render(pic);
+	}
+}
+
+void VR::Animation::render(Graphics::Surface &pic, float dt) {
+	if (!active)
+		return;
+
+	t += speed * dt;
+	if (t > 1) {
+		renderNextFrame(pic);
+		t = fmodf(t, 1);
+	}
+}
+
+void VR::render(Graphics::Screen *screen, float ax, float ay, float fov, float dt, RegionSet *regSet) {
 	if (!_pic) {
 		screen->clear();
 		return;
@@ -358,6 +399,8 @@ void VR::render(Graphics::Screen *screen, float ax, float ay, float fov, RegionS
 		Common::Rect src(_pic->getRect());
 		Common::Rect::getBlitRect(dst, src, screen->getBounds());
 		screen->copyRectToSurface(*_pic, dst.x, dst.y, src);
+		for (auto &animation : _animations)
+			animation.render(*_pic, dt);
 		if (regSet) {
 			for (auto &rect : regSet->getRegions())
 				screen->drawRoundRect(rect.toRect().toRect(), 4, _pic->format.RGBToColor(255, 255, 255), false);

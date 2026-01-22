@@ -145,13 +145,14 @@ void PhoenixVREngine::end() {
 
 void PhoenixVREngine::wait(float seconds) {
 	debug("wait %gs", seconds);
-	renderVR();
 	auto begin = g_system->getMillis();
 	unsigned millis = seconds * 1000;
 	Graphics::FrameLimiter limiter(g_system, kFPSLimit);
 	bool waiting = true;
+	unsigned frameDuration = 0;
 	while (!shouldQuit() && waiting && g_system->getMillis() - begin < millis) {
 		Common::Event event;
+		renderVR(frameDuration / 1000.0f);
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN: {
@@ -170,7 +171,7 @@ void PhoenixVREngine::wait(float seconds) {
 		// to prevent the system being unduly loaded
 		limiter.delayBeforeSwap();
 		_screen->update();
-		limiter.startFrame();
+		frameDuration = limiter.startFrame();
 	}
 }
 
@@ -310,9 +311,8 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 		warning("playMovie %s failed", movie.c_str());
 	}
 }
-void PhoenixVREngine::playAnimation(const Common::String &name, const Common::String &var, int varValue) {
-	_vr.playAnimation(name);
-	setVariable(var, varValue);
+void PhoenixVREngine::playAnimation(const Common::String &name, const Common::String &var, int varValue, float speed) {
+	_vr.playAnimation(name, var, varValue, speed);
 }
 
 void PhoenixVREngine::resetLockKey() {
@@ -415,8 +415,8 @@ void PhoenixVREngine::tickTimer(float dt) {
 	}
 }
 
-void PhoenixVREngine::renderVR() {
-	_vr.render(_screen, _angleX.angle(), _angleY.angle(), _fov, _showRegions ? _regSet.get() : nullptr);
+void PhoenixVREngine::renderVR(float dt) {
+	_vr.render(_screen, _angleX.angle(), _angleY.angle(), _fov, dt, _showRegions ? _regSet.get() : nullptr);
 	if (_text) {
 		int16 x = _textRect.left + (_textRect.width() - _text->w) / 2;
 		int16 y = _textRect.top + (_textRect.height() - _text->h) / 2;
@@ -567,7 +567,7 @@ void PhoenixVREngine::tick(float dt) {
 		executeTest(nextTest);
 	}
 
-	renderVR();
+	renderVR(dt);
 
 	Graphics::Surface *cursor = nullptr;
 	auto &cursors = _cursors[_warpIdx];

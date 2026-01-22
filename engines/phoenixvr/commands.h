@@ -80,7 +80,7 @@ struct Play_AnimBloc : public Script::Command {
 	Play_AnimBloc(const Common::Array<Common::String> &args) : name(args[0]), dstVar(args[1]), dstVarValue(atoi(args[2].c_str())), speed(atof(args[3].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		debug("Play_AnimBloc %s %s %d, %g", name.c_str(), dstVar.c_str(), dstVarValue, speed);
-		g_engine->playAnimation(name, dstVar, dstVarValue);
+		g_engine->playAnimation(name, dstVar, dstVarValue, speed);
 	}
 };
 
@@ -97,7 +97,7 @@ struct Play_AnimBloc_Number : public Script::Command {
 		debug("Play_AnimBloc_Number %s %s %s %d, %g", prefix.c_str(), var.c_str(), dstVar.c_str(), dstVarValue, speed);
 		int value = g_engine->getVariable(var);
 		auto name = Common::String::format("%s%04d", prefix.c_str(), value);
-		g_engine->playAnimation(name, dstVar, dstVarValue);
+		g_engine->playAnimation(name, dstVar, dstVarValue, speed);
 	}
 };
 

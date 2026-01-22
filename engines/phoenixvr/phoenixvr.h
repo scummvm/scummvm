@@ -126,7 +126,7 @@ public:
 	void startTimer(float seconds);
 	void pauseTimer(bool pause, bool deactivate);
 	void killTimer();
-	void playAnimation(const Common::String &name, const Common::String &var, int varValue);
+	void playAnimation(const Common::String &name, const Common::String &var, int varValue, float speed);
 	void setZoom(int fov) {
 		_fov = M_PI * fov / 180;
 	}
@@ -177,7 +177,7 @@ private:
 	void tick(float dt);
 	void tickTimer(float dt);
 	void loadNextScript();
-	void renderVR();
+	void renderVR(float dt);
 
 private:
 	Common::Point _mousePos, _mouseRel;
