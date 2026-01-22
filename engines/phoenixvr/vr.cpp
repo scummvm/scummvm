@@ -75,7 +75,7 @@ struct Quantisation {
 				v = 8;
 			}
 			v *= Q[i];
-			v >>= 12;
+			v >>= 13;
 			quantY[i] = v;
 		}
 		for (uint i = 0; i != 64; ++i) {
@@ -86,7 +86,7 @@ struct Quantisation {
 				v = 8;
 			}
 			v *= Q[i];
-			v >>= 12;
+			v >>= 13;
 			quantCbCr[i] = v;
 		}
 	}
