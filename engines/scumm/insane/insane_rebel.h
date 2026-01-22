@@ -671,12 +671,14 @@ public:
 	void spawnTurretShot(int x, int y);    // Handler 0x26
 	void spawnVehicleShot(int x, int y);   // Handler 8
 	void spawnSpaceShot(int x, int y);     // Handler 7
+	void spawnHandler25Shot(int x, int y); // Handler 25 (speeder bike)
 	void spawnShot(int x, int y);          // Dispatcher based on current handler
 
-	// Handler-specific laser rendering (FUN_40AD63, FUN_402ED0, FUN_40FADF)
+	// Handler-specific laser rendering (FUN_40AD63, FUN_402ED0, FUN_40FADF, FUN_0041f004)
 	void renderTurretLaserShots(byte *renderBitmap, int pitch, int width, int height);
 	void renderVehicleLaserShots(byte *renderBitmap, int pitch, int width, int height);
 	void renderSpaceLaserShots(byte *renderBitmap, int pitch, int width, int height);
+	void renderHandler25LaserShots(byte *renderBitmap, int pitch, int width, int height);
 
 	// Get max shot duration from level table (DAT_0047e0f0 indexed by DAT_0047a7fa/DAT_0047a7f8)
 	int16 getShotMaxDuration();
@@ -802,7 +804,10 @@ public:
 	//   4: Draw _grd001Sprite with buffer offset
 	int16 _grdSpriteMode;            // DAT_00457900
 
-	// Render Handler 25 ship sprites (called from procPostRendering)
+	// Render Handler 25 ship sprites
+	// renderHandler25ShipPre: Draw GRD001 BEFORE FOBJ (in procPreRendering)
+	// renderHandler25Ship: Draw GRD002 and other overlays AFTER FOBJ (in procPostRendering)
+	void renderHandler25ShipPre(byte *renderBitmap, int pitch, int width, int height);
 	void renderHandler25Ship(byte *renderBitmap, int pitch, int width, int height);
 
 	// ======================= Handler 0x26 Turret HUD Overlays =======================
