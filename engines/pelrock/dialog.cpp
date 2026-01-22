@@ -355,6 +355,53 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 	return pos;
 }
 
+/**
+ * Check if all sub-branches of the current choice level are exhausted.
+ * Based on Ghidra code at LAB_00018c2d in handle_conversation_tree.
+ *
+ * Returns true if we should disable the current choice, which happens when:
+ * - There are no FB sub-branches at higher indices, OR
+ * - All FB sub-branches at higher indices already have FA (are disabled)
+ *
+ * F1 markers (repeatable) don't block disabling - they never get disabled.
+ */
+bool DialogManager::checkAllSubBranchesExhausted(const byte *data, uint32 dataSize, uint32 startPos, int currentChoiceLevel) {
+	uint32 pos = startPos;
+
+	while (pos < dataSize) {
+		byte b = data[pos];
+
+		// Stop at branch/conversation end markers (0xF5, 0xF7, 0xFE, 0xF4)
+		if (b == CTRL_ALT_END_MARKER_1 || b == CTRL_END_BRANCH ||
+			b == CTRL_ALT_SPEAKER_ROOT || b == CTRL_END_CONVERSATION) {
+			break;
+		}
+
+		// Found FB (one-time choice marker)
+		if (b == CTRL_DIALOGUE_MARKER_ONEOFF && pos + 2 < dataSize) {
+			byte choiceIdx = data[pos + 1];
+
+			// Only check sub-branches (higher index = deeper level)
+			if (choiceIdx > currentChoiceLevel) {
+				// Check if NOT disabled (no FA at pos+2)
+				if (data[pos + 2] != CTRL_DISABLED_CHOICE) {
+					debug("checkAllSubBranchesExhausted: Active FB at pos %u, idx %d (current %d) - NOT exhausted",
+						  pos, choiceIdx, currentChoiceLevel);
+					return false;  // Don't disable parent
+				}
+			} else if (choiceIdx <= currentChoiceLevel) {
+				// Hit choice at same or lower level - stop
+				break;
+			}
+		}
+
+		pos++;
+	}
+
+	debug("checkAllSubBranchesExhausted: All sub-branches exhausted at level %d", currentChoiceLevel);
+	return true;
+}
+
 void DialogManager::setCurSprite(int index) {
 	// Set current sprite based on index
 	if (g_engine->_room == nullptr) {
@@ -371,6 +418,14 @@ void DialogManager::setCurSprite(int index) {
 	}
 
 	_curSprite = nullptr;
+}
+
+bool isRootDisabled(byte room, int root) {
+
+	if(g_engine->_state->getRootDisabledState(room, root)) {
+		return true;
+	}
+	return false;
 }
 
 void DialogManager::startConversation(const byte *conversationData, uint32 dataSize, byte npcIndex, Sprite *animSet) {
@@ -472,7 +527,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 		}
 
 		// Move past control byte
-		if (controlByte == CTRL_END_TEXT || controlByte == CTRL_ACTION_TRIGGER) {
+		if (controlByte == CTRL_END_TEXT) {
 			position++;
 			if (position >= dataSize) {
 				debug("Reached end of data after moving past control byte");
@@ -495,7 +550,8 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 		if (peekPos < dataSize &&
 			conversationData[peekPos] != CTRL_DIALOGUE_MARKER &&
 			conversationData[peekPos] != CTRL_DIALOGUE_MARKER_ONEOFF &&
-			conversationData[peekPos] != CTRL_END_CONVERSATION) {
+			conversationData[peekPos] != CTRL_END_CONVERSATION &&
+			conversationData[peekPos] != CTRL_DISABLED_CHOICE) {
 			continue;
 		}
 
@@ -566,8 +622,13 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 
 			if (!choiceText.empty() && choiceText.size() > 1) {
 				displayDialogue(choiceText, ALFRED_COLOR);
+				// Only disable FB choice if all sub-branches are exhausted (Ghidra LAB_00018c2d)
 				if ((*choices)[selectedIndex].shouldDisableOnSelect) {
-					g_engine->_room->addDisabledChoice((*choices)[selectedIndex]);
+					bool shouldDisable = checkAllSubBranchesExhausted(
+						conversationData, dataSize, endPos, currentChoiceLevel);
+					if (shouldDisable) {
+						g_engine->_room->addDisabledChoice((*choices)[selectedIndex]);
+					}
 				}
 			}
 
@@ -686,7 +747,6 @@ int calculateWordLength(Common::String text, int startPos, bool &isEnd) {
 	if (pos < text.size() && isEndMarker(text[pos])) {
 		isEnd = true;
 	}
-	// Count ALL trailing spaces as part of this word
 	if (pos < text.size() && !isEnd) {
 		if (text[pos] == CTRL_ACTION_TRIGGER) { // 0xF8 (-8) special case
 			wordLength += 3;

@@ -78,6 +78,7 @@ private:
 	void setCurSprite(int index);
 	void checkMouse();
 	void sayAlfred(Common::StringArray texts);
+	bool checkAllSubBranchesExhausted(const byte *data, uint32 dataSize, uint32 startPos, int currentChoiceLevel);
 
 public:
 	DialogManager(Graphics::Screen *screen, PelrockEventManager *events, GraphicsManager *graphics);
