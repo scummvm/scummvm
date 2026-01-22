@@ -1115,7 +1115,6 @@ void Room806::parser() {
 }
 
 void Room806::daemon() {
-	warning("Trigger %d", _G(kernel).trigger);
 	switch (_G(kernel).trigger) {
 	case 101:
 		ws_hide_walker(_mcTrekMach);
