@@ -6161,12 +6161,19 @@ int InsaneRebel2::runMainMenu() {
 
 		case 3:  // Continue Intro -> replay intro videos
 			debug("Rebel2: Continue Intro selected - replaying intro");
+			// Temporarily switch to intro state to disable menu overlay
+			// This emulates FUN_004142BD case 0 behavior
+			_gameState = kStateIntro;
+			_menuInputActive = false;
 			// Play intro sequence again (O_OPEN_A/B)
 			splayer->setCurVideoFlags(0x20);
 			splayer->play("OPEN/O_OPEN_A.SAN", 12);
 			if (!_vm->shouldQuit()) {
 				splayer->play("OPEN/O_OPEN_B.SAN", 12);
 			}
+			// Restore menu state
+			_gameState = kStateMainMenu;
+			_menuInputActive = true;
 			break;
 
 		case 4:  // Show Top Pilots -> high score display
@@ -6177,9 +6184,11 @@ int InsaneRebel2::runMainMenu() {
 		case 5:  // Show Credits -> play credits video
 			debug("Rebel2: Show Credits selected - playing O_CREDIT.SAN");
 			_gameState = kStateCredits;
+			_menuInputActive = false;
 			splayer->setCurVideoFlags(0x20);
 			splayer->play("OPEN/O_CREDIT.SAN", 12);
 			_gameState = kStateMainMenu;
+			_menuInputActive = true;
 			// Returns 1 in original -> stays at stage 1 (main menu)
 			break;
 
