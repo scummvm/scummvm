@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-22 22:10+0000\n"
-"PO-Revision-Date: 2026-01-22 22:09+0000\n"
+"PO-Revision-Date: 2026-01-22 22:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -3857,7 +3857,7 @@ msgstr "Гру не реалізовано"
 
 #: engines/metaengine.cpp:75 engines/saga/metaengine.cpp:267
 msgid "Default game keymap"
-msgstr "Мапа клавіш за замовчунням"
+msgstr "Мапа клавіш гри за замовчунням"
 
 #: engines/metaengine.cpp:82 engines/agos/metaengine.cpp:158
 #: engines/asylum/metaengine.cpp:159 engines/bbvs/metaengine.cpp:99
@@ -6315,7 +6315,7 @@ msgstr "Перевірити оновлення..."
 #: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
 #: engines/tucker/metaengine.cpp:167 engines/voyeur/metaengine.cpp:184
 msgid "Default keymappings"
-msgstr "Мапи клавіш за замовчунням"
+msgstr "Мапа клавіш за замовчунням"
 
 #: engines/access/metaengine.cpp:202
 msgid "Move / Interact / Skip"
@@ -7774,7 +7774,7 @@ msgstr "Мапа клавіш головного меню"
 #: engines/buried/metaengine.cpp:137 engines/lab/metaengine.cpp:153
 #: engines/sherlock/metaengine.cpp:336 engines/sherlock/metaengine.cpp:787
 msgid "Inventory keymappings"
-msgstr "Мапи клавіш інвентарю"
+msgstr "Мапа клавіш інвентарю"
 
 #: engines/buried/metaengine.cpp:141 engines/chamber/metaengine.cpp:65
 #: engines/chamber/metaengine.cpp:71 engines/chamber/metaengine.cpp:77
@@ -13603,23 +13603,17 @@ msgid "DEBUG: Show boxes"
 msgstr ""
 
 #: engines/sludge/keymapper_tables.h:237
-#, fuzzy
-#| msgid "Inventory"
 msgid "Inventory / Examine"
-msgstr "Інвентар"
+msgstr "Інвентар / Розгледіти"
 
 #: engines/sludge/keymapper_tables.h:281 engines/sword25/metaengine.cpp:118
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Examine / Skip dialog"
-msgstr "Пропустити діалог"
+msgstr "Розгледіти / Пропустити діалог"
 
 #: engines/sludge/keymapper_tables.h:287 engines/sludge/keymapper_tables.h:398
 #: engines/sludge/keymapper_tables.h:522
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Pause / Skip cutscene"
-msgstr "Пропустити ролік"
+msgstr "Пауза / Пропустити ролік"
 
 #: engines/sludge/keymapper_tables.h:328
 msgid "Smell"
@@ -13630,41 +13624,29 @@ msgid "Consume"
 msgstr ""
 
 #: engines/sludge/keymapper_tables.h:361
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast earth spell"
-msgstr "Використати закляття"
+msgstr "Використати закляття землі"
 
 #: engines/sludge/keymapper_tables.h:367
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast air spell"
-msgstr "Використати закляття"
+msgstr "Використати закляття повітря"
 
 #: engines/sludge/keymapper_tables.h:373
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast fire spell"
-msgstr "Використати закляття"
+msgstr "Використати закляття вогню"
 
 #: engines/sludge/keymapper_tables.h:379
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast water spell"
-msgstr "Використати закляття"
+msgstr "Використати закляття води"
 
 #: engines/sludge/keymapper_tables.h:423 engines/sludge/keymapper_tables.h:510
 #: engines/sword25/metaengine.cpp:112
-#, fuzzy
-#| msgid "Go to next dialogue"
 msgid "Move / Interact / Skip dialog"
-msgstr "Перейти до наступного діалогу"
+msgstr "Перейти / Діяти / Пропустити діалог"
 
 #: engines/sludge/keymapper_tables.h:516
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Inventory / Skip dialog"
-msgstr "Пропустити діалог"
+msgstr "Інвентар / Пропустити діалог"
 
 #: engines/stark/metaengine.cpp:41
 msgid "Load modded assets"
@@ -13748,40 +13730,28 @@ msgid "Scroll down in inventory"
 msgstr "Прокрутити інвентар донизу"
 
 #: engines/stark/metaengine.cpp:306
-#, fuzzy
-#| msgid "Scroll up in your dialogues"
 msgid "Scroll up in your dialogs"
 msgstr "Прокрутити діалоги догори"
 
 #: engines/stark/metaengine.cpp:312
-#, fuzzy
-#| msgid "Scroll down in your dialogues"
 msgid "Scroll down in your dialogs"
 msgstr "Прокрутити діалоги донизу"
 
 #: engines/stark/metaengine.cpp:318
-#, fuzzy
-#| msgid "Go to next dialogue"
 msgid "Go to next dialog"
 msgstr "Перейти до наступного діалогу"
 
 #: engines/stark/metaengine.cpp:323
-#, fuzzy
-#| msgid "Go to previous dialogues"
 msgid "Go to previous dialogs"
 msgstr "Перейти до попереднього діалогу"
 
 #: engines/stark/metaengine.cpp:328
-#, fuzzy
-#| msgid "Select dialogue"
 msgid "Select dialog"
-msgstr "Видбрати діалог"
+msgstr "Вибрати діалог"
 
 #: engines/stark/metaengine.cpp:335
-#, fuzzy
-#| msgid "Skip video sequence or dialogue"
 msgid "Skip video sequence or dialog"
-msgstr "Пропустити відеоряд або діалог"
+msgstr "Пропустити відеоролік або діалог"
 
 #: engines/stark/stark.cpp:106
 msgid "Software renderer does not support modded assets"
@@ -13866,50 +13836,36 @@ msgstr ""
 "допомогою клавіатури"
 
 #: engines/supernova/metaengine.cpp:220
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Improved mode keymappings"
-msgstr "Мапи клавіш"
+msgstr "Мапа клавіш покращеного режиму"
 
 #: engines/supernova/metaengine.cpp:221
-#, fuzzy
-#| msgid "Exit screen keymappings"
 msgid "Text reader keymappings"
-msgstr "Мапа клавіш виходу з екрану"
+msgstr "Мапа клавіш читача тексту"
 
 #: engines/supernova/metaengine.cpp:222
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Computer keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш комп'ютера"
 
 #: engines/supernova/metaengine.cpp:232
-#, fuzzy
-#| msgid "Look at"
 msgid "Perform default action"
-msgstr "Глянути на"
+msgstr "Дія за замовченням"
 
 #: engines/supernova/metaengine.cpp:244
 msgid "Instructions"
 msgstr "Інструкції"
 
 #: engines/supernova/metaengine.cpp:250
-#, fuzzy
-#| msgid "General Information"
 msgid "Information"
-msgstr "Загальна інформація"
+msgstr "Інформація"
 
 #: engines/supernova/metaengine.cpp:256
-#, fuzzy
-#| msgid "Text speed - Fast"
 msgid "Text speed"
-msgstr "Швидкість тексту - швидше"
+msgstr "Швидкість тексту"
 
 #: engines/supernova/metaengine.cpp:285
-#, fuzzy
-#| msgid "Rotate up"
 msgid "Page up"
-msgstr "Повернути догори"
+msgstr "Попередня сторінка"
 
 #: engines/supernova/metaengine.cpp:291
 #, fuzzy
@@ -13918,16 +13874,12 @@ msgid "Page down"
 msgstr "Повернути донизу"
 
 #: engines/supernova/metaengine.cpp:321
-#, fuzzy
-#| msgid "Good"
 msgid "Go"
-msgstr "Хороша"
+msgstr "Йти"
 
 #: engines/supernova/metaengine.cpp:379
-#, fuzzy
-#| msgid "Open Files manager"
 msgid "Office manager"
-msgstr "Відкрити менеджер файлів"
+msgstr "Менеджер офісу"
 
 #: engines/supernova/metaengine.cpp:385
 msgid "Phone"
@@ -14045,8 +13997,6 @@ msgid "Additional options:"
 msgstr "Додаткові налаштування:"
 
 #: engines/sword1/metaengine.cpp:301
-#, fuzzy
-#| msgid "Main Menu"
 msgid "Main menu"
 msgstr "Головне меню"
 
@@ -14080,22 +14030,16 @@ msgid "Reveal all interactive hotspots (hold the key)"
 msgstr ""
 
 #: engines/teenagent/metaengine.cpp:201
-#, fuzzy
-#| msgid "Inventory"
 msgid "Move / Examine"
-msgstr "Інвентар"
+msgstr "Перемістити / Розглянути"
 
 #: engines/teenagent/metaengine.cpp:221
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Close inventory"
-msgstr "Відкрити/закрити інвентар"
+msgstr "Закрити інвентар"
 
 #: engines/testbed/metaengine.cpp:38 engines/testbed/metaengine.cpp:39
-#, fuzzy
-#| msgid "Interact Mode"
 msgid "Run in interactive mode"
-msgstr "Режим взаємодії"
+msgstr "Виконувати у інтерактивному режимі"
 
 #: engines/tetraedge/metaengine.cpp:32
 msgid "Correct movie aspect ratio"
@@ -14138,68 +14082,48 @@ msgid "Save/Load keymappings"
 msgstr "Зберегти/Прочитати мапи клавіш гри"
 
 #: engines/tinsel/metaengine.cpp:341
-#, fuzzy
-#| msgid "Page Up in save/load menu"
 msgid "Page up in save / load menu"
-msgstr "Попередня сторінка в меню збереження/завантаження"
+msgstr "Попередня сторінка в меню збереження / завантаження"
 
 #: engines/tinsel/metaengine.cpp:347
-#, fuzzy
-#| msgid "Page down in save/load menu"
 msgid "Page down in save / load menu"
-msgstr "Наступна сторінка в меню збереження/завантаження"
+msgstr "Наступна сторінка в меню збереження / завантаження"
 
 #: engines/tinsel/metaengine.cpp:353
-#, fuzzy
-#| msgid "Go to start of save/load menu"
 msgid "Go to start of save / load menu"
-msgstr "Перейти до початку меню збереження/завантаження"
+msgstr "Перейти до початку меню збереження / завантаження"
 
 #: engines/tinsel/metaengine.cpp:359
-#, fuzzy
-#| msgid "Go to end of save/load menu"
 msgid "Go to end of save / load menu"
-msgstr "Перейти до кінця меню збереження/завантаження"
+msgstr "Перейти до кінця меню збереження / завантаження"
 
 #: engines/tinsel/tinsel.cpp:1040
 msgid "Discworld Noir needs ScummVM with TinyGL enabled"
 msgstr ""
 
 #: engines/titanic/metaengine.cpp:173
-#, fuzzy
-#| msgid "Escape keymappings"
 msgid "PET keymappings"
-msgstr "Мапа клавіш ESC"
+msgstr "Мапа клавіш PET"
 
 #: engines/titanic/metaengine.cpp:174
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Real Life keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш Real Life"
 
 #: engines/titanic/metaengine.cpp:175
-#, fuzzy
-#| msgid "KIA only shortcuts"
 msgid "Inventory shortcut"
-msgstr "Опції керування для KIA"
+msgstr "Швидко до інвентарю"
 
 #: engines/titanic/metaengine.cpp:176
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Continue game dialogue keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш діалогу продовження гри"
 
 #: engines/titanic/metaengine.cpp:177
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Star Map keymappings"
-msgstr "Мапа клавіш стартового меню"
+msgstr "Мапа клавіш зоряної карти"
 
 #: engines/titanic/metaengine.cpp:178
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Movement keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш руху"
 
 #: engines/titanic/metaengine.cpp:182
 #, fuzzy
