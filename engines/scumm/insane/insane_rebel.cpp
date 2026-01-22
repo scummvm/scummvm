@@ -760,20 +760,38 @@ int32 InsaneRebel2::processMouse() {
 }
 
 bool InsaneRebel2::isBitSet(int n) {
+	// FUN_00423970: When param_1 < 1 (0 or negative), the bounds check fails and returns false.
+	// This means ID 0 or negative IDs are always treated as "enabled" (not skipped).
+	if (n < 1) {
+		return false;
+	}
 	assert (n < 0x200);
 
 	return (_iactBits[n] != 0);
 }
 
 void InsaneRebel2::setBit(int n) {
+	// FUN_004239b0: When n < 1 (i.e., n == 0 or negative), set ALL bits to 1 (disable all objects)
+	// This is used to disable all enemies/objects at once
+	if (n < 1) {
+		for (int i = 0; i < 0x200; i++)
+			_iactBits[i] = 1;
+		return;
+	}
 	assert (n < 0x200);
-
 	_iactBits[n] = 1;
 }
 
 void InsaneRebel2::clearBit(int n) {
+	// FUN_00423a00: When n < 1 (i.e., n == 0 or negative), clear ALL bits to 0 (enable all objects)
+	// This is called by FUN_00423880 at the start of video playback to reset the bit table,
+	// ensuring all enemies are visible when a new level/segment starts.
+	if (n < 1) {
+		for (int i = 0; i < 0x200; i++)
+			_iactBits[i] = 0;
+		return;
+	}
 	assert (n < 0x200);
-
 	_iactBits[n] = 0;
 }
 
@@ -1116,13 +1134,16 @@ void InsaneRebel2::iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, 
 	if (par3 == 4) {
 		int16 childId = b.readSint16LE(); // Offset +8
 		int16 parentId = b.readSint16LE(); // Offset +10
-		
-		if (parentId >= 0 && parentId < 512) {
+
+		// Validate BOTH parentId AND childId to avoid triggering "set/clear ALL bits" behavior
+		// when childId <= 0. The original game's setBit(0)/clearBit(0) affects ALL bits,
+		// which would disable/enable all enemies at once - not the intended linking behavior.
+		if (parentId >= 1 && parentId < 512 && childId >= 1 && childId < 512) {
 			// Shift links
 			_rebelLinks[parentId][2] = _rebelLinks[parentId][1];
 			_rebelLinks[parentId][1] = _rebelLinks[parentId][0];
 			_rebelLinks[parentId][0] = childId;
-			
+
 			// Apply initial state based on parent state
 			if (!isBitSet(parentId)) {
 				setBit(childId);
@@ -1131,13 +1152,17 @@ void InsaneRebel2::iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, 
 				clearBit(childId);
 				debug("Rebel2: Linked ID=%d to Parent=%d (Slot 0). Parent Dead -> Child Enabled.", childId, parentId);
 			}
+		} else {
+			debug("Rebel2: Skipping link with invalid IDs childId=%d parentId=%d", childId, parentId);
 		}
 		return;
 	} else if (par3 == 1) { // Probabilistic / counter cases: par3 == 1
 		int16 value = par4; // sVar6
 		int16 targetId = b.readSint16LE(); // Offset +8 (sVar7)
-		
-		if (targetId < 0 || targetId >= 0x200) 
+
+		// Validate targetId >= 1 to avoid triggering "set/clear ALL bits" behavior
+		// The original game's setBit(0)/clearBit(0) affects ALL bits, not intended here
+		if (targetId < 1 || targetId >= 0x200)
 			return;
 		
 		if (value > 1 && value < 10) { // 1 < value < 10: random disable
@@ -4409,21 +4434,25 @@ void InsaneRebel2::renderHandler25Ship(byte *renderBitmap, int pitch, int width,
 		}
 
 		if (shouldDraw) {
-			// GRD001 is drawn at raw (DAT_00457910, DAT_00457912) per assembly line 206
-			// The render function applies the sprite's internal positioning
+			// GRD001 is drawn at (DAT_00457910, DAT_00457912) per assembly line 206
+			// FUN_004236e0 internally applies the sprite's internal offsets from NUT header
 			// Use sprite 0 (primary frame)
 			int spriteW = _grd001Sprite->getCharWidth(0);
 			int spriteH = _grd001Sprite->getCharHeight(0);
 
-			// Draw at raw offset position - the sprite is designed to be positioned
-			// at these coordinates (the NUT's internal offsets handle actual placement)
-			int drawX = _rebelViewOffset2X;
-			int drawY = _rebelViewOffset2Y;
+			// Get sprite internal offsets from NUT header (like FUN_004236e0 does internally)
+			int16 spriteXOffset = _grd001Sprite->getCharXOffset(0);
+			int16 spriteYOffset = _grd001Sprite->getCharYOffset(0);
+
+			// Position = view offset + sprite internal offset
+			// This matches how FUN_004236e0 positions sprites using NUT header offsets
+			int drawX = _rebelViewOffset2X + spriteXOffset;
+			int drawY = _rebelViewOffset2Y + spriteYOffset;
 
 			renderNutSprite(renderBitmap, pitch, width, renderHeight, drawX, drawY, _grd001Sprite, 0);
 
-			debug("Rebel2 Handler25: GRD001 at (%d,%d) offset(%d,%d) size(%d,%d) mode=%d damage=%d",
-				drawX, drawY, _rebelViewOffset2X, _rebelViewOffset2Y,
+			debug("Rebel2 Handler25: GRD001 at (%d,%d) nutOffset(%d,%d) viewOffset(%d,%d) size(%d,%d) mode=%d damage=%d",
+				drawX, drawY, spriteXOffset, spriteYOffset, _rebelViewOffset2X, _rebelViewOffset2Y,
 				spriteW, spriteH, _grdSpriteMode, _rebelDamageLevel);
 		}
 	}
@@ -7470,6 +7499,10 @@ int InsaneRebel2::runLevel1() {
 		_playerDamage = 0;
 		_deathFrame = 0;
 
+		// Reset bit table before gameplay starts - FUN_00423880 calls FUN_00423a00(0)
+		// This ensures all enemies are visible (not skipped by SKIP chunks)
+		clearBit(0);
+
 		// Play gameplay (01P01.SAN with 0x28 flags)
 		splayer->setCurVideoFlags(0x28);
 		splayer->play("LEV01/01P01.SAN", 12);
@@ -7532,6 +7565,17 @@ int InsaneRebel2::runLevel2() {
 		_currentPhase = 1;
 		bonusCount = 0;
 
+		// Reset bit table before gameplay starts - FUN_00423880 calls FUN_00423a00(0)
+		// This ensures all enemies are visible (not skipped by SKIP chunks)
+		clearBit(0);
+
+		// Also reset link tables for enemy dependencies
+		for (int i = 0; i < 512; i++) {
+			_rebelLinks[i][0] = 0;
+			_rebelLinks[i][1] = 0;
+			_rebelLinks[i][2] = 0;
+		}
+
 		// ===== PHASE 1: P1/02P01_X.SAN =====
 		// First play variant A which contains the background IACT (opcode 8, par4=5)
 		// The background is loaded during this video and persists for B/C/D variants
@@ -7581,6 +7625,9 @@ int InsaneRebel2::runLevel2() {
 
 		_currentPhase = 2;
 
+		// Reset bit table before Phase 2 gameplay starts
+		clearBit(0);
+
 		// ===== PHASE 2: P2/02P02_X.SAN =====
 		// First play variant A which contains the background IACT for this phase
 		{
@@ -7628,6 +7675,9 @@ int InsaneRebel2::runLevel2() {
 		if (_vm->shouldQuit()) return kLevelQuit;
 
 		_currentPhase = 3;
+
+		// Reset bit table before Phase 3 gameplay starts
+		clearBit(0);
 
 		// ===== PHASE 3: P3/02P03_X.SAN =====
 		// First play variant A which contains the background IACT for this phase
@@ -7700,6 +7750,9 @@ int InsaneRebel2::runLevel3() {
 		_playerDamage = 0;
 		_currentPhase = 1;
 
+		// Reset bit table before gameplay starts - FUN_00423880 calls FUN_00423a00(0)
+		clearBit(0);
+
 		// Play phase 1 gameplay (03PLAY1.SAN)
 		debug("Rebel2: Level 3 Phase 1");
 		splayer->setCurVideoFlags(0x28);
@@ -7743,6 +7796,9 @@ int InsaneRebel2::runLevel3() {
 	while (!_vm->shouldQuit()) {
 		_playerShield = 255;
 		_playerDamage = 0;
+
+		// Reset bit table before gameplay starts
+		clearBit(0);
 
 		// Play phase 2 gameplay (03PLAY2.SAN)
 		debug("Rebel2: Level 3 Phase 2");
@@ -7803,6 +7859,9 @@ int InsaneRebel2::runLevel4() {
 		_playerDamage = 0;
 		_currentPhase = 1;
 
+		// Reset bit table before gameplay starts
+		clearBit(0);
+
 		// Play gameplay (04PLAY.SAN)
 		debug("Rebel2: Level 4 gameplay");
 		splayer->setCurVideoFlags(0x28);
@@ -7855,6 +7914,9 @@ int InsaneRebel2::runLevel5() {
 		_playerShield = 255;
 		_playerDamage = 0;
 		_currentPhase = 1;
+
+		// Reset bit table before gameplay starts
+		clearBit(0);
 
 		// Play gameplay (05PLAY.SAN)
 		debug("Rebel2: Level 5 gameplay");
@@ -7910,6 +7972,9 @@ int InsaneRebel2::runLevel6() {
 		_playerDamage = 0;
 		_currentPhase = 1;
 
+		// Reset bit table before gameplay starts
+		clearBit(0);
+
 		// Play phase 1 gameplay (06PLAY1.SAN)
 		debug("Rebel2: Level 6 Phase 1");
 		splayer->setCurVideoFlags(0x28);
@@ -7951,6 +8016,9 @@ int InsaneRebel2::runLevel6() {
 	while (!_vm->shouldQuit()) {
 		_playerShield = 255;
 		_playerDamage = 0;
+
+		// Reset bit table before gameplay starts
+		clearBit(0);
 
 		// Play phase 2 gameplay (06PLAY2.SAN)
 		debug("Rebel2: Level 6 Phase 2");
