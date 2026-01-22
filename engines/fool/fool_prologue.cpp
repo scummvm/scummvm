@@ -684,7 +684,7 @@ void FoolPrologue::sub_130_004() {
 	this->sub_130_d28();
 	this->sub_128_1f4(0xb);
 	this->sub_128_2f0(2, 0, 0, SCREEN_HEIGHT-4, SCREEN_WIDTH-4);
-	g_zbasic->picture(0x74, 0xaa, -1, 0x00, this->glob_i32_2ce);
+	g_zbasic->picture(0x74, 0xaa, this->glob_i32_2ce);
 	g_toolbox->ReleaseResource(this->glob_i32_2ce);
 
 	// 130:007a
@@ -699,13 +699,13 @@ void FoolPrologue::sub_130_004() {
 
 	// 130:00d6
 	this->sub_128_2f0(2, 0, 0, 0x152, 0x1fc);
-	g_zbasic->picture(0, 0x96, -1, 0, this->arr_i32_0[1]);
+	g_zbasic->picture(0, 0x96, this->arr_i32_0[1]);
 	g_toolbox->ReleaseResource(this->arr_i32_0[1]);
 	this->sub_128_1f4(8);
 
 	// 130:011c
 	this->sub_128_2f0(2, 0, 0, 0x152, 0x1fc);
-	g_zbasic->picture(0, 0x96, -1, 0, this->arr_i32_0[2]);
+	g_zbasic->picture(0, 0x96, this->arr_i32_0[2]);
 	g_toolbox->ReleaseResource(this->arr_i32_0[2]);
 
 	// 130:015c
@@ -717,7 +717,7 @@ void FoolPrologue::sub_130_004() {
 	this->sub_128_1f4(0);
 
 	// 130:01aa
-	g_zbasic->picture(0, 0, -1, 0, this->arr_i32_0[6]);
+	g_zbasic->picture(0, 0, this->arr_i32_0[6]);
 	g_toolbox->ReleaseResource(this->arr_i32_0[6]);
 	this->sub_130_cea();
 
@@ -726,14 +726,14 @@ void FoolPrologue::sub_130_004() {
 	this->sub_128_1f4(1);
 
 	// 130:0202
-	g_zbasic->picture(0xa2, 0x3c, -1, 0, this->arr_i32_0[7]);
+	g_zbasic->picture(0xa2, 0x3c, this->arr_i32_0[7]);
 	g_toolbox->ReleaseResource(this->arr_i32_0[7]);
 	this->sub_130_cea();
 	this->sub_128_1f4(2);
 
 	// 130:0234
 	this->sub_128_2f0(2, 0, 0, SCREEN_HEIGHT - 4, SCREEN_WIDTH - 4);
-	g_zbasic->picture(0x5a, 0x2e, -1, 0, this->arr_i32_0[8]);
+	g_zbasic->picture(0x5a, 0x2e, this->arr_i32_0[8]);
 	g_toolbox->ReleaseResource(this->arr_i32_0[8]);
 
 	// 130:0276
@@ -748,8 +748,8 @@ void FoolPrologue::sub_130_004() {
 
 		// 130:029a
 		this->sub_128_1f4(j - 6);
-		g_zbasic->picture(0, 0, -1, 0, this->arr_i32_0[j]);
-		g_zbasic->picture(this->var_i16_74, 0x96, -1, 0, this->arr_i32_0[j - 6]);
+		g_zbasic->picture(0, 0, this->arr_i32_0[j]);
+		g_zbasic->picture(this->var_i16_74, 0x96, this->arr_i32_0[j - 6]);
 		g_toolbox->ReleaseResource(this->arr_i32_0[j]);
 		g_toolbox->ReleaseResource(this->arr_i32_0[j - 6]);
 	}
@@ -757,7 +757,7 @@ void FoolPrologue::sub_130_004() {
 
 	// 130:0320
 	this->sub_128_1f4(6);
-	g_zbasic->picture(0, 0, -1, 0, this->arr_i32_0[0xc]);
+	g_zbasic->picture(0, 0, this->arr_i32_0[0xc]);
 	g_toolbox->ReleaseResource(this->arr_i32_0[0xc]);
 
 	// 130:034a
@@ -885,8 +885,8 @@ void FoolPrologue::sub_130_004() {
 		this->sub_128_24a(1);
 	}
 	// 130:083c
-	g_zbasic->picture(0, 0, -1, 0, this->arr_i32_0[0xd]);
-	g_zbasic->picture(5, 0, -1, 0, this->arr_i32_0[0xe]);
+	g_zbasic->picture(0, 0, this->arr_i32_0[0xd]);
+	g_zbasic->picture(5, 0, this->arr_i32_0[0xe]);
 	g_toolbox->ReleaseResource(this->arr_i32_0[0xd]);
 	g_toolbox->ReleaseResource(this->arr_i32_0[0xe]);
 	this->var_i32_2 = g_toolbox->TickCount();
@@ -894,14 +894,14 @@ void FoolPrologue::sub_130_004() {
 	// g_zbasic->52(0);
 	this->sub_128_1f4(0);
 	this->sub_128_2f0(0, 0, 0, 0x152, 0x1fc);
-	g_zbasic->picture(0, 0x17, -1, 0, this->arr_i32_0[0xf]);
+	g_zbasic->picture(0, 0x17, this->arr_i32_0[0xf]);
 	g_toolbox->ReleaseResource(this->arr_i32_0[0xf]);
 	// 130:08dc
 	this->sub_130_f48();
 	this->sub_128_de2();
 	this->sub_128_1f4(1);
 	this->sub_128_2f0(0, 0, 0, 0x152, 0x1fc);
-	g_zbasic->picture(0xf0, 0xba, -1, 0, this->arr_i32_0[0x10]);
+	g_zbasic->picture(0xf0, 0xba, this->arr_i32_0[0x10]);
 	g_toolbox->ReleaseResource(this->arr_i32_0[0x10]);
 	this->sub_130_f48();
 	this->sub_128_de2();
@@ -927,7 +927,7 @@ void FoolPrologue::sub_130_004() {
 	// 130:0a42
 	this->sub_128_1f4(6);
 	this->sub_128_2f0(0, 0, 0, 0x152, 0x1fc);
-	g_zbasic->picture(0x166, 0x77, -1, 0, this->arr_i32_0[0x11]);
+	g_zbasic->picture(0x166, 0x77, this->arr_i32_0[0x11]);
 	this->sub_128_de2();
 	//g_zbasic->blockMove(this->arr_i32_41296[6], this->arr_i32_41296[7], 0x5580);
 	this->arr_i32_41296[7].copyFrom(this->arr_i32_41296[6]);
@@ -935,12 +935,12 @@ void FoolPrologue::sub_130_004() {
 	g_toolbox->ReleaseResource(this->arr_i32_0[0x11]);
 	this->sub_128_1f4(7);
 	// 130:0ac2
-	g_zbasic->picture(-0x14, -0x1e, -1, 0, this->arr_i32_0[0x12]);
+	g_zbasic->picture(-0x14, -0x1e, this->arr_i32_0[0x12]);
 	this->sub_128_1f4(8);
 	//g_zbasic->blockMove(this->arr_i32_41296[7], this->arr_i32_41296[8], 0x5580);
 	this->arr_i32_41296[8].copyFrom(this->arr_i32_41296[7]);
 	this->sub_128_2f0(0, 0x73, 0x15f, 0xf6, 0x1dc);
-	g_zbasic->picture(0x16d, 0x80, -1, 0, this->arr_i32_0[0x48]);
+	g_zbasic->picture(0x16d, 0x80, this->arr_i32_0[0x48]);
 	g_toolbox->ReleaseResource(this->arr_i32_0[0x48]);
 	g_toolbox->SetPortBits(this->var_i32_32);
 	// 130:0b74
@@ -1101,12 +1101,12 @@ void FoolPrologue::sub_131_004() {
 	// 131:004c
 	this->arr_i32_0[0x1f] = g_toolbox->GetPicture(0x1f);
 	this->sub_128_1f4(0x4);
-	g_zbasic->picture(0x0, 0x0, -1, 0x0, this->arr_i32_0[0x1f]);
+	g_zbasic->picture(0x0, 0x0, this->arr_i32_0[0x1f]);
 	g_toolbox->ReleaseResource(this->arr_i32_0[0x1f]);
 	this->sub_131_4dc0();
 	for (int i = 0x14; i < 0x1e; i++) {
 		// 131:009c
-		this->arr_i32_0[i] = g_toolbox->GetPicture(this->var_i16_74);
+		this->arr_i32_0[i] = g_toolbox->GetPicture(i);
 		if ((i % 3) == 0) {
 			this->var_i16_3ce += 5;
 			this->sub_131_4dc0();
@@ -1118,13 +1118,13 @@ void FoolPrologue::sub_131_004() {
 		this->sub_128_2f0(0, 0, 0, 0x152, 0x1fc);
 		// 131:0110
 		if (i < 8) {
-			g_zbasic->picture(0, 0x3, -1, 0, this->arr_i32_0[0x19]);
+			g_zbasic->picture(0, 0x3, this->arr_i32_0[0x19]);
 		}
 		if (i == 8) {
-			g_zbasic->picture(0, 0, -1, 0, this->arr_i32_0[0x1a]);
+			g_zbasic->picture(0, 0, this->arr_i32_0[0x1a]);
 		}
 		if (i == 9) {
-			g_zbasic->picture(0x60, 0x4c, -1, 0, this->arr_i32_0[0x1b]);
+			g_zbasic->picture(0x60, 0x4c, this->arr_i32_0[0x1b]);
 		}
 	}
 	// 131:0184
@@ -1134,8 +1134,8 @@ void FoolPrologue::sub_131_004() {
 	// 131:01aa
 	this->arr_i32_0[0x13] = g_toolbox->GetPicture(0x13);
 	this->sub_128_1f4(0x5);
-	g_zbasic->picture(0, 0xb4, -1, 0, this->arr_i32_0[0x13]);
-	g_zbasic->picture(0, 0, -1, 0, this->arr_i32_0[0x18]);
+	g_zbasic->picture(0, 0xb4, this->arr_i32_0[0x13]);
+	g_zbasic->picture(0, 0, this->arr_i32_0[0x18]);
 	g_toolbox->ReleaseResource(this->arr_i32_0[0x13]);
 	g_toolbox->ReleaseResource(this->arr_i32_0[0x18]);
 	this->sub_131_4e98();
@@ -1203,15 +1203,15 @@ void FoolPrologue::sub_131_004() {
 	this->sub_128_21e(0x1e);
 
 	// 131:041a
-	g_zbasic->picture(0x1cd, 0xbd, -1, 0, this->arr_i32_0[0x14]);
+	g_zbasic->picture(0x1cd, 0xbd, this->arr_i32_0[0x14]);
 	this->sub_128_21e(0x2);
-	g_zbasic->picture(0x1cd, 0xbf, -1, 0, this->arr_i32_0[0x15]);
+	g_zbasic->picture(0x1cd, 0xbf, this->arr_i32_0[0x15]);
 	this->sub_128_21e(0x3c);
-	g_zbasic->picture(0x1cd, 0xbd, -1, 0, this->arr_i32_0[0x14]);
+	g_zbasic->picture(0x1cd, 0xbd, this->arr_i32_0[0x14]);
 	this->sub_128_21e(0x6);
-	g_zbasic->picture(0x1a6, 0xbf, -1, 0, this->arr_i32_0[0x16]);
+	g_zbasic->picture(0x1a6, 0xbf, this->arr_i32_0[0x16]);
 	this->sub_128_21e(0x6);
-	g_zbasic->picture(0x1b3, 0xc5, -1, 0, this->arr_i32_0[0x17]);
+	g_zbasic->picture(0x1b3, 0xc5, this->arr_i32_0[0x17]);
 
 	// 131:04b4
 	for (int i = 0x14; i < 0x17; i++) {
@@ -1300,9 +1300,9 @@ void FoolPrologue::sub_131_004() {
 	// 131:0926
 	g_toolbox->SetRect(this->arr_i16_1bc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	g_toolbox->PenPat(this->arr_pat_194[3]);
-	g_zbasic->picture(0x6d, 0x49, -1, 0, this->arr_i32_0[0x1c]);
-	g_zbasic->picture(0x65, 0x48, -1, 0, this->arr_i32_0[0x1d]);
-	g_zbasic->picture(0x64, 0x54, -1, 0, this->arr_i32_0[0x1e]);
+	g_zbasic->picture(0x6d, 0x49, this->arr_i32_0[0x1c]);
+	g_zbasic->picture(0x65, 0x48, this->arr_i32_0[0x1d]);
+	g_zbasic->picture(0x64, 0x54, this->arr_i32_0[0x1e]);
 	// 131:099c
 
 	g_toolbox->PaintPoly(this->var_i32_3d6);
@@ -1346,10 +1346,10 @@ void FoolPrologue::sub_131_004() {
 	// 131:0bb0
 	this->sub_128_50a(4, 0, 0x1fc, 3);
 	this->sub_128_1ba(5);
-	g_zbasic->picture(0x198, 0x102, -1, 0, this->arr_i32_0[0x25]);
+	g_zbasic->picture(0x198, 0x102, this->arr_i32_0[0x25]);
 	g_toolbox->SetPortBits(this->var_i32_32);
 	this->sub_128_21e(0x3c);
-	g_zbasic->picture(0x197, 0x101, -1, 0, this->arr_i32_0[0x26]);
+	g_zbasic->picture(0x197, 0x101, this->arr_i32_0[0x26]);
 
 	// 131:0c36
 	this->var_i32_2 = g_toolbox->TickCount();
@@ -1364,15 +1364,15 @@ void FoolPrologue::sub_131_004() {
 		this->arr_i32_41296[i].copyFrom(this->arr_i32_41296[5]);
 	}
 	this->sub_128_1f4(0x6);
-	g_zbasic->picture(0x6, 0x8f, -1, 0, this->arr_i32_0[0x20]);
+	g_zbasic->picture(0x6, 0x8f, this->arr_i32_0[0x20]);
 	this->sub_128_1f4(0x7);
-	g_zbasic->picture(0x1a, 0x7e, -1, 0, this->arr_i32_0[0x21]);
+	g_zbasic->picture(0x1a, 0x7e, this->arr_i32_0[0x21]);
 	this->sub_128_1f4(0x8);
-	g_zbasic->picture(0x2e, 0x6a, -1, 0, this->arr_i32_0[0x22]);
+	g_zbasic->picture(0x2e, 0x6a, this->arr_i32_0[0x22]);
 	this->sub_128_1f4(0x9);
-	g_zbasic->picture(0x45, 0x4e, -1, 0, this->arr_i32_0[0x23]);
+	g_zbasic->picture(0x45, 0x4e, this->arr_i32_0[0x23]);
 	this->sub_128_1f4(0xa);
-	g_zbasic->picture(0x73, 0x28, -1, 0, this->arr_i32_0[0x24]);
+	g_zbasic->picture(0x73, 0x28, this->arr_i32_0[0x24]);
 
 	// 131:0d64
 	for (int i = 0x20; i < 0x23; i++) {
@@ -1380,12 +1380,12 @@ void FoolPrologue::sub_131_004() {
 	}
 	g_toolbox->SetPortBits(this->var_i32_32);
 	this->sub_128_24a(0x64);
-	g_zbasic->picture(0x198, 0x102, -1, 0, this->arr_i32_0[0x25]);
+	g_zbasic->picture(0x198, 0x102, this->arr_i32_0[0x25]);
 	for (int i = 0x6; i < 0xa; i++) {
 		this->sub_128_21e(0xf);
 		this->sub_128_50a(i, 0, 0x1fc, 1);
 	}
-	g_zbasic->picture(0x191, 0x102, -1, 0, this->arr_i32_0[0x27]);
+	g_zbasic->picture(0x191, 0x102, this->arr_i32_0[0x27]);
 	this->sub_128_21e(0x3c);
 
 	// 131:0e08
@@ -1399,15 +1399,15 @@ void FoolPrologue::sub_131_004() {
 	//g_zbasic->blockMove(this->arr_i32_41296[4], this->arr_i32_41296[5], 0x5580);
 	this->arr_i32_41296[5].copyFrom(this->arr_i32_41296[4]);
 	this->sub_128_1f4(0x5);
-	g_zbasic->picture(0x73, 0x28, -1, 0, this->arr_i32_0[0x24]);
-	g_zbasic->picture(0x191, 0x102, -1, 0, this->arr_i32_0[0x27]);
-	g_zbasic->picture(0x8a, 0x24, -1, 0, this->arr_i32_0[0x28]);
+	g_zbasic->picture(0x73, 0x28, this->arr_i32_0[0x24]);
+	g_zbasic->picture(0x191, 0x102, this->arr_i32_0[0x27]);
+	g_zbasic->picture(0x8a, 0x24, this->arr_i32_0[0x28]);
 	this->sub_128_1f4(0x6);
 	this->sub_128_2f0(0, 0, 0x152, 0x1fc, 0);
-	g_zbasic->picture(0x118, 0x19, -1, 0, this->arr_i32_0[0x29]);
+	g_zbasic->picture(0x118, 0x19, this->arr_i32_0[0x29]);
 	this->sub_128_1f4(0x7);
 	this->sub_128_2f0(0, 0, 0x152, 0x1fc, 0);
-	g_zbasic->picture(0x118, 0x19, -1, 0, this->arr_i32_0[0x2a]);
+	g_zbasic->picture(0x118, 0x19, this->arr_i32_0[0x2a]);
 	//g_zbasic->blockMove(this->arr_i32_41296[5], this->arr_i32_41296[8], 0x5580);
 	this->arr_i32_41296[8].copyFrom(this->arr_i32_41296[5]);
 	this->sub_128_1f4(0x8);
@@ -1415,10 +1415,10 @@ void FoolPrologue::sub_131_004() {
 	//g_zbasic->blockMove(this->arr_i32_41296[4], this->arr_i32_41296[9], 0x5580);
 	this->arr_i32_41296[9].copyFrom(this->arr_i32_41296[4]);
 	this->sub_128_1f4(0x9);
-	g_zbasic->picture(0x18f, 0xc0, -1, 0, this->arr_i32_0[0x2b]);
+	g_zbasic->picture(0x18f, 0xc0, this->arr_i32_0[0x2b]);
 	this->sub_128_1f4(0xa);
 	this->sub_128_2f0(0, 0, 0x152, 0x1fc, 2);
-	g_zbasic->picture(0x18f, 0xc0, -1, 0, this->arr_i32_0[0x2b]);
+	g_zbasic->picture(0x18f, 0xc0, this->arr_i32_0[0x2b]);
 
 	// 131:1056
 	g_toolbox->ReleaseResource(this->arr_i32_0[0x24]);
@@ -1454,7 +1454,7 @@ void FoolPrologue::sub_131_004() {
 	this->sub_128_1ba(0x5);
 	this->sub_128_1f4(0x5);
 	this->sub_128_2f0(0xc4, 0x141, 0xd3, 0x1fc, 0x2);
-	g_zbasic->picture(0x18f, 0xc0, -1, 0, this->arr_i32_0[0x2b]);
+	g_zbasic->picture(0x18f, 0xc0, this->arr_i32_0[0x2b]);
 	g_toolbox->SetPortBits(this->var_i32_32);
 	g_toolbox->PenNormal();
 	g_toolbox->PenMode(0xa);
@@ -1467,10 +1467,10 @@ void FoolPrologue::sub_131_004() {
 		g_toolbox->LineTo(i, 0x14a);
 		if (i == 0x43) {
 			g_zbasic->text(0xfa, 0xc, kFacePlain, kModeSourceBIC);
-			this->var_str_76 = Common::U32String::format("\"%s\"", g_zbasic->str(24));
+			this->var_str_76 = Common::U32String::format("\"%s\"", g_zbasic->str(24).encode().c_str());
 			g_zbasic->bufferFlush(this->var_str_76);
 			this->sub_128_26c(0x1f0, 0xd2);
-			g_zbasic->picture(0x198, 0x102, -1, 0, this->arr_i32_0[0x25]);
+			g_zbasic->picture(0x198, 0x102, this->arr_i32_0[0x25]);
 		}
 		this->sub_128_24a(0x2);
 		g_toolbox->MoveTo(0x172, 0x33);
@@ -1489,7 +1489,7 @@ void FoolPrologue::sub_131_004() {
 	this->sub_128_1f4(0x5);
 
 	this->sub_128_2f0(0, 0, 0x152, 0x1fc, 0);
-	g_zbasic->picture(0, 0, -1, 0, this->arr_i32_0[0x2f]);
+	g_zbasic->picture(0, 0, this->arr_i32_0[0x2f]);
 	g_toolbox->SetPortBits(this->var_i32_32);
 	this->sub_128_24a(0xa);
 	this->var_i16_5c.left = 0x18b;
@@ -1509,11 +1509,11 @@ void FoolPrologue::sub_131_004() {
 	}
 
 	// 131:1424
-	g_zbasic->picture(0x193, 0x2d, -1, 0, this->arr_i32_0[0x2c]);
+	g_zbasic->picture(0x193, 0x2d, this->arr_i32_0[0x2c]);
 	this->sub_128_21e(0x1);
-	g_zbasic->picture(0x193, 0x2d, -1, 0, this->arr_i32_0[0x2d]);
+	g_zbasic->picture(0x193, 0x2d, this->arr_i32_0[0x2d]);
 	this->sub_128_21e(0x1);
-	g_zbasic->picture(0x193, 0x2d, -1, 0, this->arr_i32_0[0x2e]);
+	g_zbasic->picture(0x193, 0x2d, this->arr_i32_0[0x2e]);
 	this->sub_128_1ba(0x6);
 	g_toolbox->PenNormal();
 	g_toolbox->PenMode(0xa);

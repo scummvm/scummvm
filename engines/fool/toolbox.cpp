@@ -19,7 +19,11 @@
  *
  */
 
+#include "common/memstream.h"
 #include "common/system.h"
+
+#include "graphics/macgui/macwindowmanager.h"
+#include "image/pict.h"
 
 #include "fool/fool.h"
 #include "fool/toolbox.h"
@@ -140,16 +144,29 @@ bool Toolbox::GetNextEvent(uint16 eventMask, EventRecord &theEvent) {
 }
 
 PicHandle Toolbox::GetPicture(uint16 picID) {
-	warning("STUB: Toolbox::GetPicture");
-	return 0;
+	Handle handle = this->GetResource(MKTAG('P', 'I', 'C', 'T'), picID);
+	if (handle) {
+		Common::MemoryReadStream stream(handle->data(), handle->size());
+		Image::PICTDecoder decoder;
+		if (decoder.loadStream(stream)) {
+			PicHandle result(new Graphics::ManagedSurface());
+			result->copyFrom(*decoder.getSurface());
+			this->_resPicts[result] = handle;
+			return result;
+		}
+	}
+
+	return nullptr;
 }
 
 void Toolbox::HideCursor() {
-	warning("STUB: Toolbox::HideCursor");
+	this->_cursorLevel--;
+	g_engine->_wm.replaceCursor(Graphics::MacGUIConstants::kMacCursorOff);
 }
 
 void Toolbox::InitCursor() {
-	warning("STUB: Toolbox::InitCursor");
+	g_engine->_wm.replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
+	this->_cursorLevel = 0;
 }
 
 void Toolbox::InsetRect(Common::Rect &r, int16 dh, int16 dv) {
@@ -218,7 +235,6 @@ void Toolbox::PenNormal() {
 
 void Toolbox::PenPat(const Pattern &pat) {
 	warning("STUB: Toolbox::PenPat");
-
 }
 
 void Toolbox::PenSize(uint16 width, uint16 height) {
@@ -231,25 +247,30 @@ void Toolbox::PortSize(uint16 width, uint16 height) {
 
 void Toolbox::SetCPixel(int16 h, int16 v, const RGBColor &cPix) {
 	warning("STUB: Toolbox::SetCPixel");
-
 }
 
 void Toolbox::SetPort(GrafPtr port) {
 	warning("STUB: Toolbox::SetPort");
-
 }
 
 void Toolbox::SetPortBits(const Graphics::Surface *bm) {
 	warning("STUB: Toolbox::SetPortBits");
-
 }
 
 void Toolbox::SetRect(Common::Rect &r, int16 left, int16 top, int16 right, int16 bottom) {
-		r.left = left;
-		r.top = top;
-		r.right = right;
-		r.bottom = bottom;
-	}
+	r.left = left;
+	r.top = top;
+	r.right = right;
+	r.bottom = bottom;
+}
+
+void Toolbox::ShowCursor() {
+	if (this->_cursorLevel < 0)
+		this->_cursorLevel++;
+	if (this->_cursorLevel == 0)
+		g_engine->_wm.replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
+}
+
 
 uint16 Toolbox::StringWidth(const Common::String &s) {
 	warning("STUB: Toolbox::StringWidth");

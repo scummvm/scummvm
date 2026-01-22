@@ -21,6 +21,7 @@
 
 #include "common/macresman.h"
 #include "common/memorypool.h"
+#include "common/memstream.h"
 #include "common/str-enc.h"
 #include "common/stream.h"
 
@@ -31,16 +32,17 @@
 namespace Fool {
 
 void ZBasic::loadProgram(const Common::Path &path) {
-	Common::MacResManager resman;
-	if (!resman.open(path)) {
+	_fileId = this->_toolbox->OpenResFile(path);
+	if (_fileId == -1) {
 		warning("ZBasic::loadProgram: unable to open %s", path.toString(':').c_str());
 		return;
 	}
-	Common::SeekableReadStream *scot = resman.getResource(MKTAG('S', 'C', 'O', 'T'), 1);
-	if (!scot) {
+	Handle scotRes = this->_toolbox->GetResource(MKTAG('S', 'C', 'O', 'T'), 1);
+	if (!scotRes) {
 		warning("ZBasic::loadProgram: could not find SCOT chunk");
 		return;
 	}
+	Common::MemoryReadStream *scot = new Common::MemoryReadStream(scotRes->data(), scotRes->size());
 
 	this->_dataTable.clear();
 	this->_dataPtr = 0;
@@ -185,6 +187,14 @@ uint32 ZBasic::mem(int16 index) {
 
 void ZBasic::openR(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo) {
 	warning("STUB: ZBasic::openR");
+}
+
+void ZBasic::picture(int16 x, int16 y, PicHandle &src) {
+	if (!src) {
+		warning("ZBasic::picture: Empty handle");
+		return;
+	}
+	g_engine->_screen.blitFrom(*src, Common::Point(x, y));
 }
 
 void ZBasic::picture(int16 x1, int16 y1, int16 x2, int16 y2, PicHandle &src) {

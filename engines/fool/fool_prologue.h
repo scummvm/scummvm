@@ -163,7 +163,7 @@ private:
 	int16 var_i16_3fc;
 
 	// picture resource handles
-	Handle arr_i32_0[92] = { 0 };
+	PicHandle arr_i32_0[92] = { nullptr };
 
 	Pattern arr_pat_194[5];
 

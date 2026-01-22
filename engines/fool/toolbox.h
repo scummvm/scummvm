@@ -27,16 +27,44 @@
 #include "common/macresman.h"
 #include "common/str.h"
 #include "common/ustr.h"
+
 #include "graphics/framelimiter.h"
 #include "graphics/macgui/macwindow.h"
 
+#include "fool/siphash/halfsip.h"
+
 namespace Fool {
 
-typedef uint32 Handle;
-typedef uint32 RgnHandle;
-typedef uint32 PicHandle;
-typedef uint32 PolyHandle;
+typedef Common::SharedPtr<Common::Array<byte>> Handle;
+typedef Handle RgnHandle;
+typedef Common::SharedPtr<Graphics::ManagedSurface> PicHandle;
+typedef Handle PolyHandle;
 typedef uint32 ResType;
+typedef size_t Size;
+
+};
+
+template<>
+struct Common::Hash<Fool::Handle> {
+	uint operator()(const Fool::Handle& h) const {
+		void *target = h.get();
+		uint result;
+		Fool::halfsiphash((const void *)&target, sizeof(intptr_t), "TBHANDLE", (byte *)&result, sizeof(uint));
+		return result;
+	}
+};
+
+template<>
+struct Common::Hash<Fool::PicHandle> {
+	uint operator()(const Fool::PicHandle& h) const {
+		void *target = h.get();
+		uint result;
+		Fool::halfsiphash((const void *)&target, sizeof(intptr_t), "TBHANDLE", (byte *)&result, sizeof(uint));
+		return result;
+	}
+};
+
+namespace Fool {
 
 struct Pattern {
 	uint8 data[8];
@@ -119,6 +147,14 @@ struct WindowRecord {
 
 // TYPE Rect: top: INTEGER; left: INTEGER; bottom: INTEGER; right: INTEGER;
 
+struct ToolboxResInfo {
+	int16 fileID;
+	ResType type;
+	uint16 resID;
+	Handle handle;
+	Common::String name;
+};
+
 class Toolbox {
 
 public:
@@ -131,18 +167,54 @@ public:
 	// FUNCTION CurResFile: INTEGER;
 	// CurResFile returns the reference number of the current resource file. You can call it when the
 	// application starts up to get the reference number of its resource file.
-	uint16 CurResFile();
+	int16 CurResFile();
+
+	// PROCEDURE DetachResource (theResource: Handle);
+	// Given a handle to a resource, DetachResource replaces the handle to that resource in the resource
+	// map with NIL (see Figure 7 above). The given handle will no longer be recognized as a handle to
+	// a resource; if the Resource Manager is subsequendy called to get the detached resource, a new
+	// handle will be allocated.
+	void DetachResource(Handle &h);
+
+	// PROCEDURE DisposHandle (h: Handle);
+	// DisposHandle releases the memory occupied by the relocatable block whose handle is h.
+	void DisposHandle(Handle &h);
+
+	// FUNCTION GetHandleSize (h: Handle) : Size;
+	// GetHandleSize returns the logical size, in bytes, of the relocatable block whose handle is h. In
+	// case of an error, GetHandleSize returns 0.
+	Size GetHandleSize(Handle &h);
 
 	// FUNCTION GetNamedResource (theType: ResType; name: Str255) : Handle;
 	// GetNamedResource is the same as GetResource (above) except that you pass a resource name
 	// instead of an ID number.
+	Handle GetNamedResource(ResType theType, const Common::String &name);
+
+	// PROCEDURE GetResInfo (theResource: Handle; VAR theID: INTEGER;
+	//		VAR theType: ResType; VAR name: Str255);
+	// Given a handle to a resource, GetResInfo returns the ID number, type, and name of the resource.
+	// If the given handle isn't a handle to a resource, GetResInfo will do nothing and the ResError
+	// function will return the result code resNotFound.
+	void GetResInfo(Handle &theResource, int16 &theID, ResType &theType, Common::String &name);
 
 	// FUNCTION GetResource (theType: ResType; theID: INTEGER) : Handle;
 	// GetResource returns a handle to the resource having the given type and ID number, reading
 	// the resource data into memory if it's not already in memory and if you haven't called
 	// SetResLoad(FALSE) (see the warning above for GetIndResource). If the resource data is already
 	// in memory, GetResource just returns the handle to the resource.
-	Handle GetResource(ResType theType, int16 theID);
+	Handle GetResource(ResType theType, uint16 theID);
+
+	// FUNCTION HomeResFile (theResource: Handle) : INTEGER;
+	// Given a handle to a resource, HomeResFile returns the reference number of the resource file
+	// containing that resource. If the given handle isn't a handle to a resource, HomeResFile will
+	// return -1 and the ResError function will return the result code resNotFound.
+	int32 HomeResFile(Handle &theResource);
+
+	// FUNCTION NewHandle (logicalSize: Size) : Handle;
+	// NewHandle attempts to allocate a new relocatable block of logicalSize bytes from the current heap
+	// zone and then return a handle to it. The new block will be unlocked and unpurgeable. If
+	// logicalSize bytes can't be allocated, NewHandle returns NIL.
+	Handle NewHandle(Size logicalSize);
 
 	// FUNCTION OpenResFile (fileName: Str255): INTEGER;
 	// OpenResFile opens the resource file having the given name and makes it the current resource file.
@@ -152,7 +224,7 @@ public:
 	// If the file can't be opened, OpenResFile will return -1 and the ResError function will return an
 	// appropriate Operating System result code. For example, an error occurs if there's no resource file
 	// with the given name.
-	int16 OpenResFile(Common::Path &filename);
+	int16 OpenResFile(const Common::Path &filename);
 
 	// PROCEDURE ReleaseResource (theResource: Handle);
 	// Given a handle to a resource, ReleaseResource releases the memory occupied by the resource
@@ -161,13 +233,21 @@ public:
 	// is subsequendy called to get the released resource, a new handle will be allocated. Use this
 	// procedure only after you're completely through with a resource.
 	void ReleaseResource(Handle &handle);
+	void ReleaseResource(PicHandle &handle);
+
+	// FUNCTION SizeResource(theResource: Handle) : LONGINT;
+	// Given a handle to a resource, SizeResource returns the size in bytes of the resource in the
+	// resource file. If the given handle isn't a handle to a resource, SizeResource will return - 1 and the
+	// ResError function will return the result code resNotFound. It's a good idea to call SizeResource
+	// and ensure that sufficient space is available before reading a resource into memory.
+	int32 SizeResource(Handle &theResource);
 
 	// PROCEDURE UseResFile (refNum: INTEGER);
 	// Given the reference number of a resource file, UseResFile sets the current resource file to that
 	// file. If there's no resource file open with the given reference number, UseResFile will do nothing
 	// and the ResError function will return the result code resFNotFound. A refNum of 0 represents
 	// the system resource file.
-	void UseResFile(uint16 refNum);
+	void UseResFile(int16 refNum);
 
 
 
@@ -417,6 +497,13 @@ public:
 	// with coordinates (left,top) (right,bottom).
 	void SetRect(Common::Rect &r, int16 left, int16 top, int16 right, int16 bottom);
 
+	// PROCEDURE ShowCursor;
+	// ShowCursor increments the cursor level, which may have been decremented by HideCursor, and
+	// displays the cursor on the screen if the level becomes 0. A call to ShowCursor should balance
+	// each previous call to HideCursor. The level isn't incremented beyond 0, so extra calls to
+	// ShowCursor have no effect.
+	void ShowCursor();
+
 	// PROCEDURE StringWidth (s: Str255) : INTEGER;
 	// StringWidth returns the width of the given text string, which it calculates by adding the
 	// CharWidths of all the characters in the string (see above).
@@ -429,8 +516,13 @@ public:
 
 private:
 	Common::HashMap<int16, Common::SharedPtr<Common::MacResManager>> _resMap;
-	int16 _nextResId = 0;
+	Common::Array<int16> _resOrder;
+	int16 _nextResId = 1;
+	size_t _resIndexStart = 0;
+	Common::HashMap<Handle, ToolboxResInfo> _resInfo;
+	Common::HashMap<PicHandle, Handle> _resPicts;
 	Graphics::FrameLimiter *_frameLimiter = nullptr;
+	int _cursorLevel = 0;
 
 	Common::Queue<EventRecord> _events;
 

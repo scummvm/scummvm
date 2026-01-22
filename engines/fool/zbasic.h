@@ -230,6 +230,7 @@ private:
 
 	Toolbox *_toolbox;
 	Common::MemoryPool *_memPool;
+	int16 _fileId = -1;
 public:
 
 	ZBasic(Toolbox *toolbox) : _toolbox(toolbox) {
@@ -254,6 +255,7 @@ public:
 	bool maybe();
 	uint32 mem(int16 index);
 	void openR(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo);
+	void picture(int16 x, int16 y, PicHandle &src);
 	void picture(int16 x1, int16 y1, int16 x2, int16 y2, PicHandle &src);
 	void put(int16 x, int16 y, Graphics::Surface &src);
 	void put(int16 x1, int16 y1, int16 x2, int16 y2, Graphics::Surface &src);
