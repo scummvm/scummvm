@@ -2696,8 +2696,8 @@ Common::Error ScummEngine::go() {
 				break;
 			}
 
-			if (menuResult == InsaneRebel2::kMenuContinue) {
-				// Continue: Show pilot selection screen (FUN_00414A41)
+			if (menuResult == InsaneRebel2::kMenuNewGame || menuResult == InsaneRebel2::kMenuContinue) {
+				// Start Game or Continue: Show pilot selection screen (FUN_00414A41)
 				int pilotResult = rebel->runLevelSelect();
 
 				if (pilotResult == InsaneRebel2::kLevelSelectQuit || shouldQuit()) {
