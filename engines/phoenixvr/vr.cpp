@@ -394,13 +394,14 @@ void VR::render(Graphics::Screen *screen, float ax, float ay, float fov, float d
 		return;
 	}
 
+	for (auto &animation : _animations)
+		animation.render(*_pic, dt);
+
 	if (!_vr) {
 		Common::Point dst(0, 0);
 		Common::Rect src(_pic->getRect());
 		Common::Rect::getBlitRect(dst, src, screen->getBounds());
 		screen->copyRectToSurface(*_pic, dst.x, dst.y, src);
-		for (auto &animation : _animations)
-			animation.render(*_pic, dt);
 		if (regSet) {
 			for (auto &rect : regSet->getRegions())
 				screen->drawRoundRect(rect.toRect().toRect(), 4, _pic->format.RGBToColor(255, 255, 255), false);

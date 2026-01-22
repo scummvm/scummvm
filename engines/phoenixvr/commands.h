@@ -102,12 +102,12 @@ struct Play_AnimBloc_Number : public Script::Command {
 };
 
 struct Until : public Script::Command {
-	Common::String block;
-	int frame;
+	Common::String var;
+	int value;
 
-	Until(const Common::Array<Common::String> &args) : block(args[0]), frame(atoi(args[1].c_str())) {}
+	Until(const Common::Array<Common::String> &args) : var(args[0]), value(atoi(args[1].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("until %s %d", block.c_str(), frame);
+		g_engine->until(var, value);
 	}
 };
 

@@ -143,6 +143,28 @@ void PhoenixVREngine::end() {
 	}
 }
 
+void PhoenixVREngine::until(const Common::String &var, int value) {
+	debug("until %s %d", var.c_str(), value);
+	Graphics::FrameLimiter limiter(g_system, kFPSLimit);
+	unsigned frameDuration = 0;
+	while (!shouldQuit() && getVariable(var) != value) {
+		Common::Event event;
+		renderVR(frameDuration / 1000.0f);
+		while (g_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			default:
+				break;
+			}
+		}
+
+		// Delay for a bit. All events loops should have a delay
+		// to prevent the system being unduly loaded
+		limiter.delayBeforeSwap();
+		_screen->update();
+		frameDuration = limiter.startFrame();
+	}
+}
+
 void PhoenixVREngine::wait(float seconds) {
 	debug("wait %gs", seconds);
 	auto begin = g_system->getMillis();

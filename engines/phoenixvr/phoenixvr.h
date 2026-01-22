@@ -118,6 +118,7 @@ public:
 	void scheduleTest(int idx);
 	void end();
 	void wait(float seconds);
+	void until(const Common::String &var, int value);
 
 	const Region *getRegion(int idx) const;
 
