@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-22 20:36+0000\n"
-"PO-Revision-Date: 2026-01-21 22:15+0000\n"
+"PO-Revision-Date: 2026-01-22 22:09+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -13514,39 +13514,29 @@ msgstr "Виберіть файл збереження"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) save file name input field has 2 modes, insert and overwrite, this action toggles between them
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) save password input field has 2 modes, insert and overwrite, this action toggles between them
 #: engines/sherlock/metaengine.cpp:1124 engines/sherlock/metaengine.cpp:1229
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle insert mode"
-msgstr "Перемикання швидкого режиму"
+msgstr "Перемикання режиму вставки"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a foolscap puzzle, where the player has to decode a hidden message on a piece of paper called a foolscap. this action is used to exit the puzzle
 #: engines/sherlock/metaengine.cpp:1135
-#, fuzzy
-#| msgid "Close popup"
 msgid "Close puzzle"
-msgstr "Закрити вискакуючий список"
+msgstr "Закрити головоломку"
 
 #: engines/sherlock/metaengine.cpp:1177
 msgid "Exit inventory / Close verb menu / Cancel item use action"
 msgstr "Вийти з інвентарю / Закрити меню дій / Перервати використання елементу"
 
 #: engines/sherlock/metaengine.cpp:1239
-#, fuzzy
-#| msgid "Select Next Actor"
 msgid "Select next option"
-msgstr "Вибрати наступного Актора"
+msgstr "Вибрати наступну опцію"
 
 #: engines/sherlock/metaengine.cpp:1261
-#, fuzzy
-#| msgid "Go to next dialogue"
 msgid "Go to next talk option"
-msgstr "Перейти до наступного діалогу"
+msgstr "Перейти до наступної опції діалогу"
 
 #: engines/sherlock/metaengine.cpp:1267
-#, fuzzy
-#| msgid "Go to previous dialogues"
 msgid "Go to previous talk option"
-msgstr "Перейти до попереднього діалогу"
+msgstr "Перейти до попередньої опції діалогу"
 
 #: engines/sky/compact.cpp:140
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
@@ -13565,10 +13555,8 @@ msgid "Open control panel"
 msgstr "Відкрити панель керування"
 
 #: engines/sky/metaengine.cpp:136
-#, fuzzy
-#| msgid "Toggle really fast mode on/off"
 msgid "Toggle really fast mode on / off"
-msgstr "Перемикання дуже швидкого режиму"
+msgstr "Перемикання дуже швидкого режиму Так / Ні"
 
 #: engines/sky/metaengine.cpp:156
 msgid "Floppy intro"
@@ -13583,44 +13571,30 @@ msgid "WARNING: Deleting the autosave slot is not supported by this engine"
 msgstr "УВАГА: Видалення слоту автозбереження не підтримується цим движком"
 
 #: engines/sludge/keymapper_tables.h:34
-#, fuzzy
-#| msgid "Default keymappings"
 msgid "Debug keymappings"
-msgstr "Мапи клавіш за замовчунням"
+msgstr "Мапа клавіш відладки"
 
 #: engines/sludge/keymapper_tables.h:36
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Minigame keymappings"
-msgstr "Мапа клавіш гри"
+msgstr "Мапа клавіш міні-гри"
 
 #: engines/sludge/keymapper_tables.h:46
-#, fuzzy
-#| msgid "Change game options"
 msgid "Change action"
-msgstr "Змінити налаштування гри"
+msgstr "Змінити дію"
 
 #: engines/sludge/keymapper_tables.h:70 engines/sludge/keymapper_tables.h:293
-#, fuzzy
-#| msgid "Select dialogue"
 msgid "Speed up dialog"
-msgstr "Видбрати діалог"
+msgstr "Прискорити діалог"
 
 #: engines/sludge/keymapper_tables.h:76 engines/sludge/keymapper_tables.h:298
-#, fuzzy
-#| msgid "Slow down virtual mouse"
 msgid "Slow down dialog"
-msgstr "Уповільнити віртуальну мишу"
+msgstr "Уповільнити діалог"
 
 #: engines/sludge/keymapper_tables.h:101 engines/sludge/keymapper_tables.h:150
-#, fuzzy
-#| msgid "Unnamed autosave"
 msgid "Load auto save"
-msgstr "Автозбереження без імені"
+msgstr "Завантажити автозбереження"
 
 #: engines/sludge/keymapper_tables.h:113 engines/sludge/keymapper_tables.h:162
-#, fuzzy
-#| msgid "Load Game"
 msgid "Load save"
 msgstr "Завантажити збережену гру"
 
