@@ -38,6 +38,7 @@ namespace Fool {
 typedef Common::SharedPtr<Common::Array<byte>> Handle;
 typedef Handle RgnHandle;
 typedef Common::SharedPtr<Graphics::ManagedSurface> PicHandle;
+typedef Common::SharedPtr<Graphics::ManagedSurface> BitMap;
 typedef Handle PolyHandle;
 typedef uint32 ResType;
 typedef size_t Size;
@@ -113,7 +114,7 @@ enum WindowDefinition {
 
 struct GrafPort {
 	uint16 device;
-	Graphics::Surface *portBits;
+	BitMap portBits;
 	Common::Rect portRect;
 	RgnHandle visRgn;
 	RgnHandle clipRgn;
@@ -286,7 +287,7 @@ public:
 	// just pass NIL for the maskRgn parameter. The dstRect and maskRgn coordinates are in terms of
 	// the dstBits.bounds coordinate system, and the srcRect coordinates are in terms of the
 	// srcBits.bounds coordinates.
-	void CopyBits(const Graphics::Surface &srcBits, Graphics::Surface &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, uint16 mode, RgnHandle maskRgn);
+	void CopyBits(const BitMap &srcBits, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, uint16 mode, RgnHandle maskRgn);
 
 	// PROCEDURE Delay (numTicks: LONGINT; VAR finalTicks: LONGINT);
 	// Delay causes the system to wait for the number of ticks (sixtieths of a second) specified by numTicks, and returns in finalTicks the total number of ticks from system startup to the end of the delay.
@@ -490,7 +491,7 @@ public:
 	// allows you to perform all normal drawing and calculations on a buffer other than the screen—for
 	// example, a small off-screen image for later "stamping" onto the screen (with the CopyBits
 	// procedure, described under "Bit Transfer Operations" below).
-	void SetPortBits(const Graphics::Surface *bm);
+	void SetPortBits(BitMap &bm);
 
 	// PROCEDURE SetRect (VAR r: Rect; left,top,right,bottom: INTEGER);
 	// SetRect assigns the four boundary coordinates to the given rectangle. The result is a rectangle

@@ -45,7 +45,7 @@ public:
 	void sub_128_24a(int16 numTicks);
 	void sub_128_26c(int16 unk1, int16 unk2);
 	void sub_128_2a6(int16 unk1, int16 unk2);
-	void sub_128_2f0(int16 pattern_id, int16 top, int16 left, int16 bottom, int16 right);
+	void fillRect(int16 patternID, int16 top, int16 left, int16 bottom, int16 right); // sub_128_2f0
 	void sub_128_354(uint16 unk1, uint16 unk2);
 	void sub_128_3ee(int16 unk1);
 	void sub_128_50a(int16 unk1, int16 unk2, int16 unk3, int16 screenPage);
@@ -70,8 +70,8 @@ public:
 	void sub_129_772();
 
 	void sub_130_004();
-	void sub_130_cea();
-	void sub_130_d28();
+	void prologueBufferNextPicture();
+	void prologueDrawLoadingMsg();
 	void sub_130_db0();
 	void sub_130_e82();
 	void sub_130_f48();
@@ -101,14 +101,14 @@ private:
 
 	WindowRecord var_window_24;
 
-	Graphics::Surface *var_i32_32;
+	BitMap var_i32_32;
 
 	int16 var_i16_36;
 	Common::Rect var_i16_38;
-	Graphics::Surface *var_i32_40;
+	BitMap var_i32_40;
 	int16 var_i16_44;
 	Common::Rect var_i16_46;
-	Graphics::Surface *var_i32_4e;
+	BitMap var_i32_4e;
 
 	int16 var_i16_52;
 	Common::Rect var_i16_54;
@@ -178,9 +178,9 @@ private:
 
 	byte arr_i32_b54[SCREEN_PAGE_SIZE*12];
 
-	Graphics::Surface arr_i32_3bca4;
+	BitMap arr_i32_3bca4;
 
-	Graphics::Surface arr_i32_41296[12];
+	BitMap arr_i32_41296[12];
 
 	int16 arr_i16_412ea[SCREEN_HEIGHT];
 	int16 arr_i16_41598[SCREEN_HEIGHT];

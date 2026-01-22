@@ -246,7 +246,7 @@ public:
 	Common::U32String chr(uint16 code);
 	void close(int16 fileNo);
 	void coordinateWindow();
-	void get(int16 x1, int16 y1, int16 x2, int16 y2, Graphics::Surface &dest);
+	void get(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &dest);
 	int16 instr(int16 expression, const Common::U32String &string1, const Common::U32String &string2);
 	int finderInfo(int16 &count, Common::U32String &var, uint32 &type, uint16 volume);
 	bool maybe();
@@ -254,8 +254,8 @@ public:
 	void openR(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo);
 	void picture(int16 x, int16 y, PicHandle &src);
 	void picture(int16 x1, int16 y1, int16 x2, int16 y2, PicHandle &src);
-	void put(int16 x, int16 y, Graphics::Surface &src);
-	void put(int16 x1, int16 y1, int16 x2, int16 y2, Graphics::Surface &src);
+	void put(int16 x, int16 y, BitMap &src);
+	void put(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &src);
 	Common::Array<byte> read(int16 fileNo, uint32 length);
 	int16 readInt();
 	Common::U32String readStr();

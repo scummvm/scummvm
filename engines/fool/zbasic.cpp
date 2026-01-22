@@ -172,7 +172,7 @@ void ZBasic::coordinateWindow() {
 	warning("STUB: ZBasic::coordinateWindow");
 }
 
-void ZBasic::get(int16 x1, int16 y1, int16 x2, int16 y2, Graphics::Surface &dest) {
+void ZBasic::get(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &dest) {
 	warning("STUB: ZBasic::get");
 }
 
@@ -207,10 +207,7 @@ void ZBasic::picture(int16 x, int16 y, PicHandle &src) {
 		warning("ZBasic::picture: Empty handle");
 		return;
 	}
-	if (debugLevelSet(5)) {
-		Graphics::Surface *srf = src->surfacePtr();
-		Common::hexdump((const byte *)srf->getPixels(), srf->pitch*srf->h);
-	}
+
 	Common::Rect srcRect(0, 0, src->w, src->h);
 	Common::Rect destRect(x, y, x+src->w, y+src->h);
 	_window->getWindowSurface()->blitFrom(*src, srcRect, destRect);
@@ -222,11 +219,11 @@ void ZBasic::picture(int16 x1, int16 y1, int16 x2, int16 y2, PicHandle &src) {
 	warning("STUB: ZBasic::picture");
 }
 
-void ZBasic::put(int16 x, int16 y, Graphics::Surface &src) {
-	this->put(x, y, x+src.w, y+src.h, src);
+void ZBasic::put(int16 x, int16 y, BitMap &src) {
+	this->put(x, y, x+src->w, y+src->h, src);
 }
 
-void ZBasic::put(int16 x1, int16 y1, int16 x2, int16 y2, Graphics::Surface &src) {
+void ZBasic::put(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &src) {
 	warning("STUB: ZBasic::put");
 }
 

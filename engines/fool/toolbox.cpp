@@ -86,7 +86,7 @@ void Toolbox::ClipRect(Common::Rect &r) {
 	warning("STUB: Toolbox::ClipRect");
 }
 
-void Toolbox::CopyBits(const Graphics::Surface &srcBits, Graphics::Surface &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, uint16 mode, RgnHandle maskRgn) {
+void Toolbox::CopyBits(const BitMap &srcBits, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, uint16 mode, RgnHandle maskRgn) {
 	warning("STUB: Toolbox::CopyBits");
 }
 
@@ -255,7 +255,7 @@ void Toolbox::SetPort(GrafPtr port) {
 	warning("STUB: Toolbox::SetPort");
 }
 
-void Toolbox::SetPortBits(const Graphics::Surface *bm) {
+void Toolbox::SetPortBits(BitMap &bm) {
 	warning("STUB: Toolbox::SetPortBits");
 }
 
