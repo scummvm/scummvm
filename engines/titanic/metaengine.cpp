@@ -221,7 +221,7 @@ Common::KeymapArray TitanicMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("KP8");
 	act->addDefaultInputMapping("JOY_UP");
 	realLifeKeymap->addAction(act);
-	
+
 	act = new Action("DOWN", _("Scroll down"));
 	act->setCustomEngineActionEvent(kActionDown);
 	act->addDefaultInputMapping("DOWN");
@@ -261,14 +261,14 @@ Common::KeymapArray TitanicMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("F6");
 	petKeymap->addAction(act);
 
-	act = new Action("SCROLLUP", _("Scroll up page"));
+	act = new Action("SCROLLUP", _("Previous page"));
 	act->setCustomEngineActionEvent(kActionPETScrollPageUp);
 	act->addDefaultInputMapping("PAGEUP");
 	act->addDefaultInputMapping("KP9");
 	act->addDefaultInputMapping("JOY_UP");
 	petKeymap->addAction(act);
 
-	act = new Action("SCROLLDOWN", _("Scroll down page"));
+	act = new Action("SCROLLDOWN", _("Next page"));
 	act->setCustomEngineActionEvent(kActionPETScrollPageDown);
 	act->addDefaultInputMapping("PAGEDOWN");
 	act->addDefaultInputMapping("KP3");
