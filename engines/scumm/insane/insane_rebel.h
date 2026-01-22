@@ -422,6 +422,7 @@ public:
 	                   int16 animFrame, int16 maxFrames,
 	                   int16 widthScale, int16 heightScale, int16 thickness);
 	void renderNutSprite(byte *dst, int pitch, int width, int height, int x, int y, NutRenderer *nut, int spriteIdx);
+	void renderNutSpriteMirrored(byte *dst, int pitch, int width, int height, int x, int y, NutRenderer *nut, int spriteIdx, bool mirror);
 
 	struct enemy {
 		int id;
@@ -587,6 +588,7 @@ public:
 	int _rebelDamageLevel;   // DAT_0045790a - damage level (0-5)
 	int _rebelFlightDir;     // DAT_00457902 - flight direction (0 or 1)
 	int _rebelControlMode;   // DAT_0047a7e4 - control mode flags
+	int _rebelInputThrottle; // DAT_00482278 - frame counter for input throttling (every 5 frames)
 
 	// View offset variables (calculated from level type)
 	int _rebelViewOffsetX;   // DAT_0045790c

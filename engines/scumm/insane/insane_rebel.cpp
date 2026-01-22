@@ -138,6 +138,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_rebelDamageLevel = 0;
 	_rebelFlightDir = 0;
 	_rebelControlMode = 0;
+	_rebelInputThrottle = 0;
 	_rebelViewOffsetX = 0;
 	_rebelViewOffsetY = 0;
 	_rebelViewOffset2X = 0;
@@ -656,17 +657,28 @@ int32 InsaneRebel2::processMouse() {
 	_prevMouseButtons = currentButtons;
 
 	// Update _rebelControlMode (DAT_0047a7e4) for Handler 25 covered/uncovered toggle:
-	// The original uses input throttling (every 5 frames) to prevent oscillation.
-	// We use edge detection instead - only set the control mode flag on button DOWN.
-	// - Bit 1 (value 2): Right mouse button just pressed - triggers cover entry
-	// - Bit 0 (value 1): Left mouse button just pressed - triggers cover exit
-	// When covered, any NEW button press exits cover. When uncovered, right button enters cover.
-	_rebelControlMode = 0;
-	if (rightPressed && !rightWasPressed) {
-		_rebelControlMode |= 2;  // Right button just pressed
-	}
-	if (leftPressed && !leftWasPressed) {
-		_rebelControlMode |= 1;  // Left button just pressed
+	// Use "sticky" flags - set on button press, cleared by IACT handler after consumption.
+	// This ensures button presses aren't missed due to timing.
+	//
+	// For Handler 25: use edge detection with sticky flags
+	if (_rebelHandler == 25) {
+		// Only SET flags on button press (edge), don't clear them here
+		// The IACT handler will clear them after processing
+		if (rightPressed && !rightWasPressed) {
+			_rebelControlMode |= 2;  // Right button pressed - sticky
+		}
+		if (leftPressed && !leftWasPressed) {
+			_rebelControlMode |= 1;  // Left button pressed - sticky
+		}
+	} else {
+		// Other handlers: use simple hold state
+		_rebelControlMode = 0;
+		if (rightPressed) {
+			_rebelControlMode |= 2;
+		}
+		if (leftPressed) {
+			_rebelControlMode |= 1;
+		}
 	}
 
 	// Left button: Trigger shot on button press (not hold)
@@ -768,6 +780,7 @@ void InsaneRebel2::clearBit(int n) {
 // Check if shooting is allowed based on current handler and control mode
 // From FUN_0040d836 (Handler 7): shooting only allowed when DAT_004437c0 == 2
 // From FUN_00401CCF (Handler 8): mode 4/5 disable shooting
+// From FUN_41DB5E (Handler 25): only shoot when fully uncovered (DAT_0045790a == 0)
 bool InsaneRebel2::isShootingAllowed() {
 	// Handler 7 (Third-Person Ship): Only mode 2 allows shooting
 	// FUN_0040d836 line 141: if (DAT_004437c0 == 2) { /* spawn shots, draw crosshair */ }
@@ -782,7 +795,14 @@ bool InsaneRebel2::isShootingAllowed() {
 		return (_shipLevelMode != 4 && _shipLevelMode != 5);
 	}
 
-	// Handler 0x26 (Turret) and 0x19 (FPS): Always allow shooting when active
+	// Handler 25 (0x19): Only allow shooting when fully uncovered
+	// FUN_41DB5E lines 170-171: if (((param_5 & 1) != 0) && (DAT_0045790a == 0))
+	// _rebelDamageLevel = DAT_0045790a (cover transition counter, 0 = uncovered, 5 = covered)
+	if (_rebelHandler == 25) {
+		return (_rebelDamageLevel == 0);
+	}
+
+	// Handler 0x26 (Turret): Always allow shooting when active
 	return (_rebelHandler != 0);
 }
 
@@ -838,31 +858,80 @@ void InsaneRebel2::procPreRendering(byte *renderBitmap) {
 	}
 
 	// For Handler 25 (Level 2 speeder bike), draw the corridor overlay BEFORE FOBJ decoding.
-	// The corridor overlay (par4=4, _rebelEmbeddedHud[4]) shows the covered/uncovered state
-	// and must be drawn BEFORE enemy FOBJ frames so enemies appear ON TOP of the corridor.
-	// Position is (_rebelViewOffsetX, _rebelViewOffsetY) from FUN_0041cadb line 216.
+	// The corridor overlay (par3=4 -> _rebelEmbeddedHud[4]) is DAT_00482268, a 350x230 buffer.
+	// From FUN_0041cadb line 216: FUN_00428a10(param_1,0,DAT_0045790c,DAT_0045790e,DAT_00482268)
+	// It's drawn at (DAT_0045790c, DAT_0045790e) which are _rebelViewOffsetX/Y.
+	//
+	// For Mode 1: DAT_0045790c = damageLevel * -5 - 14, range -39 (covered) to -14 (uncovered)
+	//
+	// From FUN_00428a10: When position is negative, we skip source pixels and draw at 0.
+	// This creates a "scrolling window" effect as the character enters/exits cover.
 	if (_rebelHandler == 25 && renderBitmap) {
 		EmbeddedSanFrame &corridorOverlay = _rebelEmbeddedHud[4];
 		if (corridorOverlay.valid && corridorOverlay.pixels) {
-			int overlayX = _rebelViewOffsetX;
-			int overlayY = _rebelViewOffsetY;
 			int pitch = (_player && _player->_width > 0) ? _player->_width : 320;
 			int bufHeight = (_player && _player->_height > 0) ? _player->_height : 200;
 
-			for (int y = 0; y < corridorOverlay.height && (overlayY + y) < bufHeight; y++) {
-				for (int x = 0; x < corridorOverlay.width && (overlayX + x) < pitch; x++) {
-					byte pixel = corridorOverlay.pixels[y * corridorOverlay.width + x];
-					if (pixel != 0 && pixel != 231) {  // 0 and 231 = transparent
-						int destX = overlayX + x;
-						int destY = overlayY + y;
-						if (destX >= 0 && destY >= 0) {
-							renderBitmap[destY * pitch + destX] = pixel;
+			// Calculate source offset and destination position (FUN_00428a10 lines 31-43)
+			// If position is negative, skip source pixels and draw at screen edge
+			// Use _rebelViewOffsetX which is DAT_0045790c (damageLevel * -5 - 14)
+			int srcOffsetX = 0;
+			int srcOffsetY = 0;
+			int destX = _rebelViewOffsetX;   // DAT_0045790c
+			int destY = _rebelViewOffsetY;   // DAT_0045790e
+			int drawWidth = corridorOverlay.width;
+			int drawHeight = corridorOverlay.height;
+
+			// Handle negative X position: skip source pixels, draw at X=0
+			if (destX < 0) {
+				srcOffsetX = -destX;
+				drawWidth -= srcOffsetX;
+				destX = 0;
+			}
+			// Handle negative Y position: skip source pixels, draw at Y=0
+			if (destY < 0) {
+				srcOffsetY = -destY;
+				drawHeight -= srcOffsetY;
+				destY = 0;
+			}
+
+			// Clip to screen bounds
+			if (destX + drawWidth > pitch) {
+				drawWidth = pitch - destX;
+			}
+			if (destY + drawHeight > bufHeight) {
+				drawHeight = bufHeight - destY;
+			}
+
+			// Bounds check: ensure srcOffsetX doesn't exceed image width
+			if (srcOffsetX >= corridorOverlay.width) {
+				debug("Rebel2 procPreRendering: srcOffsetX (%d) >= image width (%d), skipping", srcOffsetX, corridorOverlay.width);
+			}
+			// Bounds check: ensure we have valid draw dimensions
+			else if (drawWidth > 0 && drawHeight > 0) {
+				// Additional safety: clamp to source image bounds
+				int maxDrawWidth = corridorOverlay.width - srcOffsetX;
+				int maxDrawHeight = corridorOverlay.height - srcOffsetY;
+				if (drawWidth > maxDrawWidth) drawWidth = maxDrawWidth;
+				if (drawHeight > maxDrawHeight) drawHeight = maxDrawHeight;
+
+				if (drawWidth > 0 && drawHeight > 0) {
+					for (int y = 0; y < drawHeight; y++) {
+						for (int x = 0; x < drawWidth; x++) {
+							int srcIdx = (srcOffsetY + y) * corridorOverlay.width + (srcOffsetX + x);
+							byte pixel = corridorOverlay.pixels[srcIdx];
+							if (pixel != 0 && pixel != 231) {  // 0 and 231 = transparent
+								renderBitmap[(destY + y) * pitch + (destX + x)] = pixel;
+							}
 						}
 					}
 				}
 			}
-			debug("Rebel2 procPreRendering: Corridor overlay at (%d,%d) size(%d,%d)",
-				overlayX, overlayY, corridorOverlay.width, corridorOverlay.height);
+
+			debug("Rebel2 procPreRendering: Corridor overlay viewOff=(%d,%d) damageLevel=%d autopilot=%d srcOff=(%d,%d) dest=(%d,%d) draw=(%d,%d) imgSize=(%d,%d)",
+				_rebelViewOffsetX, _rebelViewOffsetY, _rebelDamageLevel, _rebelAutopilot,
+				srcOffsetX, srcOffsetY, destX, destY, drawWidth, drawHeight,
+				corridorOverlay.width, corridorOverlay.height);
 		}
 	}
 }
@@ -1458,8 +1527,19 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 	// Handler 25 (0x19) specific logic (mixed mode - speeder bike)
 	// Based on FUN_0041cadb case 4 (opcode 6) lines 113-229
 	if (_rebelHandler == 25) {
-		// If par4 == 1, enable status bar and reset state (lines 114-121)
-		if (par4 == 1) {
+		// Read the reset flag from IACT data at offset 8-9 (local_14[4] in decompiled code)
+		// The stream position should be at offset 8 after par4 was read
+		// From FUN_0041cadb line 114: if (local_14[4] == 1) { ... reset ... }
+		int16 par5 = 0;
+		if (b.pos() + 2 <= b.size()) {
+			int64 savedPos = b.pos();
+			par5 = b.readSint16LE();
+			b.seek(savedPos);  // Don't consume the stream
+		}
+
+		// If par5 == 1, enable status bar and reset state (lines 114-121)
+		// Note: This is local_14[4] in the decompiled code, NOT local_14[3] (par4)
+		if (par5 == 1) {
 			_rebelStatusBarSprite = 5;
 			// Reset link tables (DAT_0045797c through DAT_0045917c)
 			for (int i = 0; i < 512; i++) {
@@ -1467,28 +1547,44 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 				_rebelLinks[i][1] = 0;
 				_rebelLinks[i][2] = 0;
 			}
-			debug("Rebel2 Opcode 6 (Handler 25): Status bar enabled, state reset");
+			// Initialize to covered state - player starts behind cover
+			// This ensures the corridor overlay shows the "covered" position initially
+			_rebelAutopilot = 1;    // DAT_00457904 = 1 (covered)
+			_rebelDamageLevel = 5;  // DAT_0045790a = 5 (fully in cover)
+			debug("Rebel2 Opcode 6 (Handler 25): Status bar enabled, state reset, starting COVERED");
 		}
 
-		// Set sprite mode (DAT_00457900 = par4) - controls which GRD sprite to render
-		// NOTE: Original code uses local_14[3] which is par4, NOT par3!
+		// Set sprite mode (DAT_00457900 = local_14[3]) - controls which GRD sprite to render
+		// From FUN_0041cadb line 122: DAT_00457900 = local_14[3];
+		// In ScummVM's IACT parsing: local_14[3] = offset 6-7 = par4
 		// Mode 1: Uncovered, shooting position - sprite on left
 		// Mode 2: Covered, vertical shift
 		// Mode 3: Transition between covered/uncovered - sprite position depends on direction
 		// Mode 4: Alternative uncovered position - sprite on right
-		_grdSpriteMode = par4;
+		_grdSpriteMode = par4;  // local_14[3] maps to par4 (offset 6-7)
+
+		debug("Rebel2 Handler25 Opcode6: par2=%d par3=%d par4=%d(mode) par5=%d(reset) autopilot=%d damageLevel=%d controlMode=%d",
+			par2, par3, par4, par5, _rebelAutopilot, _rebelDamageLevel, _rebelControlMode);
 
 		// Autopilot logic (lines 123-146)
+		// From original FUN_0041cadb - NO damageLevel check, toggle happens immediately
+		// The damage level counter provides the smooth visual transition
 		if (!_rebelInvulnerable) {
 			if (_rebelAutopilot == 0) {
+				// Uncovered: RIGHT button enters cover
 				if ((_rebelControlMode & 2) != 0) {
 					_rebelAutopilot = 1;
+					debug("Rebel2 Handler25: Entering cover (right click), controlMode=%d", _rebelControlMode);
 				}
 			} else {
+				// Covered: ANY button exits cover
 				if (_rebelControlMode != 0) {
 					_rebelAutopilot = 0;
+					debug("Rebel2 Handler25: Exiting cover (button click), controlMode=%d", _rebelControlMode);
 				}
 			}
+			// Clear control mode after processing (sticky flags consumed)
+			_rebelControlMode = 0;
 		} else {
 			// Invulnerable mode: random autopilot changes
 			if (_rebelAutopilot == 0) {
@@ -1504,14 +1600,22 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		}
 
 		// Update damage level counter (lines 147-154)
+		// This provides the smooth transition animation between covered/uncovered states
+		int prevDamageLevel = _rebelDamageLevel;
 		if (_rebelAutopilot == 0) {
+			// Uncovered: decrement damage level towards 0
 			if (_rebelDamageLevel > 0) {
 				_rebelDamageLevel--;
 			}
 		} else {
+			// Covered: increment damage level towards 5
 			if (_rebelDamageLevel < 5) {
 				_rebelDamageLevel++;
 			}
+		}
+		if (_rebelDamageLevel != prevDamageLevel) {
+			debug("Rebel2 Handler25: damageLevel transition %d -> %d (autopilot=%d)",
+				prevDamageLevel, _rebelDamageLevel, _rebelAutopilot);
 		}
 
 		// Flight direction logic for mode 3 (lines 155-177)
@@ -1575,10 +1679,19 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 			_rebelViewOffset2X = dirMultX2 * (5 - _rebelDamageLevel);      // DAT_00457910
 			_rebelViewOffsetY = 0;
 			_rebelViewOffset2Y = 0;
+		} else {
+			// Mode 0 or unknown: use Mode 1 defaults as fallback
+			_rebelViewMode1 = 0x0e;
+			_rebelViewMode2 = 0;
+			_rebelViewOffsetX = _rebelDamageLevel * -5 + -14;
+			_rebelViewOffset2X = _rebelDamageLevel * -22;
+			_rebelViewOffsetY = 0;
+			_rebelViewOffset2Y = 0;
+			debug("Rebel2 Opcode 6 (Handler 25): Unknown mode %d, using Mode 1 fallback", _grdSpriteMode);
 		}
 
-		debug("Rebel2 Opcode 6 (Handler 25): mode=%d damage=%d dir=%d viewOff=(%d,%d) spritePos=(%d,%d)",
-			_grdSpriteMode, _rebelDamageLevel, _rebelFlightDir,
+		debug("Rebel2 Opcode 6 (Handler 25): mode=%d damage=%d dir=%d autopilot=%d viewOff=(%d,%d) spritePos=(%d,%d)",
+			_grdSpriteMode, _rebelDamageLevel, _rebelFlightDir, _rebelAutopilot,
 			_rebelViewOffsetX, _rebelViewOffsetY, _rebelViewOffset2X, _rebelViewOffset2Y);
 
 		return;
@@ -3572,6 +3685,12 @@ void InsaneRebel2::drawCollisionZones(byte *dst, int pitch, int width, int heigh
 }
 
 void InsaneRebel2::renderNutSprite(byte *dst, int pitch, int width, int height, int x, int y, NutRenderer *nut, int spriteIdx) {
+	renderNutSpriteMirrored(dst, pitch, width, height, x, y, nut, spriteIdx, false);
+}
+
+// Render NUT sprite with optional horizontal mirroring
+// Based on FUN_004236e0 disassembly - flags=0x2001 triggers horizontal flip
+void InsaneRebel2::renderNutSpriteMirrored(byte *dst, int pitch, int width, int height, int x, int y, NutRenderer *nut, int spriteIdx, bool mirror) {
 	if (!nut || spriteIdx < 0 || spriteIdx >= nut->getNumChars()) return;
 
 	int w = nut->getCharWidth(spriteIdx);
@@ -3606,12 +3725,19 @@ void InsaneRebel2::renderNutSprite(byte *dst, int pitch, int width, int height, 
 
 	if (drawW <= 0 || drawH <= 0) return;
 
-	// Draw loop
+	// Draw loop - with optional horizontal mirroring
 	for (int iy = 0; iy < drawH; iy++) {
-		const byte *s = src + (srcOffsetY + iy) * w + srcOffsetX;
+		const byte *s = src + (srcOffsetY + iy) * w;
 		byte *d = dst + (drawY + iy) * pitch + drawX;
 		for (int ix = 0; ix < drawW; ix++) {
-			byte px = s[ix];
+			int srcX;
+			if (mirror) {
+				// When mirrored, read from the opposite side of the sprite
+				srcX = (w - 1) - (srcOffsetX + ix);
+			} else {
+				srcX = srcOffsetX + ix;
+			}
+			byte px = s[srcX];
 			if (px != 231 && px != 0) { // Check both 0 and 231 (0xE7) for transparency
 				d[ix] = px;
 			}
@@ -4239,27 +4365,26 @@ void InsaneRebel2::renderHandler25Ship(byte *renderBitmap, int pitch, int width,
 	if (!_grd001Sprite && !_grd002Sprite)
 		return;
 
+	// CRITICAL: Clip height to 180 (0xb4) to avoid drawing over status bar
+	// From FUN_0041db5e line 260: _DAT_00482236 = 0xb4 during gameplay
+	// The status bar occupies Y=180-200, and sprites must not render there
+	const int clipHeight = 180;  // Status bar boundary (0xb4)
+	int renderHeight = MIN(height, clipHeight);
+
 	// Base position calculation based on FUN_0041db5e disassembly:
 	// The original reads sprite internal offsets from the NUT data at +0x12 (X) and +0x14 (Y).
-	// Since NutRenderer doesn't expose these, we use the standard positioning formula:
-	// - X: center (160) + mode-based offset
-	// - Y: positioned above status bar (status bar starts at ~Y=180)
+	// Position calculation from FUN_0041db5e assembly:
 	//
-	// From the HUD positioning formula (lines 3583-3584):
-	//   Y = 182 - (mouseOffset >> 4) - height - spriteOffsetY
-	// This means sprites are bottom-aligned relative to Y=182.
+	// GRD001 (line 206): FUN_004236e0(..., DAT_00457910, DAT_00457912, ...)
+	//   - Raw offsets passed directly, render function applies sprite internal offsets
 	//
-	// For Handler 25, the sprite position offsets (DAT_00457910, DAT_00457912) are added.
-	const int baseX = 160;
-	// Base Y is calculated to keep sprite above status bar (Y=180)
-	// We'll position the center around Y=90 (middle of playable area)
-	const int baseY = 90;
-
-	// Calculate actual ship position from base + offset
-	// _rebelViewOffset2X = DAT_00457910 (sprite X offset from mode/damage)
-	// _rebelViewOffset2Y = DAT_00457912 (sprite Y offset from mode/damage)
-	int shipX = baseX + _rebelViewOffset2X;
-	int shipY = baseY + _rebelViewOffset2Y;
+	// GRD002 (lines 238-247): Position uses sprite header offsets:
+	//   - X = DAT_00457910 + sprite_internal_x_offset (NUT header +0x12)
+	//   - Y = sprite_internal_y_offset (NUT header +0x14) + DAT_00457912
+	//
+	// Since NutRenderer doesn't expose internal offsets, we simulate them:
+	// - GRD001: Draw at raw offset position (the sprite likely has built-in positioning)
+	// - GRD002: Add base position to simulate internal offsets for character sprite
 
 	// Draw _grd001Sprite based on _grdSpriteMode (DAT_00457900)
 	// Mode 1, 2, 3, 4 all potentially draw _grd001Sprite
@@ -4284,17 +4409,21 @@ void InsaneRebel2::renderHandler25Ship(byte *renderBitmap, int pitch, int width,
 		}
 
 		if (shouldDraw) {
+			// GRD001 is drawn at raw (DAT_00457910, DAT_00457912) per assembly line 206
+			// The render function applies the sprite's internal positioning
 			// Use sprite 0 (primary frame)
 			int spriteW = _grd001Sprite->getCharWidth(0);
 			int spriteH = _grd001Sprite->getCharHeight(0);
-			// Center the sprite at the calculated position
-			int drawX = shipX - spriteW / 2;
-			int drawY = shipY - spriteH / 2;
 
-			renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _grd001Sprite, 0);
+			// Draw at raw offset position - the sprite is designed to be positioned
+			// at these coordinates (the NUT's internal offsets handle actual placement)
+			int drawX = _rebelViewOffset2X;
+			int drawY = _rebelViewOffset2Y;
 
-			debug("Rebel2 Handler25: GRD001 at (%d,%d) base(%d,%d) offset(%d,%d) size(%d,%d) mode=%d damage=%d",
-				drawX, drawY, baseX, baseY, _rebelViewOffset2X, _rebelViewOffset2Y,
+			renderNutSprite(renderBitmap, pitch, width, renderHeight, drawX, drawY, _grd001Sprite, 0);
+
+			debug("Rebel2 Handler25: GRD001 at (%d,%d) offset(%d,%d) size(%d,%d) mode=%d damage=%d",
+				drawX, drawY, _rebelViewOffset2X, _rebelViewOffset2Y,
 				spriteW, spriteH, _grdSpriteMode, _rebelDamageLevel);
 		}
 	}
@@ -4311,14 +4440,49 @@ void InsaneRebel2::renderHandler25Ship(byte *renderBitmap, int pitch, int width,
 		int spriteIdx;
 		int numSprites = _grd002Sprite->getNumChars();
 
+		// Determine if we should mirror the sprite (from FUN_41DB5E lines 231-235)
+		// Mirror when: direction != 0 AND damage == 0 (fully uncovered, facing right)
+		bool shouldMirror = (_rebelFlightDir != 0) && (_rebelDamageLevel == 0);
+
 		if (_rebelDamageLevel == 0) {
 			// Uncovered state: use aiming-based sprite selection (5-14)
-			// For now, use center position (xZone=2, yZone=0) -> 0*5+2+5 = 7
-			// TODO: Calculate actual zone from crosshair position
-			int xZone = 2;  // Center horizontal (0-4)
-			int yZone = 0;  // Top vertical (0-1)
+			// Calculate zones from crosshair position relative to playable area
+			// From FUN_41DB5E lines 155-164
+			//
+			// The playable area bounds are defined by corridor boundaries.
+			// xZone = 0-4 (left to right), yZone = 0-1 (top to bottom)
+			// Default to center if bounds not set
+			int16 areaLeft = (_corridorLeftX > 0) ? _corridorLeftX : 0;
+			int16 areaRight = (_corridorRightX > 0) ? _corridorRightX : 320;
+			int16 areaTop = (_corridorTopY > 0) ? _corridorTopY : 0;
+			int16 areaBottom = (_corridorBottomY > 0) ? _corridorBottomY : 180;
 
-			// Direction-based mirroring (line 161-162)
+			// Get crosshair position (using mouse position scaled to game coords)
+			int16 crosshairX = _vm->_mouse.x;
+			int16 crosshairY = _vm->_mouse.y;
+			if (_player && _player->_width > 320) {
+				crosshairX = (crosshairX * 320) / _player->_width;
+				crosshairY = (crosshairY * 200) / _player->_height;
+			}
+
+			// Calculate zone widths
+			int areaWidth = areaRight - areaLeft;
+			int areaHeight = areaBottom - areaTop;
+			int zoneWidth = (areaWidth > 0) ? (areaWidth + 3) / 4 : 80;  // Divide into ~4 zones
+			int zoneHeight = (areaHeight > 0) ? areaHeight / 2 : 90;     // Divide into 2 zones
+
+			// Calculate xZone (0-4) and yZone (0-1) from crosshair position
+			int xZone = (zoneWidth > 0) ? ((zoneWidth / 2) + (crosshairX - areaLeft)) / zoneWidth : 2;
+			int yZone = (zoneHeight > 0) ? ((zoneHeight / 2) + (crosshairY - areaTop)) / zoneHeight : 0;
+
+			// Clamp to valid ranges
+			if (xZone < 0) xZone = 0;
+			if (xZone > 4) xZone = 4;
+			if (yZone < 0) yZone = 0;
+			if (yZone > 1) yZone = 1;
+
+			// Direction-based sprite flip logic (line 161-162 in decompiled)
+			// if (DAT_00457902 == (uVar7 & 1)) { local_58 = 4 - local_58; }
 			if (_rebelFlightDir == (yZone & 1)) {
 				xZone = 4 - xZone;
 			}
@@ -4326,11 +4490,15 @@ void InsaneRebel2::renderHandler25Ship(byte *renderBitmap, int pitch, int width,
 			spriteIdx = yZone * 5 + xZone + 5;
 		} else {
 			// Transitioning/covered state: use direction-based sprite
+			// From FUN_41DB5E lines 166-168:
+			// sVar8 = ((-(ushort)(DAT_00457902 == 0) & 0xffec) + 0x19) - DAT_0045790a
+			// direction == 0: 5 - damage
+			// direction != 0: 25 - damage
 			if (_rebelFlightDir == 0) {
-				// Direction 0: sprites 0-5 (covered left)
+				// Direction 0: sprites 0-5 (transition left)
 				spriteIdx = 5 - _rebelDamageLevel;
 			} else {
-				// Direction 1: sprites 20-25 (covered right)
+				// Direction 1: sprites 20-25 (transition right)
 				spriteIdx = 25 - _rebelDamageLevel;
 			}
 		}
@@ -4342,15 +4510,43 @@ void InsaneRebel2::renderHandler25Ship(byte *renderBitmap, int pitch, int width,
 		int spriteW = _grd002Sprite->getCharWidth(spriteIdx);
 		int spriteH = _grd002Sprite->getCharHeight(spriteIdx);
 
-		// Position offset from GRD002 sprite header (lines 238-243 in disasm)
-		// This adds an offset from the sprite's internal positioning data
-		int drawX = shipX - spriteW / 2;
-		int drawY = shipY - spriteH / 2;
+		// Position calculation from FUN_41DB5E lines 237-247:
+		// GRD002 explicitly adds sprite internal offsets from NUT header:
+		//
+		// Normal case (direction==0 OR damage!=0):
+		//   local_60 = sprite_internal_x_offset (from NUT header +0x12)
+		//   X = DAT_00457910 + local_60
+		//   Y = sprite_internal_y_offset (from NUT header +0x14) + DAT_00457912
+		//
+		// Mirrored case (direction!=0 AND damage==0):
+		//   local_60 = 320 - sprite_width - sprite_internal_x_offset
+		//   X = DAT_00457910 + local_60
+		//   Y = sprite_internal_y_offset + DAT_00457912
+		//
+		// Now using actual NUT sprite offsets from NutRenderer!
+		int16 spriteXOffset = _grd002Sprite->getCharXOffset(spriteIdx);
+		int16 spriteYOffset = _grd002Sprite->getCharYOffset(spriteIdx);
 
-		renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _grd002Sprite, spriteIdx);
+		int drawX, drawY;
 
-		debug("Rebel2 Handler25: GRD002 at (%d,%d) size(%d,%d) spriteIdx=%d damage=%d dir=%d",
-			drawX, drawY, spriteW, spriteH, spriteIdx, _rebelDamageLevel, _rebelFlightDir);
+		if (shouldMirror) {
+			// Mirrored position: X = DAT_00457910 + (320 - sprite_width - sprite_x_offset)
+			// From assembly lines 240-243
+			drawX = _rebelViewOffset2X + (320 - spriteW - spriteXOffset);
+		} else {
+			// Normal position: X = DAT_00457910 + sprite_internal_x_offset
+			// From assembly line 238
+			drawX = _rebelViewOffset2X + spriteXOffset;
+		}
+
+		// Y = sprite_internal_y_offset + DAT_00457912
+		// From assembly line 246
+		drawY = spriteYOffset + _rebelViewOffset2Y;
+
+		renderNutSpriteMirrored(renderBitmap, pitch, width, renderHeight, drawX, drawY, _grd002Sprite, spriteIdx, shouldMirror);
+
+		debug("Rebel2 Handler25: GRD002 at (%d,%d) nutOffset(%d,%d) viewOffset(%d,%d) size(%d,%d) spriteIdx=%d damage=%d dir=%d mirror=%d",
+			drawX, drawY, spriteXOffset, spriteYOffset, _rebelViewOffset2X, _rebelViewOffset2Y, spriteW, spriteH, spriteIdx, _rebelDamageLevel, _rebelFlightDir, shouldMirror ? 1 : 0);
 	}
 }
 
@@ -4693,6 +4889,12 @@ void InsaneRebel2::renderCrosshair(byte *renderBitmap, int pitch, int width, int
 		return;
 	}
 
+	// Handler 25 (0x19): From FUN_41DB5E lines 195-197, crosshair only drawn when
+	// DAT_0045790a == 0 (fully uncovered). Hide crosshair during cover transition.
+	if (_rebelHandler == 25 && _rebelDamageLevel != 0) {
+		return;
+	}
+
 	// Update target lock state and draw crosshair/reticle
 
 	// Target lock detection (DAT_00443676 equivalent)
@@ -4719,8 +4921,8 @@ void InsaneRebel2::renderCrosshair(byte *renderBitmap, int pitch, int width, int
 	int reticleIndex;
 	switch (_rebelHandler) {
 	case 7:    // Third-Person Ship
-	case 0x19: // FPS/Mixed
-		reticleIndex = 47;
+	case 0x19: // FPS/Mixed (Handler 25)
+		reticleIndex = 47;  // 0x2F
 		break;
 	case 0x26: { // Turret/Cockpit - animated crosshair
 		static int turretAnimCounter = 0;
@@ -4744,8 +4946,20 @@ void InsaneRebel2::renderCrosshair(byte *renderBitmap, int pitch, int width, int
 	if (_smush_iconsNut->getNumChars() > reticleIndex) {
 		int cw = _smush_iconsNut->getCharWidth(reticleIndex);
 		int ch = _smush_iconsNut->getCharHeight(reticleIndex);
+
+		// Calculate crosshair position
+		int crosshairX = _vm->_mouse.x - cw / 2 + _viewX;
+		int crosshairY = _vm->_mouse.y - ch / 2 + _viewY;
+
+		// Handler 25 (0x19): Add view offset to crosshair position
+		// From FUN_41DB5E lines 198-199: X = DAT_00457914 + DAT_0045790c, Y = DAT_00457916 + DAT_0045790e
+		if (_rebelHandler == 25) {
+			crosshairX += _rebelViewOffsetX;
+			crosshairY += _rebelViewOffsetY;
+		}
+
 		renderNutSprite(renderBitmap, pitch, width, height,
-			_vm->_mouse.x - cw / 2 + _viewX, _vm->_mouse.y - ch / 2 + _viewY,
+			crosshairX, crosshairY,
 			_smush_iconsNut, reticleIndex);
 	}
 }
