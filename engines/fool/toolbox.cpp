@@ -27,15 +27,16 @@
 
 #include "fool/fool.h"
 #include "fool/toolbox.h"
+#include "fool/utils.h"
 
 namespace Fool {
 
 Toolbox::Toolbox() {
-	this->_frameLimiter = new Graphics::FrameLimiter(g_system, 60);
+	_frameLimiter = new Graphics::FrameLimiter(g_system, 60);
 }
 
 Toolbox::~Toolbox() {
-	delete this->_frameLimiter;
+	delete _frameLimiter;
 }
 
 void Toolbox::_pumpEvents() {
@@ -48,13 +49,13 @@ void Toolbox::_pumpEvents() {
 		case Common::EVENT_RBUTTONDOWN:
 			newRecord.what = kMouseDown;
 			newRecord.where = Common::Point(event.mouse.x, event.mouse.y);
-			this->_events.push(newRecord);
+			_events.push(newRecord);
 			break;
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
 			newRecord.what = kMouseUp;
 			newRecord.where = Common::Point(event.mouse.x, event.mouse.y);
-			this->_events.push(newRecord);
+			_events.push(newRecord);
 			break;
 		default:
 			break;
@@ -64,9 +65,9 @@ void Toolbox::_pumpEvents() {
 
 void Toolbox::_updateScreen() {
 	g_engine->_wm.draw();
-	this->_frameLimiter->delayBeforeSwap();
+	_frameLimiter->delayBeforeSwap();
 	g_system->updateScreen();
-	this->_frameLimiter->startFrame();
+	_frameLimiter->startFrame();
 }
 
 void Toolbox::BeginUpdate(WindowRecord &theWindow) {
@@ -92,8 +93,8 @@ void Toolbox::CopyBits(const Graphics::Surface &srcBits, Graphics::Surface &dstB
 uint32 Toolbox::Delay(uint32 numTicks) {
 	uint32 target = g_system->getMillis() + (numTicks * 1000 / 60);
 	while (g_system->getMillis() < target) {
-		this->_pumpEvents();
-		this->_updateScreen();
+		_pumpEvents();
+		_updateScreen();
 	}
 	return (uint32)(g_system->getMillis() * 60 / 1000);
 }
@@ -132,9 +133,9 @@ void Toolbox::GetCPixel(int16 h, int16 v, RGBColor &cPix) {
 
 bool Toolbox::GetNextEvent(uint16 eventMask, EventRecord &theEvent) {
 	warning("STUB: Toolbox::GetNextEvent");
-	this->_pumpEvents();
-	if (!this->_events.empty()) {
-		theEvent = this->_events.pop();
+	_pumpEvents();
+	if (!_events.empty()) {
+		theEvent = _events.pop();
 	} else {
 		theEvent.what = kNullEvent;
 		// pretend mouse button is up
@@ -149,9 +150,10 @@ PicHandle Toolbox::GetPicture(uint16 picID) {
 		Common::MemoryReadStream stream(handle->data(), handle->size());
 		Image::PICTDecoder decoder;
 		if (decoder.loadStream(stream)) {
-			PicHandle result(new Graphics::ManagedSurface());
-			result->copyFrom(*decoder.getSurface());
-			this->_resPicts[result] = handle;
+			const Graphics::Surface *surface = decoder.getSurface();
+			const Graphics::Palette &palette = decoder.getPalette();
+			PicHandle result(createRemappedSurface(surface, palette.data(), palette.size()));
+			_resPicts[result] = handle;
 			return result;
 		}
 	}
@@ -160,13 +162,13 @@ PicHandle Toolbox::GetPicture(uint16 picID) {
 }
 
 void Toolbox::HideCursor() {
-	this->_cursorLevel--;
+	_cursorLevel--;
 	g_engine->_wm.replaceCursor(Graphics::MacGUIConstants::kMacCursorOff);
 }
 
 void Toolbox::InitCursor() {
 	g_engine->_wm.replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
-	this->_cursorLevel = 0;
+	_cursorLevel = 0;
 }
 
 void Toolbox::InsetRect(Common::Rect &r, int16 dh, int16 dv) {
@@ -265,9 +267,9 @@ void Toolbox::SetRect(Common::Rect &r, int16 left, int16 top, int16 right, int16
 }
 
 void Toolbox::ShowCursor() {
-	if (this->_cursorLevel < 0)
-		this->_cursorLevel++;
-	if (this->_cursorLevel == 0)
+	if (_cursorLevel < 0)
+		_cursorLevel++;
+	if (_cursorLevel == 0)
 		g_engine->_wm.replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
 }
 

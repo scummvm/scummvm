@@ -9,7 +9,8 @@ MODULE_OBJS = \
 	zbasic.o \
 	console.o \
 	messages.o \
-	metaengine.o
+	metaengine.o \
+	utils.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_FOOL), DYNAMIC_PLUGIN)

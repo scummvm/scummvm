@@ -39,9 +39,6 @@ Toolbox *g_toolbox;
 // and was built with a different ZBASIC compiler.
 
 void FoolPrologue::run() {
-	this->_window = new Graphics::MacWindow(g_engine->_wm.getNextId(), false, false, false, &g_engine->_wm);
-	g_engine->_wm.setBackgroundWindow(this->_window);
-
 	g_toolbox = new Toolbox();
 	g_zbasic = new ZBasic(g_toolbox);
 	g_zbasic->loadProgram(Common::Path("Prologue - Finale"));
