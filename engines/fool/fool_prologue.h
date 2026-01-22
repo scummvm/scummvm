@@ -194,7 +194,6 @@ private:
 
 	PicHandle glob_i32_2ce;
 
-	Graphics::MacWindow *_window;
 
 };
 

@@ -31,6 +31,19 @@
 
 namespace Fool {
 
+ZBasic::ZBasic(Toolbox *toolbox) : _toolbox(toolbox) {
+	_memPool = new Common::MemoryPool(sizeof(int));
+	_window = g_engine->_wm.addWindow(false, false, false);
+	_window->disableBorder();
+	_window->resize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	g_engine->_wm.setBackgroundWindow(_window);
+}
+
+ZBasic::~ZBasic() {
+	delete _memPool;
+	_memPool = nullptr;
+}
+
 void ZBasic::loadProgram(const Common::Path &path) {
 	_fileId = this->_toolbox->OpenResFile(path);
 	if (_fileId == -1) {
@@ -194,7 +207,15 @@ void ZBasic::picture(int16 x, int16 y, PicHandle &src) {
 		warning("ZBasic::picture: Empty handle");
 		return;
 	}
-	g_engine->_screen.blitFrom(*src, Common::Point(x, y));
+	if (debugLevelSet(5)) {
+		Graphics::Surface *srf = src->surfacePtr();
+		Common::hexdump((const byte *)srf->getPixels(), srf->pitch*srf->h);
+	}
+	Common::Rect srcRect(0, 0, src->w, src->h);
+	Common::Rect destRect(x, y, x+src->w, y+src->h);
+	_window->getWindowSurface()->blitFrom(*src, srcRect, destRect);
+	_window->addDirtyRect(destRect);
+	_window->setContentDirty(true);
 }
 
 void ZBasic::picture(int16 x1, int16 y1, int16 x2, int16 y2, PicHandle &src) {
