@@ -3949,14 +3949,6 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	}
 
 	// Handle menu input and rendering if in menu mode
-	// Debug: Log menu mode detection on first few frames
-	static int menuDebugFrames = 0;
-	if (menuDebugFrames < 5 && _gameState == kStateMainMenu) {
-		debug("Rebel2: procPostRendering frame check - introPlaying=%d menuMode=%d _menuInputActive=%d flags=0x%x",
-		      introPlaying, menuMode, _menuInputActive, _player ? _player->_curVideoFlags : -1);
-		menuDebugFrames++;
-	}
-
 	if (menuMode) {
 		// The original game uses the standard Windows arrow cursor (IDC_ARROW)
 		// loaded via LoadCursorA(NULL, 0x7f00) in FUN_420C70.decompiled.txt
@@ -5597,16 +5589,21 @@ void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int
 
 	// Load menu strings from GAME.TRS via SmushPlayer
 	// TRS indices 10-17 correspond to main menu items (from FUN_00414073)
+	// No fallback strings - all text must come from TRS for localization support
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	const char *menuItems[8];
-	static const char *fallbackItems[] = {
-		"GAME MAIN MENU", "START GAME", "OPTIONS", "CALIBRATE JOYSTICK",
-		"CONTINUE INTRO", "SHOW TOP PILOTS", "SHOW CREDITS", "RETURN TO LAUNCHER"
-	};
+
+	if (!splayer) {
+		debug(1, "drawMenuOverlay: SmushPlayer not available for TRS strings!");
+		return;
+	}
 
 	for (int i = 0; i < 8; i++) {
-		const char *trsStr = splayer ? splayer->getString(10 + i) : nullptr;
-		menuItems[i] = (trsStr && trsStr[0]) ? trsStr : fallbackItems[i];
+		menuItems[i] = splayer->getString(10 + i);
+		if (!menuItems[i] || !menuItems[i][0]) {
+			debug(1, "drawMenuOverlay: TRS string %d not found!", 10 + i);
+			menuItems[i] = "";  // Empty string to avoid crashes
+		}
 	}
 
 	const int numItemsTotal = 8;  // Title + 7 menu options (matching assembly)
@@ -6016,8 +6013,14 @@ void InsaneRebel2::showPauseOverlay() {
 	}
 
 	// Draw "PAUSED" text centered
-	// Use hardcoded "PAUSED" string (TRS string 0x79 is "Quit Game" in RA2)
-	const char *pauseText = "PAUSED";
+	// Try to load from TRS - the exact index may vary by language version
+	// TRS index 80 (0x50) is likely "PAUSED" or equivalent (from DAT_004573f8)
+	// Note: splayer is already defined at the start of this function
+	const char *pauseText = splayer ? splayer->getString(80) : nullptr;
+	if (!pauseText || !pauseText[0]) {
+		// Fallback only if TRS string not available
+		pauseText = "PAUSED";
+	}
 
 	// Draw text using SmushFont if available
 	if (_menuFont) {
@@ -6742,25 +6745,37 @@ void InsaneRebel2::drawChapterSelectOverlay(byte *renderBitmap, int pitch, int w
 	// - Three preview boxes on right side
 	// - Status bar at bottom: "PILOTS: X  SCORE: Y  RANK:"
 
-	// Chapter names from original game (DAT_00457820)
-	// Format: "CHAPTER X - NAME" for unlocked, "CHAPTER X -" for locked
-	static const char *chapterNames[] = {
-		"THE DREIGHTON TRIANGLE",   // Chapter 1
-		"ASTEROID PURSUIT",         // Chapter 2
-		"ABOARD THE TERROR",        // Chapter 3
-		"TIE FIGHTER ATTACK",       // Chapter 4
-		"DREIGHTON NEBULA",         // Chapter 5
-		"CORELLIA",                 // Chapter 6
-		"SPEEDER PURSUIT",          // Chapter 7
-		"CANYON CHASE",             // Chapter 8
-		"DEATH STAR APPROACH",      // Chapter 9
-		"THE ASTEROID FIELD",       // Chapter 10
-		"INSIDE THE DEATH STAR",    // Chapter 11
-		"TRENCH RUN",               // Chapter 12
-		"THE MAIN REACTOR",         // Chapter 13
-		"ESCAPE FROM YAVIN",        // Chapter 14
-		"FINALE",                   // Chapter 15 is actually FINALE
-	};
+	// Chapter names from GAME.TRS (DAT_00457820 and DAT_00457868)
+	// From FUN_00414073:
+	//   TRS indices 0x28-0x39 (40-57): 18 unlocked chapter strings -> DAT_00457820
+	//   TRS indices 0x3c-0x4d (60-77): 18 locked chapter strings -> DAT_00457868
+	// These contain complete strings like "CHAPTER 1 - THE DREIGHTON TRIANGLE"
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	const char *chapterNamesUnlocked[18];
+	const char *chapterNamesLocked[18];
+
+	if (!splayer) {
+		debug(1, "drawChapterSelectOverlay: SmushPlayer not available for TRS strings!");
+		return;
+	}
+
+	// Load unlocked chapter strings (TRS indices 40-57)
+	for (int i = 0; i < 18; i++) {
+		chapterNamesUnlocked[i] = splayer->getString(40 + i);
+		if (!chapterNamesUnlocked[i] || !chapterNamesUnlocked[i][0]) {
+			debug(1, "drawChapterSelectOverlay: TRS unlocked string %d not found!", 40 + i);
+			chapterNamesUnlocked[i] = "";
+		}
+	}
+
+	// Load locked chapter strings (TRS indices 60-77)
+	for (int i = 0; i < 18; i++) {
+		chapterNamesLocked[i] = splayer->getString(60 + i);
+		if (!chapterNamesLocked[i] || !chapterNamesLocked[i][0]) {
+			debug(1, "drawChapterSelectOverlay: TRS locked string %d not found!", 60 + i);
+			chapterNamesLocked[i] = "";
+		}
+	}
 
 	// Frame counter for flashing selection box
 	static int frameCounter = 0;
@@ -6811,10 +6826,11 @@ void InsaneRebel2::drawChapterSelectOverlay(byte *renderBitmap, int pitch, int w
 		int itemY = itemBaseY + i * itemSpacing;
 		bool isSelected = (i == _chapterSelection);
 
-		// Build chapter string: "CHAPTER X - NAME" or "CHAPTER X -"
-		char chapterStr[64];
-		snprintf(chapterStr, sizeof(chapterStr), "CHAPTER %d - %s", i + 1,
-		         _chapterUnlocked[i] ? chapterNames[i] : "");
+		// Get chapter string from TRS (already contains "CHAPTER X - NAME" or "CHAPTER X -")
+		const char *chapterStr = _chapterUnlocked[i] ? chapterNamesUnlocked[i] : chapterNamesLocked[i];
+		if (!chapterStr || !chapterStr[0]) {
+			continue;  // Skip if no string available
+		}
 
 		// Calculate text width for selection box
 		int textWidth = 0;
@@ -6867,9 +6883,13 @@ void InsaneRebel2::drawChapterSelectOverlay(byte *renderBitmap, int pitch, int w
 
 	// Draw FINALE (chapter 16 = index 15)
 	// Position: Y = 19 + 15*10 = 169
+	// FINALE uses TRS index 55 (unlocked) or 75 (locked) - index 15 in the arrays
 	int finaleY = itemBaseY + 15 * itemSpacing;
 	bool finaleSelected = (_chapterSelection == 15);
-	const char *finaleStr = "FINALE     -";
+	const char *finaleStr = _chapterUnlocked[15] ? chapterNamesUnlocked[15] : chapterNamesLocked[15];
+	if (!finaleStr || !finaleStr[0]) {
+		finaleStr = "";  // Fallback to empty if TRS not available
+	}
 
 	int finaleWidth = 0;
 	for (const char *c = finaleStr; *c; c++) {
@@ -6911,9 +6931,15 @@ void InsaneRebel2::drawChapterSelectOverlay(byte *renderBitmap, int pitch, int w
 
 	// Draw "RETURN TO PILOTS" (index 16)
 	// Position: Y = 19 + 16*10 = 179
+	// This string comes from TRS - likely in DAT_00457400 (indices 89-109)
+	// Using TRS index 89 for "RETURN TO PILOTS" or equivalent
 	int returnY = itemBaseY + 16 * itemSpacing;
 	bool returnSelected = (_chapterSelection == 16);
-	const char *returnStr = "RETURN TO PILOTS";
+	const char *returnStr = splayer->getString(89);
+	if (!returnStr || !returnStr[0]) {
+		debug(1, "drawChapterSelectOverlay: TRS string 89 (RETURN TO PILOTS) not found!");
+		returnStr = "";
+	}
 
 	int returnWidth = 0;
 	for (const char *c = returnStr; *c; c++) {
@@ -6970,11 +6996,22 @@ void InsaneRebel2::drawChapterSelectOverlay(byte *renderBitmap, int pitch, int w
 	// From FUN_00415CF8 lines 101-103 (unlocked chapter score display):
 	// X = 0x19 + 0x19 = 50 (but we use 23 to align with menu items)
 	// Y = 0xbe = 190
+	// TODO: The status bar format should use TRS strings from DAT_00457400 (indices 89-109)
+	// for proper localization. Currently using minimal display.
 	int statusY = 190;
 	int statusX = 23;  // Align with menu items
 
+	// Build status string using TRS format strings where available
+	// TRS indices 89-109 contain format strings for status display
 	char statusStr[64];
-	snprintf(statusStr, sizeof(statusStr), "PILOTS: %d  SCORE: %d  RANK:", 4, _playerScore);
+	const char *pilotsLabel = splayer->getString(90);  // "PILOTS:" or equivalent
+	const char *scoreLabel = splayer->getString(91);   // "SCORE:" or equivalent
+	if (pilotsLabel && pilotsLabel[0] && scoreLabel && scoreLabel[0]) {
+		snprintf(statusStr, sizeof(statusStr), "%s %d  %s %d", pilotsLabel, 4, scoreLabel, _playerScore);
+	} else {
+		// Minimal fallback if TRS strings not available
+		snprintf(statusStr, sizeof(statusStr), "%d  %d", 4, _playerScore);
+	}
 
 	curX = statusX;
 	for (const char *c = statusStr; *c; c++) {
@@ -7196,24 +7233,32 @@ void InsaneRebel2::drawLevelSelectOverlay(byte *renderBitmap, int pitch, int wid
 	frameCounter++;
 
 	// Pilot selection menu items - matches original structure from FUN_00414A41:
-	// Items 0-5: Pilot save slots (PILOT 1 through PILOT 6)
-	// Item 6: NEW PILOT
+	// Load strings from GAME.TRS via SmushPlayer (indices from FUN_00414073)
+	// TRS indices 0x14-0x23 (20-35) are stored at DAT_004573b8
+	// Items 0-5: Pilot save slots (would come from save data, using TRS placeholder)
+	// Item 6: NEW PILOT (TRS index 20+6=26 or similar)
 	// Item 7: DELETE PILOT
 	// Item 8: COPY PILOT
 	// Item 9: MAIN MENU
-	static const char *pilotItems[] = {
-		"SELECT PILOT",      // Title (index 0) - not selectable
-		"PILOT 1",           // Pilot slot 1 (index 1) - selectable
-		"PILOT 2",           // Pilot slot 2 (index 2) - selectable
-		"PILOT 3",           // Pilot slot 3 (index 3) - selectable
-		"PILOT 4",           // Pilot slot 4 (index 4) - selectable
-		"PILOT 5",           // Pilot slot 5 (index 5) - selectable
-		"PILOT 6",           // Pilot slot 6 (index 6) - selectable
-		"NEW PILOT",         // Create new pilot (index 7) - selectable
-		"DELETE PILOT",      // Delete pilot (index 8) - selectable
-		"COPY PILOT",        // Copy pilot (index 9) - selectable
-		"MAIN MENU"          // Back to menu (index 10) - selectable
-	};
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	const char *pilotItems[11];
+
+	if (!splayer) {
+		debug(1, "drawLevelSelectOverlay: SmushPlayer not available for TRS strings!");
+		return;
+	}
+
+	// TRS index mapping from FUN_00414073:
+	// DAT_004573b8[0-15] = TRS indices 20-35
+	// Title: TRS 20, Pilot slots use save data or TRS template, Options: TRS 26-29 or similar
+	// Load from TRS indices 20-30 for the menu structure
+	for (int i = 0; i < 11; i++) {
+		pilotItems[i] = splayer->getString(20 + i);
+		if (!pilotItems[i] || !pilotItems[i][0]) {
+			debug(1, "drawLevelSelectOverlay: TRS string %d not found!", 20 + i);
+			pilotItems[i] = "";
+		}
+	}
 
 	const int numItemsTotal = 11;     // Title + 10 selectable items
 	const int numSelectableItems = 10;
