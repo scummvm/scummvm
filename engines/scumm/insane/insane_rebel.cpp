@@ -5760,21 +5760,22 @@ void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int
 	// Calls FUN_004236e0 for each character glyph (FUN_00434d10 lines 96-97)
 	//
 	// Color handling analysis from assembly:
-	//   FUN_00434d10 parses ^cNNN and passes color to FUN_004236e0 as param_8
-	//   FUN_004236e0 passes it to FUN_0042cba0, which passes to codec functions
-	//   In the codecs (FUN_0042cc50, FUN_0042ce90), the color is stored in
-	//   _DAT_00483fd0 and used as a CLIPPING BOUNDARY, not for pixel coloring!
+	// Color handling for NUT fonts (from assembly analysis):
 	//
-	//   The actual pixel colors come from the NUT font's embedded palette data.
-	//   Each font (TALKFONT, SMALFONT, TITLFONT) has its own color scheme.
-	//   The ^cNNN codes in TRS strings are metadata, not used for NUT font
-	//   pixel rendering - the codecs write pixel data directly from the font.
+	// For codec 44 (used by RA2 fonts): The ^cNNN color IS used for pixel coloring!
+	//   - Font pixels with value 1 are replaced with the ^cNNN color
+	//   - Font pixels with value 255 are replaced with 0
+	//   - Other values are written directly
 	//
-	// Therefore: Always use hardcodedColors=true to render fonts with their
-	// embedded palette colors, which matches the original behavior.
+	// FUN_00434d10 parses ^cNNN and passes the color to FUN_004236e0 as param_8,
+	// which passes it through to the codec for byte 1 substitution.
+	//
+	// In drawCharV7's default mode (hardcodedColors=false, smushColorMode=false):
+	//   dst[i] = (value == 1) ? color : value;
+	// This implements the codec 44 color substitution.
 	auto drawString = [&](const char *str, int x, int y) {
 		NutRenderer *curFont = defaultFont;
-		int curColor = -1;  // Parsed but not used for NUT font pixel rendering
+		int curColor = 1;  // Default color if no ^cNNN specified (white/foreground)
 
 		while (*str) {
 			int fontChange = parseFormatCode(str, curColor);
@@ -5783,7 +5784,7 @@ void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int
 				curFont = fonts[fontChange] ? fonts[fontChange] : defaultFont;
 				continue;
 			}
-			if (fontChange == -2) continue;  // Color code parsed (not used for NUT)
+			if (fontChange == -2) continue;  // Color code parsed, curColor updated
 
 			byte c = (byte)*str++;
 			if (c >= 'a' && c <= 'z') c = c - 'a' + 'A';
@@ -5795,12 +5796,10 @@ void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int
 			int charW = curFont->getCharWidth(c);
 
 			// FUN_004236e0 -> FUN_0042cba0 -> codec: Render character glyph
-			// NUT fonts contain embedded palette indices in their pixel data.
-			// The codec writes these values directly without color transformation.
-			// Use hardcodedColors=true and smushColorMode=true for proper rendering.
+			// Use default mode for codec 44 color substitution: byte 1 -> curColor
 			if (x >= 0 && y >= 0 && charW > 0) {
-				curFont->drawCharV7(renderBitmap, clipRect, x, y, actualPitch, -1,
-				                    kStyleAlignLeft, c, true, true);
+				curFont->drawCharV7(renderBitmap, clipRect, x, y, actualPitch, curColor,
+				                    kStyleAlignLeft, c, false, false);
 			}
 			x += charW;
 		}

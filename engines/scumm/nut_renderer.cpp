@@ -439,7 +439,20 @@ int NutRenderer::drawCharV7(byte *buffer, Common::Rect &clipRect, int x, int y, 
 			}
 		}
 	} else {
-		if (smushColorMode) {
+		if (hardcodedColors) {
+			// Direct pixel write for NUT fonts with embedded palette colors (e.g., RA2 menu fonts)
+			// This mirrors the version 7 hardcodedColors behavior
+			for (int j = minY; j < height; j++) {
+				for (int i = minX; i < width; i++) {
+					int8 value = *src++;
+					if (value != _chars[chr].transparency)
+						dst[i] = value;
+				}
+				src += clipWdth;
+				dst += pitch;
+			}
+		} else if (smushColorMode) {
+			// SMUSH subtitle color mode: remap specific values
 			for (int j = minY; j < height; j++) {
 				for (int i = minX; i < width; i++) {
 					int8 value = *src++;
