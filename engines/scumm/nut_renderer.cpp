@@ -174,8 +174,8 @@ void NutRenderer::loadFont(const char *filename) {
 			break;
 		}
 		int codec = READ_LE_UINT16(dataSrc + offset + 8);
-		// _chars[l].xoffs = READ_LE_UINT16(dataSrc + offset + 10);
-		// _chars[l].yoffs = READ_LE_UINT16(dataSrc + offset + 12);
+		_chars[l].xoffs = READ_LE_INT16(dataSrc + offset + 10);
+		_chars[l].yoffs = READ_LE_INT16(dataSrc + offset + 12);
 		_chars[l].width = READ_LE_UINT16(dataSrc + offset + 14);
 		_chars[l].height = READ_LE_UINT16(dataSrc + offset + 16);
 		_chars[l].src = decodedPtr;
@@ -285,6 +285,8 @@ void NutRenderer::loadFontFromData(const byte *data, int32 dataSize) {
 			break;
 		}
 		int codec = READ_LE_UINT16(dataSrc + offset + 8);
+		_chars[l].xoffs = READ_LE_INT16(dataSrc + offset + 10);
+		_chars[l].yoffs = READ_LE_INT16(dataSrc + offset + 12);
 		_chars[l].width = READ_LE_UINT16(dataSrc + offset + 14);
 		_chars[l].height = READ_LE_UINT16(dataSrc + offset + 16);
 		_chars[l].src = decodedPtr;

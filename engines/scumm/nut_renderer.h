@@ -54,6 +54,8 @@ protected:
 	struct {
 		uint16 width;
 		uint16 height;
+		int16 xoffs;   // X offset from NUT frame header (for sprite positioning)
+		int16 yoffs;   // Y offset from NUT frame header (for sprite positioning)
 		byte *src;
 		byte transparency;
 	} _chars[256];
@@ -76,6 +78,8 @@ public:
 
 	int getCharWidth(byte c) const;
 	int getCharHeight(byte c) const;
+	int16 getCharXOffset(byte c) const { return _chars[c].xoffs; }
+	int16 getCharYOffset(byte c) const { return _chars[c].yoffs; }
 	const byte *getCharData(byte c);
 	byte getCharTransparency(byte c) const { return _chars[c].transparency; }
 	byte getBpp() const { return 8; }
