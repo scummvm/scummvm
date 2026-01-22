@@ -133,7 +133,7 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 		const auto *src = ac;
 		for (unsigned h = 8; h--; dst += planePitch - 8) {
 			for (unsigned w = 8; w--;) {
-				int v = *src++ + 128;
+				int v = *src++ * 2 + 128; // FIXME: just compensating 13 bit shift
 				v = clip(v);
 				*dst++ = v;
 			}
