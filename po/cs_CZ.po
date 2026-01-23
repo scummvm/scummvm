@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-22 22:45+0000\n"
-"PO-Revision-Date: 2025-09-29 20:43+0000\n"
+"PO-Revision-Date: 2026-01-23 14:00+0000\n"
 "Last-Translator: AsciiWolf <mail@asciiwolf.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/cs/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 5.12.2\n"
+"X-Generator: Weblate 5.15.1\n"
 "X-Poedit-SourceCharset: iso-8859-2\n"
 "X-Poedit-Basepath: ..\n"
 "X-Language-name: Český\n"
@@ -1456,7 +1456,7 @@ msgstr "~P~řidat hru..."
 #. I18N: Button caption. R is the shortcut, Ctrl+R, put it in parens for non-latin (~R~)
 #: gui/launcher.cpp:288
 msgid "~R~emove Game"
-msgstr "~O~dstranit Hru"
+msgstr "~O~dstranit hru"
 
 #: gui/launcher.cpp:288
 msgid "Remove game from the list. The game data files stay intact"
@@ -3496,7 +3496,7 @@ msgstr "~N~ápověda"
 
 #: engines/dialogs.cpp:82
 msgid "~A~bout"
-msgstr "~O~ programu"
+msgstr "~I~nformace"
 
 #: engines/dialogs.cpp:85 engines/dialogs.cpp:156
 msgid "~R~eturn to Launcher"
