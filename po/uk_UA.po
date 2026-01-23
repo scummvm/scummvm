@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-22 22:45+0000\n"
-"PO-Revision-Date: 2026-01-22 22:45+0000\n"
+"PO-Revision-Date: 2026-01-23 22:59+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -3385,7 +3385,7 @@ msgstr ""
 
 #: dists/android.strings.xml.cpp:44
 msgid "Toggle virtual keyboard"
-msgstr "Перемикнути віртуальну клавіатуру"
+msgstr "Перемкнути віртуальну клавіатуру"
 
 #: dists/android.strings.xml.cpp:45 engines/scumm/help.cpp:82
 #: engines/scumm/help.cpp:86 engines/scumm/help.cpp:88
@@ -4243,7 +4243,7 @@ msgstr "Вибрати нову папку"
 #: backends/graphics/atari/atari-graphics.cpp:1058
 #: backends/graphics/sdl/sdl-graphics.cpp:515
 msgid "Toggle aspect ratio correction"
-msgstr "Перемикання корекції співвідношення сторін"
+msgstr "Перемкнути корекцію співвідношення сторін"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:315
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:127
@@ -4334,12 +4334,12 @@ msgstr "Віконний режим"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:492 engines/scumm/help.cpp:88
 msgid "Toggle fullscreen"
-msgstr "Перемикання повноекранного режиму"
+msgstr "Перемкнути повноекранний режим"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:499 engines/scumm/help.cpp:100
 #: engines/wintermute/keymapper_tables.h:960
 msgid "Toggle mouse capture"
-msgstr "Перемикання захоплення миші"
+msgstr "Перемкнути захоплення миші"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:504
 msgid "Toggle resizable window"
@@ -4360,7 +4360,7 @@ msgstr "Зберегти екран"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:522
 msgid "Toggle linear filtered scaling"
-msgstr "Перемикання фільтра лінийний"
+msgstr "Перемкнути збільшення з лінійною фільтрацією"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:529
 msgid "Cycle through stretch modes"
@@ -4888,11 +4888,11 @@ msgstr "Касання"
 
 #: backends/platform/3ds/osystem-events.cpp:309
 msgid "Toggle Drag Mode"
-msgstr "Перемикання режиму протягування"
+msgstr "Перемкнути режим протягування"
 
 #: backends/platform/3ds/osystem-events.cpp:314
 msgid "Toggle Magnify Mode"
-msgstr "Перемикання режиму збільшення"
+msgstr "Перемкнути режим збільшення"
 
 #: backends/platform/3ds/osystem-events.cpp:349
 msgid ""
@@ -5946,7 +5946,7 @@ msgid ""
 "| `Ctrl+Alt+d` | Opens the ScummVM debugger\n"
 msgstr ""
 "| `Ctrl+u` | Вимкнення всіх звуків\n"
-"| `Ctrl+m` | Перемикає захоплення миші\n"
+"| `Ctrl+m` | Перемкнути захоплення миші\n"
 "| `Ctrl+Alt` і `9` або `0` | Перемикання вперед/назад між графічними "
 "фільтрами\n"
 "| `Ctrl+Alt` і `+` або `-` | Збільшує/зменшує коефіцієнт масштабування\n"
@@ -6915,15 +6915,15 @@ msgstr "Гучність музики вище"
 
 #: engines/agos/metaengine.cpp:194 engines/vcruise/metaengine.cpp:201
 msgid "Toggle music on / off"
-msgstr "Перемикання музики"
+msgstr "Перемкнути музику"
 
 #: engines/agos/metaengine.cpp:199 engines/vcruise/metaengine.cpp:206
 msgid "Toggle sound effects on / off"
-msgstr "Перемикання звукових ефектів"
+msgstr "Перемкнути звукові ефекти"
 
 #: engines/agos/metaengine.cpp:204 engines/sky/metaengine.cpp:131
 msgid "Toggle fast mode on / off"
-msgstr "Перемикання швидкого режиму"
+msgstr "Перемкнути швидкий режим"
 
 #: engines/agos/metaengine.cpp:216 engines/lab/metaengine.cpp:264
 msgid "Walk forward"
@@ -6961,7 +6961,7 @@ msgstr "Повернутися вправо"
 
 #: engines/agos/metaengine.cpp:241
 msgid "Toggle fight mode"
-msgstr "Перемикання режиму бою"
+msgstr "Перемкнути режим бою"
 
 #: engines/agos/metaengine.cpp:250
 msgid "Text speed - Fast"
@@ -6981,7 +6981,7 @@ msgstr "Показувати об'єкти для взаємодії"
 
 #: engines/agos/metaengine.cpp:272
 msgid "Toggle background sounds on / off"
-msgstr "Перемикання фонових звукових ефектів"
+msgstr "Перемкнути фонові звукові ефекти"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:281
@@ -6990,7 +6990,7 @@ msgstr "Переключити героїв"
 
 #: engines/agos/metaengine.cpp:287
 msgid "Toggle hitbox names on / off"
-msgstr "Перемикання назв хіт-боксів"
+msgstr "Перемкнути назви хіт-боксів"
 
 #: engines/agos/metaengine.cpp:294
 msgid "Switches between speech only and combined speech and subtitles"
@@ -7198,7 +7198,7 @@ msgstr "Висока якість"
 
 #: engines/alcachofa/metaengine.cpp:41
 msgid "Toggles some optional graphical effects"
-msgstr "Перемикає деякі додаткові графічні ефекти"
+msgstr "Перемкнути деякі додаткові графічні ефекти"
 
 #: engines/alcachofa/metaengine.cpp:51
 msgid "32 Bits"
@@ -7278,7 +7278,7 @@ msgstr "Відкрити інвентар героя"
 
 #: engines/asylum/metaengine.cpp:226
 msgid "Toggle animation on / off"
-msgstr "Перемикання анімації"
+msgstr "Перемкнути анімацію"
 
 #: engines/asylum/metaengine.cpp:232
 msgid "Return to gameplay"
@@ -8364,7 +8364,7 @@ msgstr "Мапа клавіш вибору діалогу"
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. One of them can be assigned the "leader". This action toggles the inventory screen of the leader champion.
 #: engines/dm/metaengine.cpp:137
 msgid "Toggle leader inventory"
-msgstr "Перемикання інвентаря лідера"
+msgstr "Перемкнути інвентар лідера"
 
 #. I18N: (Game name: Dungeon Master) The game has multi-choice dialogs. If there is only one choice, then this action can be used to select it.
 #: engines/dm/metaengine.cpp:144
@@ -8374,22 +8374,22 @@ msgstr "Вибрати варіант з діалога (працює лише �
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 1.
 #: engines/dm/metaengine.cpp:151
 msgid "Toggle champion 1 inventory"
-msgstr "Перемикання івентаря воїна 1"
+msgstr "Перемкнути інвентар воїна 1"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 2.
 #: engines/dm/metaengine.cpp:157
 msgid "Toggle champion 2 inventory"
-msgstr "Перемикання івентаря воїна 2"
+msgstr "Перемкнути інвентар воїна 2"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 3.
 #: engines/dm/metaengine.cpp:163
 msgid "Toggle champion 3 inventory"
-msgstr "Перемикання івентаря воїна 3"
+msgstr "Перемкнути івентар воїна 3"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 4.
 #: engines/dm/metaengine.cpp:169
 msgid "Toggle champion 4 inventory"
-msgstr "Перемикання івентаря воїна 4"
+msgstr "Перемкнути івентар воїна 4"
 
 #: engines/dm/metaengine.cpp:216 engines/freescape/movement.cpp:49
 #: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
@@ -8437,7 +8437,7 @@ msgstr "Показати мапу для ходіння"
 
 #: engines/draci/metaengine.cpp:231
 msgid "Toggle walk speed"
-msgstr "Перемикання швидкості ходи"
+msgstr "Перемкнути швидкість ходи"
 
 #: engines/draci/metaengine.cpp:243 engines/mohawk/myst.cpp:554
 #: engines/mohawk/riven.cpp:835 engines/nancy/input.cpp:225
@@ -8799,7 +8799,7 @@ msgstr "Вибрати ворога 5"
 
 #: engines/efh/metaengine.cpp:607
 msgid "Cancel enemy selection"
-msgstr "Перервати вибір ворога"
+msgstr "Скасувати вибір ворога"
 
 #: engines/efh/metaengine.cpp:625 engines/lure/metaengine.cpp:203
 #: engines/tsage/metaengine.cpp:237
@@ -10454,27 +10454,27 @@ msgstr "Замінити кольоровий камінь на смужки о�
 
 #: engines/mm/mm1/metaengine.cpp:54
 msgid "View party member 1"
-msgstr "Дивитись героя №1 в команді"
+msgstr "Дивитись героя №1 в загоні"
 
 #: engines/mm/mm1/metaengine.cpp:55
 msgid "View party member 2"
-msgstr "Дивитись героя №2 в команді"
+msgstr "Дивитись героя №2 в загоні"
 
 #: engines/mm/mm1/metaengine.cpp:56
 msgid "View party member 3"
-msgstr "Дивитись героя №3 в команді"
+msgstr "Дивитись героя №3 в загоні"
 
 #: engines/mm/mm1/metaengine.cpp:57
 msgid "View party member 4"
-msgstr "Дивитись героя №4 в команді"
+msgstr "Дивитись героя №4 в загоні"
 
 #: engines/mm/mm1/metaengine.cpp:58
 msgid "View party member 5"
-msgstr "Дивитись героя №5 в команді"
+msgstr "Дивитись героя №5 в загоні"
 
 #: engines/mm/mm1/metaengine.cpp:59
 msgid "View party member 6"
-msgstr "Дивитись героя №6 в команді"
+msgstr "Дивитись героя №6 в загоні"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:69 engines/ultima/ultima4/metaengine.cpp:50
@@ -10525,11 +10525,11 @@ msgstr "Назад"
 
 #: engines/mm/mm1/metaengine.cpp:104
 msgid "Toggle minimap"
-msgstr "Перемкнути мапу"
+msgstr "Перемкнути міні-мапу"
 
 #: engines/mm/mm1/metaengine.cpp:105
 msgid "Reorder party"
-msgstr "Змінити порядок команди"
+msgstr "Змінити порядок загону"
 
 #. I18N: Action of hero party in Might & Magic 1
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to search the journal
@@ -10563,7 +10563,7 @@ msgstr "Might and Magic 1 - Мінімальні клавіші"
 #: engines/mm/mm1/metaengine.cpp:144 engines/mm/mm1/metaengine.cpp:150
 #: engines/mm/mm1/metaengine.cpp:156
 msgid "Might and Magic 1 - Party"
-msgstr "Might and Magic 1 - Команда"
+msgstr "Might and Magic 1 - Загін"
 
 #: engines/mm/mm1/metaengine.cpp:149
 msgid "Might and Magic 1 - Combat"
@@ -11320,7 +11320,7 @@ msgstr "Взаємодіяти / Вибрати"
 #. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action makes the player still walk to the target but not start interacting when they arrive.
 #: engines/pink/metaengine.cpp:136
 msgid "Cancel interaction"
-msgstr "Перервати дію"
+msgstr "Скасувати взаємодію"
 
 #. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action skips the walking animation and immediately start interacting.
 #: engines/pink/metaengine.cpp:144
@@ -11612,7 +11612,7 @@ msgstr "Продовжити гру"
 
 #: engines/saga/metaengine.cpp:454 engines/tot/metaengine.cpp:175
 msgid "Cancel quit"
-msgstr "Скасування виходу"
+msgstr "Скасувати вихід"
 
 #: engines/saga/metaengine.cpp:459
 msgid "Okay"
@@ -13524,7 +13524,7 @@ msgstr "Закрити головоломку"
 
 #: engines/sherlock/metaengine.cpp:1177
 msgid "Exit inventory / Close verb menu / Cancel item use action"
-msgstr "Вийти з інвентарю / Закрити меню дій / Перервати використання елементу"
+msgstr "Вийти з інвентарю / Закрити меню дій / Скасувати використання елементу"
 
 #: engines/sherlock/metaengine.cpp:1239
 msgid "Select next option"
@@ -14119,16 +14119,12 @@ msgid "Movement keymappings"
 msgstr "Мапа клавіш руху"
 
 #: engines/titanic/metaengine.cpp:182
-#, fuzzy
-#| msgid "Interact Mode"
 msgid "Select / Interact / Move"
-msgstr "Режим взаємодії"
+msgstr "Обрати / Взаємодіяти / Рухатись"
 
 #: engines/titanic/metaengine.cpp:188
-#, fuzzy
-#| msgid "Go to next dialogue"
 msgid "Select / Interact / Quick move"
-msgstr "Перейти до наступного діалогу"
+msgstr "Обрати / Взаємодіяти / Швидко рухатись"
 
 #: engines/titanic/metaengine.cpp:194
 msgid "Cheat menu"
@@ -14187,10 +14183,8 @@ msgid "View boundaries"
 msgstr ""
 
 #: engines/toltecs/metaengine.cpp:216
-#, fuzzy
-#| msgid "Move left"
 msgid "Move / Select"
-msgstr "Рухатись наліво"
+msgstr "Рухатись / Вибрати"
 
 #: engines/toltecs/metaengine.cpp:222
 msgid "Move / Perform default action"
@@ -14276,16 +14270,12 @@ msgid "Default action"
 msgstr "Дія за замовчунням"
 
 #: engines/tot/metaengine.cpp:154
-#, fuzzy
-#| msgid "Saved games"
 msgid "Save and load game"
-msgstr "Збережені ігри"
+msgstr "Збереження та завантаження гри"
 
 #: engines/tot/metaengine.cpp:164
-#, fuzzy
-#| msgid "Main Menu"
 msgid "Main menu/Exit"
-msgstr "Головне меню"
+msgstr "Головне меню / Вихід"
 
 #: engines/touche/metaengine.cpp:135
 msgid "Skip sequence / open quit dialog"
@@ -14926,10 +14916,8 @@ msgid "Ignite"
 msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:60
-#, fuzzy
-#| msgid "Look at"
 msgid "Locate position"
-msgstr "Глянути на"
+msgstr "Знайти положення"
 
 #: engines/ultima/ultima4/metaengine.cpp:61
 msgid "Mix reagents"
@@ -14956,10 +14944,8 @@ msgid "Quit and save"
 msgstr "Вийти та зберегти"
 
 #: engines/ultima/ultima4/metaengine.cpp:67
-#, fuzzy
-#| msgid "Next action"
 msgid "Ready weapon"
-msgstr "Наступна дія"
+msgstr "Приготувати зброю"
 
 #: engines/ultima/ultima4/metaengine.cpp:69
 msgid "Stats"
@@ -14999,82 +14985,59 @@ msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:90
 msgid "Party - None"
-msgstr ""
+msgstr "Загін - Нікого"
 
 #: engines/ultima/ultima4/metaengine.cpp:91
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #1"
-msgstr "Перенести героя"
+msgstr "Загін - Герой №1"
 
 #: engines/ultima/ultima4/metaengine.cpp:92
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #2"
-msgstr "Перенести героя"
+msgstr "Загін - Герой №2"
 
 #: engines/ultima/ultima4/metaengine.cpp:93
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #3"
-msgstr "Перенести героя"
+msgstr "Загін - Герой №3"
 
 #: engines/ultima/ultima4/metaengine.cpp:94
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #4"
-msgstr "Перенести героя"
+msgstr "Загін - Герой №4"
 
 #: engines/ultima/ultima4/metaengine.cpp:95
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #5"
-msgstr "Перенести героя"
+msgstr "Загін - Герой №5"
 
 #: engines/ultima/ultima4/metaengine.cpp:96
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #6"
-msgstr "Перенести героя"
+msgstr "Загін - Герой №6"
 
 #: engines/ultima/ultima4/metaengine.cpp:97
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #7"
-msgstr "Перенести героя"
+msgstr "Загін - Герой №7"
 
 #: engines/ultima/ultima4/metaengine.cpp:98
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #8"
-msgstr "Перенести героя"
+msgstr "Загін - Герой №8"
 
 #: engines/ultima/ultima4/metaengine.cpp:104
 msgid "Destroy all creatures"
 msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:105
-#, fuzzy
-#| msgctxt "Options menu"
-#| msgid "Wall collision on"
 msgid "Toggle collision handling"
-msgstr "Зіткнення зі стінами увімкнено"
+msgstr "Перемкнути зіткнення зі стінами"
 
 #: engines/ultima/ultima4/metaengine.cpp:106
-#, fuzzy
-#| msgid "Next object"
 msgid "Destroy object"
-msgstr "Наступний об'єкт"
+msgstr "Знищити об'єкт"
 
 #: engines/ultima/ultima4/metaengine.cpp:107
 msgid "Full equipment"
 msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:108
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Flee combat"
-msgstr "Перемкнути режим бою"
+msgstr "Втекти з бою"
 
 #: engines/ultima/ultima4/metaengine.cpp:110
 msgid "Help - Teleport to Lord British"
@@ -15089,10 +15052,8 @@ msgid "List karma"
 msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:113
-#, fuzzy
-#| msgid "Next location"
 msgid "Leave location"
-msgstr "Наступна локація"
+msgstr "Залишити локацію"
 
 #: engines/ultima/ultima4/metaengine.cpp:114
 msgid "Give mixtures"
@@ -15103,14 +15064,12 @@ msgid "Combat encounters"
 msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:116
-#, fuzzy
-#| msgid "Toggle Drag Mode"
 msgid "Toggle overhead view"
-msgstr "Перемикання режиму протягування"
+msgstr "Перемкнути вид зверху"
 
 #: engines/ultima/ultima4/metaengine.cpp:117
 msgid "Full party"
-msgstr ""
+msgstr "Загін повний"
 
 #: engines/ultima/ultima4/metaengine.cpp:118
 msgid "Give reagents"
@@ -15121,10 +15080,8 @@ msgid "Full stats"
 msgstr "Повна статистика"
 
 #: engines/ultima/ultima4/metaengine.cpp:120
-#, fuzzy
-#| msgid "Create directory"
 msgid "Create transport"
-msgstr "Створення каталогу"
+msgstr "Створити транспорт"
 
 #: engines/ultima/ultima4/metaengine.cpp:121
 msgid "Up level"
@@ -15139,10 +15096,8 @@ msgid "Grant virtue"
 msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:124
-#, fuzzy
-#| msgid "Change sound"
 msgid "Change wind"
-msgstr "Змінити звук"
+msgstr "Змінити вітер"
 
 #: engines/ultima/nuvie/nuvie.cpp:403
 #, c-format
@@ -15159,28 +15114,20 @@ msgid "Original Save"
 msgstr "Оригінальне збереження"
 
 #: engines/ultima/nuvie/metaengine.cpp:59
-#, fuzzy
-#| msgid "Walk to"
 msgid "Walk west"
-msgstr "Іти до"
+msgstr "Йти на захід"
 
 #: engines/ultima/nuvie/metaengine.cpp:60
-#, fuzzy
-#| msgid "Walk to"
 msgid "Walk east"
-msgstr "Іти до"
+msgstr "Йти на схід"
 
 #: engines/ultima/nuvie/metaengine.cpp:61
-#, fuzzy
-#| msgid "Walk to"
 msgid "Walk north"
-msgstr "Іти до"
+msgstr "Йти на північ"
 
 #: engines/ultima/nuvie/metaengine.cpp:62
-#, fuzzy
-#| msgid "Walk to"
 msgid "Walk south"
-msgstr "Іти до"
+msgstr "Йти на південь"
 
 #: engines/ultima/nuvie/metaengine.cpp:63
 msgid "Walk north-east"
@@ -15203,41 +15150,29 @@ msgid "Multi-use"
 msgstr ""
 
 #: engines/ultima/nuvie/metaengine.cpp:76
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select command bar"
-msgstr "Виберіть шейдер"
+msgstr "Вибрати набір команд"
 
 #: engines/ultima/nuvie/metaengine.cpp:77
-#, fuzzy
-#| msgid "Select Next Actor"
 msgid "Select new command bar"
-msgstr "Вибрати наступного Актора"
+msgstr "Вибрати новий набір команд"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:79
-#, fuzzy
-#| msgid "Scroll up"
 msgid "Doll gump"
-msgstr "Прокручення догори"
+msgstr "Меню-лялька"
 
 #: engines/ultima/nuvie/metaengine.cpp:80
-#, fuzzy
-#| msgid "Previous page"
 msgid "Previous party member"
-msgstr "Попередня сторінка"
+msgstr "Попередній герой загону"
 
 #: engines/ultima/nuvie/metaengine.cpp:81
-#, fuzzy
-#| msgid "View Party Member 1"
 msgid "Next party member"
-msgstr "Дивитись члена №1 в команді"
+msgstr "Наступний герой загону"
 
 #: engines/ultima/nuvie/metaengine.cpp:82
-#, fuzzy
-#| msgid "Boss key"
 msgid "Home key"
-msgstr "Клавіша Начальника"
+msgstr "Клавіша на початок"
 
 #: engines/ultima/nuvie/metaengine.cpp:83
 msgid "End key"
@@ -15248,78 +15183,56 @@ msgid "Toggle between inventory and actor view"
 msgstr "Перемкнути між переглядом інвентарю та акторів"
 
 #: engines/ultima/nuvie/metaengine.cpp:85
-#, fuzzy
-#| msgid "List view"
 msgid "Party view"
-msgstr "Вигляд списку"
+msgstr "Переглянути загін"
 
 #: engines/ultima/nuvie/metaengine.cpp:86
-#, fuzzy
-#| msgid "Shorty mode"
 msgid "Party mode"
-msgstr "Режим ліліпутів"
+msgstr "Режим загону"
 
 #: engines/ultima/nuvie/metaengine.cpp:87
-#, fuzzy
-#| msgid "Game menu"
 msgid "Save menu"
-msgstr "Меню гри"
+msgstr "Меню збереження"
 
 #: engines/ultima/nuvie/metaengine.cpp:88
-#, fuzzy
-#| msgid "Unnamed autosave"
 msgid "Load latest save"
-msgstr "Автозбереження без імені"
+msgstr "Завантажити останнє збереження"
 
 #: engines/ultima/nuvie/metaengine.cpp:93
 msgid "Show game menu; Cancel action if in middle of action"
-msgstr ""
+msgstr "Показати меню гри; Скасувати дію, якщо вона виконується"
 
 #: engines/ultima/nuvie/metaengine.cpp:95
-#, fuzzy
-#| msgid "Toggle Clock"
 msgid "Toggle Cursor"
-msgstr "Перемкнути годинник"
+msgstr "Перемкнути курсор"
 
 #: engines/ultima/nuvie/metaengine.cpp:96
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle combat strategy"
-msgstr "Перемкнути режим бою"
+msgstr "Перемкнути стратегію бою"
 
 #: engines/ultima/nuvie/metaengine.cpp:97
-#, fuzzy
-#| msgid "Max frames per second limit"
 msgid "Toggle frames per second display"
-msgstr "Ліміт кадрів на секунду"
+msgstr "Перемкнути показування кадрів на секунду"
 
 #: engines/ultima/nuvie/metaengine.cpp:98
-#, fuzzy
-#| msgid "Toggle Sound"
 msgid "Toggle audio"
-msgstr "Перемкнути звук"
+msgstr "Перемкнути аудіо"
 
 #: engines/ultima/nuvie/metaengine.cpp:100
-#, fuzzy
-#| msgid "Toggle sound"
 msgid "Toggle sfx"
-msgstr "Перемкнути звук"
+msgstr "Перемкнути спецефекти"
 
 #: engines/ultima/nuvie/metaengine.cpp:101
 msgid "Toggle original style command bar"
 msgstr ""
 
 #: engines/ultima/nuvie/metaengine.cpp:102
-#, fuzzy
-#| msgid "Droid's action"
 msgid "Do action"
-msgstr "Дія дроїда"
+msgstr "Зробити дію"
 
 #: engines/ultima/nuvie/metaengine.cpp:103
-#, fuzzy
-#| msgid "Change game options"
 msgid "Cancel action"
-msgstr "Змінити налаштування гри"
+msgstr "Скасувати дію"
 
 #: engines/ultima/nuvie/metaengine.cpp:104
 #, fuzzy
@@ -15353,10 +15266,8 @@ msgstr "Збільшити швидкість"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:110
-#, fuzzy
-#| msgid "Close popup"
 msgid "Close gumps"
-msgstr "Закрити вискакуючий список"
+msgstr "Закрити меню-ляльку"
 
 #: engines/ultima/nuvie/metaengine.cpp:112
 msgid "Enter ALT code (hold)"
@@ -15458,7 +15369,7 @@ msgstr "Перемикання швидкого режиму"
 
 #: engines/ultima/nuvie/metaengine.cpp:137
 msgid "Heal party"
-msgstr ""
+msgstr "Лікувати загін"
 
 #: engines/ultima/nuvie/metaengine.cpp:138
 #, fuzzy
@@ -15477,46 +15388,36 @@ msgid "Solo mode as Avatar"
 msgstr ""
 
 #: engines/ultima/nuvie/metaengine.cpp:144
-#, fuzzy
-#| msgid "View Party Member 2"
 msgid "Solo mode as party member 2"
-msgstr "Дивитись члена №2 в команді"
+msgstr "Соло як герой загону №2"
 
 #: engines/ultima/nuvie/metaengine.cpp:145
-#, fuzzy
-#| msgid "View Party Member 3"
 msgid "Solo mode as party member 3"
-msgstr "Дивитись члена №3 в команді"
+msgstr "Соло як герой загону №3"
 
 #: engines/ultima/nuvie/metaengine.cpp:146
-#, fuzzy
-#| msgid "View Party Member 4"
 msgid "Solo mode as party member 4"
-msgstr "Дивитись члена №4 в команді"
+msgstr "Соло як герой загону №4"
 
 #: engines/ultima/nuvie/metaengine.cpp:147
-#, fuzzy
-#| msgid "View Party Member 5"
 msgid "Solo mode as party member 5"
-msgstr "Дивитись члена №5 в команді"
+msgstr "Соло як герой загону №5"
 
 #: engines/ultima/nuvie/metaengine.cpp:148
-#, fuzzy
-#| msgid "View Party Member 6"
 msgid "Solo mode as party member 6"
-msgstr "Дивитись члена №6 в команді"
+msgstr "Соло як герой загону №6"
 
 #: engines/ultima/nuvie/metaengine.cpp:149
 msgid "Solo mode as party member 7"
-msgstr ""
+msgstr "Соло як герой загону №7"
 
 #: engines/ultima/nuvie/metaengine.cpp:150
 msgid "Solo mode as party member 8"
-msgstr ""
+msgstr "Соло як герой загону №8"
 
 #: engines/ultima/nuvie/metaengine.cpp:151
 msgid "Solo mode as party member 9"
-msgstr ""
+msgstr "Соло як герой загону №9"
 
 #: engines/ultima/nuvie/metaengine.cpp:152
 msgid "Show stats for Avatar"
@@ -15524,35 +15425,35 @@ msgstr "Показати статистику для Аватара"
 
 #: engines/ultima/nuvie/metaengine.cpp:153
 msgid "Show stats for party member 2"
-msgstr "Показати статистику героя №2"
+msgstr "Показати статистику героя загону №2"
 
 #: engines/ultima/nuvie/metaengine.cpp:154
 msgid "Show stats for party member 3"
-msgstr "Показати статистику героя №3"
+msgstr "Показати статистику героя загону №3"
 
 #: engines/ultima/nuvie/metaengine.cpp:155
 msgid "Show stats for party member 4"
-msgstr "Показати статистику героя №4"
+msgstr "Показати статистику героя загону №4"
 
 #: engines/ultima/nuvie/metaengine.cpp:156
 msgid "Show stats for party member 5"
-msgstr "Показати статистику героя №5"
+msgstr "Показати статистику героя загону №5"
 
 #: engines/ultima/nuvie/metaengine.cpp:157
 msgid "Show stats for party member 6"
-msgstr "Показати статистику героя №6"
+msgstr "Показати статистику героя загону №6"
 
 #: engines/ultima/nuvie/metaengine.cpp:158
 msgid "Show stats for party member 7"
-msgstr "Показати статистику героя №7"
+msgstr "Показати статистику героя загону №7"
 
 #: engines/ultima/nuvie/metaengine.cpp:159
 msgid "Show stats for party member 8"
-msgstr "Показати статистику героя №8"
+msgstr "Показати статистику героя загону №8"
 
 #: engines/ultima/nuvie/metaengine.cpp:160
 msgid "Show stats for party member 9"
-msgstr "Показати статистику героя №9"
+msgstr "Показати статистику героя загону №9"
 
 #: engines/ultima/nuvie/metaengine.cpp:161
 #, fuzzy
@@ -15562,80 +15463,80 @@ msgstr "Показати інвентар"
 
 #: engines/ultima/nuvie/metaengine.cpp:162
 msgid "Show inventory for party member 2"
-msgstr ""
+msgstr "Показати інвентар героя загону №2"
 
 #: engines/ultima/nuvie/metaengine.cpp:163
 msgid "Show inventory for party member 3"
-msgstr ""
+msgstr "Показати інвентар героя загону №3"
 
 #: engines/ultima/nuvie/metaengine.cpp:164
 msgid "Show inventory for party member 4"
-msgstr ""
+msgstr "Показати інвентар героя загону №4"
 
 #: engines/ultima/nuvie/metaengine.cpp:165
 msgid "Show inventory for party member 5"
-msgstr ""
+msgstr "Показати інвентар героя загону №5"
 
 #: engines/ultima/nuvie/metaengine.cpp:166
 msgid "Show inventory for party member 6"
-msgstr ""
+msgstr "Показати інвентар героя загону №6"
 
 #: engines/ultima/nuvie/metaengine.cpp:167
 msgid "Show inventory for party member 7"
-msgstr ""
+msgstr "Показати інвентар героя загону №7"
 
 #: engines/ultima/nuvie/metaengine.cpp:168
 msgid "Show inventory for party member 8"
-msgstr ""
+msgstr "Показати інвентар героя загону №8"
 
 #: engines/ultima/nuvie/metaengine.cpp:169
 msgid "Show inventory for party member 9"
-msgstr ""
+msgstr "Показати інвентар героя загону №9"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:171
 msgid "Show doll gump for Avatar"
-msgstr ""
+msgstr "Показати меню-ляльку для Аватара"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:173
 msgid "Show doll gump for party member 2"
-msgstr ""
+msgstr "Показати меню-ляльку героя загону №2"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:175
 msgid "Show doll gump for party member 3"
-msgstr ""
+msgstr "Показати меню-ляльку героя загону №3"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:177
 msgid "Show doll gump for party member 4"
-msgstr ""
+msgstr "Показати меню-ляльку героя загону №4"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:179
 msgid "Show doll gump for party member 5"
-msgstr ""
+msgstr "Показати меню-ляльку героя загону №5"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:181
 msgid "Show doll gump for party member 6"
-msgstr ""
+msgstr "Показати меню-ляльку героя загону №6"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:183
 msgid "Show doll gump for party member 7"
-msgstr ""
+msgstr "Показати меню-ляльку героя загону №7"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:185
 msgid "Show doll gump for party member 8"
-msgstr ""
+msgstr "Показати меню-ляльку героя загону №8"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:187
 msgid "Show doll gump for party member 9"
-msgstr ""
+msgstr "Показати меню-ляльку героя загону №9"
 
 #: engines/ultima/nuvie/metaengine.cpp:193
 #: engines/ultima/nuvie/metaengine.cpp:198
@@ -16390,7 +16291,7 @@ msgstr "Швидкість ходи: Висока"
 #: engines/wintermute/keymapper_tables.h:1314
 #: engines/wintermute/keymapper_tables.h:1872
 msgid "Cancel waiting"
-msgstr "Припинити очікування"
+msgstr "Скасувати очікування"
 
 #. I18N: ultra_super_mega_fast_walk is the name of the variable used at game script for this speed
 #: engines/wintermute/keymapper_tables.h:978
@@ -16491,7 +16392,7 @@ msgstr "Рух танцю направо"
 
 #: engines/wintermute/keymapper_tables.h:1283
 msgid "Cancel input"
-msgstr "Скасування вводу"
+msgstr "Скасувати ввод"
 
 #: engines/wintermute/keymapper_tables.h:1409
 msgid "Hide hints"
