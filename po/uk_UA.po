@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-22 22:45+0000\n"
-"PO-Revision-Date: 2026-01-23 22:59+0000\n"
+"PO-Revision-Date: 2026-01-23 23:10+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -11179,7 +11179,7 @@ msgstr "Зупинити звуки"
 
 #: engines/ngi/metaengine.cpp:155 engines/teenagent/metaengine.cpp:226
 msgid "Toggle inventory"
-msgstr "Перемикнути інвентар"
+msgstr "Перемкнути інвентар"
 
 #: engines/ngi/metaengine.cpp:176
 msgid "Skip credits"
@@ -11265,27 +11265,27 @@ msgstr "Дія/Вибір"
 
 #: engines/pegasus/pegasus.cpp:2774
 msgid "Toggle inventory tray"
-msgstr "Перемикання панелі інвентарю"
+msgstr "Перемкнути панель інвентарю"
 
 #: engines/pegasus/pegasus.cpp:2781
 msgid "Toggle biochip tray"
-msgstr "Перемикання панелі біочипу"
+msgstr "Перемкнути панель біочипу"
 
 #: engines/pegasus/pegasus.cpp:2789
 msgid "Toggle center data display"
-msgstr "Перемикання центрального екрану даних"
+msgstr "Перемкнути центральний екран даних"
 
 #: engines/pegasus/pegasus.cpp:2796
 msgid "Toggle info screen"
-msgstr "Перемикання екрану інфо"
+msgstr "Перемкнути екран інфо"
 
 #: engines/pegasus/pegasus.cpp:2803
 msgid "Toggle pause menu"
-msgstr "Перемикання меню паузи"
+msgstr "Перемкнути меню паузи"
 
 #: engines/pegasus/pegasus.cpp:2810
 msgid "Toggle Chatty AI"
-msgstr "Перемикання балакучого ШІ"
+msgstr "Перемкнути балакучий ШІ"
 
 #: engines/petka/metaengine.cpp:117
 msgid "Interact / Skip dialog"
@@ -11431,7 +11431,7 @@ msgstr ""
 #: engines/queen/metaengine.cpp:192 engines/teenagent/metaengine.cpp:239
 #: engines/touche/metaengine.cpp:167
 msgid "Toggle fast mode"
-msgstr "Перемикання швидкого режиму"
+msgstr "Перемкнути швидкий режим"
 
 #: engines/queen/metaengine.cpp:198 engines/twp/metaengine.cpp:176
 msgid "Skip text"
@@ -12423,7 +12423,7 @@ msgstr "Збільшення / Зменшення масштабу"
 
 #: engines/scumm/help.cpp:103
 msgid "Toggle aspect-ratio correction"
-msgstr "Перемикання корекції співвідношення сторін"
+msgstr "Перемкнути корекцію співвідношення сторін"
 
 #: engines/scumm/help.cpp:108
 msgid "* Note that using ctrl-f and"
@@ -12661,11 +12661,11 @@ msgstr "Третя дитина"
 
 #: engines/scumm/help.cpp:296
 msgid "Toggle Inventory/IQ Points display"
-msgstr "Перемикання показування інвентарю або значення IQ"
+msgstr "Перемкнути показування інвентарю або значення IQ"
 
 #: engines/scumm/help.cpp:297
 msgid "Toggle Keyboard/Mouse Fighting (*)"
-msgstr "Перемикання керування бійкою Клавіатура/Миша (*)"
+msgstr "Перемкнути керування бійкою Клавіатура/Миша (*)"
 
 #: engines/scumm/help.cpp:299
 msgid "* Keyboard Fighting is always on,"
@@ -13515,7 +13515,7 @@ msgstr "Виберіть файл збереження"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) save password input field has 2 modes, insert and overwrite, this action toggles between them
 #: engines/sherlock/metaengine.cpp:1124 engines/sherlock/metaengine.cpp:1229
 msgid "Toggle insert mode"
-msgstr "Перемикання режиму вставки"
+msgstr "Перемкнути режим вставки"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a foolscap puzzle, where the player has to decode a hidden message on a piece of paper called a foolscap. this action is used to exit the puzzle
 #: engines/sherlock/metaengine.cpp:1135
@@ -13556,7 +13556,7 @@ msgstr "Відкрити панель керування"
 
 #: engines/sky/metaengine.cpp:136
 msgid "Toggle really fast mode on / off"
-msgstr "Перемикання дуже швидкого режиму Так / Ні"
+msgstr "Перемкнути дуже швидкий режим"
 
 #: engines/sky/metaengine.cpp:156
 msgid "Floppy intro"
@@ -14160,7 +14160,7 @@ msgstr "Переклад"
 
 #: engines/titanic/metaengine.cpp:307
 msgid "Toggle between Star Map and photo of your home"
-msgstr ""
+msgstr "Перемкнути між Зоряною Мапою та фото вашого дому"
 
 #: engines/titanic/metaengine.cpp:350
 msgid "Stop moving"
@@ -14293,7 +14293,7 @@ msgstr "Вимкнути швидку ходу"
 
 #: engines/touche/metaengine.cpp:173
 msgid "Toggle between voice / text / text and voice"
-msgstr "Перемикання між озвучкою / текстом / текстом і озвучкою"
+msgstr "Перемкнути між озвучкою / текстом / текстом і озвучкою"
 
 #: engines/touche/metaengine.cpp:182
 msgid "Press \"Yes\" Key"
@@ -14302,7 +14302,7 @@ msgstr "Натиснути клавішу \"Так\""
 #. I18N: Toggles walking speed of actor
 #: engines/trecision/metaengine.cpp:144
 msgid "Toggle fast walk"
-msgstr "Перемикання швидкої ходи"
+msgstr "Перемкнути швидку ходу"
 
 #: engines/trecision/metaengine.cpp:163
 msgid "Open system menu"
@@ -14373,11 +14373,11 @@ msgstr "Пропустити озвучку"
 #. I18N: Panel contains all actor actions and the artstyle is toggled
 #: engines/tucker/metaengine.cpp:203
 msgid "Toggle panel style"
-msgstr "Перемикання стилю панелі"
+msgstr "Перемкнути стиль панелі"
 
 #: engines/tucker/metaengine.cpp:209
 msgid "Toggle text speech"
-msgstr "Перемкнтуи мову озвучки"
+msgstr "Перемкнути озвучку тексту"
 
 #: engines/twine/detection.cpp:188
 msgid "This version requires Giflib which was not compiled into ScummVM"
@@ -15224,7 +15224,7 @@ msgstr "Перемкнути спецефекти"
 
 #: engines/ultima/nuvie/metaengine.cpp:101
 msgid "Toggle original style command bar"
-msgstr ""
+msgstr "Перемкнути оригінальний стиль панелі команд"
 
 #: engines/ultima/nuvie/metaengine.cpp:102
 msgid "Do action"
@@ -15325,47 +15325,33 @@ msgid "Show eggs"
 msgstr "Показувати цитати"
 
 #: engines/ultima/nuvie/metaengine.cpp:129
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle hack move"
-msgstr "Перемикання швидкого режиму"
+msgstr "Перемкнути режиму гакінгу"
 
 #. I18N: Eggs are in-game hatchable objects that are normally invisible
 #: engines/ultima/nuvie/metaengine.cpp:131
-#, fuzzy
-#| msgid "Toggle Menu"
 msgid "Toggle egg spawn"
-msgstr "Перемкнути меню"
+msgstr "Перемкнути позказування яєць"
 
 #: engines/ultima/nuvie/metaengine.cpp:132
-#, fuzzy
-#| msgid "Toggle mouse capture"
 msgid "Toggle no darkness"
-msgstr "Перемикання захоплення миші"
+msgstr "Перемкнути режим темряви"
 
 #: engines/ultima/nuvie/metaengine.cpp:133
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle pickpocket mode"
-msgstr "Перемикання швидкого режиму"
+msgstr "Перемкнути режим кишенькового злодія"
 
 #: engines/ultima/nuvie/metaengine.cpp:134
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle god mode"
-msgstr "Перемикання швидкого режиму"
+msgstr "Перемкнути режим бога"
 
 #: engines/ultima/nuvie/metaengine.cpp:135
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle ethereal mode"
-msgstr "Перемикання швидкого режиму"
+msgstr "Перемкнути режим етеру"
 
 #: engines/ultima/nuvie/metaengine.cpp:136
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle X-ray mode"
-msgstr "Перемикання швидкого режиму"
+msgstr "Перемкнути режим рентген"
 
 #: engines/ultima/nuvie/metaengine.cpp:137
 msgid "Heal party"
@@ -15378,10 +15364,8 @@ msgid "Teleport to cursor"
 msgstr "Звичайний курсор"
 
 #: engines/ultima/nuvie/metaengine.cpp:139
-#, fuzzy
-#| msgid "Enable cheats"
 msgid "Toggle cheats"
-msgstr "Ввімкнути чіти"
+msgstr "Перемкнути чіти"
 
 #: engines/ultima/nuvie/metaengine.cpp:143
 msgid "Solo mode as Avatar"
@@ -15540,10 +15524,8 @@ msgstr "Показати меню-ляльку героя загону №9"
 
 #: engines/ultima/nuvie/metaengine.cpp:193
 #: engines/ultima/nuvie/metaengine.cpp:198
-#, fuzzy
-#| msgid "Toggle linear filtered scaling"
 msgid "Toggle unlimited casting"
-msgstr "Перемикання фільтра лінийний"
+msgstr "Перемкнути безлімтне використання магії"
 
 #: engines/ultima/nuvie/metaengine.cpp:224
 msgid "Ultima VI"
@@ -15709,20 +15691,16 @@ msgid "Step forward"
 msgstr "Повернутись уперед"
 
 #: engines/ultima/ultima8/metaengine.cpp:100
-#, fuzzy
-#| msgid "Toggle Clock"
 msgid "Toggle crouch"
-msgstr "Перемкнути годинник"
+msgstr "Перемкнути присідання"
 
 #: engines/ultima/ultima8/metaengine.cpp:101
 msgid "Side step / Advance / Retreat"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:106
-#, fuzzy
-#| msgid "Toggle Clock"
 msgid "Toggle clipping"
-msgstr "Перемкнути годинник"
+msgstr "Перемкнути прохід через стіни"
 
 #: engines/ultima/ultima8/metaengine.cpp:107
 msgid "Ascend"
@@ -15745,10 +15723,8 @@ msgid "Increment map sort order"
 msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:119
-#, fuzzy
-#| msgid "Toggle panel style"
 msgid "Toggle frame by frame"
-msgstr "Перемикання стилю панелі"
+msgstr "Перемкнути кадр за кадром"
 
 #: engines/ultima/ultima8/metaengine.cpp:120
 msgid "Advance frame"
@@ -15756,7 +15732,7 @@ msgstr ""
 
 #: engines/ultima/ultima8/metaengine.cpp:121
 msgid "Toggle Avatar in stasis"
-msgstr ""
+msgstr "Перемкнути Аватар в заморозці"
 
 #: engines/ultima/ultima8/metaengine.cpp:122
 #, fuzzy
