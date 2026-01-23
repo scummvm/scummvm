@@ -223,7 +223,7 @@ Common::KeymapArray AsylumMetaEngine::initKeymaps(const char *target) const {
 	act->allowKbdRepeats();
 	resviewerKeyMap->addAction(act);
 
-	act = new Action("ANIMATE", _("Toggle animation on / off"));
+	act = new Action("ANIMATE", _("Toggle animation"));
 	act->setCustomEngineActionEvent(kAsylumActionAnimate);
 	act->addDefaultInputMapping("RETURN");
 	act->addDefaultInputMapping("JOY_A");
