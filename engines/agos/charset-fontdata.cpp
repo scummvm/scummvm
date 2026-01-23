@@ -3006,30 +3006,18 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		color += dst[0] & 0xF0;
 
-do {
-    int8 b = *src++;
-    i = 0;
-    do {
-        if (!(chr >= 'A' && chr <= 'Z') && !(chr >= '0' && chr <= '9')) {
-            if (b < 0) {
-                dst[i] = color;
-            }
-        } else {
-            
-                if (i != 5) { // Skip rendering the sixth column
-                    dst[i] = color;
-                } else { // Move seventh column to fill the gap
-                    dst[i] = dst[i + 1];
-                }
-            
-            b >>= 1; // Shift bits to the right
-        }
-        ++i;
-    } while (i != w);
-    dst += dstPitch;
-} while (--h);
+	do {
+		int8 b = *src++;
+		i = 0;
+		do {
+			if (b < 0) {
+				dst[i] = color;
+			}
 
-
+			b <<= 1;
+		} while (++i != w);
+		dst += dstPitch;
+	} while (--h);
 
 	Common::Rect dirtyRect(x + window->textColumnOffset, y, x + window->textColumnOffset + 6, y + 8);
 	updateBackendSurface(&dirtyRect);
