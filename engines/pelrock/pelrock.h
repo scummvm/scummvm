@@ -256,6 +256,7 @@ public:
 	void pickUpPhoto(HotSpot *hotspot);
 	void pickYellowBook(HotSpot *hotspot);
 	void pickUpBrick(HotSpot *hotspot);
+	void openIceCreamShopDoor(HotSpot *hotspot);
 	void noOpAction(HotSpot *hotspot);
 	void noOpItem(int item, HotSpot *hotspot);
 	void useOnAlfred(int inventoryObject);
@@ -278,6 +279,9 @@ public:
 	void openPlug(HotSpot *hotspot);
 	void useCordWithPlug(int inventoryObject, HotSpot *hotspot);
 	void pickCables(HotSpot *hotspot);
+	void giveIdToGuard(int inventoryObject, HotSpot *hotspot);
+	void giveMoneyToGuard(int inventoryObject, HotSpot *hotspot);
+	void openMuseumDoor(HotSpot *hotspot);
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);
 };

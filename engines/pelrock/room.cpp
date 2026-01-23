@@ -122,14 +122,13 @@ void RoomManager::removeSticker(int stickerIndex) {
 }
 
 bool RoomManager::hasSticker(int index) {
-	for (uint i = 0; i < g_engine->_state->stickersPerRoom[_currentRoomNumber].size(); i++) {
-		if (g_engine->_state->stickersPerRoom[_currentRoomNumber][i].stickerIndex == index) {
+	for (uint i = 0; i < _roomStickers.size(); i++) {
+		if (_roomStickers[i].stickerIndex == index) {
 			return true;
 		}
 	}
-
-	for (uint i = 0; i < _roomStickers.size(); i++) {
-		if (_roomStickers[i].stickerIndex == index) {
+	for (uint i = 0; i < g_engine->_state->stickersPerRoom[_currentRoomNumber].size(); i++) {
+		if (g_engine->_state->stickersPerRoom[_currentRoomNumber][i].stickerIndex == index) {
 			return true;
 		}
 	}

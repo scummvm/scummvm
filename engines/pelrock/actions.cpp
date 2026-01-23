@@ -21,6 +21,7 @@
 
 #include "graphics/paletteman.h"
 
+#include "pelrock.h"
 #include "pelrock/actions.h"
 #include "pelrock/offsets.h"
 #include "pelrock/pelrock.h"
@@ -41,6 +42,7 @@ const ActionEntry actionTable[] = {
 	{0, PICKUP, &PelrockEngine::pickYellowBook}, // Generic pickup for other items
 	// Room 1
 	{4, PICKUP, &PelrockEngine::pickUpBrick}, // Brick
+	{277, OPEN, &PelrockEngine::openIceCreamShopDoor},
 	// Room 2
 	{282, OPEN, &PelrockEngine::openMcDoor},
 	{282, CLOSE, &PelrockEngine::closeMcDoor},
@@ -79,6 +81,7 @@ const ActionEntry actionTable[] = {
 	// Room 4
 	{315, OPEN, &PelrockEngine::openPlug},
 	{316, PICKUP, &PelrockEngine::pickCables},
+	{312, OPEN, &PelrockEngine::openMuseumDoor},
 
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
@@ -99,6 +102,8 @@ const CombinationEntry combinationTable[] = {
 	{4, 294, &PelrockEngine::useBrickWithWindow},       // Use Brick with Window (Room 3)
 	{4, 295, &PelrockEngine::useBrickWithShopWindow},
 	{6, 315, &PelrockEngine::useCordWithPlug},
+	{1, 53, &PelrockEngine::giveIdToGuard},    // Give ID to Guard
+	{5, 53, &PelrockEngine::giveMoneyToGuard}, // Give Money to Guard
 	// End marker
 	{WILDCARD, WILDCARD, nullptr}};
 
@@ -167,6 +172,11 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	if (actionTrigger == 328) {
 		debug("Disabling root %d in room %d", rootIndex, room);
 		_state->setRootDisabledState(room, rootIndex, true);
+	} else if (actionTrigger == 258) {
+		_state->setFlag(FLAG_GUARDIA_PIDECOSAS, true);
+		_state->setRootDisabledState(4, 1, true);
+	} else {
+		debug("Got actionTrigger %d in dialogActionTrigger, but no handler defined", actionTrigger);
 	}
 }
 
@@ -213,6 +223,10 @@ void PelrockEngine::pickYellowBook(HotSpot *hotspot) {
 
 void PelrockEngine::pickUpBrick(HotSpot *hotspot) {
 	_room->addSticker(133);
+}
+
+void PelrockEngine::openIceCreamShopDoor(HotSpot *hotspot) {
+	_dialog->say(_res->_ingameTexts[HELADERIA_CERRADA]);
 }
 
 void PelrockEngine::closeRoomDrawer(HotSpot *hotspot) {
@@ -469,6 +483,52 @@ void PelrockEngine::pickCables(HotSpot *hotspot) {
 
 	_dialog->say(_res->_ingameTexts[RELOJ_HA_CAMBIADO]);
 	_state->setRootDisabledState(4, 0, true);
+}
+
+void PelrockEngine::giveIdToGuard(int inventoryObject, HotSpot *hotspot) {
+	if (!_state->getFlag(FLAG_GUARDIA_PIDECOSAS)) {
+		_dialog->say(_res->_ingameTexts[CUANDOMELOPIDA]);
+		return;
+	}
+
+	if (!_state->getFlag(FLAG_GUARDIA_DNI_ENTREGADO)) {
+		_state->setFlag(FLAG_GUARDIA_DNI_ENTREGADO, true);
+		_dialog->say(_res->_ingameTexts[DEACUERDO]);
+		return;
+	}
+	if (_state->getFlag(FLAG_SOBORNO_PORTERO) && _state->getFlag(FLAG_GUARDIA_DNI_ENTREGADO)) {
+		_state->setRootDisabledState(4, 2, true);
+		return;
+	}
+}
+
+void PelrockEngine::giveMoneyToGuard(int inventoryObject, HotSpot *hotspot) {
+	if (!_state->getFlag(FLAG_GUARDIA_PIDECOSAS)) {
+		_dialog->say(_res->_ingameTexts[PRETENDEUSTED_SOBORNARME]);
+		return;
+	} else if (!_state->getFlag(FLAG_SOBORNO_PORTERO)) {
+		_state->setFlag(FLAG_SOBORNO_PORTERO, true);
+		_dialog->say(_res->_ingameTexts[MUYBIEN]);
+		_state->removeInventoryItem(5); // Remove 1000 pesetas bill
+		return;
+	}
+	if (_state->getFlag(FLAG_SOBORNO_PORTERO) && _state->getFlag(FLAG_GUARDIA_DNI_ENTREGADO)) {
+		_state->setRootDisabledState(4, 2, true);
+		return;
+	}
+}
+
+void PelrockEngine::openMuseumDoor(HotSpot *hotspot) {
+	if (!_state->getFlag(FLAG_GUARDIA_PIDECOSAS)) {
+		_dialog->say(_res->_ingameTexts[ALTO]);
+		return;
+	} else if (!_state->getFlag(FLAG_GUARDIA_DNI_ENTREGADO)) {
+		_dialog->say(_res->_ingameTexts[NECESITODNI]);
+	} else if (!_state->getFlag(FLAG_SOBORNO_PORTERO)) {
+		_dialog->say(_res->_ingameTexts[QUE_RECIBO_ACAMBIO]);
+	} else {
+		openDoor(hotspot, 1, 22, FEMININE, false);
+	}
 }
 
 void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
