@@ -121,8 +121,7 @@ public:
 	const Common::U32String getSelectedString() const	{ return stripGUIformatting(_list[_selectedItem]); }
 
 	/// Multi-selection support
-	const Common::Array<bool> &getSelectedItemsBool() const { return _selectedItems; }
-	Common::Array<int> getSelectedItems() const;  // Returns indices of selected items
+	const Common::Array<bool> &getSelectedItems() const { return _selectedItems; }
 	bool isItemSelected(int item) const;
 	void addSelectedItem(int item);
 	void removeSelectedItem(int item);

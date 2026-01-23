@@ -238,14 +238,13 @@ public:
 	// Multi-selection methods
 	void setMultiSelectEnabled(bool enabled) { _multiSelectEnabled = enabled; }
 	bool isMultiSelectEnabled() const { return _multiSelectEnabled; }
-	void addSelectedEntry(int entryID);
-
-public:
-	Common::Array<int> _selectedEntries; // Stores indices of selected entries
-	int _lastSelectedEntryID = -1;       // Track last selected entry for Shift+Click
-	bool _ctrlPressed = false;           // Track if Ctrl key is pressed
-	bool _shiftPressed = false;          // Track if Shift key is pressed
-	const Common::Array<int> &getSelectedEntries() const { return _selectedEntries; }
+	Common::Array<bool> _selectedItems;	/// Multiple selected items (bool array)
+	int _lastSelectedEntryID = -1;		/// Used for Shift+Click range selection
+	bool isItemSelected(int entryID) const;
+	void addSelectedItem(int entryID);
+	void removeSelectedItem(int entryID);
+	void clearSelection();
+	const Common::Array<bool> &getSelectedItems() const { return _selectedItems; }
 };
 
 /* GridItemWidget */

@@ -1031,8 +1031,17 @@ public:
 protected:
 	void updateSelectionAfterRemoval() override {
 		if (_grid) {
-			_grid->_selectedEntries.clear();
-			_grid->_selectedEntries.push_back(_grid->_lastSelectedEntryID);
+			_grid->clearSelection();
+			const Common::Array<bool> &selectedItems = _grid->getSelectedItems();
+			
+			// Select at the same index as before
+			if (_grid->_lastSelectedEntryID < (int)selectedItems.size()) {
+				_grid->addSelectedItem(_grid->_lastSelectedEntryID);
+			} else {
+				// If out of bounds, select the last item
+				_grid->addSelectedItem(selectedItems.size() - 1);
+				_grid->_lastSelectedEntryID = selectedItems.size() - 1;
+			}
 		}
 	}
 	void updateListing(int selPos = -1) override;
@@ -1380,7 +1389,7 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kListItemRemovalRequestCmd: {
 		// Use multi-removal logic for all removals (handles both single and multiple selections)
-		const Common::Array<bool> &selectedItemsBool = _list->getSelectedItemsBool();
+		const Common::Array<bool> &selectedItemsBool = _list->getSelectedItems();
 		// Ensure at least one item is selected before proceeding
 		for (const auto &it : selectedItemsBool) {
 			if (it) {
@@ -1422,7 +1431,7 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 	case kRemoveGameCmd: {
 		// Handle removal using multi-selection logic (works for single and multiple selections)
-		const Common::Array<bool> &selectedItemsBool = _list->getSelectedItemsBool();
+		const Common::Array<bool> &selectedItemsBool = _list->getSelectedItems();
 		// Ensure at least one item is selected before proceeding
 		for (const auto &it : selectedItemsBool) {
 			if (it) {
@@ -1441,11 +1450,9 @@ void LauncherSimple::removeListGames(const Common::Array<bool> &selectedItemsBoo
 	// Build confirmation message with list of games to remove
 	Common::U32String confirmMsg = _("Do you really want to remove the following game configurations?\n\n");
 
-	// Convert bool array to indices and build message
-	Common::Array<int> dataIndicesToRemove;
+	// Build message from bool array
 	for (int i = 0; i < (int)selectedItemsBool.size(); ++i) {
 		if (selectedItemsBool[i]) {
-			dataIndicesToRemove.push_back(i);
 			// Get the game title from the list
 			confirmMsg += _list->getList()[i];
 			confirmMsg += Common::U32String("\n");
@@ -1455,7 +1462,7 @@ void LauncherSimple::removeListGames(const Common::Array<bool> &selectedItemsBoo
 	MessageDialog alert(confirmMsg, _("Yes"), _("No"));
 
 	if (alert.runModal() == GUI::kMessageOK) {
-		performGameRemoval(dataIndicesToRemove, false);
+		performGameRemoval(selectedItemsBool, false);
 	}
 }
 
@@ -1467,7 +1474,7 @@ void LauncherSimple::updateSelectionAfterRemoval() {
 
 void LauncherSimple::updateButtons() {
 	int item = _list->getSelected();
-	const Common::Array<bool> &selectedItemsBool = _list->getSelectedItemsBool();
+	const Common::Array<bool> &selectedItemsBool = _list->getSelectedItems();
 	// Count selected items
 	int selectedCount = 0;
 	for (int i = 0; i < (int)selectedItemsBool.size(); ++i) {
@@ -1649,8 +1656,14 @@ void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		break;
 	case kRemoveGameCmd:
 		// Handle removal using multi-selection logic (works for single and multiple selections)
-		if (_grid && !_grid->getSelectedEntries().empty()) {
-			removeGridGames();
+		if (_grid) {
+			const Common::Array<bool> &selectedItems = _grid->getSelectedItems();
+			for (const auto &item : selectedItems) {
+				if (item) {
+					removeGridGames();
+					break;
+				}
+			}
 		}
 		break;
 	case kItemClicked:
@@ -1753,8 +1766,17 @@ int LauncherGrid::getItemPos(int item) {
 void LauncherGrid::updateButtons() {
     LauncherDialog::updateButtons();
     // Enable remove button if at least one entry is selected
-    bool hasSelection = _grid && !_grid->getSelectedEntries().empty();
-    _removeButton->setEnabled(hasSelection);
+    if (_grid) {
+        const Common::Array<bool> &selectedItems = _grid->getSelectedItems();
+        bool hasSelection = false;
+        for (const auto &item : selectedItems) {
+            if (item) {
+                hasSelection = true;
+                break;
+            }
+        }
+        _removeButton->setEnabled(hasSelection);
+    }
 }
 
 void LauncherGrid::selectTarget(const Common::String &target) {
@@ -1800,57 +1822,64 @@ void LauncherGrid::build() {
 void LauncherGrid::removeGridGames() {
 	if (!_grid)
 		return;
-	const Common::Array<int> &selectedEntries = _grid->getSelectedEntries();
-	if (selectedEntries.empty())
-		return;
-
+	const Common::Array<bool> &selectedItems = _grid->getSelectedItems();
+	
+	// Build the confirmation message
 	Common::U32String message = _("Do you really want to remove the following game configurations?\n\n");
-
-	for (int entryID : selectedEntries) {
-		// entryID is the index in _domains and _domainTitles
-		if (entryID >= 0 && entryID < (int)_domains.size()) {
-			Common::String domainName = _domains[entryID];
-			Common::String gameTitle = (entryID < (int)_domainTitles.size()) ? _domainTitles[entryID] : domainName;
-			message += Common::U32String(gameTitle) + "\n";
+	for (int i = 0; i < (int)selectedItems.size(); ++i) {
+		if (selectedItems[i]) {
+			// i is the index in _domains and _domainTitles
+			if (i >= 0 && i < (int)_domains.size()) {
+				Common::String domainName = _domains[i];
+				Common::String gameTitle = (i < (int)_domainTitles.size()) ? _domainTitles[i] : domainName;
+				message += Common::U32String(gameTitle) + "\n";
+			}
 		}
 	}
 
 	MessageDialog alert(message, Common::U32String(_("Yes")), Common::U32String(_("No")));
 	if (alert.runModal() == GUI::kMessageOK) {
-		performGameRemoval(selectedEntries, true);
+		performGameRemoval(selectedItems, true);
 	}
 }
 
 #endif // !DISABLE_LAUNCHERDISPLAY_GRID
 
-void LauncherDialog::performGameRemoval(const Common::Array<int> &selectedItems, bool isGrid) {
+void LauncherDialog::performGameRemoval(const Common::Array<bool> &selectedItems, bool isGrid) {
 	if (selectedItems.empty())
 		return;
 
-	Common::Array<int> itemsToProcess = selectedItems;
-	// For list view only, sort in reverse to avoid index shifting
-	if (!isGrid) {
-		Common::sort(itemsToProcess.begin(), itemsToProcess.end(), Common::Greater<int>());
+	// Check if any items are selected
+	bool hasSelection = false;
+	for (const auto &item : selectedItems) {
+		if (item) {
+			hasSelection = true;
+			break;
+		}
 	}
+	if (!hasSelection)
+		return;
 
 	int selPos = -1;
 	Common::StringArray domainsToRemove;
-	for (const int &idx : itemsToProcess) {
-		if (idx >= 0 && idx < (int)_domains.size()) {
-			if (_groupBy != kGroupByNone && !isGrid) {
-				selPos = getItemPos(idx);
+
+	for (int idx = selectedItems.size() - 1; idx >= 0; --idx) {
+		if (selectedItems[idx]) {
+			if (idx >= 0 && idx < (int)_domains.size()) {
+				if (_groupBy != kGroupByNone && !isGrid) {
+					selPos = getItemPos(idx);
+				}
+				domainsToRemove.push_back(_domains[idx]);
 			}
-			domainsToRemove.push_back(_domains[idx]);
 		}
 	}
 
 	// Remove games and addons
 	removeGamesWithAddons(domainsToRemove);
 
+	updateListing(selPos);
 	// Update UI - each subclass handles its own selection update
 	updateSelectionAfterRemoval();
-	
-	updateListing(selPos);
 	updateButtons();
 	g_gui.scheduleTopDialogRedraw();
 }

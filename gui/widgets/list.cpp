@@ -254,17 +254,6 @@ void ListWidget::selectItemRange(int from, int to) {
 	markAsDirty();
 }
 
-Common::Array<int> ListWidget::getSelectedItems() const {
-	// Convert bool array to int array of selected indices
-	Common::Array<int> _selectedItemsIndices;
-	for (int i = 0; i < (int)_selectedItems.size(); ++i) {
-		if (_selectedItems[i]) {
-			_selectedItemsIndices.push_back(i);
-		}
-	}
-	return _selectedItemsIndices;
-}
-
 void ListWidget::setList(const Common::U32StringArray &list) {
 	if (_editMode && _caretVisible)
 		drawCaret(true);
