@@ -21,7 +21,6 @@
 
 #include "graphics/paletteman.h"
 
-#include "pelrock.h"
 #include "pelrock/actions.h"
 #include "pelrock/offsets.h"
 #include "pelrock/pelrock.h"
@@ -126,7 +125,7 @@ void PelrockEngine::closeDoor(HotSpot *hotspot, int exitIndex, int sticker, bool
 }
 
 void PelrockEngine::addInventoryItem(int item) {
-	if (_state->inventoryItems.size() == 0) {
+	if (_state->inventoryItems.empty()) {
 		_state->selectedInventoryItem = item;
 	}
 	_flashingIcon = item;
@@ -228,7 +227,7 @@ void PelrockEngine::useCardWithATM(int inventoryObject, HotSpot *hotspot) {
 		addInventoryItem(75);
 	} else {
 		int billCount = 0;
-		for (int i = 0; i < _state->inventoryItems.size(); i++) {
+		for (uint i = 0; i < _state->inventoryItems.size(); i++) {
 			if (_state->inventoryItems[i] == 5) {
 				billCount++;
 			}
@@ -445,7 +444,7 @@ void PelrockEngine::useCordWithPlug(int inventoryObject, HotSpot *hotspot) {
 }
 
 void PelrockEngine::pickCables(HotSpot *hotspot) {
-	if(_room->hasSticker(21)) {
+	if (_room->hasSticker(21)) {
 		_dialog->say(_res->_ingameTexts[QUELOSCOJA_SUPADRE]);
 		return;
 	}

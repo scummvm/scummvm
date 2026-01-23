@@ -23,7 +23,6 @@
 #include "pelrock/pelrock.h"
 #include "pelrock/room.h"
 #include "pelrock/util.h"
-#include "room.h"
 
 namespace Pelrock {
 
@@ -105,37 +104,31 @@ void RoomManager::onlyPersistSticker(byte room, int stickerId) {
 }
 
 void RoomManager::removeSticker(int stickerIndex) {
-	int index = -1;
-	if (index == -1) {
-		for (int i = 0; i < _roomStickers.size(); i++) {
-			if (_roomStickers[i].stickerIndex == stickerIndex) {
-				index = i;
-				_roomStickers.remove_at(index);
-				return;
-			}
+	// First check and remove from room stickers
+	for (uint i = 0; i < _roomStickers.size(); i++) {
+		if (_roomStickers[i].stickerIndex == stickerIndex) {
+			_roomStickers.remove_at(i);
+			return;
 		}
 	}
 
-	for (int i = 0; i < g_engine->_state->stickersPerRoom[_currentRoomNumber].size(); i++) {
+	// Then check and remove from persisted stickers
+	for (uint i = 0; i < g_engine->_state->stickersPerRoom[_currentRoomNumber].size(); i++) {
 		if (g_engine->_state->stickersPerRoom[_currentRoomNumber][i].stickerIndex == stickerIndex) {
-			index = i;
-			g_engine->_state->stickersPerRoom[_currentRoomNumber].remove_at(index);
-			break;
+			g_engine->_state->stickersPerRoom[_currentRoomNumber].remove_at(i);
+			return;
 		}
 	}
-
-	if (index != -1 && index < g_engine->_state->stickersPerRoom[_currentRoomNumber].size())
-		g_engine->_state->stickersPerRoom[_currentRoomNumber].remove_at(index);
 }
 
 bool RoomManager::hasSticker(int index) {
-	for (int i = 0; i < g_engine->_state->stickersPerRoom[_currentRoomNumber].size(); i++) {
+	for (uint i = 0; i < g_engine->_state->stickersPerRoom[_currentRoomNumber].size(); i++) {
 		if (g_engine->_state->stickersPerRoom[_currentRoomNumber][i].stickerIndex == index) {
 			return true;
 		}
 	}
 
-	for (int i = 0; i < _roomStickers.size(); i++) {
+	for (uint i = 0; i < _roomStickers.size(); i++) {
 		if (_roomStickers[i].stickerIndex == index) {
 			return true;
 		}
@@ -204,7 +197,7 @@ void RoomManager::addWalkbox(WalkBox walkbox) {
 }
 
 Sprite *RoomManager::findSpriteByIndex(byte index) {
-	for (int i = 0; i < _currentRoomAnims.size(); i++) {
+	for (uint i = 0; i < _currentRoomAnims.size(); i++) {
 		if (_currentRoomAnims[i].index == index) {
 			return &_currentRoomAnims[i];
 		}
@@ -213,7 +206,7 @@ Sprite *RoomManager::findSpriteByIndex(byte index) {
 }
 
 HotSpot *RoomManager::findHotspotByIndex(byte index) {
-	for (int i = 0; i < _currentRoomHotspots.size(); i++) {
+	for (uint i = 0; i < _currentRoomHotspots.size(); i++) {
 		if (!_currentRoomHotspots[i].isSprite && _currentRoomHotspots[i].innerIndex == index) {
 			debug("Found hotspot %d at index %d, extra = %d", index, i, _currentRoomHotspots[i].extra);
 			return &_currentRoomHotspots[i];
@@ -223,7 +216,7 @@ HotSpot *RoomManager::findHotspotByIndex(byte index) {
 }
 
 HotSpot *RoomManager::findHotspotByExtra(uint16 extra) {
-	for (int i = 0; i < _currentRoomHotspots.size(); i++) {
+	for (uint i = 0; i < _currentRoomHotspots.size(); i++) {
 		if (_currentRoomHotspots[i].extra == extra) {
 			return &_currentRoomHotspots[i];
 		}

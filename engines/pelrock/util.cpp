@@ -45,28 +45,28 @@ void drawRect(Graphics::Surface *surface, int x, int y, int w, int h, byte color
 }
 
 void drawRect(byte *screenBuffer, int x, int y, int w, int h, byte color) {
-	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(w, h, Graphics::PixelFormat::createFormatCLUT8());
-	drawRect(surface, 0, 0, w, h, color);
+	Graphics::Surface surface;
+	surface.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
+	drawRect(&surface, 0, 0, w, h, color);
 
 	for (int py = 0; py < h; py++) {
 		for (int px = 0; px < w; px++) {
 			int destIdx = (y + py) * 640 + (x + px);
-			int srcIdx = py * w + px;
-			int color = *((byte *)surface->getBasePtr(px, py));
-			if (color != 0)
-				screenBuffer[destIdx] = color;
+			int pixelColor = *((byte *)surface.getBasePtr(px, py));
+			if (pixelColor != 0)
+				screenBuffer[destIdx] = pixelColor;
 		}
 	}
+	surface.free();
 }
 
 void drawText(byte *screenBuffer, Graphics::Font *font, Common::String text, int x, int y, int w, byte color, Graphics::TextAlign align) {
 	Common::Rect rect = font->getBoundingBox(text.c_str());
-	Graphics::Surface *surface = new Graphics::Surface();
+	Graphics::Surface surface;
 	int bboxW = rect.width();
 	int bboxH = rect.height();
 
-	surface->create(bboxW, bboxH, Graphics::PixelFormat::createFormatCLUT8());
+	surface.create(bboxW, bboxH, Graphics::PixelFormat::createFormatCLUT8());
 
 	if (x + bboxW > 640) {
 		x = 640 - bboxW - 2;
@@ -82,17 +82,17 @@ void drawText(byte *screenBuffer, Graphics::Font *font, Common::String text, int
 	}
 
 	// Draw main text on top
-	font->drawString(surface, text.c_str(), 0, 0, bboxW, color, align);
+	font->drawString(&surface, text.c_str(), 0, 0, bboxW, color, align);
 	// drawRect(surface, 0, 0, bboxW - 1, bboxH - 1, color);
 	for (int py = 0; py < bboxH; py++) {
 		for (int px = 0; px < bboxW; px++) {
 			int destIdx = (y + py) * 640 + (x + px);
-			int srcIdx = py * bboxW + px;
-			int color = *((byte *)surface->getBasePtr(px, py));
-			if (color != 0)
-				screenBuffer[destIdx] = color;
+			int pixelColor = *((byte *)surface.getBasePtr(px, py));
+			if (pixelColor != 0)
+				screenBuffer[destIdx] = pixelColor;
 		}
 	}
+	surface.free();
 }
 
 void drawText(Graphics::Font *font, Common::String text, int x, int y, int w, byte color) {

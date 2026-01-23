@@ -121,12 +121,10 @@ Common::Error PelrockEngine::run() {
 			_state->stateGame = GAME;
 		} else if (_state->stateGame == GAME) {
 			gameLoop();
-		}
-		else if (_state->stateGame == INTRO) {
+		} else if (_state->stateGame == INTRO) {
 			_videoManager->playIntro();
 			_state->stateGame = GAME;
-		}
-		else if (_state->stateGame == COMPUTER) {
+		} else if (_state->stateGame == COMPUTER) {
 			computerLoop();
 			_state->stateGame = GAME;
 		}
@@ -240,7 +238,7 @@ bool PelrockEngine::renderScene(int overlayMode) {
 		updateAnimations();
 		// Some stickers need to be placed AFTER sprites, hardcoded in the original
 		if (_room->_currentRoomNumber == 3) {
-			for (int i = 0; i < _state->stickersPerRoom[3].size(); i++) {
+			for (uint i = 0; i < _state->stickersPerRoom[3].size(); i++) {
 				if (_state->stickersPerRoom[3][i].stickerIndex == 14) {
 					placeSticker(_state->stickersPerRoom[3][i]);
 					break;
@@ -354,7 +352,7 @@ void PelrockEngine::updateAnimations() {
 
 	sortAnimsByZOrder(_room->_currentRoomAnims);
 	// First pass: sprites behind Alfred (y <= alfredY)
-	for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
+	for (uint i = 0; i < _room->_currentRoomAnims.size(); i++) {
 		if (_room->_currentRoomAnims[i].zOrder > 10 || _room->_currentRoomAnims[i].zOrder < 0) {
 			drawNextFrame(&_room->_currentRoomAnims[i]);
 		}
@@ -364,7 +362,7 @@ void PelrockEngine::updateAnimations() {
 	chooseAlfredStateAndDraw();
 
 	// Second pass: sprites in front of Alfred (y > alfredY)
-	for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
+	for (uint i = 0; i < _room->_currentRoomAnims.size(); i++) {
 		if (_room->_currentRoomAnims[i].zOrder <= 10 && _room->_currentRoomAnims[i].zOrder >= 0) {
 			drawNextFrame(&_room->_currentRoomAnims[i]);
 		}
@@ -399,7 +397,7 @@ void PelrockEngine::paintDebugLayer() {
 	bool showWalkboxes = false;
 
 	if (showWalkboxes) {
-		for (int i = 0; i < _room->_currentRoomWalkboxes.size(); i++) {
+		for (uint i = 0; i < _room->_currentRoomWalkboxes.size(); i++) {
 			WalkBox box = _room->_currentRoomWalkboxes[i];
 			drawRect(_screen, box.x, box.y, box.w, box.h, 150 + i);
 			// _smallFont->drawString(_screen, Common::String::format("%d", i), box.x + 2, box.y + 2, 640, 14);
@@ -408,7 +406,7 @@ void PelrockEngine::paintDebugLayer() {
 
 	bool showSprites = true;
 	if (showSprites) {
-		for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
+		for (uint i = 0; i < _room->_currentRoomAnims.size(); i++) {
 			Sprite sprite = _room->_currentRoomAnims[i];
 			drawRect(_screen, sprite.x, sprite.y, sprite.animData->w, sprite.animData->h, 14);
 			_smallFont->drawString(_screen, Common::String::format("S %d", sprite.index), sprite.x + 2, sprite.y, 640, 14);
@@ -417,7 +415,7 @@ void PelrockEngine::paintDebugLayer() {
 
 	bool showHotspots = true;
 	if (showHotspots) {
-		for (int i = 0; i < _room->_currentRoomHotspots.size(); i++) {
+		for (uint i = 0; i < _room->_currentRoomHotspots.size(); i++) {
 			HotSpot hotspot = _room->_currentRoomHotspots[i];
 			if (!hotspot.isEnabled || hotspot.isSprite)
 				continue;
@@ -429,7 +427,7 @@ void PelrockEngine::paintDebugLayer() {
 
 	bool showExits = true;
 	if (showExits) {
-		for (int i = 0; i < _room->_currentRoomExits.size(); i++) {
+		for (uint i = 0; i < _room->_currentRoomExits.size(); i++) {
 			Exit exit = _room->_currentRoomExits[i];
 			drawRect(_screen, exit.x, exit.y, exit.w, exit.h, 200 + i);
 			_smallFont->drawString(_screen, Common::String::format("Exit %d -> Room %d", i, exit.targetRoom), exit.x + 2, exit.y + 2, 640, 14);
@@ -450,7 +448,7 @@ void PelrockEngine::paintDebugLayer() {
 
 void PelrockEngine::placeStickers() {
 	// also place temporary stickers
-	for (int i = 0; i < _room->_roomStickers.size(); i++) {
+	for (uint i = 0; i < _room->_roomStickers.size(); i++) {
 		Sticker sticker = _room->_roomStickers[i];
 		placeSticker(sticker);
 	}
@@ -539,6 +537,7 @@ void PelrockEngine::animateRotatePalette(PaletteAnim *anim) {
 			_room->_roomPalette[(anim->startIndex + i) * 3 + 1] = paletteValues[srcIndex * 3 + 1];
 			_room->_roomPalette[(anim->startIndex + i) * 3 + 2] = paletteValues[srcIndex * 3 + 2];
 		}
+		delete[] paletteValues;
 
 		g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
 
@@ -571,7 +570,7 @@ void PelrockEngine::doAction(VerbIcon action, HotSpot *hotspot) {
 
 void PelrockEngine::talkTo(HotSpot *hotspot) {
 	Sprite *animSet = nullptr;
-	for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
+	for (uint i = 0; i < _room->_currentRoomAnims.size(); i++) {
 		if (_room->_currentRoomAnims[i].index == hotspot->index) {
 			animSet = &_room->_currentRoomAnims[i];
 			animSet->isTalking = true;
@@ -1120,7 +1119,7 @@ int PelrockEngine::isHotspotUnder(int x, int y) {
 }
 
 Exit *PelrockEngine::isExitUnder(int x, int y) {
-	for (int i = 0; i < _room->_currentRoomExits.size(); i++) {
+	for (uint i = 0; i < _room->_currentRoomExits.size(); i++) {
 		Exit exit = _room->_currentRoomExits[i];
 		if (x >= exit.x && x <= (exit.x + exit.w) &&
 			y >= exit.y && y <= (exit.y + exit.h) && exit.isEnabled) {
@@ -1134,6 +1133,9 @@ Exit *PelrockEngine::isExitUnder(int x, int y) {
  * Checks if the given position is actually frame data or transparent pixel
  */
 bool PelrockEngine::isSpriteUnder(Sprite *sprite, int x, int y) {
+	if (sprite == nullptr) {
+		return false;
+	}
 	Anim &animData = sprite->animData[sprite->curAnimIndex];
 	int curFrame = animData.curFrame;
 
@@ -1154,7 +1156,7 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 
 	VerbIcon icon = isActionUnder(_events->_mouseX, _events->_mouseY);
 	bool shouldBlink = _chrono->getFrameCount() % kIconBlinkPeriod == 0;
-	for (int i = 0; i < actions.size(); i++) {
+	for (uint i = 0; i < actions.size(); i++) {
 		if (icon == actions[i] && shouldBlink) {
 			continue;
 		}

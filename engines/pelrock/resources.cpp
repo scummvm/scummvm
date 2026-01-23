@@ -22,9 +22,8 @@
 #include "pelrock/resources.h"
 #include "pelrock/offsets.h"
 #include "pelrock/pelrock.h"
+#include "pelrock/room.h"
 #include "pelrock/util.h"
-#include "resources.h"
-#include "room.h"
 
 namespace Pelrock {
 
@@ -226,20 +225,19 @@ void ResourceManager::loadAlfredSpecialAnim(int numAnim, bool reverse) {
 	}
 
 	alfred7.seek(offset.offset, SEEK_SET);
-	if(_currentSpecialAnim)
+	if (_currentSpecialAnim)
 		delete _currentSpecialAnim;
 	_currentSpecialAnim = new AlfredSpecialAnim(offset.numFrames, offset.w, offset.h, offset.numBudas, offset.offset, offset.loops);
 	_currentSpecialAnim->animData = new byte[offset.numFrames * offset.w * offset.h];
-	if(offset.numBudas > 0) {
+	if (offset.numBudas > 0) {
 		mergeRleBlocks(&alfred7, offset.offset, offset.numBudas, _currentSpecialAnim->animData);
-	}
-	else {
+	} else {
 		alfred7.read(_currentSpecialAnim->animData, offset.numFrames * offset.w * offset.h);
 	}
-	if(reverse) {
+	if  (reverse) {
 		// reverse frames for testing
 		byte *reversedData = new byte[offset.numFrames * offset.w * offset.h];
-		for(int i = 0; i < offset.numFrames; i++) {
+		for (int i = 0; i < offset.numFrames; i++) {
 			extractSingleFrame(_currentSpecialAnim->animData,
 							   &reversedData[i * offset.w * offset.h],
 							   offset.numFrames - 1 - i,

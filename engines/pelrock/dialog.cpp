@@ -20,7 +20,6 @@
  */
 
 #include "pelrock/dialog.h"
-#include "dialog.h"
 #include "pelrock/pelrock.h"
 #include "pelrock/util.h"
 
@@ -113,7 +112,7 @@ void DialogManager::displayChoices(Common::Array<ChoiceOption> *choices, byte *c
 
 	int overlayHeight = choices->size() * kChoiceHeight + 2;
 	Common::Point overlayPos = _graphics->showOverlay(overlayHeight, compositeBuffer);
-	for (int i = 0; i < choices->size(); i++) {
+	for (uint i = 0; i < choices->size(); i++) {
 		ChoiceOption choice = (*choices)[i];
 		int choicePadding = 32;
 		int width = g_engine->_doubleSmallFont->getStringWidth(choice.text);

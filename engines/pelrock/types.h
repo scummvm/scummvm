@@ -508,7 +508,7 @@ struct GameStateData {
 	}
 
 	void removeInventoryItem(int id) {
-		for (int i = 0; i < inventoryItems.size(); i++) {
+		for (uint i = 0; i < inventoryItems.size(); i++) {
 			if (inventoryItems[i] == id) {
 				inventoryItems.remove_at(i);
 				return;
@@ -517,7 +517,7 @@ struct GameStateData {
 	}
 
 	bool hasInventoryItem(int id) const {
-		for (int i = 0; i < inventoryItems.size(); i++) {
+		for (uint i = 0; i < inventoryItems.size(); i++) {
 			if (inventoryItems[i] == id) {
 				return true;
 			}

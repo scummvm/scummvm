@@ -77,7 +77,7 @@ public:
 	void changeHotspot(byte room, HotSpot hotspot);
 	void disableSprite(byte roomNumber, int spriteIndex, bool persist = true);
 	void enableSprite(int spriteIndex, int zOrder, bool persist = true);
-	void enableSprite(byte roomNumber,int spriteIndex, int zOrder, bool persist = true);
+	void enableSprite(byte roomNumber, int spriteIndex, int zOrder, bool persist = true);
 	/**
 	 * Utility function to enable or disable a hotspot, with an option to persist the change.
 	 */
@@ -92,9 +92,9 @@ public:
 	void applyDisabledChoices(byte roomNumber, byte *conversationData, size_t conversationDataSize);
 	void applyDisabledChoice(ResetEntry entry, byte *conversationData, size_t conversationDataSize);
 	void addDisabledChoice(ChoiceOption choice);
-	bool isPickableByExtra(uint16 extra)  {
+	bool isPickableByExtra(uint16 extra) {
 		int size = sizeof(unpickableHotspotExtras) / sizeof(unpickableHotspotExtras[0]);
-		for(int i = 0; i < size; i++) {
+		for (int i = 0; i < size; i++) {
 			if (extra == unpickableHotspotExtras[i])
 				return false;
 		}
@@ -106,7 +106,7 @@ public:
 	PaletteAnim *getPaletteAnimForRoom(int roomNumber);
 
 	Common::String getRoomName(int roomNumber) {
-		if (roomNumber >= 0 && roomNumber < _roomNames.size()) {
+		if (roomNumber >= 0 && (uint)roomNumber < _roomNames.size()) {
 			return _roomNames[roomNumber];
 		}
 		return "Unknown Room";
