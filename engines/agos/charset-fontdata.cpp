@@ -3116,53 +3116,54 @@ void AGOSEngine_PN::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr
 
 void AGOSEngine_Elvira1::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 	if (getPlatform() == Common::kPlatformAmiga && (getFeatures() & GF_DEMO)) {
-			const byte *src;
-	byte color, *dst;
-	uint dstPitch, h, w, i;
+		const byte *src;
+		byte color, *dst;
+		uint dstPitch, h, w, i;
 
-	_videoLockOut |= 0x8000;
+		_videoLockOut |= 0x8000;
 
-	Graphics::Surface *screen = getBackendSurface();
+		Graphics::Surface *screen = getBackendSurface();
 
-	dst = (byte *)screen->getPixels();
-	dstPitch = screen->pitch;
-	h = 8;
-	w = 6;
+		dst = (byte *)screen->getPixels();
+		dstPitch = screen->pitch;
+		h = 8;
+		w = 6;
 
-	if (chr < 32 || (chr - 32) > 98) {
-		_videoLockOut &= ~0x8000;
-		return;
-	}
+		if (chr < 32 || (chr - 32) > 98) {
+			_videoLockOut &= ~0x8000;
+			return;
+		}
 
-	src = english_pnFont + (chr - 32) * 8;
+		src = english_pnFont + (chr - 32) * 8;
 
-	byte pnTmp[8];
-	pnSqueezeGlyph8Rows(src, pnTmp);
-	src = pnTmp;
+		byte pnTmp[8];
+		pnSqueezeGlyph8Rows(src, pnTmp);
+		src = pnTmp;
 
-	dst += y * dstPitch + x + window->textColumnOffset;
+		dst += y * dstPitch + x + window->textColumnOffset;
 
-	color = window->textColor;
+		color = window->textColor;
 
-	do {
-		int8 b = *src++;
-		i = 0;
 		do {
-			if (b < 0) {
-				dst[i] = color;
-			}
+			int8 b = *src++;
+			i = 0;
+			do {
+				if (b < 0) {
+					dst[i] = color;
+				}
 
-			b <<= 1;
-		} while (++i != w);
-		dst += dstPitch;
-	} while (--h);
+				b <<= 1;
+			} while (++i != w);
+			dst += dstPitch;
+		} while (--h);
 
-	Common::Rect dirtyRect(x + window->textColumnOffset, y, x + window->textColumnOffset + 6, y + 8);
-	updateBackendSurface(&dirtyRect);
+		Common::Rect dirtyRect(x + window->textColumnOffset, y, x + window->textColumnOffset + 6, y + 8);
+		updateBackendSurface(&dirtyRect);
 
-	_videoLockOut &= ~0x8000;
-		return;
-	}
+		_videoLockOut &= ~0x8000;
+			return;
+		}
+		
 	if (_language != Common::JA_JPN || _forceAscii) {
 		AGOSEngine::windowDrawChar(window, x, y, chr);
 		return;
