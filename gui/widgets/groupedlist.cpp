@@ -395,7 +395,7 @@ void GroupedListWidget::drawWidget() {
 		int mapped = _listIndex[pos];
 		bool isRealItem = (mapped >= 0);
 		if (isRealItem) {
-			if (_selectedItem == pos || isItemSelected(pos))
+			if (isItemSelected(pos))
 				inverted = _inversion;
 		}
 

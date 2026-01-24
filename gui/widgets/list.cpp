@@ -334,9 +334,6 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 			// Ctrl+Click: Add/remove from selection
 			if (isItemSelected(newSelectedItem)) {
 				markSelectedItem(newSelectedItem, false);
-				// If the primary selection is the same item, clear it to avoid highlight
-				sendCommand(kListSelectionChangedCmd, newSelectedItem);
-				markAsDirty();
 			} else {
 				markSelectedItem(newSelectedItem, true);
 				_selectedItem = newSelectedItem;
@@ -667,7 +664,7 @@ void ListWidget::drawWidget() {
 		ThemeEngine::TextInversionState inverted = ThemeEngine::kTextInversionNone;
 
 		// Draw the selected item inverted, on a highlighted background.
-		if (_selectedItem == pos || isItemSelected(pos))
+		if (isItemSelected(pos))
 			inverted = _inversion;
 
 		// Get state for drawing the item text
