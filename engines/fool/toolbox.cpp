@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/events.h"
 #include "common/system.h"
 
 #include "fool/fool.h"
@@ -52,6 +53,8 @@ void Toolbox::_pumpEvents() {
 			newRecord.where = Common::Point(event.mouse.x, event.mouse.y);
 			_events.push(newRecord);
 			break;
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
 		default:
 			break;
 		}

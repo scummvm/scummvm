@@ -132,17 +132,6 @@ enum ZBasicTextFace {
 	kFaceExtended = 64
 };
 
-enum ZBasicTextMode {
-	kModeSourceCOPY = 0,
-	kModeSourceOR = 1,
-	kModeSourceXOR = 2,
-	kModeSourceBIC = 3,
-	kModeNOTSourceCOPY = 4,
-	kModeNOTSourceOR = 5,
-	kModeNOTSourceXOR = 6,
-	kModeNOTSourceBIC = 7
-};
-
 enum ZBasicDatumType {
 	kDatumNULL = 0,
 	kDatumINT = 1,
@@ -260,7 +249,7 @@ public:
 	int16 readInt();
 	Common::U32String readStr();
 	int16 rndInt(int16 max);
-	void text(int16 font, int16 size, int16 face, ZBasicTextMode mode);
+	void text(int16 font, int16 size, int16 face, SourceMode mode);
 	void window(int16 windowNumber, const Common::String &title, int16 x1, int16 y1, int16 x2, int16 y2, ZBasicWindowType type);
 
 	const Common::U32String &str(size_t index);

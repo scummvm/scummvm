@@ -36,8 +36,13 @@
 
 namespace Fool {
 
+struct Region {
+	uint16 rgnSize;
+	Common::Rect rgnBBox;
+};
+
 typedef Common::SharedPtr<Common::Array<byte>> Handle;
-typedef Handle RgnHandle;
+typedef Common::SharedPtr<Region> RgnHandle;
 typedef Common::SharedPtr<Graphics::ManagedSurface> PicHandle;
 typedef Common::SharedPtr<Graphics::ManagedSurface> BitMap;
 typedef Handle PolyHandle;
@@ -78,7 +83,7 @@ struct RGBColor {
 	uint16 blue;
 };
 
-enum EventCode {
+enum EventCode : uint16 {
 	kNullEvent = 0,
 	kMouseDown = 1,
 	kMouseUp = 2,
@@ -94,6 +99,28 @@ enum EventCode {
 	kApp2Evt = 13,
 	kApp3Evt = 14,
 	kApp4Evt = 15
+};
+
+enum SourceMode : uint16 {
+	kSrcCopy = 0,
+	kSrcOr = 1,
+	kSrcXor = 2,
+	kSrcBic = 3,
+	kNotSrcCopy = 4,
+	kNotSrcOr = 5,
+	kNotSrcXor = 6,
+	kNotSrcBic = 7
+};
+
+enum PatternMode : uint16 {
+	kPatCopy = 8,
+	kPatOr = 9,
+	kPatXor = 10,
+	kPatBic = 11,
+	kNotPatCopy = 12,
+	kNotPatOr = 13,
+	kNotPatXor = 14,
+	kNotPatBic = 15
 };
 
 struct EventRecord {
@@ -114,29 +141,29 @@ enum WindowDefinition {
 };
 
 struct GrafPort {
-	uint16 device;
+	uint16 device = 0;
 	BitMap portBits;
 	Common::Rect portRect;
 	RgnHandle visRgn;
 	RgnHandle clipRgn;
-	Pattern bkPat;
-	Pattern fillPat;
-	Common::Point pnLoc;
-	Common::Point pnSize;
-	uint16 pnMode;
-	Pattern pnPat;
-	uint16 pnVis;
-	uint16 txFont;
+	Pattern bkPat = { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xf } };
+	Pattern fillPat = { { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } };
+	Common::Point pnLoc = {0, 0};
+	Common::Point pnSize = {1, 1};
+	PatternMode pnMode = kPatCopy;
+	Pattern pnPat = { { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } };
+	uint16 pnVis = 0;
+	uint16 txFont = 0;
 	uint16 txFace;
-	uint16 txMode;
-	uint16 txSize;
-	uint32 spExtra;
+	SourceMode txMode = kSrcOr;
+	uint16 txSize = 0;
+	uint32 spExtra = 0;
 	uint32 fgColor;
 	uint32 bkColor;
-	uint16 colrBit;
-	uint16 patStretch;
-	Handle picSave;
-	Handle rgnSave;
+	uint16 colrBit = 0;
+	uint16 patStretch = 0;
+	PicHandle picSave;
+	RgnHandle rgnSave;
 	Handle polySave;
 
 };
@@ -310,7 +337,7 @@ public:
 	// just pass NIL for the maskRgn parameter. The dstRect and maskRgn coordinates are in terms of
 	// the dstBits.bounds coordinate system, and the srcRect coordinates are in terms of the
 	// srcBits.bounds coordinates.
-	void CopyBits(const BitMap &srcBits, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, uint16 mode, RgnHandle maskRgn);
+	void CopyBits(const BitMap &srcBits, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, SourceMode mode, RgnHandle maskRgn);
 
 	// PROCEDURE DrawChar (ch: CHAR);
 	// DrawChar places the given character to the right of the pen location, with the left end of its base
@@ -415,6 +442,12 @@ public:
 	// by h and v. The new pen location is (h,v) after the line is drawn.
 	void LineTo(int16 h, int16 v);
 
+	// PROCEDURE Move (dh,dv: INTEGER);
+	// The Move procedure moves the graphics pen from its current location in the current
+	// graphics port a horizontal distance that you specify in the dh parameter and a vertical
+	// distance that you specify in the dv parameter.
+	void Move(int16 dh, int16 dv);
+
 	// PROCEDURE MovePortTo (leftGlobal,topGlobal: INTEGER);
 	// MovePortTo changes the position of the current grafPort's portRect. This does not affect the
 	// screen; it merely changes the location at which subsequent drawing inside the port will appear.
@@ -463,7 +496,7 @@ public:
 	// PROCEDURE PenMode (mode: INTEGER);
 	// PenMode sets the transfer mode through which the pen pattern is transferred onto the bit map
 	// when lines or shapes are drawn in the current grafPort.
-	void PenMode(uint16 mode);
+	void PenMode(PatternMode mode);
 
 	// PROCEDURE PenNormal;
 	// PenNormal resets the initial state of the pen in the current grafPort.
@@ -531,6 +564,8 @@ private:
 	int _cursorLevel = 0;
 
 	Common::Queue<EventRecord> _events;
+
+	GrafPtr _port = nullptr;
 
 	Graphics::MacPlotData _pd;
 

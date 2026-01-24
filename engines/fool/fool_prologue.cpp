@@ -122,7 +122,7 @@ void FoolPrologue::sub_128_004() {
 void FoolPrologue::sub_128_1ba(int16 screenPage) {
 	// 128:01ba
 	this->var_i32_40 = this->arr_i32_41296[screenPage];
-	g_toolbox->CopyBits(this->var_i32_32, this->var_i32_40, this->var_i16_38, this->var_i16_38, 0, 0);
+	g_toolbox->CopyBits(this->var_i32_32, this->var_i32_40, this->var_i16_38, this->var_i16_38, kSrcCopy, nullptr);
 }
 
 void FoolPrologue::sub_128_1f4(int16 screenPage) {
@@ -165,11 +165,11 @@ void FoolPrologue::fillRect(int16 patternID, int16 top, int16 left, int16 bottom
 	g_toolbox->FillRect(this->arr_i16_41af4, this->arr_pat_194[patternID]);
 }
 
-void FoolPrologue::sub_128_354(uint16 unk1, uint16 unk2) {
+void FoolPrologue::sub_128_354(PatternMode mode, uint16 unk2) {
 	// 128:0354
 	g_toolbox->SetRect(this->arr_i16_1bc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	g_toolbox->PenPat(this->arr_pat_194[unk2]);
-	g_toolbox->PenMode(unk1);
+	g_toolbox->PenMode(mode);
 	g_toolbox->PenSize(6, 4);
 
 	for (int i = 0; i <= 130; i += 3) {
@@ -234,7 +234,7 @@ void FoolPrologue::sub_128_50a(int16 unk1, int16 unk2, int16 unk3, int16 screenP
 		this->var_i32_2 = g_toolbox->TickCount();
 		this->var_i16_5c.top = this->arr_i16_412ea[i] - 1;
 		this->var_i16_5c.bottom = this->arr_i16_412ea[i];
-		g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->var_i16_5c, this->var_i16_5c, 0, 0);
+		g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->var_i16_5c, this->var_i16_5c, kSrcCopy, nullptr);
 		if (i % unk1 == 0) {
 			this->sub_128_24a(0);
 		}
@@ -244,7 +244,7 @@ void FoolPrologue::sub_128_50a(int16 unk1, int16 unk2, int16 unk3, int16 screenP
 void FoolPrologue::sub_128_610(int16 screenPage) {
 	// 128:0610
 	this->var_i32_40 = this->arr_i32_41296[screenPage];
-	g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->var_i16_38, this->var_i16_38, 0, 0);
+	g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->var_i16_38, this->var_i16_38, kSrcCopy, nullptr);
 }
 
 void FoolPrologue::sub_128_64a(int16 unk1) {
@@ -272,9 +272,9 @@ void FoolPrologue::sub_128_6e4(int16 screenPage) {
 		this->var_i16_5c.left = (SCREEN_WIDTH/2) - i*5;
 		this->var_i16_5c.bottom = (SCREEN_HEIGHT/2) + (int)(i*3.33);
 		this->var_i16_5c.right = (SCREEN_WIDTH/2) + i*5;
-		g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->var_i16_5c, this->var_i16_5c, 0, 0);
+		g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->var_i16_5c, this->var_i16_5c, kSrcCopy, nullptr);
 	}
-	g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->var_i16_38, this->var_i16_38, 0, 0);
+	g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->var_i16_38, this->var_i16_38, kSrcCopy, nullptr);
 }
 
 void FoolPrologue::sub_128_800(int16_t unk1, int16_t unk2, int16_t unk3, int16_t unk4, int16_t unk5, int16_t unk6, int16_t unk7, int16_t unk8, int16_t unk9) {
@@ -288,7 +288,7 @@ void FoolPrologue::sub_128_800(int16_t unk1, int16_t unk2, int16_t unk3, int16_t
 	this->arr_i16_41afc.bottom = unk3;
 	this->arr_i16_41afc.right = unk2;
 	g_toolbox->PenNormal();
-	g_toolbox->PenMode(0xa);
+	g_toolbox->PenMode(kPatXor);
 
 	// 128:08bc
 	this->arr_f64_41bbe[0] = (double)this->arr_i16_41af4.top;
@@ -328,7 +328,7 @@ void FoolPrologue::sub_128_a6c(int16_t unk1, int16_t unk2) {
 void FoolPrologue::sub_128_a8c(int16_t unk) {
 	// 128:0a8c
 	this->var_i16_1a4 = unk;
-	g_toolbox->PenMode(0xa);
+	g_toolbox->PenMode(kPatXor);
 	do {
 		// 128:0a96
 		this->sub_130_e82();
@@ -384,14 +384,14 @@ void FoolPrologue::sub_128_ccc() {
 
 void FoolPrologue::sub_128_de2() {
 	// 128:0de2
-	g_zbasic->text(0xfb, 0x9, kFacePlain, kModeSourceXOR);
+	g_zbasic->text(0xfb, 0x9, kFacePlain, kSrcXor);
 	this->var_str_76 = g_zbasic->str(3);
 	this->sub_128_a6c(0x151, 0x5);
 }
 
 void FoolPrologue::sub_128_e1c() {
 	// 128:0e1c
-	g_zbasic->text(0xfb, 0x9, kFacePlain, kModeSourceXOR);
+	g_zbasic->text(0xfb, 0x9, kFacePlain, kSrcXor);
 	this->var_str_76 = g_zbasic->str(4);
 	this->sub_128_26c(0x154, 0x1f7);
 }
@@ -558,7 +558,7 @@ void FoolPrologue::sub_129_004() {
 
 		// 129:0386
 		this->fillRect(2, 0x50, 0x6e, 0xc3, 0x18e);
-		g_zbasic->text(0, 0xc, kFacePlain, kModeSourceBIC);
+		g_zbasic->text(0, 0xc, kFacePlain, kSrcBic);
 		// "not enough memory" message
 		this->var_str_76 = g_zbasic->str(6);
 		this->sub_128_2a6(0x64, 0xfc);
@@ -627,7 +627,7 @@ void FoolPrologue::sub_129_004() {
 			this->fillRect(1, 0x69, 0x83, 0xd3, 0x175);
 			this->fillRect(2, 0x6e, 0x88, 0xce, 0x170);
 			// 129:0662
-			g_zbasic->text(0, 0xc, kFacePlain, kModeSourceBIC);
+			g_zbasic->text(0, 0xc, kFacePlain, kSrcBic);
 			// "set your monitor to black and white" message"
 			this->var_str_76 = g_zbasic->str(13);
 			this->sub_128_2a6(0x82, 0xfc);
@@ -686,7 +686,7 @@ void FoolPrologue::sub_130_004() {
 	g_toolbox->ReleaseResource(this->glob_i32_2ce);
 
 	// 130:007a
-	g_zbasic->text(0xfb, 0x9, kFacePlain, kModeSourceBIC);
+	g_zbasic->text(0xfb, 0x9, kFacePlain, kSrcBic);
 	this->var_str_76 = g_zbasic->str(18);
 	this->sub_128_2a6(0x10d, 0xdd);
 	g_toolbox->SetPortBits(this->var_i32_32);
@@ -797,26 +797,26 @@ void FoolPrologue::sub_130_004() {
 			this->var_i32_2 = g_toolbox->TickCount();
 			this->var_i32_40 = this->arr_i32_41296[8];
 			// 130:049e
-			g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->arr_i32_1c4, this->arr_i32_1c4, 0, 0);
+			g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->arr_i32_1c4, this->arr_i32_1c4, kSrcCopy, nullptr);
 			this->sub_128_a8c(4);
 			this->var_i16_192 = 0;
 			this->var_i32_2 = g_toolbox->TickCount();
 			this->var_i32_40 = this->arr_i32_41296[3];
-			g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->arr_i32_1c4, this->arr_i32_1c4, 0, 0);
+			g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->arr_i32_1c4, this->arr_i32_1c4, kSrcCopy, nullptr);
 			this->sub_128_a8c(5);
 			// 130:0518
 			this->var_i32_2 = g_toolbox->TickCount();
 			this->var_i32_40 = this->arr_i32_41296[4];
-			g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->arr_i32_1c4, this->arr_i32_1c4, 0, 0);
+			g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->arr_i32_1c4, this->arr_i32_1c4, kSrcCopy, nullptr);
 			this->sub_128_a8c(5);
 			this->var_i32_2 = g_toolbox->TickCount();
 			this->var_i32_40 = this->arr_i32_41296[5];
-			g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->arr_i32_1c4, this->arr_i32_1c4, 0, 0);
+			g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->arr_i32_1c4, this->arr_i32_1c4, kSrcCopy, nullptr);
 			this->sub_128_a8c(5);
 		}
 		// 130:05b6
 		this->var_i32_40 = this->arr_i32_41296[7];
-		g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->arr_i32_1c4, this->arr_i32_1c4, 0, 0);
+		g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->arr_i32_1c4, this->arr_i32_1c4, kSrcCopy, nullptr);
 
 	}
 
@@ -840,7 +840,7 @@ void FoolPrologue::sub_130_004() {
 			this->var_i16_5c.top = this->arr_i16_412ea[y] - 1;
 			this->var_i16_5c.bottom = this->arr_i16_412ea[y];
 			// 130:068e
-			g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->var_i16_5c, this->var_i16_5c, 0, 0);
+			g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->var_i16_5c, this->var_i16_5c, kSrcCopy, nullptr);
 		}
 		// 130:06b0
 		this->sub_128_a8c(1);
@@ -871,7 +871,7 @@ void FoolPrologue::sub_130_004() {
 		for (int i = 3; i < 5; i++) {
 			this->var_i32_2 = g_toolbox->TickCount();
 			this->var_i32_40 = this->arr_i32_41296[i];
-			g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->arr_i32_1c4, this->arr_i32_1c4, 0, 0);
+			g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->arr_i32_1c4, this->arr_i32_1c4, kSrcCopy, nullptr);
 			this->sub_128_a8c(3);
 		}
 	}
@@ -996,7 +996,7 @@ void FoolPrologue::sub_130_004() {
 	this->sub_128_21e(0xa);
 	this->sub_128_610(0x8);
 	this->sub_128_e58();
-	this->sub_128_354(8, 1);
+	this->sub_128_354(kPatCopy, 1);
 	// 130:0ce6
 	// JMP 1002
 	// g_zbasic->pushOldCodeResource(0x82);
@@ -1015,7 +1015,7 @@ void FoolPrologue::prologueBufferNextPicture() {
 void FoolPrologue::prologueDrawLoadingMsg() {
 	// 130:0d28
 	g_toolbox->SetPort(this->var_i32_c);
-	g_zbasic->text(0, 0xc, kFacePlain, kModeSourceOR);
+	g_zbasic->text(0, 0xc, kFacePlain, kSrcOr);
 	// "loading prologue" message
 	this->var_str_76 = g_zbasic->str(19);
 	this->var_str_76 += Common::U32String::format("%d", this->var_i16_3ce);
@@ -1029,7 +1029,7 @@ void FoolPrologue::prologueDrawLoadingMsg() {
 void FoolPrologue::sub_130_db0() {
 	// 130:0db0
 	g_zbasic->unk_20();
-	g_toolbox->PenMode(0xa);
+	g_toolbox->PenMode(kPatXor);
 	this->var_i16_6 = 0x1;
 	while (this->var_i16_6 <= 0xb5) {
 		// 130:0dc0
@@ -1073,7 +1073,7 @@ void FoolPrologue::sub_130_f48() {
 			}
 		}
 		// 130:0fc8
-		g_zbasic->text(0xfa, 0xc, kFacePlain, kModeSourceOR);
+		g_zbasic->text(0xfa, 0xc, kFacePlain, kSrcOr);
 		this->sub_128_a6c(this->var_i16_180, this->var_i16_176);
 	}
 }
@@ -1179,7 +1179,7 @@ void FoolPrologue::sub_131_004() {
 		}
 
 		// 131:0380
-		g_toolbox->PenMode(0xa);
+		g_toolbox->PenMode(kPatXor);
 		this->sub_128_3ee(0x14);
 		this->sub_128_3ee(0xa);
 		this->sub_128_3ee(0x14);
@@ -1192,7 +1192,7 @@ void FoolPrologue::sub_131_004() {
 
 	// 131:03c0
 	this->sub_128_21e(0x1e);
-	g_zbasic->text(0xfa, 0xc, kFacePlain, kModeSourceOR);
+	g_zbasic->text(0xfa, 0xc, kFacePlain, kSrcOr);
 	this->var_str_76 = Common::U32String::format("\"%s\"", g_zbasic->str(22));
 	g_zbasic->bufferFlush(this->var_str_76);
 
@@ -1220,12 +1220,12 @@ void FoolPrologue::sub_131_004() {
 	this->var_i32_2 = g_toolbox->TickCount();
 
 	this->var_i32_40 = this->arr_i32_41296[5];
-	g_toolbox->CopyBits(this->var_i32_32, this->var_i32_40, this->var_i16_38, this->var_i16_38, 0, 0);
+	g_toolbox->CopyBits(this->var_i32_32, this->var_i32_40, this->var_i16_38, this->var_i16_38, kSrcCopy, nullptr);
 	this->fillRect(0xa6, 0x173, 0xb5, 0x1fc, 0);
 	this->sub_131_4e48();
 
 	// 131:0538
-	g_toolbox->CopyBits(this->var_i32_32, this->var_i32_4e, this->var_i16_38, this->var_i16_38, 0, 0);
+	g_toolbox->CopyBits(this->var_i32_32, this->var_i32_4e, this->var_i16_38, this->var_i16_38, kSrcCopy, nullptr);
 	g_toolbox->SetPortBits(this->var_i32_4e);
 
 	// 131:0554
@@ -1235,13 +1235,13 @@ void FoolPrologue::sub_131_004() {
 
 	// 131:05b0
 	this->sub_128_1f4(6);
-	g_toolbox->CopyBits(this->var_i32_4e, this->var_i32_40, this->var_i16_38, this->var_i16_38, 1, 0);
+	g_toolbox->CopyBits(this->var_i32_4e, this->var_i32_40, this->var_i16_38, this->var_i16_38, kSrcOr, nullptr);
 	this->sub_128_1f4(7);
-	g_toolbox->CopyBits(this->var_i32_4e, this->var_i32_40, this->var_i16_38, this->var_i16_38, 1, 0);
+	g_toolbox->CopyBits(this->var_i32_4e, this->var_i32_40, this->var_i16_38, this->var_i16_38, kSrcOr, nullptr);
 	this->sub_128_1f4(8);
-	g_toolbox->CopyBits(this->var_i32_4e, this->var_i32_40, this->var_i16_38, this->var_i16_38, 1, 0);
+	g_toolbox->CopyBits(this->var_i32_4e, this->var_i32_40, this->var_i16_38, this->var_i16_38, kSrcOr, nullptr);
 	this->sub_128_1f4(9);
-	g_toolbox->CopyBits(this->var_i32_4e, this->var_i32_40, this->var_i16_38, this->var_i16_38, 1, 0);
+	g_toolbox->CopyBits(this->var_i32_4e, this->var_i32_40, this->var_i16_38, this->var_i16_38, kSrcOr, nullptr);
 
 	// 131:0630
 	g_toolbox->SetPortBits(this->var_i32_32);
@@ -1258,7 +1258,7 @@ void FoolPrologue::sub_131_004() {
 	this->fillRect(0xa6, 0x173, 0xb5, 0x1fc, 0);
 	this->sub_128_50a(0x9, 0, 0x1fc, 1);
 	g_toolbox->PenNormal();
-	g_toolbox->PenMode(0xa);
+	g_toolbox->PenMode(kPatXor);
 	g_zbasic->unk_20();
 
 	// 131:0730
@@ -1387,7 +1387,7 @@ void FoolPrologue::sub_131_004() {
 	this->sub_128_21e(0x3c);
 
 	// 131:0e08
-	g_zbasic->text(0xfa, 0xc, kFacePlain, kModeSourceBIC);
+	g_zbasic->text(0xfa, 0xc, kFacePlain, kSrcBic);
 	this->var_str_76 = Common::U32String::format("\"%s\"", g_zbasic->str(23));
 	g_zbasic->bufferFlush(this->var_str_76);
 	this->sub_128_a6c(0x1f4 - g_toolbox->StringWidth(this->var_str_76), 0xd2);
@@ -1441,11 +1441,11 @@ void FoolPrologue::sub_131_004() {
 		this->var_i16_64.top = i;
 		this->var_i16_5c.bottom = 0x19 + (i - 0xdf);
 		this->var_i32_40 = this->arr_i32_41296[6];
-		g_toolbox->CopyBits(this->var_i32_40, this->var_i32_4e, this->var_i16_5c, this->var_i16_64, 3, 0);
+		g_toolbox->CopyBits(this->var_i32_40, this->var_i32_4e, this->var_i16_5c, this->var_i16_64, kSrcBic, nullptr);
 		this->var_i32_40 = this->arr_i32_41296[7];
-		g_toolbox->CopyBits(this->var_i32_40, this->var_i32_4e, this->var_i16_5c, this->var_i16_64, 1, 0);
+		g_toolbox->CopyBits(this->var_i32_40, this->var_i32_4e, this->var_i16_5c, this->var_i16_64, kSrcOr, nullptr);
 		this->sub_128_24a(0x2);
-		g_toolbox->CopyBits(this->var_i32_4e, this->var_i32_32, this->var_i16_64, this->var_i16_64, 0, 0);
+		g_toolbox->CopyBits(this->var_i32_4e, this->var_i32_32, this->var_i16_64, this->var_i16_64, kSrcCopy, nullptr);
 	}
 
 	// 131:11a4
@@ -1455,7 +1455,7 @@ void FoolPrologue::sub_131_004() {
 	g_zbasic->picture(0x18f, 0xc0, this->arr_i32_0[0x2b]);
 	g_toolbox->SetPortBits(this->var_i32_32);
 	g_toolbox->PenNormal();
-	g_toolbox->PenMode(0xa);
+	g_toolbox->PenMode(kPatXor);
 	g_toolbox->PenSize(0x5, 0x5);
 
 	// 131:1208
@@ -1464,7 +1464,7 @@ void FoolPrologue::sub_131_004() {
 		g_toolbox->MoveTo(0x172, 0x33);
 		g_toolbox->LineTo(i, 0x14a);
 		if (i == 0x43) {
-			g_zbasic->text(0xfa, 0xc, kFacePlain, kModeSourceBIC);
+			g_zbasic->text(0xfa, 0xc, kFacePlain, kSrcBic);
 			this->var_str_76 = Common::U32String::format("\"%s\"", g_zbasic->str(24).encode().c_str());
 			g_zbasic->bufferFlush(this->var_str_76);
 			this->sub_128_26c(0x1f0, 0xd2);
@@ -1502,7 +1502,7 @@ void FoolPrologue::sub_131_004() {
 		this->var_i16_5c.bottom = this->var_i16_5c.top + 0x96;
 		this->var_i16_64.top = i - 1;
 		this->var_i16_64.bottom = this->var_i16_64.top + 0x96;
-		g_toolbox->CopyBits(this->var_i32_32, this->var_i32_32, this->var_i16_5c, this->var_i16_64, 0, 0);
+		g_toolbox->CopyBits(this->var_i32_32, this->var_i32_32, this->var_i16_5c, this->var_i16_64, kSrcCopy, nullptr);
 		this->sub_128_24a(0x1);
 	}
 
@@ -1514,7 +1514,7 @@ void FoolPrologue::sub_131_004() {
 	g_zbasic->picture(0x193, 0x2d, this->arr_i32_0[0x2e]);
 	this->sub_128_1ba(0x6);
 	g_toolbox->PenNormal();
-	g_toolbox->PenMode(0xa);
+	g_toolbox->PenMode(kPatXor);
 	g_toolbox->PenSize(0x3, 0x3);
 	this->var_i16_6c.left = 0x190;
 	this->var_i16_6c.right = SCREEN_WIDTH;
@@ -1538,17 +1538,17 @@ void FoolPrologue::sub_131_004() {
 		this->var_i16_64.right = this->var_i16_64.left + 0x32;
 		this->var_i16_64.top = this->var_i16_3e0;
 		this->var_i16_64.bottom = this->var_i16_64.top + 0x32;
-		g_toolbox->CopyBits(this->var_i32_40, this->var_i32_4e, this->var_i16_5c, this->var_i16_64, 2, 0);
+		g_toolbox->CopyBits(this->var_i32_40, this->var_i32_4e, this->var_i16_5c, this->var_i16_64, kSrcXor, nullptr);
 		// 131:1582
 		g_toolbox->MoveTo(0x190 - i, this->var_i16_3e0 - 0x1e + i*3);
 		g_toolbox->LineTo(0x1f4, this->var_i16_3e0 + 0xa - i);
 		this->sub_128_24a(0x1);
-		g_toolbox->CopyBits(this->var_i32_4e, this->var_i32_32, this->var_i16_6c, this->var_i16_6c, 0, 0);
+		g_toolbox->CopyBits(this->var_i32_4e, this->var_i32_32, this->var_i16_6c, this->var_i16_6c, kSrcCopy, nullptr);
 	}
 
 	g_toolbox->SetPortBits(this->var_i32_32);
 	g_toolbox->PenNormal();
-	g_toolbox->PenMode(0xa);
+	g_toolbox->PenMode(kPatXor);
 	for (int j = 0; j < 1; j++) {
 
 		for (int i = 1; i < 0xfa; i++) {
@@ -1573,7 +1573,7 @@ void FoolPrologue::sub_131_004() {
 	}
 
 	this->sub_128_24a(0x3c);
-	g_zbasic->text(0xfa, 0xc, kFacePlain, kModeSourceBIC);
+	g_zbasic->text(0xfa, 0xc, kFacePlain, kSrcBic);
 	this->var_str_76 = Common::U32String::format("\"%s\"", g_zbasic->str(25).c_str());
 	g_zbasic->bufferFlush(this->var_str_76);
 	this->sub_128_26c(0x17d, 0x3c);
@@ -1585,7 +1585,7 @@ void FoolPrologue::sub_131_004() {
 void FoolPrologue::sub_131_4dc0() {
 	// 131:4dc0
 	g_toolbox->SetPort(this->var_i32_c);
-	g_zbasic->text(0, 0xc, kFacePlain, kModeSourceOR);
+	g_zbasic->text(0, 0xc, kFacePlain, kSrcOr);
 	// Loading Finale
 	this->var_str_76 += g_zbasic->str(78);
 	this->var_str_76 += Common::U32String::format("%d%%", this->var_i16_3ce);
@@ -1599,7 +1599,7 @@ void FoolPrologue::sub_131_4dc0() {
 
 void FoolPrologue::sub_131_4e48() {
 	// 131:4e48
-	g_zbasic->text(0xfa, 0xc, kFacePlain, kModeSourceOR);
+	g_zbasic->text(0xfa, 0xc, kFacePlain, kSrcOr);
 
 	// Uh oh . . .
 	this->var_str_76 += Common::U32String::format("\"%s\"", g_zbasic->str(80).c_str());
@@ -1610,7 +1610,7 @@ void FoolPrologue::sub_131_4e48() {
 
 void FoolPrologue::sub_131_4e98() {
 	// 131:4e98
-	g_zbasic->text(0xfa, 0xc, kFacePlain, kModeSourceXOR);
+	g_zbasic->text(0xfa, 0xc, kFacePlain, kSrcXor);
 	this->var_i16_3fc = 0xa0;
 	// "And so the fool heeded the advice of the magician..."
 	this->var_str_76 += g_zbasic->str(81);
