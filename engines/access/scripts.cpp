@@ -142,7 +142,11 @@ void Scripts::setOpcodes_v2() {
 void Scripts::setOpcodes_v3() {
 	// Modify command list for Noctropolis
 	COMMAND_LIST[1] = &Scripts::cmdEndObject_v3;
+	COMMAND_LIST[6] = &Scripts::cmdJumpUse_v3;
+	COMMAND_LIST[7] = &Scripts::cmdJumpTalk_v3;
+	COMMAND_LIST[9] = &Scripts::cmdPrint_v2;
 	COMMAND_LIST[18] = &Scripts::cmdSetCoords;
+	COMMAND_LIST[33] = &Scripts::cmdJumpGoto_v3;
 	COMMAND_LIST[34] = &Scripts::cmdSetVideo_v3;
 	COMMAND_LIST[50] = &Scripts::cmdCharSpeak_v3;
 	COMMAND_LIST[51] = &Scripts::cmdPlayerSpeak;
@@ -196,7 +200,7 @@ void Scripts::searchForSequence() {
 	_data->seek(0);
 	int sequenceId;
 	do {
-		while (_data->readByte() != SCRIPT_START_BYTE) {}
+		while (_data->readByte() != SCRIPT_START_BYTE && !_data->eos()) {}
 		sequenceId = _data->readUint16LE();
 	} while (sequenceId != _sequence);
 }
@@ -320,7 +324,7 @@ void Scripts::cmdEndObject() {
 
 
 void Scripts::cmdEndObject_v3() {
-	if (_vm->_room->_selectCommand == 4 && _vm->_boxSelectY == 0x62) {
+	if (_vm->_room->_selectCommand == Noctropolis::kNoctCmdTalk && _vm->_boxSelectY == 0x62) {
 		Noctropolis::NoctropolisResources *res = (Noctropolis::NoctropolisResources *)_vm->_res;
 		const char *vidfile = "DARK/VID/A4IN00.VID";
 		if (_vm->_flags[91] == 2) {
@@ -428,9 +432,31 @@ void Scripts::cmdJumpUse() {
 	}
 }
 
+void Scripts::cmdJumpUse_v3() {
+	debugCN(1, kDebugScripts, "cmdJumpUse_v3(selectCommand=%d)", _vm->_room->_selectCommand);
+	if (_vm->_room->_selectCommand == Noctropolis::kNoctCmdUse) {
+		debugC(1, kDebugScripts, " -> True");
+		cmdGoto();
+	} else {
+		debugC(1, kDebugScripts, " -> False");
+		_data->skip(2);
+	}
+}
+
 void Scripts::cmdJumpTalk() {
 	debugCN(1, kDebugScripts, "cmdJumpTalk(selectCommand=%d)", _vm->_room->_selectCommand);
 	if (_vm->_room->_selectCommand == 6) {
+		debugC(1, kDebugScripts, " -> True");
+		cmdGoto();
+	} else {
+		debugC(1, kDebugScripts, " -> False");
+		_data->skip(2);
+	}
+}
+
+void Scripts::cmdJumpTalk_v3() {
+	debugCN(1, kDebugScripts, "cmdJumpTalk_v3(selectCommand=%d)", _vm->_room->_selectCommand);
+	if (_vm->_room->_selectCommand == Noctropolis::kNoctCmdTalk) {
 		debugC(1, kDebugScripts, " -> True");
 		cmdGoto();
 	} else {
@@ -475,6 +501,11 @@ void Scripts::printString(const Common::String &msg) {
 		_vm->_timers[PRINT_TIMER]._timer = 50;
 		_vm->_timers[PRINT_TIMER]._initTm = 50;
 		++_vm->_timers[PRINT_TIMER]._flag;
+
+		_vm->_bubbleBox->_type = (BoxType)(kTextBoxNoctCaption | kTextBoxNoctCenter);
+		if (_vm->_player->_roomNumber <= 4)
+		  _vm->_bubbleBox->_type = (BoxType)(_vm->_bubbleBox->_type | kTextBoxNoctPlain);
+
 	} else if (_vm->getGameID() != kGameMartianMemorandum) {
 		_vm->_screen->_printOrg = _vm->_screen->_printStart = Common::Point(20, 42);
 		_vm->_timers[PRINT_TIMER]._timer = 1;
@@ -795,6 +826,17 @@ void Scripts::cmdSetTravel() {
 void Scripts::cmdJumpGoto() {
 	debugCN(1, kDebugScripts, "cmdJumpGoto(selectCommand=%d)", _vm->_room->_selectCommand);
 	if (_vm->_room->_selectCommand == 5) {
+		debugC(1, kDebugScripts, " -> True");
+		cmdGoto();
+	} else {
+		debugC(1, kDebugScripts, " -> False");
+		_data->skip(2);
+	}
+}
+
+void Scripts::cmdJumpGoto_v3() {
+	debugCN(1, kDebugScripts, "cmdJumpGoto_v3(selectCommand=%d)", _vm->_room->_selectCommand);
+	if (_vm->_room->_selectCommand == Noctropolis::kNoctCmdGoto) {
 		debugC(1, kDebugScripts, " -> True");
 		cmdGoto();
 	} else {
@@ -1499,6 +1541,7 @@ void Scripts::cmdWalkTo() {
 void Scripts::cmdWalkCheck() {
 	debugCN(1, kDebugScripts, "cmdWalkCheck()");
 	if (!_vm->_player->_playerMove) {
+		// Walk is done
 		debugC(1, kDebugScripts, " -> True");
 		cmdGoto();
 	} else {

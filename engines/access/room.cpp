@@ -26,6 +26,7 @@
 #include "access/room.h"
 #include "access/amazon/amazon_resources.h"
 #include "access/martian/martian_resources.h"
+#include "access/noctropolis/noctropolis_game.h"
 
 namespace Access {
 
@@ -682,10 +683,15 @@ void Room::cycleCommand(int incr) {
 
 void Room::handleCommand(int commandId) {
 	if (commandId == -2) {
-		// Save-load button event from keymapper.  Only open if allowed at the moment.
+		// Save-load button event from keymapper or Noctropolis menu.
+		// Only open if allowed at the moment.
 		if (_vm->_canSaveLoad)
 			_vm->openMainMenuDialog();
-	} else if (commandId == 9) {
+	} else if ((commandId == 9) || (_vm->getGameID() == kGameNoctropolis && commandId == 10)) {
+		// Open Options menu (in all games)
+		// NOTE: In Noctropolis we map both "Options" and "Disk" to this.
+		// If we implement original dialogs we can split these cases.
+		//
 		_vm->_events->debounceLeft();
 		_vm->_canSaveLoad = true;
 		_vm->openMainMenuDialog();
@@ -791,24 +797,67 @@ void Room::executeCommand(int commandId) {
 		}
 	} else {
 		assert(_vm->getGameID() == kGameNoctropolis);
-		error("TODO: implement executeCommand for Noctropolis");
 		// See the code in NoctRoomEngine::afterDoCommandsTick
+		if (commandId == Noctropolis::kNoctCmdInventory) {
+			/*
+			while (!_vm->shouldQuitOrRestart()) {
+				runInventory();
+				//debug("getVariable(99) = %d", getVariable(99));
+				if (getVariable(99) == 62) {
+					runComicSpecialIssue();
+				} else if (getVariable(99) != 255) {
+					_inventoryScript->runLabel(getVariable(99));
+				} else
+					break;
+			}*/
+			warning("TODO: Implement Noctropolis inventory");
+		} else {
+			if (_vm->_exitBox)
+				_vm->_events->setCursor(CURSOR_NOCT_EXIT);
+			else if (_selectCommand >= 0 && _selectCommand <= 6)
+				_vm->_events->setCursor((CursorType)(_selectCommand + 2));
+			else
+				_vm->_events->setCursor(CURSOR_ARROW);
+
+			if (_selectCommand == Noctropolis::kNoctCmdTravel) {
+				_selectCommand = Noctropolis::kNoctCmdLook;
+				_vm->_scripts->_sequence = 5000;
+				_vm->_scripts->searchForSequence();
+
+				_conFlag = true;
+				while (_conFlag && !_vm->shouldQuitOrRestart()) {
+					_conFlag = false;
+					_vm->_scripts->executeScript();
+				}
+			} else if (_selectCommand == Noctropolis::kNoctCmdUse) {
+				_selectCommand = Noctropolis::kNoctCmdLook;
+				_vm->_scripts->_sequence = 10000;
+				_vm->_scripts->searchForSequence();
+
+				_conFlag = true;
+				while (_conFlag && !_vm->shouldQuitOrRestart()) {
+					_conFlag = false;
+					_vm->_scripts->executeScript();
+				}
+			}
+		}
 	}
 	screen.saveScreen();
 	screen.setDisplayScan();
 
 	const SpriteResource *icons = _vm->getIcons();
 
-	// Draw the button as selected
+	// Draw the button as selected (except in Noctropolis)
 	if (_vm->getGameID() == kGameMartianMemorandum) {
 		screen.plotImage(icons, 0, Common::Point(5, 184));
 		screen.plotImage(icons, 1, Common::Point(155, 184));
-	} else if (_vm->getGameID() == kGameNoctropolis) {
+	} else if (_vm->getGameID() == kGameAmazon) {
 		screen.plotImage(icons, 0, Common::Point(0, 177));
 		screen.plotImage(icons, 1, Common::Point(143, 177));
 	}
-	screen.plotImage(icons, _selectCommand + 2,
-		Common::Point(_rMouse[_selectCommand][0], (_vm->getGameID() == kGameMartianMemorandum) ? 184 : 176));
+	if (_vm->getGameID() != kGameNoctropolis)
+		screen.plotImage(icons, _selectCommand + 2,
+			Common::Point(_rMouse[_selectCommand][0], (_vm->getGameID() == kGameMartianMemorandum) ? 184 : 176));
 
 	_vm->_screen->restoreScreen();
 	_vm->_boxSelect = true;
@@ -835,7 +884,8 @@ void Room::walkCursor() {
 void Room::commandOff() {
 	_selectCommand = -1;
 	_vm->_events->forceSetCursor(CURSOR_CROSSHAIRS);
-	roomMenu();
+	if (_vm->getGameID() != kGameNoctropolis)
+		roomMenu();
 }
 
 int Room::checkBoxes() {

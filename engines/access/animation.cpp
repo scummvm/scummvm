@@ -213,7 +213,7 @@ void Animation::anim7() {
 
 void Animation::anim8() {
 	// TODO: In here be careful with whether we are using playerX or raw.x
-	debug("TODO: Animation::anim8");
+	//debug("TODO: Animation::anim8");
 }
 
 void Animation::anim9() {

@@ -23,6 +23,7 @@
 #define ACCESS_NOCTROPOLIS_NOCTROPOLIS_RESOURCES_H
 
 #include "access/resources.h"
+#include "access/polygon.h"
 
 namespace Access {
 
@@ -33,6 +34,8 @@ namespace Noctropolis {
 class NoctropolisEngine;
 
 extern const byte ICON_PALETTE[];
+
+extern const int16 MENU_POLYS[];
 
 class NoctropolisResources : public Resources {
 public:
@@ -54,6 +57,8 @@ public:
 	const char *getEndMessage() const;
 	const char *getStilEndMessage() const;
 
+	int menuPolygonAt(int16 x, int16 y) const;
+
 private:
 	Font *_fontChaleteu;
 	Font *_fontSystemeu;
@@ -62,6 +67,8 @@ private:
 	Font *_fontGothiceu;
 	Font *_fontChaletse;
 	Font *_fontComicseu;
+
+	PolygonArray _menuPolygons;
 };
 
 } // end namespace Noctropolis

@@ -33,6 +33,7 @@ struct Polygon {
     bool pointInside(int16 x, int16 y) const;
 };
 
+typedef Common::Array<Polygon> PolygonArray;
 
 } // end namespace Access
 

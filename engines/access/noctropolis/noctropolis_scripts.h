@@ -35,6 +35,11 @@ public:
 	NoctropolisScripts(NoctropolisEngine *vm);
 
 	void executeSpecial(int commandIndex, int param1, int param2) override;
+
+	void searchForSequence() override;
+
+private:
+	void skipCommand(byte cmd);
 };
 
 } // end namespace Noctropolis

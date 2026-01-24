@@ -185,7 +185,7 @@ void BaseSurface::saveBlock(const Common::Rect &bounds) {
 	_savedBounds.clip(Common::Rect(0, 0, this->w, this->h));
 
 	_savedBlock.free();
-	_savedBlock.create(bounds.width(), bounds.height(),
+	_savedBlock.create(_savedBounds.width(), _savedBounds.height(),
 		Graphics::PixelFormat::createFormatCLUT8());
 	_savedBlock.copyRectToSurface(*this, 0, 0, _savedBounds);
 }

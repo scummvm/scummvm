@@ -95,6 +95,32 @@ enum ACCESSActions : Common::CustomEventType {
 	kActionOptions,
 };
 
+/* These are the commands for MM. Noctropolis uses different numbers */
+enum MartianCommands {
+	kMartianCmdLook = 0,
+	kMartianCmdOpen = 1,
+	kMartianCmdMove = 2,
+	kMartianCmdGetTake = 3,
+	kMartianCmdUse = 4,
+	kMartianCmdGoto = 5, // aka walk-to
+	kMartianCmdTalk = 6,
+};
+
+
+/* These are the commands for MM and Amazon. Noctropolis uses different numbers */
+enum AmazonCommands {
+	kAmazonCmdLook = 0,
+	kAmazonCmdOpen = 1,
+	kAmazonCmdMove = 2,
+	kAmazonCmdGetTake = 3,
+	kAmazonCmdUse = 4,
+	kAmazonCmdGoto = 5, // aka walk-to
+	kAmazonCmdTalk = 6,
+	kAmazonCmdWalkToCursor = 7,
+	kAmazonCmdHelp = 8,
+};
+
+
 struct AccessActionCode {
 	ACCESSActions _action;
 	int8 _code;

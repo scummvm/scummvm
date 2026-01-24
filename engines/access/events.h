@@ -41,6 +41,7 @@ enum CursorType {
 	CURSOR_CLIMB = 7,
 	CURSOR_TALK = 8,
 	CURSOR_HELP = 9,
+	CURSOR_NOCT_EXIT = 9,
 	CURSOR_DARK_ANKH = 10,
 	CURSOR_INVENTORY = 99
 };
@@ -67,6 +68,7 @@ private:
 	void nextTimer();
 	void keyControl(Common::KeyCode keycode, bool isKeyDown);
 	void actionControl(Common::CustomEventType action, bool isKeyDown);
+
 public:
 	CursorType _cursorId;
 	CursorType _normalMouse;
@@ -170,6 +172,9 @@ public:
 
 	void centerMousePos();
 	void restrictMouse();
+
+	/* get ms delay before considering something a double-click */
+	uint32 getDoubleClickTime() const;
 };
 
 } // End of namespace Access

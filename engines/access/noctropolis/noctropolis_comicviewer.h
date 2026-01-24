@@ -42,7 +42,6 @@ public:
     int findPolygonAt(int16 x, int16 y) const;
     void free();
 protected:
-    typedef Common::Array<Polygon> PolygonArray;
     PolygonArray _polygons;
     void internalLoad(Common::SeekableReadStream &source, uint32 size);
 };

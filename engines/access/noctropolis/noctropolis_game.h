@@ -28,6 +28,21 @@ namespace Access {
 
 namespace Noctropolis {
 
+/* _selectCommand enum values are different in Noctropolis */
+enum NoctropolisCommands {
+	kNoctCmdLook = 0, 		// same as MM/Amazon
+	kNoctCmdOpen = 1, 		// same as MM/Amazon
+	kNoctCmdMove = 2, 		// same as MM/Amazon
+	kNoctCmdGetTake = 3, 	// same as MM/Amazon
+	kNoctCmdTalk = 4, 		// *not* the same
+	kNoctCmdUse = 5, 		// *not* the same
+	kNoctCmdGoto = 6, 		// *not* the same
+	kNoctCmdInventory = 7,
+	kNoctCmdTravel = 8,
+	kNoctCmdOptions = 9,
+	kNoctCmdSaveLoad = 10,
+};
+
 class NoctropolisEngine : public AccessEngine {
 public:
 	NoctropolisEngine(OSystem *syst, const AccessGameDescription *gameDesc);

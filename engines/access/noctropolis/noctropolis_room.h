@@ -52,6 +52,7 @@ protected:
 
 	int validateBox(int boxId) override;
 
+	void roomInit() override;
 private:
 	// Like buildColumn but can handle negative playX.
 	// TODO: Can we just replace Room::buildColumn with this one?
