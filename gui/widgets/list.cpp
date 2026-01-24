@@ -489,6 +489,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 				} else
 					sendCommand(kListItemActivatedCmd, _selectedItem);
 			}
+				scrollToCurrent();
 			break;
 		}
 
@@ -508,6 +509,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			if (_selectedItem >= 0) {
 				sendCommand(kListItemRemovalRequestCmd, _selectedItem);
 			}
+			scrollToCurrent();
 			break;
 
 		case Common::KEYCODE_KP1:
@@ -518,6 +520,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			// fall through
 		case Common::KEYCODE_END:
 			_selectedItem = _list.size() - 1;
+			scrollToCurrent();
 			break;
 
 
@@ -534,6 +537,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 				markSelectedItem(newItem, true);
 				_selectedItem = newItem;
 				_lastSelectionStartItem = newItem;
+				scrollToCurrent();
 				dirty = true;
 			}
 			break;
@@ -548,6 +552,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			_selectedItem += _entriesPerPage - 1;
 			if (_selectedItem >= (int)_list.size() )
 				_selectedItem = _list.size() - 1;
+			scrollToCurrent();
 			break;
 
 		case Common::KEYCODE_KP7:
@@ -558,6 +563,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			// fall through
 		case Common::KEYCODE_HOME:
 			_selectedItem = 0;
+			scrollToCurrent();
 			break;
 
 		case Common::KEYCODE_KP8:
@@ -573,6 +579,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 				markSelectedItem(newItem, true);
 				_selectedItem = newItem;
 				_lastSelectionStartItem = newItem;
+				scrollToCurrent();
 				dirty = true;
 			}
 			break;
@@ -587,13 +594,12 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			_selectedItem -= _entriesPerPage - 1;
 			if (_selectedItem < 0)
 				_selectedItem = 0;
+			scrollToCurrent();
 			break;
 
 		default:
 			handled = false;
 		}
-
-		scrollToCurrent();
 	}
 
 	if (dirty || _selectedItem != oldSelectedItem)
