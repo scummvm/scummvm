@@ -274,16 +274,16 @@ const Common::U32String &ZBasic::str(size_t index) {
 	return *_stringTable[index]->data.str;
 }
 
-void ZBasic::text(int16 font, int16 size, int16 face, ZBasicTextMode mode) {
+void ZBasic::text(int16 font, int16 size, int16 face, SourceMode mode) {
 	warning("STUB: ZBasic::text");
 }
 
 void ZBasic::window(int16 windowNumber, const Common::String &title, int16 x1, int16 y1, int16 x2, int16 y2, ZBasicWindowType type) {
-	warning("STUB:: ZBasic::window");
+	warning("STUB: ZBasic::window");
 }
 
 void ZBasic::unk_6(int16 unk1, int32 unk2, int16 unk3, int16 unk4) {
-	warning("STUB:: ZBasic::unk_6");
+	warning("STUB: ZBasic::unk_6");
 }
 
 void ZBasic::unk_20() {

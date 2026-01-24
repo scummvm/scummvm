@@ -47,8 +47,12 @@ void Toolbox::ClipRect(Common::Rect &r) {
 	warning("STUB: Toolbox::ClipRect");
 }
 
-void Toolbox::CopyBits(const BitMap &srcBits, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, uint16 mode, RgnHandle maskRgn) {
-	warning("STUB: Toolbox::CopyBits");
+void Toolbox::CopyBits(const BitMap &srcBits, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, SourceMode mode, RgnHandle maskRgn) {
+	if (srcBits && dstBits) {
+		if (maskRgn) {
+			warning("STUB: Toolbox::CopyBits: maskRgn unimplemented");
+		}
+	}
 }
 
 void Toolbox::DrawString(const Common::String &s) {
@@ -130,12 +134,23 @@ void Toolbox::LineTo(int16 h, int16 v) {
 	warning("STUB: Toolbox::LineTo");
 }
 
+void Toolbox::Move(int16 dh, int16 dv) {
+	if (_port) {
+		MoveTo(_port->portRect.width() + dh, _port->portRect.height() + dv);
+	}
+}
+
 void Toolbox::MovePortTo(int16 leftGlobal, int16 topGlobal) {
-	warning("STUB: Toolbox::MovePortTo");
+	if (_port) {
+		_port->portRect.left = leftGlobal;
+		_port->portRect.top = topGlobal;
+	}
 }
 
 void Toolbox::MoveTo(int16 h, int16 v) {
-	warning("STUB: Toolbox::MoveTo");
+	if (_port) {
+		_port->pnLoc = Common::Point(h, v);
+	}
 }
 
 PolyHandle Toolbox::OpenPoly() {
@@ -146,12 +161,10 @@ PolyHandle Toolbox::OpenPoly() {
 void Toolbox::OpenPort(GrafPtr port) {
 	warning("STUB: Toolbox::OpenPort");
 	// source: QuickDraw Routines I-163
-	port->device = 0;
 	//port->portBits = screenBits;
 	//port->portRect = screenBits.bounds;
-	//port->visRgn
+	port->visRgn = RgnHandle(new Region({ 1, Common::Rect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT ) }));
 	//port->clipRgn
-	//port->bkPat = white
 }
 
 void Toolbox::PaintOval(const Common::Rect &r) {
@@ -166,24 +179,37 @@ void Toolbox::PaintRect(const Common::Rect &r) {
 	warning("STUB: Toolbox::PaintRect");
 }
 
-void Toolbox::PenMode(uint16 mode) {
-	warning("STUB: Toolbox::PenMode");
+void Toolbox::PenMode(PatternMode mode) {
+	if (_port) {
+		_port->pnMode = mode;
+	}
 }
 
 void Toolbox::PenNormal() {
-	warning("STUB: Toolbox::PenNormal");
+	if (_port) {
+		_port->pnSize = Common::Point(1, 1);
+		_port->pnMode = kPatCopy;
+		_port->pnPat = { { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } };
+	}
 }
 
 void Toolbox::PenPat(const Pattern &pat) {
-	warning("STUB: Toolbox::PenPat");
+	if (_port) {
+		_port->pnPat = pat;
+	}
 }
 
 void Toolbox::PenSize(uint16 width, uint16 height) {
-	warning("STUB: Toolbox::PenSize");
+	if (_port) {
+		_port->pnSize = Common::Point(width, height);
+	}
 }
 
 void Toolbox::PortSize(uint16 width, uint16 height) {
-	warning("STUB: Toolbox::PortSize");
+	if (_port) {
+		_port->portRect.setWidth(width);
+		_port->portRect.setHeight(height);
+	}
 }
 
 void Toolbox::SetCPixel(int16 h, int16 v, const RGBColor &cPix) {
@@ -191,11 +217,13 @@ void Toolbox::SetCPixel(int16 h, int16 v, const RGBColor &cPix) {
 }
 
 void Toolbox::SetPort(GrafPtr port) {
-	warning("STUB: Toolbox::SetPort");
+	_port = port;
 }
 
 void Toolbox::SetPortBits(BitMap &bm) {
-	warning("STUB: Toolbox::SetPortBits");
+	if (_port) {
+		_port->portBits = bm;
+	}
 }
 
 void Toolbox::SetRect(Common::Rect &r, int16 left, int16 top, int16 right, int16 bottom) {

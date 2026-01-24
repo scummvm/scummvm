@@ -46,7 +46,7 @@ public:
 	void sub_128_26c(int16 unk1, int16 unk2);
 	void sub_128_2a6(int16 unk1, int16 unk2);
 	void fillRect(int16 patternID, int16 top, int16 left, int16 bottom, int16 right); // sub_128_2f0
-	void sub_128_354(uint16 unk1, uint16 unk2);
+	void sub_128_354(PatternMode mode, uint16 unk2);
 	void sub_128_3ee(int16 unk1);
 	void sub_128_50a(int16 unk1, int16 unk2, int16 unk3, int16 screenPage);
 	void sub_128_610(int16 screenPage);
