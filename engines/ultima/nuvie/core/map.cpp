@@ -319,7 +319,7 @@ uint8 Map::get_impedance(uint16 x, uint16 y, uint8 level, bool ignore_objects) {
 const Tile *Map::get_dmg_tile(uint16 x, uint16 y, uint8 level) {
 	const Tile *tile = get_tile(x, y, level);
 
-	if (tile->damages)
+	if (tile && tile->damages)
 		return tile;
 
 	return obj_manager->get_obj_dmg_tile(x, y, level);
