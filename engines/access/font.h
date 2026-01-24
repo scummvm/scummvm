@@ -70,7 +70,7 @@ public:
 	/**
 	 * Get the height of a given string
 	 */
-	virtual int stringHeight(const Common::String &msg) const { return _height; };
+	virtual int stringHeight(const Common::String &msg) const;
 
 	/**
 	 * Type of line wrapping - Martian wraps based on chars, Amazon based on px.

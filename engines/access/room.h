@@ -67,6 +67,7 @@ enum RoomFlag {
 	kRoomFlagNoPlayer = 0x80,
 };
 
+
 class Room : public Manager {
 private:
 	void roomLoop();

@@ -42,11 +42,19 @@ int Font::charWidth(char c) const {
 
 int Font::stringWidth(const Common::String &msg) const {
 	int total = 0;
+	int maxtotal = 0;
 
-	for (const char *c = msg.c_str(); *c != '\0'; ++c)
+	for (const char *c = msg.c_str(); *c != '\0'; ++c) {
+		if (*c == '\r' || *c == '\n') {
+			maxtotal = MAX(total, maxtotal);
+			total = 0;
+			continue;
+		}
 		total += charWidth(*c);
+	}
 
-	return total;
+	// Include the last line length too..
+	return MAX(total, maxtotal);
 }
 
 bool Font::getLine(Common::String &s, int maxWidth, Common::String &line, int &width,
@@ -126,6 +134,16 @@ int Font::drawChar(BaseSurface *s, char c, Common::Point &pt) const {
 
 	return ch.w;
 }
+
+int Font::stringHeight(const Common::String &msg) const {
+	int16 height = _height;
+	for (uint i = 0; i < msg.size(); i++) {
+		if (msg[i] == '\r' || msg[i] == '\n')
+			height += _height;
+	}
+	return height;
+}
+
 
 /*------------------------------------------------------------------------*/
 

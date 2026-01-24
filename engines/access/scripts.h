@@ -65,7 +65,9 @@ protected:
 	void cmdJumpGet();
 	void cmdJumpMove();
 	void cmdJumpUse();
+	void cmdJumpUse_v3();
 	void cmdJumpTalk();
+	void cmdJumpTalk_v3();
 	void cmdNull();
 	void cmdPrint_v1();
 	void cmdPrint_v2();
@@ -97,6 +99,7 @@ protected:
 	void cmdSetTimer();
 	void cmdCheckTimer();
 	void cmdJumpGoto();
+	void cmdJumpGoto_v3();
 	void cmdSetTravel();
 	void cmdSetVideo_v1();
 	void cmdSetVideo_v3();
@@ -197,7 +200,7 @@ public:
 
 	void freeScriptData();
 
-	void searchForSequence();
+	virtual void searchForSequence();
 
 	int executeScript();
 

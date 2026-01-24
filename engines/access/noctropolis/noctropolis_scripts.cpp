@@ -30,6 +30,71 @@ NoctropolisScripts::NoctropolisScripts(NoctropolisEngine *vm) : Scripts(vm) {
 	setOpcodes_v3();
 }
 
+static int COMMAND_ARG_SIZES[] = {
+	-1, 0, 2, 2, 2, 2, 2, 2, 2, -1,
+	0, 1, 2, 6, 2, 1, 2, 6, 4, 1,
+	2, 6, 4, 1, 0, 0, 10, 1, 0, 2,
+	4, 6, 2, 2, 8, 0, 8, 0, 0, 4,
+	0, 2, 8, 0, 0, 0, 6, 6, 6, 0,
+	-2, -2, -3, 2, 8, 4, 4, 0, 0, 2,
+	0, 10, 0, -1, 0, 2, 6, 8, 0, 0,
+	1, 1, 0, 0, -2, 0, 1, 6, 2, 2,
+	0, 4, 2, 8, 0, 6, 2, 0, 0, 0,
+	4, 1, 1, 2, 0, 0,
+};
+
+void NoctropolisScripts::skipCommand(byte cmd) {
+	assert(cmd < ARRAYSIZE(COMMAND_ARG_SIZES));
+	int argsize = COMMAND_ARG_SIZES[cmd];
+	switch (argsize) {
+	case -1:
+		_data->readString();
+		break;
+	case -2:
+		_data->readUint16LE();
+		_data->readUint16LE();
+		_data->readString();
+		break;
+	case -3:
+		_data->readUint16LE();
+		_data->readUint16LE();
+		_data->readString();
+		_data->readString();
+		_data->readString();
+		_data->readString();
+		_data->readString();
+		_data->readString();
+		break;
+	default:
+		_data->seek(argsize, SEEK_CUR);
+	}
+}
+
+// Unlike the previous games which just stop at any 0xE0 (SCRIPT_START_BYTE),
+// Noctropolis skips to the next command using argument size.  This avoids
+// mistakes from the 0xE0 appearing accidentally in arguments.
+void NoctropolisScripts::searchForSequence() {
+	assert(_data);
+
+	_data->seek(0);
+	int sequenceId;
+	while (_data->pos() < _data->size()) {
+		byte command = _data->readByte();
+		if (command == 0xe0) {
+			sequenceId = _data->readUint16LE();
+			if (sequenceId == _sequence)
+				break;
+		} else {
+			skipCommand(command ^ 0x80);
+		}
+	}
+	if (_data->pos() == _data->size()) {
+		warning("Hit EOS when searching for sequence %d", _sequence);
+		_endFlag = true;
+	}
+}
+
+
 void NoctropolisScripts::executeSpecial(int commandIndex, int param1, int param2) {
 	switch (commandIndex) {
 		case 1:

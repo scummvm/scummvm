@@ -70,14 +70,12 @@ void BubbleBox::clearBubbles() {
 }
 
 void BubbleBox::placeBubble(const Common::String &msg) {
-	/*if (_vm->getGameID() == kGameNoctropolis) {
-		calcBubble_v3(msg);
-		_vm->_screen->saveBlock(_bubbles[0]);
-		printBubble(msg);
-	} else {*/
-		_vm->_screen->_maxChars = (_vm->getGameID() == kGameMartianMemorandum) ? 30 : 27;
-		placeBubble1(msg);
-	//}
+	switch (_vm->getGameID()) {
+		case kGameMartianMemorandum: 	_vm->_screen->_maxChars = 30; break;
+		case kGameAmazon: 				_vm->_screen->_maxChars = 27; break;
+		case kGameNoctropolis: 			_vm->_screen->_maxChars = 200; break;
+	}
+	placeBubble1(msg);
 }
 
 void BubbleBox::placeBubble1(const Common::String &msg) {
@@ -89,9 +87,13 @@ void BubbleBox::placeBubble1(const Common::String &msg) {
 
 	calcBubble(msg);
 
-	Common::Rect r = _bubbles[0];
-	r.translate(-2, 0);
-	_vm->_screen->saveBlock(r);
+	if (_vm->getGameID() != kGameNoctropolis) {
+		// Noctropolis bounds are different and might have the extra box
+		// decoration, so we save them during the render step (in doBox_v3)
+		Common::Rect r = _bubbles[0];
+		r.translate(-2, 0);
+		_vm->_screen->saveBlock(r);
+	}
 	printBubble(msg);
 }
 
@@ -285,6 +287,7 @@ void BubbleBox::printBubble_v3(const Common::String &msg) {
 	Common::String line;
 	int width = 0;
 	bool lastLine;
+	int startx = _vm->_screen->_printOrg.x;
 	do {
 		// Get next line
 		const Font *font = _vm->_fonts.getFont(4);
@@ -294,8 +297,8 @@ void BubbleBox::printBubble_v3(const Common::String &msg) {
 		printString(line);
 
 		// Move print position
-		_vm->_screen->_printOrg.y += 6;
-		_vm->_screen->_printOrg.x = _vm->_screen->_printStart.x;
+		_vm->_screen->_printOrg.y += font->stringHeight(line);
+		_vm->_screen->_printOrg.x = startx;
 	} while (!lastLine);
 }
 
@@ -342,6 +345,8 @@ void BubbleBox::doBox_v3(int item, int box) {
 		_bounds = Common::Rect(Common::Point(boxX, boxY), boxWidth * 16 + 27, boxHeight * 16 + 20);
 	else
 		_bounds = Common::Rect(Common::Point(boxX - 34, boxY - 43), boxWidth * 16 + 27 + 34, boxHeight * 16 + 20 + 43);
+
+	_vm->_screen->saveBlock(_bounds);
 
 	screen.fillRect(Common::Rect(boxX + 5, boxY + 5, boxX + 5 + boxWidth * 16 + 15, boxY + 5 + boxHeight * 16 + 8), 246);
 

@@ -24,6 +24,7 @@
 #include "access/noctropolis/noctropolis_game.h"
 #include "access/noctropolis/noctropolis_room.h"
 #include "access/noctropolis/noctropolis_player.h"
+#include "access/noctropolis/noctropolis_resources.h"
 #include "access/access.h"
 
 namespace Access {
@@ -76,6 +77,7 @@ void NoctropolisRoom::reloadRoom1() {
 	_selectCommand = -1;
 	_vm->_boxSelect = false; //-1
 	_vm->_player->_playerOff = false;
+	_vm->_player->_playerMove = false;
 
 	_vm->_screen->forceFadeOut();
 	_vm->_events->hideCursor();
@@ -85,7 +87,6 @@ void NoctropolisRoom::reloadRoom1() {
 	_vm->_player->load();
 
 	_vm->_events->hideCursor();
-	roomMenu();
 	_vm->_screen->setBufferScan();
 	setupRoom();
 	setWallCodes();
@@ -98,6 +99,13 @@ void NoctropolisRoom::reloadRoom1() {
 	_vm->_oldRects.clear();
 	_vm->_newRects.clear();
 	_vm->_events->clearEvents();
+}
+
+void NoctropolisRoom::roomInit() {
+	Room::roomInit();
+
+	for (int i = 0; i < 8; i++)
+		_vm->_flags[178 + i] = 0;
 }
 
 void NoctropolisRoom::buildScreenXScroll() {
@@ -159,7 +167,7 @@ void NoctropolisRoom::doCommands() {
 	// aka NoctDoCommandLoop::ticker
 
 	if (_vm->_events->_interfaceOff) {
-		_vm->_events->setCursor(CURSOR_DARK_ANKH);
+		_vm->_events->setNormalCursor(CURSOR_DARK_ANKH);
 	} else {
 		if (_vm->_events->_rightButton) {
 			_vm->_events->debounceRight();
@@ -172,55 +180,60 @@ void NoctropolisRoom::doCommands() {
 
 		_vm->_exitBox = false;
 
-		if (_selectCommand != 1 && _selectCommand != 2 &&
-			_selectCommand != 3 && _selectCommand != 5 &&
-			_selectCommand != 6) {
-			hotspotIndex = checkPlayerBox(pt);
-			// Mouse is at the player or Stiletto, check what the script says
-			if (hotspotIndex >= 0 && !(validateBox(hotspotIndex) & 0x80))
-				hotspotIndex = -1;
+		if (_selectCommand != kNoctCmdOpen && _selectCommand != kNoctCmdMove &&
+			_selectCommand != kNoctCmdGetTake && _selectCommand != kNoctCmdUse &&
+			_selectCommand != kNoctCmdGoto) {
+			if (!checkPlayerBox(pt)) {
+				hotspotIndex = _plotter._blockIn;
+				// Mouse is at the player or Stiletto, check what the script says
+				if (hotspotIndex >= 0 && (validateBox(hotspotIndex) & 0x80))
+					hotspotIndex = -1;
+			}
+		}
+
+		if (_vm->_player->_roomNumber == 59 && _selectCommand == kNoctCmdGetTake && hotspotIndex == 3) {
+			_conFlag = true;
+			_vm->_scripts->_continuenceType = 3;
+			error("TODO: Implement room 59 hack from original?");
 		}
 
 		if (hotspotIndex < 0) {
 			hotspotIndex = checkBoxes1(pt);
-			while (hotspotIndex >= 0 && !(validateBox(hotspotIndex) & 0x80))
+			while (hotspotIndex >= 0 && (validateBox(hotspotIndex) & 0x80))
 				hotspotIndex = checkBoxes2(pt, hotspotIndex + 1, 0);
 		}
 
 		if (hotspotIndex >= 0) {
 			if (_vm->_exitBox)
-				_vm->_events->setCursor(CURSOR_HELP);
+				_vm->_events->setNormalCursor(CURSOR_NOCT_EXIT);
 			else if (_selectCommand <= 6)
-				_vm->_events->setCursor((CursorType)(_selectCommand + 2));
+				_vm->_events->setNormalCursor((CursorType)(_selectCommand + 2));
 			else
-				_vm->_events->setCursor(CURSOR_ARROW);
+				_vm->_events->setNormalCursor(CURSOR_ARROW);
 
 			if (_vm->_events->_leftButton) {
 				_vm->_events->debounceLeft();
 				// Double-clicking on something selects the goto command
-				uint32 endTicks = g_system->getMillis() + 100;
+				uint32 endTicks = g_system->getMillis() + _vm->_events->getDoubleClickTime();
 				while (g_system->getMillis() < endTicks) {
-					_vm->_events->pollEvents();
+					_vm->_events->pollEventsAndWait();
 					if (_vm->_events->_leftButton) {
-						_selectCommand = 1;
+						_selectCommand = kNoctCmdGoto;
 						break;
 					}
 				}
 				// Also the script can force a goto command
 				if (_vm->_exitBox)
-					_selectCommand = 3;
+					_selectCommand = kNoctCmdGoto;
 				_vm->_events->debounceLeft();
-				if (_selectCommand >= 0) {
+				if (_selectCommand != -1) {
 					_conFlag = true;
-					while (_conFlag && !_vm->shouldQuitOrRestart()) {
-						_conFlag = false;
-						_vm->_scripts->executeScript();
-					}
+					_vm->_scripts->executeScript();
 				}
 			}
 		} else {
 			_vm->_exitBox = false;
-			_vm->_events->setCursor(CURSOR_ARROW);
+			_vm->_events->setNormalCursor(CURSOR_ARROW);
 		}
 
 	}
@@ -305,6 +318,8 @@ void NoctropolisRoom::mainAreaLClick() {
 int NoctropolisRoom::validateBox(int boxId) {
 	int result = Room::validateBox(boxId);
 
+	//debug("NoctRoom::validateBox(%d) -> %d", boxId, result);
+
 	if (_vm->_player->_roomNumber == 54) {
 		_vm->_scripts->_continuenceType = 1;
 	}
@@ -313,7 +328,64 @@ int NoctropolisRoom::validateBox(int boxId) {
 
 
 void NoctropolisRoom::roomMenu() {
-	warning("TODO: Implement NoctropolisRoom::RoomMenu (see gRoomMenuLoop?)");
+	// Move the mouse to the centre of the menu
+	// see NoctRoomMenu::setPositionFromMouse.
+	Common::Point mousePt = _vm->_events->getMousePos();
+	int baseX = mousePt.x - 127;
+	int baseY = mousePt.y - 75;
+
+	if (baseX < 0) {
+		baseX = 0;
+		mousePt.x = 127;
+	} else if (baseX >= 640 - 255) {
+		baseX = 640 - 255;
+		mousePt.x = 640 - 127;
+	}
+
+	if (baseY < 0) {
+		baseY = 0;
+		mousePt.y = 75;
+	} else if (baseY >= 400 - 151) {
+		baseY = 400 - 151;
+		mousePt.y = 400 - 75;
+	}
+
+	g_system->warpMouse(mousePt.x, mousePt.y);
+
+	const SpriteResource *icons = _vm->getIcons();
+
+	int16 width = icons->getFrame(8)->w + icons->getFrame(9)->w;
+	int16 height = MAX(icons->getFrame(8)->h, icons->getFrame(9)->h);
+
+	_vm->_screen->saveScreen();
+	_vm->_screen->setDisplayScan();
+
+	_vm->_screen->saveBlock(Common::Rect(Common::Point(baseX, baseY), width, height));
+
+	_vm->_destIn = _vm->_screen;	// TODO: Redundant?
+	_vm->_screen->plotImage(icons, 8, Common::Point(baseX, baseY));
+	_vm->_screen->plotImage(icons, 9, Common::Point(baseX + 127, baseY));
+
+	int cmdIndex = -1;
+	while (cmdIndex == -1 && !_vm->shouldQuitOrRestart()) {
+		if (_vm->_events->_rightButton) {
+			cmdIndex = -2;
+			_vm->_events->debounceRight();
+		} else if (_vm->_events->_leftButton) {
+			mousePt = _vm->_events->getMousePos();
+			cmdIndex = ((NoctropolisResources *)_vm->_res)->menuPolygonAt(mousePt.x - baseX, mousePt.y - baseY);
+			_vm->_events->debounceLeft();
+		}
+		_vm->_events->pollEventsAndWait();
+	}
+
+	// Restore screen background
+	_vm->_screen->restoreBlock();
+	_vm->_screen->restoreScreen();
+	debug("menu cmdIndex = %d", cmdIndex);
+
+	if (cmdIndex >= 0)
+		handleCommand(cmdIndex);
 }
 
 } // end namespace Noctropolis

@@ -221,6 +221,11 @@ void EventsManager::keyControl(Common::KeyCode keycode, bool isKeyDown) {
 	_keyCode = keycode;
 }
 
+uint32 EventsManager::getDoubleClickTime() const {
+    uint32 timeout = g_system->getDoubleClickTime();
+    return timeout > 0 ? timeout : 400;
+}
+
 void EventsManager::actionControl(Common::CustomEventType action, bool isKeyDown) {
 	Player &player = *_vm->_player;
 
