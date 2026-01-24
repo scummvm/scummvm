@@ -376,11 +376,11 @@ void ObjectHandler_v1d::homeIn(int objIndex1, const int objIndex2, const int8 ob
 		dy = 1;
 
 	if (abs(dx) > abs(dy)) {
-		obj1->_vx = objDx * -sign<int8>(dx);
-		obj1->_vy = abs((objDy * dy) / dx) * -sign<int8>(dy);
+		obj1->_vx = objDx * -sign(dx);
+		obj1->_vy = abs((objDy * dy) / dx) * -sign(dy);
 	} else {
-		obj1->_vy = objDy * sign<int8>(dy);
-		obj1->_vx = abs((objDx * dx) / dy) * sign<int8>(dx);
+		obj1->_vy = objDy * sign(dy);
+		obj1->_vx = abs((objDx * dx) / dy) * sign(dx);
 	}
 }
 } // End of namespace Hugo
