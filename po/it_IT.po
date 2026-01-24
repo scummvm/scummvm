@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-23 23:11+0000\n"
-"PO-Revision-Date: 2026-01-19 18:28+0000\n"
+"PO-Revision-Date: 2026-01-24 00:45+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -7044,8 +7044,6 @@ msgid "Show objects to interact"
 msgstr "Mostra oggetti interattivi"
 
 #: engines/agos/metaengine.cpp:272
-#, fuzzy
-#| msgid "Toggle background sounds on / off"
 msgid "Toggle background sounds"
 msgstr "Attiva/disattiva effetti sonori ambientali"
 
@@ -7055,8 +7053,6 @@ msgid "Switch characters"
 msgstr "Cambia personaggio"
 
 #: engines/agos/metaengine.cpp:287
-#, fuzzy
-#| msgid "Toggle hitbox names on / off"
 msgid "Toggle hitbox names"
 msgstr "Mostra/nascondi nomi delle aree interattive"
 
@@ -7354,8 +7350,6 @@ msgid "Open character inventory"
 msgstr "Apri l'inventario del personaggio"
 
 #: engines/asylum/metaengine.cpp:226
-#, fuzzy
-#| msgid "Toggle animation on / off"
 msgid "Toggle animation"
 msgstr "Attiva/disattiva le animazioni"
 
@@ -13715,8 +13709,6 @@ msgid "Open control panel"
 msgstr "Apri pannello di controllo"
 
 #: engines/sky/metaengine.cpp:136
-#, fuzzy
-#| msgid "Toggle really fast mode on / off"
 msgid "Toggle really fast mode"
 msgstr "Attiva / disattiva modalità molto veloce"
 
