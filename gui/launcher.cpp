@@ -1479,24 +1479,25 @@ void LauncherSimple::updateButtons() {
 	int selectedCount = 0;
 	for (int i = 0; i < (int)selectedItemsBool.size(); ++i) {
 		if (selectedItemsBool[i]) selectedCount++;
+		if (selectedCount == 2) break;
 	}
 	bool hasMultiSelection = selectedCount > 1;
-
+	bool hasSelection = selectedCount > 0;
 	bool isAddOn = false;
 	if (item >= 0) {
 		const Common::ConfigManager::Domain *domain = ConfMan.getDomain(_domains[item]);
 		isAddOn = domain && domain->contains("parent");
 	}
 
-	bool enable = (item >= 0 && !isAddOn && !hasMultiSelection);
+	bool enable = (item >= 0 && !isAddOn && !hasMultiSelection && hasSelection);
 
 	_startButton->setEnabled(enable);
 	_editButton->setEnabled(enable);
-	_removeButton->setEnabled(item >= 0 || hasMultiSelection);
+	_removeButton->setEnabled(hasSelection);
 
 	bool en = enable;
 
-	if (item >= 0 && !isAddOn && !hasMultiSelection)
+	if (item >= 0 && !isAddOn && !hasMultiSelection && hasSelection)
 		en = !(Common::checkGameGUIOption(GUIO_NOLAUNCHLOAD, ConfMan.get("guioptions", _domains[item])));
 
 	_loadButton->setEnabled(en);
