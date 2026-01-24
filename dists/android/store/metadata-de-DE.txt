@@ -21,11 +21,12 @@ Ebenfalls auf unserer Website findest du unter der URL https://docs.scummvm.org/
 https://forums.scummvm.org/viewforum.php?f=17 ist unser Forum, wo du dich mit anderen Nutzern über die Android-Version austauschen kannst.
 
 *** Current release (limit is 500 characters):
-2.9.1.1
+2026.1.0
 
 *** Release notes:
-– Fehler beim Importieren einer ScummVM-Sicherungsdatei (Konfiguration und Spielstände) behoben.
-– Lokalisierte GUI-Texte korrigiert.
-– Ein Absturzproblem beim Spiel „Galador“ wurde behoben.
+- Unterstützung für Android 16
+- Unterstützung für skalierende Shader und Kantenglättung in 3D-Engines
+- Problem mit dem langen Drücken der Zurück-Taste in neueren Android-Versionen behoben
+- Die Start-Taste des Controllers ist jetzt standardmäßig dem ScummVM-Menü (im Spiel) zugeordnet
 
-Vollständige Versionshinweise: https://scummvm.org/frs/scummvm/2.9.1/ReleaseNotes.html
+Vollständige Versionshinweise:  https://scummvm.org/frs/scummvm/2026.1.0/ReleaseNotes.html
