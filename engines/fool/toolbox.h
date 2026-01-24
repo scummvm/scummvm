@@ -30,6 +30,7 @@
 
 #include "graphics/framelimiter.h"
 #include "graphics/macgui/macwindow.h"
+#include "graphics/macgui/macwindowmanager.h"
 
 #include "fool/siphash/halfsip.h"
 
@@ -163,6 +164,27 @@ public:
 	Toolbox();
 	~Toolbox();
 
+	// toolbox.cpp
+
+	// PROCEDURE Delay (numTicks: LONGINT; VAR finalTicks: LONGINT);
+	// Delay causes the system to wait for the number of ticks (sixtieths of a second) specified by numTicks, and returns in finalTicks the total number of ticks from system startup to the end of the delay.
+	uint32 Delay(uint32 numTicks);
+
+	// FUNCTION GetNextEvent (eventMask: INTEGER; VAR theEvent: EventRecord) : BOOLEAN;
+	// GetNextEvent returns the next available event of a specified type or types and, if the event is in
+	// the event queue, removes it from the queue. The event is returned in the parameter theEvent. The
+	// eventMask parameter specifies which event types are of interest. GetNextEvent returns the next
+	// available event of any type designated by the mask, subject to the priority rules discussed above
+	// under "Priority of Events". If no event of any of the designated types is available, GetNextEvent
+	// returns a null event.
+	bool GetNextEvent(uint16 eventMask, EventRecord &theEvent);
+
+	// FUNCTION TickCount : LONGINT;
+	// TickCount returns the current number of ticks (sixtieths of a second) since the system last started
+	// up.
+	uint32 TickCount();
+
+
 	// toolbox_resman.cpp
 
 	// FUNCTION CurResFile: INTEGER;
@@ -196,7 +218,7 @@ public:
 	// Given a handle to a resource, GetResInfo returns the ID number, type, and name of the resource.
 	// If the given handle isn't a handle to a resource, GetResInfo will do nothing and the ResError
 	// function will return the result code resNotFound.
-	void GetResInfo(Handle &theResource, int16 &theID, ResType &theType, Common::String &name);
+	void GetResInfo(Handle &theResource, uint16 &theID, ResType &theType, Common::String &name);
 
 	// FUNCTION GetResource (theType: ResType; theID: INTEGER) : Handle;
 	// GetResource returns a handle to the resource having the given type and ID number, reading
@@ -251,6 +273,7 @@ public:
 	void UseResFile(int16 refNum);
 
 
+	// toolbox_quickdraw.cpp
 
 	// PROCEDURE BeginUpdate (theWindow: WindowPtr);
 	// Call BeginUpdate when an update event occurs for theWindow. BeginUpdate replaces the
@@ -288,10 +311,6 @@ public:
 	// the dstBits.bounds coordinate system, and the srcRect coordinates are in terms of the
 	// srcBits.bounds coordinates.
 	void CopyBits(const BitMap &srcBits, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, uint16 mode, RgnHandle maskRgn);
-
-	// PROCEDURE Delay (numTicks: LONGINT; VAR finalTicks: LONGINT);
-	// Delay causes the system to wait for the number of ticks (sixtieths of a second) specified by numTicks, and returns in finalTicks the total number of ticks from system startup to the end of the delay.
-	uint32 Delay(uint32 numTicks);
 
 	// PROCEDURE DrawChar (ch: CHAR);
 	// DrawChar places the given character to the right of the pen location, with the left end of its base
@@ -346,15 +365,6 @@ public:
 	// The GetCPixel function returns the RGB of the pixel at the specified position in the current
 	// port.
 	void GetCPixel(int16 h, int16 v, RGBColor &cPix);
-
-	// FUNCTION GetNextEvent (eventMask: INTEGER; VAR theEvent: EventRecord) : BOOLEAN;
-	// GetNextEvent returns the next available event of a specified type or types and, if the event is in
-	// the event queue, removes it from the queue. The event is returned in the parameter theEvent. The
-	// eventMask parameter specifies which event types are of interest. GetNextEvent returns the next
-	// available event of any type designated by the mask, subject to the priority rules discussed above
-	// under "Priority of Events". If no event of any of the designated types is available, GetNextEvent
-	// returns a null event.
-	bool GetNextEvent(uint16 eventMask, EventRecord &theEvent);
 
 	// FUNCTION GetPicture (picID: INTEGER) : PicHandle;
 	// GetPicture returns a handle to the picture having the given resource ID, reading it from the
@@ -510,11 +520,6 @@ public:
 	// CharWidths of all the characters in the string (see above).
 	uint16 StringWidth(const Common::String &s);
 
-	// FUNCTION TickCount : LONGINT;
-	// TickCount returns the current number of ticks (sixtieths of a second) since the system last started
-	// up.
-	uint32 TickCount();
-
 private:
 	Common::HashMap<int16, Common::SharedPtr<Common::MacResManager>> _resMap;
 	Common::Array<int16> _resOrder;
@@ -526,6 +531,8 @@ private:
 	int _cursorLevel = 0;
 
 	Common::Queue<EventRecord> _events;
+
+	Graphics::MacPlotData _pd;
 
 	void _pumpEvents();
 	void _updateScreen();
