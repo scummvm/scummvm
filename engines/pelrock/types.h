@@ -394,10 +394,12 @@ struct ChoiceOption {
 	int choiceIndex;
 	Common::String text;
 	uint32 dataOffset;
-	bool isDisabled;
+	bool isDisabled = false;
 	bool shouldDisableOnSelect = false;
+	bool hasConversationEndMarker = false;
+	bool isTerminator = false;
 
-	ChoiceOption() : choiceIndex(-1), isDisabled(false), dataOffset(0) {}
+	ChoiceOption() : choiceIndex(-1), dataOffset(0) {}
 };
 
 struct ResetEntry {

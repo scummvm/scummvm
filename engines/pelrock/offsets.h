@@ -50,6 +50,7 @@ static const uint32 kInventoryDescriptionsSize = 7868;
 static const uint32 kMenuTextOffset = 0x49203;
 static const uint32 kMenuTextSize = 230;
 static const uint32 kAlfredResponsesOffset = 0x441DC;
+static const uint32 kConversationTerminatorOffset = 0x0492EE;
 static const uint32 kAlfredResponsesSize = 12163;
 static const uint32 kCreditsOffset = 0x49F60;
 static const uint32 kCreditsSize = 2540;

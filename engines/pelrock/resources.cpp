@@ -234,7 +234,7 @@ void ResourceManager::loadAlfredSpecialAnim(int numAnim, bool reverse) {
 	} else {
 		alfred7.read(_currentSpecialAnim->animData, offset.numFrames * offset.w * offset.h);
 	}
-	if  (reverse) {
+	if (reverse) {
 		// reverse frames for testing
 		byte *reversedData = new byte[offset.numFrames * offset.w * offset.h];
 		for (int i = 0; i < offset.numFrames; i++) {
@@ -277,7 +277,7 @@ void ResourceManager::loadInventoryItems() {
 	delete[] iconData;
 }
 
-void ResourceManager::loadAlfredResponses() {
+void ResourceManager::loadHardcodedText() {
 
 	Common::File exe;
 	if (!exe.open("JUEGO.EXE")) {
@@ -287,6 +287,10 @@ void ResourceManager::loadAlfredResponses() {
 	exe.seek(kAlfredResponsesOffset, SEEK_SET);
 	exe.read(descBuffer, kAlfredResponsesSize);
 	_ingameTexts = processTextData(descBuffer, kAlfredResponsesSize);
+	byte *terminatorBuffer = new byte[39];
+	exe.seek(kConversationTerminatorOffset, SEEK_SET);
+	exe.read(terminatorBuffer, 39);
+	_conversationTerminator = Common::String((const char *)terminatorBuffer, 39);
 	delete[] descBuffer;
 	exe.close();
 }
@@ -322,11 +326,11 @@ Common::Array<Common::StringArray> ResourceManager::getCredits() {
 	return credits;
 }
 
-Common::Array<Common::Array<Common::String>> ResourceManager::processTextData(byte *data, size_t size, bool decode) {
+Common::Array<Common::StringArray> ResourceManager::processTextData(byte *data, size_t size, bool decode) {
 	int pos = 0;
 	Common::String desc = "";
 	Common::StringArray lines;
-	Common::Array<Common::Array<Common::String>> texts;
+	Common::Array<Common::StringArray> texts;
 	while (pos < size) {
 		if (data[pos] == CTRL_END_TEXT) {
 			if (!desc.empty()) {

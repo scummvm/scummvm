@@ -50,18 +50,6 @@ namespace Pelrock {
 #define CTRL_ALT_END_MARKER_2 0xEB       /* Alt end marker 2 */
 #define CTRL_ALT_SPEAKER_ROOT 0xFE       /* Separates conversations from different speakers */
 
-// static void debugHexString(const Common::String &str, const char *label = nullptr) {
-// 	if (label) {
-// 		debug("%s:", label);
-// 	}
-
-// 	Common::String hexOutput;
-// 	for (uint i = 0; i < str.size(); i++) {
-// 		hexOutput += Common::String::format("%02X ", (unsigned char)str[i]);
-// 	}
-// 	debug("%s", hexOutput.c_str());
-// }
-
 class DialogManager {
 private:
 	Graphics::Screen *_screen = nullptr;

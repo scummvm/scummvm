@@ -137,7 +137,7 @@ void PelrockEngine::init() {
 	_res->loadCursors();
 	_res->loadInteractionIcons();
 	_res->loadInventoryItems();
-	_res->loadAlfredResponses();
+	_res->loadHardcodedText();
 
 	_sound->loadSoundIndex();
 	_menu->loadMenu();
@@ -314,6 +314,7 @@ void PelrockEngine::checkMouse() {
 		_actionPopupState.isActive = false;
 		// Mouse was released while popup is active
 		VerbIcon actionClicked = isActionUnder(_events->_releaseX, _events->_releaseY);
+		debug("Popup action clicked: %d, is alfredunder %d", actionClicked, _actionPopupState.isAlfredUnder);
 		if (_actionPopupState.isAlfredUnder) {
 			debug("Using item on Alfred");
 			useOnAlfred(_state->selectedInventoryItem);
@@ -937,6 +938,7 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 	_alfredState.idleFrameCounter = 0;
 	int hotspotIndex = isHotspotUnder(x, y);
 	bool alfredUnder = isAlfredUnder(x, y);
+	debug("Long click at %d,%d - hotspot %d, alfred under %d", x, y, hotspotIndex, alfredUnder);
 	if ((hotspotIndex != -1 || alfredUnder) && !_actionPopupState.isActive) {
 
 		_actionPopupState.x = _alfredState.x + kAlfredFrameWidth / 2 - kBalloonWidth / 2;
@@ -1224,10 +1226,10 @@ void PelrockEngine::pickupIconFlash() {
 
 void PelrockEngine::gameLoop() {
 
-		_events->pollEvent();
-		checkMouse();
-		renderScene();
-		_screen->update();
+	_events->pollEvent();
+	checkMouse();
+	renderScene();
+	_screen->update();
 }
 
 void PelrockEngine::computerLoop() {

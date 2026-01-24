@@ -48,7 +48,7 @@ public:
 	void loadAlfredSpecialAnim(int numAnim, bool reverse = false);
 	void clearSpecialAnim();
 	void loadInventoryItems();
-	void loadAlfredResponses();
+	void loadHardcodedText();
 	void getExtraScreen(int screenIndex, byte *screenBuf, byte *palette);
 	Common::Array<Common::StringArray> getCredits();
 	Common::Array<Common::Array<Common::String>> processTextData(byte *data, size_t size, bool decode = false);
@@ -69,13 +69,10 @@ public:
 	byte *_verbIcons[9];
 	byte *_popUpBalloon = nullptr;
 	Common::Array<Common::StringArray> _ingameTexts;
+	Common::String _conversationTerminator;
 
 	// Special anims
 	AlfredSpecialAnim *_currentSpecialAnim = nullptr;
-	// byte *_specialAnimData = nullptr;
-	// int _specialAnimCurFrame = 0;
-	// int _speciaAnimLoopCount = 0;
-	// AlfredSpecialAnimOffset _curSpecialAnim;
 	bool _isSpecialAnimFinished = false;
 };
 

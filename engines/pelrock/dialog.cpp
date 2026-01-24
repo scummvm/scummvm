@@ -20,6 +20,7 @@
  */
 
 #include "pelrock/dialog.h"
+#include "pelrock/offsets.h"
 #include "pelrock/pelrock.h"
 #include "pelrock/util.h"
 
@@ -326,6 +327,24 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 						if (tb == CTRL_END_TEXT || tb == CTRL_DIALOGUE_MARKER ||
 							tb == CTRL_DIALOGUE_MARKER_ONEOFF || tb == CTRL_END_BRANCH ||
 							tb == CTRL_ALT_END_MARKER_1) {
+							// Check if there is a terminator (F4 or F8) at the end of this choice's response
+							// Scan forward but stop at another choice marker or branch end
+							uint32 scanPos = textPos;
+							while (scanPos < dataSize) {
+								byte sb = data[scanPos];
+								// Stop scanning at another choice marker or branch boundaries
+								if (sb == CTRL_DIALOGUE_MARKER || sb == CTRL_DIALOGUE_MARKER_ONEOFF ||
+									sb == CTRL_END_BRANCH || sb == CTRL_ALT_END_MARKER_1 ||
+									sb == CTRL_ALT_SPEAKER_ROOT) {
+									break;
+								}
+								// Found a conversation terminator - this choice ends the conversation
+								if (sb == CTRL_END_CONVERSATION || sb == CTRL_ACTION_TRIGGER) {
+									opt.hasConversationEndMarker = true;
+									break;
+								}
+								scanPos++;
+							}
 							break;
 						}
 
@@ -385,7 +404,7 @@ bool DialogManager::checkAllSubBranchesExhausted(const byte *data, uint32 dataSi
 				if (data[pos + 2] != CTRL_DISABLED_CHOICE) {
 					debug("checkAllSubBranchesExhausted: Active FB at pos %u, idx %d (current %d) - NOT exhausted",
 						  pos, choiceIdx, currentChoiceLevel);
-					return false;  // Don't disable parent
+					return false; // Don't disable parent
 				}
 			} else if (choiceIdx <= currentChoiceLevel) {
 				// Hit choice at same or lower level - stop
@@ -420,7 +439,7 @@ void DialogManager::setCurSprite(int index) {
 
 bool isRootDisabled(byte room, int root) {
 
-	if(g_engine->_state->getRootDisabledState(room, root)) {
+	if (g_engine->_state->getRootDisabledState(room, root)) {
 		return true;
 	}
 	return false;
@@ -437,10 +456,10 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 	debug("Starting conversation with %u bytes of data, for npc %u", dataSize, npcIndex);
 
 	uint32 position = 0;
-	int currentChoiceLevel = -1; // Track the current choice level
+	int currentChoiceLevel = -1;       // Track the current choice level
 	uint32 lastChoiceMenuPosition = 0; // Track where we last showed a choice menu
-	ChoiceOption lastSelectedChoice; // Track the last choice we selected
-	bool skipToChoices = false; // After F0, skip directly to choice parsing
+	ChoiceOption lastSelectedChoice;   // Track the last choice we selected
+	bool skipToChoices = false;        // After F0, skip directly to choice parsing
 
 	// Find the speaker tree for this NPC; they are marked by 0xFE 0xXX where XX is NPC index + 1
 	bool speakerTreeOffsetFound = false;
@@ -497,8 +516,8 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 				}
 				position = lastChoiceMenuPosition;
 				skipToChoices = true; // Skip directly to choice parsing
-				// Jump directly to choice parsing section
-				// Don't continue - let it fall through
+									  // Jump directly to choice parsing section
+									  // Don't continue - let it fall through
 			} else {
 				debug("F0: No previous choice menu, ending conversation");
 				break;
@@ -587,6 +606,28 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 		lastChoiceMenuPosition = position;
 		Common::Array<ChoiceOption> *choices = new Common::Array<ChoiceOption>();
 		parseChoices(conversationData, dataSize, position, choices);
+
+		// Check if ANY choice has a conversation terminator (F4 or F8)
+		// If so, there's already a way to exit - don't add goodbye option
+		// Only add goodbye if NO choices terminate the conversation naturally
+		bool anyChoiceTerminatesConversation = false;
+		for (uint i = 0; i < choices->size(); i++) {
+			if ((*choices)[i].hasConversationEndMarker) {
+				anyChoiceTerminatesConversation = true;
+				break;
+			}
+		}
+		if (!anyChoiceTerminatesConversation && choices->size() > 0) {
+			// No choice ends the conversation, so add the goodbye option
+			ChoiceOption termChoice;
+			termChoice.choiceIndex = currentChoiceLevel;
+			termChoice.isTerminator = true;
+			termChoice.isDisabled = false;
+			termChoice.shouldDisableOnSelect = false;
+			termChoice.text = g_engine->_res->_conversationTerminator;
+			choices->push_back(termChoice);
+		}
+
 		debug("Parsed %u choices", choices->size());
 		for (uint i = 0; i < choices->size(); i++) {
 			debug(" Choice %u (index %d): \"%s\" (Disabled: %s)", i, (*choices)[i].choiceIndex, (*choices)[i].text.c_str(),
@@ -645,8 +686,13 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 
 		// 6. Move position to after the selected choice
 		if (selectedIndex >= 0 && selectedIndex < (int)choices->size()) {
+
 			// Save this choice in case we hit F0 and need to disable it
 			lastSelectedChoice = (*choices)[selectedIndex];
+			if (lastSelectedChoice.isTerminator) {
+				displayDialogue(lastSelectedChoice.text, ALFRED_COLOR);
+				break;
+			}
 			position = (*choices)[selectedIndex].dataOffset;
 			currentChoiceLevel = (*choices)[selectedIndex].choiceIndex;
 
@@ -657,7 +703,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 
 			if (!choiceText.empty() && choiceText.size() > 1) {
 				displayDialogue(choiceText, ALFRED_COLOR);
-				// Only disable FB choice if all sub-branches are exhausted (Ghidra LAB_00018c2d)
+				// Only disable FB choice if all sub-branches are exhausted
 				if ((*choices)[selectedIndex].shouldDisableOnSelect) {
 					bool shouldDisable = checkAllSubBranchesExhausted(conversationData, dataSize, endPos, currentChoiceLevel);
 					if (shouldDisable) {
@@ -736,7 +782,6 @@ void DialogManager::say(Common::StringArray texts, int16 x, int16 y) {
 	} else {
 		sayAlfred(texts);
 	}
-
 }
 
 bool DialogManager::processColorAndTrim(Common::StringArray &lines, byte &speakerId) {
