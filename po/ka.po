@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-23 23:11+0000\n"
-"PO-Revision-Date: 2026-01-20 15:22+0000\n"
+"PO-Revision-Date: 2026-01-24 10:33+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -6326,10 +6326,8 @@ msgid "Show objects to interact"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:272
-#, fuzzy
-#| msgid "Toggle background sounds on / off"
 msgid "Toggle background sounds"
-msgstr "ფონური ხმების ჩართვა/გამორთვა"
+msgstr "ფონური ხმების გადართვა"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:281
@@ -6337,10 +6335,8 @@ msgid "Switch characters"
 msgstr "გმირების შეცვლა"
 
 #: engines/agos/metaengine.cpp:287
-#, fuzzy
-#| msgid "Toggle hitbox names on / off"
 msgid "Toggle hitbox names"
-msgstr "დატყმის სახელების ჩართ/გამორთ"
+msgstr "დარტყმის სახელების გადართვა"
 
 #: engines/agos/metaengine.cpp:294
 msgid "Switches between speech only and combined speech and subtitles"
@@ -6591,10 +6587,8 @@ msgid "Open character inventory"
 msgstr "პერსონაჟის ინვენტარის გახსნა"
 
 #: engines/asylum/metaengine.cpp:226
-#, fuzzy
-#| msgid "Toggle animation on / off"
 msgid "Toggle animation"
-msgstr "ანიმაციების ჩართვა/გამორთვა"
+msgstr "ანიმაციების გადართვა"
 
 #: engines/asylum/metaengine.cpp:232
 msgid "Return to gameplay"
@@ -12453,10 +12447,8 @@ msgid "Open control panel"
 msgstr "მართვის პანელის გახსნა"
 
 #: engines/sky/metaengine.cpp:136
-#, fuzzy
-#| msgid "Toggle really fast mode on / off"
 msgid "Toggle really fast mode"
-msgstr "მართლა სწრაფი რეჟიმის ჩართვა / გამორთვა"
+msgstr "მართლა სწრაფი რეჟიმის გადართვა"
 
 #: engines/sky/metaengine.cpp:156
 msgid "Floppy intro"
