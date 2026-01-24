@@ -211,7 +211,7 @@ bool ListWidget::isItemSelected(int item) const {
 	return false;
 }
 
-void ListWidget::addSelectedItem(int item) {
+void ListWidget::markSelectedItem(int item, bool state) {
 	// Convert to actual item index if filtering is active
 	int actualItem = item;
 	if (!_listIndex.empty() && item >= 0 && item < (int)_listIndex.size()) {
@@ -219,20 +219,7 @@ void ListWidget::addSelectedItem(int item) {
 	}
 
 	if (actualItem >= 0 && actualItem < (int)_selectedItems.size()) {
-		_selectedItems[actualItem] = true;
-		markAsDirty();
-	}
-}
-
-void ListWidget::removeSelectedItem(int item) {
-	// Convert to actual item index if filtering is active
-	int actualItem = item;
-	if (!_listIndex.empty() && item >= 0 && item < (int)_listIndex.size()) {
-		actualItem = _listIndex[item];
-	}
-
-	if (actualItem >= 0 && actualItem < (int)_selectedItems.size()) {
-		_selectedItems[actualItem] = false;
+		_selectedItems[actualItem] = state;
 		markAsDirty();
 	}
 }
@@ -249,7 +236,7 @@ void ListWidget::selectItemRange(int from, int to) {
 		SWAP(from, to);
 
 	for (int i = from; i <= to; ++i) {
-		addSelectedItem(i);
+		markSelectedItem(i, true);
 	}
 	markAsDirty();
 }
@@ -346,12 +333,12 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 		} else if (ctrlClick) {
 			// Ctrl+Click: Add/remove from selection
 			if (isItemSelected(newSelectedItem)) {
-				removeSelectedItem(newSelectedItem);
+				markSelectedItem(newSelectedItem, false);
 				// If the primary selection is the same item, clear it to avoid highlight
 				sendCommand(kListSelectionChangedCmd, newSelectedItem);
 				markAsDirty();
 			} else {
-				addSelectedItem(newSelectedItem);
+				markSelectedItem(newSelectedItem, true);
 				_selectedItem = newSelectedItem;
 				_lastSelectionStartItem = newSelectedItem;
 			}
@@ -361,7 +348,7 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 		// Regular click: Clear previous selection and select only this item
 		clearSelection();
 		_selectedItem = newSelectedItem;
-		addSelectedItem(newSelectedItem);
+		markSelectedItem(newSelectedItem, true);
 		_lastSelectionStartItem = newSelectedItem;
 		sendCommand(kListSelectionChangedCmd, _selectedItem);
 	}
@@ -547,7 +534,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			// Down: Add next item to selection (Ctrl+Click logic without toggle)
 			if (_selectedItem < (int)_list.size() - 1) {
 				int newItem = _selectedItem + 1;
-				addSelectedItem(newItem);
+				markSelectedItem(newItem, true);
 				_selectedItem = newItem;
 				_lastSelectionStartItem = newItem;
 				dirty = true;
@@ -586,7 +573,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			// Up: Add previous item to selection (Ctrl+Click logic without toggle)
 			if (_selectedItem > 0) {
 				int newItem = _selectedItem - 1;
-				addSelectedItem(newItem);
+				markSelectedItem(newItem, true);
 				_selectedItem = newItem;
 				_lastSelectionStartItem = newItem;
 				dirty = true;

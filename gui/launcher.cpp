@@ -1036,10 +1036,10 @@ protected:
 			
 			// Select at the same index as before
 			if (_grid->_lastSelectedEntryID < (int)selectedItems.size()) {
-				_grid->addSelectedItem(_grid->_lastSelectedEntryID);
+				_grid->markSelectedItem(_grid->_lastSelectedEntryID, true);
 			} else {
 				// If out of bounds, select the last item
-				_grid->addSelectedItem(selectedItems.size() - 1);
+				_grid->markSelectedItem(selectedItems.size() - 1, true);
 				_grid->_lastSelectedEntryID = selectedItems.size() - 1;
 			}
 		}

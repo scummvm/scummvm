@@ -241,8 +241,7 @@ public:
 	Common::Array<bool> _selectedItems;	/// Multiple selected items (bool array)
 	int _lastSelectedEntryID = -1;		/// Used for Shift+Click range selection
 	bool isItemSelected(int entryID) const;
-	void addSelectedItem(int entryID);
-	void removeSelectedItem(int entryID);
+	void markSelectedItem(int entryID, bool state);
 	void clearSelection();
 	const Common::Array<bool> &getSelectedItems() const { return _selectedItems; }
 };

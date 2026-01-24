@@ -274,9 +274,9 @@ void GroupedListWidget::handleMouseDown(int x, int y, int button, int clickCount
 		} else if (ctrlClick) {
 			// Ctrl+Click: toggle selection for the underlying data index
 			if (isItemSelected(newSelectedItem)) {
-				removeSelectedItem(newSelectedItem);
+				markSelectedItem(newSelectedItem, false);
 			} else {
-				addSelectedItem(newSelectedItem);
+				markSelectedItem(newSelectedItem, true);
 			}
 			_selectedItem = newSelectedItem;
 			_lastSelectionStartItem = newSelectedItem;
@@ -286,7 +286,7 @@ void GroupedListWidget::handleMouseDown(int x, int y, int button, int clickCount
 		// Regular click: clear selection and select only this underlying item
 		clearSelection();
 		_selectedItem = newSelectedItem;
-		addSelectedItem(newSelectedItem);
+		markSelectedItem(newSelectedItem, true);
 		_lastSelectionStartItem = newSelectedItem;
 		sendCommand(kListSelectionChangedCmd, _selectedItem);
 	}

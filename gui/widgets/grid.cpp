@@ -267,7 +267,7 @@ void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 		// If multi-select is not enabled, use simple single-selection
 		if (!_grid->isMultiSelectEnabled()) {
 			_grid->clearSelection();
-			_grid->addSelectedItem(_activeEntry->entryID);
+			_grid->markSelectedItem(_activeEntry->entryID, true);
 			_grid->_lastSelectedEntryID = _activeEntry->entryID;
 			sendCommand(kItemClicked, _activeEntry->entryID);
 			return;
@@ -281,9 +281,9 @@ void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 		if (ctrlPressed) {
 			// Ctrl+Click: Toggle selection of this item
 			if (_grid->isItemSelected(_activeEntry->entryID)) {
-				_grid->removeSelectedItem(_activeEntry->entryID);
+				_grid->markSelectedItem(_activeEntry->entryID, false);
 			} else {
-				_grid->addSelectedItem(_activeEntry->entryID);
+				_grid->markSelectedItem(_activeEntry->entryID, true);
 				_grid->_lastSelectedEntryID = _activeEntry->entryID;
 			}
 		} else if (shiftPressed && _grid->_lastSelectedEntryID >= 0) {
@@ -300,7 +300,7 @@ void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 		} else {
 			// Regular click: Select only this item
 			_grid->clearSelection();
-			_grid->addSelectedItem(_activeEntry->entryID);
+			_grid->markSelectedItem(_activeEntry->entryID, true);
 			_grid->_lastSelectedEntryID = _activeEntry->entryID;
 		}
 
@@ -1002,7 +1002,7 @@ void GridWidget::selectVisualRange(int startPos, int endPos) {
 	for (uint i = 0; i < _sortedEntryList.size(); ++i) {
 		if (!_sortedEntryList[i]->isHeader) {
 			if (visPos >= startPos && visPos <= endPos) {
-				addSelectedItem(_sortedEntryList[i]->entryID);
+				markSelectedItem(_sortedEntryList[i]->entryID, true);
 			}
 			visPos++;
 		}
@@ -1251,26 +1251,21 @@ void GridWidget::setSelected(int id) {
 	}
 }
 
-void GridWidget::addSelectedItem(int entryID) {
+void GridWidget::markSelectedItem(int entryID, bool state) {
 	if (entryID >= 0) {
 		// Expand array if needed
 		if (entryID >= (int)_selectedItems.size()) {
 			_selectedItems.resize(entryID + 1, false);
 		}
-		_selectedItems[entryID] = true;
+		_selectedItems[entryID] = state;
 	}
 }
+
 bool GridWidget::isItemSelected(int entryID) const {
 	if (entryID >= 0 && entryID < (int)_selectedItems.size()) {
 		return _selectedItems[entryID];
 	}
 	return false;
-}
-
-void GridWidget::removeSelectedItem(int entryID) {
-	if (entryID >= 0 && entryID < (int)_selectedItems.size()) {
-		_selectedItems[entryID] = false;
-	}
 }
 
 void GridWidget::clearSelection() {

@@ -123,8 +123,7 @@ public:
 	/// Multi-selection support
 	const Common::Array<bool> &getSelectedItems() const { return _selectedItems; }
 	bool isItemSelected(int item) const;
-	void addSelectedItem(int item);
-	void removeSelectedItem(int item);
+	void markSelectedItem(int item, bool state);
 	void clearSelection();
 	void selectItemRange(int from, int to);
 	void setNumberingMode(NumberingMode numberingMode)	{ _numberingMode = numberingMode; }
