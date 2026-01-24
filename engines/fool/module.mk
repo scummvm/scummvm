@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	fool.o \
 	fool_prologue.o \
 	toolbox.o \
+	toolbox_quickdraw.o \
 	toolbox_resman.o \
 	zbasic.o \
 	console.o \

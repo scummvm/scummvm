@@ -40,10 +40,11 @@ void Toolbox::DetachResource(Handle &handle) {
 }
 
 void Toolbox::DisposHandle(Handle &h) {
-	// Our Handles are reference counted, do nothing.
+	// Our Handles are reference counted, don't free anything but invalidate this handle.
+	h = nullptr;
 };
 
-void Toolbox::GetResInfo(Handle &theResource, int16 &theID, ResType &theType, Common::String &name) {
+void Toolbox::GetResInfo(Handle &theResource, uint16 &theID, ResType &theType, Common::String &name) {
 	if (_resInfo.contains(theResource)) {
 		ToolboxResInfo &info = _resInfo[theResource];
 		theID = info.resID;
@@ -134,6 +135,7 @@ void Toolbox::ReleaseResource(Handle &handle) {
 	if (_resInfo.contains(handle)) {
 		_resInfo.erase(handle);
 	}
+	this->DisposHandle(handle);
 }
 
 void Toolbox::ReleaseResource(PicHandle &handle) {
@@ -143,6 +145,7 @@ void Toolbox::ReleaseResource(PicHandle &handle) {
 		_resPicts.erase(handle);
 		this->ReleaseResource(target);
 	}
+	handle = nullptr;
 }
 
 int32 Toolbox::SizeResource(Handle &theResource) {
