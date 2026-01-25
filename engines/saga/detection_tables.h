@@ -1676,6 +1676,41 @@ static const SAGAGameDescription gameDescriptions[] = {
 		{},
 	},
 
+	// I Have No Mouth And I Must Scream - French fan translaction v1.2 for ScummVM (by DarkCenobyte)
+	// English CD version with French text patch (with Nimdok)
+	// (English speech - French text)
+	{
+		{
+			"ihnm",
+			"",
+			{
+				{"musicfm.res",	GAME_MUSICFILE_FM,						"0439083e3dfdc51b486071d45872ae52", AD_NO_SIZE},
+				{"musicgm.res",	GAME_MUSICFILE_GM,						"80f875a1fb384160d1f4b27166eef583", AD_NO_SIZE},
+				{"scream.res",	GAME_RESOURCEFILE,						"46bbdc65d164ba7e89836a0935eec8e6", 79211674},
+				{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,		"58b79e61594779513c7f2d35509fa89e", AD_NO_SIZE},
+				{"scripts.res",	GAME_SCRIPTFILE,						"be38bbc5a26be809dbf39f13befebd01", AD_NO_SIZE},
+				//{"sfx.res",	GAME_SOUNDFILE,							"1c610d543f32ec8b525e3f652536f269", AD_NO_SIZE},
+				// There are two English versions of the game, each one with a different sfx.res file
+				// Known MD5 checksums for sfx.res in the English version of the game are
+				// 1c610d543f32ec8b525e3f652536f269 and 45a9a9f5d37740be24fd2ae2edf36573
+				{"sfx.res",		GAME_SOUNDFILE,							NULL, AD_NO_SIZE},
+				AD_LISTEND
+			},
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_IHNM,
+		0,
+		IHNM_DEFAULT_SCENE,
+		RESOURCELIST_IHNM,
+		FONTLIST_IHNM_CD,
+		PATCHLIST_NONE,
+		INTROLIST_NONE,
+		{},
+	},
+
 	// I Have No Mouth And I Must Scream - Mac English CD
 	{
 		{
