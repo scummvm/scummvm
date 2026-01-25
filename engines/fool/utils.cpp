@@ -20,9 +20,58 @@
  */
 
 #include "fool/fool.h"
+#include "fool/toolbox.h"
 #include "fool/utils.h"
 
 namespace Fool {
+
+void blitMono(BitMap &src, BitMap &dst, const Common::Point &dstPos, SourceMode mode) {
+	Common::Rect dstRect = src->getBounds();
+	dstRect.moveTo(dstPos);
+	dstRect.clip(dst->getBounds());
+	Common::Rect srcRect = dstRect;
+	srcRect.translate(-dstPos.x, -dstPos.y);
+
+	uint32 black = g_engine->_wm._colorBlack;
+	uint32 white = g_engine->_wm._colorWhite;
+	if (mode == kSrcCopy) {
+		dst->blitFrom(*src, srcRect, dstPos);
+	} else {
+		for (int y = srcRect.top; y < srcRect.bottom; y++) {
+			byte *source = (byte *)src->getBasePtr(srcRect.left, y);
+			byte *target = (byte *)dst->getBasePtr(srcRect.left + dstPos.x, dstPos.y + y);
+			for (int x = srcRect.left; x < srcRect.right; x++) {
+				switch (mode) {
+				case kSrcOr:
+					*target = (*target == black) || (*source == black) ? black : white;
+					break;
+				case kSrcXor:
+					*target = (*target == black) ^ (*source == black) ? black : white;
+					break;
+				case kSrcBic:
+					*target = (*target == black) && (*source != black) ? black : white;
+					break;
+				case kNotSrcCopy:
+					*target = (*source != black) ? black : white;
+					break;
+				case kNotSrcOr:
+					*target = (*target == black) || (*source != black) ? black : white;
+					break;
+				case kNotSrcXor:
+					*target = (*target == black) ^ (*source != black) ? black : white;
+					break;
+				case kNotSrcBic:
+					*target = (*target == black) && (*source == black) ? black : white;
+					break;
+				default:
+					break;
+				}
+				source++;
+				target++;
+			}
+		}
+	}
+}
 
 Graphics::ManagedSurface *createRemappedSurface(const Graphics::Surface *surface, const byte *palette, uint colorCount) {
 	Graphics::ManagedSurface *s = new Graphics::ManagedSurface();
