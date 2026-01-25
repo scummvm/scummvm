@@ -192,7 +192,7 @@ void Sprite::createQDMatte() {
 	Common::Rect srcRect(_width, _height);
 
 	Common::Rect fillAreaRect((int)srcRect.width(), (int)srcRect.height());
-	Graphics::MacPlotData plotFill(&tmp, nullptr, &g_director->getPatterns(), getPattern(), 0, 0, 1, g_director->_wm->_colorBlack);
+	Graphics::MacPlotData plotFill(&tmp, nullptr, &g_director->getPatterns(), getPattern(), 0, 0, {1, 1}, g_director->_wm->_colorBlack);
 
 	Graphics::Primitives &primitives = g_director->_wm->getDrawPrimitives();
 
