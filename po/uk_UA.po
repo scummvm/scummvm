@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-23 23:11+0000\n"
+"POT-Creation-Date: 2026-01-25 23:37+0000\n"
 "PO-Revision-Date: 2026-01-25 23:36+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -1023,7 +1023,7 @@ msgstr "GUI"
 #: engines/mohawk/riven.cpp:853 engines/sludge/keymapper_tables.h:40
 #: engines/supernova/metaengine.cpp:226 engines/teenagent/metaengine.cpp:207
 #: engines/ultima/ultima4/metaengine.cpp:42
-#: engines/ultima/ultima4/metaengine.cpp:144 engines/voyeur/metaengine.cpp:192
+#: engines/ultima/ultima4/metaengine.cpp:146 engines/voyeur/metaengine.cpp:192
 msgid "Interact"
 msgstr "Взаємодія"
 
@@ -1038,8 +1038,8 @@ msgstr "Взаємодія"
 #: engines/twine/metaengine.cpp:497 engines/twp/metaengine.cpp:154
 #: engines/ultima/ultima0/metaengine.cpp:45
 #: engines/ultima/ultima4/metaengine.cpp:44
-#: engines/ultima/ultima4/metaengine.cpp:136
-#: engines/ultima/ultima4/metaengine.cpp:146
+#: engines/ultima/ultima4/metaengine.cpp:138
+#: engines/ultima/ultima4/metaengine.cpp:148
 #: engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
 #: engines/wintermute/keymapper_tables.h:1449
@@ -1059,8 +1059,8 @@ msgstr "Догори"
 #: engines/twine/metaengine.cpp:505 engines/twp/metaengine.cpp:155
 #: engines/ultima/ultima0/metaengine.cpp:46
 #: engines/ultima/ultima4/metaengine.cpp:45
-#: engines/ultima/ultima4/metaengine.cpp:137
-#: engines/ultima/ultima4/metaengine.cpp:147
+#: engines/ultima/ultima4/metaengine.cpp:139
+#: engines/ultima/ultima4/metaengine.cpp:149
 #: engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
 #: engines/wintermute/keymapper_tables.h:1456
@@ -1078,8 +1078,8 @@ msgstr "Донизу"
 #: engines/scumm/metaengine.cpp:1000 engines/twine/metaengine.cpp:452
 #: engines/twine/metaengine.cpp:520 engines/twp/metaengine.cpp:152
 #: engines/ultima/ultima4/metaengine.cpp:46
-#: engines/ultima/ultima4/metaengine.cpp:138
-#: engines/ultima/ultima4/metaengine.cpp:148
+#: engines/ultima/ultima4/metaengine.cpp:140
+#: engines/ultima/ultima4/metaengine.cpp:150
 #: engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
 #: engines/wintermute/keymapper_tables.h:1385
@@ -1098,8 +1098,8 @@ msgstr "Наліво"
 #: engines/scumm/metaengine.cpp:1007 engines/twine/metaengine.cpp:444
 #: engines/twine/metaengine.cpp:513 engines/twp/metaengine.cpp:153
 #: engines/ultima/ultima4/metaengine.cpp:47
-#: engines/ultima/ultima4/metaengine.cpp:139
-#: engines/ultima/ultima4/metaengine.cpp:149
+#: engines/ultima/ultima4/metaengine.cpp:141
+#: engines/ultima/ultima4/metaengine.cpp:151
 #: engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
 #: engines/wintermute/keymapper_tables.h:1391
@@ -3877,7 +3877,7 @@ msgstr "Мапа клавіш гри за замовчунням"
 #: engines/touche/metaengine.cpp:122 engines/trecision/metaengine.cpp:125
 #: engines/tsage/metaengine.cpp:178 engines/tucker/metaengine.cpp:172
 #: engines/ultima/ultima0/metaengine.cpp:180
-#: engines/ultima/ultima4/metaengine.cpp:224
+#: engines/ultima/ultima4/metaengine.cpp:226
 #: engines/ultima/nuvie/metaengine.cpp:238
 #: engines/ultima/ultima8/metaengine.cpp:139 engines/vcruise/metaengine.cpp:158
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:203
@@ -3908,7 +3908,7 @@ msgstr "Середній клік"
 #: engines/toon/metaengine.cpp:92 engines/touche/metaengine.cpp:128
 #: engines/trecision/metaengine.cpp:131 engines/tsage/metaengine.cpp:184
 #: engines/tucker/metaengine.cpp:178 engines/ultima/ultima0/metaengine.cpp:186
-#: engines/ultima/ultima4/metaengine.cpp:230
+#: engines/ultima/ultima4/metaengine.cpp:232
 #: engines/ultima/nuvie/metaengine.cpp:244
 #: engines/ultima/ultima8/metaengine.cpp:145
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:209
@@ -6436,7 +6436,7 @@ msgstr "Отримати"
 #: engines/sky/metaengine.cpp:95 engines/sludge/keymapper_tables.h:333
 #: engines/supernova/metaengine.cpp:356 engines/tot/metaengine.cpp:139
 #: engines/tsage/metaengine.cpp:211 engines/twp/metaengine.cpp:186
-#: engines/ultima/ultima4/metaengine.cpp:71
+#: engines/ultima/ultima4/metaengine.cpp:73
 #: engines/ultima/nuvie/metaengine.cpp:69
 #: engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:1552
@@ -6453,7 +6453,7 @@ msgstr "Перейти"
 #: engines/scumm/help.cpp:174 engines/scumm/help.cpp:226
 #: engines/sherlock/metaengine.cpp:415 engines/supernova/metaengine.cpp:361
 #: engines/tot/metaengine.cpp:124 engines/tsage/metaengine.cpp:216
-#: engines/ultima/ultima4/metaengine.cpp:70
+#: engines/ultima/ultima4/metaengine.cpp:72
 #: engines/ultima/nuvie/metaengine.cpp:68
 msgid "Talk"
 msgstr "Говорити"
@@ -10539,7 +10539,7 @@ msgstr "Змінити порядок загону"
 #. I18N: Action of hero party in Might & Magic 1
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to search the journal
 #: engines/mm/mm1/metaengine.cpp:111 engines/sherlock/metaengine.cpp:514
-#: engines/sherlock/metaengine.cpp:961 engines/ultima/ultima4/metaengine.cpp:68
+#: engines/sherlock/metaengine.cpp:961 engines/ultima/ultima4/metaengine.cpp:70
 msgid "Search"
 msgstr "Пошук"
 
@@ -10553,7 +10553,7 @@ msgstr "Лупцювати"
 msgid "Unlock"
 msgstr "Відкрити"
 
-#: engines/mm/mm1/metaengine.cpp:122 engines/ultima/ultima4/metaengine.cpp:109
+#: engines/mm/mm1/metaengine.cpp:122 engines/ultima/ultima4/metaengine.cpp:111
 msgid "Goto location"
 msgstr "Перейти у локацію"
 
@@ -13322,7 +13322,10 @@ msgid "Skip / Deselect verb"
 msgstr "Пропустити / Скасувати вибір дієслова"
 
 #: engines/sherlock/metaengine.cpp:450
-msgid "Setup"
+#: engines/wintermute/keymapper_tables.h:1614
+#: engines/wintermute/keymapper_tables.h:1867
+#: engines/wintermute/keymapper_tables.h:1963
+msgid "Settings"
 msgstr "Налаштування"
 
 #: engines/sherlock/metaengine.cpp:472
@@ -14871,9 +14874,9 @@ msgid "Dungeon Keys"
 msgstr "Ключі від підземелля"
 
 #: engines/ultima/ultima4/metaengine.cpp:43
-#: engines/ultima/ultima4/metaengine.cpp:130
-#: engines/ultima/ultima4/metaengine.cpp:135
-#: engines/ultima/ultima4/metaengine.cpp:145
+#: engines/ultima/ultima4/metaengine.cpp:132
+#: engines/ultima/ultima4/metaengine.cpp:137
+#: engines/ultima/ultima4/metaengine.cpp:147
 msgid "Abort action"
 msgstr "Припинити дію"
 
@@ -14894,195 +14897,197 @@ msgstr "Взяти скриню"
 msgid "Hole up & camp"
 msgstr "Сховатися та таборуватися"
 
-#: engines/ultima/ultima4/metaengine.cpp:58
+#. I18N: Jimmy is used to open locked doors
+#: engines/ultima/ultima4/metaengine.cpp:59
 msgid "Jimmy"
 msgstr "Виламати"
 
-#: engines/ultima/ultima4/metaengine.cpp:59
+#: engines/ultima/ultima4/metaengine.cpp:60
 msgid "Ignite"
 msgstr "Підпалити"
 
-#: engines/ultima/ultima4/metaengine.cpp:60
+#: engines/ultima/ultima4/metaengine.cpp:61
 msgid "Locate position"
 msgstr "Знайти положення"
 
-#: engines/ultima/ultima4/metaengine.cpp:61
+#: engines/ultima/ultima4/metaengine.cpp:62
 msgid "Mix reagents"
 msgstr "Змішати реагенти"
 
-#: engines/ultima/ultima4/metaengine.cpp:62
+#: engines/ultima/ultima4/metaengine.cpp:63
 msgid "New order"
 msgstr "Нова вказівка"
 
-#: engines/ultima/ultima4/metaengine.cpp:63
+#: engines/ultima/ultima4/metaengine.cpp:64
 msgid "Open door"
 msgstr "Відкрити двері"
 
-#: engines/ultima/ultima4/metaengine.cpp:64
+#: engines/ultima/ultima4/metaengine.cpp:65
 msgid "Pass"
 msgstr "Передати"
 
-#: engines/ultima/ultima4/metaengine.cpp:65
+#. I18N: Peer is used to look through keyholes or other small openings
+#: engines/ultima/ultima4/metaengine.cpp:67
 msgid "Peer"
 msgstr "Зазирнути"
 
-#: engines/ultima/ultima4/metaengine.cpp:66
+#: engines/ultima/ultima4/metaengine.cpp:68
 msgid "Quit and save"
 msgstr "Вийти та зберегти"
 
-#: engines/ultima/ultima4/metaengine.cpp:67
+#: engines/ultima/ultima4/metaengine.cpp:69
 msgid "Ready weapon"
 msgstr "Приготувати зброю"
 
-#: engines/ultima/ultima4/metaengine.cpp:69
+#: engines/ultima/ultima4/metaengine.cpp:71
 msgid "Stats"
 msgstr "Стати"
 
-#: engines/ultima/ultima4/metaengine.cpp:72
+#: engines/ultima/ultima4/metaengine.cpp:74
 msgid "Wear armor"
 msgstr "Вдягти броню"
 
-#: engines/ultima/ultima4/metaengine.cpp:73
+#: engines/ultima/ultima4/metaengine.cpp:75
 msgid "Yell"
 msgstr "Кричати"
 
-#: engines/ultima/ultima4/metaengine.cpp:79
+#: engines/ultima/ultima4/metaengine.cpp:81
 msgid "Speed up"
 msgstr "Пришвидчити"
 
-#: engines/ultima/ultima4/metaengine.cpp:80
+#: engines/ultima/ultima4/metaengine.cpp:82
 msgid "Speed down"
 msgstr "Уповільнитись"
 
-#: engines/ultima/ultima4/metaengine.cpp:81
+#: engines/ultima/ultima4/metaengine.cpp:83
 msgid "Speed normal"
 msgstr "Нормальна швидкість"
 
-#: engines/ultima/ultima4/metaengine.cpp:82
+#: engines/ultima/ultima4/metaengine.cpp:84
 msgid "Combat speed up"
 msgstr "Підвищити швидкість бою"
 
-#: engines/ultima/ultima4/metaengine.cpp:83
+#: engines/ultima/ultima4/metaengine.cpp:85
 msgid "Combat speed down"
 msgstr "Уповільнити швидкість бійки"
 
-#: engines/ultima/ultima4/metaengine.cpp:84
+#: engines/ultima/ultima4/metaengine.cpp:86
 msgid "Combat speed normal"
 msgstr "Нормальна швидкість бою"
 
-#: engines/ultima/ultima4/metaengine.cpp:90
+#: engines/ultima/ultima4/metaengine.cpp:92
 msgid "Party - None"
 msgstr "Загін - Нікого"
 
-#: engines/ultima/ultima4/metaengine.cpp:91
+#: engines/ultima/ultima4/metaengine.cpp:93
 msgid "Party - Character #1"
 msgstr "Загін - Герой №1"
 
-#: engines/ultima/ultima4/metaengine.cpp:92
+#: engines/ultima/ultima4/metaengine.cpp:94
 msgid "Party - Character #2"
 msgstr "Загін - Герой №2"
 
-#: engines/ultima/ultima4/metaengine.cpp:93
+#: engines/ultima/ultima4/metaengine.cpp:95
 msgid "Party - Character #3"
 msgstr "Загін - Герой №3"
 
-#: engines/ultima/ultima4/metaengine.cpp:94
+#: engines/ultima/ultima4/metaengine.cpp:96
 msgid "Party - Character #4"
 msgstr "Загін - Герой №4"
 
-#: engines/ultima/ultima4/metaengine.cpp:95
+#: engines/ultima/ultima4/metaengine.cpp:97
 msgid "Party - Character #5"
 msgstr "Загін - Герой №5"
 
-#: engines/ultima/ultima4/metaengine.cpp:96
+#: engines/ultima/ultima4/metaengine.cpp:98
 msgid "Party - Character #6"
 msgstr "Загін - Герой №6"
 
-#: engines/ultima/ultima4/metaengine.cpp:97
+#: engines/ultima/ultima4/metaengine.cpp:99
 msgid "Party - Character #7"
 msgstr "Загін - Герой №7"
 
-#: engines/ultima/ultima4/metaengine.cpp:98
+#: engines/ultima/ultima4/metaengine.cpp:100
 msgid "Party - Character #8"
 msgstr "Загін - Герой №8"
 
-#: engines/ultima/ultima4/metaengine.cpp:104
+#: engines/ultima/ultima4/metaengine.cpp:106
 msgid "Destroy all creatures"
 msgstr "Знищити всі створіння"
 
-#: engines/ultima/ultima4/metaengine.cpp:105
+#: engines/ultima/ultima4/metaengine.cpp:107
 msgid "Toggle collision handling"
 msgstr "Перемкнути зіткнення зі стінами"
 
-#: engines/ultima/ultima4/metaengine.cpp:106
+#: engines/ultima/ultima4/metaengine.cpp:108
 msgid "Destroy object"
 msgstr "Знищити об'єкт"
 
-#: engines/ultima/ultima4/metaengine.cpp:107
+#: engines/ultima/ultima4/metaengine.cpp:109
 msgid "Full equipment"
 msgstr "Повна комплектація"
 
-#: engines/ultima/ultima4/metaengine.cpp:108
+#: engines/ultima/ultima4/metaengine.cpp:110
 msgid "Flee combat"
 msgstr "Втекти з бою"
 
-#: engines/ultima/ultima4/metaengine.cpp:110
+#: engines/ultima/ultima4/metaengine.cpp:112
 msgid "Help - Teleport to Lord British"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:111
+#: engines/ultima/ultima4/metaengine.cpp:113
 msgid "Give items"
 msgstr "Дати предмети"
 
-#: engines/ultima/ultima4/metaengine.cpp:112
+#: engines/ultima/ultima4/metaengine.cpp:114
 msgid "List karma"
 msgstr "Список карми"
 
-#: engines/ultima/ultima4/metaengine.cpp:113
+#: engines/ultima/ultima4/metaengine.cpp:115
 msgid "Leave location"
 msgstr "Залишити локацію"
 
-#: engines/ultima/ultima4/metaengine.cpp:114
+#: engines/ultima/ultima4/metaengine.cpp:116
 msgid "Give mixtures"
 msgstr "Дати суміші"
 
-#: engines/ultima/ultima4/metaengine.cpp:115
+#: engines/ultima/ultima4/metaengine.cpp:117
 msgid "Combat encounters"
 msgstr "Бойові зіткнення"
 
-#: engines/ultima/ultima4/metaengine.cpp:116
+#: engines/ultima/ultima4/metaengine.cpp:118
 msgid "Toggle overhead view"
 msgstr "Перемкнути вид зверху"
 
-#: engines/ultima/ultima4/metaengine.cpp:117
+#: engines/ultima/ultima4/metaengine.cpp:119
 msgid "Full party"
 msgstr "Загін повний"
 
-#: engines/ultima/ultima4/metaengine.cpp:118
+#: engines/ultima/ultima4/metaengine.cpp:120
 msgid "Give reagents"
 msgstr "Дати реактиви"
 
-#: engines/ultima/ultima4/metaengine.cpp:119
+#: engines/ultima/ultima4/metaengine.cpp:121
 msgid "Full stats"
 msgstr "Повна статистика"
 
-#: engines/ultima/ultima4/metaengine.cpp:120
+#: engines/ultima/ultima4/metaengine.cpp:122
 msgid "Create transport"
 msgstr "Створити транспорт"
 
-#: engines/ultima/ultima4/metaengine.cpp:121
+#: engines/ultima/ultima4/metaengine.cpp:123
 msgid "Up level"
 msgstr "На рівень вище"
 
-#: engines/ultima/ultima4/metaengine.cpp:122
+#: engines/ultima/ultima4/metaengine.cpp:124
 msgid "Down level"
 msgstr "На рівень нижче"
 
-#: engines/ultima/ultima4/metaengine.cpp:123
+#: engines/ultima/ultima4/metaengine.cpp:125
 msgid "Grant virtue"
 msgstr "Дарувати чесноту"
 
-#: engines/ultima/ultima4/metaengine.cpp:124
+#: engines/ultima/ultima4/metaengine.cpp:126
 msgid "Change wind"
 msgstr "Змінити вітер"
 
@@ -16317,12 +16322,6 @@ msgstr "Кнопка Shift"
 msgid "Chapayev's action"
 msgstr "Дія Чапаєва"
 
-#: engines/wintermute/keymapper_tables.h:1614
-#: engines/wintermute/keymapper_tables.h:1867
-#: engines/wintermute/keymapper_tables.h:1963
-msgid "Settings"
-msgstr "Налаштування"
-
 #: engines/wintermute/keymapper_tables.h:1619
 msgid "Dialog answer 1"
 msgstr "Діалог відповідь 1"
@@ -16528,6 +16527,9 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#~ msgid "Setup"
+#~ msgstr "Налаштування"
 
 #~ msgid "Toggle music on / off"
 #~ msgstr "Перемкнути музику"
