@@ -66,7 +66,8 @@ void NoctropolisEngine::setupGame() {
 
 void NoctropolisEngine::initVariables() {
 	// Set player room and position
-	_player->_roomNumber = 3;
+	// Room 2 for intro sequence, 3 for first interactive room.
+	_player->_roomNumber = ConfMan.getBool("skip_intro") ? 3 : 2;
 
 	_invScript->setScript(_files->loadRawFile("INVTEXT.AP"));
 
