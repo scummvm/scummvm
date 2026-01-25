@@ -1447,16 +1447,36 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 }
 
 void LauncherSimple::removeListGames(const Common::Array<bool> &selectedItemsBool) {
-	// Build confirmation message with list of games to remove
-	Common::U32String confirmMsg = _("Do you really want to remove the following game configurations?\n\n");
+	// Count selected items
+	int selectedCount = 0;
+	for (int i = 0; i < (int)selectedItemsBool.size(); ++i) {
+		if (selectedItemsBool[i]) {
+			selectedCount++;
+		}
+	}
 
-	// Build message from bool array
+	// Build confirmation message with count
+	Common::U32String confirmMsg = Common::U32String::format(
+		_("Do you really want to remove the following %d game configuration%s?\n\n"),
+		selectedCount,
+		selectedCount == 1 ? "" : "s");
+
+	// Build message from bool array (max 10 items, then ellipsis)
+	int displayCount = 0;
 	for (int i = 0; i < (int)selectedItemsBool.size(); ++i) {
 		if (selectedItemsBool[i]) {
 			// Get the game title from the list
 			confirmMsg += _list->getList()[i];
 			confirmMsg += Common::U32String("\n");
+			displayCount++;
+			if (displayCount >= 10)
+				break;
 		}
+	}
+
+	// Add ellipsis if more than 10 items are selected
+	if (selectedCount > 10) {
+		confirmMsg += Common::U32String("...\n");
 	}
 
 	MessageDialog alert(confirmMsg, _("Yes"), _("No"));
@@ -1825,8 +1845,22 @@ void LauncherGrid::removeGridGames() {
 		return;
 	const Common::Array<bool> &selectedItems = _grid->getSelectedItems();
 	
-	// Build the confirmation message
-	Common::U32String message = _("Do you really want to remove the following game configurations?\n\n");
+	// Count selected items
+	int selectedCount = 0;
+	for (int i = 0; i < (int)selectedItems.size(); ++i) {
+		if (selectedItems[i]) {
+			selectedCount++;
+		}
+	}
+
+	// Build the confirmation message with count
+	Common::U32String message = Common::U32String::format(
+		_("Do you really want to remove the following %d game configuration%s?\n\n"),
+		selectedCount,
+		selectedCount == 1 ? "" : "s");
+
+	// Add games to message (max 10 items, then ellipsis)
+	int displayCount = 0;
 	for (int i = 0; i < (int)selectedItems.size(); ++i) {
 		if (selectedItems[i]) {
 			// i is the index in _domains and _domainTitles
@@ -1834,8 +1868,16 @@ void LauncherGrid::removeGridGames() {
 				Common::String domainName = _domains[i];
 				Common::String gameTitle = (i < (int)_domainTitles.size()) ? _domainTitles[i] : domainName;
 				message += Common::U32String(gameTitle) + "\n";
+				displayCount++;
+				if (displayCount >= 10)
+					break;
 			}
 		}
+	}
+
+	// Add ellipsis if more than 10 items are selected
+	if (selectedCount > 10) {
+		message += Common::U32String("...\n");
 	}
 
 	MessageDialog alert(message, Common::U32String(_("Yes")), Common::U32String(_("No")));
