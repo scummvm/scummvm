@@ -1430,7 +1430,7 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	}
 	case kRemoveGameCmd: {
-		// Handle removal using multi-selection logic (works for single and multiple selections)
+		// Remove games if we have any selection
 		const Common::Array<bool> &selectedItemsBool = _list->getSelectedItems();
 		// Ensure at least one item is selected before proceeding
 		for (const auto &it : selectedItemsBool) {
@@ -1681,7 +1681,7 @@ void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		LauncherDialog::handleCommand(sender, kLoadGameCmd, 0);
 		break;
 	case kRemoveGameCmd:
-		// Handle removal using multi-selection logic (works for single and multiple selections)
+		// Remove games if we have any selection
 		if (_grid) {
 			const Common::Array<bool> &selectedItems = _grid->getSelectedItems();
 			for (const auto &item : selectedItems) {
