@@ -1028,16 +1028,7 @@ public:
 
 protected:
 	void confirmRemoveGames(const Common::Array<bool> &selectedItems) override;
-	void updateSelectionAfterRemoval() override {
-		if (_grid) {
-			_grid->clearSelection();
-			const Common::Array<bool> &selectedItems = _grid->getSelectedItems();
-			
-			// Select at the same index as before, or the last item if out of bounds
-			_grid->_lastSelectedEntryID = MIN((int)selectedItems.size() - 1, _grid->_lastSelectedEntryID);
-			_grid->markSelectedItem(_grid->_lastSelectedEntryID, true);
-		}
-	}
+	void updateSelectionAfterRemoval() override;
 	void updateListing(int selPos = -1) override;
 	int getItemPos(int item) override;
 	void groupEntries(const Common::Array<LauncherEntry> &metadata);
@@ -1889,6 +1880,17 @@ void LauncherGrid::confirmRemoveGames(const Common::Array<bool> &selectedItems) 
 	MessageDialog alert(message, Common::U32String(_("Yes")), Common::U32String(_("No")));
 	if (alert.runModal() == GUI::kMessageOK) {
 		performGameRemoval(selectedItems, true);
+	}
+}
+
+void LauncherGrid::updateSelectionAfterRemoval() {
+	if (_grid) {
+		_grid->clearSelection();
+		const Common::Array<bool> &selectedItems = _grid->getSelectedItems();
+		
+		// Select at the same index as before, or the last item if out of bounds
+		_grid->_lastSelectedEntryID = MIN((int)selectedItems.size() - 1, _grid->_lastSelectedEntryID);
+		_grid->markSelectedItem(_grid->_lastSelectedEntryID, true);
 	}
 }
 
