@@ -3552,6 +3552,7 @@ EOF
 			_detection_features_static=no
 			_plugins_default=dynamic
 		fi
+		_detection_features_full=no
 		append_var CXXFLAGS "-I$PSPSDK/include"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
 		append_var CXXFLAGS "-D_PSP_FW_VERSION=150"
