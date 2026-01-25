@@ -1390,7 +1390,7 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kListItemRemovalRequestCmd: {
 		// Use multi-removal logic for all removals (handles both single and multiple selections)
 		const Common::Array<bool> &selectedItemsBool = _list->getSelectedItems();
-		// Ensure at least one item is selected before proceeding
+		// If we have one or more items selected, perform the removal
 		for (const auto &it : selectedItemsBool) {
 			if (it) {
 				removeListGames(selectedItemsBool);
