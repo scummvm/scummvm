@@ -447,7 +447,7 @@ Common::KeymapArray SherlockMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping(getKey(kFixedText_Game_Hotkeys, curLanguageEntry, target, 8));
 		scalpelKeymap->addAction(act);
 
-		act = new Action("SETUP", _("Setup"));
+		act = new Action("SETUP", _("Settings"));
 		act->setCustomEngineActionEvent(kActionScalpelSetup);
 		act->addDefaultInputMapping(getKey(kFixedText_Game_Hotkeys, curLanguageEntry, target, 11));
 		scalpelKeymap->addAction(act);
