@@ -1,19 +1,5 @@
-buildscript {
-    repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.13.1'
-    }
-}
-
-dependencies {
-    repositories {
-        google()
-        mavenCentral()
-    }
+plugins {
+	id('com.android.application') version '9.0.0'
 }
 
 // Load our source dependent properties
@@ -27,21 +13,25 @@ tasks.withType(JavaCompile).configureEach {
 
 //gradle.startParameter.showStacktrace = ShowStacktrace.ALWAYS_FULL
 
-apply plugin: 'com.android.application'
-
 android {
-    compileSdk = 36
-    ndkVersion = "23.2.8568313"
-
     namespace = "org.scummvm.scummvm"
+
+    //targetSdkVersion defaults to compileSdk
+    compileSdk {
+        version = release(36)
+    }
+    ndkVersion = "23.2.8568313"
+    enableKotlin = false
 
     defaultConfig {
         applicationId "org.scummvm.scummvm"
 
-        base.archivesName = "ScummVM"
-
         minSdkVersion 16
-        targetSdkVersion 36
+
+        // Includes the default ProGuard rules files that are packaged with
+        // the Android Gradle plugin. To learn more, go to the section about
+        // R8 configuration files.
+        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), srcProperties['srcdir'] + '/dists/android/proguard-rules.pro'
 
         versionName "2026.1.1"
         versionCode 26011000
@@ -93,8 +83,8 @@ android {
         // ScummVM 1.9.0.1:  25 -  28
         // ScummVM 1.9.0:    19
         // ScummVM 1.8.1:    15
-
     }
+
     buildTypes {
         debug{
             applicationIdSuffix ".debug"
@@ -106,16 +96,12 @@ android {
             debuggable false
             // Enables code shrinking, obfuscation, and optimization for only
             // your project's release build type.
-            minifyEnabled false
+            minifyEnabled true
 
             // Enables resource shrinking, which is performed by the
             // Android Gradle plugin.
-            //shrinkResources true
+            shrinkResources = true
 
-            // Includes the default ProGuard rules files that are packaged with
-            // the Android Gradle plugin. To learn more, go to the section about
-            // R8 configuration files.
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     sourceSets {
@@ -136,9 +122,8 @@ android {
     if (project.hasProperty('splitAssets')) {
         assetPacks = [':mainAssets']
     }
-
 }
 
 dependencies {
-    implementation "androidx.annotation:annotation:1.7.1"
+    implementation "androidx.annotation:annotation:1.9.1"
 }

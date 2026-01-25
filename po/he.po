@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-22 20:36+0000\n"
+"POT-Creation-Date: 2026-01-23 23:11+0000\n"
 "PO-Revision-Date: 2025-04-09 20:18+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -3235,7 +3235,7 @@ msgstr "מנוע משחק הרפתקה גרפי"
 #: engines/ultima/ultima0/metaengine.cpp:48
 #: engines/ultima/ultima0/metaengine.cpp:71
 #: engines/ultima/ultima0/metaengine.cpp:85
-#: engines/ultima/nuvie/metaengine.cpp:91 engines/zvision/metaengine.cpp:292
+#: engines/ultima/nuvie/metaengine.cpp:93 engines/zvision/metaengine.cpp:292
 #: engines/zvision/metaengine.cpp:310
 msgid "Quit"
 msgstr "יציאה"
@@ -3777,7 +3777,7 @@ msgstr "מיפוי מקלדת"
 #: engines/tsage/metaengine.cpp:178 engines/tucker/metaengine.cpp:172
 #: engines/ultima/ultima0/metaengine.cpp:180
 #: engines/ultima/ultima4/metaengine.cpp:224
-#: engines/ultima/nuvie/metaengine.cpp:235
+#: engines/ultima/nuvie/metaengine.cpp:238
 #: engines/ultima/ultima8/metaengine.cpp:139 engines/vcruise/metaengine.cpp:158
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:203
 #, fuzzy
@@ -3812,7 +3812,7 @@ msgstr "לחיצה אמצעית"
 #: engines/trecision/metaengine.cpp:131 engines/tsage/metaengine.cpp:184
 #: engines/tucker/metaengine.cpp:178 engines/ultima/ultima0/metaengine.cpp:186
 #: engines/ultima/ultima4/metaengine.cpp:230
-#: engines/ultima/nuvie/metaengine.cpp:241
+#: engines/ultima/nuvie/metaengine.cpp:244
 #: engines/ultima/ultima8/metaengine.cpp:145
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:209
 msgid "Right click"
@@ -4136,7 +4136,7 @@ msgid "Choose a new folder"
 msgstr "בחירת תיקיה חדשה"
 
 #: backends/graphics/atari/atari-graphics.cpp:1058
-#: backends/graphics/sdl/sdl-graphics.cpp:515
+#: backends/graphics/sdl/sdl-graphics.cpp:515 engines/scumm/help.cpp:103
 msgid "Toggle aspect ratio correction"
 msgstr "מיתוג תיקון יחס ממדים"
 
@@ -6620,22 +6620,25 @@ msgstr "עוצמת מוזיקה למעלה / למטה"
 msgid "Music volume up"
 msgstr "הגברת עוצמת שמע"
 
-#: engines/agos/metaengine.cpp:194 engines/vcruise/metaengine.cpp:201
+#: engines/agos/metaengine.cpp:194 engines/sherlock/metaengine.cpp:687
+#: engines/ultima/nuvie/metaengine.cpp:101 engines/vcruise/metaengine.cpp:201
 #, fuzzy
-#| msgid "Toggle fullscreen"
-msgid "Toggle music on / off"
-msgstr "מיתוג מסך מלא"
+#| msgid "Toggle mute"
+msgid "Toggle music"
+msgstr "מיתוג השתקה"
 
-#: engines/agos/metaengine.cpp:199 engines/vcruise/metaengine.cpp:206
+#: engines/agos/metaengine.cpp:199 engines/sherlock/metaengine.cpp:702
+#: engines/vcruise/metaengine.cpp:206
 #, fuzzy
 #| msgid "Special sound effects volume"
-msgid "Toggle sound effects on / off"
+msgid "Toggle sound effects"
 msgstr "עוצמת אפקטים קוליים מיוחדים"
 
-#: engines/agos/metaengine.cpp:204 engines/sky/metaengine.cpp:131
-#, fuzzy
-#| msgid "Toggle fast mode"
-msgid "Toggle fast mode on / off"
+#. I18N: Speeds up the game to twice its normal speed
+#: engines/agos/metaengine.cpp:204 engines/queen/metaengine.cpp:192
+#: engines/sky/metaengine.cpp:131 engines/teenagent/metaengine.cpp:239
+#: engines/touche/metaengine.cpp:167
+msgid "Toggle fast mode"
 msgstr "מיתוג מצב מהיר"
 
 #: engines/agos/metaengine.cpp:216 engines/lab/metaengine.cpp:264
@@ -6707,7 +6710,7 @@ msgstr "הצג קו אובייקט"
 #: engines/agos/metaengine.cpp:272
 #, fuzzy
 #| msgid "Special sound effects volume"
-msgid "Toggle background sounds on / off"
+msgid "Toggle background sounds"
 msgstr "עוצמת אפקטים קוליים מיוחדים"
 
 #. I18N: Characters are game actors
@@ -6720,7 +6723,7 @@ msgstr "החלפת תווים:"
 #: engines/agos/metaengine.cpp:287
 #, fuzzy
 #| msgid "Toggle fullscreen"
-msgid "Toggle hitbox names on / off"
+msgid "Toggle hitbox names"
 msgstr "מיתוג מסך מלא"
 
 #: engines/agos/metaengine.cpp:294
@@ -6974,7 +6977,7 @@ msgstr "הצגת גרסה"
 #: engines/asylum/metaengine.cpp:120 engines/crab/input/input.cpp:271
 #: engines/queen/metaengine.cpp:253 engines/sludge/keymapper_tables.h:308
 #: engines/sludge/keymapper_tables.h:404 engines/sludge/keymapper_tables.h:471
-#: engines/sludge/keymapper_tables.h:502 engines/ultima/nuvie/metaengine.cpp:90
+#: engines/sludge/keymapper_tables.h:502 engines/ultima/nuvie/metaengine.cpp:92
 #: engines/wintermute/keymapper_tables.h:950
 msgid "Quick load"
 msgstr "טעינה מהירה"
@@ -6983,7 +6986,7 @@ msgstr "טעינה מהירה"
 #: engines/queen/metaengine.cpp:247 engines/sludge/keymapper_tables.h:64
 #: engines/sludge/keymapper_tables.h:303 engines/sludge/keymapper_tables.h:410
 #: engines/sludge/keymapper_tables.h:465 engines/sludge/keymapper_tables.h:496
-#: engines/ultima/nuvie/metaengine.cpp:89
+#: engines/ultima/nuvie/metaengine.cpp:91
 #: engines/ultima/ultima8/metaengine.cpp:44
 #: engines/wintermute/keymapper_tables.h:930
 msgid "Quick save"
@@ -7012,7 +7015,7 @@ msgstr "פתיחת מצאי הדמות"
 #: engines/asylum/metaengine.cpp:226
 #, fuzzy
 #| msgid "Toggle fullscreen"
-msgid "Toggle animation on / off"
+msgid "Toggle animation"
 msgstr "מיתוג מסך מלא"
 
 #: engines/asylum/metaengine.cpp:232
@@ -7422,7 +7425,8 @@ msgstr "מיתוג פרטיות רמזים"
 #: engines/freescape/games/eclipse/eclipse.cpp:227
 #: engines/hopkins/metaengine.cpp:236 engines/hugo/metaengine.cpp:165
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:192
-#: engines/mads/metaengine.cpp:305 engines/pegasus/pegasus.cpp:2825
+#: engines/mads/metaengine.cpp:305 engines/mohawk/myst.cpp:583
+#: engines/mohawk/riven.cpp:864 engines/pegasus/pegasus.cpp:2825
 #: engines/petka/metaengine.cpp:198 engines/prince/metaengine.cpp:243
 #: engines/saga/metaengine.cpp:442 engines/sherlock/metaengine.cpp:462
 #: engines/sherlock/metaengine.cpp:613 engines/sherlock/metaengine.cpp:823
@@ -8001,6 +8005,7 @@ msgstr ""
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down by a page in the widget
 #: engines/crab/input/input.cpp:221 engines/sherlock/metaengine.cpp:591
 #: engines/sherlock/metaengine.cpp:902 engines/sherlock/metaengine.cpp:1048
+#: engines/supernova/metaengine.cpp:291 engines/titanic/metaengine.cpp:271
 #: engines/twine/metaengine.cpp:460 engines/wintermute/keymapper_tables.h:190
 #: engines/wintermute/keymapper_tables.h:207
 #: engines/wintermute/keymapper_tables.h:638
@@ -8016,6 +8021,7 @@ msgstr "הדף הבא"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up by a page in the widget
 #: engines/crab/input/input.cpp:226 engines/sherlock/metaengine.cpp:572
 #: engines/sherlock/metaengine.cpp:917 engines/sherlock/metaengine.cpp:1041
+#: engines/supernova/metaengine.cpp:285 engines/titanic/metaengine.cpp:264
 #: engines/wintermute/keymapper_tables.h:183
 #: engines/wintermute/keymapper_tables.h:199
 #: engines/wintermute/keymapper_tables.h:630
@@ -9111,8 +9117,8 @@ msgstr "מיתוג השתקה"
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/freescape/games/eclipse/eclipse.cpp:278
 #: engines/kyra/engine/lol.cpp:516 engines/mm/mm1/metaengine.cpp:109
-#: engines/ultima/nuvie/metaengine.cpp:192
-#: engines/ultima/nuvie/metaengine.cpp:197
+#: engines/ultima/nuvie/metaengine.cpp:195
+#: engines/ultima/nuvie/metaengine.cpp:200
 msgid "Rest"
 msgstr "מנוחה"
 
@@ -10721,7 +10727,7 @@ msgstr ""
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:69 engines/ultima/ultima4/metaengine.cpp:50
-#: engines/ultima/nuvie/metaengine.cpp:191
+#: engines/ultima/nuvie/metaengine.cpp:194
 msgid "Cast"
 msgstr ""
 
@@ -10990,12 +10996,11 @@ msgid "The game is paused. Press any key to continue."
 msgstr "המשחק מושהה. הקש על מקש כלשהו כדי להמשיך."
 
 #: engines/mohawk/myst.cpp:578 engines/mohawk/riven.cpp:859
-msgid "Load game state"
-msgstr "טעינת מצב משחק"
-
-#: engines/mohawk/myst.cpp:583 engines/mohawk/riven.cpp:864
-msgid "Save game state"
-msgstr "שמירת מצב משחק"
+#: engines/sludge/keymapper_tables.h:113 engines/sludge/keymapper_tables.h:162
+#, fuzzy
+#| msgid "Load Game"
+msgid "Load save"
+msgstr "טעינת משחק"
 
 #: engines/mohawk/myst.cpp:588 engines/mohawk/riven.cpp:869
 msgid "Show options menu"
@@ -11736,12 +11741,6 @@ msgstr "שימוש בגופן מותאם להקלת הקריאה"
 #: engines/queen/metaengine.cpp:186
 msgid "Move / Skip / Use default action with inventory item"
 msgstr ""
-
-#. I18N: Speeds up the game to twice its normal speed
-#: engines/queen/metaengine.cpp:192 engines/teenagent/metaengine.cpp:239
-#: engines/touche/metaengine.cpp:167
-msgid "Toggle fast mode"
-msgstr "מיתוג מצב מהיר"
 
 #: engines/queen/metaengine.cpp:198 engines/twp/metaengine.cpp:176
 #, fuzzy
@@ -12765,10 +12764,6 @@ msgstr "מעבר בין פילטרים גרפיים"
 msgid "Increase / Decrease scale factor"
 msgstr "הגדל / הקטן את גורם הסולם"
 
-#: engines/scumm/help.cpp:103
-msgid "Toggle aspect-ratio correction"
-msgstr "מיתוג תיקון יחס ממדים"
-
 #: engines/scumm/help.cpp:108
 msgid "* Note that using ctrl-f and"
 msgstr "* שים לב כי באמצעות ctrl-f ו-"
@@ -13749,12 +13744,6 @@ msgstr "תזוזה ימינה"
 msgid "Select option"
 msgstr "נא לבחור קיבוץ לפי"
 
-#: engines/sherlock/metaengine.cpp:687 engines/ultima/nuvie/metaengine.cpp:99
-#, fuzzy
-#| msgid "Toggle mute"
-msgid "Toggle music"
-msgstr "מיתוג השתקה"
-
 #: engines/sherlock/metaengine.cpp:692
 #, fuzzy
 #| msgid "Toggle Combat"
@@ -13766,12 +13755,6 @@ msgstr "מיתוג קרבות"
 #| msgid "Change font size"
 msgid "Change font style"
 msgstr "שינוי גודל גופן"
-
-#: engines/sherlock/metaengine.cpp:702
-#, fuzzy
-#| msgid "Special sound effects volume"
-msgid "Toggle sound effects"
-msgstr "עוצמת אפקטים קוליים מיוחדים"
 
 #: engines/sherlock/metaengine.cpp:707
 #, fuzzy
@@ -14005,7 +13988,7 @@ msgstr "פתיחת לוח הבקרה"
 #: engines/sky/metaengine.cpp:136
 #, fuzzy
 #| msgid "Toggle really fast mode"
-msgid "Toggle really fast mode on / off"
+msgid "Toggle really fast mode"
 msgstr "מיתוג מצב מהיר ממש"
 
 #: engines/sky/metaengine.cpp:156
@@ -14055,12 +14038,6 @@ msgstr "האטת עכבר מדומה"
 #| msgid "Unnamed autosave"
 msgid "Load auto save"
 msgstr "שמירה אומטית ללא שם"
-
-#: engines/sludge/keymapper_tables.h:113 engines/sludge/keymapper_tables.h:162
-#, fuzzy
-#| msgid "Load Game"
-msgid "Load save"
-msgstr "טעינת משחק"
 
 #: engines/sludge/keymapper_tables.h:200 engines/sludge/keymapper_tables.h:435
 #: engines/sludge/keymapper_tables.h:552
@@ -14380,18 +14357,6 @@ msgstr "מידע כללי"
 msgid "Text speed"
 msgstr "מהירות הטקסט איטית / מהירה יותר"
 
-#: engines/supernova/metaengine.cpp:285
-#, fuzzy
-#| msgid "Rotate"
-msgid "Page up"
-msgstr "סובב"
-
-#: engines/supernova/metaengine.cpp:291
-#, fuzzy
-#| msgid "Rotate"
-msgid "Page down"
-msgstr "סובב"
-
 #: engines/supernova/metaengine.cpp:321
 msgid "Go"
 msgstr ""
@@ -14564,7 +14529,8 @@ msgstr "מלאי"
 msgid "Close inventory"
 msgstr "מלאי פתוח / סגור"
 
-#: engines/testbed/metaengine.cpp:38 engines/testbed/metaengine.cpp:39
+#. I18N: Runs tests in interactive mode
+#: engines/testbed/metaengine.cpp:39 engines/testbed/metaengine.cpp:40
 #, fuzzy
 #| msgid "Interact"
 msgid "Run in interactive mode"
@@ -14714,18 +14680,6 @@ msgstr "חדר:"
 #: engines/titanic/metaengine.cpp:259
 msgid "Real life"
 msgstr ""
-
-#: engines/titanic/metaengine.cpp:264
-#, fuzzy
-#| msgid "Scroll up"
-msgid "Scroll up page"
-msgstr "גלילה מעלה"
-
-#: engines/titanic/metaengine.cpp:271
-#, fuzzy
-#| msgid "Scroll down"
-msgid "Scroll down page"
-msgstr "גלילה מטה"
 
 #: engines/titanic/metaengine.cpp:278
 #, fuzzy
@@ -15965,447 +15919,450 @@ msgstr ""
 msgid "Multi-use"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:76
+#. I18N: command bar is the bar of commands at the bottom of the screen
+#: engines/ultima/nuvie/metaengine.cpp:77
 #, fuzzy
 #| msgid "Select shader"
 msgid "Select command bar"
 msgstr "בחירת סוכך"
 
-#: engines/ultima/nuvie/metaengine.cpp:77
+#. I18N: command bar is the bar of commands at the bottom of the screen
+#: engines/ultima/nuvie/metaengine.cpp:79
 #, fuzzy
 #| msgid "Select next music record"
 msgid "Select new command bar"
 msgstr "בחירת תקליט המוזיקה הבא"
 
 #. I18N: gump is Graphical User Menu Pop-up
-#: engines/ultima/nuvie/metaengine.cpp:79
+#: engines/ultima/nuvie/metaengine.cpp:81
 #, fuzzy
 #| msgid "Scroll up"
 msgid "Doll gump"
 msgstr "גלילה מעלה"
 
-#: engines/ultima/nuvie/metaengine.cpp:80
+#: engines/ultima/nuvie/metaengine.cpp:82
 #, fuzzy
 #| msgid "Previous page"
 msgid "Previous party member"
 msgstr "הדף הקודם"
 
-#: engines/ultima/nuvie/metaengine.cpp:81
+#: engines/ultima/nuvie/metaengine.cpp:83
 #, fuzzy
 #| msgid "Next page"
 msgid "Next party member"
 msgstr "הדף הבא"
 
-#: engines/ultima/nuvie/metaengine.cpp:82
+#: engines/ultima/nuvie/metaengine.cpp:84
 msgid "Home key"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:83
+#: engines/ultima/nuvie/metaengine.cpp:85
 msgid "End key"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:84
+#: engines/ultima/nuvie/metaengine.cpp:86
 msgid "Toggle between inventory and actor view"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:85
+#: engines/ultima/nuvie/metaengine.cpp:87
 #, fuzzy
 #| msgid "List view"
 msgid "Party view"
 msgstr "תצוגת רשימה"
 
-#: engines/ultima/nuvie/metaengine.cpp:86
+#: engines/ultima/nuvie/metaengine.cpp:88
 #, fuzzy
 #| msgid "Shorty mode"
 msgid "Party mode"
 msgstr "מצב שורטי"
 
-#: engines/ultima/nuvie/metaengine.cpp:87
+#: engines/ultima/nuvie/metaengine.cpp:89
 #, fuzzy
 #| msgid "Game menu"
 msgid "Save menu"
 msgstr "תפריט משחק"
 
-#: engines/ultima/nuvie/metaengine.cpp:88
+#: engines/ultima/nuvie/metaengine.cpp:90
 #, fuzzy
 #| msgid "Unnamed autosave"
 msgid "Load latest save"
 msgstr "שמירה אומטית ללא שם"
 
-#: engines/ultima/nuvie/metaengine.cpp:93
+#: engines/ultima/nuvie/metaengine.cpp:95
 msgid "Show game menu; Cancel action if in middle of action"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:95
+#: engines/ultima/nuvie/metaengine.cpp:97
 #, fuzzy
 #| msgid "Toggle Combat"
 msgid "Toggle Cursor"
 msgstr "מיתוג קרבות"
 
-#: engines/ultima/nuvie/metaengine.cpp:96
+#: engines/ultima/nuvie/metaengine.cpp:98
 #, fuzzy
 #| msgid "Toggle Combat"
 msgid "Toggle combat strategy"
 msgstr "מיתוג קרבות"
 
-#: engines/ultima/nuvie/metaengine.cpp:97
+#: engines/ultima/nuvie/metaengine.cpp:99
 #, fuzzy
 #| msgid "Max frames per second limit"
 msgid "Toggle frames per second display"
 msgstr "מגבלת כמות מרבית של תמונות בשניה"
 
-#: engines/ultima/nuvie/metaengine.cpp:98
+#: engines/ultima/nuvie/metaengine.cpp:100
 #, fuzzy
 #| msgid "Toggle mute"
 msgid "Toggle audio"
 msgstr "מיתוג השתקה"
 
-#: engines/ultima/nuvie/metaengine.cpp:100
+#: engines/ultima/nuvie/metaengine.cpp:102
 #, fuzzy
 #| msgid "Toggle mute"
 msgid "Toggle sfx"
 msgstr "מיתוג השתקה"
 
-#: engines/ultima/nuvie/metaengine.cpp:101
+#. I18N: command bar is the bar of commands at the bottom of the screen
+#: engines/ultima/nuvie/metaengine.cpp:104
 msgid "Toggle original style command bar"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:102
+#: engines/ultima/nuvie/metaengine.cpp:105
 #, fuzzy
 #| msgid "Droid's action"
 msgid "Do action"
 msgstr "פעולת דרואיד"
 
-#: engines/ultima/nuvie/metaengine.cpp:103
+#: engines/ultima/nuvie/metaengine.cpp:106
 #, fuzzy
 #| msgid "Change game options"
 msgid "Cancel action"
 msgstr "שינוי אפשרויות המשחק"
 
-#: engines/ultima/nuvie/metaengine.cpp:104
+#: engines/ultima/nuvie/metaengine.cpp:107
 #, fuzzy
 #| msgid "Scroll up"
 msgid "Msg scroll up"
 msgstr "גלילה מעלה"
 
-#: engines/ultima/nuvie/metaengine.cpp:105
+#: engines/ultima/nuvie/metaengine.cpp:108
 #, fuzzy
 #| msgid "Scroll down"
 msgid "Msg scroll down"
 msgstr "גלילה מטה"
 
-#: engines/ultima/nuvie/metaengine.cpp:106
+#: engines/ultima/nuvie/metaengine.cpp:109
 #, fuzzy
 #| msgid "Speech Options"
 msgid "Show keys"
 msgstr "אפשרויות דיבור"
 
-#: engines/ultima/nuvie/metaengine.cpp:107
+#: engines/ultima/nuvie/metaengine.cpp:110
 #, fuzzy
 #| msgid "Decrease the scale factor"
 msgid "Decrease debug"
 msgstr "הקטנת קנה מידה"
 
-#: engines/ultima/nuvie/metaengine.cpp:108
+#: engines/ultima/nuvie/metaengine.cpp:111
 #, fuzzy
 #| msgid "Increase the scale factor"
 msgid "Increase debug"
 msgstr "הגדלת קנה מידה"
 
 #. I18N: gump is Graphical User Menu Pop-up
-#: engines/ultima/nuvie/metaengine.cpp:110
+#: engines/ultima/nuvie/metaengine.cpp:113
 #, fuzzy
 #| msgid "Close popup"
 msgid "Close gumps"
 msgstr "סגירת חלון קופץ"
 
-#: engines/ultima/nuvie/metaengine.cpp:112
+#: engines/ultima/nuvie/metaengine.cpp:115
 msgid "Enter ALT code (hold)"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:113
+#: engines/ultima/nuvie/metaengine.cpp:116
 msgid "ALT code 0"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:114
+#: engines/ultima/nuvie/metaengine.cpp:117
 msgid "ALT code 1"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:115
+#: engines/ultima/nuvie/metaengine.cpp:118
 msgid "ALT code 2"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:116
+#: engines/ultima/nuvie/metaengine.cpp:119
 msgid "ALT code 3"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:117
+#: engines/ultima/nuvie/metaengine.cpp:120
 msgid "ALT code 4"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:118
+#: engines/ultima/nuvie/metaengine.cpp:121
 msgid "ALT code 5"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:119
+#: engines/ultima/nuvie/metaengine.cpp:122
 msgid "ALT code 6"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:120
+#: engines/ultima/nuvie/metaengine.cpp:123
 msgid "ALT code 7"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:121
+#: engines/ultima/nuvie/metaengine.cpp:124
 msgid "ALT code 8"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:122
+#: engines/ultima/nuvie/metaengine.cpp:125
 msgid "ALT code 9"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:126
+#: engines/ultima/nuvie/metaengine.cpp:129
 msgid "Open the asset viewer"
 msgstr ""
 
 #. I18N: Eggs are in-game hatchable objects that are normally invisible
-#: engines/ultima/nuvie/metaengine.cpp:128
+#: engines/ultima/nuvie/metaengine.cpp:131
 #, fuzzy
 #| msgid "Speech Options"
 msgid "Show eggs"
 msgstr "אפשרויות דיבור"
 
-#: engines/ultima/nuvie/metaengine.cpp:129
+#: engines/ultima/nuvie/metaengine.cpp:132
 #, fuzzy
 #| msgid "Toggle fast mode"
 msgid "Toggle hack move"
 msgstr "מיתוג מצב מהיר"
 
 #. I18N: Eggs are in-game hatchable objects that are normally invisible
-#: engines/ultima/nuvie/metaengine.cpp:131
+#: engines/ultima/nuvie/metaengine.cpp:134
 #, fuzzy
 #| msgid "Toggle mute"
 msgid "Toggle egg spawn"
 msgstr "מיתוג השתקה"
 
-#: engines/ultima/nuvie/metaengine.cpp:132
+#: engines/ultima/nuvie/metaengine.cpp:135
 #, fuzzy
 #| msgid "Toggle mouse capture"
 msgid "Toggle no darkness"
 msgstr "מיתוג לכידת עכבר"
 
-#: engines/ultima/nuvie/metaengine.cpp:133
+#: engines/ultima/nuvie/metaengine.cpp:136
 #, fuzzy
 #| msgid "Toggle fast mode"
 msgid "Toggle pickpocket mode"
 msgstr "מיתוג מצב מהיר"
 
-#: engines/ultima/nuvie/metaengine.cpp:134
+#: engines/ultima/nuvie/metaengine.cpp:137
 #, fuzzy
 #| msgid "Toggle fast mode"
 msgid "Toggle god mode"
 msgstr "מיתוג מצב מהיר"
 
-#: engines/ultima/nuvie/metaengine.cpp:135
+#: engines/ultima/nuvie/metaengine.cpp:138
 #, fuzzy
 #| msgid "Toggle fast mode"
 msgid "Toggle ethereal mode"
 msgstr "מיתוג מצב מהיר"
 
-#: engines/ultima/nuvie/metaengine.cpp:136
+#: engines/ultima/nuvie/metaengine.cpp:139
 #, fuzzy
 #| msgid "Toggle fast mode"
 msgid "Toggle X-ray mode"
 msgstr "מיתוג מצב מהיר"
 
-#: engines/ultima/nuvie/metaengine.cpp:137
+#: engines/ultima/nuvie/metaengine.cpp:140
 msgid "Heal party"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:138
+#: engines/ultima/nuvie/metaengine.cpp:141
 #, fuzzy
 #| msgid "Regular cursor"
 msgid "Teleport to cursor"
 msgstr "סמן רגיל"
 
-#: engines/ultima/nuvie/metaengine.cpp:139
+#: engines/ultima/nuvie/metaengine.cpp:142
 #, fuzzy
 #| msgid "Enable cheats"
 msgid "Toggle cheats"
 msgstr "הפעלת רמאויות"
 
-#: engines/ultima/nuvie/metaengine.cpp:143
+#: engines/ultima/nuvie/metaengine.cpp:146
 msgid "Solo mode as Avatar"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:144
+#: engines/ultima/nuvie/metaengine.cpp:147
 msgid "Solo mode as party member 2"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:145
+#: engines/ultima/nuvie/metaengine.cpp:148
 msgid "Solo mode as party member 3"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:146
+#: engines/ultima/nuvie/metaengine.cpp:149
 msgid "Solo mode as party member 4"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:147
+#: engines/ultima/nuvie/metaengine.cpp:150
 msgid "Solo mode as party member 5"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:148
+#: engines/ultima/nuvie/metaengine.cpp:151
 msgid "Solo mode as party member 6"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:149
+#: engines/ultima/nuvie/metaengine.cpp:152
 msgid "Solo mode as party member 7"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:150
+#: engines/ultima/nuvie/metaengine.cpp:153
 msgid "Solo mode as party member 8"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:151
+#: engines/ultima/nuvie/metaengine.cpp:154
 msgid "Solo mode as party member 9"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:152
+#: engines/ultima/nuvie/metaengine.cpp:155
 msgid "Show stats for Avatar"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:153
+#: engines/ultima/nuvie/metaengine.cpp:156
 msgid "Show stats for party member 2"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:154
+#: engines/ultima/nuvie/metaengine.cpp:157
 msgid "Show stats for party member 3"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:155
+#: engines/ultima/nuvie/metaengine.cpp:158
 msgid "Show stats for party member 4"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:156
+#: engines/ultima/nuvie/metaengine.cpp:159
 msgid "Show stats for party member 5"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:157
+#: engines/ultima/nuvie/metaengine.cpp:160
 msgid "Show stats for party member 6"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:158
+#: engines/ultima/nuvie/metaengine.cpp:161
 msgid "Show stats for party member 7"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:159
+#: engines/ultima/nuvie/metaengine.cpp:162
 msgid "Show stats for party member 8"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:160
+#: engines/ultima/nuvie/metaengine.cpp:163
 msgid "Show stats for party member 9"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:161
+#: engines/ultima/nuvie/metaengine.cpp:164
 #, fuzzy
 #| msgid "Show inventory"
 msgid "Show inventory for Avatar"
 msgstr "הצגת מצאי"
 
-#: engines/ultima/nuvie/metaengine.cpp:162
+#: engines/ultima/nuvie/metaengine.cpp:165
 msgid "Show inventory for party member 2"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:163
+#: engines/ultima/nuvie/metaengine.cpp:166
 msgid "Show inventory for party member 3"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:164
+#: engines/ultima/nuvie/metaengine.cpp:167
 msgid "Show inventory for party member 4"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:165
+#: engines/ultima/nuvie/metaengine.cpp:168
 msgid "Show inventory for party member 5"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:166
+#: engines/ultima/nuvie/metaengine.cpp:169
 msgid "Show inventory for party member 6"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:167
+#: engines/ultima/nuvie/metaengine.cpp:170
 msgid "Show inventory for party member 7"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:168
+#: engines/ultima/nuvie/metaengine.cpp:171
 msgid "Show inventory for party member 8"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:169
+#: engines/ultima/nuvie/metaengine.cpp:172
 msgid "Show inventory for party member 9"
 msgstr ""
 
 #. I18N: gump is Graphical User Menu Pop-up
-#: engines/ultima/nuvie/metaengine.cpp:171
+#: engines/ultima/nuvie/metaengine.cpp:174
 msgid "Show doll gump for Avatar"
 msgstr ""
 
 #. I18N: gump is Graphical User Menu Pop-up
-#: engines/ultima/nuvie/metaengine.cpp:173
+#: engines/ultima/nuvie/metaengine.cpp:176
 msgid "Show doll gump for party member 2"
 msgstr ""
 
 #. I18N: gump is Graphical User Menu Pop-up
-#: engines/ultima/nuvie/metaengine.cpp:175
+#: engines/ultima/nuvie/metaengine.cpp:178
 msgid "Show doll gump for party member 3"
 msgstr ""
 
 #. I18N: gump is Graphical User Menu Pop-up
-#: engines/ultima/nuvie/metaengine.cpp:177
+#: engines/ultima/nuvie/metaengine.cpp:180
 msgid "Show doll gump for party member 4"
 msgstr ""
 
 #. I18N: gump is Graphical User Menu Pop-up
-#: engines/ultima/nuvie/metaengine.cpp:179
+#: engines/ultima/nuvie/metaengine.cpp:182
 msgid "Show doll gump for party member 5"
 msgstr ""
 
 #. I18N: gump is Graphical User Menu Pop-up
-#: engines/ultima/nuvie/metaengine.cpp:181
+#: engines/ultima/nuvie/metaengine.cpp:184
 msgid "Show doll gump for party member 6"
 msgstr ""
 
 #. I18N: gump is Graphical User Menu Pop-up
-#: engines/ultima/nuvie/metaengine.cpp:183
+#: engines/ultima/nuvie/metaengine.cpp:186
 msgid "Show doll gump for party member 7"
 msgstr ""
 
 #. I18N: gump is Graphical User Menu Pop-up
-#: engines/ultima/nuvie/metaengine.cpp:185
+#: engines/ultima/nuvie/metaengine.cpp:188
 msgid "Show doll gump for party member 8"
 msgstr ""
 
 #. I18N: gump is Graphical User Menu Pop-up
-#: engines/ultima/nuvie/metaengine.cpp:187
+#: engines/ultima/nuvie/metaengine.cpp:190
 msgid "Show doll gump for party member 9"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:193
-#: engines/ultima/nuvie/metaengine.cpp:198
+#: engines/ultima/nuvie/metaengine.cpp:196
+#: engines/ultima/nuvie/metaengine.cpp:201
 #, fuzzy
 #| msgid "Toggle linear filtered scaling"
 msgid "Toggle unlimited casting"
 msgstr "מיתוג התאמת קנה מידה לינארית"
 
-#: engines/ultima/nuvie/metaengine.cpp:224
+#: engines/ultima/nuvie/metaengine.cpp:227
 #, fuzzy
 #| msgid "Ultima VIII"
 msgid "Ultima VI"
 msgstr "Ultima VIII"
 
-#: engines/ultima/nuvie/metaengine.cpp:226
+#: engines/ultima/nuvie/metaengine.cpp:229
 msgid "Martian Dreams"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:228
+#: engines/ultima/nuvie/metaengine.cpp:231
 msgid "The Savage Empire"
 msgstr ""
 
@@ -17515,6 +17472,50 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Toggle fullscreen"
+#~ msgid "Toggle music on / off"
+#~ msgstr "מיתוג מסך מלא"
+
+#, fuzzy
+#~| msgid "Special sound effects volume"
+#~ msgid "Toggle sound effects on / off"
+#~ msgstr "עוצמת אפקטים קוליים מיוחדים"
+
+#, fuzzy
+#~| msgid "Toggle fast mode"
+#~ msgid "Toggle fast mode on / off"
+#~ msgstr "מיתוג מצב מהיר"
+
+#~ msgid "Toggle aspect-ratio correction"
+#~ msgstr "מיתוג תיקון יחס ממדים"
+
+#, fuzzy
+#~| msgid "Rotate"
+#~ msgid "Page up"
+#~ msgstr "סובב"
+
+#, fuzzy
+#~| msgid "Rotate"
+#~ msgid "Page down"
+#~ msgstr "סובב"
+
+#, fuzzy
+#~| msgid "Scroll up"
+#~ msgid "Scroll up page"
+#~ msgstr "גלילה מעלה"
+
+#, fuzzy
+#~| msgid "Scroll down"
+#~ msgid "Scroll down page"
+#~ msgstr "גלילה מטה"
+
+#~ msgid "Load game state"
+#~ msgstr "טעינת מצב משחק"
+
+#~ msgid "Save game state"
+#~ msgstr "שמירת מצב משחק"
 
 #, fuzzy
 #~| msgid "Go to end of line"
