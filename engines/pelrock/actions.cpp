@@ -83,6 +83,9 @@ const ActionEntry actionTable[] = {
 	{316, PICKUP, &PelrockEngine::pickCables},
 	{312, OPEN, &PelrockEngine::openMuseumDoor},
 
+	// Room 5
+	{},
+
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
 	{WILDCARD, TALK, &PelrockEngine::noOpAction},   // Generic talk action
@@ -172,9 +175,22 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	if (actionTrigger == 328) {
 		debug("Disabling root %d in room %d", rootIndex, room);
 		_state->setRootDisabledState(room, rootIndex, true);
+	} else if (actionTrigger == 329) {
+		debug("Would now enable X easter egg");
 	} else if (actionTrigger == 258) {
 		_state->setFlag(FLAG_GUARDIA_PIDECOSAS, true);
 		_state->setRootDisabledState(4, 1, true);
+	} else if (actionTrigger == 259) {
+		_dialog->say(_res->_ingameTexts[NO_EMPECEMOS]);
+	} else if (actionTrigger == 260) {
+		_dialog->say(_res->_ingameTexts[CUERPO_DANONE], 1);
+		_dialog->say(_res->_ingameTexts[CABEZA_HUECA]);
+	} else if (actionTrigger == 261) {
+		_dialog->say(_res->_ingameTexts[ESO_LO_SERAS_TU], 1);
+	} else if (actionTrigger == 262) {
+		_dialog->say(_res->_ingameTexts[DEMASIADO_NO_PUEDO_PENSAR], 1);
+	} else if (actionTrigger == 263) {
+		_dialog->say(_res->_ingameTexts[UN_POCO_RESPETO]);
 	} else {
 		debug("Got actionTrigger %d in dialogActionTrigger, but no handler defined", actionTrigger);
 	}

@@ -762,13 +762,17 @@ void RoomManager::applyDisabledChoice(ResetEntry entry, byte *conversationData, 
 }
 
 void RoomManager::addDisabledChoice(ChoiceOption choice) {
-	debug("Adding disabled branch for room %d at offset %d", choice.room, choice.dataOffset);
+	// Write 0xFA at offset+2 (after FB/F1 marker and level byte)
+	// This marks the choice as disabled without destroying the marker structure
+	uint32 disableOffset = choice.dataOffset + 2;
+	debug("Adding disabled branch for room %d at offset %d (FA written at %d)", 
+		  choice.room, choice.dataOffset, disableOffset);
 	ResetEntry resetEntry = ResetEntry();
 	resetEntry.room = choice.room;
-	resetEntry.offset = choice.dataOffset;
+	resetEntry.offset = disableOffset;
 	resetEntry.dataSize = 1;
 	resetEntry.data = new byte[1];
-	resetEntry.data[0] = 0xFA; // Disabled
+	resetEntry.data[0] = 0xFA; // Disabled marker
 	// Apply immediately
 	applyDisabledChoice(resetEntry, _conversationData, _conversationDataSize);
 	// Store for future loads

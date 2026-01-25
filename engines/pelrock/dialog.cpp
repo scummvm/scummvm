@@ -289,27 +289,30 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 	outChoices->clear();
 	int firstChoiceIndex = -1;
 
-	// Scan for additional choices with SAME index
+	// Scan for choices with SAME index
+	// The key insight: choices at the same level may be scattered throughout the data,
+	// separated by deeper-level sub-branches. We must scan past higher-index choices
+	// to find all choices at our level, but stop when we hit a LOWER index.
 	while (pos < dataSize) {
 		byte b = data[pos];
 
 		// Stop at end markers
-		if (b == CTRL_ALT_END_MARKER_1 || b == CTRL_END_BRANCH) {
+		if (b == CTRL_ALT_END_MARKER_1 || b == CTRL_END_BRANCH || b == CTRL_ALT_SPEAKER_ROOT) {
 			break;
 		}
 
 		// Found a dialogue marker
 		if (b == CTRL_DIALOGUE_MARKER || b == CTRL_DIALOGUE_MARKER_ONEOFF) {
 			if (pos + 1 < dataSize) {
-				if (firstChoiceIndex == -1) {
-					firstChoiceIndex = data[pos + 1];
-				}
 				int choiceIndex = data[pos + 1];
+				
+				// Set firstChoiceIndex from first non-disabled choice, or first choice if all disabled
+				if (firstChoiceIndex == -1) {
+					firstChoiceIndex = choiceIndex;
+				}
 
-				// Only collect choices with same index
+				// Only collect choices with same index as the first one we found
 				if (choiceIndex == firstChoiceIndex) {
-					// Check if disabled
-
 					ChoiceOption opt;
 					opt.room = g_engine->_room->_currentRoomNumber;
 					opt.shouldDisableOnSelect = b == CTRL_DIALOGUE_MARKER_ONEOFF;
@@ -321,7 +324,6 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 					}
 					// Parse the choice text
 					uint32 textPos = pos + 4;
-					// textPos += 2; // Skip marker + index + 2 speaker bytes
 					while (textPos < dataSize) {
 						byte tb = data[textPos];
 						if (tb == CTRL_END_TEXT || tb == CTRL_DIALOGUE_MARKER ||
@@ -361,9 +363,12 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 					if (!opt.isDisabled)
 						outChoices->push_back(opt);
 				} else if (choiceIndex < firstChoiceIndex) {
-					// Different choice index - stop scanning
+					// Hit a choice at a LOWER level - stop scanning
+					// This means we've gone past all choices at our level
 					break;
 				}
+				// If choiceIndex > firstChoiceIndex, we're in a deeper sub-branch
+				// Continue scanning to find more choices at our level
 			}
 		}
 
@@ -388,9 +393,12 @@ bool DialogManager::checkAllSubBranchesExhausted(const byte *data, uint32 dataSi
 	while (pos < dataSize) {
 		byte b = data[pos];
 
-		// Stop at branch/conversation end markers (0xF5, 0xF7, 0xFE, 0xF4)
+		// Stop at TRUE branch boundary markers (0xF5, 0xF7, 0xFE)
+		// NOTE: Do NOT stop at F4 (CTRL_END_CONVERSATION) - F4 markers appear between
+		// choices as terminators for each choice's response path. We need to scan
+		// past them to find all choices at the target level.
 		if (b == CTRL_ALT_END_MARKER_1 || b == CTRL_END_BRANCH ||
-			b == CTRL_ALT_SPEAKER_ROOT || b == CTRL_END_CONVERSATION) {
+			b == CTRL_ALT_SPEAKER_ROOT) {
 			break;
 		}
 
@@ -407,7 +415,8 @@ bool DialogManager::checkAllSubBranchesExhausted(const byte *data, uint32 dataSi
 					return false; // Don't disable parent
 				}
 			} else if (choiceIdx <= currentChoiceLevel) {
-				// Hit choice at same or lower level - stop
+				// Hit choice at same or lower level - stop scanning
+				// All choices at higher levels before this point have been checked
 				break;
 			}
 		}
@@ -536,7 +545,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 			byte speakerId;
 			endPos = readTextBlock(conversationData, dataSize, position, text, speakerId);
 			Common::Array<Common::Array<Common::String>> wrappedText = wordWrap(text);
-			debug("Word wrapping %s produces %d pages", text.c_str(), wrappedText.size());
+			// debug("Word wrapping %s produces %d pages", text.c_str(), wrappedText.size());
 			// Skip spurious single character artifacts
 			if (!text.empty() && text.size() > 1) {
 				displayDialogue(wrappedText, speakerId);
@@ -707,6 +716,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 				if ((*choices)[selectedIndex].shouldDisableOnSelect) {
 					bool shouldDisable = checkAllSubBranchesExhausted(conversationData, dataSize, endPos, currentChoiceLevel);
 					if (shouldDisable) {
+						debug("Disabling one-time choice at index %d after selection", selectedIndex);
 						g_engine->_room->addDisabledChoice((*choices)[selectedIndex]);
 					}
 				}
@@ -747,7 +757,7 @@ void DialogManager::sayAlfred(Description description) {
 	}
 }
 
-void DialogManager::say(Common::StringArray texts) {
+void DialogManager::say(Common::StringArray texts, byte spriteIndex) {
 	if (texts.empty()) {
 		return;
 	}
@@ -759,7 +769,7 @@ void DialogManager::say(Common::StringArray texts) {
 			sayAlfred(texts);
 			return;
 		} else {
-			setCurSprite(0);
+			setCurSprite(spriteIndex);
 			Common::Array<Common::StringArray> textLines = wordWrap(texts);
 			displayDialogue(textLines, speakerId);
 		}

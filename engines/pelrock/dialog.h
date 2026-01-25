@@ -76,7 +76,7 @@ public:
 	int selectChoice(Common::Array<Common::String> &choices, byte *compositeBuffer);
 	void startConversation(const byte *conversationData, uint32 dataSize, byte npcIndex, Sprite *alfredAnimSet = nullptr);
 	void sayAlfred(Description description);
-	void say(Common::StringArray texts);
+	void say(Common::StringArray texts, byte spriteIndex = 0);
 	void say(Common::StringArray texts, int16 x, int16 y);
 	bool processColorAndTrim(Common::StringArray &lines, byte &speakerId);
 	Graphics::Surface getDialogueSurface(Common::Array<Common::String> dialogueLines, byte speakerId);

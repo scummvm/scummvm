@@ -59,7 +59,6 @@ void PelrockEventManager::pollEvent() {
 		// case Common::EVENT_KEYUP:
 		// 	return;
 		case Common::EVENT_LBUTTONDOWN:
-
 			if (_leftMouseButton == 0) {
 				_clickTime = g_system->getMillis();
 			}
@@ -70,9 +69,9 @@ void PelrockEventManager::pollEvent() {
 		case Common::EVENT_LBUTTONUP:
 			if (_leftMouseButton == 1) {
 				// Don't treat as regular click if we're in popup selection mode
-				if (!_popupSelectionMode) {
-					_leftMouseClicked = true;
-				}
+				// if (!_popupSelectionMode) {
+				_leftMouseClicked = true;
+				// }
 				_releaseX = _event.mouse.x;
 				_releaseY = _event.mouse.y;
 				_longClicked = false;

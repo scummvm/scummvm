@@ -154,7 +154,7 @@ void PelrockEngine::init() {
 		loadAnims();
 		// setScreen(0, ALFRED_DOWN);
 		// setScreen(3, ALFRED_RIGHT);
-		setScreen(4, ALFRED_DOWN);
+		setScreen(5, ALFRED_DOWN);
 		// setScreen(15, ALFRED_DOWN);
 		// setScreen(2, ALFRED_LEFT);
 		// alfredState.x = 576;
@@ -578,6 +578,7 @@ void PelrockEngine::talkTo(HotSpot *hotspot) {
 			break;
 		}
 	}
+	changeCursor(DEFAULT);
 	_dialog->startConversation(_room->_conversationData, _room->_conversationDataSize, hotspot->index, animSet);
 }
 
@@ -938,7 +939,6 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 	_alfredState.idleFrameCounter = 0;
 	int hotspotIndex = isHotspotUnder(x, y);
 	bool alfredUnder = isAlfredUnder(x, y);
-	debug("Long click at %d,%d - hotspot %d, alfred under %d", x, y, hotspotIndex, alfredUnder);
 	if ((hotspotIndex != -1 || alfredUnder) && !_actionPopupState.isActive) {
 
 		_actionPopupState.x = _alfredState.x + kAlfredFrameWidth / 2 - kBalloonWidth / 2;
@@ -1403,6 +1403,7 @@ void PelrockEngine::changeCursor(Cursor cursor) {
 }
 
 void PelrockEngine::checkMouseHover() {
+
 	bool hotspotDetected = false;
 
 	int hotspotIndex = isHotspotUnder(_events->_mouseX, _events->_mouseY);
@@ -1410,17 +1411,19 @@ void PelrockEngine::checkMouseHover() {
 		hotspotDetected = true;
 	}
 
+
 	if (isActionUnder(_events->_mouseX, _events->_mouseY) != NO_ACTION) {
 		hotspotDetected = false;
 	}
+
+	// Calculate walk target first (before checking anything else)
+	Common::Point walkTarget = calculateWalkTarget(_room->_currentRoomWalkboxes, _events->_mouseX, _events->_mouseY, hotspotDetected, hotspotDetected ? &_room->_currentRoomHotspots[hotspotIndex] : nullptr);
+
 
 	bool alfredDetected = false;
 	if (isAlfredUnder(_events->_mouseX, _events->_mouseY)) {
 		alfredDetected = true;
 	}
-	// Calculate walk target first (before checking anything else)
-	Common::Point walkTarget = calculateWalkTarget(_room->_currentRoomWalkboxes, _events->_mouseX, _events->_mouseY, hotspotDetected, hotspotDetected ? &_room->_currentRoomHotspots[hotspotIndex] : nullptr);
-
 	// Check if walk target hits any exit
 	bool exitDetected = false;
 	Exit *exit = isExitUnder(walkTarget.x, walkTarget.y);
