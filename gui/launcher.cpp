@@ -1034,14 +1034,9 @@ protected:
 			_grid->clearSelection();
 			const Common::Array<bool> &selectedItems = _grid->getSelectedItems();
 			
-			// Select at the same index as before
-			if (_grid->_lastSelectedEntryID < (int)selectedItems.size()) {
-				_grid->markSelectedItem(_grid->_lastSelectedEntryID, true);
-			} else {
-				// If out of bounds, select the last item
-				_grid->markSelectedItem(selectedItems.size() - 1, true);
-				_grid->_lastSelectedEntryID = selectedItems.size() - 1;
-			}
+			// Select at the same index as before, or the last item if out of bounds
+			_grid->_lastSelectedEntryID = MIN((int)selectedItems.size() - 1, _grid->_lastSelectedEntryID);
+			_grid->markSelectedItem(_grid->_lastSelectedEntryID, true);
 		}
 	}
 	void updateListing(int selPos = -1) override;
@@ -1489,6 +1484,12 @@ void LauncherSimple::removeListGames(const Common::Array<bool> &selectedItemsBoo
 void LauncherSimple::updateSelectionAfterRemoval() {
 	if (_list) {
 		_list->clearSelection();
+		const Common::Array<bool> &selectedItems = _list->getSelectedItems();
+		
+		// Get the real data index of the last selected item and adjust with bounds
+		int lastSelectedDataItem = MIN((int)selectedItems.size() - 1, _list->getSelected());
+		// Convert real data index to visual index for marking
+		_list->markSelectedItem(_list->getVisualPos(lastSelectedDataItem), true);
 	}
 }
 

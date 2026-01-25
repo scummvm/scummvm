@@ -277,6 +277,23 @@ void ListWidget::append(const Common::String &s) {
 	scrollBarRecalc();
 }
 
+int ListWidget::getVisualPos(int dataIndex) const {
+	// If no filtering, visual index equals data index
+	if (_listIndex.empty()) {
+		return dataIndex;
+	}
+	
+	// Find visual index by searching _listIndex for dataIndex
+	for (uint i = 0; i < _listIndex.size(); ++i) {
+		if (_listIndex[i] == dataIndex) {
+			return i;
+		}
+	}
+	
+	// Not found
+	return -1;
+}
+
 void ListWidget::scrollTo(int item) {
 	int size = _list.size();
 	if (item >= size)

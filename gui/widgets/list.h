@@ -73,7 +73,6 @@ protected:
 	int				_entriesPerPage;
 	int				_selectedItem;
 	Common::Array<bool> _selectedItems;    /// Multiple selected items (bool array)
-	int _lastSelectionStartItem;          /// Used for Shift+Click range selection
 	bool			_multiSelectEnabled;	/// Flag for multi-selection
 	ScrollBarWidget	*_scrollBar;
 	int				_currentKeyDown;
@@ -120,12 +119,16 @@ public:
 
 	const Common::U32String getSelectedString() const	{ return stripGUIformatting(_list[_selectedItem]); }
 
+	/// Get visual position (index in filtered list) from real data index
+	int getVisualPos(int dataIndex) const;
+
 	/// Multi-selection support
 	const Common::Array<bool> &getSelectedItems() const { return _selectedItems; }
 	bool isItemSelected(int item) const;
 	void markSelectedItem(int item, bool state);
 	void clearSelection();
 	void selectItemRange(int from, int to);
+	int _lastSelectionStartItem;          /// Used for Shift+Click range selection
 	void setNumberingMode(NumberingMode numberingMode)	{ _numberingMode = numberingMode; }
 
 	void scrollTo(int item);
