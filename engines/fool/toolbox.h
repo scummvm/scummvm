@@ -44,6 +44,7 @@ struct Region {
 typedef Common::SharedPtr<Common::Array<byte>> Handle;
 typedef Common::SharedPtr<Region> RgnHandle;
 typedef Common::SharedPtr<Graphics::ManagedSurface> PicHandle;
+// BitMap is the monochrome surface format.
 typedef Common::SharedPtr<Graphics::ManagedSurface> BitMap;
 typedef Handle PolyHandle;
 typedef uint32 ResType;

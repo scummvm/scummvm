@@ -48,11 +48,27 @@ void Toolbox::ClipRect(Common::Rect &r) {
 }
 
 void Toolbox::CopyBits(const BitMap &srcBits, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, SourceMode mode, RgnHandle maskRgn) {
-	if (srcBits && dstBits) {
-		if (maskRgn) {
-			warning("STUB: Toolbox::CopyBits: maskRgn unimplemented");
-		}
+	if (!srcBits) {
+		warning("Toolbox::CopyBits: empty srcBits handle");
+		return;
 	}
+
+	if (!dstBits) {
+		warning("Toolbox::CopyBits: empty dstBits handle");
+		return;
+	}
+	if (maskRgn) {
+		warning("Toolbox::CopyBits: maskRgn unimplemented");
+	}
+	// scale the source
+	BitMap subsrc(new Graphics::ManagedSurface());
+	subsrc->create(*srcBits, srcRect);
+	if (srcRect.width() != dstRect.width() ||
+			srcRect.height() != dstRect.height()) {
+		subsrc->scale(dstRect.width(), dstRect.height());
+	}
+
+	blitMono(subsrc, dstBits, Common::Point(dstRect.left, dstRect.top), mode);
 }
 
 void Toolbox::DrawString(const Common::String &s) {
