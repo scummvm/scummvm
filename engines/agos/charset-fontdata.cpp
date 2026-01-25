@@ -3066,12 +3066,13 @@ static inline void pnSqueezeGlyph8Rows(const byte *src8, byte *dst8) {
 		dst8[i] = pnSqueezeRow(src8[i], anyBit1SetAcrossGlyph);
 }
 
-void AGOSEngine_PN::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
+void AGOSEngine::drawPnSqueezedChar(WindowBlock *window, uint x, uint y, byte chr) {
 	const byte *src;
 	byte color, *dst;
 	uint dstPitch, h, w, i;
 
-	_videoLockOut |= 0x8000;
+	if (chr < 32 || (chr - 32) > 98)
+		return;
 
 	Graphics::Surface *screen = getBackendSurface();
 
@@ -3079,11 +3080,6 @@ void AGOSEngine_PN::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr
 	dstPitch = screen->pitch;
 	h = 8;
 	w = 6;
-
-	if (chr < 32 || (chr - 32) > 98) {
-		_videoLockOut &= ~0x8000;
-		return;
-	}
 
 	src = english_pnFont + (chr - 32) * 8;
 
@@ -3102,65 +3098,27 @@ void AGOSEngine_PN::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr
 			if (b < 0) {
 				dst[i] = color;
 			}
-
 			b <<= 1;
 		} while (++i != w);
 		dst += dstPitch;
 	} while (--h);
 
-	Common::Rect dirtyRect(x + window->textColumnOffset, y, x + window->textColumnOffset + 6, y + 8);
+	Common::Rect dirtyRect(x + window->textColumnOffset, y,
+	                       x + window->textColumnOffset + 6, y + 8);
 	updateBackendSurface(&dirtyRect);
+}
 
+void AGOSEngine_PN::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
+	_videoLockOut |= 0x8000;
+	drawPnSqueezedChar(window, x, y, chr);
 	_videoLockOut &= ~0x8000;
 }
 
 void AGOSEngine_Elvira1::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 	if (getPlatform() == Common::kPlatformAmiga && (getFeatures() & GF_DEMO)) {
-		const byte *src;
-		byte color, *dst;
-		uint dstPitch, h, w, i;
-
-		_videoLockOut |= 0x8000;
-
-		Graphics::Surface *screen = getBackendSurface();
-
-		dst = (byte *)screen->getPixels();
-		dstPitch = screen->pitch;
-		h = 8;
-		w = 6;
-
-		if (chr < 32 || (chr - 32) > 98) {
+			_videoLockOut |= 0x8000;
+			drawPnSqueezedChar(window, x, y, chr);
 			_videoLockOut &= ~0x8000;
-			return;
-		}
-
-		src = english_pnFont + (chr - 32) * 8;
-
-		byte pnTmp[8];
-		pnSqueezeGlyph8Rows(src, pnTmp);
-		src = pnTmp;
-
-		dst += y * dstPitch + x + window->textColumnOffset;
-
-		color = window->textColor;
-
-		do {
-			int8 b = *src++;
-			i = 0;
-			do {
-				if (b < 0) {
-					dst[i] = color;
-				}
-
-				b <<= 1;
-			} while (++i != w);
-			dst += dstPitch;
-		} while (--h);
-
-		Common::Rect dirtyRect(x + window->textColumnOffset, y, x + window->textColumnOffset + 6, y + 8);
-		updateBackendSurface(&dirtyRect);
-
-		_videoLockOut &= ~0x8000;
 			return;
 		}
 		
