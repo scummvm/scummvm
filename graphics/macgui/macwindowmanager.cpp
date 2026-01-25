@@ -826,7 +826,7 @@ void MacDrawPrimitives<T>::drawPoint(int x, int y, uint32 color, void *data) {
 
 	const byte *pat = p->patterns->operator[](p->fillType - 1);
 
-	if (p->thickness == 1) {
+	if (p->thickness.x == 1 && p->thickness.y == 1) {
 		if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h) {
 			uint xu = (uint)x; // for letting compiler optimize it
 			uint yu = (uint)y;
@@ -839,9 +839,9 @@ void MacDrawPrimitives<T>::drawPoint(int x, int y, uint32 color, void *data) {
 		}
 	} else {
 		int x1 = x;
-		int x2 = x1 + p->thickness;
+		int x2 = x1 + p->thickness.x;
 		int y1 = y;
-		int y2 = y1 + p->thickness;
+		int y2 = y1 + p->thickness.y;
 
 		for (y = y1; y < y2; y++)
 			for (x = x1; x < x2; x++)
@@ -943,7 +943,7 @@ void MacWindowManager::drawDesktop() {
 	} else {
 		Common::Rect r(_desktop->getBounds());
 
-		MacPlotData pd(_desktop, nullptr, &_patterns, kPatternCheckers, 0, 0, 1, _colorWhite);
+		MacPlotData pd(_desktop, nullptr, &_patterns, kPatternCheckers, 0, 0, {1, 1}, _colorWhite);
 
 		getDrawPrimitives().drawRoundRect(r, kDesktopArc, _colorBlack, true, &pd);
 	}
@@ -1240,7 +1240,7 @@ void MacWindowManager::renderZoomBox(bool redraw) {
 	ZoomBox *box = _zoomBoxes.front();
 	uint32 t = g_system->getMillis();
 
-	MacPlotData pd(_screen, nullptr, &getPatterns(), Graphics::kPatternCheckers, 0, 0, 1, 0, true);
+	MacPlotData pd(_screen, nullptr, &getPatterns(), Graphics::kPatternCheckers, 0, 0, {1, 1}, 0, true);
 
 	// Undraw the previous boxes
 	if (box->last.size() != 0) {

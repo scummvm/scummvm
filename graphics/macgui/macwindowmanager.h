@@ -121,13 +121,13 @@ struct MacPlotData {
 	uint fillType;
 	int fillOriginX;
 	int fillOriginY;
-	int thickness;
+	Common::Point thickness;
 	uint bgColor;
 	bool invert;
 
-	MacPlotData() : surface(nullptr), mask(nullptr), patterns(nullptr), fillType(0), fillOriginX(0), fillOriginY(0), thickness(1), bgColor(0), invert(false) {}
+	MacPlotData() : surface(nullptr), mask(nullptr), patterns(nullptr), fillType(0), fillOriginX(0), fillOriginY(0), thickness(1, 1), bgColor(0), invert(false) {}
 
-	MacPlotData(Graphics::ManagedSurface *s, Graphics::ManagedSurface *m, MacPatterns *p, uint f, int fx, int fy, int t, uint bg, bool inv = false) :
+	MacPlotData(Graphics::ManagedSurface *s, Graphics::ManagedSurface *m, MacPatterns *p, uint f, int fx, int fy, const Common::Point &t, uint bg, bool inv = false) :
 		surface(s), mask(m), patterns(p), fillType(f), fillOriginX(fx), fillOriginY(fy), thickness(t), bgColor(bg), invert(inv) {
 	}
 };

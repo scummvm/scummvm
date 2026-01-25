@@ -77,7 +77,7 @@ MacDialog::MacDialog(ManagedSurface *screen, MacWindowManager *wm, int width, Ma
 	int height;
 	if (buttonBottomPos > 0)
 		height = buttonBottomPos + kDialogBottomPadding;
-	else 
+	else
 		height = kDialogHeight + _mactext->getTextHeight();
 
 	_font = getDialogFont();
@@ -118,7 +118,7 @@ void MacDialog::paint() {
 
 	Primitives &primitives = _wm->getDrawPrimitives();
 
-	MacPlotData pd(_screen, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorBlack, false);
+	MacPlotData pd(_screen, nullptr, &_wm->getPatterns(), 1, 0, 0, {1, 1}, _wm->_colorBlack, false);
 	primitives.drawFilledRect1(_bbox, _wm->_colorWhite, &pd);
 	_mactext->drawToPoint(_screen, Common::Point(_bbox.left + (_bbox.width() - _maxTextWidth)/2, _bbox.top + 16));
 	static int boxOutline[] = {1, 0, 0, 1, 1};
@@ -165,7 +165,7 @@ void MacDialog::blit() {
 void MacDialog::drawOutline(Common::Rect &bounds, int *spec, int speclen) {
 	Primitives &primitives = _wm->getDrawPrimitives();
 
-	MacPlotData pd(_screen, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorBlack, false);
+	MacPlotData pd(_screen, nullptr, &_wm->getPatterns(), 1, 0, 0, {1, 1}, _wm->_colorBlack, false);
 	for (int i = 0; i < speclen; i++)
 		if (spec[i] != 0) {
 			Common::Rect r(bounds.left + i, bounds.top + i, bounds.right - i, bounds.bottom - i);

@@ -190,7 +190,7 @@ void MacWindowBorder::drawScrollBar(ManagedSurface *g) {
 	int ry2 = ry1 + _scrollSize ;
 	Common::Rect rr(rx1, ry1, rx2, ry2);
 
-	MacPlotData pd(g, nullptr,  &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorWhite, true);
+	MacPlotData pd(g, nullptr,  &_wm->getPatterns(), 1, 0, 0, {1, 1}, _wm->_colorWhite, true);
 	Primitives &primitives = _wm->getDrawInvertPrimitives();
 	primitives.drawFilledRect1(rr, _wm->_colorWhite, &pd);
 
