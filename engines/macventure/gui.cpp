@@ -849,7 +849,7 @@ void Gui::drawInventories() {
 				SWAP(topLeft.y, bottomRight.y);
 			Common::Rect lassoRect(topLeft, bottomRight);
 
-			Graphics::MacPlotData plotData(srf, nullptr, &_wm.getBuiltinPatterns(), kPatternCheckers2, 0, 0, 1, kColorWhite, false);
+			Graphics::MacPlotData plotData(srf, nullptr, &_wm.getBuiltinPatterns(), kPatternCheckers2, 0, 0, {1, 1}, kColorWhite, false);
 			Graphics::Primitives &primitives = _wm.getDrawPrimitives();
 			primitives.drawRect(lassoRect, kColorBlack, &plotData);
 		}

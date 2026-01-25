@@ -320,14 +320,14 @@ void InkPrimitives<T>::drawPoint(int x, int y, uint32 src, void *data) {
 	dst = (T *)p->dst->getBasePtr(x, y);
 
 	if (p->ms) {
-		if (p->ms->pd->thickness > 1) {
-			int prevThickness = p->ms->pd->thickness;
+		if (p->ms->pd->thickness.x > 1 || p->ms->pd->thickness.y > 1) {
+			Common::Point prevThickness = p->ms->pd->thickness;
 			int x1 = x;
-			int x2 = x1 + prevThickness;
+			int x2 = x1 + prevThickness.x;
 			int y1 = y;
-			int y2 = y1 + prevThickness;
+			int y2 = y1 + prevThickness.y;
 
-			p->ms->pd->thickness = 1;	// We do not want recursive loops
+			p->ms->pd->thickness = Common::Point(1, 1);	// We do not want recursive loops
 
 			for (y = y1; y < y2; y++)
 				for (x = x1; x < x2; x++)
@@ -667,7 +667,7 @@ void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
 
 	Common::Rect fillAreaRect((int)srcRect.width(), (int)srcRect.height());
 	fillAreaRect.moveTo(srcRect.left, srcRect.top);
-	Graphics::MacPlotData plotFill(dst, nullptr, &d->getPatterns(), ms->pattern, srcRect.left + wpos.x, srcRect.top + wpos.y, 1, ms->backColor);
+	Graphics::MacPlotData plotFill(dst, nullptr, &d->getPatterns(), ms->pattern, srcRect.left + wpos.x, srcRect.top + wpos.y, {1, 1}, ms->backColor);
 
 	uint strokePattern = 1;
 
@@ -679,7 +679,7 @@ void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
 
 	Common::Rect strokeRect(MAX((int)srcRect.width() - ms->lineSize, 0), MAX((int)srcRect.height() - ms->lineSize, 0));
 	strokeRect.moveTo(srcRect.left, srcRect.top);
-	Graphics::MacPlotData plotStroke(dst, nullptr, &d->getPatterns(), strokePattern, strokeRect.left + wpos.x, strokeRect.top + wpos.y, ms->lineSize, ms->backColor);
+	Graphics::MacPlotData plotStroke(dst, nullptr, &d->getPatterns(), strokePattern, strokeRect.left + wpos.x, strokeRect.top + wpos.y, {(int16)ms->lineSize, (int16)ms->lineSize}, ms->backColor);
 
 	Graphics::Primitives *primitives = g_director->getInkPrimitives();
 
