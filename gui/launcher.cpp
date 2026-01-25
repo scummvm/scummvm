@@ -1026,9 +1026,8 @@ public:
 
 	LauncherDisplayType getType() const override { return kLauncherDisplayGrid; }
 
-public:
-	void removeGridGames();
 protected:
+	void confirmRemoveGames(const Common::Array<bool> &selectedItems) override;
 	void updateSelectionAfterRemoval() override {
 		if (_grid) {
 			_grid->clearSelection();
@@ -1383,15 +1382,8 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		LauncherDialog::handleCommand(sender, kStartCmd, 0);
 		break;
 	case kListItemRemovalRequestCmd: {
-		// Use multi-removal logic for all removals (handles both single and multiple selections)
-		const Common::Array<bool> &selectedItemsBool = _list->getSelectedItems();
-		// If we have one or more items selected, perform the removal
-		for (const auto &it : selectedItemsBool) {
-			if (it) {
-				removeListGames(selectedItemsBool);
-				break;
-			}
-		}
+		// Remove games if we have any selection
+		confirmRemoveGames(_list->getSelectedItems());
 		break;
 	}
 	case kListSelectionChangedCmd:
@@ -1426,14 +1418,7 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 	case kRemoveGameCmd: {
 		// Remove games if we have any selection
-		const Common::Array<bool> &selectedItemsBool = _list->getSelectedItems();
-		// Ensure at least one item is selected before proceeding
-		for (const auto &it : selectedItemsBool) {
-			if (it) {
-				removeListGames(selectedItemsBool);
-				break;
-			}
-		}
+		confirmRemoveGames(_list->getSelectedItems());
 		break;
 	}
 	default:
@@ -1441,7 +1426,18 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 }
 
-void LauncherSimple::removeListGames(const Common::Array<bool> &selectedItemsBool) {
+void LauncherSimple::confirmRemoveGames(const Common::Array<bool> &selectedItemsBool) {
+	// Validate that at least one item is selected
+	bool hasSelection = false;
+	for (const auto &item : selectedItemsBool) {
+		if (item) {
+			hasSelection = true;
+			break;
+		}
+	}
+	if (!hasSelection)
+		return;
+	
 	// Count selected items
 	int selectedCount = 0;
 	for (int i = 0; i < (int)selectedItemsBool.size(); ++i) {
@@ -1684,13 +1680,7 @@ void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 	case kRemoveGameCmd:
 		// Remove games if we have any selection
 		if (_grid) {
-			const Common::Array<bool> &selectedItems = _grid->getSelectedItems();
-			for (const auto &item : selectedItems) {
-				if (item) {
-					removeGridGames();
-					break;
-				}
-			}
+			confirmRemoveGames(_grid->getSelectedItems());
 		}
 		break;
 	case kItemClicked:
@@ -1846,10 +1836,20 @@ void LauncherGrid::build() {
 	updateButtons();
 }
 
-void LauncherGrid::removeGridGames() {
+void LauncherGrid::confirmRemoveGames(const Common::Array<bool> &selectedItems) {
 	if (!_grid)
 		return;
-	const Common::Array<bool> &selectedItems = _grid->getSelectedItems();
+	
+	// Validate that at least one item is selected
+	bool hasSelection = false;
+	for (const auto &item : selectedItems) {
+		if (item) {
+			hasSelection = true;
+			break;
+		}
+	}
+	if (!hasSelection)
+		return;
 	
 	// Count selected items
 	int selectedCount = 0;

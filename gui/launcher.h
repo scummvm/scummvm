@@ -199,6 +199,13 @@ protected:
 	void performGameRemoval(const Common::Array<bool> &selectedItems, bool isGrid);
 
 	/**
+	 * Handle game removal confirmation with selection validation.
+	 * Checks if at least one item is selected, then calls the subclass
+	 * implementation to show the removal confirmation dialog.
+	 */
+	virtual void confirmRemoveGames(const Common::Array<bool> &selectedItems) = 0;
+
+	/**
 	 * Update selection after game removal.
 	 * Each subclass handles its own UI-specific selection logic.
 	 */
@@ -256,9 +263,9 @@ public:
 	void handleKeyDown(Common::KeyState state) override;
 
 	LauncherDisplayType getType() const override { return kLauncherDisplayList; }
-	void removeListGames(const Common::Array<bool> &selectedItems);
 
 protected:
+	void confirmRemoveGames(const Common::Array<bool> &selectedItems) override;
 	void updateSelectionAfterRemoval() override;
 	void updateListing(int selPos = -1) override;
 	int getItemPos(int item) override;
