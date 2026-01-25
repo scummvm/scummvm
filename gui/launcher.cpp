@@ -1502,6 +1502,7 @@ void LauncherSimple::updateButtons() {
 		if (selectedCount == 2) break;
 	}
 	bool hasMultiSelection = selectedCount > 1;
+	// Check if at least one entry is selected
 	bool hasSelection = selectedCount > 0;
 	bool isAddOn = false;
 	if (item >= 0) {
@@ -1509,14 +1510,18 @@ void LauncherSimple::updateButtons() {
 		isAddOn = domain && domain->contains("parent");
 	}
 
+	// Enable Start/Edit buttons only if a single game is selected (not add-on)
 	bool enable = (item >= 0 && !isAddOn && !hasMultiSelection && hasSelection);
 
 	_startButton->setEnabled(enable);
 	_editButton->setEnabled(enable);
+
+	// Enable Remove button if at least one game is selected
 	_removeButton->setEnabled(hasSelection);
 
 	bool en = enable;
 
+	// Enable Load button only if a single is game selected, unless the game disables it via GUI options
 	if (item >= 0 && !isAddOn && !hasMultiSelection && hasSelection)
 		en = !(Common::checkGameGUIOption(GUIO_NOLAUNCHLOAD, ConfMan.get("guioptions", _domains[item])));
 
