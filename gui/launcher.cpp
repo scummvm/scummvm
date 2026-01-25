@@ -1495,11 +1495,11 @@ void LauncherSimple::updateSelectionAfterRemoval() {
 void LauncherSimple::updateButtons() {
 	int item = _list->getSelected();
 	const Common::Array<bool> &selectedItemsBool = _list->getSelectedItems();
-	// Count selected items
+	// Count selected items (early exit once we know there's multi-selection)
 	int selectedCount = 0;
 	for (int i = 0; i < (int)selectedItemsBool.size(); ++i) {
 		if (selectedItemsBool[i]) selectedCount++;
-		if (selectedCount == 2) break;
+		if (selectedCount > 1) break;
 	}
 	bool hasMultiSelection = selectedCount > 1;
 	// Check if at least one entry is selected
