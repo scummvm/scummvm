@@ -137,7 +137,7 @@ void PhoenixVREngine::loadNextScript() {
 
 void PhoenixVREngine::end() {
 	debug("end");
-	if (_nextScript.empty() && _nextWarp < 0 && _nextScript < 0) {
+	if (_nextScript.empty() && _nextWarp < 0) {
 		debug("quit game");
 		quitGame();
 	}
