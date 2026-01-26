@@ -1417,10 +1417,10 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 }
 
-void LauncherSimple::confirmRemoveGames(const Common::Array<bool> &selectedItemsBool) {
+void LauncherSimple::confirmRemoveGames(const Common::Array<bool> &selectedItems) {
 	// Validate that at least one item is selected
 	bool hasSelection = false;
-	for (const auto &item : selectedItemsBool) {
+	for (const auto &item : selectedItems) {
 		if (item) {
 			hasSelection = true;
 			break;
@@ -1431,8 +1431,8 @@ void LauncherSimple::confirmRemoveGames(const Common::Array<bool> &selectedItems
 	
 	// Count selected items
 	int selectedCount = 0;
-	for (int i = 0; i < (int)selectedItemsBool.size(); ++i) {
-		if (selectedItemsBool[i]) {
+	for (int i = 0; i < (int)selectedItems.size(); ++i) {
+		if (selectedItems[i]) {
 			selectedCount++;
 		}
 	}
@@ -1445,8 +1445,8 @@ void LauncherSimple::confirmRemoveGames(const Common::Array<bool> &selectedItems
 
 	// Build message from bool array (max 10 items, then ellipsis)
 	int displayCount = 0;
-	for (int i = 0; i < (int)selectedItemsBool.size(); ++i) {
-		if (selectedItemsBool[i]) {
+	for (int i = 0; i < (int)selectedItems.size(); ++i) {
+		if (selectedItems[i]) {
 			// Get the game title from the list
 			confirmMsg += _list->getList()[i];
 			confirmMsg += Common::U32String("\n");
@@ -1464,7 +1464,7 @@ void LauncherSimple::confirmRemoveGames(const Common::Array<bool> &selectedItems
 	MessageDialog alert(confirmMsg, _("Yes"), _("No"));
 
 	if (alert.runModal() == GUI::kMessageOK) {
-		performGameRemoval(selectedItemsBool, false);
+		performGameRemoval(selectedItems, false);
 	}
 }
 
@@ -1482,11 +1482,11 @@ void LauncherSimple::updateSelectionAfterRemoval() {
 
 void LauncherSimple::updateButtons() {
 	int item = _list->getSelected();
-	const Common::Array<bool> &selectedItemsBool = _list->getSelectedItems();
+	const Common::Array<bool> &selectedItems = _list->getSelectedItems();
 	// Count selected items (early exit once we know there's multi-selection)
 	int selectedCount = 0;
-	for (int i = 0; i < (int)selectedItemsBool.size(); ++i) {
-		if (selectedItemsBool[i]) selectedCount++;
+	for (int i = 0; i < (int)selectedItems.size(); ++i) {
+		if (selectedItems[i]) selectedCount++;
 		if (selectedCount > 1) break;
 	}
 	bool hasMultiSelection = selectedCount > 1;
