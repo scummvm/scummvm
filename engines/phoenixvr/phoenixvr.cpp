@@ -133,6 +133,7 @@ void PhoenixVREngine::loadNextScript() {
 		auto warp = _script->getWarp(i);
 		_cursors[i].resize(warp->tests.size());
 	}
+	_warpIdx = 0;
 }
 
 void PhoenixVREngine::end() {
