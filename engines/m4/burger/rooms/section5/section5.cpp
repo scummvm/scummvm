@@ -374,9 +374,9 @@ void Section5::daemon() {
 		}
 
 		if (!digi_play_state(1) && !digi_play_state(2)) {
-			// FIXME: The original does a random of 1 to 9, but the switch has 1 to 13.
-			// Check if extra cases are valid, and if so, re-enable them
-			switch (imath_ranged_rand(1, 9)) {
+			// The original did a random of 1 to 9, but the switch had 1 to 13.
+			// The extra cases are valid with unused sounds, so we re-enabled them
+			switch (imath_ranged_rand(1, 13)) {
 			case 1:
 				_bgDigiName = "500_015";
 				break;
