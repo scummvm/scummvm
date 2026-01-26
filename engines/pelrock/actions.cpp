@@ -191,6 +191,10 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_dialog->say(_res->_ingameTexts[DEMASIADO_NO_PUEDO_PENSAR], 1);
 	} else if (actionTrigger == 263) {
 		_dialog->say(_res->_ingameTexts[UN_POCO_RESPETO]);
+	} else if (actionTrigger == 264) {
+		//disables the two first roots, the second one will be enabled later!
+		_state->setRootDisabledState(room, rootIndex, true);
+		_state->setRootDisabledState(room, rootIndex + 1, true);
 	} else {
 		debug("Got actionTrigger %d in dialogActionTrigger, but no handler defined", actionTrigger);
 	}
@@ -550,14 +554,17 @@ void PelrockEngine::openMuseumDoor(HotSpot *hotspot) {
 void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 	debug("Performing action trigger: %d", actionTrigger);
 	switch (actionTrigger) {
-	case 257:
+	case 257: // look portrait
 		_sound->playMusicTrack(25);
 		loadExtraScreenAndPresent(9);
 		_dialog->say(_res->_ingameTexts[QUEBUENA_ESTA]);
 		_screen->markAllDirty();
 		_screen->update();
 		break;
-	case 271:
+	case 268: // look at statue
+		_dialog->say(_res->_ingameTexts[TUCREES]);
+		break;
+	case 271: // look at librarian
 		_dialog->say(_res->_ingameTexts[TRABAJARIA_MEJOR_SI_NO_ME_MOLESTARA]);
 		break;
 	case 270:

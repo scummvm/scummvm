@@ -348,23 +348,32 @@ void PelrockEngine::copyBackgroundToBuffer() {
 	memcpy(_compositeBuffer, _currentBackground, 640 * 400);
 }
 
-void PelrockEngine::updateAnimations() {
-	// Sort sprites by zOrder (persists in the array)
+// Calculate Alfred's z-order based on Y position
+// At Y=399 (bottom of screen): z = 10 (foreground)
+// At Y=0 (top of screen): z = 209 (background)
+static int calculateAlfredZOrder(int alfredY) {
+	return ((399 - alfredY) & 0xFFFE) / 2 + 10;
+}
 
+void PelrockEngine::updateAnimations() {
+	// Sort sprites by zOrder (ascending: low z = back, rendered first)
 	sortAnimsByZOrder(_room->_currentRoomAnims);
-	// First pass: sprites behind Alfred (y <= alfredY)
+
+	int alfredZOrder = calculateAlfredZOrder(_alfredState.y);
+
+	// First pass: sprites behind Alfred (sprite zOrder > alfredZOrder)
 	for (uint i = 0; i < _room->_currentRoomAnims.size(); i++) {
-		if (_room->_currentRoomAnims[i].zOrder > 10 || _room->_currentRoomAnims[i].zOrder < 0) {
+		if (_room->_currentRoomAnims[i].zOrder > alfredZOrder || _room->_currentRoomAnims[i].zOrder < 0) {
 			drawNextFrame(&_room->_currentRoomAnims[i]);
 		}
 	}
 
-	// Draw Alfred here (you'll need to add this)
+	// Draw Alfred
 	chooseAlfredStateAndDraw();
 
-	// Second pass: sprites in front of Alfred (y > alfredY)
+	// Second pass: sprites in front of Alfred (sprite zOrder <= alfredZOrder)
 	for (uint i = 0; i < _room->_currentRoomAnims.size(); i++) {
-		if (_room->_currentRoomAnims[i].zOrder <= 10 && _room->_currentRoomAnims[i].zOrder >= 0) {
+		if (_room->_currentRoomAnims[i].zOrder <= alfredZOrder && _room->_currentRoomAnims[i].zOrder >= 0) {
 			drawNextFrame(&_room->_currentRoomAnims[i]);
 		}
 	}

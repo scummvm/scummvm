@@ -616,25 +616,31 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 		Common::Array<ChoiceOption> *choices = new Common::Array<ChoiceOption>();
 		parseChoices(conversationData, dataSize, position, choices);
 
-		// Check if ANY choice has a conversation terminator (F4 or F8)
-		// If so, there's already a way to exit - don't add goodbye option
-		// Only add goodbye if NO choices terminate the conversation naturally
-		bool anyChoiceTerminatesConversation = false;
-		for (uint i = 0; i < choices->size(); i++) {
-			if ((*choices)[i].hasConversationEndMarker) {
-				anyChoiceTerminatesConversation = true;
-				break;
+		// Store original choice count before potentially adding goodbye
+		uint originalChoiceCount = choices->size();
+
+		// Only consider adding goodbye if there are MULTIPLE choices
+		// If there's only 1 choice, it's auto-dialogue and should not have goodbye
+		if (originalChoiceCount > 1) {
+			// Check if ANY choice has a conversation terminator (F4 or F8)
+			// If so, there's already a way to exit - don't add goodbye option
+			bool anyChoiceTerminatesConversation = false;
+			for (uint i = 0; i < choices->size(); i++) {
+				if ((*choices)[i].hasConversationEndMarker) {
+					anyChoiceTerminatesConversation = true;
+					break;
+				}
 			}
-		}
-		if (!anyChoiceTerminatesConversation && choices->size() > 0) {
-			// No choice ends the conversation, so add the goodbye option
-			ChoiceOption termChoice;
-			termChoice.choiceIndex = currentChoiceLevel;
-			termChoice.isTerminator = true;
-			termChoice.isDisabled = false;
-			termChoice.shouldDisableOnSelect = false;
-			termChoice.text = g_engine->_res->_conversationTerminator;
-			choices->push_back(termChoice);
+			if (!anyChoiceTerminatesConversation) {
+				// No choice ends the conversation, so add the goodbye option
+				ChoiceOption termChoice;
+				termChoice.choiceIndex = currentChoiceLevel;
+				termChoice.isTerminator = true;
+				termChoice.isDisabled = false;
+				termChoice.shouldDisableOnSelect = false;
+				termChoice.text = g_engine->_res->_conversationTerminator;
+				choices->push_back(termChoice);
+			}
 		}
 
 		debug("Parsed %u choices", choices->size());
