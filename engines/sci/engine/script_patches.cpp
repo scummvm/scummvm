@@ -4540,6 +4540,28 @@ static const uint16 gk1Day6EnvelopePatch[] = {
 	PATCH_END
 };
 
+// WORKAROUND: Pathfinding algorithm difference
+//
+// On day 8, when entering the castle bedroom (530) from the hall (510), ego is
+//  placed on an obstacle boundary and can walk out of bounds in our pathfinding
+//  algorithm. We work around this by initializing ego one pixel lower.
+//
+// Applies to: All versions
+// Responsible method: enterFromHall:changeState
+// Fixes bug: #16478
+static const uint16 gk1CastlePathfindingSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x00e6),               // pushi 00e6 [ x: 230 ]
+	0x39, 0x7b,                             // pushi 7b   [ y: 123 ]
+	SIG_END
+};
+
+static const uint16 gk1CastlePathfindingPatch[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x7c,                                   // pushi 7c   [ y: 124 ]
+	PATCH_END
+};
+
 // GK1 Mac is missing view 56, which is the close-up of the talisman. Clicking
 //  Look on the talisman from inventory is supposed to display an inset with
 //  view 56 and say a message, but instead this would crash the Mac interpreter.
@@ -4689,6 +4711,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{ false,   480, "mac: fix cartoon timing",                     7, gk1CartoonTimingMacSignature2,    gk1CartoonTimingPatch2 },
 	{  true,   480, "fix bayou cartoon view",                      1, gk1BayouCartoonViewSignature,     gk1BayouCartoonViewPatch },
 	{  true,   480, "win: play day 6 bayou ritual avi videos",     3, gk1BayouRitualAviSignature,       gk1BayouRitualAviPatch },
+	{  true,   530, "fix castle pathfinding",                      1, gk1CastlePathfindingSignature,    gk1CastlePathfindingPatch },
 	{ false,   720, "pc: fix cartoon timing",                      2, gk1CartoonTimingPcSignature1,     gk1CartoonTimingPatch1 },
 	{ false,   720, "pc: fix cartoon timing",                      6, gk1CartoonTimingPcSignature2,     gk1CartoonTimingPatch2 },
 	{ false,   720, "mac: fix cartoon timing",                     2, gk1CartoonTimingMacSignature1,    gk1CartoonTimingPatch1 },
