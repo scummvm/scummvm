@@ -259,7 +259,7 @@ const seriesPlayBreak Room503::PLAY23[] = {
 };
 
 const seriesPlayBreak Room503::PLAY24[] = {
-	{ 0, -1, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{ 0, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -735,6 +735,9 @@ void Room503::daemon() {
 			_val9 = 33;
 			_series3 = series_play("503bk15", 0xa00, 1, 23, 6, 0, 100, 0, -2, 0, 2);
 			break;
+
+		default:
+			break;
 		}
 		break;
 
@@ -904,10 +907,10 @@ void Room503::pre_parser() {
 
 void Room503::parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
-	bool borkFlag = player_said("BORK") && _G(flags)[kBORK_STATE] == 12;
-	bool microwaveFlag = player_said("MICROWAVE");
-	bool ovenFlag = player_said("OVEN") && _G(flags)[kBORK_STATE] == 16;
-	bool prunesFlag = player_said("PRUNES") && _G(flags)[kBORK_STATE] == 16;
+	const bool borkFlag = player_said("BORK") && _G(flags)[kBORK_STATE] == 12;
+	const bool microwaveFlag = player_said("MICROWAVE");
+	const bool ovenFlag = player_said("OVEN") && _G(flags)[kBORK_STATE] == 16;
+	const bool prunesFlag = player_said("PRUNES") && _G(flags)[kBORK_STATE] == 16;
 
 	if (borkFlag && player_said("LOOK AT")) {
 		wilbur_speech("503w005");
