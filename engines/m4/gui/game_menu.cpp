@@ -257,7 +257,7 @@ Sprite *SaveLoadMenuBase::menu_CreateThumbnail(int32 *spriteSize) {
 
 				for (i = 0; i < (MAX_VIDEO_X + 1) / 3; i++) {
 					// If the pix is outside of the inventory objects in the interface, set to black
-					// If ((srcPtr - srcRowPtr < 180) || (srcPtr - srcRowPtr > 575)) {
+					// if ((srcPtr - srcRowPtr < 180) || (srcPtr - srcRowPtr > 575)) {
 					if (true) {			// for now make everything in the interface black
 						*destPtr = 21;
 					}

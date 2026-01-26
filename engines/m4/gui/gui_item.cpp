@@ -151,7 +151,7 @@ static const Buffer thumbPressedBuff = { thumbWidth, thumbHeight, const_cast<uin
 static void Item_Clear_origPrompt();
 
 bool sizeofGUIelement_border(int16 el_type, int32 *w, int32 *h) {
-	if ((!w) || (!h))
+	if (!w || !h)
 		return false;
 
 	if ((el_type == MESSAGE) || (el_type == PICTURE)) {
@@ -166,7 +166,7 @@ bool sizeofGUIelement_border(int16 el_type, int32 *w, int32 *h) {
 }
 
 bool sizeofGUIelement_interior(ButtonDrawRec *bdr, M4Rect *myRect) {
-	if ((!myRect) || (!bdr))
+	if (!myRect || !bdr)
 		return false;
 
 	if ((bdr->el_type == MESSAGE) || (bdr->el_type == PICTURE)) {
@@ -174,7 +174,7 @@ bool sizeofGUIelement_interior(ButtonDrawRec *bdr, M4Rect *myRect) {
 		myRect->y1 = bdr->y1;
 		myRect->x2 = bdr->x2;
 		myRect->y2 = bdr->y2;
-	} else if ((bdr->el_type == TEXTFIELD) || (bdr->el_type == LISTBOX) || (!bdr->pressed)) {
+	} else if ((bdr->el_type == TEXTFIELD) || (bdr->el_type == LISTBOX) || !bdr->pressed) {
 		myRect->x1 = bdr->x1 + 2;
 		myRect->y1 = bdr->y1 + 2;
 		myRect->x2 = bdr->x2 - 1;
@@ -191,8 +191,11 @@ bool sizeofGUIelement_interior(ButtonDrawRec *bdr, M4Rect *myRect) {
 
 bool drawGUIelement(ButtonDrawRec *bdr, M4Rect *myRect) {
 	int32 topLeftColor, interiorColor, bottomRightColor, bottomLeftPix, topRightPix;
-	int32 x1 = bdr->x1, y1 = bdr->y1, x2 = bdr->x2, y2 = bdr->y2;
-	bool pressed = bdr->pressed;
+	const int32 x1 = bdr->x1;
+	const int32 y1 = bdr->y1;
+	const int32 x2 = bdr->x2;
+	const int32 y2 = bdr->y2;
+	const bool pressed = bdr->pressed;
 
 	if (!bdr)
 		return false;
@@ -255,13 +258,15 @@ bool InitItems() {
 	_G(items).currTextField = nullptr;
 	_G(items).clipBoard[0] = '\0';
 	_G(items).clipBoard[99] = '\0';
-	if (!sizeofGUIelement_border(BUTTON, &_G(items).buttonWidth, &_G(items).buttonHeight)) return false;
+	if (!sizeofGUIelement_border(BUTTON, &_G(items).buttonWidth, &_G(items).buttonHeight))
+		return false;
+
 	return true;
 }
 
 Item *Item_create(Item *parent, enum ItemType type, int32 tag, M4CALLBACK cb) {
-	Item *temp;
-	if ((temp = (Item *)mem_alloc(sizeof(Item), STR_ITEM)) == nullptr)
+	Item *temp = (Item *)mem_alloc(sizeof(Item), STR_ITEM);
+	if (temp == nullptr)
 		return nullptr;
 
 	temp->callback = cb;
@@ -279,28 +284,30 @@ Item *Item_create(Item *parent, enum ItemType type, int32 tag, M4CALLBACK cb) {
 			parent = parent->next;
 		parent->next = temp;
 		temp->prev = parent;
-	} else temp->prev = nullptr;
+	} else
+		temp->prev = nullptr;
+
 	temp->next = nullptr;
 	return temp;
 }
 
 void Item_destroy(Item *myItem) {
-	ListItem *myList, *tempListItem;
-	myList = myItem->myList;
-	tempListItem = myList;
+	ListItem *myList = myItem->myList;
+	ListItem *tempListItem = myList;
 	while (tempListItem) {
 		myList = myList->next;
 		mem_free((void *)tempListItem);
 		tempListItem = myList;
 	}
-	if (myItem->prompt) mem_free(myItem->prompt);
+	if (myItem->prompt)
+		mem_free(myItem->prompt);
+
 	mem_free((void *)myItem);
 }
 
 void Item_empty_list(Item *myItem) {
-	ListItem *myList, *tempListItem;
-	myList = myItem->myList;
-	tempListItem = myList;
+	ListItem *myList = myItem->myList;
+	ListItem *tempListItem = myList;
 	while (tempListItem) {
 		myList = myList->next;
 		mem_free((void *)tempListItem);
@@ -316,64 +323,74 @@ void Item_empty_list(Item *myItem) {
 }
 
 static int32 item_string_width(char *myStr, int32 spacing) {
-	char *tempPtr, *tempPtr2, *tempPtr3, highlightChar[2];
-	int32 highlightNum;
-	int32 strWidth, column;
+	char *tempPtr, highlightChar[2];
 
 	highlightChar[0] = '~';
 	highlightChar[1] = '\0';
-	if (!myStr) return 0;
-	column = 0;
-	if ((tempPtr2 = strrchr(myStr, '^')) != nullptr) {
+	if (!myStr)
+		return 0;
+
+	int32 column = 0;
+	char *tempPtr2 = strrchr(myStr, '^');
+	if (tempPtr2 != nullptr) {
 		*tempPtr2 = '\0';
-		if ((tempPtr = strrchr(myStr, '^')) == nullptr) return 0;
+		tempPtr = strrchr(myStr, '^');
+		if (tempPtr == nullptr)
+			return 0;
+
 		tempPtr++;
 		column = (int32)atoi(tempPtr);
 		*tempPtr2 = '^';
 		tempPtr2++;
-	} else tempPtr2 = myStr;
+	} else
+		tempPtr2 = myStr;
+
 	tempPtr = strchr(tempPtr2, '~');
-	highlightNum = 0;
+	int32 highlightNum = 0;
 	while (tempPtr) {
 		highlightNum++;
-		tempPtr3 = tempPtr + 1;
+		char *tempPtr3 = tempPtr + 1;
 		tempPtr = strchr(tempPtr3, '~');
 	}
-	strWidth = column + gr_font_string_width(tempPtr2, spacing) - (gr_font_string_width(highlightChar, spacing) * highlightNum);
+	const int32 strWidth = column + gr_font_string_width(tempPtr2, spacing) - (gr_font_string_width(highlightChar, spacing) * highlightNum);
 	return strWidth;
 }
 
 static int32 item_string_write(Buffer *target, char *myStr, int32 x, int32 y, int32 w, int32 spacing, int32 color, int32 highlight) {
-	char *tempPtr, *strPtr, *nextStrPtr;
-	char *highlightPtr;
 	char tempStr[2];
-	int32 currX, column;
 
 	if (!target) return false;
-	if ((tempPtr = strchr(myStr, '^')) == nullptr) {
-		if ((tempPtr = strchr(myStr, '~')) == nullptr) {
+	char *tempPtr = strchr(myStr, '^');
+	if (tempPtr == nullptr) {
+		tempPtr = strchr(myStr, '~');
+		if (tempPtr == nullptr) {
 			gr_font_set_color((char)color);
 			gr_font_write(target, myStr, x, y, w, spacing);
 			return true;
 		}
 	}
+
 	tempStr[1] = '\0';
-	column = 0;
-	strPtr = myStr;
+	int32 column = 0;
+	char *strPtr = myStr;
 	while (strPtr) {
 		column = 0;
 		if (*strPtr == '^') {
-			if ((tempPtr = strchr((char *)(strPtr + 1), '^')) == nullptr) return false;
+			if ((tempPtr = strchr((char *)(strPtr + 1), '^')) == nullptr)
+				return false;
+
 			*tempPtr = '\0';
 			strPtr++;
 			column = (int32)atoi(strPtr);
 			*tempPtr = '^';
 			strPtr = tempPtr + 1;
 		}
-		currX = x + column;
-		nextStrPtr = strchr(strPtr, '^');
-		if (nextStrPtr) *nextStrPtr = '\0';
-		highlightPtr = strchr(strPtr, '~');
+		int32 currX = x + column;
+		char *nextStrPtr = strchr(strPtr, '^');
+		if (nextStrPtr)
+			*nextStrPtr = '\0';
+
+		char *highlightPtr = strchr(strPtr, '~');
 		while (highlightPtr) {
 			if (highlightPtr != strPtr) {
 				*highlightPtr = '\0';
@@ -382,7 +399,9 @@ static int32 item_string_write(Buffer *target, char *myStr, int32 x, int32 y, in
 				currX += gr_font_string_width(strPtr, spacing);
 				*highlightPtr = '~';
 			}
-			if (*(highlightPtr + 1) == '\0') return true;
+			if (*(highlightPtr + 1) == '\0')
+				return true;
+
 			tempStr[0] = *(highlightPtr + 1);
 			gr_font_set_color((char)highlight);
 			gr_font_write(target, tempStr, currX, y, 0, spacing);
@@ -394,7 +413,9 @@ static int32 item_string_write(Buffer *target, char *myStr, int32 x, int32 y, in
 			gr_font_set_color((char)color);
 			gr_font_write(target, strPtr, currX, y, 0, spacing);
 		}
-		if (nextStrPtr) *nextStrPtr = '^';
+		if (nextStrPtr)
+			*nextStrPtr = '^';
+
 		strPtr = nextStrPtr;
 	}
 	return true;
@@ -409,23 +430,34 @@ static void CorrectItemWidthHeight(Item *item, int32 fontHeight) {
 	switch (item->type) {
 	case LISTBOX:
 		minHeight = scrollUpHeight + thumbHeight + scrollDownHeight + _G(items).buttonHeight * 3;	//scrollup + thumb + scrolldown heights + (newHeight for each)
-		if (!sizeofGUIelement_border(LISTBOX, &tempWidth, &tempHeight)) return;
+		if (!sizeofGUIelement_border(LISTBOX, &tempWidth, &tempHeight))
+			return;
+
 		minWidth = scrollUpWidth + thumbWidth + scrollDownWidth + _G(items).buttonWidth * 3 + (tempWidth + 1);	//same as above + width of listbox
-		if (item->h < minHeight) item->h = minHeight;
-		if (item->w < minWidth) item->w = minWidth;
+		if (item->h < minHeight)
+			item->h = minHeight;
+
+		if (item->w < minWidth)
+			item->w = minWidth;
 		break;
 	case MESSAGE:
-		if (!sizeofGUIelement_border(MESSAGE, &tempWidth, &tempHeight)) return;
+		if (!sizeofGUIelement_border(MESSAGE, &tempWidth, &tempHeight))
+			return;
+
 		item->w = item_string_width(item->prompt, 1) + tempWidth;
 		item->h = fontHeight + tempHeight;
 		break;
 	case TEXTFIELD:
-		if (!sizeofGUIelement_border(TEXTFIELD, &tempWidth, &tempHeight)) return;
+		if (!sizeofGUIelement_border(TEXTFIELD, &tempWidth, &tempHeight))
+			return;
+
 		item->h = fontHeight + tempHeight + 1;
 		break;
 	case BUTTON:
 	case REPEAT_BUTTON:
-		if (!sizeofGUIelement_border(BUTTON, &tempWidth, &tempHeight)) return;
+		if (!sizeofGUIelement_border(BUTTON, &tempWidth, &tempHeight))
+			return;
+
 		item->w = item_string_width(item->prompt, 1) + tempWidth;
 		item->h = fontHeight + tempHeight + 1;
 		break;
@@ -436,13 +468,14 @@ static void CorrectItemWidthHeight(Item *item, int32 fontHeight) {
 }
 
 Item *ItemAdd(Item *itemList, int32 x, int32 y, int32 w, int32 h, const char *prompt, int32 tag, enum ItemType type, M4CALLBACK cb, int32 promptMax) {
-	Item *item;
-	int32				fontHeight, listboxWidth, listboxHeight;
-	Font *myFont;
+	int32 listboxWidth, listboxHeight;
+	Item *item = Item_create(itemList, type, tag, cb);
+	
+	if (item == nullptr)
+		return nullptr;
 
-	if ((item = Item_create(itemList, type, tag, cb)) == nullptr) return nullptr;
-	myFont = gr_font_get();
-	fontHeight = gr_font_get_height();
+	Font *myFont = gr_font_get();
+	const int32 fontHeight = gr_font_get_height();
 	item->myFont = myFont;
 	item->x = x;
 	item->y = y;
@@ -514,27 +547,34 @@ Item *ItemFind(Item *itemList, int32 tag) {
 
 bool Item_SetViewBottom(Item *i) {
 	int32 count;
-	ListItem *myListItem;
 	bool found = false;
 
-	if ((!i) || (!i->viewTop)) return false;
-	myListItem = i->viewTop;
+	if (!i || !i->viewTop)
+		return false;
+
+	ListItem *myListItem = i->viewTop;
 	for (count = 1; (count < i->listView) && myListItem->next; count++) {
-		if (myListItem == i->currItem) found = true;
+		if (myListItem == i->currItem)
+			found = true;
+
 		myListItem = myListItem->next;
 	}
-	if (myListItem == i->currItem) found = true;
-	if (count == i->listView) i->viewBottom = myListItem;
-	else i->viewBottom = nullptr;
+	if (myListItem == i->currItem)
+		found = true;
+
+	if (count == i->listView)
+		i->viewBottom = myListItem;
+	else
+		i->viewBottom = nullptr;
 	return found;
 }
 
 static void CalculateViewIndex(Item *myItem) {
-	ListItem *myListItem;
-	int32 i;
-	if ((!myItem) || (!myItem->viewTop)) return;
-	i = 0;
-	myListItem = myItem->myList;
+	if (!myItem || !myItem->viewTop)
+		return;
+
+	int32 i = 0;
+	ListItem *myListItem = myItem->myList;
 	while (myListItem != myItem->viewTop) {
 		i++;
 		myListItem = myListItem->next;
@@ -548,17 +588,16 @@ static void CalculateViewIndex(Item *myItem) {
 }
 
 static void SetViewIndex(Item *myItem) {
-	ListItem *myListItem;
-	int32 i;
+	if (!myItem || !myItem->myList)
+		return;
 
-	if ((!myItem) || (!myItem->myList)) return;
 	if (myItem->thumbY == myItem->h - maxThumbY) {
 		myItem->viewIndex = myItem->myListCount - myItem->listView;
 	} else {
 		myItem->viewIndex = ((myItem->thumbY - minThumbY) * (myItem->myListCount - myItem->listView)) / (myItem->h - thumbYRange);
 	}
-	myListItem = myItem->myList;
-	for (i = 0; i < myItem->viewIndex; i++) {
+	ListItem *myListItem = myItem->myList;
+	for (int32 i = 0; i < myItem->viewIndex; i++) {
 		myListItem = myListItem->next;
 	}
 	myItem->viewTop = myListItem;
@@ -566,9 +605,10 @@ static void SetViewIndex(Item *myItem) {
 }
 
 bool ListItemExists(Item *myItem, char *prompt, int32 listTag) {
-	ListItem *myListItems;
-	if (!myItem) return false;
-	myListItems = myItem->myList;
+	if (!myItem)
+		return false;
+
+	ListItem *myListItems = myItem->myList;
 	if (prompt) {
 		while (myListItems && strcmp(myListItems->prompt, prompt)) {
 			myListItems = myListItems->next;
@@ -578,23 +618,30 @@ bool ListItemExists(Item *myItem, char *prompt, int32 listTag) {
 			myListItems = myListItems->next;
 		}
 	}
-	if (myListItems) return true;
+	if (myListItems)
+		return true;
+
 	return false;
 }
 
 bool ListItemAdd(Item *myItem, char *prompt, int32 listTag, int32 addMode, ListItem *changedItem) {
-	ListItem *myList;
 	ListItem *newListItem;
 
-	if (!myItem) return false;
-	if (changedItem) newListItem = changedItem;
+	if (!myItem)
+		return false;
+
+	if (changedItem)
+		newListItem = changedItem;
 	else {
-		if ((newListItem = (ListItem *)mem_alloc(sizeof(ListItem), STR_LIST)) == nullptr) return false;
+		newListItem = (ListItem *)mem_alloc(sizeof(ListItem), STR_LIST);
+		if (newListItem == nullptr)
+			return false;
+
 		Common::strlcpy(newListItem->prompt, prompt, 80);
 		newListItem->tag = listTag;
 	}
 	//Add it into the list in the correct place...
-	myList = myItem->myList;
+	ListItem *myList = myItem->myList;
 	if (!myList) {
 		newListItem->prev = nullptr;
 		newListItem->next = nullptr;
@@ -620,8 +667,7 @@ bool ListItemAdd(Item *myItem, char *prompt, int32 listTag, int32 addMode, ListI
 				myItem->currItem = newListItem;
 				myItem->viewTop = newListItem;
 			} else {
-				while (myList->next &&
-					(strcmp(newListItem->prompt, myList->next->prompt) > 0)) {
+				while (myList->next && strcmp(newListItem->prompt, myList->next->prompt) > 0) {
 					myList = myList->next;
 				}
 				if (myList->next) {
@@ -668,39 +714,58 @@ bool ListItemAdd(Item *myItem, char *prompt, int32 listTag, int32 addMode, ListI
 		}
 	}
 	myItem->myListCount++;
-	if (!Item_SetViewBottom(myItem)) ViewCurrListItem(myItem);
-	else CalculateViewIndex(myItem);
+	if (!Item_SetViewBottom(myItem))
+		ViewCurrListItem(myItem);
+	else
+		CalculateViewIndex(myItem);
+
 	return true;
 }
 
 bool ListItemDelete(Item *myItem, ListItem *myListItem, int32 listTag) {
 	ListItem *myList;
 
-	if (!myItem) return false;
+	if (!myItem)
+		return false;
+
 	if (!myListItem) {
 		myList = myItem->myList;
-		while (myList && (myList->tag != listTag)) myList = myList->next;
-	} else myList = myListItem;
-	if (!myList) return false;
+		while (myList && (myList->tag != listTag))
+			myList = myList->next;
+	} else
+		myList = myListItem;
+
+	if (!myList)
+		return false;
+
 	if (myList == myItem->myList) {	//first in the list...
 		myItem->myList = myItem->myList->next;
-		if (myItem->myList) myItem->myList->prev = nullptr;
+		if (myItem->myList)
+			myItem->myList->prev = nullptr;
 	} else {
 		myList->prev->next = myList->next;
-		if (myList->next) myList->next->prev = myList->prev;
+		if (myList->next)
+			myList->next->prev = myList->prev;
 	}
 	if (myList == myItem->currItem) {
-		if (myList->next) myItem->currItem = myList->next;
-		else myItem->currItem = myList->prev;
+		if (myList->next)
+			myItem->currItem = myList->next;
+		else
+			myItem->currItem = myList->prev;
 	}
 	if (myList == myItem->viewTop) {
-		if (myItem->viewTop->prev) myItem->viewTop = myItem->viewTop->prev;
-		else myItem->viewTop = myItem->viewTop->next;
+		if (myItem->viewTop->prev)
+			myItem->viewTop = myItem->viewTop->prev;
+		else
+			myItem->viewTop = myItem->viewTop->next;
 	}
 	myItem->myListCount--;
 	Item_SetViewBottom(myItem);
-	if (!myItem->viewBottom) ViewCurrListItem(myItem);
-	else CalculateViewIndex(myItem);
+	if (!myItem->viewBottom)
+		ViewCurrListItem(myItem);
+	else
+		CalculateViewIndex(myItem);
+
 	mem_free((void *)myList);
 	return true;
 }
@@ -708,25 +773,34 @@ bool ListItemDelete(Item *myItem, ListItem *myListItem, int32 listTag) {
 bool ListItemChange(Item *myItem, ListItem *myListItem, int32 listTag,
 	char *newPrompt, int32 newTag, int32 changeMode) {
 	ListItem *myList;
-	int32			oldTag;
 
-	if (!myItem) return false;
+	if (!myItem)
+		return false;
+
 	if (!myListItem) {
 		myList = myItem->myList;
-		while (myList && (myList->tag != listTag)) myList = myList->next;
-	} else myList = myListItem;
-	if (!myList) return false;
-	if ((!strcmp(myList->prompt, newPrompt)) && (myList->tag == newTag)) return false;
+		while (myList && (myList->tag != listTag))
+			myList = myList->next;
+	} else
+		myList = myListItem;
+
+	if (!myList)
+		return false;
+	if (!strcmp(myList->prompt, newPrompt) && myList->tag == newTag)
+		return false;
+
 	Common::strcpy_s(myList->prompt, newPrompt);
-	oldTag = myList->tag;
+	const int32 oldTag = myList->tag;
 	myList->tag = newTag;
 	if (((changeMode == LIST_BY_TAG) && (oldTag != newTag)) || (changeMode == LIST_ALPH)) {
 		if (myList == myItem->myList) {	//first in the list...
 			myItem->myList = myItem->myList->next;
-			if (myItem->myList) myItem->myList->prev = nullptr;
+			if (myItem->myList)
+				myItem->myList->prev = nullptr;
 		} else {
 			myList->prev->next = myList->next;
-			if (myList->next) myList->next->prev = myList->prev;
+			if (myList->next)
+				myList->next->prev = myList->prev;
 		}
 		ListItemAdd(myItem, nullptr, 0, changeMode, myList);
 	}
@@ -734,17 +808,19 @@ bool ListItemChange(Item *myItem, ListItem *myListItem, int32 listTag,
 }
 
 bool GetNextListItem(Item *myItem) {
-	ListItem *nextItem;
 	if (myItem->currItem) {
-		nextItem = myItem->currItem->next;
-		if (!nextItem) return false;
+		ListItem *nextItem = myItem->currItem->next;
+		if (!nextItem)
+			return false;
+
 		if (myItem->currItem == myItem->viewBottom) {
 			myItem->viewBottom = nextItem;
 			myItem->viewTop = myItem->viewTop->next;
 			myItem->viewIndex++;
 			if (myItem->viewBottom && myItem->viewBottom->next) {
 				myItem->thumbY = minThumbY + (((myItem->h - thumbYRange) * myItem->viewIndex) / (myItem->myListCount - myItem->listView));
-			} else myItem->thumbY = myItem->h - maxThumbY;
+			} else
+				myItem->thumbY = myItem->h - maxThumbY;
 		}
 		myItem->currItem = nextItem;
 		return true;
@@ -753,13 +829,13 @@ bool GetNextListItem(Item *myItem) {
 }
 
 bool GetNextPageList(Item *myItem) {
-	int32 i;
 	bool changed = false;
 
 	if (myItem->currItem && myItem->viewBottom) {
-		for (i = 0; i < (myItem->listView - 1); i++) {
+		for (int32 i = 0; i < (myItem->listView - 1); i++) {
 			if (myItem->viewBottom->next) {
-				if (myItem->currItem == myItem->viewTop) myItem->currItem = myItem->currItem->next;
+				if (myItem->currItem == myItem->viewTop)
+					myItem->currItem = myItem->currItem->next;
 				myItem->viewTop = myItem->viewTop->next;
 				myItem->viewBottom = myItem->viewBottom->next;
 				myItem->viewIndex++;
@@ -768,16 +844,18 @@ bool GetNextPageList(Item *myItem) {
 		}
 		if (myItem->viewBottom && myItem->viewBottom->next) {
 			myItem->thumbY = minThumbY + (((myItem->h - thumbYRange) * myItem->viewIndex) / (myItem->myListCount - myItem->listView));
-		} else myItem->thumbY = myItem->h - maxThumbY;
+		} else
+			myItem->thumbY = myItem->h - maxThumbY;
 	}
 	return changed;
 }
 
 bool GetPrevListItem(Item *myItem) {
-	ListItem *prevItem;
 	if (myItem->currItem) {
-		prevItem = myItem->currItem->prev;
-		if (!prevItem) return false;
+		ListItem *prevItem = myItem->currItem->prev;
+		if (!prevItem)
+			return false;
+
 		if (myItem->currItem == myItem->viewTop) {
 			myItem->viewTop = prevItem;
 			myItem->viewBottom = myItem->viewBottom->prev;
@@ -791,11 +869,10 @@ bool GetPrevListItem(Item *myItem) {
 }
 
 bool GetPrevPageList(Item *myItem) {
-	int32 i;
 	bool changed = false;
 
 	if (myItem->currItem && myItem->viewBottom) {
-		for (i = 0; i < (myItem->listView - 1); i++) {
+		for (int32 i = 0; i < (myItem->listView - 1); i++) {
 			if (myItem->viewTop->prev) {
 				if (myItem->currItem == myItem->viewBottom) myItem->currItem = myItem->currItem->prev;
 				myItem->viewTop = myItem->viewTop->prev;
@@ -810,8 +887,6 @@ bool GetPrevPageList(Item *myItem) {
 }
 
 void ViewCurrListItem(Item *myItem) {
-	int32 i, j;
-	ListItem *tempItem;
 	bool breakFlag = false;
 
 	if (!myItem->currItem) {
@@ -820,89 +895,96 @@ void ViewCurrListItem(Item *myItem) {
 		return;
 	}
 	myItem->viewTop = myItem->currItem;
-	tempItem = myItem->currItem;
-	i = myItem->listView - 2;
+	ListItem *tempItem = myItem->currItem;
+	int32 i = myItem->listView - 2;
 	while (tempItem->next && (i > 0)) {
 		tempItem = tempItem->next;
 		i--;
 	}
 	if (i > 0) {
-		j = 0;
-		while ((j <= i) && (!breakFlag)) {
+		int32 j = 0;
+		while ((j <= i) && !breakFlag) {
 			if (myItem->viewTop->prev) {
 				myItem->viewTop = myItem->viewTop->prev;
 				j++;
-			} else breakFlag = true;
+			} else
+				breakFlag = true;
 		}
-		if (j > i) myItem->viewBottom = tempItem;
-		else myItem->viewBottom = nullptr;
+		if (j > i)
+			myItem->viewBottom = tempItem;
+		else
+			myItem->viewBottom = nullptr;
 	} else if (!tempItem->next) {
 		if (myItem->viewTop->prev) {
 			myItem->viewTop = myItem->viewTop->prev;
 			myItem->viewBottom = tempItem;
-		} else myItem->viewBottom = nullptr;
-	} else myItem->viewBottom = tempItem->next;
+		} else
+			myItem->viewBottom = nullptr;
+	} else
+		myItem->viewBottom = tempItem->next;
+
 	CalculateViewIndex(myItem);
 }
 
 ListItem *ListItemFind(Item *myItem, int32 searchMode, char *searchStr, int32 parm1) {
-	ListItem *myList;
-	int32 i;
 	if (!myItem)
 		return nullptr;
 
-	myList = myItem->myList;
+	ListItem *myList = myItem->myList;
 	if (searchMode == LIST_BY_TAG) {
-		while (myList && (myList->tag != parm1)) myList = myList->next;
+		while (myList && (myList->tag != parm1))
+			myList = myList->next;
 	} else if (searchMode == LIST_ALPH) {
 		while (myList && scumm_strnicmp(myList->prompt, searchStr, strlen(searchStr)))
 			myList = myList->next;
 	} else if (searchMode == LIST_SEQUN) {
-		i = 0;
+		int32 i = 0;
 		while (myList && (i < parm1)) {
 			myList = myList->next;
 			i++;
 		}
-	} else return nullptr;
+	} else
+		return nullptr;
 	return myList;
 }
 
 bool ListItemSearch(Item *myItem, int32 searchMode, char *searchStr, int32 parm1) {
-	ListItem *myList;
-	myList = ListItemFind(myItem, searchMode, searchStr, parm1);
+	ListItem *myList = ListItemFind(myItem, searchMode, searchStr, parm1);
 	if (!myList) {
 		myItem->currItem = myItem->myList;
 		myItem->viewTop = myItem->myList;
 		Item_SetViewBottom(myItem);
 		CalculateViewIndex(myItem);
 		return false;
-	} else {
-		myItem->currItem = myList;
-		if (!Item_SetViewBottom(myItem)) ViewCurrListItem(myItem);
-		else CalculateViewIndex(myItem);
-		return true;
 	}
+
+	myItem->currItem = myList;
+	if (!Item_SetViewBottom(myItem))
+		ViewCurrListItem(myItem);
+	else
+		CalculateViewIndex(myItem);
+
+	return true;
 }
 
 bool DoubleClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset) {
-	int32 listboxContentX2, itemOffset, fontHeight;
-	ListItem *myListItem;
+	int32 listboxContentX2;
 	M4Rect interiorRect;
-	ButtonDrawRec	bdr;
-	Font *currFont;
+	ButtonDrawRec bdr;
 
 	if (!myItem)
 		return false;
-	currFont = gr_font_get();
+	Font *currFont = gr_font_get();
 	if (currFont != myItem->myFont)
 		gr_font_set(myItem->myFont);
-	fontHeight = gr_font_get_height();
+	int32 fontHeight = gr_font_get_height();
 	if (currFont != myItem->myFont)
 		gr_font_set(currFont);
 
 	if (myItem->myListCount > myItem->listView) {
 		listboxContentX2 = myItem->w - scrollUpWidth - _G(items).buttonWidth - 1;
-	} else listboxContentX2 = myItem->w - 1;
+	} else
+		listboxContentX2 = myItem->w - 1;
 
 	bdr.el_type = LISTBOX;
 	bdr.pressed = true;	//since this procedure will only be called myItem is the default item
@@ -917,8 +999,8 @@ bool DoubleClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset) {
 		return false;
 	if ((yOffset < 0) || (yOffset > fontHeight *myItem->listView))
 		return false;
-	itemOffset = 0;
-	myListItem = myItem->viewTop;
+	int32 itemOffset = 0;
+	ListItem *myListItem = myItem->viewTop;
 	while (myListItem && (itemOffset + fontHeight <= yOffset)) {
 		myListItem = myListItem->next;
 		itemOffset += fontHeight;
@@ -930,15 +1012,14 @@ bool DoubleClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset) {
 }
 
 bool ClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset, int32 scrollType) {
-	int32 fontHeight, itemOffset, boxWidth;
+	int32 boxWidth;
 	ListItem *myListItem;
 	bool scrollable = false;
 	bool changed = false;
-	int32 newThumbY, i;
+	int32 i;
 	static int32 thumbOffset;
 	M4Rect interiorRect;
 	ButtonDrawRec bdr;
-	Font *currFont;
 
 	if (!myItem) return false;
 
@@ -947,13 +1028,18 @@ bool ClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset, int32 scrollType
 		boxWidth = myItem->w - (scrollUpHeight + _G(items).buttonHeight + 1);
 
 		if (myItem->status & THUMB_PRESSED) {
-			newThumbY = yOffset - thumbOffset;
-			if (newThumbY < minThumbY) newThumbY = minThumbY;
-			else if (newThumbY > (myItem->h - maxThumbY)) newThumbY = myItem->h - maxThumbY;
+			int32 newThumbY = yOffset - thumbOffset;
+			if (newThumbY < minThumbY)
+				newThumbY = minThumbY;
+			else if (newThumbY > (myItem->h - maxThumbY))
+				newThumbY = myItem->h - maxThumbY;
+
 			myItem->thumbY = newThumbY;
 			SetViewIndex(myItem);
 			return true;
-		} else if (scrollType && (!(myItem->status & BOX_PRESSED)) && (xOffset >= (myItem->w - scrollUpWidth - _G(items).buttonWidth)) && (xOffset < myItem->w)) {
+		}
+
+		if (scrollType && (!(myItem->status & BOX_PRESSED)) && (xOffset >= (myItem->w - scrollUpWidth - _G(items).buttonWidth)) && (xOffset < myItem->w)) {
 			if ((yOffset >= 0) && (yOffset <= (scrollUpHeight + _G(items).buttonHeight - 1))) {
 				if (((myItem->status & AREA_PRESSED) == 0) || (myItem->status & SU_PRESSED)) {
 					myItem->status = SU_PRESSED;
@@ -963,8 +1049,10 @@ bool ClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset, int32 scrollType
 						myItem->viewIndex--;
 						myItem->thumbY = minThumbY + (((myItem->h - thumbYRange) * myItem->viewIndex) / (myItem->myListCount - myItem->listView));
 						changed = true;
-					} else changed = false;
-				} else changed = false;
+					} else
+						changed = false;
+				} else
+					changed = false;
 			} else if ((yOffset >= (scrollUpHeight + _G(items).buttonHeight)) && (yOffset < myItem->thumbY)) {
 				if ((scrollType & PAGEABLE) && (
 						(myItem->status & AREA_PRESSED) == 0 || (myItem->status & PU_PRESSED))) {
@@ -978,7 +1066,8 @@ bool ClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset, int32 scrollType
 						} else break;
 					}
 					myItem->thumbY = minThumbY + (((myItem->h - thumbYRange) * myItem->viewIndex) / (myItem->myListCount - myItem->listView));
-				} else changed = false;
+				} else
+					changed = false;
 			} else if ((yOffset >= (myItem->h - (scrollDownHeight + _G(items).buttonHeight))) && (yOffset < myItem->h)) {
 				if (((myItem->status & AREA_PRESSED) == 0) || (myItem->status & SD_PRESSED)) {
 					myItem->status = SD_PRESSED;
@@ -990,8 +1079,10 @@ bool ClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset, int32 scrollType
 							myItem->thumbY = minThumbY + (((myItem->h - thumbYRange) * myItem->viewIndex) / (myItem->myListCount - myItem->listView));
 						} else myItem->thumbY = myItem->h - maxThumbY;
 						changed = true;
-					} else changed = false;
-				} else changed = false;
+					} else
+						changed = false;
+				} else
+					changed = false;
 			} else if ((scrollType & PAGEABLE) && (yOffset > (myItem->thumbY + thumbHeight + _G(items).buttonHeight)) && (yOffset < (myItem->h - scrollDownHeight - _G(items).buttonHeight))) {
 				if (((myItem->status & AREA_PRESSED) == 0) || (myItem->status & PD_PRESSED)) {
 					myItem->status = PD_PRESSED;
@@ -1001,33 +1092,39 @@ bool ClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset, int32 scrollType
 							myItem->viewBottom = myItem->viewBottom->next;
 							myItem->viewIndex++;
 							changed = true;
-						} else break;
+						} else
+							break;
 					}
 					if (myItem->viewBottom && myItem->viewBottom->next) {
 						myItem->thumbY = minThumbY + (((myItem->h - thumbYRange) * myItem->viewIndex) / (myItem->myListCount - myItem->listView));
-					} else myItem->thumbY = myItem->h - maxThumbY;
+					} else
+						myItem->thumbY = myItem->h - maxThumbY;
 				} else changed = false;
 			} else if (((myItem->status & AREA_PRESSED) == 0) && (yOffset >= (myItem->thumbY)) && (yOffset < (myItem->thumbY + thumbHeight + _G(items).buttonHeight))) {
 				myItem->status = THUMB_PRESSED;
 				thumbOffset = yOffset - myItem->thumbY;
-			} else changed = false;
+			} else
+				changed = false;
 			return changed;
 		}
 	} else boxWidth = myItem->w - 1;
-	if ((xOffset < 0) || (xOffset > boxWidth)) return false;
+	if ((xOffset < 0) || (xOffset > boxWidth))
+		return false;
+
 	if (((myItem->status & AREA_PRESSED) == 0) || (myItem->status & BOX_PRESSED)) {
 		myItem->status = (BOX_PRESSED | ITEM_PRESSED);
-		currFont = gr_font_get();
+		Font *currFont = gr_font_get();
 		if (myItem->myFont != currFont)
 			gr_font_set(myItem->myFont);
-		fontHeight = gr_font_get_height();
+		int32 fontHeight = gr_font_get_height();
 		if (myItem->myFont != currFont)
 			gr_font_set(currFont);
 
 		bdr.el_type = LISTBOX;
 		bdr.pressed = true;	//since this procedure will only be called myItem is the default item
 		bdr.x1 = 0; bdr.y1 = 0; bdr.x2 = myItem->w - 1; bdr.y2 = myItem->h - 1;
-		if (!sizeofGUIelement_interior(&bdr, &interiorRect)) return false;
+		if (!sizeofGUIelement_interior(&bdr, &interiorRect))
+			return false;
 
 		yOffset -= interiorRect.y1;
 		if (yOffset < 0) {
@@ -1045,11 +1142,12 @@ bool ClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset, int32 scrollType
 				myItem->viewIndex++;
 				if (myItem->viewBottom && myItem->viewBottom->next) {
 					myItem->thumbY = minThumbY + (((myItem->h - thumbYRange) * myItem->viewIndex) / (myItem->myListCount - myItem->listView));
-				} else myItem->thumbY = myItem->h - maxThumbY;
+				} else
+					myItem->thumbY = myItem->h - maxThumbY;
 			}
 			myListItem = myItem->viewBottom;
 		} else {
-			itemOffset = 0;
+			int32 itemOffset = 0;
 			myListItem = myItem->viewTop;
 			while (myListItem && (itemOffset + fontHeight <= yOffset)) {
 				myListItem = myListItem->next;
@@ -1066,18 +1164,23 @@ bool ClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset, int32 scrollType
 
 bool ResetDefaultListBox(Item *myItem) {
 	bool changed;
-	if (!myItem) return false;
-	if ((myItem->status & AREA_PRESSED) == 0) changed = false;
-	else if (myItem->status & BOX_PRESSED) changed = false;
-	else changed = true;
+	if (!myItem)
+		return false;
+	if ((myItem->status & AREA_PRESSED) == 0)
+		changed = false;
+	else if (myItem->status & BOX_PRESSED)
+		changed = false;
+	else
+		changed = true;
+
 	myItem->status = ITEM_NORMAL;
 	return changed;
 }
 
 bool Item_change_prompt(Item *myItem, const char *newPrompt) {
-	int32 fontHeight;
-	Font *currFont;
-	if (!strcmp(myItem->prompt, newPrompt)) return false;
+	if (!strcmp(myItem->prompt, newPrompt))
+		return false;
+
 	if (myItem->type == TEXTFIELD) {
 		if ((int)strlen(newPrompt) >= myItem->promptMax)
 			myItem->promptMax = strlen(newPrompt) + 1;
@@ -1087,16 +1190,16 @@ bool Item_change_prompt(Item *myItem, const char *newPrompt) {
 		Item_Clear_origPrompt();
 	} else if (myItem->type == LISTBOX) {
 		return false;
-	} else {
-		if (strlen(myItem->prompt) < strlen(newPrompt)) {
-			mem_free(myItem->prompt);
-			myItem->prompt = mem_strdup(newPrompt);
-		} else Common::strcpy_s(myItem->prompt, 256, newPrompt);
-	}
-	currFont = gr_font_get();
+	} else if (strlen(myItem->prompt) < strlen(newPrompt)) {
+		mem_free(myItem->prompt);
+		myItem->prompt = mem_strdup(newPrompt);
+	} else
+		Common::strcpy_s(myItem->prompt, 256, newPrompt);
+
+	Font *currFont = gr_font_get();
 	if (myItem->myFont != currFont)
 		gr_font_set(myItem->myFont);
-	fontHeight = gr_font_get_height();
+	int32 fontHeight = gr_font_get_height();
 	CorrectItemWidthHeight(myItem, fontHeight);
 	if (myItem->myFont != currFont)
 		gr_font_set(currFont);
@@ -1115,7 +1218,9 @@ static void Item_Clear_origPrompt() {
 }
 
 Item *Item_RestoreTextField(void) {
-	if (!_G(items).origPrompt) return nullptr;
+	if (!_G(items).origPrompt)
+		return nullptr;
+
 	Common::strcpy_s(_G(items).currTextField->prompt, 256, _G(items).origPrompt);
 	_G(items).currTextField->aux = &(_G(items).currTextField->prompt[strlen(_G(items).currTextField->prompt)]);
 	_G(items).currTextField->aux2 = _G(items).currTextField->aux;
@@ -1131,7 +1236,8 @@ Item *Item_RestoreTextField(void) {
 Item *Item_CheckTextField(void) {
 	Item *myItem = nullptr;
 	if (_G(items).origPrompt) {
-		if (strcmp(_G(items).currTextField->prompt, _G(items).origPrompt)) myItem = _G(items).currTextField;
+		if (strcmp(_G(items).currTextField->prompt, _G(items).origPrompt))
+			myItem = _G(items).currTextField;
 		Item_Clear_origPrompt();
 	}
 	return myItem;
@@ -1143,19 +1249,21 @@ void Item_SaveTextField(Item *myItem) {
 }
 
 static void Item_SaveTextFieldChange(Item *myItem, bool majorChange) {
-	if (_G(items).undoPrompt && (!majorChange)) return;
-	if (_G(items).undoPrompt) mem_free(_G(items).undoPrompt);
+	if (_G(items).undoPrompt && (!majorChange))
+		return;
+	if (_G(items).undoPrompt)
+		mem_free(_G(items).undoPrompt);
+
 	_G(items).undoPrompt = mem_strdup(myItem->prompt);
 	_G(items).undoAux = _G(items).undoPrompt + (myItem->aux - myItem->prompt);
 	_G(items).undoAux2 = _G(items).undoPrompt + (myItem->aux2 - myItem->prompt);
 }
 
 static bool Item_UndoTextFieldChange(void) {
-	char *tempBuf, *tempAux, *tempAux2;
 	if (_G(items).undoPrompt) {
-		tempBuf = mem_strdup(_G(items).currTextField->prompt);
-		tempAux = tempBuf + (_G(items).currTextField->aux - _G(items).currTextField->prompt);
-		tempAux2 = tempBuf + (_G(items).currTextField->aux2 - _G(items).currTextField->prompt);
+		char *tempBuf = mem_strdup(_G(items).currTextField->prompt);
+		char *tempAux = tempBuf + (_G(items).currTextField->aux - _G(items).currTextField->prompt);
+		char *tempAux2 = tempBuf + (_G(items).currTextField->aux2 - _G(items).currTextField->prompt);
 		Common::strcpy_s(_G(items).currTextField->prompt, 256, _G(items).undoPrompt);
 		_G(items).currTextField->aux = _G(items).currTextField->prompt + (_G(items).undoAux - _G(items).undoPrompt);
 		_G(items).currTextField->aux2 = _G(items).currTextField->prompt + (_G(items).undoAux2 - _G(items).undoPrompt);
@@ -1169,7 +1277,6 @@ static bool Item_UndoTextFieldChange(void) {
 }
 
 void SetTextBlockBegin(Item *myItem, int32 relXPos) {
-	char myChar, *scan;
 	bool finished = false;
 	M4Rect interiorRect;
 	ButtonDrawRec bdr;
@@ -1183,10 +1290,10 @@ void SetTextBlockBegin(Item *myItem, int32 relXPos) {
 	else if (relXPos >= item_string_width(myItem->prompt, 1)) {
 		myItem->aux = &(myItem->prompt[strlen(myItem->prompt)]);
 	} else {
-		scan = &(myItem->prompt[1]);
+		char *scan = &(myItem->prompt[1]);
 		finished = false;
 		while (!finished) {
-			myChar = *scan;
+			const char myChar = *scan;
 			*scan = '\0';
 			if (item_string_width(myItem->prompt, 1) > relXPos) {
 				myItem->aux = scan - 1;
@@ -1199,7 +1306,6 @@ void SetTextBlockBegin(Item *myItem, int32 relXPos) {
 }
 
 void SetTextBlockEnd(Item *myItem, int32 relXPos) {
-	char myChar, *scan;
 	bool finished = false;
 	M4Rect interiorRect;
 	ButtonDrawRec bdr;
@@ -1207,16 +1313,19 @@ void SetTextBlockEnd(Item *myItem, int32 relXPos) {
 	bdr.el_type = TEXTFIELD;
 	bdr.pressed = true;	//since this procedure will only be called myItem is the default item
 	bdr.x1 = 0; bdr.y1 = 0; bdr.x2 = myItem->w - 1; bdr.y2 = myItem->h - 1;
-	if (!sizeofGUIelement_interior(&bdr, &interiorRect)) return;
+	if (!sizeofGUIelement_interior(&bdr, &interiorRect))
+		return;
+
 	relXPos -= interiorRect.x1;
-	if (relXPos <= 0) myItem->aux2 = myItem->prompt;
+	if (relXPos <= 0)
+		myItem->aux2 = myItem->prompt;
 	else if (relXPos >= item_string_width(myItem->prompt, 1)) {
 		myItem->aux2 = &(myItem->prompt[strlen(myItem->prompt)]);
 	} else {
-		scan = &(myItem->prompt[1]);
+		char *scan = &(myItem->prompt[1]);
 		finished = false;
 		while (!finished) {
-			myChar = *scan;
+			char myChar = *scan;
 			*scan = '\0';
 			if (item_string_width(myItem->prompt, 1) > relXPos) {
 				myItem->aux2 = scan - 1;
@@ -1243,7 +1352,8 @@ static int32 CopyTextBlock(Item *myItem) {
 		Common::strlcpy(_G(items).clipBoard, beginBlock, 100);
 		if (endBlock - beginBlock <= 99) {
 			_G(items).clipBoard[endBlock - beginBlock] = '\0';
-		} else numOfCopiedChars = 99;
+		} else
+			numOfCopiedChars = 99;
 	}
 	return numOfCopiedChars;
 }
@@ -1276,16 +1386,20 @@ bool Item_TextEdit(Item *myItem, int32 parm1) {
 	bool absorbed = true;
 	switch (parm1) {
 	case KEY_LEFT:
-		if (myItem->aux < myItem->aux2) myItem->aux2 = myItem->aux;
-		else if (myItem->aux > myItem->aux2) myItem->aux = myItem->aux2;
+		if (myItem->aux < myItem->aux2)
+			myItem->aux2 = myItem->aux;
+		else if (myItem->aux > myItem->aux2)
+			myItem->aux = myItem->aux2;
 		else if (myItem->aux != myItem->prompt) {
 			myItem->aux--;
 			myItem->aux2--;
 		}
 		break;
 	case KEY_RIGHT:
-		if (myItem->aux < myItem->aux2) myItem->aux = myItem->aux2;
-		else if (myItem->aux > myItem->aux2) myItem->aux2 = myItem->aux;
+		if (myItem->aux < myItem->aux2)
+			myItem->aux = myItem->aux2;
+		else if (myItem->aux > myItem->aux2)
+			myItem->aux2 = myItem->aux;
 		else if (*(myItem->aux) != '\0') {
 			myItem->aux++;
 			myItem->aux2++;
@@ -1320,7 +1434,8 @@ bool Item_TextEdit(Item *myItem, int32 parm1) {
 		myItem->aux2 = myItem->aux;
 		break;
 	case KEY_DELETE:
-		if (!_G(items).origPrompt) Item_SaveTextField(myItem);
+		if (!_G(items).origPrompt)
+			Item_SaveTextField(myItem);
 		if ((DeleteTextBlock(myItem) <= 0) && (*(myItem->aux) != '\0')) {
 			Item_SaveTextFieldChange(myItem, false);
 			if (*(myItem->aux + 1) == '\0') {
@@ -1333,7 +1448,8 @@ bool Item_TextEdit(Item *myItem, int32 parm1) {
 		}
 		break;
 	case KEY_BACKSP:
-		if (!_G(items).origPrompt) Item_SaveTextField(myItem);
+		if (!_G(items).origPrompt)
+			Item_SaveTextField(myItem);
 		if ((DeleteTextBlock(myItem) <= 0) && (myItem->aux != myItem->prompt)) {
 			Item_SaveTextFieldChange(myItem, false);
 			if (*(myItem->aux) == '\0') {
@@ -1348,7 +1464,8 @@ bool Item_TextEdit(Item *myItem, int32 parm1) {
 		}
 		break;
 	case KEY_ALT_X:
-		if (!_G(items).origPrompt) Item_SaveTextField(myItem);
+		if (!_G(items).origPrompt)
+			Item_SaveTextField(myItem);
 		if (CopyTextBlock(myItem) > 0) {
 			DeleteTextBlock(myItem);
 		}
@@ -1357,10 +1474,12 @@ bool Item_TextEdit(Item *myItem, int32 parm1) {
 		CopyTextBlock(myItem);
 		break;
 	case KEY_ALT_V:
-		if (!_G(items).origPrompt) Item_SaveTextField(myItem);
+		if (!_G(items).origPrompt)
+			Item_SaveTextField(myItem);
 		if ((int)strlen(_G(items).clipBoard) && ((int)strlen(myItem->prompt) - abs(myItem->aux2 - myItem->aux) +
 			(int)strlen(_G(items).clipBoard) < myItem->promptMax)) {
-			if (DeleteTextBlock(myItem) <= 0) Item_SaveTextFieldChange(myItem, true);
+			if (DeleteTextBlock(myItem) <= 0)
+				Item_SaveTextFieldChange(myItem, true);
 			Common::strcpy_s(tempBuf, myItem->aux);
 			Common::strcpy_s(myItem->aux, 100, _G(items).clipBoard);
 			Common::strcat_s(myItem->prompt, 80, tempBuf);
@@ -1387,37 +1506,36 @@ bool Item_TextEdit(Item *myItem, int32 parm1) {
 				}
 				myItem->aux2 = myItem->aux;
 			}
-		} else absorbed = false;
+		} else
+			absorbed = false;
 		break;
 	}
 	return absorbed;
 }
 
 bool Item_show(Item *i, void *bdrDialog, Buffer *scrBuf, int32 itemType) {
-	int32 x1, y1, x2, y2;
-	int32 listboxContentX2, fontHeight, viewCount, temp;
+	int32 listboxContentX2, viewCount, temp;
 	char myChar, *beginBlock, *endBlock;
 	ListItem *myList;
 	Buffer pictBuff;
 	const Buffer *tempBuff;
 	ButtonDrawRec bdr;
 	M4Rect interiorRect;
-	Font *currFont;
 
 	if (!i)
 		return false;
 
-	x1 = i->x;
-	y1 = i->y;
-	x2 = x1 + i->w - 1;
-	y2 = y1 + i->h - 1;
+	int32 x1 = i->x;
+	int32 y1 = i->y;
+	int32 x2 = x1 + i->w - 1;
+	int32 y2 = y1 + i->h - 1;
 	if ((x1 < 0) || (y1 < 0) || (x2 >= scrBuf->w) || (y2 >= scrBuf->h))
 		return false;
 
-	currFont = gr_font_get();
+	Font *currFont = gr_font_get();
 	if (i->myFont != currFont)
 		gr_font_set(i->myFont);
-	fontHeight = gr_font_get_height();
+	int32 fontHeight = gr_font_get_height();
 
 	gr_color_set(__LTGRAY);
 	gr_buffer_rect_fill(scrBuf, x1, y1, i->w, i->h);
@@ -1436,7 +1554,8 @@ bool Item_show(Item *i, void *bdrDialog, Buffer *scrBuf, int32 itemType) {
 		bdr.pressed = false;
 	}
 	if ((i->type != LISTBOX) && (i->type != PICTURE)) {
-		if (!drawGUIelement(&bdr, &interiorRect)) return false;
+		if (!drawGUIelement(&bdr, &interiorRect))
+			return false;
 		x1 = interiorRect.x1;
 		y1 = interiorRect.y1;
 		x2 = interiorRect.x2;
@@ -1559,8 +1678,11 @@ bool Item_show(Item *i, void *bdrDialog, Buffer *scrBuf, int32 itemType) {
 		} else {
 			listboxContentX2 = x2 + 1;
 		}
-		if (itemType == ITEM_DEFAULT) bdr.pressed = true;
-		else bdr.pressed = false;
+		if (itemType == ITEM_DEFAULT)
+			bdr.pressed = true;
+		else
+			bdr.pressed = false;
+
 		bdr.el_type = LISTBOX;
 		bdr.x1 = x1; bdr.y1 = y1; bdr.x2 = listboxContentX2 - 1; bdr.y2 = y2;
 		drawGUIelement(&bdr, &interiorRect);
@@ -1592,16 +1714,24 @@ bool Item_show(Item *i, void *bdrDialog, Buffer *scrBuf, int32 itemType) {
 }
 
 Item *Item_set_pressed(Item *itemList, Item *myItem, int32 tag) {
-	if (!myItem) myItem = ItemFind(itemList, tag);
-	if (myItem) myItem->status = (myItem->status & AREA_PRESSED) + ITEM_PRESSED;
-	else return nullptr;
+	if (!myItem)
+		myItem = ItemFind(itemList, tag);
+	if (myItem)
+		myItem->status = (myItem->status & AREA_PRESSED) + ITEM_PRESSED;
+	else
+		return nullptr;
+
 	return myItem;
 }
 
 Item *Item_set_unpressed(Item *itemList, Item *myItem, int32 tag) {
-	if (!myItem) myItem = ItemFind(itemList, tag);
-	if (myItem) myItem->status = ITEM_NORMAL;
-	else return nullptr;
+	if (!myItem)
+		myItem = ItemFind(itemList, tag);
+	if (myItem)
+		myItem->status = ITEM_NORMAL;
+	else
+		return nullptr;
+
 	return myItem;
 }
 
@@ -1618,9 +1748,12 @@ Item *Item_set_default(Item *itemList, Item *currDefault, int32 tag) {
 		if (myItem && (myItem->type == TEXTFIELD)) {
 			myItem->aux = myItem->prompt;
 			myItem->aux2 = &(myItem->prompt[strlen(myItem->prompt)]);
-		} else if (myItem && (myItem->type != LISTBOX)) myItem = nullptr;
+		} else if (myItem && (myItem->type != LISTBOX))
+			myItem = nullptr;
 	}
-	if (myItem) myItem->status = (myItem->status & AREA_PRESSED) + ITEM_PRESSED;
+	if (myItem)
+		myItem->status = (myItem->status & AREA_PRESSED) + ITEM_PRESSED;
+
 	return myItem;
 }
 
@@ -1631,7 +1764,9 @@ Item *Item_set_next_default(Item *currDefault, Item *itemList) {
 		while (nextDefault && (nextDefault->type != LISTBOX) && (nextDefault->type != TEXTFIELD)) {
 			nextDefault = nextDefault->next;
 		}
-		if (!nextDefault) nextDefault = itemList;
+		if (!nextDefault)
+			nextDefault = itemList;
+
 		while (nextDefault && (nextDefault->type != LISTBOX) && (nextDefault->type != TEXTFIELD)) {
 			nextDefault = nextDefault->next;
 		}
@@ -1661,7 +1796,9 @@ Item *Item_set_prev_default(Item *currDefault, Item *listBottom) {
 		while (prevDefault && (prevDefault->type != LISTBOX) && (prevDefault->type != TEXTFIELD)) {
 			prevDefault = prevDefault->prev;
 		}
-		if (!prevDefault) prevDefault = listBottom;
+		if (!prevDefault)
+			prevDefault = listBottom;
+
 		while (prevDefault && (prevDefault->type != LISTBOX) && (prevDefault->type != TEXTFIELD)) {
 			prevDefault = prevDefault->prev;
 		}
