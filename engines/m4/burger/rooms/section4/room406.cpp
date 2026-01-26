@@ -22,7 +22,6 @@
 #include "m4/burger/rooms/section4/room406.h"
 #include "m4/burger/burger.h"
 #include "m4/burger/vars.h"
-#include "m4/burger/burger.h"
 
 namespace M4 {
 namespace Burger {
@@ -64,19 +63,19 @@ const char *Room406::SAID[][4] = {
 };
 
 const WilburMatch Room406::MATCH[] = {
-	{ "FISH", "PEGLEG", 8, 0, 0, &_state4, 48 },
-	{ "FISH", "PEGLEG ", 8, 0, 0, &_state4, 48 },
-	{ "FISH", "TIRE", 10016, 0, 0, &Vars::_wilbur_should, 2 },
+	{ "FISH", "PEGLEG", 8, nullptr, 0, &_state4, 48 },
+	{ "FISH", "PEGLEG ", 8, nullptr, 0, &_state4, 48 },
+	{ "FISH", "TIRE", 10016, nullptr, 0, &Vars::_wilbur_should, 2 },
 	{ "GEAR", "GATE", 8, &Flags::_flags[V172], 10025, &_state4, 25 },
-	{ "GEAR", "GATE", 8, 0, 0, &_state4, 26 },
+	{ "GEAR", "GATE", 8, nullptr, 0, &_state4, 26 },
 	{ "JAWZ O' LIFE", "GATE", 10016, &Flags::_flags[V172], 10025, &Vars::_wilbur_should, 16 },
-	{ "JAWZ O' LIFE", "GATE", 8, 0, 0, &_state4, 27 },
+	{ "JAWZ O' LIFE", "GATE", 8, nullptr, 0, &_state4, 27 },
 	{ "JAWZ O' LIFE", "LOCK", 10016, &Flags::_flags[V172], 10025, &Vars::_wilbur_should, 16 },
-	{ "JAWZ O' LIFE", "LOCK", 8, 0, 0, &_state4, 27 },
+	{ "JAWZ O' LIFE", "LOCK", 8, nullptr, 0, &_state4, 27 },
 	{ "JAWZ O' LIFE", "CHAIN", 10016, &Flags::_flags[V172], 10025, &Vars::_wilbur_should, 16 },
-	{ "JAWZ O' LIFE", "CHAIN", 8, 0, 0, &_state4, 27 },
-	{ "TAKE", "DOG COLLAR   ", 10016, 0, 0, &Vars::_wilbur_should, 20 },
-	{ "TAKE", "DOG COLLAR    ", 10016, 0, 0, &Vars::_wilbur_should, 18 },
+	{ "JAWZ O' LIFE", "CHAIN", 8, nullptr, 0, &_state4, 27 },
+	{ "TAKE", "DOG COLLAR   ", 10016, nullptr, 0, &Vars::_wilbur_should, 20 },
+	{ "TAKE", "DOG COLLAR    ", 10016, nullptr, 0, &Vars::_wilbur_should, 18 },
 	{ "GEAR", "WINCH", 8, &Flags::_flags[V175], 0, &_state4, 36 },
 	{ "GEAR", "WINCH", 10016, &Flags::_flags[V174], 4000, &Vars::_wilbur_should, 3 },
 	{ "GEAR", "WINCH", 10016, &Flags::_flags[V174], 4001, &Vars::_wilbur_should, 4 },
@@ -87,15 +86,15 @@ const WilburMatch Room406::MATCH[] = {
 	{ "GEAR", "LEVER ", 10016, &Flags::_flags[V174], 4001, &Vars::_wilbur_should, 4 },
 	{ "GEAR", "LEVER ", 8, &Flags::_flags[V174], 4002, &_state4, 34 },
 	{ "GEAR", "LEVER", 8, &Flags::_flags[V174], 4004, &_state4, 35 },
-	{ "LOOK AT", "HOOK ", 8, 0, 0, &_state4, 29 },
-	{ "LOOK AT", "HOOK  ", 8, 0, 0, &_state4, 29 },
-	{ "LOOK AT", "HOOK   ", 8, 0, 0, &_state4, 30 },
-	{ "LOOK AT", "HOOK    ", 8, 0, 0, &_state4, 29 },
+	{ "LOOK AT", "HOOK ", 8, nullptr, 0, &_state4, 29 },
+	{ "LOOK AT", "HOOK  ", 8, nullptr, 0, &_state4, 29 },
+	{ "LOOK AT", "HOOK   ", 8, nullptr, 0, &_state4, 30 },
+	{ "LOOK AT", "HOOK    ", 8, nullptr, 0, &_state4, 29 },
 	{ "TAKE", "HOOK ", 8, &Flags::_flags[V175], 0, &_state4, 36 },
-	{ "TAKE", "HOOK ", 8, 0, 0, &_state4, 31 },
-	{ "TAKE", "HOOK  ", 10016, 0, 0, &Vars::_wilbur_should, 6 },
-	{ "TAKE", "HOOK   ", 8, 0, 0, &_state4, 32 },
-	{ "LOOK AT", "JAIL CELL", 8, 0, 0, &_state4, 33 },
+	{ "TAKE", "HOOK ", 8, nullptr, 0, &_state4, 31 },
+	{ "TAKE", "HOOK  ", 10016, nullptr, 0, &Vars::_wilbur_should, 6 },
+	{ "TAKE", "HOOK   ", 8, nullptr, 0, &_state4, 32 },
+	{ "LOOK AT", "JAIL CELL", 8, nullptr, 0, &_state4, 33 },
 	{ "GEAR", "TOW TRUCK", 8, &Flags::_flags[V175], 0, &_state4, 36 },
 	{ "GEAR", "TOW TRUCK", 8, &Flags::_flags[V175], 1, &_state4, 39 },
 	{ "TAKE", "TIRE ", 8, &Flags::_flags[V175], 0, &_state4, 36 },
