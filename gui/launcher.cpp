@@ -1370,6 +1370,15 @@ void LauncherSimple::handleKeyDown(Common::KeyState state) {
 	updateButtons();
 }
 
+bool LauncherDialog::hasAnySelection(const Common::Array<bool> &selectedItems) const {
+	for (const auto &item : selectedItems) {
+		if (item) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 
 	switch (cmd) {
@@ -1424,14 +1433,7 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 void LauncherSimple::confirmRemoveGames(const Common::Array<bool> &selectedItems) {
 	// Validate that at least one item is selected
-	bool hasSelection = false;
-	for (const auto &item : selectedItems) {
-		if (item) {
-			hasSelection = true;
-			break;
-		}
-	}
-	if (!hasSelection)
+	if (!hasAnySelection(selectedItems))
 		return;
 	
 	// Count selected items
@@ -1779,14 +1781,7 @@ void LauncherGrid::updateButtons() {
     // Enable remove button if at least one entry is selected
     if (_grid) {
         const Common::Array<bool> &selectedItems = getSelectedItems();
-        bool hasSelection = false;
-        for (const auto &item : selectedItems) {
-            if (item) {
-                hasSelection = true;
-                break;
-            }
-        }
-        _removeButton->setEnabled(hasSelection);
+        _removeButton->setEnabled(hasAnySelection(selectedItems));
     }
 }
 
@@ -1839,14 +1834,7 @@ void LauncherGrid::confirmRemoveGames(const Common::Array<bool> &selectedItems) 
 		return;
 	
 	// Validate that at least one item is selected
-	bool hasSelection = false;
-	for (const auto &item : selectedItems) {
-		if (item) {
-			hasSelection = true;
-			break;
-		}
-	}
-	if (!hasSelection)
+	if (!hasAnySelection(selectedItems))
 		return;
 	
 	// Count selected items
@@ -1908,14 +1896,7 @@ void LauncherDialog::removeGames(const Common::Array<bool> &selectedItems, bool 
 		return;
 
 	// Check if any items are selected
-	bool hasSelection = false;
-	for (const auto &item : selectedItems) {
-		if (item) {
-			hasSelection = true;
-			break;
-		}
-	}
-	if (!hasSelection)
+	if (!hasAnySelection(selectedItems))
 		return;
 
 	int selPos = -1;

@@ -211,6 +211,10 @@ protected:
 	 */
 	virtual void updateSelectionAfterRemoval() = 0;
 
+	/**
+	 * Check if any items are selected in the given array.
+	 */
+	bool hasAnySelection(const Common::Array<bool> &selectedItems) const;
 
 	// Get the selected items from the current view (list or grid).
 	virtual const Common::Array<bool>& getSelectedItems() const = 0;
