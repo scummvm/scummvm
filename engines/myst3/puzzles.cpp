@@ -479,24 +479,30 @@ void Puzzles::resonanceRingsLaunchBall() {
 }
 
 void Puzzles::resonanceRingsLights() {
-	// Turn off all lights
-	for (uint i = 0; i < 5; i++)
-		_vm->_state->setVar(439 + i, false);
-
-	// For each button / ring value
+	// Reset the volume for all 5 possible harmonic frequency sounds to 0
 	for (uint i = 0; i < 5; i++) {
-		// For each light
+		_vm->_state->setVar(439 + i, 0);
+	}
+
+	// For each button on the panel
+	for (uint i = 0; i < 5; i++) {
+		// For each ring
 		for (uint j = 0; j < 5; j++) {
-			// Ring selector value
+			// Get the harmonic frequency setting for the current ring. Valid values are 1 - 5
 			uint32 ringValue = _vm->_state->getVar(434 + j);
+			// If the harmonic frequency of the current ring matches the current button
 			if (ringValue == i + 1) {
-				// Button state
+				// Check the current button state
 				uint32 buttonState = _vm->_state->getVar(43 + i);
 				if (buttonState) {
-					uint32 oldValue = _vm->_state->getVar(444 + i);
-					_vm->_state->setVar(439 + i, oldValue);
+					// If current button is pressed (lit),
+					// increase the volume for this harmonic frequency by 20
+					_vm->_state->setVar(439 + i, _vm->_state->getVar(439 + i) + 20);
+					// turn on the corresponding glowing crystal light for this ring
 					_vm->_state->setVar(38 + j, true);
 				} else {
+					// If current button is not pressed (unlit),
+					// turn off the corresponding glowing crystal light for this ring
 					_vm->_state->setVar(38 + j, false);
 				}
 			}
