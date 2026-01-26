@@ -47,8 +47,8 @@ static const char *SAID[][4] = {
 };
 
 static const seriesStreamBreak SERIES1[] = {
-	{  9, "100_010", 1, 255, -1, 0, 0, 0 },
-	{ 20, nullptr,   1, 255, 12, 0, 0, 0 },
+	{  9, "100_010", 1, 255, -1, 0, nullptr, 0 },
+	{ 20, nullptr,   1, 255, 12, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
@@ -315,7 +315,7 @@ void Room137::daemon() {
 		case 16:
 			if (_sherrifShould == 23) {
 				frame = imath_ranged_rand(0, 8);
-				series_play("137sh03", 0x800, 0, kCHANGE_SHERRIF_ANIMATION, 6, 0, 100, 0, 0);
+				series_play("137sh03", 0x800, 0, kCHANGE_SHERRIF_ANIMATION, 6, 0, 100, 0, 0, frame, frame);
 
 				if (_digi1) {
 					_G(kernel).trigger_mode = KT_PARSE;
