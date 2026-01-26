@@ -196,7 +196,7 @@ protected:
 	 * Shared helper for removing games after confirmation.
 	 * Called by subclasses after building their own confirmation message.
 	 */
-	void performGameRemoval(const Common::Array<bool> &selectedItems, bool isGrid);
+	void removeGames(const Common::Array<bool> &selectedItems, bool isGrid);
 
 	/**
 	 * Handle game removal confirmation with selection validation.

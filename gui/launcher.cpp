@@ -1464,7 +1464,7 @@ void LauncherSimple::confirmRemoveGames(const Common::Array<bool> &selectedItems
 	MessageDialog alert(confirmMsg, _("Yes"), _("No"));
 
 	if (alert.runModal() == GUI::kMessageOK) {
-		performGameRemoval(selectedItems, false);
+		removeGames(selectedItems, false);
 	}
 }
 
@@ -1879,7 +1879,7 @@ void LauncherGrid::confirmRemoveGames(const Common::Array<bool> &selectedItems) 
 
 	MessageDialog alert(message, Common::U32String(_("Yes")), Common::U32String(_("No")));
 	if (alert.runModal() == GUI::kMessageOK) {
-		performGameRemoval(selectedItems, true);
+		removeGames(selectedItems, true);
 	}
 }
 
@@ -1896,7 +1896,7 @@ void LauncherGrid::updateSelectionAfterRemoval() {
 
 #endif // !DISABLE_LAUNCHERDISPLAY_GRID
 
-void LauncherDialog::performGameRemoval(const Common::Array<bool> &selectedItems, bool isGrid) {
+void LauncherDialog::removeGames(const Common::Array<bool> &selectedItems, bool isGrid) {
 	if (selectedItems.empty())
 		return;
 
