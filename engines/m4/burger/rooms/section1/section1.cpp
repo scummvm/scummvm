@@ -181,7 +181,7 @@ void Section1::daemon() {
 		break;
 	case 1029:
 		if (_state1 == 2) {
-			int frame = imath_ranged_rand(9, 12);
+			const int frame = imath_ranged_rand(9, 12);
 			series_play("110bu01", 0, 0, 1029, 5, 0, 100, 0, 0, frame, frame);
 		} else {
 			pal_fade_set_start(_G(master_palette), 0);
@@ -205,7 +205,7 @@ void Section1::daemon() {
 		break;
 	case 1033:
 		if (_state1 == 2) {
-			int frame = imath_ranged_rand(0, 4);
+			const int frame = imath_ranged_rand(0, 4);
 			series_play("110bu02", 0, 0, 1033, 5, 0, 100, 0, 0, frame, frame);
 		} else {
 			series_play("110bu02", 0, 0, 1035, 5, 0, 100, 0, 0, 5, 16);

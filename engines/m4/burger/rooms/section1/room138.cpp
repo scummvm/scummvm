@@ -49,39 +49,39 @@ static const char *SAID[][4] = {
 };
 
 static const seriesPlayBreak PLAY1[] = {
-	{ 0,  3, 0, 1, 255, -1, 0, 0, 0, 0 },
-	{ 4,  4, 0, 1, 255,  8, 0, 0, 0, 0 },
-	{ 5, -1, 0, 1, 255, 10, 0, 0, 0, 0 },
+	{ 0,  3, nullptr, 1, 255, -1, 0, 0, nullptr, 0 },
+	{ 4,  4, nullptr, 1, 255,  8, 0, 0, nullptr, 0 },
+	{ 5, -1, nullptr, 1, 255, 10, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 static const seriesPlayBreak PLAY2[] = {
-	{  0, 11, nullptr,   1, 255, -1, 0, 0, 0, 0 },
-	{ 12, 12, "138_003", 1, 255, -1, 0, 0, 0, 0 },
-	{ 12, 12, nullptr,   1, 255, -1, 0, 0, 0, 0 },
-	{ 12, 12, nullptr,   1, 255, -1, 0, 0, 0, 0 },
-	{ 12, 12, nullptr,   1, 255,  5, 0, 0, 0, 0 },
-	{ 12, 12, nullptr,   1, 255, -1, 0, 0, 0, 0 },
-	{ 11,  0, nullptr,   1, 255, -1, 0, 0, 0, 0 },
+	{  0, 11, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 12, 12, "138_003", 1, 255, -1, 0, 0, nullptr, 0 },
+	{ 12, 12, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 12, 12, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 12, 12, nullptr,   1, 255,  5, 0, 0, nullptr, 0 },
+	{ 12, 12, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
+	{ 11,  0, nullptr,   1, 255, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 static const seriesPlayBreak PLAY3[] = {
-	{  6, 8, nullptr,   1, 255, 12,    0, 0, 0, 0 },
-	{  7, 6, "138_006", 1, 255, -1,    0, 0, 0, 0 },
-	{  7, 8, nullptr,   1, 255, -1,    0, 0, 0, 0 },
-	{  8, 6, nullptr,   1, 255, -1,    0, 0, 0, 0 },
-	{  6, 7, nullptr,   1, 255, -1,    0, 0, 0, 0 },
-	{  6, 7, nullptr,   1, 255, -1,    0, 0, 0, 0 },
-	{  7, 6, nullptr,   1, 255, -1,    0, 0, 0, 0 },
-	{  6, 8, nullptr,   1, 255, -1,    0, 0, 0, 0 },
-	{  8, 6, nullptr,   1, 255, -1, 2048, 0, 0, 0 },
+	{  6, 8, nullptr,   1, 255, 12,    0, 0, nullptr, 0 },
+	{  7, 6, "138_006", 1, 255, -1,    0, 0, nullptr, 0 },
+	{  7, 8, nullptr,   1, 255, -1,    0, 0, nullptr, 0 },
+	{  8, 6, nullptr,   1, 255, -1,    0, 0, nullptr, 0 },
+	{  6, 7, nullptr,   1, 255, -1,    0, 0, nullptr, 0 },
+	{  6, 7, nullptr,   1, 255, -1,    0, 0, nullptr, 0 },
+	{  7, 6, nullptr,   1, 255, -1,    0, 0, nullptr, 0 },
+	{  6, 8, nullptr,   1, 255, -1,    0, 0, nullptr, 0 },
+	{  8, 6, nullptr,   1, 255, -1, 2048, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 static const seriesPlayBreak PLAY4[] = {
-	{ 25, 5, 0, 1, 255, -1, 0, 0, 0, 0 },
-	{  4, 0, 0, 1, 255, 11, 0, 0, 0, 0 },
+	{ 25, 5, nullptr, 1, 255, -1, 0, 0, nullptr, 0 },
+	{  4, 0, nullptr, 1, 255, 11, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -153,7 +153,6 @@ void Room138::init() {
 }
 
 void Room138::daemon() {
-	int frame;
 
 	switch (_G(kernel).trigger) {
 	case kCHANGE_DEPUTY_ANIMATION:
@@ -331,6 +330,9 @@ void Room138::daemon() {
 			} else {
 				series_play("138cp06", 0x100, 0, kCHANGE_SHERRIF_ANIMATION, 10, 0, 100, 0, 0, 27, 27);
 			}
+			break;
+
+		default:
 			break;
 
 		}
@@ -530,7 +532,7 @@ void Room138::daemon() {
 		case 15:
 			if (_wilburShould == 15) {
 				loadSeries();
-				frame = imath_ranged_rand(0, 4);
+				const int frame = imath_ranged_rand(0, 4);
 				series_play("138wi02", 0xa00, 0, kCHANGE_WILBUR_ANIMATION, 4, 0, 100, 0, 0, frame, frame);
 
 			} else {

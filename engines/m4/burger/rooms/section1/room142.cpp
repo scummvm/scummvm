@@ -127,7 +127,7 @@ const seriesPlayBreak Room142::PLAY9[] = {
 };
 
 const seriesPlayBreak Room142::PLAY10[] = {
-	{ 3, 0, "142_002", 1, 255, -1, 0, 0, 0, 0 },
+	{ 3, 0, "142_002", 1, 255, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -138,7 +138,7 @@ const seriesPlayBreak Room142::PLAY11[] = {
 };
 
 const seriesPlayBreak Room142::PLAY12[] = {
-	{ 0, -1, "142_005", 1, 255, -1, 0, 0, 0, 0 },
+	{ 0, -1, "142_005", 1, 255, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -152,7 +152,7 @@ const seriesPlayBreak Room142::PLAY13[] = {
 };
 
 const seriesPlayBreak Room142::PLAY14[] = {
-	{ 0, 19, "142_007", 2, 255, -1, 0, 0, 0, 0 },
+	{ 0, 19, "142_007", 2, 255, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 

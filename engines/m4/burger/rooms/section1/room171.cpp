@@ -52,20 +52,20 @@ static const char *SAID[][4] = {
 };
 
 const seriesPlayBreak Room171::PLAY1[] = {
-	{ 0, 2, 0, 0, 0, -1, 0, 0, 0, 0 },
-	{ 3, 6, "171_014a", 1, 100, -1, 0, 0, 0, 0 },
-	{ 7, 12, "171_014b", 1, 100, -1, 0, 0, 0, 0 },
-	{ 13, 18, "171_014a", 1, 100, -1, 0, 0, 0, 0 },
-	{ 19, 22, "171_014b", 1, 100, -1, 0, 0, 0, 0 },
-	{ 23, 27, "171_014a", 1, 100, -1, 0, 0, 0, 0 },
-	{ 28, 32, "171_014b", 1, 100, -1, 0, 0, 0, 0 },
-	{ 33, 39, "171_014a", 1, 100, -1, 0, 0, 0, 0 },
-	{ 40, -1, "171_014b", 1, 100, -1, 0, 0, 0, 0 },
+	{ 0, 2, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 3, 6, "171_014a", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 7, 12, "171_014b", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 13, 18, "171_014a", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 19, 22, "171_014b", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 23, 27, "171_014a", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 28, 32, "171_014b", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 33, 39, "171_014a", 1, 100, -1, 0, 0, nullptr, 0 },
+	{ 40, -1, "171_014b", 1, 100, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room171::PLAY2[] = {
-	{ 0, 0, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{ 0, 0, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	{ 1, 6, "171_014a", 2, 100, -1, 0, 0, &Flags::_flags[V086], 0 },
 	{ 7, 12, "171_014b", 2, 100, -1, 0, 0, &Flags::_flags[V086], 0 },
 	{ 13, 17, "171_014a", 2, 100, -1, 0, 0, &Flags::_flags[V086], 0 },
@@ -86,88 +86,88 @@ const seriesPlayBreak Room171::PLAY2[] = {
 };
 
 const seriesPlayBreak Room171::PLAY3[] = {
-	{ 0, 4, 0, 0, 0, -1, 0, 0, 0, 0 },
-	{ 5, 16, 0, 0, 0, 3, 0, 0, 0, 0 },
+	{ 0, 4, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 5, 16, nullptr, 0, 0, 3, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room171::PLAY4[] = {
-	{ 0, -1, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{ 0, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room171::PLAY5[] = {
-	{ 0, -1, "171_001", 2, 255, -1, 0, 0, 0, 0 },
+	{ 0, -1, "171_001", 2, 255, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room171::PLAY6[] = {
-	{ 0, -1, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{ 0, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room171::PLAY7[] = {
-	{ 0, -1, 0, 2, 0, -1, 2048, 0, 0, 0 },
+	{ 0, -1, nullptr, 2, 0, -1, 2048, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room171::PLAY8[] = {
-	{ 0, 4, "171_011", 2, 255, -1, 0, 0, 0, 0 },
-	{ 5, 19, 0, 0, 0, 3, 0, 0, 0, 0 },
-	{ 20, 25, "171_012", 2, 255, -1, 0, 0, 0, 0 },
-	{ 26, 33, "171_010", 2, 255, -1, 0, 0, 0, 0 },
+	{ 0, 4, "171_011", 2, 255, -1, 0, 0, nullptr, 0 },
+	{ 5, 19, nullptr, 0, 0, 3, 0, 0, nullptr, 0 },
+	{ 20, 25, "171_012", 2, 255, -1, 0, 0, nullptr, 0 },
+	{ 26, 33, "171_010", 2, 255, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room171::PLAY9[] = {
-	{ 34, -1, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{ 34, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room171::PLAY10[] = {
-	{ 7, 8, 0, 0, 0, -1, 0, 0, 0, 0 },
-	{ 8, 8, 0, 0, 0, -1, 0, 2, 0, 0 },
-	{ 7, 8, 0, 0, 0, -1, 2, 0, 0, 0 },
+	{ 7, 8, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 8, 8, nullptr, 0, 0, -1, 0, 2, nullptr, 0 },
+	{ 7, 8, nullptr, 0, 0, -1, 2, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room171::PLAY11[] = {
-	{ 7, 12, 0, 0, 0, -1, 0, 0, 0, 0 },
-	{ 13, -1, "171_006", 2, 255, -1, 0, 0, 0, 0 },
+	{ 7, 12, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 13, -1, "171_006", 2, 255, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room171::PLAY12[] = {
-	{ 0, 4, 0, 0, 0, -1, 0, 0, 0, 0 },
-	{ 4, 4, 0, 0, 0, -1, 0, 10, 0, 0 },
-	{ 0, 4, 0, 0, 0, -1, 2, 0, 0, 0 },
+	{ 0, 4, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 4, 4, nullptr, 0, 0, -1, 0, 10, nullptr, 0 },
+	{ 0, 4, nullptr, 0, 0, -1, 2, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room171::PLAY13[] = {
-	{ 0, -1, 0, 0, 0, -1, 1, 0, 0, 0 },
+	{ 0, -1, nullptr, 0, 0, -1, 1, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room171::PLAY14[] = {
-	{ 0, 17, 0, 0, 0, -1, 0, 0, 0, 0 },
-	{ 18, -1, "171_004", 2, 255, -1, 0, 0, 0, 0 },
-	{ 0, 11, 0, 0, 0, -1, 2, 0, 0, 0 },
+	{ 0, 17, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 18, -1, "171_004", 2, 255, -1, 0, 0, nullptr, 0 },
+	{ 0, 11, nullptr, 0, 0, -1, 2, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room171::PLAY15[] = {
-	{ 0, -1, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{ 0, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room171::PLAY16[] = {
-	{ 0, -1, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{ 0, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room171::PLAY17[] = {
-	{ 0, -1, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{ 0, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -363,7 +363,7 @@ void Room171::daemon() {
 
 		case 8:
 			_pollyShould = 9;
-			npc_say(conv_sound_to_play(), 5, "171ap02", 0x300, 1, 17, 22);
+			npc_say(conv_sound_to_play(), 5, "171ap02", 0x300, true, 17, 22);
 			break;
 
 		case 9:
@@ -786,9 +786,9 @@ void Room171::frontDoor() {
 }
 
 void Room171::conv40() {
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	if (!conv_sound_to_play())
 		return;

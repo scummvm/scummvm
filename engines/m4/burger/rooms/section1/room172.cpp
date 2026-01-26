@@ -421,9 +421,9 @@ void Room172::loadSeries7() {
 
 void Room172::conv41() {
 	const char *sound = conv_sound_to_play();
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	if (sound) {
 		if (who == 1) {
