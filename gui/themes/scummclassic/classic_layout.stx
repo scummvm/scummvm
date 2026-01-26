@@ -240,9 +240,14 @@
 
 	<dialog name = 'Browser' overlays = 'Dialog.Launcher.GameList' shading = 'dim'>
 		<layout type = 'vertical' padding = '8, 8, 8, 8'>
-			<widget name = 'Headline'
-					height = 'Globals.Line.Height'
-			/>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+				<widget name = 'Headline'
+						height = 'Globals.Line.Height'
+				/>
+				<widget name = 'Help'
+						type = 'Button'
+				/>
+			</layout>
 			<widget name = 'Path'
 					height = 'Globals.Line.Height'
 			/>
@@ -1527,6 +1532,10 @@
 					height = 'Globals.Button.Height'
 			/>
 			<widget name = 'Help'
+					width = '150'
+					height = 'Globals.Button.Height'
+			/>
+			<widget name = 'MainHelp'
 					width = '150'
 					height = 'Globals.Button.Height'
 			/>

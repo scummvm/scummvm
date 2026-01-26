@@ -20,6 +20,7 @@
  */
 
 #include "gui/browser.h"
+#include "gui/helpdialog.h"
 #include "gui/gui-manager.h"
 #include "gui/widgets/edittext.h"
 #include "gui/widgets/list.h"
@@ -39,7 +40,8 @@ enum {
 	kChooseCmd = 'Chos',
 	kGoUpCmd = 'GoUp',
 	kHiddenCmd = 'Hidd',
-	kPathEditedCmd = 'Path'
+	kPathEditedCmd = 'Path',
+	kHelpCmd = 'Help',
 };
 
 /* We want to use this as a general directory selector at some point... possible uses
@@ -59,6 +61,7 @@ BrowserDialog::BrowserDialog(const Common::U32String &title, bool dirBrowser)
 
 	// Headline - TODO: should be customizable during creation time
 	new StaticTextWidget(this, "Browser.Headline", title);
+	new ButtonWidget(this, "Browser.Help", _("Help"), Common::U32String(), kHelpCmd);
 
 	// Current path - TODO: handle long paths ?
 	_currentPath = new EditTextWidget(this, "Browser.Path", Common::U32String(), Common::U32String(), 0, kPathEditedCmd);
@@ -121,6 +124,11 @@ void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	case kPathEditedCmd:
 		_node = Common::FSNode(Common::Path(Common::convertFromU32String(_currentPath->getEditString()), Common::Path::kNativeSeparator));
 		updateListing();
+		break;
+	case kHelpCmd: {
+		GUI::HelpDialog dlg;
+		dlg.runModal();
+		}
 		break;
 	//Search by text input
 	case kChooseCmd:
