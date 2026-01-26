@@ -211,6 +211,10 @@ protected:
 	 */
 	virtual void updateSelectionAfterRemoval() = 0;
 
+
+	// Get the selected items from the current view (list or grid).
+	virtual const Common::Array<bool>& getSelectedItems() const = 0;
+
 	/**
 	 * Handle "Edit game..." button.
 	 */
@@ -267,6 +271,7 @@ public:
 protected:
 	void confirmRemoveGames(const Common::Array<bool> &selectedItems) override;
 	void updateSelectionAfterRemoval() override;
+	const Common::Array<bool>& getSelectedItems() const override;
 	void updateListing(int selPos = -1) override;
 	int getItemPos(int item) override;
 	void groupEntries(const Common::Array<LauncherEntry> &metadata);

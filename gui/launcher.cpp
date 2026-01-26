@@ -1029,6 +1029,7 @@ public:
 protected:
 	void confirmRemoveGames(const Common::Array<bool> &selectedItems) override;
 	void updateSelectionAfterRemoval() override;
+	const Common::Array<bool>& getSelectedItems() const override;
 	void updateListing(int selPos = -1) override;
 	int getItemPos(int item) override;
 	void groupEntries(const Common::Array<LauncherEntry> &metadata);
@@ -1109,6 +1110,10 @@ void LauncherSimple::selectTarget(const Common::String &target) {
 }
 
 int LauncherSimple::getSelected() { return _list->getSelected(); }
+
+const Common::Array<bool>& LauncherSimple::getSelectedItems() const {
+	return _list->getSelectedItems();
+}
 
 void LauncherSimple::build() {
 	LauncherDialog::build();
@@ -1374,7 +1379,7 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kListItemRemovalRequestCmd: {
 		// Remove games if we have any selection
-		confirmRemoveGames(_list->getSelectedItems());
+		confirmRemoveGames(getSelectedItems());
 		break;
 	}
 	case kListSelectionChangedCmd:
@@ -1409,7 +1414,7 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 	case kRemoveGameCmd: {
 		// Remove games if we have any selection
-		confirmRemoveGames(_list->getSelectedItems());
+		confirmRemoveGames(getSelectedItems());
 		break;
 	}
 	default:
@@ -1471,7 +1476,7 @@ void LauncherSimple::confirmRemoveGames(const Common::Array<bool> &selectedItems
 void LauncherSimple::updateSelectionAfterRemoval() {
 	if (_list) {
 		_list->clearSelection();
-		const Common::Array<bool> &selectedItems = _list->getSelectedItems();
+		const Common::Array<bool> &selectedItems = getSelectedItems();
 		
 		// Get the real data index of the last selected item and adjust with bounds
 		int lastSelectedDataItem = MIN((int)selectedItems.size() - 1, _list->getSelected());
@@ -1482,7 +1487,7 @@ void LauncherSimple::updateSelectionAfterRemoval() {
 
 void LauncherSimple::updateButtons() {
 	int item = _list->getSelected();
-	const Common::Array<bool> &selectedItems = _list->getSelectedItems();
+	const Common::Array<bool> &selectedItems = getSelectedItems();
 	// Count selected items (early exit once we know there's multi-selection)
 	int selectedCount = 0;
 	for (int i = 0; i < (int)selectedItems.size(); ++i) {
@@ -1670,9 +1675,7 @@ void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		break;
 	case kRemoveGameCmd:
 		// Remove games if we have any selection
-		if (_grid) {
-			confirmRemoveGames(_grid->getSelectedItems());
-		}
+		confirmRemoveGames(getSelectedItems());
 		break;
 	case kItemClicked:
 		updateButtons();
@@ -1775,7 +1778,7 @@ void LauncherGrid::updateButtons() {
     LauncherDialog::updateButtons();
     // Enable remove button if at least one entry is selected
     if (_grid) {
-        const Common::Array<bool> &selectedItems = _grid->getSelectedItems();
+        const Common::Array<bool> &selectedItems = getSelectedItems();
         bool hasSelection = false;
         for (const auto &item : selectedItems) {
             if (item) {
@@ -1801,6 +1804,10 @@ void LauncherGrid::selectTarget(const Common::String &target) {
 }
 
 int LauncherGrid::getSelected() { return _grid->getSelected(); }
+
+const Common::Array<bool>& LauncherGrid::getSelectedItems() const {
+	return _grid->getSelectedItems();
+}
 
 void LauncherGrid::build() {
 	LauncherDialog::build();
@@ -1886,7 +1893,7 @@ void LauncherGrid::confirmRemoveGames(const Common::Array<bool> &selectedItems) 
 void LauncherGrid::updateSelectionAfterRemoval() {
 	if (_grid) {
 		_grid->clearSelection();
-		const Common::Array<bool> &selectedItems = _grid->getSelectedItems();
+		const Common::Array<bool> &selectedItems = getSelectedItems();
 		
 		// Select at the same index as before, or the last item if out of bounds
 		_grid->_lastSelectedEntryID = MIN((int)selectedItems.size() - 1, _grid->_lastSelectedEntryID);
