@@ -509,14 +509,14 @@ void FileManager::readBootFile() {
 			_vm->_boot._registered = kRegShareware;
 			return;
 		} else {
-			Utils::notifyBox(Common::String::format("Missing startup file '%s'", getBootFilename()));
+			_vm->notifyBox(Common::String::format("Missing startup file '%s'", getBootFilename()));
 			_vm->getGameStatus()._doQuitFl = true;
 			return;
 		}
 	}
 
 	if (ofp.size() < (int32)sizeof(_vm->_boot)) {
-		Utils::notifyBox(Common::String::format("Corrupted startup file '%s'", getBootFilename()));
+		_vm->notifyBox(Common::String::format("Corrupted startup file '%s'", getBootFilename()));
 		_vm->getGameStatus()._doQuitFl = true;
 		return;
 	}
@@ -537,7 +537,7 @@ void FileManager::readBootFile() {
 	}
 
 	if (checksum) {
-		Utils::notifyBox(Common::String::format("Corrupted startup file '%s'", getBootFilename()));
+		_vm->notifyBox(Common::String::format("Corrupted startup file '%s'", getBootFilename()));
 		_vm->getGameStatus()._doQuitFl = true;
 	}
 }

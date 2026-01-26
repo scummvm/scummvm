@@ -30,6 +30,15 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
+#define MM1_NEW_GFX
+
+#ifdef MM1_NEW_GFX
+constexpr int TEXT_COLOR = 9;
+#else
+constexpr int TEXT_COLOR = 0xff;
+#endif
+
+
 class TextView : public UIElement {
 private:
 	XeenFont *getFont() const;

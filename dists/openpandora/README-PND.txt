@@ -1,4 +1,4 @@
-ScummVM 3.1.0git - OPENPANDORA README - HOW TO INSTALL
+ScummVM 2026.1.1git - OPENPANDORA README - HOW TO INSTALL
 ------------------------------------------------------------------------
 
 Please refer to the:

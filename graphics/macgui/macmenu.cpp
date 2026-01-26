@@ -1094,8 +1094,20 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 			_font->drawString(s, utxt.visual, tx, ty, it->bbox.width(), color, _align, 0, true);
 			underlineAccelerator(s, _font, utxt, tx + accOff, ty, it->shortcutPos, color);
 		} else {
-			const Font *font = getMenuFont(it->style);
-			font->drawString(s, it->text, tx, ty, it->bbox.width(), color, Graphics::kTextAlignLeft, 0, true);
+            const Font *font = nullptr;
+            Common::String text = it->text;
+
+            if (text == "\xf0") {
+                font = _wm->_fontMan->getFont(Graphics::MacFont(kMacFontSymbol, 12, 0));
+
+                if (_wm->_fontMan->hasBuiltInFonts()) // Replace with (c) symbol if we have built-in fonts
+                    text = "\xa9";
+
+            } else {
+                font = getMenuFont(it->style);
+            }
+
+           font->drawString(s, text, tx, ty, it->bbox.width(), color, Graphics::kTextAlignLeft, 0, true);
 		}
 
 		if (!it->enabled) {

@@ -123,7 +123,7 @@
 		AD_ENTRY3s("intro.stk", "1e49c39a4a3ce6032a84b712539c2d63", 8738134,
 				   "BECBF212.CD1", "bc828c320908a5eaa349956d396bd8e1", 8,
 				   "intro.itk", "269fc5814db277b5a18d748e7ed55e90", 15079424),
-		FR_FRA, // Canadian French
+		FR_CAN,
 		kPlatformWindows,
 		GF_ENABLE_ADIBOU2_FREE_BANANAS_WORKAROUND | GF_ENABLE_ADIBOU2_FLOWERS_INFINITE_LOOP_WORKAROUND,
 		GUIO0()
@@ -420,6 +420,21 @@
 		"", // "Lesen/Rechnen 6-7 Jahre"
 		AD_ENTRY2s("intro_ap.stk", "5b83051c6d123fe0c506fd1ee17a73da", 36132776,
 				   "appli_03.vmd", "462cd55c0759c1bd097b379995342b24", 65454),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
+{
+	{ // Supplied by Indy4-Fan
+		"adibou2readcount67",
+		"", // "Lesen/Rechnen 6-7 Jahre"
+		AD_ENTRY2s("intro_ap.stk", "4f475d2ad1aec64bafd17c971768dbce", 36084716,
+			   	   "appli_03.vmd", "462cd55c0759c1bd097b379995342b24", 65454),
 		DE_DEU,
 		kPlatformWindows,
 		ADGF_ADDON,

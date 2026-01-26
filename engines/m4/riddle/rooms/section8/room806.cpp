@@ -154,14 +154,18 @@ void Room806::init() {
 			if (!_G(flags)[V265]) {
 				ws_walk(_G(my_walker), 221, 316, nullptr, 12001, 3, true);
 			} else {
-				if (!player_been_here(809))
-					kernel_timing_trigger(imath_ranged_rand(1200, 1800), 201, nullptr);
+				ws_walk(_G(my_walker), 221, 316, nullptr, 999, 3, true);
+				
+				if (!_G(flags)[V276]) {
+					if (!player_been_here(809))
+						kernel_timing_trigger(imath_ranged_rand(1200, 1800), 201, nullptr);
 
-				kernel_timing_trigger(imath_ranged_rand(1200, 1800), 701, nullptr);
+					kernel_timing_trigger(imath_ranged_rand(1200, 1800), 701, nullptr);
+				}
 			}
 
 			if (!_G(flags)[V276])
-				sendWSMessage_10000(_mcTrekMach, 30, 296, 0, 501, 1);
+				sendWSMessage_10000(_mcTrekMach, 30, 296, 0, 501, 0);
 
 		} else if (!_G(flags)[V265]) {
 			sendWSMessage_10000(_mcTrekMach, 225, 306, 3, 101, 1);
@@ -1111,7 +1115,6 @@ void Room806::parser() {
 }
 
 void Room806::daemon() {
-	warning("Trigger %d", _G(kernel).trigger);
 	switch (_G(kernel).trigger) {
 	case 101:
 		ws_hide_walker(_mcTrekMach);

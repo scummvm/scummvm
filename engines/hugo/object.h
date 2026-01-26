@@ -116,8 +116,7 @@ protected:
 	void restoreSeq(Object *obj);
 
 	inline bool checkBoundary(int16 x, int16 y);
-	template<typename T>
-	inline int sign(T a) { if ( a < 0) return -1; else return 1; }
+	static inline int sign(int a) { return (a < 0) ? -1 : 1; }
 };
 
 class ObjectHandler_v1d : public ObjectHandler {

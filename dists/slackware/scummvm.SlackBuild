@@ -9,7 +9,7 @@ if [ "$TMP" = "" ]; then
 fi
 PKG=$TMP/package-scummvm
 
-VERSION=3.1.0git
+VERSION=2026.1.1git
 ARCH=i486
 BUILD=1
 

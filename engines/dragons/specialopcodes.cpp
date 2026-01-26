@@ -1195,8 +1195,8 @@ void SpecialOpcodes::spcLoadLadyOfTheLakeActor() {
 //	uVar17 = (uint)(uint16)dragon_ini_pointer[DAT_8006398c + -1].field_0x1c;
 //	uVar7 = load_actor_file(0xcc);
 //	file_read_to_buffer(s_s12a6.act_80011740, (&actor_dictionary)[(uVar7 & 0xffff) * 2]);
-//	actors[uVar17].﻿actorFileDictionaryIndex = (uint16_t)uVar7;
-//	actors[uVar17].﻿resourceID = 0xcd;
+//	actors[uVar17].actorFileDictionaryIndex = (uint16_t)uVar7;
+//	actors[uVar17].resourceID = 0xcd;
 //	iVar18 = DAT_8006398c;
 //	actors[uVar17]._flags = actors[uVar17]._flags | 4;
 //	dragon_ini_pointer[iVar18 + -1].x = 0xcd;

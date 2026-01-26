@@ -54,8 +54,12 @@ namespace Video {
  *
  * Decoder for Theora videos.
  * Video decoder used in engines:
+ *  - ags
+ *  - asylum
+ *  - grim
  *  - pegasus
  *  - sword25
+ *  - tetraedge
  *  - wintermute
  */
 class TheoraDecoder : public VideoDecoder {

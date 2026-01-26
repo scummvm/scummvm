@@ -1,7 +1,23 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-#### 3.0.0 (XXXX-XX-XX)
+#### 2026.1.1 (2026-XX-XX)
+
+ General:
+   - Improved PC-Speaker emulation.
+
+ MM:
+   - Fixed M&M1 memory corruption on exit.
+   - Fixed M&M1 display issues/corruption getting items from treasure chests.
+   - Fixed M&M1 showing incorrect name for attacking monsters in combat.
+
+ WAGE:
+   - Implemented combat system.
+   - Numerous visual fixes.
+   - Implemented mouse scrolling of text window.
+
+
+#### 2026.1.0 (2026-01-31)
 
  New games:
    - Added support for Dark Seed.
@@ -26,10 +42,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Adibou 2: Nature & Sciences.
    - Added support for WAGE-based game. More than 160 titles so far.
    - Added support for Penumbra: Overture.
-   - Added support for Tex Murphy: Martian Memorandum
+   - Added support for Tex Murphy: Martian Memorandum.
    - Added support for Mort&Phil: A Movie Adventure (Special Edition).
-   - Added support for Trick or Treat
-   - Added support for Hodj 'n' Podj
+   - Added support for Trick or Treat.
+   - Added support for Hodj 'n' Podj.
 
  Access:
    - Added keymapper support.
@@ -37,6 +53,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  ADL:
    - Added Text-to-Speech support.
+
+ AGS:
+   - Updated detection tables.
 
  AGI:
    - Added Text-to-Speech support.
@@ -81,6 +100,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Gob:
    - Added Text-to-Speech support.
 
+ Grim:
+ - Added support for the fantranslated Polish version of Grim Fandango.
+
  Hugo:
    - Added Text-to-Speech support.
    - Fixed unrecognized commands, missing points, and graphics glitches
@@ -115,8 +137,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed protection from elements spell.
    - Added Text-to-Speech support.
    - Fixed errors with M&M1 monster advancement in combat.
-   - Fixed doors color in M&M1 enhanced mode
-   - Fixed rendering of M&M1 enhanced main menu circles
+   - Fixed doors color in M&M1 enhanced mode.
+   - Fixed rendering of M&M1 enhanced main menu circles.
 
  Mohawk:
    - Fixed popping noise in speech in some game releases (bug in the original).
@@ -259,6 +281,19 @@ For a more comprehensive changelog of the latest experimental code, see:
  Wintermute:
    - 3D renderer enabled by default for 2D games.
    - Added Text-to-Speech support.
+   - Added support for several fan translations.
+
+ ZVision:
+   - Added support for widescreen displays
+   - Added high quality panorama option (uses bilinear filtering)
+   - Improved directionality of 3D sound
+   - Improved accuracy of volume scaling
+   - Enabled high performance audiovisual effects in Zork Nemesis
+   - Improved behaviour of draggable lever controls
+   - Fixed bug causing audio to cut out after long periods of continuous gameplay
+   - Fixed bug causing some audio not to play in certain locations after restoring a saved game
+   - Fixed bug causing music puzzles not to play all notes when using MT-32
+   - Fixed various gameplay script bugs in Nemesis and Grand Inquisitor
 
  Desktop ports:
    - Allow the user to disable manual resizing of the ScummVM window (using Ctrl+R).

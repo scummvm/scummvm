@@ -593,27 +593,82 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
-	// GOG Martian Dreams
+	// REMARK: MD can have many versions, but the detection is less tricky than with SE.
+	//
+	//	There seems only one master version available, V1.4,
+	//	with two graphic modes (EGA/VGA) and (Time/Space) saving.
+	//	So there are 4 different versions of datafile-sets for this game.
+	//
+	//	* talk.lzc   differs only by (Time/Space) installation
+	//	* tileindx.* differs only by (EGA/VGA) installation
+
+	// REMARK: The next 2 versions are unsupported!
+
+	// Martian Dreams V1.4 EGA - Space saving installation
 	{
 		{
 			"martiandreams",
-			0,
-			AD_ENTRY1s("talk.lzc", "6efafc030cb552028c564897e40d87b5", 409705),
+			"V1.4S/EGA",
+			{
+				{"talk.lzc", 0, "78fa6198a30b848a45f3c2471e3c6a4e", 240299},
+				{"tileindx.ega", 0, "ce79cdcb68f214fde732106f32f16ffc", 4096},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_UNSUPPORTED,
+			GUI_OPTIONS_MARTIAN_DREAMS
+		},
+		GAME_MARTIAN_DREAMS,
+		0
+	},
+	// Martian Dreams V1.4 EGA - Time saving installation
+	{
+		{
+			"martiandreams",
+			"V1.4T/EGA",
+			{
+				{"talk.lzc", 0, "6efafc030cb552028c564897e40d87b5", 409705},
+				{"tileindx.ega", 0, "ce79cdcb68f214fde732106f32f16ffc", 4096},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
 			GUI_OPTIONS_MARTIAN_DREAMS
 		},
 		GAME_MARTIAN_DREAMS,
 		0
 	},
 
-	// GOG Martian Dreams - Enhanced
+	// Martian Dreams - Enhanced V1.4 VGA - Space saving installation
 	{
 		{
 			"martiandreams_enh",
-			0,
-			AD_ENTRY1s("talk.lzc", "6efafc030cb552028c564897e40d87b5", 409705),
+			"V1.4S/VGA",
+			{
+				{"talk.lzc", 0, "78fa6198a30b848a45f3c2471e3c6a4e", 240299},
+				{"tileindx.vga", 0, "6af67a836ee36ec0ee7c0d96a4be81b3", 4096},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_MARTIAN_DREAMS
+		},
+		GAME_MARTIAN_DREAMS,
+		GF_VGA_ENHANCED
+	},
+	// Martian Dreams - Enhanced V1.4 VGA - Time saving installation (available on GOG)
+	{
+		{
+			"martiandreams_enh",
+			"V1.4T/VGA",
+			{
+				{"talk.lzc", 0, "6efafc030cb552028c564897e40d87b5", 409705},
+				{"tileindx.vga", 0, "6af67a836ee36ec0ee7c0d96a4be81b3", 4096},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
@@ -623,28 +678,130 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GF_VGA_ENHANCED
 	},
 
+	// REMARK: SE can have many versions, so the detection is a bit tricky:
+	//
+	// 	There are two known versions, V1.6 and V2.1.
+	// 	During installation theres an option to select between (Time/Space)-saving,
+	// 	which results in different data files.
+	// 	Also theres another option to select other graphic devices (Tandy/EGA/VGA),
+	// 	which also results in different data files.
+	// 	Installation comes with Time-saving and VGA, the conversion is done by the installer.
+	// 	So there are 12 different versions of datafile-sets for that game.
+	//
+	//         * talk.lzc    differs only from V1.6 to V2.1
+	//         * endgame.lzc differs in each generated version, but is not affected by V1.6 => V2.1
+	//         * tileindx.*  is the same for each graphics type and is not affected by V1.6 => V2.1
 
-	// The Savage Empire v1.6
+	// REMARK: The next 4 versions are unsupported!
+
+	// The Savage Empire v1.6 Tandy - Space saving installation
 	{
 		{
 			"thesavageempire",
-			0,
-			AD_ENTRY1s("talk.lzc", "bef60fbc3cc478b2a2e8f0883652b2f3", 160784),
+			"V1.6S/TGA",
+			{
+				{"endgame.lzc", 0, "aed2d979ea10c4adf907f7babe82776e", 56905},
+				{"talk.lzc", 0, "bef60fbc3cc478b2a2e8f0883652b2f3", 160784},
+				{"tileindx.tga", 0, "bf8215818402b30e667cd57070248be1", 4096},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_UNSUPPORTED,
+			GUI_OPTIONS_SAVAGE_EMPIRE
+		},
+		GAME_SAVAGE_EMPIRE,
+		0
+	},
+	// The Savage Empire v1.6 Tandy - Time saving installation
+	{
+		{
+			"thesavageempire",
+			"V1.6T/TGA",
+			{
+				{"endgame.lzc", 0, "e1c362564e5754fb9d79c01d33286e14", 168092},
+				{"talk.lzc", 0, "bef60fbc3cc478b2a2e8f0883652b2f3", 160784},
+				{"tileindx.tga", 0, "bf8215818402b30e667cd57070248be1", 4096},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
 			GUI_OPTIONS_SAVAGE_EMPIRE
 		},
 		GAME_SAVAGE_EMPIRE,
 		0
 	},
 
-	// The Savage Empire v1.6
+	// The Savage Empire v1.6 EGA - Space saving installation
+	{
+		{
+			"thesavageempire",
+			"V1.6S/EGA",
+			{
+				{"endgame.lzc", 0, "e917bd55bb3b895b06e250abe269680a", 60695},
+				{"talk.lzc", 0, "bef60fbc3cc478b2a2e8f0883652b2f3", 160784},
+				{"tileindx.ega", 0, "b573bb150ec1a8890507c97576854168", 4096},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
+			GUI_OPTIONS_SAVAGE_EMPIRE
+		},
+		GAME_SAVAGE_EMPIRE,
+		0
+	},
+	// The Savage Empire v1.6 EGA - Time saving installation
+	{
+		{
+			"thesavageempire",
+			"V1.6T/EGA",
+			{
+				{"endgame.lzc", 0, "893cd767e54711939f1694a87cace3b4", 99270},
+				{"talk.lzc", 0, "bef60fbc3cc478b2a2e8f0883652b2f3", 160784},
+				{"tileindx.ega", 0, "b573bb150ec1a8890507c97576854168", 4096},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
+			GUI_OPTIONS_SAVAGE_EMPIRE
+		},
+		GAME_SAVAGE_EMPIRE,
+		0
+	},
+
+	// The Savage Empire v1.6 VGA - Space saving installation
 	{
 		{
 			"thesavageempire_enh",
-			0,
-			AD_ENTRY1s("talk.lzc", "bef60fbc3cc478b2a2e8f0883652b2f3", 160784),
+			"V1.6S/VGA",
+			{
+				{"endgame.lzc", 0, "32bd4f1daf9b97816f906623753d657b", 100947},
+				{"talk.lzc", 0, "bef60fbc3cc478b2a2e8f0883652b2f3", 160784},
+				{"tileindx.vga", 0, "5a136e5ec3b8c28a2c685c25387c334e", 4096},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_SAVAGE_EMPIRE
+		},
+		GAME_SAVAGE_EMPIRE,
+		GF_VGA_ENHANCED
+	},
+	// The Savage Empire v1.6 VGA - Time saving installation
+	{
+		{
+			"thesavageempire_enh",
+			"V1.6T/VGA",
+			{
+				{"endgame.lzc", 0, "04e34a7c9f2934507673ef8477a7763a", 172957},
+				{"talk.lzc", 0, "bef60fbc3cc478b2a2e8f0883652b2f3", 160784},
+				{"tileindx.vga", 0, "5a136e5ec3b8c28a2c685c25387c334e", 4096},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
@@ -654,27 +811,100 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GF_VGA_ENHANCED
 	},
 
-	// The Savage Empire v2.1
+	// REMARK: The next 4 versions are unsupported!
+	// Reason: different graphic files depending on the installation type.
+	// Detailed: User can choose between (Time/Space) x (Tandy/EGA/VGA) during installation.
+	//           These files will be converted according to the selection.
+
+	// The Savage Empire v2.1 Tandy - Space saving installation
 	{
 		{
 			"thesavageempire",
-			0,
-			AD_ENTRY1s("talk.lzc", "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931),
+			"V2.1S/TGA",
+			{
+				{"endgame.lzc", 0, "aed2d979ea10c4adf907f7babe82776e", 56905},
+				{"talk.lzc", 0, "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931},
+				{"tileindx.tga", 0, "bf8215818402b30e667cd57070248be1", 4096},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_UNSUPPORTED,
+			GUI_OPTIONS_SAVAGE_EMPIRE
+		},
+		GAME_SAVAGE_EMPIRE,
+		0
+	},
+	// The Savage Empire v2.1 Tandy - Time saving installation
+	{
+		{
+			"thesavageempire",
+			"V2.1T/TGA",
+			{
+				{"endgame.lzc", 0, "e1c362564e5754fb9d79c01d33286e14", 168092},
+				{"talk.lzc", 0, "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931},
+				{"tileindx.tga", 0, "bf8215818402b30e667cd57070248be1", 4096},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
 			GUI_OPTIONS_SAVAGE_EMPIRE
 		},
 		GAME_SAVAGE_EMPIRE,
 		0
 	},
 
-	// The Savage Empire v2.1
+	// The Savage Empire v2.1 EGA - Space saving installation
+	{
+		{
+			"thesavageempire",
+			"V2.1S/EGA",
+			{
+				{"endgame.lzc", 0, "e917bd55bb3b895b06e250abe269680a", 60695},
+				{"talk.lzc", 0, "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931},
+				{"tileindx.ega", 0, "b573bb150ec1a8890507c97576854168", 4096},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
+			GUI_OPTIONS_SAVAGE_EMPIRE
+		},
+		GAME_SAVAGE_EMPIRE,
+		0
+	},
+	// The Savage Empire v2.1 EGA - Time saving installation
+	{
+		{
+			"thesavageempire",
+			"V2.1T/EGA",
+			{
+				{"endgame.lzc", 0, "893cd767e54711939f1694a87cace3b4", 99270},
+				{"talk.lzc", 0, "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931},
+				{"tileindx.ega", 0, "b573bb150ec1a8890507c97576854168", 4096},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
+			GUI_OPTIONS_SAVAGE_EMPIRE
+		},
+		GAME_SAVAGE_EMPIRE,
+		0
+	},
+
+	// The Savage Empire v2.1 VGA - Space saving installation
 	{
 		{
 			"thesavageempire_enh",
-			0,
-			AD_ENTRY1s("talk.lzc", "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931),
+			"V2.1S/VGA",
+			{
+				{"endgame.lzc", 0, "32bd4f1daf9b97816f906623753d657b", 100947},
+				{"talk.lzc", 0, "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931},
+				{"tileindx.vga", 0, "5a136e5ec3b8c28a2c685c25387c334e", 4096},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
@@ -683,32 +913,21 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_SAVAGE_EMPIRE,
 		GF_VGA_ENHANCED
 	},
-
-	// The Savage Empire v2.1
-	{
-		{
-			"thesavageempire",
-			0,
-			AD_ENTRY1s("talk.lzc", "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931),
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
-			GUIO0()
-		},
-		GAME_SAVAGE_EMPIRE,
-		0
-	},
-
-	// The Savage Empire v2.1
+	// The Savage Empire v2.1 VGA - Time saving installation
 	{
 		{
 			"thesavageempire_enh",
-			0,
-			AD_ENTRY1s("talk.lzc", "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931),
+			"V2.1T/VGA",
+			{
+				{"endgame.lzc", 0, "04e34a7c9f2934507673ef8477a7763a", 172957},
+				{"talk.lzc", 0, "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931},
+				{"tileindx.vga", 0, "5a136e5ec3b8c28a2c685c25387c334e", 4096},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUI_OPTIONS_SAVAGE_EMPIRE
 		},
 		GAME_SAVAGE_EMPIRE,
 		GF_VGA_ENHANCED

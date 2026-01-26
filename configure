@@ -2249,7 +2249,7 @@ if test "$_host_os" = android; then
 	if test -z "$PKG_CONFIG_LIBDIR"; then
 		PKG_CONFIG_LIBDIR="$_android_toolchain/sysroot/usr/lib/$_host_alias/$_android_version/pkgconfig"
 	fi
-	_libcurlpath="$_android_toolchain/sysroot/usr/bin/$_host_alias/$_android_version:$_libcurlpath"
+	_libmikmodpath="$_android_toolchain/sysroot/usr/bin/$_host_alias/$_android_version:$_libmikmodpath"
 fi
 
 #
@@ -3353,7 +3353,7 @@ EOF
 		# on whether the port has been used before (and is detected) which is unpredictable.
 		if test "$_freetype2" = yes; then
 			# neither pkg-config nor freetype-config work, so we setup freetype manually
-			append_var LDFLAGS "-s USE_FREETYPE2=1"
+			append_var LDFLAGS "-s USE_FREETYPE=1"
 			_freetype_found="true"
 			_freetypepath="$EMSDK/upstream/emscripten/cache/sysroot/include/freetype2/"
 			FREETYPE2_CFLAGS="-I$_freetypepath"
@@ -3552,6 +3552,7 @@ EOF
 			_detection_features_static=no
 			_plugins_default=dynamic
 		fi
+		_detection_features_full=no
 		append_var CXXFLAGS "-I$PSPSDK/include"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
 		append_var CXXFLAGS "-D_PSP_FW_VERSION=150"

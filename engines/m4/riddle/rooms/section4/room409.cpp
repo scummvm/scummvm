@@ -251,7 +251,7 @@ void Room409::daemon() {
 		digi_play("409_s03", 2);
 		inv_give_to_player("KEY");
 		kernel_examine_inventory_object("PING KEY", _G(master_palette),
-			5, 1, 270, 150, -1, 0, -1);
+			5, 1, 270, 150, -1, nullptr, -1);
 		digi_play("409r03a", 1, 255, 406);
 		break;
 

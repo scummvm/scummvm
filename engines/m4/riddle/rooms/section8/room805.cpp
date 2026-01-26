@@ -169,8 +169,7 @@ void Room805::initHotspots() {
 		hotspot_set_active(_G(currentSceneDef).hotspots, "JADE DOOR ", false);
 
 	if (!player_been_here(805))
-		_G(flags)
-		[V262] = 0;
+		_G(flags)[V262] = 0;
 
 	if (_G(flags)[V270] == 805 && _G(flags)[V262] == 1) {
 		_chariotRestMach = series_play("805 CHARIOT REST", 1280, 0, -1, 0, -1, 100, 0, 0, 0, -1);

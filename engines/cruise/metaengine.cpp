@@ -226,7 +226,7 @@ Common::KeymapArray CruiseMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 	gameKeyMap->addAction(act);
 
-	act = new Action("EXITGAME", _("Exit game"));
+	act = new Action("EXITGAME", _("Quit game"));
 	act->setCustomEngineActionEvent(kActionExit);
 	act->addDefaultInputMapping("x");
 	act->addDefaultInputMapping("JOY_LEFT_STICK");

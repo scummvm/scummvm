@@ -55,6 +55,7 @@ static const KeybindingRecord NORMAL_KEYS[] = {
 	{ KEYBIND_FIRE, "FIRE", _s("Fire"), "fire", "f", nullptr },
 	{ KEYBIND_GET, "GET", _s("Get chest"), "get", "g", nullptr },
 	{ KEYBIND_HOLE_UP, "HOLE-UP", _s("Hole up & camp"), "camp", "h", nullptr },
+	// I18N: Jimmy is used to open locked doors
 	{ KEYBIND_JIMMY, "JIMMY", _s("Jimmy"), "jimmy", "j", nullptr },
 	{ KEYBIND_IGNITE, "IGNITE", _s("Ignite"), "ignite", "i", nullptr },
 	{ KEYBIND_LOCATE, "LOCATE", _s("Locate position"), "locate", "l", nullptr },
@@ -62,6 +63,7 @@ static const KeybindingRecord NORMAL_KEYS[] = {
 	{ KEYBIND_NEW_ORDER, "NEW-ORDER", _s("New order"), "order", "n", nullptr },
 	{ KEYBIND_OPEN_DOOR, "OPEN-DOOR", _s("Open door"), "open", "o", nullptr },
 	{ KEYBIND_PASS, "PASS", _s("Pass"), "pass", "SPACE", nullptr },
+	// I18N: Peer is used to look through keyholes or other small openings
 	{ KEYBIND_PEER, "PEER", _s("Peer"), "peer", "p", nullptr },
 	{ KEYBIND_QUIT_SAVE, "QUIT-SAVE", _s("Quit and save"), "quitAndSave", "q", nullptr },
 	{ KEYBIND_READY_WEAPON, "READY-WEAPON", _s("Ready weapon"), "ready", "r", nullptr },

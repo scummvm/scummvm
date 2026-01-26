@@ -70,6 +70,7 @@ struct BorderOffsets {
 	int resizeButtonHeight;
 	int upperScrollHeight;
 	int lowerScrollHeight;
+	int titlePadding;
 };
 
 /**

@@ -225,7 +225,7 @@ void ListWidget::addSelectedItem(int item) {
 
 	// Insert in ascending order to keep selection sorted
 	bool inserted = false;
-	for (int i = 0; i < _selectedItems.size(); ++i) {
+	for (uint i = 0; i < _selectedItems.size(); ++i) {
 		if (_selectedItems[i] > actualItem) {
 			_selectedItems.insert_at(i, actualItem);
 			inserted = true;
@@ -245,7 +245,7 @@ void ListWidget::removeSelectedItem(int item) {
 		actualItem = _listIndex[item];
 	}
 
-	for (int i = 0; i < _selectedItems.size(); ++i) {
+	for (uint i = 0; i < _selectedItems.size(); ++i) {
 		if (_selectedItems[i] == actualItem) {
 			_selectedItems.remove_at(i);
 			break;

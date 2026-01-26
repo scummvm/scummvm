@@ -76,7 +76,6 @@ void Search::draw() {
 	Common::String line;
 	setButtonEnabled(0, _mode == OPTIONS);
 
-	//if (_mode != GET_ITEMS)
 	SelectNumber::draw();
 
 	switch (_mode) {
@@ -394,6 +393,7 @@ void Search::drawTreasure() {
 void Search::drawItem() {
 	Treasure &treasure = g_globals->_treasure;
 	int itemId = treasure.removeItem();
+	_lineNum = 0;
 
 	// Iterate through any treasure items
 	if (itemId != 0) {
@@ -415,14 +415,19 @@ void Search::drawItem() {
 				item->_name.c_str()
 			));
 
-			delaySeconds(2);
-			return;
+			if (treasure.hasItems()) {
+				delaySeconds(2);
+				return;
+			} else {
+				// Finished final item, so go down below to switch to items done
+				break;
+			}
 		}
 	}
 
 	// At this point we've either displayed the up to 3 item
-	// lines (in addition to gold and/or gems), or the party's
-	// backpacks were completely full up. Wait for 7 seconds
+	// lines (in addition to gold and/or gems), or the party's backpacks
+	// were completely full up. Wait for 7 seconds and close the view
 	setMode(GET_ITEMS_DONE);
 	delaySeconds(7);
 }

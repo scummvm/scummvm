@@ -29,6 +29,7 @@
 // Display.c - DIB related code for HUGOWIN
 
 #include "common/debug.h"
+#include "common/events.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "graphics/cursorman.h"
@@ -40,6 +41,7 @@
 #include "hugo/inventory.h"
 #include "hugo/util.h"
 #include "hugo/object.h"
+#include "hugo/parser.h"
 #include "hugo/mouse.h"
 
 namespace Hugo {
@@ -106,6 +108,8 @@ Screen::Screen(HugoEngine *vm) : _vm(vm) {
 	}
 	_fnt = 0;
 	_paletteSize = 0;
+
+	_frontSurface.init(320, 200, 320, _frontBuffer, Graphics::PixelFormat::createFormatCLUT8());
 }
 
 Screen::~Screen() {
@@ -187,7 +191,7 @@ void Screen::displayRect(const int16 x, const int16 y, const int16 dx, const int
 	int16 xClip, yClip;
 	xClip = CLIP<int16>(x, 0, 319);
 	yClip = CLIP<int16>(y, 0, 199);
-	g_system->copyRectToScreen(&_frontBuffer[xClip + yClip * 320], 320, xClip, yClip, CLIP<int16>(dx, 0, 319 - xClip), CLIP<int16>(dy, 0, 199 - yClip));
+	g_system->copyRectToScreen(&_frontBuffer[xClip + yClip * 320], 320, xClip, yClip, CLIP<int16>(dx, 0, 320 - xClip), CLIP<int16>(dy, 0, 200 - yClip));
 }
 
 /**
@@ -469,69 +473,410 @@ void Screen::userHelp() const {
 	message[kHelpFirstNewlineIndex] = '\n';
 #endif
 
-	Utils::notifyBox(message, false);
+	Common::KeyCode keyCode = _vm->notifyBox(message, false, kTtsNoSpeech);
+	
+	// DOS: If the help message was dismissed with F1 then show instructions
+	if (keyCode == Common::KEYCODE_F1) {
+		_vm->_file->instructions();
+	}
 }
 
+void Screen::updateStatusText() {
+	// Format status line
+	Common::sprintf_s(_vm->_statusLine, "F1-Help  %s  Score: %3d of %3d  Sound %3s",
+		(_vm->_config._turboFl) ? "T" : " ", _vm->getScore(), _vm->getMaxScore(),
+		(_vm->_config._soundFl) ? "on" : "off");
+}
+
+void Screen::updatePromptText(const char *command, char cursor) {
+	// Format prompt line, pad with spaces to fill row
+	Common::sprintf_s(_vm->_promptLine, ">%s%c", command, cursor);
+	for (int i = strlen(_vm->_promptLine); i < kMaxTextCols; i++) {
+		_vm->_promptLine[i] = ' ';
+	}
+	_vm->_promptLine[kMaxTextCols] = '\0';
+}
+
+/**
+ * Draw status line at top row and add to blit list
+ */
 void Screen::drawStatusText() {
 	debugC(4, kDebugDisplay, "drawStatusText()");
 
-	loadFont(U_FONT8);
-	uint16 sdx = stringLength(_vm->_statusLine);
-	uint16 sdy = fontHeight() + 1;                  // + 1 for shadow
-	uint16 posX = 0;
-	uint16 posY = kYPix - sdy;
-
-	// Display the string and add rect to display list
-	writeStr(posX, posY, _vm->_statusLine, _TLIGHTYELLOW);
-	displayList(kDisplayAdd, posX, posY, sdx, sdy);
-
-	sdx = stringLength(_vm->_scoreLine);
-	posY = 0;
-
-	//Display a black behind the score line
-	_vm->_screen->drawRectangle(true, 0, 0, kXPix, 8, _TBLACK);
-	writeStr(posX, posY, _vm->_scoreLine, _TCYAN);
-	displayList(kDisplayAdd, posX, posY, sdx, sdy);
+	Common::Rect r = drawDosText(0, 0, _vm->_statusLine, _TCYAN);
+	displayList(kDisplayAdd, r.left, r.top, r.width(), r.height());
 }
 
+/**
+ * Draw status line at top row and display on the screen
+ */
+void Screen::displayStatusText() {
+	debugC(4, kDebugDisplay, "displayStatusText()");
+
+	Common::Rect r = drawDosText(0, 0, _vm->_statusLine, _TCYAN);
+	_vm->_system->copyRectToScreen(_frontBuffer, 320, r.left, r.top, r.width(), r.height());
+}
+
+/**
+ * Draw prompt line at bottom row and add to blit list
+ */
+void Screen::drawPromptText() {
+	debugC(4, kDebugDisplay, "drawPromptText()");
+
+	Common::Rect r = drawDosText(0, kMaxTextRows - 1, _vm->_promptLine, _TLIGHTYELLOW);
+	displayList(kDisplayAdd, r.left, r.top, r.width(), r.height());
+}
+
+/**
+ * Draw prompt line at bottom row and display on the screen
+ */
+void Screen::displayPromptText() {
+	debugC(4, kDebugDisplay, "displayPromptText()");
+
+	Common::Rect r = drawDosText(0, kMaxTextRows - 1, _vm->_promptLine, _TLIGHTYELLOW);
+	_vm->_system->copyRectToScreen(&_frontBuffer[r.top * 320], 320, r.left, r.top, r.width(), r.height());
+}
+
+/**
+ * Display diamond in Hugo1 DOS introduction
+ *
+ * x,y: upper left of diamond.
+ * color1: left color.
+ * color2: right color.
+ */
 void Screen::drawShape(const int x, const int y, const int color1, const int color2) {
 	for (int i = 0; i < kShapeSize; i++) {
-		for (int j = 0; j < i; j++) {
-			_backBuffer[320 * (y + i) + (x + kShapeSize + j - i)] = color1;
-			_frontBuffer[320 * (y + i) + (x + kShapeSize + j - i)] = color1;
-			_backBuffer[320 * (y + i) + (x + kShapeSize + j)] = color2;
-			_frontBuffer[320 * (y + i) + (x + kShapeSize + j)] = color2;
-			_backBuffer[320 * (y + (2 * kShapeSize - 1) - i) + (x + kShapeSize + j - i)] = color1;
-			_frontBuffer[320 * (y + (2 * kShapeSize - 1) - i) + (x + kShapeSize + j - i)] = color1;
-			_backBuffer[320 * (y + (2 * kShapeSize - 1) - i) + (x + kShapeSize + j)] = color2;
-			_frontBuffer[320 * (y + (2 * kShapeSize - 1) - i) + (x + kShapeSize + j)] = color2;
+		const int top = y + i;
+		const int bottom = y + (kShapeSize * 2) - 2 - i;
+		for (int j = 0; j <= i; j++) {
+			const int left  = x + kShapeSize - 1 - j;
+			const int right = x + kShapeSize + j;
+			_frontBuffer[320 * top + left] = color1;
+			_frontBuffer[320 * top + right] = color2;
+			_frontBuffer[320 * bottom + left] = color1;
+			_frontBuffer[320 * bottom + right] = color2;
 		}
 	}
 }
+
 /**
- * Display rectangle (filles or empty)
+ * Display rectangle (filled or empty)
+ *
+ * x1,y1: upper left of rectangle.
+ * x2,y2: lower right of rectangle.
+ *
+ * This is used by DOS code as a replacement for _rectangle() from QuickC
  */
 void Screen::drawRectangle(const bool filledFl, const int16 x1, const int16 y1, const int16 x2, const int16 y2, const int color) {
 	assert(x1 <= x2);
 	assert(y1 <= y2);
-	int16 x2Clip = CLIP<int16>(x2, 0, 320);
-	int16 y2Clip = CLIP<int16>(y2, 0, 200);
+	int16 x2Clip = CLIP<int16>(x2, 0, 319);
+	int16 y2Clip = CLIP<int16>(y2, 0, 199);
 
 	if (filledFl) {
-		for (int i = y1; i < y2Clip; i++) {
-			for (int j = x1; j < x2Clip; j++)
+		for (int i = y1; i <= y2Clip; i++) {
+			for (int j = x1; j <= x2Clip; j++)
 				_frontBuffer[320 * i + j] = color;
 		}
 	} else {
-		for (int i = y1; i < y2Clip; i++) {
+		for (int i = y1; i <= y2Clip; i++) {
 			_frontBuffer[320 * i + x1] = color;
-			_frontBuffer[320 * i + x2] = color;
+			_frontBuffer[320 * i + x2Clip] = color;
 		}
 		for (int i = x1; i < x2Clip; i++) {
 			_frontBuffer[320 * y1 + i] = color;
-			_frontBuffer[320 * y2 + i] = color;
+			_frontBuffer[320 * y2Clip + i] = color;
 		}
 	}
+}
+
+/**
+ * Draws text to the screen using DOS font with a black background
+ *
+ * Coordinates are in text: x = 0-39, y = 0-24.
+ * Returns screen rectangle of drawn text so that it can be invalidated.
+ */
+Common::Rect Screen::drawDosText(byte x, byte y, const char *text, byte color) {
+	// Calculate text length
+	assert(x < kMaxTextCols);
+	assert(y < kMaxTextRows);
+	int textLength = strlen(text);
+	if (x + textLength > kMaxTextCols) {
+		textLength = kMaxTextCols - x;
+	}
+
+	// Draw black background
+	int sx = x * 8;
+	int sy = y * 8;
+	Common::Rect rect(sx, sy, sx + (textLength * 8), sy + 8);
+	_frontSurface.fillRect(rect, _TBLACK);
+
+	// Draw text
+	for (int i = 0; i < textLength; i++) {
+		_dosFont.drawChar(&_frontSurface, (byte)text[i], sx, sy, color);
+		sx += 8;
+	}
+	return rect;
+}
+
+/**
+ * Returns the DOS message box border color for the current game
+ */
+byte Screen::getDosMessageBoxBorder() const {
+	switch (_vm->getGameType()) {
+	case kGameTypeHugo1: return _TLIGHTRED;
+	case kGameTypeHugo2: return _TBLUE;
+	default:             return _TGREEN;
+	}
+}
+
+/**
+ * Display DOS message box
+ *
+ * Returns the KeyState of the keydown event that dismissed the message box.
+ * Callers can use this to implement original behavior such as applying that
+ * key to an input prompt, such as dosPromptBox(), or detecting an F1 press
+ * on the help screen so that the instructions 
+ */
+Common::KeyState Screen::dosMessageBox(const Common::String &text, bool protect, TtsOptions ttsOptions) {
+	if (text.empty()) {
+		return Common::KeyState();
+	}
+
+	// Handle TTS the same as Utils::notifyBox()
+#ifdef USE_TTS
+	if (ttsOptions & kTtsSpeech) {
+		bool replaceNewlines = ((ttsOptions & kTtsReplaceNewlines) == kTtsReplaceNewlines);
+		Utils::sayText(text, Common::TextToSpeechManager::QUEUE, replaceNewlines);
+	}
+#endif
+
+	// Draw the status bar, as the score may have just been changed.
+	// The DOS original updated the status text on screen immediately, but we
+	// add it to the list of rectangles to eventually blit to the screen,
+	// similar to how the Windows version draws. In order to replicate the
+	// DOS behavior of displaying the new score with the message, we draw
+	// the status bar directly to the screen when showing a message box.
+	if (_vm->getGameStatus()._viewState == kViewPlay) {
+		displayStatusText();
+	}
+
+	// Compute size of formatted text for box size
+	int16 width = 0;
+	int16 x = 0;
+	int16 y = 1;
+	for (uint i = 0; i < text.size(); i++) {
+		if (text[i] != '\n') {
+			x++;
+		} else {
+			y++;
+			if (x > width)
+				width = x;
+			x = 0;
+		}
+	}
+
+	// Get width, height of text
+	int16 height = y;
+	if (x > width)
+		width = x;
+	width += 2; // Border text by +- one char
+	height += 2;
+	if (width > kMaxTextCols || height > kMaxTextRows) {
+		warning("text too long: %s", text.c_str());
+		return Common::KeyState();
+	}
+
+	// Get x,y text start coords
+	int16 xOffset = (_vm->getGameType() == kGameTypeHugo1) ? 0 : 1;
+	x = (kMaxTextCols - width + xOffset) / 2;
+	y = (kMaxTextRows - height) / 2;
+	// Adjust one based coordinates from original code to zero based
+	x--;
+	y--;
+	x = MAX<int>(x, 0);
+	y = MAX<int>(y, 0);
+	// Get screen start coordinates and dimensions
+	int16 sx1 = x * 8;
+	int16 sy1 = y * 8;
+	int16 sx2 = (x + width) * 8;
+	int16 sy2 = (y + height) * 8;
+	// If box reaches the right edge of screen, reduce by one pixel
+	// for the right border. The original games did not have messages
+	// this wide, but we display a large advertisement when exiting.
+	if (sx2 >= 320) {
+		sx2 = kXPix - 1;
+	}
+
+	// Save screen
+	int16 boxWidth = sx2 - sx1 + 1;
+	int16 boxHeight = sy2 - sy1 + 1;
+	if (sx1 + boxWidth > 320) {
+		boxWidth = 320 - sx1;
+	}
+	if (sy1 + boxHeight > 200) {
+		boxHeight = 200 - sy1;
+	}
+	moveImage(_frontBuffer, sx1, sy1, boxWidth, boxHeight, 320, _frontBufferBoxBackup, sx1, sy1, 320);
+
+	// Draw box
+	drawRectangle(true,  sx1, sy1, sx2, sy2, _TBLACK);
+	drawRectangle(false, sx1, sy1, sx2, sy2, getDosMessageBoxBorder());
+	char c[] = "X"; // A dummy string with 2nd byte null
+	int16 xTextPos = x + 1;
+	int16 yTextPos = y + 1;
+	for (uint i = 0; i < text.size(); i++) {
+		if (text[i] == '\n') {
+			xTextPos = x + 1;
+			yTextPos++;
+		} else {
+			c[0] = text[i];
+			drawDosText(xTextPos, yTextPos, c, _TLIGHTCYAN);
+			xTextPos++;
+		}
+	}
+	_vm->_system->copyRectToScreen(&_frontBuffer[320 * sy1 + sx1], 320, sx1, sy1, boxWidth, boxHeight);
+
+	// Wait for key
+	const uint32 startTime = _vm->_system->getMillis();
+	Common::KeyState keyState = getKey();
+
+	// Protect mode: there is a short duration in which keys are ignored
+	// unless they are Enter or Escape. This is used with messages that
+	// occur on timers so that the user doesn't accidentally dismiss the
+	// message while in the middle of typing a command.
+	if (protect) {
+		const uint32 delay = 3 * (1000 / _vm->getTPS());
+		while (keyState.keycode != Common::KEYCODE_RETURN &&
+			keyState.keycode != Common::KEYCODE_ESCAPE &&
+			_vm->_system->getMillis() - startTime < delay) {
+			keyState = getKey();
+		}
+	}
+
+	// Restore screen
+	moveImage(_frontBufferBoxBackup, sx1, sy1, boxWidth, boxHeight, 320, _frontBuffer, sx1, sy1, 320);
+	_vm->_system->copyRectToScreen(&_frontBuffer[320 * sy1 + sx1], 320, sx1, sy1, boxWidth, boxHeight);
+
+	// Handle TTS the same as Utils::notifyBox()
+#ifdef USE_TTS
+	Utils::stopTextToSpeech();
+#endif
+
+	return keyState;
+}
+
+/**
+ * Display DOS message box and prompt for a response
+ *
+ * Returns the text entered by the user.
+ */
+Common::String Screen::dosPromptBox(const Common::String &text) {
+	if (text.empty()) {
+		return Common::String();
+	}
+
+	// Show the message box until it is dismissed with a printable key
+	Common::KeyState keyState;
+	while (!Common::isPrint(keyState.ascii)) {
+		keyState = dosMessageBox(text);
+		if (_vm->shouldQuit()) {
+			return Common::String();
+		}
+	}
+
+	// Initialize command with the key used to dismiss the message box
+	char command[kMaxLineSize + 1];
+	int index = 0;
+	command[index++] = keyState.ascii;
+	command[index] = '\0';
+	updatePromptText(command, ' ');
+	displayPromptText();
+
+	// Keyboard input loop
+	while (!_vm->shouldQuit()) {
+		keyState = getKey();
+
+		if (keyState.keycode == Common::KEYCODE_RETURN) {
+			break;
+		} else if (keyState.keycode == Common::KEYCODE_BACKSPACE) {
+			if (index > 0) {
+				command[--index] = '\0';
+				updatePromptText(command, ' ');
+				displayPromptText();
+			}
+		} else if (Common::isPrint(keyState.ascii)) {
+			if (index < ARRAYSIZE(command) - 1) {
+				command[index++] = keyState.ascii;
+				command[index] = '\0';
+				updatePromptText(command, ' ');
+				displayPromptText();
+			}
+		}
+	}
+
+	// Clear the prompt text
+	Common::String response = command;
+	command[0] = '\0';
+	updatePromptText(command, ' ');
+	displayPromptText();
+	_vm->_parser->resetCommandLine();
+
+	// Handle TTS the same as Utils::promptBox()
+#ifdef USE_TTS
+	Utils::sayText(response);
+#endif
+
+	return response;
+}
+
+/**
+ * Get key from keyboard
+ *
+ * This function roughly mimics getch(). It returns the keystate of the first
+ * keydown message for a printable key or one of the specific keys that callers
+ * expect: enter, backspace, escape, and F1.
+ */
+Common::KeyState Screen::getKey() {
+	while (!_vm->shouldQuit()) {
+		Common::Event event;
+		while (_vm->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				// Ignore keydown if modifier other than shift is pressed
+				if (event.kbd.flags & (Common::KBD_NON_STICKY & ~Common::KBD_SHIFT)) {
+					continue;
+				}
+				// Enter, backspace, and printable keys are acceptable
+				if (event.kbd.keycode == Common::KEYCODE_RETURN ||
+					event.kbd.keycode == Common::KEYCODE_BACKSPACE ||
+					Common::isPrint(event.kbd.ascii)) {
+					return event.kbd;
+				}
+				break;
+
+			// Several keys that we wish to return have been turned into
+			// actions for the keymapper. Translate them back into their
+			// original keycodes for the caller to test like any other key.
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				switch (event.customType) {
+				case kActionEscape:
+					return Common::KeyState(Common::KEYCODE_ESCAPE);
+				case kActionUserHelp:
+					return Common::KeyState(Common::KEYCODE_F1);
+				default:
+					break;
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+		_vm->_system->updateScreen();
+		_vm->_system->delayMillis(10);
+	}
+	return Common::KeyState();
 }
 
 /**
@@ -544,18 +889,6 @@ void Screen::initNewScreenDisplay() {
 
 	// Stop premature object display in Display_list(D_DISPLAY)
 	_vm->getGameStatus()._newScreenFl = true;
-}
-
-/**
- * Load palette from Hugo.dat
- */
-void Screen::loadPalette(Common::ReadStream &in) {
-	// Read palette
-	_paletteSize = in.readUint16BE();
-	_mainPalette = (byte *)malloc(sizeof(byte) * _paletteSize);
-	_curPalette = (byte *)malloc(sizeof(byte) * _paletteSize);
-	for (int i = 0; i < _paletteSize; i++)
-		_curPalette[i] = _mainPalette[i] = in.readByte();
 }
 
 /**
@@ -778,6 +1111,23 @@ OverlayState Screen_v1d::findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y) {
 	return kOvlBackground;                          // No bits set, must be background
 }
 
+/**
+ * Load default EGA palette. Skip Windows palette from Hugo.dat
+ */
+void Screen_v1d::loadPalette(Common::SeekableReadStream &in) {
+	// Skip Windows palette
+	uint16 winPaletteSize = in.readUint16BE();
+	in.skip(winPaletteSize);
+
+	// Load default EGA palette
+	Graphics::Palette egaPalette = Graphics::Palette::createEGAPalette();
+	_paletteSize = egaPalette.size() * 3;
+	_mainPalette = (byte *)malloc(_paletteSize);
+	_curPalette = (byte *)malloc(_paletteSize);
+	memcpy(_mainPalette, egaPalette.data(), _paletteSize);
+	memcpy(_curPalette, egaPalette.data(), _paletteSize);
+}
+
 Screen_v1w::Screen_v1w(HugoEngine *vm) : Screen(vm) {
 }
 
@@ -880,6 +1230,18 @@ OverlayState Screen_v1w::findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y) {
 	}
 
 	return kOvlBackground;                          // No bits set, must be background
+}
+
+/**
+ * Load Windows palette from Hugo.dat
+ */
+void Screen_v1w::loadPalette(Common::SeekableReadStream &in) {
+	// Read palette
+	_paletteSize = in.readUint16BE();
+	_mainPalette = (byte *)malloc(sizeof(byte) * _paletteSize);
+	_curPalette = (byte *)malloc(sizeof(byte) * _paletteSize);
+	for (int i = 0; i < _paletteSize; i++)
+		_curPalette[i] = _mainPalette[i] = in.readByte();
 }
 
 } // End of namespace Hugo

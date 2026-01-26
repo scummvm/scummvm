@@ -128,7 +128,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	public View _screenKeyboard = null;
 	private boolean keyboardWithoutTextInputShown = false;
 
-//	boolean _isPaused = false;
 	private InputMethodManager _inputManager = null;
 
 	// Set to true in onDestroy
@@ -1374,17 +1373,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 	}
 
-//	// Shows the system bars by removing all the flags
-//	// except for the ones that make the content appear under the system bars.
-//	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-//	private void showSystemUI() {
-//		View decorView = getWindow().getDecorView();
-//		decorView.setSystemUiVisibility(
-//		    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//		    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//		    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-//	}
-
 //	// Show or hide the Android keyboard.
 //	// Called by the override of showVirtualKeyboard()
 //	@TargetApi(Build.VERSION_CODES.CUPCAKE)
@@ -1473,6 +1461,9 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		// so if we target more recent API levels, we could remove this function
 		return getWindowManager().getDefaultDisplay().getPixelFormat();
 	}
+
+	// region Configuration migration and internal folder init
+	// -------------------------------------------------------------------------------------------
 
 	// Auxiliary function to overwrite a file (used for overwriting the scummvm.ini file with an existing other one)
 	private static void copyFileUsingStream(File source, File dest) throws IOException {
@@ -2042,6 +2033,11 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		return true;
 	}
 
+	// endregion
+
+	// region Assets extraction and update
+	// -------------------------------------------------------------------------------------------
+
 	// Deletes recursively a directory and its contents
 	private static void deleteDir(File dir) {
 		for (File child : dir.listFiles()) {
@@ -2306,8 +2302,9 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 	}
 
-	// -------------------------------------------------------------------------------------------
-	// Start of SAF enabled code
+	// endregion
+
+	// region Start of SAF enabled code
 	// -------------------------------------------------------------------------------------------
 	public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
 		synchronized(safSyncObject) {
@@ -2397,9 +2394,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		return resultURI;
 	}
 
-	// -------------------------------------------------------------------------------------------
-	// End of SAF enabled code
-	// -------------------------------------------------------------------------------------------
+	// endregion
 
 } // end of ScummVMActivity
 

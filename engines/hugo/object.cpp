@@ -371,7 +371,7 @@ void ObjectHandler::showTakeables() {
 		if ((obj->_cycling != kCycleInvisible) &&
 		    (obj->_screenIndex == *_vm->_screenPtr) &&
 		    (((TAKE & obj->_genericCmd) == TAKE) || obj->_objValue)) {
-			Utils::notifyBox(Common::String::format("You can also see:\n%s.", _vm->_text->getNoun(obj->_nounIndex, LOOK_NAME)));
+			_vm->notifyBox(Common::String::format("You can also see:\n%s.", _vm->_text->getNoun(obj->_nounIndex, LOOK_NAME)));
 		}
 	}
 }

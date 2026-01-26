@@ -1807,24 +1807,34 @@ bool compareStringEquality(const Common::String &s1, const Common::String &s2) {
 }
 
 const char *d_strstr(const char *str, const char *substr) {
-	// Check if the substr is found inside the str
-	int len = strlen(substr);
-	const char *ref = substr;
+	while (*str && *substr) {
+		uint32 c1 = getCharEquality(*str);
+		uint32 c2 = getCharEquality(*substr);
 
-	while (*str && *ref) {
-		const uint32 c1 = getCharEquality(*str);
-		const uint32 c2 = getCharEquality(*ref);
+		if (c1 == c2) {
+			// inner loop, keep track of the starting character
+			const char *baseptr = str;
+			const char *ref = substr;
+			while (*baseptr && *ref) {
+				c1 = getCharEquality(*baseptr);
+				c2 = getCharEquality(*ref);
+
+				// characters equal, increment substring
+				if (c1 == c2) {
+					ref++;
+				} else {
+					break;
+				}
+
+				// reached the end of the substring, success
+				if (!*ref)
+					return str;
+
+				baseptr++;
+			}
+		}
 
 		str++;
-
-		if (c1 == c2)
-			ref++;
-
-		if (!*ref)
-			return (str - len);
-
-		if (len == (ref - substr))
-			ref = substr;
 	}
 
 	return nullptr;

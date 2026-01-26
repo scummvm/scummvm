@@ -29,8 +29,12 @@
 #ifndef HUGO_DISPLAY_H
 #define HUGO_DISPLAY_H
 
+#include "graphics/surface.h"
+#include "graphics/fonts/dosfont.h"
+
 namespace Common {
 class ReadStream;
+class SeekableReadStream;
 class WriteStream;
 }
 
@@ -65,12 +69,17 @@ public:
 	void     drawBoundaries();
 	void     drawRectangle(const bool filledFl, const int16 x1, const int16 y1, const int16 x2, const int16 y2, const int color);
 	void     drawShape(const int x, const int y, const int color1, const int color2);
+	void     updateStatusText();
+	void     updatePromptText(const char *command, char cursor);
 	void     drawStatusText();
+	void     displayStatusText();
+	void     drawPromptText();
+	void     displayPromptText();
 	void     freeScreen();
 	void     hideCursor();
 	void     initDisplay();
 	void     initNewScreenDisplay();
-	void     loadPalette(Common::ReadStream &in);
+	virtual void loadPalette(Common::SeekableReadStream &in) = 0;
 	void     moveImage(ImagePtr srcImage, const int16 x1, const int16 y1, const int16 dx, int16 dy, const int16 width1, ImagePtr dstImage, const int16 x2, const int16 y2, const int16 width2);
 	void     remapPal(uint16 oldIndex, uint16 newIndex);
 	void     resetInventoryObjId();
@@ -83,6 +92,11 @@ public:
 	void     showCursor();
 	void     userHelp() const;
 	void     writeStr(int16 sx, const int16 sy, const char *s, const byte color);
+	Common::Rect drawDosText(byte x, byte y, const char *text, byte color);
+	byte getDosMessageBoxBorder() const;
+	Common::KeyState dosMessageBox(const Common::String &text, bool protect = false, TtsOptions ttsOptions = kTtsReplaceNewlines);
+	Common::String dosPromptBox(const Common::String &text);
+	Common::KeyState getKey();
 
 	Icondib &getIconBuffer();
 	Viewdib &getBackBuffer();
@@ -109,19 +123,22 @@ protected:
 	byte  _fnt;                                     // Current font number
 	byte  _fontdata[kNumFonts][kFontSize];          // Font data
 	byte *_font[kNumFonts][kFontLength];            // Ptrs to each char
-	byte *_mainPalette;
 	int16 _arrayFontSize[kNumFonts];
+	byte *_mainPalette;
+	byte *_curPalette;
+	byte _paletteSize;
+
+	Graphics::DosFont _dosFont;
 
 	Viewdib _frontBuffer;
+	Graphics::Surface _frontSurface;
 
 	inline bool isInX(const int16 x, const Rect *rect) const;
 	inline bool isInY(const int16 y, const Rect *rect) const;
 	inline bool isOverlapping(const Rect *rectA, const Rect *rectB) const;
 
 private:
-	byte     *_curPalette;
 	byte      _iconImage[kInvDx * kInvDy];
-	byte      _paletteSize;
 
 	Icondib _iconBuffer;                          // Inventory icon DIB
 
@@ -131,6 +148,7 @@ private:
 	Viewdib _backBuffer;
 	Viewdib _GUIBuffer;                              // User interface images
 	Viewdib _backBufferBackup;                       // Backup _backBuffer during inventory
+	Viewdib _frontBufferBoxBackup;                   // Backup _frontBuffer during DOS message boxes
 
 	// Formerly static variables used by displayList()
 	int16  _dlAddIndex, _dlRestoreIndex;               // Index into add/restore lists
@@ -153,6 +171,8 @@ public:
 	void loadFontArr(Common::ReadStream &in) override;
 
 	void displayFrame(const int sx, const int sy, Seq *seq, const bool foreFl) override;
+
+	void loadPalette(Common::SeekableReadStream &in) override;
 protected:
 	OverlayState findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y);
 };
@@ -166,6 +186,8 @@ public:
 	void loadFontArr(Common::ReadStream &in) override;
 
 	void displayFrame(const int sx, const int sy, Seq *seq, const bool foreFl) override;
+
+	void loadPalette(Common::SeekableReadStream &in) override;
 protected:
 	OverlayState findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y);
 };

@@ -243,8 +243,8 @@ void OptionsMenu::show() {
 		OPTIONS_MENU_X, OPTIONS_MENU_Y, MENU_DEPTH | SF_GET_ALL | SF_BLOCK_ALL | SF_IMMOVABLE);
 	assert(_GM(opMenu));
 
-	const int digiPercent = digi_get_overall_volume();
-	const int midiPercent = ConfMan.getInt("music_volume") * 100 / 255;
+	const int digiPercent = ConfMan.getInt("sfx_volume") * 100 / 256;
+	const int midiPercent = ConfMan.getInt("music_volume") * 100 / 256;
 
 	menuItemButton::add(_GM(opMenu), OM_TAG_GAMEMENU,
 		OM_GAMEMENU_X, OM_GAMEMENU_Y, OM_GAMEMENU_W, OM_GAMEMENU_H,
@@ -288,11 +288,13 @@ void OptionsMenu::cbScrolling(M4::GUI::menuItemButton *myItem, M4::GUI::guiMenu 
 }
 
 void OptionsMenu::cbSetDigi(M4::GUI::menuItemHSlider *myItem, M4::GUI::guiMenu *) {
-	digi_set_overall_volume(myItem->percent);
+	ConfMan.setInt("sfx_volume", myItem->percent * 256 / 100);
+	g_engine->syncSoundSettings();
 }
 
 void OptionsMenu::cbSetMidi(M4::GUI::menuItemHSlider *myItem, M4::GUI::guiMenu *) {
-	ConfMan.setInt("music_volume", myItem->percent * 255 / 100);
+	ConfMan.setInt("music_volume", myItem->percent * 256 / 100);
+	g_engine->syncSoundSettings();
 }
 
 /*------------------- SAVE/LOAD METHODS ------------------*/

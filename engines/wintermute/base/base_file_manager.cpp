@@ -207,12 +207,17 @@ bool BaseFileManager::initPaths() {
 	// Windows registry a suitable "PackagePaths" entry. Such entry is then used
 	// by WME on startup to load only the subset of the available packages which
 	// is relevant to the selected options, avoiding incorrect overrides.
+	const char *gameVersion = use_sd_assets ? "sd" : "hd";
+	const char *voicesLang = use_it_voices ? "it" : "en";
+	const char *subtitleLang = Common::getLanguageCode(lang);
+
 	Common::Array<Common::String> sotvSubfolders;
 	sotvSubfolders.push_back("common");
-	sotvSubfolders.push_back(use_sd_assets ? "common_sd" : "common_hd");
-	sotvSubfolders.push_back(use_it_voices ? "i18n_audio_it" : "i18n_audio_en");
-	sotvSubfolders.push_back(Common::String::format("i18n_%s", Common::getLanguageCode(lang)));
-	sotvSubfolders.push_back(Common::String::format("i18n_%s_%s", Common::getLanguageCode(lang), use_sd_assets ? "sd" : "hd"));
+	sotvSubfolders.push_back(Common::String::format("common_%s", gameVersion));
+	sotvSubfolders.push_back(Common::String::format("i18n_audio_%s", voicesLang));
+	sotvSubfolders.push_back(Common::String::format("i18n_audio_%s_%s", voicesLang, gameVersion));
+	sotvSubfolders.push_back(Common::String::format("i18n_%s", subtitleLang));
+	sotvSubfolders.push_back(Common::String::format("i18n_%s_%s", subtitleLang, gameVersion));
 	for (const auto &sotvSubfolder : sotvSubfolders) {
 		Common::FSNode subFolder = gameData.getChild(sotvSubfolder);
 		if (subFolder.exists()) {

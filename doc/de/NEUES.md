@@ -1,7 +1,23 @@
 Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
-#### 3.0.0 (xx.xx.xxxx)
+#### 2026.1.1 (xx.xx.2026)
+
+ Allgemein:
+   - Verbesserte PC-Speaker-Emulation.
+
+ MM:
+   - Speicherkorruption beim Beenden von M&M1 behoben.
+   - Darstellungsfehler in M&M1, die beim Aufnehmen von Gegenständen auftreten.
+   - Fehlerhafte Namen beim Angriff von Monstern in Kampf-Szenen korrigiert.
+
+ WAGE:
+   - Kampf-System implementiert.
+   - Korrektur mehrerer Darstellungsfehler.
+   - Maus-Scrolling in Text-Fenstern implementiert.
+
+
+#### 2026.1.0 (31.01.2026)
 
  Neue Spiele:
    - Unterstützung für Dark Seed hinzugefügt.
@@ -45,6 +61,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Ton-Wiedergabeprobleme in Mickey's Space Adventure auf PS3, Wii und weiteren
      Big-Endian-Plattformen korrigiert.
 
+ AGS:
+   - Erkennungs-Datenbank aktualisiert.
+
  Buried:
    - Unterstützung für Tastenkürzel hinzugefügt.
 
@@ -82,8 +101,13 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Gob:
    - Unterstützung für Text-to-speech hinzugefügt.
 
+ Grim:
+   - Unterstützung für die von Fans erstellte polnische Übersetzung von Grim Fandango hinzugefügt.
+
  Hugo:
    - Unterstützung für Text-to-speech hinzugefügt.
+   - Nicht erkannte Befehle, fehlende Punkte sowie Grafikfehler in der DOS-Version von Hugo 2 korrigiert.
+   - Fehler beim Bewegen des Charakters durch Klicken korrigiert.
    - Das Hauptmenü kann jetzt korrekt geschlossen werden.
 
  Hypno:
@@ -112,6 +136,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  MM:
    - Der Schutz gegen Elementar-Zaubersprüche funktioniert jetzt korrekt.
    - Unterstützung für Text-to-speech hinzugefügt.
+   - Fehlerhaftes Verhalten der Monster in M&M1 in Kampfsituationen behoben.
+   - Farb-Darstellung der Türen im erweiterten Modus von M&M1 korrigiert.
+   - Fehlerhafte Darstellung des Hauptmenüs im erweiterten Modus von M&M1 korrigiert.
 
  Mohawk:
    - Störgeräusche in der Sprachausgabe einiger Spiele behoben (Fehler im Original).
@@ -126,6 +153,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  NGI:
    - Unterstützung für Tastenkürzel hinzugefügt.
+   - Absturz behoben, der immer dann auftritt, wenn das Hauptmenü mehrfach hintereinander aufgerufen wird.
 
  Nuvie:
    - Funktion "Charakter übertragen" zum Hauptmenü hinzugefügt.
@@ -163,6 +191,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Absturz in der Amiga-Version von KQ1 behoben, der auftritt, wenn der Name des Gnoms falsch geraten wird.
    - Absturz in der Amiga-Version von LONGBOW behoben, der auftritt, wenn die Abtei betreten wird.
    - Fehler in der Amiga-Version von SQ4 korrigiert, der dazu führt, dass es drei Minuten dauert, bis der Titel-Bildschirm angezeigt wird.
+   - Fehlerhaftes Verhalten des Telefons in PQ2 korrigiert, das auftritt, wenn eine falsche Nummer gewählt wird.
    - Skript-Fehler in ECO1, LSL6 und PEPPER korrigiert.
    - Unterstützung für die Macintosh-Version von SLATER hinzugefügt.
    - Die virtuelle Tastatur wird jetzt korrekt ausgelöst, wenn eine Text-Eingabe erwartet wird.
@@ -196,8 +225,17 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Sherlock:
    - Unterstützung für Tastenkürzel hinzugefügt.
 
+ Stark:
+   - Der OpenGL-Renderer funktioniert jetzt auch auf älteren GPUs,
+     die keine Nicht-Zweierpotenz-Texturen unterstützen.
+
  Supernova:
    - Unterstützung für Tastenkürzel hinzugefügt.
+
+ Sword1:
+   - Störgeräusche anstelle der gewünschten Audio-Ausgabe unter PS3,
+     Wii und anderen Big-Endian-Portierungen korrigiert.
+   - Korrektur einiger Leaks in der Spiele-Engine, die in einigen Fällen zu Abstürzen führen konnten.
 
  Sword25:
    - Unterstützung für Tastenkürzel hinzugefügt.
@@ -238,6 +276,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Wintermute:
    - Der 3D-Renderer wird jetzt auch standardmäßig für 2D-Spiele genutzt.
    - Unterstützung für Text-to-speech hinzugefügt.
+   - Unterstützung für mehrere Fan-Übersetzungen hinzugefügt.
 
  Desktop-Portierungen:
    - Die Benutzer können das Ändern der Größe des ScummVM-Fensters jetzt deaktivieren (mit Strg+R).
@@ -271,6 +310,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Kantenglättung in 3D-Engines hinzugefügt.
    - Letzte Überbleibsel des ResidualVM-Merges entfernt: Die Code-Basis ist jetzt vollständig zusammengeführt.
    - Gesperrte Bildbereiche werden jetzt berücksichtigt.
+
+ PS3-Portierung:
+   - Abstürze behoben, die bei Spielen, die als Grafik-Effekt den Bildschirm zittern lassen, auftreten.
 
 #### 2.9.1 "Slappin da BASS" (25.05.2025)
 

@@ -358,7 +358,7 @@ Common::KeymapArray MADSMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_RIGHT");
 		menuKeyMap->addAction(act);
 
-		act = new Action("EXIT", _("Exit game"));
+		act = new Action("EXIT", _("Quit game"));
 		act->setCustomEngineActionEvent(kActionEscape);
 		act->addDefaultInputMapping("F6");
 		act->addDefaultInputMapping("ESCAPE");

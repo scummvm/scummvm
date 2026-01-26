@@ -839,8 +839,16 @@ Common::KeymapperDefaultBindings *OSystem_Android::getKeymapperDefaultBindings()
 	//      The engines use those as much as possible when defining keymaps.
 	//      Then, the backends can override the default bindings to make use of the platform specific keys.
 	//
+	// Also Note: Using setDefaultBinding() will override any default/fallback keymap(s) for an action.
+	//            (for default see the ones in MetaEngine::initKeymaps() and DefaultEventManager::getGlobalKeymap())
+	//            Using addDefaultBinding() after a setDefaultBinding() here will (as expected) add another keymap to the action,
+	//            and all keymaps for the action will be listed in this method.
+	//            Using addDefaultBinding() without setDefaultBinding() will add another keymap to the action,
+	//            in addition to the existing default/fallback ones (ie. not all keymaps for the action are listed here).
 	//
-	keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "MENU", "MENU");
+	keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, Common::kStandardActionOpenMainMenu, "MENU");
+	keymapperDefaultBindings->addDefaultBinding(Common::kGlobalKeymapName, Common::kStandardActionOpenMainMenu, "JOY_START");
+	keymapperDefaultBindings->addDefaultBinding(Common::kGlobalKeymapName, Common::kStandardActionOpenMainMenu, "C+F5");
 	//
 	// We want the AC_BACK key to be the default (until overridden explicitly by the user or a game engine)
 	// mapped key for the standard SKIP action.
@@ -856,10 +864,12 @@ Common::KeymapperDefaultBindings *OSystem_Android::getKeymapperDefaultBindings()
 	// [kStandardActionsKeymapName is defined  as (constant char*) in ./backends/keymapper/keymap, and utilised in getActionDefaultMappings()]
 	// ["If no keymap-specific default mapping was found, look for a standard action binding"]
 	keymapperDefaultBindings->setDefaultBinding(Common::kStandardActionsKeymapName, Common::kStandardActionSkip, "AC_BACK");
+	keymapperDefaultBindings->addDefaultBinding(Common::kStandardActionsKeymapName, Common::kStandardActionSkip, "JOY_Y");
 
 	// The "CLOS" action ID is not a typo.
 	// See: backends/keymapper/remap-widget.cpp:	kCloseCmd        = 'CLOS'
 	keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, "CLOS", "AC_BACK");
+	keymapperDefaultBindings->addDefaultBinding(Common::kGuiKeymapName, "CLOS", "JOY_Y");
 
 	// By default DPAD directions will be used for virtual mouse in GUI context
 	// If the user wants to remap them, they will be able to navigate to Global Options -> Keymaps and do so.

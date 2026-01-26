@@ -113,9 +113,9 @@ void SpriteResource::load(Common::SeekableReadStream &f) {
 		Image::BitmapDecoder bmpDecoder;
 		Common::File imgFile;
 
-		if (imgFile.open(fnPNG.c_str()) && pngDecoder.loadStream(imgFile)) {
+		if (Common::File::exists(fnPNG.c_str()) && imgFile.open(fnPNG.c_str()) && pngDecoder.loadStream(imgFile)) {
 			_index[i]._override.copyFrom(*pngDecoder.getSurface());
-		} else if (imgFile.open(fnBitmap.c_str()) && bmpDecoder.loadStream(imgFile)) {
+		} else if (Common::File::exists(fnBitmap.c_str()) && imgFile.open(fnBitmap.c_str()) && bmpDecoder.loadStream(imgFile)) {
 			_index[i]._override.copyFrom(*bmpDecoder.getSurface());
 		}
 	}

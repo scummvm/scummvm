@@ -578,6 +578,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "winniewitch",		"Winnie the Witch" },
 	{ "wishbone", 			"Wishbone and the Amazing Odyssey" },
 	{ "wrath",				"Wrath of the Gods" },
+	{ "wttf",				"Welcome to the Future" },
 	{ "xanthus",			"Xanthus" },
 	{ "xfools",				"The X-Fools: The Spoof is Out There" },
 	{ "xmasstory",			"A Christmas Story" },
@@ -1878,7 +1879,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "windows95",			"Microsoft Windows 95" },
 	{ "worldatlas",			"World Reference Atlas" },
 	{ "wpmainstreet",		"WordPerfect Main Street" },
-	{ "wttf",				"Welcome to the Future" },
 	{ "wwaldocircus",		"Where's Waldo? At the Circus" },
 	{ "wwaldogeo",			"Where's Waldo? Exploring Geography" },
 	{ "xfiles",				"The X-Files" },
@@ -2526,10 +2526,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1t("bestservice", "", "BESTDEMO.EXE", "437d0bc26a89a5f8cda3bef31db23897", 370015, 310),
 
-	MACGAME1("beyondthewall", "",  "Beyond The Wall Of Stars", "107c6a6d3cce957eaa26d427e672000c", 465267, 300),
-	MACGAME1("beyondthewall", "",  "Desktop Folder/bstars", "107c6a6d3cce957eaa26d427e672000c", 465267, 300),
-	WINGAME2t("beyondthewall", "", "WALL.EXE",	"36a8d553a58437752e12b250389a4629", 225253,
-								   "TITLE.MMM",	"1fa63036a9c55cdbec8830219315ee7a", 661220, 300),
+	MACGAME1("beyondthewall", "",  "Beyond The Wall Of Stars", "rt:449d133e14d82d6fc87d76fd048c588d", 465267, 300),
+	MACGAME1("beyondthewall", "",  "Desktop Folder/bstars", "rt:449d133e14d82d6fc87d76fd048c588d", 465267, 300),
+	WINGAME2t("beyondthewall", "", "PCMMMFIL/WALL.EXE",	"t:36a8d553a58437752e12b250389a4629", 225253,
+								   "PCMMMFIL/TITLE.MMM",	"d:9e77d5f51082677628f62112f79f2eeb", 661220, 300),
 
 	MACDEMO1_l("bigtimemovie", "Demo", "BIG TIME MOVIE-Studios", "f5277c53bacd27936158dd3867e587e2", 392265, Common::JA_JPN, 311),
 
@@ -6493,7 +6493,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO2("worldatlas", "Sampler", "ATLAS.EXE",		   "t:73fd017684b6fd92d0b8a743994705ab", 696807,
 									  "DATA/CONTENTM.DIR", "f:f4c9435dac6653651bf7c86480c3333b", 681228, 404),
 
-	// Full game is not Director
+	MACGAME1f("wttf", "", "BLUESKY/WELCOME24", "rt:e8072b708d1d05793d0b8a3f1e2f301b", 483808, 404, GF_32BPP),
 	MACDEMO1("wttf", "Demo", "WTTF", "01be45e7241194dad07938e7059b88e3", 483518, 404),
 
 	// Full game is not Director
@@ -6923,8 +6923,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	},
 
 	// Mini-game from Star Warped can also be launched separately
+	// German version from TRAC report #16437
 	MACGAME1("deathstar", "Minigame", "Death Star Destructo", "11aea1c6868839f53cc6312df724364f", 107835, 501),
 	WINGAME1t("deathstar", "Minigame", "DSD32.EXE", "9e3c304fdd669c79b5670057557cd1fb", 2758841, 501),
+	WINGAME1_l("deathstar", "Minigame", "DSD32.EXE", "t:4e5328a0a3092d65813101d96bc77994", 3016037, Common::DE_DEU, 501),
 
 	// From MacFormat #42
 	MACGAME1("digihbd", "", "Digital Happy Birthday Card", "61f3e061ae6236d8f72312ae9de83f46", 703153, 500),
@@ -8046,9 +8048,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Mac version requires installation, Install Star Warped, VISE
 	// Preview is from X-Fools disc
 	// Win/Mac previews from Microshaft Winblows are D6
+	// German version from TRAC report #16437
 	MACGAME1("starwarped", "", "Star Warped", "d2531c0b8c0553be7c7cd5f6c6a07b78", 107835, 501),
 	WINGAME1t("starwarped", "", "STARW32.EXE", "6fb02f659d0a3e8dd24bbf1933930138", 1863971, 501),
 	WINDEMO1("starwarped", "Preview", "EWOK32.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1411571, 501),
+	WINGAME1_l("starwarped", "", "STARW32.EXE", "t:c79bd82a757e5908a822069a03db0f2f", 1863219, Common::DE_DEU, 501),
 
 	MACGAME1("staytooned", "", "Power Mac Stay Tooned!", "r:d692140f81aaf86096538f66d6477404",   94045, 500),
 	WINGAME2("staytooned", "", "WIN95/START32.EXE",		 "t:32c18644025e9d2560d002f5a8024216", 1394421,
@@ -9013,6 +9017,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("pingu1", "", "Pingu",		 "r:5c4cee7e93b3ee1dbc7ce29e8e26ecd7", 1032759, Common::FR_FRA, 601),
 	WINGAME2_l("pingu1", "", "PINGU.EXE",	 "t:92bec8aaa2eb0534fcaa8926550af7e6", 2210575,
 							 "PINTITLE.DXR", "f:407aee858eb8b3a55565dc04a374651d",  499574, Common::FR_FRA, 602),
+	// Pingu: Jede Menge Spaß!
+	// German version
+	MACGAME1_l("pingu1", "", "Pingu",		 "r:7ec09e0a52e48d9e3d203c120b8262a7", 117136, Common::DE_DEU, 650),
+	WINGAME2_l("pingu1", "", "PINGU.EXE",	 "t:d1c1bce44761a5a04b839f0b4d83fdcb", 1519348,
+							 "PINTITLE.DIR", "f:a0caee07360fdf553d77cc6fa3688b6d",  488146, Common::DE_DEU, 650),
 
 	WINGAME1t("pinguss", "Screen Saver Selector, 1282C", "SetSaver.exe", "0f21f1be9dd5342dba28168ab3841378", 2736484, 602),
 	WINGAME1t("pinguss", "Screen Saver Player, 1282C", "Pingu_ss.exe", "75ef68e4bb5b6d0cc4f2bd194dccd1d1", 1513419, 602),

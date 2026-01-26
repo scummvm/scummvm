@@ -162,6 +162,7 @@ void Scheduler::processBonus(const int bonusIndex) {
 	if (!_points[bonusIndex]._scoredFl) {
 		_vm->adjustScore(_points[bonusIndex]._score);
 		_points[bonusIndex]._scoredFl = true;
+		_vm->_screen->updateStatusText();
 	}
 }
 
@@ -668,6 +669,8 @@ void Scheduler::screenActions(const int screenNum) {
 /**
  * Maze mode is enabled.  Check to see whether hero has crossed the maze
  * bounding box, if so, go to the next room
+ *
+ * Note that north and south boundaries are different in DOS and Windows.
  */
 void Scheduler::processMaze(const int x1, const int x2, const int y1, const int y2) {
 	debugC(1, kDebugSchedule, "processMaze");
@@ -686,14 +689,14 @@ void Scheduler::processMaze(const int x1, const int x2, const int y1, const int 
 		_actListArr[_alNewscrIndex][0]._a2._y = _vm->_hero->_y;
 		_vm->_route->resetRoute();
 		insertActionList(_alNewscrIndex);
-	} else if (y1 < _vm->_maze._y1 - kShiftSize) {
+	} else if (y1 < _vm->_maze._y1) {
 		// Exit north
 		_actListArr[_alNewscrIndex][3]._a8._screenIndex = *_vm->_screenPtr - _vm->_maze._size;
 		_actListArr[_alNewscrIndex][0]._a2._x = _vm->_maze._x3;
 		_actListArr[_alNewscrIndex][0]._a2._y = _vm->_maze._y2 - kShiftSize - (y2 - y1);
 		_vm->_route->resetRoute();
 		insertActionList(_alNewscrIndex);
-	} else if (y2 > _vm->_maze._y2 - kShiftSize / 2) {
+	} else if (y2 > _vm->_maze._y2) {
 		// Exit south
 		_actListArr[_alNewscrIndex][3]._a8._screenIndex = *_vm->_screenPtr + _vm->_maze._size;
 		_actListArr[_alNewscrIndex][0]._a2._x = _vm->_maze._x4;
@@ -1157,10 +1160,6 @@ void Scheduler::insertAction(Act *action) {
 	case AGSCHEDULE:
 		curEvent->_localActionFl = false;               // Lasts over a new screen
 		break;
-	// Workaround: When dying, switch to storyMode in order to block the keyboard.
-	case GAMEOVER:
-		_vm->getGameStatus()._storyModeFl = true;
-		// fall through
 	default:
 		curEvent->_localActionFl = true;                // Rest are for current screen only
 		break;
@@ -1258,7 +1257,9 @@ Event *Scheduler::doAction(Event *curEvent) {
 			insertActionList(action->_a11._actFailIndex);
 		break;
 	case TEXT:                                        // act12: Text box (CF WARN)
-		Utils::notifyBox(_vm->_file->fetchString(action->_a12._stringIndex));   // Fetch string from file
+		// Text boxes are protected in Hugo1 and Hugo2. Hugo3 added WARN action.
+		_vm->notifyBox(_vm->_file->fetchString(action->_a12._stringIndex),    // Fetch string from file
+		               _vm->getGameType() != kGameTypeHugo3);
 		break;
 	case SWAP_IMAGES:                                 // act13: Swap 2 object images
 		_vm->_object->swapImages(action->_a13._objIndex1, action->_a13._objIndex2, false);
@@ -1326,9 +1327,11 @@ Event *Scheduler::doAction(Event *curEvent) {
 		break;
 	case ADD_SCORE:                                   // act27: Add object's value to score
 		_vm->adjustScore(_vm->_object->_objects[action->_a27._objIndex]._objValue);
+		_vm->_screen->updateStatusText();
 		break;
 	case SUB_SCORE:                                   // act28: Subtract object's value from score
 		_vm->adjustScore(-_vm->_object->_objects[action->_a28._objIndex]._objValue);
+		_vm->_screen->updateStatusText();
 		break;
 	case COND_CARRY:                                  // act29: Conditional on object being carried
 		if (_vm->_object->isCarried(action->_a29._objIndex))
@@ -1383,7 +1386,7 @@ Event *Scheduler::doAction(Event *curEvent) {
 		gameStatus._storyModeFl = action->_a39._storyModeFl;
 		break;
 	case WARN:                                        // act40: Text box (CF TEXT)
-		Utils::notifyBox(_vm->_file->fetchString(action->_a40._stringIndex));
+		_vm->notifyBox(_vm->_file->fetchString(action->_a40._stringIndex), true);
 		break;
 	case COND_BONUS:                                  // act41: Perform action if got bonus
 		if (_points[action->_a41._bonusIndex]._scoredFl)
@@ -1392,10 +1395,10 @@ Event *Scheduler::doAction(Event *curEvent) {
 			insertActionList(action->_a41._actFailIndex);
 		break;
 	case TEXT_TAKE:                                   // act42: Text box with "take" message
-		Utils::notifyBox(Common::String::format(TAKE_TEXT, _vm->_text->getNoun(_vm->_object->_objects[action->_a42._objIndex]._nounIndex, TAKE_NAME)));
+		_vm->takeObjectBox(_vm->_text->getNoun(_vm->_object->_objects[action->_a42._objIndex]._nounIndex, TAKE_NAME));
 		break;
 	case YESNO:                                       // act43: Prompt user for Yes or No
-		if (Utils::yesNoBox(_vm->_file->fetchString(action->_a43._promptIndex)))
+		if (_vm->yesNoBox(_vm->_file->fetchString(action->_a43._promptIndex), false))
 			insertActionList(action->_a43._actYesIndex);
 		else
 			insertActionList(action->_a43._actNoIndex);
@@ -1547,7 +1550,7 @@ void Scheduler_v1d::runScheduler() {
 void Scheduler_v1d::promptAction(Act *action) {
 	Common::String response;
 
-	response = Utils::promptBox(_vm->_file->fetchString(action->_a3._promptIndex));
+	response = _vm->promptBox(_vm->_file->fetchString(action->_a3._promptIndex));
 
 #ifdef USE_TTS
 	_vm->_queueAllVoicing = true;
@@ -1594,7 +1597,7 @@ const char *Scheduler_v2d::getCypher() const {
 void Scheduler_v2d::promptAction(Act *action) {
 	Common::String response;
 
-	response = Utils::promptBox(_vm->_file->fetchString(action->_a3._promptIndex));
+	response = _vm->promptBox(_vm->_file->fetchString(action->_a3._promptIndex));
 	response.toLowercase();
 
 #ifdef USE_TTS
@@ -1666,4 +1669,45 @@ void Scheduler_v1w::runScheduler() {
 
 	_vm->getGameStatus()._tick++;                     // Accessed elsewhere via getTicks()
 }
+
+/**
+ * Maze mode is enabled.  Check to see whether hero has crossed the maze
+ * bounding box, if so, go to the next room
+ *
+ * Note that north and south boundaries are different in DOS and Windows.
+ */
+void Scheduler_v1w::processMaze(const int x1, const int x2, const int y1, const int y2) {
+	debugC(1, kDebugSchedule, "processMaze");
+
+	if (x1 < _vm->_maze._x1) {
+		// Exit west
+		_actListArr[_alNewscrIndex][3]._a8._screenIndex = *_vm->_screenPtr - 1;
+		_actListArr[_alNewscrIndex][0]._a2._x = _vm->_maze._x2 - kShiftSize - (x2 - x1);
+		_actListArr[_alNewscrIndex][0]._a2._y = _vm->_hero->_y;
+		_vm->_route->resetRoute();
+		insertActionList(_alNewscrIndex);
+	} else if (x2 > _vm->_maze._x2) {
+		// Exit east
+		_actListArr[_alNewscrIndex][3]._a8._screenIndex = *_vm->_screenPtr + 1;
+		_actListArr[_alNewscrIndex][0]._a2._x = _vm->_maze._x1 + kShiftSize;
+		_actListArr[_alNewscrIndex][0]._a2._y = _vm->_hero->_y;
+		_vm->_route->resetRoute();
+		insertActionList(_alNewscrIndex);
+	} else if (y1 < _vm->_maze._y1 - kShiftSize) {
+		// Exit north
+		_actListArr[_alNewscrIndex][3]._a8._screenIndex = *_vm->_screenPtr - _vm->_maze._size;
+		_actListArr[_alNewscrIndex][0]._a2._x = _vm->_maze._x3;
+		_actListArr[_alNewscrIndex][0]._a2._y = _vm->_maze._y2 - kShiftSize - (y2 - y1);
+		_vm->_route->resetRoute();
+		insertActionList(_alNewscrIndex);
+	} else if (y2 > _vm->_maze._y2 - kShiftSize / 2) {
+		// Exit south
+		_actListArr[_alNewscrIndex][3]._a8._screenIndex = *_vm->_screenPtr + _vm->_maze._size;
+		_actListArr[_alNewscrIndex][0]._a2._x = _vm->_maze._x4;
+		_actListArr[_alNewscrIndex][0]._a2._y = _vm->_maze._y1 + kShiftSize;
+		_vm->_route->resetRoute();
+		insertActionList(_alNewscrIndex);
+	}
+}
+
 } // End of namespace Hugo

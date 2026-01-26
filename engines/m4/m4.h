@@ -76,6 +76,8 @@ protected:
 	 */
 	virtual void setupConsole() = 0;
 
+	void pauseEngineIntern(bool pause) override;
+
 public:
 	M4Engine(OSystem *syst, const M4GameDescription *gameDesc);
 	~M4Engine() override = default;

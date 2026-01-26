@@ -15,9 +15,9 @@
 	<key>CFBundlePackageType</key>
 	<string>BNDL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.1.0git</string>
+	<string>2026.1.1git</string>
 	<key>CFBundleVersion</key>
-	<string>3.1.0git</string>
+	<string>2026.1.1git</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright 2001-2026 The ScummVM Team</string>
 	<key>NSPrincipalClass</key>

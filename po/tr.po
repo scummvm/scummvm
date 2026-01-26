@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-11-14 21:01+0000\n"
+"POT-Creation-Date: 2026-01-25 23:37+0000\n"
 "PO-Revision-Date: 2024-10-10 12:33+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -98,13 +98,13 @@ msgstr "Yukarı git"
 #: gui/downloadpacksdialog.cpp:465 gui/editgamedialog.cpp:340
 #: gui/editrecorddialog.cpp:66 gui/integrity-dialog.cpp:122
 #: gui/integrity-dialog.cpp:253 gui/filebrowser-dialog.cpp:68
-#: gui/fluidsynth-dialog.cpp:153 gui/massadd.cpp:93 gui/options.cpp:2414
+#: gui/fluidsynth-dialog.cpp:153 gui/massadd.cpp:93 gui/options.cpp:2416
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
 #: gui/recorderdialog.cpp:212 gui/remotebrowser.cpp:59
 #: gui/saveload-dialog.cpp:64 gui/saveload-dialog.cpp:456
 #: gui/saveload-dialog.cpp:540 gui/saveload-dialog.cpp:839
 #: gui/saveload-dialog.cpp:1243 gui/shaderbrowser-dialog.cpp:80
-#: gui/themebrowser.cpp:54 gui/unknown-game-dialog.cpp:53 base/main.cpp:592
+#: gui/themebrowser.cpp:54 gui/unknown-game-dialog.cpp:53 base/main.cpp:594
 #: dists/android.strings.xml.cpp:46 engines/engine.cpp:808
 #: engines/engine.cpp:833 backends/dialogs/gtk/gtk-dialogs.cpp:65
 #: backends/events/default/default-events.cpp:193
@@ -168,23 +168,23 @@ msgstr ""
 "Bu modda, Yerel Web Sunucusu çalışıyor olmalıdır,\n"
 " bu nedenle tarayıcınız verileri ScummVM'ye iletemez"
 
-#: gui/cloudconnectionwizard.cpp:257 gui/options.cpp:3774
+#: gui/cloudconnectionwizard.cpp:257 gui/options.cpp:3776
 msgid "Stop server"
 msgstr "Sunucuyu durdur"
 
-#: gui/cloudconnectionwizard.cpp:257 gui/options.cpp:2838
+#: gui/cloudconnectionwizard.cpp:257 gui/options.cpp:2840
 msgid "Run server"
 msgstr "Sunucuyu çalıştır"
 
-#: gui/cloudconnectionwizard.cpp:258 gui/options.cpp:3775
+#: gui/cloudconnectionwizard.cpp:258 gui/options.cpp:3777
 msgid "Stop local webserver"
 msgstr "Yerel Web sunucusunu durdur"
 
-#: gui/cloudconnectionwizard.cpp:258 gui/options.cpp:2838
+#: gui/cloudconnectionwizard.cpp:258 gui/options.cpp:2840
 msgid "Run local webserver"
 msgstr "Yerel web sunucusunu çalıştır"
 
-#: gui/cloudconnectionwizard.cpp:266 gui/options.cpp:2839 gui/options.cpp:3782
+#: gui/cloudconnectionwizard.cpp:266 gui/options.cpp:2841 gui/options.cpp:3784
 msgid "Not running"
 msgstr "Çalışmıyor"
 
@@ -197,7 +197,7 @@ msgid "Now, open this link in your browser:"
 msgstr "Şimdi, Bu Linki Tarayıcınızda Açınız:"
 
 #: gui/cloudconnectionwizard.cpp:286 gui/cloudconnectionwizard.cpp:347
-#: gui/message.cpp:257 gui/message.cpp:261
+#: gui/message.cpp:278 gui/message.cpp:282
 msgid "Open URL"
 msgstr "URL'yi aç"
 
@@ -319,17 +319,17 @@ msgstr "Başka depolama alanı şu anda çalışıyor. Engellemek ister misiniz?
 #: gui/cloudconnectionwizard.cpp:530 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:421 gui/launcher.cpp:450
-#: gui/launcher.cpp:510 gui/options.cpp:3483 gui/options.cpp:3857
-#: base/main.cpp:592 backends/events/default/default-events.cpp:193
-#: engines/buried/buried.cpp:598 engines/chamber/metaengine.cpp:91
-#: engines/director/events.cpp:102
+#: gui/launcher.cpp:523 gui/launcher.cpp:1444 gui/launcher.cpp:1823
+#: gui/options.cpp:3485 gui/options.cpp:3859 base/main.cpp:594
+#: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:598
+#: engines/chamber/metaengine.cpp:91 engines/director/events.cpp:102
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:139
 #: engines/efh/metaengine.cpp:362 engines/grim/grim.cpp:366
 #: engines/hypno/metaengine.cpp:192 engines/kyra/gui/saveload_eob.cpp:611
 #: engines/kyra/gui/saveload_eob.cpp:644 engines/lab/metaengine.cpp:197
 #: engines/parallaction/metaengine.cpp:169
-#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4324
-#: engines/sherlock/metaengine.cpp:638 engines/sherlock/metaengine.cpp:1242
+#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4321
+#: engines/sherlock/metaengine.cpp:638 engines/sherlock/metaengine.cpp:1244
 #: engines/sludge/event.cpp:144 engines/toon/toon.cpp:1550
 #: engines/zvision/zvision.cpp:321
 msgid "Yes"
@@ -338,16 +338,16 @@ msgstr "Evet"
 #: gui/cloudconnectionwizard.cpp:530 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:421 gui/launcher.cpp:450
-#: gui/launcher.cpp:510 gui/options.cpp:3483 gui/options.cpp:3857
-#: engines/buried/buried.cpp:598 engines/chamber/metaengine.cpp:97
-#: engines/director/events.cpp:102
+#: gui/launcher.cpp:523 gui/launcher.cpp:1444 gui/launcher.cpp:1823
+#: gui/options.cpp:3485 gui/options.cpp:3859 engines/buried/buried.cpp:598
+#: engines/chamber/metaengine.cpp:97 engines/director/events.cpp:102
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:139
 #: engines/efh/metaengine.cpp:368 engines/grim/grim.cpp:366
 #: engines/hypno/metaengine.cpp:198 engines/kyra/gui/saveload_eob.cpp:611
 #: engines/kyra/gui/saveload_eob.cpp:644 engines/lab/metaengine.cpp:204
 #: engines/parallaction/metaengine.cpp:175
-#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4324
-#: engines/sherlock/metaengine.cpp:643 engines/sherlock/metaengine.cpp:1248
+#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4321
+#: engines/sherlock/metaengine.cpp:643 engines/sherlock/metaengine.cpp:1250
 #: engines/sludge/event.cpp:144 engines/toon/toon.cpp:1550
 #: engines/zvision/zvision.cpp:322
 msgid "No"
@@ -364,29 +364,19 @@ msgstr "Depolama işini bitirene kadar bekleyin ve tekrar deneyin."
 msgid "JSON code contents are malformed."
 msgstr "JSON kod içerikleri hatalı."
 
-#: gui/cloudconnectionwizard.cpp:585 gui/downloaddialog.cpp:146
-#: gui/editgamedialog.cpp:341 gui/editrecorddialog.cpp:67
-#: gui/integrity-dialog.cpp:260 gui/fluidsynth-dialog.cpp:154
-#: gui/launcher.cpp:566 gui/launcher.cpp:570 gui/massadd.cpp:90
-#: gui/options.cpp:2416 gui/predictivedialog.cpp:69
-#: gui/saveload-dialog.cpp:1244 dists/android.strings.xml.cpp:33
-#: engines/engine.cpp:603 engines/engine.cpp:626
-#: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
-#: engines/agos/midi.cpp:320 engines/agos/midi.cpp:378
-#: engines/agos/midi.cpp:457 engines/buried/saveload.cpp:83
-#: engines/director/lingo/lingo-builtins.cpp:2474
+#: gui/cloudconnectionwizard.cpp:585 gui/editgamedialog.cpp:341
+#: gui/editrecorddialog.cpp:67 gui/integrity-dialog.cpp:260
+#: gui/fluidsynth-dialog.cpp:154 gui/massadd.cpp:90 gui/message.cpp:156
+#: gui/message.cpp:160 gui/message.cpp:231 gui/message.cpp:270
+#: gui/message.cpp:274 gui/options.cpp:2418 gui/predictivedialog.cpp:69
+#: gui/saveload-dialog.cpp:1244 base/main.cpp:661 base/main.cpp:686
+#: dists/android.strings.xml.cpp:33 backends/platform/wii/options.cpp:46
+#: engines/buried/buried.cpp:622 engines/buried/saveload.cpp:83
+#: engines/director/lingo/xlibs/j/jitdraw3.cpp:123
 #: engines/drascula/saveload.cpp:51 engines/grim/inputdialog.cpp:83
-#: engines/groovie/script.cpp:665 engines/mtropolis/mtropolis.cpp:114
-#: engines/mtropolis/mtropolis.cpp:124 engines/parallaction/saveload.cpp:270
-#: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:76
-#: engines/sci/graphics/controls32.cpp:934 engines/scumm/scumm.cpp:1359
-#: engines/scumm/scumm.cpp:1814 engines/scumm/scumm.cpp:2304
-#: engines/scumm/scumm.cpp:2320 engines/sky/compact.cpp:140
-#: engines/sword1/animation.cpp:566 engines/sword1/animation.cpp:574
-#: engines/sword1/control.cpp:2816 engines/sword1/logic.cpp:1738
-#: engines/sword2/animation.cpp:459 engines/sword2/animation.cpp:469
-#: engines/vcruise/vcruise.cpp:96 engines/vcruise/vcruise.cpp:106
-#: engines/zvision/file/save_manager.cpp:211
+#: engines/parallaction/saveload.cpp:270 engines/sci/engine/kgraphics.cpp:76
+#: engines/sci/graphics/controls32.cpp:934 engines/scumm/scumm.cpp:4333
+#: engines/sword1/control.cpp:2816
 msgid "OK"
 msgstr "Tamam"
 
@@ -472,7 +462,7 @@ msgid ""
 "files with it?"
 msgstr "Bağlantınız kısıtlı gibi görünüyor. Yine de indirmek istiyor musun?"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:673
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:686
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM belirtilen klasörü açamadı!"
 
@@ -566,15 +556,15 @@ msgstr ""
 msgid "Proceed"
 msgstr "Kabul"
 
-#: gui/dump-all-dialogs.cpp:123 gui/options.cpp:3345
+#: gui/dump-all-dialogs.cpp:123 gui/options.cpp:3347
 msgid "icon packs"
 msgstr "Simge paketleri"
 
-#: gui/dump-all-dialogs.cpp:127 gui/options.cpp:3356
+#: gui/dump-all-dialogs.cpp:127 gui/options.cpp:3358
 msgid "shader packs"
 msgstr "gölgelendirici paketleri"
 
-#: gui/dump-all-dialogs.cpp:146 gui/launcher.cpp:724
+#: gui/dump-all-dialogs.cpp:146 gui/launcher.cpp:737
 msgid "Pick the game:"
 msgstr "Oyunu seç:"
 
@@ -582,13 +572,13 @@ msgstr "Oyunu seç:"
 msgid "Game"
 msgstr "Oyun"
 
-#: gui/editgamedialog.cpp:164 gui/options.cpp:2073 gui/options.cpp:2252
+#: gui/editgamedialog.cpp:164 gui/options.cpp:2075 gui/options.cpp:2254
 #, fuzzy
 msgid "GFX"
 msgstr "GFX"
 
-#: gui/editgamedialog.cpp:164 gui/options.cpp:2073 gui/options.cpp:2252
-#: backends/graphics/atari/atari-graphics.cpp:1055
+#: gui/editgamedialog.cpp:164 gui/options.cpp:2075 gui/options.cpp:2254
+#: backends/graphics/atari/atari-graphics.cpp:1054
 #: backends/graphics/sdl/sdl-graphics.cpp:488
 msgid "Graphics"
 msgstr "Grafik Ayarları"
@@ -602,11 +592,11 @@ msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "Global grafik ayarlarını bastırma"
 
-#: gui/editgamedialog.cpp:185 gui/options.cpp:2286 engines/dialogs.cpp:346
+#: gui/editgamedialog.cpp:185 gui/options.cpp:2288 engines/dialogs.cpp:346
 msgid "Keymaps"
 msgstr "Klavye haritası"
 
-#: gui/editgamedialog.cpp:197 gui/options.cpp:2298 engines/dialogs.cpp:358
+#: gui/editgamedialog.cpp:197 gui/options.cpp:2300 engines/dialogs.cpp:358
 msgid "Backend"
 msgstr "Altyapı"
 
@@ -621,7 +611,7 @@ msgctxt "lowres"
 msgid "Override global backend settings"
 msgstr "Global ses ayarlarını bastırma"
 
-#: gui/editgamedialog.cpp:220 gui/options.cpp:2316 engines/dialogs.cpp:321
+#: gui/editgamedialog.cpp:220 gui/options.cpp:2318 engines/dialogs.cpp:321
 msgid "Audio"
 msgstr "Ses"
 
@@ -634,11 +624,11 @@ msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "Global ses ayarlarını bastırma"
 
-#: gui/editgamedialog.cpp:234 gui/options.cpp:2321
+#: gui/editgamedialog.cpp:234 gui/options.cpp:2323
 msgid "Volume"
 msgstr "Ses Ayarı"
 
-#: gui/editgamedialog.cpp:236 gui/options.cpp:2323
+#: gui/editgamedialog.cpp:236 gui/options.cpp:2325
 msgctxt "lowres"
 msgid "Volume"
 msgstr "Ses Ayarı"
@@ -652,7 +642,7 @@ msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "Global ses ayarlarını bastırma"
 
-#: gui/editgamedialog.cpp:252 gui/options.cpp:2331
+#: gui/editgamedialog.cpp:252 gui/options.cpp:2333
 #, fuzzy
 msgid "MIDI"
 msgstr "MIDI"
@@ -666,7 +656,7 @@ msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "Global MIDI ayarlarını bastırma"
 
-#: gui/editgamedialog.cpp:267 gui/options.cpp:2337
+#: gui/editgamedialog.cpp:267 gui/options.cpp:2339
 msgid "MT-32"
 msgstr "MT-32"
 
@@ -679,11 +669,11 @@ msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "Global MT-32 ayarlarını bastırma"
 
-#: gui/editgamedialog.cpp:281 gui/options.cpp:2344
+#: gui/editgamedialog.cpp:281 gui/options.cpp:2346
 msgid "Paths"
 msgstr "Yollar"
 
-#: gui/editgamedialog.cpp:283 gui/options.cpp:2346
+#: gui/editgamedialog.cpp:283 gui/options.cpp:2348
 msgctxt "lowres"
 msgid "Paths"
 msgstr "Yollar"
@@ -705,7 +695,7 @@ msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Oyun Yolu:"
 
-#: gui/editgamedialog.cpp:303 gui/options.cpp:2553
+#: gui/editgamedialog.cpp:303 gui/options.cpp:2555
 msgid "Extra Path:"
 msgstr "Ekstralar Yolu:"
 
@@ -714,33 +704,33 @@ msgstr "Ekstralar Yolu:"
 msgid "Specifies path to additional data used by the game"
 msgstr "Oyun tarafından kullanılan ek verinin yolunu belirler"
 
-#: gui/editgamedialog.cpp:305 gui/options.cpp:2555
+#: gui/editgamedialog.cpp:305 gui/options.cpp:2557
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Ekstralar Yolu:"
 
-#: gui/editgamedialog.cpp:306 gui/options.cpp:2528 gui/options.cpp:2556
-#: gui/options.cpp:2565 gui/options.cpp:2846
-#: backends/platform/libretro/src/libretro-options-widget.cpp:244
+#: gui/editgamedialog.cpp:306 gui/options.cpp:2530 gui/options.cpp:2558
+#: gui/options.cpp:2567 gui/options.cpp:2848
+#: backends/platform/libretro/src/libretro-options-widget.cpp:271
 msgctxt "path"
 msgid "None"
 msgstr "Yok"
 
-#: gui/editgamedialog.cpp:312 gui/options.cpp:2517
+#: gui/editgamedialog.cpp:312 gui/options.cpp:2519
 msgid "Save Path:"
 msgstr "Kaydetme Yolu:"
 
 #: gui/editgamedialog.cpp:312 gui/editgamedialog.cpp:314
-#: gui/editgamedialog.cpp:315 gui/options.cpp:2517 gui/options.cpp:2519
+#: gui/editgamedialog.cpp:315 gui/options.cpp:2519 gui/options.cpp:2521
 msgid "Specifies where your saved games are put"
 msgstr "Kaydedilen oyunlarin konacağı yeri belirler"
 
-#: gui/editgamedialog.cpp:314 gui/options.cpp:2519
+#: gui/editgamedialog.cpp:314 gui/options.cpp:2521
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Kaydetme Yolu:"
 
-#: gui/editgamedialog.cpp:315 gui/options.cpp:1842 gui/options.cpp:2520
+#: gui/editgamedialog.cpp:315 gui/options.cpp:1844 gui/options.cpp:2522
 #: backends/platform/wii/options.cpp:55
 msgid "Default"
 msgstr "Varsayılan"
@@ -798,9 +788,9 @@ msgstr "Oyunun dili. Bu ayar sizin İspanyolca oyununuzu İngilizce'ye çevirmez
 
 #: gui/editgamedialog.cpp:365 gui/editgamedialog.cpp:380 gui/options.cpp:1613
 #: gui/options.cpp:1627 gui/options.cpp:1644 gui/options.cpp:1658
-#: gui/options.cpp:1675 gui/options.cpp:1711 gui/options.cpp:1727
-#: gui/options.cpp:2142 gui/options.cpp:2598 gui/options.cpp:2672
-#: gui/options.cpp:2886 gui/options.cpp:3387 audio/null.cpp:45
+#: gui/options.cpp:1675 gui/options.cpp:1713 gui/options.cpp:1729
+#: gui/options.cpp:2144 gui/options.cpp:2600 gui/options.cpp:2674
+#: gui/options.cpp:2888 gui/options.cpp:3389 audio/null.cpp:45
 #: backends/platform/android/options.cpp:157
 #: backends/platform/android/options.cpp:158
 #: backends/platform/android/options.cpp:186
@@ -827,7 +817,7 @@ msgctxt "lowres"
 msgid "Platform:"
 msgstr "Platform:"
 
-#: gui/editgamedialog.cpp:566 gui/options.cpp:3411
+#: gui/editgamedialog.cpp:566 gui/options.cpp:3413
 msgid "Select SoundFont"
 msgstr "Soundfont Seç"
 
@@ -835,11 +825,11 @@ msgstr "Soundfont Seç"
 msgid "Select additional game directory"
 msgstr "Oyun ek klasörünü seç"
 
-#: gui/editgamedialog.cpp:618 gui/options.cpp:3259
+#: gui/editgamedialog.cpp:618 gui/options.cpp:3261
 msgid "Select directory for saved games"
 msgstr "Kaydedilmiş oyunların klasörünü seç"
 
-#: gui/editgamedialog.cpp:625 gui/options.cpp:3266
+#: gui/editgamedialog.cpp:625 gui/options.cpp:3268
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Seçilmiş klasörün üzerine yazılamıyor. Başka seçin."
 
@@ -983,7 +973,7 @@ msgstr "Sinüs"
 msgid "Triangle"
 msgstr "Üçgen"
 
-#: gui/fluidsynth-dialog.cpp:139 gui/options.cpp:2364
+#: gui/fluidsynth-dialog.cpp:139 gui/options.cpp:2366
 msgid "Misc"
 msgstr "Diğer"
 
@@ -1023,7 +1013,7 @@ msgstr ""
 "Bütün FluidSynth ayarlarını varsayilan degerlerine döndürmeyi gerçekten "
 "istiyor musun?"
 
-#: gui/gui-manager.cpp:159 gui/options.cpp:2355
+#: gui/gui-manager.cpp:159 gui/options.cpp:2357
 msgid "GUI"
 msgstr "GUI"
 
@@ -1034,7 +1024,7 @@ msgstr "GUI"
 #: engines/mohawk/riven.cpp:853 engines/sludge/keymapper_tables.h:40
 #: engines/supernova/metaengine.cpp:226 engines/teenagent/metaengine.cpp:207
 #: engines/ultima/ultima4/metaengine.cpp:42
-#: engines/ultima/ultima4/metaengine.cpp:144 engines/voyeur/metaengine.cpp:192
+#: engines/ultima/ultima4/metaengine.cpp:146 engines/voyeur/metaengine.cpp:192
 msgid "Interact"
 msgstr "Etkileşim"
 
@@ -1047,9 +1037,10 @@ msgstr "Etkileşim"
 #: engines/icb/icb.cpp:152 engines/scumm/metaengine.cpp:1020
 #: engines/supernova/metaengine.cpp:273 engines/twine/metaengine.cpp:430
 #: engines/twine/metaengine.cpp:497 engines/twp/metaengine.cpp:154
+#: engines/ultima/ultima0/metaengine.cpp:45
 #: engines/ultima/ultima4/metaengine.cpp:44
-#: engines/ultima/ultima4/metaengine.cpp:136
-#: engines/ultima/ultima4/metaengine.cpp:146
+#: engines/ultima/ultima4/metaengine.cpp:138
+#: engines/ultima/ultima4/metaengine.cpp:148
 #: engines/wintermute/keymapper_tables.h:1290
 #: engines/wintermute/keymapper_tables.h:1373
 #: engines/wintermute/keymapper_tables.h:1449
@@ -1067,9 +1058,10 @@ msgstr "Yukarı"
 #: engines/icb/icb.cpp:157 engines/scumm/metaengine.cpp:987
 #: engines/supernova/metaengine.cpp:279 engines/twine/metaengine.cpp:437
 #: engines/twine/metaengine.cpp:505 engines/twp/metaengine.cpp:155
+#: engines/ultima/ultima0/metaengine.cpp:46
 #: engines/ultima/ultima4/metaengine.cpp:45
-#: engines/ultima/ultima4/metaengine.cpp:137
-#: engines/ultima/ultima4/metaengine.cpp:147
+#: engines/ultima/ultima4/metaengine.cpp:139
+#: engines/ultima/ultima4/metaengine.cpp:149
 #: engines/wintermute/keymapper_tables.h:1296
 #: engines/wintermute/keymapper_tables.h:1379
 #: engines/wintermute/keymapper_tables.h:1456
@@ -1087,8 +1079,8 @@ msgstr "Aşağı"
 #: engines/scumm/metaengine.cpp:1000 engines/twine/metaengine.cpp:452
 #: engines/twine/metaengine.cpp:520 engines/twp/metaengine.cpp:152
 #: engines/ultima/ultima4/metaengine.cpp:46
-#: engines/ultima/ultima4/metaengine.cpp:138
-#: engines/ultima/ultima4/metaengine.cpp:148
+#: engines/ultima/ultima4/metaengine.cpp:140
+#: engines/ultima/ultima4/metaengine.cpp:150
 #: engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1302
 #: engines/wintermute/keymapper_tables.h:1385
@@ -1107,8 +1099,8 @@ msgstr "Sol"
 #: engines/scumm/metaengine.cpp:1007 engines/twine/metaengine.cpp:444
 #: engines/twine/metaengine.cpp:513 engines/twp/metaengine.cpp:153
 #: engines/ultima/ultima4/metaengine.cpp:47
-#: engines/ultima/ultima4/metaengine.cpp:139
-#: engines/ultima/ultima4/metaengine.cpp:149
+#: engines/ultima/ultima4/metaengine.cpp:141
+#: engines/ultima/ultima4/metaengine.cpp:151
 #: engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1308
 #: engines/wintermute/keymapper_tables.h:1391
@@ -1130,7 +1122,10 @@ msgstr "Altyapı"
 msgid "Delete Character"
 msgstr "Karakteri sil"
 
-#: gui/gui-manager.cpp:210
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the save file name input field
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the password input field
+#: gui/gui-manager.cpp:210 engines/sherlock/metaengine.cpp:1117
+#: engines/sherlock/metaengine.cpp:1222
 msgid "Go to end of line"
 msgstr ""
 
@@ -1146,7 +1141,10 @@ msgstr "Soundfont Seç"
 msgid "Select to start of line"
 msgstr "Eklentilerin klasörünü seç"
 
-#: gui/gui-manager.cpp:240
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the save file name input field
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the password input field
+#: gui/gui-manager.cpp:240 engines/sherlock/metaengine.cpp:1110
+#: engines/sherlock/metaengine.cpp:1215
 msgid "Go to start of line"
 msgstr ""
 
@@ -1230,7 +1228,7 @@ msgid ""
 "and illegal game copies.\n"
 msgstr ""
 
-#: gui/helpdialog.cpp:68 gui/options.cpp:2375
+#: gui/helpdialog.cpp:68 gui/options.cpp:2377
 msgid "Cloud"
 msgstr "Bulut"
 
@@ -1367,7 +1365,7 @@ msgstr ""
 msgid "Select Group by"
 msgstr ""
 
-#: gui/launcher.cpp:234 gui/launcher.cpp:919
+#: gui/launcher.cpp:234 gui/launcher.cpp:932
 msgid "Group:"
 msgstr ""
 
@@ -1466,12 +1464,12 @@ msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Toplu Ekleme..."
 
-#: gui/launcher.cpp:302 gui/launcher.cpp:889 gui/shaderbrowser-dialog.cpp:61
+#: gui/launcher.cpp:302 gui/launcher.cpp:902 gui/shaderbrowser-dialog.cpp:61
 #: gui/shaderbrowser-dialog.cpp:97
 msgid "Search in game list"
 msgstr "Oyun listesinde ara"
 
-#: gui/launcher.cpp:306 gui/launcher.cpp:910 gui/shaderbrowser-dialog.cpp:65
+#: gui/launcher.cpp:306 gui/launcher.cpp:923 gui/shaderbrowser-dialog.cpp:65
 #: gui/shaderbrowser-dialog.cpp:107
 msgid "Search:"
 msgstr "Arama:"
@@ -1499,123 +1497,131 @@ msgstr ""
 msgid "Do you really want to remove this game configuration?"
 msgstr "Bu oyun konfigürasyonunu kaldırmak istediğinizden emin misiniz?"
 
-#: gui/launcher.cpp:509
+#: gui/launcher.cpp:522
 msgid "Do you want to load saved game?"
 msgstr "Kaydedilmiş oyunu yüklemek istiyor musunuz?"
 
-#: gui/launcher.cpp:566
+#: gui/launcher.cpp:579
 msgid "This game does not support loading games from the launcher."
 msgstr "Bu oyun, başlatıcısan kaydedilmiş oyun yüklemeyi desteklemiyor."
 
-#: gui/launcher.cpp:570
+#: gui/launcher.cpp:583
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM bu oyunu çalıştırabilecek bir motor bulamadı!"
 
-#: gui/launcher.cpp:676 gui/launcher.cpp:700
+#: gui/launcher.cpp:689 gui/launcher.cpp:713
 msgid ""
 "Have you given ScummVM access rights to this directory? Press the help "
 "button [?] on the top for detailed instructions"
 msgstr ""
 
-#: gui/launcher.cpp:697
+#: gui/launcher.cpp:710
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM belirlenen klasörde bir oyun bulamadı!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:718 engines/engine.cpp:1235
+#: gui/launcher.cpp:731 engines/engine.cpp:1235
 #, fuzzy
 msgid "Unknown variant"
 msgstr "Bilinmeyen varyant"
 
-#: gui/launcher.cpp:956 gui/saveload-dialog.cpp:381
+#: gui/launcher.cpp:971 gui/saveload-dialog.cpp:381
 msgid "List view"
 msgstr "Liste görünümü"
 
-#: gui/launcher.cpp:957 gui/saveload-dialog.cpp:382
+#: gui/launcher.cpp:972 gui/saveload-dialog.cpp:382
 msgid "Grid view"
 msgstr "Matris görünümü"
 
-#: gui/launcher.cpp:1099
+#: gui/launcher.cpp:1117
 msgid "~S~tart"
 msgstr "~B~aşlat"
 
-#: gui/launcher.cpp:1099
+#: gui/launcher.cpp:1117
 msgid "Start selected game"
 msgstr "Seçilen oyunu başlatın"
 
-#: gui/launcher.cpp:1102
+#: gui/launcher.cpp:1120
 msgid "~L~oad..."
 msgstr "~Y~ükle..."
 
-#: gui/launcher.cpp:1102
+#: gui/launcher.cpp:1120
 msgid "Load saved game for selected game"
 msgstr "Seçilmiş oyun icin kaydedilmiş oyunu yükle"
 
-#: gui/launcher.cpp:1104
+#: gui/launcher.cpp:1122
 msgid "Record..."
 msgstr "Kayıt..."
 
-#: gui/launcher.cpp:1110
+#: gui/launcher.cpp:1128
 #, fuzzy
 msgid "~G~ame Options..."
 msgstr "A~y~arlar..."
 
-#: gui/launcher.cpp:1110
+#: gui/launcher.cpp:1128
 msgid "Change game options"
 msgstr "Oyun seçeneklerini değiştirme"
 
-#: gui/launcher.cpp:1110
+#: gui/launcher.cpp:1128
 #, fuzzy
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "A~y~arlar..."
 
-#: gui/launcher.cpp:1194
+#: gui/launcher.cpp:1213
 msgid "Add-on"
 msgstr ""
 
 #. I18N: List grouping when no engine is specified
-#: gui/launcher.cpp:1244 gui/launcher.cpp:1446
+#: gui/launcher.cpp:1263 gui/launcher.cpp:1529
 #, fuzzy
 msgid "Unknown Engine"
 msgstr "Bilinmeyen varyant"
 
 #. I18N: List grouping when no publisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1261 gui/launcher.cpp:1463
+#: gui/launcher.cpp:1280 gui/launcher.cpp:1546
 #, fuzzy
 msgid "Unknown Publisher"
 msgstr "Bilinmeyen Yazar"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1278 gui/launcher.cpp:1480
+#: gui/launcher.cpp:1297 gui/launcher.cpp:1563
 msgid "No Series"
 msgstr ""
 
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1292 gui/launcher.cpp:1494
+#: gui/launcher.cpp:1311 gui/launcher.cpp:1577
 msgid "Language not detected"
 msgstr ""
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1306 gui/launcher.cpp:1508
+#: gui/launcher.cpp:1325 gui/launcher.cpp:1591
 msgid "Platform not detected"
 msgstr ""
 
 #. I18N: List group when no year is specified
-#: gui/launcher.cpp:1323 gui/launcher.cpp:1525
+#: gui/launcher.cpp:1342 gui/launcher.cpp:1608
 #, fuzzy
 #| msgid "Unknown error"
 msgid "Unknown Year"
 msgstr "Bilinmeyen hata"
 
+#: gui/launcher.cpp:1434 gui/launcher.cpp:1810
+#, fuzzy
+#| msgid "Do you really want to remove this game configuration?"
+msgid ""
+"Do you really want to remove the following game configurations?\n"
+"\n"
+msgstr "Bu oyun konfigürasyonunu kaldırmak istediğinizden emin misiniz?"
+
 #. I18N: Group for All items
-#: gui/launcher.cpp:1532 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1615 gui/widgets/groupedlist.cpp:81
 msgid "All"
 msgstr ""
 
-#: gui/launcher.cpp:1687
+#: gui/launcher.cpp:1781
 msgid "Icons per row:"
 msgstr ""
 
@@ -1847,25 +1853,25 @@ msgctxt "shader"
 msgid "None"
 msgstr "Hiçbiri"
 
-#: gui/options.cpp:1692
+#: gui/options.cpp:1693
 #, fuzzy
 #| msgid "Download game files"
 msgid "Download Shaders"
 msgstr "Oyun dosyalarını indir"
 
-#: gui/options.cpp:1692
+#: gui/options.cpp:1693
 msgid "Check on the scummvm.org website for updates of shader packs"
 msgstr ""
 
-#: gui/options.cpp:1698 backends/graphics/sdl/sdl-graphics.cpp:479
+#: gui/options.cpp:1700 backends/graphics/sdl/sdl-graphics.cpp:479
 msgid "Fullscreen mode"
 msgstr "Tam ekran modu"
 
-#: gui/options.cpp:1701
+#: gui/options.cpp:1703
 msgid "V-Sync"
 msgstr ""
 
-#: gui/options.cpp:1701
+#: gui/options.cpp:1703
 #, fuzzy
 msgid ""
 "Wait for the vertical sync to refresh the screen in order to prevent tearing "
@@ -1873,136 +1879,136 @@ msgid ""
 msgstr ""
 "3B renderlamada ekranı yenilemek için kullanılan dikey senkronizasyonu bekle"
 
-#: gui/options.cpp:1706
+#: gui/options.cpp:1708
 msgid "Game 3D Renderer:"
 msgstr "Oyun 3B Renderlama:"
 
-#: gui/options.cpp:1708
+#: gui/options.cpp:1710
 #, fuzzy
 msgctxt "lowres"
 msgid "Game 3D Renderer:"
 msgstr "Oyun 3B Renderlama:"
 
-#: gui/options.cpp:1725
+#: gui/options.cpp:1727
 msgid "3D Anti-aliasing:"
 msgstr "3B Anti merdiven efekti:"
 
-#: gui/options.cpp:1729 engines/mohawk/dialogs.cpp:364
+#: gui/options.cpp:1731 engines/mohawk/dialogs.cpp:364
 msgid "Disabled"
 msgstr "Pasifleşmiş"
 
-#: gui/options.cpp:1737
+#: gui/options.cpp:1739
 msgid "Filter graphics"
 msgstr "Grafik filtreleme"
 
-#: gui/options.cpp:1737
+#: gui/options.cpp:1739
 msgid "Use linear filtering when scaling graphics"
 msgstr "Grafik orantılama yapılırken doğrusal filtreleme"
 
-#: gui/options.cpp:1741
+#: gui/options.cpp:1743
 msgid "Aspect ratio correction"
 msgstr "Görüntü oranı düzeltme"
 
-#: gui/options.cpp:1741
+#: gui/options.cpp:1743
 msgid "Correct aspect ratio for games"
 msgstr "Oyunlar için görüntü oranını düzeltme"
 
-#: gui/options.cpp:1758
+#: gui/options.cpp:1760
 msgid "Preferred device:"
 msgstr "Tercih edilen cihaz:"
 
-#: gui/options.cpp:1758
+#: gui/options.cpp:1760
 msgid "Music device:"
 msgstr "Müzik cihazı:"
 
-#: gui/options.cpp:1758 gui/options.cpp:1760
+#: gui/options.cpp:1760 gui/options.cpp:1762
 msgid "Specifies preferred sound device or sound card emulator"
 msgstr "Tercih edilen ses cihazı veya ses kartı emülatörünü belirtir"
 
-#: gui/options.cpp:1758 gui/options.cpp:1760 gui/options.cpp:1761
+#: gui/options.cpp:1760 gui/options.cpp:1762 gui/options.cpp:1763
 msgid "Specifies output sound device or sound card emulator"
 msgstr "Çıkış ses cihazı veya ses kartı emülatörünü belirtir"
 
-#: gui/options.cpp:1760
+#: gui/options.cpp:1762
 msgctxt "lowres"
 msgid "Preferred dev.:"
 msgstr "Tercih edilen cih.:"
 
-#: gui/options.cpp:1760
+#: gui/options.cpp:1762
 msgctxt "lowres"
 msgid "Music device:"
 msgstr "Müzik cihazı:"
 
-#: gui/options.cpp:1786
+#: gui/options.cpp:1788
 msgid "AdLib emulator:"
 msgstr "AdLib emülatörü:"
 
-#: gui/options.cpp:1786 gui/options.cpp:1789
+#: gui/options.cpp:1788 gui/options.cpp:1791
 msgid "AdLib is used for music in many games"
 msgstr "AdLib birçok oyunda müzik için kullanılır"
 
-#: gui/options.cpp:1802
+#: gui/options.cpp:1804
 msgid "GM device:"
 msgstr "GM cihazı:"
 
-#: gui/options.cpp:1802
+#: gui/options.cpp:1804
 msgid "Specifies default sound device for General MIDI output"
 msgstr "Genel MIDI çıkışı için varsayılan ses cihazını belirler"
 
-#: gui/options.cpp:1813
+#: gui/options.cpp:1815
 msgid "Don't use General MIDI music"
 msgstr "Genel MIDI müzik kullanma"
 
-#: gui/options.cpp:1824 gui/options.cpp:1893
+#: gui/options.cpp:1826 gui/options.cpp:1895
 msgid "Use first available device"
 msgstr "İlk müsait cihazı kullan"
 
-#: gui/options.cpp:1836
+#: gui/options.cpp:1838
 msgid "SoundFont:"
 msgstr "Sesfontu:"
 
-#: gui/options.cpp:1836 gui/options.cpp:1838 gui/options.cpp:1846
+#: gui/options.cpp:1838 gui/options.cpp:1840 gui/options.cpp:1848
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
 msgstr ""
 "Sesfontu FluidSynth ve Timidity gibi bazı ses kartları tarafından "
 "desteklenmektedir"
 
-#: gui/options.cpp:1838
+#: gui/options.cpp:1840
 msgctxt "lowres"
 msgid "SoundFont:"
 msgstr "Sesfontu:"
 
-#: gui/options.cpp:1844
+#: gui/options.cpp:1846
 msgctxt "soundfont"
 msgid "None"
 msgstr "Yok"
 
-#: gui/options.cpp:1851
+#: gui/options.cpp:1853
 msgid "Mixed AdLib/MIDI mode"
 msgstr "Karışık AdLib/MIDI modu"
 
-#: gui/options.cpp:1851
+#: gui/options.cpp:1853
 msgid "Use both MIDI and AdLib sound generation"
 msgstr "MIDI ve AdLib ses üretimini beraber kullan"
 
-#: gui/options.cpp:1854
+#: gui/options.cpp:1856
 msgid "MIDI gain:"
 msgstr "MIDI kazancı:"
 
-#: gui/options.cpp:1864
+#: gui/options.cpp:1866
 msgid "MT-32 Device:"
 msgstr "MT-32 Cihazı:"
 
-#: gui/options.cpp:1864
+#: gui/options.cpp:1866
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr ""
 "Roland MT-32/LAPC1/CM32l/CM64 çıkışı için varsayılan ses cihazını belirler"
 
-#: gui/options.cpp:1869
+#: gui/options.cpp:1871
 msgid "True Roland MT-32 (disable GM emulation)"
 msgstr "Gerçek Roland MT-32 (GM emülatörünü iptal et)"
 
-#: gui/options.cpp:1869 gui/options.cpp:1871
+#: gui/options.cpp:1871 gui/options.cpp:1873
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
@@ -2010,16 +2016,16 @@ msgstr ""
 "Roland uyumlu gerçek cihazınızı bilgisayarınıza bağlayıp kullanmak "
 "istiyorsanız tik atın"
 
-#: gui/options.cpp:1871
+#: gui/options.cpp:1873
 msgctxt "lowres"
 msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Gerçek Roland MT-32 (GM emülatörü yok)"
 
-#: gui/options.cpp:1874
+#: gui/options.cpp:1876
 msgid "Roland GS device (enable MT-32 mappings)"
 msgstr "Roland GS cihazı (MT-32 eşleşmelerini aktive et)"
 
-#: gui/options.cpp:1874
+#: gui/options.cpp:1876
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
@@ -2027,239 +2033,239 @@ msgstr ""
 "Roland GS'de MT-32 emüle etmek için yama eşleştirmelerini aktive etmek "
 "istiyorsanız işaretleyin"
 
-#: gui/options.cpp:1883
+#: gui/options.cpp:1885
 msgid "Don't use Roland MT-32 music"
 msgstr "Roland MT-32 müzik kullanma"
 
-#: gui/options.cpp:1910
+#: gui/options.cpp:1912
 msgid "Text and speech:"
 msgstr "Metin ve Konuşma:"
 
-#: gui/options.cpp:1914 gui/options.cpp:1924
+#: gui/options.cpp:1916 gui/options.cpp:1926
 msgid "Speech"
 msgstr "Konuşma:"
 
-#: gui/options.cpp:1915 gui/options.cpp:1925
+#: gui/options.cpp:1917 gui/options.cpp:1927
 msgid "Subtitles"
 msgstr "Altyazılar"
 
-#: gui/options.cpp:1916
+#: gui/options.cpp:1918
 msgid "Both"
 msgstr "Her ikisi"
 
-#: gui/options.cpp:1918
+#: gui/options.cpp:1920
 msgid "Subtitle speed:"
 msgstr "Altyazı hızı:"
 
-#: gui/options.cpp:1920
+#: gui/options.cpp:1922
 msgctxt "lowres"
 msgid "Text and speech:"
 msgstr "Metin ve Konuşma:"
 
-#: gui/options.cpp:1924
+#: gui/options.cpp:1926
 msgid "Spch"
 msgstr "Konuşma"
 
-#: gui/options.cpp:1925
+#: gui/options.cpp:1927
 msgid "Subs"
 msgstr "A.yazılar"
 
-#: gui/options.cpp:1926
+#: gui/options.cpp:1928
 msgctxt "lowres"
 msgid "Both"
 msgstr "Her ikisi"
 
-#: gui/options.cpp:1926
+#: gui/options.cpp:1928
 msgid "Show subtitles and play speech"
 msgstr "Altyazıları göster ve konuşma sesini oynat"
 
-#: gui/options.cpp:1928
+#: gui/options.cpp:1930
 msgctxt "lowres"
 msgid "Subtitle speed:"
 msgstr "Altyazı hızı:"
 
-#: gui/options.cpp:1950
+#: gui/options.cpp:1952
 msgid "Music volume:"
 msgstr "Müzik ses düzeyi:"
 
-#: gui/options.cpp:1952
+#: gui/options.cpp:1954
 msgctxt "lowres"
 msgid "Music volume:"
 msgstr "Müzik ses düzeyi:"
 
-#: gui/options.cpp:1961
+#: gui/options.cpp:1963
 msgid "Mute all"
 msgstr "Bütün sesleri sustur"
 
-#: gui/options.cpp:1964
+#: gui/options.cpp:1966
 msgid "SFX volume:"
 msgstr "Efekt sesi düzeyi:"
 
-#: gui/options.cpp:1964 gui/options.cpp:1966 gui/options.cpp:1969
+#: gui/options.cpp:1966 gui/options.cpp:1968 gui/options.cpp:1971
 msgid "Special sound effects volume"
 msgstr "Özel ses efektleri ses düzeyi"
 
-#: gui/options.cpp:1966
+#: gui/options.cpp:1968
 msgctxt "lowres"
 msgid "SFX volume:"
 msgstr "Efektler ses düzeyi:"
 
-#: gui/options.cpp:1976
+#: gui/options.cpp:1978
 msgid "Speech volume:"
 msgstr "Konuşma ses düzeyi:"
 
-#: gui/options.cpp:1978
+#: gui/options.cpp:1980
 msgctxt "lowres"
 msgid "Speech volume:"
 msgstr "Konuşma ses düzeyi:"
 
-#: gui/options.cpp:2264
+#: gui/options.cpp:2266
 msgid "Control"
 msgstr "Kontrol"
 
-#: gui/options.cpp:2377
+#: gui/options.cpp:2379
 msgctxt "lowres"
 msgid "Cloud"
 msgstr "Bulut"
 
-#: gui/options.cpp:2392
+#: gui/options.cpp:2394
 msgid "LAN"
 msgstr "Yerel Ağ"
 
-#: gui/options.cpp:2394
+#: gui/options.cpp:2396
 msgctxt "lowres"
 msgid "LAN"
 msgstr "Yerel Ağ"
-
-#: gui/options.cpp:2403
-msgid "Accessibility"
-msgstr "Erişilebilirlik"
 
 #: gui/options.cpp:2405
+msgid "Accessibility"
+msgstr "Erişilebilirlik"
+
+#: gui/options.cpp:2407
 msgctxt "lowres"
 msgid "Accessibility"
 msgstr "Erişilebilirlik"
 
-#: gui/options.cpp:2414
+#: gui/options.cpp:2416
 msgid "Discard changes and close the dialog"
 msgstr ""
 
-#: gui/options.cpp:2415
+#: gui/options.cpp:2417
 msgid "Apply"
 msgstr "Uygula"
 
-#: gui/options.cpp:2415
+#: gui/options.cpp:2417
 msgid "Apply changes without closing the dialog"
 msgstr ""
 
-#: gui/options.cpp:2416
+#: gui/options.cpp:2418
 msgid "Apply changes and close the dialog"
 msgstr ""
 
-#: gui/options.cpp:2506
+#: gui/options.cpp:2508
 msgid "FluidSynth Settings"
 msgstr "FluidSynth Ayarları"
 
-#: gui/options.cpp:2520
+#: gui/options.cpp:2522
 msgid ""
 "Specifies where your saved games are put. A red coloring indicates the value "
 "is temporary and will not get saved"
 msgstr ""
 
-#: gui/options.cpp:2525
+#: gui/options.cpp:2527
 msgid "Theme Path:"
 msgstr "Tema Disk Klasörü:"
 
-#: gui/options.cpp:2527
+#: gui/options.cpp:2529
 msgctxt "lowres"
 msgid "Theme Path:"
 msgstr "Tema Disk Klasörü:"
-
-#: gui/options.cpp:2533
-#, fuzzy
-msgid "Icon Path:"
-msgstr "/kök/ Yolu:"
 
 #: gui/options.cpp:2535
 #, fuzzy
+msgid "Icon Path:"
+msgstr "/kök/ Yolu:"
+
+#: gui/options.cpp:2537
+#, fuzzy
 msgctxt "lowres"
 msgid "Icon Path:"
 msgstr "/kök/ Yolu:"
 
-#: gui/options.cpp:2536 gui/options.cpp:2546
+#: gui/options.cpp:2538 gui/options.cpp:2548
 #, fuzzy
 msgctxt "path"
 msgid "Default"
 msgstr "Varsayılan"
 
-#: gui/options.cpp:2543
+#: gui/options.cpp:2545
 #, fuzzy
 #| msgid "Game Path:"
 msgid "DLC Path:"
 msgstr "Oyun Yolu:"
 
-#: gui/options.cpp:2545
+#: gui/options.cpp:2547
 #, fuzzy
 #| msgid "Game Path:"
 msgctxt "lowres"
 msgid "DLC Path:"
 msgstr "Oyun Yolu:"
 
-#: gui/options.cpp:2553 gui/options.cpp:2555 gui/options.cpp:2556
+#: gui/options.cpp:2555 gui/options.cpp:2557 gui/options.cpp:2558
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr ""
 "Bütün oyunlar veya ScummVM tarafından kullanılan ek verinin yolunu belirler"
 
-#: gui/options.cpp:2562
+#: gui/options.cpp:2564
 msgid "Plugins Path:"
 msgstr "Eklentilerin Klasörü:"
 
-#: gui/options.cpp:2564
+#: gui/options.cpp:2566
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "Eklentilerin Klasörü:"
 
-#: gui/options.cpp:2574
+#: gui/options.cpp:2576
 msgid "ScummVM config path: "
 msgstr ""
 
-#: gui/options.cpp:2588
+#: gui/options.cpp:2590
 msgid "ScummVM log path: "
 msgstr ""
 
-#: gui/options.cpp:2593
+#: gui/options.cpp:2595
 msgid "View"
 msgstr ""
 
 #. I18N: Referring to the last path memorized when adding a game
-#: gui/options.cpp:2603 gui/options.cpp:3387
+#: gui/options.cpp:2605 gui/options.cpp:3389
 msgid "Last browser path: "
 msgstr ""
 
-#: gui/options.cpp:2608
+#: gui/options.cpp:2610
 msgid "Theme:"
 msgstr "Tema:"
 
-#: gui/options.cpp:2613
+#: gui/options.cpp:2615
 #, fuzzy
 msgid "GUI scale:"
 msgstr "Arayüz Dili:"
 
-#: gui/options.cpp:2630
+#: gui/options.cpp:2632
 #, c-format
 msgid "%d%% - Custom"
 msgstr ""
 
-#: gui/options.cpp:2634
+#: gui/options.cpp:2636
 msgid "GUI renderer:"
 msgstr "Arayüz çizici:"
 
-#: gui/options.cpp:2647
+#: gui/options.cpp:2649
 #, fuzzy
 msgid "Return to the launcher when leaving a game"
 msgstr "Oyundan çıkış yaparken her zaman başlatıcıya dön"
 
-#: gui/options.cpp:2648
+#: gui/options.cpp:2650
 #, fuzzy
 msgid ""
 "Return to the launcher when leaving a game instead of closing ScummVM\n"
@@ -2267,38 +2273,38 @@ msgid ""
 msgstr ""
 "ScummVM'i kapatmak dışında oyundan çıkış yaparken her zaman başlatıcıya dön."
 
-#: gui/options.cpp:2655
+#: gui/options.cpp:2657
 msgid "Ask for confirmation on exit"
 msgstr "Çıkış yaparken onaylama yap"
 
-#: gui/options.cpp:2656
+#: gui/options.cpp:2658
 msgid "Ask for permission when closing ScummVM or leaving a game."
 msgstr "ScummVM'i kapatırken veya oyundan çıkarken izin iste."
 
-#: gui/options.cpp:2662
+#: gui/options.cpp:2664
 #, fuzzy
 msgid "Disable fixed font scaling"
 msgstr "3B Anti merdiven efekti:"
 
-#: gui/options.cpp:2663
+#: gui/options.cpp:2665
 msgid ""
 "Do not upscale fixed size fonts in the GUI. This reduces artefacts on low "
 "resolution screens"
 msgstr ""
 
-#: gui/options.cpp:2669
+#: gui/options.cpp:2671
 msgid "GUI language:"
 msgstr "Arayüz Dili:"
 
-#: gui/options.cpp:2669
+#: gui/options.cpp:2671
 msgid "Language of ScummVM GUI"
 msgstr "ScummVM arayüzünün Dili"
 
-#: gui/options.cpp:2695
+#: gui/options.cpp:2697
 msgid "Switch the ScummVM GUI language to the game language"
 msgstr "Oyun dilini ScummVM arayüz dili ile değiştir"
 
-#: gui/options.cpp:2696
+#: gui/options.cpp:2698
 msgid ""
 "When starting a game, change the ScummVM GUI language to the game language. "
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
@@ -2308,11 +2314,11 @@ msgstr ""
 "eğer bir oyun ScummVM kayıt ve yükleme menüsünü kullanırsa, oyun içerisinde "
 "her ikisi de aynı dil olur."
 
-#: gui/options.cpp:2708
+#: gui/options.cpp:2710
 msgid "Use native system file browser"
 msgstr "Sistem doğal dosya tarayıcısını kullan"
 
-#: gui/options.cpp:2709
+#: gui/options.cpp:2711
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
@@ -2320,77 +2326,77 @@ msgstr ""
 "Dosya veya klasör seçimi için ScummVM'inkini değil sistem doğal dosya "
 "tarayıcısını kullan."
 
-#: gui/options.cpp:2716
+#: gui/options.cpp:2718
 #, fuzzy
 msgid "Download Icons"
 msgstr "Aşağı"
 
-#: gui/options.cpp:2716
+#: gui/options.cpp:2718
 msgid "Check on the scummvm.org website for updates of icon packs"
 msgstr ""
 
-#: gui/options.cpp:2722
+#: gui/options.cpp:2724
 msgid "Autosave:"
 msgstr "Otomatik Kayıt:"
 
-#: gui/options.cpp:2724
+#: gui/options.cpp:2726
 msgctxt "lowres"
 msgid "Autosave:"
 msgstr "Otomatik Kayıt:"
 
-#: gui/options.cpp:2735
+#: gui/options.cpp:2737
 msgid "Random seed:"
 msgstr ""
 
-#: gui/options.cpp:2735
+#: gui/options.cpp:2737
 msgid "Seed for initializing all random number generators"
 msgstr ""
 
-#: gui/options.cpp:2743
+#: gui/options.cpp:2745
 msgid "Debug level:"
 msgstr ""
 
 #. I18N: Debug level -1, no messages
-#: gui/options.cpp:2747 gui/options.cpp:2884
+#: gui/options.cpp:2749 gui/options.cpp:2886
 msgid "None"
 msgstr "Hiçbiri"
 
 #. I18N: Debug level 11, all messages
-#: gui/options.cpp:2753
+#: gui/options.cpp:2755
 msgid "11 (all)"
 msgstr ""
 
-#: gui/options.cpp:2757
+#: gui/options.cpp:2759
 msgid "Enable Discord integration"
 msgstr ""
 
-#: gui/options.cpp:2758
+#: gui/options.cpp:2760
 msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
 msgstr ""
 
-#: gui/options.cpp:2768 gui/updates-dialog.cpp:87
+#: gui/options.cpp:2770 gui/updates-dialog.cpp:87
 msgid "Update check:"
 msgstr "Güncelleme kontrolü:"
 
-#: gui/options.cpp:2768
+#: gui/options.cpp:2770
 msgid "How often to check ScummVM updates"
 msgstr "ScummVM güncellemelerinin kontrol edilme sıklığı"
 
-#: gui/options.cpp:2779
+#: gui/options.cpp:2781
 msgid "Check now"
 msgstr "Şimdi kontrol et"
 
-#: gui/options.cpp:2786
+#: gui/options.cpp:2788
 msgid "Active storage:"
 msgstr "Aktif depolama:"
 
-#: gui/options.cpp:2786
+#: gui/options.cpp:2788
 msgid "Active cloud storage"
 msgstr "Aktif bulut depolama"
 
-#: gui/options.cpp:2795
+#: gui/options.cpp:2797
 #, fuzzy
 #| msgctxt "lowres"
 #| msgid ""
@@ -2403,7 +2409,7 @@ msgstr ""
 "4. Depolama daha aktifleştirilmedi. Kullanıcı isminin doğru olduğunu kontrol "
 "ederek aktifleştirin:"
 
-#: gui/options.cpp:2797
+#: gui/options.cpp:2799
 #, fuzzy
 #| msgid ""
 #| "4. Storage is not yet enabled. Verify that username is correct and enable "
@@ -2414,106 +2420,106 @@ msgstr ""
 "4. Depolama daha aktifleştirilmedi. Kullanıcı isminin doğru olduğunu kontrol "
 "ederek aktifleştirin:"
 
-#: gui/options.cpp:2798
+#: gui/options.cpp:2800
 msgid "Enable storage"
 msgstr "Depolamayı aktif edin"
 
-#: gui/options.cpp:2798
+#: gui/options.cpp:2800
 msgid "Confirm you want to use this account for this storage"
 msgstr "Depolama için bu hesabı kullanmak istediğinizi onaylayın"
 
-#: gui/options.cpp:2800 backends/platform/wii/options.cpp:113
+#: gui/options.cpp:2802 backends/platform/wii/options.cpp:113
 msgid "Username:"
 msgstr "Kullanıcı adı:"
 
-#: gui/options.cpp:2800
+#: gui/options.cpp:2802
 msgid "Username used by this storage"
 msgstr "Bu depolama alanı tarafından kullanılan kullanıcı adı"
 
-#: gui/options.cpp:2801
+#: gui/options.cpp:2803
 msgid "<none>"
 msgstr "<Hiçbiri>"
 
-#: gui/options.cpp:2803
+#: gui/options.cpp:2805
 msgid "Used space:"
 msgstr "Kullanılan Alan:"
 
-#: gui/options.cpp:2803
+#: gui/options.cpp:2805
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr "Bu depolama alanında ScummVM'in oyun kayıtlarının kullandığı alan"
 
-#: gui/options.cpp:2806
+#: gui/options.cpp:2808
 msgid "Last sync:"
 msgstr "Son senkronizasyon:"
 
-#: gui/options.cpp:2806
+#: gui/options.cpp:2808
 msgid "When was the last time saved games were synced with this storage"
 msgstr "Bu depolamada en son ne zaman kayıtlı oyunlar senkronize edildi"
 
-#: gui/options.cpp:2807 gui/options.cpp:3691
+#: gui/options.cpp:2809 gui/options.cpp:3693
 msgid "<never>"
 msgstr "<Hiçbir zaman>"
 
-#: gui/options.cpp:2809
+#: gui/options.cpp:2811
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "Kayıt veya oyun yükleme sonrası kayıtlı oyunları otomatik olarak senkronize "
 "et."
 
-#: gui/options.cpp:2811
+#: gui/options.cpp:2813
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "Kayıt veya oyun yükleme sonrası kayıtlı oyunları otomatik olarak senkronize "
 "et."
 
-#: gui/options.cpp:2812
+#: gui/options.cpp:2814
 msgid "Sync now"
 msgstr "Şimdi Senkroniz"
 
-#: gui/options.cpp:2812
+#: gui/options.cpp:2814
 msgid "Start saved games sync"
 msgstr "Seçilen oyunu başlatın"
 
-#: gui/options.cpp:2815
+#: gui/options.cpp:2817
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "Bulut ScummVM klasöründen oyun dosyalarını indirebilirsiniz:"
 
-#: gui/options.cpp:2817
+#: gui/options.cpp:2819
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "Bulut ScummVM klasöründen oyun dosyalarını indirebilirsiniz:"
 
-#: gui/options.cpp:2818
+#: gui/options.cpp:2820
 msgid "Download game files"
 msgstr "Oyun dosyalarını indir"
 
-#: gui/options.cpp:2818
+#: gui/options.cpp:2820
 msgid "Open downloads manager dialog"
 msgstr "İndirme yöneticisi penceresini aç"
 
-#: gui/options.cpp:2821
+#: gui/options.cpp:2823
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
 "Bu depolama için kullanılan hesabı değiştirmek için, bağlantıyı kes ve "
 "yeniden kur:"
 
-#: gui/options.cpp:2823
+#: gui/options.cpp:2825
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
 "Bu depolama için kullanılan hesabı değiştirmek için, bağlantıyı kes ve "
 "yeniden kur:"
 
-#: gui/options.cpp:2824
+#: gui/options.cpp:2826
 msgid "Disconnect"
 msgstr "Bağlantıyı kopar"
 
-#: gui/options.cpp:2824
+#: gui/options.cpp:2826
 msgid "Stop using this storage on this device"
 msgstr "Bu cihazda bu depolamayı kullanmayı bırak"
 
-#: gui/options.cpp:2827
+#: gui/options.cpp:2829
 #, fuzzy
 #| msgctxt "lowres"
 #| msgid "This storage is not connected yet! To connect,"
@@ -2521,82 +2527,82 @@ msgctxt "lowres"
 msgid "This storage is not connected yet!"
 msgstr "Bu depolama alanına bağlantı daha kurulamadı! Bağlanmak için,"
 
-#: gui/options.cpp:2829
+#: gui/options.cpp:2831
 #, fuzzy
 #| msgid "This storage is not connected yet! To connect,"
 msgid "This storage is not connected yet!"
 msgstr "Bu depolama alanına bağlantı daha kurulamadı! Bağlanmak için,"
 
-#: gui/options.cpp:2830
+#: gui/options.cpp:2832
 #, fuzzy
 #| msgid "3. Connect"
 msgid "Connect"
 msgstr "3.Bağlan"
 
-#: gui/options.cpp:2830
+#: gui/options.cpp:2832
 msgid "Connect your cloud storage account"
 msgstr "Bulut depolama hesabınıza bağlanın"
 
-#: gui/options.cpp:2843
+#: gui/options.cpp:2845
 msgctxt "lowres"
 msgid "/root/ Path:"
 msgstr "/kök/ Yolu:"
 
-#: gui/options.cpp:2843 gui/options.cpp:2845 gui/options.cpp:2846
+#: gui/options.cpp:2845 gui/options.cpp:2847 gui/options.cpp:2848
 msgid "Select which directory will be shown as /root/ in the Files Manager"
 msgstr "Hangi klasörün /kök/ olarak kullanılacağını Dosya Yöneticisinden seç"
 
-#: gui/options.cpp:2845
+#: gui/options.cpp:2847
 msgid "/root/ Path:"
 msgstr "/kök/ Yolu:"
 
-#: gui/options.cpp:2851
+#: gui/options.cpp:2853
 msgid "Server's port:"
 msgstr "Sunucunun portu:"
 
-#: gui/options.cpp:2851
+#: gui/options.cpp:2853
 msgid "Port for server to use"
 msgstr "Sunucunun kullanacağı port"
 
-#: gui/options.cpp:2856
+#: gui/options.cpp:2858
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 "Tarayıcıda dosyaları yönetmek için sunucuyu çalıştır (aynı ağ içerisinde)."
-
-#: gui/options.cpp:2857
-msgctxt "lowres"
-msgid "Closing options dialog will stop the server."
-msgstr "Seçenekler penceresini kapatmak sunucuyu da kapatır."
 
 #: gui/options.cpp:2859
+msgctxt "lowres"
+msgid "Closing options dialog will stop the server."
+msgstr "Seçenekler penceresini kapatmak sunucuyu da kapatır."
+
+#: gui/options.cpp:2861
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 "Tarayıcıda dosyaları yönetmek için sunucuyu çalıştır (aynı ağ içerisinde)."
 
-#: gui/options.cpp:2860
+#: gui/options.cpp:2862
 msgid "Closing options dialog will stop the server."
 msgstr "Seçenekler penceresini kapatmak sunucuyu da kapatır."
 
-#: gui/options.cpp:2871
+#: gui/options.cpp:2873
 msgid "Use Text to speech"
 msgstr "Konuşma için metin kullan"
 
-#: gui/options.cpp:2871
+#: gui/options.cpp:2873
 #, fuzzy
 msgid "Will read text in gui on mouse over."
 msgstr "Fare üzerinden geçerken arayüzde metni okuyacak."
 
-#: gui/options.cpp:2952
+#: gui/options.cpp:2954
 msgid "Ignore"
 msgstr ""
 
-#: gui/options.cpp:2953
+#: gui/options.cpp:2955
 #, fuzzy
 msgid "Disable autosave"
 msgstr "İptal"
 
-#: gui/options.cpp:2954
+#: gui/options.cpp:2956
 msgid ""
 "WARNING: Autosave was enabled. Some of your games have existing saved games "
 "on the autosave slot. You can either move the existing saves to new slots, "
@@ -2605,14 +2611,14 @@ msgid ""
 "List of games:\n"
 msgstr ""
 
-#: gui/options.cpp:2963
+#: gui/options.cpp:2965
 #, fuzzy
 msgid ""
 "\n"
 "And more..."
 msgstr "~O~yun Ekle..."
 
-#: gui/options.cpp:2964 engines/engine.cpp:655
+#: gui/options.cpp:2966 engines/engine.cpp:655
 #: engines/access/metaengine.cpp:281 engines/drascula/metaengine.cpp:255
 #: engines/queen/metaengine.cpp:269 engines/sherlock/metaengine.cpp:410
 #: engines/ultima/nuvie/metaengine.cpp:71
@@ -2620,27 +2626,27 @@ msgstr "~O~yun Ekle..."
 msgid "Move"
 msgstr "Sol"
 
-#: gui/options.cpp:2983
+#: gui/options.cpp:2985
 msgid "ERROR: Failed to move the following saved games:\n"
 msgstr ""
 
-#: gui/options.cpp:3079
+#: gui/options.cpp:3081
 msgid "Failed to change cloud storage!"
 msgstr "Bulut depolaması değiştirilemedi!"
 
-#: gui/options.cpp:3082
+#: gui/options.cpp:3084
 msgid "Another cloud storage is already active."
 msgstr "Başka bir bulut depolama şu anda aktif."
 
-#: gui/options.cpp:3197
+#: gui/options.cpp:3199
 msgid "Theme does not support selected language!"
 msgstr "Tema seçilen dili desteklemiyor!"
 
-#: gui/options.cpp:3200
+#: gui/options.cpp:3202
 msgid "Theme cannot be loaded!"
 msgstr "Tema yüklenemedi!"
 
-#: gui/options.cpp:3203
+#: gui/options.cpp:3205
 msgid ""
 "\n"
 "Misc settings will be restored."
@@ -2648,46 +2654,46 @@ msgstr ""
 "\n"
 "Farklı ayarlar yeniden yapılandırılamadı."
 
-#: gui/options.cpp:3275
+#: gui/options.cpp:3277
 msgid "Select directory for GUI themes"
 msgstr "Arayüz temalarının klasörünü seç"
 
-#: gui/options.cpp:3285
+#: gui/options.cpp:3287
 #, fuzzy
 msgid "Select directory for GUI launcher thumbnails"
 msgstr "Arayüz temalarının klasörünü seç"
 
-#: gui/options.cpp:3296
+#: gui/options.cpp:3298
 #, fuzzy
 #| msgid "Select directory for plugins"
 msgid "Select directory for DLC downloads"
 msgstr "Eklentilerin klasörünü seç"
 
-#: gui/options.cpp:3307
+#: gui/options.cpp:3309
 msgid "Select directory for extra files"
 msgstr "Ekstar dosyaların klasörünü seç"
 
-#: gui/options.cpp:3318
+#: gui/options.cpp:3320
 msgid "Select directory for plugins"
 msgstr "Eklentilerin klasörünü seç"
 
-#: gui/options.cpp:3331
+#: gui/options.cpp:3333
 msgid "Select directory for Files Manager /root/"
 msgstr "Dosya Yöneticisinin /root/ klasörünü seç"
 
-#: gui/options.cpp:3483
+#: gui/options.cpp:3485
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Bu depolama hala çalışıyor. Engellemek ister misiniz?"
 
-#: gui/options.cpp:3492
+#: gui/options.cpp:3494
 msgid "Wait until current Storage finishes up and try again."
 msgstr "Depolama işini bitirene kadar bekleyin ve tekrar deneyin."
 
-#: gui/options.cpp:3689 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:3691 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<Şimdi>"
 
-#: gui/options.cpp:3832
+#: gui/options.cpp:3834
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -2695,13 +2701,13 @@ msgstr ""
 "İstek başarılamadı.\n"
 "İnternet bağlantınızı kontrol edin."
 
-#: gui/options.cpp:3855
+#: gui/options.cpp:3857
 msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scaler settings?"
 msgstr ""
 
-#: gui/options.cpp:3858
+#: gui/options.cpp:3860
 #, c-format
 msgid "Reverting automatically in %d seconds"
 msgstr ""
@@ -2763,7 +2769,7 @@ msgstr "Kayıt"
 msgid "Playback"
 msgstr "Oynatma"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:291
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:360
 msgid "Edit"
 msgstr "Düzenle"
 
@@ -2961,21 +2967,21 @@ msgstr ""
 msgid "Clear value"
 msgstr "Değeri sil"
 
-#: gui/widgets/grid.cpp:285
+#: gui/widgets/grid.cpp:354
 msgid "Play"
 msgstr ""
 
-#: gui/widgets/grid.cpp:288
+#: gui/widgets/grid.cpp:357
 #, fuzzy
 msgid "Saves"
 msgstr "Kaydet"
 
-#: base/main.cpp:592
+#: base/main.cpp:594
 msgid "Bad config file format. overwrite?"
 msgstr ""
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
-#: base/main.cpp:641
+#: base/main.cpp:643
 msgid ""
 "In this new version of ScummVM for Android, significant changes were made to "
 "the file access system to allow support for modern versions of the Android "
@@ -2998,20 +3004,13 @@ msgid ""
 "Repeat steps 1 and 6 for each game."
 msgstr ""
 
-#: base/main.cpp:659 base/main.cpp:684
-#: engines/director/lingo/lingo-builtins.cpp:1718
-#: engines/director/lingo/xlibs/j/jitdraw3.cpp:123
-#: engines/director/lingo/xlibs/j/jitdraw3.cpp:131
-msgid "Ok"
-msgstr "Ok"
-
 #. I18N: A button caption to dismiss a message and read it later
-#: base/main.cpp:661 base/main.cpp:686
+#: base/main.cpp:663 base/main.cpp:688
 msgid "Read Later"
 msgstr ""
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
-#: base/main.cpp:668
+#: base/main.cpp:670
 msgid ""
 "In this new version of ScummVM for Android, significant changes were made to "
 "the file access system to allow support for modern versions of the Android "
@@ -3032,7 +3031,7 @@ msgid ""
 "Repeat steps 1 and 6 for each game."
 msgstr ""
 
-#: base/main.cpp:829 base/main.cpp:878
+#: base/main.cpp:834 base/main.cpp:883
 msgid "Error running game:"
 msgstr "Çalıştırılan oyunda hata:"
 
@@ -3281,13 +3280,17 @@ msgstr ""
 #: engines/mohawk/riven_stacks/aspit.cpp:454
 #: engines/neverhood/metaengine.cpp:200 engines/saga/metaengine.cpp:449
 #: engines/scumm/help.cpp:84 engines/scumm/help.cpp:86
-#: engines/sludge/keymapper_tables.h:95 engines/sludge/keymapper_tables.h:144
-#: engines/sludge/keymapper_tables.h:223 engines/sludge/keymapper_tables.h:343
-#: engines/sludge/keymapper_tables.h:355 engines/sludge/keymapper_tables.h:416
-#: engines/sludge/keymapper_tables.h:429 engines/sludge/keymapper_tables.h:541
-#: engines/supernova/metaengine.cpp:267 engines/tinsel/metaengine.cpp:335
-#: engines/titanic/metaengine.cpp:302 engines/ultima/nuvie/metaengine.cpp:91
-#: engines/zvision/metaengine.cpp:292 engines/zvision/metaengine.cpp:310
+#: engines/scumm/scumm.cpp:4333 engines/sludge/keymapper_tables.h:95
+#: engines/sludge/keymapper_tables.h:144 engines/sludge/keymapper_tables.h:223
+#: engines/sludge/keymapper_tables.h:343 engines/sludge/keymapper_tables.h:355
+#: engines/sludge/keymapper_tables.h:416 engines/sludge/keymapper_tables.h:429
+#: engines/sludge/keymapper_tables.h:541 engines/supernova/metaengine.cpp:267
+#: engines/tinsel/metaengine.cpp:335 engines/titanic/metaengine.cpp:302
+#: engines/ultima/ultima0/metaengine.cpp:48
+#: engines/ultima/ultima0/metaengine.cpp:71
+#: engines/ultima/ultima0/metaengine.cpp:85
+#: engines/ultima/nuvie/metaengine.cpp:93 engines/zvision/metaengine.cpp:292
+#: engines/zvision/metaengine.cpp:310
 #, fuzzy
 msgid "Quit"
 msgstr "Oyun"
@@ -3347,7 +3350,7 @@ msgid "Alt"
 msgstr ""
 
 #: dists/android.strings.xml.cpp:48
-#: backends/platform/libretro/src/libretro-options-widget.cpp:222
+#: backends/platform/libretro/src/libretro-options-widget.cpp:249
 msgid "Done"
 msgstr ""
 
@@ -3790,11 +3793,11 @@ msgstr ""
 #: engines/metaengine.cpp:82 engines/agos/metaengine.cpp:158
 #: engines/asylum/metaengine.cpp:159 engines/bbvs/metaengine.cpp:99
 #: engines/cge/metaengine.cpp:203 engines/cge2/metaengine.cpp:216
-#: engines/cine/metaengine.cpp:277 engines/composer/metaengine.cpp:113
+#: engines/cine/metaengine.cpp:277 engines/composer/metaengine.cpp:114
 #: engines/cruise/metaengine.cpp:173 engines/draci/metaengine.cpp:200
 #: engines/groovie/metaengine.cpp:205 engines/hdb/metaengine.cpp:207
-#: engines/hopkins/metaengine.cpp:211 engines/hugo/metaengine.cpp:123
-#: engines/illusions/metaengine.cpp:94 engines/kyra/engine/eobcommon.cpp:367
+#: engines/hopkins/metaengine.cpp:211 engines/hugo/metaengine.cpp:134
+#: engines/illusions/metaengine.cpp:94 engines/kyra/engine/eobcommon.cpp:369
 #: engines/kyra/engine/lol.cpp:502 engines/lure/metaengine.cpp:177
 #: engines/made/metaengine.cpp:137 engines/mads/metaengine.cpp:280
 #: engines/mtropolis/metaengine.cpp:161 engines/nancy/input.cpp:181
@@ -3804,8 +3807,9 @@ msgstr ""
 #: engines/tinsel/metaengine.cpp:246 engines/toon/metaengine.cpp:86
 #: engines/touche/metaengine.cpp:122 engines/trecision/metaengine.cpp:125
 #: engines/tsage/metaengine.cpp:178 engines/tucker/metaengine.cpp:172
-#: engines/ultima/ultima4/metaengine.cpp:224
-#: engines/ultima/nuvie/metaengine.cpp:235
+#: engines/ultima/ultima0/metaengine.cpp:180
+#: engines/ultima/ultima4/metaengine.cpp:226
+#: engines/ultima/nuvie/metaengine.cpp:238
 #: engines/ultima/ultima8/metaengine.cpp:139 engines/vcruise/metaengine.cpp:158
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:203
 #, fuzzy
@@ -3823,11 +3827,11 @@ msgstr "Sağ"
 #: engines/metaengine.cpp:93 engines/agos/metaengine.cpp:164
 #: engines/asylum/metaengine.cpp:165 engines/bbvs/metaengine.cpp:105
 #: engines/cge/metaengine.cpp:209 engines/cge2/metaengine.cpp:222
-#: engines/cine/metaengine.cpp:283 engines/composer/metaengine.cpp:119
+#: engines/cine/metaengine.cpp:283 engines/composer/metaengine.cpp:120
 #: engines/cruise/metaengine.cpp:179 engines/draci/metaengine.cpp:206
 #: engines/groovie/metaengine.cpp:211 engines/hopkins/metaengine.cpp:217
-#: engines/hugo/metaengine.cpp:130 engines/illusions/metaengine.cpp:101
-#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:503
+#: engines/hugo/metaengine.cpp:141 engines/illusions/metaengine.cpp:101
+#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:503
 #: engines/lure/metaengine.cpp:183 engines/made/metaengine.cpp:144
 #: engines/mads/metaengine.cpp:286 engines/mtropolis/metaengine.cpp:167
 #: engines/nancy/input.cpp:188 engines/parallaction/metaengine.cpp:144
@@ -3836,8 +3840,9 @@ msgstr "Sağ"
 #: engines/sword1/metaengine.cpp:277 engines/tinsel/metaengine.cpp:252
 #: engines/toon/metaengine.cpp:92 engines/touche/metaengine.cpp:128
 #: engines/trecision/metaengine.cpp:131 engines/tsage/metaengine.cpp:184
-#: engines/tucker/metaengine.cpp:178 engines/ultima/ultima4/metaengine.cpp:230
-#: engines/ultima/nuvie/metaengine.cpp:241
+#: engines/tucker/metaengine.cpp:178 engines/ultima/ultima0/metaengine.cpp:186
+#: engines/ultima/ultima4/metaengine.cpp:232
+#: engines/ultima/nuvie/metaengine.cpp:244
 #: engines/ultima/ultima8/metaengine.cpp:145
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:209
 #, fuzzy
@@ -3871,7 +3876,7 @@ msgstr "Oyun"
 #. I18N: Skipping cutscene plaback
 #. I18N: Skipping cutscene playback
 #: engines/metaengine.cpp:112 engines/access/metaengine.cpp:208
-#: engines/composer/metaengine.cpp:125 engines/drascula/metaengine.cpp:224
+#: engines/composer/metaengine.cpp:126 engines/drascula/metaengine.cpp:224
 #: engines/efh/metaengine.cpp:379 engines/freescape/movement.cpp:87
 #: engines/grim/grim.cpp:533 engines/grim/grim.cpp:633
 #: engines/illusions/metaengine.cpp:142 engines/made/metaengine.cpp:151
@@ -4051,11 +4056,11 @@ msgstr ""
 msgid "MT-32 emulator"
 msgstr "AdLib emülatörü:"
 
-#: audio/softsynth/pcspk.cpp:254
+#: audio/softsynth/pcspk.cpp:250
 msgid "PC Speaker emulator"
 msgstr ""
 
-#: audio/softsynth/pcspk.cpp:273
+#: audio/softsynth/pcspk.cpp:269
 msgid "IBM PCjr emulator"
 msgstr ""
 
@@ -4167,8 +4172,8 @@ msgstr ""
 msgid "Choose a new folder"
 msgstr "Yükleme için dosyayı seçin"
 
-#: backends/graphics/atari/atari-graphics.cpp:1059
-#: backends/graphics/sdl/sdl-graphics.cpp:515
+#: backends/graphics/atari/atari-graphics.cpp:1058
+#: backends/graphics/sdl/sdl-graphics.cpp:515 engines/scumm/help.cpp:103
 #, fuzzy
 msgid "Toggle aspect ratio correction"
 msgstr "Görüntü oranı düzeltme"
@@ -4319,31 +4324,32 @@ msgid "Switch to the previous scaler"
 msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:244
-msgid "Left Mouse Button"
+msgid "Left mouse button"
 msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:245
-msgid "Right Mouse Button"
+msgid "Right mouse button"
 msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:246
-msgid "Middle Mouse Button"
+msgid "Middle mouse button"
 msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:247
-msgid "Mouse Wheel Up"
+msgid "Mouse wheel up"
 msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:248
-msgid "Mouse Wheel Down"
-msgstr ""
+#, fuzzy
+msgid "Mouse wheel down"
+msgstr "Müzik cihazı:"
 
 #: backends/keymapper/hardware-input.cpp:249
-msgid "X1 Mouse Button"
+msgid "X1 mouse button"
 msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:250
-msgid "X2 Mouse Button"
+msgid "X2 mouse button"
 msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:255
@@ -4363,118 +4369,92 @@ msgid "Joy Y"
 msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:259
-msgid "Joy Back"
-msgstr ""
+#, fuzzy
+#| msgid "Backend"
+msgid "Joy back"
+msgstr "Altyapı"
 
 #: backends/keymapper/hardware-input.cpp:260
-msgid "Joy Guide"
+msgid "Joy guide"
 msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:261
 #, fuzzy
-msgid "Joy Start"
+msgid "Joy start"
 msgstr "~B~aşlat"
 
 #: backends/keymapper/hardware-input.cpp:262
-msgid "Left Stick"
-msgstr ""
+#, fuzzy
+msgid "Left stick"
+msgstr "Sağ"
 
 #: backends/keymapper/hardware-input.cpp:263
 #, fuzzy
-msgid "Right Stick"
+msgid "Right stick"
 msgstr "Sağ"
 
-#: backends/keymapper/hardware-input.cpp:264
-msgid "Left Shoulder"
-msgstr ""
+#: backends/keymapper/hardware-input.cpp:264 engines/dragons/metaengine.cpp:206
+#, fuzzy
+msgid "Left shoulder"
+msgstr "Tema seç"
 
-#: backends/keymapper/hardware-input.cpp:265
-msgid "Right Shoulder"
+#: backends/keymapper/hardware-input.cpp:265 engines/dragons/metaengine.cpp:212
+msgid "Right shoulder"
 msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:266
-#: backends/platform/3ds/osystem-events.cpp:55
-#: backends/platform/ds/osystem_ds.cpp:182
-#: backends/platform/sdl/miyoo/miyoo.cpp:74
-#: backends/platform/sdl/miyoo/miyoo.cpp:101
-#: backends/platform/sdl/opendingux/opendingux.cpp:64
-#: backends/platform/sdl/ps3/ps3.cpp:51 backends/platform/sdl/psp2/psp2.cpp:50
-#: backends/platform/sdl/switch/switch.cpp:48
-msgid "D-pad Up"
-msgstr ""
+#, fuzzy
+msgid "D-pad up"
+msgstr "Sağ"
 
 #: backends/keymapper/hardware-input.cpp:267
-#: backends/platform/3ds/osystem-events.cpp:56
-#: backends/platform/ds/osystem_ds.cpp:183
-#: backends/platform/sdl/miyoo/miyoo.cpp:75
-#: backends/platform/sdl/miyoo/miyoo.cpp:102
-#: backends/platform/sdl/opendingux/opendingux.cpp:65
-#: backends/platform/sdl/ps3/ps3.cpp:52 backends/platform/sdl/psp2/psp2.cpp:51
-#: backends/platform/sdl/switch/switch.cpp:49
-msgid "D-pad Down"
-msgstr ""
+#, fuzzy
+msgid "D-pad down"
+msgstr "Sol"
 
 #: backends/keymapper/hardware-input.cpp:268
-#: backends/platform/3ds/osystem-events.cpp:57
-#: backends/platform/ds/osystem_ds.cpp:184
-#: backends/platform/sdl/miyoo/miyoo.cpp:76
-#: backends/platform/sdl/miyoo/miyoo.cpp:103
-#: backends/platform/sdl/opendingux/opendingux.cpp:66
-#: backends/platform/sdl/ps3/ps3.cpp:53 backends/platform/sdl/psp2/psp2.cpp:52
-#: backends/platform/sdl/switch/switch.cpp:50
-msgid "D-pad Left"
-msgstr ""
+#, fuzzy
+msgid "D-pad left"
+msgstr "Sağ"
 
 #: backends/keymapper/hardware-input.cpp:269
-#: backends/platform/3ds/osystem-events.cpp:58
-#: backends/platform/ds/osystem_ds.cpp:185
-#: backends/platform/sdl/miyoo/miyoo.cpp:77
-#: backends/platform/sdl/miyoo/miyoo.cpp:104
-#: backends/platform/sdl/opendingux/opendingux.cpp:67
-#: backends/platform/sdl/ps3/ps3.cpp:54 backends/platform/sdl/psp2/psp2.cpp:53
-#: backends/platform/sdl/switch/switch.cpp:51
 #, fuzzy
-msgid "D-pad Right"
+msgid "D-pad right"
 msgstr "Sağ"
 
 #: backends/keymapper/hardware-input.cpp:270
 #, fuzzy
-msgid "D-pad Center"
+msgid "D-pad center"
 msgstr "Sağ"
 
 #: backends/keymapper/hardware-input.cpp:275
-msgid "Left Trigger"
+msgid "Left trigger"
 msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:276
-msgid "Right Trigger"
-msgstr ""
+#, fuzzy
+msgid "Right trigger"
+msgstr "Sağ"
 
 #: backends/keymapper/hardware-input.cpp:277
-#: backends/platform/sdl/opendingux/opendingux.cpp:78
-#: backends/platform/sdl/ps3/ps3.cpp:61 backends/platform/sdl/psp2/psp2.cpp:58
-#: backends/platform/sdl/switch/switch.cpp:58
-msgid "Left Stick X"
-msgstr ""
+#, fuzzy
+msgid "Left stick X"
+msgstr "Sağ"
 
 #: backends/keymapper/hardware-input.cpp:278
-#: backends/platform/sdl/opendingux/opendingux.cpp:79
-#: backends/platform/sdl/ps3/ps3.cpp:62 backends/platform/sdl/psp2/psp2.cpp:59
-#: backends/platform/sdl/switch/switch.cpp:59
-msgid "Left Stick Y"
-msgstr ""
+#, fuzzy
+msgid "Left stick Y"
+msgstr "Sağ"
 
 #: backends/keymapper/hardware-input.cpp:279
-#: backends/platform/sdl/ps3/ps3.cpp:63 backends/platform/sdl/psp2/psp2.cpp:60
-#: backends/platform/sdl/switch/switch.cpp:60
-msgid "Right Stick X"
-msgstr ""
+#, fuzzy
+msgid "Right stick X"
+msgstr "Sağ"
 
 #: backends/keymapper/hardware-input.cpp:280
-#: backends/platform/sdl/ps3/ps3.cpp:64 backends/platform/sdl/psp2/psp2.cpp:61
-#: backends/platform/sdl/switch/switch.cpp:61
-msgid "Right Stick Y"
-msgstr ""
+#, fuzzy
+msgid "Right stick Y"
+msgstr "Sağ"
 
 #: backends/keymapper/hardware-input.cpp:281
 msgid "Hat X"
@@ -4762,9 +4742,9 @@ msgstr ""
 #: engines/bagel/metaengine.cpp:64 engines/efh/metaengine.cpp:397
 #: engines/got/metaengine.cpp:76 engines/hypno/metaengine.cpp:363
 #: engines/mm/mm1/metaengine.cpp:49 engines/mm/mm1/metaengine.cpp:92
-#: engines/sherlock/metaengine.cpp:660 engines/sherlock/metaengine.cpp:671
-#: engines/sherlock/metaengine.cpp:1012 engines/supernova/metaengine.cpp:303
-#: engines/titanic/metaengine.cpp:233
+#: engines/sherlock/metaengine.cpp:660 engines/sherlock/metaengine.cpp:672
+#: engines/sherlock/metaengine.cpp:1014 engines/supernova/metaengine.cpp:303
+#: engines/titanic/metaengine.cpp:233 engines/ultima/ultima0/metaengine.cpp:47
 msgid "Select"
 msgstr ""
 
@@ -4811,6 +4791,47 @@ msgstr ""
 #: backends/platform/sdl/switch/switch.cpp:47
 msgid "R"
 msgstr ""
+
+#: backends/platform/3ds/osystem-events.cpp:55
+#: backends/platform/ds/osystem_ds.cpp:182
+#: backends/platform/sdl/miyoo/miyoo.cpp:74
+#: backends/platform/sdl/miyoo/miyoo.cpp:101
+#: backends/platform/sdl/opendingux/opendingux.cpp:64
+#: backends/platform/sdl/ps3/ps3.cpp:51 backends/platform/sdl/psp2/psp2.cpp:50
+#: backends/platform/sdl/switch/switch.cpp:48
+msgid "D-pad Up"
+msgstr ""
+
+#: backends/platform/3ds/osystem-events.cpp:56
+#: backends/platform/ds/osystem_ds.cpp:183
+#: backends/platform/sdl/miyoo/miyoo.cpp:75
+#: backends/platform/sdl/miyoo/miyoo.cpp:102
+#: backends/platform/sdl/opendingux/opendingux.cpp:65
+#: backends/platform/sdl/ps3/ps3.cpp:52 backends/platform/sdl/psp2/psp2.cpp:51
+#: backends/platform/sdl/switch/switch.cpp:49
+msgid "D-pad Down"
+msgstr ""
+
+#: backends/platform/3ds/osystem-events.cpp:57
+#: backends/platform/ds/osystem_ds.cpp:184
+#: backends/platform/sdl/miyoo/miyoo.cpp:76
+#: backends/platform/sdl/miyoo/miyoo.cpp:103
+#: backends/platform/sdl/opendingux/opendingux.cpp:66
+#: backends/platform/sdl/ps3/ps3.cpp:53 backends/platform/sdl/psp2/psp2.cpp:52
+#: backends/platform/sdl/switch/switch.cpp:50
+msgid "D-pad Left"
+msgstr ""
+
+#: backends/platform/3ds/osystem-events.cpp:58
+#: backends/platform/ds/osystem_ds.cpp:185
+#: backends/platform/sdl/miyoo/miyoo.cpp:77
+#: backends/platform/sdl/miyoo/miyoo.cpp:104
+#: backends/platform/sdl/opendingux/opendingux.cpp:67
+#: backends/platform/sdl/ps3/ps3.cpp:54 backends/platform/sdl/psp2/psp2.cpp:53
+#: backends/platform/sdl/switch/switch.cpp:51
+#, fuzzy
+msgid "D-pad Right"
+msgstr "Sağ"
 
 #: backends/platform/3ds/osystem-events.cpp:63
 msgid "C-Pad X"
@@ -4885,12 +4906,12 @@ msgstr ""
 msgid "Magnify Mode Off"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1065
+#: backends/platform/android/android.cpp:1076
 #: backends/platform/ios7/ios7_osys_misc.mm:249
 msgid "Getting help"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1068
+#: backends/platform/android/android.cpp:1079
 msgid ""
 "## Help, I'm lost!\n"
 "\n"
@@ -4900,19 +4921,19 @@ msgid ""
 "adding them on this device. Take a moment to review this process carefully, "
 "as some users encountered challenges here owing to recent Android changes.\n"
 "\n"
-"Need more help? Refer to our [online documentation for Android](https://docs."
-"scummvm.org/en/latest/other_platforms/android.html). Got questions? Swing by "
-"our [support forums](https://forums.scummvm.org/viewforum.php?f=17) or hop "
-"on our [Discord server](https://discord.gg/4cDsMNtcpG), which includes an "
-"[Android support channel](https://discord.com/"
-"channels/581224060529148060/1135579923185139862).\n"
+"Need more help? Refer to our [online documentation for Android](https://"
+"docs.scummvm.org/en/latest/other_platforms/android.html). Got questions? "
+"Swing by our [support forums](https://forums.scummvm.org/viewforum.php?f=17) "
+"or hop on our [Discord server](https://discord.gg/4cDsMNtcpG), which "
+"includes an [Android support channel](https://discord.com/channels/"
+"581224060529148060/1135579923185139862).\n"
 "\n"
 "Oh, and heads up, many of our supported games are intentionally tricky, "
 "sometimes mind-bogglingly so. If you're stuck in a game, think about "
 "checking out a game walkthrough. Good luck!\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1077
+#: backends/platform/android/android.cpp:1088
 #: backends/platform/ios7/ios7_osys_misc.mm:261
 #: backends/platform/ios7/ios7_osys_misc.mm:357
 #, fuzzy
@@ -4920,7 +4941,7 @@ msgstr ""
 msgid "Touch Controls"
 msgstr "Kontrol"
 
-#: backends/platform/android/android.cpp:1080
+#: backends/platform/android/android.cpp:1091
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -4989,14 +5010,14 @@ msgid ""
 "\n"
 msgstr ""
 
-#: backends/platform/android/android.cpp:1136
+#: backends/platform/android/android.cpp:1147
 #: backends/platform/ios7/ios7_osys_misc.mm:336
 #: backends/platform/ios7/ios7_osys_misc.mm:380
 #, fuzzy
 msgid "Adding Games"
 msgstr "~O~yun Ekle..."
 
-#: backends/platform/android/android.cpp:1139
+#: backends/platform/android/android.cpp:1150
 msgid ""
 "## Adding Games \n"
 "\n"
@@ -5252,12 +5273,12 @@ msgid ""
 "obtained, follow the steps outlined in the **Adding Games** tab to finish "
 "adding them on this device.\n"
 "\n"
-"Need more help? Refer to our [online documentation for iOS](https://docs."
-"scummvm.org/en/latest/other_platforms/ios.html). Got questions? Swing by our "
-"[support forums](https://forums.scummvm.org/viewforum.php?f=15) or hop on "
-"our [Discord server](https://discord.gg/4cDsMNtcpG), which includes an [iOS "
-"support channel](https://discord.com/"
-"channels/581224060529148060/1149456560922316911).\n"
+"Need more help? Refer to our [online documentation for iOS](https://"
+"docs.scummvm.org/en/latest/other_platforms/ios.html). Got questions? Swing "
+"by our [support forums](https://forums.scummvm.org/viewforum.php?f=15) or "
+"hop on our [Discord server](https://discord.gg/4cDsMNtcpG), which includes "
+"an [iOS support channel](https://discord.com/channels/"
+"581224060529148060/1149456560922316911).\n"
 "\n"
 "Oh, and heads up, many of our supported games are intentionally tricky, "
 "sometimes mind-bogglingly so. If you're stuck in a game, think about "
@@ -5481,23 +5502,23 @@ msgstr ""
 msgid "Status: "
 msgstr ""
 
-#: backends/platform/libretro/src/libretro-options-widget.cpp:148
+#: backends/platform/libretro/src/libretro-options-widget.cpp:151
 msgid "Failed, can't access playlist file"
 msgstr ""
 
-#: backends/platform/libretro/src/libretro-options-widget.cpp:224
+#: backends/platform/libretro/src/libretro-options-widget.cpp:251
 #, fuzzy
 #| msgid "Reading data failed"
 msgid "cleaning failed"
 msgstr "Veri okuma başarılamadı"
 
-#: backends/platform/libretro/src/libretro-options-widget.cpp:226
+#: backends/platform/libretro/src/libretro-options-widget.cpp:253
 #, fuzzy
 #| msgid "Cannot create file"
 msgid "Failed, can't create hook files"
 msgstr "Dosya yaratılamadı"
 
-#: backends/platform/libretro/src/libretro-options-widget.cpp:236
+#: backends/platform/libretro/src/libretro-options-widget.cpp:263
 #, fuzzy
 #| msgid "Select additional game directory"
 msgid "Select Playlist directory"
@@ -5540,11 +5561,11 @@ msgstr ""
 msgid "Right Click"
 msgstr "Sağ"
 
-#: backends/platform/sdl/sdl.cpp:1140
+#: backends/platform/sdl/sdl.cpp:1163
 msgid "Keyboard"
 msgstr ""
 
-#: backends/platform/sdl/sdl.cpp:1143
+#: backends/platform/sdl/sdl.cpp:1166
 msgid ""
 "## Keyboard shortcuts\n"
 "\n"
@@ -5562,23 +5583,23 @@ msgid ""
 "| `Ctrl+F5` | Displays the Global Main Menu\n"
 msgstr ""
 
-#: backends/platform/sdl/sdl.cpp:1155
+#: backends/platform/sdl/sdl.cpp:1178
 msgid "| `Cmd+q`    | Quit (macOS)\n"
 msgstr ""
 
-#: backends/platform/sdl/sdl.cpp:1157
+#: backends/platform/sdl/sdl.cpp:1180
 msgid "| `Alt+F4`  | Quit (Windows)\n"
 msgstr ""
 
-#: backends/platform/sdl/sdl.cpp:1159
+#: backends/platform/sdl/sdl.cpp:1182
 msgid "| `Ctrl+q`  | Quit (Linux/Unix)\n"
 msgstr ""
 
-#: backends/platform/sdl/sdl.cpp:1160
+#: backends/platform/sdl/sdl.cpp:1183
 msgid "| `Ctrl+z`  | Quit (other platforms)\n"
 msgstr ""
 
-#: backends/platform/sdl/sdl.cpp:1163
+#: backends/platform/sdl/sdl.cpp:1186
 msgid ""
 "| `Ctrl+u`  | Mutes all sounds\n"
 "| `Ctrl+m`  | Toggles mouse capture\n"
@@ -5739,6 +5760,18 @@ msgstr ""
 msgid "R3"
 msgstr ""
 
+#: backends/platform/sdl/opendingux/opendingux.cpp:78
+#: backends/platform/sdl/ps3/ps3.cpp:61 backends/platform/sdl/psp2/psp2.cpp:58
+#: backends/platform/sdl/switch/switch.cpp:58
+msgid "Left Stick X"
+msgstr ""
+
+#: backends/platform/sdl/opendingux/opendingux.cpp:79
+#: backends/platform/sdl/ps3/ps3.cpp:62 backends/platform/sdl/psp2/psp2.cpp:59
+#: backends/platform/sdl/switch/switch.cpp:59
+msgid "Left Stick Y"
+msgstr ""
+
 #: backends/platform/sdl/ps3/ps3.cpp:40 backends/platform/sdl/psp2/psp2.cpp:42
 #: engines/dragons/metaengine.cpp:200
 msgid "Cross"
@@ -5764,6 +5797,16 @@ msgstr ""
 
 #: backends/platform/sdl/ps3/ps3.cpp:50
 msgid "R1"
+msgstr ""
+
+#: backends/platform/sdl/ps3/ps3.cpp:63 backends/platform/sdl/psp2/psp2.cpp:60
+#: backends/platform/sdl/switch/switch.cpp:60
+msgid "Right Stick X"
+msgstr ""
+
+#: backends/platform/sdl/ps3/ps3.cpp:64 backends/platform/sdl/psp2/psp2.cpp:61
+#: backends/platform/sdl/switch/switch.cpp:61
+msgid "Right Stick Y"
 msgstr ""
 
 #: backends/platform/sdl/switch/switch.cpp:41
@@ -5916,13 +5959,13 @@ msgstr ""
 #: engines/cruise/metaengine.cpp:168 engines/dm/metaengine.cpp:124
 #: engines/draci/metaengine.cpp:195 engines/drascula/metaengine.cpp:205
 #: engines/efh/metaengine.cpp:256 engines/hopkins/metaengine.cpp:206
-#: engines/hugo/metaengine.cpp:118 engines/hypno/metaengine.cpp:128
+#: engines/hugo/metaengine.cpp:129 engines/hypno/metaengine.cpp:128
 #: engines/illusions/metaengine.cpp:89 engines/lab/metaengine.cpp:149
 #: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:132
 #: engines/mads/metaengine.cpp:274 engines/neverhood/metaengine.cpp:185
 #: engines/ngi/metaengine.cpp:115 engines/petka/metaengine.cpp:113
 #: engines/playground3d/metaengine.cpp:51 engines/prince/metaengine.cpp:227
-#: engines/private/metaengine.cpp:95 engines/queen/metaengine.cpp:146
+#: engines/private/metaengine.cpp:127 engines/queen/metaengine.cpp:146
 #: engines/sherlock/metaengine.cpp:313 engines/stark/metaengine.cpp:184
 #: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
 #: engines/sword25/metaengine.cpp:108 engines/teenagent/metaengine.cpp:197
@@ -5972,7 +6015,7 @@ msgstr ""
 #: engines/asylum/metaengine.cpp:212 engines/cine/metaengine.cpp:391
 #: engines/efh/metaengine.cpp:300 engines/hdb/metaengine.cpp:225
 #: engines/hypno/metaengine.cpp:284 engines/hypno/metaengine.cpp:335
-#: engines/kyra/engine/eobcommon.cpp:371 engines/lure/metaengine.cpp:218
+#: engines/kyra/engine/eobcommon.cpp:373 engines/lure/metaengine.cpp:218
 #: engines/nancy/input.cpp:207 engines/tinsel/metaengine.cpp:275
 #: engines/titanic/metaengine.cpp:312 engines/titanic/metaengine.cpp:390
 #: engines/ultima/ultima8/metaengine.cpp:55
@@ -5985,7 +6028,7 @@ msgstr ""
 #: engines/asylum/metaengine.cpp:219 engines/cine/metaengine.cpp:398
 #: engines/efh/metaengine.cpp:307 engines/hdb/metaengine.cpp:231
 #: engines/hypno/metaengine.cpp:296 engines/hypno/metaengine.cpp:349
-#: engines/kyra/engine/eobcommon.cpp:372 engines/lure/metaengine.cpp:226
+#: engines/kyra/engine/eobcommon.cpp:374 engines/lure/metaengine.cpp:226
 #: engines/nancy/input.cpp:213 engines/tinsel/metaengine.cpp:281
 #: engines/titanic/metaengine.cpp:318 engines/titanic/metaengine.cpp:396
 #: engines/ultima/ultima8/metaengine.cpp:56
@@ -6025,7 +6068,7 @@ msgstr "Sağ"
 #: engines/dgds/metaengine.cpp:83 engines/drascula/metaengine.cpp:230
 #: engines/petka/metaengine.cpp:130 engines/scumm/help.cpp:167
 #: engines/scumm/help.cpp:231 engines/sherlock/metaengine.cpp:405
-#: engines/sherlock/metaengine.cpp:556 engines/sherlock/metaengine.cpp:815
+#: engines/sherlock/metaengine.cpp:556 engines/sherlock/metaengine.cpp:817
 #: engines/supernova/metaengine.cpp:326 engines/tinsel/metaengine.cpp:300
 #: engines/tot/metaengine.cpp:134 engines/tsage/metaengine.cpp:206
 #: engines/ultima/nuvie/metaengine.cpp:67
@@ -6063,7 +6106,7 @@ msgstr ""
 #: engines/sky/metaengine.cpp:95 engines/sludge/keymapper_tables.h:333
 #: engines/supernova/metaengine.cpp:356 engines/tot/metaengine.cpp:139
 #: engines/tsage/metaengine.cpp:211 engines/twp/metaengine.cpp:186
-#: engines/ultima/ultima4/metaengine.cpp:71
+#: engines/ultima/ultima4/metaengine.cpp:73
 #: engines/ultima/nuvie/metaengine.cpp:69
 #: engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:1552
@@ -6080,7 +6123,7 @@ msgstr ""
 #: engines/scumm/help.cpp:174 engines/scumm/help.cpp:226
 #: engines/sherlock/metaengine.cpp:415 engines/supernova/metaengine.cpp:361
 #: engines/tot/metaengine.cpp:124 engines/tsage/metaengine.cpp:216
-#: engines/ultima/ultima4/metaengine.cpp:70
+#: engines/ultima/ultima4/metaengine.cpp:72
 #: engines/ultima/nuvie/metaengine.cpp:68
 msgid "Talk"
 msgstr ""
@@ -6133,7 +6176,7 @@ msgid "Open save/load menu"
 msgstr "Oyun"
 
 #: engines/access/resources.cpp:43 engines/drascula/drascula.cpp:993
-#: engines/hugo/hugo.cpp:442 engines/lure/lure.cpp:57
+#: engines/hugo/hugo.cpp:461 engines/lure/lure.cpp:57
 #: engines/mortevielle/mortevielle.cpp:300 engines/sky/compact.cpp:129
 #: engines/supernova/supernova.cpp:467 engines/teenagent/resources.cpp:312
 #: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5425
@@ -6143,7 +6186,7 @@ msgid "Unable to locate the '%s' engine data file."
 msgstr ""
 
 #: engines/access/resources.cpp:51 engines/drascula/drascula.cpp:1009
-#: engines/hugo/hugo.cpp:454 engines/lure/lure.cpp:66
+#: engines/hugo/hugo.cpp:473 engines/lure/lure.cpp:66
 #: engines/mortevielle/mortevielle.cpp:308 engines/supernova/supernova.cpp:472
 #: engines/teenagent/resources.cpp:329 engines/tony/tony.cpp:200
 #: engines/toon/toon.cpp:5438
@@ -6152,7 +6195,7 @@ msgid "The '%s' engine data file is corrupt."
 msgstr ""
 
 #: engines/access/resources.cpp:60 engines/drascula/drascula.cpp:1020
-#: engines/hugo/hugo.cpp:464 engines/lure/lure.cpp:69
+#: engines/hugo/hugo.cpp:483 engines/lure/lure.cpp:69
 #: engines/mortevielle/mortevielle.cpp:318 engines/tony/tony.cpp:211
 #: engines/toon/toon.cpp:5449
 #, c-format
@@ -6207,7 +6250,7 @@ msgstr ""
 #: engines/cruise/metaengine.cpp:45 engines/drascula/metaengine.cpp:55
 #: engines/efh/metaengine.cpp:44 engines/glk/metaengine.cpp:193
 #: engines/gob/metaengine.cpp:57 engines/got/metaengine.cpp:48
-#: engines/griffon/metaengine.cpp:40 engines/hugo/metaengine.cpp:45
+#: engines/griffon/metaengine.cpp:40 engines/hugo/metaengine.cpp:56
 #: engines/made/metaengine.cpp:51 engines/mm/metaengine.cpp:91
 #: engines/mortevielle/metaengine.cpp:37 engines/parallaction/metaengine.cpp:52
 #: engines/sci/detection_options.h:223 engines/scumm/dialogs.cpp:1245
@@ -6221,7 +6264,7 @@ msgstr "Oyunun tam ismi"
 #: engines/cge/metaengine.cpp:57 engines/cine/metaengine.cpp:70
 #: engines/cruise/metaengine.cpp:46 engines/drascula/metaengine.cpp:56
 #: engines/efh/metaengine.cpp:45 engines/gob/metaengine.cpp:58
-#: engines/got/metaengine.cpp:49 engines/hugo/metaengine.cpp:46
+#: engines/got/metaengine.cpp:49 engines/hugo/metaengine.cpp:57
 #: engines/made/metaengine.cpp:52 engines/mm/metaengine.cpp:92
 #: engines/mortevielle/metaengine.cpp:38 engines/scumm/dialogs.cpp:1246
 #: engines/scumm/metaengine.cpp:864 engines/wintermute/metaengine.cpp:82
@@ -6247,7 +6290,7 @@ msgstr ""
 #: engines/m4/metaengine.cpp:37 engines/nancy/metaengine.cpp:104
 #: engines/neverhood/dialogs.cpp:47 engines/sci/detection_options.h:107
 #: engines/sherlock/metaengine.cpp:47 engines/toltecs/metaengine.cpp:44
-#: engines/trecision/metaengine.cpp:41 engines/ultima/metaengine.cpp:52
+#: engines/trecision/metaengine.cpp:41 engines/ultima/metaengine.cpp:56
 #: engines/zvision/metaengine.cpp:42
 msgid "Use original save/load screens"
 msgstr ""
@@ -6260,7 +6303,7 @@ msgstr ""
 #: engines/m4/metaengine.cpp:38 engines/nancy/metaengine.cpp:105
 #: engines/neverhood/dialogs.cpp:48 engines/sci/detection_options.h:108
 #: engines/sherlock/metaengine.cpp:48 engines/toltecs/metaengine.cpp:45
-#: engines/trecision/metaengine.cpp:42 engines/ultima/metaengine.cpp:53
+#: engines/trecision/metaengine.cpp:42 engines/ultima/metaengine.cpp:57
 #: engines/zvision/metaengine.cpp:43
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
@@ -6491,7 +6534,7 @@ msgstr ""
 #: engines/cine/metaengine.cpp:271 engines/cruise/metaengine.cpp:169
 #: engines/dm/metaengine.cpp:126 engines/draci/metaengine.cpp:196
 #: engines/drascula/metaengine.cpp:206 engines/hopkins/metaengine.cpp:207
-#: engines/hugo/metaengine.cpp:119 engines/hypno/metaengine.cpp:166
+#: engines/hugo/metaengine.cpp:130 engines/hypno/metaengine.cpp:166
 #: engines/hypno/metaengine.cpp:267 engines/hypno/metaengine.cpp:311
 #: engines/illusions/metaengine.cpp:90 engines/lab/metaengine.cpp:152
 #: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:133
@@ -6525,23 +6568,25 @@ msgstr "Müzik cihazı:"
 msgid "Music volume up"
 msgstr "Müzik cihazı:"
 
-#: engines/agos/metaengine.cpp:194 engines/vcruise/metaengine.cpp:201
+#: engines/agos/metaengine.cpp:194 engines/sherlock/metaengine.cpp:687
+#: engines/ultima/nuvie/metaengine.cpp:101 engines/vcruise/metaengine.cpp:201
+#, fuzzy
+msgid "Toggle music"
+msgstr "Altyazılar"
+
+#: engines/agos/metaengine.cpp:199 engines/sherlock/metaengine.cpp:702
+#: engines/vcruise/metaengine.cpp:206
 #, fuzzy
 #| msgid "Special sound effects volume"
-msgid "Toggle music on / off"
+msgid "Toggle sound effects"
 msgstr "Özel ses efektleri ses düzeyi"
 
-#: engines/agos/metaengine.cpp:199 engines/vcruise/metaengine.cpp:206
-#, fuzzy
-#| msgid "Special sound effects volume"
-msgid "Toggle sound effects on / off"
-msgstr "Özel ses efektleri ses düzeyi"
-
-#: engines/agos/metaengine.cpp:204 engines/sky/metaengine.cpp:131
-#, fuzzy
-#| msgid "Special sound effects volume"
-msgid "Toggle fast mode on / off"
-msgstr "Özel ses efektleri ses düzeyi"
+#. I18N: Speeds up the game to twice its normal speed
+#: engines/agos/metaengine.cpp:204 engines/queen/metaengine.cpp:192
+#: engines/sky/metaengine.cpp:131 engines/teenagent/metaengine.cpp:239
+#: engines/touche/metaengine.cpp:167
+msgid "Toggle fast mode"
+msgstr ""
 
 #: engines/agos/metaengine.cpp:216 engines/lab/metaengine.cpp:264
 msgid "Walk forward"
@@ -6554,7 +6599,7 @@ msgid "Turn backward"
 msgstr "Altyapı"
 
 #: engines/agos/metaengine.cpp:228 engines/dm/metaengine.cpp:186
-#: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:514
+#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:514
 #: engines/lab/metaengine.cpp:257 engines/mm/mm1/metaengine.cpp:97
 #: engines/mohawk/riven.cpp:901 engines/pegasus/pegasus.cpp:2740
 #: engines/twine/metaengine.cpp:353 engines/ultima/ultima8/metaengine.cpp:49
@@ -6567,7 +6612,7 @@ msgid "Turn left"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:234 engines/dm/metaengine.cpp:206
-#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:515
+#: engines/kyra/engine/eobcommon.cpp:376 engines/kyra/engine/lol.cpp:515
 #: engines/lab/metaengine.cpp:271 engines/mm/mm1/metaengine.cpp:98
 #: engines/mohawk/riven.cpp:907 engines/pegasus/pegasus.cpp:2747
 #: engines/twine/metaengine.cpp:346 engines/ultima/ultima8/metaengine.cpp:50
@@ -6603,7 +6648,7 @@ msgstr ""
 #: engines/agos/metaengine.cpp:272
 #, fuzzy
 #| msgid "Special sound effects volume"
-msgid "Toggle background sounds on / off"
+msgid "Toggle background sounds"
 msgstr "Özel ses efektleri ses düzeyi"
 
 #. I18N: Characters are game actors
@@ -6615,7 +6660,7 @@ msgstr "Oyunu seç"
 #: engines/agos/metaengine.cpp:287
 #, fuzzy
 #| msgid "Special sound effects volume"
-msgid "Toggle hitbox names on / off"
+msgid "Toggle hitbox names"
 msgstr "Özel ses efektleri ses düzeyi"
 
 #: engines/agos/metaengine.cpp:294
@@ -6648,7 +6693,7 @@ msgid ""
 "some tracks sound incorrect."
 msgstr ""
 
-#: engines/agos/midi.cpp:316
+#: engines/agos/midi.cpp:313
 #, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"
@@ -6656,7 +6701,7 @@ msgid ""
 "the music will not sound the same as the original game."
 msgstr ""
 
-#: engines/agos/midi.cpp:374
+#: engines/agos/midi.cpp:367
 #, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"
@@ -6664,7 +6709,7 @@ msgid ""
 "the sound effects will not sound the same as the original game."
 msgstr ""
 
-#: engines/agos/midi.cpp:453
+#: engines/agos/midi.cpp:445
 #, c-format
 msgid ""
 "Could not find AdLib instrument definition file\n"
@@ -6676,7 +6721,7 @@ msgstr ""
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
-#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:3278
+#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:3275
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -6684,7 +6729,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:3265
+#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:3262
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -6692,7 +6737,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:3298
+#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:3295
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6834,7 +6879,7 @@ msgstr "Gizli dosyaları göster"
 #: engines/asylum/metaengine.cpp:120 engines/crab/input/input.cpp:271
 #: engines/queen/metaengine.cpp:253 engines/sludge/keymapper_tables.h:308
 #: engines/sludge/keymapper_tables.h:404 engines/sludge/keymapper_tables.h:471
-#: engines/sludge/keymapper_tables.h:502 engines/ultima/nuvie/metaengine.cpp:90
+#: engines/sludge/keymapper_tables.h:502 engines/ultima/nuvie/metaengine.cpp:92
 #: engines/wintermute/keymapper_tables.h:950
 msgid "Quick load"
 msgstr ""
@@ -6843,7 +6888,7 @@ msgstr ""
 #: engines/queen/metaengine.cpp:247 engines/sludge/keymapper_tables.h:64
 #: engines/sludge/keymapper_tables.h:303 engines/sludge/keymapper_tables.h:410
 #: engines/sludge/keymapper_tables.h:465 engines/sludge/keymapper_tables.h:496
-#: engines/ultima/nuvie/metaengine.cpp:89
+#: engines/ultima/nuvie/metaengine.cpp:91
 #: engines/ultima/ultima8/metaengine.cpp:44
 #: engines/wintermute/keymapper_tables.h:930
 msgid "Quick save"
@@ -6875,7 +6920,7 @@ msgstr ""
 #: engines/asylum/metaengine.cpp:226
 #, fuzzy
 #| msgid "Special sound effects volume"
-msgid "Toggle animation on / off"
+msgid "Toggle animation"
 msgstr "Özel ses efektleri ses düzeyi"
 
 #: engines/asylum/metaengine.cpp:232
@@ -6959,12 +7004,13 @@ msgstr ""
 #: engines/bagel/metaengine.cpp:59 engines/bagel/metaengine.cpp:65
 #: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:223
 #: engines/freescape/movement.cpp:101 engines/got/metaengine.cpp:78
-#: engines/hugo/metaengine.cpp:186 engines/lure/metaengine.cpp:209
+#: engines/hugo/metaengine.cpp:197 engines/lure/metaengine.cpp:209
 #: engines/mads/metaengine.cpp:292 engines/mm/mm1/metaengine.cpp:41
 #: engines/mm/mm1/metaengine.cpp:47 engines/saga/metaengine.cpp:328
 #: engines/tinsel/metaengine.cpp:258 engines/tsage/metaengine.cpp:190
 #: engines/tucker/metaengine.cpp:221 engines/twine/metaengine.cpp:388
-#: engines/vcruise/metaengine.cpp:164 engines/wintermute/keymapper_tables.h:60
+#: engines/ultima/ultima0/metaengine.cpp:40 engines/vcruise/metaengine.cpp:164
+#: engines/wintermute/keymapper_tables.h:60
 msgid "Escape"
 msgstr ""
 
@@ -7002,7 +7048,7 @@ msgid "Escape keymappings"
 msgstr "A~y~arlar..."
 
 #: engines/bbvs/metaengine.cpp:117 engines/hopkins/metaengine.cpp:229
-#: engines/illusions/metaengine.cpp:147 engines/sherlock/metaengine.cpp:837
+#: engines/illusions/metaengine.cpp:147 engines/sherlock/metaengine.cpp:839
 msgid "Open inventory"
 msgstr ""
 
@@ -7150,10 +7196,10 @@ msgstr "Altyazılar"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/buried/metaengine.cpp:160
-#: engines/hypno/metaengine.cpp:152 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:1046 engines/supernova/metaengine.cpp:309
-#: engines/toltecs/metaengine.cpp:246 engines/twp/metaengine.cpp:162
-#: engines/zvision/metaengine.cpp:304
+#: engines/darkseed/metaengine.cpp:65 engines/hypno/metaengine.cpp:152
+#: engines/scumm/help.cpp:79 engines/scumm/metaengine.cpp:1046
+#: engines/supernova/metaengine.cpp:309 engines/toltecs/metaengine.cpp:246
+#: engines/twp/metaengine.cpp:162 engines/zvision/metaengine.cpp:304
 msgid "Skip cutscene"
 msgstr ""
 
@@ -7203,8 +7249,8 @@ msgstr "Seçilen oyunu başlatın"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a map, this action is used to scroll up in the map
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up in the widget
 #: engines/bladerunner/metaengine.cpp:296 engines/efh/metaengine.cpp:415
-#: engines/sherlock/metaengine.cpp:368 engines/sherlock/metaengine.cpp:997
-#: engines/sherlock/metaengine.cpp:1023 engines/titanic/metaengine.cpp:218
+#: engines/sherlock/metaengine.cpp:368 engines/sherlock/metaengine.cpp:999
+#: engines/sherlock/metaengine.cpp:1025 engines/titanic/metaengine.cpp:218
 #: engines/wintermute/keymapper_tables.h:670
 #: engines/wintermute/keymapper_tables.h:871
 #: engines/wintermute/keymapper_tables.h:892
@@ -7223,8 +7269,8 @@ msgstr ""
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a map, this action is used to scroll down in the map
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down in the widget
 #: engines/bladerunner/metaengine.cpp:303 engines/efh/metaengine.cpp:403
-#: engines/sherlock/metaengine.cpp:374 engines/sherlock/metaengine.cpp:1005
-#: engines/sherlock/metaengine.cpp:1031 engines/titanic/metaengine.cpp:225
+#: engines/sherlock/metaengine.cpp:374 engines/sherlock/metaengine.cpp:1007
+#: engines/sherlock/metaengine.cpp:1033 engines/titanic/metaengine.cpp:225
 #: engines/wintermute/keymapper_tables.h:677
 #: engines/wintermute/keymapper_tables.h:878
 #: engines/wintermute/keymapper_tables.h:899
@@ -7257,12 +7303,13 @@ msgstr ""
 #: engines/freescape/games/dark/dark.cpp:187
 #: engines/freescape/games/driller/driller.cpp:120
 #: engines/freescape/games/eclipse/eclipse.cpp:227
-#: engines/hopkins/metaengine.cpp:236 engines/hugo/metaengine.cpp:154
+#: engines/hopkins/metaengine.cpp:236 engines/hugo/metaengine.cpp:165
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:192
-#: engines/mads/metaengine.cpp:305 engines/pegasus/pegasus.cpp:2825
+#: engines/mads/metaengine.cpp:305 engines/mohawk/myst.cpp:583
+#: engines/mohawk/riven.cpp:864 engines/pegasus/pegasus.cpp:2825
 #: engines/petka/metaengine.cpp:198 engines/prince/metaengine.cpp:243
 #: engines/saga/metaengine.cpp:442 engines/sherlock/metaengine.cpp:462
-#: engines/sherlock/metaengine.cpp:613 engines/sherlock/metaengine.cpp:821
+#: engines/sherlock/metaengine.cpp:613 engines/sherlock/metaengine.cpp:823
 #: engines/sludge/keymapper_tables.h:107 engines/sludge/keymapper_tables.h:156
 #: engines/stark/metaengine.cpp:208 engines/tetraedge/metaengine.cpp:110
 #: engines/titanic/metaengine.cpp:199 engines/toltecs/metaengine.cpp:234
@@ -7290,7 +7337,7 @@ msgstr "Kaydetme Yolu:"
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/pegasus/pegasus.cpp:2831
 #: engines/petka/metaengine.cpp:203 engines/prince/metaengine.cpp:249
 #: engines/saga/metaengine.cpp:432 engines/sherlock/metaengine.cpp:457
-#: engines/sherlock/metaengine.cpp:608 engines/sherlock/metaengine.cpp:826
+#: engines/sherlock/metaengine.cpp:608 engines/sherlock/metaengine.cpp:828
 #: engines/stark/metaengine.cpp:213 engines/tetraedge/metaengine.cpp:104
 #: engines/titanic/metaengine.cpp:205 engines/toltecs/metaengine.cpp:240
 #: engines/toon/metaengine.cpp:118 engines/trecision/metaengine.cpp:175
@@ -7329,14 +7376,16 @@ msgstr ""
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. QUIT GAME
-#: engines/bladerunner/metaengine.cpp:375 engines/darkseed/metaengine.cpp:60
-#: engines/dragons/metaengine.cpp:223 engines/efh/metaengine.cpp:373
-#: engines/efh/metaengine.cpp:619 engines/freescape/games/castle/castle.cpp:273
+#: engines/bladerunner/metaengine.cpp:375 engines/cruise/metaengine.cpp:229
+#: engines/darkseed/metaengine.cpp:60 engines/dragons/metaengine.cpp:223
+#: engines/efh/metaengine.cpp:373 engines/efh/metaengine.cpp:619
+#: engines/freescape/games/castle/castle.cpp:273
 #: engines/freescape/games/dark/dark.cpp:197
 #: engines/freescape/games/driller/driller.cpp:130
 #: engines/freescape/games/eclipse/eclipse.cpp:237
-#: engines/saga/metaengine.cpp:437 engines/sherlock/metaengine.cpp:359
-#: engines/sherlock/metaengine.cpp:618 engines/sherlock/metaengine.cpp:850
+#: engines/mads/metaengine.cpp:361 engines/saga/metaengine.cpp:437
+#: engines/sherlock/metaengine.cpp:359 engines/sherlock/metaengine.cpp:618
+#: engines/sherlock/metaengine.cpp:852 engines/stark/metaengine.cpp:280
 #: engines/sword1/metaengine.cpp:295 engines/trecision/metaengine.cpp:156
 #: engines/tsage/metaengine.cpp:231 engines/vcruise/metaengine.cpp:190
 #, fuzzy
@@ -7374,15 +7423,15 @@ msgid "Main menu keymappings"
 msgstr "A~y~arlar..."
 
 #: engines/buried/metaengine.cpp:137 engines/lab/metaengine.cpp:153
-#: engines/sherlock/metaengine.cpp:336 engines/sherlock/metaengine.cpp:785
+#: engines/sherlock/metaengine.cpp:336 engines/sherlock/metaengine.cpp:787
 #, fuzzy
 msgid "Inventory keymappings"
 msgstr "A~y~arlar..."
 
 #: engines/buried/metaengine.cpp:141 engines/chamber/metaengine.cpp:65
 #: engines/chamber/metaengine.cpp:71 engines/chamber/metaengine.cpp:77
-#: engines/dm/metaengine.cpp:130 engines/private/metaengine.cpp:98
-#: engines/sherlock/metaengine.cpp:1185
+#: engines/dm/metaengine.cpp:130 engines/private/metaengine.cpp:130
+#: engines/sherlock/metaengine.cpp:1187
 #, fuzzy
 #| msgid "Interact"
 msgid "Select / Interact"
@@ -7423,7 +7472,7 @@ msgid "Look right"
 msgstr "Aşağı"
 
 #: engines/buried/metaengine.cpp:218 engines/dm/metaengine.cpp:196
-#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:510
+#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:510
 #: engines/mohawk/riven.cpp:881 engines/titanic/metaengine.cpp:336
 #: engines/titanic/metaengine.cpp:378 engines/twine/metaengine.cpp:332
 #: engines/ultima/ultima8/metaengine.cpp:51
@@ -7501,7 +7550,7 @@ msgid ""
 msgstr ""
 
 #: engines/buried/saveload.cpp:179 engines/mtropolis/saveload.cpp:158
-#: engines/tot/saveload.cpp:269 engines/vcruise/vcruise.cpp:358
+#: engines/tot/saveload.cpp:269 engines/vcruise/vcruise.cpp:356
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 
@@ -7639,7 +7688,7 @@ msgstr "Kapat"
 
 #: engines/chamber/metaengine.cpp:61 engines/drascula/metaengine.cpp:208
 #: engines/lab/metaengine.cpp:151 engines/sherlock/metaengine.cpp:338
-#: engines/sherlock/metaengine.cpp:788 engines/tot/metaengine.cpp:104
+#: engines/sherlock/metaengine.cpp:790 engines/tot/metaengine.cpp:104
 #, fuzzy
 msgid "Quit dialog keymappings"
 msgstr "A~y~arlar..."
@@ -7686,7 +7735,7 @@ msgstr ""
 msgid "Select option / Click in game"
 msgstr "Soundfont Seç"
 
-#: engines/cine/metaengine.cpp:302
+#: engines/cine/metaengine.cpp:302 engines/sherlock/metaengine.cpp:799
 msgid "Open action menu / Close menu"
 msgstr ""
 
@@ -7753,6 +7802,7 @@ msgstr "Etkileşim"
 #: engines/crab/input/input.cpp:125 engines/efh/metaengine.cpp:487
 #: engines/efh/metaengine.cpp:512 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1033
+#: engines/ultima/ultima0/metaengine.cpp:82
 #: engines/ultima/ultima4/metaengine.cpp:48
 #: engines/ultima/nuvie/metaengine.cpp:74
 msgid "Attack"
@@ -7797,8 +7847,13 @@ msgstr ""
 msgid "Reply 6"
 msgstr ""
 
-#: engines/crab/input/input.cpp:221 engines/twine/metaengine.cpp:460
-#: engines/wintermute/keymapper_tables.h:190
+#. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go ahead a page (one page displays 6 items) in the inventory
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 1 page in the journal
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down by a page in the widget
+#: engines/crab/input/input.cpp:221 engines/sherlock/metaengine.cpp:591
+#: engines/sherlock/metaengine.cpp:902 engines/sherlock/metaengine.cpp:1048
+#: engines/supernova/metaengine.cpp:291 engines/titanic/metaengine.cpp:271
+#: engines/twine/metaengine.cpp:460 engines/wintermute/keymapper_tables.h:190
 #: engines/wintermute/keymapper_tables.h:207
 #: engines/wintermute/keymapper_tables.h:638
 #: engines/wintermute/keymapper_tables.h:913
@@ -7808,7 +7863,13 @@ msgstr ""
 msgid "Next page"
 msgstr ""
 
-#: engines/crab/input/input.cpp:226 engines/wintermute/keymapper_tables.h:183
+#. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go back a page (one page displays 6 items) in the inventory
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 1 page in the journal
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up by a page in the widget
+#: engines/crab/input/input.cpp:226 engines/sherlock/metaengine.cpp:572
+#: engines/sherlock/metaengine.cpp:917 engines/sherlock/metaengine.cpp:1041
+#: engines/supernova/metaengine.cpp:285 engines/titanic/metaengine.cpp:264
+#: engines/wintermute/keymapper_tables.h:183
 #: engines/wintermute/keymapper_tables.h:199
 #: engines/wintermute/keymapper_tables.h:630
 #: engines/wintermute/keymapper_tables.h:906
@@ -7849,12 +7910,6 @@ msgstr ""
 #: engines/cruise/metaengine.cpp:211
 msgid "Decrease game speed"
 msgstr ""
-
-#: engines/cruise/metaengine.cpp:229 engines/mads/metaengine.cpp:361
-#: engines/stark/metaengine.cpp:280
-#, fuzzy
-msgid "Exit game"
-msgstr "Oyun"
 
 #: engines/cryomni3d/metaengine.cpp:143
 #, fuzzy
@@ -7916,12 +7971,6 @@ msgstr "Grafik modu:"
 #, fuzzy
 msgid "Time advance"
 msgstr "Saat: "
-
-#: engines/darkseed/metaengine.cpp:65
-#, fuzzy
-#| msgid "Speech"
-msgid "Skip Cutscene"
-msgstr "Konuşma:"
 
 #: engines/dgds/metaengine.cpp:76
 #, fuzzy
@@ -8025,8 +8074,8 @@ msgstr "Altyazılar"
 msgid "Toggle champion 4 inventory"
 msgstr "Altyazılar"
 
-#: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
-#: engines/mm/mm1/metaengine.cpp:99
+#: engines/dm/metaengine.cpp:216 engines/freescape/movement.cpp:49
+#: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
 #, fuzzy
 msgid "Strafe left"
 msgstr "Sol"
@@ -8038,8 +8087,8 @@ msgstr "Sol"
 msgid "Move backward"
 msgstr "Altyapı"
 
-#: engines/dm/metaengine.cpp:236 engines/hpl1/metaengine.cpp:79
-#: engines/mm/mm1/metaengine.cpp:100
+#: engines/dm/metaengine.cpp:236 engines/freescape/movement.cpp:56
+#: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
 #, fuzzy
 msgid "Strafe right"
 msgstr "Sağ"
@@ -8113,15 +8162,6 @@ msgid ""
 "should be copied normally from your game CD.\n"
 "\n"
 " See %s"
-msgstr ""
-
-#: engines/dragons/metaengine.cpp:206
-#, fuzzy
-msgid "Left shoulder"
-msgstr "Tema seç"
-
-#: engines/dragons/metaengine.cpp:212
-msgid "Right shoulder"
 msgstr ""
 
 #: engines/dragons/metaengine.cpp:218
@@ -8386,7 +8426,8 @@ msgstr ""
 msgid "Give"
 msgstr ""
 
-#: engines/efh/metaengine.cpp:447
+#: engines/efh/metaengine.cpp:447 engines/ultima/ultima0/metaengine.cpp:70
+#: engines/ultima/ultima0/metaengine.cpp:84
 msgid "Info"
 msgstr ""
 
@@ -8614,16 +8655,6 @@ msgstr ""
 msgid "Use smoother movements instead of discrete steps"
 msgstr ""
 
-#: engines/freescape/movement.cpp:49
-#, fuzzy
-msgid "Strafe Left"
-msgstr "Sol"
-
-#: engines/freescape/movement.cpp:56
-#, fuzzy
-msgid "Strafe Right"
-msgstr "Sağ"
-
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:63 engines/mm/mm1/metaengine.cpp:79
 msgid "Shoot"
@@ -8652,8 +8683,9 @@ msgid "Change mode"
 msgstr "Grafik modu:"
 
 #: engines/freescape/movement.cpp:106
-msgid "Info Menu"
-msgstr ""
+#, fuzzy
+msgid "Info menu"
+msgstr "Müzik cihazı:"
 
 #: engines/freescape/games/castle/castle.cpp:250
 #, fuzzy
@@ -8694,7 +8726,7 @@ msgid "Crawl"
 msgstr ""
 
 #: engines/freescape/games/castle/castle.cpp:310
-#: engines/freescape/games/eclipse/eclipse.cpp:282
+#: engines/freescape/games/eclipse/eclipse.cpp:284
 #, fuzzy
 #| msgid "Backend"
 msgid "Face Forward"
@@ -8781,10 +8813,10 @@ msgid "Toggle Height"
 msgstr "Altyazılar"
 
 #. I18N: Action of hero party in Might & Magic 1
-#: engines/freescape/games/eclipse/eclipse.cpp:277
+#: engines/freescape/games/eclipse/eclipse.cpp:278
 #: engines/kyra/engine/lol.cpp:516 engines/mm/mm1/metaengine.cpp:109
-#: engines/ultima/nuvie/metaengine.cpp:192
-#: engines/ultima/nuvie/metaengine.cpp:197
+#: engines/ultima/nuvie/metaengine.cpp:195
+#: engines/ultima/nuvie/metaengine.cpp:200
 msgid "Rest"
 msgstr ""
 
@@ -9235,34 +9267,43 @@ msgstr ""
 msgid "Glowstick"
 msgstr ""
 
-#: engines/hugo/metaengine.cpp:137
+#: engines/hugo/metaengine.cpp:45
+#, fuzzy
+msgid "Use Windows interface"
+msgstr "A~y~arlar..."
+
+#: engines/hugo/metaengine.cpp:46
+msgid "Use mouse and toolbar from Windows version"
+msgstr ""
+
+#: engines/hugo/metaengine.cpp:148
 #, fuzzy
 #| msgid "User canceled"
 msgid "User help"
 msgstr "Kullanıcı iptal etti"
 
-#: engines/hugo/metaengine.cpp:143
+#: engines/hugo/metaengine.cpp:154
 #, fuzzy
 msgid "Toggle sound"
 msgstr "Altyazılar"
 
-#: engines/hugo/metaengine.cpp:148
+#: engines/hugo/metaengine.cpp:159
 #, fuzzy
 msgid "Repeat last line"
 msgstr "Tarih kaydedilmemiş"
 
-#: engines/hugo/metaengine.cpp:161 engines/lure/metaengine.cpp:197
+#: engines/hugo/metaengine.cpp:172 engines/lure/metaengine.cpp:197
 #: engines/mads/metaengine.cpp:311 engines/tsage/metaengine.cpp:247
 #, fuzzy
 msgid "Restore game"
 msgstr "Oyun yükle:"
 
-#: engines/hugo/metaengine.cpp:168 engines/mohawk/myst_stacks/menu.cpp:300
+#: engines/hugo/metaengine.cpp:179 engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 msgid "New game"
 msgstr ""
 
-#: engines/hugo/metaengine.cpp:174 engines/wintermute/keymapper_tables.h:249
+#: engines/hugo/metaengine.cpp:185 engines/wintermute/keymapper_tables.h:249
 #: engines/wintermute/keymapper_tables.h:396
 #: engines/wintermute/keymapper_tables.h:658
 #: engines/wintermute/keymapper_tables.h:864
@@ -9275,55 +9316,55 @@ msgstr ""
 msgid "Show inventory"
 msgstr ""
 
-#: engines/hugo/metaengine.cpp:180
+#: engines/hugo/metaengine.cpp:191
 #, fuzzy
 #| msgid "Quick mode"
 msgid "Turbo mode"
 msgstr "Çekiştirme modu:"
 
 #. I18N: Move actor in the top direction
-#: engines/hugo/metaengine.cpp:193
+#: engines/hugo/metaengine.cpp:204
 #, fuzzy
 msgid "Move to top"
 msgstr "Sol"
 
 #. I18N: Move actor in the bottom direction
-#: engines/hugo/metaengine.cpp:201
+#: engines/hugo/metaengine.cpp:212
 msgid "Move to bottom"
 msgstr ""
 
 #. I18N: Move actor in the left direction
-#: engines/hugo/metaengine.cpp:209
+#: engines/hugo/metaengine.cpp:220
 #, fuzzy
 msgid "Move to left"
 msgstr "Sol"
 
 #. I18N: Move actor in the right direction
-#: engines/hugo/metaengine.cpp:217
+#: engines/hugo/metaengine.cpp:228
 #, fuzzy
 msgid "Move to right"
 msgstr "Sağ"
 
 #. I18N: Move actor in the top-left direction
-#: engines/hugo/metaengine.cpp:225
+#: engines/hugo/metaengine.cpp:236
 #, fuzzy
 msgid "Move to top left"
 msgstr "Sol"
 
 #. I18N: Move actor in the top-right direction
-#: engines/hugo/metaengine.cpp:231
+#: engines/hugo/metaengine.cpp:242
 #, fuzzy
 msgid "Move to top right"
 msgstr "Sağ"
 
 #. I18N: Move actor in the bottom-left direction
-#: engines/hugo/metaengine.cpp:237
+#: engines/hugo/metaengine.cpp:248
 #, fuzzy
 msgid "Move to bottom left"
 msgstr "Sol"
 
 #. I18N: Move actor in the bottom-right direction
-#: engines/hugo/metaengine.cpp:243
+#: engines/hugo/metaengine.cpp:254
 #, fuzzy
 msgid "Move to bottom right"
 msgstr "Sağ"
@@ -9387,8 +9428,9 @@ msgid "Secondary shoot"
 msgstr ""
 
 #: engines/hypno/metaengine.cpp:146 engines/lab/metaengine.cpp:209
-#: engines/ngi/metaengine.cpp:168 engines/teenagent/metaengine.cpp:232
-#: engines/toon/metaengine.cpp:98 engines/voyeur/metaengine.cpp:235
+#: engines/ngi/metaengine.cpp:168 engines/sherlock/metaengine.cpp:872
+#: engines/teenagent/metaengine.cpp:232 engines/toon/metaengine.cpp:98
+#: engines/voyeur/metaengine.cpp:235
 #, fuzzy
 msgid "Skip intro"
 msgstr "Gizli dosyaları göster"
@@ -9487,13 +9529,13 @@ msgid "Side step"
 msgstr "Sağ"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) cursor refers to the text cursor in the foolscap puzzle input field
-#: engines/illusions/metaengine.cpp:108 engines/sherlock/metaengine.cpp:1140
+#: engines/illusions/metaengine.cpp:108 engines/sherlock/metaengine.cpp:1142
 #, fuzzy
 msgid "Move cursor up"
 msgstr "Sol"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) cursor refers to the text cursor in the foolscap puzzle input field
-#: engines/illusions/metaengine.cpp:115 engines/sherlock/metaengine.cpp:1148
+#: engines/illusions/metaengine.cpp:115 engines/sherlock/metaengine.cpp:1150
 #, fuzzy
 msgid "Move cursor down"
 msgstr "Sol"
@@ -9501,8 +9543,8 @@ msgstr "Sol"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) cursor refers to the text cursor in the save file name input field
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) cursor refers to the text cursor in the foolscap puzzle input field
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) cursor refers to the text cursor in the password input field
-#: engines/illusions/metaengine.cpp:122 engines/sherlock/metaengine.cpp:1092
-#: engines/sherlock/metaengine.cpp:1156 engines/sherlock/metaengine.cpp:1197
+#: engines/illusions/metaengine.cpp:122 engines/sherlock/metaengine.cpp:1094
+#: engines/sherlock/metaengine.cpp:1158 engines/sherlock/metaengine.cpp:1199
 #, fuzzy
 msgid "Move cursor left"
 msgstr "Sol"
@@ -9510,8 +9552,8 @@ msgstr "Sol"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) cursor refers to the text cursor in the save file name input field
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) cursor refers to the text cursor in the foolscap puzzle input field
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) cursor refers to the text cursor in the password input field
-#: engines/illusions/metaengine.cpp:129 engines/sherlock/metaengine.cpp:1100
-#: engines/sherlock/metaengine.cpp:1164 engines/sherlock/metaengine.cpp:1205
+#: engines/illusions/metaengine.cpp:129 engines/sherlock/metaengine.cpp:1102
+#: engines/sherlock/metaengine.cpp:1166 engines/sherlock/metaengine.cpp:1207
 #, fuzzy
 msgid "Move cursor right"
 msgstr "Sağ"
@@ -9622,29 +9664,48 @@ msgstr ""
 msgid "Faithful AD&D rules"
 msgstr ""
 
-#: engines/kyra/metaengine.cpp:160
+#: engines/kyra/metaengine.cpp:161
 msgid ""
-"Make implementation of AD&D rules more compliant with the AD&D 2nd edition "
-"handbook"
+"- Eliminate HP gain round-off errors\n"
+"- Correct projectile weapon damage (per AD&D 2nd Edition rules)\n"
+"- Elves get +1 to hit with swords and bows (per official game manual)"
 msgstr ""
 
-#: engines/kyra/metaengine.cpp:251
+#: engines/kyra/metaengine.cpp:175
+msgid "Fix Ileria and Beohram NPCs"
+msgstr ""
+
+#: engines/kyra/metaengine.cpp:176
+msgid "Make Ileria a female and Beohram a paladin"
+msgstr ""
+
+#: engines/kyra/metaengine.cpp:187
+msgid "Enhanced thrown weapon reload"
+msgstr ""
+
+#: engines/kyra/metaengine.cpp:188
+msgid ""
+"Thrown weapons (daggers, darts, spears...) get replaced from belt and "
+"backpack inventory slots, with thrown weapons only"
+msgstr ""
+
+#: engines/kyra/metaengine.cpp:279
 #, fuzzy
 msgid "Lands of Lore support is not compiled in"
 msgstr "Özellikler derlenmiştir:"
 
-#: engines/kyra/metaengine.cpp:261
+#: engines/kyra/metaengine.cpp:289
 msgid ""
 "EOB II FM-TOWNS requires support of 16bit color modes which has not been "
 "activated in your ScummVM build"
 msgstr ""
 
-#: engines/kyra/metaengine.cpp:267
+#: engines/kyra/metaengine.cpp:295
 #, fuzzy
 msgid "Eye of Beholder support is not compiled in"
 msgstr "Özellikler derlenmiştir:"
 
-#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:511
+#: engines/kyra/engine/eobcommon.cpp:372 engines/kyra/engine/lol.cpp:511
 #: engines/mohawk/riven.cpp:895 engines/twine/metaengine.cpp:339
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
@@ -9654,46 +9715,46 @@ msgstr "Özellikler derlenmiştir:"
 msgid "Move backwards"
 msgstr "Altyapı"
 
-#: engines/kyra/engine/eobcommon.cpp:375
+#: engines/kyra/engine/eobcommon.cpp:377
 msgid "Open / Close inventory"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:376
+#: engines/kyra/engine/eobcommon.cpp:378
 #, fuzzy
 msgid "Switch inventory / Character screen"
 msgstr "Oyunu seç"
 
-#: engines/kyra/engine/eobcommon.cpp:377
+#: engines/kyra/engine/eobcommon.cpp:379
 msgid "Camp"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:378 engines/mm/mm1/metaengine.cpp:102
+#: engines/kyra/engine/eobcommon.cpp:380 engines/mm/mm1/metaengine.cpp:102
 #, fuzzy
 #| msgid "Fast replay"
 msgid "Cast spell"
 msgstr "Hızlı yeniden oynatma"
 
-#: engines/kyra/engine/eobcommon.cpp:381
+#: engines/kyra/engine/eobcommon.cpp:383
 msgid "Spell level 1"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:382
+#: engines/kyra/engine/eobcommon.cpp:384
 msgid "Spell level 2"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:383
+#: engines/kyra/engine/eobcommon.cpp:385
 msgid "Spell level 3"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:384
+#: engines/kyra/engine/eobcommon.cpp:386
 msgid "Spell level 4"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:385
+#: engines/kyra/engine/eobcommon.cpp:387
 msgid "Spell level 5"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:387
+#: engines/kyra/engine/eobcommon.cpp:389
 msgid "Spell level 6"
 msgstr ""
 
@@ -9810,19 +9871,19 @@ msgid ""
 "will need to use the original interpreter and purchase a key from Wyrmkeep"
 msgstr ""
 
-#: engines/lab/metaengine.cpp:150 engines/sherlock/metaengine.cpp:775
+#: engines/lab/metaengine.cpp:150 engines/sherlock/metaengine.cpp:777
 #, fuzzy
 msgid "Exit keymappings"
 msgstr "A~y~arlar..."
 
 #: engines/lab/metaengine.cpp:155 engines/ngi/metaengine.cpp:116
-#: engines/sherlock/metaengine.cpp:339 engines/sherlock/metaengine.cpp:780
+#: engines/sherlock/metaengine.cpp:339 engines/sherlock/metaengine.cpp:782
 #, fuzzy
 msgid "Map keymappings"
 msgstr "A~y~arlar..."
 
 #: engines/lab/metaengine.cpp:156 engines/queen/metaengine.cpp:148
-#: engines/sherlock/metaengine.cpp:334 engines/sherlock/metaengine.cpp:777
+#: engines/sherlock/metaengine.cpp:334 engines/sherlock/metaengine.cpp:779
 #, fuzzy
 msgid "Journal keymappings"
 msgstr "A~y~arlar..."
@@ -9831,7 +9892,7 @@ msgstr "A~y~arlar..."
 #: engines/lab/metaengine.cpp:166 engines/lab/metaengine.cpp:191
 #: engines/sherlock/metaengine.cpp:395 engines/sherlock/metaengine.cpp:494
 #: engines/sherlock/metaengine.cpp:538 engines/sherlock/metaengine.cpp:549
-#: engines/sherlock/metaengine.cpp:601 engines/sherlock/metaengine.cpp:678
+#: engines/sherlock/metaengine.cpp:601 engines/sherlock/metaengine.cpp:680
 #: engines/supernova/metaengine.cpp:297 engines/supernova/metaengine.cpp:373
 #: engines/ultima/ultima4/metaengine.cpp:54 engines/voyeur/metaengine.cpp:198
 #: engines/voyeur/metaengine.cpp:229 engines/wintermute/keymapper_tables.h:720
@@ -10045,8 +10106,8 @@ msgid ""
 "Otherwise, it will play MIDI music."
 msgstr ""
 
-#: engines/made/metaengine.cpp:63
-msgid "Use Windows mouse cursors"
+#: engines/made/metaengine.cpp:63 engines/sci/detection_options.h:132
+msgid "Use Windows cursors"
 msgstr ""
 
 #: engines/made/metaengine.cpp:64
@@ -10197,7 +10258,7 @@ msgstr ""
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:69 engines/ultima/ultima4/metaengine.cpp:50
-#: engines/ultima/nuvie/metaengine.cpp:191
+#: engines/ultima/nuvie/metaengine.cpp:194
 msgid "Cast"
 msgstr ""
 
@@ -10259,7 +10320,7 @@ msgstr ""
 #. I18N: Action of hero party in Might & Magic 1
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to search the journal
 #: engines/mm/mm1/metaengine.cpp:111 engines/sherlock/metaengine.cpp:514
-#: engines/sherlock/metaengine.cpp:959 engines/ultima/ultima4/metaengine.cpp:68
+#: engines/sherlock/metaengine.cpp:961 engines/ultima/ultima4/metaengine.cpp:70
 #, fuzzy
 #| msgid "Search:"
 msgid "Search"
@@ -10275,7 +10336,7 @@ msgstr ""
 msgid "Unlock"
 msgstr ""
 
-#: engines/mm/mm1/metaengine.cpp:122 engines/ultima/ultima4/metaengine.cpp:109
+#: engines/mm/mm1/metaengine.cpp:122 engines/ultima/ultima4/metaengine.cpp:111
 msgid "Goto location"
 msgstr ""
 
@@ -10460,13 +10521,10 @@ msgid "The game is paused. Press any key to continue."
 msgstr ""
 
 #: engines/mohawk/myst.cpp:578 engines/mohawk/riven.cpp:859
+#: engines/sludge/keymapper_tables.h:113 engines/sludge/keymapper_tables.h:162
 #, fuzzy
-msgid "Load game state"
+msgid "Load save"
 msgstr "Oyun yükle:"
-
-#: engines/mohawk/myst.cpp:583 engines/mohawk/riven.cpp:864
-msgid "Save game state"
-msgstr ""
 
 #: engines/mohawk/myst.cpp:588 engines/mohawk/riven.cpp:869
 msgid "Show options menu"
@@ -10619,7 +10677,7 @@ msgid ""
 "The game will still play, but MPEG videos will not work."
 msgstr ""
 
-#: engines/mtropolis/mtropolis.cpp:121
+#: engines/mtropolis/mtropolis.cpp:120
 msgid ""
 "This game requires MPEG audio support for some\n"
 "content but MPEG audio support was not compiled in.\n"
@@ -10630,12 +10688,12 @@ msgstr ""
 msgid "Failed to read version information from save file"
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:353
+#: engines/mtropolis/saveload.cpp:150 engines/vcruise/vcruise.cpp:351
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
 msgstr ""
 
-#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:363
+#: engines/mtropolis/saveload.cpp:166 engines/vcruise/vcruise.cpp:361
 msgid ""
 "Saved game was created with an earlier, incompatible version of ScummVM. "
 "Unable to load."
@@ -11097,24 +11155,24 @@ msgstr ""
 msgid "X key"
 msgstr ""
 
-#: engines/private/metaengine.cpp:37
+#: engines/private/metaengine.cpp:39
 #, fuzzy
 msgid "Display SFX subtitles"
 msgstr "Altyazılar"
 
-#: engines/private/metaengine.cpp:38
+#: engines/private/metaengine.cpp:40
 msgid "Use SFX subtitles (if subtitles are enabled)."
 msgstr ""
 
-#: engines/private/metaengine.cpp:48
+#: engines/private/metaengine.cpp:50
 msgid "Highlight decision areas"
 msgstr ""
 
-#: engines/private/metaengine.cpp:49
+#: engines/private/metaengine.cpp:51
 msgid "Highlight clickable areas in decision scenes."
 msgstr ""
 
-#: engines/private/metaengine.cpp:104 engines/trecision/metaengine.cpp:137
+#: engines/private/metaengine.cpp:136 engines/trecision/metaengine.cpp:137
 #, fuzzy
 msgid "Skip video"
 msgstr "İptal"
@@ -11146,12 +11204,6 @@ msgstr ""
 
 #: engines/queen/metaengine.cpp:186
 msgid "Move / Skip / Use default action with inventory item"
-msgstr ""
-
-#. I18N: Speeds up the game to twice its normal speed
-#: engines/queen/metaengine.cpp:192 engines/teenagent/metaengine.cpp:239
-#: engines/touche/metaengine.cpp:167
-msgid "Toggle fast mode"
 msgstr ""
 
 #: engines/queen/metaengine.cpp:198 engines/twp/metaengine.cpp:176
@@ -11447,10 +11499,6 @@ msgstr ""
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr ""
 
-#: engines/sci/detection_options.h:132
-msgid "Use Windows cursors"
-msgstr ""
-
 #: engines/sci/detection_options.h:133
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
@@ -11537,16 +11585,16 @@ msgstr ""
 msgid "Yamaha FB-01"
 msgstr ""
 
-#: engines/sci/detection_tables.h:1465 engines/sci/detection_tables.h:1476
+#: engines/sci/detection_tables.h:1471 engines/sci/detection_tables.h:1482
 msgid "Game does not contain menu resources"
 msgstr ""
 
 #. I18N: 'Robot' is a video format name (as in 'MP4 video')
-#: engines/sci/detection_tables.h:4796
+#: engines/sci/detection_tables.h:4802
 msgid "This demo uses an unimplemented version of Robot videos"
 msgstr ""
 
-#: engines/sci/detection_tables.h:4851
+#: engines/sci/detection_tables.h:4857
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 
@@ -11599,7 +11647,7 @@ msgid ""
 "that your game files are valid."
 msgstr ""
 
-#: engines/sci/sci.cpp:408
+#: engines/sci/sci.cpp:415
 msgid ""
 "Subtitles are enabled, but subtitling in King's Quest 7 was unfinished and "
 "disabled in the release version of the game. ScummVM allows the subtitles to "
@@ -11608,7 +11656,7 @@ msgid ""
 "ScummVM bug -- it is a problem with the game's assets."
 msgstr ""
 
-#: engines/sci/sci.cpp:432
+#: engines/sci/sci.cpp:439
 msgid ""
 "You have selected General MIDI as a sound device. Sierra has provided after-"
 "market support for General MIDI for this game in their \"General MIDI "
@@ -11616,22 +11664,22 @@ msgid ""
 "game. Once you have obtained it, you can unpack all of the included *.PAT "
 "files in your ScummVM extras folder and ScummVM will add the appropriate "
 "patch automatically. Alternatively, you can follow the instructions in the "
-"READ.ME file included in the patch and rename the associated *.PAT file to 4."
-"PAT and place it in the game folder. Without this patch, General MIDI music "
-"for this game will sound badly distorted."
+"READ.ME file included in the patch and rename the associated *.PAT file to "
+"4.PAT and place it in the game folder. Without this patch, General MIDI "
+"music for this game will sound badly distorted."
 msgstr ""
 
-#: engines/sci/sci.cpp:524
+#: engines/sci/sci.cpp:531
 msgid "Download patch"
 msgstr ""
 
-#: engines/sci/sci.cpp:525
+#: engines/sci/sci.cpp:532
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
 msgstr ""
 
-#: engines/sci/sci.cpp:532
+#: engines/sci/sci.cpp:539
 msgid ""
 "GK2 has fan made subtitles, available thanks to the good people at "
 "SierraHelp.\n"
@@ -11641,7 +11689,7 @@ msgid ""
 "GK2Subtitles.zip\n"
 msgstr ""
 
-#: engines/sci/sci.cpp:965
+#: engines/sci/sci.cpp:972
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "
@@ -11704,7 +11752,7 @@ msgid "Your Name:"
 msgstr "İsim:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4330
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4339
 msgid "Host"
 msgstr ""
 
@@ -11715,7 +11763,7 @@ msgid "Querying games..."
 msgstr "Oyun yükle:"
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4330
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4339
 msgid "Join"
 msgstr ""
 
@@ -11949,7 +11997,7 @@ msgid ""
 "available."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1839
+#: engines/scumm/dialogs.cpp:1842 engines/scumm/dialogs.cpp:1855
 msgid "Multiplayer Server:"
 msgstr ""
 
@@ -11971,34 +12019,34 @@ msgstr ""
 msgid "Enables custom-made modifications intended for online competitive play."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1852
+#: engines/scumm/dialogs.cpp:1858
 msgid "Enable connection to Multiplayer Server"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1852
+#: engines/scumm/dialogs.cpp:1858
 msgid ""
 "Toggles the connection to the server that allows hosting and joining online "
 "multiplayer games over the Internet."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1853
+#: engines/scumm/dialogs.cpp:1859
 msgid "Host games over LAN"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1853
+#: engines/scumm/dialogs.cpp:1859
 msgid "Allows the game sessions to be discovered over your local area network."
 msgstr ""
 
 #. I18N: Moonbase Console is a program name
-#: engines/scumm/dialogs.cpp:1857
+#: engines/scumm/dialogs.cpp:1863
 msgid "Generate random maps"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1857
+#: engines/scumm/dialogs.cpp:1863
 msgid "Allow random map generation (Based from Moonbase Console)."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1860
+#: engines/scumm/dialogs.cpp:1866
 msgid ""
 "Address of the server to connect to for hosting and joining online game "
 "sessions."
@@ -12095,11 +12143,6 @@ msgstr ""
 #: engines/scumm/help.cpp:102
 msgid "Increase / Decrease scale factor"
 msgstr ""
-
-#: engines/scumm/help.cpp:103
-#, fuzzy
-msgid "Toggle aspect-ratio correction"
-msgstr "Görüntü oranı düzeltme"
 
 #: engines/scumm/help.cpp:108
 msgid "* Note that using ctrl-f and"
@@ -12715,27 +12758,27 @@ msgid ""
 "Please copy the game from the original media without compression."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2302
+#: engines/scumm/scumm.cpp:2301
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
 "but %s is missing. Using AdLib instead."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2318
+#: engines/scumm/scumm.cpp:2316
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:4218
+#: engines/scumm/scumm.cpp:4215
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
 "Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:4330
+#: engines/scumm/scumm.cpp:4339
 msgid "Would you like to host or join a network play session?"
 msgstr ""
 
@@ -12938,12 +12981,12 @@ msgstr ""
 msgid "Scroll keymappings"
 msgstr "A~y~arlar..."
 
-#: engines/sherlock/metaengine.cpp:332 engines/sherlock/metaengine.cpp:774
+#: engines/sherlock/metaengine.cpp:332 engines/sherlock/metaengine.cpp:776
 #, fuzzy
 msgid "Main user interface keymappings"
 msgstr "A~y~arlar..."
 
-#: engines/sherlock/metaengine.cpp:333 engines/sherlock/metaengine.cpp:779
+#: engines/sherlock/metaengine.cpp:333 engines/sherlock/metaengine.cpp:781
 #, fuzzy
 msgid "Darts minigame keymappings"
 msgstr "A~y~arlar..."
@@ -12963,7 +13006,7 @@ msgstr "A~y~arlar..."
 msgid "Settings keymappings"
 msgstr "A~y~arlar..."
 
-#: engines/sherlock/metaengine.cpp:341 engines/sherlock/metaengine.cpp:776
+#: engines/sherlock/metaengine.cpp:341 engines/sherlock/metaengine.cpp:778
 #, fuzzy
 msgid "Movie keymappings"
 msgstr "A~y~arlar..."
@@ -12974,7 +13017,10 @@ msgid "Skip / Deselect verb"
 msgstr "Aktif"
 
 #: engines/sherlock/metaengine.cpp:450
-msgid "Setup"
+#: engines/wintermute/keymapper_tables.h:1614
+#: engines/wintermute/keymapper_tables.h:1867
+#: engines/wintermute/keymapper_tables.h:1963
+msgid "Settings"
 msgstr ""
 
 #: engines/sherlock/metaengine.cpp:472
@@ -12985,32 +13031,28 @@ msgstr "Sıfırla"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go back 10 pages in the journal
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 10 pages in the journal
-#: engines/sherlock/metaengine.cpp:501 engines/sherlock/metaengine.cpp:908
+#: engines/sherlock/metaengine.cpp:501 engines/sherlock/metaengine.cpp:910
 msgid "Go back 10 pages"
 msgstr ""
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go forward 10 pages in the journal
-#: engines/sherlock/metaengine.cpp:507
-msgid "Go ahead 10 pages"
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 10 pages in the journal
+#: engines/sherlock/metaengine.cpp:507 engines/sherlock/metaengine.cpp:895
+msgid "Go forward 10 pages"
 msgstr ""
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go to the first page of the journal
-#: engines/sherlock/metaengine.cpp:521
+#: engines/sherlock/metaengine.cpp:521 engines/sherlock/metaengine.cpp:924
 #: engines/wintermute/keymapper_tables.h:965
 msgid "First page"
 msgstr ""
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go to the last page of the journal
-#: engines/sherlock/metaengine.cpp:528
+#: engines/sherlock/metaengine.cpp:528 engines/sherlock/metaengine.cpp:931
 #: engines/wintermute/keymapper_tables.h:970
 #, fuzzy
 msgid "Last page"
 msgstr "Hızlı yeniden oynatma"
-
-#. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go back a page (one page displays 6 items) in the inventory
-#: engines/sherlock/metaengine.cpp:572
-msgid "Go back a page"
-msgstr ""
 
 #: engines/sherlock/metaengine.cpp:578
 #, fuzzy
@@ -13020,286 +13062,206 @@ msgstr "Sol"
 #: engines/sherlock/metaengine.cpp:584
 #, fuzzy
 #| msgid "Right"
-msgid "Scroll Right"
+msgid "Scroll right"
 msgstr "Sağ"
 
-#. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go ahead a page (one page displays 6 items) in the inventory
-#: engines/sherlock/metaengine.cpp:591
-msgid "Go ahead a page"
-msgstr ""
-
-#: engines/sherlock/metaengine.cpp:649 engines/sherlock/metaengine.cpp:936
+#: engines/sherlock/metaengine.cpp:649 engines/sherlock/metaengine.cpp:938
 #, fuzzy
 msgid "Select option"
 msgstr "Tema seç"
 
-#: engines/sherlock/metaengine.cpp:685 engines/ultima/nuvie/metaengine.cpp:99
-#, fuzzy
-msgid "Toggle music"
-msgstr "Altyazılar"
-
-#: engines/sherlock/metaengine.cpp:690
+#: engines/sherlock/metaengine.cpp:692
 #, fuzzy
 msgid "Toggle portraits"
 msgstr "Altyazılar"
 
-#: engines/sherlock/metaengine.cpp:695
+#: engines/sherlock/metaengine.cpp:697
 #, fuzzy
 msgid "Change font style"
 msgstr "Grafik modu:"
 
-#: engines/sherlock/metaengine.cpp:700
-#, fuzzy
-#| msgid "Special sound effects volume"
-msgid "Toggle sound effects"
-msgstr "Özel ses efektleri ses düzeyi"
-
-#: engines/sherlock/metaengine.cpp:705
+#: engines/sherlock/metaengine.cpp:707
 #, fuzzy
 msgid "Toggle windows mode"
 msgstr "Altyazılar"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an auto-help feature, this action is used to change the auto-help location between left and right
-#: engines/sherlock/metaengine.cpp:711
+#: engines/sherlock/metaengine.cpp:713
 #, fuzzy
 #| msgid "Change game options"
 msgid "Change auto-help location"
 msgstr "Oyun seçeneklerini değiştirme"
 
-#: engines/sherlock/metaengine.cpp:716
+#: engines/sherlock/metaengine.cpp:718
 #, fuzzy
 msgid "Toggle voices"
 msgstr "Oyunun tam ismi"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade by pixel"
-#: engines/sherlock/metaengine.cpp:724
+#: engines/sherlock/metaengine.cpp:726
 msgid "Fade by pixel"
 msgstr ""
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade directly"
-#: engines/sherlock/metaengine.cpp:730
+#: engines/sherlock/metaengine.cpp:732
 msgid "Fade directly"
 msgstr ""
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode
-#: engines/sherlock/metaengine.cpp:736
+#: engines/sherlock/metaengine.cpp:738
 #, fuzzy
 msgid "Change fade mode"
 msgstr "Grafik modu:"
 
-#: engines/sherlock/metaengine.cpp:778
+#: engines/sherlock/metaengine.cpp:780
 #, fuzzy
 msgid "Journal search keymappings"
 msgstr "A~y~arlar..."
 
-#: engines/sherlock/metaengine.cpp:781
+#: engines/sherlock/metaengine.cpp:783
 #, fuzzy
 msgid "Menu scrolling keymappings"
 msgstr "A~y~arlar..."
 
-#: engines/sherlock/metaengine.cpp:782
+#: engines/sherlock/metaengine.cpp:784
 #, fuzzy
 msgid "save / load menu keymappings"
 msgstr "A~y~arlar..."
 
-#: engines/sherlock/metaengine.cpp:783
+#: engines/sherlock/metaengine.cpp:785
 #, fuzzy
 msgid "Save files name editing keymappings"
 msgstr "A~y~arlar..."
 
-#: engines/sherlock/metaengine.cpp:784
+#: engines/sherlock/metaengine.cpp:786
 #, fuzzy
 msgid "Foolscap puzzle keymappings"
 msgstr "A~y~arlar..."
 
-#: engines/sherlock/metaengine.cpp:786
+#: engines/sherlock/metaengine.cpp:788
 #, fuzzy
 msgid "Options menu keymappings"
 msgstr "A~y~arlar..."
 
-#: engines/sherlock/metaengine.cpp:787
+#: engines/sherlock/metaengine.cpp:789
 #, fuzzy
 msgid "Password entry keymappings"
 msgstr "A~y~arlar..."
 
-#: engines/sherlock/metaengine.cpp:789
+#: engines/sherlock/metaengine.cpp:791
 #, fuzzy
 msgid "Talk options keymappings"
 msgstr "A~y~arlar..."
 
-#: engines/sherlock/metaengine.cpp:791
+#: engines/sherlock/metaengine.cpp:793
 #, fuzzy
 msgid "Move / Examine / Select"
 msgstr "Sol"
 
-#: engines/sherlock/metaengine.cpp:797
-msgid "Open verb menu / close menu"
-msgstr ""
-
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action changes the speed of the game (walking, animations, etc.)
-#: engines/sherlock/metaengine.cpp:808
+#: engines/sherlock/metaengine.cpp:810
 #, fuzzy
 msgid "Change speed"
 msgstr "Grafik modu:"
 
-#: engines/sherlock/metaengine.cpp:831
+#: engines/sherlock/metaengine.cpp:833
 #, fuzzy
 #| msgid "Close"
 msgid "Open journal"
 msgstr "Kapat"
 
-#: engines/sherlock/metaengine.cpp:844
+#: engines/sherlock/metaengine.cpp:846 engines/touche/metaengine.cpp:147
 #, fuzzy
-msgid "Open options"
+msgid "Open options menu"
 msgstr "Oyun"
 
-#: engines/sherlock/metaengine.cpp:860
+#: engines/sherlock/metaengine.cpp:862
 msgid "Exit / Close window"
 msgstr ""
 
-#: engines/sherlock/metaengine.cpp:870
-#, fuzzy
-#| msgid "Show hidden files"
-msgid "Skip prolog"
-msgstr "Gizli dosyaları göster"
-
-#: engines/sherlock/metaengine.cpp:880 engines/sherlock/metaengine.cpp:947
+#: engines/sherlock/metaengine.cpp:882 engines/sherlock/metaengine.cpp:949
 msgid "Change selected option to the left"
 msgstr ""
 
-#: engines/sherlock/metaengine.cpp:886 engines/sherlock/metaengine.cpp:953
+#: engines/sherlock/metaengine.cpp:888 engines/sherlock/metaengine.cpp:955
 msgid "Change selected option to the right"
 msgstr ""
 
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 10 pages in the journal
-#: engines/sherlock/metaengine.cpp:893
-msgid "Go forward 10 pages"
-msgstr ""
-
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 1 page in the journal
-#: engines/sherlock/metaengine.cpp:900
-#, fuzzy
-#| msgid "Backend"
-msgid "Go forward 1 page"
-msgstr "Altyapı"
-
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 1 page in the journal
-#: engines/sherlock/metaengine.cpp:915
-msgid "Go back 1 page"
-msgstr ""
-
-#: engines/sherlock/metaengine.cpp:922
-#, fuzzy
-#| msgid "Select directory for plugins"
-msgid "Go to start of journal"
-msgstr "Eklentilerin klasörünü seç"
-
-#: engines/sherlock/metaengine.cpp:929
-#, fuzzy
-#| msgid "Close"
-msgid "Go to end of journal"
-msgstr "Kapat"
-
-#: engines/sherlock/metaengine.cpp:970
+#: engines/sherlock/metaengine.cpp:972
 #, fuzzy
 msgid "Skip darts minigame"
 msgstr "İptal"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a map, this action is used to scroll to the top left of the map
-#: engines/sherlock/metaengine.cpp:981
+#: engines/sherlock/metaengine.cpp:983
 #, fuzzy
 msgid "Scroll to top left"
 msgstr "Aşağı"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a map, this action is used to scroll to the bottom right of the map
-#: engines/sherlock/metaengine.cpp:989
+#: engines/sherlock/metaengine.cpp:991
 #, fuzzy
 msgid "Scroll to bottom right"
 msgstr "Sol"
 
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up by a page in the widget
-#: engines/sherlock/metaengine.cpp:1039
-#, fuzzy
-msgid "Scroll page up"
-msgstr "Aşağı"
-
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down by a page in the widget
-#: engines/sherlock/metaengine.cpp:1046
-#, fuzzy
-msgid "Scroll page down"
-msgstr "Aşağı"
-
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll to the end of the widget
-#: engines/sherlock/metaengine.cpp:1053
+#: engines/sherlock/metaengine.cpp:1055
 #, fuzzy
 msgid "Scroll to end"
 msgstr "Aşağı"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll to the start of the widget
-#: engines/sherlock/metaengine.cpp:1060
+#: engines/sherlock/metaengine.cpp:1062
 #, fuzzy
 msgid "Scroll to start"
 msgstr "Aşağı"
 
-#: engines/sherlock/metaengine.cpp:1070
+#: engines/sherlock/metaengine.cpp:1072
 #, fuzzy
 #| msgid "Show hidden files"
 msgid "Go to next save file slot"
 msgstr "Gizli dosyaları göster"
 
-#: engines/sherlock/metaengine.cpp:1076
+#: engines/sherlock/metaengine.cpp:1078
 msgid "Go to next page of save files"
 msgstr ""
 
-#: engines/sherlock/metaengine.cpp:1081
+#: engines/sherlock/metaengine.cpp:1083
 #, fuzzy
 #| msgid "Select a Theme"
 msgid "Select save file"
 msgstr "Tema seç"
 
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the save file name input field
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the password input field
-#: engines/sherlock/metaengine.cpp:1108 engines/sherlock/metaengine.cpp:1213
-#, fuzzy
-msgid "Go to the line start"
-msgstr "Oyunu seç"
-
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the save file name input field
-#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the password input field
-#: engines/sherlock/metaengine.cpp:1115 engines/sherlock/metaengine.cpp:1220
-msgid "Go to the line end"
-msgstr ""
-
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) save file name input field has 2 modes, insert and overwrite, this action toggles between them
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) save password input field has 2 modes, insert and overwrite, this action toggles between them
-#: engines/sherlock/metaengine.cpp:1122 engines/sherlock/metaengine.cpp:1227
+#: engines/sherlock/metaengine.cpp:1124 engines/sherlock/metaengine.cpp:1229
 #, fuzzy
 msgid "Toggle insert mode"
 msgstr "Altyazılar"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a foolscap puzzle, where the player has to decode a hidden message on a piece of paper called a foolscap. this action is used to exit the puzzle
-#: engines/sherlock/metaengine.cpp:1133
+#: engines/sherlock/metaengine.cpp:1135
 #, fuzzy
 #| msgid "Close"
 msgid "Close puzzle"
 msgstr "Kapat"
 
-#: engines/sherlock/metaengine.cpp:1175
+#: engines/sherlock/metaengine.cpp:1177
 msgid "Exit inventory / Close verb menu / Cancel item use action"
 msgstr ""
 
-#: engines/sherlock/metaengine.cpp:1237
+#: engines/sherlock/metaengine.cpp:1239
 #, fuzzy
 msgid "Select next option"
 msgstr "Tema seç"
 
-#: engines/sherlock/metaengine.cpp:1259
+#: engines/sherlock/metaengine.cpp:1261
 #, fuzzy
 #| msgid "Show hidden files"
 msgid "Go to next talk option"
 msgstr "Gizli dosyaları göster"
 
-#: engines/sherlock/metaengine.cpp:1265
+#: engines/sherlock/metaengine.cpp:1267
 #, fuzzy
 #| msgid "Go to previous directory level"
 msgid "Go to previous talk option"
@@ -13324,7 +13286,7 @@ msgstr ""
 #: engines/sky/metaengine.cpp:136
 #, fuzzy
 #| msgid "Special sound effects volume"
-msgid "Toggle really fast mode on / off"
+msgid "Toggle really fast mode"
 msgstr "Özel ses efektleri ses düzeyi"
 
 #: engines/sky/metaengine.cpp:156
@@ -13370,11 +13332,6 @@ msgstr "Gizli dosyaları göster"
 #: engines/sludge/keymapper_tables.h:101 engines/sludge/keymapper_tables.h:150
 #, fuzzy
 msgid "Load auto save"
-msgstr "Oyun yükle:"
-
-#: engines/sludge/keymapper_tables.h:113 engines/sludge/keymapper_tables.h:162
-#, fuzzy
-msgid "Load save"
 msgstr "Oyun yükle:"
 
 #: engines/sludge/keymapper_tables.h:200 engines/sludge/keymapper_tables.h:435
@@ -13459,12 +13416,12 @@ msgid ""
 "full screen mode, at the cost of some details."
 msgstr ""
 
-#: engines/stark/metaengine.cpp:63 engines/ultima/metaengine.cpp:140
+#: engines/stark/metaengine.cpp:63 engines/ultima/metaengine.cpp:144
 #, fuzzy
 msgid "Enable font anti-aliasing"
 msgstr "3B Anti merdiven efekti:"
 
-#: engines/stark/metaengine.cpp:64 engines/ultima/metaengine.cpp:141
+#: engines/stark/metaengine.cpp:64 engines/ultima/metaengine.cpp:145
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 
@@ -13666,16 +13623,6 @@ msgstr "Enterpolasyon:"
 msgid "Text speed"
 msgstr "Metin ve Konuşma:"
 
-#: engines/supernova/metaengine.cpp:285
-#, fuzzy
-msgid "Page up"
-msgstr "Sol"
-
-#: engines/supernova/metaengine.cpp:291
-#, fuzzy
-msgid "Page down"
-msgstr "Sol"
-
 #: engines/supernova/metaengine.cpp:321
 msgid "Go"
 msgstr ""
@@ -13795,7 +13742,7 @@ msgstr ""
 msgid "Main menu"
 msgstr "Müzik cihazı:"
 
-#: engines/sword2/detection_tables.h:419
+#: engines/sword2/detection_tables.h:431
 msgid "Remastered edition is not supported. Please, use the classic version"
 msgstr ""
 
@@ -13830,7 +13777,8 @@ msgstr "Sol"
 msgid "Close inventory"
 msgstr "Altyazılar"
 
-#: engines/testbed/metaengine.cpp:38 engines/testbed/metaengine.cpp:39
+#. I18N: Runs tests in interactive mode
+#: engines/testbed/metaengine.cpp:39 engines/testbed/metaengine.cpp:40
 #, fuzzy
 #| msgid "Interact"
 msgid "Run in interactive mode"
@@ -13959,15 +13907,6 @@ msgstr "Oda:"
 #: engines/titanic/metaengine.cpp:259
 msgid "Real life"
 msgstr ""
-
-#: engines/titanic/metaengine.cpp:264
-msgid "Scroll up page"
-msgstr ""
-
-#: engines/titanic/metaengine.cpp:271
-#, fuzzy
-msgid "Scroll down page"
-msgstr "Aşağı"
 
 #: engines/titanic/metaengine.cpp:278
 #, fuzzy
@@ -14122,11 +14061,6 @@ msgstr "Müzik cihazı:"
 #: engines/touche/metaengine.cpp:135
 msgid "Skip sequence / open quit dialog"
 msgstr ""
-
-#: engines/touche/metaengine.cpp:147
-#, fuzzy
-msgid "Open options menu"
-msgstr "Oyun"
 
 #. I18N: The actor walking pace is increased
 #: engines/touche/metaengine.cpp:154
@@ -14320,11 +14254,11 @@ msgstr ""
 msgid "Enable the USA specific version flags"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:132 engines/ultima/metaengine.cpp:96
+#: engines/twine/metaengine.cpp:132 engines/ultima/metaengine.cpp:100
 msgid "Enable high resolution"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:133 engines/ultima/metaengine.cpp:97
+#: engines/twine/metaengine.cpp:133 engines/ultima/metaengine.cpp:101
 #, fuzzy
 msgid "Enable a higher resolution for the game"
 msgstr "Oyunun tam ismi"
@@ -14571,91 +14505,91 @@ msgstr "Tema seç"
 msgid "Show hotspots"
 msgstr "Gizli dosyaları göster"
 
-#: engines/twp/twp.cpp:830
+#: engines/twp/twp.cpp:833
 msgid ""
 "You selected Ransome *unbeeped* (DLC) but the DLC has not been detected!"
 msgstr ""
 
-#: engines/twp/twp.cpp:1016
+#: engines/twp/twp.cpp:1019
 #, fuzzy
 msgid ""
 "This game requires OpenGL with shaders, which is not supported on your system"
 msgstr "Özellikler derlenmiştir:"
 
-#: engines/twp/twp.cpp:1022
+#: engines/twp/twp.cpp:1025
 msgid ""
 "This game requires OpenGL Framebuffer Objects, which are not supported on "
 "your system"
 msgstr ""
 
-#: engines/ultima/metaengine.cpp:63
+#: engines/ultima/metaengine.cpp:67
 msgid "Enable frame skipping"
 msgstr ""
 
-#: engines/ultima/metaengine.cpp:64
+#: engines/ultima/metaengine.cpp:68
 msgid "Allow the game to skip animation frames when running too slow."
 msgstr ""
 
-#: engines/ultima/metaengine.cpp:74
+#: engines/ultima/metaengine.cpp:78
 #, fuzzy
 msgid "Enable frame limiting"
 msgstr "3B Anti merdiven efekti:"
 
-#: engines/ultima/metaengine.cpp:75
+#: engines/ultima/metaengine.cpp:79
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr ""
 
-#: engines/ultima/metaengine.cpp:85
+#: engines/ultima/metaengine.cpp:89
 #, fuzzy
 msgid "Enable cheats"
 msgstr "Oyunun tam ismi"
 
-#: engines/ultima/metaengine.cpp:86
+#: engines/ultima/metaengine.cpp:90
 msgid "Allow cheats by commands and a menu when player is clicked."
 msgstr ""
 
-#: engines/ultima/metaengine.cpp:107
+#: engines/ultima/metaengine.cpp:111
 msgid "Play foot step sounds"
 msgstr ""
 
-#: engines/ultima/metaengine.cpp:108
+#: engines/ultima/metaengine.cpp:112
 msgid "Plays sound when the player moves."
 msgstr ""
 
-#: engines/ultima/metaengine.cpp:118
+#: engines/ultima/metaengine.cpp:122
 #, fuzzy
 msgid "Enable jump to mouse position"
 msgstr "Oyunun tam ismi"
 
-#: engines/ultima/metaengine.cpp:119
+#: engines/ultima/metaengine.cpp:123
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
 msgstr ""
 
-#: engines/ultima/metaengine.cpp:129
+#: engines/ultima/metaengine.cpp:133
 #, fuzzy
 msgid "Enable font replacement"
 msgstr "3B Anti merdiven efekti:"
 
-#: engines/ultima/metaengine.cpp:130
+#: engines/ultima/metaengine.cpp:134
 msgid "Replaces game fonts with rendered fonts"
 msgstr ""
 
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
-#: engines/ultima/metaengine.cpp:152
+#: engines/ultima/metaengine.cpp:156
 msgid "Camera moves with Silencer"
 msgstr ""
 
-#: engines/ultima/metaengine.cpp:153
+#: engines/ultima/metaengine.cpp:157
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
 msgstr ""
 
-#: engines/ultima/metaengine.cpp:163
+#: engines/ultima/metaengine.cpp:167
 msgid "Always enable Christmas easter-egg"
 msgstr ""
 
-#: engines/ultima/metaengine.cpp:164
+#: engines/ultima/metaengine.cpp:168
 msgid "Enable the Christmas music at any time of year."
 msgstr ""
 
@@ -14663,10 +14597,140 @@ msgstr ""
 msgid "Could not find correct ultima.dat datafile"
 msgstr ""
 
+#: engines/ultima/ultima0/metaengine.cpp:49
+msgid "Swing"
+msgstr ""
+
+#: engines/ultima/ultima0/metaengine.cpp:50
+msgid "Throw"
+msgstr ""
+
+#: engines/ultima/ultima0/metaengine.cpp:51
+msgid "Food"
+msgstr ""
+
+#: engines/ultima/ultima0/metaengine.cpp:52
+msgid "Rapier"
+msgstr ""
+
+#: engines/ultima/ultima0/metaengine.cpp:53
+msgid "Axe"
+msgstr ""
+
+#: engines/ultima/ultima0/metaengine.cpp:54
+msgid "Shield"
+msgstr ""
+
+#: engines/ultima/ultima0/metaengine.cpp:55
+msgid "Bow & Arrow"
+msgstr ""
+
+#: engines/ultima/ultima0/metaengine.cpp:56
+msgid "Magic Amulet"
+msgstr ""
+
+#: engines/ultima/ultima0/metaengine.cpp:57
+#, fuzzy
+msgid "Amulet Option 1"
+msgstr "Tema seç"
+
+#: engines/ultima/ultima0/metaengine.cpp:58
+#, fuzzy
+msgid "Amulet Option 2"
+msgstr "Tema seç"
+
+#: engines/ultima/ultima0/metaengine.cpp:59
+#, fuzzy
+msgid "Amulet Option 3"
+msgstr "Tema seç"
+
+#: engines/ultima/ultima0/metaengine.cpp:60
+#, fuzzy
+msgid "Amulet Option 4"
+msgstr "Tema seç"
+
+#: engines/ultima/ultima0/metaengine.cpp:65
+msgid "North"
+msgstr ""
+
+#: engines/ultima/ultima0/metaengine.cpp:66
+msgid "South"
+msgstr ""
+
+#: engines/ultima/ultima0/metaengine.cpp:67
+msgid "West"
+msgstr ""
+
+#: engines/ultima/ultima0/metaengine.cpp:68
+msgid "East"
+msgstr ""
+
+#: engines/ultima/ultima0/metaengine.cpp:69
+#: engines/ultima/ultima0/metaengine.cpp:83
+#, fuzzy
+msgid "Enter/Exit"
+msgstr "Etkileşim"
+
+#: engines/ultima/ultima0/metaengine.cpp:72
+#: engines/ultima/ultima0/metaengine.cpp:86
+msgid "Pass/Wait"
+msgstr ""
+
+#: engines/ultima/ultima0/metaengine.cpp:73
+#: engines/ultima/ultima0/metaengine.cpp:87
+#, fuzzy
+msgid "Minimap"
+msgstr "Ses"
+
+#: engines/ultima/ultima0/metaengine.cpp:78
+#, fuzzy
+#| msgid "Backend"
+msgid "Move Forward"
+msgstr "Altyapı"
+
+#: engines/ultima/ultima0/metaengine.cpp:79
+msgid "Turn Around"
+msgstr ""
+
+#: engines/ultima/ultima0/metaengine.cpp:80
+#, fuzzy
+msgid "Turn Left"
+msgstr "Sol"
+
+#: engines/ultima/ultima0/metaengine.cpp:81
+#, fuzzy
+msgid "Turn Right"
+msgstr "Sağ"
+
+#: engines/ultima/ultima0/metaengine.cpp:98
+#: engines/ultima/ultima0/metaengine.cpp:106
+#: engines/ultima/ultima0/metaengine.cpp:111
+#: engines/ultima/ultima0/metaengine.cpp:117
+#: engines/ultima/ultima0/metaengine.cpp:123
+#, fuzzy
+msgid "Basic Keys"
+msgstr "A~y~arlar..."
+
+#: engines/ultima/ultima0/metaengine.cpp:99
+#: engines/ultima/ultima0/metaengine.cpp:112
+#, fuzzy
+msgid "Menu Keys"
+msgstr "A~y~arlar..."
+
+#: engines/ultima/ultima0/metaengine.cpp:100
+#: engines/ultima/ultima0/metaengine.cpp:118
+msgid "Overworld Keys"
+msgstr ""
+
+#: engines/ultima/ultima0/metaengine.cpp:101
+#: engines/ultima/ultima0/metaengine.cpp:124
+msgid "Dungeon Keys"
+msgstr ""
+
 #: engines/ultima/ultima4/metaengine.cpp:43
-#: engines/ultima/ultima4/metaengine.cpp:130
-#: engines/ultima/ultima4/metaengine.cpp:135
-#: engines/ultima/ultima4/metaengine.cpp:145
+#: engines/ultima/ultima4/metaengine.cpp:132
+#: engines/ultima/ultima4/metaengine.cpp:137
+#: engines/ultima/ultima4/metaengine.cpp:147
 #, fuzzy
 msgid "Abort action"
 msgstr "Aşağı"
@@ -14688,225 +14752,227 @@ msgstr ""
 msgid "Hole up & camp"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:58
+#. I18N: Jimmy is used to open locked doors
+#: engines/ultima/ultima4/metaengine.cpp:59
 msgid "Jimmy"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:59
+#: engines/ultima/ultima4/metaengine.cpp:60
 msgid "Ignite"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:60
+#: engines/ultima/ultima4/metaengine.cpp:61
 msgid "Locate position"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:61
+#: engines/ultima/ultima4/metaengine.cpp:62
 msgid "Mix reagents"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:62
+#: engines/ultima/ultima4/metaengine.cpp:63
 msgid "New order"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:63
+#: engines/ultima/ultima4/metaengine.cpp:64
 #, fuzzy
 msgid "Open door"
 msgstr "URL'yi aç"
 
-#: engines/ultima/ultima4/metaengine.cpp:64
+#: engines/ultima/ultima4/metaengine.cpp:65
 msgid "Pass"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:65
+#. I18N: Peer is used to look through keyholes or other small openings
+#: engines/ultima/ultima4/metaengine.cpp:67
 msgid "Peer"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:66
+#: engines/ultima/ultima4/metaengine.cpp:68
 #, fuzzy
 msgid "Quit and save"
 msgstr "Oyun yükle:"
 
-#: engines/ultima/ultima4/metaengine.cpp:67
+#: engines/ultima/ultima4/metaengine.cpp:69
 msgid "Ready weapon"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:69
+#: engines/ultima/ultima4/metaengine.cpp:71
 #, fuzzy
 #| msgid "Statistics"
 msgid "Stats"
 msgstr "İstatistik"
 
-#: engines/ultima/ultima4/metaengine.cpp:72
+#: engines/ultima/ultima4/metaengine.cpp:74
 msgid "Wear armor"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:73
+#: engines/ultima/ultima4/metaengine.cpp:75
 msgid "Yell"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:79
+#: engines/ultima/ultima4/metaengine.cpp:81
 #, fuzzy
 #| msgid "Speed:"
 msgid "Speed up"
 msgstr "Hız:"
 
-#: engines/ultima/ultima4/metaengine.cpp:80
+#: engines/ultima/ultima4/metaengine.cpp:82
 #, fuzzy
 msgid "Speed down"
 msgstr "Sol"
 
-#: engines/ultima/ultima4/metaengine.cpp:81
+#: engines/ultima/ultima4/metaengine.cpp:83
 msgid "Speed normal"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:82
+#: engines/ultima/ultima4/metaengine.cpp:84
 msgid "Combat speed up"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:83
+#: engines/ultima/ultima4/metaengine.cpp:85
 #, fuzzy
 msgid "Combat speed down"
 msgstr "Sol"
 
-#: engines/ultima/ultima4/metaengine.cpp:84
+#: engines/ultima/ultima4/metaengine.cpp:86
 msgid "Combat speed normal"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:90
+#: engines/ultima/ultima4/metaengine.cpp:92
 msgid "Party - None"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:91
+#: engines/ultima/ultima4/metaengine.cpp:93
 #, fuzzy
 #| msgid "Delete char"
 msgid "Party - Character #1"
 msgstr "Karakteri sil"
 
-#: engines/ultima/ultima4/metaengine.cpp:92
+#: engines/ultima/ultima4/metaengine.cpp:94
 #, fuzzy
 #| msgid "Delete char"
 msgid "Party - Character #2"
 msgstr "Karakteri sil"
 
-#: engines/ultima/ultima4/metaengine.cpp:93
+#: engines/ultima/ultima4/metaengine.cpp:95
 #, fuzzy
 #| msgid "Delete char"
 msgid "Party - Character #3"
 msgstr "Karakteri sil"
 
-#: engines/ultima/ultima4/metaengine.cpp:94
+#: engines/ultima/ultima4/metaengine.cpp:96
 #, fuzzy
 #| msgid "Delete char"
 msgid "Party - Character #4"
 msgstr "Karakteri sil"
 
-#: engines/ultima/ultima4/metaengine.cpp:95
+#: engines/ultima/ultima4/metaengine.cpp:97
 #, fuzzy
 #| msgid "Delete char"
 msgid "Party - Character #5"
 msgstr "Karakteri sil"
 
-#: engines/ultima/ultima4/metaengine.cpp:96
+#: engines/ultima/ultima4/metaengine.cpp:98
 #, fuzzy
 #| msgid "Delete char"
 msgid "Party - Character #6"
 msgstr "Karakteri sil"
 
-#: engines/ultima/ultima4/metaengine.cpp:97
+#: engines/ultima/ultima4/metaengine.cpp:99
 #, fuzzy
 #| msgid "Delete char"
 msgid "Party - Character #7"
 msgstr "Karakteri sil"
 
-#: engines/ultima/ultima4/metaengine.cpp:98
+#: engines/ultima/ultima4/metaengine.cpp:100
 #, fuzzy
 #| msgid "Delete char"
 msgid "Party - Character #8"
 msgstr "Karakteri sil"
 
-#: engines/ultima/ultima4/metaengine.cpp:104
+#: engines/ultima/ultima4/metaengine.cpp:106
 msgid "Destroy all creatures"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:105
+#: engines/ultima/ultima4/metaengine.cpp:107
 #, fuzzy
 msgid "Toggle collision handling"
 msgstr "Altyazılar"
 
-#: engines/ultima/ultima4/metaengine.cpp:106
+#: engines/ultima/ultima4/metaengine.cpp:108
 #, fuzzy
 #| msgid "Go to previous directory level"
 msgid "Destroy object"
 msgstr "Bir önceki klasör seviyesine git"
 
-#: engines/ultima/ultima4/metaengine.cpp:107
+#: engines/ultima/ultima4/metaengine.cpp:109
 msgid "Full equipment"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:108
+#: engines/ultima/ultima4/metaengine.cpp:110
 #, fuzzy
 msgid "Flee combat"
 msgstr "Altyazılar"
 
-#: engines/ultima/ultima4/metaengine.cpp:110
+#: engines/ultima/ultima4/metaengine.cpp:112
 msgid "Help - Teleport to Lord British"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:111
+#: engines/ultima/ultima4/metaengine.cpp:113
 msgid "Give items"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:112
+#: engines/ultima/ultima4/metaengine.cpp:114
 msgid "List karma"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:113
+#: engines/ultima/ultima4/metaengine.cpp:115
 #, fuzzy
 msgid "Leave location"
 msgstr "A~y~arlar..."
 
-#: engines/ultima/ultima4/metaengine.cpp:114
+#: engines/ultima/ultima4/metaengine.cpp:116
 msgid "Give mixtures"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:115
+#: engines/ultima/ultima4/metaengine.cpp:117
 msgid "Combat encounters"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:116
+#: engines/ultima/ultima4/metaengine.cpp:118
 msgid "Toggle overhead view"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:117
+#: engines/ultima/ultima4/metaengine.cpp:119
 msgid "Full party"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:118
+#: engines/ultima/ultima4/metaengine.cpp:120
 msgid "Give reagents"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:119
+#: engines/ultima/ultima4/metaengine.cpp:121
 msgid "Full stats"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:120
+#: engines/ultima/ultima4/metaengine.cpp:122
 msgid "Create transport"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:121
+#: engines/ultima/ultima4/metaengine.cpp:123
 msgid "Up level"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:122
+#: engines/ultima/ultima4/metaengine.cpp:124
 #, fuzzy
 msgid "Down level"
 msgstr "Sol"
 
-#: engines/ultima/ultima4/metaengine.cpp:123
+#: engines/ultima/ultima4/metaengine.cpp:125
 msgid "Grant virtue"
 msgstr ""
 
-#: engines/ultima/ultima4/metaengine.cpp:124
+#: engines/ultima/ultima4/metaengine.cpp:126
 #, fuzzy
 msgid "Change wind"
 msgstr "Grafik modu:"
@@ -14961,408 +15027,411 @@ msgstr ""
 msgid "Multi-use"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:76
+#. I18N: command bar is the bar of commands at the bottom of the screen
+#: engines/ultima/nuvie/metaengine.cpp:77
 #, fuzzy
 msgid "Select command bar"
 msgstr "Tema seç"
 
-#: engines/ultima/nuvie/metaengine.cpp:77
+#. I18N: command bar is the bar of commands at the bottom of the screen
+#: engines/ultima/nuvie/metaengine.cpp:79
 #, fuzzy
 msgid "Select new command bar"
 msgstr "Tema seç"
 
 #. I18N: gump is Graphical User Menu Pop-up
-#: engines/ultima/nuvie/metaengine.cpp:79
+#: engines/ultima/nuvie/metaengine.cpp:81
 msgid "Doll gump"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:80
+#: engines/ultima/nuvie/metaengine.cpp:82
 #, fuzzy
 #| msgid "Prev"
 msgid "Previous party member"
 msgstr "Önceki"
 
-#: engines/ultima/nuvie/metaengine.cpp:81
+#: engines/ultima/nuvie/metaengine.cpp:83
 msgid "Next party member"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:82
+#: engines/ultima/nuvie/metaengine.cpp:84
 msgid "Home key"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:83
+#: engines/ultima/nuvie/metaengine.cpp:85
 msgid "End key"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:84
+#: engines/ultima/nuvie/metaengine.cpp:86
 msgid "Toggle between inventory and actor view"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:85
+#: engines/ultima/nuvie/metaengine.cpp:87
 #, fuzzy
 #| msgid "List view"
 msgid "Party view"
 msgstr "Liste görünümü"
 
-#: engines/ultima/nuvie/metaengine.cpp:86
+#: engines/ultima/nuvie/metaengine.cpp:88
 #, fuzzy
 msgid "Party mode"
 msgstr "Çekiştirme modu:"
 
-#: engines/ultima/nuvie/metaengine.cpp:87
+#: engines/ultima/nuvie/metaengine.cpp:89
 #, fuzzy
 msgid "Save menu"
 msgstr "Oyun"
 
-#: engines/ultima/nuvie/metaengine.cpp:88
+#: engines/ultima/nuvie/metaengine.cpp:90
 #, fuzzy
 msgid "Load latest save"
 msgstr "Oyun yükle:"
 
-#: engines/ultima/nuvie/metaengine.cpp:93
+#: engines/ultima/nuvie/metaengine.cpp:95
 msgid "Show game menu; Cancel action if in middle of action"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:95
+#: engines/ultima/nuvie/metaengine.cpp:97
 #, fuzzy
 msgid "Toggle Cursor"
 msgstr "Altyazılar"
 
-#: engines/ultima/nuvie/metaengine.cpp:96
+#: engines/ultima/nuvie/metaengine.cpp:98
 #, fuzzy
 msgid "Toggle combat strategy"
 msgstr "Altyazılar"
 
-#: engines/ultima/nuvie/metaengine.cpp:97
+#: engines/ultima/nuvie/metaengine.cpp:99
 msgid "Toggle frames per second display"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:98
+#: engines/ultima/nuvie/metaengine.cpp:100
 #, fuzzy
 msgid "Toggle audio"
 msgstr "Altyazılar"
 
-#: engines/ultima/nuvie/metaengine.cpp:100
+#: engines/ultima/nuvie/metaengine.cpp:102
 #, fuzzy
 msgid "Toggle sfx"
 msgstr "Altyazılar"
 
-#: engines/ultima/nuvie/metaengine.cpp:101
+#. I18N: command bar is the bar of commands at the bottom of the screen
+#: engines/ultima/nuvie/metaengine.cpp:104
 msgid "Toggle original style command bar"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:102
+#: engines/ultima/nuvie/metaengine.cpp:105
 #, fuzzy
 #| msgid "Choose an action to map"
 msgid "Do action"
 msgstr "Eşleştirme için bir işlem seç"
 
-#: engines/ultima/nuvie/metaengine.cpp:103
+#: engines/ultima/nuvie/metaengine.cpp:106
 #, fuzzy
 #| msgid "Change game options"
 msgid "Cancel action"
 msgstr "Oyun seçeneklerini değiştirme"
 
-#: engines/ultima/nuvie/metaengine.cpp:104
+#: engines/ultima/nuvie/metaengine.cpp:107
 msgid "Msg scroll up"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:105
+#: engines/ultima/nuvie/metaengine.cpp:108
 #, fuzzy
 msgid "Msg scroll down"
 msgstr "Aşağı"
 
-#: engines/ultima/nuvie/metaengine.cpp:106
+#: engines/ultima/nuvie/metaengine.cpp:109
 #, fuzzy
 msgid "Show keys"
 msgstr "A~y~arlar..."
 
-#: engines/ultima/nuvie/metaengine.cpp:107
+#: engines/ultima/nuvie/metaengine.cpp:110
 msgid "Decrease debug"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:108
+#: engines/ultima/nuvie/metaengine.cpp:111
 msgid "Increase debug"
 msgstr ""
 
 #. I18N: gump is Graphical User Menu Pop-up
-#: engines/ultima/nuvie/metaengine.cpp:110
+#: engines/ultima/nuvie/metaengine.cpp:113
 #, fuzzy
 #| msgid "Close"
 msgid "Close gumps"
 msgstr "Kapat"
 
-#: engines/ultima/nuvie/metaengine.cpp:112
+#: engines/ultima/nuvie/metaengine.cpp:115
 msgid "Enter ALT code (hold)"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:113
+#: engines/ultima/nuvie/metaengine.cpp:116
 msgid "ALT code 0"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:114
+#: engines/ultima/nuvie/metaengine.cpp:117
 msgid "ALT code 1"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:115
+#: engines/ultima/nuvie/metaengine.cpp:118
 msgid "ALT code 2"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:116
+#: engines/ultima/nuvie/metaengine.cpp:119
 msgid "ALT code 3"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:117
+#: engines/ultima/nuvie/metaengine.cpp:120
 msgid "ALT code 4"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:118
+#: engines/ultima/nuvie/metaengine.cpp:121
 msgid "ALT code 5"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:119
+#: engines/ultima/nuvie/metaengine.cpp:122
 msgid "ALT code 6"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:120
+#: engines/ultima/nuvie/metaengine.cpp:123
 msgid "ALT code 7"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:121
+#: engines/ultima/nuvie/metaengine.cpp:124
 msgid "ALT code 8"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:122
+#: engines/ultima/nuvie/metaengine.cpp:125
 msgid "ALT code 9"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:126
+#: engines/ultima/nuvie/metaengine.cpp:129
 msgid "Open the asset viewer"
 msgstr ""
 
 #. I18N: Eggs are in-game hatchable objects that are normally invisible
-#: engines/ultima/nuvie/metaengine.cpp:128
+#: engines/ultima/nuvie/metaengine.cpp:131
 #, fuzzy
 msgid "Show eggs"
 msgstr "A~y~arlar..."
 
-#: engines/ultima/nuvie/metaengine.cpp:129
+#: engines/ultima/nuvie/metaengine.cpp:132
 #, fuzzy
 msgid "Toggle hack move"
 msgstr "Altyazılar"
 
 #. I18N: Eggs are in-game hatchable objects that are normally invisible
-#: engines/ultima/nuvie/metaengine.cpp:131
+#: engines/ultima/nuvie/metaengine.cpp:134
 #, fuzzy
 msgid "Toggle egg spawn"
 msgstr "Altyazılar"
 
-#: engines/ultima/nuvie/metaengine.cpp:132
+#: engines/ultima/nuvie/metaengine.cpp:135
 #, fuzzy
 msgid "Toggle no darkness"
 msgstr "Altyazılar"
 
-#: engines/ultima/nuvie/metaengine.cpp:133
+#: engines/ultima/nuvie/metaengine.cpp:136
 #, fuzzy
 msgid "Toggle pickpocket mode"
 msgstr "Altyazılar"
 
-#: engines/ultima/nuvie/metaengine.cpp:134
+#: engines/ultima/nuvie/metaengine.cpp:137
 #, fuzzy
 msgid "Toggle god mode"
 msgstr "Altyazılar"
 
-#: engines/ultima/nuvie/metaengine.cpp:135
+#: engines/ultima/nuvie/metaengine.cpp:138
 #, fuzzy
 msgid "Toggle ethereal mode"
 msgstr "Altyazılar"
 
-#: engines/ultima/nuvie/metaengine.cpp:136
+#: engines/ultima/nuvie/metaengine.cpp:139
 #, fuzzy
 msgid "Toggle X-ray mode"
 msgstr "Altyazılar"
 
-#: engines/ultima/nuvie/metaengine.cpp:137
+#: engines/ultima/nuvie/metaengine.cpp:140
 msgid "Heal party"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:138
+#: engines/ultima/nuvie/metaengine.cpp:141
 msgid "Teleport to cursor"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:139
+#: engines/ultima/nuvie/metaengine.cpp:142
 #, fuzzy
 msgid "Toggle cheats"
 msgstr "Oyunun tam ismi"
 
-#: engines/ultima/nuvie/metaengine.cpp:143
+#: engines/ultima/nuvie/metaengine.cpp:146
 msgid "Solo mode as Avatar"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:144
+#: engines/ultima/nuvie/metaengine.cpp:147
 msgid "Solo mode as party member 2"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:145
+#: engines/ultima/nuvie/metaengine.cpp:148
 msgid "Solo mode as party member 3"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:146
+#: engines/ultima/nuvie/metaengine.cpp:149
 msgid "Solo mode as party member 4"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:147
+#: engines/ultima/nuvie/metaengine.cpp:150
 msgid "Solo mode as party member 5"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:148
+#: engines/ultima/nuvie/metaengine.cpp:151
 msgid "Solo mode as party member 6"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:149
+#: engines/ultima/nuvie/metaengine.cpp:152
 msgid "Solo mode as party member 7"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:150
+#: engines/ultima/nuvie/metaengine.cpp:153
 msgid "Solo mode as party member 8"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:151
+#: engines/ultima/nuvie/metaengine.cpp:154
 msgid "Solo mode as party member 9"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:152
+#: engines/ultima/nuvie/metaengine.cpp:155
 msgid "Show stats for Avatar"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:153
+#: engines/ultima/nuvie/metaengine.cpp:156
 msgid "Show stats for party member 2"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:154
+#: engines/ultima/nuvie/metaengine.cpp:157
 msgid "Show stats for party member 3"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:155
+#: engines/ultima/nuvie/metaengine.cpp:158
 msgid "Show stats for party member 4"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:156
+#: engines/ultima/nuvie/metaengine.cpp:159
 msgid "Show stats for party member 5"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:157
+#: engines/ultima/nuvie/metaengine.cpp:160
 msgid "Show stats for party member 6"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:158
+#: engines/ultima/nuvie/metaengine.cpp:161
 msgid "Show stats for party member 7"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:159
+#: engines/ultima/nuvie/metaengine.cpp:162
 msgid "Show stats for party member 8"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:160
+#: engines/ultima/nuvie/metaengine.cpp:163
 msgid "Show stats for party member 9"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:161
+#: engines/ultima/nuvie/metaengine.cpp:164
 msgid "Show inventory for Avatar"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:162
+#: engines/ultima/nuvie/metaengine.cpp:165
 msgid "Show inventory for party member 2"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:163
+#: engines/ultima/nuvie/metaengine.cpp:166
 msgid "Show inventory for party member 3"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:164
+#: engines/ultima/nuvie/metaengine.cpp:167
 msgid "Show inventory for party member 4"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:165
+#: engines/ultima/nuvie/metaengine.cpp:168
 msgid "Show inventory for party member 5"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:166
+#: engines/ultima/nuvie/metaengine.cpp:169
 msgid "Show inventory for party member 6"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:167
+#: engines/ultima/nuvie/metaengine.cpp:170
 msgid "Show inventory for party member 7"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:168
+#: engines/ultima/nuvie/metaengine.cpp:171
 msgid "Show inventory for party member 8"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:169
+#: engines/ultima/nuvie/metaengine.cpp:172
 msgid "Show inventory for party member 9"
 msgstr ""
 
 #. I18N: gump is Graphical User Menu Pop-up
-#: engines/ultima/nuvie/metaengine.cpp:171
+#: engines/ultima/nuvie/metaengine.cpp:174
 msgid "Show doll gump for Avatar"
 msgstr ""
 
 #. I18N: gump is Graphical User Menu Pop-up
-#: engines/ultima/nuvie/metaengine.cpp:173
+#: engines/ultima/nuvie/metaengine.cpp:176
 msgid "Show doll gump for party member 2"
 msgstr ""
 
 #. I18N: gump is Graphical User Menu Pop-up
-#: engines/ultima/nuvie/metaengine.cpp:175
+#: engines/ultima/nuvie/metaengine.cpp:178
 msgid "Show doll gump for party member 3"
 msgstr ""
 
 #. I18N: gump is Graphical User Menu Pop-up
-#: engines/ultima/nuvie/metaengine.cpp:177
+#: engines/ultima/nuvie/metaengine.cpp:180
 msgid "Show doll gump for party member 4"
 msgstr ""
 
 #. I18N: gump is Graphical User Menu Pop-up
-#: engines/ultima/nuvie/metaengine.cpp:179
+#: engines/ultima/nuvie/metaengine.cpp:182
 msgid "Show doll gump for party member 5"
 msgstr ""
 
 #. I18N: gump is Graphical User Menu Pop-up
-#: engines/ultima/nuvie/metaengine.cpp:181
+#: engines/ultima/nuvie/metaengine.cpp:184
 msgid "Show doll gump for party member 6"
 msgstr ""
 
 #. I18N: gump is Graphical User Menu Pop-up
-#: engines/ultima/nuvie/metaengine.cpp:183
+#: engines/ultima/nuvie/metaengine.cpp:186
 msgid "Show doll gump for party member 7"
 msgstr ""
 
 #. I18N: gump is Graphical User Menu Pop-up
-#: engines/ultima/nuvie/metaengine.cpp:185
+#: engines/ultima/nuvie/metaengine.cpp:188
 msgid "Show doll gump for party member 8"
 msgstr ""
 
 #. I18N: gump is Graphical User Menu Pop-up
-#: engines/ultima/nuvie/metaengine.cpp:187
+#: engines/ultima/nuvie/metaengine.cpp:190
 msgid "Show doll gump for party member 9"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:193
-#: engines/ultima/nuvie/metaengine.cpp:198
+#: engines/ultima/nuvie/metaengine.cpp:196
+#: engines/ultima/nuvie/metaengine.cpp:201
 #, fuzzy
 msgid "Toggle unlimited casting"
 msgstr "Grafik orantılama yapılırken doğrusal filtreleme"
 
-#: engines/ultima/nuvie/metaengine.cpp:224
+#: engines/ultima/nuvie/metaengine.cpp:227
 msgid "Ultima VI"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:226
+#: engines/ultima/nuvie/metaengine.cpp:229
 msgid "Martian Dreams"
 msgstr ""
 
-#: engines/ultima/nuvie/metaengine.cpp:228
+#: engines/ultima/nuvie/metaengine.cpp:231
 msgid "The Savage Empire"
 msgstr ""
 
@@ -15685,21 +15754,21 @@ msgid ""
 "The game will still play, but will not have any music."
 msgstr ""
 
-#: engines/vcruise/vcruise.cpp:104
+#: engines/vcruise/vcruise.cpp:103
 msgid ""
 "Music for this game requires MP3 support, which was not compiled in.\n"
 "The game will still play, but will not have any music."
 msgstr ""
 
-#: engines/vcruise/vcruise.cpp:343
+#: engines/vcruise/vcruise.cpp:341
 msgid "Failed to load save, the save data appears to be damaged."
 msgstr ""
 
-#: engines/vcruise/vcruise.cpp:348
+#: engines/vcruise/vcruise.cpp:346
 msgid "Failed to read version information from save file."
 msgstr ""
 
-#: engines/vcruise/vcruise.cpp:368
+#: engines/vcruise/vcruise.cpp:366
 #, fuzzy
 msgid "An unknown error occurred while attempting to load the saved game."
 msgstr "Otokayıt yaparken hata oluştu"
@@ -15768,17 +15837,33 @@ msgstr ""
 msgid "This setting forces ScummVM to use 2D renderer while running 2D games"
 msgstr ""
 
-#: engines/wintermute/metaengine.cpp:124
+#: engines/wintermute/metaengine.cpp:94
+msgid "Use Italian speech pack"
+msgstr ""
+
+#: engines/wintermute/metaengine.cpp:95
+msgid "Use Italian dubbing instead of the default English one"
+msgstr ""
+
+#: engines/wintermute/metaengine.cpp:106
+msgid "Run SD version (1280x800)"
+msgstr ""
+
+#: engines/wintermute/metaengine.cpp:107
+msgid "Run the legacy SD version, which is better for small screens"
+msgstr ""
+
+#: engines/wintermute/metaengine.cpp:148
 #, fuzzy
 msgid "FoxTail support is not compiled in"
 msgstr "Özellikler derlenmiştir:"
 
-#: engines/wintermute/metaengine.cpp:130
+#: engines/wintermute/metaengine.cpp:154
 #, fuzzy
 msgid "Hero Craft support is not compiled in"
 msgstr "Özellikler derlenmiştir:"
 
-#: engines/wintermute/metaengine.cpp:136
+#: engines/wintermute/metaengine.cpp:160
 #, fuzzy
 msgid "Wintermute3D support is not compiled in"
 msgstr "Özellikler derlenmiştir:"
@@ -16185,12 +16270,6 @@ msgstr ""
 msgid "Chapayev's action"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1614
-#: engines/wintermute/keymapper_tables.h:1867
-#: engines/wintermute/keymapper_tables.h:1963
-msgid "Settings"
-msgstr ""
-
 #: engines/wintermute/keymapper_tables.h:1619
 msgid "Dialog answer 1"
 msgstr ""
@@ -16392,6 +16471,101 @@ msgid ""
 msgstr ""
 
 #, fuzzy
+#~| msgid "Special sound effects volume"
+#~ msgid "Toggle music on / off"
+#~ msgstr "Özel ses efektleri ses düzeyi"
+
+#, fuzzy
+#~| msgid "Special sound effects volume"
+#~ msgid "Toggle sound effects on / off"
+#~ msgstr "Özel ses efektleri ses düzeyi"
+
+#, fuzzy
+#~| msgid "Special sound effects volume"
+#~ msgid "Toggle fast mode on / off"
+#~ msgstr "Özel ses efektleri ses düzeyi"
+
+#, fuzzy
+#~ msgid "Toggle aspect-ratio correction"
+#~ msgstr "Görüntü oranı düzeltme"
+
+#, fuzzy
+#~ msgid "Page up"
+#~ msgstr "Sol"
+
+#, fuzzy
+#~ msgid "Page down"
+#~ msgstr "Sol"
+
+#, fuzzy
+#~ msgid "Scroll down page"
+#~ msgstr "Aşağı"
+
+#, fuzzy
+#~ msgid "Load game state"
+#~ msgstr "Oyun yükle:"
+
+#, fuzzy
+#~ msgid "Go to the line start"
+#~ msgstr "Oyunu seç"
+
+#, fuzzy
+#~ msgid "Open verb menu / Close menu"
+#~ msgstr "Oyun"
+
+#, fuzzy
+#~ msgid "Open options"
+#~ msgstr "Oyun"
+
+#, fuzzy
+#~| msgid "Show hidden files"
+#~ msgid "Skip prolog"
+#~ msgstr "Gizli dosyaları göster"
+
+#, fuzzy
+#~| msgid "Backend"
+#~ msgid "Go forward 1 page"
+#~ msgstr "Altyapı"
+
+#, fuzzy
+#~| msgid "Select directory for plugins"
+#~ msgid "Go to start of journal"
+#~ msgstr "Eklentilerin klasörünü seç"
+
+#, fuzzy
+#~| msgid "Close"
+#~ msgid "Go to end of journal"
+#~ msgstr "Kapat"
+
+#, fuzzy
+#~ msgid "Scroll page up"
+#~ msgstr "Aşağı"
+
+#, fuzzy
+#~ msgid "Scroll page down"
+#~ msgstr "Aşağı"
+
+#, fuzzy
+#~ msgid "Exit game"
+#~ msgstr "Oyun"
+
+#~ msgid "Ok"
+#~ msgstr "Ok"
+
+#, fuzzy
+#~ msgid "Strafe Left"
+#~ msgstr "Sol"
+
+#, fuzzy
+#~ msgid "Strafe Right"
+#~ msgstr "Sağ"
+
+#, fuzzy
+#~| msgid "Speech"
+#~ msgid "Skip Cutscene"
+#~ msgstr "Konuşma:"
+
+#, fuzzy
 #~ msgid "Display subtitles"
 #~ msgstr "Altyazılar"
 
@@ -16451,14 +16625,6 @@ msgstr ""
 
 #, fuzzy
 #~ msgid "Move Right"
-#~ msgstr "Sağ"
-
-#, fuzzy
-#~ msgid "Turn Left"
-#~ msgstr "Sol"
-
-#, fuzzy
-#~ msgid "Turn Right"
 #~ msgstr "Sağ"
 
 #, fuzzy

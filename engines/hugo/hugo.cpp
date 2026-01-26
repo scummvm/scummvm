@@ -86,6 +86,8 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 	_gameType = kGameTypeNone;
 	_platform = Common::kPlatformUnknown;
 	_packedFl = false;
+	_windowsInterfaceFl = (gd->desc.platform == Common::kPlatformWindows) ||
+	                      ConfMan.getBool("use_windows_interface");
 
 	_numVariant = 0;
 	_gameVariant = kGameVariantNone;
@@ -183,8 +185,12 @@ bool HugoEngine::hasFeature(EngineFeature f) const {
 	return (f == kSupportsReturnToLauncher) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
 }
 
-const char *HugoEngine::getCopyrightString() const {
-	return "Copyright 1989-1997 David P Gray, All Rights Reserved.";
+const char *HugoEngine::getCopyrightString1() const {
+	return "Copyright 1989-1997 David P Gray,";
+}
+
+const char *HugoEngine::getCopyrightString2() const {
+	return "All Rights Reserved.";
 }
 
 GameType HugoEngine::getGameType() const {
@@ -199,11 +205,15 @@ bool HugoEngine::isPacked() const {
 	return _packedFl;
 }
 
+bool HugoEngine::useWindowsInterface() const {
+	return _windowsInterfaceFl;
+}
+
 /**
  * Print options for user when dead
  */
 void HugoEngine::gameOverMsg() {
-	Utils::notifyBox(_text->getTextUtil(kGameOver));
+	notifyBox(_text->getTextUtil(kGameOver));
 }
 
 Common::Error HugoEngine::run() {
@@ -285,8 +295,10 @@ Common::Error HugoEngine::run() {
 		return Common::kUnknownError;
 
 	// Use Windows-looking mouse cursor
-	_screen->setCursorPal();
-	_screen->resetInventoryObjId();
+	if (useWindowsInterface()) {
+		_screen->setCursorPal();
+		_screen->resetInventoryObjId();
+	}
 
 	_scheduler->initCypher();
 
@@ -354,7 +366,9 @@ Common::Error HugoEngine::run() {
 			_file->instructions();
 		}
 
-		_mouse->mouseHandler();                     // Mouse activity - adds to display list
+		if (useWindowsInterface()) {
+			_mouse->mouseHandler();                 // Mouse activity - adds to display list
+		}
 		_screen->displayList(kDisplayDisplay);      // Blit the display list to screen
 		_status._doQuitFl |= shouldQuit();           // update game quit flag
 	}
@@ -378,10 +392,6 @@ void HugoEngine::initMachine() {
  */
 void HugoEngine::runMachine() {
 	Status &gameStatus = getGameStatus();
-
-	// Don't process if gameover
-	if (gameStatus._gameOverFl)
-		return;
 
 	_curTime = g_system->getMillis();
 	// Process machine once every tick
@@ -408,14 +418,23 @@ void HugoEngine::runMachine() {
 		}
 		break;
 	case kViewPlay:                                 // Playing game
-		_screen->showCursor();
+		if (useWindowsInterface()) {
+			_screen->showCursor();
+		}
 		_parser->charHandler();                     // Process user cmd input
-		_object->moveObjects();                     // Process object movement
-		_scheduler->runScheduler();                 // Process any actions
-		_screen->displayList(kDisplayRestore);      // Restore previous background
-		_object->updateImages();                    // Draw into _frontBuffer, compile display list
-		_screen->drawStatusText();
-		_screen->displayList(kDisplayDisplay);      // Blit the display list to screen
+		if (!gameStatus._gameOverFl) {
+			_object->moveObjects();                 // Process object movement
+			_scheduler->runScheduler();             // Process any actions
+			_screen->displayList(kDisplayRestore);  // Restore previous background
+			_object->updateImages();                // Draw into _frontBuffer, compile display list
+			_screen->drawStatusText();
+			_screen->drawPromptText();
+			_screen->displayList(kDisplayDisplay);  // Blit the display list to screen
+		} else {
+			// game over: update status and prompt
+			_screen->displayStatusText();           // Draw to _frontBuffer, copy to screen
+			_screen->displayPromptText();           // Draw to _frontBuffer, copy to screen
+		}
 		_sound->checkMusic();
 		break;
 	case kViewInvent:                               // Accessing inventory
@@ -726,8 +745,10 @@ void HugoEngine::endGame() {
 	debugC(1, kDebugEngine, "endGame");
 
 	if (_boot._registered != kRegRegistered)
-		Utils::notifyBox(_text->getTextEngine(kEsAdvertise));
-	Utils::notifyBox(Common::String::format("%s\n%s", _episode, getCopyrightString()), true, false);
+		notifyBox(_text->getTextEngine(kEsAdvertise));
+	Common::String text = Common::String::format("%s\n\n%s\n%s",
+		_episode, getCopyrightString1(), getCopyrightString2());
+	notifyBox(text, false, kTtsSpeech);
 	_status._viewState = kViewExit;
 }
 
@@ -751,6 +772,47 @@ void HugoEngine::syncSoundSettings() {
 
 Common::String HugoEngine::getSaveStateName(int slot) const {
 	return _targetName + Common::String::format("-%02d.SAV", slot);
+}
+
+Common::KeyCode HugoEngine::notifyBox(const Common::String &text, bool protect, TtsOptions ttsOptions) {
+	if (useWindowsInterface()) {
+		Utils::notifyBox(text, ttsOptions);
+		return Common::KEYCODE_INVALID;
+	} else {
+		Common::KeyState keyState = _screen->dosMessageBox(text, protect, ttsOptions);
+		return keyState.keycode;
+	}
+}
+
+Common::String HugoEngine::promptBox(const Common::String &text) {
+	if (useWindowsInterface()) {
+		return Utils::promptBox(text);
+	} else {
+		return _screen->dosPromptBox(text);
+	}
+}
+
+bool HugoEngine::yesNoBox(const Common::String &text, bool useFirstKey) {
+	if (useWindowsInterface()) {
+		return Utils::yesNoBox(text);
+	} else {
+		if (useFirstKey) {
+			Common::KeyState keyState = _screen->dosMessageBox(text);
+			return (keyState.keycode == Common::KEYCODE_y);
+		} else {
+			Common::String response = _screen->dosPromptBox(text);
+			response.trim();
+			return response.equalsIgnoreCase("yes");
+		}
+	}
+}
+
+void HugoEngine::takeObjectBox(const char *name) {
+	if (useWindowsInterface()) {
+		notifyBox(Common::String::format(TAKE_TEXT_WINDOWS, name));
+	} else {
+		notifyBox(TAKE_TEXT_DOS);
+	}
 }
 
 #ifdef USE_TTS

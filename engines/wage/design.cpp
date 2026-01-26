@@ -75,6 +75,8 @@ Design::Design(Common::SeekableReadStream *data) {
 	_maskImage = nullptr;
 
 	_boundsCalculationMode = false;
+	_renderedSteps = 0;
+	_lastOpString = "";
 }
 
 Design::~Design() {
@@ -86,13 +88,13 @@ Design::~Design() {
 	delete _maskImage;
 }
 
-void Design::paint(Graphics::ManagedSurface *surface, Graphics::MacPatterns &patterns, int x, int y) {
+void Design::paint(Graphics::ManagedSurface *surface, Graphics::MacPatterns &patterns, int x, int y, int steps) {
 	bool needRender = false;
 
 	if (_surface == NULL) {
 		_boundsCalculationMode = true;
 		_bounds->debugPrint(4, "Internal bounds:");
-		render(patterns);
+		render(patterns, -1);
 		_boundsCalculationMode = false;
 		if (_bounds->right == -10000) {
 			_bounds->left = _bounds->top = _bounds->right = _bounds->bottom = 0;
@@ -130,8 +132,15 @@ void Design::paint(Graphics::ManagedSurface *surface, Graphics::MacPatterns &pat
 	return;
 #endif
 
-	if (needRender)
+	if (_drawOps.empty())
 		render(patterns);
+
+	// only re-render if the requested step count changed
+	if (needRender || _renderedSteps != steps) {
+		_surface->clear(kColorGreen);
+		render(patterns, steps);
+		_renderedSteps = steps;
+	}
 
 	if (_bounds->width() && _bounds->height()) {
 		const int padding = 14;
@@ -144,11 +153,13 @@ void Design::paint(Graphics::ManagedSurface *surface, Graphics::MacPatterns &pat
 	}
 }
 
-void Design::render(Graphics::MacPatterns &patterns) {
+void Design::render(Graphics::MacPatterns &patterns, int steps) {
 	Common::MemoryReadStream in(_data, _len);
 	bool needRender = true;
+	int currentStep = 0;
 
 	while (needRender) {
+		uint32 opOffset = in.pos();
 		byte fillType = in.readByte();
 		byte borderThickness = in.readByte();
 		byte borderFillType = in.readByte();
@@ -158,6 +169,7 @@ void Design::render(Graphics::MacPatterns &patterns) {
 			break;
 
 		debug(8, "fill: %d borderFill: %d border: %d type: %d", fillType, borderFillType, borderThickness, type);
+
 		switch (type) {
 		case 4:
 			drawRect(_surface, in, patterns, fillType, borderThickness, borderFillType);
@@ -180,6 +192,22 @@ void Design::render(Graphics::MacPatterns &patterns) {
 			break;
 		}
 
+		if (_boundsCalculationMode && !_lastOpString.empty()) {
+			DrawOp op;
+			op.offset = opOffset;
+			op.fillType = fillType;
+			op.borderThickness = borderThickness;
+			op.borderFillType = borderFillType;
+			op.opcode = _lastOpString;
+			_drawOps.push_back(op);
+			_lastOpString = "";
+		}
+		currentStep++;
+
+		if (steps > 0 && currentStep >= steps) {
+			needRender = false;
+			break;
+		}
 		//g_system->copyRectToScreen(_surface->getPixels(), _surface->pitch, 0, 0, _surface->w, _surface->h);
 		//((WageEngine *)g_engine)->processEvents();
 		//g_system->updateScreen();
@@ -329,13 +357,16 @@ void Design::drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 				Graphics::MacPatterns &patterns, byte fillType, byte borderThickness, byte borderFillType) {
 	int16 y1 = in.readSint16BE();
 	int16 x1 = in.readSint16BE();
-	int16 y2 = in.readSint16BE() - 1;
-	int16 x2 = in.readSint16BE() - 1;
+	int16 y2 = in.readSint16BE();
+	int16 x2 = in.readSint16BE();
 
 	if (x1 > x2)
 		SWAP(x1, x2);
 	if (y1 > y2)
 		SWAP(y1, y2);
+
+	if (_boundsCalculationMode)
+		_lastOpString = Common::String::format("rect %d, %d, %d, %d", x1, y1, x2, y2);
 
 	if (_boundsCalculationMode) {
 		_bounds->top = MIN(y1, _bounds->top);
@@ -370,10 +401,10 @@ void Design::drawRect(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 	}
 
 	if (borderThickness > 0 && borderFillType <= patterns.size()) {
-		primitives.drawLine(x1, y1, x2, y1, kColorBlack, &pd);
-		primitives.drawLine(x2, y1, x2, y2, kColorBlack, &pd);
-		primitives.drawLine(x2, y2, x1, y2, kColorBlack, &pd);
-		primitives.drawLine(x1, y2, x1, y1, kColorBlack, &pd);
+		primitives.drawLine(x1, y1, x2 - 1, y1, kColorBlack, &pd);
+		primitives.drawLine(x2 - 1, y1, x2 - 1, y2 - 1, kColorBlack, &pd);
+		primitives.drawLine(x2 - 1, y2 - 1, x1, y2 - 1, kColorBlack, &pd);
+		primitives.drawLine(x1, y2 - 1, x1, y1, kColorBlack, &pd);
 	}
 }
 
@@ -389,6 +420,9 @@ void Design::drawRoundRect(Graphics::ManagedSurface *surface, Common::ReadStream
 		SWAP(x1, x2);
 	if (y1 > y2)
 		SWAP(y1, y2);
+
+	if (_boundsCalculationMode) 
+		_lastOpString = Common::String::format("roundRect %d, %d, %d, %d", x1, y1, x2, y2);
 
 	if (_surface) {
 		if (!_maskImage) {
@@ -479,6 +513,16 @@ void Design::drawPolygon(Graphics::ManagedSurface *surface, Common::ReadStream &
 	xcoords.push_back(x1);
 	ycoords.push_back(y1);
 
+	if (_boundsCalculationMode) {
+		Common::String vertices;
+		for (uint i = 0; i < xcoords.size(); ++i) {
+			vertices += Common::String::format("(%d,%d)", xcoords[i], ycoords[i]);
+			if (i < xcoords.size() - 1)
+				vertices += ", ";
+		}
+		_lastOpString = Common::String::format("polygon %d, %d, %d, %d, [%s]", bx1, by1, bx2, by2, vertices.c_str());
+	}
+
 	if (borderThickness > 1) {
 		for (uint i = 0; i < xcoords.size(); ++i) {
 			xcoords[i] += borderThickness / 2;
@@ -520,6 +564,9 @@ void Design::drawOval(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 	int16 x2 = in.readSint16BE();
 	PlotData pd(surface, &patterns, fillType, 1, this);
 	PlotDataPrimitives primitives;
+
+	if (_boundsCalculationMode)
+		_lastOpString = Common::String::format("oval %d, %d, %d, %d", x1, y1, x2, y2);
 
 	if (_surface) {
 		if (!_maskImage) {
@@ -566,6 +613,9 @@ void Design::drawBitmap(Graphics::ManagedSurface *surface, Common::SeekableReadS
 	int x2 = in.readSint16BE();
 	int w = x2 - x1;
 	int h = y2 - y1;
+
+	if (_boundsCalculationMode)
+		_lastOpString = Common::String::format("bitmap %d, %d, %d, %d [%d bytes]", x1, y1, x2, y2, numBytes);
 
 	if (_surface) {
 		if (!_maskImage) {
@@ -656,7 +706,7 @@ void Design::drawBitmap(Graphics::ManagedSurface *surface, Common::SeekableReadS
 			if (x1 < 0)
 				x = -x1;
 
-			byte *src = (byte *)tmp.getBasePtr(0, y);
+			byte *src = (byte *)tmp.getBasePtr(x, y);
 			byte *dst = (byte *)surface->getBasePtr(x1 + x, y1 + y);
 			byte *mask = (byte *)_maskImage->getBasePtr(x1 + x, y1 + y);
 
