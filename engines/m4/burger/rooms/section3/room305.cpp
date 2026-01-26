@@ -51,17 +51,17 @@ const seriesStreamBreak Room305::SERIES1[] = {
 	{ 72, nullptr,   2,   0, -1, 2048, nullptr, 0 },
 	{ 79, "305_004", 2, 255, -1,    0, nullptr, 0 },
 	{ 94, "305_002", 2, 255, -1,    0, nullptr, 0 },
-	{ -1, 0, 0, 0, -1, 0, 0, 0 },
+	{ -1, nullptr, 0, 0, -1, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
 const seriesPlayBreak Room305::PLAY1[] = {
-	{ 0, -1, nullptr, 1, 0, -1, 2048, 0, 0, 0 },
+	{ 0, -1, nullptr, 1, 0, -1, 2048, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room305::PLAY2[] = {
-	{ 0, -1, 0, 1, 0, -1, 2048, 0, 0, 0 },
+	{ 0, -1, nullptr, 1, 0, -1, 2048, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
