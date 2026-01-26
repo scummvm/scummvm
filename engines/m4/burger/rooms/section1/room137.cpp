@@ -775,9 +775,9 @@ void Room137::parser() {
 
 void Room137::conv15() {
 	_G(kernel).trigger_mode = KT_PARSE;
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	if (_G(kernel).trigger == 14) {
 		if (who <= 0) {

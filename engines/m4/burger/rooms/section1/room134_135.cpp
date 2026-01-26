@@ -336,7 +336,7 @@ void Room134_135::daemon() {
 		break;
 
 	case 23:
-		_play1 = 0;
+		_play1 = nullptr;
 		break;
 
 	case 24:
@@ -800,7 +800,7 @@ void Room134_135::pre_parser() {
 }
 
 void Room134_135::parser() {
-	bool lookFlag = player_said_any("look", "look at");
+	const bool lookFlag = player_said_any("look", "look at");
 	_G(kernel).trigger_mode = KT_DAEMON;
 
 	if (_G(walker).wilbur_said((_G(flags)[V000] == 1002) ? SAID1 : SAID2)) {
@@ -857,9 +857,9 @@ void Room134_135::parser() {
 
 void Room134_135::conv01() {
 	_G(kernel).trigger_mode = KT_PARSE;
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	switch (_G(kernel).trigger) {
 	case 13:
@@ -940,7 +940,7 @@ void Room134_135::conv01() {
 
 void Room134_135::conv02() {
 	_G(kernel).trigger_mode = KT_PARSE;
-	int who = conv_whos_talking();
+	const int who = conv_whos_talking();
 
 	if (_G(kernel).trigger == 35) {
 		if (who == 0) {
@@ -961,7 +961,7 @@ void Room134_135::conv03() {
 	_G(kernel).trigger_mode = KT_PARSE;
 
 	if (_G(kernel).trigger == 35) {
-		int who = conv_whos_talking();
+		const int who = conv_whos_talking();
 		if (who <= 0) {
 			if (conv_current_node() == 8 && !conv_current_entry()) {
 				digi_preload("03p1001");
@@ -975,7 +975,7 @@ void Room134_135::conv03() {
 			conv_resume();
 		}
 	} else if (conv_sound_to_play()) {
-		int who = conv_whos_talking();
+		const int who = conv_whos_talking();
 		if (who <= 0) {
 			if (conv_current_node() == 8 && conv_current_entry()) {
 				kernel_timing_trigger(1, 35);
@@ -993,7 +993,7 @@ void Room134_135::conv03() {
 				_G(kernel).trigger_mode = KT_DAEMON;
 				digi_play(conv_sound_to_play(), 1, 255, 16);
 			} else {
-				sendWSMessage(0x140000, 0, _G(my_walker), 0, 0, 1);
+				sendWSMessage(0x140000, 0, _G(my_walker), 0, nullptr, 1);
 				digi_play(conv_sound_to_play(), 1, 255, 35);
 			}
 		}

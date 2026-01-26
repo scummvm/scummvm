@@ -47,10 +47,10 @@ static const seriesStreamBreak STREAM_BREAKS2[] = {
 };
 
 static const seriesStreamBreak STREAM_BREAKS3[] = {
-	{  0, 0, 2, 255,  4, 0, nullptr, 0 },
-	{  5, 0, 2, 255,  4, 0, nullptr, 0 },
-	{ 14, 0, 2, 255,  4, 0, nullptr, 0 },
-	{ 16, 0, 1, 255, 17, 0, nullptr, 0 },
+	{  0, nullptr, 2, 255,  4, 0, nullptr, 0 },
+	{  5, nullptr, 2, 255,  4, 0, nullptr, 0 },
+	{ 14, nullptr, 2, 255,  4, 0, nullptr, 0 },
+	{ 16, nullptr, 1, 255, 17, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
@@ -230,7 +230,7 @@ void Room101::daemon() {
 	switch (_G(kernel).trigger) {
 	case 1:
 		if (_val2 == 12) {
-			int frame = imath_ranged_rand(8, 10);
+			const int frame = imath_ranged_rand(8, 10);
 			series_play("101ha01", 3840, 0, 1, 6, 0, 100, 0, 0, frame, frame);
 		} else {
 			digi_preload("101_002");
@@ -257,7 +257,7 @@ void Room101::daemon() {
 	case 6:
 		if (!_G(flags)[kFirstTestPassed]) {
 			// No tests passed yet
-			uint idx = _G(flags)[kNEURO_TEST_COUNTER];
+			const uint idx = _G(flags)[kNEURO_TEST_COUNTER];
 			assert(idx < 8);
 
 			static const char *const NAMES[8] = {
@@ -577,8 +577,7 @@ void Room101::daemon() {
 			_val2 = 12;
 
 			if (_G(flags)[V005]) {
-				Common::String name = Common::String::format("101h003%c",
-					'a' + imath_ranged_rand(0, 5));
+				const Common::String name = Common::String::format("101h003%c", 'a' + imath_ranged_rand(0, 5));
 				digi_play(name.c_str(), 1, 255, kCHANGE_WILBUR_ANIMATION);
 			} else {
 				digi_play("101h002", 1, 255, kCHANGE_WILBUR_ANIMATION);
@@ -635,7 +634,7 @@ void Room101::daemon() {
 }
 
 void Room101::pre_parser() {
-	bool lookAt = player_said_any("look", "look at");
+	const bool lookAt = player_said_any("look", "look at");
 
 	if (player_said("vera's diner") && !player_said_any("enter", "gear", "look", "look at"))
 		player_hotspot_walk_override_just_face(9);
@@ -652,7 +651,7 @@ void Room101::pre_parser() {
 }
 
 void Room101::parser() {
-	bool lookFlag = player_said_any("look", "look at");
+	const bool lookFlag = player_said_any("look", "look at");
 	_G(kernel).trigger_mode = KT_DAEMON;
 
 	if (_G(walker).wilbur_said(SAID1)) {
