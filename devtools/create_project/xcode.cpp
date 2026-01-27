@@ -603,7 +603,6 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 		frameworks_osx.push_back("CoreFoundation.framework");
 		frameworks_osx.push_back("Foundation.framework");
 		frameworks_osx.push_back("AudioToolbox.framework");
-		frameworks_osx.push_back("AVFAudio.framework");
 		frameworks_osx.push_back("CoreMIDI.framework");
 		frameworks_osx.push_back("CoreAudio.framework");
 		frameworks_osx.push_back("QuartzCore.framework");
@@ -613,6 +612,11 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 		frameworks_osx.push_back("Cocoa.framework");
 		frameworks_osx.push_back("OpenGL.framework");
 		frameworks_osx.push_back("AudioUnit.framework");
+
+		if (CONTAINS_DEFINE(setup.defines, "USE_TTS") &&
+			!CONTAINS_DEFINE(setup.defines, "USE_NS_SPEECH_SYNTHESIZER")) {
+			frameworks_osx.push_back("AVFAudio.framework");
+		}
 
 		if (CONTAINS_DEFINE(setup.defines, "USE_FAAD")) {
 			frameworks_osx.push_back(getLibString("faad", setup.useXCFramework));
@@ -729,9 +733,12 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 		frameworks_iOS.push_back("UIKit.framework");
 		frameworks_iOS.push_back("SystemConfiguration.framework");
 		frameworks_iOS.push_back("AudioToolbox.framework");
-		frameworks_iOS.push_back("AVFAudio.framework");
 		frameworks_iOS.push_back("QuartzCore.framework");
 		frameworks_iOS.push_back("OpenGLES.framework");
+
+		if (CONTAINS_DEFINE(setup.defines, "USE_TTS")) {
+			frameworks_iOS.push_back("AVFAudio.framework");
+		}
 
 		if (CONTAINS_DEFINE(setup.defines, "USE_FAAD")) {
 			frameworks_iOS.push_back(getLibString("faad", setup.useXCFramework));
@@ -849,10 +856,12 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 		frameworks_tvOS.push_back("UIKit.framework");
 		frameworks_tvOS.push_back("SystemConfiguration.framework");
 		frameworks_tvOS.push_back("AudioToolbox.framework");
-		frameworks_tvOS.push_back("AVFAudio.framework");
 		frameworks_tvOS.push_back("QuartzCore.framework");
 		frameworks_tvOS.push_back("OpenGLES.framework");
 
+		if (CONTAINS_DEFINE(setup.defines, "USE_TTS")) {
+			frameworks_tvOS.push_back("AVFAudio.framework");
+		}
 		if (CONTAINS_DEFINE(setup.defines, "USE_FAAD")) {
 			frameworks_tvOS.push_back(getLibString("faad", setup.useXCFramework));
 		}
