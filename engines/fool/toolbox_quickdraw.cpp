@@ -278,7 +278,8 @@ void Toolbox::PenNormal() {
 	if (_port) {
 		_port->pnSize = Common::Point(1, 1);
 		_port->pnMode = kPatCopy;
-		_port->pnPat = { { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } };
+		// Solid black for the pattern
+		_port->pnPat = { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff } };
 	}
 }
 

@@ -74,6 +74,8 @@ struct Common::Hash<Fool::PicHandle> {
 
 namespace Fool {
 
+
+// In QuickDraw 0 means white and 1 means black
 struct Pattern {
 	uint8 data[8];
 };
