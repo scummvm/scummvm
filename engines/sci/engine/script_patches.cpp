@@ -5042,6 +5042,44 @@ static const uint16 gk2FrauMillerLockupPatch[] = {
 	PATCH_END
 };
 
+// In St. Georg Church (room 730), clicking the south exit while Grace is facing
+//  south fades the music before changing rooms, but does not disable input.
+//  If the north exit is clicked during this long delay then both exits run at
+//  the same time and the game is left in a locked up state outside the church.
+//
+// When clicking on a Feature that Grace is not facing, input is disabled and
+//  she turns and walks towards the Feature. Since Grace is already facing the
+//  south exit, she does not move, and input is not disabled. That would be okay
+//  if it weren't for the delay introduced by this room when exiting south.
+//
+// It appears that Sierra attempted to prevent this problem by changing Grace's
+//  internal heading to 170 after initializing her with 180. This does not
+//  change her graphic but it does affect the calculations in Feature:checkAngle
+//  that determine if she moves and disables input. Unfortunately, 170 is not
+//  enough to change the result. Perhaps the checkAngle logic changed later.
+//
+// We fix this by setting Grace's heading to 140 instead of 170. This is enough
+//  to cause Grace to move and disable input when clicking the south exit.
+//  This has the benefit of adding a visual indication that clicking the exit
+//  has an effect, just like other exits, instead of a delay with no movement.
+//
+// Applies to: All versions
+// Responsible method: churchRm:init
+// Fixes bug: #16485
+static const uint16 gk2ChurchLockupSignature[] = {
+	0x39, SIG_SELECTOR8(heading),       // pushi heading
+	SIG_MAGICDWORD,
+	0x78,                               // push1
+	0x38, SIG_UINT16(0x00aa),           // pushi 00aa [ heading: 170 ]
+	SIG_END
+};
+
+static const uint16 gk2ChurchLockupPatch[] = {
+	PATCH_ADDTOOFFSET(+4),
+	PATCH_UINT16(0x008c),               // pushi 008c [ heading: 140 ]
+	PATCH_END
+};
+
 // GK2 1.0 contains a deadend bug in chapter 3. Exhausting Leber's topics before
 //  reading Grace's letter prevents returning to the police station to ask about
 //  the Black Wolf, which is necessary to complete the chapter.
@@ -5277,6 +5315,7 @@ static const SciScriptPatcherEntry gk2Signatures[] = {
 	{  true,    37, "fix sound manager lockup (no line numbers)",          1, gk2SoundManagerLockupSignature2,   gk2SoundManagerLockupPatch2 },
 	{  true,   665, "fix game-over priority",                              1, gk2GameOverPrioritySignature,      gk2GameOverPriorityPatch },
 	{  true,   666, "fix game-over priority",                              1, gk2GameOverPrioritySignature,      gk2GameOverPriorityPatch },
+	{  true,   730, "fix st. georg church lockup",                         1, gk2ChurchLockupSignature,          gk2ChurchLockupPatch },
 	{  true,   800, "fix neuschwanstein hint (1/3)",                       1, gk2NeuschwansteinHintSignature1,   gk2NeuschwansteinHintPatch },
 	{  true,   800, "fix neuschwanstein hint (2/3)",                       1, gk2NeuschwansteinHintSignature2,   gk2NeuschwansteinHintPatch },
 	{  true,   800, "fix neuschwanstein hint (3/3)",                       1, gk2NeuschwansteinHintSignature3,   gk2NeuschwansteinHintPatch },
