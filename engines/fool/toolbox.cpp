@@ -70,10 +70,10 @@ void Toolbox::_updateScreen() {
 
 uint32 Toolbox::Delay(uint32 numTicks) {
 	uint32 target = g_system->getMillis() + (numTicks * 1000 / 60);
-	while (g_system->getMillis() < target) {
+	do  {
 		_pumpEvents();
 		_updateScreen();
-	}
+	} while (g_system->getMillis() < target);
 	return (uint32)(g_system->getMillis() * 60 / 1000);
 }
 

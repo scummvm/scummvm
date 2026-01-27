@@ -37,6 +37,9 @@ ZBasic::ZBasic(Toolbox *toolbox) : _toolbox(toolbox) {
 	_window->disableBorder();
 	_window->resize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	g_engine->_wm.setBackgroundWindow(_window);
+
+	_toolbox->_defaultWindow = _window;
+	_toolbox->_defaultBits = BitMap(_window->getWindowSurface());
 }
 
 ZBasic::~ZBasic() {
