@@ -394,6 +394,14 @@ public:
 	// port.
 	void GetCPixel(int16 h, int16 v, RGBColor &cPix);
 
+	// PROCEDURE GetPort (VAR port: GrafPtr);
+	// The GetPort procedure returns a pointer to the current graphics port in the port
+	// parameter. The current graphics port is also available through the global variable
+	// thePort, but you may prefer to use GetPort for better readability of your code. For
+	// example, your program could include GetPort(savePort) before setting a new
+	// graphics port, followed by SetPort(savePort) to restore the previous port.
+	void GetPort(GrafPtr &port);
+
 	// FUNCTION GetPicture (picID: INTEGER) : PicHandle;
 	// GetPicture returns a handle to the picture having the given resource ID, reading it from the
 	// resource file if necessary. It calls the Resource Manager function GetResource('PICT',picID). If

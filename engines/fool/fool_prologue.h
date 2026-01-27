@@ -40,8 +40,8 @@ public:
 
 	void sub_128_004();
 	void sub_128_1ba(int16 screenPage);
-	void sub_128_1f4(int16 screenPage);
-	void sub_128_21e(int16 numTicks);
+	void setPortBitsToPage(int16 screenPage); // sub_128_1f4
+	void delay(int16 numTicks); // sub_128_21e
 	void sub_128_24a(int16 numTicks);
 	void sub_128_26c(int16 unk1, int16 unk2);
 	void sub_128_2a6(int16 unk1, int16 unk2);
@@ -50,7 +50,7 @@ public:
 	void sub_128_3ee(int16 unk1);
 	void sub_128_50a(int16 unk1, int16 unk2, int16 unk3, int16 screenPage);
 	void sub_128_610(int16 screenPage);
-	void sub_128_64a(int16 unk1);
+	void scanlineTransition(int16 patternID);
 	void sub_128_6e4(int16 screenPage);
 	void sub_128_800(int16_t unk1, int16_t unk2, int16_t unk3, int16_t unk4, int16_t unk5, int16_t unk6, int16_t unk7, int16_t unk8, int16_t unk9);
 	void sub_128_a6c(int16_t unk1, int16_t unk2);
@@ -69,9 +69,9 @@ public:
 	void sub_129_764();
 	void sub_129_772();
 
-	void sub_130_004();
-	void prologueBufferNextPicture();
-	void prologueDrawLoadingMsg();
+	void prologueRun(); // sub_130_004
+	void prologueBufferNextPicture(); // sub_130_cea
+	void prologueDrawLoadingMsg(); // sub_130_d28
 	void sub_130_db0();
 	void drawRainDrop(); // sub_130_e82
 	void sub_130_f48();

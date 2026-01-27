@@ -146,6 +146,10 @@ PicHandle Toolbox::GetPicture(uint16 picID) {
 	return nullptr;
 }
 
+void Toolbox::GetPort(GrafPtr &port) {
+	port = _port;
+}
+
 void Toolbox::HideCursor() {
 	_cursorLevel--;
 	g_engine->_wm.replaceCursor(Graphics::MacGUIConstants::kMacCursorOff);
