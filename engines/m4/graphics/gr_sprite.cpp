@@ -35,13 +35,13 @@ namespace M4 {
  * S and D are Raw encoded (unencoded!) buffers.
  */
 static uint8 scale_sprite(Buffer *S, Buffer *D, uint32 ScaleX, uint32 ScaleY) {
-	uint8 *pScaled, *pData = S->data;
-
 	if (!D)
 		error_show(FL, 'BUF!', "scale sprite NULL D");
 
 	if (!S)
 		error_show(FL, 'BUF!', "scale sprite h:%d w:%d sx:%uld sy:%uld", D->h, D->w, ScaleX, ScaleY);
+
+	uint8 *pData = S->data;
 
 	/* calculate new x size */
 	D->w = S->w * ScaleX / 100;
@@ -56,9 +56,11 @@ static uint8 scale_sprite(Buffer *S, Buffer *D, uint32 ScaleX, uint32 ScaleY) {
 	D->stride = D->w;
 
 	/* allocate 'scaled' buffer */
-	if (!(D->data = pScaled = (uint8 *)mem_alloc(D->h * D->stride, "scaled buffer")))
+	uint8 *pScaled = (uint8 *)mem_alloc(D->h * D->stride, "scaled buffer");
+	if (!pScaled)
 		error_show(FL, 'OOM!', "scaled buffer h:%uld w:%uld", D->h, D->stride);
-
+	D->data = pScaled;
+	
 	uint16 ErrY = 50;
 	for (uint16 i = 0; i < S->h; ++i) {
 		ErrY += ScaleY;
@@ -193,7 +195,7 @@ static uint16 EncodeScan(uint8 *pi, uint8 *po, uint16 scanlen, uint8 EndByte) {
 
 	while (scanlen) {
 		uint16 limit = (scanlen < 255) ? scanlen : 255;
-		//imath_min(scanlen, 255);
+
 		for (run = 1; run < limit && *pi == *ps; ++run, ++ps) {}
 
 		if (run > 1) {
@@ -241,8 +243,9 @@ uint32 gr_sprite_RLE8_encode(Buffer *Source, Buffer *Dest) {
 	Dest->h = Source->h;
 	Dest->encoding = RLE8;
 	Dest->stride = Source->stride;
-
-	if (!(Dest->data = (uint8 *)mem_alloc(Source->h * OutBuffSize(Source->stride), "sprite data"))) {
+	Dest->data = (uint8 *)mem_alloc(Source->h * OutBuffSize(Source->stride), "sprite data");
+	
+	if (!Dest->data) {
 		return 0;
 	}
 
