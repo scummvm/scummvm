@@ -62,6 +62,7 @@ void Toolbox::_pumpEvents() {
 }
 
 void Toolbox::_updateScreen() {
+	_defaultWindow->getWindowSurface()->copyFrom(*_defaultBits);
 	g_engine->_wm.draw();
 	_frameLimiter->delayBeforeSwap();
 	g_system->updateScreen();
