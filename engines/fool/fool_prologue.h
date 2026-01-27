@@ -42,7 +42,7 @@ public:
 	void sub_128_1ba(int16 screenPage);
 	void setPortBitsToPage(int16 screenPage); // sub_128_1f4
 	void delay(int16 numTicks); // sub_128_21e
-	void sub_128_24a(int16 numTicks);
+	void delayFromMarker(int16 numTicks); // sub_128_24a
 	void sub_128_26c(int16 unk1, int16 unk2);
 	void sub_128_2a6(int16 unk1, int16 unk2);
 	void fillRect(int16 patternID, int16 top, int16 left, int16 bottom, int16 right); // sub_128_2f0
@@ -50,8 +50,8 @@ public:
 	void sub_128_3ee(int16 unk1);
 	void sub_128_50a(int16 unk1, int16 unk2, int16 unk3, int16 screenPage);
 	void blitPageToScreen(int16 screenPage); // sub_128_610
-	void scanlineTransition(int16 patternID);
-	void sub_128_6e4(int16 screenPage);
+	void scanlineTransition(int16 patternID); // sub_128_64a
+	void zoomTransition(int16 screenPage); // sub_128_6e4
 	void sub_128_800(int16_t unk1, int16_t unk2, int16_t unk3, int16_t unk4, int16_t unk5, int16_t unk6, int16_t unk7, int16_t unk8, int16_t unk9);
 	void sub_128_a6c(int16_t unk1, int16_t unk2);
 	void drawRainRecycle(int16_t unk); // sub_128_a8c
