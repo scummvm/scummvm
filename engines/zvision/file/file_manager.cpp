@@ -135,7 +135,7 @@ Common::Path FileManager::srcPath(Common::Path filePath) {
 		return filePath.getParent().appendComponent(name);
 }
 
-bool FileManager::loadZix(const Common::Path &zixPath) {
+bool FileManager::loadZix(const Common::Path &zixPath, const Common::FSNode &gameDataDir) {
 	Common::File zixFile;
 	if (!zixFile.open(zixPath))
 		return false;
@@ -187,14 +187,19 @@ bool FileManager::loadZix(const Common::Path &zixPath) {
 				line.deleteLastChar();
 
 			Common::Path path(line, '/');
-			path = path.getLastComponent();	//We are using the search manager in "flat" mode, so only filenames are needed
 
-			if (line.matchString("*.zfs", true))
+			if (line.matchString("*.zfs", true)) {
 				if (!SearchMan.hasArchive(line)) {
-				debugC(1, kDebugFile, "Adding archive %s to search manager.", path.toString().c_str());
-				Common::Archive *arc;
-				arc = new ZfsArchive(path);
-				SearchMan.add(line, arc);
+					path = path.getLastComponent();	//We are using the search manager in "flat" mode, so only filenames are needed
+					debugC(1, kDebugFile, "Adding archive %s to search manager.", path.toString().c_str());
+					Common::Archive *arc;
+					arc = new ZfsArchive(path);
+					SearchMan.add(line, arc);
+				}
+			}
+			else {
+				debugC(1, kDebugFile, "Adding directory %s to search manager.", path.toString().c_str());
+				SearchMan.addSubDirectoryMatching(gameDataDir,path.toString());
 			}
 			archives++;
 		}

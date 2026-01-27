@@ -398,22 +398,18 @@ void ZVision::initializePath(const Common::FSNode &gamePath) {
 	const Common::FSNode gameDataDir(gamePath);
 	SearchMan.setIgnoreClashes(true);
 
+	SearchMan.addDirectory(gamePath, 0, 1, true);
 	switch (getGameId()) {
 	case GID_GRANDINQUISITOR:
 		break;
 	case GID_NEMESIS:
-		//Workaround for production error in English language releases of Zork Nemesis
-		//Multiple copies of audio file wne3hptc.raw exist in the game data subdirectories; the one in the "temple" subdirectory plays at the wrong pitch, thus the other "global" subfolders containing the correct versions of this file must take search precedence to ensure that it is never used.  Non-English releases should not be affected by this.
-		SearchMan.addSubDirectoriesMatching(gameDataDir, "data*/zassets/global*", true);
-		SearchMan.addSubDirectoriesMatching(gameDataDir, "zassets/global*", true);
-		SearchMan.addSubDirectoriesMatching(gameDataDir, "global*", true);
+		SearchMan.addSubDirectoriesMatching(gameDataDir, "znemscr", true); // Add directory that may contain .zix file in some versions of the game
 		break;
 	case GID_NONE:
 	default:
 		break;
 	}
 
-	SearchMan.addDirectory(gamePath, 0, 5, true);
 	SearchMan.addSubDirectoryMatching(gameDataDir, "FONTS");
 
 	// Ensure extras take first search priority
@@ -436,12 +432,12 @@ void ZVision::initializePath(const Common::FSNode &gamePath) {
 
 	switch (getGameId()) {
 	case GID_GRANDINQUISITOR:
-		if (!_fileManager->loadZix("INQUIS.ZIX"))
+		if (!_fileManager->loadZix("INQUIS.ZIX", gameDataDir))
 			error("Unable to load file INQUIS.ZIX");
 		break;
 	case GID_NEMESIS:
-		if (!_fileManager->loadZix("NEMESIS.ZIX"))	// GOG version or used original game installer
-			if (!_fileManager->loadZix("MEDIUM.ZIX"))	// Manual installation from CD or ZGI DVD according to wiki.scummvm.org
+		if (!_fileManager->loadZix("NEMESIS.ZIX", gameDataDir))	// GOG version or used original game installer
+			if (!_fileManager->loadZix("MEDIUM.ZIX", gameDataDir))	// Manual installation from CD or ZGI DVD according to wiki.scummvm.org
 				error("Unable to load file NEMESIS.ZIX or MEDIUM.ZIX");
 		break;
 	case GID_NONE:

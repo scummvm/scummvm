@@ -33,7 +33,7 @@ public:
 	FileManager(ZVision *engine);
 	~FileManager() {};
 
-	bool loadZix(const Common::Path &zixPath);
+	bool loadZix(const Common::Path &zixPath, const Common::FSNode &gameDataDir);
 	Common::File *open(const Common::Path &fileName, bool allowSrc=true);	// Wrapper to automatically handle loading of files which may be empty & have an alternate .src file
 	bool exists(Common::Path filePath, bool allowSrc=true);	// Wrapper to automatically handle checking existence of files which may be empty & have an alternate .src file
 
