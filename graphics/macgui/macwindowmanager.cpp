@@ -335,6 +335,7 @@ void MacWindowManager::setScreen(ManagedSurface *screen) {
 	else
 		_desktop = new ManagedSurface();
 
+	_screenDims = Common::Rect(_screen->w, _screen->h);
 	_desktop->create(_screen->w, _screen->h, _pixelformat);
 	drawDesktop();
 }
