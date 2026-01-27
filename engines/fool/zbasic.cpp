@@ -211,11 +211,21 @@ void ZBasic::picture(int16 x, int16 y, PicHandle &src) {
 		return;
 	}
 
+	GrafPtr port = nullptr;
+	_toolbox->GetPort(port);
+
 	Common::Rect srcRect(0, 0, src->w, src->h);
 	Common::Rect destRect(x, y, x+src->w, y+src->h);
-	_window->getWindowSurface()->blitFrom(*src, srcRect, destRect);
-	_window->addDirtyRect(destRect);
-	_window->setContentDirty(true);
+	_toolbox->CopyBits(src, port->portBits, srcRect, destRect, kSrcCopy, nullptr);
+
+	//Common::Rect badnews = src->getBounds();
+	//_window->getWindowSurface()->blitFrom(*src, badnews, badnews);
+	//Common::Rect badnews = port->portBits->getBounds();
+	//_window->getWindowSurface()->blitFrom(*port->portBits, badnews, badnews);
+	//_window->addDirtyRect(badnews);
+	//_window->setContentDirty(true);
+	//_toolbox->Delay(0);
+	//warning("did something stupid");
 }
 
 void ZBasic::picture(int16 x1, int16 y1, int16 x2, int16 y2, PicHandle &src) {
