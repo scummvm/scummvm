@@ -25,7 +25,7 @@
 
 namespace Fool {
 
-void blitMono(BitMap &src, BitMap &dst, const Common::Point &dstPos, SourceMode mode) {
+Common::Rect blitMono(BitMap &src, BitMap &dst, BitMap &mask, const Common::Point &dstPos, SourceMode mode) {
 	Common::Rect dstRect = src->getBounds();
 	dstRect.moveTo(dstPos);
 	dstRect.clip(dst->getBounds());
@@ -40,7 +40,14 @@ void blitMono(BitMap &src, BitMap &dst, const Common::Point &dstPos, SourceMode 
 		for (int y = srcRect.top; y < srcRect.bottom; y++) {
 			byte *source = (byte *)src->getBasePtr(srcRect.left, y);
 			byte *target = (byte *)dst->getBasePtr(srcRect.left + dstPos.x, dstPos.y + y);
+			byte *maskSource = mask ? (byte *)mask->getBasePtr(srcRect.left, y) : nullptr;
 			for (int x = srcRect.left; x < srcRect.right; x++) {
+				if (mask && !*maskSource) {
+					source++;
+					target++;
+					maskSource++;
+					continue;
+				}
 				switch (mode) {
 				case kSrcOr:
 					*target = (*target == black) || (*source == black) ? black : white;
@@ -68,9 +75,16 @@ void blitMono(BitMap &src, BitMap &dst, const Common::Point &dstPos, SourceMode 
 				}
 				source++;
 				target++;
+				if (mask)
+					maskSource++;
 			}
 		}
 	}
+	return dstRect;
+}
+
+Common::Rect blitMono(BitMap &src, BitMap &dst, BitMap &mask, const Common::Point &dstPos, PatternMode mode) {
+	return blitMono(src, dst, mask, dstPos, (SourceMode)((int)mode & 0x7));
 }
 
 Graphics::ManagedSurface *createRemappedSurface(const Graphics::Surface *surface, const byte *palette, uint colorCount) {

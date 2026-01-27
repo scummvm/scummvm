@@ -56,7 +56,7 @@ public:
 	void sub_128_a6c(int16_t unk1, int16_t unk2);
 	void sub_128_a8c(int16_t unk);
 	void sub_128_c8a();
-	void sub_128_ccc();
+	void shuffleScanlines(); // sub_128_ccc
 	void sub_128_de2();
 	void sub_128_e1c();
 	void sub_128_e58();
@@ -73,7 +73,7 @@ public:
 	void prologueBufferNextPicture();
 	void prologueDrawLoadingMsg();
 	void sub_130_db0();
-	void sub_130_e82();
+	void drawRainDrop(); // sub_130_e82
 	void sub_130_f48();
 	void sub_130_1002();
 
@@ -134,8 +134,8 @@ private:
 
 	// 1 for prologue, 2 for finale
 	int16 var_i16_1aa;
-	int16 *var_i32_1ac;
-	int16 *var_i32_1b0;
+	byte *var_i32_1ac;
+	byte *var_i32_1b0;
 
 	int16 var_i16_1b4;
 	int16 var_i16_1b6;
@@ -171,7 +171,7 @@ private:
 	Common::Rect arr_i16_1bc;
 	Common::Rect arr_i32_1c4;
 
-	int16 arr_i16_1e8[1206] = { 0 };
+	int16 arr_i16_1e8[1004] = { 0 };
 
 	GrafPort arr_grafport_9c0;
 	GrafPort arr_grafport_a8a;
@@ -182,9 +182,9 @@ private:
 
 	BitMap arr_i32_41296[12];
 
-	int16 arr_i16_412ea[SCREEN_HEIGHT];
-	int16 arr_i16_41598[SCREEN_HEIGHT];
-	int16 arr_i16_41846[SCREEN_HEIGHT];
+	int16 arr_i16_412ea[SCREEN_HEIGHT] = { 0 };
+	int16 arr_i16_41598[SCREEN_HEIGHT] = { 0 };
+	int16 arr_i16_41846[SCREEN_HEIGHT] = { 0 };
 
 	Common::Rect arr_i16_41af4;
 	Common::Rect arr_i16_41afc;

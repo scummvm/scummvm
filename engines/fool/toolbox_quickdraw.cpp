@@ -23,6 +23,7 @@
 #include "common/system.h"
 
 #include "graphics/macgui/macwindowmanager.h"
+#include "graphics/managed_surface.h"
 #include "image/pict.h"
 
 #include "fool/fool.h"
@@ -67,8 +68,12 @@ void Toolbox::CopyBits(const BitMap &srcBits, BitMap &dstBits, const Common::Rec
 			srcRect.height() != dstRect.height()) {
 		subsrc->scale(dstRect.width(), dstRect.height());
 	}
-
-	blitMono(subsrc, dstBits, Common::Point(dstRect.left, dstRect.top), mode);
+	BitMap mask(nullptr);
+	Common::Rect result = blitMono(subsrc, dstBits, mask, Common::Point(dstRect.left, dstRect.top), mode);
+	if (_port->portBits == _defaultBits) {
+		_defaultWindow->addDirtyRect(result);
+		_defaultWindow->setDirty(true);
+	}
 }
 
 void Toolbox::DrawString(const Common::String &s) {
@@ -84,7 +89,26 @@ void Toolbox::FillOval(const Common::Rect &r, const Pattern &pat) {
 }
 
 void Toolbox::FillRect(const Common::Rect &r, const Pattern &pat) {
-	warning("STUB: Toolbox::FillRect");
+	// steps:
+	// - create intermediate surface
+	// - draw to intermediate surface using MacPlotData
+	// - blit to target with blitMono
+	// - add to target dirty rect list
+	if (_port && _port->pnVis == 0) {
+		BitMap intermediate(new Graphics::ManagedSurface(r.width(), r.height()));
+		BitMap mask(nullptr);
+		Graphics::MacPatterns macpat({pat.data});
+		Graphics::MacPlotData pd(&(*intermediate), nullptr, &macpat, 1, 0, 0, _port->pnSize, _port->bkColor);
+		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
+		pm.drawFilledRect(intermediate->getBounds(), _port->fgColor, &pd);
+		Common::Point destPos(r.left, r.top);
+		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, _port->pnMode);
+		if (_port->portBits == _defaultBits) {
+			_defaultWindow->addDirtyRect(dstRect);
+			_defaultWindow->setDirty(true);
+		}
+
+	}
 }
 
 void Toolbox::FrameArc(const Common::Rect &r, int16 startAngle, int16 arcAngle) {
@@ -114,6 +138,8 @@ PicHandle Toolbox::GetPicture(uint16 picID) {
 			PicHandle result(createRemappedSurface(surface, palette.data(), palette.size()));
 			_resPicts[result] = handle;
 			return result;
+		} else {
+			warning("Toolbox::GetPicture: failed to load PICT id %d", picID);
 		}
 	}
 
@@ -139,6 +165,23 @@ void Toolbox::InvertOval(const Common::Rect &r) {
 }
 
 void Toolbox::InvertRect(const Common::Rect &r) {
+	if (_port && _port->pnVis == 0) {
+		BitMap intermediate(new Graphics::ManagedSurface(r.width(), r.height()));
+		BitMap mask(nullptr);
+		Pattern pat({0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff});
+		Graphics::MacPatterns macpat({pat.data});
+		Graphics::MacPlotData pd(&(*intermediate), nullptr, &macpat, 1, 0, 0, {1, 1}, g_engine->_wm._colorWhite);
+		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
+		pm.drawFilledRect(intermediate->getBounds(), g_engine->_wm._colorBlack, &pd);
+		Common::Point destPos(r.left, r.top);
+		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, kPatXor);
+		if (_port->portBits == _defaultBits) {
+			_defaultWindow->addDirtyRect(dstRect);
+			_defaultWindow->setDirty(true);
+		}
+
+
+	}
 	warning("STUB: Toolbox::InvertRect");
 }
 
@@ -147,7 +190,31 @@ void Toolbox::KillPoly(PolyHandle poly) {
 }
 
 void Toolbox::LineTo(int16 h, int16 v) {
-	warning("STUB: Toolbox::LineTo");
+	if (_port && _port->pnVis == 0) {
+		Common::Point dirVec(h - _port->pnLoc.x, v - _port->pnLoc.y);
+		Common::Rect interRect(ABS(dirVec.x) + _port->pnSize.x, ABS(dirVec.y) + _port->pnSize.y);
+		Common::Point startPos(dirVec.x < 0 ? -dirVec.x : 0, dirVec.y < 0 ? -dirVec.y : 0);
+		Common::Point endPos(dirVec.x < 0 ? 0 : dirVec.x, dirVec.y < 0 ? 0 : dirVec.y);
+
+		BitMap intermediate(new Graphics::ManagedSurface(interRect.width(), interRect.height()));
+		BitMap mask(new Graphics::ManagedSurface(interRect.width(), interRect.height()));
+		Graphics::MacPatterns pat({_port->pnPat.data});
+
+		Graphics::MacPlotData pd(&(*intermediate), &(*mask), &pat, 1, 0, 0, _port->pnSize, _port->bkColor);
+		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
+		pm.drawLine(startPos.x, startPos.y, endPos.x, endPos.y, _port->fgColor, &pd);
+		Common::Point destPos(dirVec.x < 0 ? h + dirVec.x : h - dirVec.x, dirVec.y < 0 ? v + dirVec.y : v - dirVec.y);
+
+		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, _port->pnMode);
+		if (_port->portBits == _defaultBits) {
+			_defaultWindow->addDirtyRect(dstRect);
+			_defaultWindow->setDirty(true);
+		}
+
+	}
+	if (_port) {
+		_port->pnLoc = Common::Point(h, v);
+	}
 }
 
 void Toolbox::Move(int16 dh, int16 dv) {
@@ -175,11 +242,13 @@ PolyHandle Toolbox::OpenPoly() {
 }
 
 void Toolbox::OpenPort(GrafPtr port) {
-	warning("STUB: Toolbox::OpenPort");
 	// source: QuickDraw Routines I-163
 	//port->portBits = screenBits;
 	//port->portRect = screenBits.bounds;
+	port->portBits = _defaultBits;
 	port->visRgn = RgnHandle(new Region({ 1, Common::Rect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT ) }));
+	port->fgColor = g_engine->_wm._colorBlack;
+	port->bkColor = g_engine->_wm._colorWhite;
 	//port->clipRgn
 }
 
