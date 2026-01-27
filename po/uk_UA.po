@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-26 23:16+0000\n"
-"PO-Revision-Date: 2026-01-26 23:16+0000\n"
+"PO-Revision-Date: 2026-01-27 12:42+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -5006,76 +5006,6 @@ msgid "Touch Controls"
 msgstr "Керування дотиком"
 
 #: backends/platform/android/android.cpp:1091
-#, fuzzy
-#| msgid ""
-#| "## Touch control modes\n"
-#| "The touch control mode can be changed by tapping or clicking on the "
-#| "controller icon in the upper right corner\n"
-#| "### Direct mouse \n"
-#| "\n"
-#| "The touch controls are direct. The pointer jumps to where the finger "
-#| "touches the screen (default for menus).\n"
-#| "\n"
-#| "  ![Direct mouse mode](mouse.png \"Direct mouse mode\")"
-#| "{w=10em,maxw=50em}\n"
-#| "\n"
-#| "### Touchpad emulation \n"
-#| "\n"
-#| "The touch controls are indirect, like on a laptop touchpad.\n"
-#| "\n"
-#| "  ![Touchpad mode](touchpad.png \"Touchpad mode\"){w=10em,maxw=50em}\n"
-#| "\n"
-#| "### Gamepad emulation \n"
-#| "\n"
-#| "Fingers must be placed on lower left and right of the screen to emulate a "
-#| "directional pad and action buttons.\n"
-#| "\n"
-#| "  ![Gamepad mode](gamepad.png \"Gamepad mode\"){w=10em,maxw=50em}\n"
-#| "\n"
-#| "To select the preferred touch mode for menus, 2D games, and 3D games, go "
-#| "to **Global Options > Backend > Choose the preferred touch mode**.\n"
-#| "\n"
-#| "## Touch actions \n"
-#| "\n"
-#| "### Two finger scroll \n"
-#| "\n"
-#| "To scroll, slide two fingers up or down the screen\n"
-#| "### Two finger tap\n"
-#| "\n"
-#| "To do a two finger tap, hold one finger down and then tap with a second "
-#| "finger.\n"
-#| "\n"
-#| "### Three finger tap\n"
-#| "\n"
-#| "To do a three finger tap, start with holding down one finger and "
-#| "progressively touch down the other two fingers, one at a time, while "
-#| "still holding down the previous fingers. Imagine you are impatiently "
-#| "tapping your fingers on a surface, but then slow down that movement so it "
-#| "is rhythmic, but not too slow.\n"
-#| "\n"
-#| "### Immersive Sticky fullscreen mode\n"
-#| "\n"
-#| "Swipe from the edge to reveal the system bars.  They remain semi-"
-#| "transparent and disappear after a few seconds unless you interact with "
-#| "them.\n"
-#| "\n"
-#| "### Global Main Menu\n"
-#| "\n"
-#| "To open the Global Main Menu, tap on the menu icon at the top right of "
-#| "the screen.\n"
-#| "\n"
-#| "  ![Menu icon](menu.png \"Menu icon\"){w=10em,maxw=50em}\n"
-#| "\n"
-#| "## Virtual keyboard\n"
-#| "\n"
-#| "To open the virtual keyboard, long press on the controller icon at the "
-#| "top right of the screen, or tap on any editable text field. To hide the "
-#| "virtual keyboard, tap the controller icon again, or tap outside the text "
-#| "field.\n"
-#| "\n"
-#| "\n"
-#| "  ![Keyboard icon](keyboard.png \"Keyboard icon\"){w=10em,maxw=50em}\n"
-#| "\n"
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -5157,8 +5087,8 @@ msgstr ""
 "\n"
 "Сенсорне управління непряме, як на тачпаді ноутбука.\n"
 "\n"
-"   ![Режим сенсорної панелі](touchpad.png \"Режим сенсорної панелі\")"
-"{w=10em}\n"
+"   ![Режим сенсорної панелі](touchpad.png \"Режим сенсорної панелі\"){w=10em}"
+"\n"
 "\n"
 "### Емуляція геймпада\n"
 "\n"
@@ -9605,7 +9535,7 @@ msgstr "Використовувати інтерфейс Windows"
 
 #: engines/hugo/metaengine.cpp:46
 msgid "Use mouse and toolbar from Windows version"
-msgstr ""
+msgstr "Використовувати мишу та панель інструментів з версії Windows"
 
 #: engines/hugo/metaengine.cpp:148
 msgid "User help"
@@ -9970,24 +9900,31 @@ msgid ""
 "- Correct projectile weapon damage (per AD&D 2nd Edition rules)\n"
 "- Elves get +1 to hit with swords and bows (per official game manual)"
 msgstr ""
+"- Виправляти помилки округлення збільшення HP\n"
+"- Виправляти пошкодження від метальної зброї (згідно з правилами AD&D 2nd "
+"Edition)\n"
+"- Ельфи отримують +1 до влучання мечами та луками (згідно з офіційним "
+"посібником гри)"
 
 #: engines/kyra/metaengine.cpp:175
 msgid "Fix Ileria and Beohram NPCs"
-msgstr ""
+msgstr "Виправити NPC Ілерію та Београма"
 
 #: engines/kyra/metaengine.cpp:176
 msgid "Make Ileria a female and Beohram a paladin"
-msgstr ""
+msgstr "Робить Ілерію жінкою, а Београма паладином"
 
 #: engines/kyra/metaengine.cpp:187
 msgid "Enhanced thrown weapon reload"
-msgstr ""
+msgstr "Покращене перезаряджання метальної зброї"
 
 #: engines/kyra/metaengine.cpp:188
 msgid ""
 "Thrown weapons (daggers, darts, spears...) get replaced from belt and "
 "backpack inventory slots, with thrown weapons only"
 msgstr ""
+"Метальна зброя (кинджали, дротики, списи...) замінюється у слотах інвентарю "
+"на поясі та в рюкзаку, виключно метальною зброєю"
 
 #: engines/kyra/metaengine.cpp:279
 msgid "Lands of Lore support is not compiled in"
@@ -11485,6 +11422,7 @@ msgstr "Ввімкнути режим 16-бітної графіки"
 #: engines/qdengine/dialogs.cpp:32
 msgid "Enable this if backend does not support 32bpp and/or to debug graphics"
 msgstr ""
+"Увімкніть це, якщо бекенд не підтримує 32 біт/пікс, або для відладки графіки"
 
 #: engines/queen/metaengine.cpp:41
 msgid "Alternative intro"
@@ -12863,6 +12801,8 @@ msgid ""
 "This fan-made translation is not supported, because it is known to contain\n"
 "corrupted resources that might make it crash or seriously misbehave."
 msgstr ""
+"Цей фанатський переклад не підтримується, оскільки відомо, що він містить\n"
+"пошкоджені ресурси, які можуть призвести до збою або серйозних несправностей."
 
 #: engines/scumm/metaengine.cpp:404
 msgid ""
@@ -13467,7 +13407,7 @@ msgstr "Перемкнути голоси"
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade by pixel"
 #: engines/sherlock/metaengine.cpp:726
 msgid "Fade by pixel"
-msgstr ""
+msgstr "Попіксельне затемнення"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade directly"
 #: engines/sherlock/metaengine.cpp:732
@@ -13534,11 +13474,11 @@ msgstr "Вийти / Закрити вікно"
 
 #: engines/sherlock/metaengine.cpp:882 engines/sherlock/metaengine.cpp:949
 msgid "Change selected option to the left"
-msgstr ""
+msgstr "Змінити вибрану опцію ліворуч"
 
 #: engines/sherlock/metaengine.cpp:888 engines/sherlock/metaengine.cpp:955
 msgid "Change selected option to the right"
-msgstr ""
+msgstr "Змінити вибрану опцію праворуч"
 
 #: engines/sherlock/metaengine.cpp:972
 msgid "Skip darts minigame"
@@ -14084,7 +14024,7 @@ msgstr ""
 
 #: engines/sword25/metaengine.cpp:130
 msgid "Reveal all interactive hotspots (hold the key)"
-msgstr ""
+msgstr "Показати всі інтерактивні гарячі точки (утримуйте клавішу)"
 
 #: engines/teenagent/metaengine.cpp:201
 msgid "Move / Examine"
@@ -14157,7 +14097,7 @@ msgstr "Перейти до кінця меню збереження / зава�
 
 #: engines/tinsel/tinsel.cpp:1040
 msgid "Discworld Noir needs ScummVM with TinyGL enabled"
-msgstr ""
+msgstr "Discworld Noir потребує ScummVM з включеним TinyGL"
 
 #: engines/titanic/metaengine.cpp:173
 msgid "PET keymappings"
@@ -14233,11 +14173,11 @@ msgstr "Припинити рух"
 
 #: engines/titanic/metaengine.cpp:356
 msgid "Lock coordinate"
-msgstr ""
+msgstr "Заблокувати координату"
 
 #: engines/titanic/metaengine.cpp:362
 msgid "Unlock coordinate"
-msgstr ""
+msgstr "Розблокувати координату"
 
 #: engines/titanic/metaengine.cpp:368
 msgid "View constellations"
@@ -14245,7 +14185,7 @@ msgstr "Переглянути сузір'я"
 
 #: engines/titanic/metaengine.cpp:373
 msgid "View boundaries"
-msgstr ""
+msgstr "Переглянути межі"
 
 #: engines/toltecs/metaengine.cpp:216
 msgid "Move / Select"
@@ -14253,7 +14193,7 @@ msgstr "Рухатись / Вибрати"
 
 #: engines/toltecs/metaengine.cpp:222
 msgid "Move / Perform default action"
-msgstr ""
+msgstr "Рухатись / Виконати дію за замовчуванням"
 
 #: engines/toltecs/metaengine.cpp:258
 msgid "Skip ride"
@@ -14320,7 +14260,7 @@ msgstr "Вимкнути переходи між сценами"
 
 #: engines/tot/metaengine.cpp:48
 msgid "Disable original transition effects between scenes"
-msgstr ""
+msgstr "Вимкнути оригінальні ефекти переходу між сценами"
 
 #: engines/tot/metaengine.cpp:58
 msgid "Original save/load dialog"
@@ -14756,6 +14696,8 @@ msgid ""
 "This game requires OpenGL Framebuffer Objects, which are not supported on "
 "your system"
 msgstr ""
+"Ця гра вимагає OpenGL Framebuffer Objects, які не підтримуються вашою "
+"системою"
 
 #: engines/ultima/metaengine.cpp:67
 msgid "Enable frame skipping"
@@ -15108,7 +15050,7 @@ msgstr "Втекти з бою"
 
 #: engines/ultima/ultima4/metaengine.cpp:112
 msgid "Help - Teleport to Lord British"
-msgstr ""
+msgstr "Допомога - Телепоруватись до лорда Брітіта"
 
 #: engines/ultima/ultima4/metaengine.cpp:113
 msgid "Give items"
@@ -15599,7 +15541,7 @@ msgstr "Перенести героя"
 
 #: engines/ultima/ultima8/metaengine.cpp:47
 msgid "Draw weapon / Combat"
-msgstr ""
+msgstr "Дістати зброю / Бій"
 
 #: engines/ultima/ultima8/metaengine.cpp:52
 msgid "Move back"
@@ -15611,7 +15553,7 @@ msgstr "Виділити елементи"
 
 #: engines/ultima/ultima8/metaengine.cpp:64
 msgid "Use bedroll"
-msgstr ""
+msgstr "Використовувати постільну білизну"
 
 #: engines/ultima/ultima8/metaengine.cpp:65
 msgid "Open backpack"
@@ -15627,7 +15569,7 @@ msgstr "Відкрити міні-мапу"
 
 #: engines/ultima/ultima8/metaengine.cpp:68
 msgid "Use recall"
-msgstr ""
+msgstr "Використовувати відтворення"
 
 #: engines/ultima/ultima8/metaengine.cpp:69
 msgid "Open inventory & statistics"
@@ -15636,15 +15578,15 @@ msgstr "Відкрити інвентар та статистику"
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
 msgid "Close all displays"
-msgstr ""
+msgstr "Закрити всі меню-ляльки"
 
 #: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Jump (fake both-button-click)"
-msgstr ""
+msgstr "Стрибок (імітація натискання обох кнопок)"
 
 #: engines/ultima/ultima8/metaengine.cpp:73
 msgid "Careful step"
-msgstr ""
+msgstr "Обережний крок"
 
 #: engines/ultima/ultima8/metaengine.cpp:79
 msgid "Cycle through weapon inventory"
@@ -15660,7 +15602,7 @@ msgstr "Використати елемент Інвентарю"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
 msgid "Use medikit"
-msgstr ""
+msgstr "Використовувати аптечку"
 
 #: engines/ultima/ultima8/metaengine.cpp:83
 msgid "Use energy cube"
@@ -15668,7 +15610,7 @@ msgstr "Використати енергетичний куб"
 
 #: engines/ultima/ultima8/metaengine.cpp:84
 msgid "Detonate bomb"
-msgstr ""
+msgstr "Підірвати бомбу"
 
 #: engines/ultima/ultima8/metaengine.cpp:86
 msgid "Drop weapon"
@@ -15696,7 +15638,7 @@ msgstr "Центрувати екран на Сайленсері"
 
 #: engines/ultima/ultima8/metaengine.cpp:92
 msgid "Jump / Roll / Crouch"
-msgstr ""
+msgstr "Стрибок / Перекат / Присідання"
 
 #: engines/ultima/ultima8/metaengine.cpp:93
 msgid "Short jump"
@@ -15720,7 +15662,7 @@ msgstr "Перемкнути присідання"
 
 #: engines/ultima/ultima8/metaengine.cpp:101
 msgid "Side step / Advance / Retreat"
-msgstr ""
+msgstr "Крок убік / Наступ / Відступ"
 
 #: engines/ultima/ultima8/metaengine.cpp:106
 msgid "Toggle clipping"
@@ -15728,7 +15670,7 @@ msgstr "Перемкнути прохід через стіни"
 
 #: engines/ultima/ultima8/metaengine.cpp:107
 msgid "Ascend"
-msgstr ""
+msgstr "Підйом"
 
 #: engines/ultima/ultima8/metaengine.cpp:115
 msgid "Show touching items"
@@ -15740,11 +15682,11 @@ msgstr "Показувати елементи редактора"
 
 #: engines/ultima/ultima8/metaengine.cpp:117
 msgid "Decrement map sort order"
-msgstr ""
+msgstr "Зменшення порядку сортування мапи"
 
 #: engines/ultima/ultima8/metaengine.cpp:118
 msgid "Increment map sort order"
-msgstr ""
+msgstr "Збільшення порядку сортування мапи"
 
 #: engines/ultima/ultima8/metaengine.cpp:119
 msgid "Toggle frame by frame"
@@ -15752,7 +15694,7 @@ msgstr "Перемкнути кадр за кадром"
 
 #: engines/ultima/ultima8/metaengine.cpp:120
 msgid "Advance frame"
-msgstr ""
+msgstr "Наступний кадр"
 
 #: engines/ultima/ultima8/metaengine.cpp:121
 msgid "Toggle Avatar in stasis"
@@ -15941,11 +15883,11 @@ msgstr "Пропустити сцену"
 
 #: engines/voyeur/metaengine.cpp:211
 msgid "View evidence"
-msgstr ""
+msgstr "Переглянути докази"
 
 #: engines/voyeur/metaengine.cpp:217
 msgid "Exit / Put away evidence"
-msgstr ""
+msgstr "Вийти / Відкласти докази"
 
 #: engines/voyeur/metaengine.cpp:223
 msgid "Enter room"
@@ -15983,15 +15925,15 @@ msgstr "Використовувати озвучення італійською
 
 #: engines/wintermute/metaengine.cpp:95
 msgid "Use Italian dubbing instead of the default English one"
-msgstr ""
+msgstr "Використовуйте італійський дубляж замість англійського за замовчуванням"
 
 #: engines/wintermute/metaengine.cpp:106
 msgid "Run SD version (1280x800)"
-msgstr ""
+msgstr "Запустити SD-версію (1280x800)"
 
 #: engines/wintermute/metaengine.cpp:107
 msgid "Run the legacy SD version, which is better for small screens"
-msgstr ""
+msgstr "Запустіть стару SD-версію, яка краще підходить для маленьких екранів"
 
 #: engines/wintermute/metaengine.cpp:148
 msgid "FoxTail support is not compiled in"
@@ -16549,6 +16491,8 @@ msgid ""
 "Rearrange placement of menus & subtitles so as to make better use of modern "
 "wide aspect ratio displays"
 msgstr ""
+"Змінити розташування меню та субтитрів, щоб ліпше використовувати сучасні "
+"дисплеї з широким співвідношенням сторін"
 
 #: engines/zvision/metaengine.cpp:114
 msgid "Enable high quality panoramas"
@@ -16602,6 +16546,10 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+"Відтворення MIDI недоступне або неправильно налаштоване. Zork Nemesis "
+"містить кілька музичних головоломок, для розв'язання яких потрібне MIDI-"
+"аудіо. Ці головоломки також можна розв'язати за допомогою субтитрів, якщо "
+"вони підтримуються. Продовжити запуск гри?"
 
 #~ msgid "Setup"
 #~ msgstr "Налаштування"
