@@ -27,10 +27,10 @@ namespace Burger {
 namespace Rooms {
 
 static const seriesPlayBreak PLAY1[] = {
-	{  0, 10, nullptr,   1,   0, -1, 2048, 0, 0, 0 },
-	{ 11, 30, "600_011", 2, 255, -1,    0, 0, 0, 0 },
-	{ 31, 33, "600_001", 2, 255, -1,    0, 0, 0, 0 },
-	{ 34, -1, "600_002", 1, 255, -1,    0, 0, 0, 0 },
+	{  0, 10, nullptr,   1,   0, -1, 2048, 0, nullptr, 0 },
+	{ 11, 30, "600_011", 2, 255, -1,    0, 0, nullptr, 0 },
+	{ 31, 33, "600_001", 2, 255, -1,    0, 0, nullptr, 0 },
+	{ 34, -1, "600_002", 1, 255, -1,    0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -367,7 +367,7 @@ void Section6::daemon() {
 
 void Section6::parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
-	bool kibble = player_said("KIBBLE");
+	const bool kibble = player_said("KIBBLE");
 
 	if (player_said("RAY GUN", "BLOCK OF ICE")) {
 		_G(flags)[V247] = 1;

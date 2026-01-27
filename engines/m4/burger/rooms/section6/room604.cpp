@@ -724,7 +724,7 @@ void Room604::pre_parser() {
 
 void Room604::parser() {
 	_G(kernel).trigger_mode = KT_DAEMON;
-	bool rayGun = player_said("RAY GUN");
+	const bool rayGun = player_said("RAY GUN");
 
 	if (_G(walker).wilbur_said(SAID)) {
 		// Already handled
