@@ -67,10 +67,10 @@ void FoolPrologue::sub_128_004() {
 	// 128:0066
 	this->var_i32_4e = this->arr_i32_41296[11];
 	// 128:0078
-	// stipple pattern buffer?
-	this->arr_pat_194[0] = { { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } };
-	this->arr_pat_194[1] = { { 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 } };
-	this->arr_pat_194[2] = { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff } };
+	// pattern buffer
+	this->arr_pat_194[0] = { { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } }; // solid white
+	this->arr_pat_194[1] = { { 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 } }; // checkerboard
+	this->arr_pat_194[2] = { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff } }; // solid black
 
 
 	// 128:00d6
@@ -877,12 +877,17 @@ void FoolPrologue::prologueRun() {
 	this->var_i32_2 = g_toolbox->TickCount();
 	g_toolbox->InvertRect(this->arr_i16_1bc);
 	this->drawRainRecycle(0xf);
+
 	this->var_i32_2 = g_toolbox->TickCount();
 	g_toolbox->InvertRect(this->arr_i16_1bc);
 	this->drawRainRecycle(0x78);
 	this->blitPageToScreen(2);
+
+	// 130:0740
 	this->drawRain();
 	this->var_i32_2 = g_toolbox->TickCount();
+	this->drawRainRecycle(0xb4);
+
 	g_toolbox->SetRect(this->arr_i32_1c4, 0, 0, 0x150, 0x96);
 
 	// 130:0778
@@ -928,6 +933,7 @@ void FoolPrologue::prologueRun() {
 		this->arr_i32_41296[i]->copyFrom(*this->arr_i32_41296[1]);
 	}
 	// 130:0978
+	// draw the sun pulsing to pages 1-5
 	for (int i = 1; i <= 5; i++) {
 		this->setPortBitsToPage(i);
 		g_toolbox->PenPat(this->arr_pat_194[1]);
@@ -1069,6 +1075,7 @@ void FoolPrologue::drawRain() {
 		this->var_i16_6 += 1;
 	}
 	this->var_i16_6 = 1;
+	g_toolbox->Delay(0);
 }
 
 void FoolPrologue::drawRainDrop() {

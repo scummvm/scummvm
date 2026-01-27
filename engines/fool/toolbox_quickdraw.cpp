@@ -102,7 +102,8 @@ void Toolbox::FillRect(const Common::Rect &r, const Pattern &pat) {
 		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
 		pm.drawFilledRect(intermediate->getBounds(), _port->fgColor, &pd);
 		Common::Point destPos(r.left, r.top);
-		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, _port->pnMode);
+		// FillRect always uses patCopy
+		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, kPatCopy);
 		if (_port->portBits == _defaultBits) {
 			_defaultWindow->addDirtyRect(dstRect);
 			_defaultWindow->setDirty(true);
