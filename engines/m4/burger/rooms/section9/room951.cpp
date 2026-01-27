@@ -20,7 +20,6 @@
  */
 
 #include "m4/burger/rooms/section9/room951.h"
-#include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/adv_trigger.h"
 #include "m4/burger/vars.h"
 #include "m4/m4.h"
@@ -105,21 +104,21 @@ static const seriesStreamBreak planet_x_hilltop_a[] = {
 };
 
 static const seriesStreamBreak planet_x_low_shot[] = {
-	{   0,   nullptr, 2,   0, -1, 2048, 0, 0 },
-	{   0, "952_003", 1, 200, -1, 0, 0, 0 },
-	{  21, "952_001", 3, 120, -1, 0, 0, 0 },
-	{  73, "952_002", 2, 160, -1, 0, 0, 0 },
-	{  80, "952Z001", 1, 255, -1, 0, 0, 0 },
-	{  92, "952_005", 2, 160, -1, 0, 0, 0 },
-	{ 111, "952_006", 2, 100, -1, 0, 0, 0 },
-	{ 117, "952_007", 2, 100, -1, 0, 0, 0 },
-	{ 124, "952_004", 1, 225, -1, 0, 0, 0 },
-	{ 136, "952_004", 1, 245, -1, 0, 0, 0 },
-	{ 143, "952_010", 1, 255, -1, 0, 0, 0 },
-	{ 147, "952_004", 1, 235, -1, 0, 0, 0 },
-	{ 153, "952_008", 2, 100, -1, 0, 0, 0 },
-	{ 154, "952_009", 3, 200, -1, 0, 0, 0 },
-	{ 157, 0, 0, 0, 52, 0, 0, 0 },
+	{   0,   nullptr, 2,   0, -1, 2048, nullptr, 0 },
+	{   0, "952_003", 1, 200, -1, 0, nullptr, 0 },
+	{  21, "952_001", 3, 120, -1, 0, nullptr, 0 },
+	{  73, "952_002", 2, 160, -1, 0, nullptr, 0 },
+	{  80, "952Z001", 1, 255, -1, 0, nullptr, 0 },
+	{  92, "952_005", 2, 160, -1, 0, nullptr, 0 },
+	{ 111, "952_006", 2, 100, -1, 0, nullptr, 0 },
+	{ 117, "952_007", 2, 100, -1, 0, nullptr, 0 },
+	{ 124, "952_004", 1, 225, -1, 0, nullptr, 0 },
+	{ 136, "952_004", 1, 245, -1, 0, nullptr, 0 },
+	{ 143, "952_010", 1, 255, -1, 0, nullptr, 0 },
+	{ 147, "952_004", 1, 235, -1, 0, nullptr, 0 },
+	{ 153, "952_008", 2, 100, -1, 0, nullptr, 0 },
+	{ 154, "952_009", 3, 200, -1, 0, nullptr, 0 },
+	{ 157, nullptr, 0, 0, 52, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
@@ -275,45 +274,45 @@ static const seriesStreamBreak break_961a[] = {
 };
 
 static const seriesStreamBreak break_961b[] = {
-	{   0,   nullptr, 0,   0, -1, 0, 0, 0 },
-	{   4, "961_003", 1, 255, -1, 0, 0, 0 },
-	{  19, "961_004", 2, 180, -1, 0, 0, 0 },
-	{  38, "961_005", 1, 255, -1, 0, 0, 0 },
-	{  55,   nullptr, 0,   0, 52, 0, 0, 0 },
+	{   0,   nullptr, 0,   0, -1, 0, nullptr, 0 },
+	{   4, "961_003", 1, 255, -1, 0, nullptr, 0 },
+	{  19, "961_004", 2, 180, -1, 0, nullptr, 0 },
+	{  38, "961_005", 1, 255, -1, 0, nullptr, 0 },
+	{  55,   nullptr, 0,   0, 52, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
 static const seriesStreamBreak break_961c[] = {
-	{   0,   nullptr, 0,   0,  -1, 0, 0, 0 },
-	{   1, "961_006", 2, 130,  -1, 0, 0, 0 },
-	{  29, "961_007", 1, 255,  -1, 0, 0, 0 },
-	{  62, "961_008", 1, 255,  -1, 0, 0, 0 },
-	{  75, "961_009", 1, 200,  -1, 0, 0, 0 },
-	{  95, "961_007", 2, 255,  -1, 0, 0, 0 },
-	{ 100,   nullptr, 3, 240,  -1, 0, 0, 0 },
-	{ 101,   nullptr, 3, 220,  -1, 0, 0, 0 },
-	{ 102,   nullptr, 3, 200,  -1, 0, 0, 0 },
-	{ 103,   nullptr, 3, 180,  -1, 0, 0, 0 },
-	{ 104,   nullptr, 3, 160,  -1, 0, 0, 0 },
-	{ 105,   nullptr, 3, 140,  -1, 0, 0, 0 },
-	{ 106,   nullptr, 3, 120,  -1, 0, 0, 0 },
-	{ 107,   nullptr, 3, 100,  -1, 0, 0, 0 },
-	{ 108,   nullptr, 3,  90,  -1, 0, 0, 0 },
-	{ 109,   nullptr, 3,  80,  -1, 0, 0, 0 },
-	{ 110,   nullptr, 3,  60,  -1, 0, 0, 0 },
-	{ 112,   nullptr, 3,  40,  -1, 0, 0, 0 },
-	{ 114,   nullptr, 3,  20,  -1, 0, 0, 0 },
-	{ 116,   nullptr, 3,  10,  -1, 0, 0, 0 },
-	{ 117,   nullptr, 0,   0,  52, 0, 0, 0 },
-	{ 118,   nullptr, 3,   0,  -1, 0, 0, 0 },
+	{   0,   nullptr, 0,   0,  -1, 0, nullptr, 0 },
+	{   1, "961_006", 2, 130,  -1, 0, nullptr, 0 },
+	{  29, "961_007", 1, 255,  -1, 0, nullptr, 0 },
+	{  62, "961_008", 1, 255,  -1, 0, nullptr, 0 },
+	{  75, "961_009", 1, 200,  -1, 0, nullptr, 0 },
+	{  95, "961_007", 2, 255,  -1, 0, nullptr, 0 },
+	{ 100,   nullptr, 3, 240,  -1, 0, nullptr, 0 },
+	{ 101,   nullptr, 3, 220,  -1, 0, nullptr, 0 },
+	{ 102,   nullptr, 3, 200,  -1, 0, nullptr, 0 },
+	{ 103,   nullptr, 3, 180,  -1, 0, nullptr, 0 },
+	{ 104,   nullptr, 3, 160,  -1, 0, nullptr, 0 },
+	{ 105,   nullptr, 3, 140,  -1, 0, nullptr, 0 },
+	{ 106,   nullptr, 3, 120,  -1, 0, nullptr, 0 },
+	{ 107,   nullptr, 3, 100,  -1, 0, nullptr, 0 },
+	{ 108,   nullptr, 3,  90,  -1, 0, nullptr, 0 },
+	{ 109,   nullptr, 3,  80,  -1, 0, nullptr, 0 },
+	{ 110,   nullptr, 3,  60,  -1, 0, nullptr, 0 },
+	{ 112,   nullptr, 3,  40,  -1, 0, nullptr, 0 },
+	{ 114,   nullptr, 3,  20,  -1, 0, nullptr, 0 },
+	{ 116,   nullptr, 3,  10,  -1, 0, nullptr, 0 },
+	{ 117,   nullptr, 0,   0,  52, 0, nullptr, 0 },
+	{ 118,   nullptr, 3,   0,  -1, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
 static const seriesStreamBreak break_961d[] = {
-	{  -1,   nullptr, 0,   0,  -1, 0, 0, 0 },
-	{   0,   nullptr, 0,   0,  -1, 0, 0, 0 },
-	{  39,   nullptr, 0,   0,  52, 0, 0, 0 },
-	{  42,   nullptr, 0,   0,2048, 0, 0, 0 },
+	{  -1,   nullptr, 0,   0,  -1, 0, nullptr, 0 },
+	{   0,   nullptr, 0,   0,  -1, 0, nullptr, 0 },
+	{  39,   nullptr, 0,   0,  52, 0, nullptr, 0 },
+	{  42,   nullptr, 0,   0,2048, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
@@ -526,7 +525,7 @@ void Room951::daemon() {
 
 	case START_33:
 		palette_prep_for_stream();
-		kernel_timing_trigger(TENTH_SECOND, START_34, 0);
+		kernel_timing_trigger(TENTH_SECOND, START_34, nullptr);
 		break;
 
 	case START_34:
@@ -548,12 +547,12 @@ void Room951::daemon() {
 	case START_36:
 		pal_fade_set_start(_G(master_palette), 0);
 		pal_cycle_stop();
-		kernel_timing_trigger(TENTH_SECOND, START_37, 0);
+		kernel_timing_trigger(TENTH_SECOND, START_37, nullptr);
 		break;
 
 	case START_37:
 		compact_mem_and_report();
-		kernel_timing_trigger(1, START_38, 0);
+		kernel_timing_trigger(1, START_38, nullptr);
 		break;
 
 	case START_38:
@@ -566,7 +565,7 @@ void Room951::daemon() {
 
 	case START_39:
 		pal_fade_set_start(_G(master_palette), 0);
-		kernel_timing_trigger(TENTH_SECOND, START_40, 0);
+		kernel_timing_trigger(TENTH_SECOND, START_40, nullptr);
 		break;
 
 	case START_40:
@@ -584,7 +583,7 @@ void Room951::daemon() {
 
 	case START_42:
 		pal_fade_set_start(_G(master_palette), 0);
-		kernel_timing_trigger(TENTH_SECOND, START_43, 0);
+		kernel_timing_trigger(TENTH_SECOND, START_43, nullptr);
 		break;
 
 	case START_43:

@@ -45,12 +45,12 @@ const seriesStreamBreak Room971::SERIES2[] = {
 };
 
 const seriesStreamBreak Room971::SERIES3[] = {
-	{   0, "972birds", 3,  80, -1, 1024, 0, 0 },
-	{   1, "972d001",  1, 255, -1,    0, 0, 0 },
-	{  35, "971slam",  2,  80, -1,    0, 0, 0 },
-	{  53, "972run_1", 2, 100, -1,    0, 0, 0 },
-	{ 110, "972dream", 2, 150, -1,    0, 0, 0 },
-	{ 129, nullptr,    0,   0, 56,    0, 0, 0 },
+	{   0, "972birds", 3,  80, -1, 1024, nullptr, 0 },
+	{   1, "972d001",  1, 255, -1,    0, nullptr, 0 },
+	{  35, "971slam",  2,  80, -1,    0, nullptr, 0 },
+	{  53, "972run_1", 2, 100, -1,    0, nullptr, 0 },
+	{ 110, "972dream", 2, 150, -1,    0, nullptr, 0 },
+	{ 129, nullptr,    0,   0, 56,    0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
@@ -132,8 +132,8 @@ const seriesStreamBreak Room971::SERIES12[] = {
 };
 
 const seriesStreamBreak Room971::SERIES13[] = {
-	{  0, "984ambi", 3, 60, -1, 1024, 0, 0 },
-	{ 10, "984d001", 1, 255, -1,   0, 0, 0 },
+	{  0, "984ambi", 3, 60, -1, 1024, nullptr, 0 },
+	{ 10, "984d001", 1, 255, -1,   0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 

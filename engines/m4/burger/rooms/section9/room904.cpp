@@ -570,7 +570,7 @@ const char *Room904::getCreditsSectionString(int sectionNum) const {
 }
 
 int Room904::getCreditsSectionLines(int sectionNum) const {
-	int sectionStart = getCreditsSectionLine(sectionNum);
+	const int sectionStart = getCreditsSectionLine(sectionNum);
 	int lineNum = sectionStart;
 
 	while (CREDITS[lineNum])
@@ -614,8 +614,8 @@ void Room904::creditsCallback(TextItem *textItem, TextScrn *textScrn) {
 
 void Room904::updateCredits(TextItem *textItem, TextScrn *textScrn) {
 	const char *credit = textItem->prompt;
-	int sectionNum = textItem->tag;
-	int linesCount = getCreditsSectionLines(sectionNum);
+	const int sectionNum = textItem->tag;
+	const int linesCount = getCreditsSectionLines(sectionNum);
 	term_message("credit: %s index: %d names: %d", credit, sectionNum, linesCount);
 
 	playRandomSound(-1, 2);
@@ -625,13 +625,13 @@ void Room904::updateCredits(TextItem *textItem, TextScrn *textScrn) {
 		gr_font_set(_G(font_conv));
 		_fontHeight = gr_font_get_height();
 
-		int sectionWidth = getCreditsSectionWidth(sectionNum) + 20;
-		int sectionHeight = linesCount * _fontHeight + 20;
+		const int sectionWidth = getCreditsSectionWidth(sectionNum) + 20;
+		const int sectionHeight = linesCount * _fontHeight + 20;
 
-		int x1 = (640 - _x2 - sectionWidth) / 2 + _x2;
-		int y1 = (480 - sectionHeight) / 2;
-		int x2 = x1 + sectionWidth;
-		int y2 = y1 + sectionHeight;
+		const int x1 = (640 - _x2 - sectionWidth) / 2 + _x2;
+		const int y1 = (480 - sectionHeight) / 2;
+		const int x2 = x1 + sectionWidth;
+		const int y2 = y1 + sectionHeight;
 
 		if (_screen2)
 			TextScrn_Destroy(_screen2);
@@ -652,8 +652,7 @@ void Room904::updateCredits(TextItem *textItem, TextScrn *textScrn) {
 }
 
 void Room904::playRandomSound(int trigger, int channel) {
-	Common::String name = Common::String::format("904pop%d",
-		g_engine->getRandomNumber(4) + 1);
+	const Common::String name = Common::String::format("904pop%d", g_engine->getRandomNumber(4) + 1);
 	digi_play(name.c_str(), channel, 255, trigger);
 }
 
