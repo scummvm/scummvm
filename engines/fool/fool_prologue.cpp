@@ -241,7 +241,7 @@ void FoolPrologue::sub_128_50a(int16 unk1, int16 unk2, int16 unk3, int16 screenP
 	}
 }
 
-void FoolPrologue::sub_128_610(int16 screenPage) {
+void FoolPrologue::blitPageToScreen(int16 screenPage) {
 	// 128:0610
 	this->var_i32_40 = this->arr_i32_41296[screenPage];
 	g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->var_i16_38, this->var_i16_38, kSrcCopy, nullptr);
@@ -325,7 +325,7 @@ void FoolPrologue::sub_128_a6c(int16_t unk1, int16_t unk2) {
 	g_toolbox->DrawString(this->var_str_76);
 }
 
-void FoolPrologue::sub_128_a8c(int16_t unk) {
+void FoolPrologue::drawRainRecycle(int16_t unk) {
 	// 128:0a8c
 	this->var_i16_1a4 = unk;
 	g_toolbox->PenMode(kPatXor);
@@ -341,7 +341,7 @@ void FoolPrologue::sub_128_a8c(int16_t unk) {
 		+ this->arr_i16_1e8[0x2f1+this->var_i16_6];
 
 		// 128:0b52
-		if ((this->arr_i16_1e8[this->var_i16_6] < 0x1f4) || (this->arr_i16_1e8[this->var_i16_6 + 0xfb] < 0x140)) {
+		if ((this->arr_i16_1e8[this->var_i16_6] > 0x1f4) || (this->arr_i16_1e8[this->var_i16_6 + 0xfb] > 0x140)) {
 
 		    // 128:0bae
 			this->arr_i16_1e8[this->var_i16_6] = g_zbasic->rndInt(0x264) - 0xc8;
@@ -775,20 +775,29 @@ void FoolPrologue::prologueRun() {
 		this->fillRect(2, 0, 0, 0x14, this->var_i16_10);
 		g_toolbox->SetPort(this->var_i32_8);
 	}
+
+	// We're done loading, start the intro.
+	// Erase the screen with a bunch of cool scanlines.
+
 	// 130:03e4
 	this->delay(0x3c);
 	this->scanlineTransition(0x2);
 	this->delay(0x1e);
-	this->sub_128_610(0xb);
+
+	// draw logo
+	this->blitPageToScreen(0xb);
 	this->delay(0x5a);
-	this->sub_130_db0();
+
+	// animate rain
+	this->drawRain();
+
 	g_toolbox->SetRect(this->arr_i16_1bc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	g_toolbox->SetRect(this->arr_i32_1c4, 0, 0x96, SCREEN_WIDTH, 0x118);
 
 	// 130:043c
 	for (int i = 1; i <= 2; i++) {
 		this->var_i32_2 = g_toolbox->TickCount();
-		this->sub_128_a8c(0xb4);
+		this->drawRainRecycle(0xb4);
 		this->var_i32_2 = g_toolbox->TickCount();
 		g_toolbox->InvertRect(this->arr_i16_1bc);
 		this->sub_128_24a(1);
@@ -799,21 +808,21 @@ void FoolPrologue::prologueRun() {
 			this->var_i32_40 = this->arr_i32_41296[8];
 			// 130:049e
 			g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->arr_i32_1c4, this->arr_i32_1c4, kSrcCopy, nullptr);
-			this->sub_128_a8c(4);
+			this->drawRainRecycle(4);
 			this->var_i16_192 = 0;
 			this->var_i32_2 = g_toolbox->TickCount();
 			this->var_i32_40 = this->arr_i32_41296[3];
 			g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->arr_i32_1c4, this->arr_i32_1c4, kSrcCopy, nullptr);
-			this->sub_128_a8c(5);
+			this->drawRainRecycle(5);
 			// 130:0518
 			this->var_i32_2 = g_toolbox->TickCount();
 			this->var_i32_40 = this->arr_i32_41296[4];
 			g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->arr_i32_1c4, this->arr_i32_1c4, kSrcCopy, nullptr);
-			this->sub_128_a8c(5);
+			this->drawRainRecycle(5);
 			this->var_i32_2 = g_toolbox->TickCount();
 			this->var_i32_40 = this->arr_i32_41296[5];
 			g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->arr_i32_1c4, this->arr_i32_1c4, kSrcCopy, nullptr);
-			this->sub_128_a8c(5);
+			this->drawRainRecycle(5);
 		}
 		// 130:05b6
 		this->var_i32_40 = this->arr_i32_41296[7];
@@ -822,10 +831,10 @@ void FoolPrologue::prologueRun() {
 	}
 
 	// 130:05fc
-	this->sub_128_610(0);
-	this->sub_130_db0();
+	this->blitPageToScreen(0);
+	this->drawRain();
 	this->var_i32_2 = g_toolbox->TickCount();
-	this->sub_128_a8c(0xb4);
+	this->drawRainRecycle(0xb4);
 	this->var_i32_40 = this->arr_i32_41296[1];
 
 	// 130:062c
@@ -844,26 +853,26 @@ void FoolPrologue::prologueRun() {
 			g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->var_i16_5c, this->var_i16_5c, kSrcCopy, nullptr);
 		}
 		// 130:06b0
-		this->sub_128_a8c(1);
+		this->drawRainRecycle(1);
 	}
 	this->var_i32_2 = g_toolbox->TickCount();
-	this->sub_128_a8c(0xa);
-	this->sub_128_610(1);
+	this->drawRainRecycle(0xa);
+	this->blitPageToScreen(1);
 	// 130:06d4
 	for (int i = 1; i <= 4; i++) {
 		this->var_i32_2 = g_toolbox->TickCount();
 		g_toolbox->InvertRect(this->arr_i16_1bc);
-		this->sub_128_a8c(0x2);
+		this->drawRainRecycle(0x2);
 	}
 	// 130:0704
 	this->var_i32_2 = g_toolbox->TickCount();
 	g_toolbox->InvertRect(this->arr_i16_1bc);
-	this->sub_128_a8c(0xf);
+	this->drawRainRecycle(0xf);
 	this->var_i32_2 = g_toolbox->TickCount();
 	g_toolbox->InvertRect(this->arr_i16_1bc);
-	this->sub_128_a8c(0x78);
-	this->sub_128_610(2);
-	this->sub_130_db0();
+	this->drawRainRecycle(0x78);
+	this->blitPageToScreen(2);
+	this->drawRain();
 	this->var_i32_2 = g_toolbox->TickCount();
 	g_toolbox->SetRect(this->arr_i32_1c4, 0, 0, 0x150, 0x96);
 
@@ -873,11 +882,11 @@ void FoolPrologue::prologueRun() {
 			this->var_i32_2 = g_toolbox->TickCount();
 			this->var_i32_40 = this->arr_i32_41296[i];
 			g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->arr_i32_1c4, this->arr_i32_1c4, kSrcCopy, nullptr);
-			this->sub_128_a8c(3);
+			this->drawRainRecycle(3);
 		}
 	}
 	// 130:07ec
-	this->sub_128_610(6);
+	this->blitPageToScreen(6);
 	g_toolbox->SetRect(this->arr_i16_1bc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	for (int i = 0; i <= 0x2d; i++) {
 		this->var_i32_2 = g_toolbox->TickCount();
@@ -963,7 +972,7 @@ void FoolPrologue::prologueRun() {
 		if (this->var_i16_74 == 1) {
 			this->var_i16_192 = 1;
 		}
-		this->sub_128_610(this->var_i16_74);
+		this->blitPageToScreen(this->var_i16_74);
 		this->sub_128_24a(0xa);
 		// 130:0bee
 		this->var_i16_1ba = g_toolbox->GetNextEvent(2, this->var_ev_22);
@@ -979,7 +988,7 @@ void FoolPrologue::prologueRun() {
 		if (this->var_i16_74 == 1) {
 			this->var_i16_192 = 1;
 		}
-		this->sub_128_610(this->var_i16_74);
+		this->blitPageToScreen(this->var_i16_74);
 		this->sub_128_24a(0xa);
 		// 130:0c56
 		this->var_i16_1ba = g_toolbox->GetNextEvent(-1, this->var_ev_22);
@@ -991,11 +1000,11 @@ void FoolPrologue::prologueRun() {
 		}
 	}
 	// 130:0ca8
-	this->sub_128_610(0x6);
+	this->blitPageToScreen(0x6);
 	this->sub_128_e58();
 	this->sub_128_50a(0x7, 0, 0x1fc, 0);
 	this->delay(0xa);
-	this->sub_128_610(0x8);
+	this->blitPageToScreen(0x8);
 	this->sub_128_e58();
 	this->sub_128_354(kPatCopy, 1);
 	// 130:0ce6
@@ -1027,7 +1036,7 @@ void FoolPrologue::prologueDrawLoadingMsg() {
 	g_toolbox->SetPort(this->var_i32_8);
 }
 
-void FoolPrologue::sub_130_db0() {
+void FoolPrologue::drawRain() {
 	// 130:0db0
 	g_zbasic->unk_20();
 	g_toolbox->PenMode(kPatXor);
@@ -1053,6 +1062,7 @@ void FoolPrologue::drawRainDrop() {
 		this->arr_i16_1e8[this->var_i16_6] + this->arr_i16_1e8[this->var_i16_6 + 0x1f6],
 		this->arr_i16_1e8[this->var_i16_6 + 0xfb] + this->arr_i16_1e8[this->var_i16_6 + 0x1f6]
 	);
+
 }
 
 void FoolPrologue::sub_130_f48() {

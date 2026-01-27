@@ -24,6 +24,7 @@
 #include "common/memstream.h"
 #include "common/str-enc.h"
 #include "common/stream.h"
+#include "graphics/managed_surface.h"
 
 #include "fool/fool.h"
 #include "fool/toolbox.h"
@@ -39,7 +40,8 @@ ZBasic::ZBasic(Toolbox *toolbox) : _toolbox(toolbox) {
 	g_engine->_wm.setBackgroundWindow(_window);
 
 	_toolbox->_defaultWindow = _window;
-	_toolbox->_defaultBits = BitMap(_window->getWindowSurface());
+	_toolbox->_defaultBits = BitMap(new Graphics::ManagedSurface());
+	_toolbox->_defaultBits->copyFrom(*_window->getWindowSurface());
 }
 
 ZBasic::~ZBasic() {
