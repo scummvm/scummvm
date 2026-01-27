@@ -554,6 +554,9 @@ public:
 	// CharWidths of all the characters in the string (see above).
 	uint16 StringWidth(const Common::String &s);
 
+	Graphics::MacWindow *_defaultWindow;
+	BitMap _defaultBits;
+
 private:
 	Common::HashMap<int16, Common::SharedPtr<Common::MacResManager>> _resMap;
 	Common::Array<int16> _resOrder;
@@ -567,8 +570,6 @@ private:
 	Common::Queue<EventRecord> _events;
 
 	GrafPtr _port = nullptr;
-
-	Graphics::MacPlotData _pd;
 
 	void _pumpEvents();
 	void _updateScreen();
