@@ -51,15 +51,13 @@ static const int8_t mv[256][2] = {
 } // namespace
 
 class FourXMDecoder::FourXMAudioTrack : public AudioTrack {
-	FourXMDecoder *_dec;
-	uint _trackIdx;
 	uint _audioType;
 	uint _audioChannels;
 	uint _sampleRate;
 	Common::ScopedPtr<Audio::QueuingAudioStream> _output;
 
 public:
-	FourXMAudioTrack(FourXMDecoder *dec, uint trackIdx, uint audioType, uint audioChannels, uint sampleRate) : AudioTrack(Audio::Mixer::SoundType::kPlainSoundType), _dec(dec), _trackIdx(trackIdx), _audioType(audioType), _audioChannels(audioChannels), _sampleRate(sampleRate),
+	FourXMAudioTrack(FourXMDecoder *dec, uint trackIdx, uint audioType, uint audioChannels, uint sampleRate) : AudioTrack(Audio::Mixer::SoundType::kPlainSoundType), _audioType(audioType), _audioChannels(audioChannels), _sampleRate(sampleRate),
 																											   _output(Audio::makeQueuingAudioStream(sampleRate, audioChannels > 1)) {
 	}
 
