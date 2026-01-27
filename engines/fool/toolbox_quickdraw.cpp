@@ -116,11 +116,47 @@ void Toolbox::FrameArc(const Common::Rect &r, int16 startAngle, int16 arcAngle) 
 }
 
 void Toolbox::FrameOval(const Common::Rect &r) {
-	warning("STUB: Toolbox::FrameOval");
+	if (_port && _port->pnVis == 0) {
+
+		BitMap intermediate(new Graphics::ManagedSurface(r.width(), r.height()));
+		BitMap mask(new Graphics::ManagedSurface(r.width(), r.height()));
+		Graphics::MacPatterns pat({_port->pnPat.data});
+
+		Graphics::MacPlotData pd(&(*intermediate), &(*mask), &pat, 1, 0, 0, _port->pnSize, _port->bkColor);
+		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
+		pm.drawEllipse(0, 0, r.width(), r.height(), _port->fgColor, false, &pd);
+		Common::Point destPos(r.left, r.top);
+
+		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, _port->pnMode);
+		if (_port->portBits == _defaultBits) {
+			_defaultWindow->addDirtyRect(dstRect);
+			_defaultWindow->setDirty(true);
+		}
+	}
 }
 
 void Toolbox::FrameRect(const Common::Rect &r) {
-	warning("STUB: Toolbox::FrameRect");
+	if (_port && _port->pnVis == 0) {
+
+		BitMap intermediate(new Graphics::ManagedSurface(r.width(), r.height()));
+		BitMap mask(new Graphics::ManagedSurface(r.width(), r.height()));
+		Graphics::MacPatterns pat({_port->pnPat.data});
+
+		Graphics::MacPlotData pd(&(*intermediate), &(*mask), &pat, 1, 0, 0, _port->pnSize, _port->bkColor);
+		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
+		Common::Rect destRect = intermediate->getBounds();
+		destRect.right -= _port->pnSize.x - 1;
+		destRect.bottom -= _port->pnSize.y - 1;
+
+		pm.drawRect(destRect, _port->fgColor, &pd);
+		Common::Point destPos(r.left, r.top);
+
+		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, _port->pnMode);
+		if (_port->portBits == _defaultBits) {
+			_defaultWindow->addDirtyRect(dstRect);
+			_defaultWindow->setDirty(true);
+		}
+	}
 }
 
 void Toolbox::GetCPixel(int16 h, int16 v, RGBColor &cPix) {
@@ -161,7 +197,13 @@ void Toolbox::InitCursor() {
 }
 
 void Toolbox::InsetRect(Common::Rect &r, int16 dh, int16 dv) {
-	warning("STUB: Toolbox::InsetRect");
+	r.left += dh;
+	r.right -= dh;
+	r.top += dv;
+	r.bottom -= dv;
+	if ((r.width() < 1) || (r.height() < 1)) {
+		r = { 0, 0, 0, 0 };
+	}
 }
 
 void Toolbox::InvertOval(const Common::Rect &r) {
