@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-01-28 11:57+0000\n"
-"PO-Revision-Date: 2026-01-10 20:50+0000\n"
+"PO-Revision-Date: 2026-01-28 18:29+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -1587,12 +1587,12 @@ msgid "Unknown Year"
 msgstr "Any desconegut"
 
 #: gui/launcher.cpp:1434 gui/launcher.cpp:1810
-#, fuzzy
-#| msgid "Do you really want to remove this game configuration?"
 msgid ""
 "Do you really want to remove the following game configurations?\n"
 "\n"
-msgstr "Realment voleu suprimir la configuració d'aquest joc?"
+msgstr ""
+"Esteu segur que voleu eliminar les següents configuracions del joc?\n"
+"\n"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1615 gui/widgets/groupedlist.cpp:81
@@ -6579,10 +6579,8 @@ msgid "Show objects to interact"
 msgstr "Mostra els objectes a interactuar"
 
 #: engines/agos/metaengine.cpp:272
-#, fuzzy
-#| msgid "Toggle background sounds on / off"
 msgid "Toggle background sounds"
-msgstr "Activa / desactiva els sons de fons"
+msgstr "Commuta els sons de fons"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:281
@@ -6590,10 +6588,8 @@ msgid "Switch characters"
 msgstr "Canvia els personatges"
 
 #: engines/agos/metaengine.cpp:287
-#, fuzzy
-#| msgid "Toggle hitbox names on / off"
 msgid "Toggle hitbox names"
-msgstr "Activa / desactiva els noms dels punts d'interès"
+msgstr "Commuta els noms dels punts d'interès"
 
 #: engines/agos/metaengine.cpp:294
 msgid "Switches between speech only and combined speech and subtitles"
@@ -6885,10 +6881,8 @@ msgid "Open character inventory"
 msgstr "Obre l'inventari del personatge"
 
 #: engines/asylum/metaengine.cpp:226
-#, fuzzy
-#| msgid "Toggle animation on / off"
 msgid "Toggle animation"
-msgstr "Activa / desactiva l'animació"
+msgstr "Commuta l'animació"
 
 #: engines/asylum/metaengine.cpp:232
 msgid "Return to gameplay"
@@ -9141,10 +9135,8 @@ msgid "Glowstick"
 msgstr "Bengala"
 
 #: engines/hugo/metaengine.cpp:45
-#, fuzzy
-#| msgid "Easy mouse interface"
 msgid "Use Windows interface"
-msgstr "Interfície fàcil del ratolí"
+msgstr "Utilitza la interfície Windows"
 
 #: engines/hugo/metaengine.cpp:46
 msgid "Use mouse and toolbar from Windows version"
@@ -12996,10 +12988,8 @@ msgid "Open control panel"
 msgstr ""
 
 #: engines/sky/metaengine.cpp:136
-#, fuzzy
-#| msgid "Toggle really fast mode on / off"
 msgid "Toggle really fast mode"
-msgstr "Activa / desactiva el mode realment ràpid"
+msgstr "Commuta el mode realment ràpid"
 
 #: engines/sky/metaengine.cpp:156
 msgid "Floppy intro"
@@ -14217,40 +14207,28 @@ msgid "Magic Amulet"
 msgstr ""
 
 #: engines/ultima/ultima0/metaengine.cpp:57
-#, fuzzy
-#| msgid "Select option 1"
 msgid "Amulet Option 1"
-msgstr "Selecciona l'opció 1"
+msgstr "Opció d'amulet 1"
 
 #: engines/ultima/ultima0/metaengine.cpp:58
-#, fuzzy
-#| msgid "Select option 2"
 msgid "Amulet Option 2"
-msgstr "Selecciona l'opció 2"
+msgstr "Opció d'amulet 2"
 
 #: engines/ultima/ultima0/metaengine.cpp:59
-#, fuzzy
-#| msgid "Select option 3"
 msgid "Amulet Option 3"
-msgstr "Selecciona l'opció 3"
+msgstr "Opció d'amulet 3"
 
 #: engines/ultima/ultima0/metaengine.cpp:60
-#, fuzzy
-#| msgid "Select option 4"
 msgid "Amulet Option 4"
-msgstr "Selecciona l'opció 4"
+msgstr "Opció d'amulet 4"
 
 #: engines/ultima/ultima0/metaengine.cpp:65
-#, fuzzy
-#| msgid "Crawl North"
 msgid "North"
-msgstr "Arrossegueu-vos cap al nord"
+msgstr "Nord"
 
 #: engines/ultima/ultima0/metaengine.cpp:66
-#, fuzzy
-#| msgid "Crawl South"
 msgid "South"
-msgstr "Arrossegueu-vos cap al sud"
+msgstr "Sud"
 
 #: engines/ultima/ultima0/metaengine.cpp:67
 msgid "West"
@@ -14262,34 +14240,26 @@ msgstr "Est"
 
 #: engines/ultima/ultima0/metaengine.cpp:69
 #: engines/ultima/ultima0/metaengine.cpp:83
-#, fuzzy
-#| msgid "Enter Text"
 msgid "Enter/Exit"
-msgstr "Introduïu el text"
+msgstr "Entra/Surt"
 
 #: engines/ultima/ultima0/metaengine.cpp:72
 #: engines/ultima/ultima0/metaengine.cpp:86
-#, fuzzy
-#| msgid "Wait"
 msgid "Pass/Wait"
-msgstr "Espera"
+msgstr "Passa/Espera"
 
 #: engines/ultima/ultima0/metaengine.cpp:73
 #: engines/ultima/ultima0/metaengine.cpp:87
-#, fuzzy
-#| msgid "Minimize"
 msgid "Minimap"
-msgstr "Minimitza"
+msgstr "Minimapa"
 
 #: engines/ultima/ultima0/metaengine.cpp:78
 msgid "Move Forward"
 msgstr "Mou endavant"
 
 #: engines/ultima/ultima0/metaengine.cpp:79
-#, fuzzy
-#| msgid "Turn on"
 msgid "Turn Around"
-msgstr "Engega"
+msgstr "Gira't"
 
 #: engines/ultima/ultima0/metaengine.cpp:80
 msgid "Turn Left"
@@ -14304,24 +14274,18 @@ msgstr "Gira a la dreta"
 #: engines/ultima/ultima0/metaengine.cpp:111
 #: engines/ultima/ultima0/metaengine.cpp:117
 #: engines/ultima/ultima0/metaengine.cpp:123
-#, fuzzy
-#| msgid "Bind Keys"
 msgid "Basic Keys"
-msgstr "Mapeja tecles"
+msgstr "Tecles bàsiques"
 
 #: engines/ultima/ultima0/metaengine.cpp:99
 #: engines/ultima/ultima0/metaengine.cpp:112
-#, fuzzy
-#| msgid "Game Keys"
 msgid "Menu Keys"
-msgstr "Tecles de joc"
+msgstr "Tecles del menú"
 
 #: engines/ultima/ultima0/metaengine.cpp:100
 #: engines/ultima/ultima0/metaengine.cpp:118
-#, fuzzy
-#| msgid "General Keys"
 msgid "Overworld Keys"
-msgstr "Tecles generals"
+msgstr "Tecles del món superior"
 
 #: engines/ultima/ultima0/metaengine.cpp:101
 #: engines/ultima/ultima0/metaengine.cpp:124
@@ -15365,10 +15329,8 @@ msgstr ""
 "s'executen jocs 2D"
 
 #: engines/wintermute/metaengine.cpp:94
-#, fuzzy
-#| msgid "Use English speech"
 msgid "Use Italian speech pack"
-msgstr "Utilitza la veu en anglès"
+msgstr "Utilitza el paquet de parla italià"
 
 #: engines/wintermute/metaengine.cpp:95
 msgid "Use Italian dubbing instead of the default English one"
