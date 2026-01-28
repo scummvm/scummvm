@@ -213,7 +213,8 @@ static jobjectArray getFormFiles(JNIEnv *env, const Common::HashMap<Common::Stri
 
 NetworkReadStreamAndroid::NetworkReadStreamAndroid(const char *url, RequestHeaders *headersList, const Common::String &postFields,
 	bool uploading, bool usingPatch, bool keepAlive, long keepAliveIdle, long keepAliveInterval) :
-	NetworkReadStream(keepAlive, keepAliveIdle, keepAliveInterval), _request(nullptr) {
+	NetworkReadStream(keepAlive, keepAliveIdle, keepAliveInterval), _request(nullptr), _backingStream(DisposeAfterUse::YES),
+	_downloaded(0), _progressDownloaded(0), _progressTotal(0), _errorCode(0) {
 	if (!reuse(url, headersList, postFields, uploading, usingPatch)) {
 		abort();
 	}
@@ -221,7 +222,8 @@ NetworkReadStreamAndroid::NetworkReadStreamAndroid(const char *url, RequestHeade
 
 NetworkReadStreamAndroid::NetworkReadStreamAndroid(const char *url, RequestHeaders *headersList, const Common::HashMap<Common::String, Common::String> &formFields,
 	const Common::HashMap<Common::String, Common::Path> &formFiles, bool keepAlive, long keepAliveIdle, long keepAliveInterval) :
-	NetworkReadStream(keepAlive, keepAliveIdle, keepAliveInterval), _request(nullptr) {
+	NetworkReadStream(keepAlive, keepAliveIdle, keepAliveInterval), _request(nullptr), _backingStream(DisposeAfterUse::YES),
+	_downloaded(0), _progressDownloaded(0), _progressTotal(0), _errorCode(0) {
 	if (!reuse(url, headersList, formFields, formFiles)) {
 		abort();
 	}
@@ -229,7 +231,8 @@ NetworkReadStreamAndroid::NetworkReadStreamAndroid(const char *url, RequestHeade
 
 NetworkReadStreamAndroid::NetworkReadStreamAndroid(const char *url, RequestHeaders *headersList, const byte *buffer, uint32 bufferSize,
 	bool uploading, bool usingPatch, bool post, bool keepAlive, long keepAliveIdle, long keepAliveInterval) :
-	NetworkReadStream(keepAlive, keepAliveIdle, keepAliveInterval), _request(nullptr) {
+	NetworkReadStream(keepAlive, keepAliveIdle, keepAliveInterval), _request(nullptr), _backingStream(DisposeAfterUse::YES),
+	_downloaded(0), _progressDownloaded(0), _progressTotal(0), _errorCode(0) {
 	if (!reuse(url, headersList, buffer, bufferSize, uploading, usingPatch, post)) {
 		abort();
 	}
@@ -351,6 +354,7 @@ void NetworkReadStreamAndroid::finished(int errorCode, const Common::String &err
 void NetworkReadStreamAndroid::resetStream(JNIEnv *env) {
 	_eos = _requestComplete = false;
 	_progressDownloaded = _progressTotal = 0;
+	_backingStream = Common::MemoryReadWriteStream(DisposeAfterUse::YES);
 
 	if (_request) {
 		env->CallVoidMethod(_request, NetJNI::_MID_request_cancel);
@@ -367,6 +371,29 @@ void NetworkReadStreamAndroid::resetStream(JNIEnv *env) {
 	_downloaded = 0;
 	_errorCode = 0;
 	_errorMsg.clear();
+}
+
+void NetworkReadStreamAndroid::setProgress(uint64 downloaded, uint64 total) {
+	_progressDownloaded = downloaded;
+	_progressTotal = total;
+}
+
+double NetworkReadStreamAndroid::getProgress() const {
+	if (_progressTotal < 1)
+		return 0;
+	return (double)_progressDownloaded / (double)_progressTotal;
+}
+
+uint32 NetworkReadStreamAndroid::read(void *dataPtr, uint32 dataSize) {
+	uint32 actuallyRead = _backingStream.read(dataPtr, dataSize);
+
+	if (actuallyRead == 0) {
+		if (_requestComplete)
+			_eos = true;
+		return 0;
+	}
+
+	return actuallyRead;
 }
 
 Common::String NetworkReadStreamAndroid::currentLocation() const {

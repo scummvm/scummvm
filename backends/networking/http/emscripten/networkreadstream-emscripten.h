@@ -25,24 +25,47 @@
 #ifdef EMSCRIPTEN
 
 #include "backends/networking/http/networkreadstream.h"
-#include <emscripten/fetch.h>
+
+extern "C" {
+// External JS functions for HTTP fetching
+extern void NetworkReadStreamEmscripten_init(void);
+extern int NetworkReadStreamEmscripten_fetch(const char *method, const char *url,
+											 char **requestHeaders,
+											 const char *requestData, size_t requestDataSize,
+											 char **formFields = nullptr,
+											 char **formFiles = nullptr);
+extern void NetworkReadStreamEmscripten_close(int fetchId);
+
+// Getter functions for fetch properties
+extern char *NetworkReadStreamEmscripten_getDataPtr(int fetchId);
+extern char *NetworkReadStreamEmscripten_getErr(int fetchId);
+extern uint32 NetworkReadStreamEmscripten_getNumBytes(int fetchId);
+extern char **NetworkReadStreamEmscripten_responseHeadersArray(int fetchId);
+extern unsigned short NetworkReadStreamEmscripten_status(int fetchId);
+extern uint32 NetworkReadStreamEmscripten_totalBytes(int fetchId);
+extern bool NetworkReadStreamEmscripten_completed(int fetchId);
+extern bool NetworkReadStreamEmscripten_hasError(int fetchId);
+}
 
 namespace Networking {
 
-class NetworkReadStream; // Forward declaration
-
 class NetworkReadStreamEmscripten : public NetworkReadStream {
 private:
-	emscripten_fetch_attr_t *_emscripten_fetch_attr;
-	emscripten_fetch_t *_emscripten_fetch;
-	const char *_emscripten_fetch_url = nullptr;
-	char **_emscripten_request_headers;
-	bool _success;
-	char *_errorBuffer;
+	int _fetchId; // Fetch ID instead of pointer
+	Common::String _url;
+	RequestHeaders *_headersList;
+	uint32 _readPos; // Current read position in the JS buffer
+
+	// Helper methods
+	static char **buildHeadersArray(const RequestHeaders *headersList);
+	static char **buildFormFieldsArray(const Common::HashMap<Common::String, Common::String> &formFields);
+	static char **buildFormFilesArray(const Common::HashMap<Common::String, Common::Path> &formFiles);
+	static void cleanupStringArray(char **array);
 
 	void resetStream();
 	void setupBufferContents(const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post);
 	void setupFormMultipart(const Common::HashMap<Common::String, Common::String> &formFields, const Common::HashMap<Common::String, Common::Path> &formFiles);
+
 public:
 	NetworkReadStreamEmscripten(const char *url, RequestHeaders *headersList, const Common::String &postFields, bool uploading, bool usingPatch, bool keepAlive, long keepAliveIdle, long keepAliveInterval);
 
@@ -51,7 +74,7 @@ public:
 	NetworkReadStreamEmscripten(const char *url, RequestHeaders *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post, bool keepAlive, long keepAliveIdle, long keepAliveInterval);
 
 	~NetworkReadStreamEmscripten() override;
-	void initEmscripten(const char *url, RequestHeaders *headersList);
+	void initFetch();
 
 	// NetworkReadStream interface
 	bool reuse(const char *url, RequestHeaders *headersList, const Common::String &postFields, bool uploading = false, bool usingPatch = false) override { return false; }                                                 // no reuse for Emscripten
@@ -60,19 +83,13 @@ public:
 
 	bool hasError() const override;
 	const char *getError() const override;
-
+	double getProgress() const override;
 	long httpResponseCode() const override;
 	Common::String currentLocation() const override;
 	Common::HashMap<Common::String, Common::String> responseHeadersMap() const override;
 
 	uint32 read(void *dataPtr, uint32 dataSize) override;
-
-	// Static callback functions
-	static void emscriptenOnSuccess(emscripten_fetch_t *fetch);
-	static void emscriptenOnError(emscripten_fetch_t *fetch);
-	static void emscriptenOnProgress(emscripten_fetch_t *fetch);
-	static void emscriptenOnReadyStateChange(emscripten_fetch_t *fetch);
-	void emscriptenDownloadFinished(bool success);
+	bool eos() const override;
 };
 
 } // End of namespace Networking

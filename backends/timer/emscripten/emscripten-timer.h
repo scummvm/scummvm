@@ -19,29 +19,18 @@
  *
  */
 
-#include "networkreadstream.h"
-#include "common/tokenizer.h"
+#ifndef BACKENDS_TIMER_EMSCRIPTEN_H
+#define BACKENDS_TIMER_EMSCRIPTEN_H
 
-namespace Networking {
+#include "backends/timer/default/default-timer.h"
 
-/*
- * The make static functions are defined in the implementation-specific subclass
- */
+class EmscriptenTimerManager : public DefaultTimerManager {
+public:
+	EmscriptenTimerManager();
+	virtual ~EmscriptenTimerManager();
 
-uint32 NetworkReadStream::fillWithSendingContents(char *bufferToFill, uint32 maxSize) {
-	uint32 sendSize = _sendingContentsSize - _sendingContentsPos;
-	if (sendSize > maxSize)
-		sendSize = maxSize;
-	for (uint32 i = 0; i < sendSize; ++i) {
-		bufferToFill[i] = _sendingContentsBuffer[_sendingContentsPos + i];
-	}
-	_sendingContentsPos += sendSize;
-	return sendSize;
-}
+protected:
+	void handler() override;
+};
 
-uint32 NetworkReadStream::addResponseHeaders(char *buffer, uint32 bufferSize) {
-	_responseHeaders += Common::String(buffer, bufferSize);
-	return bufferSize;
-}
-
-} // End of namespace Networking
+#endif
