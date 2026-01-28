@@ -3452,13 +3452,15 @@ EOF
 		fi
 		append_var LDFLAGS "-Wl,--export-dynamic"
 		append_var LDFLAGS "-L/usr/local/lib"
-		append_var CXXFLAGS "-D__MORPHOS_SHAREDLIBS"
 		# Suppress format warnings as the long 4 byte causes noisy warnings.
 		append_var CXXFLAGS "-Wno-format"
 		add_line_to_config_mk 'MORPHOS = 1'
 		_port_mk="backends/platform/sdl/morphos/morphos.mk"
 		# use SDL2
 		_sdlconfig=sdl2-config
+		# OpenGL configuration
+		_opengl_game_classic=yes
+		_opengl_game_shaders=no
 		;;
 	msys)
 		echo ERROR: Using the MSYS shell in msys mode is not supported. Please use the MSYS shell in mingw mode instead.
@@ -5189,18 +5191,6 @@ PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a
 '
 		;;
-	morphos)
-		_plugin_prefix="lib"
-		_plugin_suffix=".so"
-		append_var CXXFLAGS "-fPIC"
-		append_var LIBS "-use-dynld"
-_mak_plugins='
-PLUGIN_EXTRA_DEPS =
-PLUGIN_LDFLAGS  += -shared
-PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
-POST_OBJS_FLAGS := -Wl,-no-whole-archive
-'
-		;;
 	psp)
 		_elf_loader=yes
 		append_var DEFINES "-DUNCACHED_PLUGINS"
@@ -6660,6 +6650,10 @@ if test "$_opengl_mode" != none ; then
 						darwin*)
 							_opengl_mode=gl
 							;;
+						morphos)
+							_opengl_glad=no
+							_opengl_mode=gl
+							;;
 						*)
 							# As SDL2 supports everything, let users choose
 							test "$_opengl_mode" = "auto" && _opengl_mode=any
@@ -6753,6 +6747,9 @@ EOF
 				;;
 			mingw*)
 				OPENGL_LIBS="-lopengl32"
+				;;
+			morphos*)
+				_opengl_can_compile=yes
 				;;
 			serenity*)
 				OPENGL_LIBS="-lgl"
