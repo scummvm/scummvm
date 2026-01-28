@@ -29,10 +29,31 @@
 #include "sherlock/scalpel/scalpel_user_interface.h"
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/screen.h"
+#include "video/3do_decoder.h"
+#include "graphics/surface.h"
+#include "sherlock/scalpel/scalpel_3do_audio_durations.h"
 
 namespace Sherlock {
-
 namespace Scalpel {
+
+// Helper function to extract the base filename from a full path
+// e.g. "03/lst03aec.stream" -> "lst03aec"
+Common::String getBaseFilenameFromPath(const Common::String &fullPath) {
+    size_t lastSlashPos = fullPath.findLastOf('/');
+    Common::String filenameWithExt;
+
+    if (lastSlashPos != Common::String::npos) {
+        filenameWithExt = fullPath.substr(lastSlashPos + 1, Common::String::npos);
+    } else {
+        filenameWithExt = fullPath;
+    }
+
+    size_t dotPos = filenameWithExt.findLastOf('.');
+    if (dotPos != Common::String::npos) {
+        return filenameWithExt.substr(0, dotPos);
+    }
+    return filenameWithExt;
+}
 
 const byte SCALPEL_OPCODES[] = {
 	128,	// OP_SWITCH_SPEAKER
@@ -171,10 +192,48 @@ ScalpelTalk::ScalpelTalk(SherlockEngine *vm) : Talk(vm) {
 	_fixedTextWindowExit = FIXED(Window_Exit);
 	_fixedTextWindowUp   = FIXED(Window_Up);
 	_fixedTextWindowDown = FIXED(Window_Down);
+
+	_3doAudioDecoder = nullptr;
+}
+
+ScalpelTalk::~ScalpelTalk() {
+	stop3DOAudio();
+}
+
+void ScalpelTalk::stop3DOAudio() {
+	if (_3doAudioDecoder) {
+		_3doAudioDecoder->close();
+		delete _3doAudioDecoder;
+		_3doAudioDecoder = nullptr;
+	}
+}
+
+bool ScalpelTalk::is3DOAudioPlaying() const {
+	if (!_3doAudioDecoder) return false;
+
+	// If video is finished, assume audio is also done (prevents infinite wait if audio finish isn't flagged)
+	if (_3doAudioDecoder->endOfVideo()) return false;
+
+	// Otherwise check actual audio status
+	return !_3doAudioDecoder->isAudioTrackFinished();
 }
 
 void ScalpelTalk::talkTo(const Common::String &filename) {
 	ScalpelUserInterface &ui = *(ScalpelUserInterface *)_vm->_ui;
+
+	// Reset selector and subindex for new conversation
+	// Only reset speech index if talking to a different script/character
+	static Common::String lastScript;
+	bool newScript = (lastScript != filename);
+
+	if (newScript) {
+		lastScript = filename;
+	}
+
+	// Reset 3DO audio tracking for new dialogue
+	_pcTalkie3DOSelector = -1;
+	_pcTalkie3DOSubindex = 0;
+	_lastSpeaker = -1; // Reset last speaker tracking
 
 	Talk::talkTo(filename);
 
@@ -189,6 +248,9 @@ void ScalpelTalk::talkTo(const Common::String &filename) {
 		// gets corrupted
 		_talkToAbort = true;
 	}
+
+	// Stop any lingering 3DO audio when conversation ends
+	stop3DOAudio();
 }
 
 void ScalpelTalk::talkInterface(const byte *&str) {
@@ -541,16 +603,111 @@ OpcodeReturn ScalpelTalk::cmdSummonWindow(const byte *&str) {
 
 void ScalpelTalk::loadTalkFile(const Common::String &filename) {
 	Talk::loadTalkFile(filename);
+
+	// Reset counters for the new file
+	// fixes issues where counters would drift off limits when switching files
 	_3doSpeechIndex = 0;
+}
+
+void ScalpelTalk::set3DODialogueSelection(int statementIndex) {
+	// Set the selector to the actual statement index selected by the user
+	_pcTalkie3DOSelector = statementIndex;
+	_pcTalkie3DOSubindex = 0;
+	debug(3, "ScalpelTalk::set3DODialogueSelection: Set selector to %d", statementIndex);
+}
+
+static int getOpcodeArgsLength(int opIndex, const byte *args) {
+	switch (opIndex) {
+	case OP_SWITCH_SPEAKER: return 2;
+	case OP_RUN_CANIMATION: return 1;
+	case OP_ASSIGN_PORTRAIT_LOCATION: return 1;
+	case OP_PAUSE: return 1;
+	case OP_REMOVE_PORTRAIT: return 0;
+	case OP_CLEAR_WINDOW: return 0;
+	case OP_ADJUST_OBJ_SEQUENCE: return 3 + (args[0] & 127);
+	case OP_WALK_TO_COORDS: return 4;
+	case OP_PAUSE_WITHOUT_CONTROL: return 1;
+	case OP_BANISH_WINDOW: return 0;
+	case OP_SUMMON_WINDOW: return 0;
+	case OP_SET_FLAG: return 2;
+	case OP_SFX_COMMAND: return 8;
+	case OP_TOGGLE_OBJECT: return 1 + args[0];
+	case OP_STEALTH_MODE_ACTIVE: return 0;
+	case OP_IF_STATEMENT: return 2;
+	case OP_ELSE_STATEMENT: return 0;
+	case OP_END_IF_STATEMENT: return 0;
+	case OP_STEALTH_MODE_DEACTIVATE: return 0;
+	case OP_TURN_HOLMES_OFF: return 0;
+	case OP_TURN_HOLMES_ON: return 0;
+	case OP_GOTO_SCENE: return 7;
+	case OP_PLAY_PROLOGUE: return 8;
+	case OP_ADD_ITEM_TO_INVENTORY: return 1 + args[0];
+	case OP_SET_OBJECT: return 1 + (args[0] & 127);
+	case OP_CALL_TALK_FILE: return 9;
+	case OP_MOVE_MOUSE: return 4;
+	case OP_DISPLAY_INFO_LINE: return 1 + args[0];
+	case OP_CLEAR_INFO_LINE: return 0;
+	case OP_WALK_TO_CANIMATION: return 1;
+	case OP_REMOVE_ITEM_FROM_INVENTORY: return 1 + args[0];
+	case OP_ENABLE_END_KEY: return 0;
+	case OP_DISABLE_END_KEY: return 0;
+	case OP_END_TEXT_WINDOW: return 0;
+	default: return 0;
+	}
 }
 
 void ScalpelTalk::talkWait(const byte *&str) {
 	UserInterface &ui = *_vm->_ui;
 	bool pauseFlag = _pauseFlag;
 
-	Talk::talkWait(str);
+	// Determine if there is more text for this speaker
+	// This dictates whether we wait for Audio (Last Page) or Text (Mid Page)
+	_waitForAudio = true; // Default to waiting for audio (Single Page)
 
-	// Clear the window unless the wait was due to a PAUSE command
+	const byte *scan = str;
+	while (scan < _scriptEnd) {
+		byte c = *scan;
+		if (c == 0) break;
+
+		if (c >= _opcodes[0] && c < (_opcodes[0] + 100)) {
+			int opIndex = c - _opcodes[0];
+			if (opIndex == OP_SWITCH_SPEAKER || opIndex == OP_REMOVE_PORTRAIT) break;
+
+			int skip = 0;
+			if (scan + 1 < _scriptEnd) skip = getOpcodeArgsLength(opIndex, scan + 1);
+			scan += 1 + skip;
+		} else {
+			if (c != '{' && c != '}') {
+				// Found text! This means we are NOT on the last page (yet)
+				// Or rather, 'str' points to the NEXT text chunk.
+				// If 'str' has text, then the CURRENT chunk was NOT the last one?
+				//
+				// If 'str' has text, then we have more to show.
+				// So Current Page is NOT Last.
+				_waitForAudio = false;
+				break;
+			}
+			scan++;
+		}
+	}
+
+	int delay = _charCount * 7; // Heuristic delay
+	if (!pauseFlag && delay < 80) delay = 80;
+
+	_wait = waitForMore(delay);
+
+	if (_wait == -1)
+		_endStr = true;
+
+	if (IS_SERRATED_SCALPEL && _wait >= 0 && _wait < 254) {
+		if (str[0] == _opcodes[OP_SFX_COMMAND])
+			str += 9;
+	}
+
+	_pauseFlag = false;
+
+	// Handle Window Clearing (Page Flip)
+	// Resets counters to prevent accumulation and overlap
 	if (!pauseFlag && _wait != -1 && str < _scriptEnd && str[0] != _opcodes[OP_SFX_COMMAND]) {
 		if (!_talkStealth)
 			ui.clearWindow();
@@ -566,12 +723,8 @@ void ScalpelTalk::nothingToSay() {
 void ScalpelTalk::switchSpeaker() {
 }
 
-int ScalpelTalk::waitForMore(int delay) {
+int ScalpelTalk::handle3DONative() {
 	Events &events = *_vm->_events;
-
-	if (!IS_3DO) {
-		return Talk::waitForMore(delay);
-	}
 
 	// Hide the cursor
 	events.hideCursor();
@@ -601,6 +754,234 @@ int ScalpelTalk::waitForMore(int delay) {
 	events._pressed = events._released = false;
 
 	return 254;
+}
+
+bool ScalpelTalk::handleTalkieMode() {
+	ScalpelEngine &vm = *(ScalpelEngine *)_vm;
+
+	// Speaker Change Detection
+	// Only load new audio if the speaker has changed or we aren't playing anything
+	// This handles multi-page dialogues where one audio file covers multiple text pages
+	bool newSpeaker = (_speaker != _lastSpeaker);
+
+	// Special case: If we are just starting a conversation or it was reset
+	if (_lastSpeaker == -1) newSpeaker = true;
+
+	if (newSpeaker) {
+		// Stop previous audio before starting new turn
+		stop3DOAudio();
+
+		// Try to get video/audio file using CURRENT subindex (starts at 0)
+		Common::String videoFile = get3DOVideoFile(_converseNum, -1);
+
+		if (!videoFile.empty() && vm.has3DOVideo(videoFile)) {
+			// Audio-only mode (Non-blocking start)
+			debug(2, "ScalpelTalk::waitForMore: Starting 3DO audio: %s (Speaker %d)", videoFile.c_str(), _speaker);
+			if (play3DOConversationAudio(videoFile)) {
+				// Audio started
+
+				// Use accurate duration from lookup table
+				Common::String baseFilename = getBaseFilenameFromPath(videoFile);
+				const Common::HashMap<Common::String, uint32> &durationsMap = get3doAudioDurations();
+				auto it = durationsMap.find(baseFilename);
+
+				if (it != durationsMap.end()) {
+					_currentAudioDuration = it->_value;
+					debug(2, "ScalpelTalk::waitForMore: Audio duration for '%s': %.0f ms (source: lookup table)", baseFilename.c_str(), _currentAudioDuration);
+				} else {
+					// Fallback to 15 FPS heuristic if not found in lookup table
+					if (_3doAudioDecoder && _3doAudioDecoder->getFrameCount() > 0) {
+						_currentAudioDuration = (_3doAudioDecoder->getFrameCount() * 1000.0) / 15.0;
+						debug(2, "ScalpelTalk::waitForMore: Audio duration for '%s': %.0f ms (source: 15 FPS heuristic, %d frames)",
+						      baseFilename.c_str(), _currentAudioDuration, _3doAudioDecoder->getFrameCount());
+					} else {
+						_currentAudioDuration = 0.0;
+						debug(2, "ScalpelTalk::waitForMore: Audio duration for '%s': 0 ms (source: no decoder/frames)", baseFilename.c_str());
+					}
+				}
+			}
+		} else {
+			debug(3, "ScalpelTalk::waitForMore: No 3DO file for Speaker %d, Index %d", _speaker, _pcTalkie3DOSubindex);
+			_currentAudioDuration = 0.0;
+		}
+
+		// Always increment subindex when we've finished processing a "turn" (speaker change)
+		// This ensures the next speaker change looks for the next file in the sequence
+		_pcTalkie3DOSubindex++;
+
+		_lastSpeaker = _speaker;
+	} else {
+		// Same speaker: Continue existing audio
+		if (is3DOAudioPlaying()) {
+			debug(2, "ScalpelTalk::waitForMore: Continuing audio for Speaker %d", _speaker);
+			// Note: _currentAudioDuration is preserved from previous call
+		} else {
+			_currentAudioDuration = 0.0;
+		}
+	}
+
+	return false;
+}
+
+int ScalpelTalk::waitLoop(int delay) {
+	Events &events = *_vm->_events;
+	Scene &scene = *_vm->_scene;
+
+	CursorId oldCursor = events.getCursor();
+	int key2 = 254;
+	bool skipped = false;
+
+	// Unless we're in stealth mode, show the appropriate cursor
+	if (!_talkStealth) {
+		events.setCursor(_vm->_ui->_lookScriptFlag ? MAGNIFY : ARROW);
+	}
+
+	switchSpeaker(); // Ensure portrait is active
+
+	// MAIN TIMING LOGIC: Text-Driven
+	// We use real time (getMillis) to track the text delay, avoiding frame-rate lag issues.
+	// delay is in frames (approx 10ms).
+
+	uint32 startTime = g_system->getMillis();
+	bool timeUp = false;
+	uint32 targetTextDuration = delay * 10;
+
+	// Track if audio was playing at start of loop
+	bool wasAudioPlaying = is3DOAudioPlaying();
+
+	do {
+		// Pump Audio
+		if (_3doAudioDecoder && _3doAudioDecoder->needsUpdate()) {
+			_3doAudioDecoder->decodeNextFrame();
+		}
+
+		// Update PC Animations
+		scene.doBgAnim();
+
+		// Check for Abort
+		if (_talkToAbort) {
+			key2 = -1;
+			events._released = true;
+			break;
+		}
+
+		// Poll Events & Check Input
+		events.pollEventsAndWait();
+		events.setButtonState();
+
+		if (events.actionHit()) {
+			Common::CustomEventType action = events.getAction();
+			if (action != kActionNone) key2 = action;
+		}
+
+		if (events.kbHit()) {
+			Common::KeyState keyState = events.getKey();
+			if (Common::isPrint(keyState.ascii)) key2 = keyState.keycode;
+
+			// ESC/Space always skips audio immediately
+			if (keyState.keycode == Common::KEYCODE_ESCAPE ||
+			    keyState.keycode == Common::KEYCODE_SPACE) {
+				skipped = true;
+			}
+		}
+
+		// Mouse click behavior depends on page type
+		if (events._pressed || events._released) {
+			if (_waitForAudio) {
+				// Last page: skip and stop audio
+				skipped = true;
+			} else {
+				// Mid-page: advance text but keep audio playing
+				timeUp = true;
+			}
+		}
+
+		// Update Timing (Real Time)
+		uint32 currentTime = g_system->getMillis();
+		uint32 elapsed = currentTime - startTime;
+
+		bool textTimerDone = (elapsed >= targetTextDuration);
+		bool audioFinished = (wasAudioPlaying && !is3DOAudioPlaying());
+
+		// FORCE AUDIO ADVANCE based on Duration Lookup (Wall Clock)
+		// If the decoder claims it's playing but we exceeded the known audio duration, assume it's done.
+		if (wasAudioPlaying && _currentAudioDuration > 0.0 && elapsed >= _currentAudioDuration) {
+			audioFinished = true;
+		}
+
+		// logic:
+		// 1. Last Page (_waitForAudio=true):
+		//    - Wait for Audio to finish (Lip Sync).
+		//    - If Audio finishes -> Advance.
+		//    - If Text finishes but Audio plays -> Wait.
+		//    - If Audio never played -> Wait for Text.
+
+		// 2. Multi Page (_waitForAudio=false):
+		//    - Wait for Text to finish (Reading).
+		//    - If Text finishes -> Advance (Audio continues).
+
+		if (_waitForAudio && wasAudioPlaying) {
+			// Waiting for Audio (Lip Sync)
+			if (audioFinished) {
+				// Audio done. Enforce small floor (0.4s) to avoid flash.
+				if (elapsed >= 400) timeUp = true;
+			}
+			// If Audio is still playing, we wait.
+			// Unless text timer is excessively long? No, user complained about "too fast".
+		} else {
+			// Waiting for Text (Multi Page OR No Audio)
+			if (textTimerDone) {
+				timeUp = true;
+			}
+		}
+
+		// Failsafe: If Audio finished/absent and Text Done, always advance.
+		if (textTimerDone && !is3DOAudioPlaying()) {
+			timeUp = true;
+		}
+
+	} while (!_vm->shouldQuit() && key2 == 254 && !events._released && !events._rightReleased && !skipped && !timeUp);
+
+	// Handle different exit conditions
+	if (skipped) {
+		debug(2, "ScalpelTalk::waitLoop: Audio skipped by user (ESC/Space or click on last page, elapsed: %d ms)", g_system->getMillis() - startTime);
+		stop3DOAudio();
+	} else if (timeUp && wasAudioPlaying && is3DOAudioPlaying()) {
+		debug(2, "ScalpelTalk::waitLoop: Text advanced, audio continues (multi-page dialogue, elapsed: %d ms)", g_system->getMillis() - startTime);
+	}
+
+	// Clear any pending events so they don't trigger the next dialogue line immediately
+	events.clearEvents();
+
+	// Cleanup
+	events.setCursor(_talkToAbort ? ARROW : oldCursor);
+	events._pressed = events._released = false;
+
+	// Adjust _talkStealth (copied from original)
+	switch (_talkStealth) {
+	case 1: _talkStealth = 0; break;
+	case 2: _talkStealth = 2; break;
+	default: break;
+	}
+
+	return key2;
+}
+
+int ScalpelTalk::waitForMore(int delay) {
+       ScalpelEngine &vm = *(ScalpelEngine *)_vm;
+
+       if (IS_3DO) {
+           return handle3DONative();
+       }
+
+       if (vm.getTalkieMode() == SherlockEngine::TALKIE_AUDIO_ONLY) {
+           if (handleTalkieMode())
+               return 254;
+           return waitLoop(delay);  // Only talkie uses waitLoop
+       }
+
+       // Non-talkie: use original base class
+       return Talk::waitForMore(delay);
 }
 
 bool ScalpelTalk::talk3DOMovieTrigger(int subIndex) {
@@ -905,6 +1286,8 @@ int ScalpelTalk::talkLine(int lineNum, int stateNum, byte color, int lineY, bool
 void ScalpelTalk::showTalk() {
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	ScalpelUserInterface &ui = *(ScalpelUserInterface *)_vm->_ui;
+
+	// 3DO talkie mode is currently disabled in showTalk()
 	byte color = ui._endKeyActive ? COMMAND_FOREGROUND : COMMAND_NULL;
 
 	if (!ui._windowOpen) {
@@ -1010,6 +1393,113 @@ void ScalpelTalk::pullSequence(int slot) {
 
 void ScalpelTalk::clearSequences() {
 	_sequenceStack.clear();
+}
+
+bool ScalpelTalk::play3DOConversationAudio(const Common::String &videoFile) {
+	ScalpelEngine &vm = *(ScalpelEngine *)_vm;
+
+	// Stop any currently playing audio
+	stop3DOAudio();
+
+	// Construct full path to video file (which contains audio)
+	Common::Path videoPath = vm.get3DOVideoPath(videoFile);
+
+	debug(1, "ScalpelTalk::play3DOConversationAudio: Loading audio from %s", videoPath.toString().c_str());
+
+	// Create and initialize video decoder (to extract audio)
+	_3doAudioDecoder = new Video::ThreeDOMovieDecoder();
+
+	if (!_3doAudioDecoder->loadFile(videoPath)) {
+		warning("ScalpelTalk::play3DOConversationAudio: Failed to load video: %s", videoPath.toString().c_str());
+		stop3DOAudio();
+		return false;
+	}
+
+	// Start playback (this starts the audio track)
+	_3doAudioDecoder->start();
+
+	debug(1, "ScalpelTalk::play3DOConversationAudio: Audio playback started");
+
+	// DON'T BLOCK - just return and let the talk script continue
+	// The video decoder's audio track is playing asynchronously via the mixer
+	// The caller (waitForMore) is responsible for waiting
+	return true;
+}
+
+Common::String ScalpelTalk::get3DOVideoFile(int talkIndex, int speechIndex) {
+	// Dynamic 3DO video filename generation
+	// Pattern: {room:02d}/{prefix}{room:02d}{last_char}{selector}{subindex}.stream
+	// Where prefix = scriptName[0] + scriptName[2] + scriptName[3] (skip 2nd char), lowercased
+
+	// Get current room number
+	int roomNum = _vm->_scene->_currentScene;
+
+	// Extract 3-letter prefix from script name by skipping the 2nd character
+	// "Wigg39a" → "Wgg" → "wgg"
+	// "Wats04a" → "Wts" → "wts"
+	char prefix[4] = "wtx";  // Default fallback
+	if (_scriptName.size() >= 4) {
+		prefix[0] = tolower(_scriptName[0]);  // 1st char
+		prefix[1] = tolower(_scriptName[2]);  // 3rd char (skip 2nd)
+		prefix[2] = tolower(_scriptName[3]);  // 4th char
+		prefix[3] = '\0';
+	}
+
+	// Extract last character from script name (before extension if present)
+	// "lest03z.tlk" -> 'z', "Wigg39a" -> 'a'
+	// Handle variants like "Wats04a1" -> 'a' (ignore trailing digits)
+	char scriptLetter = 'a';  // Default
+	if (!_scriptName.empty()) {
+		// Find the last '.' to remove extension
+		int dotPos = _scriptName.findLastOf('.');
+		int endPos = (dotPos != -1 && dotPos > 0) ? dotPos : _scriptName.size();
+
+		// Scan backwards from endPos to find first non-digit
+		int charPos = endPos - 1;
+		while (charPos >= 0 && Common::isDigit(_scriptName[charPos])) {
+			charPos--;
+		}
+
+		if (charPos >= 0) {
+			scriptLetter = tolower(_scriptName[charPos]);
+		} else {
+			// Fallback if all digits or empty? Use last char
+			scriptLetter = tolower(_scriptName.lastChar());
+		}
+	}
+
+	// Use the tracked selector set by UI via set3DODialogueSelection()
+	// Falls back to _talkIndex for automatic dialogues
+	int selector = (_pcTalkie3DOSelector == -1) ? _talkIndex : _pcTalkie3DOSelector;
+	int subindex = _pcTalkie3DOSubindex;
+
+	// Convert selector and subindex to characters (0='a', 1='b', etc.)
+	char selectorChar = 'a' + selector;
+	char subindexChar = 'a' + subindex;
+
+	// Build filename: 39/wgg39aaa.stream
+	Common::String videoFile = Common::String::format(
+		"%02d/%s%02d%c%c%c.stream",
+		roomNum,
+		prefix,
+		roomNum,
+		scriptLetter,
+		selectorChar,
+		subindexChar
+	);
+
+	// DETAILED DEBUG: Track all values
+	warning("=== 3DO Video Generation ===");
+	warning("  room=%d", roomNum);
+	warning("  _scriptName='%s'", _scriptName.c_str());
+	warning("  prefix='%s' (chars [0,2,3] from script)", prefix);
+	warning("  scriptLetter='%c' (last char of script)", scriptLetter);
+	warning("  _pcTalkie3DOSelector=%d, _talkIndex=%d -> selector=%d -> selectorChar='%c'", _pcTalkie3DOSelector, _talkIndex, selector, selectorChar);
+	warning("  _pcTalkie3DOSubindex=%d -> subindexChar='%c'", subindex, subindexChar);
+	warning("  GENERATED FILE: %s", videoFile.c_str());
+	warning("============================");
+
+	return videoFile;
 }
 
 void ScalpelTalk::skipBadText(const byte *&msgP) {

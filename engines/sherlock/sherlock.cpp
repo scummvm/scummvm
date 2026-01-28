@@ -21,10 +21,12 @@
 
 #include "sherlock/sherlock.h"
 #include "sherlock/surface.h"
+#include "sherlock/scalpel/scalpel_3do_audio_durations.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/text-to-speech.h"
+#include "common/file.h"
 
 namespace Sherlock {
 
@@ -53,6 +55,11 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_interactiveFl = true;
 	_isScreenDoubled = false;
 	_startupAutosave = false;
+
+	// Initialize 3DO talkie support
+	_talkieMode = TALKIE_NONE;
+	_has3DOAssets = false;
+	_3doAssetsPath = Common::Path();
 }
 
 SherlockEngine::~SherlockEngine() {
@@ -108,6 +115,13 @@ void SherlockEngine::initialize() {
 
 	// Load game settings
 	loadConfig();
+
+	// Detect and configure 3DO talkie support (PC version with 3DO assets only)
+	if (getGameID() == GType_SerratedScalpel && getPlatform() != Common::kPlatform3DO) {
+		detect3DOAssets();
+		registerTalkieSettings();
+		loadTalkieConfig();
+	}
 
 	if (getPlatform() == Common::kPlatform3DO) {
 		// Disable portraits on 3DO
@@ -306,5 +320,136 @@ Common::Error SherlockEngine::saveGameState(int slot, const Common::String &desc
 	_saves->saveGame(slot, desc);
 	return Common::kNoError;
 }
+
+// ===== 3DO Talkie Support Implementation =====
+
+void SherlockEngine::detect3DOAssets() {
+	_has3DOAssets = false;
+	_3doAssetsPath = Common::Path();
+
+	// Detect 3DO assets by checking for conversation files
+	// Randomly sample from the audio durations table to verify files exist
+	const Common::HashMap<Common::String, uint32> &durations = Scalpel::get3doAudioDurations();
+
+	// Collect all filenames from the duration table
+	Common::Array<Common::String> filenames;
+	for (auto it = durations.begin(); it != durations.end(); ++it) {
+		filenames.push_back(it->_key);
+	}
+
+	if (filenames.empty()) {
+		debug(1, "SherlockEngine: No 3DO audio durations available");
+		return;
+	}
+
+	// Randomly select up to 5 files to check
+	const int NUM_SAMPLES = 5;
+	Common::Array<Common::String> samples;
+	for (int i = 0; i < NUM_SAMPLES && !filenames.empty(); i++) {
+		int idx = _randomSource.getRandomNumber(filenames.size() - 1);
+		samples.push_back(filenames[idx]);
+		filenames.remove_at(idx);
+	}
+
+	// Base paths candidates where 3DO assets might be located
+	const char *basePaths[] = {
+		"",
+		"Movies",
+		"HolmesData/Movies",
+		"HolmesData/videos/",
+		"videos/",
+		"3DO/",
+		nullptr
+	};
+
+	Common::File testFile;
+
+	for (int baseIdx = 0; basePaths[baseIdx] != nullptr; baseIdx++) {
+		for (uint i = 0; i < samples.size(); i++) {
+			// Extract room number from filename (characters at index 3-4)
+			// e.g., "afr30aaa" -> room "30", "gar01aaa" -> room "01"
+			Common::String filename = samples[i];
+			if (filename.size() < 5) continue;
+
+			Common::String roomNum = filename.substr(3, 2);
+			Common::String streamPath = Common::String::format("%s/%s.stream",
+			                                                    roomNum.c_str(), filename.c_str());
+			Common::Path testPath = Common::Path(basePaths[baseIdx]).join(streamPath);
+
+			if (testFile.open(testPath)) {
+				testFile.close();
+				_has3DOAssets = true;
+				_3doAssetsPath = Common::Path(basePaths[baseIdx]);
+
+				debug(1, "SherlockEngine: 3DO assets detected at: %s (verified: %s)",
+				      _3doAssetsPath.empty() ? "(game directory)" : _3doAssetsPath.toString().c_str(),
+				      streamPath.c_str());
+				return;
+			}
+		}
+	}
+
+	debug(1, "SherlockEngine: No 3DO assets detected, talkie features unavailable");
+}
+
+void SherlockEngine::registerTalkieSettings() {
+	// Default to audio-only mode - if user added 3DO assets, they want talkie
+	ConfMan.registerDefault("talkie_mode", (int)TALKIE_AUDIO_ONLY);
+}
+
+void SherlockEngine::loadTalkieConfig() {
+	// Only enable talkie mode if 3DO assets are available
+	if (!_has3DOAssets) {
+		_talkieMode = TALKIE_NONE;
+		return;
+	}
+
+	bool configMode = ConfMan.getBool("talkie_mode");
+	_talkieMode = configMode ? TALKIE_AUDIO_ONLY : TALKIE_NONE;
+
+	debug(1, "SherlockEngine: Talkie mode set to %d (0=NONE, 1=AUDIO_ONLY)", _talkieMode);
+}
+
+void SherlockEngine::setTalkieMode(TalkieMode mode) {
+	// Only allow setting if 3DO assets are available
+	if (!_has3DOAssets && mode != TALKIE_NONE) {
+		warning("SherlockEngine::setTalkieMode: Cannot enable talkie mode, 3DO assets not available");
+		return;
+	}
+
+	_talkieMode = mode;
+
+	// Save to configuration
+	//ConfMan.setBool("talkie_mode", mode != TALKIE_NONE);
+	ConfMan.setBool("talkie_mode", _talkieMode == TALKIE_AUDIO_ONLY);
+	ConfMan.flushToDisk();
+
+	debug(1, "SherlockEngine::setTalkieMode: Talkie mode changed to %d", mode);
+}
+
+Common::Path SherlockEngine::get3DOVideoPath(const Common::String &videoFile) const {
+	if (_3doAssetsPath.empty()) {
+		return Common::Path(videoFile);
+	}
+	return _3doAssetsPath.join(videoFile);
+}
+
+bool SherlockEngine::has3DOVideo(const Common::String &videoFile) const {
+	if (!_has3DOAssets) {
+		return false;
+	}
+
+	Common::File file;
+	Common::Path fullPath = get3DOVideoPath(videoFile);
+
+	bool exists = file.open(fullPath);
+	if (exists) {
+		file.close();
+	}
+
+	return exists;
+}
+
+// ===== 3DO Talkie Support implementation =====
 
 } // End of namespace Sherlock

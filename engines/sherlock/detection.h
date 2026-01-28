@@ -50,6 +50,7 @@ struct SherlockGameDescription {
 #define GAMEOPTION_TTS_NARRATOR 	GUIO_GAMEOPTIONS7
 #endif
 
+#define GAMEOPTION_TALKIE_MODE          GUIO_GAMEOPTIONS8
 } // End of namespace Sherlock
 
 #endif // SHERLOCK_DETECTION_H

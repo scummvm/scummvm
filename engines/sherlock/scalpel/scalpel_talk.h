@@ -30,6 +30,10 @@
 #include "common/stack.h"
 #include "sherlock/talk.h"
 
+namespace Video {
+class ThreeDOMovieDecoder;
+}
+
 namespace Sherlock {
 
 namespace Scalpel {
@@ -83,9 +87,95 @@ protected:
 	 * Show the talk display
 	 */
 	void showTalk() override;
+
+	// ===== 3DO Talkie Support =====
+
+	/**
+	 * Play only the audio from a 3DO conversation video
+	 * Allows PC portrait animation to continue while audio plays
+	 * @param videoFile The video filename to extract audio from
+	 * @return true if audio played successfully
+	 */
+	bool play3DOConversationAudio(const Common::String &videoFile);
+
+	/**
+	 * Get the 3DO video file for the current talk sequence
+	 * @param talkIndex The PC talk sequence index
+	 * @param statementIndex The statement index (optional, -1 for any)
+	 * @return The video filename, or empty string if no mapping exists
+	 */
+	Common::String get3DOVideoFile(int talkIndex, int statementIndex = -1);
+
+	/**
+	 * Track the last speaker to detect speaker changes
+	 */
+	int _lastSpeaker = -1;
+
+	/**
+	 * Duration of the current audio file in milliseconds
+	 */
+	double _currentAudioDuration = 0.0;
+
+	/**
+	 * Flag: Should we wait for audio to finish? (True for single/last page)
+	 */
+	bool _waitForAudio = true;
+
+	/**
+	 * Calculated wait time for the current text page (if 3DO audio is playing)
+	 */
+	double _overrideWaitMs = 0.0;
+
+	/**
+	 * Current dialogue selector (which dialogue choice was selected: 0, 1, 2, ...)
+	 * Set by UI when user selects a dialogue option
+	 */
+	int _pcTalkie3DOSelector = -1;
+
+	/**
+	 * Current subindex within the selected dialogue (which line: 0, 1, 2, ...)
+	 * Resets to 0 when a new conversation starts
+	 */
+	int _pcTalkie3DOSubindex = 0;
+
+	/**
+	 * Video decoder for 3DO audio playback (kept alive across calls)
+	 */
+	Video::ThreeDOMovieDecoder *_3doAudioDecoder;
+
+	/**
+	 * Check if 3DO audio is currently playing
+	 */
+	bool is3DOAudioPlaying() const;
+
+	/**
+	 * Stop any currently playing 3DO audio
+	 */
+	void stop3DOAudio();
+
+	// ===== END 3DO Talkie Support =====
+
+	/**
+	 * Handles native 3DO version logic for waitForMore
+	 */
+	int handle3DONative();
+
+	/**
+	 * Handles Talkie mode logic for waitForMore
+	 * @return true if 3DO video was played and blocked (returning 254), false otherwise
+	 */
+	bool handleTalkieMode();
+
+	/**
+	 * Custom Wait Loop
+	 * We wait for 'delay' time OR user input, while pumping the audio decoder
+	 */
+	int waitLoop(int delay);
+
 public:
 	ScalpelTalk(SherlockEngine *vm);
-	~ScalpelTalk() override {}
+	~ScalpelTalk() override;
+
 
 	Common::String _fixedTextWindowExit;
 	Common::String _fixedTextWindowUp;
@@ -133,6 +223,12 @@ public:
 	 * Trigger to play a 3DO talk dialog movie
 	 */
 	bool talk3DOMovieTrigger(int subIndex);
+
+	/**
+	 * Set the current dialogue selection index for 3DO video mapping.
+	 * Called by UI when user selects a dialogue option.
+	 */
+	void set3DODialogueSelection(int statementIndex);
 
 	/**
 	 * Handles skipping over bad text in conversations

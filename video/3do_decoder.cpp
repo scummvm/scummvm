@@ -50,6 +50,11 @@ ThreeDOMovieDecoder::~ThreeDOMovieDecoder() {
 	close();
 }
 
+bool ThreeDOMovieDecoder::isAudioTrackFinished() const {
+	if (_audioTracks.empty()) return true;
+	return _audioTracks[0]->endOfTrack();
+}
+
 VideoDecoder::AudioTrack* ThreeDOMovieDecoder::getAudioTrack(int index) {
 	return _audioTracks[index];
 }
@@ -253,8 +258,12 @@ void ThreeDOMovieDecoder::readNextPacket() {
 
 		//warning("offset %lx - tag %lx", dataStartOffset, tag);
 
-		if (_stream->eos())
+		if (_stream->eos()) {
+			// Mark all audio tracks as finished so the player knows when playback completes
+			for (uint i = 0; i < _audioTracks.size(); i++)
+				_audioTracks[i]->setFinished();
 			break;
+		}
 
 		switch (chunkTag) {
 		case MKTAG('F','I','L','M'):
@@ -448,6 +457,10 @@ ThreeDOMovieDecoder::StreamAudioTrack::~StreamAudioTrack() {
 
 bool ThreeDOMovieDecoder::StreamAudioTrack::matchesId(uint tid) {
 	return _trackId == tid;
+}
+
+bool ThreeDOMovieDecoder::StreamAudioTrack::endOfTrack() const {
+	return _audioStream->endOfStream();
 }
 
 void ThreeDOMovieDecoder::StreamAudioTrack::queueAudio(Common::SeekableReadStream *stream, uint32 size) {
