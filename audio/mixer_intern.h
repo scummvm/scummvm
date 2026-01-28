@@ -65,7 +65,7 @@ private:
 
 	const uint _sampleRate;
 	const bool _stereo;
-	const uint _outBufSize;
+	uint _outBufSize;
 	bool _mixerReady;
 	uint32 _handleSeed;
 
@@ -144,6 +144,11 @@ protected:
 	void insertChannel(SoundHandle *handle, Channel *chan);
 
 public:
+	/**
+	 * Adjust the output buffer size
+	 */
+	void setOutputBufSize(uint outBufSize) { _outBufSize = outBufSize; }
+
 	/**
 	 * The mixer callback function, to be called at regular intervals by
 	 * the backend (e.g. from an audio mixing thread). All the actual mixing
