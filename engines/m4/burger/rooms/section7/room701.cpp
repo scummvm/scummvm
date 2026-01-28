@@ -291,7 +291,7 @@ void Room701::daemon() {
 		break;
 
 	case 26:
-		_G(game).new_room = 702;
+		_G(game).setRoom(702);
 		break;
 
 	default:

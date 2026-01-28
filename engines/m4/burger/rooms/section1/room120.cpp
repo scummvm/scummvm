@@ -41,7 +41,7 @@ void Room120::daemon() {
 	// statements that are the previous rooms' daemons, I seriously love
 	// the simplicity of this room's daemon. It's awesome!
 	if (_G(kernel).trigger == 1) {
-		_G(game).new_room = _G(game).previous_room;
+		_G(game).setRoom(_G(game).previous_room);
 	} else {
 		_G(kernel).continue_handling_trigger = true;
 	}

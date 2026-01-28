@@ -594,7 +594,7 @@ void Room951::daemon() {
 
 	case SAVEGAME_CHECK:
 		if (_G(executing) == WHOLE_GAME && !g_engine->autosaveExists()) {
-			_G(game).new_room = 903;
+			_G(game).setRoom(903);
 			adv_kill_digi_between_rooms(false);
 		} else {
 			kernel_trigger_dispatch_now(START_44);
@@ -656,10 +656,9 @@ void Room951::daemon() {
 		compact_mem_and_report();
 		if (_G(executing) == WHOLE_GAME) {
 			g_vars->initialize_game();
-			_G(game).new_room = 801;
-			_G(game).new_section = 8;
+			_G(game).setRoom(801);
 		} else if (g_engine->getLanguage() == Common::EN_ANY) {
-			_G(game).new_room = 901;
+			_G(game).setRoom(901);
 		} else {
 			_G(kernel).force_restart = true;
 		}

@@ -59,28 +59,28 @@ Section3::Section3() : Rooms::Section() {
 void Section3::daemon() {
 	switch (_G(kernel).trigger) {
 	case 3001:
-		_G(game).new_room = 302;
+		_G(game).setRoom(302);
 		break;
 
 	case 3002:
-		_G(game).new_room = 303;
+		_G(game).setRoom(303);
 		break;
 
 	case 3003:
-		_G(game).new_room = 304;
+		_G(game).setRoom(304);
 		break;
 
 	case 3004:
-		_G(game).new_room = 305;
+		_G(game).setRoom(305);
 		break;
 
 	case 3005:
 		digi_unload("303_003");
-		_G(game).new_room = 306;
+		_G(game).setRoom(306);
 		break;
 
 	case 3006:
-		_G(game).new_room = 307;
+		_G(game).setRoom(307);
 		break;
 
 	case 3007:
@@ -134,7 +134,7 @@ void Section3::daemon() {
 			break;
 
 		case 10015:
-			_G(game).new_room = 306;
+			_G(game).setRoom(306);
 			break;
 
 		default:

@@ -73,7 +73,7 @@ void Room510::init() {
 void Room510::daemon() {
 	switch (_G(kernel).trigger) {
 	case 1:
-		_G(game).new_room = _G(game).previous_room;
+		_G(game).setRoom(_G(game).previous_room);
 		break;
 
 	case 2:

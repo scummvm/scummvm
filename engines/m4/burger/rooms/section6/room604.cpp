@@ -298,15 +298,15 @@ void Room604::daemon() {
 		break;
 
 	case 7:
-		_G(game).new_room = 602;
+		_G(game).setRoom(602);
 		break;
 
 	case 8:
-		_G(game).new_room = 603;
+		_G(game).setRoom(603);
 		break;
 
 	case 9:
-		_G(game).new_room = 612;
+		_G(game).setRoom(612);
 		break;
 
 	case 6002:
@@ -354,7 +354,7 @@ void Room604::daemon() {
 
 		case 6004:
 			if (!_G(flags)[V246])
-				_G(game).new_room = 605;
+				_G(game).setRoom(605);
 			break;
 
 		case 6005:

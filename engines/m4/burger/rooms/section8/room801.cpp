@@ -440,7 +440,7 @@ void Room801::daemon() {
 			digi_play_loop("807_003", 2, 255, -1, 807);
 			digi_play_loop("807_001", 3, 255, -1, 807);
 
-			_G(game).new_room = 802;
+			_G(game).setRoom(802);
 		} else {
 			kernel_trigger_dispatch_now(k10027);
 		}

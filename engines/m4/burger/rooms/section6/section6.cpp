@@ -67,19 +67,19 @@ void Section6::daemon() {
 	case 6004:
 	case 6005:
 	case 6006:
-		_G(game).new_room = _G(kernel).trigger - 6000 + 600;
+		_G(game).setRoom(_G(kernel).trigger - 6000 + 600);
 		break;
 
 	case 6008:
-		_G(game).new_room = 609;
+		_G(game).setRoom(609);
 		break;
 
 	case 6009:
-		_G(game).new_room = 610;
+		_G(game).setRoom(610);
 		break;
 
 	case 6010:
-		_G(game).new_room = 612;
+		_G(game).setRoom(612);
 		break;
 
 	case 6011:
@@ -346,10 +346,9 @@ void Section6::daemon() {
 			if (_G(executing) == INTERACTIVE_DEMO) {
 				// After having clicked the teleporter/"failed normally" button we end up here
 				// In the DEMO this click leads to the main menu (it does not restart the test sequence)
-				_G(game).new_section = 9;
-				_G(game).new_room = 901;
+				_G(game).setRoom(901);
 			} else {
-				_G(game).new_room = 608;
+				_G(game).setRoom(608);
 			}
 			break;
 

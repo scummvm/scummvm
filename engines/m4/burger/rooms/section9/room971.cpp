@@ -489,12 +489,12 @@ void Room971::daemon() {
 			break;
 
 		case INTERACTIVE_DEMO:
-			_G(game).new_room = 901;
+			_G(game).setRoom(901);
 			player_set_commands_allowed(false);
 			break;
 
 		case WHOLE_GAME:
-			_G(game).new_room = 903;
+			_G(game).setRoom(903);
 			player_set_commands_allowed(false);
 			break;
 

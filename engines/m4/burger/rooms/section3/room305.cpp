@@ -120,7 +120,7 @@ void Room305::daemon() {
 		break;
 
 	case 3001:
-		_G(game).new_room = 302;
+		_G(game).setRoom(302);
 		break;
 
 	case kCHANGE_WILBUR_ANIMATION:

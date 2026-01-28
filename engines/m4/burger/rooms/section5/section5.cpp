@@ -428,35 +428,35 @@ void Section5::daemon() {
 		break;
 
 	case 5006:
-		_G(game).new_room = 502;
+		_G(game).setRoom(502);
 		break;
 
 	case 5007:
-		_G(game).new_room = 503;
+		_G(game).setRoom(503);
 		break;
 
 	case 5008:
-		_G(game).new_room = 504;
+		_G(game).setRoom(504);
 		break;
 
 	case 5009:
-		_G(game).new_room = 505;
+		_G(game).setRoom(505);
 		break;
 
 	case 5010:
-		_G(game).new_room = 506;
+		_G(game).setRoom(506);
 		break;
 
 	case 5011:
-		_G(game).new_room = 507;
+		_G(game).setRoom(507);
 		break;
 
 	case 5012:
-		_G(game).new_room = 508;
+		_G(game).setRoom(508);
 		break;
 
 	case 5013:
-		_G(game).new_room = 509;
+		_G(game).setRoom(509);
 		break;
 
 	case 5014:
@@ -464,19 +464,19 @@ void Section5::daemon() {
 		_G(flags)[V187] = _G(player_info).x;
 		_G(flags)[V188] = _G(player_info).y;
 		_G(flags)[V189] = _G(player_info).facing;
-		_G(game).new_room = 510;
+		_G(game).setRoom(510);
 		break;
 
 	case 5015:
-		_G(game).new_room = 511;
+		_G(game).setRoom(511);
 		break;
 
 	case 5016:
-		_G(game).new_room = 512;
+		_G(game).setRoom(512);
 		break;
 
 	case 5017:
-		_G(game).new_room = 513;
+		_G(game).setRoom(513);
 		break;
 
 	case 5018:
@@ -509,7 +509,7 @@ void Section5::daemon() {
 			break;
 
 		case 10015:
-			_G(game).new_room = 512;
+			_G(game).setRoom(512);
 			break;
 
 		default:
