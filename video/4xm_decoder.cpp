@@ -120,7 +120,7 @@ public:
 	void decode_cfrm(Common::SeekableReadStream *stream);
 
 private:
-	void decode_pfrm_block(Graphics::Surface *frame, int x, int y, int log2w, int log2h, FourXM::BEWordBitStream &bitStream, Common::MemoryReadStream &wordStream, Common::MemoryReadStream &byteStream);
+	void decode_pfrm_block(uint16 *dst, const uint16 *src, int stride, int log2w, int log2h, FourXM::BEWordBitStream &bitStream, Common::MemoryReadStream &wordStream, Common::MemoryReadStream &byteStream);
 	Common::Rational getFrameRate() const override { return _frameRate; }
 };
 
@@ -321,45 +321,20 @@ namespace {
 template<bool Scale>
 void mcdc(uint16_t *dst, const uint16_t *src, int log2w,
 		  int log2h, int stride, uint dc) {
-	dc |= dc << 16;
 	int h = 1 << log2h;
+	int w = 1 << log2w;
 	if (Scale) {
-		for (int i = 0; i < h; ++i) {
-			auto *dst32 = reinterpret_cast<uint32_t *>(dst);
-			auto *src32 = reinterpret_cast<const uint32_t *>(src);
-			switch (log2w) {
-			case 3:
-				dst32[2] = src32[2] + dc;
-				dst32[3] = src32[3] + dc;
-				// fall through
-			case 2:
-				dst32[1] = src32[1] + dc;
-				// fall through
-			case 1:
-				dst32[0] = src32[0] + dc;
-				break;
-			case 0:
-				*dst = *src + dc;
+		for (int i = 0; i != h; ++i) {
+			for (int j = 0; j != w; ++j) {
+				dst[j] = src[j] + dc;
 			}
 			src += stride;
 			dst += stride;
 		}
 	} else {
-		for (int i = 0; i < h; ++i) {
-			auto *dst32 = reinterpret_cast<uint32_t *>(dst);
-			switch (log2w) {
-			case 3:
-				dst32[2] = dc;
-				dst32[3] = dc;
-				// fall through
-			case 2:
-				dst32[1] = dc;
-				// fall through
-			case 1:
-				dst32[0] = dc;
-				break;
-			case 0:
-				*dst = dc;
+		for (int i = 0; i != h; ++i) {
+			for (int j = 0; j != w; ++j) {
+				dst[j] = dc;
 			}
 			dst += stride;
 		}
@@ -367,59 +342,53 @@ void mcdc(uint16_t *dst, const uint16_t *src, int log2w,
 }
 } // namespace
 
-void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(Graphics::Surface *frame, int x, int y, int log2w, int log2h, FourXM::BEWordBitStream &bs, Common::MemoryReadStream &wordStream, Common::MemoryReadStream &byteStream) {
+void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(uint16 *dst, const uint16 *src, int stride, int log2w, int log2h, FourXM::BEWordBitStream &bs, Common::MemoryReadStream &wordStream, Common::MemoryReadStream &byteStream) {
 	assert(log2w >= 0 && log2h >= 0);
 	auto index = size2index[log2h][log2w];
 	assert(index >= 0);
 	auto &huff = _blockType[index];
 	auto code = huff.next(bs);
 
-	auto pitch = frame->pitch / frame->format.bytesPerPixel;
-	assert(_frame->pitch == frame->pitch);
-
 	if (code == 1) {
 		--log2h;
-		decode_pfrm_block(frame, x, y, log2w, log2h, bs, wordStream, byteStream);
-		int dy = 1 << log2h;
-		decode_pfrm_block(frame, x, y + dy, log2w, log2h, bs, wordStream, byteStream);
+		decode_pfrm_block(dst, src, stride, log2w, log2h, bs, wordStream, byteStream);
+		auto offset = stride << log2h;
+		decode_pfrm_block(dst + offset, src + offset, stride, log2w, log2h, bs, wordStream, byteStream);
 		return;
 	} else if (code == 2) {
 		--log2w;
-		decode_pfrm_block(frame, x, y, log2w, log2h, bs, wordStream, byteStream);
-		int dx = 1 << log2w;
-		decode_pfrm_block(frame, x + dx, y, log2w, log2h, bs, wordStream, byteStream);
+		decode_pfrm_block(dst, src, stride, log2w, log2h, bs, wordStream, byteStream);
+		auto offset = 1 << log2w;
+		decode_pfrm_block(dst + offset, src + offset, stride, log2w, log2h, bs, wordStream, byteStream);
 		return;
 	} else if (code == 6) {
-		auto dst = static_cast<uint16 *>(frame->getBasePtr(x, y));
 		assert(wordStream.pos() + 4 <= wordStream.size());
 		if (log2w) {
 			dst[0] = wordStream.readUint16LE();
 			dst[1] = wordStream.readUint16LE();
 		} else {
 			dst[0] = wordStream.readUint16LE();
-			dst[pitch] = wordStream.readUint16LE();
+			dst[stride] = wordStream.readUint16LE();
 		}
 		return;
 	}
 	if (code == 3 && _version >= 2)
 		return;
 
-	auto dst = static_cast<uint16 *>(frame->getBasePtr(x, y));
-	auto src = static_cast<const uint16 *>(_frame->getBasePtr(x, y));
 	if (code == 0) {
 		assert(byteStream.pos() < byteStream.size());
 		src += _mv[byteStream.readByte()];
-		mcdc<true>(dst, src, log2w, log2h, pitch, 0);
+		mcdc<true>(dst, src, log2w, log2h, stride, 0);
 	} else if (code == 4) {
 		assert(byteStream.pos() < byteStream.size());
 		assert(wordStream.pos() + 2 <= wordStream.size());
 		src += _mv[byteStream.readByte()];
 		auto dc = wordStream.readUint16LE();
-		mcdc<true>(dst, src, log2w, log2h, pitch, dc);
+		mcdc<true>(dst, src, log2w, log2h, stride, dc);
 	} else if (code == 5) {
 		assert(wordStream.pos() + 2 <= wordStream.size());
 		auto dc = wordStream.readUint16LE();
-		mcdc<false>(dst, src, log2w, log2h, pitch, dc);
+		mcdc<false>(dst, src, log2w, log2h, stride, dc);
 	} else {
 		error("invalid code %d (steps %u,%u)", code, log2w, log2h);
 	}
@@ -444,10 +413,17 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm(Common::SeekableReadStream *st
 
 	Common::ScopedPtr<Graphics::Surface> frame(new Graphics::Surface());
 	frame->copyFrom(*_frame);
+	uint16 *dst = static_cast<uint16 *>(frame->getPixels());
+	const uint16 *src = static_cast<const uint16 *>(_frame->getPixels());
+	assert(frame->format.bytesPerPixel == 2);
+	auto stride = frame->pitch / frame->format.bytesPerPixel;
+	assert(stride == _frame->pitch / _frame->format.bytesPerPixel);
 	for (int y = 0, h = frame->h; y < h; y += 8) {
 		for (int x = 0, w = frame->w; x < w; x += 8) {
-			decode_pfrm_block(frame.get(), x, y, 3, 3, bitStream, wordStream, byteStream);
+			decode_pfrm_block(dst + x, src + x, stride, 3, 3, bitStream, wordStream, byteStream);
 		}
+		dst += stride << 3;
+		src += stride << 3;
 	}
 	_frame = frame.release();
 }
