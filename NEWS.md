@@ -16,6 +16,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Numerous visual fixes.
    - Implemented mouse scrolling of text window.
 
+ iOS port:
+   - Added support for Text-to-Speech.
 
 #### 2026.1.0 (2026-01-31)
 
