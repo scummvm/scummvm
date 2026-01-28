@@ -27,7 +27,7 @@
 namespace Pelrock {
 
 PelrockConsole::PelrockConsole(PelrockEngine *engine) : GUI::Debugger(), _engine(engine) {
-	registerCmd("setScreen", WRAP_METHOD(PelrockConsole, cmdLoadRoom));
+	registerCmd("room", WRAP_METHOD(PelrockConsole, cmdLoadRoom));
 	registerCmd("give", WRAP_METHOD(PelrockConsole, cmdGiveItems));
 }
 
@@ -36,7 +36,7 @@ PelrockConsole::~PelrockConsole() {
 
 bool PelrockConsole::cmdLoadRoom(int argc, const char **argv) {
 	if (argc < 2) {
-		debugPrintf("Usage: setScreen <roomNumber>");
+		debugPrintf("Usage: room <roomNumber>");
 		return true;
 	}
 

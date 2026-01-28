@@ -71,6 +71,7 @@ private:
 		Walking alforithm
 	*/
 	void walkTo(int x, int y);
+	void walkAndAction(HotSpot *hotspot, VerbIcon action);
 	AlfredDirection calculateAlfredsDirection(HotSpot *hotspot);
 
 	Common::Array<VerbIcon> availableActions(HotSpot *hotspot);
@@ -89,8 +90,10 @@ private:
 	void presentFrame();
 	void updatePaletteAnimations();
 	void paintDebugLayer();
-	void placeStickers();
+	void placeStickersFirstPass();
+	void placeStickersSecondPass();
 	void placeSticker(Sticker sticker);
+	void renderOverlay(int overlayMode);
 
 	void animateFadePalette(PaletteAnim *anim);
 	void animateRotatePalette(PaletteAnim *anim);
@@ -224,6 +227,7 @@ public:
 	void loadExtraScreenAndPresent(int screenIndex);
 	void waitForSpecialAnimation();
 	bool renderScene(int overlayMode = OVERLAY_NONE);
+	void frameTriggers();
 
 	void changeCursor(Cursor cursor);
 
@@ -282,6 +286,12 @@ public:
 	void giveIdToGuard(int inventoryObject, HotSpot *hotspot);
 	void giveMoneyToGuard(int inventoryObject, HotSpot *hotspot);
 	void openMuseumDoor(HotSpot *hotspot);
+	void useAmuletWithStatue(int inventoryObject, HotSpot *hotspot);
+	void pickUpLetter(HotSpot *hotspot);
+	void openLibraryOutdoorsDoor(HotSpot *hotspot);
+	void closeLibraryOutdoorsDoor(HotSpot *hotspot);
+	void openLibraryIndoorsDoor(HotSpot *hotspot);
+	void closeLibraryIndoorsDoor(HotSpot *hotspot);
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);
 };

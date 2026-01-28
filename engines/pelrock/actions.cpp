@@ -83,8 +83,20 @@ const ActionEntry actionTable[] = {
 	{316, PICKUP, &PelrockEngine::pickCables},
 	{312, OPEN, &PelrockEngine::openMuseumDoor},
 
-	// Room 5
-	{},
+	// // Room 5
+	// {},
+
+	// // Room 7
+	// {},
+
+	// Room 8
+	{355, OPEN, &PelrockEngine::openLibraryOutdoorsDoor},
+	{355, CLOSE, &PelrockEngine::closeLibraryOutdoorsDoor},
+	{357, PICKUP, &PelrockEngine::pickUpLetter},
+
+	// Room 9
+	{363, OPEN, &PelrockEngine::openLibraryIndoorsDoor},
+	{363, CLOSE, &PelrockEngine::closeLibraryIndoorsDoor},
 
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
@@ -100,13 +112,14 @@ const ActionEntry actionTable[] = {
 	{WILDCARD, NO_ACTION, nullptr}};
 
 const CombinationEntry combinationTable[] = {
-	{2, 281, &PelrockEngine::useCardWithATM},           // Use ATM Card with ATM
-	{62, 117, &PelrockEngine::useSpicySauceWithBurger}, // Use Spicy Sauce with Burger
-	{4, 294, &PelrockEngine::useBrickWithWindow},       // Use Brick with Window (Room 3)
+	{2, 281, &PelrockEngine::useCardWithATM},
+	{62, 117, &PelrockEngine::useSpicySauceWithBurger},
+	{4, 294, &PelrockEngine::useBrickWithWindow},
 	{4, 295, &PelrockEngine::useBrickWithShopWindow},
 	{6, 315, &PelrockEngine::useCordWithPlug},
-	{1, 53, &PelrockEngine::giveIdToGuard},    // Give ID to Guard
-	{5, 53, &PelrockEngine::giveMoneyToGuard}, // Give Money to Guard
+	{1, 53, &PelrockEngine::giveIdToGuard},
+	{5, 53, &PelrockEngine::giveMoneyToGuard},
+	{7, 353, &PelrockEngine::useAmuletWithStatue},
 	// End marker
 	{WILDCARD, WILDCARD, nullptr}};
 
@@ -549,6 +562,46 @@ void PelrockEngine::openMuseumDoor(HotSpot *hotspot) {
 	} else {
 		openDoor(hotspot, 1, 22, FEMININE, false);
 	}
+}
+
+void PelrockEngine::useAmuletWithStatue(int inventoryObject, HotSpot *hotspot) {
+
+	if (!_room->hasSticker(24)) {
+		_room->addSticker(24);
+		_state->removeInventoryItem(7);
+		_state->setRootDisabledState(7, 0, true);
+		_state->setRootDisabledState(7, 1, false);
+		_state->setRootDisabledState(7, 2, true);
+		// TODO: Palette anim
+		HotSpot *statueHotspot = _room->findHotspotByExtra(91);
+		_currentHotspot = statueHotspot;
+
+		walkAndAction(statueHotspot, TALK);
+		_state->setRootDisabledState(7, 1, true);
+
+		// TODO: Undo palette anim!
+	}
+}
+
+void PelrockEngine::pickUpLetter(HotSpot *hotspot) {
+	addInventoryItem(9);
+	_room->setActionMask(hotspot, ACTION_MASK_NONE); // Disable hotspot
+}
+
+void PelrockEngine::openLibraryOutdoorsDoor(HotSpot *hotspot) {
+	openDoor(hotspot, 0, 26, FEMININE, false);
+}
+
+void PelrockEngine::closeLibraryOutdoorsDoor(HotSpot *hotspot) {
+	closeDoor(hotspot, 0, 26, FEMININE, false);
+}
+
+void PelrockEngine::openLibraryIndoorsDoor(HotSpot *hotspot) {
+	openDoor(hotspot, 0, 28, FEMININE, false);
+}
+
+void PelrockEngine::closeLibraryIndoorsDoor(HotSpot *hotspot) {
+	closeDoor(hotspot, 0, 28, FEMININE, false);
 }
 
 void PelrockEngine::performActionTrigger(uint16 actionTrigger) {

@@ -48,7 +48,7 @@ SoundManager::~SoundManager() {
 	stopMusic();
 }
 
-void SoundManager::playSound(byte index, int volume) {
+void SoundManager::playSound(byte index, int volume, int channel) {
 	// debug("Playing sound index %d (%s)", index, SOUND_FILENAMES[index]);
 	auto it = _soundMap.find(SOUND_FILENAMES[index]);
 	if (it != _soundMap.end()) {
@@ -58,7 +58,7 @@ void SoundManager::playSound(byte index, int volume) {
 	}
 }
 
-void SoundManager::playSound(SonidoFile sound, int volume) {
+void SoundManager::playSound(SonidoFile sound, int volume, int channel) {
 	Common::File sonidosFile;
 	if (!sonidosFile.open(Common::Path("SONIDOS.DAT"))) {
 		debug("Failed to open SONIDOS.DAT");
@@ -99,7 +99,15 @@ void SoundManager::playSound(SonidoFile sound, int volume) {
 	}
 
 	if (stream) {
-		int channel = findFreeChannel();
+		if(channel == -1) {
+			// Find a free channel
+		 	channel = findFreeChannel();
+		}
+		else {
+			if(_mixer->isSoundHandleActive(_sfxHandles[channel])) {
+				_mixer->stopHandle(_sfxHandles[channel]);
+			}
+		}
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], stream, -1, volume, 0, DisposeAfterUse::YES);
 	}
 }
@@ -149,7 +157,8 @@ int SoundManager::getSampleRate(byte *data, SoundFormat format) {
 }
 
 int SoundManager::findFreeChannel() {
-	for (int i = 0; i < kMaxChannels; i++) {
+	//Reserve first 3 channels for one-off sounds
+	for (int i = 3; i < kMaxChannels; i++) {
 		if (!_mixer->isSoundHandleActive(_sfxHandles[i])) {
 			return i;
 		}

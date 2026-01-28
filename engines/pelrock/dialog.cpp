@@ -305,7 +305,7 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 		if (b == CTRL_DIALOGUE_MARKER || b == CTRL_DIALOGUE_MARKER_ONEOFF) {
 			if (pos + 1 < dataSize) {
 				int choiceIndex = data[pos + 1];
-				
+
 				// Set firstChoiceIndex from first non-disabled choice, or first choice if all disabled
 				if (firstChoiceIndex == -1) {
 					firstChoiceIndex = choiceIndex;
@@ -462,7 +462,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 	setCurSprite(animSet ? animSet->index : -1);
 	// _curSprite = animSet;
 
-	debug("Starting conversation with %u bytes of data, for npc %u", dataSize, npcIndex);
+	debug("Starting conversation with %d bytes of data, for npc %d, hotspot %d", dataSize, npcIndex, animSet ? animSet->index : -1);
 
 	uint32 position = 0;
 	int currentChoiceLevel = -1;       // Track the current choice level

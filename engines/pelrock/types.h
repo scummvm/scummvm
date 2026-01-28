@@ -35,6 +35,15 @@ enum Cursor {
 	COMBINATION
 };
 
+#define ACTION_MASK_NONE 0
+#define ACTION_MASK_OPEN 1
+#define ACTION_MASK_CLOSE 2
+#define ACTION_MASK_UNKNOWN 4
+#define ACTION_MASK_PICKUP 8
+#define ACTION_MASK_TALK 16
+#define ACTION_MASK_PUSH 32
+#define ACTION_MASK_PULL 128
+
 enum VerbIcon {
 	PICKUP,
 	TALK,
@@ -471,8 +480,8 @@ struct GameStateData {
 	Common::Array<byte> inventoryItems;
 	int16 selectedInventoryItem = -1;
 
+	int libraryShelf = -1;
 	Common::HashMap<byte, Common::Array<Sticker>> stickersPerRoom;
-	// Common::HashMap<byte, ResetEntry> roomExitChanges;
 	Common::HashMap<byte, Common::Array<ExitChange>> roomExitChanges;
 	Common::HashMap<byte, Common::Array<WalkBoxChange>> roomWalkBoxChanges;
 	Common::HashMap<byte, Common::Array<HotSpotChange>> roomHotSpotChanges;

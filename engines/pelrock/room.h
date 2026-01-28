@@ -45,6 +45,7 @@ static const int unpickableHotspotExtras[] = {
 	6,
 	7,
 	316, // wires
+	357, // mailbox should pick a different hotspot
 };
 
 class RoomManager {
@@ -86,6 +87,7 @@ public:
 	void disableHotspot(HotSpot *hotspot, bool persist = true);
 	void disableHotspot(byte room, HotSpot *hotspot, bool persist = true);
 	void moveHotspot(HotSpot *hotspot, int16 newX, int16 newY, bool persist = true);
+	void setActionMask(HotSpot *hotspot, byte actionMask);
 	void moveHotspot(byte room, HotSpot *hotspot, int16 newX, int16 newY, bool persist = true);
 	void addWalkbox(WalkBox walkbox);
 	void addWalkbox(byte room, WalkBox walkbox);

@@ -154,7 +154,8 @@ void PelrockEngine::init() {
 		loadAnims();
 		// setScreen(0, ALFRED_DOWN);
 		// setScreen(3, ALFRED_RIGHT);
-		setScreen(5, ALFRED_DOWN);
+		// setScreen(5, ALFRED_DOWN);
+		setScreen(9, ALFRED_DOWN);
 		// setScreen(15, ALFRED_DOWN);
 		// setScreen(2, ALFRED_LEFT);
 		// alfredState.x = 576;
@@ -173,25 +174,25 @@ Common::Array<VerbIcon> PelrockEngine::availableActions(HotSpot *hotspot) {
 	Common::Array<VerbIcon> verbs;
 	verbs.push_back(LOOK);
 
-	if (hotspot->actionFlags & 1) {
+	if (hotspot->actionFlags & ACTION_MASK_OPEN) {
 		verbs.push_back(OPEN);
 	}
-	if (hotspot->actionFlags & 2) {
+	if (hotspot->actionFlags & ACTION_MASK_CLOSE) {
 		verbs.push_back(CLOSE);
 	}
-	if (hotspot->actionFlags & 4) {
+	if (hotspot->actionFlags & ACTION_MASK_UNKNOWN) {
 		verbs.push_back(UNKNOWN);
 	}
-	if (hotspot->actionFlags & 8) {
+	if (hotspot->actionFlags & ACTION_MASK_PICKUP) {
 		verbs.push_back(PICKUP);
 	}
-	if (hotspot->actionFlags & 16) {
+	if (hotspot->actionFlags & ACTION_MASK_TALK) {
 		verbs.push_back(TALK);
 	}
-	if (hotspot->actionFlags & 32) {
+	if (hotspot->actionFlags & ACTION_MASK_PUSH) {
 		verbs.push_back(PUSH);
 	}
-	if (hotspot->actionFlags & 128) {
+	if (hotspot->actionFlags & ACTION_MASK_PULL) {
 		verbs.push_back(PULL);
 	}
 	return verbs;
@@ -230,29 +231,16 @@ bool PelrockEngine::renderScene(int overlayMode) {
 
 	_chrono->updateChrono();
 	if (_chrono->_gameTick) {
-		// playSoundIfNeeded();
+		frameTriggers();
+
+		playSoundIfNeeded();
 
 		copyBackgroundToBuffer();
 
-		placeStickers();
+		placeStickersFirstPass();
 		updateAnimations();
-		// Some stickers need to be placed AFTER sprites, hardcoded in the original
-		if (_room->_currentRoomNumber == 3) {
-			for (uint i = 0; i < _state->stickersPerRoom[3].size(); i++) {
-				if (_state->stickersPerRoom[3][i].stickerIndex == 14) {
-					placeSticker(_state->stickersPerRoom[3][i]);
-					break;
-				}
-			}
-		}
 
-		if (overlayMode == OVERLAY_CHOICES) {
-			_dialog->displayChoices(_dialog->_currentChoices, _compositeBuffer);
-		} else if (overlayMode == OVERLAY_PICKUP_ICON) {
-			pickupIconFlash();
-		} else if (overlayMode == OVERLAY_ACTION) {
-			showActionBalloon(_actionPopupState.x, _actionPopupState.y, _actionPopupState.curFrame);
-		}
+		renderOverlay(overlayMode);
 
 		presentFrame();
 		updatePaletteAnimations();
@@ -261,6 +249,55 @@ bool PelrockEngine::renderScene(int overlayMode) {
 		return true;
 	}
 	return false;
+}
+
+const int kPasserbyTriggerFrameInterval = 30;
+
+void PelrockEngine::frameTriggers() {
+	if ((_chrono->getFrameCount() & kPasserbyTriggerFrameInterval) == kPasserbyTriggerFrameInterval) {
+		debug("Would trigger passer-by");
+		switch (_room->_currentRoomNumber)
+		{
+		case 9: {
+			Sprite *mouse = _room->findSpriteByIndex(2);
+			mouse->zOrder = 3;
+			break;
+		}
+		default:
+			break;
+		}
+	}
+
+	if(_room->_currentRoomNumber == 9) {
+		Sprite *mouse = _room->findSpriteByIndex(2);
+		if (mouse) {
+			if(mouse->x > 130 && mouse->x < 200) {
+				debug("Moving mouse right and down");
+				if(mouse->curAnimIndex == 0)
+					mouse->curAnimIndex = 1;
+				mouse->y += 2;
+				mouse->x += 6;
+			}
+			else if(mouse->x > 200 && mouse->x < 340) {
+				debug("Moving mouse right");
+				if(mouse->curAnimIndex == 1)
+					mouse->curAnimIndex = 2;
+				mouse->x += 6;
+			}
+			else if(mouse->x > 340) {
+				debug("Moving mouse down");
+				if(mouse->curAnimIndex == 2)
+					mouse->curAnimIndex = 1;
+				mouse->y += 2;
+			}
+			if(mouse->x > 355) {
+				mouse->x = 82;
+				mouse->y = 315;
+				mouse->zOrder = 255;
+				mouse->curAnimIndex = 0;
+			}
+		}
+	}
 }
 
 void PelrockEngine::executeAction(VerbIcon action, HotSpot *hotspot) {
@@ -320,8 +357,7 @@ void PelrockEngine::checkMouse() {
 			useOnAlfred(_state->selectedInventoryItem);
 		} else if (actionClicked != NO_ACTION && _currentHotspot != nullptr) {
 			// Action was selected - queue it
-			walkTo(_currentHotspot->x + _currentHotspot->w / 2, _currentHotspot->y + _currentHotspot->h);
-			_queuedAction = QueuedAction{actionClicked, _currentHotspot->index, true};
+			walkAndAction(_currentHotspot, actionClicked);
 		} else {
 			// Released outside popup - just close it
 			_queuedAction = QueuedAction{NO_ACTION, -1, false};
@@ -456,11 +492,23 @@ void PelrockEngine::paintDebugLayer() {
 	_smallFont->drawString(_screen, Common::String::format("Frame number: %d", _chrono->getFrameCount()), 0, 30, 640, 13);
 }
 
-void PelrockEngine::placeStickers() {
+void PelrockEngine::placeStickersFirstPass() {
 	// also place temporary stickers
 	for (uint i = 0; i < _room->_roomStickers.size(); i++) {
 		Sticker sticker = _room->_roomStickers[i];
 		placeSticker(sticker);
+	}
+}
+
+void PelrockEngine::placeStickersSecondPass() {
+	// Some stickers need to be placed AFTER sprites, hardcoded in the original
+	if (_room->_currentRoomNumber == 3) {
+		for (uint i = 0; i < _state->stickersPerRoom[3].size(); i++) {
+			if (_state->stickersPerRoom[3][i].stickerIndex == 14) {
+				placeSticker(_state->stickersPerRoom[3][i]);
+				break;
+			}
+		}
 	}
 }
 
@@ -476,6 +524,16 @@ void PelrockEngine::placeSticker(Sticker sticker) {
 				}
 			}
 		}
+	}
+}
+
+void PelrockEngine::renderOverlay(int overlayMode) {
+	if (overlayMode == OVERLAY_CHOICES) {
+		_dialog->displayChoices(_dialog->_currentChoices, _compositeBuffer);
+	} else if (overlayMode == OVERLAY_PICKUP_ICON) {
+		pickupIconFlash();
+	} else if (overlayMode == OVERLAY_ACTION) {
+		showActionBalloon(_actionPopupState.x, _actionPopupState.y, _actionPopupState.curFrame);
 	}
 }
 
@@ -588,6 +646,7 @@ void PelrockEngine::talkTo(HotSpot *hotspot) {
 		}
 	}
 	changeCursor(DEFAULT);
+	debug("Talking to hotspot %d (%d) with extra %d", hotspot->index, hotspot->isSprite ? hotspot->index : hotspot->index - _room->_currentRoomAnims.size(), hotspot->extra);
 	_dialog->startConversation(_room->_conversationData, _room->_conversationDataSize, hotspot->index, animSet);
 }
 
@@ -901,6 +960,8 @@ void applyMovement(int16_t *x, int16_t *y, int8_t *z, uint16_t flags) {
 }
 
 void PelrockEngine::drawNextFrame(Sprite *sprite) {
+	if(sprite->index == 2)
+		debug("Drawing sprite %d at (%d,%d) zOrder %d, anim %d frame %d, movementFlags %d", sprite->index, sprite->x, sprite->y, sprite->zOrder, sprite->curAnimIndex, sprite->animData[sprite->curAnimIndex].curFrame, sprite->animData[sprite->curAnimIndex].movementFlags);
 	Anim &animData = sprite->animData[sprite->curAnimIndex];
 	if (sprite->zOrder == -1) {
 		// skips z0rder -1 sprites
@@ -936,6 +997,14 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 				animData.curLoop = 0;
 				if (sprite->curAnimIndex < sprite->numAnims - 1) {
 					sprite->curAnimIndex++;
+
+					// Trigger ring on phone on every start of animation 2
+					if (_room->_currentRoomNumber == 9 && sprite->index == 3) {
+						if (sprite->curAnimIndex == 1 && animData.curLoop == 0) {
+							byte soundFileIndex = _room->_roomSfx[2];
+							_sound->playSound(soundFileIndex, 2);
+						}
+					}
 				} else {
 					sprite->curAnimIndex = 0;
 				}
@@ -1286,6 +1355,12 @@ void PelrockEngine::walkTo(int x, int y) {
 	_alfredState.setState(ALFRED_WALKING);
 }
 
+void PelrockEngine::walkAndAction(HotSpot *hotspot, VerbIcon action) {
+	walkTo(hotspot->x + hotspot->w / 2, hotspot->y + hotspot->h);
+
+	_queuedAction = QueuedAction{action, hotspot->index, true};
+}
+
 AlfredDirection PelrockEngine::calculateAlfredsDirection(HotSpot *hotspot) {
 
 	AlfredDirection calculatedDirection = ALFRED_DOWN;
@@ -1420,14 +1495,12 @@ void PelrockEngine::checkMouseHover() {
 		hotspotDetected = true;
 	}
 
-
 	if (isActionUnder(_events->_mouseX, _events->_mouseY) != NO_ACTION) {
 		hotspotDetected = false;
 	}
 
 	// Calculate walk target first (before checking anything else)
 	Common::Point walkTarget = calculateWalkTarget(_room->_currentRoomWalkboxes, _events->_mouseX, _events->_mouseY, hotspotDetected, hotspotDetected ? &_room->_currentRoomHotspots[hotspotIndex] : nullptr);
-
 
 	bool alfredDetected = false;
 	if (isAlfredUnder(_events->_mouseX, _events->_mouseY)) {

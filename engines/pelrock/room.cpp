@@ -23,6 +23,7 @@
 #include "pelrock/pelrock.h"
 #include "pelrock/room.h"
 #include "pelrock/util.h"
+#include "room.h"
 
 namespace Pelrock {
 
@@ -189,6 +190,11 @@ void RoomManager::moveHotspot(HotSpot *hotspot, int16 newX, int16 newY, bool per
 	if (persist) {
 		changeHotSpot(*hotspot);
 	}
+}
+
+void RoomManager::setActionMask(HotSpot *hotspot, byte actionMask) {
+	hotspot->actionFlags = actionMask;
+	changeHotSpot(*hotspot);
 }
 
 void RoomManager::addWalkbox(WalkBox walkbox) {
@@ -765,7 +771,7 @@ void RoomManager::addDisabledChoice(ChoiceOption choice) {
 	// Write 0xFA at offset+2 (after FB/F1 marker and level byte)
 	// This marks the choice as disabled without destroying the marker structure
 	uint32 disableOffset = choice.dataOffset + 2;
-	debug("Adding disabled branch for room %d at offset %d (FA written at %d)", 
+	debug("Adding disabled branch for room %d at offset %d (FA written at %d)",
 		  choice.room, choice.dataOffset, disableOffset);
 	ResetEntry resetEntry = ResetEntry();
 	resetEntry.room = choice.room;
