@@ -46,6 +46,7 @@ Hacks::Hacks() {
 	mtiSceneReturnHack = false;
 	mtiHispaniolaDamagedStringHack = false;
 	ignoreSceneUnloads = false;
+	alternativeDefaultSharedSceneSearch = false;
 }
 
 Hacks::~Hacks() {
@@ -1136,6 +1137,11 @@ void addMTIQuirks(const MTropolisGameDescription &desc, Hacks &hacks) {
 
 	hacks.defaultStructuralHooks.reset(new MTIStructuralHooks(molassesHandler));
 	hacks.addSceneTransitionHooks(Common::SharedPtr<SceneTransitionHooks>(new MTIMolassesSceneTransitionHooks(molassesHandler)));
+}
+
+void addTDTWBQuirks(const MTropolisGameDescription &desc, Hacks &hacks) {
+	//The default code path would cause a nullptr segfault
+	hacks.alternativeDefaultSharedSceneSearch = true;
 }
 
 } // End of namespace HackSuites
