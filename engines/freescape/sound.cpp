@@ -22,6 +22,7 @@
 #include "common/file.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+#include "audio/softsynth/ay8912.h"
 
 #include "freescape/freescape.h"
 #include "freescape/games/eclipse/eclipse.h"
@@ -324,8 +325,16 @@ void FreescapeEngine::playSound(int index, bool sync, Audio::SoundHandle &handle
 			debugC(1, kFreescapeDebugMedia, "WARNING: Sound %d is not available", index);
 
 		return;
-	} else if (isSpectrum() && !isDriller()) {
-		playSoundZX(_soundsSpeakerFxZX[index], handle);
+	} else if (isSpectrum()) {
+		if (isDriller())
+			playSoundDrillerZX(index, handle);
+		else
+			playSoundZX(_soundsSpeakerFxZX[index], handle);
+		return;
+	} else if (isCPC()) {
+		if (isDriller())
+			playSoundDrillerCPC(index, handle);
+		// else playSoundCPC(...)
 		return;
 	}
 
@@ -333,69 +342,6 @@ void FreescapeEngine::playSound(int index, bool sync, Audio::SoundHandle &handle
 	filename = Common::String::format("%s-%d.wav", _targetName.c_str(), index);
 	debugC(1,  kFreescapeDebugMedia, "Playing sound %s", filename.toString().c_str());
 	playWav(filename);
-	/*switch (index) {
-	case 1:
-		playWav("fsDOS_laserFire.wav");
-		break;
-	case 2: // Done
-		playWav("fsDOS_WallBump.wav");
-		break;
-	case 3:
-		playWav("fsDOS_stairDown.wav");
-		break;
-	case 4:
-		playWav("fsDOS_stairUp.wav");
-		break;
-	case 5:
-		playWav("fsDOS_roomChange.wav");
-		break;
-	case 6:
-		playWav("fsDOS_configMenu.wav");
-		break;
-	case 7:
-		playWav("fsDOS_bigHit.wav");
-		break;
-	case 8:
-		playWav("fsDOS_teleporterActivated.wav");
-		break;
-	case 9:
-		playWav("fsDOS_powerUp.wav");
-		break;
-	case 10:
-		playWav("fsDOS_energyDrain.wav");
-		break;
-	case 11: // ???
-		debugC(1, kFreescapeDebugMedia, "Playing unknown sound");
-		break;
-	case 12:
-		playWav("fsDOS_switchOff.wav");
-		break;
-	case 13: // Seems to be repeated?
-		playWav("fsDOS_laserHit.wav");
-		break;
-	case 14:
-		playWav("fsDOS_tankFall.wav");
-		break;
-	case 15:
-		playWav("fsDOS_successJingle.wav");
-		break;
-	case 16: // Silence?
-		break;
-	case 17:
-		playWav("fsDOS_badJingle.wav");
-		break;
-	case 18: // Silence?
-		break;
-	case 19:
-		debugC(1, kFreescapeDebugMedia, "Playing unknown sound");
-		break;
-	case 20:
-		playWav("fsDOS_bigHit.wav");
-		break;
-	default:
-		debugC(1, kFreescapeDebugMedia, "Unexpected sound %d", index);
-		break;
-	}*/
 	_syncSound = sync;
 }
 void FreescapeEngine::playWav(const Common::Path &filename) {
@@ -449,7 +395,7 @@ void FreescapeEngine::stopAllSounds(Audio::SoundHandle &handle) {
 }
 
 void FreescapeEngine::waitForSounds() {
-	if (_usePrerecordedSounds || isAmiga() || isAtariST())
+	if (_usePrerecordedSounds || isAmiga() || isAtariST() || (isCPC() && isDriller()))
 		while (_mixer->isSoundHandleActive(_soundFxHandle))
 			waitInLoop(10);
 	else {
@@ -459,7 +405,7 @@ void FreescapeEngine::waitForSounds() {
 }
 
 bool FreescapeEngine::isPlayingSound() {
-	if (_usePrerecordedSounds || isAmiga() || isAtariST())
+	if (_usePrerecordedSounds || isAmiga() || isAtariST() || (isCPC() && isDriller()))
 		return _mixer->isSoundHandleActive(_soundFxHandle);
 
 	return (!_speaker->endOfStream());
@@ -566,5 +512,104 @@ void FreescapeEngine::loadSoundsFx(Common::SeekableReadStream *file, int offset,
 		_soundsFx[i] = sound;
 	}
 }
+
+void FreescapeEngine::playSoundDrillerZX(int index, Audio::SoundHandle &handle) {
+	debugC(1, kFreescapeDebugMedia, "Playing Driller ZX sound %d", index);
+	Common::Array<soundUnitZX> soundUnits;
+
+	auto addTone = [&](uint16 hl, uint16 de, float multiplier) {
+		soundUnitZX s;
+		s.isRaw = false;
+		s.tStates = hl; // HL determines period
+		s.freqTimesSeconds = de; // DE determines duration (number of cycles)
+		s.multiplier = multiplier;
+		soundUnits.push_back(s);
+	};
+
+	// Linear Sweep: Period increases -> Pitch decreases
+	auto addSweep = [&](uint16 startHl, uint16 endHl, uint16 step, uint16 duration) {
+		for (uint16 hl = startHl; hl < endHl; hl += step) {
+			addTone(hl, duration, 10.0f);
+		}
+	};
+
+	// Zap effect: Decreasing Period (E decrements) -> Pitch increases
+	auto addZap = [&](uint16 startE, uint16 endE, uint16 duration) {
+		for (uint16 e = startE; e > endE; e--) {
+			// Map E (delay loops) to HL (tStates)
+			// Small E -> Short Period -> High Freq
+			uint16 hl = (24 + e) * 4;
+			addTone(hl, duration, 10.0f);
+		}
+	};
+
+	// Sweep Down: Increasing Period (E increments) -> Pitch decreases
+	auto addSweepDown = [&](uint16 startE, uint16 endE, uint16 step, uint16 duration, float multiplier) {
+		for (uint16 e = startE; e < endE; e += step) {
+			uint16 hl = (24 + e) * 4;
+			addTone(hl, duration, multiplier);
+		}
+	};
+
+	switch (index) {
+	case 1: // Shoot (FUN_95A1 -> 95AF)
+		// Laser: High Pitch -> Low Pitch
+		// Adjusted pitch to be even lower (0x200-0x600 is approx 850Hz-280Hz)
+		addSweepDown(0x200, 0x600, 20, 1, 2.0f);
+		break;
+	case 2: // Collide/Bump (FUN_95DE)
+		// Low tone sequence
+		addTone(0x93c, 0x40, 10.0f); // 64 cycles ~340ms
+		addTone(0x7a6, 0x30, 10.0f); // 48 cycles
+		break;
+	case 3: // Step (FUN_95E5)
+		// Short blip
+		// Increased duration significantly again (0xC0 = 192 cycles)
+		addTone(0x7a6, 0xC0, 10.0f);
+		break;
+	case 4: // Silence (FUN_95F7)
+		break;
+	case 5: // Area Change? (FUN_95F8)
+		addTone(0x1f0, 0x60, 10.0f); // High pitch, longer
+		break;
+	case 6: // Menu (Silence?) (FUN_9601)
+		break;
+	case 7: // Hit? (Sweep FUN_9605)
+		// Sweep down (Period increases)
+		addSweep(0x200, 0xC00, 64, 2);
+		break;
+	case 8: // Zap (FUN_961F)
+		// Zap: Low -> High
+		addZap(0xFF, 0x10, 2);
+		break;
+	case 9: // Sweep (FUN_9673)
+		addSweep(0x100, 0x600, 16, 4);
+		break;
+	case 10: // Area Change (FUN_9696)
+		addSweep(0x100, 0x500, 16, 4);
+		break;
+	case 11: // Explosion (FUN_96B9)
+		{
+			soundUnitZX s;
+			s.isRaw = true;
+			s.rawFreq = 0.0f; // Noise
+			s.rawLengthus = 100000; // 100ms noise
+			soundUnits.push_back(s);
+		}
+		break;
+	case 12: // Sweep Down (FUN_96E4)
+		addSweepDown(0x01, 0xFF, 1, 2, 10.0f);
+		break;
+	case 13: // Fall? (FUN_96FD)
+		addSweep(300, 800, 16, 2);
+		break;
+	default:
+		debugC(1, kFreescapeDebugMedia, "Unknown Driller ZX sound %d", index);
+		break;
+	}
+
+	playSoundZX(&soundUnits, handle);
+}
+
 
 } // namespace Freescape

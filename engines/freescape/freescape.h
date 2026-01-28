@@ -487,6 +487,8 @@ public:
 	uint16 playSoundDOSSpeaker(uint16 startFrequency, soundSpeakerFx *speakerFxInfo);
 	void playSoundDOS(soundSpeakerFx *speakerFxInfo, bool sync, Audio::SoundHandle &handle);
 
+	void playSoundDrillerZX(int index, Audio::SoundHandle &handle);
+	void playSoundDrillerCPC(int index, Audio::SoundHandle &handle);
 	virtual void playSoundFx(int index, bool sync);
 	virtual void loadSoundsFx(Common::SeekableReadStream *file, int offset, int number);
 	Common::HashMap<uint16, soundFx *> _soundsFx;
