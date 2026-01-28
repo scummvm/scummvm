@@ -77,7 +77,7 @@ bool BaseImage::getImageInfo(const Common::String &filename, int32 &width, int32
 	} else if (file.hasSuffix(".jpg")) {
 		ret = getImageInfoJPG(filename, width, height);
 	} else {
-		error("BaseImage::loadFile : Unsupported fileformat %s", filename.c_str());
+		warning("BaseImage::loadFile : Unsupported fileformat %s", filename.c_str());
 	}
 
 	return ret;
@@ -226,7 +226,7 @@ bool BaseImage::loadFile(const Common::String &filename) {
 		jpeg->setOutputPixelFormat(BaseEngine::getRenderer()->getPixelFormat());
 		_decoder = jpeg;
 	} else {
-		error("BaseImage::loadFile : Unsupported fileformat %s", filename.c_str());
+		warning("BaseImage::loadFile : Unsupported fileformat %s", filename.c_str());
 	}
 	_filename = filename;
 	Common::SeekableReadStream *file = _fileManager->openFile(filename);
