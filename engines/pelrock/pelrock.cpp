@@ -251,16 +251,22 @@ bool PelrockEngine::renderScene(int overlayMode) {
 	return false;
 }
 
-const int kPasserbyTriggerFrameInterval = 30;
+const int kPasserbyTriggerFrameInterval = 0x3FF;
 
 void PelrockEngine::frameTriggers() {
 	if ((_chrono->getFrameCount() & kPasserbyTriggerFrameInterval) == kPasserbyTriggerFrameInterval) {
 		debug("Would trigger passer-by");
-		switch (_room->_currentRoomNumber)
-		{
+		switch (_room->_currentRoomNumber) {
 		case 9: {
 			Sprite *mouse = _room->findSpriteByIndex(2);
-			mouse->zOrder = 3;
+			mouse->zOrder = 1;
+			mouse->animData[0].loopCount = 3;
+			mouse->animData[1].loopCount = 1;
+			mouse->animData[1].movementFlags = 0x3FF;
+			mouse->animData[2].loopCount = 1;
+			mouse->animData[2].movementFlags = 0x801F;
+			mouse->animData[3].loopCount = 3;
+			mouse->animData[3].movementFlags = 0x3E0;
 			break;
 		}
 		default:
@@ -268,29 +274,11 @@ void PelrockEngine::frameTriggers() {
 		}
 	}
 
-	if(_room->_currentRoomNumber == 9) {
+	if (_room->_currentRoomNumber == 9) {
+		// Mouse animation on library
 		Sprite *mouse = _room->findSpriteByIndex(2);
 		if (mouse) {
-			if(mouse->x > 130 && mouse->x < 200) {
-				debug("Moving mouse right and down");
-				if(mouse->curAnimIndex == 0)
-					mouse->curAnimIndex = 1;
-				mouse->y += 2;
-				mouse->x += 6;
-			}
-			else if(mouse->x > 200 && mouse->x < 340) {
-				debug("Moving mouse right");
-				if(mouse->curAnimIndex == 1)
-					mouse->curAnimIndex = 2;
-				mouse->x += 6;
-			}
-			else if(mouse->x > 340) {
-				debug("Moving mouse down");
-				if(mouse->curAnimIndex == 2)
-					mouse->curAnimIndex = 1;
-				mouse->y += 2;
-			}
-			if(mouse->x > 355) {
+			if (mouse->y > 355) {
 				mouse->x = 82;
 				mouse->y = 315;
 				mouse->zOrder = 255;
@@ -337,6 +325,14 @@ void PelrockEngine::executeAction(VerbIcon action, HotSpot *hotspot) {
 
 void PelrockEngine::checkMouse() {
 
+	checkMouseHover();
+	if (_alfredState.animState == ALFRED_WALKING && !_alfredState.isWalkingCancelable) {
+		// Ignore clicks while Alfred is walking
+		_events->_leftMouseClicked = false;
+		debug("Ignoring mouse click while Alfred is walking");
+		return;
+	}
+
 	// Cancel walking animation on mouse click
 	if (_events->_leftMouseButton) {
 		_alfredState.curFrame = 0;
@@ -364,6 +360,7 @@ void PelrockEngine::checkMouse() {
 			_currentHotspot = nullptr;
 		}
 	} else if (_events->_leftMouseClicked) {
+
 		// Regular click (not during popup mode)
 		checkMouseClick(_events->_mouseClickX, _events->_mouseClickY);
 		_events->_leftMouseClicked = false;
@@ -376,7 +373,6 @@ void PelrockEngine::checkMouse() {
 		_events->_rightMouseClicked = false;
 		_state->stateGame = SETTINGS;
 	}
-	checkMouseHover();
 }
 
 void PelrockEngine::copyBackgroundToBuffer() {
@@ -704,6 +700,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 				_currentStep = 0;
 				debug("Finished walking to target");
 				_alfredState.setState(ALFRED_IDLE);
+				_alfredState.isWalkingCancelable = true;
 
 				if (_currentHotspot != nullptr)
 					_alfredState.direction = calculateAlfredsDirection(_currentHotspot);
@@ -960,8 +957,6 @@ void applyMovement(int16_t *x, int16_t *y, int8_t *z, uint16_t flags) {
 }
 
 void PelrockEngine::drawNextFrame(Sprite *sprite) {
-	if(sprite->index == 2)
-		debug("Drawing sprite %d at (%d,%d) zOrder %d, anim %d frame %d, movementFlags %d", sprite->index, sprite->x, sprite->y, sprite->zOrder, sprite->curAnimIndex, sprite->animData[sprite->curAnimIndex].curFrame, sprite->animData[sprite->curAnimIndex].movementFlags);
 	Anim &animData = sprite->animData[sprite->curAnimIndex];
 	if (sprite->zOrder == -1) {
 		// skips z0rder -1 sprites
@@ -1357,7 +1352,6 @@ void PelrockEngine::walkTo(int x, int y) {
 
 void PelrockEngine::walkAndAction(HotSpot *hotspot, VerbIcon action) {
 	walkTo(hotspot->x + hotspot->w / 2, hotspot->y + hotspot->h);
-
 	_queuedAction = QueuedAction{action, hotspot->index, true};
 }
 
@@ -1453,6 +1447,7 @@ bool PelrockEngine::isAlfredUnder(int x, int y) {
 }
 
 void PelrockEngine::checkMouseClick(int x, int y) {
+
 	// This handles regular clicks (not popup selection)
 	_queuedAction = QueuedAction{NO_ACTION, -1, false};
 	_actionPopupState.isActive = false;

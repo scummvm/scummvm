@@ -45,7 +45,10 @@ static const int unpickableHotspotExtras[] = {
 	6,
 	7,
 	316, // wires
-	357, // mailbox should pick a different hotspot
+	357, // mailbox should pick a different hotspot,
+	360,  // library shelves
+	361,
+	362,
 };
 
 class RoomManager {

@@ -165,6 +165,7 @@ struct AlfredState {
 	uint16 scaledX = 0;
 	uint16 scaledY = 0;
 	int idleFrameCounter = 0;
+	bool isWalkingCancelable = true;
 
 	void setState(AlfredAnimState nextState) {
 		animState = nextState;

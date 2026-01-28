@@ -97,6 +97,9 @@ const ActionEntry actionTable[] = {
 	// Room 9
 	{363, OPEN, &PelrockEngine::openLibraryIndoorsDoor},
 	{363, CLOSE, &PelrockEngine::closeLibraryIndoorsDoor},
+	{360, PICKUP, &PelrockEngine::pickBooksFromShelf1},
+	{361, PICKUP, &PelrockEngine::pickBooksFromShelf2},
+	{362, PICKUP, &PelrockEngine::pickBooksFromShelf3},
 
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
@@ -205,7 +208,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	} else if (actionTrigger == 263) {
 		_dialog->say(_res->_ingameTexts[UN_POCO_RESPETO]);
 	} else if (actionTrigger == 264) {
-		//disables the two first roots, the second one will be enabled later!
+		// disables the two first roots, the second one will be enabled later!
 		_state->setRootDisabledState(room, rootIndex, true);
 		_state->setRootDisabledState(room, rootIndex + 1, true);
 	} else {
@@ -602,6 +605,67 @@ void PelrockEngine::openLibraryIndoorsDoor(HotSpot *hotspot) {
 
 void PelrockEngine::closeLibraryIndoorsDoor(HotSpot *hotspot) {
 	closeDoor(hotspot, 0, 28, FEMININE, false);
+}
+
+void PelrockEngine::pickBooksFromShelf1(HotSpot *hotspot) {
+	pickUpBook(0);
+}
+
+void PelrockEngine::pickBooksFromShelf2(HotSpot *hotspot) {
+	pickUpBook(1);
+}
+
+void PelrockEngine::pickBooksFromShelf3(HotSpot *hotspot) {
+	pickUpBook(2);
+}
+
+void PelrockEngine::pickUpBook(int i) {
+	if (!_state->hasInventoryItem(10)) {
+		_dialog->say(_res->_ingameTexts[VENGA_ACA]);
+		_state->setRootDisabledState(9, 0, true);
+		_alfredState.isWalkingCancelable = false;
+		walkAndAction(_room->findHotspotByExtra(102), TALK);
+	} else {
+		if (_state->libraryShelf == -1) {
+			_dialog->say(_res->_ingameTexts[TODOS]);
+		} else if (_state->libraryShelf != i) {
+			_dialog->say(_res->_ingameTexts[EL_LIBRO_NOESTA_AQUI]);
+		} else {
+			_state->libraryShelf = -1;
+		}
+	}
+	// if (AlfredActivity.stanteriaABuscar == -1)// no ha memorizado
+	// 												// ninguno
+	// 		AlfredActivity.myMovingAlfredThread
+	// 				.saySomething(AlfredActivity.extraThingsToTranslate[54]);
+	// 	else
+	// 	{
+	// 		if (AlfredActivity.stanteriaABuscar != i)// estanteria
+	// 													// equivocada
+	// 			AlfredActivity.myMovingAlfredThread
+	// 					.saySomething(AlfredActivity.extraThingsToTranslate[66]);
+	// 		else
+	// 		// coge el libro
+	// 		{
+
+	// 			AlfredActivity.stanteriaABuscar = -1;
+
+	// 			int hml = howManyLibrosTengo();
+
+	// 			if (hml == 3)
+	// 			{
+	// 				int in = getFirstBook();
+	// 				if (in != -1)
+	// 					AlfredActivity.removeUsingObject(in);
+
+	// 				AlfredActivity.myMovingAlfredThread
+	// 						.saySomething(AlfredActivity.extraThingsToTranslate[67]);
+	// 			}
+
+	// 			AlfredActivity
+	// 					.addInventoryItem(11 + AlfredActivity.newShowLibro.index);
+	// 		}
+	// 	}
 }
 
 void PelrockEngine::performActionTrigger(uint16 actionTrigger) {

@@ -166,6 +166,7 @@ public:
 	AlfredState _alfredState;
 	byte *_compositeBuffer = nullptr; // Working composition buffer
 
+	bool _mouseDisabled = false;
 	GameStateData *_state = new GameStateData();
 
 	SmallFont *_smallFont = nullptr;
@@ -292,6 +293,10 @@ public:
 	void closeLibraryOutdoorsDoor(HotSpot *hotspot);
 	void openLibraryIndoorsDoor(HotSpot *hotspot);
 	void closeLibraryIndoorsDoor(HotSpot *hotspot);
+	void pickBooksFromShelf1(HotSpot *hotspot);
+	void pickBooksFromShelf2(HotSpot *hotspot);
+	void pickBooksFromShelf3(HotSpot *hotspot);
+	void pickUpBook(int i);
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);
 };
