@@ -3277,9 +3277,9 @@ void *SurfaceSdlGraphicsManager::getImGuiTexture(const Graphics::Surface &image,
 	SDL_UpdateTexture(texture, nullptr, s->getPixels(), s->pitch);
 	SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 #ifdef USE_IMGUI_SDLRENDERER3
-	SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_LINEAR);
+	SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
 #elif defined(USE_IMGUI_SDLRENDERER2)
-	SDL_SetTextureScaleMode(texture, SDL_ScaleModeLinear);
+	SDL_SetTextureScaleMode(texture, SDL_ScaleModeNearest);
 #endif
 
 	s->free();
