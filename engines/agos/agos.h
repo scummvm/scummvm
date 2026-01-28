@@ -690,6 +690,7 @@ protected:
 	void readGamePcFile(Common::SeekableReadStream *in);
 	void decompressData(const char *srcName, byte *dst, uint32 offset, uint32 srcSize, uint32 dstSize);
 	void decompressPN(Common::Stack<uint32> &dataList, uint8 *&dataOut, int &dataOutSize);
+	void drawPnSqueezedChar(WindowBlock *window, uint x, uint y, byte chr);
 	void loadOffsets(const char *filename, int number, uint32 &file, uint32 &offset, uint32 &compressedSize, uint32 &size);
 	void loadSound(uint16 sound, int16 pan, int16 vol, uint16 type);
 	void playSfx(uint16 sound, uint16 freq, uint16 flags, bool digitalOnly = false, bool midiOnly = false);
@@ -1389,6 +1390,7 @@ public:
 	void setupGame() override;
 	void setupOpcodes() override;
 	void setupVideoOpcodes(VgaOpcodeProc *op) override;
+	void windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) override;
 
 	void executeOpcode(int opcode) override;
 
