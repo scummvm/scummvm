@@ -147,64 +147,37 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 	return true;
 }
 
-bool writeBMP(Common::WriteStream &out, const Graphics::Surface &input, const byte *palette) {
+
+bool writeBMP(Common::WriteStream &out, const Graphics::Surface &input, const Graphics::Palette &palette, uint paletteCount = 256) {
+	return writeBMP(out, input, palette.data(), palette.size());
+}
+
+bool writeBMP(Common::WriteStream &out, const Graphics::Surface &input, const byte *palette, uint paletteCount) {
+	const Graphics::PixelFormat requiredFormat_1byte = Graphics::PixelFormat::createFormatCLUT8();
 	const Graphics::PixelFormat requiredFormat_3byte = Graphics::PixelFormat::createFormatBGR24();
 
 	Graphics::Surface *tmp = NULL;
 	const Graphics::Surface *surface;
+	uint bitsPerPixel;
 
-	if (input.format == requiredFormat_3byte) {
+	if (input.format == requiredFormat_1byte) {
 		surface = &input;
+		bitsPerPixel = 8;
+	} else if (input.format == requiredFormat_3byte) {
+		surface = &input;
+		bitsPerPixel = 24;
+		paletteCount = 0;
 	} else {
 		surface = tmp = input.convertTo(requiredFormat_3byte, palette);
+		bitsPerPixel = 24;
+		paletteCount = 0;
 	}
 
-	int dstPitch = surface->w * 3;
-	int extraDataLength = (dstPitch % 4) ? 4 - (dstPitch % 4) : 0;
-	int padding = 0;
-
-	out.writeByte('B');
-	out.writeByte('M');
-	out.writeUint32LE(surface->h * dstPitch + 54);
-	out.writeUint32LE(0);
-	out.writeUint32LE(54);
-	out.writeUint32LE(40);
-	out.writeUint32LE(surface->w);
-	out.writeUint32LE(surface->h);
-	out.writeUint16LE(1);
-	out.writeUint16LE(24);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-
-
-	for (uint y = surface->h; y-- > 0;) {
-		out.write((const void *)surface->getBasePtr(0, y), dstPitch);
-		out.write(&padding, extraDataLength);
-	}
-
-	// free tmp surface
-	if (tmp) {
-		tmp->free();
-		delete tmp;
-	}
-
-	return true;
-}
-
-bool writePalettedBMP(Common::WriteStream &out, const Graphics::Surface &surface, const byte *palette) {
-	// We assume surface is already 8bpp indexed
-	// surface->pitch should be >= surface->w
-
-	const int bytesPerPixel = 1;
-	const int rowSize = surface.w * bytesPerPixel;
+	const int rowSize = surface->w * surface->format.bytesPerPixel;
 	const int rowPadding = (4 - (rowSize & 3)) & 3;
 
-	const uint32 paletteSize = 256 * 4;
-	const uint32 pixelDataSize = (rowSize + rowPadding) * surface.h;
+	const uint32 paletteSize = paletteCount * 4;
+	const uint32 pixelDataSize = (rowSize + rowPadding) * surface->h;
 	const uint32 dataOffset = 14 + 40 + paletteSize;
 	const uint32 fileSize = dataOffset + pixelDataSize;
 
@@ -218,21 +191,21 @@ bool writePalettedBMP(Common::WriteStream &out, const Graphics::Surface &surface
 
 	/* === BITMAPINFOHEADER === */
 	out.writeUint32LE(40);                // biSize
-	out.writeUint32LE(surface.w);
-	out.writeUint32LE(surface.h);
+	out.writeUint32LE(surface->w);
+	out.writeUint32LE(surface->h);
 	out.writeUint16LE(1);                 // planes
-	out.writeUint16LE(8);                 // bit count
+	out.writeUint16LE(bitsPerPixel);
 	out.writeUint32LE(0);                 // BI_RGB
 	out.writeUint32LE(pixelDataSize);
 	out.writeUint32LE(0);                 // x ppm
 	out.writeUint32LE(0);                 // y ppm
-	out.writeUint32LE(256);               // colors used
-	out.writeUint32LE(256);               // important colors
+	out.writeUint32LE(paletteCount);      // colors used
+	out.writeUint32LE(paletteCount);      // important colors
 
 	/* === PALETTE === */
 	// Input palette: RGBRGBRGB...
 	// BMP palette: B G R 0
-	for (int i = 0; i < 256; i++) {
+	for (int i = 0; i < paletteCount; i++) {
 		out.writeByte(palette[i * 3 + 2]); // B
 		out.writeByte(palette[i * 3 + 1]); // G
 		out.writeByte(palette[i * 3 + 0]); // R
@@ -242,10 +215,16 @@ bool writePalettedBMP(Common::WriteStream &out, const Graphics::Surface &surface
 	/* === PIXEL DATA (bottom-up) === */
 	byte pad[3] = { 0, 0, 0 };
 
-	for (int y = surface.h - 1; y >= 0; y--) {
-		out.write(surface.getBasePtr(0, y), rowSize);
+	for (uint y = surface->h; y-- > 0;) {
+		out.write(surface->getBasePtr(0, y), rowSize);
 		if (rowPadding)
 			out.write(pad, rowPadding);
+	}
+
+	// free tmp surface
+	if (tmp) {
+		tmp->free();
+		delete tmp;
 	}
 
 	return true;
