@@ -78,7 +78,8 @@ void TinyGLRenderer::init() {
 
 	tglDisable(TGL_LIGHTING);
 	tglDisable(TGL_TEXTURE_2D);
-	tglEnable(TGL_DEPTH_TEST);
+	tglEnable(TGL_CULL_FACE);
+	tglFrontFace(TGL_CW);
 	_stippleEnabled = false;
 }
 
@@ -105,7 +106,7 @@ void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 
 void TinyGLRenderer::drawSkybox(Texture *texture, Math::Vector3d camera) {
 	TinyGL3DTexture *glTexture = static_cast<TinyGL3DTexture *>(texture);
-	tglDisable(TGL_DEPTH_TEST);
+	tglDisable(TGL_CULL_FACE);
 	tglEnable(TGL_TEXTURE_2D);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
 
@@ -139,7 +140,7 @@ void TinyGLRenderer::drawSkybox(Texture *texture, Math::Vector3d camera) {
 
 	tglBindTexture(TGL_TEXTURE_2D, 0);
 	tglDisable(TGL_TEXTURE_2D);
-	tglEnable(TGL_DEPTH_TEST);
+	tglEnable(TGL_CULL_FACE);
 	tglFlush();
 }
 
@@ -252,7 +253,7 @@ void TinyGLRenderer::renderPlayerShootBall(byte color, const Common::Point &posi
 		tglBlendFunc(TGL_ONE_MINUS_DST_COLOR, TGL_ZERO);
 	}
 
-	tglDisable(TGL_DEPTH_TEST);
+
 	tglDepthMask(TGL_FALSE);
 
 	tglColor4ub(r, g, b, 255);
@@ -278,7 +279,6 @@ void TinyGLRenderer::renderPlayerShootBall(byte color, const Common::Point &posi
 	tglDisableClientState(TGL_VERTEX_ARRAY);
 
 	tglDisable(TGL_BLEND);
-	tglEnable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_TRUE);
 }
 
@@ -311,7 +311,6 @@ void TinyGLRenderer::renderPlayerShootRay(byte color, const Common::Point &posit
 		tglBlendFunc(TGL_ONE_MINUS_DST_COLOR, TGL_ZERO);
 	}
 
-	tglDisable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_FALSE);
 
 	tglColor4ub(r, g, b, 255);
@@ -335,7 +334,6 @@ void TinyGLRenderer::renderPlayerShootRay(byte color, const Common::Point &posit
 	tglDisableClientState(TGL_VERTEX_ARRAY);
 
 	tglDisable(TGL_BLEND);
-	tglEnable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_TRUE);
 }
 
@@ -348,7 +346,6 @@ void TinyGLRenderer::renderCrossair(const Common::Point &crossairPosition) {
 	tglEnable(TGL_BLEND);
 	tglBlendFunc(TGL_ONE_MINUS_DST_COLOR, TGL_ZERO);
 
-	tglDisable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_FALSE);
 
 	useColor(255, 255, 255);
@@ -371,7 +368,6 @@ void TinyGLRenderer::renderCrossair(const Common::Point &crossairPosition) {
 	tglDisableClientState(TGL_VERTEX_ARRAY);
 
 	tglDisable(TGL_BLEND);
-	tglEnable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_TRUE);
 }
 
@@ -461,7 +457,6 @@ void TinyGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, by
 		}
 
 	tglLoadMatrixf(m);
-	tglDisable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_FALSE);
 
 	setStippleData(stipple);
@@ -488,17 +483,15 @@ void TinyGLRenderer::drawCelestialBody(Math::Vector3d position, float radius, by
 
 	useStipple(false);
 
-	tglEnable(TGL_DEPTH_TEST);
 	tglDepthMask(TGL_TRUE);
 	tglPopMatrix();
 }
 
-void TinyGLRenderer::depthTesting(bool enabled) {
+void TinyGLRenderer::enableCulling(bool enabled) {
 	if (enabled) {
-		tglClear(TGL_DEPTH_BUFFER_BIT);
-		tglEnable(TGL_DEPTH_TEST);
+		tglEnable(TGL_CULL_FACE);
 	} else {
-		tglDisable(TGL_DEPTH_TEST);
+		tglDisable(TGL_CULL_FACE);
 	}
 }
 

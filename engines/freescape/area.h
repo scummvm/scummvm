@@ -102,6 +102,9 @@ public:
 	uint32 _lastTick;
 
 private:
+	Math::Vector3d _lastCameraPosition;
+	ObjectArray _sortedObjects;
+
 	uint16 _areaID;
 	uint16 _areaFlags;
 	ObjectMap *_objectsByID;

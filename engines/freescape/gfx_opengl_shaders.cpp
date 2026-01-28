@@ -118,7 +118,8 @@ void OpenGLShaderRenderer::init() {
 		_defaultShaderStippleArray[i] = _defaultStippleArray[i];
 
 	glDisable(GL_TEXTURE_2D);
-	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glFrontFace(GL_CW);
 	glEnable(GL_SCISSOR_TEST);
 	setViewport(_viewport);
 }
@@ -147,6 +148,7 @@ void OpenGLShaderRenderer::drawTexturedRect2D(const Common::Rect &screenRect, co
 	_bitmapShader->use();
 	_bitmapShader->setUniform("flipY", glTexture->_upsideDown);
 
+	glDisable(GL_CULL_FACE);
 	glDepthMask(GL_FALSE);
 
 	glBindTexture(GL_TEXTURE_2D, glTexture->_id);
@@ -155,6 +157,7 @@ void OpenGLShaderRenderer::drawTexturedRect2D(const Common::Rect &screenRect, co
 
 	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);
+	glEnable(GL_CULL_FACE);
 	_bitmapShader->unbind();
 }
 
@@ -177,7 +180,7 @@ void OpenGLShaderRenderer::drawSkybox(Texture *texture, Math::Vector3d camera) {
 	_cubemapShader->use();
 	_cubemapShader->setUniform("mvpMatrix", skyboxMVP);
 
-	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
 
 	glBindBuffer(GL_ARRAY_BUFFER, _cubemapTexCoordVBO);
 	if (texture->_width == 1008)
@@ -192,7 +195,7 @@ void OpenGLShaderRenderer::drawSkybox(Texture *texture, Math::Vector3d camera) {
 
 	glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, 0);
 
-	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 
 	_cubemapShader->unbind();
 }
@@ -276,7 +279,7 @@ void OpenGLShaderRenderer::renderPlayerShootBall(byte color, const Common::Point
 		glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
 	}
 
-	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
 	glDepthMask(GL_FALSE);
 
 	useColor(r, g, b);
@@ -305,7 +308,7 @@ void OpenGLShaderRenderer::renderPlayerShootBall(byte color, const Common::Point
 	glDrawArrays(GL_TRIANGLE_FAN, 0, (triangleAmount + 2));
 
 	glDisable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 	glDepthMask(GL_TRUE);
 }
 
@@ -340,7 +343,7 @@ void OpenGLShaderRenderer::renderPlayerShootRay(byte color, const Common::Point 
 		glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
 	}
 
-	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
 	glDepthMask(GL_FALSE);
 
 	useColor(r, g, b);
@@ -367,7 +370,7 @@ void OpenGLShaderRenderer::renderPlayerShootRay(byte color, const Common::Point 
 	glLineWidth(1);
 
 	glDisable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 	glDepthMask(GL_TRUE);
 }
 
@@ -435,7 +438,6 @@ void OpenGLShaderRenderer::drawCelestialBody(const Math::Vector3d position, floa
 	_triangleShader->setUniform("useStipple", false);
 
 	// === Render settings ===
-	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
 	// === Draw vertex fan ===
@@ -449,7 +451,6 @@ void OpenGLShaderRenderer::drawCelestialBody(const Math::Vector3d position, floa
 	}
 
 	// === Restore state ===
-	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 
 	// === Cleanup binding ===
@@ -473,7 +474,6 @@ void OpenGLShaderRenderer::renderCrossair(const Common::Point &crossairPosition)
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
 
-	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 
 	useColor(255, 255, 255);
@@ -500,7 +500,6 @@ void OpenGLShaderRenderer::renderCrossair(const Common::Point &crossairPosition)
 
 	glLineWidth(1);
 	glDisable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 }
 
@@ -546,13 +545,11 @@ void OpenGLShaderRenderer::renderFace(const Common::Array<Math::Vector3d> &verti
 	glDrawArrays(GL_TRIANGLES, 0, vi + 3);
 }
 
-void OpenGLShaderRenderer::depthTesting(bool enabled) {
+void OpenGLShaderRenderer::enableCulling(bool enabled) {
 	if (enabled) {
-		// If we re-enable depth testing, we need to clear the depth buffer
-		glClear(GL_DEPTH_BUFFER_BIT);
-		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
 	} else {
-		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_CULL_FACE);
 	}
 }
 

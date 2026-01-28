@@ -273,6 +273,12 @@ Object *GeometricObject::duplicate() {
 
 void GeometricObject::computeBoundingBox() {
 	_boundingBox = Math::AABB();
+	_occlusionBox = Math::AABB();
+
+	// These are used for the rendered, they should NOT be refined or it will break the sorting algorithm
+	_occlusionBox.expand(_origin);
+	_occlusionBox.expand(_origin + _size);
+
 	Math::Vector3d v;
 	switch (_type) {
 	default:
@@ -476,6 +482,12 @@ void GeometricObject::draw(Renderer *gfx, float offset) {
 
 		gfx->renderPolygon(_origin, _size, _ordinates, _colours, _ecolours, offset);
 	}
+}
+
+void GeometricObject::setColor(int idx, int color) {
+	assert(_colours);
+	assert(idx < _colours->size());
+	(*_colours)[idx] = color;
 }
 
 } // End of namespace Freescape

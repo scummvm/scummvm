@@ -59,6 +59,7 @@ public:
 	void computeBoundingBox();
 	bool collides(const Math::AABB &boundingBox);
 	void draw(Freescape::Renderer *gfx, float offset = 0.0) override;
+	void setColor(int idx, int color);
 	bool isDrawable() override;
 	bool isPlanar() override;
 	bool _cyclingColors;
