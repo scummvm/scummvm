@@ -286,6 +286,7 @@ class Lobby;
 class ScummEngine_v71he : public ScummEngine_v70he {
 	friend class Wiz;
 	friend class Gdi;
+	friend class HEFont;
 
 protected:
 	enum SubOpType {
@@ -826,8 +827,13 @@ protected:
 };
 
 class ScummEngine_v99he : public ScummEngine_v95he {
+friend class ScummEngine_v72he;
+friend class ScummEngine_v90he;
+friend class Wiz;
+
 public:
-	ScummEngine_v99he(OSystem *syst, const DetectorResult &dr) : ScummEngine_v95he(syst, dr) {}
+	ScummEngine_v99he(OSystem *syst, const DetectorResult &dr);
+	~ScummEngine_v99he() override;
 
 	void resetScumm() override;
 
@@ -843,6 +849,8 @@ protected:
 	void setPaletteFromPtr(const byte *ptr, int numcolor = -1) override;
 	void setPalColor(int index, int r, int g, int b) override;
 	void updatePalette() override;
+
+	HEFont *_heFont = nullptr;
 };
 
 class ScummEngine_v100he : public ScummEngine_v99he {

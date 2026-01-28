@@ -29,6 +29,7 @@
 #include "scumm/charset.h"
 #include "scumm/dialogs.h"
 #include "scumm/file.h"
+#include "scumm/he/font_he.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/he/localizer.h"
 #include "scumm/object.h"
@@ -2167,6 +2168,44 @@ void ScummEngine_v72he::o72_readINI() {
 				push(4);
 			else
 				push(2);
+		} else if (_game.heversion >= 99 && !strcmp((char *)option, "NoFontsInstalled")) {
+			// The three FunShop came with these six exact optional TrueType fonts:
+			// Augie, Dot2Dot, Frosty, Goo Puff, Smilage and Zodiastic.
+			//
+			// These fonts are an optional choice from the installer, and if not installed,
+			// this NoFontsInstalled flag will be set to 1.
+			//
+			// In our case, some users might not have a suitable Windows OS to run the
+			// InstallShield installers, and they might just take the plain data files
+			// from the CD. So let's check for exactly those fonts in our HEFont class
+			// and set this flag accordingly.
+			//
+			// The perceived effect of this is that without these fonts, premade printing
+			// models won't be available, instead of crashing the engine. ;-)
+#ifdef USE_FREETYPE2
+			static const char *funShopFonts[] = {
+				"Augie",
+				"Dot2Dot",
+				"Frosty",
+				"Goo Puff",
+				"Smilage",
+				"Zodiastic"
+			};
+
+			((ScummEngine_v99he *)this)->_heFont->enumInit();
+
+			bool allFontsFound = true;
+			for (int i = 0; i < ARRAYSIZE(funShopFonts); i++) {
+				if (((ScummEngine_v99he *)this)->_heFont->enumFind(funShopFonts[i]) == -1) {
+					allFontsFound = false;
+					break;
+				}
+			}
+
+			push(allFontsFound ? 0 : 1);
+#else
+			push(0);
+#endif
 		} else {
 			push(ConfMan.getInt((char *)option));
 		}

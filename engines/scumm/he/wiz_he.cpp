@@ -26,6 +26,7 @@
 #include "common/system.h"
 #include "graphics/cursorman.h"
 #include "graphics/primitives.h"
+#include "scumm/he/font_he.h"
 #include "scumm/he/logic_he.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/resource.h"
@@ -2399,23 +2400,40 @@ void Wiz::processWizImageRenderEllipseCmd(const WizImageCommand *params) {
 }
 
 void Wiz::processWizImageFontStartCmd(const WizImageCommand *params) {
-	// Used for text in FreddisFunShop/PuttsFunShop/SamsFunShop
-	// TODO: Start Font
+	// Used for TTF text in FreddisFunShop/PuttsFunShop/SamsFunShop
+	if (!(((ScummEngine_v99he *)_vm)->_heFont->startFont(params->image))) {
+		warning("Wiz::processWizImageFontStartCmd(): Couldn't start font");
+	}
 }
 
 void Wiz::processWizImageFontEndCmd(const WizImageCommand *params) {
-	// Used for text in FreddisFunShop/PuttsFunShop/SamsFunShop
-	// TODO: End Font
+	// Used for TTF text in FreddisFunShop/PuttsFunShop/SamsFunShop
+	if (!(((ScummEngine_v99he *)_vm)->_heFont->endFont(params->image))) {
+		warning("Wiz::processWizImageFontEndCmd(): Couldn't end font");
+	}
 }
 
 void Wiz::processWizImageFontCreateCmd(const WizImageCommand *params) {
-	// Used for text in FreddisFunShop/PuttsFunShop/SamsFunShop
-	// TODO: Create Font
+	// Used for TTF text in FreddisFunShop/PuttsFunShop/SamsFunShop
+	if (!(((ScummEngine_v99he *)_vm)->_heFont->createFont(params->image, 
+														  (char *)params->fontProperties.fontName,
+														  params->fontProperties.fgColor,
+														  params->fontProperties.bgColor,
+														  params->fontProperties.style,
+														  params->fontProperties.size))) {
+		warning("Wiz::processWizImageFontCreateCmd(): Couldn't create font");
+	}
 }
 
 void Wiz::processWizImageFontRenderCmd(const WizImageCommand *params) {
-	// TODO: Render Font String
-	error("Wiz::processWizImageFontRenderCmd(): Render Font String");
+	// Used for TTF text in FreddisFunShop/PuttsFunShop/SamsFunShop
+	if (!(((ScummEngine_v99he *)_vm)->_heFont->renderString(params->image,
+															params->state,
+															params->fontProperties.xPos,
+															params->fontProperties.yPos,
+															(char *)params->fontProperties.string))) {
+		warning("Wiz::processWizImageFontRenderCmd(): Couldn't render font");
+	}
 }
 
 void Wiz::processWizImageRenderFloodFillCmd(const WizImageCommand *params) {
