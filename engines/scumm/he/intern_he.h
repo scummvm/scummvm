@@ -40,6 +40,7 @@ namespace Scumm {
 class ActorHE;
 class ResExtractor;
 #ifdef ENABLE_HE
+class HEFont;
 class LogicHE;
 class MoviePlayer;
 class Sprite;
