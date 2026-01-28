@@ -190,21 +190,21 @@ bool sizeofGUIelement_interior(ButtonDrawRec *bdr, M4Rect *myRect) {
 }
 
 bool drawGUIelement(ButtonDrawRec *bdr, M4Rect *myRect) {
-	int32 topLeftColor, interiorColor, bottomRightColor, bottomLeftPix, topRightPix;
+	if (!bdr)
+		return false;
+
 	const int32 x1 = bdr->x1;
 	const int32 y1 = bdr->y1;
 	const int32 x2 = bdr->x2;
 	const int32 y2 = bdr->y2;
 	const bool pressed = bdr->pressed;
 
-	if (!bdr)
-		return false;
-
 	if (bdr->el_type == MESSAGE) {
 		sizeofGUIelement_interior(bdr, myRect);
 		return true;
 	}
 
+	int32 topLeftColor, interiorColor, bottomRightColor, bottomLeftPix, topRightPix;
 	if ((bdr->el_type == TEXTFIELD) || (bdr->el_type == LISTBOX)) {
 		if (!pressed) {
 			topLeftColor = __DKGRAY;
@@ -422,11 +422,10 @@ static int32 item_string_write(Buffer *target, char *myStr, int32 x, int32 y, in
 }
 
 static void CorrectItemWidthHeight(Item *item, int32 fontHeight) {
-	int32 tempWidth, tempHeight, minWidth, minHeight;
-
 	if (!item)
 		return;
 
+	int32 tempWidth, tempHeight, minWidth, minHeight;
 	switch (item->type) {
 	case LISTBOX:
 		minHeight = scrollUpHeight + thumbHeight + scrollDownHeight + _G(items).buttonHeight * 3;	//scrollup + thumb + scrolldown heights + (newHeight for each)
