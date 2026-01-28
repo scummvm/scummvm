@@ -582,8 +582,10 @@ static void CalculateViewIndex(Item *myItem) {
 	if (myItem->myListCount > myItem->listView) {
 		if (myItem->viewBottom && myItem->viewBottom->next) {
 			myItem->thumbY = minThumbY + (((myItem->h - thumbYRange) * myItem->viewIndex) / (myItem->myListCount - myItem->listView));
-		} else myItem->thumbY = myItem->h - maxThumbY;
-	} else myItem->thumbY = minThumbY;
+		} else
+			myItem->thumbY = myItem->h - maxThumbY;
+	} else
+		myItem->thumbY = minThumbY;
 }
 
 static void SetViewIndex(Item *myItem) {
@@ -1062,7 +1064,8 @@ bool ClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset, int32 scrollType
 							myItem->viewBottom = myItem->viewBottom->prev;
 							myItem->viewIndex--;
 							changed = true;
-						} else break;
+						} else
+							break;
 					}
 					myItem->thumbY = minThumbY + (((myItem->h - thumbYRange) * myItem->viewIndex) / (myItem->myListCount - myItem->listView));
 				} else
@@ -1076,7 +1079,8 @@ bool ClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset, int32 scrollType
 						myItem->viewIndex++;
 						if (myItem->viewBottom && myItem->viewBottom->next) {
 							myItem->thumbY = minThumbY + (((myItem->h - thumbYRange) * myItem->viewIndex) / (myItem->myListCount - myItem->listView));
-						} else myItem->thumbY = myItem->h - maxThumbY;
+						} else
+							myItem->thumbY = myItem->h - maxThumbY;
 						changed = true;
 					} else
 						changed = false;
@@ -1098,7 +1102,8 @@ bool ClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset, int32 scrollType
 						myItem->thumbY = minThumbY + (((myItem->h - thumbYRange) * myItem->viewIndex) / (myItem->myListCount - myItem->listView));
 					} else
 						myItem->thumbY = myItem->h - maxThumbY;
-				} else changed = false;
+				} else
+					changed = false;
 			} else if (((myItem->status & AREA_PRESSED) == 0) && (yOffset >= (myItem->thumbY)) && (yOffset < (myItem->thumbY + thumbHeight + _G(items).buttonHeight))) {
 				myItem->status = THUMB_PRESSED;
 				thumbOffset = yOffset - myItem->thumbY;
