@@ -496,123 +496,6 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 	return result;
 }
 
-void AkosRenderer::byleRLEDecode(ByleRLEData &dataBlock) {
-	const byte *mask, *src;
-	byte *dst;
-	byte len, maskbit;
-	int lastColumnX, y;
-	uint16 color, height, pcolor;
-	const byte *scaleytab;
-	bool masked;
-
-	lastColumnX = -1;
-	y = dataBlock.y;
-	src = _srcPtr;
-	dst = dataBlock.destPtr;
-	len = dataBlock.repLen;
-	color = dataBlock.repColor;
-	height = _height;
-
-	scaleytab = &dataBlock.scaleTable[MAX<int>(0, dataBlock.scaleYIndex)]; // Avoid invalid mem reads in Basketball...
-	maskbit = revBitMask(dataBlock.x & 7);
-	mask = _vm->getMaskBuffer(dataBlock.x - (_vm->_virtscr[kMainVirtScreen].xstart & 7), dataBlock.y, _zbuf);
-
-	if (len)
-		goto StartPos;
-
-	do {
-		len = *src++;
-		color = len >> dataBlock.shr;
-		len &= dataBlock.mask;
-		if (!len)
-			len = *src++;
-
-		do {
-			if (_scaleY == 255 || *scaleytab++ < _scaleY) {
-				if (_actorHitMode) {
-					if (color && y == _actorHitY && dataBlock.x == _actorHitX) {
-						_actorHitResult = true;
-						return;
-					}
-				} else {
-					masked = (y < dataBlock.boundsRect.top || y >= dataBlock.boundsRect.bottom) || (dataBlock.x < 0 || dataBlock.x >= dataBlock.boundsRect.right) || (*mask & maskbit);
-					bool skipColumn = false;
-
-					if (color && !masked) {
-						pcolor = _palette[color];
-						if (_shadowMode == 1) {
-							if (pcolor == 13) {
-								// In shadow mode 1 skipColumn works more or less the same way as in shadow
-								// mode 3. It is only ever checked and applied if pcolor is 13.
-								skipColumn = (lastColumnX == dataBlock.x);
-								pcolor = _shadowTable[*dst];
-							}
-						} else if (_shadowMode == 2) {
-							error("AkosRenderer::byleRLEDecode(): shadowMode 2 not implemented."); // TODO
-						} else if (_shadowMode == 3) {
-							if (_vm->_game.features & GF_16BIT_COLOR) {
-								// I add the column skip here, too, although I don't know whether it always
-								// applies. But this is the only way to prevent recursive shading of pixels.
-								// This might need more fine tuning...
-								skipColumn = (lastColumnX == dataBlock.x);
-								uint16 srcColor = (pcolor >> 1) & 0x7DEF;
-								uint16 dstColor = (READ_UINT16(dst) >> 1) & 0x7DEF;
-								pcolor = srcColor + dstColor;
-							} else if (_vm->_game.heversion >= 90) {
-								// I add the column skip here, too, although I don't know whether it always
-								// applies. But this is the only way to prevent recursive shading of pixels.
-								// This might need more fine tuning...
-								skipColumn = (lastColumnX == dataBlock.x);
-								pcolor = (pcolor << 8) + *dst;
-								pcolor = _xmap[pcolor];
-							} else if (pcolor < 8) {
-								// This mode is used in COMI. The column skip only takes place when the shading
-								// is actually applied (for pcolor < 8). The skip avoids shading of pixels that
-								// already have been shaded.
-								skipColumn = (lastColumnX == dataBlock.x);
-								pcolor = (pcolor << 8) + *dst;
-								pcolor = _shadowTable[pcolor];
-							}
-						}
-						if (!skipColumn) {
-							if (_vm->_bytesPerPixel == 2) {
-								WRITE_UINT16(dst, pcolor);
-							} else {
-								*dst = pcolor;
-							}
-						}
-					}
-				}
-				dst += _out.pitch;
-				mask += _numStrips;
-				y++;
-			}
-			if (!--height) {
-				if (!--dataBlock.skipWidth)
-					return;
-				height = _height;
-				y = dataBlock.y;
-
-				scaleytab = &dataBlock.scaleTable[MAX<int>(0, dataBlock.scaleYIndex)]; // Avoid invalid mem reads in Basketball...
-				lastColumnX = dataBlock.x;
-
-				if (_scaleX == 255 || dataBlock.scaleTable[dataBlock.scaleXIndex] < _scaleX) {
-					dataBlock.x += dataBlock.scaleXStep;
-					if (dataBlock.x < 0 || dataBlock.x >= dataBlock.boundsRect.right)
-						return;
-					maskbit = revBitMask(dataBlock.x & 7);
-					dataBlock.destPtr += dataBlock.scaleXStep * _vm->_bytesPerPixel;
-				}
-
-				dataBlock.scaleXIndex += dataBlock.scaleXStep;
-				dst = dataBlock.destPtr;
-				mask = _vm->getMaskBuffer(dataBlock.x - (_vm->_virtscr[kMainVirtScreen].xstart & 7), dataBlock.y, _zbuf);
-			}
-		StartPos:;
-		} while (--len);
-	} while (true);
-}
-
 const byte bigCostumeScaleTable[768] = {
 	0x00, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0,
 	0x10, 0x90, 0x50, 0xD0, 0x30, 0xB0, 0x70, 0xF0,
@@ -715,168 +598,53 @@ const byte bigCostumeScaleTable[768] = {
 };
 
 byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
-	int num_colors;
-	bool actorIsScaled;
-	int i, j;
-	int linesToSkip = 0, startScaleIndexX, startScaleIndexY;
-	Common::Rect rect;
-	int step;
-	byte drawFlag = 1;
 	ByleRLEData compData;
 
 	const int scaletableSize = (_vm->_game.heversion >= 61) ? 128 : 384;
-
-	/* implement custom scale table */
 
 	compData.scaleTable = (_vm->_game.heversion >= 61) ? smallCostumeScaleTable : bigCostumeScaleTable;
 	if (_vm->VAR_CUSTOMSCALETABLE != 0xFF && _vm->_res->isResourceLoaded(rtString, _vm->VAR(_vm->VAR_CUSTOMSCALETABLE))) {
 		compData.scaleTable = _vm->getStringAddressVar(_vm->VAR_CUSTOMSCALETABLE);
 	}
 
-	// Setup color decoding variables
-	num_colors = _vm->getResourceDataSize(_akpl);
-	if (num_colors == 32) {
-		compData.mask = 7;
-		compData.shr = 3;
-	} else if (num_colors == 64) {
-		compData.mask = 3;
-		compData.shr = 2;
-	} else {
-		compData.mask = 15;
-		compData.shr = 4;
-	}
-
-	actorIsScaled = (_scaleX != 0xFF) || (_scaleY != 0xFF);
-
 	compData.x = _actorX;
 	compData.y = _actorY;
 
-	compData.boundsRect.left = 0;
-	compData.boundsRect.top = 0;
-	compData.boundsRect.right = _out.w;
-	compData.boundsRect.bottom = _out.h;
+	// see ClassicCostumeRenderer::paintCelByleRLE, for smallCostumeScaleTable the same wrapping applies
+	compData.scaleIndexMask = (_vm->_game.heversion >= 61) ? 0xff : -1;
 
-	if (actorIsScaled) {
+	bool decode = true;
 
-		/* Scale direction */
-		compData.scaleXStep = -1;
-		if (xMoveCur < 0) {
-			xMoveCur = -xMoveCur;
-			compData.scaleXStep = 1;
-		}
+	byte drawFlag = paintCelByleRLECommon(
+		xMoveCur,
+		yMoveCur,
+		_vm->getResourceDataSize(_akpl),
+		scaletableSize,
+		false,
+		false,
+		compData,
+		decode);
 
-		if (_mirror) {
-			/* Adjust X position */
-			startScaleIndexX = j = scaletableSize - xMoveCur;
-			for (i = 0; i < xMoveCur; i++) {
-				if (compData.scaleTable[j++] < _scaleX)
-					compData.x -= compData.scaleXStep;
-			}
+	if (!decode)
+		return drawFlag;
 
-			rect.left = rect.right = compData.x;
+	compData.maskPtr = _vm->getMaskBuffer(-(_vm->_virtscr[kMainVirtScreen].xstart & 7), compData.y, _zbuf);
 
-			j = startScaleIndexX;
-			for (i = 0, linesToSkip = 0; i < _width; i++) {
-				if (rect.right < 0) {
-					linesToSkip++;
-					startScaleIndexX = j;
-				}
-				if (compData.scaleTable[j++] < _scaleX)
-					rect.right++;
-			}
-		} else {
-			/* No mirror */
-			/* Adjust X position */
-			startScaleIndexX = j = scaletableSize + xMoveCur;
-			for (i = 0; i < xMoveCur; i++) {
-				if (compData.scaleTable[j--] < _scaleX)
-					compData.x += compData.scaleXStep;
-			}
+	// The 5th bit is set by ClassicCostumeRenderer so make sure that there's no collision in the shared code
+	assert(!(_shadowMode & 0x20));
 
-			rect.left = rect.right = compData.x;
+	byleRLEDecode(compData, _actorHitX, _actorHitY, _actorHitMode ? &_actorHitResult : nullptr, _xmap);
 
-			j = startScaleIndexX;
-			for (i = 0; i < _width; i++) {
-				if (rect.left >= compData.boundsRect.right) {
-					startScaleIndexX = j;
-					linesToSkip++;
-				}
-				if (compData.scaleTable[j--] < _scaleX)
-					rect.left--;
-			}
-		}
+	return drawFlag;
+}
 
-		if (linesToSkip)
-			linesToSkip--;
+void AkosRenderer::markRectAsDirty(Common::Rect rect) {
+	rect.left -= _vm->_virtscr[kMainVirtScreen].xstart & 7;
+	rect.right -= _vm->_virtscr[kMainVirtScreen].xstart & 7;
+	_vm->markRectAsDirty(kMainVirtScreen, rect, _actorID);
+}
 
-		step = -1;
-		if (yMoveCur < 0) {
-			yMoveCur = -yMoveCur;
-			step = -step;
-		}
-
-		startScaleIndexY = scaletableSize - yMoveCur;
-		for (i = 0; i < yMoveCur; i++) {
-			// WORKAROUND: Backyard Basketball sends out yMoveCur values higher than 128!
-			// This triggers ASAN, because it tries to reach a negative index of compData.scaleTable[].
-			if (startScaleIndexY < 0) {
-				debug(8, "AkosRenderer::paintCelByleRLE(): Negative startScaleIndexY: %d; actor (%d), scaletableSize (%d), yMoveCur (%d), working around it...",
-					_actorID, startScaleIndexY, scaletableSize, yMoveCur);
-				if (compData.scaleTable[0] < _scaleY)
-					compData.y -= step;
-
-				startScaleIndexY++;
-				continue;
-			}
-
-			if (compData.scaleTable[startScaleIndexY++] < _scaleY)
-				compData.y -= step;
-		}
-
-		rect.top = rect.bottom = compData.y;
-		startScaleIndexY = scaletableSize - yMoveCur;
-		for (i = 0; i < _height; i++) {
-			// WORKAROUND: See above...
-			if (startScaleIndexY < 0) {
-				if (compData.scaleTable[0] < _scaleY)
-					rect.bottom++;
-
-				startScaleIndexY++;
-				continue;
-			}
-
-			if (compData.scaleTable[startScaleIndexY++] < _scaleY)
-				rect.bottom++;
-		}
-
-		startScaleIndexY = scaletableSize - yMoveCur;
-	} else {
-		if (!_mirror)
-			xMoveCur = -xMoveCur;
-
-		compData.x += xMoveCur;
-		compData.y += yMoveCur;
-
-		if (_mirror) {
-			rect.left = compData.x;
-			rect.right = compData.x + _width;
-		} else {
-			rect.left = compData.x - _width;
-			rect.right = compData.x;
-		}
-
-		rect.top = compData.y;
-		rect.bottom = rect.top + _height;
-
-		startScaleIndexX = scaletableSize;
-		startScaleIndexY = scaletableSize;
-	}
-
-	compData.scaleXIndex = startScaleIndexX;
-	compData.scaleYIndex = startScaleIndexY;
-	compData.skipWidth = _width;
-	compData.scaleXStep = _mirror ? 1 : -1;
-
+void AkosRenderer::markAsDirty(const Common::Rect &rect, ByleRLEData &compData, bool &decode) {
 	if (_vm->_game.heversion >= 71) {
 		if (_clipOverride.right > _clipOverride.left && _clipOverride.bottom > _clipOverride.top) {
 			compData.boundsRect = _clipOverride;
@@ -890,7 +658,7 @@ byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 
 	if (_actorHitMode) {
 		if (_actorHitX < rect.left || _actorHitX >= rect.right || _actorHitY < rect.top || _actorHitY >= rect.bottom)
-			return 0;
+			decode = false;
 	} else {
 		markRectAsDirty(rect);
 
@@ -899,82 +667,6 @@ byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 			a->setActorUpdateArea(rect.left, rect.top, rect.right, rect.bottom + 1);
 		}
 	}
-
-
-	if (rect.top >= compData.boundsRect.bottom || rect.bottom <= compData.boundsRect.top)
-		return 0;
-
-	if (rect.left >= compData.boundsRect.right || rect.right <= compData.boundsRect.left)
-		return 0;
-
-	compData.repLen = 0;
-
-	if (_mirror) {
-		if (!actorIsScaled)
-			linesToSkip = compData.boundsRect.left - compData.x;
-
-		if (linesToSkip > 0) {
-			compData.skipWidth -= linesToSkip;
-			skipCelLines(compData, linesToSkip);
-			compData.x = compData.boundsRect.left;
-		} else {
-			linesToSkip = rect.right - compData.boundsRect.right;
-			if (linesToSkip <= 0) {
-				drawFlag = 2;
-			} else {
-				compData.skipWidth -= linesToSkip;
-			}
-		}
-	} else {
-		if (!actorIsScaled)
-			linesToSkip = rect.right - compData.boundsRect.right + 1;
-		if (linesToSkip > 0) {
-			compData.skipWidth -= linesToSkip;
-			skipCelLines(compData, linesToSkip)	;
-			compData.x = compData.boundsRect.right - 1;
-		} else {
-			linesToSkip = (compData.boundsRect.left - 1) - rect.left;
-
-			if (linesToSkip <= 0)
-				drawFlag = 2;
-			else
-				compData.skipWidth -= linesToSkip;
-		}
-	}
-
-	if (compData.skipWidth <= 0 || _height <= 0)
-		return 0;
-
-	if (rect.left < compData.boundsRect.left)
-		rect.left = compData.boundsRect.left;
-
-	if (rect.top < compData.boundsRect.top)
-		rect.top = compData.boundsRect.top;
-
-	if (rect.top > compData.boundsRect.bottom)
-		rect.top = compData.boundsRect.bottom;
-
-	if (rect.bottom > compData.boundsRect.bottom)
-		rect.bottom = compData.boundsRect.bottom;
-
-	if (_drawTop > rect.top)
-		_drawTop = rect.top;
-	if (_drawBottom < rect.bottom)
-		_drawBottom = rect.bottom;
-
-	compData.width = _out.w;
-	compData.height = _out.h;
-	compData.destPtr = (byte *)_out.getBasePtr(compData.x, compData.y);
-
-	byleRLEDecode(compData);
-
-	return drawFlag;
-}
-
-void AkosRenderer::markRectAsDirty(Common::Rect rect) {
-	rect.left -= _vm->_virtscr[kMainVirtScreen].xstart & 7;
-	rect.right -= _vm->_virtscr[kMainVirtScreen].xstart & 7;
-	_vm->markRectAsDirty(kMainVirtScreen, rect, _actorID);
 }
 
 byte AkosRenderer::paintCelCDATRLE(int xmoveCur, int ymoveCur) {
