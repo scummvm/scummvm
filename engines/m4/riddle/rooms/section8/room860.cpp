@@ -145,7 +145,7 @@ void Room860::daemon() {
 
 		digi_play_loop("950_s45", 3, 80, -1, 950);
 
-		_G(game).new_room = 811;
+		_G(game).setRoom(811);
 		break;
 
 	case 1000:

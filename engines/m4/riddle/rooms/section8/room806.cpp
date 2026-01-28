@@ -925,7 +925,7 @@ void Room806::parser() {
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s33", 1, 255, -1, -1);
 			digi_play_loop("950_s29", 3, 93, -1, -1);
-			_G(game).new_room = 807;
+			_G(game).setRoom(807);
 
 			break;
 
@@ -1094,7 +1094,7 @@ void Room806::parser() {
 		} else if (_G(kernel).trigger == 1) {
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s29", 3, 93, -1, -1);
-			_G(game).new_room = 805;
+			_G(game).setRoom(805);
 		}
 	} // if (player_said("west") && (_G(kernel).trigger == -1 || _G(kernel).trigger == 1))
 
@@ -1106,7 +1106,7 @@ void Room806::parser() {
 		} else if (_G(kernel).trigger == 1) {
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s29", 3, 93, -1, -1);
-			_G(game).new_room = 807;
+			_G(game).setRoom(807);
 		}
 	}
 

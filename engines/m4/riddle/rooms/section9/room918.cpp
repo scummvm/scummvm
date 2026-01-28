@@ -235,7 +235,7 @@ void Room918::daemon() {
 		digi_unload("950_s48f");
 		digi_unload("950_s48a");
 		digi_unload("950_s47");
-		_G(game).new_room = 917;
+		_G(game).setRoom(917);
 		break;
 	default:
 		break;

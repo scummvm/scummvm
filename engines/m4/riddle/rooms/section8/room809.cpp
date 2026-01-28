@@ -567,7 +567,7 @@ void Room809::parser() {
 		break;
 
 	case 58:
-		_G(game).new_room = 810;
+		_G(game).setRoom(810);
 		break;
 
 	case 59:
@@ -613,7 +613,7 @@ void Room809::parser() {
 		break;
 
 	case 67:
-		_G(game).new_room = 808;
+		_G(game).setRoom(808);
 		break;
 
 	default:

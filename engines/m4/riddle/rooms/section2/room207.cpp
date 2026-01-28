@@ -318,7 +318,7 @@ void Room207::parser() {
 	}  else if (player_said("conv203d")) {
 		convHandler();
 	} else if (_G(kernel).trigger == 203) {
-		_G(game).new_room = 203;
+		_G(game).setRoom(203);
 	} else if (talkFlag && player_said("peasant")) {
 		player_set_commands_allowed(false);
 		player_update_info();
@@ -1042,7 +1042,7 @@ void Room207::parser() {
 			break;
 
 		case 1:
-			_G(game).new_room = 203;
+			_G(game).setRoom(203);
 
 			break;
 
@@ -1701,7 +1701,7 @@ void Room207::daemon() {
 		break;
 
 	case 749:
-		_G(game).new_room = 203;
+		_G(game).setRoom(203);
 		break;
 
 	default:

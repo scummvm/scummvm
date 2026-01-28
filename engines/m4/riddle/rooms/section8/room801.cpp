@@ -674,7 +674,7 @@ void Room801::parser() {
 			ws_unhide_walker(_G(my_walker));
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("801_s02", 3, 35, -1, -1);
-			_G(game).new_room = 802;
+			_G(game).setRoom(802);
 			break;
 		default:
 			break;
@@ -974,7 +974,7 @@ void Room801::daemon() {
 		break;
 
 	case 83:
-		_G(game).new_room = 852;
+		_G(game).setRoom(852);
 		break;
 
 	case 200:

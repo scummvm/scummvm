@@ -132,8 +132,7 @@ void Room818::daemon() {
 		break;
 
 	case 30:
-		_G(game).new_section = 9;
-		_G(game).new_room = 917;
+		_G(game).setRoom(917);
 
 		break;
 

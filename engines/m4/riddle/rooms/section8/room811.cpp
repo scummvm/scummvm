@@ -372,7 +372,7 @@ void Room811::daemon() {
 
 	case 92:
 		digi_play_loop("950_s45", 3, 128, -1, 950);
-		_G(game).new_room = 861;
+		_G(game).setRoom(861);
 		break;
 
 	case 1050:

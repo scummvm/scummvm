@@ -853,7 +853,7 @@ void Room805::parser() {
 				digi_play_loop("950_s33", 2, 255, -1, -1);
 				_G(flags)[V270] = 806;
 				_G(flags)[V262] = 0;
-				_G(game).new_room = 806;
+				_G(game).setRoom(806);
 
 				break;
 
@@ -986,7 +986,7 @@ void Room805::parser() {
 		case 10:
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s29", 3, 180, -1, 950);
-			_G(game).new_room = 844;
+			_G(game).setRoom(844);
 
 			break;
 
@@ -1006,7 +1006,7 @@ void Room805::parser() {
 		case 10:
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s29", 3, 180, -1, 950);
-			_G(game).new_room = 834;
+			_G(game).setRoom(834);
 
 			break;
 
@@ -1026,7 +1026,7 @@ void Room805::parser() {
 		case 10:
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s29", 3, 180, -1, 950);
-			_G(game).new_room = 814;
+			_G(game).setRoom(814);
 
 			break;
 
@@ -1046,7 +1046,7 @@ void Room805::parser() {
 		case 10:
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s29", 3, 180, -1, 950);
-			_G(game).new_room = 824;
+			_G(game).setRoom(824);
 
 			break;
 
@@ -1065,7 +1065,7 @@ void Room805::parser() {
 		case 2:
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s29", 3, 180, -1, 950);
-			_G(game).new_room = 804;
+			_G(game).setRoom(804);
 
 			break;
 
@@ -1094,7 +1094,7 @@ void Room805::parser() {
 		case 3:
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s29", 3, 180, -1, 950);
-			_G(game).new_room = 806;
+			_G(game).setRoom(806);
 
 			break;
 

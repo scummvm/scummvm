@@ -266,7 +266,7 @@ void Room803::parser() {
 		case 1:
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s29", 2, 180, -1, 950);
-			_G(game).new_room = 844;
+			_G(game).setRoom(844);
 			break;
 
 		default:
@@ -284,7 +284,7 @@ void Room803::parser() {
 		case 1:
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s29", 3, 180, -1, 950);
-			_G(game).new_room = 834;
+			_G(game).setRoom(834);
 			break;
 
 		default:
@@ -302,7 +302,7 @@ void Room803::parser() {
 		case 1:
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s29", 3, 180, -1, 950);
-			_G(game).new_room = 814;
+			_G(game).setRoom(814);
 			break;
 
 		default:
@@ -320,7 +320,7 @@ void Room803::parser() {
 		case 1:
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s29", 3, 180, -1, 950);
-			_G(game).new_room = 824;
+			_G(game).setRoom(824);
 			break;
 
 		default:
@@ -342,7 +342,7 @@ void Room803::parser() {
 		case 2:
 			adv_kill_digi_between_rooms(false);
 			digi_play_loop("950_s29", 3, 180, -1, 950);
-			_G(game).new_room = 804;
+			_G(game).setRoom(804);
 			break;
 
 		default:
