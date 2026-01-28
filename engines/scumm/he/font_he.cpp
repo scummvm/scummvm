@@ -116,6 +116,11 @@ bool HEFont::createFont(int imageNum, const char *fontName, int fgColor, int bgC
 	}
 
 #ifdef USE_FREETYPE2
+	// Some of the models really want to use Arial, for some reason...
+	if (Common::String(fontName).equalsIgnoreCase("Arial")) {
+		fontName = "LiberationSans-Regular";
+	}
+
 	// Find the filename for this font name...
 	Common::String fontFileName;
 	for (uint i = 0; i < _fontEntries.size(); i++) {
