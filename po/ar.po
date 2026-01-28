@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-01-26 23:16+0000\n"
+"POT-Creation-Date: 2026-01-28 01:05+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -76,7 +76,7 @@ msgstr "المحركات المتوفرة:"
 msgid "Close"
 msgstr "إغلاق"
 
-#: gui/browser.cpp:74 backends/dialogs/macosx/macosx-dialogs.mm:90
+#: gui/browser.cpp:74 backends/dialogs/macosx/macosx-dialogs.mm:108
 msgid "Show hidden files"
 msgstr "أظهر الملفات المخفية"
 
@@ -136,7 +136,7 @@ msgstr "إلغاء"
 #: gui/browser.cpp:82 gui/chooser.cpp:46 gui/filebrowser-dialog.cpp:69
 #: gui/remotebrowser.cpp:60 gui/shaderbrowser-dialog.cpp:81
 #: gui/themebrowser.cpp:55 backends/dialogs/gtk/gtk-dialogs.cpp:64
-#: backends/dialogs/macosx/macosx-dialogs.mm:144
+#: backends/dialogs/macosx/macosx-dialogs.mm:162
 #: backends/dialogs/win32/win32-dialogs.cpp:136
 msgid "Choose"
 msgstr "إختار"
@@ -1392,7 +1392,7 @@ msgstr ""
 msgid "~Q~uit"
 msgstr "~أ~خرج"
 
-#: gui/launcher.cpp:267 backends/platform/sdl/macosx/appmenu_osx.mm:302
+#: gui/launcher.cpp:267 backends/platform/sdl/macosx/appmenu_osx.mm:307
 msgid "Quit ScummVM"
 msgstr "اخرج من ScummVM"
 
@@ -1401,7 +1401,7 @@ msgstr "اخرج من ScummVM"
 msgid "A~b~out"
 msgstr "~ب~شأن"
 
-#: gui/launcher.cpp:271 backends/platform/sdl/macosx/appmenu_osx.mm:296
+#: gui/launcher.cpp:271 backends/platform/sdl/macosx/appmenu_osx.mm:301
 msgid "About ScummVM"
 msgstr "بشأن ScummVM"
 
@@ -5764,23 +5764,23 @@ msgid ""
 "| `Ctrl+Alt+d` | Opens the ScummVM debugger\n"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:298
+#: backends/platform/sdl/macosx/appmenu_osx.mm:303
 msgid "Hide ScummVM"
 msgstr "إخفاء ScummVM"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:299
+#: backends/platform/sdl/macosx/appmenu_osx.mm:304
 msgid "Hide Others"
 msgstr "إخفاء الآخرين"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:300
+#: backends/platform/sdl/macosx/appmenu_osx.mm:305
 msgid "Show All"
 msgstr "عرض الكل"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:305
+#: backends/platform/sdl/macosx/appmenu_osx.mm:310
 msgid "Window"
 msgstr "نافذة"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:307
+#: backends/platform/sdl/macosx/appmenu_osx.mm:312
 msgid "Minimize"
 msgstr "تصغير"
 
@@ -5789,100 +5789,100 @@ msgstr "تصغير"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. ONLINE HELP
 #. I18N: Opens the help screen.
-#: backends/platform/sdl/macosx/appmenu_osx.mm:312
+#: backends/platform/sdl/macosx/appmenu_osx.mm:319
 #: engines/access/metaengine.cpp:343 engines/bladerunner/metaengine.cpp:321
 #: engines/ngi/metaengine.cpp:162 engines/supernova/metaengine.cpp:238
 #: engines/tucker/metaengine.cpp:215 engines/zvision/metaengine.cpp:246
 msgid "Help"
 msgstr "المساعدة"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:317
+#: backends/platform/sdl/macosx/appmenu_osx.mm:324
 msgid "User Manual"
 msgstr "دليل الاستخدام"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:319
+#: backends/platform/sdl/macosx/appmenu_osx.mm:326
 msgid "General Information"
 msgstr "معلومات عامة"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:320
+#: backends/platform/sdl/macosx/appmenu_osx.mm:327
 msgid "What's New in ScummVM"
 msgstr "ما الجديد في ScummVM"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:322
+#: backends/platform/sdl/macosx/appmenu_osx.mm:329
 msgid "Credits"
 msgstr "الاعتمادات"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:323
+#: backends/platform/sdl/macosx/appmenu_osx.mm:330
 msgid "GPL License"
 msgstr "رخصة GPL"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:324
+#: backends/platform/sdl/macosx/appmenu_osx.mm:331
 msgid "LGPL License"
 msgstr "ترخيص LGPL"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:325
+#: backends/platform/sdl/macosx/appmenu_osx.mm:332
 msgid "OFL License"
 msgstr "رخصة OFL"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:326
+#: backends/platform/sdl/macosx/appmenu_osx.mm:333
 msgid "BSD License"
 msgstr "رخصةBSD"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:328
+#: backends/platform/sdl/macosx/appmenu_osx.mm:335
 #, fuzzy
 #| msgid "GPL License"
 msgid "Apache License"
 msgstr "رخصة GPL"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:329
+#: backends/platform/sdl/macosx/appmenu_osx.mm:336
 #, fuzzy
 #| msgid "BSD License"
 msgid "BSL License"
 msgstr "رخصةBSD"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:330
+#: backends/platform/sdl/macosx/appmenu_osx.mm:337
 #, fuzzy
 #| msgid "GPL License"
 msgid "GLAD License"
 msgstr "رخصة GPL"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:331
+#: backends/platform/sdl/macosx/appmenu_osx.mm:338
 #, fuzzy
 #| msgid "BSD License"
 msgid "ISC License"
 msgstr "رخصةBSD"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:332
+#: backends/platform/sdl/macosx/appmenu_osx.mm:339
 #, fuzzy
 #| msgid "GPL License"
 msgid "Lua License"
 msgstr "رخصة GPL"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:333
+#: backends/platform/sdl/macosx/appmenu_osx.mm:340
 #, fuzzy
 #| msgid "GPL License"
 msgid "MIT License"
 msgstr "رخصة GPL"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:334
+#: backends/platform/sdl/macosx/appmenu_osx.mm:341
 #, fuzzy
 #| msgid "GPL License"
 msgid "MKV License"
 msgstr "رخصة GPL"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:335
+#: backends/platform/sdl/macosx/appmenu_osx.mm:342
 #, fuzzy
 #| msgid "GPL License"
 msgid "MPL License"
 msgstr "رخصة GPL"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:336
+#: backends/platform/sdl/macosx/appmenu_osx.mm:343
 #, fuzzy
 #| msgid "GPL License"
 msgid "TinyGL License"
 msgstr "رخصة GPL"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:337
+#: backends/platform/sdl/macosx/appmenu_osx.mm:344
 #, fuzzy
 #| msgid "Freefont License"
 msgid "Catharon License"
