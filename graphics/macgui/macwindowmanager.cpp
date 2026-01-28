@@ -1104,6 +1104,11 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 		return true;
 	}
 
+	if (event.type == Common::EVENT_WHEELUP || event.type == Common::EVENT_WHEELDOWN) {
+		MacWindow *w = findWindowAtPoint(event.mouse.x, event.mouse.y);
+		if (w) setActiveWindow(w->getId());
+	}
+
 	if (_activeWindow != -1) {
 		if ((_windows[_activeWindow]->isEditable() && _windows[_activeWindow]->getType() == kWindowWindow &&
 				 ((MacWindow *)_windows[_activeWindow])->getInnerDimensions().contains(event.mouse.x, event.mouse.y)) ||
