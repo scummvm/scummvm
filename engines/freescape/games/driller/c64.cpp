@@ -158,7 +158,7 @@ void DrillerEngine::loadAssetsC64FullGame() {
 	} else
 		error("Unknown C64 release");
 
-	_playerSid = new DrillerSIDPlayer(_mixer);
+	_playerSid = new DrillerSIDPlayer();
 }
 
 

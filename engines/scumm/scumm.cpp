@@ -2389,7 +2389,7 @@ void ScummEngine::setupMusic(int midi) {
 		_musicEngine = new Player_AppleII(this, _mixer);
 	} else if (_game.platform == Common::kPlatformC64 && _game.version <= 1) {
 #ifdef USE_SID_AUDIO
-		_musicEngine = new Player_SID(this, _mixer);
+		_musicEngine = new Player_SID(this);
 #endif
 	} else if (_game.platform == Common::kPlatformNES && _game.version == 1) {
 #ifndef DISABLE_NES_APU

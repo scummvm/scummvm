@@ -21,6 +21,8 @@
 
 #include "engines/freescape/games/driller/c64.music.h"
 
+#include "common/textconsole.h"
+
 // --- Driller Music Data (Embedded from Disassembly) ---
 namespace Freescape {
 
@@ -178,12 +180,7 @@ const int voice_sid_offset[] = {0, 7, 14};
 // Debug log levels
 #define DEBUG_LEVEL 4 // 0: Minimal, 1: Basic Flow, 2: Detailed State
 
-DrillerSIDPlayer::DrillerSIDPlayer(Audio::Mixer *mixer) : _sid(nullptr),
-														  _mixer(mixer),
-														  _soundHandle(), // Default initialize
-														  _sampleRate(mixer->getOutputRate()),
-														  _cyclesPerSample(0.0f),
-														  _cycleCounter(0.0),
+DrillerSIDPlayer::DrillerSIDPlayer() : _sid(nullptr),
 														  _playState(STOPPED),
 														  _targetTuneIndex(0),
 														  _globalTempo(3),       // Default tempo
@@ -192,24 +189,15 @@ DrillerSIDPlayer::DrillerSIDPlayer(Audio::Mixer *mixer) : _sid(nullptr),
 {
 	initSID();
 
-	// Calculate cycles per sample for timing in readBuffer
-	// Using PAL clock rate for C64 SID
-	const double PAL_CLOCK_FREQ = 985248.0; // Use PAL C64 clock
-	_cyclesPerSample = PAL_CLOCK_FREQ / _sampleRate;
-
-	// Start the stream via the mixer
-	// Pass address of _soundHandle for it to be filled by playStream
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
-	debug(DEBUG_LEVEL >= 1, "Driller SID Player Initialized (Sample Rate: %d Hz)", _sampleRate);
+	debug(DEBUG_LEVEL >= 1, "Driller SID Player Initialized");
 }
 
 DrillerSIDPlayer::~DrillerSIDPlayer() {
-	// Check if sound handle is valid before stopping (might not be if playStream failed)
-	// A better check might involve a dedicated flag or checking if handle is non-zero/default
-	if (_mixer) {                         // Ensure mixer exists
-		_mixer->stopHandle(_soundHandle); // Pass handle by value
+	if (_sid) {
+		_sid->stop();
+		delete _sid;
 	}
-	delete _sid;
+
 	debug(DEBUG_LEVEL >= 1, "Driller SID Player Destroyed");
 }
 
@@ -239,61 +227,23 @@ void DrillerSIDPlayer::stopMusic() {
 	}
 }
 
-// --- AudioStream API ---
-int DrillerSIDPlayer::readBuffer(int16 *buffer, const int numSamples) {
-	if (!_sid) { // Safety check if SID initialization failed
-		memset(buffer, 0, numSamples * sizeof(int16));
-		return numSamples;
-	}
-
-	int samplesGenerated = 0;
-	while (samplesGenerated < numSamples) {
-		// Determine how many SID cycles until the next C64 frame tick (approx 50Hz for PAL)
-		const double CYCLES_PER_FRAME = 985248.0 / 50.0; // PAL C64 clock / 50Hz VSync
-
-		// How many cycles to run SID for this iteration?
-		double cyclesToRun = CYCLES_PER_FRAME - _cycleCounter;
-		int samplesToGenerate = MIN((int)ceil(cyclesToRun / _cyclesPerSample), numSamples - samplesGenerated);
-		if (samplesToGenerate <= 0)
-			samplesToGenerate = 1; // Ensure progress
-
-		// Prevent requesting more samples than the buffer has space for
-		samplesToGenerate = MIN(samplesToGenerate, numSamples - samplesGenerated);
-
-		double cyclesForThisStep = samplesToGenerate * _cyclesPerSample;
-
-		// Run the SID emulation
-		Resid::cycle_count x = static_cast<Resid::cycle_count>(cyclesForThisStep);
-		// Use the standard reSID clock method
-		_sid->updateClock(x, buffer + samplesGenerated, samplesToGenerate);
-
-		_cycleCounter += cyclesForThisStep;
-		samplesGenerated += samplesToGenerate;
-
-		// If a frame boundary is crossed, run the player logic
-		if (_cycleCounter >= CYCLES_PER_FRAME) {
-			_cycleCounter -= CYCLES_PER_FRAME; // Keep track of remainder cycles
-			playFrame();
-		}
-	}
-	return numSamples; // We always fill the buffer requested
-}
-
 // --- SID Interaction ---
 void DrillerSIDPlayer::SID_Write(int reg, uint8_t data) {
 	if (_sid) {
 		debug(DEBUG_LEVEL >= 3, "SID Write: Reg $%02X = $%02X", reg, data);
-		_sid->write(reg, data);
+		_sid->writeReg(reg, data);
 	}
 }
 
 void DrillerSIDPlayer::initSID() {
-	delete _sid; // Delete previous instance if any
-	_sid = new Resid::SID();
-	// Use PAL clock rate
-	_sid->set_sampling_parameters(985248.0, _sampleRate);
-	_sid->enable_filter(true); // Enable filter emulation
-	_sid->reset();
+	if (_sid) {
+		_sid->stop();
+		delete _sid; // Delete previous instance if any
+	}
+
+	_sid = SID::Config::create(SID::Config::kSidPAL);
+	if (!_sid || !_sid->init())
+		error("Failed to initialise SID emulator");
 
 	// Reset SID registers (like 0x0910 - reset_voices)
 	SID_Write(0x04, 0);    // V1 Ctrl = 0
@@ -303,10 +253,12 @@ void DrillerSIDPlayer::initSID() {
 	SID_Write(0x16, 0);    // Filter Cutoff Hi = 0
 	SID_Write(0x17, 0);    // Filter Res/Ctrl = 0
 	SID_Write(0x18, 0x0F); // Volume & Filter Mode = Max Volume
+
+	_sid->start(new Common::Functor0Mem<void, DrillerSIDPlayer>(this, &DrillerSIDPlayer::onTimer), 50);
 }
 
 // --- Player Logic (Called once per C64 frame) ---
-void DrillerSIDPlayer::playFrame() {
+void DrillerSIDPlayer::onTimer() {
 	// Handle global state changes first (STOPPED, CHANGING_TUNE)
 	if (_playState == STOPPED) {
 		debug(DEBUG_LEVEL >= 2, "Driller: Frame - Music Stopped");

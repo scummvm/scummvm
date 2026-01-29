@@ -29,7 +29,7 @@
 namespace Scumm {
 
 /*
- * The player's update() routine is called once per (NTSC/PAL) frame as it is
+ * The player's onTimer() routine is called once per (NTSC/PAL) frame as it is
  * called by the VIC Rasterline interrupt handler which is in turn called
  * approx. 50 (PAL) or 60 (NTSC) times per second.
  * The SCUMM V0/V1 music playback routines or sound data have not been adjusted
@@ -45,16 +45,6 @@ namespace Scumm {
  * - https://riff.2ix.at/c64/print.php?dok=man-vic (German)
  * - https://www.c64-wiki.de/wiki/VIC (German)
  */
-
-struct TimingProps {
-	double clockFreq;
-	int cyclesPerFrame;
-};
-
-static const TimingProps timingProps[2] = {
-	{ 17734472.0 / 18, 312 * 63 }, // PAL:  312*63 cycles/frame @  985248 Hz (~50Hz)
-	{ 14318180.0 / 14, 263 * 65 }  // NTSC: 263*65 cycles/frame @ 1022727 Hz (~60Hz)
-};
 
 static const uint8 BITMASK[7] = {
 	0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40
@@ -265,7 +255,7 @@ void Player_SID::resetSID() { // $48D8
 	resetPlayerState();
 }
 
-void Player_SID::update() { // $481B
+void Player_SID::onTimer() { // $481B
 	if (initializing)
 		return;
 
@@ -1132,7 +1122,7 @@ void Player_SID::unused1() { // $50AF
 
 #define ZEROMEM(a) memset(a, 0, sizeof(a))
 
-Player_SID::Player_SID(ScummEngine *scumm, Audio::Mixer *mixer) {
+Player_SID::Player_SID(ScummEngine *scumm) {
 	/*
 	 * clear memory
 	 */
@@ -1245,26 +1235,17 @@ Player_SID::Player_SID(ScummEngine *scumm, Audio::Mixer *mixer) {
 
 	_music_timer = 0;
 
-	_mixer = mixer;
-	_sampleRate = _mixer->getOutputRate();
 	_vm = scumm;
 
-	// sound speed is slightly different on NTSC and PAL machines
-	// as the SID clock depends on the frame rate.
-	// ScummVM does not distinguish between NTSC and PAL targets
-	// so we use the NTSC timing here as the music was composed for
-	// NTSC systems (music on PAL systems is slower).
-	_videoSystem = NTSC;
-	_cpuCyclesLeft = 0;
 
 	initSID();
 	resetSID();
-
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 Player_SID::~Player_SID() {
-	_mixer->stopHandle(_soundHandle);
+	Common::StackLock lock(_mutex);
+
+	_sid->stop();
 	delete _sid;
 }
 
@@ -1281,45 +1262,29 @@ uint8 *Player_SID::getResource(int resID) {
 	}
 }
 
-int Player_SID::readBuffer(int16 *buffer, const int numSamples) {
-	int samplesLeft = numSamples;
-
-	Common::StackLock lock(_mutex);
-
-	while (samplesLeft > 0) {
-		// update SID status after each frame
-		if (_cpuCyclesLeft <= 0) {
-			update();
-			_cpuCyclesLeft = timingProps[_videoSystem].cyclesPerFrame;
-		}
-		// fetch samples
-		int sampleCount = _sid->updateClock(_cpuCyclesLeft, (short *)buffer, samplesLeft);
-		samplesLeft -= sampleCount;
-		buffer += sampleCount;
-	}
-
-	return numSamples;
-}
-
 void Player_SID::SID_Write(int reg, uint8 data) {
-	_sid->write(reg, data);
+	_sid->writeReg(reg, data);
 }
 
 void Player_SID::initSID() {
-	_sid = new Resid::SID();
-	_sid->set_sampling_parameters(
-		timingProps[_videoSystem].clockFreq,
-		_sampleRate);
-	_sid->enable_filter(true);
+	// sound speed is slightly different on NTSC and PAL machines
+	// as the SID clock depends on the frame rate.
+	// ScummVM does not distinguish between NTSC and PAL targets
+	// so we use the NTSC timing here as the music was composed for
+	// NTSC systems (music on PAL systems is slower).
+	_sid = SID::Config::create(SID::Config::kSidNTSC);
+	if (!_sid || !_sid->init())
+		error("Failed to initialise SID emulator");
 
-	_sid->reset();
 	// Synchronize the waveform generators (must occur after reset)
-	_sid->write( 4, 0x08);
-	_sid->write(11, 0x08);
-	_sid->write(18, 0x08);
-	_sid->write( 4, 0x00);
-	_sid->write(11, 0x00);
-	_sid->write(18, 0x00);
+	SID_Write( 4, 0x08);
+	SID_Write(11, 0x08);
+	SID_Write(18, 0x08);
+	SID_Write( 4, 0x00);
+	SID_Write(11, 0x00);
+	SID_Write(18, 0x00);
+
+	_sid->start(new Common::Functor0Mem<void, Player_SID>(this, &Player_SID::onTimer), 60);
 }
 
 void Player_SID::startSound(int nr) {
