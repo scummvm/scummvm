@@ -466,6 +466,17 @@ bool Subtitles::drawSubtitle(uint32 timestamp, bool force, bool showSFX) const {
 	return true;
 }
 
+bool Subtitles::isSfx() const {
+	if (_srtParser) {
+		const Common::Array<SRTEntry *> &entries = _srtParser->getEntries();
+		if (!entries.empty() && !entries[0]->parts.empty()) {
+			if (entries[0]->parts[0].tag == "sfx")
+				return true;
+		}
+	}
+	return false;
+}
+
 void Subtitles::clearSubtitle() const {
 	if (!_loaded)
 		return;

@@ -229,6 +229,13 @@ typedef Common::Array<DiaryPage> DiaryPages;
 
 typedef Common::HashMap<Common::String, bool> PlayedMediaTable;
 
+struct ActiveSubtitle {
+	Sound subtitledSound;
+	Video::Subtitles *subs;
+	bool isSfx;
+
+	ActiveSubtitle() : subs(nullptr), isSfx(false) {}
+};
 
 class PrivateEngine : public Engine {
 private:
@@ -236,6 +243,9 @@ private:
 	Graphics::PixelFormat _pixelFormat;
 	Image::ImageDecoder *_image;
 	int _screenW, _screenH;
+
+	// helper to generate the correct subtitle path
+	Common::Path getSubtitlePath(const Common::String &soundName);
 
 public:
 	bool _shouldHighlightMasks;
@@ -303,10 +313,13 @@ public:
 	void destroyVideo();
 
 	void loadSubtitles(const Common::Path &path, Sound *sound = nullptr);
+	// use to clean up sounds which have finished playing once
+	void updateSubtitles();
 	void destroySubtitles();
 	void adjustSubtitleSize();
-	Video::Subtitles *_subtitles;
-	Sound *_subtitledSound;
+	Video::Subtitles *_videoSubtitles;
+	// list of subtitles attached to sound effects/speech this will allow multiple subtitles to be loaded without losing already loaded one
+	Common::List<ActiveSubtitle> _activeSubtitles;
 	bool _useSubtitles;
 	bool _sfxSubtitles;
 
@@ -454,6 +467,7 @@ public:
 	void stopSound(Sound &sound);
 	bool isSoundPlaying();
 	bool isSoundPlaying(Sound &sound);
+	bool isSpeechActive();
 	void waitForSoundsToStop();
 	bool consumeEvents();
 	Sound _bgSound;
