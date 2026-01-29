@@ -50,7 +50,7 @@ Common::Rect Font::getBoundingBox(uint32 chr) const {
 namespace {
 
 template<class StringType>
-Common::Rect getBoundingBoxImpl(const Font &font, const StringType &str, int x, int y, int w, TextAlign align, int deltax) {
+Common::Rect getBoundingBoxImpl(const Font &font, const StringType &str, int x, int y, int w, TextAlign align, int deltax, bool allowCharClipping) {
 	// We follow the logic of drawStringImpl here. The only exception is
 	// that we do allow an empty width to be specified here. This allows us
 	// to obtain the complete bounding box of a string.
@@ -73,8 +73,12 @@ Common::Rect getBoundingBoxImpl(const Font &font, const StringType &str, int x, 
 		last = cur;
 
 		Common::Rect charBox = font.getBoundingBox(cur);
-		if (x + charBox.right > rightX)
-			break;
+
+		if (!allowCharClipping) {
+			if (x + charBox.right > rightX)
+				break;
+		}
+
 		if (x + charBox.right >= leftX) {
 			charBox.translate(x, y);
 			if (first) {
@@ -106,7 +110,7 @@ int getStringWidthImpl(const Font &font, const StringType &str) {
 }
 
 template<class SurfaceType, class StringType>
-void drawStringImpl(const Font &font, SurfaceType *dst, const StringType &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool alpha) {
+void drawStringImpl(const Font &font, SurfaceType *dst, const StringType &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool alpha, bool allowCharClipping) {
 	// The logic in getBoundingImpl is the same as we use here. In case we
 	// ever change something here we will need to change it there too.
 	assert(dst != 0);
@@ -127,8 +131,14 @@ void drawStringImpl(const Font &font, SurfaceType *dst, const StringType &str, i
 		last = cur;
 
 		Common::Rect charBox = font.getBoundingBox(cur);
-		if (x + charBox.right > rightX)
-			break;
+
+		// This assumes that each drawChar/drawAlphaChar implementation
+		// MUST perform boundary checks, to avoid writing out of bounds!
+		if (!allowCharClipping) {
+			if (x + charBox.right > rightX)
+				break;
+		}
+
 		if (x + charBox.right >= leftX) {
 			if (alpha)
 				font.drawAlphaChar(dst, cur, x, y, color);
@@ -417,7 +427,7 @@ StringType handleEllipsis(const Font &font, const StringType &input, int w) {
 
 } // End of anonymous namespace
 
-Common::Rect Font::getBoundingBox(const Common::String &input, int x, int y, const int w, TextAlign align, int deltax, bool useEllipsis) const {
+Common::Rect Font::getBoundingBox(const Common::String &input, int x, int y, const int w, TextAlign align, int deltax, bool useEllipsis, bool allowCharClipping) const {
 	// In case no width was given we cannot use ellipsis or any alignment
 	// apart from left alignment.
 	if (w == 0) {
@@ -434,10 +444,10 @@ Common::Rect Font::getBoundingBox(const Common::String &input, int x, int y, con
 	}
 
 	const Common::String str = useEllipsis ? handleEllipsis(*this, input, w) : input;
-	return getBoundingBoxImpl(*this, str, x, y, w, align, deltax);
+	return getBoundingBoxImpl(*this, str, x, y, w, align, deltax, allowCharClipping);
 }
 
-Common::Rect Font::getBoundingBox(const Common::U32String &input, int x, int y, const int w, TextAlign align, int deltax, bool useEllipsis) const {
+Common::Rect Font::getBoundingBox(const Common::U32String &input, int x, int y, const int w, TextAlign align, int deltax, bool useEllipsis, bool allowCharClipping) const {
 	// In case no width was given we cannot any alignment apart from left
 	// alignment.
 	if (w == 0) {
@@ -454,7 +464,7 @@ Common::Rect Font::getBoundingBox(const Common::U32String &input, int x, int y, 
 	}
 
 	const Common::U32String str = useEllipsis ? handleEllipsis(*this, input, w) : input;
-	return getBoundingBoxImpl(*this, str, x, y, w, align, 0);
+	return getBoundingBoxImpl(*this, str, x, y, w, align, 0, allowCharClipping);
 }
 
 int Font::getStringWidth(const Common::String &str) const {
@@ -494,56 +504,56 @@ void Font::drawAlphaChar(ManagedSurface *dst, uint32 chr, int x, int y, uint32 c
 	dst->addDirtyRect(charBox);
 }
 
-void Font::drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) const {
+void Font::drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis, bool allowCharClipping) const {
 	Common::String renderStr = useEllipsis ? handleEllipsis(*this, str, w) : str;
-	drawStringImpl(*this, dst, renderStr, x, y, w, color, align, deltax, false);
+	drawStringImpl(*this, dst, renderStr, x, y, w, color, align, deltax, false, allowCharClipping);
 }
 
-void Font::drawString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) const {
+void Font::drawString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis, bool allowCharClipping) const {
 	Common::U32String renderStr = useEllipsis ? handleEllipsis(*this, str, w) : str;
-	drawStringImpl(*this, dst, renderStr, x, y, w, color, align, deltax, false);
+	drawStringImpl(*this, dst, renderStr, x, y, w, color, align, deltax, false, allowCharClipping);
 }
 
-void Font::drawString(ManagedSurface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) const {
+void Font::drawString(ManagedSurface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis, bool allowCharClipping) const {
 	Common::String renderStr = useEllipsis ? handleEllipsis(*this, str, w) : str;
-	drawStringImpl(*this, dst, renderStr, x, y, w, color, align, deltax, false);
+	drawStringImpl(*this, dst, renderStr, x, y, w, color, align, deltax, false, allowCharClipping);
 
 	if (w != 0) {
 		dst->addDirtyRect(getBoundingBox(str, x, y, w, align, deltax, useEllipsis));
 	}
 }
 
-void Font::drawString(ManagedSurface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) const {
+void Font::drawString(ManagedSurface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis, bool allowCharClipping) const {
 	Common::U32String renderStr = useEllipsis ? handleEllipsis(*this, str, w) : str;
-	drawStringImpl(*this, dst, renderStr, x, y, w, color, align, deltax, false);
+	drawStringImpl(*this, dst, renderStr, x, y, w, color, align, deltax, false, allowCharClipping);
 
 	if (w != 0) {
 		dst->addDirtyRect(getBoundingBox(str, x, y, w, align, useEllipsis));
 	}
 }
 
-void Font::drawAlphaString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) const {
+void Font::drawAlphaString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis, bool allowCharClipping) const {
 	Common::String renderStr = useEllipsis ? handleEllipsis(*this, str, w) : str;
-	drawStringImpl(*this, dst, renderStr, x, y, w, color, align, deltax, true);
+	drawStringImpl(*this, dst, renderStr, x, y, w, color, align, deltax, true, allowCharClipping);
 }
 
-void Font::drawAlphaString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) const {
+void Font::drawAlphaString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis, bool allowCharClipping) const {
 	Common::U32String renderStr = useEllipsis ? handleEllipsis(*this, str, w) : str;
-	drawStringImpl(*this, dst, renderStr, x, y, w, color, align, deltax, true);
+	drawStringImpl(*this, dst, renderStr, x, y, w, color, align, deltax, true, allowCharClipping);
 }
 
-void Font::drawAlphaString(ManagedSurface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) const {
+void Font::drawAlphaString(ManagedSurface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis, bool allowCharClipping) const {
 	Common::String renderStr = useEllipsis ? handleEllipsis(*this, str, w) : str;
-	drawStringImpl(*this, dst, renderStr, x, y, w, color, align, deltax, true);
+	drawStringImpl(*this, dst, renderStr, x, y, w, color, align, deltax, true, allowCharClipping);
 
 	if (w != 0) {
 		dst->addDirtyRect(getBoundingBox(str, x, y, w, align, deltax, useEllipsis));
 	}
 }
 
-void Font::drawAlphaString(ManagedSurface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) const {
+void Font::drawAlphaString(ManagedSurface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis, bool allowCharClipping) const {
 	Common::U32String renderStr = useEllipsis ? handleEllipsis(*this, str, w) : str;
-	drawStringImpl(*this, dst, renderStr, x, y, w, color, align, deltax, true);
+	drawStringImpl(*this, dst, renderStr, x, y, w, color, align, deltax, true, allowCharClipping);
 
 	if (w != 0) {
 		dst->addDirtyRect(getBoundingBox(str, x, y, w, align, useEllipsis));
