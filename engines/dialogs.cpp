@@ -29,6 +29,7 @@
 
 #include "gui/about.h"
 #include "gui/gui-manager.h"
+#include "gui/helpdialog.h"
 #include "gui/message.h"
 #include "gui/options.h"
 #include "gui/saveload.h"
@@ -75,9 +76,11 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 	// The help button is disabled by default.
 	// To enable "Help", an engine needs to use a subclass of MainMenuDialog
 	// (at least for now, we might change how this works in the future).
-	_helpButton = new GUI::ButtonWidget(this, "GlobalMenu.Help", _("~H~elp"), Common::U32String(), kHelpCmd);
+	_helpButton = new GUI::ButtonWidget(this, "GlobalMenu.Help", _("Game ~H~elp"), Common::U32String(), kHelpCmd);
 	_helpButton->setVisible(_engine->hasFeature(Engine::kSupportsHelp));
 	_helpButton->setEnabled(_engine->hasFeature(Engine::kSupportsHelp));
+
+	new GUI::ButtonWidget(this, "GlobalMenu.MainHelp", _("~H~elp"), Common::U32String(), kMainHelpCmd);
 
 	new GUI::ButtonWidget(this, "GlobalMenu.About", _("~A~bout"), Common::U32String(), kAboutCmd);
 
@@ -126,6 +129,11 @@ void MainMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 					"Please consult the README for basic information, and for "
 					"instructions on how to obtain further assistance."));
 		dialog.runModal();
+		}
+		break;
+	case kMainHelpCmd: {
+		GUI::HelpDialog dlg;
+		dlg.runModal();
 		}
 		break;
 	case kLauncherCmd: {

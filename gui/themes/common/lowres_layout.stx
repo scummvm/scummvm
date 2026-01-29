@@ -341,9 +341,14 @@
 
 	<dialog name = 'Browser' overlays = 'screen' inset = '8' shading = 'dim'>
 		<layout type = 'vertical' padding = '8, 8, 0, 4'>
-			<widget name = 'Headline'
-					height = 'Globals.Line.Height'
-			/>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+				<widget name = 'Headline'
+						height = 'Globals.Line.Height'
+				/>
+				<widget name = 'Help'
+						type = 'Button'
+				/>
+			</layout>
 			<widget name = 'Path'
 					height = 'Globals.Line.Height'
 			/>
@@ -1714,10 +1719,16 @@
 					width = '120'
 					height = 'Globals.Button.Height'
 			/>
-			<widget name = 'Help'
-					width = '120'
-					height = 'Globals.Button.Height'
-			/>
+			<layout type = 'horizontal' padding = '4, 4, 4, 4' align = 'center' spacing='2'>
+				<widget name = 'Help'
+						width = '60'
+						height = 'Globals.Button.Height'
+				/>
+				<widget name = 'MainHelp'
+						width = '60'
+						height = 'Globals.Button.Height'
+				/>
+			</layout>
 			<widget name = 'About'
 					width = '120'
 					height = 'Globals.Button.Height'
