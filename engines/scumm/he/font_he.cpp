@@ -216,7 +216,7 @@ bool HEFont::renderString(int imageNum, int imageState, int xPos, int yPos, cons
 	}
 
 	// Draw the string!
-	ctx->font->drawString(&surface, string, xPos, yPos, stringWidth, ctx->fgColor, ctx->align);
+	ctx->font->drawString(&surface, string, xPos, yPos, stringWidth, ctx->fgColor, ctx->align, 0, false, true);
 
 	return true;
 }
