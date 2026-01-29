@@ -89,8 +89,7 @@ void GridItemWidget::drawWidget() {
 	const int kMarginY = _grid->_gridYSpacing / 3;
 
 	// Check if this entry is in the selected entries list
-	bool isSelected = (_activeEntry->entryID >= 0 && _activeEntry->entryID < (int)_grid->_selectedItems.size()) 
-					  && _grid->_selectedItems[_activeEntry->entryID];
+	bool isSelected = _grid->_selectedItems[_activeEntry->entryID];
 
 	// Draw selection highlight if this entry is selected or hovered
 	if (isSelected || _isHighlighted) {
