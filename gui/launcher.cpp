@@ -1446,9 +1446,8 @@ void LauncherSimple::confirmRemoveGames(const Common::Array<bool> &selectedItems
 
 	// Build confirmation message with count
 	Common::U32String confirmMsg = Common::U32String::format(
-		_("Do you really want to remove the following %d game configuration%s?\n\n"),
-		selectedCount,
-		selectedCount == 1 ? "" : "s");
+		_("Do you really want to remove the following %d game configuration(s)?\n\n"),
+		selectedCount);
 
 	// Build message from bool array (max 10 items, then ellipsis)
 	int displayCount = 0;
@@ -1847,9 +1846,8 @@ void LauncherGrid::confirmRemoveGames(const Common::Array<bool> &selectedItems) 
 
 	// Build the confirmation message with count
 	Common::U32String message = Common::U32String::format(
-		_("Do you really want to remove the following %d game configuration%s?\n\n"),
-		selectedCount,
-		selectedCount == 1 ? "" : "s");
+		_("Do you really want to remove the following %d game configuration(s)?\n\n"),
+		selectedCount);
 
 	// Add games to message (max 10 items, then ellipsis)
 	int displayCount = 0;

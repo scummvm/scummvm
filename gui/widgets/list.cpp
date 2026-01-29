@@ -506,7 +506,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 				} else
 					sendCommand(kListItemActivatedCmd, _selectedItem);
 			}
-				scrollToCurrent();
+			scrollToCurrent();
 			break;
 		}
 
