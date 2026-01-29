@@ -41,7 +41,17 @@ int DosFont::getCharWidth(uint32 chr) const {
 void DosFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
 	int srcPixel = chr * 8;
 	for (int sy = 0; sy < 8; sy++) {
+		// Boundary check for Y...
+		if (y + sy < 0 || y + sy >= dst->h) {
+			srcPixel++;
+			continue;
+		}
+
 		for (int sx = 0; sx < 8; sx++) {
+			// Boundary check for X...
+			if (x + sx < 0 || x + sx >= dst->w)
+				continue;
+
 			if (Graphics::DosFont::fontData_PCBIOS[srcPixel] & 1 << (7 - sx)) {
 				if (dst->format.bytesPerPixel == 1)
 					*((byte *)dst->getBasePtr(x + sx, y + sy)) = color;

@@ -333,7 +333,15 @@ void WinFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) con
 	GlyphEntry &glyph = _glyphs[characterToIndex(chr)];
 
 	for (uint16 i = 0; i < _pixHeight; i++) {
+		// Boundary check for Y...
+		if (y + i < 0 || y + (int)i >= dst->h)
+			continue;
+
 		for (uint16 j = 0; j < glyph.charWidth; j++) {
+			// Boundary check for X...
+			if (x + j < 0 || x + (int)j >= dst->w)
+				continue;
+
 			if (glyph.bitmap[j + i * glyph.charWidth]) {
 				if (dst->format.bytesPerPixel == 1)
 					*((byte *)dst->getBasePtr(x + j, y + i)) = color;

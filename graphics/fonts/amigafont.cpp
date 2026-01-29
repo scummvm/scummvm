@@ -279,14 +279,26 @@ uint32 AmigaFont::mapChar(uint32 c) const {
 }
 
 template<typename PixelType>
-void drawCharIntern(byte *ptr, uint32 pitch, int num, int bitOffset, byte *charData, int ySize, int modulo, uint32 color) {
+void drawCharIntern(byte *ptr, uint32 pitch, int num, int bitOffset, byte *charData, int ySize, int modulo, uint32 color, Surface *dst, int x, int y) {
 
 	PixelType *d = (PixelType *)ptr;
 	byte *s = charData;
 
 	for (int i = 0; i < ySize; i++) {
+		// Boundary check for Y...
+		if (y + i < 0 || y + i >= dst->h) {
+			s += modulo;
+			d = (PixelType *)((byte *)d + pitch) - num;
+			continue;
+		}
 
 		for (int j = bitOffset; j < bitOffset + num; j++) {
+			// Boundary check for X...
+			if (x + (j - bitOffset) < 0 || x + (j - bitOffset) >= dst->w) {
+				d++;
+				continue;
+			}
+
 			byte *b = s + (j >> 3);
 			byte bit = *b & (0x80 >> (j & 7));
 
@@ -299,7 +311,6 @@ void drawCharIntern(byte *ptr, uint32 pitch, int num, int bitOffset, byte *charD
 		s += modulo;
 		d = (PixelType *)((byte *)d + pitch) - num;
 	}
-
 }
 
 void AmigaFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const {
@@ -308,11 +319,11 @@ void AmigaFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) c
 	byte *ptr = (byte *)dst->getBasePtr(x, y);
 
 	if (dst->format.bytesPerPixel == 1)
-		drawCharIntern<byte>(ptr, dst->pitch, getPixels(chr), getOffset(chr), _charData, _font->_ySize, _font->_modulo, color);
+		drawCharIntern<byte>(ptr, dst->pitch, getPixels(chr), getOffset(chr), _charData, _font->_ySize, _font->_modulo, color, dst, x, y);
 	else if (dst->format.bytesPerPixel == 2)
-		drawCharIntern<uint16>(ptr, dst->pitch, getPixels(chr), getOffset(chr), _charData, _font->_ySize, _font->_modulo, color);
+		drawCharIntern<uint16>(ptr, dst->pitch, getPixels(chr), getOffset(chr), _charData, _font->_ySize, _font->_modulo, color, dst, x, y);
 	else if (dst->format.bytesPerPixel == 4)
-		drawCharIntern<uint32>(ptr, dst->pitch, getPixels(chr), getOffset(chr), _charData, _font->_ySize, _font->_modulo, color);
+		drawCharIntern<uint32>(ptr, dst->pitch, getPixels(chr), getOffset(chr), _charData, _font->_ySize, _font->_modulo, color, dst, x, y);
 }
 
 
