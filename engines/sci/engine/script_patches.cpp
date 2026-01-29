@@ -10487,6 +10487,26 @@ static const uint16 larry6HiresTramRestartPatch[] = {
 	PATCH_END
 };
 
+// WORKAROUND: Pathfinding algorithm difference
+//
+// After wearing a towel in the locker room, Larry is placed on an obstacle
+//  boundary and can walk out of bounds. We move him one pixel to the right.
+//
+// Applies to: All versions
+// Responsible method: wearTowel:changeState(9)
+// Fixes bug: #13804
+static const uint16 larry6HiresLockerPathfindingSignature[] = {
+	SIG_MAGICDWORD,
+	0x39, 0x53,                         // pushi 53   [ x: 83 ]
+	0x39, 0x6a,                         // pushi 6a   [ y: 106 ]
+	SIG_END
+};
+
+static const uint16 larry6HiresLockerPathfindingPatch[] = {
+	0x39, 0x54,                         // pushi 54   [ x: 84 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	{  true,     0, "disable mac volume restore",                  1, larry6HiresMacVolumeRestoreSignature, larry6HiresMacVolumeRestorePatch },
@@ -10499,6 +10519,7 @@ static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	{  true,   100, "fix plane width",                             1, larry6HiresPlaneWidthSignature,       larry6HiresPlaneWidthPatch },
 	{  true,   270, "fix incorrect setScale call",                 1, larry6HiresSetScaleSignature,         larry6HiresSetScalePatch },
 	{  true,   330, "fix whale oil lamp lockup",                   1, larry6HiresWhaleOilLampSignature,     larry6HiresWhaleOilLampPatch },
+	{  true,   340, "fix locker pathfinding",                      1, larry6HiresLockerPathfindingSignature,larry6HiresLockerPathfindingPatch },
 	{  true,   610, "phone operator crash",                        1, larry6HiresPhoneOperatorSignature,    larry6HiresPhoneOperatorPatch },
 	{  true,   620, "bathroom door sound",                         1, larry6HiresBathroomDoorSoundSignature,larry6HiresBathroomDoorSoundPatch },
 	{  true,   680, "room 680 exits",                              1, larry6HiresRoom680ExitsSignature,     larry6HiresRoom680ExitsPatch },
