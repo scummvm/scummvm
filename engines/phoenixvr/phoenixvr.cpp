@@ -944,13 +944,13 @@ Common::Error PhoenixVREngine::loadGameStream(Common::SeekableReadStream *slot) 
 			warpCursor = cursor;
 		}
 	}
-	debug("vars at %08lx", ms.pos());
+	debug("vars at %08x", (uint32)ms.pos());
 	for (auto &name : _script->getVarNames()) {
 		auto value = ms.readUint32LE();
 		debug("var %s: %u", name.c_str(), value);
 		g_engine->setVariable(name, value);
 	}
-	debug("vars end at %08lx", ms.pos());
+	debug("vars end at %08x", (uint32)ms.pos());
 	auto currentSubroutine = ms.readSint32LE();
 	_prevWarp = ms.readSint32LE();
 	debug("currentSubroutine %d, prev warp %d", currentSubroutine, _prevWarp);

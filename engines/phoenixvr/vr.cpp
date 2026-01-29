@@ -243,7 +243,7 @@ VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStrea
 				auto animChunkPos = s.pos();
 				auto animChunkId = s.readUint32LE();
 				auto animChunkSize = s.readUint32LE();
-				debug("animation frame at %08zx: %08x %u", animChunkPos, animChunkId, animChunkSize);
+				debug("animation frame at %08x: %08x %u", (uint32)animChunkPos, animChunkId, animChunkSize);
 				assert(animChunkSize >= 8);
 				Animation::Frame frame;
 				if (animChunkId == CHUNK_ANIMATION_BLOCK) {
