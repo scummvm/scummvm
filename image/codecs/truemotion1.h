@@ -21,9 +21,6 @@
 
 // Based on the TrueMotion 1 decoder by Alex Beregszaszi & Mike Melanson in FFmpeg
 
-// Only compile if SCI32 is enabled, TESTBED is enabled, ZVISION is enabled, or if we're building dynamic modules
-#if defined(ENABLE_SCI32) || defined(ENABLE_TESTBED) || defined(ENABLE_ZVISION) || defined(DYNAMIC_MODULES)
-
 #ifndef IMAGE_CODECS_TRUEMOTION1_H
 #define IMAGE_CODECS_TRUEMOTION1_H
 
@@ -103,4 +100,3 @@ private:
 } // End of namespace Image
 
 #endif // IMAGE_CODECS_TRUEMOTION1_H
-#endif // SCI32/Plugins guard
