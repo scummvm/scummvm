@@ -104,7 +104,7 @@ MODULE_OBJS += \
 	fs/emscripten/emscripten-fs-factory.o \
 	fs/emscripten/emscripten-posix-fs.o \
 	fs/emscripten/http-fs.o \
-	midi/webmidi.o 
+	midi/webmidi.o
 ifdef USE_CLOUD
 MODULE_OBJS += \
 	fs/emscripten/cloud-fs.o
@@ -299,8 +299,13 @@ MODULE_OBJS += \
 	taskbar/macosx/macosx-taskbar.o
 
 ifdef USE_TTS
+ifdef USE_NS_SPEECH_SYNTHESIZER
 MODULE_OBJS += \
 	text-to-speech/macosx/macosx-text-to-speech.o
+else
+MODULE_OBJS += \
+	text-to-speech/avfaudio/avfaudio-text-to-speech.o
+endif
 endif
 
 ifdef SDL_BACKEND
@@ -436,6 +441,12 @@ MODULE_OBJS += \
 	mutex/pthread/pthread-mutex.o \
 	graphics/ios/ios-graphics.o \
 	graphics/ios/renderbuffer.o
+
+ifdef USE_TTS
+MODULE_OBJS += \
+	text-to-speech/avfaudio/avfaudio-text-to-speech.o
+endif
+
 endif
 
 ifeq ($(BACKEND),maemo)

@@ -192,6 +192,7 @@ _updates=no
 _libunity=auto
 _dialogs=auto
 _tts=auto
+_osx_tts_backend=auto
 _gtk=auto
 _fribidi=auto
 _discord=auto
@@ -3221,6 +3222,10 @@ EOF
 			fi
 		fi
 
+		# The TTS backend can use either NSSpeechSynthesizer or AVSpeechSynthesizer. The latter
+		# is only available since macOS 10.14, while the former is available in older versions
+		# but deprecated in macOS 12. This coincides with the switch to Apple Silicon CPUs.
+		_osx_tts_backend="NSSpeechSynthesizer"
 		case $_host_cpu in
 		powerpc*)
 			# We use -force_cpusubtype_ALL to ensure the binary runs on every
@@ -3237,6 +3242,7 @@ EOF
 			;;
 		aarch64)
 			add_line_to_config_mk 'MACOSX_ARM64 = 1'
+			_osx_tts_backend="AVSpeechSynthesizer"
 			;;
 		esac
 
@@ -5373,17 +5379,38 @@ EOF
 			cc_check -lspeechd && _tts=yes
 			;;
 		darwin*)
-			# Check the API is available. The most recent API we need is for the NSSpeechSynthesizerDelegate protocol
-			cat > $TMPC << EOF
+			if test "$_osx_tts_backend" = "NSSpeechSynthesizer" ; then
+				# Check older NSSpeechSynthesizer API.
+				cat > $TMPC << EOF
 #include <AppKit/NSSpeechSynthesizer.h>
 @interface SpeechDelegate : NSObject<NSSpeechSynthesizerDelegate> {
 }
 @end
 int main(void) { return 0; }
 EOF
+				cc_check -ObjC++ -lobjc && _tts=yes
+			else
+				# Check the newer AVSpeechSynthesizer API is available
+				cat > $TMPC << EOF
+#import <AVFoundation/AVFoundation.h>
+@interface SpeechDelegate : NSObject<AVSpeechSynthesizerDelegate> {
+}
+@end
+int main(void) { return 0; }
+EOF
+				cc_check -ObjC++ -lobjc && _tts=yes
+			fi
+			;;
+		iphoneos)
+			cat > $TMPC << EOF
+#import <AVFoundation/AVFoundation.h>
+@interface SpeechDelegate : NSObject<AVSpeechSynthesizerDelegate> {
+}
+@end
+int main(void) { return 0; }
+EOF
 			cc_check -ObjC++ -lobjc && _tts=yes
 			;;
-		
 		emscripten)
 			# Emscripten has the "Web Speech API" available
 			_tts=yes
@@ -7243,7 +7270,18 @@ else
 		append_var LIBS '-lsapi -lole32'
 		;;
 	darwin*)
-		echo "osx"
+		if test "$_osx_tts_backend" = "NSSpeechSynthesizer" ; then
+			echo "osx (NSSpeechSynthesizer)"
+			_tts=yes
+			define_in_config_if_yes $_tts 'USE_NS_SPEECH_SYNTHESIZER'
+		else
+			echo "osx (AVSpeechSynthesizer)"
+			_tts=yes
+			append_var LIBS "-framework AVFoundation"
+		fi
+		;;
+	iphoneos)
+		echo "ios (AVSpeechSynthesizer)"
 		_tts=yes
 		;;
 	emscripten)

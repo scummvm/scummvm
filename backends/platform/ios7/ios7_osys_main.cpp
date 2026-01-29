@@ -53,6 +53,7 @@
 #include "backends/mutex/pthread/pthread-mutex.h"
 #include "backends/fs/chroot/chroot-fs-factory.h"
 #include "backends/fs/posix/posix-fs.h"
+#include "backends/text-to-speech/avfaudio/avfaudio-text-to-speech.h"
 #include "audio/mixer.h"
 #include "audio/mixer_intern.h"
 
@@ -159,6 +160,11 @@ void OSystem_iOS7::initBackend() {
 	_startTime = CACurrentMediaTime();
 
 	_graphicsManager = new iOSGraphicsManager();
+
+#ifdef USE_TTS
+	// Initialize Text to Speech manager
+	_textToSpeechManager = new AVFAudioTextToSpeechManager();
+#endif
 
 	setupMixer();
 
