@@ -145,6 +145,7 @@ protected:
 	Common::String	_title;
 	Common::String	_search;
 	MetadataParser	_metadataParser;
+	Common::StringArray _domainTitles;	// Store game titles for each domain
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 	ButtonWidget		*_listButton;
@@ -191,6 +192,33 @@ protected:
 	 * Remove multiple games and their addons.
 	 */
 	void removeGamesWithAddons(const Common::StringArray &domainsToRemove);
+
+	/**
+	 * Shared helper for removing games after confirmation.
+	 * Called by subclasses after building their own confirmation message.
+	 */
+	void removeGames(const Common::Array<bool> &selectedItems, bool isGrid);
+
+	/**
+	 * Handle game removal confirmation with selection validation.
+	 * Checks if at least one item is selected, then shows the removal
+	 * confirmation dialog with a list of games to be removed.
+	 */
+	void confirmRemoveGames(const Common::Array<bool> &selectedItems);
+
+	/**
+	 * Update selection after game removal.
+	 * Each subclass handles its own UI-specific selection logic.
+	 */
+	virtual void updateSelectionAfterRemoval() = 0;
+
+	/**
+	 * Check if any items are selected in the given array.
+	 */
+	bool hasAnySelection(const Common::Array<bool> &selectedItems) const;
+
+	// Get the selected items from the current view (list or grid).
+	virtual const Common::Array<bool>& getSelectedItems() const = 0;
 
 	/**
 	 * Handle "Edit game..." button.
@@ -246,6 +274,8 @@ public:
 	LauncherDisplayType getType() const override { return kLauncherDisplayList; }
 
 protected:
+	void updateSelectionAfterRemoval() override;
+	const Common::Array<bool>& getSelectedItems() const override;
 	void updateListing(int selPos = -1) override;
 	int getItemPos(int item) override;
 	void groupEntries(const Common::Array<LauncherEntry> &metadata);
@@ -253,7 +283,6 @@ protected:
 	void selectTarget(const Common::String &target) override;
 	int getSelected() override;
 	void build() override;
-	void removeMultipleGames(const Common::Array<int> &selectedItems);
 
 private:
 	GroupedListWidget *_list;
