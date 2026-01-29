@@ -117,8 +117,8 @@ void HuffmanDecoder::buildTable(uint numCodes) {
 	_table[kLastEntry].freq = 0x7FFF;
 	auto codeIdx = numCodes;
 	while (true) {
-		ushort idx = 0;
-		ushort smallest2 = kLastEntry, smallest1 = kLastEntry;
+		uint16 idx = 0;
+		uint16 smallest2 = kLastEntry, smallest1 = kLastEntry;
 		while (idx < codeIdx) {
 			auto freq = _table[idx].freq;
 			if (freq != 0) {

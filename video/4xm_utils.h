@@ -92,8 +92,8 @@ class HuffmanDecoder {
 	static constexpr uint kLastEntry = kMaxTableSize - 1;
 	struct HuffChar {
 		uint freq = 0;
-		ushort falseIdx = kMaxTableSize;
-		ushort trueIdx = kMaxTableSize;
+		uint16 falseIdx = kMaxTableSize;
+		uint16 trueIdx = kMaxTableSize;
 	};
 	HuffChar _table[kMaxTableSize] = {};
 	uint _startEntry = 0;
