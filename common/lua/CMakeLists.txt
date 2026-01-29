@@ -1,0 +1,61 @@
+add_library(common_lua)
+
+target_sources(
+  common_lua
+  PRIVATE double_serialization.cpp
+          lapi.cpp
+          lauxlib.cpp
+          lbaselib.cpp
+          lcode.cpp
+          ldblib.cpp
+          ldebug.cpp
+          ldo.cpp
+          lfunc.cpp
+          lgc.cpp
+          linit.cpp
+          liolib.cpp
+          llex.cpp
+          lmathlib.cpp
+          lmem.cpp
+          loadlib.cpp
+          lobject.cpp
+          lopcodes.cpp
+          loslib.cpp
+          lparser.cpp
+          lstate.cpp
+          lstring.cpp
+          lstrlib.cpp
+          ltable.cpp
+          ltablib.cpp
+          ltm.cpp
+          lua_persist.cpp
+          lua_persistence_util.cpp
+          lua_unpersist.cpp
+          lvm.cpp
+          lzio.cpp
+          scummvm_file.cpp
+  PRIVATE FILE_SET
+          HEADERS
+          FILES
+          double_serialization.h
+          lapi.h
+          lauxlib.h
+          lcode.h
+          ldebug.h
+          ldo.h
+          lfunc.h
+          lgc.h
+          llex.h
+          lmem.h
+          lobject.h
+          lopcodes.h
+          lparser.h
+          lstate.h
+          lstring.h
+          ltable.h
+          ltm.h
+          lua_persistence_util.h
+          lvm.h
+          lzio.h
+          scummvm_file.h
+)

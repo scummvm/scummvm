@@ -1,0 +1,23 @@
+{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "vcpkg",
+            "binaryDir": "${sourceDir}/build",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+            }
+        },
+        {
+            "name": "wii",
+            "toolchainFile": "$env{DEVKITPRO}/cmake/Wii.cmake",
+            "binaryDir": "${sourceDir}/build/wii",
+            "cacheVariables": {
+                "USE_SDL2": "OFF",
+                "PLATFORM_WII": "ON",
+                "DETECT_HOST": "OFF"
+            }
+        }
+    ]
+}

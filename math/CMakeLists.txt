@@ -1,0 +1,52 @@
+add_library(math)
+
+target_sources(
+  math
+  PRIVATE aabb.cpp
+          angle.cpp
+          cosinetables.cpp
+          dct.cpp
+          fft.cpp
+          frustum.cpp
+          glmath.cpp
+          line2d.cpp
+          line3d.cpp
+          matrix3.cpp
+          matrix4.cpp
+          mdct.cpp
+          plane.cpp
+          quat.cpp
+          ray.cpp
+          rdft.cpp
+          rect2d.cpp
+          sinetables.cpp
+          sinewindows.cpp
+          vector2d.cpp
+          vector3d.cpp
+          vector4d.cpp
+  PRIVATE FILE_SET
+          HEADERS
+          FILES
+          aabb.h
+          angle.h
+          cosinetables.h
+          dct.h
+          fft.h
+          frustum.h
+          glmath.h
+          line2d.h
+          line3d.h
+          matrix3.h
+          matrix4.h
+          mdct.h
+          plane.h
+          quat.h
+          ray.h
+          rdft.h
+          rect2d.h
+          sinetables.h
+          sinewindows.h
+          vector2d.h
+          vector3d.h
+          vector4d.h
+)

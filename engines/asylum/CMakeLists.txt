@@ -1,0 +1,101 @@
+add_library(asylum STATIC)
+
+target_sources(
+  asylum
+  PRIVATE puzzles/board.cpp
+          puzzles/boardkeyhidesto.cpp
+          puzzles/boardsalvation.cpp
+          puzzles/boardyouth.cpp
+          puzzles/clock.cpp
+          puzzles/fisherman.cpp
+          puzzles/hivecontrol.cpp
+          puzzles/hivemachine.cpp
+          puzzles/lock.cpp
+          puzzles/morguedoor.cpp
+          puzzles/pipes.cpp
+          puzzles/puzzle.cpp
+          puzzles/puzzles.cpp
+          puzzles/tictactoe.cpp
+          puzzles/timemachine.cpp
+          puzzles/vcr.cpp
+          puzzles/wheel.cpp
+          puzzles/writings.cpp
+          resources/actor.cpp
+          resources/data.cpp
+          resources/object.cpp
+          resources/encounters.cpp
+          resources/inventory.cpp
+          resources/polygons.cpp
+          resources/script.cpp
+          resources/special.cpp
+          resources/worldstats.cpp
+          system/config.cpp
+          system/cursor.cpp
+          system/graphics.cpp
+          system/savegame.cpp
+          system/screen.cpp
+          system/sound.cpp
+          system/speech.cpp
+          system/text.cpp
+          views/insertdisc.cpp
+          views/menu.cpp
+          views/resviewer.cpp
+          views/scene.cpp
+          views/scenetitle.cpp
+          views/video.cpp
+          asylum.cpp
+          console.cpp
+          metaengine.cpp
+          respack.cpp
+  PRIVATE FILE_SET
+          HEADERS
+          FILES
+          puzzles/board.h
+          puzzles/boardkeyhidesto.h
+          puzzles/boardsalvation.h
+          puzzles/boardyouth.h
+          puzzles/clock.h
+          puzzles/fisherman.h
+          puzzles/hivecontrol.h
+          puzzles/hivemachine.h
+          puzzles/lock.h
+          puzzles/morguedoor.h
+          puzzles/pipes.h
+          puzzles/puzzle.h
+          puzzles/puzzles.h
+          puzzles/tictactoe.h
+          puzzles/timemachine.h
+          puzzles/vcr.h
+          puzzles/wheel.h
+          puzzles/writings.h
+          resources/actor.h
+          resources/data.h
+          resources/object.h
+          resources/encounters.h
+          resources/inventory.h
+          resources/polygons.h
+          resources/script.h
+          resources/special.h
+          resources/worldstats.h
+          system/config.h
+          system/cursor.h
+          system/graphics.h
+          system/savegame.h
+          system/screen.h
+          system/sound.h
+          system/speech.h
+          system/text.h
+          views/insertdisc.h
+          views/menu.h
+          views/resviewer.h
+          views/scene.h
+          views/scenetitle.h
+          views/video.h
+          asylum.h
+          console.h
+          respack.h
+)
+
+add_library(asylum_detection)
+
+target_sources(asylum_detection PRIVATE detection.cpp)

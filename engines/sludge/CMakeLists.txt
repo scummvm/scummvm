@@ -1,0 +1,81 @@
+add_library(sludge STATIC)
+
+target_sources(
+  sludge
+  PRIVATE backdrop.cpp
+          bg_effects.cpp
+          builtin.cpp
+          cursors.cpp
+          debugger.cpp
+          event.cpp
+          fileset.cpp
+          floor.cpp
+          freeze.cpp
+          fonttext.cpp
+          function.cpp
+          graphics.cpp
+          hsi.cpp
+          imgloader.cpp
+          language.cpp
+          main_loop.cpp
+          metaengine.cpp
+          moreio.cpp
+          movie.cpp
+          newfatal.cpp
+          objtypes.cpp
+          people.cpp
+          region.cpp
+          savedata.cpp
+          saveload.cpp
+          sludge.cpp
+          sludger.cpp
+          sound.cpp
+          speech.cpp
+          sprbanks.cpp
+          sprites.cpp
+          statusba.cpp
+          thumbnail.cpp
+          timing.cpp
+          transition.cpp
+          variable.cpp
+          zbuffer.cpp
+  PRIVATE FILE_SET
+          HEADERS
+          FILES
+          builtin.h
+          cursors.h
+          debugger.h
+          event.h
+          fileset.h
+          floor.h
+          freeze.h
+          fonttext.h
+          function.h
+          graphics.h
+          hsi.h
+          imgloader.h
+          language.h
+          main_loop.h
+          moreio.h
+          movie.h
+          newfatal.h
+          objtypes.h
+          people.h
+          region.h
+          savedata.h
+          saveload.h
+          sludge.h
+          sludger.h
+          sound.h
+          speech.h
+          sprbanks.h
+          sprites.h
+          statusba.h
+          timing.h
+          variable.h
+          zbuffer.h
+)
+
+add_library(sludge_detection)
+
+target_sources(sludge_detection PRIVATE detection.cpp)
