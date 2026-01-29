@@ -27,7 +27,7 @@
 #include "graphics/pixelformat.h"
 
 namespace Graphics {
-class Surface;
+struct Surface;
 class Screen;
 } // namespace Graphics
 
