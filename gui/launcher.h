@@ -145,6 +145,7 @@ protected:
 	Common::String	_title;
 	Common::String	_search;
 	MetadataParser	_metadataParser;
+	Common::StringArray _domainTitles;	// Store game titles for each domain
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 	ButtonWidget		*_listButton;
@@ -200,10 +201,10 @@ protected:
 
 	/**
 	 * Handle game removal confirmation with selection validation.
-	 * Checks if at least one item is selected, then calls the subclass
-	 * implementation to show the removal confirmation dialog.
+	 * Checks if at least one item is selected, then shows the removal
+	 * confirmation dialog with a list of games to be removed.
 	 */
-	virtual void confirmRemoveGames(const Common::Array<bool> &selectedItems) = 0;
+	void confirmRemoveGames(const Common::Array<bool> &selectedItems);
 
 	/**
 	 * Update selection after game removal.
@@ -273,7 +274,6 @@ public:
 	LauncherDisplayType getType() const override { return kLauncherDisplayList; }
 
 protected:
-	void confirmRemoveGames(const Common::Array<bool> &selectedItems) override;
 	void updateSelectionAfterRemoval() override;
 	const Common::Array<bool>& getSelectedItems() const override;
 	void updateListing(int selPos = -1) override;

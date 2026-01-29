@@ -1027,7 +1027,6 @@ public:
 	LauncherDisplayType getType() const override { return kLauncherDisplayGrid; }
 
 protected:
-	void confirmRemoveGames(const Common::Array<bool> &selectedItems) override;
 	void updateSelectionAfterRemoval() override;
 	const Common::Array<bool>& getSelectedItems() const override;
 	void updateListing(int selPos = -1) override;
@@ -1041,7 +1040,6 @@ private:
 	GridWidget       *_grid;
 	SliderWidget     *_gridItemSizeSlider;
 	StaticTextWidget *_gridItemSizeLabel;
-	Common::StringArray _domainTitles; // Store game titles for each domain
 };
 #endif // !DISABLE_LAUNCHERDISPLAY_GRID
 
@@ -1157,6 +1155,7 @@ void LauncherSimple::updateListing(int selPos) {
 
 	// Retrieve a list of all games defined in the config file
 	_domains.clear();
+	_domainTitles.clear();
 	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
 	const bool scanEntries = (numEntries == -1) || ((int)domains.size() <= numEntries);
 
@@ -1219,6 +1218,7 @@ void LauncherSimple::updateListing(int selPos) {
 
 		l.push_back(gameDesc);
 		_domains.push_back(curDomain.key);
+		_domainTitles.push_back(curDomain.description);
 	}
 
 	const int oldSel = _list->getSelected();
@@ -1431,48 +1431,6 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 }
 
-void LauncherSimple::confirmRemoveGames(const Common::Array<bool> &selectedItems) {
-	// Validate that at least one item is selected
-	if (!hasAnySelection(selectedItems))
-		return;
-	
-	// Count selected items
-	int selectedCount = 0;
-	for (int i = 0; i < (int)selectedItems.size(); ++i) {
-		if (selectedItems[i]) {
-			selectedCount++;
-		}
-	}
-
-	// Build confirmation message with count
-	Common::U32String confirmMsg = Common::U32String::format(
-		_("Do you really want to remove the following %d game configuration(s)?\n\n"),
-		selectedCount);
-
-	// Build message from bool array (max 10 items, then ellipsis)
-	int displayCount = 0;
-	for (int i = 0; i < (int)selectedItems.size(); ++i) {
-		if (selectedItems[i]) {
-			// Get the game title from the list
-			confirmMsg += _list->getList()[i];
-			confirmMsg += Common::U32String("\n");
-			displayCount++;
-			if (displayCount >= 10)
-				break;
-		}
-	}
-
-	// Add ellipsis if more than 10 items are selected
-	if (selectedCount > 10) {
-		confirmMsg += Common::U32String("...\n");
-	}
-
-	MessageDialog alert(confirmMsg, _("Yes"), _("No"));
-
-	if (alert.runModal() == GUI::kMessageOK) {
-		removeGames(selectedItems, false);
-	}
-}
 
 void LauncherSimple::updateSelectionAfterRemoval() {
 	if (_list) {
@@ -1828,10 +1786,20 @@ void LauncherGrid::build() {
 	updateButtons();
 }
 
-void LauncherGrid::confirmRemoveGames(const Common::Array<bool> &selectedItems) {
-	if (!_grid)
-		return;
-	
+
+void LauncherGrid::updateSelectionAfterRemoval() {
+	if (_grid) {
+		_grid->clearSelection();
+		
+		// Select at the same index as before, or the last item if out of bounds
+		_grid->_lastSelectedEntryID = MIN((int)getSelectedItems().size() - 1, _grid->_lastSelectedEntryID);
+		_grid->markSelectedItem(_grid->_lastSelectedEntryID, true);
+	}
+}
+
+#endif // !DISABLE_LAUNCHERDISPLAY_GRID
+
+void LauncherDialog::confirmRemoveGames(const Common::Array<bool> &selectedItems) {
 	// Validate that at least one item is selected
 	if (!hasAnySelection(selectedItems))
 		return;
@@ -1872,22 +1840,9 @@ void LauncherGrid::confirmRemoveGames(const Common::Array<bool> &selectedItems) 
 
 	MessageDialog alert(message, Common::U32String(_("Yes")), Common::U32String(_("No")));
 	if (alert.runModal() == GUI::kMessageOK) {
-		removeGames(selectedItems, true);
+		removeGames(selectedItems, getType() == kLauncherDisplayGrid);
 	}
 }
-
-void LauncherGrid::updateSelectionAfterRemoval() {
-	if (_grid) {
-		_grid->clearSelection();
-		const Common::Array<bool> &selectedItems = getSelectedItems();
-		
-		// Select at the same index as before, or the last item if out of bounds
-		_grid->_lastSelectedEntryID = MIN((int)selectedItems.size() - 1, _grid->_lastSelectedEntryID);
-		_grid->markSelectedItem(_grid->_lastSelectedEntryID, true);
-	}
-}
-
-#endif // !DISABLE_LAUNCHERDISPLAY_GRID
 
 void LauncherDialog::removeGames(const Common::Array<bool> &selectedItems, bool isGrid) {
 	if (selectedItems.empty())
