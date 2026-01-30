@@ -296,6 +296,7 @@ public:
 	void pickBooksFromShelf1(HotSpot *hotspot);
 	void pickBooksFromShelf2(HotSpot *hotspot);
 	void pickBooksFromShelf3(HotSpot *hotspot);
+	void giveFormulaToLibrarian(int inventoryObject, HotSpot *hotspot);
 	void pickUpBook(int i);
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);

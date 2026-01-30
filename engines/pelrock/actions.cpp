@@ -123,6 +123,7 @@ const CombinationEntry combinationTable[] = {
 	{1, 53, &PelrockEngine::giveIdToGuard},
 	{5, 53, &PelrockEngine::giveMoneyToGuard},
 	{7, 353, &PelrockEngine::useAmuletWithStatue},
+	{8, 102, &PelrockEngine::giveFormulaToLibrarian},
 	// End marker
 	{WILDCARD, WILDCARD, nullptr}};
 
@@ -177,7 +178,7 @@ void PelrockEngine::buyFromStore(HotSpot *hotspot, int stickerId) {
 		if (hotspot->extra == 69) {
 			_room->disableSprite(15, 3); // Disable monkey brain sprite
 		}
-		_state->addInventoryItem(hotspot->extra);
+		addInventoryItem(hotspot->extra);
 		_currentHotspot = nullptr;
 		walkLoop(224, 283, ALFRED_LEFT);
 		_dialog->say(_res->_ingameTexts[CUESTA1000]);
@@ -619,6 +620,12 @@ void PelrockEngine::pickBooksFromShelf3(HotSpot *hotspot) {
 	pickUpBook(3);
 }
 
+void PelrockEngine::giveFormulaToLibrarian(int inventoryObject, HotSpot *hotspot) {
+	_dialog->say(_res->_ingameTexts[REGALO_LIBRO_RECETAS]);
+	_state->removeInventoryItem(8);
+	addInventoryItem(59);
+}
+
 void PelrockEngine::pickUpBook(int i) {
 	if (!_state->hasInventoryItem(10)) {
 		_dialog->say(_res->_ingameTexts[VENGA_ACA]);
@@ -635,11 +642,11 @@ void PelrockEngine::pickUpBook(int i) {
 			int booksInInventory = _state->booksInInventory();
 			if (booksInInventory == 3) {
 				int firstBook = _state->findFirstBookIndex();
-				if(firstBook != -1)
+				if (firstBook != -1)
 					_state->removeInventoryItem(firstBook);
 				_dialog->say(_res->_ingameTexts[TENDRE_DEJAR_LIBRO]);
 			}
-			_state->addInventoryItem(_state->selectedBookIndex);
+			addInventoryItem(_state->selectedBookIndex);
 			_state->selectedBookIndex = -1;
 		}
 	}
@@ -672,7 +679,7 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 
 	debug("Using item %d on Alfred", inventoryObject);
 	switch (inventoryObject) {
-	case 63: // Recipe book
+	case 63: // Recipe
 		_res->loadAlfredSpecialAnim(1);
 		_alfredState.animState = ALFRED_SPECIAL_ANIM;
 		waitForSpecialAnimation();
@@ -681,8 +688,48 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		debug("After extra screen");
 		_dialog->say(_res->_ingameTexts[QUEASCO]);
 		break;
+	case 59: // Recipe book
+		if (!_state->hasInventoryItem(64)) {
+			_res->loadAlfredSpecialAnim(0);
+			_alfredState.animState = ALFRED_SPECIAL_ANIM;
+			waitForSpecialAnimation();
+			_dialog->say(_res->_ingameTexts[HOJAENTREPAGINAS]);
+			addInventoryItem(64);
+		} else {
+			_res->loadAlfredSpecialAnim(0);
+			_alfredState.animState = ALFRED_SPECIAL_ANIM;
+			waitForSpecialAnimation();
+			_dialog->say(_res->_ingameTexts[NOENTIENDONADA]);
+		}
+		break;
+	case 17: // Egyptian book
+		_res->loadAlfredSpecialAnim(0);
+		_alfredState.animState = ALFRED_SPECIAL_ANIM;
+		waitForSpecialAnimation();
+		_dialog->say(_res->_ingameTexts[YASEEGIPCIO]);
+		_state->setFlag(FLAG_ALFRED_SABE_EGIPCIO, true);
+		break;
+	case 24:
+		_res->loadAlfredSpecialAnim(0);
+		_alfredState.animState = ALFRED_SPECIAL_ANIM;
+		waitForSpecialAnimation();
+		_dialog->say(_res->_ingameTexts[COSASAPRENDIDO]);
+		_state->setFlag(FLAG_ALFRED_INTELIGENTE, true);
+		break;
+	case 64:
+		_res->loadAlfredSpecialAnim(0);
+		_alfredState.animState = ALFRED_SPECIAL_ANIM;
+		waitForSpecialAnimation();
+		loadExtraScreenAndPresent(5);
+		if(_state->getFlag(FLAG_ALFRED_SABE_EGIPCIO)) {
+			_dialog->say(_res->_ingameTexts[FORMULAVIAJETIEMPO]);
+		}
+		else {
+			_dialog->say(_res->_ingameTexts[QUELASTIMA_NOSEEGIPCIO]);
+		}
+		break;
 	case 0: // yellow book
-		_res->loadAlfredSpecialAnim(2);
+		_res->loadAlfredSpecialAnim(0);
 		_alfredState.animState = ALFRED_SPECIAL_ANIM;
 		waitForSpecialAnimation();
 		_dialog->say(_res->_ingameTexts[CUENTOPARECIDO]);

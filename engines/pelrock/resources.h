@@ -49,7 +49,7 @@ public:
 	void clearSpecialAnim();
 	void loadInventoryItems();
 	void loadHardcodedText();
-	void loadComputerText();
+	Common::StringArray loadComputerText();
 	void getExtraScreen(int screenIndex, byte *screenBuf, byte *palette);
 	Common::Array<Common::StringArray> getCredits();
 	Common::Array<Common::Array<Common::String>> processTextData(byte *data, size_t size, bool decode = false);
