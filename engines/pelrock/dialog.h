@@ -65,7 +65,6 @@ private:
 	uint32 parseChoices(const byte *data, uint32 dataSize, uint32 startPos, Common::Array<ChoiceOption> *outChoices);
 	void setCurSprite(int index);
 	void checkMouse();
-	void sayAlfred(Common::StringArray texts);
 	bool checkAllSubBranchesExhausted(const byte *data, uint32 dataSize, uint32 startPos, int currentChoiceLevel);
 
 public:
@@ -76,6 +75,7 @@ public:
 	int selectChoice(Common::Array<Common::String> &choices, byte *compositeBuffer);
 	void startConversation(const byte *conversationData, uint32 dataSize, byte npcIndex, Sprite *alfredAnimSet = nullptr);
 	void sayAlfred(Description description);
+	void sayAlfred(Common::StringArray texts);
 	void say(Common::StringArray texts, byte spriteIndex = 0);
 	void say(Common::StringArray texts, int16 x, int16 y);
 	bool processColorAndTrim(Common::StringArray &lines, byte &speakerId);

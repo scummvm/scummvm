@@ -24,6 +24,7 @@
 #include "pelrock/pelrock.h"
 #include "pelrock/room.h"
 #include "pelrock/util.h"
+#include "resources.h"
 
 namespace Pelrock {
 

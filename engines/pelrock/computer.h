@@ -26,6 +26,7 @@
 #include "common/str.h"
 
 #include "pelrock/events.h"
+#include "pelrock/library_books.h"
 
 namespace Pelrock {
 
@@ -34,12 +35,14 @@ class PelrockEngine;
 class Computer {
 public:
 	Computer(PelrockEventManager *eventMan);
+
 	~Computer();
 
 	/**
 	 * @return Book index if a book was memorized, -1 otherwise
 	 */
 	int run();
+	const char *_memorizedMsg;      // "Bueno... Tendre que buscar en la estanteria de la %c"
 
 private:
 	enum ComputerState {
@@ -59,6 +62,7 @@ private:
 	char _searchLetter;
 	int _searchType;  // 0 = title, 1 = author
 	Common::Array<int> _searchResults;
+	Common::Array<LibraryBook> _libraryBooks;
 	int _currentResult;
 	int _memorizedBookIndex;  // Index of book that was memorized (-1 if none)
 
@@ -77,7 +81,6 @@ private:
 	const char *_optSeguir;         // "(S)eguir"
 	const char *_optCancelar;       // "(C)ancelar"
 	const char *_noResults;         // "No se encontraron libros"
-	const char *_memorizedMsg;      // "Bueno... Tendre que buscar en la estanteria de la %c"
 
 	void loadBackground();
 	void cleanup();
@@ -87,6 +90,7 @@ private:
 	void performSearch();
 	void drawScreen();
 	void memorizeBook(int bookIndex);
+	void init();
 };
 
 } // End of namespace Pelrock

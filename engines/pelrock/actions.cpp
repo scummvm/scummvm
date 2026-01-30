@@ -608,15 +608,15 @@ void PelrockEngine::closeLibraryIndoorsDoor(HotSpot *hotspot) {
 }
 
 void PelrockEngine::pickBooksFromShelf1(HotSpot *hotspot) {
-	pickUpBook(0);
-}
-
-void PelrockEngine::pickBooksFromShelf2(HotSpot *hotspot) {
 	pickUpBook(1);
 }
 
-void PelrockEngine::pickBooksFromShelf3(HotSpot *hotspot) {
+void PelrockEngine::pickBooksFromShelf2(HotSpot *hotspot) {
 	pickUpBook(2);
+}
+
+void PelrockEngine::pickBooksFromShelf3(HotSpot *hotspot) {
+	pickUpBook(3);
 }
 
 void PelrockEngine::pickUpBook(int i) {
@@ -632,40 +632,17 @@ void PelrockEngine::pickUpBook(int i) {
 			_dialog->say(_res->_ingameTexts[EL_LIBRO_NOESTA_AQUI]);
 		} else {
 			_state->libraryShelf = -1;
+			int booksInInventory = _state->booksInInventory();
+			if (booksInInventory == 3) {
+				int firstBook = _state->findFirstBookIndex();
+				if(firstBook != -1)
+					_state->removeInventoryItem(firstBook);
+				_dialog->say(_res->_ingameTexts[TENDRE_DEJAR_LIBRO]);
+			}
+			_state->addInventoryItem(_state->selectedBookIndex);
+			_state->selectedBookIndex = -1;
 		}
 	}
-	// if (AlfredActivity.stanteriaABuscar == -1)// no ha memorizado
-	// 												// ninguno
-	// 		AlfredActivity.myMovingAlfredThread
-	// 				.saySomething(AlfredActivity.extraThingsToTranslate[54]);
-	// 	else
-	// 	{
-	// 		if (AlfredActivity.stanteriaABuscar != i)// estanteria
-	// 													// equivocada
-	// 			AlfredActivity.myMovingAlfredThread
-	// 					.saySomething(AlfredActivity.extraThingsToTranslate[66]);
-	// 		else
-	// 		// coge el libro
-	// 		{
-
-	// 			AlfredActivity.stanteriaABuscar = -1;
-
-	// 			int hml = howManyLibrosTengo();
-
-	// 			if (hml == 3)
-	// 			{
-	// 				int in = getFirstBook();
-	// 				if (in != -1)
-	// 					AlfredActivity.removeUsingObject(in);
-
-	// 				AlfredActivity.myMovingAlfredThread
-	// 						.saySomething(AlfredActivity.extraThingsToTranslate[67]);
-	// 			}
-
-	// 			AlfredActivity
-	// 					.addInventoryItem(11 + AlfredActivity.newShowLibro.index);
-	// 		}
-	// 	}
 }
 
 void PelrockEngine::performActionTrigger(uint16 actionTrigger) {

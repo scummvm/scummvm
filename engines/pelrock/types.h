@@ -481,7 +481,10 @@ struct GameStateData {
 	Common::Array<byte> inventoryItems;
 	int16 selectedInventoryItem = -1;
 
+
 	int libraryShelf = -1;
+	int selectedBookIndex = -1;
+	unsigned char bookLetter = '\0';
 	Common::HashMap<byte, Common::Array<Sticker>> stickersPerRoom;
 	Common::HashMap<byte, Common::Array<ExitChange>> roomExitChanges;
 	Common::HashMap<byte, Common::Array<WalkBoxChange>> roomWalkBoxChanges;
@@ -548,6 +551,28 @@ struct GameStateData {
 	void setRootDisabledState(byte room, byte root, bool disabled) {
 		conversationRootsState[room * 4 + root] = disabled ? 1 : 0;
 	}
+
+	int findFirstBookIndex() {
+		for (uint i = 0; i < inventoryItems.size(); i++) {
+			int x = inventoryItems[i];
+			if ((x >= 11) && (x <= 58))
+				return x;
+		}
+		return -1;
+	}
+
+
+	int booksInInventory() {
+		int l = inventoryItems.size();
+		int count = 0;
+		for (int i = 0; i < l; i++) {
+			int x = inventoryItems[i];
+			if ((x >= 11) && (x <= 58))
+				count++;
+		}
+		return count;
+	}
+
 };
 
 struct SaveGameData {

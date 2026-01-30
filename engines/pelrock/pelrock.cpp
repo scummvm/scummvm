@@ -329,7 +329,6 @@ void PelrockEngine::checkMouse() {
 	if (_alfredState.animState == ALFRED_WALKING && !_alfredState.isWalkingCancelable) {
 		// Ignore clicks while Alfred is walking
 		_events->_leftMouseClicked = false;
-		debug("Ignoring mouse click while Alfred is walking");
 		return;
 	}
 
@@ -1308,6 +1307,11 @@ void PelrockEngine::gameLoop() {
 void PelrockEngine::computerLoop() {
 	Computer computer(_events);
 	computer.run();
+	if(_state->selectedBookIndex != -1 && _state->bookLetter != '\0') {
+		Common::StringArray lines;
+		lines.push_back(Common::String::format(computer._memorizedMsg, _state->bookLetter));
+		_dialog->sayAlfred(lines);
+	}
 }
 
 void PelrockEngine::extraScreenLoop() {
