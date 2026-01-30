@@ -42,7 +42,7 @@ bool PelrockConsole::cmdLoadRoom(int argc, const char **argv) {
 
 	int roomNumber = atoi(argv[1]);
 	g_engine->setScreen(roomNumber, ALFRED_DOWN);
-	debugPrintf("Loaded room %d", roomNumber);
+	debugPrintf("Loaded room %d\n", roomNumber);
 	return true;
 }
 

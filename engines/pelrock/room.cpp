@@ -198,6 +198,7 @@ void RoomManager::setActionMask(HotSpot *hotspot, byte actionMask) {
 }
 
 void RoomManager::addWalkbox(WalkBox walkbox) {
+	_currentRoomWalkboxes.push_back(walkbox);
 	g_engine->_state->roomWalkBoxChanges[_currentRoomNumber].push_back({_currentRoomNumber, walkbox.index, walkbox});
 }
 

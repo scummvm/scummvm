@@ -189,31 +189,61 @@ void PelrockEngine::buyFromStore(HotSpot *hotspot, int stickerId) {
 }
 
 void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte rootIndex) {
-	if (actionTrigger == 328) {
+	switch (actionTrigger) {
+	case 328:
 		debug("Disabling root %d in room %d", rootIndex, room);
 		_state->setRootDisabledState(room, rootIndex, true);
-	} else if (actionTrigger == 329) {
+		break;
+	case 329:
 		debug("Would now enable X easter egg");
-	} else if (actionTrigger == 258) {
+		break;
+	case 258:
 		_state->setFlag(FLAG_GUARDIA_PIDECOSAS, true);
 		_state->setRootDisabledState(4, 1, true);
-	} else if (actionTrigger == 259) {
+		break;
+	case 259:
 		_dialog->say(_res->_ingameTexts[NO_EMPECEMOS]);
-	} else if (actionTrigger == 260) {
+		break;
+	case 260:
 		_dialog->say(_res->_ingameTexts[CUERPO_DANONE], 1);
 		_dialog->say(_res->_ingameTexts[CABEZA_HUECA]);
-	} else if (actionTrigger == 261) {
+		break;
+	case 261:
 		_dialog->say(_res->_ingameTexts[ESO_LO_SERAS_TU], 1);
-	} else if (actionTrigger == 262) {
+		break;
+	case 262:
 		_dialog->say(_res->_ingameTexts[DEMASIADO_NO_PUEDO_PENSAR], 1);
-	} else if (actionTrigger == 263) {
+		break;
+	case 263:
 		_dialog->say(_res->_ingameTexts[UN_POCO_RESPETO]);
-	} else if (actionTrigger == 264) {
+		break;
+	case 264:
 		// disables the two first roots, the second one will be enabled later!
 		_state->setRootDisabledState(room, rootIndex, true);
 		_state->setRootDisabledState(room, rootIndex + 1, true);
-	} else {
+		break;
+	case 272:
+		_state->setRootDisabledState(room, rootIndex, true);
+		break;
+	case 273:
+		WalkBox w1;
+		w1.x = 436;
+		w1.y = 356;
+		w1.w = 4;
+		w1.h = 14;
+		w1.flags = 0;
+		WalkBox w2;
+		w2.x = 440;
+		w2.y = 368;
+		w2.w = 148;
+		w2.h = 2;
+		w2.flags = 0;
+
+		_room->addWalkbox(w1);
+		_room->addWalkbox(w2);
+	default:
 		debug("Got actionTrigger %d in dialogActionTrigger, but no handler defined", actionTrigger);
+		break;
 	}
 }
 
@@ -535,6 +565,7 @@ void PelrockEngine::giveIdToGuard(int inventoryObject, HotSpot *hotspot) {
 	}
 	if (_state->getFlag(FLAG_SOBORNO_PORTERO) && _state->getFlag(FLAG_GUARDIA_DNI_ENTREGADO)) {
 		_state->setRootDisabledState(4, 2, true);
+		_room->enableSprite(4, 2, 100, true);
 		return;
 	}
 }
@@ -551,6 +582,8 @@ void PelrockEngine::giveMoneyToGuard(int inventoryObject, HotSpot *hotspot) {
 	}
 	if (_state->getFlag(FLAG_SOBORNO_PORTERO) && _state->getFlag(FLAG_GUARDIA_DNI_ENTREGADO)) {
 		_state->setRootDisabledState(4, 2, true);
+		_room->enableSprite(2, 100, true);
+		_room->enableSprite(3, 100, true);
 		return;
 	}
 }
@@ -715,6 +748,8 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		waitForSpecialAnimation();
 		_dialog->say(_res->_ingameTexts[COSASAPRENDIDO]);
 		_state->setFlag(FLAG_ALFRED_INTELIGENTE, true);
+		_state->setRootDisabledState(14, 0, true);
+		_state->setRootDisabledState(14, 1, true);
 		break;
 	case 64:
 		_res->loadAlfredSpecialAnim(0);

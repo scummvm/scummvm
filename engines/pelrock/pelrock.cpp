@@ -435,7 +435,7 @@ void PelrockEngine::updatePaletteAnimations() {
 }
 
 void PelrockEngine::paintDebugLayer() {
-	bool showWalkboxes = false;
+	bool showWalkboxes = true;
 
 	if (showWalkboxes) {
 		for (uint i = 0; i < _room->_currentRoomWalkboxes.size(); i++) {

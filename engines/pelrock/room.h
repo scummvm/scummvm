@@ -51,6 +51,12 @@ static const int unpickableHotspotExtras[] = {
 	362,
 };
 
+enum PersistType {
+	PERSIST_TEMP,
+	PERSIST_PERM,
+	PERSIST_BOTH
+};
+
 class RoomManager {
 public:
 	RoomManager();
