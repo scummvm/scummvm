@@ -1718,6 +1718,62 @@ void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
 		return;
 
 	int size = getResourceSize(type, idx);
+	
+	// WORKAROUND: The MI2 DOS NI demo relies on a prerecorded save file ("demo.rec") to start correctly.
+	// Without it, the demo can select an invalid path and attempt to load missing rooms.
+	// We patch script 77 to force the intended startup behavior so the demo begins in a valid scene.
+	// ScummVM does not currently support playback of the 'demo.rec' file so it will crash in other places.
+	if (_game.id == GID_MONKEY2 &&
+	    (_game.features & GF_DEMO) &&
+	    _game.platform == Common::kPlatformDOS &&
+	    _game.version == 5) {
+
+	    if (type == rtScript && idx == 77) {
+	        byte *scriptRes = getResourceAddress(type, idx);
+	        const uint32 scriptResSize = (size > 0) ? (uint32)size : 0;
+
+	        byte *code = scriptRes + 8;
+	        const uint32 codeSize = scriptResSize - 8;
+
+	            const byte PutActorInRoom4Pattern[] = { 0x2D, 0x01, 0x04, 0x01, 0x01 };
+
+	            if (codeSize >= (uint32)sizeof(PutActorInRoom4Pattern)) {
+	                for (uint32 i = 0; i + (uint32)sizeof(PutActorInRoom4Pattern) <= codeSize; ++i) {
+	                    if (memcmp(code + i, PutActorInRoom4Pattern, sizeof(PutActorInRoom4Pattern)) == 0) {
+	                        code[i + 2] = 0x03;
+	                        break;
+	                    }
+	                }
+	            }
+
+	            const byte OverrideInstallPattern[] = { 0x58, 0x01, 0x18, 0x1E, 0x00 };
+
+	            if (codeSize >= (uint32)sizeof(OverrideInstallPattern)) {
+	                for (uint32 i = 0; i + (uint32)sizeof(OverrideInstallPattern) <= codeSize; ++i) {
+	                    if (memcmp(code + i, OverrideInstallPattern, sizeof(OverrideInstallPattern)) == 0) {
+	                        code[i + 0] = 0x58;
+	                        code[i + 1] = 0x00;
+	                        code[i + 2] = 0x80;
+	                        code[i + 3] = 0x80;
+	                        code[i + 4] = 0x80;
+	                        break;
+	                    }
+	                }
+	            }
+
+	            const byte OverrideDecisionTestPattern[] = { 0xA8, 0x05, 0x00, 0x2D, 0x00 };
+	            const byte SetOverrideVarTrue[] = { 0x1A, 0x05, 0x00, 0x01, 0x00 };
+
+	            if (codeSize >= (uint32)sizeof(OverrideDecisionTestPattern)) {
+	                for (uint32 i = 0; i + (uint32)sizeof(OverrideDecisionTestPattern) <= codeSize; ++i) {
+	                    if (memcmp(code + i, OverrideDecisionTestPattern, sizeof(OverrideDecisionTestPattern)) == 0) {
+	                        memcpy(code + i, SetOverrideVarTrue, sizeof(SetOverrideVarTrue));
+	                        break;
+	                    }
+	                }
+	            }
+	    	}
+		}
 
 	// WORKAROUND: FM-TOWNS Zak used the extra 40 pixels at the bottom to increase the inventory to 10 items
 	// if we trim to 200 pixels, we can show only 6 items
