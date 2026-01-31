@@ -229,12 +229,16 @@ typedef Common::Array<DiaryPage> DiaryPages;
 
 typedef Common::HashMap<Common::String, bool> PlayedMediaTable;
 
-struct ActiveSubtitle {
-	Sound subtitledSound;
-	Video::Subtitles *subs;
-	bool isSfx;
+enum SubtitleType {
+	kSubtitleAudio,
+	kSubtitleVideo
+};
 
-	ActiveSubtitle() : subs(nullptr), isSfx(false) {}
+struct SubtitleSlot {
+	Audio::SoundHandle handle;
+	Video::Subtitles *subs;
+
+	SubtitleSlot() : subs(nullptr) {}
 };
 
 class PrivateEngine : public Engine {
@@ -246,6 +250,9 @@ private:
 
 	// helper to generate the correct subtitle path
 	Common::Path getSubtitlePath(const Common::String &soundName);
+
+	bool isSfxSubtitle(const Video::Subtitles *subs);
+	bool isSlotActive(const SubtitleSlot &slot);
 
 public:
 	bool _shouldHighlightMasks;
@@ -312,14 +319,14 @@ public:
 	void skipVideo();
 	void destroyVideo();
 
-	void loadSubtitles(const Common::Path &path, Sound *sound = nullptr);
+	void loadSubtitles(const Common::Path &path, SubtitleType type, Sound *sound = nullptr);
 	// use to clean up sounds which have finished playing once
 	void updateSubtitles();
 	void destroySubtitles();
 	void adjustSubtitleSize();
 	Video::Subtitles *_videoSubtitles;
-	// list of subtitles attached to sound effects/speech this will allow multiple subtitles to be loaded without losing already loaded one
-	Common::List<ActiveSubtitle> _activeSubtitles;
+	SubtitleSlot _voiceSlot; // high priority (speech)
+	SubtitleSlot _sfxSlot;   // low priority (sfxs)
 	bool _useSubtitles;
 	bool _sfxSubtitles;
 
@@ -467,7 +474,6 @@ public:
 	void stopSound(Sound &sound);
 	bool isSoundPlaying();
 	bool isSoundPlaying(Sound &sound);
-	bool isSpeechActive();
 	void waitForSoundsToStop();
 	bool consumeEvents();
 	Sound _bgSound;

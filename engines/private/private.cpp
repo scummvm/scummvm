@@ -880,6 +880,16 @@ const char *PrivateEngine::getSymbolName(const char *name, const char *strippedN
 	return strippedName;
 }
 
+bool PrivateEngine::isSlotActive(const SubtitleSlot &slot) {
+	return slot.subs != nullptr && _mixer->isSoundHandleActive(slot.handle);
+}
+
+bool PrivateEngine::isSfxSubtitle(const Video::Subtitles *subs) {
+	if (!subs)
+		return false;
+	return subs->isSfx();
+}
+
 void PrivateEngine::selectPauseGame(Common::Point mousePos) {
 	if (_mode == 1) {
 		uint32 tol = 15;
@@ -898,7 +908,7 @@ void PrivateEngine::selectPauseGame(Common::Point mousePos) {
 					_pausedVideo = _videoDecoder;
 					_pausedMovieName = _currentMovie;
 				}
-				if (_videoSubtitles || !_activeSubtitles.empty()) {
+				if (_videoSubtitles || _voiceSlot.subs || _sfxSlot.subs) {
 					_system->hideOverlay();
 				}
 
@@ -935,7 +945,7 @@ void PrivateEngine::resumeGame() {
 	// we do this unconditionally because the casebook might have loaded
 	// different subtitles while we were paused
 	if (!_currentMovie.empty()) {
-		loadSubtitles(convertPath(_currentMovie));
+		loadSubtitles(convertPath(_currentMovie), kSubtitleVideo);
 	}
 
 	if (_videoDecoder) {
@@ -954,7 +964,7 @@ void PrivateEngine::resumeGame() {
 	// calling adjustSubtitleSize() makes the next drawSubtitle call perform a full redraw
 	// automatically, so we don't need to pass 'true'
 	adjustSubtitleSize();
-	if (_videoSubtitles || !_activeSubtitles.empty()) {
+	if (_videoSubtitles || _voiceSlot.subs || _sfxSlot.subs) {
 		_system->showOverlay(false);
 		_system->clearOverlay();
 
@@ -962,19 +972,13 @@ void PrivateEngine::resumeGame() {
 		if (_videoDecoder && _videoSubtitles)
 			_videoSubtitles->drawSubtitle(_videoDecoder->getTime(), false, _sfxSubtitles);
 
-		bool speechPlaying = isSpeechActive();
 		// draw all remaining active subtitles
-		// (later entries draw on top of earlier ones)
-		for (const auto &entry : _activeSubtitles) {
-
-			// if this is an sfx subtitle, and speech is currently playing, skip drawing it
-			// the subtitle stays in the list (in memory), but is not drawn this frame because a speech is playing
-			if (entry.isSfx && speechPlaying)
-				continue;
-
-			// otherwise, draw it using the current time
-			uint32 time = _mixer->getElapsedTime(entry.subtitledSound.handle).msecs();
-			entry.subs->drawSubtitle(time, false, _sfxSubtitles);
+		if (isSlotActive(_voiceSlot)) {
+			uint32 time = _mixer->getElapsedTime(_voiceSlot.handle).msecs();
+			_voiceSlot.subs->drawSubtitle(time, false, _sfxSubtitles);
+		} else if (isSlotActive(_sfxSlot)) {
+			uint32 time = _mixer->getElapsedTime(_sfxSlot.handle).msecs();
+			_sfxSlot.subs->drawSubtitle(time, false, _sfxSubtitles);
 		}
 	}
 }
@@ -2367,7 +2371,7 @@ void PrivateEngine::playSound(Sound &sound, const Common::String &name, bool loo
 	_mixer->stopHandle(sound.handle);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &sound.handle, stream, -1, Audio::Mixer::kMaxChannelVolume);
 
-	loadSubtitles(path, &sound);
+	loadSubtitles(path, kSubtitleAudio, &sound);
 }
 
 void PrivateEngine::stopForegroundSounds() {
@@ -2387,6 +2391,14 @@ void PrivateEngine::stopSounds() {
 
 void PrivateEngine::stopSound(Sound &sound) {
 	_mixer->stopHandle(sound.handle);
+	if (_voiceSlot.handle == sound.handle && _voiceSlot.subs) {
+		delete _voiceSlot.subs;
+		_voiceSlot.subs = nullptr;
+	}
+	if (_sfxSlot.handle == sound.handle && _sfxSlot.subs) {
+		delete _sfxSlot.subs;
+		_sfxSlot.subs = nullptr;
+	}
 	sound.name.clear();
 }
 
@@ -2396,16 +2408,6 @@ bool PrivateEngine::isSoundPlaying() {
 
 bool PrivateEngine::isSoundPlaying(Sound &sound) {
 	return _mixer->isSoundHandleActive(sound.handle);
-}
-
-bool PrivateEngine::isSpeechActive() {
-	for (const auto &entry : _activeSubtitles) {
-		// a sound is speech if it is not marked as sfx
-		// we also ensure the sound handle is actually still playing in the mixer
-		if (!entry.isSfx && _mixer->isSoundHandleActive(entry.subtitledSound.handle))
-			return true;
-	}
-	return false;
 }
 
 void PrivateEngine::waitForSoundsToStop() {
@@ -2460,7 +2462,7 @@ bool PrivateEngine::consumeEvents() {
 
 void PrivateEngine::adjustSubtitleSize() {
 	debugC(1, kPrivateDebugFunction, "%s()", __FUNCTION__);
-	if (!_videoSubtitles && _activeSubtitles.empty()) return;
+	if (!_videoSubtitles && !_voiceSlot.subs && !_sfxSlot.subs) return;
 	// calculate layout first then apply to both active sounds and video subtitled sound
 	// Subtitle positioning constants (as percentages of screen height)
 	const int HORIZONTAL_MARGIN = 20;
@@ -2498,14 +2500,18 @@ void PrivateEngine::adjustSubtitleSize() {
 		_videoSubtitles->setFont("LiberationSans-Italic.ttf", fontSize, Video::Subtitles::kFontStyleItalic);
 	}
 
-	// apply to all active audio aubtitles
-	for (auto &entry : _activeSubtitles) {
-		if (entry.subs) {
-			entry.subs->setBBox(rect);
-			entry.subs->setColor(0xff, 0xff, 0x80);
-			entry.subs->setFont("LiberationSans-Regular.ttf", fontSize, Video::Subtitles::kFontStyleRegular);
-			entry.subs->setFont("LiberationSans-Italic.ttf", fontSize, Video::Subtitles::kFontStyleItalic);
-		}
+	// apply to all active audio subtitles
+	if (_voiceSlot.subs) {
+		_voiceSlot.subs->setBBox(rect);
+		_voiceSlot.subs->setColor(0xff, 0xff, 0x80);
+		_voiceSlot.subs->setFont("LiberationSans-Regular.ttf", fontSize, Video::Subtitles::kFontStyleRegular);
+		_voiceSlot.subs->setFont("LiberationSans-Italic.ttf", fontSize, Video::Subtitles::kFontStyleItalic);
+	}
+	if (_sfxSlot.subs) {
+		_sfxSlot.subs->setBBox(rect);
+		_sfxSlot.subs->setColor(0xff, 0xff, 0x80);
+		_sfxSlot.subs->setFont("LiberationSans-Regular.ttf", fontSize, Video::Subtitles::kFontStyleRegular);
+		_sfxSlot.subs->setFont("LiberationSans-Italic.ttf", fontSize, Video::Subtitles::kFontStyleItalic);
 	}
 }
 
@@ -2530,7 +2536,7 @@ Common::Path PrivateEngine::getSubtitlePath(const Common::String &soundName) {
 	return subPath;
 }
 
-void PrivateEngine::loadSubtitles(const Common::Path &path, Sound *sound) {
+void PrivateEngine::loadSubtitles(const Common::Path &path, SubtitleType type, Sound *sound) {
 	debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, path.toString().c_str());
 	if (!_useSubtitles)
 		return;
@@ -2547,21 +2553,42 @@ void PrivateEngine::loadSubtitles(const Common::Path &path, Sound *sound) {
 		delete newSub;
 		return;
 	}
-	bool isSfx = newSub->isSfx();
-	if (sound) {
-		// we do not check priority here and we do not delete any loaded sounds if they have low priority
-		// we simply store it, the active list acts as our cache
-		// updateSubtitles will decide if it should be visible
-		ActiveSubtitle entry;
-		entry.subtitledSound = *sound;
-		entry.subs = newSub;
-		entry.isSfx = isSfx;
-		_activeSubtitles.push_back(entry);
-	} else {
-		// if sound is null, we assume this is for the video decoder
+	if (type == kSubtitleVideo) {
 		if (_videoSubtitles)
 			delete _videoSubtitles;
 		_videoSubtitles = newSub;
+	}
+	else if (type == kSubtitleAudio) {
+		if (!sound) {
+			warning("PrivateEngine::loadSubtitles: Audio type requested but no Sound provided");
+			delete newSub;
+			return;
+		}
+
+		bool isSfx = isSfxSubtitle(newSub);
+
+		if (isSfx) {
+			// if voice is currently playing, ignore incoming sfx
+			if (isSlotActive(_voiceSlot)) {
+				delete newSub;
+				return;
+			}
+
+			// load sfx (overwrites any previous sfx)
+			if (_sfxSlot.subs)
+				delete _sfxSlot.subs;
+
+			_sfxSlot.handle = sound->handle;
+			_sfxSlot.subs = newSub;
+
+		} else {
+			// voice always loads and takes priority
+			if (_voiceSlot.subs)
+				delete _voiceSlot.subs;
+
+			_voiceSlot.handle = sound->handle;
+			_voiceSlot.subs = newSub;
+		}
 	}
 	// we skip clearing the overlay because updateSubtitle() handles it in the main loop
 	// if we clear here as well then minor flickering occurs
@@ -2573,39 +2600,36 @@ void PrivateEngine::updateSubtitles() {
 		return;
 
 	// remove subtitles for sounds that finished playing
-	auto it = _activeSubtitles.begin();
-	while (it != _activeSubtitles.end()) {
-		if (!_mixer->isSoundHandleActive(it->subtitledSound.handle)) {
-			delete it->subs;
-			it = _activeSubtitles.erase(it);
-		} else {
-			it++;
-		}
+	if (_voiceSlot.subs && !_mixer->isSoundHandleActive(_voiceSlot.handle)) {
+		delete _voiceSlot.subs;
+		_voiceSlot.subs = nullptr;
 	}
 
-	bool speechPlaying = isSpeechActive();
+	if (_sfxSlot.subs && !_mixer->isSoundHandleActive(_sfxSlot.handle)) {
+		delete _sfxSlot.subs;
+		_sfxSlot.subs = nullptr;
+	}
 
-	// draw all remaining active subtitles
-	// (later entries draw on top of earlier ones)
-	for (const auto &entry : _activeSubtitles) {
-
-		// if this is an sfx subtitle, and speech is currently playing, skip drawing it
-		// the subtitle stays in the list (in memory), but is not drawn this frame because a speech is playing
-		if (entry.isSfx && speechPlaying)
-			continue;
-
-		// otherwise, draw it using the current time
-		uint32 time = _mixer->getElapsedTime(entry.subtitledSound.handle).msecs();
-		entry.subs->drawSubtitle(time, false, _sfxSubtitles);
+	if (_voiceSlot.subs) {
+		// if voice is active draw voice only
+		uint32 time = _mixer->getElapsedTime(_voiceSlot.handle).msecs();
+		_voiceSlot.subs->drawSubtitle(time, false, _sfxSubtitles);
+	} else if (_sfxSlot.subs) {
+		// if voice is empty draw sfx
+		uint32 time = _mixer->getElapsedTime(_sfxSlot.handle).msecs();
+		_sfxSlot.subs->drawSubtitle(time, false, _sfxSubtitles);
 	}
 }
 
 void PrivateEngine::destroySubtitles() {
-	for (auto &entry : _activeSubtitles)
-		delete entry.subs;
-
-	_activeSubtitles.clear();
-
+	if (_voiceSlot.subs) {
+		delete _voiceSlot.subs;
+		_voiceSlot.subs = nullptr;
+	}
+	if (_sfxSlot.subs) {
+		delete _sfxSlot.subs;
+		_sfxSlot.subs = nullptr;
+	}
 	if (_videoSubtitles) {
 		delete _videoSubtitles;
 		_videoSubtitles = nullptr;
@@ -2625,7 +2649,7 @@ void PrivateEngine::playVideo(const Common::String &name) {
 	if (!_videoDecoder->loadStream(file))
 		error("unable to load video %s", path.toString().c_str());
 
-	loadSubtitles(path);
+	loadSubtitles(path, kSubtitleVideo);
 	_videoDecoder->start();
 
 	// set the view screen based on the video, unless playing from diary
@@ -3047,21 +3071,13 @@ void PrivateEngine::pauseEngineIntern(bool pause) {
 		if (_videoDecoder && _videoSubtitles)
 			_videoSubtitles->drawSubtitle(_videoDecoder->getTime(), false, _sfxSubtitles);
 
-		bool speechPlaying = isSpeechActive();
 		// draw all remaining active subtitles
-		// (later entries draw on top of earlier ones)
-		for (const auto &entry : _activeSubtitles) {
-
-			// if this is an sfx subtitle, and speech is currently playing, skip drawing it
-			// the subtitle stays in the list (in memory), but is not drawn this frame because a speech is playing
-			if (entry.isSfx && speechPlaying)
-				continue;
-
-			// otherwise, draw it using the current time
-			if (entry.subs && _mixer->isSoundHandleActive(entry.subtitledSound.handle)) {
-				uint32 time = _mixer->getElapsedTime(entry.subtitledSound.handle).msecs();
-				entry.subs->drawSubtitle(time, false, _sfxSubtitles);
-			}
+		if (isSlotActive(_voiceSlot)) {
+			uint32 time = _mixer->getElapsedTime(_voiceSlot.handle).msecs();
+			_voiceSlot.subs->drawSubtitle(time, false, _sfxSubtitles);
+		} else if (isSlotActive(_sfxSlot)) {
+			uint32 time = _mixer->getElapsedTime(_sfxSlot.handle).msecs();
+			_sfxSlot.subs->drawSubtitle(time, false, _sfxSubtitles);
 		}
 	}
 }
