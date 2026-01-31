@@ -39,20 +39,23 @@ void NoctropolisRoom::reloadRoom() {
 
 	// This is LoadPlayer1
 	int subFileBase = 1;
-	int numSubFiles;
-	int objBase;
-	int fileNum;
+	int numSubFiles = -1;
+	int objBase = -1;
+	int fileNum = -1;
 	if (!(_roomFlag & kRoomFlagTopView)) {
-		if (_roomFlag) {
-			// Peter
-			numSubFiles = 5;
-			objBase = 100;
-			fileNum = 0xfe;
+		if ((int8)_roomFlag > -1) {
+			if ((_vm->_flags[1] & 1) == 0) {
+				// Peter
+				numSubFiles = 5;
+				objBase = 100;
+				fileNum = 0xfe;
+			} else {
+				// Dark
+				numSubFiles = 5;
+				objBase = 105;
+				fileNum = 0xff;
+			}
 		} else {
-			// Dark
-			numSubFiles = 5;
-			objBase = 105;
-			fileNum = 0xff;
 		}
 	} else {
 		// Top
@@ -61,12 +64,14 @@ void NoctropolisRoom::reloadRoom() {
 		fileNum = 0xfc;
 	}
 
-	_vm->_player->loadNoctPalette(fileNum, _palIntensity + 6);
-	((NoctropolisPlayer *)_vm->_player)->loadAnimation(fileNum, 0);
+	if (fileNum > 0) {
+		_vm->_player->loadNoctPalette(fileNum, _palIntensity + 6);
+		((NoctropolisPlayer *)_vm->_player)->loadAnimation(fileNum, 0);
 
-	for (int i = subFileBase; i <= numSubFiles; i++) {
-		Resource *data = _vm->_files->loadFile(fileNum, i);
-		_vm->_objectsTable[objBase + i - subFileBase] = new SpriteResource(_vm, data);
+		for (int i = subFileBase; i <= numSubFiles; i++) {
+			Resource *data = _vm->_files->loadFile(fileNum, i);
+			_vm->_objectsTable[objBase + i - subFileBase] = new SpriteResource(_vm, data);
+		}
 	}
 
 	reloadRoom1();
