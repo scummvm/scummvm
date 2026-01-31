@@ -87,6 +87,7 @@ typedef struct ImGuiWindows {
 	bool vars = false;
 	bool channels = false;
 	bool cast = false;
+	bool castDetails = false;
 	bool funcList = false;
 	bool score = false;
 	bool bpList = false;
@@ -147,6 +148,9 @@ typedef struct ImGuiState {
 		bool _showScriptContexts = true;
 		Common::HashMap<Window *, ScriptData> _windowScriptData;
 	} _functions;
+	struct {
+		CastMember *_castMember;
+	} _castDetails;
 
 	struct {
 		bool _isScriptDirty = false; // indicates whether or not we have to display the script corresponding to the current stackframe
@@ -276,7 +280,8 @@ Window *windowListCombo(Common::String *target);
 Common::String formatHandlerName(int scriptId, int castId, Common::String handlerName, ScriptType scriptType, bool childScript);
 
 void showCast();		// dt-cast.cpp
-void showControlPanel(); // dt-controlpanel.cpp
+void showCastDetails();	// dt-castdetails.cpp
+void showControlPanel();// dt-controlpanel.cpp
 
 // dt-lists.cpp
 void showVars();
