@@ -212,8 +212,29 @@ void Animation::anim7() {
 }
 
 void Animation::anim8() {
-	// TODO: In here be careful with whether we are using playerX or raw.x
-	//debug("TODO: Animation::anim8");
+	const AnimationFrame *frame = calcFrame();
+	if (!_vm->_player->_playerOff) {
+		assert(frame->_parts.size() > 0);
+		const AnimationFramePart &part0 = frame->_parts[0];
+		const SpriteFrame *spriteFrame0 = _vm->_objectsTable[part0._spritesIndex]->_frames[part0._frameIndex];
+		_vm->_animation->_base.x = frame->_baseX;
+		_vm->_animation->_base.y = frame->_baseY;
+		int playerX = _vm->_player->_playerX;
+		int playerY = _vm->_player->_playerY;
+		int frameX = _vm->_animation->_base.x + part0._position.x;
+		int frameY = _vm->_animation->_base.y + part0._position.y;
+		int playerOffX = _vm->_player->_playerOffset.x;
+		int playerOffY = _vm->_player->_playerOffset.y;
+
+		if (playerX <= frameX + spriteFrame0->w &&
+			playerY - playerOffY <= frameY + spriteFrame0->h &&
+			playerY <= part0._offsetY && frameY <= playerY && frameX < playerOffX + playerX) {
+			// Reset frame here?
+			_frameNumber = 0;
+			frame = calcFrame();
+		}
+	}
+	setFrame(frame);
 }
 
 void Animation::anim9() {
@@ -259,7 +280,7 @@ void Animation::anim12() {
 		else
 			_vm->_player->_playerY += yadd;
 		_countdownTicks += frame->_frameDelay;
-		debug("anim12: player pos %d, %d (change %d %d -> %d %d) scale %d", _vm->_player->_playerX, _vm->_player->_playerY, deltaX, deltaY, xadd, yadd, _vm->_scale);
+		debugC(kDebugGraphics, "anim12: player pos %d, %d (change %d %d -> %d %d) scale %d", _vm->_player->_playerX, _vm->_player->_playerY, deltaX, deltaY, xadd, yadd, _vm->_scale);
 	}
 	_scaling = _vm->_scale;
 	setFrame1(frame, _vm->_player->_playerX, _vm->_player->_playerY - _vm->_player->_playerOffset.y);
