@@ -577,7 +577,7 @@ void Design::drawOval(Graphics::ManagedSurface *surface, Common::ReadStream &in,
 	}
 
 	if (fillType <= patterns.size())
-		PlotDataPrimitives().drawEllipse(x1, y1, x2-1, y2-1, kColorBlack, true, &pd);
+		PlotDataPrimitives().drawEllipse(x1, y1, x2, y2, kColorBlack, true, &pd);
 
 	pd.fillType = borderFillType;
 	pd.thickness = borderThickness;
