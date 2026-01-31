@@ -79,7 +79,7 @@ struct MacFontRun {
 		palinfo1  = palinfo1_;
 		palinfo2  = palinfo2_;
 		palinfo3  = palinfo3_;
-		fgcolor   = wm_->findBestColor(palinfo1_ & 0xff, palinfo2_ & 0xff, palinfo3_ & 0xff);
+		fgcolor   = wm_->findBestColor(palinfo1_ >> 8, palinfo2_ >> 8, palinfo3_ >> 8);
 		font      = nullptr;
 	}
 
