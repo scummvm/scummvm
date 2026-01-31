@@ -345,15 +345,15 @@ bool BinkDecoder::seekIntern(const Audio::Timestamp &time) {
 	// Adjust the video track to use for seeking
 	findNextVideoTrack();
 
-	if (frame == keyFrame) {
-		// We're already good, no need to go further
-		return true;
-	}
-
 	// Seek the audio tracks
 	for (uint32 i = 0; i < _audioTracks.size(); i++) {
 		BinkAudioTrack *audioTrack = (BinkAudioTrack *)getTrack(i + 1);
 		audioTrack->seek(videoTrack->getFrameTime(keyFrame));
+	}
+
+	if (frame == keyFrame) {
+		// We're already good, no need to go further
+		return true;
 	}
 
 	while (getCurFrame() < (int32)frame - 1)
