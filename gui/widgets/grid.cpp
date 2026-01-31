@@ -991,11 +991,8 @@ int GridWidget::getVisualPos(int entryID) const {
 void GridWidget::selectVisualRange(int startPos, int endPos) {
 	// Selects all non-header items in visual range [startPos, endPos]
 	// visPos counts only non-header items
-	if (startPos > endPos) {
-		int temp = startPos;
-		startPos = endPos;
-		endPos = temp;
-	}
+	if (startPos > endPos)
+		SWAP(startPos, endPos);
 
 	int visPos = 0;
 	for (uint i = 0; i < _sortedEntryList.size(); ++i) {
