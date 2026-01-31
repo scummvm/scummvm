@@ -439,6 +439,7 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 				Common::String fontName = Common::String::format("%s-%d-%d", familyName.c_str(), (*assoc)[i]._fontStyle | familySlant, (*assoc)[i]._fontSize);
 
 				macfont = new MacFont(_fontIds.getValOrDefault(familyName, kMacFontNonStandard), (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle | familySlant);
+				macfont->setName(fontName);
 
 				FontMan.assignFontToName(fontName, font);
 				macfont->setFont(font, false);
@@ -501,63 +502,63 @@ const Font *MacFontManager::getFont(MacFont *macFont) {
 		if (lang == Common::JA_JPN && !_japaneseFontsLoaded) {
 			loadJapaneseFonts();
 		}
+	}
 
-		if (macFont->getName().empty()) {
-			name = getFontName(macFont->getId(), macFont->getSize(), macFont->getSlant());
-			macFont->setName(name);
-		}
+	if (macFont->getName().empty()) {
+		name = getFontName(macFont->getId(), macFont->getSize(), macFont->getSlant());
+		macFont->setName(name);
+	}
 
-		if (_fontRegistry.contains(macFont->getName()))
-			return _fontRegistry[macFont->getName()]->getFont();
+	if (_fontRegistry.contains(macFont->getName()))
+		return _fontRegistry[macFont->getName()]->getFont();
 
-		if (!_fontRegistry.contains(macFont->getName())) {
-			int id = macFont->getId();
+	if (!_fontRegistry.contains(macFont->getName())) {
+		int id = macFont->getId();
 
-			if (_fontInfo.contains(id) && _winFontRegistry.contains(_fontInfo.getVal(id)->name)) {
-				font = _winFontRegistry.getVal(_fontInfo.getVal(id)->name);
-				const Graphics::WinFont *winfont = (const Graphics::WinFont *)font;
+		if (_fontInfo.contains(id) && _winFontRegistry.contains(_fontInfo.getVal(id)->name)) {
+			font = _winFontRegistry.getVal(_fontInfo.getVal(id)->name);
+			const Graphics::WinFont *winfont = (const Graphics::WinFont *)font;
 
-				if (winfont->getFontSizeInPointsAtDPI(72) != macFont->getSize()) {
-					Common::String fullFontName = Common::String::format("%s-%d-%d", winfont->getName().c_str(), winfont->getStyle(), winfont->getFontSizeInPointsAtDPI(72));
+			if (winfont->getFontSizeInPointsAtDPI(72) != macFont->getSize()) {
+				Common::String fullFontName = Common::String::format("%s-%d-%d", winfont->getName().c_str(), winfont->getStyle(), winfont->getFontSizeInPointsAtDPI(72));
 
-					if (_winFontRegistry.contains(fullFontName)) {
-						font = _winFontRegistry.getVal(fullFontName);
-					} else {
-						// Generate a scaledFont
-						Graphics::WinFont *scaledWinFont = WinFont::scaleFont(winfont, macFont->getSize());
-						if (scaledWinFont) {
-							debugC(1, kDebugLevelMacGUI, "MacFontManager::getFont(): Generated scaled winFont %s", fullFontName.c_str());
+				if (_winFontRegistry.contains(fullFontName)) {
+					font = _winFontRegistry.getVal(fullFontName);
+				} else {
+					// Generate a scaledFont
+					Graphics::WinFont *scaledWinFont = WinFont::scaleFont(winfont, macFont->getSize());
+					if (scaledWinFont) {
+						debugC(1, kDebugLevelMacGUI, "MacFontManager::getFont(): Generated scaled winFont %s", fullFontName.c_str());
 
-							// register font generated for reuse
-							_winFontRegistry.setVal(fullFontName, scaledWinFont);
+						// register font generated for reuse
+						_winFontRegistry.setVal(fullFontName, scaledWinFont);
 
-							font = scaledWinFont;
-						}
+						font = scaledWinFont;
 					}
 				}
 			}
 		}
+	}
 
-		if (!font) {
-			if (!_fontRegistry.contains(macFont->getName())) {
-				// Let's try to generate name
-				if (macFont->getSlant() != kMacFontRegular) {
-					name = getFontName(macFont->getId(), macFont->getSize(), macFont->getSlant(), true);
-					macFont->setName(name);
-				}
-
-				if (!_fontRegistry.contains(macFont->getName()))
-					generateFontSubstitute(*macFont);
+	if (!font) {
+		if (!_fontRegistry.contains(macFont->getName())) {
+			// Let's try to generate name
+			if (macFont->getSlant() != kMacFontRegular) {
+				name = getFontName(macFont->getId(), macFont->getSize(), macFont->getSlant(), true);
+				macFont->setName(name);
 			}
 
-			font = FontMan.getFontByName(macFont->getName());
+			if (!_fontRegistry.contains(macFont->getName()))
+				generateFontSubstitute(*macFont);
 		}
 
-		if (!font) {
-			debugC(1, kDebugLevelMacGUI, "Cannot load font '%s'", macFont->getName().c_str());
+		font = FontMan.getFontByName(macFont->getName());
+	}
 
-			font = FontMan.getFontByName(MacFont(kMacFontSystem, 12).getName());
-		}
+	if (!font) {
+		debugC(1, kDebugLevelMacGUI, "Cannot load font '%s'", macFont->getName().c_str());
+
+		font = FontMan.getFontByName(MacFont(kMacFontSystem, 12).getName());
 	}
 
 #ifdef USE_FREETYPE2
