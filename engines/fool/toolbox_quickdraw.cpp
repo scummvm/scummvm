@@ -102,11 +102,11 @@ void Toolbox::FillRect(const Common::Rect &r, const Pattern &pat) {
 	if (_port && _port->pnVis == 0) {
 		BitMap intermediate(new Graphics::ManagedSurface(r.width(), r.height()));
 		BitMap mask(nullptr);
+		Common::Point destPos(r.left, r.top);
 		Graphics::MacPatterns macpat({pat.data});
-		Graphics::MacPlotData pd(&(*intermediate), nullptr, &macpat, 1, 0, 0, _port->pnSize, _port->bkColor);
+		Graphics::MacPlotData pd(&(*intermediate), nullptr, &macpat, 1, destPos.x, destPos.y, _port->pnSize, _port->bkColor);
 		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
 		pm.drawFilledRect(intermediate->getBounds(), _port->fgColor, &pd);
-		Common::Point destPos(r.left, r.top);
 		// FillRect always uses patCopy
 		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, kPatCopy);
 		if (_port->portBits == _defaultBits) {
@@ -126,12 +126,12 @@ void Toolbox::FrameOval(const Common::Rect &r) {
 
 		BitMap intermediate(new Graphics::ManagedSurface(r.width(), r.height()));
 		BitMap mask(new Graphics::ManagedSurface(r.width(), r.height()));
+		Common::Point destPos(r.left, r.top);
 		Graphics::MacPatterns pat({_port->pnPat.data});
 
-		Graphics::MacPlotData pd(&(*intermediate), &(*mask), &pat, 1, 0, 0, _port->pnSize, _port->bkColor);
+		Graphics::MacPlotData pd(&(*intermediate), &(*mask), &pat, 1, destPos.x, destPos.y, _port->pnSize, _port->bkColor);
 		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
 		pm.drawEllipse(0, 0, r.width(), r.height(), _port->fgColor, false, &pd);
-		Common::Point destPos(r.left, r.top);
 
 		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, _port->pnMode);
 		if (_port->portBits == _defaultBits) {
@@ -146,16 +146,16 @@ void Toolbox::FrameRect(const Common::Rect &r) {
 
 		BitMap intermediate(new Graphics::ManagedSurface(r.width(), r.height()));
 		BitMap mask(new Graphics::ManagedSurface(r.width(), r.height()));
+		Common::Point destPos(r.left, r.top);
 		Graphics::MacPatterns pat({_port->pnPat.data});
 
-		Graphics::MacPlotData pd(&(*intermediate), &(*mask), &pat, 1, 0, 0, _port->pnSize, _port->bkColor);
+		Graphics::MacPlotData pd(&(*intermediate), &(*mask), &pat, 1, destPos.x, destPos.y, _port->pnSize, _port->bkColor);
 		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
 		Common::Rect destRect = intermediate->getBounds();
 		destRect.right -= _port->pnSize.x - 1;
 		destRect.bottom -= _port->pnSize.y - 1;
 
 		pm.drawRect(destRect, _port->fgColor, &pd);
-		Common::Point destPos(r.left, r.top);
 
 		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, _port->pnMode);
 		if (_port->portBits == _defaultBits) {
@@ -220,13 +220,13 @@ void Toolbox::InvertRect(const Common::Rect &r) {
 	if (_port && _port->pnVis == 0) {
 		BitMap intermediate(new Graphics::ManagedSurface(r.width(), r.height()));
 		BitMap mask(nullptr);
+		Common::Point destPos(r.left, r.top);
 		// set pattern to full black
 		Pattern pat({0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff});
 		Graphics::MacPatterns macpat({pat.data});
-		Graphics::MacPlotData pd(&(*intermediate), nullptr, &macpat, 1, 0, 0, {1, 1}, g_engine->_wm._colorWhite);
+		Graphics::MacPlotData pd(&(*intermediate), nullptr, &macpat, 1, destPos.x, destPos.y, {1, 1}, g_engine->_wm._colorWhite);
 		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
 		pm.drawFilledRect(intermediate->getBounds(), g_engine->_wm._colorBlack, &pd);
-		Common::Point destPos(r.left, r.top);
 		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, kPatXor);
 		if (_port->portBits == _defaultBits) {
 			_defaultWindow->addDirtyRect(dstRect);
@@ -248,12 +248,12 @@ void Toolbox::LineTo(int16 h, int16 v) {
 
 		BitMap intermediate(new Graphics::ManagedSurface(interRect.width(), interRect.height()));
 		BitMap mask(new Graphics::ManagedSurface(interRect.width(), interRect.height()));
+		Common::Point destPos(dirVec.x < 0 ? h + dirVec.x : h - dirVec.x, dirVec.y < 0 ? v + dirVec.y : v - dirVec.y);
 		Graphics::MacPatterns pat({_port->pnPat.data});
 
-		Graphics::MacPlotData pd(&(*intermediate), &(*mask), &pat, 1, 0, 0, _port->pnSize, _port->bkColor);
+		Graphics::MacPlotData pd(&(*intermediate), &(*mask), &pat, 1, destPos.x, destPos.y, _port->pnSize, _port->bkColor);
 		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
 		pm.drawLine(startPos.x, startPos.y, endPos.x, endPos.y, _port->fgColor, &pd);
-		Common::Point destPos(dirVec.x < 0 ? h + dirVec.x : h - dirVec.x, dirVec.y < 0 ? v + dirVec.y : v - dirVec.y);
 
 		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, _port->pnMode);
 		if (_port->portBits == _defaultBits) {
