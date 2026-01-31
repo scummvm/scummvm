@@ -232,6 +232,12 @@ void showCast() {
 						default:
 							break;
 						}
+
+						if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) {
+							// Cast Member Clicked
+							_state->_castDetails._castMember = castMember._value; // Must set _castMember before making the caseDetails window visible to prevent null castMember
+							_state->_w.castDetails = true;
+						}
 					}
 				}
 				ImGui::EndTable();
@@ -317,6 +323,12 @@ void showCast() {
 							ImGui::PopClipRect();
 						}
 						ImGui::EndGroup();
+
+						if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) {
+							// Cast Member Clicked
+							_state->_castDetails._castMember = castMember._value; // Must set _castMember before making the caseDetails window visible to prevent null castMember
+							_state->_w.castDetails = true;
+						}
 					}
 				}
 				ImGui::EndTable();

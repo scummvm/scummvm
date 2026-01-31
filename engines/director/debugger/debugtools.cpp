@@ -613,6 +613,7 @@ void onImGuiRender() {
 	showVars();
 	showChannels();
 	showCast();
+	showCastDetails();
 	showFuncList();
 	showScore();
 	showBreakpointList();
