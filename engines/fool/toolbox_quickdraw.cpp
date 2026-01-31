@@ -76,10 +76,6 @@ void Toolbox::CopyBits(const BitMap &srcBits, BitMap &dstBits, const Common::Rec
 	}
 }
 
-void Toolbox::DrawString(const Common::String &s) {
-	warning("STUB: Toolbox::DrawString");
-}
-
 void Toolbox::EndUpdate(WindowRecord &theWindow) {
 	warning("STUB: Toolbox::EndUpdate");
 }
@@ -89,6 +85,15 @@ void Toolbox::FillOval(const Common::Rect &r, const Pattern &pat) {
 }
 
 void Toolbox::FillRect(const Common::Rect &r, const Pattern &pat) {
+	// maybe the better way of refactoring this would be to fork the Primitives
+	// object from MacWindowManager and make one that uses GrafPort as a state store?
+	// as it stands, all the operations fall back to calling DrawPoint over and over again,
+	// which can touch the same pixel multiple times.
+	// this is a problem for all the xor blend modes.
+	// we could have it so that the draw commands check a mask before drawing again, and it
+	// gets reset after every op. this would be pretty inefficient; e.g. in fools errand most
+	// of the time is spent drawing to the screen or to a screen-sized buffer.
+
 	// steps:
 	// - create intermediate surface
 	// - draw to intermediate surface using MacPlotData
@@ -215,6 +220,7 @@ void Toolbox::InvertRect(const Common::Rect &r) {
 	if (_port && _port->pnVis == 0) {
 		BitMap intermediate(new Graphics::ManagedSurface(r.width(), r.height()));
 		BitMap mask(nullptr);
+		// set pattern to full black
 		Pattern pat({0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff});
 		Graphics::MacPatterns macpat({pat.data});
 		Graphics::MacPlotData pd(&(*intermediate), nullptr, &macpat, 1, 0, 0, {1, 1}, g_engine->_wm._colorWhite);
@@ -226,10 +232,7 @@ void Toolbox::InvertRect(const Common::Rect &r) {
 			_defaultWindow->addDirtyRect(dstRect);
 			_defaultWindow->setDirty(true);
 		}
-
-
 	}
-	warning("STUB: Toolbox::InvertRect");
 }
 
 void Toolbox::KillPoly(PolyHandle poly) {
@@ -373,11 +376,6 @@ void Toolbox::ShowCursor() {
 		g_engine->_wm.replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
 }
 
-
-uint16 Toolbox::StringWidth(const Common::String &s) {
-	warning("STUB: Toolbox::StringWidth");
-	return 0;
-}
 
 
 } // namespace Fool

@@ -143,6 +143,8 @@ enum WindowDefinition {
 	kRDocProc = 16,
 };
 
+// for text style: use kMacFont*
+
 struct GrafPort {
 	uint16 device = 0;
 	BitMap portBits;
@@ -187,12 +189,23 @@ struct ToolboxResInfo {
 	Common::String name;
 };
 
+struct FontInfo {
+	int16 ascent;
+	int16 descent;
+	int16 widMax;
+	int16 leading;
+};
+
 class Toolbox {
 
 public:
 	// Compatibility shim for the Macintosh Toolbox/QuickDraw API.
 	Toolbox();
 	~Toolbox();
+
+	Graphics::MacWindow *_defaultWindow;
+	BitMap _defaultBits;
+
 
 	// toolbox.cpp
 
@@ -217,6 +230,13 @@ public:
 
 	// toolbox_resman.cpp
 
+	// FUNCTION CountResources (theType: ResType): Integer;
+	// Given a resource type, the CountResources function reads the resource maps in
+	// memory for all resource forks open to your application. It returns as its function result
+	// the total number of resources of the given type in all resource forks open to your
+	// application.
+	uint16 CountResources(ResType theType);
+
 	// FUNCTION CurResFile: INTEGER;
 	// CurResFile returns the reference number of the current resource file. You can call it when the
 	// application starts up to get the reference number of its resource file.
@@ -237,6 +257,15 @@ public:
 	// GetHandleSize returns the logical size, in bytes, of the relocatable block whose handle is h. In
 	// case of an error, GetHandleSize returns 0.
 	Size GetHandleSize(Handle &h);
+
+	// FUNCTION GetIndResource (theType: ResType; index: Integer): Handle;
+	// Given an index ranging from 1 to the number of resources of a given type returned by
+	// CountResources (that is, the number of resources of that type in all resource forks open
+	// to your application), the GetIndResource function returns a handle to a resource of the
+	// given type. If you call GetIndResource repeatedly over the entire range of the index, it
+	// returns handles to all resources of the given type in all resource forks open to your
+	// application.
+	Handle GetIndResource(ResType theType, uint16 index);
 
 	// FUNCTION GetNamedResource (theType: ResType; name: Str255) : Handle;
 	// GetNamedResource is the same as GetResource (above) except that you pass a resource name
@@ -341,19 +370,6 @@ public:
 	// the dstBits.bounds coordinate system, and the srcRect coordinates are in terms of the
 	// srcBits.bounds coordinates.
 	void CopyBits(const BitMap &srcBits, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, SourceMode mode, RgnHandle maskRgn);
-
-	// PROCEDURE DrawChar (ch: CHAR);
-	// DrawChar places the given character to the right of the pen location, with the left end of its base
-	// line at the pen's location, and advances the pen accordingly. If the character isn't in the font, the
-	// font's missing symbol is drawn.
-	void DrawChar(Common::u32char_type_t ch);
-
-	// PROCEDURE DrawString (s: Str255);
-	// DrawString calls DrawChar for each character in the given string. The string is placed beginning
-	// at the current pen location and extending right. No formatting (such as carriage returns and line
-	// feeds) is performed by QuickDraw. The pen location ends up to the right of the last character in
-	// the string.
-	void DrawString(const Common::String &s);
 
 	// PROCEDURE EndUpdate (theWindow: WindowPtr);
 	// Call EndUpdate to restore the normal visRgn of theWindow's grafPort, which was changed by
@@ -559,13 +575,46 @@ public:
 	// ShowCursor have no effect.
 	void ShowCursor();
 
+
+	// toolbox_text.cpp
+
+	// PROCEDURE DrawChar (ch: CHAR);
+	// DrawChar places the given character to the right of the pen location, with the left end of its base
+	// line at the pen's location, and advances the pen accordingly. If the character isn't in the font, the
+	// font's missing symbol is drawn.
+	void DrawChar(Common::u32char_type_t ch);
+
+	// PROCEDURE DrawString (s: Str255);
+	// DrawString calls DrawChar for each character in the given string. The string is placed beginning
+	// at the current pen location and extending right. No formatting (such as carriage returns and line
+	// feeds) is performed by QuickDraw. The pen location ends up to the right of the last character in
+	// the string.
+	void DrawString(const Common::U32String &s);
+
 	// PROCEDURE StringWidth (s: Str255) : INTEGER;
 	// StringWidth returns the width of the given text string, which it calculates by adding the
 	// CharWidths of all the characters in the string (see above).
-	uint16 StringWidth(const Common::String &s);
+	uint16 StringWidth(const Common::U32String &s);
 
-	Graphics::MacWindow *_defaultWindow;
-	BitMap _defaultBits;
+	// PROCEDURE TextFace (face: Style);
+	// The TextFace procedure sets the style of the font in which the text is to be drawn in the
+	// current graphics port.
+	void TextFace(uint16 style);
+
+	// PROCEDURE TextFont (font: Integer);
+	// The TextFont procedure sets the font of the current graphics port in which the text is
+	// to be rendered.
+	void TextFont(uint16 font);
+
+	// PROCEDURE TextMode (mode: Integer);
+	// The TextMode procedure sets the transfer mode for drawing text in the current
+	// graphics port.
+	void TextMode(SourceMode mode);
+
+	// PROCEDURE TextSize (size: Integer);
+	// The TextSize procedure sets the font size for text drawn in the current graphics port to
+	// the speciﬁed number of points.
+	void TextSize(uint16 size);
 
 private:
 	Common::HashMap<int16, Common::SharedPtr<Common::MacResManager>> _resMap;

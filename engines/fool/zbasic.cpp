@@ -42,6 +42,7 @@ ZBasic::ZBasic(Toolbox *toolbox) : _toolbox(toolbox) {
 	_toolbox->_defaultWindow = _window;
 	_toolbox->_defaultBits = BitMap(new Graphics::ManagedSurface());
 	_toolbox->_defaultBits->copyFrom(*_window->getWindowSurface());
+
 }
 
 ZBasic::~ZBasic() {
@@ -289,8 +290,11 @@ const Common::U32String &ZBasic::str(size_t index) {
 	return *_stringTable[index]->data.str;
 }
 
-void ZBasic::text(int16 font, int16 size, int16 face, SourceMode mode) {
-	warning("STUB: ZBasic::text");
+void ZBasic::text(uint16 font, uint16 size, uint16 face, SourceMode mode) {
+	_toolbox->TextFont(font);
+	_toolbox->TextSize(size);
+	_toolbox->TextFace(face);
+	_toolbox->TextMode(mode);
 }
 
 void ZBasic::window(int16 windowNumber, const Common::String &title, int16 x1, int16 y1, int16 x2, int16 y2, ZBasicWindowType type) {

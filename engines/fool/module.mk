@@ -7,6 +7,7 @@ MODULE_OBJS = \
 	toolbox.o \
 	toolbox_quickdraw.o \
 	toolbox_resman.o \
+	toolbox_text.o \
 	zbasic.o \
 	console.o \
 	messages.o \
