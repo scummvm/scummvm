@@ -34,9 +34,11 @@ Common::Rect blitMono(BitMap &src, BitMap &dst, BitMap &mask, const Common::Poin
 
 	uint32 black = g_engine->_wm._colorBlack;
 	uint32 white = g_engine->_wm._colorWhite;
-	if (mode == kSrcCopy) {
+	if (mode == kSrcCopy && !mask) {
+		// fast blit
 		dst->blitFrom(*src, srcRect, dstPos);
 	} else {
+		// per-pixel blit
 		for (int y = srcRect.top; y < srcRect.bottom; y++) {
 			byte *source = (byte *)src->getBasePtr(srcRect.left, y);
 			byte *target = (byte *)dst->getBasePtr(srcRect.left + dstPos.x, dstPos.y + y);
@@ -49,6 +51,9 @@ Common::Rect blitMono(BitMap &src, BitMap &dst, BitMap &mask, const Common::Poin
 					continue;
 				}
 				switch (mode) {
+				case kSrcCopy:
+					*target = (*source == black) ? black : white;
+					break;
 				case kSrcOr:
 					*target = (*target == black) || (*source == black) ? black : white;
 					break;
