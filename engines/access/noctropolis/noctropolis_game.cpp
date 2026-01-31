@@ -221,6 +221,7 @@ void NoctropolisEngine::doIntro() {
 	_screen->forceFadeOut();
 
 	_midi->loadMusic(98, 1);
+	_midi->midiPlay();
 	_room->loadPlayField(1, 0);
 	_buffer2.copyFrom(*_screen);
 	_buffer1.copyFrom(*_screen);
