@@ -61,15 +61,41 @@ void Toolbox::CopyBits(const BitMap &srcBits, BitMap &dstBits, const Common::Rec
 	if (maskRgn) {
 		warning("Toolbox::CopyBits: maskRgn unimplemented");
 	}
+	Common::Rect clipSrcRect = srcRect;
+	Common::Rect clipDstRect = dstRect;
+	// the source rectangle can include areas out of bounds, crop it
+	clipSrcRect.clip(srcBits->getBounds());
+
 	// scale the source
 	BitMap subsrc(new Graphics::ManagedSurface());
-	subsrc->create(*srcBits, srcRect);
+	subsrc->create(*srcBits, clipSrcRect);
 	if (srcRect.width() != dstRect.width() ||
 			srcRect.height() != dstRect.height()) {
-		subsrc->scale(dstRect.width(), dstRect.height());
+		// source and destination are different sizes, scale it
+
+		// determine scale difference
+		float sx = srcRect.width() == 0 ? 1.0f : (float)dstRect.width() / (float)srcRect.width();
+		float sy = srcRect.height() == 0 ? 1.0f : (float)dstRect.height() / (float)srcRect.height();
+		if (clipSrcRect != srcRect) {
+			// apply clipping offsets
+			clipDstRect.left += (clipSrcRect.left - srcRect.left)*sx;
+			clipDstRect.top += (clipSrcRect.top - srcRect.top)*sy;
+			clipDstRect.right += (clipSrcRect.right - srcRect.right)*sx;
+			clipDstRect.bottom += (clipSrcRect.bottom - srcRect.bottom)*sy;
+		}
+		subsrc->scale(clipDstRect.width(), clipDstRect.height());
+	} else {
+		// source and destination are the same size, no scaling
+		if (clipSrcRect != srcRect) {
+			// apply clipping offsets
+			clipDstRect.left += clipSrcRect.left - srcRect.left;
+			clipDstRect.top += clipSrcRect.top - srcRect.top;
+			clipDstRect.right += clipSrcRect.right - srcRect.right;
+			clipDstRect.bottom += clipSrcRect.bottom - srcRect.bottom;
+		}
 	}
 	BitMap mask(nullptr);
-	Common::Rect result = blitMono(subsrc, dstBits, mask, Common::Point(dstRect.left, dstRect.top), mode);
+	Common::Rect result = blitMono(subsrc, dstBits, mask, Common::Point(clipDstRect.left, clipDstRect.top), mode);
 	if (_port->portBits == _defaultBits) {
 		_defaultWindow->addDirtyRect(result);
 		_defaultWindow->setDirty(true);
