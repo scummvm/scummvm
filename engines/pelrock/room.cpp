@@ -153,7 +153,7 @@ void RoomManager::changeExit(byte index, bool enabled, int persist) {
 }
 
 void RoomManager::changeExit(byte room, byte index, bool enabled, int persist) {
-	if (room == _currentRoomNumber & persist & PERSIST_TEMP) {
+	if (room == _currentRoomNumber && persist & PERSIST_TEMP) {
 		_currentRoomExits[index].isEnabled = enabled;
 	}
 	if (persist & PERSIST_PERM)
@@ -181,7 +181,7 @@ void RoomManager::changeWalkBox(WalkBox walkbox, int persist) {
 }
 
 void RoomManager::changeWalkbox(byte room, WalkBox walkbox, int persist) {
-	if (room == _currentRoomNumber & persist & PERSIST_TEMP) {
+	if (room == _currentRoomNumber && persist & PERSIST_TEMP) {
 		_currentRoomWalkboxes[walkbox.index] = walkbox;
 	}
 	if (persist & PERSIST_PERM) {
@@ -194,7 +194,7 @@ void RoomManager::changeHotSpot(HotSpot hotspot, int persist) {
 }
 
 void RoomManager::changeHotspot(byte room, HotSpot hotspot, int persist) {
-	if (room == _currentRoomNumber & persist & PERSIST_TEMP) {
+	if (room == _currentRoomNumber && persist & PERSIST_TEMP) {
 		for (uint i = 0; i < _currentRoomHotspots.size(); i++) {
 			if (!_currentRoomHotspots[i].isSprite && _currentRoomHotspots[i].innerIndex == hotspot.innerIndex) {
 				_currentRoomHotspots[i] = hotspot;
@@ -212,7 +212,7 @@ void RoomManager::disableSprite(byte spriteIndex, int persist) {
 }
 
 void RoomManager::disableSprite(byte roomNumber, byte spriteIndex, int persist) {
-	if (roomNumber == _currentRoomNumber & persist & PERSIST_TEMP) {
+	if (roomNumber == _currentRoomNumber && persist & PERSIST_TEMP) {
 		_currentRoomAnims[spriteIndex].zOrder = 255;
 		_currentRoomAnims[spriteIndex].isHotspotDisabled = true;
 	}
@@ -226,7 +226,7 @@ void RoomManager::enableSprite(byte spriteIndex, byte zOrder, int persist) {
 }
 
 void RoomManager::enableSprite(byte roomNumber, byte spriteIndex, byte zOrder, int persist) {
-	if (roomNumber == _currentRoomNumber & persist & PERSIST_TEMP) {
+	if (roomNumber == _currentRoomNumber && persist & PERSIST_TEMP) {
 		_currentRoomAnims[spriteIndex].zOrder = zOrder;
 	}
 	if (persist & PERSIST_PERM) {

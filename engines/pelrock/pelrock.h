@@ -285,6 +285,7 @@ public:
 	void useCordWithPlug(int inventoryObject, HotSpot *hotspot);
 	void pickCables(HotSpot *hotspot);
 	void giveIdToGuard(int inventoryObject, HotSpot *hotspot);
+	void unlockMuseum();
 	void giveMoneyToGuard(int inventoryObject, HotSpot *hotspot);
 	void openMuseumDoor(HotSpot *hotspot);
 	void useAmuletWithStatue(int inventoryObject, HotSpot *hotspot);
@@ -298,6 +299,7 @@ public:
 	void pickBooksFromShelf3(HotSpot *hotspot);
 	void giveFormulaToLibrarian(int inventoryObject, HotSpot *hotspot);
 	void openNewspaperDoor(HotSpot *hotspot);
+	void closeNewspaperDoor(HotSpot *hotspot);
 	void pickUpBook(int i);
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);

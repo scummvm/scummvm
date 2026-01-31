@@ -101,6 +101,10 @@ const ActionEntry actionTable[] = {
 	{361, PICKUP, &PelrockEngine::pickBooksFromShelf2},
 	{362, PICKUP, &PelrockEngine::pickBooksFromShelf3},
 
+	// Room 16
+	{388, OPEN, &PelrockEngine::openNewspaperDoor},
+	{388, CLOSE, &PelrockEngine::closeNewspaperDoor},
+
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
 	{WILDCARD, TALK, &PelrockEngine::noOpAction},   // Generic talk action
@@ -222,6 +226,9 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_state->setRootDisabledState(room, rootIndex, true);
 		_state->setRootDisabledState(room, rootIndex + 1, true);
 		break;
+	case 267:
+		_state->setRootDisabledState(7, 1, true);
+		break;
 	case 272:
 		_state->setRootDisabledState(room, rootIndex, true);
 		break;
@@ -297,7 +304,7 @@ void PelrockEngine::openIceCreamShopDoor(HotSpot *hotspot) {
 }
 
 void PelrockEngine::closeRoomDrawer(HotSpot *hotspot) {
-	if(!_room->hasSticker(91)) {
+	if (!_room->hasSticker(91)) {
 		_dialog->say(_res->_ingameTexts[YA_CERRADO_M]);
 		return;
 	}
@@ -565,13 +572,21 @@ void PelrockEngine::giveIdToGuard(int inventoryObject, HotSpot *hotspot) {
 	if (!_state->getFlag(FLAG_GUARDIA_DNI_ENTREGADO)) {
 		_state->setFlag(FLAG_GUARDIA_DNI_ENTREGADO, true);
 		_dialog->say(_res->_ingameTexts[DEACUERDO]);
-		return;
 	}
 	if (_state->getFlag(FLAG_SOBORNO_PORTERO) && _state->getFlag(FLAG_GUARDIA_DNI_ENTREGADO)) {
-		_state->setRootDisabledState(4, 2, true);
-		_room->enableSprite(4, 2, 100);
+		unlockMuseum();
 		return;
 	}
+}
+
+void PelrockEngine::unlockMuseum() {
+	_state->setRootDisabledState(4, 2, true);
+	_room->enableSprite(2, 100, PERSIST_PERM);
+	_room->enableSprite(3, 100, PERSIST_PERM);
+	_room->addStickerToRoom(4, 87, PERSIST_PERM);
+	_room->addStickerToRoom(4, 88, PERSIST_PERM);
+	_room->addStickerToRoom(4, 89, PERSIST_PERM);
+	_room->addStickerToRoom(4, 90, PERSIST_PERM);
 }
 
 void PelrockEngine::giveMoneyToGuard(int inventoryObject, HotSpot *hotspot) {
@@ -582,12 +597,9 @@ void PelrockEngine::giveMoneyToGuard(int inventoryObject, HotSpot *hotspot) {
 		_state->setFlag(FLAG_SOBORNO_PORTERO, true);
 		_dialog->say(_res->_ingameTexts[MUYBIEN]);
 		_state->removeInventoryItem(5); // Remove 1000 pesetas bill
-		return;
 	}
 	if (_state->getFlag(FLAG_SOBORNO_PORTERO) && _state->getFlag(FLAG_GUARDIA_DNI_ENTREGADO)) {
-		_state->setRootDisabledState(4, 2, true);
-		_room->enableSprite(2, 100);
-		_room->enableSprite(3, 100);
+		unlockMuseum();
 		return;
 	}
 }
@@ -618,7 +630,6 @@ void PelrockEngine::useAmuletWithStatue(int inventoryObject, HotSpot *hotspot) {
 		_currentHotspot = statueHotspot;
 
 		walkAndAction(statueHotspot, TALK);
-		_state->setRootDisabledState(7, 1, true);
 
 		// TODO: Undo palette anim!
 	}
@@ -664,15 +675,38 @@ void PelrockEngine::giveFormulaToLibrarian(int inventoryObject, HotSpot *hotspot
 }
 
 void PelrockEngine::openNewspaperDoor(HotSpot *hotspot) {
-	openDoor(hotspot, 0, 90, FEMININE, true);
+	openDoor(hotspot, 2, 50, MASCULINE, false);
+}
+
+void PelrockEngine::closeNewspaperDoor(HotSpot *hotspot) {
+	closeDoor(hotspot, 2, 50, MASCULINE, false);
 }
 
 void PelrockEngine::pickUpBook(int i) {
 	if (!_state->hasInventoryItem(10)) {
 		_dialog->say(_res->_ingameTexts[VENGA_ACA]);
 		_state->setRootDisabledState(9, 0, true);
+
+		if (_state->hasInventoryItem(3)) {
+			_state->setRootDisabledState(9, 1, true);
+			addInventoryItem(10);
+		}
+
 		_alfredState.isWalkingCancelable = false;
 		walkAndAction(_room->findHotspotByExtra(102), TALK);
+		// After dialog ends, reenable first dialog root if no photo in inventory
+		// Wait for dialog to end to reenable first dialog root
+		while (!shouldQuit() && _queuedAction.isQueued) {
+			_events->pollEvent();
+			renderScene(OVERLAY_NONE);
+			_screen->update();
+		}
+		if (!_state->hasInventoryItem(3)) {
+
+			_state->setRootDisabledState(9, 0, false);
+		} else {
+			_state->setRootDisabledState(9, 2, true);
+		}
 	} else {
 		if (_state->libraryShelf == -1) {
 			_dialog->say(_res->_ingameTexts[TODOS]);
@@ -764,10 +798,9 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		_alfredState.animState = ALFRED_SPECIAL_ANIM;
 		waitForSpecialAnimation();
 		loadExtraScreenAndPresent(5);
-		if(_state->getFlag(FLAG_ALFRED_SABE_EGIPCIO)) {
+		if (_state->getFlag(FLAG_ALFRED_SABE_EGIPCIO)) {
 			_dialog->say(_res->_ingameTexts[FORMULAVIAJETIEMPO]);
-		}
-		else {
+		} else {
 			_dialog->say(_res->_ingameTexts[QUELASTIMA_NOSEEGIPCIO]);
 		}
 		break;
