@@ -300,6 +300,8 @@ public:
 	void giveFormulaToLibrarian(int inventoryObject, HotSpot *hotspot);
 	void openNewspaperDoor(HotSpot *hotspot);
 	void closeNewspaperDoor(HotSpot *hotspot);
+	void openNewspaperBossDor(HotSpot *hotspot);
+	void closeNewspaperBossDoor(HotSpot *hotspot);
 	void pickUpBook(int i);
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);

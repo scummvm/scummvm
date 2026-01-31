@@ -704,6 +704,7 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 				uint32_t needed = anim.w * anim.h * anim.nframes;
 				for (int i = 0; i < anim.nframes; i++) {
 					anim.animData[i] = new byte[anim.w * anim.h];
+					// debug("Extracting frame %d for anim %d-%d, w=%d h=%d, pixelDataSize=%d, current offset %d", i, j, anim.nframes, anim.w, anim.h, pixelDataSize, picOffset);
 					extractSingleFrame(pixelData + picOffset, anim.animData[i], i, anim.w, anim.h);
 				}
 				sprite.animData[j] = anim;

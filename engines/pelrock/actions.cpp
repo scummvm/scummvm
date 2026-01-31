@@ -105,6 +105,10 @@ const ActionEntry actionTable[] = {
 	{388, OPEN, &PelrockEngine::openNewspaperDoor},
 	{388, CLOSE, &PelrockEngine::closeNewspaperDoor},
 
+	// Room 17
+	{393, OPEN, &PelrockEngine::openNewspaperBossDor},
+	{393, CLOSE, &PelrockEngine::closeNewspaperBossDoor},
+
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
 	{WILDCARD, TALK, &PelrockEngine::noOpAction},   // Generic talk action
@@ -680,6 +684,14 @@ void PelrockEngine::openNewspaperDoor(HotSpot *hotspot) {
 
 void PelrockEngine::closeNewspaperDoor(HotSpot *hotspot) {
 	closeDoor(hotspot, 2, 50, MASCULINE, false);
+}
+
+void PelrockEngine::openNewspaperBossDor(HotSpot *hotspot) {
+	openDoor(hotspot, 1, 52, MASCULINE, true);
+}
+
+void PelrockEngine::closeNewspaperBossDoor(HotSpot *hotspot) {
+	closeDoor(hotspot, 1, 52, MASCULINE, true);
 }
 
 void PelrockEngine::pickUpBook(int i) {
