@@ -276,6 +276,13 @@ const Common::Array<SubtitlePart> *SRTParser::getSubtitleParts(uint32 timestamp)
 	return &(*entry)->parts;
 }
 
+bool SRTParser::isSfx() const {
+	if (_entries.empty() || _entries[0]->parts.empty())
+		return false;
+
+	return _entries[0]->parts[0].tag == "sfx";
+}
+
 #define SHADOW 1
 
 Subtitles::Subtitles() : _loaded(false), _hPad(0), _vPad(0), _overlayHasAlpha(true),
@@ -464,17 +471,6 @@ bool Subtitles::drawSubtitle(uint32 timestamp, bool force, bool showSFX) const {
 	updateSubtitleOverlay();
 
 	return true;
-}
-
-bool Subtitles::isSfx() const {
-	if (_srtParser) {
-		const Common::Array<SRTEntry *> &entries = _srtParser->getEntries();
-		if (!entries.empty() && !entries[0]->parts.empty()) {
-			if (entries[0]->parts[0].tag == "sfx")
-				return true;
-		}
-	}
-	return false;
 }
 
 void Subtitles::clearSubtitle() const {
