@@ -51,11 +51,10 @@ static const int unpickableHotspotExtras[] = {
 	362,
 };
 
-enum PersistType {
-	PERSIST_TEMP,
-	PERSIST_PERM,
-	PERSIST_BOTH
-};
+
+#define PERSIST_TEMP 1
+#define PERSIST_PERM 2
+#define PERSIST_BOTH 3
 
 class RoomManager {
 public:
@@ -68,41 +67,54 @@ public:
 	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
 
 	/** Methods to modify room data at runtime **/
-	void addSticker(int stickerId, bool persist = true);
-	void addStickerToRoom(byte room, int stickerId);
-	void onlyPersistSticker(byte room, int stickerId);
-	void removeSticker(int index);
-	void removeSticker(byte room, int index);
+	void addSticker(int stickerId, int persist = PERSIST_BOTH);
+	void addStickerToRoom(byte room, int stickerId, int persist = PERSIST_BOTH);
+
+	void removeSticker(int stickerId);
+	void removeStickerFromRoom(byte room, int stickerId);
+
 	bool hasSticker(int index);
 	bool hasSticker(byte room, int index);
-	void changeExit(int index, bool enabled, bool persist = true);
-	void changeExit(byte room, int index, bool enabled, bool persist = true);
-	void disableExit(int index, bool persist = true);
-	void disableExit(byte room, int index, bool persist = true);
-	void enableExit(int index, bool persist = true);
-	void enableExit(byte room, int index, bool persist = true);
-	void changeWalkBox(WalkBox walkbox);
-	void changeWalkbox(byte room, WalkBox walkbox);
-	void changeHotSpot(HotSpot hotspot);
-	void changeHotspot(byte room, HotSpot hotspot);
-	void disableSprite(byte roomNumber, int spriteIndex, bool persist = true);
-	void enableSprite(int spriteIndex, int zOrder, bool persist = true);
-	void enableSprite(byte roomNumber, int spriteIndex, int zOrder, bool persist = true);
+
+	void changeExit(byte index, bool enabled, int persist = PERSIST_BOTH);
+	void changeExit(byte room, byte index, bool enabled, int persist = PERSIST_BOTH);
+
+	void disableExit(byte index, int persist = PERSIST_BOTH);
+	void disableExit(byte room, byte index, int persist = PERSIST_BOTH);
+	void enableExit(byte index, int persist = PERSIST_BOTH);
+	void enableExit(byte room, byte index, int persist = PERSIST_BOTH);
+
+	void changeWalkBox(WalkBox walkbox, int persist = PERSIST_BOTH);
+	void changeWalkbox(byte room, WalkBox walkbox, int persist = PERSIST_BOTH);
+
+	void changeHotSpot(HotSpot hotspot, int persist = PERSIST_BOTH);
+	void changeHotspot(byte room, HotSpot hotspot, int persist = PERSIST_BOTH);
+
+	void disableSprite(byte spriteIndex, int persist = PERSIST_BOTH);
+	void disableSprite(byte roomNumber, byte spriteIndex, int persist = PERSIST_BOTH);
+	void enableSprite(byte spriteIndex, byte zOrder, int persist = PERSIST_BOTH);
+	void enableSprite(byte roomNumber, byte spriteIndex, byte zOrder, int persist = PERSIST_BOTH);
 	/**
 	 * Utility function to enable or disable a hotspot, with an option to persist the change.
 	 */
-	void enableHotspot(HotSpot *hotspot, bool persist = true);
-	void enableHotspot(byte room, HotSpot *hotspot, bool persist = true);
-	void disableHotspot(HotSpot *hotspot, bool persist = true);
-	void disableHotspot(byte room, HotSpot *hotspot, bool persist = true);
-	void moveHotspot(HotSpot *hotspot, int16 newX, int16 newY, bool persist = true);
-	void setActionMask(HotSpot *hotspot, byte actionMask);
-	void moveHotspot(byte room, HotSpot *hotspot, int16 newX, int16 newY, bool persist = true);
-	void addWalkbox(WalkBox walkbox);
-	void addWalkbox(byte room, WalkBox walkbox);
+	void enableHotspot(HotSpot *hotspot, int persist = PERSIST_BOTH);
+	void enableHotspot(byte room, HotSpot *hotspot, int persist = PERSIST_BOTH);
+
+	void disableHotspot(HotSpot *hotspot, int persist = PERSIST_BOTH);
+	void disableHotspot(byte room, HotSpot *hotspot, int persist = PERSIST_BOTH);
+
+	void moveHotspot(HotSpot *hotspot, int16 newX, int16 newY, int persist = PERSIST_BOTH);
+	void moveHotspot(byte room, HotSpot *hotspot, int16 newX, int16 newY, int persist = PERSIST_BOTH);
+	void setActionMask(HotSpot *hotspot, byte actionMask, int persist = PERSIST_BOTH);
+
+	void addWalkbox(WalkBox walkbox, int persist = PERSIST_BOTH);
+	void addWalkbox(byte room, WalkBox walkbox, int persist = PERSIST_BOTH);
+
 	void applyDisabledChoices(byte roomNumber, byte *conversationData, size_t conversationDataSize);
 	void applyDisabledChoice(ResetEntry entry, byte *conversationData, size_t conversationDataSize);
 	void addDisabledChoice(ChoiceOption choice);
+
+
 	bool isPickableByExtra(uint16 extra) {
 		int size = sizeof(unpickableHotspotExtras) / sizeof(unpickableHotspotExtras[0]);
 		for (int i = 0; i < size; i++) {

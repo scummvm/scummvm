@@ -88,48 +88,59 @@ void RoomManager::getBackground(Common::File *roomFile, int roomOffset, byte *ba
 	}
 }
 
-void RoomManager::addSticker(int stickerId, bool persist) {
-	Sticker sticker = g_engine->_res->getSticker(stickerId);
-	_roomStickers.push_back(sticker);
-	addStickerToRoom(_currentRoomNumber, stickerId);
+void RoomManager::addSticker(int stickerId, int persist) {
+	addStickerToRoom(_currentRoomNumber, stickerId, persist);
 }
 
-void RoomManager::addStickerToRoom(byte room, int stickerId) {
+void RoomManager::addStickerToRoom(byte room, int stickerId, int persist) {
 	Sticker sticker = g_engine->_res->getSticker(stickerId);
-	g_engine->_state->stickersPerRoom[room].push_back(sticker);
+	if (room == _currentRoomNumber && persist & PERSIST_TEMP) {
+		_roomStickers.push_back(sticker);
+	}
+	if (persist & PERSIST_PERM) {
+		g_engine->_state->stickersPerRoom[room].push_back(sticker);
+	}
 }
 
-void RoomManager::onlyPersistSticker(byte room, int stickerId) {
-	Sticker sticker = g_engine->_res->getSticker(stickerId);
-	g_engine->_state->stickersPerRoom[room].push_back(sticker);
+void RoomManager::removeSticker(int stickerId) {
+	removeStickerFromRoom(_currentRoomNumber, stickerId);
 }
 
-void RoomManager::removeSticker(int stickerIndex) {
+void RoomManager::removeStickerFromRoom(byte room, int stickerId) {
 	// First check and remove from room stickers
 	for (uint i = 0; i < _roomStickers.size(); i++) {
-		if (_roomStickers[i].stickerIndex == stickerIndex) {
+		if (_roomStickers[i].stickerIndex == stickerId) {
 			_roomStickers.remove_at(i);
 			return;
 		}
 	}
 
 	// Then check and remove from persisted stickers
-	for (uint i = 0; i < g_engine->_state->stickersPerRoom[_currentRoomNumber].size(); i++) {
-		if (g_engine->_state->stickersPerRoom[_currentRoomNumber][i].stickerIndex == stickerIndex) {
-			g_engine->_state->stickersPerRoom[_currentRoomNumber].remove_at(i);
+	for (uint i = 0; i < g_engine->_state->stickersPerRoom[room].size(); i++) {
+		if (g_engine->_state->stickersPerRoom[room][i].stickerIndex == stickerId) {
+			g_engine->_state->stickersPerRoom[room].remove_at(i);
 			return;
 		}
 	}
 }
 
 bool RoomManager::hasSticker(int index) {
+	return hasSticker(_currentRoomNumber, index);
+}
+
+bool RoomManager::hasSticker(byte room, int index) {
 	for (uint i = 0; i < _roomStickers.size(); i++) {
 		if (_roomStickers[i].stickerIndex == index) {
 			return true;
 		}
 	}
-	for (uint i = 0; i < g_engine->_state->stickersPerRoom[_currentRoomNumber].size(); i++) {
-		if (g_engine->_state->stickersPerRoom[_currentRoomNumber][i].stickerIndex == index) {
+
+	if (room != _currentRoomNumber) {
+		return false;
+	}
+
+	for (uint i = 0; i < g_engine->_state->stickersPerRoom[room].size(); i++) {
+		if (g_engine->_state->stickersPerRoom[room][i].stickerIndex == index) {
 			return true;
 		}
 	}
@@ -137,69 +148,144 @@ bool RoomManager::hasSticker(int index) {
 	return false;
 }
 
-void RoomManager::changeExit(int index, bool enabled, bool persist) {
-	_currentRoomExits[index].isEnabled = enabled;
-	if (persist)
-		g_engine->_state->roomExitChanges[_currentRoomNumber].push_back({_currentRoomNumber, _currentRoomExits[index].index, _currentRoomExits[index]});
+void RoomManager::changeExit(byte index, bool enabled, int persist) {
+	changeExit(_currentRoomNumber, index, enabled, persist);
 }
 
-void RoomManager::disableExit(int index, bool persist) {
+void RoomManager::changeExit(byte room, byte index, bool enabled, int persist) {
+	if (room == _currentRoomNumber & persist & PERSIST_TEMP) {
+		_currentRoomExits[index].isEnabled = enabled;
+	}
+	if (persist & PERSIST_PERM)
+		g_engine->_state->roomExitChanges[room].push_back({room, index, enabled});
+}
+
+void RoomManager::disableExit(byte index, int persist) {
 	changeExit(index, false, persist);
 }
 
-void RoomManager::enableExit(int index, bool persist) {
+void RoomManager::disableExit(byte room, byte index, int persist) {
+	changeExit(room, index, false, persist);
+}
+
+void RoomManager::enableExit(byte index, int persist) {
 	changeExit(index, true, persist);
 }
 
-void RoomManager::changeWalkBox(WalkBox walkbox) {
-	g_engine->_state->roomWalkBoxChanges[_currentRoomNumber].push_back({_currentRoomNumber, walkbox.index, walkbox});
+void RoomManager::enableExit(byte room, byte index, int persist) {
+	changeExit(room, index, true, persist);
 }
 
-void RoomManager::changeHotSpot(HotSpot hotspot) {
-	g_engine->_state->roomHotSpotChanges[_currentRoomNumber].push_back({_currentRoomNumber, hotspot.innerIndex, hotspot});
+void RoomManager::changeWalkBox(WalkBox walkbox, int persist) {
+	changeWalkbox(_currentRoomNumber, walkbox, persist);
 }
 
-void RoomManager::disableSprite(byte roomNumber, int spriteIndex, bool persist) {
-	if (roomNumber == _currentRoomNumber) {
+void RoomManager::changeWalkbox(byte room, WalkBox walkbox, int persist) {
+	if (room == _currentRoomNumber & persist & PERSIST_TEMP) {
+		_currentRoomWalkboxes[walkbox.index] = walkbox;
+	}
+	if (persist & PERSIST_PERM) {
+		g_engine->_state->roomWalkBoxChanges[room].push_back({room, walkbox.index, walkbox});
+	}
+}
+
+void RoomManager::changeHotSpot(HotSpot hotspot, int persist) {
+	changeHotspot(_currentRoomNumber, hotspot, persist);
+}
+
+void RoomManager::changeHotspot(byte room, HotSpot hotspot, int persist) {
+	if (room == _currentRoomNumber & persist & PERSIST_TEMP) {
+		for (uint i = 0; i < _currentRoomHotspots.size(); i++) {
+			if (!_currentRoomHotspots[i].isSprite && _currentRoomHotspots[i].innerIndex == hotspot.innerIndex) {
+				_currentRoomHotspots[i] = hotspot;
+				break;
+			}
+		}
+	}
+	if (persist & PERSIST_PERM) {
+		g_engine->_state->roomHotSpotChanges[room].push_back({_currentRoomNumber, hotspot.innerIndex, hotspot});
+	}
+}
+
+void RoomManager::disableSprite(byte spriteIndex, int persist) {
+	disableSprite(_currentRoomNumber, spriteIndex, persist);
+}
+
+void RoomManager::disableSprite(byte roomNumber, byte spriteIndex, int persist) {
+	if (roomNumber == _currentRoomNumber & persist & PERSIST_TEMP) {
 		_currentRoomAnims[spriteIndex].zOrder = 255;
+		_currentRoomAnims[spriteIndex].isHotspotDisabled = true;
 	}
-	g_engine->_state->disabledSprites[roomNumber].push_back(spriteIndex);
-}
-
-void RoomManager::enableSprite(int spriteIndex, int zOrder, bool persist) {
-	_currentRoomAnims[spriteIndex].zOrder = zOrder;
-}
-
-void RoomManager::enableHotspot(HotSpot *hotspot, bool persist) {
-	hotspot->isEnabled = true;
-	if (persist) {
-		changeHotSpot(*hotspot);
+	if (persist & PERSIST_PERM) {
+		g_engine->_state->spriteChanges[roomNumber].push_back({roomNumber, spriteIndex, 255});
 	}
 }
 
-void RoomManager::disableHotspot(HotSpot *hotspot, bool persist) {
-	hotspot->isEnabled = false;
-	if (persist) {
-		changeHotSpot(*hotspot);
+void RoomManager::enableSprite(byte spriteIndex, byte zOrder, int persist) {
+	enableSprite(_currentRoomNumber, spriteIndex, zOrder, persist);
+}
+
+void RoomManager::enableSprite(byte roomNumber, byte spriteIndex, byte zOrder, int persist) {
+	if (roomNumber == _currentRoomNumber & persist & PERSIST_TEMP) {
+		_currentRoomAnims[spriteIndex].zOrder = zOrder;
+	}
+	if (persist & PERSIST_PERM) {
+		g_engine->_state->spriteChanges[roomNumber].push_back({roomNumber, spriteIndex, zOrder});
 	}
 }
 
-void RoomManager::moveHotspot(HotSpot *hotspot, int16 newX, int16 newY, bool persist) {
-	hotspot->x = newX;
-	hotspot->y = newY;
-	if (persist) {
-		changeHotSpot(*hotspot);
+void RoomManager::enableHotspot(HotSpot *hotspot, int persist) {
+	enableHotspot(_currentRoomNumber, hotspot, persist);
+}
+
+void RoomManager::enableHotspot(byte room, HotSpot *hotspot, int persist) {
+	if (persist & PERSIST_TEMP && room == _currentRoomNumber) {
+		hotspot->isEnabled = true;
+	}
+	if (persist & PERSIST_PERM) {
+		changeHotspot(room, *hotspot);
 	}
 }
 
-void RoomManager::setActionMask(HotSpot *hotspot, byte actionMask) {
-	hotspot->actionFlags = actionMask;
-	changeHotSpot(*hotspot);
+void RoomManager::disableHotspot(HotSpot *hotspot, int persist) {
+	disableHotspot(_currentRoomNumber, hotspot, persist);
 }
 
-void RoomManager::addWalkbox(WalkBox walkbox) {
-	_currentRoomWalkboxes.push_back(walkbox);
-	g_engine->_state->roomWalkBoxChanges[_currentRoomNumber].push_back({_currentRoomNumber, walkbox.index, walkbox});
+void RoomManager::disableHotspot(byte room, HotSpot *hotspot, int persist) {
+	if (persist & PERSIST_TEMP && room == _currentRoomNumber) {
+		hotspot->isEnabled = false;
+	}
+	if (persist & PERSIST_PERM) {
+		changeHotspot(room, *hotspot);
+	}
+}
+
+void RoomManager::moveHotspot(HotSpot *hotspot, int16 newX, int16 newY, int persist) {
+	if (persist & PERSIST_TEMP) {
+		hotspot->x = newX;
+		hotspot->y = newY;
+	}
+	if (persist & PERSIST_PERM) {
+		changeHotspot(_currentRoomNumber, *hotspot, persist);
+	}
+}
+
+void RoomManager::setActionMask(HotSpot *hotspot, byte actionMask, int persist) {
+	if (persist & PERSIST_TEMP) {
+		hotspot->actionFlags = actionMask;
+	}
+	if (persist & PERSIST_PERM) {
+		changeHotspot(_currentRoomNumber, *hotspot, persist);
+	}
+}
+
+void RoomManager::addWalkbox(WalkBox walkbox, int persist) {
+	if (persist & PERSIST_TEMP) {
+		_currentRoomWalkboxes.push_back(walkbox);
+	}
+	if (persist & PERSIST_PERM) {
+		g_engine->_state->roomWalkBoxChanges[_currentRoomNumber].push_back({_currentRoomNumber, walkbox.index, walkbox});
+	}
 }
 
 Sprite *RoomManager::findSpriteByIndex(byte index) {
@@ -310,20 +396,6 @@ Common::Array<Exit> RoomManager::loadExits(byte *data, size_t size) {
 	int exitDataOffset = 0x1BF;
 	for (int i = 0; i < exitCount; i++) {
 		int exitOffset = exitDataOffset + i * 14;
-		bool isChanged = false;
-		if (g_engine->_state->roomExitChanges.contains(_currentRoomNumber)) {
-			// if the exit has been changed, load the changed version
-			for (int j = 0; j < g_engine->_state->roomExitChanges[_currentRoomNumber].size(); j++) {
-				if (g_engine->_state->roomExitChanges[_currentRoomNumber][j].exitIndex == i) {
-					exits.push_back(g_engine->_state->roomExitChanges[_currentRoomNumber][j].exit);
-					isChanged = true;
-					break;
-				}
-			}
-		}
-
-		if (isChanged)
-			continue;
 
 		Exit exit;
 		exit.index = i;
@@ -355,6 +427,15 @@ Common::Array<Exit> RoomManager::loadExits(byte *data, size_t size) {
 			break;
 		}
 
+		if (g_engine->_state->roomExitChanges.contains(_currentRoomNumber)) {
+			// if the exit has been changed, load the changed version
+			for (int j = 0; j < g_engine->_state->roomExitChanges[_currentRoomNumber].size(); j++) {
+				if (g_engine->_state->roomExitChanges[_currentRoomNumber][j].exitIndex == i) {
+					exit.isEnabled = g_engine->_state->roomExitChanges[_currentRoomNumber][j].enabled;
+					break;
+				}
+			}
+		}
 		exits.push_back(exit);
 		// debug("Exit %d: targetRoom=%d isEnabled=%d x=%d y=%d w=%d h=%d targetX=%d targetY=%d dir=%d",
 		// 	  i, exit.targetRoom, exit.isEnabled, exit.x, exit.y, exit.w, exit.h,
@@ -572,7 +653,7 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 	uint32_t metadata_start = spriteCountPos + (44 * 2 + 5);
 	uint32_t picOffset = 0;
 
-	Common::Array<int> disabledSprites = g_engine->_state->disabledSprites[_currentRoomNumber];
+	Common::Array<SpriteChange> spriteChanges = g_engine->_state->spriteChanges[_currentRoomNumber];
 
 	for (int i = 0; i < spriteCount; i++) {
 		uint32_t animOffset = metadata_start + (i * 44);
@@ -589,10 +670,12 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 		sprite.spriteType = data[animOffset + 33];
 		sprite.actionFlags = data[animOffset + 34];
 		sprite.isHotspotDisabled = data[animOffset + 38];
-		for (int j = 0; j < disabledSprites.size(); j++) {
-			if (disabledSprites[j] == sprite.index) {
-				sprite.zOrder = 255;
-				sprite.isHotspotDisabled = 1;
+		for (int j = 0; j < spriteChanges.size(); j++) {
+			if (spriteChanges[j].spriteIndex == sprite.index) {
+				sprite.zOrder = spriteChanges[j].zIndex;
+				if(sprite.zOrder == 255) {
+					sprite.isHotspotDisabled = 1;
+				}
 				break;
 			}
 		}
@@ -727,7 +810,7 @@ uint32 RoomManager::loadDescriptions(byte *pair12data, size_t pair12size, Common
 				pos++;
 			}
 			// Hardcoded fix in the original!
-			if(_currentRoomNumber == 3 && description.text.size() == 1 && description.text[0] == 0x2D) {
+			if (_currentRoomNumber == 3 && description.text.size() == 1 && description.text[0] == 0x2D) {
 				outDescriptions.push_back(description);
 			}
 			outDescriptions.push_back(description);

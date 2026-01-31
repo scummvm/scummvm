@@ -133,8 +133,8 @@ void PelrockEngine::openDoor(HotSpot *hotspot, int exitIndex, int sticker, bool 
 		_dialog->say(_res->_ingameTexts[text]);
 		return;
 	}
-	_room->enableExit(exitIndex, !stayClosed);
-	_room->addSticker(sticker, !stayClosed);
+	_room->enableExit(exitIndex, stayClosed ? PERSIST_TEMP : PERSIST_BOTH);
+	_room->addSticker(sticker, stayClosed ? PERSIST_TEMP : PERSIST_BOTH);
 	_sound->playSound(_room->_roomSfx[0]);
 }
 
@@ -144,7 +144,7 @@ void PelrockEngine::closeDoor(HotSpot *hotspot, int exitIndex, int sticker, bool
 		_dialog->say(_res->_ingameTexts[text]);
 		return;
 	}
-	_room->disableExit(exitIndex, !stayOpen);
+	_room->disableExit(exitIndex, stayOpen ? PERSIST_TEMP : PERSIST_BOTH);
 	_room->removeSticker(sticker);
 	_sound->playSound(_room->_roomSfx[1]);
 }
@@ -297,6 +297,10 @@ void PelrockEngine::openIceCreamShopDoor(HotSpot *hotspot) {
 }
 
 void PelrockEngine::closeRoomDrawer(HotSpot *hotspot) {
+	if(!_room->hasSticker(91)) {
+		_dialog->say(_res->_ingameTexts[YA_CERRADO_M]);
+		return;
+	}
 	_room->removeSticker(91);
 	_room->enableHotspot(hotspot);
 }
@@ -441,8 +445,8 @@ void PelrockEngine::useBrickWithWindow(int inventoryObject, HotSpot *hotspot) {
 	_dialog->say(_res->_ingameTexts[YOMEVOY]);
 
 	_state->setFlag(FLAG_TIENDA_ABIERTA, true);
-	_room->onlyPersistSticker(_room->_currentRoomNumber, 9);
-	_room->onlyPersistSticker(_room->_currentRoomNumber, 10);
+	_room->addStickerToRoom(_room->_currentRoomNumber, 9, PERSIST_PERM);
+	_room->addStickerToRoom(_room->_currentRoomNumber, 10, PERSIST_PERM);
 	_room->disableHotspot(_room->findHotspotByExtra(295)); // Disable storefront hotspot
 	_room->disableHotspot(_room->findHotspotByExtra(294)); // Disable window hotspot
 	walkTo(639, _alfredState.y);
@@ -565,7 +569,7 @@ void PelrockEngine::giveIdToGuard(int inventoryObject, HotSpot *hotspot) {
 	}
 	if (_state->getFlag(FLAG_SOBORNO_PORTERO) && _state->getFlag(FLAG_GUARDIA_DNI_ENTREGADO)) {
 		_state->setRootDisabledState(4, 2, true);
-		_room->enableSprite(4, 2, 100, true);
+		_room->enableSprite(4, 2, 100);
 		return;
 	}
 }
@@ -582,8 +586,8 @@ void PelrockEngine::giveMoneyToGuard(int inventoryObject, HotSpot *hotspot) {
 	}
 	if (_state->getFlag(FLAG_SOBORNO_PORTERO) && _state->getFlag(FLAG_GUARDIA_DNI_ENTREGADO)) {
 		_state->setRootDisabledState(4, 2, true);
-		_room->enableSprite(2, 100, true);
-		_room->enableSprite(3, 100, true);
+		_room->enableSprite(2, 100);
+		_room->enableSprite(3, 100);
 		return;
 	}
 }
@@ -657,6 +661,10 @@ void PelrockEngine::giveFormulaToLibrarian(int inventoryObject, HotSpot *hotspot
 	_dialog->say(_res->_ingameTexts[REGALO_LIBRO_RECETAS]);
 	_state->removeInventoryItem(8);
 	addInventoryItem(59);
+}
+
+void PelrockEngine::openNewspaperDoor(HotSpot *hotspot) {
+	openDoor(hotspot, 0, 90, FEMININE, true);
 }
 
 void PelrockEngine::pickUpBook(int i) {

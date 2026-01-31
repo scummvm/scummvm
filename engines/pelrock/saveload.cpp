@@ -50,7 +50,8 @@ void syncExit(Common::Serializer &s, Exit &exit) {
 void syncExitChange(Common::Serializer &s, ExitChange &change) {
 	s.syncAsByte(change.roomNumber);
 	s.syncAsByte(change.exitIndex);
-	syncExit(s, change.exit);
+	s.syncAsByte((byte &)change.enabled);
+	// syncExit(s, change.exit);
 }
 
 void syncWalkBox(Common::Serializer &s, WalkBox &walkbox) {
@@ -80,6 +81,12 @@ void syncHotSpot(Common::Serializer &s, HotSpot &hotspot) {
 	s.syncAsByte((byte &)hotspot.isEnabled);
 	s.syncAsByte((byte &)hotspot.isSprite);
 	s.syncAsByte(hotspot.zOrder);
+}
+
+void syncSpriteChange(Common::Serializer &s, SpriteChange &change) {
+	s.syncAsByte(change.roomNumber);
+	s.syncAsByte(change.spriteIndex);
+	s.syncAsByte(change.zIndex);
 }
 
 void syncHotSpotChange(Common::Serializer &s, HotSpotChange &change) {
@@ -265,34 +272,34 @@ bool syncGameStateData(Common::Serializer &s, GameStateData *gameState) {
 		}
 	}
 
-	uint16 disabledSpritesSize = (uint16)gameState->disabledSprites.size();
+	uint16 disabledSpritesSize = (uint16)gameState->spriteChanges.size();
 	s.syncAsUint16LE(disabledSpritesSize);
 	if (s.isSaving()) {
-		for (const auto &spritePair : gameState->disabledSprites) {
+		for (const auto &spritePair : gameState->spriteChanges) {
 			byte roomNumber = spritePair._key;
 			s.syncAsByte(roomNumber);
-			const Common::Array<int> &sprites = spritePair._value;
+			const Common::Array<SpriteChange> &sprites = spritePair._value;
 			uint16 numSprites = (uint16)sprites.size();
 			s.syncAsUint16LE(numSprites);
 			for (uint16 i = 0; i < numSprites; ++i) {
-				int spriteIndex = sprites[i];
-				s.syncAsByte(spriteIndex);
+				SpriteChange spriteChange = sprites[i];
+				syncSpriteChange(s, spriteChange);
 			}
 		}
 	} else {
-		gameState->disabledSprites.clear();
+		gameState->spriteChanges.clear();
 		for (uint16 idx = 0; idx < disabledSpritesSize; ++idx) {
 			byte roomNumber;
 			s.syncAsByte(roomNumber);
 			uint16 numSprites;
 			s.syncAsUint16LE(numSprites);
-			Common::Array<int> sprites;
+			Common::Array<SpriteChange> sprites;
 			for (uint16 i = 0; i < numSprites; ++i) {
-				int spriteIndex;
-				s.syncAsByte(spriteIndex);
-				sprites.push_back(spriteIndex);
+				SpriteChange spriteChange;
+				syncSpriteChange(s, spriteChange);
+				sprites.push_back(spriteChange);
 			}
-			gameState->disabledSprites[roomNumber] = sprites;
+			gameState->spriteChanges[roomNumber] = sprites;
 		}
 	}
 

@@ -327,6 +327,15 @@ enum GameState {
 	COMPUTER = 104
 };
 
+struct SpriteChange
+{
+	byte roomNumber;
+	byte spriteIndex;
+	byte zIndex;
+
+};
+
+
 struct HotSpotChange {
 	byte roomNumber;
 	byte hotspotIndex;
@@ -336,7 +345,7 @@ struct HotSpotChange {
 struct ExitChange {
 	byte roomNumber;
 	byte exitIndex;
-	Exit exit;
+	bool enabled;
 };
 
 struct WalkBoxChange {
@@ -481,7 +490,6 @@ struct GameStateData {
 	Common::Array<byte> inventoryItems;
 	int16 selectedInventoryItem = -1;
 
-
 	int libraryShelf = -1;
 	int selectedBookIndex = -1;
 	unsigned char bookLetter = '\0';
@@ -490,7 +498,7 @@ struct GameStateData {
 	Common::HashMap<byte, Common::Array<WalkBoxChange>> roomWalkBoxChanges;
 	Common::HashMap<byte, Common::Array<HotSpotChange>> roomHotSpotChanges;
 	Common::HashMap<byte, Common::Array<ResetEntry>> disabledBranches;
-	Common::HashMap<byte, Common::Array<int>> disabledSprites;
+	Common::HashMap<byte, Common::Array<SpriteChange>> spriteChanges;
 
 	GameStateData() {
 		memset(conversationRootsState, 0, 4 * 56);
