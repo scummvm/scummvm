@@ -66,7 +66,10 @@ public:
 	void decode(uint32 tag, byte *buf, uint size) {
 		if (_audioType == 0) {
 			// Raw PCM data
-			byte flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+			byte flags = Audio::FLAG_16BITS;
+#ifdef SCUMM_LITTLE_ENDIAN
+			flags |= Audio::FLAG_LITTLE_ENDIAN;
+#endif
 			if (_audioChannels > 1)
 				flags |= Audio::FLAG_STEREO;
 			_output->queueBuffer(buf, size, DisposeAfterUse::YES, flags);
