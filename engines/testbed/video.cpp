@@ -29,6 +29,7 @@
 #include "video/qt_decoder.h"
 #include "video/qt_data.h"
 #include "video/smk_decoder.h"
+#include "video/4xm_decoder.h"
 
 #include "testbed/testbed.h"
 #include "testbed/video.h"
@@ -74,6 +75,8 @@ Common::Error Videotests::videoTest(Common::SeekableReadStream *stream, const Co
 		video = new Video::MveDecoder();
 	} else if (name.hasSuffixIgnoreCase(".smk")) {
 		video = new Video::SmackerDecoder();
+	} else if (name.hasSuffixIgnoreCase(".4xm")) {
+		video = new Video::FourXMDecoder();
 	} else {
 		qtVideo = new Video::QuickTimeDecoder();
 		video = qtVideo;
