@@ -128,8 +128,7 @@ void SpriteResource::clear() {
 	_index.clear();
 }
 
-static inline uint getScaledVal(int xy, uint16 &scaleMask)
-{
+static inline uint getScaledVal(int xy, uint16 &scaleMask) {
 	if (!xy)
 		return 0;
 
@@ -144,12 +143,11 @@ static inline uint getScaledVal(int xy, uint16 &scaleMask)
 }
 
 void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos,
-		uint flags, int scale) const {
+                          uint flags, int scale) const {
 	draw(dest, frame, destPos, Common::Rect(0, 0, dest.w, dest.h), flags, scale);
 }
 
-static inline void drawPixel2(byte *dest, const byte pixel, byte *destLeft, byte *destRight, byte *destTop, byte *destBottom, int pitch, uint16 &random1, uint16 &random2, uint16 mask1, uint16 mask2)
-{
+static inline void drawPixel2(byte *dest, const byte pixel, byte *destLeft, byte *destRight, byte *destTop, byte *destBottom, int pitch, uint16 &random1, uint16 &random2, uint16 mask1, uint16 mask2) {
 	static const int8 DRAWER2_DELTA[64] = {
 		-3, 3, 0, 0, 0, 0, 0, 0,
 		-5, 5, 0, 0, 0, 0, 0, 0,
@@ -163,13 +161,13 @@ static inline void drawPixel2(byte *dest, const byte pixel, byte *destLeft, byte
 
 	bool flag = (random1 & 0x8000) != 0;
 	random1 = (int)((uint16)random1 << 1) - random2 - (flag ? 1 : 0);
-	
+
 	bool newCf = (random2 & 1);
-	random2 = (random2>>1) | (flag ? 0x8000 : 0);
+	random2 = (random2 >> 1) | (flag ? 0x8000 : 0);
 	flag = newCf;
 
 	newCf = (random2 & 1);
-	random2 = (random2>>1) | (flag ? 0x8000 : 0);
+	random2 = (random2 >> 1) | (flag ? 0x8000 : 0);
 	flag = newCf;
 
 	random2 ^= random1;
@@ -184,8 +182,7 @@ static inline void drawPixel2(byte *dest, const byte pixel, byte *destLeft, byte
 	}
 }
 
-static inline void drawPixel3(byte *dest, const byte pixel, const uint16 mask, const uint16 offset, byte *palette)
-{
+static inline void drawPixel3(byte *dest, const byte pixel, const uint16 mask, const uint16 offset, byte *palette) {
 	// WORKAROUND: This is slightly different then the original:
 	// 1) The original has bunches of black pixels appearing. This does index increments to avoid such pixels
 	// 2) It also prevents any pixels being drawn in the single initial frame until the palette is set
@@ -201,20 +198,19 @@ static inline void drawPixel3(byte *dest, const byte pixel, const uint16 mask, c
 
 	//
 	while (*dest < 0xff && !palette[*dest * 3] && !palette[*dest * 3 + 1] && !palette[*dest * 3 + 2])
-	++ *dest;
+		++ *dest;
 }
 
-static inline void drawPixel5(byte *dest, const byte pixel, const uint16 threshold, uint16 &random1, uint16 &random2)
-{
+static inline void drawPixel5(byte *dest, const byte pixel, const uint16 threshold, uint16 &random1, uint16 &random2) {
 	bool flag = (random1 & 0x8000) != 0;
 	random1 = (int)((uint16)random1 << 1) - random2 - (flag ? 1 : 0);
 
 	bool newCf = (random2 & 1);
-	random2 = (random2>>1) | (flag ? 0x8000 : 0);
+	random2 = (random2 >> 1) | (flag ? 0x8000 : 0);
 	flag = newCf;
 
 	newCf = (random2 & 1);
-	random2 = (random2>>1) | (flag ? 0x8000 : 0);
+	random2 = (random2 >> 1) | (flag ? 0x8000 : 0);
 	flag = newCf;
 
 	random2 ^= random1;
@@ -223,15 +219,14 @@ static inline void drawPixel5(byte *dest, const byte pixel, const uint16 thresho
 		*dest = pixel;
 }
 
-static inline void drawSprite(byte *data, size_t filesize, XSurface &dest, uint16 offset, const Common::Point &pt, const Common::Rect &clipRect, uint flags, int scale)
-{
+static inline void drawSprite(byte *data, size_t filesize, XSurface &dest, uint16 offset, const Common::Point &pt, const Common::Rect &clipRect, uint flags, int scale) {
 	// regular drawer
 	const SpriteFlags drawerFlag = static_cast<SpriteFlags>(flags & SPRFLAG_MODE_MASK);
 
 	byte *destTop = nullptr, *destBottom = nullptr;
 	byte *destLeft = nullptr, *destRight = nullptr;
 	int pitch = 0;
-	
+
 	static const uint SCALE_TABLE[] = {
 		0xFFFF, 0xFFEF, 0xEFEF, 0xEFEE, 0xEEEE, 0xEEAE, 0xAEAE, 0xAEAA,
 		0xAAAA, 0xAA8A, 0x8A8A, 0x8A88, 0x8888, 0x8880, 0x8080, 0x8000
@@ -319,9 +314,10 @@ static inline void drawSprite(byte *data, size_t filesize, XSurface &dest, uint1
 			// Build up the line
 			int byteCount, opr1, opr2;
 			int32 pos;
-			for (byteCount = 1; byteCount < lineLength; ) {
+			for (byteCount = 1; byteCount < lineLength;) {
 				// The next byte is an opcode that determines what operators are to follow and how to interpret them.
-				int opcode = f.readByte(); ++byteCount;
+				int opcode = f.readByte();
+				++byteCount;
 
 				// Decode the opcode
 				int len = opcode & 0x1F;
@@ -338,7 +334,8 @@ static inline void drawSprite(byte *data, size_t filesize, XSurface &dest, uint1
 					break;
 
 				case 2:   // The following byte is an index into the color table, draw it len + 3 times.
-					opr1 = f.readByte(); ++byteCount;
+					opr1 = f.readByte();
+					++byteCount;
 					for (int i = 0; i < len + 3; ++i) {
 						*lineP = opr1;
 						lineP += xInc;
@@ -346,7 +343,8 @@ static inline void drawSprite(byte *data, size_t filesize, XSurface &dest, uint1
 					break;
 
 				case 3:   // Stream copy command.
-					opr1 = f.readUint16LE(); byteCount += 2;
+					opr1 = f.readUint16LE();
+					byteCount += 2;
 					pos = f.pos();
 					f.seek(-opr1, SEEK_CUR);
 
@@ -359,8 +357,10 @@ static inline void drawSprite(byte *data, size_t filesize, XSurface &dest, uint1
 					break;
 
 				case 4:   // The following two bytes are indexes into the color table, draw the pair len + 2 times.
-					opr1 = f.readByte(); ++byteCount;
-					opr2 = f.readByte(); ++byteCount;
+					opr1 = f.readByte();
+					++byteCount;
+					opr2 = f.readByte();
+					++byteCount;
 					for (int i = 0; i < len + 2; ++i) {
 						*lineP = opr1;
 						lineP += xInc;
@@ -389,7 +389,8 @@ static inline void drawSprite(byte *data, size_t filesize, XSurface &dest, uint1
 						lineP += xInc;
 						opr1 += PATTERN_STEPS[cmd + (i % 2)];
 					}
-				} break;
+				}
+				break;
 				default:
 					break;
 				}
@@ -402,184 +403,170 @@ static inline void drawSprite(byte *data, size_t filesize, XSurface &dest, uint1
 			// Handle drawing out the line
 			byte *destP = (byte *)dest.getBasePtr(destPos.x, destPos.y);
 			destLeft = (byte *)dest.getBasePtr(
-				(flags & SPRFLAG_SCENE_CLIPPED) ? SCENE_CLIP_LEFT : clipRect.left, destPos.y);
+			               (flags & SPRFLAG_SCENE_CLIPPED) ? SCENE_CLIP_LEFT : clipRect.left, destPos.y);
 			destRight = (byte *)dest.getBasePtr(
-				(flags & SPRFLAG_SCENE_CLIPPED) ? SCENE_CLIP_RIGHT : clipRect.right, destPos.y);
+			                (flags & SPRFLAG_SCENE_CLIPPED) ? SCENE_CLIP_RIGHT : clipRect.right, destPos.y);
 			int16 xp = destPos.x;
 			lineP = &tempLine[SCREEN_WIDTH];
 
 			const byte idx =  flags & 0x1F;
 
-			for (int xCtr = 0; xCtr < width; ++xCtr, ++lineP)
-			{
+			for (int xCtr = 0; xCtr < width; ++xCtr, ++lineP) {
 				bit = (scaleMaskX >> 15) & 1;
 				scaleMaskX = ((scaleMaskX & 0x7fff) << 1) + bit;
 
-				if (bit)
-				{
+				if (bit) {
 					// Check whether there's a pixel to write, and we're within the allowable bounds. Note that for
 					// the SPRFLAG_SCENE_CLIPPED or when enlarging, we also have an extra horizontal bounds check
-					if (*lineP != -1 && xp >= bounds.left && xp < bounds.right)
-					{
+					if (*lineP != -1 && xp >= bounds.left && xp < bounds.right) {
 						drawBounds.left = MIN(drawBounds.left, xp);
 						drawBounds.right = MAX((int)drawBounds.right, xp + 1);
 
-						switch (drawerFlag)
-						{
-							case SPRFLAG_DRAWER1:
-							{
-								static const byte DRAWER1_OFFSET[24] = {
-									0x30, 0xC0, 0xB0, 0x10, 0x41, 0x20, 0x40, 0x21, 0x48, 0x46, 0x43, 0x40,
-									0xD0, 0xD3, 0xD6, 0xD8, 0x01, 0x04, 0x07, 0x0A, 0xEA, 0xEE, 0xF2, 0xF6
-								};
+						switch (drawerFlag) {
+						case SPRFLAG_DRAWER1: {
+							static const byte DRAWER1_OFFSET[24] = {
+								0x30, 0xC0, 0xB0, 0x10, 0x41, 0x20, 0x40, 0x21, 0x48, 0x46, 0x43, 0x40,
+								0xD0, 0xD3, 0xD6, 0xD8, 0x01, 0x04, 0x07, 0x0A, 0xEA, 0xEE, 0xF2, 0xF6
+							};
 
-								static const byte DRAWER1_MASK[24] = {
-									0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x07, 0x07, 0x0F, 0x07, 0x07, 0x07, 0x07,
-									0x07, 0x07, 0x07, 0x07, 0x0F, 0x0F, 0x0F, 0x0F, 0x07, 0x07, 0x07, 0x07
-								};
+							static const byte DRAWER1_MASK[24] = {
+								0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x07, 0x07, 0x0F, 0x07, 0x07, 0x07, 0x07,
+								0x07, 0x07, 0x07, 0x07, 0x0F, 0x0F, 0x0F, 0x0F, 0x07, 0x07, 0x07, 0x07
+							};
 
-								const byte offset1 = DRAWER1_OFFSET[idx];
-								const byte mask = DRAWER1_MASK[idx];
-								const byte pixel = (((byte)*lineP) & mask) + offset1;
+							const byte offset1 = DRAWER1_OFFSET[idx];
+							const byte mask = DRAWER1_MASK[idx];
+							const byte pixel = (((byte) * lineP) & mask) + offset1;
 
-								(*destP) = pixel;
+							(*destP) = pixel;
 
-								if (enlarge)
-								{
-									*(destP + SCREEN_WIDTH) = pixel;
-									*(destP + 1) = pixel;
-									*(destP + 1 + SCREEN_WIDTH) = pixel;
-								}	
+							if (enlarge) {
+								*(destP + SCREEN_WIDTH) = pixel;
+								*(destP + 1) = pixel;
+								*(destP + 1 + SCREEN_WIDTH) = pixel;
+							}
 
-							}break;
-							case SPRFLAG_DRAWER2:
-							{
-								// drawer 2
-   								static const byte DRAWER2_MASK1[32] = {
-									3, 0, 3, 0, 3, 0, 3, 0, 2, 0, 2, 0, 2, 0, 2, 0,
-									1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
-								};
+						}
+						break;
+						case SPRFLAG_DRAWER2: {
+							// drawer 2
+							static const byte DRAWER2_MASK1[32] = {
+								3, 0, 3, 0, 3, 0, 3, 0, 2, 0, 2, 0, 2, 0, 2, 0,
+								1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
+							};
 
-								static const byte DRAWER2_MASK2[16] = {
-									0x7E, 0x7E, 0x7E, 0x7E, 0x3E, 0x3E, 0x3E, 0x3E,
-									0x1E, 0x1E, 0x1E, 0x1E, 0x0E, 0x0E, 0x0E, 0x0E
-								};
+							static const byte DRAWER2_MASK2[16] = {
+								0x7E, 0x7E, 0x7E, 0x7E, 0x3E, 0x3E, 0x3E, 0x3E,
+								0x1E, 0x1E, 0x1E, 0x1E, 0x0E, 0x0E, 0x0E, 0x0E
+							};
 
-								const uint16 mask21 = DRAWER2_MASK1[idx];
-								const uint16 mask22 = DRAWER2_MASK2[idx];
+							const uint16 mask21 = DRAWER2_MASK1[idx];
+							const uint16 mask22 = DRAWER2_MASK2[idx];
 
-								MM::MMEngine *engine = static_cast<MM::MMEngine *>(g_engine);
-								assert(engine!=nullptr);
+							MM::MMEngine *engine = static_cast<MM::MMEngine *>(g_engine);
+							assert(engine != nullptr);
 
-								uint16 random1 = engine->getRandomNumber(0xffff);
-								uint16 random2 = engine->getRandomNumber(0xffff);
-								const byte pixel = (byte)*lineP;
+							uint16 random1 = engine->getRandomNumber(0xffff);
+							uint16 random2 = engine->getRandomNumber(0xffff);
+							const byte pixel = (byte) * lineP;
 
-								drawPixel2(destP, pixel, destLeft, destRight, destTop, destBottom, pitch, random1, random2, mask21, mask22);
-									
-								if (enlarge)
-								{
-									drawPixel2(destP + SCREEN_WIDTH, pixel, destLeft, destRight, destTop, destBottom, pitch, random1, random2, mask21, mask22);
-									drawPixel2(destP + 1, pixel, destLeft, destRight, destTop, destBottom, pitch, random1, random2, mask21, mask22);
-									drawPixel2(destP + 1 + SCREEN_WIDTH, pixel, destLeft, destRight, destTop, destBottom, pitch, random1, random2, mask21, mask22);
-								}	
+							drawPixel2(destP, pixel, destLeft, destRight, destTop, destBottom, pitch, random1, random2, mask21, mask22);
 
-							} break;
-							case SPRFLAG_DRAWER3:
-							{
-								static const uint16 DRAWER3_MASK[4] = { 1, 3, 7, 15 };
-								static const uint16 DRAWER3_OFFSET[4] = { 1, 2, 4, 8 };
-	
-								const uint16 offsetLocal = DRAWER3_OFFSET[idx];
-								const uint16 mask = DRAWER3_MASK[idx];
+							if (enlarge) {
+								drawPixel2(destP + SCREEN_WIDTH, pixel, destLeft, destRight, destTop, destBottom, pitch, random1, random2, mask21, mask22);
+								drawPixel2(destP + 1, pixel, destLeft, destRight, destTop, destBottom, pitch, random1, random2, mask21, mask22);
+								drawPixel2(destP + 1 + SCREEN_WIDTH, pixel, destLeft, destRight, destTop, destBottom, pitch, random1, random2, mask21, mask22);
+							}
 
-								byte palette[256 * 3];
-								g_system->getPaletteManager()->grabPalette(palette, 0, PALETTE_COUNT);
+						}
+						break;
+						case SPRFLAG_DRAWER3: {
+							static const uint16 DRAWER3_MASK[4] = { 1, 3, 7, 15 };
+							static const uint16 DRAWER3_OFFSET[4] = { 1, 2, 4, 8 };
 
-								bool hasPalette = false;
-								for (byte *pal = palette; pal < palette + PALETTE_SIZE && !hasPalette; ++pal)
-								{
-									hasPalette = *pal != 0;
+							const uint16 offsetLocal = DRAWER3_OFFSET[idx];
+							const uint16 mask = DRAWER3_MASK[idx];
+
+							byte palette[256 * 3];
+							g_system->getPaletteManager()->grabPalette(palette, 0, PALETTE_COUNT);
+
+							bool hasPalette = false;
+							for (byte *pal = palette; pal < palette + PALETTE_SIZE && !hasPalette; ++pal) {
+								hasPalette = *pal != 0;
+							}
+
+							// nothing to do if hasPalette is true
+							if (hasPalette) {
+								const byte pixel = (byte) * lineP;
+								drawPixel3(destP, pixel, mask, offsetLocal, palette);
+
+								if (enlarge) {
+									drawPixel3(destP + SCREEN_WIDTH, pixel, mask, offsetLocal, palette);
+									drawPixel3(destP + 1, pixel, mask, offsetLocal, palette);
+									drawPixel3(destP + 1 + SCREEN_WIDTH, pixel, mask, offsetLocal, palette);
 								}
+							}
+						}
+						break;
+						case SPRFLAG_DRAWER4: {
+							static const byte DRAWER4_THRESHOLD[4] = { 4, 7, 10, 13 };
+							const byte threshold = DRAWER4_THRESHOLD[idx];
+							const byte pixel = (byte) * lineP;
 
-								// nothing to do if hasPalette is true
-								if(hasPalette)
-								{
-									const byte pixel = (byte)*lineP; 
-									drawPixel3(destP, pixel, mask, offsetLocal, palette);
-									
-									if (enlarge)
-									{
-										drawPixel3(destP + SCREEN_WIDTH, pixel, mask, offsetLocal, palette);
-										drawPixel3(destP + 1, pixel,  mask, offsetLocal, palette);
-										drawPixel3(destP + 1 + SCREEN_WIDTH, pixel, mask, offsetLocal, palette );
-									}	
-								}
-							}break;
-							case SPRFLAG_DRAWER4:
-							{
-								static const byte DRAWER4_THRESHOLD[4] = { 4, 7, 10, 13 };
-								const byte threshold = DRAWER4_THRESHOLD[idx];
-								const byte pixel = (byte)*lineP;
-
-								if((pixel & 0xf) >= threshold)
-								{
-									*destP = pixel;
-									
-									if (enlarge)
-									{
-										*(destP + SCREEN_WIDTH) = pixel;
-										*(destP + 1) = pixel;
-										*(destP + 1 + SCREEN_WIDTH) = pixel;
-									}	
-								}
-							} break;
-							case SPRFLAG_DRAWER5:
-							{
-								static const uint16 DRAWER5_THRESHOLD[4] = { 0x3333, 0x6666, 0x999A, 0xCCCD };
-								static const uint16 threshold = DRAWER5_THRESHOLD[idx];
-
-								MM::MMEngine *engine = static_cast<MM::MMEngine *>(g_engine);
-								uint16 random1 = engine->getRandomNumber(0xffff);
-								uint16 random2 = engine->getRandomNumber(0xffff);
-
-								const byte pixel = (byte)*lineP; 
-								drawPixel5(destP, pixel, threshold, random1, random2 );
-									
-								if (enlarge)
-								{
-									drawPixel5(destP + SCREEN_WIDTH, pixel, threshold, random1, random2 );
-									drawPixel5(destP + 1, pixel, threshold, random1, random2 );
-									drawPixel5(destP + 1 + SCREEN_WIDTH, pixel, threshold, random1, random2 );
-								}	
-							}break;
-							case SPRFLAG_DRAWER6:
-							{
-								static const byte DRAWER6_MASK[16] = { 1, 2, 4, 8, 1, 3, 7, 15, 8, 12, 14, 15, 1, 2, 1, 2 };
-								const byte mask = DRAWER6_MASK[idx];
-								const byte pixel = (byte)*lineP ^ mask; 
-								
+							if ((pixel & 0xf) >= threshold) {
 								*destP = pixel;
 
-								if (enlarge)
-								{
+								if (enlarge) {
 									*(destP + SCREEN_WIDTH) = pixel;
 									*(destP + 1) = pixel;
 									*(destP + 1 + SCREEN_WIDTH) = pixel;
-								}	
-							}break;
-							default:
-							{
-								const byte pixel = (byte)*lineP; 
-							 	*destP = pixel;
+								}
+							}
+						}
+						break;
+						case SPRFLAG_DRAWER5: {
+							static const uint16 DRAWER5_THRESHOLD[4] = { 0x3333, 0x6666, 0x999A, 0xCCCD };
+							static const uint16 threshold = DRAWER5_THRESHOLD[idx];
 
-								if (enlarge)
-								{
-									*(destP + SCREEN_WIDTH) = pixel;
-									*(destP + 1) = pixel; 
-									*(destP + 1 + SCREEN_WIDTH) = pixel;
-								}	
-							}break;
+							MM::MMEngine *engine = static_cast<MM::MMEngine *>(g_engine);
+							uint16 random1 = engine->getRandomNumber(0xffff);
+							uint16 random2 = engine->getRandomNumber(0xffff);
+
+							const byte pixel = (byte) * lineP;
+							drawPixel5(destP, pixel, threshold, random1, random2);
+
+							if (enlarge) {
+								drawPixel5(destP + SCREEN_WIDTH, pixel, threshold, random1, random2);
+								drawPixel5(destP + 1, pixel, threshold, random1, random2);
+								drawPixel5(destP + 1 + SCREEN_WIDTH, pixel, threshold, random1, random2);
+							}
+						}
+						break;
+						case SPRFLAG_DRAWER6: {
+							static const byte DRAWER6_MASK[16] = { 1, 2, 4, 8, 1, 3, 7, 15, 8, 12, 14, 15, 1, 2, 1, 2 };
+							const byte mask = DRAWER6_MASK[idx];
+							const byte pixel = (byte) * lineP ^ mask;
+
+							*destP = pixel;
+
+							if (enlarge) {
+								*(destP + SCREEN_WIDTH) = pixel;
+								*(destP + 1) = pixel;
+								*(destP + 1 + SCREEN_WIDTH) = pixel;
+							}
+						}
+						break;
+						default: {
+							const byte pixel = (byte) * lineP;
+							*destP = pixel;
+
+							if (enlarge) {
+								*(destP + SCREEN_WIDTH) = pixel;
+								*(destP + 1) = pixel;
+								*(destP + 1 + SCREEN_WIDTH) = pixel;
+							}
+						}
+						break;
 						};
 					}
 
@@ -606,12 +593,10 @@ static inline void drawSprite(byte *data, size_t filesize, XSurface &dest, uint1
 
 }
 
-void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos, const Common::Rect &bounds, uint flags, int scale) const 
-{
+void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos, const Common::Rect &bounds, uint flags, int scale) const {
 	Common::Rect r = bounds;
-	
-	if (flags & SPRFLAG_BOTTOM_CLIPPED)
-	{
+
+	if (flags & SPRFLAG_BOTTOM_CLIPPED) {
 		r.clip(SCREEN_WIDTH, _clippedBottom);
 	}
 
@@ -622,9 +607,7 @@ void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPo
 			if (flags & Shared::Xeen::SPRFLAG_RESIZE)
 				dest.create(src.w, src.h);
 			dest.blitFrom(src, destPos);
-		}
-		else
-		{
+		} else {
 			// Sprites can consist of separate background & foreground
 			drawSprite(_data, _filesize, dest, _index[frame]._offset1, destPos, r, flags, scale);
 
