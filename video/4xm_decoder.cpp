@@ -253,6 +253,8 @@ void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *st
 	FourXM::BEByteBitStream bitstream(bitstreamData.data(), bitstreamData.size(), 0);
 	uint prefixOffset = 0;
 	int lastDC = 0;
+	auto &format = _frame->format;
+	const auto dstPitch = _frame->pitch / format.bytesPerPixel - 16;
 	for (int mbY = 0; mbY < _frame->h; mbY += 16) {
 		for (int mbX = 0; mbX < _frame->w; mbX += 16) {
 			int16_t block[6][64] = {};
@@ -296,7 +298,8 @@ void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *st
 			};
 			auto blockCB = block[4];
 			auto blockCR = block[5];
-			for (byte y = 0; y != 16; ++y) {
+			auto *dst = static_cast<uint16 *>(_frame->getBasePtr(mbX, mbY));
+			for (byte y = 0; y != 16; ++y, dst += dstPitch) {
 				for (byte x = 0; x != 16; ++x) {
 					auto yb = y & 7;
 					auto xb = x & 7;
@@ -306,9 +309,9 @@ void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *st
 					auto CB = blockCB[cblockIdx];
 					auto CR = blockCR[cblockIdx];
 					int CG = (CB + CR) >> 1;
-					CB += CB;
-					auto color = _frame->format.RGBToColor(Y + CR, Y - CG, Y + CB);
-					_frame->setPixel(mbX | x, mbY | y, color);
+					CB *= 2;
+					auto color = format.RGBToColor(Y + CR, Y - CG, Y + CB);
+					*dst++ = color;
 				}
 			}
 		}
