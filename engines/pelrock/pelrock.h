@@ -230,6 +230,8 @@ public:
 	bool renderScene(int overlayMode = OVERLAY_NONE);
 	void frameTriggers();
 
+	void passerByAnim(uint32 frameCount);
+
 	void changeCursor(Cursor cursor);
 
 	// Actions

@@ -61,6 +61,7 @@ public:
 	RoomManager();
 	~RoomManager();
 	void loadRoomMetadata(Common::File *roomFile, int roomNumber);
+	RoomPasserBys *loadPasserByAnims(int roomNumber);
 	Common::Array<HotSpot> unifyHotspots(Common::Array<Pelrock::Sprite> &anims, Common::Array<Pelrock::HotSpot> &staticHotspots);
 	void loadRoomTalkingAnimations(int roomNumber);
 	void getPalette(Common::File *roomFile, int roomOffset, byte *palette);
@@ -150,6 +151,7 @@ public:
 	byte _musicTrack = 0;
 	Common::Array<byte> _roomSfx;
 	PaletteAnim *_currentPaletteAnim = nullptr;
+	RoomPasserBys *_passerByAnims = nullptr;
 	byte *_conversationData = nullptr;
 	size_t _conversationDataSize = 0;
 	Common::Array<Sticker> _roomStickers;

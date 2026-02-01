@@ -200,15 +200,19 @@ Common::Array<VerbIcon> PelrockEngine::availableActions(HotSpot *hotspot) {
 
 // Sort sprites by zOrder in-place using insertion sort (efficient for nearly-sorted data)
 void sortAnimsByZOrder(Common::Array<Sprite> &anims) {
-	for (size_t i = 1; i < anims.size(); ++i) {
+	for (size_t i = 0; i < anims.size(); ++i) {
 		Sprite key = anims[i];
 		int z = key.zOrder;
 		size_t j = i;
-		while (j > 0 && anims[j - 1].zOrder > z) {
+		while (j > 0 && anims[j - 1].zOrder < z) {
 			anims[j] = anims[j - 1];
 			--j;
 		}
 		anims[j] = key;
+	}
+	debug("Sorted anims by zOrder");
+	for (size_t i = 0; i < anims.size(); i++) {
+		debug("Anim %d, extra = %d: zOrder=%d", i, anims[i].extra, anims[i].zOrder);
 	}
 }
 
@@ -251,11 +255,13 @@ bool PelrockEngine::renderScene(int overlayMode) {
 	return false;
 }
 
-const int kPasserbyTriggerFrameInterval = 0x3FF;
+// const int kPasserbyTriggerFrameInterval = 0x3FF;
 
+const int kPasserbyTriggerFrameInterval = 15;
 void PelrockEngine::frameTriggers() {
-	if ((_chrono->getFrameCount() & kPasserbyTriggerFrameInterval) == kPasserbyTriggerFrameInterval) {
-		debug("Would trigger passer-by");
+	uint32 frameCount = _chrono->getFrameCount();
+	// Passerby animations
+	if ((frameCount & kPasserbyTriggerFrameInterval) == kPasserbyTriggerFrameInterval) {
 		switch (_room->_currentRoomNumber) {
 		case 9: {
 			Sprite *mouse = _room->findSpriteByIndex(2);
@@ -269,11 +275,8 @@ void PelrockEngine::frameTriggers() {
 			mouse->animData[3].movementFlags = 0x3E0;
 			break;
 		}
-		default:
-			break;
 		}
 	}
-
 	if (_room->_currentRoomNumber == 9) {
 		// Mouse animation on library
 		Sprite *mouse = _room->findSpriteByIndex(2);
@@ -283,6 +286,54 @@ void PelrockEngine::frameTriggers() {
 				mouse->y = 315;
 				mouse->zOrder = 255;
 				mouse->curAnimIndex = 0;
+			}
+		}
+	}
+	passerByAnim(frameCount);
+}
+
+void PelrockEngine::passerByAnim(uint32 frameCount) {
+	if (_room->_passerByAnims == nullptr) {
+		debug("No passerby anims for this room");
+		return;
+	}
+	if (_room->_passerByAnims->latch == false) {
+		int animIndex = _room->_passerByAnims->numAnims == 1 ? 0 : getRandomNumber(_room->_passerByAnims->numAnims - 1);
+		PasserByAnim anim = _room->_passerByAnims->passerByAnims[animIndex];
+		if ((frameCount & anim.frameTrigger) == anim.frameTrigger) {
+			Sprite *sprite = _room->findSpriteByIndex(anim.spriteIndex);
+			if (sprite && sprite->zOrder == -1) {
+				debug("Starting passerby anim for sprite %d at index %d", anim.spriteIndex, animIndex);
+				sprite->zOrder = anim.targetZIndex;
+				_room->_passerByAnims->latch = true;
+				_room->_passerByAnims->currentAnimIndex = animIndex;
+			}
+		}
+	} else {
+		PasserByAnim anim = _room->_passerByAnims->passerByAnims[_room->_passerByAnims->currentAnimIndex];
+		byte direction = anim.dir;
+		int spriteIndex = anim.spriteIndex;
+		int startX = anim.startX;
+		int startY = anim.startY;
+
+		Sprite *sprite = _room->findSpriteByIndex(spriteIndex);
+		if (direction == RIGHT) {
+			if (sprite->x >= anim.resetX) {
+				sprite->x = startX;
+				sprite->y = startY;
+				sprite->zOrder = -1;
+				sprite->curAnimIndex = 0;
+				sprite->animData[0].curFrame = 0;
+				_room->_passerByAnims->latch = false;
+			}
+		} else if (direction == LEFT) {
+			if (sprite->x <= anim.resetX) {
+				sprite->x = startX;
+				sprite->y = startY;
+				sprite->zOrder = -1;
+				sprite->curAnimIndex = 0;
+				sprite->animData[0].curFrame = 0;
+				_room->_passerByAnims->latch = false;
 			}
 		}
 	}
@@ -1307,7 +1358,7 @@ void PelrockEngine::gameLoop() {
 void PelrockEngine::computerLoop() {
 	Computer computer(_events);
 	computer.run();
-	if(_state->selectedBookIndex != -1 && _state->bookLetter != '\0') {
+	if (_state->selectedBookIndex != -1 && _state->bookLetter != '\0') {
 		Common::StringArray lines;
 		lines.push_back(Common::String::format(computer._memorizedMsg, _state->bookLetter));
 		_dialog->sayAlfred(lines);

@@ -405,6 +405,30 @@ struct PaletteAnim {
 	byte tickCount = 0;
 };
 
+#define RIGHT 0
+#define LEFT 1
+
+struct PasserByAnim
+{
+	uint32 frameTrigger = 0x3FF;
+	int16 startX;
+	int16 startY;
+	int16 resetX;
+	bool dir;
+	byte spriteIndex;
+	byte targetZIndex;
+};
+
+struct RoomPasserBys {
+	byte roomNumber;
+	PasserByAnim passerByAnims[2];
+	byte currentAnimIndex = 0;
+	byte numAnims = 0;
+	bool latch = false;
+	RoomPasserBys(byte roomNum, byte numAnims) : roomNumber(roomNum), numAnims(numAnims) {}
+};
+
+
 /**
  * Structure to hold a parsed choice option
  */

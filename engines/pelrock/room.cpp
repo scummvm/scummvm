@@ -589,8 +589,203 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 		_currentPaletteAnim = nullptr;
 	}
 
+	if (_passerByAnims != nullptr) {
+		delete _passerByAnims;
+	}
+	_passerByAnims = loadPasserByAnims(roomNumber);
+
 	delete[] pair10;
 	delete[] pair12;
+}
+
+int streetWalkerIndices[] = {
+	-1, // room 0,
+	5,  // room 1,
+	3,  // room 2,
+	6,  // room 3,
+	-1, // room 4,
+	-1, // room 5,
+	-1, // room 6,
+	-1, // room 7,
+	7,  // room 8,
+	-1, // room 9,
+	-1, // room 10,
+	-1, // room 11,
+	-1, // room 12,
+	-1, // room 13,
+	2,  // room 14,
+	-1, // room 15,
+	2
+
+};
+RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
+	RoomPasserBys *anims = nullptr;
+	switch (roomNumber) {
+		// case 9: {
+		// 		Sprite *mouse = findSpriteByIndex(2);
+		// 		mouse->zOrder = 1;
+		// 		mouse->animData[0].loopCount = 3;
+		// 		mouse->animData[1].loopCount = 1;
+		// 		mouse->animData[1].movementFlags = 0x3FF;
+		// 		mouse->animData[2].loopCount = 1;
+		// 		mouse->animData[2].movementFlags = 0x801F;
+		// 		mouse->animData[3].loopCount = 3;
+		// 		mouse->animData[3].movementFlags = 0x3E0;
+		// 		break;
+		// 	}
+
+	case 1:
+	case 2:
+	case 3:
+	case 8:
+	case 14:
+	case 16: {
+		anims = new RoomPasserBys(roomNumber, 1);
+		PasserByAnim anim;
+		anim.spriteIndex = streetWalkerIndices[roomNumber];
+		Sprite *camel = findSpriteByIndex(anim.spriteIndex);
+		anim.startX = camel->x;
+		anim.startY = camel->y;
+		anim.dir = RIGHT;
+		anim.frameTrigger = 0x1FFF;
+		anim.targetZIndex = 1;
+		anim.resetX = 639 + camel->w;
+
+		anims->passerByAnims[0] = anim;
+		break;
+	}
+	case 21: {
+		anims = new RoomPasserBys(roomNumber, 1);
+		PasserByAnim anim;
+		anim.spriteIndex = 3;
+		Sprite *camel = findSpriteByIndex(3);
+		anim.startX = camel->x;
+		anim.startY = camel->y;
+		anim.dir = LEFT;
+		anim.resetX = 0 - camel->w;
+		anim.targetZIndex = 1;
+
+		anims->passerByAnims[0] = anim;
+		break;
+	}
+	case 29: {
+		Sprite *carLeft = findSpriteByIndex(2);
+		Sprite *carRight = findSpriteByIndex(3);
+
+		anims = new RoomPasserBys(roomNumber, 2);
+		PasserByAnim animA;
+		animA.spriteIndex = 2;
+		animA.startX = carLeft->x;
+		animA.startY = carLeft->y;
+		animA.dir = LEFT;
+		animA.resetX = carRight->x + carRight->w - carLeft->w;
+		animA.targetZIndex = 100;
+
+		anims->passerByAnims[0] = animA;
+		PasserByAnim animB;
+		animB.spriteIndex = 3;
+		animB.startX = carRight->x;
+		animB.startY = carRight->y;
+		animB.dir = RIGHT;
+		animB.targetZIndex = 100;
+		animB.resetX = 639 + carRight->w;
+		anims->passerByAnims[1] = animB;
+		break;
+	}
+	case 31: {
+
+		anims = new RoomPasserBys(roomNumber, 1);
+		Sprite *walker = findSpriteByIndex(2);
+		Sprite *dark = findSpriteByIndex(5);
+		PasserByAnim anim;
+		anim.spriteIndex = 2;
+		anim.startX = walker->x;
+		anim.startY = walker->y;
+		anim.dir = RIGHT;
+		anim.resetX = dark->x;
+		anim.targetZIndex = dark->zOrder + 1;
+		anims->passerByAnims[0] = anim;
+		break;
+	}
+	case 46: {
+		Sprite *catRight = findSpriteByIndex(2);
+		Sprite *catLeft = findSpriteByIndex(3);
+		Sprite *blank = findSpriteByIndex(0);
+		anims = new RoomPasserBys(roomNumber, 2);
+		PasserByAnim animA;
+		animA.spriteIndex = 2;
+		animA.startX = catRight->x;
+		animA.startY = catRight->y;
+		animA.dir = RIGHT;
+		animA.resetX = catLeft->x;
+		animA.targetZIndex = blank->zOrder + 1;
+
+		anims->passerByAnims[0] = animA;
+		PasserByAnim animB;
+		animB.spriteIndex = 3;
+		animB.startX = catLeft->x;
+		animB.startY = catLeft->y;
+		animB.dir = LEFT;
+		animB.resetX = blank->x;
+		animB.targetZIndex = blank->zOrder + 1;
+		anims->passerByAnims[1] = animB;
+		break;
+	}
+	case 47: {
+		Sprite *mouseRight = findSpriteByIndex(3);
+		Sprite *mouseLeft = findSpriteByIndex(4);
+		Sprite *papers = findSpriteByIndex(1);
+
+		anims = new RoomPasserBys(roomNumber, 2);
+		PasserByAnim animA;
+		animA.spriteIndex = 3;
+		animA.startX = mouseRight->x;
+		animA.startY = mouseRight->y;
+		animA.dir = RIGHT;
+		animA.resetX = mouseLeft->x;
+		animA.targetZIndex = papers->zOrder + 1;
+		anims->passerByAnims[0] = animA;
+
+		PasserByAnim animB;
+		animB.spriteIndex = 4;
+		animB.startX = mouseLeft->x;
+		animB.startY = mouseLeft->y;
+		animB.dir = LEFT;
+		animB.resetX = mouseRight->x;
+		animB.targetZIndex = papers->zOrder + 1;
+		anims->passerByAnims[1] = animB;
+		break;
+	}
+	case 50: {
+		Sprite *mummyLeft = findSpriteByIndex(2);
+		Sprite *mummyRight = findSpriteByIndex(3);
+
+		anims = new RoomPasserBys(roomNumber, 2);
+		PasserByAnim animA;
+		animA.spriteIndex = 2;
+		animA.startX = mummyLeft->x;
+		animA.startY = mummyLeft->y;
+		animA.dir = LEFT;
+		animA.resetX = 0 - mummyLeft->w;
+		animA.targetZIndex = 1;
+
+		anims->passerByAnims[0] = animA;
+		PasserByAnim animB;
+		animB.spriteIndex = 3;
+		animB.startX = mummyRight->x;
+		animB.startY = mummyRight->y;
+		animB.dir = RIGHT;
+		animB.targetZIndex = 1;
+		animB.resetX = 639 + mummyRight->w;
+		anims->passerByAnims[1] = animB;
+		break;
+	}
+	default:
+		break;
+	}
+	if (anims != nullptr)
+		debug("Loaded passerby anims for room %d, count = %d", roomNumber, anims->numAnims);
+	return anims;
 }
 
 Common::Array<HotSpot> RoomManager::unifyHotspots(Common::Array<Pelrock::Sprite> &anims, Common::Array<Pelrock::HotSpot> &staticHotspots) {
@@ -673,7 +868,7 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 		for (int j = 0; j < spriteChanges.size(); j++) {
 			if (spriteChanges[j].spriteIndex == sprite.index) {
 				sprite.zOrder = spriteChanges[j].zIndex;
-				if(sprite.zOrder == 255) {
+				if (sprite.zOrder == 255) {
 					sprite.isHotspotDisabled = 1;
 				}
 				break;
@@ -945,7 +1140,7 @@ void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
 	readUntilBuda(&talkFile, talkHeader.spritePointer, data, dataSize);
 	size_t decompressedSize = rleDecompress(data, dataSize, 0, dataSize, &decompressed);
 	free(data);
-	// debug("Decompressed talking anim A size: %zu, decompressed size: %zu", dataSize, decompressedSize);
+	debug("Decompressed talking anim A size: %zu, decompressed size: %zu", dataSize, decompressedSize);
 	for (int i = 0; i < talkHeader.numFramesAnimA; i++) {
 		talkHeader.animA[i] = new byte[talkHeader.wAnimA * talkHeader.hAnimA];
 		extractSingleFrame(decompressed, talkHeader.animA[i], i, talkHeader.wAnimA, talkHeader.hAnimA);
@@ -955,7 +1150,14 @@ void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
 		talkHeader.animB = new byte *[talkHeader.numFramesAnimB];
 		for (int i = 0; i < talkHeader.numFramesAnimB; i++) {
 			talkHeader.animB[i] = new byte[talkHeader.wAnimB * talkHeader.hAnimB];
-			extractSingleFrame(decompressed + animASize, talkHeader.animB[i], i, talkHeader.wAnimB, talkHeader.hAnimB);
+			uint32 offset = animASize + (i * talkHeader.wAnimB * talkHeader.hAnimB);
+			debug("Extracting talking anim B frame %d at offset %d, size = %d", i, animASize + (i * talkHeader.wAnimB * talkHeader.hAnimB), talkHeader.wAnimB * talkHeader.hAnimB);
+			if (offset + talkHeader.wAnimB * talkHeader.hAnimB >= decompressedSize) {
+				debug("Error: offset %d is beyond decompressed size %zu", offset, decompressedSize);
+				talkHeader.numFramesAnimB = 0;
+			} else {
+				extractSingleFrame(decompressed + animASize, talkHeader.animB[i], i, talkHeader.wAnimB, talkHeader.hAnimB);
+			}
 		}
 	}
 	free(decompressed);
