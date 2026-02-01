@@ -43,8 +43,8 @@ public:
 	void setPortBitsToPage(int16 screenPage); // sub_128_1f4
 	void delay(int16 numTicks); // sub_128_21e
 	void delayFromMarker(int16 numTicks); // sub_128_24a
-	void sub_128_26c(int16 unk1, int16 unk2);
-	void sub_128_2a6(int16 unk1, int16 unk2);
+	void drawTextRightAlign(int16 y, int16 x); // sub_128_26c
+	void drawTextCenterAlign(int16 unk1, int16 unk2); // sub_128_2a6
 	void fillRect(int16 patternID, int16 top, int16 left, int16 bottom, int16 right); // sub_128_2f0
 	void sub_128_354(PatternMode mode, uint16 unk2);
 	void sub_128_3ee(int16 unk1);
@@ -53,7 +53,7 @@ public:
 	void scanlineTransition(int16 patternID); // sub_128_64a
 	void zoomTransition(int16 screenPage); // sub_128_6e4
 	void sub_128_800(int16_t unk1, int16_t unk2, int16_t unk3, int16_t unk4, int16_t unk5, int16_t unk6, int16_t unk7, int16_t unk8, int16_t unk9);
-	void sub_128_a6c(int16_t unk1, int16_t unk2);
+	void drawText(int16_t y, int16_t x); // sub_128_a6c
 	void drawRainRecycle(int16_t unk); // sub_128_a8c
 	void sub_128_c8a();
 	void shuffleScanlines(); // sub_128_ccc
@@ -74,7 +74,7 @@ public:
 	void prologueDrawLoadingMsg(); // sub_130_d28
 	void drawRain(); // sub_130_db0
 	void drawRainDrop(); // sub_130_e82
-	void sub_130_f48();
+	void prologueRenderNextText(); // sub_130_f48
 	void sub_130_1002();
 
 	void sub_131_004();
