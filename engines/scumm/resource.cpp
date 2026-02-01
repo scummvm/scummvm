@@ -1726,7 +1726,8 @@ void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
 	if (_game.id == GID_MONKEY2 &&
 	    (_game.features & GF_DEMO) &&
 	    _game.platform == Common::kPlatformDOS &&
-	    _game.version == 5) {
+	    _game.version == 5 && 
+	    enhancementEnabled(kEnhRestoredContent)) {
 
 	    if (type == rtScript && idx == 77) {
 	        byte *scriptRes = getResourceAddress(type, idx);
@@ -1735,22 +1736,22 @@ void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
 	        byte *code = scriptRes + 8;
 	        const uint32 codeSize = scriptResSize - 8;
 
-	            const byte PutActorInRoom4Pattern[] = { 0x2D, 0x01, 0x04, 0x01, 0x01 };
+	            const byte putActorInRoom4Pattern[] = { 0x2D, 0x01, 0x04, 0x01, 0x01 };
 
-	            if (codeSize >= (uint32)sizeof(PutActorInRoom4Pattern)) {
-	                for (uint32 i = 0; i + (uint32)sizeof(PutActorInRoom4Pattern) <= codeSize; ++i) {
-	                    if (memcmp(code + i, PutActorInRoom4Pattern, sizeof(PutActorInRoom4Pattern)) == 0) {
+	            if (codeSize >= (uint32)sizeof(putActorInRoom4Pattern)) {
+	                for (uint32 i = 0; i + (uint32)sizeof(putActorInRoom4Pattern) <= codeSize; ++i) {
+	                    if (memcmp(code + i, putActorInRoom4Pattern, sizeof(putActorInRoom4Pattern)) == 0) {
 	                        code[i + 2] = 0x03;
 	                        break;
 	                    }
 	                }
 	            }
 
-	            const byte OverrideInstallPattern[] = { 0x58, 0x01, 0x18, 0x1E, 0x00 };
+	            const byte overrideInstallPattern[] = { 0x58, 0x01, 0x18, 0x1E, 0x00 };
 
-	            if (codeSize >= (uint32)sizeof(OverrideInstallPattern)) {
-	                for (uint32 i = 0; i + (uint32)sizeof(OverrideInstallPattern) <= codeSize; ++i) {
-	                    if (memcmp(code + i, OverrideInstallPattern, sizeof(OverrideInstallPattern)) == 0) {
+	            if (codeSize >= (uint32)sizeof(overrideInstallPattern)) {
+	                for (uint32 i = 0; i + (uint32)sizeof(overrideInstallPattern) <= codeSize; ++i) {
+	                    if (memcmp(code + i, overrideInstallPattern, sizeof(overrideInstallPattern)) == 0) {
 	                        code[i + 0] = 0x58;
 	                        code[i + 1] = 0x00;
 	                        code[i + 2] = 0x80;
@@ -1761,13 +1762,13 @@ void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
 	                }
 	            }
 
-	            const byte OverrideDecisionTestPattern[] = { 0xA8, 0x05, 0x00, 0x2D, 0x00 };
-	            const byte SetOverrideVarTrue[] = { 0x1A, 0x05, 0x00, 0x01, 0x00 };
+	            const byte overrideDecisionTestPattern[] = { 0xA8, 0x05, 0x00, 0x2D, 0x00 };
+	            const byte setOverrideVarTrue[] = { 0x1A, 0x05, 0x00, 0x01, 0x00 };
 
-	            if (codeSize >= (uint32)sizeof(OverrideDecisionTestPattern)) {
-	                for (uint32 i = 0; i + (uint32)sizeof(OverrideDecisionTestPattern) <= codeSize; ++i) {
-	                    if (memcmp(code + i, OverrideDecisionTestPattern, sizeof(OverrideDecisionTestPattern)) == 0) {
-	                        memcpy(code + i, SetOverrideVarTrue, sizeof(SetOverrideVarTrue));
+	            if (codeSize >= (uint32)sizeof(overrideDecisionTestPattern)) {
+	                for (uint32 i = 0; i + (uint32)sizeof(overrideDecisionTestPattern) <= codeSize; ++i) {
+	                    if (memcmp(code + i, overrideDecisionTestPattern, sizeof(overrideDecisionTestPattern)) == 0) {
+	                        memcpy(code + i, setOverrideVarTrue, sizeof(setOverrideVarTrue));
 	                        break;
 	                    }
 	                }
