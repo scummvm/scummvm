@@ -196,6 +196,20 @@ struct FontInfo {
 	int16 leading;
 };
 
+
+typedef uint16 OSErr;
+
+struct ParamBlockRec {
+	uint32 qLink = 0;
+	uint16 qType = 0;
+	uint16 ioTrap = 0;
+	uint32 ioCmdAddr = 0;
+	uint32 ioCompletion = 0;
+	OSErr ioResult = 0;
+	Common::String ioNamePtr;
+	uint16 ioVRefNum = 0;
+};
+
 class Toolbox {
 
 public:
@@ -227,6 +241,10 @@ public:
 	// up.
 	uint32 TickCount();
 
+	// toolbox_fileman.cpp
+	void PBGetVol(ParamBlockRec &paramBlock);
+
+	void PBSetVol(ParamBlockRec &paramBlock);
 
 	// toolbox_resman.cpp
 
