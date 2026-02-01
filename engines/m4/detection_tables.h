@@ -25,7 +25,7 @@ static const PlainGameDescriptor m4Games[] = {
 	{ "m4", "MADS/M4 engine game" },
 	{ "riddle", "Ripley's Believe It or Not!: The Riddle of Master Lu" },
 	{ "burger", "Orion Burger" },
-	{ 0, 0 }
+	{ nullptr, nullptr }
 };
 
 static const M4GameDescription gameDescriptions[] = {

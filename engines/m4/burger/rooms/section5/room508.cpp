@@ -202,7 +202,7 @@ void Room508::init() {
 		kernel_trigger_dispatch_now(5);
 	} else {
 		_val4 = 22;
-		kernel_trigger_dispatch_now(22);
+		kernel_trigger_dispatch_now(5);
 	}
 
 	if (_G(flags)[V228] == 1) {

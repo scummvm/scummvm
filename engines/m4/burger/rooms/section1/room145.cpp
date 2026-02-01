@@ -51,22 +51,22 @@ const char *Room145::SAID[][4] = {
 };
 
 const WilburMatch Room145::MATCH[] = {
-	{ nullptr, "TOUR BUS", 1, 0, 0, &_state1, 12 },
-	{ "TALK", "ROXY", 10016, 0, 0, &Vars::_wilbur_should, 11 },
-	{ "AMPLIFIER", "ROXY", 1, 0, 0, &_state1, 15 },
-	{ nullptr, "ROXY", 1, 0, 0, &_state1, 17 },
-	{ "TALK" , "DRUMZ", kSPEAK_TO_DRUMZ, 0, 0, 0, 0 }, 
-	{ "LAXATIVE" , "DRUMZ", 10016, 0, 0, &Vars::_wilbur_should, 3 },
-	{ nullptr, "DRUMZ", 1, 0, 0, &_state1, 16 },
-	{ "TALK" , "VIPE", 10016, 0, 0, &Vars::_wilbur_should, 10 },
-	{ "AMPLIFIER", "VIPE", 1, 0, 0, &_state1, 15 },
-	{ nullptr, "VIPE", 1, 0, 0, &_state1, 16 },
-	{ "AMPLIFIER" , "INSTRUMENTS", 1, 0, 0, &_state1, 13 },
-	{ nullptr, "INSTRUMENTS", 1, 0, 0, &_state1, 14 },
+	{ nullptr, "TOUR BUS", 1, nullptr, 0, &_state1, 12 },
+	{ "TALK", "ROXY", 10016, nullptr, 0, &Vars::_wilbur_should, 11 },
+	{ "AMPLIFIER", "ROXY", 1, nullptr, 0, &_state1, 15 },
+	{ nullptr, "ROXY", 1, nullptr, 0, &_state1, 17 },
+	{ "TALK" , "DRUMZ", kSPEAK_TO_DRUMZ, nullptr, 0, 0, 0 }, 
+	{ "LAXATIVE" , "DRUMZ", 10016, nullptr, 0, &Vars::_wilbur_should, 3 },
+	{ nullptr, "DRUMZ", 1, nullptr, 0, &_state1, 16 },
+	{ "TALK" , "VIPE", 10016, nullptr, 0, &Vars::_wilbur_should, 10 },
+	{ "AMPLIFIER", "VIPE", 1, nullptr, 0, &_state1, 15 },
+	{ nullptr, "VIPE", 1, nullptr, 0, &_state1, 16 },
+	{ "AMPLIFIER" , "INSTRUMENTS", 1, nullptr, 0, &_state1, 13 },
+	{ nullptr, "INSTRUMENTS", 1, nullptr, 0, &_state1, 14 },
 	{ "TAKE", "AMPLIFIER ", 10016, &Flags::_flags[kDrumzFled], 0, &Vars::_wilbur_should, 1 },
 	{ "TAKE", "AMPLIFIER ", 10016, &Flags::_flags[kDrumzFled], 1, &Vars::_wilbur_should, 8 },
-	{ nullptr, "AMPLIFIER ", 1, 0, 0, &_state1, 14 },
-	{ nullptr, "MAP", 1, 0, 0, &_state1, 18 },
+	{ nullptr, "AMPLIFIER ", 1, nullptr, 0, &_state1, 14 },
+	{ nullptr, "MAP", 1, nullptr, 0, &_state1, 18 },
 	WILBUR_MATCH_END
 };
 
@@ -809,9 +809,9 @@ void Room145::loadRx() {
 
 void Room145::conv21() {
 	const char *sound = conv_sound_to_play();
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	if (sound) {
 		if (who == 1) {
@@ -858,7 +858,7 @@ void Room145::conv21() {
 
 void Room145::conv22() {
 	const char *sound = conv_sound_to_play();
-	int who = conv_whos_talking();
+	const int who = conv_whos_talking();
 
 	if (sound) {
 		if (who == 1)
@@ -870,9 +870,9 @@ void Room145::conv22() {
 
 void Room145::conv23() {
 	const char *sound = conv_sound_to_play();
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	if (sound) {
 		if (who == 1) {

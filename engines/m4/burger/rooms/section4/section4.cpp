@@ -148,27 +148,27 @@ void Section4::init() {
 void Section4::daemon() {
 	switch (_G(kernel).trigger) {
 	case 4001:
-		_G(game).new_room = 401;
+		_G(game).setRoom(401);
 		break;
 
 	case 4002:
-		_G(game).new_room = 402;
+		_G(game).setRoom(402);
 		break;
 
 	case 4003:
-		_G(game).new_room = 404;
+		_G(game).setRoom(404);
 		break;
 
 	case 4004:
-		_G(game).new_room = 405;
+		_G(game).setRoom(405);
 		break;
 
 	case 4005:
-		_G(game).new_room = 406;
+		_G(game).setRoom(406);
 		break;
 
 	case 4006:
-		_G(game).new_room = 407;
+		_G(game).setRoom(407);
 		break;
 
 	case 4007:
@@ -229,9 +229,9 @@ bool Section4::checkOrderWindow() {
 		_G(flags)[kFifthTestPassed] = 1;
 		disable_player_commands_and_fade_init(k10027);
 		return true;
-	} else {
-		return false;
 	}
+
+	return false;
 }
 
 bool Section4::teleport() {
@@ -241,19 +241,19 @@ bool Section4::teleport() {
 
 	if (te->_room) {
 		if (player_said("DISC")) {
-			_G(game).new_room = te->_newRoom1;
+			_G(game).setRoom(te->_newRoom1);
 			term_message("...%d...", te->_newRoom1);
 			return true;
-		} else if (player_said("DISC ")) {
-			_G(game).new_room = te->_newRoom2;
+		}
+
+		if (player_said("DISC ")) {
+			_G(game).setRoom(te->_newRoom2);
 			term_message("...%d...", te->_newRoom2);
 			return true;
-		} else {
-			return false;
 		}
-	} else {
-		return false;
 	}
+	
+	return false;
 }
 
 } // namespace Rooms

@@ -3,8 +3,22 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2026.1.1 (2026-XX-XX)
 
+ General:
+   - Improved PC-Speaker emulation.
+   - Implemented multiselect in the GUI launcher games list.
 
-#### 2026.1.0 (2026-01-31)
+ MM:
+   - Fixed M&M1 memory corruption on exit.
+   - Fixed M&M1 display issues/corruption getting items from treasure chests.
+   - Fixed M&M1 showing incorrect name for attacking monsters in combat.
+
+ WAGE:
+   - Implemented combat system.
+   - Numerous visual fixes.
+   - Implemented mouse scrolling of text window.
+
+
+#### 2026.1.0 "Like a version" (2026-01-31)
 
  New games:
    - Added support for Dark Seed.
@@ -88,7 +102,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added Text-to-Speech support.
 
  Grim:
- - Added support for the fantranslated Polish version of Grim Fandango.
+  - Added support for the fantranslated Polish version of Grim Fandango.
 
  Hugo:
    - Added Text-to-Speech support.
@@ -99,6 +113,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Hypno:
    - Added keymapper support.
+   - Added support for third party subtitles.
 
  Illusions:
    - Fixed a crash when triggering the game menu early in the game.
@@ -269,6 +284,18 @@ For a more comprehensive changelog of the latest experimental code, see:
    - 3D renderer enabled by default for 2D games.
    - Added Text-to-Speech support.
    - Added support for several fan translations.
+
+ ZVision:
+   - Added support for widescreen displays
+   - Added high quality panorama option (uses bilinear filtering)
+   - Improved directionality of 3D sound
+   - Improved accuracy of volume scaling
+   - Enabled high performance audiovisual effects in Zork Nemesis
+   - Improved behaviour of draggable lever controls
+   - Fixed bug causing audio to cut out after long periods of continuous gameplay
+   - Fixed bug causing some audio not to play in certain locations after restoring a saved game
+   - Fixed bug causing music puzzles not to play all notes when using MT-32
+   - Fixed various gameplay script bugs in Nemesis and Grand Inquisitor
 
  Desktop ports:
    - Allow the user to disable manual resizing of the ScummVM window (using Ctrl+R).

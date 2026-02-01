@@ -98,7 +98,7 @@ namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-struct Dialogs {
+struct Dialogs : public ViewsBase {
 private:
 	ViewsEnh::Interactions::AccessCode _accessCode;
 	ViewsEnh::Interactions::Alamar _alamar;
@@ -181,6 +181,7 @@ private:
 	Views::Bash _bash;
 public:
 	Dialogs() {}
+	~Dialogs() override {}
 };
 
 } // namespace ViewsEnh

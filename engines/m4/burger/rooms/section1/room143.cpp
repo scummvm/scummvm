@@ -1161,8 +1161,8 @@ void Room143::pre_parser() {
 }
 
 void Room143::parser() {
-	bool lookFlag = player_said_any("look", "look at");
-	bool money = player_said("money ");
+	const bool lookFlag = player_said_any("look", "look at");
+	const bool money = player_said("money ");
 	_G(kernel).trigger_mode = KT_DAEMON;
 
 	if (player_said("conv35")) {
@@ -1310,9 +1310,9 @@ void Room143::parser() {
 void Room143::conv35() {
 	_G(kernel).trigger_mode = KT_PARSE;
 	const char *sound = conv_sound_to_play();
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	switch (_G(kernel).trigger) {
 	case 9:
@@ -1432,7 +1432,7 @@ void Room143::conv35() {
 void Room143::conv30() {
 	_G(kernel).trigger_mode = KT_PARSE;
 	const char *sound = conv_sound_to_play();
-	int who = conv_whos_talking();
+	const int who = conv_whos_talking();
 
 	if (_G(kernel).trigger == 9) {
 		if (who <= 0) {

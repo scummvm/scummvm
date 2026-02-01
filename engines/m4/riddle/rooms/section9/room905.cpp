@@ -78,7 +78,7 @@ void Room905::daemon() {
 		_roomStates_field4 -= 3;
 		if (_roomStates_field4 <= 40) {
 			adv_kill_digi_between_rooms(false);
-			_G(game).new_room = 906;
+			_G(game).setRoom(906);
 		} else {
 			digi_change_panning(1, _roomStates_field4);
 			kernel_timing_trigger(2, 30, nullptr);
@@ -86,13 +86,11 @@ void Room905::daemon() {
 		break;
 
 	case 55:
-		_G(game).new_room = 304;
-		_G(game).new_section = 3;
+		_G(game).setRoom(304);
 		break;
 
 	case 56:
-		_G(game).new_room = 494;
-		_G(game).new_section = 4;
+		_G(game).setRoom(494);
 		break;
 
 	case 666:

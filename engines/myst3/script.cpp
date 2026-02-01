@@ -2456,25 +2456,25 @@ void Script::runCommonScriptWithVar(Context &c, const Opcode &cmd) {
 }
 
 void Script::runPuzzle1(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Run puzzle helper %d", cmd.op, cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Run puzzle1 helper %d", cmd.op, cmd.args[0]);
 
 	_puzzles->run(cmd.args[0]);
 }
 
 void Script::runPuzzle2(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Run puzzle helper %d", cmd.op, cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Run puzzle2 helper %d, arg0: %d", cmd.op, cmd.args[0], cmd.args[1]);
 
 	_puzzles->run(cmd.args[0], cmd.args[1]);
 }
 
 void Script::runPuzzle3(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Run puzzle helper %d", cmd.op, cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Run puzzle3 helper %d, arg0: %d, arg1: %d", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
 
 	_puzzles->run(cmd.args[0], cmd.args[1], cmd.args[2]);
 }
 
 void Script::runPuzzle4(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Run puzzle helper %d", cmd.op, cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Run puzzle4 helper %d, arg0: %d, arg1: %d, arg2: %d", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
 
 	_puzzles->run(cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
 }
@@ -2486,7 +2486,7 @@ void Script::ambientLoadNode(Context &c, const Opcode &cmd) {
 }
 
 void Script::ambientReloadCurrentNode(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Reload ambient sounds from current node with fade out delay : %d", cmd.op, cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Reload ambient sounds from current node with fade out delay: %d", cmd.op, cmd.args[0]);
 
 	_vm->_ambient->loadNode(0, 0, 0);
 	_vm->_ambient->applySounds(_vm->_state->valueOrVarValue(cmd.args[0]));
@@ -2499,14 +2499,13 @@ void Script::ambientPlayCurrentNode(Context &c, const Opcode &cmd) {
 }
 
 void Script::ambientApply(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Apply loadad ambient sounds", cmd.op);
+	debugC(kDebugScript, "Opcode %d: Apply loaded ambient sounds", cmd.op);
 
 	_vm->_ambient->applySounds(1);
 }
 
 void Script::ambientApplyWithFadeDelay(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Apply loadad ambient sounds with fade out delay : %d", cmd.op, cmd.args[0]);
-
+	debugC(kDebugScript, "Opcode %d: Apply loaded ambient sounds with fade out delay: %d", cmd.op, cmd.args[0]);
 	_vm->_ambient->applySounds(_vm->_state->valueOrVarValue(cmd.args[0]));
 }
 
@@ -2577,7 +2576,7 @@ void Script::soundStopEffect(Context &c, const Opcode &cmd) {
 }
 
 void Script::soundFadeOutEffect(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Stop sound effect %d", cmd.op, cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Stop sound effect %d, fadeDuration: %d", cmd.op, cmd.args[0], cmd.args[1]);
 
 	int32 id = _vm->_state->valueOrVarValue(cmd.args[0]);
 	int32 fadeDuration = _vm->_state->valueOrVarValue(cmd.args[1]);
@@ -2594,7 +2593,7 @@ void Script::soundPlayLooping(Context &c, const Opcode &cmd) {
 }
 
 void Script::soundPlayFadeInOut(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Play sound effect fade in fade out %d", cmd.op, cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Play sound effect %d fade in fade out, volume: %d, fadeInDuration: %d, playDuration: %d, fadeOutDuration: %d", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], cmd.args[4]);
 
 	int32 id = _vm->_state->valueOrVarValue(cmd.args[0]);
 	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
@@ -2613,7 +2612,7 @@ void Script::soundPlayFadeInOut(Context &c, const Opcode &cmd) {
 }
 
 void Script::soundChooseNext(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Setup next sound with control var %d", cmd.op, cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Setup next (choose) sound with control var %d, soundId: %d, count: %d, minDelay: %d, maxDelay: %d", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], cmd.args[4]);
 
 	int16 controlVar = cmd.args[0];
 	int16 startSoundId = cmd.args[1];
@@ -2625,7 +2624,7 @@ void Script::soundChooseNext(Context &c, const Opcode &cmd) {
 }
 
 void Script::soundRandomizeNext(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Setup next sound with control var %d", cmd.op, cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Setup next (randomize) sound with control var %d, soundId: %d, count: %d, minDelay: %d, maxDelay: %d", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], cmd.args[4]);
 
 	int16 controlVar = cmd.args[0];
 	int16 startSoundId = cmd.args[1];
@@ -2637,7 +2636,7 @@ void Script::soundRandomizeNext(Context &c, const Opcode &cmd) {
 }
 
 void Script::soundChooseNextAfterOther(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Setup next sound with control var %d", cmd.op, cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Setup next (choose after other) sound with control var %d, soundId: %d, count: %d, minDelay: %d, maxDelay: %d, ctrlSoundId: %d, ctrlSoundMaxPos: %d", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], cmd.args[4], cmd.args[5], cmd.args[6]);
 
 	int16 controlVar = cmd.args[0];
 	int16 startSoundId = cmd.args[1];
@@ -2652,7 +2651,7 @@ void Script::soundChooseNextAfterOther(Context &c, const Opcode &cmd) {
 }
 
 void Script::soundRandomizeNextAfterOther(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Setup next sound with control var %d", cmd.op, cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Setup next  (randomize after other) sound with control var %d, soundId: %d, count: %d, minDelay: %d, maxDelay: %d, ctrlSoundId: %d, ctrlSoundMaxPos: %d", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], cmd.args[4], cmd.args[5], cmd.args[6]);
 
 	int16 controlVar = cmd.args[0];
 	int16 startSoundId = cmd.args[1];
@@ -2667,13 +2666,13 @@ void Script::soundRandomizeNextAfterOther(Context &c, const Opcode &cmd) {
 }
 
 void Script::ambientSetFadeOutDelay(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Set fade out delay : %d", cmd.op, cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Set fade out delay: %d", cmd.op, cmd.args[0]);
 
 	_vm->_state->setAmbiantPreviousFadeOutDelay(cmd.args[0]);
 }
 
 void Script::ambientAddSound1(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Add ambient sound %d", cmd.op, cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Add ambient sound1 %d, volume: %d", cmd.op, cmd.args[0], cmd.args[1]);
 
 	int32 id = _vm->_state->valueOrVarValue(cmd.args[0]);
 	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
@@ -2682,7 +2681,7 @@ void Script::ambientAddSound1(Context &c, const Opcode &cmd) {
 }
 
 void Script::ambientAddSound2(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Add ambient sound %d", cmd.op, cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Add ambient sound2 %d, volume: %d, fadeOutDelay: %d", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
 
 	int32 id = _vm->_state->valueOrVarValue(cmd.args[0]);
 	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
@@ -2692,7 +2691,7 @@ void Script::ambientAddSound2(Context &c, const Opcode &cmd) {
 }
 
 void Script::ambientAddSound3(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Add ambient sound %d", cmd.op, cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Add ambient sound3 %d, volume: %d, heading: %d", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
 
 	int32 id = _vm->_state->valueOrVarValue(cmd.args[0]);
 	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
@@ -2702,7 +2701,7 @@ void Script::ambientAddSound3(Context &c, const Opcode &cmd) {
 }
 
 void Script::ambientAddSound4(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Add ambient sound %d", cmd.op, cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Add ambient sound4 %d, volume: %d, heading: %d, angle: %d", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
 
 	int32 id = _vm->_state->valueOrVarValue(cmd.args[0]);
 	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
@@ -2713,7 +2712,7 @@ void Script::ambientAddSound4(Context &c, const Opcode &cmd) {
 }
 
 void Script::ambientAddSound5(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Add ambient sound %d", cmd.op, cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Add ambient sound5 %d, volume: %d, u1: %d", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
 
 	int32 id = _vm->_state->valueOrVarValue(cmd.args[0]);
 	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
@@ -2723,7 +2722,7 @@ void Script::ambientAddSound5(Context &c, const Opcode &cmd) {
 }
 
 void Script::ambientSetCue1(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Set ambient cue %d", cmd.op, cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Set ambient cue1 %d, volume: %d", cmd.op, cmd.args[0], cmd.args[1]);
 
 	int32 id = cmd.args[0];
 	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
@@ -2732,7 +2731,7 @@ void Script::ambientSetCue1(Context &c, const Opcode &cmd) {
 }
 
 void Script::ambientSetCue2(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Set ambient cue %d", cmd.op, cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Set ambient cue2 %d, volume: %d, heading: %d", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
 
 	int32 id = cmd.args[0];
 	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
@@ -2742,7 +2741,7 @@ void Script::ambientSetCue2(Context &c, const Opcode &cmd) {
 }
 
 void Script::ambientSetCue3(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Set ambient cue %d", cmd.op, cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Set ambient cue3 %d, volume: %d, heading: %d, angle: %d", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
 
 	int32 id = cmd.args[0];
 	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
@@ -2753,7 +2752,7 @@ void Script::ambientSetCue3(Context &c, const Opcode &cmd) {
 }
 
 void Script::ambientSetCue4(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Set ambient cue %d", cmd.op, cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Set ambient cue4 %d, volume: %d", cmd.op, cmd.args[0], cmd.args[1]);
 
 	int32 id = cmd.args[0];
 	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
@@ -2770,8 +2769,8 @@ void Script::runAmbientScriptNode(Context &c, const Opcode &cmd) {
 }
 
 void Script::runAmbientScriptNodeRoomAge(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Run sound script for node %d, room %d, age %d",
-	       cmd.op, cmd.args[2], cmd.args[1], cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Run sound script for node %d, room %d, age %d, scale volume %d",
+	       cmd.op, cmd.args[2], cmd.args[1], cmd.args[0], cmd.args[3]);
 
 	int32 node = _vm->_state->valueOrVarValue(cmd.args[2]);
 	_vm->_ambient->_scriptRoom = _vm->_state->valueOrVarValue(cmd.args[1]);
@@ -2809,8 +2808,7 @@ void Script::runSoundScriptNodeRoomAge(Context &c, const Opcode &cmd) {
 }
 
 void Script::soundStopMusic(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Stop music", cmd.op);
-
+	debugC(kDebugScript, "Opcode %d: Stop music, fadeOutDuration: %d", cmd.op, cmd.args[0]);
 	int32 fadeOutDuration = _vm->_state->valueOrVarValue(cmd.args[0]);
 
 	_vm->_sound->stopMusic(fadeOutDuration);
@@ -2828,7 +2826,7 @@ void Script::movieSetStartupSound(Context &c, const Opcode &cmd) {
 }
 
 void Script::movieSetStartupSoundVolume(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Set movie startup sound %d", cmd.op, cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Set movie startup sound %d, volume: %d", cmd.op, cmd.args[0],  cmd.args[1]);
 
 	int32 soundId = _vm->_state->valueOrVarValue(cmd.args[0]);
 	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);
@@ -2840,7 +2838,7 @@ void Script::movieSetStartupSoundVolume(Context &c, const Opcode &cmd) {
 }
 
 void Script::movieSetStartupSoundVolumeH(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Set movie startup sound %d", cmd.op, cmd.args[0]);
+	debugC(kDebugScript, "Opcode %d: Set movie startup sound %d, volume: %d, heading: %d", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
 
 	int32 soundId = _vm->_state->valueOrVarValue(cmd.args[0]);
 	int32 volume = _vm->_state->valueOrVarValue(cmd.args[1]);

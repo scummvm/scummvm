@@ -37,11 +37,7 @@ namespace Agi {
 // driven by the engine's own inner loops instead of a timer, so games are
 // blocked until a sound is completed or interrupted by a key press.
 //
-// Common::PCSpeaker is used for sound generation. It produces significantly
-// louder volumes than the other AGI sound generators, so I've lowered the
-// mixer volume for consistency.
-
-#define A2_MIXER_VOLUME 20
+// TODO: Migrate to Audio::PCSpeaker
 
 static void calculateNote(uint16 clickCount, uint16 delayCount, float &freq, uint32 &duration_usec);
 static uint32 calculateDelayCycles(uint16 delayCount);
@@ -51,7 +47,7 @@ SoundGenA2::SoundGenA2(AgiBase *vm, Audio::Mixer *pMixer) :
 	_isPlaying(false),
 	SoundGen(vm, pMixer) {
 	
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, _soundHandle, this, -1, A2_MIXER_VOLUME, 0, DisposeAfterUse::NO, true);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, _soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 SoundGenA2::~SoundGenA2() {

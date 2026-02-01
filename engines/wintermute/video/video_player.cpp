@@ -112,6 +112,9 @@ bool VideoPlayer::initialize(const Common::String &filename, const Common::Strin
 	_foundSubtitles = _subtitler->loadSubtitles(_filename, subtitleFile);
 
 	if (!_aviDecoder->isVideoLoaded()) {
+		// W/A: Missing DX50 decoder support for 'Looky' game.
+		if (BaseEngine::instance().getGameId() == "looky")
+			return STATUS_OK;
 		return STATUS_FAILED;
 	}
 

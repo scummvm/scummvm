@@ -66,17 +66,15 @@ void Room903::daemon() {
 	case 30:
 		digi_stop(3);
 		adv_kill_digi_between_rooms(false);
-		_G(game).new_room = 905;
+		_G(game).setRoom(905);
 		break;
 
 	case 55:
-		_G(game).new_room = 304;
-		_G(game).new_section = 3;
+		_G(game).setRoom(304);
 		break;
 
 	case 56:
-		_G(game).new_room = 494;
-		_G(game).new_section = 4;
+		_G(game).setRoom(494);
 		break;
 
 	case 100:

@@ -29,6 +29,7 @@
 #include "common/events.h"
 #include "common/file.h"
 
+#include "testbed/testbed.h"
 #include "testbed/sound.h"
 
 namespace Testbed {
@@ -236,12 +237,19 @@ TestExitStatus SoundSubsystem::modPlayback() {
 		while (mixer->isSoundHandleActive(handle)) {
 			g_system->delayMillis(10);
 			Testsuite::writeOnScreen(Common::String::format("Playing Now: %s", music[i]), pt);
-			Testsuite::writeOnScreen("Press 'S' to stop", pt2);
+			Testsuite::writeOnScreen("Click to stop.", pt2);
 
 			if (eventMan->pollEvent(event)) {
-				if (event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_s)
+				// Quit if explicitly requested!
+				if (Engine::shouldQuit()) {
+					break;
+				}
+				if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN)
 					break;
 			}
+		}
+		if (Engine::shouldQuit()) {
+			break;
 		}
 		g_system->delayMillis(10);
 

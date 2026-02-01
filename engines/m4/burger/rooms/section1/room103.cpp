@@ -410,6 +410,9 @@ void Room103::daemon() {
 				break;
 			}
 			break;
+
+		default:
+			break;
 		}
 		break;
 

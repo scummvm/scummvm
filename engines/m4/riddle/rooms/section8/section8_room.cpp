@@ -292,7 +292,7 @@ void Section8Room::parser() {
 
 			case 70:
 				_G(flags)[V270] = 805;
-				_G(game).new_room = 805;
+				_G(game).setRoom(805);
 				adv_kill_digi_between_rooms(false);
 				digi_preload("950_s29", -1);
 				digi_play_loop("950_s29", 3, 96, -1, -1);
@@ -639,7 +639,7 @@ void Section8Room::parser() {
 			break;
 
 		case 20:
-			_G(game).new_room = _savedNextRoom;
+			_G(game).setRoom(_savedNextRoom);
 			adv_kill_digi_between_rooms(false);
 			digi_preload("950_s29", -1);
 			digi_play_loop("950_s29", 3, 255, -1, -1);

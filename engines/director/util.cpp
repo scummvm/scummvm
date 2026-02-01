@@ -1785,7 +1785,7 @@ static int getCharEquality(Common::u32char_type_t ch) {
 	if (pl == Common::kPlatformWindows && lang != Common::JA_JPN && version < 700)
 		return equalityTableD6win[num];
 
-	warning("BUILDBOT: No equality table for Director version: %d", version);
+	warning("BUILDBOT: No equality table for Director version: %d-%s", version, Common::getLanguageCode(lang));
 	return num;
 }
 

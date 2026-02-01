@@ -55,7 +55,7 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	: Engine(syst), _gameDescription(gd), _image(nullptr), _videoDecoder(nullptr),
 	  _compositeSurface(nullptr), _transparentColor(0), _frameImage(nullptr),
 	  _framePalette(nullptr),
-	  _subtitles(nullptr), _subtitledSound(nullptr), _sfxSubtitles(false), _useSubtitles(false),
+	  _videoSubtitles(nullptr), _sfxSubtitles(false), _useSubtitles(false),
 	  _defaultCursor(nullptr),
 	  _screenW(640), _screenH(480) {
 	_highlightMasks = false;
@@ -131,6 +131,7 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 
 PrivateEngine::~PrivateEngine() {
 	destroyVideo();
+	destroySubtitles();
 
 	delete _compositeSurface;
 	if (_frameImage != nullptr) {
@@ -501,17 +502,7 @@ Common::Error PrivateEngine::run() {
 
 		_system->updateScreen();
 		_system->delayMillis(10);
-		if (_subtitles != nullptr) {
-			if (_subtitledSound != nullptr && isSoundPlaying(*_subtitledSound)) {
-				_subtitles->drawSubtitle(_mixer->getElapsedTime(_subtitledSound->handle).msecs(), false, _sfxSubtitles);
-			}
-			/* Only destroy subtitles if we are not playing a video.
-			If _videoDecoder is valid (even if paused), we must keep the subtitles
-			in memory so they are available when the video resumes. */
-			else if (_videoDecoder == nullptr) {
-				destroySubtitles();
-			}
-		}
+		updateSubtitles();
 	}
 	return Common::kNoError;
 }
@@ -889,6 +880,16 @@ const char *PrivateEngine::getSymbolName(const char *name, const char *strippedN
 	return strippedName;
 }
 
+bool PrivateEngine::isSlotActive(const SubtitleSlot &slot) {
+	return slot.subs != nullptr && _mixer->isSoundHandleActive(slot.handle);
+}
+
+bool PrivateEngine::isSfxSubtitle(const Video::Subtitles *subs) {
+	if (!subs)
+		return false;
+	return subs->isSfx();
+}
+
 void PrivateEngine::selectPauseGame(Common::Point mousePos) {
 	if (_mode == 1) {
 		uint32 tol = 15;
@@ -907,7 +908,7 @@ void PrivateEngine::selectPauseGame(Common::Point mousePos) {
 					_pausedVideo = _videoDecoder;
 					_pausedMovieName = _currentMovie;
 				}
-				if (_subtitles) {
+				if (_videoSubtitles || _voiceSlot.subs || _sfxSlot.subs) {
 					_system->hideOverlay();
 				}
 
@@ -944,7 +945,7 @@ void PrivateEngine::resumeGame() {
 	// we do this unconditionally because the casebook might have loaded
 	// different subtitles while we were paused
 	if (!_currentMovie.empty()) {
-		loadSubtitles(convertPath(_currentMovie));
+		loadSubtitles(convertPath(_currentMovie), kSubtitleVideo);
 	}
 
 	if (_videoDecoder) {
@@ -960,14 +961,25 @@ void PrivateEngine::resumeGame() {
 	// the screen was likely wiped by the pause menu
 	// to account for the subtitle which was already rendered and we wiped the screen before it finished we must
 	// force the subtitle system to ignore its cache and redraw the text.
-	if (_subtitles) {
+	// calling adjustSubtitleSize() makes the next drawSubtitle call perform a full redraw
+	// automatically, so we don't need to pass 'true'
+	adjustSubtitleSize();
+	if (_videoSubtitles || _voiceSlot.subs || _sfxSlot.subs) {
 		_system->showOverlay(false);
 		_system->clearOverlay();
-		// calling adjustSubtitleSize() makes the next drawSubtitle call perform a full redraw
-		// automatically, so we don't need to pass 'true'
-		adjustSubtitleSize();
-		if (_videoDecoder)
-			_subtitles->drawSubtitle(_videoDecoder->getTime(), false, _sfxSubtitles);
+
+		// redraw video subtitles
+		if (_videoDecoder && _videoSubtitles)
+			_videoSubtitles->drawSubtitle(_videoDecoder->getTime(), false, _sfxSubtitles);
+
+		// draw all remaining active subtitles
+		if (isSlotActive(_voiceSlot)) {
+			uint32 time = _mixer->getElapsedTime(_voiceSlot.handle).msecs();
+			_voiceSlot.subs->drawSubtitle(time, false, _sfxSubtitles);
+		} else if (isSlotActive(_sfxSlot)) {
+			uint32 time = _mixer->getElapsedTime(_sfxSlot.handle).msecs();
+			_sfxSlot.subs->drawSubtitle(time, false, _sfxSubtitles);
+		}
 	}
 }
 
@@ -2359,7 +2371,7 @@ void PrivateEngine::playSound(Sound &sound, const Common::String &name, bool loo
 	_mixer->stopHandle(sound.handle);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &sound.handle, stream, -1, Audio::Mixer::kMaxChannelVolume);
 
-	loadSubtitles(path, &sound);
+	loadSubtitles(path, kSubtitleAudio, &sound);
 }
 
 void PrivateEngine::stopForegroundSounds() {
@@ -2379,6 +2391,14 @@ void PrivateEngine::stopSounds() {
 
 void PrivateEngine::stopSound(Sound &sound) {
 	_mixer->stopHandle(sound.handle);
+	if (_voiceSlot.handle == sound.handle && _voiceSlot.subs) {
+		delete _voiceSlot.subs;
+		_voiceSlot.subs = nullptr;
+	}
+	if (_sfxSlot.handle == sound.handle && _sfxSlot.subs) {
+		delete _sfxSlot.subs;
+		_sfxSlot.subs = nullptr;
+	}
 	sound.name.clear();
 }
 
@@ -2395,11 +2415,7 @@ void PrivateEngine::waitForSoundsToStop() {
 		// since this is a blocking wait loop, the main engine loop in run() is not called until this loop finishes
 		// we must manually update and draw subtitles here otherwise sounds
 		// played via fSyncSound will play audio but show no subtitles.
-		if (_subtitles != nullptr) {
-			if (_subtitledSound != nullptr && isSoundPlaying(*_subtitledSound)) {
-				_subtitles->drawSubtitle(_mixer->getElapsedTime(_subtitledSound->handle).msecs(), false, _sfxSubtitles);
-			}
-		}
+		updateSubtitles();
 		if (consumeEvents()) {
 			stopSounds();
 			return;
@@ -2446,92 +2462,179 @@ bool PrivateEngine::consumeEvents() {
 
 void PrivateEngine::adjustSubtitleSize() {
 	debugC(1, kPrivateDebugFunction, "%s()", __FUNCTION__);
-	if (_subtitles) {
-		// Subtitle positioning constants (as percentages of screen height)
-		const int HORIZONTAL_MARGIN = 20;
-		const float BOTTOM_MARGIN_PERCENT = 0.009f;  // ~20px at 2160p
-		const float MAIN_MENU_HEIGHT_PERCENT = 0.093f;  // ~200px at 2160p
-		const float ALTERNATE_MODE_HEIGHT_PERCENT = 0.102f;  // ~220px at 2160p
-		const float DEFAULT_HEIGHT_PERCENT = 0.074f;  // ~160px at 2160p
+	if (!_videoSubtitles && !_voiceSlot.subs && !_sfxSlot.subs) return;
+	// calculate layout first then apply to both active sounds and video subtitled sound
+	// Subtitle positioning constants (as percentages of screen height)
+	const int HORIZONTAL_MARGIN = 20;
+	const float BOTTOM_MARGIN_PERCENT = 0.009f;  // ~20px at 2160p
+	const float MAIN_MENU_HEIGHT_PERCENT = 0.093f;  // ~200px at 2160p
+	const float ALTERNATE_MODE_HEIGHT_PERCENT = 0.102f;  // ~220px at 2160p
+	const float DEFAULT_HEIGHT_PERCENT = 0.074f;  // ~160px at 2160p
 
-		// Font sizing constants (as percentage of screen height)
-		const int MIN_FONT_SIZE = 8;
-		const float BASE_FONT_SIZE_PERCENT = 0.023f;  // ~50px at 2160p
+	// Font sizing constants (as percentage of screen height)
+	const int MIN_FONT_SIZE = 8;
+	const float BASE_FONT_SIZE_PERCENT = 0.023f;  // ~50px at 2160p
 
-		int16 h = _system->getOverlayHeight();
-		int16 w = _system->getOverlayWidth();
+	int16 h = _system->getOverlayHeight();
+	int16 w = _system->getOverlayWidth();
 
-		int bottomMargin = int(h * BOTTOM_MARGIN_PERCENT);
+	int bottomMargin = int(h * BOTTOM_MARGIN_PERCENT);
+	int topOffset = 0;
 
-		// If we are in the main menu, we need to adjust the position of the subtitles
-		if (_mode == 0) {
-			int topOffset = int(h * MAIN_MENU_HEIGHT_PERCENT);
-			_subtitles->setBBox(Common::Rect(HORIZONTAL_MARGIN,
-											h - topOffset,
-											w - HORIZONTAL_MARGIN,
-											h - bottomMargin));
-		} else if (_mode == -1) {
-			int topOffset = int(h * ALTERNATE_MODE_HEIGHT_PERCENT);
-			_subtitles->setBBox(Common::Rect(HORIZONTAL_MARGIN,
-											h - topOffset,
-											w - HORIZONTAL_MARGIN,
-											h - bottomMargin));
-		} else {
-			int topOffset = int(h * DEFAULT_HEIGHT_PERCENT);
-			_subtitles->setBBox(Common::Rect(HORIZONTAL_MARGIN,
-											h - topOffset,
-											w - HORIZONTAL_MARGIN,
-											h - bottomMargin));
-		}
+	// If we are in the main menu, we need to adjust the position of the subtitles
+	if (_mode == 0) {
+		topOffset = int(h * MAIN_MENU_HEIGHT_PERCENT);
+	} else if (_mode == -1) {
+		topOffset = int(h * ALTERNATE_MODE_HEIGHT_PERCENT);
+	} else {
+		topOffset = int(h * DEFAULT_HEIGHT_PERCENT);
+	}
+	Common::Rect rect(HORIZONTAL_MARGIN, h - topOffset, w - HORIZONTAL_MARGIN, h - bottomMargin);
+	int fontSize = MAX(MIN_FONT_SIZE, int(h * BASE_FONT_SIZE_PERCENT));
 
-		int fontSize = MAX(MIN_FONT_SIZE, int(h * BASE_FONT_SIZE_PERCENT));
-		_subtitles->setColor(0xff, 0xff, 0x80);
-		_subtitles->setFont("LiberationSans-Regular.ttf", fontSize, Video::Subtitles::kFontStyleRegular);
-		_subtitles->setFont("LiberationSans-Italic.ttf", fontSize, Video::Subtitles::kFontStyleItalic);
+	// apply to video subtitles
+	if (_videoSubtitles) {
+		_videoSubtitles->setBBox(rect);
+		_videoSubtitles->setColor(0xff, 0xff, 0x80);
+		_videoSubtitles->setFont("LiberationSans-Regular.ttf", fontSize, Video::Subtitles::kFontStyleRegular);
+		_videoSubtitles->setFont("LiberationSans-Italic.ttf", fontSize, Video::Subtitles::kFontStyleItalic);
+	}
+
+	// apply to all active audio subtitles
+	if (_voiceSlot.subs) {
+		_voiceSlot.subs->setBBox(rect);
+		_voiceSlot.subs->setColor(0xff, 0xff, 0x80);
+		_voiceSlot.subs->setFont("LiberationSans-Regular.ttf", fontSize, Video::Subtitles::kFontStyleRegular);
+		_voiceSlot.subs->setFont("LiberationSans-Italic.ttf", fontSize, Video::Subtitles::kFontStyleItalic);
+	}
+	if (_sfxSlot.subs) {
+		_sfxSlot.subs->setBBox(rect);
+		_sfxSlot.subs->setColor(0xff, 0xff, 0x80);
+		_sfxSlot.subs->setFont("LiberationSans-Regular.ttf", fontSize, Video::Subtitles::kFontStyleRegular);
+		_sfxSlot.subs->setFont("LiberationSans-Italic.ttf", fontSize, Video::Subtitles::kFontStyleItalic);
 	}
 }
 
-void PrivateEngine::loadSubtitles(const Common::Path &path, Sound *sound) {
-	debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, path.toString().c_str());
-	if (!_useSubtitles)
-		return;
+Common::Path PrivateEngine::getSubtitlePath(const Common::String &soundName) {
+	// call convertPath to fix slashes, make lowercase etc.
+	Common::Path path = convertPath(soundName);
 
+	// add extension and replace '/' with '_' (audio/file -> audio_file)
 	Common::String subPathStr = path.toString() + ".srt";
-	subPathStr.toLowercase();
 	subPathStr.replace('/', '_');
+
+	// get language code
 	Common::String language(Common::getLanguageCode(_language));
 	if (language == "us")
 		language = "en";
 
+	// construct full path: subtitles/language/subPathStr
 	Common::Path subPath = "subtitles";
 	subPath = subPath.appendComponent(language);
 	subPath = subPath.appendComponent(subPathStr);
+
+	return subPath;
+}
+
+void PrivateEngine::loadSubtitles(const Common::Path &path, SubtitleType type, Sound *sound) {
+	debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, path.toString().c_str());
+	if (!_useSubtitles)
+		return;
+
+	Common::Path subPath = getSubtitlePath(path.toString());
 	debugC(1, kPrivateDebugFunction, "Loading subtitles from %s", subPath.toString().c_str());
 
-	destroySubtitles();
+	// instantiate and load on heap once
+	Video::Subtitles *newSub = new Video::Subtitles();
+	newSub->loadSRTFile(subPath);
 
-	_subtitles = new Video::Subtitles();
-	_subtitles->loadSRTFile(subPath);
-	if (!_subtitles->isLoaded()) {
-		delete _subtitles;
-		_subtitles = nullptr;
+	// if the subtitle failed loading we should return
+	if (!newSub->isLoaded()) {
+		delete newSub;
 		return;
 	}
+	if (type == kSubtitleVideo) {
+		if (_videoSubtitles)
+			delete _videoSubtitles;
+		_videoSubtitles = newSub;
+	}
+	else if (type == kSubtitleAudio) {
+		if (!sound) {
+			warning("PrivateEngine::loadSubtitles: Audio type requested but no Sound provided");
+			delete newSub;
+			return;
+		}
 
-	_subtitledSound = sound;
+		bool isSfx = isSfxSubtitle(newSub);
 
-	_system->showOverlay(false);
-	_system->clearOverlay();
+		if (isSfx) {
+			// if voice is currently playing, ignore incoming sfx
+			if (isSlotActive(_voiceSlot)) {
+				delete newSub;
+				return;
+			}
+
+			// load sfx (overwrites any previous sfx)
+			if (_sfxSlot.subs)
+				delete _sfxSlot.subs;
+
+			_sfxSlot.handle = sound->handle;
+			_sfxSlot.subs = newSub;
+
+		} else {
+			// voice always loads and takes priority
+			if (_voiceSlot.subs)
+				delete _voiceSlot.subs;
+
+			_voiceSlot.handle = sound->handle;
+			_voiceSlot.subs = newSub;
+		}
+	}
+	// we skip clearing the overlay because updateSubtitle() handles it in the main loop
+	// if we clear here as well then minor flickering occurs
 	adjustSubtitleSize();
 }
 
-void PrivateEngine::destroySubtitles() {
-	if (_subtitles != nullptr) {
-		delete _subtitles;
-		_subtitles = nullptr;
-		_system->hideOverlay();
-		_subtitledSound = nullptr;
+void PrivateEngine::updateSubtitles() {
+	if (!_useSubtitles)
+		return;
+
+	// remove subtitles for sounds that finished playing
+	if (_voiceSlot.subs && !_mixer->isSoundHandleActive(_voiceSlot.handle)) {
+		delete _voiceSlot.subs;
+		_voiceSlot.subs = nullptr;
 	}
+
+	if (_sfxSlot.subs && !_mixer->isSoundHandleActive(_sfxSlot.handle)) {
+		delete _sfxSlot.subs;
+		_sfxSlot.subs = nullptr;
+	}
+
+	if (_voiceSlot.subs) {
+		// if voice is active draw voice only
+		uint32 time = _mixer->getElapsedTime(_voiceSlot.handle).msecs();
+		_voiceSlot.subs->drawSubtitle(time, false, _sfxSubtitles);
+	} else if (_sfxSlot.subs) {
+		// if voice is empty draw sfx
+		uint32 time = _mixer->getElapsedTime(_sfxSlot.handle).msecs();
+		_sfxSlot.subs->drawSubtitle(time, false, _sfxSubtitles);
+	}
+}
+
+void PrivateEngine::destroySubtitles() {
+	if (_voiceSlot.subs) {
+		delete _voiceSlot.subs;
+		_voiceSlot.subs = nullptr;
+	}
+	if (_sfxSlot.subs) {
+		delete _sfxSlot.subs;
+		_sfxSlot.subs = nullptr;
+	}
+	if (_videoSubtitles) {
+		delete _videoSubtitles;
+		_videoSubtitles = nullptr;
+	}
+	_system->hideOverlay();
 }
 
 void PrivateEngine::playVideo(const Common::String &name) {
@@ -2546,7 +2649,7 @@ void PrivateEngine::playVideo(const Common::String &name) {
 	if (!_videoDecoder->loadStream(file))
 		error("unable to load video %s", path.toString().c_str());
 
-	loadSubtitles(path);
+	loadSubtitles(path, kSubtitleVideo);
 	_videoDecoder->start();
 
 	// set the view screen based on the video, unless playing from diary
@@ -2942,9 +3045,10 @@ void PrivateEngine::drawScreen() {
 		_system->copyRectToScreen(sa.getPixels(), sa.pitch, _origin.x, _origin.y, sa.w, sa.h);
 	}
 
-	if (_subtitles && _videoDecoder && !_videoDecoder->isPaused()) {
-		_subtitles->drawSubtitle(_videoDecoder->getTime(), false, _sfxSubtitles);
-	}
+	// audio subtitles are handled in updateSubtitles() in the main loop so only draw video subtitles here
+	if (_videoSubtitles && _videoDecoder && !_videoDecoder->isPaused())
+		_videoSubtitles->drawSubtitle(_videoDecoder->getTime(), false, _sfxSubtitles);
+
 	_system->updateScreen();
 }
 
@@ -2952,7 +3056,7 @@ void PrivateEngine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
 
 	// If we are unpausing (returning from quit dialog, etc.)
-	if (!pause && _subtitles) {
+	if (!pause) {
 		// reset the overlay
 		_system->showOverlay(false);
 		_system->clearOverlay();
@@ -2961,11 +3065,19 @@ void PrivateEngine::pauseEngineIntern(bool pause) {
 		// the screen was likely wiped by the dialog/menu
 		// to account for the subtitle which was already rendered and we wiped the screen before it finished we must
 		// force the subtitle system to ignore its cache and redraw the text.
-		if (_videoDecoder) {
-			// calling adjustSubtitleSize() makes the next drawSubtitle call perform a full redraw
-			// automatically, so we don't need to pass 'true'.
-			adjustSubtitleSize();
-			_subtitles->drawSubtitle(_videoDecoder->getTime(), false, _sfxSubtitles);
+		// calling adjustSubtitleSize() makes the next drawSubtitle call perform a full redraw
+		// automatically, so we don't need to pass 'true'.
+		adjustSubtitleSize();
+		if (_videoDecoder && _videoSubtitles)
+			_videoSubtitles->drawSubtitle(_videoDecoder->getTime(), false, _sfxSubtitles);
+
+		// draw all remaining active subtitles
+		if (isSlotActive(_voiceSlot)) {
+			uint32 time = _mixer->getElapsedTime(_voiceSlot.handle).msecs();
+			_voiceSlot.subs->drawSubtitle(time, false, _sfxSubtitles);
+		} else if (isSlotActive(_sfxSlot)) {
+			uint32 time = _mixer->getElapsedTime(_sfxSlot.handle).msecs();
+			_sfxSlot.subs->drawSubtitle(time, false, _sfxSubtitles);
 		}
 	}
 }

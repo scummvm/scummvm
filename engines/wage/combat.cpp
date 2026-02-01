@@ -98,8 +98,15 @@ void WageEngine::encounter(Chr *player, Chr *chr) {
 }
 
 void WageEngine::performCombatAction(Chr *npc, Chr *player) {
-	if (npc->_context._frozen)
-		return;
+	if (npc->_context._frozen) {
+		npc->_context._freezeTimer--;
+		if (npc->_context._freezeTimer <= 0) {
+			npc->_context._frozen = false;
+			npc->_context._freezeTimer = 0;
+		} else {
+			return;
+		}
+	}
 
 	RandomHat hat(_rnd);
 
@@ -107,8 +114,8 @@ void WageEngine::performCombatAction(Chr *npc, Chr *player) {
 	int validMoves = getValidMoveDirections(npc);
 	ObjArray *weapons = npc->getWeapons(false);
 	ObjArray *magics = npc->getMagicalObjects();
-	// TODO: Figure out under what circumstances we need to add +1
-	// for the chance (e.g. only when all values were set to 0?).
+	// if all values are zero we add +1 so that an action has some chance of occuring even if
+	// all stats have value zero, preventing the AI from getting stuck doing nothing
 	if (winning) {
 		if (!_world->_weaponMenuDisabled) {
 			if (!weapons->empty())
@@ -133,6 +140,11 @@ void WageEngine::performCombatAction(Chr *npc, Chr *player) {
 			hat.addTokens(kTokOffer, npc->_losingOffer + 1);
 	}
 
+	// if an enemy has no weapons or magics then it should have a chance to stay idle
+	// if we do not add this then an unarmed enemy will always keep running from room to room
+	if (weapons->empty() && magics->empty())
+		hat.addTokens(kTokNone, 1);
+
 	ObjList *objs = &npc->_currentScene->_objs;
 	if (npc->_inventory.size() < npc->_maximumCarriedObjects) {
 		int cnt = 0;
@@ -147,11 +159,9 @@ void WageEngine::performCombatAction(Chr *npc, Chr *player) {
 	int token = hat.drawToken();
 	switch (token) {
 	case kTokWeapons:
-		// TODO: I think the monster should choose the "best" weapon.
 		performAttack(npc, player, weapons->operator[](_rnd->getRandomNumber(weapons->size() - 1)));
 		break;
 	case kTokMagic:
-		// TODO: I think the monster should choose the "best" magic.
 		performMagic(npc, player, magics->operator[](_rnd->getRandomNumber(magics->size() - 1)));
 		break;
 	case kTokRun:
@@ -184,7 +194,6 @@ void WageEngine::performAttack(Chr *attacker, Chr *victim, Obj *weapon) {
 	if (_world->_weaponMenuDisabled)
 		return;
 
-	// TODO: verify that a player not aiming will always target the chest??
 	int targetIndex = -1;
 	char buf[256];
 
@@ -220,8 +229,9 @@ void WageEngine::performAttack(Chr *attacker, Chr *victim, Obj *weapon) {
 
 	bool usesDecremented = false;
 	int chance = _rnd->getRandomNumber(255);
-	// TODO: what about obj accuracy
-	if (chance < attacker->_physicalAccuracy) {
+	// average of character skill + weapon accuracy
+	int hitAccuracy = (attacker->_physicalAccuracy + weapon->_accuracy) / 2;
+	if (chance < hitAccuracy) {
 		usesDecremented = attackHit(attacker, victim, weapon, targetIndex);
 	} else if (weapon->_type != Obj::MAGICAL_OBJECT) {
 		appendText("A miss!");
@@ -257,22 +267,59 @@ void WageEngine::decrementUses(Obj *obj) {
 bool WageEngine::attackHit(Chr *attacker, Chr *victim, Obj *weapon, int targetIndex) {
 	bool receivedHitTextPrinted = false;
 	char buf[512];
+	int damage = 0;
+	int defense = 0;
 
-	if (targetIndex != -1) {
-		Obj *armor = victim->_armor[targetIndex];
-		if (armor != NULL) {
-			// TODO: Absorb some damage.
-			snprintf(buf, 512, "%s%s's %s weakens the impact of %s%s's %s.",
-				victim->getDefiniteArticle(true), victim->_name.c_str(),
-				victim->_armor[targetIndex]->_name.c_str(),
-				attacker->getDefiniteArticle(false), attacker->_name.c_str(),
-				weapon->_name.c_str());
-			appendText(buf);
-			decrementUses(armor);
+	if (weapon->_type == Obj::MAGICAL_OBJECT) {
+		// Damage = (Spell Power + Spiritual Strength) - 1
+		damage = (weapon->_damage + attacker->_spiritualStength) - 1;
+
+		// if victim has 0 or less Spiritual HP, any spell power kills them instantly
+		// we override defense to ensure the damage goes through
+		if (victim->_context._statVariables[SPIR_HIT_CUR] <= 0 && damage > 0) {
+			damage = 9999; // massive damage to force kill
+			defense = 0;
 		} else {
-			snprintf(buf, 512, "A hit to the %s!", targets[targetIndex]);
-			appendText(buf);
+			// Defense = Resistance + Spiritual Armor
+			defense = victim->_resistanceToMagic;
+
+			// check all equipped items for spiritual armor
+			for (int i = 0; i < Chr::NUMBER_OF_ARMOR_TYPES; i++) {
+				Obj *arm = victim->_armor[i];
+				if (arm != NULL && arm->_type == Obj::SPIRITUAL_ARMOR) {
+					defense += arm->_damage;
+				}
+			}
 		}
+
+		appendText(weapon->_useMessage.c_str());
+		appendText("The spell is effective!");
+
+	} else {
+		// Damage = (Weapon Power + Phys Strength) - 1
+		damage = (weapon->_damage + attacker->_physicalStrength) - 1;
+
+		// Defense = Natural Armor + Item Armor
+		defense = victim->_naturalArmor;
+
+		if (targetIndex != -1) {
+			Obj *armor = victim->_armor[targetIndex];
+			if (armor != NULL) {
+				defense += armor->_damage;
+
+				snprintf(buf, 512, "%s%s's %s weakens the impact of %s%s's %s.",
+						 victim->getDefiniteArticle(true), victim->_name.c_str(),
+						 victim->_armor[targetIndex]->_name.c_str(),
+						 attacker->getDefiniteArticle(false), attacker->_name.c_str(),
+						 weapon->_name.c_str());
+				appendText(buf);
+				decrementUses(armor);
+			} else {
+				snprintf(buf, 512, "A hit to the %s!", targets[targetIndex]);
+				appendText(buf);
+			}
+		}
+
 		debugC(1, kDebugSound, "** Attacker hit sound: %s", attacker->_scoresHitSound.c_str());
 		playSound(attacker->_scoresHitSound);
 		appendText(attacker->_scoresHitComment.c_str());
@@ -280,11 +327,12 @@ bool WageEngine::attackHit(Chr *attacker, Chr *victim, Obj *weapon, int targetIn
 		playSound(victim->_receivesHitSound);
 		appendText(victim->_receivesHitComment.c_str());
 		receivedHitTextPrinted = true;
-	} else if (weapon->_type == Obj::MAGICAL_OBJECT) {
-		appendText(weapon->_useMessage.c_str());
-		appendText("The spell is effective!");
 	}
 
+	if (damage < 0)
+		damage = 0;
+
+	// apply damage
 	bool causesPhysicalDamage = true;
 	bool causesSpiritualDamage = false;
 	bool freezesOpponent = false;
@@ -299,52 +347,63 @@ bool WageEngine::attackHit(Chr *attacker, Chr *victim, Obj *weapon, int targetIn
 		freezesOpponent = (type == Obj::FREEZES_OPPONENT);
 	}
 
-	if (causesPhysicalDamage) {
-		victim->_context._statVariables[PHYS_HIT_CUR] -= weapon->_damage;
+	// calculate net damage
+	int damageTaken = damage - defense;
+	if (damageTaken < 0)
+		damageTaken = 0;
 
-		/* Do it here to get the right order of messages in case of death. */
-		decrementUses(weapon);
-		usesDecremented = true;
+	// apply to hit Points
+	if (causesPhysicalDamage)
+		victim->_context._statVariables[PHYS_HIT_CUR] -= damageTaken;
+	if (causesSpiritualDamage)
+		victim->_context._statVariables[SPIR_HIT_CUR] -= damageTaken;
 
-		if (victim->_context._statVariables[PHYS_HIT_CUR] < 0) {
-			debugC(1, kDebugSound, "** Victim dying sound: %s", victim->_dyingSound.c_str());
-			playSound(victim->_dyingSound);
-			appendText(victim->_dyingWords.c_str());
-			snprintf(buf, 512, "%s%s is dead!", victim->getDefiniteArticle(true), victim->_name.c_str());
-			appendText(buf);
+	decrementUses(weapon);
+	usesDecremented = true;
 
-			attacker->_context._kills++;
-			attacker->_context._experience += victim->_context._statVariables[SPIR_HIT_CUR] + victim->_context._statVariables[PHYS_HIT_CUR];
+	// death check
+	// if either physical or spiritual HP drops < 0, the character dies.
+	if (victim->_context._statVariables[PHYS_HIT_CUR] < 0 ||
+		victim->_context._statVariables[SPIR_HIT_CUR] < 0) {
 
-			if (!victim->_playerCharacter && !victim->_inventory.empty()) {
-				Scene *currentScene = victim->_currentScene;
+		debugC(1, kDebugSound, "** Victim dying sound: %s", victim->_dyingSound.c_str());
+		playSound(victim->_dyingSound);
+		appendText(victim->_dyingWords.c_str());
+		snprintf(buf, 512, "%s%s is dead!", victim->getDefiniteArticle(true), victim->_name.c_str());
+		appendText(buf);
 
-				for (int i = victim->_inventory.size() - 1; i >= 0; i--) {
-					if (i < (int)victim->_inventory.size())
-						_world->move(victim->_inventory[i], currentScene);
-				}
-				Common::String *s = getGroundItemsList(currentScene);
-				appendText(s->c_str());
-				delete s;
+		attacker->_context._kills++;
+		attacker->_context._experience += victim->_context._statVariables[SPIR_HIT_BAS] + victim->_context._statVariables[PHYS_HIT_BAS];
+
+		// drop items if not player
+		if (!victim->_playerCharacter && !victim->_inventory.empty()) {
+			Scene *currentScene = victim->_currentScene;
+			for (int i = victim->_inventory.size() - 1; i >= 0; i--) {
+				if (i < (int)victim->_inventory.size())
+					_world->move(victim->_inventory[i], currentScene);
 			}
-			_world->move(victim, _world->_storageScene);
-		} else if (attacker->_playerCharacter && !receivedHitTextPrinted) {
-			double physicalPercent = (double)victim->_context._statVariables[SPIR_HIT_CUR] /
-					victim->_context._statVariables[SPIR_HIT_BAS];
-			snprintf(buf, 512, "%s%s's condition appears to be %s.",
-				victim->getDefiniteArticle(true), victim->_name.c_str(),
-				getPercentMessage(physicalPercent));
-			appendText(buf);
+			Common::String *s = getGroundItemsList(currentScene);
+			appendText(s->c_str());
+			delete s;
 		}
+		_world->move(victim, _world->_storageScene);
+	} else if (attacker->_playerCharacter && !receivedHitTextPrinted && weapon->_type != Obj::MAGICAL_OBJECT) {
+		double physicalPercent = (double)victim->_context._statVariables[PHYS_HIT_CUR] /
+								 victim->_context._statVariables[PHYS_HIT_BAS];
+		snprintf(buf, 512, "%s%s's condition appears to be %s.",
+				 victim->getDefiniteArticle(true), victim->_name.c_str(),
+				 getPercentMessage(physicalPercent));
+		appendText(buf);
 	}
 
-	if (causesSpiritualDamage) {
-		/* TODO */
-		warning("TODO: Spiritual damage");
-	}
-
+	// freeze Logic (No. Of Turns = Power / 50)
 	if (freezesOpponent) {
 		victim->_context._frozen = true;
+		int duration = 0;
+		if (weapon->_damage > 0)
+			duration = weapon->_damage / 50;
+
+		victim->_context._freezeTimer = duration;
 	}
 
 	return usesDecremented;
@@ -358,9 +417,34 @@ void WageEngine::performMagic(Chr *attacker, Chr *victim, Obj *magicalObject) {
 		performHealingMagic(attacker, magicalObject);
 		break;
 	default:
-		performAttack(attacker, victim, magicalObject);
 		break;
 	}
+
+	char buf[256];
+	if (!attacker->_playerCharacter) {
+		snprintf(buf, 256, "%s%s %ss %s%s at %s%s.",
+				 attacker->getDefiniteArticle(true), attacker->_name.c_str(),
+				 magicalObject->_operativeVerb.c_str(),
+				 getIndefiniteArticle(magicalObject->_name), magicalObject->_name.c_str(),
+				 victim->getDefiniteArticle(true), victim->_name.c_str());
+		appendText(buf);
+	}
+
+	debugC(1, kDebugSound, "** Magic sound: %s", magicalObject->_sound.c_str());
+	playSound(magicalObject->_sound);
+
+	int magicAcc = (attacker->_spiritualAccuracy + magicalObject->_accuracy) / 2;
+	int chance = _rnd->getRandomNumber(255);
+
+	// pass -1 to indicate a non physical hit
+	if (chance < magicAcc) 
+		attackHit(attacker, victim, magicalObject, -1);
+	else if (attacker->_playerCharacter) 
+		appendText("The spell has no effect.");
+	else 
+		appendText("A miss!");
+
+	decrementUses(magicalObject);
 }
 
 void WageEngine::performHealingMagic(Chr *chr, Obj *magicalObject) {
@@ -377,18 +461,38 @@ void WageEngine::performHealingMagic(Chr *chr, Obj *magicalObject) {
 	uint chance = _rnd->getRandomNumber(255);
 	if (chance < magicalObject->_accuracy) {
 		int type = magicalObject->_attackType;
+		int power = magicalObject->_damage;
 
-		if (type == Obj::HEALS_PHYSICAL_DAMAGE || type == Obj::HEALS_PHYSICAL_AND_SPIRITUAL_DAMAGE)
-			chr->_context._statVariables[PHYS_HIT_CUR] += magicalObject->_damage;
+		if (type == Obj::HEALS_PHYSICAL_DAMAGE || type == Obj::HEALS_PHYSICAL_AND_SPIRITUAL_DAMAGE) {
+			int current = chr->_context._statVariables[PHYS_HIT_CUR];
+			int max = chr->_context._statVariables[PHYS_HIT_BAS];
 
-		if (type == Obj::HEALS_SPIRITUAL_DAMAGE || type == Obj::HEALS_PHYSICAL_AND_SPIRITUAL_DAMAGE)
-			chr->_context._statVariables[SPIR_HIT_CUR] += magicalObject->_damage;
+			// do not exceed base HP
+			if (current < max) {
+				current += power;
+				if (current > max)
+					current = max;
+				chr->_context._statVariables[PHYS_HIT_CUR] = current;
+			}
+		}
+
+		if (type == Obj::HEALS_SPIRITUAL_DAMAGE || type == Obj::HEALS_PHYSICAL_AND_SPIRITUAL_DAMAGE) {
+			int current = chr->_context._statVariables[SPIR_HIT_CUR];
+			int max = chr->_context._statVariables[SPIR_HIT_BAS];
+
+			// do not exceed base HP
+			if (current < max) {
+				current += power;
+				if (current > max)
+					current = max;
+				chr->_context._statVariables[SPIR_HIT_CUR] = current;
+			}
+		}
 
 		debugC(1, kDebugSound, "** Magical object sound: %s", magicalObject->_sound.c_str());
 		playSound(magicalObject->_sound);
 		appendText(magicalObject->_useMessage.c_str());
 
-		// TODO: what if enemy heals himself?
 		if (chr->_playerCharacter) {
 			double physicalPercent = (double)chr->_context._statVariables[PHYS_HIT_CUR] / chr->_context._statVariables[PHYS_HIT_BAS];
 			double spiritualPercent = (double)chr->_context._statVariables[SPIR_HIT_CUR] / chr->_context._statVariables[SPIR_HIT_BAS];
@@ -408,19 +512,22 @@ static const int directionsY[] = { -1, 1, 0, 0 };
 static const char *const directionsS[] = { "north", "south", "east", "west" };
 
 void WageEngine::performMove(Chr *chr, int validMoves) {
-	// count how many valid moves we have
-	int numValidMoves = 0;
+	// if there are no open exits (validMoves is 0), the enemy is trapped.
+	// they cannot run, and therefore cannot escape.
+	if (validMoves == 0) {
+		return;
+	}
 
+	// we only choose from directions that are not blocked.
+	int numValidMoves = 0;
 	for (int i = 0; i < 4; i++)
 		if ((validMoves & (1 << i)) != 0)
 			numValidMoves++;
 
-	// Now pick random dir
 	int dirNum = _rnd->getRandomNumber(numValidMoves - 1);
-	int dir = 0;
+	int dir = -1;
 
-	// And get it
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++) {
 		if ((validMoves & (1 << i)) != 0) {
 			if (dirNum == 0) {
 				dir = i;
@@ -428,22 +535,50 @@ void WageEngine::performMove(Chr *chr, int validMoves) {
 			}
 			dirNum--;
 		}
+	}
 
-	char buf[256];
-	snprintf(buf, 256, "%s%s runs %s.", chr->getDefiniteArticle(true), chr->_name.c_str(), directionsS[dir]);
-	appendText(buf);
-
-	_running = chr;
+	// The enemy always runs to the next room first.
 	Scene *currentScene = chr->_currentScene;
 	int destX = currentScene->_worldX + directionsX[dir];
 	int destY = currentScene->_worldY + directionsY[dir];
+	Scene *destScene = _world->getSceneAt(destX, destY);
 
-	_world->move(chr, _world->getSceneAt(destX, destY));
+	if (destScene != NULL) {
+		char buf[256];
+		// prints: "The Wuggly Ump runs West."
+		snprintf(buf, 256, "%s%s runs %s.", chr->getDefiniteArticle(true), chr->_name.c_str(), directionsS[dir]);
+		appendText(buf);
+
+		_running = chr;
+
+		// the enemy is in the new room.
+		_world->move(chr, destScene);
+	}
+
+	// now that they are in the new room, we check if they can "Escape".
+	if (chr->_runningSpeed > 0) {
+		int playerSpeed = _world->_player->_runningSpeed;
+		int enemySpeed = chr->_runningSpeed;
+		int totalSpeed = playerSpeed + enemySpeed;
+
+		// Stop Chance = Player Speed / (Player Speed + Enemy Speed)
+		int stopChance = 0;
+		if (totalSpeed > 0) {
+			stopChance = (playerSpeed * 100) / totalSpeed;
+		}
+
+		// if rand(0, 99) >= stopChance, player failed to stop them.
+		// result: enemy vanishes from the room they just entered (escapes).
+		if (_rnd->getRandomNumber(99) >= stopChance) {
+			_world->move(chr, _world->_storageScene);
+		}
+	}
 }
 
 void WageEngine::performOffer(Chr *attacker, Chr *victim) {
-	/* TODO: choose in a smarter way? */
-	Obj *obj = attacker->_inventory[0];
+	// pick a random object from inventory
+	int r = _rnd->getRandomNumber(attacker->_inventory.size() - 1);
+	Obj *obj = attacker->_inventory[r];
 	char buf[512];
 
 	snprintf(buf, 512, "%s%s offers %s%s.", attacker->getDefiniteArticle(true), attacker->_name.c_str(),
@@ -619,7 +754,7 @@ bool WageEngine::handleInventoryCommand() {
 static const char *const armorMessages[] = {
 	"Head protection:",
 	"Chest protection:",
-	"Shield protection:", // TODO: check message
+	"Side protection:",
 	"Magical protection:"
 };
 

@@ -551,7 +551,7 @@ void Room709::parser() {
 				case 3:
 					RemoveSystemHotkey(KEY_CLEAR);
 					RemoveSystemHotkey(5);
-					_G(game).new_room = 706;
+					_G(game).setRoom(706);
 					break;
 
 				default:
@@ -941,7 +941,7 @@ void Room709::daemon() {
 			digi_play_loop("950_s41", 3, 255, -1, -1);
 			RemoveSystemHotkey(KEY_CLEAR);
 			RemoveSystemHotkey(5);
-			_G(game).new_room = 710;
+			_G(game).setRoom(710);
 		}
 
 		if (_chiselActiveFl) {
@@ -1015,7 +1015,7 @@ void Room709::daemon() {
 		digi_play_loop("950_s41", 3, 255, -1, -1);
 		RemoveSystemHotkey(KEY_CLEAR);
 		RemoveSystemHotkey(5);
-		_G(game).new_room = 710;
+		_G(game).setRoom(710);
 
 		break;
 

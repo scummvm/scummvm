@@ -478,7 +478,7 @@ void Mine::mine_travel_link(int16 takeLink) {
 
 	_mineRoomInfo = MINE_INFO[mineRoomIndex];		// Get new mine room info from new index
 	_presentSceneID = _mineRoomInfo.scene_id;		// Set the scene ID
-	_G(game).new_room = MINE_SCENE_NUMBERS[_presentSceneID]; // Go to the corresponding scene number
+	_G(game).setRoom(MINE_SCENE_NUMBERS[_presentSceneID]); // Go to the corresponding scene number
 	_G(kernel).force_restart = true; 				// Makes the scene start over even if new_room = present room
 }
 

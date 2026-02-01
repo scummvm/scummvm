@@ -574,7 +574,7 @@ void Room504::daemon() {
 			_val5 = 15;
 			_G(wilbur_should) = 1;
 			_state1 = imath_ranged_rand(1, 6);
-			int x = (double)(_state1 * _G(player_info).scale * 42) * 0.01 - _G(player_info).x;
+			const int x = (double)(_state1 * _G(player_info).scale * 42) * 0.01 - _G(player_info).x;
 
 			ws_demand_location(x, _G(player_info).y);
 			ws_hide_walker();

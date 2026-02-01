@@ -384,6 +384,7 @@ String Path::baseName() const {
 		return String();
 	}
 
+	bool escaped = isEscaped();
 	size_t last = _str.size();
 	if (isSeparatorTerminated()) {
 		last--;
@@ -396,11 +397,15 @@ String Path::baseName() const {
 
 	if (separatorPos != String::npos) {
 		begin += separatorPos + 1;
-	} else if (isEscaped()) {
+	} else if (escaped) {
 		// unescape uses the real start, not the escape marker
 		begin++;
 	}
 	end += last;
+
+	if (!escaped) {
+		return String(begin, end);
+	}
 
 	return unescape(kNoSeparator, begin, end);
 }

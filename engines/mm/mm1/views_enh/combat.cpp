@@ -544,7 +544,7 @@ void Combat::clearArea(const Common::Rect &r) {
 	area.right = MIN(area.right, _innerBounds.right);
 	area.bottom = MIN(area.bottom, _innerBounds.bottom);
 
-	s.fillRect(area, 0x99);
+	s.fillRect(area, SCROLL_BG_COLOR);
 }
 
 
@@ -656,6 +656,7 @@ void Combat::writeMonsters() {
 }
 
 void Combat::writeMonsterStatus(int monsterNum) {
+	auto *currMonster = _monsterP;
 	_monsterP = _remainingMonsters[monsterNum];
 	monsterIndexOf();
 	byte statusBits = _remainingMonsters[monsterNum]->_status;
@@ -678,6 +679,8 @@ void Combat::writeMonsterStatus(int monsterNum) {
 		writeDots();
 		writeString(STRING["dialogs.combat.status.wounded"]);
 	}
+
+	_monsterP = currMonster;
 }
 
 void Combat::writeDots() {

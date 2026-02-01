@@ -169,6 +169,7 @@ MODULE_OBJS += \
 	he/basketball/shooting.o \
 	he/basketball/trajectory.o \
 	he/cup_player_he.o \
+	he/font_he.o \
 	he/gfx_comp/aux_comp.o \
 	he/gfx_comp/mrle_comp.o \
 	he/gfx_comp/trle_comp.o \

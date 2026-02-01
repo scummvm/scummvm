@@ -48,13 +48,13 @@ const char *Room303::SAID[][4] = {
 };
 
 const seriesStreamBreak Room303::SERIES1[] = {
-	{ 0, "303_001", 2, 255, -1, 0, 0, 0 },
+	{ 0, "303_001", 2, 255, -1, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
 const seriesPlayBreak Room303::PLAY1[] = {
-	{ 0, 7, 0, 1, 0, -1, 2048, 0, 0, 0 },
-	{ 8, -1, 0, 1, 0, 9, 2048, 0, 0, 0 },
+	{ 0, 7, nullptr, 1, 0, -1, 2048, 0, nullptr, 0 },
+	{ 8, -1, nullptr, 1, 0, 9, 2048, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -340,6 +340,10 @@ void Room303::doDaemon(int trigger) {
 			}
 			if (_G(wilbur_should) == 20)
 				kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
+			break;
+
+		default:
+			break;
 		}
 		break;
 

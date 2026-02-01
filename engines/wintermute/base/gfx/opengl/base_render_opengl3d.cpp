@@ -186,7 +186,7 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 		glEnable(GL_ALPHA_TEST);
 		glAlphaFunc(GL_GEQUAL, 0.0f);
 
-		glFrontFace(GL_CCW);  // WME DX have CW
+		glFrontFace(GL_CW);  // WME DX have CCW
 		glEnable(GL_CULL_FACE);
 		glDisable(GL_STENCIL_TEST);
 

@@ -57,21 +57,21 @@ static const char *SAID2[][4] = {
 };
 
 static const seriesPlayBreak PLAY1[] = {
-	{ 0, 32, 0, 1, 255, -1, 0, 0, 0, 0 },
-	{ 33, 39, "139_002", 2, 255, -1, 0, 0, 0, 0 },
-	{ 40, 43, 0, 1, 255, 8, 0, 0, 0, 0 },
-	{ 44, 52, "139_003", 2, 255, -1, 0, 0, 0, 0 },
-	{ 52, 52, 0, 1, 255, -1, 0, 0, 0, 0 },
-	{ 52, 52, 0, 1, 255, -1, 0, 0, 0, 0 },
-	{ 52, 52, 0, 1, 255, -1, 0, 0, 0, 0 },
-	{ 52, 52, 0, 1, 255, -1, 0, 0, 0, 0 },
-	{ 52, 52, 0, 1, 255, -1, 0, 0, 0, 0 },
-	{ 52, 52, 0, 1, 255, -1, 0, 0, 0, 0 },
-	{ 52, 52, 0, 1, 255, -1, 0, 0, 0, 0 },
-	{ 52, 52, 0, 1, 255, -1, 0, 0, 0, 0 },
-	{ 52, 52, 0, 1, 255, -1, 0, 0, 0, 0 },
-	{ 52, 52, 0, 1, 255, -1, 0, 0, 0, 0 },
-	{ 52, 52, 0, 1, 255, -1, 0, 0, 0, 0 },
+	{ 0, 32, nullptr, 1, 255, -1, 0, 0, nullptr, 0 },
+	{ 33, 39, "139_002", 2, 255, -1, 0, 0, nullptr, 0 },
+	{40, 43, nullptr, 1, 255, 8, 0, 0, nullptr, 0},
+	{44, 52, "139_003", 2, 255, -1, 0, 0, nullptr, 0},
+	{52, 52, nullptr, 1, 255, -1, 0, 0, nullptr, 0},
+	{52, 52, nullptr, 1, 255, -1, 0, 0, nullptr, 0},
+	{52, 52, nullptr, 1, 255, -1, 0, 0, nullptr, 0},
+	{52, 52, nullptr, 1, 255, -1, 0, 0, nullptr, 0},
+	{52, 52, nullptr, 1, 255, -1, 0, 0, nullptr, 0},
+	{52, 52, nullptr, 1, 255, -1, 0, 0, nullptr, 0},
+	{52, 52, nullptr, 1, 255, -1, 0, 0, nullptr, 0},
+	{52, 52, nullptr, 1, 255, -1, 0, 0, nullptr, 0},
+	{52, 52, nullptr, 1, 255, -1, 0, 0, nullptr, 0},
+	{52, 52, nullptr, 1, 255, -1, 0, 0, nullptr, 0},
+	{52, 52, nullptr, 1, 255, -1, 0, 0, nullptr, 0},
 	PLAY_BREAK_END
 };
 
@@ -95,9 +95,9 @@ static const seriesPlayBreak PLAY2[] = {
 };
 
 static const seriesStreamBreak SERIES1[] = {
-	{ 6, 0, 2, 255, 2, 0, 0, 0 },
-	{ 10, "100_022", 2, 255, -1, 0, 0, 0 },
-	{ -1, 0, 0, 0, -1, 0, 0, 0 },
+	{ 6, nullptr, 2, 255, 2, 0, nullptr, 0 },
+	{ 10, "100_022", 2, 255, -1, 0, nullptr, 0 },
+	{ -1, nullptr, 0, 0, -1, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
@@ -159,7 +159,6 @@ void Room139_144::init() {
 }
 
 void Room139_144::daemon() {
-	int frame;
 
 	switch (_G(kernel).trigger) {
 	case 2:
@@ -333,7 +332,7 @@ void Room139_144::daemon() {
 
 		case 5:
 			if (_burlShould == 5) {
-				frame = imath_ranged_rand(0, 2);
+				const int frame = imath_ranged_rand(0, 2);
 				series_play("144bu09", 0x300, 0, kCHANGE_BURL_ANIMATION, 4, 0, 100, 0, 0, frame, frame);
 				series_play("144bu09s", 0x301, 0, -1, 4, 0, 100, 0, 0, frame, frame);
 
@@ -402,7 +401,7 @@ void Room139_144::pre_parser() {
 }
 
 void Room139_144::parser() {
-	bool lookFlag = player_said_any("look", "look at");
+	const bool lookFlag = player_said_any("look", "look at");
 	_G(kernel).trigger_mode = KT_DAEMON;
 
 	if (player_said("talk to")) {
@@ -468,7 +467,7 @@ void Room139_144::randomDigi() {
 
 void Room139_144::conv31() {
 	_G(kernel).trigger_mode = KT_PARSE;
-	int who = conv_whos_talking();
+	const int who = conv_whos_talking();
 
 	if (_G(kernel).trigger == 1) {
 		if (who <= 0) {

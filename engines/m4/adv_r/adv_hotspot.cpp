@@ -38,7 +38,7 @@ void HotSpotRec::clear() {
 	feet_x = feet_y = 0;
 	facing = 0;
 	active = false;
-	cursor_number = 0;
+	cursor_number = kArrowCursor;
 	syntax = 0;
 	vocabID = verbID = 0;
 	vocab = verb = prep = nullptr;
@@ -101,7 +101,7 @@ HotSpotRec *hotspot_new(int x1, int y1, int x2, int y2) {
 	newSpot->verb = nullptr;
 	newSpot->prep = nullptr;
 	newSpot->syntax = 0;		// Unused field
-	newSpot->cursor_number = 0;
+	newSpot->cursor_number = kArrowCursor;
 	newSpot->facing = 5;
 	newSpot->feet_x = 32767;
 	newSpot->feet_y = 32767;

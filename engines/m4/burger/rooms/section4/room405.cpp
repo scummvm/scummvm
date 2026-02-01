@@ -369,6 +369,8 @@ void Room405::daemon() {
 				kernel_trigger_dispatch_now(kCHANGE_VIPE_ANIMATION);
 				break;
 
+			default:
+				break;
 			}
 			break;
 
@@ -927,7 +929,7 @@ void Room405::pre_parser() {
 }
 
 void Room405::parser() {
-	bool lookFlag = player_said_any("look", "look at");
+	const bool lookFlag = player_said_any("look", "look at");
 	_G(kernel).trigger_mode = KT_DAEMON;
 
 	if (player_said("conv86")) {
@@ -1092,7 +1094,7 @@ void Room405::parser() {
 
 void Room405::conv86() {
 	_G(kernel).trigger_mode = KT_PARSE;
-	int who = conv_whos_talking();
+	const int who = conv_whos_talking();
 	const char *sound = conv_sound_to_play();
 
 	if (_G(kernel).trigger == 18) {
@@ -1137,9 +1139,9 @@ void Room405::conv86() {
 
 void Room405::conv89() {
 	_G(kernel).trigger_mode = KT_PARSE;
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 	const char *sound = conv_sound_to_play();
 
 	if (_G(kernel).trigger == 18) {
@@ -1189,7 +1191,7 @@ void Room405::conv89() {
 
 void Room405::conv90() {
 	_G(kernel).trigger_mode = KT_PARSE;
-	int who = conv_whos_talking();
+	const int who = conv_whos_talking();
 	const char *sound = conv_sound_to_play();
 
 	if (_G(kernel).trigger == 18) {
@@ -1222,7 +1224,7 @@ void Room405::conv90() {
 
 void Room405::conv91() {
 	_G(kernel).trigger_mode = KT_PARSE;
-	int who = conv_whos_talking();
+	const int who = conv_whos_talking();
 	const char *sound = conv_sound_to_play();
 
 	if (_G(kernel).trigger == 18) {
@@ -1255,9 +1257,9 @@ void Room405::conv91() {
 
 void Room405::conv92() {
 	_G(kernel).trigger_mode = KT_PARSE;
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 	const char *sound = conv_sound_to_play();
 
 	if (_G(kernel).trigger == 18) {

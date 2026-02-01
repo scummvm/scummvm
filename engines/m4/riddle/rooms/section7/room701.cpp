@@ -306,7 +306,7 @@ void Room701::parser() {
 
 			case 3:
 				digi_stop(3);
-				_G(game).new_room = 702;
+				_G(game).setRoom(702);
 				break;
 
 			default:
@@ -351,7 +351,7 @@ void Room701::parser() {
 
 			case 6:
 				digi_stop(3);
-				_G(game).new_room = 702;
+				_G(game).setRoom(702);
 				break;
 
 			default:
@@ -1402,8 +1402,7 @@ void Room701::daemon() {
 			break;
 		}
 
-		_G(game).new_room = 495;
-		_G(game).new_section = 4;
+		_G(game).setRoom(495);
 
 		break;
 

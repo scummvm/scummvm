@@ -251,7 +251,7 @@ void Room810::parser() {
 		case 150:
 			adv_kill_digi_between_rooms(false);
 			digi_unload("950_s29");
-			_G(game).new_room = 860;
+			_G(game).setRoom(860);
 
 			break;
 

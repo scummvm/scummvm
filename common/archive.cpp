@@ -341,7 +341,7 @@ void SearchSet::insert(const Node &node) {
 }
 
 void SearchSet::add(const String &name, Archive *archive, int priority, bool autoFree) {
-	if (find(name) == _list.end()) {
+	if (_ignoreClashes || (find(name) == _list.end())) {
 		Node node(priority, name, archive, autoFree);
 		insert(node);
 	} else {

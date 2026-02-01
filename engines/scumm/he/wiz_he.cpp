@@ -26,6 +26,7 @@
 #include "common/system.h"
 #include "graphics/cursorman.h"
 #include "graphics/primitives.h"
+#include "scumm/he/font_he.h"
 #include "scumm/he/logic_he.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/resource.h"
@@ -1164,13 +1165,21 @@ void Wiz::loadWizCursor(int resId, int palette, bool useColor) {
 					((uint16 *)cursor)[i] = 0x7FFF;
 			}
 		}
+
+		const byte black[3] = { 0x00, 0x00, 0x00 };
+		const byte white[3] = { 0xFF, 0xFF, 0xFF };
+
+		CursorMan.replaceCursorPalette(black, 0, 1);
+		CursorMan.replaceCursorPalette(white, 15, 1);
 	}
 
 	_vm->setCursorHotspot(x, y);
 	_vm->setCursorFromBuffer(cursor, cw, ch, cw * _vm->_bytesPerPixel);
 
 	// Since we set up cursor palette for default cursor, disable it now...
-	CursorMan.disableCursorPalette(true);
+	if (useColor) {
+		CursorMan.disableCursorPalette(true);
+	}
 }
 
 #define ADD_REQUIRED_IMAGE(whatImageIsRequired) {                                                                                    \
@@ -2399,23 +2408,40 @@ void Wiz::processWizImageRenderEllipseCmd(const WizImageCommand *params) {
 }
 
 void Wiz::processWizImageFontStartCmd(const WizImageCommand *params) {
-	// Used for text in FreddisFunShop/PuttsFunShop/SamsFunShop
-	// TODO: Start Font
+	// Used for TTF text in FreddisFunShop/PuttsFunShop/SamsFunShop
+	if (!(((ScummEngine_v99he *)_vm)->_heFont->startFont(params->image))) {
+		warning("Wiz::processWizImageFontStartCmd(): Couldn't start font");
+	}
 }
 
 void Wiz::processWizImageFontEndCmd(const WizImageCommand *params) {
-	// Used for text in FreddisFunShop/PuttsFunShop/SamsFunShop
-	// TODO: End Font
+	// Used for TTF text in FreddisFunShop/PuttsFunShop/SamsFunShop
+	if (!(((ScummEngine_v99he *)_vm)->_heFont->endFont(params->image))) {
+		warning("Wiz::processWizImageFontEndCmd(): Couldn't end font");
+	}
 }
 
 void Wiz::processWizImageFontCreateCmd(const WizImageCommand *params) {
-	// Used for text in FreddisFunShop/PuttsFunShop/SamsFunShop
-	// TODO: Create Font
+	// Used for TTF text in FreddisFunShop/PuttsFunShop/SamsFunShop
+	if (!(((ScummEngine_v99he *)_vm)->_heFont->createFont(params->image, 
+														  (char *)params->fontProperties.fontName,
+														  params->fontProperties.fgColor,
+														  params->fontProperties.bgColor,
+														  params->fontProperties.style,
+														  params->fontProperties.size))) {
+		warning("Wiz::processWizImageFontCreateCmd(): Couldn't create font");
+	}
 }
 
 void Wiz::processWizImageFontRenderCmd(const WizImageCommand *params) {
-	// TODO: Render Font String
-	error("Wiz::processWizImageFontRenderCmd(): Render Font String");
+	// Used for TTF text in FreddisFunShop/PuttsFunShop/SamsFunShop
+	if (!(((ScummEngine_v99he *)_vm)->_heFont->renderString(params->image,
+															params->state,
+															params->fontProperties.xPos,
+															params->fontProperties.yPos,
+															(char *)params->fontProperties.string))) {
+		warning("Wiz::processWizImageFontRenderCmd(): Couldn't render font");
+	}
 }
 
 void Wiz::processWizImageRenderFloodFillCmd(const WizImageCommand *params) {

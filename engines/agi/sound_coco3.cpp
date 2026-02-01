@@ -36,12 +36,10 @@ namespace Agi {
 // index. The volume is a boolean. The duration changed between interpreters;
 // originally the units were 1/10 of a second, then 1/60.
 //
-// Common::PCSpeaker is used for sound generation. It produces significantly
-// louder volumes than the other AGI sound generators, so I've lowered the
-// mixer volume for consistency.
-//
 // Thanks to Guillaume Major for documenting the sound format in their
 // conversion program, cc3snd.c.
+//
+// TODO: Migrate to Audio::PCSpeaker
 
 static const uint16 cocoFrequencies[] = {
 	 130,  138,  146,  155,  164,  174,  184,  195,  207,  220,  233,  246,
@@ -51,13 +49,11 @@ static const uint16 cocoFrequencies[] = {
 	2093, 2217, 2349, 2489, 2637, 2793, 2959, 3135, 3322, 3520, 3729, 3951
 };
 
-#define COCO3_MIXER_VOLUME 20
-
 SoundGenCoCo3::SoundGenCoCo3(AgiBase *vm, Audio::Mixer *pMixer) :
 	_isPlaying(false),
 	SoundGen(vm, pMixer) {
 
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, _soundHandle, this, -1, COCO3_MIXER_VOLUME, 0, DisposeAfterUse::NO, true);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, _soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 SoundGenCoCo3::~SoundGenCoCo3() {

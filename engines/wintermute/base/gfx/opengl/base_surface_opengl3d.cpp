@@ -395,7 +395,16 @@ bool BaseSurfaceOpenGL3D::isTransparentAtLite(int x, int y) const {
 
 	uint8 a, r, g, b;
 	_imageData->format.colorToARGB(_imageData->getPixel(x, y), a, r, g, b);
-	return a == 0;
+	// Keep behavior in sync with the 2D renderer, which implements the WME Lite logic
+	// by comparing alpha against 128.
+	// This differs from the original WME1 sources, where alpha is compared against 0.
+	// The likely reason for this discrepancy is a difference in how bitmaps are
+	// converted after loading.
+	if (a <= 128) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 void BaseSurfaceOpenGL3D::setTexture() {

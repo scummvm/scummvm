@@ -483,10 +483,10 @@ void SpiffGenerator::generate() {
 				// kElevMedium with kElevLow or WATER   kElevMedium or kElevLow, possible WATER if no kElevMedium left, down, or down-left
 				// kElevHigh with kElevLow or WATER     kElevMedium
 
-				static int highAmt = 105;
-				static int mediumAmt = 100 + _waterAmountG;
-				static int lowAmt = 105 + 3 * _waterAmountG;
-				static int waterAmt = 15 * _waterAmountG;
+				const int highAmt = 105;
+				const int mediumAmt = 100 + _waterAmountG;
+				const int lowAmt = 105 + 3 * _waterAmountG;
+				const int waterAmt = 15 * _waterAmountG;
 
 
 

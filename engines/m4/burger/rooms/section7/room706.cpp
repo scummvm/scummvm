@@ -558,7 +558,7 @@ void Room706::parser() {
 
 void Room706::conv83() {
 	if (conv_sound_to_play()) {
-		int who = conv_whos_talking();
+		const int who = conv_whos_talking();
 
 		if (who <= 0) {
 			_astralShould = 1;

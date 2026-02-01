@@ -90,22 +90,20 @@ void CMakeProvider::createWorkspace(const BuildSetup &setup) {
 
 	workspace << R"EOS(set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 11) # Globally enable C++11
-string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
-if(NOT uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG")
-	add_definitions(-DRELEASE_BUILD -UNDEBUG)
+add_compile_definitions($<$<NOT:$<CONFIG:Debug>>:RELEASE_BUILD>)
+add_compile_options($<$<NOT:$<CONFIG:Debug>>:-UNDEBUG>)
 
-	# Also remove /D NDEBUG to avoid MSVC warnings about conflicting defines.
-	foreach (flags_var_to_scrub
-			CMAKE_CXX_FLAGS_RELEASE
-			CMAKE_CXX_FLAGS_RELWITHDEBINFO
-			CMAKE_CXX_FLAGS_MINSIZEREL
-			CMAKE_C_FLAGS_RELEASE
-			CMAKE_C_FLAGS_RELWITHDEBINFO
-			CMAKE_C_FLAGS_MINSIZEREL)
-		string (REGEX REPLACE "(^| )[/-]D *NDEBUG($| )" " "
-			"${flags_var_to_scrub}" "${${flags_var_to_scrub}}")
-	endforeach()
-endif()
+# Remove /D NDEBUG to avoid MSVC warnings about conflicting defines.
+foreach (flags_var_to_scrub
+		CMAKE_CXX_FLAGS_RELEASE
+		CMAKE_CXX_FLAGS_RELWITHDEBINFO
+		CMAKE_CXX_FLAGS_MINSIZEREL
+		CMAKE_C_FLAGS_RELEASE
+		CMAKE_C_FLAGS_RELWITHDEBINFO
+		CMAKE_C_FLAGS_MINSIZEREL)
+	string (REGEX REPLACE "(^| )[/-]D *NDEBUG($| )" " "
+		"${flags_var_to_scrub}" "${${flags_var_to_scrub}}")
+endforeach()
 
 find_package(PkgConfig QUIET)
 include(CMakeParseArguments)
@@ -198,8 +196,8 @@ if (TARGET SDL2::SDL2)
 endif()
 include_directories(${SDL2_INCLUDE_DIRS})
 
-# Explicitly support MacPorts (hopefully harmless on other platforms)
-link_directories(/opt/local/lib)
+# Explicitly support MacPorts and Homebrew (hopefully harmless on other platforms)
+link_directories(/opt/local/lib /opt/homebrew/lib)
 
 )";
 

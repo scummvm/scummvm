@@ -1027,7 +1027,7 @@ void Room204::daemon() {
 
 	case 12:
 		interface_show();
-		_G(game).new_room = 205;
+		_G(game).setRoom(205);
 		break;
 
 	case 15:
@@ -2216,7 +2216,7 @@ void Room204::daemon() {
 
 	case 629:
 	case 711:
-		_G(game).new_room = 203;
+		_G(game).setRoom(203);
 		break;
 
 	case 630:

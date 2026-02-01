@@ -628,7 +628,7 @@ void Room807::parser() {
 				break;
 
 			case 20:
-				_G(game).new_room = 808;
+				_G(game).setRoom(808);
 				adv_kill_digi_between_rooms(false);
 				digi_preload("950_s29", -1);
 				digi_play_loop("950_s29", 3, 255, -1, -1);
@@ -688,7 +688,7 @@ void Room807::parser() {
 				break;
 
 			case 40:
-				_G(game).new_room = 806;
+				_G(game).setRoom(806);
 				adv_kill_digi_between_rooms(false);
 				digi_preload("950_s29", -1);
 				digi_play_loop("950_s29", 2, 255, -1, -1);

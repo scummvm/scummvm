@@ -27,6 +27,7 @@
 #include "scumm/charset.h"
 #include "scumm/dialogs.h"
 #include "scumm/he/animation_he.h"
+#include "scumm/he/font_he.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
@@ -2628,6 +2629,7 @@ void ScummEngine_v100he::o100_getSpriteGroupInfo() {
 void ScummEngine_v100he::o100_getWizData() {
 	byte filename[4096];
 	int resId, state, type;
+	int fontImageNum, fontProperty;
 	Common::Rect clipRect;
 	int32 w, h;
 	int32 x, y;
@@ -2687,11 +2689,28 @@ void ScummEngine_v100he::o100_getWizData() {
 		push(y);
 		break;
 	case SO_FONT_START:
-		pop();
+		// I don't think any HE100 games use this, since all FunShop games are HE99, but still...
+		fontProperty = pop();
 		copyScriptString(filename, sizeof(filename));
-		pop();
-		push(0);
-		debug(0, "o100_getWizData() case 111 unhandled");
+		fontImageNum = pop();
+
+		if (fontImageNum) {
+			switch (fontProperty) {
+			case 2: // PFONT_EXTENT_X
+				push(_heFont->getStringWidth(fontImageNum, Common::String((char *)filename).c_str()));
+				break;
+
+			case 3: // PFONT_EXTENT_Y
+				push(_heFont->getStringHeight(fontImageNum, Common::String((char *)filename).c_str()));
+				break;
+			default:
+				// No default case in the original...
+				break;
+			}
+		} else {
+			push(0);
+		}
+
 		break;
 	case SO_HISTOGRAM:
 		clipRect.bottom = pop();

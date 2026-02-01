@@ -81,17 +81,15 @@ void Room907::daemon() {
 
 	case 40:
 		adv_kill_digi_between_rooms(false);
-		_G(game).new_room = 908;
+		_G(game).setRoom(908);
 		break;
 
 	case 55:
-		_G(game).new_room = 304;
-		_G(game).new_section = 3;
+		_G(game).setRoom(304);
 		break;
 
 	case 56:
-		_G(game).new_room = 494;
-		_G(game).new_section = 4;
+		_G(game).setRoom(494);
 		break;
 
 	default:

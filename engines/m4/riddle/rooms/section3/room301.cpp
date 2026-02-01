@@ -926,7 +926,7 @@ void Room301::parser() {
 				player_set_commands_allowed(false);
 				disable_player_commands_and_fade_init(1);
 			} else if (_G(kernel).trigger == 1) {
-				_G(game).new_room = 303;
+				_G(game).setRoom(303);
 			}
 		}
 	} else if (lookFlag && player_said("poster")) {

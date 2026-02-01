@@ -2232,7 +2232,7 @@ const Game games[] = {
 		MTBOOT_BABE_WIN_EN,
 		&BootScriptContext::bootGeneric
 	},
-	// Biologia Cellulare Evoluzione E Variet� Della Vita - Windows - Italian
+	// Biologia Cellulare Evoluzione E Varietà Della Vita - Windows - Italian
 	{
 		MTBOOT_BIOCELLEVO_WIN_IT,
 		&BootScriptContext::bootGeneric
@@ -2252,7 +2252,7 @@ const Game games[] = {
 		MTBOOT_GREVEHOLM2_WIN_SE,
 		&BootScriptContext::bootGeneric
 	},
-	// Itacante: La Cit� des Robots - Windows - French
+	// Itacante: La Cité des Robots - Windows - French
 	{
 		MTBOOT_ITACANTE_WIN_FR,
 		&BootScriptContext::bootGeneric

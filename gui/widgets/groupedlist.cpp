@@ -213,6 +213,12 @@ void GroupedListWidget::setSelected(int item) {
 
 		_selectedItem = findDataIndex(item);
 
+		// Clear previous selections and mark only this item
+		if (_multiSelectEnabled) {
+			clearSelection();
+			markSelectedItem(_selectedItem, true);
+		}
+
 		// Notify clients that the selection changed.
 		sendCommand(kListSelectionChangedCmd, _selectedItem);
 
@@ -266,27 +272,29 @@ void GroupedListWidget::handleMouseDown(int x, int y, int button, int clickCount
 	if (_multiSelectEnabled && (shiftClick || ctrlClick)) {
 		if (shiftClick && _lastSelectionStartItem != -1) {
 			// Shift+Click: Select range in terms of underlying data indices
-			int startDataIndex = _lastSelectionStartItem;
-			selectItemRange(startDataIndex, dataIndex);
+			int startListIndex = _lastSelectionStartItem;
+			int endListIndex = newSelectedItem;              
+			selectItemRange(startListIndex, endListIndex);
 			_selectedItem = newSelectedItem;
+			_lastSelectionStartItem = newSelectedItem;
 			sendCommand(kListSelectionChangedCmd, _selectedItem);
 		} else if (ctrlClick) {
 			// Ctrl+Click: toggle selection for the underlying data index
-			if (isItemSelected(dataIndex)) {
-				removeSelectedItem(dataIndex);
+			if (isItemSelected(newSelectedItem)) {
+				markSelectedItem(newSelectedItem, false);
 			} else {
-				addSelectedItem(dataIndex);
+				markSelectedItem(newSelectedItem, true);
+				_selectedItem = newSelectedItem;
+				_lastSelectionStartItem = newSelectedItem;
 			}
-			_selectedItem = newSelectedItem;
-			_lastSelectionStartItem = dataIndex;
 			sendCommand(kListSelectionChangedCmd, _selectedItem);
 		}
 	} else {
 		// Regular click: clear selection and select only this underlying item
 		clearSelection();
 		_selectedItem = newSelectedItem;
-		addSelectedItem(dataIndex);
-		_lastSelectionStartItem = dataIndex;
+		markSelectedItem(newSelectedItem, true);
+		_lastSelectionStartItem = newSelectedItem;
 		sendCommand(kListSelectionChangedCmd, _selectedItem);
 	}
 
@@ -394,7 +402,7 @@ void GroupedListWidget::drawWidget() {
 		int mapped = _listIndex[pos];
 		bool isRealItem = (mapped >= 0);
 		if (isRealItem) {
-			if (_selectedItem == pos || isItemSelected(mapped))
+			if (isItemSelected(pos))
 				inverted = _inversion;
 		}
 

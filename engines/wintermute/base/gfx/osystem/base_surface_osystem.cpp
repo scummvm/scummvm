@@ -268,6 +268,10 @@ bool BaseSurfaceOSystem::isTransparentAtLite(int x, int y) const {
 	uint32 pixel = _surface->getPixel(x, y);
 	uint8 r, g, b, a;
 	_surface->format.colorToARGB(pixel, a, r, g, b);
+	// This implements the WME Lite logic by comparing alpha against 128.
+	// This differs from the original WME1 sources, where alpha is compared against 0.
+	// The likely reason for this discrepancy is a difference in how bitmaps are
+	// converted after loading.
 	if (a <= 128) {
 		return true;
 	} else {

@@ -27,6 +27,7 @@
 
 #include <Foundation/NSArray.h>
 #include <Foundation/NSBundle.h>
+#include <Foundation/NSDictionary.h>
 #include <Foundation/NSPathUtilities.h>
 #include <AvailabilityMacros.h>
 #include <CoreFoundation/CFString.h>

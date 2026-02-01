@@ -169,6 +169,7 @@ static const char *const selectorNameTable[] = {
 	"tWindow",      // Camelot
 #ifdef ENABLE_SCI32
 	"newWith",      // SCI2 array script
+	"inset",        // GK1
 	"posn",         // GK1, Phant2, QFG4
 	"printLang",    // GK2
 	"test",         // Torin
@@ -316,6 +317,7 @@ enum ScriptPatcherSelectors {
 #ifdef ENABLE_SCI32
 	,
 	SELECTOR_newWith,
+	SELECTOR_inset,
 	SELECTOR_posn,
 	SELECTOR_printLang,
 	SELECTOR_test,
@@ -4540,6 +4542,93 @@ static const uint16 gk1Day6EnvelopePatch[] = {
 	PATCH_END
 };
 
+// WORKAROUND: Pathfinding algorithm difference
+//
+// On day 8, when entering the castle bedroom (530) from the hall (510), ego is
+//  placed on an obstacle boundary and can walk out of bounds in our pathfinding
+//  algorithm. We work around this by initializing ego one pixel lower.
+//
+// Applies to: All versions
+// Responsible method: enterFromHall:changeState
+// Fixes bug: #16478
+static const uint16 gk1CastlePathfindingSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x00e6),               // pushi 00e6 [ x: 230 ]
+	0x39, 0x7b,                             // pushi 7b   [ y: 123 ]
+	SIG_END
+};
+
+static const uint16 gk1CastlePathfindingPatch[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x7c,                                   // pushi 7c   [ y: 124 ]
+	PATCH_END
+};
+
+// On day 2 at the Gedde mansion, the butler waits for 12 seconds before closing
+//  the door. If this timer expires while viewing an inset in inventory, such
+//  as the murder photo, then the game is stuck in handsOff mode. When an inset
+//  is displayed, the Inset class pauses global timers and the room does not
+//  handle events, but the room's Script object continues to run. shutTheDoor is
+//  a room script that calls handsOff after a delay, leaving the inset stuck.
+//
+// It seems like this should affect more scripts in the game, but several things
+//  need to happen for a Script object to be vulnerable. It must be the current
+//  room's script, as opposed to another object's script, and it must not wait
+//  on any animation or movement in between a delay and handsOff, since the room
+//  is frozen during an inset.
+//
+// We fix this by pausing the butler's script whenever an inset is displayed.
+//  We add an inset check to shutTheDoor:doit to prevent calling its superclass.
+//
+// Applies to: All versions
+// Responsible method: shutTheDoor:doit
+// Fixes bug: #16463
+static const uint16 gk1ButlerInsetSignature[] = {
+	// shutTheDoor:doit
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(doit),          // pushi doit
+	0x76,                               // push0
+	0x57, SIG_ADDTOOFFSET(+1),          // super 04 [ super doit: ]
+	      SIG_UINT16(0x0004),
+	0x39, SIG_SELECTOR8(state),         // pushi state
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // self 04 [ self state: ]
+	0x36,                               // push
+	0x35, 0x00,                         // ldi 00
+	0x1a,                               // eq?     [ self:state == 0 ]
+	0x31, 0x11,                         // bnt 11  [ ret ]
+	0x83, 0x0a,                         // lal 10  [ acc = 0 or 1 ]
+	0x31, 0x0d,                         // bnt 0d  [ ret ]
+	0x38, SIG_SELECTOR16(seconds),      // pushi seconds
+	0x78,                               // push1
+	0x76,                               // push0
+	SIG_ADDTOOFFSET(+5),
+	0x54, SIG_UINT16(0x000c),           // self 0c [ self seconds: 0 changeState: 1 ]
+	0x48,                               // ret
+	// shutTheDoor:changeState [ used to get the `state` property index ]
+	0x87, 0x01,                         // lap 01
+	0x65,                               // aTop state
+	SIG_END
+};
+
+static const uint16 gk1ButlerInsetPatch[] = {
+	0x38, PATCH_SELECTOR16(inset),      // pushi inset
+	0x76,                               // push0
+	0x81, 0x02,                         // lag 02
+	0x4a, PATCH_UINT16(0x0004),         // send 04 [ rm350 inset: ]
+	0x2f, 0x07,                         // bt 07   [ skip super:doit if inset ]
+	PATCH_GETORIGINALBYTES(0, 7),       // [ super doit: ]
+	0x67, PATCH_GETORIGINALBYTE(0x28),  // pTos state
+	0x83, 0x0a,                         // lal 10
+	0x2a,                               // ult?    [ state < local10 ]
+	0x31, 0x0b,                         // bnt 0b  [ ret ]
+	0x76,                               // push0
+	0x69, PATCH_GETORIGINALBYTEADJUST(0x28, +8), // sTop seconds [ seconds = 0 ]
+	PATCH_ADDTOOFFSET(+5),
+	0x54, PATCH_UINT16(0x0006),         // self 06 [ self changeState: 1 ]
+	PATCH_END
+};
+
 // GK1 Mac is missing view 56, which is the close-up of the talisman. Clicking
 //  Look on the talisman from inventory is supposed to display an inset with
 //  view 56 and say a message, but instead this would crash the Mac interpreter.
@@ -4675,6 +4764,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   260, "fix day 5 snake attack (1/2)",                1, gk1Day5SnakeAttackSignature1,     gk1Day5SnakeAttackPatch1 },
 	{  true,   260, "fix day 5 snake attack (2/2)",                1, gk1Day5SnakeAttackSignature2,     gk1Day5SnakeAttackPatch2 },
 	{  true,   280, "fix pathfinding in Madame Cazanoux's house",  1, gk1CazanouxPathfindingSignature,  gk1CazanouxPathfindingPatch },
+	{  true,   350, "fix day 2 butler inset lockup",               1, gk1ButlerInsetSignature,          gk1ButlerInsetPatch },
 	{  true,   380, "fix Gran's room obstacles and ego flicker",   1, gk1GranRoomInitSignature,         gk1GranRoomInitPatch },
 	{  true,   410, "fix day 2 binoculars lockup",                 1, gk1Day2BinocularsLockupSignature, gk1Day2BinocularsLockupPatch },
 	{  true,   420, "fix day 6 empty booth message",               6, gk1EmptyBoothMessageSignature,    gk1EmptyBoothMessagePatch },
@@ -4689,6 +4779,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{ false,   480, "mac: fix cartoon timing",                     7, gk1CartoonTimingMacSignature2,    gk1CartoonTimingPatch2 },
 	{  true,   480, "fix bayou cartoon view",                      1, gk1BayouCartoonViewSignature,     gk1BayouCartoonViewPatch },
 	{  true,   480, "win: play day 6 bayou ritual avi videos",     3, gk1BayouRitualAviSignature,       gk1BayouRitualAviPatch },
+	{  true,   530, "fix castle pathfinding",                      1, gk1CastlePathfindingSignature,    gk1CastlePathfindingPatch },
 	{ false,   720, "pc: fix cartoon timing",                      2, gk1CartoonTimingPcSignature1,     gk1CartoonTimingPatch1 },
 	{ false,   720, "pc: fix cartoon timing",                      6, gk1CartoonTimingPcSignature2,     gk1CartoonTimingPatch2 },
 	{ false,   720, "mac: fix cartoon timing",                     2, gk1CartoonTimingMacSignature1,    gk1CartoonTimingPatch1 },
@@ -4951,6 +5042,44 @@ static const uint16 gk2FrauMillerLockupPatch[] = {
 	PATCH_END
 };
 
+// In St. Georg Church (room 730), clicking the south exit while Grace is facing
+//  south fades the music before changing rooms, but does not disable input.
+//  If the north exit is clicked during this long delay then both exits run at
+//  the same time and the game is left in a locked up state outside the church.
+//
+// When clicking on a Feature that Grace is not facing, input is disabled and
+//  she turns and walks towards the Feature. Since Grace is already facing the
+//  south exit, she does not move, and input is not disabled. That would be okay
+//  if it weren't for the delay introduced by this room when exiting south.
+//
+// It appears that Sierra attempted to prevent this problem by changing Grace's
+//  internal heading to 170 after initializing her with 180. This does not
+//  change her graphic but it does affect the calculations in Feature:checkAngle
+//  that determine if she moves and disables input. Unfortunately, 170 is not
+//  enough to change the result. Perhaps the checkAngle logic changed later.
+//
+// We fix this by setting Grace's heading to 140 instead of 170. This is enough
+//  to cause Grace to move and disable input when clicking the south exit.
+//  This has the benefit of adding a visual indication that clicking the exit
+//  has an effect, just like other exits, instead of a delay with no movement.
+//
+// Applies to: All versions
+// Responsible method: churchRm:init
+// Fixes bug: #16485
+static const uint16 gk2ChurchLockupSignature[] = {
+	0x39, SIG_SELECTOR8(heading),       // pushi heading
+	SIG_MAGICDWORD,
+	0x78,                               // push1
+	0x38, SIG_UINT16(0x00aa),           // pushi 00aa [ heading: 170 ]
+	SIG_END
+};
+
+static const uint16 gk2ChurchLockupPatch[] = {
+	PATCH_ADDTOOFFSET(+4),
+	PATCH_UINT16(0x008c),               // pushi 008c [ heading: 140 ]
+	PATCH_END
+};
+
 // GK2 1.0 contains a deadend bug in chapter 3. Exhausting Leber's topics before
 //  reading Grace's letter prevents returning to the police station to ask about
 //  the Black Wolf, which is necessary to complete the chapter.
@@ -5186,6 +5315,7 @@ static const SciScriptPatcherEntry gk2Signatures[] = {
 	{  true,    37, "fix sound manager lockup (no line numbers)",          1, gk2SoundManagerLockupSignature2,   gk2SoundManagerLockupPatch2 },
 	{  true,   665, "fix game-over priority",                              1, gk2GameOverPrioritySignature,      gk2GameOverPriorityPatch },
 	{  true,   666, "fix game-over priority",                              1, gk2GameOverPrioritySignature,      gk2GameOverPriorityPatch },
+	{  true,   730, "fix st. georg church lockup",                         1, gk2ChurchLockupSignature,          gk2ChurchLockupPatch },
 	{  true,   800, "fix neuschwanstein hint (1/3)",                       1, gk2NeuschwansteinHintSignature1,   gk2NeuschwansteinHintPatch },
 	{  true,   800, "fix neuschwanstein hint (2/3)",                       1, gk2NeuschwansteinHintSignature2,   gk2NeuschwansteinHintPatch },
 	{  true,   800, "fix neuschwanstein hint (3/3)",                       1, gk2NeuschwansteinHintSignature3,   gk2NeuschwansteinHintPatch },
@@ -10357,6 +10487,26 @@ static const uint16 larry6HiresTramRestartPatch[] = {
 	PATCH_END
 };
 
+// WORKAROUND: Pathfinding algorithm difference
+//
+// After wearing a towel in the locker room, Larry is placed on an obstacle
+//  boundary and can walk out of bounds. We move him one pixel to the right.
+//
+// Applies to: All versions
+// Responsible method: wearTowel:changeState(9)
+// Fixes bug: #13804
+static const uint16 larry6HiresLockerPathfindingSignature[] = {
+	SIG_MAGICDWORD,
+	0x39, 0x53,                         // pushi 53   [ x: 83 ]
+	0x39, 0x6a,                         // pushi 6a   [ y: 106 ]
+	SIG_END
+};
+
+static const uint16 larry6HiresLockerPathfindingPatch[] = {
+	0x39, 0x54,                         // pushi 54   [ x: 84 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	{  true,     0, "disable mac volume restore",                  1, larry6HiresMacVolumeRestoreSignature, larry6HiresMacVolumeRestorePatch },
@@ -10369,6 +10519,7 @@ static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	{  true,   100, "fix plane width",                             1, larry6HiresPlaneWidthSignature,       larry6HiresPlaneWidthPatch },
 	{  true,   270, "fix incorrect setScale call",                 1, larry6HiresSetScaleSignature,         larry6HiresSetScalePatch },
 	{  true,   330, "fix whale oil lamp lockup",                   1, larry6HiresWhaleOilLampSignature,     larry6HiresWhaleOilLampPatch },
+	{  true,   340, "fix locker pathfinding",                      1, larry6HiresLockerPathfindingSignature,larry6HiresLockerPathfindingPatch },
 	{  true,   610, "phone operator crash",                        1, larry6HiresPhoneOperatorSignature,    larry6HiresPhoneOperatorPatch },
 	{  true,   620, "bathroom door sound",                         1, larry6HiresBathroomDoorSoundSignature,larry6HiresBathroomDoorSoundPatch },
 	{  true,   680, "room 680 exits",                              1, larry6HiresRoom680ExitsSignature,     larry6HiresRoom680ExitsPatch },

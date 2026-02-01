@@ -53,9 +53,9 @@ void Section3Room::set_palette_brightness(int start, int finish, int percent) {
 
 	RGB8 *pal = &_G(master_palette)[start];
 	for (int index = start; index < finish; ++index, ++pal) {
-		int r = (double)pal->r * (double)percent / (double)100;
-		int g = (double)pal->g * (double)percent / (double)100;
-		int b = (double)pal->b * (double)percent / (double)100;
+		const int r = (double)pal->r * (double)percent / (double)100;
+		const int g = (double)pal->g * (double)percent / (double)100;
+		const int b = (double)pal->b * (double)percent / (double)100;
 
 		pal->r = CLIP(r, 0, 255);
 		pal->g = CLIP(g, 0, 255);

@@ -71,8 +71,7 @@ void parse_all_flags() {
 
 		if (room) {
 			_G(kernel).teleported_in = true;
-			_G(game).new_room = room;
-			_G(game).new_section = (room / 100);
+			_G(game).setRoom(room);
 		}
 	}
 }

@@ -672,7 +672,7 @@ void Room608::daemon() {
 
 	case 211:
 		sendWSMessage_10000(1, _ol, _old5a, 20, 22, -1, _old5a, 20, 22, 1);
-		digi_play("6084r43", 1, 255, 213);
+		digi_play("608r43", 1, 255, 213);
 		break;
 
 	case 213:

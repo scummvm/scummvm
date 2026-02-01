@@ -70,7 +70,7 @@ const char *Section5::PARSER[] = {
 	nullptr,
 	"500w013",
 	PARSER_ITEM_END,
-	 "ROLLING PIN",
+	"ROLLING PIN",
 	"LOOK AT",
 	"500w014",
 	"TAKE",
@@ -119,7 +119,7 @@ const char *Section5::PARSER[] = {
 	"500w025",
 	"WASHING MACHINE",
 	"500w025",
-	 "LAUNDRY HAMPER",
+	"LAUNDRY HAMPER",
 	"500w023",
 	"WARDROBE",
 	"500w023",
@@ -129,9 +129,9 @@ const char *Section5::PARSER[] = {
 	"500w025",
 	"SINK",
 	"500w025",
-	 "SOAPY WATER",
+	"SOAPY WATER",
 	"500w052",
-	 "SOAPY WATER ",
+	"SOAPY WATER ",
 	"500w052",
 	"HOLE",
 	"500w026",
@@ -240,7 +240,7 @@ const char *Section5::PARSER[] = {
 	"WASHING MACHINE",
 	"500w076",
 	nullptr,
-	"500w078"
+	"500w078",
 	PARSER_ITEM_END,
 	"CHRISTMAS LIGHTS",
 	"LOOK AT",
@@ -312,9 +312,9 @@ const char *Section5::PARSER[] = {
 };
 
 const seriesPlayBreak Section5::PLAY1[] = {
-	{ 0, 25, 0, 1, 0, -1, 2048, 0, 0, 0 },
-	{ 26, 42, "500_030", 1, 255, -1, 0, 0, 0, 0 },
-	{ 43, -1, "500_030", 1, 255, -1, 0, 0, 0, 0 },
+	{ 0, 25, nullptr, 1, 0, -1, 2048, 0, nullptr, 0 },
+	{ 26, 42, "500_030", 1, 255, -1, 0, 0, nullptr, 0 },
+	{ 43, -1, "500_030", 1, 255, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -374,9 +374,9 @@ void Section5::daemon() {
 		}
 
 		if (!digi_play_state(1) && !digi_play_state(2)) {
-			// FIXME: The original does a random of 1 to 9, but the switch has 1 to 13.
-			// Check if extra cases are valid, and if so, re-enable them
-			switch (imath_ranged_rand(1, 9)) {
+			// The original did a random of 1 to 9, but the switch had 1 to 13.
+			// The extra cases are valid with unused sounds, so we re-enabled them
+			switch (imath_ranged_rand(1, 13)) {
 			case 1:
 				_bgDigiName = "500_015";
 				break;
@@ -428,35 +428,35 @@ void Section5::daemon() {
 		break;
 
 	case 5006:
-		_G(game).new_room = 502;
+		_G(game).setRoom(502);
 		break;
 
 	case 5007:
-		_G(game).new_room = 503;
+		_G(game).setRoom(503);
 		break;
 
 	case 5008:
-		_G(game).new_room = 504;
+		_G(game).setRoom(504);
 		break;
 
 	case 5009:
-		_G(game).new_room = 505;
+		_G(game).setRoom(505);
 		break;
 
 	case 5010:
-		_G(game).new_room = 506;
+		_G(game).setRoom(506);
 		break;
 
 	case 5011:
-		_G(game).new_room = 507;
+		_G(game).setRoom(507);
 		break;
 
 	case 5012:
-		_G(game).new_room = 508;
+		_G(game).setRoom(508);
 		break;
 
 	case 5013:
-		_G(game).new_room = 509;
+		_G(game).setRoom(509);
 		break;
 
 	case 5014:
@@ -464,19 +464,19 @@ void Section5::daemon() {
 		_G(flags)[V187] = _G(player_info).x;
 		_G(flags)[V188] = _G(player_info).y;
 		_G(flags)[V189] = _G(player_info).facing;
-		_G(game).new_room = 510;
+		_G(game).setRoom(510);
 		break;
 
 	case 5015:
-		_G(game).new_room = 511;
+		_G(game).setRoom(511);
 		break;
 
 	case 5016:
-		_G(game).new_room = 512;
+		_G(game).setRoom(512);
 		break;
 
 	case 5017:
-		_G(game).new_room = 513;
+		_G(game).setRoom(513);
 		break;
 
 	case 5018:
@@ -509,7 +509,7 @@ void Section5::daemon() {
 			break;
 
 		case 10015:
-			_G(game).new_room = 512;
+			_G(game).setRoom(512);
 			break;
 
 		default:

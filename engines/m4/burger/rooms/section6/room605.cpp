@@ -64,7 +64,7 @@ void Room605::daemon() {
 		break;
 
 	case 6007:
-		_G(game).new_room = 608;
+		_G(game).setRoom(608);
 		break;
 
 	default:

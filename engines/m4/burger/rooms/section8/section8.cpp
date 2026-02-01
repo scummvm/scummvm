@@ -20,7 +20,6 @@
  */
 
 #include "m4/burger/rooms/section8/section8.h"
-#include "m4/burger/vars.h"
 
 namespace M4 {
 namespace Burger {

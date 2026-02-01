@@ -69,6 +69,7 @@ public:
 	bool parseFile(const Common::Path &fname);
 	void parseTextAndTags(const Common::String &text, Common::Array<SubtitlePart> &parts) const;
 	const Common::Array<SubtitlePart> *getSubtitleParts(uint32 timestamp) const;
+	bool isSfx() const;
 
 private:
 	Common::Array<SRTEntry *> _entries;
@@ -91,6 +92,11 @@ public:
 	void setColor(byte r, byte g, byte b);
 	void setPadding(uint16 horizontal, uint16 vertical);
 	bool drawSubtitle(uint32 timestamp, bool force = false, bool showSFX = false) const;
+	bool isSfx() const {
+		if (!_srtParser)
+			return false;
+		return _srtParser->isSfx();
+	}
 	bool isLoaded() const { return _loaded || _subtitleDev; }
 	virtual void clearSubtitle() const;
 

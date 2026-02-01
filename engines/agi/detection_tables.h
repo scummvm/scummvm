@@ -768,6 +768,10 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Space Quest 1 (PC 5.25"/3.5") 2.2 [AGI 2.917]; French Translation
 	GAME_LVFPN("sq1", "2.2 1987-05-07 5.25\"/3.5\"", "words.tok.extended", "3f1730f3c9d4622a986f735af0f8734a", 12665, Common::FR_FRA, 0x2917, 0, GID_SQ1, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
 
+	// Space Quest 1 (Hebrew) 2.2
+	// Based on English version from GOG - Patch Version 1
+	GAME_LPS("sq1", "", "dcae53e681922497e2dd88624aae44bb", 372, Common::HE_ISR, 0x2917, GID_SQ1, Common::kPlatformDOS),
+
 	// Space Quest 1 (CoCo3 360k) [AGI 2.072]
 	// Unofficial port by Guillaume Major
 	GAME_PS("sq1", "", "5d67630aba008ec5f7f9a6d0a00582f4", 372, 0x2440, GID_SQ1, Common::kPlatformCoCo3),

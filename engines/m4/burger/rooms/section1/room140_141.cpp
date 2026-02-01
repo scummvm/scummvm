@@ -116,8 +116,8 @@ static const seriesStreamBreak SERIES1[] = {
 };
 
 static const seriesStreamBreak SERIES2[] = {
-	{ 5, "141_007", 1, 255, -1, 0, 0, 0 },
-	{ 9, 0, 2, 255, 3, 0, 0, 0 },
+	{ 5, "141_007", 1, 255, -1, 0, nullptr, 0 },
+	{ 9, nullptr, 2, 255, 3, 0, nullptr, 0 },
 	STREAM_BREAK_END
 };
 
@@ -663,7 +663,14 @@ void Room140_141::daemon() {
 				digi_unload("141_002");
 				digi_unload("141_003");
 				break;
+
+			default:
+				break;
 			}
+			break;
+			
+		default:
+			break;
 		}
 		break;
 
@@ -673,14 +680,14 @@ void Room140_141::daemon() {
 			switch (_wilburShould) {
 			case 50:
 				_wilburShould = 51;
-				_flag2 = 1;
+				_flag2 = true;
 				digi_preload_stream_breaks(&SERIES4[0]);
 				series_stream_with_breaks(&SERIES4[0], _G(flags)[V000] == 1002 ? "141wi01" : "140wi01",
 					6, 0xf00, kCHANGE_WILBUR_ANIMATION);
 				break;
 
 			case 51:
-				_flag2 = 0;
+				_flag2 = false;
 				_series2 = series_play(_G(flags)[V000] == 1002 ? "141wave" : "140wave",
 					0xf00, 0, -1, 10, -1, 100, 0, 0, 0, 3);
 				_wilburShould = 52;
@@ -709,7 +716,7 @@ void Room140_141::daemon() {
 
 			case 55:
 				terminateMachineAndNull(_series2);
-				_flag2 = 1;
+				_flag2 = true;
 
 				series_stream_with_breaks(SERIES3, _G(flags)[V000] == 1002 ? "141wi03" : "140wi03",
 					10, 0xf00, 18);
@@ -717,7 +724,7 @@ void Room140_141::daemon() {
 
 			case 56:
 				terminateMachineAndNull(_series2);
-				_flag2 = 1;
+				_flag2 = true;
 
 				series_stream_with_breaks(SERIES3, _G(flags)[V000] == 1002 ? "141wi03" : "140wi03",
 					6, 0xf00, 18);
@@ -843,7 +850,7 @@ void Room140_141::daemon() {
 		break;
 
 	case kWILBUR_SPEECH_STARTED:
-		_G(kernel).continue_handling_trigger = 1;
+		_G(kernel).continue_handling_trigger = true;
 		_wilburShould = 53;
 		break;
 
@@ -854,7 +861,7 @@ void Room140_141::daemon() {
 }
 
 void Room140_141::parser() {
-	bool lookFlag = player_said("look") || player_said("look at");
+	const bool lookFlag = player_said("look") || player_said("look at");
 
 	if (player_said("conv20")) {
 		conv20();
@@ -910,9 +917,9 @@ done:
 
 void Room140_141::conv20() {
 	_G(kernel).trigger_mode = KT_PARSE;
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	if (_G(kernel).trigger == 21) {
 		if (who <= 0) {

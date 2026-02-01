@@ -158,10 +158,8 @@ public:
 	bool _richSavedGames;
 	char *_savedGameExt;
 
-#ifdef ENABLE_WME3D
 	int32 _editorResolutionWidth;
 	int32 _editorResolutionHeight;
-#endif
 
 	char *_loadImageName;
 	char *_saveImageName;

@@ -134,7 +134,7 @@ void Room711::parser() {
 
 		case 2:
 			player_set_commands_allowed(true);
-			_G(game).new_room = _G(flags)[V286] ? 706 : 710;
+			_G(game).setRoom(_G(flags)[V286] ? 706 : 710);
 
 			break;
 

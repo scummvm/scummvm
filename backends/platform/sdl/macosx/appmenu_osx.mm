@@ -58,8 +58,8 @@ enum {
 #endif
 #endif
 
-// Apple added setAppleMenu in 10.5 and removed it in 10.6.
-// But as the method still exists we declare it ourselves here.
+// Apple removed setAppleMenu from the header files in 10.4,
+// but as the method still exists we declare it ourselves here.
 // Yes, this works :)
 @interface NSApplication(MissingFunction)
 - (void)setAppleMenu:(NSMenu *)menu;
@@ -201,10 +201,15 @@ static void openFromBundle(NSString *file, NSString *subdir = nil) {
 }
 
 - (void)openUserManual {
+	NSString *bundlePath = [[NSBundle mainBundle] resourcePath];
+
 	// If present locally in the bundle, open that file.
-	if ([[NSFileManager defaultManager] respondsToSelector:@selector(contentsOfDirectoryAtPath:error:)]) {
-		NSString *bundlePath = [[NSBundle mainBundle] resourcePath];
-		NSArray *dirContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:bundlePath error:nil];
+#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
+	NSArray *dirContents = [[NSFileManager defaultManager] directoryContentsAtPath:bundlePath];
+#else
+	NSArray *dirContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:bundlePath error:nil];
+#endif
+	if (dirContents != nil) {
 		NSEnumerator *dirEnum = [dirContents objectEnumerator];
 		NSString *file;
 
@@ -307,9 +312,11 @@ void replaceApplicationMenuItems() {
 		addMenuItem(_("Minimize"), nil, @selector(performMiniaturize:), @"m", windowMenu);
 	}
 
-	// Note: this part is expected not to work at run-time on 10.5 and earlier,
-	// because setHelpMenu is only available on 10.6+ (see Bug#11260).
-	NSMenu *helpMenu = addMenu(_("Help"), @"", @selector(setHelpMenu:));
+	// Note: special care must be taken for the Help menu before 10.6,
+	// as setHelpMenu didn't exist yet: give an explicit nil for it in
+	// addMenu(), and also make sure it's created last.
+	SEL helpMenuSelector = [NSApp respondsToSelector:@selector(setHelpMenu:)] ? @selector(setHelpMenu:) : nil;
+	NSMenu *helpMenu = addMenu(_("Help"), @"", helpMenuSelector);
 	if (helpMenu) {
 		if (!delegate) {
 			delegate = [[ScummVMMenuHandler alloc] init];

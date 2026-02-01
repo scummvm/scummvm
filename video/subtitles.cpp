@@ -276,6 +276,13 @@ const Common::Array<SubtitlePart> *SRTParser::getSubtitleParts(uint32 timestamp)
 	return &(*entry)->parts;
 }
 
+bool SRTParser::isSfx() const {
+	if (_entries.empty() || _entries[0]->parts.empty())
+		return false;
+
+	return _entries[0]->parts[0].tag == "sfx";
+}
+
 #define SHADOW 1
 
 Subtitles::Subtitles() : _loaded(false), _hPad(0), _vPad(0), _overlayHasAlpha(true),

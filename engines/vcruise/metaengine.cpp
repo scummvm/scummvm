@@ -198,12 +198,12 @@ Common::Array<Common::Keymap *> VCruiseMetaEngine::initKeymaps(const char *targe
 	keymap->addAction(act);
 
 
-	act = new Common::Action("VCRUISE_MUSIC_TOGGLE", _("Toggle music on / off"));
+	act = new Common::Action("VCRUISE_MUSIC_TOGGLE", _("Toggle music"));
 	act->setCustomEngineActionEvent(VCruise::kKeymappedEventMusicToggle);
 	act->addDefaultInputMapping("F5");
 	keymap->addAction(act);
 
-	act = new Common::Action("VCRUISE_SOUND_TOGGLE", _("Toggle sound effects on / off"));
+	act = new Common::Action("VCRUISE_SOUND_TOGGLE", _("Toggle sound effects"));
 	act->setCustomEngineActionEvent(VCruise::kKeymappedEventSoundToggle);
 	act->addDefaultInputMapping("F6");
 	keymap->addAction(act);

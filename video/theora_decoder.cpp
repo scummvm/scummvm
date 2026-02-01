@@ -303,13 +303,21 @@ TheoraDecoder::TheoraVideoTrack::~TheoraVideoTrack() {
 }
 
 bool TheoraDecoder::TheoraVideoTrack::decodePacket(ogg_packet &oggPacket) {
-	if (th_decode_packetin(_theoraDecode, &oggPacket, 0) == 0) {
-		_curFrame++;
+	int decodeRes = th_decode_packetin(_theoraDecode, &oggPacket, 0);
 
-		// Convert YUV data to RGB data
-		th_ycbcr_buffer yuv;
-		th_decode_ycbcr_out(_theoraDecode, yuv);
-		translateYUVtoRGBA(yuv);
+	bool gotNewFrame = decodeRes == 0;           // new frame, decoding needed
+	bool gotDupFrame = decodeRes == TH_DUPFRAME; // no decoding needed, just update timing
+	
+	if (gotNewFrame || gotDupFrame) {
+		if (gotNewFrame) {
+			// Convert YUV data to RGB data
+			th_ycbcr_buffer yuv;
+			th_decode_ycbcr_out(_theoraDecode, yuv);
+			translateYUVtoRGBA(yuv);
+		}
+
+		// We set the current frame counter, delegating the calculation to libtheora 
+		_curFrame = (int) th_granule_frame(_theoraDecode, oggPacket.granulepos);
 
 		double time = th_granule_time(_theoraDecode, oggPacket.granulepos);
 

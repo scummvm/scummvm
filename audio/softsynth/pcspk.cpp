@@ -43,7 +43,7 @@ PCSpeakerStream::PCSpeakerStream(int rate) {
 	_oscSamples = 0;
 	_remainingSamples = 0;
 	_mixedSamples = 0;
-	_volume = 255;
+	_volume = 20; // The maximum volume is 255
 	_commandQueue = new Common::Queue<Command>();
 	_commandActive = false;
 }
@@ -94,10 +94,6 @@ void PCSpeakerStream::stop(int32 delay) {
 		_remainingSamples = delaySamples;
 	}
 	_playForever = false;
-}
-
-void PCSpeakerStream::setVolume(byte volume) {
-	_volume = volume;
 }
 
 bool PCSpeakerStream::isPlaying() const {

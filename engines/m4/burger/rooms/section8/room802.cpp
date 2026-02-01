@@ -110,9 +110,9 @@ static const seriesPlayBreak PLAY4[] = {
 };
 
 static const seriesPlayBreak PLAY5[] = {
-	{  0, 7, 0, 0, 0, -1, 0, 0, 0, 0 },
-	{  7, 7, 0, 0, 0, -1, 0, 0, 0, 0 },
-	{  7, 0, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{  0, 7, 0, 0, 0, -1, 0, 0, nullptr, 0 },
+	{  7, 7, 0, 0, 0, -1, 0, 0, nullptr, 0 },
+	{  7, 0, 0, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -396,7 +396,7 @@ void Room802::daemon() {
 
 	case 19:
 		if (conv_sound_to_play()) {
-			int who = conv_whos_talking();
+			const int who = conv_whos_talking();
 			if (who <= 0)
 				_G(flumix_should) = 5;
 			else if (who == 1)
@@ -534,7 +534,9 @@ void Room802::daemon() {
 				break;
 			}
 			break;
-
+			
+		default:
+			break;
 		}
 		break;
 

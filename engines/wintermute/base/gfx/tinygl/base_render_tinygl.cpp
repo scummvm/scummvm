@@ -188,7 +188,7 @@ bool BaseRenderTinyGL::setup2D(bool force) {
 		tglEnable(TGL_ALPHA_TEST);
 		tglAlphaFunc(TGL_GEQUAL, 0.0f);
 
-		tglFrontFace(TGL_CCW);  // WME DX have CW
+		tglFrontFace(TGL_CW);  // WME DX have CCW
 		tglEnable(TGL_CULL_FACE);
 		tglDisable(TGL_STENCIL_TEST);
 

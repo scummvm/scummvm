@@ -14,7 +14,7 @@ ScummVM provides a way to play many classic graphical point-and-click adventure 
 
 You can find more information, demos, and some free-to-download adventure games on our website. See also an up-to-date list here: https://wiki.scummvm.org/index.php/Where_to_get_the_games
 
-A quick-start guide is available on our website at https://docs.scummvm.org/en/v2.9.1/other_platforms/android.html which provides some more information, explaining how to configure Android-specific options and where you can find further help.
+A quick-start guide is available on our website at https://docs.scummvm.org/en/latest/other_platforms/android.html which provides some more information, explaining how to configure Android-specific options and where you can find further help.
 
 https://forums.scummvm.org/viewforum.php?f=17 is our web forum where you can discuss the Android version.
 
@@ -22,11 +22,12 @@ ScummVM is open source software available under the term of the GPL v3.0 license
 The source code is available from https://github.com/scummvm/scummvm.
 
 *** Current release:
-2.9.1.1
+2026.1.0
 
 *** Release notes (limit is 500 characters):
-- Fixed importing a ScummVM (configuration and saves) backup file
-- Fixed localized GUI texts
-- Fixed a crash for the "The Prince and the Coward" game
+- Support for Android 16
+- Support for scaling shaders and antialiasing in 3D engine
+- Fixed long-press on back button with recent Android versions
+- Controller Start button is now mapped to ScummVM Menu (in-game) by default
 
-Full release notes: https://scummvm.org/frs/scummvm/2.9.1/ReleaseNotes.html
+Full release notes: https://scummvm.org/frs/scummvm/2026.1.0/ReleaseNotes.html

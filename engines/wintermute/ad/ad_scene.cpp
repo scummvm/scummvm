@@ -141,10 +141,8 @@ void AdScene::setDefaults() {
 	_editorShowEntities = true;
 	_editorShowScale    = true;
 
-#ifdef ENABLE_WME3D
 	_editorResolutionWidth = 0;
 	_editorResolutionHeight = 0;
-#endif
 
 	_shieldWindow = nullptr;
 
@@ -967,7 +965,6 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			parseEditorProperty(params, false);
 			break;
 
-#ifdef ENABLE_WME3D
 		case TOKEN_EDITOR_RESOLUTION_WIDTH:
 			parser.scanStr(params, "%d", &_editorResolutionWidth);
 			break;
@@ -976,6 +973,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			parser.scanStr(params, "%d", &_editorResolutionHeight);
 			break;
 
+#ifdef ENABLE_WME3D
 		case TOKEN_FOV_OVERRIDE:
 			parser.scanStr(params, "%f", &_fov);
 			break;
@@ -1050,6 +1048,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			_geom->render(false);
 		}
 	}
+#endif
 
 	if (_mainLayer) {
 		if (_editorResolutionWidth <= 0)
@@ -1057,7 +1056,6 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 		if (_editorResolutionHeight <= 0)
 			_editorResolutionHeight = _mainLayer->_height;
 	}
-#endif
 
 	return STATUS_OK;
 }
@@ -3106,6 +3104,8 @@ bool AdScene::persist(BasePersistenceManager *persistMgr) {
 		_fogStart = 0.0f;
 		_fogEnd = 0.0f;
 	}
+#else
+	_editorResolutionWidth = _editorResolutionHeight = 0;
 #endif
 
 	return STATUS_OK;

@@ -575,12 +575,12 @@ Common::KeymapArray MohawkEngine_Myst::initKeymaps(const char *target) {
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionLoad, _("Load game state"));
+	act = new Action(kStandardActionLoad, _("Load save"));
 	act->setCustomEngineActionEvent(kMystActionLoadGameState);
 	act->addDefaultInputMapping("C+o");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionSave, _("Save game state"));
+	act = new Action(kStandardActionSave, _("Save game"));
 	act->setCustomEngineActionEvent(kMystActionSaveGameState);
 	act->addDefaultInputMapping("C+s");
 	engineKeyMap->addAction(act);

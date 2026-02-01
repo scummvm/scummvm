@@ -263,10 +263,10 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 #ifdef ENABLE_WME3D
 	_maxShadowType = SHADOW_STENCIL;
 	_supportsRealTimeShadows = false;
+#endif
 
 	_editorResolutionWidth = 0;
 	_editorResolutionHeight = 0;
-#endif
 
 	_localSaveDir = nullptr;
 	BaseUtils::setString(&_localSaveDir, "saves");
@@ -2812,6 +2812,22 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->pushInt(ret);
 
 		return STATUS_OK;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	// SetWindowedMode
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "SetWindowedMode") == 0) {
+		stack->correctParams(1);
+
+		/*bool mode = */stack->pop()->getBool(false);
+
+		// Disable controlling fullscreen mode from scripts.
+		// Better handing by backend.
+		//_renderer->setWindowed(mode);
+
+		stack->pushNULL();
+
+		return STATUS_OK;
 	} else {
 		return BaseObject::scCallMethod(script, stack, thisStack, name);
 	}
@@ -3391,7 +3407,8 @@ ScValue *BaseGame::scGetProperty(const char *name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Platform (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Platform") == 0) {
+	else if (strcmp(name, "Platform") == 0 &&
+			 BaseEngine::instance().getGameId() != "royalmahjong") { // avoid clashing
 		_scValue->setString(BasePlatform::getPlatformName().c_str());
 		return _scValue;
 	}
@@ -4720,6 +4737,8 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	} else {
 		_editorResolutionWidth = _editorResolutionHeight = 0;
 	}
+#else
+	_editorResolutionWidth = _editorResolutionHeight = 0;
 #endif
 
 	persistMgr->transferSint32(TMEMBER_INT(_textEncoding));

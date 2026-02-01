@@ -1303,7 +1303,7 @@ void CastleEngine::checkSensors() {
 
 	/*if (!_mixer->isSoundHandleActive(_soundFxGhostHandle)) {
 		_speaker->play(Audio::PCSpeaker::kWaveFormSquare, 25.0f, -1);
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxGhostHandle, _speaker, -1, kFreescapeDefaultVolume / 2, 0, DisposeAfterUse::NO);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxGhostHandle, _speaker, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 	}*/
 
 	// This is the frequency to shake the screen

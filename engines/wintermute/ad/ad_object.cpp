@@ -878,7 +878,7 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 		return;
 	}
 
-	if (_forcedTalkAnimName && _forcedTalkAnimName[0] && _forcedTalkAnimUsed) {
+	if (_forcedTalkAnimName && _forcedTalkAnimUsed) {
 		SAFE_DELETE_ARRAY(_forcedTalkAnimName);
 		_forcedTalkAnimUsed = false;
 	}

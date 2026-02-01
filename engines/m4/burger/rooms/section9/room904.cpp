@@ -443,7 +443,189 @@ static const char *const CREDITS_DEU[] = {
 	nullptr
 };
 
-#define CREDITS (g_engine->getLanguage() == Common::DE_DEU ? CREDITS_DEU : CREDITS_ENG)
+static const char *const CREDITS_FRA[] = {
+	"Design",
+	"Concepteur:  Robert Aitken",
+	" ",
+	"Auteur:  Robert Aitken",
+	" ",
+	"Dialogues additionnels:  Mark Solomon",
+	" ",
+	"Concepteur original:",
+	"                   Robert Aitken",
+	"                   Matthew Powell",
+	nullptr,
+	"Art",
+	"Direction artistique:  Andrew Pratt",
+	" ",
+	"Character Design :",
+	"                   Glen Lovett",
+	"                   Sean Newton",
+	" ",
+	"Graphisme  d\xE9""cors:  Glen Lovett",
+	" ",
+	"Graphisme arri\xE8""re-plan:",
+	"                 Bob Parr",
+	"                 Andrew Pratt",
+	" ",
+	"Techniciens artistique:  Garth Buzzard",
+	" ",
+	"Graphismes additionnels:",
+	"                 Darren Brereton",
+	"                 Shelley Burke",
+	"                 Garth Buzzard",
+	"                 Karl Johanson",
+	"                 Calvin Jones",
+	"                 Dwight Lockhart",
+	"                 Bob Parr",
+	"                 Andrew Pratt",
+	" ",
+	"Interface et d\xE9""tails graphiques:  Andrew Pratt",
+	nullptr,
+	"Animation",
+	"Producteur animation:  Sean Newton",
+	" ",
+	"Animateurs:",
+	"            Jim Bridle",
+	"            Hilary Denny",
+	"            Nelson Dewey",
+	"            Richelle Grist",
+	"            Glen Lovett",
+	"            Kay Lovett",
+	"            Tim Maltby",
+	"            Stephen McCallum",
+	"            Shelley McIntosh",
+	"            Jean Paynter",
+	"            Gary Scott",
+	"            Nigel Tully",
+	"            Adrie Van Viersen",
+	" ",
+	"Concepteurs animation:  Robert Aitken",
+	" ",
+	"3D Maquette/Animation:",
+	"            Nelson Dewey",
+	"            David Henry",
+	" ",
+	"Techniciens animation:  Robert McMurtry",
+	nullptr,
+	"Coloring",
+	"Coloristes:",
+	"            Allan Cameron",
+	"            Scott Douglas",
+	"            Cindy Johnson",
+	" ",
+	"Coloristes additionnels:",
+	"            Brent Arnst",
+	"            Rob Barrett",
+	"            Garth Buzzard",
+	"            Chris Capell",
+	"            Jacob Dewey",
+	"            Bruce Elder",
+	"            Andrew James",
+	"            Darren Keetley",
+	"            Cal Jones",
+	"            Jeff Kuipers",
+	"            Dwight Lockhart",
+	"            Kimberlie Manuel",
+	"            Connie McCann",
+	"            Stephen Rowe",
+	"            Peter Taylor",
+	nullptr,
+	"Audio",
+	"Bande son originale:  Darren McGrath",
+	" ",
+	"Ing\xE9""nieur du son:  Darren McGrath",
+	" ",
+	"Producteur son:  Darren McGrath",
+	" ",
+	"Casting:",
+	"          Robert Aitken",
+	"          Darren McGrath",
+	"          Kris Zimmerman",
+	" ",
+	"Monteur dialogues:",
+	"          Darren McGrath",
+	"          Allan Cameron",
+	nullptr,
+	"Programming",
+	"Programmeur jeu:  Matthew Powell",
+	" ",
+	"Programmeurs:",
+	"       Robert McMurtry",
+	"       Paul Lahaise",
+	"       Chris Petkau",
+	"       Jason Bevins",
+	"       David Thomas",
+	" ",
+	"Producteur syst\xEA""me:  Nick Porcino",
+	" ",
+	"Programmeur syst\xEA""me:",
+	"       Andras Kovacs",
+	"       Michael Ellis",
+	"       Xi Huang",
+	"       Tinman",
+	"       Paul Lahaise",
+	"       Matthew Powell",
+	"       Cody Jones",
+	" ",
+	"Conversations:  Robert Aitken",
+	nullptr,
+	"Production",
+	"Producteur:  Fran\xE7""ois Robillard",
+	" ",
+	"Producteur d\xE9""l\xE9""gu\xE9"":  Danielle Cooper",
+	" ",
+	"Localisation - version fran\xE7""aise:",
+	"       Groupe SRC",
+	nullptr,
+	"Assurance qualit\xE9",
+	"Michael Beninger",
+	"Kimberlie Manuel",
+	"Chris Capell",
+	"Bruce Elder",
+	"Darren Keetley",
+	nullptr,
+	"Documentation",
+	"Auteur mode d'emploi: Hope Hickli",
+	" ",
+	"Graphisme mode d'emploi:",
+	"                 Calvin Jones",
+	"                 Bob Parr",
+	nullptr,
+	"Casting audio",
+	"Wilbur  -  J\xE9""rome Berthoud",
+	"Zlarg  -  Fernand Centanni",
+	"Flumix  -  Joanna Michel",
+	"Astral  -  Sheila O'Connor",
+	"Harry  -  Patrick Martinez",
+	"Tante Polly  -  Sheila O'Connor",
+	"Burl  -  Patrick Martinez",
+	"Elmo Perkins  -  Salvatore Ingoglia",
+	"Sheriff  -  Gilles Blumenfeld",
+	"Gus/Angus/Elgus  -  Patrick Martinez",
+	"Odie  -  Marion Lasserre",
+	"Vipe  -  Salvatore Ingoglia",
+	"Roxy  -  Marion Lasserre",
+	"Vera  -  Estelle Burgel",
+	"Eug\xE8""ne  -  Patrick Massiah",
+	"Stolie  -  Philippe Barrier",
+	"Borks  -  Dee Bradley Baker",
+	"Chef de l'approvisionnement  -  Fernand Centanni",
+	"Truffles  -  Bradley Baker",
+	"Junkyard Dog  -  Sheila O'Connor",
+	"Ordinateur de bord  -  Rob Paulsen",
+	"Mutant Gerbils  -  Dee Bradley Baker",
+	nullptr,
+	" ",
+	" ",
+	nullptr,
+	"Menu Principal",
+	" ",
+	nullptr,
+	nullptr
+};
+
+#define CREDITS (g_engine->getLanguage() == Common::DE_DEU ? CREDITS_DEU : (g_engine->getLanguage() == Common::FR_FRA ? CREDITS_FRA : CREDITS_ENG))
 
 void Room904::preload() {
 	_G(player).walker_in_this_scene = false;
@@ -570,7 +752,7 @@ const char *Room904::getCreditsSectionString(int sectionNum) const {
 }
 
 int Room904::getCreditsSectionLines(int sectionNum) const {
-	int sectionStart = getCreditsSectionLine(sectionNum);
+	const int sectionStart = getCreditsSectionLine(sectionNum);
 	int lineNum = sectionStart;
 
 	while (CREDITS[lineNum])
@@ -614,24 +796,24 @@ void Room904::creditsCallback(TextItem *textItem, TextScrn *textScrn) {
 
 void Room904::updateCredits(TextItem *textItem, TextScrn *textScrn) {
 	const char *credit = textItem->prompt;
-	int sectionNum = textItem->tag;
-	int linesCount = getCreditsSectionLines(sectionNum);
+	const int sectionNum = textItem->tag;
+	const int linesCount = getCreditsSectionLines(sectionNum);
 	term_message("credit: %s index: %d names: %d", credit, sectionNum, linesCount);
 
 	playRandomSound(-1, 2);
 
-	if (strncmp(credit, "Haupt", 5) && strncmp(credit, "Back ", 5)) {
+	if (strncmp(credit, "Haupt", 5) && strncmp(credit, "Back ", 5) && strncmp(credit, "Menu ", 5)) {
 		mouse_set_sprite(kArrowCursor);
 		gr_font_set(_G(font_conv));
 		_fontHeight = gr_font_get_height();
 
-		int sectionWidth = getCreditsSectionWidth(sectionNum) + 20;
-		int sectionHeight = linesCount * _fontHeight + 20;
+		const int sectionWidth = getCreditsSectionWidth(sectionNum) + 20;
+		const int sectionHeight = linesCount * _fontHeight + 20;
 
-		int x1 = (640 - _x2 - sectionWidth) / 2 + _x2;
-		int y1 = (480 - sectionHeight) / 2;
-		int x2 = x1 + sectionWidth;
-		int y2 = y1 + sectionHeight;
+		const int x1 = (640 - _x2 - sectionWidth) / 2 + _x2;
+		const int y1 = (480 - sectionHeight) / 2;
+		const int x2 = x1 + sectionWidth;
+		const int y2 = y1 + sectionHeight;
 
 		if (_screen2)
 			TextScrn_Destroy(_screen2);
@@ -652,8 +834,7 @@ void Room904::updateCredits(TextItem *textItem, TextScrn *textScrn) {
 }
 
 void Room904::playRandomSound(int trigger, int channel) {
-	Common::String name = Common::String::format("904pop%d",
-		g_engine->getRandomNumber(4) + 1);
+	const Common::String name = Common::String::format("904pop%d", g_engine->getRandomNumber(4) + 1);
 	digi_play(name.c_str(), channel, 255, trigger);
 }
 

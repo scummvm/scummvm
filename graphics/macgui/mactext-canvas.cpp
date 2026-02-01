@@ -152,6 +152,7 @@ void MacTextCanvas::splitString(const Common::U32String &str, int curLine, MacFo
 Common::String preprocessImageExt(const char *ptr) {
 	// w[idth]=WWWw  -- width in units 'w'
 	// h[eight]=HHHh -- height in units 'h'
+	// maxw[idth]=MMMm -- max-width in units 'maxw'
 	//
 	// units:
 	//   % for percents of the text width  -> %
@@ -159,27 +160,45 @@ Common::String preprocessImageExt(const char *ptr) {
 	//   px for actual pixels              -> p
 	//
 	// Translated into fixed format:
-	// WWWWwHHHHh -- 4 fixed hex numbers followed by units
+	// WWWWwHHHHhMMMMm -- 4 fixed hex numbers followed by units
 
-	int w = 0, h = 0;
-	char wu = ' ', hu = ' ';
+	int w = 0, h = 0, maxw = 0;
+	char wu = ' ', hu = ' ', maxwu = ' ';
 
 	enum {
 		kStateNone,
 		kStateW,
 		kStateH,
+		kStateMaxW,
 	};
 
 	int state = kStateNone;
 
 	while (*ptr) {
-		if (*ptr == ' ' || *ptr == '\t') {
+		if (*ptr == ' ' || *ptr == '\t' || *ptr == ',') {
 			ptr++;
 			continue;
 		}
 
-		if (*ptr == 'w' || *ptr == 'h') {
-			state = *ptr == 'w' ? kStateW : kStateH;
+		if (*ptr == '=') {
+			ptr++;
+			continue;
+		}
+
+		if (Common::isAlpha(*ptr)) {
+			if (*ptr == 'w') {
+				state = kStateW;
+			} else if (*ptr == 'h') {
+				state = kStateH;
+			} else if (scumm_strnicmp(ptr, "maxw", 4) == 0) {
+				state = kStateMaxW;
+			} else if (*ptr == '=') {
+				ptr++;
+				continue;
+			} else {
+				warning("MacTextCanvas: Malformatted image extension: unknown key at '%s'", ptr);
+				return "";
+			}
 
 			while (*ptr && *ptr != '=')
 				ptr++;
@@ -208,26 +227,29 @@ Common::String preprocessImageExt(const char *ptr) {
 				if (state == kStateW) {
 					w = num;
 					wu = unit;
-				} else {
+				} else if (state == kStateH) {
 					h = num;
 					hu = unit;
+				} else {
+					maxw = num;
+					maxwu = unit;
 				}
 
-				while (*ptr && *ptr != ' ' && *ptr != '\t')
+				state = kStateNone;
+
+				while (*ptr && *ptr != ' ' && *ptr != '\t' && *ptr != ',')
 					ptr++;
 			} else {
 				warning("MacTextCanvas: Malformatted image extension: %% or e[m] or p[x] expected at '%s'", ptr);
 				return "";
 			}
 		} else {
-			warning("MacTextCanvas: Malformatted image extension: w[idth] or h[eight] expected at '%s'", ptr);
+			warning("MacTextCanvas: Malformatted image extension: w[idth], h[eight] or maxw[idth] expected at '%s'", ptr);
 			return "";
 		}
-
-		ptr++;
 	}
 
-	return Common::String::format("%04x%c%04x%c", w, wu, h, hu);
+	return Common::String::format("%04x%c%04x%c%04x%c", w, wu, h, hu, maxw, maxwu);
 }
 
 const Common::U32String::value_type *MacTextCanvas::splitString(const Common::U32String::value_type *s, int curLine, MacFontRun &defaultFormatting) {
@@ -784,19 +806,19 @@ void MacTextCanvas::parsePicExt(const Common::U32String &ext, uint16 &wOut, uint
 
 	D(9, "P: %s", ext.encode().c_str());
 
-	// wwwwWhhhhH
+	// wwwwWhhhhHmmmmM
 	// 0123456789
 
 	bool useDefault = false;
 
-	if (ext.size() == 10 && s[4] != ' ' && s[9] != ' ' && s[4] != s[9])  {
+	if (ext.size() == 15 && s[4] != ' ' && s[9] != ' ' && s[4] != s[9])  {
 		warning("MacTextCanvas: Non-matching dimension unitss in image extension: '%s'", ext.encode().c_str());
 
 		useDefault = true;
 	}
 
 	// if it is empty or without dimensions, use default width percrent
-	if (useDefault || ext.size() < 10 || (s[4] == ' ' && s[9] == ' ')) {
+	if (useDefault || ext.size() < 15 || (s[4] == ' ' && s[9] == ' ' && s[14] == ' ')) {
 		float ratio = _maxWidth * defpercent / 100.0 / (float)wOut;
 
 		wOut = wOut * ratio;
@@ -805,23 +827,30 @@ void MacTextCanvas::parsePicExt(const Common::U32String &ext, uint16 &wOut, uint
 		return;
 	}
 
-	uint16 w, h;
+	uint16 w;
+	uint16 h;
+	uint16 maxw;
+	char maxwu;
 
 	(void)readHex(&w, s, 4);
 	(void)readHex(&h, &s[5], 4);
+	(void)readHex(&maxw, &s[10], 4);
+	maxwu = s[14];
 
-	D(9, "w: %d%c h: %d%c", w, s[4], h, s[9]);
+	D(9, "w: %d%c h: %d%c maxw: %d%c", w, s[4], h, s[9], maxw, s[14]);
 
 	if (s[9] == '%') {
 		warning("MacTextCanvas: image height in %% is not supported");
 		h = 0;
 	}
 
-	float ratio;
+	float ratio = 1.0;
 
 	// Percent of the total width
-	if (s[4] == '%') {
+	if (s[4] == '%' || s[5] == '%') {
 		ratio = _maxWidth * w / 100.0 / (float)wOut;
+		wOut = wOut * ratio;
+    	hOut = hOut * ratio;
 
 	// Size in em (font height) units
 	} else if (s[4] == 'm' || s[5] == 'm') {
@@ -831,14 +860,16 @@ void MacTextCanvas::parsePicExt(const Common::U32String &ext, uint16 &wOut, uint
 			wOut = em * w;
 			hOut = em * h;
 
-			return;
-		}
-
-		// now we need to compute ratio
-		if (w != 0)
+		} else if (w != 0) {
 			ratio = em * w / (float)wOut;
-		else
+			wOut = wOut * ratio;
+			hOut = hOut * ratio;
+
+		} else {
 			ratio = em * h / (float)hOut;
+			wOut = wOut * ratio;
+			hOut = hOut * ratio;
+		}
 
 	// Size in pixels
 	} else if (s[4] == 'p' || s[5] == 'p') {
@@ -846,22 +877,51 @@ void MacTextCanvas::parsePicExt(const Common::U32String &ext, uint16 &wOut, uint
 			wOut = w;
 			hOut = h;
 
-			return;
+		} else if (w != 0) {
+			ratio = w / (float)wOut;
+			wOut = wOut * ratio;
+			hOut = hOut * ratio;
+
+		} else {
+			ratio = h / (float)hOut;
+			wOut = wOut * ratio;
+			hOut = hOut * ratio;
 		}
 
-		// now we need to compute ratio
-		if (w != 0)
-			ratio = w / (float)wOut;
-		else
-			ratio = h / (float)hOut;
 	} else {
 		error("MacTextCanvas: malformed image extension '%s", ext.encode().c_str());
 	}
 
 	D(9, "ratio is %f", ratio);
 
-	wOut = wOut * ratio;
-	hOut = hOut * ratio;
+	if (maxw > 0 && maxwu != ' ') {
+		int maxWidthPixels = 0;
+
+		if (maxwu == '%') {
+			maxWidthPixels = _maxWidth * maxw / 100;
+
+		} else if (maxwu == 'm') {
+			int em = _defaultFormatting.fontSize;
+			maxWidthPixels = em * maxw;
+
+		} else if (maxwu == 'p') {
+			maxWidthPixels = maxw;
+
+		} else {
+			warning("MacTextCanvas: unknown max width unit '%c' in image extension '%s'", maxwu, ext.encode().c_str());
+		}
+
+		if (maxWidthPixels > 0 && wOut > maxWidthPixels) {
+			float clampRatio = maxWidthPixels / (float)wOut;
+
+			D(9, "Clamping image width from %d to %d (ratio %f)", wOut, maxWidthPixels, clampRatio);
+
+			wOut = maxWidthPixels;
+			hOut = hOut * clampRatio;
+		}
+	}
+
+	D(9, "Final dimensions: %d x %d", wOut, hOut);
 }
 
 int MacTextCanvas::getLineWidth(int lineNum, bool enforce, int col) {

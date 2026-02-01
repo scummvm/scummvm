@@ -307,9 +307,9 @@ void Room801::daemon() {
 	case 14:
 		// Conversation handler
 		if (conv_sound_to_play()) {
-			int who = conv_whos_talking();
-			int node = conv_current_node();
-			int entry = conv_current_entry();
+			const int who = conv_whos_talking();
+			const int node = conv_current_node();
+			const int entry = conv_current_entry();
 
 			if (who <= 0) {
 				if ((node == 3 && entry == 0) || (node == 4 && entry == 0) ||
@@ -440,7 +440,7 @@ void Room801::daemon() {
 			digi_play_loop("807_003", 2, 255, -1, 807);
 			digi_play_loop("807_001", 3, 255, -1, 807);
 
-			_G(game).new_room = 802;
+			_G(game).setRoom(802);
 		} else {
 			kernel_trigger_dispatch_now(k10027);
 		}
@@ -515,7 +515,7 @@ void Room801::daemon() {
 
 	case 36:
 		_G(flags)[kFirstTestPassed] = 1;
-		adv_kill_digi_between_rooms(1);
+		adv_kill_digi_between_rooms(true);
 		kernel_trigger_dispatch_now(k10027);
 		break;
 

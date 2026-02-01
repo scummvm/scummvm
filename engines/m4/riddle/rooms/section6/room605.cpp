@@ -499,6 +499,7 @@ void Room605::parser() {
 			case 2:
 				_ttShould = 0;
 				kernel_timing_trigger(1, 200, KT_DAEMON, KT_PARSE);
+				player_set_commands_allowed(true);
 				break;
 			default:
 				break;

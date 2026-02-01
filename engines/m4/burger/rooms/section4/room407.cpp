@@ -43,113 +43,113 @@ const char *Room407::SAID[][4] = {
 };
 
 const WilburMatch Room407::MATCH[] = {
-	{ "TALK", "DRUMZ",           11, 0, 0, nullptr, 0 },
-	{ "AMPLIFIER", "DRUMZ",       4, 0, 0, &_speechNum, 4 },
-	{ nullptr, "DRUMZ",           4, 0, 0, &_speechNum, 7 },
-	{ "LOOK AT", "ROXY",      10016, 0, 0, &Vars::_wilbur_should, 1 },
-	{ "TALK", "ROXY",         10016, 0, 0, &Vars::_wilbur_should, 2 },
-	{ "AMPLIFIER", "ROXY",        4, 0, 0, &_speechNum, 4 },
-	{ "DOG COLLAR", "ROXY",       4, 0, 0, &_speechNum, 5 },
-	{ nullptr, "ROXY",            4, 0, 0, &_speechNum, 6 },
-	{ "AMPLIFIER", "INSTRUMENTS", 4, 0, 0, &_speechNum, 8 },
-	{ nullptr, "INSTRUMENTS",     4, 0, 0, &_speechNum, 9 },
-	{ nullptr, "TOUR BUS",        4, 0, 0, &_speechNum, 3 },
-	{ nullptr, nullptr, -1, 0, 0, nullptr, 0 }
+	{ "TALK", "DRUMZ",           11, nullptr, 0, nullptr, 0 },
+	{ "AMPLIFIER", "DRUMZ",       4, nullptr, 0, &_speechNum, 4 },
+	{ nullptr, "DRUMZ",           4, nullptr, 0, &_speechNum, 7 },
+	{ "LOOK AT", "ROXY",      10016, nullptr, 0, &Vars::_wilbur_should, 1 },
+	{ "TALK", "ROXY",         10016, nullptr, 0, &Vars::_wilbur_should, 2 },
+	{ "AMPLIFIER", "ROXY",        4, nullptr, 0, &_speechNum, 4 },
+	{ "DOG COLLAR", "ROXY",       4, nullptr, 0, &_speechNum, 5 },
+	{ nullptr, "ROXY",            4, nullptr, 0, &_speechNum, 6 },
+	{ "AMPLIFIER", "INSTRUMENTS", 4, nullptr, 0, &_speechNum, 8 },
+	{ nullptr, "INSTRUMENTS",     4, nullptr, 0, &_speechNum, 9 },
+	{ nullptr, "TOUR BUS",        4, nullptr, 0, &_speechNum, 3 },
+	{ nullptr, nullptr, -1, nullptr, 0, nullptr, 0 }
 };
 
 const seriesPlayBreak Room407::PLAY1[] = {
-	{ 0, -1, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{ 0, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room407::PLAY2[] = {
-	{ 0, -1, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{ 0, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room407::PLAY3[] = {
-	{ 0, 1, 0, 0, 0, -1, 0, 0, 0, 0 },
-	{ 2, -1, 0, 0, 0, -1, 0, 4, 0, 0 },
-	{ 0, 1, 0, 0, 0, -1, 2, 0, 0, 0 },
+	{ 0, 1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 2, -1, nullptr, 0, 0, -1, 0, 4, nullptr, 0 },
+	{ 0, 1, nullptr, 0, 0, -1, 2, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room407::PLAY4[] = {
-	{ 0, -1, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{ 0, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room407::PLAY5[] = {
-	{ 0, -1, "145_004", 2, 255, -1, 1, 0, 0, 0 },
+	{ 0, -1, "145_004", 2, 255, -1, 1, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room407::PLAY6[] = {
-	{ 0, -1, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{ 0, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room407::PLAY7[] = {
-	{ 0, -1, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{ 0, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room407::PLAY8[] = {
-	{ 0, -1, "407r901", 1, 255, -1, 4, -1, 0, 0 },
+	{ 0, -1, "407r901", 1, 255, -1, 4, -1, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room407::PLAY9[] = {
-	{ 0, -1, "407r903", 1, 255, -1, 4, -1, 0, 0 },
+	{ 0, -1, "407r903", 1, 255, -1, 4, -1, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room407::PLAY10[] = {
-	{ 0, -1, 0, 0, 0, -1, 2, 0, 0, 0 },
+	{ 0, -1, nullptr, 0, 0, -1, 2, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room407::PLAY11[] = {
-	{ 0, 2, 0, 0, 0, -1, 0, 0, 0, 0 },
-	{ 3, -1, "407r904x", 1, 255, -1, 4, -1, 0, 0 },
+	{ 0, 2, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
+	{ 3, -1, "407r904x", 1, 255, -1, 4, -1, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room407::PLAY12[] = {
-	{ 0, 6, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{ 0, 6, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room407::PLAY13[] = {
-	{ 7, -1, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{ 7, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room407::PLAY14[] = {
-	{ 0, -1, "407r904y", 1, 255, -1, 4, -1, 0, 0 },
+	{ 0, -1, "407r904y", 1, 255, -1, 4, -1, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room407::PLAY15[] = {
-	{ 0, 3, "407v901", 1, 255, -1, 4, -1, 0, 0 },
+	{ 0, 3, "407v901", 1, 255, -1, 4, -1, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room407::PLAY16[] = {
-	{ 5, -1, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{ 5, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room407::PLAY17[] = {
-	{ 1, -1, 0, 0, 0, -1, 0, 0, 0, 0 },
+	{ 1, -1, nullptr, 0, 0, -1, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
 const seriesPlayBreak Room407::PLAY18[] = {
-	{ 0, 1, "999_003", 1, 255, -1, 0, 0, 0, 0 },
-	{ 2, 9, 0, 0, 0, 7, 0, 0, 0, 0 },
-	{ 10, 11, "999_003", 1, 255, -1, 0, 0, 0, 0 },
-	{ 12, -1, 0, 0, 0, 9, 0, 0, 0, 0 },
+	{ 0, 1, "999_003", 1, 255, -1, 0, 0, nullptr, 0 },
+	{ 2, 9, nullptr, 0, 0, 7, 0, 0, nullptr, 0 },
+	{ 10, 11, "999_003", 1, 255, -1, 0, 0, nullptr, 0 },
+	{ 12, -1, nullptr, 0, 0, 9, 0, 0, nullptr, 0 },
 	PLAY_BREAK_END
 };
 
@@ -263,7 +263,7 @@ void Room407::daemon() {
 		if (_roxyState) {
 			kernel_timing_trigger(120, 7);
 		} else {
-			int rnd = imath_ranged_rand(1, 25);
+			const int rnd = imath_ranged_rand(1, 25);
 			if (rnd >= 16)
 				_digiName = "407r902a";
 			else
@@ -642,7 +642,7 @@ void Room407::loadSeries() {
 
 void Room407::conv87() {
 	const char *sound = conv_sound_to_play();
-	int who = conv_whos_talking();
+	const int who = conv_whos_talking();
 
 	if (sound) {
 		if (who == 1)
@@ -654,9 +654,9 @@ void Room407::conv87() {
 
 void Room407::conv88() {
 	const char *sound = conv_sound_to_play();
-	int who = conv_whos_talking();
-	int node = conv_current_node();
-	int entry = conv_current_entry();
+	const int who = conv_whos_talking();
+	const int node = conv_current_node();
+	const int entry = conv_current_entry();
 
 	if (sound) {
 		if (who == 1) {

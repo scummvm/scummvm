@@ -89,13 +89,7 @@ void GridItemWidget::drawWidget() {
 	const int kMarginY = _grid->_gridYSpacing / 3;
 
 	// Check if this entry is in the selected entries list
-	bool isSelected = false;
-	for (size_t i = 0; i < _grid->_selectedEntries.size(); ++i) {
-		if (_grid->_selectedEntries[i] == _activeEntry->entryID) {
-			isSelected = true;
-			break;
-		}
-	}
+	bool isSelected = _grid->_selectedItems[_activeEntry->entryID];
 
 	// Draw selection highlight if this entry is selected or hovered
 	if (isSelected || _isHighlighted) {
@@ -271,8 +265,8 @@ void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 
 		// If multi-select is not enabled, use simple single-selection
 		if (!_grid->isMultiSelectEnabled()) {
-			_grid->_selectedEntries.clear();
-			_grid->_selectedEntries.push_back(_activeEntry->entryID);
+			_grid->clearSelection();
+			_grid->markSelectedItem(_activeEntry->entryID, true);
 			_grid->_lastSelectedEntryID = _activeEntry->entryID;
 			sendCommand(kItemClicked, _activeEntry->entryID);
 			return;
@@ -285,45 +279,27 @@ void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 
 		if (ctrlPressed) {
 			// Ctrl+Click: Toggle selection of this item
-			bool found = false;
-			for (size_t i = 0; i < _grid->_selectedEntries.size(); ++i) {
-				if (_grid->_selectedEntries[i] == _activeEntry->entryID) {
-					_grid->_selectedEntries.remove_at(i);
-					found = true;
-					break;
-				}
-			}
-			if (!found) {
-				_grid->_selectedEntries.push_back(_activeEntry->entryID);
-				// Keep entries sorted
-				Common::sort(_grid->_selectedEntries.begin(), _grid->_selectedEntries.end());
+			if (_grid->isItemSelected(_activeEntry->entryID)) {
+				_grid->markSelectedItem(_activeEntry->entryID, false);
+			} else {
+				_grid->markSelectedItem(_activeEntry->entryID, true);
 				_grid->_lastSelectedEntryID = _activeEntry->entryID;
 			}
 		} else if (shiftPressed && _grid->_lastSelectedEntryID >= 0) {
-			// Clear already selected Items
-			_grid->_selectedEntries.clear();
 			// Shift+Click: Select range from last selected to current item
-			int startID = _grid->_lastSelectedEntryID;
-			int endID = _activeEntry->entryID;
+			// Must select based on visual order, not by entryID range
+			int startID = _grid->getVisualPos(_grid->_lastSelectedEntryID);
+			int endID = _grid->getVisualPos(_activeEntry->entryID);
 
-			// Ensure start is before end
-			if (startID > endID) {
-				int temp = startID;
-				startID = endID;
-				endID = temp;
+			// If we found both positions, select all items between them (visually)
+			if (startID >= 0 && endID >= 0) {
+				_grid->selectVisualRange(startID, endID);
 			}
-
-			// Add all items in range (assuming entry IDs are sequential indices)
-			for (int i = startID; i <= endID; ++i) {
-				_grid->_selectedEntries.push_back(i);
-			}
-			// Keep entries sorted
-			Common::sort(_grid->_selectedEntries.begin(), _grid->_selectedEntries.end());
 			_grid->_lastSelectedEntryID = _activeEntry->entryID;
 		} else {
 			// Regular click: Select only this item
-			_grid->_selectedEntries.clear();
-			_grid->_selectedEntries.push_back(_activeEntry->entryID);
+			_grid->clearSelection();
+			_grid->markSelectedItem(_activeEntry->entryID, true);
 			_grid->_lastSelectedEntryID = _activeEntry->entryID;
 		}
 
@@ -515,10 +491,8 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	_selectedEntry = nullptr;
 	_isGridInvalid = true;
 	_multiSelectEnabled = false;
-	_selectedEntries.clear();
+	_selectedItems.clear();
 	_lastSelectedEntryID = -1;
-	_ctrlPressed = false;
-	_shiftPressed = false;
 }
 
 GridWidget::~GridWidget() {
@@ -583,6 +557,8 @@ void GridWidget::setEntryList(Common::Array<GridItemInfo> *list) {
 	_visibleEntryList.clear();
 	_isGridInvalid = true;
 	_selectedEntry = nullptr;
+	_selectedItems.clear();
+	_selectedItems.resize(list->size(), false);
 
 	for (Common::Array<GridItemInfo>::iterator entryIter = list->begin(); entryIter != list->end(); ++entryIter) {
 		_dataEntryList.push_back(*entryIter);
@@ -997,25 +973,48 @@ int GridWidget::getNewSel(int index) {
 	}
 }
 
+int GridWidget::getVisualPos(int entryID) const {
+	// Returns the visual position in _sortedEntryList for the given entryID
+	// Counts only non-header items
+	int visPos = 0;
+	for (uint i = 0; i < _sortedEntryList.size(); ++i) {
+		if (!_sortedEntryList[i]->isHeader) {
+			if (_sortedEntryList[i]->entryID == entryID) {
+				return visPos;
+			}
+			visPos++;
+		}
+	}
+	return -1;
+}
+
+void GridWidget::selectVisualRange(int startPos, int endPos) {
+	// Selects all non-header items in visual range [startPos, endPos]
+	// visPos counts only non-header items
+	if (startPos > endPos)
+		SWAP(startPos, endPos);
+
+	int visPos = 0;
+	for (uint i = 0; i < _sortedEntryList.size(); ++i) {
+		if (!_sortedEntryList[i]->isHeader) {
+			if (visPos >= startPos && visPos <= endPos) {
+				markSelectedItem(_sortedEntryList[i]->entryID, true);
+			}
+			visPos++;
+		}
+	}
+}
+
 void GridWidget::handleMouseWheel(int x, int y, int direction) {
 	_scrollBar->handleMouseWheel(x, y, direction);
 	_scrollPos = _scrollBar->_currentPos;
 }
 
 bool GridWidget::handleKeyDown(Common::KeyState state) {
-	if (state.flags & Common::KBD_CTRL)
-		_ctrlPressed = true;
-	if (state.flags & Common::KBD_SHIFT)
-		_shiftPressed = true;
 	return false;
 }
 
 bool GridWidget::handleKeyUp(Common::KeyState state) {
-	// Check which specific key was released based on the key code
-	if (state.keycode == Common::KEYCODE_LCTRL || state.keycode == Common::KEYCODE_RCTRL)
-		_ctrlPressed = false;
-	if (state.keycode == Common::KEYCODE_LSHIFT || state.keycode == Common::KEYCODE_RSHIFT)
-		_shiftPressed = false;
 	return false;
 }
 
@@ -1242,10 +1241,38 @@ void GridWidget::setSelected(int id) {
 	for (uint i = 0; i < _sortedEntryList.size(); ++i) {
 		if ((!_sortedEntryList[i]->isHeader) && (_sortedEntryList[i]->entryID == id)) {
 			_selectedEntry = _sortedEntryList[i];
+			
+			// Clear previous selections and mark only this item
+			if (_multiSelectEnabled) {
+				clearSelection();
+				markSelectedItem(id, true);
+			}
+			
 			scrollToEntry(id, false);
 			break;
 		}
 	}
+}
+
+void GridWidget::markSelectedItem(int entryID, bool state) {
+	if (entryID >= 0) {
+		// Expand array if needed
+		if (entryID >= (int)_selectedItems.size()) {
+			_selectedItems.resize(entryID + 1, false);
+		}
+		_selectedItems[entryID] = state;
+	}
+}
+
+bool GridWidget::isItemSelected(int entryID) const {
+	if (entryID >= 0 && entryID < (int)_selectedItems.size()) {
+		return _selectedItems[entryID];
+	}
+	return false;
+}
+
+void GridWidget::clearSelection() {
+	Common::fill(_selectedItems.begin(), _selectedItems.end(), false);
 }
 
 } // End of namespace GUI

@@ -78,7 +78,7 @@ void Room917::daemon() {
 		digi_stop(1);
 		digi_stop(2);
 		digi_unload("907R02");
-		_G(game).new_room = 918;
+		_G(game).setRoom(918);
 		break;
 
 	case 11:
@@ -152,8 +152,7 @@ void Room917::daemon() {
 		digi_unload("950_S48b");
 		digi_unload("950_S48c");
 		digi_unload("950_S50");
-		_G(game).new_room = 493;
-		_G(game).new_section = 4;
+		_G(game).setRoom(493);
 		break;
 
 	default:

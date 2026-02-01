@@ -127,7 +127,7 @@ int32 MidiParser_HMP::determineDataSize(Common::SeekableReadStream *stream) {
 	if (strcmp(stream->readString('\x00', 8).c_str(), HMP_HEADER)) {
 		return -1;
 	}
-	byte versionBytes[6];
+	byte versionBytes[6] = {0};
 	stream->readMultipleLE(*versionBytes);
 	HmpVersion version = determineVersion(versionBytes);
 	stream->skip(18);

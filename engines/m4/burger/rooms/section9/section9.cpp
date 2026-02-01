@@ -38,16 +38,16 @@ Section9::Section9() : Rooms::Section() {
 void Section9::daemon() {
 	switch (_G(kernel).trigger) {
 	case 9002:
-		_G(game).new_room = 902;
+		_G(game).setRoom(902);
 		break;
 	case 9004:
-		_G(game).new_room = 904;
+		_G(game).setRoom(904);
 		break;
 	case 9005:
-		_G(game).new_room = 951;
+		_G(game).setRoom(951);
 		break;
 	case 9006:
-		_G(game).new_room = 971;
+		_G(game).setRoom(971);
 		break;
 	default:
 		_G(kernel).continue_handling_trigger = true;

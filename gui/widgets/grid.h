@@ -214,6 +214,8 @@ public:
 
 	int getItemPos(int item);
 	int getNewSel(int index);
+	int getVisualPos(int entryID) const;
+	void selectVisualRange(int startPos, int endPos);
 	int getScrollPos() const { return _scrollPos; }
 	int getSelected() const { return ((_selectedEntry == nullptr) ? -1 : _selectedEntry->entryID); }
 	int getThumbnailHeight() const { return _thumbnailHeight; }
@@ -236,13 +238,12 @@ public:
 	// Multi-selection methods
 	void setMultiSelectEnabled(bool enabled) { _multiSelectEnabled = enabled; }
 	bool isMultiSelectEnabled() const { return _multiSelectEnabled; }
-
-public:
-	Common::Array<int> _selectedEntries; // Stores indices of selected entries
-	int _lastSelectedEntryID = -1;       // Track last selected entry for Shift+Click
-	bool _ctrlPressed = false;           // Track if Ctrl key is pressed
-	bool _shiftPressed = false;          // Track if Shift key is pressed
-	const Common::Array<int> &getSelectedEntries() const { return _selectedEntries; }
+	Common::Array<bool> _selectedItems;	/// Multiple selected items (bool array)
+	int _lastSelectedEntryID = -1;		/// Used for Shift+Click range selection
+	bool isItemSelected(int entryID) const;
+	void markSelectedItem(int entryID, bool state);
+	void clearSelection();
+	const Common::Array<bool> &getSelectedItems() const { return _selectedItems; }
 };
 
 /* GridItemWidget */

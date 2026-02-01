@@ -53,6 +53,7 @@
 #include "scumm/players/player_towns.h"
 #include "scumm/insane/insane.h"
 #include "scumm/he/animation_he.h"
+#include "scumm/he/font_he.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"
 #include "scumm/he/sound_he.h"
@@ -843,6 +844,15 @@ ScummEngine_v90he::~ScummEngine_v90he() {
 	}
 }
 
+ScummEngine_v99he::ScummEngine_v99he(OSystem *syst, const DetectorResult &dr) : ScummEngine_v95he(syst, dr) {
+	_heFont = new HEFont(this);
+}
+
+ScummEngine_v99he::~ScummEngine_v99he() {
+	delete _heFont;
+	_heFont = nullptr;
+}
+
 ScummEngine_v100he::ScummEngine_v100he(OSystem *syst, const DetectorResult &dr) : ScummEngine_v99he(syst, dr) {
 	/* Moonbase stuff */
 	if (_game.id == GID_MOONBASE)
@@ -1552,6 +1562,16 @@ Common::Error ScummEngine::init() {
 #endif
 		_internalGUIControls[i].doubleLinesFlag = false;
 	}
+
+#ifndef USE_FREETYPE2
+	if (_game.id == GID_FUNSHOP) {
+		GUI::MessageDialog dialog(_(
+			"It appears your ScummVM version was not built with TrueType Fonts support.\n\n"
+			"Since the One-Stop Fun Shop series makes extensive use of TTF fonts,\n"
+			"some of the graphics on screen will be missing."));
+		dialog.runModal();
+	}
+#endif
 
 	_setupIsComplete = true;
 

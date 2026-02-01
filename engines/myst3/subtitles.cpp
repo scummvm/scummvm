@@ -451,14 +451,17 @@ ResourceDescription Subtitles::loadText(int32 id, bool overriden) {
 void Subtitles::setFrame(int32 frame) {
 	const Phrase *phrase = nullptr;
 
-	for (uint i = 0; i < _phrases.size(); i++) {
+	uint phraseIdx = 0;
+	for (uint i = 0; i < _phrases.size(); ++i) {
 		if (_phrases[i].frame > frame)
 			break;
 
 		phrase = &_phrases[i];
+		phraseIdx = i;
 	}
 
-	if (!phrase) {
+	if (!phrase
+		|| (phraseIdx == _phrases.size() - 1 && phrase->string.empty())) {
 		freeTexture();
 		return;
 	}
@@ -476,8 +479,21 @@ void Subtitles::drawOverlay() {
 	if (!_texture)
 		return;
 
+	Common::Rect viewport;
+	if (_scaled) {
+		viewport = Common::Rect(Renderer::kOriginalWidth, Renderer::kOriginalHeight);
+	} else {
+		viewport = _vm->_gfx->viewport();
+	}
+
+	float scale = MIN(
+		viewport.width()  / (float) Renderer::kOriginalWidth,
+		viewport.height() / (float) Renderer::kOriginalHeight
+	);
+
+
 	Common::Rect screen = _vm->_gfx->viewport();
-	Common::Rect bottomBorder = Common::Rect(Renderer::kOriginalWidth, _surfaceHeight);
+	Common::Rect bottomBorder = Common::Rect(Renderer::kOriginalWidth * scale, _surfaceHeight * scale);
 	bottomBorder.translate(0, _surfaceTop);
 
 	if (_vm->isWideScreenModEnabled()) {
@@ -485,7 +501,7 @@ void Subtitles::drawOverlay() {
 		_vm->_gfx->drawRect2D(Common::Rect(screen.width(), Renderer::kBottomBorderHeight), 0xFF, 0x00, 0x00, 0x00);
 
 		// Center the subtitles in the screen
-		bottomBorder.translate((screen.width() - Renderer::kOriginalWidth) / 2, 0);
+		bottomBorder.translate((screen.width() - Renderer::kOriginalWidth * scale) / 2, 0);
 	}
 
 	Common::Rect textureRect = Common::Rect(_texture->width, _texture->height);

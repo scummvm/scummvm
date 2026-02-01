@@ -474,7 +474,7 @@ void Room602::daemon() {
 			hotspot_set_active("PAW", true);
 			hotspot_set_active("MOTOR", true);
 			hotspot_set_active("MOTOR ", false);
-			hotspot_set_active("FOOR  ", true);
+			hotspot_set_active("FLOOR  ", true);
 			break;
 
 		case 56:

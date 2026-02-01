@@ -423,7 +423,20 @@ void SimpleMovie::update() {
 
 	uint16 ambiantStartFrame = _vm->_state->getMovieAmbiantScriptStartFrame();
 	if (ambiantStartFrame && _bink.getCurFrame() > ambiantStartFrame) {
-		_vm->runAmbientScripts(_vm->_state->getMovieAmbiantScript());
+		// Fixes bug #16491 for missing ambient sounds while a simpleMovie is playing
+		// eg. the burning fire after Saavedro throws the lamp at the curtain in Tomahna (during the intro at Atrus's office)
+		// and the screaming squee after trapping it in Edanna.
+		// This fix is essentially replicating the code from ambientReloadCurrentNode() script command.
+		// In these movies (SimpleMovie), a frame number (ambiantStartFrame) is set (before they start)
+		// upon which the ambient sounds scripts should be re-evaluated,
+		// because a condition and related variables to that condition will have changed
+		// and therefore different ambient sounds should be played.
+		//
+		// NOTE: The value set for var MovieAmbiantScript (181) is not a node id -- so calling runAmbientScripts() here with it as argument does not work.
+		// Instead, we just reload the current node's ambient scripts and then applySounds using the value of MovieAmbiantScript as fadeOutDelay.
+		_vm->_ambient->loadNode(0, 0, 0);
+		_vm->_ambient->applySounds(_vm->_state->valueOrVarValue(_vm->_state->getMovieAmbiantScript()));
+
 		_vm->_state->setMovieAmbiantScriptStartFrame(0);
 		_vm->_state->setMovieAmbiantScript(0);
 	}

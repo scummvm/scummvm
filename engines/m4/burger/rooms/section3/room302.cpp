@@ -253,7 +253,7 @@ void Room302::daemon() {
 
 	case 2:
 		ws_unhide_walker();
-		ws_walk(500, 250, nullptr, 3, 8, 1);
+		ws_walk(500, 250, nullptr, 3, 8, true);
 		break;
 
 	case 3:

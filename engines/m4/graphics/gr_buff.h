@@ -31,8 +31,8 @@ class GrBuff {
 protected:
 	void alloc_pixmap();
 
-	Buffer dummy;
-	MemHandle pixmap;
+	Buffer dummy{};
+	MemHandle pixmap = nullptr;
 public:
 	int32 w, h, x_off, y_off, pitch, height;
 
@@ -51,7 +51,6 @@ public:
 	Buffer *get_buffer();
 
 	uint8 *get_pixmap();
-	void clear();
 
 	void lock();
 	void release();

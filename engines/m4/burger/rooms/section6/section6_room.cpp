@@ -51,8 +51,6 @@ HotSpotRec *Section6Room::custom_hotspot_which(int32 x, int32 y) {
 		return nullptr;
 
 	int x1, x2, x3, y1, y2, y3;
-	int total1, total2, total3;
-	int diff;
 
 	if (_G(flags)[V266]) {
 		x1 = 189;
@@ -62,10 +60,10 @@ HotSpotRec *Section6Room::custom_hotspot_which(int32 x, int32 y) {
 		x3 = 439;
 		y3 = 232;
 	} else {
-		int index = _sectionMachine1->myAnim8->myRegs[IDX_CELS_INDEX];
+		const int index = _sectionMachine1->myAnim8->myRegs[IDX_CELS_INDEX];
 		const GerbilPoint *points = _gerbilTable + index;
 
-		diff = points[3]._x - points[0]._x;
+		int diff = points[3]._x - points[0]._x;
 		x1 = points[0]._x + (index % 3) * diff / 3;
 
 		diff = points[4]._x - points[1]._x;
@@ -84,9 +82,9 @@ HotSpotRec *Section6Room::custom_hotspot_which(int32 x, int32 y) {
 		y3 = points[2]._y + (index % 3) * diff / 3;
 	}
 
-	total1 = (x - x1) * (x - x1) + (y - y1) * (y - y1);
-	total2 = (x - x2) * (x - x2) + (y - y2) * (y - y2);
-	total3 = (x - x3) * (x - x3) + (y - y3) * (y - y3);
+	const int total1 = (x - x1) * (x - x1) + (y - y1) * (y - y1);
+	const int total2 = (x - x2) * (x - x2) + (y - y2) * (y - y2);
+	const int total3 = (x - x3) * (x - x3) + (y - y3) * (y - y3);
 
 	return (total1 < 1600) || (total2 < 1600) < (total3 < 1600) ?
 		&_gerbilHotspot : nullptr;

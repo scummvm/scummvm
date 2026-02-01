@@ -31,6 +31,7 @@
 #include "base/version.h"
 
 #include <Foundation/NSBundle.h>
+#include <Foundation/NSData.h>
 #include <Foundation/NSFileManager.h>
 #include <Foundation/NSArray.h>
 #include <Foundation/NSPathUtilities.h>
@@ -137,7 +138,7 @@ Common::U32String OSystem_MacOSX::getTextFromClipboard() {
 
 	NSPasteboard *pb = [NSPasteboard generalPasteboard];
 	NSString *str = [pb  stringForType:NSPasteboardTypeString];
-	if (![str respondsToSelector:@selector(getBytes:maxLength:usedLength:encoding:options:range:remainingRange:)])
+	if (str == nil)
 		return Common::U32String();
 
 	// If translations are supported, use the current TranslationManager charset and otherwise
@@ -148,12 +149,22 @@ Common::U32String OSystem_MacOSX::getTextFromClipboard() {
 #else
 	NSStringEncoding stringEncoding = NSUTF32BigEndianStringEncoding;
 #endif
-	NSUInteger textLength = [str length];
-	Common::u32char_type_t *text = new Common::u32char_type_t[textLength];
-	if (![str getBytes:text maxLength:4*textLength usedLength:NULL encoding: stringEncoding options:0 range:NSMakeRange(0, textLength) remainingRange:NULL]) {
-		delete[] text;
+	NSData *data = [str dataUsingEncoding:stringEncoding];
+	if (data == nil)
 		return Common::U32String();
-	}
+
+	NSUInteger byteLength = [data length];
+	if (byteLength % 4 != 0)
+		return Common::U32String();
+
+	NSUInteger textLength = byteLength / 4;
+	Common::u32char_type_t *text = new Common::u32char_type_t[textLength];
+
+	// note: Using the `-getBytes:...:remainingRange:` API would make this code
+	// a bit simpler, but it's missing from the 10.4 SDK headers (although the
+	// Foundation framework seems to contain some hidden symbol for it...)
+	[data getBytes:text length:byteLength];
+
 	Common::U32String u32String(text, textLength);
 	delete[] text;
 

@@ -379,7 +379,13 @@ Common::Rect DragItem::getPosition() {
 	uint posX = CLIP<uint>(mouse.x, _texture->width / 2, viewport.width() - _texture->width / 2);
 	uint posY = CLIP<uint>(mouse.y, _texture->height / 2, viewport.height() - _texture->height / 2);
 
-	Common::Rect screenRect = Common::Rect::center(posX, posY, _texture->width, _texture->height);
+	// Proper scaling code - similar to cursor scaling code (see: Cursor::draw())
+	float scale = MIN(
+		viewport.width()  / (float) Renderer::kOriginalWidth,
+		viewport.height() / (float) Renderer::kOriginalHeight
+	);
+
+	Common::Rect screenRect = Common::Rect::center(posX, posY, _texture->width * scale, _texture->height * scale);
 	return screenRect;
 }
 
