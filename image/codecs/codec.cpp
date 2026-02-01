@@ -67,6 +67,8 @@ Codec *createBitmapCodec(uint32 tag, uint32 streamTag, int width, int height, in
 	}
 #endif
 
+	const char *missingCodec = nullptr;
+
 	switch (tag) {
 	case SWAP_CONSTANT_32(0):
 		return new BitmapRawDecoder(width, height, bitsPerPixel, false);
@@ -84,46 +86,75 @@ Codec *createBitmapCodec(uint32 tag, uint32 streamTag, int width, int height, in
 	case MKTAG('c','v','i','d'):
 		return new CinepakDecoder(bitsPerPixel);
 
-#ifdef USE_INDEO3
 	case MKTAG('I','V','3','2'):
+#ifdef USE_INDEO3
 		return new Indeo3Decoder(width, height, bitsPerPixel);
+#else
+		missingCodec = "Indeo 3";
+		break;
 #endif
-#ifdef USE_INDEO45
 	case MKTAG('I', 'V', '4', '1'):
 	case MKTAG('I', 'V', '4', '2'):
+#ifdef USE_INDEO45
 		return new Indeo4Decoder(width, height, bitsPerPixel);
+#else
+		missingCodec = "Indeo 4";
+		break;
+#endif
 	case MKTAG('I', 'V', '5', '0'):
+#ifdef USE_INDEO45
 		return new Indeo5Decoder(width, height, bitsPerPixel);
+#else
+		missingCodec = "Indeo 5";
+		break;
 #endif
-#ifdef USE_XAN
+
 	case MKTAG('X', 'x', 'a', 'n'):
+#ifdef USE_XAN
 		return new XanDecoder(width, height, bitsPerPixel);
+#else
+		missingCodec = "Xan";
+		break;
 #endif
-#ifdef USE_TRUEMOTION1
 	case MKTAG('D','U','C','K'):
 	case MKTAG('d','u','c','k'):
+#ifdef USE_TRUEMOTION1
 		return new TrueMotion1Decoder();
+#else
+		missingCodec = "TrueMotion1";
+		break;
 #endif
-#ifdef USE_MPEG2
 	case MKTAG('m','p','g','2'):
+#ifdef USE_MPEG2
 		return new MPEGDecoder();
+#else
+		missingCodec = "MPEG2";
+		break;
 #endif
-#ifdef USE_JPEG
 	case MKTAG('M','J','P','G'):
 	case MKTAG('m','j','p','g'):
+#ifdef USE_MJPEG
 		return new MJPEGDecoder();
+#else
+		missingCodec = "MJPEG";
+		break;
 #endif
 	default:
 		if (tag & 0x00FFFFFF)
 			warning("Unknown BMP/AVI compression format \'%s\'", tag2str(tag));
 		else
 			warning("Unknown BMP/AVI compression format %d", SWAP_BYTES_32(tag));
+		return 0;
 	}
 
+	assert(missingCodec);
+	warning("createBitmapCodec(): %s codec is not compiled", missingCodec);
 	return 0;
 }
 
 Codec *createQuickTimeCodec(uint32 tag, int width, int height, int bitsPerPixel) {
+	const char *missingCodec = nullptr;
+
 	switch (tag) {
 	case MKTAG('c','v','i','d'):
 		// Cinepak: As used by most Myst and all Riven videos as well as some Myst ME videos. "The Chief" videos also use this. Very popular for Director titles.
@@ -137,37 +168,52 @@ Codec *createQuickTimeCodec(uint32 tag, int width, int height, int bitsPerPixel)
 	case MKTAG('s','m','c',' '):
 		// Apple SMC: Used by some Myst videos.
 		return new SMCDecoder(width, height);
-#ifdef USE_SVQ1
 	case MKTAG('S','V','Q','1'):
+#ifdef USE_SVQ1
 		// Sorenson Video 1: Used by some Myst ME videos.
 		return new SVQ1Decoder(width, height);
+#else
+		missingCodec = "Sorenson Video 1";
+		break;
 #endif
 	case MKTAG('S','V','Q','3'):
 		// Sorenson Video 3: Used by some Myst ME videos.
 		warning("Sorenson Video 3 not yet supported");
-		break;
-#ifdef USE_JPEG
+		return 0;
 	case MKTAG('j','p','e','g'):
+#ifdef USE_JPEG
 		// JPEG: Used by some Myst ME 10th Anniversary videos.
 		return new JPEGDecoder();
+#else
+		missingCodec = "JPEG";
+		break;
 #endif
-#ifdef USE_CDTOONS
 	case MKTAG('Q','k','B','k'):
+#ifdef USE_CDTOONS
 		// CDToons: Used by most of the Broderbund games.
 		return new CDToonsDecoder(width, height);
+#else
+		missingCodec = "CDToons";
+		break;
 #endif
 	case MKTAG('r','a','w',' '):
 		// Used my L-Zone-mac (Director game)
 		return new BitmapRawDecoder(width, height, bitsPerPixel, true, true);
-#ifdef USE_INDEO3
 	case MKTAG('I','V','3','2'):
+#ifdef USE_INDEO3
 		// Indeo 3: Used by Team Xtreme: Operation Weather Disaster (Spanish)
 		return new Indeo3Decoder(width, height, bitsPerPixel);
+#else
+		missingCodec = "Indeo 3";
+		break;
 #endif
 	default:
 		warning("Unsupported QuickTime codec \'%s\'", tag2str(tag));
+		return 0;
 	}
 
+	assert(missingCodec);
+	warning("createBitmapCodec(): %s codec is not compiled", missingCodec);
 	return 0;
 }
 
