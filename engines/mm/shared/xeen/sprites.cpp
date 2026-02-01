@@ -148,7 +148,7 @@ void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPo
 	draw(dest, frame, destPos, Common::Rect(0, 0, dest.w, dest.h), flags, scale);
 }
 
-static inline void DrawerPixel2(byte *dest, const byte pixel, byte *destLeft, byte *destRight, byte *destTop, byte *destBottom, int pitch, uint16 &random1, uint16 &random2, uint16 mask1, uint16 mask2)
+static inline void drawPixel2(byte *dest, const byte pixel, byte *destLeft, byte *destRight, byte *destTop, byte *destBottom, int pitch, uint16 &random1, uint16 &random2, uint16 mask1, uint16 mask2)
 {
 	static const int8 DRAWER2_DELTA[64] = {
 		-3, 3, 0, 0, 0, 0, 0, 0,
@@ -184,7 +184,7 @@ static inline void DrawerPixel2(byte *dest, const byte pixel, byte *destLeft, by
 	}
 }
 
-static inline void DrawerPixel3(byte *dest, const byte pixel, const uint16 mask, const uint16 offset, byte *palette)
+static inline void drawPixel3(byte *dest, const byte pixel, const uint16 mask, const uint16 offset, byte *palette)
 {
 	// WORKAROUND: This is slightly different then the original:
 	// 1) The original has bunches of black pixels appearing. This does index increments to avoid such pixels
@@ -204,7 +204,7 @@ static inline void DrawerPixel3(byte *dest, const byte pixel, const uint16 mask,
 	++ *dest;
 }
 
-static inline void DrawerPixel5(byte *dest, const byte pixel, const uint16 threshold, uint16 &random1, uint16 &random2)
+static inline void drawPixel5(byte *dest, const byte pixel, const uint16 threshold, uint16 &random1, uint16 &random2)
 {
 	bool flag = (random1 & 0x8000) != 0;
 	random1 = (int)((uint16)random1 << 1) - random2 - (flag ? 1 : 0);
@@ -223,7 +223,7 @@ static inline void DrawerPixel5(byte *dest, const byte pixel, const uint16 thres
 		*dest = pixel;
 }
 
-static inline void SpriteRender(byte *data, size_t filesize, XSurface &dest, uint16 offset, const Common::Point &pt, const Common::Rect &clipRect, uint flags, int scale)
+static inline void drawSprite(byte *data, size_t filesize, XSurface &dest, uint16 offset, const Common::Point &pt, const Common::Rect &clipRect, uint flags, int scale)
 {
 	// regular drawer
 	const SpriteFlags drawerFlag = static_cast<SpriteFlags>(flags & SPRFLAG_MODE_MASK);
@@ -475,13 +475,13 @@ static inline void SpriteRender(byte *data, size_t filesize, XSurface &dest, uin
 								uint16 random2 = engine->getRandomNumber(0xffff);
 								const byte pixel = (byte)*lineP;
 
-								DrawerPixel2(destP, pixel, destLeft, destRight, destTop, destBottom, pitch, random1, random2, mask21, mask22);
+								drawPixel2(destP, pixel, destLeft, destRight, destTop, destBottom, pitch, random1, random2, mask21, mask22);
 									
 								if (enlarge)
 								{
-									DrawerPixel2(destP + SCREEN_WIDTH, pixel, destLeft, destRight, destTop, destBottom, pitch, random1, random2, mask21, mask22);
-									DrawerPixel2(destP + 1, pixel, destLeft, destRight, destTop, destBottom, pitch, random1, random2, mask21, mask22);
-									DrawerPixel2(destP + 1 + SCREEN_WIDTH, pixel, destLeft, destRight, destTop, destBottom, pitch, random1, random2, mask21, mask22);
+									drawPixel2(destP + SCREEN_WIDTH, pixel, destLeft, destRight, destTop, destBottom, pitch, random1, random2, mask21, mask22);
+									drawPixel2(destP + 1, pixel, destLeft, destRight, destTop, destBottom, pitch, random1, random2, mask21, mask22);
+									drawPixel2(destP + 1 + SCREEN_WIDTH, pixel, destLeft, destRight, destTop, destBottom, pitch, random1, random2, mask21, mask22);
 								}	
 
 							} break;
@@ -506,13 +506,13 @@ static inline void SpriteRender(byte *data, size_t filesize, XSurface &dest, uin
 								if(hasPalette)
 								{
 									const byte pixel = (byte)*lineP; 
-									DrawerPixel3(destP, pixel, mask, offsetLocal, palette);
+									drawPixel3(destP, pixel, mask, offsetLocal, palette);
 									
 									if (enlarge)
 									{
-										DrawerPixel3(destP + SCREEN_WIDTH, pixel, mask, offsetLocal, palette);
-										DrawerPixel3(destP + 1, pixel,  mask, offsetLocal, palette);
-										DrawerPixel3(destP + 1 + SCREEN_WIDTH, pixel, mask, offsetLocal, palette );
+										drawPixel3(destP + SCREEN_WIDTH, pixel, mask, offsetLocal, palette);
+										drawPixel3(destP + 1, pixel,  mask, offsetLocal, palette);
+										drawPixel3(destP + 1 + SCREEN_WIDTH, pixel, mask, offsetLocal, palette );
 									}	
 								}
 							}break;
@@ -544,13 +544,13 @@ static inline void SpriteRender(byte *data, size_t filesize, XSurface &dest, uin
 								uint16 random2 = engine->getRandomNumber(0xffff);
 
 								const byte pixel = (byte)*lineP; 
-								DrawerPixel5(destP, pixel, threshold, random1, random2 );
+								drawPixel5(destP, pixel, threshold, random1, random2 );
 									
 								if (enlarge)
 								{
-									DrawerPixel5(destP + SCREEN_WIDTH, pixel, threshold, random1, random2 );
-									DrawerPixel5(destP + 1, pixel, threshold, random1, random2 );
-									DrawerPixel5(destP + 1 + SCREEN_WIDTH, pixel, threshold, random1, random2 );
+									drawPixel5(destP + SCREEN_WIDTH, pixel, threshold, random1, random2 );
+									drawPixel5(destP + 1, pixel, threshold, random1, random2 );
+									drawPixel5(destP + 1 + SCREEN_WIDTH, pixel, threshold, random1, random2 );
 								}	
 							}break;
 							case SPRFLAG_DRAWER6:
@@ -626,10 +626,11 @@ void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPo
 		else
 		{
 			// Sprites can consist of separate background & foreground
-			SpriteRender(_data, _filesize, dest, _index[frame]._offset1, destPos, r, flags, scale);
+			drawSprite(_data, _filesize, dest, _index[frame]._offset1, destPos, r, flags, scale);
 
-			if (_index[frame]._offset2)
-				SpriteRender(_data, _filesize, dest, _index[frame]._offset2, destPos, r, flags, scale);
+			if (_index[frame]._offset2) {
+				drawSprite(_data, _filesize, dest, _index[frame]._offset2, destPos, r, flags, scale);
+			}
 		}
 	}
 }
