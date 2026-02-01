@@ -186,6 +186,12 @@ void ListWidget::setSelected(int item) {
 
 		_selectedItem = item;
 
+		// Clear previous selections and mark only this item
+		if (_multiSelectEnabled) {
+			clearSelection();
+			markSelectedItem(item, true);
+		}
+
 		// Notify clients that the selection changed.
 		sendCommand(kListSelectionChangedCmd, _selectedItem);
 

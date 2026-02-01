@@ -1241,6 +1241,13 @@ void GridWidget::setSelected(int id) {
 	for (uint i = 0; i < _sortedEntryList.size(); ++i) {
 		if ((!_sortedEntryList[i]->isHeader) && (_sortedEntryList[i]->entryID == id)) {
 			_selectedEntry = _sortedEntryList[i];
+			
+			// Clear previous selections and mark only this item
+			if (_multiSelectEnabled) {
+				clearSelection();
+				markSelectedItem(id, true);
+			}
+			
 			scrollToEntry(id, false);
 			break;
 		}

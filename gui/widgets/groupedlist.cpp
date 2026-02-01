@@ -213,6 +213,12 @@ void GroupedListWidget::setSelected(int item) {
 
 		_selectedItem = findDataIndex(item);
 
+		// Clear previous selections and mark only this item
+		if (_multiSelectEnabled) {
+			clearSelection();
+			markSelectedItem(_selectedItem, true);
+		}
+
 		// Notify clients that the selection changed.
 		sendCommand(kListSelectionChangedCmd, _selectedItem);
 
