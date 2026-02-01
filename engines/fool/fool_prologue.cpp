@@ -145,17 +145,17 @@ void FoolPrologue::delayFromMarker(int16 numTicks) {
 	g_toolbox->Delay(delay);
 }
 
-void FoolPrologue::sub_128_26c(int16 unk1, int16 unk2) {
+void FoolPrologue::drawTextRightAlign(int16 y, int16 x) {
 	// 128:026c
 	this->var_i32_182 = g_toolbox->StringWidth(this->var_str_76);
-	g_toolbox->MoveTo(this->var_i32_182 - unk2, unk1);
+	g_toolbox->MoveTo(x - this->var_i32_182, y);
 	g_toolbox->DrawString(this->var_str_76);
 }
 
-void FoolPrologue::sub_128_2a6(int16 unk1, int16 unk2) {
+void FoolPrologue::drawTextCenterAlign(int16 y, int16 x) {
 	// 128:02a6
 	this->var_i32_182 = g_toolbox->StringWidth(this->var_str_76);
-	g_toolbox->MoveTo(unk2 - (this->var_i32_182 / 2), unk1);
+	g_toolbox->MoveTo(x - (this->var_i32_182 / 2), y);
 	g_toolbox->DrawString(this->var_str_76);
 }
 
@@ -230,10 +230,10 @@ void FoolPrologue::sub_128_50a(int16 unk1, int16 unk2, int16 unk3, int16 screenP
 		unk1 = 0x5;
 	}
 	// 128:0584
-	for (int i = 1; i <= SCREEN_HEIGHT; i++) {
+	for (int i = 0; i < SCREEN_HEIGHT; i++) {
 		this->var_i32_2 = g_toolbox->TickCount();
-		this->var_i16_5c.top = this->arr_i16_412ea[i] - 1;
-		this->var_i16_5c.bottom = this->arr_i16_412ea[i];
+		this->var_i16_5c.top = this->arr_i16_412ea[i];
+		this->var_i16_5c.bottom = this->arr_i16_412ea[i] + 1;
 		g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->var_i16_5c, this->var_i16_5c, kSrcCopy, nullptr);
 		if (i % unk1 == 0) {
 			this->delayFromMarker(0);
@@ -254,8 +254,8 @@ void FoolPrologue::scanlineTransition(int16 patternID) {
 	// 128:0668
 	for (int i = 0; i < SCREEN_HEIGHT; i++) {
 		this->var_i32_2 = g_toolbox->TickCount();
-		g_toolbox->MoveTo(0, this->arr_i16_412ea[i] - 1);
-		g_toolbox->LineTo(SCREEN_WIDTH, this->arr_i16_412ea[i] - 1);
+		g_toolbox->MoveTo(0, this->arr_i16_412ea[i]);
+		g_toolbox->LineTo(SCREEN_WIDTH, this->arr_i16_412ea[i]);
 		if (i % 5 == 0) {
 			this->delayFromMarker(0);
 		}
@@ -266,7 +266,7 @@ void FoolPrologue::scanlineTransition(int16 patternID) {
 void FoolPrologue::zoomTransition(int16 screenPage) {
 	// 128:06e4
 	this->var_i32_40 = this->arr_i32_41296[screenPage];
-	for (int i = 0; i < 0x36; i++) {
+	for (int i = 1; i <= 0x36; i++) {
 		this->var_i32_2 = g_toolbox->TickCount();
 		this->var_i16_5c.top = (SCREEN_HEIGHT/2) - (int)(i*3.33);
 		this->var_i16_5c.left = (SCREEN_WIDTH/2) - i*5;
@@ -321,9 +321,9 @@ void FoolPrologue::sub_128_800(int16_t unk1, int16_t unk2, int16_t unk3, int16_t
 	g_toolbox->PenNormal();
 }
 
-void FoolPrologue::sub_128_a6c(int16_t unk1, int16_t unk2) {
+void FoolPrologue::drawText(int16_t y, int16_t x) {
 	// 128:0a6c
-	g_toolbox->MoveTo(unk2, unk1);
+	g_toolbox->MoveTo(x, y);
 	g_toolbox->DrawString(this->var_str_76);
 }
 
@@ -359,6 +359,7 @@ void FoolPrologue::drawRainRecycle(int16_t unk) {
 			g_toolbox->Delay(0);
 		}
 	} while (this->var_i32_2 + this->var_i16_1a4 > g_toolbox->TickCount());
+	g_toolbox->Delay(0);
 }
 
 void FoolPrologue::sub_128_c8a() {
@@ -388,14 +389,14 @@ void FoolPrologue::sub_128_de2() {
 	// 128:0de2
 	g_zbasic->text(0xfb, 0x9, kFacePlain, kSrcXor);
 	this->var_str_76 = g_zbasic->str(3);
-	this->sub_128_a6c(0x151, 0x5);
+	this->drawText(0x151, 0x5);
 }
 
 void FoolPrologue::sub_128_e1c() {
 	// 128:0e1c
 	g_zbasic->text(0xfb, 0x9, kFacePlain, kSrcXor);
 	this->var_str_76 = g_zbasic->str(4);
-	this->sub_128_26c(0x154, 0x1f7);
+	this->drawTextRightAlign(0x154, 0x1f7);
 }
 
 void FoolPrologue::sub_128_e58() {
@@ -563,15 +564,15 @@ void FoolPrologue::sub_129_004() {
 		g_zbasic->text(0, 0xc, kFacePlain, kSrcBic);
 		// "not enough memory" message
 		this->var_str_76 = g_zbasic->str(6);
-		this->sub_128_2a6(0x64, 0xfc);
+		this->drawTextCenterAlign(0x64, 0xfc);
 		this->var_str_76 = g_zbasic->str(7);
-		this->sub_128_2a6(0x78, 0xfc);
+		this->drawTextCenterAlign(0x78, 0xfc);
 		this->var_str_76 = g_zbasic->str(8);
-		this->sub_128_2a6(0x96, 0xfc);
+		this->drawTextCenterAlign(0x96, 0xfc);
 		this->var_str_76 = g_zbasic->str(9);
-		this->sub_128_2a6(0xaa, 0xfc);
+		this->drawTextCenterAlign(0xaa, 0xfc);
 		this->var_str_76 = g_zbasic->str(10);
-		this->sub_128_2a6(0xcb, 0xfc);
+		this->drawTextCenterAlign(0xcb, 0xfc);
 		this->sub_128_e58();
 
 		g_zbasic->put(0x0, 0x14, this->arr_i32_41296[0]);
@@ -632,19 +633,19 @@ void FoolPrologue::sub_129_004() {
 			g_zbasic->text(0, 0xc, kFacePlain, kSrcBic);
 			// "set your monitor to black and white" message"
 			this->var_str_76 = g_zbasic->str(13);
-			this->sub_128_2a6(0x82, 0xfc);
+			this->drawTextCenterAlign(0x82, 0xfc);
 			this->var_str_76 = g_zbasic->str(14);
-			this->sub_128_2a6(0x96, 0xfc);
+			this->drawTextCenterAlign(0x96, 0xfc);
 
 			this->var_str_76 = g_zbasic->str(15);
 			// if this is the finale
 			if (this->var_i16_1aa == 2) {
 				this->var_str_76 = g_zbasic->str(16);
 			}
-			this->sub_128_2a6(0xaa, 0xfc);
+			this->drawTextCenterAlign(0xaa, 0xfc);
 
 			this->var_str_76 = g_zbasic->str(17);
-			this->sub_128_2a6(0xcb, 0xfc);
+			this->drawTextCenterAlign(0xcb, 0xfc);
 			// 129:0730
 			this->sub_128_e58();
 			g_zbasic->put(0x0, 0x14, this->arr_i32_41296[0]);
@@ -676,7 +677,16 @@ void FoolPrologue::prologueRun() {
 	this->var_i16_3ce = 5;
 	this->prologueDrawLoadingMsg();
 	this->var_i16_18e = SCREEN_HEIGHT;
+	// fill a buffer with random screen y-positions, to use for the scanline transition
 	this->shuffleScanlines();
+
+	// Because of floppy disk read times, the game pre-loads as many PICT resources
+	// as it can stuff into memory. The below process happens a bunch of times:
+	// - Increment an ID by 1
+	// - Call GetPicture to fetch the next PICT resource for that ID (prologueBufferNextPicture)
+	// - Increment the loading progress % by 5 (prologueDrawLoadingMsg)
+	// - Blit it to an offscreen page with ZBasic's PICTURE command
+	// - Release the resource
 
 	// "The Fool's Errand" title card
 	this->glob_i32_2ce = g_toolbox->GetPicture(0x47);
@@ -690,7 +700,7 @@ void FoolPrologue::prologueRun() {
 	// 130:007a
 	g_zbasic->text(0xfb, 0x9, kFacePlain, kSrcBic);
 	this->var_str_76 = g_zbasic->str(18);
-	this->sub_128_2a6(0x10d, 0xdd);
+	this->drawTextCenterAlign(0x10d, 0xdd);
 	g_toolbox->SetPortBits(this->var_i32_32);
 	// cliffside images with lightning
 	for (int i = 1; i <= 5; i++) {
@@ -846,6 +856,8 @@ void FoolPrologue::prologueRun() {
 	this->drawRainRecycle(0xb4);
 	this->var_i32_40 = this->arr_i32_41296[1];
 
+	// scanline fade in priestess face
+
 	// 130:062c
 	int y = 0;
 	while (y != SCREEN_HEIGHT) {
@@ -856,14 +868,17 @@ void FoolPrologue::prologueRun() {
 			if (y < SCREEN_HEIGHT) {
 				y += 1;
 			}
-			this->var_i16_5c.top = this->arr_i16_412ea[y] - 1;
-			this->var_i16_5c.bottom = this->arr_i16_412ea[y];
+			this->var_i16_5c.top = this->arr_i16_412ea[y];
+			this->var_i16_5c.bottom = this->arr_i16_412ea[y] + 1;
 			// 130:068e
 			g_toolbox->CopyBits(this->var_i32_40, this->var_i32_32, this->var_i16_5c, this->var_i16_5c, kSrcCopy, nullptr);
 		}
 		// 130:06b0
 		this->drawRainRecycle(1);
 	}
+
+	// lightning flash over priestess face
+
 	this->var_i32_2 = g_toolbox->TickCount();
 	this->drawRainRecycle(0xa);
 	this->blitPageToScreen(1);
@@ -881,6 +896,8 @@ void FoolPrologue::prologueRun() {
 	this->var_i32_2 = g_toolbox->TickCount();
 	g_toolbox->InvertRect(this->arr_i16_1bc);
 	this->drawRainRecycle(0x78);
+
+	// cut to shot of cliff
 	this->blitPageToScreen(2);
 
 	// 130:0740
@@ -890,6 +907,7 @@ void FoolPrologue::prologueRun() {
 
 	g_toolbox->SetRect(this->arr_i32_1c4, 0, 0, 0x150, 0x96);
 
+	// priestess zap
 	// 130:0778
 	for (int j = 0; j <= 8; j++) {
 		for (int i = 3; i <= 5; i++) {
@@ -899,6 +917,8 @@ void FoolPrologue::prologueRun() {
 			this->drawRainRecycle(3);
 		}
 	}
+
+	// cut to closeup of priestess mid-zap
 	// 130:07ec
 	this->blitPageToScreen(6);
 	g_toolbox->SetRect(this->arr_i16_1bc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -906,6 +926,8 @@ void FoolPrologue::prologueRun() {
 		this->var_i32_2 = g_toolbox->TickCount();
 		this->delayFromMarker(1);
 	}
+
+	// start loading some new resources into the screen buffers
 	// 130:083c
 	g_zbasic->picture(0, 0, this->arr_i32_0[0xd]);
 	g_zbasic->picture(5, 0, this->arr_i32_0[0xe]);
@@ -919,13 +941,13 @@ void FoolPrologue::prologueRun() {
 	g_zbasic->picture(0, 0x17, this->arr_i32_0[0xf]);
 	g_toolbox->ReleaseResource(this->arr_i32_0[0xf]);
 	// 130:08dc
-	this->sub_130_f48();
+	this->prologueRenderNextText();
 	this->sub_128_de2();
 	this->setPortBitsToPage(1);
 	this->fillRect(0, 0, 0, 0x152, 0x1fc);
 	g_zbasic->picture(0xf0, 0xba, this->arr_i32_0[0x10]);
 	g_toolbox->ReleaseResource(this->arr_i32_0[0x10]);
-	this->sub_130_f48();
+	this->prologueRenderNextText();
 	this->sub_128_de2();
 	// 130:0934
 	for (int i = 2; i <= 5; i++) {
@@ -954,11 +976,12 @@ void FoolPrologue::prologueRun() {
 	this->sub_128_de2();
 	//g_zbasic->blockMove(this->arr_i32_41296[6], this->arr_i32_41296[7], 0x5580);
 	this->arr_i32_41296[7]->copyFrom(*this->arr_i32_41296[6]);
-	this->sub_130_f48();
+	this->prologueRenderNextText();
 	g_toolbox->ReleaseResource(this->arr_i32_0[0x11]);
 	this->setPortBitsToPage(7);
 	// 130:0ac2
 	g_zbasic->picture(-0x14, -0x1e, this->arr_i32_0[0x12]);
+	this->prologueRenderNextText();
 	this->setPortBitsToPage(8);
 	//g_zbasic->blockMove(this->arr_i32_41296[7], this->arr_i32_41296[8], 0x5580);
 	this->arr_i32_41296[8]->copyFrom(*this->arr_i32_41296[7]);
@@ -966,6 +989,7 @@ void FoolPrologue::prologueRun() {
 	g_zbasic->picture(0x16d, 0x80, this->arr_i32_0[0x48]);
 	g_toolbox->ReleaseResource(this->arr_i32_0[0x48]);
 	g_toolbox->SetPortBits(this->var_i32_32);
+
 	// 130:0b74
 	this->delayFromMarker(0xd2);
 	this->sub_128_e80();
@@ -1020,10 +1044,14 @@ void FoolPrologue::prologueRun() {
 		}
 	}
 	// 130:0ca8
+	// "who dares to interrupt my errand"
 	this->blitPageToScreen(0x6);
 	this->sub_128_e58();
-	this->sub_128_50a(0x7, 0, 0x1fc, 0);
+
+
+	this->sub_128_50a(0x0, 0, 0x1fc, 7);
 	this->delay(0xa);
+	// "I dare"
 	this->blitPageToScreen(0x8);
 	this->sub_128_e58();
 
@@ -1055,8 +1083,9 @@ void FoolPrologue::prologueDrawLoadingMsg() {
 	this->var_str_76 += g_zbasic->str(20);
 	// 130:0d70
 	this->fillRect(0, 0, 0x7, 0x13, this->var_i16_10 - 7);
-	this->sub_128_2a6(0xe, this->var_i16_10/2);
+	this->drawTextCenterAlign(0xe, this->var_i16_10/2);
 	g_toolbox->SetPort(this->var_i32_8);
+	g_toolbox->Delay(0);
 }
 
 void FoolPrologue::drawRain() {
@@ -1089,7 +1118,7 @@ void FoolPrologue::drawRainDrop() {
 
 }
 
-void FoolPrologue::sub_130_f48() {
+void FoolPrologue::prologueRenderNextText() {
 	// 130:0f48
 	this->var_i16_3d2 = g_zbasic->readInt();
 	for (int i = 1; i <= this->var_i16_3d2; i++) {
@@ -1109,7 +1138,7 @@ void FoolPrologue::sub_130_f48() {
 		}
 		// 130:0fc8
 		g_zbasic->text(0xfa, 0xc, kFacePlain, kSrcOr);
-		this->sub_128_a6c(this->var_i16_180, this->var_i16_176);
+		this->drawText(this->var_i16_180, this->var_i16_176);
 	}
 }
 
@@ -1232,7 +1261,7 @@ void FoolPrologue::sub_131_004() {
 	g_zbasic->bufferFlush(this->var_str_76);
 
 	// 131:0400
-	this->sub_128_a6c(0x178, 0xb4);
+	this->drawText(0x178, 0xb4);
 	this->delay(0x1e);
 
 	// 131:041a
@@ -1425,7 +1454,7 @@ void FoolPrologue::sub_131_004() {
 	g_zbasic->text(0xfa, 0xc, kFacePlain, kSrcBic);
 	this->var_str_76 = Common::U32String::format("\"%s\"", g_zbasic->str(23));
 	g_zbasic->bufferFlush(this->var_str_76);
-	this->sub_128_a6c(0x1f4 - g_toolbox->StringWidth(this->var_str_76), 0xd2);
+	this->drawText(0x1f4 - g_toolbox->StringWidth(this->var_str_76), 0xd2);
 	this->var_i32_2 = g_toolbox->TickCount();
 
 	// 131:0e76
@@ -1502,7 +1531,7 @@ void FoolPrologue::sub_131_004() {
 			g_zbasic->text(0xfa, 0xc, kFacePlain, kSrcBic);
 			this->var_str_76 = Common::U32String::format("\"%s\"", g_zbasic->str(24).encode().c_str());
 			g_zbasic->bufferFlush(this->var_str_76);
-			this->sub_128_26c(0x1f0, 0xd2);
+			this->drawTextRightAlign(0x1f0, 0xd2);
 			g_zbasic->picture(0x198, 0x102, this->arr_i32_0[0x25]);
 		}
 		this->delayFromMarker(0x2);
@@ -1611,7 +1640,7 @@ void FoolPrologue::sub_131_004() {
 	g_zbasic->text(0xfa, 0xc, kFacePlain, kSrcBic);
 	this->var_str_76 = Common::U32String::format("\"%s\"", g_zbasic->str(25).c_str());
 	g_zbasic->bufferFlush(this->var_str_76);
-	this->sub_128_26c(0x17d, 0x3c);
+	this->drawTextRightAlign(0x17d, 0x3c);
 
 	// 131:17c8
 	// ...
@@ -1628,7 +1657,7 @@ void FoolPrologue::sub_131_4dc0() {
 	// 131:4e08
 	this->fillRect(0, 7, 0x13, this->var_i16_10 - 7, 0);
 
-	this->sub_128_2a6(this->var_i16_10 / 2, 0xe);
+	this->drawTextCenterAlign(this->var_i16_10 / 2, 0xe);
 	g_toolbox->SetPort(this->var_i32_8);
 }
 
@@ -1640,7 +1669,7 @@ void FoolPrologue::sub_131_4e48() {
 	this->var_str_76 += Common::U32String::format("\"%s\"", g_zbasic->str(80).c_str());
 	g_zbasic->bufferFlush(this->var_str_76);
 
-	this->sub_128_a6c(0x1aa, 0xb4);
+	this->drawText(0x1aa, 0xb4);
 }
 
 void FoolPrologue::sub_131_4e98() {
@@ -1650,23 +1679,23 @@ void FoolPrologue::sub_131_4e98() {
 	// "And so the fool heeded the advice of the magician..."
 	this->var_str_76 += g_zbasic->str(81);
 	g_zbasic->bufferFlush(this->var_str_76);
-	this->sub_128_a6c(0x92, this->var_i16_3fc);
+	this->drawText(0x92, this->var_i16_3fc);
 
 	this->var_str_76 += g_zbasic->str(82);
 	g_zbasic->bufferFlush(this->var_str_76);
-	this->sub_128_a6c(0x9c, this->var_i16_3fc + 0xf);
+	this->drawText(0x9c, this->var_i16_3fc + 0xf);
 
 	this->var_str_76 += g_zbasic->str(83);
 	g_zbasic->bufferFlush(this->var_str_76);
-	this->sub_128_a6c(0xa6, this->var_i16_3fc + 0x1e);
+	this->drawText(0xa6, this->var_i16_3fc + 0x1e);
 
 	this->var_str_76 += g_zbasic->str(84);
 	g_zbasic->bufferFlush(this->var_str_76);
-	this->sub_128_a6c(0xc4, this->var_i16_3fc + 0x2d);
+	this->drawText(0xc4, this->var_i16_3fc + 0x2d);
 
 	this->var_str_76 += g_zbasic->str(85);
 	g_zbasic->bufferFlush(this->var_str_76);
-	this->sub_128_a6c(0xe2, this->var_i16_3fc + 0x3c);
+	this->drawText(0xe2, this->var_i16_3fc + 0x3c);
 
 	this->sub_128_de2();
 }
