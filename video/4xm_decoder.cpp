@@ -28,7 +28,7 @@
 #include "common/memstream.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 #include "video/4xm_utils.h"
 
 namespace Video {
@@ -88,13 +88,14 @@ class FourXMDecoder::FourXMVideoTrack : public FixedRateVideoTrack {
 	Common::Rational _frameRate;
 	uint _w, _h;
 	uint16 _version = 0;
-	Graphics::Surface *_frame;
+	Common::ScopedPtr<Graphics::ManagedSurface> _framePtr, _lastFramePtr;
+	Graphics::Surface *_frame = nullptr, *_lastFrame = nullptr;
 	FourXM::HuffmanDecoder _blockType[4] = {};
 	int _mv[256];
 	Common::HashMap<byte, Common::Array<byte>> _cframes;
 
 public:
-	FourXMVideoTrack(FourXMDecoder *dec, const Common::Rational &frameRate, uint w, uint h, uint16 version) : _dec(dec), _frameRate(frameRate), _w(w), _h(h), _version(version), _frame(nullptr) {
+	FourXMVideoTrack(FourXMDecoder *dec, const Common::Rational &frameRate, uint w, uint h, uint16 version) : _dec(dec), _frameRate(frameRate), _w(w), _h(h), _version(version) {
 		if (_version <= 1)
 			error("versions 0 and 1 are not supported");
 		_blockType[0].initStatistics({16, 8, 4, 2, 1, 1});
@@ -125,16 +126,21 @@ private:
 };
 
 const Graphics::Surface *FourXMDecoder::FourXMVideoTrack::decodeNextFrame() {
-	if (!_frame) {
-		_frame = new Graphics::Surface();
-		_frame->create(_w, _h, getPixelFormat());
-		auto pitch = _frame->pitch / _frame->format.bytesPerPixel;
+	if (!_framePtr) {
+		_framePtr.reset(new Graphics::ManagedSurface());
+		_framePtr->create(_w, _h, getPixelFormat());
+		_frame = _framePtr->surfacePtr();
+		_lastFramePtr.reset(new Graphics::ManagedSurface());
+		_lastFramePtr->create(_w, _h, getPixelFormat());
+		_lastFrame = _lastFramePtr->surfacePtr();
+		assert(_framePtr->pitch == _lastFramePtr->pitch);
+		auto pitch = _framePtr->pitch / _framePtr->format.bytesPerPixel;
 
 		for (uint i = 0; i < 256; i++)
 			_mv[i] = mv[i][0] + mv[i][1] * pitch;
 	}
 	_dec->decodeNextFrameImpl();
-	return _frame;
+	return _lastFrame;
 }
 
 int FourXMDecoder::FourXMVideoTrack::getCurFrame() const {
@@ -145,12 +151,7 @@ int FourXMDecoder::FourXMVideoTrack::getFrameCount() const {
 	return _dec->_frames.size();
 }
 
-FourXMDecoder::FourXMVideoTrack::~FourXMVideoTrack() {
-	if (_frame) {
-		_frame->free();
-		delete _frame;
-	}
-}
+FourXMDecoder::FourXMVideoTrack::~FourXMVideoTrack() = default;
 
 namespace {
 static const uint8_t iquant[64] = {
@@ -317,6 +318,7 @@ void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *st
 		}
 	}
 	assert(prefixOffset == prefixData.size());
+	SWAP(_frame, _lastFrame);
 }
 
 namespace {
@@ -414,21 +416,19 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm(Common::SeekableReadStream *st
 	Common::MemoryReadStream wordStream(wordStreamData.data(), wordStreamData.size());
 	Common::MemoryReadStream byteStream(byteStreamData.data(), byteStreamData.size());
 
-	Common::ScopedPtr<Graphics::Surface> frame(new Graphics::Surface());
-	frame->copyFrom(*_frame);
-	uint16 *dst = static_cast<uint16 *>(frame->getPixels());
-	const uint16 *src = static_cast<const uint16 *>(_frame->getPixels());
-	assert(frame->format.bytesPerPixel == 2);
-	auto stride = frame->pitch / frame->format.bytesPerPixel;
+	uint16 *dst = static_cast<uint16 *>(_frame->getPixels());
+	const uint16 *src = static_cast<const uint16 *>(_lastFrame->getPixels());
+	assert(_frame->format.bytesPerPixel == 2);
+	auto stride = _frame->pitch / _frame->format.bytesPerPixel;
 	assert(stride == _frame->pitch / _frame->format.bytesPerPixel);
-	for (int y = 0, h = frame->h; y < h; y += 8) {
-		for (int x = 0, w = frame->w; x < w; x += 8) {
+	for (int y = 0, h = _frame->h; y < h; y += 8) {
+		for (int x = 0, w = _frame->w; x < w; x += 8) {
 			decode_pfrm_block(dst + x, src + x, stride, 3, 3, bitStream, wordStream, byteStream);
 		}
 		dst += stride << 3;
 		src += stride << 3;
 	}
-	_frame = frame.release();
+	SWAP(_frame, _lastFrame);
 }
 
 void FourXMDecoder::FourXMVideoTrack::decode_cfrm(Common::SeekableReadStream *stream) {
