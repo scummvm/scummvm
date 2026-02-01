@@ -210,10 +210,10 @@ void sortAnimsByZOrder(Common::Array<Sprite> &anims) {
 		}
 		anims[j] = key;
 	}
-	debug("Sorted anims by zOrder");
-	for (size_t i = 0; i < anims.size(); i++) {
-		debug("Anim %d, extra = %d: zOrder=%d", i, anims[i].extra, anims[i].zOrder);
-	}
+	// debug("Sorted anims by zOrder");
+	// for (size_t i = 0; i < anims.size(); i++) {
+	// debug("Anim %d, extra = %d: zOrder=%d", i, anims[i].extra, anims[i].zOrder);
+	// }
 }
 
 void PelrockEngine::playSoundIfNeeded() {
@@ -260,35 +260,6 @@ bool PelrockEngine::renderScene(int overlayMode) {
 const int kPasserbyTriggerFrameInterval = 15;
 void PelrockEngine::frameTriggers() {
 	uint32 frameCount = _chrono->getFrameCount();
-	// Passerby animations
-	if ((frameCount & kPasserbyTriggerFrameInterval) == kPasserbyTriggerFrameInterval) {
-		switch (_room->_currentRoomNumber) {
-		case 9: {
-			Sprite *mouse = _room->findSpriteByIndex(2);
-			mouse->zOrder = 1;
-			mouse->animData[0].loopCount = 3;
-			mouse->animData[1].loopCount = 1;
-			mouse->animData[1].movementFlags = 0x3FF;
-			mouse->animData[2].loopCount = 1;
-			mouse->animData[2].movementFlags = 0x801F;
-			mouse->animData[3].loopCount = 3;
-			mouse->animData[3].movementFlags = 0x3E0;
-			break;
-		}
-		}
-	}
-	if (_room->_currentRoomNumber == 9) {
-		// Mouse animation on library
-		Sprite *mouse = _room->findSpriteByIndex(2);
-		if (mouse) {
-			if (mouse->y > 355) {
-				mouse->x = 82;
-				mouse->y = 315;
-				mouse->zOrder = 255;
-				mouse->curAnimIndex = 0;
-			}
-		}
-	}
 	passerByAnim(frameCount);
 }
 
@@ -305,6 +276,9 @@ void PelrockEngine::passerByAnim(uint32 frameCount) {
 			if (sprite && sprite->zOrder == -1) {
 				debug("Starting passerby anim for sprite %d at index %d", anim.spriteIndex, animIndex);
 				sprite->zOrder = anim.targetZIndex;
+				sprite->curAnimIndex = 0;
+				sprite->animData[0].curFrame = 0;
+				sprite->animData[0].curLoop = 0;
 				_room->_passerByAnims->latch = true;
 				_room->_passerByAnims->currentAnimIndex = animIndex;
 			}
@@ -312,13 +286,15 @@ void PelrockEngine::passerByAnim(uint32 frameCount) {
 	} else {
 		PasserByAnim anim = _room->_passerByAnims->passerByAnims[_room->_passerByAnims->currentAnimIndex];
 		byte direction = anim.dir;
+
 		int spriteIndex = anim.spriteIndex;
 		int startX = anim.startX;
 		int startY = anim.startY;
-
+		debug("Checking passerby anim %d for sprite %d, direction %d", _room->_passerByAnims->currentAnimIndex, spriteIndex, direction);
 		Sprite *sprite = _room->findSpriteByIndex(spriteIndex);
-		if (direction == RIGHT) {
-			if (sprite->x >= anim.resetX) {
+		if (direction == PASSERBY_RIGHT) {
+			debug("Checking passerby anim for sprite %d moving RIGHT, curpos is %d", spriteIndex, sprite->x);
+			if (sprite->x >= anim.resetCoord) {
 				sprite->x = startX;
 				sprite->y = startY;
 				sprite->zOrder = -1;
@@ -326,8 +302,20 @@ void PelrockEngine::passerByAnim(uint32 frameCount) {
 				sprite->animData[0].curFrame = 0;
 				_room->_passerByAnims->latch = false;
 			}
-		} else if (direction == LEFT) {
-			if (sprite->x <= anim.resetX) {
+		} else if (direction == PASSERBY_LEFT) {
+			debug("Checking passerby anim for sprite %d moving LEFT, curpos is %d", spriteIndex, sprite->x);
+
+			if (sprite->x <= anim.resetCoord) {
+				sprite->x = startX;
+				sprite->y = startY;
+				sprite->zOrder = -1;
+				sprite->curAnimIndex = 0;
+				sprite->animData[0].curFrame = 0;
+				_room->_passerByAnims->latch = false;
+			}
+		} else if (direction == PASSERBY_DOWN) {
+			debug("Checking passerby anim for sprite %d moving DOWN, curpos is %d, reset %d", spriteIndex, sprite->y, anim.resetCoord);
+			if (sprite->y >= anim.resetCoord) {
 				sprite->x = startX;
 				sprite->y = startY;
 				sprite->zOrder = -1;
@@ -1013,6 +1001,10 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 		return;
 	}
 
+	if(_room->_currentRoomNumber == 9 && sprite->index == 2) {
+		debug("Drawing sprite 2 in room 9, anim %d, frame %d/%d, loop %d/%d", sprite->curAnimIndex, animData.curFrame, animData.nframes, animData.curLoop, animData.loopCount);
+	}
+
 	applyMovement(&(sprite->x), &(sprite->y), &(sprite->zOrder), animData.movementFlags);
 	int x = sprite->x;
 	int y = sprite->y;
@@ -1352,6 +1344,7 @@ void PelrockEngine::gameLoop() {
 	_events->pollEvent();
 	checkMouse();
 	renderScene();
+	// _events->waitForKey();
 	_screen->update();
 }
 

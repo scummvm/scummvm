@@ -621,18 +621,29 @@ int streetWalkerIndices[] = {
 RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 	RoomPasserBys *anims = nullptr;
 	switch (roomNumber) {
-		// case 9: {
-		// 		Sprite *mouse = findSpriteByIndex(2);
-		// 		mouse->zOrder = 1;
-		// 		mouse->animData[0].loopCount = 3;
-		// 		mouse->animData[1].loopCount = 1;
-		// 		mouse->animData[1].movementFlags = 0x3FF;
-		// 		mouse->animData[2].loopCount = 1;
-		// 		mouse->animData[2].movementFlags = 0x801F;
-		// 		mouse->animData[3].loopCount = 3;
-		// 		mouse->animData[3].movementFlags = 0x3E0;
-		// 		break;
-		// 	}
+	case 9: {
+		Sprite *mouse = findSpriteByIndex(2);
+		Sprite *blank = findSpriteByIndex(4);
+		mouse->animData[0].loopCount = 3;
+		mouse->animData[1].loopCount = 1;
+		mouse->animData[1].movementFlags = 0x3FF;
+		mouse->animData[2].loopCount = 1;
+		mouse->animData[2].movementFlags = 0x801F;
+		mouse->animData[3].loopCount = 4;
+		mouse->animData[3].movementFlags = 0x3C0;
+
+		anims = new RoomPasserBys(roomNumber, 1);
+		PasserByAnim anim;
+		anim.spriteIndex = 2;
+		anim.startX = mouse->x;
+		anim.startY = mouse->y;
+		anim.dir = PASSERBY_DOWN;
+		anim.targetZIndex = blank->zOrder + 1;
+		anim.resetCoord = blank->y;
+		anims->passerByAnims[0] = anim;
+		debug("Loaded passerby animation for room %d, direction = %d", roomNumber, anim.dir);
+		break;
+	}
 
 	case 1:
 	case 2:
@@ -646,10 +657,10 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		Sprite *camel = findSpriteByIndex(anim.spriteIndex);
 		anim.startX = camel->x;
 		anim.startY = camel->y;
-		anim.dir = RIGHT;
+		anim.dir = PASSERBY_RIGHT;
 		anim.frameTrigger = 0x1FFF;
 		anim.targetZIndex = 1;
-		anim.resetX = 639 + camel->w;
+		anim.resetCoord = 639 + camel->w;
 
 		anims->passerByAnims[0] = anim;
 		break;
@@ -661,8 +672,8 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		Sprite *camel = findSpriteByIndex(3);
 		anim.startX = camel->x;
 		anim.startY = camel->y;
-		anim.dir = LEFT;
-		anim.resetX = 0 - camel->w;
+		anim.dir = PASSERBY_LEFT;
+		anim.resetCoord = 0 - camel->w;
 		anim.targetZIndex = 1;
 
 		anims->passerByAnims[0] = anim;
@@ -677,8 +688,8 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		animA.spriteIndex = 2;
 		animA.startX = carLeft->x;
 		animA.startY = carLeft->y;
-		animA.dir = LEFT;
-		animA.resetX = carRight->x + carRight->w - carLeft->w;
+		animA.dir = PASSERBY_LEFT;
+		animA.resetCoord = carRight->x + carRight->w - carLeft->w;
 		animA.targetZIndex = 100;
 
 		anims->passerByAnims[0] = animA;
@@ -686,9 +697,9 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		animB.spriteIndex = 3;
 		animB.startX = carRight->x;
 		animB.startY = carRight->y;
-		animB.dir = RIGHT;
+		animB.dir = PASSERBY_RIGHT;
 		animB.targetZIndex = 100;
-		animB.resetX = 639 + carRight->w;
+		animB.resetCoord = 639 + carRight->w;
 		anims->passerByAnims[1] = animB;
 		break;
 	}
@@ -701,8 +712,8 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		anim.spriteIndex = 2;
 		anim.startX = walker->x;
 		anim.startY = walker->y;
-		anim.dir = RIGHT;
-		anim.resetX = dark->x;
+		anim.dir = PASSERBY_RIGHT;
+		anim.resetCoord = dark->x;
 		anim.targetZIndex = dark->zOrder + 1;
 		anims->passerByAnims[0] = anim;
 		break;
@@ -716,8 +727,8 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		animA.spriteIndex = 2;
 		animA.startX = catRight->x;
 		animA.startY = catRight->y;
-		animA.dir = RIGHT;
-		animA.resetX = catLeft->x;
+		animA.dir = PASSERBY_RIGHT;
+		animA.resetCoord = catLeft->x;
 		animA.targetZIndex = blank->zOrder + 1;
 
 		anims->passerByAnims[0] = animA;
@@ -725,8 +736,8 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		animB.spriteIndex = 3;
 		animB.startX = catLeft->x;
 		animB.startY = catLeft->y;
-		animB.dir = LEFT;
-		animB.resetX = blank->x;
+		animB.dir = PASSERBY_LEFT;
+		animB.resetCoord = blank->x;
 		animB.targetZIndex = blank->zOrder + 1;
 		anims->passerByAnims[1] = animB;
 		break;
@@ -741,8 +752,8 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		animA.spriteIndex = 3;
 		animA.startX = mouseRight->x;
 		animA.startY = mouseRight->y;
-		animA.dir = RIGHT;
-		animA.resetX = mouseLeft->x;
+		animA.dir = PASSERBY_RIGHT;
+		animA.resetCoord = mouseLeft->x;
 		animA.targetZIndex = papers->zOrder + 1;
 		anims->passerByAnims[0] = animA;
 
@@ -750,8 +761,8 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		animB.spriteIndex = 4;
 		animB.startX = mouseLeft->x;
 		animB.startY = mouseLeft->y;
-		animB.dir = LEFT;
-		animB.resetX = mouseRight->x;
+		animB.dir = PASSERBY_LEFT;
+		animB.resetCoord = mouseRight->x;
 		animB.targetZIndex = papers->zOrder + 1;
 		anims->passerByAnims[1] = animB;
 		break;
@@ -765,8 +776,8 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		animA.spriteIndex = 2;
 		animA.startX = mummyLeft->x;
 		animA.startY = mummyLeft->y;
-		animA.dir = LEFT;
-		animA.resetX = 0 - mummyLeft->w;
+		animA.dir = PASSERBY_LEFT;
+		animA.resetCoord = 0 - mummyLeft->w;
 		animA.targetZIndex = 1;
 
 		anims->passerByAnims[0] = animA;
@@ -774,9 +785,9 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		animB.spriteIndex = 3;
 		animB.startX = mummyRight->x;
 		animB.startY = mummyRight->y;
-		animB.dir = RIGHT;
+		animB.dir = PASSERBY_RIGHT;
 		animB.targetZIndex = 1;
-		animB.resetX = 639 + mummyRight->w;
+		animB.resetCoord = 639 + mummyRight->w;
 		anims->passerByAnims[1] = animB;
 		break;
 	}
@@ -868,9 +879,6 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 		for (int j = 0; j < spriteChanges.size(); j++) {
 			if (spriteChanges[j].spriteIndex == sprite.index) {
 				sprite.zOrder = spriteChanges[j].zIndex;
-				if (sprite.zOrder == 255) {
-					sprite.isHotspotDisabled = 1;
-				}
 				break;
 			}
 		}
@@ -981,7 +989,6 @@ uint32 RoomManager::loadDescriptions(byte *pair12data, size_t pair12size, Common
 	uint32_t lastDescPos = 0;
 	outDescriptions.clear();
 	while (pos < (pair12size)) {
-		int desc_pos = 0;
 		if (pair12data[pos] == 0xFF) {
 			Description description;
 
@@ -1199,7 +1206,7 @@ byte *RoomManager::loadShadowMap(int roomNumber) {
 	readUntilBuda(&shadowMapFile, shadowOffset, compressed, compressedSize);
 
 	byte *shadows = nullptr;
-	size_t output = rleDecompress(compressed, compressedSize, 0, 640 * 400, &shadows);
+	rleDecompress(compressed, compressedSize, 0, 640 * 400, &shadows);
 	free(compressed);
 	shadowMapFile.close();
 	return shadows;
@@ -1259,7 +1266,6 @@ byte RoomManager::loadMusicTrackForRoom(Common::File *roomFile, int roomOffset) 
 	uint32_t pair9offset = roomOffset + (9 * 8);
 	roomFile->seek(pair9offset, SEEK_SET);
 	uint32_t pair9_data_offset = roomFile->readUint32LE();
-	uint32_t pair9_size = roomFile->readUint32LE();
 
 	roomFile->seek(pair9_data_offset, SEEK_SET);
 	byte musicTrack = roomFile->readByte();
@@ -1271,7 +1277,6 @@ Common::Array<byte> RoomManager::loadRoomSfx(Common::File *roomFile, int roomOff
 	uint32_t pair9offset = roomOffset + (9 * 8);
 	roomFile->seek(pair9offset, SEEK_SET);
 	uint32_t pair9_data_offset = roomFile->readUint32LE();
-	uint32_t pair9_size = roomFile->readUint32LE();
 
 	roomFile->seek(pair9_data_offset, SEEK_SET);
 	roomFile->skip(1); // skip music track byte

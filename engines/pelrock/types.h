@@ -405,16 +405,16 @@ struct PaletteAnim {
 	byte tickCount = 0;
 };
 
-#define RIGHT 0
-#define LEFT 1
-
+#define PASSERBY_RIGHT 0
+#define PASSERBY_LEFT 1
+#define PASSERBY_DOWN 2
 struct PasserByAnim
 {
 	uint32 frameTrigger = 0x3FF;
 	int16 startX;
 	int16 startY;
-	int16 resetX;
-	bool dir;
+	int16 resetCoord;
+	byte dir;
 	byte spriteIndex;
 	byte targetZIndex;
 };
