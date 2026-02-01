@@ -44,6 +44,7 @@ BaseScriptable *makeSXVlink(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSXBlackAndWhite(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSXShadowManager(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSXDisplacement(BaseGame *inGame, ScStack *stack);
+BaseScriptable *makeSXProtection(BaseGame *inGame, ScStack *stack);
 
 bool EmulatePluginCall(BaseGame *inGame, ScStack *stack, ScStack *thisStack, char *name) {
 	ScValue *thisObj;
@@ -115,6 +116,18 @@ bool EmulatePluginCall(BaseGame *inGame, ScStack *stack, ScStack *thisStack, cha
 		thisObj = thisStack->getTop();
 
 		thisObj->setNative(makeSXDisplacement(inGame, stack));
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Protection class for "Susan Rose: Mysterious Child" game)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "Protection") == 0) {
+		thisObj = thisStack->getTop();
+
+		thisObj->setNative(makeSXProtection(inGame, stack));
 
 		stack->pushNULL();
 		return STATUS_OK;
