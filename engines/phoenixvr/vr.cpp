@@ -27,7 +27,6 @@
 #include "common/textconsole.h"
 #include "graphics/screen.h"
 #include "graphics/surface.h"
-#include "graphics/yuv_to_rgb.h"
 #include "image/bmp.h"
 #include "math/vector3d.h"
 #include "phoenixvr/angle.h"
@@ -128,12 +127,12 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 			}
 		}
 
-		Video::FourXM::idct(ac);
+		Video::FourXM::idct(ac, 5);
 		auto *dst = prefix ? planes.data() + channel * planeSize + blockIdx * 64 : planes.data() + channel * planeSize + y0 * planePitch + x0;
 		const auto *src = ac;
 		for (unsigned h = 8; h--; dst += planePitch - 8) {
 			for (unsigned w = 8; w--;) {
-				int v = *src++ * 2 + 128; // FIXME: just compensating 13 bit shift
+				int v = *src++ + 128;
 				v = clip(v);
 				*dst++ = v;
 			}
@@ -169,11 +168,10 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 			}
 		}
 	} else {
-#if 0
 		auto &format = pic.format;
-		for(int yy = 0; yy < pic.h; ++yy) {
-			auto *rows = static_cast<uint32*>(pic.getBasePtr(0, yy));
-			for(int xx = 0; xx < pic.w; ++xx) {
+		for (int yy = 0; yy < pic.h; ++yy) {
+			auto *rows = static_cast<uint32 *>(pic.getBasePtr(0, yy));
+			for (int xx = 0; xx < pic.w; ++xx) {
 				int16 y = *yPtr++;
 				int16 cr = *crPtr++;
 				int16 cb = *cbPtr++;
@@ -181,10 +179,6 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 				*rows++ = YCbCr2RGB(format, y, cb, cr);
 			}
 		}
-#else
-		YUVToRGBMan.convert444(&pic, Graphics::YUVToRGBManager::kScaleFull,
-							   yPtr, cbPtr, crPtr, pic.w, pic.h, planePitch, planePitch);
-#endif
 	}
 }
 } // namespace
