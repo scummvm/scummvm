@@ -118,7 +118,7 @@ private:
 
 class Ima_ADPCMStream : public ADPCMStream {
 protected:
-	int16 decodeIMA(byte code, int channel = 0); // Default to using the left channel/using one channel
+	int16 decodeIMA(byte code, int channel = 0, int shift = 3); // Default to using the left channel/using one channel
 
 public:
 	Ima_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
@@ -274,11 +274,12 @@ public:
 		return !_planes.empty() && _samplePos >= _planes[0].size();
 	}
 
-	void reset() {
+	void reset() override {
 		Ima_ADPCMStream::reset();
 		_samplePos = 0;
 		_planes.clear();
 	}
+
 private:
 	void decode();
 

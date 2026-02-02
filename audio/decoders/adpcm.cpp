@@ -547,8 +547,8 @@ const int16 Ima_ADPCMStream::_imaTable[89] = {
 	32767
 };
 
-int16 Ima_ADPCMStream::decodeIMA(byte code, int channel) {
-	int32 E = (2 * (code & 0x7) + 1) * _imaTable[_status.ima_ch[channel].stepIndex] / 8;
+int16 Ima_ADPCMStream::decodeIMA(byte code, int channel, int shift) {
+	int32 E = ((2 * (code & 0x7) + 1) * _imaTable[_status.ima_ch[channel].stepIndex]) >> shift;
 	int32 diff = (code & 0x08) ? -E : E;
 	int32 samp = CLIP<int32>(_status.ima_ch[channel].last + diff, -32768, 32767);
 
@@ -578,8 +578,8 @@ void FOURXM_ADPCMStream::decode() {
 		auto sample = 0;
 		for(auto s = encodedPerChannel; s--; ) {
 			byte data = _stream->readByte();
-			plane[sample++] = decodeIMA(data & 0x0f, i);
-			plane[sample++] = decodeIMA((data >> 4) & 0x0f, i);
+			plane[sample++] = decodeIMA(data & 0x0f, i, 4);
+			plane[sample++] = decodeIMA((data >> 4) & 0x0f, i, 4);
 		}
 	}
 }
