@@ -501,7 +501,7 @@ void FourXMDecoder::decodeNextFrameImpl() {
 					auto trackIdx = _stream->readUint32LE();
 					auto packetSize = _stream->readUint32LE();
 					if (trackIdx == 0 && _audio) {
-						_audio->decode(tag, loadBuf(packetSize), packetSize);
+						_audio->decode(tag, loadBuf(packetSize - 8), packetSize - 8);
 					} else {
 						_stream->skip(packetSize);
 						offset += packetSize + 8;
