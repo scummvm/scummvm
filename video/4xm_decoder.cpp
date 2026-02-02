@@ -329,25 +329,51 @@ namespace {
 template<bool Scale>
 void mcdc(uint16_t *dst, const uint16_t *src, int log2w,
 		  int log2h, int stride, uint dc) {
+	dc |= dc << 16;
 	int h = 1 << log2h;
-	int w = 1 << log2w;
 	if (Scale) {
-		for (int i = 0; i != h; ++i) {
-			for (int j = 0; j != w; ++j) {
-				dst[j] = src[j] + dc;
+		for (int i = 0; i < h; ++i) {
+			auto *dst32 = reinterpret_cast<uint32_t *>(dst);
+			auto *src32 = reinterpret_cast<const uint32_t *>(src);
+			switch (log2w) {
+			case 3:
+				dst32[2] = src32[2] + dc;
+				dst32[3] = src32[3] + dc;
+				// fall through
+			case 2:
+				dst32[1] = src32[1] + dc;
+				// fall through
+			case 1:
+				dst32[0] = src32[0] + dc;
+				break;
+			case 0:
+				*dst = *src + dc;
 			}
 			src += stride;
 			dst += stride;
 		}
 	} else {
-		for (int i = 0; i != h; ++i) {
-			for (int j = 0; j != w; ++j) {
-				dst[j] = dc;
+		for (int i = 0; i < h; ++i) {
+			auto *dst32 = reinterpret_cast<uint32_t *>(dst);
+			switch (log2w) {
+			case 3:
+				dst32[2] = dc;
+				dst32[3] = dc;
+				// fall through
+			case 2:
+				dst32[1] = dc;
+				// fall through
+			case 1:
+				dst32[0] = dc;
+				break;
+			case 0:
+				*dst = dc;
 			}
 			dst += stride;
 		}
 	}
 }
+
 } // namespace
 
 void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(uint16 *dst, const uint16 *src, int stride, int log2w, int log2h, FourXM::BEWordBitStream &bs, Common::MemoryReadStream &wordStream, Common::MemoryReadStream &byteStream) {
