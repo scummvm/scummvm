@@ -120,7 +120,7 @@ private:
 	void dumpImpl(uint code, uint size, uint index, uint ch) const;
 };
 
-void idct(int16_t block[64]);
+void idct(int16_t block[64], int shift = 6);
 
 } // namespace FourXM
 } // namespace Video

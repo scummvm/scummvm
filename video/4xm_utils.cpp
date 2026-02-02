@@ -180,7 +180,7 @@ Common::Array<byte> HuffmanDecoder::unpack(const byte *huff, uint huffSize, byte
 
 #define MULTIPLY(var, const) ((int)((var) * (unsigned)(const)) >> 16)
 
-void idct(int16_t block[64]) {
+void idct(int16_t block[64], int shift) {
 	int tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7;
 	int tmp10, tmp11, tmp12, tmp13;
 	int z5, z10, z11, z12, z13;
@@ -253,14 +253,14 @@ void idct(int16_t block[64]) {
 		tmp5 = tmp11 - tmp6;
 		tmp4 = tmp10 + tmp5;
 
-		block[0 + i] = (tmp0 + tmp7) >> 6;
-		block[7 + i] = (tmp0 - tmp7) >> 6;
-		block[1 + i] = (tmp1 + tmp6) >> 6;
-		block[6 + i] = (tmp1 - tmp6) >> 6;
-		block[2 + i] = (tmp2 + tmp5) >> 6;
-		block[5 + i] = (tmp2 - tmp5) >> 6;
-		block[4 + i] = (tmp3 + tmp4) >> 6;
-		block[3 + i] = (tmp3 - tmp4) >> 6;
+		block[0 + i] = (tmp0 + tmp7) >> shift;
+		block[7 + i] = (tmp0 - tmp7) >> shift;
+		block[1 + i] = (tmp1 + tmp6) >> shift;
+		block[6 + i] = (tmp1 - tmp6) >> shift;
+		block[2 + i] = (tmp2 + tmp5) >> shift;
+		block[5 + i] = (tmp2 - tmp5) >> shift;
+		block[4 + i] = (tmp3 + tmp4) >> shift;
+		block[3 + i] = (tmp3 - tmp4) >> shift;
 	}
 }
 
