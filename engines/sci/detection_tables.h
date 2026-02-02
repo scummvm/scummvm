@@ -1884,7 +1884,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_UNDITHER	},
 
-	// King's Quest 4 - Hebrew
+	// King's Quest 4 - Fanmade Hebrew translation, based on the series GOG version
 	// Game version 1.006.004
 	// SCI interpreter version 0.000.502
 	// Released: August 7, 1989 (Information from About screen in scripts)
