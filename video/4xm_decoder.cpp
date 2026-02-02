@@ -63,7 +63,7 @@ public:
 
 	byte getAudioType() const { return _audioType; }
 
-	void decode(uint32 tag, byte *buf, uint size) {
+	void decode(byte *buf, uint size) {
 		if (_audioType == 0) {
 			// Raw PCM data
 			byte flags = Audio::FLAG_16BITS;
@@ -513,7 +513,8 @@ void FourXMDecoder::decodeNextFrameImpl() {
 			byte *buf = static_cast<byte *>(malloc(bufSize));
 			if (!buf)
 				error("failed to allocate %u bytes", bufSize);
-			_stream->read(buf, bufSize);
+			if (_stream->read(buf, bufSize) != bufSize)
+				error("loadBuf: short read");
 			return buf;
 		};
 		switch (tag) {
@@ -527,20 +528,19 @@ void FourXMDecoder::decodeNextFrameImpl() {
 					auto trackIdx = _stream->readUint32LE();
 					auto packetSize = _stream->readUint32LE();
 					if (trackIdx == 0 && _audio) {
-						_audio->decode(tag, loadBuf(packetSize - 8), packetSize - 8);
+						debug("audio data %u %u", trackIdx, packetSize);
+						_audio->decode(loadBuf(packetSize), packetSize);
 					} else {
 						_stream->skip(packetSize);
-						offset += packetSize + 8;
 					}
+					offset += packetSize + 8;
 				}
 			} break;
 			case 1: {
 				auto trackIdx = _stream->readUint32LE();
 				_stream->skip(4);
 				if (trackIdx == 0 && _audio) {
-					_audio->decode(tag, loadBuf(size - 8), size - 8);
-				} else {
-					_stream->skip(size - 8);
+					_audio->decode(loadBuf(size - 8), size - 8);
 				}
 			} break;
 			default:
