@@ -28,6 +28,7 @@
 #include "common/str.h"
 #include "common/ustr.h"
 
+#include "image/pict.h"
 #include "graphics/framelimiter.h"
 #include "graphics/macgui/macwindow.h"
 #include "graphics/macgui/macwindowmanager.h"
@@ -43,7 +44,7 @@ struct Region {
 
 typedef Common::SharedPtr<Common::Array<byte>> Handle;
 typedef Common::SharedPtr<Region> RgnHandle;
-typedef Common::SharedPtr<Graphics::ManagedSurface> PicHandle;
+typedef Common::SharedPtr<Image::PICTDecoder> PicHandle;
 // BitMap is the monochrome surface format.
 typedef Common::SharedPtr<Graphics::ManagedSurface> BitMap;
 typedef Handle PolyHandle;
@@ -389,6 +390,11 @@ public:
 	// srcBits.bounds coordinates.
 	void CopyBits(const BitMap &srcBits, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, SourceMode mode, RgnHandle maskRgn);
 
+	// PROCEDURE DrawPicture (myPicture: PicHandle; dstRect: Rect);
+	// Within the rectangle that you specify in the dstRect parameter, the DrawPicture
+	// procedure draws the picture that you specify in the myPicture parameter.
+	void DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect);
+
 	// PROCEDURE EndUpdate (theWindow: WindowPtr);
 	// Call EndUpdate to restore the normal visRgn of theWindow's grafPort, which was changed by
 	// BeginUpdate as described above.
@@ -650,6 +656,7 @@ private:
 
 	void _pumpEvents();
 	void _updateScreen();
+	void _copyBits(const BitMap &srcBits, const BitMap &mask, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, SourceMode mode, RgnHandle maskRgn);
 };
 
 } // namespace Fool
