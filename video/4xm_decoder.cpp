@@ -54,17 +54,12 @@ class FourXMDecoder::FourXMAudioTrack : public AudioTrack {
 	uint _audioType;
 	uint _audioChannels;
 	uint _sampleRate;
-	Common::ScopedPtr<Audio::QueuingAudioStream> _output;
+	Common::ScopedPtr<Audio::PacketizedAudioStream> _output;
 
 public:
-	FourXMAudioTrack(FourXMDecoder *dec, uint trackIdx, uint audioType, uint audioChannels, uint sampleRate) : AudioTrack(Audio::Mixer::SoundType::kPlainSoundType), _audioType(audioType), _audioChannels(audioChannels), _sampleRate(sampleRate),
-																											   _output(Audio::makeQueuingAudioStream(sampleRate, audioChannels > 1)) {
-	}
-
-	byte getAudioType() const { return _audioType; }
-
-	void decode(byte *buf, uint size) {
-		if (_audioType == 0) {
+	FourXMAudioTrack(FourXMDecoder *dec, uint trackIdx, uint audioType, uint audioChannels, uint sampleRate) : AudioTrack(Audio::Mixer::SoundType::kPlainSoundType), _audioType(audioType), _audioChannels(audioChannels), _sampleRate(sampleRate) {
+		switch (_audioType) {
+		case 0: {
 			// Raw PCM data
 			byte flags = Audio::FLAG_16BITS;
 #ifdef SCUMM_LITTLE_ENDIAN
@@ -72,14 +67,22 @@ public:
 #endif
 			if (_audioChannels > 1)
 				flags |= Audio::FLAG_STEREO;
-			_output->queueBuffer(buf, size, DisposeAfterUse::YES, flags);
-		} else if (_audioType == 1) {
-			auto *input = new Common::MemoryReadStream(buf, size, DisposeAfterUse::YES);
-			_output->queueAudioStream(Audio::makeADPCMStream(input, DisposeAfterUse::YES, size, Audio::ADPCMType::kADPCM4XM, _sampleRate, _audioChannels));
-		} else {
-			free(buf);
-			warning("unsupported audio type %u", _audioType);
+			_output.reset(Audio::makePacketizedRawStream(sampleRate, flags));
+			break;
 		}
+		case 1:
+			_output.reset(Audio::makePacketizedADPCMStream(Audio::ADPCMType::kADPCM4XM, sampleRate, audioChannels));
+			break;
+		default:
+			error("FourXMAudioTrack: unknown audio type: %d", _audioType);
+		}
+	}
+
+	byte getAudioType() const { return _audioType; }
+
+	void decode(byte *buf, uint size) {
+		auto *input = new Common::MemoryReadStream(buf, size, DisposeAfterUse::YES);
+		_output->queuePacket(input);
 	}
 
 private:
