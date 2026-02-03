@@ -265,7 +265,6 @@ void PelrockEngine::frameTriggers() {
 
 void PelrockEngine::passerByAnim(uint32 frameCount) {
 	if (_room->_passerByAnims == nullptr) {
-		debug("No passerby anims for this room");
 		return;
 	}
 	if (_room->_passerByAnims->latch == false) {

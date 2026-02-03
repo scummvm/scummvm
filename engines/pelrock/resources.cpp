@@ -218,39 +218,42 @@ void ResourceManager::loadAlfredAnims() {
 }
 
 void ResourceManager::loadAlfredSpecialAnim(int numAnim, bool reverse) {
-	AlfredSpecialAnimOffset offset = alfredSpecialAnims[numAnim];
-	Common::File alfred7;
-	if (!alfred7.open(Common::Path("ALFRED.7"))) {
-		error("Could not open ALFRED.7");
+	AlfredSpecialAnimOffset anim = alfredSpecialAnims[numAnim];
+
+	Common::String filename = Common::String::format("ALFRED.%d", anim.numAlfred);
+	Common::File alfredFile;
+	if (!alfredFile.open(Common::Path(filename))) {
+		error("Could not open %s", filename.c_str());
 		return;
 	}
 
-	alfred7.seek(offset.offset, SEEK_SET);
+	alfredFile.seek(anim.offset, SEEK_SET);
 	if (_currentSpecialAnim)
 		delete _currentSpecialAnim;
-	_currentSpecialAnim = new AlfredSpecialAnim(offset.numFrames, offset.w, offset.h, offset.numBudas, offset.offset, offset.loops);
-	_currentSpecialAnim->animData = new byte[offset.numFrames * offset.w * offset.h];
-	if (offset.numBudas > 0) {
-		mergeRleBlocks(&alfred7, offset.offset, offset.numBudas, _currentSpecialAnim->animData);
+	_currentSpecialAnim = new AlfredSpecialAnim(anim.numFrames, anim.w, anim.h, anim.numBudas, anim.offset, anim.loops, anim.size);
+	_currentSpecialAnim->animData = new byte[anim.size];
+	if (anim.numBudas > 0) {
+		debug("Loading special anim with budas: numBudas=%d, totalSize %d", anim.numBudas, anim.size);
+		mergeRleBlocks(&alfredFile, anim.offset, anim.numBudas, _currentSpecialAnim->animData);
 	} else {
-		alfred7.read(_currentSpecialAnim->animData, offset.numFrames * offset.w * offset.h);
+		alfredFile.read(_currentSpecialAnim->animData, anim.numFrames * anim.w * anim.h);
 	}
 	if (reverse) {
 		// reverse frames for testing
-		byte *reversedData = new byte[offset.numFrames * offset.w * offset.h];
-		for (int i = 0; i < offset.numFrames; i++) {
+		byte *reversedData = new byte[anim.numFrames * anim.w * anim.h];
+		for (int i = 0; i < anim.numFrames; i++) {
 			extractSingleFrame(_currentSpecialAnim->animData,
-							   &reversedData[i * offset.w * offset.h],
-							   offset.numFrames - 1 - i,
-							   offset.w,
-							   offset.h);
+							   &reversedData[i * anim.w * anim.h],
+							   anim.numFrames - 1 - i,
+							   anim.w,
+							   anim.h);
 		}
 		delete[] _currentSpecialAnim->animData;
 		_currentSpecialAnim->animData = reversedData;
 	}
 
 	_isSpecialAnimFinished = false;
-	alfred7.close();
+	alfredFile.close();
 }
 
 void ResourceManager::clearSpecialAnim() {
@@ -421,6 +424,7 @@ void ResourceManager::mergeRleBlocks(Common::SeekableReadStream *stream, uint32 
 		readUntilBuda(stream, stream->pos(), thisBlock, blockSize);
 		uint8_t *block_data = nullptr;
 		size_t decompressedSize = rleDecompress(thisBlock, blockSize, 0, 640 * 400, &block_data, true);
+		debug("Decompressed block %d: %zu bytes", i, decompressedSize);
 		memcpy(outputBuffer + combined_size, block_data, decompressedSize);
 		combined_size += decompressedSize;
 		free(block_data);

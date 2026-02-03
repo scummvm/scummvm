@@ -307,6 +307,9 @@ public:
 	void pickUpBook(int i);
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);
+
+	void animateStatuePaletteFade(bool reverse = false);
+	void waitForActionEnd();
 };
 
 extern PelrockEngine *g_engine;

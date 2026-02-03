@@ -413,9 +413,9 @@ void PelrockEngine::useBrickWithWindow(int inventoryObject, HotSpot *hotspot) {
 
 	// TODO: Play Alfred's throwing animation
 	// This would require adding a new special animation entry
-	// _res->loadAlfredSpecialAnim(BRICK_THROW_ANIM);
-	// _alfredState.animState = ALFRED_SPECIAL_ANIM;
-	// waitForSpecialAnimation();
+	_res->loadAlfredSpecialAnim(4);
+	_alfredState.animState = ALFRED_SPECIAL_ANIM;
+	waitForSpecialAnimation();
 
 	// TODO: Animate sprite 8 (brick projectile) moving to window
 	Sprite *brickSprite = _room->findSpriteByIndex(7);
@@ -629,13 +629,15 @@ void PelrockEngine::useAmuletWithStatue(int inventoryObject, HotSpot *hotspot) {
 		_state->setRootDisabledState(7, 0, true);
 		_state->setRootDisabledState(7, 1, false);
 		_state->setRootDisabledState(7, 2, true);
-		// TODO: Palette anim
+		_alfredState.direction = ALFRED_RIGHT;
+
 		HotSpot *statueHotspot = _room->findHotspotByExtra(91);
 		_currentHotspot = statueHotspot;
-
+		walkTo(statueHotspot->x + statueHotspot->w / 2, statueHotspot->y + statueHotspot->h);
+		animateStatuePaletteFade(false);
 		walkAndAction(statueHotspot, TALK);
-
-		// TODO: Undo palette anim!
+		waitForActionEnd();
+		animateStatuePaletteFade(true);
 	}
 }
 
@@ -708,11 +710,7 @@ void PelrockEngine::pickUpBook(int i) {
 		walkAndAction(_room->findHotspotByExtra(102), TALK);
 		// After dialog ends, reenable first dialog root if no photo in inventory
 		// Wait for dialog to end to reenable first dialog root
-		while (!shouldQuit() && _queuedAction.isQueued) {
-			_events->pollEvent();
-			renderScene(OVERLAY_NONE);
-			_screen->update();
-		}
+		waitForActionEnd();
 		if (!_state->hasInventoryItem(3)) {
 
 			_state->setRootDisabledState(9, 0, false);
@@ -827,4 +825,107 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 	}
 }
 
+void PelrockEngine::animateStatuePaletteFade(bool reverse) {
+	// Structure at JUEGO.EXE offset 0x4C700
+	struct StatuePaletteData {
+		uint16 x;           // 368
+		uint16 y;           // 148
+		uint16 type;        // 2
+		uint16 padding;     // 0
+		byte indices[16];   // Palette indices to modify
+		byte source[16][3]; // Source RGB values (6-bit VGA)
+		byte target[16][3]; // Target RGB values (6-bit VGA)
+	};
+
+	Common::File exeFile;
+	if (!exeFile.open("JUEGO.EXE")) {
+		warning("Could not open JUEGO.EXE for statue palette animation");
+		return;
+	}
+
+	// Read the palette data structure from JUEGO.EXE
+	exeFile.seek(0x4C700, SEEK_SET);
+
+	StatuePaletteData paletteData;
+	paletteData.x = exeFile.readUint16LE();
+	paletteData.y = exeFile.readUint16LE();
+	paletteData.type = exeFile.readUint16LE();
+	paletteData.padding = exeFile.readUint16LE();
+
+	exeFile.read(paletteData.indices, 16);
+
+	for (int i = 0; i < 16; i++) {
+		paletteData.source[i][0] = exeFile.readByte();
+		paletteData.source[i][1] = exeFile.readByte();
+		paletteData.source[i][2] = exeFile.readByte();
+	}
+
+	for (int i = 0; i < 16; i++) {
+		paletteData.target[i][0] = exeFile.readByte();
+		paletteData.target[i][1] = exeFile.readByte();
+		paletteData.target[i][2] = exeFile.readByte();
+	}
+
+	exeFile.close();
+
+	// Animation parameters
+	const int kNumFrames = 7; // 7 step updates total
+	const int kDelayMs = 200; // ~12 ticks at 60Hz (~200ms)
+
+	// Get current palette
+	byte currentPalette[768];
+	memcpy(currentPalette, _room->_roomPalette, 768);
+
+	// Perform the fade animation
+	int frame = 0;
+	while (!shouldQuit() && frame <= kNumFrames) {
+		_events->pollEvent();
+		_chrono->updateChrono();
+
+		if (_chrono->_gameTick) {
+			for (int i = 0; i < 16; i++) {
+				byte paletteIndex = paletteData.indices[i];
+
+				// Determine source and target based on direction
+				byte *srcColor = reverse ? paletteData.target[i] : paletteData.source[i];
+				byte *dstColor = reverse ? paletteData.source[i] : paletteData.target[i];
+
+				// Linear interpolation (6-bit VGA values)
+				byte r6 = srcColor[0] + ((dstColor[0] - srcColor[0]) * frame) / kNumFrames;
+				byte g6 = srcColor[1] + ((dstColor[1] - srcColor[1]) * frame) / kNumFrames;
+				byte b6 = srcColor[2] + ((dstColor[2] - srcColor[2]) * frame) / kNumFrames;
+
+				// Convert 6-bit VGA (0-63) to 8-bit (0-255) by shifting left 2 bits
+				currentPalette[paletteIndex * 3 + 0] = r6 << 2;
+				currentPalette[paletteIndex * 3 + 1] = g6 << 2;
+				currentPalette[paletteIndex * 3 + 2] = b6 << 2;
+			}
+
+			// Apply the palette
+			g_system->getPaletteManager()->setPalette(currentPalette, 0, 256);
+			// // Update the room's internal palette
+			// memcpy(_room->_roomPalette, currentPalette, 768);
+
+			// Redraw the scene with the new palette
+			copyBackgroundToBuffer();
+			placeStickersFirstPass();
+
+			chooseAlfredStateAndDraw();
+			placeStickersSecondPass();
+			presentFrame();
+
+			frame++;
+		}
+		_screen->update();
+		g_system->delayMillis(10);
+	}
+}
+
+void PelrockEngine::waitForActionEnd() {
+	while (!shouldQuit() && _queuedAction.isQueued) {
+		_events->pollEvent();
+		renderScene(OVERLAY_NONE);
+		_screen->update();
+	}
+}
 } // End of namespace Pelrock
