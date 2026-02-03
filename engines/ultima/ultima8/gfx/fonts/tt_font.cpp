@@ -111,7 +111,7 @@ void TTFont::getTextSize(const Common::String &text,
 						 unsigned int &remaining,
 						 int32 width, int32 height, TextAlign align,
 						 bool u8specials, bool pagebreaks) {
-	Std::list<PositionedText> tmp;
+	Common::List<PositionedText> tmp;
 	if (!_SJIS)
 		tmp = typesetText<Traits>(this, text, remaining,
 		                          width, height, align, u8specials, pagebreaks,
@@ -197,7 +197,7 @@ RenderedText *TTFont::renderText(const Common::String &text, unsigned int &remai
 		int32 width, int32 height, TextAlign align, bool u8specials, bool pagebreaks,
 		Common::String::size_type cursor) {
 	int32 resultWidth, resultHeight, lineHeight;
-	Std::list<PositionedText> lines;
+	Common::List<PositionedText> lines;
 	if (!_SJIS)
 		lines = typesetText<Traits>(this, text, remaining, width, height, align, u8specials, pagebreaks,
 			resultWidth, resultHeight, cursor);

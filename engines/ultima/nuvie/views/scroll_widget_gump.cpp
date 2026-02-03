@@ -111,7 +111,7 @@ void ScrollWidgetGump::Display(bool full_redraw) {
 	MsgText *token;
 
 	uint16 y = area.top + 4;
-	Std::list<MsgLine *>::iterator iter;
+	Common::List<MsgLine *>::iterator iter;
 
 	if (show_up_arrow) {
 		font_normal->drawChar(screen, FONT_UP_ARROW_CHAR, area.left + SCROLLWIDGETGUMP_W - 8, area.top + 4);
@@ -127,7 +127,7 @@ void ScrollWidgetGump::Display(bool full_redraw) {
 
 	for (uint16 i = 0; i < scroll_height && iter != msg_buf.end(); i++, iter++) {
 		MsgLine *msg_line = *iter;
-		Std::list<MsgText *>::iterator iter1;
+		Common::List<MsgText *>::iterator iter1;
 
 		iter1 = msg_line->text.begin();
 

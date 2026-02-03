@@ -324,7 +324,7 @@ void SuperSpriteProcess::hitAndFinish() {
 	int32 dims[3] = {1, 1, 1};
 	// will never get a collision if not stepping at all..
 	bool collision = !(xstep || ystep || zstep);
-	Std::list<CurrentMap::SweepItem> hits;
+	Common::List<CurrentMap::SweepItem> hits;
 
 	while (!collision) {
 		CurrentMap *map = World::get_instance()->getCurrentMap();
@@ -448,7 +448,7 @@ bool SuperSpriteProcess::areaSearch() {
 		start = item->getLocation();
 	}
 
-	Std::list<CurrentMap::SweepItem> hits;
+	Common::List<CurrentMap::SweepItem> hits;
 	map->sweepTest(start, end, dims, ShapeInfo::SI_SOLID,
 							   _source, true, &hits);
 

@@ -628,7 +628,7 @@ void SoundManager::musicStop() {
 	}
 }
 
-Std::list < SoundManagerSfx >::iterator SoundManagerSfx_find(Std::list < SoundManagerSfx >::iterator first, Std::list < SoundManagerSfx >::iterator last, const SfxIdType &value) {
+Common::List < SoundManagerSfx >::iterator SoundManagerSfx_find(Common::List < SoundManagerSfx >::iterator first, Common::List < SoundManagerSfx >::iterator last, const SfxIdType &value) {
 	for (; first != last; first++) {
 		if ((*first).sfx_id == value)
 			break;
@@ -721,7 +721,7 @@ void SoundManager::update_map_sfx() {
 	//DEBUG(1,LEVEL_DEBUGGING,"\n");
 	//is this sound new? - activate it.
 	for (i = 0; i < currentlyActiveSounds.size(); i++) {
-		Std::list < SoundManagerSfx >::iterator it;
+		Common::List < SoundManagerSfx >::iterator it;
 		it = SoundManagerSfx_find(m_ActiveSounds.begin(), m_ActiveSounds.end(), currentlyActiveSounds[i]);          //is the sound already active?
 		if (it == m_ActiveSounds.end()) {
 			//this is a new sound, add it to the active list
@@ -735,7 +735,7 @@ void SoundManager::update_map_sfx() {
 		}
 	}
 	//is this sound old? - deactivate it
-	Std::list < SoundManagerSfx >::iterator it;
+	Common::List < SoundManagerSfx >::iterator it;
 	it = m_ActiveSounds.begin();
 	while (it != m_ActiveSounds.end()) {
 		Std::vector<SfxIdType>::iterator fit;

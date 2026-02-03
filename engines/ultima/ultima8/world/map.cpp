@@ -191,7 +191,7 @@ void Map::unloadFixed() {
 	_fixedItems.clear();
 }
 
-void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist,
+void Map::loadFixedFormatObjects(Common::List<Item *> &itemlist,
 								 Common::SeekableReadStream *rs,
 								 uint32 extendedflags) {
 	if (!rs) return;

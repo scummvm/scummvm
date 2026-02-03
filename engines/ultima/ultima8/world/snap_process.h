@@ -57,7 +57,7 @@ protected:
 
 	ObjId   _currentSnapEgg;
 	Common::Rect32 _currentSnapEggRange;
-	Std::list<ObjId> _snapEggs;
+	Common::List<ObjId> _snapEggs;
 };
 
 } // End of namespace Ultima8

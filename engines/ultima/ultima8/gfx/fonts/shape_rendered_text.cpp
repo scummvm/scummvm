@@ -29,7 +29,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-ShapeRenderedText::ShapeRenderedText(const Std::list<PositionedText> &lines,
+ShapeRenderedText::ShapeRenderedText(const Common::List<PositionedText> &lines,
 									 int width, int height, int vLead,
 									 ShapeFont *font)
 	: _lines(lines), _font(font) {
@@ -45,7 +45,7 @@ void ShapeRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destma
 	// TODO support masking here???
 
 	uint32 color = TEX32_PACK_RGB(0, 0, 0);
-	Std::list<PositionedText>::const_iterator iter;
+	Common::List<PositionedText>::const_iterator iter;
 
 	surface->BeginPainting();
 
@@ -80,7 +80,7 @@ void ShapeRenderedText::drawBlended(RenderSurface *surface, int x, int y,
 									uint32 col, bool /*destmasked*/) {
 	// TODO Support masking here ????
 
-	Std::list<PositionedText>::const_iterator iter;
+	Common::List<PositionedText>::const_iterator iter;
 
 	for (const auto &line : _lines) {
 		int line_x = x + line._dims.left;

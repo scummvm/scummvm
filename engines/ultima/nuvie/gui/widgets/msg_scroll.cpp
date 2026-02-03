@@ -901,7 +901,7 @@ Common::String MsgScroll::get_token_string_at_pos(uint16 x, uint16 y) {
 	uint16 i;
 	sint32 buf_x, buf_y;
 	MsgText *token = nullptr;
-	Std::list<MsgLine *>::iterator iter;
+	Common::List<MsgLine *>::iterator iter;
 
 	buf_x = (x - area.left) / 8;
 	buf_y = (y - area.top) / 8;
@@ -935,7 +935,7 @@ Common::String MsgScroll::get_token_string_at_pos(uint16 x, uint16 y) {
 
 void MsgScroll::Display(bool full_redraw) {
 	uint16 i;
-	Std::list<MsgLine *>::iterator iter;
+	Common::List<MsgLine *>::iterator iter;
 	MsgLine *msg_line = nullptr;
 
 

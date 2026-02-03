@@ -59,7 +59,7 @@ protected:
 
 	bool focused;
 
-	Std::list<GUI_Widget *>children;
+	Common::List<GUI_Widget *>children;
 	GUI_Widget *parent;
 
 	char *errorptr;

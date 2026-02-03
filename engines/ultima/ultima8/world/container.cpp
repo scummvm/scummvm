@@ -144,7 +144,7 @@ bool Container::addItem(Item *item, bool checkwghtvol) {
 
 
 bool Container::removeItem(Item *item) {
-	Std::list<Item *>::iterator iter;
+	Common::List<Item *>::iterator iter;
 
 	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		if (*iter == item) {
@@ -156,7 +156,7 @@ bool Container::removeItem(Item *item) {
 }
 
 bool Container::moveItemToEnd(Item *item) {
-	Std::list<Item *>::iterator iter;
+	Common::List<Item *>::iterator iter;
 
 	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		if (*iter == item) {

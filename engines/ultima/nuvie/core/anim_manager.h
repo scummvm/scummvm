@@ -32,7 +32,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-using Std::list;
 using Std::vector;
 
 class Actor;
@@ -44,7 +43,7 @@ class Font;
 
 #define MESG_TIMED CB_TIMED
 
-typedef Std::list<NuvieAnim *>::iterator AnimIterator;
+typedef Common::List<NuvieAnim *>::iterator AnimIterator;
 
 /* Each viewable area has it's own AnimManager. (but I can only think of
  * animations in the MapWindow using this, so that could very well change)
@@ -53,7 +52,7 @@ class AnimManager {
 	MapWindow *map_window;
 	Screen *viewsurf;
 	Common::Rect viewport; // clip anims to location
-	Std::list<NuvieAnim *> anim_list; // in paint order
+	Common::List<NuvieAnim *> anim_list; // in paint order
 	uint32 next_id;
 
 	uint8 tile_pitch;

@@ -948,7 +948,7 @@ inline void MapWindow::drawActor(const Actor *actor) {
 			drawTile(tile, wrapped_x, actor->y - cur_y, false);
 			drawTile(tile, wrapped_x, actor->y - cur_y, true);
 			if (game->get_clock()->get_timer(GAMECLOCK_TIMER_U6_INFRAVISION) != 0) {
-				const Std::list<Obj *> &surrounding_objs = actor->get_surrounding_obj_list();
+				const Common::List<Obj *> &surrounding_objs = actor->get_surrounding_obj_list();
 				for (Obj *obj : surrounding_objs) {
 					const Tile *t = tile_manager->get_original_tile(obj_manager->get_obj_tile_num(obj->obj_n) + obj->frame_n);
 					uint16 wrapped_obj_x = WRAP_VIEWP(cur_x, obj->x, map_width);

@@ -146,7 +146,7 @@ bool MissileTracker::isPathClear() const {
 		end.z = start.z + sz;
 
 		// Do the sweep test
-		Std::list<CurrentMap::SweepItem> collisions;
+		Common::List<CurrentMap::SweepItem> collisions;
 		map->sweepTest(start, end, dims, item->getShapeInfo()->_flags, _objId,
 		               false, &collisions);
 

@@ -129,7 +129,7 @@ private:
 	Configuration *config;
 	GUI *gui;
 	Cursor *cursor;
-	Std::list<CSSprite *> sprite_list; // in paint order
+	Common::List<CSSprite *> sprite_list; // in paint order
 	Screen *screen;
 	uint8 *palette;
 	SoundManager *sound_manager;

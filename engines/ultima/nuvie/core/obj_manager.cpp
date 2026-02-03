@@ -233,7 +233,7 @@ bool ObjManager::save_eggs(NuvieIO *save_buf) {
 //skip number of objects we will fill that in at the end.
 	save_buf->write2(0);
 
-	Std::list<Egg *> *egg_list = egg_manager->get_egg_list();
+	Common::List<Egg *> *egg_list = egg_manager->get_egg_list();
 
 	obj_save_count = 0;
 
@@ -1631,7 +1631,7 @@ void ObjManager::remove_temp_obj(Obj *tmp_obj) {
 
 // clean objects from a whole level.
 void ObjManager::temp_obj_list_clean_level(uint8 z) {
-	Std::list<Obj *>::iterator obj;
+	Common::List<Obj *>::iterator obj;
 
 	for (obj = temp_obj_list.begin(); obj != temp_obj_list.end();) {
 		if ((*obj)->z == z) {
@@ -1647,7 +1647,7 @@ void ObjManager::temp_obj_list_clean_level(uint8 z) {
 
 // Clean objects more than 19 tiles from position
 void ObjManager::temp_obj_list_clean_area(uint16 x, uint16 y) {
-	Std::list<Obj *>::iterator obj;
+	Common::List<Obj *>::iterator obj;
 
 	for (obj = temp_obj_list.begin(); obj != temp_obj_list.end();) {
 		sint16 dist_x = abs((sint16)(*obj)->x - x);

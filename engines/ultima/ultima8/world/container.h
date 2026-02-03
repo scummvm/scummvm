@@ -123,7 +123,7 @@ public:
 	INTRINSIC(I_destroyContents);
 
 protected:
-	Std::list<Item *> _contents;
+	Common::List<Item *> _contents;
 };
 
 } // End of namespace Ultima8

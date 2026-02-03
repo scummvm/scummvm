@@ -180,7 +180,7 @@ private:
 	Std::vector<Map *> _maps;
 	CurrentMap *_currentMap;
 
-	Std::list<ObjId> _ethereal;
+	Common::List<ObjId> _ethereal;
 
 	bool _alertActive; //!< is intruder alert active (Crusader)
 	uint8 _difficulty; //!< game difficulty level (Crusader)

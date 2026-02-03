@@ -273,7 +273,7 @@ bool AnimationTracker::step() {
 		int32 dims[3] = { xd, yd, zd };
 
 		// Do the sweep test
-		Std::list<CurrentMap::SweepItem> collisions;
+		Common::List<CurrentMap::SweepItem> collisions;
 		cm->sweepTest(start, end, dims, a->getShapeInfo()->_flags, _actor,
 		              false, &collisions);
 

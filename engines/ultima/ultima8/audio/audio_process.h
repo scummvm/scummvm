@@ -63,7 +63,7 @@ public:
 			_calcVol(cv), _balance(bal), _ambient(ambient) { }
 	};
 
-	Std::list<SampleInfo> _sampleInfo;
+	Common::List<SampleInfo> _sampleInfo;
 public:
 	// p_dynamic_class stuff
 	ENABLE_RUNTIME_CLASSTYPE()

@@ -75,7 +75,7 @@ void TimeQueue::add_timer(TimedEvent *tevent) {
 	// in case it's already queued, remove the earlier instance(s)
 	remove_timer(tevent);
 	// add after events with earlier/equal time
-	Std::list<TimedEvent *>::iterator t = tq.begin();
+	Common::List<TimedEvent *>::iterator t = tq.begin();
 	while (t != tq.end() && (*t)->time <= tevent->time) t++;
 	tq.insert(t, tevent);
 }
@@ -84,7 +84,7 @@ void TimeQueue::add_timer(TimedEvent *tevent) {
 /* Remove timed event from queue.
  */
 void TimeQueue::remove_timer(TimedEvent *tevent) {
-	Std::list<TimedEvent *>::iterator t = tq.begin();
+	Common::List<TimedEvent *>::iterator t = tq.begin();
 	while (t != tq.end()) {
 		if (*t == tevent) {
 			t = tq.erase(t);

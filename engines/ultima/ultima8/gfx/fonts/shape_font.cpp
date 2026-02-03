@@ -124,7 +124,7 @@ RenderedText *ShapeFont::renderText(const Common::String &text,
 									bool u8specials, bool pagebreaks,
 									Common::String::size_type cursor) {
 	int32 resultwidth, resultheight;
-	Std::list<PositionedText> lines;
+	Common::List<PositionedText> lines;
 	lines = typesetText<Traits>(this, text, remaining,
 	                            width, height, align, u8specials, pagebreaks,
 	                            resultwidth, resultheight, cursor);

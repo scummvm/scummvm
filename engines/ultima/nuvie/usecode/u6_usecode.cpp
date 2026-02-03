@@ -765,8 +765,8 @@ bool U6UseCode::use_rune(Obj *obj, UseCodeEvent ev) {
 }
 
 void U6UseCode::remove_gargoyle_egg(uint16 x, uint16 y, uint8 z) {
-	Std::list<Egg *> *egg_list = game->get_egg_manager()->get_egg_list();
-	Std::list<Egg *>::iterator egg_itr;
+	Common::List<Egg *> *egg_list = game->get_egg_manager()->get_egg_list();
+	Common::List<Egg *>::iterator egg_itr;
 
 	for (egg_itr = egg_list->begin(); egg_itr != egg_list->end();) {
 		Egg *egg = *egg_itr;

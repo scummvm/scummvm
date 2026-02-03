@@ -43,7 +43,7 @@ class TimedEvent;
 /* A queue for our events.
  */
 class TimeQueue {
-	Std::list<TimedEvent *> tq;
+	Common::List<TimedEvent *> tq;
 public:
 	TimeQueue() : tq() { }
 	~TimeQueue() {

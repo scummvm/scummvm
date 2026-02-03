@@ -34,8 +34,8 @@ class Process;
 class idMan;
 
 typedef Process *(*ProcessLoadFunc)(Common::ReadStream *rs, uint32 version);
-typedef Std::list<Process *>::const_iterator ProcessIter;
-typedef Std::list<Process *>::iterator ProcessIterator;
+typedef Common::List<Process *>::const_iterator ProcessIter;
+typedef Common::List<Process *>::iterator ProcessIterator;
 
 
 class Kernel {
@@ -147,10 +147,10 @@ public:
 private:
 	Process *loadProcess(Common::ReadStream *rs, uint32 version);
 
-	Std::list<Process *> _processes;
+	Common::List<Process *> _processes;
 	idMan   *_pIDs;
 
-	Std::list<Process *>::iterator _currentProcess;
+	Common::List<Process *>::iterator _currentProcess;
 
 	Common::HashMap<Common::String, ProcessLoadFunc> _processLoaders;
 

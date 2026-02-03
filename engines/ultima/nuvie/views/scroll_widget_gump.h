@@ -32,8 +32,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-using Std::list;
-
 
 class Configuration;
 class Actor;

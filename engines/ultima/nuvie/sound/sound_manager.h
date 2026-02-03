@@ -154,14 +154,14 @@ private:
 	IntCollectionMap m_TileSampleMap;
 	IntCollectionMap m_ObjectSampleMap;
 	StringCollectionMap m_MusicMap;
-	list<Sound *> m_Songs;
-	list<Sound *> m_Samples;
+	Common::List<Sound *> m_Songs;
+	Common::List<Sound *> m_Samples;
 	const Configuration *m_Config;
 
 	//state info:
 	Common::String m_CurrentGroup;
 	Sound *m_pCurrentSong;
-	list<SoundManagerSfx> m_ActiveSounds;
+	Common::List<SoundManagerSfx> m_ActiveSounds;
 	bool audio_enabled;
 	bool music_enabled;
 	bool speech_enabled;

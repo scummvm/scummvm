@@ -38,7 +38,7 @@ class GUI_Console : public GUI_Widget {
 	GUI_Font *font;
 	uint16 num_cols;
 	uint16 num_rows;
-	Std::list<Common::String> data;
+	Common::List<Common::String> data;
 
 public:
 	GUI_Console(uint16 x, uint16 y, uint16 w, uint16 h);

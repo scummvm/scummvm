@@ -75,7 +75,7 @@ bool NuvieFileList::add_filename(const Common::String &fileName) {
 }
 
 const Common::String *NuvieFileList::get_latest() const {
-	Std::list<NuvieFileDesc>::const_iterator iter;
+	Common::List<NuvieFileDesc>::const_iterator iter;
 
 	iter = file_list.begin();
 
@@ -94,7 +94,7 @@ void NuvieFileList::close() {
 	return;
 }
 
-const Std::list<NuvieFileDesc> &NuvieFileList::get_filelist() const {
+const Common::List<NuvieFileDesc> &NuvieFileList::get_filelist() const {
 	return file_list;
 }
 

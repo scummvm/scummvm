@@ -122,7 +122,7 @@ struct SortItem {
 
 	// Note that PriorityQueue could be used here, BUT there is no guarantee that it's implementation
 	// will be friendly to insertions
-	// Alternatively i could use Std::list, BUT there is no guarantee that it will keep won't delete
+	// Alternatively i could use Common::List, BUT there is no guarantee that it will keep won't delete
 	// the unused nodes after doing a clear
 	// So the only reasonable solution is to write my own list
 	struct DependsList {

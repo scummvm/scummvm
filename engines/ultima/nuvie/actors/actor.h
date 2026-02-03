@@ -31,7 +31,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-using Std::list;
 using Std::vector;
 
 #define ACTOR_NO_READIABLE_LOCATION -1
@@ -296,7 +295,7 @@ protected:
 //current schedule pos;
 	uint16 sched_pos;
 
-	list<Obj *> surrounding_objects; //used for multi-tile actors.
+	Common::List<Obj *> surrounding_objects; //used for multi-tile actors.
 	Common::HashMap<uint16, uint16> *custom_tile_tbl;
 
 public:
@@ -579,7 +578,7 @@ public:
 	void clear_error();
 	ActorError *get_error();
 
-	const list<Obj *> &get_surrounding_obj_list() const {
+	const Common::List<Obj *> &get_surrounding_obj_list() const {
 		return surrounding_objects;
 	}
 	void add_surrounding_obj(Obj *obj);

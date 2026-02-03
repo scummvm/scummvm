@@ -729,7 +729,7 @@ void Debugger::dumpCurrentMap() {
 	// Work out the map limits in chunks
 	for (int32 y = 0; y < MAP_NUM_CHUNKS; y++) {
 		for (int32 x = 0; x < MAP_NUM_CHUNKS; x++) {
-			const Std::list<Item *> *list = curmap->getItemList(x, y);
+			const Common::List<Item *> *list = curmap->getItemList(x, y);
 
 			// Should iterate the items!
 			// (items could extend outside of this chunk and they have height)

@@ -44,8 +44,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-using Std::list;
-
 
 class Configuration;
 class Font;
@@ -75,7 +73,7 @@ public:
 class MsgLine {
 public:
 
-	Std::list<MsgText *> text;
+	Common::List<MsgText *> text;
 	uint32 total_length;
 
 	MsgLine() {
@@ -113,7 +111,7 @@ protected:
 	bool just_finished_page_break;
 	bool just_displayed_prompt;
 	virtual void process_page_break();
-	Std::list<MsgLine *> msg_buf;
+	Common::List<MsgLine *> msg_buf;
 
 	Common::String input_buf;
 	bool permit_inputescape; // can RETURN or ESCAPE be used to escape input entry
@@ -134,7 +132,7 @@ private:
 	bool keyword_highlight;
 
 	MsgText prompt;
-	Std::list<MsgText *> holding_buffer;
+	Common::List<MsgText *> holding_buffer;
 
 	bool show_cursor;
 	bool autobreak; // if true, a page break will be added when the scroll is full

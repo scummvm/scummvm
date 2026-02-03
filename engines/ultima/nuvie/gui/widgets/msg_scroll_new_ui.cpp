@@ -185,7 +185,7 @@ void MsgScrollNewUI::Display(bool full_redraw) {
 
 	uint16 y = area.top + 4;
 	uint16 total_length = 0;
-	Std::list<MsgLine *>::iterator iter;
+	Common::List<MsgLine *>::iterator iter;
 
 	iter = msg_buf.begin();
 	for (uint16 i = 0; i < position && iter != msg_buf.end(); i++)
@@ -193,7 +193,7 @@ void MsgScrollNewUI::Display(bool full_redraw) {
 
 	for (uint16 i = 0; i < scroll_height && iter != msg_buf.end(); i++, iter++) {
 		MsgLine *msg_line = *iter;
-		Std::list<MsgText *>::iterator iter1;
+		Common::List<MsgText *>::iterator iter1;
 
 		iter1 = msg_line->text.begin();
 

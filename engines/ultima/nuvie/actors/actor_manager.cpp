@@ -1169,8 +1169,8 @@ Std::vector<Common::String> ActorManager::getCustomTileFilenames(const Common::P
 	path.joinInPlace(datadir);
 	filelistSaveGameDir.open(path, filenamePrefix.c_str(), NUVIE_SORT_NAME_ASC);
 
-	const Std::list<NuvieFileDesc> &files = filelistSaveGameDir.get_filelist();
-	const Std::list<NuvieFileDesc> &dataFiles = filelistDataDir.get_filelist();
+	const Common::List<NuvieFileDesc> &files = filelistSaveGameDir.get_filelist();
+	const Common::List<NuvieFileDesc> &dataFiles = filelistDataDir.get_filelist();
 
 	Common::EqualTo<Common::String> comparitor;
 	Std::vector<Common::String> filenames;

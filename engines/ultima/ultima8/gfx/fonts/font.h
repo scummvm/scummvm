@@ -167,7 +167,7 @@ protected:
 };
 
 template<class T>
-Std::list<PositionedText> typesetText(Font *font,
+Common::List<PositionedText> typesetText(Font *font,
 	const Common::String &text, unsigned int &remaining,
 	int32 width, int32 height, Font::TextAlign align,
 	bool u8specials, bool pagebreaks,

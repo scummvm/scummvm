@@ -40,7 +40,7 @@ void Font::getTextSize(const Common::String &text,
 					   unsigned int &remaining,
 					   int32 width, int32 height, TextAlign align,
 					   bool u8specials, bool pagebreaks) {
-	Std::list<PositionedText> tmp;
+	Common::List<PositionedText> tmp;
 	tmp = typesetText<Traits>(this, text, remaining,
 	                          width, height, align, u8specials, pagebreaks,
 	                          resultwidth, resultheight);
@@ -178,7 +178,7 @@ CHECKME: any others? (page breaks for books?)
 */
 
 template<class T>
-Std::list<PositionedText> typesetText(Font *font,
+Common::List<PositionedText> typesetText(Font *font,
 	const Common::String &text, unsigned int &remaining, int32 width, int32 height,
 	Font::TextAlign align, bool u8specials, bool pagebreaks, int32 &resultwidth,
 	int32 &resultheight, Common::String::size_type cursor) {
@@ -193,7 +193,7 @@ Std::list<PositionedText> typesetText(Font *font,
 	int totalwidth = 0;
 	int totalheight = 0;
 
-	Std::list<PositionedText> lines;
+	Common::List<PositionedText> lines;
 	PositionedText line;
 
 	Common::String::const_iterator iter = text.begin();
@@ -366,14 +366,14 @@ Std::list<PositionedText> typesetText(Font *font,
 
 // explicit instantiations
 template
-Std::list<PositionedText> typesetText<Font::Traits>
+Common::List<PositionedText> typesetText<Font::Traits>
 (Font *font, const Common::String &text,
  unsigned int &remaining, int32 width, int32 height,
  Font::TextAlign align, bool u8specials, bool pagebreaks,
  int32 &resultwidth, int32 &resultheight, Common::String::size_type cursor);
 
 template
-Std::list<PositionedText> typesetText<Font::SJISTraits>
+Common::List<PositionedText> typesetText<Font::SJISTraits>
 (Font *font, const Common::String &text,
  unsigned int &remaining, int32 width, int32 height,
  Font::TextAlign align, bool u8specials, bool pagebreaks,

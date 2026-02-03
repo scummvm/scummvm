@@ -451,7 +451,7 @@ void ConverseGump::add_keyword(const Common::String keyword_) {
 Common::String ConverseGump::get_token_string_at_pos(uint16 x, uint16 y) {
 	uint16 total_length = 0;
 	uint16 tmp_y = area.top + portrait_height + 8 + 3 + 4;
-	Std::list<MsgText>::iterator iter;
+	Common::List<MsgText>::iterator iter;
 	for (iter = keyword_list->begin(); iter != keyword_list->end(); iter++) {
 		MsgText t = *iter;
 		uint16 token_len = font->getStringWidth(t.s.c_str());
@@ -476,7 +476,7 @@ Common::String ConverseGump::get_token_string_at_pos(uint16 x, uint16 y) {
 
 Common::String ConverseGump::get_token_at_cursor() {
 	uint16 i = 0;
-	Std::list<MsgText>::iterator iter;
+	Common::List<MsgText>::iterator iter;
 	for (iter = keyword_list->begin(); iter != keyword_list->end(); i++, iter++) {
 		if (i == cursor_position) {
 			Common::String keyword = (*iter).s;

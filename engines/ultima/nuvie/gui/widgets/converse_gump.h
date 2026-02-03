@@ -30,8 +30,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-using Std::list;
-
 
 class Configuration;
 class Font;
@@ -39,10 +37,10 @@ class MsgScroll;
 class Actor;
 
 class ConverseGump: public MsgScroll {
-	Std::list<MsgText> conv_keywords;
-	Std::list<MsgText> permitted_input_keywords;
+	Common::List<MsgText> conv_keywords;
+	Common::List<MsgText> permitted_input_keywords;
 
-	Std::list<MsgText> *keyword_list;
+	Common::List<MsgText> *keyword_list;
 
 	unsigned char *npc_portrait;
 	unsigned char *avatar_portrait;

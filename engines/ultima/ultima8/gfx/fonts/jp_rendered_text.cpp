@@ -31,7 +31,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-JPRenderedText::JPRenderedText(Std::list<PositionedText> &lines, int width, int height,
+JPRenderedText::JPRenderedText(Common::List<PositionedText> &lines, int width, int height,
 		int vLead, ShapeFont *font, unsigned int fontNum)
 		: _lines(lines), _font(font), _fontNum(fontNum) {
 	_width = width;
@@ -97,7 +97,7 @@ void JPRenderedText::drawBlended(RenderSurface *surface, int x, int y,
 	const Palette *savepal = _font->getPalette();
 	_font->setPalette(pal);
 
-	Std::list<PositionedText>::const_iterator iter;
+	Common::List<PositionedText>::const_iterator iter;
 
 	for (const auto &line : _lines) {
 		int line_x = x + line._dims.left;

@@ -79,7 +79,7 @@ void JPFont::getTextSize(const Common::String &text,
 						 unsigned int &remaining,
 						 int32 width, int32 height, TextAlign align,
 						 bool u8specials, bool pagebreaks) {
-	Std::list<PositionedText> tmp;
+	Common::List<PositionedText> tmp;
 	tmp = typesetText<SJISTraits>(this, text, remaining,
 	                              width, height, align, u8specials, pagebreaks,
 	                              resultwidth, resultheight);
@@ -91,7 +91,7 @@ RenderedText *JPFont::renderText(const Common::String &text,
 								 bool u8specials, bool pagebreaks,
 								 Common::String::size_type cursor) {
 	int32 resultwidth, resultheight;
-	Std::list<PositionedText> lines;
+	Common::List<PositionedText> lines;
 	lines = typesetText<SJISTraits>(this, text, remaining,
 	                                width, height, align, u8specials, pagebreaks,
 	                                resultwidth, resultheight,

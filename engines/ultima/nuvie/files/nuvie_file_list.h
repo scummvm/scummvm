@@ -28,8 +28,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-using Std::list;
-
 
 #define NUVIE_SORT_TIME_DESC 0x1
 #define NUVIE_SORT_TIME_ASC  0x2
@@ -53,7 +51,7 @@ public:
 
 class NuvieFileList {
 protected:
-	Std::list<NuvieFileDesc> file_list;
+	Common::List<NuvieFileDesc> file_list;
 
 	uint8 sort_mode;
 protected:
@@ -69,7 +67,7 @@ public:
 	const Common::String *get_latest() const;
 	uint32 get_num_files() const;
 
-	const Std::list<NuvieFileDesc> &get_filelist() const;
+	const Common::List<NuvieFileDesc> &get_filelist() const;
 
 	void close();
 };

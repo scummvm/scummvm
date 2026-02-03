@@ -511,7 +511,7 @@ void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction
 			// and not trigger any events
 			//
 			bool startvalid = true;
-			Std::list<CurrentMap::SweepItem> collisions;
+			Common::List<CurrentMap::SweepItem> collisions;
 			Point3 end(x, y, z);
 			avatar->setLocation(origpt);
 			currentmap->sweepTest(origpt, end, dims, avatar->getShapeInfo()->_flags,

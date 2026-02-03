@@ -1486,7 +1486,7 @@ void ScriptCutscene::print_text(CSImage *image, const char *s, uint16 *x, uint16
 	size_t start = 0;
 	size_t found;
 	Common::String str = s;
-	Std::list<Common::String> tokens;
+	Common::List<Common::String> tokens;
 	int space_width = font->getStringWidth(" ");
 	//uint16 x1 = startx;
 
@@ -1714,7 +1714,7 @@ void ScriptCutscene::display_wrapped_text(CSSprite *s) {
 	size_t start = 0;
 	size_t found;
 	Common::String str = s->text + "^";
-	Std::list<Common::String> tokens;
+	Common::List<Common::String> tokens;
 	int y = s->y;
 
 
@@ -1738,7 +1738,7 @@ int ScriptCutscene::display_wrapped_text_line(Common::String str, uint8 text_col
 	size_t start = 0;
 	size_t found;
 	str = str + " ";
-	Std::list<Common::String> tokens;
+	Common::List<Common::String> tokens;
 	int space_width = font->getStringWidth(" ");
 	//uint16 x1 = startx;
 	int width = 320 - x * 2;

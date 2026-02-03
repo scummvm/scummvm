@@ -307,8 +307,8 @@ void Mouse::setMouseCoords(int mx, int my) {
 	Gump *gump = desktopGump->onMouseMotion(mx, my);
 	if (gump && _mouseOverGump != gump->getObjId()) {
 		Gump *oldGump = getGump(_mouseOverGump);
-		Std::list<Gump *> oldgumplist;
-		Std::list<Gump *> newgumplist;
+		Common::List<Gump *> oldgumplist;
+		Common::List<Gump *> newgumplist;
 
 		// create lists of parents of old and new 'mouseover' gumps
 		if (oldGump) {
@@ -323,8 +323,8 @@ void Mouse::setMouseCoords(int mx, int my) {
 			newGump = newGump->GetParent();
 		}
 
-		Std::list<Gump *>::iterator olditer = oldgumplist.begin();
-		Std::list<Gump *>::iterator newiter = newgumplist.begin();
+		Common::List<Gump *>::iterator olditer = oldgumplist.begin();
+		Common::List<Gump *>::iterator newiter = newgumplist.begin();
 
 		// strip common prefix from lists
 		while (olditer != oldgumplist.end() &&

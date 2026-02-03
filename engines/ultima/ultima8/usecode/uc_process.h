@@ -81,7 +81,7 @@ protected:
 	UCStack _stack;
 
 	// "Free Me" list
-	Std::list<Common::Pair<uint16, int> > _freeOnTerminate;
+	Common::List<Common::Pair<uint16, int> > _freeOnTerminate;
 };
 
 } // End of namespace Ultima8

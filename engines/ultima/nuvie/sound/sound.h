@@ -29,7 +29,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-using Std::list;
 using Std::vector;
 
 class Sound {
