@@ -568,6 +568,9 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 					_selectedItem++;
 					markSelectedItem(_selectedItem, true);
 					_lastSelectionStartItem = _selectedItem;
+					if (!isItemVisible(_selectedItem)) {
+						scrollToCurrent();
+					}
 				}
 			}
 			break;
@@ -619,6 +622,9 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 					_selectedItem--;
 					markSelectedItem(_selectedItem, true);
 					_lastSelectionStartItem = _selectedItem;
+					if (!isItemVisible(_selectedItem)) {
+						scrollToCurrent();
+					}
 				}
 			}
 			break;
