@@ -32,7 +32,7 @@ const byte ZIGZAG[] = {
 	46, 53, 60, 61, 54, 47, 55, 62, 63};
 
 // looks like standard JPEG quantisation matrix
-const char QY[] = {
+const byte QY[] = {
 	16,
 	11,
 	10,
@@ -99,7 +99,7 @@ const char QY[] = {
 	99,
 };
 
-const char QUV[] = {
+const byte QUV[] = {
 	17,
 	18,
 	24,
