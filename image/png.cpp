@@ -350,11 +350,11 @@ bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const by
 	Common::Array<png_color> colorPtr;
 	if (colorType == PNG_COLOR_TYPE_PALETTE) {
 		colorPtr.resize(paletteCount);
-	        for (int i = 0; i < paletteCount; i++) {
+		for (int i = 0; i < paletteCount; i++) {
 			colorPtr[i].red   = palette[i * 3 + 0];
 			colorPtr[i].green = palette[i * 3 + 1];
 			colorPtr[i].blue  = palette[i * 3 + 2];
-	        }
+		}
 		png_set_PLTE(pngPtr, infoPtr, colorPtr.data(), paletteCount);
 	}
 
