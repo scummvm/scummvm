@@ -419,7 +419,66 @@ void FoolGame::sub_128_d34(int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16
 	}
 }
 
+void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
+	// 128:0dfe
+	this->var_i16_7b0 = unk1;
+	this->var_i16_7ae = unk2;
+	this->var_i16_7ac = unk3;
+	this->var_i16_7aa = unk4;
+	g_toolbox->SetPort(this->var_i32_4);
+	this->var_i16_7b2 = 0xa;
+	g_toolbox->InitCursor();
+	this->sub_128_4da(1);
+	if (this->var_i16_7b0 != 0) {
+		this->sub_128_50e(0x19, 0x64, 0);
+	}
+	// 128:0e46
+	this->sub_128_0a2(0, 0x6060);
+	g_zbasic->text(this->var_i16_7aa, 0xc, 0, 0x3);
+	this->var_i16_7b4 = this->var_i16_7ae*0x46;
+	this->var_i16_7b6 = 0;
+	this->var_i16_7b8 = 0;
+	for (int i = 0; i < this->var_i16_7ac; i++) {
+	// 128:0e86
+		this->var_i16_7ba = g_toolbox->StringWidth(this->arr_i32_1a8d8[this->var_i16_7ba*0x66]);
+		if (this->var_i16_7ba > this->var_i16_7b4) {
+			this->var_i16_7b4 = this->var_i16_7ba;
+		}
+		this->var_i16_7b6 += 0x11;
+	}
+	// 128:0ed6
+	if (this->var_i16_7ae >= 0) {
+		this->var_i16_7bc = 0xa4 + (this->var_i16_7b6 / 2);
+		this->var_i16_7b6 += 0x28;
+	} else {
+		this->var_i16_7b6 += 0xd;
+	}
+	// 128:0f08
+	this->var_i16_7b4 = (this->var_i16_7b4 / 2) + 0xf;
+	this->var_i16_7b6 = (this->var_i16_7b6 / 2);
+	g_toolbox->PenNormal();
+	g_toolbox->SetRect(this->arr_rect_5b7c, 0xf5-this->var_i16_7b4, 0xa0-this->var_i16_7b6, 0x10b+this->var_i16_7b4, 0xb6+this->var_i16_7b6);
+	g_toolbox->PenPat(this->arr_pat_58f4[0]);
+	g_toolbox->FrameRect(this->arr_rect_5b7c);
+	g_toolbox->InsetRect(this->arr_rect_5b7c, 1, 1);
+	g_toolbox->PenSize(5, 5);
+	g_toolbox->PenPat(this->arr_pat_58f4[2]);
+	g_toolbox->FrameRect(this->arr_rect_5b7c);
+	g_toolbox->InsetRect(this->arr_rect_5b7c, 5, 5);
+	g_toolbox->PenSize(5, 5);
+	// 128:0ff8
+	g_toolbox->PenPat(this->arr_pat_58f4[1]);
+	g_toolbox->FrameRect(this->arr_rect_5b7c);
+	g_toolbox->InsetRect(this->arr_rect_5b7c, 5, 5);
+	g_toolbox->FillRect(this->arr_rect_5b7c, this->arr_pat_58f4[2]);
+	g_toolbox->PenNormal();
+	this->var_i16_7a2 = 0xbe - this->var_i16_7b6;
+	this->var_i16_7b8 = 0;
+	this->var_str_384 = this->arr_i32_1a8d8[this->var_i16_7b8 * 0x66];
+	this->sub_128_918(this->var_str_384);
+	// 128:1086
 
+}
 
 // end
 // 128:62ae
