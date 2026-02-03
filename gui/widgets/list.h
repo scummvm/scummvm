@@ -195,6 +195,9 @@ protected:
 	void checkBounds();
 	void scrollToCurrent();
 
+	/// Find the visual position of a data item
+	int findDataIndex(int dataIndex) const;
+
 	virtual ThemeEngine::WidgetStateInfo getItemState(int item) const { return _state; }
 
 	void drawFormattedText(const Common::Rect &r, const Common::U32String &str, ThemeEngine::WidgetStateInfo state = ThemeEngine::kStateEnabled,

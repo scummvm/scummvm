@@ -189,48 +189,6 @@ void GroupedListWidget::saveClosedGroups(const Common::U32String &groupName) {
 	ConfMan.flushToDisk();
 }
 
-int GroupedListWidget::findDataIndex(int data_index) const {
-	// The given index is an index in the _dataList.
-	// We want the index in the current _listIndex (which may be filtered and sorted) for this data.
-	// Sanity check to avoid iterating on the _listIndex if we know the given index is invalid.
-	if (data_index < -1 || data_index >= (int)_dataList.size())
-		return -1;
-	for (uint i = 0; i < _listIndex.size(); ++i) {
-		if (_listIndex[i] == data_index)
-			return i;
-	}
-	return -1;
-}
-
-void GroupedListWidget::setSelected(int item) {
-	if (item < -1 || item >= (int)_dataList.size())
-		return;
-
-	// We only have to do something if the widget is enabled and the selection actually changes
-	if (isEnabled() && (_selectedItem == -1 || _selectedItem >= (int)_list.size() || _listIndex[_selectedItem] != item)) {
-		if (_editMode)
-			abortEditMode();
-
-		_selectedItem = findDataIndex(item);
-
-		// Clear previous selections and mark only this item
-		if (_multiSelectEnabled) {
-			clearSelection();
-			markSelectedItem(_selectedItem, true);
-		}
-
-		// Notify clients that the selection changed.
-		sendCommand(kListSelectionChangedCmd, _selectedItem);
-
-		if (_selectedItem != -1 && !isItemVisible(_selectedItem)) {
-			// scroll selected item to center if possible
-			_currentPos = _selectedItem - _entriesPerPage / 2;
-			scrollToCurrent();
-		}
-		markAsDirty();
-	}
-}
-
 void GroupedListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (!isEnabled())
 		return;
