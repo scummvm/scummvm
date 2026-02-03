@@ -41,7 +41,7 @@ void Toolbox::DrawString(const Common::U32String &s) {
 		Common::Rect bbox = font->getBoundingBox(s);
 		BitMap buffer(new Graphics::ManagedSurface(bbox.width(), bbox.height(), Graphics::PixelFormat::createFormatCLUT8()));
 		buffer->fillRect(buffer->getBounds(), _port->bkColor);
-		font->drawString(buffer->surfacePtr(), s.encode(), 0, 0, bbox.width(), _port->fgColor);
+		font->drawString(buffer->surfacePtr(), s, 0, 0, bbox.width(), _port->fgColor);
 
 		BitMap mask(nullptr);
 

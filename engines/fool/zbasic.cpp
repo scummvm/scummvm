@@ -214,12 +214,8 @@ void ZBasic::picture(int16 x, int16 y, PicHandle &src) {
 		return;
 	}
 
-	GrafPtr port = nullptr;
-	_toolbox->GetPort(port);
-
-	Common::Rect srcRect(0, 0, src->w, src->h);
-	Common::Rect destRect(x, y, x+src->w, y+src->h);
-	_toolbox->CopyBits(src, port->portBits, srcRect, destRect, kSrcCopy, nullptr);
+	Common::Rect destRect(x, y, x+src->getSurface()->w, y+src->getSurface()->h);
+	_toolbox->DrawPicture(src, destRect);
 
 	//Common::Rect badnews = src->getBounds();
 	//_window->getWindowSurface()->blitFrom(*src, badnews, badnews);

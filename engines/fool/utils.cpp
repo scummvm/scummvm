@@ -25,7 +25,7 @@
 
 namespace Fool {
 
-Common::Rect blitMono(BitMap &src, BitMap &dst, BitMap &mask, const Common::Point &dstPos, SourceMode mode) {
+Common::Rect blitMono(const BitMap &src, BitMap &dst, const BitMap &mask, const Common::Point &dstPos, SourceMode mode) {
 	Common::Rect dstRect = src->getBounds();
 	dstRect.moveTo(dstPos);
 	dstRect.clip(dst->getBounds());
@@ -88,7 +88,7 @@ Common::Rect blitMono(BitMap &src, BitMap &dst, BitMap &mask, const Common::Poin
 	return dstRect;
 }
 
-Common::Rect blitMono(BitMap &src, BitMap &dst, BitMap &mask, const Common::Point &dstPos, PatternMode mode) {
+Common::Rect blitMono(const BitMap &src, BitMap &dst, const BitMap &mask, const Common::Point &dstPos, PatternMode mode) {
 	return blitMono(src, dst, mask, dstPos, (SourceMode)((int)mode & 0x7));
 }
 
