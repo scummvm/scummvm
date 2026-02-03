@@ -19,6 +19,7 @@
  *
  */
 
+#include "advancedDetector.h"
 namespace PhoenixVR {
 
 const PlainGameDescriptor phoenixvrGames[] = {
@@ -28,7 +29,9 @@ const PlainGameDescriptor phoenixvrGames[] = {
 const ADGameDescription gameDescriptions[] = {
 	{"necrono",
 	 nullptr,
-	 AD_ENTRY1s("script.pak", "86294b9c445c3e06e24269c84036a207", 223),
+	 AD_ENTRY2s(
+		 "script.pak", "86294b9c445c3e06e24269c84036a207", 223,
+		 "variable.txt", "32de208759345075112f3c48b548853d", 3468),
 	 Common::EN_ANY,
 	 Common::kPlatformWindows,
 	 ADGF_DROPPLATFORM,
