@@ -109,8 +109,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-using Std::string;
-
 // a bit of a hack to prevent having to write a load function for
 // every process
 template<class T>
@@ -507,7 +505,7 @@ bool Ultima8Engine::setupGame() {
 	}
 
 	// output detected game info
-	Std::string details = info->getPrintDetails();
+	Common::String details = info->getPrintDetails();
 	debug(1, "%s: %s", info->_name.c_str(), details.c_str());
 
 	_gameInfo = info;
@@ -1505,7 +1503,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	}
 
 	if (!_gameInfo->match(saveinfo, true)) {
-		Std::string message = "Game mismatch\n";
+		Common::String message = "Game mismatch\n";
 		message += "Running _game: " + _gameInfo->getPrintDetails()  + "\n";
 		message += "Savegame    : " + saveinfo.getPrintDetails();
 
@@ -1532,7 +1530,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	// expected - anything else suggests a corrupt save (or a bug)
 	bool totalok = true;
 
-	Std::string message;
+	Common::String message;
 
 	// UCSTRINGS, UCGLOBALS, UCLISTS don't depend on anything else,
 	// so load these first

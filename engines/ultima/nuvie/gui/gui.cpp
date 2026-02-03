@@ -403,7 +403,7 @@ void GUI::lock_input(GUI_Widget *widget) {
 }
 
 Common::Path GUI::get_data_dir() const {
-	Std::string datadir;
+	Common::String datadir;
 
 	config->value("config/datadir", datadir, "");
 

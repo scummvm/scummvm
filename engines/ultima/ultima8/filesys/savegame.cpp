@@ -207,7 +207,7 @@ bool SavegameWriter::finish() {
 	return true;
 }
 
-bool SavegameWriter::writeFile(const Std::string &name, const uint8 *data, uint32 size) {
+bool SavegameWriter::writeFile(const Common::String &name, const uint8 *data, uint32 size) {
 	assert(name.size() <= 11);
 	_index.push_back(FileEntry());
 
@@ -219,7 +219,7 @@ bool SavegameWriter::writeFile(const Std::string &name, const uint8 *data, uint3
 	return true;
 }
 
-bool SavegameWriter::writeFile(const Std::string &name, Common::MemoryWriteStreamDynamic *buf) {
+bool SavegameWriter::writeFile(const Common::String &name, Common::MemoryWriteStreamDynamic *buf) {
 	return writeFile(name, buf->getData(), buf->pos());
 }
 

@@ -59,7 +59,7 @@ Party::~Party() {
 }
 
 bool Party::init(Game *g, ActorManager *am) {
-	Std::string formation_string;
+	Common::String formation_string;
 
 	game = g;
 	actor_manager = am;
@@ -851,7 +851,7 @@ void Party::rest_sleep(uint8 hours, sint16 guard) {
 	new TimedRest(hours, guard >= 0 ? member[guard].actor : 0, rest_campfire);
 }
 
-bool Party::can_rest(Std::string &err_str) {
+bool Party::can_rest(Common::String &err_str) {
 	Map *map_ = game->get_game_map();
 	Player *player = game->get_player();
 	Actor *pActor = player->get_actor();

@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/misc/u6_misc.h"
@@ -56,7 +56,7 @@ ConverseGump::ConverseGump(const Configuration *cfg, Font *f, Screen *s) {
 // y = 8;
 	int gump_h;
 	uint8 min_h, default_c;
-	Std::string height_str;
+	Common::String height_str;
 	min_w = game->get_min_converse_gump_width();
 	uint16 x_off = game->get_game_x_offset();
 	uint16 y_off = game->get_game_y_offset();
@@ -328,15 +328,15 @@ void ConverseGump::add_token(MsgText *token)
 }
 */
 
-void ConverseGump::display_string(const Std::string &s, Font *f,  bool include_on_map_window) {
+void ConverseGump::display_string(const Common::String &s, Font *f,  bool include_on_map_window) {
 	if (s.empty())
 		return;
 
 	MsgScroll::display_string(strip_whitespace_after_break(s), f, include_on_map_window);//, MSGSCROLL_NO_MAP_DISPLAY);
 }
 
-Std::string ConverseGump::strip_whitespace_after_break(Std::string s) {
-	Std::string::iterator iter;
+Common::String ConverseGump::strip_whitespace_after_break(Common::String s) {
+	Common::String::iterator iter;
 	for (iter = s.begin(); iter != s.end();) {
 		if (found_break_char == true) {
 			char c = *iter;
@@ -363,7 +363,7 @@ bool ConverseGump::parse_token(MsgText *token) {
 	int i = 0;
 	int len = (int)token->s.size();
 	while (at_idx != -1 && i < len) {
-		Std::string keyword = "";
+		Common::String keyword = "";
 		for (i = at_idx + 1; i < len; i++) {
 			char c = token->s[i];
 			if (Common::isAlpha(c)) {
@@ -408,7 +408,7 @@ void ConverseGump::parse_fm_towns_token(MsgText *token) {
 				i++;
 		}
 
-		Std::string keyword = "";
+		Common::String keyword = "";
 		for (; i < len; i++) {
 			char ch = token->s[i];
 
@@ -433,8 +433,8 @@ void ConverseGump::parse_fm_towns_token(MsgText *token) {
 	return;
 }
 
-void ConverseGump::add_keyword(const Std::string keyword_) {
-	string keyword = " *" + keyword_;
+void ConverseGump::add_keyword(const Common::String keyword_) {
+	Common::String keyword = " *" + keyword_;
 
 	for (const MsgText &txt : *keyword_list) {
 		if (string_i_compare(txt.s, keyword)) {
@@ -448,7 +448,7 @@ void ConverseGump::add_keyword(const Std::string keyword_) {
 	keyword_list->push_back(m_text);
 }
 
-Std::string ConverseGump::get_token_string_at_pos(uint16 x, uint16 y) {
+Common::String ConverseGump::get_token_string_at_pos(uint16 x, uint16 y) {
 	uint16 total_length = 0;
 	uint16 tmp_y = area.top + portrait_height + 8 + 3 + 4;
 	Std::list<MsgText>::iterator iter;
@@ -474,16 +474,16 @@ Std::string ConverseGump::get_token_string_at_pos(uint16 x, uint16 y) {
 	return "";
 }
 
-Std::string ConverseGump::get_token_at_cursor() {
+Common::String ConverseGump::get_token_at_cursor() {
 	uint16 i = 0;
 	Std::list<MsgText>::iterator iter;
 	for (iter = keyword_list->begin(); iter != keyword_list->end(); i++, iter++) {
 		if (i == cursor_position) {
-			Std::string keyword = (*iter).s;
+			Common::String keyword = (*iter).s;
 			if (!is_permanent_keyword(keyword)) {
 				keyword_list->erase(iter);
 				if (permit_input)
-					keyword = Std::string(keyword.at(2)); // only return first char after " *"
+					keyword = Common::String(keyword.at(2)); // only return first char after " *"
 			}
 			return keyword;
 		}
@@ -695,7 +695,7 @@ GUI_status ConverseGump::KeyDown(const Common::KeyState &keyState) {
 }
 
 GUI_status ConverseGump::MouseUp(int x, int y, Events::MouseButton button) {
-	Std::string token_str;
+	Common::String token_str;
 
 	if (page_break || !is_talking()) { // any click == scroll-to-end
 		page_break = false;
@@ -730,7 +730,7 @@ GUI_status ConverseGump::MouseUp(int x, int y, Events::MouseButton button) {
 	return GUI_YUM;
 }
 
-void ConverseGump::input_add_string(Std::string token_str) {
+void ConverseGump::input_add_string(Common::String token_str) {
 	input_buf.clear();
 	for (uint16 i = 0; i < token_str.size(); i++) {
 		if (Common::isAlnum(token_str[i]) && (!permit_input || strchr(permit_input, token_str[i])
@@ -739,7 +739,7 @@ void ConverseGump::input_add_string(Std::string token_str) {
 	}
 }
 
-bool ConverseGump::is_permanent_keyword(const Std::string &keyword) {
+bool ConverseGump::is_permanent_keyword(const Common::String &keyword) {
 	return (string_i_compare(keyword, " *buy") || string_i_compare(keyword, " *sell")
 	        || string_i_compare(keyword, " *bye") || string_i_compare(keyword, " *spells")
 	        || string_i_compare(keyword, " *reagents"));

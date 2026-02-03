@@ -31,8 +31,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-using Std::string;
-
 FpsCounter::FpsCounter(Game *g) : GUI_Widget(nullptr) {
 	game = g;
 	font = game->get_font_manager()->get_conv_font();

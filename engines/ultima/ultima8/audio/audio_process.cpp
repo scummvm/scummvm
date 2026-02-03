@@ -196,7 +196,7 @@ bool AudioProcess::loadData(Common::ReadStream *rs, uint32 version) {
 			char *buf = new char[slen + 1];
 			rs->read(buf, slen);
 			buf[slen] = 0;
-			Std::string text = buf;
+			Common::String text = buf;
 			delete[] buf;
 
 			playSpeech(text, priority, objId, pitchShift, volume);
@@ -332,7 +332,7 @@ void AudioProcess::setVolumeForObjectSFX(ObjId objId, int sfxNum, uint8 volume) 
 // Speech
 //
 
-bool AudioProcess::playSpeech(const Std::string &barked, int shapeNum, ObjId objId, uint32 pitchShift, uint16 volume) {
+bool AudioProcess::playSpeech(const Common::String &barked, int shapeNum, ObjId objId, uint32 pitchShift, uint16 volume) {
 	SpeechFlex *speechflex = GameData::get_instance()->getSpeechFlex(shapeNum);
 
 	if (!speechflex) return false;
@@ -376,7 +376,7 @@ bool AudioProcess::playSpeech(const Std::string &barked, int shapeNum, ObjId obj
 	return true;
 }
 
-uint32 AudioProcess::getSpeechLength(const Std::string &barked, int shapenum) const {
+uint32 AudioProcess::getSpeechLength(const Common::String &barked, int shapenum) const {
 	SpeechFlex *speechflex = GameData::get_instance()->getSpeechFlex(shapenum);
 	if (!speechflex) return 0;
 
@@ -384,7 +384,7 @@ uint32 AudioProcess::getSpeechLength(const Std::string &barked, int shapenum) co
 }
 
 
-void AudioProcess::stopSpeech(const Std::string &barked, int shapenum, ObjId objId) {
+void AudioProcess::stopSpeech(const Common::String &barked, int shapenum, ObjId objId) {
 	AudioMixer *mixer = AudioMixer::get_instance();
 
 	Std::list<SampleInfo>::iterator it;
@@ -399,7 +399,7 @@ void AudioProcess::stopSpeech(const Std::string &barked, int shapenum, ObjId obj
 	}
 }
 
-bool AudioProcess::isSpeechPlaying(const Std::string &barked, int shapeNum) {
+bool AudioProcess::isSpeechPlaying(const Common::String &barked, int shapeNum) {
 	Std::list<SampleInfo>::iterator it;
 	for (auto &si : _sampleInfo) {
 		if (si._sfxNum == -1 && si._priority == shapeNum &&

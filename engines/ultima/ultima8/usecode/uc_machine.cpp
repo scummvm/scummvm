@@ -2010,10 +2010,10 @@ void UCMachine::execProcess(UCProcess *p) {
 }
 
 
-const Std::string &UCMachine::getString(uint16 str) const {
-	static const Std::string emptystring("");
+const Common::String &UCMachine::getString(uint16 str) const {
+	static const Common::String emptystring("");
 
-	Common::HashMap<uint16, Std::string>::const_iterator iter =
+	Common::HashMap<uint16, Common::String>::const_iterator iter =
 			_stringHeap.find(str);
 
 	if (iter != _stringHeap.end())
@@ -2062,7 +2062,7 @@ void UCMachine::freeString(uint16 s) {
 	//! (when something accesses _stringHeap[0])
 	//! This may not be desirable, but OTOH the created string will be
 	//! empty, so not too much of a problem.
-	Common::HashMap<uint16, Std::string>::iterator iter = _stringHeap.find(s);
+	Common::HashMap<uint16, Common::String>::iterator iter = _stringHeap.find(s);
 	if (iter != _stringHeap.end()) {
 		_stringHeap.erase(iter);
 		_stringIDs->clearID(s);

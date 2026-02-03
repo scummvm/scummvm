@@ -174,7 +174,7 @@ void SpellViewGump::loadCircleString(const Common::Path &datadir) {
 	}
 }
 
-void SpellViewGump::loadCircleSuffix(const Common::Path &datadir, const Std::string &image) {
+void SpellViewGump::loadCircleSuffix(const Common::Path &datadir, const Common::String &image) {
 	Common::Path imagefile;
 
 	build_path(datadir, image, imagefile);

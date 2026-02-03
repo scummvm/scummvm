@@ -87,7 +87,7 @@ struct CSSprite {
 	CSImage *image;
 	bool visible;
 	Common::Rect clip_rect;
-	Std::string text;
+	Common::String text;
 	uint16 text_color;
 	uint8 text_align;
 
@@ -105,7 +105,7 @@ struct CSSprite {
 };
 
 struct CSMidGameData {
-	Std::vector<Std::string> text;
+	Std::vector<Common::String> text;
 	Std::vector<CSImage *> images;
 };
 
@@ -147,7 +147,7 @@ public:
 	ScriptCutscene(GUI *g, Configuration *cfg, SoundManager *sm);
 	~ScriptCutscene() override;
 
-	Std::vector<Std::string> load_text(const char *filename, uint8 idx);
+	Std::vector<Common::String> load_text(const char *filename, uint8 idx);
 
 	Std::vector<CSMidGameData> load_midgame_file(const char *filename);
 
@@ -219,7 +219,7 @@ private:
 	bool is_lzc(const char *filename);
 	CSImage *load_image_from_lzc(const Common::Path &filename, uint16 idx, uint16 sub_idx);
 	void display_wrapped_text(CSSprite *s);
-	int display_wrapped_text_line(Std::string str, uint8 text_color, int x, int y, uint8 align_val);
+	int display_wrapped_text_line(Common::String str, uint8 text_color, int x, int y, uint8 align_val);
 
 	bool load_u4_save_file(TransferSaveData &saveData);
 	bool load_u5_save_file(TransferSaveData &saveData);

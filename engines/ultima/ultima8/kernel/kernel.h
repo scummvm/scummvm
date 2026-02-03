@@ -23,7 +23,7 @@
 #define ULTIMA8_KERNEL_KERNEL_H
 
 #include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 
 namespace Ultima {
@@ -124,7 +124,7 @@ public:
 		return _frameByFrame;
 	}
 
-	void addProcessLoader(Std::string classname, ProcessLoadFunc func) {
+	void addProcessLoader(Common::String classname, ProcessLoadFunc func) {
 		_processLoaders[classname] = func;
 	}
 

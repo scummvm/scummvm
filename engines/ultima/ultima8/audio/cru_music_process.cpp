@@ -183,7 +183,7 @@ void CruMusicProcess::playMusic_internal(int track) {
 
 	if (track > 0) {
 		// TODO: It's a bit ugly having this here.  Should be in GameData.
-		const Std::string fname = Std::string::format("sound/%s.amf", _trackNames[track]);
+		const Common::String fname = Common::String::format("sound/%s.amf", _trackNames[track]);
 		auto *rs = new Common::File();
 		if (!rs->open(Common::Path(fname))) {
 			// This happens in No Regret demo.

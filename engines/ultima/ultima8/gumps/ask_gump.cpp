@@ -57,7 +57,7 @@ void AskGump::InitGump(Gump *newparent, bool take_focus) {
 	ItemRelativeGump::InitGump(newparent, take_focus);
 
 	for (unsigned int i = 0; i < _answers->getSize(); ++i) {
-		Std::string str_answer = "@ ";
+		Common::String str_answer = "@ ";
 		str_answer += UCMachine::get_instance()->getString(_answers->getStringIndex(i));
 
 		ButtonWidget *child = new ButtonWidget(px, py, str_answer,

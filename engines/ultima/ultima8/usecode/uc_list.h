@@ -23,7 +23,7 @@
 #define ULTIMA8_USECODE_UCLIST_H
 
 #include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -169,7 +169,7 @@ public:
 	bool load(Common::ReadStream *rs, uint32 version);
 
 private:
-	const Std::string &getString(uint32 index) const;
+	const Common::String &getString(uint32 index) const;
 };
 
 } // End of namespace Ultima8

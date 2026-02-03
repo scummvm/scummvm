@@ -22,7 +22,7 @@
 #ifndef NUVIE_FONTS_FONT_MANAGER_H
 #define NUVIE_FONTS_FONT_MANAGER_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -61,7 +61,7 @@ public:
 protected:
 
 	bool initU6();
-	bool initWOU(Std::string filename);
+	bool initWOU(Common::String filename);
 	bool initWOUSystemFont();
 	bool initConvFonts(nuvie_game_t game_type);
 };

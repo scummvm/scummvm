@@ -23,7 +23,7 @@
 #define NUVIE_ACTORS_ACTOR_H
 
 #include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/misc/actor_list.h"
 #include "ultima/nuvie/core/map.h"
 #include "ultima/nuvie/core/obj_manager.h"
@@ -32,7 +32,6 @@ namespace Ultima {
 namespace Nuvie {
 
 using Std::list;
-using Std::string;
 using Std::vector;
 
 #define ACTOR_NO_READIABLE_LOCATION -1
@@ -285,7 +284,7 @@ protected:
 	uint8 body_armor_class;
 	uint8 readied_armor_class;
 
-	string name;
+	Common::String name;
 
 	ReadiedObj *readied_objects[ACTOR_MAX_READIED_OBJECTS];
 

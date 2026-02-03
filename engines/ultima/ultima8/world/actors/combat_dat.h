@@ -24,7 +24,7 @@
 
 #include "common/stream.h"
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -44,7 +44,7 @@ public:
 
 	~CombatDat();
 
-	const Std::string &getName() const {
+	const Common::String &getName() const {
 		return _name;
 	};
 
@@ -62,7 +62,7 @@ public:
 	}
 
 private:
-	Std::string _name;
+	Common::String _name;
 
 	uint16 _offsets[4];
 	uint8 *_data;

@@ -49,7 +49,7 @@ Configuration::~Configuration() {
 		ConfMan.flushToDisk();
 }
 
-bool Configuration::readConfigFile(const Std::string &fname, const Std::string &root,
+bool Configuration::readConfigFile(const Common::String &fname, const Common::String &root,
 								   bool readonly) {
 	_configFilename = fname;
 	Shared::XMLTree *tree = new Shared::XMLTree();
@@ -77,7 +77,7 @@ void Configuration::clear() {
 	_trees.clear();
 }
 
-void Configuration::value(const Std::string &key, Std::string &ret,
+void Configuration::value(const Common::String &key, Common::String &ret,
 						  const char *defaultvalue) const {
 	// Check for a .cfg file value in the trees
 	for (int i = _trees.size() - 1; i >= 0; --i) {
@@ -89,7 +89,7 @@ void Configuration::value(const Std::string &key, Std::string &ret,
 	}
 
 	assert(key.hasPrefix("config/"));
-	Std::string k = key.substr(7);
+	Common::String k = key.substr(7);
 
 	// Check for local entry
 	if (_localKeys.contains(k)) {
@@ -106,7 +106,7 @@ void Configuration::value(const Std::string &key, Std::string &ret,
 	ret = defaultvalue;
 }
 
-void Configuration::value(const Std::string &key, int &ret, int defaultvalue) const {
+void Configuration::value(const Common::String &key, int &ret, int defaultvalue) const {
 	// Check for a .cfg file value in the trees
 	for (int i = _trees.size() - 1; i >= 0; --i) {
 		const Shared::XMLTree *tree = _trees[i];
@@ -117,7 +117,7 @@ void Configuration::value(const Std::string &key, int &ret, int defaultvalue) co
 	}
 
 	assert(key.hasPrefix("config/"));
-	Std::string k = key.substr(7);
+	Common::String k = key.substr(7);
 
 	// Check for local entry
 	if (_localKeys.contains(k)) {
@@ -134,7 +134,7 @@ void Configuration::value(const Std::string &key, int &ret, int defaultvalue) co
 	ret = defaultvalue;
 }
 
-void Configuration::value(const Std::string &key, bool &ret, bool defaultvalue) const {
+void Configuration::value(const Common::String &key, bool &ret, bool defaultvalue) const {
 	// Check for a .cfg file value in the trees
 	for (int i = _trees.size() - 1; i >= 0; --i) {
 		const Shared::XMLTree *tree = _trees[i];
@@ -145,7 +145,7 @@ void Configuration::value(const Std::string &key, bool &ret, bool defaultvalue) 
 	}
 
 	assert(key.hasPrefix("config/"));
-	Std::string k = key.substr(7);
+	Common::String k = key.substr(7);
 
 	// Check for local entry
 	if (_localKeys.contains(k)) {
@@ -164,14 +164,14 @@ void Configuration::value(const Std::string &key, bool &ret, bool defaultvalue) 
 	ret = defaultvalue;
 }
 
-void Configuration::pathFromValue(const Std::string &key, const Std::string &file, Common::Path &full_path) const {
-	Std::string tmp;
+void Configuration::pathFromValue(const Common::String &key, const Common::String &file, Common::Path &full_path) const {
+	Common::String tmp;
 	value(key, tmp);
 
 	full_path = Common::Path(tmp).joinInPlace(file);
 }
 
-bool Configuration::set(const Std::string &key, const Std::string &value) {
+bool Configuration::set(const Common::String &key, const Common::String &value) {
 	// Currently a value is written to the last writable tree with
 	// the correct root.
 
@@ -185,7 +185,7 @@ bool Configuration::set(const Std::string &key, const Std::string &value) {
 	}
 
 	assert(key.hasPrefix("config/"));
-	Std::string k = key.substr(7);
+	Common::String k = key.substr(7);
 
 	if (_localKeys.contains(k)) {
 		_localKeys[k] = value;
@@ -199,12 +199,12 @@ bool Configuration::set(const Std::string &key, const Std::string &value) {
 	return true;
 }
 
-bool Configuration::set(const Std::string &key, const char *value) {
-	return set(key, Std::string(value));
+bool Configuration::set(const Common::String &key, const char *value) {
+	return set(key, Common::String(value));
 }
 
 
-bool Configuration::set(const Std::string &key, int value) {
+bool Configuration::set(const Common::String &key, int value) {
 	// Currently a value is written to the last writable tree with
 	// the correct root.
 
@@ -218,7 +218,7 @@ bool Configuration::set(const Std::string &key, int value) {
 	}
 
 	assert(key.hasPrefix("config/"));
-	Std::string k = key.substr(7);
+	Common::String k = key.substr(7);
 
 	if (_localKeys.contains(k)) {
 		_localKeys[k] = Common::String::format("%d", value);
@@ -232,7 +232,7 @@ bool Configuration::set(const Std::string &key, int value) {
 	return true;
 }
 
-bool Configuration::set(const Std::string &key, bool value) {
+bool Configuration::set(const Common::String &key, bool value) {
 	// Currently a value is written to the last writable tree with
 	// the correct root.
 
@@ -246,7 +246,7 @@ bool Configuration::set(const Std::string &key, bool value) {
 	}
 
 	assert(key.hasPrefix("config/"));
-	Std::string k = key.substr(7);
+	Common::String k = key.substr(7);
 	Common::String strValue = value ? "yes" : "no";
 
 	if (_localKeys.contains(k)) {
@@ -260,11 +260,11 @@ bool Configuration::set(const Std::string &key, bool value) {
 	return true;
 }
 
-ConfigNode *Configuration::getNode(const Std::string &key) {
+ConfigNode *Configuration::getNode(const Common::String &key) {
 	return new ConfigNode(*this, key);
 }
 
-void Configuration::getSubkeys(KeyTypeList &ktl, const Std::string &basekey) {
+void Configuration::getSubkeys(KeyTypeList &ktl, const Common::String &basekey) {
 	for (Shared::XMLTree *tree : _trees) {
 		Shared::XMLTree::KeyTypeList l;
 		tree->getSubkeys(l, basekey);

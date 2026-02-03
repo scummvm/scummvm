@@ -76,7 +76,7 @@ public:
 protected:
 
 	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
-	GUI_Button *loadButton(const Common::Path &dir, Std::string name, uint16 x, uint16 y);
+	GUI_Button *loadButton(const Common::Path &dir, Common::String name, uint16 x, uint16 y);
 };
 
 } // End of namespace Nuvie

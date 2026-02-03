@@ -23,7 +23,7 @@
 #define NUVIE_NUVIE_H
 
 #include "ultima/shared/engine/events.h"
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "common/archive.h"
 #include "common/random.h"
@@ -68,7 +68,7 @@ protected:
 	 */
 	bool isDataRequired(Common::Path &folder, int &majorVersion, int &minorVersion);
 public:
-	const Std::string c_empty_string;
+	const Common::String c_empty_string;
 public:
 	NuvieEngine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~NuvieEngine() override;

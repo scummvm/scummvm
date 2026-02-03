@@ -546,7 +546,7 @@ TimedAdvance::TimedAdvance(uint8 hours, uint16 r)
 
 /* Advance to time indicated by timestring, of the format "HH:MM".
  */
-TimedAdvance::TimedAdvance(Std::string timestring, uint16 r)
+TimedAdvance::TimedAdvance(Common::String timestring, uint16 r)
 	: TimedCallback(nullptr, nullptr, 1000 / TIMEADVANCE_PER_SECOND, true),
 	  _clock(Game::get_game()->get_clock()),
 	  minutes_this_hour(0), minutes(0) {
@@ -626,7 +626,7 @@ bool TimedAdvance::time_passed() const {
 
 /* Set hour and minute from "HH:MM" string.
  */
-void TimedAdvance::get_time_from_string(uint8 &hour, uint8 &minute, Std::string timestring) {
+void TimedAdvance::get_time_from_string(uint8 &hour, uint8 &minute, Common::String timestring) {
 	char *minute_s = nullptr;
 	char *hour_s = scumm_strdup(timestring.c_str());
 	for (uint32 c = 0; c < strlen(hour_s); c++)

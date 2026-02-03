@@ -227,7 +227,7 @@ void U8SaveGump::ChildNotify(Gump *child, uint32 message) {
 		// save
 		assert(_save);
 
-		Std::string name = widget->getText();
+		Common::String name = widget->getText();
 		if (name.empty()) return;
 
 		// Note: this might close us, so we should return right after.
@@ -274,7 +274,7 @@ bool U8SaveGump::loadgame(int saveIndex) {
 	return true;
 }
 
-bool U8SaveGump::savegame(int saveIndex, const Std::string &name) {
+bool U8SaveGump::savegame(int saveIndex, const Common::String &name) {
 	if (name.empty())
 		return false;
 

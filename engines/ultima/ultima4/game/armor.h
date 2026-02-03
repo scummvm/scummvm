@@ -24,7 +24,7 @@
 
 #include "ultima/ultima4/filesys/savegame.h"
 #include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 
 namespace Ultima {
 namespace Ultima4 {

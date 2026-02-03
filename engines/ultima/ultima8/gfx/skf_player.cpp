@@ -252,7 +252,7 @@ void SKFPlayer::run() {
 			                    _skf->get_object(_events[_curEvent]->_data - 1));
 			uint32 textsize = _skf->get_size(_events[_curEvent]->_data - 1);
 			if (subtitles && textsize > 7) {
-				Std::string subtitle = (textbuf + 6);
+				Common::String subtitle = (textbuf + 6);
 				delete _subs;
 				_subtitleY = textbuf[4] + (textbuf[5] << 8);
 				unsigned int remaining;

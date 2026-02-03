@@ -25,7 +25,7 @@
 #include "ultima/ultima8/gumps/modal_gump.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/misc/classtype.h"
 #include "ultima/ultima8/gfx/texture.h"
@@ -38,15 +38,15 @@ namespace Ultima8 {
  * In Crusader, this should be used for things like the "Targeting reticle [in]active." message
  */
 class MessageBoxGump : public ModalGump {
-	Std::string _title;
-	Std::string _message;
-	Std::vector<Std::string> _buttons;
+	Common::String _title;
+	Common::String _message;
+	Std::vector<Common::String> _buttons;
 	int _titleColour;
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	MessageBoxGump();
-	MessageBoxGump(const Std::string &title, const Std::string &message, uint32 title_colour, Std::vector<Std::string> *buttons);
+	MessageBoxGump(const Common::String &title, const Common::String &message, uint32 title_colour, Std::vector<Common::String> *buttons);
 	~MessageBoxGump() override;
 
 	// Init the gump, call after construction
@@ -64,8 +64,8 @@ public:
 	//! \param titleColour The colour to be displayed behind the title bar
 	//! \param buttons Array of button names to be displayed. Default is "Ok"
 	//! \return Pid of process that will have the result when finished
-	static ProcId Show(Std::string title, Std::string message, uint32 titleColour, Std::vector<Std::string> *buttons = 0);
-	static ProcId Show(Std::string title, Std::string message, Std::vector<Std::string> *buttons) {
+	static ProcId Show(Common::String title, Common::String message, uint32 titleColour, Std::vector<Common::String> *buttons = 0);
+	static ProcId Show(Common::String title, Common::String message, Std::vector<Common::String> *buttons) {
 		return Show(title, message, TEX32_PACK_RGB(0x30, 0x30, 0x8F), buttons);
 	}
 

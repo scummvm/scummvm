@@ -196,7 +196,7 @@ Obj *UseCode::get_obj_from_container(Obj *obj) {
 /* Print name of event being sent and the object receiving it.
  */
 void UseCode::dbg_print_event(UseCodeEvent event, Obj *obj) {
-	string do_string = "";
+	Common::String do_string = "";
 	switch (event) {
 	case USE_EVENT_USE:
 		do_string = "Use";

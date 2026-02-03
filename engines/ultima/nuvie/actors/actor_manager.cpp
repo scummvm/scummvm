@@ -1106,13 +1106,13 @@ void ActorManager::loadAvatarTiles(const Common::Path &datadir) {
 
 	uint8 avatar_portrait = Game::get_game()->get_portrait()->get_avatar_portrait_num();
 
-	Std::vector<Std::string> files = getCustomTileFilenames(datadir, "avatar_###_####.bmp");
+	Std::vector<Common::String> files = getCustomTileFilenames(datadir, "avatar_###_####.bmp");
 
-	for (const Std::string &filename : files) {
+	for (const Common::String &filename : files) {
 		if (filename.size() != 19) { // avatar_nnn_nnnn.bmp
 			continue;
 		}
-		Std::string num_str = filename.substr(7, 3);
+		Common::String num_str = filename.substr(7, 3);
 		uint8 portrait_num = (uint8)strtol(num_str.c_str(), nullptr, 10);
 
 		if (portrait_num == avatar_portrait) {
@@ -1134,13 +1134,13 @@ void ActorManager::loadAvatarTiles(const Common::Path &datadir) {
 void ActorManager::loadNPCTiles(const Common::Path &datadir) {
 	Common::Path imagefile;
 
-	Std::vector<Std::string> files = getCustomTileFilenames(datadir, "actor_###_####.bmp");
+	Std::vector<Common::String> files = getCustomTileFilenames(datadir, "actor_###_####.bmp");
 
-	for (const Std::string &filename : files) {
+	for (const Common::String &filename : files) {
 		if (filename.size() != 18) { // actor_nnn_nnnn.bmp
 			continue;
 		}
-		Std::string num_str = filename.substr(6, 3);
+		Common::String num_str = filename.substr(6, 3);
 		uint8 actor_num = (uint8)strtol(num_str.c_str(), nullptr, 10);
 
 		num_str = filename.substr(10, 4);
@@ -1157,7 +1157,7 @@ void ActorManager::loadNPCTiles(const Common::Path &datadir) {
 	return;
 }
 
-Std::vector<Std::string> ActorManager::getCustomTileFilenames(const Common::Path &datadir, const Std::string &filenamePrefix) {
+Std::vector<Common::String> ActorManager::getCustomTileFilenames(const Common::Path &datadir, const Common::String &filenamePrefix) {
 	NuvieFileList filelistDataDir;
 	NuvieFileList filelistSaveGameDir;
 	Common::Path path;
@@ -1172,8 +1172,8 @@ Std::vector<Std::string> ActorManager::getCustomTileFilenames(const Common::Path
 	const Std::list<NuvieFileDesc> &files = filelistSaveGameDir.get_filelist();
 	const Std::list<NuvieFileDesc> &dataFiles = filelistDataDir.get_filelist();
 
-	Common::EqualTo<Std::string> comparitor;
-	Std::vector<Std::string> filenames;
+	Common::EqualTo<Common::String> comparitor;
+	Std::vector<Common::String> filenames;
 	for (const auto &desc : files) {
 		filenames.push_back(desc.filename);
 	}

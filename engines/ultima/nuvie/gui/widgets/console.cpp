@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/gui/gui.h"
@@ -44,7 +44,7 @@ Console::~Console() {
 
 }
 
-void Console::AddLine(const Std::string &line) {
+void Console::AddLine(const Common::String &line) {
 	GUI_Console::AddLine(line);
 
 	if (status == WIDGET_VISIBLE) {
@@ -83,7 +83,7 @@ void ConsoleAddInfo(const char *format, ...) {
 	}
 }
 
-void ConsoleAddError(const Std::string &s) {
+void ConsoleAddError(const Common::String &s) {
 	if (g_console != nullptr) {
 		DEBUG(0, LEVEL_ERROR, "%s\n", s.c_str());
 		g_console->Show();
@@ -91,7 +91,7 @@ void ConsoleAddError(const Std::string &s) {
 	}
 }
 
-void ConsoleAddWarning(const Std::string &s) {
+void ConsoleAddWarning(const Common::String &s) {
 	if (g_console != nullptr) {
 		DEBUG(0, LEVEL_WARNING, "%s\n", s.c_str());
 		g_console->AddLine("Warning: " + s);

@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/misc/u6_misc.h"
@@ -48,7 +48,7 @@ MsgScrollNewUI::MsgScrollNewUI(const Configuration *cfg, Screen *s) {
 
 	init(cfg, font_normal);
 
-	Std::string new_scroll_cfg = config_get_game_key(config) + "/newscroll";
+	Common::String new_scroll_cfg = config_get_game_key(config) + "/newscroll";
 
 	cfg->value(new_scroll_cfg + "/solid_bg", solid_bg, false);
 
@@ -99,11 +99,11 @@ bool MsgScrollNewUI::can_fit_token_on_msgline(MsgLine *msg_line, MsgText *token)
 	return true;
 }
 
-void MsgScrollNewUI::display_string(const Std::string &str, Font *f, bool include_on_map_window) {
+void MsgScrollNewUI::display_string(const Common::String &str, Font *f, bool include_on_map_window) {
 	if (str.empty())
 		return;
 	bool has_trailing_whitespace = (!trailing_whitespace.empty());
-	string s = trailing_whitespace + str;
+	Common::String s = trailing_whitespace + str;
 	trailing_whitespace.clear();
 
 	uint16 i, pos;
@@ -132,7 +132,7 @@ void MsgScrollNewUI::display_string(const Std::string &str, Font *f, bool includ
 	}
 }
 
-uint16 MsgScrollNewUI::count_empty_lines(const Std::string &s) {
+uint16 MsgScrollNewUI::count_empty_lines(const Common::String &s) {
 	uint16 count = 0;
 	for (char c : s) {
 		if (c != ' ' && c != '\t' && c != '\n')

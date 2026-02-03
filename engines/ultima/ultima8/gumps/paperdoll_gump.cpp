@@ -134,7 +134,7 @@ void PaperdollGump::Close(bool no_del) {
 }
 
 void PaperdollGump::PaintStat(RenderSurface *surf, unsigned int n,
-							  Std::string text, int val) {
+							  Common::String text, int val) {
 	assert(n < 7); // constant!
 
 	Font *font, *descfont;

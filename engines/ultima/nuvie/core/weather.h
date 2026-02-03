@@ -36,7 +36,6 @@ class GameClock;
 class GameTimedCallback;
 
 using Std::list;
-using Std::string;
 
 //our callbacks
 
@@ -62,7 +61,7 @@ public:
 	bool load(NuvieIO *objlist);
 	bool save(NuvieIO *objlist);
 
-	Std::string get_wind_dir_str() const;
+	Common::String get_wind_dir_str() const;
 	NuvieDir get_wind_dir() const {
 		return wind_dir;
 	}

@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/ultima8/misc/util.h"
 
 namespace Ultima {
@@ -110,7 +110,7 @@ template<class T> void SplitString(const T &args, char sep,
 }
 
 
-template void SplitString<Std::string>(const Std::string &args, char sep, Std::vector<Std::string> &argv);
+template void SplitString<Common::String>(const Common::String &args, char sep, Std::vector<Common::String> &argv);
 
 template<class T> void SplitStringKV(const T &args, char sep,
 									 Std::vector<Common::Pair<T, T> > &argv) {
@@ -139,7 +139,7 @@ template<class T> void SplitStringKV(const T &args, char sep,
 	}
 }
 
-template void SplitStringKV<Std::string>(const Std::string &args, char sep, Std::vector<Common::Pair<Std::string, Std::string> > &argv);
+template void SplitStringKV<Common::String>(const Common::String &args, char sep, Std::vector<Common::Pair<Common::String, Common::String> > &argv);
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

@@ -22,7 +22,7 @@
 #ifndef NUVIE_CONF_CONFIG_NODE_H
 #define NUVIE_CONF_CONFIG_NODE_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/conf/configuration.h"
 
 namespace Ultima {
@@ -30,7 +30,7 @@ namespace Nuvie {
 
 class ConfigNode {
 	friend class Configuration;
-	ConfigNode(Configuration &config_, Std::string key_)
+	ConfigNode(Configuration &config_, Common::String key_)
 		: config(config_), key(key_) {
 	}
 
@@ -44,8 +44,8 @@ public:
 		return *this;
 	}
 
-	Std::string get_string(const char *defaultvalue = "") {
-		Std::string s;
+	Common::String get_string(const char *defaultvalue = "") {
+		Common::String s;
 		config.value(key, s, defaultvalue);
 		return s;
 	}
@@ -60,7 +60,7 @@ public:
 		return b;
 	}
 
-	void set(const Std::string &value) {
+	void set(const Common::String &value) {
 		config.set(key, value);
 	}
 	void set(const char *value) {
@@ -75,7 +75,7 @@ public:
 
 private:
 	Configuration &config;
-	Std::string key;
+	Common::String key;
 
 };
 

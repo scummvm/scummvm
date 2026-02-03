@@ -201,7 +201,7 @@ void Player::set_actor(Actor *new_actor) {
 	if (same_actor)
 		return;
 	actor_manager->set_player(actor);
-	Std::string prompt = get_name();
+	Common::String prompt = get_name();
 
 	if (game_type == NUVIE_GAME_U6) {
 		prompt += ":\n";

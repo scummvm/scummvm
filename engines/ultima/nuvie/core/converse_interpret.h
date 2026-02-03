@@ -27,7 +27,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-using Std::string;
 using Std::vector;
 
 /* Control and value opcodes for op() & evop() (U6) */
@@ -146,9 +145,9 @@ protected:
 
 	vector<struct in_val_s> in; // control values (input/instruction)
 	uint32 in_start;
-	string text; // input text from script
-	vector<Std::string> rstrings; // string value(s) returned by op
-	string ystring; // modified by SETNAME, accessed with "$Y"
+	Common::String text; // input text from script
+	vector<Common::String> rstrings; // string value(s) returned by op
+	Common::String ystring; // modified by SETNAME, accessed with "$Y"
 	uint8 decl_v; // declared/initialized variable number
 	uint8 decl_t; // declared variable type: 0x00=none,0xb2=int,0xb3=string
 	Common::Stack<struct convi_frame_s *> *b_frame;
@@ -161,7 +160,7 @@ protected:
 	const char *get_rstr(uint32 sn) const {
 		return ((sn < rstrings.size()) ? rstrings[sn].c_str() : "");
 	}
-	const string &get_ystr() const {
+	const Common::String &get_ystr() const {
 		return ystring;
 	}
 	void set_ystr(const char *s);
@@ -242,7 +241,7 @@ protected:
 	uint8 get_val_size(uint32 vi);
 	converse_value pop_val();
 	uint8 pop_val_size();
-	const Std::string &get_text() const {
+	const Common::String &get_text() const {
 		return text;
 	}
 	void flush() {
@@ -255,7 +254,7 @@ protected:
 	void exec();
 	void do_ctrl();
 	void do_text();
-	string get_formatted_text(const char *c_str);
+	Common::String get_formatted_text(const char *c_str);
 	converse_value pop_arg(Common::Stack<converse_typed_value> &vs);
 	converse_typed_value pop_typed_arg(Common::Stack<converse_typed_value> &vs);
 	virtual bool evop(Common::Stack<converse_typed_value> &i);
@@ -267,7 +266,7 @@ protected:
 
 public:
 	virtual uint8 npc_num(uint32 n);//uint8 npc_num(uint32 n){return((n!=0xeb)?n:converse->npc_num);}
-	bool check_keywords(Std::string keystr, Std::string instr);
+	bool check_keywords(Common::String keystr, Common::String instr);
 	bool var_input() const {
 		return decl_t != 0x00;
 	}

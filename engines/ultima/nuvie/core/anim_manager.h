@@ -33,7 +33,6 @@ namespace Ultima {
 namespace Nuvie {
 
 using Std::list;
-using Std::string;
 using Std::vector;
 
 class Actor;
@@ -453,12 +452,12 @@ public:
 };
 
 class TextAnim : public TimedAnim {
-	Std::string text;
+	Common::String text;
 	Font *font;
 	uint32 duration;
 
 public:
-	TextAnim(Std::string text, MapCoord loc, uint32 dur);
+	TextAnim(Common::String text, MapCoord loc, uint32 dur);
 	~TextAnim() override;
 	uint16 callback(uint16 msg, CallBack *caller, void *msg_data) override;
 	void start() override                    {

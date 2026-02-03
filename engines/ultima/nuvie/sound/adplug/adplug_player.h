@@ -22,7 +22,7 @@
 #ifndef NUVIE_SOUND_ADPLUG_ADPLUG_PLAYER
 #define NUVIE_SOUND_ADPLUG_ADPLUG_PLAYER
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/sound/adplug/opl.h"
 
 namespace Common {
@@ -48,15 +48,15 @@ public:
 	/***** Informational methods *****/
 	unsigned long songlength(int subsong = -1);
 
-	virtual Std::string gettype() = 0;  // returns file type
-	virtual Std::string gettitle() {    // returns song title
-		return Std::string();
+	virtual Common::String gettype() = 0;  // returns file type
+	virtual Common::String gettitle() {    // returns song title
+		return Common::String();
 	}
-	virtual Std::string getauthor() {   // returns song author name
-		return Std::string();
+	virtual Common::String getauthor() {   // returns song author name
+		return Common::String();
 	}
-	virtual Std::string getdesc() {     // returns song description
-		return Std::string();
+	virtual Common::String getdesc() {     // returns song description
+		return Common::String();
 	}
 	virtual unsigned int getpatterns() { // returns number of patterns
 		return 0;
@@ -82,8 +82,8 @@ public:
 	virtual unsigned int getinstruments() { // returns number of instruments
 		return 0;
 	}
-	virtual Std::string getinstrument(unsigned int n) { // returns n-th instrument name
-		return Std::string();
+	virtual Common::String getinstrument(unsigned int n) { // returns n-th instrument name
+		return Common::String();
 	}
 
 protected:

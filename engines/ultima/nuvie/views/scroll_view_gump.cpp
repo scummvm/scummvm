@@ -41,7 +41,7 @@ ScrollViewGump::~ScrollViewGump() {
 
 }
 
-bool ScrollViewGump::init(Screen *tmp_screen, void *view_manager, Font *f, Party *p, TileManager *tm, ObjManager *om, Std::string text_string) {
+bool ScrollViewGump::init(Screen *tmp_screen, void *view_manager, Font *f, Party *p, TileManager *tm, ObjManager *om, Common::String text_string) {
 	uint16 x_off = Game::get_game()->get_game_x_offset();
 	uint16 y_off = Game::get_game()->get_game_y_offset();
 
@@ -51,9 +51,9 @@ bool ScrollViewGump::init(Screen *tmp_screen, void *view_manager, Font *f, Party
 	View::init(x_off, y_off, f, p, tm, om);
 	SetRect(area.left, area.top, SIGN_BG_W, SIGN_BG_H);
 	/*
-	    Std::string datadir = GUI::get_gui()->get_data_dir();
-	    Std::string imagefile;
-	    Std::string path;
+	    Common::String datadir = GUI::get_gui()->get_data_dir();
+	    Common::String imagefile;
+	    Common::String path;
 
 	    build_path(datadir, "images", path);
 	    datadir = path;

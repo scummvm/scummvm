@@ -22,14 +22,13 @@
 #ifndef NUVIE_FILES_NUVIE_FILE_LIST_H
 #define NUVIE_FILES_NUVIE_FILE_LIST_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "common/fs.h"
 
 namespace Ultima {
 namespace Nuvie {
 
 using Std::list;
-using Std::string;
 
 
 #define NUVIE_SORT_TIME_DESC 0x1
@@ -41,7 +40,7 @@ class Configuration;
 
 class NuvieFileDesc {
 public:
-	Std::string filename;
+	Common::String filename;
 	uint32 m_time;
 
 	bool operator<(const NuvieFileDesc &rhs) const {
@@ -66,8 +65,8 @@ public:
 
 	bool open(const Common::Path &directory, const char *restrict, uint8 sort_mode);
 
-	Std::string *next();
-	const Std::string *get_latest() const;
+	Common::String *next();
+	const Common::String *get_latest() const;
 	uint32 get_num_files() const;
 
 	const Std::list<NuvieFileDesc> &get_filelist() const;

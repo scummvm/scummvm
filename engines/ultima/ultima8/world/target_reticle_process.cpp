@@ -195,7 +195,7 @@ void TargetReticleProcess::clearSprite() {
 
 void TargetReticleProcess::toggle() {
 	bool newstate = !getEnabled();
-	Std::string msg = newstate ? _TL_("TARGETING RETICLE ACTIVE") : _TL_("TARGETING RETICLE INACTIVE");
+	Common::String msg = newstate ? _TL_("TARGETING RETICLE ACTIVE") : _TL_("TARGETING RETICLE INACTIVE");
 	MessageBoxGump::Show("", msg, TEX32_PACK_RGB(0x70, 0x70, 0x70));
 	setEnabled(newstate);
 }

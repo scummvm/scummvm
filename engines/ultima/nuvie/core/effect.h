@@ -235,8 +235,8 @@ public:
 class TextEffect : public Effect {
 
 public:
-	TextEffect(Std::string text);
-	TextEffect(Std::string text, const MapCoord &location);
+	TextEffect(Common::String text);
+	TextEffect(Common::String text, const MapCoord &location);
 	uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 };
 
@@ -387,9 +387,9 @@ class PaletteEffect : public TimedEffect {
 class SleepEffect : public Effect {
 	TimedAdvance *timer; // timed event
 	uint8 stop_hour, stop_minute; // sleep until this time
-	Std::string stop_time;
+	Common::String stop_time;
 public:
-	SleepEffect(Std::string until);
+	SleepEffect(Common::String until);
 	SleepEffect(uint8 to_hour);
 	~SleepEffect() override;
 
@@ -601,13 +601,13 @@ public:
 
 /* Gather text from scroll input then continue. */
 class TextInputEffect: public Effect {
-	Std::string input;
+	Common::String input;
 public:
 	/* Called by the Effect handler when input is available. */
 	uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 	TextInputEffect(const char *allowed_chars, bool can_escape);
 	~TextInputEffect() override { }
-	Std::string get_input() {
+	Common::String get_input() {
 		return input;
 	}
 };

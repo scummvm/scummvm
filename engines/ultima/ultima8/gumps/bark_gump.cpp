@@ -46,7 +46,7 @@ BarkGump::BarkGump() : ItemRelativeGump(), _counter(0), _textWidget(0),
 	_talkSpeed = ConfMan.getInt("talkspeed");
 }
 
-BarkGump::BarkGump(uint16 owner, const Std::string &msg, uint32 speechShapeNum) :
+BarkGump::BarkGump(uint16 owner, const Common::String &msg, uint32 speechShapeNum) :
 	ItemRelativeGump(0, 0, 100, 100, owner, FLAG_KEEP_VISIBLE, LAYER_ABOVE_NORMAL),
 	_barked(msg), _counter(100), _speechShapeNum(speechShapeNum),
 	_speechLength(0), _textWidget(0),

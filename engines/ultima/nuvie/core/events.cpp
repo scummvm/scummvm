@@ -62,8 +62,6 @@ namespace Nuvie {
 
 Events *Events::g_events;
 
-using Std::string;
-
 EventInput_s::~EventInput_s() {
 	if (target_init) delete target_init;
 	if (str) delete str;
@@ -1507,7 +1505,7 @@ bool Events::actor_exists(const Actor *a) const {
 void Events::alt_code_input(const char *in) {
 	ActorManager *am = game->get_actor_manager();
 	Actor *a = am->get_actor((uint8) strtol(in, nullptr, 10));
-	static string teleport_string = "";
+	static Common::String teleport_string = "";
 	static Obj obj;
 	uint8 a_num = 0;
 	switch (active_alt_code) {
@@ -2824,7 +2822,7 @@ bool Events::rest() {
 	}
 	scroll->display_string("Rest");
 
-	string err_str;
+	Common::String err_str;
 	if (!player->get_party()->can_rest(err_str)) {
 		scroll->display_string(err_str);
 		scroll->display_string("\n");
@@ -3027,7 +3025,7 @@ void Events::doAction() {
 			}
 			assert(scroll->has_input()); // doAction should only be called when input is ready
 			assert(input.str == 0);
-			input.str = new string(scroll->get_input());
+			input.str = new Common::String(scroll->get_input());
 			endAction();
 			doAction();
 		} else if (input.select_from_inventory) // some redirection here...

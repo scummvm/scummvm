@@ -687,7 +687,7 @@ static int nscript_sprite_set(lua_State *L) {
 	}
 	if (!strcmp(key, "text")) {
 		const char *text = lua_tostring(L, 3);
-		sprite->text = Std::string(text);
+		sprite->text = Common::String(text);
 	}
 	if (!strcmp(key, "text_color")) {
 		sprite->text_color = lua_tointeger(L, 3);
@@ -826,7 +826,7 @@ static int nscript_text_load(lua_State *L) {
 	const char *filename = lua_tostring(L, 1);
 	uint8 idx = lua_tointeger(L, 2);
 
-	Std::vector<Std::string> text = cutScene->load_text(filename, idx);
+	Std::vector<Common::String> text = cutScene->load_text(filename, idx);
 
 	if (text.empty()) {
 		return 0;
@@ -1411,7 +1411,7 @@ Std::vector<CSMidGameData> ScriptCutscene::load_midgame_file(const char *filenam
 		CSMidGameData data;
 		for (int i = 0; i < 3; i++, idx++) {
 			unsigned char *buf = lib_n.get_item(idx, nullptr);
-			data.text.push_back(string((const char *)buf));
+			data.text.push_back(Common::String((const char *)buf));
 			free(buf);
 		}
 
@@ -1449,10 +1449,10 @@ TransferSaveData ScriptCutscene::load_transfer_save() {
 	return data;
 }
 
-Std::vector<Std::string> ScriptCutscene::load_text(const char *filename, uint8 idx) {
+Std::vector<Common::String> ScriptCutscene::load_text(const char *filename, uint8 idx) {
 	Common::Path path;
 	U6Lib_n lib_n;
-	Std::vector<string> v;
+	Std::vector<Common::String> v;
 	unsigned char *buf = nullptr;
 
 	config_get_path(config, filename, path);
@@ -1468,7 +1468,7 @@ Std::vector<Std::string> ScriptCutscene::load_text(const char *filename, uint8 i
 		for (uint16 i = 0; i < len; i++) {
 			if (buf[i] == '\r') {
 				buf[i] = '\0';
-				v.push_back(string((const char *)&buf[start]));
+				v.push_back(Common::String((const char *)&buf[start]));
 				i++;
 				buf[i] = '\0'; // skip the '\n' character
 				start = i + 1;
@@ -1485,14 +1485,14 @@ void ScriptCutscene::print_text(CSImage *image, const char *s, uint16 *x, uint16
 	int len = *x - startx;
 	size_t start = 0;
 	size_t found;
-	Std::string str = s;
-	Std::list<Std::string> tokens;
+	Common::String str = s;
+	Std::list<Common::String> tokens;
 	int space_width = font->getStringWidth(" ");
 	//uint16 x1 = startx;
 
 	found = str.findFirstOf(" ", start);
-	while (found != string::npos) {
-		Std::string token = str.substr(start, found - start);
+	while (found != Common::String::npos) {
+		Common::String token = str.substr(start, found - start);
 
 		int token_len = font->getStringWidth(token.c_str());
 
@@ -1502,7 +1502,7 @@ void ScriptCutscene::print_text(CSImage *image, const char *s, uint16 *x, uint16
 			if (tokens.size() > 1)
 				new_space = floor((width - (len - space_width * (tokens.size() - 1))) / (tokens.size() - 1));
 
-			for (const Std::string &ss : tokens) {
+			for (const Common::String &ss : tokens) {
 				*x = ((WOUFont *)font)->drawStringToShape(image->shp, ss.c_str(), *x, *y, color);
 				*x += new_space;
 			}
@@ -1520,13 +1520,13 @@ void ScriptCutscene::print_text(CSImage *image, const char *s, uint16 *x, uint16
 		found = str.findFirstOf(" ", start);
 	}
 
-	for (const Std::string &ss : tokens) {
+	for (const Common::String &ss : tokens) {
 		*x = ((WOUFont *)font)->drawStringToShape(image->shp, ss.c_str(), *x, *y, color);
 		*x += space_width;
 	}
 
 	if (start < str.size()) {
-		Std::string token = str.substr(start, str.size() - start);
+		Common::String token = str.substr(start, str.size() - start);
 		if (len + font->getStringWidth(token.c_str()) > width) {
 			*y += 8;
 			*x = startx;
@@ -1713,16 +1713,16 @@ void ScriptCutscene::display_wrapped_text(CSSprite *s) {
 
 	size_t start = 0;
 	size_t found;
-	Std::string str = s->text + "^";
-	Std::list<Std::string> tokens;
+	Common::String str = s->text + "^";
+	Std::list<Common::String> tokens;
 	int y = s->y;
 
 
-	Std::string line = "";
+	Common::String line = "";
 
 	found = str.findFirstOf("^", start);
-	while (found != string::npos) {
-		Std::string token = str.substr(start, found - start);
+	while (found != Common::String::npos) {
+		Common::String token = str.substr(start, found - start);
 
 		y = display_wrapped_text_line(token, text_color, s->x, y, s->text_align);
 
@@ -1731,25 +1731,25 @@ void ScriptCutscene::display_wrapped_text(CSSprite *s) {
 	}
 }
 
-int ScriptCutscene::display_wrapped_text_line(Std::string str, uint8 text_color, int x, int y, uint8 align_val) {
+int ScriptCutscene::display_wrapped_text_line(Common::String str, uint8 text_color, int x, int y, uint8 align_val) {
 
 	//font->drawString(screen, s->text.c_str(), s->x + x_off, s->y + y_off, text_color, text_color);
 	int len = 0;
 	size_t start = 0;
 	size_t found;
 	str = str + " ";
-	Std::list<Std::string> tokens;
+	Std::list<Common::String> tokens;
 	int space_width = font->getStringWidth(" ");
 	//uint16 x1 = startx;
 	int width = 320 - x * 2;
 
 	int char_height = font->getCharHeight();
 
-	Std::string line = "";
+	Common::String line = "";
 
 	found = str.findFirstOf(" ", start);
-	while (found != string::npos) {
-		Std::string token = str.substr(start, found - start);
+	while (found != Common::String::npos) {
+		Common::String token = str.substr(start, found - start);
 
 		int token_len = font->getStringWidth(token.c_str());
 

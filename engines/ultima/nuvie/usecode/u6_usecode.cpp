@@ -309,7 +309,7 @@ bool U6UseCode::message_obj(Obj *obj, CallbackMessage msg, void *msg_data) {
 		items.ent_ref = (MapEntity *)msg_data;
 		break;
 	case MESG_TEXT_READY:
-		items.string_ref = (string *)msg_data;
+		items.string_ref = (Common::String *)msg_data;
 		break;
 	case MESG_DATA_READY:
 		items.data_ref = (char *)msg_data; // pointer to EventInput structure
@@ -1427,7 +1427,7 @@ bool U6UseCode::use_rubber_ducky(Obj *obj, UseCodeEvent ev) {
 	return true;
 }
 
-sint16 U6UseCode::parseLatLongString(U6UseCodeLatLonEnum mode, Std::string *input) {
+sint16 U6UseCode::parseLatLongString(U6UseCodeLatLonEnum mode, Common::String *input) {
 	uint16 len = input->size();
 	sint16 val = 0;
 	for (uint16 i = 0; i < len; i++) {

@@ -96,7 +96,7 @@ protected:
 	void init_chest(const Common::Path &datadir);
 	void init_crate(const Common::Path &datadir);
 	void init_barrel(const Common::Path &datadir);
-	void init_corpse(const Common::Path &datadir, Std::string bg_filename);
+	void init_corpse(const Common::Path &datadir, Common::String bg_filename);
 	void display_inventory_weight();
 
 	void left_arrow();

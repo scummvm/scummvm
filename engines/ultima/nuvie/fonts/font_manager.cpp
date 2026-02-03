@@ -98,7 +98,7 @@ bool FontManager::initU6() {
 	return true;
 }
 
-bool FontManager::initWOU(Std::string filename) {
+bool FontManager::initWOU(Common::String filename) {
 	WOUFont *font;
 	Common::Path path;
 	U6Lib_n lib_file;

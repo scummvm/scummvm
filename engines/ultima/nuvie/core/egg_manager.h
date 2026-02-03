@@ -22,7 +22,7 @@
 #ifndef NUVIE_CORE_EGG_MANAGER_H
 #define NUVIE_CORE_EGG_MANAGER_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/core/obj_manager.h"
 
 namespace Ultima {

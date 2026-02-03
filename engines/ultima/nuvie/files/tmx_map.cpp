@@ -73,10 +73,10 @@ void TMXMap::writeRoofTileset(uint8 level) {
 	free(buf);
 }
 
-void TMXMap::writeLayer(NuvieIOFileWrite *tmx, uint16 sideLength, Std::string layerName,
+void TMXMap::writeLayer(NuvieIOFileWrite *tmx, uint16 sideLength, Common::String layerName,
 		uint16 gidOffset, uint16 bitsPerTile, const unsigned char *data) {
-	Std::string slen = sint32ToString((sint32)sideLength);
-	Std::string header = " <layer name=\"" + layerName + "\" width=\"" + slen + "\" height=\""
+	Common::String slen = sint32ToString((sint32)sideLength);
+	Common::String header = " <layer name=\"" + layerName + "\" width=\"" + slen + "\" height=\""
 	                     + slen + "\">\n";
 	header += "  <data encoding=\"csv\">\n";
 
@@ -101,14 +101,14 @@ void TMXMap::writeLayer(NuvieIOFileWrite *tmx, uint16 sideLength, Std::string la
 		tmx->write1('\n');
 	}
 
-	Std::string footer = "  </data>\n";
+	Common::String footer = "  </data>\n";
 	footer += " </layer>\n";
 
 	tmx->writeBuf((const unsigned char *)footer.c_str(), footer.size());
 }
 
 void TMXMap::writeObjectLayer(NuvieIOFileWrite *tmx, uint8 level) {
-	Std::string xml = "<objectgroup name=\"Object Layer\">\n";
+	Common::String xml = "<objectgroup name=\"Object Layer\">\n";
 	tmx->writeBuf((const unsigned char *)xml.c_str(), xml.size());
 
 	writeObjects(tmx, level, true, false);
@@ -132,14 +132,14 @@ bool TMXMap::canDrawTile(Tile *t, bool forceLower, bool toptile) {
 	return true;
 }
 
-Std::string TMXMap::writeObjectTile(Obj *obj, Std::string nameSuffix, uint16 tile_num, uint16 x, uint16 y, bool forceLower, bool toptile) {
+Common::String TMXMap::writeObjectTile(Obj *obj, Common::String nameSuffix, uint16 tile_num, uint16 x, uint16 y, bool forceLower, bool toptile) {
 	Tile *t = tile_manager->get_tile(tile_num);
 
 	if (canDrawTile(t, forceLower, toptile)) {
-		return "  <object name=\"" + encode_xml_entity(Std::string(obj_manager->get_obj_name(obj))) + nameSuffix + "\" gid=\"" + sint32ToString(tile_num + 1) + "\" x=\"" + sint32ToString(x * 16) + "\" y=\"" + sint32ToString((y + 1) * 16) + "\" width=\"16\" height=\"16\"/>\n";
+		return "  <object name=\"" + encode_xml_entity(Common::String(obj_manager->get_obj_name(obj))) + nameSuffix + "\" gid=\"" + sint32ToString(tile_num + 1) + "\" x=\"" + sint32ToString(x * 16) + "\" y=\"" + sint32ToString((y + 1) * 16) + "\" width=\"16\" height=\"16\"/>\n";
 	}
 
-	return Std::string();
+	return Common::String();
 }
 
 void TMXMap::writeObjects(NuvieIOFileWrite *tmx, uint8 level, bool forceLower, bool toptiles) {
@@ -152,9 +152,9 @@ void TMXMap::writeObjects(NuvieIOFileWrite *tmx, uint8 level, bool forceLower, b
 				for (U6Link *link = list->start(); link != nullptr; link = link->next) {
 					Obj *obj = (Obj *)link->data;
 					Tile *t = tile_manager->get_original_tile(obj_manager->get_obj_tile_num(obj->obj_n) + obj->frame_n);
-					Std::string s;
+					Common::String s;
 					if (canDrawTile(t, forceLower, toptiles)) {
-						s = "  <object name=\"" + encode_xml_entity(Std::string(obj_manager->get_obj_name(obj))) + "\" gid=\"" + sint32ToString(obj_manager->get_obj_tile_num(obj->obj_n) + obj->frame_n + 1) + "\" x=\"" + sint32ToString((x) * 16) + "\" y=\"" + sint32ToString((y + 1) * 16) + "\" width=\"16\" height=\"16\">\n";
+						s = "  <object name=\"" + encode_xml_entity(Common::String(obj_manager->get_obj_name(obj))) + "\" gid=\"" + sint32ToString(obj_manager->get_obj_tile_num(obj->obj_n) + obj->frame_n + 1) + "\" x=\"" + sint32ToString((x) * 16) + "\" y=\"" + sint32ToString((y + 1) * 16) + "\" width=\"16\" height=\"16\">\n";
 						s += "    <properties>\n";
 						s += "       <property name=\"obj_n\" value=\"" + sint32ToString(obj->obj_n) + "\"/>\n";
 						s += "       <property name=\"frame_n\" value=\"" + sint32ToString(obj->frame_n) + "\"/>\n";
@@ -191,11 +191,11 @@ bool TMXMap::exportMapLevel(uint8 level) {
 	mapdata = map->get_map_data(level);
 	Common::String level_string = Common::String::format("%d", level); // 'nn\0'
 	Common::Path filename;
-	build_path(savedir, savename + "_" + Std::string(level_string.c_str()) + ".tmx", filename);
+	build_path(savedir, savename + "_" + Common::String(level_string.c_str()) + ".tmx", filename);
 
 	tmx.open(filename);
-	Std::string swidth = sint32ToString((sint32)width);
-	Std::string header = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+	Common::String swidth = sint32ToString((sint32)width);
+	Common::String header = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 	header +=
 	    "<map version=\"1.0\" orientation=\"orthogonal\" renderorder=\"right-down\" width=\""
 	    + swidth + "\" height=\"" + swidth
@@ -223,7 +223,7 @@ bool TMXMap::exportMapLevel(uint8 level) {
 		writeLayer(&tmx, width, "RoofLayer", 2047, 16, (const unsigned char *)map->get_roof_data(level));
 	}
 
-	Std::string footer = "</map>\n";
+	Common::String footer = "</map>\n";
 
 
 	tmx.writeBuf((const unsigned char *)footer.c_str(), footer.size());
@@ -235,14 +235,14 @@ bool TMXMap::exportMapLevel(uint8 level) {
 	return true;
 }
 
-Std::string TMXMap::sint32ToString(sint32 value) {
+Common::String TMXMap::sint32ToString(sint32 value) {
 	char buf[12];
 	snprintf(buf, sizeof(buf), "%d", value);
-	return Std::string(buf);
+	return Common::String(buf);
 }
 
-Std::string TMXMap::boolToString(bool value) {
-	return value ? Std::string("true") : Std::string("false");
+Common::String TMXMap::boolToString(bool value) {
+	return value ? Common::String("true") : Common::String("false");
 }
 
 } // End of namespace Nuvie

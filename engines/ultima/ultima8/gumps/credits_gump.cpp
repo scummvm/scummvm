@@ -48,7 +48,7 @@ CreditsGump::CreditsGump()
 	}
 }
 
-CreditsGump::CreditsGump(const Std::string &text, int parskip,
+CreditsGump::CreditsGump(const Common::String &text, int parskip,
 						 uint32 flags, int32 layer)
 		: ModalGump(0, 0, 320, 200, 0, flags, layer), _text(text), _parSkip(parskip),
 		_timer(0), _title(nullptr), _nextTitle(nullptr), _state(CS_PLAYING),
@@ -107,8 +107,8 @@ void CreditsGump::Close(bool no_del) {
 	if (musicproc) musicproc->playMusic(0);
 }
 
-void CreditsGump::extractLine(Std::string &text,
-							  char &modifier, Std::string &line) {
+void CreditsGump::extractLine(Common::String &text,
+							  char &modifier, Common::String &line) {
 	if (!text.empty() && (text[0] == '+' || text[0] == '&' || text[0] == '}' ||
 							text[0] == '~' || text[0] == '@')) {
 		modifier = text[0];
@@ -122,18 +122,18 @@ void CreditsGump::extractLine(Std::string &text,
 		return;
 	}
 
-	Std::string::size_type starpos = text.find('*');
+	Common::String::size_type starpos = text.find('*');
 
 	line = text.substr(0, starpos);
 
 	// replace '%%' by '%'.
 	// (Original interpreted these strings as format strings??)
-	Std::string::size_type ppos;
-	while ((ppos = line.find("%%")) != Std::string::npos) {
+	Common::String::size_type ppos;
+	while ((ppos = line.find("%%")) != Common::String::npos) {
 		line.replace(ppos, 2, "%");
 	}
 
-	if (starpos != Std::string::npos) starpos++;
+	if (starpos != Common::String::npos) starpos++;
 	text.erase(0, starpos);
 }
 
@@ -197,8 +197,8 @@ void CreditsGump::run() {
 		bool done = false;
 		bool firstline = true;
 		while (!_text.empty() && !done) {
-			Std::string::size_type endline = _text.find('\n');
-			Std::string line = _text.substr(0, endline);
+			Common::String::size_type endline = _text.find('\n');
+			Common::String line = _text.substr(0, endline);
 
 			if (line.empty()) {
 				_text.erase(0, 1);
@@ -216,7 +216,7 @@ void CreditsGump::run() {
 					continue;
 				}
 
-				Std::string titletext;
+				Common::String titletext;
 				char modifier;
 
 				extractLine(line, modifier, titletext);
@@ -242,7 +242,7 @@ void CreditsGump::run() {
 				int indent = 0;
 
 				while (!line.empty()) {
-					Std::string outline;
+					Common::String outline;
 					char modifier;
 					unsigned int remaining;
 					extractLine(line, modifier, outline);
@@ -334,7 +334,7 @@ void CreditsGump::run() {
 			}
 
 
-			if (endline != Std::string::npos) endline++;
+			if (endline != Common::String::npos) endline++;
 			_text.erase(0, endline);
 
 			firstline = false;

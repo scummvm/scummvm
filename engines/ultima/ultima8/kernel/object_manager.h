@@ -22,7 +22,7 @@
 #ifndef ULTIMA8_KERNEL_OBJECTMANAGER_H
 #define ULTIMA8_KERNEL_OBJECTMANAGER_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/misc/common_types.h"
 
@@ -74,11 +74,11 @@ public:
 	idMan *_actorIDs;
 
 private:
-	Object *loadObject(Common::ReadStream *rs, Std::string classname, uint32 version);
+	Object *loadObject(Common::ReadStream *rs, Common::String classname, uint32 version);
 
 	void setupLoaders();
 
-	void addObjectLoader(Std::string classname, ObjectLoadFunc func) {
+	void addObjectLoader(Common::String classname, ObjectLoadFunc func) {
 		_objectLoaders[classname] = func;
 	}
 	Common::HashMap<Common::String, ObjectLoadFunc> _objectLoaders;

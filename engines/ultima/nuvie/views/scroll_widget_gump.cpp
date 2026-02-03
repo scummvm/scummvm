@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/misc/u6_misc.h"
@@ -102,7 +102,7 @@ bool ScrollWidgetGump::parse_token(MsgText *token) {
 	return MsgScroll::parse_token(token);
 }
 
-void ScrollWidgetGump::display_string(const Std::string &s) {
+void ScrollWidgetGump::display_string(const Common::String &s) {
 	MsgScroll::display_string(s);
 	update_arrows();
 }

@@ -391,7 +391,7 @@ void Kernel::save(Common::WriteStream *ws) {
 	_pIDs->save(ws);
 	ws->writeUint32LE(_processes.size());
 	for (auto *p : _processes) {
-		const Std::string & classname = p->GetClassType()._className; // virtual
+		const Common::String & classname = p->GetClassType()._className; // virtual
 		assert(classname.size());
 
 		Common::HashMap<Common::String, ProcessLoadFunc>::iterator iter;
@@ -455,7 +455,7 @@ Process *Kernel::loadProcess(Common::ReadStream *rs, uint32 version) {
 	rs->read(buf, classlen);
 	buf[classlen] = 0;
 
-	Std::string classname = buf;
+	Common::String classname = buf;
 	delete[] buf;
 
 	Common::HashMap<Common::String, ProcessLoadFunc>::iterator iter;

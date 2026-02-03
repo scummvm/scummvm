@@ -24,7 +24,7 @@
 
 #include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/misc/set.h"
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 
@@ -53,7 +53,7 @@ public:
 
 	void execProcess(UCProcess *proc);
 
-	const Std::string &getString(uint16 str) const;
+	const Common::String &getString(uint16 str) const;
 	UCList *getList(uint16 l);
 
 	void freeString(uint16 s);
@@ -102,7 +102,7 @@ private:
 	GlobalStorage *_globals;
 
 	Common::HashMap<uint16, UCList *> _listHeap;
-	Common::HashMap<uint16, Std::string> _stringHeap;
+	Common::HashMap<uint16, Common::String> _stringHeap;
 
 	// Add a string to the list (copies the string)
 	uint16 assignString(const char *str);

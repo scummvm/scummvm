@@ -74,14 +74,14 @@ ObjManager::ObjManager(const Configuration *cfg, TileManager *tm, EggManager *em
 //save the egg tile_num incase we want to switch egg display on again.
 	egg_tile_num = get_obj_tile_num(obj_egg_table[game_type]);
 
-	Std::string show_eggs_key = config_get_game_key(config);
+	Common::String show_eggs_key = config_get_game_key(config);
 	show_eggs_key.append("/show_eggs");
 
 	config->value(show_eggs_key, show_eggs);
 //if(!show_eggs)
 //  show_egg_objs(false);
 
-	Std::string custom_tile_str;
+	Common::String custom_tile_str;
 	config->value(config_get_game_key(config) + "/custom_actor_tiles", custom_tile_str, "default");
 	if (custom_tile_str == "default") {
 		if (Game::get_game()->is_new_style())

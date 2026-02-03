@@ -213,7 +213,7 @@ void NuvieEngine::initConfig() {
 }
 
 void NuvieEngine::assignGameConfigValues(uint8 gameType) {
-	Std::string game_name, game_id;
+	Common::String game_name, game_id;
 
 	_config->set("config/GameType", gameType);
 
@@ -248,7 +248,7 @@ bool NuvieEngine::checkGameDir(uint8 gameType) {
 }
 
 bool NuvieEngine::checkDataDir() {
-	Std::string path;
+	Common::String path;
 	_config->value("config/datadir", path, "");
 	ConsoleAddInfo("datadir: \"%s\"", path.c_str());
 
@@ -393,7 +393,7 @@ bool NuvieEngine::quickSave(int saveSlot, bool isLoad) {
 	if (saveSlot < 0 || saveSlot > 99)
 		return false;
 
-	Std::string text;
+	Common::String text;
 	MsgScroll *scroll = _game->get_scroll();
 
 	if (isLoad) {
@@ -408,7 +408,7 @@ bool NuvieEngine::quickSave(int saveSlot, bool isLoad) {
 		text = Common::convertFromU32String(_("saving quick save %d"));
 	}
 
-	text = Std::string::format(text.c_str(), saveSlot);
+	text = Common::String::format(text.c_str(), saveSlot);
 	scroll->display_string(text);
 
 	if (isLoad) {
@@ -430,7 +430,7 @@ bool NuvieEngine::playIntro() {
 		return true;
 
 	bool skip_intro;
-	string key = config_get_game_key(_config);
+	Common::String key = config_get_game_key(_config);
 	key.append("/skip_intro");
 	_config->value(key, skip_intro, false);
 

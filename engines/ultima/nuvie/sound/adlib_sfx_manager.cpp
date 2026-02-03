@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/sound/decoder/adlib_sfx_stream.h"
 #include "ultima/nuvie/sound/adlib_sfx_manager.h"

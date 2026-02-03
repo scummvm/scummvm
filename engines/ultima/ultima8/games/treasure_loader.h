@@ -28,7 +28,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-typedef Common::HashMap<Std::string, TreasureInfo, Common::IgnoreCase_Hash> TreasureMap;
+typedef Common::HashMap<Common::String, TreasureInfo, Common::IgnoreCase_Hash> TreasureMap;
 
 class TreasureLoader {
 public:
@@ -39,17 +39,17 @@ public:
 	void loadDefaults();
 
 	//! parse treasure string into vector of TreasureInfo objects
-	bool parse(const Std::string &, Std::vector<TreasureInfo> &treasure) const;
+	bool parse(const Common::String &, Std::vector<TreasureInfo> &treasure) const;
 
 private:
 	TreasureMap _defaultTreasure;
 
-	bool internalParse(const Std::string &desc, TreasureInfo &ti, bool loadingDefault) const;
+	bool internalParse(const Common::String &desc, TreasureInfo &ti, bool loadingDefault) const;
 
-	bool parseUInt32Vector(const Std::string &val, Std::vector<uint32> &vec) const;
-	bool parseUIntRange(const Std::string &val, unsigned int &min, unsigned int &max) const;
-	bool parseDouble(const Std::string &val, double &d) const;
-	bool parseInt(const Std::string &val, int &i) const;
+	bool parseUInt32Vector(const Common::String &val, Std::vector<uint32> &vec) const;
+	bool parseUIntRange(const Common::String &val, unsigned int &min, unsigned int &max) const;
+	bool parseDouble(const Common::String &val, double &d) const;
+	bool parseInt(const Common::String &val, int &i) const;
 };
 
 } // End of namespace Ultima8

@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "common/stream.h"
 
 #ifndef NUVIE_CONF_MISC_H
@@ -28,9 +28,9 @@
 namespace Ultima {
 namespace Nuvie {
 
-extern bool string_i_compare(const Std::string &s1, const Std::string &s2);
+extern bool string_i_compare(const Common::String &s1, const Common::String &s2);
 
-extern Std::string readLine(Common::ReadStream *stream);
+extern Common::String readLine(Common::ReadStream *stream);
 
 } // End of namespace Nuvie
 } // End of namespace Ultima

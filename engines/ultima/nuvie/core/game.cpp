@@ -119,7 +119,7 @@ Game::Game(Configuration *cfg, Events *evt, Screen *scr, GUI *g, nuvie_game_t ty
 			game_style = NUVIE_STYLE_ORIG_PLUS_CUTOFF_MAP;
 	}
 
-	string game_position;
+	Common::String game_position;
 	config->value("config/video/game_position", game_position, "center");
 
 	if (game_position == "upper_left")
@@ -314,7 +314,7 @@ bool Game::loadGame(Script *s) {
 			command_bar->Show();
 		else {
 			bool show;
-			Std::string show_cb;
+			Common::String show_cb;
 			config->value(config_get_game_key(config) + "/show_orig_style_cb", show_cb, "default");
 			if (show_cb == "default") {
 				if (is_new_style())
@@ -350,7 +350,7 @@ void Game::init_converse_gump_settings() {
 	else {
 		converse_gump_type = get_converse_gump_type_from_config(config);
 	}
-	Std::string width_str;
+	Common::String width_str;
 	int gump_w = get_game_width();
 
 	if (game_type == NUVIE_GAME_MD)
@@ -445,7 +445,7 @@ void Game::init_cursor() {
 }
 
 void Game::init_game_style() {
-	string game_style_str;
+	Common::String game_style_str;
 	config->value("config/video/game_style", game_style_str, "original");
 	if (game_style_str == "new")
 		game_style = NUVIE_STYLE_NEW;

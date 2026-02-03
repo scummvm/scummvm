@@ -177,10 +177,10 @@ void GameData::loadTranslation() {
 	}
 }
 
-Std::string GameData::translate(const Std::string &text) {
+Common::String GameData::translate(const Common::String &text) {
 	// TODO: maybe cache these lookups? config calls may be expensive
 	ConfigFileManager *config = ConfigFileManager::get_instance();
-	Std::string trans;
+	Common::String trans;
 	if (config->get("language", "text", text, trans)) {
 		return trans;
 	}
@@ -193,8 +193,8 @@ FrameID GameData::translate(FrameID f) {
 	// TODO: allow translations to be in another shapeflex
 
 	ConfigFileManager *config = ConfigFileManager::get_instance();
-	Std::string category = "language";
-	Std::string section;
+	Common::String category = "language";
+	Common::String section;
 
 	switch (f._flexId) {
 	case GUMPS:
@@ -207,8 +207,8 @@ FrameID GameData::translate(FrameID f) {
 	char buf[100];
 	Common::sprintf_s(buf, "%d,%d", f._shapeNum, f._frameNum);
 
-	Std::string key = buf;
-	Std::string trans;
+	Common::String key = buf;
+	Common::String trans;
 	if (!config->get(category, section, key, trans)) {
 		return f;
 	}
@@ -235,7 +235,7 @@ void GameData::loadU8Data() {
 	if (!langletter)
 		error("Unknown language. Unable to open usecode");
 
-	Std::string filename = "usecode/";
+	Common::String filename = "usecode/";
 	filename += langletter;
 	filename += "usecode.flx";
 
@@ -373,9 +373,9 @@ void GameData::setupJPOverrides() {
 	jpkeyvals = config->listKeyValues("language", "jpfonts");
 	for (const auto &i : jpkeyvals) {
 		int fontnum = atoi(i._key.c_str());
-		const Std::string &fontdesc = i._value;
+		const Common::String &fontdesc = i._value;
 
-		Std::vector<Std::string> vals;
+		Std::vector<Common::String> vals;
 		SplitString(fontdesc, ',', vals);
 		if (vals.size() != 2) {
 			warning("Invalid jpfont override: %s", fontdesc.c_str());
@@ -404,9 +404,9 @@ void GameData::setupTTFOverrides(const char *category, bool SJIS) {
 	ttfkeyvals = config->listKeyValues(category, "fontoverride");
 	for (const auto &i : ttfkeyvals) {
 		int fontnum = atoi(i._key.c_str());
-		const Std::string &fontdesc = i._value;
+		const Common::String &fontdesc = i._value;
 
-		Std::vector<Std::string> vals;
+		Std::vector<Common::String> vals;
 		SplitString(fontdesc, ',', vals);
 		if (vals.size() != 4) {
 			warning("Invalid ttf override: %s", fontdesc.c_str());
@@ -498,7 +498,7 @@ void GameData::loadRemorseData() {
 	if (!langletter)
 		error("Unknown language. Unable to open usecode");
 
-	Std::string filename = "usecode/";
+	Common::String filename = "usecode/";
 	filename += langletter;
 	filename += "usecode.flx";
 

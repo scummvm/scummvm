@@ -347,7 +347,7 @@ void U6Lib_n::add_item(uint32 offset32, const char *name) {
 		items = (U6LibItem *)nuvie_realloc(items, sizeof(U6LibItem) * (num_offsets + 1));
 	U6LibItem *item = &items[num_offsets];
 	item->offset = offset32;
-	item->name = new string(name);
+	item->name = new Common::String(name);
 	item->size = 0;
 	item->uncomp_size = 0;
 	item->flag = 0; // uncompressed

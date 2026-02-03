@@ -55,14 +55,14 @@ class MsgText {
 public:
 
 	Font *font;
-	Std::string s;
+	Common::String s;
 	uint8 color;
 
 	MsgText();
-	MsgText(const Std::string &new_string, Font *f);
+	MsgText(const Common::String &new_string, Font *f);
 	~MsgText();
 
-	void append(const Std::string &new_string);
+	void append(const Common::String &new_string);
 	void copy(MsgText *msg_text);
 	uint32 length();
 
@@ -115,7 +115,7 @@ protected:
 	virtual void process_page_break();
 	Std::list<MsgLine *> msg_buf;
 
-	Std::string input_buf;
+	Common::String input_buf;
 	bool permit_inputescape; // can RETURN or ESCAPE be used to escape input entry
 
 	uint16 cursor_wait;
@@ -198,13 +198,13 @@ public:
 	virtual bool is_garg_font();
 
 	template<class... TParam>
-	int print(const Std::string &format, TParam... param);
+	int print(const Common::String &format, TParam... param);
 
-	virtual void display_string(const Std::string &s, Font *f, bool include_on_map_window);
-	void display_string(const Std::string &s, Font *f, uint8 color, bool include_on_map_window);
-	void display_string(const Std::string &s, uint16 length, uint8 lang_num);
-	void display_string(const Std::string &s, bool include_on_map_window = true);
-	void display_string(const Std::string &s, uint8 color, bool include_on_map_window);
+	virtual void display_string(const Common::String &s, Font *f, bool include_on_map_window);
+	void display_string(const Common::String &s, Font *f, uint8 color, bool include_on_map_window);
+	void display_string(const Common::String &s, uint16 length, uint8 lang_num);
+	void display_string(const Common::String &s, bool include_on_map_window = true);
+	void display_string(const Common::String &s, uint8 color, bool include_on_map_window);
 	void display_fmt_string(const char *format, ...);
 	void message(const char *string) {
 		display_string(string);
@@ -245,7 +245,7 @@ public:
 	GUI_status KeyDown(const Common::KeyState &key) override;
 	GUI_status MouseUp(int x, int y, Events::MouseButton button) override;
 	GUI_status MouseWheel(sint32 x, sint32 y) override;
-	virtual Std::string get_token_string_at_pos(uint16 x, uint16 y);
+	virtual Common::String get_token_string_at_pos(uint16 x, uint16 y);
 //void updateScroll();
 	void Display(bool full_redraw) override;
 
@@ -263,7 +263,7 @@ public:
 	}
 
 	bool has_input();
-	Std::string get_input();
+	Common::String get_input();
 	const char *peek_at_input();
 	void request_input(CallBack *caller, void *user_data);
 	void cancel_input_request() {
@@ -290,11 +290,11 @@ protected:
 	}
 
 private:
-	int print_internal(const Std::string *format, ...);
+	int print_internal(const Common::String *format, ...);
 };
 
 template<class... TParam>
-inline int MsgScroll::print(const Std::string &format, TParam... param) {
+inline int MsgScroll::print(const Common::String &format, TParam... param) {
 	return print_internal(&format, Common::forward<TParam>(param)...);
 }
 

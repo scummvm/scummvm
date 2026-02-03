@@ -74,11 +74,11 @@ int TTFont::getBaselineSkip() {
 }
 
 template<class T>
-static Common::U32String toUnicode(const Std::string &text, uint16 bullet) {
-	Std::string::size_type len = T::length(text);
+static Common::U32String toUnicode(const Common::String &text, uint16 bullet) {
+	Common::String::size_type len = T::length(text);
 	Common::U32String result = Common::U32String(text.c_str(), len);
 
-	Std::string::const_iterator iter = text.begin();
+	Common::String::const_iterator iter = text.begin();
 	for (uint idx = 0; idx < len; ++idx) {
 		uint32 u = T::unicode(iter);
 		if (u == '@') {
@@ -91,7 +91,7 @@ static Common::U32String toUnicode(const Std::string &text, uint16 bullet) {
 	return result;
 }
 
-void TTFont::getStringSize(const Std::string &text, int32 &width, int32 &height) {
+void TTFont::getStringSize(const Common::String &text, int32 &width, int32 &height) {
 	// convert to unicode
 	Common::U32String unicodeText;
 	if (!_SJIS)
@@ -106,7 +106,7 @@ void TTFont::getStringSize(const Std::string &text, int32 &width, int32 &height)
 	height += 2 * _borderSize;
 }
 
-void TTFont::getTextSize(const Std::string &text,
+void TTFont::getTextSize(const Common::String &text,
 						 int32 &resultWidth, int32 &resultHeight,
 						 unsigned int &remaining,
 						 int32 width, int32 height, TextAlign align,
@@ -193,9 +193,9 @@ void TTFont::addTextBorder(Graphics::ManagedSurface &textSurf, uint32 *texBuf, c
 	}
 }
 
-RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remaining,
+RenderedText *TTFont::renderText(const Common::String &text, unsigned int &remaining,
 		int32 width, int32 height, TextAlign align, bool u8specials, bool pagebreaks,
-		Std::string::size_type cursor) {
+		Common::String::size_type cursor) {
 	int32 resultWidth, resultHeight, lineHeight;
 	Std::list<PositionedText> lines;
 	if (!_SJIS)
@@ -277,7 +277,7 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 			}
 		}
 
-		if (line._cursor != Std::string::npos) {
+		if (line._cursor != Common::String::npos) {
 			assert(line._cursor <= line._text.size());
 			unicodeText = unicodeText.substr(0, line._cursor);
 

@@ -23,7 +23,7 @@
 #define ULTIMA8_GAMES_GAMEDATA_H
 
 #include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/ultima8/gfx/frame_id.h"
 
 namespace Ultima {
@@ -104,7 +104,7 @@ public:
 
 	const WeaselDat *getWeaselDat(uint16 level) const;
 
-	Std::string translate(const Std::string &text);
+	Common::String translate(const Common::String &text);
 	FrameID translate(FrameID frame);
 
 	enum ShapeFlexId {

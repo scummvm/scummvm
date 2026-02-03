@@ -20,7 +20,7 @@
 #ifndef NUVIE_SOUND_ADPLUG_ADPLUG_DECODER_STREAM_H
 #define NUVIE_SOUND_ADPLUG_ADPLUG_DECODER_STREAM_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/sound/adplug/emu_opl.h"
 #include "ultima/nuvie/sound/adplug/opl.h"
 #include "ultima/nuvie/sound/adplug/u6m.h"
@@ -33,7 +33,6 @@ namespace Nuvie {
 class U6Lib_n;
 class U6Lzw;
 class NuvieIOBuffer;
-using Std::string;
 
 class U6AdPlugDecoderStream : public Audio::RewindableAudioStream {
 public:

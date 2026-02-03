@@ -39,7 +39,7 @@ BookGump::BookGump()
 
 }
 
-BookGump::BookGump(ObjId owner, const Std::string &msg) :
+BookGump::BookGump(ObjId owner, const Common::String &msg) :
 	ModalGump(0, 0, 100, 100, owner), _text(msg),
 	_textWidgetL(0), _textWidgetR(0) {
 }
@@ -59,8 +59,8 @@ void BookGump::InitGump(Gump *newparent, bool take_focus) {
 	//
 	Item *item = getItem(_owner);
 	if (item && item->getShape() == 0x120 && item->getQuality() == 0x66) {
-		const Std::string placeholder = "spell of resurrection";
-		const Std::string replacement = _TL_(placeholder);
+		const Common::String placeholder = "spell of resurrection";
+		const Common::String replacement = _TL_(placeholder);
 		if (replacement != placeholder)
 			_text = replacement;
 	}

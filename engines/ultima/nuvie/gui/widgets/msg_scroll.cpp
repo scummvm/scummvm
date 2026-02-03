@@ -19,7 +19,7 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/misc/u6_misc.h"
@@ -40,7 +40,7 @@ namespace Nuvie {
 MsgText::MsgText() : font(nullptr), color(0) {
 }
 
-MsgText::MsgText(const Std::string &new_string, Font *f) : font(f), color(0) {
+MsgText::MsgText(const Common::String &new_string, Font *f) : font(f), color(0) {
 	s.assign(new_string);
 	if (font) {
 		color = font->getDefaultColor();
@@ -50,7 +50,7 @@ MsgText::MsgText(const Std::string &new_string, Font *f) : font(f), color(0) {
 MsgText::~MsgText() {
 }
 
-void MsgText::append(const Std::string &new_string) {
+void MsgText::append(const Common::String &new_string) {
 	s.append(new_string);
 }
 
@@ -244,7 +244,7 @@ MsgScroll::~MsgScroll() {
 }
 
 bool MsgScroll::init(const char *player_name) {
-	Std::string prompt_string;
+	Common::String prompt_string;
 
 	prompt_string.append(player_name);
 	if (game_type == NUVIE_GAME_U6) {
@@ -275,7 +275,7 @@ void MsgScroll::set_scroll_dimensions(uint16 w, uint16 h) {
 	display_pos = 0;
 }
 
-int MsgScroll::print_internal(const Std::string *format, ...) {
+int MsgScroll::print_internal(const Common::String *format, ...) {
 
 	va_list ap;
 	int printed = 0;
@@ -337,23 +337,23 @@ void MsgScroll::display_fmt_string(const char *format, ...) {
 	display_string(buf);
 }
 
-void MsgScroll::display_string(const Std::string &s, uint16 length, uint8 lang_num) {
+void MsgScroll::display_string(const Common::String &s, uint16 length, uint8 lang_num) {
 
 }
 
-void MsgScroll::display_string(const Std::string &s, bool include_on_map_window) {
+void MsgScroll::display_string(const Common::String &s, bool include_on_map_window) {
 	display_string(s, font, include_on_map_window);
 }
 
-void MsgScroll::display_string(const Std::string &s, uint8 color, bool include_on_map_window) {
+void MsgScroll::display_string(const Common::String &s, uint8 color, bool include_on_map_window) {
 	display_string(s, font, color, include_on_map_window);
 }
 
-void MsgScroll::display_string(const Std::string &s, Font *f, bool include_on_map_window) {
+void MsgScroll::display_string(const Common::String &s, Font *f, bool include_on_map_window) {
 	display_string(s, f, font_color, include_on_map_window);
 }
 
-void MsgScroll::display_string(const Std::string &s, Font *f, uint8 color, bool include_on_map_window) {
+void MsgScroll::display_string(const Common::String &s, Font *f, uint8 color, bool include_on_map_window) {
 	MsgText *msg_text;
 
 	if (s.empty())
@@ -648,7 +648,7 @@ void MsgScroll::set_input_mode(bool state, const char *allowed, bool can_escape,
 		char *user_data = callback_user_data;
 		cancel_input_request(); // clear originals (callback may request again)
 
-		Std::string input_str = input_buf;
+		Common::String input_str = input_buf;
 		requestor->set_user_data(user_data); // use temp requestor/user_data
 		requestor->callback(MSGSCROLL_CB_TEXT_READY, this, &input_str);
 	}
@@ -859,7 +859,7 @@ GUI_status MsgScroll::MouseWheel(sint32 x, sint32 y) {
 
 GUI_status MsgScroll::MouseUp(int x, int y, Events::MouseButton button) {
 	uint16 i;
-	Std::string token_str;
+	Common::String token_str;
 
 	if (page_break) { // any click == scroll-to-end
 		process_page_break();
@@ -897,7 +897,7 @@ GUI_status MsgScroll::MouseUp(int x, int y, Events::MouseButton button) {
 	return GUI_PASS;
 }
 
-Std::string MsgScroll::get_token_string_at_pos(uint16 x, uint16 y) {
+Common::String MsgScroll::get_token_string_at_pos(uint16 x, uint16 y) {
 	uint16 i;
 	sint32 buf_x, buf_y;
 	MsgText *token = nullptr;
@@ -1060,9 +1060,9 @@ bool MsgScroll::has_input() {
 	return false;
 }
 
-Std::string MsgScroll::get_input() {
+Common::String MsgScroll::get_input() {
 // MsgScroll sets input_mode to false when it receives Common::KEYCODE_ENTER
-	Std::string s;
+	Common::String s;
 
 	if (input_mode == false) {
 		s.assign(input_buf);

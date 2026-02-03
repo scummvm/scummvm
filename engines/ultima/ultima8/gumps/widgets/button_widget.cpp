@@ -38,7 +38,7 @@ ButtonWidget::ButtonWidget() : Gump(), _shapeUp(nullptr), _shapeDown(nullptr),
 		_frameNumDown(0), _mouseOverBlendCol(0), _textWidget(0) {
 }
 
-ButtonWidget::ButtonWidget(int x, int y, Std::string txt, bool gamefont,
+ButtonWidget::ButtonWidget(int x, int y, Common::String txt, bool gamefont,
 						   int font, uint32 mouseOverBlendCol,
 						   int w, int h, int32 layer) :
 	Gump(x, y, w, h, 0, 0, layer), _shapeUp(nullptr), _shapeDown(nullptr),

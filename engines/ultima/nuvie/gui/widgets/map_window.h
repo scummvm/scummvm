@@ -282,7 +282,7 @@ public:
 	bool in_town() const;
 // can put object at world location x,y?
 	CanDropOrMoveMsg can_drop_or_move_obj(uint16 x, uint16 y, Actor *actor, Obj *obj);
-	void display_can_drop_or_move_msg(CanDropOrMoveMsg msg, Std::string msg_text = "");
+	void display_can_drop_or_move_msg(CanDropOrMoveMsg msg, Common::String msg_text = "");
 	bool can_get_obj(const Actor *actor, Obj *obj);
 	bool blocked_by_wall(const Actor *actor, const Obj *obj);
 	MapCoord original_obj_loc;

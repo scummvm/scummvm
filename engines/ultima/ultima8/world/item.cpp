@@ -2030,7 +2030,7 @@ void Item::clearGump() {
 	_flags &= ~FLG_GUMP_OPEN;
 }
 
-ProcId Item::bark(const Std::string &msg) {
+ProcId Item::bark(const Common::String &msg) {
 	closeBark();
 
 	uint32 shapenum = getShape();

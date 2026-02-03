@@ -22,7 +22,7 @@
 #ifndef ULTIMA8_GAMES_GAMEINFO_H
 #define ULTIMA8_GAMES_GAMEINFO_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -33,7 +33,7 @@ class IDataSource;
 struct GameInfo {
 	GameInfo();
 
-	Std::string _name;
+	Common::String _name;
 
 	enum GameType {
 		GAME_UNKNOWN = 0,
@@ -71,12 +71,12 @@ struct GameInfo {
 
 	char getLanguageFileLetter() const;
 	char getLanguageUsecodeLetter() const;
-	Std::string getLanguage() const;
-	Std::string getGameTitle() const;
-	Std::string getPrintableVersion() const;
+	Common::String getLanguage() const;
+	Common::String getGameTitle() const;
+	Common::String getPrintableVersion() const;
 
-	Std::string getPrintDetails() const;
-	Std::string getPrintableMD5() const;
+	Common::String getPrintDetails() const;
+	Common::String getPrintableMD5() const;
 
 	bool match(GameInfo &other, bool ignoreMD5 = false) const;
 

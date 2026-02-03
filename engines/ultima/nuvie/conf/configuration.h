@@ -22,7 +22,7 @@
 #ifndef NUVIE_CONF_CONFIGURATION_H
 #define NUVIE_CONF_CONFIGURATION_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/detection.h"
 
@@ -65,7 +65,7 @@ private:
 		Common::IgnoreCase_EqualTo> _localKeys;
 	Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash,
 		Common::IgnoreCase_EqualTo> _settings;
-	Std::string _configFilename;
+	Common::String _configFilename;
 	bool _configChanged;
 
 	// Sets default configurations common to both enhanced and unhenaced
@@ -81,7 +81,7 @@ public:
 	~Configuration();
 
 	// read config file. Multiple files may be read. Order is important.
-	bool readConfigFile(const Std::string &fname, const Std::string &root, bool readonly = true);
+	bool readConfigFile(const Common::String &fname, const Common::String &root, bool readonly = true);
 
 	// Loads up the configuration settings
 	void load(GameId gameId, bool isEnhanced);
@@ -93,25 +93,25 @@ public:
 	void clear();
 
 	// get value
-	void value(const Std::string &key, Std::string &ret, const char *defaultvalue = "") const;
-	void value(const Std::string &key, int &ret, int defaultvalue = 0) const;
-	void value(const Std::string &key, bool &ret, bool defaultvalue = false) const;
+	void value(const Common::String &key, Common::String &ret, const char *defaultvalue = "") const;
+	void value(const Common::String &key, int &ret, int defaultvalue = 0) const;
+	void value(const Common::String &key, bool &ret, bool defaultvalue = false) const;
 
-	void pathFromValue(const Std::string &key, const Std::string &file, Common::Path &full_path) const;
+	void pathFromValue(const Common::String &key, const Common::String &file, Common::Path &full_path) const;
 
 	// set value
-	bool set(const Std::string &key, const Std::string &value);
-	bool set(const Std::string &key, const char *value);
-	bool set(const Std::string &key, int value);
-	bool set(const Std::string &key, bool value);
+	bool set(const Common::String &key, const Common::String &value);
+	bool set(const Common::String &key, const char *value);
+	bool set(const Common::String &key, int value);
+	bool set(const Common::String &key, bool value);
 
 	// get node ref. (delete it afterwards)
-	ConfigNode *getNode(const Std::string &key);
+	ConfigNode *getNode(const Common::String &key);
 
 	typedef Common::Pair<Common::String, Common::String> KeyType;
 	typedef Common::Array<KeyType> KeyTypeList;
 
-	void getSubkeys(KeyTypeList &ktl, const Std::string &basekey);
+	void getSubkeys(KeyTypeList &ktl, const Common::String &basekey);
 };
 
 } // End of namespace Nuvie

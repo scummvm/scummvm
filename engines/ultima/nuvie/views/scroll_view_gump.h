@@ -41,7 +41,7 @@ public:
 	ScrollViewGump(const Configuration *cfg);
 	~ScrollViewGump() override;
 
-	bool init(Screen *tmp_screen, void *view_manager, Font *f, Party *p, TileManager *tm, ObjManager *om, Std::string text_string);
+	bool init(Screen *tmp_screen, void *view_manager, Font *f, Party *p, TileManager *tm, ObjManager *om, Common::String text_string);
 
 	void Display(bool full_redraw) override;
 

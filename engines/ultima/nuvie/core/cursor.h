@@ -22,7 +22,7 @@
 #ifndef NUVIE_CORE_CURSOR_H
 #define NUVIE_CORE_CURSOR_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/shared/std/containers.h"
 
 

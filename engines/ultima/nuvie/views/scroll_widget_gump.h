@@ -27,7 +27,7 @@
 #include "ultima/nuvie/gui/widgets/msg_scroll.h"
 #include "ultima/nuvie/fonts/font.h"
 #include "ultima/shared/std/containers.h"
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -61,7 +61,7 @@ class ScrollWidgetGump: public MsgScroll {
 	uint8 font_highlight;
 	uint16 position;
 
-	Std::string trailing_whitespace;
+	Common::String trailing_whitespace;
 
 	bool show_up_arrow;
 	bool show_down_arrow;
@@ -80,8 +80,8 @@ public:
 	void Display(bool full_redraw) override;
 
 	void display_prompt() override {}
-	void display_string(const Std::string &s);
-	void display_string(const Std::string &s, Font *f, bool include_on_map_window) override {
+	void display_string(const Common::String &s);
+	void display_string(const Common::String &s, Font *f, bool include_on_map_window) override {
 		return MsgScroll::display_string(s, f, include_on_map_window);
 	}
 

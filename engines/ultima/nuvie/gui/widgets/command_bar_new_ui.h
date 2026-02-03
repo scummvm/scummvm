@@ -22,7 +22,7 @@
 #ifndef NUVIE_CORE_COMMAND_BAR_NEW_UI_H
 #define NUVIE_CORE_COMMAND_BAR_NEW_UI_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/misc/call_back.h"
 #include "ultima/nuvie/gui/widgets/command_bar.h"

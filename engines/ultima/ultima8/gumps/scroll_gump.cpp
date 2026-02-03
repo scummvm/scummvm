@@ -41,7 +41,7 @@ ScrollGump::ScrollGump()
 
 }
 
-ScrollGump::ScrollGump(ObjId owner, const Std::string &msg) :
+ScrollGump::ScrollGump(ObjId owner, const Common::String &msg) :
 	ModalGump(0, 0, 100, 100, owner), _text(msg), _textWidget(0) {
 }
 

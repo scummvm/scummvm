@@ -135,11 +135,11 @@ SoundManager::~SoundManager() {
 }
 
 bool SoundManager::nuvieStartup(const Configuration *config) {
-	Std::string config_key;
-	Std::string music_style;
-	Std::string music_cfg_file; //full path and filename to music.cfg
-	Std::string sound_dir;
-	Std::string sfx_style;
+	Common::String config_key;
+	Common::String music_style;
+	Common::String music_cfg_file; //full path and filename to music.cfg
+	Common::String sound_dir;
+	Common::String sfx_style;
 
 	m_Config = config;
 
@@ -241,7 +241,7 @@ bool SoundManager::LoadNativeU6Songs() {
 	Song *song;
 
 	Common::Path filename;
-	string fileId;
+	Common::String fileId;
 
 	fileId = "brit.m";
 	config_get_path(m_Config, fileId, filename);
@@ -378,15 +378,15 @@ bool SoundManager::groupAddSong(const char *group, Song *song) {
 }
 
 /*
-bool SoundManager::LoadObjectSamples (string sound_dir)
+bool SoundManager::LoadObjectSamples (Common::String sound_dir)
 {
   char seps[] = ";\r\n";
   char *token1;
   char *token2;
   NuvieIOFileRead niof;
   char *sz;
-  string samplename;
-  string scriptname;
+  Common::String samplename;
+  Common::String scriptname;
 
   build_path(sound_dir, "obj_samples.cfg", scriptname);
 
@@ -437,15 +437,15 @@ bool SoundManager::LoadObjectSamples (string sound_dir)
   return true;
 };
 
-bool SoundManager::LoadTileSamples (string sound_dir)
+bool SoundManager::LoadTileSamples (Common::String sound_dir)
 {
   char seps[] = ";\r\n";
   char *token1;
   char *token2;
   NuvieIOFileRead niof;
   char *sz;
-  string samplename;
-  string scriptname;
+  Common::String samplename;
+  Common::String scriptname;
 
   build_path(sound_dir, "tile_samples.cfg", scriptname);
 
@@ -499,7 +499,7 @@ bool SoundManager::LoadTileSamples (string sound_dir)
   return true;
 };
 */
-bool SoundManager::LoadSfxManager(string sfx_style) {
+bool SoundManager::LoadSfxManager(Common::String sfx_style) {
 	if (m_SfxManager != nullptr) {
 		return false;
 	}
@@ -534,7 +534,7 @@ bool SoundManager::LoadSfxManager(string sfx_style) {
 	return true;
 }
 
-void SoundManager::musicPlayFrom(string group) {
+void SoundManager::musicPlayFrom(Common::String group) {
 	Common::StackLock lock(_musicMutex);
 
 	if (!music_enabled || !audio_enabled)
@@ -644,7 +644,7 @@ void SoundManager::update_map_sfx() {
 	if (sfx_enabled == false)
 		return;
 
-	string next_group = "";
+	Common::String next_group = "";
 	Player *p = Game::get_game()->get_player();
 	MapWindow *mw = Game::get_game()->get_map_window();
 
@@ -762,7 +762,7 @@ void SoundManager::update() {
 	}
 }
 
-Sound *SoundManager::SongExists(const string &name) {
+Sound *SoundManager::SongExists(const Common::String &name) {
 	for (Sound *song : m_Songs) {
 		if (song->GetName() == name)
 			return song;
@@ -771,7 +771,7 @@ Sound *SoundManager::SongExists(const string &name) {
 	return nullptr;
 }
 
-Sound *SoundManager::SampleExists(const string &name) {
+Sound *SoundManager::SampleExists(const Common::String &name) {
 	for (Sound *sample : m_Samples) {
 		if (sample->GetName() == name)
 			return sample;
@@ -813,7 +813,7 @@ uint16 SoundManager::RequestObjectSfxId(uint16 obj_n) {
 	return NUVIE_SFX_NONE;
 }
 
-Sound *SoundManager::RequestSong(const string &group) {
+Sound *SoundManager::RequestSong(const Common::String &group) {
 	Common::HashMap<Common::String, SoundCollection * >::iterator it;
 	it = m_MusicMap.find(group);
 	if (it != m_MusicMap.end()) {

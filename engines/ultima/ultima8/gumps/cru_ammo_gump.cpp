@@ -85,7 +85,7 @@ void CruAmmoGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 		const int yoff = GAME_IS_REMORSE ? REM_YOFF : REG_YOFF;
 		const int fontno = GAME_IS_REMORSE ? REM_FONT_NUM : REG_FONT_NUM;
 
-		const Std::string bulletstr = Std::string::format("%d", bullets);
+		const Common::String bulletstr = Common::String::format("%d", bullets);
 		if (!_bulletsText || !bulletstr.equals(_bulletsText->getText())) {
 			if (_bulletsText) {
 				RemoveChild(_bulletsText);
@@ -104,7 +104,7 @@ void CruAmmoGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 			}
 		}
 
-		const Std::string clipstr = Std::string::format("%d", clips);
+		const Common::String clipstr = Common::String::format("%d", clips);
 		if (!_clipsText || !clipstr.equals(_clipsText->getText())) {
 			if (_clipsText) {
 				RemoveChild(_clipsText);

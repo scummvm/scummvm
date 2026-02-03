@@ -22,7 +22,7 @@
 #ifndef NUVIE_CORE_PARTY_H
 #define NUVIE_CORE_PARTY_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/core/obj_manager.h"
 #include "ultima/nuvie/core/map.h"
 
@@ -205,7 +205,7 @@ public:
 	}
 	void rest_gather();
 	void rest_sleep(uint8 hours, sint16 guard);
-	bool can_rest(Std::string &err_str);
+	bool can_rest(Common::String &err_str);
 
 	void set_combat_target(uint8 member_num, Actor *target);
 	void set_combat_target(uint8 member_num, MapCoord target);

@@ -22,7 +22,7 @@
 #ifndef NUVIE_CORE_COMMAND_BAR_H
 #define NUVIE_CORE_COMMAND_BAR_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 #include "ultima/nuvie/gui/widgets/gui_widget.h"
 #include "ultima/nuvie/misc/call_back.h"
 
@@ -60,7 +60,7 @@ protected:
 	sint8 selected_action; // underlined icon (-1 = none)
 	sint8 active_action_num; // the last action that was activated (for MD levers)
 	bool combat_mode; // state of combat icon
-	Std::string wind; // wind direction
+	Common::String wind; // wind direction
 	void fill_square(uint8 pal_index);
 
 	uint8 bg_color, font_color;
@@ -83,7 +83,7 @@ public:
 
 	void select_action(sint8 activate);
 	void set_combat_mode(bool mode);
-//    void set_wind(Std::string dir)        { wind = dir; update_display = true; }
+//    void set_wind(Common::String dir)        { wind = dir; update_display = true; }
 	void set_selected_action(sint8 action) {
 		selected_action = action;
 		update_display = true;

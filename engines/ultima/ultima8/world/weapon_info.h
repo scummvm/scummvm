@@ -22,13 +22,13 @@
 #ifndef ULTIMA8_WORLD_WEAPONINFO_H
 #define ULTIMA8_WORLD_WEAPONINFO_H
 
-#include "ultima/shared/std/string.h"
+#include "common/str.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 struct WeaponInfo {
-	Std::string _name;
+	Common::String _name;
 	uint32 _shape;
 	uint8 _overlayType;
 	uint32 _overlayShape;

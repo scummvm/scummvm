@@ -445,7 +445,7 @@ uint16 HitAnim::callback(uint16 msg, CallBack *caller, void *msg_data) {
 
 /*** TextAnim ***/
 
-TextAnim::TextAnim(Std::string t, MapCoord loc, uint32 dur) {
+TextAnim::TextAnim(Common::String t, MapCoord loc, uint32 dur) {
 	_px = loc.x;
 	_py = loc.y;
 	duration = dur;

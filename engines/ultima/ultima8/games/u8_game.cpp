@@ -214,7 +214,7 @@ void U8Game::playCredits() {
 		delete rs;
 		return;
 	}
-	Std::string text = getCreditText(rs);
+	Common::String text = getCreditText(rs);
 	delete rs;
 
 	MusicProcess *musicproc = MusicProcess::get_instance();
@@ -235,7 +235,7 @@ void U8Game::playQuotes() {
 		delete rs;
 		return;
 	}
-	const Std::string text = getCreditText(rs);
+	const Common::String text = getCreditText(rs);
 	delete rs;
 
 	MusicProcess *musicproc = MusicProcess::get_instance();
@@ -250,7 +250,7 @@ void U8Game::playQuotes() {
 void U8Game::writeSaveInfo(Common::WriteStream *ws) {
 	MainActor *av = getMainActor();
 
-	const Std::string &avname = av->getName();
+	const Common::String &avname = av->getName();
 	const uint8 namelength = static_cast<uint8>(avname.size());
 	ws->writeByte(namelength);
 	for (unsigned int i = 0; i < namelength; ++i)
@@ -285,9 +285,9 @@ void U8Game::writeSaveInfo(Common::WriteStream *ws) {
 	}
 }
 
-Std::string U8Game::getCreditText(Common::SeekableReadStream *rs) {
+Common::String U8Game::getCreditText(Common::SeekableReadStream *rs) {
 	unsigned int size = rs->size();
-	Std::string text(size, ' ');
+	Common::String text(size, ' ');
 	for (unsigned int i = 0; i < size; ++i) {
 		uint8 c = rs->readByte();
 		int x;

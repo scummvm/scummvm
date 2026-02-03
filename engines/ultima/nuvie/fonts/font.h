@@ -62,7 +62,7 @@ public:
 		default_highlight_color = color;
 	}
 
-//   bool drawString(Screen *screen, Std::string str, uint16 x, uint16 y);
+//   bool drawString(Screen *screen, Common::String str, uint16 x, uint16 y);
 	uint16 drawString(Screen *screen, const char *str, uint16 x, uint16 y);
 	uint16 drawString(Screen *screen, const char *str, uint16 x, uint16 y, uint8 color, uint8 highlight_color);
 	uint16 drawString(Screen *screen, const char *str, uint16 string_len, uint16 x, uint16 y, uint8 color, uint8 highlight_color);
