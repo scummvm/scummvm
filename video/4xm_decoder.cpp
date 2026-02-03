@@ -528,7 +528,6 @@ void FourXMDecoder::decodeNextFrameImpl() {
 					auto trackIdx = _stream->readUint32LE();
 					auto packetSize = _stream->readUint32LE();
 					if (trackIdx == 0 && _audio) {
-						debug("audio data %u %u", trackIdx, packetSize);
 						_audio->decode(loadBuf(packetSize), packetSize);
 					} else {
 						_stream->skip(packetSize);
