@@ -148,7 +148,7 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 }
 
 
-bool writeBMP(Common::WriteStream &out, const Graphics::Surface &input, const Graphics::Palette &palette, uint paletteCount = 256) {
+bool writeBMP(Common::WriteStream &out, const Graphics::Surface &input, const Graphics::Palette &palette) {
 	return writeBMP(out, input, palette.data(), palette.size());
 }
 
