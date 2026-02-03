@@ -313,14 +313,8 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 			}
 			if (dec.needsUpdate()) {
 				auto *s = dec.decodeNextFrame();
-				if (s) {
-					if (s->format != _pixelFormat) {
-						Graphics::ManagedSurface converted;
-						converted.convertFrom(*s, _pixelFormat);
-						_screen->copyFrom(*converted.surfacePtr());
-					} else
-						_screen->copyFrom(*s);
-				}
+				if (s)
+					_screen->simpleBlitFrom(*s);
 			}
 
 			// Delay for a bit. All events loops should have a delay
