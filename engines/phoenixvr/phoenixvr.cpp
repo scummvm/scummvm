@@ -32,6 +32,7 @@
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/font.h"
+#include "graphics/fontman.h"
 #include "graphics/fonts/ttf.h"
 #include "graphics/framelimiter.h"
 #include "graphics/managed_surface.h"
@@ -462,13 +463,17 @@ void PhoenixVREngine::loadVariables() {
 }
 
 void PhoenixVREngine::rollover(Common::Rect dstRect, int textId, int size, bool bold, uint16_t color) {
-	Graphics::Font *font = nullptr;
+	const Graphics::Font *font = nullptr;
+#ifdef USE_FREETYPE2
 	if (size < 14)
 		font = _font12.get();
 	else if (size < 18)
 		font = _font14.get();
 	else
 		font = _font18.get();
+#else
+	font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+#endif
 
 	if (!font)
 		return;
