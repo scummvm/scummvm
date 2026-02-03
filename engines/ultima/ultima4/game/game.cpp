@@ -475,8 +475,8 @@ bool creatureRangeAttack(const Coords &coords, Creature *m) {
 	return false;
 }
 
-Std::vector<Coords> gameGetDirectionalActionPath(int dirmask, int validDirections, const Coords &origin, int minDistance, int maxDistance, bool (*blockedPredicate)(const Tile *tile), bool includeBlocked) {
-	Std::vector<Coords> path;
+Common::Array<Coords> gameGetDirectionalActionPath(int dirmask, int validDirections, const Coords &origin, int minDistance, int maxDistance, bool (*blockedPredicate)(const Tile *tile), bool includeBlocked) {
+	Common::Array<Coords> path;
 	Direction dirx = DIR_NONE,
 	          diry = DIR_NONE;
 

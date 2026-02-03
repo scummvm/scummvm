@@ -89,7 +89,7 @@ template<class T> void StringToArgv(const T &args, Common::Array<T> &argv) {
 template void StringToArgv<Common::String>(const Common::String &args, Common::Array<Common::String> &argv);
 
 template<class T> void SplitString(const T &args, char sep,
-								   Std::vector<T> &argv) {
+								   Common::Array<T> &argv) {
 	// Clear the vector
 	argv.clear();
 
@@ -110,16 +110,16 @@ template<class T> void SplitString(const T &args, char sep,
 }
 
 
-template void SplitString<Common::String>(const Common::String &args, char sep, Std::vector<Common::String> &argv);
+template void SplitString<Common::String>(const Common::String &args, char sep, Common::Array<Common::String> &argv);
 
 template<class T> void SplitStringKV(const T &args, char sep,
-									 Std::vector<Common::Pair<T, T> > &argv) {
+									 Common::Array<Common::Pair<T, T> > &argv) {
 	// Clear the vector
 	argv.clear();
 
 	if (args.empty()) return;
 
-	Std::vector<T> keyvals;
+	Common::Array<T> keyvals;
 	SplitString(args, sep, keyvals);
 
 	for (unsigned int i = 0; i < keyvals.size(); ++i) {
@@ -139,7 +139,7 @@ template<class T> void SplitStringKV(const T &args, char sep,
 	}
 }
 
-template void SplitStringKV<Common::String>(const Common::String &args, char sep, Std::vector<Common::Pair<Common::String, Common::String> > &argv);
+template void SplitStringKV<Common::String>(const Common::String &args, char sep, Common::Array<Common::Pair<Common::String, Common::String> > &argv);
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

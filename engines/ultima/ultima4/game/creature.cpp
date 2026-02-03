@@ -333,7 +333,7 @@ bool Creature::specialAction() {
 		   Note: Monsters in settlements in U3 do fire on party
 		*/
 		if (mapdist <= 3 && xu4_random(2) == 0 && (g_context->_location->_context & CTX_CITY) == 0) {
-			Std::vector<Coords> path = gameGetDirectionalActionPath(dir, MASK_DIR_ALL, _coords,
+			Common::Array<Coords> path = gameGetDirectionalActionPath(dir, MASK_DIR_ALL, _coords,
 			                           1, 3, nullptr, false);
 			for (const auto &coords : path) {
 				if (creatureRangeAttack(coords, this))
@@ -354,7 +354,7 @@ bool Creature::specialAction() {
 		        ((broadsidesDirs & dir) > 0)) { /* pirate ship is firing broadsides */
 
 			// nothing (not even mountains!) can block cannonballs
-			Std::vector<Coords> path = gameGetDirectionalActionPath(dir, broadsidesDirs, _coords,
+			Common::Array<Coords> path = gameGetDirectionalActionPath(dir, broadsidesDirs, _coords,
 			                           1, 3, nullptr, false);
 			for (const auto &coords : path) {
 				if (fireAt(coords, false))
@@ -595,7 +595,7 @@ void Creature::act(CombatController *controller) {
 
 		soundPlay(SOUND_NPC_ATTACK, false);                                    // NPC_ATTACK, ranged
 
-		Std::vector<Coords> path = gameGetDirectionalActionPath(dir, MASK_DIR_ALL, m_coords,
+		Common::Array<Coords> path = gameGetDirectionalActionPath(dir, MASK_DIR_ALL, m_coords,
 		                           1, 11, &Tile::canAttackOverTile, false);
 		bool hit = false;
 		for (const auto &coords : path) {
@@ -891,7 +891,7 @@ CreatureMgr *CreatureMgr::getInstance() {
 
 void CreatureMgr::loadAll() {
 	const Config *config = Config::getInstance();
-	Std::vector<ConfigElement> creatureConfs = config->getElement("creatures").getChildren();
+	Common::Array<ConfigElement> creatureConfs = config->getElement("creatures").getChildren();
 
 	for (const auto &i : creatureConfs) {
 		if (i.getName() != "creature")

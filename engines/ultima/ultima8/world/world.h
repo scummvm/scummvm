@@ -177,7 +177,7 @@ private:
 
 	static World *_world;
 
-	Std::vector<Map *> _maps;
+	Common::Array<Map *> _maps;
 	CurrentMap *_currentMap;
 
 	Common::List<ObjId> _ethereal;

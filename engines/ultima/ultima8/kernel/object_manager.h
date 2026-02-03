@@ -69,7 +69,7 @@ public:
 	void saveObject(Common::WriteStream *ws, Object *obj) const;
 	Object *loadObject(Common::ReadStream *rs, uint32 version);
 
-	Std::vector<Object *> _objects;
+	Common::Array<Object *> _objects;
 	idMan *_objIDs;
 	idMan *_actorIDs;
 

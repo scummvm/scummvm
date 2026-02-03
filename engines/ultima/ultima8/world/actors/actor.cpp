@@ -168,7 +168,7 @@ bool Actor::giveTreasure() {
 		return false;
 
 	Common::RandomSource &rs = Ultima8Engine::get_instance()->getRandomSource();
-	const Std::vector<TreasureInfo> &treasure = mi->_treasure;
+	const Common::Array<TreasureInfo> &treasure = mi->_treasure;
 
 	for (unsigned int i = 0; i < treasure.size(); ++i) {
 		const TreasureInfo &ti = treasure[i];

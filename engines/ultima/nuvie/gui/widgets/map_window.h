@@ -142,8 +142,8 @@ class MapWindow: public GUI_Widget {
 
 	bool draw_brit_lens_anim;
 	bool draw_garg_lens_anim;
-// Std::vector<TileInfo> m_ViewableObjTiles; // shouldn't need this for in_town checks
-	Std::vector<TileInfo> m_ViewableMapTiles;
+// Common::Array<TileInfo> m_ViewableObjTiles; // shouldn't need this for in_town checks
+	Common::Array<TileInfo> m_ViewableMapTiles;
 
 	bool lighting_update_required;
 
@@ -326,7 +326,7 @@ public:
 		return roof_tiles;
 	}
 
-	Std::vector<const Obj *> m_ViewableObjects; //^^ dodgy public buffer
+	Common::Array<const Obj *> m_ViewableObjects; //^^ dodgy public buffer
 
 	void wizard_eye_start(const MapCoord &location, uint16 duration, CallBack *caller);
 

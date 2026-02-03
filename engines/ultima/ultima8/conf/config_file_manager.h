@@ -68,7 +68,7 @@ public:
 	//! list all sections
 	//! \param category The config category to list all sections in
 	//! \return the sections. They have no guaranteed order.
-	Std::vector<Common::String> listSections(const Common::String &category) const;
+	Common::Array<Common::String> listSections(const Common::String &category) const;
 	//! list all key-value pairs in the given section.
 	//! \param category The config category for the section to list
 	//! \param section The section to list
@@ -76,7 +76,7 @@ public:
 	KeyMap listKeyValues(const Common::String &category, const Common::String &section) const;
 
 private:
-	Std::vector<ConfigFile *> _configFiles;
+	Common::Array<ConfigFile *> _configFiles;
 
 	static ConfigFileManager *_configFileManager;
 };

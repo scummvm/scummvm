@@ -906,7 +906,7 @@ void CombatController::attack(Direction dir, int distance) {
 	soundPlay(SOUND_PC_ATTACK, false);                                        // PC_ATTACK, melee and ranged
 
 
-	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL,
+	Common::Array<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL,
 	                           attacker->getCoords(), 1, range,
 	                           weapon->canAttackThroughObjects() ? nullptr : &Tile::canAttackOverTile,
 	                           false);

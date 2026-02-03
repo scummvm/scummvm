@@ -46,7 +46,7 @@ TileRules::~TileRules() {
 
 void TileRules::load() {
 	const Config *config = Config::getInstance();
-	Std::vector<ConfigElement> rules = config->getElement("tileRules").getChildren();
+	Common::Array<ConfigElement> rules = config->getElement("tileRules").getChildren();
 
 	for (const auto &i : rules) {
 		TileRule *rule = new TileRule();
@@ -79,7 +79,7 @@ TileSets::~TileSets() {
 
 void TileSets::loadAll() {
 	const Config *config = Config::getInstance();
-	Std::vector<ConfigElement> conf;
+	Common::Array<ConfigElement> conf;
 
 	unloadAll();
 
@@ -257,7 +257,7 @@ void Tileset::load(const ConfigElement &tilesetConf) {
 		_extends = nullptr;
 
 	int index = 0;
-	Std::vector<ConfigElement> children = tilesetConf.getChildren();
+	Common::Array<ConfigElement> children = tilesetConf.getChildren();
 	for (const auto &i : children) {
 		if (i.getName() != "tile")
 			continue;

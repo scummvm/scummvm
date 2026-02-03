@@ -352,7 +352,7 @@ void Spells::spellMagicAttack(const Common::String &tilename, Direction dir, int
 	                   xu4_random((maxDamage + 1) - minDamage) + minDamage :
 	                   maxDamage;
 
-	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, (*party)[controller->getFocus()]->getCoords(),
+	Common::Array<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, (*party)[controller->getFocus()]->getCoords(),
 	                           1, 11, Tile::canAttackOverTile, false);
 	for (const auto &coords : path) {
 		if (spellMagicAttackAt(coords, tile, attackDamage))

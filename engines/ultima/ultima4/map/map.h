@@ -44,9 +44,9 @@ class Tileset;
 struct Portal;
 struct _Dungeon;
 
-typedef Std::vector<Portal *> PortalList;
+typedef Common::Array<Portal *> PortalList;
 typedef Common::List<int> CompressedChunkList;
-typedef Std::vector<MapTile> MapData;
+typedef Common::Array<MapTile> MapData;
 
 /* flags */
 #define SHOW_AVATAR (1 << 0)

@@ -351,7 +351,7 @@ Common::String Person::getIntro(Conversation *cnv) {
 
 Common::String Person::processResponse(Conversation *cnv, Response *response) {
 	Common::String text;
-	const Std::vector<ResponsePart> &parts = response->getParts();
+	const Common::Array<ResponsePart> &parts = response->getParts();
 	for (const auto &i : parts) {
 
 		// check for command triggers
@@ -437,7 +437,7 @@ Common::String Person::getResponse(Conversation *cnv, const char *inquiry) {
 	}
 
 	else if (settings._debug && scumm_strnicmp(inquiry, "dump", 4) == 0) {
-		Std::vector<Common::String> words = split(inquiry, " \t");
+		Common::Array<Common::String> words = split(inquiry, " \t");
 		if (words.size() <= 1)
 			reply = _dialogue->dump("");
 		else

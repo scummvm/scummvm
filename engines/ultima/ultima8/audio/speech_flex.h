@@ -29,7 +29,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 class SpeechFlex : public SoundFlex {
-	Std::vector<Common::String> _phrases;
+	Common::Array<Common::String> _phrases;
 
 public:
 	SpeechFlex(Common::SeekableReadStream *rs);

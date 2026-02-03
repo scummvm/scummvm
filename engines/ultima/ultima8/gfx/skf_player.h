@@ -55,7 +55,7 @@ private:
 
 	int _width, _height;
 	RawArchive *_skf;
-	Std::vector<SKFEvent *> _events;
+	Common::Array<SKFEvent *> _events;
 	unsigned int _curFrame, _curObject;
 	unsigned int _curAction;
 	unsigned int _curEvent;

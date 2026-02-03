@@ -181,7 +181,7 @@ void TypeFlags::loadWeaponInfo() {
 	ConfigFileManager *config = ConfigFileManager::get_instance();
 
 	// load weapons
-	Std::vector<Common::String> weaponkeys;
+	Common::Array<Common::String> weaponkeys;
 	Common::String category = "weapons";
 	weaponkeys = config->listSections(category);
 	for (const auto &section : weaponkeys) {
@@ -301,7 +301,7 @@ void TypeFlags::loadArmourInfo() {
 	MainShapeArchive *msf = GameData::get_instance()->getMainShapes();
 
 	// load armour
-	Std::vector<Common::String> armourkeys;
+	Common::Array<Common::String> armourkeys;
 	Common::String category = "armour";
 	armourkeys = config->listSections(category);
 	for (const auto &section : armourkeys) {
@@ -357,7 +357,7 @@ void TypeFlags::loadMonsterInfo() {
 	treasureLoader.loadDefaults();
 
 	// load monsters
-	Std::vector<Common::String> monsterkeys;
+	Common::Array<Common::String> monsterkeys;
 	Common::String category = "monsters";
 	monsterkeys = config->listSections(category);
 	for (const auto &section : monsterkeys) {

@@ -33,8 +33,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-using Std::vector;
-
 
 Cursor::Cursor() : cursor_id(0), cur_x(-1), cur_y(-1), cleanup(nullptr),
 		hidden(false), screen(nullptr), config(nullptr), screen_w(0), screen_h(0) {

@@ -79,7 +79,7 @@ public:
 	bool canReach();
 
 	//! pathfind. If true, the found path is returned in path
-	bool pathfind(Std::vector<PathfindingAction> &path);
+	bool pathfind(Common::Array<PathfindingAction> &path);
 
 #ifdef DEBUG_PATHFINDER
 	static ObjId _visualDebugActor;
@@ -97,10 +97,10 @@ protected:
 	int32 _actorXd, _actorYd, _actorZd;
 
 	Common::Array<PathfindingState> _visited;
-	PriorityQueue<PathNode *, Std::vector<PathNode *>, PathNodeCmp> _nodes;
+	PriorityQueue<PathNode *, Common::Array<PathNode *>, PathNodeCmp> _nodes;
 
 	/** List of nodes for garbage collection later and order is not important */
-	Std::vector<PathNode *> _cleanupNodes;
+	Common::Array<PathNode *> _cleanupNodes;
 
 	bool alreadyVisited(const Point3 &pt) const;
 	void newNode(PathNode *oldnode, PathfindingState &state,

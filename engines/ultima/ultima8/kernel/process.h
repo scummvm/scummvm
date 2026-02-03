@@ -143,7 +143,7 @@ protected:
 
 	//! Processes waiting for this one to finish.
 	//! When this process terminates, awaken them and pass them the result val.
-	Std::vector<ProcId> _waiting;
+	Common::Array<ProcId> _waiting;
 
 public:
 

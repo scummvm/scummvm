@@ -3391,7 +3391,7 @@ static int nscript_quake_start(lua_State *L) {
 }
 
 static int nscript_new_hit_entities_tbl_var(lua_State *L, ProjectileEffect *effect) {
-	vector<MapEntity> *hit_items = effect->get_hit_entities();
+	Common::Array<MapEntity> *hit_items = effect->get_hit_entities();
 
 	lua_newtable(L);
 
@@ -3512,7 +3512,7 @@ static int nscript_projectile_anim_multi(lua_State *L) {
 	uint16 y = 0;
 	uint8 z = 0;
 
-	vector<MapCoord> t;
+	Common::Array<MapCoord> t;
 
 	for (int i = 1;; i++) {
 		lua_pushinteger(L, i);

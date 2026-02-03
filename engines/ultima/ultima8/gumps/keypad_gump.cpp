@@ -194,7 +194,7 @@ void KeypadGump::updateDigitDisplay() {
 	txt->InitGump(this);
 	txt->SetIndex(TXT_CONTAINER_IDX);
 
-	Std::vector<Gump *> digits;
+	Common::Array<Gump *> digits;
 	Shape *digitshape = GameData::get_instance()->getGumps()->getShape(12);
 	int val = _value;
 	while (val) {

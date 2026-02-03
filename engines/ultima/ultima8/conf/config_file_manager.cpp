@@ -70,7 +70,7 @@ void ConfigFileManager::clear() {
 }
 
 void ConfigFileManager::clearRoot(const Common::String &category) {
-	Std::vector<ConfigFile *>::iterator i = _configFiles.begin();
+	Common::Array<ConfigFile *>::iterator i = _configFiles.begin();
 
 	while (i != _configFiles.end()) {
 		if (category.equalsIgnoreCase((*i)->_category)) {
@@ -114,8 +114,8 @@ bool ConfigFileManager::get(const Common::String &category, const Common::String
 	return true;
 }
 
-Std::vector<Common::String> ConfigFileManager::listSections(const Common::String &category) const {
-	Std::vector<Common::String> sections;
+Common::Array<Common::String> ConfigFileManager::listSections(const Common::String &category) const {
+	Common::Array<Common::String> sections;
 	for (const auto *i : _configFiles) {
 		if (category.equalsIgnoreCase(i->_category)) {
 			Common::INIFile::SectionList sectionList = i->_iniFile.getSections();

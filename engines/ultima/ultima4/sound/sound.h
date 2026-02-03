@@ -73,8 +73,8 @@ class SoundManager {
 private:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
-	Std::vector<Common::Path> _soundFilenames;
-	Std::vector<Audio::SeekableAudioStream *> _sounds;
+	Common::Array<Common::Path> _soundFilenames;
+	Common::Array<Audio::SeekableAudioStream *> _sounds;
 private:
 	bool load(Sound sound);
 

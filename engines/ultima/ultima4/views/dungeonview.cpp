@@ -53,7 +53,7 @@ void DungeonView::display(Context *c, TileView *view) {
 		// Note: This shouldn't go above 4, unless we check opaque tiles each step of the way.
 		const int farthest_non_wall_tile_visibility = 4;
 
-		Std::vector<MapTile> tiles;
+		Common::Array<MapTile> tiles;
 
 		g_screen->screenEraseMapArea();
 		if (c->_party->getTorchDuration() > 0) {
@@ -76,7 +76,7 @@ void DungeonView::display(Context *c, TileView *view) {
 				// This only checks that the tile at y==3 is opaque
 				if (y == 3 && !tiles.front().getTileType()->isOpaque()) {
 					for (int y_obj = farthest_non_wall_tile_visibility; y_obj > y; y_obj--) {
-						Std::vector<MapTile> distant_tiles = getTiles(y_obj     , 0);
+						Common::Array<MapTile> distant_tiles = getTiles(y_obj     , 0);
 						DungeonGraphicType distant_type = tilesToGraphic(distant_tiles);
 
 						if ((distant_type == DNGGRAPHIC_DNGTILE) || (distant_type == DNGGRAPHIC_BASETILE))
@@ -91,7 +91,7 @@ void DungeonView::display(Context *c, TileView *view) {
 
 	// 3rd-person perspective
 	else {
-		Std::vector<MapTile> tiles;
+		Common::Array<MapTile> tiles;
 
 		static MapTile black = c->_location->_map->_tileSet->getByName("black")->getId();
 		static MapTile avatar = c->_location->_map->_tileSet->getByName("avatar")->getId();
@@ -228,7 +228,7 @@ void DungeonView::drawTile(Tile *tile, int x_offset, int distance, Direction ori
 	DungeonViewer.drawInDungeon(tile, x_offset, distance, orientation, tile->isTiledInDungeon());
 }
 
-Std::vector<MapTile> DungeonView::getTiles(int fwd, int side) {
+Common::Array<MapTile> DungeonView::getTiles(int fwd, int side) {
 	MapCoords coords = g_context->_location->_coords;
 
 	switch (g_ultima->_saveGame->_orientation) {
@@ -265,7 +265,7 @@ Std::vector<MapTile> DungeonView::getTiles(int fwd, int side) {
 	return g_context->_location->tilesAt(coords, focus);
 }
 
-DungeonGraphicType DungeonView::tilesToGraphic(const Std::vector<MapTile> &tiles) {
+DungeonGraphicType DungeonView::tilesToGraphic(const Common::Array<MapTile> &tiles) {
 	MapTile tile = tiles.front();
 
 	if (!_tiles._loaded) {

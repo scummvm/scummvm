@@ -73,9 +73,9 @@ private:
 	//! Override fontnum with specified font
 	void setOverride(unsigned int fontnum, Font *newFont);
 
-	Std::vector<Font *> _overrides;
+	Common::Array<Font *> _overrides;
 
-	Std::vector<Font *> _ttFonts;
+	Common::Array<Font *> _ttFonts;
 
 	static FontManager *_fontManager;
 public:

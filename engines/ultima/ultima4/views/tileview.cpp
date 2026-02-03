@@ -121,7 +121,7 @@ void TileView::drawTile(MapTile &mapTile, bool focus, int x, int y) {
 		drawFocus(x, y);
 }
 
-void TileView::drawTile(Std::vector<MapTile> &tiles, bool focus, int x, int y) {
+void TileView::drawTile(Common::Array<MapTile> &tiles, bool focus, int x, int y) {
 	assertMsg(x < _columns, "x value of %d out of range", x);
 	assertMsg(y < _rows, "y value of %d out of range", y);
 

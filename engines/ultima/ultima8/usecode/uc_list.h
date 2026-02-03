@@ -39,7 +39,7 @@ namespace Ultima8 {
 // Question: does subtractList remove _all_ occurrences of elements or only 1?
 
 class UCList {
-	Std::vector<uint8> _elements;
+	Common::Array<uint8> _elements;
 	unsigned int _elementSize;
 	unsigned int _size;
 

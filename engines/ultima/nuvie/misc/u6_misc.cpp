@@ -31,9 +31,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-using namespace Std;
-
-void Tokenise(const Common::String &str, Std::vector<Common::String> &tokens, char delimiter = ' ') {
+void Tokenise(const Common::String &str, Common::Array<Common::String> &tokens, char delimiter = ' ') {
 	Common::String delimiters(delimiter);
 
 	// Skip delimiters at beginning.
@@ -92,7 +90,7 @@ void config_get_path(const Configuration *config, const Common::String &filename
 
 int mkdir_recursive(const Common::Path &path, int mode) {
 #ifdef TODO
-	vector<Common::String> directories;
+	Common::Array<Common::String> directories;
 	Common::String tmp_path;
 
 	Tokenise(path, directories, U6PATH_DELIMITER);

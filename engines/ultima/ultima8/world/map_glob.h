@@ -45,7 +45,7 @@ public:
 	void read(Common::SeekableReadStream *rs);
 
 private:
-	Std::vector<GlobItem> _contents;
+	Common::Array<GlobItem> _contents;
 };
 
 } // End of namespace Ultima8

@@ -32,7 +32,7 @@ class NPCDat {
 public:
 	NPCDat();
 
-	static Std::vector<NPCDat *> load(RawArchive *archive);
+	static Common::Array<NPCDat *> load(RawArchive *archive);
 
 	const Common::String &getName() const {
 		return _name;

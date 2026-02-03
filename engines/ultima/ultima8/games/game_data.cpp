@@ -375,7 +375,7 @@ void GameData::setupJPOverrides() {
 		int fontnum = atoi(i._key.c_str());
 		const Common::String &fontdesc = i._value;
 
-		Std::vector<Common::String> vals;
+		Common::Array<Common::String> vals;
 		SplitString(fontdesc, ',', vals);
 		if (vals.size() != 2) {
 			warning("Invalid jpfont override: %s", fontdesc.c_str());
@@ -406,7 +406,7 @@ void GameData::setupTTFOverrides(const char *category, bool SJIS) {
 		int fontnum = atoi(i._key.c_str());
 		const Common::String &fontdesc = i._value;
 
-		Std::vector<Common::String> vals;
+		Common::Array<Common::String> vals;
 		SplitString(fontdesc, ',', vals);
 		if (vals.size() != 4) {
 			warning("Invalid ttf override: %s", fontdesc.c_str());

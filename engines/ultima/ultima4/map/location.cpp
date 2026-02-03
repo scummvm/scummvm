@@ -67,8 +67,8 @@ Location::Location(MapCoords coords, Map *map, int viewmode, LocationContext ctx
 	locationPush(prev, this);
 }
 
-Std::vector<MapTile> Location::tilesAt(MapCoords coords, bool &focus) {
-	Std::vector<MapTile> tiles;
+Common::Array<MapTile> Location::tilesAt(MapCoords coords, bool &focus) {
+	Common::Array<MapTile> tiles;
 	Common::List<Annotation *> a = _map->_annotations->ptrsToAllAt(coords);
 	Common::List<Annotation *>::iterator i;
 	Object *obj = _map->objectAt(coords);

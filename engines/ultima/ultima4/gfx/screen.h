@@ -105,7 +105,7 @@ private:
 	MouseCursorSurface *_mouseCursors[5];
 	int _currentMouseCursor;
 
-	Std::vector<TileAnimSet *> _tileAnimSets;
+	Common::Array<TileAnimSet *> _tileAnimSets;
 	Layout *_gemLayout;
 	Common::HashMap<Common::String, int> _dungeonTileChars;
 	ImageInfo *_charSetInfo;
@@ -120,9 +120,9 @@ private:
 	uint32 _priorFrameTime;
 
 public:
-	Std::vector<Common::String> _gemLayoutNames;
-	Std::vector<Common::String> _filterNames;
-	Std::vector<Common::String> _lineOfSightStyles;
+	Common::Array<Common::String> _gemLayoutNames;
+	Common::Array<Common::String> _filterNames;
+	Common::Array<Common::String> _lineOfSightStyles;
 	int _currentCycle;
 	TileAnimSet *_tileAnims;
 private:
@@ -148,13 +148,13 @@ private:
 	 * Finds which tiles in the viewport are visible from the avatars
 	 * location in the middle. (original DOS algorithm)
 	 */
-	void screenFindLineOfSight(Std::vector<MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]);
+	void screenFindLineOfSight(Common::Array<MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]);
 
 	/**
 	 * Finds which tiles in the viewport are visible from the avatars
 	 * location in the middle. (original DOS algorithm)
 	 */
-	void screenFindLineOfSightDOS(Std::vector<MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]);
+	void screenFindLineOfSightDOS(Common::Array<MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]);
 
 	/**
 	 * Finds which tiles in the viewport are visible from the avatars
@@ -174,7 +174,7 @@ private:
 	 * viewport width and height are odd values and that the player
 	 * is always at the center of the screen.
 	 */
-	void screenFindLineOfSightEnhanced(Std::vector<MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]);
+	void screenFindLineOfSightEnhanced(Common::Array<MapTile> viewportTiles[VIEWPORT_W][VIEWPORT_H]);
 
 	/**
 	 * Generates terms a and b for equation "ax + b = y" that defines the
@@ -194,7 +194,7 @@ private:
 	int screenPointInTriangle(int x, int y, int tx1, int ty1, int tx2, int ty2, int tx3, int ty3);
 	Layout *screenGetGemLayout(const Map *map);
 public:
-	Std::vector<Layout *> _layouts;
+	Common::Array<Layout *> _layouts;
 	Scaler _filterScaler;
 
 public:
@@ -267,7 +267,7 @@ public:
 	void screenUpdateCursor();
 	void screenUpdateMoons();
 	void screenUpdateWind();
-	Std::vector<MapTile> screenViewportTile(uint width, uint height, int x, int y, bool &focus);
+	Common::Array<MapTile> screenViewportTile(uint width, uint height, int x, int y, bool &focus);
 
 	void screenShowCursor();
 	void screenHideCursor();
@@ -298,9 +298,9 @@ public:
 
 extern Screen *g_screen;
 
-extern const Std::vector<Common::String> &screenGetGemLayoutNames();
-extern const Std::vector<Common::String> &screenGetFilterNames();
-extern const Std::vector<Common::String> &screenGetLineOfSightStyles();
+extern const Common::Array<Common::String> &screenGetGemLayoutNames();
+extern const Common::Array<Common::String> &screenGetFilterNames();
+extern const Common::Array<Common::String> &screenGetLineOfSightStyles();
 
 } // End of namespace Ultima4
 } // End of namespace Ultima

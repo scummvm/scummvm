@@ -1106,7 +1106,7 @@ void ActorManager::loadAvatarTiles(const Common::Path &datadir) {
 
 	uint8 avatar_portrait = Game::get_game()->get_portrait()->get_avatar_portrait_num();
 
-	Std::vector<Common::String> files = getCustomTileFilenames(datadir, "avatar_###_####.bmp");
+	Common::Array<Common::String> files = getCustomTileFilenames(datadir, "avatar_###_####.bmp");
 
 	for (const Common::String &filename : files) {
 		if (filename.size() != 19) { // avatar_nnn_nnnn.bmp
@@ -1134,7 +1134,7 @@ void ActorManager::loadAvatarTiles(const Common::Path &datadir) {
 void ActorManager::loadNPCTiles(const Common::Path &datadir) {
 	Common::Path imagefile;
 
-	Std::vector<Common::String> files = getCustomTileFilenames(datadir, "actor_###_####.bmp");
+	Common::Array<Common::String> files = getCustomTileFilenames(datadir, "actor_###_####.bmp");
 
 	for (const Common::String &filename : files) {
 		if (filename.size() != 18) { // actor_nnn_nnnn.bmp
@@ -1157,7 +1157,7 @@ void ActorManager::loadNPCTiles(const Common::Path &datadir) {
 	return;
 }
 
-Std::vector<Common::String> ActorManager::getCustomTileFilenames(const Common::Path &datadir, const Common::String &filenamePrefix) {
+Common::Array<Common::String> ActorManager::getCustomTileFilenames(const Common::Path &datadir, const Common::String &filenamePrefix) {
 	NuvieFileList filelistDataDir;
 	NuvieFileList filelistSaveGameDir;
 	Common::Path path;
@@ -1173,7 +1173,7 @@ Std::vector<Common::String> ActorManager::getCustomTileFilenames(const Common::P
 	const Common::List<NuvieFileDesc> &dataFiles = filelistDataDir.get_filelist();
 
 	Common::EqualTo<Common::String> comparitor;
-	Std::vector<Common::String> filenames;
+	Common::Array<Common::String> filenames;
 	for (const auto &desc : files) {
 		filenames.push_back(desc.filename);
 	}

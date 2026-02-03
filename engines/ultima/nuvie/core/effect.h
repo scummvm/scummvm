@@ -123,7 +123,7 @@ protected:
 	uint16 tile_num;
 
 	MapCoord start_loc; // where explosion will start
-	vector<MapCoord> targets;
+	Common::Array<MapCoord> targets;
 	uint8 anim_speed;
 	bool trail;
 	uint16 initial_tile_rotation;
@@ -131,7 +131,7 @@ protected:
 	uint8 src_tile_y_offset;
 	uint16 finished_tiles;
 
-	vector<MapEntity> hit_entities;
+	Common::Array<MapEntity> hit_entities;
 
 	virtual void start_anim();
 
@@ -141,13 +141,13 @@ public:
 			finished_tiles(0) {
 	}
 	ProjectileEffect(uint16 tileNum, MapCoord start, MapCoord target, uint8 speed, bool trailFlag, uint16 initialTileRotation, uint16 rotationAmount, uint8 src_y_offset);
-	ProjectileEffect(uint16 tileNum, MapCoord start, const vector<MapCoord> &t, uint8 speed, bool trailFlag, uint16 initialTileRotation);
+	ProjectileEffect(uint16 tileNum, MapCoord start, const Common::Array<MapCoord> &t, uint8 speed, bool trailFlag, uint16 initialTileRotation);
 
-	void init(uint16 tileNum, MapCoord start, const vector<MapCoord> &t, uint8 speed, bool trailFlag, uint16 initialTileRotation, uint16 rotationAmount, uint8 src_y_offset);
+	void init(uint16 tileNum, MapCoord start, const Common::Array<MapCoord> &t, uint8 speed, bool trailFlag, uint16 initialTileRotation, uint16 rotationAmount, uint8 src_y_offset);
 
 	uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 
-	vector<MapEntity> *get_hit_entities() {
+	Common::Array<MapEntity> *get_hit_entities() {
 		return &hit_entities;
 	}
 };

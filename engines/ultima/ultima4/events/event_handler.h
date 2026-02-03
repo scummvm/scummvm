@@ -99,7 +99,7 @@ protected:
 	static bool _controllerDone;
 	static bool _ended;
 	TimedEventMgr _timer;
-	Std::vector<Controller *> _controllers;
+	Common::Array<Controller *> _controllers;
 	MouseAreaList _mouseAreaSets;
 	updateScreenCallback _updateScreen;
 public:

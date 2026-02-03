@@ -181,7 +181,7 @@ void GameInfo::save(Common::WriteStream *ws) {
 
 bool GameInfo::load(Common::SeekableReadStream *rs, uint32 ver) {
 	Common::String s;
-	Std::vector<Common::String> parts;
+	Common::Array<Common::String> parts;
 
 	s = rs->readLine();
 	SplitString(s, ',', parts);

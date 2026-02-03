@@ -56,7 +56,7 @@ public:
 	/**
 	 * Return the entire stack of objects at the given location.
 	 */
-	Std::vector<MapTile> tilesAt(MapCoords coords, bool &focus);
+	Common::Array<MapTile> tilesAt(MapCoords coords, bool &focus);
 
 	/**
 	 * Finds a valid replacement tile for the given location, using surrounding tiles

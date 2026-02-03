@@ -57,7 +57,7 @@ public:
 private:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
-	Std::vector<Common::String> _filenames;
+	Common::Array<Common::String> _filenames;
 
 	/**
 	 * Play a given music file if is exists

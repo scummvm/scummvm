@@ -480,7 +480,7 @@ int WeaselGump::purchasedCount(uint16 shape) const {
 }
 
 void WeaselGump::updateItemDisplay() {
-	const Std::vector<WeaselDat::WeaselEntry> &items = _weaselDat->getItems();
+	const Common::Array<WeaselDat::WeaselEntry> &items = _weaselDat->getItems();
 
 	// should always have the item..
 	assert(_curItem < (int)items.size());

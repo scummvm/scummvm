@@ -648,7 +648,7 @@ void SoundManager::update_map_sfx() {
 	Player *p = Game::get_game()->get_player();
 	MapWindow *mw = Game::get_game()->get_map_window();
 
-	vector < SfxIdType >currentlyActiveSounds;
+	Common::Array < SfxIdType >currentlyActiveSounds;
 	Common::HashMap < SfxIdType, float >volumeLevels;
 
 	p->get_location(&x, &y, &l);
@@ -738,7 +738,7 @@ void SoundManager::update_map_sfx() {
 	Common::List < SoundManagerSfx >::iterator it;
 	it = m_ActiveSounds.begin();
 	while (it != m_ActiveSounds.end()) {
-		Std::vector<SfxIdType>::iterator fit;
+		Common::Array<SfxIdType>::iterator fit;
 		SoundManagerSfx sfx = (*it);
 		fit = Common::find(currentlyActiveSounds.begin(), currentlyActiveSounds.end(), sfx.sfx_id);          //is the sound in the new active list?
 		if (fit == currentlyActiveSounds.end()) {

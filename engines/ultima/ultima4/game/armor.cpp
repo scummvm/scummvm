@@ -67,7 +67,7 @@ void Armors::loadConf() {
 
 	const Config *config = Config::getInstance();
 
-	Std::vector<ConfigElement> armorConfs = config->getElement("armors").getChildren();
+	Common::Array<ConfigElement> armorConfs = config->getElement("armors").getChildren();
 	for (const auto &i : armorConfs) {
 		if (i.getName() != "armor")
 			continue;
@@ -84,7 +84,7 @@ Armor::Armor(ArmorType armorType, const ConfigElement &conf) :
 	_name = conf.getString("name");
 	_defense = conf.getInt("defense");
 
-	Std::vector<ConfigElement> contraintConfs = conf.getChildren();
+	Common::Array<ConfigElement> contraintConfs = conf.getChildren();
 	for (const auto &i : contraintConfs) {
 		byte useMask = 0;
 

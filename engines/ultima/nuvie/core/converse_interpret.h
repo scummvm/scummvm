@@ -27,8 +27,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-using Std::vector;
-
 /* Control and value opcodes for op() & evop() (U6) */
 #define U6OP_GT         0x81
 #define U6OP_GE         0x82
@@ -143,10 +141,10 @@ protected:
 		converse_value break_c; // will toggle run setting
 	};
 
-	vector<struct in_val_s> in; // control values (input/instruction)
+	Common::Array<struct in_val_s> in; // control values (input/instruction)
 	uint32 in_start;
 	Common::String text; // input text from script
-	vector<Common::String> rstrings; // string value(s) returned by op
+	Common::Array<Common::String> rstrings; // string value(s) returned by op
 	Common::String ystring; // modified by SETNAME, accessed with "$Y"
 	uint8 decl_v; // declared/initialized variable number
 	uint8 decl_t; // declared variable type: 0x00=none,0xb2=int,0xb3=string

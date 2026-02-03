@@ -46,7 +46,7 @@ public:
 	void saveData(Common::WriteStream *ws) override;
 
 private:
-	Std::vector<uint16> _eggs;
+	Common::Array<uint16> _eggs;
 };
 
 } // End of namespace Ultima8

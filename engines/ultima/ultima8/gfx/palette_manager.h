@@ -91,7 +91,7 @@ public:
 	void saveTransforms(Common::WriteStream &ws);
 
 private:
-	Std::vector<Palette *> _palettes;
+	Common::Array<Palette *> _palettes;
 	Graphics::PixelFormat _format;
 
 	static PaletteManager *_paletteManager;

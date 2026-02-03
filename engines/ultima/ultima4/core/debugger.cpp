@@ -667,7 +667,7 @@ bool Debugger::cmdFire(int argc, const char **argv) {
 	}
 
 	// nothing (not even mountains!) can block cannonballs
-	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), broadsidesDirs, g_context->_location->_coords,
+	Common::Array<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), broadsidesDirs, g_context->_location->_coords,
 		1, 3, nullptr, false);
 	for (const auto &coords : path) {
 		if (fireAt(coords, true))
@@ -827,7 +827,7 @@ bool Debugger::cmdJimmy(int argc, const char **argv) {
 	if (dir == DIR_NONE)
 		return isDebuggerActive();
 
-	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
+	Common::Array<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
 		1, 1, nullptr, true);
 	for (const auto &coords : path) {
 		if (jimmyAt(coords))
@@ -970,7 +970,7 @@ bool Debugger::cmdOpenDoor(int argc, const char **argv) {
 	if (dir == DIR_NONE)
 		return isDebuggerActive();
 
-	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
+	Common::Array<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
 		1, 1, nullptr, true);
 	for (const auto &coords : path) {
 		if (openAt(coords))
@@ -1224,7 +1224,7 @@ bool Debugger::cmdTalk(int argc, const char **argv) {
 	if (dir == DIR_NONE)
 		return isDebuggerActive();
 
-	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
+	Common::Array<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir), MASK_DIR_ALL, g_context->_location->_coords,
 		1, 2, &Tile::canTalkOverTile, true);
 	for (const auto &coords : path) {
 		if (talkAt(coords))
@@ -1381,7 +1381,7 @@ bool Debugger::cmdDestroy(int argc, const char **argv) {
 	if (dir == DIR_NONE)
 		return isDebuggerActive();
 
-	Std::vector<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir),
+	Common::Array<Coords> path = gameGetDirectionalActionPath(MASK_DIR(dir),
 		MASK_DIR_ALL, g_context->_location->_coords, 1, 1, nullptr, true);
 	for (const auto &coords : path) {
 		if (destroyAt(coords)) {

@@ -47,7 +47,7 @@ public:
 	Observable() : _changed(false) {}
 
 	void addObserver(Observer<O, A> *o) {
-		typename Std::vector< Observer<O, A> *>::iterator i;
+		typename Common::Array< Observer<O, A> *>::iterator i;
 		i = Common::find(_observers.begin(), _observers.end(), o);
 		if (i == _observers.end())
 			_observers.push_back(o);
@@ -58,7 +58,7 @@ public:
 	}
 
 	void deleteObserver(Observer<O, A> *o) {
-		typename Std::vector< Observer<O, A> *>::iterator i;
+		typename Common::Array< Observer<O, A> *>::iterator i;
 		i = Common::find(_observers.begin(), _observers.end(), o);
 		if (i != _observers.end())
 			_observers.erase(i);
@@ -79,7 +79,7 @@ public:
 		// vector iterators are invalidated if erase is called, so a copy
 		// is used to prevent problems if the observer removes itself (or
 		// otherwise changes the observer list)
-		typename Std::vector< Observer<O, A> *> tmp = _observers;
+		typename Common::Array< Observer<O, A> *> tmp = _observers;
 
 		clearChanged();
 
@@ -98,7 +98,7 @@ protected:
 
 private:
 	bool _changed;
-	Std::vector< Observer<O, A> *> _observers;
+	Common::Array< Observer<O, A> *> _observers;
 };
 
 } // End of namespace Ultima4

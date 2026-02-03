@@ -60,7 +60,7 @@ private:
 	//unsigned short _mask;
 };
 
-class Armors : public Std::vector<Armor *> {
+class Armors : public Common::Array<Armor *> {
 private:
 	void loadConf();
 	bool _confLoaded;

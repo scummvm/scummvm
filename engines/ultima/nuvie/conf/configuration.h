@@ -60,7 +60,7 @@ class ConfigNode;
  */
 class Configuration {
 private:
-	Std::vector<Shared::XMLTree*> _trees;
+	Common::Array<Shared::XMLTree*> _trees;
 	Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash,
 		Common::IgnoreCase_EqualTo> _localKeys;
 	Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash,

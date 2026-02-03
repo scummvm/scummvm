@@ -59,7 +59,7 @@ void Response::add(const ResponsePart &part) {
 	_parts.push_back(part);
 }
 
-const Std::vector<ResponsePart> &Response::getParts() const {
+const Common::Array<ResponsePart> &Response::getParts() const {
 	return _parts;
 }
 
@@ -111,7 +111,7 @@ DynamicResponse::~DynamicResponse() {
 		delete _currentResponse;
 }
 
-const Std::vector<ResponsePart> &DynamicResponse::getParts() const {
+const Common::Array<ResponsePart> &DynamicResponse::getParts() const {
 	// blah, must cast away constness
 	const_cast<DynamicResponse *>(this)->_currentResponse = (*_generator)(this);
 	return _currentResponse->getParts();

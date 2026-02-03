@@ -45,8 +45,8 @@ typedef enum {
 	DNGGRAPHIC_BASETILE
 } DungeonGraphicType;
 
-Std::vector<MapTile> dungeonViewGetTiles(int fwd, int side);
-DungeonGraphicType dungeonViewTilesToGraphic(const Std::vector<MapTile> &tiles);
+Common::Array<MapTile> dungeonViewGetTiles(int fwd, int side);
+DungeonGraphicType dungeonViewTilesToGraphic(const Common::Array<MapTile> &tiles);
 
 #define DungeonViewer (*DungeonView::getInstance())
 
@@ -82,13 +82,13 @@ public:
 	void drawWall(int xoffset, int distance, Direction orientation, DungeonGraphicType type);
 
 	void display(Context *c, TileView *view);
-	DungeonGraphicType tilesToGraphic(const Std::vector<MapTile> &tiles);
+	DungeonGraphicType tilesToGraphic(const Common::Array<MapTile> &tiles);
 
 	bool toggle3DDungeonView() {
 		return _screen3dDungeonViewEnabled = !_screen3dDungeonViewEnabled;
 	}
 
-	Std::vector<MapTile> getTiles(int fwd, int side);
+	Common::Array<MapTile> getTiles(int fwd, int side);
 };
 
 } // End of namespace Ultima4

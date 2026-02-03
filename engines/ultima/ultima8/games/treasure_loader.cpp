@@ -52,10 +52,10 @@ void TreasureLoader::loadDefaults() {
 }
 
 bool TreasureLoader::parse(const Common::String &desc,
-						   Std::vector<TreasureInfo> &treasure) const {
+						   Common::Array<TreasureInfo> &treasure) const {
 	treasure.clear();
 
-	Std::vector<Common::String> tr;
+	Common::Array<Common::String> tr;
 	SplitString(desc, ';', tr);
 
 	TreasureInfo ti;
@@ -75,7 +75,7 @@ bool TreasureLoader::internalParse(const Common::String &desc, TreasureInfo &ti,
 	ti.clear();
 	bool loadedDefault = false;
 
-	Std::vector<Common::Pair<Common::String, Common::String> > kv;
+	Common::Array<Common::Pair<Common::String, Common::String> > kv;
 	SplitStringKV(desc, ' ', kv);
 
 	for (unsigned int i = 0; i < kv.size(); ++i) {
@@ -163,7 +163,7 @@ bool TreasureLoader::internalParse(const Common::String &desc, TreasureInfo &ti,
 }
 
 bool TreasureLoader::parseUInt32Vector(const Common::String &val_,
-									   Std::vector<uint32> &vec) const {
+									   Common::Array<uint32> &vec) const {
 	Common::String val = val_;
 	vec.clear();
 

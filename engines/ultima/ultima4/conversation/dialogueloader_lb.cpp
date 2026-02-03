@@ -39,8 +39,8 @@ Response *lordBritishGetIntro(const DynamicResponse *resp);
  * based on the current party status.
  */
 Dialogue *U4LBDialogueLoader::load(Common::SeekableReadStream *source) {
-	Std::vector<Common::String> lbKeywords = u4read_stringtable("lb_keywords");
-	Std::vector<Common::String> lbText = u4read_stringtable("lb_text");
+	Common::Array<Common::String> lbKeywords = u4read_stringtable("lb_keywords");
+	Common::Array<Common::String> lbText = u4read_stringtable("lb_text");
 
 	Dialogue *dlg = new Dialogue();
 	dlg->setTurnAwayProb(0);

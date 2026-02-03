@@ -32,8 +32,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-using Std::vector;
-
 class Actor;
 class CallBack;
 class AnimManager;
@@ -203,7 +201,7 @@ protected:
 	uint32 _tx, _ty, // location on surface: in increments of "tile_pitch"
 	       _px, _py; // location on surface: pixel offset from tx,ty
 
-	vector<PositionedTile *> _tiles;
+	Common::Array<PositionedTile *> _tiles;
 
 	void display() override;
 
@@ -337,9 +335,9 @@ typedef struct {
 class ExplosiveAnim : public TimedAnim {
 	MapCoord center;
 	uint32 radius; // num. of spaces from center
-	vector<ExplosiveAnimSegment> flame; // lines of fire from the center
+	Common::Array<ExplosiveAnimSegment> flame; // lines of fire from the center
 	uint16 exploding_tile_num; // fireball effect tile_num
-	vector<MapEntity> hit_items; // things the explosion has hit
+	Common::Array<MapEntity> hit_items; // things the explosion has hit
 
 public:
 	ExplosiveAnim(const MapCoord &start, uint32 size);
@@ -367,16 +365,16 @@ typedef struct {
 
 class ProjectileAnim : public TileAnim {
 	MapCoord src;
-	vector<ProjectileLine> line;
+	Common::Array<ProjectileLine> line;
 	uint16 tile_num; // fireball effect tile_num
 	uint8 src_tile_y_offset; //amount to offset src_tile when rotating. Used by arrows and bolts
-	vector<MapEntity> hit_items; // things the projectile has hit
+	Common::Array<MapEntity> hit_items; // things the projectile has hit
 	uint16 stopped_count;
 	uint8 speed; //number of pixels to move in a single update.
 
 	bool leaveTrailFlag;
 public:
-	ProjectileAnim(uint16 tileNum, MapCoord *start, vector<MapCoord> target, uint8 animSpeed, bool leaveTrailFlag = false, uint16 initialTileRotation = 0, uint16 rotationAmount = 0, uint8 src_y_offset = 0);
+	ProjectileAnim(uint16 tileNum, MapCoord *start, Common::Array<MapCoord> target, uint8 animSpeed, bool leaveTrailFlag = false, uint16 initialTileRotation = 0, uint16 rotationAmount = 0, uint8 src_y_offset = 0);
 	~ProjectileAnim() override;
 	void start() override;
 

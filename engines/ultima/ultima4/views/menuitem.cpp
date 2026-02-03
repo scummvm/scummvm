@@ -132,7 +132,7 @@ void BoolMenuItem::activate(MenuEvent &event) {
 }
 
 StringMenuItem::StringMenuItem(const Common::String &text, short xp, short yp, int shortcutKey,
-							   Common::String *val, const Std::vector<Common::String> &validSettings) :
+							   Common::String *val, const Common::Array<Common::String> &validSettings) :
 	MenuItem(text, xp, yp, shortcutKey),
 	_val(val),
 	_validSettings(validSettings) {
@@ -145,7 +145,7 @@ Common::String StringMenuItem::getText() const {
 }
 
 void StringMenuItem::activate(MenuEvent &event) {
-	Std::vector<Common::String>::const_iterator current =
+	Common::Array<Common::String>::const_iterator current =
 	    find(_validSettings.begin(), _validSettings.end(), *_val);
 
 	if (current == _validSettings.end())

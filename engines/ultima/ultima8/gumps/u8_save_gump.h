@@ -57,8 +57,8 @@ protected:
 	bool _save;
 	int _page;
 
-	Std::vector<EditWidget *> _editWidgets;
-	Std::vector<Common::String> _descriptions;
+	Common::Array<EditWidget *> _editWidgets;
+	Common::Array<Common::String> _descriptions;
 
 	void loadDescriptions();
 

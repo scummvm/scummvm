@@ -48,7 +48,7 @@ class Cursor {
 	Screen *screen;
 	const Configuration *config;
 	sint32 cur_x, cur_y; // location on screen, unused normally
-	Std::vector<MousePointer *> cursors; // pointer list
+	Common::Array<MousePointer *> cursors; // pointer list
 	uint8 cursor_id; // which pointer is active
 
 	unsigned char *cleanup; // restore image behind cursor

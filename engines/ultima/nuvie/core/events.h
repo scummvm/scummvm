@@ -203,7 +203,7 @@ private:
 	Common::Event event;
 	EventMode mode, last_mode;
 	EventInput input; // collected/received input (of any type)
-// Std::vector<EventMode> mode_stack; // current mode is at the end of the list
+// Common::Array<EventMode> mode_stack; // current mode is at the end of the list
 	int ts; //timestamp for TimeLeft() method.
 	int altCodeVal;
 	uint16 active_alt_code; // alt-code that needs more input

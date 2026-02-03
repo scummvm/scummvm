@@ -105,8 +105,8 @@ struct CSSprite {
 };
 
 struct CSMidGameData {
-	Std::vector<Common::String> text;
-	Std::vector<CSImage *> images;
+	Common::Array<Common::String> text;
+	Common::Array<CSImage *> images;
 };
 
 struct TransferSaveData {
@@ -147,14 +147,14 @@ public:
 	ScriptCutscene(GUI *g, Configuration *cfg, SoundManager *sm);
 	~ScriptCutscene() override;
 
-	Std::vector<Common::String> load_text(const char *filename, uint8 idx);
+	Common::Array<Common::String> load_text(const char *filename, uint8 idx);
 
-	Std::vector<CSMidGameData> load_midgame_file(const char *filename);
+	Common::Array<CSMidGameData> load_midgame_file(const char *filename);
 
 	TransferSaveData load_transfer_save();
 
 	CSImage *load_image(const char *filename, int idx, int sub_idx = 0);
-	Std::vector<Std::vector<CSImage *> > load_all_images(const char *filename);
+	Common::Array<Common::Array<CSImage *> > load_all_images(const char *filename);
 	void add_sprite(CSSprite *s) {
 		sprite_list.push_back(s);
 	}

@@ -702,7 +702,7 @@ void MainActor::addKeycard(int bitno) {
 	_keycards |= (1 << bitno);
 }
 
-static uint16 getIdOfNextItemInList(const Std::vector<Item *> &items, uint16 current) {
+static uint16 getIdOfNextItemInList(const Common::Array<Item *> &items, uint16 current) {
 	const int n = items.size();
 	if (n == 0)
 		return 0;
@@ -720,7 +720,7 @@ static uint16 getIdOfNextItemInList(const Std::vector<Item *> &items, uint16 cur
 }
 
 void MainActor::nextWeapon() {
-	Std::vector<Item *> weapons;
+	Common::Array<Item *> weapons;
 	getItemsWithShapeFamily(weapons, ShapeInfo::SF_CRUWEAPON, true);
 	_activeWeapon = getIdOfNextItemInList(weapons, _activeWeapon);
 
@@ -747,7 +747,7 @@ void MainActor::dropWeapon() {
 }
 
 void MainActor::nextInvItem() {
-	Std::vector<Item *> items;
+	Common::Array<Item *> items;
 	getItemsWithShapeFamily(items, ShapeInfo::SF_CRUINVITEM, true);
 	getItemsWithShapeFamily(items, ShapeInfo::SF_CRUBOMB, true);
 	if (GAME_IS_REMORSE) {

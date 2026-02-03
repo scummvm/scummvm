@@ -68,7 +68,7 @@ void FontShapeArchive::setHVLeads() {
 		int fontnum = atoi(i._key.c_str());
 		Common::String leaddesc = i._value;
 
-		Std::vector<Common::String> vals;
+		Common::Array<Common::String> vals;
 		SplitString(leaddesc, ',', vals);
 		if (vals.size() != 2) {
 			warning("Invalid hlead/vlead description: %s", leaddesc.c_str());

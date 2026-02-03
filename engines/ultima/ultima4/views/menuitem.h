@@ -113,14 +113,14 @@ protected:
  */
 class StringMenuItem : public MenuItem {
 public:
-	StringMenuItem(const Common::String &text, short xp, short yp, int shortcutKey, Common::String *val, const Std::vector<Common::String> &validSettings);
+	StringMenuItem(const Common::String &text, short xp, short yp, int shortcutKey, Common::String *val, const Common::Array<Common::String> &validSettings);
 
 	void activate(MenuEvent &event) override;
 	Common::String getText() const override;
 
 protected:
 	Common::String *_val;
-	Std::vector<Common::String> _validSettings;
+	Common::Array<Common::String> _validSettings;
 };
 
 /**

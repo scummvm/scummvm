@@ -29,8 +29,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-//using Std::vector;
-
 class NuvieIO;
 
 struct U6LibItem {

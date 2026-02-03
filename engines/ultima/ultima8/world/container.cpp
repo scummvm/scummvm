@@ -298,7 +298,7 @@ Item *Container::getFirstItemWithShape(uint16 shapeno, bool recurse) {
 	return nullptr;
 }
 
-void Container::getItemsWithShapeFamily(Std::vector<Item *> &itemlist, uint16 family, bool recurse) {
+void Container::getItemsWithShapeFamily(Common::Array<Item *> &itemlist, uint16 family, bool recurse) {
 	for (auto *item : _contents) {
 		if (item->getShapeInfo()->_family == family)
 			itemlist.push_back(item);

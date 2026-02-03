@@ -44,7 +44,7 @@ public:
 	}
 
 private:
-	Std::vector<AnimAction *> _actions; // list of this actor's actions
+	Common::Array<AnimAction *> _actions; // list of this actor's actions
 	// (0 if actor doesn't have action)
 };
 

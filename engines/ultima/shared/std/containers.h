@@ -31,18 +31,4 @@
 #include "common/stack.h"
 #include "common/util.h"
 
-namespace Ultima {
-namespace Std {
-
-template<class T>
-class vector : public Common::Array<T> {
-public:
-	constexpr vector() : Common::Array<T>() {}
-	vector(size_t newSize) : Common::Array<T>(newSize) {}
-	vector(size_t newSize, const T elem) : Common::Array<T>(newSize, elem) {}
-};
-
-} // End of namespace Std
-} // End of namespace Ultima
-
 #endif

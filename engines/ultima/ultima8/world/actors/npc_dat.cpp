@@ -56,8 +56,8 @@ NPCDat::NPCDat(Common::SeekableReadStream &rs, Common::SeekableReadStream &namer
 }
 
 /*static*/
-Std::vector<NPCDat *> NPCDat::load(RawArchive *archive) {
-	Std::vector<NPCDat *> result;
+Common::Array<NPCDat *> NPCDat::load(RawArchive *archive) {
+	Common::Array<NPCDat *> result;
 	assert(archive);
 	if (archive->getCount() < 2) {
 		warning("NPCDat: Archive does not include the expected objects.");

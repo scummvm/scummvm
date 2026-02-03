@@ -109,7 +109,7 @@ private:
 	int32 _credits;
 
 	/// The list of pending purchases (shape nums)
-	Std::vector<uint16> _purchases;
+	Common::Array<uint16> _purchases;
 
 	/// The current item num being browsed
 	int _curItem;

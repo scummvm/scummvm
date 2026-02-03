@@ -120,18 +120,18 @@ private:
 	RawArchive *_fixed;
 	MainShapeArchive *_mainShapes;
 	Usecode *_mainUsecode;
-	Std::vector<MapGlob *> _globs;
+	Common::Array<MapGlob *> _globs;
 	FontShapeArchive *_fonts;
 	GumpShapeArchive *_gumps;
 	Shape *_mouse;
 	MusicFlex *_music;
 	WpnOvlayDat *_weaponOverlay;
-	Std::vector<NPCDat *> _npcTable;
-	Std::vector<CombatDat *> _combatData;
-	Std::vector<WeaselDat *> _weaselData;
+	Common::Array<NPCDat *> _npcTable;
+	Common::Array<CombatDat *> _combatData;
+	Common::Array<WeaselDat *> _weaselData;
 
 	SoundFlex *_soundFlex;
-	Std::vector<SpeechFlex **> _speech;
+	Common::Array<SpeechFlex **> _speech;
 	GameInfo *_gameInfo;
 
 	static GameData *_gameData;

@@ -67,7 +67,7 @@ void Weapons::loadConf() {
 	_confLoaded = true;
 	const Config *config = Config::getInstance();
 
-	Std::vector<ConfigElement> weaponConfs = config->getElement("weapons").getChildren();
+	Common::Array<ConfigElement> weaponConfs = config->getElement("weapons").getChildren();
 	for (const auto &i : weaponConfs) {
 		if (i.getName() != "weapon")
 			continue;
@@ -136,7 +136,7 @@ Weapon::Weapon(WeaponType weaponType, const ConfigElement &conf)
 		_leaveTile = conf.getString("leavetile");
 	}
 
-	Std::vector<ConfigElement> contraintConfs = conf.getChildren();
+	Common::Array<ConfigElement> contraintConfs = conf.getChildren();
 	for (const auto &i : contraintConfs) {
 		byte mask = 0;
 

@@ -29,8 +29,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-using Std::vector;
-
 class Sound {
 public:
 	virtual ~Sound() {};
@@ -61,7 +59,7 @@ public:
 		int i = NUVIE_RAND()  % m_Sounds.size();
 		return m_Sounds[i];
 	}; //randomly select one from the list
-	vector<Sound *> m_Sounds;
+	Common::Array<Sound *> m_Sounds;
 };
 
 } // End of namespace Nuvie

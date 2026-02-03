@@ -31,8 +31,6 @@
 namespace Ultima {
 namespace Nuvie {
 
-using Std::vector;
-
 #define ACTOR_NO_READIABLE_LOCATION -1
 #define ACTOR_HEAD   0
 #define ACTOR_NECK   1
@@ -266,7 +264,7 @@ protected:
 
 	sint8 moves; // number of moves actor has this turn
 	uint8 light; // level of light around actor (normally 0)
-	vector<uint8> light_source;
+	Common::Array<uint8> light_source;
 
 	ActorError error_struct; // error/status; result of previous action
 

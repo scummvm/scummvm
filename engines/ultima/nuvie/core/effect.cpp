@@ -233,17 +233,17 @@ void ExpEffect::start_anim() {
 }
 
 ProjectileEffect::ProjectileEffect(uint16 tileNum, MapCoord start, MapCoord target, uint8 speed, bool trailFlag, uint16 initialTileRotation, uint16 rotationAmount, uint8 src_y_offset) {
-	vector<MapCoord> t;
+	Common::Array<MapCoord> t;
 	t.push_back(target);
 
 	init(tileNum, start, t, speed, trailFlag, initialTileRotation, rotationAmount, src_y_offset);
 }
 
-ProjectileEffect::ProjectileEffect(uint16 tileNum, MapCoord start, const vector<MapCoord> &t, uint8 speed, bool trailFlag, uint16 initialTileRotation) {
+ProjectileEffect::ProjectileEffect(uint16 tileNum, MapCoord start, const Common::Array<MapCoord> &t, uint8 speed, bool trailFlag, uint16 initialTileRotation) {
 	init(tileNum, start, t, speed, trailFlag, initialTileRotation, 0, 0);
 }
 
-void ProjectileEffect::init(uint16 tileNum, MapCoord start, const vector<MapCoord> &t, uint8 speed, bool trailFlag, uint16 initialTileRotation, uint16 rotationAmount, uint8 src_y_offset) {
+void ProjectileEffect::init(uint16 tileNum, MapCoord start, const Common::Array<MapCoord> &t, uint8 speed, bool trailFlag, uint16 initialTileRotation, uint16 rotationAmount, uint8 src_y_offset) {
 	finished_tiles = 0;
 
 	tile_num = tileNum;

@@ -32,8 +32,8 @@ struct TreasureInfo {
 	Common::String _special;
 	double _chance;
 	int _map;
-	Std::vector<uint32> _shapes;
-	Std::vector<uint32> _frames;
+	Common::Array<uint32> _shapes;
+	Common::Array<uint32> _frames;
 	unsigned int _minCount, _maxCount;
 
 	TreasureInfo() : _chance(1), _map(0), _minCount(1), _maxCount(1) {}

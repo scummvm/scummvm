@@ -439,7 +439,7 @@ static int nscript_image_load(lua_State *L) {
 
 static int nscript_image_load_all(lua_State *L) {
 	const char *filename = lua_tostring(L, 1);
-	Std::vector<Std::vector<CSImage *> > images = cutScene->load_all_images(filename);
+	Common::Array<Common::Array<CSImage *> > images = cutScene->load_all_images(filename);
 
 	if (images.empty()) {
 		return 0;
@@ -826,7 +826,7 @@ static int nscript_text_load(lua_State *L) {
 	const char *filename = lua_tostring(L, 1);
 	uint8 idx = lua_tointeger(L, 2);
 
-	Std::vector<Common::String> text = cutScene->load_text(filename, idx);
+	Common::Array<Common::String> text = cutScene->load_text(filename, idx);
 
 	if (text.empty()) {
 		return 0;
@@ -845,7 +845,7 @@ static int nscript_text_load(lua_State *L) {
 
 static int nscript_midgame_load(lua_State *L) {
 	const char *filename = lua_tostring(L, 1);
-	Std::vector<CSMidGameData> v = cutScene->load_midgame_file(filename);
+	Common::Array<CSMidGameData> v = cutScene->load_midgame_file(filename);
 
 	if (v.empty()) {
 		return 0;
@@ -1303,13 +1303,13 @@ CSImage *ScriptCutscene::load_image(const char *filename, int idx, int sub_idx) 
 	return image;
 }
 
-Std::vector<Std::vector<CSImage *> > ScriptCutscene::load_all_images(const char *filename) {
+Common::Array<Common::Array<CSImage *> > ScriptCutscene::load_all_images(const char *filename) {
 	Common::Path path;
 	CSImage *image = nullptr;
 
 	config_get_path(config, filename, path);
 
-	Std::vector<Std::vector<CSImage *> > v;
+	Common::Array<Common::Array<CSImage *> > v;
 	U6Lzw lzw;
 
 	U6Lib_n lib_n;
@@ -1326,7 +1326,7 @@ Std::vector<Std::vector<CSImage *> > ScriptCutscene::load_all_images(const char 
 			U6Lib_n lib1;
 			lib1.open(&io, 4, NUVIE_GAME_MD);
 			//printf("lib_size = %d\n", lib1.get_num_items());
-			Std::vector<CSImage *> v1;
+			Common::Array<CSImage *> v1;
 			for (uint32 idx1 = 0; idx1 < lib1.get_num_items(); idx1++) {
 				U6Shape *shp = new U6Shape();
 				if (shp->load(&lib1, idx1)) {
@@ -1351,7 +1351,7 @@ Std::vector<Std::vector<CSImage *> > ScriptCutscene::load_all_images(const char 
 		}
 
 		for (uint32 idx = 0; idx < lib_n.get_num_items(); idx++) {
-			Std::vector<CSImage *> v1;
+			Common::Array<CSImage *> v1;
 			U6Shape *shp = new U6Shape();
 			if (shp->load(&lib_n, idx)) {
 				image = new CSImage(shp);
@@ -1370,7 +1370,7 @@ Std::vector<Std::vector<CSImage *> > ScriptCutscene::load_all_images(const char 
 
 }
 
-void load_images_from_lib(Std::vector<CSImage *> *images, U6Lib_n *lib, uint32 index) {
+void load_images_from_lib(Common::Array<CSImage *> *images, U6Lib_n *lib, uint32 index) {
 	unsigned char *buf = lib->get_item(index, nullptr);
 	if (buf == nullptr) {
 		return;
@@ -1390,10 +1390,10 @@ void load_images_from_lib(Std::vector<CSImage *> *images, U6Lib_n *lib, uint32 i
 	free(buf);
 }
 
-Std::vector<CSMidGameData> ScriptCutscene::load_midgame_file(const char *filename) {
+Common::Array<CSMidGameData> ScriptCutscene::load_midgame_file(const char *filename) {
 	Common::Path path;
 	U6Lib_n lib_n;
-	Std::vector<CSMidGameData> v;
+	Common::Array<CSMidGameData> v;
 	nuvie_game_t game_type = Game::get_game()->get_game_type();
 
 	config_get_path(config, filename, path);
@@ -1449,10 +1449,10 @@ TransferSaveData ScriptCutscene::load_transfer_save() {
 	return data;
 }
 
-Std::vector<Common::String> ScriptCutscene::load_text(const char *filename, uint8 idx) {
+Common::Array<Common::String> ScriptCutscene::load_text(const char *filename, uint8 idx) {
 	Common::Path path;
 	U6Lib_n lib_n;
-	Std::vector<Common::String> v;
+	Common::Array<Common::String> v;
 	unsigned char *buf = nullptr;
 
 	config_get_path(config, filename, path);

@@ -53,7 +53,7 @@ public:
 
 private:
 	AudioSample **_samples;
-	Std::vector<SoundFlexEntry> _index;
+	Common::Array<SoundFlexEntry> _index;
 };
 
 } // End of namespace Ultima8

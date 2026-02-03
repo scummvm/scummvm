@@ -56,7 +56,7 @@ public:
 	class Provider {
 	public:
 		virtual ~Provider() {}
-		virtual Common::String translate(Std::vector<Common::String> &parts) = 0;
+		virtual Common::String translate(Common::Array<Common::String> &parts) = 0;
 	};
 
 private:

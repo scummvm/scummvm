@@ -92,7 +92,7 @@ public:
 	//! A simpler search of the container which just gets the
 	//! items with a given shape family, optionally recursively.
 	//! \return The first item with that shape, or nullptr if nothing found.
-	void getItemsWithShapeFamily(Std::vector<Item *> &itemlist, uint16 family, bool recurse);
+	void getItemsWithShapeFamily(Common::Array<Item *> &itemlist, uint16 family, bool recurse);
 
 	//! Get the weight of the container and its contents
 	//! \return weight

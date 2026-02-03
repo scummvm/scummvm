@@ -83,7 +83,7 @@ protected:
 	uint32 getRawSize(uint32 index) const;
 
 private:
-	Std::vector<FlexFile *> _sources;
+	Common::Array<FlexFile *> _sources;
 
 	FlexFile *findArchiveFile(uint32 index) const;
 };
