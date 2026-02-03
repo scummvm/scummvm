@@ -561,17 +561,14 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 					else
 						markSelectedItem(_selectedItem, false);
 					_selectedItem = newItem;
-					scrollToCurrent();
-					dirty = true;
 				} else {
 					clearSelection();
 					_selectedItem++;
 					markSelectedItem(_selectedItem, true);
 					_lastSelectionStartItem = _selectedItem;
-					if (!isItemVisible(_selectedItem)) {
-						scrollToCurrent();
-					}
 				}
+				if (!isItemVisible(_selectedItem))
+					scrollToCurrent();
 			}
 			break;
 
@@ -615,17 +612,14 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 					else
 						markSelectedItem(_selectedItem, false);
 					_selectedItem = newItem;
-					scrollToCurrent();
-					dirty = true;
 				} else {
 					clearSelection();
 					_selectedItem--;
 					markSelectedItem(_selectedItem, true);
 					_lastSelectionStartItem = _selectedItem;
-					if (!isItemVisible(_selectedItem)) {
-						scrollToCurrent();
-					}
 				}
+				if (!isItemVisible(_selectedItem))
+					scrollToCurrent();
 			}
 			break;
 
