@@ -51,9 +51,6 @@ T clip(T a) {
 }
 
 uint32 YCbCr2RGB(const Graphics::PixelFormat &format, int16 y, int16 cb, int16 cr) {
-	cr -= 128;
-	cb -= 128;
-
 	int r = clip(y + ((cr * 91881 + 32768) >> 16));
 	int g = clip(y - ((cb * 22553 + cr * 46801 + 32768) >> 16));
 	int b = clip(y + ((cb * 116129 + 32768) >> 16));
@@ -93,90 +90,61 @@ struct Quantisation {
 
 void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte *acPtr, uint acSize, const byte *dcPtr, uint dcSize, int quality, const Common::Array<uint> *prefix = nullptr) {
 	Quantisation quant(quality);
+
 	auto decoded = Video::FourXM::HuffmanDecoder::unpack(huff, huffSize, 1);
 	uint decodedOffset = 0;
 
-	const uint planePitch = prefix ? 8 : pic.w;
-	const uint planeSize = prefix ? prefix->size() * 64 : planePitch * pic.h;
-	Common::Array<byte> planes(planeSize * 3, 0);
-
 	Video::FourXM::LEByteBitStream acBs(acPtr, acSize, 0), dcBs(dcPtr, dcSize, 0);
-	uint channel = 0;
-	uint x0 = 0, y0 = 0;
-	uint blockIdx = 0;
-	while (decodedOffset < decoded.size()) {
-		int16 ac[64] = {};
-		int8 dc8 = dcBs.readUInt(8);
-		auto *iquant = channel ? quant.quantCbCr : quant.quantY;
-		ac[0] = iquant[0] * dc8;
-		for (uint idx = 1; idx < 64;) {
-			auto b = decoded[decodedOffset++];
-			if (b == 0x00) {
-				break;
-			} else if (b == 0xf0) {
-				idx += 16;
-			} else {
-				auto h = b >> 4;
-				auto l = b & 0x0f;
-				idx += h;
-				if (l && idx < 64) {
-					auto ac_idx = ZIGZAG[idx];
-					ac[ac_idx] = iquant[ac_idx] * acBs.readInt(l);
-					++idx;
+
+	const auto dstPitch = pic.pitch / pic.format.bytesPerPixel - 8;
+	for (uint blockIdx = 0; decodedOffset < decoded.size(); ++blockIdx) {
+		int16 block[3][64] = {};
+		for (unsigned channel = 0; channel != 3; ++channel) {
+			int16 *ac = block[channel];
+			int8 dc8 = dcBs.readUInt(8);
+			auto *iquant = channel ? quant.quantCbCr : quant.quantY;
+			ac[0] = iquant[0] * dc8;
+			for (uint idx = 1; idx < 64;) {
+				auto b = decoded[decodedOffset++];
+				if (b == 0x00) {
+					break;
+				} else if (b == 0xf0) {
+					idx += 16;
+				} else {
+					auto h = b >> 4;
+					auto l = b & 0x0f;
+					idx += h;
+					if (l && idx < 64) {
+						auto ac_idx = ZIGZAG[idx];
+						ac[ac_idx] = iquant[ac_idx] * acBs.readInt(l);
+						++idx;
+					}
 				}
 			}
+
+			Video::FourXM::idct(ac, 5);
+		}
+		int dstY;
+		int dstX;
+		if (prefix) {
+			auto dstOffset = (*prefix)[blockIdx];
+			dstY = dstOffset / pic.w;
+			dstX = dstOffset % pic.w;
+		} else {
+			auto dstOffset = blockIdx << 3;
+			dstX = dstOffset % pic.w;
+			dstY = (dstOffset / pic.w) << 3;
 		}
 
-		Video::FourXM::idct(ac, 5);
-		auto *dst = prefix ? planes.data() + channel * planeSize + blockIdx * 64 : planes.data() + channel * planeSize + y0 * planePitch + x0;
-		const auto *src = ac;
-		for (unsigned h = 8; h--; dst += planePitch - 8) {
-			for (unsigned w = 8; w--;) {
-				int v = *src++ + 128;
-				v = clip(v);
-				*dst++ = v;
-			}
-		}
-		++channel;
-		if (channel == 3) {
-			++blockIdx;
-			channel = 0;
-			x0 += 8;
-			if (static_cast<int16>(x0) >= pic.w) {
-				x0 = 0;
-				y0 += 8;
-			}
-		}
-	}
-	auto *yPtr = planes.data();
-	auto *cbPtr = yPtr + planeSize;
-	auto *crPtr = cbPtr + planeSize;
+		auto *dstPixel = static_cast<uint32 *>(pic.getBasePtr(dstX, dstY));
+		uint srcIdx = 0;
+		for (uint by = 0; by < 8; ++by, dstPixel += dstPitch) {
+			for (uint bx = 0; bx < 8; ++bx, ++srcIdx) {
+				int16 y = block[0][srcIdx];
+				int16 cb = block[1][srcIdx];
+				int16 cr = block[2][srcIdx];
 
-	if (prefix) {
-		for (auto dstOffset : *prefix) {
-			int dstY = dstOffset / pic.w;
-			int dstX = dstOffset % pic.w;
-			for (uint by = 0; by < 8; ++by) {
-				auto *dstPixel = static_cast<uint32 *>(pic.getBasePtr(dstX, dstY++));
-				for (uint bx = 0; bx < 8; ++bx) {
-					int16 y = *yPtr++;
-					int16 cr = *crPtr++;
-					int16 cb = *cbPtr++;
-
-					*dstPixel++ = YCbCr2RGB(pic.format, y, cb, cr);
-				}
-			}
-		}
-	} else {
-		auto &format = pic.format;
-		for (int yy = 0; yy < pic.h; ++yy) {
-			auto *rows = static_cast<uint32 *>(pic.getBasePtr(0, yy));
-			for (int xx = 0; xx < pic.w; ++xx) {
-				int16 y = *yPtr++;
-				int16 cr = *crPtr++;
-				int16 cb = *cbPtr++;
-
-				*rows++ = YCbCr2RGB(format, y, cb, cr);
+				*dstPixel++ = YCbCr2RGB(pic.format, y + 128, cb, cr);
 			}
 		}
 	}
