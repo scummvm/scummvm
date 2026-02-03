@@ -34,7 +34,7 @@
 #include "graphics/font.h"
 #include "graphics/fonts/ttf.h"
 #include "graphics/framelimiter.h"
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 #include "image/pcx.h"
 #include "phoenixvr/console.h"
 #include "phoenixvr/game_state.h"
@@ -314,11 +314,10 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 			if (dec.needsUpdate()) {
 				auto *s = dec.decodeNextFrame();
 				if (s) {
-					Common::ScopedPtr<Graphics::Surface> converted;
 					if (s->format != _pixelFormat) {
-						converted.reset(s->convertTo(_pixelFormat));
-						_screen->copyFrom(*converted);
-						converted->free();
+						Graphics::ManagedSurface converted;
+						converted.convertFrom(*s, _pixelFormat);
+						_screen->copyFrom(*converted.surfacePtr());
 					} else
 						_screen->copyFrom(*s);
 				}

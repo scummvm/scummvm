@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/stream.h"
+#include "graphics/managed_surface.h"
 #include "graphics/pixelformat.h"
 
 namespace Graphics {
@@ -34,7 +35,7 @@ class Screen;
 namespace PhoenixVR {
 class RegionSet;
 class VR {
-	Common::ScopedPtr<Graphics::Surface> _pic;
+	Common::ScopedPtr<Graphics::ManagedSurface> _pic;
 	bool _vr = false;
 	struct Animation {
 		struct Frame {
@@ -68,7 +69,7 @@ public:
 	void render(Graphics::Screen *screen, float ax, float ay, float fov, float dt, RegionSet *regSet);
 	bool isVR() const { return _vr; }
 	void playAnimation(const Common::String &name, const Common::String &variable, int value, float speed);
-	Graphics::Surface &getSurface() { return *_pic; }
+	Graphics::Surface &getSurface() { return *_pic->surfacePtr(); }
 };
 } // namespace PhoenixVR
 

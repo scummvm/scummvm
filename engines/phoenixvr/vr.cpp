@@ -151,12 +151,7 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 }
 } // namespace
 
-VR::~VR() {
-	if (_pic) {
-		_pic->free();
-		_pic.reset();
-	}
-}
+VR::~VR() = default;
 
 VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStream &s) {
 	VR vr;
@@ -181,7 +176,7 @@ VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStrea
 			auto huffSize = READ_LE_UINT32(vrData.data());
 			if (vr._pic)
 				error("2d/3d picture in the same file");
-			vr._pic.reset(new Graphics::Surface());
+			vr._pic.reset(new Graphics::ManagedSurface());
 			auto *pic = vr._pic.get();
 			if (pic3d) {
 				vr._vr = true;
@@ -194,7 +189,7 @@ VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStrea
 			auto dcOffset = READ_LE_UINT32(huff + huffSize);
 			auto *dcPtr = acPtr + 4 + dcOffset;
 			auto *dcEnd = vrData.data() + vrData.size();
-			unpack(*pic, huff, huffSize, acPtr, dcPtr - acPtr, dcPtr, dcEnd - dcPtr, quality);
+			unpack(*pic->surfacePtr(), huff, huffSize, acPtr, dcPtr - acPtr, dcPtr, dcEnd - dcPtr, quality);
 		} else if (chunkId == CHUNK_ANIMATION) {
 			Animation animation;
 			animation.name = s.readString(0, 32);
@@ -325,7 +320,7 @@ void VR::playAnimation(const Common::String &name, const Common::String &variabl
 	animation.speed = speed;
 	animation.variable = variable;
 	animation.variableValue = value;
-	animation.renderNextFrame(*_pic);
+	animation.renderNextFrame(*_pic->surfacePtr());
 }
 
 void VR::Animation::renderNextFrame(Graphics::Surface &pic) {
@@ -357,11 +352,11 @@ void VR::render(Graphics::Screen *screen, float ax, float ay, float fov, float d
 	}
 
 	for (auto &animation : _animations)
-		animation.render(*_pic, dt);
+		animation.render(*_pic->surfacePtr(), dt);
 
 	if (!_vr) {
 		Common::Point dst(0, 0);
-		Common::Rect src(_pic->getRect());
+		Common::Rect src(_pic->getBounds());
 		Common::Rect::getBlitRect(dst, src, screen->getBounds());
 		screen->copyRectToSurface(*_pic, dst.x, dst.y, src);
 		if (regSet) {
