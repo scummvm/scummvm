@@ -273,6 +273,7 @@ ImGuiImage getShapeID(CastMember *castMember);
 ImGuiImage getTextID(CastMember *castMember);
 Common::String getDisplayName(CastMember *castMember);
 void showImage(const ImGuiImage &image, const char *name, float thumbnailSize);
+void showImageWrappedBorder(const ImGuiImage &image, const char *name, float size);
 ImVec4 convertColor(uint32 color);
 void displayVariable(const Common::String &name, bool changed, bool outOfScope = false);
 ImColor brightenColor(const ImColor &color, float factor);

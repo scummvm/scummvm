@@ -176,7 +176,20 @@ void showCast() {
 							continue;
 
 						ImGui::TableNextRow();
-						ImGui::TableNextColumn();
+
+						// Make the entire row selectable/clickable
+						ImGui::TableSetColumnIndex(0);
+						if (ImGui::Selectable(
+							Common::String::format("##row%d", castMember._key).c_str(),
+							false,
+							ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap,
+							ImVec2(0, 32.f) // match row height
+						)) {
+							_state->_castDetails._castMember = castMember._value;
+							_state->_w.castDetails = true;
+						}
+						ImGui::SameLine();
+
 						ImGui::Text("%s %s", toIcon(castMember._value->_type), name.c_str());
 
 						ImGui::TableNextColumn();
@@ -231,12 +244,6 @@ void showCast() {
 							break;
 						default:
 							break;
-						}
-
-						if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) {
-							// Cast Member Clicked
-							_state->_castDetails._castMember = castMember._value; // Must set _castMember before making the caseDetails window visible to prevent null castMember
-							_state->_w.castDetails = true;
 						}
 					}
 				}

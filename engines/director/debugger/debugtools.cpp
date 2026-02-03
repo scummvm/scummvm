@@ -212,6 +212,27 @@ void showImage(const ImGuiImage &image, const char *name, float thumbnailSize) {
 	setToolTipImage(image, name);
 }
 
+void showImageWrappedBorder(const ImGuiImage &image, const char *name, float imageSize) {
+	ImVec2 size;
+	if (image.width > image.height) {
+		size = {imageSize, imageSize * image.height / image.width};
+	} else {
+		size = {imageSize * image.width / image.height, imageSize};
+	}
+	ImGui::BeginGroup();
+	ImVec2 screenPos = ImGui::GetCursorScreenPos();
+	ImGui::GetWindowDrawList()->AddRect(screenPos, screenPos + size, 0xFFFFFFFF);
+	ImVec2 pos = ImGui::GetCursorPos();
+
+	// Reserve the space of area size to make sure the column stretches properly
+	ImGui::Dummy(size);
+	ImGui::SetCursorPos(ImVec2(pos.x + 2, pos.y + 2));	// 1 pixel border + 1 pixel padding
+	ImGui::Image(image.id, ImVec2(size.x - 4, size.y - 4)); // 2 pixels on each side for border and padding
+	ImGui::EndGroup();
+
+	setToolTipImage(image, name);
+}
+
 ImGuiImage getShapeID(CastMember *castMember) {
 	if (castMember->_type != CastType::kCastShape) {
 		return {};
