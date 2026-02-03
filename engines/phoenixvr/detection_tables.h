@@ -24,6 +24,7 @@ namespace PhoenixVR {
 
 const PlainGameDescriptor phoenixvrGames[] = {
 	{"necrono", "Necronomicon: The Dawning of Darkness"},
+	{"cameronlochness", "Cameron Files: The Secret at Loch Ness"},
 	{0, 0}};
 
 const ADGameDescription gameDescriptions[] = {
@@ -31,10 +32,20 @@ const ADGameDescription gameDescriptions[] = {
 	 nullptr,
 	 AD_ENTRY2s(
 		 "script.pak", "86294b9c445c3e06e24269c84036a207", 223,
-		 "variable.txt", "32de208759345075112f3c48b548853d", 3468),
+		 "textes.txt", "f795f35b079cb8ef599724a2a7336c7e", 5319),
 	 Common::EN_ANY,
 	 Common::kPlatformWindows,
 	 ADGF_DROPPLATFORM,
+	 GUIO1(GUIO_NONE)},
+
+	{"cameronlochness",
+	 nullptr,
+	 AD_ENTRY2s(
+		 "script.pak", "a7ee3aae653658f93bba7f237bcf06f3", 1904,
+		 "textes.txt", "294efb30581661615359ce234e2e85fb", 1596),
+	 Common::EN_ANY,
+	 Common::kPlatformWindows,
+	 ADGF_DROPPLATFORM | ADGF_UNSUPPORTED,
 	 GUIO1(GUIO_NONE)},
 
 	AD_TABLE_END_MARKER};
