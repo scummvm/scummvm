@@ -75,6 +75,8 @@ public:
 	// Special anims
 	AlfredSpecialAnim *_currentSpecialAnim = nullptr;
 	bool _isSpecialAnimFinished = false;
+	static const AlfredSpecialAnimOffset alfredSpecialAnims[];
+
 };
 
 } // End of namespace Pelrock

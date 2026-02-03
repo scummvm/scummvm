@@ -770,6 +770,11 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		waitForSpecialAnimation();
 
 		loadExtraScreenAndPresent(3);
+		_state->setRootDisabledState(17, 0, true);
+		_state->setRootDisabledState(18, 0, true);
+		_state->setRootDisabledState(18, 1, true);
+		_state->setRootDisabledState(18, 2, true);
+		_state->setRootDisabledState(18, 3, true);
 		debug("After extra screen");
 		_dialog->say(_res->_ingameTexts[QUEASCO]);
 		break;

@@ -33,7 +33,16 @@ ResourceManager::ResourceManager(/* args */) {
 	for (int i = 0; i < 4; i++) {
 		alfredIdle[i] = nullptr;
 	}
+
 }
+
+const AlfredSpecialAnimOffset ResourceManager::alfredSpecialAnims[] = {
+	{10, 51, 102, 1, 7, 559685, 1, }, // READ BOOK
+	{10, 51, 102, 1, 7, 578943, 1}, // READ RECIPE
+	{3, 45, 87, 0, 7, 37000, 1}, // ELECTRIC SHOCK 1
+	{2, 82, 58, 0, 7, 53106, 20}, // ELECTRIC SHOCK 3
+	{3, 71, 110, 1, 2, 20724, 1, 62480}, // Throw
+};
 
 ResourceManager::~ResourceManager() {
 	for (int i = 0; i < 5; i++) {
@@ -231,9 +240,10 @@ void ResourceManager::loadAlfredSpecialAnim(int numAnim, bool reverse) {
 	if (_currentSpecialAnim)
 		delete _currentSpecialAnim;
 	_currentSpecialAnim = new AlfredSpecialAnim(anim.numFrames, anim.w, anim.h, anim.numBudas, anim.offset, anim.loops, anim.size);
-	_currentSpecialAnim->animData = new byte[anim.size];
+	uint32 size = anim.size == 0 ? anim.numFrames * anim.w * anim.h : anim.size;
+	_currentSpecialAnim->animData = new byte[size];
 	if (anim.numBudas > 0) {
-		debug("Loading special anim with budas: numBudas=%d, totalSize %d", anim.numBudas, anim.size);
+		debug("Loading special anim with budas: numBudas=%d, totalSize %d", anim.numBudas, size);
 		mergeRleBlocks(&alfredFile, anim.offset, anim.numBudas, _currentSpecialAnim->animData);
 	} else {
 		alfredFile.read(_currentSpecialAnim->animData, anim.numFrames * anim.w * anim.h);

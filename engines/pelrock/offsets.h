@@ -488,7 +488,7 @@ struct AlfredSpecialAnimOffset {
 
 	AlfredSpecialAnimOffset(int nF, int width, int height, int nBudas, int numAlfred, uint32 off, int loops)
 		: numFrames(nF), w(width), h(height), numBudas(nBudas), numAlfred(numAlfred), offset(off), loops(loops) {
-		AlfredSpecialAnimOffset(nF, width, height, nBudas, numAlfred, off, loops, w * h * nF);
+		AlfredSpecialAnimOffset(nF, width, height, nBudas, numAlfred, off, loops, width * height * nF);
 	}
 	AlfredSpecialAnimOffset(int nF, int width, int height, int nBudas, int numAlfred, uint32 off, int loops, uint32 sz)
 		: numFrames(nF), w(width), h(height), numBudas(nBudas), numAlfred(numAlfred), offset(off), loops(loops), size(sz) {
@@ -496,14 +496,6 @@ struct AlfredSpecialAnimOffset {
 	}
 	AlfredSpecialAnimOffset() {
 	}
-};
-
-static const AlfredSpecialAnimOffset alfredSpecialAnims[] = {
-	{10, 51, 102, 1, 7, 559685, 1}, // READ BOOK
-	{10, 51, 102, 1, 7, 578943, 1}, // READ RECIPE
-	{3, 45, 87, 0, 7, 37000, 1}, // ELECTRIC SHOCK 1
-	{2, 82, 58, 0, 7, 53106, 20}, // ELECTRIC SHOCK 3
-	{3, 71, 110, 1, 2, 20724, 1, 62480}, // Throw
 };
 
 } // End of namespace Pelrock
