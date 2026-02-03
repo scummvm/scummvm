@@ -29,8 +29,8 @@
 
 namespace Fool {
 
-Common::Rect blitMono(BitMap &src, BitMap &dst, BitMap &mask, const Common::Point &dstPos, SourceMode mode);
-Common::Rect blitMono(BitMap &src, BitMap &dst, BitMap &mask, const Common::Point &dstPos, PatternMode mode);
+Common::Rect blitMono(const BitMap &src, BitMap &dst, const BitMap &mask, const Common::Point &dstPos, SourceMode mode);
+Common::Rect blitMono(const BitMap &src, BitMap &dst, const BitMap &mask, const Common::Point &dstPos, PatternMode mode);
 
 Graphics::ManagedSurface *createRemappedSurface(const Graphics::Surface *surface, const byte *palette, uint colorCount);
 

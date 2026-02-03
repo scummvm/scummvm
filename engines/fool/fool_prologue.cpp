@@ -778,7 +778,20 @@ void FoolPrologue::prologueRun() {
 
 	// 130:034a
 	for (int i = 0xd; i <= 0x12; i++) {
-		// priestess silhouette -> fool on the cliff
+		// priestess silhouette -> fool on the cliff.
+		// Image two in this sequence is a PICT that draws the words
+		// "...for no-one can undo the treachery I have inflicted upon the land!"
+		// using the ShortLine opcode. Because the lines are drawn in white,
+		// and the default background colour is white, this is an example of a PICT
+		// that needs to be drawn to the target buffer with a mask.
+
+		// FIXME: On original (slow) hardware, this image takes a while to render to the
+		// screen with the line tool and gives a cool fade-in effect. It's unclear
+		// what the best way to replicate that here would be, as we are drawing to
+		// an offscreen buffer. Maybe we could add some generic way for the PICTDecoder
+		// to run a callback between opcodes? That probably wouldn't help, given
+		// the image is decoded to a surface at stream load time. Alternatively we could
+		// dump the opcodes for just that picture and draw it ourselves.
 		this->prologueBufferNextPicture();
 	}
 
@@ -924,15 +937,20 @@ void FoolPrologue::prologueRun() {
 	g_toolbox->SetRect(this->arr_i16_1bc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	for (int i = 0; i <= 0x2d; i++) {
 		this->var_i32_2 = g_toolbox->TickCount();
+		// seizure warning
+		g_toolbox->InvertRect(this->arr_i16_1bc);
 		this->delayFromMarker(1);
 	}
 
-	// start loading some new resources into the screen buffers
 	// 130:083c
+
+	// Draw the priestess silhouette + "treachery" message
 	g_zbasic->picture(0, 0, this->arr_i32_0[0xd]);
 	g_zbasic->picture(5, 0, this->arr_i32_0[0xe]);
 	g_toolbox->ReleaseResource(this->arr_i32_0[0xd]);
 	g_toolbox->ReleaseResource(this->arr_i32_0[0xe]);
+
+	// start loading some new resources from the floppy disk into the screen buffers
 	this->var_i32_2 = g_toolbox->TickCount();
 	// 130:0890
 	// g_zbasic->52(0);
@@ -982,6 +1000,7 @@ void FoolPrologue::prologueRun() {
 	// 130:0ac2
 	g_zbasic->picture(-0x14, -0x1e, this->arr_i32_0[0x12]);
 	this->prologueRenderNextText();
+	g_toolbox->ReleaseResource(this->arr_i32_0[0x12]);
 	this->setPortBitsToPage(8);
 	//g_zbasic->blockMove(this->arr_i32_41296[7], this->arr_i32_41296[8], 0x5580);
 	this->arr_i32_41296[8]->copyFrom(*this->arr_i32_41296[7]);

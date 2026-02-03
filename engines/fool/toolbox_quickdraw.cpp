@@ -49,17 +49,21 @@ void Toolbox::ClipRect(Common::Rect &r) {
 }
 
 void Toolbox::CopyBits(const BitMap &srcBits, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, SourceMode mode, RgnHandle maskRgn) {
+	_copyBits(srcBits, BitMap(nullptr), dstBits, srcRect, dstRect, mode, maskRgn);
+}
+
+void Toolbox::_copyBits(const BitMap &srcBits, const BitMap &mask, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, SourceMode mode, RgnHandle maskRgn) {
 	if (!srcBits) {
-		warning("Toolbox::CopyBits: empty srcBits handle");
+		warning("Toolbox::_copyBits: empty srcBits handle");
 		return;
 	}
 
 	if (!dstBits) {
-		warning("Toolbox::CopyBits: empty dstBits handle");
+		warning("Toolbox::_copyBits: empty dstBits handle");
 		return;
 	}
 	if (maskRgn) {
-		warning("Toolbox::CopyBits: maskRgn unimplemented");
+		warning("Toolbox::_copyBits: maskRgn unimplemented");
 	}
 	Common::Rect clipSrcRect = srcRect;
 	Common::Rect clipDstRect = dstRect;
@@ -94,12 +98,21 @@ void Toolbox::CopyBits(const BitMap &srcBits, BitMap &dstBits, const Common::Rec
 			clipDstRect.bottom += clipSrcRect.bottom - srcRect.bottom;
 		}
 	}
-	BitMap mask(nullptr);
 	Common::Rect result = blitMono(subsrc, dstBits, mask, Common::Point(clipDstRect.left, clipDstRect.top), mode);
 	if (_port->portBits == _defaultBits) {
 		_defaultWindow->addDirtyRect(result);
 		_defaultWindow->setDirty(true);
 	}
+}
+
+void Toolbox::DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect) {
+	const Graphics::Surface *surface = myPicture->getSurface();
+	const Graphics::Palette &palette = myPicture->getPalette();
+	//const BitMap mask(nullptr);
+	const BitMap mask(new Graphics::ManagedSurface());
+	mask->copyFrom(*myPicture->getMask());
+	const BitMap intermediate(createRemappedSurface(surface, palette.data(), palette.size()));
+	_copyBits(intermediate, mask, _port->portBits, intermediate->getBounds(), dstRect, kSrcCopy, nullptr);
 }
 
 void Toolbox::EndUpdate(WindowRecord &theWindow) {
@@ -199,13 +212,10 @@ PicHandle Toolbox::GetPicture(uint16 picID) {
 	Handle handle = this->GetResource(MKTAG('P', 'I', 'C', 'T'), picID);
 	if (handle) {
 		Common::MemoryReadStream stream(handle->data(), handle->size());
-		Image::PICTDecoder decoder;
-		if (decoder.loadStream(stream)) {
-			const Graphics::Surface *surface = decoder.getSurface();
-			const Graphics::Palette &palette = decoder.getPalette();
-			PicHandle result(createRemappedSurface(surface, palette.data(), palette.size()));
-			_resPicts[result] = handle;
-			return result;
+		PicHandle decoder(new Image::PICTDecoder());
+		if (decoder->loadStream(stream)) {
+			_resPicts[decoder] = handle;
+			return decoder;
 		} else {
 			warning("Toolbox::GetPicture: failed to load PICT id %d", picID);
 		}
