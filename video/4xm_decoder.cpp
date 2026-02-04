@@ -23,6 +23,7 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/adpcm.h"
 #include "audio/decoders/raw.h"
+#include "common/bitstream.h"
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/memstream.h"
@@ -127,7 +128,7 @@ public:
 	void decode_cfrm(Common::SeekableReadStream *stream);
 
 private:
-	void decode_pfrm_block(uint16 *dst, const uint16 *src, int stride, int log2w, int log2h, FourXM::BEWordBitStream &bitStream, Common::MemoryReadStream &wordStream, Common::MemoryReadStream &byteStream);
+	void decode_pfrm_block(uint16 *dst, const uint16 *src, int stride, int log2w, int log2h, Common::BitStreamMemory32LEMSB &bitStream, Common::MemoryReadStream &wordStream, Common::MemoryReadStream &byteStream);
 	Common::Rational getFrameRate() const override { return _frameRate; }
 };
 
@@ -257,7 +258,8 @@ void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *st
 	assert(stream->pos() == stream->size());
 
 	auto prefixData = FourXM::HuffmanDecoder::unpack(prefixStream.data(), prefixStream.size(), 4);
-	FourXM::BEByteBitStream bitstream(bitstreamData.data(), bitstreamData.size(), 0);
+	Common::BitStreamMemoryStream bitstreamInput(bitstreamData.data(), bitstreamData.size());
+	Common::BitStreamMemory8MSB bitstream(&bitstreamInput);
 	uint prefixOffset = 0;
 	int lastDC = 0;
 	auto &format = _frame->format;
@@ -269,7 +271,7 @@ void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *st
 				int dc = prefixData[prefixOffset++];
 				if (dc >> 4)
 					error("dc run code");
-				dc = bitstream.readInt(dc);
+				dc = FourXM::readInt(bitstream, dc);
 				dc = lastDC + dc * iquant[0];
 				lastDC = dc;
 				ac[0] = dc;
@@ -285,7 +287,7 @@ void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *st
 						idx += h;
 						if (l && idx < 64) {
 							auto ac_idx = zigzag[idx];
-							ac[ac_idx] = iquant[ac_idx] * bitstream.readInt(l);
+							ac[ac_idx] = iquant[ac_idx] * FourXM::readInt(bitstream, l);
 							++idx;
 						}
 					}
@@ -379,7 +381,7 @@ void mcdc(uint16_t *dst, const uint16_t *src, int log2w,
 
 } // namespace
 
-void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(uint16 *dst, const uint16 *src, int stride, int log2w, int log2h, FourXM::BEWordBitStream &bs, Common::MemoryReadStream &wordStream, Common::MemoryReadStream &byteStream) {
+void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(uint16 *dst, const uint16 *src, int stride, int log2w, int log2h, Common::BitStreamMemory32LEMSB &bs, Common::MemoryReadStream &wordStream, Common::MemoryReadStream &byteStream) {
 	assert(log2w >= 0 && log2h >= 0);
 	auto index = size2index[log2h][log2w];
 	assert(index >= 0);
@@ -444,7 +446,8 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm(Common::SeekableReadStream *st
 	Common::Array<byte> byteStreamData(byteStreamSize);
 	stream->read(byteStreamData.data(), byteStreamData.size());
 
-	FourXM::BEWordBitStream bitStream(reinterpret_cast<const uint32 *>(bitStreamData.data()), bitStreamData.size() / 4, 0);
+	Common::BitStreamMemoryStream bitStreamInput(bitStreamData.data(), bitStreamData.size());
+	Common::BitStreamMemory32LEMSB bitStream(&bitStreamInput);
 	Common::MemoryReadStream wordStream(wordStreamData.data(), wordStreamData.size());
 	Common::MemoryReadStream byteStream(byteStreamData.data(), byteStreamData.size());
 

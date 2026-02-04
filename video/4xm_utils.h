@@ -24,69 +24,6 @@
 namespace Video {
 namespace FourXM {
 
-template<typename Type, bool BigEndian>
-class BitStream {
-	const Type *_data;
-	uint _size;
-	uint _wordPos;
-	Type _bitMask;
-	static constexpr Type InitialMask = Type(1) << (sizeof(Type) * 8 - 1);
-	static constexpr uint WordSize = sizeof(Type);
-
-public:
-	BitStream(const Type *data, uint size, uint wordPos) : _data(data), _size(size), _wordPos(wordPos), _bitMask(InitialMask) {}
-
-	uint getWordPos() const {
-		return _wordPos;
-	}
-
-	bool readBit() {
-		assert(_wordPos < _size);
-		bool bit = _data[_wordPos] & _bitMask;
-		_bitMask >>= 1;
-		if (_bitMask == 0) {
-			_bitMask = InitialMask;
-			++_wordPos;
-		}
-		return bit;
-	}
-
-	int readUInt(byte n) {
-		int value = 0;
-		if (BigEndian) {
-			for (int i = 0; i != n; ++i) {
-				value <<= 1;
-				if (readBit())
-					value |= 1;
-			}
-		} else {
-			for (int i = 0; i != n; ++i) {
-				if (readBit())
-					value |= 1 << i;
-			}
-		}
-		return value;
-	}
-
-	int readInt(byte n) {
-		int value = readUInt(n);
-		if ((value & (1 << (n - 1))) == 0)
-			value += 1 - (1 << n);
-		return value;
-	}
-
-	void alignToWord() {
-		if (_bitMask != InitialMask) {
-			_bitMask = InitialMask;
-			++_wordPos;
-		}
-	}
-};
-using LEByteBitStream = BitStream<byte, false>;
-using BEByteBitStream = BitStream<byte, true>;
-using LEWordBitStream = BitStream<uint32, false>;
-using BEWordBitStream = BitStream<uint32, true>;
-
 class HuffmanDecoder {
 	static constexpr uint kMaxTableSize = 514;
 	static constexpr uint kLastEntry = kMaxTableSize - 1;
@@ -121,6 +58,17 @@ private:
 };
 
 void idct(int16_t block[64], int shift = 6);
+
+inline int readInt(int value, unsigned n) {
+	if ((value & (1 << (n - 1))) == 0)
+		value += 1 - (1 << n);
+	return value;
+}
+
+template<typename BitStream>
+inline int readInt(BitStream &bs, size_t n) {
+	return readInt(bs.getBits(n), n);
+}
 
 } // namespace FourXM
 } // namespace Video

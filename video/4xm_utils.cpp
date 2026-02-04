@@ -20,7 +20,9 @@
  */
 
 #include "video/4xm_utils.h"
+#include "common/bitstream.h"
 #include "common/debug.h"
+#include "common/memstream.h"
 
 namespace Video {
 namespace FourXM {
@@ -29,7 +31,7 @@ template<typename BitStreamType>
 uint HuffmanDecoder::next(BitStreamType &bs) {
 	uint value = _startEntry;
 	while (value >= _numCodes) {
-		auto bit = bs.readBit();
+		auto bit = bs.template getBits<1>();
 		if (bit)
 			value = _table[value].trueIdx;
 		else
@@ -37,25 +39,24 @@ uint HuffmanDecoder::next(BitStreamType &bs) {
 	}
 	return value;
 }
-template uint HuffmanDecoder::next(LEByteBitStream &bs);
-template uint HuffmanDecoder::next(BEByteBitStream &bs);
-template uint HuffmanDecoder::next(LEWordBitStream &bs);
-template uint HuffmanDecoder::next(BEWordBitStream &bs);
+template uint HuffmanDecoder::next(Common::BitStreamMemory8MSB &bs);
+template uint HuffmanDecoder::next(Common::BitStreamMemory32LEMSB &bs);
+template uint HuffmanDecoder::next(Common::BitStreamMemory32BEMSB &bs);
 
-template<typename Word>
+template<typename BitStream>
 Common::Array<byte> HuffmanDecoder::unpackStream(const byte *huff, uint huffSize, uint &offset) {
 	Common::Array<byte> decoded;
 	decoded.reserve(huffSize * 2);
-	assert((offset % sizeof(Word)) == 0);
-	BitStream<Word, false> bs(reinterpret_cast<const Word *>(huff), huffSize / sizeof(Word), offset / sizeof(Word));
+	Common::BitStreamMemoryStream ms{huff, huffSize};
+	BitStream bs(&ms);
+	bs.skip(offset * 8);
 	while (true) {
 		auto value = next(bs);
 		if (value == 256)
 			break;
 		decoded.push_back(static_cast<byte>(value));
 	}
-	bs.alignToWord();
-	offset = bs.getWordPos() * sizeof(Word);
+	offset = bs.pos();
 	return decoded;
 }
 
@@ -148,18 +149,16 @@ void HuffmanDecoder::buildTable(uint numCodes) {
 
 Common::Array<byte> HuffmanDecoder::unpack(const byte *huff, uint huffSize, uint &offset, byte wordSize) {
 	Common::Array<byte> decoded;
+	offset = (offset + wordSize - 1) / wordSize * wordSize;
 	switch (wordSize) {
 	case 1:
-		decoded = unpackStream<byte>(huff, huffSize, offset);
+		decoded = unpackStream<Common::BitStreamMemory8MSB>(huff, huffSize, offset);
 		break;
 	case 4:
-		decoded = unpackStream<uint32>(huff, huffSize, offset);
+		decoded = unpackStream<Common::BitStreamMemory32LEMSB>(huff, huffSize, offset);
 		break;
 	default:
 		error("invalid word size");
-	}
-	if (wordSize == 1) {
-		assert(offset == huffSize); // must decode to the end
 	}
 	return decoded;
 }
@@ -167,9 +166,6 @@ Common::Array<byte> HuffmanDecoder::unpack(const byte *huff, uint huffSize, uint
 Common::Array<byte> HuffmanDecoder::unpack(const byte *huff, uint huffSize, byte wordSize) {
 	HuffmanDecoder dec;
 	auto offset = dec.loadStatistics(huff, huffSize);
-	if (wordSize > 1 && (offset % wordSize) != 0) {
-		offset += wordSize - (offset % wordSize);
-	}
 	return dec.unpack(huff, huffSize, offset, wordSize);
 }
 

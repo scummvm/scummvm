@@ -21,8 +21,10 @@
 
 #include "phoenixvr/vr.h"
 #include "common/array.h"
+#include "common/bitstream.h"
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/memstream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "graphics/screen.h"
@@ -48,6 +50,17 @@ namespace {
 template<typename T>
 T clip(T a) {
 	return a >= 0 ? a <= 255 ? a : 255 : 0;
+}
+
+unsigned reverseBits(unsigned value, unsigned n) {
+	unsigned r = 0;
+	while (n--) {
+		r <<= 1;
+		if (value & 1)
+			r |= 1;
+		value >>= 1;
+	}
+	return r;
 }
 
 uint32 YCbCr2RGB(const Graphics::PixelFormat &format, int16 y, int16 cb, int16 cr) {
@@ -94,14 +107,16 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 	auto decoded = Video::FourXM::HuffmanDecoder::unpack(huff, huffSize, 1);
 	uint decodedOffset = 0;
 
-	Video::FourXM::LEByteBitStream acBs(acPtr, acSize, 0), dcBs(dcPtr, dcSize, 0);
+	Common::BitStreamMemoryStream acMs(acPtr, acSize);
+	Common::BitStreamMemoryStream dcMs(dcPtr, dcSize);
+	Common::BitStreamMemory8MSB acBs(&acMs), dcBs(&dcMs);
 
 	const auto dstPitch = pic.pitch / pic.format.bytesPerPixel - 8;
 	for (uint blockIdx = 0; decodedOffset < decoded.size(); ++blockIdx) {
 		int16 block[3][64] = {};
 		for (unsigned channel = 0; channel != 3; ++channel) {
 			int16 *ac = block[channel];
-			int8 dc8 = dcBs.readUInt(8);
+			int8 dc8 = static_cast<int8>(reverseBits(dcBs.getBits<8>(), 8));
 			auto *iquant = channel ? quant.quantCbCr : quant.quantY;
 			ac[0] = iquant[0] * dc8;
 			for (uint idx = 1; idx < 64;) {
@@ -116,7 +131,8 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 					idx += h;
 					if (l && idx < 64) {
 						auto ac_idx = ZIGZAG[idx];
-						ac[ac_idx] = iquant[ac_idx] * acBs.readInt(l);
+						auto k = Video::FourXM::readInt(reverseBits(acBs.getBits(l), l), l);
+						ac[ac_idx] = iquant[ac_idx] * k;
 						++idx;
 					}
 				}
