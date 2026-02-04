@@ -207,7 +207,7 @@ public:
 	int GetColorDepth() const override {
 		return _colDepth;
 	}
-	bool MatchesFormat(AGS::Shared::Bitmap *other) const {
+	bool MatchesFormat(AGS::Shared::Bitmap *other) const override {
 		return _width == other->GetWidth() && _height == other->GetHeight() && _colDepth == other->GetColorDepth();
 	}
 
