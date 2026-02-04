@@ -154,7 +154,7 @@ void PelrockEngine::init() {
 		loadAnims();
 		// setScreen(0, ALFRED_DOWN);
 		// setScreen(3, ALFRED_RIGHT);
-		setScreen(7, ALFRED_DOWN);
+		setScreen(25, ALFRED_DOWN);
 		// setScreen(9, ALFRED_DOWN);
 		// setScreen(15, ALFRED_DOWN);
 		// setScreen(2, ALFRED_LEFT);
@@ -321,6 +321,28 @@ void PelrockEngine::passerByAnim(uint32 frameCount) {
 				sprite->curAnimIndex = 0;
 				sprite->animData[0].curFrame = 0;
 				_room->_passerByAnims->latch = false;
+			}
+		}
+	}
+}
+
+void PelrockEngine::reflectionEffect(byte *buf, int x, int y, int width, int height) {
+	// Water reflection - draws mirrored sprite on water pixels
+	// Only sprite pixels 0-15 are reflected (checked via pixel & 0xF0 == 0)
+	for (int row = 0; row < height; row++) {
+		int reflectY = y + row;
+
+		if (reflectY >= 400)
+			break; // Screen boundary
+
+		for (int col = 0; col < width; col++) {
+			byte pixel = buf[(height - 1 - row) * width + col]; // Read from bottom up for mirror
+			// Only reflect pixels 0-15 (high nibble must be 0)
+			if (pixel != 255 && (pixel & 0xF0) == 0) {
+				byte bgPixel = _compositeBuffer[reflectY * 640 + x + col];
+				if (bgPixel >= 223 && bgPixel < 228) { // Is water (0xDF-0xE3)
+					_compositeBuffer[reflectY * 640 + x + col] = _room->_paletteRemaps[4][pixel];
+				}
 			}
 		}
 	}
@@ -839,36 +861,12 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		break;
 	}
 	}
-	// // This if is needed to draw Alfred when idle, when the switch case results in a state change
-	// if (_alfredState.animState == ALFRED_IDLE) {
-	// 	drawAlfred(_res->alfredIdle[_alfredState.direction]);
-	// }
 }
 
-/**
- * Scales and shades alfred sprite and draws it to the composite buffer
- */
-void PelrockEngine::drawAlfred(byte *buf) {
-
-	ScaleCalculation scale = calculateScaling(_alfredState.y, _room->_scaleParams);
-
-	// Update Alfred's scale state for use by other functions
-	_alfredState.scaledX = scale.scaleX;
-	_alfredState.scaledY = scale.scaleY;
-
-	// Use the pre-calculated scaled dimensions from calculateScaling
-	int finalHeight = scale.scaledHeight;
-	int finalWidth = scale.scaledWidth;
-
-	if (finalHeight <= 0) {
-		finalHeight = 1;
-	}
-	if (finalWidth <= 0) {
-		finalWidth = 1;
-	}
+byte *PelrockEngine::scale(int scaleY, int finalWidth, int finalHeight, byte *buf) {
 
 	// The scaling table is indexed by how many scanlines to skip (scaleY), not by final height
-	int scaleIndex = scale.scaleY;
+	int scaleIndex = scaleY;
 	if (scaleIndex >= (int)_heightScalingTable.size()) {
 		scaleIndex = _heightScalingTable.size() - 1;
 	}
@@ -877,8 +875,6 @@ void PelrockEngine::drawAlfred(byte *buf) {
 	}
 	int linesToSkip = kAlfredFrameHeight - finalHeight;
 
-	int shadowPos = _alfredState.y; // - finalHeight;
-	bool shadeCharacter = _room->_pixelsShadows[shadowPos * 640 + _alfredState.x] != 0xFF;
 
 	byte *finalBuf = new byte[finalWidth * finalHeight];
 
@@ -948,16 +944,52 @@ void PelrockEngine::drawAlfred(byte *buf) {
 	} else {
 		Common::copy(buf, buf + (kAlfredFrameWidth * kAlfredFrameHeight), finalBuf);
 	}
+	return finalBuf;
+}
 
+/**
+ * Scales and shades alfred sprite and draws it to the composite buffer
+ */
+void PelrockEngine::drawAlfred(byte *buf) {
+
+	ScaleCalculation scaleCalc = calculateScaling(_alfredState.y, _room->_scaleParams);
+
+	// Update Alfred's scale state for use by other functions
+	_alfredState.scaledX = scaleCalc.scaleX;
+	_alfredState.scaledY = scaleCalc.scaleY;
+
+	// Use the pre-calculated scaled dimensions from calculateScaling
+	int finalHeight = scaleCalc.scaledHeight;
+	int finalWidth = scaleCalc.scaledWidth;
+
+	if (finalHeight <= 0) {
+		finalHeight = 1;
+	}
+	if (finalWidth <= 0) {
+		finalWidth = 1;
+	}
+
+	byte *finalBuf = scale(scaleCalc.scaleY, finalWidth, finalHeight, buf);
+
+	int shadowPos = _alfredState.y; // - finalHeight;
+	bool shadeCharacter = _room->_pixelsShadows[shadowPos * 640 + _alfredState.x] != 0xFF;
 	if (shadeCharacter) {
 		for (int i = 0; i < finalWidth * finalHeight; i++) {
 			if (finalBuf[i] != 255) {
-				finalBuf[i] = _room->paletteRemaps[1][finalBuf[i]];
+				finalBuf[i] = _room->_paletteRemaps[1][finalBuf[i]];
 			}
 		}
 	}
 
 	drawSpriteToBuffer(_compositeBuffer, 640, finalBuf, _alfredState.x, _alfredState.y - finalHeight, finalWidth, finalHeight, 255);
+
+	// Water reflection (rooms 25 and 45 only)
+	if (_room->_currentRoomNumber == 25 || _room->_currentRoomNumber == 45) {
+		// Offset from Alfred's feet to start of reflection
+		int yOffset = (_room->_currentRoomNumber == 45) ? 25 : 13;
+		reflectionEffect(finalBuf, _alfredState.x, _alfredState.y + yOffset, finalWidth, finalHeight);
+	}
+
 	delete[] finalBuf;
 }
 
@@ -1000,7 +1032,7 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 		return;
 	}
 
-	if(_room->_currentRoomNumber == 9 && sprite->index == 2) {
+	if (_room->_currentRoomNumber == 9 && sprite->index == 2) {
 		debug("Drawing sprite 2 in room 9, anim %d, frame %d/%d, loop %d/%d", sprite->curAnimIndex, animData.curFrame, animData.nframes, animData.curLoop, animData.loopCount);
 	}
 

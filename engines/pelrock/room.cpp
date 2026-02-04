@@ -30,6 +30,7 @@ namespace Pelrock {
 RoomManager::RoomManager() {
 	_pixelsShadows = new byte[640 * 400];
 	_roomNames = loadRoomNames();
+	loadWaterPaletteRemap();
 }
 
 RoomManager::~RoomManager() {
@@ -38,6 +39,17 @@ RoomManager::~RoomManager() {
 		_pixelsShadows = nullptr;
 	}
 	delete[] _resetData;
+}
+
+void RoomManager::loadWaterPaletteRemap() {
+	//Extra remap for water effect
+	Common::File exe;
+	if(!exe.open("JUEGO.EXE")) {
+		error("Couldnt find file JUEGO.EXE");
+	}
+	exe.seek(0x4C77C, SEEK_SET);
+	exe.read(_paletteRemaps[4], 256);
+	exe.close();
 }
 
 void RoomManager::getPalette(Common::File *roomFile, int roomOffset, byte *palette) {
@@ -1232,11 +1244,12 @@ void RoomManager::loadRemaps(int roomNumber) {
 	uint32 remapOffset = 0x200 + (roomNumber * 1024);
 
 	remapFile.seek(remapOffset, SEEK_SET);
-	remapFile.read(paletteRemaps[0], 256);
-	remapFile.read(paletteRemaps[1], 256);
-	remapFile.read(paletteRemaps[2], 256);
-	remapFile.read(paletteRemaps[3], 256);
+	remapFile.read(_paletteRemaps[0], 256);
+	remapFile.read(_paletteRemaps[1], 256);
+	remapFile.read(_paletteRemaps[2], 256);
+	remapFile.read(_paletteRemaps[3], 256);
 	remapFile.close();
+
 }
 
 Common::StringArray RoomManager::loadRoomNames() {

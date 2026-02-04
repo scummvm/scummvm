@@ -26,6 +26,7 @@
 #include "pelrock/pelrock.h"
 #include "pelrock/types.h"
 #include "pelrock/util.h"
+#include "util.h"
 
 namespace Pelrock {
 
@@ -336,6 +337,20 @@ void changeGameSpeed(Common::Event e) {
 
 Common::StringArray arrayOf(Common::String str) {
 	return Common::StringArray(1, str);
+}
+
+
+void invertSprite(byte *spriteBuf, int w, int h) {
+	// invert horizontal lines so character is upside down
+	for (int y = 0; y < h / 2; y++) {
+		for (int x = 0; x < w; x++) {
+			int topIndex = y * w + x;
+			int bottomIndex = (h - 1 - y) * w + x;
+			byte temp = spriteBuf[topIndex];
+			spriteBuf[topIndex] = spriteBuf[bottomIndex];
+			spriteBuf[bottomIndex] = temp;
+		}
+	}
 }
 
 } // End of namespace Pelrock

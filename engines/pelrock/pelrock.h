@@ -102,6 +102,7 @@ private:
 	void lookAt(HotSpot *hotspot);
 
 	void chooseAlfredStateAndDraw();
+	byte *scale(int scaleY, int finalWidth, int finalHeight, byte *buf);
 	void drawAlfred(byte *buf);
 	void drawNextFrame(Sprite *animSet);
 	void animateTalkingNPC(Sprite *animSet);
@@ -231,7 +232,7 @@ public:
 	void frameTriggers();
 
 	void passerByAnim(uint32 frameCount);
-
+	void reflectionEffect(byte *buf, int x, int y, int width, int height);
 	void changeCursor(Cursor cursor);
 
 	// Actions

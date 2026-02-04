@@ -47,6 +47,7 @@ void drawPos(Graphics::ManagedSurface *surface, int x, int y, byte color);
 byte decodeChar(byte b);
 void changeGameSpeed(Common::Event e);
 Common::StringArray arrayOf(Common::String str);
+void invertSprite(byte *data, int w, int h);
 
 static const int special_chars[] = {
 	168, // inverted ?

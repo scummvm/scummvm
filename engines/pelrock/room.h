@@ -66,6 +66,7 @@ public:
 	void loadRoomTalkingAnimations(int roomNumber);
 	void getPalette(Common::File *roomFile, int roomOffset, byte *palette);
 	void getBackground(Common::File *roomFile, int roomOffset, byte *background);
+	void loadWaterPaletteRemap();
 
 	/** Methods to modify room data at runtime **/
 	void addSticker(int stickerId, int persist = PERSIST_BOTH);
@@ -147,7 +148,7 @@ public:
 	ScalingParams _scaleParams;
 	byte *_pixelsShadows = nullptr;
 	byte _roomPalette[768];
-	byte paletteRemaps[4][256];
+	byte _paletteRemaps[5][256];
 	byte _musicTrack = 0;
 	Common::Array<byte> _roomSfx;
 	PaletteAnim *_currentPaletteAnim = nullptr;
