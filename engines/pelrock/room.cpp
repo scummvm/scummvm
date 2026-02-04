@@ -846,8 +846,18 @@ void RoomManager::loadAnimationPixelData(Common::File *roomFile, int roomOffset,
 	roomFile->seek(offset, SEEK_SET);
 	roomFile->read(pixelData, size);
 	if (offset > 0 && size > 0) {
-		outSize = rleDecompress(pixelData, size, 0, size, &buffer, true);
+		if(_currentRoomNumber != 40) {
+			outSize = rleDecompress(pixelData, size, 0, size, &buffer, true);
+		}
+		else {
+			// room 40 has uncompressed animation data for some reason
+			buffer = new byte[size];
+			Common::copy(pixelData, pixelData + size, buffer);
+			outSize = size;
+		}
 	}
+
+
 }
 
 Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pixelDataSize, byte *data, size_t size) {

@@ -109,6 +109,10 @@ const ActionEntry actionTable[] = {
 	{393, OPEN, &PelrockEngine::openNewspaperBossDor},
 	{393, CLOSE, &PelrockEngine::closeNewspaperBossDoor},
 
+	// Room 19
+	{400, OPEN, &PelrockEngine::openTravelAgencyDoor},
+	{400, CLOSE, &PelrockEngine::closeTravelAgencyDoor},
+
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
 	{WILDCARD, TALK, &PelrockEngine::noOpAction},   // Generic talk action
@@ -131,7 +135,7 @@ const CombinationEntry combinationTable[] = {
 	{1, 53, &PelrockEngine::giveIdToGuard},
 	{5, 53, &PelrockEngine::giveMoneyToGuard},
 	{7, 353, &PelrockEngine::useAmuletWithStatue},
-	{8, 102, &PelrockEngine::giveFormulaToLibrarian},
+	{8, 102, &PelrockEngine::giveSecretCodeToLibrarian},
 	// End marker
 	{WILDCARD, WILDCARD, nullptr}};
 
@@ -252,6 +256,16 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 
 		_room->addWalkbox(w1);
 		_room->addWalkbox(w2);
+	case 274:
+	case 275:
+	case 276:
+		_state->setRootDisabledState(room, rootIndex, true);
+		break;
+	case 277:
+		_state->setRootDisabledState(room, rootIndex, true);
+		_state->setFlag(FLAG_JEFE_INGRESA_PASTA, true);
+
+		break;
 	default:
 		debug("Got actionTrigger %d in dialogActionTrigger, but no handler defined", actionTrigger);
 		break;
@@ -674,7 +688,7 @@ void PelrockEngine::pickBooksFromShelf3(HotSpot *hotspot) {
 	pickUpBook(3);
 }
 
-void PelrockEngine::giveFormulaToLibrarian(int inventoryObject, HotSpot *hotspot) {
+void PelrockEngine::giveSecretCodeToLibrarian(int inventoryObject, HotSpot *hotspot) {
 	_dialog->say(_res->_ingameTexts[REGALO_LIBRO_RECETAS]);
 	_state->removeInventoryItem(8);
 	addInventoryItem(59);
@@ -694,6 +708,22 @@ void PelrockEngine::openNewspaperBossDor(HotSpot *hotspot) {
 
 void PelrockEngine::closeNewspaperBossDoor(HotSpot *hotspot) {
 	closeDoor(hotspot, 1, 52, MASCULINE, true);
+}
+
+void PelrockEngine::openTravelAgencyDoor(HotSpot *hotspot) {
+	// In order to unlock the second part of the game, we need to ensure
+	// we have all we need to solve the game once there
+	if(
+		_state->hasInventoryItem(17) &&
+		_state->hasInventoryItem(59)
+	) {
+		openDoor(hotspot, 0, 55, FEMININE, false);
+	}
+	// The game originally did nothing here
+}
+
+void PelrockEngine::closeTravelAgencyDoor(HotSpot *hotspot) {
+	closeDoor(hotspot, 0, 55, FEMININE, false);
 }
 
 void PelrockEngine::pickUpBook(int i) {

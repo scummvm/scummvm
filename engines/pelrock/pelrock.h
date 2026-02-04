@@ -299,11 +299,13 @@ public:
 	void pickBooksFromShelf1(HotSpot *hotspot);
 	void pickBooksFromShelf2(HotSpot *hotspot);
 	void pickBooksFromShelf3(HotSpot *hotspot);
-	void giveFormulaToLibrarian(int inventoryObject, HotSpot *hotspot);
+	void giveSecretCodeToLibrarian(int inventoryObject, HotSpot *hotspot);
 	void openNewspaperDoor(HotSpot *hotspot);
 	void closeNewspaperDoor(HotSpot *hotspot);
 	void openNewspaperBossDor(HotSpot *hotspot);
 	void closeNewspaperBossDoor(HotSpot *hotspot);
+	void openTravelAgencyDoor(HotSpot *hotspot);
+	void closeTravelAgencyDoor(HotSpot *hotspot);
 	void pickUpBook(int i);
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);
