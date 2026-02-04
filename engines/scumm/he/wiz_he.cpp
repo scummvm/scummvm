@@ -2424,7 +2424,7 @@ void Wiz::processWizImageFontEndCmd(const WizImageCommand *params) {
 void Wiz::processWizImageFontCreateCmd(const WizImageCommand *params) {
 	// Used for TTF text in FreddisFunShop/PuttsFunShop/SamsFunShop
 	if (!(((ScummEngine_v99he *)_vm)->_heFont->createFont(params->image, 
-														  (char *)params->fontProperties.fontName,
+														  reinterpret_cast<const char *>(params->fontProperties.fontName),
 														  params->fontProperties.fgColor,
 														  params->fontProperties.bgColor,
 														  params->fontProperties.style,
@@ -2439,7 +2439,7 @@ void Wiz::processWizImageFontRenderCmd(const WizImageCommand *params) {
 															params->state,
 															params->fontProperties.xPos,
 															params->fontProperties.yPos,
-															(char *)params->fontProperties.string))) {
+															reinterpret_cast<const char *>(params->fontProperties.string)))) {
 		warning("Wiz::processWizImageFontRenderCmd(): Couldn't render font");
 	}
 }
