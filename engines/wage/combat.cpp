@@ -569,7 +569,7 @@ void WageEngine::performMove(Chr *chr, int validMoves) {
 
 		// if rand(0, 99) >= stopChance, player failed to stop them.
 		// result: enemy vanishes from the room they just entered (escapes).
-		if (_rnd->getRandomNumber(99) >= stopChance) {
+		if (_rnd->getRandomNumberRngSigned(0, 99) >= stopChance) {
 			_world->move(chr, _world->_storageScene);
 		}
 	}

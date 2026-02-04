@@ -133,7 +133,7 @@ void showDesignScriptWindow(Design *d) {
 		for (uint i = 0; i < d->_drawOps.size(); i++) {
 			const DrawOp &op = d->_drawOps[i];
 			// check if this is the current step
-			bool isCurrent = (_state->_currentStep == i + 1);
+			bool isCurrent = (_state->_currentStep == static_cast<int>(i + 1));
 
 			if (isCurrent) {
 				ImVec2 pos = ImGui::GetCursorScreenPos();
@@ -213,7 +213,7 @@ void showDesignViewer(Designed *item, const char *typeStr) {
 			tmp.free();
 		}
 
-		uint totalSteps = d->_drawOps.size();
+		int totalSteps = static_cast<int>(d->_drawOps.size());
 
 		if (ImGui::Button(ICON_MS_SKIP_PREVIOUS)) {
 			if (_state->_currentStep > 1)
