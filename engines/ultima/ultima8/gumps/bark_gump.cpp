@@ -32,9 +32,9 @@
 namespace Ultima {
 namespace Ultima8 {
 
-static const int INT_MAX_VALUE = 0x7fffffff;
-static const int NO_SPEECH_LENGTH = 480;
-static const int MILLIS_PER_TICK = (1000 / Kernel::TICKS_PER_SECOND) + 1;
+static constexpr int INT_MAX_VALUE = 0x7fffffff;
+static constexpr int NO_SPEECH_LENGTH = 480;
+static constexpr int MILLIS_PER_TICK = (1000 / Kernel::TICKS_PER_SECOND) + 1;
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(BarkGump) 
 

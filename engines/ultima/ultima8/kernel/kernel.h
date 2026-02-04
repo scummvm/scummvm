@@ -135,9 +135,9 @@ public:
 		return _tickNum;
 	};
 
-	static const uint32 TICKS_PER_FRAME;
-	static const uint32 TICKS_PER_SECOND;
-	static const uint32 FRAMES_PER_SECOND;
+	static constexpr uint32 TICKS_PER_FRAME = 2;
+	static constexpr uint32 TICKS_PER_SECOND = 60;
+	static constexpr uint32 FRAMES_PER_SECOND = TICKS_PER_SECOND / TICKS_PER_FRAME;
 
 	// A special process type which means kill all the processes.
 	static const uint16 PROC_TYPE_ALL;

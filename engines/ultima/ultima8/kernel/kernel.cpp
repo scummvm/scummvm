@@ -31,10 +31,6 @@ namespace Ultima8 {
 
 Kernel *Kernel::_kernel = nullptr;
 
-const uint32 Kernel::TICKS_PER_FRAME = 2;
-const uint32 Kernel::TICKS_PER_SECOND = 60;
-const uint32 Kernel::FRAMES_PER_SECOND = Kernel::TICKS_PER_SECOND / Kernel::TICKS_PER_FRAME;
-
 // A special proc type which means "all"
 const uint16 Kernel::PROC_TYPE_ALL = 6;
 
