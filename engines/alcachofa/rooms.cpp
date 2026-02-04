@@ -1057,11 +1057,11 @@ public:
 		return (int)_members.size();
 	}
 
-	const ArchiveMemberPtr getMember(const Path &path) const {
+	const ArchiveMemberPtr getMember(const Path &path) const override {
 		return getMemberInternal(path);
 	}
 
-	SeekableReadStream *createReadStreamForMember(const Path &path) const {
+	SeekableReadStream *createReadStreamForMember(const Path &path) const override {
 		auto member = getMemberInternal(path);
 		if (member == nullptr)
 			return nullptr;

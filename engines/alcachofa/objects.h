@@ -166,7 +166,7 @@ public:
 	ButtonV1(Room *room, Common::SeekableReadStream &stream);
 
 	void loadResources() override;
-	void draw();
+	void draw() override;
 	void update() override;
 	void onHoverUpdate() override;
 	void onClick() override;
