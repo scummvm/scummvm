@@ -52,7 +52,6 @@ PhoenixVREngine *g_engine;
 PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 																					 _gameDescription(gameDesc),
 																					 _randomSource("PhoenixVR"),
-																					 _pixelFormat(Graphics::BlendBlit::getSupportedPixelFormat()),
 																					 _rgb565(2, 5, 6, 5, 0, 11, 5, 0, 0),
 																					 _thumbnail(139, 103, _rgb565),
 																					 _lockKey(13),
@@ -61,6 +60,13 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 																					 _angleY(-M_PI_2),
 																					 _mixer(syst->getMixer()) {
 	g_engine = this;
+	for (auto format : g_system->getSupportedFormats()) {
+		debug("preferred format: %s", format.toString().c_str());
+		_pixelFormat = format;
+		break;
+	}
+	if (_pixelFormat.bytesPerPixel < 2)
+		error("Expected at least 16 bit format");
 }
 
 PhoenixVREngine::~PhoenixVREngine() {
@@ -350,7 +356,7 @@ Graphics::Surface *PhoenixVREngine::loadSurface(const Common::String &path) {
 	if (path.hasSuffix(".pcx")) {
 		Image::PCXDecoder pcx;
 		if (pcx.loadStream(file)) {
-			auto *s = pcx.getSurface()->convertTo(_pixelFormat, pcx.hasPalette() ? pcx.getPalette().data() : nullptr);
+			auto *s = pcx.getSurface()->convertTo(Graphics::BlendBlit::getSupportedPixelFormat(), pcx.hasPalette() ? pcx.getPalette().data() : nullptr);
 			if (s) {
 				byte r = 0, g = 0, b = 0;
 				s->applyColorKey(r, g, b);
@@ -805,7 +811,7 @@ void PhoenixVREngine::paint(Graphics::Surface &src, Common::Point dst) {
 	Common::Rect clip = _screen->getBounds();
 	if (Common::Rect::getBlitRect(dst, srcRect, clip)) {
 		Common::Rect dstRect(dst.x, dst.y, dst.x + srcRect.width(), dst.y + srcRect.height());
-		_screen->blendBlitFrom(src, srcRect, dstRect);
+		_screen->blitFrom(src, srcRect, dstRect);
 	}
 }
 

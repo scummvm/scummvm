@@ -136,16 +136,33 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 			dstY = (dstOffset / pic.w) << 3;
 		}
 
-		auto *dstPixel = static_cast<uint32 *>(pic.getBasePtr(dstX, dstY));
-		uint srcIdx = 0;
-		for (uint by = 0; by < 8; ++by, dstPixel += dstPitch) {
-			for (uint bx = 0; bx < 8; ++bx, ++srcIdx) {
-				int16 y = block[0][srcIdx];
-				int16 cb = block[1][srcIdx];
-				int16 cr = block[2][srcIdx];
+		switch (pic.format.bytesPerPixel) {
+		case 4: {
+			auto *dstPixel = static_cast<uint32 *>(pic.getBasePtr(dstX, dstY));
+			uint srcIdx = 0;
+			for (uint by = 0; by < 8; ++by, dstPixel += dstPitch) {
+				for (uint bx = 0; bx < 8; ++bx, ++srcIdx) {
+					int16 y = block[0][srcIdx];
+					int16 cb = block[1][srcIdx];
+					int16 cr = block[2][srcIdx];
 
-				*dstPixel++ = YCbCr2RGB(pic.format, y + 128, cb, cr);
+					*dstPixel++ = YCbCr2RGB(pic.format, y + 128, cb, cr);
+				}
 			}
+		} break;
+		case 2: {
+			auto *dstPixel = static_cast<uint16 *>(pic.getBasePtr(dstX, dstY));
+			uint srcIdx = 0;
+			for (uint by = 0; by < 8; ++by, dstPixel += dstPitch) {
+				for (uint bx = 0; bx < 8; ++bx, ++srcIdx) {
+					int16 y = block[0][srcIdx];
+					int16 cb = block[1][srcIdx];
+					int16 cr = block[2][srcIdx];
+
+					*dstPixel++ = YCbCr2RGB(pic.format, y + 128, cb, cr);
+				}
+			}
+		} break;
 		}
 	}
 }
