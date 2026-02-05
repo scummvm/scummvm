@@ -169,6 +169,8 @@ public:
 
 private:
 	static Common::String removeDrive(const Common::String &path);
+	Common::Path resolve(const Common::String &name);
+
 	Graphics::Surface *loadSurface(const Common::String &path);
 	Graphics::Surface *loadCursor(const Common::String &path);
 	void paint(Graphics::Surface &src, Common::Point dst);
@@ -182,7 +184,8 @@ private:
 
 private:
 	Common::Point _mousePos, _mouseRel;
-	Common::Path _nextScript;
+	Common::String _nextScript;
+	Common::Path _currentScriptPath;
 	int _warpIdx = -1;
 	Script::ConstWarpPtr _warp;
 	int _nextWarp = -1;

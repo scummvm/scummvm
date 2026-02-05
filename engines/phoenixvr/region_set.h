@@ -23,6 +23,7 @@
 #define PHOENIXVR_REGIONS_H
 
 #include "common/array.h"
+#include "common/path.h"
 #include "phoenixvr/rectf.h"
 
 namespace Common {
@@ -48,7 +49,7 @@ class RegionSet {
 	Common::Array<Region> _regions;
 
 public:
-	RegionSet(const Common::String &fname);
+	RegionSet(const Common::Path &fname);
 	uint size() const { return _regions.size(); }
 	const Common::Array<Region> &getRegions() const { return _regions; }
 	const Region &getRegion(uint idx) const {

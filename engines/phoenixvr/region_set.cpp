@@ -24,10 +24,10 @@
 #include "common/file.h"
 
 namespace PhoenixVR {
-RegionSet::RegionSet(const Common::String &fname) {
+RegionSet::RegionSet(const Common::Path &fname) {
 	Common::File file;
-	if (!file.open(Common::Path(fname))) {
-		debug("can't find region %s", fname.c_str());
+	if (!file.open(fname)) {
+		debug("can't find region %s", fname.toString().c_str());
 		return;
 	}
 	auto n = file.readUint32LE();
