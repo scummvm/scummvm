@@ -1926,16 +1926,9 @@ Object *GamosEngine::getFreeObject() {
 
 void GamosEngine::removeObject(Object *obj) {
 	obj->flags = 0;
-	/*if (&(_objects.back()) == obj) {
-	    int32 lastindex = _objects.size() - 1;
-	    for (int32 i = lastindex - 1; i >= 0; i--) {
-	        if ( _objects[i].flags & 1 ) {
-	            lastindex = i;
-	            break;
-	        }
-	    }
-	    _objects.resize(lastindex);
-	}*/
+	/*
+		In original engine here is free for continoues unused objects in the end
+	*/
 }
 
 void GamosEngine::removeObjectMarkDirty(Object *obj) {
