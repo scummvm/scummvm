@@ -128,6 +128,9 @@ void SpriteResource::clear() {
 	_index.clear();
 }
 
+/**
+	 * Scale a co-ordinate value based on the passed scaling mask
+*/
 static inline uint getScaledVal(int xy, uint16 &scaleMask) {
 	if (!xy)
 		return 0;
@@ -424,6 +427,9 @@ static inline void drawSprite(byte *data, size_t filesize, XSurface &dest, uint1
 
 						switch (drawerFlag) {
 						case SPRFLAG_DRAWER1: {
+
+							// Draw a sprite frame based on a passed offset into the data stream
+
 							static const byte DRAWER1_OFFSET[24] = {
 								0x30, 0xC0, 0xB0, 0x10, 0x41, 0x20, 0x40, 0x21, 0x48, 0x46, 0x43, 0x40,
 								0xD0, 0xD3, 0xD6, 0xD8, 0x01, 0x04, 0x07, 0x0A, 0xEA, 0xEE, 0xF2, 0xF6
@@ -449,7 +455,9 @@ static inline void drawSprite(byte *data, size_t filesize, XSurface &dest, uint1
 						}
 						break;
 						case SPRFLAG_DRAWER2: {
-							// drawer 2
+							
+							// Scrambles up the sprite by drawing many of the pixels randomly at a horizontal or vertical offset
+
 							static const byte DRAWER2_MASK1[32] = {
 								3, 0, 3, 0, 3, 0, 3, 0, 2, 0, 2, 0, 2, 0, 2, 0,
 								1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -481,6 +489,9 @@ static inline void drawSprite(byte *data, size_t filesize, XSurface &dest, uint1
 						}
 						break;
 						case SPRFLAG_DRAWER3: {
+
+							// Draws the sprite as faint ghostly, see-through.
+							
 							static const uint16 DRAWER3_MASK[4] = { 1, 3, 7, 15 };
 							static const uint16 DRAWER3_OFFSET[4] = { 1, 2, 4, 8 };
 
@@ -509,6 +520,7 @@ static inline void drawSprite(byte *data, size_t filesize, XSurface &dest, uint1
 						}
 						break;
 						case SPRFLAG_DRAWER4: {
+
 							static const byte DRAWER4_THRESHOLD[4] = { 4, 7, 10, 13 };
 							const byte threshold = DRAWER4_THRESHOLD[idx];
 							const byte pixel = (byte) * lineP;
@@ -525,6 +537,9 @@ static inline void drawSprite(byte *data, size_t filesize, XSurface &dest, uint1
 						}
 						break;
 						case SPRFLAG_DRAWER5: {
+
+							// Draws a sprite with a fuzziness effect where only some pixels of the sprite are randomly drawn
+							
 							static const uint16 DRAWER5_THRESHOLD[4] = { 0x3333, 0x6666, 0x999A, 0xCCCD };
 							static const uint16 threshold = DRAWER5_THRESHOLD[idx];
 
