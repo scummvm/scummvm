@@ -39,7 +39,7 @@ const ADGameDescription gameDescriptions[] = {
 	 ADGF_DROPPLATFORM,
 	 GUIO1(GUIO_NONE)},
 
-	{"cameronlochness",
+	{"lochness",
 	 nullptr,
 	 AD_ENTRY2s(
 		 "script.pak", "a7ee3aae653658f93bba7f237bcf06f3", 1904,
