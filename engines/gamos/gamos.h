@@ -145,8 +145,7 @@ struct Sprite {
 	uint32 index = 0;
 
 	byte field_0;
-	union
-	{
+	union {
 		byte flags;
 		byte startChar; // if it's font
 	};
