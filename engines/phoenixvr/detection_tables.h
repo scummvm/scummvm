@@ -25,6 +25,7 @@ namespace PhoenixVR {
 const PlainGameDescriptor phoenixvrGames[] = {
 	{"necrono", "Necronomicon: The Dawning of Darkness"},
 	{"cameronlochness", "Cameron Files: The Secret at Loch Ness"},
+	{"messenger", "The Messenger/Louvre: The Final Curse"},
 	{0, 0}};
 
 const ADGameDescription gameDescriptions[] = {
@@ -48,6 +49,15 @@ const ADGameDescription gameDescriptions[] = {
 	 ADGF_DROPPLATFORM | ADGF_UNSUPPORTED,
 	 GUIO1(GUIO_NONE)},
 
+	{"messenger",
+	 nullptr,
+	 AD_ENTRY2s(
+		 "script.pak", "1e0f9cb47bc203e9e2983b03ffa85174", 185,
+		 "textes.txt", "23f577d1201bc3024ca49cb11f9f7347", 5261),
+	 Common::EN_ANY,
+	 Common::kPlatformWindows,
+	 ADGF_DROPPLATFORM | ADGF_UNSUPPORTED,
+	 GUIO1(GUIO_NONE)},
 	AD_TABLE_END_MARKER};
 
 } // End of namespace PhoenixVR
