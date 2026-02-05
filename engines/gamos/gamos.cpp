@@ -1445,7 +1445,7 @@ int32 GamosEngine::doActions(const Actions &a, bool absolute) {
 
 	_gfxObjectCreated = false;
 	if (a.flags & Actions::HAS_FUNCTION) {
-		uint32 fldsv;
+		uint32 fldsv = 0;
 		if (_curObject)
 			fldsv = _curObject->priority;
 		if (a.functionAddress != -1)
