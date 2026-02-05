@@ -3284,7 +3284,7 @@ void GamosEngine::processInput(Common::Point move, Common::Point actPos, uint8 a
 	uint8 actT = 0;
 	uint8 pobjF5 = 255;
 
-	for (int i = 0; i < _objects.size(); i++) {
+	for (uint i = 0; i < _objects.size(); i++) {
 		Object &obj = _objects[i];
 		if (obj.isActionObject()) {
 			ObjectAction &action = _objectActions[obj.actID];
