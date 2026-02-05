@@ -84,6 +84,15 @@ struct Play_AnimBloc : public Script::Command {
 	}
 };
 
+struct Stop_AnimBloc : public Script::Command {
+	Common::String name;
+
+	Stop_AnimBloc(const Common::Array<Common::String> &args) : name(args[0]) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("Stop_AnimBloc %s", name.c_str());
+	}
+};
+
 struct Play_AnimBloc_Number : public Script::Command {
 	Common::String prefix, var;
 	Common::String dstVar;
@@ -183,6 +192,78 @@ struct Sub : public Script::Command {
 	}
 };
 
+struct Not : public Script::Command {
+	Common::String var;
+
+	Not(Common::String v) : var(Common::move(v)) {}
+
+	void exec(Script::ExecutionContext &ctx) const override {
+		debug("not %s", var.c_str());
+		g_engine->setVariable(var, g_engine->getVariable(var) ? 0 : 1);
+	}
+};
+
+struct GetMonde4 : public Script::Command {
+	Common::String var;
+	Common::String negativeVar;
+
+	GetMonde4(const Common::Array<Common::String> &args) : var(args[0]), negativeVar(args[1]) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("GetMonde4 %s %s", var.c_str(), negativeVar.c_str());
+		g_engine->setVariable(var, 0);
+		g_engine->setVariable(negativeVar, 1);
+	}
+};
+
+struct SetMonde4 : public Script::Command {
+	int value;
+
+	SetMonde4(const Common::Array<Common::String> &args) : value(atoi(args[0].c_str())) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("SetMonde4 %d", value);
+	}
+};
+
+struct AddObject : public Script::Command {
+	int object;
+	Common::String var;
+	Common::String negativeVar;
+
+	AddObject(const Common::Array<Common::String> &args) : object(atoi(args[0].c_str())), var(args[1]), negativeVar(args[2]) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("AddObject %d %s %s", object, var.c_str(), negativeVar.c_str());
+	}
+};
+
+struct AddCoffreObject : public Script::Command {
+	int object;
+
+	AddCoffreObject(const Common::Array<Common::String> &args) : object(atoi(args[0].c_str())) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("AddCoffreObject %d", object);
+	}
+};
+
+struct IsPresent : public Script::Command {
+	int object;
+	Common::String var;
+	Common::String negativeVar;
+
+	IsPresent(const Common::Array<Common::String> &args) : object(atoi(args[0].c_str())), var(args[1]), negativeVar(args[2]) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("IsPresent %d %s %s", object, var.c_str(), negativeVar.c_str());
+	}
+};
+
+struct RemoveObject : public Script::Command {
+	int object;
+
+	RemoveObject(const Common::Array<Common::String> &args) : object(atoi(args[0].c_str())) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("RemoveObject %d", object);
+	}
+};
+
 struct Cmp : public Script::Command {
 	Common::String var;
 	Common::String negativeVar;
@@ -215,11 +296,103 @@ struct Cmp : public Script::Command {
 	}
 };
 
+struct Select : public Script::Command {
+	int value;
+	Common::String arg0;
+	Common::String arg1;
+
+	Select(const Common::Array<Common::String> &args) : value(atoi(args[0].c_str())), arg0(args[1]), arg1(args[2]) {}
+
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("Select %d %s %s", value, arg0.c_str(), arg1.c_str());
+	}
+};
+
+struct DoAction : public Script::Command {
+	int value;
+	Common::String arg;
+
+	DoAction(const Common::Array<Common::String> &args) : value(atoi(args[0].c_str())), arg(args[1]) {}
+
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("DoAction %d %s", value, arg.c_str());
+	}
+};
+
+struct IsHere : public Script::Command {
+	IsHere(const Common::Array<Common::String> &args) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("IsHere");
+	}
+};
+
+struct InitCoffre : public Script::Command {
+	InitCoffre(const Common::Array<Common::String> &args) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("InitCoffre");
+	}
+};
+
+struct LoadCoffre : public Script::Command {
+	LoadCoffre(const Common::Array<Common::String> &args) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("LoadCoffre");
+	}
+};
+
+struct SaveCoffre : public Script::Command {
+	SaveCoffre(const Common::Array<Common::String> &args) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("SaveCoffre");
+	}
+};
+
+struct AfficheCoffre : public Script::Command {
+	AfficheCoffre(const Common::Array<Common::String> &args) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("AfficheCoffre");
+	}
+};
+
+struct AfficheSelection : public Script::Command {
+	AfficheSelection(const Common::Array<Common::String> &args) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("AfficheSelection");
+	}
+};
+
+struct AffichePorteF : public Script::Command {
+	int value;
+	AffichePorteF(const Common::Array<Common::String> &args) : value(atoi(args[0].c_str())) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("AffichePorteF %d", value);
+	}
+};
+
+struct SelectPorteF : public Script::Command {
+	int value;
+	Common::String var;
+	SelectPorteF(const Common::Array<Common::String> &args) : value(atoi(args[0].c_str())), var(args[1]) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("SelectPorteF %d %s", value, var.c_str());
+	}
+};
+
+struct SelectCoffre : public Script::Command {
+	int value;
+	Common::String var;
+	SelectCoffre(const Common::Array<Common::String> &args) : value(atoi(args[0].c_str())), var(args[1]) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("SelectCoffre %d %s", value, var.c_str());
+	}
+};
+
 struct LoadSave_Init_Slots : public Script::Command {
 	int slots;
 
 	LoadSave_Init_Slots(const Common::Array<Common::String> &args) : slots(atoi(args[0].c_str())) {}
 	void exec(Script::ExecutionContext &ctx) const override {
+		debug("LoadSave_Init_Slots %d", slots);
 	}
 };
 
@@ -306,6 +479,51 @@ struct LoadSave_Set_Context_Label : public Script::Command {
 	}
 };
 
+struct Discocier : public Script::Command {
+	Discocier(const Common::Array<Common::String> &args) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("Discocier");
+	}
+};
+
+struct Reset : public Script::Command {
+	Reset(const Common::Array<Common::String> &args) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("Reset");
+	}
+};
+
+struct MemoryRelease : public Script::Command {
+	MemoryRelease(const Common::Array<Common::String> &args) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("MemoryRelease");
+	}
+};
+
+struct DrawTextSelection : public Script::Command {
+	DrawTextSelection(const Common::Array<Common::String> &args) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("DrawTextSelection");
+	}
+};
+
+struct CarteDestination : public Script::Command {
+	Common::String varX;
+	Common::String varY;
+	CarteDestination(const Common::Array<Common::String> &args) : varX(args[0]), varY(args[1]) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("CarteDestination %s %s", varX.c_str(), varY.c_str());
+	}
+};
+
+struct Scroll : public Script::Command {
+	int value;
+	Scroll(const Common::Array<Common::String> &args) : value(atoi(args[0].c_str())) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("Scroll");
+	}
+};
+
 struct Rollover : public Script::Command {
 	int arg;
 
@@ -333,6 +551,15 @@ struct RolloverSecretaire : public Script::Command {
 	}
 };
 
+struct PorteFRollover : public Script::Command {
+	int arg;
+
+	PorteFRollover(const Common::Array<Common::String> &args) : arg(atoi(args[0].c_str())) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("PorteFRollover %d", arg);
+	}
+};
+
 struct SaveVariable : public Script::Command {
 	SaveVariable(const Common::Array<Common::String> &args) {}
 	void exec(Script::ExecutionContext &ctx) const override {
@@ -347,11 +574,36 @@ struct LoadVariable : public Script::Command {
 	}
 };
 
+struct End : public Script::Command {
+	End(const Common::Array<Common::String> &args) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		g_engine->quitGame();
+	}
+};
+
 #define PLUGIN_LIST(E)               \
 	E(Add)                           \
+	E(AddCoffreObject)               \
+	E(AddObject)                     \
+	E(AfficheCoffre)                 \
+	E(AffichePorteF)                 \
+	E(AfficheSelection)              \
+	E(CarteDestination)              \
 	E(ChangeCurseur)                 \
 	E(Cmp)                           \
+	E(Discocier)                     \
+	E(DrawTextSelection)             \
+	E(End)                           \
+	E(GetMonde4)                     \
+	E(SetMonde4)                     \
+	E(IsPresent)                     \
 	E(KillTimer)                     \
+	E(InitCoffre)                    \
+	E(IsHere)                        \
+	E(LoadCoffre)                    \
+	E(SaveCoffre)                    \
+	E(SelectPorteF)                  \
+	E(SelectCoffre)                  \
 	E(LoadSave_Capture_Context)      \
 	E(LoadSave_Context_Restored)     \
 	E(LoadSave_Enter_Script)         \
@@ -362,16 +614,24 @@ struct LoadVariable : public Script::Command {
 	E(LoadSave_Draw_Slot)            \
 	E(LoadSave_Test_Slot)            \
 	E(LoadVariable)                  \
+	E(MemoryRelease)                 \
 	E(MultiCD_Set_Transition_Script) \
 	E(MultiCD_Set_Next_Script)       \
 	E(PauseTimer)                    \
 	E(Play_AnimBloc)                 \
 	E(Play_AnimBloc_Number)          \
 	E(Play_Movie)                    \
+	E(Reset)                         \
+	E(RemoveObject)                  \
 	E(Rollover)                      \
 	E(RolloverMalette)               \
 	E(RolloverSecretaire)            \
+	E(PorteFRollover)                \
 	E(SaveVariable)                  \
+	E(Select)                        \
+	E(Scroll)                        \
+	E(Stop_AnimBloc)                 \
+	E(DoAction)                      \
 	E(StartTimer)                    \
 	E(Sub)                           \
 	E(Until)                         \
@@ -382,9 +642,9 @@ struct LoadVariable : public Script::Command {
 	if (cmd.equalsIgnoreCase(#NAME)) \
 		return Script::CommandPtr(new NAME(args));
 
-Script::CommandPtr createCommand(const Common::String &cmd, const Common::Array<Common::String> &args) {
+Script::CommandPtr createCommand(const Common::String &cmd, const Common::Array<Common::String> &args, int lineno) {
 	PLUGIN_LIST(ADD_PLUGIN)
-	error("unhandled plugin command %s", cmd.c_str());
+	error("unhandled plugin command %s at line %d", cmd.c_str(), lineno);
 }
 
 struct IfAnd : public Script::Conditional {
@@ -447,8 +707,8 @@ struct GoSub : public Script::Command {
 	}
 };
 
-struct End : public Script::Command {
-	End() {}
+struct EndScript : public Script::Command {
+	EndScript() {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		debug("end");
 		ctx.running = false;
@@ -554,6 +814,16 @@ struct SetAngle : public Script::Command {
 	}
 };
 
+struct InterpolAngle : public Script::Command {
+	float x, y;
+	int unk;
+	InterpolAngle(float x_, float y_, int u) : x(x_), y(y_), unk(u) {}
+
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("interpolangle %g,%g %d", x, y, unk);
+	}
+};
+
 struct GoToWarp : public Script::Command {
 	Common::String warp;
 	GoToWarp(Common::String w) : warp(Common::move(w)) {}
@@ -574,6 +844,10 @@ struct PlaySound : public Script::Command {
 	void exec(Script::ExecutionContext &ctx) const override {
 		g_engine->playSound(sound, volume, loops);
 	}
+};
+
+struct PlayMusique : public PlaySound {
+	PlayMusique(Common::String s, int v) : PlaySound(Common::move(s), v, -1) {}
 };
 
 struct StopSound : public Script::Command {

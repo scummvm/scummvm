@@ -159,7 +159,7 @@ public:
 			return CommandPtr(new Fade(arg0, arg1, arg2));
 		} else if (maybe("setzoom=")) {
 			return CommandPtr(new SetZoom(nextInt()));
-		} else if (maybe("setangle=")) {
+		} else if (maybe("setangle=") || keyword("setangle")) {
 			auto i0 = nextInt();
 			if (i0 > 4095)
 				i0 -= 8192;
@@ -167,6 +167,16 @@ public:
 			expect(',');
 			auto a1 = toAngle(nextInt());
 			return CommandPtr(new SetAngle(a0, a1));
+		} else if (keyword("interpolangle")) {
+			auto i0 = nextInt();
+			if (i0 > 4095)
+				i0 -= 8192;
+			auto a0 = toAngle(i0);
+			expect(',');
+			auto a1 = toAngle(nextInt());
+			expect(',');
+			int unk = nextInt();
+			return CommandPtr(new InterpolAngle(a0, a1, unk));
 		} else if (maybe("anglexmax=")) {
 			return CommandPtr(new AngleXMax(toAngle(nextInt())));
 		} else if (maybe("angleymax=")) {
@@ -185,6 +195,11 @@ public:
 			expect(',');
 			auto arg2 = nextInt();
 			return CommandPtr(new PlaySound3D(Common::move(sound), arg0, toAngle(arg1), arg2));
+		} else if (keyword("playmusique")) {
+			auto sound = nextWord();
+			expect(',');
+			auto arg0 = nextInt();
+			return CommandPtr(new PlayMusique(Common::move(sound), arg0));
 		} else if (keyword("playsound")) {
 			auto sound = nextWord();
 			expect(',');
@@ -194,7 +209,7 @@ public:
 			return CommandPtr(new PlaySound(Common::move(sound), arg0, arg1));
 		} else if (keyword("stopsound3d")) {
 			return CommandPtr(new StopSound3D(nextWord()));
-		} else if (keyword("stopsound")) {
+		} else if (keyword("stopsound") || keyword("stopmusique")) {
 			return CommandPtr(new StopSound(nextWord()));
 		} else if (keyword("setcursor")) {
 			auto image = nextWord();
@@ -213,12 +228,15 @@ public:
 			expect('=');
 			auto value = nextInt();
 			return CommandPtr(new Set(Common::move(var), value));
+		} else if (keyword("not")) {
+			auto var = nextWord();
+			return CommandPtr(new Not(Common::move(var)));
 		} else if (keyword("gosub")) {
 			return CommandPtr(new GoSub(nextWord()));
 		} else if (keyword("return")) {
 			return CommandPtr{new Return()};
 		} else if (keyword("end")) {
-			return CommandPtr{new End()};
+			return CommandPtr{new EndScript()};
 		}
 		return {};
 	};
@@ -331,11 +349,11 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 					p.expect('(');
 					auto args = p.readStringList();
 					p.expect(')');
-					auto cmd = createCommand(name, args);
+					auto cmd = createCommand(name, args, lineno);
 					if (cmd)
 						_pluginScope->commands.push_back(Common::move(cmd));
 					else
-						error("unhandled plugin command %s", line.c_str());
+						error("unhandled plugin command %s at line %d", line.c_str(), lineno);
 				} else {
 					auto cmd = p.parseCommand();
 					if (cmd) {
@@ -346,11 +364,11 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 						} else
 							commands.push_back(Common::move(cmd));
 					} else
-						error("unhandled script command %s", line.c_str());
+						error("unhandled script command %s at line %d", line.c_str(), lineno);
 				}
 			}
 		} else
-			error("invalid directive on line %u: %s", lineno, line.c_str());
+			error("invalid directive at line %u: %s", lineno, line.c_str());
 	}
 }
 
