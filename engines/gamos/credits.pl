@@ -1,3 +1,3 @@
 begin_section("Gamos");
-	add_person("Name 1", "Handle 1", "");
+	add_person("Anton Yarcev", "Zidane", "");
 end_section();
