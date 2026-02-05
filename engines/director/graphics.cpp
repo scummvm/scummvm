@@ -428,18 +428,28 @@ void InkPrimitives<T>::drawPoint(int x, int y, uint32 src, void *data) {
 		if (p->oneBitImage || p->applyColor) {
 			*dst = (src == p->colorBlack) ? p->foreColor : *dst;
 		} else {
-			// OR dst palette index with src.
-			// Originally designed for 1-bit mode to make white pixels
-			// transparent.
-			*dst = *dst | src;
+			if (sizeof(T) == 1) {
+				// OR dst palette index with src.
+				// Originally designed for 1-bit mode to make white pixels
+				// transparent.
+				*dst = *dst | src;
+			} else {
+				// In 32-bit mode, this is an AND.
+				*dst = *dst & src;
+			}
 		}
 		break;
 	case kInkTypeNotTrans:
 		if (p->oneBitImage || p->applyColor) {
 			*dst = (src == p->colorWhite) ? p->foreColor : *dst;
 		} else {
-			// OR dst palette index with the inverse of src.
-			*dst = *dst | ~src;
+			if (sizeof(T) == 1) {
+				// OR dst palette index with the inverse of src.
+				*dst = *dst | ~src;
+			} else {
+				// In 32-bit mode, this is an AND.
+				*dst = *dst & ~(src & 0xffffff00);
+			}
 		}
 		break;
 	case kInkTypeReverse:
