@@ -2,17 +2,17 @@ MODULE := engines/gamos
 
 MODULE_OBJS = \
 	blit.o \
-	gamos.o \
-	file.o \
 	console.o \
-	metaengine.o \
+	file.o \
+	gamos.o \
 	keycodes.o \
+	metaengine.o \
+	movie.o \
 	music.o \
 	proc.o \
-	movie.o \
 	saveload.o \
-	vm.o \
-	video.o
+	video.o \
+	vm.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_GAMOS), DYNAMIC_PLUGIN)
