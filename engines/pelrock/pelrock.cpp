@@ -327,6 +327,30 @@ void PelrockEngine::passerByAnim(uint32 frameCount) {
 }
 
 void PelrockEngine::reflectionEffect(byte *buf, int x, int y, int width, int height) {
+
+
+	// ScaleCalculation scaleCalc = calculateScaling(y + 50, _room->_scaleParams);
+
+	// // Update Alfred's scale state for use by other functions
+	// _alfredState.scaledX = scaleCalc.scaleX;
+	// _alfredState.scaledY = scaleCalc.scaleY;
+
+	// // Use the pre-calculated scaled dimensions from calculateScaling
+	// int finalHeight = scaleCalc.scaledHeight;
+	// int finalWidth = scaleCalc.scaledWidth;
+
+	// if (finalHeight <= 0) {
+	// 	finalHeight = 1;
+	// }
+	// if (finalWidth <= 0) {
+	// 	finalWidth = 1;
+	// }
+
+	// byte *finalBuf = scale(scaleCalc.scaleY, finalWidth, finalHeight, buf);
+	// height = finalHeight;
+	// width = finalWidth;
+
+
 	// Water reflection - draws mirrored sprite on water pixels
 	// Only sprite pixels 0-15 are reflected (checked via pixel & 0xF0 == 0)
 	for (int row = 0; row < height; row++) {
@@ -336,6 +360,7 @@ void PelrockEngine::reflectionEffect(byte *buf, int x, int y, int width, int hei
 			break; // Screen boundary
 
 		for (int col = 0; col < width; col++) {
+			// byte pixel = finalBuf[(height - 1 - row) * width + col]; // Read from bottom up for mirror
 			byte pixel = buf[(height - 1 - row) * width + col]; // Read from bottom up for mirror
 			// Only reflect pixels 0-15 (high nibble must be 0)
 			if (pixel != 255 && (pixel & 0xF0) == 0) {
@@ -984,7 +1009,7 @@ void PelrockEngine::drawAlfred(byte *buf) {
 	drawSpriteToBuffer(_compositeBuffer, 640, finalBuf, _alfredState.x, _alfredState.y - finalHeight, finalWidth, finalHeight, 255);
 
 	// Water reflection (rooms 25 and 45 only)
-	if (_room->_currentRoomNumber == 25 || _room->_currentRoomNumber == 45) {
+	if ((_room->_currentRoomNumber == 25 || _room->_currentRoomNumber == 45) && _alfredState.y >= 299) {
 		// Offset from Alfred's feet to start of reflection
 		int yOffset = (_room->_currentRoomNumber == 45) ? 25 : 13;
 		reflectionEffect(finalBuf, _alfredState.x, _alfredState.y + yOffset, finalWidth, finalHeight);

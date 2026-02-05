@@ -102,7 +102,6 @@ private:
 	void lookAt(HotSpot *hotspot);
 
 	void chooseAlfredStateAndDraw();
-	byte *scale(int scaleY, int finalWidth, int finalHeight, byte *buf);
 	void drawAlfred(byte *buf);
 	void drawNextFrame(Sprite *animSet);
 	void animateTalkingNPC(Sprite *animSet);
@@ -121,6 +120,7 @@ private:
 
 	void calculateScalingMasks();
 	ScaleCalculation calculateScaling(int yPos, ScalingParams scalingParams);
+	byte *scale(int scaleY, int finalWidth, int finalHeight, byte *buf);
 
 	Common::Array<Common::Array<int>> _widthScalingTable;
 	Common::Array<Common::Array<int>> _heightScalingTable;
