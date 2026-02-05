@@ -46,7 +46,7 @@ public:
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "Gamos (C)";
+		return "Gamos (C) 1996-1998";
 	}
 
 };
