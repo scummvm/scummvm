@@ -201,7 +201,7 @@ static const BuiltinProto builtins[] = {
 	{ "puppetTempo",	LB::b_puppetTempo,	1, 1, 200, CBLTIN },	// D2 c
 	{ "puppetTransition",LB::b_puppetTransition,-1,0,200, CBLTIN },	// D2 c
 	{ "ramNeeded",		LB::b_ramNeeded,	2, 2, 300, FBLTIN },	//		D3.1 f
-	{ "rollOver",		LB::b_rollOver,		1, 1, 200, FBLTIN },	// D2 f
+	{ "rollOver",		LB::b_rollOver,		0, 1, 200, FBLTIN },	// D2 f
 	{ "sendAllSprites",	LB::b_sendAllSprites,-1,0,600, CBLTIN },	// 					D6 c
 	{ "sendSprite",		LB::b_sendSprite,	-1,0, 600, CBLTIN },	// 					D6 c
 	{ "spriteBox",		LB::b_spriteBox,	5, 5, 200, CBLTIN },	// D2 c
@@ -3313,7 +3313,10 @@ void LB::b_ramNeeded(int nargs) {
 }
 
 void LB::b_rollOver(int nargs) {
-	Datum d = g_lingo->pop();
+	Datum d(0);
+	if (nargs == 1) {
+		d = g_lingo->pop();
+	}
 	Datum res(0);
 	int arg = 0;
 	if (d.type == SPRITEREF) {
@@ -3329,12 +3332,24 @@ void LB::b_rollOver(int nargs) {
 		return;
 	}
 
-	if (arg >= (int32) score->_channels.size()) {
-		g_lingo->push(res);
+	if ((arg >= (int32) score->_channels.size()) || (arg < 0)) {
+		g_lingo->lingoError("b_rollOver: Sprite number %d out of range", arg);
 		return;
 	}
 
 	Common::Point pos = g_director->getCurrentWindow()->getMousePos();
+
+	if (arg == 0) {
+		if (g_director->getVersion() >= 500) {
+			// return the channel ID under the pointer, or 0 for no match
+			res.u.i = score->getRollOverSpriteIDFromPos(pos);
+			g_lingo->push(res);
+			return;
+		} else {
+			g_lingo->lingoError("b_rollOver: 0 not supported as an argument in D4 or lower");
+			return;
+		}
+	}
 
 	if (score->checkSpriteRollOver(arg, pos))
 		res.u.i = 1; // TRUE
