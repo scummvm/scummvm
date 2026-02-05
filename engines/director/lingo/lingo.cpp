@@ -760,10 +760,9 @@ void Lingo::executeScript(ScriptType type, CastMemberID id) {
 
 void Lingo::executeHandler(const Common::String &name, int numargs) {
 	debugC(1, kDebugLingoExec, "Executing script handler : %s", name.c_str());
-	Symbol sym = getHandler(name);
 
 	int frame = _state->callstack.size();
-	LC::call(sym, numargs, false);
+	LC::call(name, numargs, false);
 	execute(frame);
 }
 
