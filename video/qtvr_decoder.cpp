@@ -1487,6 +1487,10 @@ Common::String QuickTimeDecoder::getHotSpotName(int id) {
 		return "";
 
 	PanoHotSpot *hotspot = _panoTrack->panoSamples[_currentSample].hotSpotTable.get(id);
+	if (!hotspot) {
+		warning("QuickTimeDecoder::getHotSpotName: no hotspot found for id %d", id);
+		return "";
+	}
 
 	return _panoTrack->panoSamples[_currentSample].strTable.getString(hotspot->nameStrOffset);
 }
