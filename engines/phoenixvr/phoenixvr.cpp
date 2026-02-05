@@ -646,16 +646,16 @@ Common::Error PhoenixVREngine::run() {
 	_screenCenter = _screen->getBounds().center();
 	{
 		Common::File vars;
-		if (!vars.open(Common::Path("variable.txt")))
-			error("can't read variable.txt");
-
-		while (!vars.eos()) {
-			auto var = vars.readLine();
-			if (var == "*")
-				break;
-			declareVariable(var);
-			_variableOrder.push_back(Common::move(var));
-		}
+		if (vars.open(Common::Path("variable.txt"))) {
+			while (!vars.eos()) {
+				auto var = vars.readLine();
+				if (var == "*")
+					break;
+				declareVariable(var);
+				_variableOrder.push_back(Common::move(var));
+			}
+		} else
+			debug("no variables.txt");
 	}
 	{
 		Common::File textes;
