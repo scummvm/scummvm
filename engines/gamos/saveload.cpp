@@ -31,7 +31,7 @@ void GamosEngine::storeToGameScreen(int id) {
 	gs._savedStates = _states;
 
 	int objCount = 0;
-	for (int i = 0; i < _objects.size(); i++) {
+	for (uint i = 0; i < _objects.size(); i++) {
 		const Object &obj = _objects[i];
 		if ((obj.flags & 3) == 3 || (obj.flags & 7) == Object::FLAG_VALID)
 			objCount++;
@@ -39,7 +39,7 @@ void GamosEngine::storeToGameScreen(int id) {
 
 	int idx = 0;
 	gs._savedObjects.resize(objCount);
-	for (int i = 0; i < _objects.size(); i++) {
+	for (uint i = 0; i < _objects.size(); i++) {
 		Object &obj = _objects[i];
 
 		if (obj.isActionObject()) {
@@ -63,7 +63,7 @@ void GamosEngine::storeToGameScreen(int id) {
 				idx += 2;
 			}
 
-			for (int j = 0; j < _objects.size(); j++) {
+			for (uint j = 0; j < _objects.size(); j++) {
 				Object &lobj = _objects[ j ];
 				if ((lobj.flags & 7) == Object::FLAG_VALID && lobj.actObjIndex == obj.index) {
 					gs._savedObjects[idx] = lobj;
@@ -327,13 +327,13 @@ bool GamosEngine::writeSaveFile(int id) {
 	writeVMData(osv, _xorSeq[1]);
 	writeVMData(osv, _xorSeq[2]);
 
-	for (int i = 0; i < _gameScreens.size(); i++) {
+	for (uint i = 0; i < _gameScreens.size(); i++) {
 		GameScreen &scr = _gameScreens[i];
 
 		if (scr.loaded) {
 			osv->writeUint32LE(i);
 
-			for (int j = 0; j < scr._savedStates.size(); j++) {
+			for (uint j = 0; j < scr._savedStates.size(); j++) {
 				const ObjState &ost = scr._savedStates[j];
 				osv->writeByte(ost.actid);
 				osv->writeByte(ost.flags);
@@ -400,7 +400,7 @@ bool GamosEngine::loadSaveFile(int id) {
 
 		scr._savedStates.resize( _states.sizes() );
 
-		for (int j = 0; j < scr._savedStates.size(); j++) {
+		for (uint j = 0; j < scr._savedStates.size(); j++) {
 			ObjState &st = scr._savedStates[j];
 			st.actid = rs->readByte();
 			st.flags = rs->readByte();

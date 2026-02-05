@@ -584,8 +584,8 @@ private:
 
 	Array2D<uint8> _pathMap;
 	uint32 _statesCount = 0;
-	int32 _pathRight = 0;
-	int32 _pathBottom = 0;
+	uint32 _pathRight = 0;
+	uint32 _pathBottom = 0;
 
 	Common::Array<Common::Rect> _dirtyRects;
 

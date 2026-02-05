@@ -332,7 +332,7 @@ int MoviePlayer::processImageChunk() {
 				if (act == ACT2_MOUSEUP_R)
 					return 3;
 
-				if ((tstamp - _firstFrameTime) / _currentFrame >= _frameTime)
+				if ((tstamp - _firstFrameTime) / _currentFrame >= (uint)_frameTime)
 					break;
 
 				g_system->delayMillis(1);

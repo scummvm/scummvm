@@ -247,10 +247,10 @@ bool GamosEngine::loadModule(uint id) {
 	byte prevByte = 0;
 	bool doLoad = true;
 
-	int32 p1 = 0;
-	int32 p2 = 0;
-	int32 p3 = 0;
-	int32 pid = 0;
+	uint32 p1 = 0;
+	uint32 p2 = 0;
+	uint32 p3 = 0;
+	uint32 pid = 0;
 
 	while (doLoad) {
 		byte curByte = _arch.readByte();
@@ -269,13 +269,13 @@ bool GamosEngine::loadModule(uint id) {
 
 			break;
 		case CONFTP_P1:
-			p1 = _arch.readPackedInt();
+			p1 = (uint32)_arch.readPackedInt();
 			break;
 		case CONFTP_P2:
-			p2 = _arch.readPackedInt();
+			p2 = (uint32)_arch.readPackedInt();
 			break;
 		case CONFTP_P3:
-			p3 = _arch.readPackedInt();
+			p3 = (uint32)_arch.readPackedInt();
 			break;
 		case 4: {
 			_resReadOffset = _arch.pos();
@@ -385,7 +385,7 @@ bool GamosEngine::loadModule(uint id) {
 			prevByte = curByte & CONFTP_RESMASK;
 
 			if ((curByte & CONFTP_IDFLG) == 0)
-				pid = _arch.readPackedInt();
+				pid = (uint32)_arch.readPackedInt();
 
 			break;
 		}
@@ -435,7 +435,7 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 		loadBackground(pid, data, dataSize);
 	} else if (tp == RESTP_INITACT) {
 		if (!_isSaveLoadingProcess) {
-			for (int i = 0; i < _states.size(); i++)
+			for (uint i = 0; i < _states.size(); i++)
 				_states.at(i) = ObjState(0xfe, 0, 0xf);
 
 			_ignoreSoundActions = true;
@@ -689,8 +689,8 @@ void GamosEngine::readElementsConfig(const RawData &data) {
 	uint32 dat6xCount = dataStream.readUint32LE(); // 30
 
 	_statesShift = 2;
-	for (int i = 2; i < 9; i++) {
-		if (_statesWidth <= (1 << i)) {
+	for (uint i = 2; i < 9; i++) {
+		if (_statesWidth <= (uint32)(1 << i)) {
 			_statesShift = i;
 			break;
 		}
@@ -1374,7 +1374,7 @@ int32 GamosEngine::doActions(const Actions &a, bool absolute) {
 
 			int32 ps = spos * 2 + 1;
 
-			for (int i = 0; i < ate.entries.size(); i++) {
+			for (uint i = 0; i < ate.entries.size(); i++) {
 				/* use copy of entrie because it will be modified */
 				ActEntry e = ate.entries[i];
 
@@ -1477,7 +1477,7 @@ int32 GamosEngine::doActions(const Actions &a, bool absolute) {
 
 			case 1: {
 				int32 num = rndRange16(ate.entries.size());
-				for (int i = 0; i < ate.entries.size(); i++) {
+				for (uint i = 0; i < ate.entries.size(); i++) {
 					if (num != 0) {
 						ActEntry e = ate.entries[i];
 						retval += processData(e, absolute);
@@ -1500,7 +1500,7 @@ int32 GamosEngine::doActions(const Actions &a, bool absolute) {
 			break;
 
 			case 3: {
-				for (int i = 0; i < ate.entries.size(); i++) {
+				for (uint i = 0; i < ate.entries.size(); i++) {
 					uint16 doproc = rndRange16(2);
 
 					if (doproc != 0) {
@@ -1976,7 +1976,7 @@ bool GamosEngine::updateObjects() {
 	if (!pobj)
 		pobj = &(_objects.front());
 
-	for (int32 objIdx = pobj->index; objIdx < _objects.size(); objIdx++) {
+	for (uint32 objIdx = pobj->index; objIdx < _objects.size(); objIdx++) {
 		pobj = &_objects[objIdx];
 
 		if (pobj->isActionObject()) {
@@ -2180,7 +2180,7 @@ void GamosEngine::addDirtyRect(const Common::Rect &rect) {
 	}
 
 	bool intersects = 0;
-	for (int i = 0; i < _dirtyRects.size(); i++) {
+	for (uint i = 0; i < _dirtyRects.size(); i++) {
 		Common::Rect &r = _dirtyRects[i];
 
 		if (!rect.intersects(r))
@@ -2223,7 +2223,7 @@ void GamosEngine::doDraw() {
 	Common::Array<Object *> drawList(1024);  //_drawElements.size(), 1024) );
 
 	int cnt = 0;
-	for (int i = 0; i < _objects.size(); i++) {
+	for (uint i = 0; i < _objects.size(); i++) {
 		Object &obj = _objects[i];
 		if ( obj.isGraphicObject() ) {
 			drawList[cnt] = &obj;
@@ -2234,8 +2234,8 @@ void GamosEngine::doDraw() {
 	drawList.resize(cnt);
 
 	if (cnt) {
-		for (int i = 0; i < drawList.size() - 1; i++) {
-			for (int j = i + 1; j < drawList.size(); j++) {
+		for (uint i = 0; i < drawList.size() - 1; i++) {
+			for (uint j = i + 1; j < drawList.size(); j++) {
 				Object *o1 = drawList[i];
 				Object *o2 = drawList[j];
 				if (o1->priority < o2->priority) {
@@ -2246,7 +2246,7 @@ void GamosEngine::doDraw() {
 		}
 	}
 
-	for (int i = 0; i < _dirtyRects.size(); i++) {
+	for (uint i = 0; i < _dirtyRects.size(); i++) {
 		Common::Rect r = _dirtyRects[i];
 
 		r.translate(-_scrollX, -_scrollY);
@@ -2365,7 +2365,7 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 		if (_curObject->tgtObjectId == -1)
 			ctx->EAX.setVal(0);
 		else
-			ctx->EAX.setVal( _objects[ _curObject->tgtObjectId ].sprId == arg1 ? 1 : 0 );
+			ctx->EAX.setVal( _objects[ _curObject->tgtObjectId ].sprId == (int32)arg1 ? 1 : 0 );
 		break;
 	case 3:
 		ctx->EAX.setVal( (_curObject->inputFlag & 0x90) == 0x10 ? 1 : 0 );
@@ -2375,15 +2375,15 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 		break;
 	case 5:
 		arg1 = ctx->pop32();
-		ctx->EAX.setVal( (_curObject->inputFlag & 0xb0) == arg1 ? 1 : 0 );
+		ctx->EAX.setVal( (uint32)(_curObject->inputFlag & 0xb0) == arg1 ? 1 : 0 );
 		break;
 	case 6:
 		arg1 = ctx->pop32();
-		ctx->EAX.setVal( (_curObject->inputFlag & 0x4f) == arg1 ? 1 : 0 );
+		ctx->EAX.setVal( (uint32)(_curObject->inputFlag & 0x4f) == arg1 ? 1 : 0 );
 		break;
 	case 7:
 		arg1 = ctx->pop32();
-		if ((_curObject->inputFlag & 0x40) == 0 || (_curObject->inputFlag & 8) != (arg1 & 8))
+		if ((_curObject->inputFlag & 0x40) == 0 || (uint32)(_curObject->inputFlag & 8) != (uint32)(arg1 & 8))
 			ctx->EAX.setVal(0);
 		else
 			ctx->EAX.setVal( FUN_0040705c(arg1 & 7, _curObject->inputFlag & 7) ? 1 : 0 );
@@ -2819,7 +2819,7 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 		VM::ValAddr a1 = ctx->popReg();
 		VM::ValAddr a2 = ctx->popReg();
 		Common::String s = ctx->getString(a1);
-		for(int i = 0; i <= s.size(); i++) {
+		for(uint i = 0; i <= s.size(); i++) {
 			ctx->setMem8(a2.getMemType(), a2.getOffset() + i, s.c_str()[i]);
 		}
 	} break;
@@ -3209,7 +3209,7 @@ void GamosEngine::removeSubtitles(Object *obj) {
 	if (obj->state.flags & 2) {
 		obj->state.flags &= ~2;
 		//for (int index = obj->index; index < _objects.size(); index++) {
-		for (int index = 0; index < _objects.size(); index++) {
+		for (uint index = 0; index < _objects.size(); index++) {
 			Object *pobj = &_objects[index];
 			if (pobj->isOverlayObject() && pobj->actObjIndex == obj->index)
 				removeObjectMarkDirty(pobj);
@@ -3226,7 +3226,7 @@ void GamosEngine::cycleNextInputObj(Object *obj) {
 		if (obj)
 			objIndex = obj->index;
 
-		for (int32 i = 0; i < _objects.size(); i++) {
+		for (uint32 i = 0; i < _objects.size(); i++) {
 			Object &robj = _objects[i];
 
 			if (robj.index > objIndex)
@@ -3432,7 +3432,7 @@ void GamosEngine::addSubtitles(VM::Context *ctx, byte memtype, int32 offset, int
 						break;
 					}
 
-					for (int i = 0; i < tmp.size(); i++) {
+					for (uint i = 0; i < tmp.size(); i++) {
 						addSubtitleImage((uint8)tmp[i], sprId, &x, y);
 					}
 				}
@@ -3539,8 +3539,8 @@ byte GamosEngine::FUN_00408648(uint8 p1, uint8 p2, uint8 p3) {
 }
 
 byte GamosEngine::FUN_004084bc(uint8 p) {
-	for (int j = 0; j < _statesHeight; j++) {
-		for (int i = 0; i < _statesWidth; i++) {
+	for (uint j = 0; j < _statesHeight; j++) {
+		for (uint i = 0; i < _statesWidth; i++) {
 			const uint8 id = _states.at(i, j).actid;
 			if (id == p)
 				_pathMap.at(i, j) = PATH_TARGET;
@@ -3552,8 +3552,8 @@ byte GamosEngine::FUN_004084bc(uint8 p) {
 }
 
 byte GamosEngine::FUN_00408510(uint8 p) {
-	for (int j = 0; j < _statesHeight; j++) {
-		for (int i = 0; i < _statesWidth; i++) {
+	for (uint j = 0; j < _statesHeight; j++) {
+		for (uint i = 0; i < _statesWidth; i++) {
 			const uint8 id = _states.at(i, j).actid;
 
 			if (id == 0xfe)
@@ -3568,8 +3568,8 @@ byte GamosEngine::FUN_00408510(uint8 p) {
 }
 
 byte GamosEngine::FUN_0040856c() {
-	for (int j = 0; j < _statesHeight; j++) {
-		for (int i = 0; i < _statesWidth; i++) {
+	for (uint j = 0; j < _statesHeight; j++) {
+		for (uint i = 0; i < _statesWidth; i++) {
 			uint8 id = _states.at(i, j).actid;
 
 			if (id == 0xfe)
@@ -3583,8 +3583,8 @@ byte GamosEngine::FUN_0040856c() {
 }
 
 byte GamosEngine::FUN_004085d8(uint8 p) {
-	for (int j = 0; j < _statesHeight; j++) {
-		for (int i = 0; i < _statesWidth; i++) {
+	for (uint j = 0; j < _statesHeight; j++) {
+		for (uint i = 0; i < _statesWidth; i++) {
 			uint8 id = _states.at(i, j).actid;
 
 			if (id == p)
@@ -3709,11 +3709,11 @@ byte GamosEngine::pathFindTraceMove(uint8 p) {
 		if (ydist < xdist) {
 			if (x >= 1 && _pathMap.at(x - 1, y) == p) {
 				xx = x - 1;
-			} else if (x <= _pathRight - 1 && _pathMap.at(x + 1, y) == p) {
+			} else if (x <= (int32)(_pathRight - 1) && _pathMap.at(x + 1, y) == p) {
 				xx = x + 1;
 			} else if (y >= 1 && _pathMap.at(x, y - 1) == p) {
 				yy = y - 1;
-			} else if (y <= _pathBottom - 1 && _pathMap.at(x, y + 1) == p) {
+			} else if (y <= (int32)(_pathBottom - 1) && _pathMap.at(x, y + 1) == p) {
 				yy = y + 1;
 			} else {
 				return ydist;
@@ -3721,11 +3721,11 @@ byte GamosEngine::pathFindTraceMove(uint8 p) {
 		} else {
 			if (y >= 1 && _pathMap.at(x, y - 1) == p) {
 				yy = y - 1;
-			} else if (y <= _pathBottom - 1 && _pathMap.at(x, y + 1) == p) {
+			} else if (y <= (int32)(_pathBottom - 1) && _pathMap.at(x, y + 1) == p) {
 				yy = y + 1;
 			} else if (x >= 1 && _pathMap.at(x - 1, y) == p) {
 				xx = x - 1;
-			} else if (x <= _pathRight - 1 && _pathMap.at(x + 1, y) == p) {
+			} else if (x <= (int32)(_pathRight - 1) && _pathMap.at(x + 1, y) == p) {
 				xx = x + 1;
 			} else {
 				return ydist;
@@ -3785,8 +3785,8 @@ byte GamosEngine::pathFindTraceMove(uint8 p) {
 byte GamosEngine::pathFindSetNeighbor(uint8 checkVal, uint8 setVal) {
 	uint8 ret = 0;
 
-	for (int32 y = 0; y < _statesHeight; y++) {
-		for (int32 x = 0; x < _statesWidth; x++) {
+	for (uint32 y = 0; y < _statesHeight; y++) {
+		for (uint32 x = 0; x < _statesWidth; x++) {
 			uint8 &rval = _pathMap.at(x, y);
 			if (rval == PATH_FREE) {
 				if ((x > 0 && _pathMap.at(x - 1, y) == checkVal) ||
@@ -3841,8 +3841,8 @@ byte GamosEngine::FUN_004088cc(uint8 p1, uint8 p2, uint8 p3) {
 }
 
 byte GamosEngine::FUN_004086e4(const Common::Array<byte> &arr) {
-	for (int j = 0; j < _statesHeight; j++) {
-		for (int i = 0; i < _statesWidth; i++) {
+	for (uint j = 0; j < _statesHeight; j++) {
+		for (uint i = 0; i < _statesWidth; i++) {
 			const uint8 id = _states.at(i, j).actid;
 
 			if ( ((arr[id >> 3]) & (1 << (id & 7))) == 0 )
@@ -3855,8 +3855,8 @@ byte GamosEngine::FUN_004086e4(const Common::Array<byte> &arr) {
 }
 
 byte GamosEngine::FUN_00408778(const Common::Array<byte> &arr) {
-	for (int j = 0; j < _statesHeight; j++) {
-		for (int i = 0; i < _statesWidth; i++) {
+	for (uint j = 0; j < _statesHeight; j++) {
+		for (uint i = 0; i < _statesWidth; i++) {
 			const uint8 id = _states.at(i, j).actid;
 
 			if ( ((arr[id >> 3]) & (1 << (id & 7))) == 0 )
@@ -3869,8 +3869,8 @@ byte GamosEngine::FUN_00408778(const Common::Array<byte> &arr) {
 }
 
 byte GamosEngine::FUN_0040881c(const Common::Array<byte> &arr) {
-	for (int j = 0; j < _statesHeight; j++) {
-		for (int i = 0; i < _statesWidth; i++) {
+	for (uint j = 0; j < _statesHeight; j++) {
+		for (uint i = 0; i < _statesWidth; i++) {
 			const uint8 id = _states.at(i, j).actid;
 
 			if ( ((arr[id >> 3]) & (1 << (id & 7))) == 0 )
@@ -4009,7 +4009,7 @@ void GamosEngine::removeStaticGfxCurObj() {
 	if (_curObject->state.actid != 0xfe) {
 		ObjectAction &act = _objectActions[_curObject->state.actid];
 
-		for (int i = 0; i < _objects.size(); i++) {
+		for (uint i = 0; i < _objects.size(); i++) {
 			Object &obj = _objects[i];
 			if (obj.isStaticObject() &&
 			        obj.actObjIndex == -1 &&
@@ -4028,7 +4028,7 @@ void GamosEngine::removeStaticGfxCurObj() {
 
 
 bool GamosEngine::updateMouseCursor(Common::Point mouseMove) {
-	if (_mouseCursorImgId >= 0 && _drawCursor == 0 && _mouseCursorImgId < _sprites.size()) {
+	if (_mouseCursorImgId >= 0 && _drawCursor == 0 && _mouseCursorImgId < (int32)_sprites.size()) {
 		Sprite &cursorSpr = _sprites[_mouseCursorImgId];
 
 		if (cursorSpr.frameCount > 1) {
@@ -4368,7 +4368,7 @@ void GamosEngine::txtInputEraseBack(int n) {
 }
 
 bool GamosEngine::onTxtInputUpdate(uint8 c) {
-	for(int i = 0; i < _objects.size(); i++) {
+	for(uint i = 0; i < _objects.size(); i++) {
 		Object &obj = _objects[i];
 		if ((obj.flags & (Object::FLAG_GRAPHIC | Object::FLAG_VALID | Object::FLAG_HASACTION | Object::FLAG_TRANSITION)) == (Object::FLAG_GRAPHIC | Object::FLAG_VALID)) {
 			if ((obj.frame + 1 == obj.frameMax) && obj.actObjIndex != -1) {
