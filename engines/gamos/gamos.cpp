@@ -4110,6 +4110,7 @@ bool GamosEngine::scrollAndDraw() {
 				_scrollX += rDelta - lDelta;
 				_scrollY += dDelta - uDelta;
 
+				eventsSkip();
 				doDraw();
 
 				lDistance -= lDelta;
