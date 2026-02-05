@@ -504,8 +504,9 @@ struct ResetEntry {
 #define FLAG_INGREDIENTES_CONSEGUIDOS 48
 #define FLAG_GUARDIA_PIDECOSAS 49
 #define FLAG_GUARDIA_DNI_ENTREGADO 50
+#define FLAG_AGENCIA_ABIERTA 51
 
-const int kNumGameFlags = 51;
+const int kNumGameFlags = 52;
 
 struct GameStateData {
 	byte flags[kNumGameFlags];

@@ -178,6 +178,8 @@ void PelrockEngine::addInventoryItem(int item) {
 		g_system->delayMillis(10);
 	}
 	_state->addInventoryItem(item);
+
+	checkObjectsForPart2();
 }
 
 void PelrockEngine::buyFromStore(HotSpot *hotspot, int stickerId) {
@@ -264,7 +266,9 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 277:
 		_state->setRootDisabledState(room, rootIndex, true);
 		_state->setFlag(FLAG_JEFE_INGRESA_PASTA, true);
-
+		break;
+	case 278:
+		_state->setRootDisabledState(room, rootIndex, true);
 		break;
 	default:
 		debug("Got actionTrigger %d in dialogActionTrigger, but no handler defined", actionTrigger);
@@ -711,19 +715,15 @@ void PelrockEngine::closeNewspaperBossDoor(HotSpot *hotspot) {
 }
 
 void PelrockEngine::openTravelAgencyDoor(HotSpot *hotspot) {
-	// In order to unlock the second part of the game, we need to ensure
-	// we have all we need to solve the game once there
-	if(
-		_state->hasInventoryItem(17) &&
-		_state->hasInventoryItem(59)
-	) {
-		openDoor(hotspot, 0, 55, FEMININE, false);
+
+	if(_state->getFlag(FLAG_AGENCIA_ABIERTA)) {
+		openDoor(hotspot, 1, 57, FEMININE, false);
 	}
 	// The game originally did nothing here
 }
 
 void PelrockEngine::closeTravelAgencyDoor(HotSpot *hotspot) {
-	closeDoor(hotspot, 0, 55, FEMININE, false);
+	closeDoor(hotspot, 1, 57, FEMININE, false);
 }
 
 void PelrockEngine::pickUpBook(int i) {
@@ -765,6 +765,7 @@ void PelrockEngine::pickUpBook(int i) {
 			_state->selectedBookIndex = -1;
 		}
 	}
+
 }
 
 void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
@@ -915,9 +916,10 @@ void PelrockEngine::animateStatuePaletteFade(bool reverse) {
 	int frame = 0;
 	while (!shouldQuit() && frame <= kNumFrames) {
 		_events->pollEvent();
-		_chrono->updateChrono();
 
-		if (_chrono->_gameTick) {
+		bool didRender = renderScene(OVERLAY_NONE);
+		if(didRender) {
+
 			for (int i = 0; i < 16; i++) {
 				byte paletteIndex = paletteData.indices[i];
 
@@ -938,21 +940,28 @@ void PelrockEngine::animateStatuePaletteFade(bool reverse) {
 
 			// Apply the palette
 			g_system->getPaletteManager()->setPalette(currentPalette, 0, 256);
-			// // Update the room's internal palette
-			// memcpy(_room->_roomPalette, currentPalette, 768);
-
-			// Redraw the scene with the new palette
-			copyBackgroundToBuffer();
-			placeStickersFirstPass();
-
-			chooseAlfredStateAndDraw();
-			placeStickersSecondPass();
-			presentFrame();
-
 			frame++;
 		}
 		_screen->update();
 		g_system->delayMillis(10);
+	}
+}
+/**
+ * In order to unlock the second part of the game, we need to ensure
+ * we have all we need to solve the game once there
+ */
+void PelrockEngine::checkObjectsForPart2() {
+	if (_state->hasInventoryItem(17) &&
+		_state->hasInventoryItem(59) &&
+		_state->hasInventoryItem(24)
+	) {
+		_room->addStickerToRoom(19, 54, PERSIST_BOTH);
+		_room->addStickerToRoom(19, 55, PERSIST_BOTH);
+		_room->addStickerToRoom(19, 56, PERSIST_BOTH);
+		_room->addStickerToRoom(19, 58, PERSIST_BOTH);
+		_state->setFlag(FLAG_AGENCIA_ABIERTA, true);
+		// _state->setFlag(FLAG_PUEDE_VIAJAR_EN_EL_TIEMPO, true);
+		// _state->setRootDisabledState(19, 0, true);
 	}
 }
 
@@ -963,4 +972,7 @@ void PelrockEngine::waitForActionEnd() {
 		_screen->update();
 	}
 }
+
+// void checkOBjec
+
 } // End of namespace Pelrock
