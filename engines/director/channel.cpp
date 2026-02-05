@@ -806,4 +806,10 @@ CastMemberID Channel::getSubChannelSound2() {
 	return CastMemberID();
 }
 
+Common::String Channel::formatInfo() {
+	return Common::String::format("[sprite: %s], visible: %d, constraint: %d, movieRate: %f, movieTime: %d (%f), filmLoopFrame: %d",
+		_sprite->formatInfo().c_str(), _visible,
+		_constraint, _movieRate, _movieTime, (float)(_movieTime/60.0f), _filmLoopFrame);
+}
+
 } // End of namespace Director

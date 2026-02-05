@@ -600,4 +600,17 @@ void Sprite::setCast(CastMemberID memberID, bool replaceDims) {
 	}
 }
 
+
+Common::String Sprite::formatInfo() {
+	return Common::String::format("castId: %s, [inkData: 0x%02x [ink: %s, trails: %d, stretch: %d, line: %d], %dx%d@%d,%d type: %d (%s) fg: %08x bg: %08x], script: %s, colorcode: 0x%x, blendAmount: 0x%x, unk3: 0x%x, puppet: %d, moveable: %d",
+		_castId.asString().c_str(), _inkData,
+		inkType2str(_ink), _trails, _stretch, _thickness,
+		_width, _height, _startPoint.x, _startPoint.y,
+		_spriteType, spriteType2str(_spriteType), _foreColor, _backColor,
+		_scriptId.asString().c_str(), _colorcode, _blendAmount, _unk3,
+		_puppet, _moveable);
+}
+
+
+
 } // End of namespace Director
