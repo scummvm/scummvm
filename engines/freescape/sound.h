@@ -67,6 +67,15 @@ public:
 	bool endOfStream() const override { return !isPlaying(); }
 };
 
+class Sound {
+public:
+	virtual ~Sound() {}
+
+	virtual void playSound(int index) = 0;
+	virtual void stopSound() = 0;
+	virtual bool isPlayingSound() const = 0;
+};
+
 } // End of namespace Freescape
 
 #endif // FREESCAPE_SOUND_H
