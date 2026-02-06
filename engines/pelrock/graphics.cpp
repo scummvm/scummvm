@@ -20,7 +20,10 @@
  */
 
 #include "common/scummsys.h"
+#include "engines/util.h"
+#include "graphics/paletteman.h"
 
+#include "graphics.h"
 #include "pelrock/graphics.h"
 #include "pelrock/pelrock.h"
 
@@ -66,6 +69,39 @@ void GraphicsManager::putBackgroundSlice(byte *buf, int x, int y, int w, int h, 
 				// *(byte *)_screen->getBasePtr(x + i, y + j) = slice[index];
 			}
 		}
+	}
+}
+
+void GraphicsManager::fadeToBlack() {
+	byte palette[768];
+	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
+	while (!g_engine->shouldQuit()) {
+		g_engine->_events->pollEvent();
+		g_engine->_chrono->updateChrono();
+		if (g_engine->_chrono->_gameTick) {
+
+			for (int i = 0; i < 768; i++) {
+				if (palette[i] > 0) {
+					palette[i] = MAX(palette[i] / 2, 0);
+				}
+			}
+			g_system->getPaletteManager()->setPalette(palette, 0, 256);
+
+			bool allBlack = true;
+			for (int i = 0; i < 768; i++) {
+				if (palette[i] != 0) {
+					allBlack = false;
+				}
+			}
+
+			if (allBlack) {
+				break;
+			}
+
+			g_engine->_screen->markAllDirty();
+			g_engine->_screen->update();
+		}
+		g_system->delayMillis(10);
 	}
 }
 

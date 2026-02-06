@@ -117,6 +117,7 @@ Common::Error PelrockEngine::run() {
 	init();
 	while (!shouldQuit()) {
 		if (_state->stateGame == SETTINGS) {
+			_graphics->clearScreen();
 			_menu->menuLoop();
 			_state->stateGame = GAME;
 		} else if (_state->stateGame == GAME) {
@@ -232,6 +233,7 @@ void PelrockEngine::playSoundIfNeeded() {
 }
 
 void PelrockEngine::travelToEgypt() {
+	_graphics->fadeToBlack();
 	_sound->playMusicTrack(26, false);
 	byte *palette = new byte[768];
 	if (_extraScreen == nullptr) {
@@ -247,12 +249,12 @@ void PelrockEngine::travelToEgypt() {
 		_events->pollEvent();
 		g_system->delayMillis(10);
 		_chrono->updateChrono();
-		if(_chrono->_gameTick && _chrono->getFrameCount() % 2 == 0) {
+		if (_chrono->_gameTick && _chrono->getFrameCount() % 2 == 0) {
 			int colorIndex = 160 + frameCount;
 			int index = colorIndex * 3;
-			palette[index] = 255;     // Red
-			palette[index + 1] = 0;   // Green
-			palette[index + 2] = 0;   // Blue
+			palette[index] = 255;   // Red
+			palette[index + 1] = 0; // Green
+			palette[index + 2] = 0; // Blue
 			g_system->getPaletteManager()->setPalette(palette, 0, 256);
 			frameCount++;
 		}
@@ -261,6 +263,7 @@ void PelrockEngine::travelToEgypt() {
 		_screen->markAllDirty();
 		_screen->update();
 	}
+	_graphics->clearScreen();
 
 	g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
 	free(_extraScreen);
@@ -270,7 +273,6 @@ void PelrockEngine::travelToEgypt() {
 	delete[] palette;
 	_screen->markAllDirty();
 	_screen->update();
-
 }
 
 bool PelrockEngine::renderScene(int overlayMode) {
@@ -370,7 +372,6 @@ void PelrockEngine::passerByAnim(uint32 frameCount) {
 
 void PelrockEngine::reflectionEffect(byte *buf, int x, int y, int width, int height) {
 
-
 	// ScaleCalculation scaleCalc = calculateScaling(y + 50, _room->_scaleParams);
 
 	// // Update Alfred's scale state for use by other functions
@@ -391,7 +392,6 @@ void PelrockEngine::reflectionEffect(byte *buf, int x, int y, int width, int hei
 	// byte *finalBuf = scale(scaleCalc.scaleY, finalWidth, finalHeight, buf);
 	// height = finalHeight;
 	// width = finalWidth;
-
 
 	// Water reflection - draws mirrored sprite on water pixels
 	// Only sprite pixels 0-15 are reflected (checked via pixel & 0xF0 == 0)
@@ -495,7 +495,6 @@ void PelrockEngine::checkMouse() {
 		checkLongMouseClick(_events->_mouseClickX, _events->_mouseClickY);
 		_events->_longClicked = false;
 	} else if (_events->_rightMouseClicked) {
-		g_system->getPaletteManager()->setPalette(_menu->_mainMenuPalette, 0, 256);
 		_events->_rightMouseClicked = false;
 		_state->stateGame = SETTINGS;
 	}
@@ -943,7 +942,6 @@ byte *PelrockEngine::scale(int scaleY, int finalWidth, int finalHeight, byte *bu
 		scaleIndex = 0;
 	}
 	int linesToSkip = kAlfredFrameHeight - finalHeight;
-
 
 	byte *finalBuf = new byte[finalWidth * finalHeight];
 
@@ -1444,7 +1442,7 @@ void PelrockEngine::gameLoop() {
 
 	_events->pollEvent();
 	checkMouse();
-	if(_events->_lastKeyEvent == Common::KeyCode::KEYCODE_m) {
+	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_m) {
 		travelToEgypt();
 	}
 	renderScene();
@@ -1733,6 +1731,7 @@ void PelrockEngine::loadExtraScreenAndPresent(int screenIndex) {
 	}
 	_res->getExtraScreen(screenIndex, _extraScreen, palette);
 	CursorMan.showMouse(false);
+	_graphics->clearScreen();
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 	extraScreenLoop();
 	CursorMan.showMouse(true);

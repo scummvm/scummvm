@@ -136,6 +136,7 @@ void MenuManager::checkMouseClick(int x, int y) {
 
 void MenuManager::menuLoop() {
 
+	g_system->getPaletteManager()->setPalette(_mainMenuPalette, 0, 256);
 	g_engine->changeCursor(DEFAULT);
 	while (!g_engine->shouldQuit() && !_events->_rightMouseClicked) {
 
