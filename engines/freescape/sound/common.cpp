@@ -40,6 +40,11 @@ void FreescapeEngine::playSound(int index, bool sync, Audio::SoundHandle &handle
 	_syncSound = sync;
 
 	debugC(1, kFreescapeDebugMedia, "Playing sound %d with sync: %d", index, sync);
+	if (_sound) {
+		_sound->playSound(index);
+		return;
+	}
+
 	if (isC64()) {
 		playSoundC64(index);
 		return;
@@ -128,34 +133,25 @@ void FreescapeEngine::playSoundFx(int index, bool sync) {
 
 void FreescapeEngine::stopAllSounds(Audio::SoundHandle &handle) {
 	debugC(1, kFreescapeDebugMedia, "Stopping sound");
-	_mixer->stopHandle(handle);
+	if (_sound)
+		_sound->stopSound();
+	else
+		_mixer->stopHandle(handle);
 }
 
 void FreescapeEngine::waitForSounds() {
-	if (_usePrerecordedSounds || isAmiga() || isAtariST() || isCPC())
-		while (_mixer->isSoundHandleActive(_soundFxHandle))
-			waitInLoop(10);
-	else {
-		while (!_speaker->endOfStream())
-			waitInLoop(10);
-	}
+	while (isPlayingSound())
+		waitInLoop(10);
 }
 
 bool FreescapeEngine::isPlayingSound() {
+	if (_sound)
+		return _sound->isPlayingSound();
+
 	if (_usePrerecordedSounds || isAmiga() || isAtariST() || isCPC())
 		return _mixer->isSoundHandleActive(_soundFxHandle);
 
 	return (!_speaker->endOfStream());
-}
-
-void FreescapeEngine::playSilence(int duration, bool sync) {
-	_speaker->playQueue(Audio::PCSpeaker::kWaveFormSilence, 0, 1000 * 10 * duration);
-	_mixer->stopHandle(_soundFxHandle);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, _speaker, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
-}
-
-void FreescapeEngine::queueSoundConst(double hzFreq, int duration) {
-	_speaker->playQueue(Audio::PCSpeaker::kWaveFormSquare, hzFreq, 1000 * 10 * duration);
 }
 
 void FreescapeEngine::loadSoundsFx(Common::SeekableReadStream *file, int offset, int number) {

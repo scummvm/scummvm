@@ -481,6 +481,7 @@ public:
 	Audio::SoundHandle _musicHandle;
 	Audio::SoundHandle _movementSoundHandle;
 	Freescape::SizedPCSpeaker *_speaker;
+	Sound *_sound;
 
 	bool _syncSound;
 	bool _firstSound;
@@ -491,8 +492,6 @@ public:
 	void playSound(int index, bool sync, Audio::SoundHandle &handle);
 	void playWav(const Common::Path &filename);
 	void playMusic(const Common::Path &filename);
-	void queueSoundConst(double hzFreq, int duration);
-	void playSilence(int duration, bool sync);
 	void playSoundConst(double hzFreq, int duration, bool sync);
 	void playSoundSweepIncWL(double hzFreq1, double hzFreq2, double wlStepPerMS, int resolution, bool sync);
 	uint16 playSoundDOSSpeaker(uint16 startFrequency, soundSpeakerFx *speakerFxInfo);

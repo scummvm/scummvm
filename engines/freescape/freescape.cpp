@@ -78,7 +78,7 @@ byte getCPCPixel(byte cpc_byte, int index, bool mode1) {
 }
 
 FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
-	: Engine(syst), _gameDescription(gd), _gfx(nullptr) {
+	: Engine(syst), _gameDescription(gd), _gfx(nullptr), _sound(nullptr) {
 	if (!ConfMan.hasKey("render_mode") || ConfMan.get("render_mode").empty())
 		_renderMode = Common::kRenderEGA;
 	else
@@ -278,6 +278,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 FreescapeEngine::~FreescapeEngine() {
 	removeTimers();
 	delete _rnd;
+	delete _sound;
 
 	if (_title && _title != _border) {
 		_title->free();
