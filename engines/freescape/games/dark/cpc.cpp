@@ -143,7 +143,7 @@ void DarkEngine::loadAssetsCPCFullGame() {
 	loadFonts(&file, 0x60f3);
 	loadGlobalObjects(&file, 0x9a, 23);
 	load8bitBinary(&file, 0x6255, 16);
-	loadSoundsCPC(&file, 0x09B7, 160, 0x0A57, 284, 0x0B73, 203);
+	_sound = loadSoundsCPC(&file, 0x09B7, 160, 0x0A57, 284, 0x0B73, 203);
 	loadCPCIndicators(&file);
 }
 
