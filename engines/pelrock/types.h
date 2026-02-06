@@ -163,8 +163,8 @@ struct AlfredState {
 	uint16 movementSpeedY = 5; // pixels per frame
 	uint16 x = 319;
 	uint16 y = 302;
-	uint16 scaledX = 0;
-	uint16 scaledY = 0;
+	byte w = kAlfredFrameWidth;
+	byte h = kAlfredFrameHeight;
 	int idleFrameCounter = 0;
 	bool isWalkingCancelable = true;
 

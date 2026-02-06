@@ -1036,13 +1036,14 @@ void PelrockEngine::drawAlfred(byte *buf) {
 
 	ScaleCalculation scaleCalc = calculateScaling(_alfredState.y, _room->_scaleParams);
 
-	// Update Alfred's scale state for use by other functions
-	_alfredState.scaledX = scaleCalc.scaleX;
-	_alfredState.scaledY = scaleCalc.scaleY;
-
 	// Use the pre-calculated scaled dimensions from calculateScaling
 	int finalHeight = scaleCalc.scaledHeight;
 	int finalWidth = scaleCalc.scaledWidth;
+
+
+	// Update Alfred's scale state for use by other functions
+	_alfredState.w = finalWidth;
+	_alfredState.h = finalHeight;
 
 	if (finalHeight <= 0) {
 		finalHeight = 1;
@@ -1051,28 +1052,28 @@ void PelrockEngine::drawAlfred(byte *buf) {
 		finalWidth = 1;
 	}
 
-	byte *finalBuf = scale(scaleCalc.scaleY, finalWidth, finalHeight, buf);
+	byte *scaledBuf = scale(scaleCalc.scaleY, finalWidth, finalHeight, buf);
+	delete[] _alfredSprite;
+	_alfredSprite = scaledBuf;
 
 	int shadowPos = _alfredState.y; // - finalHeight;
 	bool shadeCharacter = _room->_pixelsShadows[shadowPos * 640 + _alfredState.x] != 0xFF;
 	if (shadeCharacter) {
 		for (int i = 0; i < finalWidth * finalHeight; i++) {
-			if (finalBuf[i] != 255) {
-				finalBuf[i] = _room->_paletteRemaps[1][finalBuf[i]];
+			if (_alfredSprite[i] != 255) {
+				_alfredSprite[i] = _room->_paletteRemaps[1][_alfredSprite[i]];
 			}
 		}
 	}
 
-	drawSpriteToBuffer(_compositeBuffer, 640, finalBuf, _alfredState.x, _alfredState.y - finalHeight, finalWidth, finalHeight, 255);
+	drawSpriteToBuffer(_compositeBuffer, 640, _alfredSprite, _alfredState.x, _alfredState.y - finalHeight, finalWidth, finalHeight, 255);
 
 	// Water reflection (rooms 25 and 45 only)
 	if ((_room->_currentRoomNumber == 25 || _room->_currentRoomNumber == 45) && _alfredState.y >= 299) {
 		// Offset from Alfred's feet to start of reflection
 		int yOffset = (_room->_currentRoomNumber == 45) ? 25 : 13;
-		reflectionEffect(finalBuf, _alfredState.x, _alfredState.y + yOffset, finalWidth, finalHeight);
+		reflectionEffect(_alfredSprite, _alfredState.x, _alfredState.y + yOffset, finalWidth, finalHeight);
 	}
-
-	delete[] finalBuf;
 }
 
 void applyMovement(int16_t *x, int16_t *y, int8_t *z, uint16_t flags) {
@@ -1512,13 +1513,13 @@ AlfredDirection PelrockEngine::calculateAlfredsDirection(HotSpot *hotspot) {
 			calculatedDirection = ALFRED_LEFT; // Face LEFT
 		}
 		// Check if Alfred's right edge is before sprite's left edge
-		else if ((_alfredState.x + kAlfredFrameWidth - _alfredState.scaledX) < hotspot->x) {
+		else if ((_alfredState.x + _alfredState.w) < hotspot->x) {
 			calculatedDirection = ALFRED_RIGHT; // Face RIGHT
 		}
 		// Alfred is horizontally overlapping with sprite
 		else {
 			// Check if Alfred's top is above sprite's bottom OR Alfred is within sprite's Y range
-			if (((_alfredState.y + kAlfredFrameHeight - _alfredState.scaledY) < hotspot->y) ||
+			if (((_alfredState.y + _alfredState.h) < hotspot->y) ||
 				(_alfredState.y <= hotspot->y + hotspot->h &&
 				 hotspot->zOrder <= ((399 - _alfredState.y) / 2) + 10)) {
 				calculatedDirection = ALFRED_DOWN; // Face DOWN
@@ -1532,11 +1533,11 @@ AlfredDirection PelrockEngine::calculateAlfredsDirection(HotSpot *hotspot) {
 			calculatedDirection = ALFRED_LEFT; // Face LEFT
 		}
 		// Check if Alfred's right edge is before hotspot's left edge
-		else if ((_alfredState.x + kAlfredFrameWidth - _alfredState.scaledX) < hotspot->x) {
+		else if ((_alfredState.x + _alfredState.w) < hotspot->x) {
 			calculatedDirection = ALFRED_RIGHT; // Face RIGHT
 		}
 		// Check vertical positioning
-		else if (((_alfredState.y + kAlfredFrameHeight - _alfredState.scaledY) < hotspot->y) ||
+		else if (((_alfredState.y + _alfredState.h) < hotspot->y) ||
 				 (_alfredState.y <= hotspot->y + hotspot->h &&
 				  (hotspot->actionFlags & 0x80) == 0x80)) {
 			calculatedDirection = ALFRED_DOWN; // Face DOWN
@@ -1570,16 +1571,15 @@ VerbIcon PelrockEngine::isActionUnder(int x, int y) {
 }
 
 bool PelrockEngine::isAlfredUnder(int x, int y) {
-	int alfredX = _alfredState.x;
-	int alfredY = _alfredState.y;
-	// Use scaled dimensions (width - scaleX, height - scaleY)
-	int alfredW = kAlfredFrameWidth - _alfredState.scaledX;
-	int alfredH = kAlfredFrameHeight - _alfredState.scaledY;
-
-	if (alfredY - alfredH > y || alfredY < y || alfredX > x || alfredX + alfredW < x) {
-		return false;
+	int localX = x - _alfredState.x;
+	int localY = y - _alfredState.y  + _alfredState.h; // Adjust for scaling (since Alfred's position is based on his feet, but sprite may be scaled from the top)
+	if (localX >= 0 && localX < _alfredState.w && localY >= 0 && localY < _alfredState.h) {
+		byte pixel = _alfredSprite[localY * _alfredState.w + localX];
+		if (pixel != 255) {
+			return true;
+		}
 	}
-	return true;
+	return false;
 }
 
 void PelrockEngine::checkMouseClick(int x, int y) {

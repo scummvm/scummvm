@@ -147,6 +147,7 @@ private:
 	bool screenReady = false;
 
 	Common::String _hoveredMapLocation = "";
+	byte *_alfredSprite = nullptr;
 
 	// int prevDirX = 0;
 	// int prevDirY = 0;
