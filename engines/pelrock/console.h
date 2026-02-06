@@ -34,6 +34,8 @@ private:
 	bool cmdLoadRoom(int argc, const char **argv);
 	bool cmdGiveItems(int argc, const char **argv);
 	bool cmdTest(int argc, const char **argv);
+	bool disableRoot(int argc, const char **argv);
+	bool setFlag(int argc, const char **argv);
 
 public:
 	PelrockConsole(PelrockEngine *engine);

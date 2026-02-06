@@ -109,6 +109,7 @@ private:
 
 	void playSoundIfNeeded();
 
+
 	void gameLoop();
 	void computerLoop();
 	void extraScreenLoop();
@@ -234,6 +235,8 @@ public:
 	void passerByAnim(uint32 frameCount);
 	void reflectionEffect(byte *buf, int x, int y, int width, int height);
 	void changeCursor(Cursor cursor);
+
+	void travelToEgypt();
 
 	// Actions
 	void doExtraActions(int roomNumber);

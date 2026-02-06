@@ -461,7 +461,7 @@ const ExtraImages extraScreens[] = {
 	{0x9237B, // tablet
 	 0xB0EE7,
 	 8},
-	{0xB11ED, // map
+	{0x000B11F1, // map
 	 0xDE011,
 	 8},
 	{0xFFC47, // girl book

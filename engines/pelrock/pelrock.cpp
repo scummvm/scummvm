@@ -231,6 +231,48 @@ void PelrockEngine::playSoundIfNeeded() {
 	}
 }
 
+void PelrockEngine::travelToEgypt() {
+	_sound->playMusicTrack(26, false);
+	byte *palette = new byte[768];
+	if (_extraScreen == nullptr) {
+		_extraScreen = new byte[640 * 400];
+	}
+	_res->getExtraScreen(6, _extraScreen, palette);
+	CursorMan.showMouse(false);
+	g_system->getPaletteManager()->setPalette(palette, 0, 256);
+
+	memcpy(_screen->getPixels(), _extraScreen, 640 * 400);
+	int frameCount = 0;
+	while (!shouldQuit() && frameCount < 96) {
+		_events->pollEvent();
+		g_system->delayMillis(10);
+		_chrono->updateChrono();
+		if(_chrono->_gameTick && _chrono->getFrameCount() % 2 == 0) {
+			int colorIndex = 160 + frameCount;
+			int index = colorIndex * 3;
+			palette[index] = 255;     // Red
+			palette[index + 1] = 0;   // Green
+			palette[index + 2] = 0;   // Blue
+			g_system->getPaletteManager()->setPalette(palette, 0, 256);
+			frameCount++;
+		}
+		drawPaletteSquares((byte *)_screen->getPixels(), palette);
+
+		_screen->markAllDirty();
+		_screen->update();
+	}
+
+	g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
+	free(_extraScreen);
+	_extraScreen = nullptr;
+	CursorMan.showMouse(true);
+	delete[] _extraScreen;
+	delete[] palette;
+	_screen->markAllDirty();
+	_screen->update();
+
+}
+
 bool PelrockEngine::renderScene(int overlayMode) {
 
 	_chrono->updateChrono();
@@ -1399,6 +1441,9 @@ void PelrockEngine::gameLoop() {
 
 	_events->pollEvent();
 	checkMouse();
+	if(_events->_lastKeyEvent == Common::KeyCode::KEYCODE_m) {
+		travelToEgypt();
+	}
 	renderScene();
 	// _events->waitForKey();
 	_screen->update();
@@ -1678,6 +1723,7 @@ void PelrockEngine::setScreen(int roomNumber, AlfredDirection dir) {
 }
 
 void PelrockEngine::loadExtraScreenAndPresent(int screenIndex) {
+
 	byte *palette = new byte[768];
 	if (_extraScreen == nullptr) {
 		_extraScreen = new byte[640 * 400];

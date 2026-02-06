@@ -270,6 +270,9 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 278:
 		_state->setRootDisabledState(room, rootIndex, true);
 		break;
+	case 279:
+		travelToEgypt();
+		break;
 	default:
 		debug("Got actionTrigger %d in dialogActionTrigger, but no handler defined", actionTrigger);
 		break;
@@ -339,6 +342,8 @@ void PelrockEngine::useCardWithATM(int inventoryObject, HotSpot *hotspot) {
 	if (_state->getFlag(FLAG_JEFE_INGRESA_PASTA)) {
 		_state->setFlag(FLAG_JEFE_INGRESA_PASTA, false);
 		addInventoryItem(75);
+		_state->setRootDisabledState(20, 0, true);
+		_state->setRootDisabledState(20, 1, true);
 	} else {
 		int billCount = 0;
 		for (uint i = 0; i < _state->inventoryItems.size(); i++) {
@@ -787,6 +792,15 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 	case 270:
 		// loadExtraScreenAndPresent(9);
 		_state->stateGame = COMPUTER;
+		break;
+	case 145:
+		_dialog->say(_res->_ingameTexts[NOVIO2METROS]);
+		break;
+	case 281:
+		_dialog->say(_res->_ingameTexts[GRANIDEA]);
+		break;
+	case 282:
+		_dialog->say(_res->_ingameTexts[SELORECOMIENDO]);
 		break;
 	}
 }

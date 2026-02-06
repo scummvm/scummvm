@@ -165,7 +165,9 @@ size_t rleDecompress(
 				} else {
 					// In fixed mode, we've hit the limit - something is wrong
 					// but grow minimally to avoid crash
-					bufferCapacity += 256;
+					// bufferCapacity += 256;
+					break;
+
 				}
 				uint8_t *newBuf = (uint8_t *)realloc(*out_data, bufferCapacity);
 				if (!newBuf) {
@@ -349,6 +351,37 @@ void invertSprite(byte *spriteBuf, int w, int h) {
 			byte temp = spriteBuf[topIndex];
 			spriteBuf[topIndex] = spriteBuf[bottomIndex];
 			spriteBuf[bottomIndex] = temp;
+		}
+	}
+}
+
+void drawPaletteSquares(byte *screenBuffer, byte *palette) {
+	// Draw 3x3 squares for all 256 palette colors
+	// Arrange them in a 16x16 grid (256 colors)
+	const int squareSize = 6;
+	const int colorsPerRow = 16;
+	const int startX = 10;  // Left margin
+	const int startY = 10;  // Top margin
+	const int spacing = 1;  // Space between squares
+
+	for (int colorIndex = 0; colorIndex < 256; colorIndex++) {
+		int row = colorIndex / colorsPerRow;
+		int col = colorIndex % colorsPerRow;
+
+		int x = startX + col * (squareSize + spacing);
+		int y = startY + row * (squareSize + spacing);
+
+		// Draw the 3x3 square with the current color
+		for (int py = 0; py < squareSize; py++) {
+			for (int px = 0; px < squareSize; px++) {
+				int destX = x + px;
+				int destY = y + py;
+
+				// Bounds check
+				if (destX >= 0 && destX < 640 && destY >= 0 && destY < 400) {
+					screenBuffer[destY * 640 + destX] = colorIndex;
+				}
+			}
 		}
 	}
 }

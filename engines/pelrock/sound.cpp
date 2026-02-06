@@ -213,7 +213,7 @@ void SoundManager::playMusicTrack(int trackNumber, bool loop) {
 	}
 	_currentMusicTrack = trackNumber;
 	g_system->getAudioCDManager()->stop();
-	// g_system->getAudioCDManager()->play(trackNumber, loop ? -1 : 0, 0, 0);
+	g_system->getAudioCDManager()->play(trackNumber, loop ? -1 : 1, 0, 0);
 }
 
 void SoundManager::loadSoundIndex() {
