@@ -19,9 +19,15 @@
  *
  */
 
+#include "fool/fool.h"
 #include "fool/fool_game.h"
+#include "fool/toolbox.h"
+#include "fool/zbasic.h"
 
 namespace Fool {
+
+ZBasic *g_zbasic;
+Toolbox *g_toolbox;
 
 void FoolGame::sub_128_004() {
 	// 128:0004
@@ -29,12 +35,12 @@ void FoolGame::sub_128_004() {
 	g_zbasic->unk_331(0x1b58, 1);
 	g_zbasic->unk_331(0x1b58, 2);
 
-	g_toolbox->SetRect(this->arr_i16_1ae06, 0, 0x14, SCREEN_WIDTH, SCREEN_HEIGHT);
+	g_toolbox->SetRect(this->arr_rect_1ae06, 0, 0x14, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	// copyright + zbasic notice
 	this->var_str_384 = g_zbasic->str(0);
-	this->var_str_384 += g_zbasic->str(1);
-	this->var_str_384 += g_zbasic->str(2);
+	this->var_str_384 = g_zbasic->str(1);
+	this->var_str_384 = g_zbasic->str(2);
 
 	// 128:0086
 	// 128:0086: MOVEQ - 0x0,D0
@@ -56,8 +62,8 @@ void FoolGame::sub_128_004() {
 	// 128:0442: JMP - [0x45e]
 	// 128:045e: JMP - [0x478]
 	// 128:0478
-	this->var_str_69a += g_zbasic->str(6);
-	this->var_i32_79a = &this->var_str_69a;
+	this->var_str_69a = g_zbasic->str(6);
+	//this->var_i32_79a = &this->var_str_69a;
 	// 128:0496: JMP - [0x4d6]
 	// 128:04d6: JMP - [0x50a]
 	// 128:050a: JMP - [0x558]
@@ -81,20 +87,22 @@ void FoolGame::sub_128_0a2(int16 unk2, int16 unk1) {
 	this->var_i16_32 = unk1;
 	this->var_i16_30 = unk2;
 	if (this->var_i16_30 == 0) {
-		g_zbasic->get(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, this->arr_i16_5dfc[this->var_i16_32]);
+		// FIXME: use var_i16_32 to choose start offset??
+		g_zbasic->get(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, this->arr_bmp_5dfc);
 	}
 
 	// 128:00e6
 	if (this->var_i16_30 == 1) {
-		g_zbasic->put(0, 0, 0, this->arr_i16_5dfc[this->var_i16_32], 0);
+		// FIXME: use var_i16_32 to choose start offset??
+		g_zbasic->put(0, 0, 0, 0, this->arr_bmp_5dfc);
 
 	}
 }
 
-void FoolGame::sub_128_11c() {
+void FoolGame::sub_128_11c(Common::U32String &unk2, Common::U32String &unk1) {
 	// 128:011c
-	g_zbasic->unk_110(&this->var_i16_272);
-	g_zbasic->unk_110(&this->var_i16_172);
+	g_zbasic->unk_110(this->var_str_272, unk1);
+	g_zbasic->unk_110(this->var_str_172, unk2);
 	this->var_str_384 = g_zbasic->str(3);
 
 	this->var_i16_586 = 0;
@@ -102,56 +110,64 @@ void FoolGame::sub_128_11c() {
 	this->sub_128_0a2(0, 0x6260);
 
 	// 128:015a
-	this->var_i16_50 = this->var_i16_58 + 0x3d;
-	this->var_i16_52 = this->var_i16_56 + 0x68;
+	this->var_pt_50.y = this->var_i16_58 + 0x3d;
+	this->var_pt_50.x = this->var_i16_56 + 0x68;
 	this->var_i16_16c = 1;
-	this->var_i16_16e = 0;
+	this->var_i32_16e = 0;
 
 	// 128:017e
-	g_toolbox->Pack3(&this->var_i16_50, &this->var_i16_172, &this->var_i16_272, this->var_i32_16e, this->var_i16_5e, 1);
+	g_toolbox->SFPutFile(this->var_pt_50, this->var_str_172, this->var_str_272, this->var_i32_16e, this->var_sfr_5e);
 	this->sub_128_6244();
 
 	this->sub_128_0a2(1, 0x6d60);
 
 	// 128:01b0
-	if (this->var_i8_5e[0] == 1) {
-		this->var_str_486 += this->var_str_68;
-		this->var_i16_586 = this->var_i16_64;
+	if (this->var_sfr_5e.good == 1) {
+		this->var_str_486 += this->var_sfr_5e.fName;
+		this->var_i16_586 = this->var_sfr_5e.vRefNum;
 	}
 
 }
 
-void FoolGame::sub_128_01e4() {
+void FoolGame::sub_128_1e4(Common::U32String &unk1) {
 	// 128:01e4
-	g_zbasic->unk_110(&this->var_i16_172);
+	g_zbasic->unk_110(this->var_str_172, unk1);
 	this->var_str_588 = g_zbasic->str(4);
 	this->var_i16_688 = 0;
 
 	this->sub_128_0a2(0, 0x6260);
 	// 128:0218
-	this->var_i16_50 = this->var_i16_58 + 0x3d;
-	this->var_i16_52 = this->var_i16_56 + 0x53;
+	this->var_pt_50.y = this->var_i16_58 + 0x3d;
+	this->var_pt_50.x = this->var_i16_56 + 0x53;
 	this->var_i16_16c = 1;
 	this->var_i32_16e = 0;
 	// 128:023c
-	this->var_i32_168 = *(this->var_ptr_172 + 1);
-	g_toolbox->Pack3(*this->var_i32_50, g_zbasic->str(5), this->var_i32_16e, this->var_i16_16c, &this->var_i32_168, this->var_i32_16e, &this->var_i16_5e, 2);
+	// get offset of bytes in string and pretend it's an OSType
+	// this->var_i32_168 = *(this->var_str_172 + 1);
+	SFTypeList typeList = { { 0 } };
+	typeList.types[0] = this->var_str_172.at(0) << 24;
+	typeList.types[0] += this->var_str_172.at(1) << 16;
+	typeList.types[0] += this->var_str_172.at(2) << 8;
+	typeList.types[0] += this->var_str_172.at(3) << 0;
+
+	g_toolbox->SFGetFile(this->var_pt_50, g_zbasic->str(5), this->var_i32_16e, this->var_i16_16c, typeList, this->var_i32_16e, this->var_sfr_5e);
 	this->sub_128_6244();
 	this->sub_128_0a2(1, 0x6d60);
 
-	if (this->var_i16_5e[0] == 1) {
+	if (this->var_sfr_5e.good == 1) {
 		// 128:02a2
-		this->var_str_588 += this->var_str_68;
-		this->var_i16_688 = this->var_i16_64;
+		this->var_str_588 += this->var_sfr_5e.fName;
+		this->var_i16_688 = this->var_sfr_5e.vRefNum;
 	}
 }
 
 void FoolGame::sub_128_2be(int16 unk2, int16 unk1) {
+	// FIXME: why is the point inverted in the code??
 	this->var_i16_68c = unk1;
 	this->var_i16_68a = unk2;
-	this->var_i16_68a = (this->var_i16_52 - *this->arr_i16_1ec0) / (*this->arr_i16_1ec4);
+	this->var_i16_68a = (this->var_pt_50.x - this->arr_rect_1ec0.top) / (this->arr_rect_1ec0.bottom);
 
-	this->var_i16_68c = (this->var_i16_50 - *this->arr_i16_1ec2) / (*this->arr_i16_1ec6);
+	this->var_i16_68c = (this->var_pt_50.y - this->arr_rect_1ec0.left) / (this->arr_rect_1ec0.right);
 }
 
 void FoolGame::sub_128_342(int16 unk2, int16 unk1) {
@@ -159,14 +175,14 @@ void FoolGame::sub_128_342(int16 unk2, int16 unk1) {
 	if (unk2 < 1) {
 		unk2 = 1;
 	}
-	if (*this->arr_i16_1eb8 > unk2) {
-		unk2 = *this->arr_i16_1eb8;
+	if (this->arr_i16_1eb8[0] > unk2) {
+		unk2 = this->arr_i16_1eb8[0];
 	}
 	if (unk1 < 1) {
 		unk1 = 1;
 	}
-	if (*this->arr_i16_1eba > unk1) {
-		unk1 = *this->arr_i16_1eba;
+	if (this->arr_i16_1eb8[1] > unk1) {
+		unk1 = this->arr_i16_1eb8[1];
 	}
 }
 
@@ -176,45 +192,56 @@ void FoolGame::sub_128_3da(int16 unk1) {
 
 	do {
 		g_toolbox->Delay(1);
-	} while (g_toolbox->TickCount() < (this->var_i32_68e + unk1))
+	} while (g_toolbox->TickCount() < (this->var_i32_68e + unk1));
 }
 
 void FoolGame::sub_128_406(int16 unk1) {
 	// 128:0402
 	do {
 		g_toolbox->Delay(1);
-	} while (g_toolbox->TickCount() < (this->var_i32_692 + unk1))
+	} while (g_toolbox->TickCount() < (this->var_i32_692 + unk1));
 }
 
 int16 FoolGame::sub_128_428() {
 	// 128:0428
-	this->var_i16_30 = (byte *)this->var_i32_696;
+	// read a byte
+	// FIXME
+/*	this->var_i16_30 = *(byte *)this->var_i32_696;
 	this->var_i32_696 += 1;
-	return this->var_i16_30;
+	return this->var_i16_30; */
+	return 0;
 }
 
 int16 FoolGame::sub_128_446() {
 	// 128:0446
-	this->var_i16_30 = *(int16 *)this->var_i32_696;
+	// read a short
+	// FIXME
+/*	this->var_i16_30 = *(int16 *)this->var_i32_696;
 	this->var_i32_696 += 2;
-	return this->var_i16_30;
+	return this->var_i16_30;*/
+	return 0;
 }
 
 int16 FoolGame::sub_128_462() {
 	// 128:0462
-	this->var_i32_68e = *(int32 *)this->var_i32_696;
+	// read a long
+	// FIXME
+/*	this->var_i32_68e = *(int32 *)this->var_i32_696;
 	this->var_i32_696 += 4;
-	return this->var_i32_68e;
+	return this->var_i32_68e;*/
+	return 0;
 }
 
 void FoolGame::sub_128_49a() {
 	// 128:049a
-	this->var_i16_79e = *(byte *)this->var_i32_696;
-	g_zbasic->blockMove(this->var_i32_696, this->var_i32_79a, this->var_i32_79e+1);
-	this-var_i32_696 += this->var_i16_79e + 1;
+	// read a pascal string
+	// FIXME
+/*	this->var_i16_79e = *(byte *)this->var_i32_696;
+	g_zbasic->blockMove(this->var_i32_696, this->var_str_69a, this->var_i16_79e+1);
+	this->var_i32_696 += this->var_i16_79e + 1;
 
 	// 128:04cc: LEA - VAR(0x69a),A0
-	// 128:04d0: JSR - "BUFFER_CONCAT"
+	// 128:04d0: JSR - "BUFFER_CONCAT"*/
 }
 
 void FoolGame::sub_128_4da(int16 unk1) {
@@ -237,32 +264,32 @@ void FoolGame::sub_128_50e(int16 unk3, int16 unk2, int16 unk1) {
 	this->var_i16_32 = unk2;
 	this->var_i16_30 = unk3;
 	if (this->var_i16_378 != 1) {
-		g_zbasic->unk6(this->var_i16_30, this->var_i16_32, 0x96, 0);
+		g_zbasic->unk_6(this->var_i16_30, this->var_i16_32, 0x96, 0);
 		if (this->var_i16_34 == 1) {
-			while (g_zbasic->unk5()) {
+			while (g_zbasic->unk_5()) {
 				g_toolbox->Delay(1);
 			}
 		}
 	}
 }
 
-void FoolGame::sub_128_55c() {
+void FoolGame::sub_128_55c(Common::U32String &unk1) {
 	// 128:055c
-	g_zbasic->unk_110(&this->var_i32_172);
+	g_zbasic->unk_110(this->var_str_172, unk1);
 	g_toolbox->PenNormal();
-	g_toolbox->SetRect(this->arr_i32_1910c, 0x6c, 0x127, 0x84, 0x137);
-	g_toolbox->EraseRoundRect(this->arr_i32_1910c, 0x8, 0x7);
-	g_toolbox->FrameRoundRect(this->arr_i32_1910c, 0x8, 0x7);
-	g_zbasic->text(0, 0xc, 0, 0x1);
+	g_toolbox->SetRect(this->arr_rect_1910c, 0x6c, 0x127, 0x84, 0x137);
+	g_toolbox->EraseRoundRect(this->arr_rect_1910c, 0x8, 0x7);
+	g_toolbox->FrameRoundRect(this->arr_rect_1910c, 0x8, 0x7);
+	g_zbasic->text(0, 0xc, 0, kSrcOr);
 	this->var_i16_30 = g_toolbox->StringWidth(this->var_str_172);
-	g_toolbox->MoveTo(0x78 - (this->var_i16_30 / 2), 0x133)
+	g_toolbox->MoveTo(0x78 - (this->var_i16_30 / 2), 0x133);
 	g_toolbox->DrawString(this->var_str_172);
 }
 
-void FoolGame::sub_128_5fe() {
+int32 FoolGame::sub_128_5fe() {
 	// 128:05fe
 	ParamBlockRec pb;
-	g_toolbox->GetVol(pb);
+	g_toolbox->PBGetVol(pb);
 	this->var_i16_30 = pb.ioVRefNum;
 	return this->var_i16_30;
 }
@@ -274,13 +301,13 @@ void FoolGame::sub_128_64c(int16 unk1) {
 	g_toolbox->PBSetVol(pb);
 }
 
-void FoolGame::sub_128_69c(int16 unk6, int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
+void FoolGame::sub_128_69c(int16 unk6, PatternMode unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 	// 128:069c
 	g_toolbox->PenNormal();
 	g_toolbox->PenPat(this->arr_pat_58f4[unk6]);
 	g_toolbox->PenMode(unk5);
-	g_toolbox->SetRect(this->arr_i16_5b7c, unk3, unk4, unk1, unk2);
-	g_toolbox->PaintRect(this->arr_i16_5b7c);
+	g_toolbox->SetRect(this->arr_rect_5b7c, unk3, unk4, unk1, unk2);
+	g_toolbox->PaintRect(this->arr_rect_5b7c);
 	g_toolbox->PenNormal();
 }
 
@@ -295,7 +322,7 @@ void FoolGame::sub_128_712(int16 unk3, int16 unk2, int16 unk1) {
 		g_toolbox->PenPat(this->arr_pat_58f4[2]);
 		g_toolbox->FrameRoundRect(this->arr_rect_1f38[unk3], 0xf, 0xf);
 		// 128:079e
-		g_zbasic->picture(this->arr_rect_1f38[unk3].left + 3, this->arr_rect_1f38[unk3].top + 3, -1, 0, this->arr_i32_192c0[this->arr_i16_5cbc[unk2/2]]);
+		g_zbasic->picture(this->arr_rect_1f38[unk3].left + 3, this->arr_rect_1f38[unk3].top + 3, this->arr_i32_192c0[this->arr_i16_5cbc[unk2/2]]);
 	}
 	// 128:0806
 	if (unk1 == 1) {
@@ -315,53 +342,60 @@ void FoolGame::sub_128_712(int16 unk3, int16 unk2, int16 unk1) {
 
 void FoolGame::sub_128_8b4(int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 	// 128:08b4
-	g_toolbox->SetRect(this->arr_i16_5b7c, unk4, unk5, unk2, unk3);
-	g_toolbox->FillRect(this->arr_i16_5b7c, this->arr_pat_58f4[unk1]);
+	g_toolbox->SetRect(this->arr_rect_5b7c, unk4, unk5, unk2, unk3);
+	g_toolbox->FillRect(this->arr_rect_5b7c, this->arr_pat_58f4[unk1]);
 }
 
-void FoolGame::sub_128_918() {
+void FoolGame::sub_128_918(Common::U32String &unk1) {
 	// 128:0918
-	g_zbasic->unk_110(this->var_str_172);
+	g_zbasic->unk_110(unk1, this->var_str_172);
 	this->var_i16_30 = g_toolbox->StringWidth(this->var_str_172);
 	g_toolbox->MoveTo(0x100 - (this->var_i16_30 / 2), this->var_i16_7a2);
 	g_toolbox->DrawString(this->var_str_172);
 }
 
-void FoolGame::sub_128_962(int16 unk11, int16 unk10, int16 unk9, int16 unk8, int16 unk7, int16 unk6, int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
+void FoolGame::sub_128_962(int16 unk11, int16 unk10, int16 unk9, int16 unk8, int16 unk7, int16 unk6, int16 unk5, int16 unk4, int16 unk3, PatternMode unk2, int16 unk1) {
 	// 128:0962
-	this->arr_i16_5b7c.top = unk11;
-	this->arr_i16_5b7c.left = unk10;
-	this->arr_i16_5b7c.bottom = unk9;
-	this->arr_i16_5b7c.right = unk8;
-	this->arr_i16_5b84.top = unk7;
-	this->arr_i16_5b84.left = unk6;
-	this->arr_i16_5b84.bottom = unk5;
-	this->arr_i16_5b84.right = unk4;
+	this->arr_rect_5b7c.top = unk11;
+	this->arr_rect_5b7c.left = unk10;
+	this->arr_rect_5b7c.bottom = unk9;
+	this->arr_rect_5b7c.right = unk8;
+	this->arr_rect_5b84.top = unk7;
+	this->arr_rect_5b84.left = unk6;
+	this->arr_rect_5b84.bottom = unk5;
+	this->arr_rect_5b84.right = unk4;
 	g_toolbox->PenNormal();
 	g_toolbox->PenPat(this->arr_pat_58f4[unk3]);
 	g_toolbox->PenMode(unk2);
 	// 128:0a42
-	for (int i = 0; i <= 3; i++) {
-		this->arr_bcd_5dbc[i] = (float)(this->arr_i32_5b7c+i);
-		this->arr_bcd_5dbc[i+4], (float)((this->arr_i32_5b84+i) - (this->arr_i32_5b7c+i))/(float)(this->var_i16_44);
-
-	}
+	// unrolled loop
+	this->arr_bcd_5dbc[0] = (float)(this->arr_rect_5b7c.top);
+	this->arr_bcd_5dbc[1] = (float)(this->arr_rect_5b7c.left);
+	this->arr_bcd_5dbc[2] = (float)(this->arr_rect_5b7c.bottom);
+	this->arr_bcd_5dbc[3] = (float)(this->arr_rect_5b7c.right);
+	this->arr_bcd_5dbc[4] = (float)((this->arr_rect_5b84.top) - (this->arr_rect_5b7c.top))/(float)(this->var_i16_44);
+	this->arr_bcd_5dbc[5] = (float)((this->arr_rect_5b84.left) - (this->arr_rect_5b7c.left))/(float)(this->var_i16_44);
+	this->arr_bcd_5dbc[6] = (float)((this->arr_rect_5b84.bottom) - (this->arr_rect_5b7c.bottom))/(float)(this->var_i16_44);
+	this->arr_bcd_5dbc[7] = (float)((this->arr_rect_5b84.right) - (this->arr_rect_5b7c.right))/(float)(this->var_i16_44);
 	// 128:0af0
-	g_toolbox->PaintRect(this->arr_i16_5b7c);
+	g_toolbox->PaintRect(this->arr_rect_5b7c);
 	for (int i = 1; i < this->var_i16_44-1; i++) {
 		for (int j = 0; j <= 3; j++) {
 			this->arr_bcd_5dbc[j] = (float)this->arr_bcd_5dbc[j] + (float)this->arr_bcd_5dbc[j+4];
-			this->arr_i16_5b7c[j] = (int)this->arr_bcd_5dbc[j];
 		}
+		this->arr_rect_5b7c.top = (int)this->arr_bcd_5dbc[0];
+		this->arr_rect_5b7c.left = (int)this->arr_bcd_5dbc[1];
+		this->arr_rect_5b7c.bottom = (int)this->arr_bcd_5dbc[2];
+		this->arr_rect_5b7c.right = (int)this->arr_bcd_5dbc[3];
 		// 128:0ba6
-		g_toolbix->PaintRect(this->arr_i16_5b92);
+		g_toolbox->PaintRect(this->arr_rect_5b92);
 	}
 	// 128:0bc8
-	g_toolbox->PaintRect(this->arr_i16_5b84);
+	g_toolbox->PaintRect(this->arr_rect_5b84);
 	g_toolbox->PenNormal();
 }
 
-void FoolGame::sub_128_bde(int16 unk6, int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
+void FoolGame::sub_128_bde(int16 unk6, int16 unk5, PatternMode unk4, int16 unk3, int16 unk2, int16 unk1) {
 	// 128:0bde
 	this->arr_i16_4758[0] = unk6;
 	this->arr_i16_4758[1] = unk5;
@@ -376,20 +410,20 @@ void FoolGame::sub_128_c6a(int16 unk1) {
 	// 128:0c6a
 	EventRecord event;
 	this->var_i16_78a = g_toolbox->GetNextEvent(unk1, event);
-	if ((this->var_i16_46 == 1) && (this->var_i16_50 < 0x14)) {
+	if ((this->var_i16_46 == 1) && (this->var_pt_50.y < 0x14)) {
 		this->sub_128_5b30();
 	}
 	// 128:0caa
-	g_toolbox->GlobalToLocal(&this->var_i32_50);
+	g_toolbox->GlobalToLocal(this->var_pt_50);
 	if (this->var_i16_46 == 3) {
-		if (this->var_i16_54 & 0x100 == 0) {
+		if ((this->var_i16_54 & 0x100) == 0) {
 			this->sub_128_5f9e();
 		} else {
 			this->sub_128_5baa();
 		}
 	}
 	// 128:0ce0
-	if ((this->var_i16_46 == 5) && (this->var_i16_54 & 0x100 == 0)) {
+	if ((this->var_i16_46 == 5) && ((this->var_i16_54 & 0x100) == 0)) {
 		this->sub_128_5f9e();
 	}
 	if (this->var_i16_46 == 6) {
@@ -402,20 +436,20 @@ void FoolGame::sub_128_c6a(int16 unk1) {
 
 void FoolGame::sub_128_d34(int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 	// 128:0d34
-	this->arr_i16_5b7c.top = unk5;
-	this->arr_i16_5b7c.left = unk4;
-	this->arr_i16_5b7c.bottom = unk3;
-	this->arr_i16_57bc.right = unk2;
+	this->arr_rect_5b7c.top = unk5;
+	this->arr_rect_5b7c.left = unk4;
+	this->arr_rect_5b7c.bottom = unk3;
+	this->arr_rect_5b7c.right = unk2;
 	while (this->var_i16_54 & 0x80) {
 		// 128:0d94
 		do {
-			g_toolbox->InvertRect(this->arr_i16_5b7c);
+			g_toolbox->InvertRect(this->arr_rect_5b7c);
 			this->var_i16_3a = 0;
 			do {
 				this->sub_128_c6a(0);
 				this->var_i16_3a += 1;
-			} while ((this->var_i16_38 == this->var_i16_3a) || (this->var_i16_54 & 0x80 == 0))
-		} while (this->var_i16_54 & 0x80 != 0)
+			} while ((this->var_i16_38 == this->var_i16_3a) || ((this->var_i16_54 & 0x80) == 0));
+		} while ((this->var_i16_54 & 0x80) != 0);
 	}
 }
 
@@ -434,13 +468,13 @@ void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 	}
 	// 128:0e46
 	this->sub_128_0a2(0, 0x6060);
-	g_zbasic->text(this->var_i16_7aa, 0xc, 0, 0x3);
+	g_zbasic->text(this->var_i16_7aa, 0xc, 0, kSrcBic);
 	this->var_i16_7b4 = this->var_i16_7ae*0x46;
 	this->var_i16_7b6 = 0;
 	this->var_i16_7b8 = 0;
 	for (int i = 0; i < this->var_i16_7ac; i++) {
 	// 128:0e86
-		this->var_i16_7ba = g_toolbox->StringWidth(this->arr_i32_1a8d8[this->var_i16_7ba*0x66]);
+		this->var_i16_7ba = g_toolbox->StringWidth(this->arr_str_1a8d8[this->var_i16_7ba]);
 		if (this->var_i16_7ba > this->var_i16_7b4) {
 			this->var_i16_7b4 = this->var_i16_7ba;
 		}
@@ -473,11 +507,126 @@ void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 	g_toolbox->FillRect(this->arr_rect_5b7c, this->arr_pat_58f4[2]);
 	g_toolbox->PenNormal();
 	this->var_i16_7a2 = 0xbe - this->var_i16_7b6;
-	this->var_i16_7b8 = 0;
-	this->var_str_384 = this->arr_i32_1a8d8[this->var_i16_7b8 * 0x66];
-	this->sub_128_918(this->var_str_384);
-	// 128:1086
+	// 128:1056
+	for (int i = 0; i < this->var_i16_7ac; i++) {
+		this->var_i16_7b8 = 0;
+		this->var_str_384 = this->arr_str_1a8d8[this->var_i16_7b8];
+		this->sub_128_918(this->var_str_384);
+		// 128:1086
+		// 128:1086: CLR.W - -0x772(A5)
+		this->var_i16_7a2 += 0x11;
+	}
+	// 128:10a0
+	if (this->var_i16_7ae != 0) {
+		g_toolbox->PenNormal();
+		g_zbasic->text(0, 0xc, 0, kSrcOr);
 
+		// 128:10c0
+		// loop to zero out three rectangles??
+		this->arr_rect_5b7c = Common::Rect(0, 0, 0, 0);
+		this->arr_rect_5b84 = Common::Rect(0, 0, 0, 0);
+		this->arr_rect_5b8c = Common::Rect(0, 0, 0, 0);
+		// 128:10e2
+		if (this->var_i16_7ae == 1) {
+			g_toolbox->SetRect(this->arr_rect_5b7c, 0xe2, this->var_i16_7bc, 0x11e, this->var_i16_7bc+0x14);
+			// 128:1122
+		} else if (this->var_i16_7ae == 2) {
+			g_toolbox->SetRect(this->arr_rect_5b7c, 0xbf, this->var_i16_7bc, 0xfb, this->var_i16_7bc+0x14);
+			g_toolbox->SetRect(this->arr_rect_5b84, 0x105, this->var_i16_7bc, 0x141, this->var_i16_7bc+0x14);
+			// 128:1182
+		} else if (this->var_i16_7ae == 3) {
+			g_toolbox->SetRect(this->arr_rect_5b7c, 0x9c, this->var_i16_7bc, 0xd8, this->var_i16_7bc+0x14);
+			g_toolbox->SetRect(this->arr_rect_5b84, 0xe2, this->var_i16_7bc, 0x11e, this->var_i16_7bc+0x14);
+			g_toolbox->SetRect(this->arr_rect_5b8c, 0x128, this->var_i16_7bc, 0x164, this->var_i16_7bc+0x14);
+		}
+		// 128:1208
+		if (this->var_i16_7ae >= 1) {
+			g_toolbox->EraseRoundRect(this->arr_rect_5b7c, 0xa, 0xa);
+			g_toolbox->FrameRoundRect(this->arr_rect_5b7c, 0xa, 0xa);
+			this->var_str_172 = this->arr_str_1a8d8[(this->var_i16_7ac + 1)];
+			this->var_i16_30 = g_toolbox->StringWidth(this->var_str_172);
+			// 128:1274
+			this->var_i16_30 = this->arr_rect_5b7c.left + ((this->arr_rect_5b7c.right - this->arr_rect_5b7c.left) / 2) - (this->var_i16_30 / 2);
+			// 128:12d4
+			g_toolbox->MoveTo(this->var_i16_30, this->var_i16_7bc + 0xe);
+			g_toolbox->DrawString(this->var_str_172);
+			if (this->var_i16_7ae > 1) {
+				g_toolbox->InsetRect(this->arr_rect_5b7c, -2, -2);
+				g_toolbox->PenPat(this->arr_pat_58f4[0]);
+				g_toolbox->FrameRoundRect(this->arr_rect_5b7c, 0xa, 0xa);
+				g_toolbox->PenNormal();
+				g_toolbox->InsetRect(this->arr_rect_5b7c, 2, 2);
+			}
+		}
+		// 128:134c
+		if (this->var_i16_7ae >= 2) {
+			g_toolbox->EraseRoundRect(this->arr_rect_5b84, 0xa, 0xa);
+			g_toolbox->FrameRoundRect(this->arr_rect_5b84, 0xa, 0xa);
+			this->var_str_172 = this->arr_str_1a8d8[(this->var_i16_7ac+2)];
+			this->var_i16_30 = g_toolbox->StringWidth(this->var_str_172);
+			this->var_i16_30 = this->arr_rect_5b84.left + ((this->arr_rect_5b84.right - this->arr_rect_5b84.left)/2) - (this->var_i16_30 / 2);
+			// 128:1418
+			g_toolbox->MoveTo(this->var_i16_30, this->var_i16_7bc + 0xe);
+			g_toolbox->DrawString(this->var_str_172);
+		}
+		// 128:1432
+		if (this->var_i16_7ae >= 3) {
+			// FIXME
+		}
+		// 128:1518
+
+	}
+	// 128:1784
+
+}
+
+
+void FoolGame::sub_128_4472() {
+	// 128:4472
+	if (this->arr_i16_4758[1] == 0) {
+		this->arr_i16_4758[1] = this->var_i16_7e2;
+	}
+	if (this->arr_i16_4758[2] == 0) {
+		this->arr_i16_4758[2] = 0x8;
+	}
+	if (this->arr_i16_4758[0] == 0) {
+		sub_128_962(0x130, 0x76, 0x130, 0x76, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, this->arr_i16_4758[1], (PatternMode)this->arr_i16_4758[2], 0x19);
+		return;
+	}
+	// 128:4520
+	g_toolbox->PenNormal();
+	g_toolbox->PenPat(this->arr_pat_58f4[this->arr_i16_4758[1]]);
+	g_toolbox->PenMode((PatternMode)this->arr_i16_4758[2]);
+	if (this->arr_i16_4758[5] == 0) {
+		// 128:456a
+		// FIXME
+	}
+	// 128:459a
+
+}
+
+void FoolGame::sub_128_5b30() {
+	// FIXME
+}
+
+void FoolGame::sub_128_5baa() {
+	// FIXME
+}
+
+void FoolGame::sub_128_5f9e() {
+	// FIXME
+}
+
+void FoolGame::sub_128_5fb4() {
+	// FIXME
+}
+
+void FoolGame::sub_128_6154() {
+	// FIXME
+}
+
+void FoolGame::sub_128_6244() {
+	// FIXME
 }
 
 // end
