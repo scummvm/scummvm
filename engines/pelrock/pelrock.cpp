@@ -155,7 +155,7 @@ void PelrockEngine::init() {
 		loadAnims();
 		// setScreen(0, ALFRED_DOWN);
 		// setScreen(3, ALFRED_RIGHT);
-		setScreen(25, ALFRED_DOWN);
+		setScreen(23, ALFRED_DOWN);
 		// setScreen(9, ALFRED_DOWN);
 		// setScreen(15, ALFRED_DOWN);
 		// setScreen(2, ALFRED_LEFT);
@@ -198,6 +198,8 @@ Common::Array<VerbIcon> PelrockEngine::availableActions(HotSpot *hotspot) {
 	}
 	return verbs;
 }
+
+Common::Point getPositionInBallonForIndex(int i);
 
 // Sort sprites by zOrder in-place using insertion sort (efficient for nearly-sorted data)
 void sortAnimsByZOrder(Common::Array<Sprite> &anims) {
@@ -478,7 +480,6 @@ void PelrockEngine::checkMouse() {
 		_alfredState.curFrame = 0;
 		_alfredState.setState(ALFRED_IDLE);
 	}
-
 	// Handle mouse release after long press (popup selection mode)
 	if (_events->_popupSelectionMode && !_events->_leftMouseButton) {
 		_events->_leftMouseButton = false;
@@ -504,7 +505,7 @@ void PelrockEngine::checkMouse() {
 		checkMouseClick(_events->_mouseClickX, _events->_mouseClickY);
 		_events->_leftMouseClicked = false;
 		_actionPopupState.isActive = false;
-	} else if (_events->_longClicked && !_room->_currentRoomNumber == 21) {
+	} else if (_events->_longClicked && _room->_currentRoomNumber != 21) {
 		checkLongMouseClick(_events->_mouseClickX, _events->_mouseClickY);
 		_events->_longClicked = false;
 	} else if (_events->_rightMouseClicked) {
@@ -1193,24 +1194,6 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 
 void PelrockEngine::calculateScalingMasks() {
 
-	//    for scale_factor in range(CHAR_WIDTH):
-	//     step = CHAR_WIDTH / (scale_factor + 1.0)
-	//     row = []
-	//     index = 0.0
-	//     source_pixel = 0
-
-	//     while index < CHAR_WIDTH:
-	//         row.append(source_pixel)
-	//         index += step
-	//         source_pixel += 1
-	//         if source_pixel >= CHAR_WIDTH:
-	//             source_pixel = CHAR_WIDTH - 1
-
-	//     # Pad to exactly CHAR_WIDTH entries
-	//     while len(row) < CHAR_WIDTH:
-	//         row.append(row[-1] if row else 0)
-	//     width_table.append(row[:CHAR_WIDTH])
-
 	for (int scaleFactor = 0; scaleFactor < kAlfredFrameWidth; scaleFactor++) {
 		float step = kAlfredFrameWidth / (scaleFactor + 1.0f);
 		Common::Array<int> row;
@@ -1234,22 +1217,6 @@ void PelrockEngine::calculateScalingMasks() {
 		_widthScalingTable.push_back(row);
 	}
 
-	//  height_table = []
-	// for scale_factor in range(CHAR_HEIGHT):
-	//     step = CHAR_HEIGHT / (scale_factor + 1.0)
-	//     row = [0] * CHAR_HEIGHT  # Initialize all to 0
-
-	//     # Mark positions where we should keep/duplicate the scanline
-	//     position = step
-	//     counter = 1
-	//     while position < CHAR_HEIGHT:
-	//         idx = round(position)
-	//         if idx < CHAR_HEIGHT:
-	//             row[idx] = counter
-	//             counter += 1
-	//         position += step
-
-	//     height_table.append(row)
 	for (int scaleFactor = 0; scaleFactor < kAlfredFrameHeight; scaleFactor++) {
 		float step = kAlfredFrameHeight / (scaleFactor + 1.0f);
 		Common::Array<int> row;
@@ -1380,6 +1347,10 @@ bool PelrockEngine::isSpriteUnder(Sprite *sprite, int x, int y) {
 	return false;
 }
 
+Common::Point getPositionInBallonForIndex(int i, int x, int y) {
+	return Common::Point(x + 20 + (i * (kVerbIconWidth + 2)), y + 20);
+}
+
 void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 	drawSpriteToBuffer(_compositeBuffer, 640, _res->_popUpBalloon + (curFrame * kBalloonHeight * kBalloonWidth), posx, posy, kBalloonWidth, kBalloonHeight, 255);
 	Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
@@ -1390,11 +1361,11 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 		if (icon == actions[i] && shouldBlink) {
 			continue;
 		}
-		drawSpriteToBuffer(_compositeBuffer, 640, _res->_verbIcons[actions[i]], posx + 20 + (i * (kVerbIconWidth + 2)), posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
+		Common::Point p = getPositionInBallonForIndex(i, posx, posy);
+		drawSpriteToBuffer(_compositeBuffer, 640, _res->_verbIcons[actions[i]], p.x, p.y, kVerbIconWidth, kVerbIconHeight, 1);
 	}
-	bool itemUnder = isItemUnder(_events->_mouseX, _events->_mouseY);
 	if (_state->selectedInventoryItem >= 0 && !_state->inventoryItems.empty()) {
-		if (itemUnder && shouldBlink) {
+		if (icon == ITEM && shouldBlink) {
 			return;
 		}
 		drawSpriteToBuffer(_compositeBuffer, 640, _res->getIconForObject(_state->selectedInventoryItem).iconData, posx + 20 + (actions.size() * (kVerbIconWidth + 2)), posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
@@ -1442,13 +1413,26 @@ void PelrockEngine::animateTalkingNPC(Sprite *animSet) {
 	drawSpriteToBuffer(_compositeBuffer, 640, frame, x, y, w, h, 255);
 }
 
+Common::Point getPositionInOverlayForIndex(uint index) {
+	return Common::Point(5 + index * (60 + 2), 400 - 60 - 5);
+}
+
+
 void PelrockEngine::pickupIconFlash() {
 	_graphics->showOverlay(65, _compositeBuffer);
-	if (_flashingIcon == -1)
+	if (_newItem == -1)
 		return;
-	InventoryObject item = _res->getIconForObject(_flashingIcon);
+	uint invSize = _state->inventoryItems.size();
+	for( int i = 0; i < invSize; i++) {
+		Common::Point p = getPositionInOverlayForIndex(i);
+		drawSpriteToBuffer(_compositeBuffer, 640, _res->getIconForObject(_state->inventoryItems[i]).iconData, p.x, p.y, 60, 60, 1);
+	}
+
+	InventoryObject item = _res->getIconForObject(_newItem);
 	if (_chrono->getFrameCount() % kIconBlinkPeriod == 0) {
-		drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, 5, 400 - 60 - 5, 60, 60, 1);
+		Common::Point p = getPositionInOverlayForIndex(invSize);
+		debug("Drawing pickup icon for item %d at inventory index %d, position %d,%d", _newItem, invSize, p.x, p.y);
+		drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, p.x, p.y, 60, 60, 1);
 	}
 }
 
@@ -1570,9 +1554,8 @@ VerbIcon PelrockEngine::isActionUnder(int x, int y) {
 	Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
 	int loopEnd = _state->selectedInventoryItem != -1 ? actions.size() + 1 : actions.size();
 	for (int i = 0; i < loopEnd; i++) {
-		int actionX = _actionPopupState.x + 20 + (i * (kVerbIconWidth + 2));
-		int actionY = _actionPopupState.y + 20;
-		Common::Rect actionRect = Common::Rect(actionX, actionY, actionX + kVerbIconWidth, actionY + kVerbIconHeight);
+		Common::Point p = getPositionInBallonForIndex(i, _actionPopupState.x, _actionPopupState.y);
+		Common::Rect actionRect = Common::Rect(p.x, p.y, p.x + kVerbIconWidth, p.y + kVerbIconHeight);
 
 		if (i == actions.size()) {
 			// Check inventory item
@@ -1584,17 +1567,6 @@ VerbIcon PelrockEngine::isActionUnder(int x, int y) {
 		}
 	}
 	return NO_ACTION;
-}
-
-bool PelrockEngine::isItemUnder(int x, int y) {
-	Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
-	Common::Rect itemRect = Common::Rect(_actionPopupState.x + 20 + (actions.size() * (kVerbIconWidth + 2)), _actionPopupState.y + 20,
-										 _actionPopupState.x + 20 + (actions.size() * (kVerbIconWidth + 2)) + kVerbIconWidth,
-										 _actionPopupState.y + 20 + kVerbIconHeight);
-	if (itemRect.contains(x, y)) {
-		return true;
-	}
-	return false;
 }
 
 bool PelrockEngine::isAlfredUnder(int x, int y) {

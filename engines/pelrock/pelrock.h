@@ -76,7 +76,6 @@ private:
 
 	Common::Array<VerbIcon> availableActions(HotSpot *hotspot);
 	VerbIcon isActionUnder(int x, int y);
-	bool isItemUnder(int x, int y);
 	bool isAlfredUnder(int x, int y);
 	int isHotspotUnder(int x, int y);
 	Exit *isExitUnder(int x, int y);
@@ -136,7 +135,7 @@ private:
 	ActionPopupState _actionPopupState;
 
 	HotSpot *_currentHotspot = nullptr;
-	int _flashingIcon = -1;
+	int _newItem = -1;
 
 	Common::Point _curWalkTarget;
 	QueuedAction _queuedAction;
@@ -232,7 +231,7 @@ public:
 	void loadExtraScreenAndPresent(int screenIndex);
 	void waitForSpecialAnimation();
 	bool renderScene(int overlayMode = OVERLAY_NONE);
-void mouseHoverForMap();
+	void mouseHoverForMap();
 	void frameTriggers();
 
 	void passerByAnim(uint32 frameCount);

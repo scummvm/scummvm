@@ -81,8 +81,7 @@ bool PelrockConsole::cmdGiveItems(int argc, const char **argv) {
 	for (int i = 1; i < argc; i++) {
 		int itemId = atoi(argv[i]);
 		bool markAsSelected = g_engine->_state->inventoryItems.empty();
-		g_engine->addInventoryItem(itemId);
-		// g_engine->_state->addInventoryItem(itemId);
+		g_engine->_state->addInventoryItem(itemId);
 		if (markAsSelected)
 			g_engine->_state->selectedInventoryItem = itemId;
 

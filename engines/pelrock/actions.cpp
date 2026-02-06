@@ -165,7 +165,7 @@ void PelrockEngine::addInventoryItem(int item) {
 	if (_state->inventoryItems.empty()) {
 		_state->selectedInventoryItem = item;
 	}
-	_flashingIcon = item;
+	_newItem = item;
 	int frameCounter = 0;
 	while (frameCounter < kIconFlashDuration) {
 		_events->pollEvent();
