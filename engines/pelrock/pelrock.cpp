@@ -488,14 +488,16 @@ void PelrockEngine::checkMouse() {
 		_actionPopupState.isActive = false;
 		// Mouse was released while popup is active
 		VerbIcon actionClicked = isActionUnder(_events->_releaseX, _events->_releaseY);
-		debug("Popup action clicked: %d, is alfredunder %d", actionClicked, _actionPopupState.isAlfredUnder);
-		if (_actionPopupState.isAlfredUnder) {
-			debug("Using item on Alfred");
-			useOnAlfred(_state->selectedInventoryItem);
-		} else if (actionClicked != NO_ACTION && _currentHotspot != nullptr) {
+		if(actionClicked != NO_ACTION) {
+			debug("Popup action clicked: %d, is alfredunder %d", actionClicked, _actionPopupState.isAlfredUnder);
+		}
+		if (actionClicked != NO_ACTION && _currentHotspot != nullptr) {
 			// Action was selected - queue it
 			walkAndAction(_currentHotspot, actionClicked);
-		} else {
+		} else if (_actionPopupState.isAlfredUnder && actionClicked != NO_ACTION) {
+			debug("Using item on Alfred");
+			useOnAlfred(_state->selectedInventoryItem);
+		} else  {
 			// Released outside popup - just close it
 			_queuedAction = QueuedAction{NO_ACTION, -1, false};
 			_currentHotspot = nullptr;
@@ -1630,6 +1632,7 @@ void PelrockEngine::checkMouseHover() {
 
 	if (hotspotIndex != -1) {
 		hotspotDetected = true;
+		debug("Hotspot detected: %s", _room->_currentRoomDescriptions[hotspotIndex].text.c_str());
 		_hoveredMapLocation = _room->_currentRoomDescriptions[hotspotIndex].text;
 	}
 	else if (!alfredDetected) {

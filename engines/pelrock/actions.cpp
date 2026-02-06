@@ -793,7 +793,7 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 		// loadExtraScreenAndPresent(9);
 		_state->stateGame = COMPUTER;
 		break;
-	case 145:
+	case 280:
 		_dialog->say(_res->_ingameTexts[NOVIO2METROS]);
 		break;
 	case 281:
