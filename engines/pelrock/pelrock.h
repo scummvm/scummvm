@@ -147,6 +147,8 @@ private:
 	bool gameInitialized = false;
 	bool screenReady = false;
 
+	Common::String _hoveredMapLocation = "";
+
 	// int prevDirX = 0;
 	// int prevDirY = 0;
 	// Common::String objectToShow = "";
@@ -230,6 +232,7 @@ public:
 	void loadExtraScreenAndPresent(int screenIndex);
 	void waitForSpecialAnimation();
 	bool renderScene(int overlayMode = OVERLAY_NONE);
+void mouseHoverForMap();
 	void frameTriggers();
 
 	void passerByAnim(uint32 frameCount);

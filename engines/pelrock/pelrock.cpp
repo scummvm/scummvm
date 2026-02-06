@@ -286,17 +286,30 @@ bool PelrockEngine::renderScene(int overlayMode) {
 		copyBackgroundToBuffer();
 
 		placeStickersFirstPass();
+
 		updateAnimations();
+
+		placeStickersSecondPass();
 
 		renderOverlay(overlayMode);
 
+		mouseHoverForMap();
+
 		presentFrame();
+
 		updatePaletteAnimations();
 
 		_screen->markAllDirty();
 		return true;
 	}
 	return false;
+}
+
+void PelrockEngine::mouseHoverForMap() {
+	if (_room->_currentRoomNumber == 21 && !_hoveredMapLocation.empty()) {
+		Common::Rect r = _largeFont->getBoundingBox(_hoveredMapLocation.c_str());
+		drawText(_compositeBuffer, _largeFont, _hoveredMapLocation.c_str(), _events->_mouseX - r.width() / 2, _events->_mouseY - r.height(), 640, ALFRED_COLOR);
+	}
 }
 
 // const int kPasserbyTriggerFrameInterval = 0x3FF;
@@ -453,6 +466,7 @@ void PelrockEngine::executeAction(VerbIcon action, HotSpot *hotspot) {
 void PelrockEngine::checkMouse() {
 
 	checkMouseHover();
+
 	if (_alfredState.animState == ALFRED_WALKING && !_alfredState.isWalkingCancelable) {
 		// Ignore clicks while Alfred is walking
 		_events->_leftMouseClicked = false;
@@ -486,12 +500,11 @@ void PelrockEngine::checkMouse() {
 			_currentHotspot = nullptr;
 		}
 	} else if (_events->_leftMouseClicked) {
-
 		// Regular click (not during popup mode)
 		checkMouseClick(_events->_mouseClickX, _events->_mouseClickY);
 		_events->_leftMouseClicked = false;
 		_actionPopupState.isActive = false;
-	} else if (_events->_longClicked) {
+	} else if (_events->_longClicked && !_room->_currentRoomNumber == 21) {
 		checkLongMouseClick(_events->_mouseClickX, _events->_mouseClickY);
 		_events->_longClicked = false;
 	} else if (_events->_rightMouseClicked) {
@@ -624,6 +637,7 @@ void PelrockEngine::placeStickersFirstPass() {
 void PelrockEngine::placeStickersSecondPass() {
 	// Some stickers need to be placed AFTER sprites, hardcoded in the original
 	if (_room->_currentRoomNumber == 3) {
+		debug("Placing second-pass stickers for room 3");
 		for (uint i = 0; i < _state->stickersPerRoom[3].size(); i++) {
 			if (_state->stickersPerRoom[3][i].stickerIndex == 14) {
 				placeSticker(_state->stickersPerRoom[3][i]);
@@ -1634,10 +1648,24 @@ void PelrockEngine::changeCursor(Cursor cursor) {
 void PelrockEngine::checkMouseHover() {
 
 	bool hotspotDetected = false;
-
 	int hotspotIndex = isHotspotUnder(_events->_mouseX, _events->_mouseY);
+
+	bool alfredDetected = false;
+	if (isAlfredUnder(_events->_mouseX, _events->_mouseY)) {
+		alfredDetected = true;
+		_hoveredMapLocation = "Alfred";
+	}
+
 	if (hotspotIndex != -1) {
 		hotspotDetected = true;
+		_hoveredMapLocation = _room->_currentRoomDescriptions[hotspotIndex].text;
+	}
+	else if (!alfredDetected) {
+		_hoveredMapLocation = "";
+	}
+
+	if(_room->_currentRoomNumber == 21) {
+		return;
 	}
 
 	if (isActionUnder(_events->_mouseX, _events->_mouseY) != NO_ACTION) {
@@ -1647,10 +1675,7 @@ void PelrockEngine::checkMouseHover() {
 	// Calculate walk target first (before checking anything else)
 	Common::Point walkTarget = calculateWalkTarget(_room->_currentRoomWalkboxes, _events->_mouseX, _events->_mouseY, hotspotDetected, hotspotDetected ? &_room->_currentRoomHotspots[hotspotIndex] : nullptr);
 
-	bool alfredDetected = false;
-	if (isAlfredUnder(_events->_mouseX, _events->_mouseY)) {
-		alfredDetected = true;
-	}
+
 	// Check if walk target hits any exit
 	bool exitDetected = false;
 	Exit *exit = isExitUnder(walkTarget.x, walkTarget.y);

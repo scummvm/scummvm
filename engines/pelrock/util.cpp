@@ -68,7 +68,7 @@ void drawText(byte *screenBuffer, Graphics::Font *font, Common::String text, int
 	int bboxH = rect.height();
 
 	surface.create(bboxW, bboxH, Graphics::PixelFormat::createFormatCLUT8());
-
+	surface.fillRect(Common::Rect(0, 0, bboxW, bboxH), 255);
 	if (x + bboxW > 640) {
 		x = 640 - bboxW - 2;
 	}
@@ -89,7 +89,7 @@ void drawText(byte *screenBuffer, Graphics::Font *font, Common::String text, int
 		for (int px = 0; px < bboxW; px++) {
 			int destIdx = (y + py) * 640 + (x + px);
 			int pixelColor = *((byte *)surface.getBasePtr(px, py));
-			if (pixelColor != 0)
+			if(pixelColor != 255)
 				screenBuffer[destIdx] = pixelColor;
 		}
 	}
