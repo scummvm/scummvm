@@ -839,19 +839,21 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 						break;
 					}
 					_alfredState.setState(ALFRED_INTERACTING);
+					// Don't check exits when there's a queued action - action executes first
+					break;
+				}
+
+				// Only check exits after walking is complete AND no queued action
+				Exit *exit = isExitUnder(_alfredState.x, _alfredState.y);
+				if (exit != nullptr) {
+					debug("Using exit to room %d", exit->targetRoom);
+					_alfredState.x = exit->targetX;
+					_alfredState.y = exit->targetY;
+					setScreen(exit->targetRoom, exit->dir);
 				}
 			}
 		} else {
 			_currentContext.movementBuffer[_currentStep] = step;
-		}
-
-		Exit *exit = isExitUnder(_alfredState.x, _alfredState.y);
-
-		if (exit != nullptr /*&& exit->isEnabled*/) {
-			debug("Using exit to room %d", exit->targetRoom);
-			_alfredState.x = exit->targetX;
-			_alfredState.y = exit->targetY;
-			setScreen(exit->targetRoom, exit->dir);
 		}
 
 		if (_alfredState.curFrame >= walkingAnimLengths[_alfredState.direction]) {
@@ -1336,8 +1338,9 @@ int PelrockEngine::isHotspotUnder(int x, int y) {
 Exit *PelrockEngine::isExitUnder(int x, int y) {
 	for (uint i = 0; i < _room->_currentRoomExits.size(); i++) {
 		Exit exit = _room->_currentRoomExits[i];
-		if (x >= exit.x && x <= (exit.x + exit.w) &&
-			y >= exit.y && y <= (exit.y + exit.h) && exit.isEnabled) {
+		// Original game uses: x <= exit.x + exit.w - 1 and y <= exit.y + exit.h - 1
+		if (x >= exit.x && x <= (exit.x + exit.w - 1) &&
+			y >= exit.y && y <= (exit.y + exit.h - 1) && exit.isEnabled) {
 			return &(_room->_currentRoomExits[i]);
 		}
 	}
