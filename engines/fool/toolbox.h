@@ -75,6 +75,12 @@ struct Common::Hash<Fool::PicHandle> {
 
 namespace Fool {
 
+// TYPE BOOLEAN: int16
+// TYPE INTEGER: int16
+// TYPE LONGINT: int32
+// TYPE CHAR: int16
+// TYPE Rect: top: INTEGER; left: INTEGER; bottom: INTEGER; right: INTEGER;
+// TYPE Point: v: INTEGER; h: INTEGER;
 
 // In QuickDraw 0 means white and 1 means black
 struct Pattern {
@@ -180,7 +186,6 @@ struct WindowRecord {
 	uint16 windowKind;
 };
 
-// TYPE Rect: top: INTEGER; left: INTEGER; bottom: INTEGER; right: INTEGER;
 
 struct ToolboxResInfo {
 	int16 fileID;
@@ -198,7 +203,9 @@ struct FontInfo {
 };
 
 
+typedef uint32 OSType;
 typedef uint16 OSErr;
+typedef uint32 ProcPtr;
 
 struct ParamBlockRec {
 	uint32 qLink = 0;
@@ -210,6 +217,19 @@ struct ParamBlockRec {
 	Common::String ioNamePtr;
 	uint16 ioVRefNum = 0;
 };
+
+struct SFTypeList {
+	OSType types[4];
+};
+
+struct SFReply {
+	bool good; // 0
+	bool copy; // 1
+	OSType fType; // 2
+	int16 vRefNum; // 6
+	int16 version; // 8
+	Common::String fName; // 10
+}; // total: 76
 
 class Toolbox {
 
@@ -243,9 +263,17 @@ public:
 	uint32 TickCount();
 
 	// toolbox_fileman.cpp
+	void Pack3();
+
 	void PBGetVol(ParamBlockRec &paramBlock);
 
 	void PBSetVol(ParamBlockRec &paramBlock);
+
+	void SFGetFile(const Common::Point &where, const Common::U32String &prompt, ProcPtr fileFilter, int16 numTypes, const SFTypeList &typeList, const ProcPtr &dlgHook, SFReply &reply);
+
+	// PROCEDURE SFPutFile (where: Point; prompt: Str255; origName:
+	// Str255; dlgHook: ProcPtr; VAR reply: SFReply);
+	void SFPutFile(const Common::Point &where, const Common::U32String &prompt, const Common::U32String &origName, const ProcPtr &dlgHook, SFReply &reply);
 
 	// toolbox_resman.cpp
 
@@ -395,6 +423,14 @@ public:
 	// procedure draws the picture that you specify in the myPicture parameter.
 	void DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect);
 
+	// PROCEDURE EraseRoundRect (r: Rect; ovalWidth,ovalHeight: Integer);
+	// Using the patCopy pattern mode, the EraseRoundRect procedure draws the interior of
+	// the rounded rectangle bounded by the rectangle that you specify in the r parameter with
+	// the background pattern of the current graphics port. This effectively erases the rounded
+	// rectangle. Use the ovalWidth and ovalHeight parameters to specify the diameters of
+	// curvature for the corners of the rounded rectangle.
+	void EraseRoundRect(const Common::Rect &r, int16 ovalWidth, int16 ovalHeight);
+
 	// PROCEDURE EndUpdate (theWindow: WindowPtr);
 	// Call EndUpdate to restore the normal visRgn of theWindow's grafPort, which was changed by
 	// BeginUpdate as described above.
@@ -431,6 +467,13 @@ public:
 	// location is not changed by this procedure.
 	void FrameRect(const Common::Rect &r);
 
+	// PROCEDURE FrameRoundRect (r: Rect; ovalWidth,ovalHeight: Integer);
+	// Using the pattern, pattern mode, and size of the graphics pen for the current graphics
+	// port, the FrameRoundRect procedure draws an outline just inside the rounded
+	// rectangle bounded by the rectangle that you specify in the r parameter. The outline is as
+	// wide as the pen width and as tall as the pen height. The pen location does not change.
+	void FrameRoundRect(const Common::Rect &r, int16 ovalWidth, int16 ovalHeight);
+
 	// PROCEDURE GetCPixel (h,v: INTEGER; VAR cPix: RGBColor);
 	// The GetCPixel function returns the RGB of the pixel at the specified position in the current
 	// port.
@@ -450,6 +493,12 @@ public:
 	// the resource can't be read, GetPicture returns NIL. The PicHandle data type is defined in
 	// QuickDraw.
 	PicHandle GetPicture(uint16 picID);
+
+	// PROCEDURE GlobalToLocal (VAR pt: Point);
+	// GlobalToLocal takes a point expressed in global coordinates (with the top left corner of the bit
+	// image as coordinate (0,0)) and converts it into the local coordinates of the current grafPort. The
+	// global point can be obtained with the LocalToGlobal call (see above).
+	void GlobalToLocal(Common::Point &pt);
 
 	// PROCEDURE HideCursor;
 	// HideCursor removes the cursor from the screen, restoring the bits under it, and decrements the
@@ -483,6 +532,14 @@ public:
 	// ignored; the pen location is not changed.
 	void InvertRect(const Common::Rect &r);
 
+	// PROCEDURE InvertRoundRect (r: Rect; ovalWidth, ovalHeight: Integer);
+	// The InvertRoundRect procedure inverts the pixels enclosed by the rounded rectangle
+	// bounded by the rectangle that you specify in the r parameter. Every white pixel becomes
+	// black and every black pixel becomes white. The ovalWidth and ovalHeight
+	// parameters specify the diameters of curvature for the corners. The pen location does not
+	// change.
+	void InvertRoundRect(const Common::Rect &r, int16 ovalWidth, int16 ovalHeight);
+
 	// PROCEDURE KillPoly (poly: PolyHandle);
 	// KillPoly releases the memory occupied by the given polygon. Use this only when you're completely
 	// through with a polygon.
@@ -492,6 +549,13 @@ public:
 	// LineTo draws a line from the current pen location to the location specified (in local coordinates)
 	// by h and v. The new pen location is (h,v) after the line is drawn.
 	void LineTo(int16 h, int16 v);
+
+	// PROCEDURE LocalToGlobal (VAR pt: Point);
+	// LocalToGlobal converts the given point from the current grafPort's local coordinate system into a
+	// global coordinate system with the origin (0,0) at the top left corner of the port's bit image (such
+	// as the screen). This global point can then be compared to other global points, or be changed into
+	// the local coordinates of another grafPort.
+	void LocalToGlobal(Common::Point &pt);
 
 	// PROCEDURE Move (dh,dv: INTEGER);
 	// The Move procedure moves the graphics pen from its current location in the current
@@ -543,6 +607,13 @@ public:
 	// rectangle is filled with the pnPat, according to the pattern transfer mode specified by pnMode.
 	// The pen location is not changed by this procedure.
 	void PaintRect(const Common::Rect &r);
+
+	// PROCEDURE PaintRoundRect (r: Rect; ovalWidth,ovalHeight: Integer);
+	// Using the pattern and pattern mode of the graphics pen for the current graphics port, the
+	// PaintRoundRect procedure draws the interior of the rounded rectangle bounded by
+	// the rectangle that you specify in the r parameter. Use the ovalWidth and ovalHeight
+	// parameters to specify the diameters of curvature for the corners of the rounded rectangle.
+	void PaintRoundRect(const Common::Rect &r, int16 ovalWidth, int16 ovalHeight);
 
 	// PROCEDURE PenMode (mode: INTEGER);
 	// PenMode sets the transfer mode through which the pen pattern is transferred onto the bit map
