@@ -122,12 +122,12 @@ void EclipseEngine::loadAssetsCPCFullGame() {
 		loadFonts(&file, 0x60bc);
 		loadMessagesFixedSize(&file, 0x326, 16, 34);
 		load8bitBinary(&file, 0x62b4, 16);
-		loadSoundsCPC(&file, 0x0879, 104, 0x08E1, 165, 0x07E6, 147);
+		_sound = loadSoundsCPC(&file, 0x0879, 104, 0x08E1, 165, 0x07E6, 147);
 	} else {
 		loadFonts(&file, 0x6076);
 		loadMessagesFixedSize(&file, 0x326, 16, 30);
 		load8bitBinary(&file, 0x626e, 16);
-		loadSoundsCPC(&file, 0x07C9, 104, 0x0831, 165, 0x0736, 147);
+		_sound = loadSoundsCPC(&file, 0x07C9, 104, 0x0831, 165, 0x0736, 147);
 	}
 
 	loadColorPalette();
@@ -169,7 +169,7 @@ void EclipseEngine::loadAssetsCPCDemo() {
 	loadMessagesFixedSize(&file, 0x362, 16, 23);
 	loadMessagesFixedSize(&file, 0x570b, 264, 5);
 	load8bitBinary(&file, 0x65c6, 16);
-	loadSoundsCPC(&file, 0x0805, 104, 0x086D, 165, 0x0772, 147);
+	_sound = loadSoundsCPC(&file, 0x0805, 104, 0x086D, 165, 0x0772, 147);
 	loadColorPalette();
 	swapPalette(1);
 	loadHeartFramesCPC(&file, 0x0D17, 0x0D49);
