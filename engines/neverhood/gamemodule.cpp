@@ -330,6 +330,8 @@ void GameModule::initCrystalColorsPuzzle() {
 }
 
 uint32 GameModule::getCurrRadioMusicFileHash() {
+	if (!getGlobalVar(V_RADIO_ENABLED))
+		return 0;
 	uint musicIndex = getGlobalVar(V_CURR_RADIO_MUSIC_INDEX);
 	return (musicIndex % 5 != 0) ? 0 : kRadioMusicFileHashes[CLIP<uint>(musicIndex / 5, 0, 17)];
 }
