@@ -102,12 +102,12 @@ void EclipseEngine::loadAssetsCPCFullGame() {
 		loadFonts(&file, 0x60bc);
 		loadMessagesFixedSize(&file, 0x326, 16, 30);
 		load8bitBinary(&file, 0x62b4, 16);
-		// TODO: loadSoundsCPC for Eclipse 2 - need to determine table offsets from TE2.BI2
+		// TODO: _sound = loadSoundsCPC for Eclipse 2 - need to determine table offsets from TE2.BI2
 	} else {
 		loadFonts(&file, 0x6076);
 		loadMessagesFixedSize(&file, 0x326, 16, 30);
 		load8bitBinary(&file, 0x626e, 16);
-		// TODO: loadSoundsCPC for full game - need to determine table offsets from TECODE.BIN
+		// TODO: _sound = loadSoundsCPC for full game - need to determine table offsets from TECODE.BIN
 	}
 
 	loadColorPalette();
@@ -139,7 +139,7 @@ void EclipseEngine::loadAssetsCPCDemo() {
 	loadMessagesFixedSize(&file, 0x362, 16, 23);
 	loadMessagesFixedSize(&file, 0x570b, 264, 5);
 	load8bitBinary(&file, 0x65c6, 16);
-	loadSoundsCPC(&file, 0x0805, 104, 0x086D, 165, 0x0772, 147);
+	_sound = loadSoundsCPC(&file, 0x0805, 104, 0x086D, 165, 0x0772, 147);
 	loadColorPalette();
 	swapPalette(1);
 

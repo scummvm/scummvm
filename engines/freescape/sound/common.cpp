@@ -66,9 +66,6 @@ void FreescapeEngine::playSound(int index, bool sync, Audio::SoundHandle &handle
 	} else if (isSpectrum()) {
 		playSoundZX(index, handle);
 		return;
-	} else if (isCPC()) {
-		playSoundCPC(index, handle);
-		return;
 	}
 
 	Common::Path filename;
@@ -148,7 +145,7 @@ bool FreescapeEngine::isPlayingSound() {
 	if (_sound)
 		return _sound->isPlayingSound();
 
-	if (_usePrerecordedSounds || isAmiga() || isAtariST() || isCPC())
+	if (_usePrerecordedSounds || isAmiga() || isAtariST())
 		return _mixer->isSoundHandleActive(_soundFxHandle);
 
 	return (!_speaker->endOfStream());

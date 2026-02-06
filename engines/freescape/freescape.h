@@ -497,7 +497,6 @@ public:
 	uint16 playSoundDOSSpeaker(uint16 startFrequency, soundSpeakerFx *speakerFxInfo);
 	void playSoundDOS(soundSpeakerFx *speakerFxInfo, bool sync, Audio::SoundHandle &handle);
 
-	void playSoundCPC(int index, Audio::SoundHandle &handle);
 	virtual void playSoundC64(int index);
 	virtual void playSoundFx(int index, bool sync);
 	virtual void loadSoundsFx(Common::SeekableReadStream *file, int offset, int number);
@@ -510,10 +509,7 @@ public:
 	void playSoundZX(Common::Array<soundUnitZX> *data, Audio::SoundHandle &handle);
 	Common::HashMap<uint16, Common::Array<soundUnitZX>*> _soundsSpeakerFxZX;
 
-	void loadSoundsCPC(Common::SeekableReadStream *file, int offsetTone, int sizeTone, int offsetEnvelope, int sizeEnvelope, int offsetSoundDef, int sizeSoundDef);
-	Common::Array<byte> _soundsCPCToneTable;
-	Common::Array<byte> _soundsCPCEnvelopeTable;
-	Common::Array<byte> _soundsCPCSoundDefTable;
+	Sound *loadSoundsCPC(Common::SeekableReadStream *file, int offsetTone, int sizeTone, int offsetEnvelope, int sizeEnvelope, int offsetSoundDef, int sizeSoundDef);
 
 	void loadSoundsAmigaDemo(Common::SeekableReadStream *file, int offset, int numSounds);
 	void playSoundAmiga(int index, Audio::SoundHandle &handle);

@@ -167,7 +167,7 @@ void CastleEngine::loadAssetsCPCFullGame() {
 		case Common::EN_ANY:
 			loadRiddles(&file, 0x1b75 - 2 - 9 * 2, 9);
 			load8bitBinary(&file, 0x791a, 16);
-			loadSoundsCPC(&file, 0x21E2, 48, 0x2212, 204, 0x2179, 105);
+			_sound = loadSoundsCPC(&file, 0x21E2, 48, 0x2212, 204, 0x2179, 105);
 
 			file.seek(0x2724);
 			for (int i = 0; i < 90; i++) {
