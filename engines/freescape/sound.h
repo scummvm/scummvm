@@ -27,13 +27,6 @@
 
 namespace Freescape {
 
-struct soundFx {
-	int size;
-	float sampleRate;
-	int repetitions;
-	byte *data;
-};
-
 struct soundUnitZX {
 	bool isRaw;
 	uint16 freqTimesSeconds;
