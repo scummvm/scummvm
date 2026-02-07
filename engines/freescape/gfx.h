@@ -267,6 +267,16 @@ public:
 
 	int _scale;
 
+	// debug flags
+	bool _debugRenderBoundingBoxes;
+	int _debugBoundingBoxFilterID;
+	bool _debugRenderWireframe;
+	bool _debugRenderNormals;
+	int _debugHighlightObjectID;
+
+	// for drawing bounding boxes
+	virtual void drawAABB(const Math::AABB &aabb, uint8 r, uint8 g, uint8 b) {}
+
 	/**
 	 * Select the window where to render
 	 *

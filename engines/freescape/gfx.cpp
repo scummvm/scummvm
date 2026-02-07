@@ -50,6 +50,11 @@ Renderer::Renderer(int screenW, int screenH, Common::RenderMode renderMode, bool
 	_colorRemaps = nullptr;
 	_renderMode = renderMode;
 	_isAccelerated = false;
+	_debugRenderBoundingBoxes = false;
+	_debugBoundingBoxFilterID = -1;
+	_debugRenderWireframe = false;
+	_debugRenderNormals = false;
+	_debugHighlightObjectID = -1;
 	_authenticGraphics = authenticGraphics;
 
 	for (int i = 0; i < 16; i++) {

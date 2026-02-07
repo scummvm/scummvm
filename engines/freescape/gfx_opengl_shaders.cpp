@@ -459,6 +459,68 @@ void OpenGLShaderRenderer::drawCelestialBody(const Math::Vector3d position, floa
 	_triangleShader->unbind();
 }
 
+void OpenGLShaderRenderer::drawAABB(const Math::AABB &aabb, uint8 r, uint8 g, uint8 b) {
+	if (!aabb.isValid())
+		return;
+
+	Math::Vector3d min = aabb.getMin();
+	Math::Vector3d max = aabb.getMax();
+
+	// calculate the 8 corners of the box
+	Math::Vector3d c[8];
+	c[0] = Math::Vector3d(min.x(), min.y(), min.z());
+	c[1] = Math::Vector3d(max.x(), min.y(), min.z());
+	c[2] = Math::Vector3d(max.x(), max.y(), min.z());
+	c[3] = Math::Vector3d(min.x(), max.y(), min.z());
+	c[4] = Math::Vector3d(min.x(), min.y(), max.z());
+	c[5] = Math::Vector3d(max.x(), min.y(), max.z());
+	c[6] = Math::Vector3d(max.x(), max.y(), max.z());
+	c[7] = Math::Vector3d(min.x(), max.y(), max.z());
+
+	_triangleShader->use();
+	_triangleShader->setUniform("mvpMatrix", _mvpMatrix);
+	useColor(r, g, b);
+
+	// disable depth so we can see the box through walls
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	glLineWidth(2.0f);
+
+	// build lines (12 lines * 2 vertices = 24 vertices)
+	int idx = 0;
+
+	auto pushLine = [&](int i, int j) {
+		copyToVertexArray(idx++, c[i]);
+		copyToVertexArray(idx++, c[j]);
+	};
+
+	// bottom
+	pushLine(0, 1);
+	pushLine(1, 2);
+	pushLine(2, 3);
+	pushLine(3, 0);
+	// top
+	pushLine(4, 5);
+	pushLine(5, 6);
+	pushLine(6, 7);
+	pushLine(7, 4);
+	// sides
+	pushLine(0, 4);
+	pushLine(1, 5);
+	pushLine(2, 6);
+	pushLine(3, 7);
+
+	glBindBuffer(GL_ARRAY_BUFFER, _triangleVBO);
+	glBufferData(GL_ARRAY_BUFFER, idx * 3 * sizeof(float), _verts, GL_DYNAMIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+	glDrawArrays(GL_LINES, 0, idx);
+
+	// restore state
+	glLineWidth(1.0f);
+	glEnable(GL_DEPTH_TEST);
+}
+
 void OpenGLShaderRenderer::renderCrossair(const Common::Point &crossairPosition) {
 	Math::Matrix4 identity;
 	identity(0, 0) = 1.0;
@@ -511,6 +573,11 @@ void OpenGLShaderRenderer::renderFace(const Common::Array<Math::Vector3d> &verti
 	_triangleShader->use();
 	_triangleShader->setUniform("mvpMatrix", _mvpMatrix);
 
+	if (_debugRenderWireframe) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		useColor(0, 255, 0);
+	}
+
 	if (vertices.size() == 2) {
 		const Math::Vector3d &v1 = vertices[1];
 		if (v0 == v1)
@@ -527,6 +594,8 @@ void OpenGLShaderRenderer::renderFace(const Common::Array<Math::Vector3d> &verti
 		glDrawArrays(GL_LINES, 0, 2);
 
 		glLineWidth(1);
+		if (_debugRenderWireframe)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		return;
 	}
 
@@ -544,6 +613,32 @@ void OpenGLShaderRenderer::renderFace(const Common::Array<Math::Vector3d> &verti
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
 
 	glDrawArrays(GL_TRIANGLES, 0, vi + 3);
+
+	if (_debugRenderNormals && vertices.size() >= 3) {
+		// calculate center
+		Math::Vector3d center(0, 0, 0);
+		for (auto &v : vertices) center += v;
+		center /= (float)vertices.size();
+
+		// calculate normal vector
+		Math::Vector3d v1 = vertices[1] - vertices[0];
+		Math::Vector3d v2 = vertices[2] - vertices[0];
+		Math::Vector3d normal = Math::Vector3d::crossProduct(v1, v2);
+		normal.normalize();
+		Math::Vector3d tip = center + (normal * 50.0f);
+
+		// upload normal line
+		copyToVertexArray(0, center);
+		copyToVertexArray(1, tip);
+
+		useColor(255, 0, 255); // pink
+
+		glBufferData(GL_ARRAY_BUFFER, 2 * 3 * sizeof(float), _verts, GL_DYNAMIC_DRAW);
+		glDrawArrays(GL_LINES, 0, 2);
+	}
+
+	if (_debugRenderWireframe)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void OpenGLShaderRenderer::depthTesting(bool enabled) {

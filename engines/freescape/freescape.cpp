@@ -33,6 +33,7 @@
 #include "freescape/objects/sensor.h"
 #include "freescape/sweepAABB.h"
 #include "freescape/doodle.h"
+#include "freescape/debugger.h"
 
 namespace Freescape {
 
@@ -232,6 +233,8 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	ConfMan.setInt("gamepad_controller_directional_input", 1 /* kDirectionalInputDpad */, gameDomain);
 #endif
 	g_freescape = this;
+	g_debugger = new Debugger(g_freescape);
+	setDebugger(g_debugger);
 }
 
 FreescapeEngine::~FreescapeEngine() {

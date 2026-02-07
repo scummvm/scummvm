@@ -73,6 +73,7 @@ public:
 	int _variableStippleArray[128];
 
 	virtual void init() override;
+	virtual void drawAABB(const Math::AABB &aabb, uint8 r, uint8 g, uint8 b) override;
 	virtual void clear(uint8 r, uint8 g, uint8 b, bool ignoreViewport = false) override;
 	virtual void setViewport(const Common::Rect &rect) override;
 	virtual Common::Point nativeResolution() override;

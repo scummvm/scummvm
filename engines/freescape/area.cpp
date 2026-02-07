@@ -361,11 +361,33 @@ void Area::draw(Freescape::Renderer *gfx, uint32 animationTicks, Math::Vector3d 
 	}
 
 	for (auto &obj : nonPlanarObjects) {
+		if (gfx->_debugHighlightObjectID != -1 && obj->getObjectID() != gfx->_debugHighlightObjectID)
+			continue;
+
 		obj->draw(gfx);
+
+		// draw bounding boxes
+		if (gfx->_debugRenderBoundingBoxes) {
+			if (gfx->_debugBoundingBoxFilterID == -1 || gfx->_debugBoundingBoxFilterID == obj->getObjectID()) {
+				gfx->drawAABB(obj->_boundingBox, 0, 255, 0);
+			}
+		}
 	}
 
 	for (auto &pair : offsetMap) {
-		pair._key->draw(gfx, pair._value);
+		Object *obj = pair._key;
+
+		if (gfx->_debugHighlightObjectID != -1 && obj->getObjectID() != gfx->_debugHighlightObjectID)
+			continue;
+
+		obj->draw(gfx, pair._value);
+
+		// draw bounding boxes
+		if (gfx->_debugRenderBoundingBoxes) {
+			if (gfx->_debugBoundingBoxFilterID == -1 || gfx->_debugBoundingBoxFilterID == obj->getObjectID()) {
+				gfx->drawAABB(obj->_boundingBox, 0, 255, 0);
+			}
+		}
 	}
 
 	_lastTick = animationTicks;

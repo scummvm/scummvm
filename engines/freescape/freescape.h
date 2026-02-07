@@ -51,6 +51,7 @@ class RandomSource;
 namespace Freescape {
 
 class Renderer;
+class Debugger;
 
 #define FREESCAPE_DATA_BUNDLE "freescape.dat"
 
@@ -654,6 +655,7 @@ enum GameReleaseFlags {
 };
 
 extern FreescapeEngine *g_freescape;
+extern Debugger *g_debugger;
 
 } // namespace Freescape
 
