@@ -4,16 +4,14 @@
 #include "po_parser.h"
 #include <iostream>
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/util.h"
+
 // List of languages to look for. To add new languages you only need to change the array below
 // and add the supporting files:
 //   - 640x480 bitmap picture for the newpaper named 'img1-##.pbm' and 'img2-##.pbm'
 //     in pbm binary format (you can use gimp to generate those)
 //   - strings in a po file named 'strings-##.po' that uses CP850 encoding
-
-#ifndef ARRAYSIZE
-template<typename T, size_t N>
-constexpr size_t ARRAYSIZE(const T (&)[N]) { return N; }
-#endif
 
 const char *lang[] = {
 	"en",

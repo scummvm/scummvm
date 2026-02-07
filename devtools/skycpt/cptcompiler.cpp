@@ -26,6 +26,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+//Including common/util.h would cause type declaration conflicts
+#ifndef ARRAYSIZE
+#define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
+#endif
+
 uint32 crop(char *line);
 uint16 findCptId(char *name, TextFile *cptFile);
 
@@ -33,11 +38,6 @@ uint16 findCptId(char *name, TextFile *cptFile);
 #define MAX_OBJ_SIZE (0x2000 * 2)
 #define NUM_DATA_LISTS 9
 #define ASCII_SIZE (65536 * 2)
-
-#ifndef ARRAYSIZE
-template<typename T, size_t N>
-constexpr size_t ARRAYSIZE(const T (&)[N]) { return N; }
-#endif
 
 enum CptType {
 	PTR_NULL = 0,
