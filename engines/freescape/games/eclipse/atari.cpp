@@ -846,7 +846,7 @@ void EclipseEngine::loadAssetsAtariFullGame() {
 		memcpy(pal, kBorderPalette, 6 * 3);
 	}
 
-	loadSoundsFx(stream, 0x3030c, 6);
+	_sound = loadSoundsFx(stream, 0x3030c, 6);
 
 	// Load TEMUSIC.ST (GEMDOS executable at file offset $11F5A, skip $1C header, TEXT size $11E8)
 	static const uint32 kTEMusicOffset = 0x11F5A;

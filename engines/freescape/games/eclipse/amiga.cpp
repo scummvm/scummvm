@@ -72,7 +72,7 @@ void EclipseEngine::loadAssetsAmigaFullGame() {
 		memcpy(pal, kBorderPalette, 6 * 3);
 	}
 
-	loadSoundsFx(stream, 0x3030c + kAmigaDelta, 6);
+	_sound = loadSoundsFx(stream, 0x3030c + kAmigaDelta, 6);
 
 	// Load TEMUSIC.AM — Wally Beben custom Paula engine (same family as Dark Side)
 	// GEMDOS executable embedded at stream offset 0x10F5E, TEXT size 0xEB20

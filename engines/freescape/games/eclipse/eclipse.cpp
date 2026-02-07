@@ -127,6 +127,13 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_atariAreaDark = false;
 	_resting = false;
 	_flashlightOn = false;
+
+	_soundFx = nullptr;
+}
+
+EclipseEngine::~EclipseEngine() {
+	if (_soundFx)
+		delete _soundFx;
 }
 
 void EclipseEngine::stopBackgroundMusic() {
