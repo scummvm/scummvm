@@ -95,6 +95,13 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_lastSecond = -1;
 	_resting = false;
 	_flashlightOn = false;
+
+	_soundFx = nullptr;
+}
+
+EclipseEngine::~EclipseEngine() {
+	if (_soundFx)
+		delete _soundFx;
 }
 
 void EclipseEngine::initGameState() {

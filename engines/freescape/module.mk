@@ -57,6 +57,8 @@ MODULE_OBJS := \
 	sound/common.o \
 	sound/cpc.o \
 	sound/dos.o \
+	sound/fx.o \
+	sound/fx_dos.o \
 	sound/zx.o \
 	ui.o \
 	unpack.o \

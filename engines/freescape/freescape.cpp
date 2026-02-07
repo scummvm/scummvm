@@ -315,13 +315,6 @@ FreescapeEngine::~FreescapeEngine() {
 		delete it;
 	}
 
-	for (auto &it : _soundsFx) {
-		if (it._value) {
-			free(it._value->data);
-			free(it._value);
-		}
-	}
-
 	if (_savedScreen) {
 		_savedScreen->free();
 		delete _savedScreen;

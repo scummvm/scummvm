@@ -21,7 +21,6 @@
 
 #include "common/file.h"
 #include "audio/audiostream.h"
-#include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
 
 #include "freescape/freescape.h"
@@ -47,11 +46,6 @@ void FreescapeEngine::playSound(int index, bool sync, Audio::SoundHandle &handle
 
 	if (isC64()) {
 		playSoundC64(index);
-		return;
-	}
-
-	if (isAmiga() || isAtariST()) {
-		playSoundFx(index, sync);
 		return;
 	}
 
@@ -99,35 +93,6 @@ void FreescapeEngine::playMusic(const Common::Path &filename) {
 	}
 }
 
-void FreescapeEngine::playSoundFx(int index, bool sync) {
-	if (!_amigaSfxTable.empty()) {
-		playSoundAmiga(index, _soundFxHandle);
-		return;
-	}
-
-	if (_soundsFx.size() == 0) {
-		debugC(1, kFreescapeDebugMedia, "WARNING: Sounds are not loaded");
-		return;
-	}
-
-	if (index < 0 || index >= int(_soundsFx.size())) {
-		debugC(1, kFreescapeDebugMedia, "WARNING: Sound %d not available", index);
-		return;
-	}
-
-	int size = _soundsFx[index]->size;
-	int sampleRate = _soundsFx[index]->sampleRate;
-	int repetitions = _soundsFx[index]->repetitions;
-	byte *data = _soundsFx[index]->data;
-
-	if (size > 4) {
-		Audio::SeekableAudioStream *s = Audio::makeRawStream(data, size, sampleRate, Audio::FLAG_16BITS, DisposeAfterUse::NO);
-		Audio::AudioStream *stream = new Audio::LoopingAudioStream(s, repetitions);
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, stream);
-	} else
-		debugC(1, kFreescapeDebugMedia, "WARNING: Sound %d is empty", index);
-}
-
 void FreescapeEngine::stopAllSounds(Audio::SoundHandle &handle) {
 	debugC(1, kFreescapeDebugMedia, "Stopping sound");
 	if (_sound)
@@ -145,31 +110,10 @@ bool FreescapeEngine::isPlayingSound() {
 	if (_sound)
 		return _sound->isPlayingSound();
 
-	if (_usePrerecordedSounds || isAmiga() || isAtariST())
+	if (_usePrerecordedSounds)
 		return _mixer->isSoundHandleActive(_soundFxHandle);
 
 	return (!_speaker->endOfStream());
-}
-
-void FreescapeEngine::loadSoundsFx(Common::SeekableReadStream *file, int offset, int number) {
-	file->seek(offset);
-	soundFx *sound = nullptr;
-	_soundsFx[0] = sound;
-	for (int i = 1; i < number + 1; i++) {
-		sound = (soundFx *)malloc(sizeof(soundFx));
-		int zero = file->readUint16BE();
-		assert(zero == 0);
-		int size = file->readUint16BE();
-		float sampleRate = float(file->readUint16BE()) / 2;
-		debugC(1, kFreescapeDebugParser, "Loading sound: %d (size: %d, sample rate: %f) at %" PRIx64, i, size, sampleRate, file->pos());
-		byte *data = (byte *)malloc(size * sizeof(byte));
-		file->read(data, size);
-		sound->sampleRate = sampleRate;
-		sound->size = size;
-		sound->data = (byte *)data;
-		sound->repetitions = 1;
-		_soundsFx[i] = sound;
-	}
 }
 
 } // namespace Freescape
