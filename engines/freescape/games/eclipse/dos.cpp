@@ -122,7 +122,7 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 
 		loadMessagesFixedSize(&file, 0x710f, 16, 20);
 		_soundFx = loadSoundsFxDOS(&file, 0xd670, 5);
-		loadSpeakerFxDOS(&file, 0x7396 + 0x200, 0x72a1 + 0x200, 20);
+		_sound = loadSpeakerFxDOS(&file, 0x7396 + 0x200, 0x72a1 + 0x200, 20);
 		loadFonts(&file, 0xd403);
 		load8bitBinary(&file, 0x3ce0, 16);
 
@@ -150,7 +150,7 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 
 		loadMessagesFixedSize(&file, 0x594f, 16, 20);
 		_soundFx = loadSoundsFxDOS(&file, 0xb9f0, 5);
-		loadSpeakerFxDOS(&file, 0x5BD6 + 0x200, 0x5AE1 + 0x200, 20);
+		_sound = loadSpeakerFxDOS(&file, 0x5BD6 + 0x200, 0x5AE1 + 0x200, 20);
 		loadFonts(&file, 0xb785);
 		load8bitBinary(&file, 0x2530, 4);
 		_border = load8bitBinImage(&file, 0x210);

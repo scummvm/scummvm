@@ -20,19 +20,56 @@
  */
 
 #include "freescape/freescape.h"
-#include "freescape/games/eclipse/eclipse.h"
 
 namespace Freescape {
 
-void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxTable, int sfxData) {
+struct soundUnitZX {
+	bool isRaw;
+	uint16 freqTimesSeconds;
+	uint16 tStates;
+	float rawFreq;
+	uint32 rawLengthus;
+	float multiplier;
+};
+
+// TODO: Migrate to Audio::PCSpeaker
+class SoundZX : public Sound {
+public:
+	SoundZX(Audio::Mixer *mixer) : _mixer(mixer) {
+		_speaker = new SizedPCSpeaker();
+	}
+
+	~SoundZX() {
+		delete _speaker;
+	}
+
+	void loadSpeakerFx(Common::SeekableReadStream *file, int sfxTable, int sfxData, int numberSounds);
+
+	void playSound(int index) override {
+		playSoundZX(_soundsSpeakerFxZX[index]);
+	}
+
+	void stopSound() override {
+		_mixer->stopHandle(_soundFxHandle);
+	}
+
+	bool isPlayingSound() const override {
+		return !_speaker->endOfStream();
+	}
+
+protected:
+	void playSoundZX(Common::Array<soundUnitZX> *data);
+
+private:
+	Common::HashMap<uint16, Common::Array<soundUnitZX>*> _soundsSpeakerFxZX;
+
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _soundFxHandle;
+	SizedPCSpeaker *_speaker;
+};
+
+void SoundZX::loadSpeakerFx(Common::SeekableReadStream *file, int sfxTable, int sfxData, int numberSounds) {
 	debugC(1, kFreescapeDebugParser, "Reading sound table for ZX");
-	int numberSounds = 25;
-
-	if (isDark())
-		numberSounds = 34;
-
-	if (isEclipse() && (_variant & GF_ZX_DEMO_MICROHOBBY))
-		numberSounds = 21;
 
 	for (int i = 1; i < numberSounds; i++) {
 		debugC(1, kFreescapeDebugParser, "Reading sound table entry: %d ", i);
@@ -227,7 +264,7 @@ void FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxT
 	//assert(0);
 }
 
-void FreescapeEngine::playSoundZX(Common::Array<soundUnitZX> *data, Audio::SoundHandle &handle) {
+void SoundZX::playSoundZX(Common::Array<soundUnitZX> *data) {
 	for (auto &it : *data) {
 		soundUnitZX value = it;
 
@@ -253,11 +290,123 @@ void FreescapeEngine::playSoundZX(Common::Array<soundUnitZX> *data, Audio::Sound
 	}
 
 	_mixer->stopHandle(_soundFxHandle);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, _speaker, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, _speaker, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 }
 
-void FreescapeEngine::playSoundZX(int index, Audio::SoundHandle &handle) {
-	playSoundZX(_soundsSpeakerFxZX[index], handle);
+Sound *FreescapeEngine::loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxTable, int sfxData, int numberSounds) {
+	SoundZX *sound = new SoundZX(_mixer);
+	sound->loadSpeakerFx(file, sfxTable, sfxData, numberSounds);
+	return sound;
+}
+
+class SoundDrillerZX final : public SoundZX {
+public:
+	SoundDrillerZX(Audio::Mixer *mixer) : SoundZX(mixer) {}
+
+	void playSound(int index) override;
+};
+
+void SoundDrillerZX::playSound(int index) {
+	debugC(1, kFreescapeDebugMedia, "Playing Driller ZX sound %d", index);
+	Common::Array<soundUnitZX> soundUnits;
+
+	auto addTone = [&](uint16 hl, uint16 de, float multiplier) {
+		soundUnitZX s;
+		s.isRaw = false;
+		s.tStates = hl; // HL determines period
+		s.freqTimesSeconds = de; // DE determines duration (number of cycles)
+		s.multiplier = multiplier;
+		soundUnits.push_back(s);
+	};
+
+	// Linear Sweep: Period increases -> Pitch decreases
+	auto addSweep = [&](uint16 startHl, uint16 endHl, uint16 step, uint16 duration) {
+		for (uint16 hl = startHl; hl < endHl; hl += step) {
+			addTone(hl, duration, 10.0f);
+		}
+	};
+
+	// Zap effect: Decreasing Period (E decrements) -> Pitch increases
+	auto addZap = [&](uint16 startE, uint16 endE, uint16 duration) {
+		for (uint16 e = startE; e > endE; e--) {
+			// Map E (delay loops) to HL (tStates)
+			// Small E -> Short Period -> High Freq
+			uint16 hl = (24 + e) * 4;
+			addTone(hl, duration, 10.0f);
+		}
+	};
+
+	// Sweep Down: Increasing Period (E increments) -> Pitch decreases
+	auto addSweepDown = [&](uint16 startE, uint16 endE, uint16 step, uint16 duration, float multiplier) {
+		for (uint16 e = startE; e < endE; e += step) {
+			uint16 hl = (24 + e) * 4;
+			addTone(hl, duration, multiplier);
+		}
+	};
+
+	switch (index) {
+	case 1: // Shoot (FUN_95A1 -> 95AF)
+		// Laser: High Pitch -> Low Pitch
+		// Adjusted pitch to be even lower (0x200-0x600 is approx 850Hz-280Hz)
+		addSweepDown(0x200, 0x600, 20, 1, 2.0f);
+		break;
+	case 2: // Collide/Bump (FUN_95DE)
+		// Low tone sequence
+		addTone(0x93c, 0x40, 10.0f); // 64 cycles ~340ms
+		addTone(0x7a6, 0x30, 10.0f); // 48 cycles
+		break;
+	case 3: // Step (FUN_95E5)
+		// Short blip
+		// Increased duration significantly again (0xC0 = 192 cycles)
+		addTone(0x7a6, 0xC0, 10.0f);
+		break;
+	case 4: // Silence (FUN_95F7)
+		break;
+	case 5: // Area Change? (FUN_95F8)
+		addTone(0x1f0, 0x60, 10.0f); // High pitch, longer
+		break;
+	case 6: // Menu (Silence?) (FUN_9601)
+		break;
+	case 7: // Hit? (Sweep FUN_9605)
+		// Sweep down (Period increases)
+		addSweep(0x200, 0xC00, 64, 2);
+		break;
+	case 8: // Zap (FUN_961F)
+		// Zap: Low -> High
+		addZap(0xFF, 0x10, 2);
+		break;
+	case 9: // Sweep (FUN_9673)
+		addSweep(0x100, 0x600, 16, 4);
+		break;
+	case 10: // Area Change (FUN_9696)
+		addSweep(0x100, 0x500, 16, 4);
+		break;
+	case 11: // Explosion (FUN_96B9)
+		{
+			soundUnitZX s;
+			s.isRaw = true;
+			s.rawFreq = 0.0f; // Noise
+			s.rawLengthus = 100000; // 100ms noise
+			soundUnits.push_back(s);
+		}
+		break;
+	case 12: // Sweep Down (FUN_96E4)
+		addSweepDown(0x01, 0xFF, 1, 2, 10.0f);
+		break;
+	case 13: // Fall? (FUN_96FD)
+		addSweep(300, 800, 16, 2);
+		break;
+	default:
+		debugC(1, kFreescapeDebugMedia, "Unknown Driller ZX sound %d", index);
+		break;
+	}
+
+	playSoundZX(&soundUnits);
+}
+
+Sound *FreescapeEngine::loadSpeakerFxDrillerZX() {
+	SoundZX *sound = new SoundDrillerZX(_mixer);
+	return sound;
 }
 
 } // namespace Freescape

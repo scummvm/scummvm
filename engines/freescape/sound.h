@@ -23,27 +23,8 @@
 #define FREESCAPE_SOUND_H
 
 #include "audio/softsynth/pcspk.h"
-#include "common/array.h"
 
 namespace Freescape {
-
-struct soundUnitZX {
-	bool isRaw;
-	uint16 freqTimesSeconds;
-	uint16 tStates;
-	float rawFreq;
-	uint32 rawLengthus;
-	float multiplier;
-};
-
-struct soundSpeakerFx {
-	uint16 frequencyStart;
-	uint8 frequencyDuration;
-	uint8 frequencyStepsNumber;
-	uint16 frequencyStep;
-	uint8 repetitions;
-	Common::Array<struct soundSpeakerFx *>additionalSteps;
-};
 
 struct AmigaSfxEntry {
 	byte priority;

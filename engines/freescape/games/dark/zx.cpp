@@ -76,7 +76,7 @@ void DarkEngine::loadAssetsZXFullGame() {
 	loadFonts(&file, 0x5d60 - 6);
 	loadGlobalObjects(&file, 0x1a, 23);
 	load8bitBinary(&file, 0x5ec0 - 4, 4);
-	loadSpeakerFxZX(&file, 0x9c1, 0xa55);
+	_sound = loadSpeakerFxZX(&file, 0x9c1, 0xa55, 34);
 
 	_indicators.push_back(loadBundledImage("dark_fallen_indicator"));
 	_indicators.push_back(loadBundledImage("dark_crouch_indicator"));
@@ -110,7 +110,7 @@ void DarkEngine::loadAssetsZXDemo() {
 
 	loadMessagesFixedSize(&file, 0x56b, 16, 27);
 	loadMessagesFixedSize(&file, 0x5761, 264, 5);
-	loadSpeakerFxZX(&file, 0x9c7, 0xa5b);
+	_sound = loadSpeakerFxZX(&file, 0x9c7, 0xa5b, 34);
 
 	loadFonts(&file, 0x6164);
 	loadGlobalObjects(&file, 0x20, 23);

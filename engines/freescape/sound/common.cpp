@@ -49,19 +49,6 @@ void FreescapeEngine::playSound(int index, bool sync, Audio::SoundHandle &handle
 		return;
 	}
 
-	if (isDOS()) {
-		soundSpeakerFx *speakerFxInfo = _soundsSpeakerFx[index];
-		if (speakerFxInfo)
-			playSoundDOS(speakerFxInfo, sync, handle);
-		else
-			debugC(1, kFreescapeDebugMedia, "WARNING: Sound %d is not available", index);
-
-		return;
-	} else if (isSpectrum()) {
-		playSoundZX(index, handle);
-		return;
-	}
-
 	Common::Path filename;
 	filename = Common::String::format("%s-%d.wav", _targetName.c_str(), index);
 	debugC(1,  kFreescapeDebugMedia, "Playing sound %s", filename.toString().c_str());
@@ -113,7 +100,7 @@ bool FreescapeEngine::isPlayingSound() {
 	if (_usePrerecordedSounds)
 		return _mixer->isSoundHandleActive(_soundFxHandle);
 
-	return (!_speaker->endOfStream());
+	return false;
 }
 
 } // namespace Freescape
