@@ -235,7 +235,6 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_viewArea = _fullscreenViewArea;
 	_rnd = new Common::RandomSource("freescape");
 	_gfx = nullptr;
-	_speaker = nullptr;
 	_savedScreen = nullptr;
 
 	_timerStarted = false;
@@ -308,7 +307,6 @@ FreescapeEngine::~FreescapeEngine() {
 
 	delete _gfx;
 	delete _dataBundle;
-	delete _speaker;
 
 	for (auto &it : _indicators) {
 		it->free();
@@ -815,7 +813,6 @@ Common::Error FreescapeEngine::run() {
 	//_screenW = g_system->getWidth();
 	//_screenH = g_system->getHeight();
 	_gfx = createRenderer(_screenW, _screenH, _renderMode, ConfMan.getBool("authentic_graphics"));
-	_speaker = new SizedPCSpeaker();
 	_crossairPosition.x = _screenW / 2;
 	_crossairPosition.y = _screenH / 2;
 

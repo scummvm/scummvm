@@ -151,7 +151,7 @@ void CastleEngine::loadAssetsCPCFullGame() {
 			loadRiddles(&file, 0x1470 - 4 - 2 - 9 * 2, 9);
 			loadMessagesVariableSize(&file, 0xf3d, 71);
 			load8bitBinary(&file, 0x6aab - 2, 16);
-			loadSpeakerFxZX(&file, 0xca0, 0xcdc);
+			_sound = loadSpeakerFxZX(&file, 0xca0, 0xcdc, 25);
 
 			file.seek(0x1218 + 16);
 			for (int i = 0; i < 90; i++) {

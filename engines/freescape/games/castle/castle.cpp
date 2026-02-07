@@ -1453,7 +1453,7 @@ void CastleEngine::checkSensors() {
 	}
 
 	if (!ghostInArea()) {
-		_mixer->stopHandle(_soundFxGhostHandle);
+		/*_mixer->stopHandle(_soundFxGhostHandle);*/
 		_gfx->_shakeOffset = Common::Point();
 		return;
 	}
@@ -1462,8 +1462,10 @@ void CastleEngine::checkSensors() {
 		return;
 
 	/*if (!_mixer->isSoundHandleActive(_soundFxGhostHandle)) {
-		_speaker->play(Audio::PCSpeaker::kWaveFormSquare, 25.0f, -1);
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxGhostHandle, _speaker, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+		// TODO: Reimplement inside Sound class using existing chip instances
+		SizedPCSpeaker *speaker = new SizedPCSpeaker();
+		speaker->play(Audio::PCSpeaker::kWaveFormSquare, 25.0f, -1);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxGhostHandle, speaker, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
 	}*/
 
 	// This is the frequency to shake the screen

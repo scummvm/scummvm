@@ -67,7 +67,6 @@ public:
 
 	void gotoArea(uint16 areaID, int entranceID) override;
 
-	void playSoundZX(int index, Audio::SoundHandle &handle) override;
 	void drawInfoMenu() override;
 	void drawSensorShoot(Sensor *sensor) override;
 	void drawCompass(Graphics::Surface *surface, int x, int y, double degrees, double magnitude, double fov, uint32 color);

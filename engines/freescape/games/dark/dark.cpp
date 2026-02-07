@@ -716,12 +716,14 @@ void DarkEngine::pressedKey(const int keycode) {
 			_flyMode = false;
 			insertTemporaryMessage(_messagesList[13], _countdown - 2);
 		} else if (_flyMode) {
+			// TODO: Reimplement inside Sound class using existing chip instances
+			SizedPCSpeaker *speaker = new SizedPCSpeaker();
 			float hzFreq = 1193180.0f / 0xd537;
-			_speaker->play(Audio::PCSpeaker::kWaveFormSquare, hzFreq, -1);
-			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandleJetpack, _speaker, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+			speaker->play(Audio::PCSpeaker::kWaveFormSquare, hzFreq, -1);
+			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandleJetpack, speaker, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
 			insertTemporaryMessage(_messagesList[11], _countdown - 2);
 		} else {
-			_speaker->stop();
+			_mixer->stopHandle(_soundFxHandleJetpack);
 			resolveCollisions(_position);
 			if (!_hasFallen)
 				insertTemporaryMessage(_messagesList[12], _countdown - 2);

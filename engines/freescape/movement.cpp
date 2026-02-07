@@ -623,7 +623,7 @@ bool FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, 
 	Object *collided = nullptr;
 	_gotoExecuted = false;
 
-	_speaker->stop();
+	stopAllSounds(_movementSoundHandle);
 
 	Math::Ray ray(newPosition, -_upVector);
 	collided = _currentArea->checkCollisionRay(ray, _playerHeight + 3);

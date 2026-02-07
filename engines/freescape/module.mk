@@ -31,7 +31,6 @@ MODULE_OBJS := \
 	games/driller/cpc.o \
 	games/driller/dos.o \
 	games/driller/driller.o \
-	games/driller/sounds.o \
 	games/driller/zx.o \
 	games/eclipse/atari.o \
 	games/eclipse/atari.music.o \

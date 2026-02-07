@@ -160,7 +160,7 @@ private:
 	bool ghostInArea();
 	void updateThunder();
 
-	Audio::SoundHandle _soundFxGhostHandle;
+	/*Audio::SoundHandle _soundFxGhostHandle;*/
 	Texture *_optionTexture;
 	Font _fontRiddle;
 	int _droppingGateStartTicks;

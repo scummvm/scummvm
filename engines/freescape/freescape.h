@@ -480,7 +480,6 @@ public:
 	Audio::SoundHandle _soundFxHandle;
 	Audio::SoundHandle _musicHandle;
 	Audio::SoundHandle _movementSoundHandle;
-	Freescape::SizedPCSpeaker *_speaker;
 	Sound *_sound;
 
 	bool _syncSound;
@@ -492,23 +491,14 @@ public:
 	void playSound(int index, bool sync, Audio::SoundHandle &handle);
 	void playWav(const Common::Path &filename);
 	void playMusic(const Common::Path &filename);
-	void playSoundConst(double hzFreq, int duration, bool sync);
-	void playSoundSweepIncWL(double hzFreq1, double hzFreq2, double wlStepPerMS, int resolution, bool sync);
-	uint16 playSoundDOSSpeaker(uint16 startFrequency, soundSpeakerFx *speakerFxInfo);
-	void playSoundDOS(soundSpeakerFx *speakerFxInfo, bool sync, Audio::SoundHandle &handle);
 
 	virtual void playSoundC64(int index);
 	virtual void playSoundFx(int index, bool sync) {}
 	Sound *loadSoundsFx(Common::SeekableReadStream *file, int offset, int number);
 	Sound *loadSoundsFxDOS(Common::SeekableReadStream *file, int offset, int number);
-	void loadSpeakerFxDOS(Common::SeekableReadStream *file, int offsetFreq, int offsetDuration, int numberSounds);
-	void loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxTable, int sfxData);
-	Common::HashMap<uint16, soundSpeakerFx *> _soundsSpeakerFx;
-
-	virtual void playSoundZX(int index, Audio::SoundHandle &handle);
-	void playSoundZX(Common::Array<soundUnitZX> *data, Audio::SoundHandle &handle);
-	Common::HashMap<uint16, Common::Array<soundUnitZX>*> _soundsSpeakerFxZX;
-
+	Sound *loadSpeakerFxDOS(Common::SeekableReadStream *file, int offsetFreq, int offsetDuration, int numberSounds);
+	Sound *loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxTable, int sfxData, int numberSounds);
+	Sound *loadSpeakerFxDrillerZX();
 	Sound *loadSoundsCPC(Common::SeekableReadStream *file, int offsetTone, int sizeTone, int offsetEnvelope, int sizeEnvelope, int offsetSoundDef, int sizeSoundDef);
 
 	void loadSoundsAmigaDemo(Common::SeekableReadStream *file, int offset, int numSounds);
