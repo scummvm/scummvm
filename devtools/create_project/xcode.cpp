@@ -1705,6 +1705,11 @@ std::string XcodeProvider::getHash(std::string key) {
 bool isSeparator(char s) { return (s == '-'); }
 
 #ifdef MACOSX
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+// CC_MD5 is declared deprecated because MD5 is not a secure algorithm
+// but this code is not about security
+
 std::string XcodeProvider::md5(std::string key) {
 	unsigned char md[CC_MD5_DIGEST_LENGTH];
 	CC_MD5(key.c_str(), (CC_LONG) key.length(), md);
@@ -1715,6 +1720,8 @@ std::string XcodeProvider::md5(std::string key) {
 	}
 	return stream.str();
 }
+
+#pragma clang diagnostic pop
 #endif
 
 std::string XcodeProvider::newHash() const {
