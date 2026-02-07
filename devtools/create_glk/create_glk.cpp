@@ -198,6 +198,12 @@ public:
 	~File() {
 		fclose(_f);
 	}
+	
+	File(const File &) = delete;
+	File(File &&) = delete;
+	File &operator=(const File &) = delete;
+	File &operator=(File &&) = delete;
+
 	void writeByte(byte v) {
 		fwrite(&v, 1, 1, _f);
 	}

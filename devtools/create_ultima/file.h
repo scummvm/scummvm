@@ -49,6 +49,10 @@ public:
 	~File() {
 		fclose(_file);
 	}
+	File(const File &) = delete;
+	File(File &&) = delete;
+	File &operator=(const File &) = delete;
+	File &operator=(File &&) = delete;
 
 	int seek(int offset, int origin = SEEK_SET) {
 		return fseek(_file, offset, origin);

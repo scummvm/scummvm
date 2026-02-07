@@ -147,6 +147,51 @@ public:
 		delete[] _data;
 	}
 
+	MemFile(const MemFile &other) 
+		: MemFile(other._data, other._size)
+		, _offset(other._offset)
+	{
+	}
+	
+	MemFile(MemFile &&other) {
+		_data = other._data;
+		_size = other._size;
+		_offset = other._offset;
+
+		other._data = nullptr;
+		other._size = 0;
+		other._offset = 0;
+	}
+	
+	MemFile &operator=(const MemFile &other) {
+		if (this != &other) {
+			delete[] _data;
+
+			_data = new byte[MAX_MEM_SIZE];
+			memcpy(_data, other._data, other._size);
+			memset(_data + other._size, 0, MAX_MEM_SIZE - other._size);
+
+			_size = other._size;
+			_offset = other._offset;
+		}
+		return *this;
+	}
+	
+	MemFile &operator=(MemFile &&other) {
+		if (this != &other) {
+			delete[] _data;
+
+			_data = other._data;
+			_size = other._size;
+			_offset = other._offset;
+
+			other._data = nullptr;
+			other._size = 0;
+			other._offset = 0;
+		}
+		return *this;
+	}
+
 	bool open() {
 		memset(_data, 0, MAX_MEM_SIZE);
 		_size = _offset = 0;
@@ -240,6 +285,10 @@ private:
 public:
 	File() : _f(nullptr) {}
 	virtual ~File() { close(); }
+	File(const File &) = delete;
+	File(File &&) = delete;
+	File &operator=(const File &) = delete;
+	File &operator=(File &&) = delete;
 
 	bool open(const char *filename, AccessMode mode = kFileReadMode) {
 		if (mode == kFileReadMode) {

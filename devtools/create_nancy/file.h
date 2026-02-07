@@ -44,6 +44,11 @@ private:
 
 public:
 	File() : _f(nullptr), _memPtr(nullptr), _offset(0), _size(0) {}
+	~File() { close(); }
+	File(const File &) = delete;
+	File(File &&) = delete;
+	File &operator=(const File &) = delete;
+	File &operator=(File &&) = delete;
 
 	bool open(const char *filename, AccessMode mode = kFileReadMode);
 	bool open(const byte *data, uint size);

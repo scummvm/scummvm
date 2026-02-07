@@ -39,8 +39,16 @@ enum AccessMode {
 
 class File {
 private:
-	FILE *f;
+	FILE *f = nullptr;
 public:
+
+	File() = default;
+	~File() { close(); }
+	File(const File &) = delete;
+	File(File &&) = delete;
+	File &operator=(const File &) = delete;
+	File &operator=(File &&) = delete;
+
 	bool open(const char *filename, AccessMode mode = kFileReadMode) {
 		f = fopen(filename, (mode == kFileReadMode) ? "rb" : "wb");
 		return (f != nullptr);
