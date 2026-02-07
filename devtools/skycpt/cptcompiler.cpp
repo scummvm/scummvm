@@ -34,6 +34,11 @@ uint16 findCptId(char *name, TextFile *cptFile);
 #define NUM_DATA_LISTS 9
 #define ASCII_SIZE (65536 * 2)
 
+#ifndef ARRAYSIZE
+template<typename T, size_t N>
+constexpr size_t ARRAYSIZE(const T (&)[N]) { return N; }
+#endif
+
 enum CptType {
 	PTR_NULL = 0,
 	COMPACT,
@@ -477,7 +482,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 	bool filesExist = true;
 	char inName[32];
 	for (int i = 0; i < 7; i++) {
-		sprintf(inName, "RESET.%03d", gameVers[i]);
+		snprintf(inName, ARRAYSIZE(inName), "RESET.%03d", gameVers[i]);
 		FILE *test = fopen(inName, "rb");
 		if (test)
 			fclose(test);
@@ -511,7 +516,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 		for (int cnt = 0; cnt < 6; cnt++) {
 			printf("Processing diff v0.0%03d\n", gameVers[cnt]);
 			uint16 diffPos = 0;
-			sprintf(inName, "RESET.%03d", gameVers[cnt]);
+			snprintf(inName, ARRAYSIZE(inName), "RESET.%03d", gameVers[cnt]);
 			FILE *resDiff = fopen(inName, "rb");
 			fseek(resDiff, 0, SEEK_END);
 			assert(ftell(resDiff) == (resSize * 2));

@@ -1269,8 +1269,8 @@ uint32 getFilename(const ResourceProvider *provider, const ExtractFilename *fDes
 	return getFilename(provider->game, provider->platform, provider->special, provider->language, fDesc);
 }
 
-bool getFilename(char *dstFilename, const Game *g, const int id) {
-	sprintf(dstFilename, "%08X", getFilename(g, id));
+bool getFilename(char *dstFilename, size_t bufcnt, const Game *g, const int id) {
+	snprintf(dstFilename, bufcnt, "%08X", getFilename(g, id));
 	return true;
 }
 
@@ -1374,7 +1374,7 @@ bool createIDMap(PAKFile &out, const Game *g, const int *needList) {
 	// present
 	for (const int *n = needList; *n != -1; ++n) {
 		char filename[12];
-		if (!getFilename(filename, g, *n) || !out.getFileList()->findEntry(filename)) {
+		if (!getFilename(filename, ARRAYSIZE(filename), g, *n) || !out.getFileList()->findEntry(filename)) {
 			fprintf(stderr, "ERROR: Could not find need %d for game %04X", *n, createGameDef(g));
 			return false;
 		}
@@ -1398,7 +1398,7 @@ bool createIDMap(PAKFile &out, const Game *g, const int *needList) {
 	}
 
 	char filename[12];
-	if (!getFilename(filename, g, 0)) {
+	if (!getFilename(filename, ARRAYSIZE(filename), g, 0)) {
 		fprintf(stderr, "ERROR: Could not create ID map for game\n");
 		delete[] map;
 		return false;

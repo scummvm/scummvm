@@ -42,7 +42,7 @@ public:
 		_file = fopen(filename, "rb");
 		if (!_file) {
 			char buf[255];
-			sprintf(buf, "Could not open file %s", filename);
+			snprintf(buf, sizeof(buf)/sizeof(char), "Could not open file %s", filename);
 			error(buf);
 		}
 	}
