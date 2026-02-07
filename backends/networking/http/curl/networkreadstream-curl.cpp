@@ -22,9 +22,13 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #define CURL_DISABLE_DEPRECATION
 
-#include "backends/networking/basic/curl/cacert.h"
+// Include order specifically chosen to avoid ARRAYSIZE macro redefiniion on Windows
+
+#include <curl/curl.h>
+
 #include "backends/networking/http/curl/networkreadstream-curl.h"
 #include "backends/networking/http/curl/connectionmanager-curl.h"
+#include "backends/networking/basic/curl/cacert.h"
 #include "base/version.h"
 #include "common/debug.h"
 

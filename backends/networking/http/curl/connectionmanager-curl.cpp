@@ -19,8 +19,13 @@
  *
  */
 
-#include "backends/networking/http/curl/connectionmanager-curl.h"
+// Include order specifically chosen to avoid ARRAYSIZE macro redefiniion on Windows
+
+#include <curl/curl.h>
+
 #include "backends/networking/http/curl/networkreadstream-curl.h"
+#include "backends/networking/http/curl/connectionmanager-curl.h"
+
 #include "common/debug.h"
 #include "common/system.h"
 #include "common/timer.h"

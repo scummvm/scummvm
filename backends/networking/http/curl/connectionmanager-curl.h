@@ -28,6 +28,12 @@
 
 #include <curl/curl.h>
 
+// curl headers include Windows headers
+// which may define the ARRAYSIZE macro,
+// therefore include common/util.h to replace it
+// with the ScummVM definition as early as possible
+#include "common/util.h"
+
 namespace Networking {
 
 class ConnectionManagerCurl : public ConnectionManager {
