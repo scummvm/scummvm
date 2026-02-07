@@ -680,7 +680,7 @@ void Font::load() {
 	Point cellSize;
 	for (auto image : _images) {
 		if (image == nullptr)
-			continue; // the russian variant of adventuradecine-remastered unfortunately conatins fake images
+			continue; // the russian variant of adventuradecine-remastered unfortunately contains fake images
 		if (g_engine->isV3() && image == _images[128])
 			continue;
 		cellSize.x = MAX(cellSize.x, image->w);
