@@ -138,6 +138,13 @@ void Screen::setManPalette() {
 	}
 }
 
+void Screen::setStilPalette() {
+	assert(_vm->getGameID() == kGameNoctropolis);
+	for (int i = 0; i < 99; i++) {
+		_rawPalette[0x1e0 + i] = PALETTE_6BIT_TO_8BIT(_stilPal[i]);
+	}
+}
+
 void Screen::setIconPalette() {
 	// Icon palette is colors 247~255
 	if (_vm->getGameID() == kGameMartianMemorandum) {
@@ -150,6 +157,18 @@ void Screen::setIconPalette() {
 		}
 	}
 }
+
+void Screen::setDarkPalette(int16 mulValue, uint firstIndex, uint count) {
+	uint lastIndex = firstIndex + count;
+	for (uint i = firstIndex; i <= lastIndex; i++) {
+		_rawPalette[i * 3 + 0] = (_rawPalette[i * 3 + 0] * mulValue) >> 16;
+		_rawPalette[i * 3 + 1] = (_rawPalette[i * 3 + 1] * mulValue) >> 16;
+		_rawPalette[i * 3 + 2] = (_rawPalette[i * 3 + 2] * mulValue) >> 16;
+	}
+
+	setPalette();
+}
+
 
 void Screen::loadPalette(int fileNum, int subfile, int srcOffset) {
 	Resource *res = _vm->_files->loadFile(fileNum, subfile);
