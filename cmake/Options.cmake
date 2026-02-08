@@ -1,7 +1,12 @@
 # Command line options that we would want to pass
 
-# Define all of out default options. These can be overwritten via the command line, preset or platform file
+# Define all of out default options. These can be overwritten via the command line, preset or
+# platform file
 set(BACKEND "sdl" CACHE STRING "Backend to build")
+
+option(ENABLE_PLUGINS "Enable the support for dynamic plugins" OFF)
+option(DEFAULT_DYNAMIC "Make plugins dynamic by default" OFF)
+option(STATIC_BINARY "Build a static binary instead of using shared objects" OFF)
 
 # Backend logic
 set(BACKEND_VALUES

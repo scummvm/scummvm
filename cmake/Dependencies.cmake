@@ -64,8 +64,6 @@ elseif(USE_SDL)
   endif()
 endif()
 
-return()
-
 # OGG
 find_package(Ogg CONFIG)
 option(USE_OGG "Enable OGG support" ${Ogg_FOUND})
@@ -125,7 +123,7 @@ if(USE_MAD)
   add_compile_definitions(USE_MAD)
 endif()
 
-#ZLib
+# ZLib
 find_package(ZLIB)
 option(USE_ZLIB "Enable ZLib support" ${ZLIB_FOUND})
 if(USE_ZLIB)
