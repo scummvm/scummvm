@@ -23,7 +23,7 @@
 #define PHOENIXVR_ANGLE_H
 
 #include "math/utils.h"
-#include <math.h>
+#include "phoenixvr/math.h"
 
 namespace Common {
 class String;
@@ -86,11 +86,11 @@ public:
 	}
 };
 struct AngleX : Angle {
-	AngleX(float angle) : Angle(angle, 0, 2 * M_PI) {}
+	AngleX(float angle) : Angle(angle, 0, kTau) {}
 };
 
 struct AngleY : Angle {
-	AngleY(float angle) : Angle(angle, -M_PI, -Math::epsilon) {}
+	AngleY(float angle) : Angle(angle, -kPi, -Math::epsilon) {}
 	void add(float v) {
 		v += angle();
 		if (v <= _min)

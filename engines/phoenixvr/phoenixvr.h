@@ -129,11 +129,11 @@ public:
 	void killTimer();
 	void playAnimation(const Common::String &name, const Common::String &var, int varValue, float speed);
 	void setZoom(int fov) {
-		_fov = M_PI * fov / 180;
+		_fov = kPi * fov / 180;
 	}
 
 	void setXMax(float max) {
-		static const float baseX = -M_PI_2;
+		static const float baseX = -kPi2;
 		_angleY.setRange(baseX - max, baseX + max);
 	}
 
@@ -144,7 +144,7 @@ public:
 
 	void setAngle(float x, float y) {
 		_angleX.set(y);
-		static const float baseX = -M_PI_2;
+		static const float baseX = -kPi2;
 		_angleY.set(baseX + x);
 	}
 

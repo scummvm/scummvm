@@ -39,6 +39,7 @@
 #include "image/pcx.h"
 #include "phoenixvr/console.h"
 #include "phoenixvr/game_state.h"
+#include "phoenixvr/math.h"
 #include "phoenixvr/pakf.h"
 #include "phoenixvr/region_set.h"
 #include "phoenixvr/script.h"
@@ -55,9 +56,9 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 																					 _rgb565(2, 5, 6, 5, 0, 11, 5, 0, 0),
 																					 _thumbnail(139, 103, _rgb565),
 																					 _lockKey(13),
-																					 _fov(M_PI_2),
-																					 _angleX(M_PI),
-																					 _angleY(-M_PI_2),
+																					 _fov(kPi2),
+																					 _angleX(kPi),
+																					 _angleY(-kPi2),
 																					 _mixer(syst->getMixer()) {
 	g_engine = this;
 	for (auto format : g_system->getSupportedFormats()) {
@@ -832,11 +833,11 @@ void PhoenixVREngine::captureContext() {
 			ms.writeByte(0);
 	};
 
-	ms.writeSint32LE(fromAngle(_angleY.angle() + M_PI_2));
+	ms.writeSint32LE(fromAngle(_angleY.angle() + kPi2));
 	ms.writeSint32LE(fromAngle(_angleX.angle()));
 	ms.writeSint32LE(0);
 	ms.writeSint32LE(0);
-	ms.writeSint32LE(fromAngle(_angleY.rangeMax() + M_PI_2));
+	ms.writeSint32LE(fromAngle(_angleY.rangeMax() + kPi2));
 	ms.writeSint32LE(fromAngle(_angleX.rangeMin()));
 	ms.writeSint32LE(fromAngle(_angleX.rangeMax()));
 	ms.writeSint32LE(_warpIdx);
@@ -988,7 +989,7 @@ Common::Error PhoenixVREngine::loadGameStream(Common::SeekableReadStream *slot) 
 		auto flags = ms.readUint32LE();
 		debug("3d sound: %s vol: %u flags: %u angle: %u", name.c_str(), vol, flags, angle);
 		if (!name.empty())
-			playSound(name, vol, -1, true, float(angle * M_PI));
+			playSound(name, vol, -1, true, static_cast<float>(angle) * kPi);
 	}
 
 	_loading = true;

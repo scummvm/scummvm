@@ -26,6 +26,7 @@
 #include "common/hashmap.h"
 #include "common/ptr.h"
 #include "common/str.h"
+#include "phoenixvr/math.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -34,13 +35,13 @@ class SeekableReadStream;
 namespace PhoenixVR {
 namespace {
 inline float toAngle(int a) {
-	static const float angleToFloat = M_PI / 4096.0f;
-	return angleToFloat * a;
+	static const float angleToFloat = kPi / 4096.0f;
+	return angleToFloat * static_cast<float>(a);
 }
 
 inline int fromAngle(float a) {
-	static const float floatToAngle = 4096.0f / M_PI;
-	return floatToAngle * a;
+	static const float floatToAngle = 4096.0f / kPi;
+	return static_cast<int>(floatToAngle * a);
 }
 } // namespace
 class Script {

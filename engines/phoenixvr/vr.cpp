@@ -411,7 +411,6 @@ void VR::render(Graphics::Screen *screen, float ax, float ay, float fov, float d
 		Vector3d up = Vector3d::crossProduct(forward, right); // already normalized
 
 		// camera projection
-		static constexpr float kPi2 = M_PI * 2;
 		float gx = tanf(fov / 2.0f), gy = gx * h / w;
 		Vector3d incrementX = right * (2 * gx / w);
 		Vector3d incrementY = up * (2 * gy / h);
@@ -423,7 +422,7 @@ void VR::render(Graphics::Screen *screen, float ax, float ay, float fov, float d
 			regDX = fov / w;
 			regDY = fov / h;
 			if (regY < 0)
-				regY += M_PI * 2;
+				regY += kTau;
 		}
 		for (int dstY = 0; dstY != h; ++dstY, line += incrementY) {
 			if (regSet) {
@@ -450,7 +449,7 @@ void VR::render(Graphics::Screen *screen, float ax, float ay, float fov, float d
 					if (regX >= kPi2)
 						regX -= kPi2;
 					for (auto &reg : regSet->getRegions()) {
-						if (reg.contains3D(regX, M_PI * 2 - regY)) {
+						if (reg.contains3D(regX, kTau - regY)) {
 							byte r, g, b;
 							_pic->format.colorToRGB(color, r, g, b);
 							static constexpr int kGlow = 15;
