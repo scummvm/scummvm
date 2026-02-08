@@ -204,6 +204,11 @@ uint32 ZBasic::mem(int16 index) {
 	return 0;
 }
 
+void ZBasic::menu(int16 menuNo, int16 itemNo, int16 state, const Common::U32String &title) {
+	warning("STUB: ZBasic::menu");
+}
+
+
 void ZBasic::openR(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo) {
 	warning("STUB: ZBasic::openR");
 }
@@ -297,6 +302,11 @@ void ZBasic::window(int16 windowNumber, const Common::String &title, int16 x1, i
 	warning("STUB: ZBasic::window");
 }
 
+int16 ZBasic::unk_5() {
+	warning("STUB: ZBasic::unk_5");
+	return 0;
+}
+
 void ZBasic::unk_6(int16 unk1, int32 unk2, int16 unk3, int16 unk4) {
 	warning("STUB: ZBasic::unk_6");
 }
@@ -305,8 +315,20 @@ void ZBasic::unk_20() {
 	warning("STUB: ZBasic::unk_20");
 }
 
+void ZBasic::unk_44(int16 unk1) {
+	warning("STUB: ZBasic::unk_44");
+}
+
+void ZBasic::unk_110(Common::U32String &unk1, Common::U32String &unk2) {
+	warning("STUB: ZBasic::unk_110");
+}
+
 void ZBasic::unk_130(int16 unk1) {
 	warning("STUB: ZBasic::unk_130");
+}
+
+void ZBasic::unk_331(uint16 unk1, int16 unk2) {
+	warning("STUB: ZBasic::unk_331");
 }
 
 

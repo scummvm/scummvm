@@ -240,6 +240,7 @@ public:
 	int finderInfo(int16 &count, Common::U32String &var, uint32 &type, uint16 volume);
 	bool maybe();
 	uint32 mem(int16 index);
+	void menu(int16 menuNo, int16 itemNo, int16 state, const Common::U32String &title);
 	void openR(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo);
 	void picture(int16 x, int16 y, PicHandle &src);
 	void picture(int16 x1, int16 y1, int16 x2, int16 y2, PicHandle &src);
