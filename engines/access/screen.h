@@ -71,6 +71,7 @@ public:
 	int _windowXAdd, _windowYAdd;
 	int _screenYOff;
 	byte _manPal[0x84];
+	byte _stilPal[99]; // only used in Noctropolis
 	byte _scaleTable1[256];
 	byte _scaleTable2[256];
 	int _vWindowWidth;
@@ -129,9 +130,19 @@ public:
 	void setIconPalette();
 
 	/**
-	 * Set Tex palette (Martian Memorandum)
+	 * Set player palette (Martian Memorandum and Noctropolis)
 	 */
 	void setManPalette();
+
+	/**
+	 * Set Stiletto palette (Noctropolis)
+	 */
+	void setStilPalette();
+
+	/**
+	 * Dim the palette a bit
+     */
+	void setDarkPalette(int16 mulValue, uint firstIndex, uint count);
 
 	void loadPalette(int fileNum, int subfile, int srcOffset = 0);
 
