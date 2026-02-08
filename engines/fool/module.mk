@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	fool_game.o \
 	fool_prologue.o \
 	toolbox.o \
+	toolbox_fileman.o \
 	toolbox_quickdraw.o \
 	toolbox_resman.o \
 	toolbox_text.o \

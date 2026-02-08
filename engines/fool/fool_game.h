@@ -63,25 +63,30 @@ public:
 	void sub_128_d34(int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
 	void sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1);
 
+	void sub_128_178a(int16 unk2, int16 unk1);
+	void sub_128_1c30();
+	void sub_128_1c4a(int16 unk1);
+
 	void sub_128_4472();
 	void sub_128_5b30();
 	void sub_128_5baa();
 	void sub_128_5f9e();
 	void sub_128_5fb4();
 	void sub_128_6154();
+	void sub_128_61ec();
 	void sub_128_6244();
 
 private:
+	GrafPtr var_i32_0;
 	GrafPtr var_i32_4;
 	int16 var_i16_30;
 	int16 var_i16_32;
 	int16 var_i16_34;
+	int16 var_i16_36;
 	int16 var_i16_38;
 	int16 var_i16_3a;
 	int16 var_i16_44;
-	int16 var_i16_46;
-	Common::Point var_pt_50;
-	int16 var_i16_54;
+	EventRecord var_ev_46;
 	int16 var_i16_56;
 	int16 var_i16_58;
 	SFReply var_sfr_5e; // -> aa
@@ -106,6 +111,7 @@ private:
 	int16 var_i16_79e;
 	int16 var_i16_7a0;
 	int16 var_i16_7a2;
+	int16 var_i16_7a8;
 	int16 var_i16_7aa;
 	int16 var_i16_7ac;
 	int16 var_i16_7ae;
@@ -116,14 +122,20 @@ private:
 	int16 var_i16_7b8;
 	int16 var_i16_7ba;
 	int16 var_i16_7bc;
-
+	int16 var_i16_7be;
+	int16 var_i16_7c0;
+	PicHandle var_pic_7c2;
+	int16 var_i16_7c6;
 	int16 var_i16_7e2;
 
+	int16 arr_i16_1d24[202];
 	int16 arr_i16_1eb8[4];
 	Common::Rect arr_rect_1ec0;
 	Common::Rect arr_rect_1f38[3];
+	Common::Rect arr_rect_4338;
 	int16 arr_i16_4758[6];
 	Pattern arr_pat_58f4[4];
+	Pattern arr_pat_5b2c;
 	Common::Rect arr_rect_5b7c;
 	Common::Rect arr_rect_5b84;
 	Common::Rect arr_rect_5b8c;
@@ -136,6 +148,8 @@ private:
 							// Also 109dc and 15fcc
 	Common::Rect arr_rect_1910c;
 	PicHandle arr_i32_192c0[0x18];
+	Common::U32String arr_str_195e8[101]; // 0x20 each
+
 	Common::U32String arr_str_1a8d8[7]; // 0x66 each
 	Common::Rect arr_rect_1ae06;
 };
