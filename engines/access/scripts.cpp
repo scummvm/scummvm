@@ -338,10 +338,11 @@ void Scripts::cmdEndObject_v3() {
 			}
 			//NoctRoomEngine::setBoxInfo(&_gNoctRoomEngine,0x46,0xcd,"STILETTO",subtitle,3);
 		}
+
 		error("TODO: Finish the special case for cmdEndObject_v3");
 		/*
 		// duck the sound here.. SetRelVolume(0x32);
-		_vm->setRoomVideo(100,100,vidfile,true,false);
+		_vm->playVideo(100,1 00,vidfile,true,false);
 		gNoctRoomVideo.videoEnd = 0;
 		gNoctRoomVideo.field27_0x2a = 0;
 		gNoctRoomVideo.playState = 1;
@@ -495,9 +496,11 @@ void Scripts::cmdPrint_v1() {
 	doCmdPrint_v1(msg);
 }
 
-void Scripts::printString(const Common::String &msg) {
+void Scripts::printString(const Common::String &msg, Common::Point pt) {
 	if (_vm->getGameID() == kGameNoctropolis) {
-		_vm->_screen->_printOrg = _vm->_screen->_printStart = Common::Point(320, 200);
+		if (pt.x == -1)
+			pt = Common::Point(320, 200);
+		_vm->_screen->_printOrg = _vm->_screen->_printStart = pt;
 		_vm->_timers[PRINT_TIMER]._timer = 50;
 		_vm->_timers[PRINT_TIMER]._initTm = 50;
 		++_vm->_timers[PRINT_TIMER]._flag;
@@ -507,7 +510,9 @@ void Scripts::printString(const Common::String &msg) {
 		  _vm->_bubbleBox->_type = (BoxType)(_vm->_bubbleBox->_type | kTextBoxNoctPlain);
 
 	} else if (_vm->getGameID() != kGameMartianMemorandum) {
-		_vm->_screen->_printOrg = _vm->_screen->_printStart = Common::Point(20, 42);
+		if (pt.x == -1)
+			pt = Common::Point(20, 42);
+		_vm->_screen->_printOrg = _vm->_screen->_printStart = pt;
 		_vm->_timers[PRINT_TIMER]._timer = 1;
 		_vm->_timers[PRINT_TIMER]._initTm = 1;
 		++_vm->_timers[PRINT_TIMER]._flag;
@@ -642,8 +647,10 @@ void Scripts::cmdNewRoom() {
 
 	_vm->_room->_function = FN_CLEAR1;
 	_vm->freeChar();
-	if (_vm->getGameID() == kGameNoctropolis)
+	if (_vm->getGameID() == kGameNoctropolis) {
+		_vm->_room->_selectCommand = 0;
 		_vm->_events->setCursor(CURSOR_ARROW);
+	}
 	_vm->_converseMode = 0;
 	cmdRetPos();
 }
@@ -1023,11 +1030,8 @@ void Scripts::cmdDoTravel() {
 }
 
 void Scripts::cmdDoTravel_Noct() {
-	_vm->_events->setCursor(CURSOR_ARROW);
-	_vm->_player->_playerOff = true;
-	((Noctropolis::NoctropolisEngine *)_vm)->_stil->_playerOff = true;
+	((Noctropolis::NoctropolisEngine *)_vm)->doTravel();
 	cmdRetPos();
-	error("TODO: Finish Noct style cmdTravel");
 }
 
 void Scripts::cmdHelp_v1() {
@@ -1137,14 +1141,15 @@ void Scripts::cmdCharSpeak_v3() {
 
 	Common::String str = _data->readString();
 	debugC(1, kDebugScripts, "cmdCharSpeak(%d, %d, str=\"%s\")", x, y, str.c_str());
-	_vm->_bubbleBox->placeBubble(str);
+	if (_vm->_textFlag)
+		_vm->_bubbleBox->placeBubble(str);
 	findNull();
 }
 
 void Scripts::cmdPlayerSpeak() {
 	int16 x = _data->readUint16LE();
 	int16 y = _data->readUint16LE();
-	
+
 	const char *title = _vm->_res->getEgoName();
 	Common::String str = _data->readString();
 	debugC(1, kDebugScripts, "cmdPlayerSpeak(%d, %d, \"%s\", \"%s\")", x, y, title, str.c_str());
@@ -1163,7 +1168,60 @@ void Scripts::cmdPlayerSpeak() {
 
 
 void Scripts::cmdPlayerChoice() {
-	error("TODO: cmdPlayerChoice()");
+	// This is similar to cmdTexChoice but used in Noctropolis
+	assert(_vm->getGameID() == kGameNoctropolis);
+
+	int16 x = _data->readUint16LE();
+	int16 startY = _data->readUint16LE();
+
+	Common::Array<Common::String> choiceStrs;
+	for (int i = 0; i < 6; i++) {
+		Common::String tmpStr;
+		tmpStr = _data->readString();
+		if (!tmpStr.empty())
+			choiceStrs.push_back(tmpStr);
+	}
+
+	debugC(1, kDebugScripts, "cmdPlayerChoice(%d, %d, ..(%d choices)..)", x, startY, choiceStrs.size());
+
+	_vm->_events->setCursor(CURSOR_ARROW);
+	const char *respTitle = ((Noctropolis::NoctropolisResources *)_resource)->getResponseTitle();
+	Common::Array<Common::Rect> responseCoords;
+
+	for (uint i = 0; i < choiceStrs.size(); i++) {
+		_vm->_bubbleBox->_bubbleDisplStr = Common::String::format(respTitle, i + 1);
+		_vm->_bubbleBox->calcBubble(choiceStrs[i]);
+		_vm->_bubbleBox->printBubble(choiceStrs[i]);
+		responseCoords.push_back(_vm->_bubbleBox->_bounds);
+		_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + startY;
+		startY = _vm->_bubbleBox->_bounds.bottom + 10;
+	}
+
+	int choice = -1;
+	do {
+		_vm->_events->pollEvents();
+		if (_vm->shouldQuit())
+			return;
+
+		charLoop();
+
+		_vm->_bubbleBox->_bubbleDisplStr = _vm->_bubbleBox->_bubbleTitle;
+		if (_vm->_events->_leftButton) {
+			if (_vm->_events->_mouseRow >= ((_vm->getGameID() == kGameMartianMemorandum) ? 23 : 22)) {
+				_vm->_events->debounceLeft();
+				int x = _vm->_events->_mousePos.x;
+				choice = _vm->_res->inButtonXRange(x);
+			} else {
+				_vm->_events->debounceLeft();
+				choice = _vm->_events->checkMouseBox1(responseCoords);
+			}
+		}
+	} while (choice == -1);
+
+	_choice = choice + 1;
+	_vm->_bubbleBox->clearBubbles();
+
+	_vm->_room->_conFlag = true;
 }
 
 void Scripts::cmdTexSpeak() {
@@ -1474,7 +1532,16 @@ void Scripts::cmdEndVideo() {
 }
 
 void Scripts::cmdDigitalPlay() {
-	error("TODO: Implement Scripts::cmdDigitalPlay");
+	// Wait until the current sound has finished playing, then
+	// if subtitles are enabled wait for input
+	debugCN(1, kDebugScripts, "cmdDigitalPlay()");
+	while (_vm->_sound->isSFXPlaying() && !_vm->shouldQuit()) {
+		_vm->_events->pollEventsAndWait();
+	}
+
+	if (!_vm->_sound->isSFXPlaying() && !_vm->shouldQuit() && _vm->_textFlag)
+		_vm->_events->waitKeyActionMouse();
+
 	_vm->_room->_conFlag = true;
 }
 
@@ -1498,6 +1565,13 @@ void Scripts::cmdPlayVid1() {
 }
 
 void Scripts::cmdCharWait() {
+	int x = _data->readSint16LE();
+	int y = _data->readUint16LE();
+	Common::String msg = _data->readString();
+	debugCN(1, kDebugScripts, "cmdCharWait(%d, %d, '%s')", x, y, msg.c_str());
+
+	printString(msg);
+	_vm->_room->_conFlag = true;
 	error("TODO: Implement Scripts::cmdCharWait");
 }
 
@@ -1506,7 +1580,8 @@ void Scripts::cmdUndoText() {
 
 	// TODO: Restore music volume to 100%
 
-	_vm->_bubbleBox->clearBubbles();
+	if (_vm->_textFlag)
+		_vm->_bubbleBox->clearBubbles();
 }
 
 void Scripts::cmdResetAnim() {
@@ -1632,11 +1707,11 @@ void Scripts::cmdSetCoords() {
 	const int x = _data->readSint16LE();
 	const int y = _data->readSint16LE();
 	debugC(1, kDebugScripts, "cmdSetCoords(x=%d, y=%d)", x, y);
-	_vm->_player->_playerX = x;
+	_vm->_player->_rawPlayer.x = x;
 	_vm->_player->_moveTo.x = x;
 	_vm->_player->checkScroll();
 	bool hscroll = _vm->_player->_scrollFlag;
-	_vm->_player->_playerY = y;
+	_vm->_player->_rawPlayer.y = y;
 	_vm->_player->_moveTo.y = y;
 	_vm->_player->checkScroll();
 	_vm->_player->_scrollFlag |= hscroll;

@@ -58,7 +58,7 @@ public:
 	}
 };
 
-enum Function { FN_NONE = 0, FN_CLEAR1 = 1, FN_CLEAR2 = 2, FN_RELOAD = 3, FN_BREAK = 4 };
+enum Function { FN_NONE = 0, FN_CLEAR1 = 1, FN_CLEAR2 = 2, FN_RELOAD = 3, FN_BREAK = 4, FN_5 = 5 };
 
 // room flags for Noctropolis
 enum RoomFlag {
@@ -86,6 +86,7 @@ private:
 	void cycleCommand(int incr);
 
 	bool checkCode(int v1, int v2);
+
 protected:
 	void loadRoomData(const byte *roomData);
 
@@ -100,7 +101,6 @@ protected:
 	void freeTileData();
 
 	int checkBoxes();
-	int checkBoxes1(const Common::Point &pt);
 	int checkBoxes2(const Common::Point &pt, int start, int count);
 	void checkBoxes3();
 
@@ -185,6 +185,8 @@ public:
 	void handleCommand(int commandId);
 
 	void loadPlayField(int fileNum, int subfile);
+
+	int checkBoxes1(const Common::Point &pt);
 };
 
 class RoomInfo {

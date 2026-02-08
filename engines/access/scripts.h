@@ -142,7 +142,7 @@ protected:
 	void cmdFadeOut();
 	void cmdEndVideo();
 	void cmdHelp_v1();
-	void cmdHelp_v2();
+	//void cmdHelp_v2(); // only in AmazonScripts
 	void cmdCycleBack();
 	void cmdSetHelp();
 	void cmdDoTravel_Noct();
@@ -207,10 +207,11 @@ public:
 	void findNull();
 	void doCmdPrint_v1(const Common::String &msg);
 
+
 	/**
 	 * Print a given message to the screen in a bubble box
 	 */
-	void printString(const Common::String &msg);
+	void printString(const Common::String &msg, Common::Point pt = Common::Point(-1, -1));
 
 	// Script commands that need to be public
 	void cmdFreeSound();

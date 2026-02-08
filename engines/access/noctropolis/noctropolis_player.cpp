@@ -74,15 +74,15 @@ void NoctropolisPlayer::loadAnimation(int fileNum, int subFile) {
  */
 static int _animNumForDir(Direction dir) {
 	switch (dir) {
-    case UP:		return 0;
-    case UPRIGHT: 	return 1;
+	case UP:		return 0;
+	case UPRIGHT: 	return 1;
 	case RIGHT: 	return 2;
 	case DOWNRIGHT: return 3;
-    case DOWN: 		return 4;
+	case DOWN: 		return 4;
 	case DOWNLEFT: 	return 5;
 	case LEFT: 		return 6;
-    case UPLEFT:    return 7;
-    default:	    return -1;
+	case UPLEFT:	return 7;
+	default:		return -1;
 	}
 }
 

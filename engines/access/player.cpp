@@ -138,8 +138,7 @@ void Player::load() {
 	if (_manPal1) {
 		if (_vm->getGameID() == kGameNoctropolis) {
 			if (_vm->_room->_roomFlag & kRoomFlagStiletto) {
-				error("TODO: Copy _stilPal in to palette");
-				//Common::copy(_stilPal + 0x1e0, _stilPal + 0x1e0 + 99, _vm->_screen->_manPal);
+				Common::copy(_manPal1 + 0x1e0, _manPal1 + 0x1e0 + 99, _vm->_screen->_stilPal);
 			}
 			Common::copy(_manPal1 + 0x240, _manPal1 + 0x240 + 0x84, _vm->_screen->_manPal);
 		} else {

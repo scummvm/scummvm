@@ -50,13 +50,39 @@ public:
 	~NoctropolisEngine();
 
 	void playGame() override;
-	void dead(int deathId) override {};
+	void dead(int deathId) override;
 	void establish(int esatabIndex, int sub) override {};
+	Common::Error loadGameState(int slot) override;
 
 	virtual int16 getScreenWidth() const override { return 640; }
 	virtual int16 getScreenHeight() const override { return 400; }
 
 	Player *_stil;
+	int _travScrollRow;
+	int _travScrollCol;
+	int _travScrollX;
+	int _travScrollY;
+	bool _loadFlag;
+	byte _minigameCurrentConfig[9];
+
+	void doTravel();
+	void setStilettoPos();
+
+	void initMinigame();
+	void displayPegsTick();
+	void movePeg(int16 slot);
+	bool minigameIsSolved(uint rowIndex, const byte *finalRow);
+
+	// Various functions for cmdSpecial
+	void playStilMorph();
+	void flashPaletteEffect();
+	void shotoMeanwhile();
+	void makeVidPaletteCurrent();
+	void showComicCover();
+	void playSuccubusSplit();
+	void playSuccubusAttack();
+	void doLastComic();
+	void doSpecialComic();
 
 protected:
 	void setupGame() override;
@@ -67,7 +93,7 @@ private:
 	void doFlashLogo();
 	void doPublisherLogo();
 	void initVariables();
-	
+
 	Scripts *_invScript;
 };
 

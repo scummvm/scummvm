@@ -70,9 +70,11 @@ void NoctropolisScripts::skipCommand(byte cmd) {
 	}
 }
 
+//
 // Unlike the previous games which just stop at any 0xE0 (SCRIPT_START_BYTE),
 // Noctropolis skips to the next command using argument size.  This avoids
 // mistakes from the 0xE0 appearing accidentally in arguments.
+//
 void NoctropolisScripts::searchForSequence() {
 	assert(_data);
 
@@ -96,50 +98,68 @@ void NoctropolisScripts::searchForSequence() {
 
 
 void NoctropolisScripts::executeSpecial(int commandIndex, int param1, int param2) {
+	NoctropolisEngine *vm = ((NoctropolisEngine *)_vm);
 	switch (commandIndex) {
-		case 1:
-			_vm->_screen->fadeOut();
-			break;
-		case 3:
-			error("TODO: Special 3: Call DisplayPegs_Tick");
-		case 4:
-			error("TODO: Special 4: Call MovePeg(%d)", param2);
-		case 5:
-			error("TODO: Special 5: Call SucAttack()");
-		case 6:
-			error("TODO: Special 6: Load DARKSHEER player!");
-		case 7:
-			_vm->_midi->loadMusic(98, param2);
-			break;
-		case 8:
-			error("TODO: Special 8: Dim palette");
-		case 9:
-			error("TODO: Special 9: DimPalette1(0x32,0xc0,0x2b);");
-		case 10:
-			error("TODO: Special 10: StilMorph");
-		case 11:
-			error("TODO: Special 11: Ending");
-		case 12:
-			error("TODO: Special 12: Split");
-		case 13:
-			error("TODO: Special 13: ShotoMean");
-		case 14:
-			error("TODO: Special 14: StingerSeq(0x62, param_2);");
-		case 15:
-			if (!_vm->_midi->isPlaying())
-				_vm->_midi->resume();
-			break;
-		case 17:
-			error("TODO: Special 17: EndGame");
-		case 19:
-			warning("TODO: work our correct step on Special 19 (flashpalette)");
-			_vm->_screen->flashPalette(20);
-		case 20:
-			error("TODO: Special 20: DoLastComic");
-		case 21:
-			error("TODO: Special 20: DoSpecialComic");
-		default:
-			error("TODO: Unknown special %d in NoctropolisScripts::executeSpecial", commandIndex);
+	case 1:
+		vm->_screen->fadeOut();
+		break;
+	case 3:
+		vm->displayPegsTick();
+		break;
+	case 4:
+		vm->movePeg(param1); // todo: should it be param2?
+		break;
+	case 5:
+		vm->playSuccubusAttack();
+		break;
+	case 6:
+		error("TODO: Special 6: Load DARKSHEER player!");
+	case 7:
+		vm->_midi->loadMusic(98, param1);
+		break;
+	case 8:
+		vm->_screen->setDarkPalette(param1 | (param1 << 8), 0, 238);
+		break;
+	case 9:
+		vm->_screen->setDarkPalette(0x3200, 192, 43);
+		break;
+	case 10:
+		vm->playStilMorph();
+		break;
+	case 11:
+		vm->showComicCover();
+		break;
+	case 12:
+		vm->playSuccubusSplit();
+		break;
+	case 13:
+		vm->shotoMeanwhile();
+		break;
+	case 14:
+		// Load some temp music
+		_vm->_midi->newMusic(param1, 0);
+		break;
+	case 15:
+		// Resume previous music
+		if (!_vm->_midi->isPlaying())
+			_vm->_midi->newMusic(0, 1);
+		break;
+	case 17:
+		warning("TODO: Add Nightdive credits here if playing that edition?");
+		// see NoctEndGame::drawer.
+		_vm->quitGame();
+		break;
+	case 19:
+		warning("TODO: work our correct step on Special 19 (flashpalette)");
+		_vm->_screen->flashPalette(20);
+	case 20:
+		vm->doLastComic();
+		break;
+	case 21:
+		vm->doSpecialComic();
+		break;
+	default:
+		error("TODO: Unknown special %d in NoctropolisScripts::executeSpecial", commandIndex);
 	}
 }
 
