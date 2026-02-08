@@ -61,10 +61,10 @@ struct ComicPage {
 class ComicResource : public Resource {
 public:
     uint16 getCount() const { return _pages.size(); }
-    ComicPage *getPage(int index) const { return _pages[index]; }
+    const ComicPage *getPage(int index) const { return _pages[index]; }
     void free();
 protected:
-    Common::Array<ComicPage*> _pages;
+    Common::Array<ComicPage *> _pages;
     ComicPageHotspot loadHotspot(Common::SeekableReadStream &source);
     void internalLoad(Common::SeekableReadStream &source, uint32 size);
 };
@@ -82,14 +82,14 @@ public:
 	ComicViewer(NoctropolisEngine *vm);
 	~ComicViewer();
 	
-	void run(ComicResource *comic);
+	void run(const ComicResource *comic);
 	
 protected:
 	NoctropolisEngine *_vm;
 	ComicResource *_comic;
 	SpriteResource *_bubbleSprites;
 	int _currPage;
-	PageResult runPage(ComicPage *page);
+	PageResult runPage(const ComicPage *page);
 	void drawBubble(const ComicPageBubble &bubble);
 };
 

@@ -52,19 +52,17 @@ void PolygonResource::free() {
 	_polygons.clear();
 }
 
+////////////////
 
-ComicViewer::ComicViewer(NoctropolisEngine *vm)
-	: _vm(vm)
+ComicViewer::ComicViewer(NoctropolisEngine *vm) : _vm(vm)
 {
 }
 
 ComicViewer::~ComicViewer() {
 }
 
-void ComicViewer::run(ComicResource *comic) {
-
+void ComicViewer::run(const ComicResource *comic) {
 	PageResult result = kPageResultNone;
-
 	_currPage = 0;
 	
 	debug("ComicViewer::run() getCount() = %d", comic->getCount());
@@ -80,7 +78,7 @@ void ComicViewer::run(ComicResource *comic) {
 
 }
 
-PageResult ComicViewer::runPage(ComicPage *page) {
+PageResult ComicViewer::runPage(const ComicPage *page) {
 	PageResult result = kPageResultNone;
 
 	_vm->_files->loadScreen(Common::Path(page->filename.baseName()));
