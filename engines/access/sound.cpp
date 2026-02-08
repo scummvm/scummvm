@@ -203,7 +203,12 @@ void SoundManager::loadSounds(const Common::Array<RoomInfo::SoundIdent> &sounds)
 		if (sound._soundFilename.empty()) {
 			soundRes = loadSound(sound._fileNum, sound._subfile);
 		} else {
-			// TODO: should be running from DARK parent directory
+			//
+			// In Noctropolis, sounds are defined by filenames, eg,
+			// DARK/AUD/FLUX01A.WAV
+			// TODO: Should probably be loading from DARK parent directory?
+			// Remove DARK/
+			//
 			Common::Path origpath = Common::Path(sound._soundFilename);
 			Common::StringArray components = origpath.splitComponents();
 			assert(components.size() == 3);
@@ -426,7 +431,8 @@ void MusicManager::newMusic(int musicId, int mode) {
 		_isLooping = (mode == 2);
 		_tempMusic = _music;
 		stopSong();
-		loadMusic(97, musicId);
+		int musicFile = (_vm->getGameID() == kGameAmazon ? 97 : 98);
+		loadMusic(musicFile, musicId);
 	}
 
 	if (_music)
@@ -438,6 +444,15 @@ void MusicManager::freeMusic() {
 
 	delete _music;
 	_music = nullptr;
+}
+
+void MusicManager::startMusicFade() {
+	debugC(3, kDebugSound, "fadeMusic");
+	if (!isPlaying())
+		return;
+
+	int startVol = getVolume();
+	warning("TODO: Implement MusicManager::fadeMusic - fade over 700ms from startVol %d", startVol);
 }
 
 void MusicManager::setLoop(bool loop) {
