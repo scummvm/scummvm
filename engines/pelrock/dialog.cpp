@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include "common/stack.h"
 
 #include "pelrock/dialog.h"
 #include "dialog.h"
@@ -80,7 +81,7 @@ uint32 DialogManager::readTextBlock(
 
 	int lineIndex = data[++pos];
 	pos++; // blank
-	debug("Reading text block starting at pos %u, line index %d, speaker ID %d", startPos, lineIndex, outSpeakerId);
+	// debug("Reading text block starting at pos %u, line index %d, speaker ID %d", startPos, lineIndex, outSpeakerId);
 	// Read text until control byte
 	while (pos < dataSize) {
 		byte b = data[pos];
@@ -223,7 +224,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 
 		if (_events->_leftMouseClicked) {
 			_events->_leftMouseClicked = false;
-			debug("Dialogue click to advance, current page: %d, totalPages: %d", curPage, (int)dialogueLines.size());
+			// debug("Dialogue click to advance, current page: %d, totalPages: %d", curPage, (int)dialogueLines.size());
 			if (curPage < (int)dialogueLines.size() - 1) {
 				curPage++;
 			} else {
@@ -239,6 +240,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 }
 
 void DialogManager::displayDialogue(Common::String text, byte speakerId) {
+	debug("Displaying dialogue: \"%s\" (Speaker ID: %d)", text.c_str(), speakerId);
 	displayDialogue(wordWrap(text), speakerId);
 }
 
@@ -464,13 +466,13 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 	// Initialize conversation state
 	ConversationState state = initializeConversation(conversationData, dataSize, npcIndex);
 	bool skipToChoices = false;
-
+	Common::Stack<uint32> positionStack; // Stack to handle nested branches for "go back" functionality
 	// Main conversation loop
 	while (state.position < dataSize && !g_engine->shouldQuit()) {
 		state.position = skipControlBytes(conversationData, dataSize, state.position);
 
 		if (state.position < dataSize && conversationData[state.position] == CTRL_GO_BACK) {
-			if (handleGoBack(conversationData, state.position, state)) {
+			if (handleGoBack(conversationData, positionStack, state.position, state)) {
 				skipToChoices = true;
 			} else {
 				break; // End conversation if no previous menu
@@ -513,7 +515,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 
 		// Parse choices
 		skipToChoices = false;
-		state.lastChoiceMenuPosition = state.position;
+		uint32 positionAtChoices = state.position;
 
 		Common::Array<ChoiceOption> *choices = new Common::Array<ChoiceOption>();
 		parseChoices(conversationData, dataSize, state.position, choices);
@@ -526,11 +528,22 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 			debug(" Choice %u (index %d): \"%s\" (Disabled: %s)", i, (*choices)[i].choiceIndex, (*choices)[i].text.c_str(),
 				  (*choices)[i].isDisabled ? "Yes" : "No");
 		}
+		debug("-----------------------");
 
 		if (choices->empty()) {
-			state.position = peekPos;
+			state.position = positionStack.empty() ? 0 : positionStack.pop();
+			if(state.position == 0) {
+				debug("No choices and no previous position to go back to, ending conversation");
+				break;
+			}
+			checkAllSubBranchesExhausted(conversationData, dataSize, state.position, state.currentChoiceLevel-1);
+			debug("No choices found, popping back to previous choice menu, position %u", state.position);
+			skipToChoices = true;
+			// state.position = peekPos;
 			continue;
 		}
+
+		positionStack.push(positionAtChoices); // Push position of this choice menu onto stack for potential "go back"
 
 		// Validate choice level
 		if (state.currentChoiceLevel >= 0) {
@@ -637,7 +650,6 @@ ConversationState DialogManager::initializeConversation(const byte *data, uint32
 	state.currentRoot = 0;
 	state.position = findRoot(state.currentRoot, state.position, dataSize, data);
 	state.currentChoiceLevel = -1;
-	state.lastChoiceMenuPosition = 0;
 	state.lastSelectedChoice = ChoiceOption();
 
 	// Skip any junk at start until we find a speaker marker
@@ -649,25 +661,30 @@ ConversationState DialogManager::initializeConversation(const byte *data, uint32
 }
 
 // Handle F0 "Go Back" control byte
-bool DialogManager::handleGoBack(const byte *data, uint32 position, ConversationState &state) {
+// When F0 is hit, all choices at the current level have been exhausted.
+// The cascading disable in disableChoiceIfNeeded should have already disabled
+// the choices that led here. We just need to go back to the parent level.
+bool DialogManager::handleGoBack(const byte *data, Common::Stack<uint32> &positionStack, uint32 position, ConversationState &state) {
 	if (data[position] != CTRL_GO_BACK) {
 		return false;
 	}
 
-	debug("F0 Go Back at position %u, rewinding to lastChoiceMenuPosition %u", position, state.lastChoiceMenuPosition);
+	debug("F0 Go Back hit at position %u, current level %d", position, state.currentChoiceLevel);
 
-	if (state.lastChoiceMenuPosition > 0) {
-		// Disable the choice that led to this F0
-		if (state.lastSelectedChoice.dataOffset > 0) {
-			debug("F0: Disabling choice that led here at offset %u", state.lastSelectedChoice.dataOffset);
-			g_engine->_room->addDisabledChoice(state.lastSelectedChoice);
-		}
-		state.position = state.lastChoiceMenuPosition;
-		return true; // Skip to choices
-	} else {
-		debug("F0: No previous choice menu, ending conversation");
-		return false; // End conversation
+	// Pop position stack - we're going back to parent level
+	uint32 parentPos = positionStack.empty() ? 0 : positionStack.pop();
+
+	if (parentPos == 0) {
+		debug("F0: No parent position on stack, ending conversation");
+		return false;
 	}
+
+	// Go up one level
+	state.currentChoiceLevel--;
+	state.position = parentPos;
+	debug("F0: Moved back to level %d, position %u", state.currentChoiceLevel, parentPos);
+
+	return true;
 }
 
 uint32 DialogManager::readAndDisplayDialogue(const byte *data, uint32 dataSize, uint32 position) {
@@ -779,15 +796,8 @@ uint32 DialogManager::processChoiceSelection(
 
 	if (!choiceText.empty() && choiceText.size() > 1) {
 		displayDialogue(choiceText, ALFRED_COLOR);
-
-		// Only disable FB choice if all sub-branches are exhausted
-		if ((*choices)[selectedIndex].shouldDisableOnSelect) {
-			bool shouldDisable = checkAllSubBranchesExhausted(data, dataSize, endPos, state.currentChoiceLevel);
-			if (shouldDisable) {
-				debug("Disabling one-time choice at index %d after selection", selectedIndex);
-				g_engine->_room->addDisabledChoice((*choices)[selectedIndex]);
-			}
-		}
+		debug("Will check if choice should be disabled after displaying dialogue");
+		disableChoiceIfNeeded(choices, selectedIndex, data, dataSize, endPos, state);
 	}
 
 	position = endPos;
@@ -802,6 +812,94 @@ uint32 DialogManager::processChoiceSelection(
 	}
 
 	return position;
+}
+void DialogManager::disableChoiceIfNeeded(Common::Array<Pelrock::ChoiceOption> *choices, int selectedIndex, const byte *data, uint32 dataSize, uint32 endPos, Pelrock::ConversationState &state) {
+	// Cascading parent disable:
+	// 1. Check if current choice's sub-branches are exhausted
+	// 2. If so AND it's 0xFB, disable the current choice
+	// 3. Go up to parent level, check if parent's sub-branches are exhausted
+	// 4. Continue until we find a level with active sub-branches or reach level 1
+
+	// Start with the currently selected choice
+	int currentLevel = state.currentChoiceLevel;
+	uint32 currentChoicePos = (*choices)[selectedIndex].dataOffset;
+	bool isCurrentFB = (*choices)[selectedIndex].shouldDisableOnSelect;
+
+	while (currentLevel >= 1) {
+		// Check if all sub-branches at this level are exhausted
+		bool allExhausted = checkAllSubBranchesExhausted(data, dataSize, currentChoicePos + 4, currentLevel);
+
+		if (!allExhausted) {
+			debug("Cascading disable stopped at level %d - active sub-branches found", currentLevel);
+			break;
+		}
+
+		// Check if this choice is F1 (repeatable) - don't disable
+		if (!isCurrentFB) {
+			debug("Choice at level %d is repeatable (F1), stopping cascade", currentLevel);
+			break;
+		}
+
+		// Disable this one-time choice
+		debug("Cascading disable: level %d, offset %u", currentLevel, currentChoicePos);
+		ChoiceOption choiceToDisable;
+		choiceToDisable.room = g_engine->_room->_currentRoomNumber;
+		choiceToDisable.dataOffset = currentChoicePos;
+		choiceToDisable.choiceIndex = currentLevel;
+		choiceToDisable.shouldDisableOnSelect = true;
+		g_engine->_room->addDisabledChoice(choiceToDisable);
+
+		// Stop if we've reached level 1
+		if (currentLevel <= 1) {
+			debug("Reached level 1, stopping cascading disable");
+			break;
+		}
+
+		// Go up one level - scan backwards to find the parent FB/F1 marker at (currentLevel - 1)
+		currentLevel--;
+		uint32 scanPos = currentChoicePos;
+		bool foundParent = false;
+
+		while (scanPos > 0) {
+			scanPos--;
+			byte b = data[scanPos];
+
+			// Found 0xFB marker
+			if (b == CTRL_DIALOGUE_MARKER_ONEOFF && scanPos + 1 < dataSize) {
+				byte idx = data[scanPos + 1];
+				if (idx == (byte)currentLevel) {
+					currentChoicePos = scanPos;
+					isCurrentFB = true;
+					foundParent = true;
+					debug("Found parent FB at level %d, pos %u", currentLevel, currentChoicePos);
+					break;
+				}
+			}
+			// Found 0xF1 marker (repeatable)
+			else if (b == CTRL_DIALOGUE_MARKER && scanPos + 1 < dataSize) {
+				byte idx = data[scanPos + 1];
+				if (idx == (byte)currentLevel) {
+					// Found 0xF1 parent - will stop cascade on next iteration
+					currentChoicePos = scanPos;
+					isCurrentFB = false;
+					foundParent = true;
+					debug("Found parent 0xF1 at level %d, pos %u - will stop cascade", currentLevel, currentChoicePos);
+					break;
+				}
+			}
+
+			// Hit boundary markers - stop searching
+			if (b == CTRL_ALT_SPEAKER_ROOT || b == CTRL_END_BRANCH || b == CTRL_ALT_END_MARKER_1) {
+				debug("Hit boundary at pos %u while looking for parent level %d", scanPos, currentLevel);
+				break;
+			}
+		}
+
+		if (!foundParent) {
+			debug("Could not find parent at level %d, stopping cascade", currentLevel);
+			break;
+		}
+	}
 }
 void DialogManager::sayAlfred(Common::StringArray texts) {
 	g_engine->_alfredState.setState(ALFRED_TALKING);

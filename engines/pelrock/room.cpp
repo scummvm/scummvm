@@ -1082,6 +1082,8 @@ void RoomManager::addDisabledChoice(ChoiceOption choice) {
 	uint32 disableOffset = choice.dataOffset + 2;
 	debug("Adding disabled branch for room %d at offset %d (FA written at %d)",
 		  choice.room, choice.dataOffset, disableOffset);
+
+	debug("Disabled branch is: \"%s\"",  choice.text.c_str());
 	ResetEntry resetEntry = ResetEntry();
 	resetEntry.room = choice.room;
 	resetEntry.offset = disableOffset;
