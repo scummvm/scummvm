@@ -78,28 +78,38 @@ void NoctropolisRoom::reloadRoom() {
 }
 
 void NoctropolisRoom::reloadRoom1() {
-	// TODO: Check this. Currently just copied from MartianRoom.
+	// Is this also in the FN_RELOAD part of afterDoCommandsTick
+	NoctropolisEngine *vm = (NoctropolisEngine *)_vm;
+	vm->_events->_interfaceOff = false;
+	vm->_player->_playerMove = false;
+	vm->_player->_playerDirection = Direction::NONE;
+	vm->_stil->_playerDirection = Direction::NONE;
+	vm->_flags[0] = 0;
 	_selectCommand = -1;
-	_vm->_boxSelect = false; //-1
-	_vm->_player->_playerOff = false;
-	_vm->_player->_playerMove = false;
+	vm->_boxSelect = false; //-1
+	vm->_player->_playerOff = false;
+	vm->_stil->_playerOff = false;
 
+	if (!vm->_loadFlag)
+		vm->setStilettoPos();
+
+	vm->_loadFlag = false;
 	_vm->_screen->forceFadeOut();
-	_vm->_events->hideCursor();
 	_vm->_screen->clearScreen();
-	_vm->_events->showCursor();
 	roomInit();
 	_vm->_player->load();
 
-	_vm->_events->hideCursor();
 	_vm->_screen->setBufferScan();
 	setupRoom();
 	setWallCodes();
 	buildScreen();
 	_vm->copyBF2Vid();
 
-	_vm->_screen->setManPalette();
-	_vm->_events->showCursor();
+	if (_roomFlag) {
+		if (_roomFlag & kRoomFlagStiletto)
+			_vm->_screen->setStilPalette();
+		_vm->_screen->setManPalette();
+	}
 	_vm->_player->_frame = 0;
 	_vm->_oldRects.clear();
 	_vm->_newRects.clear();

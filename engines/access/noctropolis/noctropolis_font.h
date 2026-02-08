@@ -48,7 +48,7 @@ public:
 	NoctropolisFont(uint16 bytes, int16 height, byte firstchar, byte lastchar, const uint16 *offsets, const byte *data);
 
 private:
-    void load(const uint16 *offsets, const byte *data);
+	void load(const uint16 *offsets, const byte *data);
 	const byte *getCharDataPtr(byte ch, const uint16 *offsets, const byte *data) const;
 	uint getCharBitOffset(byte ch, const uint16 *offsets) const;
 	uint getCharWidth(byte ch, const uint16 *offsets) const;

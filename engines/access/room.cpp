@@ -208,18 +208,31 @@ void Room::doRoom() {
 			if (_vm->shouldQuitOrRestart())
 				return;
 
-			// DOROOMFLASHBACK jump point
+			// DOROOMFLASHBACK jump point in Amazon
+			// afterDoCommandsTick in Noctropolis
+			if (_vm->getGameID() == kGameNoctropolis) {
+				// TODO: Need to check the
+				if (_vm->_flags[200] && !_vm->_timers[0x12]._flag) {
+					warning("TODO: Work out when to call DeadMeat1");
+				}
+			}
+
 			if (_function == FN_CLEAR1) {
+				if (_vm->getGameID() == kGameNoctropolis)
+					_vm->_screen->fadeOut();
 				clearRoom();
 				break;
 			} else if (_function == FN_CLEAR2) {
 				clearRoom();
+				if (_vm->getGameID() == kGameNoctropolis)
+					((Noctropolis::NoctropolisEngine *)_vm)->doTravel();
 				return;
 			} else if (_function == FN_RELOAD) {
 				reloadRoom1();
-				// WORKAROUND: This doesn't seem to restore the palette correctly?
-				// This is only ever used in the abduction scene (special 0)
-				_vm->_screen->setPalette();
+				// WORKAROUND: This doesn't seem to restore the palette
+				// correctly in MM abduction scene (special 0)
+				if (_vm->getGameID() == kGameMartianMemorandum)
+					_vm->_screen->setPalette();
 				reloadFlag = true;
 				break;
 			} else if (_function == FN_BREAK) {
@@ -303,13 +316,19 @@ void Room::clearRoom() {
 }
 
 void Room::loadRoomData(const byte *roomData) {
+	// LoadRoom() in original games
 	RoomInfo roomInfo(roomData, _vm->getGameID(), _vm->isCD(), _vm->isDemo());
 
 	_roomFlag = roomInfo._roomFlag;
 	_palIntensity = roomInfo._palIntensity;
 
-	// TODO: If roomFlag & 2 and noctropolis, load pal files.
-	// (see LoadRoom in noctropolis.)
+	if (_vm->getGameID() == kGameNoctropolis && _roomFlag & kRoomFlagStiletto) {
+		// Load _vm->_screen->_stilPal
+		Resource *stilPal = _vm->_files->loadFile(0xfd, _palIntensity + 6);
+		assert(stilPal->_size <= 99);
+		memcpy(stilPal->data(), _vm->_screen->_stilPal, stilPal->_size);
+		error("TODO: Finish load of Stiletto data - see Noctropolis LoadRoom()");
+	}
 
 	_vm->_establishFlag = false;
 	if (roomInfo._estIndex != -1) {
@@ -319,6 +338,8 @@ void Room::loadRoomData(const byte *roomData) {
 			_vm->establish(0, roomInfo._estIndex);
 		}
 	}
+
+	// Original games call LoadPlayer1 here
 
 	_vm->_midi->freeMusic();
 	if (roomInfo._musicFile._fileNum != -1) {

@@ -1835,7 +1835,7 @@ void NoctropolisResources::load(Common::SeekableReadStream &s) {
 	_vm->_fonts.addFont(_fontGothiceu);
 	_vm->_fonts.addFont(_fontChaletse);
 	_vm->_fonts.addFont(_fontComicseu);
-	
+
 	// Set some default fonts
 	_vm->_fonts._font1 = _fontChaleteu;
 	_vm->_fonts._font2 = _fontSystemeu;
@@ -1948,10 +1948,10 @@ void NoctropolisResources::load(Common::SeekableReadStream &s) {
 		Polygon polygon;
 		int pointsCount = MENU_POLYS[i++];
 		while (pointsCount--) {
-              Common::Point point;
-              point.x = MENU_POLYS[i++];
-              point.y = MENU_POLYS[i++];
-              polygon.points.push_back(point);
+			Common::Point point;
+			point.x = MENU_POLYS[i++];
+			point.y = MENU_POLYS[i++];
+			polygon.points.push_back(point);
 		}
 		_menuPolygons.push_back(polygon);
 	}

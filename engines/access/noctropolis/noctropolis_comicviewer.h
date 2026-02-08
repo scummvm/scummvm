@@ -31,42 +31,42 @@ namespace Access {
 namespace Noctropolis {
 
 struct ComicPageBubble {
-    byte style;
-    byte textColor;
-    int16 x, y;
-    Common::String text;
+	byte style;
+	byte textColor;
+	int16 x, y;
+	Common::String text;
 };
 
 class PolygonResource : public Resource {
 public:
-    int findPolygonAt(int16 x, int16 y) const;
-    void free();
+	int findPolygonAt(int16 x, int16 y) const;
+	void free();
 protected:
-    PolygonArray _polygons;
-    void internalLoad(Common::SeekableReadStream &source, uint32 size);
+	PolygonArray _polygons;
+	void internalLoad(Common::SeekableReadStream &source, uint32 size);
 };
 
 struct ComicPageHotspot {
-    PolygonResource polygons;
-    int32 soundFileIndex, soundResIndex;
-    Common::Array<ComicPageBubble> bubbles;
+	PolygonResource polygons;
+	int32 soundFileIndex, soundResIndex;
+	Common::Array<ComicPageBubble> bubbles;
 };
 
 struct ComicPage {
-    Common::Path filename;
-    int32 musicFileIndex, musicResIndex;
-    Common::Array<ComicPageHotspot> hotspots;
+	Common::Path filename;
+	int32 musicFileIndex, musicResIndex;
+	Common::Array<ComicPageHotspot> hotspots;
 };
 
 class ComicResource : public Resource {
 public:
-    uint16 getCount() const { return _pages.size(); }
-    const ComicPage *getPage(int index) const { return _pages[index]; }
-    void free();
+	uint16 getCount() const { return _pages.size(); }
+	const ComicPage *getPage(int index) const { return _pages[index]; }
+	void free();
 protected:
-    Common::Array<ComicPage *> _pages;
-    ComicPageHotspot loadHotspot(Common::SeekableReadStream &source);
-    void internalLoad(Common::SeekableReadStream &source, uint32 size);
+	Common::Array<ComicPage *> _pages;
+	ComicPageHotspot loadHotspot(Common::SeekableReadStream &source);
+	void internalLoad(Common::SeekableReadStream &source, uint32 size);
 };
 
 
@@ -81,9 +81,9 @@ class ComicViewer {
 public:
 	ComicViewer(NoctropolisEngine *vm);
 	~ComicViewer();
-	
+
 	void run(const ComicResource *comic);
-	
+
 protected:
 	NoctropolisEngine *_vm;
 	ComicResource *_comic;

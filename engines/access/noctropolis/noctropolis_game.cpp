@@ -22,6 +22,8 @@
 #include "access/noctropolis/noctropolis_game.h"
 #include "access/noctropolis/noctropolis_room.h"
 #include "access/noctropolis/noctropolis_scripts.h"
+#include "access/noctropolis/noctropolis_resources.h"
+#include "access/noctropolis/noctropolis_comicviewer.h"
 #include "image/png.h"
 #include "graphics/color_quantizer.h"
 #include "common/config-manager.h"
@@ -32,7 +34,8 @@ namespace Noctropolis {
 
 
 NoctropolisEngine::NoctropolisEngine(OSystem *syst, const AccessGameDescription *gameDesc) :
-AccessEngine(syst, gameDesc), _invScript(nullptr), _stil(nullptr)
+AccessEngine(syst, gameDesc), _invScript(nullptr), _stil(nullptr), _loadFlag(false),
+_travScrollX(0), _travScrollY(0), _travScrollCol(0), _travScrollRow(0)
 {
 }
 
@@ -83,6 +86,12 @@ void NoctropolisEngine::initVariables() {
 	_events->setNormalCursor(CURSOR_ARROW);
 	_mouseMode = 0;
 	_animation->clearTimers();
+
+	// This is Noct_InitTravel in the original
+	_travScrollRow = 15;
+	_travScrollCol = 0;
+	_travScrollX = 0;
+	_travScrollY = 0;
 }
 
 void NoctropolisEngine::playGame() {
@@ -96,7 +105,7 @@ void NoctropolisEngine::playGame() {
 
 		_events->getAction(action);
 		keepGoing &= (action != kActionSkip);
-		
+
 		if (keepGoing)
 			doPublisherLogo();
 		if (shouldQuit())
@@ -104,7 +113,7 @@ void NoctropolisEngine::playGame() {
 
 		_events->getAction(action);
 		keepGoing &= (action != kActionSkip);
-		
+
 		if (keepGoing)
 			doIntro();
 		if (shouldQuit())
@@ -130,8 +139,14 @@ void NoctropolisEngine::playGame() {
 		// Execute the room
 		_room->doRoom();
 	} while (_restartFl);
-	
 }
+
+
+Common::Error NoctropolisEngine::loadGameState(int slot) {
+	_loadFlag = true;
+	return AccessEngine::Engine::loadGameState(slot);
+}
+
 
 void NoctropolisEngine::doFlashLogo() {
 	_events->hideCursor();
@@ -278,7 +293,7 @@ void NoctropolisEngine::doIntro() {
 				}
 
 			}
-			
+
 			if (skylineSpriteOfsX1 > -100) {
 				_buffer2.plotImage(sprites, 0, Common::Point(skylineSpriteOfsX1, 60));
 				skylineSpriteOfsX1 -= 5;
@@ -311,6 +326,397 @@ void NoctropolisEngine::doIntro() {
 
 	delete sprites;
 }
+
+void NoctropolisEngine::doTravel() {
+	_events->setCursor(CURSOR_ARROW);
+	_player->_playerOff = true;
+	_stil->_playerOff = true;
+
+	// Original starts music and video fade at the same time.  our fadeOut is
+	// synchronous so start the music fade first.
+	_midi->startMusicFade();
+	_screen->fadeOut();
+
+	// This section is "state 0" in NoctTravelEngine::ticker
+	_room->clearRoom();
+	_midi->loadMusic(98, 0x1b);
+	_midi->midiRepeat();
+	_midi->midiPlay();
+
+	//loadPlayField(0, 0); //??
+	_screen->setIconPalette();
+	_scrollRow = _travScrollRow;
+	_scrollCol = _travScrollCol;
+	_scrollX = _travScrollX;
+	_scrollY = _travScrollY;
+	Resource *spriteData = _files->loadFile(0, 1);
+	_objectsTable[0] = new SpriteResource(this, spriteData);
+	delete spriteData;
+
+	// This section is "state 1" in NoctTravelEngine::ticker
+	_screen->setPaletteCycle(0xb5, 0xbe, 5);
+	_screen->fadeIn();
+
+	Common::Point rawMouse;
+	int locFlag = -1;
+	// Show the map and wait for clicks
+	while (!shouldQuitOrRestart()) {
+		_midi->midiRepeat();
+
+		// TODO: check me.. is buildScreen equivalent??
+		//NoctPF_RenderPlayfield();
+		_room->buildScreen();
+
+		_player->calcPlayer();
+
+		for (int i = 0; i < 15; i++) {
+			if (_travel[i]) {
+				int imgNum = TRAV_ICONS[i * 3];
+				int x = TRAV_ICONS[i * 3 + 1];
+				int y = TRAV_ICONS[i * 3 + 2];
+				Common::Point pt(x - _screen->_bufferStart.x, y - _screen->_bufferStart.y);
+				_buffer2.plotImage(_objectsTable[0], imgNum, pt);
+			}
+		}
+		copyBF2Vid();
+
+		_screen->cyclePaletteForward();
+		locFlag = -1;
+		rawMouse = _events->calcRawMouse();
+		int boxResult = _room->checkBoxes1(rawMouse);
+		if (boxResult != -1 && _travel[boxResult])
+			locFlag = boxResult;
+
+		if (!_events->_leftButton || locFlag == -1) {
+			int scrolly = _scrollY;
+
+			// TODO: Clean up these if()s a bit
+			if (rawMouse.y < 33) {
+				if (_scrollRow != 0 && (scrolly = _scrollY + -8, (_scrollY + -8) < 0)) {
+					int row = _scrollRow + -1;
+					scrolly = _scrollY + 8;
+					_scrollRow = 0;
+					if (-1 < row)
+						_scrollRow = row;
+				}
+			} else if (367 < rawMouse.y &&
+						(_screen->_vWindowHeight + _scrollRow != _room->_playFieldHeight) &&
+					   (scrolly = _scrollY + 8, 0xf < (_scrollY + 8))) {
+				scrolly = _scrollY + -8;
+				_scrollRow = _scrollRow + 1;
+			}
+		}
+
+		_events->pollEventsAndWait();
+	}
+
+	// This is NoctTravelEngine::done
+	_screen->fadeOut();
+	_travScrollRow = _scrollRow;
+	_travScrollCol = _scrollCol;
+	_travScrollX = _scrollX;
+	_travScrollY = _scrollY;
+	assert(locFlag < 15);
+	_player->_roomNumber = TRAV_ROOMS[locFlag];
+	_player->_rawPlayer.x = TRAV_MAN_POS[locFlag * 2];
+	_player->_rawPlayer.y = TRAV_MAN_POS[locFlag * 2 + 1];
+	_player->_moveTo = _player->_rawPlayer;
+	setStilettoPos();
+	_room->clearRoom();
+}
+
+static const short StilYDirOff[] = {
+	10, 10, 10, 10, 5, 5, 10, 10, 10,
+};
+
+void NoctropolisEngine::setStilettoPos() {
+	_stil->_playerDirection = _player->_playerDirection;
+	int dir = _player->_playerDirection;
+	_stil->_moveTo = _player->_rawPlayer;
+	// The original has a table for X index into the scale table here, but it
+	// in practice evaluates to 30.  There is also some weird double-negation.
+	if (dir < 5) {
+		_stil->_moveTo.x -= _screen->_scaleTable1[30];
+		_stil->_moveTo.y -= _screen->_scaleTable1[StilYDirOff[dir]];
+	} else if (dir == 5) {
+		_stil->_moveTo.x += _screen->_scaleTable1[30];
+		_stil->_moveTo.y -= _screen->_scaleTable1[StilYDirOff[dir]];
+	} else {
+		_stil->_moveTo.x += _screen->_scaleTable1[30];
+		_stil->_moveTo.y += _screen->_scaleTable1[StilYDirOff[dir]];
+	}
+
+	_stil->_rawPlayer = _stil->_moveTo;
+}
+
+
+void NoctropolisEngine::dead(int deathType) {
+	// aka DeadMeat1
+	/*
+	static const struct { int16 x, y; } deathVideoPos[] = {
+		{167, 21},
+		{161, 22},
+		{186, 29},
+		{180, 29},
+		{194, 37},
+		{215, 93},
+		{215, 93},
+		{227, 0}
+	};
+
+	int16 deathTextX = deathType == 8 ? 80 : 130;
+	int16 deathTextY = deathType == 8 ? 310 : 220;
+	const char *deathScreenBackground =
+		(deathType == 6 || deathType == 12 || deathType == 7 || deathType == 8)
+		? "death1.scn" : "death.scn";
+	const char *deathTextCaption =
+		(deathType == 6 || deathType == 12 || deathType == 7)
+		? "IMPRISONED" : "DEAD";
+	int videoIndex;
+
+	NoctropolisDeathResource *deathTable = new NoctropolisDeathResource();
+	StringResource *deathVideoFilenames = new StringResource();
+
+	_res->load(deathTable, GID_NOCTROPOLIS, kResDeathTable, 0);
+	_res->load(deathVideoFilenames, GID_NOCTROPOLIS, kResStringTable, 5);
+
+	videoIndex = deathTable->getVideoIndex(deathType);
+
+	// TODO: Stop current music and play death music
+	_screen->fadeOut();
+
+	_vgaScreen->lock();
+	showScreen(deathScreenBackground);
+	drawTextBox(deathTextX, deathTextY, kTextBoxPlain | kTextBoxCaption,
+		deathTable->getText(deathType), deathTextCaption);
+	_vgaScreen->unlock();
+
+	copySystemPalette();
+	fadeToPalette();
+
+	playVideo((const char*)deathVideoFilenames->getString(videoIndex),
+		deathVideoPos[videoIndex].x, deathVideoPos[videoIndex].y, false, false);
+
+	waitUntilAnyButtonIsClicked();
+	restoreTextBoxRect();
+
+	delete deathTable;
+	delete deathVideoFilenames;
+	*/
+	// TODO: Restart game or something
+	error("TODO: Finish implementing NoctropolisEngine::dead(%d)", deathType);
+}
+
+void NoctropolisEngine::initMinigame() {
+	static const byte minigameInitialConfig[9] = {2, 8, 9, 5, 6, 4, 1, 7, 3};
+	memcpy(_minigameCurrentConfig, minigameInitialConfig, 9);
+	_flags[91] = 0;
+}
+
+void NoctropolisEngine::displayPegsTick() {
+	static const byte redSol[3] = {9, 6, 3};
+	static const byte greenSol[3] = {2, 5, 8};
+	static const byte blueSol[3] = {1, 4, 7};
+	static const struct { int16 x, y; } pegPos[10] = {
+		{255, 201}, {143, 211},
+		{27, 57}, {249, 56},
+		{141, 174}, {67, 75},
+		{210, 75}, {140, 137},
+		{107, 94}, {170, 94}
+	};
+
+	// Check if the game is solved
+	if (_flags[91])
+		return;
+
+	if (minigameIsSolved(0, redSol) &&
+		minigameIsSolved(3, greenSol) &&
+		minigameIsSolved(6, blueSol)) {
+		debug("Minigame solved!");
+		_flags[91] = 1;
+		return;
+	}
+
+	for (uint i = 0; i < 9; i++) {
+		ImageEntry ie;
+		ie._spritesPtr = _objectsTable[65];
+		ie._frameNumber = i / 3;
+		ie._position.x = pegPos[_minigameCurrentConfig[i]].x + 181 - 4;
+		ie._position.y = pegPos[_minigameCurrentConfig[i]].y + 116 - 3;
+		ie._offsetY = 7;
+		//spriteDrawItem.flags = 8; // Why? Scaling is 0! CHECKME
+		//spriteDrawItem.scaling;
+		_images.addToList(ie);
+	}
+}
+
+void NoctropolisEngine::movePeg(int16 slot) {
+	static const struct { int16 a, b; } pegPath[] = {
+		{0, 1}, {1, 2}, {1, 5}, {1, 3}, {2, 3},
+		{2, 6}, {3, 4}, {4, 5}, {4, 8}, {4, 6},
+		{5, 6}, {5, 9}, {6, 7}, {7, 8}, {8, 9},
+		{9, 7}, {0xFF, 0xFF}
+	};
+
+	for (uint i = 0; i < 9; i++) {
+		if (_minigameCurrentConfig[i] == slot) {
+			for (uint mapIndex = 0; pegPath[mapIndex].a != 0xFF; mapIndex++) {
+				if (pegPath[mapIndex].a == slot || pegPath[mapIndex].b == slot) {
+					int16 a = (pegPath[mapIndex].a == slot) ? pegPath[mapIndex].b : pegPath[mapIndex].a;
+					uint index = 9;
+					bool done = false;
+					for (uint j = 0; !done && _minigameCurrentConfig[j] != a; j++) {
+						if (--index == 0) {
+							_minigameCurrentConfig[i] = a;
+							_sound->playSound(1);
+							done = true;
+						}
+					}
+				}
+			}
+			break;
+		}
+	}
+
+#if 0
+	debug("%d %d %d", _minigameCurrentConfig[0], _minigameCurrentConfig[1], _minigameCurrentConfig[2]);
+	debug("%d %d %d", _minigameCurrentConfig[3], _minigameCurrentConfig[4], _minigameCurrentConfig[5]);
+	debug("%d %d %d", _minigameCurrentConfig[6], _minigameCurrentConfig[7], _minigameCurrentConfig[8]);
+	debug("-------------------");
+#endif
+
+}
+
+bool NoctropolisEngine::minigameIsSolved(uint rowIndex, const byte *finalRow) {
+	// Test if the colors in this 'row' match
+	return
+			(_minigameCurrentConfig[rowIndex] == finalRow[0] ||
+			_minigameCurrentConfig[rowIndex + 1] == finalRow[0] ||
+			_minigameCurrentConfig[rowIndex + 2] == finalRow[0]) &&
+			(_minigameCurrentConfig[rowIndex] == finalRow[1] ||
+			_minigameCurrentConfig[rowIndex + 1] == finalRow[1] ||
+			_minigameCurrentConfig[rowIndex + 2] == finalRow[1]) &&
+			(_minigameCurrentConfig[rowIndex] == finalRow[2] ||
+			_minigameCurrentConfig[rowIndex + 1] == finalRow[2] ||
+			_minigameCurrentConfig[rowIndex + 2] == finalRow[2]);
+}
+
+void NoctropolisEngine::playStilMorph() {
+	_midi->stopSong();
+	_system->showMouse(false);
+	_midi->loadMusic(98, 4);
+	_midi->midiPlay();
+	_screen->fadeOut();
+	_screen->clearScreen();
+	warning("TODO: Implement Noctropolis type video player");
+	//playVideo("VID1\\DRLM00.VID", 118, 118, true, true, true);
+}
+
+void NoctropolisEngine::flashPaletteEffect() {
+	_screen->flashPalette(255);
+	_screen->flashPalette(64);
+	_screen->flashPalette(16);
+}
+
+void NoctropolisEngine::shotoMeanwhile() {
+	_midi->stopSong();
+	_system->showMouse(false);
+	_midi->loadMusic(98, 2);
+	_midi->midiPlay();
+	_screen->fadeOut();
+	_screen->clearScreen();
+	// TODO: Check these colors
+	Font::_fontColors[0] = 0;
+	Font::_fontColors[3] = 244;
+	const char *meanwhileTxt = ((NoctropolisResources *)_res)->getMeanwhileMessage();
+	_fonts._fonts[3]->drawString(_screen, meanwhileTxt, Common::Point(100, 200));
+	_screen->fadeIn();
+	_system->updateScreen();
+	_system->delayMillis(180 * 17);
+	_screen->fadeOut();
+	_screen->clearScreen();
+	_screen->_printOrg = _screen->_printStart = Common::Point(300, 300);
+	_bubbleBox->_type = (BoxType)(kTextBoxNoctCaption | kTextBoxNoctPlain);
+	_bubbleBox->_bubbleTitle = ((NoctropolisResources *)_res)->getShotoTitle();
+	_bubbleBox->placeBubble(((NoctropolisResources *)_res)->getShotoText());
+	_events->waitKeyActionMouse();
+	warning("TODO: Implement Noctropolis type video player");
+	//playVideo("VID1\\B126MEAN.VID", 120, 30, false, true, true);
+	_midi->stopSong();
+	_screen->fadeOut();
+	_system->showMouse(true);
+}
+
+void NoctropolisEngine::makeVidPaletteCurrent() {
+	warning("TODO: Implement Noctropolis type video player");
+	//copyPaletteRange(_video->getPalette(), 0, 256);
+	_screen->setPalette();
+}
+
+void NoctropolisEngine::showComicCover() {
+	_midi->stopSong();
+	_midi->loadMusic(98, 1);
+	_midi->midiPlay();
+	_files->loadScreen(Common::Path("comic93.scn"));
+	_screen->setPalette();
+	_system->updateScreen();
+	_system->delayMillis(300 * 17);
+	_midi->stopSong();
+	_screen->fadeOut();
+	_screen->clearScreen();
+}
+
+void NoctropolisEngine::playSuccubusSplit() {
+	_midi->stopSong();
+	_midi->loadMusic(98, 25);
+	_midi->midiPlay();
+	_screen->clearScreen();
+	warning("TODO: Implement Noctropolis type video player");
+	//playVideo("VID1\\SUCSPLT1.VID", 116, 2, false, true);
+	_midi->stopSong();
+	_screen->fadeOut();
+}
+
+void NoctropolisEngine::playSuccubusAttack() {
+	_midi->stopSong();
+	_midi->loadMusic(98, 4);
+	_midi->midiPlay();
+	_screen->fadeOut();
+	_files->loadScreen(Common::Path("scene06.scn")); // "\\DARK\\SCENE06.SCN"
+	_screen->fadeIn();
+	_system->updateScreen();
+	_system->delayMillis(60 * 17);
+	warning("TODO: Implement Noctropolis type video player");
+	//playVideo("VID1\\SUCATT1.VID", 118, 118, false, false);
+	_screen->clearScreen();
+	warning("TODO: Implement Noctropolis type video player");
+	//playVideo("VID1\\SUCATT2.VID", 196, 96, false, false);
+	_sound->playSound(1);
+	_midi->stopSong();
+	_screen->fadeOut();
+}
+
+void NoctropolisEngine::doLastComic() {
+	_midi->stopSong();
+	ComicViewer *viewer = new ComicViewer(this);
+	const ComicResource *comic = ((NoctropolisResources *)_res)->getLastComicResource();
+	viewer->run(comic);
+	delete viewer;
+	delete comic;
+	_screen->fadeOut();
+}
+
+void NoctropolisEngine::doSpecialComic() {
+	_midi->stopSong();
+	ComicViewer *viewer = new ComicViewer(this);
+	const ComicResource *comic = ((NoctropolisResources *)_res)->getSpecialComicResource();
+	viewer->run(comic);
+	delete viewer;
+	delete comic;
+	_screen->fadeOut();
+}
+
+
 
 } // end namespace Noctropolis
 
