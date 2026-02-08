@@ -28,14 +28,20 @@
 namespace Access {
 
 class Font;
-
 namespace Noctropolis {
 
 class NoctropolisEngine;
+class ComicResource;
 
 extern const byte ICON_PALETTE[];
 
 extern const int16 MENU_POLYS[];
+
+extern const int16 TRAV_ROOMS[];
+
+extern const int16 TRAV_MAN_POS[];
+
+extern const int16 TRAV_ICONS[];
 
 class NoctropolisResources : public Resources {
 public:
@@ -55,7 +61,14 @@ public:
 	const char *getGeneralMessage(int command) const override;
 
 	const char *getEndMessage() const;
+	const char *getMeanwhileMessage() const;
+	const char *getShotoTitle() const;
+	const char *getShotoText() const;
 	const char *getStilEndMessage() const;
+	const char *getResponseTitle() const;
+
+	const ComicResource *getLastComicResource() const;
+	const ComicResource *getSpecialComicResource() const;
 
 	int menuPolygonAt(int16 x, int16 y) const;
 

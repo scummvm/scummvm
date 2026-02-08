@@ -22,6 +22,7 @@
 #include "access/noctropolis/noctropolis_resources.h"
 #include "access/noctropolis/noctropolis_game.h"
 #include "access/noctropolis/noctropolis_font.h"
+#include "access/noctropolis/noctropolis_comicviewer.h"
 #include "access/font.h"
 #include "access/polygon.h"
 
@@ -65,6 +66,38 @@ const int16 MENU_POLYS[] = {
 	0x96,  	-1,
 };
 
+// Travel rooms
+const short TRAV_ROOMS[] = {
+	0xC,  0x1C, 0xB,  0x29,
+	0x11, 0x33, 0x2B, 0xF,
+	0x1B, 0x55, 0x20, 0x25,
+	0x1A, 0x21, 0x0
+};
+
+// X and Y travel destinations
+const short TRAV_MAN_POS[] = {
+	0x118, 0x186, 0x174, 0x152, 0x19E, 0xC9, 0xFD, 0x183, 0x48, 0x173,
+	0x1D7, 0x154, 0x46, 0x17C, 0x0, 0x0, 0x55, 0x17A, 0xC2, 0x15B,
+	0x49, 0x172, 0x143, 0x182, 0x2B, 0x16A,
+};
+
+// X, Y, and image num for travel map icons
+const short TRAV_ICONS[] = {
+	0x103, 0x62, 0x0,
+	0x1E7, 0x129, 0x1,
+	0x110, 0x1EB, 0x2,
+	0x143, 0x292, 0x3,
+	0x1D2, 0x73, 0x4,
+	0x14D, 0x96, 0x5,
+	0x2A, 0x6A, 0x6,
+	0x1C, 0x1C1, 0x7,
+	0x31, 0x2D7, 0x8,
+	0x186, 0x17C, 0x9,
+	0x98, 0x11A, 0xA,
+	0xB3, 0x19, 0xB,
+	0x72, 0xC1, 0xC,
+	0xC9, 0xF2, 0xD,
+};
 
 // The original game has 4 files after a bunch of nullptrs.
 // We add them separately to make this file a little smaller.
@@ -99,6 +132,65 @@ static const char *NOCT_FILES_1[] = {
 static const char *NOCT_FILES_2[] = {
 	"DARK/TOP.AP", "DARK/STILETTO.AP",
 	"DARK/PLAYER.AP", "DARK/DARKSHR.AP",
+};
+
+static const char *NOCT_PLACE_NAMES[] = {
+	"       Cathedral",
+	"    Sunspire Tower",
+	"      Main Street",
+	"      Opera House",
+	"       Mausoleum",
+	"      Butcher Shop",
+	"      Observatory",
+	"  Stiletto's Apartment",
+	"    Bornick Mansion",
+	"  Cygnus Construction",
+	" Incarnate Technologies",
+	"Central Park Greenhouse",
+	"      Shadowlair",
+	"      Neon Noose",
+	"      Cathedrale",
+	"    Tour Sunspire",
+	"    Rue Principale",
+	"        Opera",
+	"       Mausolee",
+	"      Boucherie",
+	"     Observatoire",
+	"Appartement de Stiletto",
+	"    Manoir de Bornick",
+	"  Constructions du Cygne",
+	" Incarnate Technologies",
+	"  Serre de Central Park",
+	"     Antre d'Ombre",
+	"      Neon Noose",
+	"       Catedral",
+	"      Torre Solar",
+	"      Calle Mayor",
+	"        Opera",
+	"       Mausoleo",
+	"      Carniceria",
+	"      Observatorio",
+	"    Casa de Stiletto",
+	"     Mansion Bornick",
+	"  Construcciones Cygnus",
+	" Tecnologias Encarnadas",
+	" Invernadero del Parque",
+	"     Guarida Sombria",
+	"      Lazo de Neon",
+	"          Dom",
+	"      Sonnennadel",
+	"     Hauptstrasse",
+	"       Opernhaus",
+	"       Mausoleum",
+	"       Metzgerei",
+	"     Observatorium",
+	"   Stilettos Wohnung",
+	"Das Anwesen der Bornicks",
+	" Cygnus Hoch- & Tiefbau",
+	"Incarnate Technologies",
+	"Central Park Gewaechshaus",
+	"     Schattenhort",
+	"      Neon Noose",
 };
 
 static const byte ROOMDATA_02[] = {
@@ -1976,6 +2068,36 @@ const char *NoctropolisResources::getEndMessage() const {
 	}
 }
 
+const char *NoctropolisResources::getMeanwhileMessage() const {
+	switch (_vm->getLanguage()) {
+	case Common::EN_ANY: return "MEANWHILE...";
+	case Common::FR_FRA: return "PENDANT CE TEMPS...";
+	case Common::ES_ESP: return "MIENTRAS...";
+	case Common::DE_DEU: return "INZWISCHEN...";
+	default: error("Unsupported language for meanwhile message");
+	}
+}
+
+const char *NoctropolisResources::getShotoTitle() const {
+	switch (_vm->getLanguage()) {
+	case Common::EN_ANY: return "MS. SHOTO";
+	case Common::FR_FRA: return "Mme SHOTO";
+	case Common::ES_ESP: return "SRA. SHOTO";
+	case Common::DE_DEU: return "MS. SHOTO";
+	default: error("Unsupported language for ms shoto title");
+	}
+}
+
+const char *NoctropolisResources::getShotoText() const {
+	switch (_vm->getLanguage()) {
+	case Common::EN_ANY: return "He was just here....\nHe's better than we thought.";
+	case Common::FR_FRA: return "Il sort d'ici ... l'instant...\nIl est meilleur que nous pensions.";
+	case Common::ES_ESP: return "Ha estado aqui...\nEsta mejor de lo que pensabamos.";
+	case Common::DE_DEU: return "Er war gerade hier...\nEr ist besser, als wir dachten.";
+	default: error("Unsupported language for ms shoto text");
+	}
+}
+
 const char *NoctropolisResources::getStilEndMessage() const {
 	switch (_vm->getLanguage()) {
 	case Common::EN_ANY: return "Don't worry about me, Peter. You know I'll\nsupport whatever you've got planned.";
@@ -1986,6 +2108,25 @@ const char *NoctropolisResources::getStilEndMessage() const {
 	}
 }
 
+const char *NoctropolisResources::getResponseTitle() const {
+	switch (_vm->getLanguage()) {
+	case Common::EN_ANY: return "RESPONSE %d";
+	case Common::FR_FRA: return "REPONSE %d";
+	case Common::ES_ESP: return "RESPUESA %d";
+	case Common::DE_DEU: return "ANTWORT %d";
+	default: error("Unsupported language for response title");
+	}
+}
+
+const ComicResource *NoctropolisResources::getLastComicResource() const {
+	warning("TODO: Get comic resource for LastPages");
+	return nullptr;
+}
+
+const ComicResource *NoctropolisResources::getSpecialComicResource() const {
+	warning("TODO: Get comic resource for LastPages");
+	return nullptr;
+}
 
 } // end namespace Noctropolis
 
