@@ -263,8 +263,6 @@ public:
 	uint32 TickCount();
 
 	// toolbox_fileman.cpp
-	void Pack3();
-
 	void PBGetVol(ParamBlockRec &paramBlock);
 
 	void PBSetVol(ParamBlockRec &paramBlock);
@@ -641,6 +639,12 @@ public:
 	// PortSize changes the size of the current grafPort's portRect. This does not affect the screen; it
 	// merely changes the size of the "active area" of the grafPort.
 	void PortSize(uint16 width, uint16 height);
+
+	// FUNCTION PtInRect (pt: Point; r: Rect): Boolean;
+	// The PtInRect function determines whether the pixel below and to the right of the point
+	// you specify in the pt parameter is enclosed in the rectangle that you specify in the Rect
+	// parameter. The PtInRect function returns TRUE if it is, FALSE if it is not.
+	bool PtInRect(const Common::Point &pt, const Common::Rect &r);
 
 	// PROCEDURE SetCPixel (h,v: INTEGER; cPix: RGBColor);
 	// The SetCPixel function sets the pixel at the specified position to the pixel value that most

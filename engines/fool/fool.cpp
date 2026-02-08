@@ -28,6 +28,7 @@
 #include "graphics/palette.h"
 
 #include "fool/fool.h"
+#include "fool/fool_game.h"
 #include "fool/fool_prologue.h"
 #include "fool/detection.h"
 #include "fool/console.h"
@@ -65,9 +66,10 @@ Common::Error FoolEngine::run() {
 	// Menu
 	_menu = _wm.addMenu();
 
-	FoolPrologue fp;
-	fp.run();
-
+	//FoolPrologue fp;
+	//fp.run();
+	FoolGame fg;
+	fg.run();
 
 	return Common::kNoError;
 }

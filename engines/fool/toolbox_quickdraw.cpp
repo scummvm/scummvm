@@ -115,6 +115,10 @@ void Toolbox::DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect) {
 	_copyBits(intermediate, mask, _port->portBits, intermediate->getBounds(), dstRect, kSrcCopy, nullptr);
 }
 
+void Toolbox::EraseRoundRect(const Common::Rect &r, int16 ovalWidth, int16 ovalHeight) {
+	warning("STUB: Toolbox::EraseRoundRect");
+}
+
 void Toolbox::EndUpdate(WindowRecord &theWindow) {
 	warning("STUB: Toolbox::EndUpdate");
 }
@@ -204,6 +208,10 @@ void Toolbox::FrameRect(const Common::Rect &r) {
 	}
 }
 
+void Toolbox::FrameRoundRect(const Common::Rect &r, int16 ovalWidth, int16 ovalHeight) {
+	warning("STUB: Toolbox::InvertRoundRect");
+}
+
 void Toolbox::GetCPixel(int16 h, int16 v, RGBColor &cPix) {
 	warning("STUB: Toolbox::GetCPixel");
 }
@@ -226,6 +234,10 @@ PicHandle Toolbox::GetPicture(uint16 picID) {
 
 void Toolbox::GetPort(GrafPtr &port) {
 	port = _port;
+}
+
+void Toolbox::GlobalToLocal(Common::Point &pt) {
+	warning("STUB: Toolbox::GlobalToLocal");
 }
 
 void Toolbox::HideCursor() {
@@ -271,6 +283,11 @@ void Toolbox::InvertRect(const Common::Rect &r) {
 	}
 }
 
+void Toolbox::InvertRoundRect(const Common::Rect &r, int16 ovalWidth, int16 ovalHeight) {
+	warning("STUB: Toolbox::InvertRoundRect");
+}
+
+
 void Toolbox::KillPoly(PolyHandle poly) {
 	warning("STUB: Toolbox::KillPoly");
 }
@@ -301,6 +318,10 @@ void Toolbox::LineTo(int16 h, int16 v) {
 	if (_port) {
 		_port->pnLoc = Common::Point(h, v);
 	}
+}
+
+void Toolbox::LocalToGlobal(Common::Point &pt) {
+	warning("STUB: Toolbox::LocalToGlobal");
 }
 
 void Toolbox::Move(int16 dh, int16 dv) {
@@ -350,6 +371,10 @@ void Toolbox::PaintRect(const Common::Rect &r) {
 	warning("STUB: Toolbox::PaintRect");
 }
 
+void Toolbox::PaintRoundRect(const Common::Rect &r, int16 ovalWidth, int16 ovalHeight) {
+	warning("STUB: Toolbox::PaintRoundRect");
+}
+
 void Toolbox::PenMode(PatternMode mode) {
 	if (_port) {
 		_port->pnMode = mode;
@@ -382,6 +407,10 @@ void Toolbox::PortSize(uint16 width, uint16 height) {
 		_port->portRect.setWidth(width);
 		_port->portRect.setHeight(height);
 	}
+}
+
+bool Toolbox::PtInRect(const Common::Point &pt, const Common::Rect &r) {
+	return r.contains(pt);
 }
 
 void Toolbox::SetCPixel(int16 h, int16 v, const RGBColor &cPix) {
