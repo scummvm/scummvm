@@ -267,9 +267,9 @@ public:
 	uint32 _newDate;
 	int _flags[256];
 
-	// Fields used by MM
+	// Fields used by MM and sometimes Noctropolis
 	// TODO: Refactor
-	byte _travel[60];
+	byte _travel[60]; // only first ~15 used in MM
 	byte _ask[40];
 	int _startTravelItem;
 	int _startTravelBox;

@@ -99,10 +99,11 @@ Resource *FileManager::loadFile(int fileNum, int subfile) {
 	Common::File file;
 
 	// Noctropolis remastered has music in OGG or MID format broken
-	// out into the individual files
+	// out into the individual files.
 	if (_vm->getGameID() == kGameNoctropolis && fileNum == 98 && !file.exists(filepath)) {
 		Common::Path path = Common::Path(Common::String::format("MUSIC/M%02d.mid", subfile));
-		// TODO: Also check for OGG file here
+		// TODO: Also check for OGG file here.  Make it a configuration
+		// variable - originally hidef_music, default true.
 		if (file.exists(path))
 			res = loadRawFile(path);
 	} else {
