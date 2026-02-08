@@ -1209,8 +1209,8 @@ void Scripts::cmdPlayerChoice() {
 		if (_vm->_events->_leftButton) {
 			if (_vm->_events->_mouseRow >= ((_vm->getGameID() == kGameMartianMemorandum) ? 23 : 22)) {
 				_vm->_events->debounceLeft();
-				int x = _vm->_events->_mousePos.x;
-				choice = _vm->_res->inButtonXRange(x);
+				int mouseX = _vm->_events->_mousePos.x;
+				choice = _vm->_res->inButtonXRange(mouseX);
 			} else {
 				_vm->_events->debounceLeft();
 				choice = _vm->_events->checkMouseBox1(responseCoords);

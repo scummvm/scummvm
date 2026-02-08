@@ -54,7 +54,7 @@ uint NoctropolisFont::getCharBitOffset(byte ch, const uint16 *offsets) const {
 	return offsets[ch - _firstCharIndex];
 }
 
-void NoctropolisFont::makeCharSurface(Graphics::Surface &surface, byte ch, const uint16 *offsets, const byte *data) const {
+void NoctropolisFont::makeCharSurface(Graphics::Surface &surface, byte ch, const uint16 *offsets, const byte *fontData) const {
 	uint width = getCharWidth(ch, offsets);
 
 	surface.create(width, _height, Graphics::PixelFormat::createFormatCLUT8());
@@ -63,7 +63,7 @@ void NoctropolisFont::makeCharSurface(Graphics::Surface &surface, byte ch, const
 	if (width == 0)
 		return;
 
-	const byte *charData = getCharDataPtr(ch, offsets, data);
+	const byte *charData = getCharDataPtr(ch, offsets, fontData);
 	uint height = _height;
 	uint bitOfs = getCharBitOffset(ch, offsets);
 	byte *pixels = (byte*)surface.getPixels();
