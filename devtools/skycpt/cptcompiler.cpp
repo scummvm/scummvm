@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-//Including common/util.h would cause type declaration conflicts
+// Including common/util.h would cause type declaration conflicts
 #ifndef ARRAYSIZE
 #define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
 #endif
