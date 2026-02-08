@@ -155,7 +155,7 @@ void PelrockEngine::init() {
 		loadAnims();
 		// setScreen(0, ALFRED_DOWN);
 		// setScreen(3, ALFRED_RIGHT);
-		setScreen(23, ALFRED_DOWN);
+		setScreen(22, ALFRED_DOWN);
 		// setScreen(9, ALFRED_DOWN);
 		// setScreen(15, ALFRED_DOWN);
 		// setScreen(2, ALFRED_LEFT);
@@ -1632,7 +1632,6 @@ void PelrockEngine::checkMouseHover() {
 
 	if (hotspotIndex != -1) {
 		hotspotDetected = true;
-		debug("Hotspot detected: %s", _room->_currentRoomDescriptions[hotspotIndex].text.c_str());
 		_hoveredMapLocation = _room->_currentRoomDescriptions[hotspotIndex].text;
 	}
 	else if (!alfredDetected) {

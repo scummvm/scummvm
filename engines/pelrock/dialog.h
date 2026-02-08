@@ -50,6 +50,22 @@ namespace Pelrock {
 #define CTRL_ALT_END_MARKER_2 0xEB       /* Alt end marker 2 */
 #define CTRL_ALT_SPEAKER_ROOT 0xFE       /* Separates conversations from different speakers */
 
+// Helper structures for conversation state management
+struct ConversationState {
+	uint32 position;
+	int currentChoiceLevel;
+	uint32 lastChoiceMenuPosition;
+	ChoiceOption lastSelectedChoice;
+	int currentRoot;
+};
+
+struct ConversationEndResult {
+	bool shouldEnd;
+	uint32 nextPosition;
+	uint16 actionCode;
+	bool hasAction;
+};
+
 class DialogManager {
 private:
 	Graphics::Screen *_screen = nullptr;
@@ -67,6 +83,16 @@ private:
 	void checkMouse();
 	bool checkAllSubBranchesExhausted(const byte *data, uint32 dataSize, uint32 startPos, int currentChoiceLevel);
 
+	// Refactored helper functions for startConversation
+	uint32 skipControlBytes(const byte *data, uint32 dataSize, uint32 position);
+	uint32 peekNextMeaningfulByte(const byte *data, uint32 dataSize, uint32 position);
+	ConversationState initializeConversation(const byte *data, uint32 dataSize, byte npcIndex);
+	bool handleGoBack(const byte *data, uint32 position, ConversationState &state);
+	uint32 readAndDisplayDialogue(const byte *data, uint32 dataSize, uint32 position);
+	ConversationEndResult checkConversationEnd(const byte *data, uint32 dataSize, uint32 position);
+	void addGoodbyeOptionIfNeeded(Common::Array<ChoiceOption> *choices, int currentChoiceLevel, uint originalChoiceCount);
+	uint32 processChoiceSelection(const byte *data, uint32 dataSize, Common::Array<ChoiceOption> *choices, int selectedIndex, ConversationState &state);
+
 public:
 	DialogManager(Graphics::Screen *screen, PelrockEventManager *events, GraphicsManager *graphics);
 	~DialogManager();
@@ -74,6 +100,8 @@ public:
 	void displayChoices(Common::Array<ChoiceOption> *choices, byte *compositeBuffer);
 	int selectChoice(Common::Array<Common::String> &choices, byte *compositeBuffer);
 	void startConversation(const byte *conversationData, uint32 dataSize, byte npcIndex, Sprite *alfredAnimSet = nullptr);
+	uint32 findRoot(int &currentRoot, uint32 position, uint32 dataSize, const byte *conversationData);
+	uint32 findSpeaker(byte npcIndex, uint32 dataSize, const byte *conversationData);
 	void sayAlfred(Description description);
 	void sayAlfred(Common::StringArray texts);
 	void say(Common::StringArray texts, byte spriteIndex = 0);

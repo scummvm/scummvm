@@ -273,6 +273,52 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 279:
 		travelToEgypt();
 		break;
+			// moros
+	case 330:
+		break;
+	case 331:
+		break;
+	case 332:
+		break;
+	case 333:
+		break;
+	case 334:
+		break;
+	case 335:
+		break;
+	case 336:
+		break;
+	case 337:
+		break;
+	case 338:
+		break;
+	case 339:
+		break;
+	case 340:
+		break;
+	case 341:
+		break;
+	case 342:
+		break;
+	case 343:
+		break;
+	case 344:
+		break;
+	case 345:
+		break;
+	case 346:
+		break;
+	case 347:
+		break;
+	case 348:
+		break;
+	case 349:
+		break;
+	case 350:
+		break;
+	case 351:
+		break;
+		// end moros
 	default:
 		debug("Got actionTrigger %d in dialogActionTrigger, but no handler defined", actionTrigger);
 		break;
