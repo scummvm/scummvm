@@ -112,6 +112,8 @@ public:
 
 	void freeMusic();
 
+	void startMusicFade();
+
 	void loadMusic(int fileNum, int subfile);
 	void loadMusic(FileIdent file);
 
