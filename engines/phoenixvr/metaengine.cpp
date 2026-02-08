@@ -22,6 +22,10 @@
 #include "common/savefile.h"
 #include "common/translation.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "phoenixvr/detection.h"
 #include "phoenixvr/game_state.h"
 #include "phoenixvr/metaengine.h"
@@ -52,6 +56,55 @@ const ADExtraGuiOptionsMap *PhoenixVRMetaEngine::getAdvancedExtraGuiOptions() co
 Common::Error PhoenixVRMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	*engine = new PhoenixVR::PhoenixVREngine(syst, desc);
 	return Common::kNoError;
+}
+
+Common::KeymapArray PhoenixVRMetaEngine::initKeymaps(const char *target) const {
+	auto *keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "phoenixvr", "Default keymap for PhoenixVR");
+
+	Common::Action *act;
+
+	act = new Common::Action(Common::kStandardActionLeftClick, _("Action"));
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	act->addDefaultInputMapping("RETURN");
+	act->setLeftClickEvent();
+	keyMap->addAction(act);
+
+	act = new Common::Action(Common::kStandardActionRightClick, _("Inventory"));
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("TAB");
+	act->addDefaultInputMapping("JOY_B");
+	act->setRightClickEvent();
+	keyMap->addAction(act);
+
+	act = new Common::Action("QUIT", _("Quit game"));
+	act->addDefaultInputMapping("C+q");
+	act->setEvent(Common::EventType::EVENT_QUIT);
+	keyMap->addAction(act);
+
+	act = new Common::Action(Common::kStandardActionSkip, _("Skip cutscene"));
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("JOY_Y");
+	act->setKeyEvent(Common::KeyState{Common::KEYCODE_SPACE, ' '});
+	keyMap->addAction(act);
+
+	act = new Common::Action("QUICKSAVE", _("Quick save"));
+	act->addDefaultInputMapping("F5");
+	act->setKeyEvent(Common::KeyState{Common::KEYCODE_F5});
+	keyMap->addAction(act);
+
+	act = new Common::Action("QUICKLOAD", _("Quick load"));
+	act->addDefaultInputMapping("F8");
+	act->setKeyEvent(Common::KeyState{Common::KEYCODE_F8});
+	keyMap->addAction(act);
+
+	act = new Common::Action(Common::kStandardActionOpenMainMenu, _("Menu"));
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_START");
+	act->setKeyEvent(Common::KeyState{Common::KEYCODE_ESCAPE});
+	keyMap->addAction(act);
+
+	return Common::Keymap::arrayOf(keyMap);
 }
 
 SaveStateList PhoenixVRMetaEngine::listSaves(const char *target) const {

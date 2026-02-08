@@ -46,6 +46,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 #endif // PHOENIXVR_METAENGINE_H
