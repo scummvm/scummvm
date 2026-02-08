@@ -97,7 +97,9 @@ class FourXMDecoder::FourXMVideoTrack : public FixedRateVideoTrack {
 	uint16 _version = 0;
 	Common::ScopedPtr<Graphics::ManagedSurface> _framePtr, _lastFramePtr;
 	Graphics::Surface *_frame = nullptr, *_lastFrame = nullptr;
-	FourXM::HuffmanDecoder _blockType[4] = {};
+	using HuffmanBitStream = Common::BitStreamMemory32LEMSB;
+	using HuffmanType = Common::Huffman<HuffmanBitStream>;
+	Common::ScopedPtr<HuffmanType> _blockType[4];
 	int _mv[256];
 	Common::HashMap<byte, Common::Array<byte>> _cframes;
 
@@ -105,10 +107,10 @@ public:
 	FourXMVideoTrack(FourXMDecoder *dec, const Common::Rational &frameRate, uint w, uint h, uint16 version) : _dec(dec), _frameRate(frameRate), _w(w), _h(h), _version(version) {
 		if (_version <= 1)
 			error("versions 0 and 1 are not supported");
-		_blockType[0].initStatistics({16, 8, 4, 2, 1, 1});
-		_blockType[1].initStatistics({8, 0, 4, 2, 1, 1});
-		_blockType[2].initStatistics({8, 4, 0, 2, 1, 1});
-		_blockType[3].initStatistics({8, 0, 0, 4, 2, 1, 1});
+		_blockType[0].reset(new HuffmanType(HuffmanType::fromFrequencies({16, 8, 4, 2, 1, 1})));
+		_blockType[1].reset(new HuffmanType(HuffmanType::fromFrequencies({8, 0, 4, 2, 1, 1})));
+		_blockType[2].reset(new HuffmanType(HuffmanType::fromFrequencies({8, 4, 0, 2, 1, 1})));
+		_blockType[3].reset(new HuffmanType(HuffmanType::fromFrequencies({8, 0, 0, 4, 2, 1, 1})));
 	}
 	~FourXMVideoTrack();
 
@@ -257,10 +259,16 @@ void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *st
 	stream->read(prefixStream.data(), prefixStream.size());
 	assert(stream->pos() == stream->size());
 
-	auto prefixData = FourXM::HuffmanDecoder::unpack(prefixStream.data(), prefixStream.size(), 4);
+	const auto *huffPtr = prefixStream.data();
+	uint huffOffset = 0;
+	auto prefixDecoder = FourXM::loadStatistics<HuffmanType>(huffPtr, huffOffset);
+	huffOffset = (huffOffset + 3) & ~3u;
+
+	Common::BitStreamMemoryStream huffMs(huffPtr + huffOffset, prefixStream.size() - huffOffset);
+	Common::BitStreamMemory32LEMSB huffBs{&huffMs};
+
 	Common::BitStreamMemoryStream bitstreamInput(bitstreamData.data(), bitstreamData.size());
 	Common::BitStreamMemory8MSB bitstream(&bitstreamInput);
-	uint prefixOffset = 0;
 	int lastDC = 0;
 	auto &format = _frame->format;
 	const auto dstPitch = _frame->pitch / format.bytesPerPixel - 16;
@@ -268,7 +276,7 @@ void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *st
 		for (int mbX = 0; mbX < _frame->w; mbX += 16) {
 			int16_t block[6][64] = {};
 			auto readBlock = [&](byte blockIdx, int16_t *ac) {
-				int dc = prefixData[prefixOffset++];
+				int dc = prefixDecoder.getSymbol(huffBs);
 				if (dc >> 4)
 					error("dc run code");
 				dc = FourXM::readInt(bitstream, dc);
@@ -276,7 +284,7 @@ void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *st
 				lastDC = dc;
 				ac[0] = dc;
 				for (uint idx = 1; idx < 64;) {
-					auto b = prefixData[prefixOffset++];
+					auto b = prefixDecoder.getSymbol(huffBs);
 					if (b == 0x00) {
 						break;
 					} else if (b == 0xf0) {
@@ -325,7 +333,6 @@ void FourXMDecoder::FourXMVideoTrack::decode_ifrm(Common::SeekableReadStream *st
 			}
 		}
 	}
-	assert(prefixOffset == prefixData.size());
 	SWAP(_frame, _lastFrame);
 }
 
@@ -385,8 +392,8 @@ void FourXMDecoder::FourXMVideoTrack::decode_pfrm_block(uint16 *dst, const uint1
 	assert(log2w >= 0 && log2h >= 0);
 	auto index = size2index[log2h][log2w];
 	assert(index >= 0);
-	auto &huff = _blockType[index];
-	auto code = huff.next(bs);
+	auto &huff = *_blockType[index];
+	auto code = huff.getSymbol(bs);
 
 	if (code == 1) {
 		--log2h;

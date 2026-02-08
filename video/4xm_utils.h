@@ -20,42 +20,48 @@
  */
 
 #include "common/array.h"
+#include "common/compression/huffman.h"
+#include "common/debug.h"
 
 namespace Video {
 namespace FourXM {
 
-class HuffmanDecoder {
-	static constexpr uint kMaxTableSize = 514;
-	static constexpr uint kLastEntry = kMaxTableSize - 1;
-	struct HuffChar {
-		uint freq = 0;
-		uint16 falseIdx = kMaxTableSize;
-		uint16 trueIdx = kMaxTableSize;
-	};
-	HuffChar _table[kMaxTableSize] = {};
-	uint _startEntry = 0;
-	uint _numCodes = 0;
+template<typename HuffmanType>
+HuffmanType loadStatistics(const byte *&huff, uint &offset) {
+	Common::Array<uint32> freqs, symbols;
 
-public:
-	uint loadStatistics(const byte *huff, uint huffSize);
-	void initStatistics(const std::initializer_list<uint> &freqs);
+	uint8 freq_first = huff[offset++];
+	do {
+		uint8 freq_last = huff[offset++];
+		if (freq_first <= freq_last) {
+			for (auto idx = freq_first; idx <= freq_last; ++idx) {
+				auto freq = huff[offset++];
+				if (freq != 0) {
+					freqs.push_back(freq);
+					symbols.push_back(idx);
+				}
+			}
+		}
+		freq_first = huff[offset++];
+	} while (freq_first != 0);
 
-	Common::Array<byte> unpack(const byte *huff, uint huffSize, uint &offset, byte wordSize);
+	freqs.push_back(1);
+	symbols.push_back(256);
 
-	static Common::Array<byte> unpack(const byte *huff, uint huffSize, byte wordSize);
+	return HuffmanType::fromFrequencies(freqs.size(), freqs.data(), symbols.data());
+}
 
-	template<typename BitStreamType>
-	uint next(BitStreamType &bs);
-
-	void dump() const;
-
-private:
-	template<typename Word>
-	Common::Array<byte> unpackStream(const byte *huff, uint huffSize, uint &offset);
-
-	void buildTable(uint numCodes);
-	void dumpImpl(uint code, uint size, uint index, uint ch) const;
-};
+template<typename HuffmanType, typename Bitstream>
+inline Common::Array<byte> unpackHuffman(HuffmanType &h, Bitstream &bs) {
+	Common::Array<byte> unpacked;
+	while (true) {
+		uint32 code = h.getSymbol(bs);
+		if (code > 255)
+			break;
+		unpacked.push_back(code);
+	}
+	return unpacked;
+}
 
 void idct(int16_t block[64], int shift = 6);
 
