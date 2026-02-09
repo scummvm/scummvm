@@ -60,10 +60,10 @@ class VR {
 	Common::Array<Animation> _animations;
 
 public:
-	~VR();
-	VR() = default;
-	VR(VR &&) noexcept = default;
-	VR &operator=(VR &&) noexcept = default;
+	~VR() noexcept;
+	VR() noexcept;
+	VR(VR &&) noexcept;
+	VR &operator=(VR &&) noexcept;
 
 	static VR loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStream &s);
 	void render(Graphics::Screen *screen, float ax, float ay, float fov, float dt, RegionSet *regSet);

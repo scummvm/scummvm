@@ -27,7 +27,7 @@
 
 namespace Common {
 class String;
-};
+}
 
 namespace PhoenixVR {
 class Angle {

@@ -188,7 +188,10 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 }
 } // namespace
 
-VR::~VR() = default;
+VR::~VR() noexcept = default;
+VR::VR() noexcept = default;
+VR::VR(VR &&) noexcept = default;
+VR &VR::operator=(VR &&) noexcept = default;
 
 VR VR::loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStream &s) {
 	VR vr;
@@ -273,7 +276,7 @@ Cube toCube(float x, float y, float z) {
 	bool isYPositive = y > 0;
 	bool isZPositive = z > 0;
 
-	float maxAxis, cy, cx;
+	float maxAxis = 0, cy = 0, cx = 0;
 
 	if (isXPositive && absX >= absY && absX >= absZ) {
 		maxAxis = absX;
@@ -420,7 +423,7 @@ void VR::render(Graphics::Screen *screen, float ax, float ay, float fov, float d
 		Vector3d incrementY = up * (2 * gy / h);
 		Vector3d start = forward - right * gx - up * gy;
 		Vector3d line = start;
-		float regX, regY, regDX = 0, regDY = 0;
+		float regX = 0, regY = 0, regDX = 0, regDY = 0;
 		if (regSet) {
 			regY = ay - fov / 2;
 			regDX = fov / w;
