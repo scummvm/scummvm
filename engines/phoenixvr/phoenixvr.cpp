@@ -540,7 +540,9 @@ void PhoenixVREngine::tick(float dt) {
 				debug("region %d: %s, in: %d", i, reg.toString().c_str(), reg.contains3D(currentVRPos()));
 			}
 		}
-	}
+	} else
+		_mouseRel = {};
+
 	Common::Array<Common::String> finishedSounds;
 	for (auto &kv : _sounds) {
 		auto &sound = kv._value;
