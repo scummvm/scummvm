@@ -647,6 +647,9 @@ Common::Error PhoenixVREngine::run() {
 	_font18.reset(Graphics::loadTTFFontFromArchive(family, 18));
 #endif
 
+	setCursorDefault(0, "Cursor1.pcx");
+	setCursorDefault(1, "Cursor2.pcx");
+
 	_screen = new Graphics::Screen();
 	_screenCenter = _screen->getBounds().center();
 	{
