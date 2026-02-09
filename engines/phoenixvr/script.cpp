@@ -280,9 +280,7 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 	if (p.atEnd())
 		return;
 
-	switch (p.peek()) {
-	case '[': {
-		p.next();
+	if (p.maybe('[')) {
 		if (p.maybe("bool]=")) {
 			_vars.push_back(p.nextWord());
 		} else if (p.maybe("warp]=")) {
@@ -308,68 +306,64 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 		} else {
 			error("invalid [] directive on line %u: %s", lineno, line.c_str());
 		}
-		break;
-	}
-	default:
-		if (_currentTest) {
-			auto &commands = _currentTest->scope.commands;
-			if (p.maybe("ifand=")) {
-				if (_pluginScope)
-					error("ifand in plugin scope");
-				_conditional.reset(new IfAnd(p.readStringList()));
-			} else if (p.maybe("ifor=")) {
-				if (_pluginScope)
-					error("ifor in plugin scope");
-				_conditional.reset(new IfOr(p.readStringList()));
-			} else if (p.maybe("plugin")) {
-				if (_pluginScope)
-					error("nested plugin context is not allowed, line: %u", lineno);
-				_pluginScope.reset(new Script::Scope);
-			} else if (p.maybe("endplugin")) {
-				if (!_pluginScope)
-					error("endplugin without plugin");
-				if (_conditional) {
-					_conditional->target = Common::move(_pluginScope);
-					_pluginScope.reset();
-					commands.push_back(Common::move(_conditional));
-					_conditional.reset();
-				} else {
-					commands.push_back(Common::move(_pluginScope));
-					_pluginScope.reset();
-				}
-			} else if (p.maybe("label")) {
-				if (_pluginScope)
-					error("no labels in plugin scope allowed");
-				auto name = p.nextWord();
-				auto offset = _currentTest->scope.commands.size();
-				_currentTest->scope.labels.push_back({Common::move(name), offset});
+	} else if (_currentTest) {
+		auto &commands = _currentTest->scope.commands;
+		if (p.maybe("ifand=")) {
+			if (_pluginScope)
+				error("ifand in plugin scope");
+			_conditional.reset(new IfAnd(p.readStringList()));
+		} else if (p.maybe("ifor=")) {
+			if (_pluginScope)
+				error("ifor in plugin scope");
+			_conditional.reset(new IfOr(p.readStringList()));
+		} else if (p.maybe("plugin")) {
+			if (_pluginScope)
+				error("nested plugin context is not allowed, line: %u", lineno);
+			_pluginScope.reset(new Script::Scope);
+		} else if (p.maybe("endplugin")) {
+			if (!_pluginScope)
+				error("endplugin without plugin");
+			if (_conditional) {
+				_conditional->target = Common::move(_pluginScope);
+				_pluginScope.reset();
+				commands.push_back(Common::move(_conditional));
+				_conditional.reset();
 			} else {
-				if (_pluginScope) {
-					auto name = p.nextWord();
-					p.expect('(');
-					auto args = p.readStringList();
-					p.expect(')');
-					auto cmd = createCommand(name, args, lineno);
-					if (cmd)
-						_pluginScope->commands.push_back(Common::move(cmd));
-					else
-						error("unhandled plugin command %s at line %d", line.c_str(), lineno);
-				} else {
-					auto cmd = p.parseCommand();
-					if (cmd) {
-						if (_conditional) {
-							_conditional->target = Common::move(cmd);
-							commands.push_back(Common::move(_conditional));
-							_conditional.reset();
-						} else
-							commands.push_back(Common::move(cmd));
-					} else
-						error("unhandled script command %s at line %d", line.c_str(), lineno);
-				}
+				commands.push_back(Common::move(_pluginScope));
+				_pluginScope.reset();
 			}
-		} else
-			error("invalid directive at line %u: %s", lineno, line.c_str());
-	}
+		} else if (p.maybe("label")) {
+			if (_pluginScope)
+				error("no labels in plugin scope allowed");
+			auto name = p.nextWord();
+			auto offset = _currentTest->scope.commands.size();
+			_currentTest->scope.labels.push_back({Common::move(name), offset});
+		} else {
+			if (_pluginScope) {
+				auto name = p.nextWord();
+				p.expect('(');
+				auto args = p.readStringList();
+				p.expect(')');
+				auto cmd = createCommand(name, args, lineno);
+				if (cmd)
+					_pluginScope->commands.push_back(Common::move(cmd));
+				else
+					error("unhandled plugin command %s at line %d", line.c_str(), lineno);
+			} else {
+				auto cmd = p.parseCommand();
+				if (cmd) {
+					if (_conditional) {
+						_conditional->target = Common::move(cmd);
+						commands.push_back(Common::move(_conditional));
+						_conditional.reset();
+					} else
+						commands.push_back(Common::move(cmd));
+				} else
+					error("unhandled script command %s at line %d", line.c_str(), lineno);
+			}
+		}
+	} else
+		error("invalid directive at line %u: %s", lineno, line.c_str());
 }
 
 Script::~Script() {
