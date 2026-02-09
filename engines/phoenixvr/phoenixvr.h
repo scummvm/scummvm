@@ -91,11 +91,14 @@ public:
 			   (f == kSupportsReturnToLauncher);
 	};
 
+	// disable autosave
+	int getAutosaveSlot() const override { return -1; }
+
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return getVariable("E_Canload") != 0;
+		return true;
 	}
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return getVariable("E_Cansave") != 0;
+		return false;
 	}
 
 	// Script API
