@@ -1348,6 +1348,7 @@ protected:
 	void initCycl(const byte *ptr);	// Color cycle
 
 	void decodeNESBaseTiles();
+	void playNESTitleScreens();
 
 	void drawObject(int obj, int scrollType);
 	void drawRoomObjects(int arg);

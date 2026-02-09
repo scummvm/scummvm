@@ -2630,6 +2630,9 @@ Common::Error ScummEngine::go() {
 	// If requested, load a save game instead of running the boot script
 	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveTemporaryState)) {
 		_saveLoadFlag = 0;
+		if (_game.platform == Common::kPlatformNES && _game.id == GID_MANIAC && !(_game.features & GF_DEMO)) {
+			playNESTitleScreens();
+		}
 		runBootscript();
 	} else {
 		_loadFromLauncher = true; // The only purpose of this is triggering the IQ points update for INDY3/4
