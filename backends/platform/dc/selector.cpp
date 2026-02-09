@@ -272,6 +272,9 @@ int gameMenu(Game *games, int num_games)
   if (!num_games)
 	return -1;
 
+  if (num_games == 1)
+	  return 0;
+
   for (;;) {
 
 	if (getCdState()>=6)
