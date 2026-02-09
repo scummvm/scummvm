@@ -488,7 +488,7 @@ void PelrockEngine::checkMouse() {
 		_actionPopupState.isActive = false;
 		// Mouse was released while popup is active
 		VerbIcon actionClicked = isActionUnder(_events->_releaseX, _events->_releaseY);
-		if(actionClicked != NO_ACTION) {
+		if (actionClicked != NO_ACTION) {
 			debug("Popup action clicked: %d, is alfredunder %d", actionClicked, _actionPopupState.isAlfredUnder);
 		}
 		if (actionClicked != NO_ACTION && _currentHotspot != nullptr) {
@@ -497,7 +497,7 @@ void PelrockEngine::checkMouse() {
 		} else if (_actionPopupState.isAlfredUnder && actionClicked != NO_ACTION) {
 			debug("Using item on Alfred");
 			useOnAlfred(_state->selectedInventoryItem);
-		} else  {
+		} else {
 			// Released outside popup - just close it
 			_queuedAction = QueuedAction{NO_ACTION, -1, false};
 			_currentHotspot = nullptr;
@@ -1042,7 +1042,6 @@ void PelrockEngine::drawAlfred(byte *buf) {
 	int finalHeight = scaleCalc.scaledHeight;
 	int finalWidth = scaleCalc.scaledWidth;
 
-
 	// Update Alfred's scale state for use by other functions
 	_alfredState.w = finalWidth;
 	_alfredState.h = finalHeight;
@@ -1420,13 +1419,12 @@ Common::Point getPositionInOverlayForIndex(uint index) {
 	return Common::Point(5 + index * (60 + 2), 400 - 60 - 5);
 }
 
-
 void PelrockEngine::pickupIconFlash() {
 	_graphics->showOverlay(65, _compositeBuffer);
 	if (_newItem == -1)
 		return;
 	uint invSize = _state->inventoryItems.size();
-	for( int i = 0; i < invSize; i++) {
+	for (int i = 0; i < invSize; i++) {
 		Common::Point p = getPositionInOverlayForIndex(i);
 		drawSpriteToBuffer(_compositeBuffer, 640, _res->getIconForObject(_state->inventoryItems[i]).iconData, p.x, p.y, 60, 60, 1);
 	}
@@ -1445,6 +1443,9 @@ void PelrockEngine::gameLoop() {
 	checkMouse();
 	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_m) {
 		travelToEgypt();
+	}
+	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_n) {
+		loadExtraScreenAndPresent(10);
 	}
 	renderScene();
 	// _events->waitForKey();
@@ -1574,8 +1575,8 @@ VerbIcon PelrockEngine::isActionUnder(int x, int y) {
 
 bool PelrockEngine::isAlfredUnder(int x, int y) {
 	int localX = x - _alfredState.x;
-	int localY = y - _alfredState.y  + _alfredState.h; // Adjust for scaling (since Alfred's position is based on his feet, but sprite may be scaled from the top)
-	if (localX >= 0 && localX < _alfredState.w && localY >= 0 && localY < _alfredState.h) {
+	int localY = y - _alfredState.y + _alfredState.h; // Adjust for scaling (since Alfred's position is based on his feet, but sprite may be scaled from the top)
+	if (_alfredSprite != nullptr && localX >= 0 && localX < _alfredState.w && localY >= 0 && localY < _alfredState.h) {
 		byte pixel = _alfredSprite[localY * _alfredState.w + localX];
 		if (pixel != 255) {
 			return true;
@@ -1633,12 +1634,11 @@ void PelrockEngine::checkMouseHover() {
 	if (hotspotIndex != -1) {
 		hotspotDetected = true;
 		_hoveredMapLocation = _room->_currentRoomDescriptions[hotspotIndex].text;
-	}
-	else if (!alfredDetected) {
+	} else if (!alfredDetected) {
 		_hoveredMapLocation = "";
 	}
 
-	if(_room->_currentRoomNumber == 21) {
+	if (_room->_currentRoomNumber == 21) {
 		return;
 	}
 
@@ -1648,7 +1648,6 @@ void PelrockEngine::checkMouseHover() {
 
 	// Calculate walk target first (before checking anything else)
 	Common::Point walkTarget = calculateWalkTarget(_room->_currentRoomWalkboxes, _events->_mouseX, _events->_mouseY, hotspotDetected, hotspotDetected ? &_room->_currentRoomHotspots[hotspotIndex] : nullptr);
-
 
 	// Check if walk target hits any exit
 	bool exitDetected = false;

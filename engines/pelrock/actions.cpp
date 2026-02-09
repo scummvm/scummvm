@@ -273,50 +273,85 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 279:
 		travelToEgypt();
 		break;
-			// moros
+	// moros
+	case 317:
+		addInventoryItem(95);
+		break;
 	case 330:
+		// Two oranges
+		addInventoryItem(103);
 		break;
 	case 331:
+		_dialog->say(_res->_ingameTexts[HECHOELPRIMO]);
 		break;
 	case 332:
+		//psychologist card
+		if(!_state->hasInventoryItem(104)) {
+			addInventoryItem(104);
+		}
 		break;
 	case 333:
+		_dialog->say(_res->_ingameTexts[MEHANTOMADO_EL_PELO]);
 		break;
 	case 334:
+		addInventoryItem(86);
+		_state->setRootDisabledState(room, rootIndex, true);
+
 		break;
 	case 335:
+		//many oranges
+		addInventoryItem(104);
 		break;
 	case 336:
+		_dialog->say(_res->_ingameTexts[PESADO_UNRATO]);
 		break;
 	case 337:
-		break;
 	case 338:
-		break;
 	case 339:
-		break;
 	case 340:
-		break;
 	case 341:
-		break;
 	case 342:
-		break;
 	case 343:
-		break;
 	case 344:
-		break;
 	case 345:
-		break;
 	case 346:
+		_state->setRootDisabledState(room, rootIndex, true);
 		break;
-	case 347:
-		break;
-	case 348:
-		break;
+	case 348: {
+		//game originally crashes here intentionally!
+		g_system->quit();
+	}
 	case 349:
+		_state->setFlag(FLAG_CONSIGNAS_VENDEDOR, _state->getFlag(FLAG_CONSIGNAS_VENDEDOR) + 1);
+		if (_state->getFlag(FLAG_CONSIGNAS_VENDEDOR) == 2) {
+			_state->setRootDisabledState(room, rootIndex, true);
+		}
 		break;
 	case 350:
+		_state->setFlag(FLAG_CONSIGNAS_VENDEDOR, _state->getFlag(FLAG_CONSIGNAS_VENDEDOR) + 1);
+		if (_state->getFlag(FLAG_CONSIGNAS_VENDEDOR) == 2) {
+			_state->setRootDisabledState(room, rootIndex, true);
+		}
 		break;
 	case 351:
+		_dialog->say(_res->_ingameTexts[TRAIDOR], 0);
+		_dialog->say(_res->_ingameTexts[TUTIA], 1);
+		_dialog->say(_res->_ingameTexts[LATUYA], 0);
+		_dialog->say(_res->_ingameTexts[GORDO], 1);
+		_dialog->say(_res->_ingameTexts[FIDEO], 0);
+		_dialog->say(_res->_ingameTexts[LIMPIACULO], 1);
+		_dialog->say(_res->_ingameTexts[CONTUTURBANTE], 0);
+		_dialog->say(_res->_ingameTexts[OSO], 1);
+		_dialog->say(_res->_ingameTexts[COMADREJA], 0);
+		_dialog->say(_res->_ingameTexts[CABEZON], 1);
+		_dialog->say(_res->_ingameTexts[TUABUELO], 0);
+		_dialog->say(_res->_ingameTexts[TUMUJER], 1);
+		_dialog->say(_res->_ingameTexts[PERDEDOR], 0);
+		_dialog->say(_res->_ingameTexts[SOYMEJORQUETU], 1);
+		_dialog->say(_res->_ingameTexts[TRAMPOSO], 0);
+		_dialog->say(_res->_ingameTexts[MALPERDEDOR], 1);
+		_dialog->say(_res->_ingameTexts[PARAUNAVEZ], 0);
+		_dialog->say(_res->_ingameTexts[MEJORMELARGO], 1);
 		break;
 		// end moros
 	default:

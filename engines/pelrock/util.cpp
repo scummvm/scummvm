@@ -89,7 +89,7 @@ void drawText(byte *screenBuffer, Graphics::Font *font, Common::String text, int
 		for (int px = 0; px < bboxW; px++) {
 			int destIdx = (y + py) * 640 + (x + px);
 			int pixelColor = *((byte *)surface.getBasePtr(px, py));
-			if(pixelColor != 255)
+			if(pixelColor != 255 && destIdx >= 0 && destIdx < 256000)
 				screenBuffer[destIdx] = pixelColor;
 		}
 	}

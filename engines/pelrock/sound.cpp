@@ -108,7 +108,7 @@ void SoundManager::playSound(SonidoFile sound, int volume, int channel) {
 				_mixer->stopHandle(_sfxHandles[channel]);
 			}
 		}
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], stream, -1, volume, 0, DisposeAfterUse::YES);
+		// _mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], stream, -1, volume, 0, DisposeAfterUse::YES);
 	}
 }
 

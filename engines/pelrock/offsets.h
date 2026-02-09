@@ -473,6 +473,9 @@ const ExtraImages extraScreens[] = {
 	{0x152A88, // portrait
 	 0x15BFC8,
 	 8},
+	 {2727564, // CD
+	 2833276,
+	 8}
 };
 
 struct AlfredSpecialAnimOffset {
