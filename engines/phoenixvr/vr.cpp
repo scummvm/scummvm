@@ -437,9 +437,9 @@ void VR::render(Graphics::Screen *screen, float ax, float ay, float fov, float d
 			if (regSet) {
 				regX = ax - fov / 2;
 				if (regX < 0)
-					regX += kPi2;
-				if (regX >= kPi2)
-					regX -= kPi2;
+					regX += kTau;
+				if (regX >= kTau)
+					regX -= kTau;
 			}
 			Vector3d pixel = line;
 			for (int dstX = 0; dstX != w; ++dstX, pixel += incrementX) {
@@ -455,16 +455,15 @@ void VR::render(Graphics::Screen *screen, float ax, float ay, float fov, float d
 				auto color = _pic->getPixel(srcX, srcY);
 				if (regSet) {
 					regX += regDX;
-					if (regX >= kPi2)
-						regX -= kPi2;
+					if (regX >= kTau)
+						regX -= kTau;
 					for (auto &reg : regSet->getRegions()) {
 						if (reg.contains3D(regX, kTau - regY)) {
 							byte r, g, b;
 							_pic->format.colorToRGB(color, r, g, b);
-							static constexpr int kGlow = 15;
-							auto dr = MIN(255 - r, kGlow), db = MIN(255 - b, kGlow);
-							r += dr;
-							b += db;
+							r ^= _rnd.getRandomNumber(31);
+							g ^= _rnd.getRandomNumber(31);
+							b ^= _rnd.getRandomNumber(31);
 							color = screen->format.RGBToColor(r, g, b);
 						}
 					}
@@ -473,8 +472,8 @@ void VR::render(Graphics::Screen *screen, float ax, float ay, float fov, float d
 			}
 			if (regSet) {
 				regY += regDY;
-				if (regY >= kPi2)
-					regY -= kPi2;
+				if (regY >= kTau)
+					regY -= kTau;
 			}
 		}
 		screen->addDirtyRect(screen->getBounds());

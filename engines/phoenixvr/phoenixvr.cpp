@@ -706,7 +706,7 @@ Common::Error PhoenixVREngine::run() {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN: {
-				if (event.kbd.keycode == Common::KeyCode::KEYCODE_r)
+				if (event.kbd.keycode == Common::KeyCode::KEYCODE_h)
 					_showRegions = !_showRegions;
 				if (_prevWarp != -1)
 					break;

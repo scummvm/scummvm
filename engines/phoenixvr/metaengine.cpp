@@ -104,6 +104,11 @@ Common::KeymapArray PhoenixVRMetaEngine::initKeymaps(const char *target) const {
 	act->setKeyEvent(Common::KeyState{Common::KEYCODE_ESCAPE});
 	keyMap->addAction(act);
 
+	act = new Common::Action("HINT", _("Show hints"));
+	act->addDefaultInputMapping("h");
+	act->setKeyEvent(Common::KeyState{Common::KEYCODE_h});
+	keyMap->addAction(act);
+
 	return Common::Keymap::arrayOf(keyMap);
 }
 
