@@ -361,6 +361,8 @@ void VR::playAnimation(const Common::String &name, const Common::String &variabl
 	animation.variable = variable;
 	animation.variableValue = value;
 	animation.renderNextFrame(*_pic->surfacePtr());
+	if (animation.speed == 0)
+		g_engine->setVariable(variable, value);
 }
 
 void VR::Animation::renderNextFrame(Graphics::Surface &pic) {
