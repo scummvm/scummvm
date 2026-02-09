@@ -51,18 +51,6 @@ HuffmanType loadStatistics(const byte *&huff, uint &offset) {
 	return HuffmanType::fromFrequencies(freqs.size(), freqs.data(), symbols.data());
 }
 
-template<typename HuffmanType, typename Bitstream>
-inline Common::Array<byte> unpackHuffman(HuffmanType &h, Bitstream &bs) {
-	Common::Array<byte> unpacked;
-	while (true) {
-		uint32 code = h.getSymbol(bs);
-		if (code > 255)
-			break;
-		unpacked.push_back(code);
-	}
-	return unpacked;
-}
-
 void idct(int16_t block[64], int shift = 6);
 
 inline int readInt(int value, unsigned n) {

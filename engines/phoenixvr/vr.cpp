@@ -108,15 +108,14 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 	auto huffDecoder = Video::FourXM::loadStatistics<Common::Huffman<Common::BitStreamMemory8MSB>>(huff, huffOffset);
 	Common::BitStreamMemoryStream huffMs(huff + huffOffset, huffSize - huffOffset);
 	Common::BitStreamMemory8MSB huffBs(&huffMs);
-	auto decoded = Video::FourXM::unpackHuffman(huffDecoder, huffBs);
-	uint decodedOffset = 0;
 
 	Common::BitStreamMemoryStream acMs(acPtr, acSize);
 	Common::BitStreamMemoryStream dcMs(dcPtr, dcSize);
 	Common::BitStreamMemory8MSB acBs(&acMs), dcBs(&dcMs);
 
 	const auto dstPitch = pic.pitch / pic.format.bytesPerPixel - 8;
-	for (uint blockIdx = 0; decodedOffset < decoded.size(); ++blockIdx) {
+	unsigned numBlocks = prefix ? prefix->size() : ((pic.w + 7) / 8) * ((pic.h + 7) / 8);
+	for (uint blockIdx = 0; blockIdx < numBlocks; ++blockIdx) {
 		int16 block[3][64] = {};
 		for (unsigned channel = 0; channel != 3; ++channel) {
 			int16 *ac = block[channel];
@@ -124,7 +123,8 @@ void unpack(Graphics::Surface &pic, const byte *huff, uint huffSize, const byte 
 			auto *iquant = channel ? quant.quantCbCr : quant.quantY;
 			ac[0] = iquant[0] * dc8;
 			for (uint idx = 1; idx < 64;) {
-				auto b = decoded[decodedOffset++];
+				auto b = huffDecoder.getSymbol(huffBs);
+				assert(b < 0x100);
 				if (b == 0x00) {
 					break;
 				} else if (b == 0xf0) {
