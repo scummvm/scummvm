@@ -354,6 +354,18 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_dialog->say(_res->_ingameTexts[MEJORMELARGO], 1);
 		break;
 		// end moros
+		//puta 2
+	case 352:
+		break;
+	case 353:
+		break;
+	case 354:
+		break;
+	case 355:
+		break;
+	case 356:
+		break;
+	//end puta
 	default:
 		debug("Got actionTrigger %d in dialogActionTrigger, but no handler defined", actionTrigger);
 		break;

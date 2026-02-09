@@ -1057,12 +1057,29 @@ void PelrockEngine::drawAlfred(byte *buf) {
 	delete[] _alfredSprite;
 	_alfredSprite = scaledBuf;
 
-	int shadowPos = _alfredState.y; // - finalHeight;
-	bool shadeCharacter = _room->_pixelsShadows[shadowPos * 640 + _alfredState.x] != 0xFF;
-	if (shadeCharacter) {
+	// Shadow detection: scan across Alfred's width at feet line.
+	// Original game scans shadow buffer
+	// at (topY + 0x66) * 640 + X + col for col = 0..width, where topY + 0x66 = feetY.
+	// The shadow map value (0-3) indexes into the palette remap tables.
+	byte shadowLevel = 0xFF; // 0xFF = no shadow
+	int feetY = _alfredState.y;
+	if (feetY >= 0 && feetY < 400 && _room->_pixelsShadows != nullptr) {
+		for (int col = 0; col < finalWidth; col++) {
+			int checkX = _alfredState.x + col;
+			if (checkX >= 0 && checkX < 640) {
+				byte shadowVal = _room->_pixelsShadows[feetY * 640 + checkX];
+				if (shadowVal != 0xFF) {
+					shadowLevel = shadowVal;
+					break; // Original breaks on first shadow pixel found
+				}
+			}
+		}
+	}
+
+	if (shadowLevel != 0xFF && shadowLevel < 4) {
 		for (int i = 0; i < finalWidth * finalHeight; i++) {
 			if (_alfredSprite[i] != 255) {
-				_alfredSprite[i] = _room->_paletteRemaps[1][_alfredSprite[i]];
+				_alfredSprite[i] = _room->_paletteRemaps[3 - shadowLevel][_alfredSprite[i]];
 			}
 		}
 	}
