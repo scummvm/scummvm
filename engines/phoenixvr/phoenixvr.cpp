@@ -777,6 +777,8 @@ Common::Error PhoenixVREngine::run() {
 				} else
 					debug("click %s", _mousePos.toString().c_str());
 
+				if (_warpIdx < 0)
+					break;
 				auto &cursors = _cursors[_warpIdx];
 				for (uint i = 0, n = cursors.size(); i != n; ++i) {
 					auto *region = getRegion(i);
