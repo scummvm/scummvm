@@ -340,7 +340,8 @@ void SherlockEngine::detect3DOAssets() {
 	};
 
 	for (int i = 0; basePaths[i] != nullptr; i++) {
-		SearchMan.addSubDirectoryMatching(gameDataDir, basePaths[i]);
+		// Use depth=2 to search into room-numbered subdirectories (e.g., Movies/01/, Movies/02/, etc.)
+		SearchMan.addSubDirectoryMatching(gameDataDir, basePaths[i], 0, 2);
 	}
 
 	// Detect 3DO assets by checking for conversation files
