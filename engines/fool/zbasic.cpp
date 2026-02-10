@@ -179,7 +179,11 @@ void ZBasic::coordinateWindow() {
 }
 
 void ZBasic::get(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &dest) {
-	warning("STUB: ZBasic::get");
+	GrafPtr port;
+	_toolbox->GetPort(port);
+	Common::Rect srcRect(x1, y1, x2, y2);
+	dest->create(srcRect.width(), srcRect.height());
+	_toolbox->CopyBits(port->portBits, dest, srcRect, dest->getBounds(), kSrcCopy, nullptr);
 }
 
 int16 ZBasic::instr(int16 expression, const Common::U32String &string1, const Common::U32String &string2) {
@@ -188,6 +192,12 @@ int16 ZBasic::instr(int16 expression, const Common::U32String &string1, const Co
 		return 0;
 	return (int16)(result + 1);
 }
+
+Common::U32String ZBasic::files(int16 expression, const Common::U32String &prompt, const Common::U32String &defaultFilename, int16 &volume) {
+	warning("STUB: ZBasic::files");
+	return Common::U32String();
+}
+
 
 int ZBasic::finderInfo(int16 &count, Common::U32String &var, uint32 &type, uint16 volume) {
 	warning("STUB: ZBasic::finderInfo");
@@ -236,12 +246,23 @@ void ZBasic::picture(int16 x1, int16 y1, int16 x2, int16 y2, PicHandle &src) {
 	warning("STUB: ZBasic::picture");
 }
 
-void ZBasic::put(int16 x, int16 y, BitMap &src) {
-	this->put(x, y, x+src->w, y+src->h, src);
+void ZBasic::put(int16 x, int16 y, BitMap &src, ZBasicPutMode mode) {
+	this->put(x, y, x+src->w, y+src->h, src, mode);
 }
 
-void ZBasic::put(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &src) {
-	warning("STUB: ZBasic::put");
+void ZBasic::put(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &src, ZBasicPutMode mode) {
+	Common::Rect destRect(x1, y1, x2, y2);
+	SourceMode sm = kSrcCopy;
+	if (mode == kPutXOR) {
+		sm = kSrcXor;
+	} else if (mode == kPutAND) {
+		sm = kSrcBic;
+	} else if (mode == kPutOR) {
+		sm = kSrcOr;
+	}
+	GrafPtr port;
+	_toolbox->GetPort(port);
+	_toolbox->CopyBits(src, port->portBits, src->getBounds(), destRect, sm, nullptr);
 }
 
 Common::Array<byte> ZBasic::read(int16 fileNo, uint32 length) {
@@ -307,6 +328,10 @@ int16 ZBasic::unk_5() {
 	return 0;
 }
 
+void ZBasic::unk_4() {
+	warning("STUB: ZBasic::unk_4");
+}
+
 void ZBasic::unk_6(int16 unk1, int32 unk2, int16 unk3, int16 unk4) {
 	warning("STUB: ZBasic::unk_6");
 }
@@ -325,6 +350,10 @@ void ZBasic::unk_110(Common::U32String &unk1, Common::U32String &unk2) {
 
 void ZBasic::unk_130(int16 unk1) {
 	warning("STUB: ZBasic::unk_130");
+}
+
+void ZBasic::unk_158() {
+	warning("STUB: ZBasic::unk_158");
 }
 
 void ZBasic::unk_331(uint16 unk1, int16 unk2) {
