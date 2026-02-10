@@ -58,6 +58,7 @@ enum {
 	kDebugLevelAdLibDriver,
 	kDebugLevelMT32Driver,
 	kDebugLevelMusic,
+	kDebugLevelTalk,
 };
 
 enum SHERLOCKActions {

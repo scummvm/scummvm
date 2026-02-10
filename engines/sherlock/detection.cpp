@@ -35,6 +35,7 @@ static const DebugChannelDef debugFlagList[] = {
 	{Sherlock::kDebugLevelAdLibDriver, "AdLib", "AdLib driver debugging"},
 	{Sherlock::kDebugLevelMT32Driver, "MT32", "MT32 driver debugging"},
 	{Sherlock::kDebugLevelMusic, "Music", "Music debugging"},
+	{Sherlock::kDebugLevelTalk, "talk", "Talk system and 3DO talkie debugging"},
 	DEBUG_CHANNEL_END
 };
 

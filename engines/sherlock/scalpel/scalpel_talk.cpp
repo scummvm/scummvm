@@ -33,6 +33,8 @@
 #include "graphics/surface.h"
 #include "sherlock/scalpel/scalpel_3do_audio.h"
 #include "common/config-manager.h"
+#include "common/debug.h"
+#include "sherlock/sherlock.h"
 
 namespace Sherlock {
 namespace Scalpel {
@@ -1034,11 +1036,11 @@ bool ScalpelTalk::talk3DOMovieTrigger(int subIndex) {
 
 	Common::Path movieFilename(Common::String::format("movies/%02d/%s.stream", roomNr, movieName.c_str()));
 
-	warning("3DO movie player:");
-	warning("room: %d", roomNr);
-	warning("script: %s", _scriptName.c_str());
-	warning("selector: %d", selector);
-	warning("subindex: %d", subIndex);
+	debugC(kDebugLevelTalk, "3DO movie player:");
+	debugC(kDebugLevelTalk, "room: %d", roomNr);
+	debugC(kDebugLevelTalk, "script: %s", _scriptName.c_str());
+	debugC(kDebugLevelTalk, "selector: %d", selector);
+	debugC(kDebugLevelTalk, "subindex: %d", subIndex);
 
 	bool result = vm.play3doMovie(movieFilename, get3doPortraitPosition(), true);
 
@@ -1498,15 +1500,15 @@ Common::String ScalpelTalk::get3DOVideoFile(int talkIndex, int speechIndex) {
 	);
 
 	// DETAILED DEBUG: Track all values
-	warning("=== 3DO Video Generation ===");
-	warning("  room=%d", roomNum);
-	warning("  _scriptName='%s'", _scriptName.c_str());
-	warning("  prefix='%s' (chars [0,2,3] from script)", prefix);
-	warning("  scriptLetter='%c' (last char of script)", scriptLetter);
-	warning("  _pcTalkie3DOSelector=%d, _talkIndex=%d -> selector=%d -> selectorChar='%c'", _pcTalkie3DOSelector, _talkIndex, selector, selectorChar);
-	warning("  _pcTalkie3DOSubindex=%d -> subindexChar='%c'", subindex, subindexChar);
-	warning("  GENERATED FILE: %s", videoFile.c_str());
-	warning("============================");
+	debugC(kDebugLevelTalk, "=== 3DO Video Generation ===");
+	debugC(kDebugLevelTalk, "  room=%d", roomNum);
+	debugC(kDebugLevelTalk, "  _scriptName='%s'", _scriptName.c_str());
+	debugC(kDebugLevelTalk, "  prefix='%s' (chars [0,2,3] from script)", prefix);
+	debugC(kDebugLevelTalk, "  scriptLetter='%c' (last char of script)", scriptLetter);
+	debugC(kDebugLevelTalk, "  _pcTalkie3DOSelector=%d, _talkIndex=%d -> selector=%d -> selectorChar='%c'", _pcTalkie3DOSelector, _talkIndex, selector, selectorChar);
+	debugC(kDebugLevelTalk, "  _pcTalkie3DOSubindex=%d -> subindexChar='%c'", subindex, subindexChar);
+	debugC(kDebugLevelTalk, "  GENERATED FILE: %s", videoFile.c_str());
+	debugC(kDebugLevelTalk, "============================");
 
 	return videoFile;
 }
