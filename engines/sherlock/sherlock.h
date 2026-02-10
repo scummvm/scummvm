@@ -264,15 +264,9 @@ public:
 	bool has3DOAssets() const { return _has3DOAssets; }
 
 	/**
-	 * Get 3DO assets base path
-	 * @return Path to 3DO assets directory
-	 */
-	const Common::Path &get3DOAssetsPath() const { return _3doAssetsPath; }
-
-	/**
 	 * Construct full path to a 3DO video file
-	 * @param videoFile The video filename
-	 * @return Full path to the video file
+	 * @param videoFile The video filename (relative path, e.g., "30/afr30aaa.stream")
+	 * @return Path to the video file (SearchMan will resolve it automatically)
 	 */
 	Common::Path get3DOVideoPath(const Common::String &videoFile) const;
 
@@ -331,10 +325,9 @@ public:
 	bool _startupAutosave;
 
 	// ===== talkie member variables =====
+
 	TalkieMode _talkieMode;         // Current talkie mode
 	bool _has3DOAssets;             // Whether 3DO video files are available
-	Common::Path _3doAssetsPath;    // Path to 3DO assets directory
-	// ===== talkie member variables =====
 
 public:
 	SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc);

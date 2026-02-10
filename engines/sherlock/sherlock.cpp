@@ -27,6 +27,8 @@
 #include "common/debug-channels.h"
 #include "common/text-to-speech.h"
 #include "common/file.h"
+#include "common/archive.h"
+#include "common/fs.h"
 
 namespace Sherlock {
 
@@ -59,7 +61,6 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	// Initialize 3DO talkie support
 	_talkieMode = TALKIE_NONE;
 	_has3DOAssets = false;
-	_3doAssetsPath = Common::Path();
 }
 
 SherlockEngine::~SherlockEngine() {
@@ -325,7 +326,22 @@ Common::Error SherlockEngine::saveGameState(int slot, const Common::String &desc
 
 void SherlockEngine::detect3DOAssets() {
 	_has3DOAssets = false;
-	_3doAssetsPath = Common::Path();
+
+	// Add potential 3DO asset directories to SearchMan
+	// This makes files available automatically if present
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
+	const char *basePaths[] = {
+		"Movies",
+		"HolmesData/Movies",
+		"HolmesData/videos",
+		"videos",
+		"3DO",
+		nullptr
+	};
+
+	for (int i = 0; basePaths[i] != nullptr; i++) {
+		SearchMan.addSubDirectoryMatching(gameDataDir, basePaths[i]);
+	}
 
 	// Detect 3DO assets by checking for conversation files
 	// Randomly sample from the audio durations table to verify files exist
@@ -351,41 +367,24 @@ void SherlockEngine::detect3DOAssets() {
 		filenames.remove_at(idx);
 	}
 
-	// Base paths candidates where 3DO assets might be located
-	const char *basePaths[] = {
-		"",
-		"Movies",
-		"HolmesData/Movies",
-		"HolmesData/videos/",
-		"videos/",
-		"3DO/",
-		nullptr
-	};
-
+	// Try to open a sample file - SearchMan will find it if assets are present
 	Common::File testFile;
+	for (uint i = 0; i < samples.size(); i++) {
+		// Extract room number from filename (characters at index 3-4)
+		// e.g., "afr30aaa" -> room "30", "gar01aaa" -> room "01"
+		Common::String filename = samples[i];
+		if (filename.size() < 5) continue;
 
-	for (int baseIdx = 0; basePaths[baseIdx] != nullptr; baseIdx++) {
-		for (uint i = 0; i < samples.size(); i++) {
-			// Extract room number from filename (characters at index 3-4)
-			// e.g., "afr30aaa" -> room "30", "gar01aaa" -> room "01"
-			Common::String filename = samples[i];
-			if (filename.size() < 5) continue;
+		Common::String roomNum = filename.substr(3, 2);
+		Common::String streamPath = Common::String::format("%s/%s.stream",
+		                                                    roomNum.c_str(), filename.c_str());
+		Common::Path testPath(streamPath);
 
-			Common::String roomNum = filename.substr(3, 2);
-			Common::String streamPath = Common::String::format("%s/%s.stream",
-			                                                    roomNum.c_str(), filename.c_str());
-			Common::Path testPath = Common::Path(basePaths[baseIdx]).join(streamPath);
-
-			if (testFile.open(testPath)) {
-				testFile.close();
-				_has3DOAssets = true;
-				_3doAssetsPath = Common::Path(basePaths[baseIdx]);
-
-				debug(1, "SherlockEngine: 3DO assets detected at: %s (verified: %s)",
-				      _3doAssetsPath.empty() ? "(game directory)" : _3doAssetsPath.toString().c_str(),
-				      streamPath.c_str());
-				return;
-			}
+		if (testFile.open(testPath)) {
+			testFile.close();
+			_has3DOAssets = true;
+			debug(1, "SherlockEngine: 3DO assets detected (verified: %s)", streamPath.c_str());
+			return;
 		}
 	}
 
@@ -428,10 +427,9 @@ void SherlockEngine::setTalkieMode(TalkieMode mode) {
 }
 
 Common::Path SherlockEngine::get3DOVideoPath(const Common::String &videoFile) const {
-	if (_3doAssetsPath.empty()) {
-		return Common::Path(videoFile);
-	}
-	return _3doAssetsPath.join(videoFile);
+	// SearchMan will automatically find the file in any of the directories
+	// we added during detect3DOAssets(), so just return the relative path
+	return Common::Path(videoFile);
 }
 
 bool SherlockEngine::has3DOVideo(const Common::String &videoFile) const {
