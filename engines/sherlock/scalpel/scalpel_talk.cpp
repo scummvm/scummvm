@@ -907,6 +907,9 @@ int ScalpelTalk::waitLoop(int delay) {
 			}
 		}
 
+		// Update screen after polling events to prevent cursor jerkiness on most backends
+		g_system->updateScreen();
+
 		// Update Timing (Real Time)
 		uint32 currentTime = g_system->getMillis();
 		uint32 elapsed = currentTime - startTime;
