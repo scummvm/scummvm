@@ -31,7 +31,7 @@
 #include "sherlock/screen.h"
 #include "video/3do_decoder.h"
 #include "graphics/surface.h"
-#include "sherlock/scalpel/scalpel_3do_audio_durations.h"
+#include "sherlock/scalpel/scalpel_3do_audio.h"
 
 namespace Sherlock {
 namespace Scalpel {

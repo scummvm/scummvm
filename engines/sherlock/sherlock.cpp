@@ -21,7 +21,7 @@
 
 #include "sherlock/sherlock.h"
 #include "sherlock/surface.h"
-#include "sherlock/scalpel/scalpel_3do_audio_durations.h"
+#include "sherlock/scalpel/scalpel_3do_audio.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"

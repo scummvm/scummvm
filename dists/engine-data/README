@@ -112,6 +112,10 @@ executable. The compress_queen tool adds the information contained in queen.tbl
 to QUEEN.1; for this reason neither the freeware FOTAQ floppy version nor the
 mp3/ogg/flac encoded need the datafile.
 
+sherlock_scalpel_3do_audio.dat:
+Text file containing 3DO audio durations (milliseconds) for Sherlock Serrated
+Scalpel talkie mode. Used when playing DOS version with 3DO voice assets.
+
 sky.cpt:
 This file contains game tables required for playing Beneath a Steel Sky game.
 

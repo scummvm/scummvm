@@ -50,6 +50,9 @@ endif
 ifdef ENABLE_QUEEN
 DIST_FILES_LIST += dists/engine-data/queen.tbl
 endif
+ifdef ENABLE_SHERLOCK
+DIST_FILES_LIST += dists/engine-data/sherlock_scalpel_3do_audio.dat
+endif
 ifdef ENABLE_SKY
 DIST_FILES_LIST += dists/engine-data/sky.cpt
 endif
