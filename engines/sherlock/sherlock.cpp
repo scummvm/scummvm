@@ -354,7 +354,7 @@ void SherlockEngine::detect3DOAssets() {
 	}
 
 	if (filenames.empty()) {
-		debug(1, "SherlockEngine: No 3DO audio durations available");
+		debugC(kDebugLevelTalk, "SherlockEngine: No 3DO audio durations available");
 		return;
 	}
 
@@ -383,12 +383,12 @@ void SherlockEngine::detect3DOAssets() {
 		if (testFile.open(testPath)) {
 			testFile.close();
 			_has3DOAssets = true;
-			debug(1, "SherlockEngine: 3DO assets detected (verified: %s)", streamPath.c_str());
+			debugC(kDebugLevelTalk, "SherlockEngine: 3DO assets detected (verified: %s)", streamPath.c_str());
 			return;
 		}
 	}
 
-	debug(1, "SherlockEngine: No 3DO assets detected, talkie features unavailable");
+	debugC(kDebugLevelTalk, "SherlockEngine: No 3DO assets detected, talkie features unavailable");
 }
 
 void SherlockEngine::registerTalkieSettings() {
@@ -406,7 +406,7 @@ void SherlockEngine::loadTalkieConfig() {
 	bool configMode = ConfMan.getBool("talkie_mode");
 	_talkieMode = configMode ? TALKIE_AUDIO_ONLY : TALKIE_NONE;
 
-	debug(1, "SherlockEngine: Talkie mode set to %d (0=NONE, 1=AUDIO_ONLY)", _talkieMode);
+	debugC(kDebugLevelTalk, "SherlockEngine: Talkie mode set to %d (0=NONE, 1=AUDIO_ONLY)", _talkieMode);
 }
 
 void SherlockEngine::setTalkieMode(TalkieMode mode) {
@@ -423,7 +423,7 @@ void SherlockEngine::setTalkieMode(TalkieMode mode) {
 	ConfMan.setBool("talkie_mode", _talkieMode == TALKIE_AUDIO_ONLY);
 	ConfMan.flushToDisk();
 
-	debug(1, "SherlockEngine::setTalkieMode: Talkie mode changed to %d", mode);
+	debugC(kDebugLevelTalk, "SherlockEngine::setTalkieMode: Talkie mode changed to %d", mode);
 }
 
 Common::Path SherlockEngine::get3DOVideoPath(const Common::String &videoFile) const {
