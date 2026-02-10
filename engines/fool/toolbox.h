@@ -87,6 +87,12 @@ struct Pattern {
 	uint8 data[8];
 };
 
+struct Cursor {
+	uint16 data[16];
+	uint16 mask[16];
+	Common::Point mouse;
+}; // 0x44
+
 struct RGBColor {
 	uint16 red;
 	uint16 green;
@@ -650,6 +656,8 @@ public:
 	// The SetCPixel function sets the pixel at the specified position to the pixel value that most
 	// closely matches the specified RGB.
 	void SetCPixel(int16 h, int16 v, const RGBColor &cPix);
+
+	void SetCursor(const Cursor &crsr);
 
 	// PROCEDURE SetPort (port: GrafPtr);
 	// SetPort makes the specified grafPort the current port.
