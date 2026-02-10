@@ -256,6 +256,7 @@ public:
 	const Common::U32String &str(size_t index);
 
 
+	void unk_4();
 	int16 unk_5();
 	void unk_6(int16 unk1, int32 unk2, int16 unk3, int16 unk4);
 	void unk_20();
@@ -263,6 +264,7 @@ public:
 	// string copy? dest, src
 	void unk_110(Common::U32String &unk1, Common::U32String &unk2);
 	void unk_130(int16 unk1);
+	void unk_158();
 	void unk_331(uint16 unk1, int16 unk2);
 
 };
