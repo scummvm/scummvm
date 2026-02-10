@@ -114,7 +114,7 @@ const ActionEntry actionTable[] = {
 	{400, CLOSE, &PelrockEngine::closeTravelAgencyDoor},
 
 	// Room 28
-	{472, PICKUP, &PelrockEngine::pickUpRoom28Object},
+	{472, PICKUP, &PelrockEngine::pickUpMatches},
 
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
@@ -358,16 +358,26 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_dialog->say(_res->_ingameTexts[MEJORMELARGO], 1);
 		break;
 		// end moros
-		//puta 2
-	case 352:
-		break;
 	case 353:
+		_state->setRootDisabledState(room, rootIndex, true);
+		_state->setRootDisabledState(room, rootIndex + 1, true);
 		break;
 	case 354:
+		if(_state->hasInventoryItem(105)) {
+			addInventoryItem(105);
+		}
 		break;
+	case 352:
 	case 355:
+		_graphics->fadeToBlack();
+		_alfredState.x = 342;
+		_alfredState.y = 277;
+		setScreen(31, ALFRED_DOWN);
 		break;
 	case 356:
+		_state->setRootDisabledState(room, 0, true);
+		_state->setRootDisabledState(room, 1, true);
+		_state->setRootDisabledState(room, 2, true);
 		break;
 	//end puta
 	default:
@@ -1091,7 +1101,7 @@ void PelrockEngine::waitForActionEnd() {
  *
  * Original handler at Ghidra address 0x1FED8.
  */
-void PelrockEngine::pickUpRoom28Object(HotSpot *hotspot) {
+void PelrockEngine::pickUpMatches(HotSpot *hotspot) {
 	// Load the special palette from ALFRED.7 at offset 0x1610CE
 	static const uint32 kRoom28PaletteOffset = 0x1610CE;
 

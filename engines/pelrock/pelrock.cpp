@@ -1079,7 +1079,8 @@ void PelrockEngine::drawAlfred(byte *buf) {
 	if (shadowLevel != 0xFF && shadowLevel < 4) {
 		for (int i = 0; i < finalWidth * finalHeight; i++) {
 			if (_alfredSprite[i] != 255) {
-				_alfredSprite[i] = _room->_paletteRemaps[3 - shadowLevel][_alfredSprite[i]];
+				// _alfredSprite[i] = _room->_paletteRemaps[3 - shadowLevel][_alfredSprite[i]];
+				_alfredSprite[i] = _room->_paletteRemaps[0][_alfredSprite[i]];
 			}
 		}
 	}
