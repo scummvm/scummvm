@@ -26,12 +26,14 @@
 
 namespace Fool {
 
-void Toolbox::PBGetVol(ParamBlockRec &paramBlock) {
+OSErr Toolbox::PBGetVol(ParamBlockRec &paramBlock) {
 	warning("STUB: Toolbox::PBGetVol");
+	return 0;
 }
 
-void Toolbox::PBSetVol(ParamBlockRec &paramBlock) {
+OSErr Toolbox::PBSetVol(ParamBlockRec &paramBlock) {
 	warning("STUB: Toolbox::PBSetVol");
+	return 0;
 }
 
 void Toolbox::SFGetFile(const Common::Point &where, const Common::U32String &prompt, ProcPtr fileFilter, int16 numTypes, const SFTypeList &typeList, const ProcPtr &dlgHook, SFReply &reply) {

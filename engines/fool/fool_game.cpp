@@ -40,6 +40,12 @@ void FoolGame::run() {
 }
 
 void FoolGame::sub_128_004() {
+	// Define the bitmap surfaces (normally pointers to raw memory)
+	this->arr_bmp_5dfc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
+	this->arr_bmp_b3ec = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
+	this->arr_bmp_109dc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
+	this->arr_bmp_15fcc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
+
 	// 128:0004
 	g_zbasic->unk_331(0xdac0, 0);
 	g_zbasic->unk_331(0x1b58, 1);
@@ -133,7 +139,7 @@ void FoolGame::sub_128_004() {
 				}
 			}
 			// 128:1d76
-			if (this->var_ev_46.what == 1) {
+			if (this->var_ev_46.what == kMouseDown) {
 				this->sub_128_1f76();
 			}
 			if ((this->var_i16_7d0 == 0x10) &&
@@ -202,7 +208,7 @@ void FoolGame::sub_128_0a2(int16 unk2, int16 unk1) {
 	// 128:00e6
 	if (this->var_i16_30 == 1) {
 		// FIXME: use var_i16_32 to choose start offset??
-		g_zbasic->put(0, 0, 0, 0, this->arr_bmp_5dfc);
+		g_zbasic->put(0, 0, 0, 0, this->arr_bmp_5dfc, kPutCopy);
 
 	}
 }
@@ -394,7 +400,7 @@ void FoolGame::sub_128_55c(Common::U32String &unk1) {
 	g_toolbox->DrawString(this->var_str_172);
 }
 
-int32 FoolGame::sub_128_5fe() {
+int16 FoolGame::sub_128_5fe() {
 	// 128:05fe
 	ParamBlockRec pb;
 	g_toolbox->PBGetVol(pb);
@@ -402,11 +408,11 @@ int32 FoolGame::sub_128_5fe() {
 	return this->var_i16_30;
 }
 
-void FoolGame::sub_128_64c(int16 unk1) {
+OSErr FoolGame::sub_128_64c(int16 unk1) {
 	// 128:064c
 	ParamBlockRec pb;
 	pb.ioVRefNum = unk1;
-	g_toolbox->PBSetVol(pb);
+	return g_toolbox->PBSetVol(pb);
 }
 
 void FoolGame::sub_128_69c(int16 unk6, PatternMode unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
@@ -517,12 +523,12 @@ void FoolGame::sub_128_bde(int16 unk6, int16 unk5, int16 unk4, int16 unk3, int16
 void FoolGame::sub_128_c6a(int16 unk1) {
 	// 128:0c6a
 	this->var_i16_78a = g_toolbox->GetNextEvent(unk1, this->var_ev_46);
-	if ((this->var_ev_46.what == 1) && (this->var_ev_46.where.y < 0x14)) {
+	if ((this->var_ev_46.what == kMouseDown) && (this->var_ev_46.where.y < 0x14)) {
 		this->sub_128_5b30();
 	}
 	// 128:0caa
 	g_toolbox->GlobalToLocal(this->var_ev_46.where);
-	if (this->var_ev_46.what == 3) {
+	if (this->var_ev_46.what == kKeyDown) {
 		if ((this->var_ev_46.modifiers & 0x100) == 0) {
 			this->sub_128_5f9e();
 		} else {
@@ -530,13 +536,13 @@ void FoolGame::sub_128_c6a(int16 unk1) {
 		}
 	}
 	// 128:0ce0
-	if ((this->var_ev_46.what == 5) && ((this->var_ev_46.modifiers & 0x100) == 0)) {
+	if ((this->var_ev_46.what == kAutoKey) && ((this->var_ev_46.modifiers & 0x100) == 0)) {
 		this->sub_128_5f9e();
 	}
-	if (this->var_ev_46.what == 6) {
+	if (this->var_ev_46.what == kUpdateEvt) {
 		this->sub_128_5fb4();
 	}
-	if (this->var_ev_46.what == 7) {
+	if (this->var_ev_46.what == kDiskEvt) {
 		this->sub_128_6154();
 	}
 }
@@ -693,8 +699,9 @@ void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 		// 128:1522
 		do {
 			this->var_i16_7a8 = g_toolbox->GetNextEvent(0xa, this->var_ev_46);
+			g_toolbox->Delay(0);
 			g_toolbox->GlobalToLocal(this->var_ev_46.where);
-			if (this->var_ev_46.what == 1) {
+			if (this->var_ev_46.what == kMouseDown) {
 				// 128:154a
 				this->var_i16_7be = 0;
 				Common::Rect target;
@@ -718,7 +725,7 @@ void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 						g_toolbox->InvertRoundRect(target, 0xa, 0xa);
 
 						// 128:1624
-						while ((this->var_ev_46.what != 2) && (g_toolbox->PtInRect(this->var_ev_46.where, target) != 0)) {
+						while ((this->var_ev_46.what != kMouseUp) && (g_toolbox->PtInRect(this->var_ev_46.where, target) != 0)) {
 
 							this->var_i16_7a8 = g_toolbox->GetNextEvent(0xffff, this->var_ev_46);
 							g_toolbox->GlobalToLocal(this->var_ev_46.where);
@@ -726,12 +733,12 @@ void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 
 						g_toolbox->InvertRoundRect(target, 0xa, 0xa);
 						// 128:1686
-						while ((this->var_ev_46.what != 2) && (g_toolbox->PtInRect(this->var_ev_46.where, target))) {
+						while ((this->var_ev_46.what != kMouseUp) && (g_toolbox->PtInRect(this->var_ev_46.where, target))) {
 							this->var_i16_7a8 = g_toolbox->GetNextEvent(0xffff, this->var_ev_46);
 							g_toolbox->GlobalToLocal(this->var_ev_46.where);
 						}
 						// 128:16ea
-					} while (this->var_ev_46.what != 2);
+					} while (this->var_ev_46.what != kMouseUp);
 
 					if (g_toolbox->PtInRect(this->var_ev_46.where, target) == 0) {
 						this->var_i16_7be = 0;
@@ -740,7 +747,7 @@ void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 				}
 			}
 			// 128:172c
-			if (this->var_ev_46.what == 3) {
+			if (this->var_ev_46.what == kKeyDown) {
 				this->var_i16_7c0 = this->var_ev_46.message & 0xff;
 				if (this->var_i16_7c0 == 0xd) {
 					this->var_i16_7be = 1;
@@ -837,6 +844,10 @@ void FoolGame::sub_128_178a(int16 unk2, int16 unk1) {
 	g_toolbox->PenNormal();
 }
 
+void FoolGame::sub_128_1c2c(int16 unk1) {
+	// FIXME
+}
+
 void FoolGame::sub_128_1c30() {
 	// 128:1c30
 	this->var_i16_7c6 |= this->var_i16_30;
@@ -850,6 +861,10 @@ void FoolGame::sub_128_1c4a(int16 unk1) {
 	}
 	// 128:1c78
 }
+
+// FIXME
+
+
 
 void FoolGame::sub_128_1f1e() {
 	// 128:1f1e
@@ -957,7 +972,33 @@ void FoolGame::sub_128_21c8() {
 	}
 }
 
+void FoolGame::sub_128_2202() {
+	// FIXME
+}
 
+void FoolGame::sub_128_2808() {
+	// FIXME
+}
+
+void FoolGame::sub_128_2b0a() {
+	// FIXME
+}
+
+void FoolGame::sub_128_2bc6() {
+	// FIXME
+}
+
+void FoolGame::sub_128_2e3e() {
+	// FIXME
+}
+
+void FoolGame::sub_128_3536() {
+	// FIXME
+}
+
+void FoolGame::sub_128_39a0() {
+	// FIXME
+}
 
 void FoolGame::sub_128_4472() {
 	// 128:4472
@@ -999,7 +1040,15 @@ void FoolGame::sub_128_5fb4() {
 	// FIXME
 }
 
+void FoolGame::sub_128_5fea() {
+	// FIXME
+}
+
 void FoolGame::sub_128_6154() {
+	// FIXME
+}
+
+void FoolGame::sub_128_6186() {
 	// FIXME
 }
 
@@ -1011,10 +1060,230 @@ void FoolGame::sub_128_6244() {
 	// FIXME
 }
 
+// end
+// 128:62ae
+
+void FoolGame::sub_129_004() {
+	this->var_i16_7e6 = 0;
+	// FIXME
+	// 129:000a: LEA - 0x3ea(A5),A0
+	// 129:000e: MOVE.L - A0,-0x8ee(A5)
+	// 129:0012: SF - 0x8,D0
+	g_zbasic->openR(1, g_zbasic->str(110), 0x3e8, this->var_i16_e20);
+	if (this->var_i16_7e6 == 0) {
+		this->var_str_e22 = g_zbasic->str(111);
+		this->var_i16_f22 = this->var_i16_e20;
+		g_zbasic->close(1);
+		this->var_i16_7e6 = 0;
+	}
+
+	// 129:005e: LEA - 0x3f2(A5),A0
+	// 129:0062: MOVE.L - A0,-0x8ee(A5)
+}
+
 void FoolGame::sub_129_068() {
+	this->var_i16_7ce = 0x29a;
+	this->var_i16_372 = { 0, 0, 0 };
+	this->var_i16_378 = 1;
+	this->var_i16_7a0 = 1;
+	this->sub_128_4da(0);
+	for (size_t i = 0; i <= 3; i++) {
+		this->arr_pat_58f4[1].data[2*i] = 0xaa;
+		this->arr_pat_58f4[1].data[2*i+1] = 0x55;
+		this->arr_pat_58f4[2].data[2*i] = 0xff;
+		this->arr_pat_58f4[2].data[2*i+1] = 0xff;
+	}
+	// 129:00d8
+	// get current A5 - 0x72
+	// 129:00d8: MOVE.L - 0x904,D0
+	// 129:00de: JSR - "PEEKLONG"
+	// 129:00e2: SUBI.L - 0x72,D0
+	// 129:00e8: JSR - "PEEKWORD"
+	this->var_i16_5a = g_engine->_wm._screenDims.width();  // window width?
+	// 129:00f0: MOVE.L - 0x904,D0
+	// 129:00f6: JSR - "PEEKLONG"
+	// 129:00fa: SUBI.L - 0x74,D0
+	// 129:0100: JSR - "PEEKWORD"
+	this->var_i16_5c = g_engine->_wm._screenDims.height(); // window height?
+	this->var_i16_56 = (this->var_i16_5a - SCREEN_WIDTH)/2;
+	this->var_i16_58 = (this->var_i16_5c - SCREEN_HEIGHT)/2;
+	// 129:0138
+	if ((this->var_i16_56 == 0) && (this->var_i16_58 == 0)) {
+		this->var_i16_37a = 0;
+	} else {
+		this->var_i16_37a = 1;
+	}
+	// 129:0166
+	g_zbasic->window(1, g_zbasic->str(112), 0, 0, this->var_i16_5a, this->var_i16_5c, kWindowDialogOneLine);
+	g_zbasic->coordinateWindow();
+	g_toolbox->ClearMenuBar();
+	g_toolbox->DrawMenuBar();
+
+	// very cursed check for the ROM85 flag
+	// 129:0196: MOVE.L - 0x28e,D0
+	// 129:019c: JSR - "BCD_FROM_INT"
+	// 129:01a0: JSR - "CAST_INT"
+	// 129:01a4: JSR - "PEEKWORD"
+	// 129:01a8: CMPI.L - 0x3fff,D0
+	if (true) {
+		this->var_i16_372 = { 0x4e20, 0x4e20, 0x4e20 };
+		g_toolbox->SetCPixel(0x64, 0x64, this->var_i16_372);
+		g_toolbox->GetCPixel(0x64, 0x64, this->var_i16_372);
+
+	}
+
+	if ((this->var_i16_5a != SCREEN_WIDTH) || (this->var_i16_5c != SCREEN_HEIGHT)) {
+		this->sub_128_8b4(0, 0, this->var_i16_5c, this->var_i16_5a, 2);
+	} else {
+		// 129:0224
+		this->sub_128_8b4(0, 0, this->var_i16_5c, this->var_i16_5a, 1);
+	}
+	// 129:023e
+	g_toolbox->GetPort(this->var_i32_f24);
+
+	this->var_i32_8 = &this->arr_grafport_19042;
+	g_toolbox->OpenPort(this->var_i32_8);
+
+	this->var_i32_4 = &this->arr_grafport_18f78;
+	g_toolbox->OpenPort(this->var_i32_4);
+	g_toolbox->PortSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	g_toolbox->MovePortTo(this->var_i16_56, this->var_i16_58);
+	g_toolbox->ClipRect(this->arr_rect_1ae06);
+
+	this->var_i32_0 = &this->arr_grafport_18eae;
+	g_toolbox->OpenPort(this->var_i32_0);
+	g_toolbox->PortSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	g_toolbox->MovePortTo(this->var_i16_56, this->var_i16_58);
+	g_toolbox->ClipRect(this->arr_rect_1ae06);
+
+	this->sub_128_5fea();
+	// 129:02c8
+	this->sub_128_8b4(0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1);
+
+	if (false) {
+	//if (this->var_i16_372.red + this->var_i16_372.blue + this->var_i16_372.green != 0) {
+		// we're in colour mode, chide the user
+		this->arr_str_1a8d8[0] = g_zbasic->str(113);
+		this->arr_str_1a8d8[1] = g_zbasic->str(114);
+		this->arr_str_1a8d8[2] = g_zbasic->str(115);
+		this->arr_str_1a8d8[3] = g_zbasic->str(116);
+		this->sub_128_dfe(0, 2, 1, 0);
+		g_zbasic->unk_4();
+	}
+	// 129:0390
+	this->sub_128_61ec();
+	this->var_i32_37c = g_zbasic->mem(-1);
+	if (this->var_i32_37c < 0x1d4c0) {
+		// not enough memory, chide the user
+		this->arr_str_1a8d8[0] = g_zbasic->str(117);
+		this->arr_str_1a8d8[1] = g_zbasic->str(118);
+		this->arr_str_1a8d8[2] = g_zbasic->str(119);
+		this->arr_str_1a8d8[3] = g_zbasic->str(120);
+		this->arr_str_1a8d8[4] = g_zbasic->str(121);
+		this->arr_str_1a8d8[5] = g_zbasic->str(122);
+		this->arr_str_1a8d8[6] = g_zbasic->str(123);
+		this->sub_128_dfe(0, 5, 1, 1);
+		g_zbasic->unk_4();
+	}
+	// 129:0496
+	this->var_i16_7e4 = 1;
+	this->var_str_e22 = g_zbasic->str(124);
+	this->var_str_8ec = g_zbasic->str(125);
+
+	this->var_i16_484 = g_zbasic->finderInfo(this->var_i16_7e4, this->var_str_588, this->var_i32_f28, this->var_i16_688);
+
+	if (this->var_str_588 != g_zbasic->str(126)) {
+		if (this->var_str_588 == g_zbasic->str(127)) { // Fool's Puzzles
+			this->var_str_e22 = g_zbasic->str(128);
+			this->var_i16_f22 = this->var_i16_688;
+		} else {
+			// 129:052e
+			this->sub_128_2808();
+			if (this->var_str_588 != g_zbasic->str(129)) {
+				// 129:054c
+				this->var_str_8ec = this->var_str_588;
+				this->var_i16_9ec = this->var_i16_688;
+			}
+		}
+	}
+	// 129:0562
+	this->var_i16_f2c = this->sub_128_5fe(); // volume ref num
+	this->var_i16_e20 = this->var_i16_f2c;
+	if (this->var_str_e22 == g_zbasic->str(130)) {
+		this->sub_129_004();
+	}
+	// 129:058c
+	if (this->var_str_e22 == g_zbasic->str(131)) {
+		for (this->var_i16_f2e = 1; this->var_i16_f2e < 0x3e8; this->var_i16_f2e++) {
+			this->var_str_f30 = g_zbasic->files(-this->var_i16_f2e, g_zbasic->str(132), Common::U32String(), this->var_i16_e20);
+			if ((this->var_i16_e20 == 0) || (this->var_str_f30 == g_zbasic->str(133))) {
+				this->var_i16_f2e = 0x3e8;
+			}
+			// 129:0606
+			this->sub_129_004();
+			if (this->var_str_e22 != g_zbasic->str(134)) {
+				this->var_i16_f2e = 0x3e8;
+			}
+		}
+	}
+	// 129:0636
+	if (this->var_str_e22 == g_zbasic->str(135)) {
+		do {
+			g_zbasic->text(0, 0xc, 0, kSrcBic);
+			this->sub_128_8b4(0x17, 0x92, 0x31, 0x16e, 2);
+			this->var_i16_7a2 = 0x28;
+			// prompt to locate the fool's puzzles file
+			// 129:0690: CLR.W - -0x772(A5)
+			this->sub_128_4da(1);
+			Common::U32String PUZZ = g_zbasic->str(137);
+			this->sub_128_1e4(PUZZ);
+			// 129:06a6: CLR.W - -0x772(A5)
+			this->sub_128_8b4(0x17, 0x92, 0x31, 0x16e, 1);
+			this->sub_128_4da(0);
+			if (this->var_str_588 == g_zbasic->str(138)) {
+				g_zbasic->unk_4();
+			}
+			this->var_str_e22 = this->var_str_588;
+			this->var_i16_f22 = this->var_i16_688;
+		} while (this->var_str_e22 != g_zbasic->str(139));
+	}
+	// 129:0718
+	this->sub_128_64c(this->var_i16_f22);
+	this->var_i16_1030 = g_toolbox->OpenResFile(Common::Path(this->var_str_e22, ':'));
+	g_toolbox->UseResFile(this->var_i16_1030);
+	this->var_i16_484 = this->sub_128_64c(this->var_i16_f2c);
+	for (int i = 0; i <= 1; i++) {
+		// scroll background
+		this->arr_i32_192c0[i] = g_toolbox->GetPicture(this->var_i16_68a + 0x54);
+		PicHandle h = this->arr_i32_192c0[i];
+		g_toolbox->DetachResource(h);
+	}
+	// 129:07a2
+	g_zbasic->picture(0, 0x14, this->arr_i32_192c0[0]);
+	g_zbasic->get(0x0, 0x59, SCREEN_WIDTH, 0xb4, this->arr_bmp_5dfc);
+	g_zbasic->get(0x0, 0x14f, 0x7, SCREEN_HEIGHT, this->arr_bmp_b3ec);
+	g_zbasic->get(0x1f9, 0x14f, SCREEN_WIDTH, SCREEN_HEIGHT, this->arr_bmp_109dc);
+	// 129:0846
+	for (int i = 0; i <= 0x15; i++) {
+		this->var_i16_484 = g_zbasic->readInt();
+		g_zbasic->put(0, this->var_i16_484, this->arr_bmp_5dfc, kPutCopy);
+		this->sub_128_3da(2);
+	}
+	// 129:0888
+	g_zbasic->put(0, 0x14f, this->arr_bmp_b3ec, kPutCopy);
+	g_zbasic->put(0x1f9, 0x14f, this->arr_bmp_109dc, kPutCopy);
+	g_zbasic->picture(0x39, 0x29, this->arr_i32_192c0[1]);
+
+	// 129:08ee
 	// FIXME
 }
 
-// end
-// 128:62ae
+void FoolGame::sub_138_004() {
+	// FIXME
+}
+
+void FoolGame::sub_144_004() {
+	// FIXME
+}
+
 };

@@ -53,6 +53,11 @@ void Toolbox::CopyBits(const BitMap &srcBits, BitMap &dstBits, const Common::Rec
 }
 
 void Toolbox::_copyBits(const BitMap &srcBits, const BitMap &mask, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, SourceMode mode, RgnHandle maskRgn) {
+	if (!_port) {
+		warning("Toolbox::_copyBits: empty port");
+		return;
+	}
+
 	if (!srcBits) {
 		warning("Toolbox::_copyBits: empty srcBits handle");
 		return;
@@ -103,6 +108,10 @@ void Toolbox::_copyBits(const BitMap &srcBits, const BitMap &mask, BitMap &dstBi
 		_defaultWindow->addDirtyRect(result);
 		_defaultWindow->setDirty(true);
 	}
+}
+
+void Toolbox::DrawMenuBar() {
+	warning("STUB: Toolbox::DrawMenuBar");
 }
 
 void Toolbox::DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect) {
@@ -356,6 +365,7 @@ void Toolbox::OpenPort(GrafPtr port) {
 	port->visRgn = RgnHandle(new Region({ 1, Common::Rect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT ) }));
 	port->fgColor = g_engine->_wm._colorBlack;
 	port->bkColor = g_engine->_wm._colorWhite;
+	_port = port;
 	//port->clipRgn
 }
 
@@ -415,6 +425,10 @@ bool Toolbox::PtInRect(const Common::Point &pt, const Common::Rect &r) {
 
 void Toolbox::SetCPixel(int16 h, int16 v, const RGBColor &cPix) {
 	warning("STUB: Toolbox::SetCPixel");
+}
+
+void Toolbox::SetCursor(const Cursor &crsr) {
+	warning("STUB: Toolbox::SetCursor");
 }
 
 void Toolbox::SetPort(GrafPtr port) {

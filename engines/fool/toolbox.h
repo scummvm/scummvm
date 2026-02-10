@@ -164,7 +164,7 @@ struct GrafPort {
 	Common::Rect portRect;
 	RgnHandle visRgn;
 	RgnHandle clipRgn;
-	Pattern bkPat = { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xf } };
+	Pattern bkPat = { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff } };
 	Pattern fillPat = { { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } };
 	Common::Point pnLoc = {0, 0};
 	Common::Point pnSize = {1, 1};
@@ -269,9 +269,9 @@ public:
 	uint32 TickCount();
 
 	// toolbox_fileman.cpp
-	void PBGetVol(ParamBlockRec &paramBlock);
+	OSErr PBGetVol(ParamBlockRec &paramBlock);
 
-	void PBSetVol(ParamBlockRec &paramBlock);
+	OSErr PBSetVol(ParamBlockRec &paramBlock);
 
 	void SFGetFile(const Common::Point &where, const Common::U32String &prompt, ProcPtr fileFilter, int16 numTypes, const SFTypeList &typeList, const ProcPtr &dlgHook, SFReply &reply);
 
@@ -299,6 +299,7 @@ public:
 	// a resource; if the Resource Manager is subsequendy called to get the detached resource, a new
 	// handle will be allocated.
 	void DetachResource(Handle &h);
+	void DetachResource(PicHandle &h);
 
 	// PROCEDURE DisposHandle (h: Handle);
 	// DisposHandle releases the memory occupied by the relocatable block whose handle is h.
@@ -426,6 +427,13 @@ public:
 	// Within the rectangle that you specify in the dstRect parameter, the DrawPicture
 	// procedure draws the picture that you specify in the myPicture parameter.
 	void DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect);
+
+	// PROCEDURE DrawMenuBar;
+	// DrawMenuBar redraws the menu bar according to the menu list, incorporating any changes since
+	// the last call to DrawMenuBar. This procedure should always be called after a sequence of
+	// InsertMenu or DeleteMenu calls, and after ClearMenuBar, SetMenuBar, or any other routine that
+	// changes the menu list.
+	void DrawMenuBar();
 
 	// PROCEDURE EraseRoundRect (r: Rect; ovalWidth,ovalHeight: Integer);
 	// Using the patCopy pattern mode, the EraseRoundRect procedure draws the interior of

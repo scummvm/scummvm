@@ -148,6 +148,13 @@ enum ZBasicWindowType {
 	kWindowDocumentFixed = 5,
 };
 
+enum ZBasicPutMode {
+	kPutCopy = 0,
+	kPutXOR = 1,
+	kPutOR = 2,
+	kPutAND = 3, // FIXME: check that these are right
+};
+
 struct ZBasicDatum {
 	ZBasicDatumType type = kDatumNULL;
 	uint32 offset = 0;
@@ -237,15 +244,16 @@ public:
 	void coordinateWindow();
 	void get(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &dest);
 	int16 instr(int16 expression, const Common::U32String &string1, const Common::U32String &string2);
-	int finderInfo(int16 &count, Common::U32String &var, uint32 &type, uint16 volume);
+	Common::U32String files(int16 expression, const Common::U32String &prompt, const Common::U32String &defaultFilename, int16 &volume);
+	int finderInfo(int16 &count, Common::U32String &var, OSType &type, uint16 volume);
 	bool maybe();
 	uint32 mem(int16 index);
 	void menu(int16 menuNo, int16 itemNo, int16 state, const Common::U32String &title);
 	void openR(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo);
 	void picture(int16 x, int16 y, PicHandle &src);
 	void picture(int16 x1, int16 y1, int16 x2, int16 y2, PicHandle &src);
-	void put(int16 x, int16 y, BitMap &src);
-	void put(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &src);
+	void put(int16 x, int16 y, BitMap &src, ZBasicPutMode mode);
+	void put(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &src, ZBasicPutMode mode);
 	Common::Array<byte> read(int16 fileNo, uint32 length);
 	int16 readInt();
 	Common::U32String readStr();
@@ -256,7 +264,7 @@ public:
 	const Common::U32String &str(size_t index);
 
 
-	void unk_4();
+	void unk_4(); // possibly quit?
 	int16 unk_5();
 	void unk_6(int16 unk1, int32 unk2, int16 unk3, int16 unk4);
 	void unk_20();
