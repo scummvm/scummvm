@@ -616,7 +616,7 @@ void ScalpelTalk::set3DODialogueSelection(int statementIndex) {
 	// Set the selector to the actual statement index selected by the user
 	_pcTalkie3DOSelector = statementIndex;
 	_pcTalkie3DOSubindex = 0;
-	debug(3, "ScalpelTalk::set3DODialogueSelection: Set selector to %d", statementIndex);
+	debugC(kDebugLevelTalk, "ScalpelTalk::set3DODialogueSelection: Set selector to %d", statementIndex);
 }
 
 static int getOpcodeArgsLength(int opIndex, const byte *args) {
@@ -787,7 +787,7 @@ bool ScalpelTalk::handleTalkieMode() {
 
 		if (!videoFile.empty() && vm.has3DOVideo(videoFile)) {
 			// Audio-only mode (Non-blocking start)
-			debug(2, "ScalpelTalk::waitForMore: Starting 3DO audio: %s (Speaker %d)", videoFile.c_str(), _speaker);
+			debugC(kDebugLevelTalk, "ScalpelTalk::waitForMore: Starting 3DO audio: %s (Speaker %d)", videoFile.c_str(), _speaker);
 			if (play3DOConversationAudio(videoFile)) {
 				// Audio started
 
@@ -798,21 +798,21 @@ bool ScalpelTalk::handleTalkieMode() {
 
 				if (it != durationsMap.end()) {
 					_currentAudioDuration = it->_value;
-					debug(2, "ScalpelTalk::waitForMore: Audio duration for '%s': %.0f ms (source: lookup table)", baseFilename.c_str(), _currentAudioDuration);
+					debugC(kDebugLevelTalk, "ScalpelTalk::waitForMore: Audio duration for '%s': %.0f ms (source: lookup table)", baseFilename.c_str(), _currentAudioDuration);
 				} else {
 					// Fallback to 15 FPS heuristic if not found in lookup table
 					if (_3doAudioDecoder && _3doAudioDecoder->getFrameCount() > 0) {
 						_currentAudioDuration = (_3doAudioDecoder->getFrameCount() * 1000.0) / 15.0;
-						debug(2, "ScalpelTalk::waitForMore: Audio duration for '%s': %.0f ms (source: 15 FPS heuristic, %d frames)",
+						debugC(kDebugLevelTalk, "ScalpelTalk::waitForMore: Audio duration for '%s': %.0f ms (source: 15 FPS heuristic, %d frames)",
 						      baseFilename.c_str(), _currentAudioDuration, _3doAudioDecoder->getFrameCount());
 					} else {
 						_currentAudioDuration = 0.0;
-						debug(2, "ScalpelTalk::waitForMore: Audio duration for '%s': 0 ms (source: no decoder/frames)", baseFilename.c_str());
+						debugC(kDebugLevelTalk, "ScalpelTalk::waitForMore: Audio duration for '%s': 0 ms (source: no decoder/frames)", baseFilename.c_str());
 					}
 				}
 			}
 		} else {
-			debug(3, "ScalpelTalk::waitForMore: No 3DO file for Speaker %d, Index %d", _speaker, _pcTalkie3DOSubindex);
+			debugC(kDebugLevelTalk, "ScalpelTalk::waitForMore: No 3DO file for Speaker %d, Index %d", _speaker, _pcTalkie3DOSubindex);
 			_currentAudioDuration = 0.0;
 		}
 
@@ -824,7 +824,7 @@ bool ScalpelTalk::handleTalkieMode() {
 	} else {
 		// Same speaker: Continue existing audio
 		if (is3DOAudioPlaying()) {
-			debug(2, "ScalpelTalk::waitForMore: Continuing audio for Speaker %d", _speaker);
+			debugC(kDebugLevelTalk, "ScalpelTalk::waitForMore: Continuing audio for Speaker %d", _speaker);
 			// Note: _currentAudioDuration is preserved from previous call
 		} else {
 			_currentAudioDuration = 0.0;
@@ -958,10 +958,10 @@ int ScalpelTalk::waitLoop(int delay) {
 
 	// Handle different exit conditions
 	if (skipped) {
-		debug(2, "ScalpelTalk::waitLoop: Audio skipped by user (ESC/Space or click on last page, elapsed: %d ms)", g_system->getMillis() - startTime);
+		debugC(kDebugLevelTalk, "ScalpelTalk::waitLoop: Audio skipped by user (ESC/Space or click on last page, elapsed: %d ms)", g_system->getMillis() - startTime);
 		stop3DOAudio();
 	} else if (timeUp && wasAudioPlaying && is3DOAudioPlaying()) {
-		debug(2, "ScalpelTalk::waitLoop: Text advanced, audio continues (multi-page dialogue, elapsed: %d ms)", g_system->getMillis() - startTime);
+		debugC(kDebugLevelTalk, "ScalpelTalk::waitLoop: Text advanced, audio continues (multi-page dialogue, elapsed: %d ms)", g_system->getMillis() - startTime);
 	}
 
 	// Clear any pending events so they don't trigger the next dialogue line immediately
@@ -1418,7 +1418,7 @@ bool ScalpelTalk::play3DOConversationAudio(const Common::String &videoFile) {
 	// Construct full path to video file (which contains audio)
 	Common::Path videoPath = vm.get3DOVideoPath(videoFile);
 
-	debug(1, "ScalpelTalk::play3DOConversationAudio: Loading audio from %s", videoPath.toString().c_str());
+	debugC(kDebugLevelTalk, "ScalpelTalk::play3DOConversationAudio: Loading audio from %s", videoPath.toString().c_str());
 
 	// Create and initialize video decoder (to extract audio)
 	_3doAudioDecoder = new Video::ThreeDOMovieDecoder();
@@ -1432,7 +1432,7 @@ bool ScalpelTalk::play3DOConversationAudio(const Common::String &videoFile) {
 	// Start playback (this starts the audio track)
 	_3doAudioDecoder->start();
 
-	debug(1, "ScalpelTalk::play3DOConversationAudio: Audio playback started");
+	debugC(kDebugLevelTalk, "ScalpelTalk::play3DOConversationAudio: Audio playback started");
 
 	// DON'T BLOCK - just return and let the talk script continue
 	// The video decoder's audio track is playing asynchronously via the mixer
