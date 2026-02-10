@@ -355,7 +355,7 @@ void SherlockEngine::detect3DOAssets() {
 	}
 
 	if (filenames.empty()) {
-		debugC(kDebugLevelTalk, "SherlockEngine: No 3DO audio durations available");
+		warning("SherlockEngine: No 3DO audio durations available");
 		return;
 	}
 
@@ -384,12 +384,12 @@ void SherlockEngine::detect3DOAssets() {
 		if (testFile.open(testPath)) {
 			testFile.close();
 			_has3DOAssets = true;
-			debugC(kDebugLevelTalk, "SherlockEngine: 3DO assets detected (verified: %s)", streamPath.c_str());
+			warning("SherlockEngine: 3DO assets detected (verified: %s)", streamPath.c_str());
 			return;
 		}
 	}
 
-	debugC(kDebugLevelTalk, "SherlockEngine: No 3DO assets detected, talkie features unavailable");
+	warning("SherlockEngine: No 3DO assets detected, talkie features unavailable");
 }
 
 void SherlockEngine::registerTalkieSettings() {
