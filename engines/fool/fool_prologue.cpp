@@ -575,7 +575,7 @@ void FoolPrologue::sub_129_004() {
 		this->drawTextCenterAlign(0xcb, 0x100);
 		this->sub_128_e58();
 
-		g_zbasic->put(0x0, 0x14, this->arr_i32_41296[0]);
+		g_zbasic->put(0x0, 0x14, this->arr_i32_41296[0], kPutCopy);
 		this->var_i16_1aa = 0;
 
 	} else {
@@ -648,7 +648,7 @@ void FoolPrologue::sub_129_004() {
 			this->drawTextCenterAlign(0xcb, 0xfc);
 			// 129:0730
 			this->sub_128_e58();
-			g_zbasic->put(0x0, 0x14, this->arr_i32_41296[0]);
+			g_zbasic->put(0x0, 0x14, this->arr_i32_41296[0], kPutCopy);
 			this->var_i16_1aa = 0;
 		} else {
 			// 129:075c
@@ -1406,7 +1406,7 @@ void FoolPrologue::sub_131_004() {
 		this->var_i32_2 = g_toolbox->TickCount();
 		this->var_i16_74 = g_zbasic->rndInt(0x1ca);
 		this->var_i16_192 = g_zbasic->rndInt(0xfc);
-		g_zbasic->put(this->var_i16_74, this->var_i16_192, this->arr_i32_3bca4);
+		g_zbasic->put(this->var_i16_74, this->var_i16_192, this->arr_i32_3bca4, kPutCopy);
 		g_toolbox->InvertRect(this->arr_i16_1bc);
 		this->delayFromMarker(1);
 	}
@@ -1423,7 +1423,7 @@ void FoolPrologue::sub_131_004() {
 		// 131:0b54
 		this->var_i16_74 = g_zbasic->rndInt(0x1ca);
 		this->var_i16_192 = g_zbasic->rndInt(0xfc);
-		g_zbasic->put(this->var_i16_74, this->var_i16_192, this->arr_i32_3bca4);
+		g_zbasic->put(this->var_i16_74, this->var_i16_192, this->arr_i32_3bca4, kPutCopy);
 	}
 
 	// 131:0bb0

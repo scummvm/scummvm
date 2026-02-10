@@ -51,8 +51,8 @@ public:
 	void sub_128_4da(int16 unk1);
 	void sub_128_50e(int16 unk3, int16 unk2, int16 unk1);
 	void sub_128_55c(Common::U32String &unk1);
-	int32 sub_128_5fe();
-	void sub_128_64c(int16 unk1);
+	int16 sub_128_5fe();
+	OSErr sub_128_64c(int16 unk1);
 	void sub_128_69c(int16 unk6, PatternMode unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
 	void sub_128_712(int16 unk3, int16 unk2, int16 unk1);
 	void sub_128_8b4(int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
@@ -76,6 +76,7 @@ public:
 	void sub_128_2126();
 	void sub_128_21c8();
 	void sub_128_2202();
+	void sub_128_2808();
 	void sub_128_2b0a();
 	void sub_128_2bc6();
 	void sub_128_2e3e();
@@ -94,6 +95,7 @@ public:
 	void sub_128_61ec();
 	void sub_128_6244();
 
+	void sub_129_004();
 	void sub_129_068();
 
 	void sub_138_004();
@@ -114,12 +116,16 @@ private:
 	int16 var_i16_56;
 	int16 var_i16_58;
 	int16 var_i16_5a;
+	int16 var_i16_5c;
 	SFReply var_sfr_5e; // -> aa
 	int16 var_i16_16c;
 	ProcPtr var_i32_16e;
 	Common::U32String var_str_172;
 	Common::U32String var_str_272;
+	RGBColor var_i16_372;
 	int16 var_i16_378;
+	int16 var_i16_37a;
+	uint32 var_i32_37c;
 	Common::U32String var_str_384;
 	int16 var_i16_484;
 	Common::U32String var_str_486;
@@ -162,6 +168,21 @@ private:
 	int16 var_i16_7da;
 	int16 var_i16_7dc;
 	int16 var_i16_7e2;
+	int16 var_i16_7e4;
+	int16 var_i16_7e6;
+	Common::U32String var_str_8ec;
+	int16 var_i16_9ec;
+
+	int16 var_i16_e20;
+	Common::U32String var_str_e22;
+	int16 var_i16_f22;
+	GrafPtr var_i32_f24;
+	OSType var_i32_f28;
+	int16 var_i16_f2c;
+	int16 var_i16_f2e;
+	Common::U32String var_str_f30;
+	int16 var_i16_1030;
+
 
 	// FIXME: bounds on the following are guessed! need to trace index range
 	int16 arr_i16_18b2[101];
@@ -188,8 +209,12 @@ private:
 	int16 arr_i16_5cbc[26];
 	float arr_bcd_5dbc[8];
 	BitMap arr_bmp_5dfc; // 22000, close to a screen page
+	BitMap arr_bmp_b3ec;
 	BitMap arr_bmp_109dc;
 	BitMap arr_bmp_15fcc;
+	GrafPort arr_grafport_18eae;
+	GrafPort arr_grafport_18f78;
+	GrafPort arr_grafport_19042;
 							// Also 109dc and 15fcc
 	Common::Rect arr_rect_1910c;
 	PicHandle arr_i32_192c0[0x18];
