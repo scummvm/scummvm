@@ -68,11 +68,11 @@ const CMakeProvider::Library *CMakeProvider::getLibraryFromFeature(const char *f
 		LibraryProps("mpc", "mpcdec").Libraries("mpcdec")
 	};
 
-	for (unsigned int i = 0; i < sizeof(s_libraries) / sizeof(s_libraries[0]); i++) {
-		bool matchingSDL = (s_libraries[i].sdlVersion == kSDLVersionAny)
-		                   || (s_libraries[i].sdlVersion == useSDL);
-		if (std::strcmp(feature, s_libraries[i].feature) == 0 && matchingSDL) {
-			return &s_libraries[i];
+	for (const auto &library : s_libraries) {
+		bool matchingSDL = (library.sdlVersion == kSDLVersionAny)
+		                   || (library.sdlVersion == useSDL);
+		if (std::strcmp(feature, library.feature) == 0 && matchingSDL) {
+			return &library;
 		}
 	}
 

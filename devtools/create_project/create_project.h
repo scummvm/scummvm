@@ -544,8 +544,8 @@ struct FileNode {
 	explicit FileNode(const std::string &n) : name(n), children() {}
 
 	~FileNode() {
-		for (NodeList::iterator i = children.begin(); i != children.end(); ++i)
-			delete *i;
+		for (auto &i : children)
+			delete i;
 	}
 
 	std::string name;  ///< Name of the node
