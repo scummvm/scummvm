@@ -32,6 +32,7 @@
 #include "video/3do_decoder.h"
 #include "graphics/surface.h"
 #include "sherlock/scalpel/scalpel_3do_audio.h"
+#include "common/config-manager.h"
 
 namespace Sherlock {
 namespace Scalpel {
@@ -691,7 +692,15 @@ void ScalpelTalk::talkWait(const byte *&str) {
 		}
 	}
 
-	int delay = _charCount * 7; // Heuristic delay
+	// Calculate delay based on character count and talkspeed setting
+	// talkspeed range: 0-255, default 60. Higher values = faster text (less delay)
+	int talkspeed = ConfMan.getInt("talkspeed");
+	if (talkspeed <= 0)
+		talkspeed = 60; // Default if invalid
+	
+	// Base delay heuristic: 7ms per character at default talkspeed (60)
+	// Scale inversely with talkspeed to get variable delay: delay = (charCount * 7 * 60) / talkspeed
+	int delay = (_charCount * 7 * 60) / talkspeed;
 	if (!pauseFlag && delay < 80) delay = 80;
 
 	_wait = waitForMore(delay);
