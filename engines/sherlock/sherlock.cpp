@@ -333,8 +333,8 @@ void SherlockEngine::detect3DOAssets() {
 
 	// Collect all filenames from the duration table
 	Common::Array<Common::String> filenames;
-	for (auto it = durations.begin(); it != durations.end(); ++it) {
-		filenames.push_back(it->_key);
+	for (auto &it : durations) {
+		filenames.push_back(it.key());
 	}
 
 	if (filenames.empty()) {
