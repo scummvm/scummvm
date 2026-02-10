@@ -113,6 +113,9 @@ const ActionEntry actionTable[] = {
 	{400, OPEN, &PelrockEngine::openTravelAgencyDoor},
 	{400, CLOSE, &PelrockEngine::closeTravelAgencyDoor},
 
+	// Room 28
+	{472, PICKUP, &PelrockEngine::pickUpRoom28Object},
+
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
 	{WILDCARD, TALK, &PelrockEngine::noOpAction},   // Generic talk action
@@ -318,8 +321,9 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_state->setRootDisabledState(room, rootIndex, true);
 		break;
 	case 348: {
-		//game originally crashes here intentionally!
-		g_system->quit();
+		// Anti-piracy punishment: corrupt screen + noise + crash
+		antiPiracyEffect();
+		break;
 	}
 	case 349:
 		_state->setFlag(FLAG_CONSIGNAS_VENDEDOR, _state->getFlag(FLAG_CONSIGNAS_VENDEDOR) + 1);
@@ -1080,6 +1084,130 @@ void PelrockEngine::waitForActionEnd() {
 	}
 }
 
-// void checkOBjec
+/**
+ * Handler for picking up object with extra_id 472 in Room 28.
+ * Loads a special palette from ALFRED.7 at offset 0x1610CE and
+ * fades to it using the step-wise palette transition.
+ *
+ * Original handler at Ghidra address 0x1FED8.
+ */
+void PelrockEngine::pickUpRoom28Object(HotSpot *hotspot) {
+	// Load the special palette from ALFRED.7 at offset 0x1610CE
+	static const uint32 kRoom28PaletteOffset = 0x1610CE;
+
+	Common::File alfred7;
+	if (!alfred7.open(Common::Path("ALFRED.7"))) {
+		warning("Could not open ALFRED.7 for room 28 palette");
+		return;
+	}
+
+	byte targetPalette[768];
+	alfred7.seek(kRoom28PaletteOffset, SEEK_SET);
+	alfred7.read(targetPalette, 768);
+	alfred7.close();
+
+	// Convert 6-bit VGA palette (0-63) to 8-bit (0-255)
+	for (int i = 0; i < 768; i++) {
+		targetPalette[i] = targetPalette[i] << 2;
+	}
+
+	// Fade from current palette to the new palette
+	_graphics->fadePaletteToTarget(targetPalette, 25);
+	debug("Finished palette fade for room 28 object pickup");
+	// Pick up the item
+	// addInventoryItem(hotspot->extra);
+	_room->disableHotspot(hotspot);
+}
+
+/**
+ * Original behavior:
+ * 1. Stop all sound
+ * 2. Loop: corrupt the background buffer pointer with random values,
+ *    copy garbage to screen, write sequential memory bytes to PC speaker
+ *    port 0x61 to produce noise
+ * 3. On keypress: divide by zero -> crash to DOS
+ *
+ * ScummVM behavior:
+ * 1. Stop all sound
+ * 2. Loop: fill screen with random pixels, play white noise
+ * 3. On keypress: return to launcher
+ */
+void PelrockEngine::antiPiracyEffect() {
+	_sound->stopAllSounds();
+	_sound->stopMusic();
+
+	// Generate a buffer of white noise for the PC speaker simulation
+	const int kNoiseLength = 16000; // 1 second at 8kHz
+	byte *noiseData = new byte[kNoiseLength + 44]; // WAV header + data
+
+	// Write a minimal WAV header
+	memcpy(noiseData, "RIFF", 4);
+	WRITE_LE_UINT32(noiseData + 4, kNoiseLength + 36);
+	memcpy(noiseData + 8, "WAVE", 4);
+	memcpy(noiseData + 12, "fmt ", 4);
+	WRITE_LE_UINT32(noiseData + 16, 16);      // chunk size
+	WRITE_LE_UINT16(noiseData + 20, 1);       // PCM format
+	WRITE_LE_UINT16(noiseData + 22, 1);       // mono
+	WRITE_LE_UINT32(noiseData + 24, 8000);    // sample rate
+	WRITE_LE_UINT32(noiseData + 28, 8000);    // byte rate
+	WRITE_LE_UINT16(noiseData + 32, 1);       // block align
+	WRITE_LE_UINT16(noiseData + 34, 8);       // bits per sample
+	memcpy(noiseData + 36, "data", 4);
+	WRITE_LE_UINT32(noiseData + 40, kNoiseLength);
+
+	// Fill with random noise (simulating garbage bytes written to port 0x61)
+	byte curNoise = (byte)getRandomNumber(255);
+	for (int i = 0; i < kNoiseLength; i++) {
+		noiseData[44 + i] = curNoise;
+		bool changeNoise = getRandomNumber(10) < 2; // 20% chance to change noise value
+		if (changeNoise) {
+			curNoise = (byte)getRandomNumber(255);
+		}
+	}
+
+	// Play the noise
+	_sound->playSound(noiseData, kNoiseLength + 44, 200);
+
+	byte *screenPixels = (byte *)_screen->getPixels();
+	int screenSize = _screen->pitch * _screen->h;
+
+	// Clear any pending key event before starting the loop
+	_events->_lastKeyEvent = Common::KEYCODE_INVALID;
+
+	while (!shouldQuit()) {
+		_events->pollEvent();
+
+		if (_events->_lastKeyEvent != Common::KEYCODE_INVALID) {
+			break;
+		}
+
+		//generate random pixels on the screen (simulating corrupted video memory)
+		for (int i = 0; i < screenSize; i++) {
+			screenPixels[i] = (byte)getRandomNumber(255);
+		}
+
+		// Regenerate noise periodically
+		for (int i = 0; i < kNoiseLength; i++) {
+			noiseData[44 + i] = curNoise;
+			bool changeNoise = getRandomNumber(10) < 2; // 20% chance to change noise value
+			if (changeNoise) {
+				curNoise = (byte)getRandomNumber(255);
+			}
+		}
+		if (!_sound->isPlaying()) {
+			_sound->playSound(noiseData, kNoiseLength + 44, 200);
+		}
+
+		_screen->markAllDirty();
+		_screen->update();
+		g_system->delayMillis(50);
+	}
+
+	_sound->stopAllSounds();
+	delete[] noiseData;
+
+	// Return to launcher
+	Engine::quitGame();
+}
 
 } // End of namespace Pelrock

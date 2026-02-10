@@ -35,6 +35,7 @@ public:
 	byte *grabBackgroundSlice(byte *buf, int x, int y, int w, int h);
 	void putBackgroundSlice(byte *buf, int x, int y, int w, int h, byte *slice);
 	void fadeToBlack();
+	void fadePaletteToTarget(byte *targetPalette, int stepSize);
 	void clearScreen();
 };
 

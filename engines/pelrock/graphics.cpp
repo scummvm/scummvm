@@ -105,6 +105,44 @@ void GraphicsManager::fadeToBlack() {
 	}
 }
 
+/**
+ * Fades between two palettes by incrementally changing the current palette towards the target palette.
+ */
+void GraphicsManager::fadePaletteToTarget(byte *targetPalette, int stepSize) {
+	byte currentPalette[768];
+	memcpy(currentPalette, g_engine->_room->_roomPalette, 768);
+
+	while (!g_engine->shouldQuit()) {
+		g_engine->_events->pollEvent();
+
+		bool didRender = g_engine->renderScene(OVERLAY_NONE);
+		if (didRender) {
+			bool changed = false;
+
+			for (int i = 0; i < 768; i++) {
+				if (currentPalette[i] < targetPalette[i]) {
+					currentPalette[i] = MIN((int)currentPalette[i] + stepSize, (int)targetPalette[i]);
+					changed = true;
+				} else if (currentPalette[i] > targetPalette[i]) {
+					currentPalette[i] = MAX((int)currentPalette[i] - stepSize, (int)targetPalette[i]);
+					changed = true;
+				}
+			}
+
+			if (!changed)
+				break;
+
+			g_system->getPaletteManager()->setPalette(currentPalette, 0, 256);
+		}
+
+		g_engine->_screen->update();
+		g_system->delayMillis(10);
+	}
+
+	memcpy(g_engine->_room->_roomPalette, targetPalette, 768);
+	g_system->getPaletteManager()->setPalette(g_engine->_room->_roomPalette, 0, 256);
+}
+
 void GraphicsManager::clearScreen() {
 	memset(g_engine->_screen->getPixels(), 0, g_engine->_screen->pitch * g_engine->_screen->h);
 }

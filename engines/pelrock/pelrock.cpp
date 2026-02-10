@@ -1460,9 +1460,15 @@ void PelrockEngine::gameLoop() {
 	checkMouse();
 	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_m) {
 		travelToEgypt();
+		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
 	}
 	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_n) {
 		loadExtraScreenAndPresent(10);
+		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
+	}
+	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_p) {
+		antiPiracyEffect();
+		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
 	}
 	renderScene();
 	// _events->waitForKey();

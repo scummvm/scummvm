@@ -318,6 +318,8 @@ public:
 	void closeMcDoor(HotSpot *hotspot);
 
 	void animateStatuePaletteFade(bool reverse = false);
+	void pickUpRoom28Object(HotSpot *hotspot);
+	void antiPiracyEffect();
 	void checkObjectsForPart2();
 	void waitForActionEnd();
 };

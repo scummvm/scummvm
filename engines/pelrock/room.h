@@ -49,6 +49,7 @@ static const int unpickableHotspotExtras[] = {
 	360,  // library shelves
 	361,
 	362,
+	472, // matches
 };
 
 
