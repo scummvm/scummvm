@@ -416,7 +416,6 @@ public:
 	uint16 _playerWidth;
 	uint16 _playerDepth;
 	uint16 _stepUpDistance;
-
 	int _playerStepIndex;
 	Common::Array<int> _playerSteps;
 

@@ -678,6 +678,10 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	uint8 extraColor[4] = {};
 	if (isEclipse()) {
 		byte idx = readField(file, 8);
+		if (isDOS()) {
+            extraColor[0] = idx;
+        }
+
 		if (isEclipse2()) {
 			name = idx < 8 ? eclipse2RoomName[idx] : eclipse2RoomName[8];
 		} else

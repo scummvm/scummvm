@@ -56,6 +56,20 @@ byte kCGAPaletteRedGreen[4][3] = {
 	{0xaa, 0x55, 0x00},
 };
 
+byte kCGAPalettePinkBlueBright[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0x55, 0xff, 0xff},
+	{0xff, 0x55, 0xff},
+	{0xff, 0xff, 0xff},
+};
+
+byte kCGAPaletteRedGreenBright[4][3] = {
+	{0x00, 0x00, 0x00},
+	{0x55, 0xff, 0x55},
+	{0xff, 0x55, 0x55},
+	{0xff, 0xff, 0x55},
+};
+
 byte kHerculesPaletteGreen[2][3] = {
 	{0x00, 0x00, 0x00},
 	{0x00, 0xff, 0x00},
@@ -256,10 +270,22 @@ void FreescapeEngine::swapPalette(uint16 levelID) {
 }
 
 byte *FreescapeEngine::findCGAPalette(uint16 levelID) {
-	if (levelID % 2 == 0)
-		return (byte *)&kCGAPalettePinkBlue;
-	else
-		return (byte *)&kCGAPaletteRedGreen;
+	if (isDriller() || isDark() || isCastle()) {
+		if (levelID % 2 == 0)
+			return (byte *)&kCGAPalettePinkBlue;
+		else
+			return (byte *)&kCGAPaletteRedGreen;
+	}
+	if (isEclipse()) {
+        if (_areaMap.contains(levelID)) {
+            if (_areaMap[levelID]->_extraColor[0] & 0x01) {
+                return (byte *)&kCGAPaletteRedGreenBright;
+            } else {
+                return (byte *)&kCGAPalettePinkBlueBright;
+            }
+        }
+    }
+    return (byte *)&kCGAPaletteRedGreenBright;
 }
 
 } // End of namespace Freescape
