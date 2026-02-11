@@ -610,6 +610,13 @@ void ScalpelTalk::loadTalkFile(const Common::String &filename) {
 	// Reset counters for the new file
 	// fixes issues where counters would drift off limits when switching files
 	_3doSpeechIndex = 0;
+	
+	// Reset talkie mode tracking variables when script file changes
+	// This prevents subindex from drifting across nested script calls
+	_pcTalkie3DOSubindex = 0;
+	_lastSpeaker = -1; // Reset speaker tracking so new speaker is detected
+	// Note: _pcTalkie3DOSelector is NOT reset here because it represents
+	// the user's dialogue choice, which should persist across script file calls
 }
 
 void ScalpelTalk::set3DODialogueSelection(int statementIndex) {
