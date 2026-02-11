@@ -155,8 +155,8 @@ void PelrockEngine::init() {
 		loadAnims();
 		// setScreen(0, ALFRED_DOWN);
 		// setScreen(3, ALFRED_RIGHT);
-		setScreen(22, ALFRED_DOWN);
-		// setScreen(9, ALFRED_DOWN);
+		// setScreen(22, ALFRED_DOWN);
+		setScreen(9, ALFRED_DOWN);
 		// setScreen(15, ALFRED_DOWN);
 		// setScreen(2, ALFRED_LEFT);
 		// alfredState.x = 576;
@@ -235,7 +235,7 @@ void PelrockEngine::playSoundIfNeeded() {
 }
 
 void PelrockEngine::travelToEgypt() {
-	_graphics->fadeToBlack();
+	_graphics->fadeToBlack(10);
 	_sound->playMusicTrack(26, false);
 	byte *palette = new byte[768];
 	if (_extraScreen == nullptr) {
@@ -304,6 +304,23 @@ bool PelrockEngine::renderScene(int overlayMode) {
 		_screen->markAllDirty();
 		return true;
 	}
+
+	switch (_room->_currentRoomNumber) {
+	case 2: {
+		if (_events->_lastKeyEvent == Common::KEYCODE_x) {
+			_events->_lastKeyEvent = Common::KEYCODE_INVALID;
+			debug("Pressed X in room 2, numPressedX is now %d, flag is %d", _numPressedX + 1, _state->getFlag(FLAG_PUTA_250_VECES));
+			if (_state->getFlag(FLAG_PUTA_250_VECES) == true) {
+				_numPressedX++;
+				if (_numPressedX == 250) {
+					_dialog->say(_res->_ingameTexts[YLOSCONDONES]);
+				}
+			}
+		}
+		break;
+	}
+	}
+
 	return false;
 }
 
@@ -640,7 +657,6 @@ void PelrockEngine::placeStickersFirstPass() {
 void PelrockEngine::placeStickersSecondPass() {
 	// Some stickers need to be placed AFTER sprites, hardcoded in the original
 	if (_room->_currentRoomNumber == 3) {
-		debug("Placing second-pass stickers for room 3");
 		for (uint i = 0; i < _state->stickersPerRoom[3].size(); i++) {
 			if (_state->stickersPerRoom[3][i].stickerIndex == 14) {
 				placeSticker(_state->stickersPerRoom[3][i]);
@@ -1576,15 +1592,15 @@ AlfredDirection PelrockEngine::calculateAlfredsDirection(HotSpot *hotspot) {
 }
 
 VerbIcon PelrockEngine::isActionUnder(int x, int y) {
-	if (_currentHotspot == nullptr) {
+	/*if (_currentHotspot == nullptr) {
 		return NO_ACTION;
-	}
+	}*/
 	Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
 	int loopEnd = _state->selectedInventoryItem != -1 ? actions.size() + 1 : actions.size();
 	for (int i = 0; i < loopEnd; i++) {
 		Common::Point p = getPositionInBallonForIndex(i, _actionPopupState.x, _actionPopupState.y);
 		Common::Rect actionRect = Common::Rect(p.x, p.y, p.x + kVerbIconWidth, p.y + kVerbIconHeight);
-
+		debug("Checking action %d at rect (%d,%d) to (%d,%d) against mouse position %d,%d", i, actionRect.left, actionRect.top, actionRect.right, actionRect.bottom, x, y);
 		if (i == actions.size()) {
 			// Check inventory item
 			if (actionRect.contains(x, y)) {
@@ -1594,6 +1610,7 @@ VerbIcon PelrockEngine::isActionUnder(int x, int y) {
 			return actions[i];
 		}
 	}
+	debug("No action under mouse at position %d,%d", x, y);
 	return NO_ACTION;
 }
 
@@ -1668,6 +1685,7 @@ void PelrockEngine::checkMouseHover() {
 
 	if (isActionUnder(_events->_mouseX, _events->_mouseY) != NO_ACTION) {
 		hotspotDetected = false;
+		debug("Mouse is over action icon, not hotspot, so showing action cursor");
 	}
 
 	// Calculate walk target first (before checking anything else)

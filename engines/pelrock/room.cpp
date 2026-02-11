@@ -894,8 +894,8 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 		sprite.stride = READ_LE_INT16(data + animOffset + 6);
 		sprite.numAnims = data[animOffset + 8];
 		sprite.zOrder = data[animOffset + 23];
-		sprite.extra = data[animOffset + 32];
-		sprite.spriteType = data[animOffset + 33];
+		sprite.extra = READ_LE_INT16(data + animOffset + 32);
+		debug("Sprite %d: x=%d y=%d w=%d h=%d stride=%d numAnims=%d zOrder=%d extra=%d", i, sprite.x, sprite.y, sprite.w, sprite.h, sprite.stride, sprite.numAnims, sprite.zOrder, sprite.extra);
 		sprite.actionFlags = data[animOffset + 34];
 		sprite.isHotspotDisabled = data[animOffset + 38];
 		for (int j = 0; j < spriteChanges.size(); j++) {
@@ -908,7 +908,6 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 			break;
 		}
 		sprite.animData = new Anim[sprite.numAnims];
-		// debug("Sprite %d has %d sub-anims, type %d, actionFlags %d, isDisabled? %d", i, sprite.numAnims, sprite.spriteType, sprite.actionFlags, sprite.isHotspotDisabled);
 		int subAnimOffset = animOffset + 10;
 		for (int j = 0; j < sprite.numAnims; j++) {
 

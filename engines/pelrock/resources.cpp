@@ -42,6 +42,7 @@ const AlfredSpecialAnimOffset ResourceManager::alfredSpecialAnims[] = {
 	{3, 45, 87, 0, 7, 37000, 1}, // ELECTRIC SHOCK 1
 	{2, 82, 58, 0, 7, 53106, 20}, // ELECTRIC SHOCK 3
 	{3, 71, 110, 1, 2, 20724, 1, 62480}, // Throw
+	{14, 171, 107, 1, 7, 1556540, 1} , //crocodile
 };
 
 ResourceManager::~ResourceManager() {

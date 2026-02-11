@@ -231,13 +231,13 @@ struct Sprite {
 	uint16 stride; // 6-7
 	int numAnims;  // 8
 	int curAnimIndex = 0;
-	int8 zOrder;
-	byte spriteType;        // 33
+	int8 zOrder; //32-33
+
 	byte actionFlags;       // 34
 	bool isHotspotDisabled; // 38
 	bool isTalking = false;
 	Anim *animData;
-	byte extra;
+	int16 extra;
 };
 
 struct HotSpot {
@@ -506,8 +506,9 @@ struct ResetEntry {
 #define FLAG_GUARDIA_DNI_ENTREGADO 50
 #define FLAG_AGENCIA_ABIERTA 51
 #define FLAG_CONSIGNAS_VENDEDOR 52
+#define FLAG_PUTA_250_VECES 53
 
-const int kNumGameFlags = 53;
+const int kNumGameFlags = 54;
 
 struct GameStateData {
 	byte flags[kNumGameFlags];

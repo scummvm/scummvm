@@ -135,10 +135,13 @@ const CombinationEntry combinationTable[] = {
 	{4, 294, &PelrockEngine::useBrickWithWindow},
 	{4, 295, &PelrockEngine::useBrickWithShopWindow},
 	{6, 315, &PelrockEngine::useCordWithPlug},
-	{1, 53, &PelrockEngine::giveIdToGuard},
-	{5, 53, &PelrockEngine::giveMoneyToGuard},
+	{1, 309, &PelrockEngine::giveIdToGuard},
+	{5, 309, &PelrockEngine::giveMoneyToGuard},
 	{7, 353, &PelrockEngine::useAmuletWithStatue},
-	{8, 102, &PelrockEngine::giveSecretCodeToLibrarian},
+	{8, 353, &PelrockEngine::useSecretCodeWithStatue},
+	{8, 358, &PelrockEngine::giveSecretCodeToLibrarian},
+	{4, 358, &PelrockEngine::useBrickWithLibrarian}, // Any hotspot in the lamppost will work
+	{76, 469, &PelrockEngine::usePumpkinWithRiver},
 	// End marker
 	{WILDCARD, WILDCARD, nullptr}};
 
@@ -212,7 +215,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_state->setRootDisabledState(room, rootIndex, true);
 		break;
 	case 329:
-		debug("Would now enable X easter egg");
+		_state->setFlag(FLAG_PUTA_250_VECES, true);
 		break;
 	case 258:
 		_state->setFlag(FLAG_GUARDIA_PIDECOSAS, true);
@@ -280,6 +283,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 317:
 		addInventoryItem(95);
 		break;
+
 	case 330:
 		// Two oranges
 		addInventoryItem(103);
@@ -369,7 +373,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		break;
 	case 352:
 	case 355:
-		_graphics->fadeToBlack();
+		_graphics->fadeToBlack(10);
 		_alfredState.x = 342;
 		_alfredState.y = 277;
 		setScreen(31, ALFRED_DOWN);
@@ -550,20 +554,20 @@ void PelrockEngine::useBrickWithWindow(int inventoryObject, HotSpot *hotspot) {
 	// TODO: Animate sprite 8 (brick projectile) moving to window
 	Sprite *brickSprite = _room->findSpriteByIndex(7);
 	HotSpot *windowHotspot = _room->findHotspotByExtra(294);
-	brickSprite->x = _alfredState.x - brickSprite->w / 2;
-	brickSprite->y = _alfredState.y - kAlfredFrameHeight;
-	brickSprite->zOrder = 20; // Make it visible
+	brickSprite->x = 420;
+	brickSprite->y = 241;
+	brickSprite->zOrder = 10; // Make it visible
 	int target = windowHotspot->y + windowHotspot->h / 2;
 	while (!shouldQuit()) {
 		_events->pollEvent();
 		renderScene(OVERLAY_NONE);
-		if (_chrono->_gameTick) {
-			_room->findSpriteByIndex(7)->y -= 40;
-			if (_room->findSpriteByIndex(7)->y < target) {
+		// if (_chrono->_gameTick) {
+			_room->findSpriteByIndex(7)->y -= 10;
+			if (_room->findSpriteByIndex(7)->y <= 70) {
 				_room->findSpriteByIndex(7)->zOrder = -1;
 				break;
 			}
-		}
+		// }
 		_screen->update();
 		g_system->delayMillis(10);
 	}
@@ -590,7 +594,7 @@ void PelrockEngine::useBrickWithWindow(int inventoryObject, HotSpot *hotspot) {
 	_room->addStickerToRoom(_room->_currentRoomNumber, 10, PERSIST_PERM);
 	_room->disableHotspot(_room->findHotspotByExtra(295)); // Disable storefront hotspot
 	_room->disableHotspot(_room->findHotspotByExtra(294)); // Disable window hotspot
-	walkTo(639, _alfredState.y);
+	walkTo(630, _alfredState.y);
 }
 
 void PelrockEngine::moveCable(HotSpot *hotspot) {
@@ -771,6 +775,10 @@ void PelrockEngine::useAmuletWithStatue(int inventoryObject, HotSpot *hotspot) {
 	}
 }
 
+void PelrockEngine::useSecretCodeWithStatue(int inventoryObject, HotSpot *hotspot) {
+	_dialog->say(_res->_ingameTexts[NOESAMIAQUIENDEBES], 1);
+}
+
 void PelrockEngine::pickUpLetter(HotSpot *hotspot) {
 	addInventoryItem(9);
 	_room->setActionMask(hotspot, ACTION_MASK_NONE); // Disable hotspot
@@ -810,6 +818,10 @@ void PelrockEngine::giveSecretCodeToLibrarian(int inventoryObject, HotSpot *hots
 	addInventoryItem(59);
 }
 
+void PelrockEngine::useBrickWithLibrarian(int inventoryObject, HotSpot *hotspot) {
+	_dialog->say(_res->_ingameTexts[YSI_METIRA_MAQUINA]);
+}
+
 void PelrockEngine::openNewspaperDoor(HotSpot *hotspot) {
 	openDoor(hotspot, 2, 50, MASCULINE, false);
 }
@@ -836,6 +848,32 @@ void PelrockEngine::openTravelAgencyDoor(HotSpot *hotspot) {
 
 void PelrockEngine::closeTravelAgencyDoor(HotSpot *hotspot) {
 	closeDoor(hotspot, 1, 57, FEMININE, false);
+}
+
+void PelrockEngine::usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot) {
+	_sound->playMusicTrack(27);
+	_dialog->say(_res->_ingameTexts[PRIMERINGREDIENTE]);
+	_dialog->say(_res->_ingameTexts[CUIDADOIMPRUDENTE]);
+	_res->loadAlfredSpecialAnim(5);
+	_alfredState.animState = ALFRED_SPECIAL_ANIM;
+	_alfredState.x -= 10;
+	_alfredState.y += 20;
+	waitForSpecialAnimation();
+	_sound->playSound(_room->_roomSfx[0], 100, 0); // Belch
+	bool isPlaying = true;
+	while (!shouldQuit() && isPlaying) {
+		_events->pollEvent();
+		isPlaying = _sound->isPlaying(0);
+		_screen->update();
+		g_system->delayMillis(10);
+	}
+	_graphics->fadeToBlack(10);
+	//update conversaton state
+	_alfredState.x = 300;
+	_alfredState.y = 238;
+	setScreen(28, ALFRED_DOWN);
+	_dialog->say(_res->_ingameTexts[QUEOSCUROESTAESTO]);
+
 }
 
 void PelrockEngine::pickUpBook(int i) {
@@ -916,6 +954,12 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 
 	debug("Using item %d on Alfred", inventoryObject);
 	switch (inventoryObject) {
+	case 9: // carta
+		_dialog->say(_res->_ingameTexts[CORRESPONDENCIA_AJENA]);
+		break;
+	case 34: // Como hacerse rico...
+		_dialog->say(_res->_ingameTexts[PERIODICOSENSACIONALISTA], 1);
+		break;
 	case 63: // Recipe
 		_res->loadAlfredSpecialAnim(1);
 		_alfredState.animState = ALFRED_SPECIAL_ANIM;

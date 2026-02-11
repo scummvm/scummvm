@@ -149,6 +149,8 @@ private:
 	Common::String _hoveredMapLocation = "";
 	byte *_alfredSprite = nullptr;
 
+	int _numPressedX = 0;
+
 	// int prevDirX = 0;
 	// int prevDirY = 0;
 	// Common::String objectToShow = "";
@@ -298,6 +300,7 @@ public:
 	void giveMoneyToGuard(int inventoryObject, HotSpot *hotspot);
 	void openMuseumDoor(HotSpot *hotspot);
 	void useAmuletWithStatue(int inventoryObject, HotSpot *hotspot);
+	void useSecretCodeWithStatue(int inventoryObject, HotSpot *hotspot);
 	void pickUpLetter(HotSpot *hotspot);
 	void openLibraryOutdoorsDoor(HotSpot *hotspot);
 	void closeLibraryOutdoorsDoor(HotSpot *hotspot);
@@ -307,12 +310,14 @@ public:
 	void pickBooksFromShelf2(HotSpot *hotspot);
 	void pickBooksFromShelf3(HotSpot *hotspot);
 	void giveSecretCodeToLibrarian(int inventoryObject, HotSpot *hotspot);
+	void useBrickWithLibrarian(int inventoryObject, HotSpot *hotspot);
 	void openNewspaperDoor(HotSpot *hotspot);
 	void closeNewspaperDoor(HotSpot *hotspot);
 	void openNewspaperBossDor(HotSpot *hotspot);
 	void closeNewspaperBossDoor(HotSpot *hotspot);
 	void openTravelAgencyDoor(HotSpot *hotspot);
 	void closeTravelAgencyDoor(HotSpot *hotspot);
+	void usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot);
 	void pickUpBook(int i);
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);

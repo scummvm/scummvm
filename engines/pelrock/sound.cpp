@@ -108,7 +108,7 @@ void SoundManager::playSound(SonidoFile sound, int volume, int channel) {
 				_mixer->stopHandle(_sfxHandles[channel]);
 			}
 		}
-		// _mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], stream, -1, volume, 0, DisposeAfterUse::YES);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], stream, -1, volume, 0, DisposeAfterUse::YES);
 	}
 }
 
@@ -213,7 +213,7 @@ void SoundManager::playMusicTrack(int trackNumber, bool loop) {
 	}
 	_currentMusicTrack = trackNumber;
 	g_system->getAudioCDManager()->stop();
-	// g_system->getAudioCDManager()->play(trackNumber, loop ? -1 : 0, 0, 0);
+	g_system->getAudioCDManager()->play(trackNumber, loop ? -1 : 0, 0, 0);
 }
 
 void SoundManager::loadSoundIndex() {

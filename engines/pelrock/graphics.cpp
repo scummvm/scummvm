@@ -72,7 +72,7 @@ void GraphicsManager::putBackgroundSlice(byte *buf, int x, int y, int w, int h, 
 	}
 }
 
-void GraphicsManager::fadeToBlack() {
+void GraphicsManager::fadeToBlack(int stepSize) {
 	byte palette[768];
 	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
 	while (!g_engine->shouldQuit()) {
@@ -82,7 +82,7 @@ void GraphicsManager::fadeToBlack() {
 
 			for (int i = 0; i < 768; i++) {
 				if (palette[i] > 0) {
-					palette[i] = MAX(palette[i] / 2, 0);
+					palette[i] = MAX(palette[i] - stepSize, 0);
 				}
 			}
 			g_system->getPaletteManager()->setPalette(palette, 0, 256);
