@@ -485,6 +485,9 @@ public:
 	bool endOfData() const { return _stream->endOfData(); }
 	bool endOfStream() const { return _stream->endOfStream(); }
 
+	// QueuingAudioStream API
+	uint32 numQueuedStreams() const { return _stream->numQueuedStreams(); }
+
 	// PacketizedAudioStream API
 	void queuePacket(Common::SeekableReadStream *data) { _stream->queueAudioStream(makeStream(data)); }
 	void finish() { _stream->finish(); }

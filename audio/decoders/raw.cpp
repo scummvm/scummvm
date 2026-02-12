@@ -238,7 +238,7 @@ AudioStream *PacketizedRawStream::makeStream(Common::SeekableReadStream *data) {
 	return makeRawStream(data, getRate(), _flags);
 }
 
-PacketizedAudioStream *makePacketizedRawStream(int rate, byte flags) {
+StatelessPacketizedAudioStream *makePacketizedRawStream(int rate, byte flags) {
 	return new PacketizedRawStream(rate, flags);
 }
 
