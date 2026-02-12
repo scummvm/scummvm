@@ -556,18 +556,31 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			if (_selectedItem < (int)_list.size() - 1) {
 				if ( g_system->getEventManager()->getModifierState() & Common::KBD_SHIFT) {
 					int newItem = _selectedItem + 1;
-					if (_lastSelectionStartItem < newItem)
-						markSelectedItem(newItem, true);
-					else
-						markSelectedItem(_selectedItem, false);
-					_selectedItem = newItem;
+					// Skip selecting Group Headers
+					while (newItem < (int)_list.size() && !isItemSelectable(newItem)) {
+						newItem++;
+					}
+					if (newItem < (int)_list.size()) {
+						if (_lastSelectionStartItem < newItem)
+							markSelectedItem(newItem, true);
+						else
+							markSelectedItem(_selectedItem, false);
+						_selectedItem = newItem;
+					}
 				} else {
 					clearSelection();
-					_selectedItem++;
+					int newItem = _selectedItem + 1;
+					// Skip selecting Group Headers
+					while (newItem < (int)_list.size() && !isItemSelectable(newItem)) {
+						newItem++;
+					}
+					if (newItem < (int)_list.size())
+						_selectedItem = newItem;
+					// If dead end, restore the previous selection
 					markSelectedItem(_selectedItem, true);
 					_lastSelectionStartItem = _selectedItem;
 				}
-				if (!isItemVisible(_selectedItem))
+				if (_selectedItem < (int)_list.size() && !isItemVisible(_selectedItem))
 					scrollToCurrent();
 			}
 			break;
@@ -607,18 +620,31 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			if (_selectedItem > 0) {
 				if (g_system->getEventManager()->getModifierState() & Common::KBD_SHIFT) {
 					int newItem = _selectedItem - 1;
-					if (_lastSelectionStartItem > newItem)
-						markSelectedItem(newItem, true);
-					else
-						markSelectedItem(_selectedItem, false);
-					_selectedItem = newItem;
+					// Skip selecting Group Headers
+					while (newItem >= 0 && !isItemSelectable(newItem)) {
+						newItem--;
+					}
+					if (newItem >= 0) {
+						if (_lastSelectionStartItem > newItem)
+							markSelectedItem(newItem, true);
+						else
+							markSelectedItem(_selectedItem, false);
+						_selectedItem = newItem;
+					}
 				} else {
 					clearSelection();
-					_selectedItem--;
+					int newItem = _selectedItem - 1;
+					// Skip selecting Group Headers
+					while (newItem >= 0 && !isItemSelectable(newItem)) {
+						newItem--;
+					}
+					if (newItem >= 0) 
+						_selectedItem = newItem;
+					// If dead end, restore the previous selection
 					markSelectedItem(_selectedItem, true);
 					_lastSelectionStartItem = _selectedItem;
 				}
-				if (!isItemVisible(_selectedItem))
+				if (_selectedItem >= 0 && !isItemVisible(_selectedItem))
 					scrollToCurrent();
 			}
 			break;

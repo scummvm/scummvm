@@ -506,4 +506,10 @@ ThemeEngine::WidgetStateInfo GroupedListWidget::getItemState(int item) const {
 	return _state;
 }
 
+bool GroupedListWidget::isItemSelectable(int item) const {
+	if (item < 0 || item >= (int)_listIndex.size())
+		return false;
+	return !isGroupHeader(_listIndex[item]);
+}
+
 } // End of namespace GUI

@@ -198,6 +198,9 @@ protected:
 	/// Find the visual position of a data item
 	int findDataIndex(int dataIndex) const;
 
+	/// Check if an item at a given position is selectable
+	virtual bool isItemSelectable(int item) const { return true; }
+
 	virtual ThemeEngine::WidgetStateInfo getItemState(int item) const { return _state; }
 
 	void drawFormattedText(const Common::Rect &r, const Common::U32String &str, ThemeEngine::WidgetStateInfo state = ThemeEngine::kStateEnabled,

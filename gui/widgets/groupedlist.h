@@ -71,6 +71,8 @@ public:
 
 	void startEditMode() override { error("Edit mode is not supported for Grouped Lists"); }
 
+	bool isItemSelectable(int item) const override;
+
 protected:
 	void sortGroups();
 	void toggleGroup(int groupID);
