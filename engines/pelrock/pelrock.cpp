@@ -95,7 +95,7 @@ Common::Error PelrockEngine::run() {
 	_res = new ResourceManager();
 	_sound = new SoundManager(_mixer);
 	_dialog = new DialogManager(_screen, _events, _graphics);
-	_menu = new MenuManager(_screen, _events, _res);
+	_menu = new MenuManager(_screen, _events, _res, _sound);
 	_smallFont = new SmallFont();
 	_smallFont->load("ALFRED.4");
 	_largeFont = new LargeFont();
@@ -156,7 +156,7 @@ void PelrockEngine::init() {
 		// setScreen(0, ALFRED_DOWN);
 		// setScreen(3, ALFRED_RIGHT);
 		// setScreen(22, ALFRED_DOWN);
-		setScreen(9, ALFRED_DOWN);
+		setScreen(25, ALFRED_DOWN);
 		// setScreen(15, ALFRED_DOWN);
 		// setScreen(2, ALFRED_LEFT);
 		// alfredState.x = 576;
@@ -1600,7 +1600,6 @@ VerbIcon PelrockEngine::isActionUnder(int x, int y) {
 	for (int i = 0; i < loopEnd; i++) {
 		Common::Point p = getPositionInBallonForIndex(i, _actionPopupState.x, _actionPopupState.y);
 		Common::Rect actionRect = Common::Rect(p.x, p.y, p.x + kVerbIconWidth, p.y + kVerbIconHeight);
-		debug("Checking action %d at rect (%d,%d) to (%d,%d) against mouse position %d,%d", i, actionRect.left, actionRect.top, actionRect.right, actionRect.bottom, x, y);
 		if (i == actions.size()) {
 			// Check inventory item
 			if (actionRect.contains(x, y)) {
@@ -1610,7 +1609,7 @@ VerbIcon PelrockEngine::isActionUnder(int x, int y) {
 			return actions[i];
 		}
 	}
-	debug("No action under mouse at position %d,%d", x, y);
+
 	return NO_ACTION;
 }
 
@@ -1685,7 +1684,6 @@ void PelrockEngine::checkMouseHover() {
 
 	if (isActionUnder(_events->_mouseX, _events->_mouseY) != NO_ACTION) {
 		hotspotDetected = false;
-		debug("Mouse is over action icon, not hotspot, so showing action cursor");
 	}
 
 	// Calculate walk target first (before checking anything else)

@@ -26,6 +26,7 @@
 
 #include "pelrock/events.h"
 #include "pelrock/resources.h"
+#include "pelrock/sound.h"
 
 namespace Pelrock {
 
@@ -46,9 +47,126 @@ enum MenuButton {
 	NO_BUTTON
 };
 
+static const char *inventorySounds[113] = {
+
+	"HOJASZZZ.SMP", // 0 - Default leaf rustle
+	"11ZZZZZZ.SMP", // 1 -
+	"11ZZZZZZ.SMP",
+	"11ZZZZZZ.SMP",
+	"GLASS1ZZ.SMP", // 4 - Glass clink (brick)
+	"11ZZZZZZ.SMP",
+	"ELEC3ZZZ.SMP", // 6 - Electric zap
+	"REMATERL.SMP", // 7 - Rematerialize
+	"81ZZZZZZ.SMP", // 8 - (numbered SFX)
+	"HOJASZZZ.SMP",
+	"SSSHTZZZ.SMP", // 10 - Shushing
+	"HOJASZZZ.SMP", // 11 - Default leaf rustle
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP", // 20
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP", // 30
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP", // 40
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP", // 50
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"BOTEZZZZ.SMP", // 60
+	"BOTEZZZZ.SMP", // 61
+	"BOTEZZZZ.SMP", // 62 - Bottle sound
+	"BELCHZZZ.SMP", // 63 - Belch
+	"BEAMZZZZ.SMP", // 64 - Beam/ray
+	"ELVIS1ZZ.SMP", // 65 - Elvis impression
+	"CAT_1ZZZ.SMP", // 66 - Cat sound
+	"BOOOOOIZ.SMP", // 67 - Boing
+	"DISCOSZZ.SMP", // 68 - Disco music
+	"MONORLZZ.SMP", // 69 - Monorail
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"CARACOLA.SMP", // 73 - Seashell
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"WATER_2Z.SMP", // 76 - Water splash
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"EEEEKZZZ.SMP", // 79 - Shriek
+	"REMATERL.SMP", // 80 - Rematerialize
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"ELVIS1ZZ.SMP", // 83 - Elvis impression
+	"RIMSHOTZ.SMP", // 84 - Rimshot
+	"HOJASZZZ.SMP",
+	"WATER_2Z.SMP", // 86 - Water splash
+	"MOTOSZZZ.SMP", // 87 - Motorcycle
+	"HOJASZZZ.SMP",
+	"TWANGZZZ.SMP", // 89 - Twang
+	"HOJASZZZ.SMP",
+	"QUAKE2ZZ.SMP", // 91 - Earthquake
+	"HOJASZZZ.SMP",
+	"SORBOZZZ.SMP", // 93 - Slurp
+	"BOTEZZZZ.SMP", // 94 - Bottle sound
+	"ELVIS1ZZ.SMP", // 95 - Elvis impression
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"LLAVESZZ.SMP", // 100 - Keys jingling
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"EVLLAUGH.SMP", // 104 - Evil laugh
+	"HOJASZZZ.SMP",
+	"BURROLZZ.SMP", // 106 - Donkey bray
+	"HOJASZZZ.SMP",
+	"TWANGZZZ.SMP", // 108
+	"HOJASZZZ.SMP",
+	"TWANGZZZ.SMP", // 110
+	"ELVIS1ZZ.SMP", // 111 - Elvis impression
+	"SEX3ZZZZ.SMP"  // 112 - Suggestive sound
+};
+
 class MenuManager {
 public:
-	MenuManager(Graphics::Screen *screen, PelrockEventManager *events, ResourceManager *res);
+	MenuManager(Graphics::Screen *screen, PelrockEventManager *events, ResourceManager *res, SoundManager *sound);
 	~MenuManager();
 	void menuLoop();
 	void drawScreen();
@@ -58,6 +176,7 @@ public:
 
 private:
 	void checkMouseClick(int x, int y);
+	bool selectInventoryItem(int i);
 	void loadMenuTexts();
 	void cleanUp();
 	void drawButtons();
@@ -67,6 +186,7 @@ private:
 	Graphics::Screen *_screen = nullptr;
 	PelrockEventManager *_events = nullptr;
 	ResourceManager *_res = nullptr;
+	SoundManager *_sound = nullptr;
 	byte *_mainMenu = nullptr;
 	byte *_compositeBuffer = nullptr;
 

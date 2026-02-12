@@ -113,8 +113,12 @@ const ActionEntry actionTable[] = {
 	{400, OPEN, &PelrockEngine::openTravelAgencyDoor},
 	{400, CLOSE, &PelrockEngine::closeTravelAgencyDoor},
 
+	// Room 25
+	{609, PICKUP, &PelrockEngine::pickupSunflower},
+
 	// Room 28
 	{472, PICKUP, &PelrockEngine::pickUpMatches},
+
 
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
@@ -131,7 +135,7 @@ const ActionEntry actionTable[] = {
 
 const CombinationEntry combinationTable[] = {
 	{2, 281, &PelrockEngine::useCardWithATM},
-	{62, 117, &PelrockEngine::useSpicySauceWithBurger},
+	{62, 373, &PelrockEngine::useSpicySauceWithBurger},
 	{4, 294, &PelrockEngine::useBrickWithWindow},
 	{4, 295, &PelrockEngine::useBrickWithShopWindow},
 	{6, 315, &PelrockEngine::useCordWithPlug},
@@ -373,10 +377,8 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		break;
 	case 352:
 	case 355:
-		_graphics->fadeToBlack(10);
-		_alfredState.x = 342;
-		_alfredState.y = 277;
-		setScreen(31, ALFRED_DOWN);
+		//a la carcel
+		toJail();
 		break;
 	case 356:
 		_state->setRootDisabledState(room, 0, true);
@@ -384,10 +386,59 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_state->setRootDisabledState(room, 2, true);
 		break;
 	//end puta
+	// sabio
+	case 366:
+		_state->setRootDisabledState(room, rootIndex, true);
+		break;
+	case 363:
+		toJail();
+		break;
+	case 367: //accept riddle
+		_state->setRootDisabledState(room, 26, true);
+		walkAndAction(_room->findHotspotByExtra(467), TALK);
+		break;
+// hasta aqui
+
+	case 357: // mal
+		_state->setFlag(FLAG_RESPUESTAS_ACERTADAS, _state->getFlag(FLAG_RESPUESTAS_ACERTADAS) - 1);
+		_state->setRootDisabledState(room, rootIndex, true);
+		break;
+	case 358: // muy mal
+		_state->setFlag(FLAG_RESPUESTAS_ACERTADAS, _state->getFlag(FLAG_RESPUESTAS_ACERTADAS) - 2);
+		_state->setRootDisabledState(room, rootIndex, true);
+		break;
+	case 359: // bien
+		_state->setFlag(FLAG_RESPUESTAS_ACERTADAS, _state->getFlag(FLAG_RESPUESTAS_ACERTADAS) + 1);
+		if(_state->getFlag(FLAG_RESPUESTAS_ACERTADAS) == 15) {
+			addInventoryItem(106); // pin
+			_state->setFlag(FLAG_RESPUESTAS_ACERTADAS, 0);
+
+		}
+		_state->setRootDisabledState(room, rootIndex, true);
+		break;
+	case 360:
+
+	case 361:
+		_state->setFlag(FLAG_RESPUESTAS_ACERTADAS, 0);
+		//back to conversation 27
+	case 362:
+//?
+	case 365:
+		//correct
+	case 364:
+		//wrong
+
 	default:
 		debug("Got actionTrigger %d in dialogActionTrigger, but no handler defined", actionTrigger);
 		break;
 	}
+}
+
+void PelrockEngine::toJail() {
+	_graphics->fadeToBlack(10);
+	_alfredState.x = 342;
+	_alfredState.y = 277;
+	setScreen(31, ALFRED_DOWN);
 }
 
 void PelrockEngine::noOpAction(HotSpot *hotspot) {
@@ -521,6 +572,7 @@ void PelrockEngine::openKitchenDoorFromInside(HotSpot *hotspot) {
 
 void PelrockEngine::useSpicySauceWithBurger(int inventoryObject, HotSpot *hotspot) {
 	_state->setFlag(FLAG_PUESTA_SALSA_PICANTE, true);
+	_sound->playSound(_room->_roomSfx[2]);
 	_dialog->say(_res->_ingameTexts[VAESTAR_POCOFUERTE]);
 }
 
@@ -873,8 +925,22 @@ void PelrockEngine::usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot) {
 	_alfredState.y = 238;
 	setScreen(28, ALFRED_DOWN);
 	_dialog->say(_res->_ingameTexts[QUEOSCUROESTAESTO]);
-
 }
+
+void PelrockEngine::pickupSunflower(HotSpot *hotspot) {
+	if(_state->getFlag(FLAG_PARADOJA_RESUELTA) == false) {
+		_dialog->say(_res->_ingameTexts[OIGA]);
+		for(int i = 0; i < 26; i++) {
+			_state->setRootDisabledState(25, i, true);
+		}
+
+		walkAndAction(_room->findHotspotByExtra(467), TALK);
+	}
+	else {
+
+	}
+}
+
 
 void PelrockEngine::pickUpBook(int i) {
 	if (!_state->hasInventoryItem(10)) {
@@ -1137,6 +1203,7 @@ void PelrockEngine::waitForActionEnd() {
 		_screen->update();
 	}
 }
+
 
 /**
  * Handler for picking up object with extra_id 472 in Room 28.

@@ -31,7 +31,7 @@
 
 namespace Pelrock {
 
-Pelrock::MenuManager::MenuManager(Graphics::Screen *screen, PelrockEventManager *events, ResourceManager *res) : _screen(screen), _events(events), _res(res) {
+Pelrock::MenuManager::MenuManager(Graphics::Screen *screen, PelrockEventManager *events, ResourceManager *res, SoundManager *sound) : _screen(screen), _events(events), _res(res), _sound(sound) {
 }
 
 void MenuManager::drawColoredText(Graphics::ManagedSurface *screen, const Common::String &text, int x, int y, int w, Graphics::Font *font) {
@@ -97,11 +97,7 @@ void MenuManager::checkMouseClick(int x, int y) {
 	for (int i = 0; i < 4; i++) {
 		if (x >= 140 + (82 * i) && x <= 140 + (82 * i) + 64 &&
 			y >= 115 - (8 * i) && y <= 115 - (8 * i) + 64) {
-			_selectedInvIndex = g_engine->_state->inventoryItems[_curInventoryPage * 4 + i];
-			_menuText = _inventoryDescriptions[_selectedInvIndex];
-			g_engine->_state->selectedInventoryItem = _selectedInvIndex;
-			selectedItem = true;
-			debug("Selected inventory item %d", _selectedInvIndex);
+			selectedItem = selectInventoryItem(i);
 			return;
 		}
 	}
@@ -132,6 +128,18 @@ void MenuManager::checkMouseClick(int x, int y) {
 	default:
 		break;
 	}
+}
+
+bool MenuManager::selectInventoryItem(int i) {
+	if (_curInventoryPage * 4 + i >= g_engine->_state->inventoryItems.size())
+		return false;
+
+	_selectedInvIndex = g_engine->_state->inventoryItems[_curInventoryPage * 4 + i];
+	_menuText = _inventoryDescriptions[_selectedInvIndex];
+	_sound->playSound(inventorySounds[_selectedInvIndex], 100, 0);
+	g_engine->_state->selectedInventoryItem = _selectedInvIndex;
+	debug("Selected inventory item %d", _selectedInvIndex);
+	return true;
 }
 
 void MenuManager::menuLoop() {

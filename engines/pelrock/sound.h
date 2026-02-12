@@ -150,15 +150,15 @@ struct SoundData {
 	uint32 size;
 };
 
-
 const int kMaxChannels = 15;
-const int kAmbientSoundSlotBase = 4;  // Room sound indices 4-7 are ambient sounds
+const int kAmbientSoundSlotBase = 4; // Room sound indices 4-7 are ambient sounds
 
 class SoundManager {
 public:
 	SoundManager(Audio::Mixer *mixer);
 	~SoundManager();
 	void playSound(byte index, int volume = 128, int channel = -1);
+	void playSound(const char *filename, int volume, int channel);
 	void playSound(byte *soundData, uint32 size, int volume = 128);
 	void stopAllSounds();
 	void stopSound(int channel);

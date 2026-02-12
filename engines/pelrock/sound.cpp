@@ -34,6 +34,7 @@
 
 #include "pelrock/pelrock.h"
 #include "pelrock/sound.h"
+#include "sound.h"
 
 namespace Pelrock {
 
@@ -55,6 +56,15 @@ void SoundManager::playSound(byte index, int volume, int channel) {
 		playSound(it->_value, volume);
 	} else {
 		debug("Sound file %s not found in sound map", SOUND_FILENAMES[index]);
+	}
+}
+
+void SoundManager::playSound(const char *filename, int volume, int channel) {
+	auto it = _soundMap.find(filename);
+	if (it != _soundMap.end()) {
+		playSound(it->_value, volume);
+	} else {
+		debug("Sound file %s not found in sound map", filename);
 	}
 }
 
@@ -99,12 +109,11 @@ void SoundManager::playSound(SonidoFile sound, int volume, int channel) {
 	}
 
 	if (stream) {
-		if(channel == -1) {
+		if (channel == -1) {
 			// Find a free channel
-		 	channel = findFreeChannel();
-		}
-		else {
-			if(_mixer->isSoundHandleActive(_sfxHandles[channel])) {
+			channel = findFreeChannel();
+		} else {
+			if (_mixer->isSoundHandleActive(_sfxHandles[channel])) {
 				_mixer->stopHandle(_sfxHandles[channel]);
 			}
 		}
@@ -157,7 +166,7 @@ int SoundManager::getSampleRate(byte *data, SoundFormat format) {
 }
 
 int SoundManager::findFreeChannel() {
-	//Reserve first 3 channels for one-off sounds
+	// Reserve first 3 channels for one-off sounds
 	for (int i = 3; i < kMaxChannels; i++) {
 		if (!_mixer->isSoundHandleActive(_sfxHandles[i])) {
 			return i;
@@ -245,7 +254,7 @@ void SoundManager::loadSoundIndex() {
 	sonidosFile.close();
 }
 
-static const uint kAmbientCounterMask = 0x1F;  // Trigger when (counter & mask) == mask
+static const uint kAmbientCounterMask = 0x1F; // Trigger when (counter & mask) == mask
 
 int SoundManager::tickAmbientSound(uint32 frameCount) {
 	// Counter gate: only trigger every 32 frames when (counter & 0x1F) == 0x1F
@@ -261,7 +270,7 @@ int SoundManager::tickAmbientSound(uint32 frameCount) {
 	// Pick random ambient slot 0-3 (corresponds to room sound indices 4-7)
 	int ambientSlotOffset = g_engine->getRandomNumber(3);
 
-	return ambientSlotOffset;  // Caller adds 4 to get room sound index
+	return ambientSlotOffset; // Caller adds 4 to get room sound index
 }
 
 } // End of namespace Pelrock

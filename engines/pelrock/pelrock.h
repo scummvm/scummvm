@@ -250,6 +250,8 @@ public:
 	void performActionTrigger(uint16 actionTrigger);
 	void dialogActionTrigger(uint16 actionTrigger, byte room, byte rootIndex);
 
+	void toJail();
+
 	void executeAction(VerbIcon action, HotSpot *hotspot);
 	void openRoomDrawer(HotSpot *hotspot);
 	void closeRoomDrawer(HotSpot *hotspot);
@@ -318,6 +320,7 @@ public:
 	void openTravelAgencyDoor(HotSpot *hotspot);
 	void closeTravelAgencyDoor(HotSpot *hotspot);
 	void usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot);
+	void pickupSunflower(HotSpot *hotspot);
 	void pickUpBook(int i);
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);
