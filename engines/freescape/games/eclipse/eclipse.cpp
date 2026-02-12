@@ -356,6 +356,9 @@ void EclipseEngine::drawBackground() {
 		} else if (isAmiga() || isAtariST()) {
 			color1 = 8;
 			color2 = 14;
+		} else if (isDOS() && _renderMode == Common::kRenderCGA) {
+			color1 = 2;
+			color2 = 8;
 		}
 
 		_gfx->drawEclipse(color1, color2, progress);
@@ -627,20 +630,36 @@ void fillCircle(Graphics::Surface *surface, int x, int y, int radius, int color)
 	} while (cx <= cy);
 }
 
-void EclipseEngine::drawEclipseIndicator(Graphics::Surface *surface, int x, int y, uint32 color1, uint32 color2) {
+void EclipseEngine::drawEclipseIndicator(Graphics::Surface *surface, int x, int y, uint32 color1, uint32 color2, uint32 color3) {
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
-
-	// These calls will cover the pixels of the hardcoded eclipse image
 	surface->fillRect(Common::Rect(x, y, x + 50, y + 20), black);
-
 	float progress = 0;
 	if (_countdown >= 0)
 		progress = float(_countdown) / _initialCountdown;
-
 	int difference = 14 * progress;
-
-	fillCircle(surface, x + 7, y + 10, 7, color1); // Sun
-	fillCircle(surface, x + 7 + difference, y + 10, 7, color2); // Moon
+	int radius = 7;
+	int sunX = x + 7;
+	int sunY = y + 10;
+	int moonX = x + 7 + difference;
+	int moonY = y + 10;
+	fillCircle(surface, sunX, sunY, radius, color1);
+	if (color3 != 0) {
+		for (int dy = -radius; dy <= radius; ++dy) {
+			for (int dx = -radius; dx <= radius; ++dx) {
+				if (dx * dx + dy * dy <= radius * radius) {
+					int px = moonX + dx;
+					int py = moonY + dy;
+					if ((px + py) % 2 == 0) {
+						surface->setPixel(px, py, color2);
+					} else {
+						surface->setPixel(px, py, color3);
+					}
+				}
+			}
+		}
+	} else {
+		fillCircle(surface, moonX, moonY, radius, color2);
+	}
 }
 
 void EclipseEngine::drawIndicator(Graphics::Surface *surface, int xPosition, int yPosition, int separation) {

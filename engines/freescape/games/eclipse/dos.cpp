@@ -31,6 +31,8 @@ namespace Freescape {
 extern byte kEGADefaultPalette[16][3];
 extern byte kCGAPaletteRedGreen[4][3];
 extern byte kCGAPalettePinkBlue[4][3];
+extern byte kCGAPaletteRedGreenBright[4][3];
+extern byte kCGAPalettePinkBlueBright[4][3];
 
 void EclipseEngine::initDOS() {
 	_viewArea = Common::Rect(40, 33, 280, 133);
@@ -75,7 +77,7 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 		file.open("SCN1C.DAT");
 		if (file.isOpen()) {
 			_title = load8bitBinImage(&file, 0x0);
-			_title->setPalette((byte *)&kCGAPaletteRedGreen, 0, 4);
+			_title->setPalette((byte *)&kCGAPaletteRedGreenBright, 0, 4);
 		}
 		file.close();
 		file.open("TOTEC.EXE");
@@ -102,22 +104,37 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0x55);
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 	uint32 white = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
-	uint32 red = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0x00, 0x00);
-	uint32 blue = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x55, 0x55, 0xFF);
+	//uint32 red = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0x00, 0x00);
+	//uint32 blue = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x55, 0x55, 0xFF);
 	uint32 green = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x55, 0xFF, 0x55);
 	uint32 redish = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0x55, 0x55);
+	//uint32 transparent = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
+	uint32 pink = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0x55, 0xFF);
+	uint32 cyan = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x55, 0xFF, 0xFF);
+
+	uint32 color1 = cyan;
+	uint32 color2 = pink;
+	uint32 color3 = white;
+
+	if (_renderMode == Common::kRenderCGA) {
+        if (_currentArea && (_currentArea->_extraColor[0] & 0x01)) {
+            color1  = green;
+            color2  = redish;
+            color3 = yellow;
+        }
+    }
 
 	Common::String message;
 	int deadline;
 	getLatestMessages(message, deadline);
 	if (deadline <= _countdown) {
-		drawStringInSurface(message, 102, 135, black, yellow, surface);
+		drawStringInSurface(message, 102, 135, black, color3, surface);
 		_temporaryMessages.push_back(message);
 		_temporaryMessageDeadlines.push_back(deadline);
 	} else if (!_currentAreaMessages.empty())
-		drawStringInSurface(_currentArea->_name, 102, 135, black, yellow, surface);
+		drawStringInSurface(_currentArea->_name, 102, 135, black, color3, surface);
 
-	drawScoreString(score, 136, 6, black, white, surface);
+	drawScoreString(score, 136, 6, black, color2, surface);
 
 	int x = 171;
 	if (shield < 10)
@@ -126,27 +143,28 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 		x = 175;
 
 	Common::String shieldStr = Common::String::format("%d", shield);
-	drawStringInSurface(shieldStr, x, 162, black, redish, surface);
+	drawStringInSurface(shieldStr, x, 162, black, color2, surface);
 
-	drawStringInSurface(shiftStr("0", 'Z' - '$' + 1 - _angleRotationIndex), 79, 135, black, yellow, surface);
-	drawStringInSurface(shiftStr("3", 'Z' - '$' + 1 - _playerStepIndex), 63, 135, black, yellow, surface);
-	drawStringInSurface(shiftStr("7", 'Z' - '$' + 1 - _playerHeightNumber), 240, 135, black, yellow, surface);
+	drawStringInSurface(shiftStr("0", 'Z' - '$' + 1 - _angleRotationIndex), 79, 135, black, color3, surface);
+	drawStringInSurface(shiftStr("3", 'Z' - '$' + 1 - _playerStepIndex), 63, 135, black, color3, surface);
+	drawStringInSurface(shiftStr("7", 'Z' - '$' + 1 - _playerHeightNumber), 240, 135, black, color3, surface);
 
 	if (_shootingFrames > 0) {
-		drawStringInSurface(shiftStr("4", 'Z' - '$' + 1), 232, 135, black, yellow, surface);
-		drawStringInSurface(shiftStr("<", 'Z' - '$' + 1), 240, 135, black, yellow, surface);
+		drawStringInSurface(shiftStr("4", 'Z' - '$' + 1), 232, 135, black, color3, surface);
+		drawStringInSurface(shiftStr("<", 'Z' - '$' + 1), 240, 135, black, color3, surface);
 	}
-	drawAnalogClock(surface, 90, 172, black, red, white);
+	drawAnalogClock(surface, 90, 172, black, redish, white);
 
 	Common::Rect jarBackground(124, 165, 148, 192);
 	surface->fillRect(jarBackground, black);
 
+	
 	Common::Rect jarWater(124, 192 - _gameStateVars[k8bitVariableEnergy], 148, 192);
-	surface->fillRect(jarWater, blue);
+	surface->fillRect(jarWater, color1);
 
 	drawIndicator(surface, 41, 4, 16);
-	drawEclipseIndicator(surface, 228, 0, yellow, green);
-	surface->fillRect(Common::Rect(225, 168, 235, 187), white);
+	drawEclipseIndicator(surface, 228, 0, color3, color2, color1);
+	surface->fillRect(Common::Rect(225, 168, 235, 187), color3);
 	drawCompass(surface, 229, 177, _yaw, 10, black);
 }
 

@@ -90,7 +90,7 @@ public:
 	void drawAnalogClock(Graphics::Surface *surface, int x, int y, uint32 colorHand1, uint32 colorHand2, uint32 colorBack);
 	void drawAnalogClockHand(Graphics::Surface *surface, int x, int y, double degrees, double magnitude, uint32 color);
 	void drawCompass(Graphics::Surface *surface, int x, int y, double degrees, double magnitude, uint32 color);
-	void drawEclipseIndicator(Graphics::Surface *surface, int x, int y, uint32 color1, uint32 color2);
+	void drawEclipseIndicator(Graphics::Surface *surface, int x, int y, uint32 color1, uint32 color2, uint32 color3 = 0);
 	Common::String getScoreString(int score);
 	void drawScoreString(int score, int x, int y, uint32 front, uint32 back, Graphics::Surface *surface);
 

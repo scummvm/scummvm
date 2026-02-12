@@ -432,8 +432,6 @@ void FreescapeEngine::drawBackground() {
 }
 
 void FreescapeEngine::drawFrame() {
-
-
 	int farClipPlane = _farClipPlane;
 	if (_currentArea->isOutside())
 		farClipPlane *= 100;

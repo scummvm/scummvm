@@ -277,15 +277,15 @@ byte *FreescapeEngine::findCGAPalette(uint16 levelID) {
 			return (byte *)&kCGAPaletteRedGreen;
 	}
 	if (isEclipse()) {
-        if (_areaMap.contains(levelID)) {
-            if (_areaMap[levelID]->_extraColor[0] & 0x01) {
-                return (byte *)&kCGAPaletteRedGreenBright;
-            } else {
-                return (byte *)&kCGAPalettePinkBlueBright;
-            }
-        }
-    }
-    return (byte *)&kCGAPaletteRedGreenBright;
+		if (_areaMap.contains(levelID)) {
+			if (_areaMap[levelID]->_extraColor[0] & 0x01) {
+				return (byte *)&kCGAPaletteRedGreenBright;
+			} else {
+				return (byte *)&kCGAPalettePinkBlueBright;
+			}
+		}
+	}
+	return (byte *)&kCGAPaletteRedGreenBright;
 }
 
 } // End of namespace Freescape
