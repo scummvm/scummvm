@@ -218,6 +218,33 @@ void XPlayPACoXFCN::m_XPlayPACo(int nargs) {
 			} else {
 				warning("XPlayPACoXFCN: expected at least 1 arg for play");
 			}
+
+
+		} else if (cmd.equals("playfile")) {
+			if (nargs >= 2) {
+				Common::String filename = g_lingo->peek(nargs - 2).asString();
+				int playerId = state->openfile(filename);
+				int posX = 0;
+				int posY = 0;
+				for (int i = nargs - 3; i >= 0; i -= 2) {
+					Datum paramName = g_lingo->peek(i);
+					Datum paramValue = g_lingo->peek(i - 1);
+					if (paramName.asString().equalsIgnoreCase("centering") && paramValue.asInt() == 1) {
+						posX = (g_system->getWidth() - state->_players[playerId]._video->getWidth()) / 2;
+						posY = (g_system->getHeight() - state->_players[playerId]._video->getHeight()) / 2;
+					} else if (paramName.asString().equalsIgnoreCase("posX")) {
+						posX = paramValue.asInt();
+					} else if (paramName.asString().equalsIgnoreCase("posY")) {
+						posY = paramValue.asInt();
+					} else if (paramName.asString().equalsIgnoreCase("window")) {
+						// ignore
+					}
+				}
+				result = state->play(playerId, posX, posY);
+			} else {
+				warning("XPlayPACoXFCN: expected at least 1 arg for playfile");
+			}
+
 		} else if (cmd.equals("close")) {
 			if (nargs == 2) {
 				int playerId = g_lingo->peek(nargs - 2).asInt();
