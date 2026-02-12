@@ -323,7 +323,12 @@ public:
 	void closeTravelAgencyDoor(HotSpot *hotspot);
 	void usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot);
 	void pickupSunflower(HotSpot *hotspot);
+	void checkIngredients();
 	void pickUpBook(int i);
+	void pickUpChainsaw(HotSpot *hotspot);
+	void pickUpSpellbook(HotSpot *hotspot);
+	void pickUpBoot(HotSpot *hotspot);
+	void pickupCondoms(HotSpot *hotspot);
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);
 

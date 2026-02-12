@@ -118,6 +118,10 @@ const ActionEntry actionTable[] = {
 
 	// Room 28
 	{472, PICKUP, &PelrockEngine::pickUpMatches},
+	{87, PICKUP, &PelrockEngine::pickUpChainsaw},
+	{88, PICKUP, &PelrockEngine::pickUpSpellbook},
+	{89, PICKUP, &PelrockEngine::pickUpBoot},
+	{112, PICKUP, &PelrockEngine::pickupCondoms},
 
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
@@ -966,6 +970,14 @@ void PelrockEngine::pickupSunflower(HotSpot *hotspot) {
 		_state->setCurrentRoot(25, 1);
 		_room->addSticker(73);
 	}
+	checkIngredients();
+}
+
+void PelrockEngine::checkIngredients() {
+	byte ingredientes = _state->getFlag(FLAG_INGREDIENTES_CONSEGUIDOS);
+	int textLine = PRIMERINGREDIENTE + ingredientes;
+	_dialog->say(_res->_ingameTexts[textLine]);
+	_state->setFlag(FLAG_INGREDIENTES_CONSEGUIDOS, ingredientes + 1);
 }
 
 void PelrockEngine::pickUpBook(int i) {
@@ -1007,6 +1019,25 @@ void PelrockEngine::pickUpBook(int i) {
 			_state->selectedBookIndex = -1;
 		}
 	}
+}
+
+void PelrockEngine::pickUpChainsaw(HotSpot *hotspot) {
+
+	_room->addSticker(99);
+}
+
+void PelrockEngine::pickUpSpellbook(HotSpot *hotspot) {
+	_room->addSticker(97);
+}
+
+void PelrockEngine::pickUpBoot(HotSpot *hotspot) {
+
+	_room->addSticker(98);
+}
+
+void PelrockEngine::pickupCondoms(HotSpot *hotspot) {
+
+	_room->addSticker(100);
 }
 
 void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
@@ -1216,8 +1247,6 @@ void PelrockEngine::checkObjectsForPart2() {
 		_room->addStickerToRoom(19, 56, PERSIST_BOTH);
 		_room->addStickerToRoom(19, 58, PERSIST_BOTH);
 		_state->setFlag(FLAG_AGENCIA_ABIERTA, true);
-		// _state->setFlag(FLAG_PUEDE_VIAJAR_EN_EL_TIEMPO, true);
-		// _state->setRootDisabledState(19, 0, true);
 	}
 }
 
@@ -1233,8 +1262,6 @@ void PelrockEngine::waitForActionEnd() {
  * Handler for picking up object with extra_id 472 in Room 28.
  * Loads a special palette from ALFRED.7 at offset 0x1610CE and
  * fades to it using the step-wise palette transition.
- *
- * Original handler at Ghidra address 0x1FED8.
  */
 void PelrockEngine::pickUpMatches(HotSpot *hotspot) {
 	// Load the special palette from ALFRED.7 at offset 0x1610CE
@@ -1260,8 +1287,12 @@ void PelrockEngine::pickUpMatches(HotSpot *hotspot) {
 	_graphics->fadePaletteToTarget(targetPalette, 25);
 	debug("Finished palette fade for room 28 object pickup");
 	// Pick up the item
-	// addInventoryItem(hotspot->extra);
 	_room->disableHotspot(hotspot);
+	_state->setFlag(FLAG_CROCODILLO_ENCENDIDO, true);
+	_room->moveHotspot(_room->findHotspotByExtra(87), 415, 171);
+	_room->moveHotspot(_room->findHotspotByExtra(88), 305, 217);
+	_room->moveHotspot(_room->findHotspotByExtra(89), 201, 239);
+	_room->moveHotspot(_room->findHotspotByExtra(112), 261, 259);
 }
 
 /**

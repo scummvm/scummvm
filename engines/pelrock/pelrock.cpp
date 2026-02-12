@@ -670,13 +670,13 @@ void PelrockEngine::placeSticker(Sticker sticker) {
 	for (int y = 0; y < sticker.h; y++) {
 		for (int x = 0; x < sticker.w; x++) {
 			byte pixel = sticker.stickerData[y * sticker.w + x];
-			if (pixel != 0) {
+			// if (pixel != 0) {
 				int bgX = sticker.x + x;
 				int bgY = sticker.y + y;
 				if (bgX >= 0 && bgX < 640 && bgY >= 0 && bgY < 400) {
 					_compositeBuffer[bgY * 640 + bgX] = pixel;
 				}
-			}
+			// }
 		}
 	}
 }
