@@ -3213,7 +3213,8 @@ void LB::b_immediateSprite(int nargs) {
 }
 
 void LB::b_puppetSprite(int nargs) {
-	Score *sc = g_director->getCurrentMovie()->getScore();
+	Movie *movie = g_director->getCurrentMovie();
+	Score *sc = movie->getScore();
 	if (!sc) {
 		warning("b_puppetSprite: no score");
 		g_lingo->dropStack(nargs);
@@ -3225,7 +3226,18 @@ void LB::b_puppetSprite(int nargs) {
 		Datum sprite = g_lingo->pop();
 
 		if ((uint)sprite.asInt() < sc->_channels.size()) {
-			 sc->getSpriteById(sprite.asInt())->_puppet = (bool)state.asInt();
+			int spriteId = sprite.asInt();
+			Sprite *target = sc->getSpriteById(spriteId);
+			bool val = (bool)state.asInt();
+			bool refresh = (!val) && (target->_puppet);
+			target->_puppet = val;
+			if (refresh) {
+				// puppetSprite set to FALSE, copy back sprite data from frame cache
+				Channel *chan = sc->getChannelById(spriteId);
+				movie->getWindow()->addDirtyRect(chan->getBbox());
+				chan->setClean(sc->_currentFrame->_sprites[spriteId]);
+				chan->_dirty = true;
+			}
 		} else {
 			warning("b_puppetSprite: sprite index out of bounds");
 		}
