@@ -335,8 +335,8 @@ bool syncGameStateData(Common::Serializer &s, GameStateData *gameState) {
 		}
 	}
 
-	// Conversation roots state
-	s.syncBytes(gameState->conversationRootsState, 4 * 56);
+	// Conversation current root indices
+	s.syncBytes(gameState->conversationCurrentRoot, 56);
 	return !s.err();
 }
 

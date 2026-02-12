@@ -29,7 +29,7 @@ namespace Pelrock {
 PelrockConsole::PelrockConsole(PelrockEngine *engine) : GUI::Debugger(), _engine(engine) {
 	registerCmd("room", WRAP_METHOD(PelrockConsole, cmdLoadRoom));
 	registerCmd("give", WRAP_METHOD(PelrockConsole, cmdGiveItems));
-	registerCmd("disableRoot", WRAP_METHOD(PelrockConsole, disableRoot));
+	registerCmd("setRoot", WRAP_METHOD(PelrockConsole, setRoot));
 	registerCmd("setFlag", WRAP_METHOD(PelrockConsole, setFlag));
 }
 
@@ -49,15 +49,15 @@ bool PelrockConsole::setFlag(int argc, const char **argv) {
 	return true;
 }
 
-bool PelrockConsole::disableRoot(int argc, const char **argv) {
+bool PelrockConsole::setRoot(int argc, const char **argv) {
 	if (argc < 3) {
-		debugPrintf("Usage: disableRoot <roomNumber> <rootIndex>");
+		debugPrintf("Usage: setRoot <roomNumber> <rootIndex>");
 		return true;
 	}
 	int roomNumber = atoi(argv[1]);
 	int rootIndex = atoi(argv[2]);
-	_engine->_state->setRootDisabledState(roomNumber, rootIndex, true);
-	debugPrintf("Disabled root %d in room %d\n", rootIndex, roomNumber);
+	_engine->_state->setCurrentRoot(roomNumber, rootIndex);
+	debugPrintf("Set current root to %d in room %d\n", rootIndex, roomNumber);
 	return true;
 }
 

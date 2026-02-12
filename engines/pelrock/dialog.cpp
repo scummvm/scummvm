@@ -446,14 +446,6 @@ void DialogManager::setCurSprite(int index) {
 	_curSprite = nullptr;
 }
 
-bool isRootDisabled(byte room, int root) {
-
-	if (g_engine->_state->getRootDisabledState(room, root)) {
-		return true;
-	}
-	return false;
-}
-
 void DialogManager::startConversation(const byte *conversationData, uint32 dataSize, byte npcIndex, Sprite *animSet) {
 	if (!conversationData || dataSize == 0) {
 		debug("startConversation: No conversation data");
@@ -591,17 +583,22 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 }
 
 uint32 DialogManager::findRoot(int &currentRoot, uint32 currentPosition, uint32 dataSize, const byte *conversationData) {
-	while (g_engine->_state->getRootDisabledState(g_engine->_room->_currentRoomNumber, currentRoot)) {
-		// This root is disabled, skip to next
-		while (currentPosition < dataSize) {
+	// Check if a specific root has been set for this room
+	int targetRoot = g_engine->_state->getCurrentRoot(g_engine->_room->_currentRoomNumber);
+	
+	if (targetRoot >= 0) {
+		// Skip to the specified root
+		while (currentRoot < targetRoot && currentPosition < dataSize) {
 			if (conversationData[currentPosition] == CTRL_END_BRANCH) {
 				currentPosition++; // Move past end branch marker
 				currentRoot++;
-				break;
+			} else {
+				currentPosition++;
 			}
-			currentPosition++;
 		}
 	}
+	// If targetRoot is -1 or not set, use the first root (default behavior)
+	
 	return currentPosition;
 }
 

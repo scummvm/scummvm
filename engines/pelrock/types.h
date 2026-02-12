@@ -510,8 +510,10 @@ struct ResetEntry {
 #define FLAG_CONSIGNAS_VENDEDOR 52
 #define FLAG_PUTA_250_VECES 53
 #define FLAG_RESPUESTAS_ACERTADAS 54
+#define FLAG_CHEAT_CODE_ENABLED 55    // 0x495F3 - enables HIJODELAGRANPUTA cheat code input
+#define FLAG_RIDDLE_SOLVED 56         // 0x495D0 - set when Egyptian riddle answered correctly
 
-const int kNumGameFlags = 55;
+const int kNumGameFlags = 57;
 
 struct GameStateData {
 	byte flags[kNumGameFlags];
@@ -532,15 +534,15 @@ struct GameStateData {
 	Common::HashMap<byte, Common::Array<SpriteChange>> spriteChanges;
 
 	GameStateData() {
-		memset(conversationRootsState, 0, 4 * 56);
+		memset(conversationCurrentRoot, 0xFF, 56); // 0xFF = not set
 		for (int i = 0; i < kNumGameFlags; i++)
 			flags[i] = 0;
 		flags[FLAG_ENTRA_EN_TIENDA_PRIMERA_VEZ] = true;
 	}
 
 	~GameStateData() {
-		delete[] conversationRootsState;
-		conversationRootsState = nullptr;
+		delete[] conversationCurrentRoot;
+		conversationCurrentRoot = nullptr;
 	}
 
 	void addDisabledBranch(ResetEntry entry) {
@@ -581,14 +583,23 @@ struct GameStateData {
 		return false;
 	}
 
-	byte *conversationRootsState = new byte[4 * 56];
+	// Store current root index for each room (0xFF = not set, use findRoot logic)
+	byte *conversationCurrentRoot = new byte[56];
 
-	bool getRootDisabledState(byte room, byte root) const {
-		return (conversationRootsState[room * 4 + root] != 0);
+	int getCurrentRoot(byte room) const {
+		if (room >= 56)
+			return -1;
+		return (conversationCurrentRoot[room] == 0xFF) ? -1 : conversationCurrentRoot[room];
 	}
 
-	void setRootDisabledState(byte room, byte root, bool disabled) {
-		conversationRootsState[room * 4 + root] = disabled ? 1 : 0;
+	void setCurrentRoot(byte room, int root) {
+		if (room >= 56)
+			return;
+		if (root < 0 || root > 254) {
+			conversationCurrentRoot[room] = 0xFF; // Reset to auto-select
+		} else {
+			conversationCurrentRoot[room] = (byte)root;
+		}
 	}
 
 	int findFirstBookIndex() {
