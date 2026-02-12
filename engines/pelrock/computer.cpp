@@ -23,7 +23,6 @@
 #include "common/system.h"
 #include "graphics/paletteman.h"
 
-#include "computer.h"
 #include "pelrock/computer.h"
 #include "pelrock/library_books.h"
 #include "pelrock/pelrock.h"

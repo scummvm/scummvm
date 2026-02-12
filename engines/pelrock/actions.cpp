@@ -26,6 +26,7 @@
 #include "pelrock/offsets.h"
 #include "pelrock/pelrock.h"
 #include "pelrock/util.h"
+#include "pelrock/extrascreens.h"
 
 namespace Pelrock {
 
@@ -1138,6 +1139,41 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 			_dialog->say(_res->_ingameTexts[QUELASTIMA_NOSEEGIPCIO]);
 		}
 		break;
+	case 88: {
+
+		SpellBook spellBook = SpellBook(_events, _res);
+		_res->loadAlfredSpecialAnim(0);
+		_alfredState.animState = ALFRED_SPECIAL_ANIM;
+		waitForSpecialAnimation();
+
+		Spell *spell = spellBook.run();
+		if (spell) {
+			_alfredState.direction = ALFRED_LEFT;
+			_dialog->say(_res->_ingameTexts[DIOSHALCON + spell->page], 1);
+			if(spell->page == 12 && _room->_currentRoomNumber == 28) {
+				_graphics->clearScreen();
+				int waitFrames = 0;
+				//blank screen for half a second
+				while (!shouldQuit() && waitFrames < 20)
+				{
+					_events->pollEvent();
+					_chrono->updateChrono();
+					if(_chrono->_gameTick) {
+						waitFrames++;
+					}
+					_screen->markAllDirty();
+					_screen->update();
+					g_system->delayMillis(10);
+				}
+
+				_alfredState.x = 145;
+				_alfredState.y = 312;
+				setScreen(25, ALFRED_RIGHT);
+				_dialog->say(_res->_ingameTexts[MENUDAAVENTURA]);
+			}
+		}
+		break;
+	}
 	case 0: // yellow book
 		_res->loadAlfredSpecialAnim(0);
 		_alfredState.animState = ALFRED_SPECIAL_ANIM;

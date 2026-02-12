@@ -147,4 +147,91 @@ void GraphicsManager::clearScreen() {
 	memset(g_engine->_screen->getPixels(), 0, g_engine->_screen->pitch * g_engine->_screen->h);
 }
 
+void GraphicsManager::drawColoredText(Graphics::ManagedSurface *screen, const Common::String &text, int x, int y, int w, byte &defaultColor, Graphics::Font *font) {
+	int currentX = x;
+
+	Common::String segment;
+	for (uint i = 0; i < text.size(); i++) {
+		if (text[i] == '@' && i + 1 < text.size()) {
+			// Draw accumulated segment
+			if (!segment.empty()) {
+				font->drawString(screen, segment, currentX, y, w, defaultColor);
+				currentX += font->getStringWidth(segment);
+				segment.clear();
+			}
+			defaultColor = text[i + 1];
+			i++; // skip color code
+		} else {
+			segment += text[i];
+		}
+	}
+
+	// Draw remaining segment
+	if (!segment.empty()) {
+		font->drawString(screen, segment, currentX, y, w, defaultColor);
+	}
+}
+
+void GraphicsManager::drawColoredText(byte *buf, const Common::String &text, int x, int y, int w, byte &defaultColor, Graphics::Font *font) {
+
+	Graphics::Surface tempSurface;
+	Common::Rect r = font->getBoundingBox(text); // Ensure font metrics are loaded before creating surface
+
+	tempSurface.create(r.width(), r.height(), Graphics::PixelFormat::createFormatCLUT8());
+
+	int currentX = x;
+
+	Common::String segment;
+	for (uint i = 0; i < text.size(); i++) {
+		if (text[i] == '@' && i + 1 < text.size()) {
+			// Draw accumulated segment
+			if (!segment.empty()) {
+				font->drawString(&tempSurface, segment, currentX, y, w, defaultColor);
+				currentX += font->getStringWidth(segment);
+				segment.clear();
+			}
+			defaultColor = text[i + 1];
+			i++; // skip color code
+		} else {
+			segment += text[i];
+		}
+	}
+
+	// Draw remaining segment
+	if (!segment.empty()) {
+		font->drawString(&tempSurface, segment, currentX, y, w, defaultColor);
+	}
+
+	for(int j = 0; j < tempSurface.h; j++) {
+		for(int i = 0; i < tempSurface.w; i++) {
+			int idx = j * tempSurface.w + i;
+			if (y + j < 400 && x + i < 640) {
+				byte pixel = *((byte *)tempSurface.getBasePtr(i, j));
+				if (pixel != 0) { // Assuming 0 is transparent
+					debug("Drawing pixel at (%d, %d) with color %d", x + i, y + j, pixel);
+					buf[(y + j) * 640 + (x + i)] = pixel;
+				}
+			}
+		}
+	}
+}
+
+void GraphicsManager::drawColoredTexts(Graphics::ManagedSurface *surface, const Common::StringArray &text, int x, int y, int w, int yPadding, Graphics::Font *font) {
+	int currentX = x;
+	byte currentColor = 255;
+
+	for(int i =0; i < text.size(); i++) {
+		drawColoredText(surface, text[i], currentX, y + i * (font->getFontHeight() + yPadding), w, currentColor, font);
+	}
+}
+
+void GraphicsManager::drawColoredTexts(byte *buf, const Common::StringArray &text, int x, int y, int w, int yPadding, Graphics::Font *font) {
+	int currentX = x;
+	byte currentColor = 255;
+
+	for(int i =0; i < text.size(); i++) {
+		drawColoredText(buf, text[i], currentX, y + i * (font->getFontHeight() + yPadding), w, currentColor, font);
+	}
+}
+
 } // End of namespace Pelrock

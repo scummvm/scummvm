@@ -24,7 +24,6 @@
 #include "pelrock/pelrock.h"
 #include "pelrock/room.h"
 #include "pelrock/util.h"
-#include "resources.h"
 
 namespace Pelrock {
 
@@ -358,10 +357,11 @@ Common::Array<Common::StringArray> ResourceManager::processTextData(byte *data, 
 			pos++;
 			continue;
 		}
-		if (data[pos] == 0x00) {
+		if (data[pos] == 0x00 || data[pos] == 0x78) {
 			pos++;
 			continue;
 		}
+
 		if (data[pos] == CTRL_SPEAKER_ID) {
 			byte color = data[pos + 1];
 			desc.append(1, '@');
@@ -435,7 +435,7 @@ void ResourceManager::mergeRleBlocks(Common::SeekableReadStream *stream, uint32 
 		readUntilBuda(stream, stream->pos(), thisBlock, blockSize);
 		uint8_t *block_data = nullptr;
 		size_t decompressedSize = rleDecompress(thisBlock, blockSize, 0, 640 * 400, &block_data, true);
-		debug("Decompressed block %d: %zu bytes, total %zu", i, decompressedSize, combined_size + decompressedSize);
+		// debug("Decompressed block %d: %zu bytes, total %zu", i, decompressedSize, combined_size + decompressedSize);
 		if (combined_size + decompressedSize > 640 * 400) {
 			debug("Warning: decompressed data exceeds output buffer size, truncating");
 			decompressedSize = 640 * 400 - combined_size;

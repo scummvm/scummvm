@@ -467,9 +467,13 @@ const ExtraImages extraScreens[] = {
 	{0xFFC47, // girl book
 	 0x1180C9,
 	 8},
-	{0x1183C5, // book
+	/*{0x1183C5, // book
 	 0x1358F3,
-	 8},
+	 8},*/
+{	1147849,
+	1267955,
+	8
+},
 	{0x152A88, // portrait
 	 0x15BFC8,
 	 8},

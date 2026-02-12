@@ -21,7 +21,11 @@
 #ifndef PELROCK_GRAPHICS_H
 #define PELROCK_GRAPHICS_H
 
+#include "common/array.h"
+#include "common/str-array.h"
 #include "common/scummsys.h"
+
+#include "graphics/font.h"
 #include "graphics/screen.h"
 
 namespace Pelrock {
@@ -37,6 +41,10 @@ public:
 	void fadeToBlack(int stepSize);
 	void fadePaletteToTarget(byte *targetPalette, int stepSize);
 	void clearScreen();
+	void drawColoredText(Graphics::ManagedSurface *screen, const Common::String &text, int x, int y, int w, byte &defaultColor, Graphics::Font *font);
+	void drawColoredText(byte *buf, const Common::String &text, int x, int y, int w, byte &defaultColor, Graphics::Font *font);
+	void drawColoredTexts(Graphics::ManagedSurface *surface, const Common::StringArray &text, int x, int y, int w, int yPadding, Graphics::Font *font);
+	void drawColoredTexts(byte *buf, const Common::StringArray &text, int x, int y, int w, int yPadding, Graphics::Font *font);
 };
 
 } // End of namespace Pelrock

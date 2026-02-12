@@ -34,32 +34,6 @@ namespace Pelrock {
 Pelrock::MenuManager::MenuManager(Graphics::Screen *screen, PelrockEventManager *events, ResourceManager *res, SoundManager *sound) : _screen(screen), _events(events), _res(res), _sound(sound) {
 }
 
-void MenuManager::drawColoredText(Graphics::ManagedSurface *screen, const Common::String &text, int x, int y, int w, Graphics::Font *font) {
-	int currentX = x;
-	uint32 currentColor = 255;
-
-	Common::String segment;
-	for (uint i = 0; i < text.size(); i++) {
-		if (text[i] == '@' && i + 1 < text.size()) {
-			// Draw accumulated segment
-			if (!segment.empty()) {
-				font->drawString(screen, segment, currentX, y, w, currentColor);
-				currentX += font->getStringWidth(segment);
-				segment.clear();
-			}
-			currentColor = text[i + 1];
-			i++; // skip color code
-		} else {
-			segment += text[i];
-		}
-	}
-
-	// Draw remaining segment
-	if (!segment.empty()) {
-		font->drawString(screen, segment, currentX, y, w, currentColor);
-	}
-}
-
 MenuButton MenuManager::isButtonClicked(int x, int y) {
 	if (_questionMarkRect.contains(x, y)) {
 		return QUESTION_MARK_BUTTON;
@@ -175,8 +149,9 @@ void MenuManager::drawScreen() {
 	drawInventoryIcons();
 
 	memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
+	byte defaultColor = 255;
 	for (int i = 0; _menuText.size() > i; i++) {
-		drawColoredText(_screen, _menuText[i], 230, 200 + (i * 10), 200, g_engine->_smallFont);
+		g_engine->_graphics->drawColoredText(_screen, _menuText[i], 230, 200 + (i * 10), 200, defaultColor, g_engine->_smallFont);
 	}
 
 	drawText(g_engine->_smallFont, Common::String::format("%d,%d", _events->_mouseX, _events->_mouseY), 0, 0, 640, 13);

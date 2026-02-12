@@ -39,6 +39,7 @@
 #include "pelrock/computer.h"
 #include "pelrock/console.h"
 #include "pelrock/detection.h"
+#include "pelrock/extrascreens.h"
 #include "pelrock/fonts/small_font.h"
 #include "pelrock/offsets.h"
 #include "pelrock/pathfinding.h"
@@ -156,7 +157,7 @@ void PelrockEngine::init() {
 		// setScreen(0, ALFRED_DOWN);
 		// setScreen(3, ALFRED_RIGHT);
 		// setScreen(22, ALFRED_DOWN);
-		setScreen(25, ALFRED_DOWN);
+		setScreen(28, ALFRED_DOWN);
 		// setScreen(15, ALFRED_DOWN);
 		// setScreen(2, ALFRED_LEFT);
 		// alfredState.x = 576;
@@ -1485,6 +1486,14 @@ void PelrockEngine::gameLoop() {
 	}
 	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_p) {
 		antiPiracyEffect();
+		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
+	}
+	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_s) {
+		SpellBook spellBook(_events, _res);
+		Spell *selectedSpell = spellBook.run();
+		if(selectedSpell != nullptr) {
+			_dialog->sayAlfred(selectedSpell->text);
+		}
 		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
 	}
 	renderScene();

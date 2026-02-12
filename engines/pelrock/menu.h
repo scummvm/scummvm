@@ -180,7 +180,6 @@ private:
 	void loadMenuTexts();
 	void cleanUp();
 	void drawButtons();
-	void drawColoredText(Graphics::ManagedSurface *surface, const Common::String &text, int x, int y, int w, Graphics::Font *font);
 	void readButton(Common::File &alfred7, uint32 offset, byte *outBuffer[2], Common::Rect rect);
 	MenuButton isButtonClicked(int x, int y);
 	Graphics::Screen *_screen = nullptr;

@@ -20,7 +20,8 @@ MODULE_OBJS = \
 	dialog.o \
 	menu.o \
 	graphics.o \
-	saveload.o
+	saveload.o \
+	extrascreens.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_PELROCK), DYNAMIC_PLUGIN)
