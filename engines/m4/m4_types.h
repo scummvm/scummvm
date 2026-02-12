@@ -58,6 +58,11 @@ struct Buffer {
 	uint8 encoding = 0;
 	int32 stride = 0;
 
+	constexpr Buffer() = default;
+	constexpr Buffer(int32 w, int32 h, uint8 *data, uint8 encoding, int32 stride)
+		: w(w), h(h), data(data), encoding(encoding), stride(stride)
+	{}
+
 	uint8 *getBasePtr(int x, int y) {
 		return data + y * w + x;
 	}
