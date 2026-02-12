@@ -465,9 +465,11 @@ struct ResetEntry {
 #define FLAG_ALFRED_INTELIGENTE 9
 #define FLAG_ALFRED_SABE_EGIPCIO 10
 #define FLAG_VENDEDOR_DEJA_DE_JODER 11
+#define FLAG_PARADOJA_RESUELTA 13
+
+
 
 #define FLAG_VIAJE_A_EGIPTO 12
-#define FLAG_PARADOJA_RESUELTA 13
 #define FLAG_CROCODILLO_ENCENDIDO 14
 #define FLAG_MIRA_SIMBOLO_FUERA_MUSEO 15
 #define FLAG_PUERTA_SECRETA_ABIERTA 16
@@ -511,7 +513,7 @@ struct ResetEntry {
 #define FLAG_PUTA_250_VECES 53
 #define FLAG_RESPUESTAS_ACERTADAS 54
 #define FLAG_CHEAT_CODE_ENABLED 55    // 0x495F3 - enables HIJODELAGRANPUTA cheat code input
-#define FLAG_RIDDLE_SOLVED 56         // 0x495D0 - set when Egyptian riddle answered correctly
+#define FLAG_RIDDLE_PRESENTED 56
 
 const int kNumGameFlags = 57;
 

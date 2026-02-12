@@ -50,6 +50,7 @@ static const int unpickableHotspotExtras[] = {
 	361,
 	362,
 	472, // matches
+	609 // sunflower
 };
 
 

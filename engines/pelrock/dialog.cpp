@@ -585,7 +585,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 uint32 DialogManager::findRoot(int &currentRoot, uint32 currentPosition, uint32 dataSize, const byte *conversationData) {
 	// Check if a specific root has been set for this room
 	int targetRoot = g_engine->_state->getCurrentRoot(g_engine->_room->_currentRoomNumber);
-	
+
 	if (targetRoot >= 0) {
 		// Skip to the specified root
 		while (currentRoot < targetRoot && currentPosition < dataSize) {
@@ -598,7 +598,7 @@ uint32 DialogManager::findRoot(int &currentRoot, uint32 currentPosition, uint32 
 		}
 	}
 	// If targetRoot is -1 or not set, use the first root (default behavior)
-	
+
 	return currentPosition;
 }
 

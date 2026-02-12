@@ -119,7 +119,6 @@ const ActionEntry actionTable[] = {
 	// Room 28
 	{472, PICKUP, &PelrockEngine::pickUpMatches},
 
-
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
 	{WILDCARD, TALK, &PelrockEngine::noOpAction},   // Generic talk action
@@ -295,8 +294,8 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_dialog->say(_res->_ingameTexts[HECHOELPRIMO]);
 		break;
 	case 332:
-		//psychologist card
-		if(!_state->hasInventoryItem(104)) {
+		// psychologist card
+		if (!_state->hasInventoryItem(104)) {
 			addInventoryItem(104);
 		}
 		break;
@@ -309,7 +308,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 
 		break;
 	case 335:
-		//many oranges
+		// many oranges
 		addInventoryItem(104);
 		break;
 	case 336:
@@ -369,56 +368,65 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_state->setCurrentRoot(room, rootIndex + 2);
 		break;
 	case 354:
-		if(_state->hasInventoryItem(105)) {
+		if (_state->hasInventoryItem(105)) {
 			addInventoryItem(105);
 		}
 		break;
 	case 352:
 	case 355:
-		//a la carcel
+		// a la carcel
 		toJail();
 		break;
 	case 356:
 		_state->setCurrentRoot(room, 3);
 		break;
-	//end puta
-	// sabio
+	// end puta
+	//  sabio
 	case 366:
 		_state->setCurrentRoot(room, rootIndex + 1);
 		break;
 	case 363:
 		toJail();
 		break;
-	case 367: //accept riddle
+	case 367: // accept riddle
 		_state->setCurrentRoot(room, 27);
 		walkAndAction(_room->findHotspotByExtra(467), TALK);
 		break;
-// hasta aqui
+		// hasta aqui
 
 	case 357: // wrong answer: counter-- (min 0)
+	{
 		if (_state->getFlag(FLAG_RESPUESTAS_ACERTADAS) > 0) {
 			_state->setFlag(FLAG_RESPUESTAS_ACERTADAS, _state->getFlag(FLAG_RESPUESTAS_ACERTADAS) - 1);
 		}
-		_state->setCurrentRoot(room, rootIndex + 1);
+		advanceQuotesConversation(rootIndex, room);
 		break;
+	}
 	case 358: // very wrong answer: counter-=2 (min 0)
+	{
 		if (_state->getFlag(FLAG_RESPUESTAS_ACERTADAS) > 1) {
 			_state->setFlag(FLAG_RESPUESTAS_ACERTADAS, _state->getFlag(FLAG_RESPUESTAS_ACERTADAS) - 2);
 		}
-		_state->setCurrentRoot(room, rootIndex + 1);
+		advanceQuotesConversation(rootIndex, room);
 		break;
+	}
 	case 359: // correct answer: counter++, award pin at 15
+	{
 		_state->setFlag(FLAG_RESPUESTAS_ACERTADAS, _state->getFlag(FLAG_RESPUESTAS_ACERTADAS) + 1);
 		if (_state->getFlag(FLAG_RESPUESTAS_ACERTADAS) == 15) {
 			addInventoryItem(106); // pin
 			_state->setFlag(FLAG_RESPUESTAS_ACERTADAS, 0);
 		}
-		_state->setCurrentRoot(room, rootIndex + 1);
+		advanceQuotesConversation(rootIndex, room);
 		break;
+	}
 	case 360: // neutral reset: counter = 0
+	{
 		_state->setFlag(FLAG_RESPUESTAS_ACERTADAS, 0);
 		_state->setCurrentRoot(room, rootIndex + 1);
+		advanceQuotesConversation(rootIndex, room);
 		break;
+	}
 	case 361: // "no sé" (I don't know): no counter change, just advance
 		_state->setCurrentRoot(room, rootIndex + 1);
 		break;
@@ -426,20 +434,34 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		// Sets cheat_code_checking_enabled flag in original (0x495F3)
 		// TODO: Implement cheat code sequence checker in game loop
 		_state->setFlag(FLAG_CHEAT_CODE_ENABLED, 1);
-		_state->setCurrentRoot(room, rootIndex + 1);
+		advanceQuotesConversation(rootIndex, room);
 		break;
 	case 364: // riddle wrong answer: advance to next riddle
-		_state->setCurrentRoot(room, rootIndex + 1);
+	{
+		int targetIndex = rootIndex + 1;
+		if (rootIndex == 43) {
+			targetIndex = 27; // skip riddle explanation
+		}
+		_state->setCurrentRoot(room, targetIndex);
 		break;
+	}
 	case 365: // riddle correct: set riddle-solved flag
-		_state->setFlag(FLAG_RIDDLE_SOLVED, 1);
-		_state->setCurrentRoot(room, rootIndex + 1);
+		_state->setFlag(FLAG_PARADOJA_RESUELTA, 1);
+		_state->setCurrentRoot(room, 1);
 		break;
 
 	default:
 		debug("Got actionTrigger %d in dialogActionTrigger, but no handler defined", actionTrigger);
 		break;
 	}
+}
+
+void PelrockEngine::advanceQuotesConversation(byte rootIndex, byte room) {
+	int targetRoot = rootIndex + 1;
+	if (targetRoot == 26) {
+		targetRoot = 2;
+	}
+	_state->setCurrentRoot(room, targetRoot);
 }
 
 void PelrockEngine::toJail() {
@@ -507,7 +529,7 @@ void PelrockEngine::closeRoomDrawer(HotSpot *hotspot) {
 	_room->enableHotspot(hotspot);
 }
 
-	void PelrockEngine::useCardWithATM(int inventoryObject, HotSpot *hotspot) {
+void PelrockEngine::useCardWithATM(int inventoryObject, HotSpot *hotspot) {
 	debug("Withdrawing money from ATM using card (inv obj %d)", inventoryObject);
 	if (_state->getFlag(FLAG_JEFE_INGRESA_PASTA)) {
 		_state->setFlag(FLAG_JEFE_INGRESA_PASTA, false);
@@ -621,11 +643,11 @@ void PelrockEngine::useBrickWithWindow(int inventoryObject, HotSpot *hotspot) {
 		_events->pollEvent();
 		renderScene(OVERLAY_NONE);
 		// if (_chrono->_gameTick) {
-			_room->findSpriteByIndex(7)->y -= 10;
-			if (_room->findSpriteByIndex(7)->y <= 70) {
-				_room->findSpriteByIndex(7)->zOrder = -1;
-				break;
-			}
+		_room->findSpriteByIndex(7)->y -= 10;
+		if (_room->findSpriteByIndex(7)->y <= 70) {
+			_room->findSpriteByIndex(7)->zOrder = -1;
+			break;
+		}
 		// }
 		_screen->update();
 		g_system->delayMillis(10);
@@ -897,7 +919,7 @@ void PelrockEngine::closeNewspaperBossDoor(HotSpot *hotspot) {
 
 void PelrockEngine::openTravelAgencyDoor(HotSpot *hotspot) {
 
-	if(_state->getFlag(FLAG_AGENCIA_ABIERTA)) {
+	if (_state->getFlag(FLAG_AGENCIA_ABIERTA)) {
 		openDoor(hotspot, 1, 57, FEMININE, false);
 	}
 	// The game originally did nothing here
@@ -925,7 +947,7 @@ void PelrockEngine::usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot) {
 		g_system->delayMillis(10);
 	}
 	_graphics->fadeToBlack(10);
-	//update conversaton state
+	// update conversaton state
 	_alfredState.x = 300;
 	_alfredState.y = 238;
 	setScreen(28, ALFRED_DOWN);
@@ -933,17 +955,18 @@ void PelrockEngine::usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot) {
 }
 
 void PelrockEngine::pickupSunflower(HotSpot *hotspot) {
-	if(_state->getFlag(FLAG_PARADOJA_RESUELTA) == false) {
+	if (_state->getFlag(FLAG_PARADOJA_RESUELTA) == false) {
 		_dialog->say(_res->_ingameTexts[OIGA]);
 		_state->setCurrentRoot(25, 26);
-
+		_state->setFlag(FLAG_RIDDLE_PRESENTED, true);
 		walkAndAction(_room->findHotspotByExtra(467), TALK);
-	}
-	else {
-
+	} else {
+		addInventoryItem(85);
+		_room->disableHotspot(hotspot);
+		_state->setCurrentRoot(25, 1);
+		_room->addSticker(73);
 	}
 }
-
 
 void PelrockEngine::pickUpBook(int i) {
 	if (!_state->hasInventoryItem(10)) {
@@ -984,7 +1007,6 @@ void PelrockEngine::pickUpBook(int i) {
 			_state->selectedBookIndex = -1;
 		}
 	}
-
 }
 
 void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
@@ -1062,12 +1084,17 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		_state->setFlag(FLAG_ALFRED_SABE_EGIPCIO, true);
 		break;
 	case 24:
-		_res->loadAlfredSpecialAnim(0);
-		_alfredState.animState = ALFRED_SPECIAL_ANIM;
-		waitForSpecialAnimation();
-		_dialog->say(_res->_ingameTexts[COSASAPRENDIDO]);
-		_state->setFlag(FLAG_ALFRED_INTELIGENTE, true);
-		_state->setCurrentRoot(14, 2);
+		if (_state->getFlag(FLAG_RIDDLE_PRESENTED) == true) {
+			_dialog->say(_res->_ingameTexts[CAPITULOPARADOJAS]);
+			_state->setCurrentRoot(25, 44);
+		} else {
+			_res->loadAlfredSpecialAnim(0);
+			_alfredState.animState = ALFRED_SPECIAL_ANIM;
+			waitForSpecialAnimation();
+			_dialog->say(_res->_ingameTexts[COSASAPRENDIDO]);
+			_state->setFlag(FLAG_ALFRED_INTELIGENTE, true);
+			_state->setCurrentRoot(14, 2);
+		}
 		break;
 	case 64:
 		_res->loadAlfredSpecialAnim(0);
@@ -1148,7 +1175,7 @@ void PelrockEngine::animateStatuePaletteFade(bool reverse) {
 		_events->pollEvent();
 
 		bool didRender = renderScene(OVERLAY_NONE);
-		if(didRender) {
+		if (didRender) {
 
 			for (int i = 0; i < 16; i++) {
 				byte paletteIndex = paletteData.indices[i];
@@ -1183,8 +1210,7 @@ void PelrockEngine::animateStatuePaletteFade(bool reverse) {
 void PelrockEngine::checkObjectsForPart2() {
 	if (_state->hasInventoryItem(17) &&
 		_state->hasInventoryItem(59) &&
-		_state->hasInventoryItem(24)
-	) {
+		_state->hasInventoryItem(24)) {
 		_room->addStickerToRoom(19, 54, PERSIST_BOTH);
 		_room->addStickerToRoom(19, 55, PERSIST_BOTH);
 		_room->addStickerToRoom(19, 56, PERSIST_BOTH);
@@ -1202,7 +1228,6 @@ void PelrockEngine::waitForActionEnd() {
 		_screen->update();
 	}
 }
-
 
 /**
  * Handler for picking up object with extra_id 472 in Room 28.
@@ -1257,7 +1282,7 @@ void PelrockEngine::antiPiracyEffect() {
 	_sound->stopMusic();
 
 	// Generate a buffer of white noise for the PC speaker simulation
-	const int kNoiseLength = 16000; // 1 second at 8kHz
+	const int kNoiseLength = 16000;                // 1 second at 8kHz
 	byte *noiseData = new byte[kNoiseLength + 44]; // WAV header + data
 
 	// Write a minimal WAV header
@@ -1265,13 +1290,13 @@ void PelrockEngine::antiPiracyEffect() {
 	WRITE_LE_UINT32(noiseData + 4, kNoiseLength + 36);
 	memcpy(noiseData + 8, "WAVE", 4);
 	memcpy(noiseData + 12, "fmt ", 4);
-	WRITE_LE_UINT32(noiseData + 16, 16);      // chunk size
-	WRITE_LE_UINT16(noiseData + 20, 1);       // PCM format
-	WRITE_LE_UINT16(noiseData + 22, 1);       // mono
-	WRITE_LE_UINT32(noiseData + 24, 8000);    // sample rate
-	WRITE_LE_UINT32(noiseData + 28, 8000);    // byte rate
-	WRITE_LE_UINT16(noiseData + 32, 1);       // block align
-	WRITE_LE_UINT16(noiseData + 34, 8);       // bits per sample
+	WRITE_LE_UINT32(noiseData + 16, 16);   // chunk size
+	WRITE_LE_UINT16(noiseData + 20, 1);    // PCM format
+	WRITE_LE_UINT16(noiseData + 22, 1);    // mono
+	WRITE_LE_UINT32(noiseData + 24, 8000); // sample rate
+	WRITE_LE_UINT32(noiseData + 28, 8000); // byte rate
+	WRITE_LE_UINT16(noiseData + 32, 1);    // block align
+	WRITE_LE_UINT16(noiseData + 34, 8);    // bits per sample
 	memcpy(noiseData + 36, "data", 4);
 	WRITE_LE_UINT32(noiseData + 40, kNoiseLength);
 
@@ -1301,7 +1326,7 @@ void PelrockEngine::antiPiracyEffect() {
 			break;
 		}
 
-		//generate random pixels on the screen (simulating corrupted video memory)
+		// generate random pixels on the screen (simulating corrupted video memory)
 		for (int i = 0; i < screenSize; i++) {
 			screenPixels[i] = (byte)getRandomNumber(255);
 		}
