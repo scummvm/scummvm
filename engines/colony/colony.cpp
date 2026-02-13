@@ -2578,8 +2578,13 @@ void ColonyEngine::drawDashboardStep1() {
 		_gfx->drawLine(cx, cy - 2, cx, cy + 2, accent);
 	}
 
-	if (_headsUpRect.width() > 4 && _headsUpRect.height() > 4) {
-		_gfx->drawRect(_headsUpRect, frame);
+		if (_headsUpRect.width() > 4 && _headsUpRect.height() > 4) {
+			_gfx->drawRect(_headsUpRect, frame);
+			const Common::Rect miniMapClip(_headsUpRect.left + 1, _headsUpRect.top + 1, _headsUpRect.right - 1, _headsUpRect.bottom - 1);
+			auto drawMiniMapLine = [&](int x1, int y1, int x2, int y2, uint32 color) {
+				if (clipLineToRect(x1, y1, x2, y2, miniMapClip))
+					_gfx->drawLine(x1, y1, x2, y2, color);
+			};
 
 		const int lExtBase = _dashBoardRect.width() >> 1;
 		int lExt = lExtBase + (lExtBase >> 1);
@@ -2608,12 +2613,12 @@ void ColonyEngine::drawDashboardStep1() {
 		xcorner[5] = ccenterx + (((long)(xloc + sExt) * tsin - (long)yloc * tcos) >> 8);
 		ycorner[5] = ccentery - (((long)yloc * tsin + (long)(xloc + sExt) * tcos) >> 8);
 
-		const int dx = xcorner[1] - xcorner[0];
-		const int dy = ycorner[0] - ycorner[1];
-		_gfx->drawLine(xcorner[0] - dx, ycorner[0] + dy, xcorner[1] + dx, ycorner[1] - dy, accent);
-		_gfx->drawLine(xcorner[1] + dy, ycorner[1] + dx, xcorner[2] - dy, ycorner[2] - dx, accent);
-		_gfx->drawLine(xcorner[2] + dx, ycorner[2] - dy, xcorner[3] - dx, ycorner[3] + dy, accent);
-		_gfx->drawLine(xcorner[3] - dy, ycorner[3] - dx, xcorner[0] + dy, ycorner[0] + dx, accent);
+			const int dx = xcorner[1] - xcorner[0];
+			const int dy = ycorner[0] - ycorner[1];
+			drawMiniMapLine(xcorner[0] - dx, ycorner[0] + dy, xcorner[1] + dx, ycorner[1] - dy, accent);
+			drawMiniMapLine(xcorner[1] + dy, ycorner[1] + dx, xcorner[2] - dy, ycorner[2] - dx, accent);
+			drawMiniMapLine(xcorner[2] + dx, ycorner[2] - dy, xcorner[3] - dx, ycorner[3] + dy, accent);
+			drawMiniMapLine(xcorner[3] - dy, ycorner[3] - dx, xcorner[0] + dy, ycorner[0] + dx, accent);
 
 		auto drawMarker = [&](int x, int y, int halfSize, uint32 color) {
 			const int l = MAX<int>(_headsUpRect.left + 1, x - halfSize);
