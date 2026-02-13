@@ -1,0 +1,56 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "common/system.h"
+#include "colony/gfx.h"
+
+namespace Colony {
+
+Gfx::Gfx(OSystem *system, int width, int height) : _system(system), _width(width), _height(height) {
+	_surface.create(width, height, _system->getScreenFormat());
+}
+
+Gfx::~Gfx() {
+	_surface.free();
+}
+
+void Gfx::clear(uint32 color) {
+	_surface.clear(color);
+}
+
+void Gfx::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
+	_surface.drawLine(x1, y1, x2, y2, color);
+}
+
+void Gfx::drawRect(const Common::Rect &rect, uint32 color) {
+	_surface.frameRect(rect, color);
+}
+
+void Gfx::fillRect(const Common::Rect &rect, uint32 color) {
+	_surface.fillRect(rect, color);
+}
+
+void Gfx::copyToScreen() {
+	_system->copyRectToScreen(_surface.getPixels(), _surface.pitch, 0, 0, _surface.w, _surface.h);
+	_system->updateScreen();
+}
+
+} // End of namespace Colony
