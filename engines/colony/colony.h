@@ -30,6 +30,57 @@
 
 namespace Colony {
 
+enum WallFeatureType {
+	kWallFeatureNone = 0,
+	kWallFeatureDoor = 2,
+	kWallFeatureWindow = 3,
+	kWallFeatureShelves = 4,
+	kWallFeatureUpStairs = 5,
+	kWallFeatureDnStairs = 6,
+	kWallFeatureChar = 7,
+	kWallFeatureGlyph = 8,
+	kWallFeatureElevator = 9,
+	kWallFeatureTunnel = 10,
+	kWallFeatureAirlock = 11,
+	kWallFeatureColor = 12
+};
+
+enum MapDirection {
+	kDirNorth = 0,
+	kDirEast = 1,
+	kDirWest = 2,
+	kDirSouth = 3
+};
+
+enum ObjectType {
+	kObjDesk = 21,
+	kObjPlant = 22,
+	kObjCChair = 23,
+	kObjBed = 24,
+	kObjTable = 25,
+	kObjCouch = 26,
+	kObjChair = 27,
+	kObjTV = 28,
+	kObjScreen = 29,
+	kObjConsole = 30,
+	kObjPowerSuit = 31,
+	kObjForkLift = 32,
+	kObjCryo = 33,
+	kObjBox1 = 34,
+	kObjBox2 = 35,
+	kObjTeleport = 36,
+	kObjDrawer = 37,
+	kObjTub = 38,
+	kObjSink = 39,
+	kObjToilet = 40,
+	kObjPToilet = 43,
+	kObjProjector = 45,
+	kObjReactor = 46,
+	kObjFWall = 48,
+	kObjCWall = 49,
+	kObjBBed = 42
+};
+
 #define BASEOBJECT 20
 #define MENUM 101
 
@@ -168,7 +219,12 @@ private:
 		bool vsurface[kMaxSurfaces];
 		bool visible;
 	};
-	struct PrismPartDef;
+	struct PrismPartDef {
+		int pointCount;
+		const int (*points)[3];
+		int surfaceCount;
+		const int (*surfaces)[8];
+	};
 	bool projectPrismPart(const Thing &obj, const PrismPartDef &part, bool useLook, ProjectedPrismPart &out) const;
 	bool isSurfaceClockwise(const ProjectedPrismPart &part, const int surface[8]) const;
 	bool clipLineToRect(int &x1, int &y1, int &x2, int &y2, const Common::Rect &clip) const;

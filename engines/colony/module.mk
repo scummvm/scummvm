@@ -3,7 +3,9 @@ MODULE := engines/colony
 MODULE_OBJS := \
 	colony.o \
 	gfx.o \
-	metaengine.o
+	metaengine.o \
+	render.o \
+	ui.o
 
 MODULE_DIRS += \
 	engines/colony
