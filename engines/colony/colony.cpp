@@ -92,6 +92,13 @@ enum WallFeatureType {
 	kWallFeatureColor = 12
 };
 
+enum MapDirection {
+	kDirNorth = 0,
+	kDirEast = 1,
+	kDirWest = 2,
+	kDirSouth = 3
+};
+
 static const int g_dirRight[4] = {1, 3, 0, 2};
 static const int g_dirLeft[4] = {2, 0, 3, 1};
 
@@ -141,6 +148,11 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_mouseSensitivity = 1;
 	_change = true;
 	_showDashBoard = true;
+	_crosshair = true;
+	_insight = false;
+	_hasKeycard = false;
+	_unlocked = false;
+	_weapons = 0;
 	
 	memset(_wall, 0, sizeof(_wall));
 	memset(_mapData, 0, sizeof(_mapData));
@@ -293,118 +305,15 @@ int ColonyEngine::occupiedObjectAt(int x, int y, const Locate *pobject) {
 }
 
 int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
-	int xind2, yind2;
-	xind2 = xnew >> 8;
-	yind2 = ynew >> 8;
+	const int xind2 = xnew >> 8;
+	const int yind2 = ynew >> 8;
 	_change = true;
+
 	auto occupied = [&]() -> int {
 		return occupiedObjectAt(xind2, yind2, pobject);
 	};
-
-	if (xind2 == pobject->xindex) {
-		if (yind2 == pobject->yindex) {
-			pobject->dx = xnew - pobject->xloc;
-			pobject->dy = ynew - pobject->yloc;
-			pobject->xloc = xnew;
-			pobject->yloc = ynew;
-			return 0;
-		} else {
-				if (yind2 > pobject->yindex) {
-					if (!(_wall[pobject->xindex][yind2] & 1)) {
-						int rnum = occupied();
-						if (rnum)
-							return rnum;
-						pobject->yindex = yind2;
-						pobject->xindex = xind2;
-					pobject->dx = xnew - pobject->xloc;
-					pobject->dy = ynew - pobject->yloc;
-					pobject->xloc = xnew;
-					pobject->yloc = ynew;
-					return 0;
-				} else {
-					debug("Collision South at x=%d y=%d", pobject->xindex, yind2);
-					return -1;
-				}
-				} else {
-					if (!(_wall[pobject->xindex][pobject->yindex] & 1)) {
-						int rnum = occupied();
-						if (rnum)
-							return rnum;
-						pobject->yindex = yind2;
-						pobject->xindex = xind2;
-					pobject->dx = xnew - pobject->xloc;
-					pobject->dy = ynew - pobject->yloc;
-					pobject->xloc = xnew;
-					pobject->yloc = ynew;
-					return 0;
-				} else {
-					debug("Collision North at x=%d y=%d", pobject->xindex, pobject->yindex);
-					return -1;
-				}
-			}
-		}
-	} else if (yind2 == pobject->yindex) {
-		if (xind2 > pobject->xindex) {
-			if (!(_wall[xind2][pobject->yindex] & 2)) {
-				int rnum = occupied();
-				if (rnum)
-					return rnum;
-				pobject->yindex = yind2;
-				pobject->xindex = xind2;
-				pobject->dx = xnew - pobject->xloc;
-				pobject->dy = ynew - pobject->yloc;
-				pobject->xloc = xnew;
-				pobject->yloc = ynew;
-				return 0;
-			} else {
-				debug("Collision East at x=%d y=%d", xind2, pobject->yindex);
-				return -1;
-			}
-		} else {
-			if (!(_wall[pobject->xindex][pobject->yindex] & 2)) {
-				int rnum = occupied();
-				if (rnum)
-					return rnum;
-				pobject->yindex = yind2;
-				pobject->xindex = xind2;
-				pobject->dx = xnew - pobject->xloc;
-				pobject->dy = ynew - pobject->yloc;
-				pobject->xloc = xnew;
-				pobject->yloc = ynew;
-				return 0;
-			} else {
-				debug("Collision West at x=%d y=%d", pobject->xindex, pobject->yindex);
-				return -1;
-			}
-		}
-	} else {
-		// Diagonal
-		if (xind2 > pobject->xindex) {
-			if (yind2 > pobject->yindex) {
-				if ((_wall[pobject->xindex][yind2] & 1) || (_wall[xind2][pobject->yindex] & 2) || (_wall[xind2][yind2] & 3)) {
-					debug("Collision Diagonal SE");
-					return -1;
-				}
-			} else {
-				if ((_wall[pobject->xindex][pobject->yindex] & 1) || (_wall[xind2][yind2] & 2) || (_wall[xind2][pobject->yindex] & 3)) {
-					debug("Collision Diagonal NE");
-					return -1;
-				}
-			}
-		} else {
-			if (yind2 > pobject->yindex) {
-				if ((_wall[xind2][yind2] & 1) || (_wall[pobject->xindex][pobject->yindex] & 2) || (_wall[pobject->xindex][yind2] & 3)) {
-					debug("Collision Diagonal SW");
-					return -1;
-				}
-			} else {
-				if ((_wall[xind2][pobject->yindex] & 1) || (_wall[pobject->xindex][yind2] & 2) || (_wall[pobject->xindex][pobject->yindex] & 3)) {
-					debug("Collision Diagonal NW");
-					return -1;
-				}
-			}
-		}
-		int rnum = occupied();
+	auto moveTo = [&]() -> int {
+		const int rnum = occupied();
 		if (rnum)
 			return rnum;
 		pobject->yindex = yind2;
@@ -414,8 +323,165 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 		pobject->xloc = xnew;
 		pobject->yloc = ynew;
 		return 0;
+	};
+
+	if (xind2 == pobject->xindex) {
+		if (yind2 == pobject->yindex) {
+			pobject->dx = xnew - pobject->xloc;
+			pobject->dy = ynew - pobject->yloc;
+			pobject->xloc = xnew;
+			pobject->yloc = ynew;
+			return 0;
+		}
+
+		if (yind2 > pobject->yindex) {
+			if (!(_wall[pobject->xindex][yind2] & 1))
+				return moveTo();
+			if (tryPassThroughFeature(pobject->xindex, pobject->yindex, kDirNorth, pobject))
+				return moveTo();
+			debug("Collision South at x=%d y=%d", pobject->xindex, yind2);
+			return -1;
+		}
+
+		if (!(_wall[pobject->xindex][pobject->yindex] & 1))
+			return moveTo();
+		if (tryPassThroughFeature(pobject->xindex, pobject->yindex, kDirSouth, pobject))
+			return moveTo();
+		debug("Collision North at x=%d y=%d", pobject->xindex, pobject->yindex);
+		return -1;
 	}
-	return -1;
+
+	if (yind2 == pobject->yindex) {
+		if (xind2 > pobject->xindex) {
+			if (!(_wall[xind2][pobject->yindex] & 2))
+				return moveTo();
+			if (tryPassThroughFeature(pobject->xindex, pobject->yindex, kDirEast, pobject))
+				return moveTo();
+			debug("Collision East at x=%d y=%d", xind2, pobject->yindex);
+			return -1;
+		}
+
+		if (!(_wall[pobject->xindex][pobject->yindex] & 2))
+			return moveTo();
+		if (tryPassThroughFeature(pobject->xindex, pobject->yindex, kDirWest, pobject))
+			return moveTo();
+		debug("Collision West at x=%d y=%d", pobject->xindex, pobject->yindex);
+		return -1;
+	}
+
+	// Diagonal
+	if (xind2 > pobject->xindex) {
+		if (yind2 > pobject->yindex) {
+			if ((_wall[pobject->xindex][yind2] & 1) || (_wall[xind2][pobject->yindex] & 2) || (_wall[xind2][yind2] & 3)) {
+				debug("Collision Diagonal SE");
+				return -1;
+			}
+		} else {
+			if ((_wall[pobject->xindex][pobject->yindex] & 1) || (_wall[xind2][yind2] & 2) || (_wall[xind2][pobject->yindex] & 3)) {
+				debug("Collision Diagonal NE");
+				return -1;
+			}
+		}
+	} else {
+		if (yind2 > pobject->yindex) {
+			if ((_wall[xind2][yind2] & 1) || (_wall[pobject->xindex][pobject->yindex] & 2) || (_wall[pobject->xindex][yind2] & 3)) {
+				debug("Collision Diagonal SW");
+				return -1;
+			}
+		} else {
+			if ((_wall[xind2][pobject->yindex] & 1) || (_wall[pobject->xindex][yind2] & 2) || (_wall[pobject->xindex][pobject->yindex] & 3)) {
+				debug("Collision Diagonal NW");
+				return -1;
+			}
+		}
+	}
+
+	return moveTo();
+}
+
+bool ColonyEngine::setDoorState(int x, int y, int direction, int state) {
+	if (x < 0 || x >= 31 || y < 0 || y >= 31 || direction < 0 || direction > 3)
+		return false;
+
+	const uint8 wallType = _mapData[x][y][direction][0];
+	if (wallType != kWallFeatureDoor && wallType != kWallFeatureAirlock)
+		return false;
+
+	_mapData[x][y][direction][1] = (uint8)state;
+
+	int nx = x;
+	int ny = y;
+	int opposite = -1;
+	switch (direction) {
+	case kDirNorth:
+		ny += 1;
+		opposite = kDirSouth;
+		break;
+	case kDirEast:
+		nx += 1;
+		opposite = kDirWest;
+		break;
+	case kDirWest:
+		nx -= 1;
+		opposite = kDirEast;
+		break;
+	case kDirSouth:
+		ny -= 1;
+		opposite = kDirNorth;
+		break;
+	default:
+		return true;
+	}
+
+	if (nx >= 0 && nx < 31 && ny >= 0 && ny < 31 && opposite >= 0) {
+		if (_mapData[nx][ny][opposite][0] == wallType)
+			_mapData[nx][ny][opposite][1] = (uint8)state;
+	}
+
+	return true;
+}
+
+int ColonyEngine::openAdjacentDoors(int x, int y) {
+	int opened = 0;
+	for (int dir = 0; dir < 4; dir++) {
+		const uint8 *map = mapFeatureAt(x, y, dir);
+		if (!map)
+			continue;
+		if (map[0] == kWallFeatureDoor && map[1] != 0) {
+			if (setDoorState(x, y, dir, 0))
+				opened++;
+		}
+	}
+	return opened;
+}
+
+bool ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Locate *pobject) {
+	const uint8 *map = mapFeatureAt(fromX, fromY, direction);
+	if (!map || map[0] == kWallFeatureNone)
+		return false;
+
+	switch (map[0]) {
+	case kWallFeatureDoor:
+		if (map[1] == 0)
+			return true;
+		if (pobject != &_me)
+			return false;
+		if (_hasKeycard || _unlocked) {
+			setDoorState(fromX, fromY, direction, 0);
+			return true;
+		}
+		return false;
+	case kWallFeatureAirlock:
+		if (map[1] == 0)
+			return true;
+		if (pobject == &_me && _unlocked) {
+			setDoorState(fromX, fromY, direction, 0);
+			return true;
+		}
+		return false;
+	default:
+		return false;
+	}
 }
 
 void ColonyEngine::interactWithObject(int objNum) {
@@ -433,18 +499,27 @@ void ColonyEngine::interactWithObject(int objNum) {
 
 	switch (obj.type) {
 	case kObjDesk:
-		debug("CCommand: DESK action (%d, %d)", action0, action1);
+		if (!_hasKeycard) {
+			_hasKeycard = true;
+			debug("CCommand: DESK granted keycard");
+		} else {
+			debug("CCommand: DESK action (%d, %d)", action0, action1);
+		}
 		break;
 	case kObjConsole:
 		switch (action0) {
 		case 1:
-			debug("CCommand: CONSOLE reactor");
+			debug("CCommand: CONSOLE reactor (%d)", action1);
 			break;
 		case 2:
-			debug("CCommand: CONSOLE ship controls");
+		{
+			const int opened = openAdjacentDoors(_me.xindex, _me.yindex);
+			debug("CCommand: CONSOLE controls opened %d nearby doors", opened);
 			break;
+		}
 		case 3:
-			debug("CCommand: CONSOLE security");
+			_unlocked = true;
+			debug("CCommand: CONSOLE security unlocked");
 			break;
 		default:
 			debug("CCommand: CONSOLE action=%d", action0);
@@ -465,13 +540,44 @@ void ColonyEngine::interactWithObject(int objNum) {
 		}
 		break;
 	case kObjPowerSuit:
+		_weapons = MAX(_weapons, 1);
+		_crosshair = true;
 		debug("CCommand: POWERSUIT");
 		break;
 	case kObjTeleport:
-		debug("CCommand: TELEPORT");
+	{
+		const int targetLevelRaw = _mapData[x][y][4][2];
+		const int targetLevel = (targetLevelRaw == 0) ? _level : targetLevelRaw;
+		const int targetX = _mapData[x][y][4][3];
+		const int targetY = _mapData[x][y][4][4];
+		if (targetLevel >= 100 || targetX <= 0 || targetX >= 31 || targetY <= 0 || targetY >= 31) {
+			debug("CCommand: TELEPORT ignored invalid target L%d (%d,%d)", targetLevelRaw, targetX, targetY);
+			break;
+		}
+		if (targetLevel != _level)
+			loadMap(targetLevel);
+		const int oldX = _me.xindex;
+		const int oldY = _me.yindex;
+		_me.xindex = targetX;
+		_me.yindex = targetY;
+		_me.xloc = (targetX << 8) + 128;
+		_me.yloc = (targetY << 8) + 128;
+		_me.ang = _me.look;
+		if (oldX >= 0 && oldX < 32 && oldY >= 0 && oldY < 32)
+			_robotArray[oldX][oldY] = 0;
+		if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
+			_robotArray[_me.xindex][_me.yindex] = MENUM;
+		_change = true;
+		debug("CCommand: TELEPORT to L%d (%d,%d)", targetLevel, targetX, targetY);
 		break;
+	}
 	case kObjDrawer:
-		debug("CCommand: DRAWER vanity=%d", action0);
+		if (!_hasKeycard) {
+			_hasKeycard = true;
+			debug("CCommand: DRAWER vanity=%d (picked keycard)", action0);
+		} else {
+			debug("CCommand: DRAWER vanity=%d", action0);
+		}
 		break;
 	case kObjScreen:
 		debug("CCommand: SCREEN");
@@ -2685,6 +2791,39 @@ void ColonyEngine::drawDashboardStep1() {
 	}
 }
 
+void ColonyEngine::drawCrosshair() {
+	if (!_crosshair || _screenR.width() <= 0 || _screenR.height() <= 0)
+		return;
+
+	const uint32 color = (_weapons > 0) ? 255 : 220;
+	const int cx = _centerX;
+	const int cy = _centerY;
+	const int qx = MAX(2, _screenR.width() / 32);
+	const int qy = MAX(2, _screenR.height() / 32);
+	const int fx = (qx * 3) >> 1;
+	const int fy = (qy * 3) >> 1;
+	auto drawCrossLine = [&](int x1, int y1, int x2, int y2) {
+		if (clipLineToRect(x1, y1, x2, y2, _screenR))
+			_gfx->drawLine(x1, y1, x2, y2, color);
+	};
+
+	if (_weapons > 0) {
+		const int yTop = _insight ? (cy - qy) : (cy - fy);
+		const int yBottom = _insight ? (cy + qy) : (cy + fy);
+
+		drawCrossLine(cx - qx, yTop, cx - fx, yTop);
+		drawCrossLine(cx - fx, yTop, cx - fx, yBottom);
+		drawCrossLine(cx - fx, yBottom, cx - qx, yBottom);
+		drawCrossLine(cx + qx, yTop, cx + fx, yTop);
+		drawCrossLine(cx + fx, yTop, cx + fx, yBottom);
+		drawCrossLine(cx + fx, yBottom, cx + qx, yBottom);
+		_insight = false;
+	} else {
+		drawCrossLine(cx - qx, cy, cx + qx, cy);
+		drawCrossLine(cx, cy - qy, cx, cy + qy);
+	}
+}
+
 Common::Error ColonyEngine::run() {
 	Graphics::PixelFormat format8bpp = Graphics::PixelFormat::createFormatCLUT8();
 	initGraphics(_width, _height, &format8bpp);
@@ -2766,11 +2905,12 @@ Common::Error ColonyEngine::run() {
 			for (uint i = 0; i < _objects.size(); i++)
 				_objects[i].visible = 0;
 			
-			corridor();
-			drawStaticObjects();
-			drawDashboardStep1();
-			
-			_gfx->copyToScreen();
+				corridor();
+				drawStaticObjects();
+				drawDashboardStep1();
+				drawCrosshair();
+				
+				_gfx->copyToScreen();
 		_system->delayMillis(10);
 	}
 

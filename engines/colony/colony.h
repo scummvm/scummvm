@@ -107,6 +107,11 @@ private:
 	int _mouseSensitivity;
 	bool _change;
 	bool _showDashBoard;
+	bool _crosshair;
+	bool _insight;
+	bool _hasKeycard;
+	bool _unlocked;
+	int _weapons;
 
 	int _frntxWall, _frntyWall;
 	int _sidexWall, _sideyWall;
@@ -172,8 +177,12 @@ private:
 	void drawStaticObjectFallback(const Thing &obj, uint32 color, int depth, int sx);
 	int occupiedObjectAt(int x, int y, const Locate *pobject);
 	void interactWithObject(int objNum);
+	bool setDoorState(int x, int y, int direction, int state);
+	int openAdjacentDoors(int x, int y);
+	bool tryPassThroughFeature(int fromX, int fromY, int direction, Locate *pobject);
 	void updateViewportLayout();
 	void drawDashboardStep1();
+	void drawCrosshair();
 };
 
 } // End of namespace Colony
