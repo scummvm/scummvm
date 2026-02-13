@@ -1676,6 +1676,8 @@ void ColonyEngine::drawDashboardStep1() {
 	const uint32 frame = 190;
 	const uint32 accent = 220;
 	const uint32 mark = 255;
+	const uint32 miniMapObj = 235;
+	const uint32 miniMapActor = 255;
 
 	_gfx->fillRect(_dashBoardRect, panelBg);
 	_gfx->drawRect(_dashBoardRect, frame);
@@ -1693,16 +1695,97 @@ void ColonyEngine::drawDashboardStep1() {
 		_gfx->drawLine(cx, cy, ex, ey, mark);
 		_gfx->drawLine(cx - 2, cy, cx + 2, cy, accent);
 		_gfx->drawLine(cx, cy - 2, cx, cy + 2, accent);
+		_gfx->drawRect(Common::Rect(_compassRect.left + 2, _compassRect.top + 2, _compassRect.right - 2, _compassRect.bottom - 2), accent);
 	}
 
 	if (_headsUpRect.width() > 4 && _headsUpRect.height() > 4) {
 		_gfx->drawRect(_headsUpRect, frame);
-		const int cx = (_headsUpRect.left + _headsUpRect.right) >> 1;
-		const int cy = (_headsUpRect.top + _headsUpRect.bottom) >> 1;
-		const int nx = cx + ((_cost[_me.look] * 6) >> 8);
-		const int ny = cy - ((_sint[_me.look] * 6) >> 8);
-		_gfx->drawLine(cx, cy, nx, ny, mark);
-		_gfx->drawRect(Common::Rect(cx - 2, cy - 2, cx + 2, cy + 2), accent);
+
+		const int lExtBase = _dashBoardRect.width() >> 1;
+		int lExt = lExtBase + (lExtBase >> 1);
+		if (lExt & 1)
+			lExt--;
+		const int sExt = lExt >> 1;
+		const int xloc = (lExt * ((_me.xindex << 8) - _me.xloc)) >> 8;
+		const int yloc = (lExt * ((_me.yindex << 8) - _me.yloc)) >> 8;
+		const int ccenterx = (_headsUpRect.left + _headsUpRect.right) >> 1;
+		const int ccentery = (_headsUpRect.top + _headsUpRect.bottom) >> 1;
+		const int tsin = _sint[_me.look];
+		const int tcos = _cost[_me.look];
+
+		int xcorner[6];
+		int ycorner[6];
+		xcorner[0] = ccenterx + (((long)xloc * tsin - (long)yloc * tcos) >> 8);
+		ycorner[0] = ccentery - (((long)yloc * tsin + (long)xloc * tcos) >> 8);
+		xcorner[1] = ccenterx + (((long)(xloc + lExt) * tsin - (long)yloc * tcos) >> 8);
+		ycorner[1] = ccentery - (((long)yloc * tsin + (long)(xloc + lExt) * tcos) >> 8);
+		xcorner[2] = ccenterx + (((long)(xloc + lExt) * tsin - (long)(yloc + lExt) * tcos) >> 8);
+		ycorner[2] = ccentery - (((long)(yloc + lExt) * tsin + (long)(xloc + lExt) * tcos) >> 8);
+		xcorner[3] = ccenterx + (((long)xloc * tsin - (long)(yloc + lExt) * tcos) >> 8);
+		ycorner[3] = ccentery - (((long)(yloc + lExt) * tsin + (long)xloc * tcos) >> 8);
+		xcorner[4] = ccenterx + (((long)(xloc + sExt) * tsin - (long)(yloc + sExt) * tcos) >> 8);
+		ycorner[4] = ccentery - (((long)(yloc + sExt) * tsin + (long)(xloc + sExt) * tcos) >> 8);
+		xcorner[5] = ccenterx + (((long)(xloc + sExt) * tsin - (long)yloc * tcos) >> 8);
+		ycorner[5] = ccentery - (((long)yloc * tsin + (long)(xloc + sExt) * tcos) >> 8);
+
+		const int dx = xcorner[1] - xcorner[0];
+		const int dy = ycorner[0] - ycorner[1];
+		_gfx->drawLine(xcorner[0] - dx, ycorner[0] + dy, xcorner[1] + dx, ycorner[1] - dy, accent);
+		_gfx->drawLine(xcorner[1] + dy, ycorner[1] + dx, xcorner[2] - dy, ycorner[2] - dx, accent);
+		_gfx->drawLine(xcorner[2] + dx, ycorner[2] - dy, xcorner[3] - dx, ycorner[3] + dy, accent);
+		_gfx->drawLine(xcorner[3] - dy, ycorner[3] - dx, xcorner[0] + dy, ycorner[0] + dx, accent);
+
+		auto drawMarker = [&](int x, int y, int halfSize, uint32 color) {
+			const int l = MAX<int>(_headsUpRect.left + 1, x - halfSize);
+			const int t = MAX<int>(_headsUpRect.top + 1, y - halfSize);
+			const int r = MIN<int>(_headsUpRect.right - 1, x + halfSize + 1);
+			const int b = MIN<int>(_headsUpRect.bottom - 1, y + halfSize + 1);
+			if (l >= r || t >= b)
+				return;
+			_gfx->drawRect(Common::Rect(l, t, r, b), color);
+		};
+
+		auto hasRobotAt = [&](int x, int y) -> bool {
+			if (x < 0 || x >= 32 || y < 0 || y >= 32)
+				return false;
+			return _robotArray[x][y] != 0;
+		};
+		auto hasFoodAt = [&](int x, int y) -> bool {
+			if (x < 0 || x >= 32 || y < 0 || y >= 32)
+				return false;
+			return _foodArray[x][y] != 0;
+		};
+
+		if (hasFoodAt(_me.xindex, _me.yindex))
+			drawMarker(xcorner[4], ycorner[4], 1, miniMapObj);
+
+		if (_me.yindex > 0 && !(_wall[_me.xindex][_me.yindex] & 0x01)) {
+			if (hasFoodAt(_me.xindex, _me.yindex - 1))
+				drawMarker(xcorner[4] + dy, ycorner[4] + dx, 1, miniMapObj);
+			if (hasRobotAt(_me.xindex, _me.yindex - 1))
+				drawMarker(xcorner[4] + dy, ycorner[4] + dx, 2, miniMapActor);
+		}
+		if (_me.xindex > 0 && !(_wall[_me.xindex][_me.yindex] & 0x02)) {
+			if (hasFoodAt(_me.xindex - 1, _me.yindex))
+				drawMarker(xcorner[4] - dx, ycorner[4] + dy, 1, miniMapObj);
+			if (hasRobotAt(_me.xindex - 1, _me.yindex))
+				drawMarker(xcorner[4] - dx, ycorner[4] + dy, 2, miniMapActor);
+		}
+		if (_me.yindex < 30 && !(_wall[_me.xindex][_me.yindex + 1] & 0x01)) {
+			if (hasFoodAt(_me.xindex, _me.yindex + 1))
+				drawMarker(xcorner[4] - dy, ycorner[4] - dx, 1, miniMapObj);
+			if (hasRobotAt(_me.xindex, _me.yindex + 1))
+				drawMarker(xcorner[4] - dy, ycorner[4] - dx, 2, miniMapActor);
+		}
+		if (_me.xindex < 30 && !(_wall[_me.xindex + 1][_me.yindex] & 0x02)) {
+			if (hasFoodAt(_me.xindex + 1, _me.yindex))
+				drawMarker(xcorner[4] + dx, ycorner[4] - dy, 1, miniMapObj);
+			if (hasRobotAt(_me.xindex + 1, _me.yindex))
+				drawMarker(xcorner[4] + dx, ycorner[4] - dy, 2, miniMapActor);
+		}
+
+		drawMarker(ccenterx, ccentery, 2, mark);
+		drawMarker(ccenterx, ccentery, 1, accent);
 	}
 
 	if (_powerRect.width() > 4 && _powerRect.height() > 4) {
@@ -1735,8 +1818,8 @@ Common::Error ColonyEngine::run() {
 	
 	loadMap(1); // Try to load the first map
 	
-	_system->lockMouse(true);
-	_system->warpMouse(_width / 2, _height / 2);
+		_system->lockMouse(true);
+		_system->warpMouse(_centerX, _centerY);
 
 	// Temporary infinite loop to prevent ScummVM from closing immediately
 	while (!shouldQuit()) {
@@ -1763,13 +1846,19 @@ Common::Error ColonyEngine::run() {
 					_me.look = (uint8)((int)_me.look + 8);
 					_change = true;
 					break;
-				case Common::KEYCODE_RIGHT:
-					_me.look = (uint8)((int)_me.look - 8);
-					_change = true;
-					break;
-				default:
-					break;
-				}
+					case Common::KEYCODE_RIGHT:
+						_me.look = (uint8)((int)_me.look - 8);
+						_change = true;
+						break;
+					case Common::KEYCODE_F7:
+						_showDashBoard = !_showDashBoard;
+						updateViewportLayout();
+						_system->warpMouse(_centerX, _centerY);
+						_change = true;
+						break;
+					default:
+						break;
+					}
 				debug("Me: x=%d y=%d look=%d", _me.xloc, _me.yloc, _me.look);
 			} else if (event.type == Common::EVENT_MOUSEMOVE) {
 				if (event.relMouse.x != 0) {
@@ -1780,7 +1869,7 @@ Common::Error ColonyEngine::run() {
 				}
 			}
 		}
-		_system->warpMouse(_width / 2, _height / 2);
+			_system->warpMouse(_centerX, _centerY);
 
 			_gfx->clear(_gfx->black());
 			for (uint i = 0; i < _objects.size(); i++)
