@@ -126,6 +126,8 @@ enum ObjectType {
 	kObjPToilet = 43,
 	kObjProjector = 45,
 	kObjReactor = 46,
+	kObjFWall = 48,
+	kObjCWall = 49,
 	kObjBBed = 42
 };
 
@@ -611,6 +613,8 @@ void ColonyEngine::interactWithObject(int objNum) {
 	case kObjCouch:
 	case kObjChair:
 	case kObjBBed:
+	case kObjFWall:
+	case kObjCWall:
 		// Matches DOS CCommand where these objects are non-interactive blockers.
 		break;
 	default:
@@ -2312,6 +2316,50 @@ bool ColonyEngine::drawStaticObjectPrisms(const Thing &obj, uint32 baseColor) {
 		{4, kMirrorPts, 1, kMirrorSurf}
 	};
 
+	/* CWALL (object 49) - ported from DOS INITOBJ.C: simple corner/quarter-wall prism */
+	static const int kCWallPts[8][3] = {
+		{-128, 128, -160}, {0, 112, -160}, {112, 0, -160}, {128, -128, -160},
+		{-128, 128, 160},  {0, 112, 160},  {112, 0, 160},  {128, -128, 160}
+	};
+	static const int kCWallSurf[3][8] = {
+		{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0}
+	};
+	static const PrismPartDef kCWallParts[1] = {{8, kCWallPts, 3, kCWallSurf}};
+
+	/* PLANT (new) - simple pot + stem + two leaf plates (approximates DOS plant) */
+	static const int kPlantPotPts[8][3] = {
+		{-20, 20, 0}, {20, 20, 0}, {20, -20, 0}, {-20, -20, 0},
+		{-20, 20, 40}, {20, 20, 40}, {20, -20, 40}, {-20, -20, 40}
+	};
+	static const int kPlantPotSurf[5][8] = {
+		{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
+		{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0}, {0, 4, 7, 6, 5, 4, 0, 0}
+	};
+
+	static const int kPlantStemPts[8][3] = {
+		{-5, 5, 40}, {5, 5, 40}, {5, -5, 40}, {-5, -5, 40},
+		{-5, 5, 120}, {5, 5, 120}, {5, -5, 120}, {-5, -5, 120}
+	};
+	static const int kPlantStemSurf[4][8] = {
+		{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
+		{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0}
+	};
+
+	static const int kPlantLeaf1Pts[4][3] = {
+		{-40, 0, 120}, {40, 0, 120}, {40, 0, 140}, {-40, 0, 140}
+	};
+	static const int kPlantLeaf2Pts[4][3] = {
+		{0, 40, 120}, {0, -40, 120}, {0, 40, 140}, {0, -40, 140}
+	};
+	static const int kPlantLeafSurf[1][8] = {{0, 4, 0, 1, 2, 3, 0, 0}};
+
+	static const PrismPartDef kPlantParts[4] = {
+		{8, kPlantPotPts, 5, kPlantPotSurf},
+		{8, kPlantStemPts, 4, kPlantStemSurf},
+		{4, kPlantLeaf1Pts, 1, kPlantLeafSurf},
+		{4, kPlantLeaf2Pts, 1, kPlantLeafSurf}
+	};
+
 	const int clipLeft = MAX<int>((int)obj.clip.left, (int)_screenR.left);
 	const int clipTop = MAX<int>((int)obj.clip.top, (int)_screenR.top);
 	const int clipRight = MIN<int>((int)obj.clip.right, (int)_screenR.right);
@@ -2359,6 +2407,22 @@ bool ColonyEngine::drawStaticObjectPrisms(const Thing &obj, uint32 baseColor) {
 			drawProjectedPrism(p[3], kCChairParts[3], 1, tint(baseColor, 0), drawClip);
 		}
 		return true;
+	case kObjPlant: {
+		for (int i = 0; i < 4; i++)
+			projectPrismPart(obj, kPlantParts[i], false, p[i]);
+		// Pot must be visible for object to appear
+		if (!p[0].visible)
+			return false;
+		// Draw pot, stem and leaves (pot darker, foliage lighter)
+		drawProjectedPrism(p[0], kPlantParts[0], 0, tint(baseColor, -30), drawClip);
+		if (p[1].visible)
+			drawProjectedPrism(p[1], kPlantParts[1], 0, tint(baseColor, 10), drawClip);
+		if (p[2].vsurface[0])
+			drawProjectedPrism(p[2], kPlantParts[2], 0, tint(baseColor, 30), drawClip);
+		if (p[3].vsurface[0])
+			drawProjectedPrism(p[3], kPlantParts[3], 0, tint(baseColor, 30), drawClip);
+		return true;
+	}
 	case kObjCouch:
 	case kObjChair: {
 		const PrismPartDef *parts = (obj.type == kObjCouch) ? kCouchParts : kChairParts;
@@ -2415,6 +2479,18 @@ bool ColonyEngine::drawStaticObjectPrisms(const Thing &obj, uint32 baseColor) {
 			return false;
 		drawProjectedPrism(p[0], kDrawerParts[0], 0, tint(baseColor, 0), drawClip);
 		drawProjectedPrism(p[1], kDrawerParts[1], 1, tint(baseColor, 30), drawClip);
+		return true;
+case kObjFWall:
+		// Simple flat wall part (fallback handled by prism below)
+		if (!projectPrismPart(obj, kCWallParts[0], false, p[0]) || !p[0].visible)
+			return false;
+		drawProjectedPrism(p[0], kCWallParts[0], 0, tint(baseColor, -10), drawClip);
+		return true;
+case kObjCWall:
+		// Corner wall (CWALL) — mirror of DOS CWallparts
+		if (!projectPrismPart(obj, kCWallParts[0], false, p[0]) || !p[0].visible)
+			return false;
+		drawProjectedPrism(p[0], kCWallParts[0], 0, tint(baseColor, -5), drawClip);
 		return true;
 	case kObjScreen:
 		if (!projectPrismPart(obj, kScreenPart, false, p[0]) || !p[0].visible)
@@ -2846,11 +2922,9 @@ Common::Error ColonyEngine::run() {
 	_gfx = new Gfx(_system, _width, _height);
 	
 	loadMap(1); // Try to load the first map
-	
-		_system->lockMouse(true);
-		_system->warpMouse(_centerX, _centerY);
+	_system->lockMouse(true);
+	_system->warpMouse(_centerX, _centerY);
 
-	// Temporary infinite loop to prevent ScummVM from closing immediately
 	while (!shouldQuit()) {
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
@@ -2899,18 +2973,18 @@ Common::Error ColonyEngine::run() {
 				}
 			}
 		}
-			_system->warpMouse(_centerX, _centerY);
+		_system->warpMouse(_centerX, _centerY);
 
-			_gfx->clear(_gfx->black());
-			for (uint i = 0; i < _objects.size(); i++)
-				_objects[i].visible = 0;
-			
-				corridor();
-				drawStaticObjects();
-				drawDashboardStep1();
-				drawCrosshair();
-				
-				_gfx->copyToScreen();
+		_gfx->clear(_gfx->black());
+		for (uint i = 0; i < _objects.size(); i++)
+			_objects[i].visible = 0;
+		
+		corridor();
+		drawStaticObjects();
+		drawDashboardStep1();
+		drawCrosshair();
+		
+		_gfx->copyToScreen();
 		_system->delayMillis(10);
 	}
 
