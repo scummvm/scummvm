@@ -123,6 +123,26 @@ private:
 	void checkleft(int xs, int ys, int xf, int yf, int left, int right, int rx, int ry, int cellx, int celly, int len);
 	void checkright(int xs, int ys, int xf, int yf, int left, int right, int rx, int ry, int cellx, int celly, int len);
 	uint8 wallAt(int x, int y) const;
+	const uint8 *mapFeatureAt(int x, int y, int direction) const;
+	void frontfeature(int cellx, int celly, int xFront, int yFront, int left, int right, int rx, int ry);
+	void features(int cellx, int celly, int xFront, int yFront, int left, int right, int rx, int ry);
+	void dowall(int cellx, int celly, int direction, int left[4], int right[4]);
+	void drawWindow(int left[4], int right[4]);
+	void drawClosedDoor(int left[4], int right[4]);
+	void drawOpenDoor(int left[4], int right[4], int left2[2], int right2[2]);
+	void drawTunnel(int left[4], int right[4], int left2[2], int right2[2]);
+	void drawGlyphs(int left[4], int right[4]);
+	void drawBooks(int left[4], int right[4], int left2[2], int right2[2]);
+	void drawUpStairs(int left[4], int right[4], int left2[2], int right2[2]);
+	void drawDnStairs(int left[4], int right[4], int left2[2], int right2[2]);
+	void drawALOpen(int left[4], int right[4]);
+	void drawALClosed(int left[4], int right[4]);
+	void drawOpenSSDoor(int left[4], int right[4]);
+	void drawClosedSSDoor(int left[4], int right[4]);
+	void drawElevator(int left[4], int right[4]);
+	void drawColor(const uint8 *map, int left[4], int right[4]);
+	void split7(int arr[7], int x1, int x2) const;
+	void split7x7(int left[4], int right[4], int lr[7], int ud[7][7]) const;
 };
 
 } // End of namespace Colony

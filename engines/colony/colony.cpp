@@ -75,6 +75,24 @@ static const int g_indexTable[4][10] = {
 	{0, 0,  0, 1,  1,  0,  0, -1,  2, 1}
 };
 
+enum WallFeatureType {
+	kWallFeatureNone = 0,
+	kWallFeatureDoor = 2,
+	kWallFeatureWindow = 3,
+	kWallFeatureShelves = 4,
+	kWallFeatureUpStairs = 5,
+	kWallFeatureDnStairs = 6,
+	kWallFeatureChar = 7,
+	kWallFeatureGlyph = 8,
+	kWallFeatureElevator = 9,
+	kWallFeatureTunnel = 10,
+	kWallFeatureAirlock = 11,
+	kWallFeatureColor = 12
+};
+
+static const int g_dirRight[4] = {1, 3, 0, 2};
+static const int g_dirLeft[4] = {2, 0, 3, 1};
+
 ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst), _gameDescription(gd) {
 	_level = 0;
 	_robotNum = 0;
@@ -426,6 +444,8 @@ void ColonyEngine::corridor() {
 	uint32 white = _gfx->white();
 	_gfx->drawLine(_drX[xFrontLeft][yFrontLeft], _drY[xFrontLeft][yFrontLeft],
 	               _drX[xFrontRight][yFrontRight], _drY[xFrontRight][yFrontRight], white);
+	if (wallAt(cellx, celly) & ~0x03)
+		frontfeature(cellx, celly, xFrontLeft, yFrontLeft, left2, right2, rox, roy);
 
 	while (!(wallAt(xFrontLeft, yFrontLeft) & _front)) {
 		rox -= _tcos;
@@ -458,6 +478,8 @@ void ColonyEngine::corridor() {
 			right2 = _drX[xFrontRight][yFrontRight];
 		else
 			right2 = MIN(right, right2);
+		if (wallAt(cellx, celly) & ~0x03)
+			features(cellx, celly, xFrontLeft, yFrontLeft, left2, right2, rox, roy);
 
 		_gfx->drawLine(_drX[xFrontLeft][yFrontLeft], _drY[xFrontLeft][yFrontLeft],
 		               _drX[xFrontRight][yFrontRight], _drY[xFrontRight][yFrontRight], white);
@@ -607,6 +629,8 @@ void ColonyEngine::checkleft(int xs, int ys, int xf, int yf, int left, int right
 					               _drX[xf2 + _frntx][yf2 + _frnty], _drY[xf2 + _frntx][yf2 + _frnty], white);
 					_gfx->drawLine(_drX[xf2 + _frntx][yf2 + _frnty], _drY[xf2 + _frntx][yf2 + _frnty],
 					               _drX[xf + _frntx][yf + _frnty], _drY[xf + _frntx][yf + _frnty], white);
+					if (wallAt(cellx, celly) & ~0x03)
+						features(cellx, celly, xf2 + _frntx, yf2 + _frnty, left, right, rx, ry);
 				} else {
 					j = 0;
 					xfstart = xf2;
@@ -667,6 +691,8 @@ void ColonyEngine::checkleft(int xs, int ys, int xf, int yf, int left, int right
 						_drY[xf][yf] = dr[1];
 					}
 					_gfx->drawLine(_drX[xf2][yf2], _drY[xf2][yf2], _drX[xf][yf], _drY[xf][yf], white);
+					if (wallAt(cellx - _frntx, celly - _frnty) & ~0x03)
+						features(cellx - _frntx, celly - _frnty, xf2, yf2, left, right, rx, ry);
 					i++;
 					j++;
 				}
@@ -762,6 +788,8 @@ void ColonyEngine::checkright(int xs, int ys, int xf, int yf, int left, int righ
 					               _drX[xf2 + _frntx][yf2 + _frnty], _drY[xf2 + _frntx][yf2 + _frnty], white);
 					_gfx->drawLine(_drX[xf2 + _frntx][yf2 + _frnty], _drY[xf2 + _frntx][yf2 + _frnty],
 					               _drX[xf + _frntx][yf + _frnty], _drY[xf + _frntx][yf + _frnty], white);
+					if (wallAt(cellx, celly) & ~0x03)
+						features(cellx, celly, xf + _frntx, yf + _frnty, left, right, rx - _tsin, ry - _tcos);
 				} else {
 					j = 0;
 					xfstart = xf2;
@@ -822,6 +850,8 @@ void ColonyEngine::checkright(int xs, int ys, int xf, int yf, int left, int righ
 						_drY[xf][yf] = dr[1];
 					}
 					_gfx->drawLine(_drX[xf2][yf2], _drY[xf2][yf2], _drX[xf][yf], _drY[xf][yf], white);
+					if (wallAt(cellx - _frntx, celly - _frnty) & ~0x03)
+						features(cellx - _frntx, celly - _frnty, xf, yf, left, right, rx - _tsin, ry - _tcos);
 					i++;
 					j++;
 				}
@@ -838,6 +868,577 @@ void ColonyEngine::checkright(int xs, int ys, int xf, int yf, int left, int righ
 			}
 		}
 	}
+}
+
+const uint8 *ColonyEngine::mapFeatureAt(int x, int y, int direction) const {
+	if (x < 0 || x >= 31 || y < 0 || y >= 31 || direction < 0 || direction >= 5)
+		return nullptr;
+	return _mapData[x][y][direction];
+}
+
+void ColonyEngine::frontfeature(int cellx, int celly, int xFront, int yFront, int left, int right, int rx, int ry) {
+	int l[4], r[4];
+
+	l[0] = _drX[xFront][yFront];
+	l[2] = rx - _tcos;
+	l[3] = ry + _tsin;
+	r[0] = _drX[xFront + _sidex][yFront + _sidey];
+	r[2] = rx + _tsin - _tcos;
+	r[3] = ry + _tsin + _tcos;
+	if (_flip) {
+		l[1] = _height - _drY[xFront][yFront];
+		r[1] = _height - _drY[xFront + _sidex][yFront + _sidey];
+	} else {
+		l[1] = _drY[xFront][yFront];
+		r[1] = _drY[xFront + _sidex][yFront + _sidey];
+	}
+
+	if (MAX(left, l[0]) < MIN(right, r[0])) {
+		const uint8 *map = mapFeatureAt(cellx, celly, _direction);
+		if (map && map[0])
+			dowall(cellx, celly, _direction, l, r);
+	}
+}
+
+void ColonyEngine::features(int cellx, int celly, int xFront, int yFront, int left, int right, int rx, int ry) {
+	int l[4], r[4], ll[4], rr[4];
+
+	l[0] = _drX[xFront][yFront];
+	l[2] = rx - _tcos;
+	l[3] = ry + _tsin;
+	r[0] = _drX[xFront + _sidex][yFront + _sidey];
+	r[2] = rx + _tsin - _tcos;
+	r[3] = ry + _tsin + _tcos;
+	if (_flip) {
+		l[1] = _height - _drY[xFront][yFront];
+		r[1] = _height - _drY[xFront + _sidex][yFront + _sidey];
+	} else {
+		l[1] = _drY[xFront][yFront];
+		r[1] = _drY[xFront + _sidex][yFront + _sidey];
+	}
+
+	if (MAX(left, l[0]) + 1 < MIN(right, r[0]) - 1) {
+		const uint8 *map = mapFeatureAt(cellx, celly, _direction);
+		if (map && map[0])
+			dowall(cellx, celly, _direction, l, r);
+	}
+
+	ll[0] = r[0];
+	ll[1] = r[1];
+	ll[2] = rx + _tsin + _tsin;
+	ll[3] = ry + _tcos + _tcos;
+	rr[0] = _drX[xFront + _sidex - _frntx][yFront + _sidey - _frnty];
+	if (_flip)
+		rr[1] = _height - _drY[xFront + _sidex - _frntx][yFront + _sidey - _frnty];
+	else
+		rr[1] = _drY[xFront + _sidex - _frntx][yFront + _sidey - _frnty];
+	rr[2] = rx + _tsin + _tsin + _tcos;
+	rr[3] = ry + _tcos + _tcos - _tsin;
+	if (MAX(left, ll[0]) + 1 < MIN(right, rr[0]) - 1) {
+		const uint8 *map = mapFeatureAt(cellx, celly, g_dirRight[_direction]);
+		if (map && map[0])
+			dowall(cellx, celly, g_dirRight[_direction], ll, rr);
+	}
+
+	ll[0] = _drX[xFront - _frntx][yFront - _frnty];
+	if (_flip)
+		ll[1] = _height - _drY[xFront - _frntx][yFront - _frnty];
+	else
+		ll[1] = _drY[xFront - _frntx][yFront - _frnty];
+	ll[2] = rx + _tcos - _tsin;
+	ll[3] = (ry - _tcos) - _tsin;
+	rr[0] = l[0];
+	rr[1] = l[1];
+	rr[2] = rx - _tsin;
+	rr[3] = ry - _tcos;
+	if (MAX(left, ll[0]) + 1 < MIN(right, rr[0]) - 1) {
+		const uint8 *map = mapFeatureAt(cellx, celly, g_dirLeft[_direction]);
+		if (map && map[0])
+			dowall(cellx, celly, g_dirLeft[_direction], ll, rr);
+	}
+}
+
+void ColonyEngine::dowall(int cellx, int celly, int direction, int left[4], int right[4]) {
+	const uint8 *map = mapFeatureAt(cellx, celly, direction);
+	int left2[2], right2[2];
+	if (!map)
+		return;
+
+	switch (map[0]) {
+	case kWallFeatureDoor:
+		if (_level == 1 || _level == 5 || _level == 6) {
+			if (map[1] == 0)
+				drawOpenSSDoor(left, right);
+			else
+				drawClosedSSDoor(left, right);
+		} else {
+			if (map[1] == 0) {
+				perspective(left2, left[2], left[3]);
+				perspective(right2, right[2], right[3]);
+				if (_flip) {
+					left2[1] = _height - left2[1];
+					right2[1] = _height - right2[1];
+				}
+				drawOpenDoor(left, right, left2, right2);
+			} else {
+				drawClosedDoor(left, right);
+			}
+		}
+		break;
+	case kWallFeatureWindow:
+		drawWindow(left, right);
+		break;
+	case kWallFeatureShelves:
+		perspective(left2, left[2], left[3]);
+		perspective(right2, right[2], right[3]);
+		if (_flip) {
+			left2[1] = _height - left2[1];
+			right2[1] = _height - right2[1];
+		}
+		drawBooks(left, right, left2, right2);
+		break;
+	case kWallFeatureUpStairs:
+		perspective(left2, left[2], left[3]);
+		perspective(right2, right[2], right[3]);
+		if (_flip) {
+			left2[1] = _height - left2[1];
+			right2[1] = _height - right2[1];
+		}
+		drawUpStairs(left, right, left2, right2);
+		break;
+	case kWallFeatureDnStairs:
+		perspective(left2, left[2], left[3]);
+		perspective(right2, right[2], right[3]);
+		if (_flip) {
+			left2[1] = _height - left2[1];
+			right2[1] = _height - right2[1];
+		}
+		drawDnStairs(left, right, left2, right2);
+		break;
+	case kWallFeatureGlyph:
+		drawGlyphs(left, right);
+		break;
+	case kWallFeatureElevator:
+		drawElevator(left, right);
+		break;
+	case kWallFeatureTunnel:
+		perspective(left2, left[2], left[3]);
+		perspective(right2, right[2], right[3]);
+		if (_flip) {
+			left2[1] = _height - left2[1];
+			right2[1] = _height - right2[1];
+		}
+		drawTunnel(left, right, left2, right2);
+		break;
+	case kWallFeatureAirlock:
+		if (map[1] == 0)
+			drawALOpen(left, right);
+		else
+			drawALClosed(left, right);
+		break;
+	case kWallFeatureColor:
+		drawColor(map, left, right);
+		break;
+	default:
+		break;
+	}
+}
+
+void ColonyEngine::drawWindow(int left[4], int right[4]) {
+	const uint32 dark = 160;
+	int x1 = left[0];
+	int x2 = right[0];
+	int y1 = left[1];
+	int y2 = right[1];
+	int y3 = _height - right[1];
+	int y4 = _height - left[1];
+	int xc = (x1 + x2) >> 1;
+	int xx1 = (xc + x1) >> 1;
+	int xx2 = (xc + x2) >> 1;
+	if (xx2 < _screenR.left || xx1 > _screenR.right)
+		return;
+	int yl = (y1 + y4) >> 1;
+	int yr = (y2 + y3) >> 1;
+	int yy1 = (yl + y1) >> 1;
+	int yy2 = (yr + y2) >> 1;
+	int yy3 = (yl + y3) >> 1;
+	int yy4 = (yr + y4) >> 1;
+	int yy[4];
+	yy[0] = _height - ((((yy1 + yy2) >> 1) + yy1) >> 1);
+	yy[1] = _height - ((((yy1 + yy2) >> 1) + yy2) >> 1);
+	yy[2] = _height - ((((yy3 + yy4) >> 1) + yy3) >> 1);
+	yy[3] = _height - ((((yy3 + yy4) >> 1) + yy4) >> 1);
+	_gfx->drawLine(xx1, yy[0], xx2, yy[1], dark);
+	_gfx->drawLine(xx2, yy[1], xx2, yy[2], dark);
+	_gfx->drawLine(xx2, yy[2], xx1, yy[3], dark);
+	_gfx->drawLine(xx1, yy[3], xx1, yy[0], dark);
+	_gfx->drawLine(xc, (yy[0] + yy[1]) >> 1, xc, (yy[2] + yy[3]) >> 1, dark);
+	_gfx->drawLine(xx1, yl, xx2, yr, dark);
+}
+
+void ColonyEngine::drawClosedDoor(int left[4], int right[4]) {
+	const uint32 dark = 160;
+	int x1 = left[0];
+	int x2 = right[0];
+	int y1 = left[1];
+	int y2 = right[1];
+	int y3 = _height - right[1];
+	int y4 = _height - left[1];
+	int xc = (x1 + x2) >> 1;
+	int xx1 = (xc + x1) >> 1;
+	int xx2 = (xc + x2) >> 1;
+	if (xx2 < _screenR.left || xx1 > _screenR.right)
+		return;
+
+	int yc = (y1 + y2) >> 1;
+	int ytl = (yc + y1) >> 1;
+	int ytr = (yc + y2) >> 1;
+	yc = (y4 + y3) >> 1;
+	int ybl = (yc + y4) >> 1;
+	int ybr = (yc + y3) >> 1;
+	ytl = (((((ybl + ytl) >> 1) + ytl) >> 1) + ytl) >> 1;
+	ytr = (((((ybr + ytr) >> 1) + ytr) >> 1) + ytr) >> 1;
+
+	_gfx->drawLine(xx1, ybl, xx1, ytl, dark);
+	_gfx->drawLine(xx1, ytl, xx2, ytr, dark);
+	_gfx->drawLine(xx2, ytr, xx2, ybr, dark);
+	_gfx->drawLine(xx2, ybr, xx1, ybl, dark);
+
+	ybl = (ybl + ytl) >> 1;
+	ybr = (ybr + ytr) >> 1;
+	yc = (ybl + ybr) >> 1;
+	ybl = (((yc + ybl) >> 1) + ybl) >> 1;
+	ybr = (((yc + ybr) >> 1) + ybr) >> 1;
+	xx1 = (((xx1 + xc) >> 1) + xx1) >> 1;
+	xx2 = (((xx2 + xc) >> 1) + xx2) >> 1;
+	_gfx->drawLine(xx1, ybl, xx2, ybr, dark);
+}
+
+void ColonyEngine::drawOpenDoor(int left[4], int right[4], int left2[2], int right2[2]) {
+	const uint32 dark = 160;
+	const uint32 light = 210;
+	int x1 = left[0];
+	int x2 = right[0];
+	int y1 = left[1];
+	int y2 = right[1];
+	int y3 = _height - right[1];
+	int y4 = _height - left[1];
+	int xc = (x1 + x2) >> 1;
+	int xl = (xc + x1) >> 1;
+	int xr = (xc + x2) >> 1;
+	int yc = (y1 + y2) >> 1;
+	int ytl = (yc + y1) >> 1;
+	int ytr = (yc + y2) >> 1;
+	yc = (y4 + y3) >> 1;
+	int ybl = (yc + y4) >> 1;
+	int ybr = (yc + y3) >> 1;
+	ytl = (((((ybl + ytl) >> 1) + ytl) >> 1) + ytl) >> 1;
+	ytr = (((((ybr + ytr) >> 1) + ytr) >> 1) + ytr) >> 1;
+	if (xr < _screenR.left || xl > _screenR.right)
+		return;
+
+	_gfx->drawLine(xl, ybl, xl, ytl, dark);
+	_gfx->drawLine(xl, ytl, xr, ytr, dark);
+	_gfx->drawLine(xr, ytr, xr, ybr, dark);
+	_gfx->drawLine(xr, ybr, xl, ybl, dark);
+
+	x1 = left2[0];
+	x2 = right2[0];
+	y1 = _height - left2[1];
+	y2 = _height - right2[1];
+	xc = (x1 + x2) >> 1;
+	int xfl = (xc + x1) >> 1;
+	int xfr = (xc + x2) >> 1;
+	yc = (y1 + y2) >> 1;
+	int yfl = (yc + y1) >> 1;
+	int yfr = (yc + y2) >> 1;
+
+	_gfx->drawLine(xl, ybl, xfl, yfl, light);
+	_gfx->drawLine(xfl, yfl, xfr, yfr, light);
+	_gfx->drawLine(xfr, yfr, xr, ybr, light);
+	_gfx->drawLine(xr, ybr, xl, ybl, light);
+}
+
+void ColonyEngine::drawTunnel(int left[4], int right[4], int left2[2], int right2[2]) {
+	const uint32 dark = 120;
+	int baseX[7], baseY[7], tunnelY[7][7];
+	int xl = left[0];
+	int xr = right[0];
+	int ytl = left[1];
+	int ytr = right[1];
+	int ybr = _height - right[1];
+	int ybl = _height - left[1];
+	int hl = ybl - ytl;
+	int hr = ybr - ytr;
+	(void)left2;
+	(void)right2;
+	(void)MAX(hl, hr);
+	split7(baseX, xl, xr);
+	if (baseX[0] > _screenR.right || baseX[6] < _screenR.left)
+		return;
+	split7(baseY, ybl, ybr);
+	for (int i = 0; i < 7; i++)
+		split7(tunnelY[i], baseY[i], _height - baseY[i]);
+
+	int x[6] = {baseX[0], baseX[0], baseX[1], baseX[5], baseX[6], baseX[6]};
+	int y[6] = {baseY[0], tunnelY[0][5], tunnelY[1][6], tunnelY[5][6], tunnelY[6][5], baseY[6]};
+	for (int i = 0; i < 6; i++) {
+		int n = (i + 1) % 6;
+		_gfx->drawLine(x[i], y[i], x[n], y[n], dark);
+	}
+}
+
+void ColonyEngine::drawGlyphs(int left[4], int right[4]) {
+	const uint32 dark = 170;
+	int xl = left[0];
+	int xr = right[0];
+	int y1 = left[1];
+	int y2 = right[1];
+	int y3 = _height - right[1];
+	int y4 = _height - left[1];
+	int xc = (xl + xr) >> 1;
+	xl = (((xc + xl) >> 1) + xl) >> 1;
+	xr = (((xc + xr) >> 1) + xr) >> 1;
+	int ytc = (y1 + y2) >> 1;
+	int ybc = (y3 + y4) >> 1;
+	int ytl = (((y1 + ytc) >> 1) + y1) >> 1;
+	int ytr = (((y2 + ytc) >> 1) + y2) >> 1;
+	int ybl = (((y4 + ybc) >> 1) + y4) >> 1;
+	int ybr = (((y3 + ybc) >> 1) + y3) >> 1;
+	int yl1 = (ytl + ybl) >> 1;
+	int yr1 = (ytr + ybr) >> 1;
+	int yl2 = (yl1 + ytl) >> 1;
+	int yr2 = (yr1 + ytr) >> 1;
+	int yl3 = (yl2 + yl1) >> 1;
+	int yr3 = (yr2 + yr1) >> 1;
+	int yl4 = (yl1 + ybl) >> 1;
+	int yr4 = (yr1 + ybr) >> 1;
+	int yr5 = (yr4 + yr1) >> 1;
+	int yl5 = (yl4 + yl1) >> 1;
+
+	_gfx->drawLine(xl, yl1, xr, yr1, dark);
+	_gfx->drawLine(xl, yl2, xr, yr2, dark);
+	_gfx->drawLine(xl, yl3, xr, yr3, dark);
+	_gfx->drawLine(xl, yl4, xr, yr4, dark);
+	_gfx->drawLine(xl, yl5, xr, yr5, dark);
+	_gfx->drawLine(xl, (yl2 + yl3) >> 1, xr, (yr2 + yr3) >> 1, dark);
+	_gfx->drawLine(xl, (yl3 + yl1) >> 1, xr, (yr3 + yr1) >> 1, dark);
+	_gfx->drawLine(xl, (yl1 + yl5) >> 1, xr, (yr1 + yr5) >> 1, dark);
+	_gfx->drawLine(xl, (yl4 + yl5) >> 1, xr, (yr4 + yr5) >> 1, dark);
+}
+
+void ColonyEngine::drawBooks(int left[4], int right[4], int left2[2], int right2[2]) {
+	const uint32 dark = 170;
+	int l2[2] = {left2[0], left2[1]};
+	int r2[2] = {right2[0], right2[1]};
+	for (int i = 0; i < 2; i++) {
+		l2[0] = (l2[0] + left[0]) >> 1;
+		l2[1] = (l2[1] + left[1]) >> 1;
+		r2[0] = (r2[0] + right[0]) >> 1;
+		r2[1] = (r2[1] + right[1]) >> 1;
+	}
+	_gfx->drawLine(l2[0], l2[1], l2[0], _height - l2[1], dark);
+	_gfx->drawLine(l2[0], _height - l2[1], r2[0], _height - r2[1], dark);
+	_gfx->drawLine(r2[0], _height - r2[1], r2[0], r2[1], dark);
+	_gfx->drawLine(r2[0], r2[1], l2[0], l2[1], dark);
+	_gfx->drawLine(left[0], left[1], l2[0], l2[1], dark);
+	_gfx->drawLine(left[0], _height - left[1], l2[0], _height - l2[1], dark);
+	_gfx->drawLine(right[0], right[1], r2[0], r2[1], dark);
+	_gfx->drawLine(right[0], _height - right[1], r2[0], _height - r2[1], dark);
+
+	int lf[7], rf[7], lb[7], rb[7];
+	split7(lf, left[1], _height - left[1]);
+	split7(rf, right[1], _height - right[1]);
+	split7(lb, l2[1], _height - l2[1]);
+	split7(rb, r2[1], _height - r2[1]);
+	for (int i = 0; i < 7; i++) {
+		_gfx->drawLine(left[0], lf[i], right[0], rf[i], dark);
+		_gfx->drawLine(right[0], rf[i], r2[0], rb[i], dark);
+		_gfx->drawLine(r2[0], rb[i], l2[0], lb[i], dark);
+		_gfx->drawLine(l2[0], lb[i], left[0], lf[i], dark);
+	}
+}
+
+void ColonyEngine::drawUpStairs(int left[4], int right[4], int left2[2], int right2[2]) {
+	const uint32 dark = 170;
+	int xl[7], xr[7], yl[7], yr[7];
+	split7(xl, left[0], left2[0]);
+	split7(xr, right[0], right2[0]);
+	split7(yl, _height - left[1], left2[1]);
+	split7(yr, _height - right[1], right2[1]);
+	for (int i = 0; i < 6; i++) {
+		_gfx->drawLine(xl[i], yl[i], xl[i + 1], yl[i + 1], dark);
+		_gfx->drawLine(xr[i], yr[i], xr[i + 1], yr[i + 1], dark);
+		_gfx->drawLine(xl[i], yl[i], xr[i], yr[i], dark);
+	}
+}
+
+void ColonyEngine::drawDnStairs(int left[4], int right[4], int left2[2], int right2[2]) {
+	const uint32 dark = 170;
+	int xl[7], xr[7], yl[7], yr[7];
+	split7(xl, left[0], left2[0]);
+	split7(xr, right[0], right2[0]);
+	split7(yl, left[1], left2[1]);
+	split7(yr, right[1], right2[1]);
+	for (int i = 0; i < 6; i++) {
+		_gfx->drawLine(xl[i], yl[i], xl[i + 1], yl[i + 1], dark);
+		_gfx->drawLine(xr[i], yr[i], xr[i + 1], yr[i + 1], dark);
+		_gfx->drawLine(xl[i], _height - yl[i], xr[i], _height - yr[i], dark);
+	}
+}
+
+void ColonyEngine::drawALOpen(int left[4], int right[4]) {
+	const uint32 dark = 150;
+	int lr[7], ud[7][7];
+	split7x7(left, right, lr, ud);
+	int x[8] = {lr[0], lr[1], lr[3], lr[5], lr[6], lr[5], lr[3], lr[1]};
+	int y[8] = {ud[3][0], ud[5][1], ud[6][3], ud[5][5], ud[3][6], ud[1][5], ud[0][3], ud[1][1]};
+	for (int i = 0; i < 8; i++) {
+		int n = (i + 1) % 8;
+		_gfx->drawLine(x[i], y[i], x[n], y[n], dark);
+	}
+}
+
+void ColonyEngine::drawALClosed(int left[4], int right[4]) {
+	const uint32 dark = 170;
+	int lr[7], ud[7][7];
+	split7x7(left, right, lr, ud);
+	int x[8] = {lr[0], lr[1], lr[3], lr[5], lr[6], lr[5], lr[3], lr[1]};
+	int y[8] = {ud[3][0], ud[5][1], ud[6][3], ud[5][5], ud[3][6], ud[1][5], ud[0][3], ud[1][1]};
+	for (int i = 0; i < 8; i++) {
+		int n = (i + 1) % 8;
+		_gfx->drawLine(x[i], y[i], x[n], y[n], dark);
+	}
+	_gfx->drawLine(lr[0], ud[3][0], lr[3], ud[3][3], dark);
+	_gfx->drawLine(lr[3], ud[6][3], lr[3], ud[3][3], dark);
+	_gfx->drawLine(lr[6], ud[3][6], lr[3], ud[3][3], dark);
+	_gfx->drawLine(lr[3], ud[0][3], lr[3], ud[3][3], dark);
+}
+
+void ColonyEngine::drawOpenSSDoor(int left[4], int right[4]) {
+	const uint32 dark = 140;
+	int lr[7], ud[7][7];
+	split7x7(left, right, lr, ud);
+	int x[8] = {lr[2], lr[1], lr[1], lr[2], lr[4], lr[5], lr[5], lr[4]};
+	int y[8] = {ud[0][2], ud[1][1], ud[5][1], ud[6][2], ud[6][4], ud[5][5], ud[1][5], ud[0][4]};
+	for (int i = 0; i < 8; i++) {
+		int n = (i + 1) % 8;
+		_gfx->drawLine(x[i], y[i], x[n], y[n], dark);
+	}
+}
+
+void ColonyEngine::drawClosedSSDoor(int left[4], int right[4]) {
+	const uint32 dark = 170;
+	int lr[7], ud[7][7];
+	split7x7(left, right, lr, ud);
+	int x[8] = {lr[2], lr[1], lr[1], lr[2], lr[4], lr[5], lr[5], lr[4]};
+	int y[8] = {ud[0][2], ud[1][1], ud[5][1], ud[6][2], ud[6][4], ud[5][5], ud[1][5], ud[0][4]};
+	for (int i = 0; i < 8; i++) {
+		int n = (i + 1) % 8;
+		_gfx->drawLine(x[i], y[i], x[n], y[n], dark);
+	}
+	_gfx->drawLine(lr[2], ud[1][2], lr[2], ud[5][2], dark);
+	_gfx->drawLine(lr[2], ud[5][2], lr[4], ud[5][4], dark);
+	_gfx->drawLine(lr[4], ud[5][4], lr[4], ud[1][4], dark);
+	_gfx->drawLine(lr[4], ud[1][4], lr[2], ud[1][2], dark);
+}
+
+void ColonyEngine::drawElevator(int left[4], int right[4]) {
+	const uint32 dark = 170;
+	int x1 = left[0];
+	int x2 = right[0];
+	int y1 = left[1];
+	int y2 = right[1];
+	int y3 = _height - right[1];
+	int y4 = _height - left[1];
+	int xc = (x1 + x2) >> 1;
+	int xx1 = (xc + x1) >> 1;
+	xx1 = (x1 + xx1) >> 1;
+	int xx2 = (xc + x2) >> 1;
+	xx2 = (x2 + xx2) >> 1;
+	if (xx2 < _screenR.left || xx1 > _screenR.right)
+		return;
+	int ytc = (y1 + y2) >> 1;
+	int ytl = (ytc + y1) >> 1;
+	ytl = (ytl + y1) >> 1;
+	int ytr = (ytc + y2) >> 1;
+	ytr = (ytr + y2) >> 1;
+	int ybc = (y4 + y3) >> 1;
+	int ybl = (ybc + y4) >> 1;
+	ybl = (ybl + y4) >> 1;
+	int ybr = (ybc + y3) >> 1;
+	ybr = (ybr + y3) >> 1;
+	ytl = (((((ybl + ytl) >> 1) + ytl) >> 1) + ytl) >> 1;
+	ytr = (((((ybr + ytr) >> 1) + ytr) >> 1) + ytr) >> 1;
+	_gfx->drawLine(xx1, ybl, xx1, ytl, dark);
+	_gfx->drawLine(xx1, ytl, xx2, ytr, dark);
+	_gfx->drawLine(xx2, ytr, xx2, ybr, dark);
+	_gfx->drawLine(xx2, ybr, xx1, ybl, dark);
+	_gfx->drawLine(xc, ybc, xc, (ytl + ytr) >> 1, dark);
+}
+
+void ColonyEngine::drawColor(const uint8 *map, int left[4], int right[4]) {
+	int xl = left[0];
+	int xr = right[0];
+	int yl[5], yr[5];
+	yl[0] = left[1];
+	yr[0] = right[1];
+	yl[4] = _height - yl[0];
+	yr[4] = _height - yr[0];
+	yl[2] = (yl[0] + yl[4]) >> 1;
+	yr[2] = (yr[0] + yr[4]) >> 1;
+	yl[1] = (yl[0] + yl[2]) >> 1;
+	yl[3] = (yl[2] + yl[4]) >> 1;
+	yr[1] = (yr[0] + yr[2]) >> 1;
+	yr[3] = (yr[2] + yr[4]) >> 1;
+
+	if (map[1] || map[2] || map[3] || map[4]) {
+		for (int i = 1; i <= 3; i++) {
+			uint32 c = 120 + map[i] * 20;
+			_gfx->drawLine(xl, yl[i], xr, yr[i], c);
+		}
+	} else {
+		uint32 c = 100 + (_level * 15);
+		_gfx->drawLine(xl, yl[1], xr, yr[1], c);
+		_gfx->drawLine(xl, yl[2], xr, yr[2], c);
+		_gfx->drawLine(xl, yl[3], xr, yr[3], c);
+	}
+}
+
+void ColonyEngine::split7(int arr[7], int x1, int x2) const {
+	arr[3] = (x1 + x2) >> 1;
+	arr[1] = (x1 + arr[3]) >> 1;
+	arr[0] = (x1 + arr[1]) >> 1;
+	arr[2] = (arr[1] + arr[3]) >> 1;
+	arr[5] = (arr[3] + x2) >> 1;
+	arr[6] = (arr[5] + x2) >> 1;
+	arr[4] = (arr[3] + arr[5]) >> 1;
+}
+
+void ColonyEngine::split7x7(int left[4], int right[4], int lr[7], int ud[7][7]) const {
+	int leftX, rightX, leftY, rightY;
+	int lud[7], rud[7];
+	if (right[0] < left[0]) {
+		rightX = left[0];
+		leftX = right[0];
+		rightY = left[1];
+		leftY = right[1];
+	} else {
+		leftX = left[0];
+		rightX = right[0];
+		leftY = left[1];
+		rightY = right[1];
+	}
+	split7(lr, leftX, rightX);
+	if (_flip) {
+		split7(lud, leftY, _height - leftY);
+		split7(rud, rightY, _height - rightY);
+	} else {
+		split7(lud, _height - leftY, leftY);
+		split7(rud, _height - rightY, rightY);
+	}
+	for (int i = 0; i < 7; i++)
+		split7(ud[i], lud[i], rud[i]);
 }
 
 Common::Error ColonyEngine::run() {
