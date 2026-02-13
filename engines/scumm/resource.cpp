@@ -1719,6 +1719,51 @@ void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
 
 	int size = getResourceSize(type, idx);
 	
+	// WORKAROUND: Maniac Mansion (NES) logo scroll gets stuck because ScummVM uses a 256px wide view.
+	// The original expects a 224px wide screen, so the camera never reaches the script's wait threshold.
+	// Patch script 120 at runtime by locating the camera-wait loop and changing its compare.
+
+	if (_game.id == GID_MANIAC &&
+		_game.platform == Common::kPlatformNES) {
+
+		if (type == rtScript && idx == 120) {
+			byte *scriptRes = getResourceAddress(type, idx);
+			const uint32 scriptResSize = (size > 0) ? (uint32)size : 0;
+
+			if (scriptRes && scriptResSize >= 8) {
+				byte *code = scriptRes + 8;
+				const uint32 codeSize = scriptResSize - 8;
+
+				const byte logoCamWaitPrefix[] = {
+					0x32, 0x0A,
+					0x12, 0x46,
+					0x80,
+					0x38, 0x02
+				};
+
+				const uint32 prefixSize = (uint32)sizeof(logoCamWaitPrefix);
+
+				if (codeSize >= prefixSize + 5) {
+					for (uint32 i = 0; i + prefixSize + 5 <= codeSize; ++i) {
+						if (memcmp(code + i, logoCamWaitPrefix, prefixSize) == 0) {
+							const uint32 immOff = i + 7;
+							const uint32 tailOff = i + 8;
+
+							if (code[tailOff + 0] == 0x00 &&
+								code[tailOff + 1] == 0xF9 &&
+								code[tailOff + 2] == 0xFF &&
+								code[tailOff + 3] == 0x62) {
+
+								code[immOff] = 0x2C;
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	// WORKAROUND: The MI2 DOS NI demo relies on a prerecorded save file ("demo.rec") to start correctly.
 	// Without it, the demo can select an invalid path and attempt to load missing rooms.
 	// We patch script 77 to force the intended startup behavior so the demo begins in a valid scene.
