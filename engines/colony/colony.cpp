@@ -24,6 +24,7 @@
 #include "common/file.h"
 #include "common/system.h"
 #include "common/util.h"
+#include "common/algorithm.h"
 #include "common/debug.h"
 #include "common/events.h"
 #include "common/keyboard.h"
@@ -145,6 +146,11 @@ void ColonyEngine::loadMap(int mnum) {
 	file.read(buffer, bLength);
 	file.close();
 
+	memset(_mapData, 0, sizeof(_mapData));
+	memset(_robotArray, 0, sizeof(_robotArray));
+	memset(_foodArray, 0, sizeof(_foodArray));
+	_objects.clear();
+
 	// expand logic
 	int c = 0;
 	_robotNum = MENUM + 1;
@@ -157,7 +163,24 @@ void ColonyEngine::loadMap(int mnum) {
 						for (int l = 0; l < 5; l++) {
 							_mapData[i][j][k][l] = buffer[c++];
 						}
-						// Robot creation logic will be added here
+						// PACKIT.C: center feature type 6 marks static map objects.
+						if (k == 4 && _mapData[i][j][4][0] == 6 && i < 31 && j < 31) {
+							Thing obj;
+							memset(&obj, 0, sizeof(obj));
+							obj.alive = 1;
+							obj.visible = 0;
+							obj.type = _mapData[i][j][4][1] + BASEOBJECT;
+							obj.where.xloc = (i << 8) + 128;
+							obj.where.yloc = (j << 8) + 128;
+							obj.where.xindex = i;
+							obj.where.yindex = j;
+							obj.where.ang = (uint8)(_mapData[i][j][4][2] + 32);
+							obj.where.look = obj.where.ang;
+							_objects.push_back(obj);
+							const int objNum = (int)_objects.size(); // 1-based, DOS-style robot slots
+							if (objNum > 0 && objNum < 256 && _robotArray[i][j] == 0)
+								_robotArray[i][j] = (uint8)objNum;
+						}
 					} else {
 						_mapData[i][j][k][0] = 0;
 					}
@@ -167,7 +190,7 @@ void ColonyEngine::loadMap(int mnum) {
 	}
 	free(buffer);
 	_level = mnum;
-	debug("Successfully loaded map %d", mnum);
+	debug("Successfully loaded map %d (static objects: %d)", mnum, (int)_objects.size());
 }
 
 void ColonyEngine::initTrig() {
@@ -478,6 +501,12 @@ void ColonyEngine::corridor() {
 			right2 = _drX[xFrontRight][yFrontRight];
 		else
 			right2 = MIN(right, right2);
+		if (cellx >= 0 && cellx < 32 && celly >= 0 && celly < 32) {
+			if (_robotArray[cellx][celly])
+				setRobot(left2, right2, _robotArray[cellx][celly]);
+			if (_foodArray[cellx][celly])
+				setRobot(left2, right2, _foodArray[cellx][celly]);
+		}
 		if (wallAt(cellx, celly) & ~0x03)
 			features(cellx, celly, xFrontLeft, yFrontLeft, left2, right2, rox, roy);
 
@@ -631,6 +660,12 @@ void ColonyEngine::checkleft(int xs, int ys, int xf, int yf, int left, int right
 					               _drX[xf + _frntx][yf + _frnty], _drY[xf + _frntx][yf + _frnty], white);
 					if (wallAt(cellx, celly) & ~0x03)
 						features(cellx, celly, xf2 + _frntx, yf2 + _frnty, left, right, rx, ry);
+					if (cellx >= 0 && cellx < 32 && celly >= 0 && celly < 32) {
+						if (_robotArray[cellx][celly])
+							setRobot(left, right, _robotArray[cellx][celly]);
+						if (_foodArray[cellx][celly])
+							setRobot(left, right, _foodArray[cellx][celly]);
+					}
 				} else {
 					j = 0;
 					xfstart = xf2;
@@ -693,6 +728,14 @@ void ColonyEngine::checkleft(int xs, int ys, int xf, int yf, int left, int right
 					_gfx->drawLine(_drX[xf2][yf2], _drY[xf2][yf2], _drX[xf][yf], _drY[xf][yf], white);
 					if (wallAt(cellx - _frntx, celly - _frnty) & ~0x03)
 						features(cellx - _frntx, celly - _frnty, xf2, yf2, left, right, rx, ry);
+					const int objxL = cellx - _frntx;
+					const int objyL = celly - _frnty;
+					if (objxL >= 0 && objxL < 32 && objyL >= 0 && objyL < 32) {
+						if (_robotArray[objxL][objyL])
+							setRobot(left, right, _robotArray[objxL][objyL]);
+						if (_foodArray[objxL][objyL])
+							setRobot(left, right, _foodArray[objxL][objyL]);
+					}
 					i++;
 					j++;
 				}
@@ -790,6 +833,12 @@ void ColonyEngine::checkright(int xs, int ys, int xf, int yf, int left, int righ
 					               _drX[xf + _frntx][yf + _frnty], _drY[xf + _frntx][yf + _frnty], white);
 					if (wallAt(cellx, celly) & ~0x03)
 						features(cellx, celly, xf + _frntx, yf + _frnty, left, right, rx - _tsin, ry - _tcos);
+					if (cellx >= 0 && cellx < 32 && celly >= 0 && celly < 32) {
+						if (_robotArray[cellx][celly])
+							setRobot(left, right, _robotArray[cellx][celly]);
+						if (_foodArray[cellx][celly])
+							setRobot(left, right, _foodArray[cellx][celly]);
+					}
 				} else {
 					j = 0;
 					xfstart = xf2;
@@ -852,6 +901,14 @@ void ColonyEngine::checkright(int xs, int ys, int xf, int yf, int left, int righ
 					_gfx->drawLine(_drX[xf2][yf2], _drY[xf2][yf2], _drX[xf][yf], _drY[xf][yf], white);
 					if (wallAt(cellx - _frntx, celly - _frnty) & ~0x03)
 						features(cellx - _frntx, celly - _frnty, xf, yf, left, right, rx - _tsin, ry - _tcos);
+					const int objxR = cellx - _frntx;
+					const int objyR = celly - _frnty;
+					if (objxR >= 0 && objxR < 32 && objyR >= 0 && objyR < 32) {
+						if (_robotArray[objxR][objyR])
+							setRobot(left, right, _robotArray[objxR][objyR]);
+						if (_foodArray[objxR][objyR])
+							setRobot(left, right, _foodArray[objxR][objyR]);
+					}
 					i++;
 					j++;
 				}
@@ -1441,6 +1498,123 @@ void ColonyEngine::split7x7(int left[4], int right[4], int lr[7], int ud[7][7]) 
 		split7(ud[i], lud[i], rud[i]);
 }
 
+bool ColonyEngine::projectWorld(int worldX, int worldY, int &screenX, int &depth) const {
+	long x = worldX - _me.xloc;
+	long y = worldY - _me.yloc;
+	long tsin = _cost[_me.look];
+	long tcos = _sint[_me.look];
+	long xx = (x * tcos - y * tsin) >> 7;
+	long yy = (x * tsin + y * tcos) >> 7;
+
+	if (yy <= 16)
+		return false;
+	if (yy >= 11585)
+		yy = 11584;
+
+	screenX = _centerX + (int)((xx << 8) / yy);
+	depth = (int)yy;
+	return true;
+}
+
+uint32 ColonyEngine::objectColor(int type) const {
+	switch (type) {
+	case 21: // DESK
+		return 220;
+	case 22: // PLANT
+		return 100;
+	case 24: // BED
+	case 42: // BBED
+		return 180;
+	case 29: // SCREEN
+	case 30: // CONSOLE
+		return 240;
+	case 31: // POWERSUIT
+	case 46: // REACTOR
+		return 255;
+	case 36: // TELEPORT
+		return 140;
+	default:
+		return 160 + ((uint32)(type * 7) & 0x3F);
+	}
+}
+
+void ColonyEngine::drawStaticObjects() {
+	struct DrawCmd {
+		int depth;
+		int index;
+	};
+
+	Common::Array<DrawCmd> drawList;
+	drawList.reserve(_objects.size());
+
+	for (uint i = 0; i < _objects.size(); i++) {
+		const Thing &obj = _objects[i];
+		if (!obj.alive || !obj.visible)
+			continue;
+		int sx, depth;
+		if (!projectWorld(obj.where.xloc, obj.where.yloc, sx, depth))
+			continue;
+		if (depth > 11000)
+			continue;
+		DrawCmd cmd;
+		cmd.depth = depth;
+		cmd.index = (int)i;
+		drawList.push_back(cmd);
+	}
+
+	Common::sort(drawList.begin(), drawList.end(), [](const DrawCmd &a, const DrawCmd &b) {
+		return a.depth > b.depth; // far to near
+	});
+
+	for (uint i = 0; i < drawList.size(); i++) {
+		const DrawCmd &d = drawList[i];
+		const Thing &obj = _objects[d.index];
+		int sx, depth;
+		if (!projectWorld(obj.where.xloc, obj.where.yloc, sx, depth))
+			continue;
+		int scale = _rtable[d.depth];
+		int baseY = _height - (_centerY - scale);
+		int h = CLIP<int>(scale, 4, 96);
+		int w = CLIP<int>(h >> 1, 3, 64);
+		Common::Rect body(sx - w, baseY - h, sx + w, baseY);
+		const int bodyLeft = (int)body.left;
+		const int bodyTop = (int)body.top;
+		const int bodyRight = (int)body.right;
+		const int bodyBottom = (int)body.bottom;
+		const int clipLeft = MAX(bodyLeft, MAX((int)obj.clip.left, (int)_screenR.left));
+		const int clipTop = MAX(bodyTop, MAX((int)obj.clip.top, (int)_screenR.top));
+		const int clipRight = MIN(bodyRight, MIN((int)obj.clip.right, (int)_screenR.right));
+		const int clipBottom = MIN(bodyBottom, MIN((int)obj.clip.bottom, (int)_screenR.bottom));
+		if (clipLeft >= clipRight || clipTop >= clipBottom)
+			continue;
+		Common::Rect clipped(clipLeft, clipTop, clipRight, clipBottom);
+
+		uint32 color = objectColor(obj.type);
+		_gfx->drawRect(clipped, color);
+		_gfx->drawLine(clipped.left, clipped.bottom - 1, clipped.right - 1, clipped.bottom - 1, color);
+	}
+}
+
+void ColonyEngine::setRobot(int l, int r, int num) {
+	if (num <= 0 || num > (int)_objects.size())
+		return;
+	if (l < _screenR.left)
+		l = _screenR.left;
+	if (r > _screenR.right)
+		r = _screenR.right;
+	if (l >= r)
+		return;
+
+	Thing &obj = _objects[num - 1];
+	if (!obj.alive)
+		return;
+	obj.visible = 1;
+	obj.clip.left = l + 1;
+	obj.clip.right = r - 2;
+	obj.clip.top = _clip.top;
+	obj.clip.bottom = _clip.bottom;
+}
+
 Common::Error ColonyEngine::run() {
 	Graphics::PixelFormat format8bpp = Graphics::PixelFormat::createFormatCLUT8();
 	initGraphics(_width, _height, &format8bpp);
@@ -1515,8 +1689,11 @@ Common::Error ColonyEngine::run() {
 		_system->warpMouse(_width / 2, _height / 2);
 
 		_gfx->clear(_gfx->black());
+		for (uint i = 0; i < _objects.size(); i++)
+			_objects[i].visible = 0;
 		
 		corridor();
+		drawStaticObjects();
 		
 		_gfx->copyToScreen();
 		_system->delayMillis(10);

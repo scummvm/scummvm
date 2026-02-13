@@ -143,6 +143,10 @@ private:
 	void drawColor(const uint8 *map, int left[4], int right[4]);
 	void split7(int arr[7], int x1, int x2) const;
 	void split7x7(int left[4], int right[4], int lr[7], int ud[7][7]) const;
+	void drawStaticObjects();
+	bool projectWorld(int worldX, int worldY, int &screenX, int &depth) const;
+	uint32 objectColor(int type) const;
+	void setRobot(int l, int r, int num);
 };
 
 } // End of namespace Colony
