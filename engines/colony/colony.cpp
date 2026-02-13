@@ -135,12 +135,13 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_headsUpRect = Common::Rect(0, 0, 0, 0);
 	_powerRect = Common::Rect(0, 0, 0, 0);
 	
-	_me.xindex = 10;
-	_me.yindex = 10;
-	_me.xloc = 10 * 256 + 128;
-	_me.yloc = 10 * 256 + 128;
-	_me.look = 0;
-	_me.ang = 0;
+	// DOS gameInit(): Me.ang=Me.look=32; Me.xloc=4400; Me.yloc=4400.
+	_me.xloc = 4400;
+	_me.yloc = 4400;
+	_me.xindex = _me.xloc >> 8;
+	_me.yindex = _me.yloc >> 8;
+	_me.look = 32;
+	_me.ang = 32;
 
 	initTrig();
 }
