@@ -31,6 +31,7 @@
 #include "engines/util.h"
 #include "graphics/palette.h"
 #include "graphics/paletteman.h"
+#include <math.h>
 
 namespace Colony {
 
@@ -1672,6 +1673,7 @@ void ColonyEngine::drawDashboardStep1() {
 	if (_dashBoardRect.width() <= 0 || _dashBoardRect.height() <= 0)
 		return;
 
+	const int kFWALLType = 48;
 	const uint32 panelBg = 24;
 	const uint32 frame = 190;
 	const uint32 accent = 220;
@@ -1685,17 +1687,33 @@ void ColonyEngine::drawDashboardStep1() {
 		_gfx->drawLine(_screenR.left - 1, _screenR.top, _screenR.left - 1, _screenR.bottom - 1, mark);
 
 	if (_compassRect.width() > 4 && _compassRect.height() > 4) {
-		_gfx->drawRect(_compassRect, frame);
 		const int cx = (_compassRect.left + _compassRect.right) >> 1;
 		const int cy = (_compassRect.top + _compassRect.bottom) >> 1;
 		const int rx = MAX(2, (_compassRect.width() - 6) >> 1);
 		const int ry = MAX(2, (_compassRect.height() - 6) >> 1);
+		const int irx = MAX(1, rx - 2);
+		const int iry = MAX(1, ry - 2);
+		auto drawEllipse = [&](int erx, int ery, uint32 color) {
+			const int segments = 48;
+			int px = cx + erx;
+			int py = cy;
+			for (int i = 1; i <= segments; i++) {
+				const double t = (6.28318530717958647692 * (double)i) / (double)segments;
+				const int x = cx + (int)((double)erx * cos(t));
+				const int y = cy + (int)((double)ery * sin(t));
+				_gfx->drawLine(px, py, x, y, color);
+				px = x;
+				py = y;
+			}
+		};
+		drawEllipse(rx, ry, frame);
+		drawEllipse(irx, iry, accent);
+
 		const int ex = cx + ((_cost[_me.look] * rx) >> 8);
 		const int ey = cy - ((_sint[_me.look] * ry) >> 8);
 		_gfx->drawLine(cx, cy, ex, ey, mark);
 		_gfx->drawLine(cx - 2, cy, cx + 2, cy, accent);
 		_gfx->drawLine(cx, cy - 2, cx, cy + 2, accent);
-		_gfx->drawRect(Common::Rect(_compassRect.left + 2, _compassRect.top + 2, _compassRect.right - 2, _compassRect.bottom - 2), accent);
 	}
 
 	if (_headsUpRect.width() > 4 && _headsUpRect.height() > 4) {
@@ -1753,7 +1771,12 @@ void ColonyEngine::drawDashboardStep1() {
 		auto hasFoodAt = [&](int x, int y) -> bool {
 			if (x < 0 || x >= 32 || y < 0 || y >= 32)
 				return false;
-			return _foodArray[x][y] != 0;
+			const uint8 num = _foodArray[x][y];
+			if (num == 0)
+				return false;
+			if (num <= _objects.size())
+				return _objects[num - 1].type < kFWALLType;
+			return true;
 		};
 
 		if (hasFoodAt(_me.xindex, _me.yindex))
