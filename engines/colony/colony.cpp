@@ -182,9 +182,6 @@ void ColonyEngine::perspective(int pnt[2], int rox, int roy) {
 		p = 32000;
 	pnt[0] = (int)p;
 
-	if (roy >= 11585)
-		roy = 11584;
-
 	if (_flip)
 		pnt[1] = _centerY + _rtable[roy];
 	else
@@ -343,11 +340,23 @@ void ColonyEngine::corridor() {
 	int length = 1;
 	int xFrontLeft, yFrontLeft;
 	int xFrontRight, yFrontRight;
+	int xsstart, ysstart;
 	int xfbehind, yfbehind;
-	int dr[2];
+	int roxsave, roysave;
+	int left, right;
+	int left2, right2;
 	int cellx, celly;
+	int cellxsave, cellysave;
+	int dr[2];
+	const int screenLeft = (int)_screenR.left;
+	const int screenRight = (int)_screenR.right;
 
 	quadrant();
+
+	right = screenRight;
+	left = screenLeft;
+	right2 = right;
+	left2 = left;
 
 	xfbehind = _me.xindex + _frntxWall;
 	yfbehind = _me.yindex + _frntyWall;
@@ -355,6 +364,10 @@ void ColonyEngine::corridor() {
 	yFrontLeft = yfbehind + _frnty;
 	xFrontRight = xFrontLeft + _sidex;
 	yFrontRight = yFrontLeft + _sidey;
+	xsstart = _me.xindex + _sidexWall;
+	ysstart = _me.yindex + _sideyWall;
+	cellxsave = cellx = _me.xindex;
+	cellysave = celly = _me.yindex;
 
 	int rox = _rox;
 	int roy = _roy;
@@ -362,17 +375,27 @@ void ColonyEngine::corridor() {
 	if (_change) {
 		perspective(dr, rox, roy);
 		if (xfbehind >= 0 && xfbehind < 34 && yfbehind >= 0 && yfbehind < 34) {
-			_drX[xfbehind][yfbehind] = dr[0];
 			_drY[xfbehind][yfbehind] = dr[1];
+			if (dr[0] > _screenR.left)
+				_drX[xfbehind][yfbehind] = -32000;
+			else
+				_drX[xfbehind][yfbehind] = dr[0];
 		}
 
 		perspective(dr, rox + _tsin, roy + _tcos);
 		if (xfbehind + _sidex >= 0 && xfbehind + _sidex < 34 && yfbehind + _sidey >= 0 && yfbehind + _sidey < 34) {
-			_drX[xfbehind + _sidex][yfbehind + _sidey] = dr[0];
 			_drY[xfbehind + _sidex][yfbehind + _sidey] = dr[1];
+			if (dr[0] < _screenR.right)
+				_drX[xfbehind + _sidex][yfbehind + _sidey] = 32000;
+			else
+				_drX[xfbehind + _sidex][yfbehind + _sidey] = dr[0];
 		}
 	}
 
+	roxsave = rox;
+	roysave = roy;
+
+	// Move to the first wall in front of the observer.
 	rox -= _tcos;
 	roy += _tsin;
 
@@ -389,23 +412,22 @@ void ColonyEngine::corridor() {
 		}
 	}
 
+	if (wallAt(cellx + _sidexWall, celly + _sideyWall) & _side)
+		left2 = MAX(_drX[xFrontLeft][yFrontLeft], screenLeft);
+	else
+		left2 = MAX(left, left2);
+	left2 = MAX(left2, screenLeft);
+
+	if (wallAt(cellx + _sidexWall + _sidex, celly + _sideyWall + _sidey) & _side)
+		right2 = _drX[xFrontRight][yFrontRight];
+	else
+		right2 = MIN(right, right2);
+
 	uint32 white = _gfx->white();
-	// Draw starting lines (behind us)
-	_gfx->drawLine(_drX[xfbehind][yfbehind], _drY[xfbehind][yfbehind],
-	               _drX[xfbehind + _sidex][yfbehind + _sidey], _drY[xfbehind + _sidex][yfbehind + _sidey], white);
-	_gfx->drawLine(_drX[xfbehind][yfbehind], _height - _drY[xfbehind][yfbehind],
-	               _drX[xfbehind + _sidex][yfbehind + _sidey], _height - _drY[xfbehind + _sidex][yfbehind + _sidey], white);
-	_gfx->drawLine(_drX[xfbehind][yfbehind], _drY[xfbehind][yfbehind],
-	               _drX[xfbehind][yfbehind], _height - _drY[xfbehind][yfbehind], white);
-	_gfx->drawLine(_drX[xfbehind + _sidex][yfbehind + _sidey], _drY[xfbehind + _sidex][yfbehind + _sidey],
-	               _drX[xfbehind + _sidex][yfbehind + _sidey], _height - _drY[xfbehind + _sidex][yfbehind + _sidey], white);
+	_gfx->drawLine(_drX[xFrontLeft][yFrontLeft], _drY[xFrontLeft][yFrontLeft],
+	               _drX[xFrontRight][yFrontRight], _drY[xFrontRight][yFrontRight], white);
 
-	int xprevL = xFrontLeft;
-	int yprevL = yFrontLeft;
-	int xprevR = xFrontRight;
-	int yprevR = yFrontRight;
-
-	while (!(_wall[xFrontLeft][yFrontLeft] & _front)) {
+	while (!(wallAt(xFrontLeft, yFrontLeft) & _front)) {
 		rox -= _tcos;
 		roy += _tsin;
 		xFrontLeft += _frntx;
@@ -425,39 +447,44 @@ void ColonyEngine::corridor() {
 			}
 		}
 
-		// Horizontal transversal lines
+		cellx += _frntx;
+		celly += _frnty;
+		if (wallAt(cellx + _sidexWall, celly + _sideyWall) & _side)
+			left2 = MAX(screenLeft, _drX[xFrontLeft][yFrontLeft]);
+		else
+			left2 = MAX(left, left2);
+		left2 = MAX(left2, screenLeft);
+		if (wallAt(cellx + _sidexWall + _sidex, celly + _sideyWall + _sidey) & _side)
+			right2 = _drX[xFrontRight][yFrontRight];
+		else
+			right2 = MIN(right, right2);
+
 		_gfx->drawLine(_drX[xFrontLeft][yFrontLeft], _drY[xFrontLeft][yFrontLeft],
 		               _drX[xFrontRight][yFrontRight], _drY[xFrontRight][yFrontRight], white);
-		_gfx->drawLine(_drX[xFrontLeft][yFrontLeft], _height - _drY[xFrontLeft][yFrontLeft],
-		               _drX[xFrontRight][yFrontRight], _height - _drY[xFrontRight][yFrontRight], white);
-
-		// Longitudinal lines (floor and ceiling edges)
-		_gfx->drawLine(_drX[xprevL][yprevL], _drY[xprevL][yprevL],
-		               _drX[xFrontLeft][yFrontLeft], _drY[xFrontLeft][yFrontLeft], white);
-		_gfx->drawLine(_drX[xprevR][yprevR], _drY[xprevR][yprevR],
-		               _drX[xFrontRight][yFrontRight], _drY[xFrontRight][yFrontRight], white);
-		_gfx->drawLine(_drX[xprevL][yprevL], _height - _drY[xprevL][yprevL],
-		               _drX[xFrontLeft][yFrontLeft], _height - _drY[xFrontLeft][yFrontLeft], white);
-		_gfx->drawLine(_drX[xprevR][yprevR], _height - _drY[xprevR][yprevR],
-		               _drX[xFrontRight][yFrontRight], _height - _drY[xFrontRight][yFrontRight], white);
-
-		// Vertical corner lines
-		_gfx->drawLine(_drX[xFrontLeft][yFrontLeft], _drY[xFrontLeft][yFrontLeft],
-		               _drX[xFrontLeft][yFrontLeft], _height - _drY[xFrontLeft][yFrontLeft], white);
-		_gfx->drawLine(_drX[xFrontRight][yFrontRight], _drY[xFrontRight][yFrontRight],
-		               _drX[xFrontRight][yFrontRight], _height - _drY[xFrontRight][yFrontRight], white);
-
-		xprevL = xFrontLeft;
-		yprevL = yFrontLeft;
-		xprevR = xFrontRight;
-		yprevR = yFrontRight;
 
 		length++;
 		if (length > 30)
 			break; // Safety break
 	}
 	drawend(xfbehind, yfbehind, xFrontLeft, yFrontLeft);
-	// _change = false; // Keep true for now to debug turning
+
+	left = screenLeft;
+	right = MIN(right, _drX[xFrontLeft][yFrontLeft]);
+	if (left < right)
+		checkleft(xsstart, ysstart, xfbehind, yfbehind, left, right, roxsave, roysave, cellxsave, cellysave, length);
+
+	left = MAX(left, _drX[xFrontRight][yFrontRight]);
+	if (left < screenLeft)
+		left = screenLeft;
+	right = screenRight;
+	xsstart += _sidex;
+	ysstart += _sidey;
+	xfbehind += _sidex;
+	yfbehind += _sidey;
+	if (left < right)
+		checkright(xsstart, ysstart, xfbehind, yfbehind, left, right, roxsave + _tsin, roysave + _tcos, cellxsave, cellysave, length);
+
+	_change = false;
 }
 
 void ColonyEngine::drawend(int xstart, int ystart, int xFrontLeft, int yFrontLeft) {
@@ -485,7 +512,7 @@ void ColonyEngine::drawend(int xstart, int ystart, int xFrontLeft, int yFrontLef
 		               _drX[xstart + _sidex][ystart + _sidey], _drY[xstart + _sidex][ystart + _sidey], white);
 		if (_drY[xstart + _sidex][ystart + _sidey] > 0) {
 			_gfx->drawLine(_drX[xstart + _sidex][ystart + _sidey], _drY[xstart + _sidex][ystart + _sidey],
-			               _drX[xstart + _sidex][ystart + _sidey], _drY[xstart + _sidex][ystart + _sidey], white); // This one is still weird in original?
+			               _drX[xstart + _frntx + _sidex][ystart + _frnty + _sidey], _drY[xstart + _frntx + _sidex][ystart + _frnty + _sidey], white);
 		}
 	} else {
 		_gfx->drawLine(_drX[xFrontLeft][yFrontLeft], _drY[xFrontLeft][yFrontLeft],
@@ -497,12 +524,332 @@ void ColonyEngine::drawend(int xstart, int ystart, int xFrontLeft, int yFrontLef
 	}
 }
 
+uint8 ColonyEngine::wallAt(int x, int y) const {
+	if (x < 0 || x >= 32 || y < 0 || y >= 32)
+		return 3;
+	return _wall[x][y];
+}
+
+void ColonyEngine::checkleft(int xs, int ys, int xf, int yf, int left, int right, int rx, int ry, int cellx, int celly, int len) {
+	int i = 0, j;
+	int xf2, yf2;
+	int rox, roy;
+	int xsstart, ysstart;
+	int xfstart, yfstart;
+	int xestart, yestart;
+	int cellxsave, cellysave;
+	int dr[2];
+	uint32 white = _gfx->white();
+
+	cellx -= _sidex;
+	celly -= _sidey;
+	rx = rx - _tsin;
+	ry = ry - _tcos;
+
+	while (i < len && left <= right) {
+		if (wallAt(xs, ys) & _side) {
+			if (_flip)
+				_gfx->drawLine(_drX[xf][yf], 0, _drX[xf][yf], _height - _drY[xf][yf], white);
+
+			while ((wallAt(xs, ys) & _side) && i < len && left <= right) {
+				_gfx->drawLine(_drX[xf][yf], _drY[xf][yf], _drX[xf][yf], _height - _drY[xf][yf], white);
+				_gfx->drawLine(_drX[xf][yf], _height - _drY[xf][yf],
+				               _drX[xf + _frntx][yf + _frnty], _height - _drY[xf + _frntx][yf + _frnty], white);
+
+				left = MAX(_drX[xf][yf], left);
+				xf += _frntx;
+				yf += _frnty;
+				xs += _frntx;
+				ys += _frnty;
+				cellx += _frntx;
+				celly += _frnty;
+				rx -= _tcos;
+				ry += _tsin;
+				i++;
+			}
+
+			if (_flip)
+				_gfx->drawLine(_drX[xf][yf], 0, _drX[xf][yf], _height - _drY[xf][yf], white);
+			_gfx->drawLine(_drX[xf][yf], _height - _drY[xf][yf], _drX[xf][yf], _drY[xf][yf], white);
+			left = MAX(_drX[xf][yf], left);
+		}
+
+		if (i < len && left <= right) {
+			j = 0;
+			xf2 = xf - _sidex;
+			yf2 = yf - _sidey;
+			xfstart = xf2;
+			yfstart = yf2;
+			xsstart = xs - _sidex;
+			ysstart = ys - _sidey;
+			cellxsave = cellx;
+			cellysave = celly;
+
+			rox = rx;
+			roy = ry;
+			if (_change) {
+				perspective(dr, rx, ry);
+				_drX[xf2][yf2] = dr[0];
+				_drY[xf2][yf2] = dr[1];
+			}
+
+			while (!(wallAt(xs, ys) & _side) && i < len) {
+				rx -= _tcos;
+				ry += _tsin;
+				if (_change) {
+					perspective(dr, rx, ry);
+					_drX[xf2 + _frntx][yf2 + _frnty] = dr[0];
+					_drY[xf2 + _frntx][yf2 + _frnty] = dr[1];
+				}
+
+				if (_drX[xf + _frntx][yf + _frnty] > left) {
+					_gfx->drawLine(_drX[xf2][yf2], _drY[xf2][yf2],
+					               _drX[xf2 + _frntx][yf2 + _frnty], _drY[xf2 + _frntx][yf2 + _frnty], white);
+					_gfx->drawLine(_drX[xf2 + _frntx][yf2 + _frnty], _drY[xf2 + _frntx][yf2 + _frnty],
+					               _drX[xf + _frntx][yf + _frnty], _drY[xf + _frntx][yf + _frnty], white);
+				} else {
+					j = 0;
+					xfstart = xf2;
+					yfstart = yf2;
+					xsstart = xs - _sidex;
+					ysstart = ys - _sidey;
+					rox = rx + _tcos;
+					roy = ry - _tsin;
+					cellxsave = cellx;
+					cellysave = celly;
+				}
+
+				xf2 += _frntx;
+				yf2 += _frnty;
+				xf += _frntx;
+				yf += _frnty;
+				xs += _frntx;
+				ys += _frnty;
+				cellx += _frntx;
+				celly += _frnty;
+				i++;
+				j++;
+			}
+
+			if (wallAt(xf - _sidex, yf - _sidey) & _front) {
+				_gfx->drawLine(_drX[xf2][yf2], _drY[xf2][yf2], _drX[xf2][yf2], _height - _drY[xf2][yf2], white);
+				_gfx->drawLine(_drX[xf2][yf2], _height - _drY[xf2][yf2], _drX[xf][yf], _height - _drY[xf][yf], white);
+
+				if (MIN(_drX[xf2][yf2], right) >= left) {
+					checkleft(xsstart, ysstart, xfstart, yfstart, left, MIN(right, _drX[xf2][yf2]),
+					          rox, roy, cellxsave, cellysave, j);
+				}
+			} else {
+				if (_flip)
+					_gfx->drawLine(_drX[xf][yf], 0, _drX[xf][yf], _height - _drY[xf][yf], white);
+				xestart = xf2;
+				yestart = yf2;
+
+				while (!(wallAt(xf2, yf2) & _front)) {
+					rx -= _tcos;
+					ry += _tsin;
+					cellx += _frntx;
+					celly += _frnty;
+					xf2 += _frntx;
+					yf2 += _frnty;
+					xf += _frntx;
+					yf += _frnty;
+					xs += _frntx;
+					ys += _frnty;
+					if (_change) {
+						perspective(dr, rx, ry);
+						_drX[xf2][yf2] = dr[0];
+						_drY[xf2][yf2] = dr[1];
+					}
+					if (_change) {
+						perspective(dr, rx + _tsin, ry + _tcos);
+						_drX[xf][yf] = dr[0];
+						_drY[xf][yf] = dr[1];
+					}
+					_gfx->drawLine(_drX[xf2][yf2], _drY[xf2][yf2], _drX[xf][yf], _drY[xf][yf], white);
+					i++;
+					j++;
+				}
+
+				_gfx->drawLine(_drX[xestart][yestart], _drY[xestart][yestart], _drX[xf2][yf2], _drY[xf2][yf2], white);
+				_gfx->drawLine(_drX[xf2][yf2], _drY[xf2][yf2], _drX[xf2][yf2], _height - _drY[xf2][yf2], white);
+				_gfx->drawLine(_drX[xf2][yf2], _height - _drY[xf2][yf2],
+				               _drX[xf2 + _sidex][yf2 + _sidey], _height - _drY[xf2 + _sidex][yf2 + _sidey], white);
+
+				if (MIN(_drX[xf2][yf2], right) >= left) {
+					checkleft(xsstart, ysstart, xfstart, yfstart, left, MIN(_drX[xf2][yf2], right),
+					          rox, roy, cellxsave, cellysave, j);
+				}
+			}
+		}
+	}
+}
+
+void ColonyEngine::checkright(int xs, int ys, int xf, int yf, int left, int right, int rx, int ry, int cellx, int celly, int len) {
+	int i = 0, j;
+	int xf2, yf2;
+	int rox, roy;
+	int xsstart, ysstart;
+	int xfstart, yfstart;
+	int xestart, yestart;
+	int cellxsave, cellysave;
+	int dr[2];
+	uint32 white = _gfx->white();
+
+	cellx += _sidex;
+	celly += _sidey;
+	rx = rx + _tsin;
+	ry = ry + _tcos;
+
+	while (i < len && left < right) {
+		if (wallAt(xs, ys) & _side) {
+			if (_flip)
+				_gfx->drawLine(_drX[xf][yf], 0, _drX[xf][yf], _height - _drY[xf][yf], white);
+
+			while ((wallAt(xs, ys) & _side) && i < len && left < right) {
+				_gfx->drawLine(_drX[xf][yf], _drY[xf][yf], _drX[xf][yf], _height - _drY[xf][yf], white);
+				_gfx->drawLine(_drX[xf][yf], _height - _drY[xf][yf],
+				               _drX[xf + _frntx][yf + _frnty], _height - _drY[xf + _frntx][yf + _frnty], white);
+
+				right = MIN(_drX[xf][yf], right);
+				xf += _frntx;
+				yf += _frnty;
+				xs += _frntx;
+				ys += _frnty;
+				cellx += _frntx;
+				celly += _frnty;
+				rx -= _tcos;
+				ry += _tsin;
+				i++;
+			}
+
+			if (_flip)
+				_gfx->drawLine(_drX[xf][yf], 0, _drX[xf][yf], _height - _drY[xf][yf], white);
+			_gfx->drawLine(_drX[xf][yf], _height - _drY[xf][yf], _drX[xf][yf], _drY[xf][yf], white);
+			right = MIN(_drX[xf][yf], right);
+		}
+
+		if (i < len && left < right) {
+			j = 0;
+			xf2 = xf + _sidex;
+			yf2 = yf + _sidey;
+			xfstart = xf2;
+			yfstart = yf2;
+			xsstart = xs + _sidex;
+			ysstart = ys + _sidey;
+			cellxsave = cellx;
+			cellysave = celly;
+
+			rox = rx;
+			roy = ry;
+			if (_change) {
+				perspective(dr, rx, ry);
+				_drX[xf2][yf2] = dr[0];
+				_drY[xf2][yf2] = dr[1];
+			}
+
+			while (!(wallAt(xs, ys) & _side) && i < len) {
+				rx -= _tcos;
+				ry += _tsin;
+				if (_change) {
+					perspective(dr, rx, ry);
+					_drX[xf2 + _frntx][yf2 + _frnty] = dr[0];
+					_drY[xf2 + _frntx][yf2 + _frnty] = dr[1];
+				}
+
+				if (_drX[xf + _frntx][yf + _frnty] < right) {
+					_gfx->drawLine(_drX[xf2][yf2], _drY[xf2][yf2],
+					               _drX[xf2 + _frntx][yf2 + _frnty], _drY[xf2 + _frntx][yf2 + _frnty], white);
+					_gfx->drawLine(_drX[xf2 + _frntx][yf2 + _frnty], _drY[xf2 + _frntx][yf2 + _frnty],
+					               _drX[xf + _frntx][yf + _frnty], _drY[xf + _frntx][yf + _frnty], white);
+				} else {
+					j = 0;
+					xfstart = xf2;
+					yfstart = yf2;
+					xsstart = xs + _sidex;
+					ysstart = ys + _sidey;
+					rox = rx + _tcos;
+					roy = ry - _tsin;
+					cellxsave = cellx;
+					cellysave = celly;
+				}
+
+				xf2 += _frntx;
+				yf2 += _frnty;
+				xf += _frntx;
+				yf += _frnty;
+				xs += _frntx;
+				ys += _frnty;
+				cellx += _frntx;
+				celly += _frnty;
+				i++;
+				j++;
+			}
+
+			if (wallAt(xf, yf) & _front) {
+				_gfx->drawLine(_drX[xf2][yf2], _drY[xf2][yf2], _drX[xf2][yf2], _height - _drY[xf2][yf2], white);
+				_gfx->drawLine(_drX[xf2][yf2], _height - _drY[xf2][yf2], _drX[xf][yf], _height - _drY[xf][yf], white);
+
+				if (MAX(_drX[xf2][yf2], left) < right) {
+					checkright(xsstart, ysstart, xfstart, yfstart, MAX(left, _drX[xf2][yf2]), right,
+					           rox, roy, cellxsave, cellysave, j);
+				}
+			} else {
+				if (_flip)
+					_gfx->drawLine(_drX[xf][yf], 0, _drX[xf][yf], _height - _drY[xf][yf], white);
+				xestart = xf2;
+				yestart = yf2;
+
+				while (!(wallAt(xf, yf) & _front)) {
+					rx -= _tcos;
+					ry += _tsin;
+					cellx += _frntx;
+					celly += _frnty;
+					xf2 += _frntx;
+					yf2 += _frnty;
+					xf += _frntx;
+					yf += _frnty;
+					xs += _frntx;
+					ys += _frnty;
+					if (_change) {
+						perspective(dr, rx, ry);
+						_drX[xf2][yf2] = dr[0];
+						_drY[xf2][yf2] = dr[1];
+					}
+					if (_change) {
+						perspective(dr, rx - _tsin, ry - _tcos);
+						_drX[xf][yf] = dr[0];
+						_drY[xf][yf] = dr[1];
+					}
+					_gfx->drawLine(_drX[xf2][yf2], _drY[xf2][yf2], _drX[xf][yf], _drY[xf][yf], white);
+					i++;
+					j++;
+				}
+
+				_gfx->drawLine(_drX[xestart][yestart], _drY[xestart][yestart], _drX[xf2][yf2], _drY[xf2][yf2], white);
+				_gfx->drawLine(_drX[xf2][yf2], _drY[xf2][yf2], _drX[xf2][yf2], _height - _drY[xf2][yf2], white);
+				_gfx->drawLine(_drX[xf2][yf2], _height - _drY[xf2][yf2],
+				               _drX[xf2 - _sidex][yf2 - _sidey], _height - _drY[xf2 - _sidex][yf2 - _sidey], white);
+
+				if (MAX(_drX[xf2][yf2], left) < right) {
+					checkright(xsstart, ysstart, xfstart, yfstart, MAX(_drX[xf2][yf2], left), right,
+					           rox, roy, cellxsave, cellysave, j);
+				}
+			}
+		}
+	}
+}
+
 Common::Error ColonyEngine::run() {
 	Graphics::PixelFormat format8bpp = Graphics::PixelFormat::createFormatCLUT8();
 	initGraphics(_width, _height, &format8bpp);
 
 	_width = _system->getWidth();
 	_height = _system->getHeight();
+	_centerX = _width / 2;
+	_centerY = _height / 2;
+	_screenR = Common::Rect(0, 0, _width, _height);
+	_clip = _screenR;
 	const Graphics::PixelFormat format = _system->getScreenFormat();
 	debug("Screen format: %d bytesPerPixel. Actual size: %dx%d", format.bytesPerPixel, _width, _height);
 

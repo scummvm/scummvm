@@ -120,6 +120,9 @@ private:
 	Common::Rect _screenR;
 
 	void drawend(int xstart, int ystart, int xFrontLeft, int yFrontLeft);
+	void checkleft(int xs, int ys, int xf, int yf, int left, int right, int rx, int ry, int cellx, int celly, int len);
+	void checkright(int xs, int ys, int xf, int yf, int left, int right, int rx, int ry, int cellx, int celly, int len);
+	uint8 wallAt(int x, int y) const;
 };
 
 } // End of namespace Colony
