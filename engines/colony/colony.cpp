@@ -1699,7 +1699,7 @@ bool ColonyEngine::projectWorld(int worldX, int worldY, int &screenX, int &depth
 	if (yy >= 11585)
 		yy = 11584;
 
-	screenX = _centerX + (int)((xx << 8) / yy);
+	screenX = _centerX + (int)(((int64)xx * 256) / yy);
 	depth = (int)yy;
 	return true;
 }
@@ -1819,10 +1819,10 @@ bool ColonyEngine::projectPrismPart(const Thing &obj, const PrismPartDef &part, 
 		if (yy <= 16)
 			yy = 16;
 
-		out.x[i] = _centerX + (int)((xx << 8) / yy);
+		out.x[i] = _centerX + (int)(((int64)xx * 256) / yy);
 		out.depth[i] = (int)yy;
 		const long zrel = (long)pz - kFloorShift;
-		out.y[i] = _centerY - (int)((zrel << 8) / yy);
+		out.y[i] = _centerY - (int)(((int64)zrel * 256) / yy);
 		minX = MIN(minX, out.x[i]);
 		maxX = MAX(maxX, out.x[i]);
 		minY = MIN(minY, out.y[i]);
@@ -2206,12 +2206,13 @@ bool ColonyEngine::drawStaticObjectPrisms(const Thing &obj, uint32 baseColor) {
 		{4, kMirrorPts, 1, kMirrorSurf}
 	};
 
-	Common::Rect drawClip(MAX<int>((int)obj.clip.left, (int)_screenR.left),
-	                     MAX<int>((int)obj.clip.top, (int)_screenR.top),
-	                     MIN<int>((int)obj.clip.right, (int)_screenR.right),
-	                     MIN<int>((int)obj.clip.bottom, (int)_screenR.bottom));
-	if (drawClip.left >= drawClip.right || drawClip.top >= drawClip.bottom)
+	const int clipLeft = MAX<int>((int)obj.clip.left, (int)_screenR.left);
+	const int clipTop = MAX<int>((int)obj.clip.top, (int)_screenR.top);
+	const int clipRight = MIN<int>((int)obj.clip.right, (int)_screenR.right);
+	const int clipBottom = MIN<int>((int)obj.clip.bottom, (int)_screenR.bottom);
+	if (clipLeft >= clipRight || clipTop >= clipBottom)
 		return false;
+	Common::Rect drawClip(clipLeft, clipTop, clipRight, clipBottom);
 
 	auto tint = [](uint32 base, int delta) -> uint32 {
 		return (uint32)CLIP<int>((int)base + delta, 0, 255);
@@ -2470,13 +2471,17 @@ void ColonyEngine::setRobot(int l, int r, int num) {
 		r = _screenR.right;
 	if (l >= r)
 		return;
+	const int clipLeft = l + 1;
+	const int clipRight = r - 2;
+	if (clipLeft >= clipRight)
+		return;
 
 	Thing &obj = _objects[num - 1];
 	if (!obj.alive)
 		return;
 	obj.visible = 1;
-	obj.clip.left = l + 1;
-	obj.clip.right = r - 2;
+	obj.clip.left = clipLeft;
+	obj.clip.right = clipRight;
 	obj.clip.top = _clip.top;
 	obj.clip.bottom = _clip.bottom;
 }
