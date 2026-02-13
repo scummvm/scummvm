@@ -97,9 +97,15 @@ static const int g_dirLeft[4] = {2, 0, 3, 1};
 
 enum ObjectType {
 	kObjDesk = 21,
+	kObjCChair = 23,
 	kObjBed = 24,
 	kObjTable = 25,
+	kObjCouch = 26,
+	kObjChair = 27,
+	kObjTV = 28,
 	kObjScreen = 29,
+	kObjConsole = 30,
+	kObjDrawer = 37,
 	kObjBBed = 42
 };
 
@@ -1883,6 +1889,110 @@ bool ColonyEngine::drawStaticObjectPrisms(const Thing &obj, uint32 baseColor) {
 	};
 	static const int kDeskScreenSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
 
+	static const int kCSeatPts[4][3] = {
+		{-40, 40, 60}, {40, 40, 60}, {40, -40, 60}, {-40, -40, 60}
+	};
+	static const int kCSeatSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
+	static const int kCArmLeftPts[4][3] = {
+		{-50, 40, 90}, {-40, 40, 60}, {-40, -40, 60}, {-50, -40, 90}
+	};
+	static const int kCArmLeftSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
+	static const int kCArmRightPts[4][3] = {
+		{50, 40, 90}, {40, 40, 60}, {40, -40, 60}, {50, -40, 90}
+	};
+	static const int kCArmRightSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
+	static const int kCBackPts[4][3] = {
+		{-20, 60, 150}, {20, 60, 150}, {40, 40, 60}, {-40, 40, 60}
+	};
+	static const int kCBackSurf[2][8] = {
+		{0, 4, 3, 2, 1, 0, 0, 0}, {0, 4, 0, 1, 2, 3, 0, 0}
+	};
+	static const int kCBasePts[8][3] = {
+		{-5, 5, 0}, {5, 5, 0}, {5, -5, 0}, {-5, -5, 0},
+		{-5, 5, 60}, {5, 5, 60}, {5, -5, 60}, {-5, -5, 60}
+	};
+	static const int kCBaseSurf[4][8] = {
+		{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
+		{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0}
+	};
+
+	static const int kConsolePts[8][3] = {
+		{-5, 5, 0}, {5, 5, 0}, {5, -5, 0}, {-5, -5, 0},
+		{-100, 70, 100}, {-35, 70, 140}, {-35, -70, 140}, {-100, -70, 100}
+	};
+	static const int kConsoleSurf[5][8] = {
+		{0, 4, 4, 0, 3, 7, 0, 0}, {0, 4, 7, 3, 2, 6, 0, 0},
+		{0, 4, 5, 1, 0, 4, 0, 0}, {0, 4, 6, 2, 1, 5, 0, 0},
+		{0, 4, 7, 6, 5, 4, 0, 0}
+	};
+
+	static const int kCouchSurf[5][8] = {
+		{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
+		{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0},
+		{0, 4, 7, 6, 5, 4, 0, 0}
+	};
+	static const int kACouchPts[8][3] = {
+		{-50, 150, 0}, {50, 150, 0}, {50, -150, 0}, {-50, -150, 0},
+		{-50, 150, 50}, {50, 150, 50}, {50, -150, 50}, {-50, -150, 50}
+	};
+	static const int kBCouchPts[8][3] = {
+		{-80, 150, 0}, {-45, 150, 0}, {-45, -150, 0}, {-80, -150, 0},
+		{-80, 150, 120}, {-55, 150, 120}, {-55, -150, 120}, {-80, -150, 120}
+	};
+	static const int kCCouchPts[8][3] = {
+		{-70, 170, 0}, {50, 170, 0}, {50, 150, 0}, {-70, 150, 0},
+		{-70, 170, 80}, {50, 170, 80}, {50, 150, 80}, {-70, 150, 80}
+	};
+	static const int kDCouchPts[8][3] = {
+		{-70, -150, 0}, {50, -150, 0}, {50, -170, 0}, {-70, -170, 0},
+		{-70, -150, 80}, {50, -150, 80}, {50, -170, 80}, {-70, -170, 80}
+	};
+
+	static const int kAChairPts[8][3] = {
+		{-50, 50, 0}, {50, 50, 0}, {50, -50, 0}, {-50, -50, 0},
+		{-50, 50, 50}, {50, 50, 50}, {50, -50, 50}, {-50, -50, 50}
+	};
+	static const int kBChairPts[8][3] = {
+		{-80, 50, 0}, {-45, 50, 0}, {-45, -50, 0}, {-80, -50, 0},
+		{-80, 50, 120}, {-55, 50, 120}, {-55, -50, 120}, {-80, -50, 120}
+	};
+	static const int kCChairPts2[8][3] = {
+		{-70, 70, 0}, {50, 70, 0}, {50, 50, 0}, {-70, 50, 0},
+		{-70, 70, 80}, {50, 70, 80}, {50, 50, 80}, {-70, 50, 80}
+	};
+	static const int kDChairPts[8][3] = {
+		{-70, -50, 0}, {50, -50, 0}, {50, -70, 0}, {-70, -70, 0},
+		{-70, -50, 80}, {50, -50, 80}, {50, -70, 80}, {-70, -70, 80}
+	};
+
+	static const int kTVBodyPts[8][3] = {
+		{-30, 60, 0}, {30, 60, 0}, {30, -60, 0}, {-30, -60, 0},
+		{-30, 60, 120}, {30, 60, 120}, {30, -60, 120}, {-30, -60, 120}
+	};
+	static const int kTVBodySurf[5][8] = {
+		{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
+		{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0},
+		{0, 4, 7, 6, 5, 4, 0, 0}
+	};
+	static const int kTVScreenPts[4][3] = {
+		{30, 50, 10}, {30, -50, 10}, {30, 50, 110}, {30, -50, 110}
+	};
+	static const int kTVScreenSurf[1][8] = {{0, 4, 1, 0, 2, 3, 0, 0}};
+
+	static const int kDrawerPts[8][3] = {
+		{-80, 70, 0}, {0, 70, 0}, {0, -70, 0}, {-80, -70, 0},
+		{-80, 70, 100}, {0, 70, 100}, {0, -70, 100}, {-80, -70, 100}
+	};
+	static const int kDrawerSurf[5][8] = {
+		{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
+		{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0},
+		{0, 4, 7, 6, 5, 4, 0, 0}
+	};
+	static const int kMirrorPts[4][3] = {
+		{-80, 65, 100}, {-80, -65, 100}, {-80, 65, 210}, {-80, -65, 210}
+	};
+	static const int kMirrorSurf[1][8] = {{0, 4, 1, 0, 2, 3, 0, 0}};
+
 	static const PrismPartDef kScreenPart = {8, kScreenPts, 4, kScreenSurf};
 	static const PrismPartDef kTableParts[2] = {
 		{4, kTableTopPts, 1, kTableTopSurf},
@@ -1910,6 +2020,34 @@ bool ColonyEngine::drawStaticObjectPrisms(const Thing &obj, uint32 baseColor) {
 		{8, kMonitorPts, 5, kComputerSurf},
 		{4, kDeskScreenPts, 1, kDeskScreenSurf}
 	};
+	static const PrismPartDef kCChairParts[5] = {
+		{4, kCSeatPts, 1, kCSeatSurf},
+		{4, kCArmLeftPts, 1, kCArmLeftSurf},
+		{4, kCArmRightPts, 1, kCArmRightSurf},
+		{4, kCBackPts, 2, kCBackSurf},
+		{8, kCBasePts, 4, kCBaseSurf}
+	};
+	static const PrismPartDef kConsolePart = {8, kConsolePts, 5, kConsoleSurf};
+	static const PrismPartDef kCouchParts[4] = {
+		{8, kACouchPts, 5, kCouchSurf},
+		{8, kBCouchPts, 5, kCouchSurf},
+		{8, kCCouchPts, 5, kCouchSurf},
+		{8, kDCouchPts, 5, kCouchSurf}
+	};
+	static const PrismPartDef kChairParts[4] = {
+		{8, kAChairPts, 5, kCouchSurf},
+		{8, kBChairPts, 5, kCouchSurf},
+		{8, kCChairPts2, 5, kCouchSurf},
+		{8, kDChairPts, 5, kCouchSurf}
+	};
+	static const PrismPartDef kTVParts[2] = {
+		{8, kTVBodyPts, 5, kTVBodySurf},
+		{4, kTVScreenPts, 1, kTVScreenSurf}
+	};
+	static const PrismPartDef kDrawerParts[2] = {
+		{8, kDrawerPts, 5, kDrawerSurf},
+		{4, kMirrorPts, 1, kMirrorSurf}
+	};
 
 	Common::Rect drawClip(MAX<int>((int)obj.clip.left, (int)_screenR.left),
 	                     MAX<int>((int)obj.clip.top, (int)_screenR.top),
@@ -1924,6 +2062,96 @@ bool ColonyEngine::drawStaticObjectPrisms(const Thing &obj, uint32 baseColor) {
 
 	ProjectedPrismPart p[10];
 	switch (obj.type) {
+	case kObjConsole:
+		if (!projectPrismPart(obj, kConsolePart, false, p[0]) || !p[0].visible)
+			return false;
+		drawProjectedPrism(p[0], kConsolePart, 0, tint(baseColor, 0), drawClip);
+		return true;
+	case kObjCChair:
+		for (int i = 0; i < 5; i++)
+			projectPrismPart(obj, kCChairParts[i], false, p[i]);
+		if (p[4].visible)
+			drawProjectedPrism(p[4], kCChairParts[4], 0, tint(baseColor, -10), drawClip);
+		if (!p[0].visible)
+			return p[4].visible;
+		drawProjectedPrism(p[0], kCChairParts[0], 0, tint(baseColor, 0), drawClip);
+		if (p[3].vsurface[0]) {
+			drawProjectedPrism(p[3], kCChairParts[3], 1, tint(baseColor, 0), drawClip);
+			if (p[1].vsurface[0]) {
+				drawProjectedPrism(p[1], kCChairParts[1], 1, tint(baseColor, 0), drawClip);
+				drawProjectedPrism(p[2], kCChairParts[2], 1, tint(baseColor, 0), drawClip);
+			} else {
+				drawProjectedPrism(p[2], kCChairParts[2], 1, tint(baseColor, 0), drawClip);
+				drawProjectedPrism(p[1], kCChairParts[1], 1, tint(baseColor, 0), drawClip);
+			}
+		} else {
+			if (p[1].vsurface[0]) {
+				drawProjectedPrism(p[1], kCChairParts[1], 1, tint(baseColor, 0), drawClip);
+				drawProjectedPrism(p[2], kCChairParts[2], 1, tint(baseColor, 0), drawClip);
+			} else {
+				drawProjectedPrism(p[2], kCChairParts[2], 1, tint(baseColor, 0), drawClip);
+				drawProjectedPrism(p[1], kCChairParts[1], 1, tint(baseColor, 0), drawClip);
+			}
+			drawProjectedPrism(p[3], kCChairParts[3], 1, tint(baseColor, 0), drawClip);
+		}
+		return true;
+	case kObjCouch:
+	case kObjChair: {
+		const PrismPartDef *parts = (obj.type == kObjCouch) ? kCouchParts : kChairParts;
+		for (int i = 0; i < 4; i++)
+			projectPrismPart(obj, parts[i], false, p[i]);
+		if (!p[0].visible)
+			return false;
+		if (p[2].vsurface[1] && p[3].vsurface[2]) {
+			drawProjectedPrism(p[2], parts[2], 0, tint(baseColor, -5), drawClip);
+			drawProjectedPrism(p[3], parts[3], 0, tint(baseColor, -5), drawClip);
+			if (p[0].vsurface[3]) {
+				drawProjectedPrism(p[1], parts[1], 0, tint(baseColor, -5), drawClip);
+				drawProjectedPrism(p[0], parts[0], 0, tint(baseColor, 5), drawClip);
+			} else {
+				drawProjectedPrism(p[0], parts[0], 0, tint(baseColor, 5), drawClip);
+				drawProjectedPrism(p[1], parts[1], 0, tint(baseColor, -5), drawClip);
+			}
+		} else if (p[3].vsurface[1]) {
+			drawProjectedPrism(p[2], parts[2], 0, tint(baseColor, -5), drawClip);
+			if (p[0].vsurface[3]) {
+				drawProjectedPrism(p[1], parts[1], 0, tint(baseColor, -5), drawClip);
+				drawProjectedPrism(p[0], parts[0], 0, tint(baseColor, 5), drawClip);
+			} else {
+				drawProjectedPrism(p[0], parts[0], 0, tint(baseColor, 5), drawClip);
+				drawProjectedPrism(p[1], parts[1], 0, tint(baseColor, -5), drawClip);
+			}
+			drawProjectedPrism(p[3], parts[3], 0, tint(baseColor, -5), drawClip);
+		} else {
+			drawProjectedPrism(p[3], parts[3], 0, tint(baseColor, -5), drawClip);
+			if (p[0].vsurface[3]) {
+				drawProjectedPrism(p[1], parts[1], 0, tint(baseColor, -5), drawClip);
+				drawProjectedPrism(p[0], parts[0], 0, tint(baseColor, 5), drawClip);
+			} else {
+				drawProjectedPrism(p[0], parts[0], 0, tint(baseColor, 5), drawClip);
+				drawProjectedPrism(p[1], parts[1], 0, tint(baseColor, -5), drawClip);
+			}
+			drawProjectedPrism(p[2], parts[2], 0, tint(baseColor, -5), drawClip);
+		}
+		return true;
+	}
+	case kObjTV:
+		projectPrismPart(obj, kTVParts[0], false, p[0]);
+		projectPrismPart(obj, kTVParts[1], false, p[1]);
+		if (!p[0].visible)
+			return false;
+		drawProjectedPrism(p[0], kTVParts[0], 0, tint(baseColor, 0), drawClip);
+		if (p[1].vsurface[0])
+			drawProjectedPrism(p[1], kTVParts[1], 0, tint(baseColor, 35), drawClip);
+		return true;
+	case kObjDrawer:
+		projectPrismPart(obj, kDrawerParts[0], false, p[0]);
+		projectPrismPart(obj, kDrawerParts[1], false, p[1]);
+		if (!p[0].visible)
+			return false;
+		drawProjectedPrism(p[0], kDrawerParts[0], 0, tint(baseColor, 0), drawClip);
+		drawProjectedPrism(p[1], kDrawerParts[1], 1, tint(baseColor, 30), drawClip);
+		return true;
 	case kObjScreen:
 		if (!projectPrismPart(obj, kScreenPart, false, p[0]) || !p[0].visible)
 			return false;
