@@ -46,7 +46,7 @@ public:
 	void sub_128_406(int16 unk1);
 	int16 sub_128_428();
 	int16 sub_128_446();
-	int16 sub_128_462();
+	int32 sub_128_462();
 	void sub_128_49a();
 	void sub_128_4da(int16 unk1);
 	void sub_128_50e(int16 unk3, int16 unk2, int16 unk1);
@@ -97,6 +97,7 @@ public:
 
 	void sub_129_004();
 	void sub_129_068();
+	void sub_129_123a();
 
 	void sub_138_004();
 	void sub_144_004();
@@ -105,6 +106,7 @@ private:
 	GrafPtr var_i32_0;
 	GrafPtr var_i32_4;
 	GrafPtr var_i32_8;
+	Handle var_i32_c;
 	int16 var_i16_30;
 	int16 var_i16_32;
 	int16 var_i16_34;
@@ -136,7 +138,7 @@ private:
 	int16 var_i16_68c;
 	uint32 var_i32_68e;
 	uint32 var_i32_692;
-	int32 var_i32_696;
+	byte *var_ptr_696;
 	Common::U32String var_str_69a;
 	int16 var_i16_78a;
 	int16 var_i16_79e;
@@ -182,6 +184,7 @@ private:
 	int16 var_i16_f2e;
 	Common::U32String var_str_f30;
 	int16 var_i16_1030;
+	int32 var_i32_1036;
 
 
 	// FIXME: bounds on the following are guessed! need to trace index range
@@ -197,9 +200,7 @@ private:
 	Common::Rect arr_rect_1f38[3];
 	Common::Rect arr_rect_4338;
 	int16 arr_i16_4758[6];
-	Cursor arr_curs_4dcc; // 0x44
-	Cursor arr_curs_4e10; // 0x44
-	Cursor arr_curs_51c8; // 0x44
+	Cursor arr_curs_4d88[0x2b]; // 0x44
 	Pattern arr_pat_58f4[4];
 	Pattern arr_pat_5b2c;
 	Common::Rect arr_rect_5b7c;
@@ -208,6 +209,7 @@ private:
 	Common::Rect arr_rect_5b92;
 	int16 arr_i16_5cbc[26];
 	float arr_bcd_5dbc[8];
+	byte arr_bytes_5dfc[22000]; // used for data buffering
 	BitMap arr_bmp_5dfc; // 22000, close to a screen page
 	BitMap arr_bmp_b3ec;
 	BitMap arr_bmp_109dc;
@@ -217,7 +219,9 @@ private:
 	GrafPort arr_grafport_19042;
 							// Also 109dc and 15fcc
 	Common::Rect arr_rect_1910c;
+	PicHandle arr_i32_1912c[0x54];
 	PicHandle arr_i32_192c0[0x18];
+	int32 arr_i32_19454[0x65];
 	Common::U32String arr_str_195e8[101]; // 0x20 each
 
 	Common::U32String arr_str_1a8d8[7]; // 0x66 each

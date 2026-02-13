@@ -435,6 +435,14 @@ public:
 	// changes the menu list.
 	void DrawMenuBar();
 
+	// PROCEDURE EraseRect (r: Rect);
+	// Using the patCopy pattern mode, the EraseRect procedure draws the interior of the
+	// rectangle that you specify in the r parameter with the background pattern for the current
+	// graphics port. This effectively erases the rectangle specified in the r parameter. For
+	// example, you can use EraseRect to erase the port rectangle for a window before
+	// redrawing into the window.
+	void EraseRect(const Common::Rect &r);
+
 	// PROCEDURE EraseRoundRect (r: Rect; ovalWidth,ovalHeight: Integer);
 	// Using the patCopy pattern mode, the EraseRoundRect procedure draws the interior of
 	// the rounded rectangle bounded by the rectangle that you specify in the r parameter with
@@ -490,6 +498,12 @@ public:
 	// The GetCPixel function returns the RGB of the pixel at the specified position in the current
 	// port.
 	void GetCPixel(int16 h, int16 v, RGBColor &cPix);
+
+	// FUNCTION GetIcon(iconID: INTEGER): Handle;
+	// GetIcon returns a handle to the icon having the given resource ID, reading it from the resource file
+	// if necessary. It calls the Resource Manager function GetResource('ICON ,iconID). If the
+	// resource can't be read, GetIcon returns NIL.
+	Handle GetIcon(uint16 iconID);
 
 	// PROCEDURE GetPort (VAR port: GrafPtr);
 	// The GetPort procedure returns a pointer to the current graphics port in the port
@@ -747,6 +761,7 @@ private:
 
 	void _pumpEvents();
 	void _updateScreen();
+	void _drawRect(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame);
 	void _copyBits(const BitMap &srcBits, const BitMap &mask, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, SourceMode mode, RgnHandle maskRgn);
 };
 
