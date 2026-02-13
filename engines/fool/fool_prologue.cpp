@@ -608,7 +608,7 @@ void FoolPrologue::sub_129_004() {
 			// 0x053c: SF - 0x8,D0
 			g_zbasic->openR(1, this->var_i16_1c4, 0x400, this->var_i16_2c8);
 
-			Common::Array<byte> payload = g_zbasic->read(1, this->var_i16_2ca);
+			Common::Array<byte> payload = g_zbasic->readFile(1, this->var_i16_2ca);
 			this->var_i16_2ce = Common::U32String((char *)&payload[0], this->var_i16_2ca, Common::kMacRoman);
 			g_zbasic->close(1);
 			// 0x0570: CLR.L - -0x8ee(A5)
@@ -1141,12 +1141,12 @@ void FoolPrologue::drawRainDrop() {
 
 void FoolPrologue::prologueRenderNextText() {
 	// 130:0f48
-	this->var_i16_3d2 = g_zbasic->readInt();
+	this->var_i16_3d2 = g_zbasic->readDataInt();
 	for (int i = 1; i <= this->var_i16_3d2; i++) {
 		// 130:0f56
-		this->var_i16_176 = g_zbasic->readInt();
-		this->var_i16_180 = g_zbasic->readInt();
-		this->var_str_76 = g_zbasic->readStr();
+		this->var_i16_176 = g_zbasic->readDataInt();
+		this->var_i16_180 = g_zbasic->readDataInt();
+		this->var_str_76 = g_zbasic->readDataStr();
 		this->var_i16_1ba = 1;
 		// JMP 0xfc2
 
@@ -1255,12 +1255,12 @@ void FoolPrologue::sub_131_004() {
 		this->var_i16_3da = 1;
 
 		// 131:030c
-		this->var_i16_18e = g_zbasic->readInt();
+		this->var_i16_18e = g_zbasic->readDataInt();
 		for (int i = 1; i < this->var_i16_18e; i++) {
 			// 131:031a
-			this->arr_i16_1e8[i] = g_zbasic->readInt();
-			this->arr_i16_1e8[i + 0xfb] = g_zbasic->readInt();
-			this->arr_i16_1e8[i + 0x1f6] = g_zbasic->readInt();
+			this->arr_i16_1e8[i] = g_zbasic->readDataInt();
+			this->arr_i16_1e8[i + 0xfb] = g_zbasic->readDataInt();
+			this->arr_i16_1e8[i + 0x1f6] = g_zbasic->readDataInt();
 		}
 
 		// 131:0380

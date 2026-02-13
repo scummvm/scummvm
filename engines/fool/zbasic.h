@@ -254,9 +254,12 @@ public:
 	void picture(int16 x1, int16 y1, int16 x2, int16 y2, PicHandle &src);
 	void put(int16 x, int16 y, BitMap &src, ZBasicPutMode mode);
 	void put(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &src, ZBasicPutMode mode);
-	Common::Array<byte> read(int16 fileNo, uint32 length);
-	int16 readInt();
-	Common::U32String readStr();
+	int16 readDataInt();
+	int32 readDataDblInt();
+	Common::U32String readDataStr();
+	Common::Array<byte> readFile(int16 fileNo, uint32 length);
+	uint32 readFile(int16 fileNo, byte *dest, uint32 length);
+	int32 readFileDblInt(int16 fileNo);
 	int16 rndInt(int16 max);
 	void text(uint16 font, uint16 size, uint16 face, SourceMode mode);
 	void window(int16 windowNumber, const Common::String &title, int16 x1, int16 y1, int16 x2, int16 y2, ZBasicWindowType type);

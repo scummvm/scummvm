@@ -124,6 +124,27 @@ void Toolbox::DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect) {
 	_copyBits(intermediate, mask, _port->portBits, intermediate->getBounds(), dstRect, kSrcCopy, nullptr);
 }
 
+// maybe the better way of refactoring this would be to fork the Primitives
+// object from MacWindowManager and make one that uses GrafPort as a state store?
+// as it stands, all the operations fall back to calling DrawPoint over and over again,
+// which can touch the same pixel multiple times.
+// this is a problem for all the xor blend modes.
+// we could have it so that the draw commands check a mask before drawing again, and it
+// gets reset after every op. this would be pretty inefficient; e.g. in fools errand most
+// of the time is spent drawing to the screen or to a screen-sized buffer.
+
+// steps:
+// - create intermediate surface
+// - draw to intermediate surface using MacPlotData
+// - blit to target with blitMono
+// - add to target dirty rect list
+
+void Toolbox::EraseRect(const Common::Rect &r) {
+	if (_port) {
+		_drawRect(r, _port->bkPat, kPatCopy, false);
+	}
+}
+
 void Toolbox::EraseRoundRect(const Common::Rect &r, int16 ovalWidth, int16 ovalHeight) {
 	warning("STUB: Toolbox::EraseRoundRect");
 }
@@ -136,36 +157,43 @@ void Toolbox::FillOval(const Common::Rect &r, const Pattern &pat) {
 	warning("STUB: Toolbox::FillOval");
 }
 
-void Toolbox::FillRect(const Common::Rect &r, const Pattern &pat) {
-	// maybe the better way of refactoring this would be to fork the Primitives
-	// object from MacWindowManager and make one that uses GrafPort as a state store?
-	// as it stands, all the operations fall back to calling DrawPoint over and over again,
-	// which can touch the same pixel multiple times.
-	// this is a problem for all the xor blend modes.
-	// we could have it so that the draw commands check a mask before drawing again, and it
-	// gets reset after every op. this would be pretty inefficient; e.g. in fools errand most
-	// of the time is spent drawing to the screen or to a screen-sized buffer.
-
-	// steps:
-	// - create intermediate surface
-	// - draw to intermediate surface using MacPlotData
-	// - blit to target with blitMono
-	// - add to target dirty rect list
+void Toolbox::_drawRect(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame) {
 	if (_port && _port->pnVis == 0) {
 		BitMap intermediate(new Graphics::ManagedSurface(r.width(), r.height()));
+		// special case because rect fills the entire surface
 		BitMap mask(nullptr);
+		if (frame) {
+			mask = BitMap(new Graphics::ManagedSurface(r.width(), r.height()));
+		}
+
 		Common::Point destPos(r.left, r.top);
 		Graphics::MacPatterns macpat({pat.data});
+
 		Graphics::MacPlotData pd(&(*intermediate), nullptr, &macpat, 1, destPos.x, destPos.y, _port->pnSize, _port->bkColor);
 		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
-		pm.drawFilledRect(intermediate->getBounds(), _port->fgColor, &pd);
-		// FillRect always uses patCopy
-		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, kPatCopy);
+		// For thicker outlines, the shape should be adjusted inward
+		Common::Rect destRect = intermediate->getBounds();
+		destRect.right -= _port->pnSize.x - 1;
+		destRect.bottom -= _port->pnSize.y - 1;
+
+		if (frame) {
+			pm.drawRect(destRect, _port->fgColor, &pd);
+		} else {
+			pm.drawFilledRect(destRect, _port->fgColor, &pd);
+		}
+		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, mode);
+
+		// Dirty rects check
 		if (_port->portBits == _defaultBits) {
 			_defaultWindow->addDirtyRect(dstRect);
 			_defaultWindow->setDirty(true);
 		}
+	}
+}
 
+void Toolbox::FillRect(const Common::Rect &r, const Pattern &pat) {
+	if (_port) {
+		_drawRect(r, pat, kPatCopy, false);
 	}
 }
 
@@ -194,26 +222,8 @@ void Toolbox::FrameOval(const Common::Rect &r) {
 }
 
 void Toolbox::FrameRect(const Common::Rect &r) {
-	if (_port && _port->pnVis == 0) {
-
-		BitMap intermediate(new Graphics::ManagedSurface(r.width(), r.height()));
-		BitMap mask(new Graphics::ManagedSurface(r.width(), r.height()));
-		Common::Point destPos(r.left, r.top);
-		Graphics::MacPatterns pat({_port->pnPat.data});
-
-		Graphics::MacPlotData pd(&(*intermediate), &(*mask), &pat, 1, destPos.x, destPos.y, _port->pnSize, _port->bkColor);
-		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
-		Common::Rect destRect = intermediate->getBounds();
-		destRect.right -= _port->pnSize.x - 1;
-		destRect.bottom -= _port->pnSize.y - 1;
-
-		pm.drawRect(destRect, _port->fgColor, &pd);
-
-		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, _port->pnMode);
-		if (_port->portBits == _defaultBits) {
-			_defaultWindow->addDirtyRect(dstRect);
-			_defaultWindow->setDirty(true);
-		}
+	if (_port) {
+		_drawRect(r, _port->pnPat, _port->pnMode, true);
 	}
 }
 
@@ -223,6 +233,17 @@ void Toolbox::FrameRoundRect(const Common::Rect &r, int16 ovalWidth, int16 ovalH
 
 void Toolbox::GetCPixel(int16 h, int16 v, RGBColor &cPix) {
 	warning("STUB: Toolbox::GetCPixel");
+}
+
+Handle Toolbox::GetIcon(uint16 iconID) {
+	Handle handle = this->GetResource(MKTAG('I', 'C', 'O', 'N'), iconID);
+	if (handle) {
+		return handle;
+	} else {
+		warning("Toolbox::GetIcon: failed to load ICON id %d", iconID);
+	}
+
+	return nullptr;
 }
 
 PicHandle Toolbox::GetPicture(uint16 picID) {
@@ -378,7 +399,9 @@ void Toolbox::PaintPoly(PolyHandle poly) {
 }
 
 void Toolbox::PaintRect(const Common::Rect &r) {
-	warning("STUB: Toolbox::PaintRect");
+	if (_port) {
+		_drawRect(r, _port->pnPat, _port->pnMode, false);
+	}
 }
 
 void Toolbox::PaintRoundRect(const Common::Rect &r, int16 ovalWidth, int16 ovalHeight) {

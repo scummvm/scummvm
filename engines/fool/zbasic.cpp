@@ -265,39 +265,63 @@ void ZBasic::put(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &src, ZBasicPutM
 	_toolbox->CopyBits(src, port->portBits, src->getBounds(), destRect, sm, nullptr);
 }
 
-Common::Array<byte> ZBasic::read(int16 fileNo, uint32 length) {
-	warning("STUB: ZBasic::read");
-	return Common::Array<byte>();
+int32 ZBasic::readDataDblInt() {
+	if (_dataPtr >= _dataTable.size()) {
+		warning("ZBasic::readDataDblInt: no more data left");
+		return 0;
+	}
+	Common::SharedPtr<ZBasicDatum> &el = _dataTable[_dataPtr];
+	_dataPtr++;
+	if (el->type != kDatumDBLINT) {
+		warning("ZBasic::readDataDblInt: entry %d was unexpected type %d", _dataPtr-1, el->type);
+		return 0;
+	}
+	return el->data.i32;
 }
 
-int16 ZBasic::readInt() {
+int16 ZBasic::readDataInt() {
 	if (_dataPtr >= _dataTable.size()) {
-		warning("ZBasic::readInt: no more data left");
+		warning("ZBasic::readDataInt: no more data left");
 		return 0;
 	}
 	Common::SharedPtr<ZBasicDatum> &el = _dataTable[_dataPtr];
 	_dataPtr++;
 	if (el->type != kDatumINT) {
-		warning("ZBasic::readInt: entry %d was unexpected type %d", _dataPtr-1, el->type);
+		warning("ZBasic::readDataInt: entry %d was unexpected type %d", _dataPtr-1, el->type);
 		return 0;
 	}
 	return el->data.i16;
 }
 
-Common::U32String ZBasic::readStr() {
+Common::U32String ZBasic::readDataStr() {
 	Common::U32String result;
 	if (_dataPtr >= _dataTable.size()) {
-		warning("ZBasic::readStr: no more data left");
+		warning("ZBasic::readDataStr: no more data left");
 		return result;
 	}
 	Common::SharedPtr<ZBasicDatum> &el = _dataTable[_dataPtr];
 	_dataPtr++;
 	if (el->type != kDatumSTR) {
-		warning("ZBasic::readStr: entry %d was unexpected type %d", _dataPtr-1, el->type);
+		warning("ZBasic::readDataStr: entry %d was unexpected type %d", _dataPtr-1, el->type);
 		return result;
 	}
 	result = *el->data.str;
 	return result;
+}
+
+Common::Array<byte> ZBasic::readFile(int16 fileNo, uint32 length) {
+	warning("STUB: ZBasic::readFile");
+	return Common::Array<byte>();
+}
+
+uint32 ZBasic::readFile(int16 fileNo, byte *dest, uint32 length) {
+	warning("STUB: ZBasic::readFile");
+	return length;
+}
+
+int32 ZBasic::readFileDblInt(int16 fileNo) {
+	warning("STUB: ZBasic::readFileDblInt");
+	return 0;
 }
 
 int16 ZBasic::rndInt(int16 max) {
