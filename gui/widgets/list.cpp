@@ -309,6 +309,7 @@ void ListWidget::scrollTo(int item) {
 		_currentPos = item;
 		checkBounds();
 		scrollBarRecalc();
+		markAsDirty();
 	}
 }
 
@@ -554,6 +555,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 		case Common::KEYCODE_DOWN:
 			// Down: Add next item to selection (Ctrl+Click logic without toggle)
 			if (_selectedItem < (int)_list.size() - 1) {
+				bool scrolled = false;
 				if ( g_system->getEventManager()->getModifierState() & Common::KBD_SHIFT) {
 					int newItem = _selectedItem + 1;
 					// Skip selecting Group Headers
@@ -566,6 +568,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 						else
 							markSelectedItem(_selectedItem, false);
 						_selectedItem = newItem;
+						scrolled = true;
 					}
 				} else {
 					clearSelection();
@@ -574,14 +577,19 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 					while (newItem < (int)_list.size() && !isItemSelectable(newItem)) {
 						newItem++;
 					}
-					if (newItem < (int)_list.size())
+					if (newItem < (int)_list.size()) {
 						_selectedItem = newItem;
+						scrolled = true;
+					}
 					// If dead end, restore the previous selection
 					markSelectedItem(_selectedItem, true);
 					_lastSelectionStartItem = _selectedItem;
 				}
 				if (_selectedItem < (int)_list.size() && !isItemVisible(_selectedItem))
 					scrollToCurrent();
+				// If there are no selectable items, Scroll to Bottom
+				if (!scrolled)
+					scrollTo((int)_list.size() - 1);
 			}
 			break;
 
@@ -618,6 +626,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 		case Common::KEYCODE_UP:
 			// Up: Add previous item to selection (Ctrl+Click logic without toggle)
 			if (_selectedItem > 0) {
+				bool scrolled = false;
 				if (g_system->getEventManager()->getModifierState() & Common::KBD_SHIFT) {
 					int newItem = _selectedItem - 1;
 					// Skip selecting Group Headers
@@ -630,6 +639,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 						else
 							markSelectedItem(_selectedItem, false);
 						_selectedItem = newItem;
+						scrolled = true;
 					}
 				} else {
 					clearSelection();
@@ -638,14 +648,19 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 					while (newItem >= 0 && !isItemSelectable(newItem)) {
 						newItem--;
 					}
-					if (newItem >= 0) 
+					if (newItem >= 0) {
 						_selectedItem = newItem;
+						scrolled = true;
+					}
 					// If dead end, restore the previous selection
 					markSelectedItem(_selectedItem, true);
 					_lastSelectionStartItem = _selectedItem;
 				}
 				if (_selectedItem >= 0 && !isItemVisible(_selectedItem))
 					scrollToCurrent();
+				// If there are no selectable items, Scroll to Top
+				if (!scrolled)
+					scrollTo(0);
 			}
 			break;
 
