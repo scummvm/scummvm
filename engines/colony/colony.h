@@ -78,6 +78,7 @@ public:
 	void quadrant();
 	void perspective(int pnt[2], int rox, int roy);
 	void rot_init(int x, int y);
+	int checkwall(int xnew, int ynew, Locate *pobject);
 
 private:
 	const ADGameDescription *_gameDescription;

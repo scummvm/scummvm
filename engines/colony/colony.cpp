@@ -191,6 +191,114 @@ void ColonyEngine::perspective(int pnt[2], int rox, int roy) {
 		pnt[1] = _centerY - _rtable[roy];
 }
 
+int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
+	int xind2, yind2;
+	xind2 = xnew >> 8;
+	yind2 = ynew >> 8;
+	_change = true;
+
+	if (xind2 == pobject->xindex) {
+		if (yind2 == pobject->yindex) {
+			pobject->dx = xnew - pobject->xloc;
+			pobject->dy = ynew - pobject->yloc;
+			pobject->xloc = xnew;
+			pobject->yloc = ynew;
+			return 0;
+		} else {
+			if (yind2 > pobject->yindex) {
+				if (!(_wall[pobject->xindex][yind2] & 1)) {
+					pobject->yindex = yind2;
+					pobject->xindex = xind2;
+					pobject->dx = xnew - pobject->xloc;
+					pobject->dy = ynew - pobject->yloc;
+					pobject->xloc = xnew;
+					pobject->yloc = ynew;
+					return 0;
+				} else {
+					debug("Collision South at x=%d y=%d", pobject->xindex, yind2);
+					return -1;
+				}
+			} else {
+				if (!(_wall[pobject->xindex][pobject->yindex] & 1)) {
+					pobject->yindex = yind2;
+					pobject->xindex = xind2;
+					pobject->dx = xnew - pobject->xloc;
+					pobject->dy = ynew - pobject->yloc;
+					pobject->xloc = xnew;
+					pobject->yloc = ynew;
+					return 0;
+				} else {
+					debug("Collision North at x=%d y=%d", pobject->xindex, pobject->yindex);
+					return -1;
+				}
+			}
+		}
+	} else if (yind2 == pobject->yindex) {
+		if (xind2 > pobject->xindex) {
+			if (!(_wall[xind2][pobject->yindex] & 2)) {
+				pobject->yindex = yind2;
+				pobject->xindex = xind2;
+				pobject->dx = xnew - pobject->xloc;
+				pobject->dy = ynew - pobject->yloc;
+				pobject->xloc = xnew;
+				pobject->yloc = ynew;
+				return 0;
+			} else {
+				debug("Collision East at x=%d y=%d", xind2, pobject->yindex);
+				return -1;
+			}
+		} else {
+			if (!(_wall[pobject->xindex][pobject->yindex] & 2)) {
+				pobject->yindex = yind2;
+				pobject->xindex = xind2;
+				pobject->dx = xnew - pobject->xloc;
+				pobject->dy = ynew - pobject->yloc;
+				pobject->xloc = xnew;
+				pobject->yloc = ynew;
+				return 0;
+			} else {
+				debug("Collision West at x=%d y=%d", pobject->xindex, pobject->yindex);
+				return -1;
+			}
+		}
+	} else {
+		// Diagonal
+		if (xind2 > pobject->xindex) {
+			if (yind2 > pobject->yindex) {
+				if ((_wall[pobject->xindex][yind2] & 1) || (_wall[xind2][pobject->yindex] & 2) || (_wall[xind2][yind2] & 3)) {
+					debug("Collision Diagonal SE");
+					return -1;
+				}
+			} else {
+				if ((_wall[pobject->xindex][pobject->yindex] & 1) || (_wall[xind2][yind2] & 2) || (_wall[xind2][pobject->yindex] & 3)) {
+					debug("Collision Diagonal NE");
+					return -1;
+				}
+			}
+		} else {
+			if (yind2 > pobject->yindex) {
+				if ((_wall[xind2][yind2] & 1) || (_wall[pobject->xindex][pobject->yindex] & 2) || (_wall[pobject->xindex][yind2] & 3)) {
+					debug("Collision Diagonal SW");
+					return -1;
+				}
+			} else {
+				if ((_wall[xind2][pobject->yindex] & 1) || (_wall[pobject->xindex][yind2] & 2) || (_wall[pobject->xindex][pobject->yindex] & 3)) {
+					debug("Collision Diagonal NW");
+					return -1;
+				}
+			}
+		}
+		pobject->yindex = yind2;
+		pobject->xindex = xind2;
+		pobject->dx = xnew - pobject->xloc;
+		pobject->dy = ynew - pobject->yloc;
+		pobject->xloc = xnew;
+		pobject->yloc = ynew;
+		return 0;
+	}
+	return -1;
+}
+
 void ColonyEngine::quadrant() {
 	int remain;
 	int quad;
@@ -247,33 +355,34 @@ void ColonyEngine::corridor() {
 	yFrontLeft = yfbehind + _frnty;
 	xFrontRight = xFrontLeft + _sidex;
 	yFrontRight = yFrontLeft + _sidey;
-	// cellx = _me.xindex; // Removed unused
-	// celly = _me.yindex; // Removed unused
+
+	int rox = _rox;
+	int roy = _roy;
 
 	if (_change) {
-		perspective(dr, _rox, _roy);
+		perspective(dr, rox, roy);
 		if (xfbehind >= 0 && xfbehind < 34 && yfbehind >= 0 && yfbehind < 34) {
-			_drY[xfbehind][yfbehind] = dr[1];
 			_drX[xfbehind][yfbehind] = dr[0];
+			_drY[xfbehind][yfbehind] = dr[1];
 		}
 
-		perspective(dr, _rox + _tsin, _roy + _tcos);
+		perspective(dr, rox + _tsin, roy + _tcos);
 		if (xfbehind + _sidex >= 0 && xfbehind + _sidex < 34 && yfbehind + _sidey >= 0 && yfbehind + _sidey < 34) {
-			_drY[xfbehind + _sidex][yfbehind + _sidey] = dr[1];
 			_drX[xfbehind + _sidex][yfbehind + _sidey] = dr[0];
+			_drY[xfbehind + _sidex][yfbehind + _sidey] = dr[1];
 		}
 	}
 
-	_rox -= _tcos;
-	_roy += _tsin;
+	rox -= _tcos;
+	roy += _tsin;
 
 	if (_change) {
-		perspective(dr, _rox, _roy);
+		perspective(dr, rox, roy);
 		if (xFrontLeft >= 0 && xFrontLeft < 34 && yFrontLeft >= 0 && yFrontLeft < 34) {
 			_drX[xFrontLeft][yFrontLeft] = dr[0];
 			_drY[xFrontLeft][yFrontLeft] = dr[1];
 		}
-		perspective(dr, _rox + _tsin, _roy + _tcos);
+		perspective(dr, rox + _tsin, roy + _tcos);
 		if (xFrontRight >= 0 && xFrontRight < 34 && yFrontRight >= 0 && yFrontRight < 34) {
 			_drX[xFrontRight][yFrontRight] = dr[0];
 			_drY[xFrontRight][yFrontRight] = dr[1];
@@ -291,25 +400,25 @@ void ColonyEngine::corridor() {
 	_gfx->drawLine(_drX[xfbehind + _sidex][yfbehind + _sidey], _drY[xfbehind + _sidex][yfbehind + _sidey],
 	               _drX[xfbehind + _sidex][yfbehind + _sidey], _height - _drY[xfbehind + _sidex][yfbehind + _sidey], white);
 
-	int xprevL = xfbehind;
-	int yprevL = yfbehind;
-	int xprevR = xfbehind + _sidex;
-	int yprevR = yfbehind + _sidey;
+	int xprevL = xFrontLeft;
+	int yprevL = yFrontLeft;
+	int xprevR = xFrontRight;
+	int yprevR = yFrontRight;
 
 	while (!(_wall[xFrontLeft][yFrontLeft] & _front)) {
-		_rox -= _tcos;
-		_roy += _tsin;
+		rox -= _tcos;
+		roy += _tsin;
 		xFrontLeft += _frntx;
 		yFrontLeft += _frnty;
 		xFrontRight += _frntx;
 		yFrontRight += _frnty;
 		if (_change) {
-			perspective(dr, _rox, _roy);
+			perspective(dr, rox, roy);
 			if (xFrontLeft >= 0 && xFrontLeft < 34 && yFrontLeft >= 0 && yFrontLeft < 34) {
 				_drX[xFrontLeft][yFrontLeft] = dr[0];
 				_drY[xFrontLeft][yFrontLeft] = dr[1];
 			}
-			perspective(dr, _rox + _tsin, _roy + _tcos);
+			perspective(dr, rox + _tsin, roy + _tcos);
 			if (xFrontRight >= 0 && xFrontRight < 34 && yFrontRight >= 0 && yFrontRight < 34) {
 				_drX[xFrontRight][yFrontRight] = dr[0];
 				_drY[xFrontRight][yFrontRight] = dr[1];
@@ -421,19 +530,19 @@ Common::Error ColonyEngine::run() {
 				debug("Key down: %d", event.kbd.keycode);
 				switch (event.kbd.keycode) {
 				case Common::KEYCODE_UP:
-					_me.xloc += _cost[_me.look] >> 2;
-					_me.yloc += _sint[_me.look] >> 2;
-					_me.xindex = _me.xloc >> 8;
-					_me.yindex = _me.yloc >> 8;
-					_change = true;
+				{
+					int xnew = _me.xloc + (_cost[_me.look] >> 2);
+					int ynew = _me.yloc + (_sint[_me.look] >> 2);
+					checkwall(xnew, ynew, &_me);
 					break;
+				}
 				case Common::KEYCODE_DOWN:
-					_me.xloc -= _cost[_me.look] >> 2;
-					_me.yloc -= _sint[_me.look] >> 2;
-					_me.xindex = _me.xloc >> 8;
-					_me.yindex = _me.yloc >> 8;
-					_change = true;
+				{
+					int xnew = _me.xloc - (_cost[_me.look] >> 2);
+					int ynew = _me.yloc - (_sint[_me.look] >> 2);
+					checkwall(xnew, ynew, &_me);
 					break;
+				}
 				case Common::KEYCODE_LEFT:
 					_me.look = (uint8)((int)_me.look + 8);
 					_change = true;
