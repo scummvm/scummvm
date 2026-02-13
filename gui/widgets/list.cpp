@@ -555,13 +555,12 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 		case Common::KEYCODE_DOWN:
 			// Down: Add next item to selection (Ctrl+Click logic without toggle)
 			if (_selectedItem < (int)_list.size() - 1) {
+				int newItem = _selectedItem + 1;
 				bool scrolled = false;
 				if ( g_system->getEventManager()->getModifierState() & Common::KBD_SHIFT) {
-					int newItem = _selectedItem + 1;
 					// Skip selecting Group Headers
-					while (newItem < (int)_list.size() && !isItemSelectable(newItem)) {
+					while (newItem < (int)_list.size() && !isItemSelectable(newItem))
 						newItem++;
-					}
 					if (newItem < (int)_list.size()) {
 						if (_lastSelectionStartItem < newItem)
 							markSelectedItem(newItem, true);
@@ -572,11 +571,9 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 					}
 				} else {
 					clearSelection();
-					int newItem = _selectedItem + 1;
 					// Skip selecting Group Headers
-					while (newItem < (int)_list.size() && !isItemSelectable(newItem)) {
+					while (newItem < (int)_list.size() && !isItemSelectable(newItem))
 						newItem++;
-					}
 					if (newItem < (int)_list.size()) {
 						_selectedItem = newItem;
 						scrolled = true;
@@ -626,13 +623,12 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 		case Common::KEYCODE_UP:
 			// Up: Add previous item to selection (Ctrl+Click logic without toggle)
 			if (_selectedItem > 0) {
+				int newItem = _selectedItem - 1;
 				bool scrolled = false;
 				if (g_system->getEventManager()->getModifierState() & Common::KBD_SHIFT) {
-					int newItem = _selectedItem - 1;
 					// Skip selecting Group Headers
-					while (newItem >= 0 && !isItemSelectable(newItem)) {
+					while (newItem >= 0 && !isItemSelectable(newItem))
 						newItem--;
-					}
 					if (newItem >= 0) {
 						if (_lastSelectionStartItem > newItem)
 							markSelectedItem(newItem, true);
@@ -643,11 +639,9 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 					}
 				} else {
 					clearSelection();
-					int newItem = _selectedItem - 1;
 					// Skip selecting Group Headers
-					while (newItem >= 0 && !isItemSelectable(newItem)) {
+					while (newItem >= 0 && !isItemSelectable(newItem))
 						newItem--;
-					}
 					if (newItem >= 0) {
 						_selectedItem = newItem;
 						scrolled = true;
