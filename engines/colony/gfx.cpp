@@ -69,6 +69,25 @@ void Gfx::scroll(int dx, int dy, uint32 background) {
 	tmp.free();
 }
 
+void Gfx::drawEllipse(int x, int y, int rx, int ry, uint32 color) {
+	_surface.drawEllipse(x - rx, y - ry, x + rx, y + ry, color, false);
+}
+
+void Gfx::fillEllipse(int x, int y, int rx, int ry, uint32 color) {
+	_surface.drawEllipse(x - rx, y - ry, x + rx, y + ry, color, true);
+}
+
+void Gfx::fillDitherRect(const Common::Rect &rect, uint32 color1, uint32 color2) {
+	for (int y = rect.top; y < rect.bottom; y++) {
+		for (int x = rect.left; x < rect.right; x++) {
+			if ((x + y) % 2 == 0)
+				_surface.setPixel(x, y, color1);
+			else
+				_surface.setPixel(x, y, color2);
+		}
+	}
+}
+
 void Gfx::copyToScreen() {
 	_system->copyRectToScreen(_surface.getPixels(), _surface.pitch, 0, 0, _surface.w, _surface.h);
 	_system->updateScreen();

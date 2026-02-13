@@ -213,9 +213,20 @@ Common::Error ColonyEngine::run() {
 	const Graphics::PixelFormat format = _system->getScreenFormat();
 	debug("Screen format: %d bytesPerPixel. Actual size: %dx%d", format.bytesPerPixel, _width, _height);
 
-	// Setup a grayscale palette
+	// Setup a palette with standard 16 colors followed by grayscale
 	byte pal[256 * 3];
-	for (int i = 0; i < 256; i++) {
+	static const byte ega_colors[16][3] = {
+		{0, 0, 0}, {0, 0, 170}, {0, 170, 0}, {0, 170, 170},
+		{170, 0, 0}, {170, 0, 170}, {170, 85, 0}, {170, 170, 170},
+		{85, 85, 85}, {85, 85, 255}, {85, 255, 85}, {85, 255, 255},
+		{255, 85, 85}, {255, 85, 255}, {255, 255, 85}, {255, 255, 255}
+	};
+	for (int i = 0; i < 16; i++) {
+		pal[i * 3 + 0] = ega_colors[i][0];
+		pal[i * 3 + 1] = ega_colors[i][1];
+		pal[i * 3 + 2] = ega_colors[i][2];
+	}
+	for (int i = 16; i < 256; i++) {
 		pal[i * 3 + 0] = i;
 		pal[i * 3 + 1] = i;
 		pal[i * 3 + 2] = i;
@@ -324,7 +335,7 @@ void ColonyEngine::scrollInfo() {
 	centerY += 5;
 
 	for (int i = 0; i < storyLength; i++) {
-		_gfx->drawString(font, story[i], 0, centerY + 10 * i, _gfx->white(), Graphics::kTextAlignCenter);
+		_gfx->drawString(font, story[i], 0, centerY + 10 * i, 9, Graphics::kTextAlignCenter);
 	}
 	_gfx->copyToScreen();
 

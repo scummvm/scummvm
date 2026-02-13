@@ -79,50 +79,48 @@ void ColonyEngine::drawDashboardStep1() {
 		return;
 
 	const int kFWALLType = 48;
-	const uint32 panelBg = 24;
-	const uint32 frame = 190;
-	const uint32 accent = 220;
-	const uint32 mark = 255;
-	const uint32 miniMapObj = 235;
-	const uint32 miniMapActor = 255;
 
-	_gfx->fillRect(_dashBoardRect, panelBg);
-	_gfx->drawRect(_dashBoardRect, frame);
-	if (_screenR.left > 0)
-		_gfx->drawLine(_screenR.left - 1, _screenR.top, _screenR.left - 1, _screenR.bottom - 1, mark);
+	_gfx->fillRect(_dashBoardRect, 0); // Black background underlying
+	_gfx->fillDitherRect(_dashBoardRect, 0, 15); // Dithered 50% gray background (Black/White)
+	_gfx->drawRect(_dashBoardRect, 1); // Blue outer frame
+
+	const int shiftX = MAX(1, _dashBoardRect.width() / 8);
+	const int shiftY = MAX(1, _dashBoardRect.width() / 8);
+	const Common::Rect r = _dashBoardRect;
+
+	// Bevel lines
+	_gfx->drawLine(r.left, r.top, r.left + shiftX, r.top + shiftY, 0);
+	_gfx->drawLine(r.right - 1, r.top, r.right - 1 - shiftX, r.top + shiftY, 0);
+	_gfx->drawLine(r.left, r.bottom - 1, r.left + shiftX, r.bottom - 1 - shiftY, 0);
+	_gfx->drawLine(r.right - 1, r.bottom - 1, r.right - 1 - shiftX, r.bottom - 1 - shiftY, 0);
+
+	const Common::Rect tr(r.left + shiftX, r.top + shiftY, r.right - shiftX, r.bottom - shiftY);
+	_gfx->fillDitherRect(tr, 0, 15);
+	_gfx->drawRect(tr, 0);
 
 	if (_compassRect.width() > 4 && _compassRect.height() > 4) {
 		const int cx = (_compassRect.left + _compassRect.right) >> 1;
 		const int cy = (_compassRect.top + _compassRect.bottom) >> 1;
 		const int rx = MAX(2, (_compassRect.width() - 6) >> 1);
 		const int ry = MAX(2, (_compassRect.height() - 6) >> 1);
-		const int irx = MAX(1, rx - 2);
-		const int iry = MAX(1, ry - 2);
-		auto drawEllipse = [&](int erx, int ery, uint32 color) {
-			const int segments = 48;
-			int px = cx + erx;
-			int py = cy;
-			for (int i = 1; i <= segments; i++) {
-				const double t = (6.28318530717958647692 * (double)i) / (double)segments;
-				const int x = cx + (int)((double)erx * cos(t));
-				const int y = cy + (int)((double)ery * sin(t));
-				_gfx->drawLine(px, py, x, y, color);
-				px = x;
-				py = y;
-			}
-		};
-		drawEllipse(rx, ry, frame);
-		drawEllipse(irx, iry, accent);
+
+		_gfx->fillEllipse(cx, cy, rx, ry, 15); // White background
+		_gfx->drawEllipse(cx, cy, rx, ry, 1);  // Blue frame
 
 		const int ex = cx + ((_cost[_me.look] * rx) >> 8);
 		const int ey = cy - ((_sint[_me.look] * ry) >> 8);
-		_gfx->drawLine(cx, cy, ex, ey, mark);
-		_gfx->drawLine(cx - 2, cy, cx + 2, cy, accent);
-		_gfx->drawLine(cx, cy - 2, cx, cy + 2, accent);
+		_gfx->drawLine(cx, cy, ex, ey, 0); // Black mark
+		_gfx->drawLine(cx - 2, cy, cx + 2, cy, 0);
+		_gfx->drawLine(cx, cy - 2, cx, cy + 2, 0);
 	}
 
+	if (_screenR.left > 0)
+		_gfx->drawLine(_screenR.left - 1, _screenR.top, _screenR.left - 1, _screenR.bottom - 1, 15);
+
 	if (_headsUpRect.width() > 4 && _headsUpRect.height() > 4) {
-		_gfx->drawRect(_headsUpRect, frame);
+		_gfx->fillRect(_headsUpRect, 15); // White background
+		_gfx->drawRect(_headsUpRect, 1); // Blue frame
+
 		const Common::Rect miniMapClip(_headsUpRect.left + 1, _headsUpRect.top + 1, _headsUpRect.right - 1, _headsUpRect.bottom - 1);
 		auto drawMiniMapLine = [&](int x1, int y1, int x2, int y2, uint32 color) {
 			if (clipLineToRect(x1, y1, x2, y2, miniMapClip))
@@ -158,10 +156,10 @@ void ColonyEngine::drawDashboardStep1() {
 
 		const int dx = xcorner[1] - xcorner[0];
 		const int dy = ycorner[0] - ycorner[1];
-		drawMiniMapLine(xcorner[0] - dx, ycorner[0] + dy, xcorner[1] + dx, ycorner[1] - dy, accent);
-		drawMiniMapLine(xcorner[1] + dy, ycorner[1] + dx, xcorner[2] - dy, ycorner[2] - dx, accent);
-		drawMiniMapLine(xcorner[2] + dx, ycorner[2] - dy, xcorner[3] - dx, ycorner[3] + dy, accent);
-		drawMiniMapLine(xcorner[3] - dy, ycorner[3] - dx, xcorner[0] + dy, ycorner[0] + dx, accent);
+		drawMiniMapLine(xcorner[0] - dx, ycorner[0] + dy, xcorner[1] + dx, ycorner[1] - dy, 0); // Black for walls
+		drawMiniMapLine(xcorner[1] + dy, ycorner[1] + dx, xcorner[2] - dy, ycorner[2] - dx, 0);
+		drawMiniMapLine(xcorner[2] + dx, ycorner[2] - dy, xcorner[3] - dx, ycorner[3] + dy, 0);
+		drawMiniMapLine(xcorner[3] - dy, ycorner[3] - dx, xcorner[0] + dy, ycorner[0] + dx, 0);
 
 		auto drawMarker = [&](int x, int y, int halfSize, uint32 color) {
 			const int l = MAX<int>(_headsUpRect.left + 1, x - halfSize);
@@ -190,41 +188,45 @@ void ColonyEngine::drawDashboardStep1() {
 		};
 
 		if (hasFoodAt(_me.xindex, _me.yindex))
-			drawMarker(xcorner[4], ycorner[4], 1, miniMapObj);
+			drawMarker(xcorner[4], ycorner[4], 1, 0);
 
 		if (_me.yindex > 0 && !(_wall[_me.xindex][_me.yindex] & 0x01)) {
 			if (hasFoodAt(_me.xindex, _me.yindex - 1))
-				drawMarker(xcorner[4] + dy, ycorner[4] + dx, 1, miniMapObj);
+				drawMarker(xcorner[4] + dy, ycorner[4] + dx, 1, 0);
 			if (hasRobotAt(_me.xindex, _me.yindex - 1))
-				drawMarker(xcorner[4] + dy, ycorner[4] + dx, 2, miniMapActor);
+				drawMarker(xcorner[4] + dy, ycorner[4] + dx, 2, 0);
 		}
 		if (_me.xindex > 0 && !(_wall[_me.xindex][_me.yindex] & 0x02)) {
 			if (hasFoodAt(_me.xindex - 1, _me.yindex))
-				drawMarker(xcorner[4] - dx, ycorner[4] + dy, 1, miniMapObj);
+				drawMarker(xcorner[4] - dx, ycorner[4] + dy, 1, 0);
 			if (hasRobotAt(_me.xindex - 1, _me.yindex))
-				drawMarker(xcorner[4] - dx, ycorner[4] + dy, 2, miniMapActor);
+				drawMarker(xcorner[4] - dx, ycorner[4] + dy, 2, 0);
 		}
 		if (_me.yindex < 30 && !(_wall[_me.xindex][_me.yindex + 1] & 0x01)) {
 			if (hasFoodAt(_me.xindex, _me.yindex + 1))
-				drawMarker(xcorner[4] - dy, ycorner[4] - dx, 1, miniMapObj);
+				drawMarker(xcorner[4] - dy, ycorner[4] - dx, 1, 0);
 			if (hasRobotAt(_me.xindex, _me.yindex + 1))
-				drawMarker(xcorner[4] - dy, ycorner[4] - dx, 2, miniMapActor);
+				drawMarker(xcorner[4] - dy, ycorner[4] - dx, 2, 0);
 		}
 		if (_me.xindex < 30 && !(_wall[_me.xindex + 1][_me.yindex] & 0x02)) {
 			if (hasFoodAt(_me.xindex + 1, _me.yindex))
-				drawMarker(xcorner[4] + dx, ycorner[4] - dy, 1, miniMapObj);
+				drawMarker(xcorner[4] + dx, ycorner[4] - dy, 1, 0);
 			if (hasRobotAt(_me.xindex + 1, _me.yindex))
-				drawMarker(xcorner[4] + dx, ycorner[4] - dy, 2, miniMapActor);
+				drawMarker(xcorner[4] + dx, ycorner[4] - dy, 2, 0);
 		}
 
-		drawMarker(ccenterx, ccentery, 2, mark);
-		drawMarker(ccenterx, ccentery, 1, accent);
+		// Eye icon in the center
+		const int px = MAX(4, _dashBoardRect.width() / 10);
+		const int py = MAX(2, _dashBoardRect.width() / 24);
+		_gfx->drawEllipse(ccenterx, ccentery, px, py, 0); // Outer frame
+		_gfx->fillEllipse(ccenterx, ccentery, px / 2, py, 0); // Inner pupil
 	}
 
 	if (_powerRect.width() > 4 && _powerRect.height() > 4) {
-		_gfx->drawRect(_powerRect, frame);
+		_gfx->fillRect(_powerRect, 15); // White background
+		_gfx->drawRect(_powerRect, 1); // Blue frame
 		const int barY = _powerRect.bottom - MAX(3, _powerRect.width() / 8);
-		_gfx->drawLine(_powerRect.left + 1, barY, _powerRect.right - 2, barY, accent);
+		_gfx->drawLine(_powerRect.left + 1, barY, _powerRect.right - 2, barY, 0); // Black divider
 	}
 }
 
@@ -232,7 +234,7 @@ void ColonyEngine::drawCrosshair() {
 	if (!_crosshair || _screenR.width() <= 0 || _screenR.height() <= 0)
 		return;
 
-	const uint32 color = (_weapons > 0) ? 255 : 220;
+	const uint32 color = (_weapons > 0) ? 15 : 7;
 	const int cx = _centerX;
 	const int cy = _centerY;
 	const int qx = MAX(2, _screenR.width() / 32);

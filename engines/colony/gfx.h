@@ -41,7 +41,11 @@ public:
 	
 	void drawString(const Graphics::Font *font, const Common::String &str, int x, int y, uint32 color, Graphics::TextAlign align = Graphics::kTextAlignLeft);
 	void scroll(int dx, int dy, uint32 background);
-	
+
+	void drawEllipse(int x, int y, int rx, int ry, uint32 color);
+	void fillEllipse(int x, int y, int rx, int ry, uint32 color);
+	void fillDitherRect(const Common::Rect &rect, uint32 color1, uint32 color2);
+
 	void copyToScreen();
 
 	uint32 white() { return 255; }
