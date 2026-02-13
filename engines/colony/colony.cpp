@@ -97,6 +97,7 @@ static const int g_dirLeft[4] = {2, 0, 3, 1};
 
 enum ObjectType {
 	kObjDesk = 21,
+	kObjPlant = 22,
 	kObjCChair = 23,
 	kObjBed = 24,
 	kObjTable = 25,
@@ -105,7 +106,19 @@ enum ObjectType {
 	kObjTV = 28,
 	kObjScreen = 29,
 	kObjConsole = 30,
+	kObjPowerSuit = 31,
+	kObjForkLift = 32,
+	kObjCryo = 33,
+	kObjBox1 = 34,
+	kObjBox2 = 35,
+	kObjTeleport = 36,
 	kObjDrawer = 37,
+	kObjTub = 38,
+	kObjSink = 39,
+	kObjToilet = 40,
+	kObjPToilet = 43,
+	kObjProjector = 45,
+	kObjReactor = 46,
 	kObjBBed = 42
 };
 
@@ -142,12 +155,14 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_powerRect = Common::Rect(0, 0, 0, 0);
 	
 	// DOS gameInit(): Me.ang=Me.look=32; Me.xloc=4400; Me.yloc=4400.
+	memset(&_me, 0, sizeof(_me));
 	_me.xloc = 4400;
 	_me.yloc = 4400;
 	_me.xindex = _me.xloc >> 8;
 	_me.yindex = _me.yloc >> 8;
 	_me.look = 32;
 	_me.ang = 32;
+	_me.type = MENUM;
 
 	initTrig();
 }
@@ -221,6 +236,9 @@ void ColonyEngine::loadMap(int mnum) {
 	}
 	free(buffer);
 	_level = mnum;
+	_me.type = MENUM;
+	if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
+		_robotArray[_me.xindex][_me.yindex] = MENUM;
 	debug("Successfully loaded map %d (static objects: %d)", mnum, (int)_objects.size());
 }
 
@@ -260,11 +278,28 @@ void ColonyEngine::perspective(int pnt[2], int rox, int roy) {
 		pnt[1] = _centerY - _rtable[roy];
 }
 
+int ColonyEngine::occupiedObjectAt(int x, int y, const Locate *pobject) {
+	if (x < 0 || x >= 32 || y < 0 || y >= 32)
+		return -1;
+	const int rnum = _robotArray[x][y];
+	if (rnum <= 0)
+		return 0;
+	if (pobject == &_me && rnum <= (int)_objects.size()) {
+		Thing &obj = _objects[rnum - 1];
+		if (obj.type <= BASEOBJECT)
+			obj.where.look = obj.where.ang = _me.ang + 128;
+	}
+	return rnum;
+}
+
 int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 	int xind2, yind2;
 	xind2 = xnew >> 8;
 	yind2 = ynew >> 8;
 	_change = true;
+	auto occupied = [&]() -> int {
+		return occupiedObjectAt(xind2, yind2, pobject);
+	};
 
 	if (xind2 == pobject->xindex) {
 		if (yind2 == pobject->yindex) {
@@ -274,10 +309,13 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 			pobject->yloc = ynew;
 			return 0;
 		} else {
-			if (yind2 > pobject->yindex) {
-				if (!(_wall[pobject->xindex][yind2] & 1)) {
-					pobject->yindex = yind2;
-					pobject->xindex = xind2;
+				if (yind2 > pobject->yindex) {
+					if (!(_wall[pobject->xindex][yind2] & 1)) {
+						int rnum = occupied();
+						if (rnum)
+							return rnum;
+						pobject->yindex = yind2;
+						pobject->xindex = xind2;
 					pobject->dx = xnew - pobject->xloc;
 					pobject->dy = ynew - pobject->yloc;
 					pobject->xloc = xnew;
@@ -287,10 +325,13 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 					debug("Collision South at x=%d y=%d", pobject->xindex, yind2);
 					return -1;
 				}
-			} else {
-				if (!(_wall[pobject->xindex][pobject->yindex] & 1)) {
-					pobject->yindex = yind2;
-					pobject->xindex = xind2;
+				} else {
+					if (!(_wall[pobject->xindex][pobject->yindex] & 1)) {
+						int rnum = occupied();
+						if (rnum)
+							return rnum;
+						pobject->yindex = yind2;
+						pobject->xindex = xind2;
 					pobject->dx = xnew - pobject->xloc;
 					pobject->dy = ynew - pobject->yloc;
 					pobject->xloc = xnew;
@@ -305,6 +346,9 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 	} else if (yind2 == pobject->yindex) {
 		if (xind2 > pobject->xindex) {
 			if (!(_wall[xind2][pobject->yindex] & 2)) {
+				int rnum = occupied();
+				if (rnum)
+					return rnum;
 				pobject->yindex = yind2;
 				pobject->xindex = xind2;
 				pobject->dx = xnew - pobject->xloc;
@@ -318,6 +362,9 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 			}
 		} else {
 			if (!(_wall[pobject->xindex][pobject->yindex] & 2)) {
+				int rnum = occupied();
+				if (rnum)
+					return rnum;
 				pobject->yindex = yind2;
 				pobject->xindex = xind2;
 				pobject->dx = xnew - pobject->xloc;
@@ -357,6 +404,9 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 				}
 			}
 		}
+		int rnum = occupied();
+		if (rnum)
+			return rnum;
 		pobject->yindex = yind2;
 		pobject->xindex = xind2;
 		pobject->dx = xnew - pobject->xloc;
@@ -366,6 +416,113 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 		return 0;
 	}
 	return -1;
+}
+
+void ColonyEngine::interactWithObject(int objNum) {
+	if (objNum <= 0 || objNum > (int)_objects.size())
+		return;
+
+	const Thing &obj = _objects[objNum - 1];
+	if (!obj.alive)
+		return;
+
+	const int x = CLIP<int>(obj.where.xindex, 0, 30);
+	const int y = CLIP<int>(obj.where.yindex, 0, 30);
+	const int action0 = _mapData[x][y][4][3];
+	const int action1 = _mapData[x][y][4][4];
+
+	switch (obj.type) {
+	case kObjDesk:
+		debug("CCommand: DESK action (%d, %d)", action0, action1);
+		break;
+	case kObjConsole:
+		switch (action0) {
+		case 1:
+			debug("CCommand: CONSOLE reactor");
+			break;
+		case 2:
+			debug("CCommand: CONSOLE ship controls");
+			break;
+		case 3:
+			debug("CCommand: CONSOLE security");
+			break;
+		default:
+			debug("CCommand: CONSOLE action=%d", action0);
+			break;
+		}
+		break;
+	case kObjProjector:
+		switch (action0) {
+		case 1:
+			debug("CCommand: PROJECTOR creatures");
+			break;
+		case 2:
+			debug("CCommand: PROJECTOR teleporters");
+			break;
+		default:
+			debug("CCommand: PROJECTOR action=%d", action0);
+			break;
+		}
+		break;
+	case kObjPowerSuit:
+		debug("CCommand: POWERSUIT");
+		break;
+	case kObjTeleport:
+		debug("CCommand: TELEPORT");
+		break;
+	case kObjDrawer:
+		debug("CCommand: DRAWER vanity=%d", action0);
+		break;
+	case kObjScreen:
+		debug("CCommand: SCREEN");
+		break;
+	case kObjToilet:
+	case kObjPToilet:
+		debug("CCommand: TOILET");
+		break;
+	case kObjTub:
+		debug("CCommand: TUB");
+		break;
+	case kObjSink:
+		debug("CCommand: SINK");
+		break;
+	case kObjCryo:
+		debug("CCommand: CRYO text=%d", action0);
+		break;
+	case kObjTV:
+		debug("CCommand: TV level=%d", _level);
+		break;
+	case kObjForkLift:
+	case kObjReactor:
+	case kObjBox1:
+	case kObjBox2:
+		debug("CCommand: object type %d requires forklift/reactor flow", obj.type);
+		break;
+	case kObjPlant:
+	case kObjCChair:
+	case kObjBed:
+	case kObjTable:
+	case kObjCouch:
+	case kObjChair:
+	case kObjBBed:
+		// Matches DOS CCommand where these objects are non-interactive blockers.
+		break;
+	default:
+		debug("CCommand: object type %d", obj.type);
+		break;
+	}
+}
+
+void ColonyEngine::cCommand(int xnew, int ynew, bool allowInteraction) {
+	if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
+		_robotArray[_me.xindex][_me.yindex] = 0;
+
+	const int robot = checkwall(xnew, ynew, &_me);
+	if (robot > 0 && allowInteraction)
+		interactWithObject(robot);
+
+	if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
+		_robotArray[_me.xindex][_me.yindex] = MENUM;
 }
 
 void ColonyEngine::quadrant() {
@@ -2548,23 +2705,24 @@ Common::Error ColonyEngine::run() {
 	while (!shouldQuit()) {
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_KEYDOWN) {
-				debug("Key down: %d", event.kbd.keycode);
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_UP:
-				{
-					int xnew = _me.xloc + (_cost[_me.look] >> 2);
-					int ynew = _me.yloc + (_sint[_me.look] >> 2);
-					checkwall(xnew, ynew, &_me);
-					break;
-				}
-				case Common::KEYCODE_DOWN:
-				{
-					int xnew = _me.xloc - (_cost[_me.look] >> 2);
-					int ynew = _me.yloc - (_sint[_me.look] >> 2);
-					checkwall(xnew, ynew, &_me);
-					break;
-				}
+				if (event.type == Common::EVENT_KEYDOWN) {
+					debug("Key down: %d", event.kbd.keycode);
+					const bool allowInteraction = (event.kbd.flags & Common::KBD_CTRL) == 0;
+					switch (event.kbd.keycode) {
+					case Common::KEYCODE_UP:
+					{
+						int xnew = _me.xloc + (_cost[_me.look] >> 2);
+						int ynew = _me.yloc + (_sint[_me.look] >> 2);
+						cCommand(xnew, ynew, allowInteraction);
+						break;
+					}
+					case Common::KEYCODE_DOWN:
+					{
+						int xnew = _me.xloc - (_cost[_me.look] >> 2);
+						int ynew = _me.yloc - (_sint[_me.look] >> 2);
+						cCommand(xnew, ynew, allowInteraction);
+						break;
+					}
 				case Common::KEYCODE_LEFT:
 					_me.look = (uint8)((int)_me.look + 8);
 					_change = true;

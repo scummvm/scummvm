@@ -79,6 +79,7 @@ public:
 	void perspective(int pnt[2], int rox, int roy);
 	void rot_init(int x, int y);
 	int checkwall(int xnew, int ynew, Locate *pobject);
+	void cCommand(int xnew, int ynew, bool allowInteraction);
 
 private:
 	const ADGameDescription *_gameDescription;
@@ -169,6 +170,8 @@ private:
 	void drawProjectedPrism(const ProjectedPrismPart &part, const PrismPartDef &def, int force, uint32 color, const Common::Rect &clip);
 	bool drawStaticObjectPrisms(const Thing &obj, uint32 baseColor);
 	void drawStaticObjectFallback(const Thing &obj, uint32 color, int depth, int sx);
+	int occupiedObjectAt(int x, int y, const Locate *pobject);
+	void interactWithObject(int objNum);
 	void updateViewportLayout();
 	void drawDashboardStep1();
 };
