@@ -329,6 +329,14 @@ public:
 	void pickUpSpellbook(HotSpot *hotspot);
 	void pickUpBoot(HotSpot *hotspot);
 	void pickupCondoms(HotSpot *hotspot);
+	void openEgyptMuseumDoor(HotSpot *hotspot);
+	void closeEgyptMuseumDoor(HotSpot *hotspot);
+	void pushSymbol1(HotSpot *hotspot);
+	void pushSymbol2(HotSpot *hotspot);
+	void pushSymbol3(HotSpot *hotspot);
+	void pushSymbol4(HotSpot *hotspot);
+	void pickUpHairStrand(HotSpot *hotspot);
+	void checkAllSymbols();
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);
 

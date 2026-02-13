@@ -124,6 +124,19 @@ const ActionEntry actionTable[] = {
 	{89, PICKUP, &PelrockEngine::pickUpBoot},
 	{112, PICKUP, &PelrockEngine::pickupCondoms},
 
+	// Room 29
+	{434, OPEN, &PelrockEngine::openEgyptMuseumDoor},
+	{434, CLOSE, &PelrockEngine::closeEgyptMuseumDoor},
+
+	// Room 30
+	{435, PUSH, &PelrockEngine::pushSymbol1},
+	{436, PUSH, &PelrockEngine::pushSymbol2},
+	{437, PUSH, &PelrockEngine::pushSymbol3},
+	{438, PUSH, &PelrockEngine::pushSymbol4},
+
+	// Room 38
+	{81, PICKUP, &PelrockEngine::pickUpHairStrand},
+
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
 	{WILDCARD, TALK, &PelrockEngine::noOpAction},   // Generic talk action
@@ -1041,6 +1054,70 @@ void PelrockEngine::pickupCondoms(HotSpot *hotspot) {
 	_room->addSticker(100);
 }
 
+void PelrockEngine::openEgyptMuseumDoor(HotSpot *hotspot) {
+	openDoor(hotspot, 0, 59, MASCULINE, false);
+}
+
+void PelrockEngine::closeEgyptMuseumDoor(HotSpot *hotspot) {
+	closeDoor(hotspot, 0, 59, MASCULINE, false);
+}
+
+void PelrockEngine::pushSymbol1(HotSpot *hotspot) {
+	if(_state->getFlag(FLAG_MIRA_SIMBOLO_FUERA_MUSEO) == true) {
+		byte symbolsPulled = _state->getFlag(FLAG_SYMBOLS_PUSHED);
+		debug("Current symbols pulled: %d", symbolsPulled);
+		_state->setFlag(FLAG_SYMBOLS_PUSHED, symbolsPulled | 0x1);
+		debug("New symbols pulled: %d", _state->getFlag(FLAG_SYMBOLS_PUSHED));
+		checkAllSymbols();
+	}
+}
+
+void PelrockEngine::pushSymbol2(HotSpot *hotspot) {
+	if(_state->getFlag(FLAG_MIRA_SIMBOLO_FUERA_MUSEO) == true) {
+		byte symbolsPulled = _state->getFlag(FLAG_SYMBOLS_PUSHED);
+		debug("Current symbols pulled: %d", symbolsPulled);
+		_state->setFlag(FLAG_SYMBOLS_PUSHED, symbolsPulled | 0x2);
+		debug("New symbols pulled: %d", _state->getFlag(FLAG_SYMBOLS_PUSHED));
+		checkAllSymbols();
+	}
+}
+
+void PelrockEngine::pushSymbol3(HotSpot *hotspot) {
+	if(_state->getFlag(FLAG_MIRA_SIMBOLO_FUERA_MUSEO) == true) {
+		byte symbolsPulled = _state->getFlag(FLAG_SYMBOLS_PUSHED);
+		debug("Current symbols pulled: %d", symbolsPulled);
+		_state->setFlag(FLAG_SYMBOLS_PUSHED, symbolsPulled | 0x4);
+		debug("New symbols pulled: %d", _state->getFlag(FLAG_SYMBOLS_PUSHED));
+		checkAllSymbols();
+	}
+}
+
+void PelrockEngine::pushSymbol4(HotSpot *hotspot) {
+	if(_state->getFlag(FLAG_MIRA_SIMBOLO_FUERA_MUSEO) == true) {
+		byte symbolsPulled = _state->getFlag(FLAG_SYMBOLS_PUSHED);
+		debug("Current symbols pulled: %d", symbolsPulled);
+		_state->setFlag(FLAG_SYMBOLS_PUSHED, symbolsPulled | 0x8);
+		debug("New symbols pulled: %d", _state->getFlag(FLAG_SYMBOLS_PUSHED));
+		checkAllSymbols();
+	}
+}
+
+void PelrockEngine::pickUpHairStrand(HotSpot *hotspot) {
+	checkIngredients();
+}
+
+void PelrockEngine::checkAllSymbols() {
+	byte symbolsPulled = _state->getFlag(FLAG_SYMBOLS_PUSHED);
+	debug("Checking symbols, current value: %d", symbolsPulled);
+	if(symbolsPulled == 0x0F) {
+		//Activates animation
+		_room->enableSprite(4, 100, PERSIST_TEMP);
+		_room->enableExit(0, PERSIST_BOTH);
+		_room->addSticker(61);
+		_room->addSticker(63);
+	}
+}
+
 void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 	debug("Performing action trigger: %d", actionTrigger);
 	switch (actionTrigger) {
@@ -1069,6 +1146,9 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 		break;
 	case 282:
 		_dialog->say(_res->_ingameTexts[SELORECOMIENDO]);
+		break;
+	case 327:
+		_state->setFlag(FLAG_MIRA_SIMBOLO_FUERA_MUSEO, true);
 		break;
 	}
 }

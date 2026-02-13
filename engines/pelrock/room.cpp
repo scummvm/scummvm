@@ -898,6 +898,7 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 		debug("Sprite %d: x=%d y=%d w=%d h=%d stride=%d numAnims=%d zOrder=%d extra=%d", i, sprite.x, sprite.y, sprite.w, sprite.h, sprite.stride, sprite.numAnims, sprite.zOrder, sprite.extra);
 		sprite.actionFlags = data[animOffset + 34];
 		sprite.isHotspotDisabled = data[animOffset + 38];
+		sprite.disableAfterSequence = data[animOffset + 39];
 		for (int j = 0; j < spriteChanges.size(); j++) {
 			if (spriteChanges[j].spriteIndex == sprite.index) {
 				sprite.zOrder = spriteChanges[j].zIndex;

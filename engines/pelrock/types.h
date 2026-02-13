@@ -235,6 +235,7 @@ struct Sprite {
 
 	byte actionFlags;       // 34
 	bool isHotspotDisabled; // 38
+	bool disableAfterSequence = false; // 39
 	bool isTalking = false;
 	Anim *animData;
 	int16 extra;
@@ -466,12 +467,12 @@ struct ResetEntry {
 #define FLAG_ALFRED_SABE_EGIPCIO 10
 #define FLAG_VENDEDOR_DEJA_DE_JODER 11
 #define FLAG_PARADOJA_RESUELTA 13
+#define FLAG_MIRA_SIMBOLO_FUERA_MUSEO 15
+#define FLAG_CROCODILLO_ENCENDIDO 14
 
 
 
 #define FLAG_VIAJE_A_EGIPTO 12
-#define FLAG_CROCODILLO_ENCENDIDO 14
-#define FLAG_MIRA_SIMBOLO_FUERA_MUSEO 15
 #define FLAG_PUERTA_SECRETA_ABIERTA 16
 #define FLAG_ROBA_PELO_PRINCESA 17
 #define FLAG_A_LA_CARCEL 18
@@ -514,8 +515,9 @@ struct ResetEntry {
 #define FLAG_RESPUESTAS_ACERTADAS 54
 #define FLAG_CHEAT_CODE_ENABLED 55    // 0x495F3 - enables HIJODELAGRANPUTA cheat code input
 #define FLAG_RIDDLE_PRESENTED 56
+#define FLAG_SYMBOLS_PUSHED 57
 
-const int kNumGameFlags = 57;
+const int kNumGameFlags = 58;
 
 struct GameStateData {
 	byte flags[kNumGameFlags];

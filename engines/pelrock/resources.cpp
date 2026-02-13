@@ -36,12 +36,13 @@ ResourceManager::ResourceManager(/* args */) {
 }
 
 const AlfredSpecialAnimOffset ResourceManager::alfredSpecialAnims[] = {
-	{10, 51, 102, 1, 7, 559685, 1, }, // READ BOOK
+	{10, 51, 102, 1, 7, 559685, 1,}, // READ BOOK
 	{10, 51, 102, 1, 7, 578943, 1}, // READ RECIPE
 	{3, 45, 87, 0, 7, 37000, 1}, // ELECTRIC SHOCK 1
 	{2, 82, 58, 0, 7, 53106, 20}, // ELECTRIC SHOCK 3
 	{3, 71, 110, 1, 2, 20724, 1, 62480}, // Throw
 	{14, 171, 107, 1, 7, 1556540, 1} , //crocodile
+	{12, 113, 103, 1, 7, 1583702, 1} // exit through manhole
 };
 
 ResourceManager::~ResourceManager() {
@@ -244,7 +245,11 @@ void ResourceManager::loadAlfredSpecialAnim(int numAnim, bool reverse) {
 	_currentSpecialAnim->animData = new byte[size];
 	if (anim.numBudas > 0) {
 		debug("Loading special anim with budas: numBudas=%d, totalSize %d", anim.numBudas, size);
-		mergeRleBlocks(&alfredFile, anim.offset, anim.numBudas, _currentSpecialAnim->animData);
+		byte *thisBlock = nullptr;
+		size_t blockSize = 0;
+		readUntilBuda(&alfredFile, anim.offset, thisBlock, blockSize);
+		rleDecompress(thisBlock, blockSize, 0, size, &_currentSpecialAnim->animData, false);
+		delete[] thisBlock;
 	} else {
 		alfredFile.read(_currentSpecialAnim->animData, anim.numFrames * anim.w * anim.h);
 	}
@@ -435,7 +440,7 @@ void ResourceManager::mergeRleBlocks(Common::SeekableReadStream *stream, uint32 
 		readUntilBuda(stream, stream->pos(), thisBlock, blockSize);
 		uint8_t *block_data = nullptr;
 		size_t decompressedSize = rleDecompress(thisBlock, blockSize, 0, 640 * 400, &block_data, true);
-		// debug("Decompressed block %d: %zu bytes, total %zu", i, decompressedSize, combined_size + decompressedSize);
+		debug("Decompressed block %d: %zu bytes, total %zu", i, decompressedSize, combined_size + decompressedSize);
 		if (combined_size + decompressedSize > 640 * 400) {
 			debug("Warning: decompressed data exceeds output buffer size, truncating");
 			decompressedSize = 640 * 400 - combined_size;

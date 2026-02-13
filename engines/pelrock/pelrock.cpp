@@ -157,7 +157,7 @@ void PelrockEngine::init() {
 		// setScreen(0, ALFRED_DOWN);
 		// setScreen(3, ALFRED_RIGHT);
 		// setScreen(22, ALFRED_DOWN);
-		setScreen(28, ALFRED_DOWN);
+		setScreen(30, ALFRED_DOWN);
 		// setScreen(15, ALFRED_DOWN);
 		// setScreen(2, ALFRED_LEFT);
 		// alfredState.x = 576;
@@ -1180,6 +1180,10 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 				animData.curFrame = 0;
 				animData.curLoop++;
 			} else {
+				if(sprite->disableAfterSequence) {
+					sprite->zOrder = -1;
+					return;
+				}
 				animData.curFrame = 0;
 				animData.curLoop = 0;
 				if (sprite->curAnimIndex < sprite->numAnims - 1) {
@@ -1356,7 +1360,7 @@ Exit *PelrockEngine::isExitUnder(int x, int y) {
 		Exit exit = _room->_currentRoomExits[i];
 		// Original game uses: x <= exit.x + exit.w - 1 and y <= exit.y + exit.h - 1
 		if (x >= exit.x && x <= (exit.x + exit.w - 1) &&
-			y >= exit.y && y <= (exit.y + exit.h - 1) && exit.isEnabled) {
+			y >= exit.y && y <= (exit.y + exit.h - 1) /*&& exit.isEnabled*/) {
 			return &(_room->_currentRoomExits[i]);
 		}
 	}
@@ -1813,7 +1817,18 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			_dialog->say(_res->_ingameTexts[QUIENYO]);
 			_dialog->say(_res->_ingameTexts[PINTA_BUENAPERSONA]);
 		}
-
+	case 38: {
+		int x = _alfredState.x;
+		int y = _alfredState.y;
+		_alfredState.x -= 57;
+		_alfredState.y += 2;
+		_res->loadAlfredSpecialAnim(6);
+		_alfredState.setState(ALFRED_SPECIAL_ANIM);
+		waitForSpecialAnimation();
+		_alfredState.x = x;
+		_alfredState.y = y;
+		break;
+	}
 	default:
 		break;
 	}
