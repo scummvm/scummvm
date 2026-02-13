@@ -105,11 +105,19 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_flip = false;
 	_mouseSensitivity = 1;
 	_change = true;
+	_showDashBoard = true;
 	
 	memset(_wall, 0, sizeof(_wall));
 	memset(_mapData, 0, sizeof(_mapData));
 	memset(_robotArray, 0, sizeof(_robotArray));
 	memset(_foodArray, 0, sizeof(_foodArray));
+
+	_screenR = Common::Rect(0, 0, _width, _height);
+	_clip = _screenR;
+	_dashBoardRect = Common::Rect(0, 0, 0, 0);
+	_compassRect = Common::Rect(0, 0, 0, 0);
+	_headsUpRect = Common::Rect(0, 0, 0, 0);
+	_powerRect = Common::Rect(0, 0, 0, 0);
 	
 	_me.xindex = 10;
 	_me.yindex = 10;
@@ -1615,16 +1623,102 @@ void ColonyEngine::setRobot(int l, int r, int num) {
 	obj.clip.bottom = _clip.bottom;
 }
 
+void ColonyEngine::updateViewportLayout() {
+	auto makeSafeRect = [](int left, int top, int right, int bottom) {
+		if (right < left)
+			right = left;
+		if (bottom < top)
+			bottom = top;
+		return Common::Rect(left, top, right, bottom);
+	};
+
+	int dashWidth = 0;
+	if (_showDashBoard) {
+		dashWidth = CLIP<int>(_width / 6, 72, 140);
+		if (_width - dashWidth < 160)
+			dashWidth = 0;
+	}
+
+	_screenR = makeSafeRect(dashWidth, 0, _width, _height);
+	_clip = _screenR;
+	_centerX = (_screenR.left + _screenR.right) >> 1;
+	_centerY = (_screenR.top + _screenR.bottom) >> 1;
+
+	_dashBoardRect = makeSafeRect(0, 0, dashWidth, _height);
+	if (dashWidth == 0) {
+		_compassRect = Common::Rect(0, 0, 0, 0);
+		_headsUpRect = Common::Rect(0, 0, 0, 0);
+		_powerRect = Common::Rect(0, 0, 0, 0);
+		return;
+	}
+
+	const int pad = 2;
+	const int unit = MAX(8, (dashWidth - (pad * 2)) / 4);
+	const int blockLeft = pad;
+	const int blockRight = MIN(dashWidth - pad, blockLeft + unit * 4);
+
+	const int compassBottom = _height - MAX(2, unit / 4);
+	const int compassTop = MAX(pad, compassBottom - unit * 4);
+	_compassRect = makeSafeRect(blockLeft, compassTop, blockRight, compassBottom);
+
+	const int headsUpBottom = _compassRect.top - MAX(2, unit / 4) - 4;
+	const int headsUpTop = headsUpBottom - unit * 4;
+	_headsUpRect = makeSafeRect(blockLeft, MAX(pad, headsUpTop), blockRight, MAX(pad, headsUpBottom));
+
+	_powerRect = makeSafeRect(blockLeft, pad, blockRight, _headsUpRect.top - 4);
+}
+
+void ColonyEngine::drawDashboardStep1() {
+	if (_dashBoardRect.width() <= 0 || _dashBoardRect.height() <= 0)
+		return;
+
+	const uint32 panelBg = 24;
+	const uint32 frame = 190;
+	const uint32 accent = 220;
+	const uint32 mark = 255;
+
+	_gfx->fillRect(_dashBoardRect, panelBg);
+	_gfx->drawRect(_dashBoardRect, frame);
+	if (_screenR.left > 0)
+		_gfx->drawLine(_screenR.left - 1, _screenR.top, _screenR.left - 1, _screenR.bottom - 1, mark);
+
+	if (_compassRect.width() > 4 && _compassRect.height() > 4) {
+		_gfx->drawRect(_compassRect, frame);
+		const int cx = (_compassRect.left + _compassRect.right) >> 1;
+		const int cy = (_compassRect.top + _compassRect.bottom) >> 1;
+		const int rx = MAX(2, (_compassRect.width() - 6) >> 1);
+		const int ry = MAX(2, (_compassRect.height() - 6) >> 1);
+		const int ex = cx + ((_cost[_me.look] * rx) >> 8);
+		const int ey = cy - ((_sint[_me.look] * ry) >> 8);
+		_gfx->drawLine(cx, cy, ex, ey, mark);
+		_gfx->drawLine(cx - 2, cy, cx + 2, cy, accent);
+		_gfx->drawLine(cx, cy - 2, cx, cy + 2, accent);
+	}
+
+	if (_headsUpRect.width() > 4 && _headsUpRect.height() > 4) {
+		_gfx->drawRect(_headsUpRect, frame);
+		const int cx = (_headsUpRect.left + _headsUpRect.right) >> 1;
+		const int cy = (_headsUpRect.top + _headsUpRect.bottom) >> 1;
+		const int nx = cx + ((_cost[_me.look] * 6) >> 8);
+		const int ny = cy - ((_sint[_me.look] * 6) >> 8);
+		_gfx->drawLine(cx, cy, nx, ny, mark);
+		_gfx->drawRect(Common::Rect(cx - 2, cy - 2, cx + 2, cy + 2), accent);
+	}
+
+	if (_powerRect.width() > 4 && _powerRect.height() > 4) {
+		_gfx->drawRect(_powerRect, frame);
+		const int barY = _powerRect.bottom - MAX(3, _powerRect.width() / 8);
+		_gfx->drawLine(_powerRect.left + 1, barY, _powerRect.right - 2, barY, accent);
+	}
+}
+
 Common::Error ColonyEngine::run() {
 	Graphics::PixelFormat format8bpp = Graphics::PixelFormat::createFormatCLUT8();
 	initGraphics(_width, _height, &format8bpp);
 
 	_width = _system->getWidth();
 	_height = _system->getHeight();
-	_centerX = _width / 2;
-	_centerY = _height / 2;
-	_screenR = Common::Rect(0, 0, _width, _height);
-	_clip = _screenR;
+	updateViewportLayout();
 	const Graphics::PixelFormat format = _system->getScreenFormat();
 	debug("Screen format: %d bytesPerPixel. Actual size: %dx%d", format.bytesPerPixel, _width, _height);
 
@@ -1688,14 +1782,15 @@ Common::Error ColonyEngine::run() {
 		}
 		_system->warpMouse(_width / 2, _height / 2);
 
-		_gfx->clear(_gfx->black());
-		for (uint i = 0; i < _objects.size(); i++)
-			_objects[i].visible = 0;
-		
-		corridor();
-		drawStaticObjects();
-		
-		_gfx->copyToScreen();
+			_gfx->clear(_gfx->black());
+			for (uint i = 0; i < _objects.size(); i++)
+				_objects[i].visible = 0;
+			
+			corridor();
+			drawStaticObjects();
+			drawDashboardStep1();
+			
+			_gfx->copyToScreen();
 		_system->delayMillis(10);
 	}
 

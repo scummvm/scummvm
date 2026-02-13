@@ -105,6 +105,7 @@ private:
 	bool _flip;
 	int _mouseSensitivity;
 	bool _change;
+	bool _showDashBoard;
 
 	int _frntxWall, _frntyWall;
 	int _sidexWall, _sideyWall;
@@ -118,6 +119,10 @@ private:
 
 	Common::Rect _clip;
 	Common::Rect _screenR;
+	Common::Rect _dashBoardRect;
+	Common::Rect _compassRect;
+	Common::Rect _headsUpRect;
+	Common::Rect _powerRect;
 
 	void drawend(int xstart, int ystart, int xFrontLeft, int yFrontLeft);
 	void checkleft(int xs, int ys, int xf, int yf, int left, int right, int rx, int ry, int cellx, int celly, int len);
@@ -147,6 +152,8 @@ private:
 	bool projectWorld(int worldX, int worldY, int &screenX, int &depth) const;
 	uint32 objectColor(int type) const;
 	void setRobot(int l, int r, int num);
+	void updateViewportLayout();
+	void drawDashboardStep1();
 };
 
 } // End of namespace Colony
