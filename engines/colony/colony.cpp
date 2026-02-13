@@ -95,6 +95,21 @@ enum WallFeatureType {
 static const int g_dirRight[4] = {1, 3, 0, 2};
 static const int g_dirLeft[4] = {2, 0, 3, 1};
 
+enum ObjectType {
+	kObjDesk = 21,
+	kObjBed = 24,
+	kObjTable = 25,
+	kObjScreen = 29,
+	kObjBBed = 42
+};
+
+struct ColonyEngine::PrismPartDef {
+	int pointCount;
+	const int (*points)[3];
+	int surfaceCount;
+	const int (*surfaces)[8];
+};
+
 ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst), _gameDescription(gd) {
 	_level = 0;
 	_robotNum = 0;
@@ -1547,10 +1562,485 @@ uint32 ColonyEngine::objectColor(int type) const {
 	}
 }
 
+bool ColonyEngine::isSurfaceClockwise(const ProjectedPrismPart &part, const int surface[8]) const {
+	const int n = surface[1];
+	for (int i = 2; i < n; i++) {
+		const int ia = surface[i];
+		const int ib = surface[i + 1];
+		const int ic = surface[i + 2];
+		if (ia < 0 || ia >= part.pointCount || ib < 0 || ib >= part.pointCount || ic < 0 || ic >= part.pointCount)
+			continue;
+		const long dx = part.x[ia] - part.x[ib];
+		const long dy = part.y[ia] - part.y[ib];
+		const long dxp = part.x[ic] - part.x[ib];
+		const long dyp = part.y[ic] - part.y[ib];
+		if (dx < 0) {
+			if (dy == 0) {
+				if (dyp > 0)
+					return false;
+				if (dyp < 0)
+					return true;
+			} else {
+				const long b = dy * dxp - dx * dyp;
+				if (b > 0)
+					return false;
+				if (b < 0)
+					return true;
+			}
+		} else if (dx > 0) {
+			if (dy == 0) {
+				if (dyp < 0)
+					return false;
+				if (dyp > 0)
+					return true;
+			} else {
+				const long b = dx * dyp - dy * dxp;
+				if (b < 0)
+					return false;
+				if (b > 0)
+					return true;
+			}
+		} else {
+			if (dy < 0) {
+				if (dxp > 0)
+					return true;
+				if (dxp < 0)
+					return false;
+			}
+			if (dy > 0) {
+				if (dxp < 0)
+					return true;
+				if (dxp > 0)
+					return false;
+			}
+		}
+	}
+	return false;
+}
+
+bool ColonyEngine::projectPrismPart(const Thing &obj, const PrismPartDef &part, bool useLook, ProjectedPrismPart &out) const {
+	out.pointCount = CLIP<int>(part.pointCount, 0, ProjectedPrismPart::kMaxPoints);
+	for (int i = 0; i < ProjectedPrismPart::kMaxSurfaces; i++)
+		out.vsurface[i] = false;
+	out.visible = false;
+	if (out.pointCount <= 0 || !part.points || !part.surfaces)
+		return false;
+
+	const uint8 ang = useLook ? obj.where.look : obj.where.ang;
+	const long rotCos = _cost[ang];
+	const long rotSin = _sint[ang];
+	const long viewSin = _cost[_me.look];
+	const long viewCos = _sint[_me.look];
+
+	int minX = 32000;
+	int maxX = -32000;
+	int minY = 32000;
+	int maxY = -32000;
+	// DOS InitObj() applies: Robot[i][j].pnt[k][2] -= Floor, with Floor == 160.
+	// We keep source geometry unmodified and apply the same offset at projection time.
+	static const int kFloorShift = 160;
+	for (int i = 0; i < out.pointCount; i++) {
+		const int px = part.points[i][0];
+		const int py = part.points[i][1];
+		const int pz = part.points[i][2];
+		const long rx = ((long)px * rotCos - (long)py * rotSin) >> 7;
+		const long ry = ((long)px * rotSin + (long)py * rotCos) >> 7;
+		const long worldX = rx + obj.where.xloc;
+		const long worldY = ry + obj.where.yloc;
+
+		const long tx = worldX - _me.xloc;
+		const long ty = worldY - _me.yloc;
+		const long xx = (tx * viewCos - ty * viewSin) >> 7;
+		long yy = (tx * viewSin + ty * viewCos) >> 7;
+		if (yy <= 16)
+			yy = 16;
+
+		out.x[i] = _centerX + (int)((xx << 8) / yy);
+		out.depth[i] = (int)yy;
+		const long zrel = (long)pz - kFloorShift;
+		out.y[i] = _centerY - (int)((zrel << 8) / yy);
+		minX = MIN(minX, out.x[i]);
+		maxX = MAX(maxX, out.x[i]);
+		minY = MIN(minY, out.y[i]);
+		maxY = MAX(maxY, out.y[i]);
+	}
+
+	out.visible = !(maxX < _screenR.left || minX >= _screenR.right || maxY < _screenR.top || minY >= _screenR.bottom);
+	if (!out.visible)
+		return false;
+
+	const int surfCount = CLIP<int>(part.surfaceCount, 0, ProjectedPrismPart::kMaxSurfaces);
+	for (int i = 0; i < surfCount; i++)
+		out.vsurface[i] = isSurfaceClockwise(out, part.surfaces[i]);
+	return true;
+}
+
+bool ColonyEngine::clipLineToRect(int &x1, int &y1, int &x2, int &y2, const Common::Rect &clip) const {
+	if (clip.left >= clip.right || clip.top >= clip.bottom)
+		return false;
+	const int l = clip.left;
+	const int r = clip.right - 1;
+	const int t = clip.top;
+	const int b = clip.bottom - 1;
+	auto outCode = [&](int x, int y) {
+		int code = 0;
+		if (x < l)
+			code |= 1;
+		else if (x > r)
+			code |= 2;
+		if (y < t)
+			code |= 4;
+		else if (y > b)
+			code |= 8;
+		return code;
+	};
+
+	int c1 = outCode(x1, y1);
+	int c2 = outCode(x2, y2);
+	while (true) {
+		if ((c1 | c2) == 0)
+			return true;
+		if (c1 & c2)
+			return false;
+
+		const int cOut = c1 ? c1 : c2;
+		int x = 0;
+		int y = 0;
+		if (cOut & 8) {
+			if (y2 == y1)
+				return false;
+			x = x1 + (x2 - x1) * (b - y1) / (y2 - y1);
+			y = b;
+		} else if (cOut & 4) {
+			if (y2 == y1)
+				return false;
+			x = x1 + (x2 - x1) * (t - y1) / (y2 - y1);
+			y = t;
+		} else if (cOut & 2) {
+			if (x2 == x1)
+				return false;
+			y = y1 + (y2 - y1) * (r - x1) / (x2 - x1);
+			x = r;
+		} else {
+			if (x2 == x1)
+				return false;
+			y = y1 + (y2 - y1) * (l - x1) / (x2 - x1);
+			x = l;
+		}
+
+		if (cOut == c1) {
+			x1 = x;
+			y1 = y;
+			c1 = outCode(x1, y1);
+		} else {
+			x2 = x;
+			y2 = y;
+			c2 = outCode(x2, y2);
+		}
+	}
+}
+
+void ColonyEngine::drawProjectedPrism(const ProjectedPrismPart &part, const PrismPartDef &def, int force, uint32 color, const Common::Rect &clip) {
+	const int surfCount = CLIP<int>(def.surfaceCount, 0, ProjectedPrismPart::kMaxSurfaces);
+	for (int i = 0; i < surfCount; i++) {
+		if (!(part.vsurface[i] || force))
+			continue;
+		const int n = def.surfaces[i][1];
+		if (n < 2)
+			continue;
+		int first = def.surfaces[i][2];
+		if (first < 0 || first >= part.pointCount)
+			continue;
+		int prev = first;
+		for (int j = 1; j < n; j++) {
+			const int cur = def.surfaces[i][j + 2];
+			if (cur < 0 || cur >= part.pointCount)
+				continue;
+			int x1 = part.x[prev];
+			int y1 = part.y[prev];
+			int x2 = part.x[cur];
+			int y2 = part.y[cur];
+			if (clipLineToRect(x1, y1, x2, y2, clip))
+				_gfx->drawLine(x1, y1, x2, y2, color);
+			prev = cur;
+		}
+		int x1 = part.x[prev];
+		int y1 = part.y[prev];
+		int x2 = part.x[first];
+		int y2 = part.y[first];
+		if (clipLineToRect(x1, y1, x2, y2, clip))
+			_gfx->drawLine(x1, y1, x2, y2, color);
+	}
+}
+
+bool ColonyEngine::drawStaticObjectPrisms(const Thing &obj, uint32 baseColor) {
+	// DOS object geometry from SCREEN.H / TABLE.H / BED.H / DESK.H.
+	static const int kScreenPts[8][3] = {
+		{-16, 64, 0}, {16, 64, 0}, {16, -64, 0}, {-16, -64, 0},
+		{-16, 64, 288}, {16, 64, 288}, {16, -64, 288}, {-16, -64, 288}
+	};
+	static const int kScreenSurf[4][8] = {
+		{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
+		{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0}
+	};
+
+	static const int kTableTopPts[4][3] = {
+		{-128, 128, 100}, {128, 128, 100}, {128, -128, 100}, {-128, -128, 100}
+	};
+	static const int kTableTopSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
+	static const int kTableBasePts[8][3] = {
+		{-5, 5, 0}, {5, 5, 0}, {5, -5, 0}, {-5, -5, 0},
+		{-5, 5, 100}, {5, 5, 100}, {5, -5, 100}, {-5, -5, 100}
+	};
+	static const int kTableBaseSurf[4][8] = {
+		{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
+		{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0}
+	};
+
+	static const int kBedPostPts[4][3] = {
+		{-82, 128, 100}, {82, 128, 100}, {82, 128, 0}, {-82, 128, 0}
+	};
+	static const int kBBedPostPts[4][3] = {
+		{-130, 128, 100}, {130, 128, 100}, {130, 128, 0}, {-130, 128, 0}
+	};
+	static const int kBedPostSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
+	static const int kBlanketSurf[4][8] = {
+		{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
+		{0, 4, 2, 1, 5, 6, 0, 0}, {0, 4, 7, 6, 5, 4, 0, 0}
+	};
+	static const int kSheetSurf[3][8] = {
+		{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0},
+		{0, 4, 7, 6, 5, 4, 0, 0}
+	};
+	static const int kBedBlanketPts[8][3] = {
+		{-80, 70, 0}, {80, 70, 0}, {80, -175, 0}, {-80, -175, 0},
+		{-80, 70, 60}, {80, 70, 60}, {80, -175, 60}, {-80, -175, 60}
+	};
+	static const int kBedSheetPts[8][3] = {
+		{-80, 128, 30}, {80, 128, 30}, {80, 70, 30}, {-80, 70, 30},
+		{-80, 128, 60}, {80, 128, 60}, {80, 70, 60}, {-80, 70, 60}
+	};
+	static const int kBBedBlanketPts[8][3] = {
+		{-128, 70, 0}, {128, 70, 0}, {128, -175, 0}, {-128, -175, 0},
+		{-128, 70, 60}, {128, 70, 60}, {128, -175, 60}, {-128, -175, 60}
+	};
+	static const int kBBedSheetPts[8][3] = {
+		{-128, 128, 30}, {128, 128, 30}, {128, 70, 30}, {-128, 70, 30},
+		{-128, 128, 60}, {128, 128, 60}, {128, 70, 60}, {-128, 70, 60}
+	};
+
+	static const int kDeskTopPts[4][3] = {
+		{-150, 110, 100}, {150, 110, 100}, {150, -110, 100}, {-150, -110, 100}
+	};
+	static const int kDeskTopSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
+	static const int kDeskLeftPts[8][3] = {
+		{-135, 95, 0}, {-55, 95, 0}, {-55, -95, 0}, {-135, -95, 0},
+		{-135, 95, 100}, {-55, 95, 100}, {-55, -95, 100}, {-135, -95, 100}
+	};
+	static const int kDeskRightPts[8][3] = {
+		{55, 95, 0}, {135, 95, 0}, {135, -95, 0}, {55, -95, 0},
+		{55, 95, 100}, {135, 95, 100}, {135, -95, 100}, {55, -95, 100}
+	};
+	static const int kDeskCabSurf[4][8] = {
+		{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
+		{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0}
+	};
+	static const int kSeatPts[4][3] = {
+		{-40, 210, 60}, {40, 210, 60}, {40, 115, 60}, {-40, 115, 60}
+	};
+	static const int kSeatSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
+	static const int kArmLeftPts[4][3] = {
+		{-40, 210, 90}, {-40, 210, 0}, {-40, 115, 0}, {-40, 115, 90}
+	};
+	static const int kArmRightPts[4][3] = {
+		{40, 210, 90}, {40, 210, 0}, {40, 115, 0}, {40, 115, 90}
+	};
+	static const int kArmSurf[2][8] = {
+		{0, 4, 3, 2, 1, 0, 0, 0}, {0, 4, 0, 1, 2, 3, 0, 0}
+	};
+	static const int kBackPts[4][3] = {
+		{-40, 210, 130}, {40, 210, 130}, {40, 210, 70}, {-40, 210, 70}
+	};
+	static const int kBackSurf[2][8] = {
+		{0, 4, 3, 2, 1, 0, 0, 0}, {0, 4, 0, 1, 2, 3, 0, 0}
+	};
+	static const int kComputerPts[8][3] = {
+		{70, 25, 100}, {120, 25, 100}, {120, -25, 100}, {70, -25, 100},
+		{70, 25, 120}, {120, 25, 120}, {120, -25, 120}, {70, -25, 120}
+	};
+	static const int kMonitorPts[8][3] = {
+		{75, 20, 120}, {115, 20, 120}, {115, -20, 120}, {75, -20, 120},
+		{75, 20, 155}, {115, 20, 155}, {115, -20, 145}, {75, -20, 145}
+	};
+	static const int kComputerSurf[5][8] = {
+		{0, 4, 7, 6, 5, 4, 0, 0}, {0, 4, 0, 3, 7, 4, 0, 0},
+		{0, 4, 3, 2, 6, 7, 0, 0}, {0, 4, 1, 0, 4, 5, 0, 0},
+		{0, 4, 2, 1, 5, 6, 0, 0}
+	};
+	static const int kDeskScreenPts[4][3] = {
+		{80, 20, 125}, {110, 20, 125}, {110, 20, 150}, {80, 20, 150}
+	};
+	static const int kDeskScreenSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
+
+	static const PrismPartDef kScreenPart = {8, kScreenPts, 4, kScreenSurf};
+	static const PrismPartDef kTableParts[2] = {
+		{4, kTableTopPts, 1, kTableTopSurf},
+		{8, kTableBasePts, 4, kTableBaseSurf}
+	};
+	static const PrismPartDef kBedParts[3] = {
+		{4, kBedPostPts, 1, kBedPostSurf},
+		{8, kBedBlanketPts, 4, kBlanketSurf},
+		{8, kBedSheetPts, 3, kSheetSurf}
+	};
+	static const PrismPartDef kBBedParts[3] = {
+		{4, kBBedPostPts, 1, kBedPostSurf},
+		{8, kBBedBlanketPts, 4, kBlanketSurf},
+		{8, kBBedSheetPts, 3, kSheetSurf}
+	};
+	static const PrismPartDef kDeskParts[10] = {
+		{4, kDeskTopPts, 1, kDeskTopSurf},
+		{8, kDeskLeftPts, 4, kDeskCabSurf},
+		{8, kDeskRightPts, 4, kDeskCabSurf},
+		{4, kSeatPts, 1, kSeatSurf},
+		{4, kArmLeftPts, 2, kArmSurf},
+		{4, kArmRightPts, 2, kArmSurf},
+		{4, kBackPts, 2, kBackSurf},
+		{8, kComputerPts, 5, kComputerSurf},
+		{8, kMonitorPts, 5, kComputerSurf},
+		{4, kDeskScreenPts, 1, kDeskScreenSurf}
+	};
+
+	Common::Rect drawClip(MAX<int>((int)obj.clip.left, (int)_screenR.left),
+	                     MAX<int>((int)obj.clip.top, (int)_screenR.top),
+	                     MIN<int>((int)obj.clip.right, (int)_screenR.right),
+	                     MIN<int>((int)obj.clip.bottom, (int)_screenR.bottom));
+	if (drawClip.left >= drawClip.right || drawClip.top >= drawClip.bottom)
+		return false;
+
+	auto tint = [](uint32 base, int delta) -> uint32 {
+		return (uint32)CLIP<int>((int)base + delta, 0, 255);
+	};
+
+	ProjectedPrismPart p[10];
+	switch (obj.type) {
+	case kObjScreen:
+		if (!projectPrismPart(obj, kScreenPart, false, p[0]) || !p[0].visible)
+			return false;
+		drawProjectedPrism(p[0], kScreenPart, 0, tint(baseColor, 0), drawClip);
+		return true;
+	case kObjTable:
+		projectPrismPart(obj, kTableParts[0], false, p[0]);
+		projectPrismPart(obj, kTableParts[1], false, p[1]);
+		if (!p[1].visible)
+			return false;
+		drawProjectedPrism(p[1], kTableParts[1], 0, tint(baseColor, -10), drawClip);
+		drawProjectedPrism(p[0], kTableParts[0], 0, tint(baseColor, 20), drawClip);
+		return true;
+	case kObjBed:
+	case kObjBBed: {
+		const PrismPartDef *parts = (obj.type == kObjBBed) ? kBBedParts : kBedParts;
+		projectPrismPart(obj, parts[0], false, p[0]);
+		projectPrismPart(obj, parts[1], false, p[1]);
+		projectPrismPart(obj, parts[2], false, p[2]);
+		if (!p[1].visible)
+			return false;
+		if (p[0].vsurface[0]) {
+			drawProjectedPrism(p[0], parts[0], 1, tint(baseColor, 15), drawClip);
+			drawProjectedPrism(p[2], parts[2], 0, tint(baseColor, 5), drawClip);
+			drawProjectedPrism(p[1], parts[1], 0, tint(baseColor, -10), drawClip);
+		} else {
+			drawProjectedPrism(p[1], parts[1], 0, tint(baseColor, -10), drawClip);
+			drawProjectedPrism(p[2], parts[2], 0, tint(baseColor, 5), drawClip);
+			drawProjectedPrism(p[0], parts[0], 1, tint(baseColor, 15), drawClip);
+		}
+		return true;
+	}
+	case kObjDesk:
+		for (int i = 0; i < 10; i++)
+			projectPrismPart(obj, kDeskParts[i], false, p[i]);
+		if (!p[0].visible)
+			return false;
+		if (p[6].vsurface[1]) {
+			if (p[1].vsurface[3] || p[2].vsurface[3]) {
+				drawProjectedPrism(p[1], kDeskParts[1], 0, tint(baseColor, -15), drawClip);
+				drawProjectedPrism(p[2], kDeskParts[2], 0, tint(baseColor, -15), drawClip);
+			} else {
+				drawProjectedPrism(p[2], kDeskParts[2], 0, tint(baseColor, -15), drawClip);
+				drawProjectedPrism(p[1], kDeskParts[1], 0, tint(baseColor, -15), drawClip);
+			}
+			drawProjectedPrism(p[0], kDeskParts[0], 0, tint(baseColor, 15), drawClip);
+			drawProjectedPrism(p[7], kDeskParts[7], 0, tint(baseColor, 25), drawClip);
+			drawProjectedPrism(p[8], kDeskParts[8], 0, tint(baseColor, 25), drawClip);
+			if (p[9].vsurface[0])
+				drawProjectedPrism(p[9], kDeskParts[9], 0, tint(baseColor, 40), drawClip);
+			if (p[4].vsurface[0]) {
+				drawProjectedPrism(p[4], kDeskParts[4], 0, tint(baseColor, -5), drawClip);
+				drawProjectedPrism(p[3], kDeskParts[3], 0, tint(baseColor, -5), drawClip);
+				drawProjectedPrism(p[6], kDeskParts[6], 0, tint(baseColor, -5), drawClip);
+				drawProjectedPrism(p[5], kDeskParts[5], 0, tint(baseColor, -5), drawClip);
+			} else {
+				drawProjectedPrism(p[5], kDeskParts[5], 0, tint(baseColor, -5), drawClip);
+				drawProjectedPrism(p[3], kDeskParts[3], 0, tint(baseColor, -5), drawClip);
+				drawProjectedPrism(p[6], kDeskParts[6], 0, tint(baseColor, -5), drawClip);
+				drawProjectedPrism(p[4], kDeskParts[4], 0, tint(baseColor, -5), drawClip);
+			}
+		} else {
+			if (p[4].vsurface[0]) {
+				drawProjectedPrism(p[4], kDeskParts[4], 0, tint(baseColor, -5), drawClip);
+				drawProjectedPrism(p[3], kDeskParts[3], 0, tint(baseColor, -5), drawClip);
+				drawProjectedPrism(p[6], kDeskParts[6], 0, tint(baseColor, -5), drawClip);
+				drawProjectedPrism(p[5], kDeskParts[5], 0, tint(baseColor, -5), drawClip);
+			} else {
+				drawProjectedPrism(p[5], kDeskParts[5], 0, tint(baseColor, -5), drawClip);
+				drawProjectedPrism(p[3], kDeskParts[3], 0, tint(baseColor, -5), drawClip);
+				drawProjectedPrism(p[6], kDeskParts[6], 0, tint(baseColor, -5), drawClip);
+				drawProjectedPrism(p[4], kDeskParts[4], 0, tint(baseColor, -5), drawClip);
+			}
+			if (p[1].vsurface[3] || p[2].vsurface[3]) {
+				drawProjectedPrism(p[1], kDeskParts[1], 0, tint(baseColor, -15), drawClip);
+				drawProjectedPrism(p[2], kDeskParts[2], 0, tint(baseColor, -15), drawClip);
+			} else {
+				drawProjectedPrism(p[2], kDeskParts[2], 0, tint(baseColor, -15), drawClip);
+				drawProjectedPrism(p[1], kDeskParts[1], 0, tint(baseColor, -15), drawClip);
+			}
+			drawProjectedPrism(p[0], kDeskParts[0], 0, tint(baseColor, 15), drawClip);
+			drawProjectedPrism(p[7], kDeskParts[7], 0, tint(baseColor, 25), drawClip);
+			drawProjectedPrism(p[8], kDeskParts[8], 0, tint(baseColor, 25), drawClip);
+			if (p[9].vsurface[0])
+				drawProjectedPrism(p[9], kDeskParts[9], 0, tint(baseColor, 40), drawClip);
+		}
+		return true;
+	default:
+		return false;
+	}
+}
+
+void ColonyEngine::drawStaticObjectFallback(const Thing &obj, uint32 color, int depth, int sx) {
+	int scale = _rtable[depth];
+	int baseY = _height - (_centerY - scale);
+	int h = CLIP<int>(scale, 4, 96);
+	int w = CLIP<int>(h >> 1, 3, 64);
+	Common::Rect body(sx - w, baseY - h, sx + w, baseY);
+	const int bodyLeft = (int)body.left;
+	const int bodyTop = (int)body.top;
+	const int bodyRight = (int)body.right;
+	const int bodyBottom = (int)body.bottom;
+	const int clipLeft = MAX(bodyLeft, MAX((int)obj.clip.left, (int)_screenR.left));
+	const int clipTop = MAX(bodyTop, MAX((int)obj.clip.top, (int)_screenR.top));
+	const int clipRight = MIN(bodyRight, MIN((int)obj.clip.right, (int)_screenR.right));
+	const int clipBottom = MIN(bodyBottom, MIN((int)obj.clip.bottom, (int)_screenR.bottom));
+	if (clipLeft >= clipRight || clipTop >= clipBottom)
+		return;
+	Common::Rect clipped(clipLeft, clipTop, clipRight, clipBottom);
+	_gfx->drawRect(clipped, color);
+	_gfx->drawLine(clipped.left, clipped.bottom - 1, clipped.right - 1, clipped.bottom - 1, color);
+}
+
 void ColonyEngine::drawStaticObjects() {
 	struct DrawCmd {
 		int depth;
 		int index;
+		int screenX;
 	};
 
 	Common::Array<DrawCmd> drawList;
@@ -1568,6 +2058,7 @@ void ColonyEngine::drawStaticObjects() {
 		DrawCmd cmd;
 		cmd.depth = depth;
 		cmd.index = (int)i;
+		cmd.screenX = sx;
 		drawList.push_back(cmd);
 	}
 
@@ -1578,29 +2069,9 @@ void ColonyEngine::drawStaticObjects() {
 	for (uint i = 0; i < drawList.size(); i++) {
 		const DrawCmd &d = drawList[i];
 		const Thing &obj = _objects[d.index];
-		int sx, depth;
-		if (!projectWorld(obj.where.xloc, obj.where.yloc, sx, depth))
-			continue;
-		int scale = _rtable[d.depth];
-		int baseY = _height - (_centerY - scale);
-		int h = CLIP<int>(scale, 4, 96);
-		int w = CLIP<int>(h >> 1, 3, 64);
-		Common::Rect body(sx - w, baseY - h, sx + w, baseY);
-		const int bodyLeft = (int)body.left;
-		const int bodyTop = (int)body.top;
-		const int bodyRight = (int)body.right;
-		const int bodyBottom = (int)body.bottom;
-		const int clipLeft = MAX(bodyLeft, MAX((int)obj.clip.left, (int)_screenR.left));
-		const int clipTop = MAX(bodyTop, MAX((int)obj.clip.top, (int)_screenR.top));
-		const int clipRight = MIN(bodyRight, MIN((int)obj.clip.right, (int)_screenR.right));
-		const int clipBottom = MIN(bodyBottom, MIN((int)obj.clip.bottom, (int)_screenR.bottom));
-		if (clipLeft >= clipRight || clipTop >= clipBottom)
-			continue;
-		Common::Rect clipped(clipLeft, clipTop, clipRight, clipBottom);
-
-		uint32 color = objectColor(obj.type);
-		_gfx->drawRect(clipped, color);
-		_gfx->drawLine(clipped.left, clipped.bottom - 1, clipped.right - 1, clipped.bottom - 1, color);
+		const uint32 color = objectColor(obj.type);
+		if (!drawStaticObjectPrisms(obj, color))
+			drawStaticObjectFallback(obj, color, d.depth, d.screenX);
 	}
 }
 

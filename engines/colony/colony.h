@@ -152,6 +152,23 @@ private:
 	bool projectWorld(int worldX, int worldY, int &screenX, int &depth) const;
 	uint32 objectColor(int type) const;
 	void setRobot(int l, int r, int num);
+	struct ProjectedPrismPart {
+		static const int kMaxPoints = 8;
+		static const int kMaxSurfaces = 8;
+		int pointCount;
+		int x[kMaxPoints];
+		int y[kMaxPoints];
+		int depth[kMaxPoints];
+		bool vsurface[kMaxSurfaces];
+		bool visible;
+	};
+	struct PrismPartDef;
+	bool projectPrismPart(const Thing &obj, const PrismPartDef &part, bool useLook, ProjectedPrismPart &out) const;
+	bool isSurfaceClockwise(const ProjectedPrismPart &part, const int surface[8]) const;
+	bool clipLineToRect(int &x1, int &y1, int &x2, int &y2, const Common::Rect &clip) const;
+	void drawProjectedPrism(const ProjectedPrismPart &part, const PrismPartDef &def, int force, uint32 color, const Common::Rect &clip);
+	bool drawStaticObjectPrisms(const Thing &obj, uint32 baseColor);
+	void drawStaticObjectFallback(const Thing &obj, uint32 color, int depth, int sx);
 	void updateViewportLayout();
 	void drawDashboardStep1();
 };
