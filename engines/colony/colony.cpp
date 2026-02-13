@@ -31,6 +31,9 @@
 #include "engines/util.h"
 #include "graphics/palette.h"
 #include "graphics/paletteman.h"
+#include "graphics/fontman.h"
+#include "graphics/font.h"
+#include "graphics/fonts/dosfont.h"
 #include <math.h>
 
 namespace Colony {
@@ -221,6 +224,8 @@ Common::Error ColonyEngine::run() {
 
 	_gfx = new Gfx(_system, _width, _height);
 	
+	scrollInfo();
+
 	loadMap(1); // Try to load the first map
 	_system->lockMouse(true);
 	_system->warpMouse(_centerX, _centerY);
@@ -290,6 +295,68 @@ Common::Error ColonyEngine::run() {
 
 	delete _gfx;
 	return Common::kNoError;
+}
+
+void ColonyEngine::scrollInfo() {
+	const char *story[] = {
+		"Mankind has left the",
+		"cradle of earth and",
+		"is beginning to eye",
+		"the galaxy. He has",
+		"begun to colonize",
+		"distant planets but has",
+		"yet to meet any alien",
+		"life forms.",
+		"****",
+		"Until now...",
+		"****",
+		"Press any key to begin",
+		"the Adventure..."
+	};
+	const int storyLength = ARRAYSIZE(story);
+
+	_gfx->clear(_gfx->black());
+	Graphics::DosFont dosFont;
+	const Graphics::Font *font = &dosFont;
+
+	int centerY = _height / 2;
+	centerY -= (storyLength * 10) / 2;
+	centerY += 5;
+
+	for (int i = 0; i < storyLength; i++) {
+		_gfx->drawString(font, story[i], 0, centerY + 10 * i, _gfx->white(), Graphics::kTextAlignCenter);
+	}
+	_gfx->copyToScreen();
+
+	// Wait for keypress
+	Common::Event event;
+	bool pressed = false;
+	while (!pressed && !shouldQuit()) {
+		while (_system->getEventManager()->pollEvent(event)) {
+			if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONDOWN) {
+				pressed = true;
+				break;
+			}
+		}
+		_system->delayMillis(10);
+	}
+
+	if (shouldQuit()) return;
+
+	// Scroll up
+	for (int i = 0; i < _height; i += 8) {
+		_gfx->scroll(0, -8, _gfx->black());
+		_gfx->copyToScreen();
+		_system->delayMillis(10);
+		
+		// Allow skipping scroll
+		while (_system->getEventManager()->pollEvent(event)) {
+			if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONDOWN) {
+				return;
+			}
+		}
+		if (shouldQuit()) return;
+	}
 }
 
 } // End of namespace Colony

@@ -20,7 +20,9 @@
  */
 
 #include "common/system.h"
+#include "common/util.h"
 #include "colony/gfx.h"
+#include "graphics/font.h"
 
 namespace Colony {
 
@@ -46,6 +48,25 @@ void Gfx::drawRect(const Common::Rect &rect, uint32 color) {
 
 void Gfx::fillRect(const Common::Rect &rect, uint32 color) {
 	_surface.fillRect(rect, color);
+}
+
+void Gfx::drawString(const Graphics::Font *font, const Common::String &str, int x, int y, uint32 color, Graphics::TextAlign align) {
+	font->drawString(&_surface, str, x, y, (align == Graphics::kTextAlignCenter && x == 0) ? _width : (_width - x), color, align);
+}
+
+void Gfx::scroll(int dx, int dy, uint32 background) {
+	if (abs(dx) >= _width || abs(dy) >= _height) {
+		clear(background);
+		return;
+	}
+
+	Graphics::ManagedSurface tmp;
+	tmp.create(_width, _height, _surface.format);
+	tmp.blitFrom(_surface);
+
+	clear(background);
+	_surface.blitFrom(tmp, Common::Rect(0, 0, _width, _height), Common::Rect(dx, dy, dx + _width, dy + _height));
+	tmp.free();
 }
 
 void Gfx::copyToScreen() {

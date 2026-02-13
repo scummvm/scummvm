@@ -131,6 +131,7 @@ public:
 	void rot_init(int x, int y);
 	int checkwall(int xnew, int ynew, Locate *pobject);
 	void cCommand(int xnew, int ynew, bool allowInteraction);
+	void scrollInfo();
 
 private:
 	const ADGameDescription *_gameDescription;

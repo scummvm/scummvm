@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "common/rect.h"
 #include "graphics/managed_surface.h"
+#include "graphics/font.h"
 
 namespace Colony {
 
@@ -37,6 +38,9 @@ public:
 	void drawLine(int x1, int y1, int x2, int y2, uint32 color);
 	void drawRect(const Common::Rect &rect, uint32 color);
 	void fillRect(const Common::Rect &rect, uint32 color);
+	
+	void drawString(const Graphics::Font *font, const Common::String &str, int x, int y, uint32 color, Graphics::TextAlign align = Graphics::kTextAlignLeft);
+	void scroll(int dx, int dy, uint32 background);
 	
 	void copyToScreen();
 
