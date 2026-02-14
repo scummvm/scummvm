@@ -215,9 +215,9 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 
 		_screen->transBlitFrom(s, s.getRect(), Common::Point(xPos, yPos), 255);
 		drawPos(_screen, xPos, yPos, speakerId);
-		drawRect(_screen, xPos, yPos,
-				 s.getRect().width(),
-				 s.getRect().height(), speakerId);
+		// drawRect(_screen, xPos, yPos,
+		// 		 s.getRect().width(),
+		// 		 s.getRect().height(), speakerId);
 		// Present to screen
 		_screen->markAllDirty();
 		_screen->update();

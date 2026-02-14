@@ -77,7 +77,7 @@ void syncHotSpot(Common::Serializer &s, HotSpot &hotspot) {
 	s.syncAsSint16LE(hotspot.w);
 	s.syncAsSint16LE(hotspot.h);
 	s.syncAsByte(hotspot.actionFlags);
-	s.syncAsByte(hotspot.extra);
+	s.syncAsSint16LE(hotspot.extra);
 	s.syncAsByte((byte &)hotspot.isEnabled);
 	s.syncAsByte((byte &)hotspot.isSprite);
 	s.syncAsByte(hotspot.zOrder);

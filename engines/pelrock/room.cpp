@@ -472,7 +472,7 @@ Common::Array<HotSpot> RoomManager::loadHotspots(byte *data, size_t size) {
 			// if the hotspot has been changed, load the changed version
 			for (int j = 0; j < g_engine->_state->roomHotSpotChanges[_currentRoomNumber].size(); j++) {
 				if (g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspotIndex == spot.innerIndex) {
-					debug("Hotspot %d has been changed, loading changed version, Hotspot x=%d, y = %d, extra = %d", spot.innerIndex, g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot.x, g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot.y, g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot.extra);
+					debug("Hotspot %d has been changed, loading changed version, Hotspot x=%d, y = %d, extra = %d, isEnabled=%d", spot.innerIndex, g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot.x, g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot.y, g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot.extra, g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot.isEnabled);
 					hotspots.push_back(g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot);
 					isChanged = true;
 					break;

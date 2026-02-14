@@ -110,7 +110,7 @@ bool MenuManager::selectInventoryItem(int i) {
 
 	_selectedInvIndex = g_engine->_state->inventoryItems[_curInventoryPage * 4 + i];
 	_menuText = _inventoryDescriptions[_selectedInvIndex];
-	_sound->playSound(inventorySounds[_selectedInvIndex], 100, 0);
+	_sound->playSound(inventorySounds[_selectedInvIndex], 0);
 	g_engine->_state->selectedInventoryItem = _selectedInvIndex;
 	debug("Selected inventory item %d", _selectedInvIndex);
 	return true;

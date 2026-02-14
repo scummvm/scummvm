@@ -49,26 +49,26 @@ SoundManager::~SoundManager() {
 	stopMusic();
 }
 
-void SoundManager::playSound(byte index, int volume, int channel) {
+void SoundManager::playSound(byte index, int channel) {
 	// debug("Playing sound index %d (%s)", index, SOUND_FILENAMES[index]);
 	auto it = _soundMap.find(SOUND_FILENAMES[index]);
 	if (it != _soundMap.end()) {
-		playSound(it->_value, volume);
+		playSound(it->_value);
 	} else {
 		debug("Sound file %s not found in sound map", SOUND_FILENAMES[index]);
 	}
 }
 
-void SoundManager::playSound(const char *filename, int volume, int channel) {
+void SoundManager::playSound(const char *filename, int channel) {
 	auto it = _soundMap.find(filename);
 	if (it != _soundMap.end()) {
-		playSound(it->_value, volume);
+		playSound(it->_value);
 	} else {
 		debug("Sound file %s not found in sound map", filename);
 	}
 }
 
-void SoundManager::playSound(SonidoFile sound, int volume, int channel) {
+void SoundManager::playSound(SonidoFile sound, int channel) {
 	Common::File sonidosFile;
 	if (!sonidosFile.open(Common::Path("SONIDOS.DAT"))) {
 		debug("Failed to open SONIDOS.DAT");
@@ -117,15 +117,15 @@ void SoundManager::playSound(SonidoFile sound, int volume, int channel) {
 				_mixer->stopHandle(_sfxHandles[channel]);
 			}
 		}
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], stream, -1, volume, 0, DisposeAfterUse::YES);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], stream, -1, 255U, 0, DisposeAfterUse::YES);
 	}
 }
 
-void SoundManager::playSound(byte *soundData, uint32 size, int volume) {
+void SoundManager::playSound(byte *soundData, uint32 size) {
 	Audio::AudioStream *stream = Audio::makeRawStream(soundData, size, 11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 	if (stream) {
 		int channel = findFreeChannel();
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], stream, -1, volume, 0, DisposeAfterUse::YES);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], stream, -1, 255U, 0, DisposeAfterUse::YES);
 	}
 }
 

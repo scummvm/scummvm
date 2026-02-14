@@ -137,6 +137,10 @@ const ActionEntry actionTable[] = {
 	// Room 38
 	{81, PICKUP, &PelrockEngine::pickUpHairStrand},
 
+	// Room 31
+	{462, OPEN, &PelrockEngine::openJailFloorTile},
+	// Room 32
+	{473, OPEN, &PelrockEngine::openTunnelDrawer},
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
 	{WILDCARD, TALK, &PelrockEngine::noOpAction},   // Generic talk action
@@ -467,7 +471,13 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_state->setFlag(FLAG_PARADOJA_RESUELTA, 1);
 		_state->setCurrentRoot(room, 1);
 		break;
-
+	case 292:
+		_state->setCurrentRoot(room, rootIndex + 1);
+		break;
+	case 293:
+		_room->disableHotspot(_room->findHotspotByExtra(451)); // Disable talk hotspot for the riddle
+		_state->setCurrentRoot(room, rootIndex + 1);
+		break;
 	default:
 		debug("Got actionTrigger %d in dialogActionTrigger, but no handler defined", actionTrigger);
 		break;
@@ -956,7 +966,7 @@ void PelrockEngine::usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot) {
 	_alfredState.x -= 10;
 	_alfredState.y += 20;
 	waitForSpecialAnimation();
-	_sound->playSound(_room->_roomSfx[0], 100, 0); // Belch
+	_sound->playSound(_room->_roomSfx[0], 0); // Belch
 	bool isPlaying = true;
 	while (!shouldQuit() && isPlaying) {
 		_events->pollEvent();
@@ -1102,10 +1112,6 @@ void PelrockEngine::pushSymbol4(HotSpot *hotspot) {
 	}
 }
 
-void PelrockEngine::pickUpHairStrand(HotSpot *hotspot) {
-	checkIngredients();
-}
-
 void PelrockEngine::checkAllSymbols() {
 	byte symbolsPulled = _state->getFlag(FLAG_SYMBOLS_PUSHED);
 	debug("Checking symbols, current value: %d", symbolsPulled);
@@ -1117,6 +1123,24 @@ void PelrockEngine::checkAllSymbols() {
 		_room->addSticker(61);
 		_room->addSticker(63);
 	}
+}
+
+void PelrockEngine::pickUpHairStrand(HotSpot *hotspot) {
+	checkIngredients();
+}
+
+void PelrockEngine::openJailFloorTile(HotSpot *hotspot) {
+	if (_room->hasSticker(77)) {
+		_dialog->say(_res->_ingameTexts[YA_ABIERTO_M]);
+		return;
+	}
+	_room->enableExit(0, PERSIST_BOTH);
+	_room->addSticker(77, PERSIST_BOTH);
+}
+
+void PelrockEngine::openTunnelDrawer(HotSpot *hotspot) {
+	_room->addSticker(78, PERSIST_BOTH);
+	_room->disableHotspot(hotspot);
 }
 
 void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
@@ -1151,6 +1175,10 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 	case 327:
 		_state->setFlag(FLAG_MIRA_SIMBOLO_FUERA_MUSEO, true);
 		break;
+	case 294:
+		HotSpot *floorTile = _room->findHotspotByExtra(462);
+		floorTile->actionFlags = ACTION_MASK_OPEN;
+		_room->changeHotSpot(*floorTile);
 	}
 }
 
@@ -1459,7 +1487,7 @@ void PelrockEngine::antiPiracyEffect() {
 	}
 
 	// Play the noise
-	_sound->playSound(noiseData, kNoiseLength + 44, 200);
+	_sound->playSound(noiseData, kNoiseLength + 44);
 
 	byte *screenPixels = (byte *)_screen->getPixels();
 	int screenSize = _screen->pitch * _screen->h;
@@ -1488,7 +1516,7 @@ void PelrockEngine::antiPiracyEffect() {
 			}
 		}
 		if (!_sound->isPlaying()) {
-			_sound->playSound(noiseData, kNoiseLength + 44, 200);
+			_sound->playSound(noiseData, kNoiseLength + 44);
 		}
 
 		_screen->markAllDirty();

@@ -338,9 +338,10 @@ const uint16_t description_offsets[NUM_DESCRIPTIONS] = {
 	0x039E, // Object 14: Titulo: El sistema inmunologico de los cefalopodos (v.I)
 	0x0412, // Object 15: Titulo: Dos y dos son 5
 	0x0493, // Object 16: Titulo: La parte creativa
-	0x057B, // Object 17: Titulo: 10 maneras de preparar fideos chinos
-	0x065C, // Object 18: Titulo: Los Peces Gato del Rio Tajo
-	0x06D8, // Object 19: Titulo: Gato por liebre
+	0x057B, // Object 17: Titulo: Aprenda egipcio en 10 dias
+	0x065C, // Object 18: Titulo: Gato por liebre
+	0x06D8, // Object 19: Titulo: Enrique de Ofterdingeng
+
 	0x0753, // Object 20: Titulo: Hiper-cocina para solteros
 	0x07CE, // Object 21: Titulo: El camaleon humano
 	0x084E, // Object 22: Titulo: Psiquiatria Avanzada (vol. 8)
@@ -379,29 +380,30 @@ const uint16_t description_offsets[NUM_DESCRIPTIONS] = {
 	0x185D, // Object 55: Titulo: Los Heraldos Negros
 	0x18D1, // Object 56: Titulo: La Piedra Rosetta
 	0x194A, // Object 57: Titulo: Fabulas de Ciencia Ficcion
-	0x19C3, // Object 58: Titulo: Elogio de la pereza
-	0x1A35, // Object 59: Un pequeño altavoz
-	0x1A52, // Object 60: Un altavoz mediano
-	0x1A70, // Object 61: Un altavoz grande
-	0x1A8C, // Object 62: Un extintor
-	0x1AA3, // Object 63: Parece un extintor, pero es un termo de cafe. De los de antes, de los grandes
-	0x1B2D, // Object 64: Un termo con cafe
-	0x1B53, // Object 65: Una cafetera expres para una taza
-	0x1B8D, // Object 66: La tarjeta de acceso de Erika
-	0x1BBE, // Object 67: Billetes de avion para salir por patas hacia Valencia
-	0x1C26, // Object 68: Una bolsa de patatas fritas
-	0x1C52, // Object 69: Llave de la habitacion de Lucy
-	0x1C82, // Object 70: Llave de la habitacion de Erika
-	0x1CB3, // Object 71: Un ordenador de sobremesa
-	0x1CE1, // Object 72: Un cuadro
-	0x1CF9, // Object 73: Una moto mega-retuneada
-	0x1D24, // Object 74: Una lamparita
-	0x1D3F, // Object 75: Un libro gordo
-	0x1D5C, // Object 76: Un libro finito
-	0x1D7A, // Object 77: Un poco de escayola vieja
-	0x1DA3, // Object 78: Un cacho de ladrillo
-	0x1DCC, // Object 79: Un boligrafo
-	0x1DE5, // Object 80: Un radiocasete < --- aqui
+	0x19C3, // Object 58: Titulo: La musica amansa a las fieras
+
+	0x1A35, // Object 59: Un libro de recetas magicas
+	0x1A52, // Object 60: Un bote de tomate
+	0x1A70, // Object 61: Un bote de mostaza
+	0x1A8C, // Object 62: Salsa ultra-picante
+	0x1AA3, // Object 63: Receta de las hamburguesas de McDowells
+	0x1B2D, // Object 64: Un papiro con una inscripcion jeroglifica
+	0x1B53, // Object 65: Una guitarra española
+	0x1B8D, // Object 66: Un pez disecado
+	0x1BBE, // Object 67: Un osito de peluche
+	0x1C26, // Object 68: Unos discos antiguos
+	0x1C52, // Object 69: Un cerebro de mono
+	0x1C82, // Object 70: Novelas del salvaje oeste
+	0x1CB3, // Object 71: Una paleta
+	0x1CE1, // Object 72: Caramelos de todos los sabores
+	0x1CF9, // Object 73: Una caracola
+	0x1D24, // Object 74: Un sombrero
+	0x1D3F, // Object 75: 150000 pesetas
+	0x1D5C, // Object 76: Una calabaza para meter agua dentro
+	0x1D7A, // Object 77: Henna roja para el pelo
+	0x1DA3, // Object 78: Piramides de recuerdo
+	0x1DCC, // Object 79: Un chupa-chup de higo chumbo
+	0x1DE5, // Object 80: Un amuleto egipcio
 	0x1E00, // Object 81: El pelo de una princesa egipcia
 	0x1E49, // Object 82: Un mogollon de pasta
 	0x1E6B, // Object 83: Una replica de Elvis

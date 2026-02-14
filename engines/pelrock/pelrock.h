@@ -336,6 +336,8 @@ public:
 	void pushSymbol3(HotSpot *hotspot);
 	void pushSymbol4(HotSpot *hotspot);
 	void pickUpHairStrand(HotSpot *hotspot);
+	void openJailFloorTile(HotSpot *hotspot);
+	void openTunnelDrawer(HotSpot *hotspot);
 	void checkAllSymbols();
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);

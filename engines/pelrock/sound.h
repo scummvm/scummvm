@@ -157,9 +157,9 @@ class SoundManager {
 public:
 	SoundManager(Audio::Mixer *mixer);
 	~SoundManager();
-	void playSound(byte index, int volume = 128, int channel = -1);
-	void playSound(const char *filename, int volume, int channel);
-	void playSound(byte *soundData, uint32 size, int volume = 128);
+	void playSound(byte index, int channel = -1);
+	void playSound(const char *filename, int channel);
+	void playSound(byte *soundData, uint32 size);
 	void stopAllSounds();
 	void stopSound(int channel);
 	void stopMusic();
@@ -182,7 +182,7 @@ public:
 	int tickAmbientSound(uint32 frameCount);
 
 private:
-	void playSound(SonidoFile sound, int volume = 255, int channel = -1);
+	void playSound(SonidoFile sound, int channel = -1);
 	SoundFormat detectFormat(byte *data, uint32 size);
 	int getSampleRate(byte *data, SoundFormat format);
 	int findFreeChannel();
@@ -196,6 +196,7 @@ private:
 	Audio::SoundHandle _musicHandle;
 	Audio::SoundHandle _sfxHandles[kMaxChannels];
 	Common::HashMap<Common::String, SonidoFile> _soundMap;
+
 };
 
 } // End of namespace Pelrock
