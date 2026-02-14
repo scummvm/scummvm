@@ -21,6 +21,7 @@
 
 #include "colony/colony.h"
 #include "colony/gfx.h"
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/system.h"
 #include "common/util.h"
@@ -90,6 +91,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_hasKeycard = false;
 	_unlocked = false;
 	_weapons = 0;
+	_wireframe = true;
 	
 	memset(_wall, 0, sizeof(_wall));
 	memset(_mapData, 0, sizeof(_mapData));
@@ -212,8 +214,13 @@ void ColonyEngine::initTrig() {
 }
 
 Common::Error ColonyEngine::run() {
-	Graphics::PixelFormat format8bpp = Graphics::PixelFormat::createFormatCLUT8();
-	initGraphics(_width, _height, &format8bpp);
+	Common::String renderer = "opengl"; //ConfMan.get("renderer");
+	if (renderer == "software") {
+		Graphics::PixelFormat format8bpp = Graphics::PixelFormat::createFormatCLUT8();
+		initGraphics(_width, _height, &format8bpp);
+	} else {
+		initGraphics3d(_width, _height);
+	}
 
 	_width = _system->getWidth();
 	_height = _system->getHeight();
@@ -239,9 +246,12 @@ Common::Error ColonyEngine::run() {
 		pal[i * 3 + 1] = i;
 		pal[i * 3 + 2] = i;
 	}
-	_system->getPaletteManager()->setPalette(pal, 0, 256);
-
+	if (renderer == "software") {
+		_system->getPaletteManager()->setPalette(pal, 0, 256);
+	}
 	_gfx = new Gfx(_system, _width, _height);
+	_gfx->setPalette(pal, 0, 256);
+	_gfx->setWireframe(_wireframe);
 	
 	scrollInfo();
 
@@ -279,9 +289,8 @@ Common::Error ColonyEngine::run() {
 						_change = true;
 						break;
 					case Common::KEYCODE_F7:
-						_showDashBoard = !_showDashBoard;
-						updateViewportLayout();
-						_system->warpMouse(_centerX, _centerY);
+						_wireframe = !_wireframe;
+						_gfx->setWireframe(_wireframe);
 						_change = true;
 						break;
 					default:
@@ -295,6 +304,12 @@ Common::Error ColonyEngine::run() {
 					_me.look = (uint8)((int)_me.look - (event.relMouse.x / 2));
 					_change = true;
 				}
+				if (event.relMouse.y != 0) {
+					// Add/Subtract based on standard vertical look (pull back to look up)
+					// Mouse down is positive rel Y.
+					_me.lookY = (int8)CLIP<int>((int)_me.lookY - (event.relMouse.y / 2), -64, 64);
+					_change = true;
+				}
 			}
 		}
 		_system->warpMouse(_centerX, _centerY);
@@ -304,7 +319,9 @@ Common::Error ColonyEngine::run() {
 			_objects[i].visible = 0;
 		
 		corridor();
-		drawStaticObjects();
+		if (renderer == "software") {
+			drawStaticObjects();
+		}
 		drawDashboardStep1();
 		drawCrosshair();
 		

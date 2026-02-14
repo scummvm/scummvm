@@ -87,6 +87,7 @@ enum ObjectType {
 struct Locate {
 	uint8 ang;
 	uint8 look;
+	int8  lookY;
 	int lookx;
 	int delta;
 	int xloc;
@@ -211,6 +212,7 @@ private:
 	bool _hasKeycard;
 	bool _unlocked;
 	int _weapons;
+	bool _wireframe;
 
 	int _frntxWall, _frntyWall;
 	int _sidexWall, _sideyWall;
@@ -267,17 +269,27 @@ private:
 		bool vsurface[kMaxSurfaces];
 		bool visible;
 	};
+public:
 	struct PrismPartDef {
 		int pointCount;
 		const int (*points)[3];
 		int surfaceCount;
 		const int (*surfaces)[8];
 	};
+ 
+private:
 	bool projectPrismPart(const Thing &obj, const PrismPartDef &part, bool useLook, ProjectedPrismPart &out) const;
 	bool isSurfaceClockwise(const ProjectedPrismPart &part, const int surface[8]) const;
 	bool clipLineToRect(int &x1, int &y1, int &x2, int &y2, const Common::Rect &clip) const;
 	void drawProjectedPrism(const ProjectedPrismPart &part, const PrismPartDef &def, int force, uint32 color, const Common::Rect &clip);
+	void draw3DPrism(const Thing &obj, const PrismPartDef &def, bool useLook, uint32 color);
 	bool drawStaticObjectPrisms(const Thing &obj, uint32 baseColor);
+	bool drawStaticObjectPrisms3D(const Thing &obj, uint32 baseColor);
+
+	void drawWall(int x1, int y1, int x2, int y2, uint32 color);
+	void renderCorridor3D();
+
+	// Visibility / Clipping
 	void drawStaticObjectFallback(const Thing &obj, uint32 color, int depth, int sx);
 	int occupiedObjectAt(int x, int y, const Locate *pobject);
 	void interactWithObject(int objNum);

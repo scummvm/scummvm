@@ -38,7 +38,303 @@ static const int g_indexTable[4][10] = {
 
 static const int g_dirRight[4] = {1, 3, 0, 2};
 static const int g_dirLeft[4] = {2, 0, 3, 1};
-
+ 
+ // DOS object geometry constants
+static const int kScreenPts[8][3] = {
+	{-16, 64, 0}, {16, 64, 0}, {16, -64, 0}, {-16, -64, 0},
+	{-16, 64, 288}, {16, 64, 288}, {16, -64, 288}, {-16, -64, 288}
+};
+static const int kScreenSurf[4][8] = {
+	{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
+	{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0}
+};
+static const int kTableTopPts[4][3] = {
+	{-128, 128, 100}, {128, 128, 100}, {128, -128, 100}, {-128, -128, 100}
+};
+static const int kTableTopSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
+static const int kTableBasePts[8][3] = {
+	{-5, 5, 0}, {5, 5, 0}, {5, -5, 0}, {-5, -5, 0},
+	{-5, 5, 100}, {5, 5, 100}, {5, -5, 100}, {-5, -5, 100}
+};
+static const int kTableBaseSurf[4][8] = {
+	{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
+	{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0}
+};
+static const int kBedPostPts[4][3] = {
+	{-82, 128, 100}, {82, 128, 100}, {82, 128, 0}, {-82, 128, 0}
+};
+static const int kBBedPostPts[4][3] = {
+	{-130, 128, 100}, {130, 128, 100}, {130, 128, 0}, {-130, 128, 0}
+};
+static const int kBedPostSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
+static const int kBlanketSurf[4][8] = {
+	{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
+	{0, 4, 2, 1, 5, 6, 0, 0}, {0, 4, 7, 6, 5, 4, 0, 0}
+};
+static const int kSheetSurf[3][8] = {
+	{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0},
+	{0, 4, 7, 6, 5, 4, 0, 0}
+};
+static const int kBedBlanketPts[8][3] = {
+	{-80, 70, 0}, {80, 70, 0}, {80, -175, 0}, {-80, -175, 0},
+	{-80, 70, 60}, {80, 70, 60}, {80, -175, 60}, {-80, -175, 60}
+};
+static const int kBedSheetPts[8][3] = {
+	{-80, 128, 30}, {80, 128, 30}, {80, 70, 30}, {-80, 70, 30},
+	{-80, 128, 60}, {80, 128, 60}, {80, 70, 60}, {-80, 70, 60}
+};
+static const int kBBedBlanketPts[8][3] = {
+	{-128, 70, 0}, {128, 70, 0}, {128, -175, 0}, {-128, -175, 0},
+	{-128, 70, 60}, {128, 70, 60}, {128, -175, 60}, {-128, -175, 60}
+};
+static const int kBBedSheetPts[8][3] = {
+	{-128, 128, 30}, {128, 128, 30}, {128, 70, 30}, {-128, 70, 30},
+	{-128, 128, 60}, {128, 128, 60}, {128, 70, 60}, {-128, 70, 60}
+};
+static const int kDeskTopPts[4][3] = {
+	{-150, 110, 100}, {150, 110, 100}, {150, -110, 100}, {-150, -110, 100}
+};
+static const int kDeskTopSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
+static const int kDeskLeftPts[8][3] = {
+	{-135, 95, 0}, {-55, 95, 0}, {-55, -95, 0}, {-135, -95, 0},
+	{-135, 95, 100}, {-55, 95, 100}, {-55, -95, 100}, {-135, -95, 100}
+};
+static const int kDeskRightPts[8][3] = {
+	{55, 95, 0}, {135, 95, 0}, {135, -95, 0}, {55, -95, 0},
+	{55, 95, 100}, {135, 95, 100}, {135, -95, 100}, {55, -95, 100}
+};
+static const int kDeskCabSurf[4][8] = {
+	{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
+	{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0}
+};
+static const int kSeatPts[4][3] = {
+	{-40, 210, 60}, {40, 210, 60}, {40, 115, 60}, {-40, 115, 60}
+};
+static const int kSeatSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
+static const int kArmLeftPts[4][3] = {
+	{-40, 210, 90}, {-40, 210, 0}, {-40, 115, 0}, {-40, 115, 90}
+};
+static const int kArmRightPts[4][3] = {
+	{40, 210, 90}, {40, 210, 0}, {40, 115, 0}, {40, 115, 90}
+};
+static const int kArmSurf[2][8] = {
+	{0, 4, 3, 2, 1, 0, 0, 0}, {0, 4, 0, 1, 2, 3, 0, 0}
+};
+static const int kBackPts[4][3] = {
+	{-40, 210, 130}, {40, 210, 130}, {40, 210, 70}, {-40, 210, 70}
+};
+static const int kBackSurf[2][8] = {
+	{0, 4, 3, 2, 1, 0, 0, 0}, {0, 4, 0, 1, 2, 3, 0, 0}
+};
+static const int kComputerPts[8][3] = {
+	{70, 25, 100}, {120, 25, 100}, {120, -25, 100}, {70, -25, 100},
+	{70, 25, 120}, {120, 25, 120}, {120, -25, 120}, {70, -25, 120}
+};
+static const int kMonitorPts[8][3] = {
+	{75, 20, 120}, {115, 20, 120}, {115, -20, 120}, {75, -20, 120},
+	{75, 20, 155}, {115, 20, 155}, {115, -20, 145}, {75, -20, 145}
+};
+static const int kComputerSurf[5][8] = {
+	{0, 4, 7, 6, 5, 4, 0, 0}, {0, 4, 0, 3, 7, 4, 0, 0},
+	{0, 4, 3, 2, 6, 7, 0, 0}, {0, 4, 1, 0, 4, 5, 0, 0},
+	{0, 4, 2, 1, 5, 6, 0, 0}
+};
+static const int kDeskScreenPts[4][3] = {
+	{80, 20, 125}, {110, 20, 125}, {110, 20, 150}, {80, 20, 150}
+};
+static const int kDeskScreenSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
+static const int kCSeatPts[4][3] = {
+	{-40, 40, 60}, {40, 40, 60}, {40, -40, 60}, {-40, -40, 60}
+};
+static const int kCSeatSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
+static const int kCArmLeftPts[4][3] = {
+	{-50, 40, 90}, {-40, 40, 60}, {-40, -40, 60}, {-50, -40, 90}
+};
+static const int kCArmLeftSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
+static const int kCArmRightPts[4][3] = {
+	{50, 40, 90}, {40, 40, 60}, {40, -40, 60}, {50, -40, 90}
+};
+static const int kCArmRightSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
+static const int kCBackPts[4][3] = {
+	{-20, 60, 150}, {20, 60, 150}, {40, 40, 60}, {-40, 40, 60}
+};
+static const int kCBackSurf[2][8] = {
+	{0, 4, 3, 2, 1, 0, 0, 0}, {0, 4, 0, 1, 2, 3, 0, 0}
+};
+static const int kCBasePts[8][3] = {
+	{-5, 5, 0}, {5, 5, 0}, {5, -5, 0}, {-5, -5, 0},
+	{-5, 5, 60}, {5, 5, 60}, {5, -5, 60}, {-5, -5, 60}
+};
+static const int kCBaseSurf[4][8] = {
+	{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
+	{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0}
+};
+static const int kConsolePts[8][3] = {
+	{-5, 5, 0}, {5, 5, 0}, {5, -5, 0}, {-5, -5, 0},
+	{-100, 70, 100}, {-35, 70, 140}, {-35, -70, 140}, {-100, -70, 100}
+};
+static const int kConsoleSurf[5][8] = {
+	{0, 4, 4, 0, 3, 7, 0, 0}, {0, 4, 7, 3, 2, 6, 0, 0},
+	{0, 4, 5, 1, 0, 4, 0, 0}, {0, 4, 6, 2, 1, 5, 0, 0},
+	{0, 4, 7, 6, 5, 4, 0, 0}
+};
+static const int kCouchSurf[5][8] = {
+	{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
+	{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0},
+	{0, 4, 7, 6, 5, 4, 0, 0}
+};
+static const int kACouchPts[8][3] = {
+	{-50, 150, 0}, {50, 150, 0}, {50, -150, 0}, {-50, -150, 0},
+	{-50, 150, 50}, {50, 150, 50}, {50, -150, 50}, {-50, -150, 50}
+};
+static const int kBCouchPts[8][3] = {
+	{-80, 150, 0}, {-45, 150, 0}, {-45, -150, 0}, {-80, -150, 0},
+	{-80, 150, 120}, {-55, 150, 120}, {-55, -150, 120}, {-80, -150, 120}
+};
+static const int kCCouchPts[8][3] = {
+	{-70, 170, 0}, {50, 170, 0}, {50, 150, 0}, {-70, 150, 0},
+	{-70, 170, 80}, {50, 170, 80}, {50, 150, 80}, {-70, 150, 80}
+};
+static const int kDCouchPts[8][3] = {
+	{-70, -150, 0}, {50, -150, 0}, {50, -170, 0}, {-70, -170, 0},
+	{-70, -150, 80}, {50, -150, 80}, {50, -170, 80}, {-70, -170, 80}
+};
+static const int kAChairPts[8][3] = {
+	{-50, 50, 0}, {50, 50, 0}, {50, -50, 0}, {-50, -50, 0},
+	{-50, 50, 50}, {50, 50, 50}, {50, -50, 50}, {-50, -50, 50}
+};
+static const int kBChairPts[8][3] = {
+	{-80, 50, 0}, {-45, 50, 0}, {-45, -50, 0}, {-80, -50, 0},
+	{-80, 50, 120}, {-55, 50, 120}, {-55, -50, 120}, {-80, -50, 120}
+};
+static const int kCChairPts2[8][3] = {
+	{-70, 70, 0}, {50, 70, 0}, {50, 50, 0}, {-70, 50, 0},
+	{-70, 70, 80}, {50, 70, 80}, {50, 50, 80}, {-70, 50, 80}
+};
+static const int kDChairPts[8][3] = {
+	{-70, -50, 0}, {50, -50, 0}, {50, -70, 0}, {-70, -70, 0},
+	{-70, -50, 80}, {50, -50, 80}, {50, -70, 80}, {-70, -70, 80}
+};
+static const int kTVBodyPts[8][3] = {
+	{-30, 60, 0}, {30, 60, 0}, {30, -60, 0}, {-30, -60, 0},
+	{-30, 60, 120}, {30, 60, 120}, {30, -60, 120}, {-30, -60, 120}
+};
+static const int kTVBodySurf[5][8] = {
+	{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
+	{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0},
+	{0, 4, 7, 6, 5, 4, 0, 0}
+};
+static const int kTVScreenPts[4][3] = {
+	{30, 50, 10}, {30, -50, 10}, {30, 50, 110}, {30, -50, 110}
+};
+static const int kTVScreenSurf[1][8] = {{0, 4, 1, 0, 2, 3, 0, 0}};
+static const int kDrawerPts[8][3] = {
+	{-80, 70, 0}, {0, 70, 0}, {0, -70, 0}, {-80, -70, 0},
+	{-80, 70, 100}, {0, 70, 100}, {0, -70, 100}, {-80, -70, 100}
+};
+static const int kDrawerSurf[5][8] = {
+	{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
+	{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0},
+	{0, 4, 7, 6, 5, 4, 0, 0}
+};
+static const int kMirrorPts[4][3] = {
+	{-80, 65, 100}, {-80, -65, 100}, {-80, 65, 210}, {-80, -65, 210}
+};
+static const int kMirrorSurf[1][8] = {{0, 4, 1, 0, 2, 3, 0, 0}};
+static const Colony::ColonyEngine::PrismPartDef kScreenPart = {8, kScreenPts, 4, kScreenSurf};
+static const Colony::ColonyEngine::PrismPartDef kTableParts[2] = {
+	{4, kTableTopPts, 1, kTableTopSurf},
+	{8, kTableBasePts, 4, kTableBaseSurf}
+};
+static const Colony::ColonyEngine::PrismPartDef kBedParts[3] = {
+	{4, kBedPostPts, 1, kBedPostSurf},
+	{8, kBedBlanketPts, 4, kBlanketSurf},
+	{8, kBedSheetPts, 3, kSheetSurf}
+};
+static const Colony::ColonyEngine::PrismPartDef kBBedParts[3] = {
+	{4, kBBedPostPts, 1, kBedPostSurf},
+	{8, kBBedBlanketPts, 4, kBlanketSurf},
+	{8, kBBedSheetPts, 3, kSheetSurf}
+};
+static const Colony::ColonyEngine::PrismPartDef kDeskParts[10] = {
+	{4, kDeskTopPts, 1, kDeskTopSurf},
+	{8, kDeskLeftPts, 4, kDeskCabSurf},
+	{8, kDeskRightPts, 4, kDeskCabSurf},
+	{4, kSeatPts, 1, kSeatSurf},
+	{4, kArmLeftPts, 2, kArmSurf},
+	{4, kArmRightPts, 2, kArmSurf},
+	{4, kBackPts, 2, kBackSurf},
+	{8, kComputerPts, 5, kComputerSurf},
+	{8, kMonitorPts, 5, kComputerSurf},
+	{4, kDeskScreenPts, 1, kDeskScreenSurf}
+};
+static const Colony::ColonyEngine::PrismPartDef kCChairParts[5] = {
+	{4, kCSeatPts, 1, kCSeatSurf},
+	{4, kCArmLeftPts, 1, kCArmLeftSurf},
+	{4, kCArmRightPts, 1, kCArmRightSurf},
+	{4, kCBackPts, 2, kCBackSurf},
+	{8, kCBasePts, 4, kCBaseSurf}
+};
+static const Colony::ColonyEngine::PrismPartDef kConsolePart = {8, kConsolePts, 5, kConsoleSurf};
+static const Colony::ColonyEngine::PrismPartDef kCouchParts[4] = {
+	{8, kACouchPts, 5, kCouchSurf},
+	{8, kBCouchPts, 5, kCouchSurf},
+	{8, kCCouchPts, 5, kCouchSurf},
+	{8, kDCouchPts, 5, kCouchSurf}
+};
+static const Colony::ColonyEngine::PrismPartDef kChairParts[4] = {
+	{8, kAChairPts, 5, kCouchSurf},
+	{8, kBChairPts, 5, kCouchSurf},
+	{8, kCChairPts2, 5, kCouchSurf},
+	{8, kDChairPts, 5, kCouchSurf}
+};
+static const Colony::ColonyEngine::PrismPartDef kTVParts[2] = {
+	{8, kTVBodyPts, 5, kTVBodySurf},
+	{4, kTVScreenPts, 1, kTVScreenSurf}
+};
+static const Colony::ColonyEngine::PrismPartDef kDrawerParts[2] = {
+	{8, kDrawerPts, 5, kDrawerSurf},
+	{4, kMirrorPts, 1, kMirrorSurf}
+};
+static const int kCWallPts[8][3] = {
+	{-128, 128, -160}, {0, 112, -160}, {112, 0, -160}, {128, -128, -160},
+	{-128, 128, 160},  {0, 112, 160},  {112, 0, 160},  {128, -128, 160}
+};
+static const int kCWallSurf[3][8] = {
+	{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0}
+};
+static const Colony::ColonyEngine::PrismPartDef kCWallParts[1] = {{8, kCWallPts, 3, kCWallSurf}};
+static const int kPlantPotPts[8][3] = {
+	{-20, 20, 0}, {20, 20, 0}, {20, -20, 0}, {-20, -20, 0},
+	{-20, 20, 40}, {20, 20, 40}, {20, -20, 40}, {-20, -20, 40}
+};
+static const int kPlantPotSurf[5][8] = {
+	{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
+	{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0}, {0, 4, 7, 6, 5, 4, 0, 0}
+};
+static const int kPlantStemPts[8][3] = {
+	{-5, 5, 40}, {5, 5, 40}, {5, -5, 40}, {-5, -5, 40},
+	{-5, 5, 120}, {5, 5, 120}, {5, -5, 120}, {-5, -5, 120}
+};
+static const int kPlantStemSurf[4][8] = {
+	{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
+	{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0}
+};
+static const int kPlantLeaf1Pts[4][3] = {
+	{-40, 0, 120}, {40, 0, 120}, {40, 0, 140}, {-40, 0, 140}
+};
+static const int kPlantLeaf2Pts[4][3] = {
+	{0, 40, 120}, {0, -40, 120}, {0, 40, 140}, {0, -40, 140}
+};
+static const int kPlantLeafSurf[1][8] = {{0, 4, 0, 1, 2, 3, 0, 0}};
+static const Colony::ColonyEngine::PrismPartDef kPlantParts[4] = {
+	{8, kPlantPotPts, 5, kPlantPotSurf},
+	{8, kPlantStemPts, 4, kPlantStemSurf},
+	{4, kPlantLeaf1Pts, 1, kPlantLeafSurf},
+	{4, kPlantLeaf2Pts, 1, kPlantLeafSurf}
+};
+ 
+ 
 void ColonyEngine::rot_init(int x, int y) {
 	_rox = ((long)x * _tsin - (long)y * _tcos) >> 8;
 	_roy = ((long)y * _tsin + (long)x * _tcos) >> 8;
@@ -124,6 +420,11 @@ void ColonyEngine::corridor() {
 	left = screenLeft;
 	right2 = right;
 	left2 = left;
+
+	if (_gfx->isAccelerated()) {
+		renderCorridor3D();
+		return;
+	}
 
 	xfbehind = _me.xindex + _frntxWall;
 	yfbehind = _me.yindex + _frntyWall;
@@ -279,12 +580,9 @@ void ColonyEngine::drawend(int xstart, int ystart, int xFrontLeft, int yFrontLef
 		}
 		_gfx->drawLine(_drX[xstart + _frntx][ystart + _frnty], _drY[xstart + _frntx][ystart + _frnty],
 		               _drX[xFrontLeft][yFrontLeft], _drY[xFrontLeft][yFrontLeft], white);
-		_gfx->drawLine(_drX[xFrontLeft][yFrontLeft], _drY[xFrontLeft][yFrontLeft],
-		               _drX[xFrontLeft][yFrontLeft], _height - _drY[xFrontLeft][yFrontLeft], white);
-		_gfx->drawLine(_drX[xFrontLeft][yFrontLeft], _height - _drY[xFrontLeft][yFrontLeft],
-		               _drX[xFrontRight][yFrontRight], _height - _drY[xFrontRight][yFrontRight], white);
-		_gfx->drawLine(_drX[xFrontRight][yFrontRight], _height - _drY[xFrontRight][yFrontRight],
-		               _drX[xFrontRight][yFrontRight], _drY[xFrontRight][yFrontRight], white);
+		
+		drawWall(xFrontLeft, yFrontLeft, xFrontRight, yFrontRight, white);
+
 		_gfx->drawLine(_drX[xFrontRight][yFrontRight], _drY[xFrontRight][yFrontRight],
 		               _drX[xstart + _sidex][ystart + _sidey], _drY[xstart + _sidex][ystart + _sidey], white);
 		if (_drY[xstart + _sidex][ystart + _sidey] > 0) {
@@ -292,12 +590,7 @@ void ColonyEngine::drawend(int xstart, int ystart, int xFrontLeft, int yFrontLef
 			               _drX[xstart + _frntx + _sidex][ystart + _frnty + _sidey], _drY[xstart + _frntx + _sidex][ystart + _frnty + _sidey], white);
 		}
 	} else {
-		_gfx->drawLine(_drX[xFrontLeft][yFrontLeft], _drY[xFrontLeft][yFrontLeft],
-		               _drX[xFrontLeft][yFrontLeft], _height - _drY[xFrontLeft][yFrontLeft], white);
-		_gfx->drawLine(_drX[xFrontLeft][yFrontLeft], _height - _drY[xFrontLeft][yFrontLeft],
-		               _drX[xFrontRight][yFrontRight], _height - _drY[xFrontRight][yFrontRight], white);
-		_gfx->drawLine(_drX[xFrontRight][yFrontRight], _height - _drY[xFrontRight][yFrontRight],
-		               _drX[xFrontRight][yFrontRight], _drY[xFrontRight][yFrontRight], white);
+		drawWall(xFrontLeft, yFrontLeft, xFrontRight, yFrontRight, white);
 	}
 }
 
@@ -305,6 +598,14 @@ uint8 ColonyEngine::wallAt(int x, int y) const {
 	if (x < 0 || x >= 32 || y < 0 || y >= 32)
 		return 3;
 	return _wall[x][y];
+}
+
+void ColonyEngine::drawWall(int x1, int y1, int x2, int y2, uint32 color) {
+	_gfx->drawQuad(_drX[x1][y1], _drY[x1][y1],
+	               _drX[x2][y2], _drY[x2][y2],
+	               _drX[x2][y2], _height - _drY[x2][y2],
+	               _drX[x1][y1], _height - _drY[x1][y1],
+	               color);
 }
 
 void ColonyEngine::checkleft(int xs, int ys, int xf, int yf, int left, int right, int rx, int ry, int cellx, int celly, int len) {
@@ -329,9 +630,7 @@ void ColonyEngine::checkleft(int xs, int ys, int xf, int yf, int left, int right
 				_gfx->drawLine(_drX[xf][yf], 0, _drX[xf][yf], _height - _drY[xf][yf], white);
 
 			while ((wallAt(xs, ys) & _side) && i < len && left <= right) {
-				_gfx->drawLine(_drX[xf][yf], _drY[xf][yf], _drX[xf][yf], _height - _drY[xf][yf], white);
-				_gfx->drawLine(_drX[xf][yf], _height - _drY[xf][yf],
-				               _drX[xf + _frntx][yf + _frnty], _height - _drY[xf + _frntx][yf + _frnty], white);
+				drawWall(xf, yf, xf + _frntx, yf + _frnty, white);
 
 				left = MAX(_drX[xf][yf], left);
 				xf += _frntx;
@@ -347,7 +646,6 @@ void ColonyEngine::checkleft(int xs, int ys, int xf, int yf, int left, int right
 
 			if (_flip)
 				_gfx->drawLine(_drX[xf][yf], 0, _drX[xf][yf], _height - _drY[xf][yf], white);
-			_gfx->drawLine(_drX[xf][yf], _height - _drY[xf][yf], _drX[xf][yf], _drY[xf][yf], white);
 			left = MAX(_drX[xf][yf], left);
 		}
 
@@ -502,9 +800,7 @@ void ColonyEngine::checkright(int xs, int ys, int xf, int yf, int left, int righ
 				_gfx->drawLine(_drX[xf][yf], 0, _drX[xf][yf], _height - _drY[xf][yf], white);
 
 			while ((wallAt(xs, ys) & _side) && i < len && left < right) {
-				_gfx->drawLine(_drX[xf][yf], _drY[xf][yf], _drX[xf][yf], _height - _drY[xf][yf], white);
-				_gfx->drawLine(_drX[xf][yf], _height - _drY[xf][yf],
-				               _drX[xf + _frntx][yf + _frnty], _height - _drY[xf + _frntx][yf + _frnty], white);
+				drawWall(xf, yf, xf + _frntx, yf + _frnty, white);
 
 				right = MIN(_drX[xf][yf], right);
 				xf += _frntx;
@@ -520,7 +816,6 @@ void ColonyEngine::checkright(int xs, int ys, int xf, int yf, int left, int righ
 
 			if (_flip)
 				_gfx->drawLine(_drX[xf][yf], 0, _drX[xf][yf], _height - _drY[xf][yf], white);
-			_gfx->drawLine(_drX[xf][yf], _height - _drY[xf][yf], _drX[xf][yf], _drY[xf][yf], white);
 			right = MIN(_drX[xf][yf], right);
 		}
 
@@ -1455,344 +1750,67 @@ void ColonyEngine::drawProjectedPrism(const ProjectedPrismPart &part, const Pris
 		const int n = def.surfaces[i][1];
 		if (n < 2)
 			continue;
-		int first = def.surfaces[i][2];
-		if (first < 0 || first >= part.pointCount)
-			continue;
-		int prev = first;
-		for (int j = 1; j < n; j++) {
+		
+		int px[ProjectedPrismPart::kMaxPoints];
+		int py[ProjectedPrismPart::kMaxPoints];
+		int count = 0;
+
+		for (int j = 0; j < n; j++) {
 			const int cur = def.surfaces[i][j + 2];
 			if (cur < 0 || cur >= part.pointCount)
 				continue;
-			int x1 = part.x[prev];
-			int y1 = part.y[prev];
-			int x2 = part.x[cur];
-			int y2 = part.y[cur];
-			if (clipLineToRect(x1, y1, x2, y2, clip))
-				_gfx->drawLine(x1, y1, x2, y2, color);
-			prev = cur;
+			px[count] = part.x[cur];
+			py[count] = part.y[cur];
+			count++;
 		}
-		int x1 = part.x[prev];
-		int y1 = part.y[prev];
-		int x2 = part.x[first];
-		int y2 = part.y[first];
-		if (clipLineToRect(x1, y1, x2, y2, clip))
-			_gfx->drawLine(x1, y1, x2, y2, color);
+		
+		if (count >= 3) {
+			_gfx->drawPolygon(px, py, count, color);
+		} else if (count == 2) {
+			_gfx->drawLine(px[0], py[0], px[1], py[1], color);
+		}
+	}
+}
+
+void ColonyEngine::draw3DPrism(const Thing &obj, const PrismPartDef &def, bool useLook, uint32 color) {
+	const uint8 ang = useLook ? obj.where.look : obj.where.ang;
+	const long rotCos = _cost[ang];
+	const long rotSin = _sint[ang];
+ 
+	for (int i = 0; i < def.surfaceCount; i++) {
+		const int n = def.surfaces[i][1];
+		if (n < 2) continue;
+
+		float px[ProjectedPrismPart::kMaxPoints];
+		float py[ProjectedPrismPart::kMaxPoints];
+		float pz[ProjectedPrismPart::kMaxPoints];
+		int count = 0;
+
+		for (int j = 0; j < n; j++) {
+			const int cur = def.surfaces[i][j + 2];
+			if (cur < 0 || cur >= def.pointCount) continue;
+
+			int ox = def.points[cur][0];
+			int oy = def.points[cur][1];
+			int oz = def.points[cur][2];
+
+			// World relative rotation
+			long rx = ((long)ox * rotCos - (long)oy * rotSin) >> 7;
+			long ry = ((long)ox * rotSin + (long)oy * rotCos) >> 7;
+			
+			px[count] = (float)(rx + obj.where.xloc);
+			py[count] = (float)(ry + obj.where.yloc);
+			pz[count] = (float)oz; //(float)(oz - 160); // Floor is at -160
+			count++;
+		}
+
+		if (count >= 3) {
+			_gfx->draw3DPolygon(px, py, pz, count, color);
+		}
 	}
 }
 
 bool ColonyEngine::drawStaticObjectPrisms(const Thing &obj, uint32 baseColor) {
-	// DOS object geometry from SCREEN.H / TABLE.H / BED.H / DESK.H.
-	static const int kScreenPts[8][3] = {
-		{-16, 64, 0}, {16, 64, 0}, {16, -64, 0}, {-16, -64, 0},
-		{-16, 64, 288}, {16, 64, 288}, {16, -64, 288}, {-16, -64, 288}
-	};
-	static const int kScreenSurf[4][8] = {
-		{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
-		{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0}
-	};
-
-	static const int kTableTopPts[4][3] = {
-		{-128, 128, 100}, {128, 128, 100}, {128, -128, 100}, {-128, -128, 100}
-	};
-	static const int kTableTopSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
-	static const int kTableBasePts[8][3] = {
-		{-5, 5, 0}, {5, 5, 0}, {5, -5, 0}, {-5, -5, 0},
-		{-5, 5, 100}, {5, 5, 100}, {5, -5, 100}, {-5, -5, 100}
-	};
-	static const int kTableBaseSurf[4][8] = {
-		{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
-		{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0}
-	};
-
-	static const int kBedPostPts[4][3] = {
-		{-82, 128, 100}, {82, 128, 100}, {82, 128, 0}, {-82, 128, 0}
-	};
-	static const int kBBedPostPts[4][3] = {
-		{-130, 128, 100}, {130, 128, 100}, {130, 128, 0}, {-130, 128, 0}
-	};
-	static const int kBedPostSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
-	static const int kBlanketSurf[4][8] = {
-		{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
-		{0, 4, 2, 1, 5, 6, 0, 0}, {0, 4, 7, 6, 5, 4, 0, 0}
-	};
-	static const int kSheetSurf[3][8] = {
-		{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0},
-		{0, 4, 7, 6, 5, 4, 0, 0}
-	};
-	static const int kBedBlanketPts[8][3] = {
-		{-80, 70, 0}, {80, 70, 0}, {80, -175, 0}, {-80, -175, 0},
-		{-80, 70, 60}, {80, 70, 60}, {80, -175, 60}, {-80, -175, 60}
-	};
-	static const int kBedSheetPts[8][3] = {
-		{-80, 128, 30}, {80, 128, 30}, {80, 70, 30}, {-80, 70, 30},
-		{-80, 128, 60}, {80, 128, 60}, {80, 70, 60}, {-80, 70, 60}
-	};
-	static const int kBBedBlanketPts[8][3] = {
-		{-128, 70, 0}, {128, 70, 0}, {128, -175, 0}, {-128, -175, 0},
-		{-128, 70, 60}, {128, 70, 60}, {128, -175, 60}, {-128, -175, 60}
-	};
-	static const int kBBedSheetPts[8][3] = {
-		{-128, 128, 30}, {128, 128, 30}, {128, 70, 30}, {-128, 70, 30},
-		{-128, 128, 60}, {128, 128, 60}, {128, 70, 60}, {-128, 70, 60}
-	};
-
-	static const int kDeskTopPts[4][3] = {
-		{-150, 110, 100}, {150, 110, 100}, {150, -110, 100}, {-150, -110, 100}
-	};
-	static const int kDeskTopSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
-	static const int kDeskLeftPts[8][3] = {
-		{-135, 95, 0}, {-55, 95, 0}, {-55, -95, 0}, {-135, -95, 0},
-		{-135, 95, 100}, {-55, 95, 100}, {-55, -95, 100}, {-135, -95, 100}
-	};
-	static const int kDeskRightPts[8][3] = {
-		{55, 95, 0}, {135, 95, 0}, {135, -95, 0}, {55, -95, 0},
-		{55, 95, 100}, {135, 95, 100}, {135, -95, 100}, {55, -95, 100}
-	};
-	static const int kDeskCabSurf[4][8] = {
-		{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
-		{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0}
-	};
-	static const int kSeatPts[4][3] = {
-		{-40, 210, 60}, {40, 210, 60}, {40, 115, 60}, {-40, 115, 60}
-	};
-	static const int kSeatSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
-	static const int kArmLeftPts[4][3] = {
-		{-40, 210, 90}, {-40, 210, 0}, {-40, 115, 0}, {-40, 115, 90}
-	};
-	static const int kArmRightPts[4][3] = {
-		{40, 210, 90}, {40, 210, 0}, {40, 115, 0}, {40, 115, 90}
-	};
-	static const int kArmSurf[2][8] = {
-		{0, 4, 3, 2, 1, 0, 0, 0}, {0, 4, 0, 1, 2, 3, 0, 0}
-	};
-	static const int kBackPts[4][3] = {
-		{-40, 210, 130}, {40, 210, 130}, {40, 210, 70}, {-40, 210, 70}
-	};
-	static const int kBackSurf[2][8] = {
-		{0, 4, 3, 2, 1, 0, 0, 0}, {0, 4, 0, 1, 2, 3, 0, 0}
-	};
-	static const int kComputerPts[8][3] = {
-		{70, 25, 100}, {120, 25, 100}, {120, -25, 100}, {70, -25, 100},
-		{70, 25, 120}, {120, 25, 120}, {120, -25, 120}, {70, -25, 120}
-	};
-	static const int kMonitorPts[8][3] = {
-		{75, 20, 120}, {115, 20, 120}, {115, -20, 120}, {75, -20, 120},
-		{75, 20, 155}, {115, 20, 155}, {115, -20, 145}, {75, -20, 145}
-	};
-	static const int kComputerSurf[5][8] = {
-		{0, 4, 7, 6, 5, 4, 0, 0}, {0, 4, 0, 3, 7, 4, 0, 0},
-		{0, 4, 3, 2, 6, 7, 0, 0}, {0, 4, 1, 0, 4, 5, 0, 0},
-		{0, 4, 2, 1, 5, 6, 0, 0}
-	};
-	static const int kDeskScreenPts[4][3] = {
-		{80, 20, 125}, {110, 20, 125}, {110, 20, 150}, {80, 20, 150}
-	};
-	static const int kDeskScreenSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
-
-	static const int kCSeatPts[4][3] = {
-		{-40, 40, 60}, {40, 40, 60}, {40, -40, 60}, {-40, -40, 60}
-	};
-	static const int kCSeatSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
-	static const int kCArmLeftPts[4][3] = {
-		{-50, 40, 90}, {-40, 40, 60}, {-40, -40, 60}, {-50, -40, 90}
-	};
-	static const int kCArmLeftSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
-	static const int kCArmRightPts[4][3] = {
-		{50, 40, 90}, {40, 40, 60}, {40, -40, 60}, {50, -40, 90}
-	};
-	static const int kCArmRightSurf[1][8] = {{0, 4, 3, 2, 1, 0, 0, 0}};
-	static const int kCBackPts[4][3] = {
-		{-20, 60, 150}, {20, 60, 150}, {40, 40, 60}, {-40, 40, 60}
-	};
-	static const int kCBackSurf[2][8] = {
-		{0, 4, 3, 2, 1, 0, 0, 0}, {0, 4, 0, 1, 2, 3, 0, 0}
-	};
-	static const int kCBasePts[8][3] = {
-		{-5, 5, 0}, {5, 5, 0}, {5, -5, 0}, {-5, -5, 0},
-		{-5, 5, 60}, {5, 5, 60}, {5, -5, 60}, {-5, -5, 60}
-	};
-	static const int kCBaseSurf[4][8] = {
-		{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
-		{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0}
-	};
-
-	static const int kConsolePts[8][3] = {
-		{-5, 5, 0}, {5, 5, 0}, {5, -5, 0}, {-5, -5, 0},
-		{-100, 70, 100}, {-35, 70, 140}, {-35, -70, 140}, {-100, -70, 100}
-	};
-	static const int kConsoleSurf[5][8] = {
-		{0, 4, 4, 0, 3, 7, 0, 0}, {0, 4, 7, 3, 2, 6, 0, 0},
-		{0, 4, 5, 1, 0, 4, 0, 0}, {0, 4, 6, 2, 1, 5, 0, 0},
-		{0, 4, 7, 6, 5, 4, 0, 0}
-	};
-
-	static const int kCouchSurf[5][8] = {
-		{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
-		{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0},
-		{0, 4, 7, 6, 5, 4, 0, 0}
-	};
-	static const int kACouchPts[8][3] = {
-		{-50, 150, 0}, {50, 150, 0}, {50, -150, 0}, {-50, -150, 0},
-		{-50, 150, 50}, {50, 150, 50}, {50, -150, 50}, {-50, -150, 50}
-	};
-	static const int kBCouchPts[8][3] = {
-		{-80, 150, 0}, {-45, 150, 0}, {-45, -150, 0}, {-80, -150, 0},
-		{-80, 150, 120}, {-55, 150, 120}, {-55, -150, 120}, {-80, -150, 120}
-	};
-	static const int kCCouchPts[8][3] = {
-		{-70, 170, 0}, {50, 170, 0}, {50, 150, 0}, {-70, 150, 0},
-		{-70, 170, 80}, {50, 170, 80}, {50, 150, 80}, {-70, 150, 80}
-	};
-	static const int kDCouchPts[8][3] = {
-		{-70, -150, 0}, {50, -150, 0}, {50, -170, 0}, {-70, -170, 0},
-		{-70, -150, 80}, {50, -150, 80}, {50, -170, 80}, {-70, -170, 80}
-	};
-
-	static const int kAChairPts[8][3] = {
-		{-50, 50, 0}, {50, 50, 0}, {50, -50, 0}, {-50, -50, 0},
-		{-50, 50, 50}, {50, 50, 50}, {50, -50, 50}, {-50, -50, 50}
-	};
-	static const int kBChairPts[8][3] = {
-		{-80, 50, 0}, {-45, 50, 0}, {-45, -50, 0}, {-80, -50, 0},
-		{-80, 50, 120}, {-55, 50, 120}, {-55, -50, 120}, {-80, -50, 120}
-	};
-	static const int kCChairPts2[8][3] = {
-		{-70, 70, 0}, {50, 70, 0}, {50, 50, 0}, {-70, 50, 0},
-		{-70, 70, 80}, {50, 70, 80}, {50, 50, 80}, {-70, 50, 80}
-	};
-	static const int kDChairPts[8][3] = {
-		{-70, -50, 0}, {50, -50, 0}, {50, -70, 0}, {-70, -70, 0},
-		{-70, -50, 80}, {50, -50, 80}, {50, -70, 80}, {-70, -70, 80}
-	};
-
-	static const int kTVBodyPts[8][3] = {
-		{-30, 60, 0}, {30, 60, 0}, {30, -60, 0}, {-30, -60, 0},
-		{-30, 60, 120}, {30, 60, 120}, {30, -60, 120}, {-30, -60, 120}
-	};
-	static const int kTVBodySurf[5][8] = {
-		{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
-		{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0},
-		{0, 4, 7, 6, 5, 4, 0, 0}
-	};
-	static const int kTVScreenPts[4][3] = {
-		{30, 50, 10}, {30, -50, 10}, {30, 50, 110}, {30, -50, 110}
-	};
-	static const int kTVScreenSurf[1][8] = {{0, 4, 1, 0, 2, 3, 0, 0}};
-
-	static const int kDrawerPts[8][3] = {
-		{-80, 70, 0}, {0, 70, 0}, {0, -70, 0}, {-80, -70, 0},
-		{-80, 70, 100}, {0, 70, 100}, {0, -70, 100}, {-80, -70, 100}
-	};
-	static const int kDrawerSurf[5][8] = {
-		{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
-		{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0},
-		{0, 4, 7, 6, 5, 4, 0, 0}
-	};
-	static const int kMirrorPts[4][3] = {
-		{-80, 65, 100}, {-80, -65, 100}, {-80, 65, 210}, {-80, -65, 210}
-	};
-	static const int kMirrorSurf[1][8] = {{0, 4, 1, 0, 2, 3, 0, 0}};
-
-	static const PrismPartDef kScreenPart = {8, kScreenPts, 4, kScreenSurf};
-	static const PrismPartDef kTableParts[2] = {
-		{4, kTableTopPts, 1, kTableTopSurf},
-		{8, kTableBasePts, 4, kTableBaseSurf}
-	};
-	static const PrismPartDef kBedParts[3] = {
-		{4, kBedPostPts, 1, kBedPostSurf},
-		{8, kBedBlanketPts, 4, kBlanketSurf},
-		{8, kBedSheetPts, 3, kSheetSurf}
-	};
-	static const PrismPartDef kBBedParts[3] = {
-		{4, kBBedPostPts, 1, kBedPostSurf},
-		{8, kBBedBlanketPts, 4, kBlanketSurf},
-		{8, kBBedSheetPts, 3, kSheetSurf}
-	};
-	static const PrismPartDef kDeskParts[10] = {
-		{4, kDeskTopPts, 1, kDeskTopSurf},
-		{8, kDeskLeftPts, 4, kDeskCabSurf},
-		{8, kDeskRightPts, 4, kDeskCabSurf},
-		{4, kSeatPts, 1, kSeatSurf},
-		{4, kArmLeftPts, 2, kArmSurf},
-		{4, kArmRightPts, 2, kArmSurf},
-		{4, kBackPts, 2, kBackSurf},
-		{8, kComputerPts, 5, kComputerSurf},
-		{8, kMonitorPts, 5, kComputerSurf},
-		{4, kDeskScreenPts, 1, kDeskScreenSurf}
-	};
-	static const PrismPartDef kCChairParts[5] = {
-		{4, kCSeatPts, 1, kCSeatSurf},
-		{4, kCArmLeftPts, 1, kCArmLeftSurf},
-		{4, kCArmRightPts, 1, kCArmRightSurf},
-		{4, kCBackPts, 2, kCBackSurf},
-		{8, kCBasePts, 4, kCBaseSurf}
-	};
-	static const PrismPartDef kConsolePart = {8, kConsolePts, 5, kConsoleSurf};
-	static const PrismPartDef kCouchParts[4] = {
-		{8, kACouchPts, 5, kCouchSurf},
-		{8, kBCouchPts, 5, kCouchSurf},
-		{8, kCCouchPts, 5, kCouchSurf},
-		{8, kDCouchPts, 5, kCouchSurf}
-	};
-	static const PrismPartDef kChairParts[4] = {
-		{8, kAChairPts, 5, kCouchSurf},
-		{8, kBChairPts, 5, kCouchSurf},
-		{8, kCChairPts2, 5, kCouchSurf},
-		{8, kDChairPts, 5, kCouchSurf}
-	};
-	static const PrismPartDef kTVParts[2] = {
-		{8, kTVBodyPts, 5, kTVBodySurf},
-		{4, kTVScreenPts, 1, kTVScreenSurf}
-	};
-	static const PrismPartDef kDrawerParts[2] = {
-		{8, kDrawerPts, 5, kDrawerSurf},
-		{4, kMirrorPts, 1, kMirrorSurf}
-	};
-
-	/* CWALL (object 49) - ported from DOS INITOBJ.C: simple corner/quarter-wall prism */
-	static const int kCWallPts[8][3] = {
-		{-128, 128, -160}, {0, 112, -160}, {112, 0, -160}, {128, -128, -160},
-		{-128, 128, 160},  {0, 112, 160},  {112, 0, 160},  {128, -128, 160}
-	};
-	static const int kCWallSurf[3][8] = {
-		{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0}
-	};
-	static const PrismPartDef kCWallParts[1] = {{8, kCWallPts, 3, kCWallSurf}};
-
-	/* PLANT (new) - simple pot + stem + two leaf plates (approximates DOS plant) */
-	static const int kPlantPotPts[8][3] = {
-		{-20, 20, 0}, {20, 20, 0}, {20, -20, 0}, {-20, -20, 0},
-		{-20, 20, 40}, {20, 20, 40}, {20, -20, 40}, {-20, -20, 40}
-	};
-	static const int kPlantPotSurf[5][8] = {
-		{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
-		{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0}, {0, 4, 7, 6, 5, 4, 0, 0}
-	};
-
-	static const int kPlantStemPts[8][3] = {
-		{-5, 5, 40}, {5, 5, 40}, {5, -5, 40}, {-5, -5, 40},
-		{-5, 5, 120}, {5, 5, 120}, {5, -5, 120}, {-5, -5, 120}
-	};
-	static const int kPlantStemSurf[4][8] = {
-		{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
-		{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0}
-	};
-
-	static const int kPlantLeaf1Pts[4][3] = {
-		{-40, 0, 120}, {40, 0, 120}, {40, 0, 140}, {-40, 0, 140}
-	};
-	static const int kPlantLeaf2Pts[4][3] = {
-		{0, 40, 120}, {0, -40, 120}, {0, 40, 140}, {0, -40, 140}
-	};
-	static const int kPlantLeafSurf[1][8] = {{0, 4, 0, 1, 2, 3, 0, 0}};
-
-	static const PrismPartDef kPlantParts[4] = {
-		{8, kPlantPotPts, 5, kPlantPotSurf},
-		{8, kPlantStemPts, 4, kPlantStemSurf},
-		{4, kPlantLeaf1Pts, 1, kPlantLeafSurf},
-		{4, kPlantLeaf2Pts, 1, kPlantLeafSurf}
-	};
-
 	const int clipLeft = MAX<int>((int)obj.clip.left, (int)_screenR.left);
 	const int clipTop = MAX<int>((int)obj.clip.top, (int)_screenR.top);
 	const int clipRight = MIN<int>((int)obj.clip.right, (int)_screenR.right);
@@ -1804,6 +1822,10 @@ bool ColonyEngine::drawStaticObjectPrisms(const Thing &obj, uint32 baseColor) {
 	auto tint = [](uint32 base, int delta) -> uint32 {
 		return (uint32)CLIP<int>((int)base + delta, 0, 255);
 	};
+ 
+	if (_gfx->isAccelerated()) {
+		return drawStaticObjectPrisms3D(obj, baseColor);
+	}
 
 	ProjectedPrismPart p[10];
 	switch (obj.type) {
@@ -2039,6 +2061,17 @@ void ColonyEngine::drawStaticObjectFallback(const Thing &obj, uint32 color, int 
 }
 
 void ColonyEngine::drawStaticObjects() {
+	if (_gfx->isAccelerated()) {
+		for (uint i = 0; i < _objects.size(); i++) {
+			const Thing &obj = _objects[i];
+			if (!obj.alive)
+				continue;
+			uint32 color = objectColor(obj.type);
+			drawStaticObjectPrisms3D(obj, color);
+		}
+		return;
+	}
+
 	struct DrawCmd {
 		int depth;
 		int index;
@@ -2099,6 +2132,104 @@ void ColonyEngine::setRobot(int l, int r, int num) {
 	obj.clip.right = clipRight;
 	obj.clip.top = _clip.top;
 	obj.clip.bottom = _clip.bottom;
+}
+ 
+// DOS object geometry constants
+
+
+void ColonyEngine::renderCorridor3D() {
+	_gfx->begin3D(_me.xloc, _me.yloc, 0, _me.look, _me.lookY, _screenR);
+ 
+	// Draw large grid/outline for floor and ceiling if needed, but for wireframe match, we can just clear to black
+	// We still draw a large black floor quad to ensure depth testing works against "empty ground"
+	_gfx->draw3DQuad(-100000.0f, -100000.0f, -160.1f, 
+	                100000.0f, -100000.0f, -160.1f, 
+	                100000.0f, 100000.0f, -160.1f, 
+	                -100000.0f, 100000.0f, -160.1f, 0); // Black floor
+ 
+	_gfx->draw3DQuad(-100000.0f, -100000.0f, 160.1f, 
+	                100000.0f, -100000.0f, 160.1f, 
+	                100000.0f, 100000.0f, 160.1f, 
+	                -100000.0f, 100000.0f, 160.1f, 0); // Black ceiling
+ 
+	uint32 wallColor = 15; // White
+ 
+	for (int y = 0; y < 32; y++) {
+		for (int x = 0; x < 32; x++) {
+			uint8 w = _wall[x][y];
+			if (w & 0x01) {
+				_gfx->draw3DWall(x, y, x + 1, y, wallColor);
+			}
+			if (w & 0x02) {
+				_gfx->draw3DWall(x, y, x, y + 1, wallColor);
+			}
+		}
+	}
+	
+	drawStaticObjects();
+		
+	_gfx->end3D();
+}
+
+bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj, uint32 baseColor) {
+	auto tint = [](uint32 base, int delta) -> uint32 {
+		return (uint32)CLIP<int>((int)base + delta, 0, 255);
+	};
+
+	switch (obj.type) {
+	case kObjConsole:
+		draw3DPrism(obj, kConsolePart, false, tint(baseColor, 0));
+		break;
+	case kObjCChair:
+		for (int i = 0; i < 5; i++)
+			draw3DPrism(obj, kCChairParts[i], false, tint(baseColor, 0));
+		break;
+	case kObjPlant:
+		for (int i = 0; i < 4; i++)
+			draw3DPrism(obj, kPlantParts[i], false, tint(baseColor, 0));
+		break;
+	case kObjCouch:
+	case kObjChair: {
+		const PrismPartDef *parts = (obj.type == kObjCouch) ? kCouchParts : kChairParts;
+		for (int i = 0; i < 4; i++)
+			draw3DPrism(obj, parts[i], false, tint(baseColor, 0));
+		break;
+	}
+	case kObjTV:
+		draw3DPrism(obj, kTVParts[0], false, tint(baseColor, 0));
+		draw3DPrism(obj, kTVParts[1], false, tint(baseColor, 35));
+		break;
+	case kObjDrawer:
+		draw3DPrism(obj, kDrawerParts[0], false, tint(baseColor, 0));
+		draw3DPrism(obj, kDrawerParts[1], false, tint(baseColor, 30));
+		break;
+	case kObjFWall:
+	case kObjCWall:
+		draw3DPrism(obj, kCWallParts[0], false, tint(baseColor, -5));
+		break;
+	case kObjScreen:
+		draw3DPrism(obj, kScreenPart, false, tint(baseColor, 0));
+		break;
+	case kObjTable:
+		draw3DPrism(obj, kTableParts[0], false, tint(baseColor, 20));
+		draw3DPrism(obj, kTableParts[1], false, tint(baseColor, -10));
+		break;
+	case kObjBed:
+	case kObjBBed: {
+		const PrismPartDef *parts = (obj.type == kObjBBed) ? kBBedParts : kBedParts;
+		draw3DPrism(obj, parts[0], false, tint(baseColor, 15));
+		draw3DPrism(obj, parts[1], false, tint(baseColor, -10));
+		draw3DPrism(obj, parts[2], false, tint(baseColor, 5));
+		break;
+	}
+	case kObjDesk:
+		for (int i = 0; i < 10; i++)
+			draw3DPrism(obj, kDeskParts[i], false, tint(baseColor, 0));
+		break;
+	default:
+		return false;
+	}
+	return true;
 }
 
 } // End of namespace Colony
