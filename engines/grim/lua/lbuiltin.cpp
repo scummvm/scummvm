@@ -523,7 +523,7 @@ void luaB_predefine() {
 	// pre-register mem error messages, to avoid loop when error arises
 	luaS_newfixedstring(tableEM);
 	luaS_newfixedstring(memEM);
-	luaL_openlib(int_funcs, sizeof(int_funcs) / sizeof(int_funcs[0]));
+	luaL_openlib(int_funcs, ARRAYSIZE(int_funcs));
 	lua_pushstring(LUA_VERSION);
 	lua_setglobal("_VERSION");
 }

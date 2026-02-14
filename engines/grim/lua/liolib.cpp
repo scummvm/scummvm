@@ -416,7 +416,7 @@ static struct luaL_reg iolibtag[] = {
 static void openwithtags() {
 	int32 iotag = lua_newtag();
 	int32 closedtag = lua_newtag();
-	for (uint32 i = 0; i < sizeof(iolibtag) / sizeof(iolibtag[0]); i++) {
+	for (uint32 i = 0; i < ARRAYSIZE(iolibtag); i++) {
 		// put both tags as upvalues for these functions
 		lua_pushnumber(iotag);
 		lua_pushnumber(closedtag);
@@ -449,8 +449,8 @@ static void openwithtags() {
 void lua_iolibopen() {
 	g_files = new Common::HashMap<int32, LuaFile *>();
 
-	luaL_openlib(iolib, (sizeof(iolib) / sizeof(iolib[0])));
-	luaL_addlibtolist(iolibtag, (sizeof(iolibtag) / sizeof(iolibtag[0])));
+	luaL_openlib(iolib, ARRAYSIZE(iolib));
+	luaL_addlibtolist(iolibtag, ARRAYSIZE(iolibtag));
 	openwithtags();
 	lua_pushcfunction(errorfb);
 	lua_seterrormethod();
