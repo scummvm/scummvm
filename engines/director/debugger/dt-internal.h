@@ -31,8 +31,7 @@
 #include "backends/imgui/imgui.h"
 #include "backends/imgui/imgui_fonts.h"
 #include "backends/imgui/components/imgui_logger.h"
-
-#include "director/debugger/imgui_memory_editor.h"
+#include "backends/imgui/components/imgui_memory_editor.h"
 
 #include "director/types.h"
 #include "director/lingo/lingo.h"
