@@ -22,8 +22,6 @@
 #ifndef CREATE_TONY_H
 #define CREATE_TONY_H
 
-#define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
-
 #define DATAALIGNMENT 4
 
 #define TONY_DAT_VER_MAJ 0  // 1 byte

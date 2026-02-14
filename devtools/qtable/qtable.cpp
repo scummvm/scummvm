@@ -3,6 +3,11 @@
 #include <string.h>
 #include <assert.h>
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/util.h"
+
+
 /*
   Table file format for scummvm/queen
 	uint32 : 'QTBL'
@@ -19,7 +24,6 @@
 */
 
 #define MAX_VERSIONS  20
-#define ARRAYSIZE(x) (sizeof(x)/sizeof(x[0]))
 
 typedef unsigned char   uint8;
 typedef unsigned short uint16;
@@ -70,7 +74,7 @@ typedef struct GameVersion {
 #include "fat_amiga_interview.h"
 #include "fat_amiga_ger_floppy.h" // https://bugs.scummvm.org/ticket/12313
 
-#define FAT(x) x, (sizeof(x)/sizeof(x[0]))
+#define FAT(x) x, (ARRAYSIZE(x))
 
 static GameVersion gameVersionsTable[] = {
 	{ "PEM10",  22677657, FAT(fatEngFl),          1, 0 },

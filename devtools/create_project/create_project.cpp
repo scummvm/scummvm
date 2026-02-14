@@ -58,6 +58,11 @@
 #include <cstring>
 #include <ctime>
 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/util.h"
+
+
 namespace {
 /**
  * Converts the given path to only use slashes as
@@ -1299,7 +1304,7 @@ std::string getMSVCConfigName(MSVC_Architecture arch) {
 }
 
 FeatureList getAllFeatures() {
-	const size_t featureCount = sizeof(s_features) / sizeof(s_features[0]);
+	const size_t featureCount = ARRAYSIZE(s_features);
 
 	FeatureList features;
 	for (size_t i = 0; i < featureCount; ++i)
@@ -1522,7 +1527,7 @@ BuildSetup removeFeatureFromSetup(BuildSetup setup, const std::string &feature) 
 }
 
 ToolList getAllTools() {
-	const size_t toolCount = sizeof(s_tools) / sizeof(s_tools[0]);
+	const size_t toolCount = ARRAYSIZE(s_tools);
 
 	ToolList tools;
 	for (size_t i = 0; i < toolCount; ++i)
@@ -1532,7 +1537,7 @@ ToolList getAllTools() {
 }
 
 MSVCList getAllMSVCVersions() {
-	const size_t msvcCount = sizeof(s_msvc) / sizeof(s_msvc[0]);
+	const size_t msvcCount = ARRAYSIZE(s_msvc);
 
 	MSVCList msvcVersions;
 	for (size_t i = 0; i < msvcCount; ++i)
@@ -1542,7 +1547,7 @@ MSVCList getAllMSVCVersions() {
 }
 
 const MSVCVersion *getMSVCVersion(int version) {
-	const size_t msvcCount = sizeof(s_msvc) / sizeof(s_msvc[0]);
+	const size_t msvcCount = ARRAYSIZE(s_msvc);
 
 	for (size_t i = 0; i < msvcCount; ++i) {
 		if (s_msvc[i].version == version)
