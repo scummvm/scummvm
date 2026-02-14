@@ -32,6 +32,8 @@ enum ColonyDebugChannels {
 
 extern const ADGameDescription gameDescriptions[];
 
+#define GAMEOPTION_WIDESCREEN GUIO_GAMEOPTIONS1
+
 } // End of namespace Colony
 
 #endif // COLONY_DETECTION_H

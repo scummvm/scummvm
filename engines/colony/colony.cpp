@@ -57,6 +57,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_unlocked = false;
 	_weapons = 0;
 	_wireframe = true;
+	_widescreen = ConfMan.getBool("widescreen_mod");
 	
 	memset(_wall, 0, sizeof(_wall));
 	memset(_mapData, 0, sizeof(_mapData));
@@ -176,13 +177,17 @@ void ColonyEngine::initTrig() {
 }
 
 Common::Error ColonyEngine::run() {
-	// Create the renderer (follows Freescape pattern: always uses OpenGL)
+	_width = 640;
+	_height = 480;
+
+	if (_widescreen) {
+		_width = _height * 16 / 9;
+	}
+
 	_gfx = createRenderer(_system, _width, _height);
 	if (!_gfx)
 		return Common::kUserCanceled;
 
-	_width = _system->getWidth();
-	_height = _system->getHeight();
 	updateViewportLayout();
 	const Graphics::PixelFormat format = _system->getScreenFormat();
 	debug("Screen format: %d bytesPerPixel. Actual size: %dx%d", format.bytesPerPixel, _width, _height);
@@ -274,6 +279,8 @@ Common::Error ColonyEngine::run() {
 				// to prevent the warp from generating phantom deltas (Freescape pattern)
 				_system->warpMouse(_centerX, _centerY);
 				_system->getEventManager()->purgeMouseEvents();
+			} else if (event.type == Common::EVENT_SCREEN_CHANGED) {
+				_gfx->computeScreenViewport();
 			}
 		}
 
@@ -442,9 +449,9 @@ void ColonyEngine::playAnimation() {
 void ColonyEngine::drawAnimation() {
 	_gfx->clear(0); // Ensure entire screen is black
 
-	// Center 320x200 animation on 640x480 screen
-	int ox = (640 - 320) / 2;
-	int oy = (480 - 200) / 2;
+	// Center 320x200 animation on screen
+	int ox = (_width - 320) / 2;
+	int oy = (_height - 200) / 2;
 
 	// Draw background if active
 	if (_backgroundActive && _backgroundFG) {
@@ -542,8 +549,8 @@ Common::Rect ColonyEngine::readRect(Common::SeekableReadStream &file) {
 }
 
 int ColonyEngine::whichSprite(const Common::Point &p) {
-	int ox = (640 - 320) / 2;
-	int oy = (480 - 200) / 2;
+	int ox = (_width - 320) / 2;
+	int oy = (_height - 200) / 2;
 	Common::Point pt(p.x - ox, p.y - oy);
 
 	for (int i = _lSprites.size() - 1; i >= 0; i--) {

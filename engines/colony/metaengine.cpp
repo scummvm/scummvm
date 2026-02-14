@@ -22,13 +22,35 @@
 #include "colony/colony.h"
 #include "colony/detection.h"
 #include "common/system.h"
+#include "common/translation.h"
+#include "common/config-manager.h"
 
 namespace Colony {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_WIDESCREEN,
+		{
+			_s("Widescreen mod"),
+			_s("Enable widescreen rendering in fullscreen mode."),
+			"widescreen_mod",
+			false,
+			0,
+			0
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 class ColonyMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "colony";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return optionsList;
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override {

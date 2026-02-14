@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "common/config-manager.h"
 #include "graphics/surface.h"
 #include "graphics/font.h"
 #include <math.h>
@@ -59,6 +60,7 @@ public:
 	void drawPolygon(const int *x, const int *y, int count, uint32 color) override;
 	void copyToScreen() override;
 	void setWireframe(bool enable) override { _wireframe = enable; }
+	void computeScreenViewport() override;
 
 private:
 	void useColor(uint32 color);
@@ -68,6 +70,7 @@ private:
 	int _height;
 	byte _palette[256 * 3];
 	bool _wireframe;
+	Common::Rect _screenViewport;
 };
 
 OpenGLRenderer::OpenGLRenderer(OSystem *system, int width, int height) : _system(system), _width(width), _height(height) {
@@ -90,7 +93,7 @@ OpenGLRenderer::OpenGLRenderer(OSystem *system, int width, int height) : _system
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	glViewport(0, 0, _system->getWidth(), _system->getHeight());
+	computeScreenViewport();
 	
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -173,12 +176,12 @@ void OpenGLRenderer::begin3D(int camX, int camY, int camZ, int angle, int angleY
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
  
 	// Scale viewport coordinates to system pixels
-	float scaleX = (float)_system->getWidth() / _width;
-	float scaleY = (float)_system->getHeight() / _height;
+	float scaleX = (float)_screenViewport.width() / _width;
+	float scaleY = (float)_screenViewport.height() / _height;
 	int sysH = _system->getHeight();
  
-	int vpX = (int)(viewport.left * scaleX);
-	int vpY = sysH - (int)(viewport.bottom * scaleY);
+	int vpX = _screenViewport.left + (int)(viewport.left * scaleX);
+	int vpY = sysH - (_screenViewport.top + (int)(viewport.bottom * scaleY));
 	int vpW = (int)(viewport.width() * scaleX);
 	int vpH = (int)(viewport.height() * scaleY);
  
@@ -366,11 +369,39 @@ void OpenGLRenderer::end3D() {
 	glScissor(0, 0, _system->getWidth(), _system->getHeight());
  
 	// Reset to 2D
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	computeScreenViewport();
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, _width, _height, 0, -1, 1);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+}
+
+void OpenGLRenderer::computeScreenViewport() {
+	int32 screenWidth = _system->getWidth();
+	int32 screenHeight = _system->getHeight();
+
+	bool widescreen = ConfMan.getBool("widescreen_mod");
+
+	if (widescreen) {
+		_screenViewport = Common::Rect(screenWidth, screenHeight);
+	} else if (_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection)) {
+		// Aspect ratio correction (4:3)
+		int32 viewportWidth = MIN<int32>(screenWidth, screenHeight * 4 / 3);
+		int32 viewportHeight = MIN<int32>(screenHeight, screenWidth * 3 / 4);
+		_screenViewport = Common::Rect(viewportWidth, viewportHeight);
+
+		// Pillarboxing/Letterboxing
+		_screenViewport.translate((screenWidth - viewportWidth) / 2,
+		                           (screenHeight - viewportHeight) / 2);
+	} else {
+		_screenViewport = Common::Rect(screenWidth, screenHeight);
+	}
+
+	glViewport(_screenViewport.left, screenHeight - _screenViewport.bottom, _screenViewport.width(), _screenViewport.height());
+	glScissor(_screenViewport.left, screenHeight - _screenViewport.bottom, _screenViewport.width(), _screenViewport.height());
 }
 
 void OpenGLRenderer::scroll(int dx, int dy, uint32 background) {

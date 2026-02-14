@@ -47,6 +47,7 @@ const ADGameDescription gameDescriptions[] = {
 class ColonyMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
 public:
 	ColonyMetaEngineDetection() : AdvancedMetaEngineDetection(Colony::gameDescriptions, Colony::colonyGames) {
+		_guiOptions = GUIO1(GAMEOPTION_WIDESCREEN);
 	}
 
 	const char *getName() const override {

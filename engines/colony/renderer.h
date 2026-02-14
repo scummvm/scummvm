@@ -60,6 +60,7 @@ public:
 	// Buffer management
 	virtual void copyToScreen() = 0;
 	virtual void setWireframe(bool enable) = 0;
+	virtual void computeScreenViewport() = 0;
 
 	// Convenience color accessors
 	uint32 white() const { return 255; }

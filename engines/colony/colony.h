@@ -207,6 +207,7 @@ private:
 	bool _unlocked;
 	int _weapons;
 	bool _wireframe;
+	bool _widescreen;
 
 	int _frntxWall, _frntyWall;
 	int _sidexWall, _sideyWall;
