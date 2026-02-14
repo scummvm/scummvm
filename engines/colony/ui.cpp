@@ -468,31 +468,25 @@ void ColonyEngine::interactWithObject(int objNum) {
 	const int x = CLIP<int>(obj.where.xindex, 0, 30);
 	const int y = CLIP<int>(obj.where.yindex, 0, 30);
 	const int action0 = _mapData[x][y][4][3];
-	const int action1 = _mapData[x][y][4][4];
 
 	switch (obj.type) {
 	case kObjDesk:
-		if (!_hasKeycard) {
-			_hasKeycard = true;
-			debug("CCommand: DESK granted keycard");
-		} else {
-			debug("CCommand: DESK action (%d, %d)", action0, action1);
-		}
+		if (loadAnimation("desk"))
+			playAnimation();
 		break;
 	case kObjConsole:
 		switch (action0) {
-		case 1:
-			debug("CCommand: CONSOLE reactor (%d)", action1);
+		case 1: // Reactor console
+			if (loadAnimation("reactor"))
+				playAnimation();
 			break;
-		case 2:
-		{
-			const int opened = openAdjacentDoors(_me.xindex, _me.yindex);
-			debug("CCommand: CONSOLE controls opened %d nearby doors", opened);
+		case 2: // Main ship controls
+			if (loadAnimation("controls"))
+				playAnimation();
 			break;
-		}
-		case 3:
-			_unlocked = true;
-			debug("CCommand: CONSOLE security unlocked");
+		case 3: // Security console
+			if (loadAnimation("security"))
+				playAnimation();
 			break;
 		default:
 			debug("CCommand: CONSOLE action=%d", action0);
@@ -545,12 +539,8 @@ void ColonyEngine::interactWithObject(int objNum) {
 		break;
 	}
 	case kObjDrawer:
-		if (!_hasKeycard) {
-			_hasKeycard = true;
-			debug("CCommand: DRAWER vanity=%d (picked keycard)", action0);
-		} else {
-			debug("CCommand: DRAWER vanity=%d", action0);
-		}
+		if (loadAnimation("vanity"))
+			playAnimation();
 		break;
 	case kObjScreen:
 		debug("CCommand: SCREEN");

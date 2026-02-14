@@ -88,6 +88,11 @@ void Gfx::fillDitherRect(const Common::Rect &rect, uint32 color1, uint32 color2)
 	}
 }
 
+void Gfx::setPixel(int x, int y, uint32 color) {
+	if (x >= 0 && x < _width && y >= 0 && y < _height)
+		_surface.setPixel(x, y, color);
+}
+
 void Gfx::copyToScreen() {
 	_system->copyRectToScreen(_surface.getPixels(), _surface.pitch, 0, 0, _surface.w, _surface.h);
 	_system->updateScreen();

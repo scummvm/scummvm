@@ -113,10 +113,18 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_me.ang = 32;
 	_me.type = MENUM;
 
+	// Animation system init
+	_backgroundMask = nullptr;
+	_backgroundFG = nullptr;
+	_backgroundActive = false;
+	_divideBG = 0;
+
 	initTrig();
 }
 
 ColonyEngine::~ColonyEngine() {
+	deleteAnimation();
+	delete _gfx;
 }
 
 void ColonyEngine::loadMap(int mnum) {
@@ -304,7 +312,6 @@ Common::Error ColonyEngine::run() {
 		_system->delayMillis(10);
 	}
 
-	delete _gfx;
 	return Common::kNoError;
 }
 
@@ -339,35 +346,235 @@ void ColonyEngine::scrollInfo() {
 	}
 	_gfx->copyToScreen();
 
-	// Wait for keypress
-	Common::Event event;
-	bool pressed = false;
-	while (!pressed && !shouldQuit()) {
+	bool waiting = true;
+	while (waiting && !shouldQuit()) {
+		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONDOWN) {
-				pressed = true;
-				break;
-			}
+			if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONDOWN)
+				waiting = false;
 		}
 		_system->delayMillis(10);
 	}
 
-	if (shouldQuit()) return;
+	_gfx->fillRect(_screenR, 0);
+	_gfx->copyToScreen();
+}
 
-	// Scroll up
-	for (int i = 0; i < _height; i += 8) {
-		_gfx->scroll(0, -8, _gfx->black());
+bool ColonyEngine::loadAnimation(const Common::String &name) {
+	Common::String fileName = name + ".pic";
+	Common::File file;
+	if (!file.open(Common::Path(fileName))) {
+		warning("Could not open animation file %s", fileName.c_str());
+		return false;
+	}
+
+	deleteAnimation();
+
+	// Read background data
+	file.read(_topBG, 8);
+	file.read(_bottomBG, 8);
+	_divideBG = file.readSint16LE();
+	_backgroundActive = file.readSint16LE() != 0;
+	if (_backgroundActive) {
+		_backgroundClip = readRect(file);
+		_backgroundLocate = readRect(file);
+		_backgroundMask = loadImage(file);
+		_backgroundFG = loadImage(file);
+	}
+
+	// Read sprite data
+	int16 maxsprite = file.readSint16LE();
+	file.readSint16LE(); // locSprite
+	for (int i = 0; i < maxsprite; i++) {
+		Sprite *s = new Sprite();
+		s->fg = loadImage(file);
+		s->mask = loadImage(file);
+		s->used = file.readSint16LE() != 0;
+		s->clip = readRect(file);
+		s->locate = readRect(file);
+		_cSprites.push_back(s);
+	}
+
+	// Read complex sprite data
+	int16 maxLSprite = file.readSint16LE();
+	file.readSint16LE(); // anum
+	for (int i = 0; i < maxLSprite; i++) {
+		ComplexSprite *ls = new ComplexSprite();
+		int16 size = file.readSint16LE();
+		for (int j = 0; j < size; j++) {
+			ComplexSprite::SubObject sub;
+			sub.spritenum = file.readSint16LE();
+			sub.xloc = file.readSint16LE();
+			sub.yloc = file.readSint16LE();
+			ls->objects.push_back(sub);
+		}
+		ls->bounds = readRect(file);
+		ls->visible = file.readSint16LE() != 0;
+		ls->current = file.readSint16LE();
+		ls->xloc = file.readSint16LE();
+		ls->yloc = file.readSint16LE();
+		ls->acurrent = file.readSint16LE();
+		ls->axloc = file.readSint16LE();
+		ls->ayloc = file.readSint16LE();
+		ls->type = file.readByte();
+		ls->frozen = file.readByte();
+		ls->locked = file.readByte();
+		ls->link = file.readSint16LE();
+		ls->key = file.readSint16LE();
+		ls->lock = file.readSint16LE();
+		ls->onoff = true;
+		_lSprites.push_back(ls);
+	}
+
+	return true;
+}
+
+void ColonyEngine::deleteAnimation() {
+	delete _backgroundMask; _backgroundMask = nullptr;
+	delete _backgroundFG; _backgroundFG = nullptr;
+	for (uint i = 0; i < _cSprites.size(); i++) delete _cSprites[i];
+	_cSprites.clear();
+	for (uint i = 0; i < _lSprites.size(); i++) delete _lSprites[i];
+	_lSprites.clear();
+}
+
+void ColonyEngine::playAnimation() {
+	bool running = true;
+	while (running && !shouldQuit()) {
+		drawAnimation();
 		_gfx->copyToScreen();
-		_system->delayMillis(10);
-		
-		// Allow skipping scroll
+
+		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONDOWN) {
-				return;
+			if (event.type == Common::EVENT_LBUTTONDOWN) {
+				int item = whichSprite(event.mouse);
+				if (item > 0) {
+					handleAnimationClick(item);
+				} else {
+					// Clicked background or nothing? Exit for now as a safeguard
+					running = false;
+				}
+			} else if (event.type == Common::EVENT_KEYDOWN) {
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+					running = false;
 			}
 		}
-		if (shouldQuit()) return;
+		_system->delayMillis(20);
 	}
+	deleteAnimation();
+}
+
+void ColonyEngine::drawAnimation() {
+	_gfx->fillRect(_screenR, 0); // Black background
+
+	// Draw background if active
+	if (_backgroundActive && _backgroundFG) {
+		// Blit background using white as color 15
+		Image *img = _backgroundFG;
+		int x = _backgroundLocate.left;
+		int y = _backgroundLocate.top;
+		for (int iy = 0; iy < img->height; iy++) {
+			for (int ix = 0; ix < img->width; ix++) {
+				int byteIdx = iy * img->rowBytes + (ix / 8);
+				int bitIdx = 7 - (ix % 8);
+				if (img->data[byteIdx] & (1 << bitIdx)) {
+					_gfx->setPixel(x + ix, y + iy, 15);
+				}
+			}
+		}
+	}
+
+	// Draw complex sprites
+	for (uint i = 0; i < _lSprites.size(); i++) {
+		if (_lSprites[i]->onoff)
+			drawComplexSprite(i);
+	}
+}
+
+void ColonyEngine::drawComplexSprite(int index) {
+	ComplexSprite *ls = _lSprites[index];
+	if (!ls->onoff) return;
+
+	int cnum = ls->current;
+	if (cnum < 0 || cnum >= (int)ls->objects.size()) return;
+
+	int spriteIdx = ls->objects[cnum].spritenum;
+	if (spriteIdx < 0 || spriteIdx >= (int)_cSprites.size()) return;
+
+	Sprite *s = _cSprites[spriteIdx];
+	int x = ls->xloc + ls->objects[cnum].xloc;
+	int y = ls->yloc + ls->objects[cnum].yloc;
+
+	// Simplistic 1-bit to 8-bit blitter using White (15) as foreground
+	if (s->fg && s->fg->data) {
+		Image *img = s->fg;
+		for (int iy = 0; iy < img->height; iy++) {
+			for (int ix = 0; ix < img->width; ix++) {
+				int byteIdx = iy * img->rowBytes + (ix / 8);
+				int bitIdx = 7 - (ix % 8);
+				if (img->data[byteIdx] & (1 << bitIdx)) {
+					_gfx->setPixel(x + ix, y + iy, 15);
+				}
+			}
+		}
+	}
+}
+
+Image *ColonyEngine::loadImage(Common::SeekableReadStream &file) {
+	Image *im = new Image();
+	im->width = file.readSint16LE();
+	im->height = file.readSint16LE();
+	im->align = file.readSint16LE();
+	im->rowBytes = file.readSint16LE();
+	im->bits = file.readByte();
+	im->planes = file.readByte();
+
+	int16 tf = file.readSint16LE();
+	uint32 size;
+	if (tf) {
+		/* uint32 bsize = */ file.readUint32LE();
+		size = file.readUint32LE();
+		im->data = (byte *)malloc(size);
+		unpackBytes(file, im->data, size);
+	} else {
+		size = file.readUint32LE();
+		im->data = (byte *)malloc(size);
+		file.read(im->data, size);
+	}
+	return im;
+}
+
+void ColonyEngine::unpackBytes(Common::SeekableReadStream &file, byte *dst, uint32 len) {
+	uint32 i = 0;
+	while (i < len) {
+		byte count = file.readByte();
+		byte value = file.readByte();
+		for (int j = 0; j < count && i < len; j++) {
+			dst[i++] = value;
+		}
+	}
+}
+
+Common::Rect ColonyEngine::readRect(Common::SeekableReadStream &file) {
+	int16 top = file.readSint16LE();
+	int16 left = file.readSint16LE();
+	int16 bottom = file.readSint16LE();
+	int16 right = file.readSint16LE();
+	return Common::Rect(left, top, right, bottom);
+}
+
+int ColonyEngine::whichSprite(const Common::Point &p) {
+	for (int i = _lSprites.size() - 1; i >= 0; i--) {
+		if (_lSprites[i]->onoff && _lSprites[i]->bounds.contains(p)) {
+			return i + 1;
+		}
+	}
+	return 0;
+}
+
+void ColonyEngine::handleAnimationClick(int item) {
+	// Dummy for now - real logic depends on specific animation
+	debug("Animation click on item %d", item);
 }
 
 } // End of namespace Colony

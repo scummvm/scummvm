@@ -116,6 +116,53 @@ struct Thing {
 	// void (*think)();
 };
 
+struct Image {
+	int16 width;
+	int16 height;
+	int16 align;
+	int16 rowBytes;
+	int8 bits;
+	int8 planes;
+	byte *data;
+
+	Image() : width(0), height(0), align(0), rowBytes(0), bits(0), planes(0), data(nullptr) {}
+	~Image() { free(data); }
+};
+
+struct Sprite {
+	Image *fg;
+	Image *mask;
+	Common::Rect clip;
+	Common::Rect locate;
+	bool used;
+
+	Sprite() : fg(nullptr), mask(nullptr), used(false) {}
+	~Sprite() { delete fg; delete mask; }
+};
+
+struct ComplexSprite {
+	struct SubObject {
+		int16 spritenum;
+		int16 xloc, yloc;
+	};
+	Common::Array<SubObject> objects;
+	Common::Rect bounds;
+	bool visible;
+	int16 current;
+	int16 xloc, yloc;
+	int16 acurrent;
+	int16 axloc, ayloc;
+	uint8 type;
+	uint8 frozen;
+	uint8 locked;
+	int16 link;
+	int16 key;
+	int16 lock;
+	bool onoff;
+
+	ComplexSprite() : visible(false), current(0), xloc(0), yloc(0), acurrent(0), axloc(0), ayloc(0), type(0), frozen(0), locked(0), link(0), key(0), lock(0), onoff(true) {}
+};
+
 class ColonyEngine : public Engine {
 public:
 	ColonyEngine(OSystem *syst, const ADGameDescription *gd);
@@ -240,6 +287,29 @@ private:
 	void updateViewportLayout();
 	void drawDashboardStep1();
 	void drawCrosshair();
+
+	// Animation system
+	Common::Array<Sprite *> _cSprites;
+	Common::Array<ComplexSprite *> _lSprites;
+	Image *_backgroundMask;
+	Image *_backgroundFG;
+	Common::Rect _backgroundClip;
+	Common::Rect _backgroundLocate;
+	bool _backgroundActive;
+	byte _topBG[8];
+	byte _bottomBG[8];
+	int16 _divideBG;
+
+	bool loadAnimation(const Common::String &name);
+	void deleteAnimation();
+	void playAnimation();
+	void drawAnimation();
+	void drawComplexSprite(int index);
+	Image *loadImage(Common::SeekableReadStream &file);
+	void unpackBytes(Common::SeekableReadStream &file, byte *dst, uint32 len);
+	Common::Rect readRect(Common::SeekableReadStream &file);
+	int whichSprite(const Common::Point &p);
+	void handleAnimationClick(int item);
 };
 
 } // End of namespace Colony

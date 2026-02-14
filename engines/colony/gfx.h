@@ -45,6 +45,7 @@ public:
 	void drawEllipse(int x, int y, int rx, int ry, uint32 color);
 	void fillEllipse(int x, int y, int rx, int ry, uint32 color);
 	void fillDitherRect(const Common::Rect &rect, uint32 color1, uint32 color2);
+	void setPixel(int x, int y, uint32 color);
 
 	void copyToScreen();
 
