@@ -22,19 +22,39 @@
 #ifndef SCUMM_EDITOR_H
 #define SCUMM_EDITOR_H
 
+#include "backends/imgui/imgui.h"
+
+#include "common/array.h"
 #include "common/str.h"
 
 namespace Scumm {
 
 class ScummEngine;
 
+namespace Editor {
+
+enum {
+	kColorLabel,
+	kColorProperty,
+	kColorWarning,
+	kColorError,
+	kColorCount
+};
+
+} // End of namespace Editor
+
 class ScummEditor {
 private:
 	ScummEngine *_engine;
 	Common::String _gameName;
 
+	Common::Array<ImVec4> _colors;
+	bool _showSettings;
+
 	void loadState();
 	void saveState();
+
+	void showSettings();
 
 public:
 	ScummEditor(ScummEngine *engine);
