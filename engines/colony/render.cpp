@@ -294,8 +294,8 @@ static const Colony::ColonyEngine::PrismPartDef kDrawerParts[2] = {
 	{4, kMirrorPts, 1, kMirrorSurf}
 };
 static const int kCWallPts[8][3] = {
-	{-128, 128, -160}, {0, 112, -160}, {112, 0, -160}, {128, -128, -160},
-	{-128, 128, 160},  {0, 112, 160},  {112, 0, 160},  {128, -128, 160}
+	{-128, 128, 0}, {0, 112, 0}, {112, 0, 0}, {128, -128, 0},
+	{-128, 128, 320},  {0, 112, 320},  {112, 0, 320},  {128, -128, 320}
 };
 static const int kCWallSurf[3][8] = {
 	{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0}
@@ -435,7 +435,7 @@ void ColonyEngine::draw3DPrism(const Thing &obj, const PrismPartDef &def, bool u
 			
 			px[count] = (float)(rx + obj.where.xloc);
 			py[count] = (float)(ry + obj.where.yloc);
-			pz[count] = (float)oz;
+			pz[count] = (float)(oz - 160); // Shift from floor-relative (z=0) to world (z=-160)
 			count++;
 		}
 
