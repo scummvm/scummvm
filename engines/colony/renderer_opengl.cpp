@@ -187,11 +187,16 @@ void OpenGLRenderer::begin3D(int camX, int camY, int camZ, int angle, int angleY
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	
-	// Optical center is at viewport.width()/2 and viewport.height()/2
-	// xmax = (width/2) / 256.0
-	float xmax = (viewport.width() / 2.0f) / 256.0f;
-	float ymax = (viewport.height() / 2.0f) / 256.0f;
-	glFrustum(-xmax, xmax, -ymax, ymax, 1.0, 20000.0);
+	// Use a proper FOV-based perspective projection (like Freescape).
+	// A fixed vertical FOV ensures the forward direction stays centered
+	// regardless of viewport dimensions (e.g. when dashboard narrows it).
+	float aspectRatio = (float)viewport.width() / (float)viewport.height();
+	float fov = 75.0f; // vertical FOV in degrees
+	float nearClip = 1.0f;
+	float farClip = 20000.0f;
+	float ymax = nearClip * tanf(fov * M_PI / 360.0f);
+	float xmax = ymax * aspectRatio;
+	glFrustum(-xmax, xmax, -ymax, ymax, nearClip, farClip);
  
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();

@@ -408,7 +408,9 @@ uint32 ColonyEngine::objectColor(int type) const {
 }
 
 void ColonyEngine::draw3DPrism(const Thing &obj, const PrismPartDef &def, bool useLook, uint32 color) {
-	const uint8 ang = useLook ? obj.where.look : obj.where.ang;
+	// +32 compensates for the original sine table's 45° phase offset.
+	// Object angles from game data were stored assuming that offset.
+	const uint8 ang = (useLook ? obj.where.look : obj.where.ang) + 32;
 	const long rotCos = _cost[ang];
 	const long rotSin = _sint[ang];
  

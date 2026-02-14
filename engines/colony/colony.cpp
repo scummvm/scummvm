@@ -39,40 +39,7 @@
 
 namespace Colony {
 
-static const int16 g_sintTable[256] = {
-	90,  93,  95,  97,  99, 101, 103, 105,
-	106, 108, 110, 111, 113, 114, 116, 117,
-	118, 119, 121, 122, 122, 123, 124, 125,
-	126, 126, 127, 127, 127, 128, 128, 128,
-	128, 128, 128, 128, 127, 127, 127, 126,
-	126, 125, 124, 123, 122, 122, 121, 119,
-	118, 117, 116, 114, 113, 111, 110, 108,
-	106, 105, 103, 101,  99,  97,  95,  93,
-	90,  88,  86,  84,  81,  79,  76,  74,
-	71,  68,  66,  63,  60,  56,  54,  52,
-	49,  46,  43,  40,  37,  34,  31,  28,
-	25,  23,  19,  16,  13,   9,   6,   3,
-	0,  -3,  -6,  -9, -13, -16, -19, -23,
-	-25, -28, -31, -34, -37, -40, -43, -46,
-	-49, -52, -54, -56, -60, -63, -66, -68,
-	-71, -74, -76, -79, -81, -84, -86, -88,
-	-88, -90, -93, -95, -97, -99,-101,-103,
-	-105,-106,-108,-110,-111,-113,-114,-116,
-	-117,-118,-119,-121,-122,-122,-123,-124,
-	-125,-126,-126,-127,-127,-127,-128,-128,
-	-128,-128,-128,-128,-127,-127,-127,-126,
-	-126,-125,-124,-123,-122,-122,-121,-119,
-	-118,-117,-116,-114,-113,-111,-110,-108,
-	-106,-105,-103,-101, -99, -97, -95, -93,
-	-90, -88, -86, -84, -81, -79, -76, -74,
-	-71, -68, -66, -63, -60, -56, -54, -52,
-	-49, -46, -43, -40, -37, -34, -31, -28,
-	-25, -23, -19, -16, -13,  -9,  -6,  -3,
-	0,   3,   6,   9,  13,  16,  19,  23,
-	25,  28,  31,  34,  37,  40,  43,  46,
-	49,  52,  54,  56,  60,  63,  66,  68,
-	71,  74,  76,  79,  81,  84,  86,  88
-};
+
 
 ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst), _gameDescription(gd) {
 	_level = 0;
@@ -200,9 +167,11 @@ void ColonyEngine::loadMap(int mnum) {
 }
 
 void ColonyEngine::initTrig() {
+	// Compute standard sin/cos lookup tables (256 steps = full circle, scaled by 128)
 	for (int i = 0; i < 256; i++) {
-		_sint[i] = g_sintTable[i];
-		_cost[i] = g_sintTable[(i + 64) & 0xFF];
+		float rad = (float)i * 2.0f * M_PI / 256.0f;
+		_sint[i] = (int)roundf(128.0f * sinf(rad));
+		_cost[i] = (int)roundf(128.0f * cosf(rad));
 	}
 }
 
@@ -287,9 +256,12 @@ Common::Error ColonyEngine::run() {
 				if (event.relMouse.y != 0) {
 					_me.lookY = (int8)CLIP<int>((int)_me.lookY - (event.relMouse.y / 2), -64, 64);
 				}
+				// Warp back to center and purge remaining mouse events
+				// to prevent the warp from generating phantom deltas (Freescape pattern)
+				_system->warpMouse(_centerX, _centerY);
+				_system->getEventManager()->purgeMouseEvents();
 			}
 		}
-		_system->warpMouse(_centerX, _centerY);
 
 		_gfx->clear(_gfx->black());
 		
