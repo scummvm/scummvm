@@ -465,33 +465,25 @@ void ColonyEngine::playAnimation() {
 }
 
 void ColonyEngine::drawAnimation() {
-	_gfx->fillRect(_screenR, 0); // Black background
+	_gfx->clear(0); // Ensure entire screen is black
+
+	// Center 320x200 animation on 640x480 screen
+	int ox = (640 - 320) / 2;
+	int oy = (480 - 200) / 2;
 
 	// Draw background if active
 	if (_backgroundActive && _backgroundFG) {
-		// Blit background using white as color 15
-		Image *img = _backgroundFG;
-		int x = _backgroundLocate.left;
-		int y = _backgroundLocate.top;
-		for (int iy = 0; iy < img->height; iy++) {
-			for (int ix = 0; ix < img->width; ix++) {
-				int byteIdx = iy * img->rowBytes + (ix / 8);
-				int bitIdx = 7 - (ix % 8);
-				if (img->data[byteIdx] & (1 << bitIdx)) {
-					_gfx->setPixel(x + ix, y + iy, 15);
-				}
-			}
-		}
+		drawAnimationImage(_backgroundFG, nullptr, ox + _backgroundLocate.left, oy + _backgroundLocate.top);
 	}
 
 	// Draw complex sprites
 	for (uint i = 0; i < _lSprites.size(); i++) {
 		if (_lSprites[i]->onoff)
-			drawComplexSprite(i);
+			drawComplexSprite(i, ox, oy);
 	}
 }
 
-void ColonyEngine::drawComplexSprite(int index) {
+void ColonyEngine::drawComplexSprite(int index, int ox, int oy) {
 	ComplexSprite *ls = _lSprites[index];
 	if (!ls->onoff) return;
 
@@ -502,20 +494,31 @@ void ColonyEngine::drawComplexSprite(int index) {
 	if (spriteIdx < 0 || spriteIdx >= (int)_cSprites.size()) return;
 
 	Sprite *s = _cSprites[spriteIdx];
-	int x = ls->xloc + ls->objects[cnum].xloc;
-	int y = ls->yloc + ls->objects[cnum].yloc;
+	int x = ox + ls->xloc + ls->objects[cnum].xloc;
+	int y = oy + ls->yloc + ls->objects[cnum].yloc;
 
-	// Simplistic 1-bit to 8-bit blitter using White (15) as foreground
-	if (s->fg && s->fg->data) {
-		Image *img = s->fg;
-		for (int iy = 0; iy < img->height; iy++) {
-			for (int ix = 0; ix < img->width; ix++) {
-				int byteIdx = iy * img->rowBytes + (ix / 8);
-				int bitIdx = 7 - (ix % 8);
-				if (img->data[byteIdx] & (1 << bitIdx)) {
-					_gfx->setPixel(x + ix, y + iy, 15);
-				}
+	drawAnimationImage(s->fg, s->mask, x, y);
+}
+
+void ColonyEngine::drawAnimationImage(Image *img, Image *mask, int x, int y) {
+	if (!img || !img->data) return;
+
+	for (int iy = 0; iy < img->height; iy++) {
+		for (int ix = 0; ix < img->width; ix++) {
+			int byteIdx = iy * img->rowBytes + (ix / 8);
+			int bitIdx = 7 - (ix % 8);
+			
+			bool maskSet = true;
+			if (mask && mask->data) {
+				maskSet = (mask->data[byteIdx] & (1 << bitIdx)) != 0;
 			}
+
+			if (!maskSet) continue;
+
+			bool fgSet = (img->data[byteIdx] & (1 << bitIdx)) != 0;
+			uint32 color = fgSet ? 15 : 0;
+
+			_gfx->setPixel(x + ix, y + iy, color);
 		}
 	}
 }
@@ -564,8 +567,12 @@ Common::Rect ColonyEngine::readRect(Common::SeekableReadStream &file) {
 }
 
 int ColonyEngine::whichSprite(const Common::Point &p) {
+	int ox = (640 - 320) / 2;
+	int oy = (480 - 200) / 2;
+	Common::Point pt(p.x - ox, p.y - oy);
+
 	for (int i = _lSprites.size() - 1; i >= 0; i--) {
-		if (_lSprites[i]->onoff && _lSprites[i]->bounds.contains(p)) {
+		if (_lSprites[i]->onoff && _lSprites[i]->bounds.contains(pt)) {
 			return i + 1;
 		}
 	}

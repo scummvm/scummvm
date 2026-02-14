@@ -304,7 +304,8 @@ private:
 	void deleteAnimation();
 	void playAnimation();
 	void drawAnimation();
-	void drawComplexSprite(int index);
+	void drawComplexSprite(int index, int ox, int oy);
+	void drawAnimationImage(Image *img, Image *mask, int x, int y);
 	Image *loadImage(Common::SeekableReadStream &file);
 	void unpackBytes(Common::SeekableReadStream &file, byte *dst, uint32 len);
 	Common::Rect readRect(Common::SeekableReadStream &file);
