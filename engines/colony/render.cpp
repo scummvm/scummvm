@@ -467,8 +467,8 @@ void ColonyEngine::getWallFace3D(int cellX, int cellY, int direction, float corn
 	float y1 = (cellY + 1) * 256.0f;
 	const float zBot = -160.0f;
 	const float zTop = 160.0f;
-	// Offset slightly toward the cell interior to prevent z-fighting with the wall polygon
-	const float eps = 1.0f;
+	// No more manual eps offset; we'll use glPolygonOffset in the renderer
+	const float eps = 0.0f;
 
 	switch (direction) {
 	case kDirNorth: // Wall at y=cellY edge; viewed from inside cell (y > cellY*256)
@@ -702,6 +702,8 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 }
 
 void ColonyEngine::drawWallFeatures3D() {
+	// TODO
+	/*
 	for (int y = 0; y < 31; y++) {
 		for (int x = 0; x < 31; x++) {
 			for (int dir = 0; dir < 4; dir++) {
@@ -711,7 +713,7 @@ void ColonyEngine::drawWallFeatures3D() {
 				}
 			}
 		}
-	}
+	}*/
 }
 
 
