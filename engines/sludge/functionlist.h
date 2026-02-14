@@ -200,6 +200,6 @@ static builtInFunctionData builtInFunctionArray[] = {
 };
 #undef FUNC
 
-const static int NUM_FUNCS = (sizeof (builtInFunctionArray) / sizeof (builtInFunctionArray[0]));
+const static int NUM_FUNCS = ARRAYSIZE(builtInFunctionArray);
 
 } // End of namespace Sludge

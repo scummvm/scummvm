@@ -22,6 +22,7 @@
 #include "engines/freescape/games/driller/c64.music.h"
 
 #include "common/textconsole.h"
+#include "common/util.h"
 
 // --- Driller Music Data (Embedded from Disassembly) ---
 namespace Freescape {
@@ -163,7 +164,7 @@ const uint8_t *const pattern_addresses[] = {
 	pattern_24, pattern_25, pattern_26, pattern_27, pattern_28, pattern_29, pattern_30, pattern_31,
 	pattern_32, pattern_33, pattern_34, pattern_35, pattern_36, pattern_37, pattern_38, pattern_39,
 	pattern_40, pattern_41};
-const int NUM_PATTERNS = sizeof(pattern_addresses) / sizeof(pattern_addresses[0]);
+const int NUM_PATTERNS = ARRAYSIZE(pattern_addresses);
 
 // Tune Data (0x1054, 0x15D5 - 0x15E5)
 const uint8_t tune_tempo_data[] = {0x00, 0x03, 0x03}; // tempos for tune 0, 1, 2
@@ -171,7 +172,7 @@ const uint8_t *const tune_track_data[][3] = {
 	{nullptr, nullptr, nullptr},                               // Tune 0 (null pointers = stop)
 	{voice1_track_data, voice2_track_data, voice3_track_data}, // Tune 1
 };
-const int NUM_TUNES = sizeof(tune_tempo_data) / sizeof(tune_tempo_data[0]);
+const int NUM_TUNES = ARRAYSIZE(tune_tempo_data);
 
 // SID Base Addresses for Voices
 const int voice_sid_offset[] = {0, 7, 14};

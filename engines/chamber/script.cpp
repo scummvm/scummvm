@@ -4187,7 +4187,7 @@ cmdhandler_t command_handlers[] = {
 	CMD_25_LoadGame,
 	CMD_26_SaveGame
 };
-#define MAX_CMD_HANDLERS (sizeof(command_handlers) / sizeof(command_handlers[0]))
+#define MAX_CMD_HANDLERS ARRAYSIZE(command_handlers)
 
 cmdhandler_t script_handlers[] = {
 	0,
@@ -4298,7 +4298,7 @@ cmdhandler_t script_handlers[] = {
 	SCR_69_playSound,
 	SCR_6A_Unused,
 };
-#define MAX_SCR_HANDLERS (sizeof(script_handlers) / sizeof(script_handlers[0]))
+#define MAX_SCR_HANDLERS ARRAYSIZE(script_handlers)
 
 #ifdef DEBUG_SCRIPT
 int16 runscr_reentr = 0;

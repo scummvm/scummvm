@@ -57,7 +57,7 @@ void Test_GfxSpeed(bool enableSimd, size_t blenderModeStart, size_t blenderModeE
 	Bitmap *graphics[] = {benchgfx32, benchgfx16, benchgfx8};
 	uint64 time = 0, numIters = 0, timeNotStretched = 0, numItersNotStretched = 0, timeCommon = 0, numItersCommon = 0;
 	//int bpps[] = {32, 16, 8};
-	if (blenderModeEnd >= sizeof(blenderModes) / sizeof(blenderModes[0])) blenderModeEnd = (sizeof(blenderModes) / sizeof(blenderModes[0])) - 1;
+	if (blenderModeEnd >= ARRAYSIZE(blenderModes)) blenderModeEnd = (ARRAYSIZE(blenderModes)) - 1;
 	for (int dest = 0; dest < 3; dest++) {
 		for (int gfx = 0; gfx < 3; gfx++) {
 			if (dest == 2 && gfx != 2) continue;

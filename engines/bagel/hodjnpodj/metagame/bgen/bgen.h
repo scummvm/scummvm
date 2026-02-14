@@ -38,7 +38,7 @@ namespace Metagame {
 #define MINNEGINT (-MAXPOSINT-1)
 #define MINNEGLONG (-MAXPOSLONG-1)
 
-#define DIMENSION(a) (sizeof(a) / sizeof(a[0]))
+#define DIMENSION(a) (ARRAYSIZE(a))
 #define UPPERBOUND(a) (DIMENSION(a) - 1)
 
 typedef char *XPSTR ;
