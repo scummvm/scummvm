@@ -222,6 +222,7 @@ Common::Error ColonyEngine::run() {
 					const bool allowInteraction = (event.kbd.flags & Common::KBD_CTRL) == 0;
 					switch (event.kbd.keycode) {
 					case Common::KEYCODE_UP:
+					case Common::KEYCODE_w:
 					{
 						int xnew = _me.xloc + (_cost[_me.look] >> 2);
 						int ynew = _me.yloc + (_sint[_me.look] >> 2);
@@ -229,18 +230,31 @@ Common::Error ColonyEngine::run() {
 						break;
 					}
 					case Common::KEYCODE_DOWN:
+					case Common::KEYCODE_s:
 					{
 						int xnew = _me.xloc - (_cost[_me.look] >> 2);
 						int ynew = _me.yloc - (_sint[_me.look] >> 2);
 						cCommand(xnew, ynew, allowInteraction);
 						break;
 					}
-				case Common::KEYCODE_LEFT:
-					_me.look = (uint8)((int)_me.look + 8);
-					break;
-					case Common::KEYCODE_RIGHT:
-						_me.look = (uint8)((int)_me.look - 8);
+					case Common::KEYCODE_LEFT:
+					case Common::KEYCODE_a:
+					{
+						uint8 strafeAngle = (uint8)((int)_me.look + 64);
+						int xnew = _me.xloc + (_cost[strafeAngle] >> 2);
+						int ynew = _me.yloc + (_sint[strafeAngle] >> 2);
+						cCommand(xnew, ynew, allowInteraction);
 						break;
+					}
+					case Common::KEYCODE_RIGHT:
+					case Common::KEYCODE_d:
+					{
+						uint8 strafeAngle = (uint8)((int)_me.look - 64);
+						int xnew = _me.xloc + (_cost[strafeAngle] >> 2);
+						int ynew = _me.yloc + (_sint[strafeAngle] >> 2);
+						cCommand(xnew, ynew, allowInteraction);
+						break;
+					}
 					case Common::KEYCODE_F7:
 						_wireframe = !_wireframe;
 						_gfx->setWireframe(_wireframe);
