@@ -20,6 +20,7 @@
  */
 
 #include "common/scummsys.h"
+#include "common/util.h"
 
 /* Common memory code used by the Indeo decoder
  *
@@ -33,7 +34,7 @@
 namespace Image {
 namespace Indeo {
 
-#define FF_ARRAY_ELEMS(a) (sizeof(a) / sizeof((a)[0]))
+#define FF_ARRAY_ELEMS(a) ARRAYSIZE(a)
 #define FFALIGN(x, a) (((x) + (a)-1) & ~((a)-1))
 #define FFSIGN(a) ((a) > 0 ? 1 : -1)
 #define MAX_INTEGER 0x7ffffff

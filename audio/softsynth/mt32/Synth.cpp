@@ -33,6 +33,9 @@
 #include "ROMInfo.h"
 #include "TVA.h"
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/util.h"
+
 #if MT32EMU_MONITOR_SYSEX > 0
 #include "mmath.h"
 #endif
@@ -575,7 +578,7 @@ bool Synth::loadControlROM(const ROMImage &controlROMImage) {
 	// Control ROM successfully loaded, now check whether it's a known type
 	controlROMMap = NULL;
 	controlROMFeatures = NULL;
-	for (unsigned int i = 0; i < sizeof(ControlROMMaps) / sizeof(ControlROMMaps[0]); i++) {
+	for (unsigned int i = 0; i < ARRAYSIZE(ControlROMMaps); i++) {
 		if (strcmp(controlROMInfo->shortName, ControlROMMaps[i].shortName) == 0) {
 			controlROMMap = &ControlROMMaps[i];
 			controlROMFeatures = &controlROMMap->featureSet;
