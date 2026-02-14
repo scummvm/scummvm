@@ -401,30 +401,30 @@ const uint16_t description_offsets[NUM_DESCRIPTIONS] = {
 	0x1D7A, // Object 77: Un poco de escayola vieja
 	0x1DA3, // Object 78: Un cacho de ladrillo
 	0x1DCC, // Object 79: Un boligrafo
-	0x1DE5, // Object 80: Un radiocasete
-	0x1E00, // Object 81: Es una pistola. (Real como la vida misma)
-	0x1E49, // Object 82: Una pieza de fruta
-	0x1E6B, // Object 83: Un frasco de pastillas para dormir
-	0x1EA0, // Object 84: Una pulsera
-	0x1EB9, // Object 85: Una estatua pequeña
-	0x1EE0, // Object 86: Una jodida (disculpen las molestias) cinta de video
-	0x1F4F, // Object 87: Una jodida (disculpen las molestias) cadena hifi
-	0x1FBE, // Object 88: Una magdalena
-	0x1FD8, // Object 89: Un poco de cecina
-	0x1FFC, // Object 90: Un televisor portatil con forma de Mickey Mouse
-	0x2053, // Object 91: Un destornillador
-	0x2071, // Object 92: Alicates de electricista
-	0x2097, // Object 93: Un cable
-	0x20AE, // Object 94: Una linterna
-	0x20C6, // Object 95: Unas pilas gigantes
-	0x20E7, // Object 96: La bolsa de basura negra
-	0x2116, // Object 97: Foto de un tal Gerardo (desconocido)
-	0x2158, // Object 98: Una cinta de casete
-	0x2179, // Object 99: Un walkman
-	0x218F, // Object 100: Un papel con un telefono
-	0x21BE, // Object 101: Una llave grande de metacrilato
-	0x21F1, // Object 102: Una pequeña llave
-	0x220E, // Object 103: Autenticas naranjas de Nules
+	0x1DE5, // Object 80: Un radiocasete < --- aqui
+	0x1E00, // Object 81: El pelo de una princesa egipcia
+	0x1E49, // Object 82: Un mogollon de pasta
+	0x1E6B, // Object 83: Una replica de Elvis
+	0x1EA0, // Object 84: Aunque no sean piramides se puede decir que son monumentos
+	0x1EB9, // Object 85: Un girasol
+	0x1EE0, // Object 86: Una calabaza llena de agua
+	0x1F4F, // Object 87: Una motosierra
+	0x1FBE, // Object 88: Un libro de recetas magicas
+	0x1FD8, // Object 89: Una bota usada
+	0x1FFC, // Object 90: Una autentica piedra egipcia
+	0x2053, // Object 91: Una piedra egipcia
+	0x2071, // Object 92: Un poco de barro
+	0x2097, // Object 93: Licor de arena
+	0x20AE, // Object 94: Crema para el sol
+	0x20C6, // Object 95: Banda sonora de alfred pelrock
+	0x20E7, // Object 96: Un album de pantallas
+	0x2116, // Object 97: Plano de la piramide
+	0x2158, // Object 98: Plano detallado
+	0x2179, // Object 99: Es una peluca
+	0x218F, // Object 100: Una pequeña llave
+	0x21BE, // Object 101: Un trozo de papel con unos numeritos
+	0x21F1, // Object 102: Autenticas naranjas de Nules
+	0x220E, // Object 103: Un mogollon de naranjas de Nules
 	0x2236, // Object 104: No se haga el loco: Llameme !!!
 	0x2285, // Object 105: Folletos explicativos sobre el SIDA
 	0x22BE, // Object 106: Un pin que acredita mi sabiduria

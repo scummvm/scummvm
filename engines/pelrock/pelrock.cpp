@@ -1360,7 +1360,7 @@ Exit *PelrockEngine::isExitUnder(int x, int y) {
 		Exit exit = _room->_currentRoomExits[i];
 		// Original game uses: x <= exit.x + exit.w - 1 and y <= exit.y + exit.h - 1
 		if (x >= exit.x && x <= (exit.x + exit.w - 1) &&
-			y >= exit.y && y <= (exit.y + exit.h - 1) /*&& exit.isEnabled*/) {
+			y >= exit.y && y <= (exit.y + exit.h - 1) && exit.isEnabled) {
 			return &(_room->_currentRoomExits[i]);
 		}
 	}

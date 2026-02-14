@@ -1111,6 +1111,7 @@ void PelrockEngine::checkAllSymbols() {
 	debug("Checking symbols, current value: %d", symbolsPulled);
 	if(symbolsPulled == 0x0F) {
 		//Activates animation
+		_sound->playSound(_room->_roomSfx[0]);
 		_room->enableSprite(4, 100, PERSIST_TEMP);
 		_room->enableExit(0, PERSIST_BOTH);
 		_room->addSticker(61);
