@@ -25,6 +25,7 @@
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
 #include "common/array.h"
+#include "common/random.h"
 #include "common/rect.h"
 #include "colony/gfx.h"
 
@@ -209,6 +210,19 @@ private:
 	bool _wireframe;
 	bool _widescreen;
 
+	Common::RandomSource _randomSource;
+	uint8 _decode1[4];
+	uint8 _decode2[4];
+	uint8 _decode3[4];
+	uint8 _animDisplay[6];
+	int _coreState[2];
+	int _coreHeight[2];
+	int _corePower[3];
+	int _coreIndex;
+	int _orbit;
+	int _armor;
+	bool _gametest;
+
 	int _frntxWall, _frntyWall;
 	int _sidexWall, _sideyWall;
 	int _frntx, _frnty;
@@ -265,10 +279,13 @@ private:
 	byte _topBG[8];
 	byte _bottomBG[8];
 	int16 _divideBG;
+	Common::String _animationName;
+	bool _animationRunning;
 
 	bool loadAnimation(const Common::String &name);
 	void deleteAnimation();
 	void playAnimation();
+	void updateAnimation();
 	void drawAnimation();
 	void drawComplexSprite(int index, int ox, int oy);
 	void drawAnimationImage(Image *img, Image *mask, int x, int y);
@@ -277,6 +294,11 @@ private:
 	Common::Rect readRect(Common::SeekableReadStream &file);
 	int whichSprite(const Common::Point &p);
 	void handleAnimationClick(int item);
+	void dolSprite(int index);
+	void SetObjectState(int num, int state);
+	void SetObjectOnOff(int num, bool on);
+	void refreshAnimationDisplay();
+	void crypt(uint8 sarray[6], int i, int j, int k, int l);
 };
 
 } // End of namespace Colony

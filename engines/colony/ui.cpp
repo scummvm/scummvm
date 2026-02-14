@@ -506,9 +506,8 @@ void ColonyEngine::interactWithObject(int objNum) {
 		}
 		break;
 	case kObjPowerSuit:
-		_weapons = MAX(_weapons, 1);
-		_crosshair = true;
-		debug("CCommand: POWERSUIT");
+		if (loadAnimation("suit"))
+			playAnimation();
 		break;
 	case kObjTeleport:
 	{

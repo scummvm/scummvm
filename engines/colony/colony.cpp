@@ -41,7 +41,7 @@ namespace Colony {
 
 
 
-ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst), _gameDescription(gd) {
+ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst), _gameDescription(gd), _randomSource("colony") {
 	_level = 0;
 	_robotNum = 0;
 	_gfx = nullptr;
@@ -86,6 +86,18 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_backgroundFG = nullptr;
 	_backgroundActive = false;
 	_divideBG = 0;
+	_animationRunning = false;
+
+	for (int i = 0; i < 4; i++) {
+		_decode1[i] = _decode2[i] = _decode3[i] = 0;
+	}
+	for (int i = 0; i < 6; i++) _animDisplay[i] = 1;
+	for (int i = 0; i < 2; i++) _coreState[i] = _coreHeight[i] = 0;
+	for (int i = 0; i < 3; i++) _corePower[i] = 0;
+	_coreIndex = 0;
+	_orbit = 0;
+	_armor = 0;
+	_gametest = false;
 
 	initTrig();
 }
@@ -324,7 +336,7 @@ void ColonyEngine::scrollInfo() {
 	centerY += 5;
 
 	for (int i = 0; i < storyLength; i++) {
-		_gfx->drawString(font, story[i], 0, centerY + 10 * i, 9, Graphics::kTextAlignCenter);
+		_gfx->drawString(font, story[i], _width / 2, centerY + 10 * i, 9, Graphics::kTextAlignCenter);
 	}
 	_gfx->copyToScreen();
 
@@ -343,6 +355,8 @@ void ColonyEngine::scrollInfo() {
 }
 
 bool ColonyEngine::loadAnimation(const Common::String &name) {
+	_animationName = name;
+	for (int i = 0; i < 6; i++) _animDisplay[i] = 1;
 	Common::String fileName = name + ".pic";
 	Common::File file;
 	if (!file.open(Common::Path(fileName))) {
@@ -421,8 +435,30 @@ void ColonyEngine::deleteAnimation() {
 }
 
 void ColonyEngine::playAnimation() {
-	bool running = true;
-	while (running && !shouldQuit()) {
+	_animationRunning = true;
+	_system->lockMouse(false);
+	_system->showMouse(true);
+
+	if (_animationName == "security" && !_unlocked) {
+		for (int i = 0; i < 4; i++) {
+			_decode1[i] = (uint8)(2 + _randomSource.getRandomNumber(3));
+			SetObjectState(27 + i, _decode1[i]);
+		}
+	} else if (_animationName == "reactor") {
+		for (int i = 0; i < 6; i++) {
+			SetObjectOnOff(14 + i * 2, false);
+			SetObjectState(13 + i * 2, 1);
+		}
+	} else if (_animationName == "controls") {
+		switch (_corePower[_coreIndex]) {
+		case 0: SetObjectState(2, 1); SetObjectState(5, 1); break;
+		case 1: SetObjectState(2, 1); SetObjectState(5, 2); break;
+		case 2: SetObjectState(2, 2); SetObjectState(5, 1); break;
+		}
+	}
+
+	while (_animationRunning && !shouldQuit()) {
+		updateAnimation();
 		drawAnimation();
 		_gfx->copyToScreen();
 
@@ -432,18 +468,37 @@ void ColonyEngine::playAnimation() {
 				int item = whichSprite(event.mouse);
 				if (item > 0) {
 					handleAnimationClick(item);
-				} else {
-					// Clicked background or nothing? Exit for now as a safeguard
-					running = false;
 				}
 			} else if (event.type == Common::EVENT_KEYDOWN) {
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
-					running = false;
+					_animationRunning = false;
 			}
 		}
 		_system->delayMillis(20);
 	}
+
+	_system->lockMouse(true);
+	_system->showMouse(false);
 	deleteAnimation();
+}
+
+void ColonyEngine::updateAnimation() {
+	static uint32 lastUpdate = 0;
+	uint32 now = _system->getMillis();
+	if (now - lastUpdate < 50) // Reduced to 50ms (20 fps) to make it "move"
+		return;
+	lastUpdate = now;
+
+	for (uint i = 0; i < _lSprites.size(); i++) {
+		ComplexSprite *ls = _lSprites[i];
+		// type 0 are displays that auto-animate
+		// Original NoShowIt ONLY checked !ls->locked
+		if (ls->onoff && ls->type == 0 && !ls->locked && ls->objects.size() > 1) {
+			ls->current++;
+			if (ls->current >= (int)ls->objects.size())
+				ls->current = 0;
+		}
+	}
 }
 
 void ColonyEngine::drawAnimation() {
@@ -453,9 +508,20 @@ void ColonyEngine::drawAnimation() {
 	int ox = (_width - 320) / 2;
 	int oy = (_height - 200) / 2;
 
+	// Fill background patterns
+	for (int y = 0; y < 200; y++) {
+		byte *pat = (y < _divideBG) ? _topBG : _bottomBG;
+		byte row = pat[y % 8];
+		for (int x = 0; x < 320; x++) {
+			bool set = (row & (0x80 >> (x % 8))) != 0;
+			// Inverted as in original readanim
+			_gfx->setPixel(ox + x, oy + y, set ? 0 : 15);
+		}
+	}
+
 	// Draw background if active
 	if (_backgroundActive && _backgroundFG) {
-		drawAnimationImage(_backgroundFG, nullptr, ox + _backgroundLocate.left, oy + _backgroundLocate.top);
+		drawAnimationImage(_backgroundFG, _backgroundMask, ox + _backgroundLocate.left, oy + _backgroundLocate.top);
 	}
 
 	// Draw complex sprites
@@ -562,8 +628,215 @@ int ColonyEngine::whichSprite(const Common::Point &p) {
 }
 
 void ColonyEngine::handleAnimationClick(int item) {
-	// Dummy for now - real logic depends on specific animation
 	debug("Animation click on item %d", item);
+
+	if (_animationName == "desk") {
+		if (item >= 2 && item <= 5) {
+			int idx = item - 2;
+			uint8 *decode = (_level == 1) ? _decode2 : _decode3;
+			if (decode[idx] == 0) {
+				decode[idx] = (uint8)(2 + (_randomSource.getRandomNumber(3)));
+				_lSprites[item - 1]->current = decode[idx] - 1;
+				drawAnimation();
+				_gfx->copyToScreen();
+			}
+			return;
+		}
+	} else if (_animationName == "reactor" || _animationName == "security") {
+		if (item >= 1 && item <= 10) {
+			for (int i = 5; i >= 1; i--) _animDisplay[i] = _animDisplay[i - 1];
+			_animDisplay[0] = (uint8)(item + 1);
+			refreshAnimationDisplay();
+			drawAnimation();
+			_gfx->copyToScreen();
+			return;
+		} else if (item == 11) { // Clear
+			for (int i = 0; i < 6; i++) _animDisplay[i] = 1;
+			refreshAnimationDisplay();
+			drawAnimation();
+			_gfx->copyToScreen();
+			return;
+		} else if (item == 12) { // Enter
+			uint8 testarray[6];
+			if (_animationName == "reactor") {
+				if (_level == 1)
+					crypt(testarray, _decode2[3] - 2, _decode2[2] - 2, _decode2[1] - 2, _decode2[0] - 2);
+				else
+					crypt(testarray, _decode3[3] - 2, _decode3[2] - 2, _decode3[1] - 2, _decode3[0] - 2);
+
+				bool match = true;
+				for (int i = 0; i < 6; i++) {
+					if (testarray[i] != _animDisplay[5 - i]) match = false;
+				}
+				if (match) {
+					if (_coreState[_coreIndex] == 0) _coreState[_coreIndex] = 1;
+					else if (_coreState[_coreIndex] == 1) _coreState[_coreIndex] = 0;
+					_gametest = true;
+				}
+				_animationRunning = false;
+			} else { // security
+				crypt(testarray, _decode1[0] - 2, _decode1[1] - 2, _decode1[2] - 2, _decode1[3] - 2);
+				bool match = true;
+				for (int i = 0; i < 6; i++) {
+					if (testarray[i] != _animDisplay[5 - i]) match = false;
+				}
+				if (match) {
+					_unlocked = true;
+					_gametest = true;
+				}
+				_animationRunning = false;
+			}
+			return;
+		}
+	} else if (_animationName == "controls") {
+		switch (item) {
+		case 4: // Accelerator
+			if (_corePower[_coreIndex] >= 2 && _coreState[_coreIndex] == 0 && !_orbit) {
+				_orbit = 1;
+				debug("Taking off!");
+				_animationRunning = false;
+			} else {
+				debug("Accelerator failed: power=%d, state=%d", _corePower[_coreIndex], _coreState[_coreIndex]);
+			}
+			break;
+		case 5: // Emergency power
+			if (_coreState[_coreIndex] < 2) {
+				if (_corePower[_coreIndex] == 0) _corePower[_coreIndex] = 1;
+				else if (_corePower[_coreIndex] == 1) _corePower[_coreIndex] = 0;
+			}
+			// Update power visual state
+			switch (_corePower[_coreIndex]) {
+			case 0: SetObjectState(2, 1); SetObjectState(5, 1); break;
+			case 1: SetObjectState(2, 1); SetObjectState(5, 2); break;
+			case 2: SetObjectState(2, 2); SetObjectState(5, 1); break;
+			}
+			drawAnimation();
+			_gfx->copyToScreen();
+			break;
+		case 6: // Ship weapons
+			if (!_orbit) {
+				debug("Firing ship weapons on ground! Game Over soon.");
+				_animationRunning = false;
+			} else {
+				debug("Firing ship weapons in orbit.");
+				_animationRunning = false;
+			}
+			break;
+		case 7: // Damage report
+			debug("Damage report button clicked.");
+			break;
+		}
+	} else if (_animationName == "suit") {
+		if (item == 1) { // Armor
+			_armor = (_armor + 1) % 4;
+			SetObjectState(1, _armor * 2 + 1);
+			SetObjectState(3, _armor + 1);
+			drawAnimation();
+			_gfx->copyToScreen();
+		} else if (item == 2) { // Weapons
+			_weapons = (_weapons + 1) % 4;
+			SetObjectState(2, _weapons * 2 + 1);
+			SetObjectState(4, _weapons + 1);
+			drawAnimation();
+			_gfx->copyToScreen();
+		}
+	}
+
+	dolSprite(item - 1);
+}
+
+void ColonyEngine::dolSprite(int index) {
+	if (index < 0 || index >= (int)_lSprites.size())
+		return;
+
+	ComplexSprite *ls = _lSprites[index];
+	switch (ls->type) {
+	case 1: // Key and control
+		if (ls->frozen) {
+			// Control logic
+			if (!ls->locked || ls->current) {
+				if (ls->current > 0) {
+					while (ls->current > 0) {
+						ls->current--;
+						drawAnimation();
+						_gfx->copyToScreen();
+						_system->delayMillis(50);
+					}
+				} else {
+					while (ls->current < (int)ls->objects.size() - 1) {
+						ls->current++;
+						drawAnimation();
+						_gfx->copyToScreen();
+						_system->delayMillis(50);
+					}
+				}
+			}
+		}
+		break;
+	case 2: // Container and object
+		if (ls->frozen) {
+			if (!ls->locked) {
+				if (ls->current > 0) {
+					while (ls->current > 0) {
+						ls->current--;
+						drawAnimation();
+						_gfx->copyToScreen();
+						_system->delayMillis(50);
+					}
+				} else {
+					while (ls->current < (int)ls->objects.size() - 1) {
+						ls->current++;
+						drawAnimation();
+						_gfx->copyToScreen();
+						_system->delayMillis(50);
+					}
+				}
+			}
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+void ColonyEngine::SetObjectState(int num, int state) {
+	num--;
+	if (num >= 0 && num < (int)_lSprites.size())
+		_lSprites[num]->current = state - 1;
+}
+
+void ColonyEngine::SetObjectOnOff(int num, bool on) {
+	num--;
+	if (num >= 0 && num < (int)_lSprites.size())
+		_lSprites[num]->onoff = on;
+}
+
+void ColonyEngine::refreshAnimationDisplay() {
+	for (int i = 0; i < 6; i++) {
+		if (_animDisplay[i] < 9) {
+			SetObjectOnOff(13 + i * 2, true);
+			SetObjectOnOff(14 + i * 2, false);
+			SetObjectState(13 + i * 2, _animDisplay[i]);
+		} else {
+			SetObjectOnOff(14 + i * 2, true);
+			SetObjectOnOff(13 + i * 2, false);
+			SetObjectState(14 + i * 2, _animDisplay[i] - 8);
+		}
+	}
+}
+
+void ColonyEngine::crypt(uint8 sarray[6], int i, int j, int k, int l) {
+	int res[6];
+	res[0] = ((3 * l) ^ i ^ j ^ k) % 10;
+	res[1] = ((i * 3) ^ (j * 7) ^ (k * 11) ^ (l * 13)) % 10;
+	res[2] = (3 + (l * 17) ^ (j * 19) ^ (k * 23) ^ (i * 29)) % 10;
+	res[3] = ((l * 19) ^ (j * 23) ^ (k * 29) ^ (i * 31)) % 10;
+	res[4] = ((l * 17) | (j * 19) | (k * 23) | (i * 29)) % 10;
+	res[5] = (29 + (l * 17) - (j * 19) - (k * 23) - (i * 29)) % 10;
+	for (int m = 0; m < 6; m++) {
+		if (res[m] < 0) res[m] = -res[m];
+		sarray[m] = (uint8)(res[m] + 2);
+	}
 }
 
 } // End of namespace Colony
