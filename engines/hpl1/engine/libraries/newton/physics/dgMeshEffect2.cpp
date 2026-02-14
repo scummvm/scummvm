@@ -211,14 +211,14 @@ dgMeshEffect *dgMeshEffect::CreateVoronoiPartition(dgInt32 pointsCount,
 						pointArray[countI] = voronoiPoints[i] + normal.Scale(perimeterConvexBound);
 
 						countI++;
-						NEWTON_ASSERT(countI < dgInt32(sizeof(pointArray) / sizeof(pointArray[0])));
+						NEWTON_ASSERT(countI < dgInt32(ARRAYSIZE(pointArray)));
 					}
 				}
 			}
 
 			pointArray[countI] = voronoiPoints[i];
 			countI++;
-			NEWTON_ASSERT(countI < dgInt32(sizeof(pointArray) / sizeof(pointArray[0])));
+			NEWTON_ASSERT(countI < dgInt32(ARRAYSIZE(pointArray)));
 		}
 
 		dgMeshEffect *const convexMesh = MakeDelanayIntersection(tree,

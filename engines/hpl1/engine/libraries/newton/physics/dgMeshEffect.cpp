@@ -1148,7 +1148,7 @@ void dgMeshEffect::AddPolygon(dgInt32 count, const dgFloat64 *const vertexList,
 	if (count > 3) {
 		dgPolyhedra polygon(GetAllocator());
 		dgInt32 indexList[256];
-		NEWTON_ASSERT(count < dgInt32(sizeof(indexList) / sizeof(indexList[0])));
+		NEWTON_ASSERT(count < dgInt32(ARRAYSIZE(indexList)));
 		for (dgInt32 i = 0; i < count; i++) {
 			indexList[i] = i;
 		}
@@ -1222,7 +1222,7 @@ void dgMeshEffect::AddPolygon(dgInt32 count, const dgFloat64 *const vertexList,
 void dgMeshEffect::AddPolygon(dgInt32 count, const dgFloat32 *const vertexList,
                               dgInt32 strideIndBytes, dgInt32 material) {
 	dgVertexAtribute points[256];
-	NEWTON_ASSERT(count < dgInt32(sizeof(points) / sizeof(points[0])));
+	NEWTON_ASSERT(count < dgInt32(ARRAYSIZE(points)));
 
 	dgInt32 stride = strideIndBytes / sizeof(dgFloat32);
 	for (dgInt32 i = 0; i < count; i++) {
@@ -1405,7 +1405,7 @@ void dgMeshEffect::BuildFromVertexListIndexList(
 		dgInt32 index[256];
 		dgInt64 userdata[256];
 		dgInt32 count = faceIndexCount[j];
-		NEWTON_ASSERT(count < dgInt32(sizeof(index) / sizeof(index[0])));
+		NEWTON_ASSERT(count < dgInt32(ARRAYSIZE(index)));
 		for (dgInt32 i = 0; i < count; i++) {
 			index[i] = vertexIndex[totalIndexCount + i];
 			// dgTrace (("%d ", index[i]));
@@ -1580,7 +1580,7 @@ void dgMeshEffect::BuildFromVertexListIndexList(
 	dgInt64 userdata[256];
 
 	int indexCount = faceIndexCount[j];
-	NEWTON_ASSERT(indexCount < dgInt32 (sizeof (index) / sizeof (index[0])));
+	NEWTON_ASSERT(indexCount < dgInt32 (ARRAYSIZE(index)));
 
 	if (faceMark[j])
 	{
@@ -2764,7 +2764,7 @@ void dgMeshEffect::MergeFaces(const dgMeshEffect *const source) {
 				ptr->m_mark = mark;
 				face[count] = source->m_attib[ptr->m_userData];
 				count++;
-				NEWTON_ASSERT(count < dgInt32(sizeof(face) / sizeof(face[0])));
+				NEWTON_ASSERT(count < dgInt32(ARRAYSIZE(face)));
 				ptr = ptr->m_next;
 			} while (ptr != edge);
 			AddPolygon(count, &face[0].m_vertex.m_x, sizeof(dgVertexAtribute),
@@ -2790,7 +2790,7 @@ void dgMeshEffect::ReverseMergeFaces(dgMeshEffect *const source) {
 				face[count].m_normal_y *= dgFloat32(-1.0f);
 				face[count].m_normal_z *= dgFloat32(-1.0f);
 				count++;
-				NEWTON_ASSERT(count < dgInt32(sizeof(face) / sizeof(face[0])));
+				NEWTON_ASSERT(count < dgInt32(ARRAYSIZE(face)));
 				ptr = ptr->m_prev;
 			} while (ptr != edge);
 			AddPolygon(count, &face[0].m_vertex.m_x, sizeof(dgVertexAtribute),
@@ -3205,7 +3205,7 @@ bool dgMeshEffect::CheckIntersection(
 	 stackPool[stack] = root->m_front;
 	 faceOnStack[stack] = frontFace;
 	 stack ++;
-	 NEWTON_ASSERT (stack < sizeof (stackPool) / sizeof (stackPool[0]));
+	 NEWTON_ASSERT (stack < ARRAYSIZE(stackPool));
 	 } else {
 	 frontFace->Release();
 	 frontCount ++;
@@ -3218,7 +3218,7 @@ bool dgMeshEffect::CheckIntersection(
 	 stackPool[stack] = root->m_back;
 	 faceOnStack[stack] = backFace;
 	 stack ++;
-	 NEWTON_ASSERT (stack < sizeof (stackPool) / sizeof (stackPool[0]));
+	 NEWTON_ASSERT (stack < ARRAYSIZE(stackPool));
 	 } else {
 	 backFace->Release();
 	 backCount ++;
@@ -3796,7 +3796,7 @@ dgMeshEffect *dgMeshEffect::GetNextLayer(dgInt32 mark) const {
 					faceIndex[count] = ptr->m_incidentVertex;
 					faceDataIndex[count] = ptr->m_userData;
 					count++;
-					NEWTON_ASSERT(count < dgInt32(sizeof(faceIndex) / sizeof(faceIndex[0])));
+					NEWTON_ASSERT(count < dgInt32(ARRAYSIZE(faceIndex)));
 					ptr = ptr->m_next;
 				} while (ptr != edgeI);
 				polyhedra.AddFace(count, &faceIndex[0], &faceDataIndex[0]);
@@ -3888,14 +3888,14 @@ void dgMeshEffect::ClipMesh(const dgMeshEffectSolidTree *const clipper,
 					 stackPool[stack] = root->m_front;
 					 faceOnStack[stack] = face;
 					 stack ++;
-					 NEWTON_ASSERT (stack < sizeof (stackPool) / sizeof (stackPool[0]));
+					 NEWTON_ASSERT (stack < ARRAYSIZE(stackPool));
 					 } else {
 					 //if (root->m_back) {
 					 NEWTON_ASSERT (root->m_back->m_planeType == dgMeshEffectSolidTree::m_divider);
 					 stackPool[stack] = root->m_back;
 					 faceOnStack[stack] = face;
 					 stack ++;
-					 NEWTON_ASSERT (stack < sizeof (stackPool) / sizeof (stackPool[0]));
+					 NEWTON_ASSERT (stack < ARRAYSIZE(stackPool));
 					 }
 					 }
 					 */
@@ -3905,7 +3905,7 @@ void dgMeshEffect::ClipMesh(const dgMeshEffectSolidTree *const clipper,
 							stackPool[stack] = root->m_front;
 							faceOnStack[stack] = frontFace;
 							stack++;
-							NEWTON_ASSERT(stack < dgInt32(sizeof(stackPool) / sizeof(stackPool[0])));
+							NEWTON_ASSERT(stack < dgInt32(ARRAYSIZE(stackPool)));
 						} else {
 
 							// if (xxx == 485){
@@ -3925,7 +3925,7 @@ void dgMeshEffect::ClipMesh(const dgMeshEffectSolidTree *const clipper,
 							stackPool[stack] = root->m_back;
 							faceOnStack[stack] = backFace;
 							stack++;
-							NEWTON_ASSERT(stack < dgInt32(sizeof(stackPool) / sizeof(stackPool[0])));
+							NEWTON_ASSERT(stack < dgInt32(ARRAYSIZE(stackPool)));
 						} else {
 
 							// if (xxx == 485){

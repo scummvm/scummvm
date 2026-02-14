@@ -1323,7 +1323,7 @@ dgUnsigned32 dgBroadPhaseCollision::UpdateContactsBroadPhaseBegin(
 						cellArray[cellsPairsCount].m_cell_A = cell1;
 						cellArray[cellsPairsCount].m_cell_B = cell0;
 						cellsPairsCount++;
-						if (cellsPairsCount >= dgInt32(sizeof(cellArray) / sizeof(cellArray[0]))) {
+						if (cellsPairsCount >= dgInt32(ARRAYSIZE(cellArray))) {
 							if (threadCounts > 1) {
 								me->m_threadsManager.CalculateChunkSizes(cellsPairsCount,
 								        chunkSizes);
@@ -1366,7 +1366,7 @@ dgUnsigned32 dgBroadPhaseCollision::UpdateContactsBroadPhaseBegin(
 				cellArray[cellsPairsCount].m_cell_A = &cell;
 				cellArray[cellsPairsCount].m_cell_B = NULL;
 				cellsPairsCount++;
-				if (cellsPairsCount >= dgInt32(sizeof(cellArray) / sizeof(cellArray[0]))) {
+				if (cellsPairsCount >= dgInt32(ARRAYSIZE(cellArray))) {
 
 					if (threadCounts > 1) {
 						me->m_threadsManager.CalculateChunkSizes(cellsPairsCount,
