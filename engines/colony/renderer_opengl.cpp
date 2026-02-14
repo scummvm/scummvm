@@ -168,7 +168,8 @@ void OpenGLRenderer::begin3D(int camX, int camY, int camZ, int angle, int angleY
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_DEPTH_BUFFER_BIT);
  
-	glPolygonMode(GL_FRONT_AND_BACK, _wireframe ? GL_LINE : GL_FILL);
+	// Always use filled polygons; wireframe mode draws black fill + colored edges
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
  
 	// Scale viewport coordinates to system pixels
 	float scaleX = (float)_system->getWidth() / _width;
@@ -192,7 +193,7 @@ void OpenGLRenderer::begin3D(int camX, int camY, int camZ, int angle, int angleY
 	// regardless of viewport dimensions (e.g. when dashboard narrows it).
 	float aspectRatio = (float)viewport.width() / (float)viewport.height();
 	float fov = 75.0f; // vertical FOV in degrees
-	float nearClip = 1.0f;
+	float nearClip = 10.0f;
 	float farClip = 20000.0f;
 	float ymax = nearClip * tanf(fov * M_PI / 360.0f);
 	float xmax = ymax * aspectRatio;
@@ -221,7 +222,22 @@ void OpenGLRenderer::draw3DWall(int x1, int y1, int x2, int y2, uint32 color) {
 	float fy1 = y1 * 256.0f;
 	float fx2 = x2 * 256.0f;
 	float fy2 = y2 * 256.0f;
- 
+
+	if (_wireframe) {
+		// Push the black fill away from camera so wireframe edges always win
+		glEnable(GL_POLYGON_OFFSET_FILL);
+		glPolygonOffset(1.0f, 1.0f);
+		useColor(0);
+		glBegin(GL_QUADS);
+		glVertex3f(fx1, fy1, -160.0f);
+		glVertex3f(fx2, fy2, -160.0f);
+		glVertex3f(fx2, fy2, 160.0f);
+		glVertex3f(fx1, fy1, 160.0f);
+		glEnd();
+		glDisable(GL_POLYGON_OFFSET_FILL);
+		// Switch to wireframe for the colored edge pass
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
 	useColor(color);
 	glBegin(GL_QUADS);
 	glVertex3f(fx1, fy1, -160.0f);
@@ -229,6 +245,9 @@ void OpenGLRenderer::draw3DWall(int x1, int y1, int x2, int y2, uint32 color) {
 	glVertex3f(fx2, fy2, 160.0f);
 	glVertex3f(fx1, fy1, 160.0f);
 	glEnd();
+	if (_wireframe) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
 }
  
 void OpenGLRenderer::draw3DQuad(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, uint32 color) {
@@ -243,13 +262,28 @@ void OpenGLRenderer::draw3DQuad(float x1, float y1, float z1, float x2, float y2
  
 void OpenGLRenderer::draw3DPolygon(const float *x, const float *y, const float *z, int count, uint32 color) {
 	if (count < 3) return;
- 
+
+	if (_wireframe) {
+		// Push the black fill away from camera so wireframe edges always win
+		glEnable(GL_POLYGON_OFFSET_FILL);
+		glPolygonOffset(1.0f, 1.0f);
+		useColor(0);
+		glBegin(GL_POLYGON);
+		for (int i = 0; i < count; i++)
+			glVertex3f(x[i], y[i], z[i]);
+		glEnd();
+		glDisable(GL_POLYGON_OFFSET_FILL);
+		// Switch to wireframe for the colored edge pass
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
 	useColor(color);
 	glBegin(GL_POLYGON);
-	for (int i = 0; i < count; i++) {
+	for (int i = 0; i < count; i++)
 		glVertex3f(x[i], y[i], z[i]);
-	}
 	glEnd();
+	if (_wireframe) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
 }
  
 void OpenGLRenderer::end3D() {
