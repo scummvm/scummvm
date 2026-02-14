@@ -141,6 +141,11 @@ const ActionEntry actionTable[] = {
 	{462, OPEN, &PelrockEngine::openJailFloorTile},
 	// Room 32
 	{473, OPEN, &PelrockEngine::openTunnelDrawer},
+	// Room 33
+	{651, OPEN, &PelrockEngine::openSafe},
+	{465, OPEN, &PelrockEngine::openTunnelDoor},
+	{465, CLOSE, &PelrockEngine::closeTunnelDoor},
+
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
 	{WILDCARD, TALK, &PelrockEngine::noOpAction},   // Generic talk action
@@ -167,6 +172,7 @@ const CombinationEntry combinationTable[] = {
 	{8, 358, &PelrockEngine::giveSecretCodeToLibrarian},
 	{4, 358, &PelrockEngine::useBrickWithLibrarian}, // Any hotspot in the lamppost will work
 	{76, 469, &PelrockEngine::usePumpkinWithRiver},
+	{100, 650, &PelrockEngine::useKeyWithPortrait},
 	// End marker
 	{WILDCARD, WILDCARD, nullptr}};
 
@@ -497,6 +503,7 @@ void PelrockEngine::toJail() {
 	_alfredState.x = 342;
 	_alfredState.y = 277;
 	setScreen(31, ALFRED_DOWN);
+	_room->moveHotspot(_room->findHotspotByExtra(101), 444, 166);
 }
 
 void PelrockEngine::noOpAction(HotSpot *hotspot) {
@@ -1143,6 +1150,29 @@ void PelrockEngine::openTunnelDrawer(HotSpot *hotspot) {
 	_room->disableHotspot(hotspot);
 }
 
+void PelrockEngine::useKeyWithPortrait(int inventoryObject, HotSpot *hotspot) {
+	_room->disableHotspot(hotspot);
+	_room->addSticker(101);
+}
+
+void PelrockEngine::openSafe(HotSpot *hotspot) {
+	if(_state->getFlag(FLAG_CLAVE_CAJA_FUERTE) == true) {
+		_room->addSticker(102);
+		_dialog->say(_res->_ingameTexts[GRANCANTIDAD_DINERO]);
+		addInventoryItem(82);
+	} else {
+		_dialog->say(_res->_ingameTexts[SISUPIERA_COMBINACION]);
+	}
+}
+
+void PelrockEngine::openTunnelDoor(HotSpot *hotspot) {
+	openDoor(hotspot, 0, 66, MASCULINE, true);
+}
+
+void PelrockEngine::closeTunnelDoor(HotSpot *hotspot) {
+	closeDoor(hotspot, 0, 66, MASCULINE, true);
+}
+
 void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 	debug("Performing action trigger: %d", actionTrigger);
 	switch (actionTrigger) {
@@ -1288,6 +1318,13 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		_alfredState.animState = ALFRED_SPECIAL_ANIM;
 		waitForSpecialAnimation();
 		_dialog->say(_res->_ingameTexts[CUENTOPARECIDO]);
+		break;
+	case 101: // combination
+		_res->loadAlfredSpecialAnim(1);
+		_alfredState.animState = ALFRED_SPECIAL_ANIM;
+		waitForSpecialAnimation();
+		_dialog->say(_res->_ingameTexts[PARECE_COMBINACION_CAJAFUERTE]);
+		_state->setFlag(FLAG_CLAVE_CAJA_FUERTE, true);
 		break;
 	default:
 		break;

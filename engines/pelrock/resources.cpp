@@ -36,13 +36,15 @@ ResourceManager::ResourceManager(/* args */) {
 }
 
 const AlfredSpecialAnimOffset ResourceManager::alfredSpecialAnims[] = {
-	{10, 51, 102, 1, 7, 559685, 1,}, // READ BOOK
-	{10, 51, 102, 1, 7, 578943, 1}, // READ RECIPE
-	{3, 45, 87, 0, 7, 37000, 1}, // ELECTRIC SHOCK 1
-	{2, 82, 58, 0, 7, 53106, 20}, // ELECTRIC SHOCK 3
-	{3, 71, 110, 1, 2, 20724, 1, 62480}, // Throw
-	{14, 171, 107, 1, 7, 1556540, 1} , //crocodile
-	{12, 113, 103, 1, 7, 1583702, 1} // exit through manhole
+	{10, 51, 102, 1, 7, 559685, 1,}, // 0 - READ BOOK
+	{10, 51, 102, 1, 7, 578943, 1}, // 1 - READ RECIPE
+	{3, 45, 87, 0, 7, 37000, 1}, // 2 -  ELECTRIC SHOCK 1
+	{2, 82, 58, 0, 7, 53106, 20}, // 3 - ELECTRIC SHOCK 3
+	{3, 71, 110, 1, 2, 20724, 1, 62480}, // 4 - Throw
+	{14, 171, 107, 1, 7, 1556540, 1} , // 5 - crocodile
+	{12, 113, 103, 1, 7, 1583702, 1}, // 6 - exit through manhole
+	{11, 33, 72, 1, 7, 1761234, 1}, // 7 - alfred climbs down
+	{9, 33, 72, 1, 7, 1766378, 1} // 8 - alfred climbs up
 };
 
 ResourceManager::~ResourceManager() {

@@ -527,6 +527,7 @@ void RoomManager::resetConversationStates(byte roomNumber, byte *conversationDat
 void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 
 	_roomStickers.clear();
+	_prevRoomNumber = _currentRoomNumber;
 	_currentRoomNumber = roomNumber;
 	int roomOffset = roomNumber * kRoomStructSize;
 

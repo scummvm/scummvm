@@ -338,6 +338,10 @@ public:
 	void pickUpHairStrand(HotSpot *hotspot);
 	void openJailFloorTile(HotSpot *hotspot);
 	void openTunnelDrawer(HotSpot *hotspot);
+	void useKeyWithPortrait(int inventoryObject, HotSpot *hotspot);
+	void openSafe(HotSpot *hotspot);
+	void openTunnelDoor(HotSpot *hotspot);
+	void closeTunnelDoor(HotSpot *hotspot);
 	void checkAllSymbols();
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);

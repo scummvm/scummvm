@@ -140,6 +140,7 @@ public:
 	}
 
 	byte _currentRoomNumber = 0;
+	int _prevRoomNumber = -1;
 	Common::Array<HotSpot> _currentRoomHotspots;
 	Common::Array<Sprite> _currentRoomAnims;
 	Common::Array<Exit> _currentRoomExits;

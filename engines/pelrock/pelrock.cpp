@@ -880,6 +880,11 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 				Exit *exit = isExitUnder(_alfredState.x, _alfredState.y);
 				if (exit != nullptr) {
 					debug("Using exit to room %d", exit->targetRoom);
+					if(exit->targetRoom == 31 && _room->_currentRoomNumber == 32) {
+						_res->loadAlfredSpecialAnim(8);
+						_alfredState.setState(ALFRED_SPECIAL_ANIM);
+						waitForSpecialAnimation();
+					}
 					_alfredState.x = exit->targetX;
 					_alfredState.y = exit->targetY;
 					setScreen(exit->targetRoom, exit->dir);
@@ -1723,7 +1728,6 @@ void PelrockEngine::checkMouseHover() {
 }
 
 void PelrockEngine::setScreen(int roomNumber, AlfredDirection dir) {
-
 	Common::File roomFile;
 	if (!roomFile.open(Common::Path("ALFRED.1"))) {
 		error("Could not open ALFRED.1");
@@ -1828,6 +1832,20 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		_alfredState.x = x;
 		_alfredState.y = y;
 		break;
+	}
+	case 32: {
+		if(_room->_prevRoomNumber == 31) {
+			int x = _alfredState.x;
+			int y = _alfredState.y;
+			// _alfredState.x += 57;
+			// _alfredState.y -= 2;
+			_res->loadAlfredSpecialAnim(7);
+			_alfredState.setState(ALFRED_SPECIAL_ANIM);
+			waitForSpecialAnimation();
+			_alfredState.x = x;
+			_alfredState.y = y;
+
+		}
 	}
 	default:
 		break;

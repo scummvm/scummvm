@@ -29,15 +29,16 @@ namespace Pelrock {
 PelrockConsole::PelrockConsole(PelrockEngine *engine) : GUI::Debugger(), _engine(engine) {
 	registerCmd("room", WRAP_METHOD(PelrockConsole, cmdLoadRoom));
 	registerCmd("give", WRAP_METHOD(PelrockConsole, cmdGiveItems));
-	registerCmd("setRoot", WRAP_METHOD(PelrockConsole, setRoot));
-	registerCmd("setFlag", WRAP_METHOD(PelrockConsole, setFlag));
+	registerCmd("setRoot", WRAP_METHOD(PelrockConsole, cmdSetRoot));
+	registerCmd("setFlag", WRAP_METHOD(PelrockConsole, cmdSetFlag));
+	registerCmd("toJail", WRAP_METHOD(PelrockConsole, cmdToJail));
 }
 
 PelrockConsole::~PelrockConsole() {
 }
 
 
-bool PelrockConsole::setFlag(int argc, const char **argv) {
+bool PelrockConsole::cmdSetFlag(int argc, const char **argv) {
 	if (argc < 3) {
 		debugPrintf("Usage: setFlag <flagIndex> <value>");
 		return true;
@@ -49,7 +50,7 @@ bool PelrockConsole::setFlag(int argc, const char **argv) {
 	return true;
 }
 
-bool PelrockConsole::setRoot(int argc, const char **argv) {
+bool PelrockConsole::cmdSetRoot(int argc, const char **argv) {
 	if (argc < 3) {
 		debugPrintf("Usage: setRoot <roomNumber> <rootIndex>");
 		return true;
@@ -87,6 +88,11 @@ bool PelrockConsole::cmdGiveItems(int argc, const char **argv) {
 
 		debugPrintf("Gave item %d\n", itemId);
 	}
+	return true;
+}
+
+bool PelrockConsole::cmdToJail(int argc, const char **argv) {
+	g_engine->toJail();
 	return true;
 }
 
