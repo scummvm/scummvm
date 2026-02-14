@@ -42,6 +42,11 @@ protected:
 	Common::HashMap<int, Common::Array<int> >	_itemsInGroup;
 	bool _groupsVisible;
 
+	bool _isDragging;
+	int _dragStartY;
+	int _dragStartPos;
+	int _dragPixelOffset;
+
 public:
 	GroupedListWidget(Dialog *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
 	GroupedListWidget(Dialog *boss, int x, int y, int w, int h, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
@@ -64,7 +69,7 @@ public:
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseWheel(int x, int y, int direction) override;
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
-
+	void handleMouseMoved(int x, int y, int button) override;
 	void setGroupsVisibility(bool val) { _groupsVisible = val; }
 
 	int getItemPos(int item);

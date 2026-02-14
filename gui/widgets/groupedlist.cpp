@@ -39,7 +39,7 @@
 namespace GUI {
 
 GroupedListWidget::GroupedListWidget(Dialog *boss, const Common::String &name, const Common::U32String &tooltip, uint32 cmd)
-	: ListWidget(boss, name, tooltip, cmd) {
+	: ListWidget(boss, name, tooltip, cmd), _isDragging(false), _dragStartY(0), _dragStartPos(0), _dragPixelOffset(0) {
 	_groupsVisible = true;
 }
 
@@ -234,6 +234,9 @@ void GroupedListWidget::setSelected(int item) {
 void GroupedListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (!isEnabled())
 		return;
+	_isDragging = true;
+	_dragStartY = y; // assign mouse y pos
+	_dragStartPos = _currentPos; // assign current list pos
 
 	// First check whether the selection changed
 	int newSelectedItem = findItem(x, y);
@@ -314,8 +317,64 @@ void GroupedListWidget::handleMouseUp(int x, int y, int button, int clickCount) 
 			sendCommand(kListItemDoubleClickedCmd, _selectedItem);
 		}
 	}
+	_isDragging = false;
 }
+void GroupedListWidget::handleMouseMoved(int x, int y, int button) {
+	if (!isEnabled())
+		return;
+	// Drag with mouse logic
+	if (_isDragging == true) {
+		int delta = y - _dragStartY;
+		_dragPixelOffset += delta; // accumulate pixel offset
+		_dragStartY = y;
 
+
+		//calculate the bound pos
+		int minPos=0;
+		int maxPos = _list.size() - _entriesPerPage;
+
+		int lineheight = kLineHeight + _itemSpacing;
+		while (_dragPixelOffset >= lineheight) {
+			// drag down to scroll up
+			if (_currentPos > minPos) {
+				_currentPos--;
+				_dragPixelOffset -= lineheight; 
+			} else {
+				_dragPixelOffset = 0; //preventing offset accumulation at boundaries
+				break;
+			}
+		}
+		while (_dragPixelOffset <= -lineheight) {
+			// drag up to scroll down
+			if (_currentPos < maxPos) {
+				_currentPos++;
+				_dragPixelOffset += lineheight;
+			} else {
+				_dragPixelOffset = 0;
+				break;
+			}
+		}
+
+		markAsDirty();
+		scrollBarRecalc();
+		return;
+	}
+
+	// Determine if we are inside the widget
+	if (x < 0 || x > _w)
+		return;
+
+	// First check whether the selection changed
+	int item = findItem(x, y);
+
+	if (item != -1) {
+		if (_lastRead != item) {
+			read(stripGUIformatting(_list[item]));
+			_lastRead = item;
+		}
+	} else
+		_lastRead = -1;
+}
 void GroupedListWidget::handleMouseWheel(int x, int y, int direction) {
 	_scrollBar->handleMouseWheel(x, y, direction);
 }
