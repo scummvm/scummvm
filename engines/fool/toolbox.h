@@ -761,7 +761,7 @@ private:
 
 	void _pumpEvents();
 	void _updateScreen();
-	void _drawRect(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame);
+	void _drawRect(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor);
 	void _copyBits(const BitMap &srcBits, const BitMap &mask, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, SourceMode mode, RgnHandle maskRgn);
 };
 
