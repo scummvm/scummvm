@@ -239,6 +239,9 @@ private:
 	void draw3DPrism(const Thing &obj, const PrismPartDef &def, bool useLook, uint32 color);
 	bool drawStaticObjectPrisms3D(const Thing &obj, uint32 baseColor);
 	void renderCorridor3D();
+	void drawWallFeatures3D();
+	void drawWallFeature3D(int cellX, int cellY, int direction);
+	void getWallFace3D(int cellX, int cellY, int direction, float corners[4][3]);
 
 	int occupiedObjectAt(int x, int y, const Locate *pobject);
 	void interactWithObject(int objNum);

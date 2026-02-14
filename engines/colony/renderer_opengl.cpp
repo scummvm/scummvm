@@ -52,6 +52,7 @@ public:
 	void draw3DWall(int x1, int y1, int x2, int y2, uint32 color) override;
 	void draw3DQuad(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, uint32 color) override;
 	void draw3DPolygon(const float *x, const float *y, const float *z, int count, uint32 color) override;
+	void draw3DLine(float x1, float y1, float z1, float x2, float y2, float z2, uint32 color) override;
 	void end3D() override;
 
 	void drawQuad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, uint32 color) override;
@@ -284,6 +285,14 @@ void OpenGLRenderer::draw3DPolygon(const float *x, const float *y, const float *
 	if (_wireframe) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
+}
+
+void OpenGLRenderer::draw3DLine(float x1, float y1, float z1, float x2, float y2, float z2, uint32 color) {
+	useColor(color);
+	glBegin(GL_LINES);
+	glVertex3f(x1, y1, z1);
+	glVertex3f(x2, y2, z2);
+	glEnd();
 }
  
 void OpenGLRenderer::end3D() {

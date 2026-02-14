@@ -54,6 +54,7 @@ public:
 	virtual void draw3DWall(int x1, int y1, int x2, int y2, uint32 color) = 0;
 	virtual void draw3DQuad(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, uint32 color) = 0;
 	virtual void draw3DPolygon(const float *x, const float *y, const float *z, int count, uint32 color) = 0;
+	virtual void draw3DLine(float x1, float y1, float z1, float x2, float y2, float z2, uint32 color) = 0;
 	virtual void end3D() = 0;
 
 	// Buffer management

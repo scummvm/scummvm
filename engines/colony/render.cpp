@@ -457,6 +457,264 @@ void ColonyEngine::drawStaticObjects() {
 	}
 }
 
+// Get the 4 corners of a wall face in 3D world space.
+// corners[0] = bottom-left, corners[1] = bottom-right, corners[2] = top-right, corners[3] = top-left
+// "left" and "right" are as seen from the cell that owns the feature.
+void ColonyEngine::getWallFace3D(int cellX, int cellY, int direction, float corners[4][3]) {
+	float x0 = cellX * 256.0f;
+	float y0 = cellY * 256.0f;
+	float x1 = (cellX + 1) * 256.0f;
+	float y1 = (cellY + 1) * 256.0f;
+	const float zBot = -160.0f;
+	const float zTop = 160.0f;
+	// Offset slightly toward the cell interior to prevent z-fighting with the wall polygon
+	const float eps = 1.0f;
+
+	switch (direction) {
+	case kDirNorth: // Wall at y=cellY edge; viewed from inside cell (y > cellY*256)
+		corners[0][0] = x0;  corners[0][1] = y0 + eps;  corners[0][2] = zBot;
+		corners[1][0] = x1;  corners[1][1] = y0 + eps;  corners[1][2] = zBot;
+		corners[2][0] = x1;  corners[2][1] = y0 + eps;  corners[2][2] = zTop;
+		corners[3][0] = x0;  corners[3][1] = y0 + eps;  corners[3][2] = zTop;
+		break;
+	case kDirSouth: // Wall at y=(cellY+1) edge; viewed from inside cell
+		corners[0][0] = x1;  corners[0][1] = y1 - eps;  corners[0][2] = zBot;
+		corners[1][0] = x0;  corners[1][1] = y1 - eps;  corners[1][2] = zBot;
+		corners[2][0] = x0;  corners[2][1] = y1 - eps;  corners[2][2] = zTop;
+		corners[3][0] = x1;  corners[3][1] = y1 - eps;  corners[3][2] = zTop;
+		break;
+	case kDirEast: // Wall at x=(cellX+1) edge; viewed from inside cell
+		corners[0][0] = x1 - eps;  corners[0][1] = y1;  corners[0][2] = zBot;
+		corners[1][0] = x1 - eps;  corners[1][1] = y0;  corners[1][2] = zBot;
+		corners[2][0] = x1 - eps;  corners[2][1] = y0;  corners[2][2] = zTop;
+		corners[3][0] = x1 - eps;  corners[3][1] = y1;  corners[3][2] = zTop;
+		break;
+	case kDirWest: // Wall at x=cellX edge; viewed from inside cell
+		corners[0][0] = x0 + eps;  corners[0][1] = y0;  corners[0][2] = zBot;
+		corners[1][0] = x0 + eps;  corners[1][1] = y1;  corners[1][2] = zBot;
+		corners[2][0] = x0 + eps;  corners[2][1] = y1;  corners[2][2] = zTop;
+		corners[3][0] = x0 + eps;  corners[3][1] = y0;  corners[3][2] = zTop;
+		break;
+	default:
+		return;
+	}
+}
+
+// Interpolate a point on the wall face.
+// u: 0=left, 1=right (horizontal fraction)
+// v: 0=bottom, 1=top (vertical fraction)
+static void wallPoint(const float corners[4][3], float u, float v, float out[3]) {
+	float botX = corners[0][0] + (corners[1][0] - corners[0][0]) * u;
+	float botY = corners[0][1] + (corners[1][1] - corners[0][1]) * u;
+	float botZ = corners[0][2] + (corners[1][2] - corners[0][2]) * u;
+	float topX = corners[3][0] + (corners[2][0] - corners[3][0]) * u;
+	float topY = corners[3][1] + (corners[2][1] - corners[3][1]) * u;
+	float topZ = corners[3][2] + (corners[2][2] - corners[3][2]) * u;
+	out[0] = botX + (topX - botX) * v;
+	out[1] = botY + (topY - botY) * v;
+	out[2] = botZ + (topZ - botZ) * v;
+}
+
+// Draw a line on a wall face using normalized (u,v) coordinates
+static void wallLine(Renderer *gfx, const float corners[4][3], float u1, float v1, float u2, float v2, uint32 color) {
+	float p1[3], p2[3];
+	wallPoint(corners, u1, v1, p1);
+	wallPoint(corners, u2, v2, p2);
+	gfx->draw3DLine(p1[0], p1[1], p1[2], p2[0], p2[1], p2[2], color);
+}
+
+void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
+	const uint8 *map = mapFeatureAt(cellX, cellY, direction);
+	if (!map || map[0] == kWallFeatureNone)
+		return;
+
+	float corners[4][3];
+	getWallFace3D(cellX, cellY, direction, corners);
+
+	switch (map[0]) {
+	case kWallFeatureDoor: {
+		const uint32 dark = 160;
+		// Door frame: centered rectangle on the wall
+		float xl = 0.25f, xr = 0.75f;
+		float yb = 0.125f, yt = 0.875f;
+		if (map[1] == 0) {
+			// Open door — just the frame
+			wallLine(_gfx, corners, xl, yb, xl, yt, dark);
+			wallLine(_gfx, corners, xl, yt, xr, yt, dark);
+			wallLine(_gfx, corners, xr, yt, xr, yb, dark);
+			wallLine(_gfx, corners, xr, yb, xl, yb, dark);
+		} else {
+			// Closed door — frame + handle line
+			wallLine(_gfx, corners, xl, yb, xl, yt, dark);
+			wallLine(_gfx, corners, xl, yt, xr, yt, dark);
+			wallLine(_gfx, corners, xr, yt, xr, yb, dark);
+			wallLine(_gfx, corners, xr, yb, xl, yb, dark);
+			// Handle
+			float hx = 0.6f;
+			float hy1 = 0.45f, hy2 = 0.55f;
+			wallLine(_gfx, corners, hx, hy1, hx, hy2, dark);
+		}
+		break;
+	}
+	case kWallFeatureWindow: {
+		const uint32 dark = 160;
+		// Window: centered smaller rectangle with cross divider
+		float xl = 0.25f, xr = 0.75f;
+		float yb = 0.375f, yt = 0.75f;
+		wallLine(_gfx, corners, xl, yb, xr, yb, dark);
+		wallLine(_gfx, corners, xr, yb, xr, yt, dark);
+		wallLine(_gfx, corners, xr, yt, xl, yt, dark);
+		wallLine(_gfx, corners, xl, yt, xl, yb, dark);
+		// Cross dividers
+		float xc = 0.5f, yc = (yb + yt) * 0.5f;
+		wallLine(_gfx, corners, xc, yb, xc, yt, dark);
+		wallLine(_gfx, corners, xl, yc, xr, yc, dark);
+		break;
+	}
+	case kWallFeatureShelves: {
+		const uint32 dark = 170;
+		// Bookshelf: outer rectangle + horizontal shelf lines
+		float xl = 0.15f, xr = 0.85f;
+		float yb = 0.1f, yt = 0.9f;
+		wallLine(_gfx, corners, xl, yb, xr, yb, dark);
+		wallLine(_gfx, corners, xr, yb, xr, yt, dark);
+		wallLine(_gfx, corners, xr, yt, xl, yt, dark);
+		wallLine(_gfx, corners, xl, yt, xl, yb, dark);
+		// 6 shelves
+		for (int i = 1; i <= 6; i++) {
+			float t = yb + (yt - yb) * (float)i / 7.0f;
+			wallLine(_gfx, corners, xl, t, xr, t, dark);
+		}
+		break;
+	}
+	case kWallFeatureUpStairs: {
+		const uint32 dark = 170;
+		// Upward stairs: ascending step pattern
+		float xl = 0.15f, xr = 0.85f;
+		for (int i = 0; i < 6; i++) {
+			float u = xl + (xr - xl) * (float)i / 6.0f;
+			float u2 = xl + (xr - xl) * (float)(i + 1) / 6.0f;
+			float v = 0.1f + 0.8f * (float)i / 6.0f;
+			float v2 = 0.1f + 0.8f * (float)(i + 1) / 6.0f;
+			wallLine(_gfx, corners, u, v, u2, v2, dark);
+		}
+		// Side rails
+		wallLine(_gfx, corners, xl, 0.1f, xr, 0.9f, dark);
+		break;
+	}
+	case kWallFeatureDnStairs: {
+		const uint32 dark = 170;
+		// Downward stairs: descending step pattern
+		float xl = 0.15f, xr = 0.85f;
+		for (int i = 0; i < 6; i++) {
+			float u = xl + (xr - xl) * (float)i / 6.0f;
+			float u2 = xl + (xr - xl) * (float)(i + 1) / 6.0f;
+			float v = 0.9f - 0.8f * (float)i / 6.0f;
+			float v2 = 0.9f - 0.8f * (float)(i + 1) / 6.0f;
+			wallLine(_gfx, corners, u, v, u2, v2, dark);
+		}
+		wallLine(_gfx, corners, xl, 0.9f, xr, 0.1f, dark);
+		break;
+	}
+	case kWallFeatureGlyph: {
+		const uint32 dark = 170;
+		// Alien glyphs: horizontal lines (like hieroglyphics)
+		float xl = 0.1f, xr = 0.9f;
+		for (int i = 0; i < 9; i++) {
+			float v = 0.15f + 0.7f * (float)i / 8.0f;
+			wallLine(_gfx, corners, xl, v, xr, v, dark);
+		}
+		break;
+	}
+	case kWallFeatureElevator: {
+		const uint32 dark = 170;
+		// Elevator: tall rectangle with center divider line
+		float xl = 0.15f, xr = 0.85f;
+		float yb = 0.05f, yt = 0.95f;
+		wallLine(_gfx, corners, xl, yb, xl, yt, dark);
+		wallLine(_gfx, corners, xl, yt, xr, yt, dark);
+		wallLine(_gfx, corners, xr, yt, xr, yb, dark);
+		wallLine(_gfx, corners, xr, yb, xl, yb, dark);
+		// Center divider
+		float xc = 0.5f;
+		wallLine(_gfx, corners, xc, yb, xc, yt, dark);
+		break;
+	}
+	case kWallFeatureTunnel: {
+		const uint32 dark = 120;
+		// Tunnel: hexagonal opening
+		float pts[][2] = {
+			{0.0f, 0.5f}, {0.15f, 0.85f}, {0.5f, 1.0f},
+			{0.85f, 0.85f}, {1.0f, 0.5f}, {0.85f, 0.15f},
+			{0.5f, 0.0f}, {0.15f, 0.15f}
+		};
+		for (int i = 0; i < 8; i++) {
+			int n = (i + 1) % 8;
+			// Scale inward slightly
+			float u1 = 0.1f + pts[i][0] * 0.8f;
+			float v1 = 0.1f + pts[i][1] * 0.8f;
+			float u2 = 0.1f + pts[n][0] * 0.8f;
+			float v2 = 0.1f + pts[n][1] * 0.8f;
+			wallLine(_gfx, corners, u1, v1, u2, v2, dark);
+		}
+		break;
+	}
+	case kWallFeatureAirlock: {
+		const uint32 dark = map[1] == 0 ? (uint32)150 : (uint32)170;
+		// Airlock: octagonal shape
+		float pts[][2] = {
+			{0.0f, 0.5f}, {0.15f, 0.85f}, {0.5f, 1.0f},
+			{0.85f, 0.85f}, {1.0f, 0.5f}, {0.85f, 0.15f},
+			{0.5f, 0.0f}, {0.15f, 0.15f}
+		};
+		for (int i = 0; i < 8; i++) {
+			int n = (i + 1) % 8;
+			float u1 = 0.1f + pts[i][0] * 0.8f;
+			float v1 = 0.1f + pts[i][1] * 0.8f;
+			float u2 = 0.1f + pts[n][0] * 0.8f;
+			float v2 = 0.1f + pts[n][1] * 0.8f;
+			wallLine(_gfx, corners, u1, v1, u2, v2, dark);
+		}
+		if (map[1] != 0) {
+			// Closed: add cross lines through center
+			wallLine(_gfx, corners, 0.1f, 0.5f, 0.5f, 0.5f, dark);
+			wallLine(_gfx, corners, 0.5f, 0.1f, 0.5f, 0.5f, dark);
+			wallLine(_gfx, corners, 0.9f, 0.5f, 0.5f, 0.5f, dark);
+			wallLine(_gfx, corners, 0.5f, 0.9f, 0.5f, 0.5f, dark);
+		}
+		break;
+	}
+	case kWallFeatureColor: {
+		// Colored horizontal bands
+		for (int i = 1; i <= 3; i++) {
+			uint32 c = 120 + map[i] * 20;
+			if (c == 120 && map[i] == 0 && !map[1] && !map[2] && !map[3] && !map[4]) {
+				c = 100 + (_level * 15);
+			}
+			float v = (float)i / 4.0f;
+			wallLine(_gfx, corners, 0.0f, v, 1.0f, v, c);
+		}
+		break;
+	}
+	default:
+		break;
+	}
+}
+
+void ColonyEngine::drawWallFeatures3D() {
+	for (int y = 0; y < 31; y++) {
+		for (int x = 0; x < 31; x++) {
+			for (int dir = 0; dir < 4; dir++) {
+				const uint8 *map = mapFeatureAt(x, y, dir);
+				if (map && map[0] != kWallFeatureNone) {
+					drawWallFeature3D(x, y, dir);
+				}
+			}
+		}
+	}
+}
+
+
 void ColonyEngine::renderCorridor3D() {
 	_gfx->begin3D(_me.xloc, _me.yloc, 0, _me.look, _me.lookY, _screenR);
  
@@ -485,6 +743,7 @@ void ColonyEngine::renderCorridor3D() {
 		}
 	}
 	
+	drawWallFeatures3D();
 	drawStaticObjects();
 		
 	_gfx->end3D();
