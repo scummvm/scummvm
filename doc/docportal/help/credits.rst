@@ -1043,6 +1043,17 @@ Petka
    * - Eugene Sandulenko
      -
 
+PhoenixVR
+^^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Vladimir Menshakov
+     -
+   * - Hermann Noll
+     - Help with 3D VR projections
+
 Pink
 ^^^^
 

@@ -21,9 +21,10 @@
 
 #include "m4/riddle/rooms/section6/room608.h"
 #include "m4/riddle/rooms/section6/section6.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/adv_file.h"
+#include "m4/graphics/gr_series.h"
 
 namespace M4 {
 namespace Riddle {
@@ -1327,8 +1328,8 @@ void Room608::daemon() {
 	case 763:
 		inv_give_to_player("STICK AND SHELL MAP");
 		inv_give_to_player("WHALE BONE HORN");
-		kernel_examine_inventory_object("PING STICK AND SHELL MAP",
-			5, 1, 350, 224, 764);
+		kernel_examine_inventory_object("PING STICK AND SHELL MAP", _G(master_palette),
+			5, 1, 350, 224, 764, nullptr, -1);
 		break;
 
 	case 764:
@@ -1336,8 +1337,8 @@ void Room608::daemon() {
 		break;
 
 	case 765:
-		kernel_examine_inventory_object("PING WHALE BONE HORN",
-			5, 1, 350, 224, 766);
+		kernel_examine_inventory_object("PING WHALE BONE HORN", _G(master_palette),
+			5, 1, 350, 224, 766, nullptr, -1);
 		break;
 
 	case 766:
@@ -1841,8 +1842,8 @@ bool Room608::takeStump1() {
 	case 2:
 		hotspot_set_active("DRIFTWOOD STUMP", false);
 		inv_give_to_player("DRIFTWOOD STUMP");
-		kernel_examine_inventory_object("PING DRIFTWOOD STUMP",
-			5, 1, 230, 244, 3);
+		kernel_examine_inventory_object("PING DRIFTWOOD STUMP", _G(master_palette),
+			5, 1, 230, 244, 3, nullptr, -1);
 		terminateMachineAndNull(_stump);
 		break;
 
@@ -1876,8 +1877,8 @@ bool Room608::takePuffin() {
 	case 2:
 		hotspot_set_active("DRIFTWOOD PUFFIN", false);
 		inv_give_to_player("DRIFTWOOD PUFFIN");
-		kernel_examine_inventory_object("PING DRIFTWOOD PUFFIN",
-			5, 1, 142, 239, 3);
+		kernel_examine_inventory_object("PING DRIFTWOOD PUFFIN", _G(master_palette),
+			5, 1, 142, 239, 3, nullptr, -1);
 		terminateMachineAndNull(_puffin);
 		break;
 
@@ -1984,7 +1985,7 @@ bool Room608::takeLighter() {
 	case 2:
 		hotspot_set_active("LIGHTER", false);
 		inv_give_to_player("LIGHTER");
-		kernel_examine_inventory_object("PING LIGHTER", 5, 1, 455, 250, 3);
+		kernel_examine_inventory_object("PING LIGHTER", _G(master_palette), 5, 1, 455, 250, 3, nullptr, -1);
 		terminateMachineAndNull(_lighter);
 		return true;
 
@@ -2036,8 +2037,8 @@ bool Room608::hornCordWater() {
 		case 3:
 			inv_give_to_player("HORN/PULL CORD/WATER");
 			inv_move_object("HORN/PULL CORD", NOWHERE);
-			kernel_examine_inventory_object("PING HORN/PULL CORD/WATER",
-				5, 1, 42, 239, 4);
+			kernel_examine_inventory_object("PING HORN/PULL CORD/WATER", _G(master_palette),
+				5, 1, 42, 239, 4, nullptr, -1);
 			return true;
 
 		case 4:

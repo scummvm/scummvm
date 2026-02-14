@@ -29,8 +29,6 @@
 
 namespace M4 {
 
-#define font_width 2		/* offset to width array */
-#define font_data 130		/* offset to data array	*/
 #define STR_FONTSTRUCT "font struct"
 #define STR_FONTWIDTH "font widths"
 #define STR_FONTOFF "font offsets"

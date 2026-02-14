@@ -26,14 +26,10 @@
 
 namespace M4 {
 
-#define STR_PARSE_BUFFER_SIZE 255
-
 int32 cstrlen(const char *s);
 void cstrcpy(char *dest, const char *src);
 void cstrncpy(char *dest, const char *src, const int16 max_len);
 char *cstrupr(char *src);
-
-#define strrun(a,b,c) memset(a,b,c)
 
 } // namespace M4
 

@@ -194,6 +194,9 @@ Common::Path OSystem_3DS::getDefaultLogFileName() {
 
 void OSystem_3DS::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	s.add("RomFS", new Common::FSDirectory(DATA_PATH"/"), priority);
+	// Add the current dir as a very last resort (cf. bug #3984).
+	// TODO: check if it's really needed
+	s.addDirectory(".", ".", priority - 1);
 }
 
 uint32 OSystem_3DS::getMillis(bool skipRecord) {

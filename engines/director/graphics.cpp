@@ -373,24 +373,7 @@ void InkPrimitives<T>::drawPoint(int x, int y, uint32 src, void *data) {
 		// Otherwise, treat it like a Matte image.
 	case kInkTypeCopy: {
 		if (p->applyColor) {
-			if (sizeof(T) == 1) {
-				*dst = (src == 0xff) ? p->foreColor : ((src == 0x00) ? p->backColor : *dst);
-			} else {
-				// TODO: Improve the efficiency of this composition
-				byte rSrc, gSrc, bSrc;
-				byte rDst, gDst, bDst;
-				byte rFor, gFor, bFor;
-				byte rBak, gBak, bBak;
-
-				wm->decomposeColor<T>(src, rSrc, gSrc, bSrc);
-				wm->decomposeColor<T>(*dst, rDst, gDst, bDst);
-				wm->decomposeColor<T>(p->foreColor, rFor, gFor, bFor);
-				wm->decomposeColor<T>(p->backColor, rBak, gBak, bBak);
-
-				*dst = wm->findBestColor((rSrc | rFor) & (~rSrc | rBak),
-										(gSrc | gFor) & (~gSrc | gBak),
-										(bSrc | bFor) & (~bSrc | bBak));
-			}
+			*dst = (src == p->colorBlack) ? p->foreColor : ((src == p->colorWhite) ? p->backColor : *dst);
 		} else {
 			*dst = src;
 		}
@@ -399,22 +382,11 @@ void InkPrimitives<T>::drawPoint(int x, int y, uint32 src, void *data) {
 	case kInkTypeNotCopy:
 		if (p->applyColor) {
 			if (sizeof(T) == 1) {
-				*dst = (src == 0xff) ? p->backColor : ((src == 0x00) ? p->foreColor : src);
-			} else {
-				// TODO: Improve the efficiency of this composition
-				byte rSrc, gSrc, bSrc;
-				byte rDst, gDst, bDst;
-				byte rFor, gFor, bFor;
-				byte rBak, gBak, bBak;
-
-				wm->decomposeColor<T>(src, rSrc, gSrc, bSrc);
-				wm->decomposeColor<T>(*dst, rDst, gDst, bDst);
-				wm->decomposeColor<T>(p->foreColor, rFor, gFor, bFor);
-				wm->decomposeColor<T>(p->backColor, rBak, gBak, bBak);
-
-				*dst = wm->findBestColor((~rSrc | rFor) & (rSrc | rBak),
-										(~gSrc | gFor) & (gSrc | gBak),
-										(~bSrc | bFor) & (bSrc | bBak));
+				*dst = (src == p->colorBlack) ? p->backColor : ((src == p->colorWhite) ? p->foreColor : src);
+			} else if (sizeof(T) == 4) {
+				// In 32-bit, apply color mode seems to just return the original src
+				// with no changes. This is different to kInkTypeCopy.
+				*dst = src;
 			}
 		} else {
 			// Find the inverse of the colour and match it back to the palette if required
@@ -428,18 +400,28 @@ void InkPrimitives<T>::drawPoint(int x, int y, uint32 src, void *data) {
 		if (p->oneBitImage || p->applyColor) {
 			*dst = (src == p->colorBlack) ? p->foreColor : *dst;
 		} else {
-			// OR dst palette index with src.
-			// Originally designed for 1-bit mode to make white pixels
-			// transparent.
-			*dst = *dst | src;
+			if (sizeof(T) == 1) {
+				// OR dst palette index with src.
+				// Originally designed for 1-bit mode to make white pixels
+				// transparent.
+				*dst = *dst | src;
+			} else {
+				// In 32-bit mode, this is an AND.
+				*dst = *dst & src;
+			}
 		}
 		break;
 	case kInkTypeNotTrans:
 		if (p->oneBitImage || p->applyColor) {
 			*dst = (src == p->colorWhite) ? p->foreColor : *dst;
 		} else {
-			// OR dst palette index with the inverse of src.
-			*dst = *dst | ~src;
+			if (sizeof(T) == 1) {
+				// OR dst palette index with the inverse of src.
+				*dst = *dst | ~src;
+			} else {
+				// In 32-bit mode, this is an AND.
+				*dst = *dst & ~(src & 0xffffff00);
+			}
 		}
 		break;
 	case kInkTypeReverse:

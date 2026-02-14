@@ -20,14 +20,12 @@
  */
 
 #include "m4/gui/gui_vmng_rectangles.h"
-#include "m4/gui/gui_vmng.h"
 #include "m4/core/errors.h"
 #include "m4/core/imath.h"
 #include "m4/mem/mem.h"
 #include "m4/vars.h"
 
 namespace M4 {
-
 
 #define LEFT_EDGE 1
 #define RIGHT_EDGE 2
@@ -309,19 +307,6 @@ bool vmng_ClipRectList(RectList **myRectList, int32 clipX1, int32 clipY1, int32 
 
 		// Check the next rect
 		myRect = nextRect;
-	}
-
-	return true;
-}
-
-bool vmng_RectListValid(RectList *myRectList) {
-	RectList *myRect = myRectList;
-	while (myRect) {
-		RectList *tempRectList = myRect->next;
-		if (vmng_RectIntersectsRectList(tempRectList, myRect->x1, myRect->y1, myRect->x2, myRect->y2)) {
-			return false;
-		}
-		myRect = myRect->next;
 	}
 
 	return true;

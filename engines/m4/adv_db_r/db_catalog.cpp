@@ -162,7 +162,7 @@ static void sort_catalog() {
 			++index;
 
 		if (index > _G(catalog)._size)
-			error_show(FL);
+			error_show(FL, "sort_catalog");
 	}
 
 	qsort(_G(catalog)._catalog, _G(catalog)._size, sizeof(char *), compare_catalog_entries_for_sort);
@@ -220,7 +220,7 @@ static char *db_get_catalog_entry(char *c, short *tag, short *room, char *name, 
 		s[i++] = c[x];
 
 		if (i == MAX_FILENAME_SIZE)
-			error_show(FL);
+			error_show(FL, "db_get_catalog_entry");
 	}
 	s[i] = '\0';
 

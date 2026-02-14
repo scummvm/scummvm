@@ -71,7 +71,7 @@ protected:
 	 * Draw the sprite onto the given surface
 	 */
 	void draw(XSurface &dest, int frame, const Common::Point &destPos,
-		const Common::Rect &bounds, uint flags = 0, int scale = 0) const;
+	          const Common::Rect &bounds, uint flags = 0, int scale = 0) const;
 
 	/**
 	 * Deep copy assuming that the current instance is clean
@@ -101,20 +101,20 @@ public:
 
 	/**
 	 * Draw a sprite onto a surface
-	 * @param dest		Destination surface
-	 * @param frame		Frame number
-	 * @param destPos	Destination position
-	 * @param flags		Flags
-	 * @param scale		Scale: 0=No scale, SCALE_ENLARGE=Enlarge it
-	 *					1..15   -> reduces the sprite: the higher, the smaller it'll be
+	 * @param dest      Destination surface
+	 * @param frame     Frame number
+	 * @param destPos   Destination position
+	 * @param flags     Flags
+	 * @param scale     Scale: 0=No scale, SCALE_ENLARGE=Enlarge it
+	 *                  1..15   -> reduces the sprite: the higher, the smaller it'll be
 	 */
 	void draw(XSurface &dest, int frame, const Common::Point &destPos,
-		uint flags = 0, int scale = 0) const;
+	          uint flags = 0, int scale = 0) const;
 
 	/**
 	 * Draw the sprite onto the given surface
-	 * @param dest		Destination surface
-	 * @param frame		Frame number
+	 * @param dest      Destination surface
+	 * @param frame     Frame number
 	 */
 	void draw(XSurface &dest, int frame) const;
 
@@ -149,155 +149,6 @@ public:
 	static void setClippedBottom(int y) {
 		_clippedBottom = y;
 	}
-};
-
-/**
- * Basic sprite drawer
- */
-class SpriteDrawer {
-private:
-	byte *_data = nullptr;
-	size_t _filesize = 0;
-protected:
-	byte *_destTop = nullptr, *_destBottom = nullptr;
-	byte *_destLeft = nullptr, *_destRight = nullptr;
-	int _pitch = 0;
-private:
-	/**
-	 * Scale a co-ordinate value based on the passed scaling mask
-	 */
-	static uint getScaledVal(int xy, uint16 &scaleMask);
-protected:
-	/**
-	 * Roll carry right opcode emulation
-	 */
-	void rcr(uint16 &val, bool &cf);
-
-	/**
-	 * Output a pixel
-	 */
-	virtual void drawPixel(byte *dest, byte pixel);
-public:
-	/**
-	 * Constructor
-	 */
-	SpriteDrawer(byte *data, size_t filesize) : _data(data), _filesize(filesize) {
-	}
-
-	/**
-	 * Destructor
-	 */
-	virtual ~SpriteDrawer() {
-	}
-
-	/**
-	 * Draw a sprite frame based on a passed offset into the data stream
-	 */
-	void draw(XSurface &dest, uint16 offset, const Common::Point &pt,
-		const Common::Rect &clipRect, uint flags, int scale);
-};
-
-class SpriteDrawer1 : public SpriteDrawer {
-private:
-	byte _offset = 0, _mask = 0;
-protected:
-	/**
-	 * Output a pixel
-	 */
-	void drawPixel(byte *dest, byte pixel) override;
-public:
-	/**
-	 * Constructor
-	 */
-	SpriteDrawer1(byte *data, size_t filesize, int index);
-};
-
-/**
- * Scrambles up the sprite by drawing many of the pixels randomly
- * at a horizontal or vertical offset
- */
-class SpriteDrawer2 : public SpriteDrawer {
-private:
-	uint16 _mask1 = 0, _mask2 = 0;
-	uint16 _random1 = 0, _random2 = 0;
-private:
-	/**
-	 * Output a pixel
-	 */
-	void drawPixel(byte *dest, byte pixel) override;
-public:
-	/**
-	 * Constructor
-	 */
-	SpriteDrawer2(byte *data, size_t filesize, int index);
-};
-
-/**
- * Draws the sprite as faint ghostly, see-through.
- */
-class SpriteDrawer3 : public SpriteDrawer {
-private:
-	uint16 _offset = 0, _mask = 0;
-	byte _palette[256 * 3];
-	bool _hasPalette = false;
-private:
-	/**
-	 * Output a pixel
-	 */
-	void drawPixel(byte *dest, byte pixel) override;
-public:
-	/**
-	 * Constructor
-	 */
-	SpriteDrawer3(byte *data, size_t filesize, int index);
-};
-
-class SpriteDrawer4 : public SpriteDrawer {
-private:
-	byte _threshold = 0;
-protected:
-	/**
-	 * Output a pixel
-	 */
-	void drawPixel(byte *dest, byte pixel) override;
-public:
-	/**
-	 * Constructor
-	 */
-	SpriteDrawer4(byte *data, size_t filesize, int index);
-};
-
-/**
- * Draws a sprite with a fuzziness effect where only some pixels of the sprite are randomly drawn
- */
-class SpriteDrawer5 : public SpriteDrawer {
-private:
-	uint16 _threshold = 0, _random1 = 0, _random2 = 0;
-protected:
-	/**
-	 * Output a pixel
-	 */
-	void drawPixel(byte *dest, byte pixel) override;
-public:
-	/**
-	 * Constructor
-	 */
-	SpriteDrawer5(byte *data, size_t filesize, int index);
-};
-
-class SpriteDrawer6 : public SpriteDrawer {
-private:
-	byte _mask = 0;
-protected:
-	/**
-	 * Output a pixel
-	 */
-	void drawPixel(byte *dest, byte pixel) override;
-public:
-	/**
-	 * Constructor
-	 */
-	SpriteDrawer6(byte *data, size_t filesize, int index);
 };
 
 } // End of namespace Xeen

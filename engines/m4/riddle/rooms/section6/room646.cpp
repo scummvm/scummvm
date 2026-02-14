@@ -21,6 +21,7 @@
 
 #include "m4/riddle/rooms/section6/room646.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
 
 namespace M4 {
 namespace Riddle {

@@ -847,7 +847,7 @@ int16 Game::checkKeys(int16 *pMouseX, int16 *pMouseY,
 		MouseButtons *pButtons, char handleMouse) {
 
 	if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4)
-		_vm->_vidPlayer->updateLive();
+		_vm->_vidPlayer->updateVideos();
 	_vm->_util->processInput(true);
 
 	if (_vm->_mult->_multData && _vm->_inter->_variables &&

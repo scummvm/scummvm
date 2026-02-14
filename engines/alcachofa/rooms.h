@@ -68,7 +68,7 @@ public:
 protected:
 	Room(World *world);
 	void readRoomV1(Common::SeekableReadStream &stream);
-	void readRoomV3(Common::SeekableReadStream &stream, bool hasUselessByte);
+	void readRoomV2and3(Common::SeekableReadStream &stream, bool hasUselessByte);
 	void readObjects(Common::SeekableReadStream &stream);
 	void initBackground();
 	void updateScripts();
@@ -209,6 +209,7 @@ public:
 
 private:
 	bool loadWorldFileV3(const char *path);
+	bool loadWorldFileV2(const char *path);
 	bool loadWorldFileV1(const char *path);
 	void readRooms(Common::File &file);
 	void loadLocalizedNames();

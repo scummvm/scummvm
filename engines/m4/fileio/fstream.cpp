@@ -55,7 +55,7 @@ bool f_stream_Init() {
 	return true;
 }
 
-void f_stream_Shutdown(void) {
+void f_stream_Shutdown() {
 	// Loop through the list, closing all stream requests, which also deallocs the request
 	strmRequest *myStream = _G(firstStream);
 	while (myStream) {
@@ -72,7 +72,7 @@ strmRequest *f_stream_Open(SysFile *srcFile, int32 fileOffset, int32 strmMinBuff
 
 	// Parameter verification        
 	if (!srcFile) {
-		error_show(FL);
+		error_show(FL,"f_stream_Open() failed - invalid FILE* given");
 	}
 
 	if (strmMinBuffSize < 0) {
@@ -225,8 +225,6 @@ void f_stream_DumpPreviouslyRead(strmRequest *myStream) {
 
 
 int32 f_stream_Read(strmRequest *myStream, uint8 **dest, int32 numBytes) {
-	int32 bytesAvail;
-
 	// Parameter verification
 	if (!myStream)
 		error_show(FL, "f_stream_Read() failed - invalid stream request");
@@ -243,6 +241,7 @@ int32 f_stream_Read(strmRequest *myStream, uint8 **dest, int32 numBytes) {
 	// Now either the strmHead is >= the strmTail, or there is enough data at the end of the buffer to fulfill numBytes      
 
 	// Calculate the number of bytes available
+	int32 bytesAvail;
 	if (myStream->strmTail <= myStream->strmHead) {
 		bytesAvail = (int32)(myStream->strmHead - myStream->strmTail);
 	} else {
@@ -272,7 +271,7 @@ int32 f_stream_Read(strmRequest *myStream, uint8 **dest, int32 numBytes) {
 	// If this has happened, since we "unwrapped" the stream buff, we can guarantee that strmTail < strmHead
 
 	// Calculate how much more must be read in
-	int32 bytesNeeded = numBytes - bytesAvail;
+	const int32 bytesNeeded = numBytes - bytesAvail;
 
 	// Make sure we have enough room at the end of the buffer to accommodate
 	if ((int32)(myStream->endStrmBuff - myStream->strmHead) < bytesNeeded) {
@@ -297,7 +296,7 @@ int32 f_stream_Read(strmRequest *myStream, uint8 **dest, int32 numBytes) {
 	}
 
 	// Read in the bytesNeeded
-	int32 bytesRead = myStream->srcFile->read(myStream->strmHead, bytesNeeded);
+	const int32 bytesRead = myStream->srcFile->read(myStream->strmHead, bytesNeeded);
 
 	if (bytesRead < bytesNeeded) {
 		// If we could not read that much in, close the srcFile
@@ -492,7 +491,7 @@ void f_stream_Process(int32 numToProcess) {
 			}
 		}
 
-		// If we were able, we serviced the above stream request. Get the next request and decriment the counter
+		// If we were able, we serviced the above stream request. Get the next request and decrement the counter
 		myStream = myStream->next;
 		numToProcess--;
 	}

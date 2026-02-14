@@ -314,7 +314,7 @@ static HotSpotRec *saved_hotspots = nullptr;
 
 void hotspot_hide_all() {
 	if (saved_hotspots)
-		error_show(FL);
+		error_show(FL, "Cannot nest hotspots_hide_all()");
 
 	saved_hotspots = _G(currentSceneDef).hotspots;
 	_G(currentSceneDef).hotspots = nullptr;
@@ -322,7 +322,7 @@ void hotspot_hide_all() {
 
 void hotspot_restore_all() {
 	if (!saved_hotspots) {
-		error_show(FL);
+		error_show(FL, "No saved hotspots to restore");
 	}
 
 	if (_G(currentSceneDef).hotspots)

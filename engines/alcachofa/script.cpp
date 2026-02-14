@@ -464,7 +464,7 @@ struct ScriptTask final : public Task {
 
 private:
 	void setCharacterVariables() {
-		if (g_engine->isV3()) {
+		if (g_engine->isV3() || g_engine->isV2()) {
 			_script.variable("m_o_f") = (int32)process().character();
 			_script.variable("m_o_f_real") = (int32)g_engine->player().activeCharacterKind();
 		} else
@@ -476,15 +476,14 @@ private:
 		// in V3 this is "by the script" by having a special PopN op
 		// in V1 we have to know the proper number of arguments per kernel call, so we do it in kernelCall
 
-		if (g_engine->isV3()) {
+		if (g_engine->isV1()) {
+			popN(g_engine->game().getKernelTaskArgCount(_lastKernelTaskI));
+		}
+		else {
 			scumm_assert(
 				_pc < _script._instructions.size() &&
 				g_engine->game().getScriptOpMap()[_script._instructions[_pc]._op] == ScriptOp::PopN);
 			popN(_script._instructions[_pc++]._arg);
-		}
-		else {
-			assert(g_engine->isV1());
-			popN(g_engine->game().getKernelTaskArgCount(_lastKernelTaskI));
 		}
 		pushNumber(returnValue);
 	}

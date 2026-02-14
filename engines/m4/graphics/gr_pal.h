@@ -48,8 +48,6 @@ constexpr int MAX_PAL_ENTRY = 255;
 
 uint8 gr_pal_get_ega_color(uint8 myColor);
 
-void gr_color_create_ipl5(uint8 *inverseColorTable, char *fname, int room_num);
-uint8 *gr_color_load_ipl5(const char *filename, uint8 *inverseColors);
 void gr_color_set(int32 c);
 byte gr_color_get_current();
 

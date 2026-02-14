@@ -65,6 +65,7 @@ protected:
 	int16 _introTicks;                              // Count calls to introPlay()
 	byte *_logo_v1d;
 
+	void loadFont(const char *fileName, const char *faceName, uint16 sizeInPoints);
 	bool wait(uint32 delay);
 };
 

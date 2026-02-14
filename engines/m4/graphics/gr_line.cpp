@@ -24,37 +24,6 @@
 
 namespace M4 {
 
-void gr_vline_xor(Buffer *buf, int32 x, int32 y1, int32 y2) {
-	if (y1 > y2) {
-		SWAP(y1, y2);
-	}
-
-	if ((x > buf->w) || (y1 > buf->h))
-		return;
-
-	if (y2 > buf->h)
-		y2 = buf->h;	// Don't draw past bottom
-
-	byte *start = buf->data + x;
-
-	for (int32 i = y1; i < y2; i++, start += buf->stride)
-		*start ^= 0xff;
-}
-
-void gr_hline_xor(Buffer *buf, int32 x1, int32 x2, int32 y) {
-	if (x1 > x2) {
-		SWAP(x1, x2);
-	}
-
-	if ((y > buf->h) || (x1 > buf->w))
-		return;
-
-	byte *start = gr_buffer_pointer(buf, x1, y);
-
-	for (int32 i = x1; i < x2; i++, start++)
-		*start ^= 0xff;
-}
-
 void gr_vline(Buffer *buf, int32 x, int32 y1, int32 y2) {
 	if (y1 > y2) {
 		SWAP(y1, y2);

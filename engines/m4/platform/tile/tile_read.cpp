@@ -71,7 +71,7 @@ Buffer *tt_read(SysFile *ifp, int index, int32 tile_x, int32 tile_y) {
 
 	// Check parameters
 	if (index < 0)
-		error_show(FL);
+		error_show(FL, "Negative index");
 
 	const int32 tile_size = tile_x * tile_y;
 
@@ -86,12 +86,6 @@ Buffer *tt_read(SysFile *ifp, int index, int32 tile_x, int32 tile_y) {
 	}
 
 	gr_buffer_init(out, "back tile", tile_x, tile_y);
-	if (out->data == nullptr) {
-		out->w = 0;
-		out->stride = 0;
-		out->h = 0;
-		error_show(FL, "fail to allocate mem for .TT buffer");
-	}
 
 	out->w = out->stride = tile_x;
 	out->h = tile_y;

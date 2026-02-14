@@ -240,6 +240,8 @@ void Draw::blitInvalidated() {
 			((_vm->_global->_videoMode == 5) || (_vm->_global->_videoMode == 7)))
 		return;
 
+	_vm->_vidPlayer->liveVideosLoop();
+
 	if (_cursorIndex == 4)
 		blitCursor();
 

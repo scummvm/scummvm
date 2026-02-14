@@ -60,7 +60,7 @@ public:
 int32 gr_buffer_free(Buffer *buf);
 byte *gr_buffer_pointer(Buffer *buf, int32 x, int32 y);
 const byte *gr_buffer_pointer(const Buffer *buf, int32 x, int32 y);
-int32 gr_buffer_init(Buffer *buf, const char *name, int32 w, int32 h);
+void gr_buffer_init(Buffer *buf, const char *name, int32 w, int32 h);
 
 /**
  * Copies a "rectangular" buffer area from "from" to "unto".  Size

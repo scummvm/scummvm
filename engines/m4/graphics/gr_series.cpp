@@ -55,11 +55,6 @@ void Series::show(const char *series1, const char *series2, int layer) {
 	_seriesS = M4::series_show(series2, layer + 1);
 }
 
-void Series::show_index2(const char *series1, const char *series2, int layer, int index1, int index2) {
-	_series = M4::series_show(series1, layer, 0, -1, -1, index1);
-	_seriesS = M4::series_show(series2, layer + 1, 0, -1, -1, index1 + 1);
-}
-
 void Series::series_play(const char *seriesName, frac16 layer, uint32 flags,
 		int16 triggerNum, int32 frameRate, int32 loopCount, int32 s,
 		int32 x, int32 y, int32 firstFrame, int32 lastFrame) {
@@ -106,11 +101,12 @@ bool series_draw_sprite(int32 spriteHash, int32 index, Buffer *destBuff, int32 x
 	M4Rect clipRect, updateRect;
 
 	if (!destBuff) {
-		error_show(FL);
+		error_show(FL, "series_draw_sprite");
 	}
 
 	M4sprite *srcSpritePtr = &srcSprite;
-	if ((srcSpritePtr = GetWSAssetSprite(nullptr, (uint32)spriteHash, (uint32)index, srcSpritePtr, nullptr)) == nullptr)
+	srcSpritePtr = GetWSAssetSprite(nullptr, (uint32)spriteHash, (uint32)index, srcSpritePtr, nullptr);
+	if (srcSpritePtr == nullptr)
 		error_show(FL, "hash: %d, index: %d", spriteHash, index);
 
 	HLock(srcSpritePtr->sourceHandle);
@@ -194,9 +190,9 @@ bool series_stream_break_on_frame(machine *m, int32 frameNum, int32 trigger) {
 }
 
 void series_set_frame_rate(machine *m, int32 newFrameRate) {
-	if ((!m) || (!m->myAnim8) || !verifyMachineExists(m)) {
+	if (!m || !m->myAnim8 || !verifyMachineExists(m)) {
 		if (g_engine->getGameType() == GType_Burger)
-			error_show(FL);
+			error_show(FL, "CHECK_SERIES");
 		return;
 	}
 

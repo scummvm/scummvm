@@ -474,47 +474,6 @@ void Inter_Playtoons::oPlaytoons_openItk() {
 	_vm->_dataIO->openArchive(file, false);
 }
 
-Common::String Inter_Playtoons::getFile(const char *path, bool stripPath, bool *isCd) {
-	const char *orig = path;
-
-	if      (!strncmp(path, "@:\\", 3))
-		path += 3;
-	else if (!strncmp(path, "<ME>", 4))
-		path += 4;
-	else if (!strncmp(path, "<CD>", 4)) {
-		path += 4;
-		if (isCd)
-			*isCd = true;
-	} else if (!strncmp(path, "<STK>", 5))
-		path += 5;
-	else if (!strncmp(path, "<ALLCD>", 7)) {
-		path += 7;
-		if (isCd)
-			*isCd = true;
-	}
-
-	if (stripPath) {
-		const char *backslash = strrchr(path, '\\');
-		if (backslash)
-			path = backslash + 1;
-	}
-
-	Common::String newPath = path;
-	// Comma in filenames tells this engine that the file handle may be reused for next read/write operations
-	// E.g. myfile,0 will keep the file handle for "myfile".
-	// If later we request file I/O for "myfile,1" the file handle will be reused.
-	// It seems that we can just ignore this, as the seek position of the handle is reset anyway.
-	uint32 commaPos = newPath.find(',');
-	if (commaPos != Common::String::npos)
-		newPath = newPath.substr(0, commaPos);
-
-	if (orig != newPath)
-		debugC(2, kDebugFileIO, "Inter_Playtoons::getFile(): Evaluating path"
-				"\"%s\" to \"%s\"", orig, path);
-
-	return newPath;
-}
-
 bool Inter_Playtoons::readSprite(Common::String file, int32 dataVar,
 		int32 size, int32 offset) {
 

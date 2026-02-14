@@ -183,12 +183,13 @@ public:
 	 * @param useEllipsis  Try to fit the string in the area by inserting an
 	 *                     ellipsis. Note that the default value is false for this
 	 *                     argument, unlike for drawString.
+	 * @param allowCharClipping  Allows characters to extend beyond the right boundary.
 	 *
 	 * @return The actual area where the string is drawn.
 	 */
-	Common::Rect getBoundingBox(const Common::String &str, int x = 0, int y = 0, const int w = 0, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false) const;
+	Common::Rect getBoundingBox(const Common::String &str, int x = 0, int y = 0, const int w = 0, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false, bool allowCharClipping = false) const;
 	/** @overload */
-	Common::Rect getBoundingBox(const Common::U32String &str, int x = 0, int _y = 0, const int w = 0, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false) const;
+	Common::Rect getBoundingBox(const Common::U32String &str, int x = 0, int _y = 0, const int w = 0, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false, bool allowCharClipping = false) const;
 
 	/**
 	 * Draw a character at a specific point on the surface.
@@ -255,15 +256,16 @@ public:
 	 * @param align   Text alignment. This can be used to center the string in the given area or to align it to the right.
 	 * @param deltax  Offset to the x starting position of the string.
 	 * @param useEllipsis  Use ellipsis if needed to fit the string in the area.
+	 * @param allowCharClipping  Allows characters to extend beyond the right boundary.
 	 *
 	 */
-	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false) const;
+	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false, bool allowCharClipping = false) const;
 	/** @overload */
-	void drawString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false) const;
+	void drawString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false, bool allowCharClipping = false) const;
 	/** @overload */
-	void drawString(ManagedSurface *dst, const Common::String &str, int x, int _y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false) const;
+	void drawString(ManagedSurface *dst, const Common::String &str, int x, int _y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false, bool allowCharClipping = false) const;
 	/** @overload */
-	void drawString(ManagedSurface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false) const;
+	void drawString(ManagedSurface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false, bool allowCharClipping = false) const;
 
 	/**
 	 * Draw the given @p str string to the given @p dst surface.
@@ -282,15 +284,16 @@ public:
 	 * @param align   Text alignment. This can be used to center the string in the given area or to align it to the right.
 	 * @param deltax  Offset to the x starting position of the string.
 	 * @param useEllipsis  Use ellipsis if needed to fit the string in the area.
+	 * @param allowCharClipping  Allows characters to extend beyond the right boundary.
 	 *
 	 */
-	void drawAlphaString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false) const;
+	void drawAlphaString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false, bool allowCharClipping = false) const;
 	/** @overload */
-	void drawAlphaString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false) const;
+	void drawAlphaString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false, bool allowCharClipping = false) const;
 	/** @overload */
-	void drawAlphaString(ManagedSurface *dst, const Common::String &str, int x, int _y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false) const;
+	void drawAlphaString(ManagedSurface *dst, const Common::String &str, int x, int _y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false, bool allowCharClipping = false) const;
 	/** @overload */
-	void drawAlphaString(ManagedSurface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false) const;
+	void drawAlphaString(ManagedSurface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false, bool allowCharClipping = false) const;
 
 	/**
 	 * Compute and return the width of the string @p str when rendered using this font.

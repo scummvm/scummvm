@@ -26,6 +26,7 @@
 
 #include "common/array.h"
 #include "common/list.h"
+#include "common/queue.h"
 #include "common/types.h"
 
 namespace Common {
@@ -48,7 +49,7 @@ inline uint32 REVERSEBITS(uint32 x) {
 	x = (((x & ~0x0F0F0F0F) >> 4) | ((x & 0x0F0F0F0F) << 4));
 	x = (((x & ~0x00FF00FF) >> 8) | ((x & 0x00FF00FF) << 8));
 
-	return((x >> 16) | (x << 16));
+	return ((x >> 16) | (x << 16));
 }
 
 /**
@@ -67,6 +68,21 @@ public:
 	 *  @param symbols   The symbols. If 0, assume they are identical to the code indices.
 	 */
 	Huffman(uint8 maxLength, uint32 codeCount, const uint32 *codes, const uint8 *lengths, const uint32 *symbols = nullptr);
+
+	/** Construct Huffman decoder from the symbol frequencies using canonical huffman algorithm.
+	 *
+	 *  @param freqCount Number of frequencies.
+	 *  @param freq      Frequencies.
+	 *  @param symbols   Symbols.
+	 */
+	static Huffman fromFrequencies(uint32 freqCount, const uint32 *freq, const uint32 *symbols);
+
+	/** Construct Huffman decoder from the symbol frequencies using canonical huffman algorithm.
+	 * Symbols added for each non-zero frequency in the list
+	 *
+	 *  @param freqs     Frequencies,
+	 */
+	static Huffman fromFrequencies(std::initializer_list<uint32> freqs);
 
 	/** Return the next symbol in the bit stream. */
 	uint32 getSymbol(BITSTREAM &bits) const;
@@ -88,7 +104,7 @@ private:
 	/** Prefix lookup table used to speed up the decoding of short codes. */
 	struct PrefixEntry {
 		uint32 symbol;
-		uint8  length;
+		uint8 length;
 
 		PrefixEntry() : length(0xFF) {}
 	};
@@ -97,7 +113,92 @@ private:
 	PrefixEntry _prefixTable[1 << _prefixTableBits];
 };
 
-template <class BITSTREAM>
+template<class BITSTREAM>
+Huffman<BITSTREAM> Huffman<BITSTREAM>::fromFrequencies(std::initializer_list<uint32> init) {
+	Common::Array<uint32> freqs;
+	Common::Array<uint32> symbols;
+	uint32 sym = 0;
+	for (auto freq : init) {
+		if (freq != 0) {
+			freqs.push_back(freq);
+			symbols.push_back(sym);
+		}
+		++sym;
+	}
+	return fromFrequencies(freqs.size(), freqs.data(), symbols.data());
+}
+
+template<class BITSTREAM>
+Huffman<BITSTREAM> Huffman<BITSTREAM>::fromFrequencies(uint32 freqCount, const uint32 *freq, const uint32 *symbols) {
+	assert(freqCount > 0);
+	assert(freq);
+	assert(symbols);
+
+	Common::Array<uint32> codes(freqCount, 0);
+	Common::Array<uint8> lengths(freqCount, 0);
+
+	static constexpr uint32 End = ~uint32(0);
+	struct Symbol {
+		uint32 zero, one;
+		uint32 freq;
+	};
+
+	Common::Array<Symbol> syms;
+	for (uint32_t i = 0; i != freqCount; ++i)
+		syms.push_back(Symbol{End, End, freq[i]});
+
+	auto appendBit = [&](uint32 top, bool bit) {
+		Common::Queue<uint32> queue;
+		queue.push(top);
+		while (!queue.empty()) {
+			auto idx = queue.front();
+			queue.pop();
+			if (idx < freqCount) {
+				auto &len = lengths[idx];
+				if (bit)
+					codes[idx] |= (1 << len);
+				++len;
+			} else {
+				assert(syms[idx].zero != End);
+				queue.push(syms[idx].zero);
+				assert(syms[idx].one != End);
+				queue.push(syms[idx].one);
+			}
+		}
+	};
+
+	while (true) {
+		uint32 smallest1 = End, smallest2 = End;
+		for (uint32 idx = 0; idx != syms.size(); ++idx) {
+			auto &sym = syms[idx];
+			if (sym.freq != 0) {
+				if (smallest1 != End && sym.freq >= syms[smallest1].freq) {
+					if (smallest2 == End || sym.freq < syms[smallest2].freq) {
+						smallest2 = idx;
+					}
+				} else {
+					smallest2 = smallest1;
+					smallest1 = idx;
+				}
+			}
+		}
+		if (smallest2 == End)
+			break;
+
+		auto &zero = syms[smallest1];
+		auto &one = syms[smallest2];
+		auto sum = zero.freq + one.freq;
+		zero.freq = 0;
+		one.freq = 0;
+		syms.push_back(Symbol{smallest1, smallest2, sum});
+		appendBit(smallest1, false);
+		appendBit(smallest2, true);
+	}
+
+	return Huffman<BITSTREAM>{0, freqCount, codes.data(), lengths.data(), symbols};
+}
+
+template<class BITSTREAM>
 Huffman<BITSTREAM>::Huffman(uint8 maxLength, uint32 codeCount, const uint32 *codes, const uint8 *lengths, const uint32 *symbols) {
 	assert(codeCount > 0);
 
@@ -144,7 +245,7 @@ Huffman<BITSTREAM>::Huffman(uint8 maxLength, uint32 codeCount, const uint32 *cod
 	}
 }
 
-template <class BITSTREAM>
+template<class BITSTREAM>
 uint32 Huffman<BITSTREAM>::getSymbol(BITSTREAM &bits) const {
 	uint32 code = bits.peekBits(_prefixTableBits);
 

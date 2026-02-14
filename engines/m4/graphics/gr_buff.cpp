@@ -105,7 +105,7 @@ int32 gr_buffer_free(Buffer *buf) {
 		return true;
 	}
 
-	error_show(FL);
+	error_show(FL, "buffer_free");
 }
 
 byte *gr_buffer_pointer(Buffer *buf, int32 x, int32 y) {
@@ -124,7 +124,7 @@ const byte *gr_buffer_pointer(const Buffer *buf, int32 x, int32 y) {
 	return (byte *)(buf->data + x + (y * buf->stride));
 }
 
-int32 gr_buffer_init(Buffer *buf, const char *name, int32 w, int32 h) {
+void gr_buffer_init(Buffer *buf, const char *name, int32 w, int32 h) {
 	if (buf->data)
 		error_show(FL, "buffer_init %s", name);
 
@@ -132,8 +132,6 @@ int32 gr_buffer_init(Buffer *buf, const char *name, int32 w, int32 h) {
 	buf->h = h;
 	buf->stride = w;
 	buf->data = (uint8 *)mem_alloc(buf->stride * h, name);
-
-	return (true);
 }
 
 bool gr_buffer_rect_copy_2(const Buffer *from, Buffer *to, int32 sx, int32 sy,

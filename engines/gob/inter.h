@@ -661,6 +661,8 @@ protected:
 	void o6_fillRect(OpFuncParams &params);
 
 	void probe16bitMusic(Common::String &fileName);
+
+	Common::String getFile(const char *path, bool stripPath = true, bool *isCd = nullptr);
 };
 
 class Inter_Playtoons : public Inter_v6 {
@@ -686,8 +688,6 @@ protected:
 	void oPlaytoons_CD_25();
 	void oPlaytoons_copyFile();
 	void oPlaytoons_openItk();
-
-	Common::String getFile(const char *path, bool stripPath = true, bool *isCd = nullptr);
 
 	bool readSprite(Common::String file, int32 dataVar, int32 size, int32 offset);
 };

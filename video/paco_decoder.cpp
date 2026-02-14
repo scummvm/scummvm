@@ -22,6 +22,7 @@
 #include "common/endian.h"
 #include "common/rect.h"
 #include "common/stream.h"
+#include "common/substream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "graphics/surface.h"
@@ -50,7 +51,7 @@ enum frameTypes {
 };
 
 PacoDecoder::PacoDecoder()
-	: _fileStream(nullptr), _videoTrack(nullptr), _audioTrack(nullptr) {
+	: _fileStream(nullptr), _videoStream(nullptr), _audioStream(nullptr), _videoTrack(nullptr), _audioTrack(nullptr) {
 }
 
 PacoDecoder::~PacoDecoder() {
@@ -60,6 +61,10 @@ PacoDecoder::~PacoDecoder() {
 void PacoDecoder::PacoDecoder::close() {
 	Video::VideoDecoder::close();
 
+	delete _videoStream;
+	_videoStream = nullptr;
+	delete _audioStream;
+	_audioStream = nullptr;
 	delete _fileStream;
 	_fileStream = nullptr;
 	_videoTrack = nullptr;
@@ -99,6 +104,11 @@ bool PacoDecoder::loadStream(Common::SeekableReadStream *stream) {
 	}
 
 	_fileStream = stream;
+	int loc = _fileStream->pos();
+	_videoStream = new Common::SafeSeekableSubReadStream(stream, 0, stream->size());
+	_videoStream->seek(loc);
+	_audioStream = new Common::SafeSeekableSubReadStream(stream, 0, stream->size());
+	_audioStream->seek(loc);
 
 	_videoTrack = new PacoVideoTrack(frameRate, frameCount, width, height);
 	addTrack(_videoTrack);
@@ -117,23 +127,23 @@ int PacoDecoder::getAudioSamplingRate() {
 	const Common::Array<int> samplingRates = {5563, 7418, 11127, 22254};
 	int index = 0;
 
-	int64 startPos = _fileStream->pos();
+	int64 startPos = _audioStream->pos();
 
-	while (_fileStream->pos() < _fileStream->size()) {
-		int64 currentPos = _fileStream->pos();
-		int frameType = _fileStream->readByte();
-		int v = _fileStream->readByte();
-		uint32 chunkSize =  (v << 16 ) | _fileStream->readUint16BE();
+	while (_audioStream->pos() < _audioStream->size()) {
+		int64 currentPos = _audioStream->pos();
+		int frameType = _audioStream->readByte();
+		int v = _audioStream->readByte();
+		uint32 chunkSize =  (v << 16 ) | _audioStream->readUint16BE();
 		if (frameType != AUDIO) {
-			_fileStream->seek(currentPos + chunkSize);
+			_audioStream->seek(currentPos + chunkSize);
 			continue;
 		}
-		uint16 header = _fileStream->readUint16BE();
-		_fileStream->readUint16BE();
+		uint16 header = _audioStream->readUint16BE();
+		_audioStream->readUint16BE();
 		index = (header >> 10) & 7;
 		break;
 	}
-	_fileStream->seek(startPos);
+	_audioStream->seek(startPos);
 
 	return samplingRates[index];
 }
@@ -208,34 +218,58 @@ Graphics::PixelFormat PacoDecoder::PacoVideoTrack::getPixelFormat() const {
 }
 
 void PacoDecoder::readNextPacket() {
+	if (_audioTrack) {
+		while (_audioTrack->needsAudio() && (_audioStream->pos() < _audioStream->size())) {
+			// buffer as much audio as we need
+			int64 currentPos = _audioStream->pos();
+			int frameType = _audioStream->readByte();
+			int v = _audioStream->readByte();
+			uint32 chunkSize =  (v << 16 ) | _audioStream->readUint16BE();
+			debugC(2, kDebugLevelGVideo, "  _audioStream: slot type %d size %d @ %lX", frameType, chunkSize, long(_videoStream->pos() - 4));
+			switch (frameType) {
+			case AUDIO:
+				_audioTrack->queueSound(_audioStream, chunkSize - 4);
+				break;
+			case VIDEO:
+			case PALETTE:
+			case EOC:
+			case NOP:
+				_audioStream->skip(chunkSize - 4);
+				break;
+			default:
+				error("PacoDecoder::decodeFrame(): unknown main chunk type (type = 0x%02X)", frameType);
+				break;
+			}
+		}
+	}
+
 	if (_curFrame >= _videoTrack->getFrameCount())
 		return;
 
-	uint32 nextFrame = _fileStream->pos() + _frameSizes[_curFrame];
+	uint32 nextFrame = _videoStream->pos() + _frameSizes[_curFrame];
 
-	debugC(2, kDebugLevelGVideo, " frame %3d size %d @ %lX", _curFrame, _frameSizes[_curFrame], long(_fileStream->pos()));
+	debugC(2, kDebugLevelGVideo, " frame %3d size %d @ %lX", _curFrame, _frameSizes[_curFrame], long(_videoStream->pos()));
 
 	_curFrame++;
 
-	while (_fileStream->pos() < nextFrame) {
-		int64 currentPos = _fileStream->pos();
-		int frameType = _fileStream->readByte();
-		int v = _fileStream->readByte();
-		uint32 chunkSize =  (v << 16 ) | _fileStream->readUint16BE();
-		debugC(2, kDebugLevelGVideo, "  slot type %d size %d @ %lX", frameType, chunkSize, long(_fileStream->pos() - 4));
+	while (_videoStream->pos() < nextFrame) {
+		int64 currentPos = _videoStream->pos();
+		int frameType = _videoStream->readByte();
+		int v = _videoStream->readByte();
+		uint32 chunkSize =  (v << 16 ) | _videoStream->readUint16BE();
+		debugC(2, kDebugLevelGVideo, "  _videoStream: slot type %d size %d @ %lX", frameType, chunkSize, long(_videoStream->pos() - 4));
 
 		switch (frameType) {
 		case AUDIO:
-			if (_audioTrack)
-				_audioTrack->queueSound(_fileStream, chunkSize - 4);
+			_videoStream->skip(chunkSize - 4);
 			break;
 		case VIDEO:
 			if (_videoTrack)
-				_videoTrack->handleFrame(_fileStream, chunkSize - 4, _curFrame);
+				_videoTrack->handleFrame(_videoStream, chunkSize - 4, _curFrame);
 			break;
 		case PALETTE:
 			if (_videoTrack)
-				_videoTrack->handlePalette(_fileStream);
+				_videoTrack->handlePalette(_videoStream);
 			break;
 		case EOC:
 			if (_videoTrack)
@@ -247,9 +281,8 @@ void PacoDecoder::readNextPacket() {
 			error("PacoDecoder::decodeFrame(): unknown main chunk type (type = 0x%02X)", frameType);
 			break;
 		}
-		_fileStream->seek(currentPos + chunkSize);
-	 }
-
+		_videoStream->seek(currentPos + chunkSize);
+	}
 
 }
 
@@ -611,5 +644,9 @@ void PacoDecoder::PacoAudioTrack::queueSound(Common::SeekableReadStream *fileStr
 	_packetStream->queuePacket(fileStream->readStream(chunkSize - 4));
 }
 
+bool PacoDecoder::PacoAudioTrack::needsAudio() const {
+	// TODO: 5 is very arbitrary. We probably should do something like QuickTime does.
+	return _packetStream->numQueuedStreams() < 5;
+}
 
 } // End of namespace Video

@@ -179,8 +179,10 @@ MenuButton::MenuButton(Room *room, SeekableReadStream &stream)
 	, _actionId(stream.readSint32LE())
 	, _graphicNormal(stream)
 	, _graphicHovered(stream)
-	, _graphicClicked(stream)
-	, _graphicDisabled(stream) {}
+	, _graphicClicked(stream) {
+	if (g_engine->isV3())
+		_graphicDisabled = Graphic(stream);
+}
 
 void MenuButton::draw() {
 	if (!isEnabled())
@@ -295,15 +297,30 @@ PushButton::PushButton(Room *room, SeekableReadStream &stream)
 const char *EditBox::typeName() const { return "EditBox"; }
 
 EditBox::EditBox(Room *room, SeekableReadStream &stream)
-	: PhysicalObject(room, stream)
-	, i1(stream.readSint32LE())
-	, p1(Shape(stream).firstPoint())
-	, _labelId(readVarString(stream))
-	, b1(readBool(stream))
-	, i3(stream.readSint32LE())
-	, i4(stream.readSint32LE())
-	, i5(stream.readSint32LE())
-	, _fontId(0) {
+	: PhysicalObject(room, stream) {
+}
+
+EditBoxV2::EditBoxV2(Room *room, SeekableReadStream &stream)
+	: EditBox(room, stream) {
+	p1 = Shape(stream).firstPoint();
+	auto p2 = Shape(stream).firstPoint();
+	i1 = p2.x - p1.x;
+	_labelId = readVarString(stream);
+	b1 = readBool(stream);
+	i3 = stream.readSint32LE();
+	i4 = stream.readSint32LE();
+	i5 = stream.readSint32LE();
+}
+
+EditBoxV3::EditBoxV3(Room *room, SeekableReadStream &stream)
+	: EditBox(room, stream) {
+	i1 = stream.readSint32LE();
+	p1 = Shape(stream).firstPoint();
+	_labelId = readVarString(stream);
+	b1 = readBool(stream);
+	i3 = stream.readSint32LE();
+	i4 = stream.readSint32LE();
+	i5 = stream.readSint32LE();
 
 	if (g_engine->version() == EngineVersion::V3_1)
 		_fontId = stream.readSint32LE();
@@ -384,13 +401,28 @@ CheckBoxAutoAdjustNoise::CheckBoxAutoAdjustNoise(Room *room, SeekableReadStream 
 const char *SlideButton::typeName() const { return "SlideButton"; }
 
 SlideButton::SlideButton(Room *room, SeekableReadStream &stream)
-	: ObjectBase(room, stream)
-	, _valueId(stream.readSint32LE())
-	, _minPos(Shape(stream).firstPoint())
-	, _maxPos(Shape(stream).firstPoint())
-	, _graphicIdle(stream)
-	, _graphicHovered(stream)
-	, _graphicClicked(stream) {}
+	: ObjectBase(room, stream) {
+}
+
+SlideButtonV2::SlideButtonV2(Room *room, SeekableReadStream &stream)
+	: SlideButton(room, stream) {
+	_valueId = stream.readSint32LE();
+	_minPos = Shape(stream).firstPoint();
+	_maxPos = Shape(stream).firstPoint();
+	_graphicIdle = Graphic(stream);
+	_graphicHovered = _graphicIdle;
+	_graphicClicked = Graphic(stream);
+}
+
+SlideButtonV3::SlideButtonV3(Room *room, SeekableReadStream &stream)
+	: SlideButton(room, stream) {
+	_valueId = stream.readSint32LE();
+	_minPos = Shape(stream).firstPoint();
+	_maxPos = Shape(stream).firstPoint();
+	_graphicIdle = Graphic(stream);
+	_graphicHovered = Graphic(stream);
+	_graphicClicked = Graphic(stream);
+}
 
 void SlideButton::draw() {
 	auto *optionsMenu = dynamic_cast<OptionsMenu *>(room());

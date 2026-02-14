@@ -182,7 +182,10 @@ protected:
 	void freeImages();
 	void setToEmpty();
 	void readV1(Common::SeekableReadStream &stream);
+	void readV2(Common::SeekableReadStream &stream);
 	void readV3(Common::SeekableReadStream &stream);
+	void createIndexMappingV1and2(const Common::Array<byte> &spriteOrder);
+	void readFramesV1and2(Common::SeekableReadStream &stream, uint frameCount, uint spriteCount);
 	Graphics::ManagedSurface *readImageV3(Common::SeekableReadStream &stream) const;
 	Common::Point imageSize(int32 imageI) const;
 	inline bool isLoaded() const { return _isLoaded; }

@@ -56,7 +56,7 @@ void InitRails() {
 }
 
 
-void rail_system_shutdown(void) {
+void rail_system_shutdown() {
 	if (_G(rails).stackBottom) {
 		mem_free(_G(rails).stackBottom);
 		_G(rails).stackBottom = nullptr;
@@ -75,7 +75,7 @@ void rail_system_shutdown(void) {
 }
 
 
-void ClearRails(void) {
+void ClearRails() {
 	int32 i;
 
 	if (_G(rails).myNodes) {

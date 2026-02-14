@@ -28,8 +28,6 @@
 namespace Graphics {
 namespace MFC {
 
-typedef long clock_t;
-
 class CTimeSpan {
 public:
 	CTimeSpan();

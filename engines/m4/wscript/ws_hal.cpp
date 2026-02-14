@@ -25,7 +25,7 @@
 #include "m4/wscript/wst_regs.h"
 #include "m4/core/errors.h"
 #include "m4/core/imath.h"
-#include "m4/dbg/debug.h"
+#include "m4/dbg/dbg_wscript.h"
 #include "m4/graphics/gr_sprite.h"
 #include "m4/graphics/rend.h"
 #include "m4/gui/gui_vmng.h"
@@ -520,41 +520,10 @@ void ShowCCB(CCB *myCCB) {
 	myCCB->flags &= ~CCB_HIDE;
 }
 
-void MoveCCB(CCB *myCCB, frac16 deltaX, frac16 deltaY) {
-	if (!myCCB || !myCCB->source) {
-		error_show(FL);
-	}
-
-	myCCB->newLocation->x1 = myCCB->currLocation->x1 + (deltaX >> 16);
-	myCCB->newLocation->y1 = myCCB->currLocation->y1 + (deltaY >> 16);
-	myCCB->newLocation->x2 = myCCB->currLocation->x2 + (deltaX >> 16);
-	myCCB->newLocation->y2 = myCCB->currLocation->y2 + (deltaY >> 16);
-
-	if (myCCB->flags & CCB_STREAM) {
-		if (!myCCB->maxArea) {
-			myCCB->maxArea = (M4Rect *)mem_alloc(sizeof(M4Rect), "Rectangle");
-
-			myCCB->maxArea->x1 = myCCB->newLocation->x1;
-			myCCB->maxArea->y1 = myCCB->newLocation->y1;
-			myCCB->maxArea->x2 = myCCB->newLocation->x2;
-			myCCB->maxArea->y2 = myCCB->newLocation->y2;
-		} else {
-			myCCB->maxArea->x1 = imath_min(myCCB->maxArea->x1, myCCB->newLocation->x1);
-			myCCB->maxArea->y1 = imath_min(myCCB->maxArea->y1, myCCB->newLocation->y1);
-			myCCB->maxArea->x2 = imath_max(myCCB->maxArea->x2, myCCB->newLocation->x2);
-			myCCB->maxArea->y2 = imath_max(myCCB->maxArea->y2, myCCB->newLocation->y2);
-		}
-	}
-
-	if ((myCCB->source->w != 0) && (myCCB->source->h != 0)) {
-		myCCB->flags |= CCB_REDRAW;
-	}
-}
-
 void KillCCB(CCB *myCCB, bool restoreFlag) {
-	if (!myCCB) {
-		error_show(FL);
-	}
+	if (!myCCB)
+		error_show(FL, "myCCB not set");
+
 	if (restoreFlag && (!(myCCB->flags & CCB_SKIP)) && (!(myCCB->flags & CCB_HIDE))) {
 		if ((myCCB->flags & CCB_STREAM) && myCCB->maxArea) {
 			vmng_AddRectToRectList(&_GWS(deadRectList), myCCB->maxArea->x1, myCCB->maxArea->y1,
@@ -585,12 +554,12 @@ void KillCCB(CCB *myCCB, bool restoreFlag) {
 
 void Cel_msr(Anim8 *myAnim8) {
 	if (!myAnim8) {
-		error_show(FL);
+		error_show(FL, "myAnim8 not set");
 	}
 
 	CCB *myCCB = myAnim8->myCCB;
 	if ((!myCCB) || (!myCCB->source)) {
-		error_show(FL);
+		error_show(FL, "myCCB not set");
 	}
 
 	if ((myCCB->source->w == 0) || (myCCB->source->h == 0)) {
@@ -599,7 +568,7 @@ void Cel_msr(Anim8 *myAnim8) {
 
 	frac16 *myRegs = myAnim8->myRegs;
 	if (!myRegs) {
-		error_show(FL);
+		error_show(FL, "myRegs not set");
 	}
 
 	const int32 scaler = FixedMul(myRegs[IDX_S], 100 << 16) >> 16;
@@ -632,14 +601,11 @@ void Cel_msr(Anim8 *myAnim8) {
 	myCCB->layer = imath_max(0, myAnim8->myLayer);
 	myCCB->flags &= ~CCB_SKIP;
 	myCCB->flags |= CCB_REDRAW;
-	return;
 }
 
 void ws_OverrideCrunchTime(machine *m) {
-	if ((!m) || (!m->myAnim8)) {
-		return;
-	}
-	m->myAnim8->switchTime = 0;
+	if (m && m->myAnim8)
+		m->myAnim8->switchTime = 0;
 }
 
 } // End of namespace M4

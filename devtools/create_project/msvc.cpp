@@ -88,11 +88,11 @@ std::string MSVCProvider::getLibraryFromFeature(const char *feature, const Build
 	};
 
 	const MSVCLibrary *library = nullptr;
-	for (unsigned int i = 0; i < sizeof(s_libraries) / sizeof(s_libraries[0]); i++) {
-		if (std::strcmp(feature, s_libraries[i].feature) == 0 &&
-			((s_libraries[i].sdl == kSDLVersionAny) ||
-			(s_libraries[i].sdl == setup.useSDL))) {
-			library = &s_libraries[i];
+	for (const auto &_library : s_libraries) {
+		if (std::strcmp(feature, _library.feature) == 0 &&
+			((_library.sdl == kSDLVersionAny) ||
+			(_library.sdl == setup.useSDL))) {
+			library = &_library;
 			break;
 		}
 	}
@@ -127,9 +127,9 @@ std::string MSVCProvider::outputLibraryDependencies(const BuildSetup &setup, boo
 	// SDL is always enabled
 	libs += getLibraryFromFeature("sdl", setup, isRelease);
 	libs += " ";
-	for (FeatureList::const_iterator i = setup.features.begin(); i != setup.features.end(); ++i) {
-		if (i->enable) {
-			std::string lib = getLibraryFromFeature(i->name, setup, isRelease);
+	for (const auto &i : setup.features) {
+		if (i.enable) {
+			std::string lib = getLibraryFromFeature(i.name, setup, isRelease);
 			if (!lib.empty())
 				libs += lib + " ";
 		}
@@ -180,34 +180,34 @@ void MSVCProvider::createWorkspaceClassic(const BuildSetup &setup) {
 	}
 
 	// Note we assume that the UUID map only includes UUIDs for enabled engines!
-	for (UUIDMap::const_iterator i = _engineUuidMap.begin(); i != _engineUuidMap.end(); ++i) {
-		solution << "Project(\"{" << solutionUUID << "}\") = \"" << i->first << "\", \"" << i->first << getProjectExtension() << "\", \"{" << i->second << "}\"\n"
+	for (const auto &i : _engineUuidMap) {
+		solution << "Project(\"{" << solutionUUID << "}\") = \"" << i.first << "\", \"" << i.first << getProjectExtension() << "\", \"{" << i.second << "}\"\n"
 		         << "EndProject\n";
 	}
 
 	solution << "Global\n"
 	            "\tGlobalSection(SolutionConfigurationPlatforms) = preSolution\n";
 
-	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
-		solution << "\t\tDebug|" << getMSVCConfigName(*arch) << " = Debug|" << getMSVCConfigName(*arch) << "\n"
-		         << "\t\tASan|" << getMSVCConfigName(*arch) << " = ASan|" << getMSVCConfigName(*arch) << "\n"
-		         << "\t\tLLVM|" << getMSVCConfigName(*arch) << " = LLVM|" << getMSVCConfigName(*arch) << "\n"
-		         << "\t\tRelease|" << getMSVCConfigName(*arch) << " = Release|" << getMSVCConfigName(*arch) << "\n";
+	for (const auto arch : _archs) {
+		solution << "\t\tDebug|" << getMSVCConfigName(arch) << " = Debug|" << getMSVCConfigName(arch) << "\n"
+		         << "\t\tASan|" << getMSVCConfigName(arch) << " = ASan|" << getMSVCConfigName(arch) << "\n"
+		         << "\t\tLLVM|" << getMSVCConfigName(arch) << " = LLVM|" << getMSVCConfigName(arch) << "\n"
+		         << "\t\tRelease|" << getMSVCConfigName(arch) << " = Release|" << getMSVCConfigName(arch) << "\n";
 	}
 
 	solution << "\tEndGlobalSection\n"
 	            "\tGlobalSection(ProjectConfigurationPlatforms) = postSolution\n";
 
-	for (UUIDMap::const_iterator i = _allProjUuidMap.begin(); i != _allProjUuidMap.end(); ++i) {
-		for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
-			solution << "\t\t{" << i->second << "}.Debug|" << getMSVCConfigName(*arch) << ".ActiveCfg = Debug|" << getMSVCConfigName(*arch) << "\n"
-			         << "\t\t{" << i->second << "}.Debug|" << getMSVCConfigName(*arch) << ".Build.0 = Debug|" << getMSVCConfigName(*arch) << "\n"
-			         << "\t\t{" << i->second << "}.ASan|" << getMSVCConfigName(*arch) << ".ActiveCfg = ASan|" << getMSVCConfigName(*arch) << "\n"
-			         << "\t\t{" << i->second << "}.ASan|" << getMSVCConfigName(*arch) << ".Build.0 = ASan|" << getMSVCConfigName(*arch) << "\n"
-			         << "\t\t{" << i->second << "}.LLVM|" << getMSVCConfigName(*arch) << ".ActiveCfg = LLVM|" << getMSVCConfigName(*arch) << "\n"
-			         << "\t\t{" << i->second << "}.LLVM|" << getMSVCConfigName(*arch) << ".Build.0 = LLVM|" << getMSVCConfigName(*arch) << "\n"
-			         << "\t\t{" << i->second << "}.Release|" << getMSVCConfigName(*arch) << ".ActiveCfg = Release|" << getMSVCConfigName(*arch) << "\n"
-			         << "\t\t{" << i->second << "}.Release|" << getMSVCConfigName(*arch) << ".Build.0 = Release|" << getMSVCConfigName(*arch) << "\n";
+	for (const auto &i : _allProjUuidMap) {
+		for (const auto arch : _archs) {
+			solution << "\t\t{" << i.second << "}.Debug|" << getMSVCConfigName(arch) << ".ActiveCfg = Debug|" << getMSVCConfigName(arch) << "\n"
+			         << "\t\t{" << i.second << "}.Debug|" << getMSVCConfigName(arch) << ".Build.0 = Debug|" << getMSVCConfigName(arch) << "\n"
+			         << "\t\t{" << i.second << "}.ASan|" << getMSVCConfigName(arch) << ".ActiveCfg = ASan|" << getMSVCConfigName(arch) << "\n"
+			         << "\t\t{" << i.second << "}.ASan|" << getMSVCConfigName(arch) << ".Build.0 = ASan|" << getMSVCConfigName(arch) << "\n"
+			         << "\t\t{" << i.second << "}.LLVM|" << getMSVCConfigName(arch) << ".ActiveCfg = LLVM|" << getMSVCConfigName(arch) << "\n"
+			         << "\t\t{" << i.second << "}.LLVM|" << getMSVCConfigName(arch) << ".Build.0 = LLVM|" << getMSVCConfigName(arch) << "\n"
+			         << "\t\t{" << i.second << "}.Release|" << getMSVCConfigName(arch) << ".ActiveCfg = Release|" << getMSVCConfigName(arch) << "\n"
+			         << "\t\t{" << i.second << "}.Release|" << getMSVCConfigName(arch) << ".Build.0 = Release|" << getMSVCConfigName(arch) << "\n";
 		}
 	}
 
@@ -269,11 +269,11 @@ void MSVCProvider::createOtherBuildFiles(const BuildSetup &setup) {
 
 	// Create the configuration property files (for Debug and Release with 32 and 64bits versions)
 	// Note: we use the debug properties for the asan configuration
-	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
-		createBuildProp(setup, true, *arch, "Release");
-		createBuildProp(setup, false, *arch, "Debug");
-		createBuildProp(setup, false, *arch, "ASan");
-		createBuildProp(setup, false, *arch, "LLVM");
+	for (const auto arch : _archs) {
+		createBuildProp(setup, true, arch, "Release");
+		createBuildProp(setup, false, arch, "Debug");
+		createBuildProp(setup, false, arch, "ASan");
+		createBuildProp(setup, false, arch, "LLVM");
 	}
 }
 
@@ -283,20 +283,20 @@ void MSVCProvider::addResourceFiles(const BuildSetup &setup, StringList &include
 }
 
 void MSVCProvider::createGlobalProp(const BuildSetup &setup) {
-	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
-		std::ofstream properties((setup.outputDir + '/' + setup.projectDescription + "_Global" + getMSVCArchName(*arch) + getPropertiesExtension()).c_str());
+	for (const auto arch : _archs) {
+		std::ofstream properties((setup.outputDir + '/' + setup.projectDescription + "_Global" + getMSVCArchName(arch) + getPropertiesExtension()).c_str());
 		if (!properties)
-			error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_Global" + getMSVCArchName(*arch) + getPropertiesExtension() + "\" for writing");
+			error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_Global" + getMSVCArchName(arch) + getPropertiesExtension() + "\" for writing");
 
 		BuildSetup archSetup = setup;
-		std::map<MSVC_Architecture, StringList>::const_iterator arch_disabled_features_it = _arch_disabled_features.find(*arch);
+		std::map<MSVC_Architecture, StringList>::const_iterator arch_disabled_features_it = _arch_disabled_features.find(arch);
 		if (arch_disabled_features_it != _arch_disabled_features.end()) {
-			for (StringList::const_iterator feature = arch_disabled_features_it->second.begin(); feature != arch_disabled_features_it->second.end(); ++feature) {
-				archSetup = removeFeatureFromSetup(archSetup, *feature);
+			for (const auto &feature : arch_disabled_features_it->second) {
+				archSetup = removeFeatureFromSetup(archSetup, feature);
 			}
 		}
 
-		outputGlobalPropFile(archSetup, properties, *arch, archSetup.defines, convertPathToWin(archSetup.filePrefix));
+		outputGlobalPropFile(archSetup, properties, arch, archSetup.defines, convertPathToWin(archSetup.filePrefix));
 		properties.close();
 	}
 }
@@ -317,8 +317,8 @@ std::string MSVCProvider::getTestPreBuildEvent(const BuildSetup &setup) const {
 	// Build list of folders containing tests
 	std::string target = "";
 
-	for (StringList::const_iterator it = setup.testDirs.begin(); it != setup.testDirs.end(); ++it)
-		target += " $(SolutionDir)" + *it + "*.h";
+	for (const auto &testDir : setup.testDirs)
+		target += " $(SolutionDir)" + testDir + "*.h";
 
 	std::string cmdLine = "";
 	cmdLine = "if not exist \"$(SolutionDir)test\\runner\" mkdir \"$(SolutionDir)test\\runner\"\n"

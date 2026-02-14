@@ -83,7 +83,7 @@ void cdd_init() {
 	_G(cdd).mesg_snd_file = nullptr;
 }
 
-Conv *conv_get_handle(void) {
+Conv *conv_get_handle() {
 	return _GC(globConv);
 }
 
@@ -658,7 +658,7 @@ void conv_set_box_xy(int32 x, int32 y) {
 	_GC(glob_y) = y;
 }
 
-static void conv_set_disp_default(void) {
+static void conv_set_disp_default() {
 	_GC(conv_font_spacing_h) = _GC(conv_default_h);
 	_GC(conv_font_spacing_v) = _GC(conv_default_v);
 	_GC(conv_normal_colour) = _GC(conv_default_normal_colour);

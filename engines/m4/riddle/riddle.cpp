@@ -26,6 +26,7 @@
 #include "m4/riddle/triggers.h"
 #include "m4/riddle/console.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/other.h"
 #include "m4/console.h"
 
@@ -165,8 +166,8 @@ void RiddleEngine::global_parser() {
 		splitItems("WOODEN LADDER", "BROWN VINE");
 	} else if (splitFlag && player_said("ENVELOPE")) {
 		splitItems("VON SELTSAM'S NOTE", "POSTAGE STAMP");
-		kernel_examine_inventory_object("PING VON SELTSAM'S NOTE",
-			5, 1, 270, 150, 10000, "406R18C");
+		kernel_examine_inventory_object("PING VON SELTSAM'S NOTE", _G(master_palette),
+			5, 1, 270, 150, 10000, "406R18C",-1);
 	} else if (splitFlag && player_said("LADDER/VINES")) {
 		splitItems("WOODEN LADDER", "VINES");
 	} else if (splitFlag && player_said("VINES")) {
@@ -459,8 +460,8 @@ void RiddleEngine::global_parser() {
 	} else if (_G(kernel).trigger == 10001) {
 		player_set_commands_allowed(true);
 		digi_stop(1);
-		kernel_examine_inventory_object("PING POSTAGE STAMP", 5, 1,
-			270, 150, 990, "406R19");
+		kernel_examine_inventory_object("PING POSTAGE STAMP", _G(master_palette), 5, 1,
+			270, 150, 990, "406R19", -1);
 	} else if (useFlag && HAS("TWELVETREES' NOTE")) {
 		inv_move_object("TWELVETREES' NOTE", NOWHERE);
 		inv_give_to_player("TWELVETREES' MAP");
@@ -720,7 +721,7 @@ void RiddleEngine::lookAtInventoryItem() {
 			str = "PING TWELVETREES' MAP";
 	}
 
-	kernel_examine_inventory_object(str.c_str(), 5, 1, 270, 150, kINVENTORY_CLOSEUP_END, digi);
+	kernel_examine_inventory_object(str.c_str(), _G(master_palette), 5, 1, 270, 150, kINVENTORY_CLOSEUP_END, digi, -1);
 }
 
 void sketchInJournal(const char *digiName) {

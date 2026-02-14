@@ -22,6 +22,7 @@
 #include "m4/burger/rooms/section5/room503.h"
 #include "m4/burger/rooms/section5/section5.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/adv_hotspot.h"
 
 namespace M4 {

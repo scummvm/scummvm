@@ -31,6 +31,7 @@ public:
 	bool hasFeature(Feature f) override;
 	void logMessage(LogMessageType::Type type, const char *message) override;
 	Common::HardwareInputSet *getHardwareInputSet() override;
+	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority) override;
 
 protected:
 	Common::Path getDefaultConfigFileName() override;

@@ -22,7 +22,6 @@
 #ifndef M4_GRAPHICS_GR_COLOR_H
 #define M4_GRAPHICS_GR_COLOR_H
 
-#include "m4/m4_types.h"
 #include "m4/mem/reloc.h"
 
 namespace M4 {

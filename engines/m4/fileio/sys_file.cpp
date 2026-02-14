@@ -209,12 +209,8 @@ void SysFile::open_read() {
 	}
 }
 
-void SysFile::open_write() {
-	error("open_write is not implemented in ScummVM");
-}
-
 Common::String SysFile::get_last_string(const Common::String &src) {
-	int len = src.size();
+	const int len = src.size();
 	Common::String result;
 
 	int j;
@@ -241,8 +237,8 @@ bool SysFile::open_hash_file() {
 		return false;
 	}
 
-	uint32 hash_table_size = hashfp->readUint32LE();
-	uint32 hash_address = key_to_hash_address(filename, hash_table_size);
+	const uint32 hash_table_size = hashfp->readUint32LE();
+	const uint32 hash_address = key_to_hash_address(filename, hash_table_size);
 
 	if (!hash_search(filename, &curr_hash_record, curr_hag_record, hash_address, hashfp, hash_table_size, show_error_flag)) {
 		hag_success = 0;
@@ -260,8 +256,8 @@ bool SysFile::open_hash_file() {
 
 	// Check if this Hag file already open or not
 	local_name = f_extension_new(local_name, "HAG");
-	Common::String temp_name = local_name;
-	Common::String hag_name = local_name; // Original used in cd_resource + name
+	const Common::String temp_name = local_name;
+	const Common::String hag_name = local_name; // Original used in cd_resource + name
 
 	bool found = false;
 	Hag_Record *temp_ptr = _G(hag).hag_file_list;
@@ -294,8 +290,6 @@ bool SysFile::open_hash_file() {
 				temp_fp = f_io_open(Common::Path(temp_name), "rb");
 				if (!temp_fp) {
 					error("hag file not found: %s", hag_name.c_str());
-					hag_success = 0;
-					return 0;
 				}
 
 				// Add this new open hag file in resource dir into open hag file list
@@ -410,12 +404,12 @@ int SysFile::hash_search(const Common::String &fname, Hash_Record *current_hash_
 			r.disks = hashfp->readByte();
 			r.offset = hashfp->readUint32LE();
 			r.size = hashfp->readUint32LE();
-			uint32 next_record = hashfp->readUint32LE();
+			const uint32 next_record = hashfp->readUint32LE();
 			r.filename = myfilename;
 
-			// As long as we find a hag file, use it immedeiately
+			// As long as we find a hag file, use it immediately
 			get_local_name_from_hagfile(local_name, current_hash_record_ptr->hagfile);
-			Common::String local_hag_name = f_extension_new(local_name, "HAG");
+			const Common::String local_hag_name = f_extension_new(local_name, "HAG");
 			local_name = local_hag_name;
 
 			if (!Common::File::exists(Common::Path(local_name))) {
@@ -443,7 +437,6 @@ int SysFile::hash_search(const Common::String &fname, Hash_Record *current_hash_
 			offset = HASH_RECORD_LENGTH * next_entry + 4; // 4 bytes is header of hash file, store hash_table_size
 		}
 	}
-
 
 	// get the best close one of hag file for multiple same fname
 	if (find_offset != offset) {

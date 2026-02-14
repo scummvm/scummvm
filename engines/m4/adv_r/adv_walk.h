@@ -89,7 +89,6 @@ void ws_custom_walk(machine *myWalker, int32 finalFacing, int32 trigger, bool co
 #define adv_walker_move(ww, xx, yy)          (ws_demand_location(ww, xx, yy))
 #define adv_walker_hide(ww)                  (ws_hide_walker(ww))
 #define adv_walker_unhide(ww)                (ws_unhide_walker(ww))
-bool adv_walker_path_exists(machine *myWalker, int32 x, int32 y);
 
 void adv_hyperwalk_to_final_destination(void *, void *);
 

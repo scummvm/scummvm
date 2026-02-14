@@ -111,7 +111,7 @@ void Walker::walk_load_walker_and_shadow_series() {
 		break;
 		
 	default:
-		error_show(FL);
+		error_show(FL, "walk_load_walker_and_shadow_series");
 	}
 }
 

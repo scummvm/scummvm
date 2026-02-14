@@ -149,7 +149,7 @@ void update_mouse_pos_dialog() {
 
 	if (_G(my_walker) != nullptr) {
 		if (!_G(my_walker)->myAnim8)
-			error_show(FL);
+			error_show(FL, "you sunk the walker!");
 		player_get_info();
 	}
 

@@ -59,19 +59,6 @@ static byte Pointer[] = {
 	00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00
 };
 
-// returns FALSE if the mouse couldn't be initialized
-int mouse_init() {
-	auto &ms = _G(MouseState);
-	ms.CursorColumn = 640 / 2;
-	ms.CursorRow = 480 / 2;
-
-	return true;
-}
-
-void mouse_uninstall() {
-	// No implementation
-}
-
 byte *GetMousePicture() {
 	return &Pointer[0];
 }

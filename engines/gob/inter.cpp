@@ -237,6 +237,8 @@ void Inter::funcBlock(int16 retFlag) {
 	if (_vm->_game->_script->isFinished())
 		return;
 
+	_vm->_vidPlayer->liveVideosLoop();
+
 	_break = false;
 	_vm->_game->_script->skip(1);
 	params.cmdCount = _vm->_game->_script->readByte();

@@ -269,9 +269,6 @@ bool load_background(SysFile *pic_file, GrBuff **loadBuffer, RGB8 *palette) {
 
 	*loadBuffer = new GrBuff(file_x, file_y);
 
-	if (!*loadBuffer)
-		error_show(FL);
-
 	Buffer *theBuff = (**loadBuffer).get_buffer();
 
 	for (int i = 0; i < num_y_tiles; i++) {

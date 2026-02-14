@@ -139,7 +139,8 @@ public:
 	bool isPlayingLive() const;
 	bool isSoundPlaying() const;
 
-	void updateLive(bool force = false, int exceptSlot = -1);
+	void updateVideos(bool force = false, int exceptSlot = -1);
+	void liveVideosLoop();
 
 	bool slotIsOpen(int slot = 0) const;
 
@@ -208,6 +209,8 @@ private:
 
 	bool _noCursorSwitch;
 	bool _woodruffCohCottWorkaround;
+	uint32 _lastLiveVideosLoopCall;
+
 
 	const Video *getVideoBySlot(int slot) const;
 	Video *getVideoBySlot(int slot);
@@ -228,7 +231,7 @@ private:
 
 	void copyPalette(const Video &video, int16 palStart, int16 palEnd);
 
-	void updateLive(int slot, bool force = false);
+	void updateVideo(int slot, bool force = false);
 };
 
 } // End of namespace Gob

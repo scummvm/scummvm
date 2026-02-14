@@ -20,9 +20,10 @@
  */
 
 #include "m4/riddle/rooms/section5/room508.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/adv_file.h"
+#include "m4/graphics/gr_series.h"
 
 namespace M4 {
 namespace Riddle {
@@ -617,7 +618,7 @@ void Room508::parser() {
 		case 2:
 			player_set_commands_allowed(false);
 			hotspot_set_active("CRYSTAL SKULL ", false);
-			kernel_examine_inventory_object("PING CRYSTAL SKULL", 5, 1, 250, 170, 3, "508_s05", 7);
+			kernel_examine_inventory_object("PING CRYSTAL SKULL", _G(master_palette), 5, 1, 250, 170, 3, "508_s05", 7);
 			break;
 
 		case 3:

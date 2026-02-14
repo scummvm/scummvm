@@ -20,10 +20,11 @@
  */
 
 #include "m4/riddle/rooms/section6/room604.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/adv_file.h"
 #include "m4/adv_r/other.h"
+#include "m4/graphics/gr_series.h"
 
 namespace M4 {
 namespace Riddle {
@@ -994,7 +995,7 @@ void Room604::takePullCord() {
 		terminateMachineAndNull(_pullCord1);
 		hotspot_set_active("PULL CORD", false);
 		inv_give_to_player("PULL CORD");
-		kernel_examine_inventory_object("ping pull cord", 5, 1, 312, 250, 3);
+		kernel_examine_inventory_object("ping pull cord", _G(master_palette), 5, 1, 312, 250, 3, nullptr, -1);
 		break;
 
 	case 3:
@@ -1024,8 +1025,8 @@ void Room604::takeSparkPlugTool() {
 	case 2:
 		hotspot_set_active("SPARK PLUG TOOL", false);
 		inv_give_to_player("SPARK PLUG TOOL");
-		kernel_examine_inventory_object("ping spark plug tool",
-			5, 1, 282, 247, 3);
+		kernel_examine_inventory_object("ping spark plug tool", _G(master_palette),
+			5, 1, 282, 247, 3, nullptr, -1);
 		terminateMachineAndNull(_sparkPlugTool);
 		break;
 

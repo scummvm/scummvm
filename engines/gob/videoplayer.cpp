@@ -76,7 +76,7 @@ void VideoPlayer::Video::close() {
 const char *const VideoPlayer::_extensions[] = { "IMD", "IMD", "VMD", "RMD", "SMD" };
 
 VideoPlayer::VideoPlayer(GobEngine *vm) : _vm(vm), _needBlit(false),
-	_noCursorSwitch(false), _woodruffCohCottWorkaround(false) {
+	_noCursorSwitch(false), _woodruffCohCottWorkaround(false), _lastLiveVideosLoopCall(0) {
 }
 
 VideoPlayer::~VideoPlayer() {
@@ -433,7 +433,7 @@ bool VideoPlayer::play(int slot, Properties &properties) {
 
 		if (_vm->getGameType() != kGameTypeAdibou2 &&
 				_vm->getGameType() != kGameTypeAdi4) {
-			updateLive(slot, true);
+			updateVideo(slot, true);
 			return true;
 		}
 	}
@@ -529,29 +529,55 @@ bool VideoPlayer::isSoundPlaying() const {
 	return video && video->decoder && video->decoder->isSoundPlaying();
 }
 
-void VideoPlayer::updateLive(bool force, int exceptSlot) {
+void VideoPlayer::liveVideosLoop() {
+	if (_vm->getGameType() != kGameTypeAdibou2 && _vm->getGameType() != kGameTypeAdi4)
+		return;
+
+	uint32 timeKey = _vm->_util->getTimeKey();
+	if (timeKey - _lastLiveVideosLoopCall < 2)
+		return;
+
+	_lastLiveVideosLoopCall = timeKey;
+
+	for (int slot = 0; slot < kLiveVideoSlotCount; slot++) {
+		Video *video = getVideoBySlot(slot);
+		if (video && video->live) {
+			video->properties.startFrame = video->decoder->getCurFrame() + video->decoder->getNbFramesPastEnd();
+			playFrame(slot, video->properties);
+		}
+	}
+}
+
+void VideoPlayer::updateVideos(bool force, int exceptSlot) {
+	liveVideosLoop();
+
 	int nbrOfSlots = (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) ?
 					 kLiveVideoSlotCount : kVideoSlotCount;
 
 	for (int i = 0; i < nbrOfSlots; i++) {
 		if ((_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) &&
 				i >= 0 &&
-				i < kVideoSlotWithCurFrameVarCount)
+				i < kVideoSlotWithCurFrameVarCount) {
 			WRITE_VAR(53 + i, (uint32)-1);
 
+			Video *video = getVideoBySlot(i);
+			if (video) {
+				WRITE_VAR(53 + i, video->decoder->getCurFrame() + video->decoder->getNbFramesPastEnd());
+			}
+		}
+
 		if (i != exceptSlot)
-			updateLive(i, force);
+			updateVideo(i, force);
 	}
 }
 
-void VideoPlayer::updateLive(int slot, bool force) {
+void VideoPlayer::updateVideo(int slot, bool force) {
 	Video *video = getVideoBySlot(slot);
-	if (!video || !video->live)
+	if (!video)
 		return;
 
-	if ((_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4)
-			&& slot < kVideoSlotWithCurFrameVarCount)
-		WRITE_VAR(53 + slot, video->decoder->getCurFrame() + video->decoder->getNbFramesPastEnd());
+	if (!video->live && _vm->getGameType() != kGameTypeAdibou2 && _vm->getGameType() != kGameTypeAdi4)
+		return;
 
 	int nbrOfLiveVideos = 0;
 	for (int i = 0; i < kVideoSlotCount; i++) {

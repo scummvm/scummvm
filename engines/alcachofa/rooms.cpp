@@ -44,7 +44,7 @@ Room::Room(World *world, SeekableReadStream &stream)
 		readObjects(stream);
 	}
 	else
-		readRoomV3(stream, false);
+		readRoomV2and3(stream, false);
 	initBackground();
 }
 
@@ -67,16 +67,24 @@ static ObjectBase *readRoomObject(Room *room, const String &type, SeekableReadSt
 		return new InternetMenuButton(room, stream);
 	else if (type == OptionsMenuButton::kClassName)
 		return new OptionsMenuButton(room, stream);
-	else if (type == EditBox::kClassName)
-		return new EditBox(room, stream);
+	else if (type == EditBox::kClassName) {
+		if (g_engine->isV2())
+			return new EditBoxV2(room, stream);
+		else
+			return new EditBoxV3(room, stream);
+	}
 	else if (type == PushButton::kClassName)
 		return new PushButton(room, stream);
 	else if (type == CheckBox::kClassName)
 		return new CheckBox(room, stream);
 	else if (type == CheckBoxAutoAdjustNoise::kClassName)
 		return new CheckBoxAutoAdjustNoise(room, stream);
-	else if (type == SlideButton::kClassName)
-		return new SlideButton(room, stream);
+	else if (type == SlideButton::kClassName) {
+		if (g_engine->isV2())
+			return new SlideButtonV2(room, stream);
+		else
+			return new SlideButtonV3(room, stream);
+	}
 	else if (type == IRCWindow::kClassName)
 		return new IRCWindow(room, stream);
 	else if (type == MessageBox::kClassName)
@@ -109,7 +117,7 @@ void Room::readRoomV1(SeekableReadStream &stream) {
 	skipVarString(stream);
 }
 
-void Room::readRoomV3(SeekableReadStream &stream, bool hasUselessByte) {
+void Room::readRoomV2and3(SeekableReadStream &stream, bool hasUselessByte) {
 	_name = readVarString(stream);
 	_backgroundName = _name;
 	_musicId = (int)stream.readByte();
@@ -118,8 +126,10 @@ void Room::readRoomV3(SeekableReadStream &stream, bool hasUselessByte) {
 	_floors[0] = PathFindingShape(stream);
 	_floors[1] = PathFindingShape(stream);
 	_fixedCameraOnEntering = readBool(stream);
-	PathFindingShape _(stream); // unused path finding area
-	_characterAlphaPremultiplier = stream.readByte();
+	if (g_engine->isV3()) {
+		PathFindingShape _(stream); // unused path finding area
+		_characterAlphaPremultiplier = stream.readByte();
+	}
 	if (hasUselessByte)
 		stream.readByte();
 
@@ -362,7 +372,7 @@ ShapeObject *Room::getSelectedObject(ShapeObject *best) const {
 }
 
 OptionsMenu::OptionsMenu(World *world, SeekableReadStream &stream) : Room(world) {
-	readRoomV3(stream, true);
+	readRoomV2and3(stream, true);
 	initBackground();
 }
 
@@ -398,12 +408,12 @@ void OptionsMenu::clearLastSelectedObject() {
 }
 
 ConnectMenu::ConnectMenu(World *world, SeekableReadStream &stream) : Room(world) {
-	readRoomV3(stream, true);
+	readRoomV2and3(stream, true);
 	initBackground();
 }
 
 ListenMenu::ListenMenu(World *world, SeekableReadStream &stream) : Room(world) {
-	readRoomV3(stream, true);
+	readRoomV2and3(stream, true);
 	initBackground();
 }
 
@@ -413,7 +423,7 @@ Inventory::Inventory(World *world, SeekableReadStream &stream) : Room(world) {
 		stream.skip(1); // denoted as "sinusar" but unused
 		readObjects(stream);
 	} else
-		readRoomV3(stream, true);
+		readRoomV2and3(stream, true);
 	initBackground();
 }
 
@@ -549,6 +559,7 @@ void World::load() {
 
 	auto loadWorldFile =
 		g_engine->isV1() ? &World::loadWorldFileV1
+		: g_engine->isV2() ? &World::loadWorldFileV2
 		: &World::loadWorldFileV3;
 	const char *const *mapFiles = g_engine->game().getMapFiles();
 	for (auto *itMapFile = mapFiles; *itMapFile != nullptr; itMapFile++) {
@@ -739,6 +750,45 @@ bool World::loadWorldFileV3(const char *path) {
 	return true;
 }
 
+bool World::loadWorldFileV2(const char *path) {
+	File file;
+	if (!file.open(path)) {
+		// this is not necessarily an error, the demos just have less chapter files.
+		// Being a demo is then also stored in some script vars
+		warning("Could not open world file %s\n", path);
+		return false;
+	}
+
+	uint32 startOffset = file.readUint32LE();
+	file.seek(startOffset, SEEK_SET);
+	skipVarString(file); // always "CMundo"
+	skipVarString(file); // name of the CMundo object
+	skipVarString(file); // path to sound files
+	skipVarString(file); // path to animation files
+	skipVarString(file); // path to background files
+
+	_initScriptName = readVarString(file);
+	skipVarString(file); // would be _updateScriptName, but it is never called
+	
+	const auto readGlobalAnim = [&] (
+		GlobalAnimationKind kind1,
+		GlobalAnimationKind kind2) {
+		auto fileRef = readFileRef(file);
+		_globalAnimations[(int)kind1] = fileRef;
+		if (kind2 != GlobalAnimationKind::Count)
+			_globalAnimations[(int)kind2] = fileRef;
+	};
+	readGlobalAnim(GlobalAnimationKind::GeneralFont, GlobalAnimationKind::DialogFont);
+	readGlobalAnim(GlobalAnimationKind::Cursor, GlobalAnimationKind::Count);
+	readGlobalAnim(GlobalAnimationKind::MortadeloIcon, GlobalAnimationKind::MortadeloDisabledIcon);
+	readGlobalAnim(GlobalAnimationKind::FilemonIcon, GlobalAnimationKind::FilemonDisabledIcon);
+	readGlobalAnim(GlobalAnimationKind::InventoryIcon, GlobalAnimationKind::InventoryDisabledIcon);
+
+	readRooms(file);
+
+	return true;
+}
+
 static void readEmbeddedArchive(SharedPtr<File> file);
 
 bool World::loadWorldFileV1(const char *path) {
@@ -775,7 +825,7 @@ bool World::loadWorldFileV1(const char *path) {
 	};
 	readGlobalAnim(GlobalAnimationKind::GeneralFont, GlobalAnimationKind::DialogFont);
 	readGlobalAnim(GlobalAnimationKind::Cursor, GlobalAnimationKind::Count);
-	readGlobalAnim(GlobalAnimationKind::FilemonIcon, GlobalAnimationKind::FilemonDisabledIcon); // note this is swapped in V1
+	readGlobalAnim(GlobalAnimationKind::FilemonIcon, GlobalAnimationKind::FilemonDisabledIcon); // note file/morta are swapped in V1
 	readGlobalAnim(GlobalAnimationKind::MortadeloIcon, GlobalAnimationKind::MortadeloDisabledIcon);
 	readGlobalAnim(GlobalAnimationKind::InventoryIcon, GlobalAnimationKind::InventoryDisabledIcon);
 

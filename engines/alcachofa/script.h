@@ -82,6 +82,7 @@ enum class ScriptKernelTask {
 	StopAndTurnMe,
 	ChangeCharacter,
 	SayText,
+	SayTextV2, // TODO: Reverse engineer this variant
 	Go,
 	Put,
 	ChangeCharacterRoom,

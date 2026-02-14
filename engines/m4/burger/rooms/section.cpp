@@ -23,6 +23,7 @@
 #include "m4/gui/gui_vmng.h"
 #include "m4/burger/vars.h"
 #include "m4/m4.h"
+#include "m4/adv_r/adv_control.h"
 
 namespace M4 {
 namespace Burger {

@@ -91,6 +91,16 @@ void IntroHandler::freeIntroData() {
 }
 
 /**
+ * Load a font from a Windows .FON file. Used only by DOS versions.
+ * Original DOS versions used the Microsoft QuickC runtime for this.
+ */
+void IntroHandler::loadFont(const char *fileName, const char *faceName, uint16 sizeInPoints) {
+	if (!_font.loadFromFON(fileName, Graphics::WinFontDirEntry(faceName, sizeInPoints))) {
+		error("Unable to load font %s, face '%s', size %d", fileName, faceName, sizeInPoints);
+	}
+}
+
+/**
  * Wait for a delay in milliseconds while processing events.
  * This keeps the program window responsive during long delays.
  * Returns false if interrupted by a quit event or the Escape key.
@@ -174,8 +184,7 @@ bool intro_v1d::introPlay() {
 			_vm->_screen->drawShape(250,92,_TLIGHTMAGENTA,_TMAGENTA);
 
 			// TROMAN, size 10-5
-			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))
-				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 8");
+			loadFont("TMSRB.FON", "Tms Rmn", 8);
 
 			char buffer[80];
 			if (_vm->_boot._registered == kRegRegistered)
@@ -214,8 +223,7 @@ bool intro_v1d::introPlay() {
 			drawLogo(119, 22, _TMAGENTA); // "Hugo's"
 
 			// TROMAN, size 30-24
-			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 24)))
-				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 24");
+			loadFont("TMSRB.FON", "Tms Rmn", 24);
 
 			Common::strcpy_s(buffer, "House of Horrors !");
 			_font.drawString(&_surf, buffer, 0, 50, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
@@ -224,8 +232,7 @@ bool intro_v1d::introPlay() {
 			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
 
 			// TROMAN, size 16-9
-			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 14)))
-				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 14");
+			loadFont("TMSRB.FON", "Tms Rmn", 14);
 
 			Common::strcpy_s(buffer, "S t a r r i n g :");
 			_font.drawString(&_surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
@@ -235,8 +242,7 @@ bool intro_v1d::introPlay() {
 			break;
 		case 3:
 			// TROMAN, size 20-9
-			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 18)))
-				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 18");
+			loadFont("TMSRB.FON", "Tms Rmn", 18);
 
 			Common::strcpy_s(buffer, "Hugo !");
 			_font.drawString(&_surf, buffer, 0, 115, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
@@ -248,8 +254,7 @@ bool intro_v1d::introPlay() {
 			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
 
 			// TROMAN, size 16-9
-			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 14)))
-				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 14");
+			loadFont("TMSRB.FON", "Tms Rmn", 14);
 
 			Common::strcpy_s(buffer, "P r o d u c e d  b y :");
 			_font.drawString(&_surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
@@ -305,8 +310,7 @@ bool intro_v1d::introPlay() {
 			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
 
 			// TROMAN, size 20-14
-			if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 18)))
-				error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 18");
+			loadFont("TMSRB.FON", "Tms Rmn", 18);
 
 			Common::strcpy_s(buffer, "E n j o y !");
 			_font.drawString(&_surf, buffer, 0, 100, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
@@ -367,8 +371,7 @@ void intro_v2d::introInit() {
 	char buffer[128];
 
 	// TROMAN, size 10-5
-	if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))
-		error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 8");
+	loadFont("TMSRB.FON", "Tms Rmn", 8);
 
 	if (_vm->_boot._registered)
 		Common::sprintf_s(buffer, "%s %s  Registered Version", _vm->getCopyrightString1(), _vm->getCopyrightString2());
@@ -431,8 +434,7 @@ void intro_v3d::introInit() {
 		Common::sprintf_s(buffer,"%s %s  Shareware Version", _vm->getCopyrightString1(), _vm->getCopyrightString2());
 
 	// TROMAN, size 10-5
-	if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))
-		error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 8");
+	loadFont("TMSRB.FON", "Tms Rmn", 8);
 
 	_font.drawString(&_surf, buffer, 0, 190, 320, _TBROWN, Graphics::kTextAlignCenter);
 

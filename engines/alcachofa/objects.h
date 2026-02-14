@@ -257,20 +257,30 @@ private:
 	int32 _actionId;
 };
 
-class EditBox final : public PhysicalObject {
+class EditBox : public PhysicalObject {
 public:
 	static constexpr const char *kClassName = "CEditBox";
 	EditBox(Room *room, Common::SeekableReadStream &stream);
 
 	const char *typeName() const override;
 
-private:
-	int32 i1;
+protected:
+	int32 i1 = 0;
 	Common::Point p1;
 	Common::String _labelId;
-	bool b1;
-	int32 i3, i4, i5,
-		_fontId;
+	bool b1 = false;
+	int32 i3 = 0, i4 = 0, i5 = 0,
+		_fontId = 0;
+};
+
+class EditBoxV2 final : public EditBox {
+public:
+	EditBoxV2(Room *room, Common::SeekableReadStream &stream);
+};
+
+class EditBoxV3 final : public EditBox {
+public:
+	EditBoxV3(Room *room, Common::SeekableReadStream &stream);
 };
 
 class CheckBox : public PhysicalObject {
@@ -304,11 +314,10 @@ private:
 	uint32 _clickTime = 0;
 };
 
-class SlideButton final : public ObjectBase {
+class SlideButton : public ObjectBase {
 public:
 	static constexpr const char *kClassName = "CSlideButton";
 	SlideButton(Room *room, Common::SeekableReadStream &stream);
-	~SlideButton() override {}
 
 	inline float &value() { return _value; }
 
@@ -318,16 +327,26 @@ public:
 	void freeResources() override;
 	const char *typeName() const override;
 
-private:
+protected:
 	bool isMouseOver() const;
 
 	float _value = 0;
-	int32 _valueId;
+	int32 _valueId = -1;
 	Common::Point _minPos, _maxPos;
 	Graphic
 		_graphicIdle,
 		_graphicHovered,
 		_graphicClicked;
+};
+
+class SlideButtonV2 final : public SlideButton {
+public:
+	SlideButtonV2(Room *room, Common::SeekableReadStream &stream);
+};
+
+class SlideButtonV3 final : public SlideButton {
+public:
+	SlideButtonV3(Room *room, Common::SeekableReadStream &stream);
 };
 
 class CheckBoxAutoAdjustNoise final : public CheckBox {

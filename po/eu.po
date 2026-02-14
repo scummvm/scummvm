@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-02-08 20:33+0000\n"
+"POT-Creation-Date: 2026-02-14 14:48+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -74,7 +74,7 @@ msgstr "Itxi"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. ONLINE HELP
 #. I18N: Opens the help screen.
-#: gui/browser.cpp:64 gui/launcher.cpp:275 gui/launcher.cpp:953
+#: gui/browser.cpp:64 gui/launcher.cpp:277 gui/launcher.cpp:955
 #: backends/platform/sdl/macosx/appmenu_osx.mm:319
 #: engines/access/metaengine.cpp:343 engines/bladerunner/metaengine.cpp:321
 #: engines/ngi/metaengine.cpp:162 engines/supernova/metaengine.cpp:238
@@ -271,7 +271,7 @@ msgstr "Itsatsi"
 msgid "Paste code from clipboard"
 msgstr "Kodea arbeletik itsatsi"
 
-#: gui/cloudconnectionwizard.cpp:387 gui/launcher.cpp:322
+#: gui/cloudconnectionwizard.cpp:387 gui/launcher.cpp:324
 #: engines/dialogs.cpp:97 engines/engine.cpp:1019 engines/mm/xeen/saves.cpp:259
 #: engines/nancy/state/loadsave.cpp:108 engines/nancy/state/loadsave.cpp:153
 #: engines/parallaction/metaengine.cpp:151
@@ -325,8 +325,8 @@ msgstr "Beste biltegiratzen bat dago orain martxan. Gelditu nahi al duzu?"
 
 #: gui/cloudconnectionwizard.cpp:530 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:426 gui/launcher.cpp:455
-#: gui/launcher.cpp:528 gui/launcher.cpp:1858 gui/options.cpp:3485
+#: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:428 gui/launcher.cpp:457
+#: gui/launcher.cpp:530 gui/launcher.cpp:1908 gui/options.cpp:3485
 #: gui/options.cpp:3859 base/main.cpp:594
 #: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:598
 #: engines/chamber/metaengine.cpp:91 engines/director/events.cpp:102
@@ -335,7 +335,7 @@ msgstr "Beste biltegiratzen bat dago orain martxan. Gelditu nahi al duzu?"
 #: engines/hypno/metaengine.cpp:192 engines/kyra/gui/saveload_eob.cpp:611
 #: engines/kyra/gui/saveload_eob.cpp:644 engines/lab/metaengine.cpp:197
 #: engines/parallaction/metaengine.cpp:169
-#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4341
+#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4355
 #: engines/sherlock/metaengine.cpp:638 engines/sherlock/metaengine.cpp:1244
 #: engines/sludge/event.cpp:144 engines/toon/toon.cpp:1550
 #: engines/zvision/zvision.cpp:321
@@ -344,8 +344,8 @@ msgstr "Bai"
 
 #: gui/cloudconnectionwizard.cpp:530 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:426 gui/launcher.cpp:455
-#: gui/launcher.cpp:528 gui/launcher.cpp:1858 gui/options.cpp:3485
+#: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:428 gui/launcher.cpp:457
+#: gui/launcher.cpp:530 gui/launcher.cpp:1909 gui/options.cpp:3485
 #: gui/options.cpp:3859 engines/buried/buried.cpp:598
 #: engines/chamber/metaengine.cpp:97 engines/director/events.cpp:102
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:139
@@ -353,7 +353,7 @@ msgstr "Bai"
 #: engines/hypno/metaengine.cpp:198 engines/kyra/gui/saveload_eob.cpp:611
 #: engines/kyra/gui/saveload_eob.cpp:644 engines/lab/metaengine.cpp:204
 #: engines/parallaction/metaengine.cpp:175
-#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4341
+#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4355
 #: engines/sherlock/metaengine.cpp:643 engines/sherlock/metaengine.cpp:1250
 #: engines/sludge/event.cpp:144 engines/toon/toon.cpp:1550
 #: engines/zvision/zvision.cpp:322
@@ -380,7 +380,7 @@ msgstr "JSON kodearen edukia ez dago ongi osatuta."
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:123
 #: engines/drascula/saveload.cpp:51 engines/grim/inputdialog.cpp:83
 #: engines/parallaction/saveload.cpp:270 engines/sci/engine/kgraphics.cpp:76
-#: engines/sci/graphics/controls32.cpp:934 engines/scumm/scumm.cpp:4353
+#: engines/sci/graphics/controls32.cpp:934 engines/scumm/scumm.cpp:4367
 #: engines/sword1/control.cpp:2816
 msgid "OK"
 msgstr "Ados"
@@ -433,7 +433,7 @@ msgid "Select directory where to download game data"
 msgstr "Jokoaren jaitsiera direktorioa aukeratu"
 
 #: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:117
-#: gui/dump-all-dialogs.cpp:142 gui/editgamedialog.cpp:586 gui/launcher.cpp:319
+#: gui/dump-all-dialogs.cpp:142 gui/editgamedialog.cpp:586 gui/launcher.cpp:321
 msgid "Select directory with game data"
 msgstr "Jokoaren direktorioa aukeratu"
 
@@ -469,7 +469,7 @@ msgstr ""
 "Antza denez, zure konexioa mugatua da. Ziur al zaude fitxategiak deskargatu "
 "nahi dituzula?"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:691
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:693
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM-k ezin izan du zehazturiko direktorioa ireki!"
 
@@ -571,7 +571,7 @@ msgstr "ikono multzoak"
 msgid "shader packs"
 msgstr "shader multzoak"
 
-#: gui/dump-all-dialogs.cpp:146 gui/launcher.cpp:742
+#: gui/dump-all-dialogs.cpp:146 gui/launcher.cpp:744
 msgid "Pick the game:"
 msgstr "Jokoa aukeratu:"
 
@@ -1387,183 +1387,183 @@ msgid "Save Image"
 msgstr "Gorde Irudia"
 
 #. I18N: Group name for the game list
-#: gui/launcher.cpp:106
+#: gui/launcher.cpp:108
 msgctxt "group"
 msgid "None"
 msgstr "Bat ere ez"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
-#: gui/launcher.cpp:108
+#: gui/launcher.cpp:110
 msgctxt "group"
 msgid "First letter"
 msgstr "Lehenengo letra"
 
-#: gui/launcher.cpp:108
+#: gui/launcher.cpp:110
 msgctxt "group"
 msgid "Initial"
 msgstr "Hasierakoa"
 
 #. I18N: Group name for the game list, grouped by game engine
-#: gui/launcher.cpp:110
+#: gui/launcher.cpp:112
 msgctxt "group"
 msgid "Engine"
 msgstr "Motorea"
 
 #. I18N: Group name for the game list, grouped by game series
-#: gui/launcher.cpp:112
+#: gui/launcher.cpp:114
 msgctxt "group"
 msgid "Series"
 msgstr "Saila"
 
 #. I18N: Group name for the game list, grouped by game publisher
-#: gui/launcher.cpp:114
+#: gui/launcher.cpp:116
 msgctxt "group"
 msgid "Publisher"
 msgstr "Argitaratzailea"
 
 #. I18N: Group name for the game list, grouped by language
-#: gui/launcher.cpp:116
+#: gui/launcher.cpp:118
 msgctxt "group"
 msgid "Language"
 msgstr "Hizkuntza"
 
 #. I18N: Group name for the game list, grouped by game platform
-#: gui/launcher.cpp:118
+#: gui/launcher.cpp:120
 msgctxt "group"
 msgid "Platform"
 msgstr "Plataforma"
 
 #. I18N: Group name for the game list, grouped by year
-#: gui/launcher.cpp:120
+#: gui/launcher.cpp:122
 msgctxt "year"
 msgid "Year"
 msgstr "Urtea"
 
-#: gui/launcher.cpp:230
+#: gui/launcher.cpp:232
 msgid "Select Group by"
 msgstr "Aukeratu Taldea honen bidez"
 
-#: gui/launcher.cpp:234 gui/launcher.cpp:937
+#: gui/launcher.cpp:236 gui/launcher.cpp:939
 msgid "Group:"
 msgstr "Taldea:"
 
-#: gui/launcher.cpp:236
+#: gui/launcher.cpp:238
 msgid "Select a criteria to group the entries"
 msgstr "Aukeratu sarrerak taldekatzeko irizpidea"
 
-#: gui/launcher.cpp:263
+#: gui/launcher.cpp:265
 msgid "Click here to see Help"
 msgstr ""
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
-#: gui/launcher.cpp:267 engines/dialogs.cpp:94
+#: gui/launcher.cpp:269 engines/dialogs.cpp:94
 msgid "~Q~uit"
 msgstr "~I~rten"
 
-#: gui/launcher.cpp:267 backends/platform/sdl/macosx/appmenu_osx.mm:307
+#: gui/launcher.cpp:269 backends/platform/sdl/macosx/appmenu_osx.mm:307
 msgid "Quit ScummVM"
 msgstr "Irten ScummVM-tik"
 
 #. I18N: Button About ScummVM program. b is the shortcut, Ctrl+b, put it in parens for non-latin (~b~)
-#: gui/launcher.cpp:271
+#: gui/launcher.cpp:273
 msgid "A~b~out"
 msgstr "Honi ~b~uruz"
 
-#: gui/launcher.cpp:271 backends/platform/sdl/macosx/appmenu_osx.mm:301
+#: gui/launcher.cpp:273 backends/platform/sdl/macosx/appmenu_osx.mm:301
 msgid "About ScummVM"
 msgstr "ScummVM-i buruz"
 
-#: gui/launcher.cpp:275 gui/launcher.cpp:953
+#: gui/launcher.cpp:277 gui/launcher.cpp:955
 #, fuzzy
 #| msgid "General"
 msgid "General help"
 msgstr "Orokorra"
 
 #. I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
-#: gui/launcher.cpp:278
+#: gui/launcher.cpp:280
 msgid "Global ~O~ptions..."
 msgstr "Ezarpen ~O~rokorrak..."
 
-#: gui/launcher.cpp:278
+#: gui/launcher.cpp:280
 msgid "Change global ScummVM options"
 msgstr "ScummVM-ren aukera globalak aldatu"
 
-#: gui/launcher.cpp:278
+#: gui/launcher.cpp:280
 msgctxt "lowres"
 msgid "Global ~O~pts..."
 msgstr "Aukerak ~O~rokorrak..."
 
-#: gui/launcher.cpp:282
+#: gui/launcher.cpp:284
 msgid "Download Games"
 msgstr "Deskargatu Jokoak"
 
-#: gui/launcher.cpp:282
+#: gui/launcher.cpp:284
 msgid "Download freeware games for ScummVM"
 msgstr "Deskargatu ScummVMrentzat freeware jokoak"
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
-#: gui/launcher.cpp:289
+#: gui/launcher.cpp:291
 msgid "~A~dd Game..."
 msgstr "~G~ehitu..."
 
-#: gui/launcher.cpp:289
+#: gui/launcher.cpp:291
 msgid "Add games to the list"
 msgstr "Jokoak zerrendara gehitu"
 
-#: gui/launcher.cpp:289
+#: gui/launcher.cpp:291
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "~G~ehitu..."
 
 #. I18N: Button caption. R is the shortcut, Ctrl+R, put it in parens for non-latin (~R~)
-#: gui/launcher.cpp:293
+#: gui/launcher.cpp:295
 msgid "~R~emove Game"
 msgstr "~K~endu jokoa"
 
-#: gui/launcher.cpp:293
+#: gui/launcher.cpp:295
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "Jokoa zerrendatik kendu. Jokoaren fitxategiak ez dira ezabatzen"
 
-#: gui/launcher.cpp:293
+#: gui/launcher.cpp:295
 msgctxt "lowres"
 msgid "~R~emove Game"
 msgstr "~K~endu"
 
 #. I18N: Button caption. Mass add games
-#: gui/launcher.cpp:296
+#: gui/launcher.cpp:298
 msgid "Mass Add..."
 msgstr "Gehitu hainbat..."
 
 #. I18N: Button caption for lower resolution GUI. Mass add games
-#: gui/launcher.cpp:299
+#: gui/launcher.cpp:301
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Hainbat gehitu..."
 
-#: gui/launcher.cpp:307 gui/launcher.cpp:907 gui/shaderbrowser-dialog.cpp:61
+#: gui/launcher.cpp:309 gui/launcher.cpp:909 gui/shaderbrowser-dialog.cpp:61
 #: gui/shaderbrowser-dialog.cpp:97
 msgid "Search in game list"
 msgstr "Bilatu joko-zerrendan"
 
-#: gui/launcher.cpp:311 gui/launcher.cpp:928 gui/shaderbrowser-dialog.cpp:65
+#: gui/launcher.cpp:313 gui/launcher.cpp:930 gui/shaderbrowser-dialog.cpp:65
 #: gui/shaderbrowser-dialog.cpp:107
 msgid "Search:"
 msgstr "Bilatu:"
 
-#: gui/launcher.cpp:322 engines/dialogs.cpp:97 engines/engine.cpp:1019
+#: gui/launcher.cpp:324 engines/dialogs.cpp:97 engines/engine.cpp:1019
 #: engines/mm/xeen/saves.cpp:259 engines/nancy/state/loadsave.cpp:153
 #: engines/pegasus/pegasus.cpp:388 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:642 engines/wage/saveload.cpp:753
 msgid "Load game:"
 msgstr "Jokoa kargatu:"
 
-#: gui/launcher.cpp:414
+#: gui/launcher.cpp:416
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
 "Direktorio hau ezin da oraindik erabili, fitxategiak jaisten ari dira "
 "oraindik!"
 
-#: gui/launcher.cpp:425
+#: gui/launcher.cpp:427
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
@@ -1571,25 +1571,25 @@ msgstr ""
 "Joko detektatzaile masiboa exekutatu nahi al duzu? Honek joko kantitate "
 "handia gehitu dezake."
 
-#: gui/launcher.cpp:455
+#: gui/launcher.cpp:457
 msgid "Do you really want to remove this game configuration?"
 msgstr "Benetan ezabatu nahi duzu joko-konfigurazio hau?"
 
-#: gui/launcher.cpp:527
+#: gui/launcher.cpp:529
 msgid "Do you want to load saved game?"
 msgstr "Gordetako jokoa kargatu?"
 
-#: gui/launcher.cpp:584
+#: gui/launcher.cpp:586
 msgid "This game does not support loading games from the launcher."
 msgstr "Joko honek ez du uzten partidak abiarazletik kargatzen."
 
-#: gui/launcher.cpp:588
+#: gui/launcher.cpp:590
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 "ScummVM-k ezin izan du aukeraturiko jokoa exekutatzeko gai den motorerik "
 "aurkitu!"
 
-#: gui/launcher.cpp:694 gui/launcher.cpp:718
+#: gui/launcher.cpp:696 gui/launcher.cpp:720
 #, fuzzy
 #| msgid ""
 #| "Did you add this directory to the SAF? Press the help button [?] on the "
@@ -1601,104 +1601,104 @@ msgstr ""
 "Zuk gehitu duzu direktorio hau SAFen? Sakatu goiko laguntza botoia [?] "
 "argibide gehiagorako"
 
-#: gui/launcher.cpp:715
+#: gui/launcher.cpp:717
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM-k ezin izan du jokorik aurkitu zehazturiko direktorioan!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:736 engines/engine.cpp:1235
+#: gui/launcher.cpp:738 engines/engine.cpp:1235
 msgid "Unknown variant"
 msgstr "Aldaera ezezaguna"
 
-#: gui/launcher.cpp:988 gui/saveload-dialog.cpp:381
+#: gui/launcher.cpp:990 gui/saveload-dialog.cpp:381
 msgid "List view"
 msgstr "Zerrenda ikuspegia"
 
-#: gui/launcher.cpp:989 gui/saveload-dialog.cpp:382
+#: gui/launcher.cpp:991 gui/saveload-dialog.cpp:382
 msgid "Grid view"
 msgstr "Sareta ikuspegia"
 
-#: gui/launcher.cpp:1137
+#: gui/launcher.cpp:1139
 msgid "~S~tart"
 msgstr "~H~asi"
 
-#: gui/launcher.cpp:1137
+#: gui/launcher.cpp:1139
 msgid "Start selected game"
 msgstr "Aukeraturiko jokora jolastu"
 
-#: gui/launcher.cpp:1140
+#: gui/launcher.cpp:1142
 msgid "~L~oad..."
 msgstr "~K~argatu..."
 
-#: gui/launcher.cpp:1140
+#: gui/launcher.cpp:1142
 msgid "Load saved game for selected game"
 msgstr "Aukeraturiko jokorako partida gordea kargatu"
 
-#: gui/launcher.cpp:1142
+#: gui/launcher.cpp:1144
 msgid "Record..."
 msgstr "Grabatu..."
 
-#: gui/launcher.cpp:1148
+#: gui/launcher.cpp:1150
 #, fuzzy
 msgid "~G~ame Options..."
 msgstr "~A~ukerak..."
 
-#: gui/launcher.cpp:1148
+#: gui/launcher.cpp:1150
 msgid "Change game options"
 msgstr "Aldatu jokoaren aukerak"
 
-#: gui/launcher.cpp:1148
+#: gui/launcher.cpp:1150
 #, fuzzy
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "~A~ukerak..."
 
-#: gui/launcher.cpp:1234
+#: gui/launcher.cpp:1236
 msgid "Add-on"
 msgstr ""
 
 #. I18N: List grouping when no engine is specified
-#: gui/launcher.cpp:1285 gui/launcher.cpp:1530
+#: gui/launcher.cpp:1287 gui/launcher.cpp:1532
 msgid "Unknown Engine"
 msgstr "Motore Ezezaguna"
 
 #. I18N: List grouping when no publisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1302 gui/launcher.cpp:1547
+#: gui/launcher.cpp:1304 gui/launcher.cpp:1549
 msgid "Unknown Publisher"
 msgstr "Argitaratzaile ezezaguna"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1319 gui/launcher.cpp:1564
+#: gui/launcher.cpp:1321 gui/launcher.cpp:1566
 msgid "No Series"
 msgstr "Sailik ez"
 
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1333 gui/launcher.cpp:1578
+#: gui/launcher.cpp:1335 gui/launcher.cpp:1580
 msgid "Language not detected"
 msgstr "Hizkuntza ez da detektatu"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1347 gui/launcher.cpp:1592
+#: gui/launcher.cpp:1349 gui/launcher.cpp:1594
 msgid "Platform not detected"
 msgstr "Plataforma ez da detektatu"
 
 #. I18N: List group when no year is specified
-#: gui/launcher.cpp:1364 gui/launcher.cpp:1609
+#: gui/launcher.cpp:1366 gui/launcher.cpp:1611
 msgid "Unknown Year"
 msgstr "Urte ezezaguna"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1616 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1618 gui/widgets/groupedlist.cpp:81
 msgid "All"
 msgstr "Guztiak"
 
-#: gui/launcher.cpp:1784
+#: gui/launcher.cpp:1786
 msgid "Icons per row:"
 msgstr ""
 
-#: gui/launcher.cpp:1834
+#: gui/launcher.cpp:1836
 #, fuzzy, c-format
 #| msgid "Do you really want to remove this game configuration?"
 msgid ""
@@ -3281,7 +3281,7 @@ msgstr "<Balio okerra>"
 #. I18N: Abbreviation for 'bytes' as data size
 #. I18N: Hardware key
 #: common/util.cpp:183 backends/platform/3ds/osystem-events.cpp:46
-#: backends/platform/ds/osystem_ds.cpp:175
+#: backends/platform/ds/osystem_ds.cpp:178
 #: backends/platform/sdl/miyoo/miyoo.cpp:61
 #: backends/platform/sdl/miyoo/miyoo.cpp:88
 #: backends/platform/sdl/opendingux/opendingux.cpp:51
@@ -3353,7 +3353,7 @@ msgstr "Abendura grafikoen motorea"
 #: engines/mohawk/riven_stacks/aspit.cpp:454
 #: engines/neverhood/metaengine.cpp:200 engines/saga/metaengine.cpp:449
 #: engines/scumm/help.cpp:84 engines/scumm/help.cpp:86
-#: engines/scumm/scumm.cpp:4353 engines/sludge/keymapper_tables.h:95
+#: engines/scumm/scumm.cpp:4367 engines/sludge/keymapper_tables.h:95
 #: engines/sludge/keymapper_tables.h:144 engines/sludge/keymapper_tables.h:223
 #: engines/sludge/keymapper_tables.h:343 engines/sludge/keymapper_tables.h:355
 #: engines/sludge/keymapper_tables.h:416 engines/sludge/keymapper_tables.h:429
@@ -3879,9 +3879,10 @@ msgstr ""
 msgid "Game not implemented"
 msgstr "Jokoaren ID ez-onartua"
 
-#: engines/metaengine.cpp:75
-msgid "Default game keymap"
-msgstr ""
+#: engines/metaengine.cpp:75 engines/saga/metaengine.cpp:267
+#, fuzzy
+msgid "Default game keymappings"
+msgstr "~A~ukerak..."
 
 #: engines/metaengine.cpp:82 backends/platform/maemo/maemo.cpp:161
 #: engines/agos/metaengine.cpp:158 engines/asylum/metaengine.cpp:159
@@ -4521,7 +4522,7 @@ msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:266
 #: backends/platform/3ds/osystem-events.cpp:55
-#: backends/platform/ds/osystem_ds.cpp:182
+#: backends/platform/ds/osystem_ds.cpp:185
 #: backends/platform/sdl/miyoo/miyoo.cpp:74
 #: backends/platform/sdl/miyoo/miyoo.cpp:101
 #: backends/platform/sdl/opendingux/opendingux.cpp:64
@@ -4533,7 +4534,7 @@ msgstr "Ezkerrera irristatu"
 
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/3ds/osystem-events.cpp:56
-#: backends/platform/ds/osystem_ds.cpp:183
+#: backends/platform/ds/osystem_ds.cpp:186
 #: backends/platform/sdl/miyoo/miyoo.cpp:75
 #: backends/platform/sdl/miyoo/miyoo.cpp:102
 #: backends/platform/sdl/opendingux/opendingux.cpp:65
@@ -4545,7 +4546,7 @@ msgstr "Behera"
 
 #: backends/keymapper/hardware-input.cpp:268
 #: backends/platform/3ds/osystem-events.cpp:57
-#: backends/platform/ds/osystem_ds.cpp:184
+#: backends/platform/ds/osystem_ds.cpp:187
 #: backends/platform/sdl/miyoo/miyoo.cpp:76
 #: backends/platform/sdl/miyoo/miyoo.cpp:103
 #: backends/platform/sdl/opendingux/opendingux.cpp:66
@@ -4557,7 +4558,7 @@ msgstr "Ezkerrera irristatu"
 
 #: backends/keymapper/hardware-input.cpp:269
 #: backends/platform/3ds/osystem-events.cpp:58
-#: backends/platform/ds/osystem_ds.cpp:185
+#: backends/platform/ds/osystem_ds.cpp:188
 #: backends/platform/sdl/miyoo/miyoo.cpp:77
 #: backends/platform/sdl/miyoo/miyoo.cpp:104
 #: backends/platform/sdl/opendingux/opendingux.cpp:67
@@ -4881,7 +4882,7 @@ msgstr "Biak"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:45
-#: backends/platform/ds/osystem_ds.cpp:174
+#: backends/platform/ds/osystem_ds.cpp:177
 #: backends/platform/sdl/miyoo/miyoo.cpp:59
 #: backends/platform/sdl/miyoo/miyoo.cpp:86
 #: backends/platform/sdl/opendingux/opendingux.cpp:49
@@ -4891,7 +4892,7 @@ msgstr ""
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:47
-#: backends/platform/ds/osystem_ds.cpp:176
+#: backends/platform/ds/osystem_ds.cpp:179
 #: backends/platform/sdl/miyoo/miyoo.cpp:63
 #: backends/platform/sdl/miyoo/miyoo.cpp:90
 #: backends/platform/sdl/opendingux/opendingux.cpp:53
@@ -4901,7 +4902,7 @@ msgstr ""
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:48
-#: backends/platform/ds/osystem_ds.cpp:177
+#: backends/platform/ds/osystem_ds.cpp:180
 #: backends/platform/sdl/miyoo/miyoo.cpp:65
 #: backends/platform/sdl/miyoo/miyoo.cpp:92
 #: backends/platform/sdl/opendingux/opendingux.cpp:55
@@ -4914,7 +4915,7 @@ msgstr ""
 #. I18N: Return key
 #. I18N: Select party member command in Might & Magic 1
 #: backends/platform/3ds/osystem-events.cpp:49
-#: backends/platform/ds/osystem_ds.cpp:178
+#: backends/platform/ds/osystem_ds.cpp:181
 #: backends/platform/sdl/miyoo/miyoo.cpp:67
 #: backends/platform/sdl/miyoo/miyoo.cpp:94
 #: backends/platform/sdl/opendingux/opendingux.cpp:57
@@ -4932,7 +4933,7 @@ msgstr "Ekintza/Aukeratu"
 #. I18N: Hardware key
 #. I18N: Hardware key on controller
 #: backends/platform/3ds/osystem-events.cpp:50
-#: backends/platform/ds/osystem_ds.cpp:179
+#: backends/platform/ds/osystem_ds.cpp:182
 #: backends/platform/sdl/miyoo/miyoo.cpp:69
 #: backends/platform/sdl/miyoo/miyoo.cpp:96
 #: backends/platform/sdl/opendingux/opendingux.cpp:59
@@ -4954,7 +4955,7 @@ msgstr ""
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:53
-#: backends/platform/ds/osystem_ds.cpp:180
+#: backends/platform/ds/osystem_ds.cpp:183
 #: backends/platform/sdl/miyoo/miyoo.cpp:71
 #: backends/platform/sdl/miyoo/miyoo.cpp:98
 #: backends/platform/sdl/opendingux/opendingux.cpp:61
@@ -4965,7 +4966,7 @@ msgstr ""
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:54
-#: backends/platform/ds/osystem_ds.cpp:181
+#: backends/platform/ds/osystem_ds.cpp:184
 #: backends/platform/sdl/miyoo/miyoo.cpp:73
 #: backends/platform/sdl/miyoo/miyoo.cpp:100
 #: backends/platform/sdl/opendingux/opendingux.cpp:63
@@ -4983,7 +4984,7 @@ msgid "Circle Pad Y"
 msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:69
-#: backends/platform/ds/osystem_ds.cpp:194
+#: backends/platform/ds/osystem_ds.cpp:197
 msgid "Touch"
 msgstr ""
 
@@ -5735,11 +5736,11 @@ msgstr ""
 msgid "Click Mode"
 msgstr "Klikatzeko modua"
 
-#: backends/platform/sdl/sdl.cpp:1163
+#: backends/platform/sdl/sdl.cpp:1166
 msgid "Keyboard"
 msgstr "Teklatua"
 
-#: backends/platform/sdl/sdl.cpp:1166
+#: backends/platform/sdl/sdl.cpp:1169
 msgid ""
 "## Keyboard shortcuts\n"
 "\n"
@@ -5757,23 +5758,23 @@ msgid ""
 "| `Ctrl+F5` | Displays the Global Main Menu\n"
 msgstr ""
 
-#: backends/platform/sdl/sdl.cpp:1178
+#: backends/platform/sdl/sdl.cpp:1181
 msgid "| `Cmd+q`    | Quit (macOS)\n"
 msgstr ""
 
-#: backends/platform/sdl/sdl.cpp:1180
+#: backends/platform/sdl/sdl.cpp:1183
 msgid "| `Alt+F4`  | Quit (Windows)\n"
 msgstr ""
 
-#: backends/platform/sdl/sdl.cpp:1182
+#: backends/platform/sdl/sdl.cpp:1185
 msgid "| `Ctrl+q`  | Quit (Linux/Unix)\n"
 msgstr ""
 
-#: backends/platform/sdl/sdl.cpp:1183
+#: backends/platform/sdl/sdl.cpp:1186
 msgid "| `Ctrl+z`  | Quit (other platforms)\n"
 msgstr ""
 
-#: backends/platform/sdl/sdl.cpp:1186
+#: backends/platform/sdl/sdl.cpp:1189
 msgid ""
 "| `Ctrl+u`  | Mutes all sounds\n"
 "| `Ctrl+m`  | Toggles mouse capture\n"
@@ -5903,7 +5904,8 @@ msgstr ""
 #: backends/platform/sdl/miyoo/miyoo.cpp:114
 #: engines/alcachofa/metaengine.cpp:110 engines/grim/grim.cpp:545
 #: engines/grim/grim.cpp:645 engines/hdb/metaengine.cpp:264
-#: engines/made/metaengine.cpp:186 engines/toltecs/metaengine.cpp:252
+#: engines/made/metaengine.cpp:186 engines/phoenixvr/metaengine.cpp:101
+#: engines/toltecs/metaengine.cpp:252
 msgid "Menu"
 msgstr "Menua"
 
@@ -6293,15 +6295,15 @@ msgstr "Kendu"
 #: engines/grim/grim.cpp:621 engines/hdb/metaengine.cpp:251
 #: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
 #: engines/icb/icb.cpp:179 engines/petka/metaengine.cpp:173
-#: engines/scumm/help.cpp:228 engines/scumm/help.cpp:237
-#: engines/scumm/help.cpp:244 engines/scumm/help.cpp:252
-#: engines/sherlock/metaengine.cpp:435 engines/sludge/keymapper_tables.h:58
-#: engines/sludge/keymapper_tables.h:119 engines/sludge/keymapper_tables.h:168
-#: engines/sludge/keymapper_tables.h:181 engines/sludge/keymapper_tables.h:217
-#: engines/sludge/keymapper_tables.h:256 engines/stark/metaengine.cpp:267
-#: engines/tinsel/metaengine.cpp:313 engines/titanic/metaengine.cpp:244
-#: engines/titanic/metaengine.cpp:297 engines/twine/metaengine.cpp:370
-#: engines/zvision/metaengine.cpp:252
+#: engines/phoenixvr/metaengine.cpp:73 engines/scumm/help.cpp:228
+#: engines/scumm/help.cpp:237 engines/scumm/help.cpp:244
+#: engines/scumm/help.cpp:252 engines/sherlock/metaengine.cpp:435
+#: engines/sludge/keymapper_tables.h:58 engines/sludge/keymapper_tables.h:119
+#: engines/sludge/keymapper_tables.h:168 engines/sludge/keymapper_tables.h:181
+#: engines/sludge/keymapper_tables.h:217 engines/sludge/keymapper_tables.h:256
+#: engines/stark/metaengine.cpp:267 engines/tinsel/metaengine.cpp:313
+#: engines/titanic/metaengine.cpp:244 engines/titanic/metaengine.cpp:297
+#: engines/twine/metaengine.cpp:370 engines/zvision/metaengine.cpp:252
 msgid "Inventory"
 msgstr "Inbentarioa"
 
@@ -6439,10 +6441,10 @@ msgstr ""
 #: engines/drascula/metaengine.cpp:42 engines/dreamweb/metaengine.cpp:48
 #: engines/got/metaengine.cpp:35 engines/groovie/metaengine.cpp:53
 #: engines/m4/metaengine.cpp:37 engines/nancy/metaengine.cpp:104
-#: engines/neverhood/dialogs.cpp:47 engines/sci/detection_options.h:107
-#: engines/sherlock/metaengine.cpp:47 engines/toltecs/metaengine.cpp:44
-#: engines/trecision/metaengine.cpp:41 engines/ultima/metaengine.cpp:56
-#: engines/zvision/metaengine.cpp:42
+#: engines/neverhood/dialogs.cpp:47 engines/phoenixvr/metaengine.cpp:38
+#: engines/sci/detection_options.h:107 engines/sherlock/metaengine.cpp:47
+#: engines/toltecs/metaengine.cpp:44 engines/trecision/metaengine.cpp:41
+#: engines/ultima/metaengine.cpp:56 engines/zvision/metaengine.cpp:42
 msgid "Use original save/load screens"
 msgstr "Erabili jatorrizko gorde/kargatu pantailak"
 
@@ -6452,10 +6454,10 @@ msgstr "Erabili jatorrizko gorde/kargatu pantailak"
 #: engines/drascula/metaengine.cpp:43 engines/dreamweb/metaengine.cpp:49
 #: engines/got/metaengine.cpp:36 engines/groovie/metaengine.cpp:54
 #: engines/m4/metaengine.cpp:38 engines/nancy/metaengine.cpp:105
-#: engines/neverhood/dialogs.cpp:48 engines/sci/detection_options.h:108
-#: engines/sherlock/metaengine.cpp:48 engines/toltecs/metaengine.cpp:45
-#: engines/trecision/metaengine.cpp:42 engines/ultima/metaengine.cpp:57
-#: engines/zvision/metaengine.cpp:43
+#: engines/neverhood/dialogs.cpp:48 engines/phoenixvr/metaengine.cpp:39
+#: engines/sci/detection_options.h:108 engines/sherlock/metaengine.cpp:48
+#: engines/toltecs/metaengine.cpp:45 engines/trecision/metaengine.cpp:42
+#: engines/ultima/metaengine.cpp:57 engines/zvision/metaengine.cpp:43
 #, fuzzy
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
@@ -6897,7 +6899,7 @@ msgstr ""
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
-#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:3295
+#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:3309
 #, fuzzy, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -6908,7 +6910,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:3282
+#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:3296
 #, fuzzy, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -6919,7 +6921,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:3315
+#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:3329
 #, fuzzy, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -7078,19 +7080,20 @@ msgid "Show version"
 msgstr "Erakutsi objektuen etiketak"
 
 #: engines/asylum/metaengine.cpp:120 engines/crab/input/input.cpp:271
-#: engines/queen/metaengine.cpp:253 engines/sludge/keymapper_tables.h:308
-#: engines/sludge/keymapper_tables.h:404 engines/sludge/keymapper_tables.h:471
-#: engines/sludge/keymapper_tables.h:502 engines/ultima/nuvie/metaengine.cpp:92
+#: engines/phoenixvr/metaengine.cpp:96 engines/queen/metaengine.cpp:253
+#: engines/sludge/keymapper_tables.h:308 engines/sludge/keymapper_tables.h:404
+#: engines/sludge/keymapper_tables.h:471 engines/sludge/keymapper_tables.h:502
+#: engines/ultima/nuvie/metaengine.cpp:92
 #: engines/wintermute/keymapper_tables.h:950
 #, fuzzy
 msgid "Quick load"
 msgstr "Klikatzeko modua"
 
 #: engines/asylum/metaengine.cpp:125 engines/crab/input/input.cpp:266
-#: engines/queen/metaengine.cpp:247 engines/sludge/keymapper_tables.h:64
-#: engines/sludge/keymapper_tables.h:303 engines/sludge/keymapper_tables.h:410
-#: engines/sludge/keymapper_tables.h:465 engines/sludge/keymapper_tables.h:496
-#: engines/ultima/nuvie/metaengine.cpp:91
+#: engines/phoenixvr/metaengine.cpp:91 engines/queen/metaengine.cpp:247
+#: engines/sludge/keymapper_tables.h:64 engines/sludge/keymapper_tables.h:303
+#: engines/sludge/keymapper_tables.h:410 engines/sludge/keymapper_tables.h:465
+#: engines/sludge/keymapper_tables.h:496 engines/ultima/nuvie/metaengine.cpp:91
 #: engines/ultima/ultima8/metaengine.cpp:43
 #: engines/wintermute/keymapper_tables.h:930
 #, fuzzy
@@ -7411,9 +7414,10 @@ msgstr "Mututu/Ez-mututu"
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/buried/metaengine.cpp:160
 #: engines/darkseed/metaengine.cpp:65 engines/hypno/metaengine.cpp:152
-#: engines/scumm/help.cpp:79 engines/scumm/metaengine.cpp:1046
-#: engines/supernova/metaengine.cpp:309 engines/toltecs/metaengine.cpp:246
-#: engines/twp/metaengine.cpp:162 engines/zvision/metaengine.cpp:304
+#: engines/phoenixvr/metaengine.cpp:85 engines/scumm/help.cpp:79
+#: engines/scumm/metaengine.cpp:1046 engines/supernova/metaengine.cpp:309
+#: engines/toltecs/metaengine.cpp:246 engines/twp/metaengine.cpp:162
+#: engines/zvision/metaengine.cpp:304
 msgid "Skip cutscene"
 msgstr "Eszena saltatu"
 
@@ -7599,11 +7603,12 @@ msgstr ""
 #: engines/freescape/games/dark/dark.cpp:198
 #: engines/freescape/games/driller/driller.cpp:130
 #: engines/freescape/games/eclipse/eclipse.cpp:237
-#: engines/mads/metaengine.cpp:361 engines/saga/metaengine.cpp:437
-#: engines/sherlock/metaengine.cpp:359 engines/sherlock/metaengine.cpp:618
-#: engines/sherlock/metaengine.cpp:852 engines/stark/metaengine.cpp:280
-#: engines/sword1/metaengine.cpp:295 engines/trecision/metaengine.cpp:156
-#: engines/tsage/metaengine.cpp:231 engines/vcruise/metaengine.cpp:190
+#: engines/mads/metaengine.cpp:361 engines/phoenixvr/metaengine.cpp:80
+#: engines/saga/metaengine.cpp:437 engines/sherlock/metaengine.cpp:359
+#: engines/sherlock/metaengine.cpp:618 engines/sherlock/metaengine.cpp:852
+#: engines/stark/metaengine.cpp:280 engines/sword1/metaengine.cpp:295
+#: engines/trecision/metaengine.cpp:156 engines/tsage/metaengine.cpp:231
+#: engines/vcruise/metaengine.cpp:190
 #, fuzzy
 msgid "Quit game"
 msgstr " (Jokoa)"
@@ -8208,7 +8213,8 @@ msgstr ""
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:42 engines/dragons/metaengine.cpp:135
-#: engines/tinsel/metaengine.cpp:294 engines/twp/metaengine.cpp:150
+#: engines/phoenixvr/metaengine.cpp:66 engines/tinsel/metaengine.cpp:294
+#: engines/twp/metaengine.cpp:150
 #, fuzzy
 msgid "Action"
 msgstr "Aktiboa"
@@ -9266,13 +9272,13 @@ msgid "Save file created by different version."
 msgstr ""
 
 #: engines/gob/inter_geisha.cpp:237 engines/gob/inter_playtoons.cpp:282
-#: engines/gob/inter_v2.cpp:1511 engines/tinsel/saveload.cpp:590
+#: engines/gob/inter_v2.cpp:1512 engines/tinsel/saveload.cpp:590
 #, fuzzy
 msgid "Failed to load saved game from file."
 msgstr "Ezin izan da fitxategitik jokoa kargatu."
 
-#: engines/gob/inter_geisha.cpp:268 engines/gob/inter_v2.cpp:1590
-#: engines/gob/inter_v7.cpp:1948 engines/tinsel/saveload.cpp:603
+#: engines/gob/inter_geisha.cpp:268 engines/gob/inter_v2.cpp:1591
+#: engines/gob/inter_v7.cpp:1970 engines/tinsel/saveload.cpp:603
 #, fuzzy
 msgid "Failed to save game to file."
 msgstr "Ezin izan da jokoa fitxategira gorde."
@@ -11530,6 +11536,36 @@ msgstr "Kontsola erakutsi / ezkutatu"
 msgid "Close current interface"
 msgstr "Ahotsak bakarrik"
 
+#: engines/phoenixvr/metaengine.cpp:107
+#: engines/wintermute/keymapper_tables.h:239
+#: engines/wintermute/keymapper_tables.h:262
+#: engines/wintermute/keymapper_tables.h:313
+#: engines/wintermute/keymapper_tables.h:352
+#: engines/wintermute/keymapper_tables.h:389
+#: engines/wintermute/keymapper_tables.h:499
+#: engines/wintermute/keymapper_tables.h:526
+#: engines/wintermute/keymapper_tables.h:651
+#: engines/wintermute/keymapper_tables.h:785
+#: engines/wintermute/keymapper_tables.h:812
+#: engines/wintermute/keymapper_tables.h:833
+#: engines/wintermute/keymapper_tables.h:858
+#: engines/wintermute/keymapper_tables.h:885
+#: engines/wintermute/keymapper_tables.h:1045
+#: engines/wintermute/keymapper_tables.h:1248
+#: engines/wintermute/keymapper_tables.h:1319
+#: engines/wintermute/keymapper_tables.h:1415
+#: engines/wintermute/keymapper_tables.h:1472
+#: engines/wintermute/keymapper_tables.h:1498
+#: engines/wintermute/keymapper_tables.h:1660
+#: engines/wintermute/keymapper_tables.h:1709
+#: engines/wintermute/keymapper_tables.h:1757
+#: engines/wintermute/keymapper_tables.h:1790
+#: engines/wintermute/keymapper_tables.h:1983
+#: engines/wintermute/keymapper_tables.h:2103
+#, fuzzy
+msgid "Show hints"
+msgstr "Erakutsi fitxategi ezkutuak"
+
 #: engines/pink/gui.cpp:291
 msgid "This menu item is not yet implemented"
 msgstr ""
@@ -11765,11 +11801,6 @@ msgstr "Jokoaren ID ez-onartua"
 #, fuzzy
 msgid "I Have No Mouth support not compiled in"
 msgstr "Ezaugarri erantsiak:"
-
-#: engines/saga/metaengine.cpp:267
-#, fuzzy
-msgid "Default game keymappings"
-msgstr "~A~ukerak..."
 
 #: engines/saga/metaengine.cpp:269
 #, fuzzy
@@ -12211,7 +12242,7 @@ msgid "Your Name:"
 msgstr "Izena:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4359
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4373
 msgid "Host"
 msgstr ""
 
@@ -12223,7 +12254,7 @@ msgid "Querying games..."
 msgstr "Jokoa gordetzen..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4359
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4373
 msgid "Join"
 msgstr ""
 
@@ -13164,7 +13195,7 @@ msgid ""
 "this save file."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:315
+#: engines/scumm/scumm.cpp:316
 msgid ""
 "You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural "
 "resolution is 320x240, which doesn't allow aspect ratio correction.\n"
@@ -13172,18 +13203,18 @@ msgid ""
 "320x200, under 'engine' tab."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1355
+#: engines/scumm/scumm.cpp:1356
 #, c-format
 msgid "This game requires the '%s' Macintosh executable for its fonts."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1364
+#: engines/scumm/scumm.cpp:1365
 #, c-format
 msgid ""
 "This game requires the '%s' Macintosh executable for its music and fonts."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1368
+#: engines/scumm/scumm.cpp:1369
 #, fuzzy, c-format
 #| msgid ""
 #| "Could not find the 'Monkey Island' Macintosh executable to read the\n"
@@ -13195,25 +13226,25 @@ msgstr ""
 "Ezin izan da 'Monkey Island' Macintosh exekutagarria aurkitu instrumentuak\n"
 "bertatik irakurtzeko. Musika desgaituta egongo da."
 
-#: engines/scumm/scumm.cpp:1369
+#: engines/scumm/scumm.cpp:1370
 msgid "The Mac GUI"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1369
+#: engines/scumm/scumm.cpp:1370
 msgid "The music and the Mac GUI"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1398
+#: engines/scumm/scumm.cpp:1399
 #, c-format
 msgid "Could not open Macintosh resource file %s"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1401
+#: engines/scumm/scumm.cpp:1402
 #, c-format
 msgid "Could not find resource fork in Macintosh resource file %s"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1408
+#: engines/scumm/scumm.cpp:1409
 #, c-format
 msgid ""
 "'%s' appears to be the wrong Dig executable. It may be the launcher one "
@@ -13222,7 +13253,7 @@ msgid ""
 "its sub-folders should be what you need."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1569
+#: engines/scumm/scumm.cpp:1570
 msgid ""
 "It appears your ScummVM version was not built with TrueType Fonts support.\n"
 "\n"
@@ -13230,14 +13261,14 @@ msgid ""
 "some of the graphics on screen will be missing."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1831
+#: engines/scumm/scumm.cpp:1832
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
 "Please copy the game from the original media without compression."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2321
+#: engines/scumm/scumm.cpp:2322
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -13246,13 +13277,13 @@ msgstr ""
 "MIDI euskarri natiboak LucasArts-en Roland eguneraketa behar du,\n"
 "baina %s ez dago eskuragarri. AdLib erabiliko da."
 
-#: engines/scumm/scumm.cpp:2336
+#: engines/scumm/scumm.cpp:2337
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:4235
+#: engines/scumm/scumm.cpp:4249
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -13262,7 +13293,7 @@ msgstr ""
 "fitxategiak 'Maniac' direktorio barruan egon behar dira, Tentacle jokoko "
 "direktorioan, eta jokoa ScummVM-ra gehitu behar da."
 
-#: engines/scumm/scumm.cpp:4359
+#: engines/scumm/scumm.cpp:4373
 #, fuzzy
 msgid "Would you like to host or join a network play session?"
 msgstr "Jokoa kargatu edo gorde nahi duzu?"
@@ -16536,35 +16567,6 @@ msgstr ""
 #, fuzzy
 msgid "Show scene geometry"
 msgstr "Inbentarioa"
-
-#: engines/wintermute/keymapper_tables.h:239
-#: engines/wintermute/keymapper_tables.h:262
-#: engines/wintermute/keymapper_tables.h:313
-#: engines/wintermute/keymapper_tables.h:352
-#: engines/wintermute/keymapper_tables.h:389
-#: engines/wintermute/keymapper_tables.h:499
-#: engines/wintermute/keymapper_tables.h:526
-#: engines/wintermute/keymapper_tables.h:651
-#: engines/wintermute/keymapper_tables.h:785
-#: engines/wintermute/keymapper_tables.h:812
-#: engines/wintermute/keymapper_tables.h:833
-#: engines/wintermute/keymapper_tables.h:858
-#: engines/wintermute/keymapper_tables.h:885
-#: engines/wintermute/keymapper_tables.h:1045
-#: engines/wintermute/keymapper_tables.h:1248
-#: engines/wintermute/keymapper_tables.h:1319
-#: engines/wintermute/keymapper_tables.h:1415
-#: engines/wintermute/keymapper_tables.h:1472
-#: engines/wintermute/keymapper_tables.h:1498
-#: engines/wintermute/keymapper_tables.h:1660
-#: engines/wintermute/keymapper_tables.h:1709
-#: engines/wintermute/keymapper_tables.h:1757
-#: engines/wintermute/keymapper_tables.h:1790
-#: engines/wintermute/keymapper_tables.h:1983
-#: engines/wintermute/keymapper_tables.h:2103
-#, fuzzy
-msgid "Show hints"
-msgstr "Erakutsi fitxategi ezkutuak"
 
 #: engines/wintermute/keymapper_tables.h:269
 #: engines/wintermute/keymapper_tables.h:332

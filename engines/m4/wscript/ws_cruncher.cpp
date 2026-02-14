@@ -24,7 +24,7 @@
 #include "m4/wscript/wst_regs.h"
 #include "m4/core/errors.h"
 #include "m4/core/imath.h"
-#include "m4/dbg/debug.h"
+#include "m4/dbg/dbg_wscript.h"
 #include "m4/mem/mem.h"
 #include "m4/vars.h"
 
@@ -124,15 +124,13 @@ int32 *ws_GetDataFormats() {
 	return &dataFormats[0];
 }
 
-bool ws_InitCruncher(void) {
+bool ws_InitCruncher() {
 	// Make sure the cruncher has not been initialized
 	if (_GWS(cruncherInitialized))
-		error_show(FL);
+		error_show(FL,"cruncher not initialized");
 
 	// Register the end of sequence struct with the stash manager
 	mem_register_stash_type(&_GWS(memtypeEOS), sizeof(EOSreq), 32, "+EOS");
-	if (_GWS(memtypeEOS) < 0)
-		error_show(FL);
 
 	_GWS(myCruncher) = (cruncher *)mem_alloc(sizeof(cruncher), "cruncher");
 
@@ -245,7 +243,7 @@ bool ws_ChangeAnim8Program(machine *m, int32 newSequHash) {
 
 	// Parameter verification
 	if (!m || !m->myAnim8) {
-		error_show(FL);
+		error_show(FL, "myAnim8 not set");
 	}
 
 	Anim8 *myAnim8 = m->myAnim8;
@@ -278,7 +276,7 @@ void ws_RemoveAnim8FromCruncher(Anim8 *myAnim8) {
 	VERIFY_INTIALIZED("ws_RemoveAnim8FromCruncher()");
 
 	if (!myAnim8)
-		error_show(FL);
+		error_show(FL, "myAnim8 not set");
 
 	// In case we are crunching the current list of EOS requests, remove any for this machine
 	EOSreq *tempEOSreq = _GWS(EOSreqList);
@@ -348,7 +346,7 @@ bool ws_PauseAnim8(Anim8 *myAnim8) {
 	VERIFY_INTIALIZED("ws_PauseAnim8()");
 
 	if (!myAnim8)
-		error_show(FL);
+		error_show(FL, "myAnim8 not set");
 
 	myAnim8->active = false;
 	HideCCB(myAnim8->myCCB);
@@ -361,7 +359,7 @@ bool ws_ResumeAnim8(Anim8 *myAnim8) {
 	VERIFY_INTIALIZED("ws_PauseAnim8()");
 
 	if (!myAnim8)
-		error_show(FL);
+		error_show(FL, "myAnim8 not set");
 
 	myAnim8->active = true;
 	if (myAnim8->myCCB) {
@@ -1517,7 +1515,7 @@ void ws_CrunchAnim8s(int16 *depth_table) {
 	_GWS(crunchNext) = nullptr;
 }
 
-void ws_CrunchEOSreqs(void) {
+void ws_CrunchEOSreqs() {
 	// Make sure the cruncher has been initialized
 	VERIFY_INTIALIZED("ws_CrunchEOSreqs()");
 

@@ -152,7 +152,8 @@ void gui_system_event_handler() {
 						if (myHotkey->callback) {
 							(myHotkey->callback)((void *)static_cast<intptr>(parm1), (void *)myScreen->scrnContent);
 						}
-					} else myHotkey = myHotkey->next;
+					} else
+						myHotkey = myHotkey->next;
 				}
 			}
 			myScreen = myScreen->behind;
@@ -170,7 +171,8 @@ void gui_system_event_handler() {
 					if (myHotkey->callback) {
 						(myHotkey->callback)((void *)static_cast<intptr>(parm1), nullptr);
 					}
-				} else myHotkey = myHotkey->next;
+				} else
+					myHotkey = myHotkey->next;
 			}
 		}
 	} // end key handling check

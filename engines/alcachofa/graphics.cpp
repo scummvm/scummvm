@@ -171,6 +171,7 @@ void AnimationBase::load() {
 			rawStream = g_engine->world().openFileRef(_fileRef);
 	} else {
 		// for real file paths we have to apply the folder and do some fallback
+		const char *extension = g_engine->isV3() ? ".AN0" : ".ANI";
 		String fullPath;
 		const auto getFullPath = [&] (AnimationFolder folder) {
 			switch (folder) {
@@ -188,8 +189,8 @@ void AnimationBase::load() {
 				break;
 			}
 			fullPath += _fileRef._path;
-			if (_fileRef._path.size() < 4 || scumm_strnicmp(_fileRef._path.end() - 4, ".AN0", 4) != 0)
-				fullPath += ".AN0";
+			if (!_fileRef._path.hasSuffixIgnoreCase(extension))
+				fullPath += extension;
 		};
 		getFullPath(_folder);
 
@@ -217,6 +218,8 @@ void AnimationBase::load() {
 		wrapBufferedSeekableReadStream(rawStream.get(), rawStream->size(), DisposeAfterUse::NO));
 	if (g_engine->isV1())
 		readV1(*stream);
+	else if (g_engine->isV2())
+		readV2(*stream);
 	else
 		readV3(*stream);
 	_isLoaded = true;
@@ -257,14 +260,53 @@ void AnimationBase::readV1(SeekableReadStream &stream) {
 			_images.push_back(image.render(alpha));
 		}
 	}
+	createIndexMappingV1and2(spriteOrder);
+	readFramesV1and2(stream, frameCount, spriteCount);
+}
 
+void AnimationBase::readV2(SeekableReadStream &stream) {
+	char magic[4];
+	stream.read(magic, sizeof(magic));
+	scumm_assert(memcmp(magic, "ANI", 4) == 0);
+
+	stream.skip(4); // unused and unknown
+	uint spriteCount = stream.readUint32LE();
+	uint frameCount = stream.readUint32LE();
+	scumm_assert(spriteCount <= kMaxSpriteIDsV1);
+	_spriteBases.reserve(spriteCount);
+	_spriteEnabled.resize(spriteCount, true); // all sprites are enabled
+	_spriteOffsets.reserve(spriteCount * frameCount);
+	
+	_totalDuration = stream.readUint32LE();
+	byte alpha = stream.readByte();
+	stream.skip(8);
+
+	Array<byte> spriteOrder;
+	spriteOrder.reserve(spriteCount);
+	for (uint i = 0; i < spriteCount; i++) {
+		uint imageCount = stream.readUint32LE();
+		spriteOrder.push_back(stream.readByte());
+		stream.skip(4);
+
+		_spriteBases.push_back(_images.size());
+		for (uint j = 0; j < imageCount; j++) {
+			ImageV1 image(stream);
+			_imageOffsets.push_back(image.drawOffset());
+			_images.push_back(image.render(alpha));
+		}
+	}
+	createIndexMappingV1and2(spriteOrder);
+	readFramesV1and2(stream, frameCount, spriteCount);
+}
+
+void AnimationBase::createIndexMappingV1and2(const Array<byte> &spriteOrder) {
 	// Sprite order is setup by setting up index sequence and
 	// then stable sort descending by order (here: Bubblesort)
-	for (uint i = 0; i < spriteCount; i++)
+	for (uint i = 0; i < spriteOrder.size(); i++)
 		_spriteIndexMapping[i] = i;
-	for (uint i = 0; i < spriteCount; i++) {
+	for (uint i = 0; i < spriteOrder.size(); i++) {
 		bool hadChange = false;
-		for (uint j = 0; j < spriteCount - i - 1; j++) {
+		for (uint j = 0; j < spriteOrder.size() - i - 1; j++) {
 			if (spriteOrder[_spriteIndexMapping[j]] < spriteOrder[_spriteIndexMapping[j + 1]]) {
 				SWAP(_spriteIndexMapping[j], _spriteIndexMapping[j + 1]);
 				hadChange = true;
@@ -273,7 +315,9 @@ void AnimationBase::readV1(SeekableReadStream &stream) {
 		if (!hadChange)
 			break;
 	}
+}
 
+void AnimationBase::readFramesV1and2(Common::SeekableReadStream &stream, uint frameCount, uint spriteCount) {
 	for (uint i = 0; i < frameCount; i++) {
 		for (uint j = 0; j < spriteCount; j++) {
 			int imageI = stream.readSByte();

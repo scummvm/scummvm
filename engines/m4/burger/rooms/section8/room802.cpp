@@ -22,10 +22,15 @@
 #include "m4/burger/rooms/section8/room802.h"
 #include "m4/burger/rooms/section8/section8.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
 
 namespace M4 {
 namespace Burger {
 namespace Rooms {
+
+enum {
+	kCHANGE_FLUMIX_ANIMATION = 17
+};
 
 static const seriesStreamBreak SERIES1[] = {
 	{   0, "802_012", 1, 150, -1, 0, nullptr, 0 },
@@ -232,7 +237,7 @@ void Room802::daemon() {
 			_G(wilbur_should) = getWilburShould();
 			_G(flumix_should) = 6;
 			kernel_trigger_dispatch_now(kCHANGE_WILBUR_ANIMATION);
-			kernel_trigger_dispatch_now(17);
+			kernel_trigger_dispatch_now(kCHANGE_FLUMIX_ANIMATION);
 
 			_series1 = series_play("802BFX03", 0x101, 0, -1, 6, -1);
 			_series2 = series_play("802BFX02", 0x100, 1, -1, 6, -1);
@@ -287,34 +292,33 @@ void Room802::daemon() {
 		release_trigger_on_digi_state(k10027, 1);
 		break;
 
-	case 17:
-		// Flumix
+	case kCHANGE_FLUMIX_ANIMATION:
 		switch (_val2) {
 		case 1:
 			switch (_G(flumix_should)) {
 			case 5:
 				_flag1 = true;
 				_val2 = 3;
-				_series3.play("802BF03", 0x100, 0, 17, 6);
+				_series3.play("802BF03", 0x100, 0, kCHANGE_FLUMIX_ANIMATION, 6);
 				break;
 
 			case 6:
 				_flag1 = true;
 				_val2 = 2;
-				_series3.play("802BF03", 0x100, 0, 17, 6);
+				_series3.play("802BF03", 0x100, 0, kCHANGE_FLUMIX_ANIMATION, 6);
 				break;
 
 			case 9:
 				_flag1 = false;
 				_G(flumix_should) = getFlumixShould();
-				series_play_with_breaks(PLAY2, "802BF02", 0x100, 17, 3);
+				series_play_with_breaks(PLAY2, "802BF02", 0x100, kCHANGE_FLUMIX_ANIMATION, 3);
 				break;
 
 			case 10:
 				_flag1 = false;
 				_G(flumix_should) = getFlumixShould();
 				_val4 = 30;
-				series_play_with_breaks(PLAY3, "802BF02", 0x100, 17, 1);
+				series_play_with_breaks(PLAY3, "802BF02", 0x100, kCHANGE_FLUMIX_ANIMATION, 1);
 				break;
 
 			case 19:
@@ -326,7 +330,7 @@ void Room802::daemon() {
 				_flag1 = false;
 				_val4 = 30;
 				_G(flumix_should) = getFlumixShould();
-				series_play_with_breaks(PLAY1, "802BF02", 0x100, 17, 3);
+				series_play_with_breaks(PLAY1, "802BF02", 0x100, kCHANGE_FLUMIX_ANIMATION, 3);
 				break;
 			}
 			break;
@@ -336,13 +340,13 @@ void Room802::daemon() {
 			case 5:
 				_flag1 = true;
 				_val2 = 3;
-				_series3.show("802BF01", 0x100, 0, 17, 1);
+				_series3.show("802BF01", 0x100, 0, kCHANGE_FLUMIX_ANIMATION, 1);
 				break;
 
 			case 6 :
 				_flag1 = true;
 				_G(flumix_should) = getFlumixShould();
-				_series3.show("802BF03", 0x100, 0, 17, 30, 1);
+				_series3.show("802BF03", 0x100, 0, kCHANGE_FLUMIX_ANIMATION, 30, 1);
 				break;
 
 			case 19:
@@ -353,7 +357,7 @@ void Room802::daemon() {
 			default:
 				_flag1 = true;
 				_val2 = 1;
-				_series3.show("802BF03", 0x100, 2, 17, 6);
+				_series3.show("802BF03", 0x100, 2, kCHANGE_FLUMIX_ANIMATION, 6);
 				break;
 			}
 			break;
@@ -365,7 +369,7 @@ void Room802::daemon() {
 				_G(flumix_should) = 20;
 				_G(wilbur_should) = 16;
 				_series3.play("802BF01", 0x100, 4, -1, 6, -1);
-				digi_play(conv_sound_to_play(), 1, 255, 17);
+				digi_play(conv_sound_to_play(), 1, 255, kCHANGE_FLUMIX_ANIMATION);
 				break;
 
 			case 19:
@@ -377,14 +381,14 @@ void Room802::daemon() {
 				_series3.terminate();
 				_G(flumix_should) = getFlumixShould();
 				_flag1 = true;
-				_series3.show("802BF01", 0x100, 0, 17, 30, 0);
+				_series3.show("802BF01", 0x100, 0, kCHANGE_FLUMIX_ANIMATION, 30, 0);
 				conv_resume_curr();
 				break;
 
 			default:
 				_val2 = 1;
 				_flag1 = true;
-				_series3.play("802BF03", 0x100, 2, 17, 6);
+				_series3.play("802BF03", 0x100, 2, kCHANGE_FLUMIX_ANIMATION, 6);
 				break;
 			}
 			break;

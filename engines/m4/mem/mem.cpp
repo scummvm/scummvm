@@ -73,7 +73,7 @@ void mem_free_to_stash(void *mem, int32 memType) {
 	const int32 index = ((intptr)mem - (intptr)_G(memBlock)[memType]) / (_G(sizeMem)[memType] + sizeof(uintptr));
 
 	if (index < 0 || index > _G(requests)[memType])
-		error_show(FL);
+		error_show(FL, "block not in stash");
 
 	b_ptr += index * (_G(sizeMem)[memType] + sizeof(uintptr));
 	*(uintptr *)b_ptr = 0;

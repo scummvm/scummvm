@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-02-08 20:33+0000\n"
-"PO-Revision-Date: 2026-02-07 22:19+0000\n"
+"POT-Creation-Date: 2026-02-14 14:48+0000\n"
+"PO-Revision-Date: 2026-02-11 23:18+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -74,7 +74,7 @@ msgstr "Закрыть"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. ONLINE HELP
 #. I18N: Opens the help screen.
-#: gui/browser.cpp:64 gui/launcher.cpp:275 gui/launcher.cpp:953
+#: gui/browser.cpp:64 gui/launcher.cpp:277 gui/launcher.cpp:955
 #: backends/platform/sdl/macosx/appmenu_osx.mm:319
 #: engines/access/metaengine.cpp:343 engines/bladerunner/metaengine.cpp:321
 #: engines/ngi/metaengine.cpp:162 engines/supernova/metaengine.cpp:238
@@ -271,7 +271,7 @@ msgstr "Вставить"
 msgid "Paste code from clipboard"
 msgstr "Вставить код из буфера обмена"
 
-#: gui/cloudconnectionwizard.cpp:387 gui/launcher.cpp:322
+#: gui/cloudconnectionwizard.cpp:387 gui/launcher.cpp:324
 #: engines/dialogs.cpp:97 engines/engine.cpp:1019 engines/mm/xeen/saves.cpp:259
 #: engines/nancy/state/loadsave.cpp:108 engines/nancy/state/loadsave.cpp:153
 #: engines/parallaction/metaengine.cpp:151
@@ -325,8 +325,8 @@ msgstr "Сейчас работает другое хранилище. Вы хо
 
 #: gui/cloudconnectionwizard.cpp:530 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:426 gui/launcher.cpp:455
-#: gui/launcher.cpp:528 gui/launcher.cpp:1858 gui/options.cpp:3485
+#: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:428 gui/launcher.cpp:457
+#: gui/launcher.cpp:530 gui/launcher.cpp:1908 gui/options.cpp:3485
 #: gui/options.cpp:3859 base/main.cpp:594
 #: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:598
 #: engines/chamber/metaengine.cpp:91 engines/director/events.cpp:102
@@ -335,7 +335,7 @@ msgstr "Сейчас работает другое хранилище. Вы хо
 #: engines/hypno/metaengine.cpp:192 engines/kyra/gui/saveload_eob.cpp:611
 #: engines/kyra/gui/saveload_eob.cpp:644 engines/lab/metaengine.cpp:197
 #: engines/parallaction/metaengine.cpp:169
-#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4341
+#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4355
 #: engines/sherlock/metaengine.cpp:638 engines/sherlock/metaengine.cpp:1244
 #: engines/sludge/event.cpp:144 engines/toon/toon.cpp:1550
 #: engines/zvision/zvision.cpp:321
@@ -344,8 +344,8 @@ msgstr "Да"
 
 #: gui/cloudconnectionwizard.cpp:530 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
-#: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:426 gui/launcher.cpp:455
-#: gui/launcher.cpp:528 gui/launcher.cpp:1858 gui/options.cpp:3485
+#: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:428 gui/launcher.cpp:457
+#: gui/launcher.cpp:530 gui/launcher.cpp:1909 gui/options.cpp:3485
 #: gui/options.cpp:3859 engines/buried/buried.cpp:598
 #: engines/chamber/metaengine.cpp:97 engines/director/events.cpp:102
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:139
@@ -353,7 +353,7 @@ msgstr "Да"
 #: engines/hypno/metaengine.cpp:198 engines/kyra/gui/saveload_eob.cpp:611
 #: engines/kyra/gui/saveload_eob.cpp:644 engines/lab/metaengine.cpp:204
 #: engines/parallaction/metaengine.cpp:175
-#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4341
+#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4355
 #: engines/sherlock/metaengine.cpp:643 engines/sherlock/metaengine.cpp:1250
 #: engines/sludge/event.cpp:144 engines/toon/toon.cpp:1550
 #: engines/zvision/zvision.cpp:322
@@ -380,7 +380,7 @@ msgstr "Содержимое кода JSON имеет неверный форм�
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:123
 #: engines/drascula/saveload.cpp:51 engines/grim/inputdialog.cpp:83
 #: engines/parallaction/saveload.cpp:270 engines/sci/engine/kgraphics.cpp:76
-#: engines/sci/graphics/controls32.cpp:934 engines/scumm/scumm.cpp:4353
+#: engines/sci/graphics/controls32.cpp:934 engines/scumm/scumm.cpp:4367
 #: engines/sword1/control.cpp:2816
 msgid "OK"
 msgstr "OK"
@@ -433,7 +433,7 @@ msgid "Select directory where to download game data"
 msgstr "Выберите каталог для скачивания данных игры"
 
 #: gui/downloaddialog.cpp:49 gui/dump-all-dialogs.cpp:117
-#: gui/dump-all-dialogs.cpp:142 gui/editgamedialog.cpp:586 gui/launcher.cpp:319
+#: gui/dump-all-dialogs.cpp:142 gui/editgamedialog.cpp:586 gui/launcher.cpp:321
 msgid "Select directory with game data"
 msgstr "Выберите каталог с файлами игры"
 
@@ -469,7 +469,7 @@ msgstr ""
 "Похоже, что ваше соединение ограничено. Вы действительно хотите загрузить "
 "файлы?"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:691
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:693
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM не смог открыть указанный каталог!"
 
@@ -571,7 +571,7 @@ msgstr "пакетов иконок"
 msgid "shader packs"
 msgstr "пакетов шейдеров"
 
-#: gui/dump-all-dialogs.cpp:146 gui/launcher.cpp:742
+#: gui/dump-all-dialogs.cpp:146 gui/launcher.cpp:744
 msgid "Pick the game:"
 msgstr "Выберите игру:"
 
@@ -1394,183 +1394,181 @@ msgid "Save Image"
 msgstr "Сохранить изображение"
 
 #. I18N: Group name for the game list
-#: gui/launcher.cpp:106
+#: gui/launcher.cpp:108
 msgctxt "group"
 msgid "None"
 msgstr "Без группировки"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
-#: gui/launcher.cpp:108
+#: gui/launcher.cpp:110
 msgctxt "group"
 msgid "First letter"
 msgstr "Первая буква"
 
-#: gui/launcher.cpp:108
+#: gui/launcher.cpp:110
 msgctxt "group"
 msgid "Initial"
 msgstr "Буква"
 
 #. I18N: Group name for the game list, grouped by game engine
-#: gui/launcher.cpp:110
+#: gui/launcher.cpp:112
 msgctxt "group"
 msgid "Engine"
 msgstr "Движок"
 
 #. I18N: Group name for the game list, grouped by game series
-#: gui/launcher.cpp:112
+#: gui/launcher.cpp:114
 msgctxt "group"
 msgid "Series"
 msgstr "Серия"
 
 #. I18N: Group name for the game list, grouped by game publisher
-#: gui/launcher.cpp:114
+#: gui/launcher.cpp:116
 msgctxt "group"
 msgid "Publisher"
 msgstr "Издатель"
 
 #. I18N: Group name for the game list, grouped by language
-#: gui/launcher.cpp:116
+#: gui/launcher.cpp:118
 msgctxt "group"
 msgid "Language"
 msgstr "Язык"
 
 #. I18N: Group name for the game list, grouped by game platform
-#: gui/launcher.cpp:118
+#: gui/launcher.cpp:120
 msgctxt "group"
 msgid "Platform"
 msgstr "Платформа"
 
 #. I18N: Group name for the game list, grouped by year
-#: gui/launcher.cpp:120
+#: gui/launcher.cpp:122
 msgctxt "year"
 msgid "Year"
 msgstr "Год"
 
-#: gui/launcher.cpp:230
+#: gui/launcher.cpp:232
 msgid "Select Group by"
 msgstr "Выбрать как группировать"
 
-#: gui/launcher.cpp:234 gui/launcher.cpp:937
+#: gui/launcher.cpp:236 gui/launcher.cpp:939
 msgid "Group:"
 msgstr "Группа:"
 
-#: gui/launcher.cpp:236
+#: gui/launcher.cpp:238
 msgid "Select a criteria to group the entries"
 msgstr "Указать критерий для группирования игр"
 
-#: gui/launcher.cpp:263
+#: gui/launcher.cpp:265
 msgid "Click here to see Help"
 msgstr "Нажмите здесь, чтобы просмотреть справку"
 
 #. I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
-#: gui/launcher.cpp:267 engines/dialogs.cpp:94
+#: gui/launcher.cpp:269 engines/dialogs.cpp:94
 msgid "~Q~uit"
 msgstr "~В~ыход"
 
-#: gui/launcher.cpp:267 backends/platform/sdl/macosx/appmenu_osx.mm:307
+#: gui/launcher.cpp:269 backends/platform/sdl/macosx/appmenu_osx.mm:307
 msgid "Quit ScummVM"
 msgstr "Завершить ScummVM"
 
 #. I18N: Button About ScummVM program. b is the shortcut, Ctrl+b, put it in parens for non-latin (~b~)
-#: gui/launcher.cpp:271
+#: gui/launcher.cpp:273
 msgid "A~b~out"
 msgstr "О п~р~ограмме"
 
-#: gui/launcher.cpp:271 backends/platform/sdl/macosx/appmenu_osx.mm:301
+#: gui/launcher.cpp:273 backends/platform/sdl/macosx/appmenu_osx.mm:301
 msgid "About ScummVM"
 msgstr "О программе ScummVM"
 
-#: gui/launcher.cpp:275 gui/launcher.cpp:953
-#, fuzzy
-#| msgid "General Keys"
+#: gui/launcher.cpp:277 gui/launcher.cpp:955
 msgid "General help"
-msgstr "Общие клавиши"
+msgstr "Общая помощь"
 
 #. I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
-#: gui/launcher.cpp:278
+#: gui/launcher.cpp:280
 msgid "Global ~O~ptions..."
 msgstr "~Н~астройки..."
 
-#: gui/launcher.cpp:278
+#: gui/launcher.cpp:280
 msgid "Change global ScummVM options"
 msgstr "Изменить глобальные настройки ScummVM"
 
-#: gui/launcher.cpp:278
+#: gui/launcher.cpp:280
 msgctxt "lowres"
 msgid "Global ~O~pts..."
 msgstr "~Н~астр..."
 
-#: gui/launcher.cpp:282
+#: gui/launcher.cpp:284
 msgid "Download Games"
 msgstr "Скачать игры"
 
-#: gui/launcher.cpp:282
+#: gui/launcher.cpp:284
 msgid "Download freeware games for ScummVM"
 msgstr "Скачать бесплатыне игры для ScummVM"
 
 #. I18N: Button caption. A is the shortcut, Ctrl+A, put it in parens for non-latin (~A~)
-#: gui/launcher.cpp:289
+#: gui/launcher.cpp:291
 msgid "~A~dd Game..."
 msgstr "~Д~обавить игру..."
 
-#: gui/launcher.cpp:289
+#: gui/launcher.cpp:291
 msgid "Add games to the list"
 msgstr "Добавить игры в список"
 
-#: gui/launcher.cpp:289
+#: gui/launcher.cpp:291
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "~Д~об. игру..."
 
 #. I18N: Button caption. R is the shortcut, Ctrl+R, put it in parens for non-latin (~R~)
-#: gui/launcher.cpp:293
+#: gui/launcher.cpp:295
 msgid "~R~emove Game"
 msgstr "~У~далить игру"
 
-#: gui/launcher.cpp:293
+#: gui/launcher.cpp:295
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "Удалить игру из списка. Не удаляет игру с носителя"
 
-#: gui/launcher.cpp:293
+#: gui/launcher.cpp:295
 msgctxt "lowres"
 msgid "~R~emove Game"
 msgstr "~У~далить игру"
 
 #. I18N: Button caption. Mass add games
-#: gui/launcher.cpp:296
+#: gui/launcher.cpp:298
 msgid "Mass Add..."
 msgstr "Много игр..."
 
 #. I18N: Button caption for lower resolution GUI. Mass add games
-#: gui/launcher.cpp:299
+#: gui/launcher.cpp:301
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Много игр..."
 
-#: gui/launcher.cpp:307 gui/launcher.cpp:907 gui/shaderbrowser-dialog.cpp:61
+#: gui/launcher.cpp:309 gui/launcher.cpp:909 gui/shaderbrowser-dialog.cpp:61
 #: gui/shaderbrowser-dialog.cpp:97
 msgid "Search in game list"
 msgstr "Поиск в списке игр"
 
-#: gui/launcher.cpp:311 gui/launcher.cpp:928 gui/shaderbrowser-dialog.cpp:65
+#: gui/launcher.cpp:313 gui/launcher.cpp:930 gui/shaderbrowser-dialog.cpp:65
 #: gui/shaderbrowser-dialog.cpp:107
 msgid "Search:"
 msgstr "Поиск:"
 
-#: gui/launcher.cpp:322 engines/dialogs.cpp:97 engines/engine.cpp:1019
+#: gui/launcher.cpp:324 engines/dialogs.cpp:97 engines/engine.cpp:1019
 #: engines/mm/xeen/saves.cpp:259 engines/nancy/state/loadsave.cpp:153
 #: engines/pegasus/pegasus.cpp:388 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:642 engines/wage/saveload.cpp:753
 msgid "Load game:"
 msgstr "Загрузить игру:"
 
-#: gui/launcher.cpp:414
+#: gui/launcher.cpp:416
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
 "Этот каталог пока не может быть использован, в него сейчас загружаются "
 "данные!"
 
-#: gui/launcher.cpp:425
+#: gui/launcher.cpp:427
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
@@ -1578,23 +1576,23 @@ msgstr ""
 "Вы действительно хотите запустить поиск всех игр? Это потенциально может "
 "добавить большое количество игр."
 
-#: gui/launcher.cpp:455
+#: gui/launcher.cpp:457
 msgid "Do you really want to remove this game configuration?"
 msgstr "Вы действительно хотите удалить настройки для этой игры?"
 
-#: gui/launcher.cpp:527
+#: gui/launcher.cpp:529
 msgid "Do you want to load saved game?"
 msgstr "Вы хотите загрузить игру?"
 
-#: gui/launcher.cpp:584
+#: gui/launcher.cpp:586
 msgid "This game does not support loading games from the launcher."
 msgstr "Эта игра не поддерживает загрузку сохранённых игр через главное меню."
 
-#: gui/launcher.cpp:588
+#: gui/launcher.cpp:590
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM не смог найти движок для запуска выбранной игры!"
 
-#: gui/launcher.cpp:694 gui/launcher.cpp:718
+#: gui/launcher.cpp:696 gui/launcher.cpp:720
 msgid ""
 "Have you given ScummVM access rights to this directory? Press the help "
 "button [?] on the top for detailed instructions"
@@ -1602,102 +1600,102 @@ msgstr ""
 "Дали ли вы ScummVM права доступа к этому каталогу? Нажмите кнопку помощи [?] "
 "вверху окна для подробных инструкций"
 
-#: gui/launcher.cpp:715
+#: gui/launcher.cpp:717
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM не смог найти игру в указанном каталоге!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:736 engines/engine.cpp:1235
+#: gui/launcher.cpp:738 engines/engine.cpp:1235
 msgid "Unknown variant"
 msgstr "Неизвестный вариант"
 
-#: gui/launcher.cpp:988 gui/saveload-dialog.cpp:381
+#: gui/launcher.cpp:990 gui/saveload-dialog.cpp:381
 msgid "List view"
 msgstr "Вид списка"
 
-#: gui/launcher.cpp:989 gui/saveload-dialog.cpp:382
+#: gui/launcher.cpp:991 gui/saveload-dialog.cpp:382
 msgid "Grid view"
 msgstr "Вид сетки"
 
-#: gui/launcher.cpp:1137
+#: gui/launcher.cpp:1139
 msgid "~S~tart"
 msgstr "П~у~ск"
 
-#: gui/launcher.cpp:1137
+#: gui/launcher.cpp:1139
 msgid "Start selected game"
 msgstr "Запустить выбранную игру"
 
-#: gui/launcher.cpp:1140
+#: gui/launcher.cpp:1142
 msgid "~L~oad..."
 msgstr "~З~агрузить..."
 
-#: gui/launcher.cpp:1140
+#: gui/launcher.cpp:1142
 msgid "Load saved game for selected game"
 msgstr "Загрузить сохранение для выбранной игры"
 
-#: gui/launcher.cpp:1142
+#: gui/launcher.cpp:1144
 msgid "Record..."
 msgstr "Запись..."
 
-#: gui/launcher.cpp:1148
+#: gui/launcher.cpp:1150
 msgid "~G~ame Options..."
 msgstr "Настройки ~и~гры..."
 
-#: gui/launcher.cpp:1148
+#: gui/launcher.cpp:1150
 msgid "Change game options"
 msgstr "Изменить настройки игры"
 
-#: gui/launcher.cpp:1148
+#: gui/launcher.cpp:1150
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "Настр. ~и~гры..."
 
-#: gui/launcher.cpp:1234
+#: gui/launcher.cpp:1236
 msgid "Add-on"
 msgstr "Дополнение"
 
 #. I18N: List grouping when no engine is specified
-#: gui/launcher.cpp:1285 gui/launcher.cpp:1530
+#: gui/launcher.cpp:1287 gui/launcher.cpp:1532
 msgid "Unknown Engine"
 msgstr "Неизвестный движок"
 
 #. I18N: List grouping when no publisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1302 gui/launcher.cpp:1547
+#: gui/launcher.cpp:1304 gui/launcher.cpp:1549
 msgid "Unknown Publisher"
 msgstr "Неизвестный издатель"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1319 gui/launcher.cpp:1564
+#: gui/launcher.cpp:1321 gui/launcher.cpp:1566
 msgid "No Series"
 msgstr "Без серии"
 
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1333 gui/launcher.cpp:1578
+#: gui/launcher.cpp:1335 gui/launcher.cpp:1580
 msgid "Language not detected"
 msgstr "Язык не определён"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1347 gui/launcher.cpp:1592
+#: gui/launcher.cpp:1349 gui/launcher.cpp:1594
 msgid "Platform not detected"
 msgstr "Платформа не определена"
 
 #. I18N: List group when no year is specified
-#: gui/launcher.cpp:1364 gui/launcher.cpp:1609
+#: gui/launcher.cpp:1366 gui/launcher.cpp:1611
 msgid "Unknown Year"
 msgstr "Год неизвестен"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1616 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1618 gui/widgets/groupedlist.cpp:81
 msgid "All"
 msgstr "Все"
 
-#: gui/launcher.cpp:1784
+#: gui/launcher.cpp:1786
 msgid "Icons per row:"
 msgstr "Иконок в ряду:"
 
-#: gui/launcher.cpp:1834
+#: gui/launcher.cpp:1836
 #, c-format
 msgid ""
 "Do you really want to remove the following %d game configuration(s)?\n"
@@ -3285,7 +3283,7 @@ msgstr "<Неправильное значение>"
 #. I18N: Abbreviation for 'bytes' as data size
 #. I18N: Hardware key
 #: common/util.cpp:183 backends/platform/3ds/osystem-events.cpp:46
-#: backends/platform/ds/osystem_ds.cpp:175
+#: backends/platform/ds/osystem_ds.cpp:178
 #: backends/platform/sdl/miyoo/miyoo.cpp:61
 #: backends/platform/sdl/miyoo/miyoo.cpp:88
 #: backends/platform/sdl/opendingux/opendingux.cpp:51
@@ -3355,7 +3353,7 @@ msgstr "Движок графической адвенчуры"
 #: engines/mohawk/riven_stacks/aspit.cpp:454
 #: engines/neverhood/metaengine.cpp:200 engines/saga/metaengine.cpp:449
 #: engines/scumm/help.cpp:84 engines/scumm/help.cpp:86
-#: engines/scumm/scumm.cpp:4353 engines/sludge/keymapper_tables.h:95
+#: engines/scumm/scumm.cpp:4367 engines/sludge/keymapper_tables.h:95
 #: engines/sludge/keymapper_tables.h:144 engines/sludge/keymapper_tables.h:223
 #: engines/sludge/keymapper_tables.h:343 engines/sludge/keymapper_tables.h:355
 #: engines/sludge/keymapper_tables.h:416 engines/sludge/keymapper_tables.h:429
@@ -3558,10 +3556,8 @@ msgid "~O~ptions"
 msgstr "~О~пции"
 
 #: engines/dialogs.cpp:79
-#, fuzzy
-#| msgid "~H~elp"
 msgid "Game ~H~elp"
-msgstr "~П~омощь"
+msgstr "~П~омощь по игре"
 
 #: engines/dialogs.cpp:83
 msgid "~H~elp"
@@ -3891,8 +3887,8 @@ msgstr "Возможные ID игры для движка %s:"
 msgid "Game not implemented"
 msgstr "Игра не реализована"
 
-#: engines/metaengine.cpp:75
-msgid "Default game keymap"
+#: engines/metaengine.cpp:75 engines/saga/metaengine.cpp:267
+msgid "Default game keymappings"
 msgstr "Раскладка клавиш игры по умолчанию"
 
 #: engines/metaengine.cpp:82 backends/platform/maemo/maemo.cpp:161
@@ -4494,7 +4490,7 @@ msgstr "Правый курок"
 
 #: backends/keymapper/hardware-input.cpp:266
 #: backends/platform/3ds/osystem-events.cpp:55
-#: backends/platform/ds/osystem_ds.cpp:182
+#: backends/platform/ds/osystem_ds.cpp:185
 #: backends/platform/sdl/miyoo/miyoo.cpp:74
 #: backends/platform/sdl/miyoo/miyoo.cpp:101
 #: backends/platform/sdl/opendingux/opendingux.cpp:64
@@ -4505,7 +4501,7 @@ msgstr "Крестовина вверх"
 
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/3ds/osystem-events.cpp:56
-#: backends/platform/ds/osystem_ds.cpp:183
+#: backends/platform/ds/osystem_ds.cpp:186
 #: backends/platform/sdl/miyoo/miyoo.cpp:75
 #: backends/platform/sdl/miyoo/miyoo.cpp:102
 #: backends/platform/sdl/opendingux/opendingux.cpp:65
@@ -4516,7 +4512,7 @@ msgstr "Крестовина вниз"
 
 #: backends/keymapper/hardware-input.cpp:268
 #: backends/platform/3ds/osystem-events.cpp:57
-#: backends/platform/ds/osystem_ds.cpp:184
+#: backends/platform/ds/osystem_ds.cpp:187
 #: backends/platform/sdl/miyoo/miyoo.cpp:76
 #: backends/platform/sdl/miyoo/miyoo.cpp:103
 #: backends/platform/sdl/opendingux/opendingux.cpp:66
@@ -4527,7 +4523,7 @@ msgstr "Крестовина влево"
 
 #: backends/keymapper/hardware-input.cpp:269
 #: backends/platform/3ds/osystem-events.cpp:58
-#: backends/platform/ds/osystem_ds.cpp:185
+#: backends/platform/ds/osystem_ds.cpp:188
 #: backends/platform/sdl/miyoo/miyoo.cpp:77
 #: backends/platform/sdl/miyoo/miyoo.cpp:104
 #: backends/platform/sdl/opendingux/opendingux.cpp:67
@@ -4820,7 +4816,7 @@ msgstr "Оба"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:45
-#: backends/platform/ds/osystem_ds.cpp:174
+#: backends/platform/ds/osystem_ds.cpp:177
 #: backends/platform/sdl/miyoo/miyoo.cpp:59
 #: backends/platform/sdl/miyoo/miyoo.cpp:86
 #: backends/platform/sdl/opendingux/opendingux.cpp:49
@@ -4830,7 +4826,7 @@ msgstr "A"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:47
-#: backends/platform/ds/osystem_ds.cpp:176
+#: backends/platform/ds/osystem_ds.cpp:179
 #: backends/platform/sdl/miyoo/miyoo.cpp:63
 #: backends/platform/sdl/miyoo/miyoo.cpp:90
 #: backends/platform/sdl/opendingux/opendingux.cpp:53
@@ -4840,7 +4836,7 @@ msgstr "X"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:48
-#: backends/platform/ds/osystem_ds.cpp:177
+#: backends/platform/ds/osystem_ds.cpp:180
 #: backends/platform/sdl/miyoo/miyoo.cpp:65
 #: backends/platform/sdl/miyoo/miyoo.cpp:92
 #: backends/platform/sdl/opendingux/opendingux.cpp:55
@@ -4853,7 +4849,7 @@ msgstr "Y"
 #. I18N: Return key
 #. I18N: Select party member command in Might & Magic 1
 #: backends/platform/3ds/osystem-events.cpp:49
-#: backends/platform/ds/osystem_ds.cpp:178
+#: backends/platform/ds/osystem_ds.cpp:181
 #: backends/platform/sdl/miyoo/miyoo.cpp:67
 #: backends/platform/sdl/miyoo/miyoo.cpp:94
 #: backends/platform/sdl/opendingux/opendingux.cpp:57
@@ -4870,7 +4866,7 @@ msgstr "Выбор"
 #. I18N: Hardware key
 #. I18N: Hardware key on controller
 #: backends/platform/3ds/osystem-events.cpp:50
-#: backends/platform/ds/osystem_ds.cpp:179
+#: backends/platform/ds/osystem_ds.cpp:182
 #: backends/platform/sdl/miyoo/miyoo.cpp:69
 #: backends/platform/sdl/miyoo/miyoo.cpp:96
 #: backends/platform/sdl/opendingux/opendingux.cpp:59
@@ -4891,7 +4887,7 @@ msgstr "ZR"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:53
-#: backends/platform/ds/osystem_ds.cpp:180
+#: backends/platform/ds/osystem_ds.cpp:183
 #: backends/platform/sdl/miyoo/miyoo.cpp:71
 #: backends/platform/sdl/miyoo/miyoo.cpp:98
 #: backends/platform/sdl/opendingux/opendingux.cpp:61
@@ -4902,7 +4898,7 @@ msgstr "L"
 
 #. I18N: Hardware key
 #: backends/platform/3ds/osystem-events.cpp:54
-#: backends/platform/ds/osystem_ds.cpp:181
+#: backends/platform/ds/osystem_ds.cpp:184
 #: backends/platform/sdl/miyoo/miyoo.cpp:73
 #: backends/platform/sdl/miyoo/miyoo.cpp:100
 #: backends/platform/sdl/opendingux/opendingux.cpp:63
@@ -4920,7 +4916,7 @@ msgid "Circle Pad Y"
 msgstr "Круг-пад Y"
 
 #: backends/platform/3ds/osystem-events.cpp:69
-#: backends/platform/ds/osystem_ds.cpp:194
+#: backends/platform/ds/osystem_ds.cpp:197
 msgid "Touch"
 msgstr "Касание"
 
@@ -5910,11 +5906,11 @@ msgstr ""
 msgid "Click Mode"
 msgstr "Режим щелчка"
 
-#: backends/platform/sdl/sdl.cpp:1163
+#: backends/platform/sdl/sdl.cpp:1166
 msgid "Keyboard"
 msgstr "Клавиатура"
 
-#: backends/platform/sdl/sdl.cpp:1166
+#: backends/platform/sdl/sdl.cpp:1169
 msgid ""
 "## Keyboard shortcuts\n"
 "\n"
@@ -5946,23 +5942,23 @@ msgstr ""
 "| --------------|------------------\n"
 "| `Ctrl+F5` | Отображает глобальное главное меню\n"
 
-#: backends/platform/sdl/sdl.cpp:1178
+#: backends/platform/sdl/sdl.cpp:1181
 msgid "| `Cmd+q`    | Quit (macOS)\n"
 msgstr "| `Cmd+q`    | Выход (macOS)\n"
 
-#: backends/platform/sdl/sdl.cpp:1180
+#: backends/platform/sdl/sdl.cpp:1183
 msgid "| `Alt+F4`  | Quit (Windows)\n"
 msgstr "| `Alt+F4`  | Выход (Windows)\n"
 
-#: backends/platform/sdl/sdl.cpp:1182
+#: backends/platform/sdl/sdl.cpp:1185
 msgid "| `Ctrl+q`  | Quit (Linux/Unix)\n"
 msgstr "| `Ctrl+q`  | Выход (Linux/Unix)\n"
 
-#: backends/platform/sdl/sdl.cpp:1183
+#: backends/platform/sdl/sdl.cpp:1186
 msgid "| `Ctrl+z`  | Quit (other platforms)\n"
 msgstr "| `Ctrl+z`  | Выход (другие платформы)\n"
 
-#: backends/platform/sdl/sdl.cpp:1186
+#: backends/platform/sdl/sdl.cpp:1189
 msgid ""
 "| `Ctrl+u`  | Mutes all sounds\n"
 "| `Ctrl+m`  | Toggles mouse capture\n"
@@ -6105,7 +6101,8 @@ msgstr "R2"
 #: backends/platform/sdl/miyoo/miyoo.cpp:114
 #: engines/alcachofa/metaengine.cpp:110 engines/grim/grim.cpp:545
 #: engines/grim/grim.cpp:645 engines/hdb/metaengine.cpp:264
-#: engines/made/metaengine.cpp:186 engines/toltecs/metaengine.cpp:252
+#: engines/made/metaengine.cpp:186 engines/phoenixvr/metaengine.cpp:101
+#: engines/toltecs/metaengine.cpp:252
 msgid "Menu"
 msgstr "Меню"
 
@@ -6480,15 +6477,15 @@ msgstr "Поднять"
 #: engines/grim/grim.cpp:621 engines/hdb/metaengine.cpp:251
 #: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
 #: engines/icb/icb.cpp:179 engines/petka/metaengine.cpp:173
-#: engines/scumm/help.cpp:228 engines/scumm/help.cpp:237
-#: engines/scumm/help.cpp:244 engines/scumm/help.cpp:252
-#: engines/sherlock/metaengine.cpp:435 engines/sludge/keymapper_tables.h:58
-#: engines/sludge/keymapper_tables.h:119 engines/sludge/keymapper_tables.h:168
-#: engines/sludge/keymapper_tables.h:181 engines/sludge/keymapper_tables.h:217
-#: engines/sludge/keymapper_tables.h:256 engines/stark/metaengine.cpp:267
-#: engines/tinsel/metaengine.cpp:313 engines/titanic/metaengine.cpp:244
-#: engines/titanic/metaengine.cpp:297 engines/twine/metaengine.cpp:370
-#: engines/zvision/metaengine.cpp:252
+#: engines/phoenixvr/metaengine.cpp:73 engines/scumm/help.cpp:228
+#: engines/scumm/help.cpp:237 engines/scumm/help.cpp:244
+#: engines/scumm/help.cpp:252 engines/sherlock/metaengine.cpp:435
+#: engines/sludge/keymapper_tables.h:58 engines/sludge/keymapper_tables.h:119
+#: engines/sludge/keymapper_tables.h:168 engines/sludge/keymapper_tables.h:181
+#: engines/sludge/keymapper_tables.h:217 engines/sludge/keymapper_tables.h:256
+#: engines/stark/metaengine.cpp:267 engines/tinsel/metaengine.cpp:313
+#: engines/titanic/metaengine.cpp:244 engines/titanic/metaengine.cpp:297
+#: engines/twine/metaengine.cpp:370 engines/zvision/metaengine.cpp:252
 msgid "Inventory"
 msgstr "Инвентарь"
 
@@ -6621,10 +6618,10 @@ msgstr ""
 #: engines/drascula/metaengine.cpp:42 engines/dreamweb/metaengine.cpp:48
 #: engines/got/metaengine.cpp:35 engines/groovie/metaengine.cpp:53
 #: engines/m4/metaengine.cpp:37 engines/nancy/metaengine.cpp:104
-#: engines/neverhood/dialogs.cpp:47 engines/sci/detection_options.h:107
-#: engines/sherlock/metaengine.cpp:47 engines/toltecs/metaengine.cpp:44
-#: engines/trecision/metaengine.cpp:41 engines/ultima/metaengine.cpp:56
-#: engines/zvision/metaengine.cpp:42
+#: engines/neverhood/dialogs.cpp:47 engines/phoenixvr/metaengine.cpp:38
+#: engines/sci/detection_options.h:107 engines/sherlock/metaengine.cpp:47
+#: engines/toltecs/metaengine.cpp:44 engines/trecision/metaengine.cpp:41
+#: engines/ultima/metaengine.cpp:56 engines/zvision/metaengine.cpp:42
 msgid "Use original save/load screens"
 msgstr "Использовать оригинальные экраны записи/чтения игры"
 
@@ -6634,10 +6631,10 @@ msgstr "Использовать оригинальные экраны запи�
 #: engines/drascula/metaengine.cpp:43 engines/dreamweb/metaengine.cpp:49
 #: engines/got/metaengine.cpp:36 engines/groovie/metaengine.cpp:54
 #: engines/m4/metaengine.cpp:38 engines/nancy/metaengine.cpp:105
-#: engines/neverhood/dialogs.cpp:48 engines/sci/detection_options.h:108
-#: engines/sherlock/metaengine.cpp:48 engines/toltecs/metaengine.cpp:45
-#: engines/trecision/metaengine.cpp:42 engines/ultima/metaengine.cpp:57
-#: engines/zvision/metaengine.cpp:43
+#: engines/neverhood/dialogs.cpp:48 engines/phoenixvr/metaengine.cpp:39
+#: engines/sci/detection_options.h:108 engines/sherlock/metaengine.cpp:48
+#: engines/toltecs/metaengine.cpp:45 engines/trecision/metaengine.cpp:42
+#: engines/ultima/metaengine.cpp:57 engines/zvision/metaengine.cpp:43
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
 "Использовать оригинальные экраны чтения и сохранения игры вместо сделанных в "
@@ -7068,7 +7065,7 @@ msgstr ""
 msgid "Quick load or save game isn't supported in this location"
 msgstr "Быстрое сохранение или загрузка не поддерживаются в этой локации"
 
-#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:3295
+#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:3309
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -7079,7 +7076,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:3282
+#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:3296
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -7090,7 +7087,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:3315
+#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:3329
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -7254,18 +7251,19 @@ msgid "Show version"
 msgstr "Показать версию"
 
 #: engines/asylum/metaengine.cpp:120 engines/crab/input/input.cpp:271
-#: engines/queen/metaengine.cpp:253 engines/sludge/keymapper_tables.h:308
-#: engines/sludge/keymapper_tables.h:404 engines/sludge/keymapper_tables.h:471
-#: engines/sludge/keymapper_tables.h:502 engines/ultima/nuvie/metaengine.cpp:92
+#: engines/phoenixvr/metaengine.cpp:96 engines/queen/metaengine.cpp:253
+#: engines/sludge/keymapper_tables.h:308 engines/sludge/keymapper_tables.h:404
+#: engines/sludge/keymapper_tables.h:471 engines/sludge/keymapper_tables.h:502
+#: engines/ultima/nuvie/metaengine.cpp:92
 #: engines/wintermute/keymapper_tables.h:950
 msgid "Quick load"
 msgstr "Быстрая загрузка"
 
 #: engines/asylum/metaengine.cpp:125 engines/crab/input/input.cpp:266
-#: engines/queen/metaengine.cpp:247 engines/sludge/keymapper_tables.h:64
-#: engines/sludge/keymapper_tables.h:303 engines/sludge/keymapper_tables.h:410
-#: engines/sludge/keymapper_tables.h:465 engines/sludge/keymapper_tables.h:496
-#: engines/ultima/nuvie/metaengine.cpp:91
+#: engines/phoenixvr/metaengine.cpp:91 engines/queen/metaengine.cpp:247
+#: engines/sludge/keymapper_tables.h:64 engines/sludge/keymapper_tables.h:303
+#: engines/sludge/keymapper_tables.h:410 engines/sludge/keymapper_tables.h:465
+#: engines/sludge/keymapper_tables.h:496 engines/ultima/nuvie/metaengine.cpp:91
 #: engines/ultima/ultima8/metaengine.cpp:43
 #: engines/wintermute/keymapper_tables.h:930
 msgid "Quick save"
@@ -7574,9 +7572,10 @@ msgstr "Переключить бой"
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/buried/metaengine.cpp:160
 #: engines/darkseed/metaengine.cpp:65 engines/hypno/metaengine.cpp:152
-#: engines/scumm/help.cpp:79 engines/scumm/metaengine.cpp:1046
-#: engines/supernova/metaengine.cpp:309 engines/toltecs/metaengine.cpp:246
-#: engines/twp/metaengine.cpp:162 engines/zvision/metaengine.cpp:304
+#: engines/phoenixvr/metaengine.cpp:85 engines/scumm/help.cpp:79
+#: engines/scumm/metaengine.cpp:1046 engines/supernova/metaengine.cpp:309
+#: engines/toltecs/metaengine.cpp:246 engines/twp/metaengine.cpp:162
+#: engines/zvision/metaengine.cpp:304
 msgid "Skip cutscene"
 msgstr "Пропустить заставку"
 
@@ -7753,11 +7752,12 @@ msgstr "База улик"
 #: engines/freescape/games/dark/dark.cpp:198
 #: engines/freescape/games/driller/driller.cpp:130
 #: engines/freescape/games/eclipse/eclipse.cpp:237
-#: engines/mads/metaengine.cpp:361 engines/saga/metaengine.cpp:437
-#: engines/sherlock/metaengine.cpp:359 engines/sherlock/metaengine.cpp:618
-#: engines/sherlock/metaengine.cpp:852 engines/stark/metaengine.cpp:280
-#: engines/sword1/metaengine.cpp:295 engines/trecision/metaengine.cpp:156
-#: engines/tsage/metaengine.cpp:231 engines/vcruise/metaengine.cpp:190
+#: engines/mads/metaengine.cpp:361 engines/phoenixvr/metaengine.cpp:80
+#: engines/saga/metaengine.cpp:437 engines/sherlock/metaengine.cpp:359
+#: engines/sherlock/metaengine.cpp:618 engines/sherlock/metaengine.cpp:852
+#: engines/stark/metaengine.cpp:280 engines/sword1/metaengine.cpp:295
+#: engines/trecision/metaengine.cpp:156 engines/tsage/metaengine.cpp:231
+#: engines/vcruise/metaengine.cpp:190
 msgid "Quit game"
 msgstr "Выйти из игры"
 
@@ -7797,23 +7797,17 @@ msgstr "Раскладка клавиш инвентаря"
 #: engines/chamber/metaengine.cpp:71 engines/chamber/metaengine.cpp:77
 #: engines/dm/metaengine.cpp:130 engines/private/metaengine.cpp:130
 #: engines/sherlock/metaengine.cpp:1187
-#, fuzzy
-#| msgid "Interact Mode"
 msgid "Select / Interact"
-msgstr "Режим взаимодействия"
+msgstr "Выбрать / Взаимодействовать"
 
 #. I18N: This action refers to the control key on the keyboard.
 #: engines/buried/metaengine.cpp:148
-#, fuzzy
-#| msgid "Control"
 msgid "Control key"
-msgstr "Управление"
+msgstr "Клавиша Ctrl"
 
 #: engines/buried/metaengine.cpp:173 engines/buried/metaengine.cpp:224
-#, fuzzy
-#| msgid "Quit to menu"
 msgid "Quit to main menu"
-msgstr "Выйти в меню"
+msgstr "Выйти в главное меню"
 
 #: engines/buried/metaengine.cpp:190 engines/mohawk/riven.cpp:913
 #: engines/zvision/metaengine.cpp:217
@@ -7826,16 +7820,12 @@ msgid "Look down"
 msgstr "Смотреть вниз"
 
 #: engines/buried/metaengine.cpp:204
-#, fuzzy
-#| msgid "Look at"
 msgid "Look left"
-msgstr "Смотреть на"
+msgstr "Смотреть налево"
 
 #: engines/buried/metaengine.cpp:211
-#, fuzzy
-#| msgid "Look at"
 msgid "Look right"
-msgstr "Смотреть на"
+msgstr "Смотреть направо"
 
 #: engines/buried/metaengine.cpp:218 engines/dm/metaengine.cpp:196
 #: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:510
@@ -7876,10 +7866,8 @@ msgstr ""
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the files biochip.
 #: engines/buried/metaengine.cpp:261
-#, fuzzy
-#| msgid "Show hidden files"
 msgid "Biochip files"
-msgstr "Показать скрытые файлы"
+msgstr "Файлы биочипа"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the interface biochip.
 #: engines/buried/metaengine.cpp:267
@@ -7898,10 +7886,8 @@ msgstr ""
 
 #. I18N: Shows a summary of collected points in the game.
 #: engines/buried/metaengine.cpp:285
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show points"
-msgstr "Показать подсказки"
+msgstr "Показать счёт"
 
 #: engines/buried/saveload.cpp:80
 msgid ""
@@ -7942,23 +7928,17 @@ msgstr "Раскладки клавиш игры"
 
 #: engines/cge/metaengine.cpp:215 engines/hopkins/metaengine.cpp:223
 #: engines/sword1/metaengine.cpp:283
-#, fuzzy
-#| msgid "Exit/Skip"
 msgid "Exit / Skip"
-msgstr "Выйти/Пропустить"
+msgstr "Выйти / Пропустить"
 
 #. I18N: 3-4 dialogs of game version info, (translation) credits, etc.
 #: engines/cge/metaengine.cpp:234 engines/cge2/metaengine.cpp:248
-#, fuzzy
-#| msgid "Game Info"
 msgid "Game info"
 msgstr "Информация об игре"
 
 #. I18N: This opens a Quit Prompt where you have to choose
 #. [Confirm] or [Continue Playing] lines with Left Click.
 #: engines/cge/metaengine.cpp:242 engines/cge2/metaengine.cpp:256
-#, fuzzy
-#| msgid "Quit Prompt"
 msgid "Quit prompt"
 msgstr "Подтверждение выхода из игры"
 
@@ -7969,50 +7949,34 @@ msgid "ALTered Item"
 msgstr "АЛЬТернативный предмет"
 
 #: engines/cge/metaengine.cpp:257
-#, fuzzy
-#| msgid "Inventory Item 1 (Select/Deselect)"
 msgid "Inventory Item 1 (Select / Deselect)"
 msgstr "Предмет инвентаря 1 (выбрать/отменить выбор)"
 
 #: engines/cge/metaengine.cpp:262
-#, fuzzy
-#| msgid "Inventory Item 2 (Select/Deselect)"
 msgid "Inventory Item 2 (Select / Deselect)"
 msgstr "Предмет инвентаря 2 (выбрать/отменить выбор)"
 
 #: engines/cge/metaengine.cpp:267
-#, fuzzy
-#| msgid "Inventory Item 3 (Select/Deselect)"
 msgid "Inventory Item 3 (Select / Deselect)"
 msgstr "Предмет инвентаря 3 (выбрать/отменить выбор)"
 
 #: engines/cge/metaengine.cpp:272
-#, fuzzy
-#| msgid "Inventory Item 4 (Select/Deselect)"
 msgid "Inventory Item 4 (Select / Deselect)"
 msgstr "Предмет инвентаря 4 (выбрать/отменить выбор)"
 
 #: engines/cge/metaengine.cpp:277
-#, fuzzy
-#| msgid "Inventory Item 5 (Select/Deselect)"
 msgid "Inventory Item 5 (Select / Deselect)"
 msgstr "Предмет инвентаря 5 (выбрать/отменить выбор)"
 
 #: engines/cge/metaengine.cpp:282
-#, fuzzy
-#| msgid "Inventory Item 6 (Select/Deselect)"
 msgid "Inventory Item 6 (Select / Deselect)"
 msgstr "Предмет инвентаря 6 (выбрать/отменить выбор)"
 
 #: engines/cge/metaengine.cpp:287
-#, fuzzy
-#| msgid "Inventory Item 7 (Select/Deselect)"
 msgid "Inventory Item 7 (Select / Deselect)"
 msgstr "Предмет инвентаря 7 (выбрать/отменить выбор)"
 
 #: engines/cge/metaengine.cpp:292
-#, fuzzy
-#| msgid "Inventory Item 8 (Select/Deselect)"
 msgid "Inventory Item 8 (Select / Deselect)"
 msgstr "Предмет инвентаря 8 (выбрать/отменить выбор)"
 
@@ -8020,36 +7984,26 @@ msgstr "Предмет инвентаря 8 (выбрать/отменить в�
 #. You switch between them from numbered buttons on interface.
 #. Sets the current access to only the first Location
 #: engines/cge/metaengine.cpp:300
-#, fuzzy
-#| msgid "DEBUG: Access to Location 1"
 msgid "DEBUG: Access to location 1"
 msgstr "ОТЛАДКА: Доступ к локации 1"
 
 #. I18N: Sets the current access to Locations 1 to 8.
 #: engines/cge/metaengine.cpp:306
-#, fuzzy
-#| msgid "DEBUG: Access to Locations 1-8"
 msgid "DEBUG: Access to locations 1-8"
 msgstr "ОТЛАДКА: Доступ к локациям 1-8"
 
 #. I18N: Sets the current access to Locations 1 to 16.
 #: engines/cge/metaengine.cpp:312
-#, fuzzy
-#| msgid "DEBUG: Access to Locations 1-16"
 msgid "DEBUG: Access to locations 1-16"
 msgstr "ОТЛАДКА: Доступ к локациям 1-16"
 
 #. I18N: Sets the current access to Locations 1 to 23.
 #: engines/cge/metaengine.cpp:318
-#, fuzzy
-#| msgid "DEBUG: Access to Locations 1-23"
 msgid "DEBUG: Access to locations 1-23"
 msgstr "ОТЛАДКА: Доступ к локациям 1-23"
 
 #. I18N: Sets the current access to Locations 1 to 24.
 #: engines/cge/metaengine.cpp:324
-#, fuzzy
-#| msgid "DEBUG: Access to Locations 1-24"
 msgid "DEBUG: Access to locations 1-24"
 msgstr "ОТЛАДКА: Доступ к локациям 1-24"
 
@@ -8082,16 +8036,12 @@ msgstr "Использовать TTS для чтения субтитров вс
 
 #. I18N: This closes the Dialog/text box.
 #: engines/cge2/metaengine.cpp:229
-#, fuzzy
-#| msgid "Close the Dialogue box"
 msgid "Close the dialog box"
 msgstr "Закрыть окно диалога"
 
 #: engines/chamber/metaengine.cpp:61 engines/drascula/metaengine.cpp:208
 #: engines/lab/metaengine.cpp:151 engines/sherlock/metaengine.cpp:338
 #: engines/sherlock/metaengine.cpp:790 engines/tot/metaengine.cpp:104
-#, fuzzy
-#| msgid "Quit panel keymapping"
 msgid "Quit dialog keymappings"
 msgstr "Раскладка клавиш панели выхода"
 
@@ -8193,10 +8143,8 @@ msgstr ""
 "самого начала, с новыми сохранениями."
 
 #: engines/crab/input/input.cpp:119
-#, fuzzy
-#| msgid "Talk/Interact"
 msgid "Talk / Interact"
-msgstr "Говорить/Взаимодействовать"
+msgstr "Говорить / Взаимодействовать"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/efh/metaengine.cpp:487
@@ -8328,10 +8276,8 @@ msgstr ""
 "скопировать в папку SOUND."
 
 #: engines/darkseed/dialogs.cpp:121
-#, fuzzy
-#| msgid "SFX volume:"
 msgid "SFX mode:"
-msgstr "Громкость SFX:"
+msgstr "Режим SFX:"
 
 #: engines/darkseed/dialogs.cpp:122
 msgid ""
@@ -8354,19 +8300,16 @@ msgstr ""
 
 #. I18N: Perform action on object where cursor points
 #: engines/darkseed/metaengine.cpp:42 engines/dragons/metaengine.cpp:135
-#: engines/tinsel/metaengine.cpp:294 engines/twp/metaengine.cpp:150
+#: engines/phoenixvr/metaengine.cpp:66 engines/tinsel/metaengine.cpp:294
+#: engines/twp/metaengine.cpp:150
 msgid "Action"
 msgstr "Действие"
 
 #: engines/darkseed/metaengine.cpp:48 engines/dragons/metaengine.cpp:141
-#, fuzzy
-#| msgid "Change Command"
 msgid "Change command"
 msgstr "Изменить команду"
 
 #: engines/darkseed/metaengine.cpp:54
-#, fuzzy
-#| msgid "Time Advance"
 msgid "Time advance"
 msgstr "Продвинуть время"
 
@@ -8437,10 +8380,8 @@ msgstr "Раскладки клавиш стартового меню"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. One of them can be assigned the "leader". This action toggles the inventory screen of the leader champion.
 #: engines/dm/metaengine.cpp:137
-#, fuzzy
-#| msgid "Toggle Inventory/IQ Points display"
 msgid "Toggle leader inventory"
-msgstr "Переключить показ инвентаря/очков IQ"
+msgstr "Переключить показ инвентаря лидера"
 
 #. I18N: (Game name: Dungeon Master) The game has multi-choice dialogs. If there is only one choice, then this action can be used to select it.
 #: engines/dm/metaengine.cpp:144
@@ -8449,50 +8390,36 @@ msgstr ""
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 1.
 #: engines/dm/metaengine.cpp:151
-#, fuzzy
-#| msgid "Toggle Inventory/IQ Points display"
 msgid "Toggle champion 1 inventory"
-msgstr "Переключить показ инвентаря/очков IQ"
+msgstr "Переключить показ инвентаря воина 1"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 2.
 #: engines/dm/metaengine.cpp:157
-#, fuzzy
-#| msgid "Toggle Inventory/IQ Points display"
 msgid "Toggle champion 2 inventory"
-msgstr "Переключить показ инвентаря/очков IQ"
+msgstr "Переключить показ инвентаря воина 2"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 3.
 #: engines/dm/metaengine.cpp:163
-#, fuzzy
-#| msgid "Toggle Inventory/IQ Points display"
 msgid "Toggle champion 3 inventory"
-msgstr "Переключить показ инвентаря/очков IQ"
+msgstr "Переключить показ инвентаря воина 3"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 4.
 #: engines/dm/metaengine.cpp:169
-#, fuzzy
-#| msgid "Toggle Inventory/IQ Points display"
 msgid "Toggle champion 4 inventory"
-msgstr "Переключить показ инвентаря/очков IQ"
+msgstr "Переключить показ инвентаря воина 4"
 
 #: engines/dm/metaengine.cpp:216 engines/freescape/movement.cpp:49
 #: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
-#, fuzzy
-#| msgid "Strafe Left"
 msgid "Strafe left"
 msgstr "Стрейф влево"
 
 #: engines/dm/metaengine.cpp:226 engines/titanic/metaengine.cpp:343
 #: engines/titanic/metaengine.cpp:384
-#, fuzzy
-#| msgid "Move backwards"
 msgid "Move backward"
 msgstr "Идти назад"
 
 #: engines/dm/metaengine.cpp:236 engines/freescape/movement.cpp:56
 #: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
-#, fuzzy
-#| msgid "Strafe Right"
 msgid "Strafe right"
 msgstr "Стрейф вправо"
 
@@ -8515,10 +8442,8 @@ msgid ""
 msgstr "Использовать TTS для чтения субтитров вслух (если TTS доступна)"
 
 #: engines/draci/metaengine.cpp:212
-#, fuzzy
-#| msgid "Skip intro/Exit map or inventory"
 msgid "Skip intro / Exit map or inventory"
-msgstr "Пропустить вступление/Выйти из карты или инвентаря"
+msgstr "Пропустить вступление / Выйти из карты или инвентаря"
 
 #: engines/draci/metaengine.cpp:218 engines/ngi/metaengine.cpp:191
 msgid "Open map"
@@ -8580,16 +8505,12 @@ msgstr ""
 "Смотрите %s"
 
 #: engines/dragons/metaengine.cpp:218
-#, fuzzy
-#| msgid "Debug Graphics"
 msgid "Debug graphics"
 msgstr "Отладка графики"
 
 #: engines/drascula/metaengine.cpp:207 engines/sherlock/metaengine.cpp:330
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Animation keymappings"
-msgstr "Раскладки клавиш указателя"
+msgstr "Раскладка клавиш указателя"
 
 #: engines/drascula/metaengine.cpp:212 engines/sherlock/metaengine.cpp:343
 #: engines/tetraedge/metaengine.cpp:92
@@ -8599,10 +8520,8 @@ msgid "Move / Interact / Select"
 msgstr "Идти влево"
 
 #: engines/drascula/metaengine.cpp:235 engines/tot/metaengine.cpp:129
-#, fuzzy
-#| msgid "Pick up"
 msgid "Pick"
-msgstr "Поднять"
+msgstr "Выбрать"
 
 #: engines/drascula/metaengine.cpp:266
 #, fuzzy
@@ -9392,12 +9311,12 @@ msgid "Save file created by different version."
 msgstr "Игра была сохранено в другой версии."
 
 #: engines/gob/inter_geisha.cpp:237 engines/gob/inter_playtoons.cpp:282
-#: engines/gob/inter_v2.cpp:1511 engines/tinsel/saveload.cpp:590
+#: engines/gob/inter_v2.cpp:1512 engines/tinsel/saveload.cpp:590
 msgid "Failed to load saved game from file."
 msgstr "Не удалось загрузить сохранённую игру из файла."
 
-#: engines/gob/inter_geisha.cpp:268 engines/gob/inter_v2.cpp:1590
-#: engines/gob/inter_v7.cpp:1948 engines/tinsel/saveload.cpp:603
+#: engines/gob/inter_geisha.cpp:268 engines/gob/inter_v2.cpp:1591
+#: engines/gob/inter_v7.cpp:1970 engines/tinsel/saveload.cpp:603
 msgid "Failed to save game to file."
 msgstr "Не удалось сохранить игру в файл."
 
@@ -11730,6 +11649,35 @@ msgstr "Показать / убрать консоль"
 msgid "Close current interface"
 msgstr "Простой интерфейс мыши"
 
+#: engines/phoenixvr/metaengine.cpp:107
+#: engines/wintermute/keymapper_tables.h:239
+#: engines/wintermute/keymapper_tables.h:262
+#: engines/wintermute/keymapper_tables.h:313
+#: engines/wintermute/keymapper_tables.h:352
+#: engines/wintermute/keymapper_tables.h:389
+#: engines/wintermute/keymapper_tables.h:499
+#: engines/wintermute/keymapper_tables.h:526
+#: engines/wintermute/keymapper_tables.h:651
+#: engines/wintermute/keymapper_tables.h:785
+#: engines/wintermute/keymapper_tables.h:812
+#: engines/wintermute/keymapper_tables.h:833
+#: engines/wintermute/keymapper_tables.h:858
+#: engines/wintermute/keymapper_tables.h:885
+#: engines/wintermute/keymapper_tables.h:1045
+#: engines/wintermute/keymapper_tables.h:1248
+#: engines/wintermute/keymapper_tables.h:1319
+#: engines/wintermute/keymapper_tables.h:1415
+#: engines/wintermute/keymapper_tables.h:1472
+#: engines/wintermute/keymapper_tables.h:1498
+#: engines/wintermute/keymapper_tables.h:1660
+#: engines/wintermute/keymapper_tables.h:1709
+#: engines/wintermute/keymapper_tables.h:1757
+#: engines/wintermute/keymapper_tables.h:1790
+#: engines/wintermute/keymapper_tables.h:1983
+#: engines/wintermute/keymapper_tables.h:2103
+msgid "Show hints"
+msgstr "Показать подсказки"
+
 #: engines/pink/gui.cpp:291
 msgid "This menu item is not yet implemented"
 msgstr "Этот пункт меню ещё не реализован"
@@ -11973,12 +11921,6 @@ msgstr "Пробная версия для Pocket PC не поддерживае
 #: engines/saga/metaengine.cpp:137
 msgid "I Have No Mouth support not compiled in"
 msgstr "Поддержка для I Have No Mouth не скомпилирована"
-
-#: engines/saga/metaengine.cpp:267
-#, fuzzy
-#| msgid "Default game keymap"
-msgid "Default game keymappings"
-msgstr "Раскладка клавиш игры по умолчанию"
 
 #: engines/saga/metaengine.cpp:269
 #, fuzzy
@@ -12456,7 +12398,7 @@ msgid "Your Name:"
 msgstr "Ваше имя:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4359
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4373
 msgid "Host"
 msgstr "Начать"
 
@@ -12466,7 +12408,7 @@ msgid "Querying games..."
 msgstr "Получаю список игр..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4359
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4373
 msgid "Join"
 msgstr "Подключиться"
 
@@ -13452,7 +13394,7 @@ msgstr ""
 "Измените конфигурацию звука соответствующим образом, чтобы правильно "
 "загрузить этот файл сохранения."
 
-#: engines/scumm/scumm.cpp:315
+#: engines/scumm/scumm.cpp:316
 msgid ""
 "You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural "
 "resolution is 320x240, which doesn't allow aspect ratio correction.\n"
@@ -13465,13 +13407,13 @@ msgstr ""
 "Коррекция соотношения сторон может быть достигнута путем обрезки разрешения "
 "до 320x200 на вкладке «Движок»."
 
-#: engines/scumm/scumm.cpp:1355
+#: engines/scumm/scumm.cpp:1356
 #, c-format
 msgid "This game requires the '%s' Macintosh executable for its fonts."
 msgstr ""
 "Для шрифтов для этой игры требуется исполняемый файл '%s' для Macintosh."
 
-#: engines/scumm/scumm.cpp:1364
+#: engines/scumm/scumm.cpp:1365
 #, c-format
 msgid ""
 "This game requires the '%s' Macintosh executable for its music and fonts."
@@ -13479,7 +13421,7 @@ msgstr ""
 "Для этой игры требуется исполняемый файл '%s' для Macintosh, содержащий "
 "музыку и шрифты."
 
-#: engines/scumm/scumm.cpp:1368
+#: engines/scumm/scumm.cpp:1369
 #, c-format
 msgid ""
 "Could not find the '%s' Macintosh executable to read resources from. %s will "
@@ -13488,25 +13430,25 @@ msgstr ""
 "Не удалось найти исполнимый файл '%s' Macintosh, чтобы прочитать ресурсы. %s "
 "будут выключены."
 
-#: engines/scumm/scumm.cpp:1369
+#: engines/scumm/scumm.cpp:1370
 msgid "The Mac GUI"
 msgstr "Mac GUI"
 
-#: engines/scumm/scumm.cpp:1369
+#: engines/scumm/scumm.cpp:1370
 msgid "The music and the Mac GUI"
 msgstr "Музыка и Mac GUI"
 
-#: engines/scumm/scumm.cpp:1398
+#: engines/scumm/scumm.cpp:1399
 #, c-format
 msgid "Could not open Macintosh resource file %s"
 msgstr "Не удалось открыть файл ресурсов Macintosh %s"
 
-#: engines/scumm/scumm.cpp:1401
+#: engines/scumm/scumm.cpp:1402
 #, c-format
 msgid "Could not find resource fork in Macintosh resource file %s"
 msgstr "Не удалось найти ветку ресурса в файле ресурсов Macintosh %s"
 
-#: engines/scumm/scumm.cpp:1408
+#: engines/scumm/scumm.cpp:1409
 #, c-format
 msgid ""
 "'%s' appears to be the wrong Dig executable. It may be the launcher one "
@@ -13519,7 +13461,7 @@ msgstr ""
 "и диалогов. Найдите папку 'The Dig f' на вашем CD. Внутри её подпапок вы "
 "найдёте нужный файл."
 
-#: engines/scumm/scumm.cpp:1569
+#: engines/scumm/scumm.cpp:1570
 msgid ""
 "It appears your ScummVM version was not built with TrueType Fonts support.\n"
 "\n"
@@ -13527,7 +13469,7 @@ msgid ""
 "some of the graphics on screen will be missing."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1831
+#: engines/scumm/scumm.cpp:1832
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -13537,7 +13479,7 @@ msgstr ""
 "*.BUN/*.SOU больше не поддерживается для этой игры, звук будет выключен.\n"
 "Пожалуйста, скопируйте заново файлы с оригинальных дисков без компрессии."
 
-#: engines/scumm/scumm.cpp:2321
+#: engines/scumm/scumm.cpp:2322
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -13546,7 +13488,7 @@ msgstr ""
 "Режим \"родного\" MIDI требует обновление Roland Upgrade от\n"
 "LucasArts, но не хватает %s. Переключаюсь на AdLib."
 
-#: engines/scumm/scumm.cpp:2336
+#: engines/scumm/scumm.cpp:2337
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
@@ -13554,7 +13496,7 @@ msgstr ""
 "Эта версия Monkey Island 1 известна тем, что в ней отсутствуют\n"
 "ресурсы, необходимые для MT-32. Переключаюсь на AdLib."
 
-#: engines/scumm/scumm.cpp:4235
+#: engines/scumm/scumm.cpp:4249
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -13564,7 +13506,7 @@ msgstr ""
 "игры Maniac Mansion должны быть скопированы в директорию 'Maniac' внутри "
 "директории игры Tentacle и сама игра должна быть добавлена в ScummVM."
 
-#: engines/scumm/scumm.cpp:4359
+#: engines/scumm/scumm.cpp:4373
 msgid "Would you like to host or join a network play session?"
 msgstr "Вы хотите присоединиться или начать сетевую игру?"
 
@@ -16033,10 +15975,8 @@ msgid "End key"
 msgstr ""
 
 #: engines/ultima/nuvie/metaengine.cpp:86
-#, fuzzy
-#| msgid "Toggle between voice/text/text and voice"
 msgid "Toggle between inventory and actor view"
-msgstr "Переключение между озвучкой/текстом/текстом и озвучкой"
+msgstr "Переключение между инвентарём и видом на героя"
 
 #: engines/ultima/nuvie/metaengine.cpp:87
 #, fuzzy
@@ -16945,34 +16885,6 @@ msgstr ""
 msgid "Show scene geometry"
 msgstr "Показать геомертию сцены"
 
-#: engines/wintermute/keymapper_tables.h:239
-#: engines/wintermute/keymapper_tables.h:262
-#: engines/wintermute/keymapper_tables.h:313
-#: engines/wintermute/keymapper_tables.h:352
-#: engines/wintermute/keymapper_tables.h:389
-#: engines/wintermute/keymapper_tables.h:499
-#: engines/wintermute/keymapper_tables.h:526
-#: engines/wintermute/keymapper_tables.h:651
-#: engines/wintermute/keymapper_tables.h:785
-#: engines/wintermute/keymapper_tables.h:812
-#: engines/wintermute/keymapper_tables.h:833
-#: engines/wintermute/keymapper_tables.h:858
-#: engines/wintermute/keymapper_tables.h:885
-#: engines/wintermute/keymapper_tables.h:1045
-#: engines/wintermute/keymapper_tables.h:1248
-#: engines/wintermute/keymapper_tables.h:1319
-#: engines/wintermute/keymapper_tables.h:1415
-#: engines/wintermute/keymapper_tables.h:1472
-#: engines/wintermute/keymapper_tables.h:1498
-#: engines/wintermute/keymapper_tables.h:1660
-#: engines/wintermute/keymapper_tables.h:1709
-#: engines/wintermute/keymapper_tables.h:1757
-#: engines/wintermute/keymapper_tables.h:1790
-#: engines/wintermute/keymapper_tables.h:1983
-#: engines/wintermute/keymapper_tables.h:2103
-msgid "Show hints"
-msgstr "Показать подсказки"
-
 #: engines/wintermute/keymapper_tables.h:269
 #: engines/wintermute/keymapper_tables.h:332
 #: engines/wintermute/keymapper_tables.h:367
@@ -17530,6 +17442,9 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#~ msgid "Default game keymap"
+#~ msgstr "Раскладка клавиш игры по умолчанию"
 
 #~ msgid "D-pad Up"
 #~ msgstr "Крестовина вверх"

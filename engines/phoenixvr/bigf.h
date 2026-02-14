@@ -19,9 +19,20 @@
  *
  */
 
-#ifndef M4_DBG_DEBUG_H
-#define M4_DBG_DEBUG_H
+#ifndef PHOENIXVR_BIGF_H
+#define PHOENIXVR_BIGF_H
 
-#include "m4/dbg/dbg_wscript.h"
+#include "common/str.h"
+
+namespace PhoenixVR {
+
+class BIGF {
+	Common::String _path;
+	size_t _dataPos;
+
+public:
+	BIGF(const Common::String &path);
+};
+} // namespace PhoenixVR
 
 #endif

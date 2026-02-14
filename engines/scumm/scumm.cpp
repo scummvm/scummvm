@@ -92,6 +92,7 @@
 #include "scumm/imuse/drivers/macintosh.h"
 #include "scumm/imuse/drivers/midi.h"
 #include "scumm/detection_steam.h"
+#include "scumm/debugger/debugtools.h"
 
 #ifdef ENABLE_HE
 #ifdef USE_ENET
@@ -2630,6 +2631,9 @@ Common::Error ScummEngine::go() {
 	// If requested, load a save game instead of running the boot script
 	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveTemporaryState)) {
 		_saveLoadFlag = 0;
+		if (_game.platform == Common::kPlatformNES && _game.id == GID_MANIAC && !(_game.features & GF_DEMO)) {
+			playNESTitleScreens();
+		}
 		runBootscript();
 	} else {
 		_loadFromLauncher = true; // The only purpose of this is triggering the IQ points update for INDY3/4
@@ -2680,6 +2684,16 @@ Common::Error ScummEngine::go() {
 		}
 	}
 #endif // ENABLE_HE
+
+#ifdef USE_IMGUI
+	if (debugChannelSet(-1, DEBUG_IMGUI)) {
+		ImGuiCallbacks callbacks;
+		callbacks.init = Editor::onImGuiInit;
+		callbacks.render = Editor::onImGuiRender;
+		callbacks.cleanup = Editor::onImGuiCleanup;
+		_system->setImGuiCallbacks(callbacks);
+	}
+#endif
 
 	while (!shouldQuit()) {
 		// Determine how long to wait before the next loop iteration should start

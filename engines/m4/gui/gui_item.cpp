@@ -252,18 +252,6 @@ bool drawGUIelement(ButtonDrawRec *bdr, M4Rect *myRect) {
 	return true;
 }
 
-bool InitItems() {
-	_G(items).origPrompt = nullptr;
-	_G(items).undoPrompt = nullptr;
-	_G(items).currTextField = nullptr;
-	_G(items).clipBoard[0] = '\0';
-	_G(items).clipBoard[99] = '\0';
-	if (!sizeofGUIelement_border(BUTTON, &_G(items).buttonWidth, &_G(items).buttonHeight))
-		return false;
-
-	return true;
-}
-
 Item *Item_create(Item *parent, enum ItemType type, int32 tag, M4CALLBACK cb) {
 	Item *temp = (Item *)mem_alloc(sizeof(Item), STR_ITEM);
 
@@ -299,23 +287,6 @@ void Item_destroy(Item *myItem) {
 		mem_free(myItem->prompt);
 
 	mem_free((void *)myItem);
-}
-
-void Item_empty_list(Item *myItem) {
-	ListItem *myList = myItem->myList;
-	ListItem *tempListItem = myList;
-	while (tempListItem) {
-		myList = myList->next;
-		mem_free((void *)tempListItem);
-		tempListItem = myList;
-	}
-	myItem->myList = nullptr;
-	myItem->currItem = nullptr;
-	myItem->viewTop = nullptr;
-	myItem->viewBottom = nullptr;
-	myItem->myListCount = 0;
-	myItem->viewIndex = 0;
-	myItem->thumbY = minThumbY;
 }
 
 static int32 item_string_width(char *myStr, int32 spacing) {
@@ -355,7 +326,9 @@ static int32 item_string_width(char *myStr, int32 spacing) {
 static int32 item_string_write(Buffer *target, char *myStr, int32 x, int32 y, int32 w, int32 spacing, int32 color, int32 highlight) {
 	char tempStr[2];
 
-	if (!target) return false;
+	if (!target)
+		return false;
+
 	char *tempPtr = strchr(myStr, '^');
 	if (tempPtr == nullptr) {
 		tempPtr = strchr(myStr, '~');
@@ -599,207 +572,6 @@ static void SetViewIndex(Item *myItem) {
 	}
 	myItem->viewTop = myListItem;
 	Item_SetViewBottom(myItem);
-}
-
-bool ListItemExists(Item *myItem, char *prompt, int32 listTag) {
-	if (!myItem)
-		return false;
-
-	ListItem *myListItems = myItem->myList;
-	if (prompt) {
-		while (myListItems && strcmp(myListItems->prompt, prompt)) {
-			myListItems = myListItems->next;
-		}
-	} else {
-		while (myListItems && (myListItems->tag != listTag)) {
-			myListItems = myListItems->next;
-		}
-	}
-	if (myListItems)
-		return true;
-
-	return false;
-}
-
-bool ListItemAdd(Item *myItem, char *prompt, int32 listTag, int32 addMode, ListItem *changedItem) {
-	ListItem *newListItem;
-
-	if (!myItem)
-		return false;
-
-	if (changedItem)
-		newListItem = changedItem;
-	else {
-		newListItem = (ListItem *)mem_alloc(sizeof(ListItem), STR_LIST);
-
-		Common::strlcpy(newListItem->prompt, prompt, 80);
-		newListItem->tag = listTag;
-	}
-	//Add it into the list in the correct place...
-	ListItem *myList = myItem->myList;
-	if (!myList) {
-		newListItem->prev = nullptr;
-		newListItem->next = nullptr;
-		myItem->myList = newListItem;
-		myItem->currItem = newListItem;
-		myItem->viewTop = newListItem;
-		myItem->viewIndex = 0;
-		myItem->thumbY = minThumbY;
-	} else {
-		switch (addMode) {
-		case LIST_SEQUN:
-			while (myList->next) myList = myList->next;
-			myList->next = newListItem;
-			newListItem->prev = myList;
-			newListItem->next = nullptr;
-			break;
-		case LIST_ALPH:
-			if (strcmp(newListItem->prompt, myList->prompt) <= 0) {		//add to front
-				newListItem->prev = nullptr;
-				newListItem->next = myList;
-				myList->prev = newListItem;
-				myItem->myList = newListItem;
-				myItem->currItem = newListItem;
-				myItem->viewTop = newListItem;
-			} else {
-				while (myList->next && strcmp(newListItem->prompt, myList->next->prompt) > 0) {
-					myList = myList->next;
-				}
-				if (myList->next) {
-					newListItem->next = myList->next;
-					newListItem->prev = myList;
-					myList->next->prev = newListItem;
-					myList->next = newListItem;
-				} else {
-					newListItem->next = nullptr;
-					newListItem->prev = myList;
-					myList->next = newListItem;
-				}
-			}
-			break;
-		case LIST_BY_TAG:
-		default:
-			if (newListItem->tag <= myList->tag) {		//add to front
-				newListItem->prev = nullptr;
-				newListItem->next = myList;
-				myList->prev = newListItem;
-				myItem->myList = newListItem;
-				myItem->currItem = newListItem;
-				myItem->viewTop = newListItem;
-			} else {
-				while (myList->next && (newListItem->tag > myList->next->tag)) {
-					myList = myList->next;
-				}
-				if (myList->next) {
-					newListItem->next = myList->next;
-					newListItem->prev = myList;
-					myList->next->prev = newListItem;
-					myList->next = newListItem;
-				} else {
-					newListItem->next = nullptr;
-					newListItem->prev = myList;
-					myList->next = newListItem;
-				}
-			}
-			break;
-		}
-		if (changedItem) {
-			myItem->currItem = myList;
-			myItem->viewTop = myList;
-		}
-	}
-	myItem->myListCount++;
-	if (!Item_SetViewBottom(myItem))
-		ViewCurrListItem(myItem);
-	else
-		CalculateViewIndex(myItem);
-
-	return true;
-}
-
-bool ListItemDelete(Item *myItem, ListItem *myListItem, int32 listTag) {
-	ListItem *myList;
-
-	if (!myItem)
-		return false;
-
-	if (!myListItem) {
-		myList = myItem->myList;
-		while (myList && (myList->tag != listTag))
-			myList = myList->next;
-	} else
-		myList = myListItem;
-
-	if (!myList)
-		return false;
-
-	if (myList == myItem->myList) {	//first in the list...
-		myItem->myList = myItem->myList->next;
-		if (myItem->myList)
-			myItem->myList->prev = nullptr;
-	} else {
-		myList->prev->next = myList->next;
-		if (myList->next)
-			myList->next->prev = myList->prev;
-	}
-	if (myList == myItem->currItem) {
-		if (myList->next)
-			myItem->currItem = myList->next;
-		else
-			myItem->currItem = myList->prev;
-	}
-	if (myList == myItem->viewTop) {
-		if (myItem->viewTop->prev)
-			myItem->viewTop = myItem->viewTop->prev;
-		else
-			myItem->viewTop = myItem->viewTop->next;
-	}
-	myItem->myListCount--;
-	Item_SetViewBottom(myItem);
-	if (!myItem->viewBottom)
-		ViewCurrListItem(myItem);
-	else
-		CalculateViewIndex(myItem);
-
-	mem_free((void *)myList);
-	return true;
-}
-
-bool ListItemChange(Item *myItem, ListItem *myListItem, int32 listTag,
-	char *newPrompt, int32 newTag, int32 changeMode) {
-	ListItem *myList;
-
-	if (!myItem)
-		return false;
-
-	if (!myListItem) {
-		myList = myItem->myList;
-		while (myList && (myList->tag != listTag))
-			myList = myList->next;
-	} else
-		myList = myListItem;
-
-	if (!myList)
-		return false;
-	if (!strcmp(myList->prompt, newPrompt) && myList->tag == newTag)
-		return false;
-
-	Common::strcpy_s(myList->prompt, newPrompt);
-	const int32 oldTag = myList->tag;
-	myList->tag = newTag;
-	if (((changeMode == LIST_BY_TAG) && (oldTag != newTag)) || (changeMode == LIST_ALPH)) {
-		if (myList == myItem->myList) {	//first in the list...
-			myItem->myList = myItem->myList->next;
-			if (myItem->myList)
-				myItem->myList->prev = nullptr;
-		} else {
-			myList->prev->next = myList->next;
-			if (myList->next)
-				myList->next->prev = myList->prev;
-		}
-		ListItemAdd(myItem, nullptr, 0, changeMode, myList);
-	}
-	return true;
 }
 
 bool GetNextListItem(Item *myItem) {
@@ -1215,7 +987,7 @@ static void Item_Clear_origPrompt() {
 	}
 }
 
-Item *Item_RestoreTextField(void) {
+Item *Item_RestoreTextField() {
 	if (!_G(items).origPrompt)
 		return nullptr;
 
@@ -1231,7 +1003,7 @@ Item *Item_RestoreTextField(void) {
 	return _G(items).currTextField;
 }
 
-Item *Item_CheckTextField(void) {
+Item *Item_CheckTextField() {
 	Item *myItem = nullptr;
 	if (_G(items).origPrompt) {
 		if (strcmp(_G(items).currTextField->prompt, _G(items).origPrompt))
@@ -1257,7 +1029,7 @@ static void Item_SaveTextFieldChange(Item *myItem, bool majorChange) {
 	_G(items).undoAux2 = _G(items).undoPrompt + (myItem->aux2 - myItem->prompt);
 }
 
-static bool Item_UndoTextFieldChange(void) {
+static bool Item_UndoTextFieldChange() {
 	if (_G(items).undoPrompt) {
 		char *tempBuf = mem_strdup(_G(items).currTextField->prompt);
 		char *tempAux = tempBuf + (_G(items).currTextField->aux - _G(items).currTextField->prompt);

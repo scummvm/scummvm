@@ -36,7 +36,6 @@ class Term {
 private:
 	Common::WriteStream *_file = nullptr;
 	bool _using_mono_screen = false;
-	bool _use_log_file = false;
 	TermMode _mode = NO_MODE;
 
 public:

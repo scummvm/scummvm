@@ -43,24 +43,18 @@ namespace M4 {
 frac16 FixedMul(frac16 Multiplicand, frac16 Multiplier);
 frac16 FixedDiv(frac16 Dividend, frac16 Divisor);
 
-unsigned long sqrtul(unsigned long v);
-
 int32 imath_max(int32 a, int32 b);
 int32 imath_min(int32 a, int32 b);
 int32 imath_abs(int32 a);
 
 void imath_seed(int32 seedNum);
-uint32 imath_random();
+
 int32 imath_ranged_rand(int32 a, int32 b);
 frac16 imath_ranged_rand16(frac16 a, frac16 b);
 bool imath_rand_bool(int max);
 
-frac16 dist2d(int32 x1, int32 y1, int32 x2, int32 y2);
 frac16 SqrtF16(frac16 n);
 frac16 ArcTan(frac16 x, frac16 y);
-
-uint16 HighWord(uint32 n);
-uint16 LowWord(uint32 n);
 
 uint32 convert_intel32(uint32 a);
 uint16 convert_intel16(uint16 a);
@@ -75,10 +69,6 @@ inline short abs(short a) {
 
 inline long abs(long a) {
 	return (a >= 0) ? a : -a;
-}
-
-inline int16 convert_intel16(void *src) {
-	return READ_LE_INT16(src);
 }
 
 } // namespace M4

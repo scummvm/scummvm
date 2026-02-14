@@ -408,6 +408,9 @@ void OSystem_iOS7::addSysArchivesToSearchSet(Common::SearchSet &s, int priority)
 		}
 		CFRelease(fileUrl);
 	}
+	// Add the current dir as a very last resort (cf. bug #3984).
+	// TODO: check if it's really needed
+	s.addDirectory(".", ".", priority - 1);
 }
 
 void iOS7_buildSharedOSystemInstance() {

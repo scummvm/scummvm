@@ -46,45 +46,6 @@ Hotkeys::Hotkeys() {
 	_teleportDialog = nullptr;
 }
 
-void Hotkeys::disable_hot_keys() {
-	RemoveSystemHotkey(KEY_HOME);
-	RemoveSystemHotkey(KEY_PAGE_UP);
-	RemoveSystemHotkey(KEY_PAGE_DOWN);
-	RemoveSystemHotkey(KEY_END);
-
-	RemoveSystemHotkey(KEY_ALT_UP);
-	RemoveSystemHotkey(KEY_ALT_DOWN);
-	RemoveSystemHotkey(KEY_ALT_LEFT);
-	RemoveSystemHotkey(KEY_ALT_RIGHT);
-
-	RemoveSystemHotkey(KEY_CTRL_UP);
-	RemoveSystemHotkey(KEY_CTRL_DOWN);
-	RemoveSystemHotkey(KEY_CTRL_LEFT);
-	RemoveSystemHotkey(KEY_CTRL_RIGHT);
-
-	RemoveSystemHotkey(KEY_F4);
-
-	RemoveSystemHotkey('[');
-	RemoveSystemHotkey(']');
-	RemoveSystemHotkey('{');
-	RemoveSystemHotkey('}');
-
-	//RemoveSystemHotkey( KEY_ALT_B);
-	RemoveSystemHotkey(KEY_ALT_C);
-	RemoveSystemHotkey(KEY_ALT_D);
-	RemoveSystemHotkey(KEY_ALT_F);
-	RemoveSystemHotkey(KEY_ALT_G);
-	RemoveSystemHotkey(KEY_ALT_I);
-	RemoveSystemHotkey(KEY_ALT_B);
-	RemoveSystemHotkey(KEY_ALT_M);
-	RemoveSystemHotkey(KEY_ALT_P);
-	RemoveSystemHotkey(KEY_ALT_R);
-	RemoveSystemHotkey(KEY_ALT_S);
-	RemoveSystemHotkey(KEY_ALT_T);
-	RemoveSystemHotkey(KEY_ALT_W);
-	RemoveSystemHotkey(KEY_ALT_Z);
-}
-
 void Hotkeys::add_hot_keys() {
 	AddSystemHotkey(KEY_F2, saveGame);
 	AddSystemHotkey(KEY_F3, loadGame);

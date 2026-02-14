@@ -22,6 +22,7 @@
 #ifndef M4_RIDDLE_ROOMS_SECTION2_ROOM207_H
 #define M4_RIDDLE_ROOMS_SECTION2_ROOM207_H
 
+#include "m4/adv_r/adv_trigger.h"
 #include "m4/riddle/rooms/room.h"
 
 namespace M4 {

@@ -29,7 +29,6 @@ namespace M4 {
 #define FL __FILE__,__LINE__
 
 void NORETURN_PRE error_show(const char *filename, uint32 line, const char *fmt, ...) NORETURN_POST;
-void NORETURN_PRE error_show(const char *filename, uint32 line) NORETURN_POST;
 
 } // namespace M4
 

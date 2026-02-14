@@ -160,42 +160,40 @@ Widget *ListWidget::findWidget(int x, int y) {
 	return this;
 }
 
-void ListWidget::setSelected(int item) {
-	// HACK/FIXME: If our _listIndex has a non zero size,
-	// we will need to look up, whether the user selected
-	// item is present in that list
-	if (!_filter.empty()) {
-		int filteredItem = -1;
-
-		for (uint i = 0; i < _listIndex.size(); ++i) {
-			if (_listIndex[i] == item) {
-				filteredItem = i;
-				break;
-			}
-		}
-
-		item = filteredItem;
+int ListWidget::findDataIndex(int dataIndex) const {
+	// The given index is an index in the _dataList.
+	// We want the index in the current _list (which may be filtered) for this data.
+	// Sanity check to avoid iterating on the _listIndex if we know the given index is invalid.
+	if (dataIndex < -1 || dataIndex >= (int)_dataList.size())
+		return -1;
+	for (uint i = 0; i < _listIndex.size(); ++i) {
+		if (_listIndex[i] == dataIndex)
+			return i;
 	}
+	return -1;
+}
 
-	assert(item >= -1 && item < (int)_list.size());
+void ListWidget::setSelected(int item) {
+	if (item < -1 || item >= (int)_list.size())
+		return;
 
 	// We only have to do something if the widget is enabled and the selection actually changes
-	if (isEnabled() && _selectedItem != item) {
+	if (isEnabled() && (_selectedItem == -1 || _selectedItem >= (int)_list.size() || _listIndex[_selectedItem] != item)) {
 		if (_editMode)
 			abortEditMode();
 
-		_selectedItem = item;
+		_selectedItem = findDataIndex(item);
 
 		// Clear previous selections and mark only this item
 		if (_multiSelectEnabled) {
 			clearSelection();
-			markSelectedItem(item, true);
 		}
+		markSelectedItem(_selectedItem, true);
 
 		// Notify clients that the selection changed.
 		sendCommand(kListSelectionChangedCmd, _selectedItem);
 
-		if (!isItemVisible(_selectedItem)) {
+		if (_selectedItem != -1 && !isItemVisible(_selectedItem)) {
 			// scroll selected item to center if possible
 			_currentPos = _selectedItem - _entriesPerPage / 2;
 			scrollToCurrent();
@@ -311,6 +309,7 @@ void ListWidget::scrollTo(int item) {
 		_currentPos = item;
 		checkBounds();
 		scrollBarRecalc();
+		markAsDirty();
 	}
 }
 
@@ -556,21 +555,38 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 		case Common::KEYCODE_DOWN:
 			// Down: Add next item to selection (Ctrl+Click logic without toggle)
 			if (_selectedItem < (int)_list.size() - 1) {
+				int newItem = _selectedItem + 1;
+				bool scrolled = false;
 				if ( g_system->getEventManager()->getModifierState() & Common::KBD_SHIFT) {
-					int newItem = _selectedItem + 1;
-					if (_lastSelectionStartItem < newItem)
-						markSelectedItem(newItem, true);
-					else
-						markSelectedItem(_selectedItem, false);
-					_selectedItem = newItem;
-					scrollToCurrent();
-					dirty = true;
+					// Skip selecting Group Headers
+					while (newItem < (int)_list.size() && !isItemSelectable(newItem))
+						newItem++;
+					if (newItem < (int)_list.size()) {
+						if (_lastSelectionStartItem < newItem)
+							markSelectedItem(newItem, true);
+						else
+							markSelectedItem(_selectedItem, false);
+						_selectedItem = newItem;
+						scrolled = true;
+					}
 				} else {
 					clearSelection();
-					_selectedItem++;
+					// Skip selecting Group Headers
+					while (newItem < (int)_list.size() && !isItemSelectable(newItem))
+						newItem++;
+					if (newItem < (int)_list.size()) {
+						_selectedItem = newItem;
+						scrolled = true;
+					}
+					// If dead end, restore the previous selection
 					markSelectedItem(_selectedItem, true);
 					_lastSelectionStartItem = _selectedItem;
 				}
+				if (_selectedItem < (int)_list.size() && !isItemVisible(_selectedItem))
+					scrollToCurrent();
+				// If there are no selectable items, Scroll to Bottom
+				if (!scrolled)
+					scrollTo((int)_list.size() - 1);
 			}
 			break;
 
@@ -607,21 +623,38 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 		case Common::KEYCODE_UP:
 			// Up: Add previous item to selection (Ctrl+Click logic without toggle)
 			if (_selectedItem > 0) {
+				int newItem = _selectedItem - 1;
+				bool scrolled = false;
 				if (g_system->getEventManager()->getModifierState() & Common::KBD_SHIFT) {
-					int newItem = _selectedItem - 1;
-					if (_lastSelectionStartItem > newItem)
-						markSelectedItem(newItem, true);
-					else
-						markSelectedItem(_selectedItem, false);
-					_selectedItem = newItem;
-					scrollToCurrent();
-					dirty = true;
+					// Skip selecting Group Headers
+					while (newItem >= 0 && !isItemSelectable(newItem))
+						newItem--;
+					if (newItem >= 0) {
+						if (_lastSelectionStartItem > newItem)
+							markSelectedItem(newItem, true);
+						else
+							markSelectedItem(_selectedItem, false);
+						_selectedItem = newItem;
+						scrolled = true;
+					}
 				} else {
 					clearSelection();
-					_selectedItem--;
+					// Skip selecting Group Headers
+					while (newItem >= 0 && !isItemSelectable(newItem))
+						newItem--;
+					if (newItem >= 0) {
+						_selectedItem = newItem;
+						scrolled = true;
+					}
+					// If dead end, restore the previous selection
 					markSelectedItem(_selectedItem, true);
 					_lastSelectionStartItem = _selectedItem;
 				}
+				if (_selectedItem >= 0 && !isItemVisible(_selectedItem))
+					scrollToCurrent();
+				// If there are no selectable items, Scroll to Top
+				if (!scrolled)
+					scrollTo(0);
 			}
 			break;
 

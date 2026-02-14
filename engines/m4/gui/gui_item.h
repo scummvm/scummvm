@@ -115,19 +115,12 @@ struct Item_Globals {
 	char clipBoard[100] = { 0 };
 };
 
-bool InitItems(void);
 Item *Item_create(Item *parent, enum ItemType type, int32 tag, M4CALLBACK cb);
 void Item_destroy(Item *myItem);
-void Item_empty_list(Item *myItem);
 Item *ItemAdd(Item *itemList, int32 x, int32 y, int32 w, int32 h, const char *prompt, int32 tag,
 	ItemType type, M4CALLBACK cb, int32 promptMax);
 Item *ItemFind(Item *itemList, int32 tag);
 bool Item_SetViewBottom(Item *i);
-bool ListItemExists(Item *myItem, char *prompt, int32 listTag);
-bool ListItemAdd(Item *myItem, char *prompt, int32 listTag, int32 addMode, ListItem *changedItem);
-bool ListItemDelete(Item *myItem, ListItem *myListItem, int32 listTag);
-bool ListItemChange(Item *myItem, ListItem *myListItem, int32 listTag,
-	char *newPrompt, int32 newTag, int32 changeMode);
 void ViewCurrListItem(Item *myItem);
 ListItem *ListItemFind(Item *myItem, int32 searchMode, char *searchStr, int32 parm1);
 bool ListItemSearch(Item *myItem, int32 searchMode, char *searchStr, int32 parm1);
@@ -135,9 +128,9 @@ bool DoubleClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset);
 bool ClickOnListBox(Item *myItem, int32 xOffset, int32 yOffset, int32 scrollType);
 bool ResetDefaultListBox(Item *myItem);
 bool Item_change_prompt(Item *myItem, const char *newPrompt);
-void Item_ClearOrigPrompt(void);
-Item *Item_RestoreTextField(void);
-Item *Item_CheckTextField(void);
+void Item_ClearOrigPrompt();
+Item *Item_RestoreTextField();
+Item *Item_CheckTextField();
 void Item_SaveTextField(Item *myItem);
 void SetTextBlockBegin(Item *myItem, int32 relXPos);
 void SetTextBlockEnd(Item *myItem, int32 relXPos);

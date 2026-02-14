@@ -938,20 +938,23 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"APPLIS/appli_07.ini", kSaveModeSave, nullptr, "app info" },
 
 	// Adi 4
-	// Temporary ancillary files
-	{"DATA/premier.dep", kSaveModeSave, nullptr, nullptr},
-	{"DATA/quitter.dep", kSaveModeSave, nullptr, nullptr},
-	{"DATA/appel.dep", kSaveModeSave, nullptr, nullptr},
-	{"DATA/parole.dep", kSaveModeSave, nullptr, nullptr},
-	{"DATA/perso.dep", kSaveModeSave, nullptr, nullptr},
-	{"DATA/nouveau.dep", kSaveModeSave, nullptr, nullptr},
+	// Temporary ancillary files,
 	{"DATA/iduser.tmp", kSaveModeSave, nullptr, nullptr},
 	{"adi.tmp", kSaveModeSave, nullptr, nullptr},
 	{"adi4.tmp", kSaveModeSave, nullptr, nullptr},
 
 	// Persitent files
+	{"RETURN_FROM_GAMEBOX", kSaveModeSave, nullptr, nullptr}, // Fictive file used to simulate returning from Gamebox in ScummVM
+	{"TEMP/ADI4.PHO", kSaveModeSave, nullptr, nullptr},
+	{"perso.dep", kSaveModeSave, nullptr, nullptr},
+	{"premier.dep", kSaveModeSave, nullptr, nullptr},
+	{"quitter.dep", kSaveModeSave, nullptr, nullptr},
+	{"appel.dep", kSaveModeSave, nullptr, nullptr},
+	{"parole.dep", kSaveModeSave, nullptr, nullptr},
+	{"nouveau.dep", kSaveModeSave, nullptr, nullptr},
 	{"DATA/iduser.inf", kSaveModeSave, nullptr, nullptr},
 	{"adi.inf", kSaveModeSave, nullptr, nullptr},
+	{"adi.bis", kSaveModeSave, nullptr, nullptr},
 	{"DATA/ado4.inf", kSaveModeSave, nullptr, nullptr},
 	{"DATA/mcurrent.inf", kSaveModeSave, nullptr, nullptr},
 
@@ -1838,9 +1841,9 @@ bool SaveLoad_v7::GameFileHandler::save(const byte *ptrRaw, int16 dataVar, int32
 	}
 
 	int32 fileSize = getSize();
-	int32 newFileSize = size;
-	if (fileSize > 0) {
-		newFileSize = MAX<int32>(fileSize, size + offset);
+	int32 newFileSize = size + offset;
+	if (fileSize > newFileSize) {
+		newFileSize = fileSize;
 	}
 
 	SavePartVars vars(_vm, newFileSize);
@@ -2104,19 +2107,50 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 	int indexAdi4file = 0;
 	_saveFiles[index++].handler = _adi4GameFileHandler[indexAdi4file++] = new GameFileHandler(_vm,
 																							  targetName,
+																							  "scummvm_autosave");
+
+	_saveFiles[index++].handler = _adi4GameFileHandler[indexAdi4file++] = new GameFileHandler(_vm,
+																							  targetName,
+																							  "adi4_pho");
+
+	_saveFiles[index++].handler = _adi4GameFileHandler[indexAdi4file++] = new GameFileHandler(_vm,
+																							  targetName,
+																							  "perso_dep");
+	_saveFiles[index++].handler = _adi4GameFileHandler[indexAdi4file++] = new GameFileHandler(_vm,
+																							  targetName,
+																							  "premier_dep");
+	_saveFiles[index++].handler = _adi4GameFileHandler[indexAdi4file++] = new GameFileHandler(_vm,
+																							  targetName,
+																							  "quitter_dep");
+	_saveFiles[index++].handler = _adi4GameFileHandler[indexAdi4file++] = new GameFileHandler(_vm,
+																							  targetName,
+																							  "appel_dep");
+	_saveFiles[index++].handler = _adi4GameFileHandler[indexAdi4file++] = new GameFileHandler(_vm,
+																							  targetName,
+																							  "parole_dep");
+	_saveFiles[index++].handler = _adi4GameFileHandler[indexAdi4file++] = new GameFileHandler(_vm,
+																							  targetName,
+																							  "nouveau_dep");
+
+	_saveFiles[index++].handler = _adi4GameFileHandler[indexAdi4file++] = new GameFileHandler(_vm,
+																							  targetName,
 																							  "id_user");
 
 	_saveFiles[index++].handler = _adi4GameFileHandler[indexAdi4file++] = new GameFileHandler(_vm,
 																							  targetName,
-																							  "adi");
+																							  "adi_inf");
 
 	_saveFiles[index++].handler = _adi4GameFileHandler[indexAdi4file++] = new GameFileHandler(_vm,
 																							  targetName,
-																							  "ado4");
+																							  "adi_bis");
 
 	_saveFiles[index++].handler = _adi4GameFileHandler[indexAdi4file++] = new GameFileHandler(_vm,
 																							  targetName,
-																							  "mcurrent");
+																							  "ado4_inf");
+
+	_saveFiles[index++].handler = _adi4GameFileHandler[indexAdi4file++] = new GameFileHandler(_vm,
+																							  targetName,
+																							  "mcurrent_inf");
 
 	for (uint32 i = 0; i < kChildrenCount; i++) {
 		_saveFiles[index++].handler = _adi4GameFileHandler[indexAdi4file++] = new GameFileHandler(_vm,

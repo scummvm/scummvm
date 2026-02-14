@@ -23,6 +23,7 @@
 #define M4_RIDDLE_ROOMS_SECTION9_ROOM903_H
 
 #include "m4/core/rooms.h"
+#include "m4/wscript/ws_machine.h"
 
 namespace M4 {
 namespace Riddle {

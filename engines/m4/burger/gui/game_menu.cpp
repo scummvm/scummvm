@@ -296,7 +296,7 @@ void OptionsMenu::cb_Options_Digestability(menuItemHSlider *myItem, guiMenu *myM
 	guiMenu::itemRefresh(nullptr, OM_TAG_DONE, myMenu);
 }
 
-void OptionsMenu::destroyMenu(void) {
+void OptionsMenu::destroyMenu() {
 	if (!_GM(opMenu))
 		return;
 

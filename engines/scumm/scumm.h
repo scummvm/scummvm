@@ -520,6 +520,7 @@ class ScummEngine : public Engine, public Common::Serializable {
 	friend class MacV5Gui;
 	friend class MacV6Gui;
 	friend class LogicHEBasketball;
+	friend class ScummEditor;
 
 public:
 	/* Put often used variables at the top.
@@ -1088,6 +1089,7 @@ protected:
 	void deleteRoomOffsets();
 	virtual void readRoomsOffsets();
 	void askForDisk(const Common::Path &filename, int disknum);
+	byte getEncByte(int room);
 	bool openResourceFile(const Common::Path &filename, byte encByte);
 
 	void loadPtrToResource(ResType type, ResId idx, const byte *ptr);
@@ -1348,6 +1350,7 @@ protected:
 	void initCycl(const byte *ptr);	// Color cycle
 
 	void decodeNESBaseTiles();
+	void playNESTitleScreens();
 
 	void drawObject(int obj, int scrollType);
 	void drawRoomObjects(int arg);

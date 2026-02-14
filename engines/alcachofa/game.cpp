@@ -223,6 +223,12 @@ Game *Game::create() {
 			return createForVaqueros();
 		}
 		break;
+	case EngineVersion::V2_0:
+		switch (*desc.desc.gameId) {
+		case 's':
+			return createForSecta();
+		}
+		break;
 	case EngineVersion::V3_0:
 	case EngineVersion::V3_1:
 		return createForMovieAdventureSpecial();

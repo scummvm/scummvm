@@ -22,11 +22,12 @@
 #include "m4/riddle/rooms/section8/room808.h"
 
 
+#include "m4/riddle/riddle.h"
+#include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/other.h"
 #include "m4/core/errors.h"
 #include "m4/graphics/gr_series.h"
-#include "m4/riddle/riddle.h"
-#include "m4/riddle/vars.h"
 #include "m4/wscript/wst_regs.h"
 
 namespace M4 {

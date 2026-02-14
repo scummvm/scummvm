@@ -22,6 +22,7 @@
 #include "m4/burger/rooms/section1/room140_141.h"
 #include "m4/burger/rooms/section1/section1.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/graphics/gr_series.h"
 
 namespace M4 {
@@ -310,31 +311,31 @@ void Room140_141::daemon() {
 				if (imath_ranged_rand(1, 15) == 1) {
 					digi_stop(2);
 					_trufflesMode = 1;
-					Series::series_play("140tr01", 0xa00, 0, 6, 10, 0, 100, 0, 0, 0, 0);
+					Series::series_play("140tr01", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 10, 0, 100, 0, 0, 0, 0);
 				} else {
 					playRandom();
 					frame = imath_ranged_rand(7, 8);
-					Series::series_play("140tr01", 0xa00, 0, 6, 10, 0, 100, 0, 0, frame, frame);
+					Series::series_play("140tr01", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 10, 0, 100, 0, 0, frame, frame);
 				}
 			} else {
 				digi_stop(2);
 				_trufflesMode = 1;
-				Series::series_play("140tr01", 0xa00, 0, 6, 10, 0, 100, 0, 0, 0, 0);
+				Series::series_play("140tr01", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 10, 0, 100, 0, 0, 0, 0);
 			}
 			break;
 
 		case 4:
 			_trufflesMode = 3;
-			Series::series_play("140tr01", 0xa00, 0, 6, 6, 0, 100, 0, 0, 9, 11);
+			Series::series_play("140tr01", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 6, 0, 100, 0, 0, 9, 11);
 			break;
 
 		case 7:
 			if (_trufflesShould == 7) {
 				frame = imath_ranged_rand(5, 6);
-				Series::series_play("140tr02", 0xa00, 0, 6, 7, 0, 100, 0, 0, frame, frame);
+				Series::series_play("140tr02", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 7, 0, 100, 0, 0, frame, frame);
 
 			} else {
-				Series::series_play("140tr02", 0xa00, 0, 6, 7, 0, 100, 0, 0, 7, 8);
+				Series::series_play("140tr02", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 7, 0, 100, 0, 0, 7, 8);
 			}
 			break;
 
@@ -343,14 +344,14 @@ void Room140_141::daemon() {
 			case 10:
 				digi_play("140t002", 2, 255, 12);
 				_trufflesMode = 10;
-				Series::series_play("140tr06", 0xa00, 0, 6, 8, 0, 100, 0, 0, 0, 4);
+				Series::series_play("140tr06", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 8, 0, 100, 0, 0, 0, 4);
 				break;
 
 			case 12:
 				digi_play(Common::String::format("140t004%c", 'a' + imath_ranged_rand(0, 3)).c_str(),
 					2, 255, 10);
 				_trufflesMode = 12;
-				Series::series_play("140tr07", 0xa00, 0, 6, 7, 0, 100, 0, 0, 0, 3);
+				Series::series_play("140tr07", 0xa00, 0, kCHANGE_TRUFFLES_ANIMATION, 7, 0, 100, 0, 0, 0, 3);
 
 				if (player_said("gear", "dock") || player_said("try to dock")) {
 					kernel_timing_trigger(90, 16);

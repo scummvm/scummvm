@@ -23,8 +23,9 @@ namespace Alcachofa {
 
 const PlainGameDescriptor alcachofaGames[] = {
 	{ "aventuradecine", "Mort & Phil: A Movie Adventure" },
-	{ "terror", "Mortadelo y Filemón: Terror, Espanto y Pavor"},
-	{ "vaqueros", "Mortadelo y Filemón: Dos vaqueros chapuceros"},
+	{ "secta", "Mortadelo y Filemón: La Sexta Secta" },
+	{ "terror", "Mortadelo y Filemón: Terror, Espanto y Pavor" },
+	{ "vaqueros", "Mortadelo y Filemón: Dos vaqueros chapuceros" },
 	{ 0, 0 }
 };
 
@@ -127,6 +128,22 @@ const AlcachofaGameDescription gameDescriptions[] = {
 			GUIO2(GAMEOPTION_32BITS, GAMEOPTION_HIGH_QUALITY)
 		},
 		EngineVersion::V3_1
+	},
+
+	//
+	// La Sexta Secta
+	//
+	{
+		{
+			"secta",
+			"Mortadelo y Filemón: La Sexta Secta",
+			AD_ENTRY1s("Fondos/MUSEO_O.ANI", "40a880c866aabbb5c09899d9b7ca66b6", 10630),
+			Common::ES_ESP,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE | ADGF_USEEXTRAASTITLE,
+			GUIO0()
+		},
+		EngineVersion::V2_0
 	},
 
 	//

@@ -44,7 +44,7 @@ bool Interface::init(int arrow, int wait, int look, int grab, int use) {
 
 	_sprite = series_load("999intr", 22, nullptr);
 	if (_sprite != 22)
-		error_show(FL);
+		error_show(FL, "interface stuff");
 
 	mouse_set_sprite(arrow);
 
@@ -52,9 +52,9 @@ bool Interface::init(int arrow, int wait, int look, int grab, int use) {
 		_G(gameInterfaceBuff) = new GrBuff(_x2 - _x1, _y2 - _y1);
 		setup();
 		return true;
-	} else {
-		return false;
 	}
+
+	return false;
 }
 
 Interface::~Interface() {

@@ -22,6 +22,7 @@
 #include "m4/riddle/rooms/section4/room401.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
 
 namespace M4 {
 namespace Riddle {

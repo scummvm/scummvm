@@ -100,6 +100,9 @@ void OSystem_DS::initBackend() {
 
 void OSystem_DS::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	s.add("nitro:/", new Common::FSDirectory("nitro:/"), priority);
+	// Add the current dir as a very last resort (cf. bug #3984).
+	// TODO: check if it's really needed
+	s.addDirectory(".", ".", priority - 1);
 }
 
 uint32 OSystem_DS::getMillis(bool skipRecord) {

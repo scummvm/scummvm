@@ -116,7 +116,7 @@ void Sections::m4SceneLoad() {
 	_G(kernel).going = kernel_load_room(MIN_PAL_ENTRY, MAX_PAL_ENTRY,
 		&_G(currentSceneDef), &_G(screenCodeBuff), &_G(game_bgBuff));
 	if (!_G(kernel).going)
-		error_show(FL);	// this should never ever happen
+		error_show(FL, "kernel_load_room failed");	// this should never ever happen
 
 	get_ipl();
 
@@ -270,7 +270,7 @@ void Sections::game_control_cycle() {
 		int32 status;
 		ScreenContext *screen = vmng_screen_find(_G(gameDrawBuff), &status);
 		if (!screen)
-			error_show(FL);
+			error_show(FL, "no gameDrawBuff");
 
 		if (_G(player).ready_to_walk) {
 			if (_G(player).need_to_walk) {
@@ -389,7 +389,7 @@ void Sections::pal_game_task() {
 		_G(game_bgBuff)->release();
 
 		if (!game_buff_ptr)
-			error_show(FL);
+			error_show(FL, "no gameDrawBuff");
 
 		if _G(please_hyperwalk) {
 			_G(please_hyperwalk) = false;

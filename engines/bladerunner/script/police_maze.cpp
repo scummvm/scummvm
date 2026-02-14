@@ -227,7 +227,7 @@ void PoliceMazeTargetTrack::add(int trackId, float startX, float startY, float s
 		_pointCount = steps;
 		_dataIndex = 0;
 
-		double coef = 1.0f / (long double)steps;
+		double coef = 1.0 / steps;
 
 		double coefX = (endX - startX) * coef;
 		double coefY = (endY - startY) * coef;

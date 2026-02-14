@@ -56,8 +56,7 @@ void GetBezPoint(frac16 *x, frac16 *y, frac16 *coeffs, frac16 tVal);
 void InitCCB(CCB *myCCB);
 void HideCCB(CCB *myCCB);
 void ShowCCB(CCB *myCCB);
-//void SetLastCCB(CCB *myCCB);
-void MoveCCB(CCB *myCCB, frac16 deltaX, frac16 deltaY);
+
 void KillCCB(CCB *myCCB, bool restoreFlag);
 void Cel_msr(Anim8 *myAnim8);
 void ws_OverrideCrunchTime(machine *m);

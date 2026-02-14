@@ -24,33 +24,6 @@
 
 namespace M4 {
 
-unsigned long sqrtul(unsigned long v) {
-	unsigned long r = 0, s;
-
-#define STEP(k) s = r + (1L << (k * 2)); r >>= 1; \
-		if (s <= v) { v -= s; r |= (1L << (k * 2)); }
-
-	STEP(15);
-	STEP(14);
-	STEP(13);
-	STEP(12);
-	STEP(11);
-	STEP(10);
-	STEP(9);
-	STEP(8);
-	STEP(7);
-	STEP(6);
-	STEP(5);
-	STEP(4);
-	STEP(3);
-	STEP(2);
-	STEP(1);
-	STEP(0);
-
-	return r;
-#undef STEP
-}
-
 int32 imath_min(int32 a, int32 b) {
 	return ((a < b) ? a : b);
 }
@@ -85,14 +58,6 @@ frac16 imath_ranged_rand16(frac16 a, frac16 b) {
 
 bool imath_rand_bool(int max) {
 	return imath_ranged_rand(1, max) == 1;
-}
-
-frac16 dist2d(int32 x1, int32 y1, int32 x2, int32 y2) {
-	if ((x2 -= x1) < 0)
-		x2 = -x2;
-	if ((y2 -= y1) < 0)
-		y2 = -y2;
-	return (x2 + y2 - (((x2 > y2) ? y2 : x2) >> 1));
 }
 
 #define STEP(k) s = r + (1L << (k * 2)); r >>= 1; \
@@ -131,14 +96,6 @@ frac16 ArcTan(frac16 x, frac16 y) {
 	fracResult = MulSF16(fracResult, DIV_128_PI);
 	if (fracResult < 0) fracResult += 0x1000000;
 	return fracResult;
-}
-
-uint16 HighWord(uint32 n) {
-	return (uint16)(n >> 16);
-}
-
-uint16 LowWord(uint32 n) {
-	return (uint16)(n & 0xffff);
 }
 
 uint32 convert_intel32(uint32 a) {

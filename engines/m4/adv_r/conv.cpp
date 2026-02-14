@@ -847,7 +847,7 @@ void set_dlg_rect() {
 	int32 status;
 	ScreenContext *game_buff_ptr = vmng_screen_find(_G(gameDrawBuff), &status);
 	if (!game_buff_ptr)
-		error_show(FL);
+		error_show(FL, "no gameDrawBuff");
 
 	const int32 screen_x_center = VIDEO_W / 2;
 	const int32 screen_y_center = (game_buff_ptr->y2 - game_buff_ptr->y1) / 2;

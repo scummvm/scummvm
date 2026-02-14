@@ -47,7 +47,7 @@ bool Interface::init(int arrow, int wait, int look, int grab, int use) {
 	gr_pal_interface(_G(master_palette));
 
 	if (_sprite != 22)
-		error_show(FL);
+		error_show(FL, "interface stuff");
 
 	mouse_set_sprite(arrow);
 

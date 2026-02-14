@@ -305,7 +305,7 @@ void kernel_examine_inventory_object(const char *picName, RGB8 *pal, int steps, 
 	// Play the sprite series as a loop
 	int32 status;
 	ScreenContext *game_buff_ptr = vmng_screen_find(_G(gameDrawBuff), &status);
-	_GP(seriesAnim8) = series_play_xy(picName, -1, FORWARD,
+	_GP(seriesAnim8) = series_play_xy(picName, -1, SERIES_FORWARD,
 		x - game_buff_ptr->x1, y - game_buff_ptr->y1, 100, 0, 7, -1);
 
 	if (digiName) {
@@ -326,12 +326,6 @@ void kernel_examine_inventory_object(const char *picName, RGB8 *pal, int steps, 
 	_G(game_bgBuff)->release();
 
 	pauseEngines();
-}
-
-void kernel_examine_inventory_object(const char *picName, int steps, int delay,
-		int32 x, int32 y, int32 triggerNum, const char *digiName, int32 digiTrigger) {
-	kernel_examine_inventory_object(picName, _G(master_palette), steps, delay,
-		x, y, triggerNum, digiName, digiTrigger);
 }
 
 void kernel_unexamine_inventory_object(RGB8 *pal, int steps, int delay) {
@@ -372,7 +366,8 @@ void kernel_unexamine_inventory_object(RGB8 *pal, int steps, int delay) {
 // This is an inplace remap
 // fadeToMe must already have been set up to correspond to the image on the screen
 void remap_buffer_with_luminance_map(Buffer *src, int32 x1, int32 y1, int32 x2, int32 y2) {
-	if ((!src) || (!src->data)) return;
+	if ((!src) || (!src->data))
+		return;
 
 	// WORKAROUND: Fix original bounding that could result in buffer overruns on final y2 line
 	if (x1 < 0) x1 = 0;
@@ -710,7 +705,8 @@ static void pal_cycle_update() {
 }
 
 void pal_fx_update() {
-	int32 startA = 0, endA = 0, startB = 0, endB = 0, startDAC = 0, endDAC = 0;
+	int32 startA = 0, endA = 0, startB = 0, endB = 0;
+	int32 startDAC, endDAC;
 
 	if (!_GP(myCycleReq) && !_GP(myFadeReq))
 		// Crap out quickly if no effects required
@@ -852,11 +848,6 @@ void DAC_tint_range(const RGB8 *tintColor, int32 percent, int32 firstPalEntry, i
 			gr_pal_set_entry(i, &color); // Set new colors to DAC.
 		}
 	}
-}
-
-void DAC_restore() {
-	term_message("DAC restored");
-	gr_pal_set_range(&_G(master_palette)[0], 0, 256);
 }
 
 } // namespace M4

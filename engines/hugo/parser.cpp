@@ -290,18 +290,23 @@ void Parser::charHandler() {
 	}
 
 	if (_vm->_voiceScoreLine) {
-		_vm->sayText(Common::String::format("F1: Help\n%s\nScore: %d of %d\nSound %s", (_vm->_config._turboFl) ? "T" : " ", _vm->getScore(), _vm->getMaxScore(), (_vm->_config._soundFl) ? "On" : "Off"));
+		_vm->sayText(Common::String::format("F1: Help\n%s\nScore: %d of %d\nSound %s",
+			(_vm->_config._turboFl) ? "T" : " ",
+			_vm->getScore(),
+			_vm->getMaxScore(),
+			(_vm->_config._soundFl) ? "On" : "Off"));
 		_vm->_voiceScoreLine = false;
 	}
 
 	if (_vm->_voiceSoundSetting) {
 		_vm->sayText(Common::String::format("Sound %s", (_vm->_config._soundFl) ? "On" : "Off"));
 
-		// If the mouse is in the top menu range, the top menu will close and reopen after the sound setting is changed,
-		// causing the new sound setting voicing to be interrupted. Therefore, keep trying to voice the new sound setting
-		// as long as the top menu can be opened
+		// If the mouse is in the top menu range, the top menu will close and
+		// reopen after the sound setting is changed, causing the new sound
+		// setting voicing to be interrupted. Therefore, keep trying to voice
+		// the new sound setting as long as the top menu can be opened
 		int mouseY = _vm->_mouse->getMouseY();
-		if (mouseY <= 0 || mouseY >= 5) {
+		if (!(0 <= mouseY && mouseY < 5)) {
 			_vm->_voiceSoundSetting = false;
 		}
 	}

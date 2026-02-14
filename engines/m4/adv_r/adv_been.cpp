@@ -77,7 +77,7 @@ bool player_enters_scene(int16 scene_num) {
 	++_G(scene_list).tail;
 
 	if (_G(scene_list).tail > _G(scene_list).total_scenes)
-		error_show(FL);
+		error_show(FL, "player_enters_scene()");
 
 	return false;
 }

@@ -20,9 +20,10 @@
  */
 
 #include "m4/riddle/rooms/section7/room706.h"
+#include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/gui/gui_vmng_screen.h"
-#include "m4/riddle/vars.h"
 
 namespace M4 {
 namespace Riddle {

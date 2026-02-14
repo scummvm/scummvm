@@ -6,8 +6,9 @@ MODULE_OBJS = \
 	common.o \
 	console.o \
 	game.o \
-	game-movie-adventure-original.o \
-	game-movie-adventure-special.o \
+	game-v1.o \
+	game-v2.o \
+	game-v3.o \
 	game-objects.o \
 	general-objects.o \
 	global-ui.o \

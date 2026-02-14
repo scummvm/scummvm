@@ -26,7 +26,7 @@ namespace M4 {
 
 static void dispose_timeRequest(onTimeReq *timeReq);
 
-bool ws_InitWSTimer(void) {
+bool ws_InitWSTimer() {
 	_GWS(firstTimeReq) = nullptr;
 	return true;
 }

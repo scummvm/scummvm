@@ -30,6 +30,7 @@
 
 namespace Common {
 class SeekableReadStream;
+class SafeSeekableSubReadStream;
 }
 
 namespace Graphics {
@@ -105,12 +106,13 @@ protected:
 		PacoAudioTrack(int samplingRate);
 		~PacoAudioTrack();
 		void queueSound(Common::SeekableReadStream *fileStream, uint32 chunkSize);
+		bool needsAudio() const;
 
 	protected:
 		Audio::AudioStream *getAudioStream() const { return _packetStream; }
 
 	private:
-		Audio::PacketizedAudioStream *_packetStream;
+		Audio::StatelessPacketizedAudioStream *_packetStream;
 		int _samplingRate;
 	};
 
@@ -118,6 +120,8 @@ private:
 	PacoVideoTrack *_videoTrack;
 	PacoAudioTrack *_audioTrack;
 	Common::SeekableReadStream *_fileStream;
+	Common::SafeSeekableSubReadStream *_videoStream;
+	Common::SafeSeekableSubReadStream *_audioStream;
 	int _curFrame = 0;
 	int _frameSizes[65536]; // can be done differently?
 	int getAudioSamplingRate();

@@ -83,11 +83,6 @@ static uint8 scale_sprite(Buffer *S, Buffer *D, uint32 ScaleX, uint32 ScaleY) {
 
 #define Scaled	((drawReq->scaleY != 100) || (drawReq->scaleX != 100 && drawReq->scaleX != -100))
 #define Rle	(source.encoding == RLE8)
-#define Clipped ((drawReq->x < 0) || (drawReq->y < 0) || (drawReq->x + source.w > drawReq->Dest->w) || (drawReq->y + source.h > drawReq->Dest->h))
-#define Forward (drawReq->scaleX > 0)
-#define Depthed (drawReq->srcDepth)
-#define Shadow	(source.encoding & 0x80)
-#define ClipD	(leftOffset || rightOffset || bottomCut)
 
 uint8 gr_sprite_draw(DrawRequest *drawReq) {
 	Buffer source;
@@ -182,7 +177,6 @@ uint8 gr_sprite_draw(DrawRequest *drawReq) {
 #define ESC     ((uint8)0)
 #define EOL	((uint8)0)
 #define EOB	((uint8)1)
-#define DELTA	((uint8)2)
 
 #define OutBuffSize(x)	((x) + (((x) + 254) / 255 + 1) * 2 + 2)
 

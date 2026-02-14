@@ -23,6 +23,7 @@
 #define SCUMM_FILE_NES_H
 
 #include "scumm/file.h"
+#include "common/array.h"
 
 namespace Scumm {
 
@@ -59,8 +60,36 @@ public:
 		NES_SPROFFS,
 		NES_SPRDATA,
 		NES_CHARSET,
-		NES_PREPLIST
+		NES_PREPLIST,
+		NES_TITLES,
+		NES_TITLE2_SPARKLECHR,
+		NES_TITLE2_SPARKLEPAL,
 	};
+
+
+	struct NESTitleScreen {
+		uint16 unk1;
+		uint16 unk2;
+		byte numberOfTiles;
+		Common::Array<byte> gfx;
+		uint16 unk3;
+		byte unk4;
+		byte width;
+		byte height;
+		Common::Array<byte> nametable;
+		uint16 unk5;
+		byte unk6;
+		byte attrWidth;
+		byte attrHeight;
+		Common::Array<byte> attributes;
+		byte stepNum;
+		Common::Array<byte> palette;
+		byte endOfData;
+	};
+
+	bool decodeTitleScreen(uint titleIndex, NESTitleScreen &outTitle);
+	bool readTitle2SparkleChr(Common::Array<byte> &outChr);
+	bool readTitle2SparklePalette(Common::Array<byte> &outPalette);
 
 
 private:
@@ -73,6 +102,7 @@ private:
 	uint16 extractResource(Common::WriteStream *out, const Resource *res, ResType type);
 
 	byte fileReadByte();
+	void decodeTitleRLE(Common::Array<byte> &dst, uint32 expectedSize);
 	uint16 fileReadUint16LE();
 
 public:

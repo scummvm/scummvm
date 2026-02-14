@@ -20,10 +20,11 @@
  */
 
 #include "m4/riddle/rooms/section5/room504.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
-#include "m4/gui/gui_vmng.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/other.h"
+#include "m4/graphics/gr_series.h"
+#include "m4/gui/gui_vmng.h"
 #include "m4/m4.h"
 
 namespace M4 {
@@ -1159,19 +1160,19 @@ void Room504::daemon() {
 		switch (_vineThrowType) {
 		case 1:
 			inv_give_to_player("ROPE");
-			kernel_examine_inventory_object("PING ROPE", 5, 1, 449, 90, 592);
+			kernel_examine_inventory_object("PING ROPE", _G(master_palette), 5, 1, 449, 90, 592, nullptr, -1);
 			break;
 		case 2:
 			inv_give_to_player("GREEN VINE");
-			kernel_examine_inventory_object("PING GREEN VINE", 5, 1, 449, 90, 592);
+			kernel_examine_inventory_object("PING GREEN VINE", _G(master_palette), 5, 1, 449, 90, 592, nullptr, -1);
 			break;
 		case 3:
 			inv_give_to_player("BROWN VINE");
-			kernel_examine_inventory_object("PING BROWN VINE", 5, 1, 449, 90, 592);
+			kernel_examine_inventory_object("PING BROWN VINE", _G(master_palette), 5, 1, 449, 90, 592, nullptr, -1);
 			break;
 		case 4:
 			inv_give_to_player("VINES");
-			kernel_examine_inventory_object("PING VINES", 5, 1, 449, 90, 592);
+			kernel_examine_inventory_object("PING VINES", _G(master_palette), 5, 1, 449, 90, 592, nullptr, -1);
 			break;
 		default:
 			break;
@@ -1312,26 +1313,26 @@ void Room504::daemon() {
 		switch (_vineThrowType) {
 		case 1:
 			inv_give_to_player("ROPE");
-			kernel_examine_inventory_object("PING ROPE",
-				5, 1, 449, 90, 608);
+			kernel_examine_inventory_object("PING ROPE", _G(master_palette),
+				5, 1, 449, 90, 608, nullptr, -1);
 			break;
 
 		case 2:
 			inv_give_to_player("GREEN VINE");
-			kernel_examine_inventory_object("PING GREEN VINE",
-				5, 1, 449, 90, 608);
+			kernel_examine_inventory_object("PING GREEN VINE", _G(master_palette),
+				5, 1, 449, 90, 608, nullptr, -1);
 			break;
 
 		case 3:
 			inv_give_to_player("BROWN VINE");
-			kernel_examine_inventory_object("PING BROWN VINE",
-				5, 1, 449, 90, 608);
+			kernel_examine_inventory_object("PING BROWN VINE", _G(master_palette),
+				5, 1, 449, 90, 608, nullptr, -1);
 			break;
 
 		case 4:
 			inv_give_to_player("VINES");
-			kernel_examine_inventory_object("PING VINES",
-				5, 1, 449, 90, 608);
+			kernel_examine_inventory_object("PING VINES", _G(master_palette),
+				5, 1, 449, 90, 608, nullptr, -1);
 			break;
 
 		default:
@@ -1705,8 +1706,8 @@ void Room504::daemon() {
 		break;
 
 	case 664:
-		kernel_examine_inventory_object("PING SHRUNKEN HEAD",
-			5, 1, 136, 120, 665);
+		kernel_examine_inventory_object("PING SHRUNKEN HEAD", _G(master_palette),
+			5, 1, 136, 120, 665, nullptr, -1);
 		break;
 
 	case 665:
@@ -1926,26 +1927,26 @@ void Room504::daemon() {
 		switch (_vineThrowType) {
 		case 1:
 			inv_give_to_player("ROPE");
-			kernel_examine_inventory_object("PING ROPE",
-				5, 1, 105, 60, 697);
+			kernel_examine_inventory_object("PING ROPE", _G(master_palette),
+				5, 1, 105, 60, 697, nullptr, -1);
 			break;
 
 		case 2:
 			inv_give_to_player("GREEN VINE");
-			kernel_examine_inventory_object("PING GREEN VINE",
-				5, 1, 105, 60, 697);
+			kernel_examine_inventory_object("PING GREEN VINE", _G(master_palette),
+				5, 1, 105, 60, 697, nullptr, -1);
 			break;
 
 		case 3:
 			inv_give_to_player("BROWN VINE");
-			kernel_examine_inventory_object("PING BROWN VINE",
-				5, 1, 105, 60, 697);
+			kernel_examine_inventory_object("PING BROWN VINE", _G(master_palette),
+				5, 1, 105, 60, 697, nullptr, -1);
 			break;
 
 		case 4:
 			inv_give_to_player("VINES");
-			kernel_examine_inventory_object("PING VINES",
-				5, 1, 105, 60, 697);
+			kernel_examine_inventory_object("PING VINES", _G(master_palette),
+				5, 1, 105, 60, 697, nullptr, -1);
 			break;
 
 		default:
@@ -2003,26 +2004,26 @@ void Room504::daemon() {
 		switch (_vineThrowType) {
 		case 1:
 			inv_give_to_player("ROPE");
-			kernel_examine_inventory_object("PING ROPE",
-				5, 1, 105, 60, 704);
+			kernel_examine_inventory_object("PING ROPE", _G(master_palette),
+				5, 1, 105, 60, 704, nullptr, -1);
 			break;
 
 		case 2:
 			inv_give_to_player("GREEN VINE");
-			kernel_examine_inventory_object("PING GREEN VINE",
-				5, 1, 105, 60, 704);
+			kernel_examine_inventory_object("PING GREEN VINE", _G(master_palette),
+				5, 1, 105, 60, 704, nullptr, -1);
 			break;
 
 		case 3:
 			inv_give_to_player("BROWN VINE");
-			kernel_examine_inventory_object("PING BROWN VINE",
-				5, 1, 105, 60, 704);
+			kernel_examine_inventory_object("PING BROWN VINE", _G(master_palette),
+				5, 1, 105, 60, 704, nullptr, -1);
 			break;
 
 		case 4:
 			inv_give_to_player("VINES");
-			kernel_examine_inventory_object("PING VINES",
-				5, 1, 105, 60, 704);
+			kernel_examine_inventory_object("PING VINES", _G(master_palette),
+				5, 1, 105, 60, 704, nullptr, -1);
 			break;
 
 		default:

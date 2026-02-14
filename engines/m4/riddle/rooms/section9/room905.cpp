@@ -19,14 +19,15 @@
  *
  */
 
-#include "m4/m4.h"
 #include "m4/riddle/rooms/section9/room905.h"
+#include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/graphics/gr_series.h"
 #include "m4/gui/gui_buffer.h"
 #include "m4/gui/gui_sys.h"
 #include "m4/gui/gui_vmng.h"
+#include "m4/m4.h"
 #include "m4/platform/keys.h"
-#include "m4/riddle/vars.h"
 
 namespace M4 {
 namespace Riddle {

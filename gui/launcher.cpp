@@ -48,6 +48,8 @@
 #include "gui/unknown-game-dialog.h"
 #include "gui/widgets/edittext.h"
 #include "gui/widgets/groupedlist.h"
+#include "gui/widgets/scrollcontainer.h"
+#include "gui/widget.h"
 #include "gui/widgets/tab.h"
 #include "gui/widgets/popup.h"
 #include "gui/widgets/grid.h"
@@ -1834,29 +1836,20 @@ void LauncherDialog::confirmRemoveGames(const Common::Array<bool> &selectedItems
 		_("Do you really want to remove the following %d game configuration(s)?\n\n"),
 		selectedCount);
 
-	// Add games to message (max 10 items, then ellipsis)
-	int displayCount = 0;
+	// Build array of game titles to display
+	Common::StringArray gameTitles;
 	for (int i = 0; i < (int)selectedItems.size(); ++i) {
 		if (selectedItems[i]) {
 			// i is the index in _domains and _domainTitles
 			if (i >= 0 && i < (int)_domains.size()) {
-				Common::String domainName = _domains[i];
-				Common::String gameTitle = (i < (int)_domainTitles.size()) ? _domainTitles[i] : domainName;
-				message += Common::U32String(gameTitle) + "\n";
-				displayCount++;
-				if (displayCount >= 10)
-					break;
+				Common::String gameTitle = (i < (int)_domainTitles.size()) ? _domainTitles[i] : _domains[i];
+				gameTitles.push_back(gameTitle);
 			}
 		}
 	}
 
-	// Add ellipsis if more than 10 items are selected
-	if (selectedCount > 10) {
-		message += Common::U32String("...\n");
-	}
-
-	MessageDialog alert(message, Common::U32String(_("Yes")), Common::U32String(_("No")));
-	if (alert.runModal() == GUI::kMessageOK) {
+	RemovalConfirmationDialog alert(message, gameTitles);
+	if (alert.runModal() == RemovalConfirmationDialog::kRemovalYes) {
 		removeGames(selectedItems, getType() == kLauncherDisplayGrid);
 	}
 }
@@ -1891,6 +1884,119 @@ void LauncherDialog::removeGames(const Common::Array<bool> &selectedItems, bool 
 	updateSelectionAfterRemoval();
 	updateButtons();
 	g_gui.scheduleTopDialogRedraw();
+}
+
+RemovalConfirmationDialog::RemovalConfirmationDialog(const Common::U32String &message, const Common::StringArray &gameTitles)
+	: Dialog(""),
+	  _message(message),
+	  _gameTitles(gameTitles),
+	  _scrollContainer(nullptr),
+	  _buttonWidth(g_gui.xmlEval()->getVar("Globals.Button.Width", 0)),
+	  _buttonHeight(g_gui.xmlEval()->getVar("Globals.Button.Height", 0)),
+	  _scrollbarWidth(g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0)) {
+
+	// Create scroll container with bogus size (will be sized in reflowLayout)
+	_scrollContainer = new ScrollContainerWidget(this, 10, 10, 20, 20);
+	_scrollContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundPlain);
+
+	// Create Game Widgets with bogus size (will be sized in reflowLayout)
+	for (uint i = 0; i < _gameTitles.size(); ++i) {
+		_gameNameWidgets.push_back(new StaticTextWidget(_scrollContainer, 0, 0, 0, 0, _gameTitles[i], Graphics::kTextAlignLeft));
+	}
+
+	// Create Button Widgets with bogus size (will be sized in reflowLayout)
+	_buttons.push_back(new ButtonWidget(this, 0, 0, 0, 0, Common::U32String(_("Yes")), Common::U32String(), kRemovalYes, 'y'));
+	_buttons.push_back(new ButtonWidget(this, 0, 0, 0, 0, Common::U32String(_("No")), Common::U32String(), kRemovalNo, 'n'));
+
+	reflowLayout();
+}
+
+RemovalConfirmationDialog::~RemovalConfirmationDialog() {
+}
+
+void RemovalConfirmationDialog::reflowLayout() {
+	int16 screenW, screenH;
+	const Common::Rect safeArea = g_system->getSafeOverlayArea(&screenW, &screenH);
+
+	const int buttonCount = _buttons.size();
+	const int buttonsTotalWidth = buttonCount * _buttonWidth + (buttonCount - 1) * kButtonSpacing;
+
+	_maxlineWidth = g_gui.getFont().wordWrapText(_message, safeArea.width() - 2 * kHorizontalMargin, _messageLines);
+
+	// Calculate desired dialog size
+	_w = MAX(_maxlineWidth, buttonsTotalWidth) + 2 * kHorizontalMargin;
+	_w = MIN((uint16)_w, (uint16)safeArea.width());
+
+	int curY = 10;
+
+	// restrict the overall container height to max of 18 lines
+	_h = MIN((int)safeArea.height(), (int)(kLineHeight * (18 + 2) + curY + 5 + _buttonHeight));
+
+	// Center the dialog
+	_x = (screenW - _w) / 2;
+	_y = (screenH - _h) / 2;
+
+	safeArea.constrain(_x, _y, _w, _h);
+
+	int gameListHeight = _h;
+	gameListHeight -= curY;
+	gameListHeight -= (int)_messageWidgets.size() * kLineHeight;
+	gameListHeight -= 5;
+	gameListHeight -= kLineHeight;
+	gameListHeight -= _buttonHeight;
+
+	// Cleanup message line widgets
+	if (_messageWidgets.size() > 0) {
+		for (uint i = 0; i < _messageWidgets.size(); ++i) {
+			removeWidget(_messageWidgets[i]);
+			delete _messageWidgets[i];
+		}
+	}
+	_messageWidgets.clear();
+
+	for (uint i = 0; i < _messageLines.size(); ++i) {
+		_messageWidgets.push_back(new StaticTextWidget(this, kHorizontalMargin, curY, _w - 2 * kHorizontalMargin, kLineHeight, _messageLines[i], Graphics::kTextAlignCenter));
+		curY += kLineHeight;
+	}
+	_messageLines.clear();
+
+	curY -= kLineHeight;
+	curY += 5;
+
+	// Position scroll container
+	_scrollContainer->setPos(kHorizontalMargin, curY);
+	_scrollContainer->setSize(_w - 2 * kHorizontalMargin - _scrollbarWidth, gameListHeight);
+
+	// Size and Position game line widgets
+	int gameY = kGamePadding;
+	for (uint i = 0; i < _gameNameWidgets.size(); ++i) {
+		_gameNameWidgets[i]->setPos(kGamePadding, gameY);
+		_gameNameWidgets[i]->setSize(_scrollContainer->getWidth() - 2 * kGamePadding - _scrollbarWidth, kLineHeight);
+		gameY += kLineHeight;
+	}
+
+	curY += gameListHeight + kLineHeight;
+
+	// Size and Position button widgets
+	if (buttonCount) {
+		int buttonPos = (_w - buttonsTotalWidth) / 2;
+		for (int i = 0; i < buttonCount; ++i) {
+			_buttons[i]->setPos(buttonPos, curY);
+			_buttons[i]->setSize(_buttonWidth, _buttonHeight);
+			buttonPos += _buttonWidth + kButtonSpacing;
+		}
+	}
+
+	Dialog::reflowLayout();
+}
+
+void RemovalConfirmationDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	if (cmd == kRemovalYes || cmd == kRemovalNo) {
+		setResult(cmd);
+		close();
+	} else {
+		Dialog::handleCommand(sender, cmd, data);
+	}
 }
 
 } // End of namespace GUI

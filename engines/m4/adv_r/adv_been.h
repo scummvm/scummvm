@@ -50,7 +50,7 @@ void player_been_shutdown();
 /**
  * Resets the player_been system
  */
-void player_reset_been(void);
+void player_reset_been();
 
 /**
  * Saves/loads player_been information

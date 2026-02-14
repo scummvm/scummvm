@@ -40,9 +40,9 @@
 /*
 For information on how to unify the CoreMidi and MusicDevice code:
 
-https://lists.apple.com/archives/coreaudio-api/2005/Jun/msg00194.html
-https://lists.apple.com/archives/coreaudio-api/2003/Mar/msg00248.html
-https://lists.apple.com/archives/coreaudio-api/2003/Jul/msg00137.html
+https://web.archive.org/web/20140109175906/http://lists.apple.com/archives/coreaudio-api/2005/Jun/msg00194.html
+https://web.archive.org/web/20140112110740/http://lists.apple.com/archives/coreaudio-api/2003/Mar/msg00248.html
+https://web.archive.org/web/20140115124651/http://lists.apple.com/archives/coreaudio-api/2003/Jul/msg00137.html
 
 */
 

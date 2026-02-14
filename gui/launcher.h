@@ -89,6 +89,7 @@ class StaticTextWidget;
 class EditTextWidget;
 class SaveLoadChooser;
 class PopUpWidget;
+class ScrollContainerWidget;
 
 struct LauncherEntry {
 	Common::String key;
@@ -250,6 +251,41 @@ private:
 	Common::HashMap<Common::String, Common::StringMap, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _engines;
 
 	bool checkModifier(int modifier);
+};
+
+/**
+ * Removal confirmation dialog with scrollable content.
+ * Used by LauncherDialog to display game list for removal confirmation.
+ */
+class RemovalConfirmationDialog : public Dialog {
+public:
+	RemovalConfirmationDialog(const Common::U32String &message, const Common::StringArray &gameTitles);
+	~RemovalConfirmationDialog() override;
+
+	void reflowLayout() override;
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+
+	static const uint32 kRemovalYes = 1;
+	static const uint32 kRemovalNo = 2;
+
+private:
+	static const int kHorizontalMargin = 10;
+	static const int kButtonSpacing = 10;
+	static const int kGamePadding = 10;
+
+	// Pre-calculated values
+	const int _buttonWidth;
+	const int _buttonHeight;
+	const int _scrollbarWidth;
+
+	Common::U32String _message;
+	Common::StringArray _gameTitles;
+	ScrollContainerWidget *_scrollContainer;
+	Common::Array<StaticTextWidget *> _messageWidgets;
+	Common::Array<StaticTextWidget *> _gameNameWidgets;
+	Common::Array<ButtonWidget *> _buttons;
+	Common::Array<Common::U32String> _messageLines;
+	int _maxlineWidth;
 };
 
 class LauncherChooser {

@@ -1245,8 +1245,8 @@ void GridWidget::setSelected(int id) {
 			// Clear previous selections and mark only this item
 			if (_multiSelectEnabled) {
 				clearSelection();
-				markSelectedItem(id, true);
 			}
+			markSelectedItem(id, true);
 			
 			scrollToEntry(id, false);
 			break;

@@ -22,6 +22,7 @@
 #include "m4/burger/rooms/section1/room103.h"
 #include "m4/burger/rooms/section1/section1.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/graphics/gr_series.h"
 
 namespace M4 {

@@ -39,13 +39,6 @@ uint8 *gr_color_createInverseTable(RGB8 *pal, uint8 bitDepth, int begin_color, i
 	error("gr_color_createInverseTable is not implemented in ScummVM");
 }
 
-void gr_color_create_ipl5(uint8 *inverseColorTable, char *fname, int room_num) {
-	error("gr_color_create_ipl5 is not implemented in ScummVM");
-}
-
-uint8 *gr_color_load_ipl5(const char *filename, uint8 *inverseColors) {
-	error("gr_color_load_ipl5 is not implemented in ScummVM");
-}
 
 void gr_color_set(int32 c) {
 	_G(color) = c;

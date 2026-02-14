@@ -23,6 +23,7 @@
 #define M4_RIDDLE_ROOMS_SECTION3_ROOM301_H
 
 #include "m4/riddle/rooms/room.h"
+#include "m4/adv_r/adv_trigger.h"
 
 namespace M4 {
 namespace Riddle {

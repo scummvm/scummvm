@@ -21,10 +21,12 @@
 
 #include "common/debug.h"
 #include "m4/vars.h"
+
+#include "core/imath.h"
 #include "m4/adv_r/adv.h"
 #include "m4/adv_r/adv_been.h"
 #include "m4/core/errors.h"
-#include "m4/dbg/debug.h"
+#include "m4/dbg/dbg_wscript.h"
 #include "m4/graphics/gr_pal.h"
 #include "m4/gui/game_menu.h"
 #include "m4/gui/gui_buffer.h"
@@ -127,7 +129,7 @@ void Vars::game_systems_initialize(byte flags) {
 
 	if (flags & INSTALL_PLAYER_BEEN_INIT) {
 		if (!player_been_init(MAX_SCENES))
-			error_show(FL);
+			error_show(FL, "main init");
 	}
 
 	term_message("Firing up GUI");
@@ -142,7 +144,7 @@ void Vars::game_systems_initialize(byte flags) {
 	}
 
 	if (!woodscript_init())
-		error_show(FL);
+		error_show(FL, "main init");
 
 	gr_pal_clear(_master_palette);
 
@@ -151,7 +153,7 @@ void Vars::game_systems_initialize(byte flags) {
 		InitRails();
 
 	if (!f_stream_Init())
-		error_show(FL);
+		error_show(FL, "main init");
 
 	mouse_set_sprite(kArrowCursor);
 
@@ -219,19 +221,19 @@ void Vars::game_systems_shutdown() {
 
 void Vars::fire_up_gui() {
 	if (!gui_system_init())
-		error_show(FL);
+		error_show(FL, "gui init");
 	if (!vmng_init())
-		error_show(FL);
+		error_show(FL, "gui init");
 	if (!gui_mouse_init())
-		error_show(FL);
+		error_show(FL, "gui init");
 	if (!gui_dialog_init())
-		error_show(FL);
+		error_show(FL, "gui init");
 #ifdef TODO
 	if (!InitItems())
-		error_show(FL);
+		error_show(FL, "gui init");
 #endif
 	if (!gui_buffer_system_init())
-		error_show(FL);
+		error_show(FL, "gui init");
 }
 
 bool Vars::woodscript_init() {

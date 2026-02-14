@@ -85,11 +85,12 @@ const char *GraphicObject::typeName() const { return "GraphicObject"; }
 
 GraphicObject::GraphicObject(Room *room, SeekableReadStream &stream)
 	: ObjectBase(room, stream) {
-	if (g_engine->isV1()) {
+	if (g_engine->isV1())
 		toggle(readBool(stream));
-		_graphic = Graphic(stream);
-	} else {
-		_graphic = Graphic(stream);
+
+	_graphic = Graphic(stream);
+
+	if (g_engine->isV3()) {
 		_type = (GraphicObjectType)stream.readSint32LE();
 		_posterizeAlpha = 100 - stream.readSint32LE();
 	}
@@ -240,7 +241,7 @@ const char *ShapeObject::typeName() const { return "ShapeObject"; }
 ShapeObject::ShapeObject(Room *room, SeekableReadStream &stream)
 	: ObjectBase(room, stream)
 	, _shape(stream) {
-	if (g_engine->isV2() || g_engine->isV3())
+	if (g_engine->isV3())
 		_cursorType = (CursorType)stream.readSint32LE();
 }
 

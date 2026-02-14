@@ -7254,8 +7254,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("ichsehewas", "", "ichsehewas.exe", "t:f5127fbc00272caecc04eccd6bb69eca", 1436195, Common::DE_DEU, 501),
 
 	// Installers for both platforms also use Director
-	MACGAME1_l("incarnatia", "", "Install_Mac/CopyTo_HD/incarnatia_PowerMac", "r:2e7d373f75c014be20cfb04c5cd65dae",  108480, Common::JA_JPN, 501),
-	WINGAME1_l("incarnatia", "", "Install_Win/CopyTo_HD/incarnatia_Win.exe",  "t:7c640323fff4890486c5fbabb177ce29", 1414152, Common::JA_JPN, 501),
+	MACGAME1f_l("incarnatia", "", "Install_Mac/CopyTo_HD/incarnatia_PowerMac", "r:2e7d373f75c014be20cfb04c5cd65dae",  108480, Common::JA_JPN, 501, GF_32BPP),
+	WINGAME1f_l("incarnatia", "", "Install_Win/CopyTo_HD/incarnatia_Win.exe",  "t:7c640323fff4890486c5fbabb177ce29", 1414152, Common::JA_JPN, 501, GF_32BPP),
 
 	// Australian Broadcasting Corporation (ABC) has made this available for free download
 	// https://www.abc.net.au/science/ingenious/patch.htm
@@ -10119,7 +10119,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("greveholm3", "", "Greveholm3.exe", "t:ea8943fe1d6f2cf8df68d2f77b964f8e", 2408960, Common::SV_SWE, 800),
 	// Multilingual version
 	WINGAME1("greveholm3", "", "Greveholm3.exe", "t:c72fe7b88a22c8a4b28482a6e31fc409", 2286633, 800),
-	
+
 
 	// Early Education Series from Ariss Computer Inc. of Beirut
 	WINGAME1_l("hamamalachkal", "", "SHAPE.EXE",  "c163f36141579ee374f7b4b2bddee95a", 3784670, Common::AR_ARB, 850),

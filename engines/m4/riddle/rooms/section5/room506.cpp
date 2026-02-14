@@ -20,8 +20,9 @@
  */
 
 #include "m4/riddle/rooms/section5/room506.h"
-#include "m4/graphics/gr_series.h"
 #include "m4/riddle/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/graphics/gr_series.h"
 #include "m4/gui/gui_vmng_screen.h"
 
 namespace M4 {
@@ -226,8 +227,7 @@ void Room506::parser() {
 			break;
 
 		case 2:
-			kernel_examine_inventory_object(_G(flags)[V152] == 6 ? "PING GREEN VINE" :
-				"PING BROWN VINE", 5, 1, 396, 180, 3);
+			kernel_examine_inventory_object(_G(flags)[V152] == 6 ? "PING GREEN VINE" : "PING BROWN VINE", _G(master_palette), 5, 1, 396, 180, 3, nullptr, -1);
 			break;
 
 		case 3:

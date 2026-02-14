@@ -23,6 +23,7 @@
 #include "m4/burger/rooms/section1/section1.h"
 #include "m4/burger/burger.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
 
 namespace M4 {
 namespace Burger {
@@ -399,7 +400,7 @@ void Room145::daemon() {
 		case 31:
 			_duration = imath_ranged_rand(180, 360);
 			_roxyState = 32;
-			_roxy.show("145rx01", 0x900, 0, 4, _duration);
+			_roxy.show("145rx01", 0x900, 0, kCHANGE_ROXY_ANIMATION, _duration);
 			break;
 
 		case 32:

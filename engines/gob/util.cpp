@@ -102,7 +102,7 @@ void Util::processInput(bool scroll) {
 	bool hasMove = false;
 
 	if (_vm->getGameType() != kGameTypeAdibou2 && _vm->getGameType() != kGameTypeAdi4)
-		_vm->_vidPlayer->updateLive();
+		_vm->_vidPlayer->updateVideos();
 
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
@@ -474,6 +474,9 @@ void Util::waitEndFrame(bool handleInput) {
 
 		if (handleInput)
 			processInput();
+
+		if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4)
+			_vm->_vidPlayer->updateVideos();
 
 		_vm->_video->retrace();
 

@@ -32,48 +32,6 @@ bool gui_buffer_system_init() {
 void gui_buffer_system_shutdown() {
 }
 
-static void Buffer_Show(void *s, void *r, void *b, int32 destX, int32 destY) {
-	ScreenContext *myScreen = (ScreenContext *)s;
-	RectList *myRectList = (RectList *)r;
-	Buffer *destBuffer = (Buffer *)b;
-	RectList *myRect;
-
-	// Parameter verification
-	if (!myScreen) return;
-	Buffer *myBuffer = (Buffer *)(myScreen->scrnContent);
-	if (!myBuffer)
-		return;
-
-	// If no destBuffer, then draw directly to video
-	if (!destBuffer) {
-		myRect = myRectList;
-		while (myRect) {
-			vmng_refresh_video(myRect->x1, myRect->y1, myRect->x1 - myScreen->x1, myRect->y1 - myScreen->y1,
-				myRect->x2 - myScreen->x1, myRect->y2 - myScreen->y1, myBuffer);
-			myRect = myRect->next;
-		}
-	} else {
-		// Draw to the dest buffer
-		myRect = myRectList;
-		while (myRect) {
-			gr_buffer_rect_copy_2(myBuffer, destBuffer, myRect->x1 - myScreen->x1, myRect->y1 - myScreen->y1,
-				destX, destY, myRect->x2 - myRect->x1 + 1, myRect->y2 - myRect->y1 + 1);
-			myRect = myRect->next;
-		}
-	}
-}
-
-bool gui_buffer_register(int32 x1, int32 y1, Buffer *myBuf, uint32 scrnFlags, EventHandler evtHandler) {
-	int32 x2 = x1 + myBuf->w - 1;
-	int32 y2 = y1 + myBuf->h - 1;
-
-	if (!vmng_screen_create(x1, y1, x2, y2, SCRN_BUF, scrnFlags | SF_OFFSCRN, (void *)myBuf,
-		(RefreshFunc)Buffer_Show, evtHandler))
-		return false;
-
-	return true;
-}
-
 void GrBuff_Show(void *s, void *r, void *b, int32 destX, int32 destY) {
 	ScreenContext *myScreen = (ScreenContext *)s;
 	RectList *myRectList = (RectList *)r;
@@ -136,10 +94,6 @@ void gui_buffer_deregister(void *myBuf) {
 
 void gui_buffer_activate(Buffer *myBuf) {
 	vmng_screen_show((void *)myBuf);
-}
-
-bool gui_buffer_add_key(Buffer *myBuf, long myKey, HotkeyCB cb) {
-	return AddScreenHotkey((void *)myBuf, myKey, cb);
 }
 
 } // End of namespace M4

@@ -30,14 +30,10 @@ void error_show(const char *filename, uint32 line, const char *fmt, ...) {
 
 	va_list va;
 	va_start(va, fmt);
-	Common::String msg = Common::String::vformat(fmt, va);
+	const Common::String msg = Common::String::vformat(fmt, va);
 	va_end(va);
 
 	error("%s", msg.c_str());
-}
-
-void error_show(const char *filename, uint32 line) {
-	error_show(filename, line, "No extra description");
 }
 
 } // namespace M4

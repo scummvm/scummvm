@@ -26,9 +26,10 @@
 #include "m4/burger/core/conv.h"
 #include "m4/burger/gui/gui_gizmo.h"
 #include "m4/burger/gui/game_menu.h"
-#include "m4/graphics/krn_pal.h"
+#include "m4/adv_r/adv_control.h"
 #include "m4/core/errors.h"
 #include "m4/core/imath.h"
+#include "m4/graphics/krn_pal.h"
 
 namespace M4 {
 namespace Burger {

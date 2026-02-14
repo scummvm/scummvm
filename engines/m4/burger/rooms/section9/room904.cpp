@@ -20,8 +20,9 @@
  */
 
 #include "m4/burger/rooms/section9/room904.h"
-#include "m4/core/errors.h"
 #include "m4/burger/vars.h"
+#include "m4/adv_r/adv_control.h"
+#include "m4/core/errors.h"
 #include "m4/m4.h"
 
 namespace M4 {

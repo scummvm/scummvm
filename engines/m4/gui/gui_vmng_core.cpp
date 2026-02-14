@@ -309,7 +309,8 @@ ScreenContext *ExtractScreen(void *scrnContent, int32 status) {
 			} else {
 				tempScreen = myScreen->infront;
 				tempScreen->behind = myScreen->behind;
-				if (tempScreen->behind) tempScreen->behind->infront = tempScreen;
+				if (tempScreen->behind)
+					tempScreen->behind->infront = tempScreen;
 			}
 		}
 	}

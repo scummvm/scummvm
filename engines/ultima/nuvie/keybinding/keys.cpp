@@ -66,7 +66,8 @@ struct Action {
 
 const char *const appendAltCodeActionStr = "ALT_CODE";
 const char *const toggleAltCodeModeActionStr = "TOGGLE_ALT_CODE_MODE";
-const uint toggleAltCodeModeEventID = Common::hashit(toggleAltCodeModeActionStr); // to identify END (KEYUP) events for alt-code mode toggle action
+// toggleAltCodeModeEventID = Common::hashit(toggleAltCodeModeActionStr)
+const uint toggleAltCodeModeEventID = 1810543662; // to identify END (KEYUP) events for alt-code mode toggle action
 
 const Action NuvieActions[] = {
 	{ "WALK_WEST", ActionWalkWest, Action::KeyNormal, true, WEST_KEY  },
@@ -353,6 +354,8 @@ KeyBinder::KeyBinder(const Configuration *config) : enable_joystick(false) {
 	next_axes_pair4_update = next_joy_repeat_time = 0;
     
     AddIosBindings();
+
+	assert(toggleAltCodeModeEventID == Common::hashit(toggleAltCodeModeActionStr));
 }
 
 void KeyBinder::AddIosBindings()

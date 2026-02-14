@@ -19,33 +19,43 @@
  *
  */
 
-#ifndef M4_DBG_DBG_DEFS_H
-#define M4_DBG_DBG_DEFS_H
+#ifndef PHOENIXVR_REGIONS_H
+#define PHOENIXVR_REGIONS_H
 
-#include "m4/m4_types.h"
-#include "m4/dbg/dbg_defs.h"
-#include "m4/gui/gui_dialog.h"
-#include "m4/wscript/ws_machine.h"
+#include "common/array.h"
+#include "phoenixvr/rectf.h"
 
-namespace M4 {
+namespace Common {
+class String;
+class SeekableReadStream;
+} // namespace Common
 
-struct DBGSequSR {
-	DBGSequSR *next;
-	int32 prevSequHash;
-	int32 returnOffset;
+namespace PhoenixVR {
+struct Region {
+	float a, b, c, d;
+	void setEmpty() {
+		a = b = c = d = 0;
+	}
+	RectF toRect() const;
+	Common::String toString() const;
+	bool contains3D(float angleX, float angleY) const;
+	bool contains3D(PointF p) const { return contains3D(p.x, p.y); }
+	bool contains2D(float x, float y) const {
+		return toRect().contains(x, y);
+	}
 };
 
-struct DBGWatch {
-	DBGWatch *next;
-	DBGWatch *prev;
-	machine *m;
-	Dialog *d;
-	bool moreInfo;
-	bool machStep;
-	int32 sequHash;
-	bool sequStep;
-};
+class RegionSet {
+	Common::Array<Region> _regions;
 
-} // namespace M4
+public:
+	RegionSet(Common::SeekableReadStream &s);
+	uint size() const { return _regions.size(); }
+	const Common::Array<Region> &getRegions() const { return _regions; }
+	const Region &getRegion(uint idx) const {
+		return _regions[idx];
+	}
+};
+} // namespace PhoenixVR
 
 #endif

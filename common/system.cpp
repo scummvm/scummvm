@@ -241,6 +241,12 @@ FilesystemFactory *OSystem::getFilesystemFactory() {
 	return _fsFactory;
 }
 
+void OSystem::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
+	// Add the current dir as a very last resort (cf. bug #3984).
+	// TODO: check if it's really needed
+	s.addDirectory(".", ".", priority - 1);
+}
+
 Common::SeekableReadStream *OSystem::createConfigReadStream() {
 	Common::FSNode file(getDefaultConfigFileName());
 	return file.createReadStream();

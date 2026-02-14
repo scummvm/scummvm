@@ -19,6 +19,7 @@ MODULE_OBJS := \
 	file_nes.o \
 	gfx_gui.o \
 	gfx_mac.o \
+	gfx_nes.o \
 	gfx_towns.o \
 	gfx.o \
 	he/mixer_he.o \
@@ -93,6 +94,12 @@ MODULE_OBJS := \
 	util.o \
 	vars.o \
 	verbs.o
+
+ifdef USE_IMGUI
+MODULE_OBJS += \
+	debugger/debugtools.o \
+	debugger/editor.o
+endif
 
 ifdef USE_ARM_COSTUME_ASM
 MODULE_OBJS += \

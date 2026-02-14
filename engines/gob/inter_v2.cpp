@@ -1418,6 +1418,7 @@ void Inter_v2::o2_goblinFunc(OpFuncParams &params) {
 	int16 cmd;
 
 	cmd = _vm->_game->_script->readInt16();
+	_vm->_vidPlayer->liveVideosLoop();
 
 	gobParams.paramCount = _vm->_game->_script->readInt16();
 	gobParams.extraData = cmd;

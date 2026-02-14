@@ -67,7 +67,6 @@ private:
 		CDialog::DoWaitCursor(nCode);
 	}
 	void DoArrowCursor();
-	void Sleep(clock_t wait);
 
 private:
 	bool m_bKeyboardHook = false;	// whether keyboard hook present

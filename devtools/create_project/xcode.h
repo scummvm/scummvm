@@ -94,8 +94,8 @@ private:
 		}
 
 		Setting(ValueList values, int flgs = 0, int idt = 0, int ord = -1) : _flags(flgs), _indent(idt), _order(ord) {
-			for (unsigned int i = 0; i < values.size(); i++)
-				_entries.push_back(Entry(values[i], ""));
+			for (const auto &value : values)
+				_entries.push_back(Entry(value, ""));
 		}
 
 		Setting(EntryList ents, int flgs = 0, int idt = 0, int ord = -1) : _entries(ents), _flags(flgs), _indent(idt), _order(ord) {}
@@ -134,8 +134,8 @@ private:
 			OrderedSettingList list;
 
 			// Prepare vector to sort
-			for (SettingList::const_iterator setting = _settings.begin(); setting != _settings.end(); ++setting)
-				list.push_back(SettingPair(setting->first, setting->second));
+			for (const auto &setting : _settings)
+				list.emplace_back(setting.first, setting.second);
 
 			// Sort vector using setting order
 			if (_hasOrder)
@@ -187,11 +187,11 @@ private:
 			output += _parent->writeProperty("isa", _properties["isa"], flags);
 
 			// Write each property
-			for (PropertyList::iterator property = _properties.begin(); property != _properties.end(); ++property) {
-				if (property->first == "isa")
+			for (auto &property : _properties) {
+				if (property.first == "isa")
 					continue;
 
-				output += _parent->writeProperty(property->first, property->second, flags);
+				output += _parent->writeProperty(property.first, property.second, flags);
 			}
 
 			if (flags & kSettingsAsList)
@@ -244,9 +244,9 @@ private:
 		}
 
 		Object *find(std::string id) {
-			for (std::vector<Object *>::iterator it = _objects.begin(); it != _objects.end(); ++it) {
-				if ((*it)->_id == id) {
-					return *it;
+			for (const auto &object : _objects) {
+				if (object->_id == id) {
+					return object;
 				}
 			}
 			return NULL;
@@ -258,8 +258,8 @@ private:
 			if (!_comment.empty())
 				output = "\n/* Begin " + _comment + " section */\n";
 
-			for (std::vector<Object *>::iterator object = _objects.begin(); object != _objects.end(); ++object)
-				output += (*object)->toString(_flags);
+			for (const auto &object : _objects)
+				output += object->toString(_flags);
 
 			if (!_comment.empty())
 				output += "/* End " + _comment + " section */\n";

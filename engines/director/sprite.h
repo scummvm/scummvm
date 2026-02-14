@@ -109,6 +109,8 @@ public:
 	Common::Point getPosition();
 	void setPosition(int x, int y);
 
+	Common::String formatInfo();
+
 	Frame *_frame;
 	Score *_score;
 	Movie *_movie;

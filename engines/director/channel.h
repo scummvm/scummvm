@@ -98,6 +98,8 @@ public:
 	CastMemberID getSubChannelSound1();
 	CastMemberID getSubChannelSound2();
 
+	Common::String formatInfo();
+
 public:
 	Sprite *_sprite;
 	Cursor _cursor;

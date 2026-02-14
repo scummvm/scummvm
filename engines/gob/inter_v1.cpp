@@ -1432,7 +1432,7 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 			if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) {
 				// The engine calls updateLive() every 100ms while waiting there
 				while (cmd > 100) {
-					_vm->_vidPlayer->updateLive();
+					_vm->_vidPlayer->updateVideos();
 					_vm->_util->longDelay(100);
 					cmd -= 100;
 				}

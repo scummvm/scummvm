@@ -170,6 +170,19 @@ Common::Path OSystem_PSP2::getDefaultLogFileName() {
 	return "ux0:data/scummvm/scummvm.log";
 }
 
+void OSystem_PSP2::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
+#ifdef DATA_PATH
+	// Add the global DATA_PATH to the directory search list
+	// FIXME: We use depth = 4 for now, to match the old code. May want to change that
+	Common::FSNode dataNode(DATA_PATH);
+	if (dataNode.exists() && dataNode.isDirectory()) {
+		s.add(DATA_PATH, new Common::FSDirectory(dataNode, 4), priority);
+	}
+#endif
+
+	// Don't add current working directory: there is none
+}
+
 Common::HardwareInputSet *OSystem_PSP2::getHardwareInputSet() {
 	using namespace Common;
 

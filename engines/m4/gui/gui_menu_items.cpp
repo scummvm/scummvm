@@ -21,7 +21,6 @@
 
 #include "graphics/thumbnail.h"
 #include "m4/gui/gui_menu_items.h"
-#include "m4/adv_r/other.h"
 #include "m4/adv_r/adv_background.h"
 #include "m4/adv_r/adv_control.h"
 #include "m4/adv_r/adv_player.h"
@@ -1224,7 +1223,7 @@ void menuItemMsg::drawMsg(menuItemMsg *myItem, guiMenu *myMenu, int32 x, int32 y
 
 	// Get the menu buffer and draw the sprite to it
 	Buffer *myBuff = myMenu->menuBuffer->get_buffer();
-	if (!myBuff) {
+	if (!myBuff || !mySprite) {
 		return;
 	}
 

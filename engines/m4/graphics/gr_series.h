@@ -37,18 +37,9 @@ constexpr uint32 SERIES_LOOP_TRIGGER = 32;	// get trigger back every loop
 constexpr uint32 SERIES_LOAD_PALETTE = 64;	// load master_palette with colours?
 constexpr uint32 SERIES_HORZ_FLIP = 128;	// horizontal flip
 
-// Old constants
-constexpr uint32 FORWARD = 0;
-constexpr uint32 PINGPONG = 1;
-constexpr uint32 BACKWARD = 2;
-constexpr uint32 STICK = 4;
-constexpr uint32 NO_TOSS = 8;
-
 enum {
 	HASH_SERIES_PLAY_MACHINE = 0,
 	HASH_SERIES_SHOW_MACHINE = 1,
-	// HASH_TIMER_MACHINE = 2,  // defined in adv.h
-
 	HASH_STREAM_MACHINE = 6
 };
 
@@ -66,7 +57,6 @@ struct Series {
 		int16 triggerNum = -1, int32 duration = -1, int32 index = 0, int32 s = 100,
 		int32 x = 0, int32 y = 0);
 	void show(const char *series1, const char *series2, int layer);
-	void show_index2(const char *series1, const char *series2, int layer, int index1, int index2);
 	void terminate();
 
 	operator bool() const {
