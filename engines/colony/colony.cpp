@@ -645,16 +645,59 @@ int ColonyEngine::whichSprite(const Common::Point &p) {
 	int oy = (_height - 264) / 2;
 	Common::Point pt(p.x - ox, p.y - oy);
 
+	debug(1, "Click at (%d, %d), relative (%d, %d)", p.x, p.y, pt.x, pt.y);
+
 	for (int i = _lSprites.size() - 1; i >= 0; i--) {
-		if (_lSprites[i]->onoff && _lSprites[i]->bounds.contains(pt)) {
-			return i + 1;
+		ComplexSprite *ls = _lSprites[i];
+		if (ls->onoff) {
+			int cnum = ls->current;
+			if (cnum < 0 || cnum >= (int)ls->objects.size()) continue;
+
+			int spriteIdx = ls->objects[cnum].spritenum;
+			if (spriteIdx < 0 || spriteIdx >= (int)_cSprites.size()) continue;
+
+			Sprite *s = _cSprites[spriteIdx];
+			int xloc = ls->xloc + ls->objects[cnum].xloc;
+			int yloc = ls->yloc + ls->objects[cnum].yloc;
+
+			Common::Rect r = s->clip;
+			r.translate(xloc, yloc);
+
+			if (r.contains(pt)) {
+				debug(1, "Sprite %d hit. Frame %d, Base Sprite %d. Box: (%d, %d, %d, %d)", i + 1,
+					cnum, spriteIdx, r.left, r.top, r.right, r.bottom);
+				return i + 1;
+			}
 		}
 	}
+
+	// Dump accurately calculated bounds if debug is high enough
+	if (gDebugLevel >= 2) {
+		for (int i = 0; i < (int)_lSprites.size(); i++) {
+			ComplexSprite *ls = _lSprites[i];
+			if (ls->onoff) {
+				int cnum = ls->current;
+				if (cnum < 0 || cnum >= (int)ls->objects.size()) continue;
+				int spriteIdx = ls->objects[cnum].spritenum;
+				if (spriteIdx < 0 || spriteIdx >= (int)_cSprites.size()) continue;
+				Sprite *s = _cSprites[spriteIdx];
+
+				int xloc = ls->xloc + ls->objects[cnum].xloc;
+				int yloc = ls->yloc + ls->objects[cnum].yloc;
+				Common::Rect r = s->clip;
+				r.translate(xloc, yloc);
+
+				debug(2, "  Sprite %d: Frame=%d Box=(%d,%d,%d,%d)", i + 1,
+					cnum, r.left, r.top, r.right, r.bottom);
+			}
+		}
+	}
+
 	return 0;
 }
 
 void ColonyEngine::handleAnimationClick(int item) {
-	debug("Animation click on item %d", item);
+	debug(0, "Animation click on item %d in %s", item, _animationName.c_str());
 
 	if (_animationName == "desk") {
 		if (item >= 2 && item <= 5) {
@@ -666,23 +709,23 @@ void ColonyEngine::handleAnimationClick(int item) {
 				drawAnimation();
 				_gfx->copyToScreen();
 			}
-			return;
 		}
-	} else if (_animationName == "reactor" || _animationName == "security") {
-		if (item >= 1 && item <= 10) {
-			for (int i = 5; i >= 1; i--) _animDisplay[i] = _animDisplay[i - 1];
+	} else if (_animationName == "reactor" || _animationName == "security" || _animationName == "suit") {
+		if (item >= 1 && item <= 10 && _animationName != "suit") {
+			for (int i = 5; i >= 1; i--)
+				_animDisplay[i] = _animDisplay[i - 1];
 			_animDisplay[0] = (uint8)(item + 1);
 			refreshAnimationDisplay();
 			drawAnimation();
 			_gfx->copyToScreen();
-			return;
-		} else if (item == 11) { // Clear
-			for (int i = 0; i < 6; i++) _animDisplay[i] = 1;
+			// Don't return, let dolSprite animate the button
+		} else if (item == 11 && _animationName != "suit") { // Clear
+			for (int i = 0; i < 6; i++)
+				_animDisplay[i] = 1;
 			refreshAnimationDisplay();
 			drawAnimation();
 			_gfx->copyToScreen();
-			return;
-		} else if (item == 12) { // Enter
+		} else if (item == 12 && _animationName != "suit") { // Enter
 			uint8 testarray[6];
 			if (_animationName == "reactor") {
 				if (_level == 1)
@@ -692,19 +735,23 @@ void ColonyEngine::handleAnimationClick(int item) {
 
 				bool match = true;
 				for (int i = 0; i < 6; i++) {
-					if (testarray[i] != _animDisplay[5 - i]) match = false;
+					if (testarray[i] != _animDisplay[5 - i])
+						match = false;
 				}
 				if (match) {
-					if (_coreState[_coreIndex] == 0) _coreState[_coreIndex] = 1;
-					else if (_coreState[_coreIndex] == 1) _coreState[_coreIndex] = 0;
+					if (_coreState[_coreIndex] == 0)
+						_coreState[_coreIndex] = 1;
+					else if (_coreState[_coreIndex] == 1)
+						_coreState[_coreIndex] = 0;
 					_gametest = true;
 				}
 				_animationRunning = false;
-			} else { // security
+			} else if (_animationName == "security") { // security
 				crypt(testarray, _decode1[0] - 2, _decode1[1] - 2, _decode1[2] - 2, _decode1[3] - 2);
 				bool match = true;
 				for (int i = 0; i < 6; i++) {
-					if (testarray[i] != _animDisplay[5 - i]) match = false;
+					if (testarray[i] != _animDisplay[5 - i])
+						match = false;
 				}
 				if (match) {
 					_unlocked = true;
@@ -712,23 +759,43 @@ void ColonyEngine::handleAnimationClick(int item) {
 				}
 				_animationRunning = false;
 			}
-			return;
+		} else if (_animationName == "suit") {
+			if (item == 1) { // Armor
+				// Animation: toggle button state frame by frame
+				SetObjectState(1, (_armor * 2 + 1) + 1); // intermediate/pressed
+				drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(50);
+				_armor = (_armor + 1) % 4;
+				SetObjectState(1, _armor * 2 + 1); // target state
+				SetObjectState(3, _armor + 1); // display state
+				drawAnimation(); _gfx->copyToScreen();
+				if (_armor == 3 && _weapons == 3) _corePower[_coreIndex] = 2;
+			} else if (item == 2) { // Weapons
+				SetObjectState(2, (_weapons * 2 + 1) + 1); // intermediate/pressed
+				drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(50);
+				_weapons = (_weapons + 1) % 4;
+				SetObjectState(2, _weapons * 2 + 1);
+				SetObjectState(4, _weapons + 1);
+				drawAnimation(); _gfx->copyToScreen();
+				if (_armor == 3 && _weapons == 3) _corePower[_coreIndex] = 2;
+			}
 		}
 	} else if (_animationName == "controls") {
 		switch (item) {
 		case 4: // Accelerator
 			if (_corePower[_coreIndex] >= 2 && _coreState[_coreIndex] == 0 && !_orbit) {
 				_orbit = 1;
-				debug("Taking off!");
+				debug(0, "Taking off!");
 				_animationRunning = false;
 			} else {
-				debug("Accelerator failed: power=%d, state=%d", _corePower[_coreIndex], _coreState[_coreIndex]);
+				debug(0, "Accelerator failed: power=%d, state=%d", _corePower[_coreIndex], _coreState[_coreIndex]);
 			}
 			break;
 		case 5: // Emergency power
 			if (_coreState[_coreIndex] < 2) {
-				if (_corePower[_coreIndex] == 0) _corePower[_coreIndex] = 1;
-				else if (_corePower[_coreIndex] == 1) _corePower[_coreIndex] = 0;
+				if (_corePower[_coreIndex] == 0)
+					_corePower[_coreIndex] = 1;
+				else if (_corePower[_coreIndex] == 1)
+					_corePower[_coreIndex] = 0;
 			}
 			// Update power visual state
 			switch (_corePower[_coreIndex]) {
@@ -741,34 +808,31 @@ void ColonyEngine::handleAnimationClick(int item) {
 			break;
 		case 6: // Ship weapons
 			if (!_orbit) {
-				debug("Firing ship weapons on ground! Game Over soon.");
+				debug(0, "Firing ship weapons on ground! Game Over soon.");
 				_animationRunning = false;
+				_system->quit(); // Triggering end of game for now
 			} else {
-				debug("Firing ship weapons in orbit.");
+				debug(0, "Firing ship weapons in orbit.");
 				_animationRunning = false;
 			}
 			break;
 		case 7: // Damage report
-			debug("Damage report button clicked.");
+			debug(0, "Damage report button clicked.");
 			break;
-		}
-	} else if (_animationName == "suit") {
-		if (item == 1) { // Armor
-			_armor = (_armor + 1) % 4;
-			SetObjectState(1, _armor * 2 + 1);
-			SetObjectState(3, _armor + 1);
-			drawAnimation();
-			_gfx->copyToScreen();
-		} else if (item == 2) { // Weapons
-			_weapons = (_weapons + 1) % 4;
-			SetObjectState(2, _weapons * 2 + 1);
-			SetObjectState(4, _weapons + 1);
-			drawAnimation();
-			_gfx->copyToScreen();
 		}
 	}
 
-	dolSprite(item - 1);
+	if (item > 0) {
+		dolSprite(item - 1);
+		// After dolSprite, many buttons return to state 1 (unpressed)
+		if (_animationName == "reactor" || _animationName == "security") {
+			if (item <= 12) {
+				SetObjectState(item, 1);
+				drawAnimation();
+				_gfx->copyToScreen();
+			}
+		}
+	}
 }
 
 void ColonyEngine::dolSprite(int index) {
