@@ -35,6 +35,7 @@
 #include "graphics/fontman.h"
 #include "graphics/font.h"
 #include "graphics/fonts/dosfont.h"
+#include "graphics/cursorman.h"
 #include <math.h>
 
 namespace Colony {
@@ -46,7 +47,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_robotNum = 0;
 	_gfx = nullptr;
 	_width = 640;
-	_height = 480;
+	_height = 350;
 	_centerX = _width / 2;
 	_centerY = _height / 2;
 	_mouseSensitivity = 1;
@@ -190,7 +191,7 @@ void ColonyEngine::initTrig() {
 
 Common::Error ColonyEngine::run() {
 	_width = 640;
-	_height = 480;
+	_height = 350;
 
 	if (_widescreen) {
 		_width = _height * 16 / 9;
@@ -438,6 +439,10 @@ void ColonyEngine::playAnimation() {
 	_animationRunning = true;
 	_system->lockMouse(false);
 	_system->showMouse(true);
+	_system->warpMouse(_centerX, _centerY);
+	CursorMan.setDefaultArrowCursor(true);
+	CursorMan.showMouse(true);
+	_system->updateScreen();
 
 	if (_animationName == "security" && !_unlocked) {
 		for (int i = 0; i < 4; i++) {
@@ -469,9 +474,25 @@ void ColonyEngine::playAnimation() {
 				if (item > 0) {
 					handleAnimationClick(item);
 				}
+			} else if (event.type == Common::EVENT_MOUSEMOVE) {
+				debug(5, "Animation Mouse: %d, %d", event.mouse.x, event.mouse.y);
 			} else if (event.type == Common::EVENT_KEYDOWN) {
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+				int item = 0;
+				if (event.kbd.keycode >= Common::KEYCODE_0 && event.kbd.keycode <= Common::KEYCODE_9) {
+					item = 1 + (event.kbd.keycode - Common::KEYCODE_0);
+				} else if (event.kbd.keycode >= Common::KEYCODE_KP0 && event.kbd.keycode <= Common::KEYCODE_KP9) {
+					item = 1 + (event.kbd.keycode - Common::KEYCODE_KP0);
+				} else if (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
+					item = 12; // Enter
+				} else if (event.kbd.keycode == Common::KEYCODE_BACKSPACE || event.kbd.keycode == Common::KEYCODE_DELETE) {
+					item = 11; // Clear
+				} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					_animationRunning = false;
+				}
+
+				if (item > 0) {
+					handleAnimationClick(item);
+				}
 			}
 		}
 		_system->delayMillis(20);
@@ -479,6 +500,8 @@ void ColonyEngine::playAnimation() {
 
 	_system->lockMouse(true);
 	_system->showMouse(false);
+	CursorMan.showMouse(false);
+	CursorMan.popAllCursors();
 	deleteAnimation();
 }
 
@@ -504,18 +527,20 @@ void ColonyEngine::updateAnimation() {
 void ColonyEngine::drawAnimation() {
 	_gfx->clear(0); // Ensure entire screen is black
 
-	// Center 320x200 animation on screen
-	int ox = (_width - 320) / 2;
-	int oy = (_height - 200) / 2;
+	// Center 416x264 animation area on screen (from original InitDejaVu)
+	int ox = (_width - 416) / 2;
+	ox = (ox / 8) * 8; // Round to 8 as in original code
+	int oy = (_height - 264) / 2;
 
-	// Fill background patterns
-	for (int y = 0; y < 200; y++) {
+	// Fill background patterns (416x264 area)
+	for (int y = 0; y < 264; y++) {
 		byte *pat = (y < _divideBG) ? _topBG : _bottomBG;
 		byte row = pat[y % 8];
-		for (int x = 0; x < 320; x++) {
+		for (int x = 0; x < 416; x++) {
 			bool set = (row & (0x80 >> (x % 8))) != 0;
-			// Inverted as in original readanim
-			_gfx->setPixel(ox + x, oy + y, set ? 0 : 15);
+			// Pattern bit 1 is background color (15), bit 0 is foreground (0)
+			// matching original FillRect with inverted data.
+			_gfx->setPixel(ox + x, oy + y, set ? 15 : 0);
 		}
 	}
 
@@ -615,8 +640,9 @@ Common::Rect ColonyEngine::readRect(Common::SeekableReadStream &file) {
 }
 
 int ColonyEngine::whichSprite(const Common::Point &p) {
-	int ox = (_width - 320) / 2;
-	int oy = (_height - 200) / 2;
+	int ox = (_width - 416) / 2;
+	ox = (ox / 8) * 8;
+	int oy = (_height - 264) / 2;
 	Common::Point pt(p.x - ox, p.y - oy);
 
 	for (int i = _lSprites.size() - 1; i >= 0; i--) {
