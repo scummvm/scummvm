@@ -70,7 +70,7 @@ char GameInfo::getLanguageFileLetter() const {
 	switch (_type) {
 	case GAME_U8: {
 		unsigned int l = static_cast<unsigned int>(_language);
-		assert(l < (sizeof(gamelangs) / sizeof(gamelangs[0])) - 1);
+		assert(l < ARRAYSIZE(gamelangs) - 1);
 
 		return gamelangs[l].letter;
 	}
@@ -86,7 +86,7 @@ char GameInfo::getLanguageUsecodeLetter() const {
 	switch (_type) {
 	case GAME_U8: {
 		unsigned int l = static_cast<unsigned int>(_language);
-		assert(l < (sizeof(gamelangs) / sizeof(gamelangs[0])) - 1);
+		assert(l < ARRAYSIZE(gamelangs) - 1);
 
 		return gamelangs[l].usecodeletter;
 	}
@@ -100,14 +100,14 @@ char GameInfo::getLanguageUsecodeLetter() const {
 
 Common::String GameInfo::getLanguage() const {
 	unsigned int l = static_cast<unsigned int>(_language);
-	assert(l < (sizeof(gamelangs) / sizeof(gamelangs[0])) - 1);
+	assert(l < ARRAYSIZE(gamelangs) - 1);
 
 	return gamelangs[l].name;
 }
 
 Common::String GameInfo::getGameTitle() const {
 	unsigned int t = static_cast<unsigned int>(_type);
-	assert(t < (sizeof(gametypes) / sizeof(gametypes[0])) - 1);
+	assert(t < ARRAYSIZE(gametypes) - 1);
 
 	return gametypes[t].longname;
 }
@@ -164,9 +164,9 @@ bool GameInfo::match(GameInfo &other, bool ignoreMD5) const {
 
 void GameInfo::save(Common::WriteStream *ws) {
 	unsigned int l = static_cast<unsigned int>(_language);
-	assert(l < (sizeof(gamelangs) / sizeof(gamelangs[0])) - 1);
+	assert(l < ARRAYSIZE(gamelangs) - 1);
 	unsigned int t = static_cast<unsigned int>(_type);
-	assert(t < (sizeof(gametypes) / sizeof(gametypes[0])) - 1);
+	assert(t < ARRAYSIZE(gametypes) - 1);
 
 	Common::String game = gametypes[t].shortname;
 	Common::String lang = gamelangs[l].name;

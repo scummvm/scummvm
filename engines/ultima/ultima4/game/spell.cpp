@@ -232,7 +232,7 @@ Common::String Spells::spellGetErrorMessage(uint spell, SpellCastError error) {
 	}
 
 	/* find the message that we're looking for and return it! */
-	for (i = 0; i < sizeof(SPELL_ERROR_MSGS) / sizeof(SPELL_ERROR_MSGS[0]); i++) {
+	for (i = 0; i < ARRAYSIZE(SPELL_ERROR_MSGS); i++) {
 		if (err == SPELL_ERROR_MSGS[i].err)
 			return Common::String(SPELL_ERROR_MSGS[i].msg);
 	}

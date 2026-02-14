@@ -117,7 +117,7 @@ Weapon::Weapon(WeaponType weaponType, const ConfigElement &conf)
 	_range = atoi(range.c_str());
 
 	/* Load weapon attributes */
-	for (unsigned at = 0; at < sizeof(booleanAttributes) / sizeof(booleanAttributes[0]); at++) {
+	for (unsigned at = 0; at < ARRAYSIZE(booleanAttributes); at++) {
 		if (conf.getBool(booleanAttributes[at].name)) {
 			_flags |= booleanAttributes[at].flag;
 		}

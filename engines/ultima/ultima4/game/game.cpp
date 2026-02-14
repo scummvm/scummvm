@@ -744,7 +744,7 @@ void mixReagentsSuper() {
 		{ "Paws", {3, 4, 2, 8, 6, 7} },
 		{ "SkaraBr", {2, 4, 9, 6, 4, 8} },
 	};
-	const int shopcount = sizeof(shops) / sizeof(shops[0]);
+	const int shopcount = ARRAYSIZE(shops);
 
 	int oldlocation = g_context->_location->_viewMode;
 	g_context->_location->_viewMode = VIEW_MIXTURES;

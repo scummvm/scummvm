@@ -62,7 +62,7 @@ const struct {
 	{ 5, "\nLord British says: I have pulled thy spirit and some possessions from the void.  Be more careful in the future!\n\n\020" }
 };
 
-#define N_MSGS (sizeof(DEATH_MSGS) / sizeof(DEATH_MSGS[0]))
+#define N_MSGS ARRAYSIZE(DEATH_MSGS)
 
 Death::Death() : timerCount(0), timerMsg(0), deathSequenceRunning(false) {
 	g_death = this;
