@@ -42,7 +42,6 @@ public:
 	void fillRect(const Common::Rect &rect, uint32 color) override;
 	void drawString(const Graphics::Font *font, const Common::String &str, int x, int y, uint32 color, Graphics::TextAlign align) override;
 	void scroll(int dx, int dy, uint32 background) override;
-	bool isAccelerated() const override { return true; }
 	void drawEllipse(int x, int y, int rx, int ry, uint32 color) override;
 	void fillEllipse(int x, int y, int rx, int ry, uint32 color) override;
 	void fillDitherRect(const Common::Rect &rect, uint32 color1, uint32 color2) override;

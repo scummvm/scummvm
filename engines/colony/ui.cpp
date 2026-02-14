@@ -280,7 +280,6 @@ int ColonyEngine::occupiedObjectAt(int x, int y, const Locate *pobject) {
 int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 	const int xind2 = xnew >> 8;
 	const int yind2 = ynew >> 8;
-	_change = true;
 
 	auto occupied = [&]() -> int {
 		return occupiedObjectAt(xind2, yind2, pobject);
@@ -534,8 +533,7 @@ void ColonyEngine::interactWithObject(int objNum) {
 			_robotArray[oldX][oldY] = 0;
 		if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
 			_robotArray[_me.xindex][_me.yindex] = MENUM;
-		_change = true;
-		debug("CCommand: TELEPORT to L%d (%d,%d)", targetLevel, targetX, targetY);
+			debug("CCommand: TELEPORT to L%d (%d,%d)", targetLevel, targetX, targetY);
 		break;
 	}
 	case kObjDrawer:
@@ -594,6 +592,67 @@ void ColonyEngine::cCommand(int xnew, int ynew, bool allowInteraction) {
 
 	if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
 		_robotArray[_me.xindex][_me.yindex] = MENUM;
+}
+
+bool ColonyEngine::clipLineToRect(int &x1, int &y1, int &x2, int &y2, const Common::Rect &clip) const {
+	if (clip.left >= clip.right || clip.top >= clip.bottom)
+		return false;
+	const int l = clip.left;
+	const int r = clip.right - 1;
+	const int t = clip.top;
+	const int b = clip.bottom - 1;
+	auto outCode = [&](int x, int y) {
+		int code = 0;
+		if (x < l)
+			code |= 1;
+		else if (x > r)
+			code |= 2;
+		if (y < t)
+			code |= 4;
+		else if (y > b)
+			code |= 8;
+		return code;
+	};
+
+	int c1 = outCode(x1, y1);
+	int c2 = outCode(x2, y2);
+	while (true) {
+		if ((c1 | c2) == 0)
+			return true;
+		if (c1 & c2)
+			return false;
+
+		const int cOut = c1 ? c1 : c2;
+		int x = 0;
+		int y = 0;
+		if (cOut & 8) {
+			if (y2 == y1) return false;
+			x = x1 + (x2 - x1) * (b - y1) / (y2 - y1);
+			y = b;
+		} else if (cOut & 4) {
+			if (y2 == y1) return false;
+			x = x1 + (x2 - x1) * (t - y1) / (y2 - y1);
+			y = t;
+		} else if (cOut & 2) {
+			if (x2 == x1) return false;
+			y = y1 + (y2 - y1) * (r - x1) / (x2 - x1);
+			x = r;
+		} else {
+			if (x2 == x1) return false;
+			y = y1 + (y2 - y1) * (l - x1) / (x2 - x1);
+			x = l;
+		}
+
+		if (cOut == c1) {
+			x1 = x;
+			y1 = y;
+			c1 = outCode(x1, y1);
+		} else {
+			x2 = x;
+			y2 = y;
+			c2 = outCode(x2, y2);
+		}
+	}
 }
 
 } // End of namespace Colony

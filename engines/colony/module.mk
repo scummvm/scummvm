@@ -6,7 +6,6 @@ MODULE_OBJS := \
 	metaengine.o \
 	render.o \
 	renderer_opengl.o \
-	renderer_software.o \
 	ui.o
 
 MODULE_DIRS += \

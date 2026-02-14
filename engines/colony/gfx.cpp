@@ -21,21 +21,18 @@
 
 #include "common/system.h"
 #include "common/config-manager.h"
-#include "colony/gfx.h"
+#include "engines/util.h"
+#include "colony/renderer.h"
 
 namespace Colony {
 
-Gfx::Gfx(OSystem *system, int width, int height) {
-	Common::String renderer = ConfMan.get("renderer");
-	if (renderer == "software") {
-		_renderer = createSoftwareRenderer(system, width, height);
-	} else {
-		_renderer = createOpenGLRenderer(system, width, height);
-	}
-}
+// Forward declaration for the OpenGL renderer factory
+Renderer *createOpenGLRenderer(OSystem *system, int width, int height);
 
-Gfx::~Gfx() {
-	delete _renderer;
+Renderer *createRenderer(OSystem *system, int width, int height) {
+	// Always use OpenGL (following Freescape's pattern for accelerated renderers)
+	initGraphics3d(width, height);
+	return createOpenGLRenderer(system, width, height);
 }
 
 } // End of namespace Colony

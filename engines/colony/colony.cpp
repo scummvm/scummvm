@@ -82,9 +82,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_height = 480;
 	_centerX = _width / 2;
 	_centerY = _height / 2;
-	_flip = false;
 	_mouseSensitivity = 1;
-	_change = true;
 	_showDashBoard = true;
 	_crosshair = true;
 	_insight = false;
@@ -206,21 +204,13 @@ void ColonyEngine::initTrig() {
 		_sint[i] = g_sintTable[i];
 		_cost[i] = g_sintTable[(i + 64) & 0xFF];
 	}
-
-	_rtable[0] = 32000;
-	for (int i = 1; i < 11585; i++) {
-		_rtable[i] = (160 * 128) / i;
-	}
 }
 
 Common::Error ColonyEngine::run() {
-	Common::String renderer = "opengl"; //ConfMan.get("renderer");
-	if (renderer == "software") {
-		Graphics::PixelFormat format8bpp = Graphics::PixelFormat::createFormatCLUT8();
-		initGraphics(_width, _height, &format8bpp);
-	} else {
-		initGraphics3d(_width, _height);
-	}
+	// Create the renderer (follows Freescape pattern: always uses OpenGL)
+	_gfx = createRenderer(_system, _width, _height);
+	if (!_gfx)
+		return Common::kUserCanceled;
 
 	_width = _system->getWidth();
 	_height = _system->getHeight();
@@ -246,10 +236,6 @@ Common::Error ColonyEngine::run() {
 		pal[i * 3 + 1] = i;
 		pal[i * 3 + 2] = i;
 	}
-	if (renderer == "software") {
-		_system->getPaletteManager()->setPalette(pal, 0, 256);
-	}
-	_gfx = new Gfx(_system, _width, _height);
 	_gfx->setPalette(pal, 0, 256);
 	_gfx->setWireframe(_wireframe);
 	
@@ -282,16 +268,13 @@ Common::Error ColonyEngine::run() {
 					}
 				case Common::KEYCODE_LEFT:
 					_me.look = (uint8)((int)_me.look + 8);
-					_change = true;
 					break;
 					case Common::KEYCODE_RIGHT:
 						_me.look = (uint8)((int)_me.look - 8);
-						_change = true;
 						break;
 					case Common::KEYCODE_F7:
 						_wireframe = !_wireframe;
 						_gfx->setWireframe(_wireframe);
-						_change = true;
 						break;
 					default:
 						break;
@@ -299,29 +282,18 @@ Common::Error ColonyEngine::run() {
 				debug("Me: x=%d y=%d look=%d", _me.xloc, _me.yloc, _me.look);
 			} else if (event.type == Common::EVENT_MOUSEMOVE) {
 				if (event.relMouse.x != 0) {
-					// Subtract because increasing look turns left, but mouse right is positive rel X
-					// Reduced sensitivity by half
 					_me.look = (uint8)((int)_me.look - (event.relMouse.x / 2));
-					_change = true;
 				}
 				if (event.relMouse.y != 0) {
-					// Add/Subtract based on standard vertical look (pull back to look up)
-					// Mouse down is positive rel Y.
 					_me.lookY = (int8)CLIP<int>((int)_me.lookY - (event.relMouse.y / 2), -64, 64);
-					_change = true;
 				}
 			}
 		}
 		_system->warpMouse(_centerX, _centerY);
 
 		_gfx->clear(_gfx->black());
-		for (uint i = 0; i < _objects.size(); i++)
-			_objects[i].visible = 0;
 		
 		corridor();
-		if (renderer == "software") {
-			drawStaticObjects();
-		}
 		drawDashboardStep1();
 		drawCrosshair();
 		
