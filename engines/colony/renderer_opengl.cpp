@@ -208,7 +208,9 @@ void OpenGLRenderer::begin3D(int camX, int camY, int camZ, int angle, int angleY
 	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
  
 	// 3. Horizontal rotation (Yaw) around World Z axis (Up)
-	glRotatef(-(float)angle * 360.0f / 256.0f, 0.0f, 0.0f, 1.0f);
+	// +90° compensates for the -90° X rotation above: without it the camera
+	// looks along +Y at angle=0, but movement cos/sin uses +X as angle=0.
+	glRotatef(-(float)angle * 360.0f / 256.0f + 90.0f, 0.0f, 0.0f, 1.0f);
 	
 	// 4. Translate camera
 	glTranslatef(-(float)camX, -(float)camY, -(float)camZ);
