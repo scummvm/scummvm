@@ -467,33 +467,33 @@ void ColonyEngine::getWallFace3D(int cellX, int cellY, int direction, float corn
 	float y1 = (cellY + 1) * 256.0f;
 	const float zBot = -160.0f;
 	const float zTop = 160.0f;
-	// No more manual eps offset; we'll use glPolygonOffset in the renderer
-	const float eps = 0.0f;
+	// Pull slightly into the cell to prevent z-fighting
+	const float eps = 1.0f;
 
 	switch (direction) {
-	case kDirNorth: // Wall at y=cellY edge; viewed from inside cell (y > cellY*256)
-		corners[0][0] = x0;  corners[0][1] = y0 + eps;  corners[0][2] = zBot;
-		corners[1][0] = x1;  corners[1][1] = y0 + eps;  corners[1][2] = zBot;
-		corners[2][0] = x1;  corners[2][1] = y0 + eps;  corners[2][2] = zTop;
-		corners[3][0] = x0;  corners[3][1] = y0 + eps;  corners[3][2] = zTop;
+	case kDirNorth: // Wall at y1 (+Y); viewed from inside (looking North)
+		corners[0][0] = x0;  corners[0][1] = y1 - eps;  corners[0][2] = zBot; // BL
+		corners[1][0] = x1;  corners[1][1] = y1 - eps;  corners[1][2] = zBot; // BR
+		corners[2][0] = x1;  corners[2][1] = y1 - eps;  corners[2][2] = zTop; // TR
+		corners[3][0] = x0;  corners[3][1] = y1 - eps;  corners[3][2] = zTop; // TL
 		break;
-	case kDirSouth: // Wall at y=(cellY+1) edge; viewed from inside cell
-		corners[0][0] = x1;  corners[0][1] = y1 - eps;  corners[0][2] = zBot;
-		corners[1][0] = x0;  corners[1][1] = y1 - eps;  corners[1][2] = zBot;
-		corners[2][0] = x0;  corners[2][1] = y1 - eps;  corners[2][2] = zTop;
-		corners[3][0] = x1;  corners[3][1] = y1 - eps;  corners[3][2] = zTop;
+	case kDirSouth: // Wall at y0 (-Y); viewed from inside (looking South)
+		corners[0][0] = x1;  corners[0][1] = y0 + eps;  corners[0][2] = zBot; // BL
+		corners[1][0] = x0;  corners[1][1] = y0 + eps;  corners[1][2] = zBot; // BR
+		corners[2][0] = x0;  corners[2][1] = y0 + eps;  corners[2][2] = zTop; // TR
+		corners[3][0] = x1;  corners[3][1] = y0 + eps;  corners[3][2] = zTop; // TL
 		break;
-	case kDirEast: // Wall at x=(cellX+1) edge; viewed from inside cell
-		corners[0][0] = x1 - eps;  corners[0][1] = y1;  corners[0][2] = zBot;
-		corners[1][0] = x1 - eps;  corners[1][1] = y0;  corners[1][2] = zBot;
-		corners[2][0] = x1 - eps;  corners[2][1] = y0;  corners[2][2] = zTop;
-		corners[3][0] = x1 - eps;  corners[3][1] = y1;  corners[3][2] = zTop;
+	case kDirEast: // Wall at x1 (+X); viewed from inside (looking East)
+		corners[0][0] = x1 - eps;  corners[0][1] = y1;  corners[0][2] = zBot; // BL
+		corners[1][0] = x1 - eps;  corners[1][1] = y0;  corners[1][2] = zBot; // BR
+		corners[2][0] = x1 - eps;  corners[2][1] = y0;  corners[2][2] = zTop; // TR
+		corners[3][0] = x1 - eps;  corners[3][1] = y1;  corners[3][2] = zTop; // TL
 		break;
-	case kDirWest: // Wall at x=cellX edge; viewed from inside cell
-		corners[0][0] = x0 + eps;  corners[0][1] = y0;  corners[0][2] = zBot;
-		corners[1][0] = x0 + eps;  corners[1][1] = y1;  corners[1][2] = zBot;
-		corners[2][0] = x0 + eps;  corners[2][1] = y1;  corners[2][2] = zTop;
-		corners[3][0] = x0 + eps;  corners[3][1] = y0;  corners[3][2] = zTop;
+	case kDirWest: // Wall at x0 (-X); viewed from inside (looking West)
+		corners[0][0] = x0 + eps;  corners[0][1] = y0;  corners[0][2] = zBot; // BL
+		corners[1][0] = x0 + eps;  corners[1][1] = y1;  corners[1][2] = zBot; // BR
+		corners[2][0] = x0 + eps;  corners[2][1] = y1;  corners[2][2] = zTop; // TR
+		corners[3][0] = x0 + eps;  corners[3][1] = y0;  corners[3][2] = zTop; // TL
 		break;
 	default:
 		return;
@@ -702,8 +702,6 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 }
 
 void ColonyEngine::drawWallFeatures3D() {
-	// TODO
-	/*
 	for (int y = 0; y < 31; y++) {
 		for (int x = 0; x < 31; x++) {
 			for (int dir = 0; dir < 4; dir++) {
@@ -713,7 +711,7 @@ void ColonyEngine::drawWallFeatures3D() {
 				}
 			}
 		}
-	}*/
+	}
 }
 
 
