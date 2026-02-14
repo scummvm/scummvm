@@ -242,7 +242,7 @@ public:
 	Common::U32String chr(uint16 code);
 	void close(int16 fileNo);
 	void coordinateWindow();
-	void get(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &dest);
+	void get(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &dest, bool preserveDims = false);
 	int16 instr(int16 expression, const Common::U32String &string1, const Common::U32String &string2);
 	Common::U32String files(int16 expression, const Common::U32String &prompt, const Common::U32String &defaultFilename, int16 &volume);
 	int finderInfo(int16 &count, Common::U32String &var, OSType &type, uint16 volume);

@@ -141,7 +141,7 @@ void Toolbox::DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect) {
 
 void Toolbox::EraseRect(const Common::Rect &r) {
 	if (_port) {
-		_drawRect(r, _port->bkPat, kPatCopy, false);
+		_drawRect(r, _port->bkPat, kPatCopy, false, _port->fgColor, _port->bkColor);
 	}
 }
 
@@ -157,7 +157,7 @@ void Toolbox::FillOval(const Common::Rect &r, const Pattern &pat) {
 	warning("STUB: Toolbox::FillOval");
 }
 
-void Toolbox::_drawRect(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame) {
+void Toolbox::_drawRect(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor) {
 	if (_port && _port->pnVis == 0) {
 		BitMap intermediate(new Graphics::ManagedSurface(r.width(), r.height()));
 		// special case because rect fills the entire surface
@@ -169,7 +169,7 @@ void Toolbox::_drawRect(const Common::Rect &r, const Pattern &pat, PatternMode m
 		Common::Point destPos(r.left, r.top);
 		Graphics::MacPatterns macpat({pat.data});
 
-		Graphics::MacPlotData pd(&(*intermediate), nullptr, &macpat, 1, destPos.x, destPos.y, _port->pnSize, _port->bkColor);
+		Graphics::MacPlotData pd(intermediate.get(), mask.get(), &macpat, 1, destPos.x, destPos.y, _port->pnSize, bkColor);
 		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
 		// For thicker outlines, the shape should be adjusted inward
 		Common::Rect destRect = intermediate->getBounds();
@@ -177,9 +177,9 @@ void Toolbox::_drawRect(const Common::Rect &r, const Pattern &pat, PatternMode m
 		destRect.bottom -= _port->pnSize.y - 1;
 
 		if (frame) {
-			pm.drawRect(destRect, _port->fgColor, &pd);
+			pm.drawRect(destRect, fgColor, &pd);
 		} else {
-			pm.drawFilledRect(destRect, _port->fgColor, &pd);
+			pm.drawFilledRect(destRect, fgColor, &pd);
 		}
 		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, mode);
 
@@ -193,7 +193,7 @@ void Toolbox::_drawRect(const Common::Rect &r, const Pattern &pat, PatternMode m
 
 void Toolbox::FillRect(const Common::Rect &r, const Pattern &pat) {
 	if (_port) {
-		_drawRect(r, pat, kPatCopy, false);
+		_drawRect(r, pat, kPatCopy, false, _port->fgColor, _port->bkColor);
 	}
 }
 
@@ -207,9 +207,9 @@ void Toolbox::FrameOval(const Common::Rect &r) {
 		BitMap intermediate(new Graphics::ManagedSurface(r.width(), r.height()));
 		BitMap mask(new Graphics::ManagedSurface(r.width(), r.height()));
 		Common::Point destPos(r.left, r.top);
-		Graphics::MacPatterns pat({_port->pnPat.data});
+		Graphics::MacPatterns macpat({_port->pnPat.data});
 
-		Graphics::MacPlotData pd(&(*intermediate), &(*mask), &pat, 1, destPos.x, destPos.y, _port->pnSize, _port->bkColor);
+		Graphics::MacPlotData pd(intermediate.get(), mask.get(), &macpat, 1, destPos.x, destPos.y, _port->pnSize, _port->bkColor);
 		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
 		pm.drawEllipse(0, 0, r.width(), r.height(), _port->fgColor, false, &pd);
 
@@ -223,12 +223,12 @@ void Toolbox::FrameOval(const Common::Rect &r) {
 
 void Toolbox::FrameRect(const Common::Rect &r) {
 	if (_port) {
-		_drawRect(r, _port->pnPat, _port->pnMode, true);
+		_drawRect(r, _port->pnPat, _port->pnMode, true, _port->fgColor, _port->bkColor);
 	}
 }
 
 void Toolbox::FrameRoundRect(const Common::Rect &r, int16 ovalWidth, int16 ovalHeight) {
-	warning("STUB: Toolbox::InvertRoundRect");
+	warning("STUB: Toolbox::FrameRoundRect");
 }
 
 void Toolbox::GetCPixel(int16 h, int16 v, RGBColor &cPix) {
@@ -295,21 +295,10 @@ void Toolbox::InvertOval(const Common::Rect &r) {
 }
 
 void Toolbox::InvertRect(const Common::Rect &r) {
-	if (_port && _port->pnVis == 0) {
-		BitMap intermediate(new Graphics::ManagedSurface(r.width(), r.height()));
-		BitMap mask(nullptr);
-		Common::Point destPos(r.left, r.top);
+	if (_port) {
 		// set pattern to full black
 		Pattern pat({0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff});
-		Graphics::MacPatterns macpat({pat.data});
-		Graphics::MacPlotData pd(&(*intermediate), nullptr, &macpat, 1, destPos.x, destPos.y, {1, 1}, g_engine->_wm._colorWhite);
-		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
-		pm.drawFilledRect(intermediate->getBounds(), g_engine->_wm._colorBlack, &pd);
-		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, kPatXor);
-		if (_port->portBits == _defaultBits) {
-			_defaultWindow->addDirtyRect(dstRect);
-			_defaultWindow->setDirty(true);
-		}
+		_drawRect(r, pat, kPatXor, false, g_engine->_wm._colorBlack, g_engine->_wm._colorWhite);
 	}
 }
 
@@ -332,9 +321,9 @@ void Toolbox::LineTo(int16 h, int16 v) {
 		BitMap intermediate(new Graphics::ManagedSurface(interRect.width(), interRect.height()));
 		BitMap mask(new Graphics::ManagedSurface(interRect.width(), interRect.height()));
 		Common::Point destPos(dirVec.x < 0 ? h + dirVec.x : h - dirVec.x, dirVec.y < 0 ? v + dirVec.y : v - dirVec.y);
-		Graphics::MacPatterns pat({_port->pnPat.data});
+		Graphics::MacPatterns macpat({_port->pnPat.data});
 
-		Graphics::MacPlotData pd(&(*intermediate), &(*mask), &pat, 1, destPos.x, destPos.y, _port->pnSize, _port->bkColor);
+		Graphics::MacPlotData pd(intermediate.get(), mask.get(), &macpat, 1, destPos.x, destPos.y, _port->pnSize, _port->bkColor);
 		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
 		pm.drawLine(startPos.x, startPos.y, endPos.x, endPos.y, _port->fgColor, &pd);
 
@@ -400,7 +389,7 @@ void Toolbox::PaintPoly(PolyHandle poly) {
 
 void Toolbox::PaintRect(const Common::Rect &r) {
 	if (_port) {
-		_drawRect(r, _port->pnPat, _port->pnMode, false);
+		_drawRect(r, _port->pnPat, _port->pnMode, false, _port->fgColor, _port->bkColor);
 	}
 }
 

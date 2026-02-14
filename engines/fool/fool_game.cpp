@@ -1031,7 +1031,22 @@ void FoolGame::sub_128_5fb4() {
 }
 
 void FoolGame::sub_128_5fea() {
-	warning("STUB: %s", __func__);
+	if (this->var_i16_37a == 1) {
+		g_toolbox->SetPort(this->var_i32_8);
+		g_toolbox->PenNormal();
+		this->sub_128_8b4(0x14, 0, this->var_i16_5c, this->var_i16_56-3, 2);
+		this->sub_128_8b4(0x14, 0, this->var_i16_58+0x11, this->var_i16_5a, 2);
+		this->sub_128_8b4(0x14, this->var_i16_56+0x203, this->var_i16_5c, this->var_i16_5a, 2);
+		this->sub_128_8b4(this->var_i16_58 + 0x159, 0, this->var_i16_5c, this->var_i16_5a, 2);
+		g_toolbox->SetRect(this->arr_rect_5b7c, this->var_i16_56-2, this->var_i16_58+0x12, this->var_i16_56+0x202, this->var_i16_58+0x158);
+		g_toolbox->PenPat(this->arr_pat_58f4[1]);
+		g_toolbox->FrameRect(this->arr_rect_5b7c);
+		g_toolbox->SetRect(this->arr_rect_5b7c, this->var_i16_56-1, this->var_i16_58+0x13, this->var_i16_56+0x201, this->var_i16_58+0x157);
+		g_toolbox->PenPat(this->arr_pat_58f4[2]);
+		g_toolbox->FrameRect(this->arr_rect_5b7c);
+		g_toolbox->SetPort(this->var_i32_0);
+	}
+	// 128:6152
 }
 
 void FoolGame::sub_128_6154() {
@@ -1043,7 +1058,16 @@ void FoolGame::sub_128_6186() {
 }
 
 void FoolGame::sub_128_61ec() {
-	warning("STUB: %s", __func__);
+	do {
+		this->var_i16_7a8 = g_toolbox->GetNextEvent(0xffff, this->var_ev_46);
+		if (this->var_ev_46.what == 6) {
+			this->sub_128_5fb4();
+		}
+		if (this->var_ev_46.what == 7) {
+			this->sub_128_6154();
+		}
+	} while ((this->var_ev_46.what == 0) && (this->var_ev_46.modifiers & 0x80));
+	this->var_i16_7c0 = 0;
 }
 
 void FoolGame::sub_128_6244() {

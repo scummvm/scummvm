@@ -178,11 +178,20 @@ void ZBasic::coordinateWindow() {
 	warning("STUB: ZBasic::coordinateWindow");
 }
 
-void ZBasic::get(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &dest) {
+void ZBasic::get(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &dest, bool preserveDims) {
 	GrafPtr port;
 	_toolbox->GetPort(port);
 	Common::Rect srcRect(x1, y1, x2, y2);
-	dest->create(srcRect.width(), srcRect.height());
+	// Real ZBasic uses a raw array for storage.
+	// Some graphical effects expect there to be a full screen page that only has part
+	// of it copied over, so we have this flag.
+	if (preserveDims) {
+		if (srcRect.width() != dest->w) {
+			warning("ZBasic::get: differing row lengths, surface not going to draw correctly");
+		}
+	} else {
+		dest->create(srcRect.width(), srcRect.height());
+	}
 	_toolbox->CopyBits(port->portBits, dest, srcRect, dest->getBounds(), kSrcCopy, nullptr);
 }
 
