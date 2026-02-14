@@ -108,7 +108,7 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 	//uint32 blue = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x55, 0x55, 0xFF);
 	uint32 green = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x55, 0xFF, 0x55);
 	uint32 redish = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0x55, 0x55);
-	//uint32 transparent = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
+	uint32 transparent = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
 	uint32 pink = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0x55, 0xFF);
 	uint32 cyan = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x55, 0xFF, 0xFF);
 
@@ -143,7 +143,7 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 		x = 175;
 
 	Common::String shieldStr = Common::String::format("%d", shield);
-	drawStringInSurface(shieldStr, x, 162, black, color2, surface);
+	drawStringInSurface(shieldStr, x, 162, black, transparent, surface);
 
 	drawStringInSurface(shiftStr("0", 'Z' - '$' + 1 - _angleRotationIndex), 79, 135, black, color3, surface);
 	drawStringInSurface(shiftStr("3", 'Z' - '$' + 1 - _playerStepIndex), 63, 135, black, color3, surface);
