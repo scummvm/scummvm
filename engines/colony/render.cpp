@@ -763,6 +763,17 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 	if (!map || map[0] == kWallFeatureNone)
 		return;
 
+	// Backface culling: only draw features for the side facing the camera.
+	// This prevents backside decorations (like Level 2 lines) from bleeding through.
+	// We use non-inclusive comparisons so features remain visible while standing on the boundary.
+	switch (direction) {
+	case kDirNorth: if (_me.yloc > (cellY + 1) * 256) return; break;
+	case kDirSouth: if (_me.yloc < cellY * 256) return;       break;
+	case kDirWest:  if (_me.xloc < cellX * 256) return;       break;
+	case kDirEast:  if (_me.xloc > (cellX + 1) * 256) return; break;
+	default: break;
+	}
+	
 	float corners[4][3];
 	getWallFace3D(cellX, cellY, direction, corners);
 
