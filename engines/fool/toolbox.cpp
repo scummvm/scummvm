@@ -79,7 +79,7 @@ uint32 Toolbox::Delay(uint32 numTicks) {
 }
 
 bool Toolbox::GetNextEvent(uint16 eventMask, EventRecord &theEvent) {
-	warning("STUB: Toolbox::GetNextEvent");
+	//warning("STUB: Toolbox::GetNextEvent");
 	_pumpEvents();
 	if (!_events.empty()) {
 		theEvent = _events.pop();

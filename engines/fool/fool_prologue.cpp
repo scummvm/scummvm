@@ -608,8 +608,8 @@ void FoolPrologue::sub_129_004() {
 			// 0x053c: SF - 0x8,D0
 			g_zbasic->openR(1, this->var_i16_1c4, 0x400, this->var_i16_2c8);
 
-			Common::Array<byte> payload = g_zbasic->readFile(1, this->var_i16_2ca);
-			this->var_i16_2ce = Common::U32String((char *)&payload[0], this->var_i16_2ca, Common::kMacRoman);
+			Handle payload = g_zbasic->readFile(1, this->var_i16_2ca);
+			this->var_i16_2ce = Common::U32String((char *)payload->data(), this->var_i16_2ca, Common::kMacRoman);
 			g_zbasic->close(1);
 			// 0x0570: CLR.L - -0x8ee(A5)
 			// 129:0582

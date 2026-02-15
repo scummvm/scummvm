@@ -267,7 +267,7 @@ void Toolbox::GetPort(GrafPtr &port) {
 }
 
 void Toolbox::GlobalToLocal(Common::Point &pt) {
-	warning("STUB: Toolbox::GlobalToLocal");
+	//warning("STUB: Toolbox::GlobalToLocal");
 }
 
 void Toolbox::HideCursor() {

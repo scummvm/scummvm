@@ -319,7 +319,8 @@ void FoolGame::sub_128_406(int16 unk1) {
 int16 FoolGame::sub_128_428() {
 	// 128:0428
 	// read a byte
-	this->var_i16_30 = *(byte *)this->var_ptr_696;
+	this->var_i16_30 = *(byte *)(&arr_bytes_5dfc->data()[this->var_ptr_696]);
+	debug(5, "Read[%04x]: %02x", this->var_ptr_696, this->var_i16_30);
 	this->var_ptr_696 += 1;
 	return this->var_i16_30;
 	return 0;
@@ -328,7 +329,8 @@ int16 FoolGame::sub_128_428() {
 int16 FoolGame::sub_128_446() {
 	// 128:0446
 	// read a short
-	this->var_i16_30 = READ_BE_INT16(this->var_ptr_696);
+	this->var_i16_30 = READ_BE_INT16(&arr_bytes_5dfc->data()[this->var_ptr_696]);
+	debug(5, "Read[%04x]: %04x", this->var_ptr_696, this->var_i16_30);
 	this->var_ptr_696 += 2;
 	return this->var_i16_30;
 }
@@ -336,18 +338,20 @@ int16 FoolGame::sub_128_446() {
 int32 FoolGame::sub_128_462() {
 	// 128:0462
 	// read a long
-	this->var_i32_68e = READ_BE_INT32(this->var_ptr_696);
+	this->var_i32_68e = READ_BE_INT32(&arr_bytes_5dfc->data()[this->var_ptr_696]);
+	debug(5, "Read[%04x]: %08x", this->var_ptr_696, this->var_i32_68e);
 	this->var_ptr_696 += 4;
 	return this->var_i32_68e;
 }
 
-void FoolGame::sub_128_49a() {
+Common::U32String FoolGame::sub_128_49a() {
 	// 128:049a
 	// read a pascal string
-	this->var_i16_79e = *(byte *)this->var_ptr_696;
-	this->var_ptr_696++;
-	this->var_str_69a = Common::U32String((const char *)this->var_ptr_696, this->var_i16_79e, Common::kMacRoman);
-	this->var_ptr_696 += this->var_i16_79e;
+	this->var_i16_79e = *(byte *)(&arr_bytes_5dfc->data()[this->var_ptr_696]);
+	this->var_str_69a = Common::U32String((const char *)&arr_bytes_5dfc->data()[this->var_ptr_696+1], this->var_i16_79e, Common::kMacRoman);
+	debug(5, "Read[%04x]: %s", this->var_ptr_696, this->var_str_69a.encode().c_str());
+	this->var_ptr_696 += this->var_i16_79e + 1;
+	return this->var_str_69a;
 }
 
 void FoolGame::sub_128_4da(int16 unk1) {
@@ -1060,13 +1064,14 @@ void FoolGame::sub_128_6186() {
 void FoolGame::sub_128_61ec() {
 	do {
 		this->var_i16_7a8 = g_toolbox->GetNextEvent(0xffff, this->var_ev_46);
-		if (this->var_ev_46.what == 6) {
+		if (this->var_ev_46.what == kUpdateEvt) {
 			this->sub_128_5fb4();
 		}
-		if (this->var_ev_46.what == 7) {
+		if (this->var_ev_46.what == kDiskEvt) {
 			this->sub_128_6154();
 		}
-	} while ((this->var_ev_46.what == 0) && (this->var_ev_46.modifiers & 0x80));
+		g_toolbox->Delay(1);
+	} while ((this->var_ev_46.what == kNullEvent) && (this->var_ev_46.modifiers & 0x80));
 	this->var_i16_7c0 = 0;
 }
 
@@ -1079,7 +1084,6 @@ void FoolGame::sub_128_6244() {
 
 void FoolGame::sub_129_004() {
 	this->var_i16_7e6 = 0;
-	warning("STUB: %s", __func__);
 	// 129:000a: LEA - 0x3ea(A5),A0
 	// 129:000e: MOVE.L - A0,-0x8ee(A5)
 	// 129:0012: SF - 0x8,D0
@@ -1298,13 +1302,13 @@ void FoolGame::sub_129_068() {
 	this->sub_129_123a();
 
 	// load sun's map tiles
-	byte fakePal[768];
-	Common::fill(fakePal, fakePal+3, 0xff);
-	Common::fill(fakePal+3, fakePal+768, 0x00);
+	//byte fakePal[768];
+	//Common::fill(fakePal, fakePal+3, 0xff);
+	//Common::fill(fakePal+3, fakePal+768, 0x00);
 
 	for (int i = 1; i <= 0x53; i++) {
 		this->arr_i32_1912c[i] = g_toolbox->GetPicture(i);
-		this->arr_i32_1912c[i]->getSurface()->debugPrint(0, 0, 0, 0, 0, -1, 160, fakePal);
+		//this->arr_i32_1912c[i]->getSurface()->debugPrint(0, 0, 0, 0, 0, -1, 160, fakePal);
 
 		g_toolbox->DetachResource(this->arr_i32_1912c[i]);
 	}
@@ -1321,10 +1325,10 @@ void FoolGame::sub_129_068() {
 	g_zbasic->openR(1, g_zbasic->str(140), 1000, this->var_i16_f22);
 	this->var_i32_1036 = g_zbasic->readFileDblInt(1);
 
-	this->var_ptr_696 = &this->arr_bytes_5dfc[0];
+	this->var_ptr_696 = 0;
 
 	// read into pointer
-	g_zbasic->readFile(1, this->var_ptr_696, this->var_i32_1036);
+	this->arr_bytes_5dfc = g_zbasic->readFile(1, this->var_i32_1036);
 
 	// 129:0a0a
 	this->var_i16_68a = 0x50;
@@ -1351,11 +1355,74 @@ void FoolGame::sub_129_068() {
 		this->arr_curs_4d88[i].mouse.x = this->sub_128_446();
 	}
 	// 129:0ad4
+	for (int i = 0; i <= 0xf; i++) {
+		this->arr_i16_4738[i] = this->sub_128_446();
+	}
+	// 129:0b02
+	for (int i = 1; i <= 0x51; i++) {
+		this->arr_i16_4c7c[i] = this->sub_128_428();
+	}
+	// 129:0b30
+	for (int i = 1; i <= 0xc; i++) {
+		for (int j = 0; j <= 3; j++) {
+			this->arr_i16_4d20[i*4 + j] = this->sub_128_446();
+		}
+	}
+	// 129:0b78
+	this->var_i16_103a = this->sub_128_446();
+	for (int i = 1; i <= this->var_i16_103a; i++) {
+		this->arr_i16_18b2[i] = this->sub_128_446();
+		this->arr_i16_197c[i] = this->sub_128_446();
+		this->arr_str_195e8[i] = this->sub_128_49a();
+	}
+	// 129:0c0a
+	this->var_i16_103a = this->sub_128_446();
+	for (int i = 1; i <= this->var_i16_103a; i++) {
+		for (int j = 0; j <= 5; j++) {
+			this->arr_i16_16b2[i*8+j] = this->sub_128_446();
+		}
+	}
+	// 129:0c5e
+	this->var_i16_7da = this->sub_128_446();
+	for (int i = 1; i <= this->var_i16_7da; i++) {
+		this->arr_i16_1a46[i] = this->sub_128_446();
+	}
+	// 129:0c98
+	for (int i = 1; i <= this->var_i16_7da; i++) {
+		this->arr_i16_0[i*2] = this->sub_128_446();
+		this->arr_i16_0[i*2 + 1] = this->sub_128_446();
+	}
+	// 129:0ce0
+	this->var_i16_103a = this->sub_128_446();
+	for (int i = 1; i <= this->var_i16_103a; i++) {
+		this->arr_i16_1b10[i*2] = this->sub_128_446();
+		this->arr_i16_1b10[i*2 + 1] = this->sub_128_446();
+	}
+	// 129:0d3c
+	this->var_i16_103c = this->sub_128_446();
+	this->var_i16_68a = 1;
+	this->var_i16_103e = this->sub_128_428();
+	if (this->var_i16_103e & 0x8) {
+		this->var_i16_103e |= 0x8;
+		this->var_str_384 = this->sub_128_49a();
+		//g_zbasic->unk_92(this->var_i16_68a, 0, 4);
+		// 129:0d76
+	}
+	// 129:0da4
+
 	warning("STUB: %s", __func__);
 }
 
 void FoolGame::sub_129_123a() {
-	warning("STUB: %s", __func__);
+	g_toolbox->SetPort(this->var_i32_8);
+	this->sub_128_8b4(0, 7, 0x13, this->var_i16_5a - 7, 0);
+	g_zbasic->text(0, 0xc, 0, kSrcOr);
+	// Loading Game text
+	this->var_str_172 = Common::U32String::format("%s%d%s", g_zbasic->str(158), this->var_i16_68a, g_zbasic->str(159));
+	this->var_i16_30 = g_toolbox->StringWidth(this->var_str_172);
+	g_toolbox->MoveTo((this->var_i16_5a / 2) - (this->var_i16_30 / 2), 0xe);
+	g_toolbox->DrawString(this->var_str_172);
+	g_toolbox->SetPort(this->var_i32_0);
 }
 
 void FoolGame::sub_138_004() {

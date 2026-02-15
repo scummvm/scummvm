@@ -171,7 +171,12 @@ void ZBasic::bufferFlush(const Common::U32String &str) {
 }
 
 void ZBasic::close(int16 fileNo) {
-	warning("STUB: ZBasic::close");
+	if (this->_fileStreams.contains(fileNo)) {
+		this->_fileStreams.erase(fileNo);
+	}
+	if (this->_fileLineSize.contains(fileNo)) {
+		this->_fileLineSize.erase(fileNo);
+	}
 }
 
 void ZBasic::coordinateWindow() {
@@ -229,7 +234,16 @@ void ZBasic::menu(int16 menuNo, int16 itemNo, int16 state, const Common::U32Stri
 
 
 void ZBasic::openR(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo) {
-	warning("STUB: ZBasic::openR");
+	if (_fileStreams.contains(fileNo)) {
+		this->close(fileNo);
+	}
+	Common::MacResManager resMan;
+	Common::SeekableReadStream *result = resMan.openFileOrDataFork(Common::Path(fileName, ':'));
+	if (!result) {
+		error("ZBasic::openR: couldn't open %s", fileName.encode().c_str());
+	}
+	_fileStreams[fileNo] = Common::SharedPtr<Common::SeekableReadStream>(result);
+	_fileLineSize[fileNo] = lineSize;
 }
 
 void ZBasic::picture(int16 x, int16 y, PicHandle &src) {
@@ -318,19 +332,39 @@ Common::U32String ZBasic::readDataStr() {
 	return result;
 }
 
-Common::Array<byte> ZBasic::readFile(int16 fileNo, uint32 length) {
-	warning("STUB: ZBasic::readFile");
-	return Common::Array<byte>();
+Handle ZBasic::readFile(int16 fileNo, uint32 length) {
+	if (!_fileStreams.contains(fileNo)) {
+		error("ZBasic::readFile: unknown fileNo %d", fileNo);
+	}
+	Handle result(new Common::Array<byte>());
+	result->resize(length);
+	uint32 newLen = _fileStreams[fileNo]->read(result->data(), length);
+	if (newLen != length) {
+		result->resize(newLen);
+	}
+	return result;
 }
 
 uint32 ZBasic::readFile(int16 fileNo, byte *dest, uint32 length) {
-	warning("STUB: ZBasic::readFile");
+	if (!_fileStreams.contains(fileNo)) {
+		error("ZBasic::readFile: unknown fileNo %d", fileNo);
+	}
+	length = _fileStreams[fileNo]->read(dest, length);
 	return length;
 }
 
 int32 ZBasic::readFileDblInt(int16 fileNo) {
-	warning("STUB: ZBasic::readFileDblInt");
-	return 0;
+	if (!_fileStreams.contains(fileNo)) {
+		error("ZBasic::readFileDblInt: unknown fileNo %d", fileNo);
+	}
+	return _fileStreams[fileNo]->readSint32BE();
+}
+
+int16 ZBasic::readFileInt(int16 fileNo) {
+	if (!_fileStreams.contains(fileNo)) {
+		error("ZBasic::readFileInt: unknown fileNo %d", fileNo);
+	}
+	return _fileStreams[fileNo]->readSint16BE();
 }
 
 int16 ZBasic::rndInt(int16 max) {
