@@ -3478,8 +3478,8 @@ class PyCdlib:
 
         return num_bytes_to_remove
 
-    def _get_iso_entry(self, iso_path, encoding=None):
-        # type: (bytes, str | None) -> dr.DirectoryRecord
+    def _get_iso_entry(self, iso_path, encoding='utf-8'):
+        # type: (bytes, str) -> dr.DirectoryRecord
         """
         Internal method to get the directory record for an ISO path.
 
@@ -3489,14 +3489,13 @@ class PyCdlib:
         Returns:
          A dr.DirectoryRecord object representing the path.
         """
-        encoding = encoding or 'utf-8'
         if self._needs_reshuffle:
             self._reshuffle_extents()
 
         return self._find_iso_record(iso_path, encoding)
 
-    def _get_rr_entry(self, rr_path, encoding=None):
-        # type: (bytes, str | None) -> dr.DirectoryRecord
+    def _get_rr_entry(self, rr_path, encoding='utf-8'):
+        # type: (bytes, str) -> dr.DirectoryRecord
         """
         Internal method to get the directory record for a Rock Ridge path.
 
@@ -3507,14 +3506,13 @@ class PyCdlib:
         Returns:
          A dr.DirectoryRecord object representing the path.
         """
-        encoding = encoding or 'utf-8'
         if self._needs_reshuffle:
             self._reshuffle_extents()
 
         return self._find_rr_record(rr_path, encoding)
 
-    def _get_joliet_entry(self, joliet_path, encoding=None):
-        # type: (bytes, str | None) -> dr.DirectoryRecord
+    def _get_joliet_entry(self, joliet_path, encoding='utf-16_be'):
+        # type: (bytes, str) -> dr.DirectoryRecord
         """
         Internal method to get the directory record for a Joliet path.
 
@@ -3525,7 +3523,6 @@ class PyCdlib:
         Returns:
          A dr.DirectoryRecord object representing the path.
         """
-        encoding = encoding or 'utf-16_be'
         if self._needs_reshuffle:
             self._reshuffle_extents()
 
