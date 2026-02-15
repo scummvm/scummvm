@@ -1822,16 +1822,18 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			_dialog->say(_res->_ingameTexts[PINTA_BUENAPERSONA]);
 		}
 	case 38: {
-		int x = _alfredState.x;
-		int y = _alfredState.y;
-		_alfredState.x -= 57;
-		_alfredState.y += 2;
-		_res->loadAlfredSpecialAnim(6);
-		_alfredState.setState(ALFRED_SPECIAL_ANIM);
-		waitForSpecialAnimation();
-		_alfredState.x = x;
-		_alfredState.y = y;
-		break;
+		if(_room->_prevRoomNumber == 30) {
+			int x = _alfredState.x;
+			int y = _alfredState.y;
+			_alfredState.x -= 57;
+			_alfredState.y += 2;
+			_res->loadAlfredSpecialAnim(6);
+			_alfredState.setState(ALFRED_SPECIAL_ANIM);
+			waitForSpecialAnimation();
+			_alfredState.x = x;
+			_alfredState.y = y;
+			break;
+		}
 	}
 	case 32: {
 		if(_room->_prevRoomNumber == 31) {

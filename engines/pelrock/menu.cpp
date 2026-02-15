@@ -99,6 +99,9 @@ void MenuManager::checkMouseClick(int x, int y) {
 	case LOAD_GAME_BUTTON:
 		g_engine->loadGameDialog();
 		break;
+	case EXIT_MENU_BUTTON:
+		g_engine->quitGame();
+		break;
 	default:
 		break;
 	}
