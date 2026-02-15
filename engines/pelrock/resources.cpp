@@ -44,7 +44,9 @@ const AlfredSpecialAnimOffset ResourceManager::alfredSpecialAnims[] = {
 	{14, 171, 107, 1, 7, 1556540, 1} , // 5 - crocodile
 	{12, 113, 103, 1, 7, 1583702, 1}, // 6 - exit through manhole
 	{11, 33, 72, 1, 7, 1761234, 1}, // 7 - alfred climbs down
-	{9, 33, 72, 1, 7, 1766378, 1} // 8 - alfred climbs up
+	{9, 33, 72, 1, 7, 1766378, 1}, // 8 - alfred climbs up
+	{16, 158, 115, 0, 7, 1770196, 1}, // 9 - alfred exits tunnel
+	{7, 208, 102, 0, 7, 1600956, 1} // 10 - alfred with workers
 };
 
 ResourceManager::~ResourceManager() {

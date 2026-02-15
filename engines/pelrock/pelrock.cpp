@@ -1800,6 +1800,7 @@ void PelrockEngine::waitForSpecialAnimation() {
 	while (!g_engine->shouldQuit() && !_res->_isSpecialAnimFinished) {
 		_events->pollEvent();
 		renderScene(OVERLAY_NONE);
+		_events->waitForKey();
 		_screen->update();
 		g_system->delayMillis(10);
 	}
@@ -1839,14 +1840,25 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		if(_room->_prevRoomNumber == 31) {
 			int x = _alfredState.x;
 			int y = _alfredState.y;
-			// _alfredState.x += 57;
-			// _alfredState.y -= 2;
 			_res->loadAlfredSpecialAnim(7);
 			_alfredState.setState(ALFRED_SPECIAL_ANIM);
 			waitForSpecialAnimation();
 			_alfredState.x = x;
 			_alfredState.y = y;
 
+		}
+	}
+	case 27: {
+		if(_room->_prevRoomNumber == 33) {
+			int x = _alfredState.x;
+			int y = _alfredState.y;
+			_alfredState.x = 12;
+			_alfredState.y += 10;
+			_res->loadAlfredSpecialAnim(9);
+			_alfredState.setState(ALFRED_SPECIAL_ANIM);
+			waitForSpecialAnimation();
+			_alfredState.x = x;
+			_alfredState.y = y;
 		}
 	}
 	default:
