@@ -25,6 +25,7 @@
 #include "common/memorypool.h"
 #include "common/ptr.h"
 #include "common/str.h"
+#include "common/stream.h"
 #include "common/ustr.h"
 #include "graphics/macgui/macwindow.h"
 #include "graphics/surface.h"
@@ -229,6 +230,9 @@ private:
 	Common::MemoryPool *_memPool;
 	int16 _fileId = -1;
 	Graphics::MacWindow *_window;
+
+	Common::HashMap<int16, Common::SharedPtr<Common::SeekableReadStream>> _fileStreams;
+	Common::HashMap<int16, uint32> _fileLineSize;
 public:
 
 	ZBasic(Toolbox *toolbox);
@@ -257,9 +261,10 @@ public:
 	int16 readDataInt();
 	int32 readDataDblInt();
 	Common::U32String readDataStr();
-	Common::Array<byte> readFile(int16 fileNo, uint32 length);
+	Handle readFile(int16 fileNo, uint32 length);
 	uint32 readFile(int16 fileNo, byte *dest, uint32 length);
 	int32 readFileDblInt(int16 fileNo);
+	int16 readFileInt(int16 fileNo);
 	int16 rndInt(int16 max);
 	void text(uint16 font, uint16 size, uint16 face, SourceMode mode);
 	void window(int16 windowNumber, const Common::String &title, int16 x1, int16 y1, int16 x2, int16 y2, ZBasicWindowType type);
