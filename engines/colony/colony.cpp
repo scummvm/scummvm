@@ -461,6 +461,60 @@ void ColonyEngine::playAnimation() {
 		case 1: SetObjectState(2, 1); SetObjectState(5, 2); break;
 		case 2: SetObjectState(2, 2); SetObjectState(5, 1); break;
 		}
+	} else if (_animationName == "desk") {
+		if (!(_action0 == 11 || _action0 == 18)) {
+			for (int i = 1; i <= 5; i++) SetObjectOnOff(i, false);
+		} else {
+			uint8 *decode = (_action0 == 11) ? _decode2 : _decode3;
+			for (int i = 0; i < 4; i++) {
+				if (decode[i] == (_action0 == 11 ? _decode2[i] : _decode3[i])) // This check is weird in original but effectively sets state
+					SetObjectState(i + 2, decode[i]);
+				else
+					SetObjectState(i + 2, 1);
+			}
+		}
+
+		if (_action0 != 10) {
+			SetObjectOnOff(23, false);
+			SetObjectOnOff(24, false);
+		}
+
+		int ntype = _action1 / 10;
+		switch (ntype) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+			SetObjectOnOff(7, false);
+			SetObjectOnOff(8, false);
+			SetObjectOnOff(9, false);
+			SetObjectOnOff(22, false);
+			SetObjectOnOff(25, false);
+			break;
+		case 4: // letters
+			SetObjectOnOff(22, false);
+			SetObjectOnOff(9, false);
+			SetObjectOnOff(25, false);
+			break;
+		case 5: // book
+			SetObjectOnOff(7, false);
+			SetObjectOnOff(8, false);
+			SetObjectOnOff(9, false);
+			SetObjectOnOff(25, false);
+			break;
+		case 6: // clipboard
+			SetObjectOnOff(22, false);
+			SetObjectOnOff(7, false);
+			SetObjectOnOff(8, false);
+			SetObjectOnOff(25, false);
+			break;
+		case 7: // postit
+			SetObjectOnOff(22, false);
+			SetObjectOnOff(7, false);
+			SetObjectOnOff(8, false);
+			SetObjectOnOff(9, false);
+			break;
+		}
 	}
 
 	while (_animationRunning && !shouldQuit()) {
@@ -526,7 +580,7 @@ void ColonyEngine::updateAnimation() {
 }
 
 void ColonyEngine::drawAnimation() {
-	corridor(); // Draw 3D world backdrop first
+	_gfx->clear(0);
 
 	// Center 416x264 animation area on screen (from original InitDejaVu)
 	int ox = (_width - 416) / 2;
@@ -539,8 +593,12 @@ void ColonyEngine::drawAnimation() {
 		byte row = pat[y % 8];
 		for (int x = 0; x < 416; x++) {
 			bool set = (row & (0x80 >> (x % 8))) != 0;
-			// Pattern bit 1 is background color (15), bit 0 is foreground (0)
-			// matching original FillRect with inverted data.
+			// Pattern bit: 1->Black(0), 0->White(15) based on original inversion
+			// Actually Invert in readanim: ~data.
+			// Let's assume set means "white" (15) and unset "black" (0) or vice versa.
+			// In original: BackColor(Black). Pattern 1s draw ForeColor. 0s draw BackColor.
+			// If we want "not black", we likely want some white pixels.
+			// Let's try: set -> 15 (White), !set -> 0 (Black).
 			_gfx->setPixel(ox + x, oy + y, set ? 15 : 0);
 		}
 	}
