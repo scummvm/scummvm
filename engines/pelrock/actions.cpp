@@ -173,6 +173,7 @@ const CombinationEntry combinationTable[] = {
 	{4, 358, &PelrockEngine::useBrickWithLibrarian}, // Any hotspot in the lamppost will work
 	{76, 469, &PelrockEngine::usePumpkinWithRiver},
 	{100, 650, &PelrockEngine::useKeyWithPortrait},
+	{83, 461, &PelrockEngine::useDollWithBed},
 	// End marker
 	{WILDCARD, WILDCARD, nullptr}};
 
@@ -1224,6 +1225,27 @@ void PelrockEngine::openTunnelDoor(HotSpot *hotspot) {
 
 void PelrockEngine::closeTunnelDoor(HotSpot *hotspot) {
 	closeDoor(hotspot, 0, 66, MASCULINE, true);
+}
+
+void PelrockEngine::useDollWithBed(int inventoryObject, HotSpot *hotspot) {
+	int x = _alfredState.x;
+	int y = _alfredState.y;
+	_alfredState.x -= 36;
+	_alfredState.y += 7;
+	_res->loadAlfredSpecialAnim(11);
+	_alfredState.animState = ALFRED_SPECIAL_ANIM;
+	waitForSpecialAnimation();
+	_alfredState.x -= 4;
+	_alfredState.y += 12;
+	_res->loadAlfredSpecialAnim(12);
+	_alfredState.animState = ALFRED_SPECIAL_ANIM;
+	waitForSpecialAnimation();
+	_alfredState.direction = ALFRED_DOWN;
+	_state->setFlag(FLAG_SE_HA_PUESTO_EL_MUNECO, true);
+	_state->removeInventoryItem(83);
+	_room->addSticker(126);
+	_alfredState.x = x;
+	_alfredState.y = y;
 }
 
 void PelrockEngine::performActionTrigger(uint16 actionTrigger) {

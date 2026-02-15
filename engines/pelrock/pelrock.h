@@ -342,6 +342,7 @@ public:
 	void openSafe(HotSpot *hotspot);
 	void openTunnelDoor(HotSpot *hotspot);
 	void closeTunnelDoor(HotSpot *hotspot);
+	void useDollWithBed(int inventoryObject, HotSpot *hotspot);
 	void checkAllSymbols();
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);
