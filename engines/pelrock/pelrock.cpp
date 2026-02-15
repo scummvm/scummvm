@@ -1800,7 +1800,7 @@ void PelrockEngine::waitForSpecialAnimation() {
 	while (!g_engine->shouldQuit() && !_res->_isSpecialAnimFinished) {
 		_events->pollEvent();
 		renderScene(OVERLAY_NONE);
-		_events->waitForKey();
+		// _events->waitForKey();
 		_screen->update();
 		g_system->delayMillis(10);
 	}

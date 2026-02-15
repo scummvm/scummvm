@@ -589,21 +589,21 @@ struct GameStateData {
 	}
 
 	// Store current root index for each room (0xFF = not set, use findRoot logic)
-	byte *conversationCurrentRoot = new byte[56];
+	byte *conversationCurrentRoot = new byte[112];
 
-	int getCurrentRoot(byte room) const {
+	int getCurrentRoot(byte room, int npc = 0) const {
 		if (room >= 56)
 			return -1;
-		return (conversationCurrentRoot[room] == 0xFF) ? -1 : conversationCurrentRoot[room];
+		return (conversationCurrentRoot[room * 2 + npc] == 0xFF) ? -1 : conversationCurrentRoot[room * 2 + npc];
 	}
 
-	void setCurrentRoot(byte room, int root) {
+	void setCurrentRoot(byte room, int root, int npc = 0) {
 		if (room >= 56)
 			return;
 		if (root < 0 || root > 254) {
-			conversationCurrentRoot[room] = 0xFF; // Reset to auto-select
+			conversationCurrentRoot[room * 2 + npc] = 0xFF; // Reset to auto-select
 		} else {
-			conversationCurrentRoot[room] = (byte)root;
+			conversationCurrentRoot[room * 2 + npc] = (byte)root;
 		}
 	}
 

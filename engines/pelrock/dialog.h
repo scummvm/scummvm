@@ -101,7 +101,7 @@ public:
 	void displayChoices(Common::Array<ChoiceOption> *choices, byte *compositeBuffer);
 	int selectChoice(Common::Array<Common::String> &choices, byte *compositeBuffer);
 	void startConversation(const byte *conversationData, uint32 dataSize, byte npcIndex, Sprite *alfredAnimSet = nullptr);
-	uint32 findRoot(int &currentRoot, uint32 position, uint32 dataSize, const byte *conversationData);
+	uint32 findRoot(int npc, int &currentRoot, uint32 position, uint32 dataSize, const byte *conversationData);
 	uint32 findSpeaker(byte npcIndex, uint32 dataSize, const byte *conversationData);
 	void sayAlfred(Description description);
 	void sayAlfred(Common::StringArray texts);

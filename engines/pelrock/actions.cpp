@@ -484,6 +484,22 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_room->disableHotspot(_room->findHotspotByExtra(451)); // Disable talk hotspot for the riddle
 		_state->setCurrentRoot(room, rootIndex + 1);
 		break;
+	//merchants
+	case 370:
+		break;
+	case 371:
+		break;
+	case 286:
+		break;
+	case 287:
+		break;
+	case 288:
+		break;
+	case 289:
+		break;
+	case 290:
+		break;
+	// end merchants
 	default:
 		debug("Got actionTrigger %d in dialogActionTrigger, but no handler defined", actionTrigger);
 		break;
@@ -1160,6 +1176,8 @@ void PelrockEngine::openSafe(HotSpot *hotspot) {
 		_room->addSticker(102);
 		_dialog->say(_res->_ingameTexts[GRANCANTIDAD_DINERO]);
 		addInventoryItem(82);
+		_state->setCurrentRoot(27, 1, 0);
+		_state->setCurrentRoot(27, 1, 1);
 	} else {
 		_dialog->say(_res->_ingameTexts[SISUPIERA_COMBINACION]);
 	}

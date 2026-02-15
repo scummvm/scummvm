@@ -582,9 +582,9 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 	debug("Conversation ended");
 }
 
-uint32 DialogManager::findRoot(int &currentRoot, uint32 currentPosition, uint32 dataSize, const byte *conversationData) {
+uint32 DialogManager::findRoot(int npc, int &currentRoot, uint32 currentPosition, uint32 dataSize, const byte *conversationData) {
 	// Check if a specific root has been set for this room
-	int targetRoot = g_engine->_state->getCurrentRoot(g_engine->_room->_currentRoomNumber);
+	int targetRoot = g_engine->_state->getCurrentRoot(g_engine->_room->_currentRoomNumber, npc);
 
 	if (targetRoot >= 0) {
 		// Skip to the specified root
@@ -645,7 +645,7 @@ ConversationState DialogManager::initializeConversation(const byte *data, uint32
 	ConversationState state;
 	state.position = findSpeaker(npcIndex, dataSize, data);
 	state.currentRoot = 0;
-	state.position = findRoot(state.currentRoot, state.position, dataSize, data);
+	state.position = findRoot(npcIndex, state.currentRoot, state.position, dataSize, data);
 	state.currentChoiceLevel = -1;
 	state.lastSelectedChoice = ChoiceOption();
 
