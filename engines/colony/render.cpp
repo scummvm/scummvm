@@ -89,16 +89,16 @@ static const int kBBedPostPts[4][3] = {
 	{-120, 96, 0}, {120, 96, 0}, {120, 96, 100}, {-120, 96, 100}
 };
 static const int kDeskTopPts[4][3] = {
-	{-128, 80, 100}, {128, 80, 100}, {128, -80, 100}, {-128, -80, 100}
+	{-150, 110, 100}, {150, 110, 100}, {150, -110, 100}, {-150, -110, 100}
 };
 static const int kDeskTopSurf[1][8] = {{6, 4, 3, 2, 1, 0, 0, 0}};
 static const int kDeskLeftPts[8][3] = {
-	{-128, 80, 0}, {-60, 80, 0}, {-60, -80, 0}, {-128, -80, 0},
-	{-128, 80, 100}, {-60, 80, 100}, {-60, -80, 100}, {-128, -80, 100}
+	{-135, 95, 0}, {-55, 95, 0}, {-55, -95, 0}, {-135, -95, 0},
+	{-135, 95, 100}, {-55, 95, 100}, {-55, -95, 100}, {-135, -95, 100}
 };
 static const int kDeskRightPts[8][3] = {
-	{60, 80, 0}, {128, 80, 0}, {128, -80, 0}, {60, -80, 0},
-	{60, 80, 100}, {128, 80, 100}, {128, -80, 100}, {60, -80, 100}
+	{55, 95, 0}, {135, 95, 0}, {135, -95, 0}, {55, -95, 0},
+	{55, 95, 100}, {135, 95, 100}, {135, -95, 100}, {55, -95, 100}
 };
 static const int kDeskCabSurf[4][8] = {
 	{6, 4, 0, 3, 7, 4, 0, 0}, {6, 4, 3, 2, 6, 7, 0, 0},
@@ -301,34 +301,84 @@ static const int kCWallSurf[3][8] = {
 	{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0}
 };
 static const Colony::ColonyEngine::PrismPartDef kCWallParts[1] = {{8, kCWallPts, 3, kCWallSurf}};
-static const int kPlantPotPts[8][3] = {
-	{-20, 20, 0}, {20, 20, 0}, {20, -20, 0}, {-20, -20, 0},
-	{-20, 20, 40}, {20, 20, 40}, {20, -20, 40}, {-20, -20, 40}
+
+static const int kPlantPotPts[12][3] = {
+	{10, 17, 40}, {20, 0, 40}, {10, -17, 40}, {-10, -17, 40}, {-20, 0, 40}, {-10, 17, 40},
+	{8, 12, 0}, {15, 0, 0}, {8, -12, 0}, {-8, -12, 0}, {-15, 0, 0}, {-8, 12, 0}
 };
-static const int kPlantPotSurf[5][8] = {
+static const int kPlantPotSurf[6][8] = {
+	{6, 4, 0, 1, 7, 6, 0, 0}, {6, 4, 1, 2, 8, 7, 0, 0}, {6, 4, 2, 3, 9, 8, 0, 0},
+	{6, 4, 3, 4, 10, 9, 0, 0}, {6, 4, 4, 5, 11, 10, 0, 0}, {6, 4, 5, 0, 6, 11, 0, 0}
+};
+static const int kPlantTopPotPts[6][3] = {
+	{10, 17, 40}, {20, 0, 40}, {10, -17, 40}, {-10, -17, 40}, {-20, 0, 40}, {-10, 17, 40}
+};
+static const int kPlantTopPotSurf[1][8] = {{8, 6, 5, 4, 3, 2, 1, 0}};
+
+static const int kPlantLeaf0Pts[3][3] = {{0, 0, 0}, {20, 20, 150}, {70, 70, 100}};
+static const int kPlantLeaf1Pts[3][3] = {{0, 0, 0}, {-20, 30, 100}, {-60, 50, 50}};
+static const int kPlantLeaf2Pts[3][3] = {{0, 0, 0}, {-20, -10, 70}, {-90, -70, 50}};
+static const int kPlantLeaf3Pts[3][3] = {{0, 0, 0}, {20, -10, 50}, {90, -70, 70}};
+static const int kPlantLeaf4Pts[3][3] = {{0, 0, 0}, {20, -30, 190}, {40, -60, 150}};
+static const int kPlantLeaf5Pts[3][3] = {{0, 0, 0}, {20, -10, 130}, {50, -80, 200}};
+
+static const int kPlantLeafSurf[2][8] = {{2, 3, 0, 1, 2, 0, 0, 0}, {2, 3, 2, 1, 0, 0, 0, 0}};
+
+static const Colony::ColonyEngine::PrismPartDef kPlantParts[8] = {
+	{12, kPlantPotPts, 6, kPlantPotSurf},
+	{6, kPlantTopPotPts, 1, kPlantTopPotSurf},
+	{3, kPlantLeaf0Pts, 2, kPlantLeafSurf},
+	{3, kPlantLeaf1Pts, 2, kPlantLeafSurf},
+	{3, kPlantLeaf2Pts, 2, kPlantLeafSurf},
+	{3, kPlantLeaf3Pts, 2, kPlantLeafSurf},
+	{3, kPlantLeaf4Pts, 2, kPlantLeafSurf},
+	{3, kPlantLeaf5Pts, 2, kPlantLeafSurf}
+};
+
+static const int kBox1Pts[8][3] = {
+	{-50, 50, 0}, {50, 50, 0}, {50, -50, 0}, {-50, -50, 0},
+	{-50, 50, 100}, {50, 50, 100}, {50, -50, 100}, {-50, -50, 100}
+};
+static const int kBox1Surf[5][8] = {
 	{6, 4, 0, 3, 7, 4, 0, 0}, {6, 4, 3, 2, 6, 7, 0, 0},
 	{6, 4, 1, 0, 4, 5, 0, 0}, {6, 4, 2, 1, 5, 6, 0, 0}, {6, 4, 7, 6, 5, 4, 0, 0}
 };
-static const int kPlantStemPts[8][3] = {
-	{-5, 5, 40}, {5, 5, 40}, {5, -5, 40}, {-5, -5, 40},
-	{-5, 5, 120}, {5, 5, 120}, {5, -5, 120}, {-5, -5, 120}
+static const int kBox2Pts[8][3] = {
+	{-50, 50, 100}, {50, 50, 100}, {50, -50, 100}, {-50, -50, 100},
+	{-50, 50, 200}, {50, 50, 200}, {50, -50, 200}, {-50, -50, 200}
 };
-static const int kPlantStemSurf[4][8] = {
-	{2, 4, 0, 3, 7, 4, 0, 0}, {2, 4, 3, 2, 6, 7, 0, 0},
-	{2, 4, 1, 0, 4, 5, 0, 0}, {2, 4, 2, 1, 5, 6, 0, 0}
+
+static const int kReactorCorePts[12][3] = {
+	{32, 55, 120}, {64, 0, 120}, {32, -55, 120}, {-32, -55, 120}, {-64, 0, 120}, {-32, 55, 120},
+	{32, 55, 168}, {64, 0, 168}, {32, -55, 168}, {-32, -55, 168}, {-64, 0, 168}, {-32, 55, 168}
 };
-static const int kPlantLeaf1Pts[4][3] = {
-	{-40, 0, 120}, {40, 0, 120}, {40, 0, 140}, {-40, 0, 140}
+static const int kReactorCoreSurf[7][8] = {
+	{15, 4, 0, 1, 7, 6, 0, 0}, {15, 4, 1, 2, 8, 7, 0, 0}, {15, 4, 2, 3, 9, 8, 0, 0},
+	{15, 4, 3, 4, 10, 9, 0, 0}, {15, 4, 4, 5, 11, 10, 0, 0}, {15, 4, 5, 0, 6, 11, 0, 0},
+	{15, 6, 5, 4, 3, 2, 1, 0}
 };
-static const int kPlantLeaf2Pts[4][3] = {
-	{0, 40, 120}, {0, -40, 120}, {0, 40, 140}, {0, -40, 140}
+static const int kReactorBasePts[8][3] = {
+	{-128, 128, 0}, {128, 128, 0}, {128, -128, 0}, {-128, -128, 0},
+	{-128, 128, 120}, {128, 128, 120}, {128, -128, 120}, {-128, -128, 120}
 };
-static const int kPlantLeafSurf[1][8] = {{2, 4, 0, 1, 2, 3, 0, 0}};
-static const Colony::ColonyEngine::PrismPartDef kPlantParts[4] = {
-	{8, kPlantPotPts, 5, kPlantPotSurf},
-	{8, kPlantStemPts, 4, kPlantStemSurf},
-	{4, kPlantLeaf1Pts, 1, kPlantLeafSurf},
-	{4, kPlantLeaf2Pts, 1, kPlantLeafSurf}
+static const int kReactorBaseSurf[6][8] = {
+	{4, 4, 0, 3, 7, 4, 0, 0}, {4, 4, 3, 2, 6, 7, 0, 0}, {4, 4, 1, 0, 4, 5, 0, 0},
+	{4, 4, 2, 1, 5, 6, 0, 0}, {4, 4, 7, 6, 5, 4, 0, 0}, {4, 4, 0, 1, 2, 3, 0, 0}
+};
+static const int kReactorTopPts[8][3] = {
+	{-128, 128, 168}, {128, 128, 168}, {128, -128, 168}, {-128, -128, 168},
+	{-128, 128, 288}, {128, 128, 288}, {128, -128, 288}, {-128, -128, 288}
+};
+
+static const Colony::ColonyEngine::PrismPartDef kBox1Part = {8, kBox1Pts, 5, kBox1Surf};
+static const Colony::ColonyEngine::PrismPartDef kBox2Parts[2] = {
+	{8, kBox2Pts, 4, kBox1Surf}, // Body (stacked on box1)
+	{8, kBox1Pts, 5, kBox1Surf}  // Lid (same geometry as box1 base)
+};
+static const Colony::ColonyEngine::PrismPartDef kReactorParts[3] = {
+	{12, kReactorCorePts, 7, kReactorCoreSurf},
+	{8, kReactorBasePts, 6, kReactorBaseSurf},
+	{8, kReactorTopPts, 6, kReactorBaseSurf}
 };
 
 
@@ -784,7 +834,7 @@ bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj, uint32 baseColor) 
 			draw3DPrism(obj, kCChairParts[i], false, tint(baseColor, 0));
 		break;
 	case kObjPlant:
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 8; i++)
 			draw3DPrism(obj, kPlantParts[i], false, tint(baseColor, 0));
 		break;
 	case kObjCouch:
@@ -824,6 +874,31 @@ bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj, uint32 baseColor) 
 	case kObjDesk:
 		for (int i = 0; i < 10; i++)
 			draw3DPrism(obj, kDeskParts[i], false, tint(baseColor, 0));
+		break;
+	case kObjBox1:
+		draw3DPrism(obj, kBox1Part, false, tint(baseColor, 0));
+		break;
+	case kObjBox2:
+		draw3DPrism(obj, kBox2Parts[0], false, tint(baseColor, 0));
+		draw3DPrism(obj, kBox2Parts[1], false, tint(baseColor, 0));
+		break;
+	case kObjReactor:
+		for (int i = 0; i < 3; i++)
+			draw3DPrism(obj, kReactorParts[i], false, tint(baseColor, 0));
+		break;
+	case kObjPowerSuit:
+		draw3DPrism(obj, kConsolePart, false, tint(baseColor, 0)); // Placeholder
+		break;
+	case kObjTeleport:
+		draw3DPrism(obj, kCWallParts[0], false, tint(baseColor, 50)); // Placeholder
+		break;
+	case kObjSink:
+	case kObjTub:
+	case kObjToilet:
+		draw3DPrism(obj, kBox1Part, false, tint(baseColor, 0)); // Placeholder
+		break;
+	case kObjForkLift:
+		draw3DPrism(obj, kBox1Part, false, tint(baseColor, 0)); // Placeholder
 		break;
 	default:
 		return false;
