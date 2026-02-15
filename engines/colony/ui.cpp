@@ -478,6 +478,10 @@ void ColonyEngine::interactWithObject(int objNum) {
 	_creature = 1;
 
 	switch (obj.type) {
+	case kObjDesk:
+		if (loadAnimation("desk"))
+			playAnimation();
+		break;
 	case kObjConsole:
 		switch (_action0) {
 		case 1: // Reactor console
