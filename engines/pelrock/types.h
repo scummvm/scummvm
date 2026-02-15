@@ -540,7 +540,7 @@ struct GameStateData {
 	Common::HashMap<byte, Common::Array<SpriteChange>> spriteChanges;
 
 	GameStateData() {
-		memset(conversationCurrentRoot, 0xFF, 56); // 0xFF = not set
+		memset(conversationCurrentRoot, 0, 112); // Initialize all to 0xFF (not set)
 		for (int i = 0; i < kNumGameFlags; i++)
 			flags[i] = 0;
 		flags[FLAG_ENTRA_EN_TIENDA_PRIMERA_VEZ] = true;

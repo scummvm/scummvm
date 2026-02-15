@@ -516,6 +516,17 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		givenItems();
 		break;
 	// end merchants
+	case 369:
+	case 383:
+		_state->setCurrentRoot(room, rootIndex + 1, 0);
+		break;
+	case 295:
+		addInventoryItem(84);
+		_state->setCurrentRoot(room, rootIndex + 1, 0);
+		break;
+	case 285:
+		toJail();
+		break;
 	default:
 		debug("Got actionTrigger %d in dialogActionTrigger, but no handler defined", actionTrigger);
 		break;
@@ -542,6 +553,7 @@ void PelrockEngine::toJail() {
 	_alfredState.x = 342;
 	_alfredState.y = 277;
 	setScreen(31, ALFRED_DOWN);
+	_state->setFlag(FLAG_A_LA_CARCEL, true);
 	_room->moveHotspot(_room->findHotspotByExtra(101), 444, 166);
 }
 
@@ -1032,15 +1044,15 @@ void PelrockEngine::pickupSunflower(HotSpot *hotspot) {
 	if (_state->getFlag(FLAG_PARADOJA_RESUELTA) == false) {
 		_dialog->say(_res->_ingameTexts[OIGA]);
 		_state->setCurrentRoot(25, 26, 0);
-		_state->setFlag(FLAG_RIDDLE_PRESENTED, true);
 		walkAndAction(_room->findHotspotByExtra(467), TALK);
+		_state->setFlag(FLAG_RIDDLE_PRESENTED, true);
 	} else {
 		addInventoryItem(85);
 		_room->disableHotspot(hotspot);
 		_state->setCurrentRoot(25, 1, 0);
 		_room->addSticker(73);
+		checkIngredients();
 	}
-	checkIngredients();
 }
 
 void PelrockEngine::checkIngredients() {

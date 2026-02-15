@@ -453,7 +453,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 	}
 	setCurSprite(animSet ? animSet->index : -1);
 
-	debug("Starting conversation with %d bytes of data, for npc %d, hotspot %d", dataSize, npcIndex, animSet ? animSet->index : -1);
+	debug("Starting conversation with %d bytes of data, for npc %d, hotspot %d, currentRoot is = %d", dataSize, npcIndex, animSet ? animSet->index : -1, g_engine->_state->getCurrentRoot(g_engine->_room->_currentRoomNumber, npcIndex));
 
 	// Initialize conversation state
 	ConversationState state = initializeConversation(conversationData, dataSize, npcIndex);

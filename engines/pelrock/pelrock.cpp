@@ -1860,6 +1860,21 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			_alfredState.x = x;
 			_alfredState.y = y;
 		}
+		break;
+	}
+	case 26: {
+		if(_state->getFlag(FLAG_A_LA_CARCEL) == true) {
+			if(!_state->getFlag(FLAG_SE_HA_PUESTO_EL_MUNECO)) {
+				_state->setCurrentRoot(26, 2, 1);
+			} else {
+				_dialog->say(_res->_ingameTexts[OIGAUSTED], 1);
+				_dialog->say(_res->_ingameTexts[ESAMI]);
+				_dialog->say(_res->_ingameTexts[VENGAAHORAMISMO], 1);
+				_state->setCurrentRoot(26, 1, 1);
+				walkAndAction(_room->findHotspotByExtra(421), TALK);
+			}
+		}
+		break;
 	}
 	default:
 		break;
