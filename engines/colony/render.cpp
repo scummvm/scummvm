@@ -578,8 +578,41 @@ void ColonyEngine::wallLine(const float corners[4][3], float u1, float v1, float
 	float p1[3], p2[3];
 	wallPoint(corners, u1, v1, p1);
 	wallPoint(corners, u2, v2, p2);
-	uint32 finalColor = (_corePower[_coreIndex] > 0) ? 0 : 15;
-	_gfx->draw3DLine(p1[0], p1[1], p1[2], p2[0], p2[1], p2[2], finalColor);
+	// We assume this is only called when lit (handled in drawWallFeatures3D)
+	_gfx->draw3DLine(p1[0], p1[1], p1[2], p2[0], p2[1], p2[2], color);
+}
+
+// Draw a filled polygon on a wall face using normalized (u,v) coordinates
+void ColonyEngine::wallPolygon(const float corners[4][3], const float *u, const float *v, int count, uint32 color) {
+	float px[8], py[8], pz[8];
+	if (count > 8) count = 8;
+	for (int i = 0; i < count; i++) {
+		float p[3];
+		wallPoint(corners, u[i], v[i], p);
+		px[i] = p[0]; py[i] = p[1]; pz[i] = p[2];
+	}
+	_gfx->draw3DPolygon(px, py, pz, count, color);
+}
+
+void ColonyEngine::wallChar(const float corners[4][3], uint8 cnum) {
+	// Character 'b' (right arrow) and 'c' (left arrow) coordinates on 0-6 grid
+	static const uint8 wallchar_b[] = {7, 0,3, 3,0, 3,2, 6,2, 6,4, 3,4, 3,6};
+	static const uint8 wallchar_c[] = {7, 0,2, 0,4, 3,4, 3,6, 6,3, 3,0, 3,2};
+	
+	const uint8 *data = nullptr;
+	if (cnum == 'b') data = wallchar_b;
+	else if (cnum == 'c') data = wallchar_c;
+	
+	if (data) {
+		int count = data[0];
+		float u[8], v[8];
+		for (int i = 0; i < count; i++) {
+			u[i] = 0.2f + (data[1 + i*2] / 6.0f) * 0.6f;
+			v[i] = 0.2f + (data[2 + i*2] / 6.0f) * 0.6f;
+		}
+		// Characters are usually drawn in black or level-specific color. Color 0 is safe.
+		wallPolygon(corners, u, v, count, 0); 
+	}
 }
 
 void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
@@ -592,164 +625,157 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 
 	switch (map[0]) {
 	case kWallFeatureDoor: {
-		const uint32 dark = 160;
-		// Door frame: centered rectangle on the wall
-		float xl = 0.25f, xr = 0.75f;
-		float yb = 0.125f, yt = 0.875f;
-		if (map[1] == 0) {
-			// Open door — just the frame
-			wallLine(corners, xl, yb, xl, yt, dark);
-			wallLine(corners, xl, yt, xr, yt, dark);
-			wallLine(corners, xr, yt, xr, yb, dark);
-			wallLine(corners, xr, yb, xl, yb, dark);
+		bool shipLevel = (_level == 1 || _level == 5 || _level == 6);
+		
+		if (shipLevel) {
+			// Octagonal ship door (Weighted 7-point grid from source)
+			// Horizontal indices: 2, 1, 1, 2, 4, 5, 5, 4 (0.25..0.75 width)
+			// Vertical indices:   0, 1, 5, 6, 6, 5, 1, 0 (0.125..0.875 height)
+			static const float u_ss[8] = { 0.375f, 0.250f, 0.250f, 0.375f, 0.625f, 0.750f, 0.750f, 0.625f };
+			static const float v_ss[8] = { 0.125f, 0.250f, 0.750f, 0.875f, 0.875f, 0.750f, 0.250f, 0.125f };
+			
+			if (map[1] == 0) {
+				wallPolygon(corners, u_ss, v_ss, 8, 0);
+			} else {
+				wallPolygon(corners, u_ss, v_ss, 8, 7);
+				for (int i = 0; i < 8; i++)
+					wallLine(corners, u_ss[i], v_ss[i], u_ss[(i + 1) % 8], v_ss[(i + 1) % 8], 0);
+				// Ship door inner panel
+				wallLine(corners, 0.375f, 0.25f, 0.375f, 0.75f, 0);
+				wallLine(corners, 0.625f, 0.25f, 0.625f, 0.75f, 0);
+				wallLine(corners, 0.375f, 0.25f, 0.625f, 0.25f, 0);
+				wallLine(corners, 0.375f, 0.75f, 0.625f, 0.75f, 0);
+			}
 		} else {
-			// Closed door — frame + handle line
-			wallLine(corners, xl, yb, xl, yt, dark);
-			wallLine(corners, xl, yt, xr, yt, dark);
-			wallLine(corners, xr, yt, xr, yb, dark);
-			wallLine(corners, xr, yb, xl, yb, dark);
-			// Handle
-			float hx = 0.6f;
-			float hy1 = 0.45f, hy2 = 0.55f;
-			wallLine(corners, hx, hy1, hx, hy2, dark);
+			// Standard rectangular door (Lab levels) - Smaller look
+			float xl = 0.25f, xr = 0.75f;
+			float yb = 0.125f, yt = 0.875f; // Suspended 1/8th from both ends
+			float f_u[4] = {xl, xr, xr, xl};
+			float f_v[4] = {yb, yb, yt, yt};
+			
+			if (map[1] == 0) {
+				wallPolygon(corners, f_u, f_v, 4, 0);
+				float leaf_u[4] = {xl, xl + 0.1f, xl + 0.1f, xl};
+				float leaf_v[4] = {yb, yb + 0.05f, yt - 0.05f, yt};
+				wallPolygon(corners, leaf_u, leaf_v, 4, 15);
+			} else {
+				uint32 fill = (_level >= 1 && _level <= 3) ? 12 : 7;
+				wallPolygon(corners, f_u, f_v, 4, fill);
+				wallLine(corners, xl, yb, xl, yt, 0);
+				wallLine(corners, xl, yt, xr, yt, 0);
+				wallLine(corners, xr, yt, xr, yb, 0);
+				wallLine(corners, xr, yb, xl, yb, 0);
+				// Diagonal Handle (Centered in the door)
+				wallLine(corners, xr - 0.15f, 0.45f, xr - 0.05f, 0.55f, 0);
+			}
 		}
 		break;
 	}
 	case kWallFeatureWindow: {
-		const uint32 dark = 160;
-		// Window: centered smaller rectangle with cross divider
-		float xl = 0.25f, xr = 0.75f;
-		float yb = 0.375f, yt = 0.75f;
-		wallLine(corners, xl, yb, xr, yb, dark);
-		wallLine(corners, xr, yb, xr, yt, dark);
-		wallLine(corners, xr, yt, xl, yt, dark);
-		wallLine(corners, xl, yt, xl, yb, dark);
-		// Cross dividers
-		float xc = 0.5f, yc = (yb + yt) * 0.5f;
-		wallLine(corners, xc, yb, xc, yt, dark);
-		wallLine(corners, xl, yc, xr, yc, dark);
+		// Window: Uses average midpoint shifts. 1/8th suspended.
+		float xl = 0.3125f, xr = 0.6875f;
+		float yb = 0.3125f, yt = 0.6875f; 
+		float u[4] = {xl, xr, xr, xl};
+		float v[4] = {yb, yb, yt, yt};
+		wallPolygon(corners, u, v, 4, 7); 
+		wallLine(corners, xl, yb, xr, yb, 0);
+		wallLine(corners, xr, yb, xr, yt, 0);
+		wallLine(corners, xr, yt, xl, yt, 0);
+		wallLine(corners, xl, yt, xl, yb, 0);
+		wallLine(corners, 0.5f, yb, 0.5f, yt, 0);
+		wallLine(corners, xl, 0.5f, xr, 0.5f, 0);
 		break;
 	}
 	case kWallFeatureShelves: {
-		const uint32 dark = 170;
-		// Bookshelf: outer rectangle + horizontal shelf lines
 		float xl = 0.15f, xr = 0.85f;
 		float yb = 0.1f, yt = 0.9f;
-		wallLine(corners, xl, yb, xr, yb, dark);
-		wallLine(corners, xr, yb, xr, yt, dark);
-		wallLine(corners, xr, yt, xl, yt, dark);
-		wallLine(corners, xl, yt, xl, yb, dark);
-		// 6 shelves
+		wallLine(corners, xl, yb, xr, yb, 0);
+		wallLine(corners, xr, yb, xr, yt, 0);
+		wallLine(corners, xr, yt, xl, yt, 0);
+		wallLine(corners, xl, yt, xl, yb, 0);
 		for (int i = 1; i <= 6; i++) {
 			float t = yb + (yt - yb) * (float)i / 7.0f;
-			wallLine(corners, xl, t, xr, t, dark);
+			wallLine(corners, xl, t, xr, t, 0);
 		}
 		break;
 	}
 	case kWallFeatureUpStairs: {
-		const uint32 dark = 170;
-		// Upward stairs: ascending step pattern
 		float xl = 0.15f, xr = 0.85f;
 		for (int i = 0; i < 6; i++) {
 			float u = xl + (xr - xl) * (float)i / 6.0f;
 			float u2 = xl + (xr - xl) * (float)(i + 1) / 6.0f;
 			float v = 0.1f + 0.8f * (float)i / 6.0f;
 			float v2 = 0.1f + 0.8f * (float)(i + 1) / 6.0f;
-			wallLine(corners, u, v, u2, v2, dark);
+			wallLine(corners, u, v, u2, v2, 0);
 		}
-		// Side rails
-		wallLine(corners, xl, 0.1f, xr, 0.9f, dark);
+		wallLine(corners, xl, 0.1f, xr, 0.9f, 0);
 		break;
 	}
 	case kWallFeatureDnStairs: {
-		const uint32 dark = 170;
-		// Downward stairs: descending step pattern
 		float xl = 0.15f, xr = 0.85f;
 		for (int i = 0; i < 6; i++) {
 			float u = xl + (xr - xl) * (float)i / 6.0f;
 			float u2 = xl + (xr - xl) * (float)(i + 1) / 6.0f;
 			float v = 0.9f - 0.8f * (float)i / 6.0f;
 			float v2 = 0.9f - 0.8f * (float)(i + 1) / 6.0f;
-			wallLine(corners, u, v, u2, v2, dark);
+			wallLine(corners, u, v, u2, v2, 0);
 		}
-		wallLine(corners, xl, 0.9f, xr, 0.1f, dark);
+		wallLine(corners, xl, 0.9f, xr, 0.1f, 0);
 		break;
 	}
+	case kWallFeatureChar:
+		wallChar(corners, map[1]);
+		break;
 	case kWallFeatureGlyph: {
-		const uint32 dark = 170;
-		// Alien glyphs: horizontal lines (like hieroglyphics)
-		float xl = 0.1f, xr = 0.9f;
-		for (int i = 0; i < 9; i++) {
-			float v = 0.15f + 0.7f * (float)i / 8.0f;
-			wallLine(corners, xl, v, xr, v, dark);
+		for (int i = 0; i < 7; i++) {
+			float v = 0.2f + i * 0.1f;
+			wallLine(corners, 0.2f, v, 0.8f, v, 0);
 		}
 		break;
 	}
 	case kWallFeatureElevator: {
-		const uint32 dark = 170;
-		// Elevator: tall rectangle with center divider line
-		float xl = 0.15f, xr = 0.85f;
-		float yb = 0.05f, yt = 0.95f;
-		wallLine(corners, xl, yb, xl, yt, dark);
-		wallLine(corners, xl, yt, xr, yt, dark);
-		wallLine(corners, xr, yt, xr, yb, dark);
-		wallLine(corners, xr, yb, xl, yb, dark);
-		// Center divider
-		float xc = 0.5f;
-		wallLine(corners, xc, yb, xc, yt, dark);
+		float xl = 0.2f, xr = 0.8f;
+		float yb = 0.1f, yt = 0.9f;
+		wallLine(corners, xl, yb, xl, yt, 0);
+		wallLine(corners, xl, yt, xr, yt, 0);
+		wallLine(corners, xr, yt, xr, yb, 0);
+		wallLine(corners, xr, yb, xl, yb, 0);
+		wallLine(corners, 0.5f, yb, 0.5f, yt, 0);
 		break;
 	}
 	case kWallFeatureTunnel: {
-		const uint32 dark = 120;
-		// Tunnel: hexagonal opening
-		float pts[][2] = {
-			{0.0f, 0.5f}, {0.15f, 0.85f}, {0.5f, 1.0f},
-			{0.85f, 0.85f}, {1.0f, 0.5f}, {0.85f, 0.15f},
-			{0.5f, 0.0f}, {0.15f, 0.15f}
-		};
-		for (int i = 0; i < 8; i++) {
-			int n = (i + 1) % 8;
-			// Scale inward slightly
-			float u1 = 0.1f + pts[i][0] * 0.8f;
-			float v1 = 0.1f + pts[i][1] * 0.8f;
-			float u2 = 0.1f + pts[n][0] * 0.8f;
-			float v2 = 0.1f + pts[n][1] * 0.8f;
-			wallLine(corners, u1, v1, u2, v2, dark);
-		}
+		// Tunnel: hexagonal opening from Grid (0,0 0,5 1,6 5,6 6,5 6,0)
+		static const float u_t[6] = { 0.0f,    0.0f,    1/6.0f,  5/6.0f,  1.0f,    1.0f };
+		static const float v_t[6] = { 0.0f,    0.750f,  0.875f,  0.875f,  0.750f,  0.0f };
+		wallPolygon(corners, u_t, v_t, 6, 0); // Black tunnel fill
 		break;
 	}
 	case kWallFeatureAirlock: {
-		const uint32 dark = map[1] == 0 ? (uint32)150 : (uint32)170;
-		// Airlock: octagonal shape
-		float pts[][2] = {
-			{0.0f, 0.5f}, {0.15f, 0.85f}, {0.5f, 1.0f},
-			{0.85f, 0.85f}, {1.0f, 0.5f}, {0.85f, 0.15f},
-			{0.5f, 0.0f}, {0.15f, 0.15f}
-		};
+		float pts[][2] = {{0.0f, 0.5f}, {0.15f, 0.85f}, {0.5f, 1.0f}, {0.85f, 0.85f},
+		                  {1.0f, 0.5f}, {0.85f, 0.15f}, {0.5f, 0.0f}, {0.15f, 0.15f}};
+		float u[8], v[8];
 		for (int i = 0; i < 8; i++) {
-			int n = (i + 1) % 8;
-			float u1 = 0.1f + pts[i][0] * 0.8f;
-			float v1 = 0.1f + pts[i][1] * 0.8f;
-			float u2 = 0.1f + pts[n][0] * 0.8f;
-			float v2 = 0.1f + pts[n][1] * 0.8f;
-			wallLine(corners, u1, v1, u2, v2, dark);
+			u[i] = 0.1f + pts[i][0] * 0.8f;
+			v[i] = 0.1f + pts[i][1] * 0.8f;
 		}
-		if (map[1] != 0) {
-			// Closed: add cross lines through center
-			wallLine(corners, 0.1f, 0.5f, 0.5f, 0.5f, dark);
-			wallLine(corners, 0.5f, 0.1f, 0.5f, 0.5f, dark);
-			wallLine(corners, 0.9f, 0.5f, 0.5f, 0.5f, dark);
-			wallLine(corners, 0.5f, 0.9f, 0.5f, 0.5f, dark);
+		if (map[1] == 0) {
+			wallPolygon(corners, u, v, 8, 0);
+		} else {
+			wallPolygon(corners, u, v, 8, 7);
+			for (int i = 0; i < 8; i++) {
+				int n = (i + 1) % 8;
+				wallLine(corners, u[i], v[i], u[n], v[n], 0);
+			}
+			wallLine(corners, 0.1f, 0.5f, 0.9f, 0.5f, 0);
+			wallLine(corners, 0.5f, 0.1f, 0.5f, 0.9f, 0);
 		}
 		break;
 	}
 	case kWallFeatureColor: {
-		// Colored horizontal bands
 		for (int i = 1; i <= 3; i++) {
 			uint32 c = 120 + map[i] * 20;
-			if (c == 120 && map[i] == 0 && !map[1] && !map[2] && !map[3] && !map[4]) {
+			if (c == 120 && map[i] == 0 && !map[1] && !map[2] && !map[3] && !map[4])
 				c = 100 + (_level * 15);
-			}
 			float v = (float)i / 4.0f;
 			wallLine(corners, 0.0f, v, 1.0f, v, c);
 		}
@@ -761,6 +787,9 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 }
 
 void ColonyEngine::drawWallFeatures3D() {
+	if (_corePower[_coreIndex] == 0)
+		return;
+
 	for (int y = 0; y < 31; y++) {
 		for (int x = 0; x < 31; x++) {
 			for (int dir = 0; dir < 4; dir++) {

@@ -270,6 +270,8 @@ private:
 	void drawCrosshair();
 	bool clipLineToRect(int &x1, int &y1, int &x2, int &y2, const Common::Rect &clip) const;
 	void wallLine(const float corners[4][3], float u1, float v1, float u2, float v2, uint32 color);
+	void wallPolygon(const float corners[4][3], const float *u, const float *v, int count, uint32 color);
+	void wallChar(const float corners[4][3], uint8 cnum);
 
 	// Animation system
 	Common::Array<Sprite *> _cSprites;
