@@ -471,6 +471,8 @@ struct ResetEntry {
 #define FLAG_MIRA_SIMBOLO_FUERA_MUSEO 15
 #define FLAG_CROCODILLO_ENCENDIDO 14
 #define FLAG_CLAVE_CAJA_FUERTE 19
+#define FLAG_INGREDIENTES_CONSEGUIDOS 48
+#define FLAG_MERCHANT_GIVENITEMS 58
 
 
 
@@ -506,7 +508,6 @@ struct ResetEntry {
 #define FLAG_HA_USADO_AGUA 45
 #define FLAG_TIENDA_ABIERTA 46
 #define FLAG_NUMERO_DE_COPAS 47
-#define FLAG_INGREDIENTES_CONSEGUIDOS 48
 
 #define FLAG_GUARDIA_PIDECOSAS 49
 #define FLAG_GUARDIA_DNI_ENTREGADO 50
@@ -518,7 +519,7 @@ struct ResetEntry {
 #define FLAG_RIDDLE_PRESENTED 56
 #define FLAG_SYMBOLS_PUSHED 57
 
-const int kNumGameFlags = 58;
+const int kNumGameFlags = 59;
 
 struct GameStateData {
 	byte flags[kNumGameFlags];
@@ -591,13 +592,13 @@ struct GameStateData {
 	// Store current root index for each room (0xFF = not set, use findRoot logic)
 	byte *conversationCurrentRoot = new byte[112];
 
-	int getCurrentRoot(byte room, int npc = 0) const {
+	int getCurrentRoot(byte room, int npc) const {
 		if (room >= 56)
 			return -1;
 		return (conversationCurrentRoot[room * 2 + npc] == 0xFF) ? -1 : conversationCurrentRoot[room * 2 + npc];
 	}
 
-	void setCurrentRoot(byte room, int root, int npc = 0) {
+	void setCurrentRoot(byte room, int root, int npc) {
 		if (room >= 56)
 			return;
 		if (root < 0 || root > 254) {

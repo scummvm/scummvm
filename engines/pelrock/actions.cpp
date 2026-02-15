@@ -23,10 +23,10 @@
 
 #include "pelrock.h"
 #include "pelrock/actions.h"
+#include "pelrock/extrascreens.h"
 #include "pelrock/offsets.h"
 #include "pelrock/pelrock.h"
 #include "pelrock/util.h"
-#include "pelrock/extrascreens.h"
 
 namespace Pelrock {
 
@@ -243,14 +243,14 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	switch (actionTrigger) {
 	case 328:
 		debug("Setting current root to %d in room %d", rootIndex + 1, room);
-		_state->setCurrentRoot(room, rootIndex + 1);
+		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
 	case 329:
 		_state->setFlag(FLAG_PUTA_250_VECES, true);
 		break;
 	case 258:
 		_state->setFlag(FLAG_GUARDIA_PIDECOSAS, true);
-		_state->setCurrentRoot(4, 2);
+		_state->setCurrentRoot(4, 2, 0);
 		break;
 	case 259:
 		_dialog->say(_res->_ingameTexts[NO_EMPECEMOS]);
@@ -270,13 +270,13 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		break;
 	case 264:
 		// skip to root after the next one
-		_state->setCurrentRoot(room, rootIndex + 2);
+		_state->setCurrentRoot(room, rootIndex + 2, 0);
 		break;
 	case 267:
-		_state->setCurrentRoot(7, 2);
+		_state->setCurrentRoot(7, 2, 0);
 		break;
 	case 272:
-		_state->setCurrentRoot(room, rootIndex + 1);
+		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
 	case 273:
 		WalkBox w1;
@@ -297,14 +297,14 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 274:
 	case 275:
 	case 276:
-		_state->setCurrentRoot(room, rootIndex + 1);
+		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
 	case 277:
-		_state->setCurrentRoot(room, rootIndex + 1);
+		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		_state->setFlag(FLAG_JEFE_INGRESA_PASTA, true);
 		break;
 	case 278:
-		_state->setCurrentRoot(room, rootIndex + 1);
+		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
 	case 279:
 		travelToEgypt();
@@ -332,8 +332,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		break;
 	case 334:
 		addInventoryItem(86);
-		_state->setCurrentRoot(room, rootIndex + 1);
-
+		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
 	case 335:
 		// many oranges
@@ -352,7 +351,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 344:
 	case 345:
 	case 346:
-		_state->setCurrentRoot(room, rootIndex + 1);
+		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
 	case 348: {
 		// Anti-piracy punishment: corrupt screen + noise + crash
@@ -362,13 +361,13 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 349:
 		_state->setFlag(FLAG_CONSIGNAS_VENDEDOR, _state->getFlag(FLAG_CONSIGNAS_VENDEDOR) + 1);
 		if (_state->getFlag(FLAG_CONSIGNAS_VENDEDOR) == 2) {
-			_state->setCurrentRoot(room, rootIndex + 1);
+			_state->setCurrentRoot(room, rootIndex + 1, 1);
 		}
 		break;
 	case 350:
 		_state->setFlag(FLAG_CONSIGNAS_VENDEDOR, _state->getFlag(FLAG_CONSIGNAS_VENDEDOR) + 1);
 		if (_state->getFlag(FLAG_CONSIGNAS_VENDEDOR) == 2) {
-			_state->setCurrentRoot(room, rootIndex + 1);
+			_state->setCurrentRoot(room, rootIndex + 1, 1);
 		}
 		break;
 	case 351:
@@ -393,7 +392,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		break;
 		// end moros
 	case 353:
-		_state->setCurrentRoot(room, rootIndex + 2);
+		_state->setCurrentRoot(room, rootIndex + 2, 0);
 		break;
 	case 354:
 		if (_state->hasInventoryItem(105)) {
@@ -406,18 +405,18 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		toJail();
 		break;
 	case 356:
-		_state->setCurrentRoot(room, 3);
+		_state->setCurrentRoot(room, 3, 0);
 		break;
 	// end puta
 	//  sabio
 	case 366:
-		_state->setCurrentRoot(room, rootIndex + 1);
+		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
 	case 363:
 		toJail();
 		break;
 	case 367: // accept riddle
-		_state->setCurrentRoot(room, 27);
+		_state->setCurrentRoot(room, 27, 0);
 		walkAndAction(_room->findHotspotByExtra(467), TALK);
 		break;
 		// hasta aqui
@@ -451,12 +450,12 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 360: // neutral reset: counter = 0
 	{
 		_state->setFlag(FLAG_RESPUESTAS_ACERTADAS, 0);
-		_state->setCurrentRoot(room, rootIndex + 1);
+		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		advanceQuotesConversation(rootIndex, room);
 		break;
 	}
 	case 361: // "no sé" (I don't know): no counter change, just advance
-		_state->setCurrentRoot(room, rootIndex + 1);
+		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
 	case 362: // special trigger: enables HIJODELAGRANPUTA cheat code
 		// Sets cheat_code_checking_enabled flag in original (0x495F3)
@@ -470,34 +469,51 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		if (rootIndex == 43) {
 			targetIndex = 27; // skip riddle explanation
 		}
-		_state->setCurrentRoot(room, targetIndex);
+		_state->setCurrentRoot(room, targetIndex, 0);
 		break;
 	}
 	case 365: // riddle correct: set riddle-solved flag
 		_state->setFlag(FLAG_PARADOJA_RESUELTA, 1);
-		_state->setCurrentRoot(room, 1);
+		_state->setCurrentRoot(room, 1, 0);
 		break;
 	case 292:
-		_state->setCurrentRoot(room, rootIndex + 1);
+		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
 	case 293:
 		_room->disableHotspot(_room->findHotspotByExtra(451)); // Disable talk hotspot for the riddle
-		_state->setCurrentRoot(room, rootIndex + 1);
+		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
-	//merchants
+	// merchants
 	case 370:
+		addInventoryItem(111);
 		break;
 	case 371:
+		addInventoryItem(111);
+		addInventoryItem(110);
+		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
 	case 286:
+		addInventoryItem(83);
+		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
 	case 287:
+		addInventoryItem(77);
+		addInventoryItem(107);
+		givenItems();
 		break;
 	case 288:
+		addInventoryItem(78);
+		givenItems();
 		break;
 	case 289:
+		addInventoryItem(79);
+		addInventoryItem(108);
+		givenItems();
 		break;
 	case 290:
+		addInventoryItem(80);
+		addInventoryItem(109);
+		givenItems();
 		break;
 	// end merchants
 	default:
@@ -506,12 +522,19 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	}
 }
 
+void PelrockEngine::givenItems() {
+	_state->setFlag(FLAG_MERCHANT_GIVENITEMS, _state->getFlag(FLAG_MERCHANT_GIVENITEMS) + 1);
+	if(_state->getFlag(FLAG_MERCHANT_GIVENITEMS) == 4) {
+		_state->setCurrentRoot(27, 2, 1);
+	}
+}
+
 void PelrockEngine::advanceQuotesConversation(byte rootIndex, byte room) {
 	int targetRoot = rootIndex + 1;
 	if (targetRoot == 26) {
 		targetRoot = 2;
 	}
-	_state->setCurrentRoot(room, targetRoot);
+	_state->setCurrentRoot(room, targetRoot, 0);
 }
 
 void PelrockEngine::toJail() {
@@ -585,7 +608,7 @@ void PelrockEngine::useCardWithATM(int inventoryObject, HotSpot *hotspot) {
 	if (_state->getFlag(FLAG_JEFE_INGRESA_PASTA)) {
 		_state->setFlag(FLAG_JEFE_INGRESA_PASTA, false);
 		addInventoryItem(75);
-		_state->setCurrentRoot(20, 2);
+		_state->setCurrentRoot(20, 2, 0);
 	} else {
 		int billCount = 0;
 		for (uint i = 0; i < _state->inventoryItems.size(); i++) {
@@ -830,7 +853,7 @@ void PelrockEngine::pickCables(HotSpot *hotspot) {
 	_room->addSticker(21);
 
 	_dialog->say(_res->_ingameTexts[RELOJ_HA_CAMBIADO]);
-	_state->setCurrentRoot(4, 1);
+	_state->setCurrentRoot(4, 1, 0);
 }
 
 void PelrockEngine::giveIdToGuard(int inventoryObject, HotSpot *hotspot) {
@@ -850,7 +873,7 @@ void PelrockEngine::giveIdToGuard(int inventoryObject, HotSpot *hotspot) {
 }
 
 void PelrockEngine::unlockMuseum() {
-	_state->setCurrentRoot(4, 3);
+	_state->setCurrentRoot(4, 3, 0);
 	_room->enableSprite(2, 100, PERSIST_PERM);
 	_room->enableSprite(3, 100, PERSIST_PERM);
 	_room->addStickerToRoom(4, 87, PERSIST_PERM);
@@ -892,7 +915,7 @@ void PelrockEngine::useAmuletWithStatue(int inventoryObject, HotSpot *hotspot) {
 	if (!_room->hasSticker(24)) {
 		_room->addSticker(24);
 		_state->removeInventoryItem(7);
-		_state->setCurrentRoot(7, 1);
+		_state->setCurrentRoot(7, 1, 0);
 		_alfredState.direction = ALFRED_RIGHT;
 
 		HotSpot *statueHotspot = _room->findHotspotByExtra(91);
@@ -1008,13 +1031,13 @@ void PelrockEngine::usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot) {
 void PelrockEngine::pickupSunflower(HotSpot *hotspot) {
 	if (_state->getFlag(FLAG_PARADOJA_RESUELTA) == false) {
 		_dialog->say(_res->_ingameTexts[OIGA]);
-		_state->setCurrentRoot(25, 26);
+		_state->setCurrentRoot(25, 26, 0);
 		_state->setFlag(FLAG_RIDDLE_PRESENTED, true);
 		walkAndAction(_room->findHotspotByExtra(467), TALK);
 	} else {
 		addInventoryItem(85);
 		_room->disableHotspot(hotspot);
-		_state->setCurrentRoot(25, 1);
+		_state->setCurrentRoot(25, 1, 0);
 		_room->addSticker(73);
 	}
 	checkIngredients();
@@ -1030,10 +1053,10 @@ void PelrockEngine::checkIngredients() {
 void PelrockEngine::pickUpBook(int i) {
 	if (!_state->hasInventoryItem(10)) {
 		_dialog->say(_res->_ingameTexts[VENGA_ACA]);
-		_state->setCurrentRoot(9, 1);
+		_state->setCurrentRoot(9, 1, 0);
 
 		if (_state->hasInventoryItem(3)) {
-			_state->setCurrentRoot(9, 2);
+			_state->setCurrentRoot(9, 2, 0);
 			addInventoryItem(10);
 		}
 
@@ -1044,9 +1067,9 @@ void PelrockEngine::pickUpBook(int i) {
 		waitForActionEnd();
 		if (!_state->hasInventoryItem(3)) {
 
-			_state->setCurrentRoot(9, 0);
+			_state->setCurrentRoot(9, 0, 0);
 		} else {
-			_state->setCurrentRoot(9, 3);
+			_state->setCurrentRoot(9, 3, 0);
 		}
 	} else {
 		if (_state->libraryShelf == -1) {
@@ -1096,7 +1119,7 @@ void PelrockEngine::closeEgyptMuseumDoor(HotSpot *hotspot) {
 }
 
 void PelrockEngine::pushSymbol1(HotSpot *hotspot) {
-	if(_state->getFlag(FLAG_MIRA_SIMBOLO_FUERA_MUSEO) == true) {
+	if (_state->getFlag(FLAG_MIRA_SIMBOLO_FUERA_MUSEO) == true) {
 		byte symbolsPulled = _state->getFlag(FLAG_SYMBOLS_PUSHED);
 		debug("Current symbols pulled: %d", symbolsPulled);
 		_state->setFlag(FLAG_SYMBOLS_PUSHED, symbolsPulled | 0x1);
@@ -1106,7 +1129,7 @@ void PelrockEngine::pushSymbol1(HotSpot *hotspot) {
 }
 
 void PelrockEngine::pushSymbol2(HotSpot *hotspot) {
-	if(_state->getFlag(FLAG_MIRA_SIMBOLO_FUERA_MUSEO) == true) {
+	if (_state->getFlag(FLAG_MIRA_SIMBOLO_FUERA_MUSEO) == true) {
 		byte symbolsPulled = _state->getFlag(FLAG_SYMBOLS_PUSHED);
 		debug("Current symbols pulled: %d", symbolsPulled);
 		_state->setFlag(FLAG_SYMBOLS_PUSHED, symbolsPulled | 0x2);
@@ -1116,7 +1139,7 @@ void PelrockEngine::pushSymbol2(HotSpot *hotspot) {
 }
 
 void PelrockEngine::pushSymbol3(HotSpot *hotspot) {
-	if(_state->getFlag(FLAG_MIRA_SIMBOLO_FUERA_MUSEO) == true) {
+	if (_state->getFlag(FLAG_MIRA_SIMBOLO_FUERA_MUSEO) == true) {
 		byte symbolsPulled = _state->getFlag(FLAG_SYMBOLS_PUSHED);
 		debug("Current symbols pulled: %d", symbolsPulled);
 		_state->setFlag(FLAG_SYMBOLS_PUSHED, symbolsPulled | 0x4);
@@ -1126,7 +1149,7 @@ void PelrockEngine::pushSymbol3(HotSpot *hotspot) {
 }
 
 void PelrockEngine::pushSymbol4(HotSpot *hotspot) {
-	if(_state->getFlag(FLAG_MIRA_SIMBOLO_FUERA_MUSEO) == true) {
+	if (_state->getFlag(FLAG_MIRA_SIMBOLO_FUERA_MUSEO) == true) {
 		byte symbolsPulled = _state->getFlag(FLAG_SYMBOLS_PUSHED);
 		debug("Current symbols pulled: %d", symbolsPulled);
 		_state->setFlag(FLAG_SYMBOLS_PUSHED, symbolsPulled | 0x8);
@@ -1138,8 +1161,8 @@ void PelrockEngine::pushSymbol4(HotSpot *hotspot) {
 void PelrockEngine::checkAllSymbols() {
 	byte symbolsPulled = _state->getFlag(FLAG_SYMBOLS_PUSHED);
 	debug("Checking symbols, current value: %d", symbolsPulled);
-	if(symbolsPulled == 0x0F) {
-		//Activates animation
+	if (symbolsPulled == 0x0F) {
+		// Activates animation
 		_sound->playSound(_room->_roomSfx[0]);
 		_room->enableSprite(4, 100, PERSIST_TEMP);
 		_room->enableExit(0, PERSIST_BOTH);
@@ -1172,7 +1195,7 @@ void PelrockEngine::useKeyWithPortrait(int inventoryObject, HotSpot *hotspot) {
 }
 
 void PelrockEngine::openSafe(HotSpot *hotspot) {
-	if(_state->getFlag(FLAG_CLAVE_CAJA_FUERTE) == true) {
+	if (_state->getFlag(FLAG_CLAVE_CAJA_FUERTE) == true) {
 		_room->addSticker(102);
 		_dialog->say(_res->_ingameTexts[GRANCANTIDAD_DINERO]);
 		addInventoryItem(82);
@@ -1246,8 +1269,8 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		waitForSpecialAnimation();
 
 		loadExtraScreenAndPresent(3);
-		_state->setCurrentRoot(17, 1);
-		_state->setCurrentRoot(18, 4);
+		_state->setCurrentRoot(17, 1, 0);
+		_state->setCurrentRoot(18, 4, 0);
 		debug("After extra screen");
 		_dialog->say(_res->_ingameTexts[QUEASCO]);
 		break;
@@ -1275,14 +1298,14 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 	case 24:
 		if (_state->getFlag(FLAG_RIDDLE_PRESENTED) == true) {
 			_dialog->say(_res->_ingameTexts[CAPITULOPARADOJAS]);
-			_state->setCurrentRoot(25, 44);
+			_state->setCurrentRoot(25, 44, 0);
 		} else {
 			_res->loadAlfredSpecialAnim(0);
 			_alfredState.animState = ALFRED_SPECIAL_ANIM;
 			waitForSpecialAnimation();
 			_dialog->say(_res->_ingameTexts[COSASAPRENDIDO]);
 			_state->setFlag(FLAG_ALFRED_INTELIGENTE, true);
-			_state->setCurrentRoot(14, 2);
+			_state->setCurrentRoot(14, 2, 0);
 		}
 		break;
 	case 64:
@@ -1307,15 +1330,14 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		if (spell) {
 			_alfredState.direction = ALFRED_LEFT;
 			_dialog->say(_res->_ingameTexts[DIOSHALCON + spell->page], 1);
-			if(spell->page == 12 && _room->_currentRoomNumber == 28) {
+			if (spell->page == 12 && _room->_currentRoomNumber == 28) {
 				_graphics->clearScreen();
 				int waitFrames = 0;
-				//blank screen for half a second
-				while (!shouldQuit() && waitFrames < 20)
-				{
+				// blank screen for half a second
+				while (!shouldQuit() && waitFrames < 20) {
 					_events->pollEvent();
 					_chrono->updateChrono();
-					if(_chrono->_gameTick) {
+					if (_chrono->_gameTick) {
 						waitFrames++;
 					}
 					_screen->markAllDirty();

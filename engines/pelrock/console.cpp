@@ -52,13 +52,14 @@ bool PelrockConsole::cmdSetFlag(int argc, const char **argv) {
 
 bool PelrockConsole::cmdSetRoot(int argc, const char **argv) {
 	if (argc < 3) {
-		debugPrintf("Usage: setRoot <roomNumber> <rootIndex>");
+		debugPrintf("Usage: setRoot <roomNumber> <rootIndex> <npcIndex (optional, default=0)>");
 		return true;
 	}
 	int roomNumber = atoi(argv[1]);
 	int rootIndex = atoi(argv[2]);
-	_engine->_state->setCurrentRoot(roomNumber, rootIndex);
-	debugPrintf("Set current root to %d in room %d\n", rootIndex, roomNumber);
+	int npcIndex = (argc >= 4) ? atoi(argv[3]) : 0;
+	_engine->_state->setCurrentRoot(roomNumber, rootIndex, npcIndex);
+	debugPrintf("Set current root to %d in room %d for npc %d\n", rootIndex, roomNumber, npcIndex);
 	return true;
 }
 
