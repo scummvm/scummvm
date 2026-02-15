@@ -181,6 +181,11 @@ public:
 	void cCommand(int xnew, int ynew, bool allowInteraction);
 	void scrollInfo();
 
+	void doText(int entry, int center);
+	void inform(const char *text, bool hold);
+	void printMessage(const char *text[], bool hold);
+	void makeMessageRect(Common::Rect &r);
+
 private:
 	const ADGameDescription *_gameDescription;
 
@@ -225,6 +230,8 @@ private:
 	bool _gametest = false;
 	uint32 _blackoutColor = 0;
 	uint32 _lastClickTime = 0;
+	int _action0, _action1;
+	int _creature;
 
 	int _frntxWall, _frntyWall;
 	int _sidexWall, _sideyWall;
@@ -275,6 +282,12 @@ private:
 	void wallLine(const float corners[4][3], float u1, float v1, float u2, float v2, uint32 color);
 	void wallPolygon(const float corners[4][3], const float *u, const float *v, int count, uint32 color);
 	void wallChar(const float corners[4][3], uint8 cnum);
+
+	struct TextIndex {
+		uint32 offset;
+		uint16 ch;
+		uint16 lines;
+	};
 
 	// Animation system
 	Common::Array<Sprite *> _cSprites;

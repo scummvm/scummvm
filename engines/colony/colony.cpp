@@ -716,8 +716,59 @@ void ColonyEngine::handleAnimationClick(int item) {
 				drawAnimation();
 				_gfx->copyToScreen();
 			}
+		} else if (item == 7) { // Letter
+			if (_lSprites[6]->current == 1)
+				doText(_action1, 0);
+		} else if (item == 9) { // Clipboard
+			doText(_action1, 0);
+		} else if (item == 17) { // Screen
+			doText(_action0, 0);
+		} else if (item == 22) { // Book
+			doText(_action1, 0);
+		} else if (item == 24) { // Cigarette
+			doText(55, 0);
+			terminateGame(false);
+		} else if (item == 25) { // Post-it
+			doText(_action1, 0);
 		}
 		return; // Handled
+	} else if (_animationName == "vanity") {
+		if (item == 13) { // Paper
+			doText(_action0, 0);
+		} else if (item == 14) { // Badge
+			doText(80, 0);
+		} else if (item == 4) { // Diary
+			doText(_action0, 0);
+		} else if (item == 7) { // Book
+			doText(_action0, 0);
+		}
+		return;
+	} else if (_animationName == "slides") {
+		if (item == 2) { // Speaker
+			doText(261 + _creature, 0);
+		} else if (item == 5) { // Prev
+			_creature--;
+			if (_creature == 0) _creature = 8;
+			SetObjectState(1, _creature);
+		} else if (item == 6) { // Next
+			_creature++;
+			if (_creature == 9) _creature = 1;
+			SetObjectState(1, _creature);
+		}
+		return;
+	} else if (_animationName == "teleshow") {
+		if (item == 2) { // Speaker
+			doText(269 + _creature, 0);
+		} else if (item == 5) { // Prev
+			_creature--;
+			if (_creature == 0) _creature = 7;
+			SetObjectState(1, _creature);
+		} else if (item == 6) { // Next
+			_creature++;
+			if (_creature == 8) _creature = 1;
+			SetObjectState(1, _creature);
+		}
+		return;
 	} else if (_animationName == "reactor" || _animationName == "security" || _animationName == "suit") {
 		if (item >= 1 && item <= 10 && _animationName != "suit") {
 			for (int i = 5; i >= 1; i--)
@@ -893,6 +944,7 @@ void ColonyEngine::handleAnimationClick(int item) {
 
 void ColonyEngine::terminateGame(bool blowup) {
 	debug(0, "YOU HAVE BEEN TERMINATED! (blowup=%d)", blowup);
+	doText(65, 0);
 	
 	// Flash effect
 	for (int i = 0; i < 4; i++) {

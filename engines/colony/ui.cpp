@@ -24,7 +24,10 @@
 #include "common/system.h"
 #include "common/util.h"
 #include "common/debug.h"
+#include "common/file.h"
+#include "common/events.h"
 #include "graphics/palette.h"
+#include "graphics/fonts/dosfont.h"
 #include <math.h>
 
 namespace Colony {
@@ -442,13 +445,17 @@ bool ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Lo
 			setDoorState(fromX, fromY, direction, 0);
 			return true;
 		}
+		doText(75, 0); // "Door is locked" or similar from T.DAT
 		return false;
 	case kWallFeatureAirlock:
 		if (map[1] == 0)
 			return true;
-		if (pobject == &_me && _unlocked) {
-			setDoorState(fromX, fromY, direction, 0);
-			return true;
+		if (pobject == &_me) {
+			if (_unlocked) {
+				setDoorState(fromX, fromY, direction, 0);
+				return true;
+			}
+			inform("AIRLOCK IS SEALED.", true);
 		}
 		return false;
 	default:
@@ -466,15 +473,13 @@ void ColonyEngine::interactWithObject(int objNum) {
 
 	const int x = CLIP<int>(obj.where.xindex, 0, 30);
 	const int y = CLIP<int>(obj.where.yindex, 0, 30);
-	const int action0 = _mapData[x][y][4][3];
+	_action0 = _mapData[x][y][4][3];
+	_action1 = _mapData[x][y][4][4];
+	_creature = 1;
 
 	switch (obj.type) {
-	case kObjDesk:
-		if (loadAnimation("desk"))
-			playAnimation();
-		break;
 	case kObjConsole:
-		switch (action0) {
+		switch (_action0) {
 		case 1: // Reactor console
 			if (loadAnimation("reactor"))
 				playAnimation();
@@ -488,20 +493,22 @@ void ColonyEngine::interactWithObject(int objNum) {
 				playAnimation();
 			break;
 		default:
-			debug("CCommand: CONSOLE action=%d", action0);
+			inform("IT DOES NOT SEEM TO BE WORKING.", true);
 			break;
 		}
 		break;
 	case kObjProjector:
-		switch (action0) {
+		switch (_action0) {
 		case 1:
-			debug("CCommand: PROJECTOR creatures");
+			if (loadAnimation("slides"))
+				playAnimation();
 			break;
 		case 2:
-			debug("CCommand: PROJECTOR teleporters");
+			if (loadAnimation("teleshow")) // "teleshow" matches original interaction
+				playAnimation();
 			break;
 		default:
-			debug("CCommand: PROJECTOR action=%d", action0);
+			inform("PROJECTOR OFFLINE", true);
 			break;
 		}
 		break;
@@ -513,10 +520,10 @@ void ColonyEngine::interactWithObject(int objNum) {
 	{
 		const int targetLevelRaw = _mapData[x][y][4][2];
 		const int targetLevel = (targetLevelRaw == 0) ? _level : targetLevelRaw;
-		const int targetX = _mapData[x][y][4][3];
-		const int targetY = _mapData[x][y][4][4];
+		const int targetX = _action0;
+		const int targetY = _action1;
 		if (targetLevel >= 100 || targetX <= 0 || targetX >= 31 || targetY <= 0 || targetY >= 31) {
-			debug("CCommand: TELEPORT ignored invalid target L%d (%d,%d)", targetLevelRaw, targetX, targetY);
+			inform("TELEPORTER INITIALIZATION FAILED", true);
 			break;
 		}
 		if (targetLevel != _level)
@@ -532,7 +539,6 @@ void ColonyEngine::interactWithObject(int objNum) {
 			_robotArray[oldX][oldY] = 0;
 		if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
 			_robotArray[_me.xindex][_me.yindex] = MENUM;
-			debug("CCommand: TELEPORT to L%d (%d,%d)", targetLevel, targetX, targetY);
 		break;
 	}
 	case kObjDrawer:
@@ -540,45 +546,206 @@ void ColonyEngine::interactWithObject(int objNum) {
 			playAnimation();
 		break;
 	case kObjScreen:
-		debug("CCommand: SCREEN");
+		// original game shows "Full of stars" effect/text
+		inform("I CAN SEE THROUGH IT...", true);
 		break;
 	case kObjToilet:
 	case kObjPToilet:
-		debug("CCommand: TOILET");
+		inform("IT'S A TOILET.", true); 
 		break;
 	case kObjTub:
-		debug("CCommand: TUB");
+		inform("A BATHTUB. NO TIME FOR A SOAK.", true);
 		break;
 	case kObjSink:
-		debug("CCommand: SINK");
+		inform("A SINK. IT'S DRY.", true);
 		break;
 	case kObjCryo:
-		debug("CCommand: CRYO text=%d", action0);
+		doText(_action0, 0);
 		break;
 	case kObjTV:
-		debug("CCommand: TV level=%d", _level);
+		if (_level == 1) doText(56, 0);
+		else doText(16, 0);
 		break;
 	case kObjForkLift:
 	case kObjReactor:
 	case kObjBox1:
 	case kObjBox2:
-		debug("CCommand: object type %d requires forklift/reactor flow", obj.type);
-		break;
-	case kObjPlant:
-	case kObjCChair:
-	case kObjBed:
-	case kObjTable:
-	case kObjCouch:
-	case kObjChair:
-	case kObjBBed:
-	case kObjFWall:
-	case kObjCWall:
-		// Matches DOS CCommand where these objects are non-interactive blockers.
+		inform("NEEDS FORKLIFT INTERACTION", true);
 		break;
 	default:
-		debug("CCommand: object type %d", obj.type);
 		break;
 	}
+}
+
+void ColonyEngine::inform(const char *text, bool hold) {
+	const char *msg[3];
+	msg[0] = text;
+	msg[1] = hold ? "-Press Any Key to Continue-" : nullptr;
+	msg[2] = nullptr;
+	printMessage(msg, hold);
+}
+
+void ColonyEngine::printMessage(const char *text[], bool hold) {
+	int numLines = 0;
+	int width = 0;
+	Graphics::DosFont font;
+	
+	while (text[numLines] != nullptr) {
+		int w = font.getStringWidth(text[numLines]);
+		if (w > width) width = w;
+		numLines++;
+	}
+
+	int px_per_inch_x = 72;
+	int px_per_inch_y = 72;
+
+	Common::Rect rr;
+	rr.top = _centerY - (numLines + 1) * (px_per_inch_y / 4);
+	rr.bottom = _centerY + (numLines + 1) * (px_per_inch_y / 4);
+	rr.left = _centerX - width / 2 - (px_per_inch_x / 2);
+	rr.right = _centerX + width / 2 + (px_per_inch_x / 2);
+
+	_gfx->fillDitherRect(_screenR, 0, 15);
+	makeMessageRect(rr);
+
+	int start;
+	int step;
+	if (numLines > 1) {
+		start = rr.top + (px_per_inch_y / 4) * 2;
+		step = (rr.height() - (px_per_inch_y / 4) * 4) / (numLines - 1);
+	} else {
+		start = (rr.top + rr.bottom) / 2;
+		step = 0;
+	}
+
+	for (int i = 0; i < numLines; i++) {
+		_gfx->drawString(&font, text[i], (rr.left + rr.right) / 2, start + i * step, 0, Graphics::kTextAlignCenter);
+	}
+
+	_gfx->copyToScreen();
+
+	if (hold) {
+		bool waiting = true;
+		while (waiting && !shouldQuit()) {
+			Common::Event event;
+			while (_system->getEventManager()->pollEvent(event)) {
+				if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONDOWN)
+					waiting = false;
+			}
+			_system->delayMillis(10);
+		}
+	}
+}
+
+void ColonyEngine::makeMessageRect(Common::Rect &rr) {
+	_gfx->fillRect(rr, 15);
+	_gfx->drawRect(rr, 0);
+	Common::Rect inner = rr;
+	inner.grow(-2);
+	_gfx->drawRect(inner, 0);
+}
+
+void ColonyEngine::doText(int entry, int center) {
+	Common::File file;
+	if (!file.open("T.DAT")) {
+		warning("doText: Could not open T.DAT");
+		return;
+	}
+
+	uint32 entries = file.readUint32BE();
+	if (entry < 0 || (uint32)entry >= entries) {
+		warning("doText: Entry %d out of range (max %d)", entry, entries);
+		file.close();
+		return;
+	}
+
+	file.seek(4 + entry * 8);
+	uint32 offset = file.readUint32BE();
+	uint16 ch = file.readUint16BE();
+	file.readUint16BE(); // lines (unused)
+
+	if (ch == 0) {
+		file.close();
+		return;
+	}
+
+	byte *page = (byte *)malloc(ch + 1);
+	file.seek(offset);
+	file.read(page, ch);
+	file.close();
+	page[ch] = 0;
+
+	// Decode: Chain XOR starting from end with '\'
+	page[ch - 1] ^= '\\';
+	for (int n = ch - 2; n >= 0; n--)
+		page[n] ^= page[n + 1];
+
+	Common::Array<Common::String> lineArray;
+	char *p = (char *)page;
+	int start = 0;
+	for (int i = 0; i < ch; i++) {
+		if (p[i] == '\r' || p[i] == '\n') {
+			p[i] = 0;
+			if (p[start]) lineArray.push_back(&p[start]);
+			start = i + 1;
+		}
+	}
+	if (start < ch && p[start]) lineArray.push_back(&p[start]);
+
+	Graphics::DosFont font;
+	int width = 0;
+	for (uint i = 0; i < lineArray.size(); i++) {
+		int w = font.getStringWidth(lineArray[i]);
+		if (w > width) width = w;
+	}
+	const char *kpress = "-Press Any Key to Continue-";
+	int kw = font.getStringWidth(kpress);
+	if (kw > width) width = kw;
+	width += 12;
+
+	int lineheight = 14;
+	int maxlines = (_screenR.height() / lineheight) - 2;
+	if (maxlines > (int)lineArray.size()) maxlines = lineArray.size();
+
+	Common::Rect r;
+	r.top = _centerY - (((maxlines + 1) * lineheight / 2) + 4);
+	r.bottom = _centerY + (((maxlines + 1) * lineheight / 2) + 4);
+	r.left = _centerX - (width / 2);
+	r.right = _centerX + (width / 2);
+
+	_gfx->fillDitherRect(_screenR, 0, 15);
+	
+	// Draw shadow/border (original draws 3 frames total)
+	for (int i = 0; i < 2; i++) {
+		_gfx->drawRect(r, 0);
+		r.translate(-1, -1);
+	}
+	_gfx->fillRect(r, 15);
+	_gfx->drawRect(r, 0);
+
+	for (int i = 0; i < maxlines; i++) {
+		_gfx->drawString(&font, lineArray[i], r.left + 3, r.top + 4 + i * lineheight, 0);
+		if (center == 2) {
+			// Teletype sound effect placeholder
+			_system->delayMillis(20); 
+		}
+	}
+
+	_gfx->drawString(&font, (int)lineArray.size() > maxlines ? "-More-" : kpress, (r.left + r.right) / 2, r.top + 6 + maxlines * lineheight, 0, Graphics::kTextAlignCenter);
+	_gfx->copyToScreen();
+
+	// Wait for key
+	bool waiting = true;
+	while (waiting && !shouldQuit()) {
+		Common::Event event;
+		while (_system->getEventManager()->pollEvent(event)) {
+			if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONDOWN)
+				waiting = false;
+		}
+		_system->delayMillis(10);
+	}
+
+	free(page);
 }
 
 void ColonyEngine::cCommand(int xnew, int ynew, bool allowInteraction) {

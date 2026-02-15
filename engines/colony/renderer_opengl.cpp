@@ -434,6 +434,14 @@ void OpenGLRenderer::fillEllipse(int x, int y, int rx, int ry, uint32 color) {
 
 void OpenGLRenderer::fillDitherRect(const Common::Rect &rect, uint32 color1, uint32 color2) {
 	fillRect(rect, color1);
+	useColor(color2);
+	glBegin(GL_POINTS);
+	for (int y = rect.top; y < rect.bottom; y++) {
+		for (int x = rect.left + (y % 2); x < rect.right; x += 2) {
+			glVertex2i(x, y);
+		}
+	}
+	glEnd();
 }
 
 void OpenGLRenderer::setPixel(int x, int y, uint32 color) {
