@@ -157,7 +157,7 @@ void PelrockEngine::init() {
 		// setScreen(0, ALFRED_DOWN);
 		// setScreen(3, ALFRED_RIGHT);
 		// setScreen(22, ALFRED_DOWN);
-		setScreen(30, ALFRED_DOWN);
+		setScreen(27, ALFRED_DOWN);
 		// setScreen(15, ALFRED_DOWN);
 		// setScreen(2, ALFRED_LEFT);
 		// alfredState.x = 576;
@@ -802,7 +802,7 @@ void PelrockEngine::talkTo(HotSpot *hotspot) {
 	}
 	changeCursor(DEFAULT);
 	debug("Talking to hotspot %d (%d) with extra %d", hotspot->index, hotspot->isSprite ? hotspot->index : hotspot->index - _room->_currentRoomAnims.size(), hotspot->extra);
-	_dialog->startConversation(_room->_conversationData, _room->_conversationDataSize, hotspot->index, animSet);
+	_dialog->startConversation(_room->_conversationData, _room->_conversationDataSize, animSet->talkingAnimIndex, animSet);
 }
 
 void PelrockEngine::lookAt(HotSpot *hotspot) {
@@ -1426,7 +1426,7 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 void PelrockEngine::animateTalkingNPC(Sprite *animSet) {
 	// Change with the right index
 
-	int index = animSet->index;
+	int index = animSet->talkingAnimIndex;
 	TalkingAnims *animHeader = &_room->_talkingAnimHeader;
 
 	int x = animSet->x + (index ? animHeader->offsetXAnimB : animHeader->offsetXAnimA);

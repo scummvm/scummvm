@@ -237,6 +237,7 @@ struct Sprite {
 	bool isHotspotDisabled; // 38
 	bool disableAfterSequence = false; // 39
 	bool isTalking = false;
+	byte talkingAnimIndex = 0;
 	Anim *animData;
 	int16 extra;
 };
@@ -469,6 +470,7 @@ struct ResetEntry {
 #define FLAG_PARADOJA_RESUELTA 13
 #define FLAG_MIRA_SIMBOLO_FUERA_MUSEO 15
 #define FLAG_CROCODILLO_ENCENDIDO 14
+#define FLAG_CLAVE_CAJA_FUERTE 19
 
 
 
@@ -476,7 +478,6 @@ struct ResetEntry {
 #define FLAG_PUERTA_SECRETA_ABIERTA 16
 #define FLAG_ROBA_PELO_PRINCESA 17
 #define FLAG_A_LA_CARCEL 18
-#define FLAG_CLAVE_CAJA_FUERTE 19
 #define FLAG_SE_HA_PUESTO_EL_MUNECO 20
 #define FLAG_VIGILANTE_BEBE_AGUA 21
 #define FLAG_VIGILANTE_MEANDO 22

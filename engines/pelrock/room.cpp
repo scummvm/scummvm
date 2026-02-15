@@ -883,7 +883,7 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 	uint32_t picOffset = 0;
 
 	Common::Array<SpriteChange> spriteChanges = g_engine->_state->spriteChanges[_currentRoomNumber];
-
+	int talkingAnims = 0;
 	for (int i = 0; i < spriteCount; i++) {
 		uint32_t animOffset = metadata_start + (i * 44);
 		Sprite sprite;
@@ -898,6 +898,9 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 		sprite.extra = READ_LE_INT16(data + animOffset + 32);
 		debug("Sprite %d: x=%d y=%d w=%d h=%d stride=%d numAnims=%d zOrder=%d extra=%d", i, sprite.x, sprite.y, sprite.w, sprite.h, sprite.stride, sprite.numAnims, sprite.zOrder, sprite.extra);
 		sprite.actionFlags = data[animOffset + 34];
+		if(sprite.actionFlags & ACTION_MASK_TALK) {
+			sprite.talkingAnimIndex = talkingAnims++;
+		}
 		sprite.isHotspotDisabled = data[animOffset + 38];
 		sprite.disableAfterSequence = data[animOffset + 39];
 		for (int j = 0; j < spriteChanges.size(); j++) {
