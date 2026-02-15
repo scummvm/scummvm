@@ -74,8 +74,8 @@ static const int kBedSheetPts[8][3] = {
 	{-80, 70, 80}, {80, 70, 80}, {80, -175, 80}, {-80, -175, 80}
 };
 static const int kSheetSurf[3][8] = {
-	{15, 4, 0, 3, 7, 4, 0, 0}, {15, 4, 2, 1, 5, 6, 0, 0},
-	{15, 4, 7, 6, 5, 4, 0, 0}
+	{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0},
+	{0, 4, 7, 6, 5, 4, 0, 0}
 };
 static const int kBBedBlanketPts[8][3] = {
 	{-120, 96, 0}, {120, 96, 0}, {120, -96, 0}, {-120, -96, 0},
@@ -238,6 +238,73 @@ static const int kMirrorPts[4][3] = {
 	{-80, 65, 100}, {-80, -65, 100}, {-80, 65, 210}, {-80, -65, 210}
 };
 static const int kMirrorSurf[1][8] = {{0, 4, 1, 0, 2, 3, 0, 0}};
+
+// Bathtub geometry
+static const int kTubPts[8][3] = {
+	{-128, 128,  0}, {   0, 128,  0}, {   0,-128,  0}, {-128,-128,  0},
+	{-128, 128, 70}, {   0, 128, 70}, {   0,-128, 70}, {-128,-128, 70}
+};
+static const int kTubSurf[5][8] = {
+	{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
+	{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0},
+	{0, 4, 7, 6, 5, 4, 0, 0}
+};
+static const int kDTubPts[6][3] = {
+	{-16, 112, 70}, {-8, 0, 70}, {-16, -112, 70}, {-112, -112, 70}, {-120, 0, 70}, {-112, 112, 70}
+};
+static const int kDTubSurf[1][8] = {{1, 6, 5, 4, 3, 2, 1, 0}};
+
+// Toilet geometry
+static const int kAToiletPts[8][3] = {
+	{-128, 45, 30}, {-100, 45, 30}, {-100, -45, 30}, {-128, -45, 30},
+	{-128, 45, 100}, {-100, 45, 100}, {-100, -45, 100}, {-128, -45, 100}
+};
+static const int kAToiletSurf[5][8] = {
+	{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
+	{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0},
+	{0, 4, 7, 6, 5, 4, 0, 0}
+};
+static const int kBToiletPts[12][3] = {
+	{-100, 20, 50}, {-60, 40, 50}, {-20, 20, 50}, {-20, -20, 50}, {-60, -40, 50}, {-100, -20, 50},
+	{-80, 10,  0}, {-60, 20,  0}, {-40, 10,  0}, {-40, -10,  0}, {-60, -20,  0}, {-80, -10,  0}
+};
+static const int kBToiletSurf[7][8] = {
+	{0, 4, 0, 1, 7, 6, 0, 0}, {0, 4, 1, 2, 8, 7, 0, 0}, {0, 4, 2, 3, 9, 8, 0, 0},
+	{0, 4, 3, 4, 10, 9, 0, 0}, {0, 4, 4, 5, 11, 10, 0, 0}, {0, 4, 5, 0, 6, 11, 0, 0},
+	{0, 6, 5, 4, 3, 2, 1, 0}
+};
+static const int kCToiletPts[6][3] = {
+	{-95, 15, 50}, {-60, 35, 50}, {-25, 15, 50}, {-25, -15, 50}, {-60, -35, 50}, {-95, -15, 50}
+};
+static const int kCToiletSurf[1][8] = {{1, 6, 5, 4, 3, 2, 1, 0}};
+static const int kDToiletPts[6][3] = {
+	{-100, 20, 50}, {-100, 40, 90}, {-100, 20, 130}, {-100, -20, 130}, {-100, -40, 90}, {-100, -20, 50}
+};
+static const int kDToiletSurf[1][8] = {{10, 6, 5, 4, 3, 2, 1, 0}};
+static const int kEToiletPts[4][3] = {
+	{-128,-128, 20}, {-128,-128, 200}, { 128,-128, 200}, { 128,-128, 20}
+};
+static const int kEToiletSurf[1][8] = {{0, 4, 0, 1, 2, 3, 0, 0}};
+
+// Sink geometry
+static const int kSinkPts[8][3] = {
+	{-128, 50, 70}, {-50, 50, 90}, {-50,-50, 90}, {-128,-50, 70},
+	{-128, 50, 110}, {-50, 50, 110}, {-50,-50, 110}, {-128,-50, 110}
+};
+static const int kSinkSurf[5][8] = {
+	{0, 4, 0, 3, 7, 4, 0, 0}, {0, 4, 3, 2, 6, 7, 0, 0},
+	{0, 4, 1, 0, 4, 5, 0, 0}, {0, 4, 2, 1, 5, 6, 0, 0},
+	{0, 4, 7, 6, 5, 4, 0, 0}
+};
+static const int kDSinkPts[6][3] = {
+	{-55, 0, 110}, {-60, -45, 110}, {-118, -45, 110}, {-123, 0, 110}, {-118, 45, 110}, {-60, 45, 110}
+};
+static const int kDSinkSurf[1][8] = {{1, 6, 5, 4, 3, 2, 1, 0}};
+static const int kSinkMirrorPts[4][3] = {
+	{-128, 65, 130}, {-128, -65, 130}, {-128, 65, 250}, {-128, -65, 250}
+};
+static const int kSinkMirrorSurf[1][8] = {{0, 4, 1, 0, 2, 3, 0, 0}};
+
 static const Colony::ColonyEngine::PrismPartDef kScreenPart = {8, kScreenPts, 4, kScreenSurf};
 static const Colony::ColonyEngine::PrismPartDef kTableParts[2] = {
 	{4, kTableTopPts, 1, kTableTopSurf},
@@ -293,6 +360,29 @@ static const Colony::ColonyEngine::PrismPartDef kDrawerParts[2] = {
 	{8, kDrawerPts, 5, kDrawerSurf},
 	{4, kMirrorPts, 1, kMirrorSurf}
 };
+static const Colony::ColonyEngine::PrismPartDef kTubParts[2] = {
+	{8, kTubPts, 5, kTubSurf},
+	{6, kDTubPts, 1, kDTubSurf}
+};
+static const Colony::ColonyEngine::PrismPartDef kSinkParts[3] = {
+	{8, kSinkPts, 5, kSinkSurf},
+	{6, kDSinkPts, 1, kDSinkSurf},
+	{4, kSinkMirrorPts, 1, kSinkMirrorSurf}
+};
+static const Colony::ColonyEngine::PrismPartDef kToiletParts[4] = {
+	{8, kAToiletPts, 5, kAToiletSurf},
+	{12, kBToiletPts, 7, kBToiletSurf},
+	{6, kCToiletPts, 1, kCToiletSurf},
+	{6, kDToiletPts, 1, kDToiletSurf}
+};
+static const Colony::ColonyEngine::PrismPartDef kPToiletParts[5] = {
+	{8, kAToiletPts, 5, kAToiletSurf},
+	{12, kBToiletPts, 7, kBToiletSurf},
+	{6, kCToiletPts, 1, kCToiletSurf},
+	{6, kDToiletPts, 1, kDToiletSurf},
+	{4, kEToiletPts, 1, kEToiletSurf}
+};
+
 static const int kCWallPts[8][3] = {
 	{-128, 128, 0}, {0, 112, 0}, {112, 0, 0}, {128, -128, 0},
 	{-128, 128, 320},  {0, 112, 320},  {112, 0, 320},  {128, -128, 320}
@@ -313,7 +403,7 @@ static const int kPlantPotSurf[6][8] = {
 static const int kPlantTopPotPts[6][3] = {
 	{10, 17, 40}, {20, 0, 40}, {10, -17, 40}, {-10, -17, 40}, {-20, 0, 40}, {-10, 17, 40}
 };
-static const int kPlantTopPotSurf[1][8] = {{8, 6, 5, 4, 3, 2, 1, 0}};
+static const int kPlantTopPotSurf[1][8] = {{0, 6, 5, 4, 3, 2, 1, 0}};
 
 static const int kPlantLeaf0Pts[3][3] = {{0, 0, 0}, {20, 20, 150}, {70, 70, 100}};
 static const int kPlantLeaf1Pts[3][3] = {{0, 0, 0}, {-20, 30, 100}, {-60, 50, 50}};
@@ -353,9 +443,9 @@ static const int kReactorCorePts[12][3] = {
 	{32, 55, 168}, {64, 0, 168}, {32, -55, 168}, {-32, -55, 168}, {-64, 0, 168}, {-32, 55, 168}
 };
 static const int kReactorCoreSurf[7][8] = {
-	{15, 4, 0, 1, 7, 6, 0, 0}, {15, 4, 1, 2, 8, 7, 0, 0}, {15, 4, 2, 3, 9, 8, 0, 0},
-	{15, 4, 3, 4, 10, 9, 0, 0}, {15, 4, 4, 5, 11, 10, 0, 0}, {15, 4, 5, 0, 6, 11, 0, 0},
-	{15, 6, 5, 4, 3, 2, 1, 0}
+	{0, 4, 0, 1, 7, 6, 0, 0}, {0, 4, 1, 2, 8, 7, 0, 0}, {0, 4, 2, 3, 9, 8, 0, 0},
+	{0, 4, 3, 4, 10, 9, 0, 0}, {0, 4, 4, 5, 11, 10, 0, 0}, {0, 4, 5, 0, 6, 11, 0, 0},
+	{0, 6, 5, 4, 3, 2, 1, 0}
 };
 static const int kReactorBasePts[8][3] = {
 	{-128, 128, 0}, {128, 128, 0}, {128, -128, 0}, {-128, -128, 0},
@@ -985,11 +1075,23 @@ bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj, uint32 baseColor) 
 	case kObjTeleport:
 		draw3DPrism(obj, kCWallParts[0], false, tint(baseColor, 50)); // Placeholder
 		break;
-	case kObjSink:
 	case kObjTub:
-	case kObjToilet:
-		draw3DPrism(obj, kBox1Part, false, tint(baseColor, 0)); // Placeholder
+		for (int i = 0; i < 2; i++)
+			draw3DPrism(obj, kTubParts[i], false, tint(baseColor, 0));
 		break;
+	case kObjSink:
+		for (int i = 0; i < 3; i++)
+			draw3DPrism(obj, kSinkParts[i], false, tint(baseColor, 0));
+		break;
+	case kObjToilet:
+		for (int i = 0; i < 4; i++)
+			draw3DPrism(obj, kToiletParts[i], false, tint(baseColor, 0));
+		break;
+	case kObjPToilet:
+		for (int i = 0; i < 5; i++)
+			draw3DPrism(obj, kPToiletParts[i], false, tint(baseColor, 0));
+		break;
+
 	case kObjForkLift:
 		draw3DPrism(obj, kBox1Part, false, tint(baseColor, 0)); // Placeholder
 		break;
