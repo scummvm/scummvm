@@ -171,8 +171,8 @@ static const int kConsolePts[8][3] = {
 	{-100, 70, 100}, {-35, 70, 140}, {-35, -70, 140}, {-100, -70, 100}
 };
 static const int kConsoleSurf[5][8] = {
-	{0, 4, 4, 0, 3, 7, 0, 0}, {0, 4, 7, 3, 2, 6, 0, 0},
-	{0, 4, 5, 1, 0, 4, 0, 0}, {0, 4, 6, 2, 1, 5, 0, 0},
+	{1, 4, 4, 0, 3, 7, 0, 0}, {1, 4, 7, 3, 2, 6, 0, 0},
+	{1, 4, 5, 1, 0, 4, 0, 0}, {1, 4, 6, 2, 1, 5, 0, 0},
 	{0, 4, 7, 6, 5, 4, 0, 0}
 };
 static const int kCouchSurf[5][8] = {
@@ -442,7 +442,17 @@ void ColonyEngine::draw3DPrism(const Thing &obj, const PrismPartDef &def, bool u
 		}
 
 		if (count >= 3) {
-			uint32 finalColor = (_corePower[_coreIndex] > 0) ? 0 : 15;
+			uint32 finalColor;
+			if (_corePower[_coreIndex] > 0) {
+				// Lit mode: use surface-specific colors if defined, else black.
+				if (def.surfaces[i][0] == 1)
+					finalColor = 4; // vRED
+				else
+					finalColor = 0; // vBLACK
+			} else {
+				// Dark mode: everything is white wireframe.
+				finalColor = 15; // vINTWHITE
+			}
 			_gfx->draw3DPolygon(px, py, pz, count, finalColor);
 		}
 	}
