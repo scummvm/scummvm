@@ -50,7 +50,8 @@ enum MapDirection {
 	kDirNorth = 0,
 	kDirEast = 1,
 	kDirWest = 2,
-	kDirSouth = 3
+	kDirSouth = 3,
+	kDirCenter = 4
 };
 
 enum ObjectType {
@@ -258,7 +259,9 @@ private:
 	void renderCorridor3D();
 	void drawWallFeatures3D();
 	void drawWallFeature3D(int cellX, int cellY, int direction);
+	void drawCellFeature3D(int cellX, int cellY);
 	void getWallFace3D(int cellX, int cellY, int direction, float corners[4][3]);
+	void getCellFace3D(int cellX, int cellY, bool ceiling, float corners[4][3]);
 
 	int occupiedObjectAt(int x, int y, const Locate *pobject);
 	void interactWithObject(int objNum);

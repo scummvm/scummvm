@@ -615,6 +615,59 @@ void ColonyEngine::wallChar(const float corners[4][3], uint8 cnum) {
 	}
 }
 
+void ColonyEngine::getCellFace3D(int cellX, int cellY, bool ceiling, float corners[4][3]) {
+	float z = ceiling ? 160.0f : -160.0f;
+	float x0 = cellX * 256.0f;
+	float y0 = cellY * 256.0f;
+	float x1 = x0 + 256.0f;
+	float y1 = y0 + 256.0f;
+	const float eps = 0.1f;
+	if (ceiling) z -= eps; else z += eps;
+
+	corners[0][0] = x0; corners[0][1] = y0; corners[0][2] = z;
+	corners[1][0] = x1; corners[1][1] = y0; corners[1][2] = z;
+	corners[2][0] = x1; corners[2][1] = y1; corners[2][2] = z;
+	corners[3][0] = x0; corners[3][1] = y1; corners[3][2] = z;
+}
+
+void ColonyEngine::drawCellFeature3D(int cellX, int cellY) {
+	const uint8 *map = mapFeatureAt(cellX, cellY, kDirCenter);
+	if (!map || map[0] == 0)
+		return;
+
+	float corners[4][3];
+	bool ceiling = (map[0] == 3 || map[0] == 4); // SMHOLECEIL, LGHOLECEIL
+	getCellFace3D(cellX, cellY, ceiling, corners);
+
+	switch (map[0]) {
+	case 1: // SMHOLEFLR
+	case 3: // SMHOLECEIL
+	{
+		float u[4] = {0.375f, 0.625f, 0.625f, 0.375f};
+		float v[4] = {0.375f, 0.375f, 0.625f, 0.625f};
+		wallPolygon(corners, u, v, 4, 7); // LTGRAY
+		break;
+	}
+	case 2: // LGHOLEFLR
+	case 4: // LGHOLECEIL
+	{
+		float u[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+		float v[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+		wallPolygon(corners, u, v, 4, 7); // LTGRAY
+		break;
+	}
+	case 5: // HOTFOOT
+	{
+		float u[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+		float v[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+		wallPolygon(corners, u, v, 4, 4); // RED
+		break;
+	}
+	default:
+		break;
+	}
+}
+
 void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 	const uint8 *map = mapFeatureAt(cellX, cellY, direction);
 	if (!map || map[0] == kWallFeatureNone)
@@ -792,6 +845,7 @@ void ColonyEngine::drawWallFeatures3D() {
 
 	for (int y = 0; y < 31; y++) {
 		for (int x = 0; x < 31; x++) {
+			drawCellFeature3D(x, y);
 			for (int dir = 0; dir < 4; dir++) {
 				const uint8 *map = mapFeatureAt(x, y, dir);
 				if (map && map[0] != kWallFeatureNone) {
@@ -830,6 +884,16 @@ void ColonyEngine::renderCorridor3D() {
 	                100000.0f, 100000.0f, 160.1f, 
 	                -100000.0f, 100000.0f, 160.1f, floorColor);
  
+	// Draw ceiling grid (Cuadricule) - Historically only on ceiling
+	for (int i = 0; i <= 32; i++) {
+		float d = i * 256.0f;
+		float max_d = 32.0f * 256.0f;
+		float zCeil = 160.0f;
+		
+		_gfx->draw3DLine(d, 0.0f, zCeil, d, max_d, zCeil, wallColor);
+		_gfx->draw3DLine(0.0f, d, zCeil, max_d, d, zCeil, wallColor);
+	}
+
 	for (int y = 0; y < 32; y++) {
 		for (int x = 0; x < 32; x++) {
 			uint8 w = _wall[x][y];
