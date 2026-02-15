@@ -187,7 +187,7 @@ private:
 	uint8 _mapData[31][31][5][5];
 	uint8 _robotArray[32][32];
 	uint8 _foodArray[32][32];
-	
+
 	Locate _me;
 	Common::Array<Thing> _objects;
 	int _level;
@@ -219,9 +219,11 @@ private:
 	int _coreHeight[2];
 	int _corePower[3];
 	int _coreIndex;
-	int _orbit;
-	int _armor;
-	bool _gametest;
+	int _orbit = 0;
+	int _armor = 0;
+	bool _gametest = false;
+	uint32 _blackoutColor = 0;
+	uint32 _lastClickTime = 0;
 
 	int _frntxWall, _frntyWall;
 	int _sidexWall, _sideyWall;
@@ -267,6 +269,7 @@ private:
 	void drawDashboardStep1();
 	void drawCrosshair();
 	bool clipLineToRect(int &x1, int &y1, int &x2, int &y2, const Common::Rect &clip) const;
+	void wallLine(const float corners[4][3], float u1, float v1, float u2, float v2, uint32 color);
 
 	// Animation system
 	Common::Array<Sprite *> _cSprites;
@@ -299,6 +302,7 @@ private:
 	void SetObjectOnOff(int num, bool on);
 	void refreshAnimationDisplay();
 	void crypt(uint8 sarray[6], int i, int j, int k, int l);
+	void terminateGame(bool blowup);
 };
 
 } // End of namespace Colony

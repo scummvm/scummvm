@@ -442,7 +442,8 @@ void ColonyEngine::draw3DPrism(const Thing &obj, const PrismPartDef &def, bool u
 		}
 
 		if (count >= 3) {
-			_gfx->draw3DPolygon(px, py, pz, count, color);
+			uint32 finalColor = (_corePower[_coreIndex] > 0) ? 0 : 15;
+			_gfx->draw3DPolygon(px, py, pz, count, finalColor);
 		}
 	}
 }
@@ -516,11 +517,12 @@ static void wallPoint(const float corners[4][3], float u, float v, float out[3])
 }
 
 // Draw a line on a wall face using normalized (u,v) coordinates
-static void wallLine(Renderer *gfx, const float corners[4][3], float u1, float v1, float u2, float v2, uint32 color) {
+void ColonyEngine::wallLine(const float corners[4][3], float u1, float v1, float u2, float v2, uint32 color) {
 	float p1[3], p2[3];
 	wallPoint(corners, u1, v1, p1);
 	wallPoint(corners, u2, v2, p2);
-	gfx->draw3DLine(p1[0], p1[1], p1[2], p2[0], p2[1], p2[2], color);
+	uint32 finalColor = (_corePower[_coreIndex] > 0) ? 0 : 15;
+	_gfx->draw3DLine(p1[0], p1[1], p1[2], p2[0], p2[1], p2[2], finalColor);
 }
 
 void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
@@ -539,20 +541,20 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		float yb = 0.125f, yt = 0.875f;
 		if (map[1] == 0) {
 			// Open door — just the frame
-			wallLine(_gfx, corners, xl, yb, xl, yt, dark);
-			wallLine(_gfx, corners, xl, yt, xr, yt, dark);
-			wallLine(_gfx, corners, xr, yt, xr, yb, dark);
-			wallLine(_gfx, corners, xr, yb, xl, yb, dark);
+			wallLine(corners, xl, yb, xl, yt, dark);
+			wallLine(corners, xl, yt, xr, yt, dark);
+			wallLine(corners, xr, yt, xr, yb, dark);
+			wallLine(corners, xr, yb, xl, yb, dark);
 		} else {
 			// Closed door — frame + handle line
-			wallLine(_gfx, corners, xl, yb, xl, yt, dark);
-			wallLine(_gfx, corners, xl, yt, xr, yt, dark);
-			wallLine(_gfx, corners, xr, yt, xr, yb, dark);
-			wallLine(_gfx, corners, xr, yb, xl, yb, dark);
+			wallLine(corners, xl, yb, xl, yt, dark);
+			wallLine(corners, xl, yt, xr, yt, dark);
+			wallLine(corners, xr, yt, xr, yb, dark);
+			wallLine(corners, xr, yb, xl, yb, dark);
 			// Handle
 			float hx = 0.6f;
 			float hy1 = 0.45f, hy2 = 0.55f;
-			wallLine(_gfx, corners, hx, hy1, hx, hy2, dark);
+			wallLine(corners, hx, hy1, hx, hy2, dark);
 		}
 		break;
 	}
@@ -561,14 +563,14 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		// Window: centered smaller rectangle with cross divider
 		float xl = 0.25f, xr = 0.75f;
 		float yb = 0.375f, yt = 0.75f;
-		wallLine(_gfx, corners, xl, yb, xr, yb, dark);
-		wallLine(_gfx, corners, xr, yb, xr, yt, dark);
-		wallLine(_gfx, corners, xr, yt, xl, yt, dark);
-		wallLine(_gfx, corners, xl, yt, xl, yb, dark);
+		wallLine(corners, xl, yb, xr, yb, dark);
+		wallLine(corners, xr, yb, xr, yt, dark);
+		wallLine(corners, xr, yt, xl, yt, dark);
+		wallLine(corners, xl, yt, xl, yb, dark);
 		// Cross dividers
 		float xc = 0.5f, yc = (yb + yt) * 0.5f;
-		wallLine(_gfx, corners, xc, yb, xc, yt, dark);
-		wallLine(_gfx, corners, xl, yc, xr, yc, dark);
+		wallLine(corners, xc, yb, xc, yt, dark);
+		wallLine(corners, xl, yc, xr, yc, dark);
 		break;
 	}
 	case kWallFeatureShelves: {
@@ -576,14 +578,14 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		// Bookshelf: outer rectangle + horizontal shelf lines
 		float xl = 0.15f, xr = 0.85f;
 		float yb = 0.1f, yt = 0.9f;
-		wallLine(_gfx, corners, xl, yb, xr, yb, dark);
-		wallLine(_gfx, corners, xr, yb, xr, yt, dark);
-		wallLine(_gfx, corners, xr, yt, xl, yt, dark);
-		wallLine(_gfx, corners, xl, yt, xl, yb, dark);
+		wallLine(corners, xl, yb, xr, yb, dark);
+		wallLine(corners, xr, yb, xr, yt, dark);
+		wallLine(corners, xr, yt, xl, yt, dark);
+		wallLine(corners, xl, yt, xl, yb, dark);
 		// 6 shelves
 		for (int i = 1; i <= 6; i++) {
 			float t = yb + (yt - yb) * (float)i / 7.0f;
-			wallLine(_gfx, corners, xl, t, xr, t, dark);
+			wallLine(corners, xl, t, xr, t, dark);
 		}
 		break;
 	}
@@ -596,10 +598,10 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 			float u2 = xl + (xr - xl) * (float)(i + 1) / 6.0f;
 			float v = 0.1f + 0.8f * (float)i / 6.0f;
 			float v2 = 0.1f + 0.8f * (float)(i + 1) / 6.0f;
-			wallLine(_gfx, corners, u, v, u2, v2, dark);
+			wallLine(corners, u, v, u2, v2, dark);
 		}
 		// Side rails
-		wallLine(_gfx, corners, xl, 0.1f, xr, 0.9f, dark);
+		wallLine(corners, xl, 0.1f, xr, 0.9f, dark);
 		break;
 	}
 	case kWallFeatureDnStairs: {
@@ -611,9 +613,9 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 			float u2 = xl + (xr - xl) * (float)(i + 1) / 6.0f;
 			float v = 0.9f - 0.8f * (float)i / 6.0f;
 			float v2 = 0.9f - 0.8f * (float)(i + 1) / 6.0f;
-			wallLine(_gfx, corners, u, v, u2, v2, dark);
+			wallLine(corners, u, v, u2, v2, dark);
 		}
-		wallLine(_gfx, corners, xl, 0.9f, xr, 0.1f, dark);
+		wallLine(corners, xl, 0.9f, xr, 0.1f, dark);
 		break;
 	}
 	case kWallFeatureGlyph: {
@@ -622,7 +624,7 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		float xl = 0.1f, xr = 0.9f;
 		for (int i = 0; i < 9; i++) {
 			float v = 0.15f + 0.7f * (float)i / 8.0f;
-			wallLine(_gfx, corners, xl, v, xr, v, dark);
+			wallLine(corners, xl, v, xr, v, dark);
 		}
 		break;
 	}
@@ -631,13 +633,13 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		// Elevator: tall rectangle with center divider line
 		float xl = 0.15f, xr = 0.85f;
 		float yb = 0.05f, yt = 0.95f;
-		wallLine(_gfx, corners, xl, yb, xl, yt, dark);
-		wallLine(_gfx, corners, xl, yt, xr, yt, dark);
-		wallLine(_gfx, corners, xr, yt, xr, yb, dark);
-		wallLine(_gfx, corners, xr, yb, xl, yb, dark);
+		wallLine(corners, xl, yb, xl, yt, dark);
+		wallLine(corners, xl, yt, xr, yt, dark);
+		wallLine(corners, xr, yt, xr, yb, dark);
+		wallLine(corners, xr, yb, xl, yb, dark);
 		// Center divider
 		float xc = 0.5f;
-		wallLine(_gfx, corners, xc, yb, xc, yt, dark);
+		wallLine(corners, xc, yb, xc, yt, dark);
 		break;
 	}
 	case kWallFeatureTunnel: {
@@ -655,7 +657,7 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 			float v1 = 0.1f + pts[i][1] * 0.8f;
 			float u2 = 0.1f + pts[n][0] * 0.8f;
 			float v2 = 0.1f + pts[n][1] * 0.8f;
-			wallLine(_gfx, corners, u1, v1, u2, v2, dark);
+			wallLine(corners, u1, v1, u2, v2, dark);
 		}
 		break;
 	}
@@ -673,14 +675,14 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 			float v1 = 0.1f + pts[i][1] * 0.8f;
 			float u2 = 0.1f + pts[n][0] * 0.8f;
 			float v2 = 0.1f + pts[n][1] * 0.8f;
-			wallLine(_gfx, corners, u1, v1, u2, v2, dark);
+			wallLine(corners, u1, v1, u2, v2, dark);
 		}
 		if (map[1] != 0) {
 			// Closed: add cross lines through center
-			wallLine(_gfx, corners, 0.1f, 0.5f, 0.5f, 0.5f, dark);
-			wallLine(_gfx, corners, 0.5f, 0.1f, 0.5f, 0.5f, dark);
-			wallLine(_gfx, corners, 0.9f, 0.5f, 0.5f, 0.5f, dark);
-			wallLine(_gfx, corners, 0.5f, 0.9f, 0.5f, 0.5f, dark);
+			wallLine(corners, 0.1f, 0.5f, 0.5f, 0.5f, dark);
+			wallLine(corners, 0.5f, 0.1f, 0.5f, 0.5f, dark);
+			wallLine(corners, 0.9f, 0.5f, 0.5f, 0.5f, dark);
+			wallLine(corners, 0.5f, 0.9f, 0.5f, 0.5f, dark);
 		}
 		break;
 	}
@@ -692,7 +694,7 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 				c = 100 + (_level * 15);
 			}
 			float v = (float)i / 4.0f;
-			wallLine(_gfx, corners, 0.0f, v, 1.0f, v, c);
+			wallLine(corners, 0.0f, v, 1.0f, v, c);
 		}
 		break;
 	}
@@ -716,20 +718,31 @@ void ColonyEngine::drawWallFeatures3D() {
 
 
 void ColonyEngine::renderCorridor3D() {
+	bool lit = (_corePower[_coreIndex] > 0);
+	bool oldWire = _wireframe;
+
+	// Authentic look: Always wireframe for walls. 
+	// Power ON = White background (fill), Black lines.
+	// Power OFF = Black background (fill), White lines.
+	_gfx->setWireframe(true, lit ? 15 : 0);
+
 	_gfx->begin3D(_me.xloc, _me.yloc, 0, _me.look, _me.lookY, _screenR);
+	_gfx->clear(lit ? 15 : 0);
  
-	// Draw large black floor and ceiling quads
+	uint32 wallColor = lit ? 0 : 15; 
+	uint32 floorColor = lit ? 0 : 15; 
+
+	// Draw large floor and ceiling quads
+	// These will be filled with the background color in the occlusion pass
 	_gfx->draw3DQuad(-100000.0f, -100000.0f, -160.1f, 
 	                100000.0f, -100000.0f, -160.1f, 
 	                100000.0f, 100000.0f, -160.1f, 
-	                -100000.0f, 100000.0f, -160.1f, 0); // Black floor
+	                -100000.0f, 100000.0f, -160.1f, floorColor);
  
 	_gfx->draw3DQuad(-100000.0f, -100000.0f, 160.1f, 
 	                100000.0f, -100000.0f, 160.1f, 
 	                100000.0f, 100000.0f, 160.1f, 
-	                -100000.0f, 100000.0f, 160.1f, 0); // Black ceiling
- 
-	uint32 wallColor = 15; // White
+	                -100000.0f, 100000.0f, 160.1f, floorColor);
  
 	for (int y = 0; y < 32; y++) {
 		for (int x = 0; x < 32; x++) {
@@ -747,6 +760,7 @@ void ColonyEngine::renderCorridor3D() {
 	drawStaticObjects();
 		
 	_gfx->end3D();
+	_gfx->setWireframe(oldWire);
 }
 
 bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj, uint32 baseColor) {

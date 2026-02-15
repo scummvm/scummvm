@@ -59,7 +59,7 @@ public:
 
 	// Buffer management
 	virtual void copyToScreen() = 0;
-	virtual void setWireframe(bool enable) = 0;
+	virtual void setWireframe(bool enable, int fillColor = -1) = 0;
 	virtual void computeScreenViewport() = 0;
 
 	// Convenience color accessors

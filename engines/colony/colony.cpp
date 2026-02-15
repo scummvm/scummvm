@@ -57,7 +57,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_hasKeycard = false;
 	_unlocked = false;
 	_weapons = 0;
-	_wireframe = true;
+	_wireframe = false;
 	_widescreen = ConfMan.getBool("widescreen_mod");
 	
 	memset(_wall, 0, sizeof(_wall));
@@ -99,6 +99,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_orbit = 0;
 	_armor = 0;
 	_gametest = false;
+	_blackoutColor = 15; // Set to white (vINTWHITE) for better visibility in darkness
 
 	initTrig();
 }
@@ -280,7 +281,7 @@ Common::Error ColonyEngine::run() {
 					default:
 						break;
 					}
-				debug("Me: x=%d y=%d look=%d", _me.xloc, _me.yloc, _me.look);
+				debug("Me: x=%d y=%d", _me.xloc, _me.yloc);
 			} else if (event.type == Common::EVENT_MOUSEMOVE) {
 				if (event.relMouse.x != 0) {
 					_me.look = (uint8)((int)_me.look - (event.relMouse.x / 2));
@@ -297,7 +298,7 @@ Common::Error ColonyEngine::run() {
 			}
 		}
 
-		_gfx->clear(_gfx->black());
+		_gfx->clear((_corePower[_coreIndex] > 0) ? 15 : 0);
 		
 		corridor();
 		drawDashboardStep1();
@@ -525,7 +526,7 @@ void ColonyEngine::updateAnimation() {
 }
 
 void ColonyEngine::drawAnimation() {
-	_gfx->clear(0); // Ensure entire screen is black
+	corridor(); // Draw 3D world backdrop first
 
 	// Center 416x264 animation area on screen (from original InitDejaVu)
 	int ox = (_width - 416) / 2;
@@ -697,6 +698,12 @@ int ColonyEngine::whichSprite(const Common::Point &p) {
 }
 
 void ColonyEngine::handleAnimationClick(int item) {
+	uint32 now = _system->getMillis();
+	if (now - _lastClickTime < 250) {
+		debug("Ignoring rapid click on item %d", item);
+		return;
+	}
+	_lastClickTime = now;
 	debug(0, "Animation click on item %d in %s", item, _animationName.c_str());
 
 	if (_animationName == "desk") {
@@ -710,6 +717,7 @@ void ColonyEngine::handleAnimationClick(int item) {
 				_gfx->copyToScreen();
 			}
 		}
+		return; // Handled
 	} else if (_animationName == "reactor" || _animationName == "security" || _animationName == "suit") {
 		if (item >= 1 && item <= 10 && _animationName != "suit") {
 			for (int i = 5; i >= 1; i--)
@@ -761,31 +769,63 @@ void ColonyEngine::handleAnimationClick(int item) {
 			}
 		} else if (_animationName == "suit") {
 			if (item == 1) { // Armor
-				// Animation: toggle button state frame by frame
-				SetObjectState(1, (_armor * 2 + 1) + 1); // intermediate/pressed
-				drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(50);
-				_armor = (_armor + 1) % 4;
+				if (_armor == 3) {
+					for (int i = 6; i >= 1; i--) {
+						SetObjectState(1, i);
+						SetObjectState(3, i / 2 + 1);
+						drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(30);
+					}
+					_armor = 0;
+				} else {
+					SetObjectState(1, (_armor * 2 + 1) + 1); // intermediate/pressed
+					drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(50);
+					_armor++;
+				}
 				SetObjectState(1, _armor * 2 + 1); // target state
 				SetObjectState(3, _armor + 1); // display state
 				drawAnimation(); _gfx->copyToScreen();
 				if (_armor == 3 && _weapons == 3) _corePower[_coreIndex] = 2;
 			} else if (item == 2) { // Weapons
-				SetObjectState(2, (_weapons * 2 + 1) + 1); // intermediate/pressed
-				drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(50);
-				_weapons = (_weapons + 1) % 4;
+				if (_weapons == 3) {
+					for (int i = 6; i >= 1; i--) {
+						SetObjectState(2, i);
+						SetObjectState(4, i / 2 + 1);
+						drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(30);
+					}
+					_weapons = 0;
+				} else {
+					SetObjectState(2, (_weapons * 2 + 1) + 1); // intermediate/pressed
+					drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(50);
+					_weapons++;
+				}
 				SetObjectState(2, _weapons * 2 + 1);
 				SetObjectState(4, _weapons + 1);
 				drawAnimation(); _gfx->copyToScreen();
 				if (_armor == 3 && _weapons == 3) _corePower[_coreIndex] = 2;
 			}
 		}
+		if (_animationName == "reactor" || _animationName == "security") {
+			if (item <= 12) {
+				dolSprite(item - 1); // Animate the button press
+				SetObjectState(item, 1); // Return to unpressed state
+				drawAnimation();
+				_gfx->copyToScreen();
+			}
+		}
+		return; // Handled
 	} else if (_animationName == "controls") {
 		switch (item) {
 		case 4: // Accelerator
 			if (_corePower[_coreIndex] >= 2 && _coreState[_coreIndex] == 0 && !_orbit) {
 				_orbit = 1;
 				debug(0, "Taking off!");
+				// Animate the lever moving full range
+				for (int i = 1; i <= 6; i++) {
+					SetObjectState(4, i);
+					drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(30);
+				}
 				_animationRunning = false;
+				return; // Exit animation immediately on success
 			} else {
 				debug(0, "Accelerator failed: power=%d, state=%d", _corePower[_coreIndex], _coreState[_coreIndex]);
 			}
@@ -796,8 +836,11 @@ void ColonyEngine::handleAnimationClick(int item) {
 					_corePower[_coreIndex] = 1;
 				else if (_corePower[_coreIndex] == 1)
 					_corePower[_coreIndex] = 0;
+			} else {
+				// If power is already high/locked, ensure visual state is correct
+				SetObjectState(5, 1);
 			}
-			// Update power visual state
+			// Update power visual state:
 			switch (_corePower[_coreIndex]) {
 			case 0: SetObjectState(2, 1); SetObjectState(5, 1); break;
 			case 1: SetObjectState(2, 1); SetObjectState(5, 2); break;
@@ -806,19 +849,23 @@ void ColonyEngine::handleAnimationClick(int item) {
 			drawAnimation();
 			_gfx->copyToScreen();
 			break;
-		case 6: // Ship weapons
-			if (!_orbit) {
-				debug(0, "Firing ship weapons on ground! Game Over soon.");
-				_animationRunning = false;
-				_system->quit(); // Triggering end of game for now
-			} else {
-				debug(0, "Firing ship weapons in orbit.");
-				_animationRunning = false;
-			}
-			break;
 		case 7: // Damage report
-			debug(0, "Damage report button clicked.");
+		{
+			const char *msg = "SHIP STATUS: NORMAL";
+			if (_corePower[_coreIndex] < 2) msg = "CRITICAL: MAIN POWER OFFLINE. EMERGENCY POWER ACTIVE.";
+			else if (!_orbit) msg = "ALL SYSTEMS NOMINAL. READY FOR LIFTOFF.";
+			else msg = "ORBITAL STABILIZATION AT 100%.";
+			
+			debug(0, "Damage Report: %s", msg);
+			
+			// Simple on-screen display for messages
+			Graphics::DosFont dosFont;
+			uint32 textColor = (_corePower[_coreIndex] > 0) ? 0 : 15;
+			_gfx->drawString(&dosFont, msg, _width / 2, _height - 20, textColor, Graphics::kTextAlignCenter);
+			_gfx->copyToScreen();
+			_system->delayMillis(2000);
 			break;
+		}
 		}
 	}
 
@@ -831,8 +878,32 @@ void ColonyEngine::handleAnimationClick(int item) {
 				drawAnimation();
 				_gfx->copyToScreen();
 			}
+		} else if (_animationName == "controls") {
+			if (item == 4) { // Accelerator lever returns to state 1
+				for (int i = 6; i > 0; i--) {
+					SetObjectState(4, i);
+					drawAnimation();
+					_gfx->copyToScreen();
+					_system->delayMillis(20);
+				}
+			}
 		}
 	}
+}
+
+void ColonyEngine::terminateGame(bool blowup) {
+	debug(0, "YOU HAVE BEEN TERMINATED! (blowup=%d)", blowup);
+	
+	// Flash effect
+	for (int i = 0; i < 4; i++) {
+		_gfx->clear(i % 2 == 0 ? 15 : 0);
+		_gfx->copyToScreen();
+		_system->delayMillis(100);
+	}
+
+	// In a real implementation we would show a menu here
+	// For now, just quit as requested by the user
+	_system->quit();
 }
 
 void ColonyEngine::dolSprite(int index) {
