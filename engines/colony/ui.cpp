@@ -237,7 +237,10 @@ void ColonyEngine::drawCrosshair() {
 	if (!_crosshair || _screenR.width() <= 0 || _screenR.height() <= 0)
 		return;
 
-	const uint32 color = (_weapons > 0) ? 15 : 7;
+	uint32 color = (_weapons > 0) ? 15 : 7;
+	if (_corePower[_coreIndex] > 0)
+		color = 0;
+
 	const int cx = _centerX;
 	const int cy = _centerY;
 	const int qx = MAX(2, _screenR.width() / 32);
