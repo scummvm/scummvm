@@ -237,8 +237,8 @@ GrimEngine::~GrimEngine() {
 }
 
 void GrimEngine::clearPools() {
-	Set::getPool().deleteObjects();
 	Actor::getPool().deleteObjects();
+	Set::getPool().deleteObjects();
 	PrimitiveObject::getPool().deleteObjects();
 	TextObject::getPool().deleteObjects();
 	Bitmap::getPool().deleteObjects();
