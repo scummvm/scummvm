@@ -763,26 +763,45 @@ int ColonyEngine::whichSprite(const Common::Point &p) {
 
 	for (int i = _lSprites.size() - 1; i >= 0; i--) {
 		ComplexSprite *ls = _lSprites[i];
-		if (ls->onoff) {
-			int cnum = ls->current;
-			if (cnum < 0 || cnum >= (int)ls->objects.size()) continue;
+		if (!ls->onoff) continue;
 
-			int spriteIdx = ls->objects[cnum].spritenum;
-			if (spriteIdx < 0 || spriteIdx >= (int)_cSprites.size()) continue;
+		int cnum = ls->current;
+		if (cnum < 0 || cnum >= (int)ls->objects.size()) continue;
 
-			Sprite *s = _cSprites[spriteIdx];
-			int xloc = ls->xloc + ls->objects[cnum].xloc;
-			int yloc = ls->yloc + ls->objects[cnum].yloc;
+		int spriteIdx = ls->objects[cnum].spritenum;
+		if (spriteIdx < 0 || spriteIdx >= (int)_cSprites.size()) continue;
 
-			Common::Rect r = s->clip;
-			r.translate(xloc, yloc);
+		Sprite *s = _cSprites[spriteIdx];
+		int xloc = ls->xloc + ls->objects[cnum].xloc;
+		int yloc = ls->yloc + ls->objects[cnum].yloc;
 
-			if (r.contains(pt)) {
-				debug(1, "Sprite %d hit. Frame %d, Base Sprite %d. Box: (%d, %d, %d, %d)", i + 1,
-					cnum, spriteIdx, r.left, r.top, r.right, r.bottom);
-				return i + 1;
+		Common::Rect r = s->clip;
+		r.translate(xloc, yloc);
+
+		if (!r.contains(pt)) continue;
+
+		// Pixel-perfect mask test (matches DOS WhichlSprite)
+		Image *mask = s->mask;
+		if (mask && mask->data) {
+			int row = pt.y - r.top;
+			int col = pt.x - r.left;
+			int bitCol = (col + mask->align) * mask->bits;
+			int maskIndex = row * mask->rowBytes + (bitCol / 8);
+			int shift = bitCol % 8;
+
+			if (maskIndex >= 0 && maskIndex < mask->rowBytes * mask->height) {
+				byte maskByte = mask->data[maskIndex];
+				if (mask->planes == 2)
+					maskByte |= mask->data[mask->rowBytes * mask->height + maskIndex];
+				maskByte = maskByte >> shift;
+				if (!(maskByte & ((1 << mask->bits) - 1)))
+					continue; // Transparent pixel, skip this sprite
 			}
 		}
+
+		debug(1, "Sprite %d hit. Frame %d, Base Sprite %d. Box: (%d, %d, %d, %d)", i + 1,
+			cnum, spriteIdx, r.left, r.top, r.right, r.bottom);
+		return i + 1;
 	}
 
 	// Dump accurately calculated bounds if debug is high enough
