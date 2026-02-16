@@ -233,6 +233,8 @@ Common::Error ColonyEngine::run() {
 	_system->lockMouse(true);
 	_system->warpMouse(_centerX, _centerY);
 
+	int mouseDX = 0, mouseDY = 0;
+	bool mouseMoved = false;
 	while (!shouldQuit()) {
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
@@ -283,19 +285,27 @@ Common::Error ColonyEngine::run() {
 					}
 				debug("Me: x=%d y=%d", _me.xloc, _me.yloc);
 			} else if (event.type == Common::EVENT_MOUSEMOVE) {
-				if (event.relMouse.x != 0) {
-					_me.look = (uint8)((int)_me.look - (event.relMouse.x / 2));
-				}
-				if (event.relMouse.y != 0) {
-					_me.lookY = (int8)CLIP<int>((int)_me.lookY - (event.relMouse.y / 2), -64, 64);
-				}
-				// Warp back to center and purge remaining mouse events
-				// to prevent the warp from generating phantom deltas (Freescape pattern)
-				_system->warpMouse(_centerX, _centerY);
-				_system->getEventManager()->purgeMouseEvents();
+				mouseDX += event.relMouse.x;
+				mouseDY += event.relMouse.y;
+				mouseMoved = true;
 			} else if (event.type == Common::EVENT_SCREEN_CHANGED) {
 				_gfx->computeScreenViewport();
 			}
+		}
+
+		if (mouseMoved) {
+			if (mouseDX != 0) {
+				_me.look = (uint8)((int)_me.look - (mouseDX * _mouseSensitivity));
+			}
+			if (mouseDY != 0) {
+				_me.lookY = (int8)CLIP<int>((int)_me.lookY - (mouseDY * _mouseSensitivity), -64, 64);
+			}
+			// Warp back to center and purge remaining mouse events
+			// to prevent the warp from generating phantom deltas (Freescape pattern)
+			_system->warpMouse(_centerX, _centerY);
+			_system->getEventManager()->purgeMouseEvents();
+			mouseMoved = false;
+			mouseDX = mouseDY = 0;
 		}
 
 		_gfx->clear((_corePower[_coreIndex] > 0) ? 15 : 0);
@@ -839,6 +849,9 @@ void ColonyEngine::handleAnimationClick(int item) {
 		} else if (item == 11 && _animationName != "suit") { // Clear
 			for (int i = 0; i < 6; i++)
 				_animDisplay[i] = 1;
+			// Reset keypad buttons to unpressed state
+			for (int i = 1; i <= 10; i++)
+				SetObjectState(i, 1);
 			refreshAnimationDisplay();
 			drawAnimation();
 			_gfx->copyToScreen();
@@ -915,8 +928,10 @@ void ColonyEngine::handleAnimationClick(int item) {
 		}
 		if (_animationName == "reactor" || _animationName == "security") {
 			if (item <= 12) {
+				SetObjectState(item, 1); // Reset to ensure animation runs Off -> On
 				dolSprite(item - 1); // Animate the button press
-				SetObjectState(item, 1); // Return to unpressed state
+				if (item > 10) // Clear/Enter should return to Off
+					SetObjectState(item, 1);
 				drawAnimation();
 				_gfx->copyToScreen();
 			}
@@ -937,19 +952,25 @@ void ColonyEngine::handleAnimationClick(int item) {
 				return; // Exit animation immediately on success
 			} else {
 				debug(0, "Accelerator failed: power=%d, state=%d", _corePower[_coreIndex], _coreState[_coreIndex]);
+				// Fail animation click
+				SetObjectState(4, 1);
+				dolSprite(3); // Animate lever moving and returning
+				for (int i = 6; i > 0; i--) {
+					SetObjectState(4, i);
+					drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(20);
+				}
 			}
 			break;
 		case 5: // Emergency power
+			SetObjectState(5, 1); // Reset to ensure animation runs Off -> On
+			dolSprite(4); // Animate the button press
 			if (_coreState[_coreIndex] < 2) {
 				if (_corePower[_coreIndex] == 0)
 					_corePower[_coreIndex] = 1;
 				else if (_corePower[_coreIndex] == 1)
 					_corePower[_coreIndex] = 0;
-			} else {
-				// If power is already high/locked, ensure visual state is correct
-				SetObjectState(5, 1);
 			}
-			// Update power visual state:
+			// Finalize visual state according to power settings
 			switch (_corePower[_coreIndex]) {
 			case 0: SetObjectState(2, 1); SetObjectState(5, 1); break;
 			case 1: SetObjectState(2, 1); SetObjectState(5, 2); break;
@@ -960,22 +981,26 @@ void ColonyEngine::handleAnimationClick(int item) {
 			break;
 		case 7: // Damage report
 		{
-			const char *msg = "SHIP STATUS: NORMAL";
-			if (_corePower[_coreIndex] < 2) msg = "CRITICAL: MAIN POWER OFFLINE. EMERGENCY POWER ACTIVE.";
-			else if (!_orbit) msg = "ALL SYSTEMS NOMINAL. READY FOR LIFTOFF.";
-			else msg = "ORBITAL STABILIZATION AT 100%.";
+			dolSprite(6); // Button animation
+			if (_corePower[_coreIndex] < 2) {
+				doText(15, 0); // Critical status
+			} else if (!_orbit) {
+				doText(49, 0); // Ready for liftoff
+			} else {
+				doText(66, 0); // Orbital stabilization
+			}
 			
-			debug(0, "Damage Report: %s", msg);
-			
-			// Simple on-screen display for messages
-			Graphics::DosFont dosFont;
-			uint32 textColor = (_corePower[_coreIndex] > 0) ? 0 : 15;
-			_gfx->drawString(&dosFont, msg, _width / 2, _height - 20, textColor, Graphics::kTextAlignCenter);
-			_gfx->copyToScreen();
-			_system->delayMillis(2000);
+			SetObjectState(7, 1); // Reset button
+			drawAnimation(); _gfx->copyToScreen();
 			break;
 		}
+		default:
+			if (item > 0) {
+				dolSprite(item - 1);
+			}
+			break;
 		}
+		return;
 	}
 
 	if (item > 0) {
@@ -986,15 +1011,6 @@ void ColonyEngine::handleAnimationClick(int item) {
 				SetObjectState(item, 1);
 				drawAnimation();
 				_gfx->copyToScreen();
-			}
-		} else if (_animationName == "controls") {
-			if (item == 4) { // Accelerator lever returns to state 1
-				for (int i = 6; i > 0; i--) {
-					SetObjectState(4, i);
-					drawAnimation();
-					_gfx->copyToScreen();
-					_system->delayMillis(20);
-				}
 			}
 		}
 	}
