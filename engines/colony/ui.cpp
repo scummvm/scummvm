@@ -303,6 +303,16 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 		return 0;
 	};
 
+	// tryPassThroughFeature returns: 0=blocked, 1=pass through, 2=teleported (position already set)
+	auto tryFeature = [&](int dir) -> int {
+		int r = tryPassThroughFeature(pobject->xindex, pobject->yindex, dir, pobject);
+		if (r == 2)
+			return 0; // teleported — position already updated by the feature
+		if (r == 1)
+			return moveTo();
+		return -2; // blocked, caller handles
+	};
+
 	if (xind2 == pobject->xindex) {
 		if (yind2 == pobject->yindex) {
 			pobject->dx = xnew - pobject->xloc;
@@ -315,8 +325,7 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 		if (yind2 > pobject->yindex) {
 			if (!(_wall[pobject->xindex][yind2] & 1))
 				return moveTo();
-			if (tryPassThroughFeature(pobject->xindex, pobject->yindex, kDirNorth, pobject))
-				return moveTo();
+			{ int r = tryFeature(kDirNorth); if (r != -2) return r; }
 			debug("Collision South at x=%d y=%d", pobject->xindex, yind2);
 			_sound->play(Sound::kBang);
 			return -1;
@@ -325,8 +334,7 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 
 		if (!(_wall[pobject->xindex][pobject->yindex] & 1))
 			return moveTo();
-		if (tryPassThroughFeature(pobject->xindex, pobject->yindex, kDirSouth, pobject))
-			return moveTo();
+		{ int r = tryFeature(kDirSouth); if (r != -2) return r; }
 		debug("Collision North at x=%d y=%d", pobject->xindex, pobject->yindex);
 		_sound->play(Sound::kBang);
 		return -1;
@@ -337,8 +345,7 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 		if (xind2 > pobject->xindex) {
 			if (!(_wall[xind2][pobject->yindex] & 2))
 				return moveTo();
-			if (tryPassThroughFeature(pobject->xindex, pobject->yindex, kDirEast, pobject))
-				return moveTo();
+			{ int r = tryFeature(kDirEast); if (r != -2) return r; }
 			debug("Collision East at x=%d y=%d", xind2, pobject->yindex);
 			_sound->play(Sound::kBang);
 			return -1;
@@ -347,8 +354,7 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 
 		if (!(_wall[pobject->xindex][pobject->yindex] & 2))
 			return moveTo();
-		if (tryPassThroughFeature(pobject->xindex, pobject->yindex, kDirWest, pobject))
-			return moveTo();
+		{ int r = tryFeature(kDirWest); if (r != -2) return r; }
 		debug("Collision West at x=%d y=%d", pobject->xindex, pobject->yindex);
 		_sound->play(Sound::kBang);
 		return -1;
@@ -444,38 +450,136 @@ int ColonyEngine::openAdjacentDoors(int x, int y) {
 	return opened;
 }
 
-bool ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Locate *pobject) {
+// Returns: 0 = blocked, 1 = can pass through normally, 2 = teleported (position already set)
+int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Locate *pobject) {
 	const uint8 *map = mapFeatureAt(fromX, fromY, direction);
 	if (!map || map[0] == kWallFeatureNone)
-		return false;
+		return 0;
 
 	switch (map[0]) {
 	case kWallFeatureDoor:
 		if (map[1] == 0)
-			return true;
+			return 1;
 		if (pobject != &_me)
-			return false;
+			return 0;
 		if (_hasKeycard || _unlocked) {
 			setDoorState(fromX, fromY, direction, 0);
-			return true;
+			return 1;
 		}
-		doText(75, 0); // "Door is locked" or similar from T.DAT
-		return false;
+		doText(75, 0);
+		return 0;
 	case kWallFeatureAirlock:
 		if (map[1] == 0)
-			return true;
+			return 1;
 		if (pobject == &_me) {
 			if (_unlocked) {
 				_sound->play(Sound::kAirlock);
 				setDoorState(fromX, fromY, direction, 0);
-				return true;
+				return 1;
 			}
-
 			inform("AIRLOCK IS SEALED.", true);
 		}
-		return false;
+		return 0;
+
+	case kWallFeatureUpStairs:
+	case kWallFeatureDnStairs:
+	case kWallFeatureTunnel: {
+		if (pobject != &_me)
+			return 0; // robots don't use stairs/tunnels
+
+		// DOS GoTo(): mapdata[2]=level, [3]=xcell, [4]=ycell
+		// Must copy values BEFORE loadMap, which overwrites _mapData
+		const int targetMap = map[2];
+		const int targetX = map[3];
+		const int targetY = map[4];
+
+		if (targetMap == 0 && targetX == 0 && targetY == 0)
+			return 1; // no destination data — just pass through
+
+		// Special cases from DOS
+		if (targetMap == 100) {
+			doText(78, 0); // Dimension error
+			return 0;
+		}
+
+		// Play appropriate sound
+		if (map[0] == kWallFeatureDnStairs)
+			_sound->play(Sound::kClatter);
+
+		// Move player to target position (preserve sub-cell offset like DOS)
+		if (targetX > 0 && targetX < 31 && targetY > 0 && targetY < 31) {
+			const int xmod = pobject->xloc - (pobject->xindex << 8);
+			const int ymod = pobject->yloc - (pobject->yindex << 8);
+			_robotArray[pobject->xindex][pobject->yindex] = 0;
+			pobject->xloc = (targetX << 8) + xmod;
+			pobject->xindex = targetX;
+			pobject->yloc = (targetY << 8) + ymod;
+			pobject->yindex = targetY;
+		}
+
+		// Load new map if target level specified
+		if (targetMap > 0 && targetMap != _level) {
+			loadMap(targetMap);
+			// DOS: coreindex depends on level
+			_coreIndex = (targetMap == 1) ? 0 : 1;
+		}
+
+		if (pobject->xindex >= 0 && pobject->xindex < 32 &&
+		    pobject->yindex >= 0 && pobject->yindex < 32)
+			_robotArray[pobject->xindex][pobject->yindex] = MENUM;
+
+		debug("Level change via %s: level=%d pos=(%d,%d)",
+		      map[0] == kWallFeatureUpStairs ? "upstairs" :
+		      map[0] == kWallFeatureDnStairs ? "downstairs" : "tunnel",
+		      _level, pobject->xindex, pobject->yindex);
+		return 2; // teleported
+	}
+
+	case kWallFeatureElevator: {
+		if (pobject != &_me)
+			return 0;
+		if (_corePower[1] == 0) {
+			inform("ELEVATOR HAS NO POWER.", true);
+			return 0;
+		}
+
+		// The elevator is an interactive animation in DOS (the "elev" animation).
+		// For now, directly use the map data destination if available.
+		const int targetMap = map[2];
+		const int targetX = map[3];
+		const int targetY = map[4];
+
+		if (targetMap == 0 && targetX == 0 && targetY == 0)
+			return 1; // no destination — just pass through
+
+		_sound->play(Sound::kElevator);
+
+		if (targetX > 0 && targetX < 31 && targetY > 0 && targetY < 31) {
+			_robotArray[pobject->xindex][pobject->yindex] = 0;
+			pobject->xloc = (targetX << 8) + 128;
+			pobject->xindex = targetX;
+			pobject->yloc = (targetY << 8) + 128;
+			pobject->yindex = targetY;
+			// DOS: player turns around when exiting elevator
+			pobject->ang += 128;
+			pobject->look = pobject->ang;
+		}
+
+		if (targetMap > 0 && targetMap != _level) {
+			loadMap(targetMap);
+			_coreIndex = (targetMap == 1) ? 0 : 1;
+		}
+
+		if (pobject->xindex >= 0 && pobject->xindex < 32 &&
+		    pobject->yindex >= 0 && pobject->yindex < 32)
+			_robotArray[pobject->xindex][pobject->yindex] = MENUM;
+
+		debug("Elevator: level=%d pos=(%d,%d)", _level, pobject->xindex, pobject->yindex);
+		return 2; // teleported
+	}
+
 	default:
-		return false;
+		return 0;
 	}
 }
 

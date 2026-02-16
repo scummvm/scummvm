@@ -311,7 +311,7 @@ private:
 	void interactWithObject(int objNum);
 	bool setDoorState(int x, int y, int direction, int state);
 	int openAdjacentDoors(int x, int y);
-	bool tryPassThroughFeature(int fromX, int fromY, int direction, Locate *pobject);
+	int tryPassThroughFeature(int fromX, int fromY, int direction, Locate *pobject);
 	void updateViewportLayout();
 	void drawDashboardStep1();
 	void drawCrosshair();

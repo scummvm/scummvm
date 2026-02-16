@@ -867,27 +867,111 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		break;
 	}
 	case kWallFeatureUpStairs: {
-		float xl = 0.15f, xr = 0.85f;
-		for (int i = 0; i < 6; i++) {
-			float u = xl + (xr - xl) * (float)i / 6.0f;
-			float u2 = xl + (xr - xl) * (float)(i + 1) / 6.0f;
-			float v = 0.1f + 0.8f * (float)i / 6.0f;
-			float v2 = 0.1f + 0.8f * (float)(i + 1) / 6.0f;
-			wallLine(corners, u, v, u2, v2, 0);
+		// DOS: draw_up_stairs — staircase ascending into the wall with perspective
+		// Uses split7 subdivision (7 depth levels at fractions 1/8..7/8)
+		// Passage narrows toward vanishing point (0.5, 0.5)
+		const uint32 col = 0; // vBLACK
+
+		// Perspective convergence: back of passage at ~1/3 width (1 cell deep)
+		float ul[7], ur[7], vf[7], vc[7];
+		for (int i = 0; i < 7; i++) {
+			float f = (i + 1) / 8.0f;
+			float inset = f * (1.0f / 3.0f);
+			ul[i] = inset;
+			ur[i] = 1.0f - inset;
+			vf[i] = inset;        // floor rises toward center
+			vc[i] = 1.0f - inset; // ceiling drops toward center
 		}
-		wallLine(corners, xl, 0.1f, xr, 0.9f, 0);
+		// Step height: at depth d, step s is at fraction (s+1)/8 from floor to ceiling
+		auto vh = [&](int d, int s) -> float {
+			return vf[d] + (s + 1) / 8.0f * (vc[d] - vf[d]);
+		};
+		// Back of passage (full depth)
+		float bi = 1.0f / 3.0f; // back inset
+		float bu = bi, bur = 1.0f - bi, bvc = 1.0f - bi;
+
+		// 1. Side wall verticals at back of passage
+		wallLine(corners, bu, bvc, bu, 0.5f, col);
+		wallLine(corners, bur, 0.5f, bur, bvc, col);
+
+		// 2. Back wall landing (depth 6 to full depth)
+		wallLine(corners, ul[6], vh(6, 6), bu, bvc, col);
+		wallLine(corners, bu, bvc, bur, bvc, col);
+		wallLine(corners, bur, bvc, ur[6], vh(6, 6), col);
+		wallLine(corners, ur[6], vh(6, 6), ul[6], vh(6, 6), col);
+
+		// 3. First step tread (floor from wall face to depth 0)
+		wallLine(corners, 0.0f, 0.0f, ul[0], vf[0], col);
+		wallLine(corners, ul[0], vf[0], ur[0], vf[0], col);
+		wallLine(corners, ur[0], vf[0], 1.0f, 0.0f, col);
+		wallLine(corners, 1.0f, 0.0f, 0.0f, 0.0f, col);
+
+		// 4. First step riser (at depth 0)
+		wallLine(corners, ul[0], vh(0, 0), ul[0], vf[0], col);
+		wallLine(corners, ur[0], vf[0], ur[0], vh(0, 0), col);
+		wallLine(corners, ur[0], vh(0, 0), ul[0], vh(0, 0), col);
+
+		// 5. Step treads (i=3..0: depth i to depth i+1)
+		for (int i = 3; i >= 0; i--) {
+			wallLine(corners, ul[i], vh(i, i), ul[i + 1], vh(i + 1, i), col);
+			wallLine(corners, ul[i + 1], vh(i + 1, i), ur[i + 1], vh(i + 1, i), col);
+			wallLine(corners, ur[i + 1], vh(i + 1, i), ur[i], vh(i, i), col);
+			wallLine(corners, ur[i], vh(i, i), ul[i], vh(i, i), col);
+		}
+
+		// 6. Step risers (i=5..0: vertical face at depth i+1)
+		for (int i = 5; i >= 0; i--) {
+			wallLine(corners, ul[i + 1], vh(i + 1, i + 1), ul[i + 1], vh(i + 1, i), col);
+			wallLine(corners, ul[i + 1], vh(i + 1, i), ur[i + 1], vh(i + 1, i), col);
+			wallLine(corners, ur[i + 1], vh(i + 1, i), ur[i + 1], vh(i + 1, i + 1), col);
+			wallLine(corners, ur[i + 1], vh(i + 1, i + 1), ul[i + 1], vh(i + 1, i + 1), col);
+		}
+
+		// 7. Handrails: from center of wall edges up to near-ceiling at mid-depth
+		wallLine(corners, 0.0f, 0.5f, ul[3], vc[0], col);
+		wallLine(corners, 1.0f, 0.5f, ur[3], vc[0], col);
 		break;
 	}
 	case kWallFeatureDnStairs: {
-		float xl = 0.15f, xr = 0.85f;
-		for (int i = 0; i < 6; i++) {
-			float u = xl + (xr - xl) * (float)i / 6.0f;
-			float u2 = xl + (xr - xl) * (float)(i + 1) / 6.0f;
-			float v = 0.9f - 0.8f * (float)i / 6.0f;
-			float v2 = 0.9f - 0.8f * (float)(i + 1) / 6.0f;
-			wallLine(corners, u, v, u2, v2, 0);
+		// DOS: draw_dn_stairs — staircase descending into the wall with perspective
+		// Simpler than up stairs: ceiling slopes down, side walls, first step, handrails
+		const uint32 col = 0; // vBLACK
+
+		float ul[7], ur[7], vf[7], vc[7];
+		for (int i = 0; i < 7; i++) {
+			float f = (i + 1) / 8.0f;
+			float inset = f * (1.0f / 3.0f);
+			ul[i] = inset;
+			ur[i] = 1.0f - inset;
+			vf[i] = inset;
+			vc[i] = 1.0f - inset;
 		}
-		wallLine(corners, xl, 0.9f, xr, 0.1f, 0);
+		float bi = 1.0f / 3.0f;
+		float bu = bi, bur = 1.0f - bi;
+
+		// 1. Ceiling: front ceiling slopes down to mid-depth
+		wallLine(corners, 0.0f, 1.0f, ul[3], vc[3], col);
+		wallLine(corners, ul[3], vc[3], ur[3], vc[3], col);
+		wallLine(corners, ur[3], vc[3], 1.0f, 1.0f, col);
+
+		// 2. Slant: from mid-depth ceiling down to center at back
+		wallLine(corners, ul[3], vc[3], bu, 0.5f, col);
+		wallLine(corners, bu, 0.5f, bur, 0.5f, col);
+		wallLine(corners, bur, 0.5f, ur[3], vc[3], col);
+
+		// 3. Side wall verticals: from center at back down to floor level
+		wallLine(corners, bu, 0.5f, bu, vf[0], col);
+		wallLine(corners, bur, 0.5f, bur, vf[0], col);
+
+		// 4. First step (floor from wall face to depth 0)
+		wallLine(corners, 0.0f, 0.0f, ul[0], vf[0], col);
+		wallLine(corners, ul[0], vf[0], ur[0], vf[0], col);
+		wallLine(corners, ur[0], vf[0], 1.0f, 0.0f, col);
+		wallLine(corners, 1.0f, 0.0f, 0.0f, 0.0f, col);
+
+		// 5. Handrails: from center of wall edges down to floor at mid-depth
+		wallLine(corners, 0.0f, 0.5f, ul[3], vf[3], col);
+		wallLine(corners, 1.0f, 0.5f, ur[3], vf[3], col);
 		break;
 	}
 	case kWallFeatureChar:
