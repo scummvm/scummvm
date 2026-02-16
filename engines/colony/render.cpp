@@ -453,7 +453,7 @@ static const int kPlantLeaf3Pts[3][3] = {{0, 0, 0}, {20, -10, 50}, {90, -70, 70}
 static const int kPlantLeaf4Pts[3][3] = {{0, 0, 0}, {20, -30, 190}, {40, -60, 150}};
 static const int kPlantLeaf5Pts[3][3] = {{0, 0, 0}, {20, -10, 130}, {50, -80, 200}};
 
-static const int kPlantLeafSurf[2][8] = {{kColorPlant, 3, 0, 1, 2, 0, 0, 0}, {kColorPlant, 3, 2, 1, 0, 0, 0, 0}};
+static const int kPlantLeafSurf[2][8] = {{kColorClear, 3, 0, 1, 2, 0, 0, 0}, {kColorClear, 3, 2, 1, 0, 0, 0, 0}};
 
 static const Colony::ColonyEngine::PrismPartDef kPlantParts[8] = {
 	{12, kPlantPotPts, 6, kPlantPotSurf},
@@ -608,6 +608,42 @@ void ColonyEngine::draw3DPrism(const Thing &obj, const PrismPartDef &def, bool u
 			uint32 lineColor = lit ? (uint32)lookupLineColor(colorIdx) : 15;
 			_gfx->draw3DPolygon(px, py, pz, count, lineColor);
 		}
+	}
+}
+
+void ColonyEngine::draw3DLeaf(const Thing &obj, const PrismPartDef &def) {
+	// DOS DrawLeaf: draws leaf surfaces as lines (MoveTo/LineTo), not filled polygons.
+	// PenColor is set to vGREEN by the caller (MakePlant).
+	const uint8 ang = obj.where.ang + 32;
+	const long rotCos = _cost[ang];
+	const long rotSin = _sint[ang];
+	const bool lit = (_corePower[_coreIndex] > 0);
+	const uint32 color = lit ? 2 : 15; // vGREEN when lit, white when dark
+
+	for (int i = 0; i < def.surfaceCount; i++) {
+		const int n = def.surfaces[i][1];
+		if (n < 2) continue;
+
+		float px[8], py[8], pz[8];
+		int count = 0;
+
+		for (int j = 0; j < n; j++) {
+			const int cur = def.surfaces[i][j + 2];
+			if (cur < 0 || cur >= def.pointCount) continue;
+			int ox = def.points[cur][0];
+			int oy = def.points[cur][1];
+			int oz = def.points[cur][2];
+			long rx = ((long)ox * rotCos - (long)oy * rotSin) >> 7;
+			long ry = ((long)ox * rotSin + (long)oy * rotCos) >> 7;
+			px[count] = (float)(rx + obj.where.xloc);
+			py[count] = (float)(ry + obj.where.yloc);
+			pz[count] = (float)(oz - 160);
+			count++;
+		}
+
+		// Draw as connected line segments (MoveTo first point, LineTo the rest)
+		for (int j = 0; j < count - 1; j++)
+			_gfx->draw3DLine(px[j], py[j], pz[j], px[j + 1], py[j + 1], pz[j + 1], color);
 	}
 }
 
@@ -908,29 +944,45 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		break;
 	}
 	case kWallFeatureWindow: {
-		// DOS wireframe: PenColor(realcolor[vDKGRAY]) = 8
+		// DOS drawwind: window pane at 1/4..3/4 with vertical + horizontal center lines
 		const uint32 winColor = 8; // vDKGRAY
-		float xl = 0.3125f, xr = 0.6875f;
-		float yb = 0.3125f, yt = 0.6875f;
+		float xl = 0.25f, xr = 0.75f;
+		float yb = 0.25f, yt = 0.75f;
+		float xc = 0.5f, yc = 0.5f;
+		// Window frame
 		wallLine(corners, xl, yb, xl, yt, winColor);
 		wallLine(corners, xl, yt, xr, yt, winColor);
 		wallLine(corners, xr, yt, xr, yb, winColor);
 		wallLine(corners, xr, yb, xl, yb, winColor);
-		wallLine(corners, xl, 0.5f, xr, 0.5f, winColor);
+		// Mullion (vertical center) and transom (horizontal center)
+		wallLine(corners, xc, yb, xc, yt, winColor);
+		wallLine(corners, xl, yc, xr, yc, winColor);
 		break;
 	}
 	case kWallFeatureShelves: {
-		// DOS wireframe: PenColor(realcolor[vDKGRAY]) = 8
+		// DOS drawbooks: recessed bookcase with 3D depth.
+		// The depth effect uses actual back-wall coordinates in DOS, which we can't
+		// replicate with UV mapping on a single wall face. We draw:
+		// - Back face rectangle (inset)
+		// - 4 connecting lines (front corners to back corners)
+		// - 7 horizontal shelf lines across the front face (full width)
 		const uint32 shelfColor = 8; // vDKGRAY
-		float xl = 0.15f, xr = 0.85f;
-		float yb = 0.1f, yt = 0.9f;
-		wallLine(corners, xl, yb, xr, yb, shelfColor);
-		wallLine(corners, xr, yb, xr, yt, shelfColor);
-		wallLine(corners, xr, yt, xl, yt, shelfColor);
-		wallLine(corners, xl, yt, xl, yb, shelfColor);
-		for (int i = 1; i <= 6; i++) {
-			float t = yb + (yt - yb) * (float)i / 7.0f;
-			wallLine(corners, xl, t, xr, t, shelfColor);
+		float bx = 0.1875f, bxr = 0.8125f;
+		float by = 0.1875f, byt = 0.8125f;
+		// Back face rectangle
+		wallLine(corners, bx, by, bxr, by, shelfColor);
+		wallLine(corners, bxr, by, bxr, byt, shelfColor);
+		wallLine(corners, bxr, byt, bx, byt, shelfColor);
+		wallLine(corners, bx, byt, bx, by, shelfColor);
+		// Connecting lines (front corners to back corners)
+		wallLine(corners, 0.0f, 0.0f, bx, by, shelfColor);
+		wallLine(corners, 0.0f, 1.0f, bx, byt, shelfColor);
+		wallLine(corners, 1.0f, 0.0f, bxr, by, shelfColor);
+		wallLine(corners, 1.0f, 1.0f, bxr, byt, shelfColor);
+		// 7 shelf lines across front face (DOS split7 at 1/8..7/8 intervals)
+		for (int i = 1; i <= 7; i++) {
+			float v = (float)i / 8.0f;
+			wallLine(corners, 0.0f, v, 1.0f, v, shelfColor);
 		}
 		break;
 	}
@@ -1206,8 +1258,11 @@ bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj) {
 			draw3DPrism(obj, kCChairParts[i], false);
 		break;
 	case kObjPlant:
-		for (int i = 0; i < 8; i++)
-			draw3DPrism(obj, kPlantParts[i], false);
+		// DOS MakePlant draw order: top pot, then green leaf lines, then pot on top.
+		draw3DPrism(obj, kPlantParts[1], false); // top pot (soil)
+		for (int i = 2; i < 8; i++)
+			draw3DLeaf(obj, kPlantParts[i]); // leaves as lines
+		draw3DPrism(obj, kPlantParts[0], false); // pot (drawn last, on top)
 		break;
 	case kObjCouch:
 	case kObjChair: {

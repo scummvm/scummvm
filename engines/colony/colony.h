@@ -302,6 +302,7 @@ public:
 
 private:
 	void draw3DPrism(const Thing &obj, const PrismPartDef &def, bool useLook);
+	void draw3DLeaf(const Thing &obj, const PrismPartDef &def);
 	bool drawStaticObjectPrisms3D(const Thing &obj);
 	void renderCorridor3D();
 	void drawWallFeatures3D();
