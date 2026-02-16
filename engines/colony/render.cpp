@@ -49,9 +49,9 @@ static uint8 lookupLineColor(int colorIdx) {
 	case kColorBath:      return 0;  // vBLACK
 	case kColorWater:     return 1;  // vBLUE
 	case kColorSilver:    return 1;  // vBLUE
-	case kColorReactor:   return 7;  // vWHITE
+	case kColorReactor:   return 0;  // vBLACK (LINEFILLCOLOR for fill mode)
 	case kColorBlanket:   return 2;  // vGREEN
-	case kColorSheet:     return 15; // vINTWHITE
+	case kColorSheet:     return 0;  // vBLACK (LINEFILLCOLOR for fill mode)
 	case kColorBed:       return 6;  // vBROWN
 	case kColorBox:       return 6;  // vBROWN
 	case kColorChair:     return 1;  // vBLUE
@@ -66,13 +66,24 @@ static uint8 lookupLineColor(int colorIdx) {
 	case kColorDeskChair: return 2;  // vGREEN
 	case kColorMac:       return 0;  // vBLACK
 	case kColorMacScreen: return 8;  // vDKGRAY
+	case kColorCryo:      return 1;  // vBLUE
+	case kColorCryoGlass: return 1;  // vBLUE
+	case kColorCryoBase:  return 1;  // vBLUE
+	case kColorForklift:  return 14; // vYELLOW
+	case kColorTread1:    return 14; // vYELLOW
+	case kColorTread2:    return 14; // vYELLOW
 	case kColorPot:       return 6;  // vBROWN
-	case kColorPlant:     return 2;  // vGREEN (hardcoded in MakePlant via DrawLeaf)
-	case kColorPower:     return 1;  // vBLUE (lsColor[54] LINECOLOR)
-	case kColorPBase:     return 1;  // vBLUE (lsColor[55] LINECOLOR)
-	case kColorPSource:   return 4;  // vRED (lsColor[56] LINECOLOR)
+	case kColorPlant:     return 2;  // vGREEN
+	case kColorPower:     return 1;  // vBLUE
+	case kColorPBase:     return 1;  // vBLUE
+	case kColorPSource:   return 4;  // vRED
 	case kColorTable:     return 6;  // vBROWN
 	case kColorTableBase: return 6;  // vBROWN
+	case kColorPStand:    return 5;  // vMAGENTA
+	case kColorPLens:     return 0;  // vBLACK
+	case kColorProjector: return 3;  // vCYAN
+	case kColorTele:      return 4;  // vRED
+	case kColorTeleDoor:  return 1;  // vBLUE
 	case kColorWall:      return 0;  // vBLACK
 	case kColorRainbow1:  return 4;  // vRED
 	case kColorRainbow2:  return 14; // vYELLOW
@@ -87,22 +98,22 @@ static const int kScreenPts[8][3] = {
 };
 static const int kScreenSurf[4][8] = {
 	{kColorBlack, 4, 0, 3, 7, 4, 0, 0}, {kColorBlack, 4, 3, 2, 6, 7, 0, 0},
-	{kColorBlack, 4, 2, 1, 5, 6, 0, 0}, {kColorBlack, 4, 7, 6, 5, 4, 0, 0}
+	{kColorBlack, 4, 1, 0, 4, 5, 0, 0}, {kColorBlack, 4, 2, 1, 5, 6, 0, 0}
 };
 static const int kTableTopPts[4][3] = {
-	{-64, 64, 100}, {64, 64, 100}, {64, -64, 100}, {-64, -64, 100}
+	{-128, 128, 100}, {128, 128, 100}, {128, -128, 100}, {-128, -128, 100}
 };
 static const int kTableTopSurf[1][8] = {{kColorTable, 4, 3, 2, 1, 0, 0, 0}};
 static const int kTableBasePts[8][3] = {
-	{-20, 20, 0}, {20, 20, 0}, {20, -20, 0}, {-20, -20, 0},
-	{-20, 20, 100}, {20, 20, 100}, {20, -20, 100}, {-20, -20, 100}
+	{-5, 5, 0}, {5, 5, 0}, {5, -5, 0}, {-5, -5, 0},
+	{-5, 5, 100}, {5, 5, 100}, {5, -5, 100}, {-5, -5, 100}
 };
 static const int kTableBaseSurf[4][8] = {
 	{kColorTableBase, 4, 0, 3, 7, 4, 0, 0}, {kColorTableBase, 4, 3, 2, 6, 7, 0, 0},
 	{kColorTableBase, 4, 1, 0, 4, 5, 0, 0}, {kColorTableBase, 4, 2, 1, 5, 6, 0, 0}
 };
 static const int kBedPostPts[4][3] = {
-	{-80, 180, 0}, {80, 180, 0}, {80, 180, 100}, {-80, 180, 100}
+	{-82, 128, 100}, {82, 128, 100}, {82, 128, 0}, {-82, 128, 0}
 };
 static const int kBedPostSurf[1][8] = {{kColorBed, 4, 3, 2, 1, 0, 0, 0}};
 static const int kBedBlanketPts[8][3] = {
@@ -114,23 +125,23 @@ static const int kBlanketSurf[4][8] = {
 	{kColorBlanket, 4, 2, 1, 5, 6, 0, 0}, {kColorBlanket, 4, 7, 6, 5, 4, 0, 0}
 };
 static const int kBedSheetPts[8][3] = {
-	{-80, 70, 60}, {80, 70, 60}, {80, -175, 60}, {-80, -175, 60},
-	{-80, 70, 80}, {80, 70, 80}, {80, -175, 80}, {-80, -175, 80}
+	{-80, 128, 30}, {80, 128, 30}, {80, 70, 30}, {-80, 70, 30},
+	{-80, 128, 60}, {80, 128, 60}, {80, 70, 60}, {-80, 70, 60}
 };
 static const int kSheetSurf[3][8] = {
 	{kColorSheet, 4, 0, 3, 7, 4, 0, 0}, {kColorSheet, 4, 2, 1, 5, 6, 0, 0},
 	{kColorSheet, 4, 7, 6, 5, 4, 0, 0}
 };
 static const int kBBedBlanketPts[8][3] = {
-	{-120, 96, 0}, {120, 96, 0}, {120, -96, 0}, {-120, -96, 0},
-	{-120, 96, 60}, {120, 96, 60}, {120, -96, 60}, {-120, -96, 60}
+	{-128, 70, 0}, {128, 70, 0}, {128, -175, 0}, {-128, -175, 0},
+	{-128, 70, 60}, {128, 70, 60}, {128, -175, 60}, {-128, -175, 60}
 };
 static const int kBBedSheetPts[8][3] = {
-	{-120, 96, 60}, {120, 96, 60}, {120, -96, 60}, {-120, -96, 60},
-	{-120, 96, 80}, {120, 96, 80}, {120, -96, 80}, {-120, -96, 80}
+	{-128, 128, 30}, {128, 128, 30}, {128, 70, 30}, {-128, 70, 30},
+	{-128, 128, 60}, {128, 128, 60}, {128, 70, 60}, {-128, 70, 60}
 };
 static const int kBBedPostPts[4][3] = {
-	{-120, 96, 0}, {120, 96, 0}, {120, 96, 100}, {-120, 96, 100}
+	{-130, 128, 100}, {130, 128, 100}, {130, 128, 0}, {-130, 128, 0}
 };
 static const int kDeskTopPts[4][3] = {
 	{-150, 110, 100}, {150, 110, 100}, {150, -110, 100}, {-150, -110, 100}
@@ -285,8 +296,8 @@ static const int kMirrorSurf[1][8] = {{kColorSilver, 4, 1, 0, 2, 3, 0, 0}};
 
 // Bathtub geometry
 static const int kTubPts[8][3] = {
-	{-127, 127,  0}, {   0, 127,  0}, {   0,-127,  0}, {-127,-127,  0},
-	{-127, 127, 70}, {   0, 127, 70}, {   0,-127, 70}, {-127,-127, 70}
+	{-128, 128,  0}, {   0, 128,  0}, {   0,-128,  0}, {-128,-128,  0},
+	{-128, 128, 70}, {   0, 128, 70}, {   0,-128, 70}, {-128,-128, 70}
 };
 static const int kTubSurf[5][8] = {
 	{kColorBath, 4, 0, 3, 7, 4, 0, 0}, {kColorBath, 4, 3, 2, 6, 7, 0, 0},
@@ -300,8 +311,8 @@ static const int kDTubSurf[1][8] = {{kColorWater, 6, 5, 4, 3, 2, 1, 0}};
 
 // Toilet geometry
 static const int kAToiletPts[8][3] = {
-	{-127, 45, 30}, {-100, 45, 30}, {-100, -45, 30}, {-127, -45, 30},
-	{-127, 45, 100}, {-100, 45, 100}, {-100, -45, 100}, {-127, -45, 100}
+	{-128, 45, 30}, {-100, 45, 30}, {-100, -45, 30}, {-128, -45, 30},
+	{-128, 45, 100}, {-100, 45, 100}, {-100, -45, 100}, {-128, -45, 100}
 };
 static const int kAToiletSurf[5][8] = {
 	{kColorBath, 4, 0, 3, 7, 4, 0, 0}, {kColorBath, 4, 3, 2, 6, 7, 0, 0},
@@ -326,14 +337,14 @@ static const int kDToiletPts[6][3] = {
 };
 static const int kDToiletSurf[1][8] = {{kColorLtGreen, 6, 5, 4, 3, 2, 1, 0}};
 static const int kEToiletPts[4][3] = {
-	{-127,-127, 20}, {-127,-127, 200}, { 127,-127, 200}, { 127,-127, 20}
+	{-128,-128, 20}, {-128,-128, 200}, { 128,-128, 200}, { 128,-128, 20}
 };
 static const int kEToiletSurf[1][8] = {{kColorDkGray, 4, 0, 1, 2, 3, 0, 0}};
 
 // Sink geometry
 static const int kSinkPts[8][3] = {
-	{-127, 50, 70}, {-50, 50, 90}, {-50,-50, 90}, {-127,-50, 70},
-	{-127, 50, 110}, {-50, 50, 110}, {-50,-50, 110}, {-127,-50, 110}
+	{-128, 50, 70}, {-50, 50, 90}, {-50,-50, 90}, {-128,-50, 70},
+	{-128, 50, 110}, {-50, 50, 110}, {-50,-50, 110}, {-128,-50, 110}
 };
 static const int kSinkSurf[5][8] = {
 	{kColorBath, 4, 0, 3, 7, 4, 0, 0}, {kColorBath, 4, 3, 2, 6, 7, 0, 0},
@@ -345,7 +356,7 @@ static const int kDSinkPts[6][3] = {
 };
 static const int kDSinkSurf[1][8] = {{kColorWater, 6, 5, 4, 3, 2, 1, 0}};
 static const int kSinkMirrorPts[4][3] = {
-	{-127, 65, 130}, {-127, -65, 130}, {-127, 65, 250}, {-127, -65, 250}
+	{-128, 65, 130}, {-128, -65, 130}, {-128, 65, 250}, {-128, -65, 250}
 };
 static const int kSinkMirrorSurf[1][8] = {{kColorSilver, 4, 1, 0, 2, 3, 0, 0}};
 
@@ -380,7 +391,7 @@ static const Colony::ColonyEngine::PrismPartDef kCChairParts[5] = {
 	{4, kCSeatPts, 1, kCSeatSurf},
 	{4, kCArmLeftPts, 1, kCArmLeftSurf},
 	{4, kCArmRightPts, 1, kCArmRightSurf},
-	{4, kCBackPts, 2, kCBackSurf},
+	{4, kCBackPts, 1, kCBackSurf},
 	{8, kCBasePts, 4, kCBaseSurf}
 };
 static const Colony::ColonyEngine::PrismPartDef kConsolePart = {8, kConsolePts, 5, kConsoleSurf};
@@ -427,6 +438,12 @@ static const Colony::ColonyEngine::PrismPartDef kPToiletParts[5] = {
 	{4, kEToiletPts, 1, kEToiletSurf}
 };
 
+static const int kFWallPts[4][3] = {
+	{-128, 128, 0}, {128, -128, 0}, {-128, 128, 320}, {128, -128, 320}
+};
+static const int kFWallSurf[1][8] = {{kColorWall, 4, 2, 3, 1, 0, 0, 0}};
+static const Colony::ColonyEngine::PrismPartDef kFWallPart = {4, kFWallPts, 1, kFWallSurf};
+
 static const int kCWallPts[8][3] = {
 	{-128, 128, 0}, {0, 112, 0}, {112, 0, 0}, {128, -128, 0},
 	{-128, 128, 320},  {0, 112, 320},  {112, 0, 320},  {128, -128, 320}
@@ -434,7 +451,7 @@ static const int kCWallPts[8][3] = {
 static const int kCWallSurf[3][8] = {
 	{kColorWall, 4, 1, 0, 4, 5, 0, 0}, {kColorWall, 4, 2, 1, 5, 6, 0, 0}, {kColorWall, 4, 3, 2, 6, 7, 0, 0}
 };
-static const Colony::ColonyEngine::PrismPartDef kCWallParts[1] = {{8, kCWallPts, 3, kCWallSurf}};
+static const Colony::ColonyEngine::PrismPartDef kCWallPart = {8, kCWallPts, 3, kCWallSurf};
 
 static const int kPlantPotPts[12][3] = {
 	{10, 17, 40}, {20, 0, 40}, {10, -17, 40}, {-10, -17, 40}, {-20, 0, 40}, {-10, 17, 40},
@@ -483,8 +500,8 @@ static const int kBox2Pts[8][3] = {
 };
 
 static const int kReactorCorePts[12][3] = {
-	{32, 55, 120}, {64, 0, 120}, {32, -55, 120}, {-32, -55, 120}, {-64, 0, 120}, {-32, 55, 120},
-	{32, 55, 168}, {64, 0, 168}, {32, -55, 168}, {-32, -55, 168}, {-64, 0, 168}, {-32, 55, 168}
+	{-40, 20, 288}, {0, 40, 288}, {40, 20, 288}, {40, -20, 288}, {0, -40, 288}, {-40, -20, 288},
+	{-40, 20, 32}, {0, 40, 32}, {40, 20, 32}, {40, -20, 32}, {0, -40, 32}, {-40, -20, 32}
 };
 static const int kReactorCoreSurf[7][8] = {
 	{kColorReactor, 4, 0, 1, 7, 6, 0, 0}, {kColorReactor, 4, 1, 2, 8, 7, 0, 0}, {kColorReactor, 4, 2, 3, 9, 8, 0, 0},
@@ -492,16 +509,16 @@ static const int kReactorCoreSurf[7][8] = {
 	{kColorReactor, 6, 5, 4, 3, 2, 1, 0}
 };
 static const int kReactorBasePts[8][3] = {
-	{-127, 127, 0}, {127, 127, 0}, {127, -127, 0}, {-127, -127, 0},
-	{-127, 127, 120}, {127, 127, 120}, {127, -127, 120}, {-127, -127, 120}
+	{-128, 128, 0}, {128, 128, 0}, {128, -128, 0}, {-128, -128, 0},
+	{-128, 128, 32}, {128, 128, 32}, {128, -128, 32}, {-128, -128, 32}
 };
 static const int kReactorBaseSurf[6][8] = {
 	{kColorRainbow1, 4, 0, 3, 7, 4, 0, 0}, {kColorRainbow1, 4, 3, 2, 6, 7, 0, 0}, {kColorRainbow1, 4, 1, 0, 4, 5, 0, 0},
 	{kColorRainbow1, 4, 2, 1, 5, 6, 0, 0}, {kColorRainbow1, 4, 7, 6, 5, 4, 0, 0}, {kColorRainbow1, 4, 0, 1, 2, 3, 0, 0}
 };
 static const int kReactorTopPts[8][3] = {
-	{-127, 127, 168}, {127, 127, 168}, {127, -127, 168}, {-127, -127, 168},
-	{-127, 127, 288}, {127, 127, 288}, {127, -127, 288}, {-127, -127, 288}
+	{-128, 128, 288}, {128, 128, 288}, {128, -128, 288}, {-128, -128, 288},
+	{-128, 128, 320}, {128, 128, 320}, {128, -128, 320}, {-128, -128, 320}
 };
 
 static const Colony::ColonyEngine::PrismPartDef kBox1Part = {8, kBox1Pts, 5, kBox1Surf};
@@ -552,6 +569,164 @@ static const Colony::ColonyEngine::PrismPartDef kPowerSuitParts[5] = {
 	{8, kPowerBasePts, 4, kPowerBaseSurf},
 	{4, kPowerTablePts, 1, kPowerTableSurf},
 	{12, kPowerSourcePts, 7, kPowerSourceSurf}
+};
+
+// Cryo tube: top (coffin-shaped lid) + base
+static const int kCryoTopPts[16][3] = {
+	{-130,  50,  80}, { 130,  50,  80}, { 130, -50,  80}, {-130, -50,  80},
+	{-130,  50, 140}, { 130,  50, 140}, { 130, -50, 140}, {-130, -50, 140},
+	{   0,  50, 140}, {   0, -50, 140},
+	{-140,  70, 110}, { 140,  70, 110}, { 140, -70, 110}, {-140, -70, 110},
+	{   0,  70, 110}, {   0, -70, 110}
+};
+static const int kCryoTopSurf[12][8] = {
+	{kColorCryo,      4, 7, 9, 8, 4, 0, 0},
+	{kColorCryoGlass, 4, 9, 6, 5, 8, 0, 0},
+	{kColorCryo,      4, 0, 10, 11, 1, 0, 0},
+	{kColorCryo,      4, 1, 11, 12, 2, 0, 0},
+	{kColorCryo,      4, 2, 12, 13, 3, 0, 0},
+	{kColorCryo,      4, 3, 13, 10, 0, 0, 0},
+	{kColorCryo,      4, 7, 13, 15, 9, 0, 0},
+	{kColorCryo,      4, 4, 10, 13, 7, 0, 0},
+	{kColorCryo,      4, 14, 10, 4, 8, 0, 0},
+	{kColorSilver,    4, 5, 11, 14, 8, 0, 0},
+	{kColorSilver,    4, 6, 12, 11, 5, 0, 0},
+	{kColorSilver,    4, 9, 15, 12, 6, 0, 0}
+};
+static const int kCryoBasePts[8][3] = {
+	{-130,  50,  0}, { 130,  50,  0}, { 130, -50,  0}, {-130, -50,  0},
+	{-130,  50, 80}, { 130,  50, 80}, { 130, -50, 80}, {-130, -50, 80}
+};
+static const int kCryoBaseSurf[5][8] = {
+	{kColorCryoBase, 4, 0, 3, 7, 4, 0, 0}, {kColorCryoBase, 4, 3, 2, 6, 7, 0, 0},
+	{kColorCryoBase, 4, 1, 0, 4, 5, 0, 0}, {kColorCryoBase, 4, 2, 1, 5, 6, 0, 0},
+	{kColorCryo,     4, 7, 6, 5, 4, 0, 0}
+};
+static const Colony::ColonyEngine::PrismPartDef kCryoParts[2] = {
+	{16, kCryoTopPts, 12, kCryoTopSurf},
+	{8, kCryoBasePts, 5, kCryoBaseSurf}
+};
+
+// Forklift: cab + treads + upper-left arm + lower-left fork + upper-right arm + lower-right fork
+static const int kFLCabPts[14][3] = {
+	{-35, 60, 40}, {35, 60, 40}, {35, -60, 40}, {-35, -60, 40},
+	{-15, 60, 260}, {15, 60, 260}, {15, -60, 260}, {-15, -60, 260},
+	{25, 60, 140}, {25, -60, 140},
+	{70, 35, 120}, {70, -35, 120},
+	{-70, 40, 80}, {-70, -40, 80}
+};
+static const int kFLCabSurf[12][8] = {
+	{kColorForklift, 4, 0, 3, 13, 12, 0, 0}, {kColorForklift, 4, 12, 13, 7, 4, 0, 0},
+	{kColorForklift, 3, 0, 12, 4, 0, 0, 0},  {kColorForklift, 3, 3, 7, 13, 0, 0, 0},
+	{kColorForklift, 4, 3, 2, 6, 7, 0, 0},   {kColorForklift, 4, 1, 0, 4, 5, 0, 0},
+	{kColorForklift, 3, 1, 8, 10, 0, 0, 0},  {kColorForklift, 3, 2, 11, 9, 0, 0, 0},
+	{kColorForklift, 4, 1, 10, 11, 2, 0, 0},
+	{kColorSilver,   3, 8, 5, 10, 0, 0, 0},  {kColorSilver, 3, 11, 6, 9, 0, 0, 0},
+	{kColorSilver,   4, 10, 5, 6, 11, 0, 0}
+};
+static const int kFLTreadPts[12][3] = {
+	{-60, 60, 20}, {60, 60, 20}, {60, -60, 20}, {-60, -60, 20},
+	{-35, 60, 40}, {35, 60, 40}, {35, -60, 40}, {-35, -60, 40},
+	{-35, 60, 0}, {35, 60, 0}, {35, -60, 0}, {-35, -60, 0}
+};
+static const int kFLTreadSurf[6][8] = {
+	{kColorTread1, 4, 0, 3, 7, 4, 0, 0},
+	{kColorTread2, 6, 3, 11, 10, 2, 6, 7},
+	{kColorTread2, 6, 0, 4, 5, 1, 9, 8},
+	{kColorTread1, 4, 2, 1, 5, 6, 0, 0},
+	{kColorTread1, 4, 0, 8, 11, 3, 0, 0},
+	{kColorTread1, 4, 10, 9, 1, 2, 0, 0}
+};
+static const int kFLULPts[8][3] = {
+	{-15, 70, 120}, {15, 70, 120}, {15, 60, 120}, {-15, 60, 120},
+	{-25, 70, 230}, {25, 70, 230}, {25, 60, 230}, {-25, 60, 230}
+};
+static const int kFLArmSurf[4][8] = {
+	{kColorForklift, 4, 0, 3, 7, 4, 0, 0}, {kColorForklift, 4, 3, 2, 6, 7, 0, 0},
+	{kColorForklift, 4, 1, 0, 4, 5, 0, 0}, {kColorForklift, 4, 2, 1, 5, 6, 0, 0}
+};
+static const int kFLLLPts[8][3] = {
+	{-15, 80, 120}, {100, 80, 125}, {100, 70, 125}, {-15, 70, 120},
+	{-15, 80, 150}, {100, 80, 140}, {100, 70, 140}, {-15, 70, 150}
+};
+static const int kFLForkSurf[6][8] = {
+	{kColorForklift, 4, 0, 3, 7, 4, 0, 0}, {kColorForklift, 4, 3, 2, 6, 7, 0, 0},
+	{kColorForklift, 4, 1, 0, 4, 5, 0, 0}, {kColorBlack,    4, 2, 1, 5, 6, 0, 0},
+	{kColorForklift, 4, 7, 6, 5, 4, 0, 0}, {kColorForklift, 4, 0, 1, 2, 3, 0, 0}
+};
+static const int kFLURPts[8][3] = {
+	{-15, -60, 120}, {15, -60, 120}, {15, -70, 120}, {-15, -70, 120},
+	{-25, -60, 230}, {25, -60, 230}, {25, -70, 230}, {-25, -70, 230}
+};
+static const int kFLLRPts[8][3] = {
+	{-15, -70, 120}, {100, -70, 125}, {100, -80, 125}, {-15, -80, 120},
+	{-15, -70, 150}, {100, -70, 140}, {100, -80, 140}, {-15, -80, 150}
+};
+static const Colony::ColonyEngine::PrismPartDef kForkliftParts[6] = {
+	{14, kFLCabPts, 12, kFLCabSurf},
+	{12, kFLTreadPts, 6, kFLTreadSurf},
+	{8, kFLULPts, 4, kFLArmSurf},
+	{8, kFLLLPts, 6, kFLForkSurf},
+	{8, kFLURPts, 4, kFLArmSurf},
+	{8, kFLLRPts, 6, kFLForkSurf}
+};
+
+// Teleport: octagonal booth with flared middle
+static const int kTelePts[24][3] = {
+	// Ring 0: outer flared ring at z=140
+	{   0, 175, 140}, { 125, 125, 140}, { 175,   0, 140}, { 125,-125, 140},
+	{   0,-175, 140}, {-125,-125, 140}, {-175,   0, 140}, {-125, 125, 140},
+	// Ring 1: inner ring at z=0 (bottom)
+	{  0,  80, 0}, { 65,  65, 0}, { 80,   0, 0}, { 65, -65, 0},
+	{  0, -80, 0}, {-65, -65, 0}, {-80,   0, 0}, {-65,  65, 0},
+	// Ring 2: inner ring at z=280 (top)
+	{  0,  80, 280}, { 65,  65, 280}, { 80,   0, 280}, { 65, -65, 280},
+	{  0, -80, 280}, {-65, -65, 280}, {-80,   0, 280}, {-65,  65, 280}
+};
+static const int kTeleSurf[16][8] = {
+	// Bottom 8 panels (outer mid to inner bottom)
+	{kColorTeleDoor, 4, 0, 1, 9, 8, 0, 0},
+	{kColorTele,     4, 1, 2, 10, 9, 0, 0}, {kColorTele, 4, 2, 3, 11, 10, 0, 0},
+	{kColorTele,     4, 3, 4, 12, 11, 0, 0}, {kColorTele, 4, 4, 5, 13, 12, 0, 0},
+	{kColorTele,     4, 5, 6, 14, 13, 0, 0}, {kColorTele, 4, 6, 7, 15, 14, 0, 0},
+	{kColorTele,     4, 7, 0, 8, 15, 0, 0},
+	// Top 8 panels (outer mid to inner top)
+	{kColorSilver,   4, 1, 0, 16, 17, 0, 0},
+	{kColorTele,     4, 2, 1, 17, 18, 0, 0}, {kColorTele, 4, 3, 2, 18, 19, 0, 0},
+	{kColorTele,     4, 4, 3, 19, 20, 0, 0}, {kColorTele, 4, 5, 4, 20, 21, 0, 0},
+	{kColorTele,     4, 6, 5, 21, 22, 0, 0}, {kColorTele, 4, 7, 6, 22, 23, 0, 0},
+	{kColorTele,     4, 0, 7, 23, 16, 0, 0}
+};
+static const Colony::ColonyEngine::PrismPartDef kTelePart = {24, kTelePts, 16, kTeleSurf};
+
+// Projector: body + stand + lens (sits on table)
+static const int kProjectorPts[8][3] = {
+	{-30, 30, 140}, {30, 30, 140}, {30, -30, 140}, {-30, -30, 140},
+	{-20, 30, 160}, {30, 30, 160}, {30, -30, 160}, {-20, -30, 160}
+};
+static const int kProjectorSurf[5][8] = {
+	{kColorProjector, 4, 0, 3, 7, 4, 0, 0}, {kColorProjector, 4, 3, 2, 6, 7, 0, 0},
+	{kColorProjector, 4, 1, 0, 4, 5, 0, 0}, {kColorProjector, 4, 2, 1, 5, 6, 0, 0},
+	{kColorProjector, 4, 7, 6, 5, 4, 0, 0}
+};
+static const int kPStandPts[4][3] = {
+	{-25, 50, 100}, {0, 10, 140}, {0, -10, 140}, {-25, -50, 100}
+};
+static const int kPStandSurf[1][8] = {{kColorPStand, 4, 0, 1, 2, 3, 0, 0}};
+static const int kPLensPts[12][3] = {
+	{30,  8, 154}, {30,  0, 158}, {30, -8, 154}, {30, -8, 146}, {30,  0, 142}, {30,  8, 146},
+	{55, 10, 155}, {55,  0, 160}, {55,-10, 155}, {55,-10, 145}, {55,  0, 140}, {55, 10, 145}
+};
+static const int kPLensSurf[7][8] = {
+	{kColorPLens, 4, 0, 1, 7, 6, 0, 0}, {kColorPLens, 4, 1, 2, 8, 7, 0, 0},
+	{kColorPLens, 4, 2, 3, 9, 8, 0, 0}, {kColorPLens, 4, 3, 4, 10, 9, 0, 0},
+	{kColorPLens, 4, 4, 5, 11, 10, 0, 0}, {kColorPLens, 4, 5, 0, 6, 11, 0, 0},
+	{kColorBlack, 6, 6, 7, 8, 9, 10, 11}
+};
+static const Colony::ColonyEngine::PrismPartDef kProjectorParts[3] = {
+	{8, kProjectorPts, 5, kProjectorSurf},
+	{4, kPStandPts, 1, kPStandSurf},
+	{12, kPLensPts, 7, kPLensSurf}
 };
 
 
@@ -1322,8 +1497,10 @@ bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj) {
 			draw3DPrism(obj, kDrawerParts[i], false);
 		break;
 	case kObjFWall:
+		draw3DPrism(obj, kFWallPart, false);
+		break;
 	case kObjCWall:
-		draw3DPrism(obj, kCWallParts[0], false);
+		draw3DPrism(obj, kCWallPart, false);
 		break;
 	case kObjScreen:
 		draw3DPrism(obj, kScreenPart, false);
@@ -1347,8 +1524,8 @@ bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj) {
 		draw3DPrism(obj, kBox1Part, false);
 		break;
 	case kObjBox2:
-		for (int i = 0; i < 2; i++)
-			draw3DPrism(obj, kBox2Parts[i], false);
+		draw3DPrism(obj, kBox2Parts[1], false); // base first
+		draw3DPrism(obj, kBox2Parts[0], false); // top second
 		break;
 	case kObjReactor:
 		for (int i = 0; i < 3; i++)
@@ -1359,7 +1536,19 @@ bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj) {
 			draw3DPrism(obj, kPowerSuitParts[i], false);
 		break;
 	case kObjTeleport:
-		draw3DPrism(obj, kCWallParts[0], false); // Placeholder
+		draw3DPrism(obj, kTelePart, false);
+		break;
+	case kObjCryo:
+		draw3DPrism(obj, kCryoParts[1], false); // base first
+		draw3DPrism(obj, kCryoParts[0], false); // top second
+		break;
+	case kObjProjector:
+		// Projector sits on table — draw table first, then projector parts
+		for (int i = 0; i < 2; i++)
+			draw3DPrism(obj, kTableParts[i], false);
+		draw3DPrism(obj, kProjectorParts[1], false); // stand
+		draw3DPrism(obj, kProjectorParts[0], false); // body
+		draw3DPrism(obj, kProjectorParts[2], false); // lens
 		break;
 	case kObjTub:
 		for (int i = 0; i < 2; i++)
@@ -1378,7 +1567,13 @@ bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj) {
 			draw3DPrism(obj, kPToiletParts[i], false);
 		break;
 	case kObjForkLift:
-		draw3DPrism(obj, kBox1Part, false); // Placeholder
+		// Default draw order: forks, arms, treads, cab (back-to-front)
+		draw3DPrism(obj, kForkliftParts[3], false); // FLLL (left fork)
+		draw3DPrism(obj, kForkliftParts[2], false); // FLUL (left arm)
+		draw3DPrism(obj, kForkliftParts[5], false); // FLLR (right fork)
+		draw3DPrism(obj, kForkliftParts[4], false); // FLUR (right arm)
+		draw3DPrism(obj, kForkliftParts[1], false); // treads
+		draw3DPrism(obj, kForkliftParts[0], false); // cab
 		break;
 	default:
 		return false;
