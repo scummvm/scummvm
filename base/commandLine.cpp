@@ -2227,7 +2227,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 			Common::Path fileName = Filename.getLastComponent();
 
 			Common::MacResManager macResMan;
-			if (macResMan.open(fileName, dir)) {
+			if (macResMan.open(fileName, dir) && macResMan.isMacFile()) {
 				warning("Mac resources detected");
 				command = "md5mac";
 			}
