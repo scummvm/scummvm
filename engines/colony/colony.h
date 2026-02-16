@@ -85,6 +85,40 @@ enum ObjectType {
 	kObjBBed = 42
 };
 
+enum ObjColor {
+	kColorClear = 0,
+	kColorBlack = 1,
+	kColorDkGray = 9,
+	kColorLtGreen = 11,
+	kColorBath = 17,
+	kColorWater = 18,
+	kColorSilver = 19,
+	kColorReactor = 20,
+	kColorBlanket = 21,
+	kColorSheet = 22,
+	kColorBed = 23,
+	kColorBox = 24,
+	kColorChair = 26,
+	kColorChairBase = 27,
+	kColorCouch = 28,
+	kColorConsole = 29,
+	kColorTV = 30,
+	kColorTVScreen = 31,
+	kColorDrawer = 32,
+	kColorDesk = 37,
+	kColorDeskTop = 38,
+	kColorDeskChair = 39,
+	kColorMac = 40,
+	kColorMacScreen = 41,
+	kColorPot = 52,
+	kColorPlant = 53,
+	kColorTable = 61,
+	kColorTableBase = 62,
+	kColorWall = 77,
+	kColorRainbow1 = 80,
+	kColorRainbow2 = 81
+};
+
 #define BASEOBJECT 20
 #define MENUM 101
 
@@ -254,7 +288,6 @@ private:
 	uint8 wallAt(int x, int y) const;
 	const uint8 *mapFeatureAt(int x, int y, int direction) const;
 	void drawStaticObjects();
-	uint32 objectColor(int type) const;
 
 public:
 	struct PrismPartDef {
@@ -265,8 +298,8 @@ public:
 	};
 
 private:
-	void draw3DPrism(const Thing &obj, const PrismPartDef &def, bool useLook, uint32 color);
-	bool drawStaticObjectPrisms3D(const Thing &obj, uint32 baseColor);
+	void draw3DPrism(const Thing &obj, const PrismPartDef &def, bool useLook);
+	bool drawStaticObjectPrisms3D(const Thing &obj);
 	void renderCorridor3D();
 	void drawWallFeatures3D();
 	void drawWallFeature3D(int cellX, int cellY, int direction);
