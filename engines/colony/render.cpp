@@ -965,13 +965,13 @@ void ColonyEngine::renderCorridor3D() {
 	// Authentic look: Always wireframe for walls. 
 	// Power ON = White background (fill), Black lines.
 	// Power OFF = Black background (fill), White lines.
-	_gfx->setWireframe(true, lit ? 15 : 0);
+	_gfx->setWireframe(true, lit ? 7 : 0);
 
 	_gfx->begin3D(_me.xloc, _me.yloc, 0, _me.look, _me.lookY, _screenR);
-	_gfx->clear(lit ? 15 : 0);
+	_gfx->clear(lit ? 7 : 0);
  
-	uint32 wallColor = lit ? 0 : 15; 
-	uint32 floorColor = lit ? 0 : 15; 
+	uint32 wallColor = lit ? 0 : 7; 
+	uint32 floorColor = lit ? 0 : 7; 
 
 	// Draw large floor and ceiling quads
 	// These will be filled with the background color in the occlusion pass
