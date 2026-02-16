@@ -484,7 +484,7 @@ void ColonyEngine::playAnimation() {
 		} else {
 			uint8 *decode = (_action0 == 11) ? _decode2 : _decode3;
 			for (int i = 0; i < 4; i++) {
-				if (decode[i] == (_action0 == 11 ? _decode2[i] : _decode3[i])) // This check is weird in original but effectively sets state
+				if (decode[i])
 					SetObjectState(i + 2, decode[i]);
 				else
 					SetObjectState(i + 2, 1);
@@ -535,6 +535,37 @@ void ColonyEngine::playAnimation() {
 			SetObjectOnOff(8, false);
 			SetObjectOnOff(9, false);
 			break;
+		}
+	} else if (_animationName == "vanity") {
+		// DOS DoVanity: set suit state on mirror display (object 1)
+		if (_weapons && _armor)
+			SetObjectState(1, 3);
+		else if (_weapons)
+			SetObjectState(1, 2);
+		else if (_armor)
+			SetObjectState(1, 1);
+		else
+			SetObjectState(1, 4);
+		// Badge only visible on level 1
+		if (_level != 1)
+			SetObjectOnOff(14, false);
+		// Hide items based on action0 (num parameter in DOS)
+		if (_action0 < 90) { // coffee cup only
+			SetObjectOnOff(4, false);
+			SetObjectOnOff(7, false);
+			SetObjectOnOff(13, false);
+		} else if (_action0 < 100) { // paper
+			SetObjectOnOff(12, false);
+			SetObjectOnOff(4, false);
+			SetObjectOnOff(7, false);
+		} else if (_action0 < 110) { // diary
+			SetObjectOnOff(12, false);
+			SetObjectOnOff(13, false);
+			SetObjectOnOff(7, false);
+		} else if (_action0 < 120) { // book
+			SetObjectOnOff(12, false);
+			SetObjectOnOff(13, false);
+			SetObjectOnOff(4, false);
 		}
 	}
 
@@ -818,7 +849,17 @@ void ColonyEngine::handleAnimationClick(int item) {
 			doText(_action1, 0);
 		}
 	} else if (_animationName == "vanity") {
-		if (item == 13) { // Paper
+		if (item == 12) { // Coffee cup - spill animation
+			if (!_doorOpen) { // reuse _doorOpen as "spilled" flag
+				for (int i = 1; i < 6; i++) {
+					SetObjectState(12, i);
+					drawAnimation();
+					_gfx->copyToScreen();
+					_system->delayMillis(50);
+				}
+				_doorOpen = true;
+			}
+		} else if (item == 13) { // Paper
 			doText(_action0, 0);
 		} else if (item == 14) { // Badge
 			doText(80, 0);
@@ -1143,21 +1184,45 @@ void ColonyEngine::dolSprite(int index) {
 		return;
 
 	ComplexSprite *ls = _lSprites[index];
+	int maxFrames = (int)ls->objects.size();
+
 	switch (ls->type) {
 	case 1: // Key and control
 		if (ls->frozen) {
-			// Control logic
+			// Container: can open or close if not locked, or if slightly open
 			if (!ls->locked || ls->current) {
-				if (ls->current > 0) {
+				if (ls->current > 1) {
+					// Close: animate from current down to 0
 					while (ls->current > 0) {
 						ls->current--;
+						// Sync linked sprites via key/lock
+						if (ls->key) {
+							for (int i = 0; i < (int)_lSprites.size(); i++) {
+								if (i != index && _lSprites[i]->lock == ls->key) {
+									_lSprites[i]->current = ls->current;
+									if (_lSprites[i]->current >= (int)_lSprites[i]->objects.size())
+										_lSprites[i]->current = (int)_lSprites[i]->objects.size() - 1;
+								}
+							}
+						}
 						drawAnimation();
 						_gfx->copyToScreen();
 						_system->delayMillis(50);
 					}
 				} else {
-					while (ls->current < (int)ls->objects.size() - 1) {
+					// Open: animate from current up to max
+					while (ls->current < maxFrames - 1) {
 						ls->current++;
+						// Sync linked sprites via key/lock
+						if (ls->key) {
+							for (int i = 0; i < (int)_lSprites.size(); i++) {
+								if (i != index && _lSprites[i]->lock == ls->key) {
+									_lSprites[i]->current = ls->current;
+									if (_lSprites[i]->current >= (int)_lSprites[i]->objects.size())
+										_lSprites[i]->current = (int)_lSprites[i]->objects.size() - 1;
+								}
+							}
+						}
 						drawAnimation();
 						_gfx->copyToScreen();
 						_system->delayMillis(50);
@@ -1169,6 +1234,7 @@ void ColonyEngine::dolSprite(int index) {
 	case 2: // Container and object
 		if (ls->frozen) {
 			if (!ls->locked) {
+				// Unlocked container: toggle open/close
 				if (ls->current > 0) {
 					while (ls->current > 0) {
 						ls->current--;
@@ -1177,7 +1243,24 @@ void ColonyEngine::dolSprite(int index) {
 						_system->delayMillis(50);
 					}
 				} else {
-					while (ls->current < (int)ls->objects.size() - 1) {
+					while (ls->current < maxFrames - 1) {
+						ls->current++;
+						drawAnimation();
+						_gfx->copyToScreen();
+						_system->delayMillis(50);
+					}
+				}
+			} else {
+				// Locked container: current>1 closes, current==1 opens further
+				if (ls->current > 1) {
+					while (ls->current > 0) {
+						ls->current--;
+						drawAnimation();
+						_gfx->copyToScreen();
+						_system->delayMillis(50);
+					}
+				} else if (ls->current == 1) {
+					while (ls->current < maxFrames - 1) {
 						ls->current++;
 						drawAnimation();
 						_gfx->copyToScreen();
