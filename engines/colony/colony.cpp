@@ -59,6 +59,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_weapons = 0;
 	_wireframe = false;
 	_widescreen = ConfMan.getBool("widescreen_mod");
+	_speedShift = 2; // DOS default: speedshift=1, but 2 feels better with our frame rate
 	
 	memset(_wall, 0, sizeof(_wall));
 	memset(_mapData, 0, sizeof(_mapData));
@@ -232,8 +233,7 @@ Common::Error ColonyEngine::run() {
 		pal[i * 3 + 2] = i;
 	}
 	_gfx->setPalette(pal, 0, 256);
-	_gfx->setWireframe(_wireframe);
-	
+
 	scrollInfo();
 
 	loadMap(1); // Try to load the first map
@@ -248,44 +248,98 @@ Common::Error ColonyEngine::run() {
 				if (event.type == Common::EVENT_KEYDOWN) {
 					debug("Key down: %d", event.kbd.keycode);
 					const bool allowInteraction = (event.kbd.flags & Common::KBD_CTRL) == 0;
+					// DOS movement: xai[ang] << speedshift, where xai[i] = cost[i] >> 4
+					const int moveX = (_cost[_me.look] * (1 << _speedShift)) >> 4;
+					const int moveY = (_sint[_me.look] * (1 << _speedShift)) >> 4;
+					const int rotSpeed = 1 << (_speedShift - 1); // DOS: speed = 1 << (speedshift-1)
 					switch (event.kbd.keycode) {
+					// Move forward (DOS: w / 8 / up)
 					case Common::KEYCODE_UP:
 					case Common::KEYCODE_w:
-					{
-						int xnew = _me.xloc + (_cost[_me.look] >> 2);
-						int ynew = _me.yloc + (_sint[_me.look] >> 2);
-						cCommand(xnew, ynew, allowInteraction);
+						cCommand(_me.xloc + moveX, _me.yloc + moveY, allowInteraction);
 						break;
-					}
+					// Move backward (DOS: s / 5 / down)
 					case Common::KEYCODE_DOWN:
 					case Common::KEYCODE_s:
-					{
-						int xnew = _me.xloc - (_cost[_me.look] >> 2);
-						int ynew = _me.yloc - (_sint[_me.look] >> 2);
-						cCommand(xnew, ynew, allowInteraction);
+						cCommand(_me.xloc - moveX, _me.yloc - moveY, allowInteraction);
 						break;
-					}
+					// Strafe left (DOS: a / 4 / left)
 					case Common::KEYCODE_LEFT:
 					case Common::KEYCODE_a:
 					{
 						uint8 strafeAngle = (uint8)((int)_me.look + 64);
-						int xnew = _me.xloc + (_cost[strafeAngle] >> 2);
-						int ynew = _me.yloc + (_sint[strafeAngle] >> 2);
-						cCommand(xnew, ynew, allowInteraction);
+						int sx = (_cost[strafeAngle] * (1 << _speedShift)) >> 4;
+						int sy = (_sint[strafeAngle] * (1 << _speedShift)) >> 4;
+						cCommand(_me.xloc + sx, _me.yloc + sy, allowInteraction);
 						break;
 					}
+					// Strafe right (DOS: d / 6 / right)
 					case Common::KEYCODE_RIGHT:
 					case Common::KEYCODE_d:
 					{
 						uint8 strafeAngle = (uint8)((int)_me.look - 64);
-						int xnew = _me.xloc + (_cost[strafeAngle] >> 2);
-						int ynew = _me.yloc + (_sint[strafeAngle] >> 2);
-						cCommand(xnew, ynew, allowInteraction);
+						int sx = (_cost[strafeAngle] * (1 << _speedShift)) >> 4;
+						int sy = (_sint[strafeAngle] * (1 << _speedShift)) >> 4;
+						cCommand(_me.xloc + sx, _me.yloc + sy, allowInteraction);
 						break;
 					}
+					// Rotate left (DOS: q / 7)
+					case Common::KEYCODE_q:
+						_me.ang += rotSpeed;
+						_me.look += rotSpeed;
+						break;
+					// Rotate right (DOS: e / 9)
+					case Common::KEYCODE_e:
+						_me.ang -= rotSpeed;
+						_me.look -= rotSpeed;
+						break;
+					// Look left (DOS: z / 1)
+					case Common::KEYCODE_z:
+						_me.look = _me.ang + 64;
+						break;
+					// Look right (DOS: c / 3)
+					case Common::KEYCODE_c:
+						_me.look = _me.ang - 64;
+						break;
+					// Look behind (DOS: x / 2)
+					case Common::KEYCODE_x:
+						_me.look = _me.ang + 128;
+						break;
+					// Speed 1-5 (DOS: keys 1-5)
+					case Common::KEYCODE_1:
+					case Common::KEYCODE_2:
+					case Common::KEYCODE_3:
+					case Common::KEYCODE_4:
+					case Common::KEYCODE_5:
+						_speedShift = event.kbd.keycode - Common::KEYCODE_1 + 1;
+						debug("Speed: %d", _speedShift);
+						break;
+					// F7: toggle dashboard (DOS: doFunctionKey case 7)
 					case Common::KEYCODE_F7:
+						_showDashBoard = !_showDashBoard;
+						break;
+					// F8: toggle polyfill (DOS: doFunctionKey case 8)
+					case Common::KEYCODE_F8:
 						_wireframe = !_wireframe;
-						_gfx->setWireframe(_wireframe);
+						debug("Polyfill: %s", _wireframe ? "off (wireframe)" : "on (filled)");
+						break;
+					// F10: ScummVM menu (replaces DOS F10 pause)
+					case Common::KEYCODE_F10:
+						_system->lockMouse(false);
+						openMainMenuDialog();
+						_gfx->computeScreenViewport();
+						_system->lockMouse(true);
+						_system->warpMouse(_centerX, _centerY);
+						_system->getEventManager()->purgeMouseEvents();
+						break;
+					// Escape: also opens ScummVM menu
+					case Common::KEYCODE_ESCAPE:
+						_system->lockMouse(false);
+						openMainMenuDialog();
+						_gfx->computeScreenViewport();
+						_system->lockMouse(true);
+						_system->warpMouse(_centerX, _centerY);
+						_system->getEventManager()->purgeMouseEvents();
 						break;
 					default:
 						break;

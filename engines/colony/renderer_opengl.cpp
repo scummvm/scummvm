@@ -59,9 +59,9 @@ public:
 	void drawQuad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, uint32 color) override;
 	void drawPolygon(const int *x, const int *y, int count, uint32 color) override;
 	void copyToScreen() override;
-	void setWireframe(bool enable, int fillColor = -1) override { 
-		_wireframe = enable; 
-		if (fillColor != -1) _wireframeFillColor = (uint32)fillColor;
+	void setWireframe(bool enable, int fillColor = -1) override {
+		_wireframe = enable;
+		_wireframeFillColor = fillColor;
 	}
 	void computeScreenViewport() override;
 
@@ -73,7 +73,7 @@ private:
 	int _height;
 	byte _palette[256 * 3];
 	bool _wireframe;
-	uint32 _wireframeFillColor;
+	int _wireframeFillColor; // -1 = no fill (outline only)
 	Common::Rect _screenViewport;
 };
 
@@ -236,20 +236,21 @@ void OpenGLRenderer::draw3DWall(int x1, int y1, int x2, int y2, uint32 color) {
 	float fy2 = y2 * 256.0f;
 
 	if (_wireframe) {
-		// Pass 1: Draw background fill (pushed back)
-		glEnable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(1.1f, 4.0f);
-		useColor(_wireframeFillColor);
-		glBegin(GL_QUADS);
-		glVertex3f(fx1, fy1, -160.0f);
-		glVertex3f(fx2, fy2, -160.0f);
-		glVertex3f(fx2, fy2, 160.0f);
-		glVertex3f(fx1, fy1, 160.0f);
-		glEnd();
+		if (_wireframeFillColor >= 0) {
+			// Pass 1: Draw background fill (pushed back)
+			glEnable(GL_POLYGON_OFFSET_FILL);
+			glPolygonOffset(1.1f, 4.0f);
+			useColor((uint32)_wireframeFillColor);
+			glBegin(GL_QUADS);
+			glVertex3f(fx1, fy1, -160.0f);
+			glVertex3f(fx2, fy2, -160.0f);
+			glVertex3f(fx2, fy2, 160.0f);
+			glVertex3f(fx1, fy1, 160.0f);
+			glEnd();
+			glDisable(GL_POLYGON_OFFSET_FILL);
+		}
 
-		// Pass 2: Draw colored wireframe edges pulled forward relative to the fill
-		glEnable(GL_POLYGON_OFFSET_LINE);
-		glPolygonOffset(0.0f, -1.0f); // Pull lines forward from the fill
+		// Pass 2: Draw colored wireframe edges
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		useColor(color);
 		glBegin(GL_QUADS);
@@ -259,8 +260,6 @@ void OpenGLRenderer::draw3DWall(int x1, int y1, int x2, int y2, uint32 color) {
 		glVertex3f(fx1, fy1, 160.0f);
 		glEnd();
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		glDisable(GL_POLYGON_OFFSET_LINE);
-		glDisable(GL_POLYGON_OFFSET_FILL);
 	} else {
 		// Normal mode: push the wall face back slightly.
 		// This ensures that wall features drawn later as lines at the same depth correctly win the depth test.
@@ -279,20 +278,21 @@ void OpenGLRenderer::draw3DWall(int x1, int y1, int x2, int y2, uint32 color) {
  
 void OpenGLRenderer::draw3DQuad(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, uint32 color) {
 	if (_wireframe) {
-		// Pass 1: Draw background fill (pushed back)
-		glEnable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(1.1f, 4.0f);
-		useColor(_wireframeFillColor);
-		glBegin(GL_QUADS);
-		glVertex3f(x1, y1, z1);
-		glVertex3f(x2, y2, z2);
-		glVertex3f(x3, y3, z3);
-		glVertex3f(x4, y4, z4);
-		glEnd();
+		if (_wireframeFillColor >= 0) {
+			// Pass 1: Draw background fill (pushed back)
+			glEnable(GL_POLYGON_OFFSET_FILL);
+			glPolygonOffset(1.1f, 4.0f);
+			useColor((uint32)_wireframeFillColor);
+			glBegin(GL_QUADS);
+			glVertex3f(x1, y1, z1);
+			glVertex3f(x2, y2, z2);
+			glVertex3f(x3, y3, z3);
+			glVertex3f(x4, y4, z4);
+			glEnd();
+			glDisable(GL_POLYGON_OFFSET_FILL);
+		}
 
-		// Pass 2: Draw colored wireframe edges pulled forward
-		glEnable(GL_POLYGON_OFFSET_LINE);
-		glPolygonOffset(0.0f, -1.0f);
+		// Pass 2: Draw colored wireframe edges
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		useColor(color);
 		glBegin(GL_QUADS);
@@ -302,8 +302,6 @@ void OpenGLRenderer::draw3DQuad(float x1, float y1, float z1, float x2, float y2
 		glVertex3f(x4, y4, z4);
 		glEnd();
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		glDisable(GL_POLYGON_OFFSET_LINE);
-		glDisable(GL_POLYGON_OFFSET_FILL);
 	} else {
 		// Normal mode: push back to allow overlays (like wall features or floor decorations)
 		glEnable(GL_POLYGON_OFFSET_FILL);
@@ -323,18 +321,19 @@ void OpenGLRenderer::draw3DPolygon(const float *x, const float *y, const float *
 	if (count < 3) return;
 
 	if (_wireframe) {
-		// Pass 1: Draw background fill (pushed back)
-		glEnable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(1.1f, 4.0f);
-		useColor(_wireframeFillColor);
-		glBegin(GL_POLYGON);
-		for (int i = 0; i < count; i++)
-			glVertex3f(x[i], y[i], z[i]);
-		glEnd();
+		if (_wireframeFillColor >= 0) {
+			// Pass 1: Draw background fill (pushed back)
+			glEnable(GL_POLYGON_OFFSET_FILL);
+			glPolygonOffset(1.1f, 4.0f);
+			useColor((uint32)_wireframeFillColor);
+			glBegin(GL_POLYGON);
+			for (int i = 0; i < count; i++)
+				glVertex3f(x[i], y[i], z[i]);
+			glEnd();
+			glDisable(GL_POLYGON_OFFSET_FILL);
+		}
 
-		// Pass 2: Draw colored wireframe edges pulled forward
-		glEnable(GL_POLYGON_OFFSET_LINE);
-		glPolygonOffset(0.0f, -1.0f);
+		// Pass 2: Draw colored wireframe edges
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		useColor(color);
 		glBegin(GL_POLYGON);
@@ -342,8 +341,6 @@ void OpenGLRenderer::draw3DPolygon(const float *x, const float *y, const float *
 			glVertex3f(x[i], y[i], z[i]);
 		glEnd();
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		glDisable(GL_POLYGON_OFFSET_LINE);
-		glDisable(GL_POLYGON_OFFSET_FILL);
 	} else {
 		// Normal mode: push back
 		glEnable(GL_POLYGON_OFFSET_FILL);

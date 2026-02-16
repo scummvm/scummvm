@@ -253,6 +253,7 @@ private:
 	int _weapons;
 	bool _wireframe;
 	bool _widescreen;
+	int _speedShift; // 1-5, movement speed = 1 << (_speedShift - 1)
 
 	Common::RandomSource _randomSource;
 	uint8 _decode1[4];

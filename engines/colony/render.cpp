@@ -780,8 +780,11 @@ void ColonyEngine::wallChar(const float corners[4][3], uint8 cnum) {
 			u[i] = 0.2f + (data[1 + i*2] / 6.0f) * 0.6f;
 			v[i] = 0.2f + (data[2 + i*2] / 6.0f) * 0.6f;
 		}
-		// Characters are usually drawn in black or level-specific color. Color 0 is safe.
-		wallPolygon(corners, u, v, count, 0); 
+		// Draw arrow as outline only (wireframe mode)
+		for (int i = 0; i < count; i++) {
+			int n = (i + 1) % count;
+			wallLine(corners, u[i], v[i], u[n], v[n], 0); // vBLACK
+		}
 	}
 }
 
@@ -815,7 +818,7 @@ void ColonyEngine::drawCellFeature3D(int cellX, int cellY) {
 	{
 		float u[4] = {0.375f, 0.625f, 0.625f, 0.375f};
 		float v[4] = {0.375f, 0.375f, 0.625f, 0.625f};
-		wallPolygon(corners, u, v, 4, 7); // LTGRAY
+		wallPolygon(corners, u, v, 4, 8); // vDKGRAY outline
 		break;
 	}
 	case 2: // LGHOLEFLR
@@ -823,14 +826,14 @@ void ColonyEngine::drawCellFeature3D(int cellX, int cellY) {
 	{
 		float u[4] = {0.0f, 1.0f, 1.0f, 0.0f};
 		float v[4] = {0.0f, 0.0f, 1.0f, 1.0f};
-		wallPolygon(corners, u, v, 4, 7); // LTGRAY
+		wallPolygon(corners, u, v, 4, 8); // vDKGRAY outline
 		break;
 	}
 	case 5: // HOTFOOT
 	{
 		float u[4] = {0.0f, 1.0f, 1.0f, 0.0f};
 		float v[4] = {0.0f, 0.0f, 1.0f, 1.0f};
-		wallPolygon(corners, u, v, 4, 4); // RED
+		wallPolygon(corners, u, v, 4, 4); // vRED outline
 		break;
 	}
 	default:
@@ -1067,7 +1070,7 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		// Tunnel: hexagonal opening from Grid (0,0 0,5 1,6 5,6 6,5 6,0)
 		static const float u_t[6] = { 0.0f,    0.0f,    1/6.0f,  5/6.0f,  1.0f,    1.0f };
 		static const float v_t[6] = { 0.0f,    0.750f,  0.875f,  0.875f,  0.750f,  0.0f };
-		wallPolygon(corners, u_t, v_t, 6, 0); // Black tunnel fill
+		wallPolygon(corners, u_t, v_t, 6, 0); // vBLACK outline
 		break;
 	}
 	case kWallFeatureAirlock: {
@@ -1081,7 +1084,7 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		}
 		if (map[1] == 0) {
 			// Open: black fill (passable opening)
-			wallPolygon(corners, u, v, 8, 0);
+			wallPolygon(corners, u, v, 8, 0); // vBLACK outline
 		} else {
 			// Closed: dark gray wireframe outline + cross
 			const uint32 airlockColor = 8; // vDKGRAY
@@ -1133,18 +1136,15 @@ void ColonyEngine::renderCorridor3D() {
 	computeVisibleCells();
 
 	bool lit = (_corePower[_coreIndex] > 0);
-	bool oldWire = _wireframe;
 
-	// Authentic look: Always wireframe for walls.
-	// Power ON = White background (fill), Black lines.
-	// Power OFF = Black background (fill), White lines.
+	// Walls always use wireframe with fill (opaque walls).
 	_gfx->setWireframe(true, lit ? 7 : 0);
 
 	_gfx->begin3D(_me.xloc, _me.yloc, 0, _me.look, _me.lookY, _screenR);
 	_gfx->clear(lit ? 7 : 0);
- 
-	uint32 wallColor = lit ? 0 : 7; 
-	uint32 floorColor = lit ? 0 : 7; 
+
+	uint32 wallColor = lit ? 0 : 7;
+	uint32 floorColor = lit ? 0 : 7;
 
 	// Draw large floor and ceiling quads
 	// These will be filled with the background color in the occlusion pass
@@ -1181,10 +1181,19 @@ void ColonyEngine::renderCorridor3D() {
 	}
 	
 	drawWallFeatures3D();
+
+	// F8 toggles polyfill for objects only (DOS doFunctionKey case 8).
+	// Non-fill: objects are outline-only (see-through). Walls stay filled.
+	if (_wireframe) {
+		_gfx->setWireframe(true); // No fill = outline-only objects
+	}
 	drawStaticObjects();
+	if (_wireframe) {
+		_gfx->setWireframe(true, lit ? 7 : 0); // Restore wall fill
+	}
 
 	_gfx->end3D();
-	_gfx->setWireframe(oldWire);
+	_gfx->setWireframe(false);
 }
 
 bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj) {
