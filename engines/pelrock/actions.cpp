@@ -762,6 +762,7 @@ void PelrockEngine::useBrickWithWindow(int inventoryObject, HotSpot *hotspot) {
 	_room->addStickerToRoom(_room->_currentRoomNumber, 10, PERSIST_PERM);
 	_room->disableHotspot(_room->findHotspotByExtra(295)); // Disable storefront hotspot
 	_room->disableHotspot(_room->findHotspotByExtra(294)); // Disable window hotspot
+	_disableAction = true; // Prevent player from doing anything until they move Alfred
 	walkTo(630, _alfredState.y);
 }
 

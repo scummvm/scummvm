@@ -487,6 +487,10 @@ void PelrockEngine::checkMouse() {
 
 	checkMouseHover();
 
+	if(_disableAction) {
+		return;
+	}
+
 	if (_alfredState.animState == ALFRED_WALKING && !_alfredState.isWalkingCancelable) {
 		// Ignore clicks while Alfred is walking
 		_events->_leftMouseClicked = false;
@@ -860,7 +864,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 				debug("Finished walking to target");
 				_alfredState.setState(ALFRED_IDLE);
 				_alfredState.isWalkingCancelable = true;
-
+				_disableAction = false;
 				if (_currentHotspot != nullptr)
 					_alfredState.direction = calculateAlfredsDirection(_currentHotspot);
 				drawAlfred(_res->alfredIdle[_alfredState.direction]);
@@ -1561,6 +1565,7 @@ void PelrockEngine::walkTo(int x, int y) {
 }
 
 void PelrockEngine::walkAndAction(HotSpot *hotspot, VerbIcon action) {
+	_disableAction = true;
 	walkTo(hotspot->x + hotspot->w / 2, hotspot->y + hotspot->h);
 	_queuedAction = QueuedAction{action, hotspot->index, true};
 }
@@ -1864,7 +1869,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 	}
 	case 26: {
 		if(_state->getFlag(FLAG_A_LA_CARCEL) == true) {
-			if(!_state->getFlag(FLAG_SE_HA_PUESTO_EL_MUNECO)) {
+			if(_state->getFlag(FLAG_SE_HA_PUESTO_EL_MUNECO) == true) {
 				_state->setCurrentRoot(26, 2, 1);
 			} else {
 				_dialog->say(_res->_ingameTexts[OIGAUSTED], 1);

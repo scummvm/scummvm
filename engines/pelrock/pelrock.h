@@ -178,7 +178,7 @@ public:
 	SmallFont *_smallFont = nullptr;
 	LargeFont *_largeFont = nullptr;
 	DoubleSmallFont *_doubleSmallFont = nullptr;
-
+	bool _disableAction = false;
 
 public:
 	PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc);
