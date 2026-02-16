@@ -1532,30 +1532,16 @@ void PelrockEngine::waitForActionEnd() {
  * fades to it using the step-wise palette transition.
  */
 void PelrockEngine::pickUpMatches(HotSpot *hotspot) {
-	// Load the special palette from ALFRED.7 at offset 0x1610CE
-	static const uint32 kRoom28PaletteOffset = 0x1610CE;
-
-	Common::File alfred7;
-	if (!alfred7.open(Common::Path("ALFRED.7"))) {
-		warning("Could not open ALFRED.7 for room 28 palette");
-		return;
-	}
 
 	byte targetPalette[768];
-	alfred7.seek(kRoom28PaletteOffset, SEEK_SET);
-	alfred7.read(targetPalette, 768);
-	alfred7.close();
-
-	// Convert 6-bit VGA palette (0-63) to 8-bit (0-255)
-	for (int i = 0; i < 768; i++) {
-		targetPalette[i] = targetPalette[i] << 2;
-	}
+	_res->getPaletteForRoom28(targetPalette);
 
 	// Fade from current palette to the new palette
 	_graphics->fadePaletteToTarget(targetPalette, 25);
 	debug("Finished palette fade for room 28 object pickup");
 	// Pick up the item
 	_room->disableHotspot(hotspot);
+	Common::copy(targetPalette, targetPalette + 768, _room->_roomPalette);
 	_state->setFlag(FLAG_CROCODILLO_ENCENDIDO, true);
 	_room->moveHotspot(_room->findHotspotByExtra(87), 415, 171);
 	_room->moveHotspot(_room->findHotspotByExtra(88), 305, 217);

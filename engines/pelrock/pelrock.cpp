@@ -1867,6 +1867,15 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		}
 		break;
 	}
+	case 28: {
+		if(_state->getFlag(FLAG_CROCODILLO_ENCENDIDO) == true) {
+			byte palette[768];
+			_res->getPaletteForRoom28(palette);
+			g_system->getPaletteManager()->setPalette(palette, 0, 256);
+			Common::copy(palette, palette + 768, _room->_roomPalette);
+			break;
+		}
+	}
 	case 26: {
 		if(_state->getFlag(FLAG_A_LA_CARCEL) == true) {
 			if(_state->getFlag(FLAG_SE_HA_PUESTO_EL_MUNECO) == true) {

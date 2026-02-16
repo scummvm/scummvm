@@ -24,6 +24,7 @@
 #include "pelrock/pelrock.h"
 #include "pelrock/room.h"
 #include "pelrock/util.h"
+#include "resources.h"
 
 namespace Pelrock {
 
@@ -320,6 +321,26 @@ void ResourceManager::loadHardcodedText() {
 	exe.close();
 }
 
+void ResourceManager::getPaletteForRoom28(byte *palette) {
+	// Load the special palette from ALFRED.7 at offset 0x1610CE
+	static const uint32 kRoom28PaletteOffset = 0x1610CE;
+
+	Common::File alfred7;
+	if (!alfred7.open(Common::Path("ALFRED.7"))) {
+		warning("Could not open ALFRED.7 for room 28 palette");
+		return;
+	}
+
+	alfred7.seek(kRoom28PaletteOffset, SEEK_SET);
+	alfred7.read(palette, 768);
+
+	// Convert 6-bit VGA palette (0-63) to 8-bit (0-255)
+	for (int i = 0; i < 768; i++) {
+		palette[i] = palette[i] << 2;
+	}
+
+	alfred7.close();
+}
 void ResourceManager::getExtraScreen(int screenIndex, byte *screenBuf, byte *palette) {
 	Common::File alfred7;
 	if (!alfred7.open("ALFRED.7")) {

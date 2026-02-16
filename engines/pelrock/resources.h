@@ -49,6 +49,7 @@ public:
 	void clearSpecialAnim();
 	void loadInventoryItems();
 	void loadHardcodedText();
+	void getPaletteForRoom28(byte *palette);
 	Common::StringArray loadComputerText();
 	void getExtraScreen(int screenIndex, byte *screenBuf, byte *palette);
 	Common::Array<Common::StringArray> getCredits();
