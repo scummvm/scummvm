@@ -24,20 +24,4 @@
 
 namespace Bolt {
 
-XpLib::XpLib(BoltEngine *bolt) {
-	_bolt = bolt;
-
-	initialize();
-}
-
-XpLib::~XpLib() {
-	terminate();
-}
-
-void XpLib::initialize() {
-}
-
-void XpLib::terminate() {
-}
-
 } // End of namespace Bolt

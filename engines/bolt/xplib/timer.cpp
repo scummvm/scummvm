@@ -24,17 +24,22 @@
 
 namespace Bolt {
 
-void XpLib::setMem() {
+bool XpLib::initTimer() {
+	return false;
 }
 
-byte *XpLib::allocMem(int32 size) {
-	return nullptr;
+void XpLib::shutdownTimer() {
 }
 
-void XpLib::tryAllocMem() {
+int32 XpLib::startTimer(int16 delay) {
+	return 0;
 }
 
-void XpLib::freeMem(void *mem) {
+void XpLib::timeCb() {
+}
+
+bool XpLib::killTimer(int32 timerId) {
+	return false;
 }
 
 } // End of namespace Bolt

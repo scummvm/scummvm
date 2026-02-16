@@ -24,31 +24,49 @@
 
 namespace Bolt {
 
-void XpLib::getEvent() {
+void XpLib::fileError(const char *message) {
 }
 
-void XpLib::peekEvent() {
+int32 XpLib::createFile(const char *fileName) {
+	return int32();
 }
 
-void XpLib::postEvent() {
+void XpLib::deleteFile(const char *fileName) {
 }
 
-void XpLib::enableController() {
+int32 XpLib::openFile(const char *fileName, short flags) {
+	return int32();
 }
 
-void XpLib::disableController() {
+void XpLib::closeFile(int32 handle) {
 }
 
-void XpLib::setInactivityTimer() {
+bool XpLib::readFile(int32 handle, void *buffer, uint32 *size) {
+	return false;
 }
 
-void XpLib::setScreenSaverTimer(int32 time) {
+bool XpLib::setFilePos(int32 handle, uint32 offset, int16 origin) {
+	return false;
 }
 
-void XpLib::startTimer() {
+void *XpLib::allocMem(uint32 size) {
+	void *result = malloc(size);
+	if (!result)
+		error("XpLib::allocMem(): Not enough memory");
+
+	return result;
 }
 
-void XpLib::killTimer() {
+void *XpLib::tryAllocMem(uint32 size) {
+	void *result = (void *)malloc(size);
+	if (!result)
+		warning("XpLib::tryAllocMem(): Couldn't allocate memory, returning nullptr");
+
+	return result;
+}
+
+void XpLib::freeMem(void *mem) {
+	free(mem);
 }
 
 } // End of namespace Bolt

@@ -24,16 +24,37 @@
 
 namespace Bolt {
 
-void XpLib::openFile() {
+bool XpLib::initCoords() {
+	return false;
 }
 
-void XpLib::closeFile() {
+void XpLib::shutdownCoords() {
 }
 
-void XpLib::readFile() {
+bool XpLib::readCursor(uint16 *outButtons, int16 *outX, int16 *outY) {
+	return false;
 }
 
-void XpLib::setFilePos() {
+void XpLib::readJoystick(int16 *outX, int16 *outY) {
+}
+
+void XpLib::setCursorPos(int16 x, int16 y) {
+}
+
+void XpLib::setCursorImage(void *bitmap, int16 hotspotX, int16 hotspotY) {
+}
+
+void XpLib::setCursorColor(byte r, byte g, byte b) {
+}
+
+bool XpLib::showCursor() {
+	return false;
+}
+
+void XpLib::hideCursor() {
+}
+
+void XpLib::updateCursorPosition() {
 }
 
 } // End of namespace Bolt

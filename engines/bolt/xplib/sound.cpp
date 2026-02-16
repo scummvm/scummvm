@@ -24,20 +24,36 @@
 
 namespace Bolt {
 
-XpLib::XpLib(BoltEngine *bolt) {
-	_bolt = bolt;
-
-	initialize();
+bool XpLib::pollSound(void *outData) {
+	return false;
 }
 
-XpLib::~XpLib() {
-	terminate();
+bool XpLib::initSound() {
+	return false;
 }
 
-void XpLib::initialize() {
+void XpLib::waveCb() {
+
 }
 
-void XpLib::terminate() {
+void XpLib::shutdownSound() {
+
+}
+
+bool XpLib::playSound(void *data, uint32 size, int16 sampleRate) {
+	return false;
+}
+
+bool XpLib::pauseSound() {
+	return false;
+}
+
+bool XpLib::resumeSound() {
+	return false;
+}
+
+bool XpLib::stopSound() {
+	return false;
 }
 
 } // End of namespace Bolt

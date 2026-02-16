@@ -1,19 +1,23 @@
 MODULE := engines/bolt
 
 MODULE_OBJS = \
+	anim.o \
 	bolt.o \
 	booth.o \
 	console.o \
 	gfx.o \
 	metaengine.o \
 	resource.o \
-	video.o \
-	xplib\xp_cursor.o \
-	xplib\xp_events.o \
-	xplib\xp_file.o \
-	xplib\xp_gfx.o \
-	xplib\xp_mem.o \
-	xplib\xp_sound.o \
+	xplib\blit.o \
+	xplib\cursor.o \
+	xplib\display.o \
+	xplib\events.o \
+	xplib\file.o \
+	xplib\mem.o \
+	xplib\palette.o \
+	xplib\random.o \
+	xplib\sound.o \
+	xplib\timer.o \
 	xplib\xplib.o
 
 # This module can be built as a plugin

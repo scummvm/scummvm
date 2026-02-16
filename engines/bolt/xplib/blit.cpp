@@ -24,10 +24,40 @@
 
 namespace Bolt {
 
-void XpLib::playSound() {
+void XpLib::blit(void *src, uint16 srcStride, void *dst, uint16 dstStride, uint16 width, uint16 height) {
+
 }
 
-void XpLib::stopSound() {
+void XpLib::dirtyBlit(void *src, void *dst, void *dirtyFlags, uint16 width, uint16 height) {
+
+}
+
+void XpLib::maskBlit(void *src, uint16 srcStride, void *dst, uint16 dstStride, uint16 width, uint16 height) {
+
+}
+
+uint32 XpLib::compositeBlit(void *src, void *background, void *dst, uint16 stride, uint16 width, uint16 height) {
+	return 0;
+}
+
+void XpLib::rleBlit(void *src, void *dst, uint16 dstStride, uint16 width, uint16 height) {
+
+}
+
+void XpLib::rleMaskBlit(void *src, void *dst, uint16 dstStride, uint16 width, uint16 height) {
+
+}
+
+uint32 XpLib::rleCompositeBlit(void *rle, void *background, void *dst, uint16 width, uint16 height, void *dirtyFlags) {
+	return 0;
+}
+
+uint16 XpLib::rleDataSize(void *rleData, uint16 height) {
+	return 0;
+}
+
+void XpLib::markCursorPixels(void *buffer, uint32 count) {
+
 }
 
 } // End of namespace Bolt

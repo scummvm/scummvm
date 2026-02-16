@@ -24,22 +24,12 @@
 
 namespace Bolt {
 
-void XpLib::readCursor() {
+int16 XpLib::getRandom(int16 range) {
+	return (int16)(((uint32)_bolt->_randomSource.getRandomNumber(UINT_MAX) * (uint32)range) / 0x8000);
 }
 
-void XpLib::setCursorPos() {
-}
-
-void XpLib::setCursorImage() {
-}
-
-void XpLib::setCursorColor() {
-}
-
-void XpLib::showCursor() {
-}
-
-void XpLib::hideCursor() {
+void XpLib::randomize() {
+	_bolt->_randomSource.generateNewSeed();
 }
 
 } // End of namespace Bolt

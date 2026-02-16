@@ -122,7 +122,7 @@ void BoltEngine::boltMain() {
 	// g_callbackPtr = DS:0xCB; 
 
 	testAlloc = _xp->allocMem(0x100000);
-	if (testAlloc == nullptr)
+	if (!testAlloc)
 		return;
 
 	_xp->freeMem(testAlloc);

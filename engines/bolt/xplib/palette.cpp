@@ -24,48 +24,24 @@
 
 namespace Bolt {
 
-void XpLib::blit() {
 
+void XpLib::getPalette(uint16 startIndex, uint16 count, void *destBuf) {
 }
 
-void XpLib::maskBlit() {
+void XpLib::setPalette(uint16 count, uint16 startIndex, void *srcBu) {
 }
 
-void XpLib::getPalette() {
+bool XpLib::startCycle(XPCycleSpec *specs) {
+	return false;
 }
 
-void XpLib::setPalette() {
-}
-
-void XpLib::startCycle() {
+void XpLib::cycleColors() {
 }
 
 void XpLib::stopCycle() {
 }
 
-void XpLib::setScreenBrightness() {
-}
-
-bool XpLib::chooseDisplaySpec(int *outMode, int numSpecs, DisplaySpecs *specs) {
-	return false;
-}
-
-void XpLib::setCoordSpec(int32 x, int32 y, int32 width, int32 height) {
-}
-
-void XpLib::displayPic() {
-}
-
-void XpLib::updateDisplay() {
-}
-
-void XpLib::setFrameRate() {
-}
-
-void XpLib::setTransparency(bool toggle) {
-}
-
-void XpLib::fillDisplay() {
+void XpLib::setScreenBrightness(uint8 percent) {
 }
 
 } // End of namespace Bolt

@@ -66,6 +66,8 @@ struct BOLTLib {
 };
 
 class BoltEngine : public Engine {
+friend class XpLib;
+
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
