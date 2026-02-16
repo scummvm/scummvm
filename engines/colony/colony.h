@@ -358,6 +358,7 @@ private:
 	int whichSprite(const Common::Point &p);
 	void handleAnimationClick(int item);
 	void dolSprite(int index);
+	void moveObject(int index);
 	void SetObjectState(int num, int state);
 	int ObjectState(int num) const;
 	void SetObjectOnOff(int num, bool on);

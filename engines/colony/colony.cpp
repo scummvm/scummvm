@@ -537,6 +537,12 @@ void ColonyEngine::playAnimation() {
 			break;
 		}
 	} else if (_animationName == "vanity") {
+		debug(0, "Vanity init: action0=%d action1=%d level=%d weapons=%d armor=%d", _action0, _action1, _level, _weapons, _armor);
+		for (int i = 0; i < (int)_lSprites.size(); i++) {
+			ComplexSprite *ls = _lSprites[i];
+			debug(0, "  Vanity sprite %d: type=%d frozen=%d locked=%d current=%d onoff=%d key=%d lock=%d frames=%d",
+				i + 1, ls->type, ls->frozen, ls->locked, ls->current, (int)ls->onoff, ls->key, ls->lock, (int)ls->objects.size());
+		}
 		// DOS DoVanity: set suit state on mirror display (object 1)
 		if (_weapons && _armor)
 			SetObjectState(1, 3);
@@ -794,13 +800,20 @@ int ColonyEngine::whichSprite(const Common::Point &p) {
 				if (mask->planes == 2)
 					maskByte |= mask->data[mask->rowBytes * mask->height + maskIndex];
 				maskByte = maskByte >> shift;
-				if (!(maskByte & ((1 << mask->bits) - 1)))
+				if (!(maskByte & ((1 << mask->bits) - 1))) {
+					debug(0, "  Sprite %d (type=%d frz=%d): bbox hit but mask transparent at row=%d col=%d bits=%d align=%d",
+						i + 1, ls->type, ls->frozen, row, col, mask->bits, mask->align);
 					continue; // Transparent pixel, skip this sprite
+				}
+			} else {
+				debug(0, "  Sprite %d: mask index %d out of bounds (max %d)", i + 1, maskIndex, mask->rowBytes * mask->height);
 			}
+		} else {
+			debug(0, "  Sprite %d: no mask data, using bbox", i + 1);
 		}
 
-		debug(1, "Sprite %d hit. Frame %d, Base Sprite %d. Box: (%d, %d, %d, %d)", i + 1,
-			cnum, spriteIdx, r.left, r.top, r.right, r.bottom);
+		debug(0, "Sprite %d HIT. type=%d frozen=%d Frame %d, Sprite %d. Box: (%d,%d,%d,%d)",
+			i + 1, ls->type, ls->frozen, cnum, spriteIdx, r.left, r.top, r.right, r.bottom);
 		return i + 1;
 	}
 
@@ -868,6 +881,16 @@ void ColonyEngine::handleAnimationClick(int item) {
 			doText(_action1, 0);
 		}
 	} else if (_animationName == "vanity") {
+		debug(0, "Vanity item %d clicked. Sprite type=%d frozen=%d locked=%d current=%d onoff=%d key=%d lock=%d size=%d",
+			item,
+			(item > 0 && item <= (int)_lSprites.size()) ? _lSprites[item-1]->type : -1,
+			(item > 0 && item <= (int)_lSprites.size()) ? _lSprites[item-1]->frozen : -1,
+			(item > 0 && item <= (int)_lSprites.size()) ? _lSprites[item-1]->locked : -1,
+			(item > 0 && item <= (int)_lSprites.size()) ? _lSprites[item-1]->current : -1,
+			(item > 0 && item <= (int)_lSprites.size()) ? (int)_lSprites[item-1]->onoff : -1,
+			(item > 0 && item <= (int)_lSprites.size()) ? _lSprites[item-1]->key : -1,
+			(item > 0 && item <= (int)_lSprites.size()) ? _lSprites[item-1]->lock : -1,
+			(item > 0 && item <= (int)_lSprites.size()) ? (int)_lSprites[item-1]->objects.size() : -1);
 		if (item == 12) { // Coffee cup - spill animation
 			if (!_doorOpen) { // reuse _doorOpen as "spilled" flag
 				for (int i = 1; i < 6; i++) {
@@ -886,6 +909,8 @@ void ColonyEngine::handleAnimationClick(int item) {
 			doText(_action0, 0);
 		} else if (item == 7) { // Book
 			doText(_action0, 0);
+		} else {
+			debug(0, "Vanity: unhandled item %d", item);
 		}
 	} else if (_animationName == "slides") {
 		if (item == 2) { // Speaker
@@ -1198,6 +1223,83 @@ void ColonyEngine::terminateGame(bool blowup) {
 	_system->quit();
 }
 
+void ColonyEngine::moveObject(int index) {
+	if (index < 0 || index >= (int)_lSprites.size())
+		return;
+
+	ComplexSprite *ls = _lSprites[index];
+
+	// Build link group
+	Common::Array<int> linked;
+	if (ls->link) {
+		for (int i = 0; i < (int)_lSprites.size(); i++)
+			if (_lSprites[i]->link == ls->link)
+				linked.push_back(i);
+	} else {
+		linked.push_back(index);
+	}
+
+	// Get initial mouse position and animation origin
+	Common::Point old = _system->getEventManager()->getMousePos();
+	int ox = _screenR.left + (_screenR.width() - 416) / 2;
+	ox = (ox / 8) * 8;
+	int oy = _screenR.top + (_screenR.height() - 264) / 2;
+
+	// Drag loop: track mouse while left button held.
+	// NOTE: The original DOS hides dragged sprites during drag (SetObjectOnOff FALSE)
+	// and redraws them separately on top. We improve on this by keeping them visible
+	// throughout, and drawing an extra copy on top so they render above drawers.
+	while (!shouldQuit()) {
+		Common::Event event;
+		bool buttonDown = true;
+		while (_system->getEventManager()->pollEvent(event)) {
+			if (event.type == Common::EVENT_LBUTTONUP) {
+				buttonDown = false;
+				break;
+			}
+		}
+		if (!buttonDown)
+			break;
+
+		Common::Point cur = _system->getEventManager()->getMousePos();
+		int dx = cur.x - old.x;
+		int dy = cur.y - old.y;
+
+		if (dx != 0 || dy != 0) {
+			// Cycle frame for non-type-2 sprites
+			if (ls->type != 2 && (int)ls->objects.size() > 1) {
+				ls->current++;
+				if (ls->current >= (int)ls->objects.size())
+					ls->current = 0;
+			}
+
+			// Move all linked sprites
+			for (uint i = 0; i < linked.size(); i++) {
+				_lSprites[linked[i]]->xloc += dx;
+				_lSprites[linked[i]]->yloc += dy;
+			}
+
+			old = cur;
+		}
+
+		// Draw all sprites normally, then draw dragged sprites again on top
+		// so they appear above drawers and other overlapping sprites
+		drawAnimation();
+		for (uint i = 0; i < linked.size(); i++)
+			drawComplexSprite(linked[i], ox, oy);
+		_gfx->copyToScreen();
+
+		_system->delayMillis(20);
+	}
+
+	// Reset frame for non-type-2
+	if (ls->type != 2)
+		ls->current = 0;
+
+	drawAnimation();
+	_gfx->copyToScreen();
+}
+
 void ColonyEngine::dolSprite(int index) {
 	if (index < 0 || index >= (int)_lSprites.size())
 		return;
@@ -1206,6 +1308,10 @@ void ColonyEngine::dolSprite(int index) {
 	int maxFrames = (int)ls->objects.size();
 
 	switch (ls->type) {
+	case 0: // Display
+		if (!ls->frozen)
+			moveObject(index);
+		break;
 	case 1: // Key and control
 		if (ls->frozen) {
 			// Container: can open or close if not locked, or if slightly open
@@ -1248,6 +1354,8 @@ void ColonyEngine::dolSprite(int index) {
 					}
 				}
 			}
+		} else {
+			moveObject(index);
 		}
 		break;
 	case 2: // Container and object
@@ -1287,6 +1395,8 @@ void ColonyEngine::dolSprite(int index) {
 					}
 				}
 			}
+		} else {
+			moveObject(index);
 		}
 		break;
 	default:

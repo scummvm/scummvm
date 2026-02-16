@@ -205,8 +205,8 @@ void OpenGLRenderer::begin3D(int camX, int camY, int camZ, int angle, int angleY
 	// regardless of viewport dimensions (e.g. when dashboard narrows it).
 	float aspectRatio = (float)viewport.width() / (float)viewport.height();
 	float fov = 75.0f; // vertical FOV in degrees
-	float nearClip = 10.0f;
-	float farClip = 20000.0f;
+	float nearClip = 1.0f;
+	float farClip = 10000.0f;
 	float ymax = nearClip * tanf(fov * M_PI / 360.0f);
 	float xmax = ymax * aspectRatio;
 	glFrustum(-xmax, xmax, -ymax, ymax, nearClip, farClip);
