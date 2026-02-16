@@ -299,7 +299,7 @@ public:
 	void openPlug(HotSpot *hotspot);
 	void useCordWithPlug(int inventoryObject, HotSpot *hotspot);
 	void pickCables(HotSpot *hotspot);
-	void giveIdToGuard(int inventoryObject, HotSpot *hotspot);
+	void showIdToGuard(int inventoryObject, HotSpot *hotspot);
 	void unlockMuseum();
 	void giveMoneyToGuard(int inventoryObject, HotSpot *hotspot);
 	void openMuseumDoor(HotSpot *hotspot);
@@ -343,6 +343,8 @@ public:
 	void openTunnelDoor(HotSpot *hotspot);
 	void closeTunnelDoor(HotSpot *hotspot);
 	void useDollWithBed(int inventoryObject, HotSpot *hotspot);
+	void giveMagazineToGuard(int inventoryObject, HotSpot *hotspot);
+	void giveWaterToGuard(int inventoryObject, HotSpot *hotspot);
 	void checkAllSymbols();
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);

@@ -157,7 +157,7 @@ void PelrockEngine::init() {
 		// setScreen(0, ALFRED_DOWN);
 		// setScreen(3, ALFRED_RIGHT);
 		// setScreen(22, ALFRED_DOWN);
-		setScreen(31, ALFRED_DOWN);
+		setScreen(36, ALFRED_DOWN);
 		// setScreen(15, ALFRED_DOWN);
 		// setScreen(2, ALFRED_LEFT);
 		// alfredState.x = 576;
@@ -584,7 +584,7 @@ void PelrockEngine::updateAnimations() {
 
 void PelrockEngine::presentFrame() {
 	memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
-	paintDebugLayer();
+	// paintDebugLayer();
 	_screen->markAllDirty();
 }
 
@@ -1158,10 +1158,6 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 	if (sprite->zOrder == -1) {
 		// skips z0rder -1 sprites
 		return;
-	}
-
-	if (_room->_currentRoomNumber == 9 && sprite->index == 2) {
-		debug("Drawing sprite 2 in room 9, anim %d, frame %d/%d, loop %d/%d", sprite->curAnimIndex, animData.curFrame, animData.nframes, animData.curLoop, animData.loopCount);
 	}
 
 	applyMovement(&(sprite->x), &(sprite->y), &(sprite->zOrder), animData.movementFlags);

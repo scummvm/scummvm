@@ -224,8 +224,10 @@ void RoomManager::disableSprite(byte spriteIndex, int persist) {
 }
 
 void RoomManager::disableSprite(byte roomNumber, byte spriteIndex, int persist) {
+	debug("Disabling sprite %d in room %d with persist %d", spriteIndex, roomNumber, persist);
 	if (roomNumber == _currentRoomNumber && persist & PERSIST_TEMP) {
-		_currentRoomAnims[spriteIndex].zOrder = 255;
+		debug("Disabling sprite LOCALLY %d in room %d with persist %d", spriteIndex, roomNumber, persist);
+		_currentRoomAnims[spriteIndex].zOrder = -1;
 		_currentRoomAnims[spriteIndex].isHotspotDisabled = true;
 	}
 	if (persist & PERSIST_PERM) {
@@ -940,6 +942,12 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 				// debug("  Anim %d-%d: x=%d y=%d w=%d h=%d nframes=%d loopCount=%d speed=%d", i, j, anim.x, anim.y, anim.w, anim.h, anim.nframes, anim.loopCount, anim.speed);
 				// debug("  Movement flags: 0x%04X", anim.movementFlags);
 				picOffset += needed;
+
+				if(_currentRoomNumber == 36 && i == 0) {
+					// Room 36 sets its anim to 1 to appear idle and only enables anim later on
+					anim.nframes = 1;
+				}
+
 			} else {
 				continue;
 				// debug("Anim %d-%d: invalid dimensions, skipping", i, j);

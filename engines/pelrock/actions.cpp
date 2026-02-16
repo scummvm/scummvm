@@ -165,7 +165,7 @@ const CombinationEntry combinationTable[] = {
 	{4, 294, &PelrockEngine::useBrickWithWindow},
 	{4, 295, &PelrockEngine::useBrickWithShopWindow},
 	{6, 315, &PelrockEngine::useCordWithPlug},
-	{1, 309, &PelrockEngine::giveIdToGuard},
+	{1, 309, &PelrockEngine::showIdToGuard},
 	{5, 309, &PelrockEngine::giveMoneyToGuard},
 	{7, 353, &PelrockEngine::useAmuletWithStatue},
 	{8, 353, &PelrockEngine::useSecretCodeWithStatue},
@@ -174,6 +174,8 @@ const CombinationEntry combinationTable[] = {
 	{76, 469, &PelrockEngine::usePumpkinWithRiver},
 	{100, 650, &PelrockEngine::useKeyWithPortrait},
 	{83, 461, &PelrockEngine::useDollWithBed},
+	{84, 503, &PelrockEngine::giveMagazineToGuard},
+	{86, 500, &PelrockEngine::giveWaterToGuard},
 	// End marker
 	{WILDCARD, WILDCARD, nullptr}};
 
@@ -528,6 +530,29 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 285:
 		toJail();
 		break;
+	case 374:
+	case 372:
+	case 373:
+		_state->setCurrentRoot(room, rootIndex + 1, 0);
+		break;
+	case 297: {
+		// sprite moves to right
+		_room->enableExit(0);
+		Sprite *sprite = _room->findSpriteByIndex(0);
+		sprite->animData[0].movementFlags = 0x1C; // Move right
+		//Basic loop to wait until the sprite has reached the door
+		while (!shouldQuit()) {
+			_events->pollEvent();
+			renderScene();
+			if (sprite->x >= 206) {
+				break;
+			}
+			_screen->update();
+			g_system->delayMillis(10);
+		}
+		_room->disableSprite(0);
+	} break;
+
 	default:
 		debug("Got actionTrigger %d in dialogActionTrigger, but no handler defined", actionTrigger);
 		break;
@@ -536,7 +561,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 
 void PelrockEngine::givenItems() {
 	_state->setFlag(FLAG_MERCHANT_GIVENITEMS, _state->getFlag(FLAG_MERCHANT_GIVENITEMS) + 1);
-	if(_state->getFlag(FLAG_MERCHANT_GIVENITEMS) == 4) {
+	if (_state->getFlag(FLAG_MERCHANT_GIVENITEMS) == 4) {
 		_state->setCurrentRoot(27, 2, 1);
 	}
 }
@@ -762,7 +787,7 @@ void PelrockEngine::useBrickWithWindow(int inventoryObject, HotSpot *hotspot) {
 	_room->addStickerToRoom(_room->_currentRoomNumber, 10, PERSIST_PERM);
 	_room->disableHotspot(_room->findHotspotByExtra(295)); // Disable storefront hotspot
 	_room->disableHotspot(_room->findHotspotByExtra(294)); // Disable window hotspot
-	_disableAction = true; // Prevent player from doing anything until they move Alfred
+	_disableAction = true;                                 // Prevent player from doing anything until they move Alfred
 	walkTo(630, _alfredState.y);
 }
 
@@ -834,10 +859,10 @@ void PelrockEngine::useCordWithPlug(int inventoryObject, HotSpot *hotspot) {
 	if (!_room->hasSticker(18)) {
 		_dialog->say(_res->_ingameTexts[PRIMERO_ABRIRLO]);
 	} else {
-		debug("Flag is %d", _state->getFlag(FLAG_CABLES_PUESTOS));
 		if (_state->getFlag(FLAG_CABLES_PUESTOS)) {
 			_room->addSticker(19);
 			_room->moveHotspot(_room->findHotspotByIndex(6), 391, 381);
+			_state->removeInventoryItem(6);
 		}
 	}
 }
@@ -870,7 +895,7 @@ void PelrockEngine::pickCables(HotSpot *hotspot) {
 	_state->setCurrentRoot(4, 1, 0);
 }
 
-void PelrockEngine::giveIdToGuard(int inventoryObject, HotSpot *hotspot) {
+void PelrockEngine::showIdToGuard(int inventoryObject, HotSpot *hotspot) {
 	if (!_state->getFlag(FLAG_GUARDIA_PIDECOSAS)) {
 		_dialog->say(_res->_ingameTexts[CUANDOMELOPIDA]);
 		return;
@@ -1019,8 +1044,10 @@ void PelrockEngine::closeTravelAgencyDoor(HotSpot *hotspot) {
 }
 
 void PelrockEngine::usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot) {
+	_state->removeInventoryItem(76);
+	addInventoryItem(86);
 	_sound->playMusicTrack(27);
-	_dialog->say(_res->_ingameTexts[PRIMERINGREDIENTE]);
+	checkIngredients();
 	_dialog->say(_res->_ingameTexts[CUIDADOIMPRUDENTE]);
 	_res->loadAlfredSpecialAnim(5);
 	_alfredState.animState = ALFRED_SPECIAL_ANIM;
@@ -1250,6 +1277,54 @@ void PelrockEngine::useDollWithBed(int inventoryObject, HotSpot *hotspot) {
 	_alfredState.y = y;
 }
 
+void PelrockEngine::giveMagazineToGuard(int inventoryObject, HotSpot *hotspot) {
+	_state->removeInventoryItem(84);
+	_state->setCurrentRoot(34, 4, 0);
+	walkAndAction(hotspot, TALK);
+	waitForActionEnd();
+}
+
+void PelrockEngine::giveWaterToGuard(int inventoryObject, HotSpot *hotspot) {
+	_state->setFlag(FLAG_VIGILANTE_BEBE_AGUA, _state->getFlag(FLAG_VIGILANTE_BEBE_AGUA) + 1);
+
+	_dialog->say(_res->_ingameTexts[ALACONUSTED]);
+	_state->removeInventoryItem(86);
+	addInventoryItem(76);
+	if (_state->getFlag(FLAG_VIGILANTE_BEBE_AGUA) == 1) {
+		_dialog->say(_res->_ingameTexts[MEMEO]);
+
+		// guard running
+		Sprite *sprite = _room->findSpriteByIndex(0);
+		sprite->animData[0].nframes = 5;
+		sprite->animData[0].movementFlags = 0x1C; // Move right
+		byte state = 0;
+		//Basic loop to wait until the sprite has reached the door
+		while (!shouldQuit()) {
+			_events->pollEvent();
+			renderScene();
+			if (sprite->x >= 339 && state == 0) {
+				state = 1;
+				sprite->animData[0].movementFlags = 0x240;
+			}
+			if(sprite->y <= 188 && state == 1) {
+				state = 2;
+				sprite->animData[0].movementFlags = 0x14; // Move
+			}
+			if(sprite->x <= 327 && state == 2) {
+				sprite->zOrder = -1; // Hide sprite
+				break;
+			}
+			debug("Guard position: (%d, %d), state: %d", sprite->x, sprite->y, state);
+			_screen->update();
+			g_system->delayMillis(10);
+		}
+		_room->disableSprite(36, 0, PERSIST_BOTH);
+		_room->enableExit(0, PERSIST_BOTH);
+	} else {
+		_state->setCurrentRoot(36, _state->getCurrentRoot(36, 0) + 1, 0);
+	}
+}
+
 void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 	debug("Performing action trigger: %d", actionTrigger);
 	switch (actionTrigger) {
@@ -1404,13 +1479,20 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		break;
 	case 108:
 	case 109: {
-		if(_state->hasInventoryItem(110) == true) {
+		if (_state->hasInventoryItem(110) == true) {
 			_state->removeInventoryItem(110);
 			_state->removeInventoryItem(109);
 			_state->removeInventoryItem(108);
 			addInventoryItem(83);
 			_dialog->say(_res->_ingameTexts[MUNECO_ARREGLADO]);
 		}
+		break;
+	}
+	case 84: {
+		_res->loadAlfredSpecialAnim(1);
+		_alfredState.animState = ALFRED_SPECIAL_ANIM;
+		waitForSpecialAnimation();
+		loadExtraScreenAndPresent(7);
 		break;
 	}
 	default:
