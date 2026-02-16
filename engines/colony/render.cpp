@@ -1128,41 +1128,38 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 
 		if (shipLevel) {
 			// Octagonal ship door (SS door)
+			// DOS split7x7 grid: lr[2,1,1,2,4,5,5,4] ud[0,1,5,6,6,5,1,0][same]
+			// split7 positions: 0=1/8, 1=2/8, 2=3/8, 3=4/8, 4=5/8, 5=6/8, 6=7/8
 			static const float u_ss[8] = { 0.375f, 0.250f, 0.250f, 0.375f, 0.625f, 0.750f, 0.750f, 0.625f };
 			static const float v_ss[8] = { 0.125f, 0.250f, 0.750f, 0.875f, 0.875f, 0.750f, 0.250f, 0.125f };
 
-			if (map[1] == 0) {
-				// Open: dark gray octagonal outline
-				for (int i = 0; i < 8; i++)
-					wallLine(corners, u_ss[i], v_ss[i], u_ss[(i + 1) % 8], v_ss[(i + 1) % 8], doorColor);
-			} else {
-				// Closed: dark gray octagon + inner panel
-				for (int i = 0; i < 8; i++)
-					wallLine(corners, u_ss[i], v_ss[i], u_ss[(i + 1) % 8], v_ss[(i + 1) % 8], doorColor);
+			// DOS wireframe: octagon outline in vDKGRAY (both open and closed)
+			for (int i = 0; i < 8; i++)
+				wallLine(corners, u_ss[i], v_ss[i], u_ss[(i + 1) % 8], v_ss[(i + 1) % 8], doorColor);
+
+			if (map[1] != 0) {
+				// Closed: add inner rectangle panel (lr[2]..lr[4] × ud[1]..ud[5])
 				wallLine(corners, 0.375f, 0.25f, 0.375f, 0.75f, doorColor);
-				wallLine(corners, 0.625f, 0.25f, 0.625f, 0.75f, doorColor);
-				wallLine(corners, 0.375f, 0.25f, 0.625f, 0.25f, doorColor);
 				wallLine(corners, 0.375f, 0.75f, 0.625f, 0.75f, doorColor);
+				wallLine(corners, 0.625f, 0.75f, 0.625f, 0.25f, doorColor);
+				wallLine(corners, 0.625f, 0.25f, 0.375f, 0.25f, doorColor);
 			}
 		} else {
 			// Standard rectangular door (Lab levels)
-			float xl = 0.25f, xr = 0.75f;
-			float yb = 0.125f, yt = 0.875f;
+			// DOS: xx1 = mid(center,left) = 0.25, xx2 = mid(center,right) = 0.75
+			// ybl goes to floor (v=0), ytl = 7/8*ceil + 1/8*floor (v=0.875)
+			static const float xl = 0.25f, xr = 0.75f;
+			static const float yb = 0.0f, yt = 0.875f;
 
-			if (map[1] == 0) {
-				// Open: dark gray door outline + floor perspective quad
-				wallLine(corners, xl, yb, xl, yt, doorColor);
-				wallLine(corners, xl, yt, xr, yt, doorColor);
-				wallLine(corners, xr, yt, xr, yb, doorColor);
-				wallLine(corners, xr, yb, xl, yb, doorColor);
-			} else {
-				// Closed: dark gray door outline + handle
-				wallLine(corners, xl, yb, xl, yt, doorColor);
-				wallLine(corners, xl, yt, xr, yt, doorColor);
-				wallLine(corners, xr, yt, xr, yb, doorColor);
-				wallLine(corners, xr, yb, xl, yb, doorColor);
-				// Handle
-				wallLine(corners, xr - 0.15f, 0.45f, xr - 0.05f, 0.55f, doorColor);
+			// DOS wireframe: door outline in vDKGRAY (both open and closed)
+			wallLine(corners, xl, yb, xl, yt, doorColor);
+			wallLine(corners, xl, yt, xr, yt, doorColor);
+			wallLine(corners, xr, yt, xr, yb, doorColor);
+			wallLine(corners, xr, yb, xl, yb, doorColor);
+
+			if (map[1] != 0) {
+				// Closed: add handle bar at midpoint of door
+				wallLine(corners, 0.3125f, 0.4375f, 0.6875f, 0.4375f, doorColor);
 			}
 		}
 		break;
