@@ -345,6 +345,7 @@ public:
 	void useDollWithBed(int inventoryObject, HotSpot *hotspot);
 	void giveMagazineToGuard(int inventoryObject, HotSpot *hotspot);
 	void giveWaterToGuard(int inventoryObject, HotSpot *hotspot);
+	void pickUpStone(HotSpot *hotspot);
 	void checkAllSymbols();
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);

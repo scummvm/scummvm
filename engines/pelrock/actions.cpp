@@ -146,6 +146,9 @@ const ActionEntry actionTable[] = {
 	{465, OPEN, &PelrockEngine::openTunnelDoor},
 	{465, CLOSE, &PelrockEngine::closeTunnelDoor},
 
+	//Room 37
+	{90, PICKUP, &PelrockEngine::pickUpStone},
+
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
 	{WILDCARD, TALK, &PelrockEngine::noOpAction},   // Generic talk action
@@ -540,7 +543,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_room->enableExit(0);
 		Sprite *sprite = _room->findSpriteByIndex(0);
 		sprite->animData[0].movementFlags = 0x1C; // Move right
-		//Basic loop to wait until the sprite has reached the door
+		// Basic loop to wait until the sprite has reached the door
 		while (!shouldQuit()) {
 			_events->pollEvent();
 			renderScene();
@@ -1298,7 +1301,7 @@ void PelrockEngine::giveWaterToGuard(int inventoryObject, HotSpot *hotspot) {
 		sprite->animData[0].nframes = 5;
 		sprite->animData[0].movementFlags = 0x1C; // Move right
 		byte state = 0;
-		//Basic loop to wait until the sprite has reached the door
+		// Basic loop to wait until the sprite has reached the door
 		while (!shouldQuit()) {
 			_events->pollEvent();
 			renderScene();
@@ -1306,11 +1309,11 @@ void PelrockEngine::giveWaterToGuard(int inventoryObject, HotSpot *hotspot) {
 				state = 1;
 				sprite->animData[0].movementFlags = 0x240;
 			}
-			if(sprite->y <= 188 && state == 1) {
+			if (sprite->y <= 188 && state == 1) {
 				state = 2;
 				sprite->animData[0].movementFlags = 0x14; // Move
 			}
-			if(sprite->x <= 327 && state == 2) {
+			if (sprite->x <= 327 && state == 2) {
 				sprite->zOrder = -1; // Hide sprite
 				break;
 			}
@@ -1323,6 +1326,10 @@ void PelrockEngine::giveWaterToGuard(int inventoryObject, HotSpot *hotspot) {
 	} else {
 		_state->setCurrentRoot(36, _state->getCurrentRoot(36, 0) + 1, 0);
 	}
+}
+
+void PelrockEngine::pickUpStone(HotSpot *hotspot) {
+	checkIngredients();
 }
 
 void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
@@ -1357,10 +1364,18 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 	case 327:
 		_state->setFlag(FLAG_MIRA_SIMBOLO_FUERA_MUSEO, true);
 		break;
-	case 294:
+	case 294: {
 		HotSpot *floorTile = _room->findHotspotByExtra(462);
 		floorTile->actionFlags = ACTION_MASK_OPEN;
 		_room->changeHotSpot(*floorTile);
+	}
+
+	case 307: {
+		HotSpot *stone = _room->findHotspotByExtra(90);
+		stone->actionFlags = ACTION_MASK_PICKUP;
+		_room->changeHotSpot(*stone);
+		break;
+	}
 	}
 }
 

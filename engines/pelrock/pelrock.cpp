@@ -584,7 +584,7 @@ void PelrockEngine::updateAnimations() {
 
 void PelrockEngine::presentFrame() {
 	memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
-	// paintDebugLayer();
+	paintDebugLayer();
 	_screen->markAllDirty();
 }
 

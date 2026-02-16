@@ -212,6 +212,7 @@ void RoomManager::changeHotspot(byte room, HotSpot hotspot, int persist) {
 				_currentRoomHotspots[i] = hotspot;
 				break;
 			}
+			debug("Hotspot %d in room %d does not match changed hotspot inner index %d", _currentRoomHotspots[i].innerIndex, room, hotspot.innerIndex);
 		}
 	}
 	if (persist & PERSIST_PERM) {
