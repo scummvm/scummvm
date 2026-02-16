@@ -101,13 +101,17 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_gametest = false;
 	_blackoutColor = 15; // Set to white (vINTWHITE) for better visibility in darkness
 
+	_sound = new Sound(this);
 	initTrig();
 }
+
 
 ColonyEngine::~ColonyEngine() {
 	deleteAnimation();
 	delete _gfx;
+	delete _sound;
 }
+
 
 void ColonyEngine::loadMap(int mnum) {
 	Common::String mapName = Common::String::format("MAP.%d", mnum);
@@ -1003,6 +1007,8 @@ void ColonyEngine::handleAnimationClick(int item) {
 
 void ColonyEngine::terminateGame(bool blowup) {
 	debug(0, "YOU HAVE BEEN TERMINATED! (blowup=%d)", blowup);
+	if (blowup)
+		_sound->play(Sound::kExplode);
 	
 	const char *msg[] = {
 		"   YOU HAVE BEEN TERMINATED!   ",

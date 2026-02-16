@@ -28,6 +28,8 @@
 #include "common/random.h"
 #include "common/rect.h"
 #include "colony/gfx.h"
+#include "colony/sound.h"
+
 
 namespace Colony {
 
@@ -200,6 +202,8 @@ private:
 	int _robotNum;
 
 	Renderer *_gfx;
+	Sound *_sound;
+
 
 	int _tsin, _tcos;
 	int _sint[256];

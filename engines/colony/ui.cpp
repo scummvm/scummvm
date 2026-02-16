@@ -318,7 +318,9 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 			if (tryPassThroughFeature(pobject->xindex, pobject->yindex, kDirNorth, pobject))
 				return moveTo();
 			debug("Collision South at x=%d y=%d", pobject->xindex, yind2);
+			_sound->play(Sound::kBang);
 			return -1;
+
 		}
 
 		if (!(_wall[pobject->xindex][pobject->yindex] & 1))
@@ -326,7 +328,9 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 		if (tryPassThroughFeature(pobject->xindex, pobject->yindex, kDirSouth, pobject))
 			return moveTo();
 		debug("Collision North at x=%d y=%d", pobject->xindex, pobject->yindex);
+		_sound->play(Sound::kBang);
 		return -1;
+
 	}
 
 	if (yind2 == pobject->yindex) {
@@ -336,7 +340,9 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 			if (tryPassThroughFeature(pobject->xindex, pobject->yindex, kDirEast, pobject))
 				return moveTo();
 			debug("Collision East at x=%d y=%d", xind2, pobject->yindex);
+			_sound->play(Sound::kBang);
 			return -1;
+
 		}
 
 		if (!(_wall[pobject->xindex][pobject->yindex] & 2))
@@ -344,7 +350,9 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 		if (tryPassThroughFeature(pobject->xindex, pobject->yindex, kDirWest, pobject))
 			return moveTo();
 		debug("Collision West at x=%d y=%d", pobject->xindex, pobject->yindex);
+		_sound->play(Sound::kBang);
 		return -1;
+
 	}
 
 	// Diagonal
@@ -386,6 +394,9 @@ bool ColonyEngine::setDoorState(int x, int y, int direction, int state) {
 		return false;
 
 	_mapData[x][y][direction][1] = (uint8)state;
+	if (state == 0)
+		_sound->play(Sound::kDoor);
+
 
 	int nx = x;
 	int ny = y;
@@ -455,9 +466,11 @@ bool ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Lo
 			return true;
 		if (pobject == &_me) {
 			if (_unlocked) {
+				_sound->play(Sound::kAirlock);
 				setDoorState(fromX, fromY, direction, 0);
 				return true;
 			}
+
 			inform("AIRLOCK IS SEALED.", true);
 		}
 		return false;
@@ -525,7 +538,9 @@ void ColonyEngine::interactWithObject(int objNum) {
 		break;
 	case kObjTeleport:
 	{
+		_sound->play(Sound::kTeleport);
 		const int targetLevelRaw = _mapData[x][y][4][2];
+
 		const int targetLevel = (targetLevelRaw == 0) ? _level : targetLevelRaw;
 		const int targetX = _action0;
 		const int targetY = _action1;
@@ -554,16 +569,22 @@ void ColonyEngine::interactWithObject(int objNum) {
 		break;
 	case kObjScreen:
 		// original game shows "Full of stars" effect/text
+		_sound->play(Sound::kStars1);
 		inform("I CAN SEE THROUGH IT...", true);
 		break;
+
 	case kObjToilet:
 	case kObjPToilet:
+		_sound->play(Sound::kToilet);
 		inform("IT'S A TOILET.", true); 
 		break;
 	case kObjTub:
+		_sound->play(Sound::kBath);
 		inform("A BATHTUB. NO TIME FOR A SOAK.", true);
 		break;
+
 	case kObjSink:
+		_sound->play(Sound::kSink);
 		inform("A SINK. IT'S DRY.", true);
 		break;
 	case kObjCryo:
@@ -733,8 +754,8 @@ void ColonyEngine::doText(int entry, int center) {
 	for (int i = 0; i < maxlines; i++) {
 		_gfx->drawString(&font, lineArray[i], r.left + 3, r.top + 4 + i * lineheight, 0);
 		if (center == 2) {
-			// Teletype sound effect placeholder
-			_system->delayMillis(20); 
+			_sound->play(Sound::kDit);
+			_system->delayMillis(20);
 		}
 	}
 
