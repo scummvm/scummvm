@@ -287,6 +287,8 @@ private:
 
 	uint8 wallAt(int x, int y) const;
 	const uint8 *mapFeatureAt(int x, int y, int direction) const;
+	bool _visibleCell[32][32];
+	void computeVisibleCells();
 	void drawStaticObjects();
 
 public:

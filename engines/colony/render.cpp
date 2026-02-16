@@ -611,10 +611,75 @@ void ColonyEngine::draw3DPrism(const Thing &obj, const PrismPartDef &def, bool u
 	}
 }
 
+void ColonyEngine::computeVisibleCells() {
+	memset(_visibleCell, 0, sizeof(_visibleCell));
+
+	int px = _me.xindex;
+	int py = _me.yindex;
+	if (px < 0 || px >= 32 || py < 0 || py >= 32)
+		return;
+
+	// BFS from player cell, stopping at walls.
+	// Doors are on walls, so they act as opaque barriers.
+	_visibleCell[px][py] = true;
+	int queueX[1024], queueY[1024];
+	int head = 0, tail = 0;
+	queueX[tail] = px;
+	queueY[tail] = py;
+	tail++;
+
+	while (head < tail) {
+		int cx = queueX[head];
+		int cy = queueY[head];
+		head++;
+
+		// North: (cx, cy+1) — wall check: _wall[cx][cy+1] & 0x01
+		if (cy + 1 < 32 && !_visibleCell[cx][cy + 1]) {
+			if (!(wallAt(cx, cy + 1) & 0x01)) {
+				_visibleCell[cx][cy + 1] = true;
+				queueX[tail] = cx;
+				queueY[tail] = cy + 1;
+				tail++;
+			}
+		}
+		// South: (cx, cy-1) — wall check: _wall[cx][cy] & 0x01
+		if (cy - 1 >= 0 && !_visibleCell[cx][cy - 1]) {
+			if (!(wallAt(cx, cy) & 0x01)) {
+				_visibleCell[cx][cy - 1] = true;
+				queueX[tail] = cx;
+				queueY[tail] = cy - 1;
+				tail++;
+			}
+		}
+		// East: (cx+1, cy) — wall check: _wall[cx+1][cy] & 0x02
+		if (cx + 1 < 32 && !_visibleCell[cx + 1][cy]) {
+			if (!(wallAt(cx + 1, cy) & 0x02)) {
+				_visibleCell[cx + 1][cy] = true;
+				queueX[tail] = cx + 1;
+				queueY[tail] = cy;
+				tail++;
+			}
+		}
+		// West: (cx-1, cy) — wall check: _wall[cx][cy] & 0x02
+		if (cx - 1 >= 0 && !_visibleCell[cx - 1][cy]) {
+			if (!(wallAt(cx, cy) & 0x02)) {
+				_visibleCell[cx - 1][cy] = true;
+				queueX[tail] = cx - 1;
+				queueY[tail] = cy;
+				tail++;
+			}
+		}
+	}
+}
+
 void ColonyEngine::drawStaticObjects() {
 	for (uint i = 0; i < _objects.size(); i++) {
 		const Thing &obj = _objects[i];
 		if (!obj.alive)
+			continue;
+		int ox = obj.where.xindex;
+		int oy = obj.where.yindex;
+		if (ox < 0 || ox >= 32 || oy < 0 || oy >= 32 || !_visibleCell[ox][oy])
 			continue;
 		drawStaticObjectPrisms3D(obj);
 	}
@@ -1050,6 +1115,8 @@ void ColonyEngine::drawWallFeatures3D() {
 
 	for (int y = 0; y < 31; y++) {
 		for (int x = 0; x < 31; x++) {
+			if (!_visibleCell[x][y])
+				continue;
 			drawCellFeature3D(x, y);
 			for (int dir = 0; dir < 4; dir++) {
 				const uint8 *map = mapFeatureAt(x, y, dir);
@@ -1063,10 +1130,12 @@ void ColonyEngine::drawWallFeatures3D() {
 
 
 void ColonyEngine::renderCorridor3D() {
+	computeVisibleCells();
+
 	bool lit = (_corePower[_coreIndex] > 0);
 	bool oldWire = _wireframe;
 
-	// Authentic look: Always wireframe for walls. 
+	// Authentic look: Always wireframe for walls.
 	// Power ON = White background (fill), Black lines.
 	// Power OFF = Black background (fill), White lines.
 	_gfx->setWireframe(true, lit ? 7 : 0);

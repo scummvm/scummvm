@@ -287,6 +287,43 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 	const int xind2 = xnew >> 8;
 	const int yind2 = ynew >> 8;
 
+	// Clamp position to maintain minimum distance from walls within a cell.
+	// This prevents the camera from clipping through thin walls.
+	// Skip clamping for walls that have a passable feature (open door, stairs, etc.)
+	static const int kWallPad = 40;
+	auto isPassable = [this](int cx, int cy, int dir) -> bool {
+		if (cx < 0 || cx >= 31 || cy < 0 || cy >= 31)
+			return false;
+		uint8 type = _mapData[cx][cy][dir][0];
+		if (type == kWallFeatureDoor || type == kWallFeatureAirlock)
+			return _mapData[cx][cy][dir][1] == 0; // open
+		if (type == kWallFeatureUpStairs || type == kWallFeatureDnStairs ||
+			type == kWallFeatureTunnel || type == kWallFeatureElevator)
+			return true;
+		return false;
+	};
+	auto clampToWalls = [this, &isPassable](Locate *p) {
+		int cx = p->xindex;
+		int cy = p->yindex;
+		int cellMinX = cx << 8;
+		int cellMinY = cy << 8;
+		int cellMaxX = cellMinX + 255;
+		int cellMaxY = cellMinY + 255;
+
+		// South wall of this cell (at cellMinY boundary)
+		if ((wallAt(cx, cy) & 0x01) && !isPassable(cx, cy, kDirSouth))
+			p->yloc = MAX(p->yloc, cellMinY + kWallPad);
+		// North wall (at cellMaxY+1 boundary = south wall of cell above)
+		if ((wallAt(cx, cy + 1) & 0x01) && !isPassable(cx, cy, kDirNorth))
+			p->yloc = MIN(p->yloc, cellMaxY - kWallPad);
+		// West wall of this cell (at cellMinX boundary)
+		if ((wallAt(cx, cy) & 0x02) && !isPassable(cx, cy, kDirWest))
+			p->xloc = MAX(p->xloc, cellMinX + kWallPad);
+		// East wall (at cellMaxX+1 boundary = west wall of cell to right)
+		if ((wallAt(cx + 1, cy) & 0x02) && !isPassable(cx, cy, kDirEast))
+			p->xloc = MIN(p->xloc, cellMaxX - kWallPad);
+	};
+
 	auto occupied = [&]() -> int {
 		return occupiedObjectAt(xind2, yind2, pobject);
 	};
@@ -300,6 +337,7 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 		pobject->dy = ynew - pobject->yloc;
 		pobject->xloc = xnew;
 		pobject->yloc = ynew;
+		clampToWalls(pobject);
 		return 0;
 	};
 
@@ -319,6 +357,7 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 			pobject->dy = ynew - pobject->yloc;
 			pobject->xloc = xnew;
 			pobject->yloc = ynew;
+			clampToWalls(pobject);
 			return 0;
 		}
 
