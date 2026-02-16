@@ -1401,6 +1401,17 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		_dialog->say(_res->_ingameTexts[PARECE_COMBINACION_CAJAFUERTE]);
 		_state->setFlag(FLAG_CLAVE_CAJA_FUERTE, true);
 		break;
+	case 108:
+	case 109: {
+		if(_state->hasInventoryItem(110) == true) {
+			_state->removeInventoryItem(110);
+			_state->removeInventoryItem(109);
+			_state->removeInventoryItem(108);
+			addInventoryItem(83);
+			_dialog->say(_res->_ingameTexts[MUNECO_ARREGLADO]);
+		}
+		break;
+	}
 	default:
 		break;
 	}
