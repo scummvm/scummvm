@@ -35,10 +35,35 @@
 #include "graphics/screen.h"
 
 #include "bolt/detection.h"
+#include "bolt/xplib/xplib.h"
 
 namespace Bolt {
 
 struct BoltGameDescription;
+class XpLib;
+
+struct DisplaySpecs {
+	int16 width;
+	int16 height;
+	int16 depth;
+	int16 unk;
+};
+
+struct BarkerTable {
+	
+};
+
+struct BOLTLib {
+	int16 refCount;
+	int16 groupCount;
+	int32 fileHandle;
+	int32 *funcTable1;
+	int32 *funcTable2;
+	int32 *dwordPtr1;
+	int32 *dwordPtr2;
+	int32 *dwordPtr3;
+	int32 *dwordPtr4;
+};
 
 class BoltEngine : public Engine {
 private:
@@ -95,6 +120,151 @@ public:
 		Common::Serializer s(stream, nullptr);
 		return syncGame(s);
 	}
+
+protected:
+	DisplaySpecs g_displaySpecs[2] = {
+		{384, 240, 1, 1},
+		{320, 200, 1, 1}
+	};
+
+	XpLib *_xp;
+
+	// Entry point
+	void boltMain();
+
+	// Booths logic
+	typedef void (BoltEngine::*SideShowHandler)(void);
+
+	int g_lettersWon = 0;
+
+	void displayBooth();
+	void playAVOverBooth();
+	void hucksBooth();
+	void fredsBooth();
+	void scoobysBooth();
+	void yogisBooth();
+	void georgesBooth();
+	void topCatsBooth();
+	void mainEntrance();
+	void huckGame();
+	void fredGame();
+	void scoobyGame();
+	void yogiGame();
+	void georgeGame();
+	void topCatGame();
+	void winALetter();
+
+	void loadBooth();
+	void unloadBooth();
+	void openBooth();
+	void closeBooth();
+	void playTour();
+	void finishPlayingHelp();
+	void hotSpotActive();
+	void hoverHotSpot();
+	void boothEventLoop();
+	void resetInactivityState();
+	void handleButtonPress();
+	void playBoothAV();
+	void mapIdleAnimation();
+	void boothIdleAnimation();
+	void screensaverStep();
+	void flushInput();
+	
+	BarkerTable *createBarker(int16 minIndex, int16 maxIndex);
+	void freeBarker(BarkerTable *table);
+	void registerSideShow(BarkerTable *table, SideShowHandler handler, short boothId);
+	void barker(BarkerTable *table, int16 startBooth);
+	bool checkError();
+
+	// Graphics
+	int g_displayMode = 0;
+	int32 g_displayX = 0;
+	int32 g_displayY = 0;
+	int32 g_displayWidth = 0;
+	int32 g_displayHeight = 0;
+
+	void setCursorPict(void *sprite);
+	void startCycle(void *cycleResource);
+	void blastColors();
+	void setColors();
+	void restoreColors();
+	void loadColors();
+	void shiftColorMap();
+	void fadeToBlack();
+	void displayColors(void *palette, int16 page, int16 flags);
+	void boltPict2Pict(void *dest, void *boltSprite);
+	void displayPic(void *boltSprite, int16 xOff, int16 yOff, int16 flags);
+	void boltCycleToXPCycle();
+	void unpackColors();
+	void inRect();
+	void rectOverlap();
+
+	// Resource handling
+	BOLTLib *g_boothsBoltLib = nullptr;
+	int g_boothsBoltIndex = 0;
+
+	#define AssetPath(x) x
+
+	bool openBOLTLib(const char *fileName, int *outIdx, BOLTLib **outLib);
+	void closeBOLTLib(BOLTLib **lib);
+	bool attemptFreeIndex(BOLTLib *lib, int16 groupId);
+	void loadGroupDirectory();
+	bool getBOLTGroup(BOLTLib *lib, int16 groupId, int16 flags);
+	void freeBOLTGroup(BOLTLib *lib, int16 groupId, int16 flags);
+	void *getBOLTMember(BOLTLib *lib, int16 resId);
+	bool freeBOLTMember(BOLTLib *lib, int16 resId);
+
+	void *memberAddr(BOLTLib *lib, int16 resId);
+	void *memberAddrOffset(BOLTLib *lib, uint32 resIdAndOffset);
+	uint32 memberSize(BOLTLib *lib, int16 resId);
+	void *groupAddr(BOLTLib *lib, int16 groupId);
+
+	bool allocResourceIndex();
+	void freeResourceIndex();
+
+	bool initVRam(int16 poolSize);
+	void freeVRam();
+	bool vLoad(void *dest, const char *name);
+	bool vSave(void *src, uint16 srcSize, const char *name);
+	bool vDelete(const char *name);
+	void memMove(void *dest, void *src, uint16 count);
+	void *dataAddress(int16 recordOffset);
+	uint16 dataSize(int16 recordOffset);
+	bool findRecord(const char *name, int16 *outOffset);
+
+	// Videos
+	void *g_rtfHandle = nullptr;
+
+	void *openRTF(const char *fileName);
+	void closeRTF(void *rtf);
+	bool playRTF(void *rtfFile, int16 animIndex, void *ringBuffer, int32 bufferSize);
+	bool fillRTFBuffer();
+	void flushRTFSoundQueue();
+	bool maintainRTF(int16 mode, void *outFrameData);
+	bool isRTFPlaying();
+	void killRTF();
+	void readPacket();
+	void preProcessPacket();
+	void queuePacket();
+	void deQueuePacket();
+	void allocPacket();
+	void freePacket();
+	void resetPlaybackState();
+	void sub_12980();
+	void prepareAV();
+	void maintainAV();
+	void stopAV();
+	bool playAV(void *rtfHandle, int16 animIndex, int16 width, int16 height, int16 xOff, int16 yOff);
+	void processPacket();
+	void processRL7();
+	void processPLTE();
+	void initAV();
+	void cleanUpAV();
+	void startAnimation();
+	void maintainAudioPlay();
+	void initAnim();
+	void cleanUpAnim();
 };
 
 extern BoltEngine *g_engine;
