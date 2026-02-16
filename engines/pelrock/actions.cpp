@@ -62,7 +62,7 @@ const ActionEntry actionTable[] = {
 	// Room 3
 	{290, OPEN, &PelrockEngine::openShopDoor},
 	{290, CLOSE, &PelrockEngine::closeShopDoor},
-	{32, OPEN, &PelrockEngine::openLamppost},
+	{288, OPEN, &PelrockEngine::openLamppost},
 	{308, PICKUP, &PelrockEngine::moveCable}, // Lamppost cable
 
 	// Room 15
@@ -932,13 +932,14 @@ void PelrockEngine::useAmuletWithStatue(int inventoryObject, HotSpot *hotspot) {
 		_state->setCurrentRoot(7, 1, 0);
 		_alfredState.direction = ALFRED_RIGHT;
 
-		HotSpot *statueHotspot = _room->findHotspotByExtra(91);
+		HotSpot *statueHotspot = _room->findHotspotByExtra(347);
 		_currentHotspot = statueHotspot;
 		walkTo(statueHotspot->x + statueHotspot->w / 2, statueHotspot->y + statueHotspot->h);
 		animateStatuePaletteFade(false);
 		walkAndAction(statueHotspot, TALK);
 		waitForActionEnd();
 		animateStatuePaletteFade(true);
+		addInventoryItem(8);
 	}
 }
 
