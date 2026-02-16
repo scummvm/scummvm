@@ -115,6 +115,9 @@ enum ObjColor {
 	kColorTable = 61,
 	kColorTableBase = 62,
 	kColorWall = 77,
+	kColorPower = 54,
+	kColorPBase = 55,
+	kColorPSource = 56,
 	kColorRainbow1 = 80,
 	kColorRainbow2 = 81
 };

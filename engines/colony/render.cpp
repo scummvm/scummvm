@@ -68,6 +68,9 @@ static uint8 lookupLineColor(int colorIdx) {
 	case kColorMacScreen: return 8;  // vDKGRAY
 	case kColorPot:       return 6;  // vBROWN
 	case kColorPlant:     return 2;  // vGREEN (hardcoded in MakePlant via DrawLeaf)
+	case kColorPower:     return 1;  // vBLUE (lsColor[54] LINECOLOR)
+	case kColorPBase:     return 1;  // vBLUE (lsColor[55] LINECOLOR)
+	case kColorPSource:   return 4;  // vRED (lsColor[56] LINECOLOR)
 	case kColorTable:     return 6;  // vBROWN
 	case kColorTableBase: return 6;  // vBROWN
 	case kColorWall:      return 0;  // vBLACK
@@ -510,6 +513,45 @@ static const Colony::ColonyEngine::PrismPartDef kReactorParts[3] = {
 	{12, kReactorCorePts, 7, kReactorCoreSurf},
 	{8, kReactorBasePts, 6, kReactorBaseSurf},
 	{8, kReactorTopPts, 6, kReactorBaseSurf}
+};
+
+// Power Suit: triangular prism body + small rectangular pedestal + flat table + hexagonal power source
+// DOS INITOBJ.C: 5 prism parts. Floor=160, so 2*Floor=320.
+static const int kPowerTopPts[3][3] = {{-150, 120, 320}, {150, 120, 320}, {0, -150, 320}};
+static const int kPowerTopSurf[1][8] = {{kColorPower, 3, 0, 1, 2, 0, 0, 0}};
+
+static const int kPowerBottomPts[3][3] = {{-150, 120, 0}, {150, 120, 0}, {0, -150, 0}};
+static const int kPowerBottomSurf[1][8] = {{kColorPower, 3, 2, 1, 0, 0, 0, 0}};
+
+static const int kPowerBasePts[8][3] = {
+	{-5, 100, 0}, {5, 100, 0}, {5, 90, 0}, {-5, 90, 0},
+	{-5, 100, 100}, {5, 100, 100}, {5, 90, 100}, {-5, 90, 100}
+};
+static const int kPowerBaseSurf[4][8] = {
+	{kColorPBase, 4, 0, 3, 7, 4, 0, 0}, {kColorPBase, 4, 3, 2, 6, 7, 0, 0},
+	{kColorPBase, 4, 1, 0, 4, 5, 0, 0}, {kColorPBase, 4, 2, 1, 5, 6, 0, 0}
+};
+
+static const int kPowerTablePts[4][3] = {{-50, 135, 100}, {50, 135, 100}, {50, 55, 100}, {-50, 55, 100}};
+static const int kPowerTableSurf[1][8] = {{kColorBlack, 4, 3, 2, 1, 0, 0, 0}};
+
+static const int kPowerSourcePts[12][3] = {
+	{-75, 0, 290}, {-35, 60, 290}, {35, 60, 290}, {75, 0, 290}, {35, -60, 290}, {-35, -60, 290},
+	{-75, 0, 320}, {-35, 60, 320}, {35, 60, 320}, {75, 0, 320}, {35, -60, 320}, {-35, -60, 320}
+};
+static const int kPowerSourceSurf[7][8] = {
+	{kColorRainbow1, 6, 0, 1, 2, 3, 4, 5},
+	{kColorPSource, 4, 0, 6, 7, 1, 0, 0}, {kColorPSource, 4, 1, 7, 8, 2, 0, 0},
+	{kColorPSource, 4, 2, 8, 9, 3, 0, 0}, {kColorPSource, 4, 3, 9, 10, 4, 0, 0},
+	{kColorPSource, 4, 4, 10, 11, 5, 0, 0}, {kColorPSource, 4, 5, 11, 6, 0, 0, 0}
+};
+
+static const Colony::ColonyEngine::PrismPartDef kPowerSuitParts[5] = {
+	{3, kPowerTopPts, 1, kPowerTopSurf},
+	{3, kPowerBottomPts, 1, kPowerBottomSurf},
+	{8, kPowerBasePts, 4, kPowerBaseSurf},
+	{4, kPowerTablePts, 1, kPowerTableSurf},
+	{12, kPowerSourcePts, 7, kPowerSourceSurf}
 };
 
 
@@ -1313,7 +1355,8 @@ bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj) {
 			draw3DPrism(obj, kReactorParts[i], false);
 		break;
 	case kObjPowerSuit:
-		draw3DPrism(obj, kConsolePart, false); // Placeholder
+		for (int i = 0; i < 5; i++)
+			draw3DPrism(obj, kPowerSuitParts[i], false);
 		break;
 	case kObjTeleport:
 		draw3DPrism(obj, kCWallParts[0], false); // Placeholder
