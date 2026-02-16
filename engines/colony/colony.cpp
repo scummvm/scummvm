@@ -488,6 +488,10 @@ void ColonyEngine::playAnimation() {
 			SetObjectOnOff(23, false);
 			SetObjectOnOff(24, false);
 		}
+		if (_action0 != 30) SetObjectOnOff(6, false); // Teeth
+		if (_action0 != 33) { // Jack-in-the-box
+			for (int i = 18; i <= 21; i++) SetObjectOnOff(i, false);
+		}
 
 		int ntype = _action1 / 10;
 		switch (ntype) {
@@ -593,9 +597,9 @@ void ColonyEngine::drawAnimation() {
 	_gfx->clear(0);
 
 	// Center 416x264 animation area on screen (from original InitDejaVu)
-	int ox = (_width - 416) / 2;
-	ox = (ox / 8) * 8; // Round to 8 as in original code
-	int oy = (_height - 264) / 2;
+	int ox = _screenR.left + (_screenR.width() - 416) / 2;
+	ox = (ox / 8) * 8;
+	int oy = _screenR.top + (_screenR.height() - 264) / 2;
 
 	// Fill background patterns (416x264 area)
 	for (int y = 0; y < 264; y++) {
@@ -636,8 +640,8 @@ void ColonyEngine::drawComplexSprite(int index, int ox, int oy) {
 	if (spriteIdx < 0 || spriteIdx >= (int)_cSprites.size()) return;
 
 	Sprite *s = _cSprites[spriteIdx];
-	int x = ox + ls->xloc + ls->objects[cnum].xloc;
-	int y = oy + ls->yloc + ls->objects[cnum].yloc;
+	int x = ox + ls->xloc + ls->objects[cnum].xloc + s->clip.left;
+	int y = oy + ls->yloc + ls->objects[cnum].yloc + s->clip.top;
 
 	drawAnimationImage(s->fg, s->mask, x, y);
 }
@@ -701,17 +705,17 @@ void ColonyEngine::unpackBytes(Common::SeekableReadStream &file, byte *dst, uint
 }
 
 Common::Rect ColonyEngine::readRect(Common::SeekableReadStream &file) {
-	int16 top = file.readSint16LE();
 	int16 left = file.readSint16LE();
-	int16 bottom = file.readSint16LE();
+	int16 top = file.readSint16LE();
 	int16 right = file.readSint16LE();
+	int16 bottom = file.readSint16LE();
 	return Common::Rect(left, top, right, bottom);
 }
 
 int ColonyEngine::whichSprite(const Common::Point &p) {
-	int ox = (_width - 416) / 2;
+	int ox = _screenR.left + (_screenR.width() - 416) / 2;
 	ox = (ox / 8) * 8;
-	int oy = (_height - 264) / 2;
+	int oy = _screenR.top + (_screenR.height() - 264) / 2;
 	Common::Point pt(p.x - ox, p.y - oy);
 
 	debug(1, "Click at (%d, %d), relative (%d, %d)", p.x, p.y, pt.x, pt.y);
@@ -774,6 +778,10 @@ void ColonyEngine::handleAnimationClick(int item) {
 	_lastClickTime = now;
 	debug(0, "Animation click on item %d in %s", item, _animationName.c_str());
 
+	if (item > 0) {
+		dolSprite(item - 1);
+	}
+
 	if (_animationName == "desk") {
 		if (item >= 2 && item <= 5) {
 			int idx = item - 2;
@@ -785,7 +793,7 @@ void ColonyEngine::handleAnimationClick(int item) {
 				_gfx->copyToScreen();
 			}
 		} else if (item == 7) { // Letter
-			if (_lSprites[6]->current == 1)
+			if (_lSprites[6]->current > 0)
 				doText(_action1, 0);
 		} else if (item == 9) { // Clipboard
 			doText(_action1, 0);
@@ -799,7 +807,6 @@ void ColonyEngine::handleAnimationClick(int item) {
 		} else if (item == 25) { // Post-it
 			doText(_action1, 0);
 		}
-		return; // Handled
 	} else if (_animationName == "vanity") {
 		if (item == 13) { // Paper
 			doText(_action0, 0);
@@ -810,7 +817,6 @@ void ColonyEngine::handleAnimationClick(int item) {
 		} else if (item == 7) { // Book
 			doText(_action0, 0);
 		}
-		return;
 	} else if (_animationName == "slides") {
 		if (item == 2) { // Speaker
 			doText(261 + _creature, 0);
@@ -823,7 +829,6 @@ void ColonyEngine::handleAnimationClick(int item) {
 			if (_creature == 9) _creature = 1;
 			SetObjectState(1, _creature);
 		}
-		return;
 	} else if (_animationName == "teleshow") {
 		if (item == 2) { // Speaker
 			doText(269 + _creature, 0);
@@ -836,7 +841,6 @@ void ColonyEngine::handleAnimationClick(int item) {
 			if (_creature == 8) _creature = 1;
 			SetObjectState(1, _creature);
 		}
-		return;
 	} else if (_animationName == "reactor" || _animationName == "security" || _animationName == "suit") {
 		if (item >= 1 && item <= 10 && _animationName != "suit") {
 			for (int i = 5; i >= 1; i--)
@@ -928,15 +932,13 @@ void ColonyEngine::handleAnimationClick(int item) {
 		}
 		if (_animationName == "reactor" || _animationName == "security") {
 			if (item <= 12) {
-				SetObjectState(item, 1); // Reset to ensure animation runs Off -> On
-				dolSprite(item - 1); // Animate the button press
+				// SetObjectState(item, 1); // Reset to ensure animation runs Off -> On - handled by dolSprite
 				if (item > 10) // Clear/Enter should return to Off
 					SetObjectState(item, 1);
 				drawAnimation();
 				_gfx->copyToScreen();
 			}
 		}
-		return; // Handled
 	} else if (_animationName == "controls") {
 		switch (item) {
 		case 4: // Accelerator
@@ -954,7 +956,7 @@ void ColonyEngine::handleAnimationClick(int item) {
 				debug(0, "Accelerator failed: power=%d, state=%d", _corePower[_coreIndex], _coreState[_coreIndex]);
 				// Fail animation click
 				SetObjectState(4, 1);
-				dolSprite(3); // Animate lever moving and returning
+				// dolSprite(3); // Animate lever moving and returning - handled by top dolSprite
 				for (int i = 6; i > 0; i--) {
 					SetObjectState(4, i);
 					drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(20);
@@ -962,8 +964,8 @@ void ColonyEngine::handleAnimationClick(int item) {
 			}
 			break;
 		case 5: // Emergency power
-			SetObjectState(5, 1); // Reset to ensure animation runs Off -> On
-			dolSprite(4); // Animate the button press
+			// SetObjectState(5, 1); // Reset to ensure animation runs Off -> On - handled by dolSprite
+			// dolSprite(4); // Animate the button press - handled by top dolSprite
 			if (_coreState[_coreIndex] < 2) {
 				if (_corePower[_coreIndex] == 0)
 					_corePower[_coreIndex] = 1;
@@ -981,7 +983,7 @@ void ColonyEngine::handleAnimationClick(int item) {
 			break;
 		case 7: // Damage report
 		{
-			dolSprite(6); // Button animation
+			// dolSprite(6); // Button animation - handled by top dolSprite
 			if (_corePower[_coreIndex] < 2) {
 				doText(15, 0); // Critical status
 			} else if (!_orbit) {
@@ -994,41 +996,21 @@ void ColonyEngine::handleAnimationClick(int item) {
 			drawAnimation(); _gfx->copyToScreen();
 			break;
 		}
-		default:
-			if (item > 0) {
-				dolSprite(item - 1);
-			}
 			break;
-		}
-		return;
-	}
-
-	if (item > 0) {
-		dolSprite(item - 1);
-		// After dolSprite, many buttons return to state 1 (unpressed)
-		if (_animationName == "reactor" || _animationName == "security") {
-			if (item <= 12) {
-				SetObjectState(item, 1);
-				drawAnimation();
-				_gfx->copyToScreen();
-			}
 		}
 	}
 }
 
 void ColonyEngine::terminateGame(bool blowup) {
 	debug(0, "YOU HAVE BEEN TERMINATED! (blowup=%d)", blowup);
-	doText(65, 0);
 	
-	// Flash effect
-	for (int i = 0; i < 4; i++) {
-		_gfx->clear(i % 2 == 0 ? 15 : 0);
-		_gfx->copyToScreen();
-		_system->delayMillis(100);
-	}
-
-	// In a real implementation we would show a menu here
-	// For now, just quit as requested by the user
+	const char *msg[] = {
+		"   YOU HAVE BEEN TERMINATED!   ",
+		" Type 'q' to quit the game.    ",
+		nullptr
+	};
+	printMessage(msg, true);
+	
 	_system->quit();
 }
 
