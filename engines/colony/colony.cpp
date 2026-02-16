@@ -46,6 +46,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_level = 0;
 	_robotNum = 0;
 	_gfx = nullptr;
+	_frameLimiter = nullptr;
 	_width = 640;
 	_height = 350;
 	_centerX = _width / 2;
@@ -112,6 +113,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 
 ColonyEngine::~ColonyEngine() {
 	deleteAnimation();
+	delete _frameLimiter;
 	delete _gfx;
 	delete _sound;
 }
@@ -234,6 +236,9 @@ Common::Error ColonyEngine::run() {
 	}
 	_gfx->setPalette(pal, 0, 256);
 
+	// Frame limiter: target 60fps, like Freescape engine
+	_frameLimiter = new Graphics::FrameLimiter(_system, 60);
+
 	scrollInfo();
 
 	loadMap(1); // Try to load the first map
@@ -243,6 +248,7 @@ Common::Error ColonyEngine::run() {
 	int mouseDX = 0, mouseDY = 0;
 	bool mouseMoved = false;
 	while (!shouldQuit()) {
+		_frameLimiter->startFrame();
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
 				if (event.type == Common::EVENT_KEYDOWN) {
@@ -374,9 +380,10 @@ Common::Error ColonyEngine::run() {
 		corridor();
 		drawDashboardStep1();
 		drawCrosshair();
+		checkCenter();
 		
+		_frameLimiter->delayBeforeSwap();
 		_gfx->copyToScreen();
-		_system->delayMillis(10);
 	}
 
 	return Common::kNoError;

@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "common/random.h"
 #include "common/rect.h"
+#include "graphics/framelimiter.h"
 #include "colony/gfx.h"
 #include "colony/sound.h"
 
@@ -230,6 +231,8 @@ public:
 	int checkwall(int xnew, int ynew, Locate *pobject);
 	void cCommand(int xnew, int ynew, bool allowInteraction);
 	void scrollInfo();
+	void checkCenter();
+	void fallThroughHole();
 
 	void doText(int entry, int center);
 	void inform(const char *text, bool hold);
@@ -251,6 +254,7 @@ private:
 
 	Renderer *_gfx;
 	Sound *_sound;
+	Graphics::FrameLimiter *_frameLimiter;
 
 
 	int _tsin, _tcos;

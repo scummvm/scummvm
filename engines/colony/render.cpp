@@ -1065,28 +1065,35 @@ void ColonyEngine::drawCellFeature3D(int cellX, int cellY) {
 	bool ceiling = (map[0] == 3 || map[0] == 4); // SMHOLECEIL, LGHOLECEIL
 	getCellFace3D(cellX, cellY, ceiling, corners);
 
+	// DOS uses color_wall (PenColor) for hole outlines.
+	// In our inverted 3D renderer: lit=black outlines on white fill, dark=white on black.
+	bool lit = (_corePower[_coreIndex] > 0);
+	uint32 holeColor = lit ? 0 : 7;
+
 	switch (map[0]) {
 	case 1: // SMHOLEFLR
 	case 3: // SMHOLECEIL
 	{
-		float u[4] = {0.375f, 0.625f, 0.625f, 0.375f};
-		float v[4] = {0.375f, 0.375f, 0.625f, 0.625f};
-		wallPolygon(corners, u, v, 4, 8); // vDKGRAY outline
+		// DOS floor1hole/ceil1hole: hole spans 25%-75% of cell in each dimension
+		// Matching the CCenter proximity trigger zone (64..192 of 256)
+		float u[4] = {0.25f, 0.75f, 0.75f, 0.25f};
+		float v[4] = {0.25f, 0.25f, 0.75f, 0.75f};
+		wallPolygon(corners, u, v, 4, holeColor);
 		break;
 	}
 	case 2: // LGHOLEFLR
 	case 4: // LGHOLECEIL
 	{
+		// DOS floor2hole/ceil2hole: full-cell hole
 		float u[4] = {0.0f, 1.0f, 1.0f, 0.0f};
 		float v[4] = {0.0f, 0.0f, 1.0f, 1.0f};
-		wallPolygon(corners, u, v, 4, 8); // vDKGRAY outline
+		wallPolygon(corners, u, v, 4, holeColor);
 		break;
 	}
-	case 5: // HOTFOOT
+	case 5: // HOTFOOT — DOS draws X pattern (two diagonals), not a rectangle
 	{
-		float u[4] = {0.0f, 1.0f, 1.0f, 0.0f};
-		float v[4] = {0.0f, 0.0f, 1.0f, 1.0f};
-		wallPolygon(corners, u, v, 4, 4); // vRED outline
+		wallLine(corners, 0.0f, 0.0f, 1.0f, 1.0f, holeColor); // front-left to back-right
+		wallLine(corners, 1.0f, 0.0f, 0.0f, 1.0f, holeColor); // front-right to back-left
 		break;
 	}
 	default:

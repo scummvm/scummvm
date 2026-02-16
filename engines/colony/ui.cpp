@@ -953,6 +953,122 @@ void ColonyEngine::doText(int entry, int center) {
 	free(page);
 }
 
+void ColonyEngine::fallThroughHole() {
+	// DOS tunnel(TRUE, mapdata) + GoTo(mapdata)
+	// Called when player falls through a floor hole (SMHOLEFLR or LGHOLEFLR)
+	const uint8 *mapdata = _mapData[_me.xindex][_me.yindex][4];
+	int targetMap = mapdata[2];
+	int targetX = mapdata[3];
+	int targetY = mapdata[4];
+
+	if (targetMap == 0 && targetX == 0 && targetY == 0) {
+		terminateGame(false); // you're dead
+		return;
+	}
+
+	// DOS tunnel(TRUE,...): power damage from falling
+	int damage = -(_level << 7);
+	for (int i = 0; i < 3; i++)
+		_corePower[i] += damage;
+
+	_sound->play(Sound::kClatter);
+
+	// DOS tunnel(pt=TRUE): falling animation — nested rectangles shrinking toward
+	// center, simulating falling down a shaft. White outlines on black background.
+	// DOS runs 10 steps × 2 frames = 20 display frames at ~15fps = ~1.3 seconds.
+	// At 60fps we use 80 frames for the same duration, paced by the frame limiter.
+	{
+		const int cx = (_screenR.left + _screenR.right) / 2;
+		const int cy = (_screenR.top + _screenR.bottom) / 2;
+		const int hw = _screenR.width() / 2;
+		const int hh = _screenR.height() / 2;
+		const int totalFrames = 80;
+		const int maxRings = 10;
+
+		for (int frame = 0; frame < totalFrames && !shouldQuit(); frame++) {
+			_frameLimiter->startFrame();
+
+			_gfx->fillRect(_screenR, 0); // black background
+
+			float progress = (float)frame / totalFrames;
+
+			// Draw nested rectangles — outer ring shrinks in, inner rings follow
+			// The number of visible rings decreases as we fall deeper
+			int visibleRings = maxRings - (int)(progress * (maxRings - 1));
+			for (int ring = 0; ring < visibleRings; ring++) {
+				// Each ring's depth combines the overall fall progress with per-ring spacing
+				float depth = progress * 0.6f + (float)ring / (maxRings + 2.0f);
+				if (depth >= 1.0f) break;
+				float scale = 1.0f - depth;
+				int rw = (int)(hw * scale);
+				int rh = (int)(hh * scale);
+				if (rw < 2 || rh < 2) break;
+				Common::Rect r(cx - rw, cy - rh, cx + rw, cy + rh);
+				_gfx->drawRect(r, 15); // white outline
+			}
+
+			_frameLimiter->delayBeforeSwap();
+			_gfx->copyToScreen();
+		}
+	}
+
+	// DOS GoTo(): preserve sub-cell offset, move to destination
+	if (targetX > 0 && targetY > 0) {
+		// Don't go if destination is occupied on same level (DOS: (!map) && robotarray check)
+		if (targetMap == 0 && _robotArray[targetX][targetY] != 0)
+			return;
+
+		_robotArray[_me.xindex][_me.yindex] = 0;
+
+		// Preserve sub-cell offset (DOS: xmod = xloc - (xindex<<8))
+		int xmod = _me.xloc - (_me.xindex << 8);
+		int ymod = _me.yloc - (_me.yindex << 8);
+		_me.xloc = (targetX << 8) + xmod;
+		_me.xindex = targetX;
+		_me.yloc = (targetY << 8) + ymod;
+		_me.yindex = targetY;
+
+		_robotArray[targetX][targetY] = MENUM;
+	}
+
+	// DOS: if(map) load_mapnum(map, TRUE) — always reload when map != 0
+	if (targetMap > 0)
+		loadMap(targetMap);
+
+	debug("Fell through hole: level=%d pos=(%d,%d)", _level, _me.xindex, _me.yindex);
+}
+
+void ColonyEngine::checkCenter() {
+	// DOS CCenter(): check if player is standing on a floor hole or hotfoot
+	if (_me.xindex < 0 || _me.xindex >= 31 || _me.yindex < 0 || _me.yindex >= 31)
+		return;
+
+	const uint8 cellType = _mapData[_me.xindex][_me.yindex][4][0];
+	if (cellType == 0)
+		return;
+
+	switch (cellType) {
+	case 1: { // SMHOLEFLR — small floor hole, must be near center
+		// DOS: xcheck=abs(xloc-(xindex<<8)); if(xcheck>64&&xcheck<192)
+		int xcheck = ABS(_me.xloc - (_me.xindex << 8));
+		int ycheck = ABS(_me.yloc - (_me.yindex << 8));
+		if (xcheck > 64 && xcheck < 192 && ycheck > 64 && ycheck < 192)
+			fallThroughHole();
+		break;
+	}
+	case 2: // LGHOLEFLR — large floor hole, full cell
+		fallThroughHole();
+		break;
+	case 5: // HOTFOOT — electric floor, damages power
+		// DOS: SetPower(-(5<<level),-(5<<level),-(5<<level))
+		for (int i = 0; i < 3; i++)
+			_corePower[i] -= (5 << _level);
+		break;
+	default:
+		break;
+	}
+}
+
 void ColonyEngine::cCommand(int xnew, int ynew, bool allowInteraction) {
 	if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
 		_robotArray[_me.xindex][_me.yindex] = 0;
