@@ -341,6 +341,9 @@ private:
 	int16 _divideBG;
 	Common::String _animationName;
 	bool _animationRunning;
+	int _animationResult;
+	bool _doorOpen;
+	int _elevatorFloor;
 
 	bool loadAnimation(const Common::String &name);
 	void deleteAnimation();
@@ -356,6 +359,7 @@ private:
 	void handleAnimationClick(int item);
 	void dolSprite(int index);
 	void SetObjectState(int num, int state);
+	int ObjectState(int num) const;
 	void SetObjectOnOff(int num, bool on);
 	void refreshAnimationDisplay();
 	void crypt(uint8 sarray[6], int i, int j, int k, int l);

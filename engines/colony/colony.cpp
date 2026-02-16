@@ -88,6 +88,9 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_backgroundActive = false;
 	_divideBG = 0;
 	_animationRunning = false;
+	_animationResult = 0;
+	_doorOpen = false;
+	_elevatorFloor = 0;
 
 	for (int i = 0; i < 4; i++) {
 		_decode1[i] = _decode2[i] = _decode3[i] = 0;
@@ -547,6 +550,9 @@ void ColonyEngine::playAnimation() {
 				if (item > 0) {
 					handleAnimationClick(item);
 				}
+			} else if (event.type == Common::EVENT_RBUTTONDOWN) {
+				// DOS: right-click exits animation (AnimControl returns FALSE on button-up)
+				_animationRunning = false;
 			} else if (event.type == Common::EVENT_MOUSEMOVE) {
 				debug(5, "Animation Mouse: %d, %d", event.mouse.x, event.mouse.y);
 			} else if (event.type == Common::EVENT_KEYDOWN) {
@@ -943,6 +949,118 @@ void ColonyEngine::handleAnimationClick(int item) {
 				_gfx->copyToScreen();
 			}
 		}
+	} else if (_animationName == "door" || _animationName == "bulkhead") {
+		// DOS DoDoor: item==3 toggles door open/close, item==1 or (item==101 && door open) exits
+		if (item == 3) {
+			_sound->play(Sound::kDoor);
+			if (_doorOpen) {
+				for (int i = 3; i >= 1; i--) {
+					_doorOpen = !_doorOpen;
+					SetObjectState(2, i);
+					drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(80);
+				}
+			} else {
+				for (int i = 1; i < 4; i++) {
+					_doorOpen = !_doorOpen;
+					SetObjectState(2, i);
+					drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(80);
+				}
+			}
+		}
+		if (item == 1 || (item == 101 && ObjectState(2) == 3)) {
+			_animationResult = 1;
+			_animationRunning = false;
+		}
+	} else if (_animationName == "airlock") {
+		// DOS DoAirLock: item==1 toggles airlock if power on && unlocked
+		// item==2 or (item==101 && airlock open) exits with pass-through
+		if ((item == 2 || item == 101) && _doorOpen) {
+			_animationResult = 1;
+			_animationRunning = false;
+		} else if (item == 1 && _corePower[_coreIndex] && _unlocked) {
+			_sound->play(Sound::kAirlock);
+			if (_doorOpen) {
+				for (int i = 3; i >= 1; i--) {
+					SetObjectState(2, i);
+					drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(80);
+				}
+			} else {
+				for (int i = 1; i < 4; i++) {
+					SetObjectState(2, i);
+					drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(80);
+				}
+			}
+			_doorOpen = !_doorOpen;
+		} else if (item == 101 && !_doorOpen) {
+			// Exit without opening
+			_animationRunning = false;
+		}
+	} else if (_animationName == "elev") {
+		// DOS DoElevator: two phases
+		// _doorOpen=false: Phase 1 (outside) - item==5 toggles doors
+		// _doorOpen=true: Phase 2 (inside) - items 6-10 select floor
+		// _animationResult tracks: 0=outside, 1=doors open, 2=inside
+		if (_animationResult < 2) {
+			// Phase 1: outside the elevator
+			if (item == 5) {
+				_sound->play(Sound::kElevator);
+				if (!_doorOpen) {
+					for (int i = 1; i < 4; i++) {
+						SetObjectState(3, i);
+						SetObjectState(4, i);
+						drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(80);
+					}
+					_doorOpen = true;
+				} else {
+					for (int i = 3; i >= 1; i--) {
+						SetObjectState(4, i);
+						SetObjectState(3, i);
+						drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(80);
+					}
+					_doorOpen = false;
+				}
+			} else if (item == 2 || (item == 101 && _doorOpen)) {
+				// Enter the elevator (transition to phase 2)
+				_animationResult = 2;
+				SetObjectOnOff(6, true);
+				SetObjectOnOff(7, true);
+				SetObjectOnOff(8, true);
+				SetObjectOnOff(9, true);
+				SetObjectOnOff(10, true);
+				SetObjectOnOff(2, false);
+				SetObjectOnOff(5, false);
+				drawAnimation(); _gfx->copyToScreen();
+			} else if (item == 101 && !_doorOpen) {
+				// Exit without entering
+				_animationResult = 0;
+				_animationRunning = false;
+			}
+		} else {
+			// Phase 2: inside — floor selection
+			if (item >= 6 && item <= 10) {
+				int fl = item - 5;
+				if (fl == _elevatorFloor) {
+					SetObjectState(item, 1); // already on this floor
+				} else {
+					_sound->play(Sound::kElevator);
+					for (int i = 3; i >= 1; i--) {
+						SetObjectState(4, i);
+						SetObjectState(3, i);
+						drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(80);
+					}
+					_elevatorFloor = fl;
+					for (int i = 1; i <= 3; i++) {
+						SetObjectState(4, i);
+						SetObjectState(3, i);
+						drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(80);
+					}
+					SetObjectState(item, 1);
+				}
+			} else if (item == 1 || item == 101) {
+				// Exit elevator
+				_animationRunning = false;
+			}
+		}
 	} else if (_animationName == "controls") {
 		switch (item) {
 		case 4: // Accelerator
@@ -1078,6 +1196,13 @@ void ColonyEngine::SetObjectState(int num, int state) {
 	num--;
 	if (num >= 0 && num < (int)_lSprites.size())
 		_lSprites[num]->current = state - 1;
+}
+
+int ColonyEngine::ObjectState(int num) const {
+	num--;
+	if (num >= 0 && num < (int)_lSprites.size())
+		return _lSprites[num]->current + 1;
+	return 0;
 }
 
 void ColonyEngine::SetObjectOnOff(int num, bool on) {

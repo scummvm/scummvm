@@ -289,20 +289,20 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 
 	// Clamp position to maintain minimum distance from walls within a cell.
 	// This prevents the camera from clipping through thin walls.
-	// Skip clamping for walls that have a passable feature (open door, stairs, etc.)
+	// Skip clamping for walls that have any interactive feature (door, airlock,
+	// stairs, etc.) so the player can reach the boundary and trigger the interaction.
+	// The wall itself still blocks via checkwall; clamping only prevents camera clipping
+	// on plain walls with no features.
 	static const int kWallPad = 40;
-	auto isPassable = [this](int cx, int cy, int dir) -> bool {
+	auto hasFeature = [this](int cx, int cy, int dir) -> bool {
 		if (cx < 0 || cx >= 31 || cy < 0 || cy >= 31)
 			return false;
 		uint8 type = _mapData[cx][cy][dir][0];
-		if (type == kWallFeatureDoor || type == kWallFeatureAirlock)
-			return _mapData[cx][cy][dir][1] == 0; // open
-		if (type == kWallFeatureUpStairs || type == kWallFeatureDnStairs ||
-			type == kWallFeatureTunnel || type == kWallFeatureElevator)
-			return true;
-		return false;
+		return type == kWallFeatureDoor || type == kWallFeatureAirlock ||
+			type == kWallFeatureUpStairs || type == kWallFeatureDnStairs ||
+			type == kWallFeatureTunnel || type == kWallFeatureElevator;
 	};
-	auto clampToWalls = [this, &isPassable](Locate *p) {
+	auto clampToWalls = [this, &hasFeature](Locate *p) {
 		int cx = p->xindex;
 		int cy = p->yindex;
 		int cellMinX = cx << 8;
@@ -311,16 +311,16 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 		int cellMaxY = cellMinY + 255;
 
 		// South wall of this cell (at cellMinY boundary)
-		if ((wallAt(cx, cy) & 0x01) && !isPassable(cx, cy, kDirSouth))
+		if ((wallAt(cx, cy) & 0x01) && !hasFeature(cx, cy, kDirSouth))
 			p->yloc = MAX(p->yloc, cellMinY + kWallPad);
 		// North wall (at cellMaxY+1 boundary = south wall of cell above)
-		if ((wallAt(cx, cy + 1) & 0x01) && !isPassable(cx, cy, kDirNorth))
+		if ((wallAt(cx, cy + 1) & 0x01) && !hasFeature(cx, cy, kDirNorth))
 			p->yloc = MIN(p->yloc, cellMaxY - kWallPad);
 		// West wall of this cell (at cellMinX boundary)
-		if ((wallAt(cx, cy) & 0x02) && !isPassable(cx, cy, kDirWest))
+		if ((wallAt(cx, cy) & 0x02) && !hasFeature(cx, cy, kDirWest))
 			p->xloc = MAX(p->xloc, cellMinX + kWallPad);
 		// East wall (at cellMaxX+1 boundary = west wall of cell to right)
-		if ((wallAt(cx + 1, cy) & 0x02) && !isPassable(cx, cy, kDirEast))
+		if ((wallAt(cx + 1, cy) & 0x02) && !hasFeature(cx, cy, kDirEast))
 			p->xloc = MIN(p->xloc, cellMaxX - kWallPad);
 	};
 
@@ -498,27 +498,46 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 	switch (map[0]) {
 	case kWallFeatureDoor:
 		if (map[1] == 0)
-			return 1;
+			return 1; // already open — pass through
 		if (pobject != &_me)
-			return 0;
-		if (_hasKeycard || _unlocked) {
-			setDoorState(fromX, fromY, direction, 0);
-			return 1;
+			return 0; // robots can't open doors
+		// DOS DoDoor: play door animation, player clicks handle to open
+		if (_corePower[_coreIndex] == 0)
+			return 0; // no power
+		{
+			const char *animName = (_level == 1 || _level == 5 || _level == 6) ? "bulkhead" : "door";
+			if (!loadAnimation(animName))
+				return 0;
+			_animationResult = 0;
+			_doorOpen = false;
+			SetObjectState(2, 1); // door starts closed
+			playAnimation();
+			if (_animationResult) {
+				setDoorState(fromX, fromY, direction, 0);
+				return 1; // pass through
+			}
+			return 0; // player didn't open the door
 		}
-		doText(75, 0);
-		return 0;
 	case kWallFeatureAirlock:
 		if (map[1] == 0)
-			return 1;
-		if (pobject == &_me) {
-			if (_unlocked) {
-				_sound->play(Sound::kAirlock);
+			return 1; // already open — pass through
+		if (pobject != &_me)
+			return 0;
+		// DOS DoAirLock: play airlock animation
+		{
+			if (!loadAnimation("airlock"))
+				return 0;
+			_animationResult = 0;
+			_doorOpen = false;
+			SetObjectState(2, 1); // airlock starts closed
+			SetObjectState(1, 1);
+			playAnimation();
+			if (_animationResult) {
 				setDoorState(fromX, fromY, direction, 0);
 				return 1;
 			}
-			inform("AIRLOCK IS SEALED.", true);
+			return 0;
 		}
-		return 0;
 
 	case kWallFeatureUpStairs:
 	case kWallFeatureDnStairs:
@@ -582,39 +601,54 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 			return 0;
 		}
 
-		// The elevator is an interactive animation in DOS (the "elev" animation).
-		// For now, directly use the map data destination if available.
-		const int targetMap = map[2];
-		const int targetX = map[3];
-		const int targetY = map[4];
+		// DOS DoElevator: play elevator animation with floor selection
+		if (!loadAnimation("elev"))
+			return 0;
+		_animationResult = 0;
+		_doorOpen = false;
+		_elevatorFloor = _level - 1; // DOS: fl = level-1
+		SetObjectOnOff(6, false);
+		SetObjectOnOff(7, false);
+		SetObjectOnOff(8, false);
+		SetObjectOnOff(9, false);
+		SetObjectOnOff(10, false);
+		playAnimation();
 
-		if (targetMap == 0 && targetX == 0 && targetY == 0)
-			return 1; // no destination — just pass through
+		bool entered = (_animationResult >= 2);
+		if (entered && _elevatorFloor + 1 != _level) {
+			// Player selected a different floor
+			int targetMap = _elevatorFloor + 1;
+			const int targetX = map[3];
+			const int targetY = map[4];
 
-		_sound->play(Sound::kElevator);
+			if (targetX > 0 && targetX < 31 && targetY > 0 && targetY < 31) {
+				_robotArray[pobject->xindex][pobject->yindex] = 0;
+				pobject->xloc = (targetX << 8) + 128;
+				pobject->xindex = targetX;
+				pobject->yloc = (targetY << 8) + 128;
+				pobject->yindex = targetY;
+				pobject->ang += 128;
+				pobject->look = pobject->ang;
+			}
 
-		if (targetX > 0 && targetX < 31 && targetY > 0 && targetY < 31) {
-			_robotArray[pobject->xindex][pobject->yindex] = 0;
-			pobject->xloc = (targetX << 8) + 128;
-			pobject->xindex = targetX;
-			pobject->yloc = (targetY << 8) + 128;
-			pobject->yindex = targetY;
-			// DOS: player turns around when exiting elevator
+			if (targetMap > 0 && targetMap != _level) {
+				loadMap(targetMap);
+				_coreIndex = (targetMap == 1) ? 0 : 1;
+			}
+
+			if (pobject->xindex >= 0 && pobject->xindex < 32 &&
+			    pobject->yindex >= 0 && pobject->yindex < 32)
+				_robotArray[pobject->xindex][pobject->yindex] = MENUM;
+
+			debug("Elevator: level=%d pos=(%d,%d)", _level, pobject->xindex, pobject->yindex);
+			return 2; // teleported
+		}
+		// Player entered but stayed on same floor — turn around
+		if (entered) {
 			pobject->ang += 128;
 			pobject->look = pobject->ang;
 		}
-
-		if (targetMap > 0 && targetMap != _level) {
-			loadMap(targetMap);
-			_coreIndex = (targetMap == 1) ? 0 : 1;
-		}
-
-		if (pobject->xindex >= 0 && pobject->xindex < 32 &&
-		    pobject->yindex >= 0 && pobject->yindex < 32)
-			_robotArray[pobject->xindex][pobject->yindex] = MENUM;
-
-		debug("Elevator: level=%d pos=(%d,%d)", _level, pobject->xindex, pobject->yindex);
-		return 2; // teleported
+		return 0;
 	}
 
 	default:
