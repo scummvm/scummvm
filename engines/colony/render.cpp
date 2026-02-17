@@ -54,6 +54,7 @@ static uint8 lookupLineColor(int colorIdx) {
 	case kColorSheet:     return 0;  // vBLACK (LINEFILLCOLOR for fill mode)
 	case kColorBed:       return 6;  // vBROWN
 	case kColorBox:       return 6;  // vBROWN
+	case kColorBench:     return 0;  // vBLACK
 	case kColorChair:     return 1;  // vBLUE
 	case kColorChairBase: return 1;  // vBLUE
 	case kColorCouch:     return 4;  // vRED
@@ -614,6 +615,34 @@ static const Colony::ColonyEngine::PrismPartDef kReactorParts[3] = {
 	{12, kReactorCorePts, 7, kReactorCoreSurf},
 	{8, kReactorBasePts, 6, kReactorBaseSurf},
 	{8, kReactorTopPts, 6, kReactorBaseSurf}
+};
+
+// Bench: simple box (1 part). DOS INITOBJ.C InitBench.
+static const int kBenchPts[8][3] = {
+	{-60, 128, 0}, {60, 128, 0}, {60, -128, 0}, {-60, -128, 0},
+	{-60, 128, 120}, {60, 128, 120}, {60, -128, 120}, {-60, -128, 120}
+};
+static const int kBenchSurf[5][8] = {
+	{kColorBench, 4, 0, 3, 7, 4, 0, 0}, {kColorBench, 4, 3, 2, 6, 7, 0, 0},
+	{kColorBench, 4, 1, 0, 4, 5, 0, 0}, {kColorBench, 4, 2, 1, 5, 6, 0, 0},
+	{kColorBlack, 4, 7, 6, 5, 4, 0, 0}
+};
+static const Colony::ColonyEngine::PrismPartDef kBenchPart = {8, kBenchPts, 5, kBenchSurf};
+
+// CBench: L-shaped corner bench (2 parts). DOS INITOBJ.C InitCBench.
+// Part 0: slanted front face (front-left Y=60, front-right Y=-60)
+static const int kCBenchPts[8][3] = {
+	{-60, 60, 0}, {60, -60, 0}, {60, -128, 0}, {-60, -128, 0},
+	{-60, 60, 120}, {60, -60, 120}, {60, -128, 120}, {-60, -128, 120}
+};
+// Part 1: wider perpendicular section
+static const int kDBenchPts[8][3] = {
+	{-60, 60, 0}, {128, 60, 0}, {128, -60, 0}, {60, -60, 0},
+	{-60, 60, 120}, {128, 60, 120}, {128, -60, 120}, {60, -60, 120}
+};
+static const Colony::ColonyEngine::PrismPartDef kCBenchParts[2] = {
+	{8, kCBenchPts, 5, kBenchSurf},
+	{8, kDBenchPts, 5, kBenchSurf}
 };
 
 // Power Suit: triangular prism body + small rectangular pedestal + flat table + hexagonal power source
@@ -1788,6 +1817,13 @@ bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj) {
 		break;
 	case kObjBox1:
 		draw3DPrism(obj, kBox1Part, false);
+		break;
+	case kObjBench:
+		draw3DPrism(obj, kBenchPart, false);
+		break;
+	case kObjCBench:
+		for (int i = 0; i < 2; i++)
+			draw3DPrism(obj, kCBenchParts[i], false);
 		break;
 	case kObjBox2:
 		draw3DPrism(obj, kBox2Parts[1], false); // base first
