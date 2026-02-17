@@ -58,7 +58,7 @@ uint16 Toolbox::StringWidth(const Common::U32String &s) {
 	if (_port) {
 		Graphics::MacFontRun fontRun(&g_engine->_wm, _port->txFont, _port->txFace, _port->txSize, 0, 0, 0);
 		uint16 result = fontRun.getFont()->getStringWidth(s);
-		warning("STUB: Toolbox::StringWidth: %s -> %d", s.encode().c_str(), result);
+		debug(5, "Toolbox::StringWidth: %s -> %d", s.encode().c_str(), result);
 		return result;
 	}
 	return 0;

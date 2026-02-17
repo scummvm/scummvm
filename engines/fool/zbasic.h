@@ -265,7 +265,11 @@ public:
 	uint32 readFile(int16 fileNo, byte *dest, uint32 length);
 	int32 readFileDblInt(int16 fileNo);
 	int16 readFileInt(int16 fileNo);
+	Common::U32String readFileStr(int16 fileNo, int16 length);
+	void record(int16 fileNo, int16 recordNo, int16 location);
 	int16 rndInt(int16 max);
+	Common::U32String space(int16 count);
+	void swapInt(int16 &a, int16 &b);
 	void text(uint16 font, uint16 size, uint16 face, SourceMode mode);
 	void window(int16 windowNumber, const Common::String &title, int16 x1, int16 y1, int16 x2, int16 y2, ZBasicWindowType type);
 
@@ -276,13 +280,15 @@ public:
 	int16 unk_5();
 	void unk_6(int16 unk1, int32 unk2, int16 unk3, int16 unk4);
 	void unk_20();
+	bool incrAndCheck(int16 &a0, int16 d1, int16 d0);
 	void unk_44(int16 unk1);
 	// string copy? dest, src
 	void unk_110(Common::U32String &unk1, Common::U32String &unk2);
 	void unk_130(int16 unk1);
 	void unk_158();
 	void unk_331(uint16 unk1, int16 unk2);
-
+	void unk_333(uint16 unk1);
+	void unk_334(const Common::U32String &unk1, int32 unk2, int32 unk3);
 };
 
 } // namespace Fool
