@@ -390,6 +390,7 @@ Common::Error ColonyEngine::run() {
 		drawCrosshair();
 		checkCenter();
 		
+		_displayCount++; // Mac: count++ after Display()
 		_frameLimiter->delayBeforeSwap();
 		_gfx->copyToScreen();
 	}

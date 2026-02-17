@@ -1259,6 +1259,8 @@ void ColonyEngine::drawCellFeature3D(int cellX, int cellY) {
 	bool lit = (_corePower[_coreIndex] > 0);
 	uint32 holeColor = lit ? 0 : 7;
 
+	const bool macMode = (_renderMode == Common::kRenderMacintosh);
+
 	switch (map[0]) {
 	case 1: // SMHOLEFLR
 	case 3: // SMHOLECEIL
@@ -1267,7 +1269,14 @@ void ColonyEngine::drawCellFeature3D(int cellX, int cellY) {
 		// Matching the CCenter proximity trigger zone (64..192 of 256)
 		float u[4] = {0.25f, 0.75f, 0.75f, 0.25f};
 		float v[4] = {0.25f, 0.25f, 0.75f, 0.75f};
-		wallPolygon(corners, u, v, 4, holeColor);
+		if (macMode) {
+			// Mac: SuperPoly(c_hole, ...) — c_hole = GRAY stipple, always filled
+			_gfx->setStippleData(kStippleGray);
+			wallPolygon(corners, u, v, 4, 0);
+			_gfx->setStippleData(nullptr);
+		} else {
+			wallPolygon(corners, u, v, 4, holeColor);
+		}
 		break;
 	}
 	case 2: // LGHOLEFLR
@@ -1276,13 +1285,31 @@ void ColonyEngine::drawCellFeature3D(int cellX, int cellY) {
 		// DOS floor2hole/ceil2hole: full-cell hole
 		float u[4] = {0.0f, 1.0f, 1.0f, 0.0f};
 		float v[4] = {0.0f, 0.0f, 1.0f, 1.0f};
-		wallPolygon(corners, u, v, 4, holeColor);
+		if (macMode) {
+			// Mac: SuperPoly(c_hole, ...) — c_hole = GRAY stipple, always filled
+			_gfx->setStippleData(kStippleGray);
+			wallPolygon(corners, u, v, 4, 0);
+			_gfx->setStippleData(nullptr);
+		} else {
+			wallPolygon(corners, u, v, 4, holeColor);
+		}
 		break;
 	}
-	case 5: // HOTFOOT — DOS draws X pattern (two diagonals), not a rectangle
+	case 5: // HOTFOOT
 	{
-		wallLine(corners, 0.0f, 0.0f, 1.0f, 1.0f, holeColor); // front-left to back-right
-		wallLine(corners, 1.0f, 0.0f, 0.0f, 1.0f, holeColor); // front-right to back-left
+		if (macMode) {
+			// Mac: SuperPoly(c_hotplate, ...) — c_hotplate = GRAY stipple, full cell
+			// Mac draws ONLY the filled polygon, no X-pattern
+			float u[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+			float v[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+			_gfx->setStippleData(kStippleGray);
+			wallPolygon(corners, u, v, 4, 0);
+			_gfx->setStippleData(nullptr);
+		} else {
+			// DOS non-polyfill: X pattern (two diagonals)
+			wallLine(corners, 0.0f, 0.0f, 1.0f, 1.0f, holeColor);
+			wallLine(corners, 1.0f, 0.0f, 0.0f, 1.0f, holeColor);
+		}
 		break;
 	}
 	default:
@@ -1654,9 +1681,45 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		break;
 	}
 	case kWallFeatureColor: {
+		// Mac drawColor / DOS drawColor: 4 horizontal bands.
+		// map[1..4] = pattern ID per band (0=WHITE, 1=LTGRAY, 2=GRAY, 3=DKGRAY, 4=BLACK).
+		// Values >= 5 trigger animation: color = (map[i+1] + _displayCount) % 5.
+		// Band 0 (top): v=0.75..1.0, Band 1: v=0.5..0.75, Band 2: v=0.25..0.5, Band 3: v=0..0.25.
+		if (_renderMode == Common::kRenderMacintosh) {
+			static const byte *stripPatterns[5] = {
+				nullptr, kStippleLtGray, kStippleGray, kStippleDkGray, nullptr
+			};
+			for (int i = 0; i < 4; i++) {
+				int pat = map[i + 1];
+				if (pat > 4)
+					pat = (pat + _displayCount / 6) % 5; // animated cycling
+				float vb = (3 - i) / 4.0f;
+				float vt = (4 - i) / 4.0f;
+				float ub[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+				float vb4[4] = {vb, vb, vt, vt};
+				if (pat == 4) {
+					// BLACK: solid black fill
+					_gfx->setWireframe(true, 0);
+					wallPolygon(corners, ub, vb4, 4, 0);
+					_gfx->setWireframe(true, 255);
+				} else if (pat == 0) {
+					// WHITE: no fill needed (wall background is white)
+				} else {
+					_gfx->setStippleData(stripPatterns[pat]);
+					wallPolygon(corners, ub, vb4, 4, 0);
+					_gfx->setStippleData(nullptr);
+				}
+			}
+		}
+
+		// EGA / both modes: colored lines at band boundaries.
+		// DOS non-polyfill draws 3 lines; we animate line colors for bands > 4.
 		for (int i = 1; i <= 3; i++) {
-			uint32 c = 120 + map[i] * 20;
-			if (c == 120 && map[i] == 0 && !map[1] && !map[2] && !map[3] && !map[4])
+			int val = map[i];
+			if (val > 4)
+				val = (val + _displayCount / 6) % 5; // animated cycling
+			uint32 c = 120 + val * 20;
+			if (c == 120 && val == 0 && !map[1] && !map[2] && !map[3] && !map[4])
 				c = 100 + (_level * 15);
 			float v = (float)i / 4.0f;
 			wallLine(corners, 0.0f, v, 1.0f, v, c);

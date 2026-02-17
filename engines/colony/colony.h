@@ -292,6 +292,7 @@ private:
 	bool _gametest = false;
 	uint32 _blackoutColor = 0;
 	uint32 _lastClickTime = 0;
+	uint32 _displayCount = 0; // Frame counter for COLOR wall animation (Mac: count)
 	int _action0, _action1;
 	int _creature;
 
