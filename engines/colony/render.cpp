@@ -904,8 +904,18 @@ void ColonyEngine::draw3DPrism(const Thing &obj, const PrismPartDef &def, bool u
 		}
 
 		if (count >= 3) {
-			if (colorIdx == kColorClear)
-				continue; // Transparent surface, skip
+			if (colorIdx == kColorClear) {
+				// CLEAR = no fill, but still draw wireframe outline.
+				// DOS DrawPrism skips CLEAR in the fill pass but draws
+				// outlines for ALL surfaces in the wireframe pass.
+				uint32 color = lit ? 0 : 15; // vBLACK lit, vINTWHITE unlit
+				for (int j = 0; j < count; j++) {
+					int next = (j + 1) % count;
+					_gfx->draw3DLine(px[j], py[j], pz[j],
+					                 px[next], py[next], pz[next], color);
+				}
+				continue;
+			}
 
 			if (lit) {
 				if (_renderMode == Common::kRenderMacintosh) {
