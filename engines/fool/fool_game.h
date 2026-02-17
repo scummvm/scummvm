@@ -77,12 +77,16 @@ public:
 	void sub_128_2126();
 	void sub_128_21c8();
 	void sub_128_2202();
+	void sub_128_271a();
 	void sub_128_2808();
 	void sub_128_2b0a();
 	void sub_128_2bc6();
 	void sub_128_2e3e();
 
+	void sub_128_3032();
 	void sub_128_3536();
+	void sub_128_3744();
+	void sub_128_3774();
 	void sub_128_39a0();
 
 	void sub_128_4472();
@@ -99,6 +103,8 @@ public:
 	void sub_129_004();
 	void sub_129_068();
 	void sub_129_123a();
+
+	void sub_130_004();
 
 	void sub_138_004();
 	void sub_144_004();
@@ -175,7 +181,9 @@ private:
 	int16 var_i16_7e6;
 	Common::U32String var_str_8ec;
 	int16 var_i16_9ec;
+	int16 var_i16_9f2;
 
+	int16 var_i16_d0c;
 	int16 var_i16_e20;
 	Common::U32String var_str_e22;
 	int16 var_i16_f22;
@@ -189,10 +197,32 @@ private:
 	int16 var_i16_103a;
 	int16 var_i16_103c;
 	int16 var_i16_103e;
+	int16 var_i16_1040;
+	int16 var_i16_1056;
+	int16 var_i16_1058;
+	int16 var_i16_105a;
+	int16 var_i16_105c;
+	int16 var_i16_105e;
+	int16 var_i16_1060;
+	int16 var_i16_1062;
+	int16 var_i16_1064;
+	int16 var_i16_1066;
+	int16 var_i16_1068;
+	int16 var_i16_106a;
+	int16 var_i16_106c;
+	int16 var_i16_106e;
+	Common::U32String var_str_1070;
+	Common::U32String var_str_1170;
+	int16 var_i16_1270;
+	Common::U32String var_str_1272;
+	int16 var_i16_1372;
 
 
 	// FIXME: bounds on the following are guessed! need to trace index range
-	int16 arr_i16_0[6969];
+	int16 arr_i16_0[202];
+	int16 arr_i16_194[202];
+	int16 arr_i16_bbe[202];
+	int16 arr_i16_15e8[101];
 	int16 arr_i16_16b2[0x100];
 	int16 arr_i16_18b2[101];
 	int16 arr_i16_197c[101];
@@ -202,17 +232,22 @@ private:
 	int16 arr_i16_1c5a[16];
 	int16 arr_i16_1c7a[16];
 	int16 arr_i16_1d24[202];
+	int16 arr_i16_1dee[202];
 	int16 arr_i16_1eb8[4];
 	Common::Rect arr_rect_1ec0;
+	Common::Rect arr_rect_1ec8;
+	Common::Point arr_pt_1ed0;
 	Common::Rect arr_rect_1f38[3];
+	int16 arr_i16_2f38[0xc00]; // 96x32?
+	int16 arr_i16_3b38[0xc00]; // 96x32?
 	Common::Rect arr_rect_4338;
 	int16 arr_i16_4738[16];
-	int16 arr_i16_4758[6];
+	uint16 arr_i16_4758[6];
+	int16 arr_i16_4bd8[0x52];
 	int16 arr_i16_4c7c[0x52];
 	int16 arr_i16_4d20[48];
 	Cursor arr_curs_4d88[0x2b]; // 0x44
-	Pattern arr_pat_58f4[4];
-	Pattern arr_pat_5b2c;
+	Pattern arr_pat_58f4[0x51];
 	Common::Rect arr_rect_5b7c;
 	Common::Rect arr_rect_5b84;
 	Common::Rect arr_rect_5b8c;
@@ -233,6 +268,8 @@ private:
 	PicHandle arr_i32_192c0[0x18];
 	int32 arr_i32_19454[0x65];
 	Common::U32String arr_str_195e8[101]; // 0x20 each
+
+	Common::U32String arr_str_1a288[101]; // 0x10 each
 
 	Common::U32String arr_str_1a8d8[7]; // 0x66 each
 	Common::Rect arr_rect_1ae06;
