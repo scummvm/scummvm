@@ -176,8 +176,8 @@ enum ObjColor {
 	kColorShadow = 74
 };
 
-#define BASEOBJECT 20
-#define MENUM 101
+static const int kBaseObject = 20;
+static const int kMeNum = 101;
 
 struct Locate {
 	uint8 ang;
@@ -356,6 +356,7 @@ private:
 	uint32 _blackoutColor = 0;
 	uint32 _lastClickTime = 0;
 	uint32 _displayCount = 0; // Frame counter for COLOR wall animation (Mac: count)
+	uint32 _lastAnimUpdate = 0;
 	int _action0, _action1;
 	int _creature;
 
@@ -469,9 +470,9 @@ private:
 	void handleAnimationClick(int item);
 	void dolSprite(int index);
 	void moveObject(int index);
-	void SetObjectState(int num, int state);
-	int ObjectState(int num) const;
-	void SetObjectOnOff(int num, bool on);
+	void setObjectState(int num, int state);
+	int objectState(int num) const;
+	void setObjectOnOff(int num, bool on);
 	void refreshAnimationDisplay();
 	void crypt(uint8 sarray[6], int i, int j, int k, int l);
 	void terminateGame(bool blowup);
