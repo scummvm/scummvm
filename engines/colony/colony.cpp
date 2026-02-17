@@ -60,6 +60,14 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_weapons = 0;
 	_wireframe = false;
 	_widescreen = ConfMan.getBool("widescreen_mod");
+
+	// Render mode: EGA (DOS wireframe default) or Macintosh (filled polygons)
+	if (!ConfMan.hasKey("render_mode") || ConfMan.get("render_mode").empty())
+		_renderMode = Common::kRenderEGA;
+	else
+		_renderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
+	if (_renderMode == Common::kRenderDefault)
+		_renderMode = Common::kRenderEGA;
 	_speedShift = 2; // DOS default: speedshift=1, but 2 feels better with our frame rate
 	
 	memset(_wall, 0, sizeof(_wall));

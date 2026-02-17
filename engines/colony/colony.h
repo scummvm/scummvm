@@ -28,6 +28,7 @@
 #include "common/random.h"
 #include "common/rect.h"
 #include "graphics/framelimiter.h"
+#include "common/rendermode.h"
 #include "colony/gfx.h"
 #include "colony/sound.h"
 
@@ -255,6 +256,7 @@ private:
 	Renderer *_gfx;
 	Sound *_sound;
 	Graphics::FrameLimiter *_frameLimiter;
+	Common::RenderMode _renderMode;
 
 
 	int _tsin, _tcos;

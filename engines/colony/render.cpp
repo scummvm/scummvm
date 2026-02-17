@@ -91,6 +91,90 @@ static uint8 lookupLineColor(int colorIdx) {
 	}
 }
 
+// Mac Classic dither patterns (from colorize.c cColor[].pattern).
+// Mac Classic was a 1-bit B&W display. QuickDraw used 8x8 dither patterns
+// to simulate grayscale: WHITE, LTGRAY, GRAY, DKGRAY, BLACK, CLEAR.
+// Rendered via GL_POLYGON_STIPPLE: two-pass fill (white bg + black fg with stipple mask).
+enum MacPattern {
+	kPatternWhite  = 0, // Solid white (all background)
+	kPatternLtGray = 1, // 25% foreground (sparse black dots on white)
+	kPatternGray   = 2, // 50% foreground (checkerboard)
+	kPatternDkGray = 3, // 75% foreground (dense black, sparse white)
+	kPatternBlack  = 4, // Solid black (all foreground)
+	kPatternClear  = 5  // Outline only (no fill)
+};
+
+// GL_POLYGON_STIPPLE patterns: 32x32 bit arrays (128 bytes), tiled from 8x8 Mac patterns.
+// Bit=1 → fragment drawn (black foreground), bit=0 → fragment discarded (white background shows).
+// Mac QuickDraw convention: bit=1 = foreground (BLACK), bit=0 = background (WHITE).
+static const byte kStippleLtGray[128] = {
+	// 0x88,0x22 alternating rows = 25% coverage (sparse dots)
+	0x88,0x88,0x88,0x88, 0x22,0x22,0x22,0x22, 0x88,0x88,0x88,0x88, 0x22,0x22,0x22,0x22,
+	0x88,0x88,0x88,0x88, 0x22,0x22,0x22,0x22, 0x88,0x88,0x88,0x88, 0x22,0x22,0x22,0x22,
+	0x88,0x88,0x88,0x88, 0x22,0x22,0x22,0x22, 0x88,0x88,0x88,0x88, 0x22,0x22,0x22,0x22,
+	0x88,0x88,0x88,0x88, 0x22,0x22,0x22,0x22, 0x88,0x88,0x88,0x88, 0x22,0x22,0x22,0x22,
+	0x88,0x88,0x88,0x88, 0x22,0x22,0x22,0x22, 0x88,0x88,0x88,0x88, 0x22,0x22,0x22,0x22,
+	0x88,0x88,0x88,0x88, 0x22,0x22,0x22,0x22, 0x88,0x88,0x88,0x88, 0x22,0x22,0x22,0x22,
+	0x88,0x88,0x88,0x88, 0x22,0x22,0x22,0x22, 0x88,0x88,0x88,0x88, 0x22,0x22,0x22,0x22,
+	0x88,0x88,0x88,0x88, 0x22,0x22,0x22,0x22, 0x88,0x88,0x88,0x88, 0x22,0x22,0x22,0x22,
+};
+
+static const byte kStippleGray[128] = {
+	// 0xAA,0x55 alternating rows = 50% coverage (checkerboard)
+	0xAA,0xAA,0xAA,0xAA, 0x55,0x55,0x55,0x55, 0xAA,0xAA,0xAA,0xAA, 0x55,0x55,0x55,0x55,
+	0xAA,0xAA,0xAA,0xAA, 0x55,0x55,0x55,0x55, 0xAA,0xAA,0xAA,0xAA, 0x55,0x55,0x55,0x55,
+	0xAA,0xAA,0xAA,0xAA, 0x55,0x55,0x55,0x55, 0xAA,0xAA,0xAA,0xAA, 0x55,0x55,0x55,0x55,
+	0xAA,0xAA,0xAA,0xAA, 0x55,0x55,0x55,0x55, 0xAA,0xAA,0xAA,0xAA, 0x55,0x55,0x55,0x55,
+	0xAA,0xAA,0xAA,0xAA, 0x55,0x55,0x55,0x55, 0xAA,0xAA,0xAA,0xAA, 0x55,0x55,0x55,0x55,
+	0xAA,0xAA,0xAA,0xAA, 0x55,0x55,0x55,0x55, 0xAA,0xAA,0xAA,0xAA, 0x55,0x55,0x55,0x55,
+	0xAA,0xAA,0xAA,0xAA, 0x55,0x55,0x55,0x55, 0xAA,0xAA,0xAA,0xAA, 0x55,0x55,0x55,0x55,
+	0xAA,0xAA,0xAA,0xAA, 0x55,0x55,0x55,0x55, 0xAA,0xAA,0xAA,0xAA, 0x55,0x55,0x55,0x55,
+};
+
+static const byte kStippleDkGray[128] = {
+	// 0x77,0xDD alternating rows = 75% coverage (dense dots)
+	0x77,0x77,0x77,0x77, 0xDD,0xDD,0xDD,0xDD, 0x77,0x77,0x77,0x77, 0xDD,0xDD,0xDD,0xDD,
+	0x77,0x77,0x77,0x77, 0xDD,0xDD,0xDD,0xDD, 0x77,0x77,0x77,0x77, 0xDD,0xDD,0xDD,0xDD,
+	0x77,0x77,0x77,0x77, 0xDD,0xDD,0xDD,0xDD, 0x77,0x77,0x77,0x77, 0xDD,0xDD,0xDD,0xDD,
+	0x77,0x77,0x77,0x77, 0xDD,0xDD,0xDD,0xDD, 0x77,0x77,0x77,0x77, 0xDD,0xDD,0xDD,0xDD,
+	0x77,0x77,0x77,0x77, 0xDD,0xDD,0xDD,0xDD, 0x77,0x77,0x77,0x77, 0xDD,0xDD,0xDD,0xDD,
+	0x77,0x77,0x77,0x77, 0xDD,0xDD,0xDD,0xDD, 0x77,0x77,0x77,0x77, 0xDD,0xDD,0xDD,0xDD,
+	0x77,0x77,0x77,0x77, 0xDD,0xDD,0xDD,0xDD, 0x77,0x77,0x77,0x77, 0xDD,0xDD,0xDD,0xDD,
+	0x77,0x77,0x77,0x77, 0xDD,0xDD,0xDD,0xDD, 0x77,0x77,0x77,0x77, 0xDD,0xDD,0xDD,0xDD,
+};
+
+// Lookup: MacPattern enum → GL stipple data pointer (null for solid/clear patterns)
+static const byte *kMacStippleData[] = {
+	nullptr,        // kPatternWhite  - solid white, no stipple
+	kStippleLtGray, // kPatternLtGray - 25% black dots
+	kStippleGray,   // kPatternGray   - 50% checkerboard
+	kStippleDkGray, // kPatternDkGray - 75% black
+	nullptr,        // kPatternBlack  - solid black, no stipple
+	nullptr         // kPatternClear  - outline only
+};
+
+// Map ObjColor constant → Mac dither pattern.
+// From colorize.c cColor[] array: ~90% of objects use GRAY,
+// special cases: c_dwall=WHITE, c_lwall=LTGRAY, c_window=DKGRAY,
+// c_desktop=WHITE, c_shelves=LTGRAY.
+static int lookupMacPattern(int colorIdx) {
+	switch (colorIdx) {
+	case kColorClear:     return kPatternClear;
+	case kColorBlack:     return kPatternBlack;
+	case kColorWall:      return kPatternWhite;  // c_dwall = WHITE
+	case kColorDeskTop:   return kPatternWhite;  // c_desktop = WHITE
+	case kColorSheet:     return kPatternWhite;  // c_bedsheet = WHITE (bright surface)
+	case kColorBath:      return kPatternWhite;  // c_bath = WHITE (porcelain)
+	case kColorMac:       return kPatternWhite;  // c_computer = WHITE (bright casing)
+	case kColorSilver:    return kPatternLtGray; // c_mirror = LTGRAY
+	case kColorReactor:   return kPatternLtGray; // c_reactor = LTGRAY
+	case kColorTVScreen:  return kPatternDkGray; // c_tvscreen = DKGRAY
+	case kColorMacScreen: return kPatternDkGray; // c_screen = DKGRAY
+	case kColorWater:     return kPatternDkGray; // c_water = DKGRAY
+	default:              return kPatternGray;   // Most objects = GRAY
+	}
+}
+
 // DOS object geometry constants
 static const int kScreenPts[8][3] = {
 	{-16, 64, 0}, {16, 64, 0}, {16, -64, 0}, {-16, -64, 0},
@@ -820,10 +904,28 @@ void ColonyEngine::draw3DPrism(const Thing &obj, const PrismPartDef &def, bool u
 		}
 
 		if (count >= 3) {
-			// polyfill=False mode: wireframe fill stays as wall background,
-			// only outline color changes per surface (LINECOLOR from lsColor)
-			uint32 lineColor = lit ? (uint32)lookupLineColor(colorIdx) : 15;
-			_gfx->draw3DPolygon(px, py, pz, count, lineColor);
+			if (colorIdx == kColorClear)
+				continue; // Transparent surface, skip
+
+			if (lit) {
+				if (_renderMode == Common::kRenderMacintosh) {
+					// Mac B&W: stipple dither pattern fill + black outline
+					int pattern = lookupMacPattern(colorIdx);
+					if (pattern == kPatternClear) continue;
+					if (!_wireframe) {
+						_gfx->setStippleData(kMacStippleData[pattern]);
+						_gfx->setWireframe(true, pattern == kPatternBlack ? 0 : 255);
+					}
+					_gfx->draw3DPolygon(px, py, pz, count, 0); // black outline
+					_gfx->setStippleData(nullptr);
+				} else {
+					// EGA: global wall fill, per-surface colored outline
+					_gfx->draw3DPolygon(px, py, pz, count, (uint32)lookupLineColor(colorIdx));
+				}
+			} else {
+				// Unlit: same for both modes — black fill, white outline
+				_gfx->draw3DPolygon(px, py, pz, count, 15);
+			}
 		}
 	}
 }
@@ -835,7 +937,8 @@ void ColonyEngine::draw3DLeaf(const Thing &obj, const PrismPartDef &def) {
 	const long rotCos = _cost[ang];
 	const long rotSin = _sint[ang];
 	const bool lit = (_corePower[_coreIndex] > 0);
-	const uint32 color = lit ? 2 : 15; // vGREEN when lit, white when dark
+	// Mac B&W: black outlines; EGA: green outlines; unlit: white
+	const uint32 color = lit ? (_renderMode == Common::kRenderMacintosh ? 0 : 2) : 15;
 
 	for (int i = 0; i < def.surfaceCount; i++) {
 		const int n = def.surfaces[i][1];
@@ -1033,7 +1136,14 @@ void ColonyEngine::wallChar(const float corners[4][3], uint8 cnum) {
 			u[i] = 0.2f + (data[1 + i*2] / 6.0f) * 0.6f;
 			v[i] = 0.2f + (data[2 + i*2] / 6.0f) * 0.6f;
 		}
-		// Draw arrow as outline only (wireframe mode)
+		// Mac: fill arrow polygon with BLACK.
+		// drawchar() sets cColor[cc].pattern=WHITE (all background) and
+		// background is {0,0,0}=BLACK, so SuperPoly fills solid black.
+		if (_renderMode == Common::kRenderMacintosh) {
+			_gfx->setWireframe(true, 0); // BLACK fill
+			wallPolygon(corners, u, v, count, 0);
+			_gfx->setWireframe(true, 255); // restore white wall fill
+		}
 		for (int i = 0; i < count; i++) {
 			int n = (i + 1) % count;
 			wallLine(corners, u[i], v[i], u[n], v[n], 0); // vBLACK
@@ -1122,72 +1232,106 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 
 	switch (map[0]) {
 	case kWallFeatureDoor: {
-		// DOS wireframe: all doors drawn with PenColor(realcolor[vDKGRAY]) = 8
-		const uint32 doorColor = 8; // vDKGRAY
+		// EGA: vDKGRAY outlines; Mac B&W: black outlines + gray fills
+		const bool macMode = (_renderMode == Common::kRenderMacintosh);
+		const uint32 doorColor = macMode ? 0 : 8; // Mac: black, EGA: vDKGRAY
 		bool shipLevel = (_level == 1 || _level == 5 || _level == 6);
 
 		if (shipLevel) {
-			// Octagonal ship door (SS door)
-			// DOS split7x7 grid: lr[2,1,1,2,4,5,5,4] ud[0,1,5,6,6,5,1,0][same]
-			// split7 positions: 0=1/8, 1=2/8, 2=3/8, 3=4/8, 4=5/8, 5=6/8, 6=7/8
 			static const float u_ss[8] = { 0.375f, 0.250f, 0.250f, 0.375f, 0.625f, 0.750f, 0.750f, 0.625f };
 			static const float v_ss[8] = { 0.125f, 0.250f, 0.750f, 0.875f, 0.875f, 0.750f, 0.250f, 0.125f };
 
-			// DOS wireframe: octagon outline in vDKGRAY (both open and closed)
+			if (macMode) {
+				if (map[1] != 0) {
+					// Closed: fill octagon (c_bulkhead = GRAY stipple)
+					_gfx->setStippleData(kStippleGray);
+					wallPolygon(corners, u_ss, v_ss, 8, 0);
+					_gfx->setStippleData(nullptr);
+				} else {
+					// Open: fill with BLACK (passable opening)
+					_gfx->setWireframe(true, 0);
+					wallPolygon(corners, u_ss, v_ss, 8, 0);
+					_gfx->setWireframe(true, 255);
+				}
+			}
+
 			for (int i = 0; i < 8; i++)
 				wallLine(corners, u_ss[i], v_ss[i], u_ss[(i + 1) % 8], v_ss[(i + 1) % 8], doorColor);
 
 			if (map[1] != 0) {
-				// Closed: add inner rectangle panel (lr[2]..lr[4] × ud[1]..ud[5])
 				wallLine(corners, 0.375f, 0.25f, 0.375f, 0.75f, doorColor);
 				wallLine(corners, 0.375f, 0.75f, 0.625f, 0.75f, doorColor);
 				wallLine(corners, 0.625f, 0.75f, 0.625f, 0.25f, doorColor);
 				wallLine(corners, 0.625f, 0.25f, 0.375f, 0.25f, doorColor);
 			}
 		} else {
-			// Standard rectangular door (Lab levels)
-			// DOS: xx1 = mid(center,left) = 0.25, xx2 = mid(center,right) = 0.75
-			// ybl goes to floor (v=0), ytl = 7/8*ceil + 1/8*floor (v=0.875)
 			static const float xl = 0.25f, xr = 0.75f;
 			static const float yb = 0.0f, yt = 0.875f;
 
-			// DOS wireframe: door outline in vDKGRAY (both open and closed)
+			if (macMode) {
+				float ud[4] = {xl, xr, xr, xl};
+				float vd[4] = {yb, yb, yt, yt};
+				if (map[1] != 0) {
+					// Closed: fill (c_door = GRAY stipple)
+					_gfx->setStippleData(kStippleGray);
+					wallPolygon(corners, ud, vd, 4, 0);
+					_gfx->setStippleData(nullptr);
+				} else {
+					// Open: fill with BLACK (passable opening)
+					_gfx->setWireframe(true, 0);
+					wallPolygon(corners, ud, vd, 4, 0);
+					_gfx->setWireframe(true, 255);
+				}
+			}
+
 			wallLine(corners, xl, yb, xl, yt, doorColor);
 			wallLine(corners, xl, yt, xr, yt, doorColor);
 			wallLine(corners, xr, yt, xr, yb, doorColor);
 			wallLine(corners, xr, yb, xl, yb, doorColor);
 
 			if (map[1] != 0) {
-				// Closed: add handle bar at midpoint of door
 				wallLine(corners, 0.3125f, 0.4375f, 0.6875f, 0.4375f, doorColor);
 			}
 		}
 		break;
 	}
 	case kWallFeatureWindow: {
-		// DOS drawwind: window pane at 1/4..3/4 with vertical + horizontal center lines
-		const uint32 winColor = 8; // vDKGRAY
+		const bool macMode = (_renderMode == Common::kRenderMacintosh);
+		const uint32 winColor = macMode ? 0 : 8; // Mac: black, EGA: vDKGRAY
 		float xl = 0.25f, xr = 0.75f;
 		float yb = 0.25f, yt = 0.75f;
 		float xc = 0.5f, yc = 0.5f;
-		// Window frame
+
+		// Mac: fill window pane (c_window = DKGRAY stipple)
+		if (macMode) {
+			_gfx->setStippleData(kStippleDkGray);
+			float uw[4] = {xl, xr, xr, xl};
+			float vw[4] = {yb, yb, yt, yt};
+			wallPolygon(corners, uw, vw, 4, 0);
+			_gfx->setStippleData(nullptr);
+		}
+
 		wallLine(corners, xl, yb, xl, yt, winColor);
 		wallLine(corners, xl, yt, xr, yt, winColor);
 		wallLine(corners, xr, yt, xr, yb, winColor);
 		wallLine(corners, xr, yb, xl, yb, winColor);
-		// Mullion (vertical center) and transom (horizontal center)
 		wallLine(corners, xc, yb, xc, yt, winColor);
 		wallLine(corners, xl, yc, xr, yc, winColor);
 		break;
 	}
 	case kWallFeatureShelves: {
 		// DOS drawbooks: recessed bookcase with 3D depth.
-		// The depth effect uses actual back-wall coordinates in DOS, which we can't
-		// replicate with UV mapping on a single wall face. We draw:
-		// - Back face rectangle (inset)
-		// - 4 connecting lines (front corners to back corners)
-		// - 7 horizontal shelf lines across the front face (full width)
-		const uint32 shelfColor = 8; // vDKGRAY
+		const bool macMode = (_renderMode == Common::kRenderMacintosh);
+		const uint32 shelfColor = macMode ? 0 : 8;
+
+		// Mac: fill shelves area (c_shelves = LTGRAY stipple)
+		if (macMode) {
+			_gfx->setStippleData(kStippleLtGray);
+			float us[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+			float vs[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+			wallPolygon(corners, us, vs, 4, 0);
+			_gfx->setStippleData(nullptr);
+		}
 		float bx = 0.1875f, bxr = 0.8125f;
 		float by = 0.1875f, byt = 0.8125f;
 		// Back face rectangle
@@ -1209,9 +1353,16 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 	}
 	case kWallFeatureUpStairs: {
 		// DOS: draw_up_stairs — staircase ascending into the wall with perspective
-		// Uses split7 subdivision (7 depth levels at fractions 1/8..7/8)
-		// Passage narrows toward vanishing point (0.5, 0.5)
 		const uint32 col = 0; // vBLACK
+
+		// Mac: fill entire wall face (c_upstairs = GRAY stipple)
+		if (_renderMode == Common::kRenderMacintosh) {
+			_gfx->setStippleData(kStippleGray);
+			float uf[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+			float vf[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+			wallPolygon(corners, uf, vf, 4, 0);
+			_gfx->setStippleData(nullptr);
+		}
 
 		// Perspective convergence: back of passage at ~1/3 width (1 cell deep)
 		float ul[7], ur[7], vf[7], vc[7];
@@ -1275,8 +1426,16 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 	}
 	case kWallFeatureDnStairs: {
 		// DOS: draw_dn_stairs — staircase descending into the wall with perspective
-		// Simpler than up stairs: ceiling slopes down, side walls, first step, handrails
 		const uint32 col = 0; // vBLACK
+
+		// Mac: fill entire wall face (c_dnstairs = GRAY stipple)
+		if (_renderMode == Common::kRenderMacintosh) {
+			_gfx->setStippleData(kStippleGray);
+			float uf[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+			float vf[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+			wallPolygon(corners, uf, vf, 4, 0);
+			_gfx->setStippleData(nullptr);
+		}
 
 		float ul[7], ur[7], vf[7], vc[7];
 		for (int i = 0; i < 7; i++) {
@@ -1320,7 +1479,18 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		break;
 	case kWallFeatureGlyph: {
 		// DOS wireframe: PenColor(realcolor[vDKGRAY]) = 8
-		const uint32 glyphColor = 8; // vDKGRAY
+		const bool macMode = (_renderMode == Common::kRenderMacintosh);
+		const uint32 glyphColor = macMode ? 0 : 8;
+
+		// Mac: fill glyph area (c_glyph = GRAY stipple)
+		if (macMode) {
+			_gfx->setStippleData(kStippleGray);
+			float ug[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+			float vg[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+			wallPolygon(corners, ug, vg, 4, 0);
+			_gfx->setStippleData(nullptr);
+		}
+
 		for (int i = 0; i < 7; i++) {
 			float v = 0.2f + i * 0.1f;
 			wallLine(corners, 0.2f, v, 0.8f, v, glyphColor);
@@ -1328,10 +1498,20 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		break;
 	}
 	case kWallFeatureElevator: {
-		// DOS wireframe: PenColor(realcolor[vDKGRAY]) = 8
-		const uint32 elevColor = 8; // vDKGRAY
+		const bool macMode = (_renderMode == Common::kRenderMacintosh);
+		const uint32 elevColor = macMode ? 0 : 8; // Mac: black, EGA: vDKGRAY
 		float xl = 0.2f, xr = 0.8f;
 		float yb = 0.1f, yt = 0.9f;
+
+		// Mac: fill elevator door (c_elevator = GRAY stipple)
+		if (macMode) {
+			_gfx->setStippleData(kStippleGray);
+			float ue[4] = {xl, xr, xr, xl};
+			float ve[4] = {yb, yb, yt, yt};
+			wallPolygon(corners, ue, ve, 4, 0);
+			_gfx->setStippleData(nullptr);
+		}
+
 		wallLine(corners, xl, yb, xl, yt, elevColor);
 		wallLine(corners, xl, yt, xr, yt, elevColor);
 		wallLine(corners, xr, yt, xr, yb, elevColor);
@@ -1343,11 +1523,18 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		// Tunnel: hexagonal opening from Grid (0,0 0,5 1,6 5,6 6,5 6,0)
 		static const float u_t[6] = { 0.0f,    0.0f,    1/6.0f,  5/6.0f,  1.0f,    1.0f };
 		static const float v_t[6] = { 0.0f,    0.750f,  0.875f,  0.875f,  0.750f,  0.0f };
-		wallPolygon(corners, u_t, v_t, 6, 0); // vBLACK outline
+		if (_renderMode == Common::kRenderMacintosh) {
+			// Mac: c_tunnel = GRAY stipple fill + black outline
+			_gfx->setStippleData(kStippleGray);
+			wallPolygon(corners, u_t, v_t, 6, 0);
+			_gfx->setStippleData(nullptr);
+		} else {
+			wallPolygon(corners, u_t, v_t, 6, 0); // vBLACK outline
+		}
 		break;
 	}
 	case kWallFeatureAirlock: {
-		// DOS wireframe: open=vBLACK(0), closed=vDKGRAY(8)
+		const bool macMode = (_renderMode == Common::kRenderMacintosh);
 		float pts[][2] = {{0.0f, 0.5f}, {0.15f, 0.85f}, {0.5f, 1.0f}, {0.85f, 0.85f},
 		                  {1.0f, 0.5f}, {0.85f, 0.15f}, {0.5f, 0.0f}, {0.15f, 0.15f}};
 		float u[8], v[8];
@@ -1357,16 +1544,33 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		}
 		if (map[1] == 0) {
 			// Open: black fill (passable opening)
-			wallPolygon(corners, u, v, 8, 0); // vBLACK outline
+			_gfx->setWireframe(true, 0);
+			wallPolygon(corners, u, v, 8, 0);
+			bool lit = (_corePower[_coreIndex] > 0);
+			_gfx->setWireframe(true, lit ? (macMode ? 255 : 7) : 0);
 		} else {
-			// Closed: dark gray wireframe outline + cross
-			const uint32 airlockColor = 8; // vDKGRAY
+			// Mac: fill airlock (c_airlock = GRAY stipple) when closed
+			if (macMode) {
+				_gfx->setStippleData(kStippleGray);
+				wallPolygon(corners, u, v, 8, 0);
+				_gfx->setStippleData(nullptr);
+			}
+
+			const uint32 airlockColor = macMode ? 0 : 8; // Mac: black, EGA: vDKGRAY
 			for (int i = 0; i < 8; i++) {
 				int n = (i + 1) % 8;
 				wallLine(corners, u[i], v[i], u[n], v[n], airlockColor);
 			}
-			wallLine(corners, 0.1f, 0.5f, 0.9f, 0.5f, airlockColor);
-			wallLine(corners, 0.5f, 0.1f, 0.5f, 0.9f, airlockColor);
+			if (macMode) {
+				// Mac: 8 radial lines from each vertex to center (drawALClosed)
+				float cu = 0.5f, cv = 0.5f;
+				for (int i = 0; i < 8; i++)
+					wallLine(corners, u[i], v[i], cu, cv, airlockColor);
+			} else {
+				// EGA: simple crosshairs
+				wallLine(corners, 0.1f, 0.5f, 0.9f, 0.5f, airlockColor);
+				wallLine(corners, 0.5f, 0.1f, 0.5f, 0.9f, airlockColor);
+			}
 		}
 		break;
 	}
@@ -1409,27 +1613,34 @@ void ColonyEngine::renderCorridor3D() {
 	computeVisibleCells();
 
 	bool lit = (_corePower[_coreIndex] > 0);
+	bool macMode = (_renderMode == Common::kRenderMacintosh);
+
+	// Mac B&W: walls are pure white (c_dwall=WHITE); EGA: light gray (7)
+	uint32 wallFill = lit ? (macMode ? 255 : 7) : 0;
+	uint32 wallLine = lit ? 0 : (macMode ? 255 : 7);
 
 	// Walls always use wireframe with fill (opaque walls).
-	_gfx->setWireframe(true, lit ? 7 : 0);
+	_gfx->setWireframe(true, wallFill);
 
 	_gfx->begin3D(_me.xloc, _me.yloc, 0, _me.look, _me.lookY, _screenR);
-	_gfx->clear(lit ? 7 : 0);
+	_gfx->clear(wallFill);
 
-	uint32 wallColor = lit ? 0 : 7;
-	uint32 floorColor = lit ? 0 : 7;
+	uint32 wallColor = wallLine;
+	// Mac: floor = black (c_lwall foreground), ceiling = white (c_lwall background)
+	// EGA: both use wallLine color
+	uint32 floorColor = macMode ? (lit ? 0 : 255) : wallLine;
+	uint32 ceilColor  = macMode ? (lit ? 255 : 0) : wallLine;
 
 	// Draw large floor and ceiling quads
-	// These will be filled with the background color in the occlusion pass
-	_gfx->draw3DQuad(-100000.0f, -100000.0f, -160.1f, 
-	                100000.0f, -100000.0f, -160.1f, 
-	                100000.0f, 100000.0f, -160.1f, 
+	_gfx->draw3DQuad(-100000.0f, -100000.0f, -160.1f,
+	                100000.0f, -100000.0f, -160.1f,
+	                100000.0f, 100000.0f, -160.1f,
 	                -100000.0f, 100000.0f, -160.1f, floorColor);
- 
-	_gfx->draw3DQuad(-100000.0f, -100000.0f, 160.1f, 
-	                100000.0f, -100000.0f, 160.1f, 
-	                100000.0f, 100000.0f, 160.1f, 
-	                -100000.0f, 100000.0f, 160.1f, floorColor);
+
+	_gfx->draw3DQuad(-100000.0f, -100000.0f, 160.1f,
+	                100000.0f, -100000.0f, 160.1f,
+	                100000.0f, 100000.0f, 160.1f,
+	                -100000.0f, 100000.0f, 160.1f, ceilColor);
  
 	// Draw ceiling grid (Cuadricule) - Historically only on ceiling
 	for (int i = 0; i <= 32; i++) {
@@ -1455,15 +1666,16 @@ void ColonyEngine::renderCorridor3D() {
 	
 	drawWallFeatures3D();
 
-	// F8 toggles polyfill for objects only (DOS doFunctionKey case 8).
-	// Non-fill: objects are outline-only (see-through). Walls stay filled.
+	// F7 toggles object fill.
+	// EGA: default is filled (wall background); F7 = outline-only (see-through).
+	// Mac: default is per-surface fill; F7 = "Fast mode" (outline-only).
 	if (_wireframe) {
 		_gfx->setWireframe(true); // No fill = outline-only objects
 	}
 	drawStaticObjects();
-	if (_wireframe) {
-		_gfx->setWireframe(true, lit ? 7 : 0); // Restore wall fill
-	}
+	// Always restore wall fill after objects.
+	// Mac mode's draw3DPrism changes fill per surface; must reset for subsequent rendering.
+	_gfx->setWireframe(true, wallFill);
 
 	_gfx->end3D();
 	_gfx->setWireframe(false);

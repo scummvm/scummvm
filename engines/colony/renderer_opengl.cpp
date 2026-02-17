@@ -63,6 +63,9 @@ public:
 		_wireframe = enable;
 		_wireframeFillColor = fillColor;
 	}
+	void setStippleData(const byte *data) override {
+		_stippleData = data;
+	}
 	void computeScreenViewport() override;
 
 private:
@@ -74,12 +77,14 @@ private:
 	byte _palette[256 * 3];
 	bool _wireframe;
 	int _wireframeFillColor; // -1 = no fill (outline only)
+	const byte *_stippleData; // GL_POLYGON_STIPPLE pattern (128 bytes), null = disabled
 	Common::Rect _screenViewport;
 };
 
 OpenGLRenderer::OpenGLRenderer(OSystem *system, int width, int height) : _system(system), _width(width), _height(height) {
 	_wireframe = true;
 	_wireframeFillColor = 0;
+	_stippleData = nullptr;
 	memset(_palette, 0, sizeof(_palette));
 	
 	// Default to white for initial colors if setPalette isn't called yet
@@ -236,21 +241,36 @@ void OpenGLRenderer::draw3DWall(int x1, int y1, int x2, int y2, uint32 color) {
 	float fy2 = y2 * 256.0f;
 
 	if (_wireframe) {
-		if (_wireframeFillColor >= 0) {
-			// Pass 1: Draw background fill (pushed back)
+		if (_wireframeFillColor >= 0 || _stippleData) {
 			glEnable(GL_POLYGON_OFFSET_FILL);
 			glPolygonOffset(1.1f, 4.0f);
-			useColor((uint32)_wireframeFillColor);
-			glBegin(GL_QUADS);
-			glVertex3f(fx1, fy1, -160.0f);
-			glVertex3f(fx2, fy2, -160.0f);
-			glVertex3f(fx2, fy2, 160.0f);
-			glVertex3f(fx1, fy1, 160.0f);
-			glEnd();
+
+			if (_stippleData) {
+				// Two-pass stipple fill (Mac B&W dither pattern)
+				useColor(255); // White background
+				glBegin(GL_QUADS);
+				glVertex3f(fx1, fy1, -160.0f); glVertex3f(fx2, fy2, -160.0f);
+				glVertex3f(fx2, fy2, 160.0f);  glVertex3f(fx1, fy1, 160.0f);
+				glEnd();
+				glEnable(GL_POLYGON_STIPPLE);
+				glPolygonStipple(_stippleData);
+				useColor(0); // Black foreground through stipple mask
+				glBegin(GL_QUADS);
+				glVertex3f(fx1, fy1, -160.0f); glVertex3f(fx2, fy2, -160.0f);
+				glVertex3f(fx2, fy2, 160.0f);  glVertex3f(fx1, fy1, 160.0f);
+				glEnd();
+				glDisable(GL_POLYGON_STIPPLE);
+			} else {
+				useColor((uint32)_wireframeFillColor);
+				glBegin(GL_QUADS);
+				glVertex3f(fx1, fy1, -160.0f); glVertex3f(fx2, fy2, -160.0f);
+				glVertex3f(fx2, fy2, 160.0f);  glVertex3f(fx1, fy1, 160.0f);
+				glEnd();
+			}
 			glDisable(GL_POLYGON_OFFSET_FILL);
 		}
 
-		// Pass 2: Draw colored wireframe edges
+		// Draw colored wireframe edges
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		useColor(color);
 		glBegin(GL_QUADS);
@@ -261,38 +281,63 @@ void OpenGLRenderer::draw3DWall(int x1, int y1, int x2, int y2, uint32 color) {
 		glEnd();
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	} else {
-		// Normal mode: push the wall face back slightly.
-		// This ensures that wall features drawn later as lines at the same depth correctly win the depth test.
 		glEnable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(1.1f, 4.0f); // Positive pulls AWAY from camera
-		useColor(color);
-		glBegin(GL_QUADS);
-		glVertex3f(fx1, fy1, -160.0f);
-		glVertex3f(fx2, fy2, -160.0f);
-		glVertex3f(fx2, fy2, 160.0f);
-		glVertex3f(fx1, fy1, 160.0f);
-		glEnd();
+		glPolygonOffset(1.1f, 4.0f);
+		if (_stippleData) {
+			useColor(255);
+			glBegin(GL_QUADS);
+			glVertex3f(fx1, fy1, -160.0f); glVertex3f(fx2, fy2, -160.0f);
+			glVertex3f(fx2, fy2, 160.0f);  glVertex3f(fx1, fy1, 160.0f);
+			glEnd();
+			glEnable(GL_POLYGON_STIPPLE);
+			glPolygonStipple(_stippleData);
+			useColor(0);
+			glBegin(GL_QUADS);
+			glVertex3f(fx1, fy1, -160.0f); glVertex3f(fx2, fy2, -160.0f);
+			glVertex3f(fx2, fy2, 160.0f);  glVertex3f(fx1, fy1, 160.0f);
+			glEnd();
+			glDisable(GL_POLYGON_STIPPLE);
+		} else {
+			useColor(color);
+			glBegin(GL_QUADS);
+			glVertex3f(fx1, fy1, -160.0f); glVertex3f(fx2, fy2, -160.0f);
+			glVertex3f(fx2, fy2, 160.0f);  glVertex3f(fx1, fy1, 160.0f);
+			glEnd();
+		}
 		glDisable(GL_POLYGON_OFFSET_FILL);
 	}
 }
  
 void OpenGLRenderer::draw3DQuad(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, uint32 color) {
 	if (_wireframe) {
-		if (_wireframeFillColor >= 0) {
-			// Pass 1: Draw background fill (pushed back)
+		if (_wireframeFillColor >= 0 || _stippleData) {
 			glEnable(GL_POLYGON_OFFSET_FILL);
 			glPolygonOffset(1.1f, 4.0f);
-			useColor((uint32)_wireframeFillColor);
-			glBegin(GL_QUADS);
-			glVertex3f(x1, y1, z1);
-			glVertex3f(x2, y2, z2);
-			glVertex3f(x3, y3, z3);
-			glVertex3f(x4, y4, z4);
-			glEnd();
+
+			if (_stippleData) {
+				useColor(255);
+				glBegin(GL_QUADS);
+				glVertex3f(x1, y1, z1); glVertex3f(x2, y2, z2);
+				glVertex3f(x3, y3, z3); glVertex3f(x4, y4, z4);
+				glEnd();
+				glEnable(GL_POLYGON_STIPPLE);
+				glPolygonStipple(_stippleData);
+				useColor(0);
+				glBegin(GL_QUADS);
+				glVertex3f(x1, y1, z1); glVertex3f(x2, y2, z2);
+				glVertex3f(x3, y3, z3); glVertex3f(x4, y4, z4);
+				glEnd();
+				glDisable(GL_POLYGON_STIPPLE);
+			} else {
+				useColor((uint32)_wireframeFillColor);
+				glBegin(GL_QUADS);
+				glVertex3f(x1, y1, z1); glVertex3f(x2, y2, z2);
+				glVertex3f(x3, y3, z3); glVertex3f(x4, y4, z4);
+				glEnd();
+			}
 			glDisable(GL_POLYGON_OFFSET_FILL);
 		}
 
-		// Pass 2: Draw colored wireframe edges
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		useColor(color);
 		glBegin(GL_QUADS);
@@ -303,16 +348,29 @@ void OpenGLRenderer::draw3DQuad(float x1, float y1, float z1, float x2, float y2
 		glEnd();
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	} else {
-		// Normal mode: push back to allow overlays (like wall features or floor decorations)
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(1.1f, 4.0f);
-		useColor(color);
-		glBegin(GL_QUADS);
-		glVertex3f(x1, y1, z1);
-		glVertex3f(x2, y2, z2);
-		glVertex3f(x3, y3, z3);
-		glVertex3f(x4, y4, z4);
-		glEnd();
+		if (_stippleData) {
+			useColor(255);
+			glBegin(GL_QUADS);
+			glVertex3f(x1, y1, z1); glVertex3f(x2, y2, z2);
+			glVertex3f(x3, y3, z3); glVertex3f(x4, y4, z4);
+			glEnd();
+			glEnable(GL_POLYGON_STIPPLE);
+			glPolygonStipple(_stippleData);
+			useColor(0);
+			glBegin(GL_QUADS);
+			glVertex3f(x1, y1, z1); glVertex3f(x2, y2, z2);
+			glVertex3f(x3, y3, z3); glVertex3f(x4, y4, z4);
+			glEnd();
+			glDisable(GL_POLYGON_STIPPLE);
+		} else {
+			useColor(color);
+			glBegin(GL_QUADS);
+			glVertex3f(x1, y1, z1); glVertex3f(x2, y2, z2);
+			glVertex3f(x3, y3, z3); glVertex3f(x4, y4, z4);
+			glEnd();
+		}
 		glDisable(GL_POLYGON_OFFSET_FILL);
 	}
 }
@@ -321,19 +379,31 @@ void OpenGLRenderer::draw3DPolygon(const float *x, const float *y, const float *
 	if (count < 3) return;
 
 	if (_wireframe) {
-		if (_wireframeFillColor >= 0) {
-			// Pass 1: Draw background fill (pushed back)
+		if (_wireframeFillColor >= 0 || _stippleData) {
 			glEnable(GL_POLYGON_OFFSET_FILL);
 			glPolygonOffset(1.1f, 4.0f);
-			useColor((uint32)_wireframeFillColor);
-			glBegin(GL_POLYGON);
-			for (int i = 0; i < count; i++)
-				glVertex3f(x[i], y[i], z[i]);
-			glEnd();
+
+			if (_stippleData) {
+				useColor(255);
+				glBegin(GL_POLYGON);
+				for (int i = 0; i < count; i++) glVertex3f(x[i], y[i], z[i]);
+				glEnd();
+				glEnable(GL_POLYGON_STIPPLE);
+				glPolygonStipple(_stippleData);
+				useColor(0);
+				glBegin(GL_POLYGON);
+				for (int i = 0; i < count; i++) glVertex3f(x[i], y[i], z[i]);
+				glEnd();
+				glDisable(GL_POLYGON_STIPPLE);
+			} else {
+				useColor((uint32)_wireframeFillColor);
+				glBegin(GL_POLYGON);
+				for (int i = 0; i < count; i++) glVertex3f(x[i], y[i], z[i]);
+				glEnd();
+			}
 			glDisable(GL_POLYGON_OFFSET_FILL);
 		}
 
-		// Pass 2: Draw colored wireframe edges
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		useColor(color);
 		glBegin(GL_POLYGON);
@@ -342,14 +412,26 @@ void OpenGLRenderer::draw3DPolygon(const float *x, const float *y, const float *
 		glEnd();
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	} else {
-		// Normal mode: push back
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(1.1f, 4.0f);
-		useColor(color);
-		glBegin(GL_POLYGON);
-		for (int i = 0; i < count; i++)
-			glVertex3f(x[i], y[i], z[i]);
-		glEnd();
+		if (_stippleData) {
+			useColor(255);
+			glBegin(GL_POLYGON);
+			for (int i = 0; i < count; i++) glVertex3f(x[i], y[i], z[i]);
+			glEnd();
+			glEnable(GL_POLYGON_STIPPLE);
+			glPolygonStipple(_stippleData);
+			useColor(0);
+			glBegin(GL_POLYGON);
+			for (int i = 0; i < count; i++) glVertex3f(x[i], y[i], z[i]);
+			glEnd();
+			glDisable(GL_POLYGON_STIPPLE);
+		} else {
+			useColor(color);
+			glBegin(GL_POLYGON);
+			for (int i = 0; i < count; i++) glVertex3f(x[i], y[i], z[i]);
+			glEnd();
+		}
 		glDisable(GL_POLYGON_OFFSET_FILL);
 	}
 }
