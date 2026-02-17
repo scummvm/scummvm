@@ -139,14 +139,6 @@ enum PatternMode : uint16 {
 	kNotPatBic = 15
 };
 
-struct EventRecord {
-	EventCode what;
-	uint32 message;
-	uint32 when;
-	Common::Point where;
-	uint16 modifiers;
-};
-
 enum WindowDefinition {
 	kDocumentProc = 0,
 	kDBoxProc = 1,
@@ -192,6 +184,14 @@ struct WindowRecord {
 	uint16 windowKind;
 };
 
+struct EventRecord {
+	EventCode what; // 0
+	uint32 message; // 2
+	WindowRecord *windowPtr; // also 2
+	uint32 when;  // 6
+	Common::Point where; // 10
+	uint16 modifiers;  // 14
+};
 
 struct ToolboxResInfo {
 	int16 fileID;

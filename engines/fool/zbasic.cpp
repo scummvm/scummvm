@@ -367,6 +367,21 @@ int16 ZBasic::readFileInt(int16 fileNo) {
 	return _fileStreams[fileNo]->readSint16BE();
 }
 
+Common::U32String ZBasic::readFileStr(int16 fileNo, int16 length) {
+	if (!_fileStreams.contains(fileNo)) {
+		error("ZBasic::readFileStr: unknown fileNo %d", fileNo);
+	}
+	warning("STUB: ZBasic::readFileStr");
+	return Common::U32String();
+}
+
+void ZBasic::record(int16 fileNo, int16 recordNo, int16 location) {
+	if (!_fileStreams.contains(fileNo)) {
+		error("ZBasic::record: unknown fileNo %d", fileNo);
+	}
+	_fileStreams[fileNo]->seek(_fileLineSize[fileNo]*recordNo + location);
+}
+
 int16 ZBasic::rndInt(int16 max) {
 	if (max == 0)
 		return 0;
@@ -377,6 +392,20 @@ int16 ZBasic::rndInt(int16 max) {
 
 const Common::U32String &ZBasic::str(size_t index) {
 	return *_stringTable[index]->data.str;
+}
+
+Common::U32String ZBasic::space(int16 count) {
+	Common::U32String result;
+	for (int i = 0; i < count; i++) {
+		result += Common::U32String(" ");
+	}
+	return result;
+}
+
+void ZBasic::swapInt(int16 &a, int16 &b) {
+	int16 tmp = a;
+	a = b;
+	b = tmp;
 }
 
 void ZBasic::text(uint16 font, uint16 size, uint16 face, SourceMode mode) {
@@ -407,6 +436,11 @@ void ZBasic::unk_20() {
 	warning("STUB: ZBasic::unk_20");
 }
 
+bool ZBasic::incrAndCheck(int16 &a0, int16 d1, int16 d0) {
+	a0 += d0;
+	return (d0 < 0) ? (a0 < d1) : (d1 < a0);
+}
+
 void ZBasic::unk_44(int16 unk1) {
 	warning("STUB: ZBasic::unk_44");
 }
@@ -427,5 +461,12 @@ void ZBasic::unk_331(uint16 unk1, int16 unk2) {
 	warning("STUB: ZBasic::unk_331");
 }
 
+void ZBasic::unk_333(uint16 unk1) {
+	warning("STUB: ZBasic::unk_333");
+}
+
+void ZBasic::unk_334(const Common::U32String &unk1, int32 unk2, int32 unk3) {
+	warning("STUB: ZBasic::unk_334 - %s, %d, %d", unk1.encode().c_str(), unk2, unk3);
+}
 
 } // namespace Fool
