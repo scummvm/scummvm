@@ -204,10 +204,11 @@ void ColonyEngine::loadMap(int mnum) {
 
 	getWall();  // restore saved wall state changes (airlocks)
 	doPatch();  // apply object relocations from patch table
+	initRobots();  // spawn robot objects for this level
 
 	if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
 		_robotArray[_me.xindex][_me.yindex] = MENUM;
-	debug("Successfully loaded map %d (static objects: %d)", mnum, (int)_objects.size());
+	debug("Successfully loaded map %d (objects: %d)", mnum, (int)_objects.size());
 }
 
 // PATCH.C: Create a new object in _objects and register in _robotArray.
@@ -380,6 +381,69 @@ bool ColonyEngine::patchMapFrom(const PassPatch &from, uint8 *mapdata) {
 		}
 	}
 	return false;
+}
+
+// DOS InitObject() — spawn robots for the current level.
+// Level 1 = no robots; Level 2 = 25; Level 3-4 = 30; Level 5-7 = 35.
+// Robot #1 = QUEEN, #2 = SNOOP, rest = random type weighted by level.
+void ColonyEngine::initRobots() {
+	if (_level == 1) return;  // Level 1 has no robots
+
+	int maxrob;
+	switch (_level) {
+	case 2:  maxrob = 25; break;
+	case 3:
+	case 4:  maxrob = 30; break;
+	default: maxrob = 35; break;
+	}
+
+	int lvl = _level - 1;
+	if (lvl > 5) lvl = 5;
+
+	for (int i = 1; i <= maxrob; i++) {
+		uint8 ang = _randomSource.getRandomNumber(255);
+		int xloc, yloc;
+
+		// Find unoccupied cell (avoiding borders)
+		do {
+			if (_level == 7 && i == 1) {
+				// Queen on level 7 has fixed position
+				xloc = 27;
+				yloc = 10;
+			} else {
+				xloc = 2 + _randomSource.getRandomNumber(26);  // 2..28
+				yloc = 2 + _randomSource.getRandomNumber(26);  // 2..28
+			}
+		} while (_robotArray[xloc][yloc] != 0);
+
+		// Convert grid coords to world coords (center of cell)
+		int wxloc = (xloc << 8) + 128;
+		int wyloc = (yloc << 8) + 128;
+
+		int type;
+		if (i == 1)
+			type = kRobQueen;
+		else if (i == 2)
+			type = kRobSnoop;
+		else {
+			// Random type weighted by level difficulty
+			int rnd = _randomSource.getRandomNumber(lvl);
+			if (rnd > 5) rnd = 5;
+			switch (rnd) {
+			case 0: type = kRobCube; break;
+			case 1: type = kRobPyramid; break;
+			case 2: type = kRobUPyramid; break;
+			case 3: type = kRobEye; break;
+			case 4: type = kRobDrone; break;
+			case 5: type = kRobSoldier; break;
+			default: type = kRobCube; break;
+			}
+		}
+
+		createObject(type, wxloc, wyloc, ang);
+	}
+
+	debug("initRobots: spawned %d robots on level %d", maxrob, _level);
 }
 
 void ColonyEngine::initTrig() {

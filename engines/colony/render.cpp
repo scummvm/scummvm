@@ -88,6 +88,21 @@ static uint8 lookupLineColor(int colorIdx) {
 	case kColorWall:      return 0;  // vBLACK
 	case kColorRainbow1:  return 4;  // vRED
 	case kColorRainbow2:  return 14; // vYELLOW
+	// Robot colors (from ROBOCOLR.C fill color column 2)
+	case kColorCube:        return 3;  // vCYAN
+	case kColorDrone:       return 3;  // vCYAN
+	case kColorClaw1:       return 4;  // vRED
+	case kColorClaw2:       return 3;  // vCYAN
+	case kColorEyes:        return 15; // vINTWHITE
+	case kColorEye:         return 15; // vINTWHITE
+	case kColorIris:        return 1;  // vBLUE
+	case kColorPupil:       return 0;  // vBLACK
+	case kColorPyramid:     return 4;  // vRED
+	case kColorQueen:       return 14; // vYELLOW
+	case kColorTopSnoop:    return 3;  // vCYAN
+	case kColorBottomSnoop: return 8;  // vDKGRAY
+	case kColorUPyramid:    return 9;  // vLTBLUE
+	case kColorShadow:      return 8;  // vDKGRAY
 	default:              return 0;  // vBLACK
 	}
 }
@@ -172,6 +187,13 @@ static int lookupMacPattern(int colorIdx) {
 	case kColorTVScreen:  return kPatternDkGray; // c_tvscreen = DKGRAY
 	case kColorMacScreen: return kPatternDkGray; // c_screen = DKGRAY
 	case kColorWater:     return kPatternDkGray; // c_water = DKGRAY
+	// Robot colors (from ROBOCOLR.C Mac pattern column 0)
+	case kColorEyes:        return kPatternWhite;
+	case kColorEye:         return kPatternWhite;
+	case kColorPupil:       return kPatternBlack;
+	case kColorShadow:      return kPatternDkGray;
+	case kColorBottomSnoop: return kPatternDkGray;
+	case kColorClaw1:       return kPatternDkGray;
 	default:              return kPatternGray;   // Most objects = GRAY
 	}
 }
@@ -842,6 +864,278 @@ static const Colony::ColonyEngine::PrismPartDef kProjectorParts[3] = {
 	{12, kPLensPts, 7, kPLensSurf}
 };
 
+// ============================================================================
+// Robot geometry data (from DOS PYRAMID.H, CUBE.H, EYE.H, UPYRAMID.H,
+// QUEEN.H, DRONE.H, SNOOP.H)
+// ============================================================================
+
+// --- Pyramid (type 2) ---
+static const int kPyramidPts[5][3] = {
+	{-75, 75, 30}, {75, 75, 30}, {75, -75, 30}, {-75, -75, 30}, {0, 0, 200}
+};
+static const int kPyramidSurf[4][8] = {
+	{kColorPyramid, 3, 1, 0, 4, 1, 0, 0}, {kColorPyramid, 3, 2, 1, 4, 2, 0, 0},
+	{kColorPyramid, 3, 3, 2, 4, 3, 0, 0}, {kColorPyramid, 3, 0, 3, 4, 0, 0, 0}
+};
+static const int kPShadowPts[4][3] = {
+	{-75, 75, 0}, {75, 75, 0}, {75, -75, 0}, {-75, -75, 0}
+};
+static const int kPShadowSurf[1][8] = {{kColorShadow, 4, 3, 2, 1, 0, 3, 0}};
+// Pyramid eye (ball on top)
+static const int kPIrisPts[4][3] = {
+	{15, 0, 185}, {15, 15, 200}, {15, 0, 215}, {15, -15, 200}
+};
+static const int kPIrisSurf[1][8] = {{kColorIris, 4, 0, 1, 2, 3, 0, 0}};
+static const int kPPupilPts[4][3] = {
+	{16, 0, 194}, {16, 6, 200}, {16, 0, 206}, {16, -6, 200}
+};
+static const int kPPupilSurf[1][8] = {{kColorPupil, 4, 0, 1, 2, 3, 0, 0}};
+
+static const Colony::ColonyEngine::PrismPartDef kPyramidBodyDef = {5, kPyramidPts, 4, kPyramidSurf};
+static const Colony::ColonyEngine::PrismPartDef kPShadowDef = {4, kPShadowPts, 1, kPShadowSurf};
+static const Colony::ColonyEngine::PrismPartDef kPIrisDef = {4, kPIrisPts, 1, kPIrisSurf};
+static const Colony::ColonyEngine::PrismPartDef kPPupilDef = {4, kPPupilPts, 1, kPPupilSurf};
+
+// --- Cube (type 3) --- (octahedron)
+static const int kCubePts[6][3] = {
+	{0, 0, 200}, {100, 0, 100}, {0, 100, 100}, {-100, 0, 100}, {0, -100, 100}, {0, 0, 0}
+};
+static const int kCubeSurf[8][8] = {
+	{kColorCube, 3, 0, 1, 2, 0, 0, 0}, {kColorCube, 3, 0, 2, 3, 0, 0, 0},
+	{kColorCube, 3, 0, 3, 4, 0, 0, 0}, {kColorCube, 3, 0, 4, 1, 0, 0, 0},
+	{kColorCube, 3, 5, 2, 1, 5, 0, 0}, {kColorCube, 3, 5, 3, 2, 5, 0, 0},
+	{kColorCube, 3, 5, 4, 3, 5, 0, 0}, {kColorCube, 3, 5, 1, 4, 5, 0, 0}
+};
+static const Colony::ColonyEngine::PrismPartDef kCubeBodyDef = {6, kCubePts, 8, kCubeSurf};
+
+// --- UPyramid (type 4) --- (inverted pyramid)
+static const int kUPyramidPts[5][3] = {
+	{-75, 75, 190}, {75, 75, 190}, {75, -75, 190}, {-75, -75, 190}, {0, 0, 30}
+};
+static const int kUPyramidSurf[5][8] = {
+	{kColorUPyramid, 3, 0, 1, 4, 0, 0, 0}, {kColorUPyramid, 3, 1, 2, 4, 1, 0, 0},
+	{kColorUPyramid, 3, 2, 3, 4, 2, 0, 0}, {kColorUPyramid, 3, 3, 0, 4, 3, 0, 0},
+	{kColorUPyramid, 4, 3, 2, 1, 0, 3, 0}
+};
+static const int kUPShadowPts[4][3] = {
+	{-25, 25, 0}, {25, 25, 0}, {25, -25, 0}, {-25, -25, 0}
+};
+static const int kUPShadowSurf[1][8] = {{kColorShadow, 4, 3, 2, 1, 0, 3, 0}};
+
+static const Colony::ColonyEngine::PrismPartDef kUPyramidBodyDef = {5, kUPyramidPts, 5, kUPyramidSurf};
+static const Colony::ColonyEngine::PrismPartDef kUPShadowDef = {4, kUPShadowPts, 1, kUPShadowSurf};
+
+// --- Eye (type 1) ---
+// Ball is rendered by draw3DSphere(), not as a prism
+static const int kEyeIrisPts[4][3] = {
+	{60, 0, 140}, {60, 60, 200}, {60, 0, 260}, {60, -60, 200}
+};
+static const int kEyeIrisSurf[1][8] = {{kColorIris, 4, 0, 1, 2, 3, 0, 0}};
+static const int kEyePupilPts[4][3] = {
+	{66, 0, 175}, {66, 25, 200}, {66, 0, 225}, {66, -25, 200}
+};
+static const int kEyePupilSurf[1][8] = {{kColorBlack, 4, 0, 1, 2, 3, 0, 0}};
+
+static const Colony::ColonyEngine::PrismPartDef kEyeIrisDef = {4, kEyeIrisPts, 1, kEyeIrisSurf};
+static const Colony::ColonyEngine::PrismPartDef kEyePupilDef = {4, kEyePupilPts, 1, kEyePupilSurf};
+
+// --- Floating Pyramid (type 6) --- egg on ground
+static const int kFPyramidPts[5][3] = {
+	{-75, 75, 0}, {75, 75, 0}, {75, -75, 0}, {-75, -75, 0}, {0, 0, 170}
+};
+static const Colony::ColonyEngine::PrismPartDef kFPyramidBodyDef = {5, kFPyramidPts, 4, kPyramidSurf};
+
+// --- Small Pyramid (type 10) ---
+static const int kSPyramidPts[5][3] = {
+	{-40, 40, 0}, {40, 40, 0}, {40, -40, 0}, {-40, -40, 0}, {0, 0, 100}
+};
+static const Colony::ColonyEngine::PrismPartDef kSPyramidBodyDef = {5, kSPyramidPts, 4, kPyramidSurf};
+
+// --- Mini Pyramid (type 14) ---
+static const int kMPyramidPts[5][3] = {
+	{-20, 20, 0}, {20, 20, 0}, {20, -20, 0}, {-20, -20, 0}, {0, 0, 50}
+};
+static const Colony::ColonyEngine::PrismPartDef kMPyramidBodyDef = {5, kMPyramidPts, 4, kPyramidSurf};
+
+// --- Floating Cube (type 7) ---
+static const int kFCubePts[6][3] = {
+	{0, 0, 150}, {75, 0, 75}, {0, 75, 75}, {-75, 0, 75}, {0, -75, 75}, {0, 0, 0}
+};
+static const Colony::ColonyEngine::PrismPartDef kFCubeBodyDef = {6, kFCubePts, 8, kCubeSurf};
+
+// --- Small Cube (type 11) ---
+static const int kSCubePts[6][3] = {
+	{0, 0, 100}, {50, 0, 50}, {0, 50, 50}, {-50, 0, 50}, {0, -50, 50}, {0, 0, 0}
+};
+static const Colony::ColonyEngine::PrismPartDef kSCubeBodyDef = {6, kSCubePts, 8, kCubeSurf};
+
+// --- Mini Cube (type 15) ---
+static const int kMCubePts[6][3] = {
+	{0, 0, 50}, {25, 0, 25}, {0, 25, 25}, {-25, 0, 25}, {0, -25, 25}, {0, 0, 0}
+};
+static const Colony::ColonyEngine::PrismPartDef kMCubeBodyDef = {6, kMCubePts, 8, kCubeSurf};
+
+// --- Floating UPyramid (type 8) ---
+static const int kFUPyramidPts[5][3] = {
+	{-75, 75, 170}, {75, 75, 170}, {75, -75, 170}, {-75, -75, 170}, {0, 0, 0}
+};
+static const Colony::ColonyEngine::PrismPartDef kFUPyramidBodyDef = {5, kFUPyramidPts, 5, kUPyramidSurf};
+
+// --- Small UPyramid (type 12) ---
+static const int kSUPyramidPts[5][3] = {
+	{-40, 40, 100}, {40, 40, 100}, {40, -40, 100}, {-40, -40, 100}, {0, 0, 0}
+};
+static const Colony::ColonyEngine::PrismPartDef kSUPyramidBodyDef = {5, kSUPyramidPts, 5, kUPyramidSurf};
+
+// --- Mini UPyramid (type 16) ---
+static const int kMUPyramidPts[5][3] = {
+	{-20, 20, 50}, {20, 20, 50}, {20, -20, 50}, {-20, -20, 50}, {0, 0, 0}
+};
+static const Colony::ColonyEngine::PrismPartDef kMUPyramidBodyDef = {5, kMUPyramidPts, 5, kUPyramidSurf};
+
+// --- Floating Eye (type 5) ---
+static const int kFEyeIrisPts[4][3] = {
+	{60, 0, 40}, {60, 60, 100}, {60, 0, 160}, {60, -60, 100}
+};
+static const int kFEyePupilPts[4][3] = {
+	{66, 0, 75}, {66, 25, 100}, {66, 0, 125}, {66, -25, 100}
+};
+static const Colony::ColonyEngine::PrismPartDef kFEyeIrisDef = {4, kFEyeIrisPts, 1, kEyeIrisSurf};
+static const Colony::ColonyEngine::PrismPartDef kFEyePupilDef = {4, kFEyePupilPts, 1, kEyePupilSurf};
+
+// --- Small Eye (type 9) ---
+static const int kSEyeIrisPts[4][3] = {
+	{30, 0, 20}, {30, 30, 50}, {30, 0, 80}, {30, -30, 50}
+};
+static const int kSEyePupilPts[4][3] = {
+	{33, 0, 38}, {33, 13, 50}, {33, 0, 63}, {33, -13, 50}
+};
+static const Colony::ColonyEngine::PrismPartDef kSEyeIrisDef = {4, kSEyeIrisPts, 1, kEyeIrisSurf};
+static const Colony::ColonyEngine::PrismPartDef kSEyePupilDef = {4, kSEyePupilPts, 1, kEyePupilSurf};
+
+// --- Mini Eye (type 13) ---
+static const int kMEyeIrisPts[4][3] = {
+	{15, 0, 10}, {15, 15, 25}, {15, 0, 40}, {15, -15, 25}
+};
+static const int kMEyePupilPts[4][3] = {
+	{16, 0, 19}, {16, 6, 25}, {16, 0, 31}, {16, -6, 25}
+};
+static const Colony::ColonyEngine::PrismPartDef kMEyeIrisDef = {4, kMEyeIrisPts, 1, kEyeIrisSurf};
+static const Colony::ColonyEngine::PrismPartDef kMEyePupilDef = {4, kMEyePupilPts, 1, kEyePupilSurf};
+
+// --- Queen (type 17) ---
+// Queen eye (ball rendered by draw3DSphere)
+static const int kQIrisPts[4][3] = {
+	{15, 0, 140}, {15, 15, 155}, {15, 0, 170}, {15, -15, 155}
+};
+static const int kQIrisSurf[1][8] = {{kColorIris, 4, 0, 1, 2, 3, 0, 0}};
+static const int kQPupilPts[4][3] = {
+	{16, 0, 148}, {16, 6, 155}, {16, 0, 161}, {16, -6, 155}
+};
+static const int kQPupilSurf[1][8] = {{kColorPupil, 4, 0, 1, 2, 3, 0, 0}};
+// Queen abdomen
+static const int kQAbdomenPts[9][3] = {
+	{120, 0, 130}, {30, 0, 160}, {30, 0, 100}, {30, 50, 130}, {30, -50, 130},
+	{0, 0, 150}, {0, 0, 110}, {0, 25, 130}, {0, -25, 130}
+};
+static const int kQAbdomenSurf[9][8] = {
+	{kColorQueen, 3, 0, 3, 1, 0, 0, 0}, {kColorQueen, 3, 0, 1, 4, 0, 0, 0},
+	{kColorQueen, 3, 0, 2, 3, 0, 0, 0}, {kColorQueen, 3, 0, 4, 2, 0, 0, 0},
+	{kColorQueen, 4, 1, 5, 8, 4, 1, 0}, {kColorQueen, 4, 1, 3, 7, 5, 1, 0},
+	{kColorQueen, 4, 2, 4, 8, 6, 2, 0}, {kColorQueen, 4, 2, 6, 7, 3, 2, 0},
+	{kColorClear, 4, 5, 7, 6, 8, 5, 0}
+};
+// Queen thorax
+static const int kQThoraxPts[9][3] = {
+	{-120, 0, 130}, {-50, 0, 170}, {-50, 0, 90}, {-50, 60, 130}, {-50, -60, 130},
+	{0, 0, 150}, {0, 0, 110}, {0, 25, 130}, {0, -25, 130}
+};
+static const int kQThoraxSurf[8][8] = {
+	{kColorQueen, 3, 0, 1, 3, 0, 0, 0}, {kColorQueen, 3, 0, 4, 1, 0, 0, 0},
+	{kColorQueen, 3, 0, 3, 2, 0, 0, 0}, {kColorQueen, 3, 0, 2, 4, 0, 0, 0},
+	{kColorQueen, 4, 1, 4, 8, 5, 1, 0}, {kColorQueen, 4, 1, 5, 7, 3, 1, 0},
+	{kColorQueen, 4, 2, 6, 8, 4, 2, 0}, {kColorQueen, 4, 2, 3, 7, 6, 2, 0}
+};
+// Queen wings
+static const int kQLWingPts[4][3] = {
+	{80, 0, 140}, {-40, 10, 200}, {-120, 60, 170}, {-40, 120, 140}
+};
+static const int kQLWingSurf[1][8] = {{kColorClear, 4, 0, 1, 2, 3, 0, 0}};
+static const int kQRWingPts[4][3] = {
+	{80, 0, 140}, {-40, -10, 200}, {-120, -60, 170}, {-40, -120, 140}
+};
+static const int kQRWingSurf[1][8] = {{kColorClear, 4, 0, 1, 2, 3, 0, 0}};
+
+static const Colony::ColonyEngine::PrismPartDef kQIrisDef = {4, kQIrisPts, 1, kQIrisSurf};
+static const Colony::ColonyEngine::PrismPartDef kQPupilDef = {4, kQPupilPts, 1, kQPupilSurf};
+static const Colony::ColonyEngine::PrismPartDef kQAbdomenDef = {9, kQAbdomenPts, 9, kQAbdomenSurf};
+static const Colony::ColonyEngine::PrismPartDef kQThoraxDef = {9, kQThoraxPts, 8, kQThoraxSurf};
+static const Colony::ColonyEngine::PrismPartDef kQLWingDef = {4, kQLWingPts, 1, kQLWingSurf};
+static const Colony::ColonyEngine::PrismPartDef kQRWingDef = {4, kQRWingPts, 1, kQRWingSurf};
+
+// --- Drone / Soldier (types 18, 19) ---
+static const int kDAbdomenPts[6][3] = {
+	{0, 0, 170}, {120, 0, 130}, {0, 100, 130}, {-130, 0, 130}, {0, -100, 130}, {0, 0, 100}
+};
+static const int kDAbdomenSurf[8][8] = {
+	{kColorDrone, 3, 0, 1, 2, 0, 0, 0}, {kColorDrone, 3, 0, 2, 3, 0, 0, 0},
+	{kColorDrone, 3, 0, 3, 4, 0, 0, 0}, {kColorDrone, 3, 0, 4, 1, 0, 0, 0},
+	{kColorDrone, 3, 5, 2, 1, 5, 0, 0}, {kColorDrone, 3, 5, 3, 2, 5, 0, 0},
+	{kColorDrone, 3, 5, 4, 3, 5, 0, 0}, {kColorDrone, 3, 5, 1, 4, 5, 0, 0}
+};
+// Drone static pincers (llPincer/rrPincer)
+static const int kDLLPincerPts[4][3] = {
+	{0, 0, 130}, {50, -2, 130}, {35, -20, 140}, {35, -20, 120}
+};
+static const int kDLPincerSurf[4][8] = {
+	{kColorClaw1, 3, 0, 2, 1, 0, 0, 0}, {kColorClaw1, 3, 0, 1, 3, 0, 0, 0},
+	{kColorClaw2, 3, 0, 3, 2, 0, 0, 0}, {kColorClaw2, 3, 1, 2, 3, 1, 0, 0}
+};
+static const int kDRRPincerPts[4][3] = {
+	{0, 0, 130}, {50, 2, 130}, {35, 20, 140}, {35, 20, 120}
+};
+static const int kDRPincerSurf[4][8] = {
+	{kColorClaw1, 3, 0, 1, 2, 0, 0, 0}, {kColorClaw1, 3, 0, 3, 1, 0, 0, 0},
+	{kColorClaw2, 3, 0, 2, 3, 0, 0, 0}, {kColorClaw2, 3, 1, 3, 2, 1, 0, 0}
+};
+// Drone eyes
+static const int kDLEyePts[3][3] = {
+	{60, 0, 150}, {60, 50, 130}, {60, 25, 150}
+};
+static const int kDLEyeSurf[2][8] = {
+	{kColorEyes, 3, 0, 1, 2, 0, 0, 0}, {kColorEyes, 3, 0, 2, 1, 0, 0, 0}
+};
+static const int kDREyePts[3][3] = {
+	{60, 0, 150}, {60, -50, 130}, {60, -25, 150}
+};
+static const int kDREyeSurf[2][8] = {
+	{kColorEyes, 3, 0, 1, 2, 0, 0, 0}, {kColorEyes, 3, 0, 2, 1, 0, 0, 0}
+};
+
+static const Colony::ColonyEngine::PrismPartDef kDAbdomenDef = {6, kDAbdomenPts, 8, kDAbdomenSurf};
+static const Colony::ColonyEngine::PrismPartDef kDLLPincerDef = {4, kDLLPincerPts, 4, kDLPincerSurf};
+static const Colony::ColonyEngine::PrismPartDef kDRRPincerDef = {4, kDRRPincerPts, 4, kDRPincerSurf};
+static const Colony::ColonyEngine::PrismPartDef kDLEyeDef = {3, kDLEyePts, 2, kDLEyeSurf};
+static const Colony::ColonyEngine::PrismPartDef kDREyeDef = {3, kDREyePts, 2, kDREyeSurf};
+
+// --- Snoop (type 20) ---
+static const int kSnoopAbdomenPts[4][3] = {
+	{0, 100, 0}, {-180, 0, 0}, {0, -100, 0}, {0, 0, 70}
+};
+static const int kSnoopAbdomenSurf[2][8] = {
+	{kColorTopSnoop, 3, 0, 1, 3, 0, 0, 0}, {kColorTopSnoop, 3, 2, 3, 1, 2, 0, 0}
+};
+static const int kSnoopHeadPts[4][3] = {
+	{0, 100, 0}, {150, 0, 0}, {0, -100, 0}, {0, 0, 70}
+};
+static const int kSnoopHeadSurf[3][8] = {
+	{kColorTopSnoop, 3, 0, 3, 1, 0, 0, 0}, {kColorTopSnoop, 3, 2, 1, 3, 2, 0, 0},
+	{kColorBottomSnoop, 3, 0, 1, 2, 0, 0, 0}
+};
+
+static const Colony::ColonyEngine::PrismPartDef kSnoopAbdomenDef = {4, kSnoopAbdomenPts, 2, kSnoopAbdomenSurf};
+static const Colony::ColonyEngine::PrismPartDef kSnoopHeadDef = {4, kSnoopHeadPts, 3, kSnoopHeadSurf};
+
 
 void ColonyEngine::quadrant() {
 	int remain;
@@ -1003,6 +1297,79 @@ void ColonyEngine::draw3DLeaf(const Thing &obj, const PrismPartDef &def) {
 		// Draw as connected line segments (MoveTo first point, LineTo the rest)
 		for (int j = 0; j < count - 1; j++)
 			_gfx->draw3DLine(px[j], py[j], pz[j], px[j + 1], py[j + 1], pz[j + 1], color);
+	}
+}
+
+void ColonyEngine::draw3DSphere(const Thing &obj, int pt0x, int pt0y, int pt0z,
+                                int pt1x, int pt1y, int pt1z,
+                                uint32 fillColor, uint32 outlineColor) {
+	// Sphere defined by two object-local points: pt0 (center bottom) and pt1 (center top).
+	// Center is midpoint, radius is half the distance (along z typically).
+	// Rendered as a billboard polygon facing the camera.
+	const uint8 ang = obj.where.ang + 32;
+	const long rotCos = _cost[ang];
+	const long rotSin = _sint[ang];
+	const bool lit = (_corePower[_coreIndex] > 0);
+
+	// Transform both points to world space
+	long rx0 = ((long)pt0x * rotCos - (long)pt0y * rotSin) >> 7;
+	long ry0 = ((long)pt0x * rotSin + (long)pt0y * rotCos) >> 7;
+	float wx0 = (float)(rx0 + obj.where.xloc);
+	float wy0 = (float)(ry0 + obj.where.yloc);
+	float wz0 = (float)(pt0z - 160);
+
+	long rx1 = ((long)pt1x * rotCos - (long)pt1y * rotSin) >> 7;
+	long ry1 = ((long)pt1x * rotSin + (long)pt1y * rotCos) >> 7;
+	float wx1 = (float)(rx1 + obj.where.xloc);
+	float wy1 = (float)(ry1 + obj.where.yloc);
+	float wz1 = (float)(pt1z - 160);
+
+	// Center and radius
+	float cx = (wx0 + wx1) * 0.5f;
+	float cy = (wy0 + wy1) * 0.5f;
+	float cz = (wz0 + wz1) * 0.5f;
+	float dx = wx1 - wx0, dy = wy1 - wy0, dz = wz1 - wz0;
+	float radius = sqrtf(dx * dx + dy * dy + dz * dz) * 0.5f;
+
+	// Billboard: create a polygon perpendicular to the camera direction.
+	// Camera is at (_me.xloc, _me.yloc, 0).
+	float viewDx = cx - (float)_me.xloc;
+	float viewDy = cy - (float)_me.yloc;
+	float viewLen = sqrtf(viewDx * viewDx + viewDy * viewDy);
+	if (viewLen < 0.001f) return;
+
+	// "right" vector: perpendicular to view in XY plane
+	float rightX = -viewDy / viewLen;
+	float rightY = viewDx / viewLen;
+	// "up" vector: world Z axis
+	float upZ = 1.0f;
+
+	// Create 12-sided polygon
+	static const int N = 12;
+	float px[N], py[N], pz[N];
+	for (int i = 0; i < N; i++) {
+		float a = (float)i * 2.0f * (float)M_PI / (float)N;
+		float cosA = cosf(a);
+		float sinA = sinf(a);
+		px[i] = cx + radius * (cosA * rightX);
+		py[i] = cy + radius * (cosA * rightY);
+		pz[i] = cz + radius * (sinA * upZ);
+	}
+
+	if (lit) {
+		if (_renderMode == Common::kRenderMacintosh) {
+			int pattern = (fillColor == 15) ? kPatternWhite : kPatternGray;
+			if (!_wireframe) {
+				_gfx->setWireframe(true, pattern == kPatternBlack ? 0 : 255);
+			}
+			_gfx->setStippleData(kMacStippleData[pattern]);
+			_gfx->draw3DPolygon(px, py, pz, N, 0);
+			_gfx->setStippleData(nullptr);
+		} else {
+			_gfx->draw3DPolygon(px, py, pz, N, fillColor);
+		}
+	} else {
+		_gfx->draw3DPolygon(px, py, pz, N, outlineColor);
 	}
 }
 
@@ -1939,6 +2306,89 @@ bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj) {
 		draw3DPrism(obj, kForkliftParts[4], false); // FLUR (right arm)
 		draw3DPrism(obj, kForkliftParts[1], false); // treads
 		draw3DPrism(obj, kForkliftParts[0], false); // cab
+		break;
+	// === Robot types (1-20) ===
+	case kRobEye:
+		draw3DSphere(obj, 0, 0, 100, 0, 0, 200, 15, 15); // ball: white
+		draw3DPrism(obj, kEyeIrisDef, false);
+		draw3DPrism(obj, kEyePupilDef, false);
+		break;
+	case kRobPyramid:
+		draw3DPrism(obj, kPShadowDef, false);
+		draw3DPrism(obj, kPyramidBodyDef, false);
+		draw3DSphere(obj, 0, 0, 175, 0, 0, 200, 15, 15); // ball on top
+		draw3DPrism(obj, kPIrisDef, false);
+		draw3DPrism(obj, kPPupilDef, false);
+		break;
+	case kRobCube:
+		draw3DPrism(obj, kCubeBodyDef, false);
+		break;
+	case kRobUPyramid:
+		draw3DPrism(obj, kUPShadowDef, false);
+		draw3DPrism(obj, kUPyramidBodyDef, false);
+		break;
+	case kRobFEye:
+		draw3DSphere(obj, 0, 0, 0, 0, 0, 100, 15, 15);
+		draw3DPrism(obj, kFEyeIrisDef, false);
+		draw3DPrism(obj, kFEyePupilDef, false);
+		break;
+	case kRobFPyramid:
+		draw3DPrism(obj, kFPyramidBodyDef, false);
+		break;
+	case kRobFCube:
+		draw3DPrism(obj, kFCubeBodyDef, false);
+		break;
+	case kRobFUPyramid:
+		draw3DPrism(obj, kFUPyramidBodyDef, false);
+		break;
+	case kRobSEye:
+		draw3DSphere(obj, 0, 0, 0, 0, 0, 50, 15, 15);
+		draw3DPrism(obj, kSEyeIrisDef, false);
+		draw3DPrism(obj, kSEyePupilDef, false);
+		break;
+	case kRobSPyramid:
+		draw3DPrism(obj, kSPyramidBodyDef, false);
+		break;
+	case kRobSCube:
+		draw3DPrism(obj, kSCubeBodyDef, false);
+		break;
+	case kRobSUPyramid:
+		draw3DPrism(obj, kSUPyramidBodyDef, false);
+		break;
+	case kRobMEye:
+		draw3DSphere(obj, 0, 0, 0, 0, 0, 25, 15, 15);
+		draw3DPrism(obj, kMEyeIrisDef, false);
+		draw3DPrism(obj, kMEyePupilDef, false);
+		break;
+	case kRobMPyramid:
+		draw3DPrism(obj, kMPyramidBodyDef, false);
+		break;
+	case kRobMCube:
+		draw3DPrism(obj, kMCubeBodyDef, false);
+		break;
+	case kRobMUPyramid:
+		draw3DPrism(obj, kMUPyramidBodyDef, false);
+		break;
+	case kRobQueen:
+		draw3DPrism(obj, kQThoraxDef, false);
+		draw3DPrism(obj, kQAbdomenDef, false);
+		draw3DPrism(obj, kQLWingDef, false);
+		draw3DPrism(obj, kQRWingDef, false);
+		draw3DSphere(obj, 0, 0, 130, 0, 0, 155, 15, 15); // queen ball
+		draw3DPrism(obj, kQIrisDef, false);
+		draw3DPrism(obj, kQPupilDef, false);
+		break;
+	case kRobDrone:
+	case kRobSoldier:
+		draw3DPrism(obj, kDAbdomenDef, false);
+		draw3DPrism(obj, kDLLPincerDef, false);
+		draw3DPrism(obj, kDRRPincerDef, false);
+		draw3DPrism(obj, kDLEyeDef, false);
+		draw3DPrism(obj, kDREyeDef, false);
+		break;
+	case kRobSnoop:
+		draw3DPrism(obj, kSnoopAbdomenDef, false);
+		draw3DPrism(obj, kSnoopHeadDef, false);
 		break;
 	default:
 		return false;

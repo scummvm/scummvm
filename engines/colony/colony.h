@@ -58,6 +58,29 @@ enum MapDirection {
 	kDirCenter = 4
 };
 
+enum RobotType {
+	kRobEye = 1,
+	kRobPyramid = 2,
+	kRobCube = 3,
+	kRobUPyramid = 4,
+	kRobFEye = 5,
+	kRobFPyramid = 6,
+	kRobFCube = 7,
+	kRobFUPyramid = 8,
+	kRobSEye = 9,
+	kRobSPyramid = 10,
+	kRobSCube = 11,
+	kRobSUPyramid = 12,
+	kRobMEye = 13,
+	kRobMPyramid = 14,
+	kRobMCube = 15,
+	kRobMUPyramid = 16,
+	kRobQueen = 17,
+	kRobDrone = 18,
+	kRobSoldier = 19,
+	kRobSnoop = 20
+};
+
 enum ObjectType {
 	kObjDesk = 21,
 	kObjPlant = 22,
@@ -135,7 +158,22 @@ enum ObjColor {
 	kColorTeleDoor = 67,
 	kColorWall = 77,
 	kColorRainbow1 = 80,
-	kColorRainbow2 = 81
+	kColorRainbow2 = 81,
+	// Robot colors
+	kColorCube = 36,
+	kColorDrone = 42,
+	kColorClaw1 = 43,
+	kColorClaw2 = 44,
+	kColorEyes = 45,
+	kColorEye = 46,
+	kColorIris = 47,
+	kColorPupil = 48,
+	kColorPyramid = 57,
+	kColorQueen = 58,
+	kColorTopSnoop = 59,
+	kColorBottomSnoop = 60,
+	kColorUPyramid = 68,
+	kColorShadow = 74
 };
 
 #define BASEOBJECT 20
@@ -359,7 +397,10 @@ public:
 private:
 	void draw3DPrism(const Thing &obj, const PrismPartDef &def, bool useLook);
 	void draw3DLeaf(const Thing &obj, const PrismPartDef &def);
+	void draw3DSphere(const Thing &obj, int pt0x, int pt0y, int pt0z,
+	                  int pt1x, int pt1y, int pt1z, uint32 fillColor, uint32 outlineColor);
 	bool drawStaticObjectPrisms3D(const Thing &obj);
+	void initRobots();
 	void renderCorridor3D();
 	void drawWallFeatures3D();
 	void drawWallFeature3D(int cellX, int cellY, int direction);
