@@ -146,7 +146,7 @@ const ActionEntry actionTable[] = {
 	{465, OPEN, &PelrockEngine::openTunnelDoor},
 	{465, CLOSE, &PelrockEngine::closeTunnelDoor},
 
-	//Room 37
+	// Room 37
 	{90, PICKUP, &PelrockEngine::pickUpStone},
 
 	// Generic handlers
@@ -179,6 +179,12 @@ const CombinationEntry combinationTable[] = {
 	{83, 461, &PelrockEngine::useDollWithBed},
 	{84, 503, &PelrockEngine::giveMagazineToGuard},
 	{86, 500, &PelrockEngine::giveWaterToGuard},
+
+	// Room 35 (cauldron)
+	{90, 506, &PelrockEngine::magicFormula},
+	{85, 506, &PelrockEngine::magicFormula},
+	{86, 506, &PelrockEngine::magicFormula},
+	{81, 506, &PelrockEngine::magicFormula},
 	// End marker
 	{WILDCARD, WILDCARD, nullptr}};
 
@@ -1330,6 +1336,44 @@ void PelrockEngine::giveWaterToGuard(int inventoryObject, HotSpot *hotspot) {
 
 void PelrockEngine::pickUpStone(HotSpot *hotspot) {
 	checkIngredients();
+}
+
+void PelrockEngine::magicFormula(int inventoryObject, HotSpot *hotspot) {
+	_state->removeInventoryItem(inventoryObject);
+	_state->setFlag(FLAG_FORMULA_MAGICA, _state->getFlag(FLAG_FORMULA_MAGICA) + 1);
+	if (_state->getFlag(FLAG_FORMULA_MAGICA) == 4) {
+
+		size_t frameSize = 98 * 138;
+		size_t bufSize = frameSize * 11;
+		byte *smokeFrames = new byte[bufSize];
+		_res->loadOtherSpecialAnim(1526432, true, smokeFrames, bufSize);
+		Graphics::Surface smokeSurface;
+		smokeSurface.create(98, 138, Graphics::PixelFormat::createFormatCLUT8());
+		int curFrame = 0;
+		while (!shouldQuit()) {
+			_events->pollEvent();
+
+			bool didRender = renderScene(OVERLAY_NONE);
+
+			memset(smokeSurface.getPixels(), 0, frameSize);
+			extractSingleFrame(smokeFrames, (byte *)smokeSurface.getPixels(), curFrame, 98, 138);
+			_screen->transBlitFrom(smokeSurface, Common::Point(_alfredState.x, _alfredState.y - _alfredState.h), 255);
+			if (curFrame == 5) {
+				_alfredState.setState(ALFRED_SKIP_DRAWING);
+			}
+			if (didRender && _chrono->getFrameCount() % 2 == 0) {
+				curFrame++;
+
+				if (curFrame >= 11) {
+					break;
+				}
+			}
+			_screen->update();
+			g_system->delayMillis(10);
+		}
+		_alfredState.setState(ALFRED_IDLE);
+		setScreen(39, ALFRED_UP);
+	}
 }
 
 void PelrockEngine::performActionTrigger(uint16 actionTrigger) {

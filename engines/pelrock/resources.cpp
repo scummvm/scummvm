@@ -50,6 +50,7 @@ const AlfredSpecialAnimOffset ResourceManager::alfredSpecialAnims[] = {
 	{7, 208, 102, 0, 7, 1600956, 1}, // 10 - alfred with workers
 	{23, 116, 124, 1, 7, 2060916, 1}, // 11 - Munheco 1
 	{18, 177, 124, 1, 7, 2115632, 1}, // 12 - Munheco 2
+	{11, 98, 138, 1, 7, 1526432, 1}, // 13 - Munheco 3
 };
 
 ResourceManager::~ResourceManager() {
@@ -232,6 +233,24 @@ void ResourceManager::loadAlfredAnims() {
 	alfred7.close();
 	free(alfredCombRightRaw);
 	free(alfredCombLeftRaw);
+}
+
+void ResourceManager::loadOtherSpecialAnim(uint32 offset, bool rleCompressed, byte *&buffer, size_t bufferSize) {
+	Common::File alfred7;
+	if (!alfred7.open(Common::Path("ALFRED.7"))) {
+		error("Could not open ALFRED.7");
+		return;
+	}
+
+	if (rleCompressed) {
+		byte *compressed = nullptr;
+		size_t compressedSize = 0;
+		readUntilBuda(&alfred7, offset, compressed, compressedSize);
+		rleDecompress(compressed, compressedSize, 0, bufferSize, &buffer, false);
+	}
+
+	alfred7.close();
+
 }
 
 void ResourceManager::loadAlfredSpecialAnim(int numAnim, bool reverse) {

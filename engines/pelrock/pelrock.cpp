@@ -157,7 +157,7 @@ void PelrockEngine::init() {
 		// setScreen(0, ALFRED_DOWN);
 		// setScreen(3, ALFRED_RIGHT);
 		// setScreen(22, ALFRED_DOWN);
-		setScreen(36, ALFRED_DOWN);
+		setScreen(35, ALFRED_DOWN);
 		// setScreen(15, ALFRED_DOWN);
 		// setScreen(2, ALFRED_LEFT);
 		// alfredState.x = 576;
@@ -824,6 +824,9 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 	}
 
 	switch (_alfredState.animState) {
+	case ALFRED_SKIP_DRAWING: {
+		break;
+	}
 	case ALFRED_IDLE: {
 		drawAlfred(_res->alfredIdle[_alfredState.direction]);
 		break;
