@@ -913,9 +913,9 @@ void ColonyEngine::draw3DPrism(const Thing &obj, const PrismPartDef &def, bool u
 					int pattern = lookupMacPattern(colorIdx);
 					if (pattern == kPatternClear) continue;
 					if (!_wireframe) {
-						_gfx->setStippleData(kMacStippleData[pattern]);
 						_gfx->setWireframe(true, pattern == kPatternBlack ? 0 : 255);
 					}
+					_gfx->setStippleData(kMacStippleData[pattern]);
 					_gfx->draw3DPolygon(px, py, pz, count, 0); // black outline
 					_gfx->setStippleData(nullptr);
 				} else {
@@ -975,8 +975,16 @@ void ColonyEngine::computeVisibleCells() {
 	if (px < 0 || px >= 32 || py < 0 || py >= 32)
 		return;
 
-	// BFS from player cell, stopping at walls.
-	// Doors are on walls, so they act as opaque barriers.
+	// Check if a wall feature exists on a cell boundary (either side).
+	// Features like doors define room boundaries and block visibility.
+	auto hasFeatureAt = [this](int x, int y, int dir) -> bool {
+		const uint8 *map = mapFeatureAt(x, y, dir);
+		return map && map[0] != kWallFeatureNone;
+	};
+
+	// BFS from player cell, stopping at walls AND wall features.
+	// This limits visibility to the current "room" — doors, shelves, etc.
+	// act as solid barriers even if the cells are connected via open paths.
 	_visibleCell[px][py] = true;
 	int queueX[1024], queueY[1024];
 	int head = 0, tail = 0;
@@ -989,36 +997,48 @@ void ColonyEngine::computeVisibleCells() {
 		int cy = queueY[head];
 		head++;
 
-		// North: (cx, cy+1) — wall check: _wall[cx][cy+1] & 0x01
+		// North: (cx, cy+1)
 		if (cy + 1 < 32 && !_visibleCell[cx][cy + 1]) {
-			if (!(wallAt(cx, cy + 1) & 0x01)) {
+			bool blocked = (wallAt(cx, cy + 1) & 0x01) != 0;
+			if (!blocked)
+				blocked = hasFeatureAt(cx, cy, kDirNorth) || hasFeatureAt(cx, cy + 1, kDirSouth);
+			if (!blocked) {
 				_visibleCell[cx][cy + 1] = true;
 				queueX[tail] = cx;
 				queueY[tail] = cy + 1;
 				tail++;
 			}
 		}
-		// South: (cx, cy-1) — wall check: _wall[cx][cy] & 0x01
+		// South: (cx, cy-1)
 		if (cy - 1 >= 0 && !_visibleCell[cx][cy - 1]) {
-			if (!(wallAt(cx, cy) & 0x01)) {
+			bool blocked = (wallAt(cx, cy) & 0x01) != 0;
+			if (!blocked)
+				blocked = hasFeatureAt(cx, cy, kDirSouth) || hasFeatureAt(cx, cy - 1, kDirNorth);
+			if (!blocked) {
 				_visibleCell[cx][cy - 1] = true;
 				queueX[tail] = cx;
 				queueY[tail] = cy - 1;
 				tail++;
 			}
 		}
-		// East: (cx+1, cy) — wall check: _wall[cx+1][cy] & 0x02
+		// East: (cx+1, cy)
 		if (cx + 1 < 32 && !_visibleCell[cx + 1][cy]) {
-			if (!(wallAt(cx + 1, cy) & 0x02)) {
+			bool blocked = (wallAt(cx + 1, cy) & 0x02) != 0;
+			if (!blocked)
+				blocked = hasFeatureAt(cx, cy, kDirEast) || hasFeatureAt(cx + 1, cy, kDirWest);
+			if (!blocked) {
 				_visibleCell[cx + 1][cy] = true;
 				queueX[tail] = cx + 1;
 				queueY[tail] = cy;
 				tail++;
 			}
 		}
-		// West: (cx-1, cy) — wall check: _wall[cx][cy] & 0x02
+		// West: (cx-1, cy)
 		if (cx - 1 >= 0 && !_visibleCell[cx - 1][cy]) {
-			if (!(wallAt(cx, cy) & 0x02)) {
+			bool blocked = (wallAt(cx, cy) & 0x02) != 0;
+			if (!blocked)
+				blocked = hasFeatureAt(cx, cy, kDirWest) || hasFeatureAt(cx - 1, cy, kDirEast);
+			if (!blocked) {
 				_visibleCell[cx - 1][cy] = true;
 				queueX[tail] = cx - 1;
 				queueY[tail] = cy;
@@ -1139,9 +1159,29 @@ void ColonyEngine::wallChar(const float corners[4][3], uint8 cnum) {
 		// Mac: fill arrow polygon with BLACK.
 		// drawchar() sets cColor[cc].pattern=WHITE (all background) and
 		// background is {0,0,0}=BLACK, so SuperPoly fills solid black.
+		// Arrow shapes are concave — GL_POLYGON only handles convex polys.
+		// Decompose into convex parts: triangle head + rectangle shaft.
 		if (_renderMode == Common::kRenderMacintosh) {
 			_gfx->setWireframe(true, 0); // BLACK fill
-			wallPolygon(corners, u, v, count, 0);
+			if (cnum == 'b') {
+				// Right arrow head: (0,3)-(3,0)-(3,6)
+				float hu[3] = {u[0], u[1], u[6]};
+				float hv[3] = {v[0], v[1], v[6]};
+				wallPolygon(corners, hu, hv, 3, 0);
+				// Right arrow shaft: (3,2)-(6,2)-(6,4)-(3,4)
+				float su[4] = {u[2], u[3], u[4], u[5]};
+				float sv[4] = {v[2], v[3], v[4], v[5]};
+				wallPolygon(corners, su, sv, 4, 0);
+			} else if (cnum == 'c') {
+				// Left arrow shaft: (0,2)-(0,4)-(3,4)-(3,2)
+				float su[4] = {u[0], u[1], u[2], u[6]};
+				float sv[4] = {v[0], v[1], v[2], v[6]};
+				wallPolygon(corners, su, sv, 4, 0);
+				// Left arrow head: (3,6)-(6,3)-(3,0)
+				float hu[3] = {u[3], u[4], u[5]};
+				float hv[3] = {v[3], v[4], v[5]};
+				wallPolygon(corners, hu, hv, 3, 0);
+			}
 			_gfx->setWireframe(true, 255); // restore white wall fill
 		}
 		for (int i = 0; i < count; i++) {
