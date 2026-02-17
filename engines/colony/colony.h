@@ -174,6 +174,31 @@ struct Thing {
 	// void (*think)();
 };
 
+// PATCH.C: Tracks object relocations across levels (forklift carry/drop).
+struct PatchEntry {
+	struct { uint8 level, xindex, yindex; } from;
+	struct { uint8 level, xindex, yindex; int xloc, yloc; uint8 ang; } to;
+	uint8 type;
+	uint8 mapdata[5];
+};
+
+// Temporary location reference for carrying objects.
+struct PassPatch {
+	uint8 level, xindex, yindex;
+	int xloc, yloc;
+	uint8 ang;
+};
+
+// Per-level persistence: wall state changes (airlock locks) and visit flags.
+struct LevelData {
+	uint8 visit;
+	uint8 queen;
+	uint8 count;           // airlock open count (termination check)
+	uint8 size;            // number of saved wall changes (max 10)
+	uint8 location[10][3]; // [x, y, direction] of each changed wall
+	uint8 data[10][5];     // saved wall feature bytes (5 per location)
+};
+
 struct Image {
 	int16 width;
 	int16 height;
@@ -296,6 +321,13 @@ private:
 	int _action0, _action1;
 	int _creature;
 
+	// PATCH.C: object relocation + wall state persistence
+	Common::Array<PatchEntry> _patches;
+	PassPatch _carryPatch[2];   // [0]=forklift, [1]=carried object
+	int _carryType;             // type of object being carried
+	int _fl;                    // 0=not in forklift, 1=in forklift empty, 2=carrying object
+	LevelData _levelData[8];   // per-level wall state persistence
+
 	int _frntxWall, _frntyWall;
 	int _sidexWall, _sideyWall;
 	int _frntx, _frnty;
@@ -337,6 +369,17 @@ private:
 
 	int occupiedObjectAt(int x, int y, const Locate *pobject);
 	void interactWithObject(int objNum);
+
+	// PATCH.C: object relocation + wall state persistence
+	void createObject(int type, int xloc, int yloc, uint8 ang);
+	void doPatch();
+	void saveWall(int x, int y, int direction);
+	void getWall();
+	void newPatch(int type, const PassPatch &from, const PassPatch &to, const uint8 *mapdata);
+	bool patchMapTo(const PassPatch &to, uint8 *mapdata);
+	bool patchMapFrom(const PassPatch &from, uint8 *mapdata);
+	void exitForklift();
+	void dropCarriedObject();
 	bool setDoorState(int x, int y, int direction, int state);
 	int openAdjacentDoors(int x, int y);
 	int tryPassThroughFeature(int fromX, int fromY, int direction, Locate *pobject);

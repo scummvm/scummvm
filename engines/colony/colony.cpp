@@ -75,6 +75,13 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	memset(_robotArray, 0, sizeof(_robotArray));
 	memset(_foodArray, 0, sizeof(_foodArray));
 
+	// PATCH.C init
+	memset(_levelData, 0, sizeof(_levelData));
+	memset(_carryPatch, 0, sizeof(_carryPatch));
+	_carryType = 0;
+	_fl = 0;
+	_patches.clear();
+
 	_screenR = Common::Rect(0, 0, _width, _height);
 	_clip = _screenR;
 	_dashBoardRect = Common::Rect(0, 0, 0, 0);
@@ -194,9 +201,185 @@ void ColonyEngine::loadMap(int mnum) {
 	free(buffer);
 	_level = mnum;
 	_me.type = MENUM;
+
+	getWall();  // restore saved wall state changes (airlocks)
+	doPatch();  // apply object relocations from patch table
+
 	if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
 		_robotArray[_me.xindex][_me.yindex] = MENUM;
 	debug("Successfully loaded map %d (static objects: %d)", mnum, (int)_objects.size());
+}
+
+// PATCH.C: Create a new object in _objects and register in _robotArray.
+// Mirrors DOS CreateObject() — sets basic Thing fields for static objects.
+void ColonyEngine::createObject(int type, int xloc, int yloc, uint8 ang) {
+	Thing obj;
+	memset(&obj, 0, sizeof(obj));
+	while (ang > 255) ang -= 256;
+	obj.alive = 1;
+	obj.visible = 0;
+	obj.type = type;
+	obj.where.xloc = xloc;
+	obj.where.yloc = yloc;
+	obj.where.xindex = xloc >> 8;
+	obj.where.yindex = yloc >> 8;
+	obj.where.delta = 4;
+	obj.where.ang = ang;
+	obj.where.look = ang;
+
+	// Try to reuse a dead slot (starting after MENUM)
+	int slot = -1;
+	for (int j = MENUM; j < (int)_objects.size(); j++) {
+		if (!_objects[j].alive) {
+			slot = j;
+			break;
+		}
+	}
+	if (slot >= 0) {
+		_objects[slot] = obj;
+	} else {
+		_objects.push_back(obj);
+		slot = (int)_objects.size() - 1;
+	}
+	int objNum = slot + 1; // 1-based for _robotArray
+	if (obj.where.xindex >= 0 && obj.where.xindex < 32 &&
+	    obj.where.yindex >= 0 && obj.where.yindex < 32)
+		_robotArray[obj.where.xindex][obj.where.yindex] = (uint8)objNum;
+	if (slot + 1 > _robotNum)
+		_robotNum = slot + 1;
+}
+
+// PATCH.C: DoPatch() — remove originals and install relocated objects.
+void ColonyEngine::doPatch() {
+	// Pass 1: remove objects that were moved away from this level
+	for (uint i = 0; i < _patches.size(); i++) {
+		if (_level == _patches[i].from.level) {
+			int robot = _robotArray[_patches[i].from.xindex][_patches[i].from.yindex];
+			if (robot > 0 && robot <= (int)_objects.size()) {
+				_robotArray[_objects[robot - 1].where.xindex][_objects[robot - 1].where.yindex] = 0;
+				_objects[robot - 1].alive = 0;
+			}
+		}
+	}
+	// Pass 2: install objects that were moved to this level
+	for (uint i = 0; i < _patches.size(); i++) {
+		if (_level == _patches[i].to.level) {
+			createObject(
+				(int)_patches[i].type,
+				(int)_patches[i].to.xloc,
+				(int)_patches[i].to.yloc,
+				_patches[i].to.ang);
+		}
+	}
+}
+
+// PATCH.C: savewall() — save 5 bytes of map feature data for persistence across level loads.
+void ColonyEngine::saveWall(int x, int y, int direction) {
+	if (_level < 1 || _level > 8) return;
+	LevelData &ld = _levelData[_level - 1];
+
+	// Search for existing entry at this location
+	for (int i = 0; i < ld.size; i++) {
+		if (ld.location[i][0] == x && ld.location[i][1] == y && ld.location[i][2] == direction) {
+			for (int j = 0; j < 5; j++)
+				ld.data[i][j] = _mapData[x][y][direction][j];
+			return;
+		}
+	}
+	// Add new entry (max 10)
+	if (ld.size >= 10) {
+		warning("saveWall: too many wall changes for level %d", _level);
+		return;
+	}
+	int i = ld.size;
+	for (int j = 0; j < 5; j++)
+		ld.data[i][j] = _mapData[x][y][direction][j];
+	ld.location[i][0] = x;
+	ld.location[i][1] = y;
+	ld.location[i][2] = direction;
+	ld.size++;
+}
+
+// PATCH.C: getwall() — restore saved wall bytes into _mapData after level load.
+void ColonyEngine::getWall() {
+	if (_level < 1 || _level > 8) return;
+	const LevelData &ld = _levelData[_level - 1];
+	for (int i = 0; i < ld.size; i++) {
+		int x = ld.location[i][0];
+		int y = ld.location[i][1];
+		int dir = ld.location[i][2];
+		if (x < 31 && y < 31 && dir < 5) {
+			for (int j = 0; j < 5; j++)
+				_mapData[x][y][dir][j] = ld.data[i][j];
+		}
+	}
+}
+
+// PATCH.C: newpatch() — create or update a patch entry.
+void ColonyEngine::newPatch(int type, const PassPatch &from, const PassPatch &to, const uint8 *mapdata) {
+	// Search for existing patch where 'from' matches an existing 'to'
+	for (uint i = 0; i < _patches.size(); i++) {
+		if (from.level == _patches[i].to.level &&
+		    from.xindex == _patches[i].to.xindex &&
+		    from.yindex == _patches[i].to.yindex) {
+			_patches[i].to.level = to.level;
+			_patches[i].to.xindex = to.xindex;
+			_patches[i].to.yindex = to.yindex;
+			_patches[i].to.xloc = to.xloc;
+			_patches[i].to.yloc = to.yloc;
+			_patches[i].to.ang = to.ang;
+			return;
+		}
+	}
+	// Create new patch entry (max 100)
+	if (_patches.size() >= 100) return;
+	PatchEntry pe;
+	pe.type = type;
+	pe.from.level = from.level;
+	pe.from.xindex = from.xindex;
+	pe.from.yindex = from.yindex;
+	pe.to.level = to.level;
+	pe.to.xindex = to.xindex;
+	pe.to.yindex = to.yindex;
+	pe.to.xloc = to.xloc;
+	pe.to.yloc = to.yloc;
+	pe.to.ang = to.ang;
+	if (mapdata) {
+		for (int j = 0; j < 5; j++)
+			pe.mapdata[j] = mapdata[j];
+	} else {
+		memset(pe.mapdata, 0, sizeof(pe.mapdata));
+	}
+	_patches.push_back(pe);
+}
+
+// PATCH.C: patchmapto() — find patch entry by destination, fill mapdata.
+bool ColonyEngine::patchMapTo(const PassPatch &to, uint8 *mapdata) {
+	for (uint i = 0; i < _patches.size(); i++) {
+		if (to.level == _patches[i].to.level &&
+		    to.xindex == _patches[i].to.xindex &&
+		    to.yindex == _patches[i].to.yindex) {
+			for (int j = 0; j < 5; j++)
+				mapdata[j] = _patches[i].mapdata[j];
+			return true;
+		}
+	}
+	return false;
+}
+
+// PATCH.C: patchmapfrom() — find patch entry by source, fill destination into mapdata.
+bool ColonyEngine::patchMapFrom(const PassPatch &from, uint8 *mapdata) {
+	for (uint i = 0; i < _patches.size(); i++) {
+		if (from.level == _patches[i].from.level &&
+		    from.xindex == _patches[i].from.xindex &&
+		    from.yindex == _patches[i].from.yindex) {
+			mapdata[2] = _patches[i].to.level;
+			mapdata[3] = _patches[i].to.xindex;
+			mapdata[4] = _patches[i].to.yindex;
+			return true;
+		}
+	}
+	return false;
 }
 
 void ColonyEngine::initTrig() {
@@ -345,6 +528,14 @@ Common::Error ColonyEngine::run() {
 						_system->lockMouse(true);
 						_system->warpMouse(_centerX, _centerY);
 						_system->getEventManager()->purgeMouseEvents();
+						break;
+					// Space: shoot or exit forklift (DOS: ScanCode 57)
+					case Common::KEYCODE_SPACE:
+						if (_fl == 2)
+							dropCarriedObject();
+						else if (_fl == 1)
+							exitForklift();
+						// else: shoot (TODO: implement shooting)
 						break;
 					// Escape: also opens ScummVM menu
 					case Common::KEYCODE_ESCAPE:

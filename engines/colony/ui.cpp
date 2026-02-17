@@ -472,6 +472,13 @@ bool ColonyEngine::setDoorState(int x, int y, int direction, int state) {
 			_mapData[nx][ny][opposite][1] = (uint8)state;
 	}
 
+	// Persist airlock state changes across level loads
+	if (wallType == kWallFeatureAirlock) {
+		saveWall(x, y, direction);
+		if (nx >= 0 && nx < 31 && ny >= 0 && ny < 31 && opposite >= 0)
+			saveWall(nx, ny, opposite);
+	}
+
 	return true;
 }
 
@@ -715,12 +722,51 @@ void ColonyEngine::interactWithObject(int objNum) {
 		break;
 	case kObjTeleport:
 	{
+		if (_fl == 1) {
+			// In empty forklift — pick up the teleporter itself
+			if (loadAnimation("lift")) {
+				_animationResult = 0;
+				playAnimation();
+				if (_animationResult) {
+					PassPatch from;
+					from.level = _level;
+					from.xindex = obj.where.xindex;
+					from.yindex = obj.where.yindex;
+					from.xloc = obj.where.xloc;
+					from.yloc = obj.where.yloc;
+					from.ang = obj.where.ang;
+					_carryPatch[1].level = 100;
+					_carryPatch[1].xindex = 1;
+					_carryPatch[1].yindex = 1;
+					_carryPatch[1].xloc = 1;
+					_carryPatch[1].yloc = 1;
+					_carryPatch[1].ang = 1;
+					newPatch(kObjTeleport, from, _carryPatch[1], _mapData[from.xindex][from.yindex][4]);
+					_carryType = kObjTeleport;
+					_robotArray[obj.where.xindex][obj.where.yindex] = 0;
+					_objects[objNum - 1].alive = 0;
+					_fl = 2;
+				}
+			}
+			break;
+		}
+		// fl==0 or fl==2: use the teleporter
 		_sound->play(Sound::kTeleport);
-		const int targetLevelRaw = _mapData[x][y][4][2];
-
+		int targetLevelRaw = _mapData[x][y][4][2];
+		int targetX = _action0;
+		int targetY = _action1;
+		// Check if this teleporter was relocated via patch
+		PassPatch tp;
+		tp.level = _level;
+		tp.xindex = x;
+		tp.yindex = y;
+		uint8 patchData[5];
+		if (patchMapTo(tp, patchData)) {
+			targetLevelRaw = patchData[2];
+			targetX = patchData[3];
+			targetY = patchData[4];
+		}
 		const int targetLevel = (targetLevelRaw == 0) ? _level : targetLevelRaw;
-		const int targetX = _action0;
-		const int targetY = _action1;
 		if (targetLevel >= 100 || targetX <= 0 || targetX >= 31 || targetY <= 0 || targetY >= 31) {
 			inform("TELEPORTER INITIALIZATION FAILED", true);
 			break;
@@ -764,18 +810,99 @@ void ColonyEngine::interactWithObject(int objNum) {
 		_sound->play(Sound::kSink);
 		inform("A SINK. IT'S DRY.", true);
 		break;
-	case kObjCryo:
-		doText(_action0, 0);
-		break;
 	case kObjTV:
 		if (_level == 1) doText(56, 0);
 		else doText(16, 0);
 		break;
 	case kObjForkLift:
-	case kObjReactor:
+		if (_fl == 0) {
+			// Enter forklift: play animation, if confirmed, patch it away
+			if (loadAnimation("forklift")) {
+				playAnimation();
+				if (_animationResult) {
+					PassPatch from;
+					from.level = _level;
+					from.xindex = obj.where.xindex;
+					from.yindex = obj.where.yindex;
+					from.xloc = obj.where.xloc;
+					from.yloc = obj.where.yloc;
+					from.ang = obj.where.ang;
+					_carryPatch[0].level = 100;
+					_carryPatch[0].xindex = 0;
+					_carryPatch[0].yindex = 0;
+					_carryPatch[0].xloc = 0;
+					_carryPatch[0].yloc = 0;
+					_carryPatch[0].ang = 0;
+					newPatch(kObjForkLift, from, _carryPatch[0], _mapData[from.xindex][from.yindex][4]);
+					_robotArray[obj.where.xindex][obj.where.yindex] = 0;
+					_objects[objNum - 1].alive = 0;
+					_me.look = _me.ang = obj.where.ang;
+					_fl = 1;
+				}
+			}
+		}
+		break;
 	case kObjBox1:
 	case kObjBox2:
-		inform("NEEDS FORKLIFT INTERACTION", true);
+	case kObjCryo:
+		if (_fl == 1) {
+			// In empty forklift — pick up object
+			if (loadAnimation("lift")) {
+				_animationResult = 0;
+				playAnimation();
+				if (_animationResult) {
+					PassPatch from;
+					from.level = _level;
+					from.xindex = obj.where.xindex;
+					from.yindex = obj.where.yindex;
+					from.xloc = obj.where.xloc;
+					from.yloc = obj.where.yloc;
+					from.ang = obj.where.ang;
+					_carryPatch[1].level = 100;
+					_carryPatch[1].xindex = 1;
+					_carryPatch[1].yindex = 1;
+					_carryPatch[1].xloc = 1;
+					_carryPatch[1].yloc = 1;
+					_carryPatch[1].ang = 1;
+					newPatch(obj.type, from, _carryPatch[1], _mapData[from.xindex][from.yindex][4]);
+					_carryType = obj.type;
+					_robotArray[obj.where.xindex][obj.where.yindex] = 0;
+					_objects[objNum - 1].alive = 0;
+					_fl = 2;
+				}
+			}
+		} else if (_fl == 0 && obj.type == kObjCryo) {
+			// Not in forklift — read cryo text
+			doText(_action0, 0);
+		}
+		break;
+	case kObjReactor:
+		if (_fl == 1 && _coreState[_coreIndex] == 1) {
+			// Empty forklift at open reactor — pick up reactor core
+			if (loadAnimation("lift")) {
+				_animationResult = 0;
+				playAnimation();
+				if (_animationResult) {
+					_carryType = kObjReactor;
+					_corePower[2] = _corePower[_coreIndex];
+					_corePower[_coreIndex] = 0;
+					_coreState[_coreIndex] = 2;
+					_fl = 2;
+				}
+			}
+		} else if (_fl == 2 && _carryType == kObjReactor && _coreState[_coreIndex] == 2) {
+			// Carrying reactor core — drop it into reactor
+			if (loadAnimation("lift")) {
+				_animationResult = 0;
+				playAnimation();
+				if (!_animationResult) {
+					_carryType = 0;
+					_coreState[_coreIndex] = 1;
+					_corePower[_coreIndex] = _corePower[2];
+					_fl = 1;
+				}
+			}
+		}
 		break;
 	default:
 		break;
@@ -1079,6 +1206,110 @@ void ColonyEngine::cCommand(int xnew, int ynew, bool allowInteraction) {
 
 	if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
 		_robotArray[_me.xindex][_me.yindex] = MENUM;
+}
+
+// DOS ExitFL(): step back one cell and drop the forklift.
+void ColonyEngine::exitForklift() {
+	if (_fl != 1) return;
+
+	int xloc = _me.xloc;
+	int yloc = _me.yloc;
+	int xindex = _me.xindex;
+	int yindex = _me.yindex;
+
+	// Walk backward until we move into a different cell
+	while (_me.xindex == xindex && _me.yindex == yindex) {
+		int xnew = _me.xloc - _cost[_me.ang];
+		int ynew = _me.yloc - _sint[_me.ang];
+		_me.type = 2; // temporary small collision type
+		if (checkwall(xnew, ynew, &_me)) {
+			_sound->play(Sound::kChime);
+			_me.type = MENUM;
+			return;
+		}
+		_me.type = MENUM;
+	}
+
+	// Snap to cell center for the dropped forklift
+	xloc = (xloc >> 8);
+	xloc = (xloc << 8) + 128;
+	yloc = (yloc >> 8);
+	yloc = (yloc << 8) + 128;
+
+	createObject(kObjForkLift, xloc, yloc, _me.ang);
+
+	PassPatch to;
+	to.level = _level;
+	to.xindex = xindex;
+	to.yindex = yindex;
+	to.xloc = xloc;
+	to.yloc = yloc;
+	to.ang = _me.ang;
+	newPatch(kObjForkLift, _carryPatch[0], to, nullptr);
+
+	_fl = 0;
+}
+
+// DOS DropFL(): step back one cell and drop the carried object, then return to fl=1.
+void ColonyEngine::dropCarriedObject() {
+	if (_fl != 2) return;
+
+	// Special case: carrying reactor core
+	if (_carryType == kObjReactor) {
+		_sound->play(Sound::kChime); // glass break sound
+		_carryType = 0;
+		_fl = 1;
+		return;
+	}
+
+	// Play the drop animation
+	if (loadAnimation("lift")) {
+		_animationResult = 0;
+		playAnimation();
+		if (!_animationResult) {
+			// Animation was cancelled — don't drop
+			return;
+		}
+	}
+
+	int xloc = _me.xloc;
+	int yloc = _me.yloc;
+	int xindex = _me.xindex;
+	int yindex = _me.yindex;
+
+	// Walk backward until we move into a different cell
+	while (_me.xindex == xindex && _me.yindex == yindex) {
+		int xnew = _me.xloc - _cost[_me.ang];
+		int ynew = _me.yloc - _sint[_me.ang];
+		_me.type = 2;
+		if (checkwall(xnew, ynew, &_me)) {
+			_sound->play(Sound::kChime);
+			_me.type = MENUM;
+			return;
+		}
+		_me.type = MENUM;
+	}
+
+	// DOS: teleport always drops at ang=0; other objects use player's angle
+	uint8 ang = (_carryType == kObjTeleport) ? 0 : _me.ang;
+
+	xloc = (xloc >> 8);
+	xloc = (xloc << 8) + 128;
+	yloc = (yloc >> 8);
+	yloc = (yloc << 8) + 128;
+
+	createObject(_carryType, xloc, yloc, ang);
+
+	PassPatch to;
+	to.level = _level;
+	to.xindex = xindex;
+	to.yindex = yindex;
+	to.xloc = xloc;
+	to.yloc = yloc;
+	to.ang = _me.ang;
+	newPatch(_carryType, _carryPatch[1], to, nullptr);
+
+	_fl = 1;
 }
 
 bool ColonyEngine::clipLineToRect(int &x1, int &y1, int &x2, int &y2, const Common::Rect &clip) const {
