@@ -1201,7 +1201,8 @@ void ColonyEngine::draw3DPrism(const Thing &obj, const PrismPartDef &def, bool u
 	for (int i = 0; i < def.surfaceCount; i++) {
 		const int colorIdx = def.surfaces[i][0];
 		const int n = def.surfaces[i][1];
-		if (n < 2) continue;
+		if (n < 2)
+			continue;
 
 		float px[8];
 		float py[8];
@@ -1210,7 +1211,8 @@ void ColonyEngine::draw3DPrism(const Thing &obj, const PrismPartDef &def, bool u
 
 		for (int j = 0; j < n; j++) {
 			const int cur = def.surfaces[i][j + 2];
-			if (cur < 0 || cur >= def.pointCount) continue;
+			if (cur < 0 || cur >= def.pointCount)
+				continue;
 
 			int ox = def.points[cur][0];
 			int oy = def.points[cur][1];
@@ -1244,7 +1246,8 @@ void ColonyEngine::draw3DPrism(const Thing &obj, const PrismPartDef &def, bool u
 				if (_renderMode == Common::kRenderMacintosh) {
 					// Mac B&W: stipple dither pattern fill + black outline
 					int pattern = lookupMacPattern(colorIdx);
-					if (pattern == kPatternClear) continue;
+					if (pattern == kPatternClear)
+						continue;
 					if (!_wireframe) {
 						_gfx->setWireframe(true, pattern == kPatternBlack ? 0 : 255);
 					}
@@ -1275,14 +1278,16 @@ void ColonyEngine::draw3DLeaf(const Thing &obj, const PrismPartDef &def) {
 
 	for (int i = 0; i < def.surfaceCount; i++) {
 		const int n = def.surfaces[i][1];
-		if (n < 2) continue;
+		if (n < 2)
+			continue;
 
 		float px[8], py[8], pz[8];
 		int count = 0;
 
 		for (int j = 0; j < n; j++) {
 			const int cur = def.surfaces[i][j + 2];
-			if (cur < 0 || cur >= def.pointCount) continue;
+			if (cur < 0 || cur >= def.pointCount)
+				continue;
 			int ox = def.points[cur][0];
 			int oy = def.points[cur][1];
 			int oz = def.points[cur][2];
@@ -1336,7 +1341,8 @@ void ColonyEngine::draw3DSphere(const Thing &obj, int pt0x, int pt0y, int pt0z,
 	float viewDx = cx - (float)_me.xloc;
 	float viewDy = cy - (float)_me.yloc;
 	float viewLen = sqrtf(viewDx * viewDx + viewDy * viewDy);
-	if (viewLen < 0.001f) return;
+	if (viewLen < 0.001f)
+		return;
 
 	// "right" vector: perpendicular to view in XY plane
 	float rightX = -viewDy / viewLen;
@@ -1537,7 +1543,8 @@ void ColonyEngine::wallLine(const float corners[4][3], float u1, float v1, float
 // Draw a filled polygon on a wall face using normalized (u,v) coordinates
 void ColonyEngine::wallPolygon(const float corners[4][3], const float *u, const float *v, int count, uint32 color) {
 	float px[8], py[8], pz[8];
-	if (count > 8) count = 8;
+	if (count > 8)
+		count = 8;
 	for (int i = 0; i < count; i++) {
 		float p[3];
 		wallPoint(corners, u[i], v[i], p);
@@ -1548,12 +1555,14 @@ void ColonyEngine::wallPolygon(const float corners[4][3], const float *u, const 
 
 void ColonyEngine::wallChar(const float corners[4][3], uint8 cnum) {
 	// Character 'b' (right arrow) and 'c' (left arrow) coordinates on 0-6 grid
-	static const uint8 wallchar_b[] = {7, 0,3, 3,0, 3,2, 6,2, 6,4, 3,4, 3,6};
-	static const uint8 wallchar_c[] = {7, 0,2, 0,4, 3,4, 3,6, 6,3, 3,0, 3,2};
+	static const uint8 wallcharB[] = {7, 0,3, 3,0, 3,2, 6,2, 6,4, 3,4, 3,6};
+	static const uint8 wallcharC[] = {7, 0,2, 0,4, 3,4, 3,6, 6,3, 3,0, 3,2};
 	
 	const uint8 *data = nullptr;
-	if (cnum == 'b') data = wallchar_b;
-	else if (cnum == 'c') data = wallchar_c;
+	if (cnum == 'b')
+		data = wallcharB;
+	else if (cnum == 'c')
+		data = wallcharC;
 	
 	if (data) {
 		int count = data[0];
@@ -1604,7 +1613,10 @@ void ColonyEngine::getCellFace3D(int cellX, int cellY, bool ceiling, float corne
 	float x1 = x0 + 256.0f;
 	float y1 = y0 + 256.0f;
 	const float eps = 0.1f;
-	if (ceiling) z -= eps; else z += eps;
+	if (ceiling)
+		z -= eps;
+	else
+		z += eps;
 
 	corners[0][0] = x0; corners[0][1] = y0; corners[0][2] = z;
 	corners[1][0] = x1; corners[1][1] = y0; corners[1][2] = z;
@@ -1711,25 +1723,25 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		bool shipLevel = (_level == 1 || _level == 5 || _level == 6);
 
 		if (shipLevel) {
-			static const float u_ss[8] = { 0.375f, 0.250f, 0.250f, 0.375f, 0.625f, 0.750f, 0.750f, 0.625f };
-			static const float v_ss[8] = { 0.125f, 0.250f, 0.750f, 0.875f, 0.875f, 0.750f, 0.250f, 0.125f };
+			static const float uSs[8] = { 0.375f, 0.250f, 0.250f, 0.375f, 0.625f, 0.750f, 0.750f, 0.625f };
+			static const float vSs[8] = { 0.125f, 0.250f, 0.750f, 0.875f, 0.875f, 0.750f, 0.250f, 0.125f };
 
 			if (macMode) {
 				if (map[1] != 0) {
 					// Closed: fill octagon (c_bulkhead = GRAY stipple)
 					_gfx->setStippleData(kStippleGray);
-					wallPolygon(corners, u_ss, v_ss, 8, 0);
+					wallPolygon(corners, uSs, vSs, 8, 0);
 					_gfx->setStippleData(nullptr);
 				} else {
 					// Open: fill with BLACK (passable opening)
 					_gfx->setWireframe(true, 0);
-					wallPolygon(corners, u_ss, v_ss, 8, 0);
+					wallPolygon(corners, uSs, vSs, 8, 0);
 					_gfx->setWireframe(true, 255);
 				}
 			}
 
 			for (int i = 0; i < 8; i++)
-				wallLine(corners, u_ss[i], v_ss[i], u_ss[(i + 1) % 8], v_ss[(i + 1) % 8], doorColor);
+				wallLine(corners, uSs[i], vSs[i], uSs[(i + 1) % 8], vSs[(i + 1) % 8], doorColor);
 
 			if (map[1] != 0) {
 				wallLine(corners, 0.375f, 0.25f, 0.375f, 0.75f, doorColor);
@@ -1994,15 +2006,15 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 	}
 	case kWallFeatureTunnel: {
 		// Tunnel: hexagonal opening from Grid (0,0 0,5 1,6 5,6 6,5 6,0)
-		static const float u_t[6] = { 0.0f,    0.0f,    1/6.0f,  5/6.0f,  1.0f,    1.0f };
-		static const float v_t[6] = { 0.0f,    0.750f,  0.875f,  0.875f,  0.750f,  0.0f };
+		static const float uT[6] = { 0.0f,    0.0f,    1/6.0f,  5/6.0f,  1.0f,    1.0f };
+		static const float vT[6] = { 0.0f,    0.750f,  0.875f,  0.875f,  0.750f,  0.0f };
 		if (_renderMode == Common::kRenderMacintosh) {
 			// Mac: c_tunnel = GRAY stipple fill + black outline
 			_gfx->setStippleData(kStippleGray);
-			wallPolygon(corners, u_t, v_t, 6, 0);
+			wallPolygon(corners, uT, vT, 6, 0);
 			_gfx->setStippleData(nullptr);
 		} else {
-			wallPolygon(corners, u_t, v_t, 6, 0); // vBLACK outline
+			wallPolygon(corners, uT, vT, 6, 0); // vBLACK outline
 		}
 		break;
 	}
@@ -2154,11 +2166,11 @@ void ColonyEngine::renderCorridor3D() {
 	// Draw ceiling grid (Cuadricule) - Historically only on ceiling
 	for (int i = 0; i <= 32; i++) {
 		float d = i * 256.0f;
-		float max_d = 32.0f * 256.0f;
+		float maxD = 32.0f * 256.0f;
 		float zCeil = 160.0f;
 		
-		_gfx->draw3DLine(d, 0.0f, zCeil, d, max_d, zCeil, wallColor);
-		_gfx->draw3DLine(0.0f, d, zCeil, max_d, d, zCeil, wallColor);
+		_gfx->draw3DLine(d, 0.0f, zCeil, d, maxD, zCeil, wallColor);
+		_gfx->draw3DLine(0.0f, d, zCeil, maxD, d, zCeil, wallColor);
 	}
 
 	for (int y = 0; y < 32; y++) {

@@ -88,7 +88,8 @@ OpenGLRenderer::OpenGLRenderer(OSystem *system, int width, int height) : _system
 	memset(_palette, 0, sizeof(_palette));
 	
 	// Default to white for initial colors if setPalette isn't called yet
-	for (int i = 0; i < 256 * 3; i++) _palette[i] = 255;
+	for (int i = 0; i < 256 * 3; i++)
+		_palette[i] = 255;
 
 	glDisable(GL_LIGHTING);
 	glDisable(GL_TEXTURE_2D);
@@ -113,7 +114,8 @@ OpenGLRenderer::~OpenGLRenderer() {
 }
 
 void OpenGLRenderer::setPalette(const byte *palette, uint start, uint count) {
-	if (start + count > 256) count = 256 - start;
+	if (start + count > 256)
+		count = 256 - start;
 	memcpy(_palette + start * 3, palette, count * 3);
 }
 
@@ -157,11 +159,14 @@ void OpenGLRenderer::fillRect(const Common::Rect &rect, uint32 color) {
 }
 
 void OpenGLRenderer::drawString(const Graphics::Font *font, const Common::String &str, int x, int y, uint32 color, Graphics::TextAlign align) {
-	if (!font) return;
+	if (!font)
+		return;
 	int width = font->getStringWidth(str);
 	int height = font->getFontHeight();
-	if (align == Graphics::kTextAlignCenter) x -= width / 2;
-	else if (align == Graphics::kTextAlignRight) x -= width;
+	if (align == Graphics::kTextAlignCenter)
+		x -= width / 2;
+	else if (align == Graphics::kTextAlignRight)
+		x -= width;
 	
 	Graphics::Surface surface;
 	surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
@@ -376,7 +381,8 @@ void OpenGLRenderer::draw3DQuad(float x1, float y1, float z1, float x2, float y2
 }
  
 void OpenGLRenderer::draw3DPolygon(const float *x, const float *y, const float *z, int count, uint32 color) {
-	if (count < 3) return;
+	if (count < 3)
+		return;
 
 	if (_wireframe) {
 		if (_wireframeFillColor >= 0 || _stippleData) {
@@ -386,19 +392,22 @@ void OpenGLRenderer::draw3DPolygon(const float *x, const float *y, const float *
 			if (_stippleData) {
 				useColor(255);
 				glBegin(GL_POLYGON);
-				for (int i = 0; i < count; i++) glVertex3f(x[i], y[i], z[i]);
+				for (int i = 0; i < count; i++)
+					glVertex3f(x[i], y[i], z[i]);
 				glEnd();
 				glEnable(GL_POLYGON_STIPPLE);
 				glPolygonStipple(_stippleData);
 				useColor(0);
 				glBegin(GL_POLYGON);
-				for (int i = 0; i < count; i++) glVertex3f(x[i], y[i], z[i]);
+				for (int i = 0; i < count; i++)
+					glVertex3f(x[i], y[i], z[i]);
 				glEnd();
 				glDisable(GL_POLYGON_STIPPLE);
 			} else {
 				useColor((uint32)_wireframeFillColor);
 				glBegin(GL_POLYGON);
-				for (int i = 0; i < count; i++) glVertex3f(x[i], y[i], z[i]);
+				for (int i = 0; i < count; i++)
+					glVertex3f(x[i], y[i], z[i]);
 				glEnd();
 			}
 			glDisable(GL_POLYGON_OFFSET_FILL);
@@ -417,19 +426,22 @@ void OpenGLRenderer::draw3DPolygon(const float *x, const float *y, const float *
 		if (_stippleData) {
 			useColor(255);
 			glBegin(GL_POLYGON);
-			for (int i = 0; i < count; i++) glVertex3f(x[i], y[i], z[i]);
+			for (int i = 0; i < count; i++)
+				glVertex3f(x[i], y[i], z[i]);
 			glEnd();
 			glEnable(GL_POLYGON_STIPPLE);
 			glPolygonStipple(_stippleData);
 			useColor(0);
 			glBegin(GL_POLYGON);
-			for (int i = 0; i < count; i++) glVertex3f(x[i], y[i], z[i]);
+			for (int i = 0; i < count; i++)
+				glVertex3f(x[i], y[i], z[i]);
 			glEnd();
 			glDisable(GL_POLYGON_STIPPLE);
 		} else {
 			useColor(color);
 			glBegin(GL_POLYGON);
-			for (int i = 0; i < count; i++) glVertex3f(x[i], y[i], z[i]);
+			for (int i = 0; i < count; i++)
+				glVertex3f(x[i], y[i], z[i]);
 			glEnd();
 		}
 		glDisable(GL_POLYGON_OFFSET_FILL);
@@ -549,7 +561,8 @@ void OpenGLRenderer::drawQuad(int x1, int y1, int x2, int y2, int x3, int y3, in
 }
 
 void OpenGLRenderer::drawPolygon(const int *x, const int *y, int count, uint32 color) {
-	if (count < 3) return;
+	if (count < 3)
+		return;
 	useColor(color);
 	glBegin(GL_POLYGON);
 	for (int i = 0; i < count; i++) {

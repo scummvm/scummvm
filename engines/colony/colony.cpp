@@ -97,7 +97,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_me.yindex = _me.yloc >> 8;
 	_me.look = 32;
 	_me.ang = 32;
-	_me.type = MENUM;
+	_me.type = kMeNum;
 
 	// Animation system init
 	_backgroundMask = nullptr;
@@ -112,9 +112,12 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	for (int i = 0; i < 4; i++) {
 		_decode1[i] = _decode2[i] = _decode3[i] = 0;
 	}
-	for (int i = 0; i < 6; i++) _animDisplay[i] = 1;
-	for (int i = 0; i < 2; i++) _coreState[i] = _coreHeight[i] = 0;
-	for (int i = 0; i < 3; i++) _corePower[i] = 0;
+	for (int i = 0; i < 6; i++)
+		_animDisplay[i] = 1;
+	for (int i = 0; i < 2; i++)
+		_coreState[i] = _coreHeight[i] = 0;
+	for (int i = 0; i < 3; i++)
+		_corePower[i] = 0;
 	_coreIndex = 0;
 	_orbit = 0;
 	_armor = 0;
@@ -163,7 +166,7 @@ void ColonyEngine::loadMap(int mnum) {
 
 	// expand logic
 	int c = 0;
-	_robotNum = MENUM + 1;
+	_robotNum = kMeNum + 1;
 	for (int i = 0; i < 32; i++) {
 		for (int j = 0; j < 32; j++) {
 			_wall[i][j] = buffer[c++];
@@ -179,7 +182,7 @@ void ColonyEngine::loadMap(int mnum) {
 							memset(&obj, 0, sizeof(obj));
 							obj.alive = 1;
 							obj.visible = 0;
-							obj.type = _mapData[i][j][4][1] + BASEOBJECT;
+							obj.type = _mapData[i][j][4][1] + kBaseObject;
 							obj.where.xloc = (i << 8) + 128;
 							obj.where.yloc = (j << 8) + 128;
 							obj.where.xindex = i;
@@ -200,14 +203,14 @@ void ColonyEngine::loadMap(int mnum) {
 	}
 	free(buffer);
 	_level = mnum;
-	_me.type = MENUM;
+	_me.type = kMeNum;
 
 	getWall();  // restore saved wall state changes (airlocks)
 	doPatch();  // apply object relocations from patch table
 	initRobots();  // spawn robot objects for this level
 
 	if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
-		_robotArray[_me.xindex][_me.yindex] = MENUM;
+		_robotArray[_me.xindex][_me.yindex] = kMeNum;
 	debug("Successfully loaded map %d (objects: %d)", mnum, (int)_objects.size());
 }
 
@@ -216,7 +219,8 @@ void ColonyEngine::loadMap(int mnum) {
 void ColonyEngine::createObject(int type, int xloc, int yloc, uint8 ang) {
 	Thing obj;
 	memset(&obj, 0, sizeof(obj));
-	while (ang > 255) ang -= 256;
+	while (ang > 255)
+		ang -= 256;
 	obj.alive = 1;
 	obj.visible = 0;
 	obj.type = type;
@@ -228,9 +232,9 @@ void ColonyEngine::createObject(int type, int xloc, int yloc, uint8 ang) {
 	obj.where.ang = ang;
 	obj.where.look = ang;
 
-	// Try to reuse a dead slot (starting after MENUM)
+	// Try to reuse a dead slot (starting after kMeNum)
 	int slot = -1;
-	for (int j = MENUM; j < (int)_objects.size(); j++) {
+	for (int j = kMeNum; j < (int)_objects.size(); j++) {
 		if (!_objects[j].alive) {
 			slot = j;
 			break;
@@ -276,7 +280,8 @@ void ColonyEngine::doPatch() {
 
 // PATCH.C: savewall() — save 5 bytes of map feature data for persistence across level loads.
 void ColonyEngine::saveWall(int x, int y, int direction) {
-	if (_level < 1 || _level > 8) return;
+	if (_level < 1 || _level > 8)
+		return;
 	LevelData &ld = _levelData[_level - 1];
 
 	// Search for existing entry at this location
@@ -303,7 +308,8 @@ void ColonyEngine::saveWall(int x, int y, int direction) {
 
 // PATCH.C: getwall() — restore saved wall bytes into _mapData after level load.
 void ColonyEngine::getWall() {
-	if (_level < 1 || _level > 8) return;
+	if (_level < 1 || _level > 8)
+		return;
 	const LevelData &ld = _levelData[_level - 1];
 	for (int i = 0; i < ld.size; i++) {
 		int x = ld.location[i][0];
@@ -333,7 +339,8 @@ void ColonyEngine::newPatch(int type, const PassPatch &from, const PassPatch &to
 		}
 	}
 	// Create new patch entry (max 100)
-	if (_patches.size() >= 100) return;
+	if (_patches.size() >= 100)
+		return;
 	PatchEntry pe;
 	pe.type = type;
 	pe.from.level = from.level;
@@ -387,7 +394,8 @@ bool ColonyEngine::patchMapFrom(const PassPatch &from, uint8 *mapdata) {
 // Level 1 = no robots; Level 2 = 25; Level 3-4 = 30; Level 5-7 = 35.
 // Robot #1 = QUEEN, #2 = SNOOP, rest = random type weighted by level.
 void ColonyEngine::initRobots() {
-	if (_level == 1) return;  // Level 1 has no robots
+	if (_level == 1)
+		return;  // Level 1 has no robots
 
 	int maxrob;
 	switch (_level) {
@@ -398,7 +406,8 @@ void ColonyEngine::initRobots() {
 	}
 
 	int lvl = _level - 1;
-	if (lvl > 5) lvl = 5;
+	if (lvl > 5)
+		lvl = 5;
 
 	for (int i = 1; i <= maxrob; i++) {
 		uint8 ang = _randomSource.getRandomNumber(255);
@@ -428,7 +437,8 @@ void ColonyEngine::initRobots() {
 		else {
 			// Random type weighted by level difficulty
 			int rnd = _randomSource.getRandomNumber(lvl);
-			if (rnd > 5) rnd = 5;
+			if (rnd > 5)
+				rnd = 5;
 			switch (rnd) {
 			case 0: type = kRobCube; break;
 			case 1: type = kRobPyramid; break;
@@ -473,16 +483,16 @@ Common::Error ColonyEngine::run() {
 
 	// Setup a palette with standard 16 colors followed by grayscale
 	byte pal[256 * 3];
-	static const byte ega_colors[16][3] = {
+	static const byte egaColors[16][3] = {
 		{0, 0, 0}, {0, 0, 170}, {0, 170, 0}, {0, 170, 170},
 		{170, 0, 0}, {170, 0, 170}, {170, 85, 0}, {170, 170, 170},
 		{85, 85, 85}, {85, 85, 255}, {85, 255, 85}, {85, 255, 255},
 		{255, 85, 85}, {255, 85, 255}, {255, 255, 85}, {255, 255, 255}
 	};
 	for (int i = 0; i < 16; i++) {
-		pal[i * 3 + 0] = ega_colors[i][0];
-		pal[i * 3 + 1] = ega_colors[i][1];
-		pal[i * 3 + 2] = ega_colors[i][2];
+		pal[i * 3 + 0] = egaColors[i][0];
+		pal[i * 3 + 1] = egaColors[i][1];
+		pal[i * 3 + 2] = egaColors[i][2];
 	}
 	for (int i = 16; i < 256; i++) {
 		pal[i * 3 + 0] = i;
@@ -700,7 +710,8 @@ void ColonyEngine::scrollInfo() {
 
 bool ColonyEngine::loadAnimation(const Common::String &name) {
 	_animationName = name;
-	for (int i = 0; i < 6; i++) _animDisplay[i] = 1;
+	for (int i = 0; i < 6; i++)
+		_animDisplay[i] = 1;
 	Common::String fileName = name + ".pic";
 	Common::File file;
 	if (!file.open(Common::Path(fileName))) {
@@ -770,11 +781,15 @@ bool ColonyEngine::loadAnimation(const Common::String &name) {
 }
 
 void ColonyEngine::deleteAnimation() {
-	delete _backgroundMask; _backgroundMask = nullptr;
-	delete _backgroundFG; _backgroundFG = nullptr;
-	for (uint i = 0; i < _cSprites.size(); i++) delete _cSprites[i];
+	delete _backgroundMask;
+	_backgroundMask = nullptr;
+	delete _backgroundFG;
+	_backgroundFG = nullptr;
+	for (uint i = 0; i < _cSprites.size(); i++)
+		delete _cSprites[i];
 	_cSprites.clear();
-	for (uint i = 0; i < _lSprites.size(); i++) delete _lSprites[i];
+	for (uint i = 0; i < _lSprites.size(); i++)
+		delete _lSprites[i];
 	_lSprites.clear();
 }
 
@@ -790,39 +805,42 @@ void ColonyEngine::playAnimation() {
 	if (_animationName == "security" && !_unlocked) {
 		for (int i = 0; i < 4; i++) {
 			_decode1[i] = (uint8)(2 + _randomSource.getRandomNumber(3));
-			SetObjectState(27 + i, _decode1[i]);
+			setObjectState(27 + i, _decode1[i]);
 		}
 	} else if (_animationName == "reactor") {
 		for (int i = 0; i < 6; i++) {
-			SetObjectOnOff(14 + i * 2, false);
-			SetObjectState(13 + i * 2, 1);
+			setObjectOnOff(14 + i * 2, false);
+			setObjectState(13 + i * 2, 1);
 		}
 	} else if (_animationName == "controls") {
 		switch (_corePower[_coreIndex]) {
-		case 0: SetObjectState(2, 1); SetObjectState(5, 1); break;
-		case 1: SetObjectState(2, 1); SetObjectState(5, 2); break;
-		case 2: SetObjectState(2, 2); SetObjectState(5, 1); break;
+		case 0: setObjectState(2, 1); setObjectState(5, 1); break;
+		case 1: setObjectState(2, 1); setObjectState(5, 2); break;
+		case 2: setObjectState(2, 2); setObjectState(5, 1); break;
 		}
 	} else if (_animationName == "desk") {
 		if (!(_action0 == 11 || _action0 == 18)) {
-			for (int i = 1; i <= 5; i++) SetObjectOnOff(i, false);
+			for (int i = 1; i <= 5; i++)
+				setObjectOnOff(i, false);
 		} else {
 			uint8 *decode = (_action0 == 11) ? _decode2 : _decode3;
 			for (int i = 0; i < 4; i++) {
 				if (decode[i])
-					SetObjectState(i + 2, decode[i]);
+					setObjectState(i + 2, decode[i]);
 				else
-					SetObjectState(i + 2, 1);
+					setObjectState(i + 2, 1);
 			}
 		}
 
 		if (_action0 != 10) {
-			SetObjectOnOff(23, false);
-			SetObjectOnOff(24, false);
+			setObjectOnOff(23, false);
+			setObjectOnOff(24, false);
 		}
-		if (_action0 != 30) SetObjectOnOff(6, false); // Teeth
+		if (_action0 != 30)
+			setObjectOnOff(6, false); // Teeth
 		if (_action0 != 33) { // Jack-in-the-box
-			for (int i = 18; i <= 21; i++) SetObjectOnOff(i, false);
+			for (int i = 18; i <= 21; i++)
+				setObjectOnOff(i, false);
 		}
 
 		int ntype = _action1 / 10;
@@ -831,34 +849,34 @@ void ColonyEngine::playAnimation() {
 		case 1:
 		case 2:
 		case 3:
-			SetObjectOnOff(7, false);
-			SetObjectOnOff(8, false);
-			SetObjectOnOff(9, false);
-			SetObjectOnOff(22, false);
-			SetObjectOnOff(25, false);
+			setObjectOnOff(7, false);
+			setObjectOnOff(8, false);
+			setObjectOnOff(9, false);
+			setObjectOnOff(22, false);
+			setObjectOnOff(25, false);
 			break;
 		case 4: // letters
-			SetObjectOnOff(22, false);
-			SetObjectOnOff(9, false);
-			SetObjectOnOff(25, false);
+			setObjectOnOff(22, false);
+			setObjectOnOff(9, false);
+			setObjectOnOff(25, false);
 			break;
 		case 5: // book
-			SetObjectOnOff(7, false);
-			SetObjectOnOff(8, false);
-			SetObjectOnOff(9, false);
-			SetObjectOnOff(25, false);
+			setObjectOnOff(7, false);
+			setObjectOnOff(8, false);
+			setObjectOnOff(9, false);
+			setObjectOnOff(25, false);
 			break;
 		case 6: // clipboard
-			SetObjectOnOff(22, false);
-			SetObjectOnOff(7, false);
-			SetObjectOnOff(8, false);
-			SetObjectOnOff(25, false);
+			setObjectOnOff(22, false);
+			setObjectOnOff(7, false);
+			setObjectOnOff(8, false);
+			setObjectOnOff(25, false);
 			break;
 		case 7: // postit
-			SetObjectOnOff(22, false);
-			SetObjectOnOff(7, false);
-			SetObjectOnOff(8, false);
-			SetObjectOnOff(9, false);
+			setObjectOnOff(22, false);
+			setObjectOnOff(7, false);
+			setObjectOnOff(8, false);
+			setObjectOnOff(9, false);
 			break;
 		}
 	} else if (_animationName == "vanity") {
@@ -870,33 +888,33 @@ void ColonyEngine::playAnimation() {
 		}
 		// DOS DoVanity: set suit state on mirror display (object 1)
 		if (_weapons && _armor)
-			SetObjectState(1, 3);
+			setObjectState(1, 3);
 		else if (_weapons)
-			SetObjectState(1, 2);
+			setObjectState(1, 2);
 		else if (_armor)
-			SetObjectState(1, 1);
+			setObjectState(1, 1);
 		else
-			SetObjectState(1, 4);
+			setObjectState(1, 4);
 		// Badge only visible on level 1
 		if (_level != 1)
-			SetObjectOnOff(14, false);
+			setObjectOnOff(14, false);
 		// Hide items based on action0 (num parameter in DOS)
 		if (_action0 < 90) { // coffee cup only
-			SetObjectOnOff(4, false);
-			SetObjectOnOff(7, false);
-			SetObjectOnOff(13, false);
+			setObjectOnOff(4, false);
+			setObjectOnOff(7, false);
+			setObjectOnOff(13, false);
 		} else if (_action0 < 100) { // paper
-			SetObjectOnOff(12, false);
-			SetObjectOnOff(4, false);
-			SetObjectOnOff(7, false);
+			setObjectOnOff(12, false);
+			setObjectOnOff(4, false);
+			setObjectOnOff(7, false);
 		} else if (_action0 < 110) { // diary
-			SetObjectOnOff(12, false);
-			SetObjectOnOff(13, false);
-			SetObjectOnOff(7, false);
+			setObjectOnOff(12, false);
+			setObjectOnOff(13, false);
+			setObjectOnOff(7, false);
 		} else if (_action0 < 120) { // book
-			SetObjectOnOff(12, false);
-			SetObjectOnOff(13, false);
-			SetObjectOnOff(4, false);
+			setObjectOnOff(12, false);
+			setObjectOnOff(13, false);
+			setObjectOnOff(4, false);
 		}
 	}
 
@@ -947,11 +965,10 @@ void ColonyEngine::playAnimation() {
 }
 
 void ColonyEngine::updateAnimation() {
-	static uint32 lastUpdate = 0;
 	uint32 now = _system->getMillis();
-	if (now - lastUpdate < 50) // Reduced to 50ms (20 fps) to make it "move"
+	if (now - _lastAnimUpdate < 50) // Reduced to 50ms (20 fps) to make it "move"
 		return;
-	lastUpdate = now;
+	_lastAnimUpdate = now;
 
 	for (uint i = 0; i < _lSprites.size(); i++) {
 		ComplexSprite *ls = _lSprites[i];
@@ -1003,13 +1020,16 @@ void ColonyEngine::drawAnimation() {
 
 void ColonyEngine::drawComplexSprite(int index, int ox, int oy) {
 	ComplexSprite *ls = _lSprites[index];
-	if (!ls->onoff) return;
+	if (!ls->onoff)
+		return;
 
 	int cnum = ls->current;
-	if (cnum < 0 || cnum >= (int)ls->objects.size()) return;
+	if (cnum < 0 || cnum >= (int)ls->objects.size())
+		return;
 
 	int spriteIdx = ls->objects[cnum].spritenum;
-	if (spriteIdx < 0 || spriteIdx >= (int)_cSprites.size()) return;
+	if (spriteIdx < 0 || spriteIdx >= (int)_cSprites.size())
+		return;
 
 	Sprite *s = _cSprites[spriteIdx];
 	int x = ox + ls->xloc + ls->objects[cnum].xloc + s->clip.left;
@@ -1019,7 +1039,8 @@ void ColonyEngine::drawComplexSprite(int index, int ox, int oy) {
 }
 
 void ColonyEngine::drawAnimationImage(Image *img, Image *mask, int x, int y) {
-	if (!img || !img->data) return;
+	if (!img || !img->data)
+		return;
 
 	for (int iy = 0; iy < img->height; iy++) {
 		for (int ix = 0; ix < img->width; ix++) {
@@ -1031,7 +1052,8 @@ void ColonyEngine::drawAnimationImage(Image *img, Image *mask, int x, int y) {
 				maskSet = (mask->data[byteIdx] & (1 << bitIdx)) != 0;
 			}
 
-			if (!maskSet) continue;
+			if (!maskSet)
+				continue;
 
 			bool fgSet = (img->data[byteIdx] & (1 << bitIdx)) != 0;
 			uint32 color = fgSet ? 15 : 0;
@@ -1094,13 +1116,16 @@ int ColonyEngine::whichSprite(const Common::Point &p) {
 
 	for (int i = _lSprites.size() - 1; i >= 0; i--) {
 		ComplexSprite *ls = _lSprites[i];
-		if (!ls->onoff) continue;
+		if (!ls->onoff)
+			continue;
 
 		int cnum = ls->current;
-		if (cnum < 0 || cnum >= (int)ls->objects.size()) continue;
+		if (cnum < 0 || cnum >= (int)ls->objects.size())
+			continue;
 
 		int spriteIdx = ls->objects[cnum].spritenum;
-		if (spriteIdx < 0 || spriteIdx >= (int)_cSprites.size()) continue;
+		if (spriteIdx < 0 || spriteIdx >= (int)_cSprites.size())
+			continue;
 
 		Sprite *s = _cSprites[spriteIdx];
 		int xloc = ls->xloc + ls->objects[cnum].xloc;
@@ -1109,7 +1134,8 @@ int ColonyEngine::whichSprite(const Common::Point &p) {
 		Common::Rect r = s->clip;
 		r.translate(xloc, yloc);
 
-		if (!r.contains(pt)) continue;
+		if (!r.contains(pt))
+			continue;
 
 		// Pixel-perfect mask test (matches DOS WhichlSprite)
 		Image *mask = s->mask;
@@ -1148,9 +1174,11 @@ int ColonyEngine::whichSprite(const Common::Point &p) {
 			ComplexSprite *ls = _lSprites[i];
 			if (ls->onoff) {
 				int cnum = ls->current;
-				if (cnum < 0 || cnum >= (int)ls->objects.size()) continue;
+				if (cnum < 0 || cnum >= (int)ls->objects.size())
+					continue;
 				int spriteIdx = ls->objects[cnum].spritenum;
-				if (spriteIdx < 0 || spriteIdx >= (int)_cSprites.size()) continue;
+				if (spriteIdx < 0 || spriteIdx >= (int)_cSprites.size())
+					continue;
 				Sprite *s = _cSprites[spriteIdx];
 
 				int xloc = ls->xloc + ls->objects[cnum].xloc;
@@ -1219,7 +1247,7 @@ void ColonyEngine::handleAnimationClick(int item) {
 		if (item == 12) { // Coffee cup - spill animation
 			if (!_doorOpen) { // reuse _doorOpen as "spilled" flag
 				for (int i = 1; i < 6; i++) {
-					SetObjectState(12, i);
+					setObjectState(12, i);
 					drawAnimation();
 					_gfx->copyToScreen();
 					_system->delayMillis(50);
@@ -1242,24 +1270,28 @@ void ColonyEngine::handleAnimationClick(int item) {
 			doText(261 + _creature, 0);
 		} else if (item == 5) { // Prev
 			_creature--;
-			if (_creature == 0) _creature = 8;
-			SetObjectState(1, _creature);
+			if (_creature == 0)
+				_creature = 8;
+			setObjectState(1, _creature);
 		} else if (item == 6) { // Next
 			_creature++;
-			if (_creature == 9) _creature = 1;
-			SetObjectState(1, _creature);
+			if (_creature == 9)
+				_creature = 1;
+			setObjectState(1, _creature);
 		}
 	} else if (_animationName == "teleshow") {
 		if (item == 2) { // Speaker
 			doText(269 + _creature, 0);
 		} else if (item == 5) { // Prev
 			_creature--;
-			if (_creature == 0) _creature = 7;
-			SetObjectState(1, _creature);
+			if (_creature == 0)
+				_creature = 7;
+			setObjectState(1, _creature);
 		} else if (item == 6) { // Next
 			_creature++;
-			if (_creature == 8) _creature = 1;
-			SetObjectState(1, _creature);
+			if (_creature == 8)
+				_creature = 1;
+			setObjectState(1, _creature);
 		}
 	} else if (_animationName == "reactor" || _animationName == "security" || _animationName == "suit") {
 		if (item >= 1 && item <= 10 && _animationName != "suit") {
@@ -1275,7 +1307,7 @@ void ColonyEngine::handleAnimationClick(int item) {
 				_animDisplay[i] = 1;
 			// Reset keypad buttons to unpressed state
 			for (int i = 1; i <= 10; i++)
-				SetObjectState(i, 1);
+				setObjectState(i, 1);
 			refreshAnimationDisplay();
 			drawAnimation();
 			_gfx->copyToScreen();
@@ -1317,44 +1349,56 @@ void ColonyEngine::handleAnimationClick(int item) {
 			if (item == 1) { // Armor
 				if (_armor == 3) {
 					for (int i = 6; i >= 1; i--) {
-						SetObjectState(1, i);
-						SetObjectState(3, i / 2 + 1);
-						drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(30);
+						setObjectState(1, i);
+						setObjectState(3, i / 2 + 1);
+						drawAnimation();
+						_gfx->copyToScreen();
+						_system->delayMillis(30);
 					}
 					_armor = 0;
 				} else {
-					SetObjectState(1, (_armor * 2 + 1) + 1); // intermediate/pressed
-					drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(50);
+					setObjectState(1, (_armor * 2 + 1) + 1); // intermediate/pressed
+					drawAnimation();
+					_gfx->copyToScreen();
+					_system->delayMillis(50);
 					_armor++;
 				}
-				SetObjectState(1, _armor * 2 + 1); // target state
-				SetObjectState(3, _armor + 1); // display state
-				drawAnimation(); _gfx->copyToScreen();
-				if (_armor == 3 && _weapons == 3) _corePower[_coreIndex] = 2;
+				setObjectState(1, _armor * 2 + 1); // target state
+				setObjectState(3, _armor + 1); // display state
+				drawAnimation();
+				_gfx->copyToScreen();
+				if (_armor == 3 && _weapons == 3)
+					_corePower[_coreIndex] = 2;
 			} else if (item == 2) { // Weapons
 				if (_weapons == 3) {
 					for (int i = 6; i >= 1; i--) {
-						SetObjectState(2, i);
-						SetObjectState(4, i / 2 + 1);
-						drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(30);
+						setObjectState(2, i);
+						setObjectState(4, i / 2 + 1);
+						drawAnimation();
+						_gfx->copyToScreen();
+						_system->delayMillis(30);
 					}
 					_weapons = 0;
 				} else {
-					SetObjectState(2, (_weapons * 2 + 1) + 1); // intermediate/pressed
-					drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(50);
+					setObjectState(2, (_weapons * 2 + 1) + 1); // intermediate/pressed
+					drawAnimation();
+					_gfx->copyToScreen();
+					_system->delayMillis(50);
 					_weapons++;
 				}
-				SetObjectState(2, _weapons * 2 + 1);
-				SetObjectState(4, _weapons + 1);
-				drawAnimation(); _gfx->copyToScreen();
-				if (_armor == 3 && _weapons == 3) _corePower[_coreIndex] = 2;
+				setObjectState(2, _weapons * 2 + 1);
+				setObjectState(4, _weapons + 1);
+				drawAnimation();
+				_gfx->copyToScreen();
+				if (_armor == 3 && _weapons == 3)
+					_corePower[_coreIndex] = 2;
 			}
 		}
 		if (_animationName == "reactor" || _animationName == "security") {
 			if (item <= 12) {
-				// SetObjectState(item, 1); // Reset to ensure animation runs Off -> On - handled by dolSprite
+				// setObjectState(item, 1); // Reset to ensure animation runs Off -> On - handled by dolSprite
 				if (item > 10) // Clear/Enter should return to Off
-					SetObjectState(item, 1);
+					setObjectState(item, 1);
 				drawAnimation();
 				_gfx->copyToScreen();
 			}
@@ -1366,18 +1410,22 @@ void ColonyEngine::handleAnimationClick(int item) {
 			if (_doorOpen) {
 				for (int i = 3; i >= 1; i--) {
 					_doorOpen = !_doorOpen;
-					SetObjectState(2, i);
-					drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(80);
+					setObjectState(2, i);
+					drawAnimation();
+					_gfx->copyToScreen();
+					_system->delayMillis(80);
 				}
 			} else {
 				for (int i = 1; i < 4; i++) {
 					_doorOpen = !_doorOpen;
-					SetObjectState(2, i);
-					drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(80);
+					setObjectState(2, i);
+					drawAnimation();
+					_gfx->copyToScreen();
+					_system->delayMillis(80);
 				}
 			}
 		}
-		if (item == 1 || (item == 101 && ObjectState(2) == 3)) {
+		if (item == 1 || (item == 101 && objectState(2) == 3)) {
 			_animationResult = 1;
 			_animationRunning = false;
 		}
@@ -1391,13 +1439,17 @@ void ColonyEngine::handleAnimationClick(int item) {
 			_sound->play(Sound::kAirlock);
 			if (_doorOpen) {
 				for (int i = 3; i >= 1; i--) {
-					SetObjectState(2, i);
-					drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(80);
+					setObjectState(2, i);
+					drawAnimation();
+					_gfx->copyToScreen();
+					_system->delayMillis(80);
 				}
 			} else {
 				for (int i = 1; i < 4; i++) {
-					SetObjectState(2, i);
-					drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(80);
+					setObjectState(2, i);
+					drawAnimation();
+					_gfx->copyToScreen();
+					_system->delayMillis(80);
 				}
 			}
 			_doorOpen = !_doorOpen;
@@ -1416,30 +1468,35 @@ void ColonyEngine::handleAnimationClick(int item) {
 				_sound->play(Sound::kElevator);
 				if (!_doorOpen) {
 					for (int i = 1; i < 4; i++) {
-						SetObjectState(3, i);
-						SetObjectState(4, i);
-						drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(80);
+						setObjectState(3, i);
+						setObjectState(4, i);
+						drawAnimation();
+						_gfx->copyToScreen();
+						_system->delayMillis(80);
 					}
 					_doorOpen = true;
 				} else {
 					for (int i = 3; i >= 1; i--) {
-						SetObjectState(4, i);
-						SetObjectState(3, i);
-						drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(80);
+						setObjectState(4, i);
+						setObjectState(3, i);
+						drawAnimation();
+						_gfx->copyToScreen();
+						_system->delayMillis(80);
 					}
 					_doorOpen = false;
 				}
 			} else if (item == 2 || (item == 101 && _doorOpen)) {
 				// Enter the elevator (transition to phase 2)
 				_animationResult = 2;
-				SetObjectOnOff(6, true);
-				SetObjectOnOff(7, true);
-				SetObjectOnOff(8, true);
-				SetObjectOnOff(9, true);
-				SetObjectOnOff(10, true);
-				SetObjectOnOff(2, false);
-				SetObjectOnOff(5, false);
-				drawAnimation(); _gfx->copyToScreen();
+				setObjectOnOff(6, true);
+				setObjectOnOff(7, true);
+				setObjectOnOff(8, true);
+				setObjectOnOff(9, true);
+				setObjectOnOff(10, true);
+				setObjectOnOff(2, false);
+				setObjectOnOff(5, false);
+				drawAnimation();
+				_gfx->copyToScreen();
 			} else if (item == 101 && !_doorOpen) {
 				// Exit without entering
 				_animationResult = 0;
@@ -1450,21 +1507,25 @@ void ColonyEngine::handleAnimationClick(int item) {
 			if (item >= 6 && item <= 10) {
 				int fl = item - 5;
 				if (fl == _elevatorFloor) {
-					SetObjectState(item, 1); // already on this floor
+					setObjectState(item, 1); // already on this floor
 				} else {
 					_sound->play(Sound::kElevator);
 					for (int i = 3; i >= 1; i--) {
-						SetObjectState(4, i);
-						SetObjectState(3, i);
-						drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(80);
+						setObjectState(4, i);
+						setObjectState(3, i);
+						drawAnimation();
+						_gfx->copyToScreen();
+						_system->delayMillis(80);
 					}
 					_elevatorFloor = fl;
 					for (int i = 1; i <= 3; i++) {
-						SetObjectState(4, i);
-						SetObjectState(3, i);
-						drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(80);
+						setObjectState(4, i);
+						setObjectState(3, i);
+						drawAnimation();
+						_gfx->copyToScreen();
+						_system->delayMillis(80);
 					}
-					SetObjectState(item, 1);
+					setObjectState(item, 1);
 				}
 			} else if (item == 1 || item == 101) {
 				// Exit elevator
@@ -1479,24 +1540,28 @@ void ColonyEngine::handleAnimationClick(int item) {
 				debug(0, "Taking off!");
 				// Animate the lever moving full range
 				for (int i = 1; i <= 6; i++) {
-					SetObjectState(4, i);
-					drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(30);
+					setObjectState(4, i);
+					drawAnimation();
+					_gfx->copyToScreen();
+					_system->delayMillis(30);
 				}
 				_animationRunning = false;
 				return; // Exit animation immediately on success
 			} else {
 				debug(0, "Accelerator failed: power=%d, state=%d", _corePower[_coreIndex], _coreState[_coreIndex]);
 				// Fail animation click
-				SetObjectState(4, 1);
+				setObjectState(4, 1);
 				// dolSprite(3); // Animate lever moving and returning - handled by top dolSprite
 				for (int i = 6; i > 0; i--) {
-					SetObjectState(4, i);
-					drawAnimation(); _gfx->copyToScreen(); _system->delayMillis(20);
+					setObjectState(4, i);
+					drawAnimation();
+					_gfx->copyToScreen();
+					_system->delayMillis(20);
 				}
 			}
 			break;
 		case 5: // Emergency power
-			// SetObjectState(5, 1); // Reset to ensure animation runs Off -> On - handled by dolSprite
+			// setObjectState(5, 1); // Reset to ensure animation runs Off -> On - handled by dolSprite
 			// dolSprite(4); // Animate the button press - handled by top dolSprite
 			if (_coreState[_coreIndex] < 2) {
 				if (_corePower[_coreIndex] == 0)
@@ -1506,9 +1571,9 @@ void ColonyEngine::handleAnimationClick(int item) {
 			}
 			// Finalize visual state according to power settings
 			switch (_corePower[_coreIndex]) {
-			case 0: SetObjectState(2, 1); SetObjectState(5, 1); break;
-			case 1: SetObjectState(2, 1); SetObjectState(5, 2); break;
-			case 2: SetObjectState(2, 2); SetObjectState(5, 1); break;
+			case 0: setObjectState(2, 1); setObjectState(5, 1); break;
+			case 1: setObjectState(2, 1); setObjectState(5, 2); break;
+			case 2: setObjectState(2, 2); setObjectState(5, 1); break;
 			}
 			drawAnimation();
 			_gfx->copyToScreen();
@@ -1524,8 +1589,9 @@ void ColonyEngine::handleAnimationClick(int item) {
 				doText(66, 0); // Orbital stabilization
 			}
 			
-			SetObjectState(7, 1); // Reset button
-			drawAnimation(); _gfx->copyToScreen();
+			setObjectState(7, 1); // Reset button
+			drawAnimation();
+			_gfx->copyToScreen();
 			break;
 		}
 			break;
@@ -1571,7 +1637,7 @@ void ColonyEngine::moveObject(int index) {
 	int oy = _screenR.top + (_screenR.height() - 264) / 2;
 
 	// Drag loop: track mouse while left button held.
-	// NOTE: The original DOS hides dragged sprites during drag (SetObjectOnOff FALSE)
+	// NOTE: The original DOS hides dragged sprites during drag (setObjectOnOff FALSE)
 	// and redraws them separately on top. We improve on this by keeping them visible
 	// throughout, and drawing an extra copy on top so they render above drawers.
 	while (!shouldQuit()) {
@@ -1729,20 +1795,20 @@ void ColonyEngine::dolSprite(int index) {
 	}
 }
 
-void ColonyEngine::SetObjectState(int num, int state) {
+void ColonyEngine::setObjectState(int num, int state) {
 	num--;
 	if (num >= 0 && num < (int)_lSprites.size())
 		_lSprites[num]->current = state - 1;
 }
 
-int ColonyEngine::ObjectState(int num) const {
+int ColonyEngine::objectState(int num) const {
 	num--;
 	if (num >= 0 && num < (int)_lSprites.size())
 		return _lSprites[num]->current + 1;
 	return 0;
 }
 
-void ColonyEngine::SetObjectOnOff(int num, bool on) {
+void ColonyEngine::setObjectOnOff(int num, bool on) {
 	num--;
 	if (num >= 0 && num < (int)_lSprites.size())
 		_lSprites[num]->onoff = on;
@@ -1751,13 +1817,13 @@ void ColonyEngine::SetObjectOnOff(int num, bool on) {
 void ColonyEngine::refreshAnimationDisplay() {
 	for (int i = 0; i < 6; i++) {
 		if (_animDisplay[i] < 9) {
-			SetObjectOnOff(13 + i * 2, true);
-			SetObjectOnOff(14 + i * 2, false);
-			SetObjectState(13 + i * 2, _animDisplay[i]);
+			setObjectOnOff(13 + i * 2, true);
+			setObjectOnOff(14 + i * 2, false);
+			setObjectState(13 + i * 2, _animDisplay[i]);
 		} else {
-			SetObjectOnOff(14 + i * 2, true);
-			SetObjectOnOff(13 + i * 2, false);
-			SetObjectState(14 + i * 2, _animDisplay[i] - 8);
+			setObjectOnOff(14 + i * 2, true);
+			setObjectOnOff(13 + i * 2, false);
+			setObjectState(14 + i * 2, _animDisplay[i] - 8);
 		}
 	}
 }
@@ -1771,7 +1837,8 @@ void ColonyEngine::crypt(uint8 sarray[6], int i, int j, int k, int l) {
 	res[4] = ((l * 17) | (j * 19) | (k * 23) | (i * 29)) % 10;
 	res[5] = (29 + (l * 17) - (j * 19) - (k * 23) - (i * 29)) % 10;
 	for (int m = 0; m < 6; m++) {
-		if (res[m] < 0) res[m] = -res[m];
+		if (res[m] < 0)
+			res[m] = -res[m];
 		sarray[m] = (uint8)(res[m] + 2);
 	}
 }

@@ -277,7 +277,7 @@ int ColonyEngine::occupiedObjectAt(int x, int y, const Locate *pobject) {
 		return 0;
 	if (pobject == &_me && rnum <= (int)_objects.size()) {
 		Thing &obj = _objects[rnum - 1];
-		if (obj.type <= BASEOBJECT)
+		if (obj.type <= kBaseObject)
 			obj.where.look = obj.where.ang = _me.ang + 128;
 	}
 	return rnum;
@@ -517,7 +517,7 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 				return 0;
 			_animationResult = 0;
 			_doorOpen = false;
-			SetObjectState(2, 1); // door starts closed
+			setObjectState(2, 1); // door starts closed
 			playAnimation();
 			if (_animationResult) {
 				setDoorState(fromX, fromY, direction, 0);
@@ -536,8 +536,8 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 				return 0;
 			_animationResult = 0;
 			_doorOpen = false;
-			SetObjectState(2, 1); // airlock starts closed
-			SetObjectState(1, 1);
+			setObjectState(2, 1); // airlock starts closed
+			setObjectState(1, 1);
 			playAnimation();
 			if (_animationResult) {
 				setDoorState(fromX, fromY, direction, 0);
@@ -591,7 +591,7 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 
 		if (pobject->xindex >= 0 && pobject->xindex < 32 &&
 		    pobject->yindex >= 0 && pobject->yindex < 32)
-			_robotArray[pobject->xindex][pobject->yindex] = MENUM;
+			_robotArray[pobject->xindex][pobject->yindex] = kMeNum;
 
 		debug("Level change via %s: level=%d pos=(%d,%d)",
 		      map[0] == kWallFeatureUpStairs ? "upstairs" :
@@ -614,11 +614,11 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 		_animationResult = 0;
 		_doorOpen = false;
 		_elevatorFloor = _level - 1; // DOS: fl = level-1
-		SetObjectOnOff(6, false);
-		SetObjectOnOff(7, false);
-		SetObjectOnOff(8, false);
-		SetObjectOnOff(9, false);
-		SetObjectOnOff(10, false);
+		setObjectOnOff(6, false);
+		setObjectOnOff(7, false);
+		setObjectOnOff(8, false);
+		setObjectOnOff(9, false);
+		setObjectOnOff(10, false);
 		playAnimation();
 
 		bool entered = (_animationResult >= 2);
@@ -645,7 +645,7 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 
 			if (pobject->xindex >= 0 && pobject->xindex < 32 &&
 			    pobject->yindex >= 0 && pobject->yindex < 32)
-				_robotArray[pobject->xindex][pobject->yindex] = MENUM;
+				_robotArray[pobject->xindex][pobject->yindex] = kMeNum;
 
 			debug("Elevator: level=%d pos=(%d,%d)", _level, pobject->xindex, pobject->yindex);
 			return 2; // teleported
@@ -783,7 +783,7 @@ void ColonyEngine::interactWithObject(int objNum) {
 		if (oldX >= 0 && oldX < 32 && oldY >= 0 && oldY < 32)
 			_robotArray[oldX][oldY] = 0;
 		if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
-			_robotArray[_me.xindex][_me.yindex] = MENUM;
+			_robotArray[_me.xindex][_me.yindex] = kMeNum;
 		break;
 	}
 	case kObjDrawer:
@@ -811,8 +811,10 @@ void ColonyEngine::interactWithObject(int objNum) {
 		inform("A SINK. IT'S DRY.", true);
 		break;
 	case kObjTV:
-		if (_level == 1) doText(56, 0);
-		else doText(16, 0);
+		if (_level == 1)
+			doText(56, 0);
+		else
+			doText(16, 0);
 		break;
 	case kObjForkLift:
 		if (_fl == 0) {
@@ -924,18 +926,19 @@ void ColonyEngine::printMessage(const char *text[], bool hold) {
 	
 	while (text[numLines] != nullptr) {
 		int w = font.getStringWidth(text[numLines]);
-		if (w > width) width = w;
+		if (w > width)
+			width = w;
 		numLines++;
 	}
 
-	int px_per_inch_x = 72;
-	int px_per_inch_y = 72;
+	int pxPerInchX = 72;
+	int pxPerInchY = 72;
 
 	Common::Rect rr;
-	rr.top = _centerY - (numLines + 1) * (px_per_inch_y / 4);
-	rr.bottom = _centerY + (numLines + 1) * (px_per_inch_y / 4);
-	rr.left = _centerX - width / 2 - (px_per_inch_x / 2);
-	rr.right = _centerX + width / 2 + (px_per_inch_x / 2);
+	rr.top = _centerY - (numLines + 1) * (pxPerInchY / 4);
+	rr.bottom = _centerY + (numLines + 1) * (pxPerInchY / 4);
+	rr.left = _centerX - width / 2 - (pxPerInchX / 2);
+	rr.right = _centerX + width / 2 + (pxPerInchX / 2);
 
 	_gfx->fillDitherRect(_screenR, 0, 15);
 	makeMessageRect(rr);
@@ -943,8 +946,8 @@ void ColonyEngine::printMessage(const char *text[], bool hold) {
 	int start;
 	int step;
 	if (numLines > 1) {
-		start = rr.top + (px_per_inch_y / 4) * 2;
-		step = (rr.height() - (px_per_inch_y / 4) * 4) / (numLines - 1);
+		start = rr.top + (pxPerInchY / 4) * 2;
+		step = (rr.height() - (pxPerInchY / 4) * 4) / (numLines - 1);
 	} else {
 		start = (rr.top + rr.bottom) / 2;
 		step = 0;
@@ -1018,26 +1021,31 @@ void ColonyEngine::doText(int entry, int center) {
 	for (int i = 0; i < ch; i++) {
 		if (p[i] == '\r' || p[i] == '\n') {
 			p[i] = 0;
-			if (p[start]) lineArray.push_back(&p[start]);
+			if (p[start])
+				lineArray.push_back(&p[start]);
 			start = i + 1;
 		}
 	}
-	if (start < ch && p[start]) lineArray.push_back(&p[start]);
+	if (start < ch && p[start])
+		lineArray.push_back(&p[start]);
 
 	Graphics::DosFont font;
 	int width = 0;
 	for (uint i = 0; i < lineArray.size(); i++) {
 		int w = font.getStringWidth(lineArray[i]);
-		if (w > width) width = w;
+		if (w > width)
+			width = w;
 	}
 	const char *kpress = "-Press Any Key to Continue-";
 	int kw = font.getStringWidth(kpress);
-	if (kw > width) width = kw;
+	if (kw > width)
+		width = kw;
 	width += 12;
 
 	int lineheight = 14;
 	int maxlines = (_screenR.height() / lineheight) - 2;
-	if (maxlines > (int)lineArray.size()) maxlines = lineArray.size();
+	if (maxlines > (int)lineArray.size())
+		maxlines = lineArray.size();
 
 	Common::Rect r;
 	r.top = _centerY - (((maxlines + 1) * lineheight / 2) + 4);
@@ -1125,11 +1133,13 @@ void ColonyEngine::fallThroughHole() {
 			for (int ring = 0; ring < visibleRings; ring++) {
 				// Each ring's depth combines the overall fall progress with per-ring spacing
 				float depth = progress * 0.6f + (float)ring / (maxRings + 2.0f);
-				if (depth >= 1.0f) break;
+				if (depth >= 1.0f)
+					break;
 				float scale = 1.0f - depth;
 				int rw = (int)(hw * scale);
 				int rh = (int)(hh * scale);
-				if (rw < 2 || rh < 2) break;
+				if (rw < 2 || rh < 2)
+					break;
 				Common::Rect r(cx - rw, cy - rh, cx + rw, cy + rh);
 				_gfx->drawRect(r, 15); // white outline
 			}
@@ -1155,7 +1165,7 @@ void ColonyEngine::fallThroughHole() {
 		_me.yloc = (targetY << 8) + ymod;
 		_me.yindex = targetY;
 
-		_robotArray[targetX][targetY] = MENUM;
+		_robotArray[targetX][targetY] = kMeNum;
 	}
 
 	// DOS: if(map) load_mapnum(map, TRUE) — always reload when map != 0
@@ -1205,12 +1215,13 @@ void ColonyEngine::cCommand(int xnew, int ynew, bool allowInteraction) {
 		interactWithObject(robot);
 
 	if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
-		_robotArray[_me.xindex][_me.yindex] = MENUM;
+		_robotArray[_me.xindex][_me.yindex] = kMeNum;
 }
 
 // DOS ExitFL(): step back one cell and drop the forklift.
 void ColonyEngine::exitForklift() {
-	if (_fl != 1) return;
+	if (_fl != 1)
+		return;
 
 	int xloc = _me.xloc;
 	int yloc = _me.yloc;
@@ -1224,10 +1235,10 @@ void ColonyEngine::exitForklift() {
 		_me.type = 2; // temporary small collision type
 		if (checkwall(xnew, ynew, &_me)) {
 			_sound->play(Sound::kChime);
-			_me.type = MENUM;
+			_me.type = kMeNum;
 			return;
 		}
-		_me.type = MENUM;
+		_me.type = kMeNum;
 	}
 
 	// Snap to cell center for the dropped forklift
@@ -1252,7 +1263,8 @@ void ColonyEngine::exitForklift() {
 
 // DOS DropFL(): step back one cell and drop the carried object, then return to fl=1.
 void ColonyEngine::dropCarriedObject() {
-	if (_fl != 2) return;
+	if (_fl != 2)
+		return;
 
 	// Special case: carrying reactor core
 	if (_carryType == kObjReactor) {
@@ -1284,10 +1296,10 @@ void ColonyEngine::dropCarriedObject() {
 		_me.type = 2;
 		if (checkwall(xnew, ynew, &_me)) {
 			_sound->play(Sound::kChime);
-			_me.type = MENUM;
+			_me.type = kMeNum;
 			return;
 		}
-		_me.type = MENUM;
+		_me.type = kMeNum;
 	}
 
 	// DOS: teleport always drops at ang=0; other objects use player's angle
@@ -1344,19 +1356,23 @@ bool ColonyEngine::clipLineToRect(int &x1, int &y1, int &x2, int &y2, const Comm
 		int x = 0;
 		int y = 0;
 		if (cOut & 8) {
-			if (y2 == y1) return false;
+			if (y2 == y1)
+				return false;
 			x = x1 + (x2 - x1) * (b - y1) / (y2 - y1);
 			y = b;
 		} else if (cOut & 4) {
-			if (y2 == y1) return false;
+			if (y2 == y1)
+				return false;
 			x = x1 + (x2 - x1) * (t - y1) / (y2 - y1);
 			y = t;
 		} else if (cOut & 2) {
-			if (x2 == x1) return false;
+			if (x2 == x1)
+				return false;
 			y = y1 + (y2 - y1) * (r - x1) / (x2 - x1);
 			x = r;
 		} else {
-			if (x2 == x1) return false;
+			if (x2 == x1)
+				return false;
 			y = y1 + (y2 - y1) * (l - x1) / (x2 - x1);
 			x = l;
 		}
