@@ -157,7 +157,7 @@ void PelrockEngine::init() {
 		// setScreen(0, ALFRED_DOWN);
 		// setScreen(3, ALFRED_RIGHT);
 		// setScreen(22, ALFRED_DOWN);
-		setScreen(35, ALFRED_DOWN);
+		setScreen(39, ALFRED_DOWN);
 		// setScreen(15, ALFRED_DOWN);
 		// setScreen(2, ALFRED_LEFT);
 		// alfredState.x = 576;

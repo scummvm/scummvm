@@ -44,13 +44,6 @@ static const int unpickableHotspotExtras[] = {
 	74,
 	6,
 	7,
-	316, // wires
-	357, // mailbox should pick a different hotspot,
-	360,  // library shelves
-	361,
-	362,
-	472, // matches
-	609 // sunflower
 };
 
 
@@ -120,6 +113,8 @@ public:
 
 
 	bool isPickableByExtra(uint16 extra) {
+		if(extra > 112)
+			return false;
 		int size = sizeof(unpickableHotspotExtras) / sizeof(unpickableHotspotExtras[0]);
 		for (int i = 0; i < size; i++) {
 			if (extra == unpickableHotspotExtras[i])

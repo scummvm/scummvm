@@ -45,7 +45,7 @@ public:
 	void loadCursors();
 	void loadInteractionIcons();
 	void loadAlfredAnims();
-	void loadOtherSpecialAnim(uint32 offset, bool rleCompressed, byte *&buffer, size_t bufferSize);
+	void loadOtherSpecialAnim(uint32 offset, bool rleCompressed, byte *&buffer, size_t &bufferSize);
 	void loadAlfredSpecialAnim(int numAnim, bool reverse = false);
 	void clearSpecialAnim();
 	void loadInventoryItems();

@@ -235,7 +235,7 @@ void ResourceManager::loadAlfredAnims() {
 	free(alfredCombLeftRaw);
 }
 
-void ResourceManager::loadOtherSpecialAnim(uint32 offset, bool rleCompressed, byte *&buffer, size_t bufferSize) {
+void ResourceManager::loadOtherSpecialAnim(uint32 offset, bool rleCompressed, byte *&buffer, size_t &bufferSize) {
 	Common::File alfred7;
 	if (!alfred7.open(Common::Path("ALFRED.7"))) {
 		error("Could not open ALFRED.7");
@@ -246,11 +246,9 @@ void ResourceManager::loadOtherSpecialAnim(uint32 offset, bool rleCompressed, by
 		byte *compressed = nullptr;
 		size_t compressedSize = 0;
 		readUntilBuda(&alfred7, offset, compressed, compressedSize);
-		rleDecompress(compressed, compressedSize, 0, bufferSize, &buffer, false);
+		bufferSize = rleDecompress(compressed, compressedSize, 0, 0, &buffer, true);
 	}
-
 	alfred7.close();
-
 }
 
 void ResourceManager::loadAlfredSpecialAnim(int numAnim, bool reverse) {
