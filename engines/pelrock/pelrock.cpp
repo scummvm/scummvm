@@ -1835,6 +1835,8 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			_res->loadAlfredSpecialAnim(6);
 			_alfredState.setState(ALFRED_SPECIAL_ANIM);
 			waitForSpecialAnimation();
+
+			_room->addStickerToRoom(38, 123, PERSIST_TEMP);
 			_alfredState.x = x;
 			_alfredState.y = y;
 			break;
@@ -1886,6 +1888,15 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 				_state->setCurrentRoot(26, 1, 1);
 				walkAndAction(_room->findHotspotByExtra(421), TALK);
 			}
+		}
+		break;
+	}
+	case 30: {
+		if(_state->getFlag(FLAG_ROBA_PELO_PRINCESA) == true) {
+			_state->setFlag(FLAG_ROBA_PELO_PRINCESA, false);
+			_room->enableSprite(0, 200, PERSIST_TEMP);
+			_dialog->say(_res->_ingameTexts[OIGAUSTED]);
+			walkAndAction(_room->findHotspotByExtra(0), TALK);
 		}
 		break;
 	}

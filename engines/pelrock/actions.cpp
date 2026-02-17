@@ -415,6 +415,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		break;
 	case 352:
 	case 355:
+	case 291:
 		// a la carcel
 		toJail();
 		break;
@@ -1226,6 +1227,7 @@ void PelrockEngine::checkAllSymbols() {
 
 void PelrockEngine::pickUpHairStrand(HotSpot *hotspot) {
 	checkIngredients();
+	_state->setFlag(FLAG_ROBA_PELO_PRINCESA,true);
 }
 
 void PelrockEngine::openJailFloorTile(HotSpot *hotspot) {
