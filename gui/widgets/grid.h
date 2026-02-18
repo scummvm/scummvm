@@ -98,6 +98,9 @@ public:
 
 /* GridWidget */
 class GridWidget : public ContainerWidget, public CommandSender {
+public:
+	typedef bool (*FilterMatcher)(void *arg, int idx, const Common::U32String &item, const Common::U32String &token);
+
 protected:
 	Common::HashMap<int, const Graphics::ManagedSurface *> _platformIcons;
 	Common::HashMap<int, const Graphics::ManagedSurface *> _languageIcons;
@@ -157,6 +160,9 @@ protected:
 	int				_trayHeight;
 
 	bool			_multiSelectEnabled;	/// Flag for multi-selection
+
+	FilterMatcher _filterMatcher;
+	void *_filterMatcherArg;
 
 public:
 	int				_gridItemHeight;
@@ -234,6 +240,7 @@ public:
 
 	void setSelected(int id);
 	void setFilter(const Common::U32String &filter);
+	void setFilterMatcher(FilterMatcher matcher, void *arg) { _filterMatcher = matcher; _filterMatcherArg = arg; }
 
 	// Multi-selection methods
 	void setMultiSelectEnabled(bool enabled) { _multiSelectEnabled = enabled; }

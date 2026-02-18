@@ -33,6 +33,10 @@
 
 namespace GUI {
 
+bool GridWidgetDefaultMatcher(void *, int, const Common::U32String &item, const Common::U32String &token) {
+	return item.contains(token);
+}
+
 GridItemWidget::GridItemWidget(GridWidget *boss)
 	: ContainerWidget(boss, 0, 0, 0, 0), CommandSender(boss) {
 
@@ -493,6 +497,9 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	_multiSelectEnabled = false;
 	_selectedItems.clear();
 	_lastSelectedEntryID = -1;
+
+	_filterMatcher = GridWidgetDefaultMatcher;
+	_filterMatcherArg = nullptr;
 }
 
 GridWidget::~GridWidget() {
@@ -651,7 +658,7 @@ void GridWidget::sortGroups() {
 			bool matches = true;
 			tok.reset();
 			while (!tok.empty()) {
-				if (!tmp.contains(tok.nextToken())) {
+				if (!_filterMatcher(_filterMatcherArg, i->entryID, tmp, tok.nextToken())) {
 					matches = false;
 					break;
 				}
@@ -1241,13 +1248,13 @@ void GridWidget::setSelected(int id) {
 	for (uint i = 0; i < _sortedEntryList.size(); ++i) {
 		if ((!_sortedEntryList[i]->isHeader) && (_sortedEntryList[i]->entryID == id)) {
 			_selectedEntry = _sortedEntryList[i];
-			
+
 			// Clear previous selections and mark only this item
 			if (_multiSelectEnabled) {
 				clearSelection();
 			}
 			markSelectedItem(id, true);
-			
+
 			scrollToEntry(id, false);
 			break;
 		}
