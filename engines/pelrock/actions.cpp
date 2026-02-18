@@ -1396,7 +1396,6 @@ void PelrockEngine::swimmingPoolCutscene(HotSpot *hotspot) {
 
 	_sound->stopMusic();
 	_sound->playMusicTrack(28);
-	Sprite *s1 = _room->findSpriteByIndex(3);
 	while (!shouldQuit()) {
 		_events->pollEvent();
 		bool didRender = renderScene(OVERLAY_NONE);
@@ -1426,6 +1425,22 @@ void PelrockEngine::swimmingPoolCutscene(HotSpot *hotspot) {
 	guard->animData[0].nframes = 1;
 	_alfredState.direction = ALFRED_RIGHT;
 	talkTo(_room->findHotspotByExtra(guard->extra));
+	if(shouldQuit()) {
+		return;
+	}
+	_graphics->fadeToBlack(10);
+	_alfredState.x = 271;
+	_alfredState.y = 385;
+	setScreen(40, ALFRED_UP);
+	walkAndAction(_room->findHotspotByExtra(640), TALK);
+	waitForActionEnd();
+	if(shouldQuit()) {
+		return;
+	}
+	_graphics->fadeToBlack(10);
+	_alfredState.x = 271;
+	_alfredState.y = 385;
+	setScreen(41, ALFRED_UP);
 }
 
 void PelrockEngine::magicFormula(int inventoryObject, HotSpot *hotspot) {

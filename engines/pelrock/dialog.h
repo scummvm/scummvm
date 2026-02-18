@@ -113,6 +113,9 @@ public:
 	Common::Array<Common::Array<Common::String>> wordWrap(Common::String text);
 	Common::Array<Common::Array<Common::String>> wordWrap(Common::StringArray texts);
 	Common::Array<ChoiceOption> *_currentChoices = nullptr;
+
+	// When true, the goodbye option is suppressed for all conversations in the current room.
+	bool _goodbyeDisabled = false;
 };
 
 } // End of namespace Pelrock

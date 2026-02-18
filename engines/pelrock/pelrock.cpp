@@ -1811,6 +1811,9 @@ void PelrockEngine::waitForSpecialAnimation() {
 }
 
 void PelrockEngine::doExtraActions(int roomNumber) {
+	// Reset goodbye-disabled flag each room load. Specific rooms set it below.
+	_dialog->_goodbyeDisabled = false;
+
 	switch (roomNumber) {
 	case 4:
 		if (_state->getFlag(FLAG_PUESTA_SALSA_PICANTE) && !_state->getFlag(FLAG_JEFE_ENCARCELADO)) {
@@ -1879,6 +1882,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 	}
 	case 26: {
 		if(_state->getFlag(FLAG_A_LA_CARCEL) == true) {
+			_dialog->_goodbyeDisabled = true;
 			if(_state->getFlag(FLAG_SE_HA_PUESTO_EL_MUNECO) == true) {
 				_state->setCurrentRoot(26, 2, 1);
 			} else {
@@ -1893,6 +1897,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 	}
 	case 30: {
 		if(_state->getFlag(FLAG_ROBA_PELO_PRINCESA) == true) {
+			_dialog->_goodbyeDisabled = true;
 			_state->setFlag(FLAG_ROBA_PELO_PRINCESA, false);
 			_room->enableSprite(0, 200, PERSIST_TEMP);
 			_dialog->say(_res->_ingameTexts[OIGAUSTED]);
@@ -1900,6 +1905,15 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		}
 		break;
 	}
+	case 39:
+	case 40:
+		// Rooms 39/40 are the pharaoh's guard and throne room — all conversation
+		// paths lead to capture, no voluntary exit allowed.
+		_dialog->_goodbyeDisabled = true;
+		break;
+	case 48:
+		_dialog->_goodbyeDisabled = true;
+		break;
 	default:
 		break;
 	}

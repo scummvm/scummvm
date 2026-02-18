@@ -736,6 +736,12 @@ ConversationEndResult DialogManager::checkConversationEnd(const byte *data, uint
 }
 
 void DialogManager::addGoodbyeOptionIfNeeded(Common::Array<ChoiceOption> *choices, int currentChoiceLevel, uint originalChoiceCount) {
+	// Room entry handlers can globally disable the goodbye option for certain rooms
+	// (e.g. rooms 39/40 pharaoh, room 48).
+	if (_goodbyeDisabled) {
+		return;
+	}
+
 	// Only consider adding goodbye if there are MULTIPLE choices
 	// If there's only 1 choice, it's auto-dialogue and should not have goodbye
 	if (originalChoiceCount <= 1) {
