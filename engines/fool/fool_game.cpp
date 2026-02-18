@@ -110,7 +110,7 @@ void FoolGame::sub_128_004() {
 				this->var_i16_7cc = -1;
 			}
 			// 128:1cbe
-			if (this->var_ev_46.where.y <= 0x11d) {
+			if (this->var_ev_46.where.y > 0x11d) {
 				this->var_i16_7cc = 1;
 			}
 			// 128:1cce
@@ -124,17 +124,19 @@ void FoolGame::sub_128_004() {
 					if ((this->var_i16_7ce & 2) == 0) {
 						g_toolbox->InitCursor();
 					} else {
-						g_toolbox->SetCursor(this->arr_curs_4d88[0x20]);
+						g_toolbox->SetCursor(this->arr_curs_4d88[0x10]);
 					}
 					// 128:1d42
 				} else {
 					// 128:1d46
 					if (this->var_i16_7b2 == -1) {
-						g_toolbox->SetCursor(this->arr_curs_4d88[0x4]);
+						// arrow pointing up
+						g_toolbox->SetCursor(this->arr_curs_4d88[0x2]);
 					}
 					// 128:1d5e
 					if (this->var_i16_7b2 == 1) {
-						g_toolbox->SetCursor(this->arr_curs_4d88[0x2]);
+						// arrow pointing down
+						g_toolbox->SetCursor(this->arr_curs_4d88[0x1]);
 					}
 				}
 			}
@@ -152,6 +154,7 @@ void FoolGame::sub_128_004() {
 			if (this->var_i16_7d2 && (this->var_i16_7c0 == 0x20)) {
 				this->sub_128_1c2c(0x100);
 			}
+			g_toolbox->Delay(0);
 		// 128:1e06
 		} while (this->var_i16_7c6 == 0);
 
@@ -557,6 +560,7 @@ void FoolGame::sub_128_d34(int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16
 			do {
 				this->sub_128_c6a(0);
 				this->var_i16_3a += 1;
+				g_toolbox->Delay(0);
 			} while ((this->var_i16_38 == this->var_i16_3a) || ((this->var_ev_46.modifiers & 0x80) == 0));
 		} while ((this->var_ev_46.modifiers & 0x80) != 0);
 	}
@@ -880,6 +884,7 @@ void FoolGame::sub_128_1f44() {
 
 void FoolGame::sub_128_1f76() {
 	// 128:1f76
+	// hold down mouse on scroll
 	if (this->var_i16_7cc != 0) {
 		do {
 			this->var_i32_692 = g_toolbox->TickCount();
@@ -917,6 +922,7 @@ void FoolGame::sub_128_2078() {
 
 void FoolGame::sub_128_20d0() {
 	// 128:20d0
+	// change page on scroll
 	do {
 		this->var_i16_7d8 += this->var_i16_7cc;
 		if (this->var_i16_7d8 < 1) {
@@ -967,7 +973,90 @@ void FoolGame::sub_128_21c8() {
 }
 
 void FoolGame::sub_128_2202() {
-	warning("STUB: %s", __func__);
+	// 128:2202
+	if (this->var_i16_7d8 != this->var_i16_7d4) {
+		if ((this->arr_i16_1dee[this->var_i16_7d8] < 0xe) && (this->var_i16_7de > 0)) {
+			this->sub_128_69c(1, kPatBic, this->var_i16_7de, 0x37, 0x11d, 0x1db);
+			g_zbasic->get(0x3c, 0x122 - (0xf - this->arr_i16_1dee[this->var_i16_7d8]) * 0xf, 0x1d6, 0x11d, this->arr_bmp_b3ec);
+			this->var_i16_7e0 = 1;
+		} else {
+			// 128:22d4
+			this->var_i16_7e0 = 0;
+		}
+	}
+	// 128:22da
+	this->sub_128_8b4(0x127, 0x69, 0x138, 0x190, 0);
+	this->var_i16_7d0 = this->arr_i16_1a46[this->var_i16_7d8];
+	if ((this->var_i16_7ce & 0x8) != 0) {
+		this->var_i16_7ce ^= 0x8;
+		this->sub_128_bde(1, 0, 0, 0, 1, 0);
+		this->sub_128_bde(1, 0, 0, 0, 0, 0);
+	}
+	// 128:235e
+	if (this->arr_i16_18b2[this->var_i16_7d0] > 0) {
+		this->var_str_384 = g_zbasic->str(10); // ?
+		if (this->arr_i16_1c5a[this->var_i16_7d0] == 0x63) {
+			this->var_str_384 = g_zbasic->str(11); // ~
+		}
+		// 128:23b8
+		if (this->arr_i16_1c5a[this->var_i16_7d0] >= 0x64) {
+			this->var_str_384 = g_zbasic->str(12); // *
+		}
+		// 128:23e8
+		this->sub_128_55c(this->var_str_384);
+		// 128:23f0: CLR.W - -0x772(A5)
+		this->var_i16_7d6 = 1;
+		g_zbasic->text(0, 0xc, 0, kSrcOr);
+		g_toolbox->MoveTo(0x8a, 0x133);
+		g_toolbox->DrawString(this->arr_str_195e8[this->var_i16_7d0]);
+	} else {
+		// 128:2430
+		this->var_i16_7d6 = 0;
+		g_zbasic->text(0, 0xc, 0, kSrcOr);
+		g_toolbox->MoveTo(0x70, 0x133);
+		g_toolbox->DrawString(this->arr_str_195e8[this->var_i16_7d0]);
+	}
+	// 128:2468
+	if (this->arr_str_1a288[this->var_i16_7d8] != g_zbasic->str(13)) { // blank
+		g_zbasic->text(0xfa, 0xc, 0, kSrcOr);
+		g_toolbox->DrawString(this->arr_str_1a288[this->var_i16_7d8]);
+	}
+	// 128:24be
+	if (this->var_i16_7d8 != this->var_i16_7d4) {
+		g_zbasic->text(0xfa, 0xc, 0, kSrcOr);
+		this->sub_128_8b4(0x2f, 0x37, 0x11f, 0x1db, 0);
+		if (this->var_i16_7e0 == 0) {
+			g_zbasic->put(0x3c, 0x32, this->arr_bmp_b3ec, kPutCopy);
+		}
+		// 128:252a
+		// y-position where the story text should start
+		this->var_i16_7a2 = 0x11d - (this->arr_i16_1dee[this->var_i16_7d8] * 0xf);
+		if (this->arr_i16_1dee[this->var_i16_7da] < 0xf) {
+			g_toolbox->MoveTo(0xfa, this->var_i16_7a2-0xf);
+			g_toolbox->DrawString(g_zbasic->str(14)); // infinity symbol
+			this->var_i16_7de = this->var_i16_7a2 - 0x1e;
+		} else {
+		// 128:25a6
+			this->var_i16_7de = this->var_i16_7a2 - 0xf;
+		}
+		// 128:25b6
+		// printing the story to the screen
+		g_toolbox->MoveTo(0x41, this->var_i16_7a2);
+		for (int i = this->arr_i16_0[this->var_i16_7d8*2]; i <= this->arr_i16_0[this->var_i16_7d8*2+1]; i++) {
+			g_toolbox->TextFace(this->arr_i16_194[i]);
+			this->var_str_384 = g_zbasic->index(0, i);
+			g_toolbox->DrawString(this->var_str_384);
+			if (this->arr_i16_bbe[i] != 0) {
+				// 128:262a
+				this->var_i16_7a2 += 0xf;
+				g_toolbox->MoveTo(0x41, this->var_i16_7a2);
+			}
+			// 128:263a
+		}
+		// 128:265c
+		this->var_i16_7d4 = this->var_i16_7d8;
+	}
+	// 128:2662
 }
 
 void FoolGame::sub_128_271a() {
@@ -1007,7 +1096,8 @@ void FoolGame::sub_128_2bc6() {
 		// 128:2c5e
 		for (int i = 0; i <= 0xf; i++) {
 			this->var_i16_484++;
-			if (this->arr_i16_4758[j] && this->arr_i16_4738[i]) {
+			// arr_i16_4738 is 1 << i
+			if (this->arr_i16_4758[j] & this->arr_i16_4738[i]) {
 				this->arr_i16_1b90[this->var_i16_484] = 1;
 			} else {
 				// 128:2ca6
@@ -1085,7 +1175,7 @@ void FoolGame::sub_128_2e3e() {
 		this->arr_i16_1b90[i] = g_zbasic->readFileInt(2);
 		this->var_i16_484 = g_zbasic->readFileInt(2);
 		this->var_str_384 = g_zbasic->readFileStr(2, this->var_i16_484);
-		g_zbasic->unk_334(this->var_str_384, i, 2);
+		g_zbasic->indexSet(this->var_str_384, i, 2);
 	}
 	// 128:2f54
 	warning("STUB: %s", __func__);
@@ -1093,7 +1183,73 @@ void FoolGame::sub_128_2e3e() {
 }
 
 void FoolGame::sub_128_3032() {
-	warning("STUB: %s", __func__);
+	this->var_i16_7d0 = 0;
+	this->var_i16_7c6 = 0;
+	this->var_i16_484 = 0;
+	this->var_i16_68c = 3;
+	for (int j = 3; j <= 7; j++) {
+		this->var_str_384 = g_zbasic->str(37) + g_zbasic->chr(0x7d+j) + g_zbasic->str(38);
+		g_zbasic->menu(j, 0, 1, this->var_str_384);
+		for (int i = 1; i <= 0x10; i++) {
+			this->var_i16_484++;
+			this->var_i16_9f2 = this->arr_i16_1d24[this->var_i16_484] & 3;
+			if (this->arr_i16_1c5a[this->var_i16_484] == 0x63) {
+				this->var_str_384 = g_zbasic->str(39);
+			} else {
+			// 128:30e4
+				this->var_str_384 = g_zbasic->str(40);
+			}
+			// 128:30f8
+			this->var_str_9f4 = this->arr_str_195e8[this->var_i16_484] + this->var_str_384;
+			if ((j == 3) && (i == 1)) {
+				this->var_str_9f4 = g_zbasic->str(41) + this->var_str_9f4;
+			}
+			// 128:315e
+			g_zbasic->menu(j, i, this->var_i16_9f2, this->var_str_9f4);
+		}
+		// 128:3180
+	}
+	// 128:318e
+	this->sub_128_8b4(0x13, 0x37, 0x32, 0xc8, 0);
+	this->sub_128_8b4(0x2f, 0x37, 0x11f, 0x1db, 0x0);
+	g_zbasic->text(0xfa, 0xc, 0, kSrcOr);
+	this->var_i16_7a2 = 0x3c;
+	this->var_i16_7de = 0x2d;
+	for (int i = 1; i <= 0xf; i++) {
+		// 128:31ec
+		g_toolbox->MoveTo(0x41, this->var_i16_7a2);
+		this->var_str_384 = g_zbasic->index(0, i);
+		g_toolbox->DrawString(this->var_str_384);
+		this->var_i16_7a2 += 0xf;
+	}
+	// 128:3228
+	this->sub_128_0a2(0, 0);
+	this->var_i16_7d4 = 1;
+	this->sub_128_2202();
+	if ((this->var_i16_7ce & 1) == 0) {
+		this->sub_128_378a();
+	} else {
+		if ((this->var_i16_7e2 > 0) && (this->var_i16_7e2 <= 0x50)) {
+			this->sub_128_1c2c(0x80);
+		} else {
+			this->sub_128_1c2c(0x100);
+		}
+	}
+	// 128:3294
+	this->sub_128_32c8();
+	if (this->var_i16_7d2 == 0) {
+		g_zbasic->menu(2, 7, 0, Common::U32String());
+	} else {
+		g_zbasic->menu(2, 7, 1, Common::U32String());
+	}
+}
+
+void FoolGame::sub_128_32c8() {
+	if (this->var_i16_378 == 0) {
+		g_zbasic->menu(2, 6, 1, Common::U32String());
+	} else {
+		g_zbasic->menu(2, 6, 0x86, Common::U32String());
+	}
 }
 
 void FoolGame::sub_128_3536() {
@@ -1101,11 +1257,38 @@ void FoolGame::sub_128_3536() {
 }
 
 void FoolGame::sub_128_3744() {
-	warning("STUB: %s", __func__);
+	// 128:3744
+	for (int i = 3; i <= 7; i++) {
+		this->var_i32_bf8 = g_toolbox->GetMHandle(i);
+		g_toolbox->DeleteMenu(i);
+		g_toolbox->DisposeMenu(this->var_i32_bf8);
+	}
+	g_toolbox->DrawMenuBar();
 }
 
+// watch cursor
 void FoolGame::sub_128_3774() {
-	warning("STUB: %s", __func__);
+	// 128:3774
+	g_toolbox->SetCursor(this->arr_curs_4d88[3]);
+	this->var_i16_7b2 = 0xa;
+}
+
+// exploding watch cursor
+void FoolGame::sub_128_378a() {
+	// 128:378a
+	for (int j = 0; j <= 1; j++) {
+		for (int i = 3; i <= 6; i++) {
+			g_toolbox->SetCursor(this->arr_curs_4d88[i]);
+			this->sub_128_3da(3);
+		}
+	// 128:37c2
+	}
+	for (int i = 7; i <= 0xf; i++) {
+		g_toolbox->SetCursor(this->arr_curs_4d88[i]);
+		this->sub_128_3da(4);
+	}
+
+	this->var_i16_7b2 = 0xa;
 }
 
 void FoolGame::sub_128_39a0() {
@@ -1137,10 +1320,41 @@ void FoolGame::sub_128_4472() {
 }
 
 void FoolGame::sub_128_5b30() {
-	warning("STUB: %s", __func__);
+	// 128:5b30
+	if (this->var_i16_e12 == 0) {
+		this->var_ev_46.what = kNullEvent;
+		if (this->var_i16_e14 != 0) {
+			this->sub_128_5ef0();
+		}
+		this->var_i32_bf8 = g_toolbox->MenuSelect(this->var_ev_46.where);
+		this->var_i16_e16 = (uint16)(this->var_i32_bf8 >> 16);
+		this->var_i16_e18 = (uint16)(this->var_i32_bf8 & 0xffff);
+		if (this->var_i16_e16 > 0) {
+			// 128:5b8c
+			this->sub_128_5c20();
+			g_toolbox->HiliteMenu(0);
+		}
+		// 128:5b94
+		if (this->var_i16_e14 != 0) {
+			this->sub_128_5f16();
+		}
+		this->sub_128_61ec();
+	}
 }
 
 void FoolGame::sub_128_5baa() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_128_5c20() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_128_5ef0() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_128_5f16() {
 	warning("STUB: %s", __func__);
 }
 
@@ -1206,6 +1420,7 @@ void FoolGame::sub_128_6244() {
 		}
 		g_toolbox->Delay(1);
 	} while ((this->var_ev_46.what == kNullEvent) && ((this->var_ev_46.modifiers & 0x80) == 0));
+	// SEGMENT_RETURN
 }
 
 // end
@@ -1476,14 +1691,16 @@ void FoolGame::sub_129_068() {
 	}
 	// 129:0a8a
 	for (int i = 1; i <= 0x2a; i++) {
+		this->arr_curs_4d88[i] = Common::SharedPtr<Cursor>(new Cursor());
 		for (int j = 0; j < 16; j++) {
-			this->arr_curs_4d88[i].data[j] = (uint16)this->sub_128_446();
+			this->arr_curs_4d88[i]->data[j] = (uint16)this->sub_128_446();
 		}
 		for (int j = 0; j < 16; j++) {
-			this->arr_curs_4d88[i].mask[j] = (uint16)this->sub_128_446();
+			this->arr_curs_4d88[i]->mask[j] = (uint16)this->sub_128_446();
 		}
-		this->arr_curs_4d88[i].mouse.y = this->sub_128_446();
-		this->arr_curs_4d88[i].mouse.x = this->sub_128_446();
+		this->arr_curs_4d88[i]->mouse.y = this->sub_128_446();
+		this->arr_curs_4d88[i]->mouse.x = this->sub_128_446();
+		this->arr_curs_4d88[i]->render();
 	}
 	// 129:0ad4
 	for (int i = 0; i <= 0xf; i++) {
@@ -1542,10 +1759,10 @@ void FoolGame::sub_129_068() {
 			this->var_str_384 = this->sub_128_49a();
 			// 129:0d7e
 			// indent at start of story paragraph
-			g_zbasic->unk_334(g_zbasic->space(4) + this->var_str_384, 0, i);
+			g_zbasic->indexSet(g_zbasic->space(4) + this->var_str_384, 0, i);
 		} else {
 		// 129:0da4
-			g_zbasic->unk_334(this->sub_128_49a(), 0, i);
+			g_zbasic->indexSet(this->sub_128_49a(), 0, i);
 		}
 		// 129:0db8
 		if ((this->var_i16_103e == 1) || (this->var_i16_103e == 4)) {
@@ -1570,7 +1787,7 @@ void FoolGame::sub_129_068() {
 	this->sub_129_123a();
 	this->var_i16_103a = this->sub_128_446();
 	for (int i = this->var_i16_103c + 1; i <= this->var_i16_103a; i++) {
-		g_zbasic->unk_334(this->sub_128_49a(), 0, i);
+		g_zbasic->indexSet(this->sub_128_49a(), 0, i);
 	}
 	// 129:0ec2
 	for (int j = 1; j <= 0x50; j++) {
@@ -1639,9 +1856,11 @@ void FoolGame::sub_129_068() {
 
 	this->sub_128_6244();
 	// 129:11f6
-	if (g_zbasic->str(157) != this->var_str_8ec) { // empty
+	if (g_zbasic->str(157) == this->var_str_8ec) { // empty
+		// cold start
 		this->var_i16_7c6 = 8;
 	} else {
+		// loading a save game
 		this->var_i16_7c6 = 0x10;
 		this->var_str_588 = this->var_str_8ec;
 		this->var_i16_688 = this->var_i16_9ec;

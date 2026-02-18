@@ -233,6 +233,8 @@ private:
 
 	Common::HashMap<int16, Common::SharedPtr<Common::SeekableReadStream>> _fileStreams;
 	Common::HashMap<int16, uint32> _fileLineSize;
+	Common::HashMap<int16, Common::Array<Common::U32String>> _index;
+
 public:
 
 	ZBasic(Toolbox *toolbox);
@@ -288,7 +290,8 @@ public:
 	void unk_158();
 	void unk_331(uint16 unk1, int16 unk2);
 	void unk_333(uint16 unk1);
-	void unk_334(const Common::U32String &unk1, int32 unk2, int32 unk3);
+	void indexSet(const Common::U32String &value, int16 table, int16 index);
+	Common::U32String index(int16 table, int16 index);
 };
 
 } // namespace Fool

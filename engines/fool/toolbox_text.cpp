@@ -36,6 +36,7 @@ void Toolbox::DrawChar(Common::u32char_type_t ch) {
 
 void Toolbox::DrawString(const Common::U32String &s) {
 	if (_port) {
+		debugN(5, "Toolbox::DrawString: (%d, %d) %s\n", _port->pnLoc.x, _port->pnLoc.y, s.encode().c_str());
 		Graphics::MacFontRun fontRun(&g_engine->_wm, _port->txFont, _port->txFace, _port->txSize, 0, 0, 0);
 		const Graphics::Font *font = fontRun.getFont();
 		Common::Rect bbox = font->getBoundingBox(s);
