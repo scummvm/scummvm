@@ -465,8 +465,34 @@ void ZBasic::unk_333(uint16 unk1) {
 	warning("STUB: ZBasic::unk_333");
 }
 
-void ZBasic::unk_334(const Common::U32String &unk1, int32 unk2, int32 unk3) {
-	warning("STUB: ZBasic::unk_334 - %s, %d, %d", unk1.encode().c_str(), unk2, unk3);
+void ZBasic::indexSet(const Common::U32String &value, int16 table, int16 index) {
+	if (index < 0) {
+		warning("ZBasic::indexSet: index must be positive, not %d", index);
+		return;
+	}
+	if (!_index.contains(table)) {
+		_index[table] = Common::Array<Common::U32String>();
+	}
+	if (_index[table].size() <= index) {
+		_index[table].resize(index+1);
+	}
+	_index[table][index] = value;
+}
+
+Common::U32String ZBasic::index(int16 table, int16 index) {
+	if (index < 0) {
+		warning("ZBasic::index: index must be positive, not %d", index);
+		return Common::U32String();
+	}
+	if (!_index.contains(table)) {
+		warning("ZBasic::index: table %d not found", table);
+		return Common::U32String();
+	}
+	if (_index[table].size() <= index) {
+		warning("ZBasic::index: asked for index %d but only %d entries in table %d", index, _index[table].size(), table);
+		return Common::U32String();
+	}
+	return _index[table][index];
 }
 
 } // namespace Fool

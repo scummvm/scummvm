@@ -22,12 +22,14 @@
 #ifndef FOOL_TOOLBOX_H
 #define FOOL_TOOLBOX_H
 
+#include "common/bitstream.h"
 #include "common/hashmap.h"
 #include "common/system.h"
 #include "common/macresman.h"
 #include "common/str.h"
 #include "common/ustr.h"
 
+#include "graphics/cursor.h"
 #include "image/pict.h"
 #include "graphics/framelimiter.h"
 #include "graphics/macgui/macwindow.h"
@@ -48,6 +50,7 @@ typedef Common::SharedPtr<Image::PICTDecoder> PicHandle;
 // BitMap is the monochrome surface format.
 typedef Common::SharedPtr<Graphics::ManagedSurface> BitMap;
 typedef Handle PolyHandle;
+typedef uint32 MenuHandle;
 typedef uint32 ResType;
 typedef size_t Size;
 
@@ -87,10 +90,38 @@ struct Pattern {
 	uint8 data[8];
 };
 
-struct Cursor {
+class Cursor: public Graphics::Cursor {
+public:
 	uint16 data[16];
 	uint16 mask[16];
 	Common::Point mouse;
+
+	void render() {
+		for (int y = 0; y < 16; y++) {
+			for (int x = 0; x < 16; x++) {
+				this->_surface[y*16+x] = (this->data[y] & (1 << x)) ? 1 : 0;
+				this->_mask[y*16+x] = (this->mask[y] & (1 << x)) ? kCursorMaskOpaque : kCursorMaskTransparent;
+			}
+		}
+	}
+
+	virtual uint16 getWidth() const { return 16; }
+	virtual uint16 getHeight() const { return 16; }
+	virtual uint16 getHotspotX() const { return mouse.x; }
+	virtual uint16 getHotspotY() const { return mouse.y; }
+	virtual byte getKeyColor() const { return 3; }
+	virtual const byte *getSurface() const { return _surface; }
+	virtual const byte *getMask() const { return _mask; }
+	virtual const byte *getPalette() const { return _palette; }
+	virtual byte getPaletteStartIndex() const { return 0; }
+	virtual uint16 getPaletteCount() const { return _paletteCount; }
+
+
+private:
+	byte _surface[16*16] = { 0 };
+	byte _mask[16*16] = { 0 };
+	byte _palette[6] = { 0xff, 0xff, 0xff, 0x00, 0x00, 0x00 };
+	uint16 _paletteCount = 2;
 }; // 0x44
 
 struct RGBColor {
@@ -384,6 +415,58 @@ public:
 	void UseResFile(int16 refNum);
 
 
+	// toolbox_menu.cpp
+
+	// PROCEDURE ClearMenuBar;
+	// Call ClearMenuBar to remove all menus from the menu list when you want to start afresh with all
+	// new menus. Be sure to call DrawMenuBar to update the menu bar.
+	void ClearMenuBar();
+
+	// PROCEDURE DeleteMenu(menuID: INTEGER);
+	// DeleteMenu deletes a menu from the menu list. If there's no menu with the given menu ID in the
+	// menu list, DeleteMenu has no effect. Be sure to call DrawMenuBar to update the menu bar; the
+	// menu tides following the deleted menu will move over to fill the vacancy.
+	void DeleteMenu(uint16 menuID);
+
+	// PROCEDURE DrawMenuBar;
+	// DrawMenuBar redraws the menu bar according to the menu list, incorporating any changes since
+	// the last call to DrawMenuBar. This procedure should always be called after a sequence of
+	// InsertMenu or DeleteMenu calls, and after ClearMenuBar, SetMenuBar, or any other routine that
+	// changes the menu list.
+	void DrawMenuBar();
+
+	// PROCEDURE DisposeMenu(theMenu: MenuHandle);
+	// Call DisposeMenu to release the memory occupied by a menu that you allocated with NewMenu.
+	// (For menus read from a resource file with GetMenu, use the Resource Manager procedure
+	// ReleaseResource instead.) This is useful if you've created temporary menus that you no longer
+	// need.
+	void DisposeMenu(MenuHandle &theMenu);
+
+	// FUNCTION GetMHandle(menuID: INTEGER): MenuHandle;
+	// Given the menu ID of a menu currentiy installed in the menu list, GetMHandle returns a handle to
+	// that menu; given any other menu ID, it returns NIL.
+	MenuHandle GetMHandle(uint16 menuID);
+
+	// PROCEDURE HiliteMenu(menuID: INTEGER);
+	// HiliteMenu highlights the title of the given menu, or does nothing if the tide is already
+	// highlighted. Since only one menu tide can be highlighted at a time, it unhighlights any previously
+	// highlighted menu tide. If menuID is 0 (or isn't the ID of any menu in the menu list), HiliteMenu
+	// simply unhighlights whichever menu title is highlighted (if any).
+	void HiliteMenu(uint16 menuID);
+
+	// FUNCTION MenuSelect(startPt: Point): LONGINT;
+	// When there's a mouse-down event in the menu bar, the application should call MenuSelect with
+	// startPt equal to the point (in global coordinates) where the mouse button was pressed.
+	// MenuSelect keeps control until the mouse button is released, tracking the mouse, pulling down
+	// menus as needed, and highlighting enabled menu items under the cursor. When the mouse button
+	// is released over an enabled item in an application menu, MenuSelect returns a long integer whose
+	// high-order word is the menu ED of the menu, and whose low-order word is the menu item
+	// number for the item chosen (see Figure 3). It leaves the selected menu tide highlighted. After
+	// performing the chosen task, your application should call HiliteMenu(O) to remove the
+	// highlighting from the menu title.
+	uint32 MenuSelect(const Common::Point &startPt);
+
+
 	// toolbox_quickdraw.cpp
 
 	// PROCEDURE BeginUpdate (theWindow: WindowPtr);
@@ -394,11 +477,6 @@ public:
 	// the window that require updating will actually be drawn on the screen. Every call to
 	// BeginUpdate must be balanced by a call to EndUpdate.
 	void BeginUpdate(WindowRecord &theWindow);
-
-	// PROCEDURE ClearMenuBar;
-	// Call ClearMenuBar to remove all menus from the menu list when you want to start afresh with all
-	// new menus. Be sure to call DrawMenuBar to update the menu bar.
-	void ClearMenuBar();
 
 	// PROCEDURE ClipRect (r: Rect);
 	// ClipRect changes the clipping region of the current grafPort to a rectangle that's equivalent to the
@@ -427,13 +505,6 @@ public:
 	// Within the rectangle that you specify in the dstRect parameter, the DrawPicture
 	// procedure draws the picture that you specify in the myPicture parameter.
 	void DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect);
-
-	// PROCEDURE DrawMenuBar;
-	// DrawMenuBar redraws the menu bar according to the menu list, incorporating any changes since
-	// the last call to DrawMenuBar. This procedure should always be called after a sequence of
-	// InsertMenu or DeleteMenu calls, and after ClearMenuBar, SetMenuBar, or any other routine that
-	// changes the menu list.
-	void DrawMenuBar();
 
 	// PROCEDURE EraseRect (r: Rect);
 	// Using the patCopy pattern mode, the EraseRect procedure draws the interior of the
@@ -679,7 +750,7 @@ public:
 	// closely matches the specified RGB.
 	void SetCPixel(int16 h, int16 v, const RGBColor &cPix);
 
-	void SetCursor(const Cursor &crsr);
+	void SetCursor(const Common::SharedPtr<Cursor> &crsr);
 
 	// PROCEDURE SetPort (port: GrafPtr);
 	// SetPort makes the specified grafPort the current port.
@@ -753,7 +824,9 @@ private:
 	Common::HashMap<Handle, ToolboxResInfo> _resInfo;
 	Common::HashMap<PicHandle, Handle> _resPicts;
 	Graphics::FrameLimiter *_frameLimiter = nullptr;
+	Common::SharedPtr<Cursor> _cursor;
 	int _cursorLevel = 0;
+	Common::Point _mouse;
 
 	Common::Queue<EventRecord> _events;
 

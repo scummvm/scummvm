@@ -22,6 +22,7 @@
 #include "common/memstream.h"
 #include "common/system.h"
 
+#include "graphics/cursor.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/managed_surface.h"
 #include "image/pict.h"
@@ -34,10 +35,6 @@ namespace Fool {
 
 void Toolbox::BeginUpdate(WindowRecord &theWindow) {
 	warning("STUB: Toolbox::BeginUpdate");
-}
-
-void Toolbox::ClearMenuBar() {
-	warning("STUB: Toolbox::ClearMenuBar");
 }
 
 void Toolbox::ClosePoly() {
@@ -108,10 +105,6 @@ void Toolbox::_copyBits(const BitMap &srcBits, const BitMap &mask, BitMap &dstBi
 		_defaultWindow->addDirtyRect(result);
 		_defaultWindow->setDirty(true);
 	}
-}
-
-void Toolbox::DrawMenuBar() {
-	warning("STUB: Toolbox::DrawMenuBar");
 }
 
 void Toolbox::DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect) {
@@ -276,8 +269,11 @@ void Toolbox::HideCursor() {
 }
 
 void Toolbox::InitCursor() {
-	g_engine->_wm.replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
 	_cursorLevel = 0;
+	g_engine->_wm.replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
+	if (_cursor) {
+		_cursor = nullptr;
+	}
 }
 
 void Toolbox::InsetRect(Common::Rect &r, int16 dh, int16 dv) {
@@ -439,8 +435,10 @@ void Toolbox::SetCPixel(int16 h, int16 v, const RGBColor &cPix) {
 	warning("STUB: Toolbox::SetCPixel");
 }
 
-void Toolbox::SetCursor(const Cursor &crsr) {
-	warning("STUB: Toolbox::SetCursor");
+void Toolbox::SetCursor(const Common::SharedPtr<Cursor> &crsr) {
+	_cursor = crsr;
+	if (_cursorLevel == 0)
+		g_engine->_wm.replaceCursor(Graphics::MacGUIConstants::kMacCursorCustom, crsr.get());
 }
 
 void Toolbox::SetPort(GrafPtr port) {
@@ -463,8 +461,13 @@ void Toolbox::SetRect(Common::Rect &r, int16 left, int16 top, int16 right, int16
 void Toolbox::ShowCursor() {
 	if (_cursorLevel < 0)
 		_cursorLevel++;
-	if (_cursorLevel == 0)
-		g_engine->_wm.replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
+	if (_cursorLevel == 0) {
+		if (_cursor) {
+			g_engine->_wm.replaceCursor(Graphics::MacGUIConstants::kMacCursorCustom, _cursor.get());
+		} else {
+			g_engine->_wm.replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
+		}
+	}
 }
 
 
