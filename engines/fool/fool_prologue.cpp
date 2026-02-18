@@ -448,7 +448,6 @@ void FoolPrologue::sub_128_ee0() {
 
 void FoolPrologue::sub_128_f0a() {
 	// g_zbasic->pushOldCodeResource(0x80); // switch CODE resource?
-	this->sub_129_004();
 }
 
 // Sources:
@@ -669,7 +668,6 @@ void FoolPrologue::sub_129_764() {
 
 void FoolPrologue::sub_129_772() {
 	// g_zbasic->pushOldCodeResource(0x81);
-	this->prologueRun();
 }
 
 void FoolPrologue::prologueRun() {

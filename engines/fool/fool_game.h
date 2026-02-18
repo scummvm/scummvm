@@ -84,14 +84,19 @@ public:
 	void sub_128_2e3e();
 
 	void sub_128_3032();
+	void sub_128_32c8();
 	void sub_128_3536();
 	void sub_128_3744();
 	void sub_128_3774();
+	void sub_128_378a();
 	void sub_128_39a0();
 
 	void sub_128_4472();
 	void sub_128_5b30();
 	void sub_128_5baa();
+	void sub_128_5c20();
+	void sub_128_5ef0();
+	void sub_128_5f16();
 	void sub_128_5f9e();
 	void sub_128_5fb4();
 	void sub_128_5fea();
@@ -176,14 +181,23 @@ private:
 	int16 var_i16_7d8;
 	int16 var_i16_7da;
 	int16 var_i16_7dc;
+	int16 var_i16_7de;
+	int16 var_i16_7e0;
 	int16 var_i16_7e2;
 	int16 var_i16_7e4;
 	int16 var_i16_7e6;
 	Common::U32String var_str_8ec;
 	int16 var_i16_9ec;
 	int16 var_i16_9f2;
+	Common::U32String var_str_9f4;
+
+	MenuHandle var_i32_bf8;
 
 	int16 var_i16_d0c;
+	int16 var_i16_e12;
+	int16 var_i16_e14;
+	int16 var_i16_e16;
+	int16 var_i16_e18;
 	int16 var_i16_e20;
 	Common::U32String var_str_e22;
 	int16 var_i16_f22;
@@ -246,7 +260,7 @@ private:
 	int16 arr_i16_4bd8[0x52];
 	int16 arr_i16_4c7c[0x52];
 	int16 arr_i16_4d20[48];
-	Cursor arr_curs_4d88[0x2b]; // 0x44
+	Common::SharedPtr<Cursor> arr_curs_4d88[0x2b]; // 0x44
 	Pattern arr_pat_58f4[0x51];
 	Common::Rect arr_rect_5b7c;
 	Common::Rect arr_rect_5b84;

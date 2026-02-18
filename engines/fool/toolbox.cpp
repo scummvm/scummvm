@@ -41,17 +41,22 @@ void Toolbox::_pumpEvents() {
 		EventRecord newRecord;
 		newRecord.when = this->TickCount();
 		switch (event.type) {
+		case Common::EVENT_MOUSEMOVE:
+			_mouse = event.mouse;
+			break;
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN:
 			newRecord.what = kMouseDown;
-			newRecord.where = Common::Point(event.mouse.x, event.mouse.y);
+			newRecord.where = event.mouse;
 			_events.push(newRecord);
+			_mouse = event.mouse;
 			break;
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
 			newRecord.what = kMouseUp;
-			newRecord.where = Common::Point(event.mouse.x, event.mouse.y);
+			newRecord.where = event.mouse;
 			_events.push(newRecord);
+			_mouse = event.mouse;
 			break;
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RETURN_TO_LAUNCHER:
@@ -85,6 +90,7 @@ bool Toolbox::GetNextEvent(uint16 eventMask, EventRecord &theEvent) {
 		theEvent = _events.pop();
 	} else {
 		theEvent.what = kNullEvent;
+		theEvent.where = _mouse;
 		// pretend mouse button is up
 		theEvent.modifiers = 0x80;
 	}
