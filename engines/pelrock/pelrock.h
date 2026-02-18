@@ -346,6 +346,7 @@ public:
 	void giveMagazineToGuard(int inventoryObject, HotSpot *hotspot);
 	void giveWaterToGuard(int inventoryObject, HotSpot *hotspot);
 	void pickUpStone(HotSpot *hotspot);
+	void giveStoneToSlaves(int inventoryObject, HotSpot *hotspot);
 	void swimmingPoolCutscene(HotSpot *hotspot);
 	void magicFormula(int inventoryObject, HotSpot *hotspot);
 	void checkAllSymbols();

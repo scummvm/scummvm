@@ -181,6 +181,8 @@ const CombinationEntry combinationTable[] = {
 	{83, 461, &PelrockEngine::useDollWithBed},
 	{84, 503, &PelrockEngine::giveMagazineToGuard},
 	{86, 500, &PelrockEngine::giveWaterToGuard},
+	{91, 601, &PelrockEngine::giveStoneToSlaves},
+	{92, 601, &PelrockEngine::giveStoneToSlaves}, // Item 92 = mud/clay, same handler
 
 	// Room 35 (cauldron)
 	{90, 506, &PelrockEngine::magicFormula},
@@ -433,6 +435,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 367: // accept riddle
 		_state->setCurrentRoot(room, 27, 0);
 		walkAndAction(_room->findHotspotByExtra(467), TALK);
+		waitForActionEnd();
 		break;
 		// hasta aqui
 
@@ -564,7 +567,17 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		}
 		_room->disableSprite(0);
 	} break;
-
+	case 313:
+		_state->setCurrentRoot(room, rootIndex + 1, 0);
+		break;
+	case 308: {
+		int targetBranch = rootIndex + 1;
+		if (targetBranch > 17) {
+			targetBranch = 3;
+		}
+		_state->setCurrentRoot(room, targetBranch, 0);
+		break;
+	}
 	default:
 		debug("Got actionTrigger %d in dialogActionTrigger, but no handler defined", actionTrigger);
 		break;
@@ -1116,9 +1129,6 @@ void PelrockEngine::pickUpBook(int i) {
 
 		_alfredState.isWalkingCancelable = false;
 		walkAndAction(_room->findHotspotByExtra(102), TALK);
-		// After dialog ends, reenable first dialog root if no photo in inventory
-		// Wait for dialog to end to reenable first dialog root
-		waitForActionEnd();
 		if (!_state->hasInventoryItem(3)) {
 
 			_state->setCurrentRoot(9, 0, 0);
@@ -1294,7 +1304,6 @@ void PelrockEngine::giveMagazineToGuard(int inventoryObject, HotSpot *hotspot) {
 	_state->removeInventoryItem(84);
 	_state->setCurrentRoot(34, 4, 0);
 	walkAndAction(hotspot, TALK);
-	waitForActionEnd();
 }
 
 void PelrockEngine::giveWaterToGuard(int inventoryObject, HotSpot *hotspot) {
@@ -1340,6 +1349,76 @@ void PelrockEngine::giveWaterToGuard(int inventoryObject, HotSpot *hotspot) {
 
 void PelrockEngine::pickUpStone(HotSpot *hotspot) {
 	checkIngredients();
+}
+
+void PelrockEngine::giveStoneToSlaves(int inventoryObject, HotSpot *hotspot) {
+	// Remove whichever stone item was used (91 = Egyptian stone, 92 = mud/clay)
+	_state->removeInventoryItem(inventoryObject);
+
+	// Play 7-frame 208×102 stone-passing animation
+	size_t frameSize = 208 * 102;
+	size_t bufSize = frameSize * 7;
+	byte *animData = new byte[bufSize];
+	_res->loadOtherSpecialAnim(1600956, false, animData, bufSize);
+
+	Graphics::Surface animSurface;
+	animSurface.create(208, 102, Graphics::PixelFormat::createFormatCLUT8());
+	int curFrame = 0;
+	while (!shouldQuit()) {
+		_events->pollEvent();
+
+		bool didRender = renderScene(OVERLAY_NONE);
+
+		memset(animSurface.getPixels(), 0, frameSize);
+		extractSingleFrame(animData, (byte *)animSurface.getPixels(), curFrame, 208, 102);
+		_screen->transBlitFrom(animSurface, Common::Point(0, 298), 255);
+		if (didRender && _chrono->getFrameCount() % 2 == 0) {
+			curFrame++;
+
+			if (curFrame >= 7) {
+				break;
+			}
+		}
+		_screen->update();
+		g_system->delayMillis(10);
+	}
+	animSurface.free();
+	delete[] animData;
+
+	//play some sound
+
+	_dialog->say(_res->_ingameTexts[HAYQUECELEBRARLO]);
+
+	// TODO: wait for slave sprite frame 6 animation (sprite index derived from
+	// play drinking animation
+	//   room_sprite_data_ptr + sprite_id * 0x2C, then poll +0x20 == 6)
+
+	// Increment stone delivery counter (tracks 0→1→2→3)
+	byte counter = _state->getFlag(FLAG_DA_PIEDRA);
+	debug("Current stone delivery count: %d", counter);
+	if (counter < 3) {
+		_state->setFlag(FLAG_DA_PIEDRA, ++counter);
+	}
+
+	// At 2nd stone delivery: slave starts singing (conversation root 2)
+	// Root 2 text: "¡Deesde Santuurce a Bilbaooo...!"
+	if (counter == 2) {
+		_state->setCurrentRoot(41, 2, 0);
+	}
+
+	// At 3rd stone delivery: pyramid is complete
+	if (counter == 3) {
+		_room->disableSprite(0);
+		// Render permanent pyramid sticker (ALFRED.6 offset 0x0696AD = sticker index 116)
+		_room->addSticker(116, PERSIST_PERM);
+
+		// TODO: add 5 walkboxes for completed pyramid layout (write_data_to_alfred1 ×4)
+		//   Original game writes walkbox count→5 and walkbox data to ALFRED.1 room 41.
+		//   Walkbox coordinates TBD from binary analysis.
+
+		// Mark pyramid quest complete
+		_state->setFlag(FLAG_PIEDRAS_COGIDAS, true);
+	}
 }
 
 /**
@@ -1425,7 +1504,6 @@ void PelrockEngine::swimmingPoolCutscene(HotSpot *hotspot) {
 	guard->animData[0].nframes = 1;
 	_alfredState.direction = ALFRED_RIGHT;
 	walkAndAction(_room->findHotspotByExtra(guard->extra), TALK);
-	waitForActionEnd();
 	if(shouldQuit()) {
 		return;
 	}
@@ -1434,7 +1512,6 @@ void PelrockEngine::swimmingPoolCutscene(HotSpot *hotspot) {
 	_alfredState.y = 385;
 	setScreen(40, ALFRED_UP);
 	walkAndAction(_room->findHotspotByExtra(640), TALK);
-	waitForActionEnd();
 	if(shouldQuit()) {
 		return;
 	}

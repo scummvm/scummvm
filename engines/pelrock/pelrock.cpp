@@ -1574,6 +1574,7 @@ void PelrockEngine::walkAndAction(HotSpot *hotspot, VerbIcon action) {
 	_disableAction = true;
 	walkTo(hotspot->x + hotspot->w / 2, hotspot->y + hotspot->h);
 	_queuedAction = QueuedAction{action, hotspot->index, true};
+	waitForActionEnd();
 }
 
 AlfredDirection PelrockEngine::calculateAlfredsDirection(HotSpot *hotspot) {
