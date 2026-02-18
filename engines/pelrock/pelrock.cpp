@@ -613,7 +613,7 @@ void PelrockEngine::paintDebugLayer() {
 	if (showSprites) {
 		for (uint i = 0; i < _room->_currentRoomAnims.size(); i++) {
 			Sprite sprite = _room->_currentRoomAnims[i];
-			drawRect(_screen, sprite.x, sprite.y, sprite.animData->w, sprite.animData->h, 14);
+			drawRect(_screen, sprite.x, sprite.y, sprite.w, sprite.h, 14);
 			_smallFont->drawString(_screen, Common::String::format("S %d", sprite.index), sprite.x + 2, sprite.y, 640, 14);
 		}
 	}
@@ -1166,8 +1166,8 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 	applyMovement(&(sprite->x), &(sprite->y), &(sprite->zOrder), animData.movementFlags);
 	int x = sprite->x;
 	int y = sprite->y;
-	int w = animData.w;
-	int h = animData.h;
+	int w = sprite->w;
+	int h = sprite->h;
 	if (sprite->isTalking) {
 		animateTalkingNPC(sprite);
 		return;
@@ -1385,10 +1385,10 @@ bool PelrockEngine::isSpriteUnder(Sprite *sprite, int x, int y) {
 	Anim &animData = sprite->animData[sprite->curAnimIndex];
 	int curFrame = animData.curFrame;
 
-	int localX = x - animData.x;
-	int localY = y - animData.y;
-	if (localX >= 0 && localX < animData.w && localY >= 0 && localY < animData.h) {
-		byte pixel = animData.animData[curFrame][localY * animData.w + localX];
+	int localX = x - sprite->x;
+	int localY = y - sprite->y;
+	if (localX >= 0 && localX < sprite->w && localY >= 0 && localY < sprite->h) {
+		byte pixel = animData.animData[curFrame][localY * sprite->w + localX];
 		if (pixel != 255) {
 			return true;
 		}

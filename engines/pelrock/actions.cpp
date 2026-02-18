@@ -1227,7 +1227,7 @@ void PelrockEngine::checkAllSymbols() {
 
 void PelrockEngine::pickUpHairStrand(HotSpot *hotspot) {
 	checkIngredients();
-	_state->setFlag(FLAG_ROBA_PELO_PRINCESA,true);
+	_state->setFlag(FLAG_ROBA_PELO_PRINCESA, true);
 }
 
 void PelrockEngine::openJailFloorTile(HotSpot *hotspot) {
@@ -1351,82 +1351,58 @@ void PelrockEngine::swimmingPoolCutscene(HotSpot *hotspot) {
 	size_t bufSize = 0;
 
 	struct SwimmerInfo {
+		int spriteIndex;
+		int16 x;
+		int16 y;
 		int w;
 		int h;
 		int nFrames;
-		int curFrame;
 		int totalSize;
-		Sprite *sprite;
-		int x;
-		int y;
-		byte *data;
+		uint16 movementFlags;
 	};
 
-	Sprite *sprite1 = _room->findSpriteByIndex(3);
-	Sprite *sprite2 = _room->findSpriteByIndex(4);
-	Sprite *sprite3 = _room->findSpriteByIndex(5);
-	Sprite *sprite4 = _room->findSpriteByIndex(6);
-	SwimmerInfo swimmers[4];
-	swimmers[0] = {93, 88, 9, 0, 93 * 88 * 9, sprite1, sprite1->x, sprite1->y - 30, nullptr};
-	swimmers[1] = {68, 31, 7, 0, 68 * 31 * 7, sprite2, sprite2->x, sprite2->y, nullptr};
-	swimmers[2] = {79, 95, 9, 0, 79 * 95 * 9, sprite3, sprite3->x, sprite3->y, nullptr};
-	swimmers[3] = {54, 42, 8, 0, 54 * 42 * 8, sprite4, sprite4->x, sprite4->y, nullptr};
+	SwimmerInfo swimmers[4] = {
+		{3, 3, -17, 93, 88, 9, 93 * 88 * 9, 0x02FF}, // Move right and up
+		{4, 1, 0, 68, 31, 7, 68 * 31 * 7, 0},
+		{5, -14, -18, 79, 95, 9, 79 * 95 * 9, 0},
+		{6, -1, -8, 54, 42, 8, 54 * 42 * 8, 0}};
 
 	_res->loadOtherSpecialAnim(1446862, true, buffer, bufSize);
 
-	int acc = swimmers[0].totalSize;
-	swimmers[0].data = new byte[swimmers[0].totalSize];
-	Common::copy(buffer, buffer + swimmers[0].totalSize, swimmers[0].data);
-
-	swimmers[1].data = new byte[swimmers[1].totalSize];
-	Common::copy(buffer + acc, buffer + acc + swimmers[1].totalSize, swimmers[1].data);
-	acc += swimmers[1].totalSize;
-
-	swimmers[2].data = new byte[swimmers[2].totalSize];
-	Common::copy(buffer + acc, buffer + acc + swimmers[2].totalSize, swimmers[2].data);
-	acc += swimmers[2].totalSize;
-
-	swimmers[3].data = new byte[swimmers[3].totalSize];
-	Common::copy(buffer + acc, buffer + acc + swimmers[3].totalSize, swimmers[3].data);
-	acc += swimmers[3].totalSize;
-
-	Graphics::Surface surfaces[4];
+	int acc = 0;
 	for (int i = 0; i < 4; i++) {
-		surfaces[i].create(swimmers[i].w, swimmers[i].h, Graphics::PixelFormat::createFormatCLUT8());
-	}
-	sprite1->zOrder = -1;
-	sprite2->zOrder = -1;
-	sprite3->zOrder = -1;
-	sprite4->zOrder = -1;
+		Sprite *sprite = _room->findSpriteByIndex(swimmers[i].spriteIndex);
+		sprite->x = sprite->x + swimmers[i].x;
+		sprite->y = sprite->y + swimmers[i].y;
+		sprite->w = swimmers[i].w;
+		sprite->h = swimmers[i].h;
+		sprite->animData[0].nframes = swimmers[i].nFrames;
+		sprite->animData[0].movementFlags = swimmers[i].movementFlags;
+		sprite->animData[0].curFrame = 0;
+		sprite->animData[0].loopCount = 0;
+		sprite->animData[0].curLoop = 0;
+		sprite->animData[0].speed = 0;
+		sprite->animData[0].elpapsedFrames = 0;
+		sprite->disableAfterSequence = true;
 
+		sprite->animData[0].animData = new byte *[sprite->animData[0].nframes];
+		byte *spriteFrames[sprite->animData[0].nframes];
+		for (int i = 0; i < sprite->animData[0].nframes; i++) {
+			sprite->animData[0].animData[i] = new byte[sprite->w * sprite->h];
+			extractSingleFrame(buffer + acc, sprite->animData[0].animData[i], i, sprite->w, sprite->h);
+		}
+		acc += sprite->w * sprite->h * sprite->animData[0].nframes;
+	}
+
+	_sound->stopMusic();
+	_sound->playMusicTrack(28);
+	Sprite *s1 = _room->findSpriteByIndex(3);
 	while (!shouldQuit()) {
 		_events->pollEvent();
 		bool didRender = renderScene(OVERLAY_NONE);
-		for (int i = 0; i < 4; i++) {
-			if (swimmers[i].curFrame >= swimmers[i].nFrames) {
-				continue;
-			}
-			debug("Swimmer %d position: (%d, %d)", i + 1, swimmers[i].sprite->x, swimmers[i].sprite->y);
-			memset(surfaces[i].getPixels(), 0, swimmers[i].w * swimmers[i].h);
-			extractSingleFrame(swimmers[i].data, (byte *)surfaces[i].getPixels(), swimmers[i].curFrame, swimmers[i].w, swimmers[i].h);
-			debug("Moving swimmer %d to (%d, %d)", i + 1, swimmers[i].x, swimmers[i].y);
-			_screen->transBlitFrom(surfaces[i], Common::Point(swimmers[i].x, swimmers[i].y), 255);
-		}
 
-		if (didRender && _chrono->getFrameCount() % 2 == 0) {
-			if (swimmers[0].curFrame < swimmers[0].nFrames)
-				swimmers[0].curFrame++;
-			if (swimmers[1].curFrame < swimmers[1].nFrames)
-				swimmers[1].curFrame++;
-			if (swimmers[2].curFrame < swimmers[2].nFrames)
-				swimmers[2].curFrame++;
-			if (swimmers[3].curFrame < swimmers[3].nFrames)
-				swimmers[3].curFrame++;
-			_events->waitForKey();
-			if (swimmers[0].curFrame >= swimmers[0].nFrames &&
-				swimmers[1].curFrame >= swimmers[1].nFrames &&
-				swimmers[2].curFrame >= swimmers[2].nFrames &&
-				swimmers[3].curFrame >= swimmers[3].nFrames) {
+		if (didRender) {
+			if (_room->findSpriteByIndex(swimmers[0].spriteIndex)->zOrder == -1) {
 				break;
 			}
 		}
@@ -1435,6 +1411,21 @@ void PelrockEngine::swimmingPoolCutscene(HotSpot *hotspot) {
 	}
 	Sprite *guard = _room->findSpriteByIndex(0);
 	guard->animData[0].movementFlags = 0x14;
+	while (!shouldQuit()) {
+		_events->pollEvent();
+		renderScene();
+		if (guard->x <= _alfredState.x + 70) {
+			break;
+		}
+		_screen->update();
+		g_system->delayMillis(10);
+	}
+
+	guard->animData[0].movementFlags = 0;
+	guard->animData[0].curFrame = 0;
+	guard->animData[0].nframes = 1;
+	_alfredState.direction = ALFRED_RIGHT;
+	talkTo(_room->findHotspotByExtra(guard->extra));
 }
 
 void PelrockEngine::magicFormula(int inventoryObject, HotSpot *hotspot) {

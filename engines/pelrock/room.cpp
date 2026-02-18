@@ -920,10 +920,6 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 		for (int j = 0; j < sprite.numAnims; j++) {
 
 			Anim anim;
-			anim.x = sprite.x;
-			anim.y = sprite.y;
-			anim.w = sprite.w;
-			anim.h = sprite.h;
 			anim.curFrame = 0;
 
 			anim.nframes = data[subAnimOffset + j];
@@ -931,18 +927,18 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 			anim.speed = data[subAnimOffset + 8 + j];
 			anim.movementFlags = data[subAnimOffset + 14 + (j * 2)] | (data[subAnimOffset + 14 + (j * 2) + 1] << 8);
 
+			uint32_t totalBytesPerFrame = sprite.w * sprite.h * anim.nframes;
 			anim.animData = new byte *[anim.nframes];
-			if (anim.w > 0 && anim.h > 0 && anim.nframes > 0) {
-				uint32_t needed = anim.w * anim.h * anim.nframes;
+			if (sprite.w > 0 && sprite.h > 0 && anim.nframes > 0) {
 				for (int i = 0; i < anim.nframes; i++) {
-					anim.animData[i] = new byte[anim.w * anim.h];
-					// debug("Extracting frame %d for anim %d-%d, w=%d h=%d, pixelDataSize=%d, current offset %d", i, j, anim.nframes, anim.w, anim.h, pixelDataSize, picOffset);
-					extractSingleFrame(pixelData + picOffset, anim.animData[i], i, anim.w, anim.h);
+					anim.animData[i] = new byte[sprite.w * sprite.h];
+					// debug("Extracting frame %d for anim %d-%d, w=%d h=%d, pixelDataSize=%d, current offset %d", i, j, anim.nframes, sprite.w, sprite.h, pixelDataSize, picOffset);
+					extractSingleFrame(pixelData + picOffset, anim.animData[i], i, sprite.w, sprite.h);
 				}
 				sprite.animData[j] = anim;
 				// debug("  Anim %d-%d: x=%d y=%d w=%d h=%d nframes=%d loopCount=%d speed=%d", i, j, anim.x, anim.y, anim.w, anim.h, anim.nframes, anim.loopCount, anim.speed);
 				// debug("  Movement flags: 0x%04X", anim.movementFlags);
-				picOffset += needed;
+				picOffset += totalBytesPerFrame;
 
 				if(_currentRoomNumber == 36 && i == 0) {
 					// Room 36 sets its anim to 1 to appear idle and only enables anim later on

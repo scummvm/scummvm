@@ -194,10 +194,6 @@ typedef struct {
 } PathContext;
 
 struct Anim {
-	int16 x;
-	int16 y;
-	int w;
-	int h;
 	int nframes;
 	int curFrame = 0;
 	int curLoop = 0;
