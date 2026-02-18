@@ -487,7 +487,7 @@ void PelrockEngine::checkMouse() {
 
 	checkMouseHover();
 
-	if(_disableAction) {
+	if (_disableAction) {
 		return;
 	}
 
@@ -676,11 +676,11 @@ void PelrockEngine::placeSticker(Sticker sticker) {
 		for (int x = 0; x < sticker.w; x++) {
 			byte pixel = sticker.stickerData[y * sticker.w + x];
 			// if (pixel != 0) {
-				int bgX = sticker.x + x;
-				int bgY = sticker.y + y;
-				if (bgX >= 0 && bgX < 640 && bgY >= 0 && bgY < 400) {
-					_compositeBuffer[bgY * 640 + bgX] = pixel;
-				}
+			int bgX = sticker.x + x;
+			int bgY = sticker.y + y;
+			if (bgX >= 0 && bgX < 640 && bgY >= 0 && bgY < 400) {
+				_compositeBuffer[bgY * 640 + bgX] = pixel;
+			}
 			// }
 		}
 	}
@@ -868,14 +868,21 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 				_alfredState.setState(ALFRED_IDLE);
 				_alfredState.isWalkingCancelable = true;
 				_disableAction = false;
-				if (_currentHotspot != nullptr)
+				if (_queuedAction.isQueued) {
+					// When a queued action exists, face toward its target hotspot
+					// (not _currentHotspot which is the mouse-hovered one)
+					HotSpot *targetHotspot = &_room->_currentRoomHotspots[_queuedAction.hotspotIndex];
+					_alfredState.direction = calculateAlfredsDirection(targetHotspot);
+				} else if (_currentHotspot != nullptr) {
 					_alfredState.direction = calculateAlfredsDirection(_currentHotspot);
+				}
 				drawAlfred(_res->alfredIdle[_alfredState.direction]);
 				if (_queuedAction.isQueued) {
 					// look and talk execute immediately, others need interaction animation first
 					if (_queuedAction.verb == TALK || _queuedAction.verb == LOOK) {
 						_queuedAction.isQueued = false;
-						doAction(_queuedAction.verb, &_room->_currentRoomHotspots[_queuedAction.hotspotIndex]);
+						HotSpot *actionHotspot = &_room->_currentRoomHotspots[_queuedAction.hotspotIndex];
+						doAction(_queuedAction.verb, actionHotspot);
 						break;
 					}
 					_alfredState.setState(ALFRED_INTERACTING);
@@ -887,7 +894,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 				Exit *exit = isExitUnder(_alfredState.x, _alfredState.y);
 				if (exit != nullptr) {
 					debug("Using exit to room %d", exit->targetRoom);
-					if(exit->targetRoom == 31 && _room->_currentRoomNumber == 32) {
+					if (exit->targetRoom == 31 && _room->_currentRoomNumber == 32) {
 						_res->loadAlfredSpecialAnim(8);
 						_alfredState.setState(ALFRED_SPECIAL_ANIM);
 						waitForSpecialAnimation();
@@ -1188,7 +1195,7 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 				animData.curFrame = 0;
 				animData.curLoop++;
 			} else {
-				if(sprite->disableAfterSequence) {
+				if (sprite->disableAfterSequence) {
 					sprite->zOrder = -1;
 					return;
 				}
@@ -1503,7 +1510,7 @@ void PelrockEngine::gameLoop() {
 	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_s) {
 		SpellBook spellBook(_events, _res);
 		Spell *selectedSpell = spellBook.run();
-		if(selectedSpell != nullptr) {
+		if (selectedSpell != nullptr) {
 			_dialog->sayAlfred(selectedSpell->text);
 		}
 		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
@@ -1830,7 +1837,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			_dialog->say(_res->_ingameTexts[PINTA_BUENAPERSONA]);
 		}
 	case 38: {
-		if(_room->_prevRoomNumber == 30) {
+		if (_room->_prevRoomNumber == 30) {
 			int x = _alfredState.x;
 			int y = _alfredState.y;
 			_alfredState.x -= 57;
@@ -1846,7 +1853,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		}
 	}
 	case 32: {
-		if(_room->_prevRoomNumber == 31) {
+		if (_room->_prevRoomNumber == 31) {
 			int x = _alfredState.x;
 			int y = _alfredState.y;
 			_res->loadAlfredSpecialAnim(7);
@@ -1854,11 +1861,10 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			waitForSpecialAnimation();
 			_alfredState.x = x;
 			_alfredState.y = y;
-
 		}
 	}
 	case 27: {
-		if(_room->_prevRoomNumber == 33) {
+		if (_room->_prevRoomNumber == 33) {
 			int x = _alfredState.x;
 			int y = _alfredState.y;
 			_alfredState.x = 12;
@@ -1872,7 +1878,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		break;
 	}
 	case 28: {
-		if(_state->getFlag(FLAG_CROCODILLO_ENCENDIDO) == true) {
+		if (_state->getFlag(FLAG_CROCODILLO_ENCENDIDO) == true) {
 			byte palette[768];
 			_res->getPaletteForRoom28(palette);
 			g_system->getPaletteManager()->setPalette(palette, 0, 256);
@@ -1881,9 +1887,9 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		}
 	}
 	case 26: {
-		if(_state->getFlag(FLAG_A_LA_CARCEL) == true) {
+		if (_state->getFlag(FLAG_A_LA_CARCEL) == true) {
 			_dialog->_goodbyeDisabled = true;
-			if(_state->getFlag(FLAG_SE_HA_PUESTO_EL_MUNECO) == true) {
+			if (_state->getFlag(FLAG_SE_HA_PUESTO_EL_MUNECO) == true) {
 				_state->setCurrentRoot(26, 2, 1);
 			} else {
 				_dialog->say(_res->_ingameTexts[OIGAUSTED], 1);
@@ -1896,7 +1902,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		break;
 	}
 	case 30: {
-		if(_state->getFlag(FLAG_ROBA_PELO_PRINCESA) == true) {
+		if (_state->getFlag(FLAG_ROBA_PELO_PRINCESA) == true) {
 			_dialog->_goodbyeDisabled = true;
 			_state->setFlag(FLAG_ROBA_PELO_PRINCESA, false);
 			_room->enableSprite(0, 200, PERSIST_TEMP);

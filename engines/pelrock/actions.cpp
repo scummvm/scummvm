@@ -1424,7 +1424,8 @@ void PelrockEngine::swimmingPoolCutscene(HotSpot *hotspot) {
 	guard->animData[0].curFrame = 0;
 	guard->animData[0].nframes = 1;
 	_alfredState.direction = ALFRED_RIGHT;
-	talkTo(_room->findHotspotByExtra(guard->extra));
+	walkAndAction(_room->findHotspotByExtra(guard->extra), TALK);
+	waitForActionEnd();
 	if(shouldQuit()) {
 		return;
 	}
