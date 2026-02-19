@@ -24,7 +24,7 @@ namespace Gamos {
 const PlainGameDescriptor gamosGames[] = {
 	{ "gamos", "Gamos" },
 	{ "solgamer", "21 Solitaire" },
-	{ "pilots", "Pilots 1" },
+	{ "pilots1", "Pilots 1" },
 	{ "pilots2", "Pilots 2" },
 	{ "wild", "WildSnakes"},
 	{ "flop", "Flip-Flop"},
@@ -76,7 +76,7 @@ const GamosGameDescription gameDescriptions[] = {
 	{
 		{ /* Copyright (C) 1997 by Gamos JSC, Moscow, Russia...  Run-time engine [1.47] by Vadim Sytnikov
 			30.08.1997 */
-			"pilots",
+			"pilots1",
 			0,
 			AD_ENTRY1s("pilots.exe", "t:82ae05090898af66447bac4f06e910f3", 48357155),
 			Common::RU_RUS,
@@ -89,7 +89,7 @@ const GamosGameDescription gameDescriptions[] = {
 	{
 		{ /* Copyright (C) 1997 by Gamos JSC, Moscow, Russia...  Run-time engine [1.47] by Vadim Sytnikov
 			04.09.1995 ??? */
-			"pilots",
+			"pilots1",
 			0,
 			AD_ENTRY1s("pilde_r.exe", "t:a1bbaa7e59f69cb2be3223c3336982ac", 10770038),
 			Common::RU_RUS,
@@ -102,7 +102,7 @@ const GamosGameDescription gameDescriptions[] = {
 	{
 		{ /* Copyright (C) 1997 by Gamos JSC, Moscow, Russia...  Run-time engine [1.47] by Vadim Sytnikov
 			04.09.1995 ??? */
-			"pilots",
+			"pilots1",
 			0,
 			AD_ENTRY1s("pildemo.exe", "t:a1bbaa7e59f69cb2be3223c3336982ac", 10770038),
 			Common::RU_RUS,
@@ -115,7 +115,7 @@ const GamosGameDescription gameDescriptions[] = {
 	{
 		{ /* Copyright (C) 1997 by Gamos JSC, Moscow, Russia...  Run-time engine [1.47] by Vadim Sytnikov
 			04.09.1995 ??? */
-			"pilots",
+			"pilots1",
 			0,
 			AD_ENTRY1s("pilotsrd.exe", "t:a1bbaa7e59f69cb2be3223c3336982ac", 10770038),
 			Common::RU_RUS,
@@ -128,7 +128,7 @@ const GamosGameDescription gameDescriptions[] = {
 	{
 		{ /* Copyright (C) 1997 by Gamos JSC, Moscow, Russia...  Run-time engine [1.47] by Vadim Sytnikov
 			20.09.1995 ??? */
-			"pilots",
+			"pilots1",
 			0,
 			AD_ENTRY1s("pilde_e.exe", "t:a784fc52f6923817d8ec8b9101e3f3ea", 10904737),
 			Common::EN_ANY,
@@ -141,7 +141,7 @@ const GamosGameDescription gameDescriptions[] = {
 	{
 		{ /* Copyright (C) 1997 by Gamos JSC, Moscow, Russia...  Run-time engine [1.50] by Vadim Sytnikov
 			17.12.1997 */
-			"pilots",
+			"pilots1",
 			0,
 			AD_ENTRY1s("pilotsed.exe", "t:190cb2dcf936d0c3a891ba333dbc2f33", 10946501),
 			Common::EN_ANY,
