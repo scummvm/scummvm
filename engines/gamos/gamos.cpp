@@ -18,7 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "gamos/console.h"
 #include "gamos/detection.h"
 #include "gamos/gamos.h"
 
@@ -70,8 +69,6 @@ void GamosEngine::freeSequences() {
 }
 
 Common::Error GamosEngine::run() {
-	// Set the engine's debugger console
-	setDebugger(new Console());
 
 	// If a savegame was selected from the launcher, load it
 	int saveSlot = ConfMan.getInt("save_slot");

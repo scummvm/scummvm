@@ -2,7 +2,6 @@ MODULE := engines/gamos
 
 MODULE_OBJS = \
 	blit.o \
-	console.o \
 	file.o \
 	gamos.o \
 	keycodes.o \
