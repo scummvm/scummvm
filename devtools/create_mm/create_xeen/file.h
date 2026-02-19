@@ -169,9 +169,6 @@ public:
 	
 	MemFile &operator=(const MemFile &other) {
 		if (this != &other) {
-			delete[] _data;
-
-			_data = new byte[MAX_MEM_SIZE];
 			memcpy(_data, other._data, other._size);
 			memset(_data + other._size, 0, MAX_MEM_SIZE - other._size);
 
