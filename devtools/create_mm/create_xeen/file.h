@@ -148,9 +148,13 @@ public:
 	}
 
 	MemFile(const MemFile &other) 
-		: MemFile(other._data, other._size)
-		, _offset(other._offset)
 	{
+		_data = new byte[MAX_MEM_SIZE];
+		_size = other._size;
+		_offset = other._offset;
+
+		memcpy(_data, other._data, _size);
+		memset(_data + _size, 0, MAX_MEM_SIZE - _size);
 	}
 	
 	MemFile(MemFile &&other) {
