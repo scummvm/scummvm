@@ -4401,7 +4401,7 @@ bool GamosEngine::eventsSkip(bool breakOnInput) {
 
 
 void GamosEngine::dumpActions() {
-	Common::String t = Common::String::format("./actions_%d.txt", _currentModuleID);
+	Common::String t = Common::String::format("./dumps/actions_%d.txt", _currentModuleID);
 
 	Common::DumpFile f;
 
