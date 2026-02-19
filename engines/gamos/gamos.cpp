@@ -2005,7 +2005,7 @@ bool GamosEngine::updateObjects() {
 							pobj->flags &= ~Object::FLAG_TRANSITION;
 						} else {
 							if (pobj == _firstUpdateObject) {
-								goto exit;
+								goto loopExit;
 							}
 							goto continue_to_next_object;
 						}
@@ -2051,13 +2051,13 @@ bool GamosEngine::updateObjects() {
 
 									if (_firstUpdateObject) {
 										_firstUpdateObject = nullptr;
-										goto exit;
+										goto loopExit;
 									}
 									goto continue_to_next_object;
 								} else if (res != 0) {
 									if (_firstUpdateObject) {
 										_firstUpdateObject = nullptr;
-										goto exit;
+										goto loopExit;
 									}
 									cycleNextInputObj(pobj);
 									goto continue_to_next_object;
@@ -2068,12 +2068,12 @@ bool GamosEngine::updateObjects() {
 						if (scr.flags & 0x80) {
 							if (tmp) {
 								_firstUpdateObject = pobj;
-								goto exit;
+								goto loopExit;
 							}
 
 							if (_firstUpdateObject) {
 								_firstUpdateObject = nullptr;
-								goto exit;
+								goto loopExit;
 							}
 
 							break;
@@ -2089,7 +2089,7 @@ continue_to_next_object:
 		;
 	}
 
-exit:
+loopExit:
 	_curObject = nullptr;
 	_curObjIndex = -1;
 	return true;
