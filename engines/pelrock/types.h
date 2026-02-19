@@ -303,7 +303,8 @@ struct WalkBox {
 struct QueuedAction {
 	VerbIcon verb;
 	int hotspotIndex;
-	bool isQueued;
+	bool isQueued;        // Alfred is walking/interacting toward the target
+	bool readyToExecute;  // Animation done - execute after the current renderScene
 };
 
 struct ScalingParams {
@@ -332,7 +333,6 @@ struct SpriteChange
 	byte roomNumber;
 	byte spriteIndex;
 	byte zIndex;
-
 };
 
 

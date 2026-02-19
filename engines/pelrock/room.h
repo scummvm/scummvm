@@ -123,6 +123,7 @@ public:
 		return true;
 	}
 	Sprite *findSpriteByIndex(byte index);
+	Sprite *findSpriteByExtra(int16 extra);
 	HotSpot *findHotspotByIndex(byte index);
 	HotSpot *findHotspotByExtra(uint16 extra);
 	PaletteAnim *getPaletteAnimForRoom(int roomNumber);

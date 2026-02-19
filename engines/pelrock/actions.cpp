@@ -37,6 +37,8 @@ const ActionEntry actionTable[] = {
 	// Room 0
 	{261, OPEN, &PelrockEngine::openRoomDrawer},
 	{261, CLOSE, &PelrockEngine::closeRoomDrawer},
+	{263, OPEN, &PelrockEngine::openClosedDrawer},
+
 	{268, OPEN, &PelrockEngine::openRoomDoor},
 	{268, CLOSE, &PelrockEngine::closeRoomDoor},
 	{3, PICKUP, &PelrockEngine::pickUpPhoto},
@@ -666,6 +668,10 @@ void PelrockEngine::closeRoomDrawer(HotSpot *hotspot) {
 	_room->enableHotspot(hotspot);
 }
 
+void PelrockEngine::openClosedDrawer(HotSpot *hotspot) {
+	_dialog->say(_res->_ingameTexts[ESTAN_CERRADOS]);
+}
+
 void PelrockEngine::useCardWithATM(int inventoryObject, HotSpot *hotspot) {
 	debug("Withdrawing money from ATM using card (inv obj %d)", inventoryObject);
 	if (_state->getFlag(FLAG_JEFE_INGRESA_PASTA)) {
@@ -1080,19 +1086,22 @@ void PelrockEngine::usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot) {
 	_alfredState.y += 20;
 	waitForSpecialAnimation();
 	_sound->playSound(_room->_roomSfx[0], 0); // Belch
-	bool isPlaying = true;
-	while (!shouldQuit() && isPlaying) {
-		_events->pollEvent();
-		isPlaying = _sound->isPlaying(0);
-		_screen->update();
-		g_system->delayMillis(10);
-	}
+	waitForSoundEnd();
 	_graphics->fadeToBlack(10);
 	// update conversaton state
 	_alfredState.x = 300;
 	_alfredState.y = 238;
 	setScreen(28, ALFRED_DOWN);
 	_dialog->say(_res->_ingameTexts[QUEOSCUROESTAESTO]);
+}
+
+void PelrockEngine::waitForSoundEnd() {
+	while (!shouldQuit() && _sound->isPlaying(0)) {
+		_events->pollEvent();
+		renderScene(OVERLAY_NONE);
+		_screen->update();
+		g_system->delayMillis(10);
+	}
 }
 
 void PelrockEngine::pickupSunflower(HotSpot *hotspot) {
@@ -1351,47 +1360,68 @@ void PelrockEngine::pickUpStone(HotSpot *hotspot) {
 	checkIngredients();
 }
 
-void PelrockEngine::giveStoneToSlaves(int inventoryObject, HotSpot *hotspot) {
-	// Remove whichever stone item was used (91 = Egyptian stone, 92 = mud/clay)
-	_state->removeInventoryItem(inventoryObject);
-
-	// Play 7-frame 208×102 stone-passing animation
-	size_t frameSize = 208 * 102;
-	size_t bufSize = frameSize * 7;
+void PelrockEngine::playSpecialAnim(uint32 offset, bool compressed, int x, int y, int width, int height, int numFrames) {
+	size_t frameSize = width * height;
+	debug("Frame size: %d bytes", frameSize);
+	size_t bufSize = frameSize * numFrames;
 	byte *animData = new byte[bufSize];
-	_res->loadOtherSpecialAnim(1600956, false, animData, bufSize);
+	_res->loadOtherSpecialAnim(offset, compressed, animData, bufSize);
 
 	Graphics::Surface animSurface;
-	animSurface.create(208, 102, Graphics::PixelFormat::createFormatCLUT8());
+	animSurface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	int curFrame = 0;
+	bool firstFrame = true;
 	while (!shouldQuit()) {
 		_events->pollEvent();
 
 		bool didRender = renderScene(OVERLAY_NONE);
-
-		memset(animSurface.getPixels(), 0, frameSize);
-		extractSingleFrame(animData, (byte *)animSurface.getPixels(), curFrame, 208, 102);
-		_screen->transBlitFrom(animSurface, Common::Point(0, 298), 255);
-		if (didRender && _chrono->getFrameCount() % 2 == 0) {
-			curFrame++;
-
-			if (curFrame >= 7) {
-				break;
+		if(didRender) {
+			memset(animSurface.getPixels(), 0, frameSize);
+			extractSingleFrame(animData, (byte *)animSurface.getPixels(), curFrame, width, height);
+			_screen->transBlitFrom(animSurface, Common::Point(x, y), 255);
+			if (_chrono->getFrameCount() % 2 == 0) {
+				curFrame++;
+				if (curFrame >= numFrames) {
+					_screen->markAllDirty();
+					_screen->update();
+					break;
+				}
 			}
 		}
+		_screen->markAllDirty();
 		_screen->update();
+		// _events->waitForKey();
 		g_system->delayMillis(10);
 	}
 	animSurface.free();
 	delete[] animData;
 
-	//play some sound
+}
+
+void PelrockEngine::giveStoneToSlaves(int inventoryObject, HotSpot *hotspot) {
+	// Remove whichever stone item was used (91 = Egyptian stone, 92 = mud/clay)
+	_state->removeInventoryItem(inventoryObject);
+
+	Sprite *masters = _room->findSpriteByExtra(600);
+	byte zIndex = masters->zOrder;
+	// Capture coordinates now, before any playSpecialAnim loop runs renderScene and
+	// sortAnimsByZOrder reorders _currentRoomAnims (which would make the pointer stale).
+	int16 mastersX = masters->x;
+	int16 mastersY = masters->y;
+
+	// Slaves take stone then chant
+	playSpecialAnim(1600956, false, 0, 298, 208, 102, 7);
+	_sound->playSound(_room->_roomSfx[0], 0);
+	// waitForSoundEnd();
 
 	_dialog->say(_res->_ingameTexts[HAYQUECELEBRARLO]);
 
-	// TODO: wait for slave sprite frame 6 animation (sprite index derived from
-	// play drinking animation
-	//   room_sprite_data_ptr + sprite_id * 0x2C, then poll +0x20 == 6)
+
+	//drinking animation and sound
+	_sound->playSound(_room->_roomSfx[1], 0);
+
+	_room->disableSprite(0);
+	playSpecialAnim(1473360, true, mastersX - 5, mastersY - 1, 152, 83, 7);
 
 	// Increment stone delivery counter (tracks 0→1→2→3)
 	byte counter = _state->getFlag(FLAG_DA_PIEDRA);
@@ -1400,24 +1430,25 @@ void PelrockEngine::giveStoneToSlaves(int inventoryObject, HotSpot *hotspot) {
 		_state->setFlag(FLAG_DA_PIEDRA, ++counter);
 	}
 
-	// At 2nd stone delivery: slave starts singing (conversation root 2)
-	// Root 2 text: "¡Deesde Santuurce a Bilbaooo...!"
+	// At 2nd stone delivery: masters starts singing (conversation root 2)
 	if (counter == 2) {
 		_state->setCurrentRoot(41, 2, 0);
 	}
 
-	// At 3rd stone delivery: pyramid is complete
+	// At 3rd stone delivery: masters get wasted
 	if (counter == 3) {
-		_room->disableSprite(0);
-		// Render permanent pyramid sticker (ALFRED.6 offset 0x0696AD = sticker index 116)
-		_room->addSticker(116, PERSIST_PERM);
+		playSpecialAnim(1512060, true, mastersX - 28, mastersY - 6, 172, 96, 3);
 
-		// TODO: add 5 walkboxes for completed pyramid layout (write_data_to_alfred1 ×4)
-		//   Original game writes walkbox count→5 and walkbox data to ALFRED.1 room 41.
-		//   Walkbox coordinates TBD from binary analysis.
+		_room->addSticker(116);
 
-		// Mark pyramid quest complete
+		WalkBox w1 = {3, 187, 374, 5, 17};
+		WalkBox w2 = {4, 141, 374, 46, 4};
+		_room->addWalkbox(w1);
+		_room->addWalkbox(w2);
 		_state->setFlag(FLAG_PIEDRAS_COGIDAS, true);
+	}
+	else {
+		_room->enableSprite(0, zIndex);
 	}
 }
 

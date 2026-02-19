@@ -228,8 +228,14 @@ void RoomManager::disableSprite(byte roomNumber, byte spriteIndex, int persist) 
 	debug("Disabling sprite %d in room %d with persist %d", spriteIndex, roomNumber, persist);
 	if (roomNumber == _currentRoomNumber && persist & PERSIST_TEMP) {
 		debug("Disabling sprite LOCALLY %d in room %d with persist %d", spriteIndex, roomNumber, persist);
-		_currentRoomAnims[spriteIndex].zOrder = -1;
-		_currentRoomAnims[spriteIndex].isHotspotDisabled = true;
+		// Search by sprite.index, not by array position: sortAnimsByZOrder reorders the
+		// array every frame so a raw array index is unreliable.
+		for (uint i = 0; i < _currentRoomAnims.size(); i++) {
+			if (_currentRoomAnims[i].index == spriteIndex) {
+				_currentRoomAnims[i].zOrder = -1;
+				break;
+			}
+		}
 	}
 	if (persist & PERSIST_PERM) {
 		g_engine->_state->spriteChanges[roomNumber].push_back({roomNumber, spriteIndex, 255});
@@ -242,7 +248,13 @@ void RoomManager::enableSprite(byte spriteIndex, byte zOrder, int persist) {
 
 void RoomManager::enableSprite(byte roomNumber, byte spriteIndex, byte zOrder, int persist) {
 	if (roomNumber == _currentRoomNumber && persist & PERSIST_TEMP) {
-		_currentRoomAnims[spriteIndex].zOrder = zOrder;
+		// Search by sprite.index field, not by array position (array is re-sorted every frame).
+		for (uint i = 0; i < _currentRoomAnims.size(); i++) {
+			if (_currentRoomAnims[i].index == spriteIndex) {
+				_currentRoomAnims[i].zOrder = zOrder;
+				break;
+			}
+		}
 	}
 	if (persist & PERSIST_PERM) {
 		g_engine->_state->spriteChanges[roomNumber].push_back({roomNumber, spriteIndex, zOrder});
@@ -306,6 +318,15 @@ void RoomManager::addWalkbox(WalkBox walkbox, int persist) {
 Sprite *RoomManager::findSpriteByIndex(byte index) {
 	for (uint i = 0; i < _currentRoomAnims.size(); i++) {
 		if (_currentRoomAnims[i].index == index) {
+			return &_currentRoomAnims[i];
+		}
+	}
+	return nullptr;
+}
+
+Sprite *RoomManager::findSpriteByExtra(int16 extra) {
+	for (uint i = 0; i < _currentRoomAnims.size(); i++) {
+		if (_currentRoomAnims[i].extra == extra) {
 			return &_currentRoomAnims[i];
 		}
 	}
@@ -923,6 +944,9 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 			anim.curFrame = 0;
 
 			anim.nframes = data[subAnimOffset + j];
+			if (_currentRoomNumber == 41 && i == 1) {
+				anim.nframes = 3;
+			}
 			anim.loopCount = data[subAnimOffset + 4 + j];
 			anim.speed = data[subAnimOffset + 8 + j];
 			anim.movementFlags = data[subAnimOffset + 14 + (j * 2)] | (data[subAnimOffset + 14 + (j * 2) + 1] << 8);

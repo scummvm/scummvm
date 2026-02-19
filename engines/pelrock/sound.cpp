@@ -53,7 +53,7 @@ void SoundManager::playSound(byte index, int channel) {
 	// debug("Playing sound index %d (%s)", index, SOUND_FILENAMES[index]);
 	auto it = _soundMap.find(SOUND_FILENAMES[index]);
 	if (it != _soundMap.end()) {
-		playSound(it->_value);
+		playSound(it->_value, channel);
 	} else {
 		debug("Sound file %s not found in sound map", SOUND_FILENAMES[index]);
 	}
@@ -62,7 +62,7 @@ void SoundManager::playSound(byte index, int channel) {
 void SoundManager::playSound(const char *filename, int channel) {
 	auto it = _soundMap.find(filename);
 	if (it != _soundMap.end()) {
-		playSound(it->_value);
+		playSound(it->_value, channel);
 	} else {
 		debug("Sound file %s not found in sound map", filename);
 	}

@@ -157,7 +157,7 @@ void PelrockEngine::init() {
 		// setScreen(0, ALFRED_DOWN);
 		// setScreen(3, ALFRED_RIGHT);
 		// setScreen(22, ALFRED_DOWN);
-		setScreen(39, ALFRED_DOWN);
+		setScreen(41, ALFRED_DOWN);
 		// setScreen(15, ALFRED_DOWN);
 		// setScreen(2, ALFRED_LEFT);
 		// alfredState.x = 576;
@@ -302,7 +302,14 @@ bool PelrockEngine::renderScene(int overlayMode) {
 
 		updatePaletteAnimations();
 
-		_screen->markAllDirty();
+		// Execute deferred actions AFTER renderScene, so any scene changes
+		// (addSticker, disableSprite, etc.) are in place before the next frame's
+		// placeStickersFirstPass + presentFrame.
+		if (_queuedAction.readyToExecute) {
+			_queuedAction.readyToExecute = false;
+			doAction(_queuedAction.verb, &_room->_currentRoomHotspots[_queuedAction.hotspotIndex]);
+		}
+
 		return true;
 	}
 
@@ -521,7 +528,7 @@ void PelrockEngine::checkMouse() {
 			useOnAlfred(_state->selectedInventoryItem);
 		} else {
 			// Released outside popup - just close it
-			_queuedAction = QueuedAction{NO_ACTION, -1, false};
+			_queuedAction = QueuedAction{NO_ACTION, -1, false, false};
 			_currentHotspot = nullptr;
 		}
 	} else if (_events->_leftMouseClicked) {
@@ -559,6 +566,7 @@ void PelrockEngine::updateAnimations() {
 	// First pass: sprites behind Alfred (sprite zOrder > alfredZOrder)
 	for (uint i = 0; i < _room->_currentRoomAnims.size(); i++) {
 		if (_room->_currentRoomAnims[i].zOrder > alfredZOrder || _room->_currentRoomAnims[i].zOrder < 0) {
+			// debug("Drawing anim %d with zOrder %d in first pass (behind Alfred)", i, _room->_currentRoomAnims[i].zOrder);
 			drawNextFrame(&_room->_currentRoomAnims[i]);
 		}
 	}
@@ -569,6 +577,7 @@ void PelrockEngine::updateAnimations() {
 	// Second pass: sprites in front of Alfred (sprite zOrder <= alfredZOrder)
 	for (uint i = 0; i < _room->_currentRoomAnims.size(); i++) {
 		if (_room->_currentRoomAnims[i].zOrder <= alfredZOrder && _room->_currentRoomAnims[i].zOrder >= 0) {
+			// debug("Drawing anim %d with zOrder %d in second pass (in front of Alfred)", i, _room->_currentRoomAnims[i].zOrder);
 			drawNextFrame(&_room->_currentRoomAnims[i]);
 		}
 	}
@@ -602,10 +611,10 @@ void PelrockEngine::paintDebugLayer() {
 	bool showWalkboxes = true;
 
 	if (showWalkboxes) {
+		debug("Drawing walkboxes, count: %d", _room->_currentRoomWalkboxes.size());
 		for (uint i = 0; i < _room->_currentRoomWalkboxes.size(); i++) {
 			WalkBox box = _room->_currentRoomWalkboxes[i];
-			drawRect(_screen, box.x, box.y, box.w, box.h, 150 + i);
-			// _smallFont->drawString(_screen, Common::String::format("%d", i), box.x + 2, box.y + 2, 640, 14);
+			drawRect(_screen, box.x, box.y, box.w, box.h, 13);
 		}
 	}
 
@@ -613,6 +622,10 @@ void PelrockEngine::paintDebugLayer() {
 	if (showSprites) {
 		for (uint i = 0; i < _room->_currentRoomAnims.size(); i++) {
 			Sprite sprite = _room->_currentRoomAnims[i];
+			if(sprite.zOrder < 0) {
+				// Skip sprites with negative zOrder (not rendered)
+				continue;
+			}
 			drawRect(_screen, sprite.x, sprite.y, sprite.w, sprite.h, 14);
 			_smallFont->drawString(_screen, Common::String::format("S %d", sprite.index), sprite.x + 2, sprite.y, 640, 14);
 		}
@@ -880,9 +893,10 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 				if (_queuedAction.isQueued) {
 					// look and talk execute immediately, others need interaction animation first
 					if (_queuedAction.verb == TALK || _queuedAction.verb == LOOK) {
+						// Defer to after renderScene so any scene changes (stickers,
+						// sprites) take effect before the next presentFrame.
 						_queuedAction.isQueued = false;
-						HotSpot *actionHotspot = &_room->_currentRoomHotspots[_queuedAction.hotspotIndex];
-						doAction(_queuedAction.verb, actionHotspot);
+						_queuedAction.readyToExecute = true;
 						break;
 					}
 					_alfredState.setState(ALFRED_INTERACTING);
@@ -941,9 +955,11 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		_alfredState.curFrame++;
 		if (_alfredState.curFrame >= interactingAnimLength) {
 			if (_queuedAction.isQueued) {
+				// Defer to after renderScene so any scene changes (stickers,
+				// sprites) take effect before the next presentFrame.
 				_queuedAction.isQueued = false;
+				_queuedAction.readyToExecute = true;
 				_alfredState.setState(ALFRED_IDLE);
-				doAction(_queuedAction.verb, &_room->_currentRoomHotspots[_queuedAction.hotspotIndex]);
 				break;
 			}
 		}
@@ -1495,28 +1511,30 @@ void PelrockEngine::gameLoop() {
 
 	_events->pollEvent();
 	checkMouse();
-	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_m) {
-		travelToEgypt();
-		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
-	}
-	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_n) {
-		loadExtraScreenAndPresent(10);
-		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
-	}
-	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_p) {
-		antiPiracyEffect();
-		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
-	}
-	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_s) {
-		SpellBook spellBook(_events, _res);
-		Spell *selectedSpell = spellBook.run();
-		if (selectedSpell != nullptr) {
-			_dialog->sayAlfred(selectedSpell->text);
-		}
-		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
-	}
+
+	// if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_m) {
+	// 	travelToEgypt();
+	// 	_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
+	// }
+	// if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_n) {
+	// 	loadExtraScreenAndPresent(10);
+	// 	_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
+	// }
+	// if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_p) {
+	// 	antiPiracyEffect();
+	// 	_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
+	// }
+	// if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_s) {
+	// 	SpellBook spellBook(_events, _res);
+	// 	Spell *selectedSpell = spellBook.run();
+	// 	if (selectedSpell != nullptr) {
+	// 		_dialog->sayAlfred(selectedSpell->text);
+	// 	}
+	// 	_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
+	// }
+
 	renderScene();
-	// _events->waitForKey();
+
 	_screen->update();
 }
 
@@ -1573,7 +1591,7 @@ void PelrockEngine::walkTo(int x, int y) {
 void PelrockEngine::walkAndAction(HotSpot *hotspot, VerbIcon action) {
 	_disableAction = true;
 	walkTo(hotspot->x + hotspot->w / 2, hotspot->y + hotspot->h);
-	_queuedAction = QueuedAction{action, hotspot->index, true};
+	_queuedAction = QueuedAction{action, hotspot->index, true, false};
 	waitForActionEnd();
 }
 
@@ -1658,7 +1676,7 @@ bool PelrockEngine::isAlfredUnder(int x, int y) {
 void PelrockEngine::checkMouseClick(int x, int y) {
 
 	// This handles regular clicks (not popup selection)
-	_queuedAction = QueuedAction{NO_ACTION, -1, false};
+	_queuedAction = QueuedAction{NO_ACTION, -1, false, false};
 	_actionPopupState.isActive = false;
 	_currentHotspot = nullptr;
 	_alfredState.idleFrameCounter = 0;

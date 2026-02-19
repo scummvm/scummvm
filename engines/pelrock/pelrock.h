@@ -138,7 +138,7 @@ private:
 	int _newItem = -1;
 
 	Common::Point _curWalkTarget;
-	QueuedAction _queuedAction;
+	QueuedAction _queuedAction = {NO_ACTION, -1, false, false};
 
 	bool showShadows = false;
 
@@ -257,6 +257,7 @@ public:
 	void executeAction(VerbIcon action, HotSpot *hotspot);
 	void openRoomDrawer(HotSpot *hotspot);
 	void closeRoomDrawer(HotSpot *hotspot);
+	void openClosedDrawer(HotSpot *hotspot);
 	void openRoomDoor(HotSpot *hotspot);
 	void closeRoomDoor(HotSpot *hotspot);
 	void pickUpAndDisable(HotSpot *hotspot);
@@ -322,6 +323,7 @@ public:
 	void openTravelAgencyDoor(HotSpot *hotspot);
 	void closeTravelAgencyDoor(HotSpot *hotspot);
 	void usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot);
+	void waitForSoundEnd();
 	void pickupSunflower(HotSpot *hotspot);
 	void checkIngredients();
 	void pickUpBook(int i);
@@ -346,6 +348,7 @@ public:
 	void giveMagazineToGuard(int inventoryObject, HotSpot *hotspot);
 	void giveWaterToGuard(int inventoryObject, HotSpot *hotspot);
 	void pickUpStone(HotSpot *hotspot);
+	void playSpecialAnim(uint32 offset, bool compressed, int x, int y, int width, int height, int numFrames);
 	void giveStoneToSlaves(int inventoryObject, HotSpot *hotspot);
 	void swimmingPoolCutscene(HotSpot *hotspot);
 	void magicFormula(int inventoryObject, HotSpot *hotspot);
