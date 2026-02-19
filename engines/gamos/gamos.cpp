@@ -85,7 +85,7 @@ Common::Error GamosEngine::run() {
 
 	_engineVersion = getEngineVersion() & 0xFF;
 
-	_arch.setVersion(_engineVersion);
+	_gameFile.setVersion(_engineVersion);
 
 	init(getRunFile());
 
@@ -142,14 +142,14 @@ Common::Error GamosEngine::run() {
 
 
 bool GamosEngine::loader2() {
-	int32 skipsz = _arch.readSint32LE();
-	_arch.skip(skipsz);
+	int32 skipsz = _gameFile.readSint32LE();
+	_gameFile.skip(skipsz);
 
-	if (_arch.readByte() != 7)
+	if (_gameFile.readByte() != 7)
 		return false;
 
 	RawData data;
-	if (!_arch.readCompressedData(&data))
+	if (!_gameFile.readCompressedData(&data))
 		return false;
 
 	int32 p1 = 0;
@@ -217,7 +217,7 @@ bool GamosEngine::loadModule(uint id) {
 	_keySeq.clear();
 
 	if ((!_isResLoadingProcess && !writeStateFile()) ||
-	        !_arch.seekDir(1))
+	        !_gameFile.seekDir(1))
 		return false;
 
 	_currentModuleID = id;
@@ -250,7 +250,7 @@ bool GamosEngine::loadModule(uint id) {
 	uint32 pid = 0;
 
 	while (doLoad) {
-		byte curByte = _arch.readByte();
+		byte curByte = _gameFile.readByte();
 
 		switch (curByte) {
 		case 0:
@@ -261,25 +261,25 @@ bool GamosEngine::loadModule(uint id) {
 
 			prefixLoaded = true;
 
-			if (!_arch.seekDir(targetDir))
+			if (!_gameFile.seekDir(targetDir))
 				return false;
 
 			break;
 		case CONFTP_P1:
-			p1 = (uint32)_arch.readPackedInt();
+			p1 = (uint32)_gameFile.readPackedInt();
 			break;
 		case CONFTP_P2:
-			p2 = (uint32)_arch.readPackedInt();
+			p2 = (uint32)_gameFile.readPackedInt();
 			break;
 		case CONFTP_P3:
-			p3 = (uint32)_arch.readPackedInt();
+			p3 = (uint32)_gameFile.readPackedInt();
 			break;
 		case 4: {
-			_resReadOffset = _arch.pos();
+			_resReadOffset = _gameFile.pos();
 			bool isResource = true;
 			if (prevByte == RESTP_GAMECONF) {
 				RawData data;
-				if (!_arch.readCompressedData(&data))
+				if (!_gameFile.readCompressedData(&data))
 					return false;
 				if (_isResLoadingProcess && !_isSaveLoadingProcess)
 					readData2(data);
@@ -302,20 +302,20 @@ bool GamosEngine::loadModule(uint id) {
 				isResource = false; /* do not loadResHandler */
 			} else if (prevByte == RESTP_DATACONF) {
 				RawData data;
-				if (!_arch.readCompressedData(&data))
+				if (!_gameFile.readCompressedData(&data))
 					return false;
 				if (pid == id)
 					readElementsConfig(data);
 				isResource = false; /* do not loadResHandler */
 			} else if (prevByte == RESTP_BKG) {
 				/* free elements ? */
-				_readingBkgOffset = _arch.pos();
+				_readingBkgOffset = _gameFile.pos();
 				_countReadedBkg++;
 			}
 
 			RawData data;
 			if (isResource) {
-				if (!_arch.readCompressedData(&data))
+				if (!_gameFile.readCompressedData(&data))
 					return false;
 
 				if (!loadResHandler(prevByte, pid, p1, p2, p3, data))
@@ -351,19 +351,19 @@ bool GamosEngine::loadModule(uint id) {
 			break;
 		}
 		case 5: {
-			byte t = _arch.readByte();
+			byte t = _gameFile.readByte();
 			if (t == 0 || (t & 0xec) != 0xec)
 				return false;
 
 			byte sz = (t & 3) + 1;
 			int32 movieSize = 0;
 			for (uint i = 0; i < sz; ++i)
-				movieSize |= _arch.readByte() << (i * 8);
+				movieSize |= _gameFile.readByte() << (i * 8);
 
 			if (prevByte == 0x14)
-				_movieOffsets[pid] = _arch.pos();
+				_movieOffsets[pid] = _gameFile.pos();
 
-			_arch.skip(movieSize);
+			_gameFile.skip(movieSize);
 			break;
 		}
 		case 6:
@@ -382,7 +382,7 @@ bool GamosEngine::loadModule(uint id) {
 			prevByte = curByte & CONFTP_RESMASK;
 
 			if ((curByte & CONFTP_IDFLG) == 0)
-				pid = (uint32)_arch.readPackedInt();
+				pid = (uint32)_gameFile.readPackedInt();
 
 			break;
 		}
@@ -552,7 +552,7 @@ bool GamosEngine::reuseLastResource(uint tp, uint pid, uint p1, uint p2, uint p3
 bool GamosEngine::initMainDatas() {
 	RawData rawdata;
 
-	if (!_arch.readCompressedData(&rawdata))
+	if (!_gameFile.readCompressedData(&rawdata))
 		return false;
 
 	Common::MemoryReadStream dataStream(rawdata.data(), rawdata.size(), DisposeAfterUse::NO);
@@ -619,7 +619,7 @@ bool GamosEngine::initMainDatas() {
 bool GamosEngine::init(const Common::String &moduleName) {
 	_isSaveLoadingProcess = false;
 
-	if (!_arch.open(Common::Path(moduleName)))
+	if (!_gameFile.open(Common::Path(moduleName)))
 		return false;
 
 	if (!loadInitModule())
@@ -818,11 +818,11 @@ bool GamosEngine::loadSpriteSeqImageData(int32 id, int32 p1, int32 p2, const byt
 		img->cSize = s.readSint32LE();
 	} else {
 		if (_sprites[id].flags & 0x80) {
-			if (_arch._lastReadDecompressedSize) {
-				img->offset = _arch._lastReadDataOffset;
-				img->cSize = _arch._lastReadSize;
+			if (_gameFile._lastReadDecompressedSize) {
+				img->offset = _gameFile._lastReadDataOffset;
+				img->cSize = _gameFile._lastReadSize;
 			} else {
-				img->offset = _arch._lastReadDataOffset;
+				img->offset = _gameFile._lastReadDataOffset;
 				img->cSize = 0;
 			}
 		} else {
@@ -883,7 +883,7 @@ bool GamosEngine::playIntro() {
 }
 
 bool GamosEngine::moviePlayerPlay(int id) {
-	bool res = _moviePlayer.playMovie(&_arch, _movieOffsets[id], this);
+	bool res = _moviePlayer.playMovie(&_gameFile, _movieOffsets[id], this);
 	return res;
 }
 
@@ -2315,19 +2315,19 @@ bool GamosEngine::loadImage(Image *img) {
 	if (img->offset < 0)
 		return false;
 
-	_arch.seek(img->offset, 0);
+	_gameFile.seek(img->offset, 0);
 
 	if (img->cSize == 0) {
 		img->rawData.resize((img->surface.w * img->surface.h + 16) & ~0xf);
 
-		_arch.read(img->rawData.data(), img->surface.w * img->surface.h);
+		_gameFile.read(img->rawData.data(), img->surface.w * img->surface.h);
 		img->surface.setPixels(img->rawData.data());
 	} else {
 		img->rawData.resize((img->surface.w * img->surface.h + 4 + 16) & ~0xf);
 
 		RawData tmp(img->cSize);
-		_arch.read(tmp.data(), tmp.size());
-		_arch.decompress(&tmp, &img->rawData);
+		_gameFile.read(tmp.data(), tmp.size());
+		_gameFile.decompress(&tmp, &img->rawData);
 		img->surface.setPixels(img->rawData.data() + 4);
 	}
 

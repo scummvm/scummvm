@@ -28,15 +28,15 @@ namespace Gamos {
 
 typedef Common::Array<byte> RawData;
 
-struct ArchiveDir {
+struct GameFileDir {
 	uint32 offset;
 	byte id;
 };
 
-class Archive : public Common::File {
+class GameFile : public Common::File {
 public:
-	Archive();
-	~Archive() override;
+	GameFile();
+	~GameFile() override;
 	bool open(const Common::Path &name) override;
 
 	uint16 getDirCount() const {
@@ -78,7 +78,7 @@ private:
 	byte _dirCount;
 	uint32 _dataOffset;
 
-	Common::Array<ArchiveDir> _directories;
+	Common::Array<GameFileDir> _directories;
 
 	int _version = 0x18;
 

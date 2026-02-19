@@ -410,7 +410,7 @@ bool MoviePlayer::readCompressed(int32_t count, Common::Array<byte> *buf) {
 		_packedBuffer.resize(_hdrValue1);
 		_file->read(_packedBuffer.data(), _hdrValue1);
 		buf->resize(_hdrValue2);
-		Archive::decompress(&_packedBuffer, buf);
+		GameFile::decompress(&_packedBuffer, buf);
 	} else {
 		buf->resize(_hdrValue1);
 		_file->read(buf->data(), _hdrValue1);

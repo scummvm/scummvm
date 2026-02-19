@@ -23,13 +23,13 @@
 
 namespace Gamos {
 
-Archive::Archive() {
+GameFile::GameFile() {
 };
 
-Archive::~Archive() {
+GameFile::~GameFile() {
 };
 
-bool Archive::open(const Common::Path &name) {
+bool GameFile::open(const Common::Path &name) {
 	bool res = File::open(name);
 
 	if (!res)
@@ -64,7 +64,7 @@ bool Archive::open(const Common::Path &name) {
 	_directories.resize(_dirCount);
 
 	for (uint i = 0; i < _dirCount; ++i) {
-		ArchiveDir &dir = _directories[i];
+		GameFileDir &dir = _directories[i];
 
 		dir.offset = readUint32LE();
 		dir.id = readByte();
@@ -73,12 +73,12 @@ bool Archive::open(const Common::Path &name) {
 	return true;
 }
 
-bool Archive::seekDir(uint id) {
+bool GameFile::seekDir(uint id) {
 	int16 idx = findDirByID(id);
 	if (idx < 0)
 		return false;
 
-	const ArchiveDir &dir = _directories[idx];
+	const GameFileDir &dir = _directories[idx];
 
 	if (!seek(_dataOffset + dir.offset, SEEK_SET))
 		return false;
@@ -86,7 +86,7 @@ bool Archive::seekDir(uint id) {
 	return true;
 }
 
-int32 Archive::readPackedInt() {
+int32 GameFile::readPackedInt() {
 	byte b = readByte();
 	if (!(b & 0x80))
 		return b;
@@ -127,7 +127,7 @@ int32 Archive::readPackedInt() {
 	return val;
 }
 
-RawData *Archive::readCompressedData() {
+RawData *GameFile::readCompressedData() {
 	RawData *data = new RawData();
 	if (!readCompressedData(data)) {
 		delete data;
@@ -136,7 +136,7 @@ RawData *Archive::readCompressedData() {
 	return data;
 }
 
-bool Archive::readCompressedData(RawData *out) {
+bool GameFile::readCompressedData(RawData *out) {
 	const byte t = readByte();
 	if ((t & 0x80) == 0)
 		return false;
@@ -185,7 +185,7 @@ bool Archive::readCompressedData(RawData *out) {
 	return true;
 }
 
-void Archive::decompress(RawData const *in, RawData *out) {
+void GameFile::decompress(RawData const *in, RawData *out) {
 	uint pos = 0;
 	uint outPos = 0;
 

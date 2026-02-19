@@ -382,7 +382,7 @@ private:
 	bool _errSet = false;
 	Common::String _errMessage;
 
-	Archive _arch;
+	GameFile _gameFile;
 
 	byte _cmdByte = 0;
 
@@ -600,7 +600,7 @@ protected:
 	Common::Error run() override;
 
 	void readCMDByte() {
-		_cmdByte = _arch.readByte();
+		_cmdByte = _gameFile.readByte();
 	}
 
 	bool loadModule(uint id);
