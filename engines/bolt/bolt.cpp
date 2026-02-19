@@ -44,7 +44,6 @@ BoltEngine::BoltEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 }
 
 BoltEngine::~BoltEngine() {
-	delete _screen;
 	delete _xp;
 }
 
@@ -57,12 +56,21 @@ Common::String BoltEngine::getGameId() const {
 }
 
 Common::Error BoltEngine::run() {
-	// Initialize 320x200 paletted graphics mode
-	initGraphics(320, 200);
-	_screen = new Graphics::Screen();
+	ConfMan.registerDefault("extended_viewport", false);
+	if (ConfMan.hasKey("extended_viewport", _targetName)) {
+		g_extendedViewport = ConfMan.getBool("extended_viewport");
+	}
 
-	//// Set the engine's debugger console
-	//setDebugger(new Console());
+	// Initialize paletted graphics mode
+	if (g_extendedViewport) {
+		initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
+	} else {
+		initGraphics(EXTENDED_SCREEN_WIDTH, EXTENDED_SCREEN_HEIGHT);
+	}
+
+	// Set the engine's debugger console
+	setDebugger(new Console());
+
 	//
 	//// If a savegame was selected from the launcher, load it
 	//int saveSlot = ConfMan.getInt("save_slot");
@@ -95,6 +103,8 @@ Common::Error BoltEngine::run() {
 	//	_screen->update();
 	//	limiter.startFrame();
 	//}
+
+	_xp->initialize();
 	boltMain();
 
 	return Common::kNoError;
@@ -112,12 +122,9 @@ Common::Error BoltEngine::syncGame(Common::Serializer &s) {
 }
 
 void BoltEngine::boltMain() {
-	DisplaySpecs displaySpecs[2];
 	void *testAlloc;
 	BarkerTable *barkerTable;
 	void *boothSprite;
-
-	memcpy(displaySpecs, g_displaySpecs, 16);
 
 	// g_callbackPtr = DS:0xCB; 
 
@@ -134,14 +141,14 @@ void BoltEngine::boltMain() {
 
 	g_boothsBoltLib = 0;
 
-	if (!openBOLTLib(AssetPath("booths.blt"), &g_boothsBoltIndex, &g_boothsBoltLib))
+	if (!openBOLTLib(&g_boothsBoltLib, &g_boothsBoltIndex, AssetPath("booths.blt")))
 		goto cleanup;
 
-	if (!_xp->chooseDisplaySpec(&g_displayMode, 2, displaySpecs))
+	if (!_xp->chooseDisplaySpec(&g_displayMode, 2, g_displaySpecs))
 		goto cleanup;
 
-	g_displayWidth = displaySpecs[g_displayMode].width;
-	g_displayHeight = displaySpecs[g_displayMode].height;
+	g_displayWidth = g_displaySpecs[g_displayMode].width;
+	g_displayHeight = g_displaySpecs[g_displayMode].height;
 
 	// Center within 384x240 virtual coordinate space...
 	g_displayX = (384 - g_displayWidth) / 2;

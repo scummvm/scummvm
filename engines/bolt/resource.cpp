@@ -23,7 +23,7 @@
 
 namespace Bolt {
 
-bool BoltEngine::openBOLTLib(const char *fileName, int *outIdx, BOLTLib **outLib) {
+bool BoltEngine::openBOLTLib(BOLTLib **outLib, int *outIdx, const char *fileName) {
 	return false;
 }
 

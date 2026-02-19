@@ -24,30 +24,31 @@
 
 #include "bolt/bolt.h"
 
+#include "common/events.h"
+#include "common/file.h"
+#include "common/mutex.h"
+#include "graphics/paletteman.h"
+
 namespace Bolt {
 
 struct DisplaySpecs;
 class BoltEngine;
 
-typedef struct XPCycleSpec {
-	short startIndex; // +0x00: first palette index
-	short endIndex;   // +0x02: last palette index
-	short delay;      // +0x04: cycle period in ms
-} XPCycleSpec;        // 6 bytes
+struct XPCycleState {
+	int16 startIndex;
+	int16 endIndex;
+	int16 delay;     // ms between rotations
+	uint32 nextFire; // getMillis() deadline for next rotation
+	bool active;
 
-typedef struct XPSurface {
-	byte *pixelData;     // +0x00: pixel buffer (width * height bytes, 8bpp)
-	int16 width;         // +0x04: surface width
-	int16 height;        // +0x06: surface height
-	byte *palette;       // +0x08: RGB palette data (127 * 3 = 381 bytes)
-	int16 paletteStart;  // +0x0C: first palette index (1)
-	int16 paletteCount;  // +0x0E: number of palette entries (127)
-	int16 flags;         // +0x10
-	long overlayData;    // +0x12
-	char _pad[0x10];     // +0x16..+0x23 (unknown)
-	int16 clipX;         // +0x24
-	int16 clipY;         // +0x26
-} XPSurface;             // total: 0x28 = 40 bytes
+	XPCycleState() {
+		startIndex = 0;
+		endIndex = 0;
+		delay = 0;
+		nextFire = 0;
+		active = false;
+	}
+};
 
 typedef struct XPPicDesc {
 	byte *pixelData;     // +0x00: pixel buffer (8bpp)
@@ -57,33 +58,93 @@ typedef struct XPPicDesc {
 	int16 paletteStart;  // +0x0C: first palette index
 	int16 paletteCount;  // +0x0E: number of palette entries
 	int16 flags;         // +0x10: bit 0 = transparent, bit 1 = RLE
-} XPPicDesc;             // 0x12 = 18 bytes
 
-typedef void (*BlitFunc)(void *src, int16 srcStride, void *dest, int16 destStride, int16 width, int16 height);
+	XPPicDesc() {
+		pixelData = nullptr;
+		width = 0;
+		height = 0;
+		palette = nullptr;
+		paletteStart = 0;
+		paletteCount = 0;
+		flags = 0;
+	}
+} XPPicDesc;
 
-typedef struct ClipRect {
-	short left;
-	short top;
-	short right;
-	short bottom;
-} ClipRect;
+typedef struct XPSurface {
+	XPPicDesc mainPic;
+	XPPicDesc overlayPic;
+	int16 dirtyPalStart; // +0x24
+	int16 dirtyPalEnd;   // +0x26
+
+	XPSurface() {
+		dirtyPalStart = 0;
+		dirtyPalEnd = 0;
+	}
+} XPSurface;             // total: 0x28 = 40 bytes
+
+enum XPEventTypes : int16 {
+	etEmpty      = 0,
+	etTimer      = 1,
+	etMouseMove  = 2,
+	etMouseDown  = 3,
+	etMouseUp    = 4,
+	etJoystick   = 5,
+	etSound      = 6,
+	etInactivity = 7
+};
+
+enum XPEventKeyStates : int16 {
+	eksInputOff     = 0,
+	eksMouseMode    = 1,
+	eksJoystickMode = 2
+};
+
+enum CustomEventType {
+	EVENT_TIMER = Common::EVENT_USER_FIRST_AVAILABLE
+};
+
+typedef struct XPEvent {
+	XPEvent *prev;
+	XPEvent *next;
+	XPEventTypes type;
+	uint32 payload;
+
+	XPEvent() {
+		prev = nullptr;
+		next = nullptr;
+		type = etEmpty;
+		payload = 0;
+	}
+} XPEvent;
+
+typedef struct XPTimer {
+	uint32 id;
+	uint32 deadline;
+	bool active;
+
+	XPTimer() {
+		id = 0;
+		deadline = 0;
+		active = false;
+	}
+} XPTimer;
 
 class XpLib {
 public:
 	XpLib(BoltEngine *bolt);
 	~XpLib();
 
-	void initialize();
+	bool initialize();
 	void terminate();
 
 	// Blit
-	void blit(void *src, uint16 srcStride, void *dst, uint16 dstStride, uint16 width, uint16 height);
-	void maskBlit(void *src, uint16 srcStride, void *dst, uint16 dstStride, uint16 width, uint16 height);
+	void blit(byte *src, uint16 srcStride, byte *dst, uint16 dstStride, uint16 width, uint16 height);
+	void maskBlit(byte *src, uint16 srcStride, byte *dst, uint16 dstStride, uint16 width, uint16 height);
 
 	// Palette
-	void getPalette(uint16 startIndex, uint16 count, void *destBuf);
-	void setPalette(uint16 count, uint16 startIndex, void *srcBuf);
-	bool startCycle(XPCycleSpec *specs);
+	void getPalette(uint16 startIndex, uint16 count, byte *destBuf);
+	void setPalette(uint16 count, uint16 startIndex, byte *srcBuf);
+	bool startCycle(XPCycleState *specs);
 	void cycleColors();
 	void stopCycle();
 	void setScreenBrightness(uint8 percent);
@@ -91,7 +152,7 @@ public:
 	// Cursor
 	bool readCursor(uint16 *outButtons, int16 *outX, int16 *outY);
 	void setCursorPos(int16 x, int16 y);
-	void setCursorImage(void *bitmap, int16 hotspotX, int16 hotspotY);
+	void setCursorImage(byte *bitmap, int16 hotspotX, int16 hotspotY);
 	void setCursorColor(byte r, byte g, byte b);
 	bool showCursor();
 	void hideCursor();
@@ -100,9 +161,9 @@ public:
 	// Events
 	int16 getEvent(int16 filter, uint32 *outData);
 	int16 peekEvent(int16 filter, uint32 *outData);
-	void postEvent(int16 type, uint32 data);
+	void postEvent(XPEventTypes type, uint32 data);
 	int16 setInactivityTimer(int16 seconds);
-	int16 setScreenSaverTimer(int16 time);
+	int16 setScreenSaverTimer(int16 seconds);
 	bool enableController();
 	void disableController();
 
@@ -120,55 +181,77 @@ public:
 	void randomize();
 
 	// File
-	int32 createFile(const char *fileName);
-	void deleteFile(const char *fileName);
-	int32 openFile(const char *fileName, short flags);
-	void closeFile(int32 handle);
-	bool readFile(int32 handle, void *buffer, uint32 *size);
-	bool setFilePos(int32 handle, uint32 offset, int16 origin);
+	Common::File *openFile(const char *fileName, short flags);
+	void closeFile(Common::File *handle);
+	bool readFile(Common::File *handle, void *buffer, uint32 *size);
+	bool setFilePos(Common::File *handle, int32 offset, int32 origin);
 	void *allocMem(uint32 size);
 	void *tryAllocMem(uint32 size);
 	void freeMem(void *mem);
 
 	// Sound
 	void waveCb();
-	bool playSound(void *data, uint32 size, int16 sampleRate);
+	bool playSound(byte *data, uint32 size, int16 sampleRate);
 	bool pauseSound();
 	bool resumeSound();
 	bool stopSound();
 
 	// Timer
-	int32 startTimer(int16 delay);
-	void timeCb();
-	bool killTimer(int32 timerId);
+	uint32 startTimer(int16 delay);
+	void updateTimers();
+	bool killTimer(uint32 timerId);
 
 protected:
-	BoltEngine *_bolt;
+	BoltEngine *_bolt = nullptr;
+	bool g_xpInitialized = false;
 
 	// Blit
-	void dirtyBlit(void *src, void *dst, void *dirtyFlags, uint16 width, uint16 height);
-	uint32 compositeBlit(void *src, void *background, void *dst, uint16 stride, uint16 width, uint16 height);
-	void rleBlit(void *src, void *dst, uint16 dstStride, uint16 width, uint16 height);
-	void rleMaskBlit(void *src, void *dst, uint16 dstStride, uint16 width, uint16 height);
-	uint32 rleCompositeBlit(void *rle, void *background, void *dst, uint16 width, uint16 height, void *dirtyFlags);
-	uint16 rleDataSize(void *rleData, uint16 height);
-	void markCursorPixels(void *buffer, uint32 count);
+	void dirtyBlit(byte *src, byte *dst, uint16 width, uint16 height, byte *dirtyFlags);
+	void compositeBlit(byte *src, byte *background, byte *dst, uint16 stride, uint16 width, uint16 height);
+	void rleBlit(byte *src, uint16 srcStride, byte *dst, uint16 dstStride, uint16 width, uint16 height);
+	void rleMaskBlit(byte *src, uint16 srcStride, byte *dst, uint16 dstStride, uint16 width, uint16 height);
+	void rleCompositeBlit(byte *rle, byte *background, byte *dst, uint16 width, uint16 height, byte *dirtyFlags);
+	uint16 rleDataSize(byte *rleData, uint16 height);
+	void markCursorPixels(byte *buffer, uint32 count);
+
+	// Palette
+	XPCycleState g_cycleStates[4];
+	byte g_paletteBuffer[3 * 256];
+	byte g_shiftedPaletteBuffer[3 * 256];
+	byte g_cycleTempPalette[3 * 20];
+	uint32 g_cycleTimerIds[4];
+	int16 g_brightnessShift = 0;
+	Common::Mutex g_paletteMutex;
+
+	static void cycleColorsCallback(void *refConf);
 
 	// Cursor
-	bool initCoords();
-	void shutdownCoords();
+	bool initCursor();
+	void shutdownCursor();
 	void readJoystick(int16 *outX, int16 *outY);
 
+	byte g_cursorBuffer[16 * 16];
+	int16 g_cursorWidth = 0;
+	int16 g_cursorHeight = 0;
+	int16 g_cursorScale = 0;
+	int16 g_cursorHotspotX = 0;
+	int16 g_cursorHotspotY = 0;
+	int16 g_lastCursorX = 0;
+	int16 g_lastCursorY = 0;
+	int16 g_cursorViewportWidth = 0;
+	int16 g_cursorViewportHeight = 0;
+	int16 g_cursorHidden = 1;
+
 	// Events
-	bool initWindow();
-	void shutdownWindow();
-	void unlinkEvent(int16 node);
-	void enqueueEvent(int16 node);
+	bool initEvents();
+	void shutdownEvents();
+	void unlinkEvent(XPEvent *node);
+	void enqueueEvent(XPEvent *node);
 	void pumpMessages();
 	void handleTimer(uint32 timerId);
 	void handleMouseMove(bool *mouseMoved);
 	void handleMouseButton(int16 down, int16 button);
-	void handleKey(int16 vkey, int16 down);
+	void handleKey(Common::KeyCode vkey, int16 down);
 	void postJoystickEvent(int16 source, int16 dx, int16 dy);
 	bool canDropEvent(int16 type);
 	void activateScreenSaver();
@@ -177,26 +260,80 @@ protected:
 	void disableMouse();
 	int16 getButtonState();
 
+	XPEvent g_events[40];
+
+	int8 g_keyStateLeft = 0;
+	int8 g_keyStateRight = 0;
+	int8 g_keyStateUp = 0;
+	int8 g_keyStateDown = 0;
+	int16 g_lastJoystickX = 0;
+	int16 g_lastJoystickY = 0;
+	int16 g_mouseButtonPrev = 0;
+	int16 g_mouseButtonState = 0;
+	int16 g_eventMouseMoved = 0;
+	int16 g_eventKeyStates = 0;
+	uint32 g_inactivityDeadline = 0;
+
+	XPEvent *g_eventQueueHead = nullptr;
+	XPEvent *g_eventQueueTail = nullptr;
+	XPEvent *g_eventFreeList = nullptr;
+
+	uint32 g_lastMouseEventData = 0;
+	Common::Point g_lastRegisteredMousePos;
+
 	// Display
-	int16 switchDisplayMode(int16 mode);
 	bool initDisplay();
 	void shutdownDisplay();
 	bool createSurface(XPSurface *surf);
 	void freeSurface(XPSurface *surf);
 	void virtualToScreen(int16 *x, int16 *y);
 	void screenToVirtual(int16 *x, int16 *y);
-	bool clipAndBlit(XPPicDesc *src, XPSurface *dest, int16 x, int16 y, ClipRect *outClip);
-	void addDirtyRect(ClipRect *rect);
+	void dispatchBlit(int16 mode, byte *src, uint16 srcStride, byte *dst, uint16 dstStride, uint16 width, uint16 height);
+	bool clipAndBlit(XPPicDesc *src, XPSurface *dest, int16 x, int16 y, Common::Rect *outClip);
+	void addDirtyRect(Common::Rect *rect);
 	void waitForFrameRate();
 	void handlePaletteTransitions();
 	void flushPalette();
 	void overlayComposite();
 	void compositeToScreen();
 	void mergeDirtyRects();
-	void blitDirtyRects(ClipRect *rects, int16 count);
-	void compositeDirtyRects(ClipRect *rects, int16 count);
-	void applyCursorPalette(bool enable);
+	void blitDirtyRects(Common::Rect *rects, int16 count);
+	void compositeDirtyRects(Common::Rect *rects, int16 count);
+	void applyCursorPalette();
 	void prepareBackSurface();
+
+	Graphics::Screen *_screen = nullptr;
+
+	XPSurface g_surfaces[2];
+
+	int16 g_virtualWidth = 0;
+	int16 g_virtualHeight = 0;
+	int16 g_currentDisplayPage = 0;
+	int16 g_spriteOverlayActive = 0;
+	int16 g_spriteOverlayEnabled = 0;
+	int16 g_frameRateFPS = 0;
+	int16 g_overlayCount = 0;
+	int16 g_prevDirtyCount = 0;
+	int16 g_prevDirtyValid = 0;
+	int16 g_surfaceWidth = 0;
+	int16 g_surfaceHeight = 0;
+	int16 g_viewportOffsetX = 0;
+	int16 g_viewportOffsetY = 0;
+	uint32 g_nextFrameTime = 0;
+
+	Common::Rect g_dirtyRects[30];
+	Common::Rect g_prevDirtyRects[30];
+	Common::Rect g_cursorDirtyRect;
+	Common::Rect g_prevCursorRect;
+	Common::Rect g_cursorClipRect2;
+	Common::Rect g_prevCursorRect2;
+
+	byte g_vgaFramebuffer[320 * 200];
+	byte g_cursorBackgroundSaveBuffer[16 * 16];
+	byte g_rowDirtyFlags[200];
+
+	XPPicDesc g_cursorBackgroundSave;
+	XPPicDesc g_cursorSprite;
 
 	// File
 	void fileError(const char *message);
@@ -209,6 +346,18 @@ protected:
 	// Timer
 	bool initTimer();
 	void shutdownTimer();
+
+	uint32 g_inactivityTimerId = 0;
+	int16 g_inactivityCountdown = 0;
+	int16 g_inactivityTimerValue = 0;
+	int16 g_cursorBlinkCountdown = 0;
+	int16 g_screenSaverTimerValue = 0;
+	int16 g_inactivityTimeout = 0;
+
+	bool g_timerInitialized = false;
+
+	XPTimer g_timers[128];
+	uint16 g_nextTimerId = 0;
 };
 
 } // End of namespace Bolt

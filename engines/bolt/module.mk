@@ -13,7 +13,6 @@ MODULE_OBJS = \
 	xplib\display.o \
 	xplib\events.o \
 	xplib\file.o \
-	xplib\mem.o \
 	xplib\palette.o \
 	xplib\random.o \
 	xplib\sound.o \

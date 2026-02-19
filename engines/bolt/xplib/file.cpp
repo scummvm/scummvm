@@ -22,31 +22,53 @@
 #include "bolt/bolt.h"
 #include "bolt/xplib/xplib.h"
 
+#include "common/file.h"
+
 namespace Bolt {
 
 void XpLib::fileError(const char *message) {
+	stopCycle();
+	error(message);
 }
 
-int32 XpLib::createFile(const char *fileName) {
-	return int32();
+Common::File *XpLib::openFile(const char *fileName, short flags) {
+	// Read-write (mode 3) and write (mode 2) are unsupported and not needed by Cartoon Carnival...
+	assert(flags == 1);
+
+	Common::File *file = new Common::File();
+	if (!file->exists(fileName)) {
+		fileError("File does not exist.");
+	}
+
+	file->open(fileName);
+	if (!file->isOpen()) {
+		fileError("Disc error.  The Disc may be dirty.");
+		return nullptr;
+	}
+
+	return file;
 }
 
-void XpLib::deleteFile(const char *fileName) {
+void XpLib::closeFile(Common::File *handle) {
+	if (handle->isOpen()) {
+		handle->close();
+	}
 }
 
-int32 XpLib::openFile(const char *fileName, short flags) {
-	return int32();
+bool XpLib::readFile(Common::File *handle, void *buffer, uint32 *size) {
+	uint32 sizeRead = handle->read(buffer, *size);
+	bool readEntireSize = sizeRead == *size;
+	*size = sizeRead;
+
+	if (!readEntireSize) {
+		fileError("Disc error.  The Disc may be dirty.");
+	}
+
+	return readEntireSize;
 }
 
-void XpLib::closeFile(int32 handle) {
-}
-
-bool XpLib::readFile(int32 handle, void *buffer, uint32 *size) {
-	return false;
-}
-
-bool XpLib::setFilePos(int32 handle, uint32 offset, int16 origin) {
-	return false;
+bool XpLib::setFilePos(Common::File *handle, int32 offset, int32 origin) {
+	return handle->seek(offset + origin, SEEK_SET);
 }
 
 void *XpLib::allocMem(uint32 size) {

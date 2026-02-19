@@ -39,14 +39,17 @@
 
 namespace Bolt {
 
+#define SCREEN_WIDTH           320
+#define SCREEN_HEIGHT          200
+#define EXTENDED_SCREEN_WIDTH  384
+#define EXTENDED_SCREEN_HEIGHT 240
+
 struct BoltGameDescription;
 class XpLib;
 
 struct DisplaySpecs {
 	int16 width;
 	int16 height;
-	int16 depth;
-	int16 unk;
 };
 
 struct BarkerTable {
@@ -74,8 +77,7 @@ private:
 protected:
 	// Engine APIs
 	Common::Error run() override;
-public:
-	Graphics::Screen *_screen = nullptr;
+
 public:
 	BoltEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~BoltEngine() override;
@@ -125,11 +127,12 @@ public:
 
 protected:
 	DisplaySpecs g_displaySpecs[2] = {
-		{384, 240, 1, 1},
-		{320, 200, 1, 1}
+		{384, 240},
+		{320, 200}
 	};
 
 	XpLib *_xp;
+	bool g_extendedViewport = false;
 
 	// Entry point
 	void boltMain();
@@ -205,10 +208,12 @@ protected:
 	// Resource handling
 	BOLTLib *g_boothsBoltLib = nullptr;
 	int g_boothsBoltIndex = 0;
+	int16 g_resourceIndexCount = 1000;
+	uint32 *g_resourceIndex = nullptr;
 
 	#define AssetPath(x) x
 
-	bool openBOLTLib(const char *fileName, int *outIdx, BOLTLib **outLib);
+	bool openBOLTLib(BOLTLib **outLib, int *outIdx, const char *fileName);
 	void closeBOLTLib(BOLTLib **lib);
 	bool attemptFreeIndex(BOLTLib *lib, int16 groupId);
 	void loadGroupDirectory();

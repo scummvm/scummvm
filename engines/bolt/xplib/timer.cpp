@@ -25,20 +25,63 @@
 namespace Bolt {
 
 bool XpLib::initTimer() {
-	return false;
+	for (int i = 0; i < ARRAYSIZE(g_timers); i++)
+		g_timers[i].active = false;
+
+	g_nextTimerId = 1;
+	g_timerInitialized = true;
+
+	return true;
 }
 
 void XpLib::shutdownTimer() {
+	if (!g_timerInitialized) {
+		g_timerInitialized = false;
+
+		for (int i = 0; i < ARRAYSIZE(g_timers); i++) {
+			g_timers[i].active = false;
+		}
+	}
 }
 
-int32 XpLib::startTimer(int16 delay) {
+uint32 XpLib::startTimer(int16 delay) {
+	uint32 now = _bolt->_system->getMillis();
+
+	for (int i = 0; i < ARRAYSIZE(g_timers); i++) {
+		if (!g_timers[i].active) {
+			g_timers[i].id = g_nextTimerId++;
+
+			if (g_nextTimerId == 0)
+				g_nextTimerId = 1;
+
+			g_timers[i].deadline = now + delay;
+			g_timers[i].active = true;
+			return g_timers[i].id;
+		}
+	}
+
 	return 0;
 }
 
-void XpLib::timeCb() {
+void XpLib::updateTimers() {
+	uint32 now = _bolt->_system->getMillis();
+
+	for (int i = 0; i < ARRAYSIZE(g_timers); i++) {
+		if (g_timers[i].active && now >= g_timers[i].deadline) {
+			g_timers[i].active = false;
+			handleTimer(g_timers[i].id);
+		}
+	}
 }
 
-bool XpLib::killTimer(int32 timerId) {
+bool XpLib::killTimer(uint32 timerId) {
+	for (int i = 0; i < ARRAYSIZE(g_timers); i++) {
+		if (g_timers[i].active && g_timers[i].id == timerId) {
+			g_timers[i].active = false;
+			return true;
+		}
+	}
+
 	return false;
 }
 

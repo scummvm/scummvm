@@ -25,11 +25,11 @@
 namespace Bolt {
 
 bool XpLib::pollSound(void *outData) {
-	return false;
+	return true;
 }
 
 bool XpLib::initSound() {
-	return false;
+	return true;
 }
 
 void XpLib::waveCb() {
@@ -40,7 +40,7 @@ void XpLib::shutdownSound() {
 
 }
 
-bool XpLib::playSound(void *data, uint32 size, int16 sampleRate) {
+bool XpLib::playSound(byte *data, uint32 size, int16 sampleRate) {
 	return false;
 }
 

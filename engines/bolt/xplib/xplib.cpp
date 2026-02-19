@@ -27,17 +27,65 @@ namespace Bolt {
 XpLib::XpLib(BoltEngine *bolt) {
 	_bolt = bolt;
 
-	initialize();
+	memset(g_cursorBuffer, 0, sizeof(g_cursorBuffer));
+	memset(g_cursorBackgroundSaveBuffer, 0, sizeof(g_cursorBackgroundSaveBuffer));
+
+	memset(g_paletteBuffer, 0, sizeof(g_paletteBuffer));
+	memset(g_shiftedPaletteBuffer, 0, sizeof(g_shiftedPaletteBuffer));
+	memset(g_cycleTimerIds, 0, sizeof(g_cycleTimerIds));
+	memset(g_cycleTempPalette, 0, sizeof(g_cycleTempPalette));
+
+	_screen = new Graphics::Screen();
 }
 
 XpLib::~XpLib() {
 	terminate();
+
+	delete _screen;
 }
 
-void XpLib::initialize() {
+bool XpLib::initialize() {
+	if (g_xpInitialized)
+		return false;
+
+	g_xpInitialized = true;
+
+	if (!initTimer()) {
+		terminate();
+		return false;
+	}
+
+	if (!initEvents()) {
+		terminate();
+		return false;
+	}
+
+	if (!initSound()) {
+		terminate();
+		return false;
+	}
+
+	if (!initDisplay()) {
+		terminate();
+		return false;
+	}
+
+	if (!initCursor()) {
+		terminate();
+		return false;
+	}
+
+	return true;
 }
 
 void XpLib::terminate() {
+	shutdownCursor();
+	shutdownDisplay();
+	shutdownSound();
+	shutdownEvents();
+	shutdownTimer();
+
+	g_xpInitialized = false;
 }
 
 } // End of namespace Bolt
