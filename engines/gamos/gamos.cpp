@@ -4390,7 +4390,8 @@ bool GamosEngine::eventsSkip(bool breakOnInput) {
 		if (breakOnInput) {
 			if (e.type == Common::EVENT_LBUTTONUP ||
 				e.type == Common::EVENT_RBUTTONUP ||
-				e.type == Common::EVENT_KEYUP)
+				e.type == Common::EVENT_KEYUP ||
+				e.type == Common::EVENT_QUIT)
 				brk = true;
 		}
 	}
