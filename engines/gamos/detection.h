@@ -30,7 +30,6 @@ struct GamosGameDescription {
 	AD_GAME_DESCRIPTION_HELPERS(desc);
 
 	ADGameDescription desc;
-	const char *runFile;
 	uint32 engineVersion;
 };
 

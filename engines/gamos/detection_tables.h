@@ -45,7 +45,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		"solgamer.exe",
 		0x80000018
 	},
 	{
@@ -59,7 +58,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		"solgamee.exe",
 		0x80000018
 	},
 	{
@@ -73,7 +71,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		"solgamee.exe",
 		0x80000018
 	},
 	{
@@ -87,7 +84,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		"pilots.exe",
 		0x80000016
 	},
 	{
@@ -101,7 +97,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE | ADGF_DEMO,
 			GUIO1(GUIO_NONE)
 		},
-		"pilde_r.exe",
 		0x80000016
 	},
 	{
@@ -115,7 +110,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE | ADGF_DEMO,
 			GUIO1(GUIO_NONE)
 		},
-		"pildemo.exe",
 		0x80000016
 	},
 	{
@@ -129,7 +123,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE | ADGF_DEMO,
 			GUIO1(GUIO_NONE)
 		},
-		"pilotsrd.exe",
 		0x80000016
 	},
 	{
@@ -143,7 +136,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE | ADGF_DEMO,
 			GUIO1(GUIO_NONE)
 		},
-		"pilde_e.exe",
 		0x80000016
 	},
 	{
@@ -157,7 +149,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE | ADGF_DEMO,
 			GUIO1(GUIO_NONE)
 		},
-		"pilotsed.exe",
 		0x80000018
 	},
 	{
@@ -171,7 +162,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		"pilots2.exe",
 		0x80000018
 	},
 	{
@@ -185,7 +175,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		"wildus.exe",
 		0x80000018
 	},
 	{
@@ -199,7 +188,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		"wildus.exe",
 		0x80000016
 	},
 	{
@@ -213,7 +201,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		"wildru.exe",
 		0x80000016
 	},
 	{
@@ -227,7 +214,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE | ADGF_DEMO,
 			GUIO1(GUIO_NONE)
 		},
-		"wildrudm.exe",
 		0x80000016
 	},
 	{
@@ -241,7 +227,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE | ADGF_DEMO,
 			GUIO1(GUIO_NONE)
 		},
-		"wildusdm.exe",
 		0x80000016
 	},
 	{
@@ -255,7 +240,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE | ADGF_DEMO,
 			GUIO1(GUIO_NONE)
 		},
-		"ffloprd.exe",
 		0x80000016
 	},
 	{
@@ -269,7 +253,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE | ADGF_DEMO,
 			GUIO1(GUIO_NONE)
 		},
-		"ffloped.exe",
 		0x80000016
 	},
 	{
@@ -283,7 +266,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		"fflope.exe",
 		0x80000018
 	},
 	{
@@ -297,7 +279,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE | ADGF_DEMO,
 			GUIO1(GUIO_NONE)
 		},
-		"ffloped.exe",
 		0x80000018
 	},
 	{
@@ -311,7 +292,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		"fflope.exe",
 		0x80000016
 	},
 	{
@@ -325,7 +305,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		"fflopr.exe",
 		0x80000016
 	},
 	{ // 1.13rus
@@ -338,7 +317,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		"fflop.exe",
 		0x8000000b
 	},
 	{ // 1.13eng
@@ -351,7 +329,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		"fflop.exe",
 		0x8000000b
 	},
 	{ // 1.29eng
@@ -365,7 +342,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		"fflop.exe",
 		0x80000012
 	},
 	{
@@ -379,7 +355,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		"it.exe",
 		0x80000016
 	},
 	{
@@ -392,7 +367,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		"it.exe",
 		0x8000000b
 	},
 	{
@@ -405,7 +379,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		"netwalk.exe",
 		0x8000000b
 	},
 	{
@@ -419,7 +392,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		"netwalk.exe",
 		0x80000016
 	},
 	{
@@ -433,7 +405,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		"netwalk.exe",
 		0x80000016
 	},
 	{
@@ -447,7 +418,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		"netwalk.exe",
 		0x80000012
 	},
 	{
@@ -461,7 +431,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		"netwalk.exe",
 		0x80000018
 	},
 	{
@@ -475,7 +444,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE | ADGF_DEMO,
 			GUIO1(GUIO_NONE)
 		},
-		"netwalk.exe",
 		0x80000018
 	},
 	{
@@ -489,7 +457,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		"vitam_e.exe",
 		0x80000016
 	},
 	{
@@ -503,7 +470,6 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		"vitam_e.exe",
 		0x80000018
 	},
 	{
@@ -517,12 +483,10 @@ const GamosGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		"vitam_r.exe",
 		0x80000016
 	},
 	{
 		AD_TABLE_END_MARKER,
-		"",
 		0
 	}
 };

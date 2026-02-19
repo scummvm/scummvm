@@ -837,7 +837,7 @@ public:
 	}
 
 	Common::String getRunFile() const {
-		return _gameDescription->runFile;
+		return _gameDescription->desc.filesDescriptions[0].fileName;
 	}
 
 	uint32 getEngineVersion() const {
