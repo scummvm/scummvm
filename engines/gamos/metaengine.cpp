@@ -19,8 +19,6 @@
  *
  */
 
-#include "common/translation.h"
-
 #include "gamos/metaengine.h"
 #include "gamos/detection.h"
 #include "gamos/gamos.h"
