@@ -48,7 +48,7 @@ private:
 	int proccessMidiChunk();
 
 	bool readHdr();
-	bool readCompressed(int32_t count, Common::Array<byte> *buf);
+	bool readCompressed(int32 count, Common::Array<byte> *buf);
 
 	uint8 processMessages(bool keepAct, uint32 *msecs);
 
@@ -98,8 +98,8 @@ private:
 	Common::File *_file = nullptr;
 
 	byte _hdrBytes[4];
-	int32_t _hdrValue1 = 0;
-	int32_t _hdrValue2 = 0;
+	int32 _hdrValue1 = 0;
+	int32 _hdrValue2 = 0;
 };
 
 }

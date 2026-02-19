@@ -408,7 +408,7 @@ bool GamosEngine::loadModule(uint id) {
 	return true;
 }
 
-bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, const byte *data, size_t dataSize) {
+bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, const byte *data, uint32 dataSize) {
 	if (tp == RESTP_VMSTATE) {
 		Common::MemoryReadStream dataStream(data, dataSize, DisposeAfterUse::NO);
 
@@ -528,7 +528,7 @@ bool GamosEngine::loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, c
 	} else if (tp == RESTP_XORSEQ2) {
 		loadXorSeq(data, dataSize, 2);
 	} else {
-		warning("Unk Res %x at %x sz %zx", tp, _loadedDataSize, dataSize);
+		warning("Unk Res %x at %x sz %x", tp, _loadedDataSize, dataSize);
 	}
 	return true;
 }
@@ -733,7 +733,7 @@ void GamosEngine::readElementsConfig(const RawData &data) {
 	_vm.clearMemory();
 }
 
-void GamosEngine::loadXorSeq(const byte *data, size_t dataSize, int id) {
+void GamosEngine::loadXorSeq(const byte *data, uint32 dataSize, int id) {
 	Common::MemoryReadStream dataStream(data, dataSize);
 
 	Common::Array<XorArg> &seq = _xorSeq[id];
@@ -747,7 +747,7 @@ void GamosEngine::loadXorSeq(const byte *data, size_t dataSize, int id) {
 	}
 }
 
-bool GamosEngine::loadSpriteInfo(int32 id, const byte *data, size_t dataSize) {
+bool GamosEngine::loadSpriteInfo(int32 id, const byte *data, uint32 dataSize) {
 	if (dataSize < 4)
 		return false;
 
@@ -764,7 +764,7 @@ bool GamosEngine::loadSpriteInfo(int32 id, const byte *data, size_t dataSize) {
 	return true;
 }
 
-bool GamosEngine::loadSpriteSeqLength(int32 id, const byte *data, size_t dataSize) {
+bool GamosEngine::loadSpriteSeqLength(int32 id, const byte *data, uint32 dataSize) {
 	if (*(const uint32 *)data != 0)
 		error("41 not null!!!");
 
@@ -774,7 +774,7 @@ bool GamosEngine::loadSpriteSeqLength(int32 id, const byte *data, size_t dataSiz
 	return true;
 }
 
-bool GamosEngine::loadSpriteSeqImageInfo(int32 id, int32 p1, const byte *data, size_t dataSize) {
+bool GamosEngine::loadSpriteSeqImageInfo(int32 id, int32 p1, const byte *data, uint32 dataSize) {
 	//warning("loadRes42 pid %d p %d sz %x",id, p1, dataSize);
 
 	if (_sprites[id].sequences.size() == 0)
@@ -798,7 +798,7 @@ bool GamosEngine::loadSpriteSeqImageInfo(int32 id, int32 p1, const byte *data, s
 	return true;
 }
 
-bool GamosEngine::loadSpriteSeqImageData(int32 id, int32 p1, int32 p2, const byte *data, size_t dataSize) {
+bool GamosEngine::loadSpriteSeqImageData(int32 id, int32 p1, int32 p2, const byte *data, uint32 dataSize) {
 	_images.push_back(new Image());
 	_sprites[id].sequences[p1]->operator[](p2).image = _images.back();
 
@@ -836,12 +836,12 @@ bool GamosEngine::loadSpriteSeqImageData(int32 id, int32 p1, int32 p2, const byt
 	return true;
 }
 
-bool GamosEngine::loadMidiTrack(int32 id, const byte *data, size_t dataSize) {
+bool GamosEngine::loadMidiTrack(int32 id, const byte *data, uint32 dataSize) {
 	_midiTracks[id].assign(data, data + dataSize);
 	return true;
 }
 
-bool GamosEngine::loadBackground(int32 id, const byte *data, size_t dataSize) {
+bool GamosEngine::loadBackground(int32 id, const byte *data, uint32 dataSize) {
 	GameScreen &bimg = _gameScreens[id];
 	bimg.loaded = true;
 	bimg.offset = _readingBkgOffset;
@@ -3883,7 +3883,7 @@ byte GamosEngine::FUN_0040881c(const Common::Array<byte> &arr) {
 
 
 
-void Actions::parse(const byte *data, size_t dataSize) {
+void Actions::parse(const byte *data, uint32 dataSize) {
 	Common::MemoryReadStream rstream(data, dataSize);
 
 	/* clean first */

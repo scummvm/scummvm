@@ -213,7 +213,7 @@ struct Actions {
 	int32 conditionAddress = -1;
 	int32 functionAddress = -1;
 
-	void parse(const byte *data, size_t dataSize);
+	void parse(const byte *data, uint32 dataSize);
 };
 
 struct ObjectAction {
@@ -606,7 +606,7 @@ protected:
 	bool loadModule(uint id);
 	bool loader2();
 
-	bool loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, const byte *data, size_t dataSize);
+	bool loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, const byte *data, uint32 dataSize);
 	bool loadResHandler(uint tp, uint pid, uint p1, uint p2, uint p3, const RawData &data);
 
 	bool reuseLastResource(uint tp, uint pid, uint p1, uint p2, uint p3);
@@ -620,16 +620,16 @@ protected:
 
 	void setFPS(uint fps);
 
-	void loadXorSeq(const byte *data, size_t dataSize, int id);
+	void loadXorSeq(const byte *data, uint32 dataSize, int id);
 
-	bool loadSpriteInfo(int32 id, const byte *data, size_t dataSize);
-	bool loadSpriteSeqLength(int32 id, const byte *data, size_t dataSize);
-	bool loadSpriteSeqImageInfo(int32 id, int32 p1, const byte *data, size_t dataSize);
-	bool loadSpriteSeqImageData(int32 id, int32 p1, int32 p2, const byte *data, size_t dataSize);
+	bool loadSpriteInfo(int32 id, const byte *data, uint32 dataSize);
+	bool loadSpriteSeqLength(int32 id, const byte *data, uint32 dataSize);
+	bool loadSpriteSeqImageInfo(int32 id, int32 p1, const byte *data, uint32 dataSize);
+	bool loadSpriteSeqImageData(int32 id, int32 p1, int32 p2, const byte *data, uint32 dataSize);
 
-	bool loadMidiTrack(int32 id, const byte *data, size_t dataSize);
+	bool loadMidiTrack(int32 id, const byte *data, uint32 dataSize);
 
-	bool loadBackground(int32 id, const byte *data, size_t dataSize);
+	bool loadBackground(int32 id, const byte *data, uint32 dataSize);
 
 	void freeImages();
 	void freeSequences();

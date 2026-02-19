@@ -139,7 +139,7 @@ int MoviePlayer::processControlChunk() {
 
 	switch (_hdrBytes[1]) {
 	case 0:
-		if ((uint32_t)_hdrValue1 != 0x563d2d5b || (uint32_t)_hdrValue2 != 0x5d2d3d53) {
+		if ((uint32)_hdrValue1 != 0x563d2d5b || (uint32)_hdrValue2 != 0x5d2d3d53) {
 			error();
 			return 0;
 		}
@@ -402,7 +402,7 @@ bool MoviePlayer::readHdr() {
 	return true;
 }
 
-bool MoviePlayer::readCompressed(int32_t count, Common::Array<byte> *buf) {
+bool MoviePlayer::readCompressed(int32 count, Common::Array<byte> *buf) {
 	if (_hdrValue1 == 0)
 		return true;
 
