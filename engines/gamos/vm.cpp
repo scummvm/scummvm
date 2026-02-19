@@ -30,7 +30,7 @@ uint8 VM::MemAccess::getU8(uint32 address) {
 	if (!_currentBlock)
 		return 0; // ERROR!
 
-	return _currentBlock->data[ address - _currentBlock->address ];
+	return _currentBlock->data[address - _currentBlock->address];
 }
 
 uint32 VM::MemAccess::getU32(uint32 address) {

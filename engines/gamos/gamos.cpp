@@ -2948,7 +2948,7 @@ void GamosEngine::vmCallDispatcher(VM::Context *ctx, uint32 funcID) {
 
 		char buffer[256];
 		int a = 0, b = 0, c = 0, d = 0;
-		if ( sscanf(str.c_str(), "%s %d %d %d %d", buffer, &a, &b, &c, &d) > 0) {
+		if (sscanf(str.c_str(), "%s %d %d %d %d", buffer, &a, &b, &c, &d) > 0) {
 			stopMidi();
 			stopSounds();
 
@@ -4386,8 +4386,8 @@ bool GamosEngine::onTxtInputUpdate(uint8 c) {
 bool GamosEngine::eventsSkip(bool breakOnInput) {
 	bool brk = false;
 	Common::Event e;
-	while(_system->getEventManager()->pollEvent(e)) {
-		if (breakOnInput){
+	while (_system->getEventManager()->pollEvent(e)) {
+		if (breakOnInput) {
 			if (e.type == Common::EVENT_LBUTTONUP ||
 				e.type == Common::EVENT_RBUTTONUP ||
 				e.type == Common::EVENT_KEYUP)
