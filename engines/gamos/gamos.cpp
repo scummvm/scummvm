@@ -46,7 +46,8 @@ GamosEngine::GamosEngine(OSystem *syst, const GamosGameDescription *gameDesc) : 
 	_gameDescription(gameDesc),
 	_messageProc(this),
 	_vm(this, callbackVMCallDispatcher),
-	_txtInputVMAccess(_vm) {}
+	_txtInputVMAccess(_vm),
+	_randomSource("gamos") {}
 
 GamosEngine::~GamosEngine() {
 	freeImages();
@@ -983,7 +984,7 @@ void GamosEngine::flushDirtyRects(bool apply) {
 	_inputMouseActType = ACT_NONE;
 	PTR_00417388 = nullptr;
 
-	rndSeed(_system->getMillis());
+	rndSeed(_randomSource.getRandomNumber(UINT_MAX));
 	_inputActObj = nullptr;
 	cycleNextInputObj(nullptr);
 }

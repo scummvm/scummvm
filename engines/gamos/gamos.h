@@ -436,6 +436,7 @@ private:
 
 	Common::Array<XorArg> _xorSeq[3];
 
+	Common::RandomSource _randomSource;
 	uint32 _seed = 1;
 
 	Object _cursorObject;
