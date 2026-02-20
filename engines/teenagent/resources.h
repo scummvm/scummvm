@@ -1162,6 +1162,17 @@ const uint16 dsAddr_finalCredits7 = 0xe488; // "programming..."
 
 const byte kNumDialogStacks = 26;
 
+// Values in the enum below should match those defined in the Language enum
+// in create_teenagent.h
+namespace DataLanguage {
+enum : byte {
+	CS_CZE = 3,
+	EN_ANY = 7,
+	PL_POL = 27,
+	RU_RUS = 30,
+};
+}
+
 enum MessageType{
 	kRejectMsg0 = 0,
 	kRejectMsg1,

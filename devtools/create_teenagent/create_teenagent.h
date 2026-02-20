@@ -22,7 +22,6 @@
 #ifndef CREATE_TEENAGENT_H
 #define CREATE_TEENAGENT_H
 
-#include "common/language.h"
 #include "util.h"
 
 #define TEENAGENT_DAT_VERSION 6
@@ -46,7 +45,17 @@ struct ResourceInfo {
 #define NUM_RESOURCES 7
 #define NUM_LANGS 4
 
-const Common::Language supportedLanguages[NUM_LANGS] = {
+// If you are adding a new language here, make sure to sync with teenagent/resources.h
+// enum in DataLanguage around line 1165
+
+enum Language : byte {
+	CS_CZE = 3,
+	EN_ANY = 7,
+	PL_POL = 27,
+	RU_RUS = 30,
+};
+
+const Language supportedLanguages[NUM_LANGS] = {
 	CS_CZE,
 	EN_ANY,
 	PL_POL,
