@@ -70,11 +70,6 @@ void GamosEngine::freeSequences() {
 
 Common::Error GamosEngine::run() {
 
-	// If a savegame was selected from the launcher, load it
-	int saveSlot = ConfMan.getInt("save_slot");
-	if (saveSlot != -1)
-		(void)loadGameState(saveSlot);
-
 	CursorMan.setDefaultArrowCursor();
 	CursorMan.showMouse(true);
 
