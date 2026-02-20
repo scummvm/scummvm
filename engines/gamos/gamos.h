@@ -493,6 +493,10 @@ private:
 	bool _enableMidi = false;
 	int32 _midiTrack = 0;
 
+	uint16 _scummMidiVolume = 256;
+	uint16 _scummSndVolume = 256;
+
+
 	uint32 _readingBkgOffset = 0;
 	int32 _readingBkgMainId = -1;
 	int32 _countReadedBkg = 0;
@@ -641,6 +645,8 @@ protected:
 	int stepVolume(int volume, int target);
 
 	void changeVolume();
+
+	void syncSoundSettings() override;
 
 
 	void stopMidi();

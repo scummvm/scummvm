@@ -620,10 +620,15 @@ bool GamosEngine::init(const Common::String &moduleName) {
 	if (!loadInitModule())
 		return false;
 
-	_savedSndVolume = !ConfMan.hasKey("sfx_volume") ? 255 : ConfMan.getInt("sfx_volume");
-	_savedMidiVolume = !ConfMan.hasKey("music_volume") ? 255 : ConfMan.getInt("music_volume");
+	_scummMidiVolume = !ConfMan.hasKey("music_volume") ? 256 : ConfMan.getInt("music_volume");
+	_scummSndVolume = !ConfMan.hasKey("sfx_volume") ? 256 : ConfMan.getInt("sfx_volume");
+	_savedSndVolume = 255;
+	_savedMidiVolume = 255;
 	_sndVolumeTarget = _savedSndVolume;
 	_midiVolumeTarget = _savedMidiVolume;
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, (_sndVolume * _scummSndVolume) >> 8);
+	_musicPlayer.setVolume((_midiVolume * _scummMidiVolume) >> 8);
 
 	playVideo("intro", _introPos, _introSize);
 
@@ -634,7 +639,7 @@ bool GamosEngine::init(const Common::String &moduleName) {
 }
 
 bool GamosEngine::loadInitModule() {
-	rndSeed(_system->getMillis());
+	rndSeed(_randomSource.getRandomNumber(UINT_MAX));
 	_curObjIndex = -1;
 	_curObject = nullptr;
 	_curAction = nullptr;
@@ -1223,7 +1228,7 @@ bool GamosEngine::playMidi(Common::Array<byte> *buffer) {
 
 bool GamosEngine::playSound(uint id) {
 	Audio::SeekableAudioStream *stream = Audio::makeRawStream(_soundSamples[id].data(), _soundSamples[id].size(), 11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, nullptr, stream, -1, _sndVolume);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, nullptr, stream, -1, ((uint16)_sndVolume * _scummSndVolume) >> 8);
 	return true;
 }
 
@@ -1248,14 +1253,33 @@ void GamosEngine::changeVolume() {
 	const int sndStep = stepVolume(_sndVolume, _sndVolumeTarget);
 	if (sndStep) {
 		_sndVolume += sndStep;
-		_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, _sndVolume);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ((uint16)_sndVolume * _scummSndVolume) >> 8);
 	}
 	const int midiStep = stepVolume(_midiVolume, _midiVolumeTarget);
 	if (midiStep) {
 		_midiVolume += midiStep;
-		_musicPlayer.setVolume(_midiVolume);
+		_musicPlayer.setVolume(((uint16)_midiVolume * _scummMidiVolume) >> 8);
 	}
 }
+
+void GamosEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	const uint16 newSndVolume = !ConfMan.hasKey("sfx_volume") ? 256 : ConfMan.getInt("sfx_volume");
+	const uint16 newMusicVolume = !ConfMan.hasKey("music_volume") ? 256 : ConfMan.getInt("music_volume");
+
+	if (newSndVolume != _scummSndVolume) {
+		_scummSndVolume = newSndVolume;
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ((uint16)_sndVolume * _scummSndVolume) >> 8);
+	}
+
+	if (newMusicVolume != _scummMidiVolume) {
+		_scummMidiVolume = newMusicVolume;
+		_musicPlayer.setVolume(((uint16)_midiVolume * _scummMidiVolume) >> 8);
+	}
+
+}
+
 
 uint8 GamosEngine::update(Common::Point screenSize, Common::Point mouseMove, Common::Point actPos, uint8 act2, uint8 act1, uint16 keyCode, bool mouseInWindow) {
 	_needReload = false;

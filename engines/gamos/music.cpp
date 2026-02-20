@@ -131,7 +131,7 @@ void MidiMusic::update() {
 				param2 = b & 0x7f;
 
 				if (cmd == MidiDriver_BASE::MIDI_COMMAND_NOTE_ON)
-					param2 = param2 * _volume / 255;
+					param2 = ((uint16)param2 * (uint16)_volume) / 255;
 			}
 
 			if (doSend)
