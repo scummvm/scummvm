@@ -36,6 +36,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  SCUMM:
    - Added the original splash screens to MM NES (works only with PRG files).
 
+ TEENGENT:
+   - Fixed 'could not locate language block' error when starting the Polish and Russian versions.
+
  WAGE:
    - Implemented combat system.
    - Numerous visual fixes.
