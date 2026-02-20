@@ -126,7 +126,7 @@ void GamosEngine::playVideo(const Common::String &video, const Common::Point &po
     }
 
     Common::Event e;
-    while ( !avi.endOfVideo() ) {
+    while (!avi.endOfVideo()) {
         if (eventsSkip(true))
             break;
 
