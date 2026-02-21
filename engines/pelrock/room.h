@@ -44,6 +44,8 @@ static const int unpickableHotspotExtras[] = {
 	74,
 	6,
 	7,
+	91, //mud and stone should only be picked under certain conditions!
+	92
 };
 
 

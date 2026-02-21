@@ -210,7 +210,7 @@ enum TextIndices {
 	CAPITULOPARADOJAS,
 	HAYQUECELEBRARLO,
 	PESADEMASIADO,
-	NINGUNATEMAAPROPIADO,
+	NINGUNATAMANHOAPROPIADO,
 	PARAQUECOGERBARRO,
 	BUENOCOGEREUNPOCO,
 	ABSOLUTAMENTECERRADO,
@@ -445,39 +445,49 @@ struct ExtraImages {
 };
 
 const ExtraImages extraScreens[] = {
-	{0x00, // Portrait above bed
+	{0x00, // 0 - Portrait above bed
 	 0x7984,
 	 8},
-	{0x1A9EE, // Computer screen
+	{0x1A9EE, // 1 - Computer screen
 	 0x305A2,
 	 8},
-	{0x647C3, // Alfred circle
+	{0x647C3, // 2 - Alfred circle
 	 0x7B6B1,
 	 4},
-	{0x6FBCD, // Recipe
+	{0x6FBCD, // 3 - Recipe
 	 0x7B6B1,
 	 8},
-	{0x7BA11, // Newspaper
+	{0x7BA11, // 4 - Newspaper
 	 0x88745,
 	 8},
-	{0x9237B, // tablet
+	{0x9237B, // 5 - tablet
 	 0xB0EE7,
 	 8},
-	{0x000B11F1, // map
+	{0x000B11F1, // 6 - map
 	 0xDE011,
 	 8},
-	{0xFFC47, // girl book
+	{0xFFC47, // 7 - girl book
 	 0x1180C9,
 	 8},
-	{1147849,
+	{1147849, // 8 - unknown
 	 1267955,
 	 8},
-	{0x152A88, // portrait
+	{0x152A88, // 9 - portrait
 	 0x15BFC8,
 	 8},
-	{2727564, // CD
+	{2727564, // 10 - CD
 	 2833276,
-	 8}};
+	 8},
+	{
+	2834044, // 11 - pyramid map
+	2971800,
+	8},
+	{
+	2306538, // 12 - CENSORED
+	2321064,
+	8
+	},
+};
 
 struct AlfredSpecialAnimOffset {
 	int numFrames = 0;

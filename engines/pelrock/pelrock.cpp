@@ -157,7 +157,8 @@ void PelrockEngine::init() {
 		// setScreen(0, ALFRED_DOWN);
 		// setScreen(3, ALFRED_RIGHT);
 		// setScreen(22, ALFRED_DOWN);
-		setScreen(41, ALFRED_DOWN);
+		// setScreen(41, ALFRED_DOWN);
+		setScreen(43, ALFRED_DOWN);
 		// setScreen(15, ALFRED_DOWN);
 		// setScreen(2, ALFRED_LEFT);
 		// alfredState.x = 576;
@@ -611,7 +612,6 @@ void PelrockEngine::paintDebugLayer() {
 	bool showWalkboxes = true;
 
 	if (showWalkboxes) {
-		debug("Drawing walkboxes, count: %d", _room->_currentRoomWalkboxes.size());
 		for (uint i = 0; i < _room->_currentRoomWalkboxes.size(); i++) {
 			WalkBox box = _room->_currentRoomWalkboxes[i];
 			drawRect(_screen, box.x, box.y, box.w, box.h, 13);
@@ -1198,6 +1198,10 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 
 	int frameSize = sprite->stride;
 	int curFrame = animData.curFrame;
+	if(curFrame >= animData.nframes) {
+		debug("Warning: curFrame %d exceeds nframes %d for sprite %d anim %d", curFrame, animData.nframes, sprite->index, sprite->curAnimIndex);
+		curFrame = 0;
+	}
 	drawSpriteToBuffer(_compositeBuffer, 640, animData.animData[curFrame], x, y, w, h, 255);
 
 	// Original in the game: increment FIRST, then check (not check-then-increment)
@@ -1721,7 +1725,8 @@ void PelrockEngine::checkMouseHover() {
 
 	if (hotspotIndex != -1) {
 		hotspotDetected = true;
-		_hoveredMapLocation = _room->_currentRoomDescriptions[hotspotIndex].text;
+		if(hotspotIndex < _room->_currentRoomDescriptions.size())
+			_hoveredMapLocation = _room->_currentRoomDescriptions[hotspotIndex].text;
 	} else if (!alfredDetected) {
 		_hoveredMapLocation = "";
 	}
@@ -1939,6 +1944,16 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 	case 48:
 		_dialog->_goodbyeDisabled = true;
 		break;
+	case 10:{
+		// _events->waitForKey();
+		// while(!shouldQuit()) {
+		// 	playSpecialAnim(212915, true, 287, 152, 62, 58, 10);
+		// 	playSpecialAnim(236645, true, 287, 152, 62, 58, 10);
+		// 	// setScreen(11, ALFRED_DOWN);
+		// 	playSpecialAnim(261449, true, 0, 223, 64, 97, 8);
+		// }
+		break;
+		}
 	default:
 		break;
 	}

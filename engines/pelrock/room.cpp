@@ -247,6 +247,14 @@ void RoomManager::enableSprite(byte spriteIndex, byte zOrder, int persist) {
 }
 
 void RoomManager::enableSprite(byte roomNumber, byte spriteIndex, byte zOrder, int persist) {
+	for(int i =0; i < g_engine->_state->spriteChanges[roomNumber].size(); i++) {
+		if (g_engine->_state->spriteChanges[roomNumber][i].spriteIndex == spriteIndex) {
+			debug("Removing pending sprite change for sprite %d in room %d", spriteIndex, roomNumber);
+			g_engine->_state->spriteChanges[roomNumber].remove_at(i);
+			break;
+		}
+	}
+
 	if (roomNumber == _currentRoomNumber && persist & PERSIST_TEMP) {
 		// Search by sprite.index field, not by array position (array is re-sorted every frame).
 		for (uint i = 0; i < _currentRoomAnims.size(); i++) {
@@ -257,6 +265,7 @@ void RoomManager::enableSprite(byte roomNumber, byte spriteIndex, byte zOrder, i
 		}
 	}
 	if (persist & PERSIST_PERM) {
+		debug("Enabling sprite %d in room %d with zOrder %d and persist %d", spriteIndex, roomNumber, zOrder, persist);
 		g_engine->_state->spriteChanges[roomNumber].push_back({roomNumber, spriteIndex, zOrder});
 	}
 }
@@ -929,6 +938,7 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 		sprite.disableAfterSequence = data[animOffset + 39];
 		for (int j = 0; j < spriteChanges.size(); j++) {
 			if (spriteChanges[j].spriteIndex == sprite.index) {
+				debug("Sprite %d has been changed, loading changed version with zOrder %d", sprite.index, spriteChanges[j].zIndex);
 				sprite.zOrder = spriteChanges[j].zIndex;
 				break;
 			}
@@ -955,6 +965,10 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 			anim.animData = new byte *[anim.nframes];
 			if (sprite.w > 0 && sprite.h > 0 && anim.nframes > 0) {
 				for (int i = 0; i < anim.nframes; i++) {
+					if(picOffset >= pixelDataSize) {
+						debug("Pixel data offset out of bounds for sprite %d anim %d, offset %d, size %d", i, j, picOffset, pixelDataSize);
+						break;
+					}
 					anim.animData[i] = new byte[sprite.w * sprite.h];
 					// debug("Extracting frame %d for anim %d-%d, w=%d h=%d, pixelDataSize=%d, current offset %d", i, j, anim.nframes, sprite.w, sprite.h, pixelDataSize, picOffset);
 					extractSingleFrame(pixelData + picOffset, anim.animData[i], i, sprite.w, sprite.h);

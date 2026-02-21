@@ -153,6 +153,16 @@ const ActionEntry actionTable[] = {
 
 	// Room 39
 	{700, PICKUP, &PelrockEngine::swimmingPoolCutscene},
+
+	// Room 41
+	{605, PICKUP, &PelrockEngine::pickUpStones},
+	{606, PICKUP, &PelrockEngine::pickUpStones},
+	{607, PICKUP, &PelrockEngine::pickUpStones},
+	{608, PICKUP, &PelrockEngine::pickUpMud},
+
+	// Room 44
+	{613, OPEN, &PelrockEngine::openPyramidDoor},
+
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
 	{WILDCARD, TALK, &PelrockEngine::noOpAction},   // Generic talk action
@@ -191,6 +201,10 @@ const CombinationEntry combinationTable[] = {
 	{85, 506, &PelrockEngine::magicFormula},
 	{86, 506, &PelrockEngine::magicFormula},
 	{81, 506, &PelrockEngine::magicFormula},
+
+	{76, 617, &PelrockEngine::usePumpkinWithPond},
+
+	{86, 614, &PelrockEngine::useWaterOnFakeStone},
 	// End marker
 	{WILDCARD, WILDCARD, nullptr}};
 
@@ -327,10 +341,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 279:
 		travelToEgypt();
 		break;
-	// moros
-	case 317:
-		addInventoryItem(95);
-		break;
+		// moros
 
 	case 330:
 		// Two oranges
@@ -580,6 +591,49 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_state->setCurrentRoot(room, targetBranch, 0);
 		break;
 	}
+		/* pyramid merchant*/
+	case 314:
+		addInventoryItem(93);
+		break;
+	case 316:
+		addInventoryItem(94);
+		break;
+	case 317:
+		// CD
+		addInventoryItem(95);
+		break;
+	case 318:
+		// bg book
+		addInventoryItem(96);
+		break;
+	case 319:
+		// add pyramid map
+		addInventoryItem(97);
+		_state->setCurrentRoot(room, 2, 0);
+		break;
+	case 320:
+		_state->setCurrentRoot(room, 2, 0);
+		break;
+	case 324:
+		// ?
+		break;
+	// girls in pond
+	case 321:
+		_state->setCurrentRoot(45, 1, 0);
+		_sound->playSound("TWANGZZZ.SMP", 0);
+		break;
+	case 376: {
+		_res->loadAlfredSpecialAnim(14);
+		_alfredState.animState = ALFRED_SPECIAL_ANIM;
+		waitForSpecialAnimation();
+		loadExtraScreenAndPresent(12);
+		_state->setCurrentRoot(45, 2, 0);
+	} break;
+	case 377:
+		_state->setCurrentRoot(45, 3, 0);
+		break;
+	case 30840:
+		break;
 	default:
 		debug("Got actionTrigger %d in dialogActionTrigger, but no handler defined", actionTrigger);
 		break;
@@ -1375,7 +1429,7 @@ void PelrockEngine::playSpecialAnim(uint32 offset, bool compressed, int x, int y
 		_events->pollEvent();
 
 		bool didRender = renderScene(OVERLAY_NONE);
-		if(didRender) {
+		if (didRender) {
 			memset(animSurface.getPixels(), 0, frameSize);
 			extractSingleFrame(animData, (byte *)animSurface.getPixels(), curFrame, width, height);
 			_screen->transBlitFrom(animSurface, Common::Point(x, y), 255);
@@ -1395,7 +1449,6 @@ void PelrockEngine::playSpecialAnim(uint32 offset, bool compressed, int x, int y
 	}
 	animSurface.free();
 	delete[] animData;
-
 }
 
 void PelrockEngine::giveStoneToSlaves(int inventoryObject, HotSpot *hotspot) {
@@ -1412,12 +1465,11 @@ void PelrockEngine::giveStoneToSlaves(int inventoryObject, HotSpot *hotspot) {
 	// Slaves take stone then chant
 	playSpecialAnim(1600956, false, 0, 298, 208, 102, 7);
 	_sound->playSound(_room->_roomSfx[0], 0);
-	// waitForSoundEnd();
+	waitForSoundEnd();
 
 	_dialog->say(_res->_ingameTexts[HAYQUECELEBRARLO]);
 
-
-	//drinking animation and sound
+	// drinking animation and sound
 	_sound->playSound(_room->_roomSfx[1], 0);
 
 	_room->disableSprite(0);
@@ -1429,7 +1481,7 @@ void PelrockEngine::giveStoneToSlaves(int inventoryObject, HotSpot *hotspot) {
 	if (counter < 3) {
 		_state->setFlag(FLAG_DA_PIEDRA, ++counter);
 	}
-
+	debug("New stone delivery count: %d", _state->getFlag(FLAG_DA_PIEDRA));
 	// At 2nd stone delivery: masters starts singing (conversation root 2)
 	if (counter == 2) {
 		_state->setCurrentRoot(41, 2, 0);
@@ -1445,9 +1497,9 @@ void PelrockEngine::giveStoneToSlaves(int inventoryObject, HotSpot *hotspot) {
 		WalkBox w2 = {4, 141, 374, 46, 4};
 		_room->addWalkbox(w1);
 		_room->addWalkbox(w2);
-		_state->setFlag(FLAG_PIEDRAS_COGIDAS, true);
-	}
-	else {
+		_state->setFlag(FLAG_GUARDIAS_BORRACHOS, true);
+	} else {
+		debug("Re-enabling master sprite with zIndex %d", zIndex);
 		_room->enableSprite(0, zIndex);
 	}
 }
@@ -1535,7 +1587,7 @@ void PelrockEngine::swimmingPoolCutscene(HotSpot *hotspot) {
 	guard->animData[0].nframes = 1;
 	_alfredState.direction = ALFRED_RIGHT;
 	walkAndAction(_room->findHotspotByExtra(guard->extra), TALK);
-	if(shouldQuit()) {
+	if (shouldQuit()) {
 		return;
 	}
 	_graphics->fadeToBlack(10);
@@ -1543,13 +1595,74 @@ void PelrockEngine::swimmingPoolCutscene(HotSpot *hotspot) {
 	_alfredState.y = 385;
 	setScreen(40, ALFRED_UP);
 	walkAndAction(_room->findHotspotByExtra(640), TALK);
-	if(shouldQuit()) {
+	if (shouldQuit()) {
 		return;
 	}
 	_graphics->fadeToBlack(10);
 	_alfredState.x = 271;
 	_alfredState.y = 385;
 	setScreen(41, ALFRED_UP);
+}
+
+void PelrockEngine::pickUpStones(HotSpot *hotspot) {
+	if (_state->hasInventoryItem(91)) {
+		_dialog->say(_res->_ingameTexts[PESADEMASIADO]);
+		return;
+	}
+	if (_state->getFlag(FLAG_PIEDRAS_COGIDAS) >= 2) {
+		_dialog->say(_res->_ingameTexts[NINGUNATAMANHOAPROPIADO]);
+		return;
+	} else {
+		addInventoryItem(91);
+		_state->setFlag(FLAG_PIEDRAS_COGIDAS, _state->getFlag(FLAG_PIEDRAS_COGIDAS) + 1);
+		debug("Piedras cogidas: %d", _state->getFlag(FLAG_PIEDRAS_COGIDAS));
+	}
+}
+
+void PelrockEngine::pickUpMud(HotSpot *hotspot) {
+	if (_state->getFlag(FLAG_PIEDRAS_COGIDAS) != 2) {
+		_dialog->say(_res->_ingameTexts[PARAQUECOGERBARRO]);
+		return;
+	} else {
+		addInventoryItem(92);
+		_state->setFlag(FLAG_PIEDRAS_COGIDAS, _state->getFlag(FLAG_PIEDRAS_COGIDAS) + 1);
+		_dialog->say(_res->_ingameTexts[BUENOCOGEREUNPOCO]);
+	}
+}
+
+void PelrockEngine::openPyramidDoor(HotSpot *hotspot) {
+	_dialog->say(_res->_ingameTexts[ABSOLUTAMENTECERRADO]);
+}
+
+void PelrockEngine::usePumpkinWithPond(int inventoryObject, HotSpot *hotspot) {
+	_state->removeInventoryItem(76);
+	addInventoryItem(86);
+}
+
+void PelrockEngine::useWaterOnFakeStone(int inventoryObject, HotSpot *hotspot) {
+
+	int count = _state->getFlag(FLAG_PIEDRA_FAKE_MOJADA);
+	if(count != 3) {
+		_state->removeInventoryItem(86);
+		addInventoryItem(76);
+		switch (count)
+		{
+		case 0:
+			_room->addSticker(120);
+			break;
+		case 1:
+			_room->addSticker(121);
+			break;
+		case 2:
+			_room->addSticker(122);
+			_room->enableExit(1);
+			break;
+		default:
+			break;
+		}
+		count++;
+		_state->setFlag(FLAG_PIEDRA_FAKE_MOJADA, count);
+	}
 }
 
 void PelrockEngine::magicFormula(int inventoryObject, HotSpot *hotspot) {
@@ -1766,6 +1879,15 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		_alfredState.animState = ALFRED_SPECIAL_ANIM;
 		waitForSpecialAnimation();
 		loadExtraScreenAndPresent(7);
+		break;
+	}
+	case 97: {
+		_res->loadAlfredSpecialAnim(1);
+		_alfredState.animState = ALFRED_SPECIAL_ANIM;
+		waitForSpecialAnimation();
+		loadExtraScreenAndPresent(11);
+		_dialog->say(_res->_ingameTexts[MEHANTOMADO_EL_PELO]);
+		_state->setCurrentRoot(43, 1, 0);
 		break;
 	}
 	default:

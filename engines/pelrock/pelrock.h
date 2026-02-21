@@ -351,6 +351,11 @@ public:
 	void playSpecialAnim(uint32 offset, bool compressed, int x, int y, int width, int height, int numFrames);
 	void giveStoneToSlaves(int inventoryObject, HotSpot *hotspot);
 	void swimmingPoolCutscene(HotSpot *hotspot);
+	void pickUpStones(HotSpot *hotspot);
+	void pickUpMud(HotSpot *hotspot);
+	void openPyramidDoor(HotSpot *hotspot);
+	void usePumpkinWithPond(int inventoryObject, HotSpot *hotspot);
+	void useWaterOnFakeStone(int inventoryObject, HotSpot *hotspot);
 	void magicFormula(int inventoryObject, HotSpot *hotspot);
 	void checkAllSymbols();
 	void openMcDoor(HotSpot *hotspot);

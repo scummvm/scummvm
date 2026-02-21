@@ -51,6 +51,7 @@ const AlfredSpecialAnimOffset ResourceManager::alfredSpecialAnims[] = {
 	{23, 116, 124, 1, 7, 2060916, 1}, // 11 - Munheco 1
 	{18, 177, 124, 1, 7, 2115632, 1}, // 12 - Munheco 2
 	{11, 98, 138, 1, 7, 1526432, 1}, // 13 - Munheco 3
+	{4, 51, 102, 1, 7, 2972568, 1}, // 14 - descamisa
 };
 
 ResourceManager::~ResourceManager() {

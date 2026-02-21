@@ -103,7 +103,7 @@ bool findPath(int sourceX, int sourceY, int targetX, int targetY, Common::Array<
 		context->pathLength = buildWalkboxPath(walkboxes, startBox, destBox, context->pathBuffer);
 		debug("Walkbox path to point");
 		for (int i = 0; i < context->pathLength; i++) {
-			debug("Walkbox %d: %d", i, context->pathBuffer[i]);
+			// debug("Walkbox %d: %d", i, context->pathBuffer[i]);
 		}
 		if (context->pathLength == 0) {
 			debug("Error: No path found\n");
