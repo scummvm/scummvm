@@ -34,6 +34,7 @@
 #include "director/sprite.h"
 #include "director/window.h"
 
+
 namespace Director {
 namespace DT {
 
@@ -45,9 +46,39 @@ const char *modes2[] = {
 	ICON_MS_PALETTE, "Palette",				// palette
 	ICON_MS_TRANSITION_FADE, "Transition",	// transition_fade
 	ICON_MS_VOLUME_UP,"Sound 1",			// volume_up
-	ICON_MS_VOLUME_DOWN,"Sound 2",			// volume_up
+	ICON_MS_VOLUME_DOWN,"Sound 2",			// volume_down
 	ICON_MS_FORMS_APPS_SCRIPT, "Script",	// forms_apps_script
 };
+
+static const ImU32 COL_DARK_GRAY = IM_COL32(38,  38,  38,  255);
+static const ImU32 COL_ROW_LIGHT = IM_COL32(51,  51,  51,  255);
+static const ImU32 COL_ROW_DARK = IM_COL32(38, 38, 38, 255);
+static const ImU32 COL_BORDER = IM_COL32(102, 102, 102, 255);
+
+struct ScoreLayout {
+    ImVec2 sidebar1Pos;
+	ImVec2 mainChannelGridPos;
+    ImVec2 modeSelectorPos;
+    ImVec2 rulerPos;
+    ImVec2 sidebar2Pos;
+    ImVec2 gridPos;
+    ImVec2 sliderPos;
+    ImVec2 sliderYPos;
+};
+
+static ScoreLayout computeLayout(ImVec2 origin, const ImGuiState::ScoreConfig &cfg) {
+    ScoreLayout l;
+    l.sidebar1Pos = ImVec2(origin.x, origin.y);
+	l.mainChannelGridPos = ImVec2(origin.x + cfg.sidebar_width, origin.y);
+    l.modeSelectorPos = ImVec2(origin.x, origin.y + cfg.sidebar1_height);
+    l.rulerPos = ImVec2(origin.x + cfg.sidebar_width, origin.y + cfg.sidebar1_height);
+    l.sidebar2Pos = ImVec2(origin.x, origin.y + cfg.sidebar1_height + cfg.ruler_height);
+    l.gridPos = ImVec2(origin.x + cfg.sidebar_width, origin.y + cfg.sidebar1_height + cfg.ruler_height);
+    l.sliderPos = ImVec2(origin.x + cfg.sidebar_width, origin.y + cfg.sidebar1_height + cfg.ruler_height + cfg.table_height + 8.0f);
+	l.sliderYPos = ImVec2(origin.x + cfg.sidebar_width + cfg.table_width,
+                      origin.y + cfg.sidebar1_height + cfg.ruler_height);
+    return l;
+}
 
 #define FRAME_PAGE_SIZE 100
 
@@ -355,6 +386,519 @@ static void displayScoreChannel(int ch, int mode, int modeSel, Window *window) {
 	ImGui::PopFont();
 }
 
+static void drawSliderY(ImVec2 pos, int numChannels) {
+    auto &cfg = _state->_scoreCfg;
+    ImGui::SetCursorScreenPos(pos);
+    ImGui::SetNextItemWidth(16.0f);
+    int maxScroll = MAX(0, numChannels - cfg.visible_channels);
+    ImGui::VSliderInt("##channelSlider", ImVec2(16.0f, cfg.table_height),
+                      &_state->_scoreState.channelScrollOffset, maxScroll, 1);
+}
+
+static void drawSidebar1(ImDrawList *dl, ImVec2 startPos, Score *score) {
+    float toggle_col_width = 20.0f;
+    float label_col_width  = 40.0f;
+    float total_width      = toggle_col_width + label_col_width;
+	auto &cfg = _state->_scoreCfg;
+
+    for (int ch = 1; ch <= 6; ch++) {
+        float y       = startPos.y + (ch - 1) * cfg.cell_height;
+        ImVec2 rowMin = ImVec2(startPos.x, y);
+        ImVec2 rowMax = ImVec2(startPos.x + total_width, y + cfg.cell_height);
+
+		dl->AddRectFilled(rowMin, rowMax, COL_DARK_GRAY);
+        dl->AddRect(rowMin, rowMax, COL_BORDER);
+
+        // toggle circle centered in the left column
+        ImVec2 mid = ImVec2(startPos.x + toggle_col_width / 2.0f, y + cfg.cell_height / 2.0f);
+        if (score->_channels[ch]->_visible)
+            dl->AddCircleFilled(mid, 4.0f, IM_COL32(200, 200, 200, 255));
+        else
+            dl->AddCircle(mid, 4.0f, IM_COL32(200, 200, 200, 255));
+
+        // channel number centered in the right column
+		ImFont *iconFont = ImGui::GetIO().FontDefault;
+		const char *icon = modes2[(ch - 1) * 2];
+		float textlen = ImGui::CalcTextSize(icon).x;
+		float text_x  = startPos.x + toggle_col_width + (label_col_width - textlen) / 2.0f;
+		float text_y  = y + (cfg.cell_height - ImGui::GetTextLineHeight()) / 2.0f;
+		dl->AddText(iconFont, 0.0f, ImVec2(text_x, text_y), IM_COL32(255, 255, 255, 255), icon);
+
+		// invisible button covering the row for interaction
+		ImGui::SetCursorScreenPos(rowMin);
+		ImGui::InvisibleButton(Common::String::format("##s1row%d", ch).c_str(), ImVec2(total_width, cfg.cell_height));
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("%s", modes2[(ch - 1) * 2 + 1]);
+		if (ImGui::IsItemClicked())
+			score->_channels[ch]->_visible = !score->_channels[ch]->_visible;
+
+
+    }
+}
+
+static void drawSidebar2(ImDrawList *dl, ImVec2 startPos, Score *score) {
+    float toggle_col_width = 20.0f;
+    float label_col_width  = 40.0f;
+    float total_width      = toggle_col_width + label_col_width;
+	auto &cfg = _state->_scoreCfg;
+
+    for (int i = 0; i < cfg.visible_channels; i++) {
+		int ch = i + _state->_scoreState.channelScrollOffset;
+        float y = startPos.y + i * cfg.cell_height;
+        ImVec2 rowMin = ImVec2(startPos.x, y);
+        ImVec2 rowMax = ImVec2(startPos.x + total_width, y + cfg.cell_height);
+
+		if (ch >= (int)score->_channels.size()) break;
+
+		if (ch == _state->_selectedScoreCast.channel)
+            dl->AddRectFilled(rowMin, rowMax, IM_COL32(128, 128, 128, 100));
+        else
+            dl->AddRectFilled(rowMin, rowMax, COL_DARK_GRAY);
+
+        dl->AddRect(rowMin, rowMax, COL_BORDER);
+
+        // toggle circle centered in the left column
+        ImVec2 mid = ImVec2(startPos.x + toggle_col_width / 2.0f, y + cfg.cell_height / 2.0f);
+        if (score->_channels[ch]->_visible)
+            dl->AddCircleFilled(mid, 4.0f, IM_COL32(200, 200, 200, 255));
+        else
+            dl->AddCircle(mid, 4.0f, IM_COL32(200, 200, 200, 255));
+
+        // channel number centered in the right column
+        char buf[8];
+        snprintf(buf, sizeof(buf), "%d", ch);
+        float textlen = ImGui::CalcTextSize(buf).x;
+        float text_x  = startPos.x + toggle_col_width + (label_col_width - textlen) / 2.0f;
+        float text_y  = y + (cfg.cell_height - ImGui::GetTextLineHeight()) / 2.0f;
+        dl->AddText(ImVec2(text_x, text_y), IM_COL32(255, 255, 255, 255), buf);
+    }
+}
+
+static void drawRuler(ImDrawList *dl, ImVec2 startPos) {
+	auto &cfg = _state->_scoreCfg;
+    int start = _state->_scoreState.sliderX_value;
+    ImVec2 p1 = startPos;
+    ImVec2 p2 = {p1.x + cfg.ruler_width, p1.y + cfg.ruler_height};
+
+    dl->AddRectFilled(p1, p2, COL_DARK_GRAY);
+    dl->AddRect(p1, p2, COL_BORDER);
+
+    float big_tick_len   = cfg.ruler_height * 0.4f;
+    float small_tick_len = cfg.ruler_height * 0.3f;
+
+    // i is the real frame number (1-indexed), ruler_x is its pixel position
+	for (int i = start; i < start + cfg.visible_frames; i++) {
+		float ruler_x = p1.x + (i - start) * cfg.cell_width + cfg.cell_width / 2.0f;
+        float len       = small_tick_len;
+        float thickness = 1.0f;
+
+        if (i % 5 == 0) {
+            len       = big_tick_len;
+            thickness = 1.5f;
+            char buf[16];
+            snprintf(buf, sizeof(buf), "%d", i);
+            float textlen = ImGui::CalcTextSize(buf).x;
+            dl->AddText(ImVec2(ruler_x - textlen / 2, p1.y + 4.0), IM_COL32(255, 255, 255, 255), buf);
+        }
+
+        dl->AddLine(ImVec2(ruler_x, p2.y), ImVec2(ruler_x, p2.y - len), IM_COL32(200, 200, 200, 255), thickness);
+    }
+}
+
+static void drawModeSelector(ImVec2 startPos) {
+    static int current_item = 0;
+    const char *items[] = { "Member", "Behavior", "Location", "Ink", "Blend", "Extended" };
+
+	auto &cfg = _state->_scoreCfg;
+    ImGui::SetNextItemWidth(cfg.sidebar_width);
+    ImGui::SetCursorScreenPos(startPos);
+    if (ImGui::BeginCombo("##mode", items[current_item])) {
+        for (int i = 0; i < IM_ARRAYSIZE(items); i++) {
+            bool is_selected = (current_item == i);
+            if (ImGui::Selectable(items[i], is_selected))
+                current_item = i;
+            if (is_selected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+}
+
+static void drawSpriteInspector(Score *score, Cast *cast, uint numFrames) {
+
+	if (_state->_scoreFrameOffset >= (int)numFrames)
+		_state->_scoreFrameOffset = 1;
+
+	{ // Render sprite details
+		Sprite *sprite = nullptr;
+		CastMember *castMember = nullptr;
+		bool shape = false;
+
+		if (_state->_selectedScoreCast.frame != -1)
+			sprite = score->_scoreCache[_state->_selectedScoreCast.frame]->_sprites[_state->_selectedScoreCast.channel];
+
+		if (sprite) {
+			castMember = cast->getCastMember(sprite->_castId.member, true);
+
+			shape = sprite->isQDShape();
+		}
+
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+		ImGui::BeginChild("Image", ImVec2(200.0f, 70.0f));
+
+		if (castMember || shape) {
+			ImGuiImage imgID = {};
+
+			if (castMember) {
+				switch (castMember->_type) {
+				case kCastBitmap:
+					imgID = getImageID(castMember);
+					break;
+				case kCastShape:
+					imgID = getShapeID(castMember);
+					break;
+				case kCastText:
+				case kCastButton:
+				case kCastRichText:
+					imgID = getTextID(castMember);
+					break;
+
+				default:
+					break;
+				}
+			}
+
+			if (castMember && imgID.id) {
+				Common::String name(getDisplayName(castMember));
+				showImage(imgID, name.c_str(), 32.f);
+			} else {
+				ImGui::InvisibleButton("##canvas", ImVec2(32.f, 32.f));
+			}
+			ImGui::SameLine();
+			ImGui::Text("%s", sprite->_castId.asString().c_str());
+			ImGui::Text("%s", spriteType2str(sprite->_spriteType));
+		}
+
+		ImGui::PopStyleColor();
+		ImGui::EndChild();
+
+		ImGui::SameLine();
+		ImGui::BeginChild("Details", ImVec2(500.0f, 70.0f));
+
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+		ImGui::BeginChild("Ink", ImVec2(150.0f, 20.0f));
+
+		if (castMember || shape) {
+			ImGui::Text("%s", inkType2str(sprite->_ink));
+			ImGui::SameLine(70);
+			ImGui::SetItemTooltip("Ink");
+			ImGui::Text("|");
+			ImGui::SameLine();
+			ImGui::Text("%d", sprite->_blendAmount);
+			ImGui::SameLine();
+			ImGui::SetItemTooltip("Blend");
+		}
+		ImGui::PopStyleColor();
+		ImGui::EndChild();
+
+		ImGui::SameLine();
+
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+		ImGui::BeginChild("Range", ImVec2(100.0f, 20.0f));
+
+		if (castMember || shape) {
+			ImGui::TextUnformatted("\uf816"); ImGui::SameLine();	// line_start_circle
+			// the continuation data is 0-indexed but the frames are 1-indexed
+			ImGui::Text("%4d", _state->_continuationData[_state->_selectedScoreCast.channel][_state->_selectedScoreCast.frame].first + 1); ImGui::SameLine(50);
+			ImGui::SetItemTooltip("Start Frame");
+			ImGui::TextUnformatted("\uf819"); ImGui::SameLine();	// line_end_square
+			// the continuation data is 0-indexed but the frames are 1-indexed
+			ImGui::Text("%4d", _state->_continuationData[_state->_selectedScoreCast.channel][_state->_selectedScoreCast.frame].second + 1); ImGui::SameLine();
+			ImGui::SetItemTooltip("End Frame");
+		}
+
+		ImGui::PopStyleColor();
+		ImGui::EndChild();
+
+		ImGui::SameLine();
+
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+		ImGui::BeginChild("Flags", ImVec2(200.0f, 20.0f));
+
+		if (castMember || shape) {
+			ImGui::Checkbox(ICON_MS_LOCK, &sprite->_enabled); ImGui::SameLine();
+			ImGui::SetItemTooltip("enabled");
+			ImGui::Checkbox(ICON_MS_EDIT_NOTE, &sprite->_editable); ImGui::SameLine();
+			ImGui::SetItemTooltip("editable");
+			ImGui::Checkbox(ICON_MS_MOVE_SELECTION_RIGHT, &sprite->_moveable); ImGui::SameLine();
+			ImGui::SetItemTooltip("moveable");
+			ImGui::Checkbox(ICON_MS_DYNAMIC_FEED, &sprite->_trails);
+			ImGui::SetItemTooltip("trails");
+		}
+		ImGui::PopStyleColor();
+		ImGui::EndChild();
+
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+		ImGui::BeginChild("Colors", ImVec2(150.0f, 50.0f));
+
+		if (castMember || shape) {
+			ImVec4 fg = convertColor(sprite->_foreColor);
+
+			ImGui::ColorButton("foreColor", fg);
+			ImGui::SameLine();
+			ImGui::Text("#%02x%02x%02x", (int)(fg.x * 255), (int)(fg.y * 255), (int)(fg.z * 255));
+			ImGui::SetItemTooltip("Foreground Color");
+			ImVec4 bg = convertColor(sprite->_backColor);
+			ImGui::ColorButton("backColor", bg);
+			ImGui::SameLine();
+			ImGui::Text("#%02x%02x%02x", (int)(bg.x * 255), (int)(bg.y * 255), (int)(bg.z * 255));
+			ImGui::SameLine();
+			ImGui::SetItemTooltip("Background Color");
+		}
+
+		ImGui::PopStyleColor();
+		ImGui::EndChild();
+
+		ImGui::SameLine();
+
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+		ImGui::BeginChild("Coordinates", ImVec2(150.0f, 50.0f));
+
+		if (castMember || shape) {
+			ImGui::Text("X:"); ImGui::SameLine();
+			ImGui::Text("%d", sprite->_startPoint.x); ImGui::SameLine(75);
+			ImGui::SetItemTooltip("Reg Point Horizontal");
+			ImGui::Text("W:"); ImGui::SameLine();
+			ImGui::Text("%d", sprite->getWidth());
+			ImGui::SetItemTooltip("Width");
+
+			ImGui::Text("Y:"); ImGui::SameLine();
+			ImGui::Text("%d", sprite->_startPoint.y); ImGui::SameLine(75);
+			ImGui::SetItemTooltip("Reg Point Vertical");
+			ImGui::Text("H:"); ImGui::SameLine();
+			ImGui::Text("%d", sprite->getHeight()); ImGui::SameLine();
+			ImGui::SetItemTooltip("Height");
+		}
+		ImGui::PopStyleColor();
+		ImGui::EndChild();
+
+		ImGui::SameLine();
+
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+		ImGui::BeginChild("Bbox", ImVec2(150.0f, 50.0f));
+
+		if (castMember || shape) {
+			const Common::Rect &box = sprite->getBbox(true);
+
+			ImGui::Text("l:"); ImGui::SameLine();
+			ImGui::Text("%d", box.left); ImGui::SameLine(75);
+			ImGui::SetItemTooltip("Left");
+			ImGui::Text("r:"); ImGui::SameLine();
+			ImGui::Text("%d", box.right);
+			ImGui::SetItemTooltip("Right");
+
+			ImGui::Text("t:"); ImGui::SameLine();
+			ImGui::Text("%d", box.top); ImGui::SameLine(75);
+			ImGui::SetItemTooltip("Top");
+			ImGui::Text("b:"); ImGui::SameLine();
+			ImGui::Text("%d", box.bottom);
+			ImGui::SetItemTooltip("Bottom");
+		}
+		ImGui::PopStyleColor();
+		ImGui::EndChild();
+
+		ImGui::EndChild();
+	}
+
+}
+
+static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score* score, Window *window) {
+    int total_frames = (int)score->_scoreCache.size();
+
+	auto &cfg = _state->_scoreCfg;
+    int startFrame = _state->_scoreState.sliderX_value - 1;
+	int numChannels = MIN<int>(score->_scoreCache[0]->_sprites.size(), score->_maxChannelsUsed + 10);
+
+	ImVec2 gridMin = startPos;
+	ImVec2 gridMax = ImVec2(startPos.x + cfg.table_width, startPos.y + cfg.table_height);
+	dl->PushClipRect(gridMin, gridMax, true);
+
+	for (int i = 0; i < cfg.visible_channels; i++) {
+		int ch = i + _state->_scoreState.channelScrollOffset;
+		if (ch >= numChannels) break;
+        float y = startPos.y + i * cfg.cell_height;
+
+        // pass 1: draw cell backgrounds
+        for (int f = 0; f < cfg.visible_frames; f++) {
+            int rf    = startFrame + f;
+            float x   = startPos.x + f * cfg.cell_width;
+            ImVec2 cellMin = ImVec2(x, y);
+            ImVec2 cellMax = ImVec2(x + cfg.cell_width, y + cfg.cell_height);
+            ImU32 col = ((rf + 1) % 5 == 0) ? COL_ROW_DARK : COL_ROW_LIGHT;
+            dl->AddRectFilled(cellMin, cellMax, col);
+            dl->AddRect(cellMin, cellMax, COL_BORDER);
+        }
+
+        // pass 2: draw sprite span bars on top of cells
+        for (int f = 0; f < cfg.visible_frames; f++) {
+            int rf = startFrame + f;
+            if (rf >= total_frames) break;
+			Frame &frame = *score->_scoreCache[rf];
+			Sprite &sprite = *frame._sprites[ch];
+
+            if (!sprite._castId.member && !sprite.isQDShape()) continue; // empty cell
+			if (ch >= (int)_state->_continuationData.size()) continue;
+			if (rf >= (int)_state->_continuationData[ch].size()) break;
+
+			int spanStart = _state->_continuationData[ch][rf].first;
+			int spanEnd   = _state->_continuationData[ch][rf].second;
+
+			if (rf != spanStart && spanStart >= startFrame) continue;
+			float x1 = startPos.x + MAX<float>(spanStart - startFrame, 0) * cfg.cell_width;
+			float x2 = MIN<float>(startPos.x + (spanEnd - startFrame + 1) * cfg.cell_width, startPos.x + cfg.table_width);
+
+			if (ch >= (int)_state->_continuationData.size()) continue;
+			if (rf >= (int)_state->_continuationData[ch].size()) break;
+
+			bool startVisible = spanStart >= startFrame;
+			bool endVisible   = spanEnd < startFrame + cfg.visible_frames;
+
+			// clamp x1 to grid left edge, x2 to right
+            float cy  = y + cfg.cell_height / 2.0f;
+            float pad = 5.0f; // vertical padding so bar doesnt touch cell borders
+
+			int colorIdx = sprite._colorcode & 0x07;
+			if (colorIdx > 5) colorIdx = 0;
+
+			// color selection based on if the sprite is selected or not
+			ImU32 color;
+			bool isSelected = (_state->_selectedScoreCast.channel == ch &&
+							   _state->_selectedScoreCast.frame >= spanStart &&
+							   _state->_selectedScoreCast.frame <= spanEnd);
+			bool isHovered  = (_state->_hoveredScoreCast.channel == ch &&
+							   _state->_hoveredScoreCast.frame >= spanStart &&
+							   _state->_hoveredScoreCast.frame <= spanEnd);
+
+			if (isSelected)
+				color = _state->_colors._channel_selected_col;
+			else if (isHovered)
+				color = _state->_colors._channel_hovered_col;
+			else {
+				int colorIdx = sprite._colorcode & 0x07;
+				if (colorIdx > 5) colorIdx = 0;
+				color = _state->_colors._contColors[colorIdx];
+			}
+
+			float rounding = 3.0f;
+            dl->AddRectFilled(ImVec2(x1, y + pad), ImVec2(x2, y + cfg.cell_height - pad), color, rounding);
+            // horizontal line through the middle, offset from x1 if circle is present
+            dl->AddLine(ImVec2(x1 + (startVisible ? 6.0f : 0.0f), cy), ImVec2(x2 - 6.0f, cy), IM_COL32(0, 0, 0, 255), 1.0f);
+
+            if (startVisible)
+                dl->AddCircle(ImVec2(x1 + 4.0f, cy), 3.0f, IM_COL32(0, 0, 0, 255), 0, 1.5f);
+
+            if (endVisible)
+                dl->AddRect(ImVec2(x2 - 7.0f, cy - 3.0f), ImVec2(x2 - 1.0f, cy + 3.0f), IM_COL32(0, 0, 0, 255), 0.0f, 0, 1.5f);
+
+			if (startVisible) {
+				char label[32] = "";
+				switch (_state->_scoreMode) {
+				case kModeMember:
+					if (sprite._castId.member)
+						snprintf(label, sizeof(label), "%d", sprite._castId.member);
+					else if (sprite.isQDShape())
+						snprintf(label, sizeof(label), "Q");
+					break;
+				case kModeInk:
+					snprintf(label, sizeof(label), "%s", inkType2str(sprite._ink));
+					break;
+				case kModeLocation:
+					snprintf(label, sizeof(label), "%d,%d", sprite._startPoint.x, sprite._startPoint.y);
+					break;
+				case kModeBlend:
+					snprintf(label, sizeof(label), "%d", sprite._blendAmount);
+					break;
+				default:
+					break;
+				}
+				if (label[0])
+					dl->AddText(ImVec2(x1 + 16.0f, y + (cfg.cell_height - ImGui::GetTextLineHeight()) / 2.0f),
+								IM_COL32(0, 0, 0, 255), label);
+			}
+        }
+
+		// pass 3, for clickable rects, add invisible buttosn
+		for (int f = 0; f < cfg.visible_frames; f++) {
+			int rf = startFrame + f;
+			if (rf >= total_frames) break;
+			float x = startPos.x + f * cfg.cell_width;
+			ImGui::SetCursorScreenPos(ImVec2(x, y));
+			ImGui::InvisibleButton(Common::String::format("##cell_%d_%d", ch, f).c_str(),
+								   ImVec2(cfg.cell_width, cfg.cell_height));
+			if (ImGui::IsItemClicked()) {
+				_state->_selectedScoreCast.frame = rf;
+				_state->_selectedScoreCast.channel = ch;
+			}
+			if (ImGui::IsItemHovered()) {
+				_state->_hoveredScoreCast.frame = rf;
+				_state->_hoveredScoreCast.channel = ch;
+			}
+		}
+    }
+	dl->PopClipRect();
+}
+
+static void drawSliderX(ImVec2 pos, Score *score) {
+    auto &cfg = _state->_scoreCfg;
+    ImGui::SetCursorScreenPos(pos);
+    ImGui::SetNextItemWidth(cfg.ruler_width);
+    int total_frames = (int)score->_scoreCache.size();
+    ImGui::SliderInt("##frameSlider", &_state->_scoreState.sliderX_value, 1, total_frames - cfg.visible_frames + 1);
+}
+
+static void drawMainChannelGrid(ImDrawList *dl, ImVec2 startPos, Score *score) {
+    auto &cfg = _state->_scoreCfg;
+    int startFrame = _state->_scoreState.sliderX_value - 1;
+
+    for (int ch = 0; ch < 6; ch++) {
+        float y = startPos.y + ch * cfg.cell_height;
+
+        for (int f = 0; f < cfg.visible_frames; f++) {
+            int rf = startFrame + f;
+            float x = startPos.x + f * cfg.cell_width;
+            ImVec2 cellMin = ImVec2(x, y);
+            ImVec2 cellMax = ImVec2(x + cfg.cell_width, y + cfg.cell_height);
+            ImU32 col = ((rf + 1) % 5 == 0) ? COL_ROW_DARK : COL_ROW_LIGHT;
+            dl->AddRectFilled(cellMin, cellMax, col);
+            dl->AddRect(cellMin, cellMax, COL_BORDER);
+        }
+    }
+}
+
+static void drawPlayhead(ImDrawList *dl, ImVec2 rulerPos, ImVec2 mainChannelGridPos, ImVec2 gridPos, Score *score) {
+    auto &cfg = _state->_scoreCfg;
+    int start = _state->_scoreState.sliderX_value;
+    uint currentFrameNum = score->getCurrentFrameNum();
+
+    if ((int)currentFrameNum < start || (int)currentFrameNum >= start + cfg.visible_frames)
+        return;
+
+    float px = rulerPos.x + (currentFrameNum - start) * cfg.cell_width;
+    float top = mainChannelGridPos.y;                  // top of main channel grid
+    float bottom = gridPos.y + cfg.table_height;       // bottom of sprite grid
+	ImU32 RED = IM_COL32(200, 50, 0, 255);
+
+    dl->AddLine(ImVec2(px, top), ImVec2(px, bottom), RED, 2.0f);
+
+    // triangle marker in the ruler
+    dl->AddTriangleFilled(
+        ImVec2(px - 5.0f, rulerPos.y),
+        ImVec2(px + 5.0f, rulerPos.y),
+        ImVec2(px, rulerPos.y + 8.0f),
+        RED
+    );
+}
+
 void showScore() {
 	if (!_state->_w.score)
 		return;
@@ -365,7 +909,7 @@ void showScore() {
 	ImVec2 windowSize = ImGui::GetMainViewport()->Size - pos - pos;
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
 
-	if (ImGui::Begin("Score", &_state->_w.score)) {
+	if (ImGui::Begin("Score", &_state->_w.score, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
 		Window *selectedWindow = windowListCombo(&_state->_scoreWindow);
 
 		buildContinuationData(selectedWindow);
@@ -377,7 +921,6 @@ void showScore() {
 		if (!numFrames) {
 			ImGui::Text("No frames");
 			ImGui::End();
-
 			return;
 		}
 
@@ -387,336 +930,22 @@ void showScore() {
 		if (!numFrames || _state->_selectedScoreCast.channel >= (int)score->_scoreCache[0]->_sprites.size())
 			_state->_selectedScoreCast.channel = 0;
 
-		if (_state->_scoreFrameOffset >= (int)numFrames)
-			_state->_scoreFrameOffset = 1;
-
-		{ // Render sprite details
-			Sprite *sprite = nullptr;
-			CastMember *castMember = nullptr;
-			bool shape = false;
-
-			if (_state->_selectedScoreCast.frame != -1)
-				sprite = score->_scoreCache[_state->_selectedScoreCast.frame]->_sprites[_state->_selectedScoreCast.channel];
-
-			if (sprite) {
-				castMember = cast->getCastMember(sprite->_castId.member, true);
-
-				shape = sprite->isQDShape();
-			}
-
-			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
-			ImGui::BeginChild("Image", ImVec2(200.0f, 70.0f));
-
-			if (castMember || shape) {
-				ImGuiImage imgID = {};
-
-				if (castMember) {
-					switch (castMember->_type) {
-					case kCastBitmap:
-						imgID = getImageID(castMember);
-						break;
-					case kCastShape:
-						imgID = getShapeID(castMember);
-						break;
-					case kCastText:
-					case kCastButton:
-					case kCastRichText:
-						imgID = getTextID(castMember);
-						break;
-
-					default:
-						break;
-					}
-				}
-
-				if (castMember && imgID.id) {
-					Common::String name(getDisplayName(castMember));
-					showImage(imgID, name.c_str(), 32.f);
-				} else {
-					ImGui::InvisibleButton("##canvas", ImVec2(32.f, 32.f));
-				}
-				ImGui::SameLine();
-				ImGui::Text("%s", sprite->_castId.asString().c_str());
-				ImGui::Text("%s", spriteType2str(sprite->_spriteType));
-			}
-
-			ImGui::PopStyleColor();
-			ImGui::EndChild();
-
-			ImGui::SameLine();
-			ImGui::BeginChild("Details", ImVec2(500.0f, 70.0f));
-
-			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
-			ImGui::BeginChild("Ink", ImVec2(150.0f, 20.0f));
-
-			if (castMember || shape) {
-				ImGui::Text("%s", inkType2str(sprite->_ink));
-				ImGui::SameLine(70);
-				ImGui::SetItemTooltip("Ink");
-				ImGui::Text("|");
-				ImGui::SameLine();
-				ImGui::Text("%d", sprite->_blendAmount);
-				ImGui::SameLine();
-				ImGui::SetItemTooltip("Blend");
-			}
-			ImGui::PopStyleColor();
-			ImGui::EndChild();
-
-			ImGui::SameLine();
-
-			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
-			ImGui::BeginChild("Range", ImVec2(100.0f, 20.0f));
-
-			if (castMember || shape) {
-				ImGui::TextUnformatted("\uf816"); ImGui::SameLine();	// line_start_circle
-				// the continuation data is 0-indexed but the frames are 1-indexed
-				ImGui::Text("%4d", _state->_continuationData[_state->_selectedScoreCast.channel][_state->_selectedScoreCast.frame].first + 1); ImGui::SameLine(50);
-				ImGui::SetItemTooltip("Start Frame");
-				ImGui::TextUnformatted("\uf819"); ImGui::SameLine();	// line_end_square
-				// the continuation data is 0-indexed but the frames are 1-indexed
-				ImGui::Text("%4d", _state->_continuationData[_state->_selectedScoreCast.channel][_state->_selectedScoreCast.frame].second + 1); ImGui::SameLine();
-				ImGui::SetItemTooltip("End Frame");
-			}
-
-			ImGui::PopStyleColor();
-			ImGui::EndChild();
-
-			ImGui::SameLine();
-
-			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
-			ImGui::BeginChild("Flags", ImVec2(200.0f, 20.0f));
-
-			if (castMember || shape) {
-				ImGui::Checkbox(ICON_MS_LOCK, &sprite->_enabled); ImGui::SameLine();
-				ImGui::SetItemTooltip("enabled");
-				ImGui::Checkbox(ICON_MS_EDIT_NOTE, &sprite->_editable); ImGui::SameLine();
-				ImGui::SetItemTooltip("editable");
-				ImGui::Checkbox(ICON_MS_MOVE_SELECTION_RIGHT, &sprite->_moveable); ImGui::SameLine();
-				ImGui::SetItemTooltip("moveable");
-				ImGui::Checkbox(ICON_MS_DYNAMIC_FEED, &sprite->_trails);
-				ImGui::SetItemTooltip("trails");
-			}
-			ImGui::PopStyleColor();
-			ImGui::EndChild();
-
-			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
-			ImGui::BeginChild("Colors", ImVec2(150.0f, 50.0f));
-
-			if (castMember || shape) {
-				ImVec4 fg = convertColor(sprite->_foreColor);
-
-				ImGui::ColorButton("foreColor", fg);
-				ImGui::SameLine();
-				ImGui::Text("#%02x%02x%02x", (int)(fg.x * 255), (int)(fg.y * 255), (int)(fg.z * 255));
-				ImGui::SetItemTooltip("Foreground Color");
-				ImVec4 bg = convertColor(sprite->_backColor);
-				ImGui::ColorButton("backColor", bg);
-				ImGui::SameLine();
-				ImGui::Text("#%02x%02x%02x", (int)(bg.x * 255), (int)(bg.y * 255), (int)(bg.z * 255));
-				ImGui::SameLine();
-				ImGui::SetItemTooltip("Background Color");
-			}
-
-			ImGui::PopStyleColor();
-			ImGui::EndChild();
-
-			ImGui::SameLine();
-
-			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
-			ImGui::BeginChild("Coordinates", ImVec2(150.0f, 50.0f));
-
-			if (castMember || shape) {
-				ImGui::Text("X:"); ImGui::SameLine();
-				ImGui::Text("%d", sprite->_startPoint.x); ImGui::SameLine(75);
-				ImGui::SetItemTooltip("Reg Point Horizontal");
-				ImGui::Text("W:"); ImGui::SameLine();
-				ImGui::Text("%d", sprite->getWidth());
-				ImGui::SetItemTooltip("Width");
-
-				ImGui::Text("Y:"); ImGui::SameLine();
-				ImGui::Text("%d", sprite->_startPoint.y); ImGui::SameLine(75);
-				ImGui::SetItemTooltip("Reg Point Vertical");
-				ImGui::Text("H:"); ImGui::SameLine();
-				ImGui::Text("%d", sprite->getHeight()); ImGui::SameLine();
-				ImGui::SetItemTooltip("Height");
-			}
-			ImGui::PopStyleColor();
-			ImGui::EndChild();
-
-			ImGui::SameLine();
-
-			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
-			ImGui::BeginChild("Bbox", ImVec2(150.0f, 50.0f));
-
-			if (castMember || shape) {
-				const Common::Rect &box = sprite->getBbox(true);
-
-				ImGui::Text("l:"); ImGui::SameLine();
-				ImGui::Text("%d", box.left); ImGui::SameLine(75);
-				ImGui::SetItemTooltip("Left");
-				ImGui::Text("r:"); ImGui::SameLine();
-				ImGui::Text("%d", box.right);
-				ImGui::SetItemTooltip("Right");
-
-				ImGui::Text("t:"); ImGui::SameLine();
-				ImGui::Text("%d", box.top); ImGui::SameLine(75);
-				ImGui::SetItemTooltip("Top");
-				ImGui::Text("b:"); ImGui::SameLine();
-				ImGui::Text("%d", box.bottom);
-				ImGui::SetItemTooltip("Bottom");
-			}
-			ImGui::PopStyleColor();
-			ImGui::EndChild();
-
-			ImGui::EndChild();
-		}
-
-		uint numChannels = MIN<int>(score->_scoreCache[0]->_sprites.size(), score->_maxChannelsUsed + 10);
-		uint tableColumns = MAX(numFrames + 5, 25U); // Set minimal table width to 25
-
-		if (tableColumns > kMaxColumnsInTable - 3) // Current restriction of ImGui
-			tableColumns = kMaxColumnsInTable - 3;
-
-		ImGuiTableFlags addonFlags = _state->_scoreMode == kModeExtended ? 0 : ImGuiTableFlags_RowBg;
-
-		ImGui::BeginChild("Score table", ImVec2(0, -20));
-
-		if (ImGui::BeginTable("Score", tableColumns + 2,
-					ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY |
-					addonFlags)) {
-			ImGuiTableFlags flags = ImGuiTableColumnFlags_WidthFixed;
-
-			ImGui::TableSetupScrollFreeze(2, 2);
-
-			ImGui::PushFont(_state->_tinyFont);
-
-			ImGui::TableSetupColumn("##disable", flags); // disable button
-
-			ImGui::TableSetupColumn("##", flags);   // Number
-			for (uint i = 0; i < tableColumns; i++) {
-				Common::String label = Common::String::format("%-2d", i + _state->_scoreFrameOffset);
-				label += Common::String::format("##l%d", i);
-
-				ImGui::TableSetupColumn(label.c_str(), flags);
-			}
-
-			ImGui::TableNextRow(ImGuiTableRowFlags_Headers);
-			ImGui::TableNextRow(0);
-
-			ImGui::TableSetColumnIndex(0);
-			ImGui::SetNextItemWidth(20);
-
-			ImGui::TableSetColumnIndex(1);
-			ImGui::PushID(0);
-
-			ImGui::SetNextItemWidth(50);
-
-			const char *selMode = modes[_state->_scoreMode];
-
-			if (ImGui::BeginCombo("##mode", selMode)) {
-				for (int n = 0; n < ARRAYSIZE(modes); n++) {
-					const bool selected = (_state->_scoreMode == n);
-					if (ImGui::Selectable(Common::String::format("%s##%d", modes[n], n).c_str(), selected))
-						_state->_scoreMode = n;
-
-					if (selected)
-						ImGui::SetItemDefaultFocus();
-				}
-				ImGui::EndCombo();
-
-				ImGui::TableHeader("##");
-			}
-			ImGui::PopID();
-
-			for (uint i = 0; i < tableColumns; i++) {
-				ImGui::TableSetColumnIndex(i + 2);
-				const char *column_name = ImGui::TableGetColumnName(i + 2);
-
-				ImGui::SetNextItemWidth(20);
-				ImGui::TableHeader(column_name);
-			}
-
-			ImGui::TableNextRow();
-
-			ImGui::TableNextColumn(); // Enable/Disable switch
-
-			ImGui::TableNextColumn(); // Label column
-
-			float indentSize = 10.0;
-			ImGui::Indent(indentSize);
-			ImGui::Text("Labels");
-			ImGui::Unindent(indentSize);
-
-			ImGui::PopFont();
-
-			if (score->_labels && score->_labels->size()) {
-				auto labels = *score->_labels;
-				auto it = labels.begin();
-
-				for (uint f = 0; f < tableColumns; f++) {
-					ImGui::TableNextColumn();
-
-					while (it != labels.end() && (*it)->number < f + _state->_scoreFrameOffset)
-						it++;
-
-					if (it == labels.end())
-						continue;
-
-					if ((*it)->number == f + _state->_scoreFrameOffset) {
-						ImGui::Text(ICON_MS_BEENHERE);
-						ImGui::SetItemTooltip((*it)->name.c_str());
-					}
-				}
-			}
-
-			{
-				displayScoreChannel(0, kChTempo, 0, selectedWindow);
-				displayScoreChannel(0, kChPalette, 0, selectedWindow);
-				displayScoreChannel(0, kChTransition, 0, selectedWindow);
-				displayScoreChannel(0, kChSound1, 0, selectedWindow);
-				displayScoreChannel(0, kChSound2, 0, selectedWindow);
-				displayScoreChannel(0, kChScript, 0, selectedWindow);
-			}
-			ImGui::TableNextRow();
-
-			int mode = _state->_scoreMode;
-
-			for (int ch = 0; ch < (int)numChannels - 1; ch++) {
-				if (mode == kModeExtended) // This will render empty row
-					displayScoreChannel(ch + 1, kModeExtended, _state->_scoreMode, selectedWindow);
-
-				if (mode == kModeMember || mode == kModeExtended)
-					displayScoreChannel(ch + 1, kModeMember, _state->_scoreMode, selectedWindow);
-
-				if (mode == kModeBehavior || mode == kModeExtended)
-					displayScoreChannel(ch + 1, kModeBehavior, _state->_scoreMode, selectedWindow);
-
-				if (mode == kModeInk || mode == kModeExtended)
-					displayScoreChannel(ch + 1, kModeInk, _state->_scoreMode, selectedWindow);
-
-				if (mode == kModeBlend || mode == kModeExtended)
-					displayScoreChannel(ch + 1, kModeBlend, _state->_scoreMode, selectedWindow);
-
-				if (mode == kModeLocation || mode == kModeExtended)
-					displayScoreChannel(ch + 1, kModeLocation, _state->_scoreMode, selectedWindow);
-			}
-			ImGui::EndTable();
-		}
-
-		ImGui::EndChild();
-
-		{  // Render pagination
-			ImGui::BeginDisabled(numFrames <= FRAME_PAGE_SIZE);
-			ImGui::Text("   Jump to frame:");
-			ImGui::SameLine();
-			ImGui::SliderInt("##scorepage", &_state->_scorePageSlider, 0, numFrames / FRAME_PAGE_SIZE, "%d00");
-			_state->_scoreFrameOffset = _state->_scorePageSlider * FRAME_PAGE_SIZE + 1;
-			ImGui::EndDisabled();
-
-			ImGui::SameLine();
-			ImGui::Button(ICON_MS_ALIGN_JUSTIFY_CENTER, ImVec2(20, 20));
-			ImGui::SetItemTooltip("Center View");
-		}
+		drawSpriteInspector(score, cast, numFrames);
+
+		ImDrawList *dl    = ImGui::GetWindowDrawList();
+		ImVec2     origin = ImGui::GetCursorScreenPos();
+		ScoreLayout layout = computeLayout(origin, _state->_scoreCfg);
+		int numChannels = MIN<int>(score->_scoreCache[0]->_sprites.size(), score->_maxChannelsUsed + 10);
+
+		drawSidebar1(dl, layout.sidebar1Pos, score);
+		drawMainChannelGrid(dl, layout.mainChannelGridPos, score);
+		drawModeSelector(layout.modeSelectorPos);
+		drawRuler(dl, layout.rulerPos);
+		drawSidebar2(dl, layout.sidebar2Pos, score);
+		drawSpriteGrid(dl, layout.gridPos, score, selectedWindow);
+		drawPlayhead(dl, layout.rulerPos, layout.mainChannelGridPos, layout.gridPos, score);
+		drawSliderX(layout.sliderPos, score);
+		drawSliderY(layout.sliderYPos, numChannels);
 
 	}
 	ImGui::End();

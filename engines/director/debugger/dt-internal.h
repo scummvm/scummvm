@@ -110,6 +110,25 @@ typedef struct WindowFlag {
 } WindowFlag;
 
 typedef struct ImGuiState {
+
+	struct ScoreConfig {
+		float sidebar_width = 60.0f;
+		float cell_width = 16.0f;
+		float cell_height = 32.0f;
+		int visible_frames = 60;
+		int visible_channels = 10;
+		float table_width = cell_width * visible_frames;
+		float table_height = cell_height * visible_channels;
+		float ruler_height = 30.0f;
+		float ruler_width = cell_width * visible_frames;
+		float sidebar1_height = cell_height * 6;
+	} _scoreCfg;
+
+	struct ScoreState {
+		int sliderX_value = 1; // first visible frame, 1 indexed
+		int channelScrollOffset = 1; // first visible channel, 1 indexed
+	} _scoreState;
+
 	struct {
 		Common::HashMap<CastMember *, ImGuiImage> _textures;
 		bool _listView = true;
