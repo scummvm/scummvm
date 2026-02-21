@@ -105,23 +105,25 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
 	uint32 white = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
 	//uint32 red = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0x00, 0x00);
-	//uint32 blue = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x55, 0x55, 0xFF);
+	uint32 blue = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x55, 0x55, 0xFF);
 	uint32 green = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x55, 0xFF, 0x55);
 	uint32 redish = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0x55, 0x55);
 	//uint32 transparent = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0x00, 0x00, 0x00);
 	uint32 pink = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0x55, 0xFF);
 	uint32 cyan = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x55, 0xFF, 0xFF);
 
-	uint32 color1 = cyan;
-	uint32 color2 = pink;
-	uint32 color3 = white;
+	uint32 color1, color2, color3;
 
-	if (_renderMode == Common::kRenderCGA) {
-        if (_currentArea && (_currentArea->_extraColor[0] & 0x01)) {
-            color1  = green;
-            color2  = redish;
-            color3 = yellow;
-        }
+    bool isCGAAltPalette = (_renderMode == Common::kRenderCGA && _currentArea && (_currentArea->_extraColor[0] & 0x01));
+
+    if (_renderMode == Common::kRenderEGA || isCGAAltPalette) {
+        color1 = green;
+        color2 = redish;
+        color3 = yellow;
+    } else {
+        color1 = cyan;
+        color2 = pink;
+        color3 = white;
     }
 
 	Common::String message;
@@ -134,7 +136,10 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 	} else if (!_currentAreaMessages.empty())
 		drawStringInSurface(_currentArea->_name, 102, 135, black, color3, surface);
 
-	drawScoreString(score, 136, 6, black, color2, surface);
+	if (_renderMode == Common::kRenderEGA)
+		drawScoreString(score, 136, 6, black, white, surface);
+	else if (_renderMode == Common::kRenderCGA)
+		drawScoreString(score, 136, 6, black, color2, surface);
 
 	int x = 171;
 	if (shield < 10)
@@ -160,11 +165,18 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 
 	
 	Common::Rect jarWater(124, 192 - _gameStateVars[k8bitVariableEnergy], 148, 192);
-	surface->fillRect(jarWater, color1);
 
 	drawIndicator(surface, 41, 4, 16);
-	drawEclipseIndicator(surface, 228, 0, color3, color2, color1);
-	surface->fillRect(Common::Rect(225, 168, 235, 187), color3);
+	if (_renderMode == Common::kRenderEGA) {
+		surface->fillRect(jarWater, blue);
+		drawEclipseIndicator(surface, 228, 0, color3, color1);
+		surface->fillRect(Common::Rect(225, 168, 235, 187), white);
+	}
+	else if (_renderMode == Common::kRenderCGA) {
+		surface->fillRect(jarWater, color1);
+		drawEclipseIndicator(surface, 228, 0, color3, color2, color1);
+		surface->fillRect(Common::Rect(225, 168, 235, 187), color3);
+	}
 	drawCompass(surface, 229, 177, _yaw, 10, black);
 }
 
