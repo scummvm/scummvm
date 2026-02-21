@@ -166,6 +166,7 @@ private:
 	int _droppingGateStartTicks;
 	int _thunderTicks;
 	int _thunderFrameDuration;
+	int _thunderFrameIndex;
 	Math::Vector3d _thunderOffset;
 	Common::Array<Texture *>_thunderTextures;
 };

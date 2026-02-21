@@ -106,6 +106,7 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 	_spiritsMeterMax = 64;
 	_thunderTicks = 0;
 	_thunderFrameDuration = 0;
+	_thunderFrameIndex = 0;
 }
 
 CastleEngine::~CastleEngine() {
@@ -1848,10 +1849,14 @@ void CastleEngine::updateThunder() {
 		//debug("Thunder frame duration: %d", _thunderFrameDuration);
 		//debug("Size: %f", 2 * _thunderOffset.length());
 		//debug("Offset: %.1f, %.1f, %.1f", _thunderOffset.x(), _thunderOffset.y(), _thunderOffset.z());
-		_gfx->drawThunder(_thunderTextures[0], _position + _thunderOffset, 100);
+		_gfx->drawThunder(_thunderTextures[_thunderFrameIndex], _position + _thunderOffset, 100);
 		_thunderFrameDuration--;
+
+		if (_thunderFrameDuration == 5)
+			_gfx->clear(255, 255, 255);
+
 		if (_thunderFrameDuration == 0)
-			if (isSpectrum() || isCPC())
+			if (isSpectrum() || isCPC() || isDOS())
 				playSound(8, false, _soundFxHandle);
 		return;
 	}
@@ -1860,15 +1865,31 @@ void CastleEngine::updateThunder() {
 		//debug("Thunder ticks: %d", _thunderTicks);
 		_thunderTicks--;
 		if (_thunderTicks <= 0) {
+			if (isDOS())
+				_thunderFrameIndex = int(_rnd->getRandomNumber(_thunderTextures.size() - 1));
 			_thunderFrameDuration = 10;
+			_thunderOffset = Math::Vector3d();
+
+			// Project to floor plane
+			Math::Vector3d forward = _cameraFront; 
+			forward.y() = 0;
+			forward.normalize();
+
+			Math::Angle yaw = Math::Angle(30.0f - (float)_rnd->getRandomNumber(60));
+			Math::Angle pitch = Math::Angle(5.0f + (float)_rnd->getRandomNumber(20));
+
+			// Rotate on floor plane
+			float x = forward.x();
+			forward.x() = forward.x() * yaw.getCosine() - forward.z() * yaw.getSine();
+			forward.z() = x * yaw.getSine() + forward.z() * yaw.getCosine();
+
+			// Rotate upwards
+			Math::Vector3d tiltedForward = (forward * pitch.getCosine()) + (_upVector * pitch.getSine());
+			_thunderOffset = tiltedForward * (400.0f + (float)_rnd->getRandomNumber(200));
 		}
 	} else {
 		// Schedule next thunder, between 10 and 10 + 10 seconds
 		_thunderTicks = 50 * (10 + _rnd->getRandomNumber(10));
-		_thunderOffset = Math::Vector3d();
-		_thunderOffset.x() += (int(_rnd->getRandomNumber(100)) + 300);
-		_thunderOffset.y() += int(_rnd->getRandomNumber(100)) + 50.0f;
-		_thunderOffset.z() += (int(_rnd->getRandomNumber(100)) + 300);
 	}
 }
 
