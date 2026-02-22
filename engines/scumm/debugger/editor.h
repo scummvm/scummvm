@@ -27,6 +27,8 @@
 #include "common/array.h"
 #include "common/str.h"
 
+#include "scumm/debugger/resource.h"
+
 namespace Scumm {
 
 class ScummEngine;
@@ -47,9 +49,14 @@ class ScummEditor {
 private:
 	ScummEngine *_engine;
 	Common::String _gameName;
+	Common::Path _gamePath;
+
+	Editor::Resource _resource;
 
 	Common::Array<ImVec4> _colors;
 	bool _showSettings;
+
+	void loadGame();
 
 	void loadState();
 	void saveState();

@@ -23,8 +23,10 @@
 
 #include "common/config-manager.h"
 #include "common/formats/json.h"
+#include "common/hash-str.h"
 #include "common/savefile.h"
 
+#include "scumm/resource.h"
 #include "scumm/scumm.h"
 
 #include "scumm/debugger/editor.h"
@@ -41,6 +43,8 @@ static const char *colorNames[] = {"Label", "Property", "Warning", "Error"};
 ScummEditor::ScummEditor(ScummEngine *engine)
 	: _engine(engine),
 	  _gameName(ConfMan.get("gameid")),
+	  _gamePath(ConfMan.get("path")),
+	  _resource(engine->_game.version),
 	  _showSettings(false) {
 	// Specify default colors
 	_colors.resize(Editor::kColorCount);
@@ -49,7 +53,30 @@ ScummEditor::ScummEditor(ScummEngine *engine)
 	_colors[Editor::kColorWarning] = ImVec4(0.710f, 0.537f, 0.000f, 1.0f);  // SOL_YELLOW
 	_colors[Editor::kColorError] = ImVec4(0.863f, 0.196f, 0.184f, 1.0f);    // SOL_RED
 
+	loadGame();
 	loadState();
+}
+
+void ScummEditor::loadGame() {
+	// Add index file
+	_resource.addFile(_gamePath.join(_engine->generateFilename(0)), _engine->getEncByte(0));
+
+	// Find data files
+	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> files;
+	for (int i = 1; i < _engine->_numRooms; ++i) {
+		// Skip invalid rooms
+		if (_engine->_res->_types[rtRoom][i]._roomno == 0)
+			continue;
+
+		// Skip duplicates
+		Common::String filename = _engine->generateFilename(i).toString();
+		if (files.contains(filename))
+			continue;
+
+		// Add data file
+		_resource.addFile(_gamePath.join(filename), _engine->getEncByte(i));
+		files[filename] = true;
+	}
 }
 
 void ScummEditor::loadState() {
