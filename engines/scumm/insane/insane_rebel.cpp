@@ -128,9 +128,14 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_viewX = 0;
 	_viewY = 0;
 
+	// Damage visual effect counters (FUN_420515/420562/420754/42073B)
+	_damageFlashCounter = 0;
+	_damageHighFlashCounter = 0;
+	_damageShakeCounter = 0;
+	memset(_damageSavedPalette, 0, sizeof(_damageSavedPalette));
+
 	// Retail globals mapped: hit counter, cooldown, invulnerability flag
 	_rebelHitCounter = 0;
-	_rebelHitCooldown = 0;
 	_rebelInvulnerable = false;
 
 	// Opcode 6 state variables
@@ -1243,70 +1248,57 @@ void InsaneRebel2::iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, 
 	}
 }
 void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4) {
-	// Handle IACT opcode 3 subcases (damage, counters, special 100 branch)
-	// Mirrors retail FUN_0041CADB case 1 behavior where possible.
+	// FUN_00401234 case 1 (Handler 8): IACT opcode 3 — damage and hit counter.
+	//
+	// par3 == 5: Damage path — probability check, accumulate damage, trigger visual effect
+	//   Original reads probability from per-level table DAT_0047e0fc[levelIdx]
+	//   and damage amount from DAT_0047e0f8[levelIdx].
+	//   triggerDamageEffect (FUN_0042073B) is called OUTSIDE invulnerability check.
+	//
+	// par3 == 1: Hit counter increment (DAT_0047ab80)
 
-	// Very small cooldown counter decremented on each IACT to emulate DAT_0045790a behavior
-	if (_rebelHitCooldown > 0) _rebelHitCooldown--;
-
-	// Subcase: par3 == 5 -> damage logic, expects extra param at +10 (source enemy ID)
 	if (par3 == 5) {
-		b.skip(2); // Offset +8
-		int16 srcId = b.readSint16LE(); // Offset +10 (Enemy ID)
+		b.skip(2); // Offset +8 (unused)
+		int16 srcId = b.readSint16LE(); // Offset +10: source enemy ID (local_14[5])
 
-		// Only proceed if source is active (bit clear)
+		debug("Rebel2 Opcode3: par3=5 srcId=%d isBitSet=%d", srcId, isBitSet(srcId));
+
+		// FUN_00423970(srcId): only proceed if source enemy is active (bit clear)
 		if (!isBitSet(srcId)) {
-			if (_rebelHitCooldown < 2) {
-				int limit = 20 + _difficulty * 20; // heuristic mapping for probability table
-				if (limit < 5) limit = 5;
-				if (limit > 90) limit = 90;
-				if (_vm->_rnd.getRandomNumber(100) < limit) {
-					// Apply damage unless invulnerable flag set (DAT_0047ab64)
-					if (!_rebelInvulnerable) {
-						int damageAmount = 5 + (_difficulty * 2);
-						// Apply to shields first (do not end game on depletion during tests)
-	
-	
-						// Update the retail-like damage accumulator (DAT_0047a7ec equivalent)
-						_playerDamage += damageAmount;
-						if (_playerDamage > 255) _playerDamage = 255;
-						debug("Rebel2: Damage HIT by Enemy %d. Damage=%d (limit=%d)", srcId, _playerDamage, limit);
-						// TODO: call UI update / flash screen / play sound to match retail (FUN_00420515 / FUN_0041189e)
-					}
-					// Impose short cooldown to prevent immediate repeated damage
-					_rebelHitCooldown = 6;
-				}
-			}
-		}
-	}
-	// Subcase: par3 == 1 -> increment hit counter when source active and par4 != 4
-	else if (par3 == 1) {
-		b.skip(2); // read extra param (source id)
-		int16 srcId = b.readSint16LE();
-		if (!isBitSet(srcId) && par4 != 4) {
-			_rebelHitCounter++;
-			debug("Rebel2: Incremented hit counter DAT_0047ab80 -> %d (source=%d)", _rebelHitCounter, srcId);
-		}
-	}
-	// Special-case branch when par2 == 100 (retail: triggers damage/sound via different offsets)
-	else if (par2 == 100) {
-		b.skip(2);
-		int16 srcId = b.readSint16LE();
-		if (!isBitSet(srcId)) {
-			int limit = 20 + _difficulty * 20;
-			if (_vm->_rnd.getRandomNumber(100) < limit) {
+			// Probability check: original reads from per-level table DAT_0047e0fc
+			// TODO: Use actual per-level probability table instead of hardcoded values
+			int probability = 20 + _difficulty * 20;
+			if (probability < 5) probability = 5;
+			if (probability > 90) probability = 90;
+
+			int roll = _vm->_rnd.getRandomNumber(99); // FUN_004233a0(100) returns [0,99]
+			debug("Rebel2 Opcode3: probability=%d roll=%d (need roll < prob)", probability, roll);
+
+			if (roll < probability) {
+				// Apply damage unless invulnerable (DAT_0047ab64 == 0)
 				if (!_rebelInvulnerable) {
+					// TODO: Read damage amount from per-level table DAT_0047e0f8
 					int damageAmount = 5 + (_difficulty * 2);
-					// Increment the retail-like damage accumulator (DAT_0047a7ec equivalent)
 					_playerDamage += damageAmount;
 					if (_playerDamage > 255) _playerDamage = 255;
-					debug("Rebel2: Damage HIT (special) by Enemy %d. Damage=%d (limit=%d)", srcId, _playerDamage, limit);
+					debug("Rebel2: Damage HIT by Enemy %d. Damage=%d", srcId, _playerDamage);
 				}
-				_rebelHitCooldown = 6;
+				// Visual effect — called regardless of invulnerability.
+				// Handler 8: FUN_0042073B — palette flash + screen shake
+				// Other handlers: FUN_00420515 — palette flash only (no screen shake)
+				if (_rebelHandler == 8) {
+					triggerDamageEffect();
+				} else {
+					initDamageFlash();
+				}
+				// TODO: FUN_0041189e(1, 0, 0x7f, 0, 0) — play hit sound
 			}
 		}
+	} else if (par3 == 1) {
+		// Hit counter increment: unconditional in original (no isBitSet or par4 check)
+		_rebelHitCounter++;
+		debug("Rebel2: Incremented hit counter DAT_0047ab80 -> %d", _rebelHitCounter);
 	}
-	// other subcases not implemented yet
 }
 
 void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStream &b, int32 chunkSize, int16 par2, int16 par3, int16 par4) {
@@ -4071,6 +4063,22 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// Laser shot beams and impacts
 	renderLaserShots(renderBitmap, pitch, width, height);
 
+	// Damage visual effects — handler-specific per original architecture:
+	//   Handler 8:    FUN_401CCF line 119 → FUN_00420754 (palette flash + screen shake)
+	//   Handler 0x19: FUN_41DB5E line 192 → FUN_00420562 (palette flash only, every frame)
+	//   Handler 0x26: FUN_4092D9 lines 135/225/237 → FUN_00420515 trigger + palette flash
+	//   Handler 7:    No damage effects
+	if (_rebelHandler == 8) {
+		// Full damage effect: palette flash + screen shake
+		// Suppressed during autopilot (mode 4) and cutscene (mode 5)
+		if (_shipLevelMode != 4 && _shipLevelMode != 5) {
+			updateDamageEffect(renderBitmap, pitch, width, height);
+		}
+	} else if (_rebelHandler == 0x19 || _rebelHandler == 0x26) {
+		// Palette flash only — no screen shake for turret/FPS handlers
+		updateDamageFlashPalette();
+	}
+
 	// Collision zone visualization (debug - for Handler 7/8 pilot modes)
 	if (_rebelHandler == 7 || _rebelHandler == 8) {
 		drawCollisionZones(renderBitmap, pitch, width, height, 0);
@@ -4084,6 +4092,143 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 
 	// Frame end cleanup: reset enemy active flags and collision zones (FUN_403240)
 	frameEndCleanup();
+}
+
+// ======================= Damage Visual Effect Functions =======================
+// Palette flash + screen shake when the player takes damage.
+// Original retail functions: FUN_420515, FUN_420562, FUN_420754, FUN_42073B, FUN_420501
+
+// FUN_00420501 - Reset palette flash counter.
+// Called at level start / scene transitions to clear any in-progress flash.
+void InsaneRebel2::resetDamageFlash() {
+	_damageFlashCounter = 0;
+}
+
+// FUN_00420515 - Save current palette and initiate a 5-frame flash.
+// If a flash is already in progress, just resets the counter to 5
+// (the palette was already saved on the first hit).
+void InsaneRebel2::initDamageFlash() {
+	if (_damageFlashCounter == 0) {
+		// Save current SMUSH palette before modifying it
+		memcpy(_damageSavedPalette, _player->_pal, 0x300);
+	}
+	_damageFlashCounter = 5;
+}
+
+// FUN_0042073B - Trigger both palette flash and screen shake.
+// Called from the damage hit handler when the player takes damage.
+void InsaneRebel2::triggerDamageEffect() {
+	initDamageFlash();
+	_damageShakeCounter = 10;
+}
+
+// FUN_00420562 - Per-frame palette modification.
+//
+// Two modes determined by _damageHighFlashCounter:
+//
+//   Normal hit flash (_damageHighFlashCounter == 0 or odd):
+//     Decrements _damageFlashCounter. On even counter values, all 768 palette
+//     bytes (RGB) are blended from inverted toward the saved original:
+//       output[i] = 0xFF - ((0xFF - saved[i]) * (0x10 - counter)) >> 4
+//     Counter 5→4(apply)→3(skip)→2(apply)→1(skip)→0(apply=original). The
+//     alternating apply/skip creates a strobe-like flash effect.
+//
+//   High-damage red pulse (_playerDamage >= 0xFF, even counter):
+//     Only the R channel (every 3rd byte) is modified using the same formula
+//     with _damageHighFlashCounter. Creates a pulsing red tint overlay.
+void InsaneRebel2::updateDamageFlashPalette() {
+	// High-damage mode: persistent red pulsing when damage is maxed out
+	if (_playerDamage < 0xFF) {
+		_damageHighFlashCounter = 0;
+	} else {
+		if (_damageHighFlashCounter == 0) {
+			// Save palette on first frame of high-damage mode
+			memcpy(_damageSavedPalette, _player->_pal, 0x300);
+		}
+		if (_damageHighFlashCounter < 0x10) {
+			_damageHighFlashCounter++;
+		}
+	}
+
+	if (_damageHighFlashCounter == 0 || (_damageHighFlashCounter & 1) != 0) {
+		// Normal hit flash path: decrement counter, apply on even values.
+		// Original C: if ((counter != 0) && (counter--, (counter & 1) == 0))
+		if (_damageFlashCounter != 0) {
+			_damageFlashCounter--;
+			if ((_damageFlashCounter & 1) == 0) {
+				// Apply palette inversion on ALL RGB channels
+				byte modPal[0x300];
+				int blend = 0x10 - _damageFlashCounter;
+				for (int i = 0; i < 0x300; i++) {
+					modPal[i] = 0xFF - (((0xFF - _damageSavedPalette[i]) * blend) >> 4);
+				}
+				_player->setPalette(modPal);
+			}
+		}
+	} else {
+		// High-damage red-only flash (even _damageHighFlashCounter):
+		// Modify only R channel (stride 3), G and B stay unchanged.
+		byte modPal[0x300];
+		memcpy(modPal, _player->_pal, 0x300);
+		int blend = 0x10 - _damageHighFlashCounter;
+		for (int i = 0; i < 0x300; i += 3) {
+			modPal[i] = 0xFF - (((0xFF - _damageSavedPalette[i]) * blend) >> 4);
+		}
+		_player->setPalette(modPal);
+	}
+}
+
+// FUN_00420754 - Per-frame screen shake + palette flash.
+//
+// Screen shake randomly shifts scanlines left or right for visual distortion.
+// The number of affected scanlines decreases each frame (counter * 5),
+// creating a diminishing shake effect over 10 frames.
+//
+// Called every frame from procPostRendering when not in cutscene modes
+// (shipLevelMode != 4 and != 5, matching original: DAT_0043e000 != 4 && != 5).
+void InsaneRebel2::updateDamageEffect(byte *renderBitmap, int pitch, int width, int height) {
+	if (_damageShakeCounter != 0) {
+		_damageShakeCounter--;
+		int numLines = _damageShakeCounter * 5;
+
+		// Temporary buffer for scanline rotation (case 1 in original)
+		byte tempLine[640];
+
+		for (int n = numLines; n > 0; n--) {
+			// Pick a random scanline within the gameplay area (0..179, not status bar)
+			int maxY = MIN(height, 180);
+			int scanline = _vm->_rnd.getRandomNumber(maxY - 1);
+
+			byte *linePtr = renderBitmap + pitch * scanline;
+			int offset = _vm->_rnd.getRandomNumber(4) + 1;  // 1..5 pixel shift
+			int direction = _vm->_rnd.getRandomNumber(4);    // 0..4
+
+			int copyLen = pitch - offset;
+			if (copyLen <= 0)
+				continue;
+
+			switch (direction) {
+			case 0:
+			case 3:
+				// Shift left: copy line[offset..] -> line[0..]
+				memmove(linePtr, linePtr + offset, copyLen);
+				break;
+			case 1:
+				// Shift right with wrap: save, then copy
+				memcpy(tempLine, linePtr, MIN(copyLen, (int)sizeof(tempLine)));
+				memmove(linePtr + offset, tempLine, MIN(copyLen, (int)sizeof(tempLine)));
+				break;
+			case 2:
+			case 4:
+				// Shift right: copy line[0..] -> line[offset..]
+				memmove(linePtr + offset, linePtr, copyLen);
+				break;
+			}
+		}
+	}
+
+	// Palette flash runs every frame (even without shake)
+	updateDamageFlashPalette();
 }
 
 // ======================= Rendering Helper Functions =======================
@@ -4436,9 +4581,14 @@ void InsaneRebel2::renderHandler8Ship(byte *renderBitmap, int pitch, int width, 
 
 	renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _shipSprite, spriteIndex);
 
-	// Secondary ship sprite
-	if (_shipSprite2 && _shipSprite2->getNumChars() > spriteIndex) {
-		renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _shipSprite2, spriteIndex);
+	// Shadow sprite (POV004 / DAT_0047e028): drawn at same position as primary ship.
+	// Original FUN_401CCF lines 91-92 uses param_5 & 1 (firing flag) as sprite index
+	// for both primary and shadow, NOT the direction-based spriteIndex.
+	if (_shipSprite2) {
+		int shadowIndex = _shipFiring ? 1 : 0;
+		if (shadowIndex < _shipSprite2->getNumChars()) {
+			renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _shipSprite2, shadowIndex);
+		}
 	}
 
 	debug("Rebel2 Handler8: Ship at (%d,%d) raw(%d,%d) offset(%d,%d) sprite=%d/%d dir=(%d,%d)",
@@ -7769,6 +7919,9 @@ int InsaneRebel2::runLevel(int levelId) {
 	_playerShield = 255;
 	_playerScore = 0;
 	_playerDamage = 0;
+	resetDamageFlash();
+	_damageHighFlashCounter = 0;
+	_damageShakeCounter = 0;
 	_currentPhase = 1;
 	_phaseScore = 0;
 	_phaseMisses = 0;
