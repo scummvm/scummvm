@@ -5710,25 +5710,36 @@ int InsaneRebel2::processMenuInput() {
 }
 
 void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int height,
-                                  const char **items, int numItems, int selection) {
+                                  const char **items, int numItems, int selection,
+                                  bool leftAligned) {
 	// =====================================================================
-	// Shared menu renderer - Emulates FUN_0041f5ae param_4==0 (centered mode)
+	// Shared menu renderer - Emulates FUN_0041f5ae
 	// Address: 0x41F5AE
 	// =====================================================================
 	//
 	// items[0] = title string, items[1..numItems] = selectable items
 	// numItems = number of selectable items (FUN_0041f5ae param_3)
 	// selection = currently highlighted item (0-based, maps to DAT_00459988)
+	// leftAligned = false: param_4==0 (centered), true: param_4==1 (left-aligned)
 	//
 	// Coordinate formulas from FUN_0041f5ae (low-res, DAT_0047a808 < 2):
-	//   Title Y:     param_3 * -5 + 0x51           (line 19)
-	//   Item base Y: param_3 * -5 + 0x68           (line 28)
-	//   Item Y:      param_3 * -5 + i * 10 + 0x68  (line 28)
-	//   Center X:    ((DAT_0047a808 < 2) - 1 & 0xa0) + 0xa0 = 160
+	// Centered (param_4=0):
+	//   Title X:     center - titleWidth/2  (centerX = 160)
+	//   Title Y:     param_3 * -5 + 0x51
+	//   Item X:      center - textWidth/2
+	//   Box X:       center - bracketWidth/2
+	// Left-aligned (param_4=1):
+	//   Title X:     0x28 = 40
+	//   Title Y:     param_3 * -5 + 0x56
+	//   Item X:      0x17 = 23
+	//   Box X:       0x14 = 20
+	// Both modes:
+	//   Item base Y: param_3 * -5 + 0x68
+	//   Item Y:      param_3 * -5 + i * 10 + 0x68
 	//   Box Y:       param_3 * -5 + i * 10 + 0x67  (1px above text)
 
 	const int centerX = width / 2;
-	const int titleY = numItems * -5 + 0x51;
+	const int titleY = numItems * -5 + (leftAligned ? 0x56 : 0x51);
 	const int itemBaseY = numItems * -5 + 0x68;
 	const int itemSpacing = 10;
 
@@ -5848,23 +5859,27 @@ void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int h
 	};
 
 	// =====================================================================
-	// Draw title - items[0], centered at titleY
+	// Draw title - items[0]
+	// Centered: X = center - titleWidth/2
+	// Left-aligned: X = 40 (0x28)
 	// =====================================================================
 	{
 		int titleWidth = getStringWidth(items[0]);
-		int titleX = centerX - titleWidth / 2;
+		int titleX = leftAligned ? 40 : (centerX - titleWidth / 2);
 		drawString(items[0], titleX, titleY);
 	}
 
 	// =====================================================================
 	// Draw selectable items with selection highlight box
+	// Centered: item X = center - textWidth/2, box X = center - bracketWidth/2
+	// Left-aligned: item X = 23 (0x17), box X = 20 (0x14)
 	// =====================================================================
 	for (int i = 0; i < numItems; i++) {
 		int itemY = itemBaseY + i * itemSpacing;
 		const char *text = items[i + 1];
 
 		int textWidth = getStringWidth(text);
-		int textX = centerX - textWidth / 2;
+		int textX = leftAligned ? 23 : (centerX - textWidth / 2);
 		drawString(text, textX, itemY);
 
 		// Selection highlight box - FUN_004292d0
@@ -5880,9 +5895,9 @@ void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int h
 			frameCounter++;
 			byte highlightColor = ((frameCounter / 8) & 1) ? 248 : 240;
 
-			// Box position: X centered, Y = itemY - 1 (0x67 vs 0x68)
-			int leftX = centerX - bracketWidth / 2;
-			int rightX = centerX + bracketWidth / 2;
+			// Box position: Y = itemY - 1 (0x67 vs 0x68)
+			int leftX = leftAligned ? 20 : (centerX - bracketWidth / 2);
+			int rightX = leftX + bracketWidth;
 			int topY = itemY - 1;
 			int bottomY = itemY + bracketHeight - 1;
 
@@ -6264,8 +6279,13 @@ int InsaneRebel2::runChapterSelect() {
 	while (!_menuEventQueue.empty()) _menuEventQueue.pop();
 
 	// Initialize chapter selection state
-	_chapterSelection = 0;
-	_chapterItemCount = 17;  // 16 chapters + BACK
+	// Original (lines 51-54): local_10 = 0xf; while (local_10 > 0 && locked) local_10--;
+	// Finds highest unlocked chapter. With debug unlock all = 15 (FINALE).
+	_chapterSelection = 15;
+	while (_chapterSelection > 0 && !_chapterUnlocked[_chapterSelection]) {
+		_chapterSelection--;
+	}
+	_chapterItemCount = 17;  // 16 chapters + RETURN TO PILOTS
 	_selectedChapter = 0;
 	_passwordInput = "";
 	_menuRepeatDelay = 0;
@@ -6399,40 +6419,19 @@ int InsaneRebel2::processChapterSelectInput() {
 		case Common::EVENT_LBUTTONDOWN:
 			{
 				// Mouse click - check if clicking on a menu item
-				// From FUN_0041F5AE assembly (low-res 320x200):
+				// From FUN_0041F5AE (low-res, left-aligned):
 				// Item Y = 17 * -5 + i * 10 + 104 = 19 + i * 10
-				// Chapters 0-14 at Y = 19 + i*10
-				// FINALE (15) at Y = 19 + 15*10 = 169
-				// RETURN TO PILOTS (16) at Y = 19 + 16*10 = 179
-				int baseY = 19;
-				int itemHeight = 10;
+				int baseY = _chapterItemCount * -5 + 0x68;  // = 19
 				int mouseY = event.mouse.y;
 
-				// Check chapters 0-14
-				for (int i = 0; i < 15; i++) {
-					int itemY = baseY + i * itemHeight;
+				for (int i = 0; i < _chapterItemCount; i++) {
+					int itemY = baseY + i * 10;
 					if (mouseY >= itemY - 4 && mouseY < itemY + 6) {
 						_chapterSelection = i;
 						result = i;
-						debug("ChapterSelect: Chapter %d clicked at Y=%d", i + 1, mouseY);
+						debug("ChapterSelect: Item %d clicked at Y=%d", i, mouseY);
 						break;
 					}
-				}
-
-				// Check FINALE (index 15) at Y=169
-				int finaleY = baseY + 15 * itemHeight;
-				if (mouseY >= finaleY - 4 && mouseY < finaleY + 6) {
-					_chapterSelection = 15;
-					result = 15;
-					debug("ChapterSelect: FINALE clicked");
-				}
-
-				// Check RETURN TO PILOTS (index 16) at Y=179
-				int returnY = baseY + 16 * itemHeight;
-				if (mouseY >= returnY - 4 && mouseY < returnY + 6) {
-					_chapterSelection = 16;
-					result = 16;
-					debug("ChapterSelect: RETURN TO PILOTS clicked");
 				}
 			}
 			break;
@@ -6631,140 +6630,39 @@ void InsaneRebel2::drawPreviewThumbnail(byte *renderBitmap, int pitch, int width
 	}
 }
 
-// Draw left-aligned menu item - emulates FUN_0041F5AE with param_4=1
-void InsaneRebel2::drawLeftAlignedMenuItem(byte *renderBitmap, int pitch, int width, int height,
-                                           const char *text, int x, int y, bool selected) {
+// Draw score/info line at bottom of chapter select - emulates FUN_00434cb0 calls
+// For unlocked chapters: score display using TRS 80 at (25, 190)
+// For locked chapters: password prompt at (30, 190)
+void InsaneRebel2::drawChapterInfoLine(byte *renderBitmap, int pitch, int width, int height) {
+	if (_chapterSelection < 0 || _chapterSelection >= 16) return;
+
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	if (!splayer) return;
+
 	NutRenderer *font = _smush_smalfontNut;
 	if (!font) return;
 
-	int numFontChars = font->getNumChars();
-	Common::Rect clipRect(0, 0, width, height);
+	Common::Rect clipRect(0, 0, _vm->_screenWidth, _vm->_screenHeight);
+	int actualPitch = _vm->_screenWidth;
 
-	// Calculate text width for selection box
-	int textWidth = 0;
-	for (const char *c = text; *c; c++) {
-		int charIdx = (unsigned char)*c;
-		if (charIdx < numFontChars) {
-			textWidth += font->getCharWidth(charIdx);
-		}
-	}
+	if (_chapterUnlocked[_chapterSelection]) {
+		// Unlocked: show score info using TRS 80 at X=25 (0x19), Y=190 (0xbe)
+		const char *scoreStr = splayer->getString(80);
+		if (!scoreStr || !scoreStr[0]) return;
 
-	// Draw selection box if selected
-	// Box dimensions: width = textWidth + 6, height = 10 (low-res)
-	if (selected) {
-		static int frameCounter = 0;
-		frameCounter++;
-
-		int boxWidth = textWidth + 6;
-		int boxHeight = 10;
-		int boxX = x - 3;  // Left-aligned, so box starts 3 pixels before text
-		int boxY = y - 1;
-
-		// Flashing color (emulates (-((DAT_0047a7e4 & 1) == 0) & 8U) - 0x10)
-		byte highlightColor = (frameCounter & 1) ? 0xF8 : 0xF0;
-
-		// Draw box border
-		if (boxY >= 0 && boxY < height && boxX >= 0) {
-			// Top edge
-			for (int px = boxX; px < boxX + boxWidth && px < width; px++) {
-				if (px >= 0) renderBitmap[boxY * pitch + px] = highlightColor;
-			}
-			// Bottom edge
-			int bottomY = boxY + boxHeight - 1;
-			if (bottomY < height) {
-				for (int px = boxX; px < boxX + boxWidth && px < width; px++) {
-					if (px >= 0) renderBitmap[bottomY * pitch + px] = highlightColor;
+		int curX = 25;
+		int numChars = font->getNumChars();
+		for (const char *c = scoreStr; *c; c++) {
+			byte ch = (byte)*c;
+			if (ch >= 'a' && ch <= 'z') ch = ch - 'a' + 'A';
+			if (ch < numChars) {
+				int charW = font->getCharWidth(ch);
+				if (curX >= 0 && curX + charW <= width && 190 < height) {
+					font->drawCharV7(renderBitmap, clipRect, curX, 190, actualPitch, 1,
+					                 kStyleAlignLeft, ch, false, false);
 				}
+				curX += charW;
 			}
-			// Left edge
-			for (int py = boxY; py < boxY + boxHeight && py < height; py++) {
-				if (py >= 0 && boxX >= 0) renderBitmap[py * pitch + boxX] = highlightColor;
-			}
-			// Right edge
-			int rightX = boxX + boxWidth - 1;
-			if (rightX < width) {
-				for (int py = boxY; py < boxY + boxHeight && py < height; py++) {
-					if (py >= 0) renderBitmap[py * pitch + rightX] = highlightColor;
-				}
-			}
-		}
-	}
-
-	// Draw text characters
-	int curX = x;
-	for (const char *c = text; *c; c++) {
-		int charIdx = (unsigned char)*c;
-		if (charIdx < numFontChars) {
-			int charWidth = font->getCharWidth(charIdx);
-			if (curX >= 0 && curX + charWidth <= width && y >= 0 && y < height) {
-				font->drawCharV7(renderBitmap, clipRect, curX, y, pitch, -1,
-				                 kStyleAlignLeft, charIdx, true, true);
-			}
-			curX += charWidth;
-		}
-	}
-}
-
-// Draw password input field - emulates lines 106-125 of FUN_00415CF8
-void InsaneRebel2::drawPasswordInput(byte *renderBitmap, int pitch, int width, int height) {
-	// Password display position for low-res: X=30 (0x1e), Y=190 (0xbe)
-	int infoX = 30;
-	int infoY = 190;
-
-	// Build display string with cursor
-	static int frameCounter = 0;
-	frameCounter++;
-	char cursor = (frameCounter & 2) ? '_' : ' ';  // Blinking cursor
-
-	char displayText[32];
-	snprintf(displayText, sizeof(displayText), "ACCESS CODE: %s%c", _passwordInput.c_str(), cursor);
-
-	NutRenderer *font = _smush_smalfontNut;
-	if (!font) return;
-
-	int numFontChars = font->getNumChars();
-	Common::Rect clipRect(0, 0, width, height);
-
-	int curX = infoX;
-	for (const char *c = displayText; *c; c++) {
-		int charIdx = (unsigned char)*c;
-		if (charIdx < numFontChars) {
-			int charWidth = font->getCharWidth(charIdx);
-			if (curX >= 0 && curX + charWidth <= width && infoY >= 0 && infoY < height) {
-				font->drawCharV7(renderBitmap, clipRect, curX, infoY, pitch, -1,
-				                 kStyleAlignLeft, charIdx, true, true);
-			}
-			curX += charWidth;
-		}
-	}
-}
-
-// Draw score/time display - emulates lines 99-104 of FUN_00415CF8
-void InsaneRebel2::drawScoreDisplay(byte *renderBitmap, int pitch, int width, int height, int chapter) {
-	// Score display position for low-res: X=25 (0x19), Y=190 (0xbe)
-	int infoX = 25;
-	int infoY = 190;
-
-	// For now, just display a placeholder score
-	char displayText[32];
-	snprintf(displayText, sizeof(displayText), "SCORE: %d", 0);
-
-	NutRenderer *font = _smush_smalfontNut;
-	if (!font) return;
-
-	int numFontChars = font->getNumChars();
-	Common::Rect clipRect(0, 0, width, height);
-
-	int curX = infoX;
-	for (const char *c = displayText; *c; c++) {
-		int charIdx = (unsigned char)*c;
-		if (charIdx < numFontChars) {
-			int charWidth = font->getCharWidth(charIdx);
-			if (curX >= 0 && curX + charWidth <= width && infoY >= 0 && infoY < height) {
-				font->drawCharV7(renderBitmap, clipRect, curX, infoY, pitch, -1,
-				                 kStyleAlignLeft, charIdx, true, true);
-			}
-			curX += charWidth;
 		}
 	}
 }
@@ -6772,295 +6670,50 @@ void InsaneRebel2::drawScoreDisplay(byte *renderBitmap, int pitch, int width, in
 // Draw chapter selection overlay - called during O_LEVEL.SAN playback
 // FUN_00415CF8 - Chapter selection screen with preview thumbnail
 void InsaneRebel2::drawChapterSelectOverlay(byte *renderBitmap, int pitch, int width, int height) {
-	// Draw chapter selection screen overlay
-	// Emulates rendering in FUN_00415CF8
+	// Emulates FUN_00415CF8 rendering via shared drawMenuItems(leftAligned=true)
 	//
-	// Layout (320x200 mode):
-	// - Title "Chapters" at top-left using TITLFONT
-	// - 15 chapters + FINALE + RETURN TO PILOTS (17 items total)
-	// - Three preview boxes on right side
-	// - Status bar at bottom: "PILOTS: X  SCORE: Y  RANK:"
+	// Menu structure (18 entries, 17 selectable):
+	//   items[0]     = title = TRS 60 (locked chapter 0 header, contains ^f02 for TITLFONT)
+	//   items[1..16] = chapters 1-16 = TRS 41-56 (unlocked) or TRS 61-76 (locked)
+	//   items[17]    = "RETURN TO PILOTS" = TRS 77
+	//
+	// FUN_0041f5ae(0, &DAT_004577a8, 0x11, 1): param_3=17, param_4=1 (left-aligned)
 
-	// Chapter names from GAME.TRS (DAT_00457820 and DAT_00457868)
-	// From FUN_00414073:
-	//   TRS indices 0x28-0x39 (40-57): 18 unlocked chapter strings -> DAT_00457820
-	//   TRS indices 0x3c-0x4d (60-77): 18 locked chapter strings -> DAT_00457868
-	// These contain complete strings like "CHAPTER 1 - THE DREIGHTON TRIANGLE"
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
-	const char *chapterNamesUnlocked[18];
-	const char *chapterNamesLocked[18];
+	if (!splayer) return;
 
-	if (!splayer) {
-		debug(1, "drawChapterSelectOverlay: SmushPlayer not available for TRS strings!");
-		return;
+	// Build items array matching original DAT_004577a8 layout
+	const char *items[18];
+
+	// items[0] = title (always locked version = TRS 60, contains "^f02CHAPTERS")
+	items[0] = splayer->getString(60);
+	if (!items[0] || !items[0][0]) items[0] = "^f02CHAPTERS";
+
+	// items[1..16] = chapters, using unlocked (TRS 41-56) or locked (TRS 61-76) strings
+	for (int i = 1; i <= 16; i++) {
+		bool unlocked = (i - 1 < 16) && _chapterUnlocked[i - 1];
+		int trsIdx = unlocked ? (40 + i) : (60 + i);
+		items[i] = splayer->getString(trsIdx);
+		if (!items[i] || !items[i][0]) items[i] = "";
 	}
 
-	// Load unlocked chapter strings (TRS indices 40-57)
-	for (int i = 0; i < 18; i++) {
-		chapterNamesUnlocked[i] = splayer->getString(40 + i);
-		if (!chapterNamesUnlocked[i] || !chapterNamesUnlocked[i][0]) {
-			debug(1, "drawChapterSelectOverlay: TRS unlocked string %d not found!", 40 + i);
-			chapterNamesUnlocked[i] = "";
-		}
-	}
+	// items[17] = "RETURN TO PILOTS" (always locked version = TRS 77)
+	items[17] = splayer->getString(77);
+	if (!items[17] || !items[17][0]) items[17] = "RETURN TO PILOTS";
 
-	// Load locked chapter strings (TRS indices 60-77)
-	for (int i = 0; i < 18; i++) {
-		chapterNamesLocked[i] = splayer->getString(60 + i);
-		if (!chapterNamesLocked[i] || !chapterNamesLocked[i][0]) {
-			debug(1, "drawChapterSelectOverlay: TRS locked string %d not found!", 60 + i);
-			chapterNamesLocked[i] = "";
-		}
-	}
+	// Render menu using shared renderer with left-aligned mode
+	drawMenuItems(renderBitmap, pitch, width, height, items, 17, _chapterSelection, true);
 
-	// Frame counter for flashing selection box
-	static int frameCounter = 0;
-	frameCounter++;
-
-	NutRenderer *menuFont = _smush_smalfontNut;
-	NutRenderer *titleFont = _smush_titlefontNut;
-	if (!menuFont) return;
-
-	Common::Rect clipRect(0, 0, width, height);
-	int numFontChars = menuFont->getNumChars();
-
-	// === Draw title "Chapters" using TITLFONT ===
-	// From FUN_0041F5AE param_4=1 (left-aligned mode), low-res (320x200):
-	// Title X = 0x28 = 40, Title Y = param_3 * -5 + 0x56 = 17 * -5 + 86 = 1
-	int titleX = 40;
-	int titleY = 1;
-
-	if (titleFont) {
-		const char *titleText = "Chapters";
-		int curX = titleX;
-		int numTitleChars = titleFont->getNumChars();
-		for (const char *c = titleText; *c; c++) {
-			int charIdx = (unsigned char)*c;
-			if (charIdx < numTitleChars) {
-				int charWidth = titleFont->getCharWidth(charIdx);
-				if (curX >= 0 && curX + charWidth <= width && titleY >= 0) {
-					titleFont->drawCharV7(renderBitmap, clipRect, curX, titleY, pitch, -1,
-					                      kStyleAlignLeft, charIdx, true, true);
-				}
-				curX += charWidth;
-			}
-		}
-	}
-
-	// === Draw chapter list (left-aligned) ===
-	// From FUN_0041F5AE param_4=1 (left-aligned mode), low-res (320x200):
-	// Item X = 0x17 = 23
-	// Item Y = param_3 * -5 + local_c * 10 + 0x68 = 17 * -5 + i * 10 + 104 = 19 + i * 10
-	// Selection Box X = 0x14 = 20, Y = 18 + i * 10 (item Y - 1)
-	int itemX = 23;       // From assembly: 0x17 = 23
-	int itemBaseY = 19;   // From assembly: 17 * -5 + 104 = 19
-	int itemSpacing = 10; // From assembly: 10 pixels between items
-	int selBoxX = 20;     // From assembly: 0x14 = 20
-
-	// Draw 15 chapters (indices 0-14)
-	for (int i = 0; i < 15; i++) {
-		int itemY = itemBaseY + i * itemSpacing;
-		bool isSelected = (i == _chapterSelection);
-
-		// Get chapter string from TRS (already contains "CHAPTER X - NAME" or "CHAPTER X -")
-		const char *chapterStr = _chapterUnlocked[i] ? chapterNamesUnlocked[i] : chapterNamesLocked[i];
-		if (!chapterStr || !chapterStr[0]) {
-			continue;  // Skip if no string available
-		}
-
-		// Calculate text width for selection box
-		int textWidth = 0;
-		for (const char *c = chapterStr; *c; c++) {
-			int charIdx = (unsigned char)*c;
-			if (charIdx < numFontChars) {
-				textWidth += menuFont->getCharWidth(charIdx);
-			}
-		}
-
-		// Draw selection box if selected (red border)
-		// From assembly: box starts at X=0x14=20, Y = itemY - 1
-		if (isSelected) {
-			int boxWidth = textWidth + 6;  // From assembly: textWidth + 6
-			int boxHeight = 10;            // From assembly: 10 pixels
-			int boxX = selBoxX;            // From assembly: 0x14 = 20
-			int boxY = itemY - 1;          // From assembly: itemY - 1
-
-			// Flashing color from assembly: (-((DAT_0047a7e4 & 1) == 0) & 8U) - 0x10
-			// This gives -16 or -8, which are palette-relative negative offsets
-			byte boxColor = (frameCounter & 1) ? 0xF8 : 0xF0;
-
-			// Draw box border
-			if (boxY >= 0 && boxY + boxHeight <= height && boxX >= 0 && boxX + boxWidth <= width) {
-				for (int px = boxX; px < boxX + boxWidth; px++) {
-					renderBitmap[boxY * pitch + px] = boxColor;
-					renderBitmap[(boxY + boxHeight - 1) * pitch + px] = boxColor;
-				}
-				for (int py = boxY; py < boxY + boxHeight; py++) {
-					renderBitmap[py * pitch + boxX] = boxColor;
-					renderBitmap[py * pitch + boxX + boxWidth - 1] = boxColor;
-				}
-			}
-		}
-
-		// Draw chapter text
-		int curX = itemX;
-		for (const char *c = chapterStr; *c; c++) {
-			int charIdx = (unsigned char)*c;
-			if (charIdx < numFontChars) {
-				int charWidth = menuFont->getCharWidth(charIdx);
-				if (curX >= 0 && curX + charWidth <= width && itemY >= 0 && itemY < height) {
-					menuFont->drawCharV7(renderBitmap, clipRect, curX, itemY, pitch, -1,
-					                     kStyleAlignLeft, charIdx, true, true);
-				}
-				curX += charWidth;
-			}
-		}
-	}
-
-	// Draw FINALE (chapter 16 = index 15)
-	// Position: Y = 19 + 15*10 = 169
-	// FINALE uses TRS index 55 (unlocked) or 75 (locked) - index 15 in the arrays
-	int finaleY = itemBaseY + 15 * itemSpacing;
-	bool finaleSelected = (_chapterSelection == 15);
-	const char *finaleStr = _chapterUnlocked[15] ? chapterNamesUnlocked[15] : chapterNamesLocked[15];
-	if (!finaleStr || !finaleStr[0]) {
-		finaleStr = "";  // Fallback to empty if TRS not available
-	}
-
-	int finaleWidth = 0;
-	for (const char *c = finaleStr; *c; c++) {
-		int charIdx = (unsigned char)*c;
-		if (charIdx < numFontChars) finaleWidth += menuFont->getCharWidth(charIdx);
-	}
-
-	if (finaleSelected) {
-		int boxWidth = finaleWidth + 6;
-		int boxHeight = 10;
-		int boxX = selBoxX;  // Use assembly value: 20
-		int boxY = finaleY - 1;
-		byte boxColor = (frameCounter & 1) ? 0xF8 : 0xF0;
-
-		if (boxY >= 0 && boxY + boxHeight <= height && boxX >= 0 && boxX + boxWidth <= width) {
-			for (int px = boxX; px < boxX + boxWidth; px++) {
-				renderBitmap[boxY * pitch + px] = boxColor;
-				renderBitmap[(boxY + boxHeight - 1) * pitch + px] = boxColor;
-			}
-			for (int py = boxY; py < boxY + boxHeight; py++) {
-				renderBitmap[py * pitch + boxX] = boxColor;
-				renderBitmap[py * pitch + boxX + boxWidth - 1] = boxColor;
-			}
-		}
-	}
-
-	int curX = itemX;
-	for (const char *c = finaleStr; *c; c++) {
-		int charIdx = (unsigned char)*c;
-		if (charIdx < numFontChars) {
-			int charWidth = menuFont->getCharWidth(charIdx);
-			if (curX >= 0 && curX + charWidth <= width && finaleY >= 0) {
-				menuFont->drawCharV7(renderBitmap, clipRect, curX, finaleY, pitch, -1,
-				                     kStyleAlignLeft, charIdx, true, true);
-			}
-			curX += charWidth;
-		}
-	}
-
-	// Draw "RETURN TO PILOTS" (index 16)
-	// Position: Y = 19 + 16*10 = 179
-	// This string comes from TRS - likely in DAT_00457400 (indices 89-109)
-	// Using TRS index 89 for "RETURN TO PILOTS" or equivalent
-	int returnY = itemBaseY + 16 * itemSpacing;
-	bool returnSelected = (_chapterSelection == 16);
-	const char *returnStr = splayer->getString(89);
-	if (!returnStr || !returnStr[0]) {
-		debug(1, "drawChapterSelectOverlay: TRS string 89 (RETURN TO PILOTS) not found!");
-		returnStr = "";
-	}
-
-	int returnWidth = 0;
-	for (const char *c = returnStr; *c; c++) {
-		int charIdx = (unsigned char)*c;
-		if (charIdx < numFontChars) returnWidth += menuFont->getCharWidth(charIdx);
-	}
-
-	if (returnSelected) {
-		int boxWidth = returnWidth + 6;
-		int boxHeight = 10;
-		int boxX = selBoxX;  // Use assembly value: 20
-		int boxY = returnY - 1;
-		byte boxColor = (frameCounter & 1) ? 0xF8 : 0xF0;
-
-		if (boxY >= 0 && boxY + boxHeight <= height && boxX >= 0 && boxX + boxWidth <= width) {
-			for (int px = boxX; px < boxX + boxWidth; px++) {
-				renderBitmap[boxY * pitch + px] = boxColor;
-				renderBitmap[(boxY + boxHeight - 1) * pitch + px] = boxColor;
-			}
-			for (int py = boxY; py < boxY + boxHeight; py++) {
-				renderBitmap[py * pitch + boxX] = boxColor;
-				renderBitmap[py * pitch + boxX + boxWidth - 1] = boxColor;
-			}
-		}
-	}
-
-	curX = itemX;
-	for (const char *c = returnStr; *c; c++) {
-		int charIdx = (unsigned char)*c;
-		if (charIdx < numFontChars) {
-			int charWidth = menuFont->getCharWidth(charIdx);
-			if (curX >= 0 && curX + charWidth <= width && returnY >= 0) {
-				menuFont->drawCharV7(renderBitmap, clipRect, curX, returnY, pitch, -1,
-				                     kStyleAlignLeft, charIdx, true, true);
-			}
-			curX += charWidth;
-		}
-	}
-
-	// === Draw preview box on the right side ===
-	// From FUN_00415CF8 lines 128-133:
-	// Outer: X=228 (0xe4), Y=73 (0x49), W=84 (0x54), H=54 (0x36), color=0xF8
-	// Inner: X=229 (0xe5), Y=74 (0x4a), W=82 (0x52), H=52 (0x34), color=4
+	// Draw preview box on the right side (FUN_004292d0 calls at lines 128-133)
 	drawPreviewBox(renderBitmap, pitch, width, height);
 
-	// === Draw preview thumbnail inside the box ===
-	// Shows chapter number and unlock status for currently selected chapter
-	// Only draw for chapters 0-15 (not RETURN TO PILOTS at index 16)
+	// Draw preview thumbnail for chapters 0-15 (not RETURN TO PILOTS)
 	if (_chapterSelection >= 0 && _chapterSelection < 16) {
 		drawPreviewThumbnail(renderBitmap, pitch, width, height, _chapterSelection);
 	}
 
-	// === Draw status bar at bottom ===
-	// From FUN_00415CF8 lines 101-103 (unlocked chapter score display):
-	// X = 0x19 + 0x19 = 50 (but we use 23 to align with menu items)
-	// Y = 0xbe = 190
-	// TODO: The status bar format should use TRS strings from DAT_00457400 (indices 89-109)
-	// for proper localization. Currently using minimal display.
-	int statusY = 190;
-	int statusX = 23;  // Align with menu items
-
-	// Build status string using TRS format strings where available
-	// TRS indices 89-109 contain format strings for status display
-	char statusStr[64];
-	const char *pilotsLabel = splayer->getString(90);  // "PILOTS:" or equivalent
-	const char *scoreLabel = splayer->getString(91);   // "SCORE:" or equivalent
-	if (pilotsLabel && pilotsLabel[0] && scoreLabel && scoreLabel[0]) {
-		snprintf(statusStr, sizeof(statusStr), "%s %d  %s %d", pilotsLabel, 4, scoreLabel, _playerScore);
-	} else {
-		// Minimal fallback if TRS strings not available
-		snprintf(statusStr, sizeof(statusStr), "%d  %d", 4, _playerScore);
-	}
-
-	curX = statusX;
-	for (const char *c = statusStr; *c; c++) {
-		int charIdx = (unsigned char)*c;
-		if (charIdx < numFontChars) {
-			int charWidth = menuFont->getCharWidth(charIdx);
-			if (curX >= 0 && curX + charWidth <= width && statusY >= 0 && statusY < height) {
-				menuFont->drawCharV7(renderBitmap, clipRect, curX, statusY, pitch, -1,
-				                     kStyleAlignLeft, charIdx, true, true);
-			}
-			curX += charWidth;
-		}
-	}
+	// Draw score/info line at bottom
+	drawChapterInfoLine(renderBitmap, pitch, width, height);
 }
 
 // ==================== Pilot Selection Menu (FUN_00414A41) ====================

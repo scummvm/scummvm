@@ -96,10 +96,13 @@ public:
 	// Process menu input (keyboard/mouse) - returns selected item or -1
 	int processMenuInput();
 
-	// Shared menu item renderer - emulates FUN_0041F5AE param_4==0 (centered mode)
+	// Shared menu item renderer - emulates FUN_0041F5AE
 	// items[0] = title, items[1..numItems] = selectable items, selection = highlighted item
+	// leftAligned=false: param_4==0 (centered, for main menu / pilot select)
+	// leftAligned=true:  param_4==1 (left-aligned, for chapter select)
 	void drawMenuItems(byte *renderBitmap, int pitch, int width, int height,
-	                   const char **items, int numItems, int selection);
+	                   const char **items, int numItems, int selection,
+	                   bool leftAligned = false);
 
 	// Draw menu overlay (selection highlight) on current frame
 	void drawMenuOverlay(byte *renderBitmap, int pitch, int width, int height);
@@ -150,15 +153,8 @@ public:
 	int16 _previewOffsetX;   // X offset = -90 for chapter select
 	int16 _previewOffsetY;   // Y offset = chapter * -50 + 75
 
-	// Draw left-aligned menu text - emulates FUN_0041F5AE with param_4=1
-	void drawLeftAlignedMenuItem(byte *renderBitmap, int pitch, int width, int height,
-	                             const char *text, int x, int y, bool selected);
-
-	// Draw password input field - emulates lines 106-125 of FUN_00415CF8
-	void drawPasswordInput(byte *renderBitmap, int pitch, int width, int height);
-
-	// Draw score/time display - emulates lines 99-104 of FUN_00415CF8
-	void drawScoreDisplay(byte *renderBitmap, int pitch, int width, int height, int chapter);
+	// Draw score/info display at bottom of chapter select - emulates FUN_00434cb0 calls
+	void drawChapterInfoLine(byte *renderBitmap, int pitch, int width, int height);
 
 	// ================= Pilot Selection Menu (FUN_00414A41) ====================
 	// This is the pilot/save selection menu (separate from chapter selection)
