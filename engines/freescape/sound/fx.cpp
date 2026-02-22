@@ -67,7 +67,7 @@ public:
 		}
 	}
 
-	void playSound(int index) override {
+	void playSound(int index, Type type) override {
 		if (_soundsFx.size() == 0) {
 			debugC(1, kFreescapeDebugMedia, "WARNING: Sounds are not loaded");
 			return;
@@ -91,11 +91,11 @@ public:
 			debugC(1, kFreescapeDebugMedia, "WARNING: Sound %d is empty", index);
 	}
 
-	void stopSound() override {
+	void stopSound(Type type) override {
 		_mixer->stopHandle(_soundFxHandle);
 	}
 
-	bool isPlayingSound() const override {
+	bool isPlayingSound(Type type) const override {
 		return _mixer->isSoundHandleActive(_soundFxHandle);
 	}
 
