@@ -66,7 +66,8 @@ public:
 		kStateChapterSelect = 3,// Stage 3: Chapter selection (FUN_00415CF8)
 		kStateGameplay = 4,     // Stage 4: Gameplay (FUN_00416787)
 		kStateCredits = 5,      // Credits sequence
-		kStateQuit = 6          // Exit game
+		kStateQuit = 6,         // Exit game
+		kStateDifficultySelect = 7 // Difficulty submenu within pilot select
 	};
 
 	// Menu selection results (return values from FUN_004147B2)
@@ -171,6 +172,7 @@ public:
 	int _levelSelection;          // Current level selection (0-based)
 	int _levelItemCount;          // Number of level items (levels + options)
 	int _selectedLevel;           // Final selected level ID (1-15)
+	int _difficultySelection;     // Current difficulty selection in submenu (0-based)
 
 	// Run pilot selection menu - emulates FUN_00414A41
 	int runLevelSelect();
