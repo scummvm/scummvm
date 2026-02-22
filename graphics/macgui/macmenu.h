@@ -149,6 +149,8 @@ public:
 	bool isVisible() { return _isVisible; }
 	void setVisible(bool visible, bool silent = false) override { _isVisible = visible; _contentIsDirty = true; }
 
+	void setFont(const Font *font) { _font = font; }
+
 	void printMenu(int level = 0, MacMenuSubMenu *submenu = nullptr);
 
 	virtual void closeMenu();

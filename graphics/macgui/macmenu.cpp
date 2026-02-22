@@ -485,7 +485,7 @@ void MacMenu::insertMenuItem(MacMenuSubMenu *submenu, const Common::String &text
 		return;
 	}
 
-	if (pos >= submenu->items.size()) {
+	if (pos > submenu->items.size()) {
 		_dimensionsDirty = false;
 		return;
 	}
@@ -525,7 +525,7 @@ void MacMenu::insertMenuItem(MacMenuSubMenu *submenu, const Common::U32String &t
 		return;
 	}
 
-	if (pos >= submenu->items.size()) {
+	if (pos > submenu->items.size()) {
 		_dimensionsDirty = false;
 		return;
 	}
@@ -674,6 +674,8 @@ int MacMenu::getAction(MacMenuItem *menuItem) {
 }
 
 void MacMenu::clearSubMenu(int id) {
+	if ((id < 0) || ((uint)id >= _items.size()))
+		return;
 	MacMenuItem *menu = _items[id];
 
 	if (menu->submenu == nullptr)
