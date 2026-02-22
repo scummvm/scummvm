@@ -136,7 +136,10 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 
 	// Retail globals mapped: hit counter, cooldown, invulnerability flag
 	_rebelHitCounter = 0;
+	_rebelKillCounter = 0;
 	_rebelInvulnerable = false;
+	_rebelWaveState = 0;
+	_rebelPhaseState = 0;
 
 	// Opcode 6 state variables
 	_rebelAutopilot = 0;
@@ -727,18 +730,29 @@ int32 InsaneRebel2::processMouse() {
 				// Enemy hit!
 				it->active = false;
 				it->destroyed = true;  // Mark as destroyed so IACT won't re-activate
-				debug("Rebel2: HIT enemy ID=%d at (%d,%d) - Rect: (%d,%d)-(%d,%d)", 
-					it->id, mousePos.x, mousePos.y,
+				debug("Rebel2: HIT enemy ID=%d type=%d at (%d,%d) - Rect: (%d,%d)-(%d,%d)",
+					it->id, it->type, mousePos.x, mousePos.y,
 					it->rect.left, it->rect.top, it->rect.right, it->rect.bottom);
 
 				// Spawn explosion using native system
 				// Use width / 2 as the scale parameter
-				spawnExplosion((it->rect.left + it->rect.right) / 2, 
-							   (it->rect.top + it->rect.bottom) / 2, 
+				spawnExplosion((it->rect.left + it->rect.right) / 2,
+							   (it->rect.top + it->rect.bottom) / 2,
 							   it->rect.width() / 2);
 
-				// Disable self
+				// Disable self (prevents sprite from rendering via SKIP chunks)
 				setBit(it->id);
+
+				// Set enemy type bit in wave state (FUN_004028c5 line 74)
+				// DAT_0047ab98 |= 1 << (enemyType & 0x1f)
+				// This tracks which enemy GROUPS have been killed in this wave
+				if (it->type > 0 && it->type < 32) {
+					_rebelWaveState |= (1 << it->type);
+					debug("Rebel2: Wave state updated: 0x%x (set bit %d)", _rebelWaveState, it->type);
+				}
+
+				// Increment kill counter (DAT_0047ab88)
+				_rebelKillCounter++;
 
 				// Handle dependencies
 				int id = it->id;
@@ -1204,7 +1218,19 @@ void InsaneRebel2::iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, 
 		// The original game's setBit(0)/clearBit(0) affects ALL bits, not intended here
 		if (targetId < 1 || targetId >= 0x200)
 			return;
-		
+
+		// Handler 8 specific: FUN_401234 case 0, par3==1, par4!=0
+		// "If enemy type par4 has been killed (bit set in wave state), disable targetId"
+		// This conditionally hides entities based on which enemy groups have been destroyed
+		if (_rebelHandler == 8 && value != 0) {
+			int bitMask = 1 << (value & 0x1f);
+			if ((_rebelWaveState & bitMask) != 0) {
+				setBit(targetId);
+				debug("Rebel2 Opcode2 (H8): Disable target=%d (type %d killed, wave=0x%x)", targetId, value, _rebelWaveState);
+			}
+			return;
+		}
+
 		if (value > 1 && value < 10) { // 1 < value < 10: random disable
 			if (_vm->_rnd.getRandomNumber(value) == 0) {
 				setBit(targetId);
@@ -1333,16 +1359,22 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		// Set ship level mode (DAT_0043e000 = par3)
 		_shipLevelMode = par3;
 
-		// If par4 == 1, enable status bar and reset state
+		// If par4 == 1, enable status bar
 		if (par4 == 1) {
 			_rebelStatusBarSprite = 5;  // Status bar sprite for Handler 8
-			// Reset link tables
+		}
+
+		// Reset state when shipLevelMode != 0 && par4 == 1 (FUN_401234 lines 97-103)
+		if (_shipLevelMode != 0 && par4 == 1) {
+			// Clear link tables
 			for (int i = 0; i < 512; i++) {
 				_rebelLinks[i][0] = 0;
 				_rebelLinks[i][1] = 0;
 				_rebelLinks[i][2] = 0;
 			}
-			debug("Rebel2 Opcode 6 (Handler 8): Status bar enabled, state reset");
+			// DAT_0047ab98 = DAT_0047ab9c: Reset wave state to accumulated phase state
+			_rebelWaveState = _rebelPhaseState;
+			debug("Rebel2 Opcode 6 (Handler 8): State reset, wave=0x%x", _rebelWaveState);
 		}
 
 		// Skip position calculation for special modes 4 and 5
@@ -1763,9 +1795,12 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 			_rebelLinks[i][2] = 0;
 		}
 
-		// DAT_0047ab98 = DAT_0047ab9c (reset state flags)
-		// We don't have a direct equivalent, but we can reset relevant counters
+		// DAT_0047ab98 = DAT_0047ab9c: At the start of each wave video,
+		// reset wave state to accumulated phase state. Enemies killed in
+		// previous waves stay killed; new kills add during this wave.
+		_rebelWaveState = _rebelPhaseState;
 		_rebelHitCounter = 0;
+		debug("Rebel2 Opcode 6: Wave state reset to phase state 0x%x", _rebelWaveState);
 	}
 
 	// Step 2: Set level type (DAT_00457900 = par3)
@@ -2692,6 +2727,7 @@ void InsaneRebel2::enemyUpdate(byte *renderBitmap, Common::SeekableReadStream &b
 	for (it = _enemies.begin(); it != _enemies.end(); ++it) {
 		if (it->id == enemyId) {
 			it->rect = Common::Rect(x, y, x + w, y + h);
+			it->type = par3;  // Update enemy type/group
 			// Only re-activate if not destroyed
 			if (!it->destroyed) {
 				it->active = true;
@@ -2701,13 +2737,14 @@ void InsaneRebel2::enemyUpdate(byte *renderBitmap, Common::SeekableReadStream &b
 		}
 	}
 	if (!found) {
-		init_enemyStruct(enemyId, x, y, w, h, true, false, -1);
+		init_enemyStruct(enemyId, x, y, w, h, true, false, -1, par3);
 	}
 }
 
-void InsaneRebel2::init_enemyStruct(int id, int32 x, int32 y, int32 w, int32 h, bool active, bool destroyed, int32 explosionFrame) {
+void InsaneRebel2::init_enemyStruct(int id, int32 x, int32 y, int32 w, int32 h, bool active, bool destroyed, int32 explosionFrame, int type) {
 	enemy e;
 	e.id = id;
+	e.type = type;
 	e.rect = Common::Rect(x, y, x + w, y + h);
 	e.active = active;
 	e.destroyed = destroyed;
@@ -7602,8 +7639,17 @@ int InsaneRebel2::runLevel1() {
 // =============================================================================
 
 int InsaneRebel2::runLevel2() {
+	// FUN_00418063: Level 2 "Corellia Star" - Third-person on-foot shooting
+	// Three phases, each with looping enemy waves until all enemy types killed.
+	// Phase completion: (_rebelPhaseState & mask) == mask
+	// Phase 1 mask: 0x06 (enemy types 1,2)
+	// Phase 2 mask: 0x0e (enemy types 1,2,3)
+	// Phase 3 mask: 0x0e (enemy types 1,2,3)
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
-	int bonusCount = 0;  // Tracks special events (local_1c in assembly)
+	int bonusCount = 0;     // local_1c: tracks bonus events (DAT_0047ab9c & 0x10)
+	int totalKills = 0;     // local_c: accumulated kill count across phases
+	int totalMisses = 0;    // Accumulated misses (sVar1 + sVar2 from hit counters)
+	int prevWaveState = 0;  // local_8: previous wave's state for Phase 3 randomization
 
 	// Play cutscene (02CUT.SAN)
 	playCinematic("LEV02/02CUT.SAN");
@@ -7619,12 +7665,12 @@ int InsaneRebel2::runLevel2() {
 		_playerDamage = 0;
 		_currentPhase = 1;
 		bonusCount = 0;
+		totalKills = 0;
+		totalMisses = 0;
 
-		// Reset bit table before gameplay starts - FUN_00423880 calls FUN_00423a00(0)
-		// This ensures all enemies are visible (not skipped by SKIP chunks)
+		// FUN_00401000 + FUN_00407d10 + FUN_0040c040: Reset game state
 		clearBit(0);
-
-		// Also reset link tables for enemy dependencies
+		_enemies.clear();
 		for (int i = 0; i < 512; i++) {
 			_rebelLinks[i][0] = 0;
 			_rebelLinks[i][1] = 0;
@@ -7632,154 +7678,231 @@ int InsaneRebel2::runLevel2() {
 		}
 
 		// ===== PHASE 1: P1/02P01_X.SAN =====
-		// First play variant A which contains the background IACT (opcode 8, par4=5)
-		// The background is loaded during this video and persists for B/C/D variants
-		{
-			debug("Rebel2: Level 2 Phase 1 - playing 02P01_A.SAN (background loader)");
-			splayer->setCurVideoFlags(0x28);
-			splayer->play("LEV02/P1/02P01_A.SAN", 12);
-			_deathFrame = splayer->_frame;
-		}
+		// FUN_0041c7d0: Reset per-phase counters
+		_rebelKillCounter = 0;
+		_rebelHitCounter = 0;
+		_rebelPhaseState = 0;
+		_rebelWaveState = 0;
+
+		// Play A.SAN (background loader)
+		debug("Rebel2: Level 2 Phase 1 - playing 02P01_A.SAN (background)");
+		splayer->setCurVideoFlags(0x28);
+		splayer->play("LEV02/P1/02P01_A.SAN", 12);
+		_deathFrame = splayer->_frame;
 
 		if (_vm->shouldQuit()) return kLevelQuit;
 
-		// Now select random variant (B, C, or D) for actual gameplay
-		if (_playerShield > 0) {
-			int variant = getRandomVariant(3);
-			const char *variants[] = {"B", "C", "D"};
-			Common::String filename = Common::String::format("LEV02/P1/02P01_%s.SAN", variants[variant]);
+		// Copy wave state to phase state after A.SAN
+		_rebelPhaseState = _rebelWaveState;
 
-			debug("Rebel2: Level 2 Phase 1 - playing %s (gameplay)", filename.c_str());
+		// Phase 1 wave loop: random B/C/D until all type 1,2 enemies killed
+		// Original: while (uVar3 >= 0 && (DAT_0047ab9c & 6) != 6)
+		while (_playerDamage < 255 && (_rebelPhaseState & 0x06) != 0x06) {
+			if (_vm->shouldQuit()) return kLevelQuit;
+
+			// Random variant B, C, or D
+			int variant = _vm->_rnd.getRandomNumber(2);  // 0-2
+			const char *variants[] = {
+				"LEV02/P1/02P01_B.SAN",
+				"LEV02/P1/02P01_C.SAN",
+				"LEV02/P1/02P01_D.SAN"
+			};
+			debug("Rebel2: Phase 1 wave - playing %s (state=0x%x)", variants[variant], _rebelPhaseState);
 			splayer->setCurVideoFlags(0x28);
-			splayer->play(filename.c_str(), 12);
+			splayer->play(variants[variant], 12);
 			_deathFrame = splayer->_frame;
+
+			// After wave: copy wave state to phase state (FUN_00417b61 line 33)
+			_rebelPhaseState = _rebelWaveState;
+			debug("Rebel2: Phase 1 wave done - state=0x%x (need 0x06)", _rebelPhaseState);
 		}
 
+		// Check for bonus (bit 4 = 0x10)
+		if ((_rebelPhaseState & 0x10) != 0) bonusCount++;
+
+		if (_playerDamage >= 255) goto level2_death;
 		if (_vm->shouldQuit()) return kLevelQuit;
-
-		if (_playerShield == 0) {
-			// Died in phase 1
-			debug("Rebel2: Level 2 Phase 1 death");
-			playLevelDeathVariant(2, 1, _deathFrame);
-			if (_vm->shouldQuit()) return kLevelQuit;
-
-			_playerLives--;
-			if (_playerLives <= 0) {
-				playLevelGameOver(2);
-				return kLevelGameOver;
-			}
-			playLevelRetry(2);
-			if (_vm->shouldQuit()) return kLevelQuit;
-			continue;  // Restart from beginning
-		}
 
 		// Post segment 1 (02PST1.SAN)
 		splayer->setCurVideoFlags(0x20);
 		splayer->play("LEV02/02PST1.SAN", 12);
 		if (_vm->shouldQuit()) return kLevelQuit;
 
-		_currentPhase = 2;
-
-		// Reset bit table before Phase 2 gameplay starts
-		clearBit(0);
+		totalKills += _rebelKillCounter;
+		totalMisses += _rebelHitCounter;
 
 		// ===== PHASE 2: P2/02P02_X.SAN =====
-		// First play variant A which contains the background IACT for this phase
-		{
-			debug("Rebel2: Level 2 Phase 2 - playing 02P02_A.SAN (background loader)");
-			splayer->setCurVideoFlags(0x28);
-			splayer->play("LEV02/P2/02P02_A.SAN", 12);
-			_deathFrame = splayer->_frame;
-		}
+		_currentPhase = 2;
+		_rebelKillCounter = 0;
+		_rebelHitCounter = 0;
+		_rebelPhaseState = 0;
+		_rebelWaveState = 0;
+		_enemies.clear();
+
+		// Play A.SAN (background loader)
+		debug("Rebel2: Level 2 Phase 2 - playing 02P02_A.SAN (background)");
+		splayer->setCurVideoFlags(0x28);
+		splayer->play("LEV02/P2/02P02_A.SAN", 12);
+		_deathFrame = splayer->_frame;
 
 		if (_vm->shouldQuit()) return kLevelQuit;
+		_rebelPhaseState = _rebelWaveState;
 
-		// Now select gameplay variant (B through F)
-		if (_playerShield > 0) {
-			int variant = getRandomVariant(5);
-			const char *variants[] = {"B", "C", "D", "E", "F"};
-			Common::String filename = Common::String::format("LEV02/P2/02P02_%s.SAN", variants[variant]);
-
-			debug("Rebel2: Level 2 Phase 2 - playing %s (gameplay)", filename.c_str());
-			splayer->setCurVideoFlags(0x28);
-			splayer->play(filename.c_str(), 12);
-			_deathFrame = splayer->_frame;
-		}
-
-		if (_vm->shouldQuit()) return kLevelQuit;
-
-		if (_playerShield == 0) {
-			// Died in phase 2
-			debug("Rebel2: Level 2 Phase 2 death");
-			playLevelDeathVariant(2, 2, _deathFrame);
+		// Phase 2 wave loop: state-based variant selection
+		// Original: while (local_10 >= 0 && (DAT_0047ab9c & 0xe) != 0xe)
+		while (_playerDamage < 255 && (_rebelPhaseState & 0x0e) != 0x0e) {
 			if (_vm->shouldQuit()) return kLevelQuit;
 
-			_playerLives--;
-			if (_playerLives <= 0) {
-				playLevelGameOver(2);
-				return kLevelGameOver;
+			int waveSelect = _rebelPhaseState & 0x0e;  // masked enemy state
+
+			// If no specific pattern: randomize high bits (original lines 71-74)
+			// When (local_10 & 0xc) == 0: add random 0x10/0x11/0x12
+			if ((waveSelect & 0x0c) == 0) {
+				waveSelect = _vm->_rnd.getRandomNumber(2) + 0x10;
 			}
-			playLevelRetry(2);
-			if (_vm->shouldQuit()) return kLevelQuit;
-			continue;  // Restart from beginning
+
+			// Variant selection matching original switch (FUN_418063 lines 75-96)
+			const char *filename;
+			switch (waveSelect) {
+			case 4: case 6:
+				filename = "LEV02/P2/02P02_B.SAN"; break;
+			case 8: case 10:
+				filename = "LEV02/P2/02P02_C.SAN"; break;
+			case 0x0c: case 0x0e:
+				filename = "LEV02/P2/02P02_A.SAN"; break;
+			case 0x11:
+				filename = "LEV02/P2/02P02_E.SAN"; break;
+			case 0x12:
+				filename = "LEV02/P2/02P02_F.SAN"; break;
+			default:
+				filename = "LEV02/P2/02P02_D.SAN"; break;
+			}
+
+			debug("Rebel2: Phase 2 wave - playing %s (state=0x%x sel=0x%x)", filename, _rebelPhaseState, waveSelect);
+			splayer->setCurVideoFlags(0x28);
+			splayer->play(filename, 12);
+			_deathFrame = splayer->_frame;
+
+			_rebelPhaseState = _rebelWaveState;
+			debug("Rebel2: Phase 2 wave done - state=0x%x (need 0x0e)", _rebelPhaseState);
 		}
+
+		if ((_rebelPhaseState & 0x10) != 0) bonusCount++;
+
+		if (_playerDamage >= 255) goto level2_death;
+		if (_vm->shouldQuit()) return kLevelQuit;
 
 		// Post segment 2 (02PST2.SAN)
 		splayer->setCurVideoFlags(0x20);
 		splayer->play("LEV02/02PST2.SAN", 12);
 		if (_vm->shouldQuit()) return kLevelQuit;
 
-		_currentPhase = 3;
-
-		// Reset bit table before Phase 3 gameplay starts
-		clearBit(0);
+		totalKills += _rebelKillCounter;
+		totalMisses += _rebelHitCounter;
 
 		// ===== PHASE 3: P3/02P03_X.SAN =====
-		// First play variant A which contains the background IACT for this phase
+		_currentPhase = 3;
+		_rebelKillCounter = 0;
+		_rebelHitCounter = 0;
+		_rebelPhaseState = 0;
+		_rebelWaveState = 0;
+		_enemies.clear();
+		prevWaveState = 0;
+
+		// Play A.SAN (background loader)
+		debug("Rebel2: Level 2 Phase 3 - playing 02P03_A.SAN (background)");
+		splayer->setCurVideoFlags(0x28);
+		splayer->play("LEV02/P3/02P03_A.SAN", 12);
+		_deathFrame = splayer->_frame;
+
+		if (_vm->shouldQuit()) return kLevelQuit;
+		_rebelPhaseState = _rebelWaveState;
+
+		// Phase 3 wave loop: state-based with randomization
+		// Original: while (local_10 >= 0 && (DAT_0047ab9c & 0xe) != 0xe)
 		{
-			debug("Rebel2: Level 2 Phase 3 - playing 02P03_A.SAN (background loader)");
-			splayer->setCurVideoFlags(0x28);
-			splayer->play("LEV02/P3/02P03_A.SAN", 12);
-			_deathFrame = splayer->_frame;
-		}
+			int waveSelect = _rebelPhaseState & 0x0e;
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+			while (_playerDamage < 255 && (_rebelPhaseState & 0x0e) != 0x0e) {
+				if (_vm->shouldQuit()) return kLevelQuit;
 
-		// Now select gameplay variant (B through I)
-		if (_playerShield > 0) {
-			int variant = getRandomVariant(8);
-			const char *variants[] = {"B", "C", "D", "E", "F", "G", "H", "I"};
-			Common::String filename = Common::String::format("LEV02/P3/02P03_%s.SAN", variants[variant]);
+				// Phase 3 randomization (original lines 113-115):
+				// If previous wave state bit 0 was clear AND random(8)==0, set bit 0
+				if (((prevWaveState & 1) == 0) && (_vm->_rnd.getRandomNumber(7) == 0)) {
+					waveSelect |= 1;
+				}
+				prevWaveState = waveSelect;
 
-			debug("Rebel2: Level 2 Phase 3 - playing %s (gameplay)", filename.c_str());
-			splayer->setCurVideoFlags(0x28);
-			splayer->play(filename.c_str(), 12);
-			_deathFrame = splayer->_frame;
-		}
+				// Variant selection matching original switch (FUN_418063 lines 117-144)
+				const char *filename;
+				switch (waveSelect) {
+				case 0:
+					filename = "LEV02/P3/02P03_H.SAN"; break;
+				case 2:
+					filename = "LEV02/P3/02P03_G.SAN"; break;
+				case 4:
+					filename = "LEV02/P3/02P03_F.SAN"; break;
+				case 6:
+					filename = "LEV02/P3/02P03_E.SAN"; break;
+				case 8:
+					filename = "LEV02/P3/02P03_D.SAN"; break;
+				case 10:
+					filename = "LEV02/P3/02P03_C.SAN"; break;
+				case 0x0c:
+					filename = "LEV02/P3/02P03_B.SAN"; break;
+				case 0x0e:
+					filename = "LEV02/P3/02P03_A.SAN"; break;
+				default:
+					filename = "LEV02/P3/02P03_I.SAN"; break;
+				}
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+				debug("Rebel2: Phase 3 wave - playing %s (state=0x%x sel=0x%x)", filename, _rebelPhaseState, waveSelect);
+				splayer->setCurVideoFlags(0x28);
+				splayer->play(filename, 12);
+				_deathFrame = splayer->_frame;
 
-		if (_playerShield == 0) {
-			// Died in phase 3
-			debug("Rebel2: Level 2 Phase 3 death");
-			playLevelDeathVariant(2, 3, _deathFrame);
-			if (_vm->shouldQuit()) return kLevelQuit;
-
-			_playerLives--;
-			if (_playerLives <= 0) {
-				playLevelGameOver(2);
-				return kLevelGameOver;
+				_rebelPhaseState = _rebelWaveState;
+				waveSelect = _rebelPhaseState & 0x0e;
+				debug("Rebel2: Phase 3 wave done - state=0x%x (need 0x0e)", _rebelPhaseState);
 			}
-			playLevelRetry(2);
-			if (_vm->shouldQuit()) return kLevelQuit;
-			continue;  // Restart from beginning
 		}
 
-		// Level completed!
-		debug("Rebel2: Level 2 completed! bonusCount=%d", bonusCount);
+		if ((_rebelPhaseState & 0x10) != 0) bonusCount++;
+		totalKills += _rebelKillCounter;
+
+		if (_playerDamage >= 255) goto level2_death;
+		if (_vm->shouldQuit()) return kLevelQuit;
+
+		// Level completed! Calculate accuracy score.
+		{
+			int accuracy = 0;
+			int totalShots = totalKills + totalMisses + _rebelHitCounter;
+			if (totalKills > 0 && totalShots > 0) {
+				accuracy = (totalKills * 100) / totalShots;
+			}
+			debug("Rebel2: Level 2 completed! kills=%d misses=%d accuracy=%d%% bonus=%d",
+				totalKills, totalMisses, accuracy, bonusCount);
+		}
+
 		playLevelEnd(2);
 		_levelUnlocked[2] = true;  // Unlock level 3
 		return kLevelNextLevel;
+
+	level2_death:
+		// Player died — play death sequence and retry or game over
+		debug("Rebel2: Level 2 Phase %d death", _currentPhase);
+		playCinematic("LEV02/02DIE.SAN");
+		if (_vm->shouldQuit()) return kLevelQuit;
+
+		_playerLives--;
+		if (_playerLives <= 0) {
+			playLevelGameOver(2);
+			return kLevelGameOver;
+		}
+		playCinematic("LEV02/02RETRY.SAN");
+		_playerDamage = 0;
+		if (_vm->shouldQuit()) return kLevelQuit;
+		continue;  // Restart from beginning
 	}
 
 	return kLevelQuit;
