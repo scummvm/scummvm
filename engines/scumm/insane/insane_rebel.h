@@ -429,6 +429,7 @@ public:
 
 	struct enemy {
 		int id;
+		int type;                 // Enemy type/group from IACT opcode 4 par3 (determines DAT_0047ab98 bit)
 		Common::Rect rect;
 		bool active;
 		bool destroyed;           // Set when enemy is shot - prevents re-activation
@@ -439,7 +440,7 @@ public:
 		int savedBgHeight;        // Height of saved background
 	};
 
-	void init_enemyStruct(int id, int32 x, int32 y, int32 w, int32 h, bool active, bool destroyed, int32 explosionFrame);
+	void init_enemyStruct(int id, int32 x, int32 y, int32 w, int32 h, bool active, bool destroyed, int32 explosionFrame, int type = 0);
 	void enemyUpdate(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
 
 	Common::List<enemy> _enemies;
@@ -607,7 +608,15 @@ public:
 
 	// Rebel per-level counters / flags mapped from retail globals
 	int _rebelHitCounter;    // DAT_0047ab80 - hit counter / state tracker
+	int _rebelKillCounter;   // DAT_0047ab88 - enemies destroyed this phase
 	bool _rebelInvulnerable; // DAT_0047ab64 - toggles invulnerability / state
+
+	// Enemy wave/phase state tracking (FUN_004028c5 / FUN_00417b61)
+	// DAT_0047ab98: Per-wave enemy kill state. Bits set when enemy types are destroyed.
+	// DAT_0047ab9c: Per-phase accumulated state. Copied from _rebelWaveState between waves.
+	// Phase completion: (_rebelPhaseState & mask) == mask (all required enemy types killed)
+	int _rebelWaveState;     // DAT_0047ab98 - current wave enemy kill flags
+	int _rebelPhaseState;    // DAT_0047ab9c - accumulated phase enemy kill flags
 
 	// Opcode 6 state variables (from FUN_41CADB case 4)
 	int _rebelAutopilot;     // DAT_00457904 - autopilot flag (0 or 1)
