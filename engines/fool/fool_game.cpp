@@ -33,7 +33,6 @@ void FoolGame::run() {
 	g_toolbox = new Toolbox();
 	g_zbasic = new ZBasic(g_toolbox);
 	g_zbasic->loadProgram(Common::Path("The Fool's Errand"));
-	g_engine->_menu->setVisible(false);
 	this->sub_128_004();
 	delete g_zbasic;
 	delete g_toolbox;
@@ -323,7 +322,7 @@ int16 FoolGame::sub_128_428() {
 	// 128:0428
 	// read a byte
 	this->var_i16_30 = *(byte *)(&arr_bytes_5dfc->data()[this->var_ptr_696]);
-	debug(5, "Read[%04x]: %02x", this->var_ptr_696, this->var_i16_30);
+	debugC(8, kDebugLoading, "Read[%04x]: %02x", this->var_ptr_696, this->var_i16_30);
 	this->var_ptr_696 += 1;
 	return this->var_i16_30;
 	return 0;
@@ -333,7 +332,7 @@ int16 FoolGame::sub_128_446() {
 	// 128:0446
 	// read a short
 	this->var_i16_30 = READ_BE_INT16(&arr_bytes_5dfc->data()[this->var_ptr_696]);
-	debug(5, "Read[%04x]: %04x", this->var_ptr_696, this->var_i16_30);
+	debugC(8, kDebugLoading, "Read[%04x]: %04x", this->var_ptr_696, this->var_i16_30);
 	this->var_ptr_696 += 2;
 	return this->var_i16_30;
 }
@@ -342,7 +341,7 @@ int32 FoolGame::sub_128_462() {
 	// 128:0462
 	// read a long
 	this->var_i32_68e = READ_BE_INT32(&arr_bytes_5dfc->data()[this->var_ptr_696]);
-	debug(5, "Read[%04x]: %08x", this->var_ptr_696, this->var_i32_68e);
+	debugC(8, kDebugLoading, "Read[%04x]: %08x", this->var_ptr_696, this->var_i32_68e);
 	this->var_ptr_696 += 4;
 	return this->var_i32_68e;
 }
@@ -352,7 +351,7 @@ Common::U32String FoolGame::sub_128_49a() {
 	// read a pascal string
 	this->var_i16_79e = *(byte *)(&arr_bytes_5dfc->data()[this->var_ptr_696]);
 	this->var_str_69a = Common::U32String((const char *)&arr_bytes_5dfc->data()[this->var_ptr_696+1], this->var_i16_79e, Common::kMacRoman);
-	debug(5, "Read[%04x]: %s", this->var_ptr_696, this->var_str_69a.encode().c_str());
+	debugC(8, kDebugLoading, "Read[%04x]: %s", this->var_ptr_696, this->var_str_69a.encode().c_str());
 	this->var_ptr_696 += this->var_i16_79e + 1;
 	return this->var_str_69a;
 }
@@ -933,7 +932,10 @@ void FoolGame::sub_128_20d0() {
 			this->var_i16_7d8 = this->var_i16_7da;
 			return;
 		}
-	} while (this->arr_i16_1b90[this->var_i16_7d8]);
+	} while (this->arr_i16_1b90[this->var_i16_7d8] == 0);
+	// The original game took time to redraw the whole screen,
+	// which made the scroll happen at a sane rate.
+	g_toolbox->Delay(15);
 	this->sub_128_2202();
 }
 
@@ -1187,6 +1189,7 @@ void FoolGame::sub_128_3032() {
 	this->var_i16_7c6 = 0;
 	this->var_i16_484 = 0;
 	this->var_i16_68c = 3;
+	// render chapter menu headings
 	for (int j = 3; j <= 7; j++) {
 		this->var_str_384 = g_zbasic->str(37) + g_zbasic->chr(0x7d+j) + g_zbasic->str(38);
 		g_zbasic->menu(j, 0, 1, this->var_str_384);
@@ -1259,9 +1262,9 @@ void FoolGame::sub_128_3536() {
 void FoolGame::sub_128_3744() {
 	// 128:3744
 	for (int i = 3; i <= 7; i++) {
-		this->var_i32_bf8 = g_toolbox->GetMHandle(i);
+		this->var_menu_bf8 = g_toolbox->GetMHandle(i);
 		g_toolbox->DeleteMenu(i);
-		g_toolbox->DisposeMenu(this->var_i32_bf8);
+		g_toolbox->DisposeMenu(this->var_menu_bf8);
 	}
 	g_toolbox->DrawMenuBar();
 }

@@ -19,6 +19,7 @@
  *
  */
 
+#include "graphics/macgui/macmenu.h"
 #include "graphics/macgui/mactext-canvas.h"
 #include "graphics/macgui/mactext.h"
 #include "graphics/managed_surface.h"
@@ -31,33 +32,91 @@
 namespace Fool {
 
 void Toolbox::ClearMenuBar() {
-	warning("STUB: Toolbox::ClearMenuBar");
+	if (_defaultMenu) {
+		_defaultMenu->setVisible(false);
+	}
 }
 
 void Toolbox::DeleteMenu(uint16 menuID) {
-	warning("STUB: Toolbox::DeleteMenu");
+	if (_menu.contains(menuID)) {
+		_menu.erase(menuID);
+	}
+	if (_defaultMenu) {
+		_defaultMenu->clearSubMenu(menuID-1);
+	}
 }
 
 void Toolbox::DrawMenuBar() {
-	warning("STUB: Toolbox::DrawMenuBar");
+	if (_defaultMenu) {
+		_defaultMenu->setVisible(true);
+	}
 }
 
 void Toolbox::DisposeMenu(MenuHandle &theMenu) {
-	warning("STUB: Toolbox::DisposeMenu");
+	// only frees memory, DeleteMenu is responsible for removing it from the menu state
+	theMenu = nullptr;
 }
 
 MenuHandle Toolbox::GetMHandle(uint16 menuID) {
-	warning("STUB: Toolbox::GetMHandle");
-	return MenuHandle();
+	MenuHandle result;
+	if (_menu.contains(menuID)) {
+		result = _menu[menuID];
+	}
+	return result;
 }
 
 void Toolbox::HiliteMenu(uint16 menuID) {
+	// FIXME: this is coupled to the mouse click code
 	warning("STUB: Toolbox::HiliteMenu");
 }
 
 uint32 Toolbox::MenuSelect(const Common::Point &startPt) {
 	warning("STUB: Toolbox::MenuSelect");
 	return 0;
+}
+
+MenuHandle Toolbox::NewMenu(uint16 menuID, const Common::U32String &menuTitle) {
+	MenuHandle handle(new MenuInfo());
+	handle->menuID = menuID;
+	handle->menuData.push_back(menuTitle);
+	_menu[menuID] = handle;
+	if (_defaultMenu) {
+		for (int i = 0; i < (menuID - _defaultMenu->numberOfMenus()); i++) {
+			_defaultMenu->addMenuItem(nullptr, Common::U32String());
+		}
+		_defaultMenu->clearSubMenu(menuID-1);
+		Graphics::MacMenuItem *item = _defaultMenu->getMenuItem(menuID-1);
+		item->unicodeText = menuTitle;
+		item->unicode = true;
+		_defaultMenu->addSubMenu(nullptr, menuID-1);
+	}
+	return handle;
+}
+
+void Toolbox::SetItem(MenuHandle &theMenu, uint16 item, const Common::U32String &itemString) {
+	if (!theMenu) {
+		warning("Toolbox::SetItem: empty menu handle");
+		return;
+	}
+	if (theMenu->menuData.size() < (uint)(item + 1)) {
+		theMenu->menuData.resize(item + 1);
+	}
+	theMenu->menuData[item] = itemString;
+	if (_defaultMenu) {
+		Graphics::MacMenuSubMenu *submenu = _defaultMenu->getSubmenu(nullptr, theMenu->menuID-1);
+		if (!submenu) {
+			warning("Toolbox::SetItem: menu ID %d not found", theMenu->menuID);
+			return;
+		}
+		if (item == 0) {
+			Graphics::MacMenuItem *mi = _defaultMenu->getMenuItem(theMenu->menuID-1);
+			mi->text = itemString.encode(Common::kMacRoman);
+			mi->unicode = false;
+		} else {
+			_defaultMenu->removeMenuItem(submenu, item-1);
+			_defaultMenu->insertMenuItem(submenu, itemString.encode(Common::kMacRoman), item-1);
+		}
+	}
 }
 
 

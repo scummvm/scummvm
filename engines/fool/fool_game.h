@@ -191,7 +191,9 @@ private:
 	int16 var_i16_9f2;
 	Common::U32String var_str_9f4;
 
-	MenuHandle var_i32_bf8;
+	// Used as both a pointer and a bitstore
+	uint32 var_i32_bf8;
+	MenuHandle var_menu_bf8;
 
 	int16 var_i16_d0c;
 	int16 var_i16_e12;
@@ -255,7 +257,7 @@ private:
 	int16 arr_i16_2f38[0xc00]; // 96x32?
 	int16 arr_i16_3b38[0xc00]; // 96x32?
 	Common::Rect arr_rect_4338;
-	int16 arr_i16_4738[16];
+	uint16 arr_i16_4738[16];
 	uint16 arr_i16_4758[6];
 	int16 arr_i16_4bd8[0x52];
 	int16 arr_i16_4c7c[0x52];

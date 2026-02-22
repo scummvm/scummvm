@@ -56,7 +56,6 @@ protected:
 public:
 	Graphics::ManagedSurface _screen;
 	Graphics::MacWindowManager _wm;
-	Graphics::MacMenu *_menu;
 
 	FoolEngine(OSystem *syst, const FOOLGameDescription *gameDesc);
 	~FoolEngine() override;
