@@ -27,7 +27,7 @@
 
 namespace Freescape {
 
-void FreescapeEngine::playSound(int index, bool sync, Audio::SoundHandle &handle) {
+void FreescapeEngine::playSound(int index, bool sync, Sound::Type type) {
 	if (index < 0) {
 		debugC(1, kFreescapeDebugMedia, "Sound not specified");
 		return;
@@ -40,7 +40,7 @@ void FreescapeEngine::playSound(int index, bool sync, Audio::SoundHandle &handle
 
 	debugC(1, kFreescapeDebugMedia, "Playing sound %d with sync: %d", index, sync);
 	if (_sound) {
-		_sound->playSound(index);
+		_sound->playSound(index, type);
 		return;
 	}
 
@@ -80,22 +80,22 @@ void FreescapeEngine::playMusic(const Common::Path &filename) {
 	}
 }
 
-void FreescapeEngine::stopAllSounds(Audio::SoundHandle &handle) {
+void FreescapeEngine::stopAllSounds(Sound::Type type) {
 	debugC(1, kFreescapeDebugMedia, "Stopping sound");
 	if (_sound)
-		_sound->stopSound();
+		_sound->stopSound(type);
 	else
-		_mixer->stopHandle(handle);
+		_mixer->stopHandle(_soundFxHandle);
 }
 
-void FreescapeEngine::waitForSounds() {
-	while (isPlayingSound())
+void FreescapeEngine::waitForSounds(Sound::Type type) {
+	while (isPlayingSound(type))
 		waitInLoop(10);
 }
 
-bool FreescapeEngine::isPlayingSound() {
+bool FreescapeEngine::isPlayingSound(Sound::Type type) {
 	if (_sound)
-		return _sound->isPlayingSound();
+		return _sound->isPlayingSound(type);
 
 	if (_usePrerecordedSounds)
 		return _mixer->isSoundHandleActive(_soundFxHandle);

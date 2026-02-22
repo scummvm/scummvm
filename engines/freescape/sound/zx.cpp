@@ -45,15 +45,15 @@ public:
 
 	void loadSpeakerFx(Common::SeekableReadStream *file, int sfxTable, int sfxData, int numberSounds);
 
-	void playSound(int index) override {
+	void playSound(int index, Type type) override {
 		playSoundZX(_soundsSpeakerFxZX[index]);
 	}
 
-	void stopSound() override {
+	void stopSound(Type type) override {
 		_mixer->stopHandle(_soundFxHandle);
 	}
 
-	bool isPlayingSound() const override {
+	bool isPlayingSound(Type type) const override {
 		return !_speaker->endOfStream();
 	}
 
@@ -303,10 +303,10 @@ class SoundDrillerZX final : public SoundZX {
 public:
 	SoundDrillerZX(Audio::Mixer *mixer) : SoundZX(mixer) {}
 
-	void playSound(int index) override;
+	void playSound(int index, Type type) override;
 };
 
-void SoundDrillerZX::playSound(int index) {
+void SoundDrillerZX::playSound(int index, Type type) {
 	debugC(1, kFreescapeDebugMedia, "Playing Driller ZX sound %d", index);
 	Common::Array<soundUnitZX> soundUnits;
 

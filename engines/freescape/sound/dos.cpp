@@ -47,7 +47,7 @@ public:
 
 	void loadSpeakerFx(Common::SeekableReadStream *file, int offsetFreq, int offsetTable, int numberSounds);
 
-	void playSound(int index) override {
+	void playSound(int index, Type type) override {
 		soundSpeakerFx *speakerFxInfo = _soundsSpeakerFx[index];
 		if (speakerFxInfo)
 			playSoundDOS(speakerFxInfo);
@@ -55,11 +55,11 @@ public:
 			debugC(1, kFreescapeDebugMedia, "WARNING: Sound %d is not available", index);
 	}
 
-	void stopSound() override {
+	void stopSound(Type type) override {
 		_mixer->stopHandle(_soundFxHandle);
 	}
 
-	bool isPlayingSound() const override {
+	bool isPlayingSound(Type type) const override {
 		return !_speaker->endOfStream();
 	}
 

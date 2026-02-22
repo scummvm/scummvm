@@ -398,7 +398,7 @@ void FreescapeEngine::drawBorderScreenAndWait(Graphics::Surface *surface, int ma
 		delete compositedSurface;
 	}
 	pauseToken.clear();
-	playSound(_soundIndexMenu, false, _soundFxHandle);
+	playSound(_soundIndexMenu, false);
 	_gfx->clear(0, 0, 0, true);
 }
 
