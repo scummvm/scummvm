@@ -578,9 +578,32 @@ public:
 	int _viewX;
 	int _viewY;
 
+	// ======================= Damage Visual Effect System =======================
+	// Palette flash + screen shake on taking damage.
+	// Original functions: FUN_420515, FUN_420562, FUN_420754, FUN_42073B
+	//
+	// FUN_42073B (triggerDamageEffect): Called on damage hit. Initiates palette
+	//   flash via FUN_420515 and sets screen shake counter to 10.
+	// FUN_420515 (initDamageFlash): Saves current palette, sets 5-frame flash.
+	// FUN_420562 (updateDamageFlashPalette): Per-frame palette inversion.
+	//   Normal hit: all RGB channels inverted toward white, fades over 5 frames.
+	//   High damage (>=255): red channel pulsing on even frames.
+	// FUN_420754 (updateDamageEffect): Per-frame screen shake (random scanline
+	//   shifts) + calls FUN_420562. Called every frame from the render loop.
+
+	void triggerDamageEffect();          // FUN_0042073B
+	void initDamageFlash();              // FUN_00420515
+	void updateDamageFlashPalette();     // FUN_00420562
+	void updateDamageEffect(byte *renderBitmap, int pitch, int width, int height); // FUN_00420754
+	void resetDamageFlash();             // FUN_00420501
+
+	int16 _damageFlashCounter;           // DAT_00482404 - palette flash countdown (0..5)
+	int16 _damageHighFlashCounter;       // DAT_00482408 - high-damage red flash (0..16)
+	int16 _damageShakeCounter;           // DAT_0048240c - screen shake countdown (0..10)
+	byte _damageSavedPalette[0x300];     // DAT_00459990 - palette snapshot before flash
+
 	// Rebel per-level counters / flags mapped from retail globals
 	int _rebelHitCounter;    // DAT_0047ab80 - hit counter / state tracker
-	int _rebelHitCooldown;   // DAT_0045790a - cooldown / timing for damage checks
 	bool _rebelInvulnerable; // DAT_0047ab64 - toggles invulnerability / state
 
 	// Opcode 6 state variables (from FUN_41CADB case 4)
