@@ -100,7 +100,8 @@ ifdef USE_IMGUI
 MODULE_OBJS += \
 	debugger/debugtools.o \
 	debugger/editor.o \
-	debugger/file.o
+	debugger/file.o \
+	debugger/resource.o
 endif
 
 ifdef USE_ARM_COSTUME_ASM
