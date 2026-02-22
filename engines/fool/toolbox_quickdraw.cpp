@@ -19,9 +19,11 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/memstream.h"
 #include "common/system.h"
 
+#include "fool/detection.h"
 #include "graphics/cursor.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/managed_surface.h"
@@ -175,6 +177,10 @@ void Toolbox::_drawRect(const Common::Rect &r, const Pattern &pat, PatternMode m
 			pm.drawFilledRect(destRect, fgColor, &pd);
 		}
 		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, mode);
+
+		if (debugChannelSet(5, kDebugGraphics)) {
+			debugC(5, kDebugGraphics, "Toolbox::_drawRect: dstRect (%d, %d) %dx%d, pattern %s, mode %d, frame %d, fgColor %08x, bkColor %08x", dstRect.left, dstRect.top, dstRect.width(), dstRect.height(), pat.format().c_str(), mode, frame, fgColor, bkColor);
+		}
 
 		// Dirty rects check
 		if (_port->portBits == _defaultBits) {

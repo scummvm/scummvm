@@ -50,7 +50,6 @@ typedef Common::SharedPtr<Image::PICTDecoder> PicHandle;
 // BitMap is the monochrome surface format.
 typedef Common::SharedPtr<Graphics::ManagedSurface> BitMap;
 typedef Handle PolyHandle;
-typedef uint32 MenuHandle;
 typedef uint32 ResType;
 typedef size_t Size;
 
@@ -88,6 +87,10 @@ namespace Fool {
 // In QuickDraw 0 means white and 1 means black
 struct Pattern {
 	uint8 data[8];
+
+	Common::String format() const {
+		return Common::String::format("%02x%02x%02x%02x%02x%02x%02x%02x", data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
+	}
 };
 
 class Cursor: public Graphics::Cursor {
@@ -123,6 +126,10 @@ private:
 	byte _palette[6] = { 0xff, 0xff, 0xff, 0x00, 0x00, 0x00 };
 	uint16 _paletteCount = 2;
 }; // 0x44
+
+typedef uint32 OSType;
+typedef uint16 OSErr;
+typedef uint32 ProcPtr;
 
 struct RGBColor {
 	uint16 red;
@@ -239,10 +246,17 @@ struct FontInfo {
 	int16 leading;
 };
 
+struct MenuInfo {
+	uint16 menuID;
+	uint16 menuWidth;
+	uint16 menuHeight;
+	Handle menuProc;
+	uint32 enableFlags;
+	// original record stores this as a single string blob, we split it up.
+	Common::Array<Common::U32String> menuData;
+};
 
-typedef uint32 OSType;
-typedef uint16 OSErr;
-typedef uint32 ProcPtr;
+typedef Common::SharedPtr<MenuInfo> MenuHandle;
 
 struct ParamBlockRec {
 	uint32 qLink = 0;
@@ -276,6 +290,7 @@ public:
 	~Toolbox();
 
 	Graphics::MacWindow *_defaultWindow;
+	Graphics::MacMenu *_defaultMenu;
 	BitMap _defaultBits;
 
 
@@ -465,6 +480,22 @@ public:
 	// performing the chosen task, your application should call HiliteMenu(O) to remove the
 	// highlighting from the menu title.
 	uint32 MenuSelect(const Common::Point &startPt);
+
+	// FUNCTION NewMenu(menuID: INTEGER; menuTitle: Str255): MenuHandle;
+	// NewMenu allocates space for a new menu with the given menu ID and tide, and returns a handle
+	// to it. It sets up the menu to use the standard menu definition procedure. (The menu definition
+	// procedure is read into memory if it isn't already in memory.) The new menu (which is created
+	// empty) is not installed in the menu list. To use this menu, you must first call AppendMenu or
+	// AddResMenu to fill it with items, InsertMenu to place it in the menu list, and DrawMenuBar to
+	// update the menu bar to include the new tide.
+	MenuHandle NewMenu(uint16 menuID, const Common::U32String &menuTitle);
+
+	// PROCEDURE SetItem(theMenu: MenuHandle; itemString: Str255);
+	// SetItem changes the text of the given menu item to itemString. It doesn't recognize the meta-
+	// characters used in AppendMenu; if you include them in itemString, they will appear in the text of
+	// the menu item. The attributes already in effect for this item—its character style, icon, and so
+	// on—remain in effect. ItemString may be blank but should not be the empty string.
+	void SetItem(MenuHandle &theMenu, uint16 item, const Common::U32String &itemString);
 
 
 	// toolbox_quickdraw.cpp
@@ -827,6 +858,7 @@ private:
 	Common::SharedPtr<Cursor> _cursor;
 	int _cursorLevel = 0;
 	Common::Point _mouse;
+	Common::HashMap<uint16, MenuHandle> _menu;
 
 	Common::Queue<EventRecord> _events;
 

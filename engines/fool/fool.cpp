@@ -63,9 +63,6 @@ Common::Error FoolEngine::run() {
 	_screen.create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 	_wm.setScreen(&_screen);
 
-	// Menu
-	_menu = _wm.addMenu();
-
 	//FoolPrologue fp;
 	//fp.run();
 	FoolGame fg;

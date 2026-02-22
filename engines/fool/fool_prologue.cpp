@@ -42,7 +42,6 @@ void FoolPrologue::run() {
 	g_toolbox = new Toolbox();
 	g_zbasic = new ZBasic(g_toolbox);
 	g_zbasic->loadProgram(Common::Path("Prologue - Finale"));
-	g_engine->_menu->setVisible(false);
 	this->sub_128_004();
 	delete g_zbasic;
 	delete g_toolbox;

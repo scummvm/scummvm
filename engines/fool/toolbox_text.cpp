@@ -36,13 +36,14 @@ void Toolbox::DrawChar(Common::u32char_type_t ch) {
 
 void Toolbox::DrawString(const Common::U32String &s) {
 	if (_port) {
+		Common::String macString = s.encode(Common::kMacRoman);
 		debugN(5, "Toolbox::DrawString: (%d, %d) %s\n", _port->pnLoc.x, _port->pnLoc.y, s.encode().c_str());
 		Graphics::MacFontRun fontRun(&g_engine->_wm, _port->txFont, _port->txFace, _port->txSize, 0, 0, 0);
 		const Graphics::Font *font = fontRun.getFont();
 		Common::Rect bbox = font->getBoundingBox(s);
 		BitMap buffer(new Graphics::ManagedSurface(bbox.width(), bbox.height(), Graphics::PixelFormat::createFormatCLUT8()));
 		buffer->fillRect(buffer->getBounds(), _port->bkColor);
-		font->drawString(buffer->surfacePtr(), s, 0, 0, bbox.width(), _port->fgColor);
+		font->drawString(buffer->surfacePtr(), macString, 0, 0, bbox.width(), _port->fgColor);
 
 		BitMap mask(nullptr);
 
@@ -57,8 +58,9 @@ void Toolbox::DrawString(const Common::U32String &s) {
 
 uint16 Toolbox::StringWidth(const Common::U32String &s) {
 	if (_port) {
+		Common::String macString = s.encode(Common::kMacRoman);
 		Graphics::MacFontRun fontRun(&g_engine->_wm, _port->txFont, _port->txFace, _port->txSize, 0, 0, 0);
-		uint16 result = fontRun.getFont()->getStringWidth(s);
+		uint16 result = fontRun.getFont()->getStringWidth(macString);
 		debug(5, "Toolbox::StringWidth: %s -> %d", s.encode().c_str(), result);
 		return result;
 	}

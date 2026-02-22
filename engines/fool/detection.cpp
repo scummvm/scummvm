@@ -32,10 +32,7 @@
 
 const DebugChannelDef FoolMetaEngineDetection::debugFlagList[] = {
 	{ Fool::kDebugGraphics, "Graphics", "Graphics debug level" },
-	{ Fool::kDebugPath, "Path", "Pathfinding debug level" },
-	{ Fool::kDebugFilePath, "FilePath", "File path debug level" },
-	{ Fool::kDebugScan, "Scan", "Scan for unrecognised games" },
-	{ Fool::kDebugScript, "Script", "Enable debug script dump" },
+	{ Fool::kDebugLoading, "Loading", "Loading debug level" },
 	DEBUG_CHANNEL_END
 };
 

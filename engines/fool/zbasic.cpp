@@ -24,9 +24,11 @@
 #include "common/memstream.h"
 #include "common/str-enc.h"
 #include "common/stream.h"
+#include "graphics/fontman.h"
 #include "graphics/managed_surface.h"
 
 #include "fool/fool.h"
+#include "fool/detection.h"
 #include "fool/toolbox.h"
 #include "fool/zbasic.h"
 
@@ -38,8 +40,10 @@ ZBasic::ZBasic(Toolbox *toolbox) : _toolbox(toolbox) {
 	_window->disableBorder();
 	_window->resize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	g_engine->_wm.setBackgroundWindow(_window);
+	_menu = g_engine->_wm.addMenu();
 
 	_toolbox->_defaultWindow = _window;
+	_toolbox->_defaultMenu = _menu;
 	_toolbox->_defaultBits = BitMap(new Graphics::ManagedSurface());
 	_toolbox->_defaultBits->copyFrom(*_window->getWindowSurface());
 
@@ -61,6 +65,10 @@ void ZBasic::loadProgram(const Common::Path &path) {
 		warning("ZBasic::loadProgram: could not find SCOT chunk");
 		return;
 	}
+	// Fool's Errand has an embedded version of Chicago with custom characters
+	Graphics::MacFont macFont = Graphics::MacFont(g_engine->_wm._fontMan->getFontIdByName("Chicago"), 12, 0);
+	_menu->setFont(g_engine->_wm._fontMan->getFont(&macFont));
+
 	Common::MemoryReadStream *scot = new Common::MemoryReadStream(scotRes->data(), scotRes->size());
 
 	this->_dataTable.clear();
@@ -76,7 +84,7 @@ void ZBasic::loadProgram(const Common::Path &path) {
 		}
 		switch (opcode) {
 		case kDatumNULL:
-			debugN(5, "ZBasic::loadProgram: _dataTable[%d]: offset %d, NULL\n", this->_dataTable.size(), offset);
+			debugC(5, kDebugLoading, "ZBasic::loadProgram: _dataTable[%d]: offset %d, NULL\n", this->_dataTable.size(), offset);
 			this->_dataTable.push_back(ZBasicDatum::newNull(offset));
 			break;
 		case kDatumINT:
@@ -85,11 +93,11 @@ void ZBasic::loadProgram(const Common::Path &path) {
 				Common::SharedPtr<ZBasicDatum> result;
 				if (size == 0) {
 					result = ZBasicDatum::newInt(offset, 0);
-					debugN(5, "ZBasic::loadProgram: _dataTable[%d]: offset %d, %d\n", this->_dataTable.size(), offset, result->data.i16);
+					debugC(5, kDebugLoading, "ZBasic::loadProgram: _dataTable[%d]: offset %d, %d\n", this->_dataTable.size(), offset, result->data.i16);
 					this->_dataTable.push_back(result);
 				} else if (size == 2) {
 					result = ZBasicDatum::newInt(offset, scot->readSint16BE());
-					debugN(5, "ZBasic::loadProgram: _dataTable[%d]: offset %d, %d\n", this->_dataTable.size(), offset, result->data.i16);
+					debugC(5, kDebugLoading, "ZBasic::loadProgram: _dataTable[%d]: offset %d, %d\n", this->_dataTable.size(), offset, result->data.i16);
 					this->_dataTable.push_back(result);
 				} else {
 					warning("ZBasic::loadProgram: unexpected size for int %d", size);
@@ -103,11 +111,11 @@ void ZBasic::loadProgram(const Common::Path &path) {
 				Common::SharedPtr<ZBasicDatum> result;
 				if (size == 0) {
 					result = ZBasicDatum::newDblInt(offset, 0);
-					debugN(5, "ZBasic::loadProgram: _dataTable[%d]: offset %d, %d\n", this->_dataTable.size(), offset, result->data.i32);
+					debugC(5, kDebugLoading, "ZBasic::loadProgram: _dataTable[%d]: offset %d, %d\n", this->_dataTable.size(), offset, result->data.i32);
 					this->_dataTable.push_back(result);
 				} else if (size == 4) {
 					result = ZBasicDatum::newDblInt(offset, scot->readSint32BE());
-					debugN(5, "ZBasic::loadProgram: _dataTable[%d]: offset %d, %d\n", this->_dataTable.size(), offset, result->data.i32);
+					debugC(5, kDebugLoading, "ZBasic::loadProgram: _dataTable[%d]: offset %d, %d\n", this->_dataTable.size(), offset, result->data.i32);
 					this->_dataTable.push_back(result);
 				} else {
 					warning("ZBasic::loadProgram: unexpected size for dblint %d", size);
@@ -121,7 +129,7 @@ void ZBasic::loadProgram(const Common::Path &path) {
 				char *buf = (char*)calloc(size+1, 1);
 				scot->read(buf, size);
 				Common::SharedPtr<ZBasicDatum> result = ZBasicDatum::newStr(offset, Common::convertToU32String(buf, Common::kMacRoman));
-				debugN(5, "ZBasic::loadProgram: _dataTable[%d]: offset %d, \"%s\"\n", this->_dataTable.size(), offset, result->data.str->encode().c_str());
+				debugC(5, kDebugLoading, "ZBasic::loadProgram: _dataTable[%d]: offset %d, \"%s\"\n", this->_dataTable.size(), offset, result->data.str->encode().c_str());
 				this->_dataTable.push_back(result);
 				free(buf);
 			}
@@ -129,7 +137,7 @@ void ZBasic::loadProgram(const Common::Path &path) {
 		case kDatumBCD:
 			{
 				scot->seek(-1);
-				debugN(5, "ZBasic::loadProgram: _dataTable[%d]: offset %d, BCD\n", this->_dataTable.size(), offset);
+				debugC(5, kDebugLoading, "ZBasic::loadProgram: _dataTable[%d]: offset %d, BCD\n", this->_dataTable.size(), offset);
 				this->_dataTable.push_back(ZBasicDatum::newBcd(offset, ZBasicBCD::read(scot)));
 			}
 			break;
@@ -146,7 +154,7 @@ void ZBasic::loadProgram(const Common::Path &path) {
 			char *buf = (char*)calloc(size+1, 1);
 			scot->read(buf, size);
 			Common::SharedPtr<ZBasicDatum> result = ZBasicDatum::newStr(offset, Common::convertToU32String(buf, Common::kMacRoman));
-			debugN(5, "ZBasic::loadProgram: _stringTable[%d]: offset %d, \"%s\"\n", this->_stringTable.size(), offset, result->data.str->encode().c_str());
+			debugC(5, kDebugLoading, "ZBasic::loadProgram: _stringTable[%d]: offset %d, \"%s\"\n", this->_stringTable.size(), offset, result->data.str->encode().c_str());
 			this->_stringTable.push_back(result);
 			offset += size + 1;
 			free(buf);
@@ -163,7 +171,9 @@ void ZBasic::blockMove(void *srcptr, void *destptr, uint16 size) {
 }
 
 Common::U32String ZBasic::chr(uint16 code) {
-	return Common::U32String(code, Common::kMacRoman);
+	char buf[2] = { 0x00, 0x00 };
+	buf[0] = (char)(code & 0xff);
+	return Common::U32String(buf, 1, Common::kMacRoman);
 }
 
 void ZBasic::bufferFlush(const Common::U32String &str) {
@@ -228,8 +238,12 @@ uint32 ZBasic::mem(int16 index) {
 	return 0;
 }
 
-void ZBasic::menu(int16 menuNo, int16 itemNo, int16 state, const Common::U32String &title) {
-	warning("STUB: ZBasic::menu");
+void ZBasic::menu(uint16 menuNo, uint16 itemNo, uint16 state, const Common::U32String &title) {
+	MenuHandle handle = _toolbox->GetMHandle(menuNo);
+	if (!handle) {
+		handle = _toolbox->NewMenu(menuNo, Common::U32String());
+	}
+	_toolbox->SetItem(handle, itemNo, title);
 }
 
 
