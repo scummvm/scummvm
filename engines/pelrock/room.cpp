@@ -1277,7 +1277,12 @@ byte *RoomManager::loadShadowMap(int roomNumber) {
 	readUntilBuda(&shadowMapFile, shadowOffset, compressed, compressedSize);
 
 	byte *shadows = nullptr;
-	rleDecompress(compressed, compressedSize, 0, 640 * 400, &shadows);
+	size_t decompressedSize = rleDecompress(compressed, compressedSize, 0, 640 * 400, &shadows);
+	if(decompressedSize == 0) {
+		debug("Failed to decompress shadow map for room %d", roomNumber);
+		shadows = nullptr;
+	}
+	debug("Decompressed shadow map for room %d, compressed size: %zu, decompressed size: %zu", roomNumber, compressedSize, decompressedSize);
 	free(compressed);
 	shadowMapFile.close();
 	return shadows;
@@ -1290,7 +1295,7 @@ void RoomManager::loadRemaps(int roomNumber) {
 		error("Couldnt find file ALFRED.9");
 	}
 
-	uint32 remapOffset = 0x200 + (roomNumber * 1024);
+	uint32 remapOffset =/* 0x200 + */(roomNumber * 1024);
 
 	remapFile.seek(remapOffset, SEEK_SET);
 	remapFile.read(_paletteRemaps[0], 256);

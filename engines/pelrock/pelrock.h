@@ -101,6 +101,7 @@ private:
 	void lookAt(HotSpot *hotspot);
 
 	void chooseAlfredStateAndDraw();
+void drawIdleFrame();
 	void drawAlfred(byte *buf);
 	void drawNextFrame(Sprite *animSet);
 	void animateTalkingNPC(Sprite *animSet);

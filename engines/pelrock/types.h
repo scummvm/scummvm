@@ -21,6 +21,7 @@
 #ifndef PELROCK_TYPES_H
 #define PELROCK_TYPES_H
 
+#include "common/debug.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/types.h"
@@ -170,6 +171,7 @@ struct AlfredState {
 	bool isWalkingCancelable = true;
 
 	void setState(AlfredAnimState nextState) {
+		debug("Transitioning Alfred from state %d to state %d", animState, nextState);
 		animState = nextState;
 		curFrame = 0;
 	}

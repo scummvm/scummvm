@@ -158,7 +158,8 @@ void PelrockEngine::init() {
 		// setScreen(3, ALFRED_RIGHT);
 		// setScreen(22, ALFRED_DOWN);
 		// setScreen(41, ALFRED_DOWN);
-		setScreen(43, ALFRED_DOWN);
+		// setScreen(43, ALFRED_DOWN);
+		setScreen(55, ALFRED_RIGHT);
 		// setScreen(15, ALFRED_DOWN);
 		// setScreen(2, ALFRED_LEFT);
 		// alfredState.x = 576;
@@ -622,7 +623,7 @@ void PelrockEngine::paintDebugLayer() {
 	if (showSprites) {
 		for (uint i = 0; i < _room->_currentRoomAnims.size(); i++) {
 			Sprite sprite = _room->_currentRoomAnims[i];
-			if(sprite.zOrder < 0) {
+			if (sprite.zOrder < 0) {
 				// Skip sprites with negative zOrder (not rendered)
 				continue;
 			}
@@ -841,7 +842,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		break;
 	}
 	case ALFRED_IDLE: {
-		drawAlfred(_res->alfredIdle[_alfredState.direction]);
+		drawIdleFrame();
 		break;
 	}
 	case ALFRED_WALKING: {
@@ -873,7 +874,8 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		if (step.distanceY > 0)
 			step.distanceY -= MIN(_alfredState.movementSpeedY, step.distanceY);
 
-		if (step.distanceX <= 0 && step.distanceY <= 0) {
+		if (step.distanceX <= 0 && step.
+			distanceY <= 0) {
 			_currentStep++;
 			if (_currentStep >= _currentContext.movementCount) {
 				_currentStep = 0;
@@ -889,7 +891,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 				} else if (_currentHotspot != nullptr) {
 					_alfredState.direction = calculateAlfredsDirection(_currentHotspot);
 				}
-				drawAlfred(_res->alfredIdle[_alfredState.direction]);
+				drawIdleFrame();
 				if (_queuedAction.isQueued) {
 					// look and talk execute immediately, others need interaction animation first
 					if (_queuedAction.verb == TALK || _queuedAction.verb == LOOK) {
@@ -921,13 +923,24 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		} else {
 			_currentContext.movementBuffer[_currentStep] = step;
 		}
+		if (_room->_currentRoomNumber == 55) {
+			if (_alfredState.curFrame >= 9) {
+				_alfredState.curFrame = 0;
+			}
+			if (_alfredState.animState == ALFRED_WALKING) { // in case it changed to idle above
+				debug("Drawing crawl frame %d for direction %d", _alfredState.curFrame, _alfredState.direction);
+				drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredCrawlFrames[_alfredState.direction][_alfredState.curFrame], _alfredState.x, _alfredState.y - 55, 130, 55, 255);
+				_alfredState.curFrame++;
+			}
+		} else {
+			if (_alfredState.curFrame >= walkingAnimLengths[_alfredState.direction]) {
+				_alfredState.curFrame = 0;
+			}
+			if (_alfredState.animState == ALFRED_WALKING) { // in case it changed to idle above
 
-		if (_alfredState.curFrame >= walkingAnimLengths[_alfredState.direction]) {
-			_alfredState.curFrame = 0;
-		}
-		if (_alfredState.animState == ALFRED_WALKING) { // in case it changed to idle above
-			drawAlfred(_res->alfredWalkFrames[_alfredState.direction][_alfredState.curFrame]);
-			_alfredState.curFrame++;
+				drawAlfred(_res->alfredWalkFrames[_alfredState.direction][_alfredState.curFrame]);
+				_alfredState.curFrame++;
+			}
 		}
 		break;
 	}
@@ -997,6 +1010,14 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		delete[] frame;
 		break;
 	}
+	}
+}
+
+void PelrockEngine::drawIdleFrame() {
+	if (_room->_currentRoomNumber == 55) {
+		drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredCrawlFrames[_alfredState.direction][0], _alfredState.x, _alfredState.y - 55, 130, 55, 255);
+	} else {
+		drawAlfred(_res->alfredIdle[_alfredState.direction]);
 	}
 }
 
@@ -1113,26 +1134,28 @@ void PelrockEngine::drawAlfred(byte *buf) {
 	// Original game scans shadow buffer
 	// at (topY + 0x66) * 640 + X + col for col = 0..width, where topY + 0x66 = feetY.
 	// The shadow map value (0-3) indexes into the palette remap tables.
-	byte shadowLevel = 0xFF; // 0xFF = no shadow
-	int feetY = _alfredState.y;
-	if (feetY >= 0 && feetY < 400 && _room->_pixelsShadows != nullptr) {
-		for (int col = 0; col < finalWidth; col++) {
-			int checkX = _alfredState.x + col;
-			if (checkX >= 0 && checkX < 640) {
-				byte shadowVal = _room->_pixelsShadows[feetY * 640 + checkX];
-				if (shadowVal != 0xFF) {
-					shadowLevel = shadowVal;
-					break; // Original breaks on first shadow pixel found
+	if (_room->_pixelsShadows != nullptr) {
+		byte shadowLevel = 0xFF; // 0xFF = no shadow
+		int feetY = _alfredState.y;
+		if (feetY >= 0 && feetY < 400 && _room->_pixelsShadows != nullptr) {
+			for (int col = 0; col < finalWidth; col++) {
+				int checkX = _alfredState.x + col;
+				if (checkX >= 0 && checkX < 640) {
+					byte shadowVal = _room->_pixelsShadows[feetY * 640 + checkX];
+					if (shadowVal != 0xFF) {
+						shadowLevel = shadowVal;
+						break; // Original breaks on first shadow pixel found
+					}
 				}
 			}
 		}
-	}
 
-	if (shadowLevel != 0xFF && shadowLevel < 4) {
-		for (int i = 0; i < finalWidth * finalHeight; i++) {
-			if (_alfredSprite[i] != 255) {
-				// _alfredSprite[i] = _room->_paletteRemaps[3 - shadowLevel][_alfredSprite[i]];
-				_alfredSprite[i] = _room->_paletteRemaps[0][_alfredSprite[i]];
+		if (shadowLevel != 0xFF && shadowLevel < 4) {
+			for (int i = 0; i < finalWidth * finalHeight; i++) {
+				if (_alfredSprite[i] != 255) {
+					_alfredSprite[i] = _room->_paletteRemaps[shadowLevel][_alfredSprite[i]];
+					// _alfredSprite[i] = _room->_paletteRemaps[0][_alfredSprite[i]];
+				}
 			}
 		}
 	}
@@ -1198,7 +1221,7 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 
 	int frameSize = sprite->stride;
 	int curFrame = animData.curFrame;
-	if(curFrame >= animData.nframes) {
+	if (curFrame >= animData.nframes) {
 		debug("Warning: curFrame %d exceeds nframes %d for sprite %d anim %d", curFrame, animData.nframes, sprite->index, sprite->curAnimIndex);
 		curFrame = 0;
 	}
@@ -1725,7 +1748,7 @@ void PelrockEngine::checkMouseHover() {
 
 	if (hotspotIndex != -1) {
 		hotspotDetected = true;
-		if(hotspotIndex < _room->_currentRoomDescriptions.size())
+		if (hotspotIndex < _room->_currentRoomDescriptions.size())
 			_hoveredMapLocation = _room->_currentRoomDescriptions[hotspotIndex].text;
 	} else if (!alfredDetected) {
 		_hoveredMapLocation = "";
@@ -1944,7 +1967,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 	case 48:
 		_dialog->_goodbyeDisabled = true;
 		break;
-	case 10:{
+	case 10: {
 		// _events->waitForKey();
 		// while(!shouldQuit()) {
 		// 	playSpecialAnim(212915, true, 287, 152, 62, 58, 10);
@@ -1953,7 +1976,11 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		// 	playSpecialAnim(261449, true, 0, 223, 64, 97, 8);
 		// }
 		break;
-		}
+	}
+	case 55: {
+
+		break;
+	}
 	default:
 		break;
 	}

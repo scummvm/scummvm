@@ -147,10 +147,12 @@ void ResourceManager::loadAlfredAnims() {
 
 	int index = 0;
 	int index3 = 0;
-	uint32_t capacity = 3060 * 102;
-	unsigned char *pic = new unsigned char[capacity];
-	rleDecompress(bufferFile, alfred3Size, 0, capacity, &pic);
+	uint32_t capacity = 3060 * 102 + 2340 * 55;
+	unsigned char *completePic = new unsigned char[capacity];
+	rleDecompress(bufferFile, alfred3Size, 0, capacity, &completePic);
 
+	byte *stdFramesPic = new byte[3060 * 102];
+	Common::copy(completePic, completePic + 3060 * 102, stdFramesPic);
 	int frameSize = kAlfredFrameHeight * kAlfredFrameWidth;
 	for (int i = 0; i < 4; i++) {
 		alfredIdle[i] = new byte[frameSize];
@@ -170,12 +172,12 @@ void ResourceManager::loadAlfredAnims() {
 
 		int standingFrame = prevWalkingFrames;
 
-		extractSingleFrame(pic, alfredIdle[i], standingFrame, kAlfredFrameWidth, kAlfredFrameHeight);
+		extractSingleFrame(stdFramesPic, alfredIdle[i], standingFrame, kAlfredFrameWidth, kAlfredFrameHeight);
 		for (int j = 0; j < walkingAnimLengths[i]; j++) {
 
 			alfredWalkFrames[i][j] = new byte[frameSize];
 			int walkingFrame = prevWalkingFrames + 1 + j;
-			extractSingleFrame(pic, alfredWalkFrames[i][j], walkingFrame, kAlfredFrameWidth, kAlfredFrameHeight);
+			extractSingleFrame(stdFramesPic, alfredWalkFrames[i][j], walkingFrame, kAlfredFrameWidth, kAlfredFrameHeight);
 		}
 
 		alfredTalkFrames[i] = new byte *[talkingAnimLengths[i]];
@@ -184,7 +186,7 @@ void ResourceManager::loadAlfredAnims() {
 		for (int j = 0; j < talkingAnimLengths[i]; j++) {
 			alfredTalkFrames[i][j] = new byte[frameSize];
 			int talkingFrame = talkingStartFrame + j;
-			extractSingleFrame(pic, alfredTalkFrames[i][j], talkingFrame, kAlfredFrameWidth, kAlfredFrameHeight);
+			extractSingleFrame(stdFramesPic, alfredTalkFrames[i][j], talkingFrame, kAlfredFrameWidth, kAlfredFrameHeight);
 		}
 
 		alfredInteractFrames[i] = new byte *[interactingAnimLength];
@@ -192,7 +194,19 @@ void ResourceManager::loadAlfredAnims() {
 		for (int j = 0; j < interactingAnimLength; j++) {
 			alfredInteractFrames[i][j] = new byte[frameSize];
 			int interactingFrame = interactingStartFrame + j;
-			extractSingleFrame(pic, alfredInteractFrames[i][j], interactingFrame, kAlfredFrameWidth, kAlfredFrameHeight);
+			extractSingleFrame(stdFramesPic, alfredInteractFrames[i][j], interactingFrame, kAlfredFrameWidth, kAlfredFrameHeight);
+		}
+	}
+
+	byte *crawlFramesPic = new byte[2340 * 55];
+	Common::copy(completePic + 3060 * 102, completePic + 3060 * 102 + 2340 * 55, crawlFramesPic);
+	int crawlFrameSize = 2340 * 55;
+	for (int i = 0; i < 4; i++) {
+		alfredCrawlFrames[i] = new byte *[9];
+		for (int j = 0; j < 9; j++) {
+			int walkingFrame = (i % 2) * 9 + j;
+			alfredCrawlFrames[i][j] = new byte[crawlFrameSize];
+			extractSingleFrame(crawlFramesPic, alfredCrawlFrames[i][j], walkingFrame, 130, 55);
 		}
 	}
 

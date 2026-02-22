@@ -62,7 +62,7 @@ public:
 	byte *alfredIdle[4]; // 4 directions
 
 	byte **alfredWalkFrames[4]; // 4 arrays of arrays
-
+	byte **alfredCrawlFrames[4];
 	byte **alfredTalkFrames[4]; // 4 arrays of arrays
 
 	byte **alfredCombFrames[2];
