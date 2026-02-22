@@ -382,12 +382,12 @@ void FreescapeEngine::executeExecute(FCLInstruction &instruction) {
 }
 
 void FreescapeEngine::executeSound(FCLInstruction &instruction) {
-	stopAllSounds(_movementSoundHandle);
+	stopAllSounds(Sound::kTypeMovement);
 	_firstSound = false;
 	uint16 index = instruction._source;
 	bool sync = instruction._additional;
 	debugC(1, kFreescapeDebugCode, "Playing sound %d", index);
-	playSound(index, sync, _soundFxHandle);
+	playSound(index, sync);
 }
 
 void FreescapeEngine::executeDelay(FCLInstruction &instruction) {

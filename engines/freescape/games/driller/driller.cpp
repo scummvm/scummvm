@@ -268,9 +268,9 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 		if (isC64()) {
 			if (!_c64UseSFX && _playerSid)
 				_playerSid->startMusic();
-			playSound(_soundIndexStart, true, _soundFxHandle);
+			playSound(_soundIndexStart, true);
 		} else {
-			playSound(_soundIndexStart, true, _soundFxHandle);
+			playSound(_soundIndexStart, true);
 			// Start playing music, if any, in any supported format
 			playMusic("Matt Gray - The Best Of Reformation - 07 Driller Theme");
 		}
@@ -282,7 +282,7 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 		// Show the number of completed areas
 		_areaMap[127]->_name.replace(0, 3, Common::String::format("%4d", _gameStateVars[32]));
 	} else
-		playSound(_soundIndexAreaChange, false, _soundFxHandle);
+		playSound(_soundIndexAreaChange, false);
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	clearTemporalMessages();
@@ -592,7 +592,7 @@ void DrillerEngine::pressedKey(const int keycode) {
 			_drillStatusByArea[_currentArea->getAreaID()] = kDrillerRigOutOfPlace;
 		executeMovementConditions();
 		if (isDOS())
-			playSound(_soundIndexAreaChange, false, _soundFxHandle);
+			playSound(_soundIndexAreaChange, false);
 	} else if (keycode == kActionCollectDrillingRig) {
 		if (isDOS() && isDemo()) // No support for drilling here yet
 			return;
@@ -635,7 +635,7 @@ void DrillerEngine::pressedKey(const int keycode) {
 		_gameStateVars[k8bitVariableScore] -= scoreToRemove;
 		executeMovementConditions();
 		if (isDOS())
-			playSound(_soundIndexAreaChange, false, _soundFxHandle);
+			playSound(_soundIndexAreaChange, false);
 	}
 }
 
@@ -967,7 +967,7 @@ bool DrillerEngine::onScreenControls(Common::Point mouse) {
 void DrillerEngine::drawSensorShoot(Sensor *sensor) {
 	if (_underFireFrames == 1 && _gameStateControl == kFreescapeGameStatePlaying) {
 		// Avoid playing new sounds, so the endgame can progress
-		playSound(_soundIndexHit, true, _soundFxHandle);
+		playSound(_soundIndexHit, true);
 	}
 
 	Math::Vector3d target;

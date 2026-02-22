@@ -43,11 +43,16 @@ public:
 
 class Sound {
 public:
+	enum Type {
+		kTypeNormal,
+		kTypeMovement
+	};
+
 	virtual ~Sound() {}
 
-	virtual void playSound(int index) = 0;
-	virtual void stopSound() = 0;
-	virtual bool isPlayingSound() const = 0;
+	virtual void playSound(int index, Type type) = 0;
+	virtual void stopSound(Type type) = 0;
+	virtual bool isPlayingSound(Type type) const = 0;
 };
 
 } // End of namespace Freescape

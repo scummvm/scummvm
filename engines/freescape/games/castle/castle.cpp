@@ -459,9 +459,9 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	if (areaID == _startArea && entranceID == _startEntrance) {
 		if (getGameBit(31))
-			playSound(13, true, _soundFxHandle);
+			playSound(13, true);
 		else
-			playSound(_soundIndexStart, false, _soundFxHandle);
+			playSound(_soundIndexStart, false);
 
 		// Start ProTracker background music for Amiga demo
 		if (isAmiga() && !_modData.empty() && !_mixer->isSoundHandleActive(_musicHandle)) {
@@ -475,9 +475,9 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	} else {
 		// If escaped, play a different sound
 		if (getGameBit(31))
-			playSound(13, true, _soundFxHandle);
+			playSound(13, true);
 		else
-			playSound(_soundIndexAreaChange, true, _soundFxHandle);
+			playSound(_soundIndexAreaChange, true);
 	}
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
@@ -562,7 +562,7 @@ bool CastleEngine::checkIfGameEnded() {
 	if (_gameStateControl == kFreescapeGameStatePlaying) {
 		if (_hasFallen && _avoidRenderingFrames == 0) {
 			_hasFallen = false;
-			playSound(_soundIndexFallen, false, _soundFxHandle);
+			playSound(_soundIndexFallen, false);
 
 			stopMovement();
 			// If shield is less than 11 after a fall, the game ends
@@ -1002,9 +1002,9 @@ void CastleEngine::drawFullscreenGameOverAndWait() {
 	_droppingGateStartTicks = _ticks;
 
 	if (isDOS()) {
-		// TODO: playSound(X, false, _soundFxHandle);
+		// TODO: playSound(X, false);
 	} else if (isSpectrum() || isCPC()) {
-		playSound(9, false, _soundFxHandle);
+		playSound(9, false);
 	}
 
 	if (isSpectrum() && getGameBit(31)) {
@@ -1859,7 +1859,7 @@ void CastleEngine::updateThunder() {
 
 		if (_thunderFrameDuration == 0)
 			if (isSpectrum() || isCPC() || isDOS())
-				playSound(8, false, _soundFxHandle);
+				playSound(8, false);
 		return;
 	}
 

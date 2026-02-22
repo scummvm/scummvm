@@ -174,11 +174,11 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 	drawCompass(surface, 229, 177, _yaw, 10, black);
 }
 
-void EclipseEngine::playSoundFx(int index, bool sync) {
+void EclipseEngine::playSoundFx(int index, bool sync, Sound::Type type) {
 	if (_soundFx)
-		_soundFx->playSound(index);
+		_soundFx->playSound(index, type);
 	else
-		playSound(index, sync, _soundFxHandle);
+		playSound(index, sync, type);
 }
 
 

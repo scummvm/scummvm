@@ -53,7 +53,7 @@ public:
 		}
 	}
 
-	void playSound(int index) override {
+	void playSound(int index, Type type) override {
 		if (_soundsFx.size() == 0) {
 			debugC(1, kFreescapeDebugMedia, "WARNING: Sounds are not loaded");
 			return;
@@ -67,11 +67,11 @@ public:
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, stream, -1, kFreescapeDefaultVolume / 10);
 	}
 
-	void stopSound() override {
+	void stopSound(Type type) override {
 		_mixer->stopHandle(_soundFxHandle);
 	}
 
-	bool isPlayingSound() const override {
+	bool isPlayingSound(Type type) const override {
 		return _mixer->isSoundHandleActive(_soundFxHandle);
 	}
 

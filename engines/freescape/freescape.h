@@ -479,21 +479,20 @@ public:
 	// Sound
 	Audio::SoundHandle _soundFxHandle;
 	Audio::SoundHandle _musicHandle;
-	Audio::SoundHandle _movementSoundHandle;
 	Sound *_sound;
 
 	bool _syncSound;
 	bool _firstSound;
 	bool _usePrerecordedSounds;
-	void waitForSounds();
-	void stopAllSounds(Audio::SoundHandle &handle);
-	bool isPlayingSound();
-	void playSound(int index, bool sync, Audio::SoundHandle &handle);
+	void waitForSounds(Sound::Type type = Sound::kTypeNormal);
+	void stopAllSounds(Sound::Type type = Sound::kTypeNormal);
+	bool isPlayingSound(Sound::Type type = Sound::kTypeNormal);
+	void playSound(int index, bool sync, Sound::Type type = Sound::kTypeNormal);
 	void playWav(const Common::Path &filename);
 	void playMusic(const Common::Path &filename);
 
 	virtual void playSoundC64(int index);
-	virtual void playSoundFx(int index, bool sync) {}
+	virtual void playSoundFx(int index, bool sync, Sound::Type type = Sound::kTypeNormal) {}
 	Sound *loadSoundsFx(Common::SeekableReadStream *file, int offset, int number);
 	Sound *loadSoundsFxDOS(Common::SeekableReadStream *file, int offset, int number);
 	Sound *loadSpeakerFxDOS(Common::SeekableReadStream *file, int offsetFreq, int offsetDuration, int numberSounds);

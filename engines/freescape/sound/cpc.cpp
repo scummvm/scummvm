@@ -102,7 +102,7 @@ public:
 		file->read(_soundDefTable.data(), sizeSoundDef);
 	}
 
-	void playSound(int index) override {
+	void playSound(int index, Type type) override {
 		if (_soundDefTable.empty()) {
 			debugC(1, kFreescapeDebugMedia, "CPC sound tables not loaded");
 			return;
@@ -112,11 +112,11 @@ public:
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, toAudioStream(), -1, kFreescapeDefaultVolume, 0, DisposeAfterUse::NO);
 	}
 
-	void stopSound() override {
+	void stopSound(Type type) override {
 		_mixer->stopHandle(_soundFxHandle);
 	}
 
-	bool isPlayingSound() const override {
+	bool isPlayingSound(Type type) const override {
 		return _mixer->isSoundHandleActive(_soundFxHandle);
 	}
 

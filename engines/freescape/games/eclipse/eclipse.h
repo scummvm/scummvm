@@ -134,7 +134,7 @@ public:
 
 	bool checkIfGameEnded() override;
 	void endGame() override;
-	void playSoundFx(int index, bool sync) override;
+	void playSoundFx(int index, bool sync, Sound::Type type = Sound::kTypeNormal) override;
 
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
