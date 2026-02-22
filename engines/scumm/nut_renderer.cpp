@@ -185,7 +185,12 @@ void NutRenderer::loadFont(const char *filename) {
 		// If characters have transparency, then bytes just get skipped and
 		// so there may appear some garbage. That's why we have to fill it
 		// with a default color first.
-		if (codec == 44) {
+		//
+		// For codec 44: standard SCUMM v7/v8 fonts use value 2 as the
+		// transparent color. But RA2 codec 44 fonts use value 2 as an actual
+		// glyph color (medium body shade), so we must use 0 instead to avoid
+		// making those pixels invisible during rendering.
+		if (codec == 44 && _vm->_game.id != GID_REBEL2) {
 			memset(_chars[l].src, kSmush44TransparentColor, _chars[l].width * _chars[l].height);
 			_chars[l].transparency = kSmush44TransparentColor;
 		} else {
@@ -293,7 +298,9 @@ void NutRenderer::loadFontFromData(const byte *data, int32 dataSize) {
 
 		decodedPtr += (_chars[l].width * _chars[l].height);
 
-		if (codec == 44) {
+		// Same transparency logic as loadFont: RA2 codec 44 fonts use
+		// value 2 as a glyph color, not as transparency.
+		if (codec == 44 && _vm->_game.id != GID_REBEL2) {
 			memset(_chars[l].src, kSmush44TransparentColor, _chars[l].width * _chars[l].height);
 			_chars[l].transparency = kSmush44TransparentColor;
 		} else {
@@ -414,7 +421,20 @@ int NutRenderer::drawCharV7(byte *buffer, Common::Rect &clipRect, int x, int y, 
 	int clipWdth = (_chars[chr].width - width);
 	char color = (col != -1) ? col : 1;
 
-	if (_vm->_game.version == 7) {
+	if (_vm->_game.id == GID_REBEL2) {
+		// RA2 codec 44 fonts use pixel values 1-4 as body/gradient.
+		// The AHDR palette indices don't match the SMUSH video palette,
+		// so all non-transparent pixels get the caller's text color.
+		for (int j = minY; j < height; j++) {
+			for (int i = minX; i < width; i++) {
+				int8 value = *src++;
+				if (value != _chars[chr].transparency)
+					dst[i] = color;
+			}
+			src += clipWdth;
+			dst += pitch;
+		}
+	} else if (_vm->_game.version == 7) {
 		if (hardcodedColors) {
 			for (int j = minY; j < height; j++) {
 				for (int i = minX; i < width; i++) {
@@ -440,8 +460,7 @@ int NutRenderer::drawCharV7(byte *buffer, Common::Rect &clipRect, int x, int y, 
 		}
 	} else {
 		if (hardcodedColors) {
-			// Direct pixel write for NUT fonts with embedded palette colors (e.g., RA2 menu fonts)
-			// This mirrors the version 7 hardcodedColors behavior
+			// Direct pixel write for NUT fonts with embedded palette colors
 			for (int j = minY; j < height; j++) {
 				for (int i = minX; i < width; i++) {
 					int8 value = *src++;
