@@ -75,7 +75,7 @@ static ScoreLayout computeLayout(ImVec2 origin, const ImGuiState::ScoreConfig &c
     l.sidebar2Pos = ImVec2(origin.x, origin.y + cfg.sidebar1_height + cfg.ruler_height);
     l.gridPos = ImVec2(origin.x + cfg.sidebar_width, origin.y + cfg.sidebar1_height + cfg.ruler_height);
     l.sliderPos = ImVec2(origin.x + cfg.sidebar_width, origin.y + cfg.sidebar1_height + cfg.ruler_height + cfg.table_height + 8.0f);
-	l.sliderYPos = ImVec2(origin.x + cfg.sidebar_width + cfg.table_width,
+	l.sliderYPos = ImVec2(origin.x + cfg.sidebar_width + cfg.table_width + 8.0f,
                       origin.y + cfg.sidebar1_height + cfg.ruler_height);
     return l;
 }
@@ -721,7 +721,7 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score* score, Window
 
 	ImVec2 gridMin = startPos;
 	ImVec2 gridMax = ImVec2(startPos.x + cfg.table_width, startPos.y + cfg.table_height);
-	dl->PushClipRect(gridMin, gridMax, true);
+	dl->PushClipRect(gridMin, gridMax, false);
 
 	for (int i = 0; i < cfg.visible_channels; i++) {
 		int ch = i + _state->_scoreState.channelScrollOffset;
@@ -753,7 +753,7 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score* score, Window
 			int spanStart = _state->_continuationData[ch][rf].first;
 			int spanEnd   = _state->_continuationData[ch][rf].second;
 
-			if (rf != spanStart && spanStart >= startFrame) continue;
+			if (rf != spanStart && f != 0) continue; // fixed the Alpha Accumulation error, rects were being drawn 99% opawue
 			float x1 = startPos.x + MAX<float>(spanStart - startFrame, 0) * cfg.cell_width;
 			float x2 = MIN<float>(startPos.x + (spanEnd - startFrame + 1) * cfg.cell_width, startPos.x + cfg.table_width);
 
@@ -790,7 +790,7 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score* score, Window
 			}
 
 			float rounding = 3.0f;
-            dl->AddRectFilled(ImVec2(x1, y + pad), ImVec2(x2, y + cfg.cell_height - pad), color, rounding);
+            dl->AddRectFilled(ImVec2(x1, y + pad), ImVec2(x2 - 1.0f, y + cfg.cell_height - pad), color, rounding);
             // horizontal line through the middle, offset from x1 if circle is present
             dl->AddLine(ImVec2(x1 + (startVisible ? 6.0f : 0.0f), cy), ImVec2(x2 - 6.0f, cy), IM_COL32(0, 0, 0, 255), 1.0f);
 
