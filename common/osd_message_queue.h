@@ -29,6 +29,10 @@
 #include "common/queue.h"
 #include "common/mutex.h"
 
+namespace Graphics {
+struct Surface;
+}
+
 namespace Common {
 
 /**
@@ -59,6 +63,11 @@ public:
 	void addMessage(const Common::U32String &msg);
 
 	/**
+	 * Add an image to the OSD message queue.
+	 */
+	void addImage(const Graphics::Surface *surface);
+
+	/**
 	 * Common::EventSource interface
 	 *
 	 * The OSDMessageQueue registers itself as an event source even if it does not
@@ -70,8 +79,17 @@ public:
 	bool pollEvent(Common::Event &event) override;
 
 private:
+	struct OSDQueueEntry {
+		Common::U32String *_text;
+		Graphics::Surface *_image;
+
+		OSDQueueEntry(const Common::U32String &msg);
+		OSDQueueEntry(const Graphics::Surface *surface);
+		~OSDQueueEntry();
+	};
+
 	Mutex _mutex;
-	Queue<U32String> _messages;
+	Queue<OSDQueueEntry *> _messages;
 	uint32 _lastUpdate;
 };
 

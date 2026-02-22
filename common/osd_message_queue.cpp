@@ -22,15 +22,43 @@
 #include "common/osd_message_queue.h"
 #include "common/system.h"
 
+#include "graphics/surface.h"
+
 namespace Common {
 
 DECLARE_SINGLETON(OSDMessageQueue);
+
+OSDMessageQueue::OSDQueueEntry::OSDQueueEntry(const Common::U32String &msg)
+	: _text(new Common::U32String(msg)), _image(nullptr) {}
+
+OSDMessageQueue::OSDQueueEntry::OSDQueueEntry(const Graphics::Surface *surface)
+	: _text(nullptr), _image(nullptr) {
+	if (surface) {
+		_image = new Graphics::Surface();
+		_image->copyFrom(*surface);
+	}
+}
+
+OSDMessageQueue::OSDQueueEntry::~OSDQueueEntry() {
+	if (_text)
+		delete _text;
+	if (_image) {
+		_image->free();
+		delete _image;
+	}
+}
 
 OSDMessageQueue::OSDMessageQueue() : _lastUpdate(0) {
 }
 
 OSDMessageQueue::~OSDMessageQueue() {
 	g_system->getEventManager()->getEventDispatcher()->unregisterSource(this);
+	_mutex.lock();
+	while (!_messages.empty()) {
+		OSDQueueEntry *entry = _messages.pop();
+		delete entry;
+	}
+	_mutex.unlock();
 }
 
 void OSDMessageQueue::registerEventSource() {
@@ -39,7 +67,13 @@ void OSDMessageQueue::registerEventSource() {
 
 void OSDMessageQueue::addMessage(const Common::U32String &msg) {
 	_mutex.lock();
-	_messages.push(msg);
+	_messages.push(new OSDQueueEntry(msg));
+	_mutex.unlock();
+}
+
+void OSDMessageQueue::addImage(const Graphics::Surface *surface) {
+	_mutex.lock();
+	_messages.push(new OSDQueueEntry(surface));
 	_mutex.unlock();
 }
 
@@ -49,8 +83,15 @@ bool OSDMessageQueue::pollEvent(Common::Event &event) {
 		uint t = g_system->getMillis(true);
 		if (t - _lastUpdate >= kMinimumDelay) {
 			_lastUpdate = t;
-			Common::U32String msg = _messages.pop();
-			g_system->displayMessageOnOSD(msg);
+
+			OSDQueueEntry *entry = _messages.pop();
+
+			if (entry->_image)
+				g_system->displayActivityIconOnOSD(entry->_image);
+			else if (entry->_text)
+				g_system->displayMessageOnOSD(*(entry->_text));
+
+			delete entry;
 		}
 	}
 	_mutex.unlock();
