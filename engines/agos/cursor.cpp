@@ -781,12 +781,12 @@ void AGOSEngine_Simon1::initMouse() {
 		memset(pal, 0, sizeof(pal));
 
 		pal[0xE5 * 3 + 0] = 0x00;
-		pal[0xE5 * 3 + 1] = 0x00;
-		pal[0xE5 * 3 + 2] = 0x99;
+		pal[0xE5 * 3 + 1] = 0xFF;
+		pal[0xE5 * 3 + 2] = 0xFF;
 
 		pal[0xE6 * 3 + 0] = 0x00;
-		pal[0xE6 * 3 + 1] = 0xFF;
-		pal[0xE6 * 3 + 2] = 0xFF;
+		pal[0xE6 * 3 + 1] = 0x00;
+		pal[0xE6 * 3 + 2] = 0x99;
 
 		CursorMan.replaceCursorPalette(pal, 0, 256);
 		CursorMan.replaceCursor(_simon1_acorn_cursor, 11, 11, 5, 1, 0xFF);
