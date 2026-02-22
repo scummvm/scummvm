@@ -392,9 +392,9 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_previewOffsetY = 75;  // Chapter 0: 0 * -50 + 75 = 75
 
 	// Initialize pilot selection system (FUN_00414A41)
-	// Menu structure: 6 levels + 4 options (NEW PILOT, DELETE PILOT, COPY PILOT, MAIN MENU)
-	_levelSelection = 0;          // First level selected
-	_levelItemCount = 10;         // 6 levels + 4 options
+	// Menu structure: [saved pilots] + 4 fixed options (NEW/DUPE/DELETE/MAIN MENU)
+	_levelSelection = 0;          // First item selected
+	_levelItemCount = 4;          // 0 saved pilots + 4 fixed options
 	_selectedLevel = 1;           // Default selected level
 
 	// Initialize menu input capture system
@@ -5707,139 +5707,63 @@ int InsaneRebel2::processMenuInput() {
 	return result;
 }
 
-void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int height) {
+void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int height,
+                                  const char **items, int numItems, int selection) {
 	// =====================================================================
-	// Emulates FUN_0041f5ae - Menu Text Overlay Renderer
+	// Shared menu renderer - Emulates FUN_0041f5ae param_4==0 (centered mode)
 	// Address: 0x41F5AE
 	// =====================================================================
 	//
-	// Call chain from main menu:
-	//   FUN_004147b2 (Main Menu Handler) -> FUN_0041f5ae (this function)
+	// items[0] = title string, items[1..numItems] = selectable items
+	// numItems = number of selectable items (FUN_0041f5ae param_3)
+	// selection = currently highlighted item (0-based, maps to DAT_00459988)
 	//
-	// IMPORTANT: The menu background comes from the O_MENU_X.SAN video file, NOT from MSTOVER.NUT.
-	// The O_MENU_X.SAN files (A through O) each contain a full 320x200 FOBJ frame in Frame 0
-	// which is decoded by SmushPlayer and stored in renderBitmap before this function is called.
-	// MSTOVER.NUT is only used in cheat mode (when DAT_0047aba4 != 0).
-	//
-	// FUN_0041f5ae parameters:
-	//   param_1: 0 = render mode, 1 = init mode (reset selection)
-	//   param_2: Array of string pointers (menu items from TRS)
-	//   param_3: Number of selectable menu items
-	//   param_4: 0 = main menu (keyboard), 1 = level selection menu
-	//
-	// Menu strings loaded from GAME.TRS (keyboard mode indices 10-17):
-	//   TRS index 10: "^f02Game Main Menu"           -> Title (uses TITLFONT)
-	//   TRS index 11: "^f01^c005Start Game"          -> Item 0 (uses SMALFONT, color 5)
-	//   TRS index 12: "^f01^c009Options"             -> Item 1 (uses SMALFONT, color 9)
-	//   TRS index 13: "^f01^c009Calibrate Joystick"  -> Item 2
-	//   TRS index 14: "^f01^c009Continue Intro"      -> Item 3
-	//   TRS index 15: "^f01^c009Show Top Pilots"     -> Item 4
-	//   TRS index 16: "^f01^c009Show Credits"        -> Item 5
-	//   TRS index 17: "^f01^c240Return to Launcher"  -> Item 6 (color 240)
+	// Coordinate formulas from FUN_0041f5ae (low-res, DAT_0047a808 < 2):
+	//   Title Y:     param_3 * -5 + 0x51           (line 19)
+	//   Item base Y: param_3 * -5 + 0x68           (line 28)
+	//   Item Y:      param_3 * -5 + i * 10 + 0x68  (line 28)
+	//   Center X:    ((DAT_0047a808 < 2) - 1 & 0xa0) + 0xa0 = 160
+	//   Box Y:       param_3 * -5 + i * 10 + 0x67  (1px above text)
 
-	// Load menu strings from GAME.TRS via SmushPlayer
-	// TRS indices 10-17 correspond to main menu items (from FUN_00414073)
-	// No fallback strings - all text must come from TRS for localization support
-	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
-	const char *menuItems[8];
-
-	if (!splayer) {
-		debug(1, "drawMenuOverlay: SmushPlayer not available for TRS strings!");
-		return;
-	}
-
-	for (int i = 0; i < 8; i++) {
-		menuItems[i] = splayer->getString(10 + i);
-		if (!menuItems[i] || !menuItems[i][0]) {
-			debug(1, "drawMenuOverlay: TRS string %d not found!", 10 + i);
-			menuItems[i] = "";  // Empty string to avoid crashes
-		}
-	}
-
-	const int numItemsTotal = 8;  // Title + 7 menu options (matching assembly)
-	const int numSelectableItems = 7;  // Selectable menu options (0-6)
+	const int centerX = width / 2;
+	const int titleY = numItems * -5 + 0x51;
+	const int itemBaseY = numItems * -5 + 0x68;
+	const int itemSpacing = 10;
 
 	// =====================================================================
-	// Coordinate calculations from FUN_0041f5ae (lines 18-32)
+	// Font system - Emulates linked list from FUN_00403bd0
 	// =====================================================================
-	// Low-res mode (DAT_0047a808 < 2):
-	//   Title Y: param_3 * -5 + 0x51 = 8 * -5 + 81 = 41  (line 19)
-	//   Item base Y: param_3 * -5 + 0x68 = 8 * -5 + 104 = 64  (line 28)
-	//   Center X: ((DAT_0047a808 < 2) - 1 & 0xa0) + 0xa0 = 160  (line 25)
-	//
-	// High-res mode (DAT_0047a808 >= 2):
-	//   Title Y: (param_3 * -5 + 0x5a) * 2 + -0x12  (line 22-23)
-	//   Item Y: (param_3 * -5 + 0x5a + i * 10) * 2 + 0x1c  (line 31)
-	//   Center X: 320
-	const int centerX = width / 2;  // 160 for 320px width
-	const int titleY = numItemsTotal * -5 + 0x51;  // 41
-	const int itemBaseY = numItemsTotal * -5 + 0x68;  // 64
-	const int itemSpacing = 10;  // Line 28: local_c * 10
-
-	debug(5, "drawMenuOverlay: buffer %dx%d, centerX=%d", width, height, centerX);
-
-	// =====================================================================
-	// Font system - Emulates linked list from FUN_00403bd0 (lines 302-348)
-	// =====================================================================
-	// Font linked list structure (DAT_00485058):
-	//   offset 0x00: pointer to previous font in chain
-	//   offset 0x04: pointer to next font in chain
-	//   offset 0x08: pointer to font data (NUT)
-	//   offset 0x0C: font index/ID
-	//   offset 0x0E: chain terminator flag (0 = end of chain)
-	//
-	// Fonts loaded in low-res mode:
-	//   Font 0 (^f00): TALKFONT.NUT - DAT_00485058 (root)
-	//   Font 1 (^f01): SMALFONT.NUT - linked via offset 0x04
-	//   Font 2 (^f02): TITLFONT.NUT - linked via offset 0x04
+	//   Font 0 (^f00): TALKFONT.NUT
+	//   Font 1 (^f01): SMALFONT.NUT (menu items)
+	//   Font 2 (^f02): TITLFONT.NUT (title)
 	NutRenderer *fonts[3] = {
-		_smush_talkfontNut,   // Font 0 - TALKFONT.NUT (default)
-		_smush_smalfontNut,   // Font 1 - SMALFONT.NUT (menu items)
-		_smush_titlefontNut   // Font 2 - TITLFONT.NUT (title)
+		_smush_talkfontNut,
+		_smush_smalfontNut,
+		_smush_titlefontNut
 	};
 
-	// FUN_004341a0 line 35-37: Default font when param_1 == -1
-	// if (param_1 == (int *)0xffffffff) param_1 = DAT_00485058;
 	NutRenderer *defaultFont = fonts[0] ? fonts[0] : _smush_smalfontNut;
 	if (!defaultFont) {
-		debug(1, "drawMenuOverlay: no fonts available!");
+		debug(1, "drawMenuItems: no fonts available!");
 		return;
 	}
 
-	// Set up clipRect for the entire rendering area
 	Common::Rect clipRect(0, 0, _vm->_screenWidth, _vm->_screenHeight);
 	int actualPitch = _vm->_screenWidth;
 
 	// =====================================================================
-	// Format code parser - Emulates FUN_00434d10 and FUN_00433da0
+	// Format code parser - Emulates FUN_00434d10 / FUN_00433da0
 	// =====================================================================
-	// Format codes parsed by the original game:
-	//   0x5e 0x5e (^^)   : Literal ^ character (FUN_00434d10 line 34-36)
-	//   0x5e 0x66 (^f)   : Font switch ^fNN (FUN_00434d10 lines 41-66)
-	//   0x5e 0x63 (^c)   : Color code ^cNNN (FUN_00434d10 lines 70-84)
-	//   0x5e 0x6c (^l)   : Newline
-	//
-	// Font switching algorithm from FUN_00433da0 (lines 86-107):
-	//   sVar4 = cVar1 * 10 + (short)*pcVar5;  // Parse 2-digit font index
-	//   Font index 0x210 (528) = '0'*10 + '0' = font 0
-	//   Font index 0x211 (529) = '0'*10 + '1' = font 1
-	//   Font index 0x212 (530) = '0'*10 + '2' = font 2
-	//
-	// Color parsing from FUN_00434d10 (line 81):
-	//   color = (digit1 - '0') * 100 + (digit2 - '0') * 10 + (digit3 - '0')
-	//   e.g., ^c005 -> color = 5, ^c240 -> color = 240
+	//   ^^ = literal ^, ^fNN = font switch, ^cNNN = color code, ^l = newline
 	auto parseFormatCode = [&](const char *&str, int &outColor) -> int {
-		if (*str != '^') return -1;  // 0x5e check
+		if (*str != '^') return -1;
 
 		const char *p = str + 1;
 		if (*p == '^') {
-			// ^^ = literal ^ (FUN_00434d10 line 34-36)
 			str = p;
-			return -1;  // Process ^ as character
+			return -1;
 		}
 		if (*p == 'f') {
-			// ^fNN = font switch (FUN_00434d10 lines 41-66)
-			// Parse 2-digit font index: sVar4 = cVar1 * 10 + (short)*pcVar5
 			p++;
 			int fontIdx = 0;
 			while (*p >= '0' && *p <= '9') {
@@ -5850,8 +5774,6 @@ void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int
 			return (fontIdx >= 0 && fontIdx < 3) ? fontIdx : 0;
 		}
 		if (*p == 'c') {
-			// ^cNNN = color code (FUN_00434d10 lines 70-84)
-			// Parse 3-digit color: (d1-'0')*100 + (d2-'0')*10 + (d3-'0')
 			p++;
 			int color = 0;
 			while (*p >= '0' && *p <= '9') {
@@ -5860,25 +5782,16 @@ void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int
 			}
 			str = p;
 			outColor = color;
-			return -2;  // Color changed, no font change
+			return -2;
 		}
 		if (*p == 'l') {
-			// ^l = newline
 			str = p + 1;
 			return -2;
 		}
-		// Unknown code, skip
 		return -1;
 	};
 
-	// =====================================================================
 	// String width calculation - Emulates FUN_00433da0
-	// Address: 0x433DA0
-	// =====================================================================
-	// Iterates through string, parsing format codes and summing character widths
-	// Character width lookup (FUN_00433da0 lines 129-133):
-	//   piVar2 = (int *)DAT_0046a5e4[2];  // Font data pointer
-	//   sVar8 = sVar8 + *(short *)(*piVar2 + 0x16 + iVar3);  // Add char width
 	auto getStringWidth = [&](const char *str) -> int {
 		int w = 0;
 		NutRenderer *curFont = defaultFont;
@@ -5887,14 +5800,13 @@ void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int
 		while (*str) {
 			int fontChange = parseFormatCode(str, curColor);
 			if (fontChange >= 0) {
-				// Font switch via linked list traversal (FUN_00433da0 lines 94-106)
 				curFont = fonts[fontChange] ? fonts[fontChange] : defaultFont;
 				continue;
 			}
-			if (fontChange == -2) continue;  // Color or newline code
+			if (fontChange == -2) continue;
 
 			byte c = (byte)*str++;
-			if (c >= 'a' && c <= 'z') c = c - 'a' + 'A';  // Uppercase conversion
+			if (c >= 'a' && c <= 'z') c = c - 'a' + 'A';
 			if (curFont && c < curFont->getNumChars()) {
 				w += curFont->getCharWidth(c);
 			}
@@ -5902,39 +5814,19 @@ void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int
 		return w;
 	};
 
-	// =====================================================================
 	// String rendering - Emulates FUN_00434d10
-	// Address: 0x434D10
-	// =====================================================================
-	// Renders string character-by-character with format code support
-	// Calls FUN_004236e0 for each character glyph (FUN_00434d10 lines 96-97)
-	//
-	// Color handling analysis from assembly:
-	// Color handling for NUT fonts (from assembly analysis):
-	//
-	// For codec 44 (used by RA2 fonts): The ^cNNN color IS used for pixel coloring!
-	//   - Font pixels with value 1 are replaced with the ^cNNN color
-	//   - Font pixels with value 255 are replaced with 0
-	//   - Other values are written directly
-	//
-	// FUN_00434d10 parses ^cNNN and passes the color to FUN_004236e0 as param_8,
-	// which passes it through to the codec for byte 1 substitution.
-	//
-	// In drawCharV7's default mode (hardcodedColors=false, smushColorMode=false):
-	//   dst[i] = (value == 1) ? color : value;
-	// This implements the codec 44 color substitution.
+	// Codec 44 color substitution: font pixels with value 1 → ^cNNN color
 	auto drawString = [&](const char *str, int x, int y) {
 		NutRenderer *curFont = defaultFont;
-		int curColor = 1;  // Default color if no ^cNNN specified (white/foreground)
+		int curColor = 1;
 
 		while (*str) {
 			int fontChange = parseFormatCode(str, curColor);
 			if (fontChange >= 0) {
-				// Font switch (FUN_00434d10 lines 41-66)
 				curFont = fonts[fontChange] ? fonts[fontChange] : defaultFont;
 				continue;
 			}
-			if (fontChange == -2) continue;  // Color code parsed, curColor updated
+			if (fontChange == -2) continue;
 
 			byte c = (byte)*str++;
 			if (c >= 'a' && c <= 'z') c = c - 'a' + 'A';
@@ -5945,8 +5837,6 @@ void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int
 
 			int charW = curFont->getCharWidth(c);
 
-			// FUN_004236e0 -> FUN_0042cba0 -> codec: Render character glyph
-			// Use default mode for codec 44 color substitution: byte 1 -> curColor
 			if (x >= 0 && y >= 0 && charW > 0) {
 				curFont->drawCharV7(renderBitmap, clipRect, x, y, actualPitch, curColor,
 				                    kStyleAlignLeft, c, false, false);
@@ -5956,78 +5846,44 @@ void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int
 	};
 
 	// =====================================================================
-	// Draw title - FUN_0041f5ae lines 24-25
+	// Draw title - items[0], centered at titleY
 	// =====================================================================
-	// FUN_004341a0((int *)0xffffffff, DAT_0047a7d0, DAT_0047a7d8,
-	//              ((DAT_0047a808 < 2) - 1 & 0xa0) + 0xa0, sVar2, 1, 0, 1, (char *)*param_2);
-	// X position: centerX (160 for low-res)
-	// Y position: sVar2 = param_3 * -5 + 0x51
 	{
-		int titleWidth = getStringWidth(menuItems[0]);
-		int titleX = centerX - titleWidth / 2;  // Center alignment (param_8 & 1)
-		drawString(menuItems[0], titleX, titleY);
+		int titleWidth = getStringWidth(items[0]);
+		int titleX = centerX - titleWidth / 2;
+		drawString(items[0], titleX, titleY);
 	}
 
 	// =====================================================================
-	// Draw menu items - FUN_0041f5ae lines 26-48
+	// Draw selectable items with selection highlight box
 	// =====================================================================
-	// for (local_c = 0; local_c < param_3; local_c = local_c + 1) {
-	//     FUN_004341a0(..., (char *)param_2[local_c + 1]);
-	//     if (DAT_00459988 == local_c) {  // Selected item
-	//         sVar2 = FUN_00433da0(...);  // Get string width
-	//         FUN_004292d0(...);          // Draw selection box
-	//     }
-	// }
-	for (int i = 0; i < numSelectableItems; i++) {
-		// Item Y calculation (FUN_0041f5ae line 28):
-		// sVar2 = param_3 * -5 + local_c * 10 + 0x68
+	for (int i = 0; i < numItems; i++) {
 		int itemY = itemBaseY + i * itemSpacing;
-		const char *text = menuItems[i + 1];
+		const char *text = items[i + 1];
 
 		int textWidth = getStringWidth(text);
-		int textX = centerX - textWidth / 2;  // Center alignment
+		int textX = centerX - textWidth / 2;
 		drawString(text, textX, itemY);
 
-		// =====================================================================
-		// Selection highlight box - FUN_0041f5ae lines 36-47
-		// Calls FUN_004292d0 (Rectangle Drawer) at 0x4292D0
-		// =====================================================================
-		// if (DAT_00459988 == local_c) {
-		//     sVar2 = FUN_00433da0((int *)0xffffffff, (byte *)param_2[local_c + 1]);
-		//     sVar2 = sVar2 + ((DAT_0047a808 < 2) - 1 & 6) + 6;  // Width padding
-		//     FUN_004292d0(DAT_0047a7d0, DAT_0047a7d8,
-		//                  (((DAT_0047a808 < 2) - 1 & 0xa0) + 0xa0) - sVar2 / 2,  // X
-		//                  sVar1,  // Y = param_3 * -5 + local_c * 10 + 0x67
-		//                  sVar2,  // Width
-		//                  ((DAT_0047a808 < 2) - 1 & 10) + 10,  // Height = 10
-		//                  (-((DAT_0047a7e4 & 1) == 0) & 8U) - 0x10);  // Color
-		// }
-		if (i == _menuSelection) {
-			// Width: sVar2 + ((DAT_0047a808 < 2) - 1 & 6) + 6
-			// For low-res: textWidth + (0 & 6) + 6 = textWidth + 6
+		// Selection highlight box - FUN_004292d0
+		if (i == selection) {
+			// Width: textWidth + ((DAT_0047a808 < 2) - 1 & 6) + 6 = textWidth + 6
 			int bracketWidth = textWidth + 6;
-
-			// Height: ((DAT_0047a808 < 2) - 1 & 10) + 10
-			// For low-res: (0 & 10) + 10 = 10
+			// Height: ((DAT_0047a808 < 2) - 1 & 10) + 10 = 10
 			int bracketHeight = 10;
 
-			// Flash color (FUN_0041f5ae line 47):
-			// (-((DAT_0047a7e4 & 1) == 0) & 8U) - 0x10
-			// When mouse button NOT pressed (bit 0 == 0): (-1 & 8) - 16 = 8 - 16 = -8 = 248
-			// When mouse button pressed (bit 0 == 1): (0 & 8) - 16 = -16 = 240
+			// Flash color: (-((DAT_0047a7e4 & 1) == 0) & 8U) - 0x10
+			// bit0==0: 8-16=248(0xF8), bit0==1: 0-16=240(0xF0)
 			static int frameCounter = 0;
 			frameCounter++;
 			byte highlightColor = ((frameCounter / 8) & 1) ? 248 : 240;
 
-			// Box position (FUN_0041f5ae lines 40, 45-46):
-			// X: centerX - sVar2 / 2
-			// Y: sVar1 = param_3 * -5 + local_c * 10 + 0x67 (one pixel above text)
+			// Box position: X centered, Y = itemY - 1 (0x67 vs 0x68)
 			int leftX = centerX - bracketWidth / 2;
 			int rightX = centerX + bracketWidth / 2;
-			int topY = itemY - 1;  // 0x67 vs 0x68 = 1 pixel difference
+			int topY = itemY - 1;
 			int bottomY = itemY + bracketHeight - 1;
 
-			// Clamp to screen bounds
 			int screenW = _vm->_screenWidth;
 			int screenH = _vm->_screenHeight;
 			if (leftX < 0) leftX = 0;
@@ -6035,28 +5891,57 @@ void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int
 			if (topY < 0) topY = 0;
 			if (bottomY >= screenH) bottomY = screenH - 1;
 
-			// =====================================================================
-			// FUN_004292d0 - Rectangle Drawer (Address: 0x4292D0)
-			// =====================================================================
-			// Draws rectangle border as 4 lines:
-			//   FUN_004290d0(param_1, param_2, x, y, width, color);      // Top horizontal
-			//   FUN_004291d0(param_1, param_2, x, y, height, color);     // Left vertical
-			//   FUN_004291d0(param_1, param_2, x+w-1, y, height, color); // Right vertical
-			//   FUN_004290d0(param_1, param_2, x, y+h-1, width, color);  // Bottom horizontal
+			// FUN_004292d0 - Draw rectangle border (4 lines)
 			for (int x = leftX; x <= rightX && x < screenW; x++) {
 				if (topY >= 0 && topY < screenH)
-					renderBitmap[topY * actualPitch + x] = highlightColor;  // Top line
+					renderBitmap[topY * actualPitch + x] = highlightColor;
 				if (bottomY >= 0 && bottomY < screenH)
-					renderBitmap[bottomY * actualPitch + x] = highlightColor;  // Bottom line
+					renderBitmap[bottomY * actualPitch + x] = highlightColor;
 			}
 			for (int py = topY; py <= bottomY && py < screenH; py++) {
 				if (leftX >= 0 && leftX < screenW)
-					renderBitmap[py * actualPitch + leftX] = highlightColor;  // Left line
+					renderBitmap[py * actualPitch + leftX] = highlightColor;
 				if (rightX >= 0 && rightX < screenW)
-					renderBitmap[py * actualPitch + rightX] = highlightColor;  // Right line
+					renderBitmap[py * actualPitch + rightX] = highlightColor;
 			}
 		}
 	}
+}
+
+void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int height) {
+	// =====================================================================
+	// Main menu renderer - calls shared drawMenuItems()
+	// Emulates FUN_004147b2 -> FUN_0041f5ae with param_3=7, param_4=0
+	// =====================================================================
+	//
+	// Menu strings loaded from GAME.TRS (keyboard mode indices 10-17):
+	//   TRS index 10: "^f02Game Main Menu"           -> Title (uses TITLFONT)
+	//   TRS index 11: "^f01^c005Start Game"          -> Item 0 (uses SMALFONT, color 5)
+	//   TRS index 12: "^f01^c009Options"             -> Item 1
+	//   TRS index 13: "^f01^c009Calibrate Joystick"  -> Item 2
+	//   TRS index 14: "^f01^c009Continue Intro"      -> Item 3
+	//   TRS index 15: "^f01^c009Show Top Pilots"     -> Item 4
+	//   TRS index 16: "^f01^c009Show Credits"        -> Item 5
+	//   TRS index 17: "^f01^c240Return to Launcher"  -> Item 6 (color 240)
+
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	if (!splayer) {
+		debug(1, "drawMenuOverlay: SmushPlayer not available for TRS strings!");
+		return;
+	}
+
+	// Load TRS strings 10-17 (title + 7 selectable items)
+	const char *menuItems[8];
+	for (int i = 0; i < 8; i++) {
+		menuItems[i] = splayer->getString(10 + i);
+		if (!menuItems[i] || !menuItems[i][0]) {
+			debug(1, "drawMenuOverlay: TRS string %d not found!", 10 + i);
+			menuItems[i] = "";
+		}
+	}
+
+	// FUN_004147b2 line 25: param_3 = (DAT_0047a806 == 0) + 6 = 7 (keyboard mode)
+	drawMenuItems(renderBitmap, pitch, width, height, menuItems, 7, _menuSelection);
 }
 
 // ======================= Pause Overlay =======================
@@ -7201,7 +7086,7 @@ int InsaneRebel2::runLevelSelect() {
 	// Item 8: COPY PILOT
 	// Item 9: MAIN MENU
 	_levelSelection = 0;
-	_levelItemCount = 10;  // Selectable items: 6 pilots + 4 options
+	_levelItemCount = 4;  // Selectable items: 0 saved pilots + 4 fixed options (NEW/DUPE/DELETE/MAIN MENU)
 	_selectedLevel = 1;
 	_menuRepeatDelay = 0;
 	_gameState = kStatePilotSelect;
@@ -7280,11 +7165,9 @@ int InsaneRebel2::processLevelSelectInput() {
 
 	int result = -1;
 
-	// Level menu Y positions (similar to main menu)
-	// Using same formula: base Y = numItemsTotal * -5 + 104
-	// numItemsTotal = 3 (title + 2 selectable items)
-	const int numItemsTotal = 3;
-	const int baseY = numItemsTotal * -5 + 104;  // 89
+	// Level menu Y positions — must match drawMenuItems() formula
+	// itemBaseY = numItems * -5 + 0x68
+	const int baseY = _levelItemCount * -5 + 0x68;
 	const int itemHeight = 10;
 
 	// Process events from the queue (populated by notifyEvent)
@@ -7370,168 +7253,63 @@ int InsaneRebel2::processLevelSelectInput() {
 }
 
 void InsaneRebel2::drawLevelSelectOverlay(byte *renderBitmap, int pitch, int width, int height) {
-	// Draw level selection menu overlay
-	// Emulates FUN_0041f5ae for level selection mode
+	// =====================================================================
+	// Pilot selection menu renderer - Emulates FUN_00414A41
+	// =====================================================================
 	//
-	// From info.md - Low Resolution Coordinate Formulas (320x200 mode):
-	// Center X = 160, Title Y = numItems * -5 + 81, Item Base Y = numItems * -5 + 104
-	// Item spacing = 10 pixels, Selection box: width = textWidth + 6, height = 10
+	// FUN_00414A41 builds the menu dynamically:
+	//   items[0]          = DAT_004573b8[0] = TRS 20 (title "PILOTS")
+	//   items[1..N]       = saved pilot slot strings (dynamically formatted)
+	//   items[N+1]        = DAT_004573b8[1] = TRS 21 (ADD NEW PILOT)
+	//   items[N+2]        = DAT_004573b8[2] = TRS 22 (DUPE PILOT)
+	//   items[N+3]        = DAT_004573b8[3] = TRS 23 (DELETE PILOT)
+	//   items[N+4]        = DAT_004573b8[4] = TRS 24 (RETURN TO MAIN MENU)
+	//
+	// FUN_0041f5ae called with param_3 = N + 4 (selectable items)
+	//
+	// TRS 25+ are NOT menu items — they are info format strings
+	// ("DIFFICULTY: %S", "CHAPTER: %HO") rendered separately by FUN_00434cb0
+	// at fixed coordinates when a saved pilot is selected.
 
-	// Frame counter for flashing selection box (emulates DAT_0047a7e4)
-	static int frameCounter = 0;
-	frameCounter++;
-
-	// Pilot selection menu items - matches original structure from FUN_00414A41:
-	// Load strings from GAME.TRS via SmushPlayer (indices from FUN_00414073)
-	// TRS indices 0x14-0x23 (20-35) are stored at DAT_004573b8
-	// Items 0-5: Pilot save slots (would come from save data, using TRS placeholder)
-	// Item 6: NEW PILOT (TRS index 20+6=26 or similar)
-	// Item 7: DELETE PILOT
-	// Item 8: COPY PILOT
-	// Item 9: MAIN MENU
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
-	const char *pilotItems[11];
-
 	if (!splayer) {
 		debug(1, "drawLevelSelectOverlay: SmushPlayer not available for TRS strings!");
 		return;
 	}
 
-	// TRS index mapping from FUN_00414073:
-	// DAT_004573b8[0-15] = TRS indices 20-35
-	// Title: TRS 20, Pilot slots use save data or TRS template, Options: TRS 26-29 or similar
-	// Load from TRS indices 20-30 for the menu structure
-	for (int i = 0; i < 11; i++) {
-		pilotItems[i] = splayer->getString(20 + i);
+	// Number of saved pilots (TODO: implement save system, 0 for now)
+	int numPilots = 0;
+
+	// Build menu item array: title + [pilot slots] + 4 fixed options
+	// Max: 1 title + 6 pilots + 4 options = 11
+	const char *pilotItems[11];
+	int idx = 0;
+
+	// Title: TRS 20
+	pilotItems[idx++] = splayer->getString(20);
+
+	// Saved pilot slots would be inserted here (items[1..numPilots])
+	// Each formatted as "^f01^c005<name>^f00" by the original
+
+	// Fixed options: TRS 21-24
+	for (int i = 0; i < 4; i++) {
+		pilotItems[idx++] = splayer->getString(21 + i);
+	}
+
+	// Validate strings
+	for (int i = 0; i < idx; i++) {
 		if (!pilotItems[i] || !pilotItems[i][0]) {
-			debug(1, "drawLevelSelectOverlay: TRS string %d not found!", 20 + i);
 			pilotItems[i] = "";
 		}
 	}
 
-	const int numItemsTotal = 11;     // Title + 10 selectable items
-	const int numSelectableItems = 10;
+	int numSelectableItems = numPilots + 4;
+	drawMenuItems(renderBitmap, pitch, width, height, pilotItems, numSelectableItems, _levelSelection);
 
-	// Calculate positions (low-res 320x200 mode)
-	// Formula from FUN_0041F5AE: titleY = numItems * -5 + 81, itemBaseY = numItems * -5 + 104
-	const int centerX = width / 2;  // 160 for 320 width
-	const int titleY = numSelectableItems * -5 + 81;      // 10 * -5 + 81 = 31
-	const int itemBaseY = numSelectableItems * -5 + 104;  // 10 * -5 + 104 = 54
-	const int itemSpacing = 10;
-
-	NutRenderer *font = _smush_smalfontNut;
-	if (!font) {
-		debug(1, "drawLevelSelectOverlay: font is NULL!");
-		return;
-	}
-
-	int numFontChars = font->getNumChars();
-	int actualPitch = pitch;
-	Common::Rect clipRect(0, 0, width, height);
-
-	// Helper function to draw centered text with optional highlight box
-	// We'll use a simple loop instead of lambda for compatibility
-	auto drawTextCentered = [&](const char *text, int y, bool highlight) {
-		// Calculate text width first
-		int textWidth = 0;
-		for (const char *c = text; *c; c++) {
-			int charIdx = (unsigned char)*c;
-			if (charIdx < numFontChars) {
-				textWidth += font->getCharWidth(charIdx);
-			}
-		}
-
-		int curX = centerX - textWidth / 2;
-
-		// Draw each character using drawCharV7
-		for (const char *c = text; *c; c++) {
-			int charIdx = (unsigned char)*c;
-			if (charIdx < numFontChars) {
-				int charWidth = font->getCharWidth(charIdx);
-				if (curX >= 0 && curX + charWidth <= width && y >= 0) {
-					// Use drawCharV7 with color -1 (original colors), hardcodedColors=true, smushColorMode=true
-					font->drawCharV7(renderBitmap, clipRect, curX, y, actualPitch, -1,
-					                 kStyleAlignLeft, charIdx, true, true);
-				}
-				curX += charWidth;
-			}
-		}
-
-		// If highlighted, draw selection box around text
-		if (highlight) {
-			// Box dimensions from FUN_0041F5AE:
-			// Width = textWidth + 6 (low-res), Height = 10
-			int boxWidth = textWidth + 6;
-			int boxHeight = 10;
-			int boxX = centerX - boxWidth / 2;
-			int boxY = y - 1;  // 1 pixel above text (itemY - 1 = numItems * -5 + idx * 10 + 103)
-
-			// Flashing highlight color (emulates original behavior)
-			// Original uses palette-relative colors -8 and -16 alternating on frameCounter & 1
-			// We use bright colors that approximate the visual effect
-			byte highlightColor = (frameCounter & 1) ? 0xF8 : 0xF0;
-
-			// Draw box border (top, bottom, left, right edges)
-			if (boxY >= 0 && boxY < height && boxX >= 0 && boxX + boxWidth <= width) {
-				// Top edge
-				for (int px = boxX; px < boxX + boxWidth && px < width; px++) {
-					if (px >= 0) renderBitmap[boxY * actualPitch + px] = highlightColor;
-				}
-				// Bottom edge
-				int bottomY = boxY + boxHeight - 1;
-				if (bottomY < height) {
-					for (int px = boxX; px < boxX + boxWidth && px < width; px++) {
-						if (px >= 0) renderBitmap[bottomY * actualPitch + px] = highlightColor;
-					}
-				}
-				// Left edge
-				for (int py = boxY; py < boxY + boxHeight && py < height; py++) {
-					if (py >= 0 && boxX >= 0) renderBitmap[py * actualPitch + boxX] = highlightColor;
-				}
-				// Right edge
-				int rightX = boxX + boxWidth - 1;
-				if (rightX < width) {
-					for (int py = boxY; py < boxY + boxHeight && py < height; py++) {
-						if (py >= 0) renderBitmap[py * actualPitch + rightX] = highlightColor;
-					}
-				}
-			}
-		}
-	};
-
-	// Draw title (not selectable)
-	drawTextCentered(pilotItems[0], titleY, false);
-
-	// Draw selectable items
-	for (int i = 0; i < numSelectableItems; i++) {
-		int itemY = itemBaseY + i * itemSpacing;
-		bool isSelected = (i == _levelSelection);
-		drawTextCentered(pilotItems[i + 1], itemY, isSelected);
-	}
-
-	// Draw info text at bottom if a pilot slot is selected (items 0-5)
-	// From FUN_00414A41: info is shown when local_18 < local_10 (selection < num_pilots)
-	if (_levelSelection >= 0 && _levelSelection <= 5) {
-		// Show difficulty or score info for selected pilot
-		// From info.md: Info displayed at X=30, Y=180
-		const char *pilotInfoText = "DIFFICULTY: EASY";
-		int infoY = 180;
-		int infoX = 30;
-
-		// Draw left-aligned text using drawCharV7
-		int curX = infoX;
-		for (const char *c = pilotInfoText; *c; c++) {
-			int charIdx = (unsigned char)*c;
-			if (charIdx < numFontChars) {
-				int charWidth = font->getCharWidth(charIdx);
-				if (curX >= 0 && curX + charWidth <= width && infoY >= 0) {
-					font->drawCharV7(renderBitmap, clipRect, curX, infoY, actualPitch, -1,
-					                 kStyleAlignLeft, charIdx, true, true);
-				}
-				curX += charWidth;
-			}
-		}
-	}
+	// When a saved pilot is selected, show info at fixed coordinates
+	// FUN_00414A41 lines 78-86: FUN_00434cb0 at Y=0xb4(180) and Y=0xbe(190)
+	// DAT_004573cc = TRS 25 ("DIFFICULTY: %S"), DAT_004573d0 = TRS 26 ("CHAPTER: %HO")
+	// TODO: Implement pilot info display when save system is added
 }
 
 // ======================= Level Loading System =======================

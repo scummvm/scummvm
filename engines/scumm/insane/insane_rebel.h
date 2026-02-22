@@ -95,6 +95,11 @@ public:
 	// Process menu input (keyboard/mouse) - returns selected item or -1
 	int processMenuInput();
 
+	// Shared menu item renderer - emulates FUN_0041F5AE param_4==0 (centered mode)
+	// items[0] = title, items[1..numItems] = selectable items, selection = highlighted item
+	void drawMenuItems(byte *renderBitmap, int pitch, int width, int height,
+	                   const char **items, int numItems, int selection);
+
 	// Draw menu overlay (selection highlight) on current frame
 	void drawMenuOverlay(byte *renderBitmap, int pitch, int width, int height);
 
