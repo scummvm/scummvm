@@ -72,13 +72,14 @@ public:
 	byte *_verbIcons[9];
 	byte *_popUpBalloon = nullptr;
 	Common::Array<Common::StringArray> _ingameTexts;
+	Common::String _izquierda;
+	Common::String _derecha;
 	Common::String _conversationTerminator;
 
 	// Special anims
 	AlfredSpecialAnim *_currentSpecialAnim = nullptr;
 	bool _isSpecialAnimFinished = false;
 	static const AlfredSpecialAnimOffset alfredSpecialAnims[];
-
 };
 
 } // End of namespace Pelrock

@@ -101,6 +101,7 @@ private:
 	void lookAt(HotSpot *hotspot);
 
 	void chooseAlfredStateAndDraw();
+	void exitTriggers(Pelrock::Exit *exit);
 	void drawIdleFrame();
 	void drawAlfred(byte *buf);
 	void drawNextFrame(Sprite *animSet);
@@ -108,7 +109,6 @@ private:
 	void pickupIconFlash();
 
 	void playSoundIfNeeded();
-
 
 	void gameLoop();
 	void computerLoop();
@@ -282,6 +282,7 @@ public:
 	void noOpAction(HotSpot *hotspot);
 	void noOpItem(int item, HotSpot *hotspot);
 	void useOnAlfred(int inventoryObject);
+	void chooseCorrectDoor();
 	void useCardWithATM(int inventoryObject, HotSpot *hotspot);
 	void useBrickWithWindow(int inventoryObject, HotSpot *hotspot);
 	void moveCable(HotSpot *hotspot);
@@ -358,6 +359,7 @@ public:
 	void usePumpkinWithPond(int inventoryObject, HotSpot *hotspot);
 	void useWaterOnFakeStone(int inventoryObject, HotSpot *hotspot);
 	void magicFormula(int inventoryObject, HotSpot *hotspot);
+	void smokeAnimation(int spriteIndex, bool hide = true);
 	void openArchitectDoor(HotSpot *hotspot);
 	void closeArchitectDoor(HotSpot *hotspot);
 	void pickupPyramidMap(HotSpot *hotspot);

@@ -653,7 +653,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_state->setCurrentRoot(45, 3, 0);
 		break;
 	case 30840:
-		//toJail()? not present in the game
+		// toJail()? not present in the game
 		break;
 
 	case 323:
@@ -1668,11 +1668,10 @@ void PelrockEngine::usePumpkinWithPond(int inventoryObject, HotSpot *hotspot) {
 void PelrockEngine::useWaterOnFakeStone(int inventoryObject, HotSpot *hotspot) {
 
 	int count = _state->getFlag(FLAG_PIEDRA_FAKE_MOJADA);
-	if(count != 3) {
+	if (count != 3) {
 		_state->removeInventoryItem(86);
 		addInventoryItem(76);
-		switch (count)
-		{
+		switch (count) {
 		case 0:
 			_room->addSticker(120);
 			break;
@@ -1696,36 +1695,54 @@ void PelrockEngine::magicFormula(int inventoryObject, HotSpot *hotspot) {
 	_state->setFlag(FLAG_FORMULA_MAGICA, _state->getFlag(FLAG_FORMULA_MAGICA) + 1);
 	if (_state->getFlag(FLAG_FORMULA_MAGICA) == 4) {
 
-		size_t frameSize = 98 * 138;
-		size_t bufSize = frameSize * 11;
-		byte *smokeFrames = new byte[bufSize];
-		_res->loadOtherSpecialAnim(1526432, true, smokeFrames, bufSize);
-		Graphics::Surface smokeSurface;
-		smokeSurface.create(98, 138, Graphics::PixelFormat::createFormatCLUT8());
-		int curFrame = 0;
-		while (!shouldQuit()) {
-			_events->pollEvent();
-
-			bool didRender = renderScene(OVERLAY_NONE);
-
-			memset(smokeSurface.getPixels(), 0, frameSize);
-			extractSingleFrame(smokeFrames, (byte *)smokeSurface.getPixels(), curFrame, 98, 138);
-			_screen->transBlitFrom(smokeSurface, Common::Point(_alfredState.x, _alfredState.y - _alfredState.h), 255);
-			if (curFrame == 5) {
-				_alfredState.setState(ALFRED_SKIP_DRAWING);
-			}
-			if (didRender && _chrono->getFrameCount() % 2 == 0) {
-				curFrame++;
-
-				if (curFrame >= 11) {
-					break;
-				}
-			}
-			_screen->update();
-			g_system->delayMillis(10);
-		}
+		smokeAnimation(-1);
 		_alfredState.setState(ALFRED_IDLE);
 		setScreen(39, ALFRED_UP);
+	}
+}
+
+void PelrockEngine::smokeAnimation(int spriteIndex, bool hide) {
+	size_t frameSize = 98 * 138;
+	size_t bufSize = frameSize * 11;
+	byte *smokeFrames = new byte[bufSize];
+	_res->loadOtherSpecialAnim(1526432, true, smokeFrames, bufSize);
+	Graphics::Surface smokeSurface;
+	smokeSurface.create(98, 138, Graphics::PixelFormat::createFormatCLUT8());
+	int curFrame = 0;
+	int x = _alfredState.x;
+	int y = _alfredState.y - _alfredState.h;
+	if (spriteIndex >= 0) {
+		x = _room->findSpriteByIndex(spriteIndex)->x;
+		y = _room->findSpriteByIndex(spriteIndex)->y;
+	}
+	while (!shouldQuit()) {
+		_events->pollEvent();
+
+		bool didRender = renderScene(OVERLAY_NONE);
+
+		memset(smokeSurface.getPixels(), 0, frameSize);
+		extractSingleFrame(smokeFrames, (byte *)smokeSurface.getPixels(), curFrame, 98, 138);
+		_screen->transBlitFrom(smokeSurface, Common::Point(x, y), 255);
+		if (curFrame == 5) {
+			if (spriteIndex == -1) {
+				_alfredState.setState(ALFRED_SKIP_DRAWING);
+			} else {
+				if (hide) {
+					_room->disableSprite(spriteIndex);
+				} else {
+					_room->enableSprite(spriteIndex, 200);
+				}
+			}
+		}
+		if (didRender && _chrono->getFrameCount()) {
+			curFrame++;
+
+			if (curFrame >= 11) {
+				break;
+			}
+		}
+		_screen->update();
+		g_system->delayMillis(10);
 	}
 }
 
@@ -1934,14 +1951,34 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		break;
 	}
 	case 98: {
-		_res->loadAlfredSpecialAnim(1);
-		_alfredState.animState = ALFRED_SPECIAL_ANIM;
-		waitForSpecialAnimation();
-		_dialog->say(_res->_ingameTexts[PUERTAAUTENTICA_IZQUIERDA]);
+		chooseCorrectDoor();
 	}
 	default:
 		break;
 	}
+}
+
+void PelrockEngine::chooseCorrectDoor() {
+	_res->loadAlfredSpecialAnim(1);
+	_alfredState.animState = ALFRED_SPECIAL_ANIM;
+	waitForSpecialAnimation();
+	byte puertaBuena = _state->getFlag(FLAG_PUERTA_BUENA);
+	if (puertaBuena == 0) { // if not set yet, choose randomly
+		int choice = getRandomNumber(1);
+		_state->setFlag(FLAG_PUERTA_BUENA, choice + 1);
+		debug("Randomly chosen good door: %d", _state->getFlag(FLAG_PUERTA_BUENA));
+	}
+	puertaBuena = _state->getFlag(FLAG_PUERTA_BUENA);
+	Common::String doorText = _res->_izquierda;
+	if (puertaBuena == 1) {
+		doorText = _res->_izquierda;
+	} else if (puertaBuena == 2) {
+		doorText = _res->_derecha;
+	}
+	Common::StringArray fullTextArray = _res->_ingameTexts[PUERTAAUTENTICA_IZQUIERDA];
+	fullTextArray[0] = fullTextArray[0].substr(0, 45);
+	fullTextArray[0].append(doorText);
+	_dialog->say(fullTextArray);
 }
 
 void PelrockEngine::animateStatuePaletteFade(bool reverse) {

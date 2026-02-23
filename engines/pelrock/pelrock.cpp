@@ -788,6 +788,9 @@ void PelrockEngine::animateRotatePalette(PaletteAnim *anim) {
 }
 
 void PelrockEngine::doAction(VerbIcon action, HotSpot *hotspot) {
+	if (action == NO_ACTION) {
+		return;
+	}
 	switch (action) {
 	case LOOK:
 		lookAt(hotspot);
@@ -874,8 +877,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		if (step.distanceY > 0)
 			step.distanceY -= MIN(_alfredState.movementSpeedY, step.distanceY);
 
-		if (step.distanceX <= 0 && step.
-			distanceY <= 0) {
+		if (step.distanceX <= 0 && step.distanceY <= 0) {
 			_currentStep++;
 			if (_currentStep >= _currentContext.movementCount) {
 				_currentStep = 0;
@@ -910,21 +912,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 				Exit *exit = isExitUnder(_alfredState.x, _alfredState.y);
 				if (exit != nullptr) {
 					debug("Using exit to room %d", exit->targetRoom);
-					if (exit->targetRoom == 31 && _room->_currentRoomNumber == 32) {
-						_res->loadAlfredSpecialAnim(8);
-						_alfredState.setState(ALFRED_SPECIAL_ANIM);
-						waitForSpecialAnimation();
-					} else if (exit->targetRoom == 55 && _room->_currentRoomNumber == 44) {
-						uint16 x = _alfredState.x;
-						uint16 y = _alfredState.y;
-						_alfredState.x -= 20;
-						_alfredState.y += 5;
-						_res->loadAlfredSpecialAnim(15);
-						_alfredState.setState(ALFRED_SPECIAL_ANIM);
-						waitForSpecialAnimation();
-						_alfredState.x = x;
-						_alfredState.y = y;
-					}
+					exitTriggers(exit);
 					_alfredState.x = exit->targetX;
 					_alfredState.y = exit->targetY;
 					setScreen(exit->targetRoom, exit->dir);
@@ -1020,6 +1008,37 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		delete[] frame;
 		break;
 	}
+	}
+}
+
+void PelrockEngine::exitTriggers(Pelrock::Exit *exit) {
+	if (exit->targetRoom == 31 && _room->_currentRoomNumber == 32) {
+		_res->loadAlfredSpecialAnim(8);
+		_alfredState.setState(ALFRED_SPECIAL_ANIM);
+		waitForSpecialAnimation();
+	} else if (exit->targetRoom == 55 && _room->_currentRoomNumber == 44) {
+		uint16 x = _alfredState.x;
+		uint16 y = _alfredState.y;
+		_alfredState.x -= 20;
+		_alfredState.y += 5;
+		_res->loadAlfredSpecialAnim(15);
+		_alfredState.setState(ALFRED_SPECIAL_ANIM);
+		waitForSpecialAnimation();
+		_alfredState.x = x;
+		_alfredState.y = y;
+	} else if (exit->targetRoom == 48 && _room->_currentRoomNumber == 46) {
+		smokeAnimation(-1);
+		uint16 x = _alfredState.x;
+		uint16 y = _alfredState.y;
+		if (x < 282) {
+			if (_state->getFlag(FLAG_PUERTA_BUENA) == 1) {
+				_state->setFlag(FLAG_CORRECT_DOOR_CHOSEN, true);
+			}
+		} else {
+			if (_state->getFlag(FLAG_PUERTA_BUENA) == 2) {
+				_state->setFlag(FLAG_CORRECT_DOOR_CHOSEN, true);
+			}
+		}
 	}
 }
 
@@ -1974,9 +1993,6 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		// paths lead to capture, no voluntary exit allowed.
 		_dialog->_goodbyeDisabled = true;
 		break;
-	case 48:
-		_dialog->_goodbyeDisabled = true;
-		break;
 	case 10: {
 		// _events->waitForKey();
 		// while(!shouldQuit()) {
@@ -1987,8 +2003,29 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		// }
 		break;
 	}
-	case 55: {
+	case 48: {
+		_dialog->_goodbyeDisabled = true;
+		if (_state->getFlag(FLAG_CORRECT_DOOR_CHOSEN) == true) {
 
+		} else {
+			_dialog->say(_res->_ingameTexts[OHMISALVADOR]);
+			_dialog->say(_res->_ingameTexts[VOYPORTI_PRINCESA]);
+			// _state->setCurrentRoot(48, 0, 1);
+			Sprite *thinMummy = _room->findSpriteByIndex(0);
+			Sprite *thickMummy = _room->findSpriteByIndex(1);
+			HotSpot *fatMummy = nullptr;
+			for (uint i = 0; i < _room->_currentRoomHotspots.size(); i++) {
+				if (_room->_currentRoomHotspots[i].isSprite && _room->_currentRoomHotspots[i].index == 1) {
+					fatMummy = &_room->_currentRoomHotspots[i];
+				}
+			}
+			walkAndAction(fatMummy, NO_ACTION);
+			smokeAnimation(0);
+			smokeAnimation(1, false);
+
+			walkAndAction(fatMummy, TALK);
+			debug("Restart game now!");
+		}
 		break;
 	}
 	default:

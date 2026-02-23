@@ -36,22 +36,30 @@ ResourceManager::ResourceManager(/* args */) {
 }
 
 const AlfredSpecialAnimOffset ResourceManager::alfredSpecialAnims[] = {
-	{10, 51, 102, 1, 7, 559685, 1,}, // 0 - READ BOOK
-	{10, 51, 102, 1, 7, 578943, 1}, // 1 - READ RECIPE
-	{3, 45, 87, 0, 7, 37000, 1}, // 2 -  ELECTRIC SHOCK 1
-	{2, 82, 58, 0, 7, 53106, 20}, // 3 - ELECTRIC SHOCK 3
+	{
+		10,
+		51,
+		102,
+		1,
+		7,
+		559685,
+		1,
+	},                                   // 0 - READ BOOK
+	{10, 51, 102, 1, 7, 578943, 1},      // 1 - READ RECIPE
+	{3, 45, 87, 0, 7, 37000, 1},         // 2 -  ELECTRIC SHOCK 1
+	{2, 82, 58, 0, 7, 53106, 20},        // 3 - ELECTRIC SHOCK 3
 	{3, 71, 110, 1, 2, 20724, 1, 62480}, // 4 - Throw
-	{14, 171, 107, 1, 7, 1556540, 1} , // 5 - crocodile
-	{12, 113, 103, 1, 7, 1583702, 1}, // 6 - exit through manhole
-	{11, 33, 72, 1, 7, 1761234, 1}, // 7 - alfred climbs down
-	{9, 33, 72, 1, 7, 1766378, 1}, // 8 - alfred climbs up
-	{16, 158, 115, 0, 7, 1770196, 1}, // 9 - alfred exits tunnel
-	{7, 208, 102, 0, 7, 1600956, 1}, // 10 - alfred with workers
-	{23, 116, 124, 1, 7, 2060916, 1}, // 11 - Munheco 1
-	{18, 177, 124, 1, 7, 2115632, 1}, // 12 - Munheco 2
-	{11, 98, 138, 1, 7, 1526432, 1}, // 13 - Munheco 3
-	{4, 51, 102, 1, 7, 2972568, 1}, // 14 - descamisa
-	{13, 95, 99, 1, 7, 1749464, 1}, // 15 - alfred enters secret passage
+	{14, 171, 107, 1, 7, 1556540, 1},    // 5 - crocodile
+	{12, 113, 103, 1, 7, 1583702, 1},    // 6 - exit through manhole
+	{11, 33, 72, 1, 7, 1761234, 1},      // 7 - alfred climbs down
+	{9, 33, 72, 1, 7, 1766378, 1},       // 8 - alfred climbs up
+	{16, 158, 115, 0, 7, 1770196, 1},    // 9 - alfred exits tunnel
+	{7, 208, 102, 0, 7, 1600956, 1},     // 10 - alfred with workers
+	{23, 116, 124, 1, 7, 2060916, 1},    // 11 - Munheco 1
+	{18, 177, 124, 1, 7, 2115632, 1},    // 12 - Munheco 2
+	{11, 98, 138, 1, 7, 1526432, 1},     // 13 - Munheco 3
+	{4, 51, 102, 1, 7, 2972568, 1},      // 14 - descamisa
+	{13, 95, 99, 1, 7, 1749464, 1},      // 15 - alfred enters secret passage
 };
 
 ResourceManager::~ResourceManager() {
@@ -262,8 +270,7 @@ void ResourceManager::loadOtherSpecialAnim(uint32 offset, bool rleCompressed, by
 		size_t compressedSize = 0;
 		readUntilBuda(&alfred7, offset, compressed, compressedSize);
 		bufferSize = rleDecompress(compressed, compressedSize, 0, 0, &buffer, true);
-	}
-	else {
+	} else {
 		alfred7.seek(offset, SEEK_SET);
 		alfred7.read(buffer, bufferSize);
 	}
@@ -349,6 +356,9 @@ void ResourceManager::loadHardcodedText() {
 	exe.seek(kAlfredResponsesOffset, SEEK_SET);
 	exe.read(descBuffer, kAlfredResponsesSize);
 	_ingameTexts = processTextData(descBuffer, kAlfredResponsesSize);
+	// exe.seek(-1, SEEK_CUR);
+	_izquierda = exe.readString();
+	_derecha = exe.readString(0xFD);
 	byte *terminatorBuffer = new byte[39];
 	exe.seek(kConversationTerminatorOffset, SEEK_SET);
 	exe.read(terminatorBuffer, 39);
