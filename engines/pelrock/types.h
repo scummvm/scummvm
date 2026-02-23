@@ -518,8 +518,9 @@ struct ResetEntry {
 #define FLAG_RIDDLE_PRESENTED 56
 #define FLAG_SYMBOLS_PUSHED 57
 #define FLAG_CORRECT_DOOR_CHOSEN 58
+#define FLAG_ESQUELETO_RECONOCE 59
 
-const int kNumGameFlags = 60;
+const int kNumGameFlags = 61;
 
 struct GameStateData {
 	byte flags[kNumGameFlags];

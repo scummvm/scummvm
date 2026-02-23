@@ -660,6 +660,18 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_state->setCurrentRoot(47, 1, 0);
 		_state->setCurrentRoot(43, 3, 0);
 		break;
+	case 325:
+		_state->setFlag(FLAG_ESQUELETO_RECONOCE, _state->getFlag(FLAG_ESQUELETO_RECONOCE) + 1);
+		if(_state->getFlag(FLAG_ESQUELETO_RECONOCE) == 2) {
+			_state->setCurrentRoot(49, 1, 0);
+		}
+		break;
+	case 326:
+		_state->setCurrentRoot(49, 2, 0);
+		break;
+	case 378:
+		_state->setCurrentRoot(49, 3, 0);
+		break;
 	default:
 		debug("Got actionTrigger %d in dialogActionTrigger, but no handler defined", actionTrigger);
 		break;
