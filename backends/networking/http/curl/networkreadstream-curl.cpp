@@ -22,7 +22,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #define CURL_DISABLE_DEPRECATION
 
-// Include order specifically chosen to avoid ARRAYSIZE macro redefiniion on Windows
+// Include order specifically chosen to avoid ARRAYSIZE macro redefinition on Windows
 
 #include <curl/curl.h>
 
