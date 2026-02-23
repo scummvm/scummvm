@@ -20,6 +20,7 @@
  */
 
 #include "audio/mixer.h"
+#include "common/timer.h"
 
 #include "agi/agi.h"
 #include "agi/sound_coco3.h"
@@ -38,8 +39,6 @@ namespace Agi {
 //
 // Thanks to Guillaume Major for documenting the sound format in their
 // conversion program, cc3snd.c.
-//
-// TODO: Migrate to Audio::PCSpeaker
 
 static const uint16 cocoFrequencies[] = {
 	 130,  138,  146,  155,  164,  174,  184,  195,  207,  220,  233,  246,
@@ -52,17 +51,16 @@ static const uint16 cocoFrequencies[] = {
 SoundGenCoCo3::SoundGenCoCo3(AgiBase *vm, Audio::Mixer *pMixer) :
 	_isPlaying(false),
 	SoundGen(vm, pMixer) {
-
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, _soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_speaker.init();
+	g_system->getTimerManager()->installTimerProc(timerProc, 10000, this, "SoundGenCoCo3");
 }
 
 SoundGenCoCo3::~SoundGenCoCo3() {
-	_mixer->stopHandle(*_soundHandle);
+	g_system->getTimerManager()->removeTimerProc(timerProc);
+	_speaker.quit();
 }
 
 void SoundGenCoCo3::play(int resnum) {
-	Common::StackLock lock(_mutex);
-
 	if (_vm->_game.sounds[resnum] == nullptr ||
 		_vm->_game.sounds[resnum]->type() != AGI_SOUND_COCO3) {
 		error("CoCo3 sound %d not loaded", resnum);
@@ -113,30 +111,20 @@ void SoundGenCoCo3::play(int resnum) {
 }
 
 void SoundGenCoCo3::stop() {
-	Common::StackLock lock(_mutex);
-
 	_speaker.stop();
 	_isPlaying = false;
 }
 
-int SoundGenCoCo3::readBuffer(int16 *buffer, const int numSamples) {
-	Common::StackLock lock(_mutex);
-
-	// if not playing then there are no samples
-	if (!_isPlaying) {
-		return 0;
-	}
-
-	// fill the buffer with PCSpeaker samples
-	int result = _speaker.readBuffer(buffer, numSamples);
-
+void SoundGenCoCo3::onTimer() {
 	// if PCSpeaker is no longer playing then sound is finished
-	if (!_speaker.isPlaying()) {
+	if (_isPlaying && !_speaker.isPlaying()) {
 		_isPlaying = false;
 		_vm->_sound->soundIsFinished();
 	}
+}
 
-	return result;
+void SoundGenCoCo3::timerProc(void *refCon) {
+	static_cast<SoundGenCoCo3 *>(refCon)->onTimer();
 }
 
 } // End of namespace Agi

@@ -20,6 +20,7 @@
  */
 
 #include "audio/mixer.h"
+#include "common/timer.h"
 
 #include "agi/agi.h"
 #include "agi/sound_a2.h"
@@ -36,8 +37,6 @@ namespace Agi {
 // consumed by AGI's play-note routine and the speed of the CPU. Playback was
 // driven by the engine's own inner loops instead of a timer, so games are
 // blocked until a sound is completed or interrupted by a key press.
-//
-// TODO: Migrate to Audio::PCSpeaker
 
 static void calculateNote(uint16 clickCount, uint16 delayCount, float &freq, uint32 &duration_usec);
 static uint32 calculateDelayCycles(uint16 delayCount);
@@ -46,17 +45,16 @@ static uint32 calculateTotalCycles(uint32 delayCycles, uint16 delayCount, uint16
 SoundGenA2::SoundGenA2(AgiBase *vm, Audio::Mixer *pMixer) :
 	_isPlaying(false),
 	SoundGen(vm, pMixer) {
-	
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, _soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_speaker.init();
+	g_system->getTimerManager()->installTimerProc(timerProc, 10000, this, "SoundGenA2");
 }
 
 SoundGenA2::~SoundGenA2() {
-	_mixer->stopHandle(*_soundHandle);
+	g_system->getTimerManager()->removeTimerProc(timerProc);
+	_speaker.quit();
 }
 
 void SoundGenA2::play(int resnum) {
-	Common::StackLock lock(_mutex);
-
 	if (_vm->_game.sounds[resnum] == nullptr ||
 		_vm->_game.sounds[resnum]->type() != AGI_SOUND_APPLE2) {
 		error("Apple II sound %d not loaded", resnum);
@@ -90,30 +88,20 @@ void SoundGenA2::play(int resnum) {
 }
 
 void SoundGenA2::stop() {
-	Common::StackLock lock(_mutex);
-
 	_speaker.stop();
 	_isPlaying = false;
 }
 
-int SoundGenA2::readBuffer(int16 *buffer, const int numSamples) {
-	Common::StackLock lock(_mutex);
-
-	// if not playing then there are no samples
-	if (!_isPlaying) {
-		return 0;
-	}
-
-	// fill the buffer with PCSpeaker samples
-	int result = _speaker.readBuffer(buffer, numSamples);
-
+void SoundGenA2::onTimer() {
 	// if PCSpeaker is no longer playing then sound is finished
-	if (!_speaker.isPlaying()) {
+	if (_isPlaying && !_speaker.isPlaying()) {
 		_isPlaying = false;
 		_vm->_sound->soundIsFinished();
 	}
+}
 
-	return result;
+void SoundGenA2::timerProc(void *refCon) {
+	static_cast<SoundGenA2 *>(refCon)->onTimer();
 }
 
 // Apple II note calculations
