@@ -491,5 +491,4 @@ bool WaynesWorldEngine::walkTo(int actor1_destX, int actor1_destY, int direction
 
     return true;
 }
-
 } // End of namespace WaynesWorld

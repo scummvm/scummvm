@@ -23,6 +23,7 @@
 #include "waynesworld/waynesworld.h"
 #include "waynesworld/gamelogic.h"
 #include "waynesworld/graphics.h"
+#include "waynesworld/gxlarchive.h"
 #include "waynesworld/objectids.h"
 
 #include "audio/audiostream.h"
@@ -349,10 +350,8 @@ void WaynesWorldEngine::updateMouseMove() {
             const char *roomObjectName = getRoomObjectName(inventoryObjectId);
 			Common::String objectName;
             if (inventoryItemQuantity == 1) {
-//                sprintf(objectName, "%s", roomObjectName);
 				objectName = roomObjectName;
             } else {
-//                sprintf(objectName, "%d %ss", inventoryItemQuantity, roomObjectName);
 				objectName = Common::String::format("%d %ss", inventoryItemQuantity, roomObjectName);
             }
             drawVerbLine(_verbNumber, inventoryObjectId, objectName.c_str());
@@ -456,10 +455,6 @@ void WaynesWorldEngine::handleMouseRightClick() {
 }
 
 Image::PCXDecoder *WaynesWorldEngine::loadImage(const char *filename, bool appendRoomName) {
-//	Common::String tempFilename = appendRoomName
-//		? Common::String::format("%s/%s.pcx", _roomName.c_str(), filename)
-//		: Common::String::format("%s.pcx", filename);
-
 	Common::Path tempFilename(appendRoomName
 		? Common::String::format("%s/%s.pcx", _roomName.c_str(), filename)
 		: Common::String::format("%s.pcx", filename));
@@ -1151,6 +1146,10 @@ void WaynesWorldEngine::toggleActor() {
 
 void WaynesWorldEngine::openRoomLibrary(int roomNum) {
     _roomName = Common::String::format("r%02d", roomNum);
+	if (_roomGxl)
+		delete _roomGxl;
+
+	_roomGxl = new GxlArchive(_roomName);
 }
 
 void WaynesWorldEngine::loadRoomBackground() {
@@ -1164,8 +1163,8 @@ void WaynesWorldEngine::loadRoomBackground() {
 
 void WaynesWorldEngine::changeRoom(int roomNum) {
     if (_currentRoomNumber != -1) {
-        // NOTE Not needed gxCloseLib(roomLib);
-        unloadStaticRoomObjects();
+    	// GxlCloseLib is included in openRoomLibrary, no need to call it here
+    	unloadStaticRoomObjects();
     }
     openRoomLibrary(roomNum);
     if (_wayneSpriteX != -1) {
@@ -2119,6 +2118,11 @@ void WaynesWorldEngine::extremeCloseUpHandleMouseClick() {
     drawInterface(_verbNumber);
     loadRoomBackground();
     // sysMouseDriver(1);
+}
+
+void WaynesWorldEngine::gxCloseLib(GxlArchive *lib) {
+	delete lib;
+	lib = nullptr;
 }
 
 } // End of namespace WaynesWorld

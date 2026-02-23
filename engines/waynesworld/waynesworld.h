@@ -38,6 +38,7 @@
 #include "image/pcx.h"
 
 #include "waynesworld/detection.h"
+#include "waynesworld/gxlarchive.h"
 
 namespace WaynesWorld {
 
@@ -134,6 +135,7 @@ public:
 
 	// Room
 	Common::String _roomName;
+	GxlArchive *_roomGxl = nullptr;
 	byte *_walkMap;
 	int _scrollWidth;
 	int _scrollRemaining;
@@ -311,6 +313,7 @@ public:
 	int walkCalcDirection(int deltaX, int deltaY);
 	bool walkTo(int actor1_destX, int actor1_destY, int direction, int actor2_destX, int actor2_destY);
 
+	void gxCloseLib(GxlArchive *lib);
 	// Room
 	void openRoomLibrary(int roomNum);
 	void loadRoomBackground();

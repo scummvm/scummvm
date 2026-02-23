@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	detection.o \
 	gamelogic.o \
 	gamemap.o \
+	glxarchive.o \
 	graphics.o \
 	metaengine.o \
 	pathfinding.o \
