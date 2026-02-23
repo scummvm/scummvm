@@ -171,7 +171,6 @@ struct AlfredState {
 	bool isWalkingCancelable = true;
 
 	void setState(AlfredAnimState nextState) {
-		debug("Transitioning Alfred from state %d to state %d", animState, nextState);
 		animState = nextState;
 		curFrame = 0;
 	}

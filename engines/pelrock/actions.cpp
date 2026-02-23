@@ -163,6 +163,13 @@ const ActionEntry actionTable[] = {
 	// Room 44
 	{613, OPEN, &PelrockEngine::openPyramidDoor},
 
+	// Room 46
+	{621, OPEN, &PelrockEngine::openArchitectDoor},
+	{621, CLOSE, &PelrockEngine::closeArchitectDoor},
+
+	// Room 47
+	{628, PICKUP, &PelrockEngine::pickupPyramidMap},
+
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
 	{WILDCARD, TALK, &PelrockEngine::noOpAction},   // Generic talk action
@@ -614,9 +621,22 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 320:
 		_state->setCurrentRoot(room, 2, 0);
 		break;
-	case 324:
-		// ?
+	case 324: {
+		HotSpot hotspot = HotSpot();
+		hotspot.extra = 628;
+		hotspot.x = 221;
+		hotspot.y = 202;
+		hotspot.w = 50;
+		hotspot.h = 56;
+		hotspot.isEnabled = true;
+		hotspot.isSprite = false;
+		hotspot.actionFlags = 8;
+		hotspot.index = 9;
+		hotspot.innerIndex = 5;
+		_room->changeHotspot(47, hotspot);
+		_state->setCurrentRoot(room, 2, 0);
 		break;
+	}
 	// girls in pond
 	case 321:
 		_state->setCurrentRoot(45, 1, 0);
@@ -633,6 +653,12 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_state->setCurrentRoot(45, 3, 0);
 		break;
 	case 30840:
+		//toJail()? not present in the game
+		break;
+
+	case 323:
+		_state->setCurrentRoot(47, 1, 0);
+		_state->setCurrentRoot(43, 3, 0);
 		break;
 	default:
 		debug("Got actionTrigger %d in dialogActionTrigger, but no handler defined", actionTrigger);
@@ -1703,6 +1729,18 @@ void PelrockEngine::magicFormula(int inventoryObject, HotSpot *hotspot) {
 	}
 }
 
+void PelrockEngine::openArchitectDoor(HotSpot *hotspot) {
+	openDoor(hotspot, 2, 124, FEMININE, true);
+}
+
+void PelrockEngine::closeArchitectDoor(HotSpot *hotspot) {
+	closeDoor(hotspot, 2, 124, FEMININE, true);
+}
+
+void PelrockEngine::pickupPyramidMap(HotSpot *hotspot) {
+	addInventoryItem(98);
+}
+
 void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 	debug("Performing action trigger: %d", actionTrigger);
 	switch (actionTrigger) {
@@ -1745,6 +1783,11 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 		HotSpot *stone = _room->findHotspotByExtra(90);
 		stone->actionFlags = ACTION_MASK_PICKUP;
 		_room->changeHotSpot(*stone);
+		break;
+	}
+
+	case 322: {
+		_dialog->say(_res->_ingameTexts[NOSETEOCURRAACERCARTE]);
 		break;
 	}
 	}
@@ -1889,6 +1932,12 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		_dialog->say(_res->_ingameTexts[MEHANTOMADO_EL_PELO]);
 		_state->setCurrentRoot(43, 1, 0);
 		break;
+	}
+	case 98: {
+		_res->loadAlfredSpecialAnim(1);
+		_alfredState.animState = ALFRED_SPECIAL_ANIM;
+		waitForSpecialAnimation();
+		_dialog->say(_res->_ingameTexts[PUERTAAUTENTICA_IZQUIERDA]);
 	}
 	default:
 		break;

@@ -33,7 +33,6 @@ ResourceManager::ResourceManager(/* args */) {
 	for (int i = 0; i < 4; i++) {
 		alfredIdle[i] = nullptr;
 	}
-
 }
 
 const AlfredSpecialAnimOffset ResourceManager::alfredSpecialAnims[] = {
@@ -52,6 +51,7 @@ const AlfredSpecialAnimOffset ResourceManager::alfredSpecialAnims[] = {
 	{18, 177, 124, 1, 7, 2115632, 1}, // 12 - Munheco 2
 	{11, 98, 138, 1, 7, 1526432, 1}, // 13 - Munheco 3
 	{4, 51, 102, 1, 7, 2972568, 1}, // 14 - descamisa
+	{13, 95, 99, 1, 7, 1749464, 1}, // 15 - alfred enters secret passage
 };
 
 ResourceManager::~ResourceManager() {

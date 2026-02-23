@@ -101,7 +101,7 @@ private:
 	void lookAt(HotSpot *hotspot);
 
 	void chooseAlfredStateAndDraw();
-void drawIdleFrame();
+	void drawIdleFrame();
 	void drawAlfred(byte *buf);
 	void drawNextFrame(Sprite *animSet);
 	void animateTalkingNPC(Sprite *animSet);
@@ -358,6 +358,9 @@ public:
 	void usePumpkinWithPond(int inventoryObject, HotSpot *hotspot);
 	void useWaterOnFakeStone(int inventoryObject, HotSpot *hotspot);
 	void magicFormula(int inventoryObject, HotSpot *hotspot);
+	void openArchitectDoor(HotSpot *hotspot);
+	void closeArchitectDoor(HotSpot *hotspot);
+	void pickupPyramidMap(HotSpot *hotspot);
 	void checkAllSymbols();
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);

@@ -159,7 +159,7 @@ void PelrockEngine::init() {
 		// setScreen(22, ALFRED_DOWN);
 		// setScreen(41, ALFRED_DOWN);
 		// setScreen(43, ALFRED_DOWN);
-		setScreen(55, ALFRED_RIGHT);
+		setScreen(46, ALFRED_RIGHT);
 		// setScreen(15, ALFRED_DOWN);
 		// setScreen(2, ALFRED_LEFT);
 		// alfredState.x = 576;
@@ -375,10 +375,10 @@ void PelrockEngine::passerByAnim(uint32 frameCount) {
 		int spriteIndex = anim.spriteIndex;
 		int startX = anim.startX;
 		int startY = anim.startY;
-		debug("Checking passerby anim %d for sprite %d, direction %d", _room->_passerByAnims->currentAnimIndex, spriteIndex, direction);
+		// debug("Checking passerby anim %d for sprite %d, direction %d", _room->_passerByAnims->currentAnimIndex, spriteIndex, direction);
 		Sprite *sprite = _room->findSpriteByIndex(spriteIndex);
 		if (direction == PASSERBY_RIGHT) {
-			debug("Checking passerby anim for sprite %d moving RIGHT, curpos is %d", spriteIndex, sprite->x);
+			// debug("Checking passerby anim for sprite %d moving RIGHT, curpos is %d", spriteIndex, sprite->x);
 			if (sprite->x >= anim.resetCoord) {
 				sprite->x = startX;
 				sprite->y = startY;
@@ -388,7 +388,7 @@ void PelrockEngine::passerByAnim(uint32 frameCount) {
 				_room->_passerByAnims->latch = false;
 			}
 		} else if (direction == PASSERBY_LEFT) {
-			debug("Checking passerby anim for sprite %d moving LEFT, curpos is %d", spriteIndex, sprite->x);
+			// debug("Checking passerby anim for sprite %d moving LEFT, curpos is %d", spriteIndex, sprite->x);
 
 			if (sprite->x <= anim.resetCoord) {
 				sprite->x = startX;
@@ -399,7 +399,7 @@ void PelrockEngine::passerByAnim(uint32 frameCount) {
 				_room->_passerByAnims->latch = false;
 			}
 		} else if (direction == PASSERBY_DOWN) {
-			debug("Checking passerby anim for sprite %d moving DOWN, curpos is %d, reset %d", spriteIndex, sprite->y, anim.resetCoord);
+			// debug("Checking passerby anim for sprite %d moving DOWN, curpos is %d, reset %d", spriteIndex, sprite->y, anim.resetCoord);
 			if (sprite->y >= anim.resetCoord) {
 				sprite->x = startX;
 				sprite->y = startY;
@@ -914,6 +914,16 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 						_res->loadAlfredSpecialAnim(8);
 						_alfredState.setState(ALFRED_SPECIAL_ANIM);
 						waitForSpecialAnimation();
+					} else if (exit->targetRoom == 55 && _room->_currentRoomNumber == 44) {
+						uint16 x = _alfredState.x;
+						uint16 y = _alfredState.y;
+						_alfredState.x -= 20;
+						_alfredState.y += 5;
+						_res->loadAlfredSpecialAnim(15);
+						_alfredState.setState(ALFRED_SPECIAL_ANIM);
+						waitForSpecialAnimation();
+						_alfredState.x = x;
+						_alfredState.y = y;
 					}
 					_alfredState.x = exit->targetX;
 					_alfredState.y = exit->targetY;
