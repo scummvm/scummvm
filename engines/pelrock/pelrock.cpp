@@ -1900,6 +1900,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 
 	switch (roomNumber) {
 	case 4:
+	case 0:
 		if (_state->getFlag(FLAG_PUESTA_SALSA_PICANTE) && !_state->getFlag(FLAG_JEFE_ENCARCELADO)) {
 			_state->setFlag(FLAG_JEFE_ENCARCELADO, true);
 			_room->disableSprite(13, 0, true);
