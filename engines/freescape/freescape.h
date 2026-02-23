@@ -519,11 +519,7 @@ public:
 	Sound *loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxTable, int sfxData, int numberSounds);
 	Sound *loadSpeakerFxDrillerZX();
 	Sound *loadSoundsCPC(Common::SeekableReadStream *file, int offsetTone, int sizeTone, int offsetEnvelope, int sizeEnvelope, int offsetSoundDef, int sizeSoundDef);
-
-	void loadSoundsAmigaDemo(Common::SeekableReadStream *file, int offset, int numSounds, int modOffset = 0x3D5A6);
-	void playSoundAmiga(int index, Audio::SoundHandle &handle);
-	Common::Array<AmigaSfxEntry> _amigaSfxTable;
-	Common::Array<AmigaDmaSample> _amigaDmaSamples;
+	Sound *loadSoundsAmigaDemo(Common::SeekableReadStream *file, int offset, int numSounds, int modOffset);
 
 	int _soundIndexShoot;
 	int _soundIndexCollide;
