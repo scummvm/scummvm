@@ -28,6 +28,7 @@
 #include "common/textconsole.h"
 
 #include "waynesworld/gxlarchive.h"
+#include "waynesworld/graphics.h"
 
 namespace WaynesWorld {
 
@@ -122,4 +123,29 @@ Common::SeekableReadStream *GxlArchive::createReadStreamForMember(const Common::
 	return new Common::MemoryReadStream(data, hdr->size, DisposeAfterUse::YES);
 }
 
+Image::PCXDecoder *GxlArchive::loadImage(const char *filename) {
+	if (!hasFile(Common::Path(filename)))
+		error("loadImage() Could not find '%s'", filename);
+
+	Image::PCXDecoder *pcx = new Image::PCXDecoder();
+	if (!pcx->loadStream(*createReadStreamForMember(Common::Path(filename))))
+		error("loadImage() Could not process '%s'", filename);
+	
+	return pcx;
+}
+
+WWSurface *GxlArchive::loadSurfaceIntern(const char *filename) {
+	Image::PCXDecoder *imageDecoder = loadImage(filename);
+	WWSurface *surface = new WWSurface(imageDecoder->getSurface());
+	delete imageDecoder;
+	return surface;
+}
+
+WWSurface *GxlArchive::loadRoomSurface(const char *filename) {
+	return loadSurfaceIntern(filename);
+}
+
+WWSurface *GxlArchive::loadSurface(const char *filename) {
+	return loadSurfaceIntern(filename);
+}
 } // End of namespace WaynesWorld

@@ -124,7 +124,7 @@ void WaynesWorldEngine::gameMapOpen() {
     _musicIndex = 2;
     changeMusic();
     _screen->clear(0);
-    drawImageToScreen("m02/main_map", 0, 0);
+    drawImageToScreen(_m02Gxl, "main_map.pcx", 0, 0);
     _screen->fillSquare(kMapItem9s[_gameMapRoomNumber].x0, kMapItem9s[_gameMapRoomNumber].y0, 3, 109);
     paletteFadeIn(0, 256, 16);
     // TODO gameMapPaletteHandlerStart();
@@ -147,7 +147,7 @@ void WaynesWorldEngine::gameMapHandleMouseMove(int objectNumber) {
     if (_hoverObjectNumber == objectNumber)
         return;
     _hoverObjectNumber = objectNumber;
-
+	GxlArchive *lib = _m02Gxl;
     Common::String tagFilename;
     int tagX = -1, tagY = -1;
 
@@ -159,23 +159,23 @@ void WaynesWorldEngine::gameMapHandleMouseMove(int objectNumber) {
             _currentMapItemIndex = -1;
         } else if (_currentMapItemIndex >= 0 && _currentMapItemIndex <= 5) {
             const MapItem13 &item = kMapItem13s[_currentMapItemIndex];
-            tagFilename = Common::String::format("m02/%s_xtag", item.name);
+            tagFilename = Common::String::format("%s_xtag.pcx", item.name);
             tagX = item.tagX;
             tagY = item.tagY;
         } else if (_currentMapItemIndex >= 7 && _currentMapItemIndex <= 21) {
             const MapItem17 &item = kMapItem17s[_currentMapItemIndex - 7];
-            tagFilename = Common::String::format("m02/%s_xtag", item.name);
+            tagFilename = Common::String::format("%s_xtag.pcx", item.name);
             tagX = item.tagX;
             tagY = item.tagY;
         }
     } else if (_hoverObjectNumber >= 0 && _hoverObjectNumber <= 5) {
         const MapItem13 &item = kMapItem13s[_hoverObjectNumber];
-        tagFilename = Common::String::format("m02/%s_tag", item.name);
+        tagFilename = Common::String::format("%s_tag.pcx", item.name);
         tagX = item.tagX;
         tagY = item.tagY;
     } else if (_hoverObjectNumber >= 7 && _hoverObjectNumber <= 21) {
         const MapItem17 &item = kMapItem17s[_hoverObjectNumber - 7];
-        tagFilename = Common::String::format("m02/%s_tag", item.name);
+        tagFilename = Common::String::format("%s_tag.pcx", item.name);
         tagX = item.tagX;
         tagY = item.tagY;
     } else if (_hoverObjectNumber == 6 || (_hoverObjectNumber >= 22 && _hoverObjectNumber <= 27)) {
@@ -187,7 +187,7 @@ void WaynesWorldEngine::gameMapHandleMouseMove(int objectNumber) {
 
     if (tagX != -1 && tagY != -1) {
         _currentMapItemIndex = _hoverObjectNumber;
-        drawImageToScreen(tagFilename.c_str(), tagX, tagY);
+        drawImageToScreen(lib, tagFilename.c_str(), tagX, tagY);
     }
 
 }
@@ -203,7 +203,7 @@ void WaynesWorldEngine::gameMapHandleMouseClick() {
     } else if (_hoverObjectNumber >= 22 && _hoverObjectNumber <= 27) {
         _gameMapFlag = false;
         _currentRoomNumber = 100;
-        drawImageToScreen("m02/main_map", 0, 0);
+        drawImageToScreen(_m02Gxl, "main_map.pcx", 0, 0);
         _screen->fillSquare(kMapItem9s[_gameMapRoomNumber].x0, kMapItem9s[_gameMapRoomNumber].y0, 3, 109);
     } else if (_hoverObjectNumber >= 0 && _hoverObjectNumber <= 5) {
         const MapItem13 &item = kMapItem13s[_hoverObjectNumber];
@@ -222,7 +222,7 @@ void WaynesWorldEngine::gameMapHandleMouseClick() {
 
     if (isDone) {
         gameMapFinish();
-        loadPalette("m01/wstand0");
+        loadPalette(_m01Gxl, "wstand0.pcx");
     }
 
 }
@@ -230,11 +230,11 @@ void WaynesWorldEngine::gameMapHandleMouseClick() {
 void WaynesWorldEngine::gameMapSelectItem(const char *prefix, int animX, int animY) {
     // sysMouseDriver(2);
     for (int frameNum = 0; frameNum < 12; frameNum++) {
-        Common::String filename = Common::String::format("m02/%s_zm%d", prefix, frameNum);
-        drawImageToScreen(filename.c_str(), animX, animY);
+        Common::String filename = Common::String::format("%s_zm%d.pcx", prefix, frameNum);
+        drawImageToScreen(_m02Gxl, filename.c_str(), animX, animY);
         waitMillis(50);
     }
-    drawImageToScreen("m02/zmbtn", 125, 188);
+	drawImageToScreen(_m02Gxl, "zmbtn.pcx", 125, 188);
     if (kMapItem9s[_gameMapRoomNumber].roomNumber == _currentRoomNumber) {
         _screen->fillSquare(kMapItem9s[_gameMapRoomNumber].x1, kMapItem9s[_gameMapRoomNumber].y1, 3, 109);
     }

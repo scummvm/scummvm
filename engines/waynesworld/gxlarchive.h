@@ -23,6 +23,7 @@
 #define WAYNESWORLD_GXLARCHIVE
 
 #include "common/archive.h"
+#include "gamelogic.h"
 
 namespace Common {
 class File;
@@ -44,6 +45,8 @@ class GxlArchive : public Common::Archive {
 	GxlHeadersMap _headers;
 	Common::File *_gxlFile;
 
+	WWSurface *loadSurfaceIntern(const char *filename);
+
 public:
 	GxlArchive(const Common::String name);
 	~GxlArchive() override;
@@ -53,6 +56,10 @@ public:
 	int listMembers(Common::ArchiveMemberList &list) const override;
 	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
+
+	Image::PCXDecoder *loadImage(const char *filename);
+	WWSurface *loadRoomSurface(const char *filename);
+	WWSurface *loadSurface(const char *filename);
 };
 
 } // End of namespace WaynesWorld

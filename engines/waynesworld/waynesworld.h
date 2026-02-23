@@ -38,9 +38,9 @@
 #include "image/pcx.h"
 
 #include "waynesworld/detection.h"
-#include "waynesworld/gxlarchive.h"
 
 namespace WaynesWorld {
+class GxlArchive;
 
 #define WAYNESWORLD_SAVEGAME_VERSION 0
 
@@ -132,6 +132,18 @@ public:
 	GFTFont *_fontWWInv;
 	GFTFont *_fontBit5x7;
 	WWSurface *_roomAnimations[kRoomAnimationsCount];
+	GxlArchive *_m00Gxl = nullptr;
+	GxlArchive *_m01Gxl = nullptr;
+	GxlArchive *_m02Gxl = nullptr;
+	GxlArchive *_m03Gxl = nullptr;
+	GxlArchive *_m05Gxl = nullptr;
+
+	GxlArchive *_r08Gxl = nullptr;
+	GxlArchive *_r10Gxl = nullptr;
+	GxlArchive *_r14Gxl = nullptr;
+	GxlArchive *_r21Gxl = nullptr;
+	GxlArchive *_r22Gxl = nullptr;
+	GxlArchive *_r33Gxl = nullptr;
 
 	// Room
 	Common::String _roomName;
@@ -233,19 +245,16 @@ public:
 	Image::PCXDecoder *loadImage(const char *filename, bool appendRoomName);
 	WWSurface *loadSurfaceIntern(const char *filename, bool appendRoomName);
 	WWSurface *loadSurface(const char *filename);
-	WWSurface *loadRoomSurface(const char *filename);
-	void loadPalette(const char *filename);
+	void loadPalette(GxlArchive *lib, const char *filename);
 
 	void paletteFadeIn(int index, int count, int stepsSize);
 	void paletteFadeOut(int index, int count, int stepsSize);
 
 	// Image drawing
-	void drawImageToSurfaceIntern(const char *filename, WWSurface *destSurface, int x, int y, bool transparent, bool appendRoomName);
-	void drawImageToScreenIntern(const char *filename, int x, int y, bool transparent, bool appendRoomName);
-	void drawImageToBackground(const char *filename, int x, int y);
-	void drawImageToBackgroundTransparent(const char *filename, int x, int y);
-	void drawImageToScreen(const char *filename, int x, int y);
-	void drawImageToSurface(const char *filename, WWSurface *destSurface, int x, int y);
+	void drawImageToSurfaceIntern(GxlArchive *lib, const char *filename, WWSurface *destSurface, int x, int y, bool transparent);
+	void drawImageToScreenIntern(GxlArchive *lib, const char *filename, int x, int y, bool transparent);
+	void drawImageToScreen(GxlArchive *lib, const char *filename, int x, int y);
+	void drawImageToSurface(GxlArchive *lib, const char *filename, WWSurface *destSurface, int x, int y);
 	void drawRoomImageToBackground(const char *filename, int x, int y);
 	void drawRoomImageToBackgroundTransparent(const char *filename, int x, int y);
 	void drawRoomImageToScreen(const char *filename, int x, int y);

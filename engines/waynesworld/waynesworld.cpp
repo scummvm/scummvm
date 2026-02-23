@@ -96,6 +96,19 @@ Common::Error WaynesWorldEngine::run() {
 	_fontWWInv->loadFromFile("wwinv.gft");
 	_fontBit5x7->loadFromFile("bit5x7.gft");
 
+	_m00Gxl = new GxlArchive("m00");
+	_m01Gxl = new GxlArchive("m01");
+	_m02Gxl = new GxlArchive("m02");
+	_m03Gxl = new GxlArchive("m03");
+	_m05Gxl = new GxlArchive("m05");
+
+	_r08Gxl = new GxlArchive("r08");
+	_r10Gxl = new GxlArchive("r10");
+	_r14Gxl = new GxlArchive("r14");
+	_r21Gxl = new GxlArchive("r21");
+	_r22Gxl = new GxlArchive("r22");
+	_r33Gxl = new GxlArchive("r33");
+
 	_logic = new GameLogic(this);
 
 	_wayneSpriteX = 94;
@@ -187,6 +200,19 @@ Common::Error WaynesWorldEngine::run() {
 
 	delete _logic;
 
+	delete _m00Gxl;
+	delete _m01Gxl;
+	delete _m02Gxl;
+	delete _m03Gxl;
+	delete _m05Gxl;
+
+	delete _r08Gxl;
+	delete _r10Gxl;
+	delete _r14Gxl;
+	delete _r21Gxl;
+	delete _r22Gxl;
+	delete _r33Gxl;
+	
 	delete _fontWW;
 	delete _fontWWInv;
 	delete _fontBit5x7;
@@ -486,12 +512,8 @@ WWSurface *WaynesWorldEngine::loadSurface(const char *filename) {
 	return loadSurfaceIntern(filename, false);
 }
 
-WWSurface *WaynesWorldEngine::loadRoomSurface(const char *filename) {
-	return loadSurfaceIntern(filename, true);
-}
-
-void WaynesWorldEngine::loadPalette(const char *filename) {
-    Image::PCXDecoder *imageDecoder = loadImage(filename, false);
+void WaynesWorldEngine::loadPalette(GxlArchive* lib, const char *filename) {
+    Image::PCXDecoder *imageDecoder = lib->loadImage(filename);
 	if (imageDecoder->getPalette().empty()) {
 		warning("loadPalette() Could not load palette from '%s'", filename);
 	} else {
@@ -543,8 +565,8 @@ void WaynesWorldEngine::paletteFadeOut(int index, int count, int stepsSize) {
 	}
 }
 
-void WaynesWorldEngine::drawImageToSurfaceIntern(const char *filename, WWSurface *destSurface, int x, int y, bool transparent, bool appendRoomName) {
-    Image::PCXDecoder *imageDecoder = loadImage(filename, appendRoomName);
+void WaynesWorldEngine::drawImageToSurfaceIntern(GxlArchive *lib, const char *filename, WWSurface *destSurface, int x, int y, bool transparent) {
+    Image::PCXDecoder *imageDecoder = lib->loadImage(filename);
 	if (transparent) {
 		destSurface->drawSurfaceTransparent(imageDecoder->getSurface(), x, y);
 	} else {
@@ -553,8 +575,8 @@ void WaynesWorldEngine::drawImageToSurfaceIntern(const char *filename, WWSurface
     delete imageDecoder;
 }
 
-void WaynesWorldEngine::drawImageToScreenIntern(const char *filename, int x, int y, bool transparent, bool appendRoomName) {
-    Image::PCXDecoder *imageDecoder = loadImage(filename, appendRoomName);
+void WaynesWorldEngine::drawImageToScreenIntern(GxlArchive *lib, const char *filename, int x, int y, bool transparent) {
+    Image::PCXDecoder *imageDecoder = lib->loadImage(filename);
 	if (transparent) {
 		_screen->drawSurfaceTransparent(imageDecoder->getSurface(), x, y);
 	} else {
@@ -563,36 +585,28 @@ void WaynesWorldEngine::drawImageToScreenIntern(const char *filename, int x, int
     delete imageDecoder;
 }
 
-void WaynesWorldEngine::drawImageToBackground(const char *filename, int x, int y) {
-    drawImageToSurfaceIntern(filename, _backgroundSurface, x, y, false, false);
+void WaynesWorldEngine::drawImageToScreen(GxlArchive* lib, const char *filename, int x, int y) {
+	drawImageToScreenIntern(lib, filename, x, y, false);
 }
 
-void WaynesWorldEngine::drawImageToBackgroundTransparent(const char *filename, int x, int y) {
-    drawImageToSurfaceIntern(filename, _backgroundSurface, x, y, true, false);
-}
-
-void WaynesWorldEngine::drawImageToScreen(const char *filename, int x, int y) {
-    drawImageToScreenIntern(filename, x, y, false, false);
-}
-
-void WaynesWorldEngine::drawImageToSurface(const char *filename, WWSurface *destSurface, int x, int y) {
-    drawImageToSurfaceIntern(filename, destSurface, x, y, false, false);
+void WaynesWorldEngine::drawImageToSurface(GxlArchive *lib, const char *filename, WWSurface *destSurface, int x, int y) {
+    drawImageToSurfaceIntern(lib, filename, destSurface, x, y, false);
 }
 
 void WaynesWorldEngine::drawRoomImageToBackground(const char *filename, int x, int y) {
-    drawImageToSurfaceIntern(filename, _backgroundSurface, x, y, false, true);
+	drawImageToSurfaceIntern(_roomGxl, filename, _backgroundSurface, x, y, false);
 }
 
 void WaynesWorldEngine::drawRoomImageToBackgroundTransparent(const char *filename, int x, int y) {
-    drawImageToSurfaceIntern(filename, _backgroundSurface, x, y, true, true);
+	drawImageToSurfaceIntern(_roomGxl, filename, _backgroundSurface, x, y, true);
 }
 
 void WaynesWorldEngine::drawRoomImageToScreen(const char *filename, int x, int y) {
-    drawImageToScreenIntern(filename, x, y, false, true);
+    drawImageToScreenIntern(_roomGxl, filename, x, y, false);
 }
 
 void WaynesWorldEngine::drawRoomImageToSurface(const char *filename, WWSurface *destSurface, int x, int y) {
-    drawImageToSurfaceIntern(filename, destSurface, x, y, false, true);
+    drawImageToSurfaceIntern(_roomGxl, filename, destSurface, x, y, false);
 }
 
 void WaynesWorldEngine::drawSpiralEffect(Graphics::Surface *surface, int x, int y, int grainWidth, int grainHeight) {
@@ -698,9 +712,9 @@ void WaynesWorldEngine::changeMusic() {
 
 void WaynesWorldEngine::drawInterface(int verbNum) {
     if (isActorWayne()) {
-        drawImageToScreen("m00/winter", 0, 151);
+        drawImageToScreen(_m00Gxl, "winter.pcx", 0, 151);
     } else {
-        drawImageToScreen("m00/ginter", 0, 151);
+        drawImageToScreen(_m00Gxl, "ginter.pcx", 0, 151);
     }
     selectVerbNumber2(_verbNumber2 * 24 + 3);
     _verbNumber = verbNum;
@@ -854,9 +868,9 @@ void WaynesWorldEngine::drawInventory() {
         int objectRoomNumber = getObjectRoom(inventoryItemIndex + kFirstInventoryObjectId);
         if ((isActorWayne() && objectRoomNumber == 99 && _wayneInventory[inventoryItemIndex] > 0) ||
             (isActorGarth() && objectRoomNumber == 99 && _garthInventory[inventoryItemIndex] > 0)) {
-            Common::String filename = Common::String::format("m03/icon%02d", inventoryItemIndex + 1);
+            Common::String filename = Common::String::format("icon%02d.pcx", inventoryItemIndex + 1);
 			debug("filename: [%s]", filename.c_str());
-            drawImageToSurface(filename.c_str(), _inventorySprite, iconX, iconY);
+            drawImageToSurface(_m03Gxl, filename.c_str(), _inventorySprite, iconX, iconY);
             iconX += 26;
             if (iconX > 300) {
                 iconX = 0;
@@ -886,16 +900,16 @@ int WaynesWorldEngine::getGarthInventoryItemQuantity(int objectId) {
 
 void WaynesWorldEngine::loadMainActorSprites() {
     // _inventorySprite = new WWSurface(312, 52);
-	_wayneReachRightSprite = loadSurface("m01/wreachr");
-	_wayneReachLeftSprite = loadSurface("m01/wreachl");
-	_garthReachRightSprite = loadSurface("m01/greachr");
-	_garthReachLeftSprite = loadSurface("m01/greachl");
+	_wayneReachRightSprite = _m01Gxl->loadSurface("wreachr.pcx");
+	_wayneReachLeftSprite = _m01Gxl->loadSurface("wreachl.pcx");
+	_garthReachRightSprite = _m01Gxl->loadSurface("greachr.pcx");
+	_garthReachLeftSprite = _m01Gxl->loadSurface("greachl.pcx");
     for (int direction = 0; direction < 8; direction++) {
-		_wayneSprites[direction] = loadSurface(Common::String::format("m01/wstand%d", direction).c_str());
-		_garthSprites[direction] = loadSurface(Common::String::format("m01/gstand%d", direction).c_str());
+		_wayneSprites[direction] = _m01Gxl->loadSurface(Common::String::format("wstand%d.pcx", direction).c_str());
+		_garthSprites[direction] = _m01Gxl->loadSurface(Common::String::format("gstand%d.pcx", direction).c_str());
 		for (int frameNum = 0; frameNum < 4; frameNum++) {			
-			_wayneWalkSprites[direction][frameNum] = loadSurface(Common::String::format("m01/wwalk%d%d", direction, frameNum).c_str());
-			_garthWalkSprites[direction][frameNum] = loadSurface(Common::String::format("m01/gwalk%d%d", direction, frameNum).c_str());
+			_wayneWalkSprites[direction][frameNum] = _m01Gxl->loadSurface(Common::String::format("wwalk%d%d.pcx", direction, frameNum).c_str());
+			_garthWalkSprites[direction][frameNum] = _m01Gxl->loadSurface(Common::String::format("gwalk%d%d.pcx", direction, frameNum).c_str());
 		}
     }
 }
@@ -1082,7 +1096,7 @@ void WaynesWorldEngine::playAnimation(const char *prefix, int startIndex, int co
 	if (count > 0) {
 		for (int index = startIndex; index < startIndex + count; index++) {
 			updateRoomAnimations();
-			filename = Common::String::format("%s%d", prefix, index);
+			filename = Common::String::format("%s%d.pcx", prefix, index);
 			drawRoomImageToScreen(filename.c_str(), x, y);
 			drawRoomImageToBackground(filename.c_str(), x, y);
 			waitMillis(ticks);
@@ -1090,14 +1104,14 @@ void WaynesWorldEngine::playAnimation(const char *prefix, int startIndex, int co
 	} else {
 		for (int index = startIndex; index > startIndex + count; index--) {
 			updateRoomAnimations();
-			filename = Common::String::format("%s%d", prefix, index);
+			filename = Common::String::format("%s%d.pcx", prefix, index);
 			drawRoomImageToScreen(filename.c_str(), x, y);
 			drawRoomImageToBackground(filename.c_str(), x, y);
 			waitMillis(ticks);
 		}
 	}
     if (flag) {
-		filename = Common::String::format("%s%d", prefix, startIndex);
+		filename = Common::String::format("%s%d.pcx", prefix, startIndex);
         drawRoomImageToScreen(filename.c_str(), x, y);
         drawRoomImageToBackground(filename.c_str(), x, y);
     }
@@ -1153,10 +1167,10 @@ void WaynesWorldEngine::openRoomLibrary(int roomNum) {
 }
 
 void WaynesWorldEngine::loadRoomBackground() {
-	loadPalette(Common::String(_roomName + "/backg").c_str());
+	loadPalette(_roomGxl, "backg.pcx");
 	g_system->getPaletteManager()->setPalette(_palette2, 0, 256);
 	
-    drawRoomImageToSurface("backg", _backgroundSurface, 0, 0);
+    drawRoomImageToSurface("backg.pcx", _backgroundSurface, 0, 0);
     refreshRoomBackground(_currentRoomNumber);
     refreshActors();
 }
@@ -1259,41 +1273,41 @@ void WaynesWorldEngine::changeRoomScrolling() {
 void WaynesWorldEngine::loadScrollSprite() {
     if (_currentRoomNumber == 14 && _hoverObjectNumber == kObjectIdLoadingDock) {
         _backgroundScrollSurface = new WWSurface(112, 150);
-        drawRoomImageToSurface("scroll", _backgroundScrollSurface, 0, 0);
+        drawRoomImageToSurface("scroll.pcx", _backgroundScrollSurface, 0, 0);
         if ((_logic->_r1_flags1 & 0x10) && !(_logic->_pizzathonListFlags1 & 0x04)) {
-            drawRoomImageToSurface("gill0", _backgroundScrollSurface, 65, 84);
+            drawRoomImageToSurface("gill0.pcx", _backgroundScrollSurface, 65, 84);
         }
         _scrollRemaining = 112;
         _scrollWidth = 112;
         _doScrollRight = true;
     } else if (_currentRoomNumber == 19 && _hoverObjectNumber == kObjectIdStore) {
         _backgroundScrollSurface = new WWSurface(112, 150);
-        drawImageToSurface("r14/backg", _backgroundScrollSurface, 0, 0);
+        drawImageToSurface(_r14Gxl, "backg.pcx", _backgroundScrollSurface, 0, 0);
         _scrollRemaining = 112;
         _scrollWidth = 112;
         _doScrollRight = false;
     } else if (_currentRoomNumber == 8 && _hoverObjectNumber == kObjectIdHallway8) {
         stopRoomAnimations();
         _backgroundScrollSurface = new WWSurface(320, 150);
-        drawImageToSurface("r21/backg", _backgroundScrollSurface, 0, 0);
+        drawImageToSurface(_r21Gxl, "backg.pcx", _backgroundScrollSurface, 0, 0);
         _scrollRemaining = 320;
         _scrollWidth = 320;
         _doScrollRight = false;
     } else if (_currentRoomNumber == 21 && _hoverObjectNumber == kObjectIdFoyer) {
         _backgroundScrollSurface = new WWSurface(320, 150);
-        drawImageToSurface("r08/backg", _backgroundScrollSurface, 0, 0);
+        drawImageToSurface(_r08Gxl, "backg.pcx", _backgroundScrollSurface, 0, 0);
         _scrollRemaining = 320;
         _scrollWidth = 320;
         _doScrollRight = true;
     } else if (_currentRoomNumber == 21 && _hoverObjectNumber == kObjectIdOffice21) {
         _backgroundScrollSurface = new WWSurface(320, 150);
-        drawImageToSurface("r22/backg", _backgroundScrollSurface, 0, 0);
+        drawImageToSurface(_r22Gxl, "backg.pcx", _backgroundScrollSurface, 0, 0);
         _scrollRemaining = 320;
         _scrollWidth = 320;
         _doScrollRight = false;
     } else if (_currentRoomNumber == 22 && _hoverObjectNumber == kObjectIdHallway22) {
         _backgroundScrollSurface = new WWSurface(320, 150);
-        drawImageToSurface("r21/backg", _backgroundScrollSurface, 0, 0);
+		drawImageToSurface(_r21Gxl, "backg.pcx", _backgroundScrollSurface, 0, 0);
         _scrollRemaining = 320;
         _scrollWidth = 320;
         _doScrollRight = true;
@@ -1305,16 +1319,16 @@ void WaynesWorldEngine::loadScrollSprite() {
             walkTo(150, 140, 6, 160, 140);
             stopRoomAnimations();
             _backgroundScrollSurface = new WWSurface(168, 150);
-            drawImageToSurface("r33/backg", _backgroundScrollSurface, 0, 0);
+            drawImageToSurface(_r33Gxl, "backg.pcx", _backgroundScrollSurface, 0, 0);
             _scrollRemaining = 168;
             _scrollWidth = 168;
             _doScrollRight = false;
         }
     } else if (_currentRoomNumber == 33 && _hoverObjectNumber == kObjectIdHallway33) {
         _backgroundScrollSurface = new WWSurface(168, 150);
-        drawRoomImageToSurface("scroll", _backgroundScrollSurface, 0, 0);
+        drawRoomImageToSurface("scroll.pcx", _backgroundScrollSurface, 0, 0);
         if (_logic->_r32_flags & 0x02) {
-            drawRoomImageToSurface("noplunge", _backgroundScrollSurface, 141, 94);
+            drawRoomImageToSurface("noplunge.pcx", _backgroundScrollSurface, 141, 94);
         }
         _scrollRemaining = 168;
         _scrollWidth = 168;
@@ -1384,7 +1398,7 @@ void WaynesWorldEngine::loadAnimationSpriteRange(int baseIndex, const char *file
 
 void WaynesWorldEngine::loadAnimationSprite(int index, const char *filename) {
 	delete _roomAnimations[index];
-	_roomAnimations[index] = loadRoomSurface(filename);
+	_roomAnimations[index] = _roomGxl->loadRoomSurface(filename);
 }
 
 void WaynesWorldEngine::drawAnimationSprite(int index, int x, int y) {
@@ -1465,7 +1479,8 @@ void WaynesWorldEngine::loadStaticRoomObjects(int roomNum) {
 		const StaticRoomObject &roomObject = _staticRoomObjects[startIndex + index];
 		if (roomObject.x1 != -1) {
 			debug("%s", roomObject.name);
-			_staticRoomObjectSprites[index] = loadRoomSurface(roomObject.name);
+			Common::String objectName = Common::String::format("%s.pcx", roomObject.name);
+			_staticRoomObjectSprites[index] = _roomGxl->loadRoomSurface(objectName.c_str());
 			_backgroundSurface->drawSurfaceTransparent(_staticRoomObjectSprites[index], roomObject.x1, roomObject.y1);
 		}
 	}
@@ -2063,14 +2078,14 @@ void WaynesWorldEngine::lookAtUnusedTicket() {
     _logic->_didScratchTicket = false;
     stopRoomAnimations();    
     if (!(_logic->_r10_flags & 0x80)) {
-        _roomAnimations[19] = loadSurface("r10/win");
+        _roomAnimations[19] = _r10Gxl->loadSurface("win.pcx");
     } else {
-        _roomAnimations[19] = loadSurface("r10/nowin");
+		_roomAnimations[19] = _r10Gxl->loadSurface("nowin.pcx");
     }
     paletteFadeOut(0, 256, 64);
     _screen->clear(0);
     playSound("sv14", 0);
-    drawImageToScreen("r10/ticket", 0, 13);
+    drawImageToScreen(_r10Gxl, "ticket.pcx", 0, 13);
     paletteFadeIn(0, 256, 64);
     // sysMouseDriver(1);
 }

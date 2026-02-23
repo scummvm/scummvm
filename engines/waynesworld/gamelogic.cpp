@@ -22,6 +22,7 @@
 
 #include "waynesworld/gamelogic.h"
 #include "waynesworld/graphics.h"
+#include "waynesworld/gxlarchive.h"
 #include "waynesworld/objectids.h"
 #include "common/str.h"
 #include "graphics/cursorman.h"
@@ -1094,41 +1095,43 @@ void GameLogic::setPizzathonStatus(int flagNum) {
 }
 
 void GameLogic::displayExtremeCloseupOfPizzathonList() {
-    _vm->stopRoomAnimations();
+	GxlArchive *lib = _vm->_m05Gxl;
+
+	_vm->stopRoomAnimations();
     _vm->_gameState = 5;
     _vm->paletteFadeOut(0, 256, 16);
     // sysMouseDriver(2);
-    _vm->drawImageToScreen("m05/list", 0, 0);
+	_vm->drawImageToScreen(lib, "list.pcx", 0, 0);
     _vm->playSound("sv14", 1);
     if (_pizzathonListFlags1 & 0x08) {
-        _vm->drawImageToScreen("m05/adline", 72, 22);
+		_vm->drawImageToScreen(lib, "adline.pcx", 72, 22);
     }
     if (_pizzathonListFlags1 & 0x40) {
-        _vm->drawImageToScreen("m05/locline", 72, 42);
+		_vm->drawImageToScreen(lib, "locline.pcx", 72, 42);
     }
     if (_pizzathonListFlags1 & 0x80) {
-        _vm->drawImageToScreen("m05/volline", 74, 59);
+		_vm->drawImageToScreen(lib, "volline.pcx", 74, 59);
     }
     if (_pizzathonListFlags2 & 0x01) {
-        _vm->drawImageToScreen("m05/timeline", 66, 76);
+		_vm->drawImageToScreen(lib, "timeline.pcx", 66, 76);
     }
     if (_pizzathonListFlags2 & 0x02) {
-        _vm->drawImageToScreen("m05/totline", 73, 94);
+		_vm->drawImageToScreen(lib, "totline.pcx", 73, 94);
     }
     if (_pizzathonListFlags1 & 0x02) {
-        _vm->drawImageToScreen("m05/vidline", 80, 111);
+		_vm->drawImageToScreen(lib, "vidline.pcx", 80, 111);
     }
     if (_pizzathonListFlags1 & 0x04) {
-        _vm->drawImageToScreen("m05/ingline", 72, 129);
+		_vm->drawImageToScreen(lib, "ingline.pcx", 72, 129);
     }
     if (_pizzathonListFlags1 & 0x10) {
-        _vm->drawImageToScreen("m05/musline", 78, 148);
+		_vm->drawImageToScreen(lib, "musline.pcx", 78, 148);
     }
     if (_pizzathonListFlags1 & 0x01) {
-        _vm->drawImageToScreen("m05/magline", 61, 164);
+		_vm->drawImageToScreen(lib, "magline.pcx", 61, 164);
     }
     if (_pizzathonListFlags1 & 0x20) {
-        _vm->drawImageToScreen("m05/comline", 68, 100);
+		_vm->drawImageToScreen(lib, "comline.pcx", 68, 100);
     }
     _vm->paletteFadeIn(0, 256, 16);
     // sysMouseDriver(1);
@@ -1140,7 +1143,7 @@ void GameLogic::displayExtremeCloseupOfSign15() {
     // sysMouseDriver(2);
     _vm->paletteFadeOut(0, 256, 16);
     _vm->playSound("sv14", 1);
-    _vm->drawRoomImageToScreen("sign", 0, 0);
+    _vm->drawRoomImageToScreen("sign.pcx", 0, 0);
     _vm->paletteFadeIn(0, 256, 16);
     // sysMouseDriver(1);
 }
@@ -1151,53 +1154,53 @@ void GameLogic::displayExtremeCloseupOfObjectPictures22() {
     // sysMouseDriver(2);
     _vm->paletteFadeOut(0, 256, 16);
     _vm->playSound("sv14", 1);
-    _vm->drawImageToScreen("m05/oldmap", 0, 0);
+	_vm->drawImageToScreen(_vm->_m05Gxl, "oldmap.pcx", 0, 0);
     _vm->paletteFadeIn(0, 256, 16);
     // sysMouseDriver(1);
 }
 
 void GameLogic::displayExtremeCloseupOfMemo() {
-    _vm->stopRoomAnimations();
+	_vm->stopRoomAnimations();
     _vm->_gameState = 5;
     // sysMouseDriver(2);
     _vm->paletteFadeOut(0, 256, 16);
     _vm->playSound("sv14", 1);
-    _vm->drawImageToScreen("m05/memo", 0, 0);
+	_vm->drawImageToScreen(_vm->_m05Gxl, "memo.pcx", 0, 0);
     _vm->paletteFadeIn(0, 256, 16);
     // sysMouseDriver(1);
 }
 
 void GameLogic::displayExtremeCloseupOfSewerMap() {
-    _vm->stopRoomAnimations();
+	_vm->stopRoomAnimations();
     _vm->_gameState = 5;
     // sysMouseDriver(2);
     _vm->paletteFadeOut(0, 256, 16);
     _vm->playSound("sv14", 1);
-    _vm->drawImageToScreen("m05/sewermap", 0, 0);
+	_vm->drawImageToScreen(_vm->_m05Gxl, "sewermap.pcx", 0, 0);
     _vm->paletteFadeIn(0, 256, 16);
     // sysMouseDriver(1);
 }
 
 void GameLogic::displayExtremeCloseupOfBillboard1() {
-    _vm->stopRoomAnimations();
+	_vm->stopRoomAnimations();
     _vm->_gameState = 5;
     // sysMouseDriver(2);
     _vm->paletteFadeOut(0, 256, 16);
     _vm->playSound("sv14", 1);
     _vm->_screen->clear(0);
-    _vm->drawImageToScreen("m05/fboard", 51, 18);
+	_vm->drawImageToScreen(_vm->_m05Gxl, "fboard.pcx", 51, 18);
     _vm->paletteFadeIn(0, 256, 16);
     // sysMouseDriver(1);
 }
 
 void GameLogic::displayExtremeCloseupOfBillboard2() {
-    _vm->stopRoomAnimations();
+	_vm->stopRoomAnimations();
     _vm->_gameState = 5;
     // sysMouseDriver(2);
     _vm->paletteFadeOut(0, 256, 16);
     _vm->playSound("sv14", 1);
     _vm->_screen->clear(0);
-    _vm->drawImageToScreen("m05/pboard", 51, 18);
+	_vm->drawImageToScreen(_vm->_m05Gxl, "pboard.pcx", 51, 18);
     _vm->paletteFadeIn(0, 256, 16);
     // sysMouseDriver(1);
 }
@@ -1330,13 +1333,13 @@ bool GameLogic::r0_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 
 void GameLogic::r0_refreshRoomBackground() {
 	if (!(_r0_flags & 0x01)) {
-		_vm->drawRoomImageToBackground("guitar", 18, 84);
+		_vm->drawRoomImageToBackground("guitar.pcx", 18, 84);
 	}
 	if (!(_r0_flags & 0x04)) {
-		_vm->drawRoomImageToBackground("hockey", 235, 66);
+		_vm->drawRoomImageToBackground("hockey.pcx", 235, 66);
 	}
 	if (!(_r0_flags & 0x08)) {
-		_vm->drawRoomImageToBackground("basket", 217, 76);
+		_vm->drawRoomImageToBackground("basket.pcx", 217, 76);
 	}
 	if (!(_r0_flags & 0x02)) {
 		_vm->_roomEventNum = 1;
@@ -1668,7 +1671,7 @@ void GameLogic::r1_initRoomAnimations() {
 
 void GameLogic::r1_uninitRoomAnimations() {
 	_vm->stopRoomAnimations();
-	_vm->loadPalette("m01/wstand0");
+	_vm->loadPalette(_vm->_m01Gxl, "wstand0.pcx");
 }
 
 void GameLogic::r1_updateRoomAnimations() {
@@ -1686,17 +1689,17 @@ void GameLogic::r1_updateRoomAnimations() {
 void GameLogic::r1_refreshRoomBackground() {
 	if (_pizzathonListFlags2 & 0x08) {
 		_vm->loadRoomMask(97);
-		_vm->drawRoomImageToBackground("norobot", 64, 68);
-		_vm->drawRoomImageToBackground("machine", 82, 50);
+		_vm->drawRoomImageToBackground("norobot.pcx", 64, 68);
+		_vm->drawRoomImageToBackground("machine.pcx", 82, 50);
 		if (_r1_flags2 & 0x02) {
-			_vm->drawRoomImageToBackground("donon", 86, 104);
+			_vm->drawRoomImageToBackground("donon.pcx", 86, 104);
 		}
 		if (!(_r1_flags2 & 0x04)) {
-			_vm->drawRoomImageToBackground("cord", 143, 106);
+			_vm->drawRoomImageToBackground("cord.pcx", 143, 106);
 		}
 		if (!(_r1_flags2 & 0x08)) {
 			_vm->moveObjectToRoom(kObjectIdDrGadget_0, 1);
-			_vm->drawRoomImageToBackground("gadget2", 127, 82);
+			_vm->drawRoomImageToBackground("gadget2.pcx", 127, 82);
 			_vm->fillRoomMaskArea(100, 0, 319, 149, true);
 		} else {
 			_vm->moveObjectToNowhere(kObjectIdDrGadget_0);
@@ -1707,7 +1710,7 @@ void GameLogic::r1_refreshRoomBackground() {
 			}
 		}
 		if (!(_r1_flags1 & 0x08)) {
-			_vm->drawRoomImageToBackground("suckcut", 32, 80);
+			_vm->drawRoomImageToBackground("suckcut.pcx", 32, 80);
 		}
 		_vm->moveObjectToNowhere(kObjectIdLever);
 		_vm->moveObjectToNowhere(kObjectIdMice);
@@ -1726,54 +1729,54 @@ void GameLogic::r1_refreshRoomBackground() {
 		}
 	} else {
 		if (_r1_flags1 & 0x01) {
-			_vm->drawRoomImageToBackground("screenup", 118, 53);
+			_vm->drawRoomImageToBackground("screenup.pcx", 118, 53);
 			if (_r1_flags1 & 0x02) {
-				_vm->drawRoomImageToBackground("safeopen", 131, 69);
+				_vm->drawRoomImageToBackground("safeopen.pcx", 131, 69);
 				if (!(_r1_flags1 & 0x04)) {
-					_vm->drawRoomImageToBackground("remote", 138, 78);
+					_vm->drawRoomImageToBackground("remote.pcx", 138, 78);
 				}
 			}
 		}
 		if (!(_r1_flags1 & 0x08)) {
-			_vm->drawRoomImageToBackground("suckcut", 32, 80);
+			_vm->drawRoomImageToBackground("suckcut.pcx", 32, 80);
 		}
 		if (_r1_flags1 & 0x20) {
-			_vm->drawRoomImageToBackground("emptycg", 180, 66);
+			_vm->drawRoomImageToBackground("emptycg.pcx", 180, 66);
 		} else if (_r1_flags1 & 0x10) {
-			_vm->drawRoomImageToBackground("emptycls", 179, 67);
+			_vm->drawRoomImageToBackground("emptycls.pcx", 179, 67);
 		}
 		if (_r1_flags2 & ((_r1_flags1 & 0x40) + 1) & 0x01) {
 			if (_r1_flags1 & 0x08) {
-				_vm->drawRoomImageToBackground("gadin10", 0, 78);
+				_vm->drawRoomImageToBackground("gadin10.pcx", 0, 78);
 			} else {
-				_vm->drawRoomImageToBackground("scin10", 0, 78);
+				_vm->drawRoomImageToBackground("scin10.pcx", 0, 78);
 			}
 		}
 		if (_r1_flags1 & 0x80) {
-			_vm->drawRoomImageToBackground("norobot", 64, 68);
+			_vm->drawRoomImageToBackground("norobot.pcx", 64, 68);
 		}
 		if (_r1_tongueTrickActive) {
 			switch (_r1_tongueTrickCtr) {
 			case 2: case 9:
-				_vm->drawRoomImageToBackground("tt011", 119, 81);
+				_vm->drawRoomImageToBackground("tt011.pcx", 119, 81);
 				break;
 			case 3:
-				_vm->drawRoomImageToBackground("tt111", 119, 81);
+				_vm->drawRoomImageToBackground("tt111.pcx", 119, 81);
 				break;
 			case 4:
-				_vm->drawRoomImageToBackground("tt211", 119, 81);
+				_vm->drawRoomImageToBackground("tt211.pcx", 119, 81);
 				break;
 			case 5:
-				_vm->drawRoomImageToBackground("tt311", 119, 81);
+				_vm->drawRoomImageToBackground("tt311.pcx", 119, 81);
 				break;
 			case 6:
-				_vm->drawRoomImageToBackground("tt46", 119, 81);
+				_vm->drawRoomImageToBackground("tt46.pcx", 119, 81);
 				break;
 			case 7:
-				_vm->drawRoomImageToBackground("tt56", 119, 81);
+				_vm->drawRoomImageToBackground("tt56.pcx", 119, 81);
 				break;
 			case 8:
-				_vm->drawRoomImageToBackground("tt66", 119, 81);
+				_vm->drawRoomImageToBackground("tt66.pcx", 119, 81);
 			default:
 				break;
 			}
@@ -2246,10 +2249,10 @@ void GameLogic::r2_refreshRoomBackground() {
 		_r2_flags |= 0x80;
 	}
 	if (_r2_backgroundValue1 < 7) {
-		_vm->drawRoomImageToBackground("geeks", 152, 72);
+		_vm->drawRoomImageToBackground("geeks.pcx", 152, 72);
 	}
 	if (!(_pizzathonListFlags2 & 0x08)) {
-		_vm->drawRoomImageToBackground("gang", 0, 68);
+		_vm->drawRoomImageToBackground("gang.pcx", 0, 68);
 	} else {
 		_vm->moveObjectToNowhere(kObjectIdBikerGang);
 	}
@@ -2258,17 +2261,17 @@ void GameLogic::r2_refreshRoomBackground() {
 		_vm->setStaticRoomObjectPosition(2, 1, 1, 92, 103);
 	} else {
 		_vm->setStaticRoomObjectPosition(2, 2, 2, 92, 88);
-		_vm->drawRoomImageToBackgroundTransparent("table2", 92, 88);
+		_vm->drawRoomImageToBackgroundTransparent("table2.pcx", 92, 88);
 		_vm->moveObjectToRoom(kObjectIdGirls, 2);
 	}
-	_vm->drawRoomImageToBackground("wait1", 237, 69);
+	_vm->drawRoomImageToBackground("wait1.pcx", 237, 69);
 	if (!(_r2_flags & 0x04)) {
-		_vm->drawRoomImageToBackground("box", 265, 83);
+		_vm->drawRoomImageToBackground("box.pcx", 265, 83);
 	} else if (_r2_flags & 0x40) {
-		_vm->drawRoomImageToBackground("cbox", 226, 91);
+		_vm->drawRoomImageToBackground("cbox.pcx", 226, 91);
 	}
 	if (_r2_flags & 0x20) {
-		_vm->drawRoomImageToBackground("donut", 232, 95);
+		_vm->drawRoomImageToBackground("donut.pcx", 232, 95);
 	}
 }
 
@@ -2447,11 +2450,11 @@ bool GameLogic::r3_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 
 void GameLogic::r3_refreshRoomBackground() {
 	if (_pizzathonListFlags2 & 0x08) {
-		_vm->drawRoomImageToBackground("nosat", 232, 53);
+		_vm->drawRoomImageToBackground("nosat.pcx", 232, 53);
 		_vm->moveObjectToNowhere(kObjectIdProtesters3);
 		_vm->moveObjectToNowhere(kObjectIdSatdish);
 	} else {
-		_vm->drawRoomImageToBackground("elvis", 0, 47);
+		_vm->drawRoomImageToBackground("elvis.pcx", 0, 47);
 		_vm->moveObjectToRoom(kObjectIdProtesters3, 3);
 	}
 }
@@ -2635,10 +2638,10 @@ void GameLogic::r4_refreshRoomBackground() {
 		r4_initRoomAnimations();
 	}
 	if (_r4_flags & 0x02) {
-		_vm->drawRoomImageToBackground("opengate", 223, 49);
+		_vm->drawRoomImageToBackground("opengate.pcx", 223, 49);
 	}
 	if (_r4_flags & 0x04) {
-		_vm->drawRoomImageToBackground("cheesein", 226, 61);
+		_vm->drawRoomImageToBackground("cheesein.pcx", 226, 61);
 		chainCheeseIn = 'y';
 	}
 	if (_r4_flags & 0x08) {
@@ -2650,13 +2653,13 @@ void GameLogic::r4_refreshRoomBackground() {
 		chainVisible = true;
 	}
 	if (chainVisible) {
-		Common::String filename = Common::String::format("%c%cchain%c", chainCheeseIn, chainUpDown1, chainUpDown2);
+		Common::String filename = Common::String::format("%c%cchain%c.pcx", chainCheeseIn, chainUpDown1, chainUpDown2);
 		_vm->drawRoomImageToBackground(filename.c_str(), 224, 57);
 	}
 	if (_r4_flags & 0x20) {
-		_vm->drawRoomImageToBackground("wcrouch", 163, 53);
+		_vm->drawRoomImageToBackground("wcrouch.pcx", 163, 53);
 	} else if (_r4_flags & 0x40) {
-		_vm->drawRoomImageToBackground("gcrouch", 163, 53);
+		_vm->drawRoomImageToBackground("gcrouch.pcx", 163, 53);
 	}
 }
 
@@ -3096,21 +3099,21 @@ void GameLogic::r6_updateRoomAnimations() {
 
 void GameLogic::r6_refreshRoomBackground() {
 	if (!(_r6_flags & 0x01)) {
-		_vm->drawRoomImageToBackground("sitdog0", 49, 111);
+		_vm->drawRoomImageToBackground("sitdog0.pcx", 49, 111);
 		_vm->fillRoomMaskArea(65, 110, 106, 124, false);
 		_vm->fillRoomMaskArea(96, 111, 125, 123, true);
 	}
 	if (_r6_flags & 0x02) {
-		_vm->drawRoomImageToBackground("norope", 49, 111);
+		_vm->drawRoomImageToBackground("norope.pcx", 49, 111);
 	}
 	if (_r6_flags & 0x04) {
-		_vm->drawRoomImageToBackground("throw5", 142, 37);
+		_vm->drawRoomImageToBackground("throw5.pcx", 142, 37);
 	}
 	if (_r6_flags & 0x08) {
-		_vm->drawRoomImageToBackground("seat", 148, 84);
+		_vm->drawRoomImageToBackground("seat.pcx", 148, 84);
 	}
 	if (_r6_flags & 0x10) {
-		_vm->drawRoomImageToBackground("sitgarth", 151, 83);
+		_vm->drawRoomImageToBackground("sitgarth.pcx", 151, 83);
 	}
 	if (!_vm->_hasRoomAnimationCallback) {
 		r6_initRoomAnimations();
@@ -3457,15 +3460,15 @@ void GameLogic::r7_updateRoomAnimations() {
 
 void GameLogic::r7_refreshRoomBackground() {
 	if (_pizzathonListFlags1 & 0x08) {
-		_vm->drawRoomImageToBackground("bboard", 68, 39);
+		_vm->drawRoomImageToBackground("bboard.pcx", 68, 39);
 		_vm->moveObjectToRoom(kObjectIdBillboard_0, 7);
 		_vm->moveObjectToNowhere(kObjectIdBillboard7);
 	}
 	if (_r7_flags & 0x04) {
-		_vm->drawRoomImageToBackground("opendoor", 155, 73);
+		_vm->drawRoomImageToBackground("opendoor.pcx", 155, 73);
 	}
 	if (!(_pizzathonListFlags2 & 0x08)) {
-		_vm->drawRoomImageToBackground("elvis0", 197, 68);
+		_vm->drawRoomImageToBackground("elvis0.pcx", 197, 68);
 		_vm->moveObjectToRoom(kObjectIdProtesters7, 7);
 		if (!_vm->_hasRoomAnimationCallback) {
 			r7_initRoomAnimations();
@@ -3796,7 +3799,7 @@ void GameLogic::r8_updateRoomAnimations() {
 
 void GameLogic::r8_refreshRoomBackground() {
 	if (!(_r8_flags & 0x01)) {
-		_vm->drawRoomImageToBackground("opendoor", 259, 51);
+		_vm->drawRoomImageToBackground("opendoor.pcx", 259, 51);
 	}
 	if (!(_r8_flags & 0x08) && ((_r8_flags & 0x80) || (_r38_flags & 0x08))) {
 		_vm->_roomEventNum = 1;
@@ -4164,7 +4167,7 @@ void GameLogic::r9_updateRoomAnimations() {
 
 void GameLogic::r9_refreshRoomBackground() {
 	if (!(_pizzathonListFlags1 & 0x01)) {
-		_vm->drawRoomImageToBackground("man", 211, 59);
+		_vm->drawRoomImageToBackground("man.pcx", 211, 59);
 	}
 	if (!_vm->_hasRoomAnimationCallback) {
 		r9_initRoomAnimations();
@@ -4469,19 +4472,19 @@ bool GameLogic::r10_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 
 void GameLogic::r10_refreshRoomBackground() {
 	if (_r10_flags & 0x02) {
-		_vm->drawRoomImageToBackground("cticket", 147, 100);
+		_vm->drawRoomImageToBackground("cticket.pcx", 147, 100);
 	}
 	if (_r10_flags & 0x01) {
-		_vm->drawRoomImageToBackground("money", 136, 100);
+		_vm->drawRoomImageToBackground("money.pcx", 136, 100);
 	}
 	if (_r10_flags & 0x40) {
-		_vm->drawRoomImageToBackground("candybar", 135, 100);
+		_vm->drawRoomImageToBackground("candybar.pcx", 135, 100);
 	}
 	if (_r10_flags & 0x10) {
-		_vm->drawRoomImageToBackground("nogum", 248, 88);
+		_vm->drawRoomImageToBackground("nogum.pcx", 248, 88);
 	}
 	if (_r10_flags & 0x20) {
-		_vm->drawRoomImageToBackground("nojawb", 271, 88);
+		_vm->drawRoomImageToBackground("nojawb.pcx", 271, 88);
 	}
 }
 
@@ -4667,18 +4670,18 @@ void GameLogic::r11_refreshRoomBackground() {
 	if (!_vm->_hasRoomAnimationCallback && !(_r11_flags & 0x10)) {
 		r11_initRoomAnimations();
 	} else if (_r11_flags & 0x10) {
-		_vm->drawRoomImageToBackground("fillbag", 45, 92);
+		_vm->drawRoomImageToBackground("fillbag.pcx", 45, 92);
 	}
 	if (_r11_flags & 0x08) {
-		_vm->drawRoomImageToBackground("plugin5", 189, 60);
+		_vm->drawRoomImageToBackground("plugin5.pcx", 189, 60);
 	} else if (_r11_flags & 0x01) {
-		_vm->drawRoomImageToBackground("plunge15", 190, 62);
+		_vm->drawRoomImageToBackground("plunge15.pcx", 190, 62);
 	}
 	if (_r11_flags & 0x02) {
-		_vm->drawRoomImageToBackground("cord", 114, 140);
+		_vm->drawRoomImageToBackground("cord.pcx", 114, 140);
 	}
 	if (_r11_flags & 0x04) {
-		_vm->drawRoomImageToBackground("suckcut", 116, 125);
+		_vm->drawRoomImageToBackground("suckcut.pcx", 116, 125);
 	}
 }
 
@@ -4751,7 +4754,7 @@ void GameLogic::r11_useSuckCutWithExtensionCord() {
 	_vm->_garthSpriteX = -1;
 	_vm->_hasRoomAnimationCallback = false;
 	_vm->playAnimation("usecord", 0, 7, 106, 102, 0, 150);
-	_vm->drawRoomImageToBackground("suckcut", 116, 125);
+	_vm->drawRoomImageToBackground("suckcut.pcx", 116, 125);
 	_vm->moveObjectToRoom(kObjectIdSuckCut, 11);
 	_vm->moveObjectToNowhere(kObjectIdInventorySuckCut);
 	_vm->refreshInventory(true);
@@ -4764,7 +4767,7 @@ void GameLogic::r11_useSuckCutWithExtensionCord() {
 void GameLogic::r11_useExtensionCordWithOutlet() {
 	_vm->_garthSpriteX = -1;
 	_vm->playAnimation("plugin", 0, 6, 189, 60, 0, 150);
-	_vm->drawRoomImageToBackground("cord", 114, 140);
+	_vm->drawRoomImageToBackground("cord.pcx", 114, 140);
 	_vm->moveObjectToRoom(kObjectIdExtensionCord_1, 11);
 	_vm->moveObjectToNowhere(kObjectIdInventoryExtensionCord);
 	_vm->refreshInventory(true);
@@ -4955,7 +4958,7 @@ bool GameLogic::r12_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 
 void GameLogic::r12_refreshRoomBackground() {
 	if ((_r30_flags & 0x08) && !(_pizzathonListFlags2 & 0x02)) {
-		_vm->drawRoomImageToBackground("people0", 73, 81);
+		_vm->drawRoomImageToBackground("people0.pcx", 73, 81);
 		_vm->moveObjectToRoom(kObjectIdWoman, 12);
 		_vm->moveObjectToRoom(kObjectIdFarmer, 12);
 		_vm->moveObjectToRoom(kObjectIdCecil, 12);
@@ -4966,7 +4969,7 @@ void GameLogic::r12_refreshRoomBackground() {
 		_vm->setStaticRoomObjectPosition(12, 0, 0, 214, 69);
 		_vm->setStaticRoomObjectPosition(12, 2, 2, -1, 69);
 		_vm->moveObjectToNowhere(kObjectIdCecil);
-		Common::String filename = Common::String::format("people%d", peopleIndex);
+		Common::String filename = Common::String::format("people%d.pcx", peopleIndex);
 		_vm->drawRoomImageToBackground(filename.c_str(), 73, 81);
 		if (peopleIndex == 0) {
 			_vm->moveObjectToRoom(kObjectIdWoman, 12);
@@ -4977,7 +4980,7 @@ void GameLogic::r12_refreshRoomBackground() {
 		}
 	}
 	if (!(_r12_flags & 0x01)) {
-		_vm->drawRoomImageToBackground("lawyer0", 55, 84);
+		_vm->drawRoomImageToBackground("lawyer0.pcx", 55, 84);
 		_vm->moveObjectToRoom(kObjectIdMan_0, 12);
 	} else {
 		_vm->moveObjectToNowhere(kObjectIdMan_0);
@@ -5022,7 +5025,7 @@ void GameLogic::r12_givePotatoChipToCecil() {
 	_vm->setStaticRoomObjectPosition(12, 0, 0, 214, 69);
 	_vm->setStaticRoomObjectPosition(12, 2, 2, -1, 69);
 	_vm->moveObjectToNowhere(kObjectIdCecil);
-	_vm->drawRoomImageToBackground("cwalk12", 198, 84);
+	_vm->drawRoomImageToBackground("cwalk12.pcx", 198, 84);
 }
 
 int GameLogic::r13_handleVerbUse() {
@@ -5249,11 +5252,11 @@ bool GameLogic::r13_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 
 void GameLogic::r13_refreshRoomBackground() {
 	if (!(_r13_flags & 0x04)) {
-		_vm->drawRoomImageToBackground("ptalk0", 72, 60);
+		_vm->drawRoomImageToBackground("ptalk0.pcx", 72, 60);
 	}
 	if (_pizzathonListFlags2 & 0x08) {
 		_r13_flags |= 0x04;
-		_vm->drawRoomImageToBackground("newbackg", 0, 0);
+		_vm->drawRoomImageToBackground("newbackg.pcx", 0, 0);
 		_vm->setStaticRoomObjectPosition(13, 0, 3, -1, -1);
 		_vm->setStaticRoomObjectPosition(13, 4, 4, 96, 53);
 		_vm->setStaticRoomObjectPosition(13, 5, 5, 0, 94);
@@ -5387,10 +5390,10 @@ void GameLogic::r14_refreshRoomBackground() {
 		_vm->moveObjectToNowhere(kObjectIdBillboard14);
 		_vm->moveObjectToRoom(kObjectIdBillboard_2, 19);
 		_vm->moveObjectToNowhere(kObjectIdBillboard19);
-		_vm->drawRoomImageToBackground("bboard", 144, 38);
+		_vm->drawRoomImageToBackground("bboard.pcx", 144, 38);
 	}
 	if ((_r1_flags1 & 0x10) && !(_r19_flags & 0x08)) {
-		_vm->drawRoomImageToBackground("robot", 169, 76);
+		_vm->drawRoomImageToBackground("robot.pcx", 169, 76);
 		_vm->moveObjectToRoom(kObjectIdRobot, 14);
 		_vm->moveObjectToRoom(kObjectIdGilligan, 19);
 	} else {
@@ -5423,10 +5426,10 @@ bool GameLogic::r15_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 
 void GameLogic::r16_refreshRoomBackground() {
 	if (_r7_flags & 0x01) {
-		_vm->drawRoomImageToBackground("nocape", 179, 58);
+		_vm->drawRoomImageToBackground("nocape.pcx", 179, 58);
 	}
 	if (_r7_flags & 0x02) {
-		_vm->drawRoomImageToBackground("nohat", 201, 59);
+		_vm->drawRoomImageToBackground("nohat.pcx", 201, 59);
 	}
 }
 
@@ -5599,10 +5602,10 @@ void GameLogic::r18_updateRoomAnimations() {
 
 void GameLogic::r18_refreshRoomBackground() {
 	if (!(_r13_flags & 0x01)) {
-		_vm->drawRoomImageToBackground("pizza", 18, 92);
+		_vm->drawRoomImageToBackground("pizza.pcx", 18, 92);
 	}
 	if (_r13_flags & 0x02) {
-		_vm->drawRoomImageToBackground("notube", 71, 63);
+		_vm->drawRoomImageToBackground("notube.pcx", 71, 63);
 	}
 	if (!_vm->_hasRoomAnimationCallback) {
 		r18_initRoomAnimations();
@@ -5772,7 +5775,7 @@ void GameLogic::r19_handleVerbTalkTo() {
 		_vm->setDialogChoices(256, 257, 258, 259, 260);
 		break;
 	case kObjectIdMan_1:
-		_vm->drawRoomImageToScreen("mtalk1", 184, 68);
+		_vm->drawRoomImageToScreen("mtalk1.pcx", 184, 68);
 		_vm->displayTextLines("c04r", 487, 300, 20, 2);
 		_vm->setDialogChoices(449, 450, 451, 452, -1);
 		break;
@@ -5785,16 +5788,16 @@ void GameLogic::r19_refreshRoomBackground() {
 		_vm->moveObjectToNowhere(kObjectIdBillboard14);
 		_vm->moveObjectToRoom(kObjectIdBillboard_2, 19);
 		_vm->moveObjectToNowhere(kObjectIdBillboard19);
-		_vm->drawRoomImageToBackground("bboard", 32, 38);
+		_vm->drawRoomImageToBackground("bboard.pcx", 32, 38);
 	}
 	if ((_r1_flags1 & 0x10) && !(_r19_flags & 0x08)) {
-		_vm->drawRoomImageToBackground("robot", 57, 76);
+		_vm->drawRoomImageToBackground("robot.pcx", 57, 76);
 		_vm->moveObjectToRoom(kObjectIdRobot19, 19);
 	} else {
 		_vm->moveObjectToNowhere(kObjectIdRobot19);
 	}
 	if ((_r1_flags1 & 0x10) && !(_pizzathonListFlags1 & 0x04) && !(_pizzathonListFlags2 & 0x08)) {
-		_vm->drawRoomImageToBackground("gill0", 273, 84);
+		_vm->drawRoomImageToBackground("gill0.pcx", 273, 84);
 		_vm->moveObjectToRoom(kObjectIdGilligan, 19);
 	} else {
 		_vm->moveObjectToNowhere(kObjectIdGilligan);
@@ -5818,12 +5821,12 @@ void GameLogic::r19_handleRoomEvent() {
 
 void GameLogic::r20_refreshRoomBackground() {
 	if (_r19_flags & 0x01) {
-		_vm->drawRoomImageToBackground("expl0", 40, 32);
+		_vm->drawRoomImageToBackground("expl0.pcx", 40, 32);
 		_vm->_roomEventNum = 1;
 	} else {
 		_vm->setStaticRoomObjectPosition(20, 0, 1, -1, -1);
 		if (_pizzathonListFlags2 & 0x08) {
-			_vm->drawRoomImageToBackground("newbackg", 0, 0);
+			_vm->drawRoomImageToBackground("newbackg.pcx", 0, 0);
 			_vm->setStaticRoomObjectPosition(20, 2, 2, 176, 64);
 			_vm->moveObjectToRoom(kObjectIdMan_1, 20);
 			_vm->moveObjectToNowhere(kObjectIdCrate);
@@ -5832,10 +5835,10 @@ void GameLogic::r20_refreshRoomBackground() {
 			_vm->moveObjectToNowhere(kObjectIdMunchies);
 			_vm->moveObjectToNowhere(kObjectIdFood);
 		} else if (_r19_flags & 0x08) {
-			_vm->drawRoomImageToBackground("robjunk", 38, 93);
+			_vm->drawRoomImageToBackground("robjunk.pcx", 38, 93);
 			_vm->setStaticRoomObjectPosition(20, 1, 1, 72, 95);
 			if (_r19_flags & 0x10) {
-				_vm->drawRoomImageToBackground("nochip", 139, 108);
+				_vm->drawRoomImageToBackground("nochip.pcx", 139, 108);
 				_vm->moveObjectToNowhere(kObjectIdPotatoChip);
 			} else {
 				_vm->moveObjectToRoom(kObjectIdPotatoChip, 20);
@@ -5843,7 +5846,7 @@ void GameLogic::r20_refreshRoomBackground() {
 			_vm->moveObjectToRoom(kObjectIdRemains, 20);
 			_vm->moveObjectToNowhere(kObjectIdCrate);
 		} else if (_r1_flags1 & 0x10) {
-			_vm->drawRoomImageToBackground("crate", 103, 84);
+			_vm->drawRoomImageToBackground("crate.pcx", 103, 84);
 			_vm->setStaticRoomObjectPosition(20, 0, 0, 103, 84);
 			_vm->moveObjectToRoom(kObjectIdCrate, 20);
 		}
@@ -5870,13 +5873,13 @@ void GameLogic::r20_handleRoomEvent() {
 
 void GameLogic::r22_refreshRoomBackground() {
 	if (_r8_flags & 0x02) {
-		_vm->drawRoomImageToBackground("cab1open", 258, 69);
+		_vm->drawRoomImageToBackground("cab1open.pcx", 258, 69);
 	}
 	if (_r8_flags & 0x04) {
-		_vm->drawRoomImageToBackground("cab2open", 206, 52);
+		_vm->drawRoomImageToBackground("cab2open.pcx", 206, 52);
 	}
 	if (_r29_flags & 0x02) {
-		_vm->drawRoomImageToBackground("nomap", 209, 87);
+		_vm->drawRoomImageToBackground("nomap.pcx", 209, 87);
 	}
 }
 
@@ -5980,20 +5983,20 @@ int GameLogic::r24_handleVerbUse() {
 
 void GameLogic::r24_refreshRoomBackground() {
 	if (_r24_mazeRoomNumber > 48 && _r24_mazeRoomNumber < 59) {
-		_vm->drawRoomImageToBackground("bbackg", 0, 0);
+		_vm->drawRoomImageToBackground("bbackg.pcx", 0, 0);
 	} else if (_r24_mazeRoomNumber > 58) {
-		_vm->drawRoomImageToBackground("rbackg", 0, 0);
+		_vm->drawRoomImageToBackground("rbackg.pcx", 0, 0);
 	}
 	for (int holeIndex = 0; holeIndex < 7; holeIndex++) {
 		if (kMazeInfos[_r24_mazeRoomNumber][holeIndex] != -1) {
 			Common::String holeFilename;
 			_vm->moveObjectToRoom(holeIndex + 306, 24);
 			if (_r24_mazeRoomNumber < 49) {
-				holeFilename = Common::String::format("hole%d", holeIndex);
+				holeFilename = Common::String::format("hole%d.pcx", holeIndex);
 			} else if (_r24_mazeRoomNumber > 58) {
-				holeFilename = Common::String::format("rhole%d", holeIndex);
+				holeFilename = Common::String::format("rhole%d.pcx", holeIndex);
 			} else {
-				holeFilename = Common::String::format("bhole%d", holeIndex);
+				holeFilename = Common::String::format("bhole%d.pcx", holeIndex);
 			}
 			_vm->drawRoomImageToBackground(holeFilename.c_str(), kRoom24MazeHolePositionsX[holeIndex], kRoom24MazeHolePositionsY[holeIndex]);
 			if (holeIndex == 0) {
@@ -6029,25 +6032,26 @@ void GameLogic::r24_climbLadder(int wayneX, int wayneLadderX, int wayneLadderY, 
 	WWSurface *wclimbSprites[4];
 	WWSurface *gclimbSprites[4];
 	WWSurface *getladSprites[3];
-
+	GxlArchive *roomLib = _vm->_roomGxl;
+	
 	for (int index = 0; index < 4; index++) {
 		tempFilename = Common::String::format("wclimb%d", index);
-		wclimbSprites[index] = _vm->loadRoomSurface(tempFilename.c_str());
+		wclimbSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
 	for (int index = 0; index < 3; index++) {
 		tempFilename = Common::String::format("wgetlad%d", index);
-		getladSprites[index] = _vm->loadRoomSurface(tempFilename.c_str());
+		getladSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
 	workBackground = new WWSurface(320, 150);
 
 	if (_r24_mazeRoomNumber < 49) {
 		tempFilename = Common::String::format("ceil%d", ceilingIndex);
-		ceilingSprite = _vm->loadRoomSurface(tempFilename.c_str());
+		ceilingSprite = roomLib->loadRoomSurface(tempFilename.c_str());
 	} else {
 		tempFilename = Common::String::format("rceil%d", ceilingIndex);
-		ceilingSprite = _vm->loadRoomSurface(tempFilename.c_str());
+		ceilingSprite = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
 	for (int index = 0; index < 3; index++) {
@@ -6064,12 +6068,12 @@ void GameLogic::r24_climbLadder(int wayneX, int wayneLadderX, int wayneLadderY, 
 
 	for (int index = 0; index < 4; index++) {
 		tempFilename = Common::String::format("gclimb%d", index);
-		gclimbSprites[index] = _vm->loadRoomSurface(tempFilename.c_str());
+		gclimbSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
 	for (int index = 0; index < 3; index++) {
 		tempFilename = Common::String::format("ggetlad%d", index);
-		getladSprites[index] = _vm->loadRoomSurface(tempFilename.c_str());
+		getladSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
 	int climbCtr = 0, garthLadderY = wayneLadderY;
@@ -6128,27 +6132,28 @@ void GameLogic::r24_handleRoomEvent(int wayneLadderX, int wayneX, int wayneLadde
 	WWSurface *wclimbSprites[4];
 	WWSurface *gclimbSprites[4];
 	WWSurface *getladSprites[3];
-
+	GxlArchive *roomLib = _vm->_roomGxl;
+	
 	for (int index = 0; index < 4; index++) {
 		tempFilename = Common::String::format("wclimb%d", index);
-		wclimbSprites[index] = _vm->loadRoomSurface(tempFilename.c_str());
+		wclimbSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 		tempFilename = Common::String::format("gclimb%d", index);
-		gclimbSprites[index] = _vm->loadRoomSurface(tempFilename.c_str());
+		gclimbSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
 	for (int index = 0; index < 3; index++) {
 		tempFilename = Common::String::format("wgetlad%d", index);
-		getladSprites[index] = _vm->loadRoomSurface(tempFilename.c_str());
+		getladSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
 	workBackground = new WWSurface(320, 150);
 
 	if (_r24_mazeRoomNumber < 49) {
 		tempFilename = Common::String::format("ceil%d", ceilingIndex);
-		ceilingSprite = _vm->loadRoomSurface(tempFilename.c_str());
+		ceilingSprite = roomLib->loadRoomSurface(tempFilename.c_str());
 	} else {
 		tempFilename = Common::String::format("rceil%d", ceilingIndex);
-		ceilingSprite = _vm->loadRoomSurface(tempFilename.c_str());
+		ceilingSprite = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
 	int climbCtr = 0, garthLadderY = wayneLadderY;
@@ -6180,7 +6185,7 @@ void GameLogic::r24_handleRoomEvent(int wayneLadderX, int wayneX, int wayneLadde
 
 	for (int index = 0; index < 3; index++) {
 		tempFilename = Common::String::format("ggetlad%d", index);
-		getladSprites[index] = _vm->loadRoomSurface(tempFilename.c_str());
+		getladSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
 	for (int index = 2; index >= 0; index--) {
@@ -6234,7 +6239,7 @@ int GameLogic::r25_handleVerbUse() {
 
 void GameLogic::r25_refreshRoomBackground() {
 	if (_r25_holeIndex != -1) {
-		Common::String holeFilename = Common::String::format("hole%d", _r25_holeIndex % 2);
+		Common::String holeFilename = Common::String::format("hole%d.pcx", _r25_holeIndex % 2);
 		_vm->drawRoomImageToBackground(holeFilename.c_str(), kRoom25MazeHolePositionsX[_r25_holeIndex], kRoom25MazeHolePositionsY[_r25_holeIndex]);
 	}
 	_vm->setWaynePosition(150, 125);
@@ -6322,7 +6327,7 @@ void GameLogic::r28_refreshRoomBackground() {
 		_vm->_roomEventNum = 1;
 	}
 	if (_r20_flags & 0x02) {
-		_vm->drawRoomImageToBackground("repxit10", 0, 33);
+		_vm->drawRoomImageToBackground("repxit10.pcx", 0, 33);
 	}
 }
 
@@ -6423,7 +6428,7 @@ int GameLogic::r29_handleVerbUse() {
 		_vm->paletteFadeOut(0, 256, 8);
 		_vm->_screen->clear(0);
 		_vm->drawInterface(_vm->_verbNumber);
-		_vm->loadPalette("m01/wstand0");
+		_vm->loadPalette(_vm->_m01Gxl, "wstand0.pcx");
 		_vm->changeRoom(24);
 		CursorMan.showMouse(true);
 		break;
@@ -6465,16 +6470,16 @@ void GameLogic::r29_refreshRoomBackground() {
 		_vm->paletteFadeOut(0, 256, 8);
 		_vm->_screen->clear(0);
 		_vm->drawInterface(_vm->_verbNumber);
-		_vm->loadPalette("r29/stool");
+		_vm->loadPalette(_vm->_roomGxl, "stool.pcx");
 		_vm->_roomEventNum = 1;
 	}
 	if (!_vm->_hasRoomAnimationCallback) {
 		r29_initRoomAnimations();
 	}
 	if (!(_r29_flags & 0x01)) {
-		_vm->drawRoomImageToBackground("acid", 90, 81);
+		_vm->drawRoomImageToBackground("acid.pcx", 90, 81);
 	}
-	_vm->drawRoomImageToBackground("doc1", 138, 69);
+	_vm->drawRoomImageToBackground("doc1.pcx", 138, 69);
 }
 
 void GameLogic::r29_handleRoomEvent() {
@@ -6600,17 +6605,17 @@ bool GameLogic::r30_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 
 void GameLogic::r30_refreshRoomBackground() {
 	if (_r30_flags & 0x10) {
-		_vm->drawRoomImageToBackground("cbackg", 0, 0);
-		_vm->drawRoomImageToBackgroundTransparent("cecil", 177, 102);
+		_vm->drawRoomImageToBackground("cbackg.pcx", 0, 0);
+		_vm->drawRoomImageToBackgroundTransparent("cecil.pcx", 177, 102);
 	} else if (!(_r30_flags & 0x02)) {
-		_vm->drawRoomImageToBackground("babeshow", 105, 12);
+		_vm->drawRoomImageToBackground("babeshow.pcx", 105, 12);
 		_vm->_roomEventNum = 1;
 	} else if (!(_r30_flags & 0x01)) {
-		_vm->drawRoomImageToBackground("babeshow", 105, 12);
+		_vm->drawRoomImageToBackground("babeshow.pcx", 105, 12);
 		if (!(_r30_flags & 0x04)) {
-			_vm->drawRoomImageToBackground("waynecon", 224, 30);
+			_vm->drawRoomImageToBackground("waynecon.pcx", 224, 30);
 		} else {
-			_vm->drawRoomImageToBackground("nobink", 160, 33);
+			_vm->drawRoomImageToBackground("nobink.pcx", 160, 33);
 		}
 	} else if (!(_r30_flags & 0x08) && _vm->_roomChangeCtr > 20) {
 		r30_runLudwigCutscene();
@@ -6654,7 +6659,7 @@ void GameLogic::r30_runLudwigCutscene() {
 	// TODO gxSetDisplayPalette(palette2);
 	_vm->paletteFadeOut(0, 256, 64);
 	_vm->_screen->clear(0);
-	_vm->drawRoomImageToBackground("backg", 0, 0);
+	_vm->drawRoomImageToBackground("backg.pcx", 0, 0);
 	_vm->_screen->drawSurface(_vm->_backgroundSurface, 0, 0);
 	_vm->_musicIndex = 1;
 	_vm->changeMusic();
@@ -6830,15 +6835,15 @@ void GameLogic::r31_handleRoomEvent4() {
 			}
 			_vm->setDialogChoices(questionChoices[0], questionChoices[1], questionChoices[2], questionChoices[3], questionChoices[4]);
 			_vm->startDialog();
-			_vm->drawRoomImageToBackground("dnorm", 287, 30);
-			_vm->drawRoomImageToBackground("mtalk0", 240, 31);
+			_vm->drawRoomImageToBackground("dnorm.pcx", 287, 30);
+			_vm->drawRoomImageToBackground("mtalk0.pcx", 240, 31);
 			_r31_categorySelected = true;
 			return;
 		}
 
 		_r31_categorySelected = false;
 		_r31_askedQuestions[_r31_categoryIndex * 5 + _r31_questionIndex] = true;
-		_vm->drawRoomImageToBackground("star", kRoom31StarPositionsX[_r31_categoryIndex], kRoom31StarPositionsY[_r31_categoryIndex * 5 + _r31_questionIndex]);
+		_vm->drawRoomImageToBackground("star.pcx", kRoom31StarPositionsX[_r31_categoryIndex], kRoom31StarPositionsY[_r31_categoryIndex * 5 + _r31_questionIndex]);
 
 		_vm->_mouseClickButtons = 0;
 
@@ -6861,8 +6866,8 @@ void GameLogic::r31_handleRoomEvent4() {
 		if (_vm->_mouseClickButtons != 0 && _vm->_mouseClickX > 130 && _vm->_mouseClickX < 180 && _vm->_mouseClickY > 106 && _vm->_mouseClickY < 128) {
 			_r31_currentPlayer = 0;
 			r31_useBuzzer();
-			_vm->drawRoomImageToBackground("dlook", 287, 30);
-			_vm->drawRoomImageToBackground("mlook", 240, 31);
+			_vm->drawRoomImageToBackground("dlook.pcx", 287, 30);
+			_vm->drawRoomImageToBackground("mlook.pcx", 240, 31);
 			r31_buildQuestionDialogChoices(_r31_categoryIndex, _r31_questionIndex);
 			return;
 		} else {
@@ -6916,13 +6921,13 @@ void GameLogic::r31_handleRoomEvent5() {
 }
 
 void GameLogic::r31_drawDBuzzer() {
-	_vm->drawRoomImageToScreen("dbuzzer", 247, 78);
+	_vm->drawRoomImageToScreen("dbuzzer.pcx", 247, 78);
 	_vm->waitSeconds(2);
 	_vm->_screen->drawSurface(_vm->_backgroundSurface, 0, 0);
 }
 
 void GameLogic::r31_drawMBuzzer() {
-	_vm->drawRoomImageToScreen("mbuzzer", 210, 61);
+	_vm->drawRoomImageToScreen("mbuzzer.pcx", 210, 61);
 	_vm->waitSeconds(2);
 	_vm->_screen->drawSurface(_vm->_backgroundSurface, 0, 0);
 }
@@ -6943,7 +6948,7 @@ void GameLogic::r31_playTalkAnim(int talkerIndex) {
 }
 
 void GameLogic::r31_useBuzzer() {
-	_vm->drawRoomImageToScreen("buzzer", 131, 106);
+	_vm->drawRoomImageToScreen("buzzer.pcx", 131, 106);
 	_vm->playSound("ss04", 1);
 	_vm->_screen->drawSurface(_vm->_backgroundSurface, 0, 0);
 	if (!(_r31_flags & 0x01)) {
@@ -6954,12 +6959,14 @@ void GameLogic::r31_useBuzzer() {
 
 void GameLogic::r31_displayCategories() {
 	CursorMan.showMouse(false);
-	WWSurface *screenImage = _vm->loadRoomSurface("screen");
+	GxlArchive *roomLib = _vm->_roomGxl;
+
+	WWSurface *screenImage = roomLib->loadRoomSurface("screen");
 	_vm->drawSpiralEffect(screenImage, 0, 0, 4, 4);
 	delete screenImage;
 	for (int categoryIndex = 0; categoryIndex < 5; categoryIndex++) {
 		Common::String categoryFilename = Common::String::format("cat%d", categoryIndex);
-		WWSurface *categoryImage = _vm->loadRoomSurface(categoryFilename.c_str());
+		WWSurface *categoryImage = roomLib->loadRoomSurface(categoryFilename.c_str());
 		_vm->drawRandomEffect(categoryImage, 17, 61, 1, 1);
 		delete categoryImage;
 		_vm->waitSeconds(3);
@@ -6972,8 +6979,8 @@ void GameLogic::r31_displayCategories() {
 void GameLogic::r31_runBabeoff() {
 	_vm->_gameState = 0;
 	_vm->drawInterface(_vm->_verbNumber);
-	_vm->drawRoomImageToBackground("dnorm", 287, 30);
-	_vm->drawRoomImageToBackground("mtalk0", 240, 31);
+	_vm->drawRoomImageToBackground("dnorm.pcx", 287, 30);
+	_vm->drawRoomImageToBackground("mtalk0.pcx", 240, 31);
 	for (int textIndex = 54; textIndex < 62; textIndex++) {
 		_vm->displayText("gms", textIndex, 0, 50, 10, 0);
 		r31_playTalkAnim(3);
@@ -7001,18 +7008,18 @@ void GameLogic::r31_drawCurrentPlayerScore() {
 	int numberY = kRoom31NumberPositionsY[_r31_currentPlayer];
 	int score = _r31_scores[_r31_currentPlayer];
 	if (score > 99) {
-		Common::String numberFilename = Common::String::format("n%d", score / 100);
+		Common::String numberFilename = Common::String::format("n%d.pcx", score / 100);
 		_vm->drawRoomImageToBackground(numberFilename.c_str(), numberX, numberY);
 	} else {
 		_vm->_backgroundSurface->fillRect(numberX, numberY, numberX + 3, numberY + 6, 0);
 	}
 	if (score > 9) {
-		Common::String numberFilename = Common::String::format("n%d", (score % 100) / 10);
+		Common::String numberFilename = Common::String::format("n%d.pcx", (score % 100) / 10);
 		_vm->drawRoomImageToBackground(numberFilename.c_str(), numberX + 5, numberY);
 	} else {
 		_vm->_backgroundSurface->fillRect(numberX + 5, numberY, numberX + 8, numberY + 6, 0);
 	}
-	Common::String numberFilename = Common::String::format("n%d", score % 10);
+	Common::String numberFilename = Common::String::format("n%d.pcx", score % 10);
 	_vm->drawRoomImageToBackground(numberFilename.c_str(), numberX + 10, numberY);
 	_vm->refreshActors();
 }
@@ -7047,8 +7054,8 @@ void GameLogic::r31_correctAnswerSelected() {
 }
 
 void GameLogic::r31_wrongAnswerSelected() {
-	_vm->drawRoomImageToBackground("dnorm", 287, 30);
-	_vm->drawRoomImageToBackground("mtalk0", 240, 31);
+	_vm->drawRoomImageToBackground("dnorm.pcx", 287, 30);
+	_vm->drawRoomImageToBackground("mtalk0.pcx", 240, 31);
 	_vm->displayText("gms", 53, 0, 50, 10, 0);
 	r31_playTalkAnim(3);
 	_r31_scores[0] -= (_r31_questionIndex + 1) * 10;
@@ -7115,7 +7122,7 @@ void GameLogic::r32_handleVerbTalkTo() {
 			_vm->displayTextLines("c04", 419, -1, -1, 1);
 		} else {
 			r32_uninitRoomAnimations();
-			_vm->drawRoomImageToBackground("jtalk1", 262, 84);
+			_vm->drawRoomImageToBackground("jtalk1.pcx", 262, 84);
 			_vm->setDialogChoices(402, 403, 404, 405, 406);
 		}
 		break;
@@ -7228,16 +7235,16 @@ void GameLogic::r32_updateRoomAnimations() {
 
 void GameLogic::r32_refreshRoomBackground() {
 	if (!(_pizzathonListFlags2 & 0x08)) {
-		_vm->drawRoomImageToBackground("cdoor", 13, 65);
+		_vm->drawRoomImageToBackground("cdoor.pcx", 13, 65);
 		_vm->fillRoomMaskArea(0, 0, 33, 149, true);
 	} else {
 		_vm->moveObjectToNowhere(kObjectIdDoor32_0);
 		_vm->moveObjectToRoom(kObjectIdOffice, 32);
 		_vm->moveObjectToRoom(kObjectIdJanitor, 32);
 		_vm->moveObjectToRoom(kObjectIdCart, 32);
-		_vm->drawRoomImageToBackground("cart", 269, 82);
+		_vm->drawRoomImageToBackground("cart.pcx", 269, 82);
 		if (_r32_flags & 0x02) {
-			_vm->drawRoomImageToBackground("noplunge", 293, 94);
+			_vm->drawRoomImageToBackground("noplunge.pcx", 293, 94);
 		}
 		r32_initRoomAnimations();
 	}
@@ -7271,7 +7278,7 @@ void GameLogic::r32_pickUpMemo() {
 
 void GameLogic::r33_refreshRoomBackground() {
 	if (_r32_flags & 0x01) {
-		_vm->drawRoomImageToBackground("nomemo", 55, 100);
+		_vm->drawRoomImageToBackground("nomemo.pcx", 55, 100);
 	}
 }
 
@@ -7432,22 +7439,22 @@ void GameLogic::r34_updateRoomAnimations() {
 
 void GameLogic::r34_refreshRoomBackground() {
 	if (!(_r34_flags & 0x01) && !_vm->_hasRoomAnimationCallback) {
-		_vm->drawRoomImageToBackground("towel0", 198, 68);
+		_vm->drawRoomImageToBackground("towel0.pcx", 198, 68);
 		r34_initRoomAnimations();
 	} else {
 		_vm->moveObjectToNowhere(kObjectIdMan34);
 		_vm->moveObjectToRoom(kObjectIdLocker, 34);
 	}
 	if (_r34_flags & 0x02) {
-		_vm->drawRoomImageToBackground("openlckr", 95, 60);
+		_vm->drawRoomImageToBackground("openlckr.pcx", 95, 60);
 		if (_r34_flags & 0x08) {
-			_vm->drawRoomImageToBackground("lunchbox", 96, 87);
+			_vm->drawRoomImageToBackground("lunchbox.pcx", 96, 87);
 			_vm->moveObjectToRoom(kObjectIdLunchBox, 34);
 		} else {
 			_vm->moveObjectToNowhere(kObjectIdLunchBox);
 		}
 		if (!(_r34_flags & 0x01)) {
-			_vm->drawRoomImageToBackground("passcard", 98, 74);
+			_vm->drawRoomImageToBackground("passcard.pcx", 98, 74);
 			_vm->moveObjectToRoom(kObjectIdPasscard, 34);
 		} else {
 			_vm->moveObjectToNowhere(kObjectIdPasscard);
@@ -7563,7 +7570,7 @@ bool GameLogic::r35_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 
 void GameLogic::r35_refreshRoomBackground() {
 	if (!(_r35_flags & 0x01)) {
-		_vm->drawRoomImageToBackground("cass1", 179, 68);
+		_vm->drawRoomImageToBackground("cass1.pcx", 179, 68);
 	}
 	_vm->_roomEventNum = 1;
 }
@@ -7658,7 +7665,7 @@ void GameLogic::r36_updateRoomAnimations() {
 
 void GameLogic::r36_refreshRoomBackground() {
 	if (_r36_flags & 0x04) {
-		_vm->drawRoomImageToBackground("nolunch", 268, 101);
+		_vm->drawRoomImageToBackground("nolunch.pcx", 268, 101);
 	}
 	if (!_vm->_hasRoomAnimationCallback) {
 		r36_initRoomAnimations();
@@ -7764,15 +7771,15 @@ void GameLogic::r37_refreshRoomBackground() {
 		_vm->_roomEventNum = 1;
 	}
 	if (!(_r37_flags & 0x04)) {
-		Common::String lockFilename = Common::String::format("lock%d", _r37_safeCombinationLockIndex);
+		Common::String lockFilename = Common::String::format("lock%d.pcx", _r37_safeCombinationLockIndex);
 		_vm->drawRoomImageToBackground(lockFilename.c_str(), 109, 97);
 	} else {
-		_vm->drawRoomImageToBackground("opensafe", 92, 84);
+		_vm->drawRoomImageToBackground("opensafe.pcx", 92, 84);
 		if (_r37_flags & 0x08) {
-			_vm->drawRoomImageToBackground("nokeys", 101, 95);
+			_vm->drawRoomImageToBackground("nokeys.pcx", 101, 95);
 		}
 		if (_r37_flags & 0x10) {
-			_vm->drawRoomImageToBackground("nomoney", 102, 102);
+			_vm->drawRoomImageToBackground("nomoney.pcx", 102, 102);
 		}
 	}
 }
@@ -7783,15 +7790,16 @@ void GameLogic::r37_climbExitLadderUp() {
 	WWSurface *wclimbSprites[4];
 	WWSurface *gclimbSprites[4];
 	WWSurface *getldrSprites[3];
+	GxlArchive *roomLib = _vm->_roomGxl;
 
 	for (int index = 0; index < 4; index++) {
 		tempFilename = Common::String::format("wclimb%d", index);
-		wclimbSprites[index] = _vm->loadRoomSurface(tempFilename.c_str());
+		wclimbSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
     for (int index = 0; index < 3; index++) {
 		tempFilename = Common::String::format("wgetldr%d", index);
-		getldrSprites[index] = _vm->loadRoomSurface(tempFilename.c_str());
+		getldrSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 	
 	workBackground = new WWSurface(320, 150);
@@ -7810,12 +7818,12 @@ void GameLogic::r37_climbExitLadderUp() {
 	
 	for (int index = 0; index < 4; index++) {
 		tempFilename = Common::String::format("gclimb%d", index);
-		gclimbSprites[index] = _vm->loadRoomSurface(tempFilename.c_str());
+		gclimbSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
 	for (int index = 0; index < 3; index++) {
 		tempFilename = Common::String::format("ggetldr%d", index);
-		getldrSprites[index] = _vm->loadRoomSurface(tempFilename.c_str());
+		getldrSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
 	int wayneLadderY = 24;
@@ -7861,19 +7869,20 @@ void GameLogic::r37_climbLadderDown() {
 	WWSurface *gclimbSprites[4];
 	WWSurface *wgetldlSprites[3];
 	WWSurface *ggetldlSprites[3];
+	GxlArchive *roomLib = _vm->_roomGxl;
 
 	for (int index = 0; index < 4; index++) {
 		tempFilename = Common::String::format("wclimb%d", index);
-		wclimbSprites[index] = _vm->loadRoomSurface(tempFilename.c_str());
+		wclimbSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 		tempFilename = Common::String::format("gclimb%d", index);
-		gclimbSprites[index] = _vm->loadRoomSurface(tempFilename.c_str());
+		gclimbSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
 	for (int index = 0; index < 3; index++) {
 		tempFilename = Common::String::format("wgetldl%d", index);
-		wgetldlSprites[index] = _vm->loadRoomSurface(tempFilename.c_str());
+		wgetldlSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 		tempFilename = Common::String::format("ggetldl%d", index);
-		ggetldlSprites[index] = _vm->loadRoomSurface(tempFilename.c_str());
+		ggetldlSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
 	workBackground = new WWSurface(320, 150);
@@ -7969,19 +7978,20 @@ void GameLogic::r37_climbLadderUp() {
 	WWSurface *gclimbSprites[4];
 	WWSurface *wgetldlSprites[3];
 	WWSurface *ggetldlSprites[3];
+	GxlArchive *roomLib = _vm->_roomGxl;
 
 	for (int index = 0; index < 4; index++) {
 		tempFilename = Common::String::format("wclimb%d", index);
-		wclimbSprites[index] = _vm->loadRoomSurface(tempFilename.c_str());
+		wclimbSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 		tempFilename = Common::String::format("gclimb%d", index);
-		gclimbSprites[index] = _vm->loadRoomSurface(tempFilename.c_str());
+		gclimbSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
     for (int index = 0; index < 3; index++) {
 		tempFilename = Common::String::format("wgetldl%d", index);
-		wgetldlSprites[index] = _vm->loadRoomSurface(tempFilename.c_str());
+		wgetldlSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 		tempFilename = Common::String::format("ggetldl%d", index);
-		ggetldlSprites[index] = _vm->loadRoomSurface(tempFilename.c_str());
+		ggetldlSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
 	workBackground = new WWSurface(320, 150);
@@ -8117,17 +8127,18 @@ void GameLogic::r37_climbEnterLadderDown() {
 	WWSurface *wclimbSprites[4];
 	WWSurface *gclimbSprites[4];
 	WWSurface *getldrSprites[3];
+	GxlArchive *roomLib = _vm->_roomGxl;
 
 	for (int index = 0; index < 4; index++) {
 		tempFilename = Common::String::format("wclimb%d", index);
-		wclimbSprites[index] = _vm->loadRoomSurface(tempFilename.c_str());
+		wclimbSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 		tempFilename = Common::String::format("gclimb%d", index);
-		gclimbSprites[index] = _vm->loadRoomSurface(tempFilename.c_str());
+		gclimbSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
 	for (int index = 0; index < 3; index++) {
 		tempFilename = Common::String::format("wgetldr%d", index);
-		getldrSprites[index] = _vm->loadRoomSurface(tempFilename.c_str());
+		getldrSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
 	workBackground = new WWSurface(320, 150);
@@ -8160,7 +8171,7 @@ void GameLogic::r37_climbEnterLadderDown() {
 
 	for (int index = 0; index < 3; index++) {
 		tempFilename = Common::String::format("ggetldr%d", index);
-		getldrSprites[index] = _vm->loadRoomSurface(tempFilename.c_str());
+		getldrSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
 	for (int index = 2; index >= 0; index--) {
@@ -8262,7 +8273,7 @@ void GameLogic::r38_refreshRoomBackground() {
 		r38_initRoomAnimations();
 	}
 	if ((_r38_flags & 0x08)) {
-		_vm->drawRoomImageToBackground("backg2", 0, 0);
+		_vm->drawRoomImageToBackground("backg2.pcx", 0, 0);
 		_vm->setStaticRoomObjectPosition(38, 2, 2, 166, 94);
 	} else {
 		if (_r35_flags & 0x01) {
@@ -8286,8 +8297,8 @@ void GameLogic::r38_atrap() {
 void GameLogic::r38_useCassandra() {
 	_vm->moveObjectToNowhere(kObjectIdCassandra);
 	_vm->setStaticRoomObjectPosition(38, 1, 1, -1, 72);
-	_vm->drawRoomImageToScreen("nocass", 168, 76);
-	_vm->drawRoomImageToBackground("nocass", 168, 76);
+	_vm->drawRoomImageToScreen("nocass.pcx", 168, 76);
+	_vm->drawRoomImageToBackground("nocass.pcx", 168, 76);
 	_vm->playAnimation("btrap", 0, 25, 124, 15, 0, 100);
 	_r38_flags |= 0x04;
 }
@@ -8368,12 +8379,12 @@ int GameLogic::r39_handleVerbOpen() {
 
 void GameLogic::r39_refreshRoomBackground() {
 	if (_r39_flags & 0x02) {
-		_vm->drawRoomImageToBackground("shoot13", 108, 49);
+		_vm->drawRoomImageToBackground("shoot13.pcx", 108, 49);
 	}
 	if (_r39_flags & 0x04) {
-		_vm->drawRoomImageToBackground("wshoot", 87, 90);
+		_vm->drawRoomImageToBackground("wshoot.pcx", 87, 90);
 	} else  if (_r39_flags & 0x08) {
-		_vm->drawRoomImageToBackground("gshoot", 88, 90);
+		_vm->drawRoomImageToBackground("gshoot.pcx", 88, 90);
 	}
 }
 
