@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	gamelogic.o \
 	gamemap.o \
 	graphics.o \
+	metaengine.o \
 	pathfinding.o \
 	staticdata.o
 

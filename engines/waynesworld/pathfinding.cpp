@@ -100,21 +100,25 @@ void WaynesWorldEngine::walkCalcOtherActorDest(int flag, int &x, int &y) {
     switch (direction) {
     case 0:
         y += actorDistance;
+        // fallthrough
     case 1:
         x += actorDistance;
         break;
     case 2:
         x += actorDistance;
+        // fallthrough
     case 3:
         y -= actorDistance;
         break;
     case 4:
         y -= actorDistance;
+        // fallthrough
     case 5:
         x -= actorDistance;
         break;
     case 6:
         x -= actorDistance;
+        // fallthrough
     case 7:
         y += actorDistance;
         break;
@@ -451,6 +455,7 @@ bool WaynesWorldEngine::walkTo(int actor1_destX, int actor1_destY, int direction
                 scale = drawActors(actor2Points[pointIndex].direction, 1, 0, (walkIncr % 8) / 2, _wayneSpriteX, _wayneSpriteY, _garthWalkPoints[pointIndex].x - _scrollPosition, _garthWalkPoints[pointIndex].y);
             }
         }
+        debug(5, "scale:%d", scale);
         // if (_inventoryItemsCount == 0 && _scrollPosition == 0) {
         //     waitMillis(10000 / (scale * scale) * 10);
         // }

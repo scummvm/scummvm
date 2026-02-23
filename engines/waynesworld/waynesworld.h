@@ -33,10 +33,11 @@
 #include "common/substream.h"
 #include "common/system.h"
 #include "engines/engine.h"
+#include "engines/advancedDetector.h"
 
 #include "image/pcx.h"
 
-struct ADGameDescription;
+#include "waynesworld/detection.h"
 
 namespace WaynesWorld {
 

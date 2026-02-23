@@ -40,6 +40,7 @@
 #include "graphics/fontman.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
+#include "graphics/paletteman.h"
 
 namespace WaynesWorld {
 
@@ -139,12 +140,12 @@ Common::Error WaynesWorldEngine::run() {
 #endif
 
 #if 1
-	loadPalette("m01/wstand0");
-	g_system->getPaletteManager()->setPalette(_palette2, 0, 256);
+//	loadPalette("m01/wstand0");
+//	g_system->getPaletteManager()->setPalette(_palette2, 0, 256);
 
 	CursorMan.showMouse(true);
 
-	drawImageToScreen("r00/backg", 0, 0);
+//	drawImageToScreen("r00/backg", 0, 0);
 
 	drawInterface(2);
 	changeRoom(0);
@@ -346,13 +347,15 @@ void WaynesWorldEngine::updateMouseMove() {
                 inventoryItemQuantity = getGarthInventoryItemQuantity(inventoryObjectId);
             }
             const char *roomObjectName = getRoomObjectName(inventoryObjectId);
-            char objectName[32];
+			Common::String objectName;
             if (inventoryItemQuantity == 1) {
-                sprintf(objectName, "%s", roomObjectName);
+//                sprintf(objectName, "%s", roomObjectName);
+				objectName = roomObjectName;
             } else {
-                sprintf(objectName, "%d %ss", inventoryItemQuantity, roomObjectName);
+//                sprintf(objectName, "%d %ss", inventoryItemQuantity, roomObjectName);
+				objectName = Common::String::format("%d %ss", inventoryItemQuantity, roomObjectName);
             }
-            drawVerbLine(_verbNumber, inventoryObjectId, objectName);
+            drawVerbLine(_verbNumber, inventoryObjectId, objectName.c_str());
             return;
         }
     }
@@ -453,19 +456,23 @@ void WaynesWorldEngine::handleMouseRightClick() {
 }
 
 Image::PCXDecoder *WaynesWorldEngine::loadImage(const char *filename, bool appendRoomName) {
-	Common::String tempFilename = appendRoomName
+//	Common::String tempFilename = appendRoomName
+//		? Common::String::format("%s/%s.pcx", _roomName.c_str(), filename)
+//		: Common::String::format("%s.pcx", filename);
+
+	Common::Path tempFilename(appendRoomName
 		? Common::String::format("%s/%s.pcx", _roomName.c_str(), filename)
-		: Common::String::format("%s.pcx", filename);
+		: Common::String::format("%s.pcx", filename));
 
 	Common::File pcxFile;
 	if (!pcxFile.open(tempFilename)) {
-		warning("loadImage() Could not open '%s'", tempFilename.c_str());
+		warning("loadImage() Could not open '%s'", tempFilename.baseName().c_str());
 		return nullptr;
 	}
 
 	Image::PCXDecoder *pcx = new Image::PCXDecoder();
 	if (!pcx->loadStream(pcxFile)) {
-		warning("loadImage() Could not process '%s'", tempFilename.c_str());
+		warning("loadImage() Could not process '%s'", tempFilename.baseName().c_str());
 		delete pcx;
 		return nullptr;
 	}
@@ -490,10 +497,10 @@ WWSurface *WaynesWorldEngine::loadRoomSurface(const char *filename) {
 
 void WaynesWorldEngine::loadPalette(const char *filename) {
     Image::PCXDecoder *imageDecoder = loadImage(filename, false);
-	if (imageDecoder->getPaletteColorCount() != 256) {
+	if (imageDecoder->getPalette().empty()) {
 		warning("loadPalette() Could not load palette from '%s'", filename);
 	} else {
-		memcpy(_palette2, imageDecoder->getPalette(), imageDecoder->getPaletteColorCount() * 3);
+		memcpy(_palette2, imageDecoder->getPalette().data(), Graphics::PALETTE_SIZE);
 		g_system->getPaletteManager()->setPalette(_palette2, 0, 256);
 	}
     delete imageDecoder;
@@ -607,9 +614,9 @@ Common::String WaynesWorldEngine::loadString(const char *filename, int index, in
 	const uint kMaxStringLen = 60;
 	char textBuffer[kMaxStringLen];
 	Common::File fd;
-	Common::String tempFilename = Common::String::format("%s.txt", filename);
+	Common::Path tempFilename(Common::String::format("%s.txt", filename));
 	if (!fd.open(tempFilename))
-		error("WaynesWorldEngine::loadString() Could not open %s", tempFilename.c_str());
+		error("WaynesWorldEngine::loadString() Could not open %s", tempFilename.baseName().c_str());
 	fd.seek(index * kMaxStringLen);
 	fd.read(textBuffer, kMaxStringLen);
 	// Decrypt the string
@@ -628,7 +635,7 @@ void WaynesWorldEngine::drawCurrentTextToSurface(WWSurface *destSurface, int x, 
 }
 
 void WaynesWorldEngine::drawCurrentText(int x, int y, WWSurface *destSurface) {
-    int textCenterX, textX, textY, textColor, actorY;
+    int textCenterX, textX, textY = 0, textColor, actorY = 0;
     int textWidth = _fontWWInv->getTextWidth(_currentText.c_str());
     if (x != -1) {
         textCenterX = x;
@@ -1074,29 +1081,30 @@ void WaynesWorldEngine::pickupObject(int objectId, byte &flags, byte flagsSet, i
 }
 
 void WaynesWorldEngine::playAnimation(const char *prefix, int startIndex, int count, int x, int y, int flag, uint ticks) {
-    char filename[32];
+//    char filename[32];
+	Common::String filename;
     // sysMouseDriver(2);
 	if (count > 0) {
 		for (int index = startIndex; index < startIndex + count; index++) {
 			updateRoomAnimations();
-			sprintf(filename, "%s%d", prefix, index);
-			drawRoomImageToScreen(filename, x, y);
-			drawRoomImageToBackground(filename, x, y);
+			filename = Common::String::format("%s%d", prefix, index);
+			drawRoomImageToScreen(filename.c_str(), x, y);
+			drawRoomImageToBackground(filename.c_str(), x, y);
 			waitMillis(ticks);
 		}
 	} else {
 		for (int index = startIndex; index > startIndex + count; index--) {
 			updateRoomAnimations();
-			sprintf(filename, "%s%d", prefix, index);
-			drawRoomImageToScreen(filename, x, y);
-			drawRoomImageToBackground(filename, x, y);
+			filename = Common::String::format("%s%d", prefix, index);
+			drawRoomImageToScreen(filename.c_str(), x, y);
+			drawRoomImageToBackground(filename.c_str(), x, y);
 			waitMillis(ticks);
 		}
 	}
     if (flag) {
-        sprintf(filename, "%s%d", prefix, startIndex);
-        drawRoomImageToScreen(filename, x, y);
-        drawRoomImageToBackground(filename, x, y);
+		filename = Common::String::format("%s%d", prefix, startIndex);
+        drawRoomImageToScreen(filename.c_str(), x, y);
+        drawRoomImageToBackground(filename.c_str(), x, y);
     }
     // sysMouseDriver(1)
 }
@@ -1146,6 +1154,9 @@ void WaynesWorldEngine::openRoomLibrary(int roomNum) {
 }
 
 void WaynesWorldEngine::loadRoomBackground() {
+	loadPalette(Common::String(_roomName + "/backg").c_str());
+	g_system->getPaletteManager()->setPalette(_palette2, 0, 256);
+	
     drawRoomImageToSurface("backg", _backgroundSurface, 0, 0);
     refreshRoomBackground(_currentRoomNumber);
     refreshActors();
@@ -1342,12 +1353,12 @@ void WaynesWorldEngine::scrollRoom() {
 }
 
 void WaynesWorldEngine::loadRoomMask(int roomNum) {
-	Common::String filename = Common::String::format("r%02d.msk", roomNum);
+	Common::Path filename(Common::String::format("r%02d.msk", roomNum));
 	Common::File fd;
 	if (!fd.open(filename))
-		error("WaynesWorldEngine::loadRoomMask() Could not open %s", filename.c_str());
+		error("WaynesWorldEngine::loadRoomMask() Could not open %s", filename.baseName().c_str());
 	if (fd.size() != kWalkMapSize)
-		error("WaynesWorldEngine::loadRoomMask() Wrong file size in %s", filename.c_str());
+		error("WaynesWorldEngine::loadRoomMask() Wrong file size in %s", filename.baseName().c_str());
 	fd.read(_walkMap, kWalkMapSize);
 }
 
