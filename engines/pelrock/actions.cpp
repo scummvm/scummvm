@@ -1952,9 +1952,13 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 	}
 	case 98: {
 		chooseCorrectDoor();
-	}
-	default:
 		break;
+	}
+	default: {
+		byte response = (byte)getRandomNumber(12);
+		_dialog->say(_res->_ingameTexts[154 + response]);
+		break;
+		}
 	}
 }
 

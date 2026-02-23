@@ -1820,6 +1820,7 @@ void PelrockEngine::setScreen(int roomNumber, AlfredDirection dir) {
 		error("Could not open ALFRED.1");
 		return;
 	}
+	changeCursor(DEFAULT);
 	_sound->stopAllSounds();
 	_currentHotspot = nullptr;
 	_alfredState.direction = dir;
@@ -2006,7 +2007,28 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 	case 48: {
 		_dialog->_goodbyeDisabled = true;
 		if (_state->getFlag(FLAG_CORRECT_DOOR_CHOSEN) == true) {
+			if(_state->getFlag(FLAG_TRAMPILLA_ABIERTA) == true) {
 
+			}
+			else {
+				_dialog->say(_res->_ingameTexts[OHMISALVADOR]);
+				_dialog->say(_res->_ingameTexts[VOYPORTI_PRINCESA]);
+				walkAndAction(_room->findHotspotByExtra(634), TALK);
+				_room->addSticker(134);
+				//wait a few frames
+				int framesToWait = 0;
+				while(!shouldQuit() && framesToWait < 10) {
+					_events->pollEvent();
+
+					bool didRender = renderScene(OVERLAY_NONE);
+					if(didRender) framesToWait++;
+					_screen->update();
+					g_system->delayMillis(10);
+				}
+				_alfredState.x = 294;
+				_alfredState.y = 387;
+				setScreen(49, ALFRED_UP);
+			}
 		} else {
 			_dialog->say(_res->_ingameTexts[OHMISALVADOR]);
 			_dialog->say(_res->_ingameTexts[VOYPORTI_PRINCESA]);
