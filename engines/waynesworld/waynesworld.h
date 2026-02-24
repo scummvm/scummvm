@@ -124,14 +124,14 @@ public:
 	void updateEvents();
 
 	// Graphics
-	byte _palette2[768];
-	Screen *_screen;
-	WWSurface *_backgroundSurface;
-	WWSurface *_backgroundScrollSurface;
-	GFTFont *_fontWW;
-	GFTFont *_fontWWInv;
-	GFTFont *_fontBit5x7;
-	WWSurface *_roomAnimations[kRoomAnimationsCount];
+	byte _palette2[768] = {0};
+	Screen *_screen = nullptr;
+	WWSurface *_backgroundSurface = nullptr;
+	WWSurface *_backgroundScrollSurface = nullptr;
+	GFTFont *_fontWW = nullptr;
+	GFTFont *_fontWWInv = nullptr;
+	GFTFont *_fontBit5x7 = nullptr;
+	WWSurface *_roomAnimations[kRoomAnimationsCount] = {nullptr};
 	GxlArchive *_m00Gxl = nullptr;
 	GxlArchive *_m01Gxl = nullptr;
 	GxlArchive *_m02Gxl = nullptr;
@@ -148,13 +148,13 @@ public:
 	// Room
 	Common::String _roomName;
 	GxlArchive *_roomGxl = nullptr;
-	byte *_walkMap;
-	int _scrollWidth;
-	int _scrollRemaining;
-	int _roomChangeCtr;
-	int _scrollPosition;
-	bool _doScrollRight;
-	bool _hasRoomAnimationCallback;
+	byte *_walkMap = nullptr;
+	int _scrollWidth = 0;
+	int _scrollRemaining = 0;
+	int _roomChangeCtr = 0;
+	int _scrollPosition = 0;
+	bool _doScrollRight = false;
+	bool _hasRoomAnimationCallback = false;
 
 	// Room animations
 	AnimationTimer _animationTimers[kAnimationTimersCount];
