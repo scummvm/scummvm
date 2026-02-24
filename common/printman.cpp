@@ -88,4 +88,16 @@ void PrintingManager::doPrint(const Graphics::ManagedSurface &surf) {
 	warning("PrintingManager::doPrint: No printing support in this backend");
 }
 
+Common::Rect PrintingManager::getPrintableArea() const {
+	return Common::Rect();
+}
+
+Common::Point PrintingManager::getPrintableAreaOffset() const {
+	return Common::Point();
+}
+
+Common::Rect PrintingManager::getPaperDimensions() const {
+	return Common::Rect();
+}
+
 } // End of namespace Common
