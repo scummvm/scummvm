@@ -44,12 +44,13 @@ SpellBook::~SpellBook() {
 Spell *SpellBook::run() {
 	loadBackground();
 	g_engine->changeCursor(DEFAULT);
-	while (!g_engine->shouldQuit() && !_selectedSpell) {
+	bool exit = false;
+	while (!g_engine->shouldQuit() && !exit) {
 		_events->pollEvent();
 		drawScreen();
 		if (_events->_leftMouseClicked) {
 			_events->_leftMouseClicked = false;
-			checkMouse(_events->_mouseClickX, _events->_mouseClickY);
+			exit = checkMouse(_events->_mouseClickX, _events->_mouseClickY);
 		}
 		g_engine->_screen->markAllDirty();
 		g_engine->_screen->update();
@@ -152,24 +153,27 @@ void SpellBook::cleanup() {
 	g_engine->_screen->update();
 }
 
-void SpellBook::checkMouse(int x, int y) {
+bool SpellBook::checkMouse(int x, int y) {
 	// Check bookmarks
 	for (int i = 0; i < 13; i++) {
 		Common::Rect r = Common::Rect(_bookmarks[i].x, _bookmarks[i].y, _bookmarks[i].x + _bookmarks[i].w, _bookmarks[i].y + _bookmarks[i].h);
 		if (r.contains(x, y)) {
 			selectPage(_bookmarks[i].page);
-			return;
+			return false;
 		}
 	}
 
 	// Check text area
 	if (_spell == nullptr) {
-		return;
+		return true;
 	}
+
 	Common::Rect textArea = Common::Rect(321, 81, 321 + 140, 81 + (_spell->text.size() * 10));
 	if (textArea.contains(x, y)) {
 		_selectedSpell = _spell;
+		return true;
 	}
+	return false;
 }
 
 } // End of namespace Pelrock

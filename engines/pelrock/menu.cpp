@@ -145,7 +145,6 @@ void MenuManager::menuLoop() {
 
 void MenuManager::drawScreen() {
 	memcpy(_compositeBuffer, _mainMenu, 640 * 400);
-	// memset(_compositeBuffer, 0, 640 * 400);
 	if (showButtons)
 		drawButtons();
 

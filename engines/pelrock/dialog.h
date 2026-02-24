@@ -116,6 +116,9 @@ public:
 
 	// When true, the goodbye option is suppressed for all conversations in the current room.
 	bool _goodbyeDisabled = false;
+
+	// True while a blocking dialog or conversation is on screen.
+	bool _dialogActive = false;
 };
 
 } // End of namespace Pelrock

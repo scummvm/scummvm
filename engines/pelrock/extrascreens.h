@@ -84,7 +84,7 @@ private:
 	void drawScreen();
 	void loadBackground();
 	void cleanup();
-	void checkMouse(int x, int y);
+	bool checkMouse(int x, int y);
 };
 
 } // End of namespace Pelrock

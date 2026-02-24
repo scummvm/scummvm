@@ -52,6 +52,7 @@ public:
 
 	bool _gameTick = false;
 	bool countTextDown = false;
+	bool _pauseCounter = false;
 };
 
 } // End of namespace Pelrock

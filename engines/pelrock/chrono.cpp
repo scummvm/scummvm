@@ -39,7 +39,9 @@ void ChronoManager::updateChrono() {
 
 	if ((currentTime - _lastTick) >= kTickMs / _speedMultiplier) {
 		_gameTick = true;
-		_frameCount++;
+		if(!_pauseCounter) {
+			_frameCount++;
+		}
 		_lastTick = currentTime;
 	} else {
 		_gameTick = false;
