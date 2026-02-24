@@ -341,12 +341,12 @@ void PelrockEngine::mouseHoverForMap() {
 	}
 }
 
-// const int kPasserbyTriggerFrameInterval = 0x3FF;
+const int kPasserbyTriggerFrameInterval = 0x3FF;
 
-const int kPasserbyTriggerFrameInterval = 15;
 void PelrockEngine::frameTriggers() {
 	uint32 frameCount = _chrono->getFrameCount();
 	passerByAnim(frameCount);
+	handleFlightRoomFrame();
 }
 
 void PelrockEngine::passerByAnim(uint32 frameCount) {
@@ -2051,8 +2051,99 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		}
 		break;
 	}
+	case 51:
+	case 52:
+	case 53:
+	case 54:
+		initGodsSequences(_room->_currentRoomNumber);
+		break;
 	default:
 		break;
+	}
+}
+
+struct FlightRoomCfg {
+	int spriteIdx;
+	int appearFrames;
+	int spellFrames;
+};
+
+static const FlightRoomCfg kFlightRooms[] = {
+	{1, 31, 17}, // room 51
+	{0, 30, 13}, // room 52
+	{1, 30, 13}, // room 53
+	{1, 38, 11}, // room 54
+};
+
+void PelrockEngine::initGodsSequences(int roomNumber) {
+	int idx = roomNumber - 51;
+	_flightFrameCounter = 0;
+	_flightSorcererSpriteIdx = kFlightRooms[idx].spriteIdx;
+	_flightSorcererAppeared = false;
+	_flightSpellCast = false;
+	_flightSpellFrameCounter = 0;
+	_flightInBlockingAnim = false;
+
+	_room->disableSprite(_flightSorcererSpriteIdx);
+}
+
+void PelrockEngine::handleFlightRoomFrame() {
+	int room = _room->_currentRoomNumber;
+	if (room < 51 || room > 54)
+		return;
+
+	// Guard against reentrance from blocking animation loops calling renderScene
+	if (_flightInBlockingAnim)
+		return;
+
+	int idx = room - 51;
+
+	_flightFrameCounter++;
+
+	// Phase 1: NPC appearance at tick 64
+	if (!_flightSorcererAppeared && _flightFrameCounter >= 64) {
+		_flightSorcererAppeared = true;
+		_flightInBlockingAnim = true;
+		_room->findSpriteByIndex(_flightSorcererSpriteIdx)->animData[0].nframes = 1;
+		smokeAnimation(_flightSorcererSpriteIdx, false);
+		_flightInBlockingAnim = false;
+		return;
+	}
+
+	// Phase 2: spell trigger at tick 104 (64 + 40)
+	if (_flightSorcererAppeared && !_flightSpellCast && _flightFrameCounter >= 104) {
+		_flightSpellCast = true;
+		_flightSpellFrameCounter = 0;
+	}
+
+	// Phase 3: wait 40 ticks after spell trigger, then cast
+	if (_flightSpellCast) {
+		_flightSpellFrameCounter++;
+		if (_flightSpellFrameCounter >= 40) {
+			_flightInBlockingAnim = true;
+
+			int spellFrames = kFlightRooms[idx].spellFrames;
+			int framesDone = 0;
+			_room->findSpriteByIndex(_flightSorcererSpriteIdx)->animData[0].nframes = kFlightRooms[idx].spellFrames;
+			_room->findSpriteByIndex(_flightSorcererSpriteIdx)->animData[0].speed = 1;
+
+			while (!shouldQuit() && framesDone < spellFrames) {
+				_events->pollEvent();
+				if (renderScene(OVERLAY_NONE))
+					framesDone++;
+				_screen->update();
+				g_system->delayMillis(10);
+			}
+			_room->findSpriteByIndex(_flightSorcererSpriteIdx)->animData[0].nframes = 1;
+			smokeAnimation(-1, true);
+
+			_flightInBlockingAnim = false;
+
+			_alfredState.x = 294;
+			_alfredState.y = 387;
+			_alfredState.direction = ALFRED_UP;
+			setScreen(49, ALFRED_UP);
+		}
 	}
 }
 

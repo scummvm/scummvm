@@ -174,6 +174,14 @@ public:
 	byte *_compositeBuffer = nullptr; // Working composition buffer
 
 	bool _mouseDisabled = false;
+
+	int _flightFrameCounter = 0;
+	int _flightSorcererSpriteIdx = -1;
+	bool _flightSorcererAppeared = false;
+	bool _flightSpellCast = false;
+	int _flightSpellFrameCounter = 0;
+	bool _flightInBlockingAnim = false;
+
 	GameStateData *_state = new GameStateData();
 
 	SmallFont *_smallFont = nullptr;
@@ -237,6 +245,7 @@ public:
 	bool renderScene(int overlayMode = OVERLAY_NONE);
 	void mouseHoverForMap();
 	void frameTriggers();
+	void handleFlightRoomFrame();
 
 	void passerByAnim(uint32 frameCount);
 	void reflectionEffect(byte *buf, int x, int y, int width, int height);
@@ -246,6 +255,7 @@ public:
 
 	// Actions
 	void doExtraActions(int roomNumber);
+	void initGodsSequences(int roomNumber);
 	void addInventoryItem(int item);
 	void buyFromStore(HotSpot *hotspot, int stickerId);
 	void performActionTrigger(uint16 actionTrigger);
