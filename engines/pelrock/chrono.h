@@ -39,6 +39,7 @@ private:
 	uint32 _lastTick = 0;
 	byte _speedMultiplier = 1;
 	uint32 _frameCount = 0;
+	bool _pauseCounter = false;
 
 public:
 	ChronoManager();
@@ -46,13 +47,14 @@ public:
 	void updateChrono();
 	void changeSpeed();
 	void delay(uint32 ms);
+	inline void pauseCounter() { _pauseCounter = true; }
+	inline void resumeCounter() { _pauseCounter = false; }
 	uint32 getFrameCount() const {
 		return _frameCount;
 	}
 
 	bool _gameTick = false;
 	bool countTextDown = false;
-	bool _pauseCounter = false;
 };
 
 } // End of namespace Pelrock

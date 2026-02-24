@@ -662,7 +662,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		break;
 	case 325:
 		_state->setFlag(FLAG_ESQUELETO_RECONOCE, _state->getFlag(FLAG_ESQUELETO_RECONOCE) + 1);
-		if(_state->getFlag(FLAG_ESQUELETO_RECONOCE) == 2) {
+		if (_state->getFlag(FLAG_ESQUELETO_RECONOCE) == 2) {
 			_state->setCurrentRoot(49, 1, 0);
 		}
 		break;
@@ -778,9 +778,9 @@ void PelrockEngine::useCardWithATM(int inventoryObject, HotSpot *hotspot) {
 			}
 		}
 		if (billCount < 13) {
-			addInventoryItem(5); // 1000 pesetas bill
+			addInventoryItem(5);                     // 1000 pesetas bill
 			bool sayLine = getRandomNumber(15) == 1; // 1 in 15 chance to say the line about not having more money
-			if(sayLine) {
+			if (sayLine) {
 				_dialog->say(_res->_ingameTexts[TEAPETECE_BUENRATO]);
 			}
 		} else {
@@ -1895,7 +1895,6 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		}
 		break;
 	case 88: {
-
 		SpellBook spellBook = SpellBook(_events, _res);
 		_res->loadAlfredSpecialAnim(0);
 		_alfredState.animState = ALFRED_SPECIAL_ANIM;
@@ -1905,25 +1904,48 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		if (spell) {
 			_alfredState.direction = ALFRED_LEFT;
 			_dialog->say(_res->_ingameTexts[DIOSHALCON + spell->page], 1);
-			if (spell->page == 12 && _room->_currentRoomNumber == 28) {
-				_graphics->clearScreen();
-				int waitFrames = 0;
-				// blank screen for half a second
-				while (!shouldQuit() && waitFrames < 20) {
-					_events->pollEvent();
-					_chrono->updateChrono();
-					if (_chrono->_gameTick) {
-						waitFrames++;
+			switch (_room->_currentRoomNumber) {
+			case 28: {
+				if (spell->page == 12) {
+					_graphics->clearScreen();
+					int waitFrames = 0;
+					// blank screen for half a second
+					while (!shouldQuit() && waitFrames < 20) {
+						_events->pollEvent();
+						_chrono->updateChrono();
+						if (_chrono->_gameTick) {
+							waitFrames++;
+						}
+						_screen->markAllDirty();
+						_screen->update();
+						g_system->delayMillis(10);
 					}
-					_screen->markAllDirty();
-					_screen->update();
-					g_system->delayMillis(10);
-				}
 
-				_alfredState.x = 145;
-				_alfredState.y = 312;
-				setScreen(25, ALFRED_RIGHT);
-				_dialog->say(_res->_ingameTexts[MENUDAAVENTURA]);
+					_alfredState.x = 145;
+					_alfredState.y = 312;
+					setScreen(25, ALFRED_RIGHT);
+					_dialog->say(_res->_ingameTexts[MENUDAAVENTURA]);
+				}
+				break;
+			}
+			case 51:
+			case 52:
+			case 53:
+			case 54: {
+				debug("Flight spell cast in room %d, spell page: %d", _room->_currentRoomNumber, spell->page);
+				int flightIndex = _room->_currentRoomNumber - 51;
+				debug("Correct page for this spell is = %d", kFlightRooms[flightIndex].spellPage);
+				if(_flightSorcererAppeared && !_flightInBlockingAnim && spell->page == kFlightRooms[flightIndex].spellPage) {
+					_state->setFlag(FLAG_COMO_ESTAN_LOS_DIOSES, _state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES) | (1 << flightIndex));
+					debug("Flight spell successful, starting animation and updating state");
+					debug("Updated FLAG_COMO_ESTAN_LOS_DIOSES: %d", _state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES));
+					smokeAnimation(kFlightRooms[flightIndex].spriteIdx, true);
+					_room->addStickerToRoom(_room->_currentRoomNumber, 127 + flightIndex);
+				}
+				break;
+			}
+			default:
+				break;
 			}
 		}
 		break;
@@ -1976,7 +1998,7 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		byte response = (byte)getRandomNumber(12);
 		_dialog->say(_res->_ingameTexts[154 + response]);
 		break;
-		}
+	}
 	}
 }
 

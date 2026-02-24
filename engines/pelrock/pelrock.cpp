@@ -977,7 +977,6 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		break;
 	}
 	case ALFRED_SPECIAL_ANIM: {
-
 		byte *frame = new byte[_res->_currentSpecialAnim->stride * _res->_currentSpecialAnim->numFrames];
 		extractSingleFrame(_res->_currentSpecialAnim->animData,
 						   frame,
@@ -2008,21 +2007,21 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 	case 48: {
 		_dialog->_goodbyeDisabled = true;
 		if (_state->getFlag(FLAG_CORRECT_DOOR_CHOSEN) == true) {
-			if(_state->getFlag(FLAG_TRAMPILLA_ABIERTA) == true) {
+			if (_state->getFlag(FLAG_TRAMPILLA_ABIERTA) == true) {
 
-			}
-			else {
+			} else {
 				_dialog->say(_res->_ingameTexts[OHMISALVADOR]);
 				_dialog->say(_res->_ingameTexts[VOYPORTI_PRINCESA]);
 				walkAndAction(_room->findHotspotByExtra(634), TALK);
 				_room->addSticker(134);
-				//wait a few frames
+				// wait a few frames
 				int framesToWait = 0;
-				while(!shouldQuit() && framesToWait < 10) {
+				while (!shouldQuit() && framesToWait < 10) {
 					_events->pollEvent();
 
 					bool didRender = renderScene(OVERLAY_NONE);
-					if(didRender) framesToWait++;
+					if (didRender)
+						framesToWait++;
 					_screen->update();
 					g_system->delayMillis(10);
 				}
@@ -2062,19 +2061,6 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 	}
 }
 
-struct FlightRoomCfg {
-	int spriteIdx;
-	int appearFrames;
-	int spellFrames;
-};
-
-static const FlightRoomCfg kFlightRooms[] = {
-	{1, 31, 17}, // room 51
-	{0, 30, 13}, // room 52
-	{1, 30, 13}, // room 53
-	{1, 38, 11}, // room 54
-};
-
 void PelrockEngine::initGodsSequences(int roomNumber) {
 	int idx = roomNumber - 51;
 	_flightFrameCounter = 0;
@@ -2091,17 +2077,25 @@ void PelrockEngine::handleFlightRoomFrame() {
 	int room = _room->_currentRoomNumber;
 	if (room < 51 || room > 54)
 		return;
+	int idx = room - 51;
+
+	if (_state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES) & (1 << idx)) {
+		// Gods are already defeated in this room, no need to run sequence
+		return;
+	}
 
 	// Guard against reentrance from blocking animation loops calling renderScene
 	if (_flightInBlockingAnim)
 		return;
 
-	int idx = room - 51;
-
+	if (_alfredState.animState != ALFRED_IDLE) {
+		return;
+	}
 	_flightFrameCounter++;
 
 	// Phase 1: NPC appearance at tick 64
 	if (!_flightSorcererAppeared && _flightFrameCounter >= 64) {
+		_sound->playSound(_room->_roomSfx[0]);
 		_flightSorcererAppeared = true;
 		_flightInBlockingAnim = true;
 		_room->findSpriteByIndex(_flightSorcererSpriteIdx)->animData[0].nframes = 1;
@@ -2112,21 +2106,28 @@ void PelrockEngine::handleFlightRoomFrame() {
 
 	// Phase 2: spell trigger at tick 104 (64 + 40)
 	if (_flightSorcererAppeared && !_flightSpellCast && _flightFrameCounter >= 104) {
+		debug("spell cast triggered for room %d at frame %d", room, _flightFrameCounter);
 		_flightSpellCast = true;
 		_flightSpellFrameCounter = 0;
 	}
 
 	// Phase 3: wait 40 ticks after spell trigger, then cast
 	if (_flightSpellCast) {
+		if (_alfredState.animState != ALFRED_IDLE) {
+			debug("blocking animation active at frame %d, delaying spell cast", _flightFrameCounter);
+			return;
+		}
+		debug("in spell cast phase for room %d at frame %d", room, _flightFrameCounter);
 		_flightSpellFrameCounter++;
-		if (_flightSpellFrameCounter >= 40) {
+		if (_flightSpellFrameCounter >= 40 && !(_state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES) & (1 << idx))) {
+			debug("spell cast animation starting for room %d at frame %d, flag is %d", room, _flightFrameCounter, _state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES));
 			_flightInBlockingAnim = true;
 
 			int spellFrames = kFlightRooms[idx].spellFrames;
 			int framesDone = 0;
 			_room->findSpriteByIndex(_flightSorcererSpriteIdx)->animData[0].nframes = kFlightRooms[idx].spellFrames;
 			_room->findSpriteByIndex(_flightSorcererSpriteIdx)->animData[0].speed = 1;
-
+			_sound->playSound(_room->_roomSfx[1]);
 			while (!shouldQuit() && framesDone < spellFrames) {
 				_events->pollEvent();
 				if (renderScene(OVERLAY_NONE))

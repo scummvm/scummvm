@@ -642,6 +642,22 @@ struct SaveGameData {
 	GameStateData *gameState = nullptr;
 };
 
+
+struct FlightRoomCfg {
+	int roomNumber;
+	int spriteIdx;
+	int appearFrames;
+	int spellFrames;
+	int spellPage;
+};
+
+static const FlightRoomCfg kFlightRooms[] = {
+	{51, 1, 31, 17, 8}, // room 51
+	{52, 0, 30, 13, 4}, // room 52
+	{53, 1, 30, 13, 0}, // room 53
+	{54, 1, 38, 11, 2}, // room 54
+};
+
 } // End of namespace Pelrock
 
 #endif

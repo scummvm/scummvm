@@ -187,7 +187,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 	// Clear any existing click state
 	_events->_leftMouseClicked = false;
 	_dialogActive = true;
-	g_engine->_chrono->_pauseCounter = true;
+	g_engine->_chrono->pauseCounter();
 	int curPage = 0;
 
 	// Render loop - display text and wait for click
@@ -239,7 +239,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		_curSprite->isTalking = false;
 	}
 	_dialogActive = false;
-	g_engine->_chrono->_pauseCounter = false;
+	g_engine->_chrono->resumeCounter();
 	g_engine->_alfredState.setState(ALFRED_IDLE);
 }
 
@@ -255,7 +255,7 @@ void DialogManager::displayDialogue(Common::String text, byte speakerId) {
 int DialogManager::selectChoice(Common::Array<Common::String> &choices, byte *compositeBuffer) {
 	_events->_leftMouseClicked = false;
 	_dialogActive = true;
-	g_engine->_chrono->_pauseCounter = true;
+	g_engine->_chrono->pauseCounter();
 
 	int overlayHeight = choices.size() * kChoiceHeight + 2;
 	int overlayY = 400 - overlayHeight;
@@ -272,7 +272,7 @@ int DialogManager::selectChoice(Common::Array<Common::String> &choices, byte *co
 				int selectedIndex = (_events->_mouseClickY - overlayY - 2) / kChoiceHeight;
 				if (selectedIndex >= 0 && selectedIndex < (int)choices.size()) {
 					_dialogActive = false;
-					g_engine->_chrono->_pauseCounter = false;
+					g_engine->_chrono->resumeCounter();
 					return selectedIndex;
 				}
 			}
@@ -282,7 +282,7 @@ int DialogManager::selectChoice(Common::Array<Common::String> &choices, byte *co
 	}
 
 	_dialogActive = false;
-	g_engine->_chrono->_pauseCounter = false;
+	g_engine->_chrono->resumeCounter();
 	return 0;
 }
 

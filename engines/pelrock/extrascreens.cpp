@@ -69,6 +69,7 @@ void SpellBook::init() {
 }
 
 void SpellBook::selectPage(int page) {
+	debug("Selected spell page: %d", page);
 	_spell = new Spell();
 	_spell->page = page;
 	Common::File alfred7;

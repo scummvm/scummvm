@@ -225,9 +225,7 @@ void RoomManager::disableSprite(byte spriteIndex, int persist) {
 }
 
 void RoomManager::disableSprite(byte roomNumber, byte spriteIndex, int persist) {
-	debug("Disabling sprite %d in room %d with persist %d", spriteIndex, roomNumber, persist);
 	if (roomNumber == _currentRoomNumber && persist & PERSIST_TEMP) {
-		debug("Disabling sprite LOCALLY %d in room %d with persist %d", spriteIndex, roomNumber, persist);
 		// Search by sprite.index, not by array position: sortAnimsByZOrder reorders the
 		// array every frame so a raw array index is unreliable.
 		for (uint i = 0; i < _currentRoomAnims.size(); i++) {
@@ -249,7 +247,6 @@ void RoomManager::enableSprite(byte spriteIndex, byte zOrder, int persist) {
 void RoomManager::enableSprite(byte roomNumber, byte spriteIndex, byte zOrder, int persist) {
 	for(int i =0; i < g_engine->_state->spriteChanges[roomNumber].size(); i++) {
 		if (g_engine->_state->spriteChanges[roomNumber][i].spriteIndex == spriteIndex) {
-			debug("Removing pending sprite change for sprite %d in room %d", spriteIndex, roomNumber);
 			g_engine->_state->spriteChanges[roomNumber].remove_at(i);
 			break;
 		}
@@ -265,7 +262,6 @@ void RoomManager::enableSprite(byte roomNumber, byte spriteIndex, byte zOrder, i
 		}
 	}
 	if (persist & PERSIST_PERM) {
-		debug("Enabling sprite %d in room %d with zOrder %d and persist %d", spriteIndex, roomNumber, zOrder, persist);
 		g_engine->_state->spriteChanges[roomNumber].push_back({roomNumber, spriteIndex, zOrder});
 	}
 }
