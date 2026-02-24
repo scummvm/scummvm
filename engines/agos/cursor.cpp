@@ -766,8 +766,7 @@ void AGOSEngine_Simon1::initMouse() {
 	if (getPlatform() == Common::kPlatformAcorn && ConfMan.getBool("use_system_cursor")) {
 	    Graphics::Cursor *c = Graphics::makeRiscOSCursor();
 
-	    CursorMan.replaceCursorPalette(c->getPalette(), c->getPaletteStartIndex(), c->getPaletteCount());
-	    CursorMan.replaceCursor(c->getSurface(), c->getWidth(), c->getHeight(), c->getHotspotX(), c->getHotspotY(), c->getKeyColor());
+	    CursorMan.replaceCursor(c);
 
 	    delete c;
 	    return;

@@ -51,6 +51,7 @@ static const uint16 hotX = 0;
 static const uint16 hotY = 0;
 static const byte key = 0xFF;
 
+// Risc OS 3.11 cursor
 static const byte riscOSCursor[w * h] = {
     0xE5, 0xE5, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
     0xE5, 0xE6, 0xE5, 0xE5, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
@@ -94,7 +95,7 @@ public:
     uint16 getPaletteCount() const override { return 256; }
 
 private:
-    byte _palette[256 * 3];
+    byte _palette[3];
 };
 
 Cursor *makeRiscOSCursor() {
