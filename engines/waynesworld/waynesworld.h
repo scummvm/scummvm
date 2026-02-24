@@ -241,10 +241,7 @@ public:
 	void handleMouseLeftClick();
 	void handleMouseRightClick();
 
-	// Image loading
-	Image::PCXDecoder *loadImage(const char *filename, bool appendRoomName);
-	WWSurface *loadSurfaceIntern(const char *filename, bool appendRoomName);
-	WWSurface *loadSurface(const char *filename);
+	// Palette loading
 	void loadPalette(GxlArchive *lib, const char *filename);
 
 	void paletteFadeIn(int index, int count, int stepsSize);

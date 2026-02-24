@@ -56,7 +56,7 @@ GxlArchive::GxlArchive(const Common::String name) : _gxlFile(new Common::File())
 	for (uint i = 0; i < count; i++) {
 		_gxlFile->readByte(); // Packing Type
 		char baseName[9] = {0};
-		char extension[5] = {0};
+		char extension[6] = {0};
 		_gxlFile->read(baseName, 8);
 		_gxlFile->read(extension, 5);
 		Common::String fullName = Common::String(baseName);
@@ -72,7 +72,7 @@ GxlArchive::GxlArchive(const Common::String name) : _gxlFile(new Common::File())
 
 		_gxlFile->readUint32LE(); // date and time of the file
 
-		warning("file: %s offset: %d  size: %d", header.filename, header.offset, header.size);
+		// warning("file: %s offset: %d  size: %d", header.filename, header.offset, header.size);
 
 		_headers[header.filename].reset(new GxlHeader(header));
 	}

@@ -415,6 +415,7 @@ void WaynesWorldEngine::handleMouseClick() {
     }
     if (_mouseClickButtons & kKeyPressed) {
         // TODO handleKeyInput();
+		warning("handleMouseClick - STUB handleKeyInput");
     }
 }
 
@@ -444,11 +445,16 @@ void WaynesWorldEngine::handleMouseLeftClick() {
         break;
     case 4:
         // TODO handleMouseClickState4();
-        break;
+		warning("STUB - handleMouseClickState4");
+		break;
     case 5:
         extremeCloseUpHandleMouseClick();
         break;
-    }
+  
+	default:
+		warning("handleMouseLeftClick - Unhandled game state %d", _gameState);
+		break;
+	}
 }
 
 void WaynesWorldEngine::handleMouseRightClick() {
@@ -473,43 +479,16 @@ void WaynesWorldEngine::handleMouseRightClick() {
         break;
     case 4:
         // TODO handleMouseClickState4();
+		warning("STUB - handleMouseClickState4");
         break;
     case 5:
         extremeCloseUpHandleMouseClick();
         break;
+
+    default:
+		warning("handleMouseRightClick - Unhandled game state %d", _gameState);
+		break;
     }
-}
-
-Image::PCXDecoder *WaynesWorldEngine::loadImage(const char *filename, bool appendRoomName) {
-	Common::Path tempFilename(appendRoomName
-		? Common::String::format("%s/%s.pcx", _roomName.c_str(), filename)
-		: Common::String::format("%s.pcx", filename));
-
-	Common::File pcxFile;
-	if (!pcxFile.open(tempFilename)) {
-		warning("loadImage() Could not open '%s'", tempFilename.baseName().c_str());
-		return nullptr;
-	}
-
-	Image::PCXDecoder *pcx = new Image::PCXDecoder();
-	if (!pcx->loadStream(pcxFile)) {
-		warning("loadImage() Could not process '%s'", tempFilename.baseName().c_str());
-		delete pcx;
-		return nullptr;
-	}
-
-	return pcx;
-}
-
-WWSurface *WaynesWorldEngine::loadSurfaceIntern(const char *filename, bool appendRoomName) {
-    Image::PCXDecoder *imageDecoder = loadImage(filename, appendRoomName);
-	WWSurface *surface = new WWSurface(imageDecoder->getSurface());
-    delete imageDecoder;
-    return surface;
-}
-
-WWSurface *WaynesWorldEngine::loadSurface(const char *filename) {
-	return loadSurfaceIntern(filename, false);
 }
 
 void WaynesWorldEngine::loadPalette(GxlArchive* lib, const char *filename) {

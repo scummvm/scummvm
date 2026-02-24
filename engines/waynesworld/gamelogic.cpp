@@ -6657,6 +6657,7 @@ void GameLogic::r30_runLudwigCutscene() {
 	// TODO gxGetDisplayPalette(palette1);
 	// TODO pcxGetLibPalette(8, roomLib, "backg", palette2);
 	// TODO gxSetDisplayPalette(palette2);
+	warning("r30_runLudwigCutscene - STUB some initialization");
 	_vm->paletteFadeOut(0, 256, 64);
 	_vm->_screen->clear(0);
 	_vm->drawRoomImageToBackground("backg.pcx", 0, 0);
