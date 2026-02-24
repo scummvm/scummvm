@@ -146,7 +146,7 @@ BITMAPINFO *Win32PrintingManager::buildBitmapInfo(const Graphics::ManagedSurface
 	bitmapInfo->bmiHeader.biHeight = -((LONG)surf.h);
 	bitmapInfo->bmiHeader.biPlanes = 1;
 	bitmapInfo->bmiHeader.biBitCount = (surf.format.isCLUT8() ? 8 : surf.format.bpp());
-	bitmapInfo->bmiHeader.biCompression = BI_RGB;
+	bitmapInfo->bmiHeader.biCompression = (surf.format.isCLUT8() ? BI_RGB : BI_BITFIELDS);
 	bitmapInfo->bmiHeader.biSizeImage = 0;
 	bitmapInfo->bmiHeader.biClrUsed = (surf.format.isCLUT8() ? colorCount : 0);
 	bitmapInfo->bmiHeader.biClrImportant = (surf.format.isCLUT8() ? colorCount : 0);
@@ -164,6 +164,11 @@ BITMAPINFO *Win32PrintingManager::buildBitmapInfo(const Graphics::ManagedSurface
 		}
 
 		delete[] colors;
+	} else {
+		DWORD *masks = (DWORD *)bitmapInfo->bmiColors;
+		masks[0] = (DWORD)surf.format.rMax() << surf.format.rShift;
+		masks[1] = (DWORD)surf.format.gMax() << surf.format.gShift;
+		masks[2] = (DWORD)surf.format.bMax() << surf.format.bShift;
 	}
 
 	return bitmapInfo;
