@@ -104,7 +104,7 @@ void PrintingDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		if (_saveAsImageCheckbox->getState()) {
 			printMan->saveAsImage(_surface);
 		}
-		printMan->doPrint(_surface);
+		printMan->doPrint(_surface, _surface.getBounds());
 		close();
 		break;
 	}

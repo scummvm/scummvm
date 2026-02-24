@@ -84,7 +84,7 @@ void PrintingManager::saveAsImage(const Graphics::ManagedSurface &surf, const Co
 	delete saveFile;
 }
 
-void PrintingManager::doPrint(const Graphics::ManagedSurface &surf) {
+void PrintingManager::doPrint(const Graphics::ManagedSurface &surf, const Common::Rect &destRect) {
 	warning("PrintingManager::doPrint: No printing support in this backend");
 }
 

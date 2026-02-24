@@ -36,7 +36,7 @@ class Win32PrintingManager : public Common::PrintingManager {
 public:
 	virtual ~Win32PrintingManager();
 
-	void doPrint(const Graphics::ManagedSurface &surf) override;
+	void doPrint(const Graphics::ManagedSurface &surf, const Common::Rect &destRect) override;
 
 	Common::StringArray listPrinterNames() const override;
 
@@ -50,13 +50,13 @@ private:
 	HDC createDefaultPrinterContext() const;
 	HDC createPrinterContext(LPTSTR devName) const;
 	HDC createPrinterContext() const;
-	HBITMAP buildBitmap(HDC hdc, const Graphics::ManagedSurface &surf);
+	BITMAPINFO *buildBitmapInfo(const Graphics::ManagedSurface &surf);
 };
 
 
 Win32PrintingManager::~Win32PrintingManager() {}
 
-void Win32PrintingManager::doPrint(const Graphics::ManagedSurface &surf) {
+void Win32PrintingManager::doPrint(const Graphics::ManagedSurface &surf, const Common::Rect &destRect) {
 	HDC hdcPrint = createPrinterContext();
 	if (!hdcPrint)
 		return;
@@ -68,26 +68,26 @@ void Win32PrintingManager::doPrint(const Graphics::ManagedSurface &surf) {
 	info.lpszOutput = nullptr;
 	info.lpszDocName = _jobName.c_str();
 
-	HDC hdcImg = CreateCompatibleDC(hdcPrint);
-
-	HBITMAP bitmap = buildBitmap(hdcPrint, surf);
-	if (!bitmap) {
-		DeleteDC(hdcImg);
+	BITMAPINFO *bitmapInfo = buildBitmapInfo(surf);
+	if (!bitmapInfo) {
+		DeleteDC(hdcPrint);
 		return;
 	}
 
 	StartDocA(hdcPrint, &info);
 	StartPage(hdcPrint);
 
-	SelectObject(hdcImg, bitmap);
+	StretchDIBits(hdcPrint,
+				  destRect.left, destRect.top, destRect.width(), destRect.height(),
+				  0, 0, surf.w, surf.h,
+				  surf.getPixels(),
+				  bitmapInfo, DIB_RGB_COLORS, SRCCOPY);
 
-	BitBlt(hdcPrint, 0, 0, surf.w, surf.h, hdcImg, 0, 0, SRCCOPY);
+	free(bitmapInfo);
 
 	EndPage(hdcPrint);
 	EndDoc(hdcPrint);
 
-	DeleteObject(bitmap);
-	DeleteDC(hdcImg);
 	DeleteDC(hdcPrint);
 }
 
@@ -134,7 +134,7 @@ HDC Win32PrintingManager::createPrinterContext() const {
 		return createPrinterContext(Win32::stringToTchar(_printerName));
 }
 
-HBITMAP Win32PrintingManager::buildBitmap(HDC hdc, const Graphics::ManagedSurface &surf) {
+BITMAPINFO *Win32PrintingManager::buildBitmapInfo(const Graphics::ManagedSurface &surf) {
 	const uint colorCount = 256;
 	BITMAPINFO *bitmapInfo = (BITMAPINFO *)malloc(sizeof(BITMAPINFO) + sizeof(RGBQUAD) * (colorCount - 1));
 
@@ -166,11 +166,7 @@ HBITMAP Win32PrintingManager::buildBitmap(HDC hdc, const Graphics::ManagedSurfac
 		delete[] colors;
 	}
 
-	HBITMAP bitmap = CreateDIBitmap(hdc, &(bitmapInfo->bmiHeader), CBM_INIT, surf.getPixels(), bitmapInfo, DIB_RGB_COLORS);
-
-	free(bitmapInfo);
-
-	return bitmap;
+	return bitmapInfo;
 }
 
 Common::StringArray Win32PrintingManager::listPrinterNames() const {
