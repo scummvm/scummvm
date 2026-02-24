@@ -42,9 +42,14 @@ public:
 
 	Common::String getDefaultPrinterName() const override;
 
+	Common::Rect getPrintableArea() const override;
+	Common::Point getPrintableAreaOffset() const override;
+	Common::Rect getPaperDimensions() const override;
+
 private:
-	HDC createDefaultPrinterContext();
-	HDC createPrinterContext(LPTSTR devName);
+	HDC createDefaultPrinterContext() const;
+	HDC createPrinterContext(LPTSTR devName) const;
+	HDC createPrinterContext() const;
 	HBITMAP buildBitmap(HDC hdc, const Graphics::ManagedSurface &surf);
 };
 
@@ -52,12 +57,9 @@ private:
 Win32PrintingManager::~Win32PrintingManager() {}
 
 void Win32PrintingManager::doPrint(const Graphics::ManagedSurface &surf) {
-
-	HDC hdcPrint;
-	if (!_printerName.size())
-		hdcPrint = createDefaultPrinterContext();
-	else
-		hdcPrint = createPrinterContext(Win32::stringToTchar(_printerName));
+	HDC hdcPrint = createPrinterContext();
+	if (!hdcPrint)
+		return;
 
 	DOCINFOA info;
 	info.cbSize = sizeof(info);
@@ -89,7 +91,7 @@ void Win32PrintingManager::doPrint(const Graphics::ManagedSurface &surf) {
 	DeleteDC(hdcPrint);
 }
 
-HDC Win32PrintingManager::createDefaultPrinterContext() {
+HDC Win32PrintingManager::createDefaultPrinterContext() const {
 	TCHAR szPrinter[MAX_PATH];
 	BOOL success;
 	DWORD cchPrinter(ARRAYSIZE(szPrinter));
@@ -101,7 +103,7 @@ HDC Win32PrintingManager::createDefaultPrinterContext() {
 	return createPrinterContext(szPrinter);
 }
 
-HDC Win32PrintingManager::createPrinterContext(LPTSTR devName) {
+HDC Win32PrintingManager::createPrinterContext(LPTSTR devName) const {
 	HANDLE handle;
 	BOOL success;
 
@@ -123,6 +125,13 @@ HDC Win32PrintingManager::createPrinterContext(LPTSTR devName) {
 
 	HDC printerDC = CreateDC(TEXT("WINSPOOL"), devName, NULL, devmode);
 	return printerDC;
+}
+
+HDC Win32PrintingManager::createPrinterContext() const {
+	if (_printerName.empty())
+		return createDefaultPrinterContext();
+	else
+		return createPrinterContext(Win32::stringToTchar(_printerName));
 }
 
 HBITMAP Win32PrintingManager::buildBitmap(HDC hdc, const Graphics::ManagedSurface &surf) {
@@ -202,6 +211,42 @@ Common::String Win32PrintingManager::getDefaultPrinterName() const {
 	delete[] str;
 
 	return name;
+}
+
+Common::Rect Win32PrintingManager::getPrintableArea() const {
+	HDC hdcPrint = createPrinterContext();
+	if (hdcPrint) {
+		int16 width = GetDeviceCaps(hdcPrint, HORZRES);
+		int16 height = GetDeviceCaps(hdcPrint, VERTRES);
+		DeleteDC(hdcPrint);
+		return Common::Rect(width, height);
+	}
+
+	return Common::Rect();
+}
+
+Common::Point Win32PrintingManager::getPrintableAreaOffset() const {
+	HDC hdcPrint = createPrinterContext();
+	if (hdcPrint) {
+		int16 x = GetDeviceCaps(hdcPrint, PHYSICALOFFSETX);
+		int16 y = GetDeviceCaps(hdcPrint, PHYSICALOFFSETY);
+		DeleteDC(hdcPrint);
+		return Common::Point(x, y);
+	}
+
+	return Common::Point();
+}
+
+Common::Rect Win32PrintingManager::getPaperDimensions() const {
+	HDC hdcPrint = createPrinterContext();
+	if (hdcPrint) {
+		int16 width = GetDeviceCaps(hdcPrint, PHYSICALWIDTH);
+		int16 height = GetDeviceCaps(hdcPrint, PHYSICALHEIGHT);
+		DeleteDC(hdcPrint);
+		return Common::Rect(width, height);
+	}
+
+	return Common::Rect();
 }
 
 Common::PrintingManager *createWin32PrintingManager() {
