@@ -87,6 +87,7 @@ public:
 	void removeWidget(MacWidget *child, bool del = true);
 
 	virtual Graphics::ManagedSurface *getSurface() final { return _composeSurface; }
+	void setSurface(Graphics::ManagedSurface *srf, DisposeAfterUse::Flag dispose);
 
 protected:
 	uint16 _border;
@@ -97,6 +98,7 @@ protected:
 	uint32 _fgcolor, _bgcolor;
 
 	Graphics::ManagedSurface *_composeSurface;
+	DisposeAfterUse::Flag _dispose;
 
 	bool _contentIsDirty;
 

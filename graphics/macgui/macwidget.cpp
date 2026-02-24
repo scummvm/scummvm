@@ -44,6 +44,7 @@ MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, MacWindowMan
 
 	_composeSurface = new ManagedSurface(_dims.width(), _dims.height(), _wm->_pixelformat);
 	_composeSurface->clear(_bgcolor);
+	_dispose = DisposeAfterUse::YES;
 
 	_active = false;
 	_editable = false;
@@ -58,7 +59,7 @@ MacWidget::~MacWidget() {
 	if (_wm)
 		_wm->clearWidgetRefs(this);
 
-	if (_composeSurface) {
+	if (_composeSurface && (_dispose == DisposeAfterUse::YES)) {
 		_composeSurface->free();
 		delete _composeSurface;
 	}
@@ -171,6 +172,15 @@ Common::Rect MacWidget::getAbsoluteDimensions() {
 	dims.translate(absPos.x, absPos.y);
 
 	return dims;
+}
+
+void MacWidget::setSurface(Graphics::ManagedSurface *srf, DisposeAfterUse::Flag dispose) {
+	if (_composeSurface && (_dispose == DisposeAfterUse::YES)) {
+		_composeSurface->free();
+		delete _composeSurface;
+	}
+	_composeSurface = srf;
+	_dispose = dispose;
 }
 
 } // End of namespace Graphics
