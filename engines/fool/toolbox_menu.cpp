@@ -71,7 +71,13 @@ void Toolbox::HiliteMenu(uint16 menuID) {
 }
 
 uint32 Toolbox::MenuSelect(const Common::Point &startPt) {
-	warning("STUB: Toolbox::MenuSelect");
+	if (_defaultMenu) {
+		if (_defaultMenu->mouseClick(startPt.x, startPt.y)) {
+			Common::Event ev;
+			g_system->getEventManager()->pollEvent(ev);
+			_defaultMenu->processEvent(ev);
+		}
+	}
 	return 0;
 }
 
