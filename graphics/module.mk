@@ -51,6 +51,7 @@ MODULE_OBJS := \
 	pixelformat.o \
 	pm5544.o \
 	primitives.o \
+	riscoscursor.o \
 	renderer.o \
 	scalerplugin.o \
 	scaler/downscaler.o \
