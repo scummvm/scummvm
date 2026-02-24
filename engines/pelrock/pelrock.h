@@ -368,6 +368,7 @@ public:
 	void openPyramidDoor(HotSpot *hotspot);
 	void usePumpkinWithPond(int inventoryObject, HotSpot *hotspot);
 	void useWaterOnFakeStone(int inventoryObject, HotSpot *hotspot);
+	void useWigWithPot(int inventoryObject, HotSpot *hotspot);
 	void magicFormula(int inventoryObject, HotSpot *hotspot);
 	void smokeAnimation(int spriteIndex, bool hide = true);
 	void openArchitectDoor(HotSpot *hotspot);

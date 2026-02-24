@@ -2088,7 +2088,7 @@ void PelrockEngine::handleFlightRoomFrame() {
 	if (_flightInBlockingAnim)
 		return;
 
-	if (_alfredState.animState != ALFRED_IDLE) {
+	if (_alfredState.animState != ALFRED_IDLE || _actionPopupState.isActive) {
 		return;
 	}
 	_flightFrameCounter++;
@@ -2113,10 +2113,6 @@ void PelrockEngine::handleFlightRoomFrame() {
 
 	// Phase 3: wait 40 ticks after spell trigger, then cast
 	if (_flightSpellCast) {
-		if (_alfredState.animState != ALFRED_IDLE) {
-			debug("blocking animation active at frame %d, delaying spell cast", _flightFrameCounter);
-			return;
-		}
 		debug("in spell cast phase for room %d at frame %d", room, _flightFrameCounter);
 		_flightSpellFrameCounter++;
 		if (_flightSpellFrameCounter >= 40 && !(_state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES) & (1 << idx))) {

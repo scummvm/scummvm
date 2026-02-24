@@ -208,6 +208,7 @@ const CombinationEntry combinationTable[] = {
 	{85, 506, &PelrockEngine::magicFormula},
 	{86, 506, &PelrockEngine::magicFormula},
 	{81, 506, &PelrockEngine::magicFormula},
+	{99, 506, &PelrockEngine::useWigWithPot},
 
 	{76, 617, &PelrockEngine::usePumpkinWithPond},
 
@@ -1263,7 +1264,6 @@ void PelrockEngine::pickUpBook(int i) {
 }
 
 void PelrockEngine::pickUpChainsaw(HotSpot *hotspot) {
-
 	_room->addSticker(99);
 }
 
@@ -1708,6 +1708,11 @@ void PelrockEngine::useWaterOnFakeStone(int inventoryObject, HotSpot *hotspot) {
 	}
 }
 
+void PelrockEngine::useWigWithPot(int inventoryObject, HotSpot *hotspot) {
+	_dialog->say(_res->_ingameTexts[NOERAAUTENTICO]);
+	_state->removeInventoryItem(99);
+}
+
 void PelrockEngine::magicFormula(int inventoryObject, HotSpot *hotspot) {
 	_state->removeInventoryItem(inventoryObject);
 	_state->setFlag(FLAG_FORMULA_MAGICA, _state->getFlag(FLAG_FORMULA_MAGICA) + 1);
@@ -1965,12 +1970,27 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		break;
 	case 108:
 	case 109: {
+
 		if (_state->hasInventoryItem(110) == true) {
-			_state->removeInventoryItem(110);
-			_state->removeInventoryItem(109);
-			_state->removeInventoryItem(108);
-			addInventoryItem(83);
-			_dialog->say(_res->_ingameTexts[MUNECO_ARREGLADO]);
+			if(_state->hasInventoryItem(109) == true && _state->hasInventoryItem(108) == true) {
+					_state->removeInventoryItem(110);
+					_state->removeInventoryItem(109);
+					_state->removeInventoryItem(108);
+					addInventoryItem(83);
+					_dialog->say(_res->_ingameTexts[MUNECO_ARREGLADO]);
+					return;
+			}
+			else if(_state->hasInventoryItem(109) == true) {
+				_dialog->say(_res->_ingameTexts[NOTENGOPARCHES]);
+
+			}
+			else if(_state->hasInventoryItem(108) == true) {
+				_dialog->say(_res->_ingameTexts[NOTENGOPEGAMENTO]);
+			}
+		}
+		else {
+			byte response = (byte)getRandomNumber(12);
+			_dialog->say(_res->_ingameTexts[154 + response]);
 		}
 		break;
 	}
@@ -1992,6 +2012,10 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 	}
 	case 98: {
 		chooseCorrectDoor();
+		break;
+	}
+	case 87: {
+		_dialog->say(_res->_ingameTexts[NECESITOGASOLINA]);
 		break;
 	}
 	default: {
