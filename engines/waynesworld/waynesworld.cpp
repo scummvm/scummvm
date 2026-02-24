@@ -1160,8 +1160,7 @@ void WaynesWorldEngine::toggleActor() {
 
 void WaynesWorldEngine::openRoomLibrary(int roomNum) {
     _roomName = Common::String::format("r%02d", roomNum);
-	if (_roomGxl)
-		delete _roomGxl;
+	delete _roomGxl;
 
 	_roomGxl = new GxlArchive(_roomName);
 }
