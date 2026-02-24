@@ -33,6 +33,8 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/unicode-bidi.h"
+#include "common/formats/po_parser.h"
+#include "common/debug.h"
 
 #ifdef USE_TRANSLATION
 
@@ -44,7 +46,12 @@ bool operator<(const TLanguage &l, const TLanguage &r) {
 	return l.name < r.name;
 }
 
-TranslationManager::TranslationManager(const Common::String &fileName) : _currentLang(-1) {
+TranslationManager::TranslationManager(const Common::String &fileName) : _currentLang(-1), _havePoDirectory(false), _usingPo(false) {
+	FSNode root(".");
+	FSNode poDir = root.getChild("po");
+	if (poDir.exists() && poDir.isDirectory())
+		_havePoDirectory = true;
+
 	loadTranslationsInfoDat(fileName);
 
 	// Set the default language
@@ -108,7 +115,21 @@ void TranslationManager::setLanguage(const String &lang) {
 }
 
 U32String TranslationManager::getTranslation(const char *message) const {
+	if (_usingPo)
+		return getPoTranslation(message);
 	return getTranslation(message, nullptr);
+}
+
+U32String TranslationManager::getPoTranslation(const char* message) const {
+	if (_currentTranslationMessages.empty() || *message == '\0')
+		return U32String(message);
+
+	int messageIndex = _poTranslations.getValOrDefault(message, -1);
+
+	if (messageIndex == -1)
+		return U32String(message);
+
+	return _currentTranslationMessages[messageIndex].msgstr.decode();
 }
 
 U32String TranslationManager::getTranslation(const char *message, const char *context) const {
@@ -347,6 +368,13 @@ void TranslationManager::loadLanguageDat(int index) {
 		return;
 	}
 
+	
+	// If po directory exists and loading the specific language .po succeeds we can skip loading the dat
+	if (_havePoDirectory && loadLanguagePo(index))
+		return;
+
+	_usingPo = false;
+
 	File in;
 	if (!openTranslationsFile(in))
 		return;
@@ -397,7 +425,41 @@ void TranslationManager::loadLanguageDat(int index) {
 		}
 	}
 }
+bool TranslationManager::loadLanguagePo(int index) {
+	File in;
+	Common::Path poPath("po/" + _langs[index] + ".po");
+	FSNode poFile(poPath);
+	if (!poFile.exists())
+		return false;
+	_usingPo = true;
 
+	PlainPoMessageList parserMsgList;
+	PlainPoMessageEntryList *poData = parsePoFile(poPath.toString().c_str(), parserMsgList);
+
+	if (poData) {
+		debug("TranslationManager: Loading strings from file %s", poPath.toString().c_str());
+
+		int numEntries = poData->size();
+
+		_currentTranslationMessages.reserve(numEntries);
+		for (int i = 0; i < numEntries; ++i) {
+			const Common::PlainPoMessageEntry *entry = poData->entry(i);
+
+			_poTranslations[entry->msgid] = i;
+			PoMessageEntry engineEntry;
+			engineEntry.msgid = i;
+			engineEntry.msgstr = entry->msgstr;
+			if (entry->msgctxt) {
+				engineEntry.msgctxt = entry->msgctxt;
+			}
+
+			_currentTranslationMessages.push_back(engineEntry);
+		}
+	}
+
+	delete poData;
+	return true;
+}
 bool TranslationManager::checkHeader(File &in) {
 	char buf[13];
 	int ver;
