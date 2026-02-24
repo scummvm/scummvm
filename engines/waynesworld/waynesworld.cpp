@@ -136,6 +136,12 @@ Common::Error WaynesWorldEngine::run() {
 	_selectedDialogChoice = 0;
 	_gameState = 7;
 	_currentMapItemIndex = -1;
+	_musicIndex = 0;
+	
+	_sound = new SoundManager(this, _mixer);
+	_midi = new MusicManager(this);
+
+	syncSoundSettings();
 
 	loadMainActorSprites();
 
@@ -163,6 +169,8 @@ Common::Error WaynesWorldEngine::run() {
 
 	drawInterface(2);
 	changeRoom(0);
+	changeMusic();
+	
 	// _wayneSpriteX = -1; _garthSpriteX = -1;
 	// changeRoom(31); // DEBUG
 	// _logic->r31_displayCategories();
@@ -291,7 +299,6 @@ void WaynesWorldEngine::waitMillis(uint millis) {
 }
 
 void WaynesWorldEngine::waitSeconds(uint seconds) {
-	// TODO Replace calls with waitMillis
 	waitMillis(seconds * 1000);
 }
 
@@ -414,7 +421,6 @@ void WaynesWorldEngine::handleMouseClick() {
         handleMouseRightClick();
     }
     if (_mouseClickButtons & kKeyPressed) {
-        // TODO handleKeyInput();
 		warning("handleMouseClick - STUB handleKeyInput");
     }
 }
@@ -444,7 +450,6 @@ void WaynesWorldEngine::handleMouseLeftClick() {
         unusedTicketHandleMouseClick();
         break;
     case 4:
-        // TODO handleMouseClickState4();
 		warning("STUB - handleMouseClickState4");
 		break;
     case 5:
@@ -478,7 +483,6 @@ void WaynesWorldEngine::handleMouseRightClick() {
         unusedTicketHandleMouseClick();
         break;
     case 4:
-        // TODO handleMouseClickState4();
 		warning("STUB - handleMouseClickState4");
         break;
     case 5:
@@ -682,11 +686,24 @@ void WaynesWorldEngine::displayTextLines(const char *filename, int baseIndex, in
 }
 
 void WaynesWorldEngine::playSound(const char *filename, int flag) {
-	// TODO
+	_sound->playSound(filename, flag);
 }
 
 void WaynesWorldEngine::changeMusic() {
-	// TODO
+	switch (_musicIndex) {
+	case 0:
+		_midi->playMusic("pop-a.xmi");
+		break;
+	case 1:
+		_midi->playMusic("metal1.xmi");
+		break;
+	case 2:
+		_midi->playMusic("metal2.xmi");
+		break;
+	default:
+		_midi->playMusic("metal3.xmi");
+		break;
+	}
 }
 
 void WaynesWorldEngine::drawInterface(int verbNum) {
@@ -742,8 +759,6 @@ void WaynesWorldEngine::changeActor() {
 }
 
 void WaynesWorldEngine::drawVerbLine(int verbNumber, int objectNumber, const char *objectName) {
-
-	// TODO Move to StaticData class/file
 	static const char *kVerbStrings[] = {
 		"",
 		"pick up",
@@ -1702,33 +1717,33 @@ void WaynesWorldEngine::handleVerbPickUp() {
 
     switch (actionTextIndex) {
     case 7:
-        playSound("sv18", 1);
-        playSound("sv28", 1);
+        playSound("sv18.snd", 1);
+        playSound("sv28.snd", 1);
         break;
     case 0:
     case 10:
     case 44:
     case 54:
-        playSound("sv32", 1);
+        playSound("sv32.snd", 1);
         break;
     case 13:
-        playSound("sv19", 1);
+        playSound("sv19.snd", 1);
         break;
     case 50:
-        playSound("sv33", 1);
+        playSound("sv33.snd", 1);
         break;
     case 51:
     case 59:
-        playSound("sv31", 1);
+        playSound("sv31.snd", 1);
         break;
     case 53:
-        playSound("ss07", 1);
+        playSound("ss07.snd", 1);
         break;
     case 55:
-        playSound("sv29", 1);
+        playSound("sv29.snd", 1);
         break;
     case 56:
-        playSound("sv38", 1);
+        playSound("sv38.snd", 1);
         break;
     }
 
@@ -1830,22 +1845,22 @@ void WaynesWorldEngine::handleVerbUse() {
 
     switch (actionTextIndex) {
     case 0:
-        playSound("sv18", 1);
+        playSound("sv18.snd", 1);
         break;
     case 67:
-        playSound("ss07", 1);
+        playSound("ss07.snd", 1);
         break;
     case 68:
-        playSound("sv32", 1);
+        playSound("sv32.snd", 1);
         break;
     case 69:
-        playSound("sv47", 1);
+        playSound("sv47.snd", 1);
         break;
     case 70:
-        playSound("sv39", 1);
+        playSound("sv39.snd", 1);
         break;
     case 71:
-        playSound("sv38", 1);
+        playSound("sv38.snd", 1);
         break;
     }
 
@@ -1911,10 +1926,10 @@ void WaynesWorldEngine::handleVerbPush() {
 
     switch (actionTextIndex) {
     case 0:
-        playSound("sv02", 1);
+        playSound("sv02.snd", 1);
         break;
     case 4:
-        playSound("sv47", 1);
+        playSound("sv47.snd", 1);
         break;
     }
 
@@ -1936,7 +1951,7 @@ void WaynesWorldEngine::handleVerbPull() {
 
     switch (actionTextIndex) {
     case 0:
-        playSound("sv31", 1);
+        playSound("sv31.snd", 1);
         break;
     }
 
@@ -2001,25 +2016,25 @@ void WaynesWorldEngine::handleVerbOpen() {
 
     switch (actionTextIndex) {
     case 5:
-        playSound("sv31", 1);
+        playSound("sv31.snd", 1);
         break;
     case 7:
-        playSound("ss07", 1);
+        playSound("ss07.snd", 1);
         break;
     case 8:
-        playSound("sv47", 1);
+        playSound("sv47.snd", 1);
         break;
     case 0:
-        playSound("sv28", 1);
+        playSound("sv28.snd", 1);
         break;
     case 1:
-        playSound("sv38", 1);
+        playSound("sv38.snd", 1);
         break;
     case 10:
-        playSound("sv28", 1);
+        playSound("sv28.snd", 1);
         break;
     case 11:
-        playSound("sv21", 1);
+        playSound("sv21.snd", 1);
         break;
     }
 
@@ -2041,10 +2056,10 @@ void WaynesWorldEngine::handleVerbClose() {
 
     switch (actionTextIndex) {
     case 0:
-        playSound("sv47", 1);
+        playSound("sv47.snd", 1);
         break;
     case 1:
-        playSound("sv21", 1);
+        playSound("sv21.snd", 1);
         break;
     }
 
@@ -2062,7 +2077,7 @@ void WaynesWorldEngine::lookAtUnusedTicket() {
     }
     paletteFadeOut(0, 256, 64);
     _screen->clear(0);
-    playSound("sv14", 0);
+    playSound("sv14.snd", 0);
     drawImageToScreen(_r10Gxl, "ticket.pcx", 0, 13);
     paletteFadeIn(0, 256, 64);
     // sysMouseDriver(1);

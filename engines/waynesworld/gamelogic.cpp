@@ -593,7 +593,7 @@ void GameLogic::handleDialogReply(int index, int x, int y) {
 		_vm->playAnimationLoops("g1talk", 0, 2, 54, 81, 0, 100, 4);
         break;
     default:
-        _vm->waitSeconds(2);
+ //       _vm->waitSeconds(2);
         break;
     }
     _vm->waitSeconds(2);
@@ -1102,7 +1102,7 @@ void GameLogic::displayExtremeCloseupOfPizzathonList() {
     _vm->paletteFadeOut(0, 256, 16);
     // sysMouseDriver(2);
 	_vm->drawImageToScreen(lib, "list.pcx", 0, 0);
-    _vm->playSound("sv14", 1);
+    _vm->playSound("sv14.snd", 1);
     if (_pizzathonListFlags1 & 0x08) {
 		_vm->drawImageToScreen(lib, "adline.pcx", 72, 22);
     }
@@ -1142,7 +1142,7 @@ void GameLogic::displayExtremeCloseupOfSign15() {
     _vm->_gameState = 5;
     // sysMouseDriver(2);
     _vm->paletteFadeOut(0, 256, 16);
-    _vm->playSound("sv14", 1);
+    _vm->playSound("sv14.snd", 1);
     _vm->drawRoomImageToScreen("sign.pcx", 0, 0);
     _vm->paletteFadeIn(0, 256, 16);
     // sysMouseDriver(1);
@@ -1153,7 +1153,7 @@ void GameLogic::displayExtremeCloseupOfObjectPictures22() {
     _vm->_gameState = 5;
     // sysMouseDriver(2);
     _vm->paletteFadeOut(0, 256, 16);
-    _vm->playSound("sv14", 1);
+    _vm->playSound("sv14.snd", 1);
 	_vm->drawImageToScreen(_vm->_m05Gxl, "oldmap.pcx", 0, 0);
     _vm->paletteFadeIn(0, 256, 16);
     // sysMouseDriver(1);
@@ -1164,7 +1164,7 @@ void GameLogic::displayExtremeCloseupOfMemo() {
     _vm->_gameState = 5;
     // sysMouseDriver(2);
     _vm->paletteFadeOut(0, 256, 16);
-    _vm->playSound("sv14", 1);
+    _vm->playSound("sv14.snd", 1);
 	_vm->drawImageToScreen(_vm->_m05Gxl, "memo.pcx", 0, 0);
     _vm->paletteFadeIn(0, 256, 16);
     // sysMouseDriver(1);
@@ -1175,7 +1175,7 @@ void GameLogic::displayExtremeCloseupOfSewerMap() {
     _vm->_gameState = 5;
     // sysMouseDriver(2);
     _vm->paletteFadeOut(0, 256, 16);
-    _vm->playSound("sv14", 1);
+    _vm->playSound("sv14.snd", 1);
 	_vm->drawImageToScreen(_vm->_m05Gxl, "sewermap.pcx", 0, 0);
     _vm->paletteFadeIn(0, 256, 16);
     // sysMouseDriver(1);
@@ -1186,7 +1186,7 @@ void GameLogic::displayExtremeCloseupOfBillboard1() {
     _vm->_gameState = 5;
     // sysMouseDriver(2);
     _vm->paletteFadeOut(0, 256, 16);
-    _vm->playSound("sv14", 1);
+    _vm->playSound("sv14.snd", 1);
     _vm->_screen->clear(0);
 	_vm->drawImageToScreen(_vm->_m05Gxl, "fboard.pcx", 51, 18);
     _vm->paletteFadeIn(0, 256, 16);
@@ -1198,7 +1198,7 @@ void GameLogic::displayExtremeCloseupOfBillboard2() {
     _vm->_gameState = 5;
     // sysMouseDriver(2);
     _vm->paletteFadeOut(0, 256, 16);
-    _vm->playSound("sv14", 1);
+    _vm->playSound("sv14.snd", 1);
     _vm->_screen->clear(0);
 	_vm->drawImageToScreen(_vm->_m05Gxl, "pboard.pcx", 51, 18);
     _vm->paletteFadeIn(0, 256, 16);
@@ -3157,7 +3157,7 @@ void GameLogic::r6_handleRoomEvent2() {
 
 void GameLogic::r6_handleRoomEvent3() {
 	_vm->waitSeconds(1);
-	_vm->playSound("ss10", 1);
+	_vm->playSound("ss10.snd", 1);
 	_vm->walkTo(110, 107, 4, 135, 107);
 	_vm->playAnimation("dad", 0, 3, 119, 79, 0, 100);
 	if ((_r6_flags & 0x40) && !(_r6_flags & 0x20)) {
@@ -4729,7 +4729,7 @@ void GameLogic::r11_pickUpExtensionCord() {
 void GameLogic::r11_useSuckCutWithFountain() {
 	r11_uninitRoomAnimations();
 	_vm->playAnimation("suckwt", 0, 5, 45, 92, 0, 200);
-	_vm->playSound("ss40", 0);
+	_vm->playSound("ss40.snd", 0);
 	for (int i = 5; i < 15; i++) {
 		_vm->playAnimation("elec", i - 5, 1, 176, 61, 0, 1);
 		_vm->playAnimation("suckwt", i, 1, 45, 92, 0, 150);
@@ -5568,13 +5568,13 @@ void GameLogic::r17_handleRoomEvent1() {
 
 void GameLogic::r17_handleRoomEvent2() {
 	_vm->walkTo(71, 117, 0, 90, 117);
-	_vm->playSound("ss13", 0);
+	_vm->playSound("ss13.snd", 0);
 	_vm->playAnimation("beam", 0, 13, 62, 51, 0, 150);
 	_vm->changeRoom(37);
 }
 
 void GameLogic::r17_handleRoomEvent3() {
-	_vm->playSound("ss13", 0);
+	_vm->playSound("ss13.snd", 0);
 	_vm->playAnimation("beam", 12, -13, 62, 51, 0, 150);
 	_r37_flags &= ~0x20;
 	_vm->setWaynePosition(71, 117);
@@ -5856,7 +5856,7 @@ void GameLogic::r20_refreshRoomBackground() {
 void GameLogic::r20_handleRoomEvent() {
 	_vm->waitSeconds(1);
 	_vm->playAnimation("expl", 0, 36, 40, 32, 0, 150);
-	_vm->playSound("ss17", 0);
+	_vm->playSound("ss17.snd", 0);
 	_vm->playAnimation("expl", 37, 66, 40, 32, 0, 150);
 	_r19_flags &= ~0x01;
 	_r19_flags |= 0x08;
@@ -6347,9 +6347,9 @@ void GameLogic::r28_handleRoomEvent1() {
 		_vm->refreshActors();
 	}
 	_vm->playAnimation("scepter", 1, 4, 26, 42, 0, 150);
-	_vm->playSound("ss13", 0);
+	_vm->playSound("ss13.snd", 0);
 	_vm->playAnimation("zapwg", 0, 11, 107, 53, 0, 70);
-	_vm->playSound("sv08", 1);
+	_vm->playSound("sv08.snd", 1);
 	_vm->playAnimation("scepter", 3, -4, 26, 42, 0, 150);
 	_vm->displayText("c04r", 30, 0, 150, 10, 0);
 	_vm->playAnimation("reptalk", 0, 6, 26, 51, 0, 150);
@@ -6374,11 +6374,11 @@ void GameLogic::r28_handleRoomEvent1() {
 }
 
 void GameLogic::r28_handleRoomEvent2() {
-	_vm->playSound("ss12", 0);
+	_vm->playSound("ss12.snd", 0);
 	_vm->playAnimation("scepter", 1, 4, 26, 42, 0, 150);
 	_vm->playAnimation("repxit", 0, 11, 0, 33, 0, 100);
 	_vm->waitSeconds(2);
-	_vm->playSound("ss12", 0);
+	_vm->playSound("ss12.snd", 0);
 	_vm->playAnimation("repxit", 10, -11, 0, 33, 0, 100);
 	_vm->playAnimation("scepter", 3, -4, 26, 42, 0, 150);
 	_vm->displayText("c04r", 38, 0, 150, 10, 0);
@@ -6386,7 +6386,7 @@ void GameLogic::r28_handleRoomEvent2() {
 	_vm->waitSeconds(2);
 	_vm->_isTextVisible = false;
 	_vm->refreshActors();
-	_vm->playSound("ss12", 0);
+	_vm->playSound("ss12.snd", 0);
 	_vm->playAnimation("scepter", 1, 4, 26, 42, 0, 150);
 	_vm->playAnimation("repxit", 0, 11, 0, 33, 0, 100);
 	_vm->waitSeconds(2);
@@ -6688,7 +6688,7 @@ void GameLogic::r30_runLudwigCutscene() {
 	_vm->playAnimation("ludwig", 42, 20, 185, 34, 0, 150);
 	_vm->displayTextLines("lws", 27, 50, 10, 1);
 	_vm->playAnimation("ludwig", 62, 4, 185, 34, 0, 150);
-	_vm->playSound("ss17", 0);
+	_vm->playSound("ss17.snd", 0);
 	_vm->playAnimation("ludwig", 66, 4, 186, 22, 0, 150);
 	_vm->playAnimation("ludwig", 70, 3, 185, 34, 0, 150);
 	_vm->displayTextLines("lws", 28, 50, 10, 5);
@@ -6950,7 +6950,7 @@ void GameLogic::r31_playTalkAnim(int talkerIndex) {
 
 void GameLogic::r31_useBuzzer() {
 	_vm->drawRoomImageToScreen("buzzer.pcx", 131, 106);
-	_vm->playSound("ss04", 1);
+	_vm->playSound("ss04.snd", 1);
 	_vm->_screen->drawSurface(_vm->_backgroundSurface, 0, 0);
 	if (!(_r31_flags & 0x01)) {
 		r31_handleRoomEvent3();

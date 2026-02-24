@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	graphics.o \
 	metaengine.o \
 	pathfinding.o \
+	sound.o \
 	staticdata.o
 
 # This module can be built as a plugin

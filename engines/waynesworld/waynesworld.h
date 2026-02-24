@@ -38,6 +38,8 @@
 #include "image/pcx.h"
 
 #include "waynesworld/detection.h"
+#include "waynesworld/sound.h"
+
 
 namespace WaynesWorld {
 class GxlArchive;
@@ -144,6 +146,10 @@ public:
 	GxlArchive *_r21Gxl = nullptr;
 	GxlArchive *_r22Gxl = nullptr;
 	GxlArchive *_r33Gxl = nullptr;
+
+	// Sound and Music
+	SoundManager *_sound;
+	MusicManager *_midi;
 
 	// Room
 	Common::String _roomName;
