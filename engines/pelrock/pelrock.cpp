@@ -990,7 +990,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			// Scale special anim frame to Alfred size before drawing
 			drawSpriteToBuffer(_compositeBuffer, 640, frame, _alfredState.x, _alfredState.y - _res->_currentSpecialAnim->h, _res->_currentSpecialAnim->w, _res->_currentSpecialAnim->h, 255);
 		}
-		if (_chrono->getFrameCount() % kAlfredAnimationSpeed == 0) {
+		if (_chrono->getFrameCount() % _res->_currentSpecialAnim->speed == 0) {
 			_res->_currentSpecialAnim->curFrame++;
 
 			if (_res->_currentSpecialAnim->curFrame >= _res->_currentSpecialAnim->numFrames) {

@@ -499,13 +499,14 @@ struct AlfredSpecialAnimOffset {
 	uint32 offset;
 	int stride = 0;
 	uint32 size;
+	int speed = 2;
 
-	AlfredSpecialAnimOffset(int nF, int width, int height, int nBudas, int numAlfred, uint32 off, int loops)
-		: numFrames(nF), w(width), h(height), numBudas(nBudas), numAlfred(numAlfred), offset(off), loops(loops) {
-		AlfredSpecialAnimOffset(nF, width, height, nBudas, numAlfred, off, loops, width * height * nF);
+	AlfredSpecialAnimOffset(int nF, int width, int height, int nBudas, int numAlfred, uint32 off, int loops, int speed = 2)
+		: numFrames(nF), w(width), h(height), numBudas(nBudas), numAlfred(numAlfred), offset(off), loops(loops), speed(speed) {
+		AlfredSpecialAnimOffset(nF, width, height, nBudas, numAlfred, off, loops, speed, width * height * nF);
 	}
-	AlfredSpecialAnimOffset(int nF, int width, int height, int nBudas, int numAlfred, uint32 off, int loops, uint32 sz)
-		: numFrames(nF), w(width), h(height), numBudas(nBudas), numAlfred(numAlfred), offset(off), loops(loops), size(sz) {
+	AlfredSpecialAnimOffset(int nF, int width, int height, int nBudas, int numAlfred, uint32 off, int loops, int speed, uint32 sz)
+		: numFrames(nF), w(width), h(height), numBudas(nBudas), numAlfred(numAlfred), offset(off), loops(loops), size(sz), speed(speed) {
 		stride = w * h;
 	}
 	AlfredSpecialAnimOffset() {

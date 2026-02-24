@@ -779,7 +779,10 @@ void PelrockEngine::useCardWithATM(int inventoryObject, HotSpot *hotspot) {
 		}
 		if (billCount < 13) {
 			addInventoryItem(5); // 1000 pesetas bill
-			_dialog->say(_res->_ingameTexts[TEAPETECE_BUENRATO]);
+			bool sayLine = getRandomNumber(15) == 1; // 1 in 15 chance to say the line about not having more money
+			if(sayLine) {
+				_dialog->say(_res->_ingameTexts[TEAPETECE_BUENRATO]);
+			}
 		} else {
 			_dialog->say(_res->_ingameTexts[NOTENGOMASDINERO]);
 		}
@@ -1003,6 +1006,8 @@ void PelrockEngine::pickCables(HotSpot *hotspot) {
 	// electric shock
 	int prevX = _alfredState.x;
 	_alfredState.x -= 20;
+	// original incorrectly played door closing sound here
+	_sound->playSound("ELEC3ZZZ.SMP", 0);
 	_res->loadAlfredSpecialAnim(3);
 	_alfredState.animState = ALFRED_SPECIAL_ANIM;
 	waitForSpecialAnimation();
@@ -1083,6 +1088,7 @@ void PelrockEngine::useAmuletWithStatue(int inventoryObject, HotSpot *hotspot) {
 		HotSpot *statueHotspot = _room->findHotspotByExtra(347);
 		_currentHotspot = statueHotspot;
 		walkTo(statueHotspot->x + statueHotspot->w / 2, statueHotspot->y + statueHotspot->h);
+		_sound->playSound(_room->_roomSfx[0]); // Magic sound
 		animateStatuePaletteFade(false);
 		walkAndAction(statueHotspot, TALK);
 		waitForActionEnd();
@@ -1998,7 +2004,6 @@ void PelrockEngine::chooseCorrectDoor() {
 }
 
 void PelrockEngine::animateStatuePaletteFade(bool reverse) {
-	// Structure at JUEGO.EXE offset 0x4C700
 	struct StatuePaletteData {
 		uint16 x;           // 368
 		uint16 y;           // 148
@@ -2041,8 +2046,7 @@ void PelrockEngine::animateStatuePaletteFade(bool reverse) {
 	exeFile.close();
 
 	// Animation parameters
-	const int kNumFrames = 7; // 7 step updates total
-	const int kDelayMs = 200; // ~12 ticks at 60Hz (~200ms)
+	const int numFrames = 7; // 7 step updates total
 
 	// Get current palette
 	byte currentPalette[768];
@@ -2050,7 +2054,7 @@ void PelrockEngine::animateStatuePaletteFade(bool reverse) {
 
 	// Perform the fade animation
 	int frame = 0;
-	while (!shouldQuit() && frame <= kNumFrames) {
+	while (!shouldQuit() && frame <= numFrames) {
 		_events->pollEvent();
 
 		bool didRender = renderScene(OVERLAY_NONE);
@@ -2064,9 +2068,9 @@ void PelrockEngine::animateStatuePaletteFade(bool reverse) {
 				byte *dstColor = reverse ? paletteData.source[i] : paletteData.target[i];
 
 				// Linear interpolation (6-bit VGA values)
-				byte r6 = srcColor[0] + ((dstColor[0] - srcColor[0]) * frame) / kNumFrames;
-				byte g6 = srcColor[1] + ((dstColor[1] - srcColor[1]) * frame) / kNumFrames;
-				byte b6 = srcColor[2] + ((dstColor[2] - srcColor[2]) * frame) / kNumFrames;
+				byte r6 = srcColor[0] + ((dstColor[0] - srcColor[0]) * frame) / numFrames;
+				byte g6 = srcColor[1] + ((dstColor[1] - srcColor[1]) * frame) / numFrames;
+				byte b6 = srcColor[2] + ((dstColor[2] - srcColor[2]) * frame) / numFrames;
 
 				// Convert 6-bit VGA (0-63) to 8-bit (0-255) by shifting left 2 bits
 				currentPalette[paletteIndex * 3 + 0] = r6 << 2;
@@ -2082,6 +2086,7 @@ void PelrockEngine::animateStatuePaletteFade(bool reverse) {
 		g_system->delayMillis(10);
 	}
 }
+
 /**
  * In order to unlock the second part of the game, we need to ensure
  * we have all we need to solve the game once there

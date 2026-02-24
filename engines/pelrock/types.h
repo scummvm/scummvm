@@ -136,10 +136,12 @@ struct AlfredSpecialAnim {
 	int curFrame = 0;
 	int curLoop = 0;
 	uint32 size = 0;
-	AlfredSpecialAnim(int nF, int width, int height, int nBudas, uint32 off, int loopCount, uint32 sz)
-		: numFrames(nF), w(width), h(height), loopCount(loopCount), size(sz) {
+	int speed = 2;
+	AlfredSpecialAnim(int nF, int width, int height, int nBudas, uint32 off, int loopCount, uint32 sz, int spd = 2)
+		: numFrames(nF), w(width), h(height), loopCount(loopCount), size(sz), speed(spd) {
 		stride = w * h;
 	}
+
 	~AlfredSpecialAnim() {
 		if (animData) {
 			delete[] animData;
