@@ -2935,6 +2935,14 @@
 						type = 'Checkbox'
 						width = '140'
 				/>
+				<widget name = 'FitToPage'
+						type = 'Checkbox'
+						width = '140'
+				/>
+				<widget name = 'Center'
+						type = 'Checkbox'
+						width = '140'
+				/>
 				<space/>
 				<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
 					<widget name = 'Cancel'

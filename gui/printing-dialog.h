@@ -36,18 +36,27 @@ public:
 		kCmdPrint = 'PRNT',
 		kCmdSelectPrinterName = 'SLPN',
 		kCmdSelectOrientation = 'SLOR',
+		kCmdSaveAsImage = 'SVIM',
+		kCmdFitToPage = 'FITP',
+		kCmdCenter = 'CNTR',
 	};
 
-	PrintingDialog(const Graphics::ManagedSurface &surface);
+	PrintingDialog(const Graphics::ManagedSurface &surface, bool defaultFitToPage, bool defaultCenter, PageOrientation defaultOrientation);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
 private:
+	void updatePreview();
+	static Common::Rect computePlacementInContainer(int16 srcW, int16 srcH, int16 containerW, int16 containerH, bool fitToContainer, bool center);
+
 	const Graphics::ManagedSurface &_surface;
 
+	bool _initDone;
 	GraphicsWidget *_preview;
 	ButtonWidget *_printButton;
 	CheckboxWidget *_saveAsImageCheckbox;
+	CheckboxWidget *_fitToPageCheckbox;
+	CheckboxWidget *_centerCheckbox;
 	PopUpWidget *_printersListPopUp;
 
 	PopUpWidget *_orientationPopUp;

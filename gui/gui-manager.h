@@ -28,6 +28,7 @@
 #include "common/str.h"
 #include "common/list.h"
 #include "common/mutex.h"
+#include "common/printman.h"
 
 #include "gui/ThemeEngine.h"
 #include "gui/widget.h"
@@ -156,6 +157,7 @@ public:
 	Graphics::MacWindowManager *getWM();
 
 	// Defined in printing-dialog.cpp
+	void printImage(const Graphics::ManagedSurface &surf, bool defaultFitToPage, bool defaultCenter, PageOrientation defaultOrientation);
 	void printImage(const Graphics::ManagedSurface &surf);
 
 protected:
