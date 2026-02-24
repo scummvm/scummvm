@@ -27,6 +27,7 @@
 
 #include "common/endian.h"
 #include "common/str.h"
+#include "common/printman.h"
 #include "common/translation.h"
 
 #include "gui/gui-manager.h"
@@ -354,7 +355,20 @@ void Inter_Playtoons::oPlaytoons_writeData(OpFuncParams &params) {
 
 	if (file.compareToIgnoreCase("PRINTER") == 0) {
 		// Send a sprite to the printer.
+		WRITE_VAR(1, 0);
+
 		int32 spriteIndex = -size - 1;
+		if (spriteIndex == 1000) {
+			// Just query the printable area size, without printing anything.
+			Common::Rect printArea = g_system->getPrintingManager()->getPrintableArea();
+			if (!printArea.isEmpty()) {
+				WRITE_VAR(2, printArea.width());
+				WRITE_VAR(3, printArea.height());
+			}
+
+			return;
+		}
+
 		if (spriteIndex < 0 || spriteIndex >= Draw::kSpriteCount) {
 			warning("o7_writeData: Invalid sprite index %d for printing", spriteIndex);
 			return;
