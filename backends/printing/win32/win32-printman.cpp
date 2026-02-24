@@ -74,15 +74,30 @@ void Win32PrintingManager::doPrint(const Graphics::ManagedSurface &surf, const C
 		return;
 	}
 
+	// Ensure the pitch is a multiple of 4, as required by StretchDIBits
+	int32 pitchCeiledUp = (surf.pitch + 3) / 4 * 4;
+	byte *dibPixels = nullptr;
+	if (pitchCeiledUp != surf.pitch) {
+		dibPixels = new byte[pitchCeiledUp * surf.h]();
+		const byte *src = (const byte *)surf.getPixels();
+		byte *dst = dibPixels;
+		for (int y = 0; y < surf.h; y++) {
+			memcpy(dst, src, surf.pitch);
+			src += surf.pitch;
+			dst += pitchCeiledUp;
+		}
+	}
+
 	StartDocA(hdcPrint, &info);
 	StartPage(hdcPrint);
 
 	StretchDIBits(hdcPrint,
 				  destRect.left, destRect.top, destRect.width(), destRect.height(),
 				  0, 0, surf.w, surf.h,
-				  surf.getPixels(),
+				  dibPixels ? dibPixels : surf.getPixels(),
 				  bitmapInfo, DIB_RGB_COLORS, SRCCOPY);
 
+	delete[] dibPixels;
 	free(bitmapInfo);
 
 	EndPage(hdcPrint);
