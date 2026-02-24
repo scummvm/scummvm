@@ -25,6 +25,8 @@
 #ifdef USE_MT32EMU
 
 #include "audio/softsynth/emumidi.h"
+#include "audio/softsynth/mt32/font_6x8.h"
+#include "audio/softsynth/mt32/lcd_bg_data.h"
 #include "audio/musicplugin.h"
 #include "audio/mpu401.h"
 
@@ -39,11 +41,16 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "common/osd_message_queue.h"
+#include "common/memstream.h"
+#include "common/rect.h"
+
+#include "image/bmp.h"
 
 #include "graphics/fontman.h"
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
 #include "graphics/font.h"
+#include "graphics/palette.h"
 
 #include "gui/message.h"
 
@@ -55,8 +62,69 @@
 
 namespace MT32Emu {
 
-class ScummVMReportHandler : public MT32Emu::IReportHandler {
+class MT32LCDScreen : public MT32Emu::IReportHandler {
+private:
+	enum : uint {
+		kLCDBottomRowIndex = 6,
+		kLCDRowCount = 8,
+		kLCDPixelSize = 2,
+		kLCDUnderlineGap = kLCDPixelSize,
+		kLCDColumnSizeWithSpacing = 6 * kLCDPixelSize,
+		kLCDWidth = 254,
+		kLCDHeight = 38,
+		kInitialStartX = 8,
+		kInitialStartY = 10,
+		kMaxChars = 20
+	};
+
+	Graphics::Surface *_cachedLCDBg;
+	Graphics::Surface *_osdSurface;
+
+	uint32 _unlitColor;
+	uint32 _litColor;
+
 public:
+	MT32LCDScreen() {
+		_cachedLCDBg = nullptr;
+		_osdSurface = new Graphics::Surface();
+		Graphics::PixelFormat format = g_system->getOverlayFormat();
+		_osdSurface->create(kLCDWidth, kLCDHeight, format);
+
+		_unlitColor = format.ARGBToColor(0xEE, 0x32, 0x50, 0x32);
+		_litColor = format.ARGBToColor(0xFF, 0xCA, 0xFB, 0x10);
+
+		Common::MemoryReadStream bmpStream(kLCDBgBmp, kLCDBgBmpLen, DisposeAfterUse::NO);
+		Image::BitmapDecoder decoder;
+
+		if (!decoder.loadStream(bmpStream)) {
+			warning("Failed to decode MT-32 LCD bmp array");
+			return;
+		}
+
+		const Graphics::Surface *rawBmpSurface = decoder.getSurface();
+		if (!rawBmpSurface) {
+			warning("MT-32 LCD bmp surface is null");
+			return;
+		}
+
+		const Graphics::Palette &palette = decoder.getPalette();
+		_cachedLCDBg = rawBmpSurface->convertTo(format, palette.data(), palette.size());
+
+		if (!_cachedLCDBg)
+			warning("Failed to convert the LCD background to the system color format");
+	}
+
+	virtual ~MT32LCDScreen() {
+		if(_cachedLCDBg) {
+			_cachedLCDBg->free();
+			delete _cachedLCDBg;
+		}
+		if(_osdSurface) {
+			_osdSurface->free();
+			delete _osdSurface;
+		}
+	}
+
 	// Callback for debug messages, in vprintf() format
 	void printDebug(const char *fmt, va_list list) override {
 		Common::String out = Common::String::vformat(fmt, list);
@@ -77,11 +145,66 @@ public:
 	void showLCDMessage(const char *message) override {
 		// Don't show messages that are only spaces, e.g. the first
 		// message in Operation Stealth.
+		bool isOnlySpaces = true;
 		for (const char *ptr = message; *ptr; ptr++) {
 			if (*ptr != ' ') {
-				Common::OSDMessageQueue::instance().addMessage(Common::U32String(message));
+				isOnlySpaces = false;
 				break;
 			}
+		}
+		if (isOnlySpaces)
+			return;
+
+		if (_cachedLCDBg && _osdSurface) {
+			_osdSurface->copyRectToSurface(*_cachedLCDBg, 0, 0, Common::Rect(0, 0, kLCDWidth, kLCDHeight));
+
+			bool endOfText = false;
+
+			uint charStartX = kInitialStartX;
+
+			for (uint position = 0; position < kMaxChars; position++) {
+				byte charCode = endOfText ? 0x20 : message[position];
+				uint drawX = charStartX;
+				uint drawY = kInitialStartY;
+
+				// Map special characters to what we have defined in the font.
+				if (charCode < 0x20) {
+					switch (charCode) {
+					case 0x02:
+						charCode = 0x7C;
+						break;
+					case 0x01:
+						charCode = 0x80;
+						break;
+					case 0x00:
+						endOfText = true;
+						charCode = 0x20;
+						break;
+					default:
+						charCode = 0x20;
+						break;
+					}
+				} else if (charCode > 0x7f)
+					charCode = 0x20;
+
+				charCode -= 0x20;
+
+				for (uint rowIndex = 0; rowIndex < kLCDRowCount; rowIndex++) {
+					byte row = kFont6x8[charCode][rowIndex];
+					for (uint mask = 0x10; mask > 0; mask >>= 1) {
+						uint32 color = (row & mask) ? _litColor : _unlitColor;
+						_osdSurface->fillRect(Common::Rect(drawX, drawY, drawX + kLCDPixelSize, drawY + kLCDPixelSize), color);
+						drawX += kLCDPixelSize;
+					}
+					drawX = charStartX;
+					drawY += kLCDPixelSize;
+					if (rowIndex == kLCDBottomRowIndex)
+						drawY += kLCDUnderlineGap;
+				}
+				charStartX += kLCDColumnSizeWithSpacing;
+			}
+
+			Common::OSDMessageQueue::instance().addImage(_osdSurface);
 		}
 	}
 
@@ -96,8 +219,6 @@ public:
 	void onNewReverbLevel(Bit8u /* level */) override {}
 	void onPolyStateChanged(Bit8u /* part_num */) override {}
 	void onProgramChanged(Bit8u /* part_num */, const char * /* sound_group_name */, const char * /* patch_name */) override {}
-
-	virtual ~ScummVMReportHandler() {}
 };
 
 }	// end of namespace MT32Emu
@@ -112,7 +233,7 @@ private:
 	MidiChannel_MT32 _midiChannels[16];
 	uint16 _channelMask;
 	MT32Emu::Service _service;
-	MT32Emu::ScummVMReportHandler _reportHandler;
+	MT32Emu::MT32LCDScreen _LCDScreen;
 	byte *_controlData, *_pcmData;
 	Common::Mutex _mutex;
 
@@ -186,7 +307,7 @@ int MidiDriver_MT32::open() {
 	_pcmData = new byte[pcmFile.size()];
 	pcmFile.read(_pcmData, pcmFile.size());
 
-	_service.createContext(_reportHandler);
+	_service.createContext(_LCDScreen);
 
 	if (_service.addROMData(_controlData, controlFile.size()) != MT32EMU_RC_ADDED_CONTROL_ROM) {
 		error("Adding control ROM failed. Check that your control ROM is valid");
