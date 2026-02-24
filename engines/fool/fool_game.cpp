@@ -543,6 +543,9 @@ void FoolGame::sub_128_c6a(int16 unk1) {
 	if (this->var_ev_46.what == kDiskEvt) {
 		this->sub_128_6154();
 	}
+	if ((this->var_ev_46.what == kScummVMQuitEvt) || (this->var_ev_46.what == kScummVMReturnToLauncherEvt)) {
+		_quit = true;
+	}
 }
 
 void FoolGame::sub_128_d34(int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
@@ -726,14 +729,14 @@ void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 						// 128:1624
 						while ((this->var_ev_46.what != kMouseUp) && (g_toolbox->PtInRect(this->var_ev_46.where, target) != 0)) {
 
-							this->var_i16_7a8 = g_toolbox->GetNextEvent(0xffff, this->var_ev_46);
+							this->var_i16_7a8 = g_toolbox->GetNextEvent(-1, this->var_ev_46);
 							g_toolbox->GlobalToLocal(this->var_ev_46.where);
 						}
 
 						g_toolbox->InvertRoundRect(target, 0xa, 0xa);
 						// 128:1686
 						while ((this->var_ev_46.what != kMouseUp) && (g_toolbox->PtInRect(this->var_ev_46.where, target))) {
-							this->var_i16_7a8 = g_toolbox->GetNextEvent(0xffff, this->var_ev_46);
+							this->var_i16_7a8 = g_toolbox->GetNextEvent(-1, this->var_ev_46);
 							g_toolbox->GlobalToLocal(this->var_ev_46.where);
 						}
 						// 128:16ea
@@ -889,7 +892,7 @@ void FoolGame::sub_128_1f76() {
 			this->var_i32_692 = g_toolbox->TickCount();
 			this->sub_128_20d0();
 			this->sub_128_406(5);
-			this->var_i16_7a8 = g_toolbox->GetNextEvent(0xffff, this->var_ev_46);
+			this->var_i16_7a8 = g_toolbox->GetNextEvent(-1, this->var_ev_46);
 		} while ((this->var_ev_46.modifiers & 0x80) == 0);
 	}
 	// 128:1fec
@@ -1398,7 +1401,7 @@ void FoolGame::sub_128_6186() {
 
 void FoolGame::sub_128_61ec() {
 	do {
-		this->var_i16_7a8 = g_toolbox->GetNextEvent(0xffff, this->var_ev_46);
+		this->var_i16_7a8 = g_toolbox->GetNextEvent(-1, this->var_ev_46);
 		if (this->var_ev_46.what == kUpdateEvt) {
 			this->sub_128_5fb4();
 		}
@@ -1412,7 +1415,7 @@ void FoolGame::sub_128_61ec() {
 
 void FoolGame::sub_128_6244() {
 	do {
-		this->var_i16_7a8 = g_toolbox->GetNextEvent(0xffff, this->var_ev_46);
+		this->var_i16_7a8 = g_toolbox->GetNextEvent(-1, this->var_ev_46);
 		if (this->var_ev_46.what == kUpdateEvt) {
 			g_toolbox->BeginUpdate(*this->var_ev_46.windowPtr);
 			g_toolbox->EndUpdate(*this->var_ev_46.windowPtr);

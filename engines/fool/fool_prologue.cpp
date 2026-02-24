@@ -104,6 +104,8 @@ void FoolPrologue::sub_128_004() {
 	// JMP 0xc8a
 	// 128:0c8a
 	this->sub_129_004();
+	if (_quit)
+		return;
 	this->var_i32_1a6 = g_zbasic->mem(-1);
 	if (this->var_i16_1aa == 1) {
 		this->prologueRun();
@@ -402,9 +404,14 @@ void FoolPrologue::sub_128_e58() {
 	// 128:0e58
 	this->sub_128_e80();
 	while (true) {
-		this->var_i16_1ba = g_toolbox->GetNextEvent(0x2, this->var_ev_22);
+		// was: 2
+		this->var_i16_1ba = g_toolbox->GetNextEvent(-1, this->var_ev_22);
 		if (this->var_ev_22.what == kMouseDown)
 			break;
+		if ((this->var_ev_22.what == kScummVMQuitEvt) || (this->var_ev_22.what == kScummVMReturnToLauncherEvt)) {
+			_quit = true;
+			return;
+		}
 		// wait until next redraw
 		g_toolbox->Delay(1);
 	}
@@ -420,6 +427,10 @@ void FoolPrologue::sub_128_e80() {
 		}
 		if (this->var_ev_22.what == kDiskEvt) {
 			this->sub_128_ee0();
+		}
+		if (this->var_ev_22.what == kScummVMQuitEvt || this->var_ev_22.what == kScummVMReturnToLauncherEvt) {
+			_quit = true;
+			return;
 		}
 		// keep looping until mouse is seen as up??
 		// see I-252
@@ -572,6 +583,8 @@ void FoolPrologue::sub_129_004() {
 		this->var_str_76 = g_zbasic->str(10);
 		this->drawTextCenterAlign(0xcb, 0x100);
 		this->sub_128_e58();
+		if (_quit)
+			return;
 
 		g_zbasic->put(0x0, 0x14, this->arr_i32_41296[0], kPutCopy);
 		this->var_i16_1aa = 0;
@@ -646,6 +659,8 @@ void FoolPrologue::sub_129_004() {
 			this->drawTextCenterAlign(0xcb, 0xfc);
 			// 129:0730
 			this->sub_128_e58();
+			if (_quit)
+				return;
 			g_zbasic->put(0x0, 0x14, this->arr_i32_41296[0], kPutCopy);
 			this->var_i16_1aa = 0;
 		} else {
@@ -1009,6 +1024,8 @@ void FoolPrologue::prologueRun() {
 	// 130:0b74
 	this->delayFromMarker(0xd2);
 	this->sub_128_e80();
+	if (_quit)
+		return;
 	this->scanlineTransition(1);
 
 	// rectangle zoom into the clifftop scene
@@ -1018,6 +1035,8 @@ void FoolPrologue::prologueRun() {
 
 	// stall until mouse click
 	this->sub_128_e58();
+	if (_quit)
+		return;
 	// 130:0b98
 	this->var_i16_74 = 0;
 	this->var_i16_192 = 1;
@@ -1063,13 +1082,16 @@ void FoolPrologue::prologueRun() {
 	// "who dares to interrupt my errand"
 	this->blitPageToScreen(0x6);
 	this->sub_128_e58();
-
+	if (_quit)
+		return;
 
 	this->sub_128_50a(0x0, 0, SCREEN_HEIGHT, 7);
 	this->delay(0xa);
 	// "I dare"
 	this->blitPageToScreen(0x8);
 	this->sub_128_e58();
+	if (_quit)
+		return;
 
 	// zoom to close
 
@@ -1246,6 +1268,9 @@ void FoolPrologue::sub_131_004() {
 	this->delay(0x3c);
 	this->zoomTransition(0x5);
 	this->sub_128_e58();
+	if (_quit)
+		return;
+
 	this->sub_131_4e98();
 	// g_zbasic->52(0x4c);
 	for (int j = 1; j < 0xe; j++) {

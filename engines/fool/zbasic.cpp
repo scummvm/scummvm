@@ -46,6 +46,7 @@ ZBasic::ZBasic(Toolbox *toolbox) : _toolbox(toolbox) {
 	_toolbox->_defaultMenu = _menu;
 	_toolbox->_defaultBits = BitMap(new Graphics::ManagedSurface());
 	_toolbox->_defaultBits->copyFrom(*_window->getWindowSurface());
+	_window->setSurface(_toolbox->_defaultBits.get(), DisposeAfterUse::NO);
 
 }
 
@@ -197,6 +198,7 @@ void ZBasic::get(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &dest, bool pres
 	GrafPtr port;
 	_toolbox->GetPort(port);
 	Common::Rect srcRect(x1, y1, x2, y2);
+	Common::Rect dstRect(srcRect.width(), srcRect.height());
 	// Real ZBasic uses a raw array for storage.
 	// Some graphical effects expect there to be a full screen page that only has part
 	// of it copied over, so we have this flag.
@@ -205,9 +207,9 @@ void ZBasic::get(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &dest, bool pres
 			warning("ZBasic::get: differing row lengths, surface not going to draw correctly");
 		}
 	} else {
-		dest->create(srcRect.width(), srcRect.height());
+		dest->create(dstRect.width(), dstRect.height());
 	}
-	_toolbox->CopyBits(port->portBits, dest, srcRect, dest->getBounds(), kSrcCopy, nullptr);
+	_toolbox->CopyBits(port->portBits, dest, srcRect, dstRect, kSrcCopy, nullptr);
 }
 
 int16 ZBasic::instr(int16 expression, const Common::U32String &string1, const Common::U32String &string2) {
@@ -487,7 +489,7 @@ void ZBasic::indexSet(const Common::U32String &value, int16 table, int16 index) 
 	if (!_index.contains(table)) {
 		_index[table] = Common::Array<Common::U32String>();
 	}
-	if (_index[table].size() <= index) {
+	if (_index[table].size() <= (uint)index) {
 		_index[table].resize(index+1);
 	}
 	_index[table][index] = value;
@@ -502,7 +504,7 @@ Common::U32String ZBasic::index(int16 table, int16 index) {
 		warning("ZBasic::index: table %d not found", table);
 		return Common::U32String();
 	}
-	if (_index[table].size() <= index) {
+	if (_index[table].size() <= (uint)index) {
 		warning("ZBasic::index: asked for index %d but only %d entries in table %d", index, _index[table].size(), table);
 		return Common::U32String();
 	}

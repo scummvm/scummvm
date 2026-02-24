@@ -37,7 +37,8 @@ Toolbox::~Toolbox() {
 
 void Toolbox::_pumpEvents() {
 	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event)) {
+	Common::EventManager *manager = g_system->getEventManager();
+	while (manager->pollEvent(event)) {
 		EventRecord newRecord;
 		newRecord.when = this->TickCount();
 		switch (event.type) {
@@ -48,26 +49,37 @@ void Toolbox::_pumpEvents() {
 		case Common::EVENT_RBUTTONDOWN:
 			newRecord.what = kMouseDown;
 			newRecord.where = event.mouse;
-			_events.push(newRecord);
+			_events.push_back(newRecord);
 			_mouse = event.mouse;
 			break;
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
 			newRecord.what = kMouseUp;
 			newRecord.where = event.mouse;
-			_events.push(newRecord);
+			_events.push_back(newRecord);
 			_mouse = event.mouse;
 			break;
 		case Common::EVENT_QUIT:
+			manager->resetQuit();
+			newRecord.what = kScummVMQuitEvt;
+			_events.push_back(newRecord);
+			break;
 		case Common::EVENT_RETURN_TO_LAUNCHER:
+			manager->resetReturnToLauncher();
+			newRecord.what = kScummVMReturnToLauncherEvt;
+			_events.push_back(newRecord);
+			break;
 		default:
 			break;
 		}
 	}
+	// erase the older events if they aren't consumed in time
+	while (_events.size() > 2048) {
+		_events.pop_front();
+	}
 }
 
 void Toolbox::_updateScreen() {
-	_defaultWindow->getWindowSurface()->copyFrom(*_defaultBits);
 	g_engine->_wm.draw();
 	_frameLimiter->delayBeforeSwap();
 	g_system->updateScreen();
@@ -83,18 +95,23 @@ uint32 Toolbox::Delay(uint32 numTicks) {
 	return (uint32)(g_system->getMillis() * 60 / 1000);
 }
 
-bool Toolbox::GetNextEvent(uint16 eventMask, EventRecord &theEvent) {
+bool Toolbox::GetNextEvent(uint32 eventMask, EventRecord &theEvent) {
 	//warning("STUB: Toolbox::GetNextEvent");
 	_pumpEvents();
-	if (!_events.empty()) {
-		theEvent = _events.pop();
-	} else {
-		theEvent.what = kNullEvent;
-		theEvent.where = _mouse;
-		// pretend mouse button is up
-		theEvent.modifiers = 0x80;
+	if (!_events.empty() && eventMask) {
+		for (auto it = _events.begin(); it != _events.end(); ++it) {
+			if ((1 << it->what) & eventMask) {
+				theEvent = Common::move(*it);
+				_events.erase(it);
+				return true;
+			}
+		}
 	}
-	return true;
+	theEvent.what = kNullEvent;
+	theEvent.where = _mouse;
+	// FIXME: pretend mouse button is up
+	theEvent.modifiers = 0x80;
+	return false;
 }
 
 uint32 Toolbox::TickCount() {
