@@ -152,7 +152,10 @@ enum EventCode : uint16 {
 	kApp1Evt = 12,
 	kApp2Evt = 13,
 	kApp3Evt = 14,
-	kApp4Evt = 15
+	kOsEvt = 15,
+	kHighLevelEvt = 23,
+	kScummVMQuitEvt = 24,
+	kScummVMReturnToLauncherEvt = 25,
 };
 
 enum SourceMode : uint16 {
@@ -223,12 +226,12 @@ struct WindowRecord {
 };
 
 struct EventRecord {
-	EventCode what; // 0
-	uint32 message; // 2
-	WindowRecord *windowPtr; // also 2
-	uint32 when;  // 6
+	EventCode what = kNullEvent; // 0
+	uint32 message = 0; // 2
+	WindowRecord *windowPtr = nullptr; // also 2
+	uint32 when = 0;  // 6
 	Common::Point where; // 10
-	uint16 modifiers;  // 14
+	uint16 modifiers = 0;  // 14
 };
 
 struct ToolboxResInfo {
@@ -307,7 +310,7 @@ public:
 	// available event of any type designated by the mask, subject to the priority rules discussed above
 	// under "Priority of Events". If no event of any of the designated types is available, GetNextEvent
 	// returns a null event.
-	bool GetNextEvent(uint16 eventMask, EventRecord &theEvent);
+	bool GetNextEvent(uint32 eventMask, EventRecord &theEvent);
 
 	// FUNCTION TickCount : LONGINT;
 	// TickCount returns the current number of ticks (sixtieths of a second) since the system last started
@@ -860,7 +863,7 @@ private:
 	Common::Point _mouse;
 	Common::HashMap<uint16, MenuHandle> _menu;
 
-	Common::Queue<EventRecord> _events;
+	Common::List<EventRecord> _events;
 
 	GrafPtr _port = nullptr;
 

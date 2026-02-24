@@ -115,6 +115,8 @@ public:
 	void sub_144_004();
 
 private:
+	bool _quit = false;
+
 	GrafPtr var_i32_0;
 	GrafPtr var_i32_4;
 	GrafPtr var_i32_8;

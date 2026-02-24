@@ -85,6 +85,8 @@ public:
 	void sub_131_4f96();
 
 private:
+	bool _quit = false;
+
 	// last tick count
 	uint32 var_i32_2;
 	int16 var_i16_6;
