@@ -262,6 +262,8 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 
 	_skipNext = false;
 	_ra2FastForwarding = false;
+	_fobjOffsetX = 0;
+	_fobjOffsetY = 0;
 	_dst = nullptr;
 	_storeFrame = false;
 	_compressedFileMode = false;
@@ -436,19 +438,23 @@ void SmushPlayer::handleFetch(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFetch()");
 	assert(subSize >= 6);
 
-	// For RA2 Handlers 8 and 25, skip FTCH because the frame buffer only contains the
+	// For RA2 Handler 25, skip FTCH because the frame buffer only contains the
 	// par4=5 base background without the overlays (par4=4, 6, 7) that were drawn
 	// immediately in frame 0. Restoring would erase those overlays and make
 	// enemies invisible since they draw on top of the erased areas.
 	//
-	// Handler 8 (Level 2 on-foot): Background is drawn in procPreRendering from
-	// _level2Background. FTCH would overwrite FOBJ-drawn enemies.
-	// Handler 25 (Level 2 speeder bike): Same issue with corridor overlays.
+	// Handler 25 (Level 2 speeder bike): Corridor overlay is drawn in procPreRendering
+	// BEFORE FOBJs. FTCH would erase the overlay, making enemies draw on wrong background.
+	//
+	// Handler 8 (Level 2 on-foot): FTCH is NOT skipped here. FTCH restores the clean
+	// background each frame, which properly erases old enemy sprite positions before
+	// new FOBJs draw updated positions. procPreRendering also restores _level2Background,
+	// but FTCH provides the authoritative clean slate from frame 0's stored background.
 	if (_vm->_game.id == GID_REBEL2 && _insane != nullptr) {
 		InsaneRebel2 *rebel2 = static_cast<InsaneRebel2 *>(_insane);
 		int handler = rebel2->getHandler();
-		if (handler == 8 || handler == 25) {
-			debug("SmushPlayer::handleFetch: Skipping FTCH for Handler %d - preserving overlays", handler);
+		if (handler == 25) {
+			debug("SmushPlayer::handleFetch: Skipping FTCH for Handler 25 - preserving overlays");
 			return;
 		}
 	}
@@ -1081,6 +1087,32 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	if (_dst == _specialBuffer)
 		pitch = _width;
 
+	// RA2: Apply global FOBJ position offsets (matching original FUN_00423A50)
+	// These are set by InsaneRebel2 during IACT opcode 6 processing
+	if (_vm->_game.id == GID_REBEL2) {
+		left += _fobjOffsetX;
+		top += _fobjOffsetY;
+	}
+
+	// Bounds check: clamp FOBJ to destination buffer dimensions
+	int bufHeight = (_dst == _specialBuffer) ? _height : _vm->_screenHeight;
+	if (top < 0) {
+		height += top;
+		top = 0;
+	}
+	if (left < 0) {
+		width += left;
+		left = 0;
+	}
+	if (top + height > bufHeight) {
+		height = bufHeight - top;
+	}
+	if (left + width > pitch) {
+		width = pitch - left;
+	}
+	if (width <= 0 || height <= 0)
+		return;
+
 	switch (codec) {
 	case SMUSH_CODEC_RLE:
 	case SMUSH_CODEC_RLE_ALT:
@@ -1208,9 +1240,26 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 		const int32 subSize = b.readUint32BE();
 		const int32 subOffset = b.pos();
 
-		// Debug: Log all chunk types for first few frames
-		if (_vm->_game.id == GID_REBEL2 && _frame < 5) {
+		// Debug: Log all chunk types for first 25 frames
+		if (_vm->_game.id == GID_REBEL2 && _frame < 25) {
 			debug("SmushPlayer::handleFrame: frame=%d chunk=%s size=%d", _frame, tag2str(subType), subSize);
+		}
+
+		// RA2 SKIP mechanism (matching original FUN_00423A50 bVar6):
+		// When _skipNext is set, skip the NEXT chunk of ANY type (FOBJ, PSAD, SKIP, etc.)
+		// In the original, bVar6 is checked at the top of the loop before the type switch,
+		// corrupting the tag so no handler matches. This consumes exactly one chunk.
+		// Critical: this must also skip SKIP chunks to prevent SKIP→SKIP→FOBJ misalignment.
+		if (_vm->_game.id == GID_REBEL2 && _skipNext) {
+			_skipNext = false;
+			debug("SmushPlayer::handleFrame: SKIP consumed chunk %s frame=%d", tag2str(subType), _frame);
+			frameSize -= subSize + 8;
+			b.seek(subOffset + subSize, SEEK_SET);
+			if (subSize & 1) {
+				b.skip(1);
+				frameSize--;
+			}
+			continue;
 		}
 
 		switch (subType) {
@@ -1224,13 +1273,6 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 			handleZlibFrameObject(subSize, b);
 			break;
 		case MKTAG('P','S','A','D'):
-			// Rebel Assault 2 only: Skip sound when _skipNext is set (enemy killed)
-			// This mirrors the original game's FUN_00423A50 behavior where
-			// SKIP tags cause subsequent PSAD/SAUD chunks to be skipped
-			if (_vm->_game.id == GID_REBEL2 && _skipNext) {
-				_skipNext = false;
-				break;
-			}
 			if (!_compressedFileMode) {
 				audioChunk = (uint8 *)malloc(subSize + 8);
 				b.seek(-8, SEEK_CUR);

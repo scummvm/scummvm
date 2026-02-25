@@ -917,96 +917,9 @@ void InsaneRebel2::procPreRendering(byte *renderBitmap) {
 	// For Mode 1: DAT_0045790c = damageLevel * -5 - 14, range -39 (covered) to -14 (uncovered)
 	//
 	// From FUN_00428a10: When position is negative, we skip source pixels and draw at 0.
-	// This creates a "scrolling window" effect as the character enters/exits cover.
-	if (_rebelHandler == 25 && renderBitmap) {
-		// Calculate pitch and buffer height for both corridor overlay and GRD001 rendering
-		int pitch = (_player && _player->_width > 0) ? _player->_width : 320;
-		int bufHeight = (_player && _player->_height > 0) ? _player->_height : 200;
-
-		// FIRST: Restore Level 2 background (par4=5) as the base layer
-		// This is the scene background that enemies (FOBJ) draw on top of.
-		// Without this, enemies are drawn onto black/empty buffer and appear invisible.
-		// The corridor overlay (par4=4) is a HUD frame drawn ON TOP of this background.
-		if (_level2BackgroundLoaded && _level2Background) {
-			for (int y = 0; y < MIN(200, bufHeight); y++) {
-				memcpy(renderBitmap + y * pitch, _level2Background + y * 320, MIN(320, pitch));
-			}
-			debug("Rebel2 Handler25 PRE: Restored _level2Background to renderBitmap");
-		} else {
-			debug("Rebel2 Handler25 PRE: WARNING - _level2Background NOT restored (loaded=%d ptr=%p)",
-				_level2BackgroundLoaded, (void*)_level2Background);
-		}
-
-		EmbeddedSanFrame &corridorOverlay = _rebelEmbeddedHud[4];
-		if (corridorOverlay.valid && corridorOverlay.pixels) {
-
-			// Calculate source offset and destination position (FUN_00428a10 lines 31-43)
-			// If position is negative, skip source pixels and draw at screen edge
-			// Use _rebelViewOffsetX which is DAT_0045790c (damageLevel * -5 - 14)
-			int srcOffsetX = 0;
-			int srcOffsetY = 0;
-			int destX = _rebelViewOffsetX;   // DAT_0045790c
-			int destY = _rebelViewOffsetY;   // DAT_0045790e
-			int drawWidth = corridorOverlay.width;
-			int drawHeight = corridorOverlay.height;
-
-			// Handle negative X position: skip source pixels, draw at X=0
-			if (destX < 0) {
-				srcOffsetX = -destX;
-				drawWidth -= srcOffsetX;
-				destX = 0;
-			}
-			// Handle negative Y position: skip source pixels, draw at Y=0
-			if (destY < 0) {
-				srcOffsetY = -destY;
-				drawHeight -= srcOffsetY;
-				destY = 0;
-			}
-
-			// Clip to screen bounds
-			if (destX + drawWidth > pitch) {
-				drawWidth = pitch - destX;
-			}
-			if (destY + drawHeight > bufHeight) {
-				drawHeight = bufHeight - destY;
-			}
-
-			// Bounds check: ensure srcOffsetX doesn't exceed image width
-			if (srcOffsetX >= corridorOverlay.width) {
-				debug("Rebel2 procPreRendering: srcOffsetX (%d) >= image width (%d), skipping", srcOffsetX, corridorOverlay.width);
-			}
-			// Bounds check: ensure we have valid draw dimensions
-			else if (drawWidth > 0 && drawHeight > 0) {
-				// Additional safety: clamp to source image bounds
-				int maxDrawWidth = corridorOverlay.width - srcOffsetX;
-				int maxDrawHeight = corridorOverlay.height - srcOffsetY;
-				if (drawWidth > maxDrawWidth) drawWidth = maxDrawWidth;
-				if (drawHeight > maxDrawHeight) drawHeight = maxDrawHeight;
-
-				if (drawWidth > 0 && drawHeight > 0) {
-					for (int y = 0; y < drawHeight; y++) {
-						for (int x = 0; x < drawWidth; x++) {
-							int srcIdx = (srcOffsetY + y) * corridorOverlay.width + (srcOffsetX + x);
-							byte pixel = corridorOverlay.pixels[srcIdx];
-							if (pixel != 0 && pixel != 231) {  // 0 and 231 = transparent
-								renderBitmap[(destY + y) * pitch + (destX + x)] = pixel;
-							}
-						}
-					}
-				}
-			}
-
-			debug("Rebel2 procPreRendering: Corridor overlay viewOff=(%d,%d) damageLevel=%d autopilot=%d srcOff=(%d,%d) dest=(%d,%d) draw=(%d,%d) imgSize=(%d,%d)",
-				_rebelViewOffsetX, _rebelViewOffsetY, _rebelDamageLevel, _rebelAutopilot,
-				srcOffsetX, srcOffsetY, destX, destY, drawWidth, drawHeight,
-				corridorOverlay.width, corridorOverlay.height);
-		}
-
-		// Draw GRD001 (wall/cockpit overlay) AFTER corridor but BEFORE FOBJ enemies.
-		// This ensures enemies from FOBJ chunks draw ON TOP of the cockpit overlay.
-		// Uses width-halving logic from FUN_0041db5e lines 202-221.
-		renderHandler25ShipPre(renderBitmap, pitch, pitch, bufHeight);
-	}
+	// Handler 25: Corridor overlay and FOBJ position offsets are set during
+	// IACT opcode 6 processing (iactRebel2Opcode6), matching the original
+	// FUN_41CADB architecture. No corridor drawing needed here.
 }
 
 void InsaneRebel2::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -1219,14 +1132,15 @@ void InsaneRebel2::iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, 
 		if (targetId < 1 || targetId >= 0x200)
 			return;
 
-		// Handler 8 specific: FUN_401234 case 0, par3==1, par4!=0
+		// Handler 8/25: FUN_401234 case 0 / FUN_41E7C2 par3==1, par4!=0
 		// "If enemy type par4 has been killed (bit set in wave state), disable targetId"
-		// This conditionally hides entities based on which enemy groups have been destroyed
-		if (_rebelHandler == 8 && value != 0) {
+		// This conditionally hides entities based on which enemy groups have been destroyed.
+		// Both Handler 8 (on-foot) and Handler 25 (FPS/cover) use DAT_0047ab98 for wave state.
+		if ((_rebelHandler == 8 || _rebelHandler == 25) && value != 0) {
 			int bitMask = 1 << (value & 0x1f);
 			if ((_rebelWaveState & bitMask) != 0) {
 				setBit(targetId);
-				debug("Rebel2 Opcode2 (H8): Disable target=%d (type %d killed, wave=0x%x)", targetId, value, _rebelWaveState);
+				debug("Rebel2 Opcode2 (H%d): Disable target=%d (type %d killed, wave=0x%x)", _rebelHandler, targetId, value, _rebelWaveState);
 			}
 			return;
 		}
@@ -1631,11 +1545,14 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 				_rebelLinks[i][1] = 0;
 				_rebelLinks[i][2] = 0;
 			}
+			// Reset wave state to accumulated phase state (same as Handler 8)
+			// DAT_0047ab98 = DAT_0047ab9c: ensures new wave starts with correct state
+			_rebelWaveState = _rebelPhaseState;
 			// Initialize to covered state - player starts behind cover
 			// This ensures the corridor overlay shows the "covered" position initially
 			_rebelAutopilot = 1;    // DAT_00457904 = 1 (covered)
 			_rebelDamageLevel = 5;  // DAT_0045790a = 5 (fully in cover)
-			debug("Rebel2 Opcode 6 (Handler 25): Status bar enabled, state reset, starting COVERED");
+			debug("Rebel2 Opcode 6 (Handler 25): Status bar enabled, state reset, starting COVERED, wave=0x%x", _rebelWaveState);
 		}
 
 		// Set sprite mode (DAT_00457900 = local_14[3]) - controls which GRD sprite to render
@@ -1777,6 +1694,47 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		debug("Rebel2 Opcode 6 (Handler 25): mode=%d damage=%d dir=%d autopilot=%d viewOff=(%d,%d) spritePos=(%d,%d)",
 			_grdSpriteMode, _rebelDamageLevel, _rebelFlightDir, _rebelAutopilot,
 			_rebelViewOffsetX, _rebelViewOffsetY, _rebelViewOffset2X, _rebelViewOffset2Y);
+
+		// Set FOBJ position offsets (FUN_00424510 in original, line 214)
+		// All subsequent FOBJs in this frame will be shifted by these offsets
+		if (_player) {
+			_player->_fobjOffsetX = _rebelViewOffsetX;
+			_player->_fobjOffsetY = _rebelViewOffsetY;
+		}
+
+		// Draw corridor overlay OPAQUELY (FUN_00428A10 in original, line 216)
+		// This wipes previous frame content so codec 23 delta skip regions show clean corridor
+		if (renderBitmap) {
+			EmbeddedSanFrame &corridorOverlay = _rebelEmbeddedHud[4];
+			if (corridorOverlay.valid && corridorOverlay.pixels) {
+				int pitch = (_player && _player->_width > 0) ? _player->_width : 320;
+				int bufHeight = (_player && _player->_height > 0) ? _player->_height : 200;
+
+				int srcOffsetX = 0;
+				int srcOffsetY = 0;
+				int destX = _rebelViewOffsetX;
+				int destY = _rebelViewOffsetY;
+				int drawWidth = corridorOverlay.width;
+				int drawHeight = corridorOverlay.height;
+
+				if (destX < 0) { srcOffsetX = -destX; drawWidth -= srcOffsetX; destX = 0; }
+				if (destY < 0) { srcOffsetY = -destY; drawHeight -= srcOffsetY; destY = 0; }
+				if (destX + drawWidth > pitch) drawWidth = pitch - destX;
+				if (destY + drawHeight > bufHeight) drawHeight = bufHeight - destY;
+				if (drawWidth > corridorOverlay.width - srcOffsetX) drawWidth = corridorOverlay.width - srcOffsetX;
+				if (drawHeight > corridorOverlay.height - srcOffsetY) drawHeight = corridorOverlay.height - srcOffsetY;
+
+				if (drawWidth > 0 && drawHeight > 0) {
+					for (int y = 0; y < drawHeight; y++) {
+						memcpy(renderBitmap + (destY + y) * pitch + destX,
+							   corridorOverlay.pixels + (srcOffsetY + y) * corridorOverlay.width + srcOffsetX,
+							   drawWidth);
+					}
+				}
+				debug("Rebel2 Opcode 6: Corridor overlay drawn at (%d,%d) size(%d,%d)",
+					_rebelViewOffsetX, _rebelViewOffsetY, corridorOverlay.width, corridorOverlay.height);
+			}
+		}
 
 		return;
 	}
@@ -2722,12 +2680,16 @@ void InsaneRebel2::enemyUpdate(byte *renderBitmap, Common::SeekableReadStream &b
 	// But for drawing the bounding box, we want the top-left corner (x, y) and full dimensions.
 
 	// Update enemy list for hit detection
+	// Enemy type comes from par4 (IACT offset +6), NOT par3 (offset +4).
+	// In the original (FUN_004028C5/FUN_0041E7C2): sVar5/sVar2 = *(short *)(*local + 6)
+	// This maps to par4 (userId field). Used for DAT_0047ab98 wave state bitmask:
+	//   DAT_0047ab98 |= 1 << (type & 0x1f)
 	bool found = false;
 	Common::List<enemy>::iterator it;
 	for (it = _enemies.begin(); it != _enemies.end(); ++it) {
 		if (it->id == enemyId) {
 			it->rect = Common::Rect(x, y, x + w, y + h);
-			it->type = par3;  // Update enemy type/group
+			it->type = par4;  // Enemy type from IACT offset +6 (userId)
 			// Only re-activate if not destroyed
 			if (!it->destroyed) {
 				it->active = true;
@@ -2737,7 +2699,7 @@ void InsaneRebel2::enemyUpdate(byte *renderBitmap, Common::SeekableReadStream &b
 		}
 	}
 	if (!found) {
-		init_enemyStruct(enemyId, x, y, w, h, true, false, -1, par3);
+		init_enemyStruct(enemyId, x, y, w, h, true, false, -1, par4);
 	}
 }
 
@@ -4090,6 +4052,8 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 
 	renderHandler7Ship(renderBitmap, pitch, width, height);
 	renderHandler8Ship(renderBitmap, pitch, width, height);
+	// GRD001 (wall/cockpit) drawn AFTER FOBJs per original FUN_0041DB5E lines 202-210
+	renderHandler25ShipPre(renderBitmap, pitch, width, height);
 	renderHandler25Ship(renderBitmap, pitch, width, height);
 	renderFallbackShip(renderBitmap, pitch, width, height);
 
@@ -4128,6 +4092,12 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 
 	// HUD score/lives rendering (FUN_0041c012)
 	renderScoreHUD(renderBitmap, pitch, width, height, 0);
+
+	// Reset FOBJ position offsets (FUN_00424510(0,0) in original FUN_0041DB5E line 271)
+	if (_player) {
+		_player->_fobjOffsetX = 0;
+		_player->_fobjOffsetY = 0;
+	}
 
 	// Frame end cleanup: reset enemy active flags and collision zones (FUN_403240)
 	frameEndCleanup();
@@ -4364,9 +4334,10 @@ void InsaneRebel2::renderEmbeddedHudOverlays(byte *renderBitmap, int pitch, int 
 		if (!frame.valid || !frame.pixels || frame.width <= 0 || frame.height <= 0)
 			continue;
 
-		// For Handler 25: Skip slot 4 (corridor overlay) here - it's already drawn
-		// in procPreRendering BEFORE FOBJ enemies. Drawing it again here (after FOBJs)
-		// would cover the enemies and make them invisible.
+		// Handler 25: Skip slot 4 (corridor overlay) in post-rendering.
+		// The corridor is a full background image (no color 0 transparent center).
+		// Drawing it here would cover enemies. It's already drawn in procPreRendering
+		// with transparency to preserve frame persistence for codec 23 delta.
 		if (_rebelHandler == 25 && hudSlot == 4) {
 			continue;
 		}
@@ -4635,8 +4606,8 @@ void InsaneRebel2::renderHandler8Ship(byte *renderBitmap, int pitch, int width, 
 		spriteIndex, numSprites, _shipDirectionH, _shipDirectionV);
 }
 
-// Handler 25 PRE-rendering: Draw GRD001 BEFORE FOBJ decoding
-// This is called from procPreRendering so enemies draw ON TOP of GRD001
+// Handler 25: Draw GRD001 (wall/cockpit overlay) in procPostRendering.
+// Per original FUN_0041DB5E, GRD sprites are drawn AFTER FOBJ enemies, before GRD002.
 //
 // From FUN_0041db5e disassembly (lines 202-221):
 // - Mode 1 with damage==0: Width halved (left half only, pixels 0-159)
@@ -4714,9 +4685,8 @@ void InsaneRebel2::renderHandler25ShipPre(byte *renderBitmap, int pitch, int wid
 }
 
 void InsaneRebel2::renderHandler25Ship(byte *renderBitmap, int pitch, int width, int height) {
-	// Handler 25 POST-rendering: Draw ONLY GRD002 (character sprite)
-	// GRD001 (wall/cockpit) is now drawn in renderHandler25ShipPre() during procPreRendering
-	// so that FOBJ enemies can draw ON TOP of it.
+	// Handler 25 POST-rendering: Draw GRD002 (character sprite) on top of enemies.
+	// GRD001 (wall/cockpit) is drawn before this via renderHandler25ShipPre().
 	//
 	// From FUN_0041db5e disassembly (lines 230-248):
 	// GRD002 is drawn LAST (after enemies) so the character appears in front.
