@@ -290,6 +290,7 @@ public:
 	virtual ~ColonyEngine();
 
 	Common::Error run() override;
+	Common::Platform getPlatform() const { return _gameDescription->platform; }
 
 	void initTrig();
 	void loadMap(int mnum);
@@ -466,6 +467,9 @@ private:
 	Image *loadImage(Common::SeekableReadStream &file);
 	void unpackBytes(Common::SeekableReadStream &file, byte *dst, uint32 len);
 	Common::Rect readRect(Common::SeekableReadStream &file);
+	int16 readSint16(Common::SeekableReadStream &s);
+	uint16 readUint16(Common::SeekableReadStream &s);
+	uint32 readUint32(Common::SeekableReadStream &s);
 	int whichSprite(const Common::Point &p);
 	void handleAnimationClick(int item);
 	void dolSprite(int index);

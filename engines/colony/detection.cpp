@@ -31,6 +31,26 @@ static const PlainGameDescriptor colonyGames[] = {
 const ADGameDescription gameDescriptions[] = {
 	{
 		"colony",
+		"B&W",
+		AD_ENTRY2s("Colony", "50f79a9fd68055a49171eaf92f3f6b13", 229888,
+		           "Zounds", "9de09af0a8d62f30d6863ff86c95cc51", 552576),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_RENDERMACINTOSH, GUIO_RENDEREGA)
+	},
+	{
+		"colony",
+		"Color",
+		AD_ENTRY2s("Color256", "7955c1cd7b94bba89a31c5c96840eeb2", 1588,
+		           "Color16", "e5382c33f47e5619887eac8991a5c249", 1588),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_RENDERMACINTOSH, GUIO_RENDEREGA)
+	},
+	{
+		"colony",
 		"",
 		AD_ENTRY2s("logo1.pic", "70d44e40ac19ea0413f1253b781399de", 6689,
 		           "MAP.1", "ab40dc3d9658e8cdc0bee63c2ca9c79b", 3350),

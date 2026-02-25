@@ -23,7 +23,9 @@
 #define COLONY_SOUND_H
 
 #include "audio/softsynth/pcspk.h"
+#include "audio/mixer.h"
 #include "common/ptr.h"
+#include "common/macresman.h"
 
 namespace Colony {
 
@@ -73,8 +75,11 @@ public:
 private:
 	ColonyEngine *_vm;
 	Audio::PCSpeaker *_speaker;
+	Common::MacResManager *_resMan;
 
 	void playPCSpeaker(int soundID);
+	bool playMacSound(int soundID);
+	bool playResource(int resID);
 };
 
 } // End of namespace Colony

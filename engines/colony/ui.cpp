@@ -981,33 +981,36 @@ void ColonyEngine::makeMessageRect(Common::Rect &rr) {
 }
 
 void ColonyEngine::doText(int entry, int center) {
-	Common::File file;
-	if (!file.open("T.DAT")) {
-		warning("doText: Could not open T.DAT");
-		return;
+	Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(Common::Path("T.DAT"));
+	if (!file) {
+		file = Common::MacResManager::openFileOrDataFork(Common::Path("CData/Tdata"));
+		if (!file) {
+			warning("doText: Could not open text file");
+			return;
+		}
 	}
 
-	uint32 entries = file.readUint32BE();
+	uint32 entries = file->readUint32BE();
 	if (entry < 0 || (uint32)entry >= entries) {
 		warning("doText: Entry %d out of range (max %d)", entry, entries);
-		file.close();
+		delete file;
 		return;
 	}
 
-	file.seek(4 + entry * 8);
-	uint32 offset = file.readUint32BE();
-	uint16 ch = file.readUint16BE();
-	file.readUint16BE(); // lines (unused)
+	file->seek(4 + entry * 8);
+	uint32 offset = file->readUint32BE();
+	uint16 ch = file->readUint16BE();
+	file->readUint16BE(); // lines (unused)
 
 	if (ch == 0) {
-		file.close();
+		delete file;
 		return;
 	}
 
 	byte *page = (byte *)malloc(ch + 1);
-	file.seek(offset);
-	file.read(page, ch);
-	file.close();
+	file->seek(offset);
+	file->read(page, ch);
+	delete file;
 	page[ch] = 0;
 
 	// Decode: Chain XOR starting from end with '\'
