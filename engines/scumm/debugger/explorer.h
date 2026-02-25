@@ -19,58 +19,50 @@
  *
  */
 
-#ifndef SCUMM_EDITOR_H
-#define SCUMM_EDITOR_H
-
-#include "backends/imgui/imgui.h"
+#ifndef SCUMM_EDITOR_EXPLORER_H
+#define SCUMM_EDITOR_EXPLORER_H
 
 #include "common/array.h"
-#include "common/str.h"
+#include "common/formats/json.h"
 
-#include "scumm/debugger/explorer.h"
 #include "scumm/debugger/resource.h"
 
 namespace Scumm {
 
-class ScummEngine;
-
 namespace Editor {
 
-enum {
-	kColorLabel,
-	kColorProperty,
-	kColorWarning,
-	kColorError,
-	kColorCount
-};
-
-} // End of namespace Editor
-
-class ScummEditor {
+class Explorer {
 private:
-	ScummEngine *_engine;
-	Common::String _gameName;
-	Common::Path _gamePath;
+	enum {
+		kColorData,
+		kColorZero,
+		kColorCount
+	};
 
-	Editor::Resource _resource;
-	Editor::Explorer _explorer;
+	Resource *_resource;
 
-	Common::Array<ImVec4> _colors;
-	bool _showSettings;
-	bool _showExplorer;
+	Common::Array<ImVec4> &_colors;
+	Common::Array<ImVec4> _explorerColors;
 
-	void loadGame();
+	Common::Array<int> _selectedBlocks;
 
-	void loadState();
-	void saveState();
+	void renderTab(int fileIndex);
+	void renderTree(const Common::Array<Block> &blocks, int &selectedBlock);
+	void renderTreeNode(const Common::Array<Block> &blocks, int blockIndex, int &selectedBlock);
+	void renderBlock(int fileIndex);
+
+public:
+	Explorer(Resource *resource, Common::Array<ImVec4> &colors);
+
+	void loadState(const Common::JSONObject &json);
+	Common::JSONObject saveState() const;
 
 	void showSettings();
 
-public:
-	ScummEditor(ScummEngine *engine);
-
-	void render();
+	void render(const char *icon, ImGuiID dockSpaceId, bool *open);
 };
+
+} // End of namespace Editor
 
 } // End of namespace Scumm
 

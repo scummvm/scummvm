@@ -32,6 +32,7 @@
 #include "scumm/debugger/editor.h"
 
 #define ICON_EDITOR   ICON_MS_CONSTRUCTION
+#define ICON_EXPLORER ICON_MS_DATABASE
 #define ICON_SETTINGS ICON_MS_SETTINGS
 
 namespace Scumm {
@@ -45,7 +46,9 @@ ScummEditor::ScummEditor(ScummEngine *engine)
 	  _gameName(ConfMan.get("gameid")),
 	  _gamePath(ConfMan.get("path")),
 	  _resource(engine->_game.version),
-	  _showSettings(false) {
+	  _explorer(&_resource, _colors),
+	  _showSettings(false),
+	  _showExplorer(true) {
 	// Specify default colors
 	_colors.resize(Editor::kColorCount);
 	_colors[Editor::kColorLabel] = ImVec4(0.149f, 0.545f, 0.824f, 1.0f);    // SOL_BLUE
@@ -97,6 +100,12 @@ void ScummEditor::loadState() {
 	if (!state)
 		return;
 
+	// Load window visibility
+	if (state->asObject().contains("Windows")) {
+		int64 flags = state->asObject()["Windows"]->asIntegerNumber();
+		_showExplorer = flags & (1 << 0);
+	}
+
 	// Load colors
 	if (state->asObject().contains("Colors")) {
 		const Common::JSONObject &colors = state->asObject()["Colors"]->asObject();
@@ -110,6 +119,10 @@ void ScummEditor::loadState() {
 			}
 		}
 	}
+
+	// Load editor states
+	if (state->asObject().contains("Explorer"))
+		_explorer.loadState(state->asObject()["Explorer"]->asObject());
 
 	// Load ImGui layout
 	if (state->asObject().contains("IniSettings")) {
@@ -139,6 +152,12 @@ void ScummEditor::loadState() {
 void ScummEditor::saveState() {
 	Common::JSONObject json;
 
+	// Save window visibility
+	int64 flags = 0;
+	if (_showExplorer)
+		flags |= (1 << 0);
+	json["Windows"] = new Common::JSONValue((long long int)flags);
+
 	// Save colors
 	Common::JSONObject colors;
 	for (uint i = 0; i < _colors.size(); ++i) {
@@ -150,6 +169,9 @@ void ScummEditor::saveState() {
 		colors[colorNames[i]] = new Common::JSONValue(arr);
 	}
 	json["Colors"] = new Common::JSONValue(colors);
+
+	// Save editor states
+	json["Explorer"] = new Common::JSONValue(_explorer.saveState());
 
 	// Save layout
 	const char *iniSettings = ImGui::SaveIniSettingsToMemory();
@@ -187,6 +209,9 @@ void ScummEditor::showSettings() {
 			for (uint i = 0; i < _colors.size(); ++i)
 				ImGui::ColorEdit4(colorNames[i], &_colors[i].x);
 
+		// Show editor settings
+		_explorer.showSettings();
+
 		// ImGui settings
 		if (ImGui::CollapsingHeader("ImGui", ImGuiTreeNodeFlags_DefaultOpen)) {
 			ImGuiStyle &style = ImGui::GetStyle();
@@ -198,7 +223,7 @@ void ScummEditor::showSettings() {
 }
 
 void ScummEditor::render() {
-	ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
+	ImGuiID dockSpaceId = ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
 
 	// Menu bar
 	if (ImGui::BeginMainMenuBar()) {
@@ -211,11 +236,17 @@ void ScummEditor::render() {
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("View")) {
+			ImGui::MenuItem(ICON_EXPLORER " Explorer", nullptr, &_showExplorer);
+			ImGui::Separator();
 			ImGui::MenuItem(ICON_SETTINGS " Settings", nullptr, &_showSettings);
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
 	}
+
+	// Editor windows
+	if (_showExplorer)
+		_explorer.render(ICON_EXPLORER, dockSpaceId, &_showExplorer);
 
 	// Settings window
 	if (_showSettings)

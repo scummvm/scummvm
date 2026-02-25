@@ -100,6 +100,7 @@ ifdef USE_IMGUI
 MODULE_OBJS += \
 	debugger/debugtools.o \
 	debugger/editor.o \
+	debugger/explorer.o \
 	debugger/file.o \
 	debugger/resource.o
 endif
