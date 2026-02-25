@@ -4652,7 +4652,7 @@ int GameLogic::r11_handleVerbPush() {
 
 void GameLogic::r11_initRoomAnimations() {
 	_vm->loadAnimationSpriteRange(0, "water", 4);
-	_vm->loadAnimationSprite(4, "suckcut");
+	_vm->loadAnimationSprite(4, "suckcut.pcx");
 	_vm->setAnimationTimer(0, 800);
 	_vm->startRoomAnimations();
 }

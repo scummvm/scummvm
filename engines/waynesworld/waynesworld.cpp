@@ -426,7 +426,7 @@ void WaynesWorldEngine::handleMouseClick() {
 
 void WaynesWorldEngine::handleMouseLeftClick() {
     switch (_gameState) {
-    case 0:
+    case 0: // Normal Game mode
         if (_mouseClickY < 150) {
             _objectNumber = _hoverObjectNumber;
             if (_objectNumber != -1) {
@@ -442,7 +442,7 @@ void WaynesWorldEngine::handleMouseLeftClick() {
     case 1:
         gameMapHandleMouseClick();
         break;
-    case 2:
+    case 2: // Dialog Mode
         handleDialogMouseClick();
         break;
     case 3:
@@ -733,14 +733,14 @@ void WaynesWorldEngine::selectVerbNumber(int x) {
                 drawInventory();
                 refreshActors();
             } else {
-                // TODO r0_handleRoomEvent1();
+				warning("STUB r0_handleRoomEvent1()");
             }
         }
     } else if (selectedButtonIndex == 0) {
         changeActor();
     } else {
         _verbNumber = selectedButtonIndex;
-        drawVerbLine(_verbNumber, -4, 0);
+        drawVerbLine(_verbNumber, -4, nullptr);
         if (_verbNumber == 8 && _inventoryItemsCount == 0) {
             drawInventory();
             refreshActors();
