@@ -138,26 +138,32 @@ ColonyEngine::~ColonyEngine() {
 
 
 void ColonyEngine::loadMap(int mnum) {
-	Common::String mapName = Common::String::format("MAP.%d", mnum);
-	Common::File file;
-	if (!file.open(Common::Path(mapName))) {
-		warning("Could not open map file %s", mapName.c_str());
-		return;
+	Common::Path mapPath(Common::String::format("MAP.%d", mnum));
+	Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(mapPath);
+	if (!file) {
+		// Try Mac-style path
+		mapPath = Common::Path(Common::String::format("CData/map.%d", mnum));
+		file = Common::MacResManager::openFileOrDataFork(mapPath);
+		if (!file) {
+			warning("Could not open map file %s", mapPath.toString().c_str());
+			return;
+		}
 	}
 
-	file.readUint32BE(); // "DAVE" header
+	file->readUint32BE(); // "DAVE" header
 	int16 mapDefs[10];
 	for (int i = 0; i < 10; i++) {
-		mapDefs[i] = file.readSint16BE(); // Swapped in original code
+		mapDefs[i] = file->readSint16BE();
 	}
 
-	uint16 bLength = file.readUint16BE(); // Swapped in original code
+	uint16 bLength = file->readUint16BE();
 	uint8 *buffer = (uint8 *)malloc(bLength);
 	if (!buffer) {
+		delete file;
 		error("Out of memory loading map");
 	}
-	file.read(buffer, bLength);
-	file.close();
+	file->read(buffer, bLength);
+	delete file;
 
 	memset(_mapData, 0, sizeof(_mapData));
 	memset(_robotArray, 0, sizeof(_robotArray));
@@ -712,71 +718,84 @@ bool ColonyEngine::loadAnimation(const Common::String &name) {
 	_animationName = name;
 	for (int i = 0; i < 6; i++)
 		_animDisplay[i] = 1;
+
 	Common::String fileName = name + ".pic";
-	Common::File file;
-	if (!file.open(Common::Path(fileName))) {
-		warning("Could not open animation file %s", fileName.c_str());
-		return false;
+	Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(Common::Path(fileName));
+	if (!file) {
+		// Try lowercase for Mac
+		fileName = name;
+		fileName.toLowercase();
+		file = Common::MacResManager::openFileOrDataFork(Common::Path(fileName));
+		if (!file) {
+			// Try CData directory
+			fileName = "CData/" + fileName;
+			file = Common::MacResManager::openFileOrDataFork(Common::Path(fileName));
+			if (!file) {
+				warning("Could not open animation file %s", name.c_str());
+				return false;
+			}
+		}
 	}
 
 	deleteAnimation();
 
 	// Read background data
-	file.read(_topBG, 8);
-	file.read(_bottomBG, 8);
-	_divideBG = file.readSint16LE();
-	_backgroundActive = file.readSint16LE() != 0;
+	file->read(_topBG, 8);
+	file->read(_bottomBG, 8);
+	_divideBG = readSint16(*file);
+	_backgroundActive = readSint16(*file) != 0;
 	if (_backgroundActive) {
-		_backgroundClip = readRect(file);
-		_backgroundLocate = readRect(file);
-		_backgroundMask = loadImage(file);
-		_backgroundFG = loadImage(file);
+		_backgroundClip = readRect(*file);
+		_backgroundLocate = readRect(*file);
+		_backgroundMask = loadImage(*file);
+		_backgroundFG = loadImage(*file);
 	}
 
 	// Read sprite data
-	int16 maxsprite = file.readSint16LE();
-	file.readSint16LE(); // locSprite
+	int16 maxsprite = readSint16(*file);
+	readSint16(*file); // locSprite
 	for (int i = 0; i < maxsprite; i++) {
 		Sprite *s = new Sprite();
-		s->fg = loadImage(file);
-		s->mask = loadImage(file);
-		s->used = file.readSint16LE() != 0;
-		s->clip = readRect(file);
-		s->locate = readRect(file);
+		s->fg = loadImage(*file);
+		s->mask = loadImage(*file);
+		s->used = readSint16(*file) != 0;
+		s->clip = readRect(*file);
+		s->locate = readRect(*file);
 		_cSprites.push_back(s);
 	}
 
 	// Read complex sprite data
-	int16 maxLSprite = file.readSint16LE();
-	file.readSint16LE(); // anum
+	int16 maxLSprite = readSint16(*file);
+	readSint16(*file); // anum
 	for (int i = 0; i < maxLSprite; i++) {
 		ComplexSprite *ls = new ComplexSprite();
-		int16 size = file.readSint16LE();
+		int16 size = readSint16(*file);
 		for (int j = 0; j < size; j++) {
 			ComplexSprite::SubObject sub;
-			sub.spritenum = file.readSint16LE();
-			sub.xloc = file.readSint16LE();
-			sub.yloc = file.readSint16LE();
+			sub.spritenum = readSint16(*file);
+			sub.xloc = readSint16(*file);
+			sub.yloc = readSint16(*file);
 			ls->objects.push_back(sub);
 		}
-		ls->bounds = readRect(file);
-		ls->visible = file.readSint16LE() != 0;
-		ls->current = file.readSint16LE();
-		ls->xloc = file.readSint16LE();
-		ls->yloc = file.readSint16LE();
-		ls->acurrent = file.readSint16LE();
-		ls->axloc = file.readSint16LE();
-		ls->ayloc = file.readSint16LE();
-		ls->type = file.readByte();
-		ls->frozen = file.readByte();
-		ls->locked = file.readByte();
-		ls->link = file.readSint16LE();
-		ls->key = file.readSint16LE();
-		ls->lock = file.readSint16LE();
+		ls->bounds = readRect(*file);
+		ls->visible = readSint16(*file) != 0;
+		ls->current = readSint16(*file);
+		ls->xloc = readSint16(*file);
+		ls->yloc = readSint16(*file);
+		ls->acurrent = readSint16(*file);
+		ls->axloc = readSint16(*file);
+		ls->ayloc = readSint16(*file);
+		ls->type = file->readByte();
+		ls->frozen = file->readByte();
+		ls->locked = file->readByte();
+		ls->link = readSint16(*file);
+		ls->key = readSint16(*file);
+		ls->lock = readSint16(*file);
 		ls->onoff = true;
 		_lSprites.push_back(ls);
 	}
 
+	delete file;
 	return true;
 }
 
@@ -1065,22 +1084,33 @@ void ColonyEngine::drawAnimationImage(Image *img, Image *mask, int x, int y) {
 
 Image *ColonyEngine::loadImage(Common::SeekableReadStream &file) {
 	Image *im = new Image();
-	im->width = file.readSint16LE();
-	im->height = file.readSint16LE();
-	im->align = file.readSint16LE();
-	im->rowBytes = file.readSint16LE();
-	im->bits = file.readByte();
-	im->planes = file.readByte();
+	if (getPlatform() == Common::kPlatformMacintosh) {
+		readUint32(file); // baseAddr placeholder
+		im->rowBytes = readSint16(file);
+		Common::Rect r = readRect(file);
+		im->width = r.width();
+		im->height = r.height();
+		im->align = 0;
+		im->bits = 1;
+		im->planes = 1;
+	} else {
+		im->width = readSint16(file);
+		im->height = readSint16(file);
+		im->align = readSint16(file);
+		im->rowBytes = readSint16(file);
+		im->bits = file.readByte();
+		im->planes = file.readByte();
+	}
 
-	int16 tf = file.readSint16LE();
+	int16 tf = readSint16(file);
 	uint32 size;
 	if (tf) {
-		/* uint32 bsize = */ file.readUint32LE();
-		size = file.readUint32LE();
+		/* uint32 bsize = */ readUint32(file);
+		size = readUint32(file);
 		im->data = (byte *)malloc(size);
 		unpackBytes(file, im->data, size);
 	} else {
-		size = file.readUint32LE();
+		size = readUint32(file);
 		im->data = (byte *)malloc(size);
 		file.read(im->data, size);
 	}
@@ -1099,11 +1129,37 @@ void ColonyEngine::unpackBytes(Common::SeekableReadStream &file, byte *dst, uint
 }
 
 Common::Rect ColonyEngine::readRect(Common::SeekableReadStream &file) {
-	int16 left = file.readSint16LE();
-	int16 top = file.readSint16LE();
-	int16 right = file.readSint16LE();
-	int16 bottom = file.readSint16LE();
-	return Common::Rect(left, top, right, bottom);
+	if (getPlatform() == Common::kPlatformMacintosh) {
+		int16 top = readSint16(file);
+		int16 left = readSint16(file);
+		int16 bottom = readSint16(file);
+		int16 right = readSint16(file);
+		return Common::Rect(left, top, right, bottom);
+	} else {
+		int16 left = readSint16(file);
+		int16 top = readSint16(file);
+		int16 right = readSint16(file);
+		int16 bottom = readSint16(file);
+		return Common::Rect(left, top, right, bottom);
+	}
+}
+
+int16 ColonyEngine::readSint16(Common::SeekableReadStream &s) {
+	if (getPlatform() == Common::kPlatformMacintosh)
+		return s.readSint16BE();
+	return s.readSint16LE();
+}
+
+uint16 ColonyEngine::readUint16(Common::SeekableReadStream &s) {
+	if (getPlatform() == Common::kPlatformMacintosh)
+		return s.readUint16BE();
+	return s.readUint16LE();
+}
+
+uint32 ColonyEngine::readUint32(Common::SeekableReadStream &s) {
+	if (getPlatform() == Common::kPlatformMacintosh)
+		return s.readUint32BE();
+	return s.readUint32LE();
 }
 
 int ColonyEngine::whichSprite(const Common::Point &p) {

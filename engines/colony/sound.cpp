@@ -21,16 +21,27 @@
 
 #include "colony/sound.h"
 #include "colony/colony.h"
+#include "common/stream.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
 
 namespace Colony {
 
 Sound::Sound(ColonyEngine *vm) : _vm(vm) {
 	_speaker = new Audio::PCSpeaker();
 	_speaker->init();
+
+	_resMan = new Common::MacResManager();
+	if (!_resMan->open("Zounds")) {
+		if (!_resMan->open("CData/Zounds")) {
+			debug("Could not open Zounds resource file");
+		}
+	}
 }
 
 Sound::~Sound() {
 	delete _speaker;
+	delete _resMan;
 }
 
 void Sound::stop() {
@@ -41,7 +52,11 @@ void Sound::stop() {
 void Sound::play(int soundID) {
 	if (_speaker->isPlaying())
 		_speaker->stop();
-	playPCSpeaker(soundID);
+
+	if (_vm->getPlatform() == Common::kPlatformMacintosh)
+		playMacSound(soundID);
+	else
+		playPCSpeaker(soundID);
 }
 
 void Sound::playPCSpeaker(int soundID) {
@@ -217,6 +232,70 @@ void Sound::playPCSpeaker(int soundID) {
 	default:
 		break;
 	}
+}
+
+bool Sound::playMacSound(int soundID) {
+	int resID = -1;
+	switch (soundID) {
+	case kKlaxon: resID = 27317; break;
+	case kAirlock: resID = 5141; break;
+	case kOuch: resID = 9924; break;
+	case kChime: resID = 24694; break;
+	case kBang: resID = 24433; break;
+	case kShoot: resID = 24010; break;
+	case kEat: resID = 11783; break;
+	case kBonk: resID = 7970; break;
+	case kBzzz: resID = 11642; break;
+	case kExplode: resID = 1432; break;
+	case kElevator: resID = 12019; break;
+	case kPShot: resID = 27539; break;
+	case kTest: resID = 25795; break;
+	case kDit: resID = 1516; break;
+	case kSink: resID = 2920; break;
+	case kClatter: resID = 11208; break;
+	case kStop: resID = 29382; break;
+	case kTeleport: resID = 9757; break;
+	case kSlug: resID = 8347; break;
+	case kTunnel2: resID = 17354; break;
+	case kLift: resID = 28521; break;
+	case kGlass: resID = 19944; break;
+	case kDoor: resID = 26867; break;
+	case kToilet: resID = 4955; break;
+	case kBath: resID = 11589; break;
+	default: break;
+	}
+
+	if (resID != -1 && playResource(resID))
+		return true;
+
+	// Fallback to DOS sounds if Mac resource is missing
+	playPCSpeaker(soundID);
+	return false;
+}
+
+bool Sound::playResource(int resID) {
+	if (!_resMan || !_resMan->isMacFile())
+		return false;
+
+	Common::SeekableReadStream *snd = _resMan->getResource(MKTAG('s', 'n', 'd', ' '), resID);
+	if (!snd)
+		return false;
+
+	// The Mac source skips 42 bytes of the 'snd ' resource header to get to wave data.
+	if (snd->size() <= 42) {
+		delete snd;
+		return false;
+	}
+
+	snd->seek(42);
+	uint32 dataSize = snd->size() - 42;
+	byte *data = (byte *)malloc(dataSize);
+	snd->read(data, dataSize);
+	delete snd;
+
+	Audio::AudioStream *stream = Audio::makeRawStream(data, dataSize, 11127, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, nullptr, stream);
+	return true;
 }
 
 } // End of namespace Colony
