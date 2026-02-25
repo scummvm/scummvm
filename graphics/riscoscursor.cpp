@@ -92,7 +92,7 @@ public:
 
     byte getKeyColor() const override { return key; }
     byte getPaletteStartIndex() const override { return 0; }
-    uint16 getPaletteCount() const override { return 256; }
+    uint16 getPaletteCount() const override { return 3; }
 
 private:
     byte _palette[3];
