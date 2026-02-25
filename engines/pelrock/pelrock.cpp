@@ -1593,6 +1593,11 @@ void PelrockEngine::gameLoop() {
 		cdPlayer.run();
 		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
 	}
+	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_b) {
+		BackgroundBook backgroundBook(_events, _res);
+		backgroundBook.run();
+		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
+	}
 
 	renderScene();
 

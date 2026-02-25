@@ -179,6 +179,8 @@ public:
 	 *         Add kAmbientSoundSlotBase (4) to get room sound index
 	 */
 	int tickAmbientSound(uint32 frameCount);
+	bool _isPaused = false;
+	byte _currentMusicTrack = 0;
 
 private:
 	void playSound(SonidoFile sound, int channel = -1);
@@ -191,7 +193,6 @@ private:
 	bool _isMusicPlaying = false;
 	int _currentVolume;
 	Common::File *_musicFile;
-	byte _currentMusicTrack = 0;
 	Audio::SoundHandle _musicHandle;
 	Audio::SoundHandle _sfxHandles[kMaxChannels];
 	Common::HashMap<Common::String, SonidoFile> _soundMap;
@@ -200,7 +201,7 @@ private:
 	uint32 _cdTrackStart = 0;
 	uint32 _cdTrackDuration;
 	uint32 _cdPlayStartTime; // time at the moment of calling play()
-	bool _isPaused = false;
+
 };
 
 } // End of namespace Pelrock

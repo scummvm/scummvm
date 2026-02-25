@@ -205,6 +205,8 @@ void CDPlayer::run() {
 	memset(g_engine->_screen->getPixels(), 0, 640 * 400);
 	// Restore room palette
 	g_system->getPaletteManager()->setPalette(g_engine->_room->_roomPalette, 0, 256);
+	_sound->stopMusic();
+	_sound->playMusicTrack(g_engine->_room->_musicTrack, true);
 }
 
 void CDPlayer::init() {
@@ -287,8 +289,13 @@ void CDPlayer::checkMouse(int x, int y) {
 			_sound->pauseMusic();
 			break;
 		case PLAY_BUTTON:
-			_sound->stopMusic();
-			_sound->playMusicTrack(_selectedTrack, true);
+			if(_sound->_isPaused && _sound->_currentMusicTrack == _selectedTrack) {
+				_sound->playMusicTrack(_selectedTrack, true);
+			}
+			else {
+				_sound->stopMusic();
+				_sound->playMusicTrack(_selectedTrack, true);
+			}
 			break;
 		case PREVIOUS_BUTTON:
 			if (_selectedTrack > 2) {
@@ -353,6 +360,187 @@ void CDPlayer::loadControls() {
 	alfred7.close();
 	delete[] compressedData;
 	delete[] rawData;
+}
+
+BackgroundBook::BackgroundBook(PelrockEventManager *eventMan, ResourceManager *res) : _events(eventMan), _res(res) {
+	init();
+}
+
+BackgroundBook::~BackgroundBook() {
+	cleanup();
+}
+
+void BackgroundBook::run() {
+	g_engine->changeCursor(DEFAULT);
+	while (!g_engine->shouldQuit()) {
+		_events->pollEvent();
+		checkMouse(_events->_mouseX, _events->_mouseY);
+
+		if (_events->_rightMouseClicked) {
+			_events->_rightMouseClicked = false;
+			break;
+		}
+
+		drawScreen();
+		g_engine->_screen->markAllDirty();
+		g_engine->_screen->update();
+		g_system->delayMillis(10);
+	}
+	memset(g_engine->_screen->getPixels(), 0, 640 * 400);
+	// Restore room palette
+	g_system->getPaletteManager()->setPalette(g_engine->_room->_roomPalette, 0, 256);
+}
+
+void BackgroundBook::init() {
+	_compositeScreen = new byte[640 * 400];
+	loadBackground();
+	loadButtons();
+	loadRoomNames();
+}
+
+void BackgroundBook::checkMouse(int x, int y) {
+	if (_events->_leftMouseClicked) {
+		switch (_selectedButton) {
+		case PREVIOUS_BUTTON:
+			if (_selectedPage > 0) {
+				_selectedPage--;
+			}
+			break;
+		case NEXT_BUTTON:
+			if ((_selectedPage + 1) * kItemsPerPage < _roomNames.size()) {
+				_selectedPage++;
+			}
+			break;
+		default:
+			break;
+		}
+		_selectedButton = NO_BUTTON;
+
+		int firstItem = _selectedPage * kItemsPerPage;
+		if (y >= 72 && y < 72 + (kItemsPerPage * g_engine->_smallFont->getFontHeight()) && x >= 37 && x <= 37 + 200) {
+			int itemIndex = (y - 72) / g_engine->_smallFont->getFontHeight();
+			if (firstItem + itemIndex < _roomNames.size()) {
+				Common::String roomName = _roomNames[firstItem + itemIndex];
+				debug("Selected room: %s", roomName.c_str());
+			}
+		}
+
+		_events->_leftMouseClicked = false;
+	}
+
+	if (_events->_leftMouseButton != 0 && _selectedButton == NO_BUTTON) {
+		_selectedButton = isButtonClicked(_events->_mouseX, _events->_mouseY);
+	}
+}
+
+BackgroundBook::Buttons BackgroundBook::isButtonClicked(int x, int y) {
+	for (int i = 0; i < 2; i++) {
+		if (_buttonRects[i].contains(x, y)) {
+			return static_cast<Buttons>(i);
+		}
+	}
+	return NO_BUTTON;
+}
+
+void BackgroundBook::loadRoomNames() {
+	Common::StringArray roomNames;
+	Common::File juegoExe;
+	if (!juegoExe.open(Common::Path("JUEGO.EXE"))) {
+		error("Couldnt find file JUEGO.EXE");
+	}
+
+	size_t namesSize = 1335;
+	juegoExe.seek(0x49315, SEEK_SET);
+	byte *namesData = new byte[namesSize];
+	juegoExe.read(namesData, namesSize);
+	uint32 pos = 0;
+	Common::String currentName = "";
+	while (pos < namesSize) {
+		if (namesData[pos] == 0xFD &&
+			namesData[pos + 1] == 0x00 &&
+			namesData[pos + 2] == 0x08 &&
+			namesData[pos + 3] == 0x02) {
+			if (currentName.size() > 0) {
+				roomNames.push_back(currentName);
+			}
+			currentName = "";
+			pos += 4;
+			continue;
+		}
+		currentName += (char)namesData[pos];
+		pos++;
+	}
+	delete[] namesData;
+	juegoExe.close();
+	_roomNames = roomNames;
+}
+
+
+void BackgroundBook::drawScreen() {
+	memcpy(_compositeScreen, _backgroundScreen, 640 * 400);
+	drawButtons();
+	memcpy(g_engine->_screen->getPixels(), _compositeScreen, 640 * 400);
+
+
+	int firstItem = _selectedPage * kItemsPerPage;
+	for(int i = 0; i < kItemsPerPage; i++) {
+		if(firstItem + i >= _roomNames.size()) {
+			break;
+		}
+		// g_engine->_graphics->drawColoredTexts(_compositeScreen, _roomNames[i], 37, 72 + (i * g_engine->_smallFont->getFontHeight()), 640, 0, Graphics::kTextAlignLeft);
+	// g_engine->_graphics->drawColoredTexts(_compositeScreen, _spell->text, textX, textY, 640, 0, g_engine->_smallFont);
+		g_engine->_smallFont->drawString(g_engine->_screen, _roomNames[firstItem + i], 37, 72 + (i * g_engine->_smallFont->getFontHeight()), 640, 2, Graphics::kTextAlignLeft);
+	}
+}
+
+void BackgroundBook::drawButtons() {
+	for (int i = 0; i < 2; i++) {
+		if (_selectedButton == i) {
+			drawSpriteToBuffer(_compositeScreen, 640, _buttons[i][0], _buttonRects[i].left, _buttonRects[i].top, _buttonRects[i].width(), _buttonRects[i].height(), 207);
+		} else {
+			drawSpriteToBuffer(_compositeScreen, 640, _buttons[i][1], _buttonRects[i].left, _buttonRects[i].top, _buttonRects[i].width(), _buttonRects[i].height(), 207);
+		}
+	}
+}
+
+void BackgroundBook::loadBackground() {
+	_backgroundScreen = new byte[640 * 400];
+	_palette = new byte[768];
+	_res->getExtraScreen(13, _backgroundScreen, _palette);
+	g_system->getPaletteManager()->setPalette(_palette, 0, 256);
+}
+
+void BackgroundBook::loadButtons() {
+	Common::File alfred7;
+	if (!alfred7.open("ALFRED.7")) {
+		return;
+	}
+	alfred7.seek(3188448, SEEK_SET);
+	for(int i = 0; i < 2; i++) {
+		for(int j = 0; j < 2; j++) {
+			int w = _buttonRects[i].width();
+			int h = _buttonRects[i].height();
+			_buttons[i][j] = new byte[w * h];
+			alfred7.read(_buttons[i][j], w * h);
+		}
+	}
+
+	alfred7.close();
+}
+
+void BackgroundBook::cleanup() {
+	if (_compositeScreen) {
+		delete[] _compositeScreen;
+		_compositeScreen = nullptr;
+	}
+	if (_backgroundScreen) {
+		delete[] _backgroundScreen;
+		_backgroundScreen = nullptr;
+	}
+	if (_palette) {
+		delete[] _palette;
+		_palette = nullptr;
+	}
 }
 
 } // End of namespace Pelrock

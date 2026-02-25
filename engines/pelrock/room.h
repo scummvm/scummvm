@@ -130,12 +130,6 @@ public:
 	HotSpot *findHotspotByExtra(uint16 extra);
 	PaletteAnim *getPaletteAnimForRoom(int roomNumber);
 
-	Common::String getRoomName(int roomNumber) {
-		if (roomNumber >= 0 && (uint)roomNumber < _roomNames.size()) {
-			return _roomNames[roomNumber];
-		}
-		return "Unknown Room";
-	}
 
 	byte _currentRoomNumber = 0;
 	int _prevRoomNumber = -1;

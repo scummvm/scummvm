@@ -122,8 +122,8 @@ private:
 	byte *_compositeScreen;
 	byte *_palette;
 	byte *_controls;
-	byte *buttons[5][2];
 	Common::String trackNames[31];
+	byte *buttons[5][2];
 	Common::Rect _buttonRects[5] = {
 		Common::Rect(Common::Point(17, 46), 37, 26), // Stop
 		Common::Rect(Common::Point(57, 48), 33, 23), // Pause
@@ -138,6 +138,12 @@ private:
 
 
 class BackgroundBook {
+enum Buttons {
+	PREVIOUS_BUTTON,
+	NEXT_BUTTON,
+	NO_BUTTON
+};
+	int kItemsPerPage = 22;
 
 public:
 	BackgroundBook(PelrockEventManager *eventMan, ResourceManager *res);
@@ -147,17 +153,29 @@ public:
 
 private:
 	void init();
+	void loadRoomNames();
 	void drawScreen();
+	void drawButtons();
+	void loadButtons();
 	void loadBackground();
-	void loadControls();
 	void checkMouse(int x, int y);
+	BackgroundBook::Buttons isButtonClicked(int x, int y);
 	void cleanup();
+
 	PelrockEventManager *_events;
 	ResourceManager *_res;
 	byte *_backgroundScreen;
 	byte *_compositeScreen;
 	byte *_palette;
-	byte *_controls;
+	byte *_buttons[2][2];
+	Buttons _selectedButton = NO_BUTTON;
+	int _selectedPage = 0;
+
+	Common::Rect _buttonRects[2] = {
+		Common::Rect(Common::Point(238, 104), 28, 44), // Stop
+		Common::Rect(Common::Point(238, 178), 28, 44), // Pause
+	};
+	Common::StringArray _roomNames;
 };
 
 } // End of namespace Pelrock

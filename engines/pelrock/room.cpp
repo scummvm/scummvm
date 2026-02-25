@@ -29,7 +29,6 @@ namespace Pelrock {
 
 RoomManager::RoomManager() {
 	_pixelsShadows = new byte[640 * 400];
-	_roomNames = loadRoomNames();
 	loadWaterPaletteRemap();
 }
 
@@ -1300,39 +1299,6 @@ void RoomManager::loadRemaps(int roomNumber) {
 	remapFile.read(_paletteRemaps[3], 256);
 	remapFile.close();
 
-}
-
-Common::StringArray RoomManager::loadRoomNames() {
-	Common::StringArray roomNames;
-	Common::File juegoExe;
-	if (!juegoExe.open(Common::Path("JUEGO.EXE"))) {
-		error("Couldnt find file JUEGO.EXE");
-	}
-
-	size_t namesSize = 1335;
-	juegoExe.seek(0x49315, SEEK_SET);
-	byte *namesData = new byte[namesSize];
-	juegoExe.read(namesData, namesSize);
-	uint32 pos = 0;
-	Common::String currentName = "";
-	while (pos < namesSize) {
-		if (namesData[pos] == 0xFD &&
-			namesData[pos + 1] == 0x00 &&
-			namesData[pos + 2] == 0x08 &&
-			namesData[pos + 3] == 0x02) {
-			if (currentName.size() > 0) {
-				roomNames.push_back(currentName);
-			}
-			currentName = "";
-			pos += 4;
-			continue;
-		}
-		currentName += (char)namesData[pos];
-		pos++;
-	}
-	delete[] namesData;
-	juegoExe.close();
-	return roomNames;
 }
 
 byte RoomManager::loadMusicTrackForRoom(Common::File *roomFile, int roomOffset) {

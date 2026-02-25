@@ -227,14 +227,17 @@ bool SoundManager::isMusicPlaying() {
 }
 
 void SoundManager::playMusicTrack(int trackNumber, bool loop) {
-	if (_currentMusicTrack == trackNumber && isMusicPlaying()) {
+	if (!_isPaused && _currentMusicTrack == trackNumber && isMusicPlaying()) {
 		// Already playing this track
 		return;
 	}
 	_currentMusicTrack = trackNumber;
-	_cdTrackStart = 0;
-	_cdTrackDuration = 0;
-	_cdPlayStartTime = g_system->getMillis();
+
+	if(!_isPaused) {
+		_cdTrackStart = 0;
+		_cdTrackDuration = 0;
+		_cdPlayStartTime = g_system->getMillis();
+	}
 	g_system->getAudioCDManager()->stop();
 	g_system->getAudioCDManager()->play(trackNumber, loop ? -1 : 0, _cdTrackStart, _cdTrackDuration);
 }
