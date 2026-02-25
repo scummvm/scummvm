@@ -162,6 +162,12 @@ private:
 	bool _ra2FastForwarding;  // Fast-forwarding RA2 BEG video to establish background
 	uint32 _frame;
 
+	// RA2: Global FOBJ position offsets (DAT_00482c1c / DAT_00482c20 in original)
+	// Set by InsaneRebel2 during IACT opcode 6 processing, reset in procPostRendering.
+	// Applied to all FOBJ left/top positions during decoding.
+	int16 _fobjOffsetX;
+	int16 _fobjOffsetY;
+
 	Audio::SoundHandle *_IACTchannel;
 	Audio::QueuingAudioStream *_IACTstream;
 
