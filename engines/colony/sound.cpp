@@ -47,11 +47,12 @@ Sound::~Sound() {
 void Sound::stop() {
 	if (_speaker->isPlaying())
 		_speaker->stop();
+	if (_vm->_mixer->isSoundHandleActive(_handle))
+		_vm->_mixer->stopHandle(_handle);
 }
 
 void Sound::play(int soundID) {
-	if (_speaker->isPlaying())
-		_speaker->stop();
+	stop();
 
 	if (_vm->getPlatform() == Common::kPlatformMacintosh)
 		playMacSound(soundID);
@@ -262,6 +263,8 @@ bool Sound::playMacSound(int soundID) {
 	case kDoor: resID = 26867; break;
 	case kToilet: resID = 4955; break;
 	case kBath: resID = 11589; break;
+	case kMars: resID = 23390; break;
+	case kBeamMe: resID = 5342; break;
 	default: break;
 	}
 
@@ -294,7 +297,7 @@ bool Sound::playResource(int resID) {
 	delete snd;
 
 	Audio::AudioStream *stream = Audio::makeRawStream(data, dataSize, 11127, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
-	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, nullptr, stream);
+	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handle, stream);
 	return true;
 }
 
