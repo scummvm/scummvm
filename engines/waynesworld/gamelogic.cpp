@@ -395,6 +395,8 @@ int GameLogic::handleVerbPush() {
         return r7_handleVerbPush();
     case 37:
         return r37_handleVerbPush();
+    default:
+		break;
     }
 	return 0;
 }
@@ -409,6 +411,8 @@ int GameLogic::handleVerbPull() {
         return r37_handleVerbPull();
     case 38:
         return r38_handleVerbPull();
+    default:
+		break;
     }
 	return 0;
 }

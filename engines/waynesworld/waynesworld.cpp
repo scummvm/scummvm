@@ -290,7 +290,7 @@ int WaynesWorldEngine::getRandom(int max) {
 }
 
 void WaynesWorldEngine::waitMillis(uint millis) {
-	uint32 waitTime = _system->getMillis() + millis;
+	const uint32 waitTime = _system->getMillis() + millis;
 	while (_system->getMillis() < waitTime && !shouldQuit()) {
 		updateEvents();
 		_system->updateScreen();
@@ -322,23 +322,22 @@ void WaynesWorldEngine::initMouseCursor() {
 }
 
 bool WaynesWorldEngine::isPointAtWayne(int x, int y) {
-    int x1 = _wayneSpriteX - (_wayneActorScale * 13) / 100;
-    int x2 = _wayneSpriteX + (_wayneActorScale * 13) / 100;
-    int y1 = _wayneSpriteY - (_wayneActorScale * 48) / 100;
-    int y2 = _wayneSpriteY;
+	const int x1 = _wayneSpriteX - (_wayneActorScale * 13) / 100;
+	const int x2 = _wayneSpriteX + (_wayneActorScale * 13) / 100;
+	const int y1 = _wayneSpriteY - (_wayneActorScale * 48) / 100;
+	const int y2 = _wayneSpriteY;
     return x >= x1 && y >= y1 && x <= x2 && y <= y2;
 }
 
 bool WaynesWorldEngine::isPointAtGarth(int x, int y) {
-    int x1 = _garthSpriteX - (_garthActorScale * 13) / 100;
-    int x2 = _garthSpriteX + (_garthActorScale * 13) / 100;
-    int y1 = _garthSpriteY - (_garthActorScale * 48) / 100;
-    int y2 = _garthSpriteY;
+	const int x1 = _garthSpriteX - (_garthActorScale * 13) / 100;
+	const int x2 = _garthSpriteX + (_garthActorScale * 13) / 100;
+	const int y1 = _garthSpriteY - (_garthActorScale * 48) / 100;
+	const int y2 = _garthSpriteY;
     return x >= x1 && y >= y1 && x <= x2 && y <= y2;
 }
 
 void WaynesWorldEngine::updateMouseMove() {
-
     // Yet unknown
     if (_gameState == 4)
         return;
@@ -371,9 +370,9 @@ void WaynesWorldEngine::updateMouseMove() {
 
     // Inventory
     if (_gameState == 0 && _inventoryItemsCount > 0 && _mouseX < 312) {
-        int inventorySlotIndex = _mouseY / 20 * 12 + _mouseX / 26;
+	    const int inventorySlotIndex = _mouseY / 20 * 12 + _mouseX / 26;
         if (inventorySlotIndex < _inventoryItemsCount) {
-            int inventoryObjectId = _inventoryItemsObjectMap[inventorySlotIndex];
+	        const int inventoryObjectId = _inventoryItemsObjectMap[inventorySlotIndex];
             int inventoryItemQuantity;
             if (isActorWayne()) {
                 inventoryItemQuantity = getWayneInventoryItemQuantity(inventoryObjectId);
@@ -399,7 +398,7 @@ void WaynesWorldEngine::updateMouseMove() {
         drawVerbLine(_verbNumber, -2, "Wayne");
     } else {
         // Room objects
-        int objectIdAtPoint = findRoomObjectIdAtPoint(_mouseX, _mouseY);
+        const int objectIdAtPoint = findRoomObjectIdAtPoint(_mouseX, _mouseY);
         if (_gameState == 0) {
             if (objectIdAtPoint != -1) {
                 drawVerbLine(_verbNumber, objectIdAtPoint, getRoomObjectName(objectIdAtPoint));
@@ -508,8 +507,8 @@ void WaynesWorldEngine::loadPalette(GxlArchive* lib, const char *filename) {
 
 void WaynesWorldEngine::paletteFadeIn(int index, int count, int stepsSize) {
 	byte fadePalette[768];
-	int fadeStartIndex = index * 3;
-	int fadeEndIndex = (index + count) * 3;
+	const int fadeStartIndex = index * 3;
+	const int fadeEndIndex = (index + count) * 3;
 	bool isDone = false;
 	// CHECKME Assume we're always fading in from black for now
 	memset(fadePalette, 0, 768);
@@ -530,8 +529,8 @@ void WaynesWorldEngine::paletteFadeIn(int index, int count, int stepsSize) {
 
 void WaynesWorldEngine::paletteFadeOut(int index, int count, int stepsSize) {
 	byte fadePalette[768];
-	int fadeStartIndex = index * 3;
-	int fadeEndIndex = (index + count) * 3;
+	const int fadeStartIndex = index * 3;
+	const int fadeEndIndex = (index + count) * 3;
 	bool isDone = false;
 	memcpy(fadePalette, _palette2, 768);
 	while (!isDone) {
@@ -606,7 +605,7 @@ Common::String WaynesWorldEngine::loadString(const char *filename, int index, in
 	const uint kMaxStringLen = 60;
 	char textBuffer[kMaxStringLen];
 	Common::File fd;
-	Common::Path tempFilename(Common::String::format("%s.txt", filename));
+	const Common::Path tempFilename(Common::String::format("%s.txt", filename));
 	if (!fd.open(tempFilename))
 		error("WaynesWorldEngine::loadString() Could not open %s", tempFilename.baseName().c_str());
 	fd.seek(index * kMaxStringLen);
@@ -627,8 +626,8 @@ void WaynesWorldEngine::drawCurrentTextToSurface(WWSurface *destSurface, int x, 
 }
 
 void WaynesWorldEngine::drawCurrentText(int x, int y, WWSurface *destSurface) {
-    int textCenterX, textX, textY = 0, textColor, actorY = 0;
-    int textWidth = _fontWWInv->getTextWidth(_currentText.c_str());
+    int textCenterX, textY = 0, textColor, actorY = 0;
+    const int textWidth = _fontWWInv->getTextWidth(_currentText.c_str());
     if (x != -1) {
         textCenterX = x;
         textY = y;
@@ -642,7 +641,7 @@ void WaynesWorldEngine::drawCurrentText(int x, int y, WWSurface *destSurface) {
         actorY = _garthSpriteY;
         textColor = 119;
     }
-    textX = textCenterX - 75;
+    int textX = textCenterX - 75;
     if (textX < 0) {
         textX = 5;
     } else if (textX + 150 > 319) {
@@ -726,7 +725,7 @@ void WaynesWorldEngine::selectVerbNumber2(int x) {
 }
 
 void WaynesWorldEngine::selectVerbNumber(int x) {
-    int selectedButtonIndex = (x - 3) / 24;
+	const int selectedButtonIndex = (x - 3) / 24;
     _firstObjectNumber = -1;
     if (selectedButtonIndex > 10) {
         if (_mouseClickY > 182) {
@@ -859,7 +858,7 @@ void WaynesWorldEngine::drawInventory() {
     int iconY = 0;
     _inventorySprite->clear(0);
     for (int inventoryItemIndex = 0; inventoryItemIndex < kInventorySize; inventoryItemIndex++) {
-        int objectRoomNumber = getObjectRoom(inventoryItemIndex + kFirstInventoryObjectId);
+	    const int objectRoomNumber = getObjectRoom(inventoryItemIndex + kFirstInventoryObjectId);
         if ((isActorWayne() && objectRoomNumber == 99 && _wayneInventory[inventoryItemIndex] > 0) ||
             (isActorGarth() && objectRoomNumber == 99 && _garthInventory[inventoryItemIndex] > 0)) {
             Common::String filename = Common::String::format("icon%02d.pcx", inventoryItemIndex + 1);
@@ -928,7 +927,7 @@ int WaynesWorldEngine::getActorScaleFromY(int actorY) {
 }
 
 void WaynesWorldEngine::drawActorReachObject(int objectId, int spriteIndex) {
-    int direction = getObjectDirection(objectId);
+	const int direction = getObjectDirection(objectId);
     if (isActorWayne()) {
         drawActors(direction, 2, 1, spriteIndex, _wayneSpriteX, _wayneSpriteY, _garthSpriteX, _garthSpriteY);
     } else {
@@ -959,8 +958,8 @@ int WaynesWorldEngine::drawActors(int direction, int wayneKind, int garthKind, i
         _wayneActorScale = getActorScaleFromY(wayneY);
         wayneHeight = (100 - _wayneActorScale) * 48 / 90;
         wayneWidth = _wayneActorScale * 13 / 100;
-        int scaledWayneWidth = _wayneActorScale * 27 / 100;
-        int scaledWayneHeight = _wayneActorScale * 48 / 100;
+        const int scaledWayneWidth = _wayneActorScale * 27 / 100;
+        const int scaledWayneHeight = _wayneActorScale * 48 / 100;
         wayneSprite = new WWSurface(scaledWayneWidth, scaledWayneHeight);
         if (wayneKind == 0) {
             wayneSprite->scaleSurface(_wayneWalkSprites[direction][spriteIndex]);
@@ -982,8 +981,8 @@ int WaynesWorldEngine::drawActors(int direction, int wayneKind, int garthKind, i
         _garthActorScale = getActorScaleFromY(garthY);
         garthHeight = (100 - _garthActorScale) * 48 / 100;
         garthWidth = _garthActorScale * 13 / 100;
-        int scaledGarthWidth = _garthActorScale * 27 / 100;
-        int scaledGarthHeight = _garthActorScale * 48 / 100;
+        const int scaledGarthWidth = _garthActorScale * 27 / 100;
+        const int scaledGarthHeight = _garthActorScale * 48 / 100;
         garthSprite = new WWSurface(scaledGarthWidth, scaledGarthHeight);
         if (garthKind == 0) {
             garthSprite->scaleSurface(_garthWalkSprites[direction][spriteIndex]);
@@ -1190,7 +1189,7 @@ void WaynesWorldEngine::refreshRoomBackground(int roomNum) {
 
 void WaynesWorldEngine::handleRoomEvent() {
     if (_roomEventNum != 0) {
-		int eventNum = _roomEventNum;
+	    const int eventNum = _roomEventNum;
 		_roomEventNum = 0;
 		_logic->handleRoomEvent(eventNum);
 	}
@@ -1359,7 +1358,7 @@ void WaynesWorldEngine::scrollRoom() {
 }
 
 void WaynesWorldEngine::loadRoomMask(int roomNum) {
-	Common::Path filename(Common::String::format("r%02d.msk", roomNum));
+	const Common::Path filename(Common::String::format("r%02d.msk", roomNum));
 	Common::File fd;
 	if (!fd.open(filename))
 		error("WaynesWorldEngine::loadRoomMask() Could not open %s", filename.baseName().c_str());
@@ -1371,8 +1370,8 @@ void WaynesWorldEngine::loadRoomMask(int roomNum) {
 void WaynesWorldEngine::fillRoomMaskArea(int x1, int y1, int x2, int y2, bool blocked) {
 	for (int y = y1; y <= y2; y++) {
 		for (int x = x1; x <= x2; x++) {
-			int offset = (y * 40) + (x / 8);
-			byte value = 0x80 >> (x % 8);
+			const int offset = (y * 40) + (x / 8);
+			const byte value = 0x80 >> (x % 8);
 			if (blocked) {
 				_walkMap[offset] &= ~value;
 			} else {
@@ -1431,7 +1430,7 @@ void WaynesWorldEngine::stopRoomAnimations() {
 }
 
 void WaynesWorldEngine::updateAnimationTimers() {
-	uint32 currentTicks = _system->getMillis();
+	const uint32 currentTicks = _system->getMillis();
 	for (uint i = 0; i < kAnimationTimersCount; i++) {
 		AnimationTimer &animationTimer = _animationTimers[i];
 		animationTimer.expired = animationTimer.nextUpdateTicks == 0 || currentTicks >= animationTimer.nextUpdateTicks;
@@ -1466,8 +1465,8 @@ void WaynesWorldEngine::initStaticRoomObjects() {
 }
 
 void WaynesWorldEngine::loadStaticRoomObjects(int roomNum) {
-	int startIndex = kStaticRoomObjectsMap[roomNum].index;
-	int count = kStaticRoomObjectsMap[roomNum].count;
+	const int startIndex = kStaticRoomObjectsMap[roomNum].index;
+	const int count = kStaticRoomObjectsMap[roomNum].count;
 	for (int index = 0; index < count; index++) {
 		const StaticRoomObject &roomObject = _staticRoomObjects[startIndex + index];
 		if (roomObject.x1 != -1) {
@@ -1487,8 +1486,8 @@ void WaynesWorldEngine::unloadStaticRoomObjects() {
 }
 
 void WaynesWorldEngine::setStaticRoomObjectPosition(int roomNum, int fromIndex, int toIndex, int x, int y) {
-	int startIndex = kStaticRoomObjectsMap[roomNum].index + fromIndex;
-	int endIndex = kStaticRoomObjectsMap[roomNum].index + toIndex;
+	const int startIndex = kStaticRoomObjectsMap[roomNum].index + fromIndex;
+	const int endIndex = kStaticRoomObjectsMap[roomNum].index + toIndex;
 	unloadStaticRoomObjects();
 	for (int index = startIndex; index <= endIndex; index++) {
 		StaticRoomObject &roomObject = _staticRoomObjects[index];
@@ -1499,11 +1498,11 @@ void WaynesWorldEngine::setStaticRoomObjectPosition(int roomNum, int fromIndex, 
 }
 
 void WaynesWorldEngine::drawStaticRoomObjects(int roomNum, int x, int y, int actorHeight, int actorWidth, WWSurface *surface) {
-	int x1 = x - actorWidth;
-	int x2 = x + actorWidth;
-	int y2 = y + actorHeight - 48;
-	int startIndex = kStaticRoomObjectsMap[roomNum].index;
-	int count = kStaticRoomObjectsMap[roomNum].count;
+	const int x1 = x - actorWidth;
+	const int x2 = x + actorWidth;
+	const int y2 = y + actorHeight - 48;
+	const int startIndex = kStaticRoomObjectsMap[roomNum].index;
+	const int count = kStaticRoomObjectsMap[roomNum].count;
 	for (int index = 0; index < count; index++) {
 		const StaticRoomObject &roomObject = _staticRoomObjects[startIndex + index];
 		if (roomObject.x1 != -1 && roomObject.y2 > y &&
@@ -1514,14 +1513,14 @@ void WaynesWorldEngine::drawStaticRoomObjects(int roomNum, int x, int y, int act
 }
 
 void WaynesWorldEngine::initRoomObjects() {
-	for  (uint i = 0; i < kRoomObjectsCount; i++)
+	for  (int i = 0; i < kRoomObjectsCount; i++)
 		_roomObjects[i] = kRoomObjects[i];
 }
 
 void WaynesWorldEngine::moveObjectToRoom(int objectId, int roomNum) {
     _roomObjects[objectId].roomNumber = roomNum;
     if (objectId <= kLastInventoryObjectId) {
-        int inventoryIndex = objectId - kFirstInventoryObjectId;
+	    const int inventoryIndex = objectId - kFirstInventoryObjectId;
         if (isActorWayne()) {
             _wayneInventory[inventoryIndex]++;
         } else {
@@ -1532,7 +1531,7 @@ void WaynesWorldEngine::moveObjectToRoom(int objectId, int roomNum) {
 
 void WaynesWorldEngine::moveObjectToNowhere(int objectId) {
     if (objectId <= kLastInventoryObjectId) {
-        int inventoryIndex = objectId - kFirstInventoryObjectId;
+	    const int inventoryIndex = objectId - kFirstInventoryObjectId;
         if (isActorWayne()) {
             _wayneInventory[inventoryIndex]--;
         } else {
@@ -1563,12 +1562,12 @@ int WaynesWorldEngine::getObjectDirection(int objectId) {
 }
 
 int WaynesWorldEngine::findRoomObjectIdAtPoint(int x, int y) {
-    for (uint index = 0; index < kRoomObjectsCount; index++) {
+    for (int index = 0; index < kRoomObjectsCount; index++) {
         const RoomObject *roomObject = getRoomObject(index);
         if (roomObject->roomNumber == _currentRoomNumber &&
             x >= roomObject->x1 && x <= roomObject->x2 &&
             y >= roomObject->y1 && y <= roomObject->y2) {
-            return (int)index;
+            return index;
         }
     }
     return -1;
@@ -1611,7 +1610,7 @@ void WaynesWorldEngine::drawDialogChoices(int choiceIndex) {
     byte choiceTextColor = isActorWayne() ? 11 : 10;
     byte selectedTextColor = 13;
     for (int index = 0; index < 5 && _dialogChoices[index] != -1; index++) {
-        byte textColor = index + choiceIndex + 11 == 0 ? selectedTextColor : choiceTextColor;
+	    const byte textColor = index + choiceIndex + 11 == 0 ? selectedTextColor : choiceTextColor;
         Common::String dialogText = loadString("c04", _dialogChoices[index], 0);
 		_screen->drawText(_fontBit5x7, dialogText.c_str(), 3, 152 + index * 9, textColor);
     }
@@ -1620,8 +1619,7 @@ void WaynesWorldEngine::drawDialogChoices(int choiceIndex) {
 }
 
 void WaynesWorldEngine::handleDialogMouseClick() {
-    int continueDialog = 0;
-    int replyTextIndex1, replyTextIndex2, replyTextIndex3;
+	int replyTextIndex1, replyTextIndex2, replyTextIndex3;
     int replyTextX, replyTextY;
 
     if (_selectedDialogChoice == -10)
@@ -1635,7 +1633,7 @@ void WaynesWorldEngine::handleDialogMouseClick() {
     _isTextVisible = false;
     refreshActors();
 
-    continueDialog = _logic->handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
+	const int continueDialog = _logic->handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
 
     if (replyTextIndex1 != -1) {
         _logic->handleDialogReply(replyTextIndex1, replyTextX, replyTextY);
@@ -1655,7 +1653,7 @@ void WaynesWorldEngine::handleDialogMouseClick() {
 }
 
 void WaynesWorldEngine::handleVerb(int verbFlag) {
-    int verbNum = verbFlag == 1 ? _verbNumber : _verbNumber2;
+	const int verbNum = verbFlag == 1 ? _verbNumber : _verbNumber2;
     switch (verbNum) {
     case 1:
         handleVerbPickUp();
@@ -1696,14 +1694,12 @@ void WaynesWorldEngine::handleVerb(int verbFlag) {
 }
 
 void WaynesWorldEngine::handleVerbPickUp() {
-    int actionTextIndex = -1;
-
-    _isTextVisible = false;
+	_isTextVisible = false;
     if (_objectNumber <= kLastInventoryObjectId) {
         refreshActors();
     }
 
-    actionTextIndex = _logic->handleVerbPickUp();
+    int actionTextIndex = _logic->handleVerbPickUp();
 
     if (_objectNumber == -3) {
         actionTextIndex = 29;
@@ -1750,7 +1746,7 @@ void WaynesWorldEngine::handleVerbPickUp() {
 }
 
 void WaynesWorldEngine::handleVerbLookAt() {
-    _isTextVisible = 0;
+    _isTextVisible = false;
     if (_objectNumber <= kLastInventoryObjectId) {
         refreshActors();
     }
@@ -1775,9 +1771,7 @@ void WaynesWorldEngine::handleVerbLookAt() {
 }
 
 void WaynesWorldEngine::handleVerbUse() {
-    int actionTextIndex = -1;
-
-    _isTextVisible = false;
+	_isTextVisible = false;
     if (_objectNumber <= kLastInventoryObjectId) {
         refreshActors();
     }
@@ -1814,7 +1808,7 @@ void WaynesWorldEngine::handleVerbUse() {
         return;
     }
 
-    actionTextIndex = _logic->handleVerbUse();
+    int actionTextIndex = _logic->handleVerbUse();
 
     if (_firstObjectNumber == kObjectIdInventoryPlungers && _objectNumber != kObjectIdLampPost) {
         actionTextIndex = 44;
@@ -1862,17 +1856,17 @@ void WaynesWorldEngine::handleVerbUse() {
     case 71:
         playSound("sv38.snd", 1);
         break;
+	default:
+		break;
     }
-
 }
 
 void WaynesWorldEngine::handleVerbTalkTo() {
-    int actionTextIndex = -1;
-
+    int actionTextIndex;
     _dialogChoices[0] = -1;
 
     if (_objectNumber == -3 || _objectNumber == -2) {
-        bool room1Special = !(_logic->_r1_flags1 & 0x10) && isActorWayne() && _currentRoomNumber == 1 && (_logic->_r1_flags2 & 0x01);
+	    const bool room1Special = !(_logic->_r1_flags1 & 0x10) && isActorWayne() && _currentRoomNumber == 1 && (_logic->_r1_flags2 & 0x01);
         if (room1Special) {
             actionTextIndex = 14;
         } else {
@@ -1911,14 +1905,12 @@ void WaynesWorldEngine::handleVerbTalkTo() {
 }
 
 void WaynesWorldEngine::handleVerbPush() {
-    int actionTextIndex = -1;
-
-    _isTextVisible = false;
+	_isTextVisible = false;
     if (_objectNumber <= kLastInventoryObjectId) {
         refreshActors();
     }
 
-    actionTextIndex = _logic->handleVerbPush();
+	const int actionTextIndex = _logic->handleVerbPush();
 
     if (actionTextIndex != -1) {
         displayText("c05", actionTextIndex, 0, -1, -1, 0);
@@ -1931,29 +1923,26 @@ void WaynesWorldEngine::handleVerbPush() {
     case 4:
         playSound("sv47.snd", 1);
         break;
+	default:
+		break;
     }
 
 }
 
 void WaynesWorldEngine::handleVerbPull() {
-    int actionTextIndex = -1;
-
-    _isTextVisible = false;
+	_isTextVisible = false;
     if (_objectNumber <= kLastInventoryObjectId) {
         refreshActors();
     }
 
-    actionTextIndex = _logic->handleVerbPull();
+	const int actionTextIndex = _logic->handleVerbPull();
 
     if (actionTextIndex != -1) {
         displayText("c06", actionTextIndex, 0, -1, -1, 0);
     }
 
-    switch (actionTextIndex) {
-    case 0:
+	if (actionTextIndex == 0)
         playSound("sv31.snd", 1);
-        break;
-    }
 
 }
 
@@ -1962,9 +1951,7 @@ void WaynesWorldEngine::handleVerbExtremeCloseupOf() {
 }
 
 void WaynesWorldEngine::handleVerbGive() {
-    int actionTextIndex = -1;
-
-    if (_firstObjectNumber == -1) {
+	if (_firstObjectNumber == -1) {
         _firstObjectNumber = _objectNumber;
         rememberFirstObjectName(_objectNumber);
         return;
@@ -1975,7 +1962,7 @@ void WaynesWorldEngine::handleVerbGive() {
         if (_firstObjectNumber == kObjectIdInventoryDrumstick || _firstObjectNumber == kObjectIdInventoryGuitar) {
             displayText("c08", 2, 0, -1, -1, 0);
         } else {
-            int inventoryIndex = _firstObjectNumber - kFirstInventoryObjectId;
+	        const int inventoryIndex = _firstObjectNumber - kFirstInventoryObjectId;
             if (_objectNumber == -3) {
                 _garthInventory[inventoryIndex] += _wayneInventory[inventoryIndex];
                 _wayneInventory[inventoryIndex] = 0;
@@ -1990,7 +1977,7 @@ void WaynesWorldEngine::handleVerbGive() {
         return;
     }
 
-    actionTextIndex = _logic->handleVerbGive();
+	const int actionTextIndex = _logic->handleVerbGive();
 
     _firstObjectNumber = -1;
 
@@ -2001,14 +1988,12 @@ void WaynesWorldEngine::handleVerbGive() {
 }
 
 void WaynesWorldEngine::handleVerbOpen() {
-    int actionTextIndex = -1;
-
-    _isTextVisible = false;
+	_isTextVisible = false;
     if (_objectNumber <= kLastInventoryObjectId) {
         refreshActors();
     }
 
-    actionTextIndex = _logic->handleVerbOpen();
+	const int actionTextIndex = _logic->handleVerbOpen();
 
     if (actionTextIndex != -1) {
         displayText("c09", actionTextIndex, 0, -1, -1, 0);
@@ -2041,14 +2026,12 @@ void WaynesWorldEngine::handleVerbOpen() {
 }
 
 void WaynesWorldEngine::handleVerbClose() {
-    int actionTextIndex = -1;
-
-    _isTextVisible = false;
+	_isTextVisible = false;
     if (_objectNumber <= kLastInventoryObjectId) {
         refreshActors();
     }
 
-    actionTextIndex = _logic->handleVerbClose();
+	const int actionTextIndex = _logic->handleVerbClose();
 
     if (actionTextIndex != -1) {
         displayText("c10", actionTextIndex, 0, -1, -1, 0);
@@ -2087,8 +2070,8 @@ void WaynesWorldEngine::unusedTicketHandleMouseMove() {
     if (_mouseX > 157 && _mouseY > 38 && _mouseX < 297 && _mouseY < 129) {
         _logic->_didScratchTicket = true;
         // Reveal partial image
-		int scratchX = _mouseX - 158;
-		int scratchY = _mouseY - 39;
+        const int scratchX = _mouseX - 158;
+        const int scratchY = _mouseY - 39;
 		Graphics::Surface scratchSurface = _roomAnimations[19]->getSubArea(Common::Rect(scratchX, scratchY, scratchX + 4, scratchY + 4));
 		_screen->drawSurface(&scratchSurface, _mouseX - 2, _mouseY - 2);
     }

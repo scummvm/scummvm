@@ -90,7 +90,7 @@ enum {
 	kKeyPressed = 1 << 2
 };
 
-const uint kRoomObjectsCount = 404;
+const int kRoomObjectsCount = 404;
 const int kWalkPointsCount = 300;
 const uint kWalkMapSize = (320 * 150) / 8;
 const uint kRoomAnimationsCount = 20;
