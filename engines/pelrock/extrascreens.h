@@ -90,6 +90,15 @@ private:
 
 class CDPlayer {
 
+enum CDControls {
+	STOP_BUTTON,
+	PAUSE_BUTTON,
+	PLAY_BUTTON,
+	PREVIOUS_BUTTON,
+	NEXT_BUTTON,
+	NO_BUTTON
+};
+
 public:
 	CDPlayer(PelrockEventManager *eventMan, ResourceManager *res, SoundManager *sound);
 	~CDPlayer();
@@ -98,11 +107,14 @@ public:
 
 private:
 	void init();
+	void loadTrackNames();
 	void drawScreen();
+	void drawButtons();
 	void loadBackground();
 	void loadControls();
 	void checkMouse(int x, int y);
 	void cleanup();
+	CDControls isButtonClicked(int x, int y);
 	ResourceManager *_res;
 	SoundManager *_sound;
 	PelrockEventManager *_events;
@@ -111,6 +123,17 @@ private:
 	byte *_palette;
 	byte *_controls;
 	byte *buttons[5][2];
+	Common::String trackNames[31];
+	Common::Rect _buttonRects[5] = {
+		Common::Rect(Common::Point(17, 46), 37, 26), // Stop
+		Common::Rect(Common::Point(57, 48), 33, 23), // Pause
+		Common::Rect(Common::Point(92, 44), 34, 28), // Play
+		Common::Rect(Common::Point(128, 45), 38, 24), // Previous
+		Common::Rect(Common::Point(168, 44), 41, 28) // Next
+	};
+	int _selectedTrack = 2;
+	CDControls _selectedButton = NO_BUTTON;
+
 };
 
 

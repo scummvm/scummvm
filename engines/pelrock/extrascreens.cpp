@@ -176,7 +176,6 @@ bool SpellBook::checkMouse(int x, int y) {
 	return false;
 }
 
-
 CDPlayer::CDPlayer(PelrockEventManager *eventMan, ResourceManager *res, SoundManager *sound) : _events(eventMan), _res(res), _sound(sound) {
 	init();
 }
@@ -186,12 +185,18 @@ CDPlayer::~CDPlayer() {
 }
 
 void CDPlayer::run() {
-	loadBackground();
-	loadControls();
+
 	g_engine->changeCursor(DEFAULT);
 
-	while(!g_engine->shouldQuit()) {
+	while (!g_engine->shouldQuit()) {
 		_events->pollEvent();
+		checkMouse(_events->_mouseX, _events->_mouseY);
+
+		if (_events->_rightMouseClicked) {
+			_events->_rightMouseClicked = false;
+			break;
+		}
+
 		drawScreen();
 		g_engine->_screen->markAllDirty();
 		g_engine->_screen->update();
@@ -204,12 +209,45 @@ void CDPlayer::run() {
 
 void CDPlayer::init() {
 	_compositeScreen = new byte[640 * 400];
+	loadBackground();
+	loadControls();
+	loadTrackNames();
+}
+
+void CDPlayer::loadTrackNames() {
+	Common::File juegoFile;
+	if (!juegoFile.open("JUEGO.EXE")) {
+		return;
+	}
+	juegoFile.seek(0x049893, SEEK_SET);
+
+	for (int i = 0; i < 31; i++) {
+		trackNames[i] = juegoFile.readString(0, 30);
+		debug("Loaded track name: %s", trackNames[i].c_str());
+	}
+
+	juegoFile.close();
 }
 
 void CDPlayer::drawScreen() {
 	memcpy(_compositeScreen, _backgroundScreen, 640 * 400);
-	drawSpriteToBuffer(_compositeScreen, 640, _controls, 0, 0, 213, 72, 207);
+	drawSpriteToBuffer(_compositeScreen, 640, _controls, 1, 1, 213, 72, 207);
+
+	drawButtons();
+
 	memcpy(g_engine->_screen->getPixels(), _compositeScreen, 640 * 400);
+	g_engine->_smallFont->drawString(g_engine->_screen, trackNames[_selectedTrack - 2], 26, 17, 640, 255, Graphics::kTextAlignLeft);
+}
+
+void CDPlayer::drawButtons() {
+
+	for (int i = 0; i < 5; i++) {
+		if (_selectedButton == i) {
+			drawSpriteToBuffer(_compositeScreen, 640, buttons[i][1], _buttonRects[i].left, _buttonRects[i].top, _buttonRects[i].width(), _buttonRects[i].height(), 207);
+		} else {
+			drawSpriteToBuffer(_compositeScreen, 640, buttons[i][0], _buttonRects[i].left, _buttonRects[i].top, _buttonRects[i].width(), _buttonRects[i].height(), 207);
+		}
+	}
 }
 
 void CDPlayer::loadBackground() {
@@ -230,16 +268,64 @@ void CDPlayer::cleanup() {
 		_palette = nullptr;
 	}
 
+	for (int i = 0; i < 5; i++) {
+		delete[] buttons[i][0];
+		delete[] buttons[i][1];
+	}
+
 	g_engine->_screen->markAllDirty();
 	g_engine->_screen->update();
 }
 
 void CDPlayer::checkMouse(int x, int y) {
+	if (_events->_leftMouseClicked) {
+		switch (_selectedButton) {
+		case STOP_BUTTON:
+			_sound->stopMusic();
+			break;
+		case PAUSE_BUTTON:
+			_sound->pauseMusic();
+			break;
+		case PLAY_BUTTON:
+			_sound->stopMusic();
+			_sound->playMusicTrack(_selectedTrack, true);
+			break;
+		case PREVIOUS_BUTTON:
+			if (_selectedTrack > 2) {
+				_selectedTrack--;
+			}
+			break;
+		case NEXT_BUTTON:
+			if (_selectedTrack < 32) {
+				_selectedTrack++;
+			}
+			break;
+		default:
+			break;
+		}
+		_selectedButton = NO_BUTTON;
+		_events->_leftMouseClicked = false;
+	}
 
+	if (_events->_leftMouseButton != 0 && _selectedButton == NO_BUTTON) {
+		_selectedButton = isButtonClicked(_events->_mouseX, _events->_mouseY);
+		if(_selectedButton != NO_BUTTON) {
+			_sound->playSound("11ZZZZZZ.SMP", 0);
+		}
+	}
+}
+
+CDPlayer::CDControls CDPlayer::isButtonClicked(int x, int y) {
+	for (int i = 0; i < 5; i++) {
+		if (_buttonRects[i].contains(x, y)) {
+			return static_cast<CDControls>(i);
+		}
+	}
+	return NO_BUTTON;
 }
 
 void CDPlayer::loadControls() {
-	_controls = new byte[213*72];
+	_controls = new byte[213 * 72];
 	Common::File alfred7;
 	if (!alfred7.open("ALFRED.7")) {
 		return;
@@ -253,12 +339,17 @@ void CDPlayer::loadControls() {
 	size_t decompressedSize = rleDecompress(compressedData, outSize, 0, 0, &rawData, true);
 
 	debug("Decompressed CD player controls: %d bytes", decompressedSize);
-	Common::copy(rawData, rawData + 213 * 72, _controls);
-	// for(int i = 0; i < 5; i++) {
-	// 	for (int j = 0; j < 2; j++) {
-	// 		buttons[i][j] = _controls + (i * 2 + j) * 213 * 72;
-	// 	}
-	// }
+	uint32 pos = 213 * 72;
+	Common::copy(rawData, rawData + pos, _controls);
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 2; j++) {
+			int w = _buttonRects[i].width();
+			int h = _buttonRects[i].height();
+			buttons[i][j] = new byte[w * h];
+			Common::copy(rawData + pos, rawData + pos + w * h, buttons[i][j]);
+			pos += w * h;
+		}
+	}
 	alfred7.close();
 	delete[] compressedData;
 	delete[] rawData;

@@ -208,7 +208,18 @@ bool SoundManager::isPlaying(int channel) const {
 }
 
 void SoundManager::stopMusic() {
+	_isPaused = false;
 	g_system->getAudioCDManager()->stop();
+}
+
+void SoundManager::pauseMusic() {
+	uint32 elapsed = g_system->getMillis() - _cdPlayStartTime;
+	uint32 elapsedFrames = elapsed * 75 / 1000;
+	_cdTrackStart += elapsedFrames; // advance the start offset
+	if (_cdTrackDuration > 0)
+    	_cdTrackDuration -= elapsedFrames; // shrink remaining duration
+	g_system->getAudioCDManager()->stop();
+	_isPaused = true;
 }
 
 bool SoundManager::isMusicPlaying() {
@@ -221,8 +232,11 @@ void SoundManager::playMusicTrack(int trackNumber, bool loop) {
 		return;
 	}
 	_currentMusicTrack = trackNumber;
+	_cdTrackStart = 0;
+	_cdTrackDuration = 0;
+	_cdPlayStartTime = g_system->getMillis();
 	g_system->getAudioCDManager()->stop();
-	g_system->getAudioCDManager()->play(trackNumber, loop ? -1 : 0, 0, 0);
+	g_system->getAudioCDManager()->play(trackNumber, loop ? -1 : 0, _cdTrackStart, _cdTrackDuration);
 }
 
 void SoundManager::loadSoundIndex() {

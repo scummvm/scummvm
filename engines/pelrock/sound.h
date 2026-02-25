@@ -162,16 +162,15 @@ public:
 	void playSound(byte *soundData, uint32 size);
 	void stopAllSounds();
 	void stopSound(int channel);
-	void stopMusic();
-	bool isMusicPlaying();
 	void setVolume(int volume);
 	bool isPlaying() const;
 	bool isPlaying(int channel) const;
-	void playMusicTrack(int trackNumber, bool loop = true);
-	bool isMusicPlaying() const {
-		return _isMusicPlaying;
-	}
 	void loadSoundIndex();
+
+	bool isMusicPlaying();
+	void playMusicTrack(int trackNumber, bool loop = true);
+	void stopMusic();
+	void pauseMusic();
 
 	/**
 	 * Check if ambient sound should play this frame.
@@ -197,6 +196,11 @@ private:
 	Audio::SoundHandle _sfxHandles[kMaxChannels];
 	Common::HashMap<Common::String, SonidoFile> _soundMap;
 
+
+	uint32 _cdTrackStart = 0;
+	uint32 _cdTrackDuration;
+	uint32 _cdPlayStartTime; // time at the moment of calling play()
+	bool _isPaused = false;
 };
 
 } // End of namespace Pelrock

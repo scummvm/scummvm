@@ -159,7 +159,8 @@ void PelrockEngine::init() {
 		// setScreen(22, ALFRED_DOWN);
 		// setScreen(41, ALFRED_DOWN);
 		// setScreen(43, ALFRED_DOWN);
-		setScreen(46, ALFRED_RIGHT);
+		// setScreen(46, ALFRED_RIGHT);
+		setScreen(0, ALFRED_DOWN);
 		// setScreen(15, ALFRED_DOWN);
 		// setScreen(2, ALFRED_LEFT);
 		// alfredState.x = 576;
@@ -1567,26 +1568,31 @@ void PelrockEngine::gameLoop() {
 	_events->pollEvent();
 	checkMouse();
 
-	// if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_m) {
-	// 	travelToEgypt();
-	// 	_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
-	// }
-	// if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_n) {
-	// 	loadExtraScreenAndPresent(10);
-	// 	_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
-	// }
-	// if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_p) {
-	// 	antiPiracyEffect();
-	// 	_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
-	// }
-	// if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_s) {
-	// 	SpellBook spellBook(_events, _res);
-	// 	Spell *selectedSpell = spellBook.run();
-	// 	if (selectedSpell != nullptr) {
-	// 		_dialog->sayAlfred(selectedSpell->text);
-	// 	}
-	// 	_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
-	// }
+	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_m) {
+		travelToEgypt();
+		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
+	}
+	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_n) {
+		loadExtraScreenAndPresent(10);
+		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
+	}
+	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_p) {
+		antiPiracyEffect();
+		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
+	}
+	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_s) {
+		SpellBook spellBook(_events, _res);
+		Spell *selectedSpell = spellBook.run();
+		if (selectedSpell != nullptr) {
+			_dialog->sayAlfred(selectedSpell->text);
+		}
+		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
+	}
+	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_c) {
+		CDPlayer cdPlayer(_events, _res, _sound);
+		cdPlayer.run();
+		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
+	}
 
 	renderScene();
 
