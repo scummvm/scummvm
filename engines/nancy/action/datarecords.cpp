@@ -86,7 +86,7 @@ void TableIndexSetValueHS::execute() {
 		// Check for correctness...
 
 		// ...of current index only...
-		if (playerTable->singleValues[_tableIndex] == tabl->correctIDs[_tableIndex]) {
+		if (playerTable->singleValues[_tableIndex - 1] == tabl->correctIDs[_tableIndex - 1]) {
 			NancySceneState.setEventFlag(_entryCorrectFlagID, g_nancy->_true);
 		} else {
 			NancySceneState.setEventFlag(_entryCorrectFlagID, g_nancy->_false);
