@@ -3432,11 +3432,11 @@ int GameLogic::r7_handleVerbPickUp() {
 }
 
 void GameLogic::r7_initRoomAnimations() {
-	_vm->loadAnimationSprite(0, "clouds");
-	_vm->loadAnimationSprite(1, "bldg");
-	_vm->loadAnimationSprite(2, "sky");
-	_vm->loadAnimationSprite(3, "elvis0");
-	_vm->loadAnimationSprite(4, "elvis1");
+	_vm->loadAnimationSprite(0, "clouds.pcx");
+	_vm->loadAnimationSprite(1, "bldg.pcx");
+	_vm->loadAnimationSprite(2, "sky.pcx");
+	_vm->loadAnimationSprite(3, "elvis0.pcx");
+	_vm->loadAnimationSprite(4, "elvis1.pcx");
 	_vm->setAnimationTimer(0, 1000, _vm->getRandom(230));
 	_vm->setAnimationTimer(1, 4000);
 	_vm->startRoomAnimations();

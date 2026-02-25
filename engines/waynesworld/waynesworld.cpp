@@ -1384,7 +1384,7 @@ void WaynesWorldEngine::fillRoomMaskArea(int x1, int y1, int x2, int y2, bool bl
 
 void WaynesWorldEngine::loadAnimationSpriteRange(int baseIndex, const char *filename, int count) {
 	for (int index = 0; index < count; index++) {
-		Common::String tempFilename = Common::String::format("%s%d", filename, index);
+		Common::String tempFilename = Common::String::format("%s%d.pcx", filename, index);
 		loadAnimationSprite(baseIndex + index, tempFilename.c_str());
 	}
 }
