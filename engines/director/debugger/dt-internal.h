@@ -122,6 +122,7 @@ typedef struct ImGuiState {
 		float ruler_height = 30.0f;
 		float ruler_width = cell_width * visible_frames;
 		float sidebar1_height = cell_height * 6;
+		float cell_height_extended = 5 * cell_height;
 	} _scoreCfg;
 
 	struct ScoreState {
@@ -213,6 +214,7 @@ typedef struct ImGuiState {
 	struct {
 		int frame = -1;
 		int channel = -1;
+		bool isMainChannel = false;
 	} _selectedScoreCast;
 
 	struct {
