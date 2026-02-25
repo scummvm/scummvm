@@ -2018,6 +2018,11 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		_dialog->say(_res->_ingameTexts[NECESITOGASOLINA]);
 		break;
 	}
+	case 95: {
+		CDPlayer player = CDPlayer(_events, _res, _sound);
+		player.run();
+		break;
+	}
 	default: {
 		byte response = (byte)getRandomNumber(12);
 		_dialog->say(_res->_ingameTexts[154 + response]);

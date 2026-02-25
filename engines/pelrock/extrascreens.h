@@ -87,6 +87,56 @@ private:
 	bool checkMouse(int x, int y);
 };
 
+
+class CDPlayer {
+
+public:
+	CDPlayer(PelrockEventManager *eventMan, ResourceManager *res, SoundManager *sound);
+	~CDPlayer();
+
+	void run();
+
+private:
+	void init();
+	void drawScreen();
+	void loadBackground();
+	void loadControls();
+	void checkMouse(int x, int y);
+	void cleanup();
+	ResourceManager *_res;
+	SoundManager *_sound;
+	PelrockEventManager *_events;
+	byte *_backgroundScreen;
+	byte *_compositeScreen;
+	byte *_palette;
+	byte *_controls;
+	byte *buttons[5][2];
+};
+
+
+class BackgroundBook {
+
+public:
+	BackgroundBook(PelrockEventManager *eventMan, ResourceManager *res);
+	~BackgroundBook();
+
+	void run();
+
+private:
+	void init();
+	void drawScreen();
+	void loadBackground();
+	void loadControls();
+	void checkMouse(int x, int y);
+	void cleanup();
+	PelrockEventManager *_events;
+	ResourceManager *_res;
+	byte *_backgroundScreen;
+	byte *_compositeScreen;
+	byte *_palette;
+	byte *_controls;
+};
+
 } // End of namespace Pelrock
 
 #endif // PELROCK_EXTRASCREENS_H

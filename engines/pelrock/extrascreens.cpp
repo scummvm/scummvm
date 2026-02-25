@@ -123,7 +123,6 @@ void SpellBook::drawScreen() {
 		g_engine->_graphics->drawColoredTexts(_compositeScreen, _spell->text, textX, textY, 640, 0, g_engine->_smallFont);
 	}
 
-	drawPaletteSquares(_compositeScreen, _palette);
 	memcpy(g_engine->_screen->getPixels(), _compositeScreen, 640 * 400);
 	if (_spell != nullptr) {
 		g_engine->_graphics->drawColoredTexts(g_engine->_screen, _spell->text, textX, textY, 640, 0, g_engine->_smallFont);
@@ -175,6 +174,94 @@ bool SpellBook::checkMouse(int x, int y) {
 		return true;
 	}
 	return false;
+}
+
+
+CDPlayer::CDPlayer(PelrockEventManager *eventMan, ResourceManager *res, SoundManager *sound) : _events(eventMan), _res(res), _sound(sound) {
+	init();
+}
+
+CDPlayer::~CDPlayer() {
+	cleanup();
+}
+
+void CDPlayer::run() {
+	loadBackground();
+	loadControls();
+	g_engine->changeCursor(DEFAULT);
+
+	while(!g_engine->shouldQuit()) {
+		_events->pollEvent();
+		drawScreen();
+		g_engine->_screen->markAllDirty();
+		g_engine->_screen->update();
+		g_system->delayMillis(10);
+	}
+	memset(g_engine->_screen->getPixels(), 0, 640 * 400);
+	// Restore room palette
+	g_system->getPaletteManager()->setPalette(g_engine->_room->_roomPalette, 0, 256);
+}
+
+void CDPlayer::init() {
+	_compositeScreen = new byte[640 * 400];
+}
+
+void CDPlayer::drawScreen() {
+	memcpy(_compositeScreen, _backgroundScreen, 640 * 400);
+	drawSpriteToBuffer(_compositeScreen, 640, _controls, 0, 0, 213, 72, 207);
+	memcpy(g_engine->_screen->getPixels(), _compositeScreen, 640 * 400);
+}
+
+void CDPlayer::loadBackground() {
+	_backgroundScreen = new byte[640 * 400];
+	_palette = new byte[768];
+	_res->getExtraScreen(10, _backgroundScreen, _palette);
+	g_system->getPaletteManager()->setPalette(_palette, 0, 256);
+}
+
+void CDPlayer::cleanup() {
+	if (_backgroundScreen) {
+		delete[] _backgroundScreen;
+		_backgroundScreen = nullptr;
+	}
+
+	if (_palette) {
+		delete[] _palette;
+		_palette = nullptr;
+	}
+
+	g_engine->_screen->markAllDirty();
+	g_engine->_screen->update();
+}
+
+void CDPlayer::checkMouse(int x, int y) {
+
+}
+
+void CDPlayer::loadControls() {
+	_controls = new byte[213*72];
+	Common::File alfred7;
+	if (!alfred7.open("ALFRED.7")) {
+		return;
+	}
+	alfred7.seek(2214760, SEEK_SET);
+	byte *compressedData = nullptr;
+	size_t outSize = 0;
+	readUntilBuda(&alfred7, 2214760, compressedData, outSize);
+	byte *rawData = nullptr;
+
+	size_t decompressedSize = rleDecompress(compressedData, outSize, 0, 0, &rawData, true);
+
+	debug("Decompressed CD player controls: %d bytes", decompressedSize);
+	Common::copy(rawData, rawData + 213 * 72, _controls);
+	// for(int i = 0; i < 5; i++) {
+	// 	for (int j = 0; j < 2; j++) {
+	// 		buttons[i][j] = _controls + (i * 2 + j) * 213 * 72;
+	// 	}
+	// }
+	alfred7.close();
+	delete[] compressedData;
+	delete[] rawData;
 }
 
 } // End of namespace Pelrock
