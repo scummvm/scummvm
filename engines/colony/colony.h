@@ -298,7 +298,7 @@ public:
 	void quadrant();
 	int checkwall(int xnew, int ynew, Locate *pobject);
 	void cCommand(int xnew, int ynew, bool allowInteraction);
-	void scrollInfo();
+	void scrollInfo(const Graphics::Font *macFont = nullptr);
 	void checkCenter();
 	void fallThroughHole();
 
@@ -448,6 +448,7 @@ private:
 	Common::Rect _backgroundClip;
 	Common::Rect _backgroundLocate;
 	bool _backgroundActive;
+	Common::MacResManager *_resMan;
 	byte _topBG[8];
 	byte _bottomBG[8];
 	int16 _divideBG;
@@ -457,6 +458,11 @@ private:
 	bool _doorOpen;
 	int _elevatorFloor;
 
+	void playIntro();
+	bool makeStars(const Common::Rect &r, int btn);
+	bool makeBlackHole();
+	bool timeSquare(const Common::String &str, const Graphics::Font *macFont = nullptr);
+	void drawPict(int resID);
 	bool loadAnimation(const Common::String &name);
 	void deleteAnimation();
 	void playAnimation();

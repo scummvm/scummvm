@@ -69,13 +69,16 @@ public:
 		kStars3,
 		kStars4,
 		kToilet,
-		kBath
+		kBath,
+		kMars,
+		kBeamMe
 	};
 
 private:
 	ColonyEngine *_vm;
 	Audio::PCSpeaker *_speaker;
 	Common::MacResManager *_resMan;
+	Audio::SoundHandle _handle;
 
 	void playPCSpeaker(int soundID);
 	bool playMacSound(int soundID);
