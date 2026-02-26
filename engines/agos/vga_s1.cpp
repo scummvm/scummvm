@@ -93,40 +93,31 @@ static const uint8 customPalette[96] = {
 	0xFF, 0xFF, 0x77,
 };
 
-static const uint8 acornFloppyDemoPalette[96] = {
-    0x00, 0x00, 0x00, 
-    0xE0, 0x94, 0x54, 
-    0xE0, 0x80, 0x40, 
-    0xA0, 0x50, 0x20,
-    0x70, 0x28, 0x10, 
-    0x40, 0x00, 0x00, 
-    0x80, 0xA0, 0xC0, 
-    0x60, 0x80, 0xA0,
-    0x40, 0x58, 0x80, 
-    0x00, 0x3C, 0x44, 
-    0xE0, 0xA4, 0x6C, 
-    0x94, 0x44, 0x8C,
-    0x7C, 0x34, 0x74, 
-    0x64, 0x24, 0x5C, 
-    0x48, 0x14, 0x44, 
-    0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 
-    0x00, 0xEC, 0xEC, 
-    0x00, 0xFC, 0xFC, 
-    0x00, 0x00, 0x30,
-    0x3C, 0x38, 0x54, 
-    0x80, 0xA0, 0xC0, 
-    0x60, 0x80, 0xA0, 
-    0x40, 0x58, 0x80,
-    0x00, 0x3C, 0x44, 
-    0x64, 0x24, 0x5C, 
-    0x30, 0x00, 0x00, 
-    0x94, 0x44, 0x8C,
-    0x7C, 0x34, 0x74, 
-    0x48, 0x14, 0x44, 
-    0xFC, 0xA0, 0xA0, 
-    0x9C, 0x00, 0x00,
-};
+// Simon 1 Acorn floppy demo does not load Simon's palette
+// via TABLES. It needs to be loaded and patched in.
+void AGOSEngine_Simon1::patchSimonAcornFloppyDemoPalettes() {
+	if (_simonAcornFloppyDemoPaletteLoaded)
+		return;
+
+	Common::Array<byte> palette;
+	if (!loadSimonAcornFloppyDemoPalette(palette))
+		return;
+
+	for (int c = 0; c < 16; ++c) {
+		const int dst = (32 + c) * 3;
+		const int src = c * 3;
+
+		if (_displayPalette[dst + 0] == 0 &&
+		    _displayPalette[dst + 1] == 0 &&
+		    _displayPalette[dst + 2] == 0) {
+			_displayPalette[dst + 0] = palette[src + 0];
+			_displayPalette[dst + 1] = palette[src + 1];
+			_displayPalette[dst + 2] = palette[src + 2];
+		}
+	}
+
+	_simonAcornFloppyDemoPaletteLoaded = true;
+}
 
 void AGOSEngine_Simon1::vc22_setPalette() {
 	byte *offs, *palptr = nullptr, *src;
@@ -150,24 +141,6 @@ void AGOSEngine_Simon1::vc22_setPalette() {
 	offs = _curVgaFile1 + 6;
 	src = offs + b * palSize;
 
-	// Acorn Simon 1 floppy demo: Simon renders black because part of the palette
-	// is never populated. The original demo executable loads the palette data from 
-	// VGA 0121 as a special case via the original executable, not via TABLES.
-	if (getGameId() == GID_SIMON1 && getPlatform() == Common::kPlatformAcorn && (_gameDescription->desc.flags & ADGF_DEMO) && !(getFeatures() & GF_TALKIE)) {
-		bool paletteRangeEmpty = true;
-		const int startByte = 32 * 3;
-		const int endByte = 64 * 3;
-		for (int i = startByte; i < endByte; i++) {
-			if (_displayPalette[i] != 0) {
-				paletteRangeEmpty = false;
-				break;
-			}
-		}
-		if (paletteRangeEmpty) {
-			memcpy(&_displayPalette[startByte], acornFloppyDemoPalette, sizeof(acornFloppyDemoPalette));
-		}
-	}
-	
 	do {
 		palptr[0] = src[0] * 4;
 		palptr[1] = src[1] * 4;
@@ -189,6 +162,12 @@ void AGOSEngine_Simon1::vc22_setPalette() {
 		};
 	}
 
+	// Acorn Simon 1 floppy demo: Simon renders black because part of the palette
+	// is never populated. The original demo executable loads the palette data from
+	// VGA 0191 as a special case, not via TABLES.
+	if (getGameId() == GID_SIMON1 && getPlatform() == Common::kPlatformAcorn && (_gameDescription->desc.flags & ADGF_DEMO) && !(getFeatures() & GF_TALKIE)) {
+		patchSimonAcornFloppyDemoPalettes();
+	}
 	_paletteFlag = 2;
 	_vgaSpriteChanged++;
 }

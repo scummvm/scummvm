@@ -1931,6 +1931,10 @@ protected:
 
 	void dumpVgaFile(const byte *vga) override;
 
+	bool loadSimonAcornFloppyDemoPalette(Common::Array<byte> &outPalette);
+	bool _simonAcornFloppyDemoPaletteLoaded = false;
+	void patchSimonAcornFloppyDemoPalettes();
+	
 	void clearName() override;
 
 	void handleMouseWheelUp() override;
