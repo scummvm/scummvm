@@ -8513,12 +8513,14 @@ void GameLogic::menuExit() {
 }
 
 void GameLogic::handleGameMenu() {
+	bool refresh = true;
 	if (_menuQuitVisible) {
 		if (_vm->_mouseClickX >= 159) {
 			closeQuitMenu();
 		} else {
 			menuExit();
 			_vm->quitGame();
+			refresh = false;
 		}
 	} else if (_menuIsSaveLoad) {
 		int si = 1 + ((_vm->_mouseClickY - 35) / 15);
@@ -8534,8 +8536,9 @@ void GameLogic::handleGameMenu() {
 				warning("if (!loadSavegame()) return;");
 
 			menuExit();
+			refresh = false;
 		}
-	} else {
+	} else {		
 		switch ((_vm->_mouseClickY - 24) / 16) {
 		case 0:
 			toggleMusicEnabled();
@@ -8554,6 +8557,7 @@ void GameLogic::handleGameMenu() {
 		case 4:
 			warning("STUB: loadSaveGame(0)");
 			menuExit();
+			refresh = false;
 			break;
 		case 5:
 			menuQuitGame();
@@ -8572,12 +8576,16 @@ void GameLogic::handleGameMenu() {
 			} else {
 				menuExit();
 			}
-			return;
+
+			refresh = false;
+			break;
 		default:
 			break;
 		}
 	}
-	_vm->_screen->drawSurfaceTransparent(_menuSurface, 0, 0);
+
+	if (refresh)
+		_vm->_screen->drawSurfaceTransparent(_menuSurface, 0, 0);
 }
 
 void GameLogic::menuQuitGame() {
