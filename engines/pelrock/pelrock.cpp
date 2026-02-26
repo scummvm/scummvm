@@ -154,14 +154,14 @@ void PelrockEngine::init() {
 	if (gameInitialized == false) {
 		gameInitialized = true;
 		loadAnims();
-		// setScreen(0, ALFRED_DOWN);
+		setScreen(0, ALFRED_DOWN);
 		// setScreen(3, ALFRED_RIGHT);
 		// setScreen(22, ALFRED_DOWN);
 		// setScreen(41, ALFRED_DOWN);
 		// setScreen(43, ALFRED_DOWN);
 		// setScreen(46, ALFRED_RIGHT);
 		// setScreen(0, ALFRED_DOWN);
-		setScreen(52, ALFRED_DOWN);
+		// setScreen(52, ALFRED_DOWN);
 		// setScreen(15, ALFRED_DOWN);
 		// setScreen(2, ALFRED_LEFT);
 		// alfredState.x = 576;
@@ -243,14 +243,14 @@ void PelrockEngine::travelToEgypt() {
 	_graphics->fadeToBlack(10);
 	_sound->playMusicTrack(26, false);
 	byte *palette = new byte[768];
-	if (_extraScreen == nullptr) {
-		_extraScreen = new byte[640 * 400];
+	if (_bgScreen == nullptr) {
+		_bgScreen = new byte[640 * 400];
 	}
-	_res->getExtraScreen(6, _extraScreen, palette);
+	_res->getExtraScreen(6, _bgScreen, palette);
 	CursorMan.showMouse(false);
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 
-	memcpy(_screen->getPixels(), _extraScreen, 640 * 400);
+	memcpy(_screen->getPixels(), _bgScreen, 640 * 400);
 	int frameCount = 0;
 	while (!shouldQuit() && frameCount < 96) {
 		_events->pollEvent();
@@ -273,10 +273,10 @@ void PelrockEngine::travelToEgypt() {
 	_graphics->clearScreen();
 
 	g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
-	free(_extraScreen);
-	_extraScreen = nullptr;
+	free(_bgScreen);
+	_bgScreen = nullptr;
 	CursorMan.showMouse(true);
-	delete[] _extraScreen;
+	delete[] _bgScreen;
 	delete[] palette;
 	_screen->markAllDirty();
 	_screen->update();
@@ -348,7 +348,7 @@ const int kPasserbyTriggerFrameInterval = 0x3FF;
 void PelrockEngine::frameTriggers() {
 	uint32 frameCount = _chrono->getFrameCount();
 	passerByAnim(frameCount);
-	// make();
+	handleFlightRoomFrame();
 }
 
 void PelrockEngine::passerByAnim(uint32 frameCount) {
@@ -1607,6 +1607,11 @@ void PelrockEngine::gameLoop() {
 	}
 
 	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_e && _room->_currentRoomNumber == 52) {
+		teletransportToPrincess();
+		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
+	}
+
+	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_f) {
 		endingScene();
 		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
 	}
@@ -1627,7 +1632,7 @@ void PelrockEngine::computerLoop() {
 }
 
 void PelrockEngine::extraScreenLoop() {
-	memcpy(_screen->getPixels(), _extraScreen, 640 * 400);
+	memcpy(_screen->getPixels(), _bgScreen, 640 * 400);
 	while (!shouldQuit()) {
 		_events->pollEvent();
 
@@ -1641,8 +1646,8 @@ void PelrockEngine::extraScreenLoop() {
 	}
 
 	g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
-	free(_extraScreen);
-	_extraScreen = nullptr;
+	free(_bgScreen);
+	_bgScreen = nullptr;
 }
 
 void PelrockEngine::walkLoop(int16 x, int16 y, AlfredDirection direction) {
@@ -1891,16 +1896,16 @@ void PelrockEngine::setScreen(int roomNumber, AlfredDirection dir) {
 void PelrockEngine::loadExtraScreenAndPresent(int screenIndex) {
 
 	byte *palette = new byte[768];
-	if (_extraScreen == nullptr) {
-		_extraScreen = new byte[640 * 400];
+	if (_bgScreen == nullptr) {
+		_bgScreen = new byte[640 * 400];
 	}
-	_res->getExtraScreen(screenIndex, _extraScreen, palette);
+	_res->getExtraScreen(screenIndex, _bgScreen, palette);
 	CursorMan.showMouse(false);
 	_graphics->clearScreen();
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 	extraScreenLoop();
 	CursorMan.showMouse(true);
-	delete[] _extraScreen;
+	delete[] _bgScreen;
 	delete[] palette;
 	_screen->markAllDirty();
 	_screen->update();
@@ -2033,9 +2038,17 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		if (_state->getFlag(FLAG_CORRECT_DOOR_CHOSEN) == true) {
 			if (_state->getFlag(FLAG_TRAMPILLA_ABIERTA) == true) {
 
+				_dialog->say(_res->_ingameTexts[OHMISALVADOR]);
+				_dialog->say(_res->_ingameTexts[VOYPORTI_PRINCESA]);
+				_state->setCurrentRoot(48, 1, 0);
+				walkAndAction(_room->findHotspotByExtra(634), TALK);
+
+				endingScene();
+
 			} else {
 				_dialog->say(_res->_ingameTexts[OHMISALVADOR]);
 				_dialog->say(_res->_ingameTexts[VOYPORTI_PRINCESA]);
+				_state->setFlag(FLAG_TRAMPILLA_ABIERTA, true);
 				walkAndAction(_room->findHotspotByExtra(634), TALK);
 				_room->addSticker(134);
 				// wait a few frames
@@ -2051,6 +2064,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 				}
 				_alfredState.x = 294;
 				_alfredState.y = 387;
+				_room->addSticker(136);
 				setScreen(49, ALFRED_UP);
 			}
 		} else {
@@ -2083,6 +2097,138 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 	default:
 		break;
 	}
+}
+
+void PelrockEngine::endingScene() {
+	byte *palette = new byte[768];
+	if (_bgScreen == nullptr) {
+		_bgScreen = new byte[640 * 400];
+	}
+	_res->getExtraScreen(14, _bgScreen, palette);
+	CursorMan.showMouse(false);
+	_graphics->clearScreen();
+	g_system->getPaletteManager()->setPalette(palette, 0, 256);
+	Common::File alfred7;
+	if (!alfred7.open(Common::Path("ALFRED.7"))) {
+		error("Could not open ALFRED.7");
+		return;
+	}
+	byte *decompressedBuf = nullptr;
+	size_t decompressedSize = 0;
+	rleDecompressSingleBuda(&alfred7, 3222250, decompressedBuf, decompressedSize);
+	alfred7.close();
+
+	int animValues[4][8] = {
+		{426, 211, 114, 189, 2, 2, 0, 0}, // Legs anim values (2 frames)
+		{287, 68, 42, 26, 3, 1, 1, 15},   // Eyes anim values (3 frames)
+		{172, 173, 93, 71, 3, 1, 3, 17},  // Alfred hand anim values (3 frames)
+		{241, 334, 55, 66, 2, 2, 0, 0}    // Hand anim values (2 frames)
+	};
+
+	uint32 pos = 0;
+	Common::Array<Sprite *> sprites;
+	for (int i = 0; i < 4; i++) {
+		Sprite *sprite = new Sprite();
+		sprite->x = animValues[i][0];
+		sprite->y = animValues[i][1];
+		sprite->w = animValues[i][2];
+		sprite->h = animValues[i][3];
+		sprite->stride = animValues[i][2] * animValues[i][3];
+		bool idleAnim = animValues[i][7] > 0;
+		if (idleAnim) {
+			sprite->numAnims = 2;
+		} else {
+			sprite->numAnims = 1;
+		}
+
+		sprite->animData = new Anim[sprite->numAnims];
+		Anim mainAnim;
+		mainAnim.nframes = animValues[i][4];
+		mainAnim.loopCount = animValues[i][6];
+		mainAnim.speed = animValues[i][5];
+
+		byte *legsAnimData = new byte[sprite->stride * mainAnim.nframes];
+		Common::copy(decompressedBuf + pos, decompressedBuf + pos + sprite->stride * mainAnim.nframes, legsAnimData);
+		mainAnim.animData = new byte *[mainAnim.nframes];
+		for (int j = 0; j < mainAnim.nframes; j++) {
+			mainAnim.animData[j] = new byte[sprite->stride];
+			extractSingleFrame(legsAnimData, mainAnim.animData[j], j, sprite->w, sprite->h);
+		}
+
+		if (idleAnim) {
+			Anim idleAnim;
+			idleAnim.nframes = 1;
+			idleAnim.loopCount = 1;
+			idleAnim.speed = animValues[i][7];
+			idleAnim.animData = new byte *[1];
+			idleAnim.animData[0] = new byte[sprite->stride];
+			extractSingleFrame(legsAnimData, idleAnim.animData[0], 0, sprite->w, sprite->h);
+			sprite->animData[0] = idleAnim;
+			sprite->animData[1] = mainAnim;
+		} else {
+			sprite->animData[0] = mainAnim;
+		}
+
+		pos += sprite->stride * mainAnim.nframes;
+		delete[] legsAnimData;
+		sprites.push_back(sprite);
+	}
+
+	Common::Rect bbox1 = _largeFont->getBoundingBox("ALFRED PELROCK");
+	Common::Rect bbox2 = _largeFont->getBoundingBox("En busca de un sueño");
+	int y1 = 400 / 2 - bbox1.height() / 2;
+	int y2 = 400 / 2 + bbox1.height() / 2;
+	int ticks = 0;
+	_sound->playMusicTrack(3);
+	while (!shouldQuit()) {
+		_events->pollEvent();
+
+		_chrono->updateChrono();
+
+		if (_chrono->_gameTick) {
+
+			memcpy(_compositeBuffer, _bgScreen, 640 * 400);
+
+			for (Sprite *sprite : sprites) {
+				drawNextFrame(sprite);
+			}
+
+			memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
+			if (ticks > 30 && ticks < 180) {
+				drawText(_largeFont, "ALFRED PELROCK", 0, y1, 640, 255);
+				drawText(_largeFont, "En busca de un sue\x80o", 0, y2, 640, 255);
+			}
+
+			if (ticks > 200) {
+				break;
+			}
+			ticks++;
+		}
+
+		g_system->delayMillis(10);
+		_screen->markAllDirty();
+		_screen->update();
+	}
+
+	memset(_screen->getPixels(), 0, 640 * 400);
+	g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
+	free(_bgScreen);
+	_bgScreen = nullptr;
+
+	CursorMan.showMouse(true);
+	delete[] _bgScreen;
+	_bgScreen = nullptr;
+	delete[] palette;
+	_screen->markAllDirty();
+	_screen->update();
+	if (shouldQuit())
+		return;
+	credits();
+}
+
+void PelrockEngine::credits() {
+
+	debug("Starting credits sequence");
 }
 
 void PelrockEngine::initGodsSequences(int roomNumber) {

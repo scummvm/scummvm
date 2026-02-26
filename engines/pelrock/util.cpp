@@ -240,6 +240,14 @@ void readUntilBuda(Common::SeekableReadStream *stream, uint32_t startPos, byte *
 	outSize = pos;
 }
 
+void rleDecompressSingleBuda(Common::SeekableReadStream *stream, uint32_t startPos, byte *&outBuffer, size_t &outSize){
+	byte *buffer = nullptr;
+	size_t size = 0;
+	readUntilBuda(stream, startPos, buffer, size);
+	outSize = rleDecompress(buffer, size, 0, 0, &outBuffer, true);
+	free(buffer);
+}
+
 // Helper function for transparent blitting
 void drawSpriteToBuffer(byte *buffer, int bufferWidth, byte *sprite, int x, int y, int width, int height, int transparentColor) {
 

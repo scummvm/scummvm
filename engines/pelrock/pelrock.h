@@ -131,7 +131,7 @@ private:
 	PathContext _currentContext;
 
 	byte *_currentBackground = nullptr; // Clean background - NEVER modified
-	byte *_extraScreen = nullptr;
+	byte *_bgScreen = nullptr;
 
 	ActionPopupState _actionPopupState;
 
@@ -255,6 +255,8 @@ public:
 
 	// Actions
 	void doExtraActions(int roomNumber);
+	void endingScene();
+	void credits();
 	void initGodsSequences(int roomNumber);
 	void addInventoryItem(int item);
 	void buyFromStore(HotSpot *hotspot, int stickerId);
@@ -377,7 +379,7 @@ public:
 	void checkAllSymbols();
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);
-	void endingScene();
+	void teletransportToPrincess();
 
 	void animateStatuePaletteFade(bool reverse = false);
 	void pickUpMatches(HotSpot *hotspot);

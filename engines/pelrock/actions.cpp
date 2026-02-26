@@ -1835,13 +1835,13 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 		break;
 	}
 	case 375: {
-		endingScene();
+		teletransportToPrincess();
 		break;
 	}
 	}
 }
 
-void PelrockEngine::endingScene() {
+void PelrockEngine::teletransportToPrincess() {
 	int phase = 0;
 
 	int lines[5][4] = {

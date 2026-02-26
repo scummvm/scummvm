@@ -488,10 +488,15 @@ const ExtraImages extraScreens[] = {
 	8
 	},
 	{
-		0x00226358,
-		0x00236AA8,
-		8
+	0x00226358, // 13 - Background book
+	0x00236AA8,
+	8
 	},
+	{
+	3058226, // 14 - Ending
+	3185280,
+	8
+	}
 
 };
 
