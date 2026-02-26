@@ -90,4 +90,18 @@ void ChamberEngine::syncGameStream(Common::Serializer &s) {
 	s.syncAsUint16LE(dummy);
 }
 
+int ChamberEngine::getX(int original_x) {
+	if (_videoMode == Common::RenderMode::kRenderHercG) {
+		return original_x + 40; 
+	}
+	return original_x; 
+}
+
+int ChamberEngine::getY(int original_y) {
+	if (_videoMode == Common::RenderMode::kRenderHercG) {
+		return original_y + 74; 
+	}
+	return original_y;
+}
+
 } // End of namespace Chamber

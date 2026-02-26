@@ -40,6 +40,8 @@
 #include "chamber/dialog.h"
 #include "chamber/menu.h"
 #include "chamber/ifgm.h"
+#include "graphics/surface.h"
+#include "graphics/paletteman.h"
 
 namespace Chamber {
 
@@ -61,11 +63,39 @@ void saveToFile(char *filename, void *data, uint16 size) {
 #endif
 }
 
-int16 loadSplash(const char *filename) {
+Graphics::Surface *loadSplash(const char *filename) {
 	if (!loadFile(filename, scratch_mem1))
-		return 0;
-	decompress(scratch_mem1 + 8, backbuffer);   /* skip compressed/decompressed size fields */
-	return 1;
+		return nullptr;
+
+	Graphics::Surface *surface = new Graphics::Surface();
+	int width = (g_vm->_videoMode == Common::kRenderHercG) ? 640 : 320;
+	int height = (g_vm->_videoMode == Common::kRenderHercG) ? 640 : 200;
+	surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+
+	decompress(scratch_mem1 + 8, backbuffer);
+
+	for (int y = 0; y < CGA_HEIGHT; ++y) {
+		byte *dst = (byte *)surface->getBasePtr(0, y);
+		for (int x = 0; x < CGA_WIDTH; x += 4) {
+			int cga_offset = (y % 2) * 8192 + (y / 2) * 80 + (x / 4);
+			byte cga_byte = backbuffer[cga_offset];
+
+			if (g_vm->_videoMode == Common::RenderMode::kRenderHercG) {
+				byte colors = cga_byte;
+				for (int i = 0; i < 8; i++) {
+					byte bit = (colors & 0x80) >> 7;
+					colors <<= 1;
+					dst[x * 2 + i] = bit;
+				}
+			} else{
+				for (int i = 0; i < 4; i++) {
+					byte color = (cga_byte >> (6 - i * 2)) & 0x03;
+					dst[x + i] = color;
+				}
+			}
+		}
+	}
+	return surface;
 }
 
 uint16 benchmarkCpu(void) {
@@ -236,10 +266,13 @@ Common::Error ChamberEngine::init() {
 
 	/* Install timer callback */
 	initTimer();
+	
+	Graphics::Surface *splash = nullptr;
 
 	if (g_vm->getLanguage() == Common::EN_USA) {
 		/* Load title screen */
-		if (!loadSplash("PRESCGA.BIN"))
+		splash = loadSplash("PRESCGA.BIN");
+		if (!splash)
 			exitGame();
 
 		if (ifgm_loaded) {
@@ -247,7 +280,8 @@ Common::Error ChamberEngine::init() {
 		}
 	} else {
 		/* Load title screen */
-		if (!loadSplash("PRES.BIN"))
+		splash = loadSplash("PRES.BIN");
+		if (!splash)
 			exitGame();
 	}
 
@@ -261,11 +295,20 @@ Common::Error ChamberEngine::init() {
 		cga_BackBufferToRealFull();
 	}
 
+    int splash_x = getX(0);
+    int splash_y = getY(0);
+   
+    g_system->copyRectToScreen(splash->getPixels(), splash->pitch, splash_x, splash_y, splash->w, splash->h);
+    g_system->updateScreen(); 
+
+    splash->free();
+    delete splash;
+   
 	/* Wait for a keypress */
 	clearKeyboard();
 	readKeyboardChar();
 
-
+	
 	if (g_vm->getLanguage() == Common::EN_USA) {
 		if (ifgm_loaded) {
 			/*TODO*/

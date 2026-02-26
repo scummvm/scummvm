@@ -72,6 +72,9 @@ public:
 	void initSound();
 	void deinitSound();
 
+	int getX(int original_x);
+	int getY(int original_y);
+
 public:
 	bool _shouldQuit;
 	bool _shouldRestart;
