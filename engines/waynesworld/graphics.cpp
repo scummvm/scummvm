@@ -285,12 +285,22 @@ void Screen::endUpdate() {
 }
 
 void Screen::drawSurface(const Graphics::Surface *surface, int x, int y) {
+	if (!surface) {
+		warning("drawSurface - Trying to draw on a null surface!");
+		return;
+	}
+	
 	beginUpdate();
 	drawSurfaceIntern(_vgaSurface, surface, x, y, false);
 	endUpdate();
 }
 
 void Screen::drawSurfaceTransparent(const Graphics::Surface *surface, int x, int y) {
+	if (!surface) {
+		warning("drawSurfaceTransparent - Trying to draw on a null surface!");
+		return;
+	}
+
 	beginUpdate();
 	drawSurfaceIntern(_vgaSurface, surface, x, y, true);
 	endUpdate();
