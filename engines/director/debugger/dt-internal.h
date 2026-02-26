@@ -112,17 +112,20 @@ typedef struct WindowFlag {
 typedef struct ImGuiState {
 
 	struct ScoreConfig {
-		float sidebar_width = 60.0f;
-		float cell_width = 16.0f;
-		float cell_height = 32.0f;
-		int visible_frames = 60;
-		int visible_channels = 10;
-		float table_width = cell_width * visible_frames;
-		float table_height = cell_height * visible_channels;
-		float ruler_height = 30.0f;
-		float ruler_width = cell_width * visible_frames;
-		float sidebar1_height = cell_height * 6;
-		float cell_height_extended = 5 * cell_height;
+		float _sidebar_width = 60.0f;
+		float _cell_width = 16.0f;
+		float _cell_height = 20.0f;
+		int _visible_frames = 60;
+		int _visible_channels = 25;
+		float _table_width = _cell_width * _visible_frames;
+		float _table_height = _cell_height * _visible_channels;
+		float _ruler_height = 30.0f;
+		float _ruler_width = _cell_width * _visible_frames;
+		float _sidebar1_height = _cell_height * 6;
+		float _cell_height_extended = 5 * _cell_height;
+		ImU32 _table_light_color = IM_COL32(51,  51,  51,  255);
+		ImU32 _table_dark_color = IM_COL32(38, 38, 38, 255);
+		ImU32 _border_color = IM_COL32(102, 102, 102, 255);
 	} _scoreCfg;
 
 	struct ScoreState {
@@ -137,6 +140,7 @@ typedef struct ImGuiState {
 		ImGuiTextFilter _nameFilter;
 		int _typeFilter = 0x7FFF;
 	} _cast;
+
 	struct {
 		ImGuiTextFilter _nameFilter;
 		bool _showScriptContexts = true;
@@ -159,13 +163,15 @@ typedef struct ImGuiState {
 		ImVec4 _channel_toggle = ImColor(IM_COL32(0x30, 0x30, 0xFF, 0xFF));
 
 		ImVec4 _current_statement = ImColor(IM_COL32(0xFF, 0xFF, 0x00, 0xFF));
-		ImVec4 _line_color = ImVec4(0.44f, 0.44f, 0.44f, 1.0f);
+		//ImVec4 _line_color = ImVec4(0.44f, 0.44f, 0.44f, 1.0f);
+		ImVec4 _line_color = ImColor(IM_COL32(0x2F, 0x2F, 0x2F, 0xFF)); // added for better contrast
 		ImVec4 _call_color = ImColor(IM_COL32(0xFF, 0xC5, 0x5C, 0xFF));
 		ImVec4 _builtin_color = ImColor(IM_COL32(0x60, 0x7C, 0xFF, 0xFF));
 		ImVec4 _var_color = ImColor(IM_COL32(0x4B, 0xCD, 0x5E, 0xFF));
 		ImVec4 _literal_color = ImColor(IM_COL32(0xFF, 0x9F, 0xDA, 0x9E));
 		ImVec4 _comment_color = ImColor(IM_COL32(0xFF, 0xA5, 0x9D, 0x95));
-		ImVec4 _type_color = ImColor(IM_COL32(0x13, 0xC5, 0xF9, 0xFF));
+		//ImVec4 _type_color = ImColor(IM_COL32(0x13, 0xC5, 0xF9, 0xFF));
+		ImVec4 _type_color = ImColor(IM_COL32(0xB8, 0xB8, 0xB8, 0xC0)); // added this instead because better contrast
 		ImVec4 _keyword_color = ImColor(IM_COL32(0xC1, 0xC1, 0xC1, 0xFF));
 		ImVec4 _the_color = ImColor(IM_COL32(0xFF, 0x49, 0xEF, 0xFF));
 
