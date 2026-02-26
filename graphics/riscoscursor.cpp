@@ -47,38 +47,38 @@ namespace Graphics {
 
 class RiscOSCursor : public Cursor {
 public:
-    uint16 getWidth() const override { return w; }
-    uint16 getHeight() const override { return h; }
-    uint16 getHotspotX() const override { return hotX; }
-    uint16 getHotspotY() const override { return hotY; }
+    uint16 getWidth() const override { return _w; }
+    uint16 getHeight() const override { return _h; }
+    uint16 getHotspotX() const override { return _hotX; }
+    uint16 getHotspotY() const override { return _hotY; }
 
-    const byte *getSurface() const override { return riscOSCursor; }
-    const byte *getPalette() const override { return riscOSPalette; }
+    const byte *getSurface() const override { return _riscOSCursor; }
+    const byte *getPalette() const override { return _riscOSPalette; }
 
-    byte getKeyColor() const override { return key; }
+    byte getKeyColor() const override { return _key; }
     byte getPaletteStartIndex() const override { return 0; }
     uint16 getPaletteCount() const override { return 3; }
 
 private:
-    static const uint16 w = 11;
-    static const uint16 h = 11;
-    static const uint16 hotX = 0;
-    static const uint16 hotY = 0;
-    static const byte key = 0;
+    static const uint16 _w = 11;
+    static const uint16 _h = 11;
+    static const uint16 _hotX = 0;
+    static const uint16 _hotY = 0;
+    static const byte _key = 0;
 
-    static const byte riscOSPalette[3 * 3];
-    static const byte riscOSCursor[w * h];
+    static const byte _riscOSPalette[3 * 3];
+    static const byte _riscOSCursor[_w * _h];
 };
 
 // Palette: transparent, light blue, dark blue
-const byte RiscOSCursor::riscOSPalette[3 * 3] = {
+const byte RiscOSCursor::_riscOSPalette[3 * 3] = {
     0x00, 0x00, 0x00,
     0x00, 0xFF, 0xFF,
     0x00, 0x00, 0x99
 };
 
 // 11 x 11 RISC OS 3.11 cursor
-const byte RiscOSCursor::riscOSCursor[RiscOSCursor::w * RiscOSCursor::h] = {
+const byte RiscOSCursor::_riscOSCursor[RiscOSCursor::_w * RiscOSCursor::_h] = {
     1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     1, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0,
     1, 2, 2, 2, 1, 1, 0, 0, 0, 0, 0,
