@@ -660,6 +660,7 @@ Common::Error ColonyEngine::run() {
 				warning("Failed to open Colony resource fork");
 			}
 		}
+		_sound->init();
 	}
 
 	_width = 640;

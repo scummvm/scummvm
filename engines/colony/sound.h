@@ -36,6 +36,7 @@ public:
 	Sound(ColonyEngine *vm);
 	~Sound();
 
+	void init();
 	void play(int soundID);
 	void stop();
 	bool isPlaying() const;

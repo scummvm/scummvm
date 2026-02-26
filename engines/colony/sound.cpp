@@ -27,11 +27,14 @@
 
 namespace Colony {
 
-Sound::Sound(ColonyEngine *vm) : _vm(vm) {
+Sound::Sound(ColonyEngine *vm) : _vm(vm), _resMan(nullptr), _appResMan(nullptr) {
 	_speaker = new Audio::PCSpeaker();
 	_speaker->init();
+}
 
-	// Open Zounds resource file (contains most sounds)
+void Sound::init() {
+	// Open Zounds resource file (contains most sounds).
+	// Must be called from run() after SearchMan has the game data path.
 	_resMan = new Common::MacResManager();
 	if (!_resMan->open("Zounds")) {
 		if (!_resMan->open("CData/Zounds")) {
@@ -43,7 +46,9 @@ Sound::Sound(ColonyEngine *vm) : _vm(vm) {
 	// EXPLODE, EAT, THEYSHOOT, MESHOOT, CHIME that aren't in Zounds)
 	_appResMan = new Common::MacResManager();
 	if (!_appResMan->open("Colony")) {
-		debug("Could not open Colony resource file for sounds");
+		if (!_appResMan->open("(Color) Colony")) {
+			debug("Could not open Colony resource file for sounds");
+		}
 	}
 }
 
