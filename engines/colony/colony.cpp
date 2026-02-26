@@ -141,11 +141,6 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 
 	_sound = new Sound(this);
 	_resMan = new Common::MacResManager();
-	if (getPlatform() == Common::kPlatformMacintosh) {
-		if (!_resMan->open("Colony")) {
-			_resMan->open("Colony.bin");
-		}
-	}
 	initTrig();
 }
 
@@ -656,6 +651,16 @@ void ColonyEngine::initTrig() {
 }
 
 Common::Error ColonyEngine::run() {
+	// Open Colony resource fork (must happen in run(), not constructor,
+	// because SearchMan doesn't have the game path until now)
+	if (getPlatform() == Common::kPlatformMacintosh) {
+		if (!_resMan->open("Colony")) {
+			if (!_resMan->open("Colony.bin")) {
+				warning("Failed to open Colony resource fork");
+			}
+		}
+	}
+
 	_width = 640;
 	_height = 350;
 
@@ -914,9 +919,13 @@ void ColonyEngine::playIntro() {
 		// Load the Mac "Commando" font (FOND 190, 12pt) from Colony resources.
 		// Original intro.c: TextFont(190); TextSize(12);
 		// FONT resource ID = FOND_ID * 128 + size = 190 * 128 + 12 = 24332
+		// Some builds store it as NFNT instead of FONT.
 		Graphics::MacFONTFont *macFont = nullptr;
 		if (_resMan) {
-			Common::SeekableReadStream *fontStream = _resMan->getResource(MKTAG('F', 'O', 'N', 'T'), 24332);
+			const uint16 fontResID = 24332;
+			Common::SeekableReadStream *fontStream = _resMan->getResource(MKTAG('N', 'F', 'N', 'T'), fontResID);
+			if (!fontStream)
+				fontStream = _resMan->getResource(MKTAG('F', 'O', 'N', 'T'), fontResID);
 			if (fontStream) {
 				macFont = new Graphics::MacFONTFont();
 				if (!macFont->loadFont(*fontStream)) {
@@ -926,7 +935,15 @@ void ColonyEngine::playIntro() {
 				}
 				delete fontStream;
 			} else {
-				warning("playIntro: FONT 24332 not found in Colony resources");
+				// List available font resources for debugging
+				Common::MacResIDArray nfntIDs = _resMan->getResIDArray(MKTAG('N', 'F', 'N', 'T'));
+				Common::MacResIDArray fontIDs = _resMan->getResIDArray(MKTAG('F', 'O', 'N', 'T'));
+				debug("playIntro: FONT/NFNT %d not found. Available NFNT IDs: %d, FONT IDs: %d",
+				      fontResID, nfntIDs.size(), fontIDs.size());
+				for (uint i = 0; i < nfntIDs.size(); i++)
+					debug("  NFNT %d", nfntIDs[i]);
+				for (uint i = 0; i < fontIDs.size(); i++)
+					debug("  FONT %d", fontIDs[i]);
 			}
 		}
 
@@ -939,16 +956,18 @@ void ColonyEngine::playIntro() {
 		_gfx->copyToScreen();
 
 		// 3. "MindScape Presents" logo + PlayMars() + makestars()
-		// B&W Colony has PICT -32748 (254x251) for logo
+		// Color Colony: DoPicture(-32565), B&W Colony: DoPicture(-32748)
 		_gfx->clear(_gfx->black());
-		drawPict(-32748);
+		if (!drawPict(-32565))  // Color Colony
+			drawPict(-32748);   // B&W Colony
 		_sound->play(Sound::kMars);
 		if (makeStars(_screenR, 0)) { _sound->stop(); delete macFont; return; }
 
 		// 4. "The Colony by David A. Smith" logo + makestars()
-		// B&W Colony has PICT -32750 (394x252) for title card
+		// Color Colony: DoPicture(-32564), B&W Colony: DoPicture(-32750)
 		_gfx->clear(_gfx->black());
-		drawPict(-32750);
+		if (!drawPict(-32564))  // Color Colony
+			drawPict(-32750);   // B&W Colony
 		if (makeStars(_screenR, 0)) { _sound->stop(); delete macFont; return; }
 
 		// 5. Empty stars
@@ -1375,19 +1394,19 @@ bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *m
 	return false;
 }
 
-void ColonyEngine::drawPict(int resID) {
+bool ColonyEngine::drawPict(int resID) {
 	// Original: DoPicture() in intro.c
 	// Loads a PICT resource from the Colony application, centers it on screen.
 	if (!_resMan || !(_resMan->isMacFile() || _resMan->hasResFork()))
-		return;
+		return false;
 
 	// Try both signed interpretations for negative resource IDs
 	Common::SeekableReadStream *pictStream = _resMan->getResource(MKTAG('P', 'I', 'C', 'T'), (int16)resID);
 	if (!pictStream) {
 		pictStream = _resMan->getResource(MKTAG('P', 'I', 'C', 'T'), resID);
 		if (!pictStream) {
-			warning("drawPict: could not load PICT %d", resID);
-			return;
+			debug("drawPict: PICT %d not found", resID);
+			return false;
 		}
 	}
 
@@ -1395,35 +1414,80 @@ void ColonyEngine::drawPict(int resID) {
 	if (decoder.loadStream(*pictStream)) {
 		const Graphics::Surface *surface = decoder.getSurface();
 		if (surface) {
-			// Center like the original: locate = centered, clip = inset by 1
 			int x = (_width - surface->w) / 2;
 			int y = (_height - surface->h) / 2;
+			bool isCLUT8 = (surface->format == Graphics::PixelFormat::createFormatCLUT8());
+			const Graphics::Palette &pictPal = decoder.getPalette();
 
-			// Detect if this is a 1-bit B&W PICT (CLUT8 with only values 0/1)
-			// In Mac QuickDraw: bit 0 = white (background), bit 1 = black (foreground)
-			bool isBW = (surface->format == Graphics::PixelFormat::createFormatCLUT8());
+			debug("drawPict(%d): %dx%d, format=%dbpp, palette=%d entries",
+			      resID, surface->w, surface->h, surface->format.bytesPerPixel * 8, pictPal.size());
 
-			for (int iy = 0; iy < surface->h; iy++) {
-				if (y + iy < 0 || y + iy >= _height) continue;
-				for (int ix = 0; ix < surface->w; ix++) {
-					if (x + ix < 0 || x + ix >= _width) continue;
-					uint32 color = surface->getPixel(ix, iy);
-					if (isBW) {
-						// Mac QuickDraw: 0=white, 1=black
-						// Map to our palette: white=15 (IntWhite), black=0
-						color = (color == 0) ? 15 : 0;
+			if (isCLUT8 && pictPal.size() > 0) {
+				// CLUT8 PICT with embedded palette.
+				// Install PICT palette at offset 128 in our engine palette,
+				// then draw pixels remapped to that offset.
+				const int palOffset = 128;
+				int nColors = MIN((int)pictPal.size(), 128); // cap to fit 128-255
+				_gfx->setPalette(pictPal.data(), palOffset, nColors);
+
+				for (int iy = 0; iy < surface->h; iy++) {
+					if (y + iy < 0 || y + iy >= _height) continue;
+					for (int ix = 0; ix < surface->w; ix++) {
+						if (x + ix < 0 || x + ix >= _width) continue;
+						byte idx = *((const byte *)surface->getBasePtr(ix, iy));
+						// Look up the pixel's RGB from the PICT palette
+						byte pr = pictPal.data()[idx * 3 + 0];
+						byte pg = pictPal.data()[idx * 3 + 1];
+						byte pb = pictPal.data()[idx * 3 + 2];
+						// Skip black pixels so the logo sits on the black background
+						if (pr == 0 && pg == 0 && pb == 0)
+							continue;
+						int palIdx = (idx < nColors) ? palOffset + idx : 15;
+						_gfx->setPixel(x + ix, y + iy, palIdx);
 					}
-					// Only draw non-black pixels so the logo sits on the black background
-					if (color != 0)
-						_gfx->setPixel(x + ix, y + iy, color);
+				}
+			} else if (isCLUT8) {
+				// CLUT8 without palette — assume 1-bit B&W PICT.
+				// Mac QuickDraw: 0=white (background), 1=black (foreground)
+				for (int iy = 0; iy < surface->h; iy++) {
+					if (y + iy < 0 || y + iy >= _height) continue;
+					for (int ix = 0; ix < surface->w; ix++) {
+						if (x + ix < 0 || x + ix >= _width) continue;
+						byte idx = *((const byte *)surface->getBasePtr(ix, iy));
+						if (idx == 0)
+							_gfx->setPixel(x + ix, y + iy, 15); // white
+						// idx != 0 → black, skip (background)
+					}
+				}
+			} else {
+				// RGB surface — convert each pixel through nearest-palette match.
+				// Use palette entries 0-15 (EGA) for matching.
+				for (int iy = 0; iy < surface->h; iy++) {
+					if (y + iy < 0 || y + iy >= _height) continue;
+					for (int ix = 0; ix < surface->w; ix++) {
+						if (x + ix < 0 || x + ix >= _width) continue;
+						uint32 pixel = surface->getPixel(ix, iy);
+						byte r, g, b;
+						surface->format.colorToRGB(pixel, r, g, b);
+						if (r == 0 && g == 0 && b == 0)
+							continue;
+						// Simple luminance-based mapping to grayscale palette
+						int lum = (r * 77 + g * 150 + b * 29) >> 8;
+						int palIdx = (lum * 15 + 127) / 255; // map 0-255 → 0-15
+						if (palIdx > 0)
+							_gfx->setPixel(x + ix, y + iy, palIdx);
+					}
 				}
 			}
 			_gfx->copyToScreen();
+			delete pictStream;
+			return true;
 		}
 	} else {
 		warning("drawPict: failed to decode PICT %d", resID);
 	}
 	delete pictStream;
+	return false;
 }
 
 bool ColonyEngine::loadAnimation(const Common::String &name) {
