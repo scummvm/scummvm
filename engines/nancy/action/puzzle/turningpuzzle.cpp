@@ -132,6 +132,9 @@ void TurningPuzzle::readData(Common::SeekableReadStream &stream) {
 	uint numSpindles = stream.readUint16LE();
 	_numFaces = stream.readUint16LE();
 	_numFramesPerTurn = stream.readUint16LE();
+	if (_numFramesPerTurn == 0) {
+		error("TurningPuzzle::readData(): _numFramesPerTurn is 0");
+	}
 
 	_startPositions.resize(numSpindles);
 	for (uint i = 0; i < numSpindles; ++i) {
