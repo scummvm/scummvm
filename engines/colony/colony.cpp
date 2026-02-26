@@ -22,6 +22,7 @@
 #include "colony/colony.h"
 #include "colony/gfx.h"
 #include "common/config-manager.h"
+#include "common/hashmap.h"
 #include "common/file.h"
 #include "common/system.h"
 #include "common/util.h"
@@ -947,65 +948,109 @@ void ColonyEngine::playIntro() {
 			}
 		}
 
-		// Original: intro() in intro.c
+		// Original: intro() in intro.c, lines 40-119
+		// qt flag propagates through sections — only modifier+click sets it
+		bool qt = false;
+
 		// 1. ScrollInfo() - scrolling story text with BeamMe sound
-		scrollInfo(macFont);
+		qt = scrollInfo(macFont);
 
-		// 2. Wait for sound to finish
+		// 2. Wait for BeamMe sound to finish
+		// Original: if(!qt) while(!SoundDone());
+		while (!qt && !shouldQuit() && _sound->isPlaying())
+			_system->delayMillis(10);
+
+		// Original: if(Button()) qt=OptionKey(); — check for skip
+		if (!qt) {
+			Common::Event event;
+			while (_system->getEventManager()->pollEvent(event)) {
+				if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_KEYDOWN) {
+					int mods = _system->getEventManager()->getModifierState();
+					if (mods & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_SHIFT | Common::KBD_META))
+						qt = true;
+				}
+			}
+		}
+
+		if (!qt) {
+			// 3. Logo 1 + PlayMars + makestars
+			// Original: FillRect black; DoPicture; PlayMars(); makestars()
+			_gfx->clear(_gfx->black());
+			if (!drawPict(-32565))  // Color Colony
+				drawPict(-32748);   // B&W Colony
+			_sound->play(Sound::kMars);
+			qt = makeStars(_screenR, 0);
+
+			if (!qt) {
+				// 4. Logo 2 + makestars (inside the same !qt block as original)
+				// Original: FillRect black; DoPicture(-32564); makestars()
+				_gfx->clear(_gfx->black());
+				if (!drawPict(-32564))  // Color Colony
+					drawPict(-32750);   // B&W Colony
+				qt = makeStars(_screenR, 0);
+			}
+
+			if (!qt) {
+				// 5. Empty starfield
+				// Original: FillRect black; makestars()
+				_gfx->clear(_gfx->black());
+				_gfx->copyToScreen();
+				qt = makeStars(_screenR, 0);
+			}
+
+			if (!qt) {
+				// 6. TimeSquare("...BLACK HOLE COLLISION...")
+				qt = timeSquare("...BLACK HOLE COLLISION...", macFont);
+			}
+
+			if (!qt) {
+				// 7. Makeblackhole()
+				_gfx->clear(_gfx->black());
+				_gfx->copyToScreen();
+				qt = makeBlackHole();
+			}
+
+			if (!qt) {
+				// 8. TimeSquare("...FUEL HAS BEEN DEPLETED...")
+				qt = timeSquare("...FUEL HAS BEEN DEPLETED...", macFont);
+			}
+
+			// Original: SetPort(&metaPort); before next TimeSquare (no !qt guard)
+			if (!qt) {
+				// 9. TimeSquare("...PREPARE FOR CRASH LANDING...")
+				qt = timeSquare("...PREPARE FOR CRASH LANDING...", macFont);
+			}
+
+			if (!qt) {
+				// 10. makeplanet() + EndCSound()
+				// Simplified: starfield + delay (makeplanet draws a rotating planet)
+				_gfx->clear(_gfx->black());
+				_gfx->copyToScreen();
+				qt = makeStars(_screenR, 0);
+				_sound->stop(); // EndCSound()
+			}
+		}
+
+		// 11. Final crash — always runs (even if qt)
+		// Original: FillRect black; if(!qt) while(!SoundDone());
 		_gfx->clear(_gfx->black());
 		_gfx->copyToScreen();
+		while (!qt && !shouldQuit() && _sound->isPlaying())
+			_system->delayMillis(10);
 
-		// 3. "MindScape Presents" logo + PlayMars() + makestars()
-		// Color Colony: DoPicture(-32565), B&W Colony: DoPicture(-32748)
-		_gfx->clear(_gfx->black());
-		if (!drawPict(-32565))  // Color Colony
-			drawPict(-32748);   // B&W Colony
-		_sound->play(Sound::kMars);
-		if (makeStars(_screenR, 0)) { _sound->stop(); delete macFont; return; }
-
-		// 4. "The Colony by David A. Smith" logo + makestars()
-		// Color Colony: DoPicture(-32564), B&W Colony: DoPicture(-32750)
-		_gfx->clear(_gfx->black());
-		if (!drawPict(-32564))  // Color Colony
-			drawPict(-32750);   // B&W Colony
-		if (makeStars(_screenR, 0)) { _sound->stop(); delete macFont; return; }
-
-		// 5. Empty stars
-		_gfx->clear(_gfx->black());
-		_gfx->copyToScreen();
-		if (makeStars(_screenR, 0)) { _sound->stop(); delete macFont; return; }
-
-		// 6. TimeSquare("...BLACK HOLE COLLISION...")
-		if (timeSquare("...BLACK HOLE COLLISION...", macFont)) { _sound->stop(); delete macFont; return; }
-
-		// 7. Makeblackhole()
-		_gfx->clear(_gfx->black());
-		_gfx->copyToScreen();
-		if (makeBlackHole()) { _sound->stop(); delete macFont; return; }
-
-		// 8. TimeSquare("...FUEL HAS BEEN DEPLETED...")
-		if (timeSquare("...FUEL HAS BEEN DEPLETED...", macFont)) { _sound->stop(); delete macFont; return; }
-
-		// 9. TimeSquare("...PREPARE FOR CRASH LANDING...")
-		if (timeSquare("...PREPARE FOR CRASH LANDING...", macFont)) { _sound->stop(); delete macFont; return; }
-
-		// 10. makeplanet() + EndCSound() — simplified: just a delay
-		_gfx->clear(_gfx->black());
-		_gfx->copyToScreen();
-		_system->delayMillis(500);
-
-		// 11. Final crash: DoExplodeSound() + InvertRect flashing
-		_gfx->clear(_gfx->black());
-		_gfx->copyToScreen();
+		// Original: DoExplodeSound(); while(!SoundDone()) InvertRect(&rScreen); StopSound();
 		_sound->play(Sound::kExplode);
-		for (int i = 0; i < 16; i++) {
-			_gfx->clear(i % 2 ? _gfx->white() : _gfx->black());
+		while (!shouldQuit() && _sound->isPlaying()) {
+			_gfx->clear(_gfx->white());
+			_gfx->copyToScreen();
+			_system->delayMillis(50);
+			_gfx->clear(_gfx->black());
 			_gfx->copyToScreen();
 			_system->delayMillis(50);
 		}
+		_sound->stop();
 		_gfx->clear(_gfx->black());
 		_gfx->copyToScreen();
-		_sound->stop();
 		delete macFont;
 		macFont = nullptr;
 
@@ -1023,12 +1068,13 @@ void ColonyEngine::playIntro() {
 	}
 }
 
-void ColonyEngine::scrollInfo(const Graphics::Font *macFont) {
-	// Original: ScrollInfo() in intro.c
-	// Displays story text in blue gradient on black, plays DoBeammeSound(),
-	// scrolls text up from bottom, waits for click, scrolls off top.
+bool ColonyEngine::scrollInfo(const Graphics::Font *macFont) {
+	// Original: ScrollInfo() in intro.c, lines 138-221
+	// Renders story text in blue gradient to offscreen half-width buffer,
+	// scrolls it up from below screen with DoBeammeSound(),
+	// waits for click, then scrolls it off the top.
 	// Mac original: TextFont(190 = Commando); TextSize(12);
-	// Text starts bright blue (0xFFFF) and fades by -4096 per line.
+	// Text blue starts at 0xFFFF and fades by -4096 per visible line.
 	const char *story[] = {
 		"",
 		"Mankind has left the",
@@ -1051,10 +1097,12 @@ void ColonyEngine::scrollInfo(const Graphics::Font *macFont) {
 		_sound->play(Sound::kBeamMe);
 
 	_gfx->clear(_gfx->black());
+	_gfx->copyToScreen();
+
 	Graphics::DosFont dosFont;
 	const Graphics::Font *font = macFont ? macFont : (const Graphics::Font *)&dosFont;
 
-	// Original uses 19px line height, centers vertically
+	// Original uses 19px line height, centers vertically within height
 	int lineHeight = 19;
 	int totalHeight = lineHeight * storyLength;
 	int ht = (_height - totalHeight) / 2;
@@ -1064,7 +1112,6 @@ void ColonyEngine::scrollInfo(const Graphics::Font *macFont) {
 	byte pal[14 * 3]; // storyLength entries
 	memset(pal, 0, sizeof(pal));
 	for (int i = 0; i < storyLength; i++) {
-		// Blue intensity: starts at 255 (0xFFFF >> 8), decreases by ~16 per line
 		int blue = 255 - i * 16;
 		if (blue < 0) blue = 0;
 		pal[i * 3 + 0] = 0;     // R
@@ -1073,27 +1120,101 @@ void ColonyEngine::scrollInfo(const Graphics::Font *macFont) {
 	}
 	_gfx->setPalette(pal, 200, storyLength);
 
-	// Draw text with per-line blue gradient
-	for (int i = 0; i < storyLength; i++) {
-		if (strlen(story[i]) > 0)
-			_gfx->drawString(font, story[i], _width / 2, ht + lineHeight * i, 200 + i, Graphics::kTextAlignCenter);
-	}
-	_gfx->copyToScreen();
+	// Phase 1: Scroll text up from below screen
+	// Original: scrollRect starts at bottom (stayRect.bottom..stayRect.bottom*2),
+	// moves up by inc=4 each frame until text is visible at its correct position.
+	// We simulate by drawing text with a y-offset that starts at _height and decreases to 0.
+	int inc = 4;
+	bool qt = false;
 
-	// Wait for click (original: while(!Button()); while(Button()&&!qt);)
-	bool waiting = true;
-	while (waiting && !shouldQuit()) {
+	for (int scrollOff = _height; scrollOff > 0 && !qt; scrollOff -= inc) {
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONDOWN)
-				waiting = false;
+			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_KEYDOWN) {
+				// Original: if(Button()) if(qt=OptionKey()) { StopSound(); break; }
+				// Only modifier+click/key skips entire intro
+				int mods = _system->getEventManager()->getModifierState();
+				if (mods & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_SHIFT | Common::KBD_META)) {
+					qt = true;
+					_sound->stop();
+					break;
+				}
+			}
 		}
-		_system->delayMillis(10);
+		if (shouldQuit()) { qt = true; break; }
+
+		_gfx->clear(_gfx->black());
+		for (int i = 0; i < storyLength; i++) {
+			int drawY = ht + lineHeight * i + scrollOff;
+			if (strlen(story[i]) > 0 && drawY >= 0 && drawY < _height)
+				_gfx->drawString(font, story[i], _width / 2, drawY, 200 + i, Graphics::kTextAlignCenter);
+		}
+		_gfx->copyToScreen();
+		_system->delayMillis(16);
 	}
 
-	_sound->stop();
+	// Draw final position (scrollOff = 0)
+	if (!qt) {
+		_gfx->clear(_gfx->black());
+		for (int i = 0; i < storyLength; i++) {
+			if (strlen(story[i]) > 0)
+				_gfx->drawString(font, story[i], _width / 2, ht + lineHeight * i, 200 + i, Graphics::kTextAlignCenter);
+		}
+		_gfx->copyToScreen();
+	}
+
+	// Wait for click (original: while(!Button()); while(Button()&&!qt);)
+	if (!qt) {
+		bool waiting = true;
+		while (waiting && !shouldQuit()) {
+			Common::Event event;
+			while (_system->getEventManager()->pollEvent(event)) {
+				if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_KEYDOWN) {
+					// Check if modifier held — if so, skip entire intro
+					int mods = _system->getEventManager()->getModifierState();
+					if (mods & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_SHIFT | Common::KBD_META))
+						qt = true;
+					waiting = false;
+				}
+			}
+			_system->delayMillis(10);
+		}
+	}
+
+	// Phase 2: Scroll text off the top of the screen
+	// Original: scrollRect continues moving up, text slides upward
+	if (!qt) {
+		for (int scrollOff = 0; scrollOff > -_height && !qt; scrollOff -= inc) {
+			Common::Event event;
+			while (_system->getEventManager()->pollEvent(event)) {
+				if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_KEYDOWN) {
+					int mods = _system->getEventManager()->getModifierState();
+					if (mods & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_SHIFT | Common::KBD_META)) {
+						qt = true;
+						_sound->stop();
+						break;
+					}
+				}
+			}
+			if (shouldQuit()) { qt = true; break; }
+
+			_gfx->clear(_gfx->black());
+			for (int i = 0; i < storyLength; i++) {
+				int drawY = ht + lineHeight * i + scrollOff;
+				if (strlen(story[i]) > 0 && drawY >= -lineHeight && drawY < _height)
+					_gfx->drawString(font, story[i], _width / 2, drawY, 200 + i, Graphics::kTextAlignCenter);
+			}
+			_gfx->copyToScreen();
+			_system->delayMillis(16);
+		}
+	}
+
+	// Original does NOT stop the sound here — BeamMe continues playing
+	// and intro() waits for it with while(!SoundDone()) after ScrollInfo returns.
+	// Only stop if skipping (qt already stops in the modifier+click handlers above).
 	_gfx->clear(_gfx->black());
 	_gfx->copyToScreen();
+	return qt;
 }
 
 bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
@@ -1150,11 +1271,15 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 	_gfx->copyToScreen();
 
 	// Animate: original loops ~200 frames or until Mars sound repeats 2x
+	// Original: only modifier+click (OptionKey()) returns true when btn=0
 	for (int k = 0; k < 120; k++) {
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONUP)
-				return true;
+			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_KEYDOWN) {
+				int mods = _system->getEventManager()->getModifierState();
+				if (mods & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_SHIFT | Common::KBD_META))
+					return true;
+			}
 		}
 		if (shouldQuit()) return true;
 
@@ -1188,13 +1313,17 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 	}
 
 	// Fade-out phase: stars fly off without resetting
+	// Original: only modifier+click (OptionKey()) returns true when btn=0
 	int nstars = 2 * ((MAXSTAR - 0x030) / deltapd);
 	if (nstars > 200) nstars = 200;
 	for (int k = 0; k < nstars; k++) {
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONUP)
-				return true;
+			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_KEYDOWN) {
+				int mods = _system->getEventManager()->getModifierState();
+				if (mods & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_SHIFT | Common::KBD_META))
+					return true;
+			}
 		}
 		if (shouldQuit()) return true;
 
@@ -1288,8 +1417,12 @@ bool ColonyEngine::makeBlackHole() {
 
 			Common::Event event;
 			while (_system->getEventManager()->pollEvent(event)) {
-				if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONUP)
-					return true;
+				// Original: if(Button()) if(OptionKey()) return(TRUE);
+				if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_KEYDOWN) {
+					int mods = _system->getEventManager()->getModifierState();
+					if (mods & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_SHIFT | Common::KBD_META))
+						return true;
+				}
 			}
 			if (shouldQuit()) return true;
 		}
@@ -1340,52 +1473,71 @@ bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *m
 	_gfx->copyToScreen();
 
 	// Phase 1: Scroll text in from the right to center
+	// Original: if(Button()) if(qt=OptionKey()) break;
 	int targetX = (_width - swidth) / 2;
 	for (int x = _width; x > targetX; x -= 2) {
-		// Redraw center band
 		_gfx->fillRect(Common::Rect(0, centery + 1, _width, centery + 16), 0);
-		_gfx->drawString(font, str, x, centery + 2, 176, Graphics::kTextAlignLeft); // Red text
+		_gfx->drawString(font, str, x, centery + 2, 176, Graphics::kTextAlignLeft);
 		_gfx->copyToScreen();
 
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONDOWN)
-				return true;
+			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_KEYDOWN) {
+				int mods = _system->getEventManager()->getModifierState();
+				if (mods & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_SHIFT | Common::KBD_META))
+					return true;
+			}
 		}
 		if (shouldQuit()) return true;
 		_system->delayMillis(8);
 	}
 
-	// Phase 2: Klaxon flash – original does 6 iterations of:
+	// Phase 2: Klaxon flash — original: EndCSound(); then 6 iterations of:
+	//   if(Button()) if(qt=OptionKey()) break;
 	//   while(!SoundDone()); StopSound(); PlayKlaxon(); InvertRect(&invrt);
-	_sound->stop();
+	_sound->stop(); // EndCSound()
 	for (int i = 0; i < 6; i++) {
-		_sound->play(Sound::kKlaxon);
-		// Invert the center band area
-		_gfx->fillRect(Common::Rect(0, centery + 1, _width, centery + 16), i % 2 ? 15 : 0);
-		_gfx->drawString(font, str, targetX, centery + 2, i % 2 ? 0 : 15, Graphics::kTextAlignLeft);
-		_gfx->copyToScreen();
-		_system->delayMillis(300);
-
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONDOWN)
-				return true;
+			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_KEYDOWN) {
+				int mods = _system->getEventManager()->getModifierState();
+				if (mods & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_SHIFT | Common::KBD_META))
+					return true;
+			}
 		}
 		if (shouldQuit()) return true;
+
+		// Wait for previous klaxon to finish
+		while (_sound->isPlaying() && !shouldQuit())
+			_system->delayMillis(10);
+		_sound->stop();
+
+		_sound->play(Sound::kKlaxon);
+
+		// InvertRect(&invrt) — toggle the text band
+		_gfx->fillRect(Common::Rect(0, centery + 1, _width, centery + 16), i % 2 ? 0 : 15);
+		_gfx->drawString(font, str, targetX, centery + 2, i % 2 ? 15 : 0, Graphics::kTextAlignLeft);
+		_gfx->copyToScreen();
 	}
+	// Wait for last klaxon
+	while (_sound->isPlaying() && !shouldQuit())
+		_system->delayMillis(10);
+	_sound->stop();
 
 	// Phase 3: PlayMars(), scroll text off to the left
 	_sound->play(Sound::kMars);
 	for (int x = targetX; x > -swidth; x -= 2) {
 		_gfx->fillRect(Common::Rect(0, centery + 1, _width, centery + 16), 0);
-		_gfx->drawString(font, str, x, centery + 2, 176, Graphics::kTextAlignLeft); // Red text
+		_gfx->drawString(font, str, x, centery + 2, 176, Graphics::kTextAlignLeft);
 		_gfx->copyToScreen();
 
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONDOWN)
-				return true;
+			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_KEYDOWN) {
+				int mods = _system->getEventManager()->getModifierState();
+				if (mods & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_SHIFT | Common::KBD_META))
+					return true;
+			}
 		}
 		if (shouldQuit()) return true;
 		_system->delayMillis(8);
@@ -1395,12 +1547,12 @@ bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *m
 }
 
 bool ColonyEngine::drawPict(int resID) {
-	// Original: DoPicture() in intro.c
-	// Loads a PICT resource from the Colony application, centers it on screen.
+	// Original: DoPicture() in intro.c, lines 861-886
+	// Loads a PICT resource, centers it in the screen rect, draws with srcCopy.
+	// Original applies clip rect inset by 1 pixel on all sides.
 	if (!_resMan || !(_resMan->isMacFile() || _resMan->hasResFork()))
 		return false;
 
-	// Try both signed interpretations for negative resource IDs
 	Common::SeekableReadStream *pictStream = _resMan->getResource(MKTAG('P', 'I', 'C', 'T'), (int16)resID);
 	if (!pictStream) {
 		pictStream = _resMan->getResource(MKTAG('P', 'I', 'C', 'T'), resID);
@@ -1414,68 +1566,105 @@ bool ColonyEngine::drawPict(int resID) {
 	if (decoder.loadStream(*pictStream)) {
 		const Graphics::Surface *surface = decoder.getSurface();
 		if (surface) {
+			// Center PICT on screen (original: locate = centered within rScreen)
 			int x = (_width - surface->w) / 2;
 			int y = (_height - surface->h) / 2;
 			bool isCLUT8 = (surface->format == Graphics::PixelFormat::createFormatCLUT8());
 			const Graphics::Palette &pictPal = decoder.getPalette();
 
-			debug("drawPict(%d): %dx%d, format=%dbpp, palette=%d entries",
-			      resID, surface->w, surface->h, surface->format.bytesPerPixel * 8, pictPal.size());
+			// Original DoPicture clips 1 pixel inset from locate rect
+			// clip.top = locate.top+1, clip.left = locate.left+1, etc.
+			int clipX1 = x + 1;
+			int clipY1 = y + 1;
+			int clipX2 = x + surface->w - 1;
+			int clipY2 = y + surface->h - 1;
+
+			debug("drawPict(%d): %dx%d at (%d,%d), format=%dbpp, palette=%d entries",
+			      resID, surface->w, surface->h, x, y,
+			      surface->format.bytesPerPixel * 8, pictPal.size());
 
 			if (isCLUT8 && pictPal.size() > 0) {
-				// CLUT8 PICT with embedded palette.
-				// Install PICT palette at offset 128 in our engine palette,
-				// then draw pixels remapped to that offset.
+				// CLUT8 PICT with embedded palette (8-bit color).
+				// Install PICT palette at offset 128, draw all pixels with srcCopy.
 				const int palOffset = 128;
-				int nColors = MIN((int)pictPal.size(), 128); // cap to fit 128-255
+				int nColors = MIN((int)pictPal.size(), 128);
 				_gfx->setPalette(pictPal.data(), palOffset, nColors);
 
 				for (int iy = 0; iy < surface->h; iy++) {
-					if (y + iy < 0 || y + iy >= _height) continue;
+					int sy = y + iy;
+					if (sy < clipY1 || sy >= clipY2) continue;
 					for (int ix = 0; ix < surface->w; ix++) {
-						if (x + ix < 0 || x + ix >= _width) continue;
+						int sx = x + ix;
+						if (sx < clipX1 || sx >= clipX2) continue;
 						byte idx = *((const byte *)surface->getBasePtr(ix, iy));
-						// Look up the pixel's RGB from the PICT palette
-						byte pr = pictPal.data()[idx * 3 + 0];
-						byte pg = pictPal.data()[idx * 3 + 1];
-						byte pb = pictPal.data()[idx * 3 + 2];
-						// Skip black pixels so the logo sits on the black background
-						if (pr == 0 && pg == 0 && pb == 0)
-							continue;
-						int palIdx = (idx < nColors) ? palOffset + idx : 15;
-						_gfx->setPixel(x + ix, y + iy, palIdx);
+						int palIdx = (idx < nColors) ? palOffset + idx : 0;
+						_gfx->setPixel(sx, sy, palIdx);
 					}
 				}
 			} else if (isCLUT8) {
-				// CLUT8 without palette — assume 1-bit B&W PICT.
-				// Mac QuickDraw: 0=white (background), 1=black (foreground)
+				// CLUT8 without palette — 1-bit B&W PICT.
+				// Mac QuickDraw srcCopy: pixel 0 = background (white),
+				// pixel 1 = foreground (black). Screen is already black,
+				// so we only need to draw the white pixels.
 				for (int iy = 0; iy < surface->h; iy++) {
-					if (y + iy < 0 || y + iy >= _height) continue;
+					int sy = y + iy;
+					if (sy < clipY1 || sy >= clipY2) continue;
 					for (int ix = 0; ix < surface->w; ix++) {
-						if (x + ix < 0 || x + ix >= _width) continue;
+						int sx = x + ix;
+						if (sx < clipX1 || sx >= clipX2) continue;
 						byte idx = *((const byte *)surface->getBasePtr(ix, iy));
 						if (idx == 0)
-							_gfx->setPixel(x + ix, y + iy, 15); // white
-						// idx != 0 → black, skip (background)
+							_gfx->setPixel(sx, sy, 15); // white
 					}
 				}
 			} else {
-				// RGB surface — convert each pixel through nearest-palette match.
-				// Use palette entries 0-15 (EGA) for matching.
-				for (int iy = 0; iy < surface->h; iy++) {
-					if (y + iy < 0 || y + iy >= _height) continue;
-					for (int ix = 0; ix < surface->w; ix++) {
-						if (x + ix < 0 || x + ix >= _width) continue;
+				// RGB surface — build a color palette from unique pixel colors
+				// and install it at offset 128, preserving actual PICT colors.
+				const int palOffset = 128;
+				const int maxColors = 128;
+				byte builtPal[128 * 3];
+				memset(builtPal, 0, sizeof(builtPal));
+				int nUniqueColors = 0;
+
+				Common::HashMap<uint32, byte> colorMap;
+
+				for (int iy = 0; iy < surface->h && nUniqueColors < maxColors; iy++) {
+					for (int ix = 0; ix < surface->w && nUniqueColors < maxColors; ix++) {
 						uint32 pixel = surface->getPixel(ix, iy);
-						byte r, g, b;
-						surface->format.colorToRGB(pixel, r, g, b);
-						if (r == 0 && g == 0 && b == 0)
+						byte pr, pg, pb;
+						surface->format.colorToRGB(pixel, pr, pg, pb);
+						if (pr == 0 && pg == 0 && pb == 0)
 							continue;
-						// Simple luminance-based mapping to grayscale palette
-						int lum = (r * 77 + g * 150 + b * 29) >> 8;
-						int palIdx = (lum * 15 + 127) / 255; // map 0-255 → 0-15
-						if (palIdx > 0)
-							_gfx->setPixel(x + ix, y + iy, palIdx);
+						uint32 key = ((uint32)pr << 16) | ((uint32)pg << 8) | pb;
+						if (!colorMap.contains(key)) {
+							builtPal[nUniqueColors * 3 + 0] = pr;
+							builtPal[nUniqueColors * 3 + 1] = pg;
+							builtPal[nUniqueColors * 3 + 2] = pb;
+							colorMap[key] = nUniqueColors;
+							nUniqueColors++;
+						}
+					}
+				}
+
+				if (nUniqueColors > 0)
+					_gfx->setPalette(builtPal, palOffset, nUniqueColors);
+
+				for (int iy = 0; iy < surface->h; iy++) {
+					int sy = y + iy;
+					if (sy < clipY1 || sy >= clipY2) continue;
+					for (int ix = 0; ix < surface->w; ix++) {
+						int sx = x + ix;
+						if (sx < clipX1 || sx >= clipX2) continue;
+						uint32 pixel = surface->getPixel(ix, iy);
+						byte pr, pg, pb;
+						surface->format.colorToRGB(pixel, pr, pg, pb);
+						if (pr == 0 && pg == 0 && pb == 0)
+							continue;
+						uint32 key = ((uint32)pr << 16) | ((uint32)pg << 8) | pb;
+						if (colorMap.contains(key))
+							_gfx->setPixel(sx, sy, palOffset + colorMap[key]);
+						else
+							_gfx->setPixel(sx, sy, 15);
 					}
 				}
 			}

@@ -31,17 +31,26 @@ Sound::Sound(ColonyEngine *vm) : _vm(vm) {
 	_speaker = new Audio::PCSpeaker();
 	_speaker->init();
 
+	// Open Zounds resource file (contains most sounds)
 	_resMan = new Common::MacResManager();
 	if (!_resMan->open("Zounds")) {
 		if (!_resMan->open("CData/Zounds")) {
 			debug("Could not open Zounds resource file");
 		}
 	}
+
+	// Open Colony application binary (contains snd resources for
+	// EXPLODE, EAT, THEYSHOOT, MESHOOT, CHIME that aren't in Zounds)
+	_appResMan = new Common::MacResManager();
+	if (!_appResMan->open("Colony")) {
+		debug("Could not open Colony resource file for sounds");
+	}
 }
 
 Sound::~Sound() {
 	delete _speaker;
 	delete _resMan;
+	delete _appResMan;
 }
 
 void Sound::stop() {
@@ -49,6 +58,10 @@ void Sound::stop() {
 		_speaker->stop();
 	if (_vm->_mixer->isSoundHandleActive(_handle))
 		_vm->_mixer->stopHandle(_handle);
+}
+
+bool Sound::isPlaying() const {
+	return _vm->_mixer->isSoundHandleActive(_handle) || _speaker->isPlaying();
 }
 
 void Sound::play(int soundID) {
@@ -236,25 +249,26 @@ void Sound::playPCSpeaker(int soundID) {
 }
 
 bool Sound::playMacSound(int soundID) {
+	// Primary resource IDs from original sound.c
 	int resID = -1;
 	switch (soundID) {
 	case kKlaxon: resID = 27317; break;
 	case kAirlock: resID = 5141; break;
 	case kOuch: resID = 9924; break;
 	case kChime: resID = 24694; break;
-	case kBang: resID = 24433; break;
-	case kShoot: resID = 24010; break;
+	case kBang: resID = 24433; break;   // MESHOOT
+	case kShoot: resID = 24010; break;  // THEYSHOOT
 	case kEat: resID = 11783; break;
-	case kBonk: resID = 7970; break;
-	case kBzzz: resID = 11642; break;
+	case kBonk: resID = 7970; break;    // UGH
+	case kBzzz: resID = 11642; break;   // FLOOR
 	case kExplode: resID = 1432; break;
 	case kElevator: resID = 12019; break;
-	case kPShot: resID = 27539; break;
+	case kPShot: resID = 27539; break;  // PLANETSHOT
 	case kTest: resID = 25795; break;
 	case kDit: resID = 1516; break;
 	case kSink: resID = 2920; break;
 	case kClatter: resID = 11208; break;
-	case kStop: resID = 29382; break;
+	case kStop: resID = 29382; break;   // FULLSTOP
 	case kTeleport: resID = 9757; break;
 	case kSlug: resID = 8347; break;
 	case kTunnel2: resID = 17354; break;
@@ -271,16 +285,35 @@ bool Sound::playMacSound(int soundID) {
 	if (resID != -1 && playResource(resID))
 		return true;
 
+	// Fallback resource IDs for sounds missing from this binary version.
+	// MARS (23390) not in Zounds or Colony — use MARS2 (32291) from Zounds.
+	// BEAMME (5342) not in Zounds or Colony — use 32015 from Zounds.
+	int altResID = -1;
+	switch (soundID) {
+	case kMars: altResID = 32291; break;   // MARS2
+	case kBeamMe: altResID = 32015; break; // alternate BeamMe
+	default: break;
+	}
+
+	if (altResID != -1 && playResource(altResID))
+		return true;
+
 	// Fallback to DOS sounds if Mac resource is missing
 	playPCSpeaker(soundID);
 	return false;
 }
 
 bool Sound::playResource(int resID) {
-	if (!_resMan || !_resMan->isMacFile())
-		return false;
+	Common::SeekableReadStream *snd = nullptr;
 
-	Common::SeekableReadStream *snd = _resMan->getResource(MKTAG('s', 'n', 'd', ' '), resID);
+	// Search Zounds first (has most sounds)
+	if (_resMan && _resMan->isMacFile())
+		snd = _resMan->getResource(MKTAG('s', 'n', 'd', ' '), resID);
+
+	// Fall back to Colony application binary (has EXPLODE, EAT, etc.)
+	if (!snd && _appResMan && _appResMan->isMacFile())
+		snd = _appResMan->getResource(MKTAG('s', 'n', 'd', ' '), resID);
+
 	if (!snd)
 		return false;
 

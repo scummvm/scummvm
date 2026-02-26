@@ -321,7 +321,7 @@ public:
 	void quadrant();
 	int checkwall(int xnew, int ynew, Locate *pobject);
 	void cCommand(int xnew, int ynew, bool allowInteraction);
-	void scrollInfo(const Graphics::Font *macFont = nullptr);
+	bool scrollInfo(const Graphics::Font *macFont = nullptr);
 	void checkCenter();
 	void fallThroughHole();
 
