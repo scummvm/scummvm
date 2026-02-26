@@ -66,6 +66,10 @@ public:
 	void setStippleData(const byte *data) override {
 		_stippleData = data;
 	}
+	void setMacColors(uint32 fg, uint32 bg) override {
+		_stippleFgColor = fg;
+		_stippleBgColor = bg;
+	}
 	void computeScreenViewport() override;
 
 private:
@@ -78,6 +82,8 @@ private:
 	bool _wireframe;
 	int _wireframeFillColor; // -1 = no fill (outline only)
 	const byte *_stippleData; // GL_POLYGON_STIPPLE pattern (128 bytes), null = disabled
+	uint32 _stippleFgColor;
+	uint32 _stippleBgColor;
 	Common::Rect _screenViewport;
 };
 
@@ -85,6 +91,8 @@ OpenGLRenderer::OpenGLRenderer(OSystem *system, int width, int height) : _system
 	_wireframe = true;
 	_wireframeFillColor = 0;
 	_stippleData = nullptr;
+	_stippleFgColor = 0;
+	_stippleBgColor = 255;
 	memset(_palette, 0, sizeof(_palette));
 	
 	// Default to white for initial colors if setPalette isn't called yet
@@ -120,13 +128,27 @@ void OpenGLRenderer::setPalette(const byte *palette, uint start, uint count) {
 }
 
 void OpenGLRenderer::useColor(uint32 color) {
-	uint32 index = color & 0xFF;
-	glColor3ub(_palette[index * 3], _palette[index * 3 + 1], _palette[index * 3 + 2]);
+	if (color & 0xFF000000) {
+		glColor3ub((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
+	} else {
+		uint32 index = color & 0xFF;
+		glColor3ub(_palette[index * 3], _palette[index * 3 + 1], _palette[index * 3 + 2]);
+	}
 }
 
 void OpenGLRenderer::clear(uint32 color) {
-	uint32 index = color & 0xFF;
-	glClearColor(_palette[index * 3] / 255.0f, _palette[index * 3 + 1] / 255.0f, _palette[index * 3 + 2] / 255.0f, 1.0f);
+	float r, g, b;
+	if (color & 0xFF000000) {
+		r = ((color >> 16) & 0xFF) / 255.0f;
+		g = ((color >> 8) & 0xFF) / 255.0f;
+		b = (color & 0xFF) / 255.0f;
+	} else {
+		uint32 index = color & 0xFF;
+		r = _palette[index * 3] / 255.0f;
+		g = _palette[index * 3 + 1] / 255.0f;
+		b = _palette[index * 3 + 2] / 255.0f;
+	}
+	glClearColor(r, g, b, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -246,20 +268,20 @@ void OpenGLRenderer::draw3DWall(int x1, int y1, int x2, int y2, uint32 color) {
 	float fy2 = y2 * 256.0f;
 
 	if (_wireframe) {
-		if (_wireframeFillColor >= 0 || _stippleData) {
+		if (_wireframeFillColor != -1 || _stippleData) {
 			glEnable(GL_POLYGON_OFFSET_FILL);
 			glPolygonOffset(1.1f, 4.0f);
 
 			if (_stippleData) {
 				// Two-pass stipple fill (Mac B&W dither pattern)
-				useColor(255); // White background
+				useColor(_stippleBgColor); // White background
 				glBegin(GL_QUADS);
 				glVertex3f(fx1, fy1, -160.0f); glVertex3f(fx2, fy2, -160.0f);
 				glVertex3f(fx2, fy2, 160.0f);  glVertex3f(fx1, fy1, 160.0f);
 				glEnd();
 				glEnable(GL_POLYGON_STIPPLE);
 				glPolygonStipple(_stippleData);
-				useColor(0); // Black foreground through stipple mask
+				useColor(_stippleFgColor); // Black foreground through stipple mask
 				glBegin(GL_QUADS);
 				glVertex3f(fx1, fy1, -160.0f); glVertex3f(fx2, fy2, -160.0f);
 				glVertex3f(fx2, fy2, 160.0f);  glVertex3f(fx1, fy1, 160.0f);
@@ -289,14 +311,14 @@ void OpenGLRenderer::draw3DWall(int x1, int y1, int x2, int y2, uint32 color) {
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(1.1f, 4.0f);
 		if (_stippleData) {
-			useColor(255);
+			useColor(_stippleBgColor);
 			glBegin(GL_QUADS);
 			glVertex3f(fx1, fy1, -160.0f); glVertex3f(fx2, fy2, -160.0f);
 			glVertex3f(fx2, fy2, 160.0f);  glVertex3f(fx1, fy1, 160.0f);
 			glEnd();
 			glEnable(GL_POLYGON_STIPPLE);
 			glPolygonStipple(_stippleData);
-			useColor(0);
+			useColor(_stippleFgColor);
 			glBegin(GL_QUADS);
 			glVertex3f(fx1, fy1, -160.0f); glVertex3f(fx2, fy2, -160.0f);
 			glVertex3f(fx2, fy2, 160.0f);  glVertex3f(fx1, fy1, 160.0f);
@@ -315,19 +337,19 @@ void OpenGLRenderer::draw3DWall(int x1, int y1, int x2, int y2, uint32 color) {
  
 void OpenGLRenderer::draw3DQuad(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, uint32 color) {
 	if (_wireframe) {
-		if (_wireframeFillColor >= 0 || _stippleData) {
+		if (_wireframeFillColor != -1 || _stippleData) {
 			glEnable(GL_POLYGON_OFFSET_FILL);
 			glPolygonOffset(1.1f, 4.0f);
 
 			if (_stippleData) {
-				useColor(255);
+				useColor(_stippleBgColor);
 				glBegin(GL_QUADS);
 				glVertex3f(x1, y1, z1); glVertex3f(x2, y2, z2);
 				glVertex3f(x3, y3, z3); glVertex3f(x4, y4, z4);
 				glEnd();
 				glEnable(GL_POLYGON_STIPPLE);
 				glPolygonStipple(_stippleData);
-				useColor(0);
+				useColor(_stippleFgColor);
 				glBegin(GL_QUADS);
 				glVertex3f(x1, y1, z1); glVertex3f(x2, y2, z2);
 				glVertex3f(x3, y3, z3); glVertex3f(x4, y4, z4);
@@ -356,14 +378,14 @@ void OpenGLRenderer::draw3DQuad(float x1, float y1, float z1, float x2, float y2
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(1.1f, 4.0f);
 		if (_stippleData) {
-			useColor(255);
+			useColor(_stippleBgColor);
 			glBegin(GL_QUADS);
 			glVertex3f(x1, y1, z1); glVertex3f(x2, y2, z2);
 			glVertex3f(x3, y3, z3); glVertex3f(x4, y4, z4);
 			glEnd();
 			glEnable(GL_POLYGON_STIPPLE);
 			glPolygonStipple(_stippleData);
-			useColor(0);
+			useColor(_stippleFgColor);
 			glBegin(GL_QUADS);
 			glVertex3f(x1, y1, z1); glVertex3f(x2, y2, z2);
 			glVertex3f(x3, y3, z3); glVertex3f(x4, y4, z4);
@@ -385,19 +407,19 @@ void OpenGLRenderer::draw3DPolygon(const float *x, const float *y, const float *
 		return;
 
 	if (_wireframe) {
-		if (_wireframeFillColor >= 0 || _stippleData) {
+		if (_wireframeFillColor != -1 || _stippleData) {
 			glEnable(GL_POLYGON_OFFSET_FILL);
 			glPolygonOffset(1.1f, 4.0f);
 
 			if (_stippleData) {
-				useColor(255);
+				useColor(_stippleBgColor);
 				glBegin(GL_POLYGON);
 				for (int i = 0; i < count; i++)
 					glVertex3f(x[i], y[i], z[i]);
 				glEnd();
 				glEnable(GL_POLYGON_STIPPLE);
 				glPolygonStipple(_stippleData);
-				useColor(0);
+				useColor(_stippleFgColor);
 				glBegin(GL_POLYGON);
 				for (int i = 0; i < count; i++)
 					glVertex3f(x[i], y[i], z[i]);
@@ -424,14 +446,14 @@ void OpenGLRenderer::draw3DPolygon(const float *x, const float *y, const float *
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(1.1f, 4.0f);
 		if (_stippleData) {
-			useColor(255);
+			useColor(_stippleBgColor);
 			glBegin(GL_POLYGON);
 			for (int i = 0; i < count; i++)
 				glVertex3f(x[i], y[i], z[i]);
 			glEnd();
 			glEnable(GL_POLYGON_STIPPLE);
 			glPolygonStipple(_stippleData);
-			useColor(0);
+			useColor(_stippleFgColor);
 			glBegin(GL_POLYGON);
 			for (int i = 0; i < count; i++)
 				glVertex3f(x[i], y[i], z[i]);

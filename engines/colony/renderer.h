@@ -61,6 +61,7 @@ public:
 	virtual void copyToScreen() = 0;
 	virtual void setWireframe(bool enable, int fillColor = -1) = 0;
 	virtual void setStippleData(const byte *data) {}
+	virtual void setMacColors(uint32 fg, uint32 bg) {}
 	virtual void computeScreenViewport() = 0;
 
 	// Convenience color accessors

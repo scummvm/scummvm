@@ -60,16 +60,22 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_hasKeycard = false;
 	_unlocked = false;
 	_weapons = 0;
-	_wireframe = false;
 	_widescreen = ConfMan.getBool("widescreen_mod");
 
 	// Render mode: EGA (DOS wireframe default) or Macintosh (filled polygons)
 	if (!ConfMan.hasKey("render_mode") || ConfMan.get("render_mode").empty())
-		_renderMode = Common::kRenderEGA;
+		_renderMode = Common::kRenderDefault;
 	else
 		_renderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
-	if (_renderMode == Common::kRenderDefault)
-		_renderMode = Common::kRenderEGA;
+
+	if (_renderMode == Common::kRenderDefault) {
+		if (getPlatform() == Common::kPlatformMacintosh)
+			_renderMode = Common::kRenderMacintosh;
+		else
+			_renderMode = Common::kRenderEGA;
+	}
+	
+	_wireframe = (_renderMode != Common::kRenderMacintosh);
 	_speedShift = 2; // DOS default: speedshift=1, but 2 feels better with our frame rate
 	
 	memset(_wall, 0, sizeof(_wall));
@@ -121,6 +127,8 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	for (int i = 0; i < 3; i++)
 		_corePower[i] = 0;
 	_coreIndex = 0;
+	_hasMacColors = false;
+	memset(_macColors, 0, sizeof(_macColors));
 	_orbit = 0;
 	_armor = 0;
 	_gametest = false;
@@ -471,6 +479,50 @@ void ColonyEngine::initRobots() {
 	debug("initRobots: spawned %d robots on level %d", maxrob, _level);
 }
 
+void ColonyEngine::loadMacColors() {
+	_hasMacColors = false;
+	Common::SeekableReadStream *file = nullptr;
+
+	// Try MacResManager first (for resource fork / AppleDouble files)
+	Common::Path path("Color256");
+	file = Common::MacResManager::openFileOrDataFork(path);
+	if (!file) {
+		path = Common::Path("CData/Color256");
+		file = Common::MacResManager::openFileOrDataFork(path);
+	}
+
+	// Fallback to plain file open (for raw data files)
+	if (!file) {
+		Common::File *f = new Common::File();
+		if (f->open(Common::Path("Color256"))) {
+			file = f;
+		} else if (f->open(Common::Path("CData/Color256"))) {
+			file = f;
+		} else {
+			delete f;
+		}
+	}
+	if (!file) return;
+
+	uint32 vers = file->readUint32BE(); // Should be 'v1.0' = 0x76312E30
+	(void)vers; // Ignore
+	uint16 cnum = file->readUint16BE();
+	if (cnum > 145) cnum = 145;
+
+	for (int i = 0; i < cnum; i++) {
+		_macColors[i].fg[0] = file->readUint16BE();
+		_macColors[i].fg[1] = file->readUint16BE();
+		_macColors[i].fg[2] = file->readUint16BE();
+		_macColors[i].bg[0] = file->readUint16BE();
+		_macColors[i].bg[1] = file->readUint16BE();
+		_macColors[i].bg[2] = file->readUint16BE();
+		_macColors[i].pattern = file->readUint16BE();
+	}
+	delete file;
+	_hasMacColors = true;
+	debug("Loaded %d Mac colors", cnum);
+}
+
 void ColonyEngine::initTrig() {
 	// Compute standard sin/cos lookup tables (256 steps = full circle, scaled by 128)
 	for (int i = 0; i < 256; i++) {
@@ -514,6 +566,16 @@ Common::Error ColonyEngine::run() {
 		pal[i * 3 + 1] = i;
 		pal[i * 3 + 2] = i;
 	}
+
+	loadMacColors();
+	if (_hasMacColors) {
+		for (int i = 0; i < 145; i++) {
+			pal[(100 + i) * 3 + 0] = _macColors[i].fg[0] >> 8;
+			pal[(100 + i) * 3 + 1] = _macColors[i].fg[1] >> 8;
+			pal[(100 + i) * 3 + 2] = _macColors[i].fg[2] >> 8;
+		}
+	}
+
 	_gfx->setPalette(pal, 0, 256);
 
 	// Frame limiter: target 60fps, like Freescape engine

@@ -237,6 +237,12 @@ struct LevelData {
 	uint8 data[10][5];     // saved wall feature bytes (5 per location)
 };
 
+struct MacColor {
+	uint16 fg[3];
+	uint16 bg[3];
+	uint16 pattern;
+};
+
 struct Image {
 	int16 width;
 	int16 height;
@@ -293,6 +299,7 @@ public:
 	Common::Platform getPlatform() const { return _gameDescription->platform; }
 
 	void initTrig();
+	void loadMacColors();
 	void loadMap(int mnum);
 	void corridor();
 	void quadrant();
@@ -367,6 +374,9 @@ private:
 	int _carryType;             // type of object being carried
 	int _fl;                    // 0=not in forklift, 1=in forklift empty, 2=carrying object
 	LevelData _levelData[8];   // per-level wall state persistence
+
+	MacColor _macColors[145];
+	bool _hasMacColors;
 
 	int _frntxWall, _frntyWall;
 	int _sidexWall, _sideyWall;
