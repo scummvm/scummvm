@@ -94,6 +94,7 @@ enum {
 	kWMModeNoCursorOverride     = (1 << 12),
 	kWMModeForceMacBorder       = (1 << 13),
 	kWMModeForceMacFonts        = (1 << 14), // Enforce Mac fonts even when there are viable TTF substitutions
+	kWMModeNoSystemRedraw       = (1 << 15), // Skip g_system->copyRectToScreen (for 3D game backends)
 };
 
 }
