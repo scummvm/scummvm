@@ -439,6 +439,7 @@ endif
 
 ifdef IPHONE
 MODULE_OBJS += \
+	midi/coremidi.o \
 	mutex/pthread/pthread-mutex.o \
 	graphics/ios/ios-graphics.o \
 	graphics/ios/renderbuffer.o

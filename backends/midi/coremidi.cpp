@@ -24,7 +24,7 @@
 
 #include "common/scummsys.h"
 
-#ifdef MACOSX
+#if defined(MACOSX) || defined(IPHONE)
 
 #include "common/config-manager.h"
 #include "common/error.h"

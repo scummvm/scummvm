@@ -733,6 +733,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 		frameworks_iOS.push_back("AudioToolbox.framework");
 		frameworks_iOS.push_back("QuartzCore.framework");
 		frameworks_iOS.push_back("OpenGLES.framework");
+		frameworks_iOS.push_back("CoreMIDI.framework");
 
 		if (CONTAINS_DEFINE(setup.defines, "USE_TTS")) {
 			frameworks_iOS.push_back("AVFAudio.framework");
@@ -856,6 +857,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 		frameworks_tvOS.push_back("AudioToolbox.framework");
 		frameworks_tvOS.push_back("QuartzCore.framework");
 		frameworks_tvOS.push_back("OpenGLES.framework");
+		frameworks_tvOS.push_back("CoreMIDI.framework");
 
 		if (CONTAINS_DEFINE(setup.defines, "USE_TTS")) {
 			frameworks_tvOS.push_back("AVFAudio.framework");

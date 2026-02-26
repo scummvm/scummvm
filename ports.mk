@@ -617,7 +617,8 @@ scummvm-static-ios: $(DETECT_OBJS) $(OBJS)
 		$(OSX_STATIC_LIBS) \
 		-framework UIKit -framework CoreGraphics -framework OpenGLES -framework GameController \
 		-framework CoreFoundation -framework QuartzCore -framework Foundation \
-		-framework AudioToolbox -framework CoreAudio -framework SystemConfiguration -lobjc -lz
+		-framework AudioToolbox -framework CoreAudio -framework CoreMIDI \
+		-framework SystemConfiguration -lobjc -lz
 
 # Special target to create a snapshot disk image for macOS
 # TODO: Replace AUTHORS by Credits.rtf
