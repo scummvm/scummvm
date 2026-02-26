@@ -34,6 +34,10 @@
 
 namespace Fool {
 
+void menuCommandsCallback(int action, Common::String &text, void *data) {
+	// unused
+}
+
 ZBasic::ZBasic(Toolbox *toolbox) : _toolbox(toolbox) {
 	_memPool = new Common::MemoryPool(sizeof(int));
 	_window = g_engine->_wm.addWindow(false, false, false);
@@ -41,6 +45,7 @@ ZBasic::ZBasic(Toolbox *toolbox) : _toolbox(toolbox) {
 	_window->resize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	g_engine->_wm.setBackgroundWindow(_window);
 	_menu = g_engine->_wm.addMenu();
+	_menu->setCommandsCallback(menuCommandsCallback, nullptr);
 
 	_toolbox->_defaultWindow = _window;
 	_toolbox->_defaultMenu = _menu;

@@ -47,26 +47,34 @@ void Toolbox::_pumpEvents() {
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN:
-			newRecord.what = kMouseDown;
-			newRecord.where = event.mouse;
-			_events.push_back(newRecord);
 			_mouse = event.mouse;
+			_modifiers &= !0x80;
+			newRecord.what = kMouseDown;
+			newRecord.where = _mouse;
+			newRecord.modifiers = _modifiers;
+			_events.push_back(newRecord);
 			break;
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
-			newRecord.what = kMouseUp;
-			newRecord.where = event.mouse;
-			_events.push_back(newRecord);
 			_mouse = event.mouse;
+			_modifiers |= 0x80;
+			newRecord.what = kMouseUp;
+			newRecord.where = _mouse;
+			newRecord.modifiers = _modifiers;
+			_events.push_back(newRecord);
 			break;
 		case Common::EVENT_QUIT:
 			manager->resetQuit();
 			newRecord.what = kScummVMQuitEvt;
+			newRecord.where = _mouse;
+			newRecord.modifiers = _modifiers;
 			_events.push_back(newRecord);
 			break;
 		case Common::EVENT_RETURN_TO_LAUNCHER:
 			manager->resetReturnToLauncher();
 			newRecord.what = kScummVMReturnToLauncherEvt;
+			newRecord.where = _mouse;
+			newRecord.modifiers = _modifiers;
 			_events.push_back(newRecord);
 			break;
 		default:
@@ -109,8 +117,7 @@ bool Toolbox::GetNextEvent(uint32 eventMask, EventRecord &theEvent) {
 	}
 	theEvent.what = kNullEvent;
 	theEvent.where = _mouse;
-	// FIXME: pretend mouse button is up
-	theEvent.modifiers = 0x80;
+	theEvent.modifiers = _modifiers;
 	return false;
 }
 

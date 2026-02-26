@@ -71,14 +71,26 @@ void Toolbox::HiliteMenu(uint16 menuID) {
 }
 
 uint32 Toolbox::MenuSelect(const Common::Point &startPt) {
+	uint32 result = 0;
 	if (_defaultMenu) {
 		if (_defaultMenu->mouseClick(startPt.x, startPt.y)) {
-			Common::Event ev;
-			g_system->getEventManager()->pollEvent(ev);
-			_defaultMenu->processEvent(ev);
+			while (_defaultMenu->_active) {
+				Common::Event ev;
+				while (g_system->getEventManager()->pollEvent(ev)) {
+					_defaultMenu->processEvent(ev);
+				}
+				_updateScreen();
+			}
+			int menuItem = _defaultMenu->getLastSelectedMenuItem();
+			int menuSubItem = _defaultMenu->getLastSelectedSubmenuItem();
+			if ((menuItem != -1) && (menuSubItem != -1)) {
+				result |= ((menuItem + 1) & 0xffff) << 16;
+				result |= ((menuSubItem + 1) & 0xffff);
+			}
 		}
 	}
-	return 0;
+	warning("Toolbox::MenuSelect: %08x", result);
+	return result;
 }
 
 MenuHandle Toolbox::NewMenu(uint16 menuID, const Common::U32String &menuTitle) {
