@@ -2,12 +2,24 @@ MODULE := engines/bolt
 
 MODULE_OBJS = \
 	anim.o \
+	av.o \
+	barker.o \
 	bolt.o \
 	booth.o \
+	booths\fred.o \
+	booths\george.o \
+	booths\huck.o \
+	booths\scooby.o \
+	booths\topcat.o \
+	booths\yogi.o \
 	console.o \
-	gfx.o \
 	metaengine.o \
 	resource.o \
+	rtf.o \
+	ssprite.o \
+	state.o \
+	swap.o \
+	utils.o \
 	xplib\blit.o \
 	xplib\cursor.o \
 	xplib\display.o \

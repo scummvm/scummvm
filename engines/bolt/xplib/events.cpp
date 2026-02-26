@@ -68,7 +68,7 @@ int16 XpLib::getEvent(int16 filter, uint32 *outData) {
 	}
 
 	if (!node)
-		return 0;
+		return etEmpty;
 
 	// Remove from queue...
 	unlinkEvent(node);
@@ -140,7 +140,7 @@ void XpLib::enqueueEvent(XPEvent *node) {
 
 void XpLib::pumpMessages() {
 	Common::Event event;
-	long timerData;
+	uint32 timerData;
 	bool mouseMoved = false;
 
 	// Drain any pending sound events...
@@ -148,6 +148,8 @@ void XpLib::pumpMessages() {
 		updateTimers();
 		postEvent(etSound, timerData);
 	}
+
+	cycleColors();
 
 	// Check inactivity timeout...
 	if (g_inactivityDeadline != 0) {
@@ -350,7 +352,7 @@ void XpLib::postEvent(XPEventTypes type, uint32 data) {
 			return;
 
 		g_lastMouseEventData = data;
-		if (g_eventQueueTail->type == etMouseMove) {
+		if (g_eventQueueTail && g_eventQueueTail->type == etMouseMove) {
 			g_eventQueueTail->payload = data;
 			return;
 		}

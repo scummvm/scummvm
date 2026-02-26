@@ -24,12 +24,27 @@
 
 #include "bolt/bolt.h"
 
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+
 #include "common/events.h"
 #include "common/file.h"
 #include "common/mutex.h"
+
 #include "graphics/paletteman.h"
 
 namespace Bolt {
+
+// RENDER FLAGS
+
+#define RF_OVERLAY_ACTIVE    0x01  // RLE overlay source stored on front surface
+#define RF_DOUBLE_BUFFER     0x02  // Double-buffer compositing enabled
+#define RF_FULL_REDRAW       0x04  // Full-screen overwrite, skip dirty tracking
+#define RF_FRONT_DIRTY       0x08  // Front surface pixels changed
+#define RF_BACK_DIRTY        0x10  // Back surface pixels changed
+#define RF_FRONT_PAL_DIRTY   0x20  // Front surface palette changed
+#define RF_BACK_PAL_DIRTY    0x40  // Back surface palette changed
+#define RF_CURSOR_VISIBLE    0x80  // Cursor should be drawn this frame
 
 struct DisplaySpecs;
 class BoltEngine;
@@ -70,6 +85,11 @@ typedef struct XPPicDesc {
 	}
 } XPPicDesc;
 
+enum XPSurfaceType : int {
+	stFront = 0,
+	stBack
+};
+
 typedef struct XPSurface {
 	XPPicDesc mainPic;
 	XPPicDesc overlayPic;
@@ -90,7 +110,8 @@ enum XPEventTypes : int16 {
 	etMouseUp    = 4,
 	etJoystick   = 5,
 	etSound      = 6,
-	etInactivity = 7
+	etInactivity = 7,
+	etTrigger    = 8
 };
 
 enum XPEventKeyStates : int16 {
@@ -130,6 +151,8 @@ typedef struct XPTimer {
 } XPTimer;
 
 class XpLib {
+friend class BoltEngine;
+
 public:
 	XpLib(BoltEngine *bolt);
 	~XpLib();
@@ -142,8 +165,8 @@ public:
 	void maskBlit(byte *src, uint16 srcStride, byte *dst, uint16 dstStride, uint16 width, uint16 height);
 
 	// Palette
-	void getPalette(uint16 startIndex, uint16 count, byte *destBuf);
-	void setPalette(uint16 count, uint16 startIndex, byte *srcBuf);
+	void getPalette(int16 startIndex, int16 count, byte *destBuf);
+	void setPalette(int16 count, int16 startIndex, byte *srcBuf);
 	bool startCycle(XPCycleState *specs);
 	void cycleColors();
 	void stopCycle();
@@ -168,7 +191,7 @@ public:
 	void disableController();
 
 	// Display
-	bool chooseDisplaySpec(int *outMode, int numSpecs, DisplaySpecs *specs);
+	bool setDisplaySpec(int *outMode, DisplaySpecs *spec);
 	void setCoordSpec(int16 x, int16 y, int16 width, int16 height);
 	void displayPic(XPPicDesc *pic, int16 x, int16 y, int16 page);
 	void setFrameRate(int16 fps);
@@ -181,7 +204,7 @@ public:
 	void randomize();
 
 	// File
-	Common::File *openFile(const char *fileName, short flags);
+	Common::File *openFile(const char *fileName, int16 flags);
 	void closeFile(Common::File *handle);
 	bool readFile(Common::File *handle, void *buffer, uint32 *size);
 	bool setFilePos(Common::File *handle, int32 offset, int32 origin);
@@ -221,9 +244,6 @@ protected:
 	byte g_cycleTempPalette[3 * 20];
 	uint32 g_cycleTimerIds[4];
 	int16 g_brightnessShift = 0;
-	Common::Mutex g_paletteMutex;
-
-	static void cycleColorsCallback(void *refConf);
 
 	// Cursor
 	bool initCursor();
@@ -231,9 +251,6 @@ protected:
 	void readJoystick(int16 *outX, int16 *outY);
 
 	byte g_cursorBuffer[16 * 16];
-	int16 g_cursorWidth = 0;
-	int16 g_cursorHeight = 0;
-	int16 g_cursorScale = 0;
 	int16 g_cursorHotspotX = 0;
 	int16 g_cursorHotspotY = 0;
 	int16 g_lastCursorX = 0;
@@ -289,7 +306,7 @@ protected:
 	void virtualToScreen(int16 *x, int16 *y);
 	void screenToVirtual(int16 *x, int16 *y);
 	void dispatchBlit(int16 mode, byte *src, uint16 srcStride, byte *dst, uint16 dstStride, uint16 width, uint16 height);
-	bool clipAndBlit(XPPicDesc *src, XPSurface *dest, int16 x, int16 y, Common::Rect *outClip);
+	bool clipAndBlit(XPPicDesc *src, XPPicDesc *dest, int16 x, int16 y, Common::Rect *outClip);
 	void addDirtyRect(Common::Rect *rect);
 	void waitForFrameRate();
 	void handlePaletteTransitions();
@@ -309,8 +326,8 @@ protected:
 	int16 g_virtualWidth = 0;
 	int16 g_virtualHeight = 0;
 	int16 g_currentDisplayPage = 0;
-	int16 g_spriteOverlayActive = 0;
-	int16 g_spriteOverlayEnabled = 0;
+	int16 g_prevRenderFlags = 0;
+	int16 g_renderFlags = 0;
 	int16 g_frameRateFPS = 0;
 	int16 g_overlayCount = 0;
 	int16 g_prevDirtyCount = 0;
@@ -323,14 +340,15 @@ protected:
 
 	Common::Rect g_dirtyRects[30];
 	Common::Rect g_prevDirtyRects[30];
-	Common::Rect g_cursorDirtyRect;
+	Common::Rect g_cursorRect;
 	Common::Rect g_prevCursorRect;
-	Common::Rect g_cursorClipRect2;
-	Common::Rect g_prevCursorRect2;
+	Common::Rect g_overlayCursorRect;
+	Common::Rect g_prevOverlayCursorRect;
 
-	byte g_vgaFramebuffer[320 * 200];
+	byte *g_vgaFramebuffer = nullptr;
+	//Graphics::Surface *g_videoSurface = nullptr;
+	byte *g_rowDirtyFlags = nullptr;
 	byte g_cursorBackgroundSaveBuffer[16 * 16];
-	byte g_rowDirtyFlags[200];
 
 	XPPicDesc g_cursorBackgroundSave;
 	XPPicDesc g_cursorSprite;
@@ -339,9 +357,22 @@ protected:
 	void fileError(const char *message);
 
 	// Sound
-	bool pollSound(void *outData);
+	bool pollSound(uint32 *outData);
 	bool initSound();
 	void shutdownSound();
+
+	Audio::QueuingAudioStream *_audioStream = nullptr;
+	Audio::SoundHandle _soundHandle;
+	Common::Queue<uint32> _durationQueue;
+	uint32 _nextSoundDeadlineMs = 0;
+	uint32 _pauseTimeMs = 0;
+	int16 _sndPlayState = 0;
+	int16 _sndQueued = 0;
+	int _sndCompletedCount = 0;
+	bool _sndPaused = false;
+	int16 _sndSampleRate = 22050;
+	uint32 _sndNextDeadline = 0;
+	uint32 _sndBufferQueueTime = 0;
 
 	// Timer
 	bool initTimer();

@@ -31,7 +31,7 @@ void XpLib::fileError(const char *message) {
 	error(message);
 }
 
-Common::File *XpLib::openFile(const char *fileName, short flags) {
+Common::File *XpLib::openFile(const char *fileName, int16 flags) {
 	// Read-write (mode 3) and write (mode 2) are unsupported and not needed by Cartoon Carnival...
 	assert(flags == 1);
 
@@ -76,6 +76,7 @@ void *XpLib::allocMem(uint32 size) {
 	if (!result)
 		error("XpLib::allocMem(): Not enough memory");
 
+	memset(result, 0, size);
 	return result;
 }
 
@@ -83,6 +84,8 @@ void *XpLib::tryAllocMem(uint32 size) {
 	void *result = (void *)malloc(size);
 	if (!result)
 		warning("XpLib::tryAllocMem(): Couldn't allocate memory, returning nullptr");
+	else
+		memset(result, 0, size);
 
 	return result;
 }

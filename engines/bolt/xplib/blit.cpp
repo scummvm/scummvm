@@ -50,6 +50,8 @@ void XpLib::dirtyBlit(byte *src, byte *dst, uint16 width, uint16 height, byte *d
 		dirtyFlags[row] = (flag == 2) ? 3 : 0;
 
 		memcpy(dst, src, width);
+		src += width;
+		dst += width;
 	}
 }
 
@@ -173,8 +175,7 @@ void XpLib::rleCompositeBlit(byte *rle, byte *background, byte *dst, uint16 widt
 		// Check if row is all transparent...
 		if (rlePtr[0] == 0x80 && rlePtr[1] == 0x00) {
 			if (dirtyFlags[row] & 2) {
-				// Row was already transparent: mark clean and skip...
-				dirtyFlags[row] = 3;
+				// Row was already transparent: skip
 				rlePtr += 2;
 				dstPtr = rowEnd;
 				bgPtr += width;

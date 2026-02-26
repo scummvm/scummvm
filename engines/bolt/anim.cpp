@@ -23,98 +23,70 @@
 
 namespace Bolt {
 
-void *BoltEngine::openRTF(const char *fileName) {
-	return nullptr;
+bool BoltEngine::startAnimation(RTFResource *rtf, int16 animIndex) {
+	if (!initAnim(rtf, animIndex)) {
+		cleanUpAnim();
+		return false;
+	}
+
+	return true;
 }
 
-void BoltEngine::closeRTF(void *rtf) {
+void BoltEngine::stopAnimation() {
+	killRTF(nullptr);
+	cleanUpAnim();
 }
 
-bool BoltEngine::playRTF(void *rtfFile, int16 animIndex, void *ringBuffer, int32 bufferSize) {
-	return false;
+bool BoltEngine::maintainAudioPlay(int16 mode) {
+	RTFPacket *frameData;
+
+	if (!maintainRTF(mode, &frameData)) {
+		cleanUpAnim();
+		return false;
+	}
+
+	// Check for "TRGR" trigger marker in frame data
+	if (frameData && frameData->tag == MKTAG('T', 'R', 'G', 'R')) {
+		_xp->postEvent(etTrigger, 0);
+	}
+
+	return true;
 }
 
-bool BoltEngine::fillRTFBuffer() {
-	return false;
-}
+bool BoltEngine::initAnim(RTFResource *rtf, int16 animIndex) {
+	int32 bufSize;
 
-void BoltEngine::flushRTFSoundQueue() {
-}
+	g_animPrevInactivityTimer = _xp->setInactivityTimer(0);
 
-bool BoltEngine::maintainRTF(int16 mode, void *outFrameData) {
-	return false;
-}
+	// Try 80KB ring buffer, fall back to 40KB
+	bufSize = 0x14000;
+	g_animRingBuffer = (byte *)_xp->tryAllocMem(bufSize);
+	if (!g_animRingBuffer) {
+		bufSize = 0xA000;
+		g_animRingBuffer = (byte *)_xp->allocMem(bufSize);
+	}
 
-bool BoltEngine::isRTFPlaying() {
-	return false;
-}
+	if (!g_animRingBuffer)
+		return false;
 
-void BoltEngine::killRTF() {
-}
+	if (!playRTF(rtf, animIndex, g_animRingBuffer, bufSize))
+		return false;
 
-void BoltEngine::readPacket() {
-
-}
-
-void BoltEngine::preProcessPacket() {
-}
-
-void BoltEngine::queuePacket() {
-}
-
-void BoltEngine::deQueuePacket() {
-}
-
-void BoltEngine::allocPacket() {
-}
-
-void BoltEngine::freePacket() {
-}
-
-void BoltEngine::resetPlaybackState() {
-}
-
-void BoltEngine::sub_12980() {
-}
-
-void BoltEngine::prepareAV() {
-}
-
-void BoltEngine::maintainAV() {
-}
-
-void BoltEngine::stopAV() {
-}
-
-bool BoltEngine::playAV(void *rtfHandle, int16 animIndex, int16 width, int16 height, int16 xOff, int16 yOff) {
-	return false;
-}
-
-void BoltEngine::processPacket() {
-}
-
-void BoltEngine::processRL7() {
-}
-
-void BoltEngine::processPLTE() {
-}
-
-void BoltEngine::initAV() {
-}
-
-void BoltEngine::cleanUpAV() {
-}
-
-void BoltEngine::startAnimation() {
-}
-
-void BoltEngine::maintainAudioPlay() {
-}
-
-void BoltEngine::initAnim() {
+	return true;
 }
 
 void BoltEngine::cleanUpAnim() {
+	if (g_animRingBuffer) {
+		_xp->freeMem(g_animRingBuffer);
+		g_animRingBuffer = nullptr;
+	}
+
+	if (g_animFileHandle) {
+		_xp->closeFile(g_animFileHandle);
+		g_animFileHandle = nullptr;
+	}
+
+	_xp->setInactivityTimer(g_animPrevInactivityTimer);
 }
 
 } // End of namespace Bolt

@@ -39,8 +39,6 @@ XpLib::XpLib(BoltEngine *bolt) {
 }
 
 XpLib::~XpLib() {
-	terminate();
-
 	delete _screen;
 }
 
@@ -49,6 +47,30 @@ bool XpLib::initialize() {
 		return false;
 
 	g_xpInitialized = true;
+
+	//g_videoSurface = new Graphics::Surface();
+
+	if (_bolt->g_extendedViewport) {
+		g_rowDirtyFlags = (byte *)malloc(EXTENDED_SCREEN_HEIGHT);
+		assert(g_rowDirtyFlags);
+		memset(g_rowDirtyFlags, 0, EXTENDED_SCREEN_HEIGHT);
+
+		g_vgaFramebuffer = (byte *)malloc(EXTENDED_SCREEN_WIDTH * EXTENDED_SCREEN_HEIGHT);
+		assert(g_vgaFramebuffer);
+		memset(g_vgaFramebuffer, 0, EXTENDED_SCREEN_WIDTH * EXTENDED_SCREEN_HEIGHT);
+
+		//g_videoSurface->init(EXTENDED_SCREEN_WIDTH, EXTENDED_SCREEN_HEIGHT, EXTENDED_SCREEN_WIDTH, g_vgaFramebuffer, Graphics::PixelFormat::createFormatCLUT8());
+	} else {
+		g_rowDirtyFlags = (byte *)malloc(SCREEN_HEIGHT);
+		assert(g_rowDirtyFlags);
+		memset(g_rowDirtyFlags, 0, SCREEN_HEIGHT);
+
+		g_vgaFramebuffer = (byte *)malloc(SCREEN_WIDTH * SCREEN_HEIGHT);
+		assert(g_vgaFramebuffer);
+		memset(g_vgaFramebuffer, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
+
+		//g_videoSurface->init(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH, g_vgaFramebuffer, Graphics::PixelFormat::createFormatCLUT8());
+	}
 
 	if (!initTimer()) {
 		terminate();
@@ -84,6 +106,14 @@ void XpLib::terminate() {
 	shutdownSound();
 	shutdownEvents();
 	shutdownTimer();
+
+	free(g_vgaFramebuffer);
+	g_vgaFramebuffer = nullptr;
+
+	free(g_rowDirtyFlags);
+	g_rowDirtyFlags = nullptr;
+
+	//delete g_videoSurface;
 
 	g_xpInitialized = false;
 }

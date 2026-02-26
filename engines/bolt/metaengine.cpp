@@ -29,11 +29,11 @@ namespace Bolt {
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
-		GAMEOPTION_ORIGINAL_SAVELOAD,
+		GAMEOPTION_EXTEND_SCREEN,
 		{
-			_s("Use original save/load screens"),
-			_s("Use the original save/load screens instead of the ScummVM ones"),
-			"original_menus",
+			_s("Extended game resolution"),
+			_s("This option allows the game to play at a slightly extended resolution. This is what the Mac and CDi versions are supposed to play like."),
+			"extended_viewport",
 			false,
 			0,
 			0

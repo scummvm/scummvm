@@ -26,48 +26,35 @@
 
 namespace Bolt {
 
-void XpLib::getPalette(uint16 startIndex, uint16 count, byte *destBuf) {
-	Common::StackLock lock(g_paletteMutex);
-
+void XpLib::getPalette(int16 startIndex, int16 count, byte *destBuf) {
 	memcpy(destBuf, &g_paletteBuffer[startIndex * 3], count * 3);
 }
 
-void XpLib::setPalette(uint16 count, uint16 startIndex, byte *srcBuf) {
-	Common::StackLock lock(g_paletteMutex);
-
+void XpLib::setPalette(int16 count, int16 startIndex, byte *srcBuf) {
 	if (startIndex == 0 || (startIndex == 128 && count != 1)) {
 		startIndex++;
 		srcBuf += 3;
 		count--;
 	}
 
-	if (count == 0)
-		return;
+	if (count > 0) {
+		memcpy(&g_paletteBuffer[startIndex * 3], srcBuf, count * 3);
 
-	memcpy(&g_paletteBuffer[startIndex * 3], srcBuf, count * 3);
+		// Apply brightness shift into shifted buffer...
+		const byte *src = &g_paletteBuffer[startIndex * 3];
+		byte *dst = &g_shiftedPaletteBuffer[startIndex * 3];
 
-	// Apply brightness shift into shifted buffer...
-	const byte *src = &g_paletteBuffer[startIndex * 3];
-	byte *dst = &g_shiftedPaletteBuffer[startIndex * 3];
+		for (uint16 i = 0; i < count * 3; i++)
+			dst[i] = src[i] >> g_brightnessShift;
 
-	for (uint16 i = 0; i < count * 3; i++)
-		dst[i] = src[i] >> g_brightnessShift;
-
-	// Finally set the palette!
-	g_system->getPaletteManager()->setPalette(&g_shiftedPaletteBuffer[startIndex * 3], startIndex, count);
-}
-
-void XpLib::cycleColorsCallback(void *refCon) {
-	XpLib *xp = (XpLib *)refCon;
-	xp->cycleColors();
+		// Finally set the palette!
+		g_system->getPaletteManager()->setPalette(&g_shiftedPaletteBuffer[startIndex * 3], startIndex, count);
+	}
 }
 
 bool XpLib::startCycle(XPCycleState *specs) {
-	Common::StackLock lock(g_paletteMutex);
-
 	stopCycle();
 
-	bool anyActive = false;
 	uint32 now = g_system->getMillis();
 
 	for (int16 i = 0; i < 4; i++) {
@@ -81,20 +68,12 @@ bool XpLib::startCycle(XPCycleState *specs) {
 		g_cycleStates[i].delay = specs[i].delay;
 		g_cycleStates[i].nextFire = now + specs[i].delay;
 		g_cycleStates[i].active = true;
-		anyActive = true;
-	}
-
-	if (anyActive) {
-		_bolt->getTimerManager()->installTimerProc(
-			cycleColorsCallback, 50 * 1000, this, "BoltPalCycle");
 	}
 
 	return true;
 }
 
 void XpLib::cycleColors() {
-	Common::StackLock lock(g_paletteMutex);
-
 	for (int i = 0; i < 4; i++) {
 		if (!g_cycleStates[i].active)
 			continue;
@@ -121,7 +100,6 @@ void XpLib::cycleColors() {
 
 			// Write back shifted by one (swap buffer starts 3 bytes earlier)...
 			setPalette(count, startIdx, g_cycleTempPalette);
-
 		} else if (startIdx > endIdx) {
 			int16 count = startIdx - endIdx + 1;
 			if (count > 19 || endIdx < 0 || startIdx > 255)
@@ -136,27 +114,20 @@ void XpLib::cycleColors() {
 			// Write back shifted by one (starts one entry later)...
 			setPalette(count, endIdx, &g_cycleTempPalette[3]);
 		}
+
+		g_system->updateScreen();
 	}
 }
 
 void XpLib::stopCycle() {
-	Common::StackLock lock(g_paletteMutex);
-
-	bool wasActive = false;
 	for (int16 i = 0; i < 4; i++) {
 		if (g_cycleStates[i].active) {
-			wasActive = true;
 			g_cycleStates[i].active = false;
 		}
 	}
-
-	if (wasActive)
-		_bolt->getTimerManager()->removeTimerProc(cycleColorsCallback);
 }
 
 void XpLib::setScreenBrightness(uint8 percent) {
-	Common::StackLock lock(g_paletteMutex);
-
 	if (percent >= 100) {
 		g_brightnessShift = 2; // Full brightness (VGA DAC is 6-bit)
 	} else if (percent >= 50) {

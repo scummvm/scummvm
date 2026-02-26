@@ -23,49 +23,6 @@
 
 namespace Bolt {
 
-void BoltEngine::setCursorPict(void *sprite) {
-}
 
-void BoltEngine::startCycle(void *cycleResource) {
-}
-
-void BoltEngine::blastColors() {
-}
-
-void BoltEngine::setColors() {
-}
-
-void BoltEngine::restoreColors() {
-}
-
-void BoltEngine::loadColors() {
-}
-
-void BoltEngine::shiftColorMap() {
-}
-
-void BoltEngine::fadeToBlack() {
-}
-
-void BoltEngine::displayColors(void *palette, int16 page, int16 flags) {
-}
-
-void BoltEngine::boltPict2Pict(void *dest, void *boltSprite) {
-}
-
-void BoltEngine::displayPic(void *boltSprite, int16 xOff, int16 yOff, int16 flags) {
-}
-
-void BoltEngine::boltCycleToXPCycle() {
-}
-
-void BoltEngine::unpackColors() {
-}
-
-void BoltEngine::inRect() {
-}
-
-void BoltEngine::rectOverlap() {
-}
 
 } // End of namespace Bolt

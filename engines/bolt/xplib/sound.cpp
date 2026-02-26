@@ -22,38 +22,209 @@
 #include "bolt/bolt.h"
 #include "bolt/xplib/xplib.h"
 
+#include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
+#include "audio/mixer.h"
+
 namespace Bolt {
 
-bool XpLib::pollSound(void *outData) {
-	return true;
-}
-
 bool XpLib::initSound() {
+	_audioStream = Audio::makeQueuingAudioStream(22050, false);
+	_nextSoundDeadlineMs = 0;
+	_sndPlayState = 0;
+	_sndQueued = 0;
+	_sndPaused = false;
+	_sndCompletedCount = 0;
+	_sndSampleRate = 22050;
+
+	g_system->getMixer()->playStream(
+		Audio::Mixer::kSFXSoundType,
+		&_soundHandle,
+		_audioStream,
+		-1, 255, 0,
+		DisposeAfterUse::NO);
+
 	return true;
 }
 
-void XpLib::waveCb() {
+bool XpLib::pollSound(uint32 *outData) {
+	*outData = 0;
 
-}
+	if (_sndQueued == 0 || _sndPaused)
+		return false;
 
-void XpLib::shutdownSound() {
+	if (!_audioStream)
+		return false;
 
+	bool ready = false;
+
+	int activeStreams = _audioStream->numQueuedStreams();
+	int completed = _sndQueued - activeStreams;
+	if (completed > (int)_sndCompletedCount)
+		_sndCompletedCount = completed;
+
+	uint32 now = _bolt->_system->getMillis();
+
+	debug(5, "pollSound: queued=%d active=%d completed=%d state=%d deadline=%u now=%u",
+		  _sndQueued, activeStreams, _sndCompletedCount, _sndPlayState,
+		  _sndNextDeadline, now);
+
+	if (_sndCompletedCount > 0) {
+		if (_sndPlayState == 0) {
+			_sndPlayState = 1;
+		} else if (_sndPlayState == 2) {
+			_sndPlayState = 0;
+			ready = true;
+		}
+	}
+
+	if (!ready) {
+		if (now >= _sndNextDeadline) {
+			if (_sndPlayState == 0) {
+				_sndPlayState = 2;
+			} else if (_sndPlayState == 1) {
+				_sndPlayState = 0;
+				ready = true;
+			}
+		}
+	}
+
+	if (!ready)
+		return false;
+
+	*outData = 1; // The original puts the elapsed buffer data in here...
+
+	// Buffer completed!
+	_sndCompletedCount--;
+	_sndQueued--;
+
+	if (!_durationQueue.empty())
+		_durationQueue.pop();
+
+	if (_sndQueued == 0)
+		return true;
+
+	// Deadline adjustment for next buffer...
+	uint32 nextDurationMs = 0;
+	if (!_durationQueue.empty())
+		nextDurationMs = _durationQueue.front();
+
+	int32 elapsed = (int32)(_sndNextDeadline - _sndBufferQueueTime);
+
+	if (elapsed > 0) {
+		elapsed /= 50;
+		int32 maxAdj = (int32)nextDurationMs / 10;
+		if (maxAdj < elapsed)
+			elapsed = maxAdj;
+		_sndNextDeadline += (nextDurationMs - elapsed);
+	} else {
+		_sndNextDeadline = _sndBufferQueueTime + nextDurationMs;
+	}
+
+	_sndBufferQueueTime = _bolt->_system->getMillis();
+
+	return true;
 }
 
 bool XpLib::playSound(byte *data, uint32 size, int16 sampleRate) {
-	return false;
+	if (!_audioStream)
+		return false;
+
+	if (sampleRate != 22050)
+		return false;
+
+	// Drain completed buffers if full...
+	int retries = 0;
+	while (_audioStream->numQueuedStreams() >= 50) {
+		uint32 eventData;
+		if (pollSound(&eventData))
+			postEvent(etSound, eventData);
+
+		_bolt->_system->delayMillis(1);
+		if (++retries > 5000) {
+			warning("XpLib::playSound(): drain timeout");
+			return false;
+		}
+	}
+
+	byte *buf = (byte *)malloc(size);
+	if (!buf)
+		return false;
+
+	memcpy(buf, data, size);
+	_audioStream->queueBuffer(buf, size, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
+
+	uint32 durationMs = (size * 1000) / (uint32)sampleRate;
+
+	// First buffer: set initial deadline...
+	if (_sndQueued == 0) {
+		uint32 now = _bolt->_system->getMillis();
+		_sndNextDeadline = now + durationMs;
+		_sndBufferQueueTime = now;
+
+		if (_sndPaused)
+			_pauseTimeMs = now;
+	}
+
+	_sndQueued++;
+	_durationQueue.push(durationMs);
+
+	return true;
 }
 
 bool XpLib::pauseSound() {
-	return false;
+	if (_sndPaused)
+		return true;
+
+	_sndPaused = true;
+	_pauseTimeMs = _bolt->_system->getMillis();
+	g_system->getMixer()->pauseHandle(_soundHandle, true);
+	return true;
 }
 
 bool XpLib::resumeSound() {
-	return false;
+	if (_sndQueued > 0) {
+		uint32 now = _bolt->_system->getMillis();
+		uint32 pauseDuration = now - _pauseTimeMs;
+		_sndNextDeadline += pauseDuration;
+	}
+
+	_sndPaused = false;
+	g_system->getMixer()->pauseHandle(_soundHandle, false);
+	return true;
 }
 
 bool XpLib::stopSound() {
-	return false;
+	g_system->getMixer()->stopHandle(_soundHandle);
+
+	_sndQueued = 0;
+	_sndPaused = false;
+	_sndCompletedCount = 0;
+	_sndPlayState = 0;
+	_nextSoundDeadlineMs = 0;
+	_pauseTimeMs = 0;
+
+	while (!_durationQueue.empty())
+		_durationQueue.pop();
+
+	uint32 dummy;
+	while (getEvent(etSound, &dummy) == etSound);
+
+	// Recreate stream for next use...
+	_audioStream = Audio::makeQueuingAudioStream(22050, false);
+	g_system->getMixer()->playStream(
+		Audio::Mixer::kSFXSoundType,
+		&_soundHandle,
+		_audioStream,
+		-1, 255, 0,
+		DisposeAfterUse::NO);
+
+	return true;
+}
+
+void XpLib::shutdownSound() {
+	g_system->getMixer()->stopHandle(_soundHandle);
+	_audioStream = nullptr;
 }
 
 } // End of namespace Bolt

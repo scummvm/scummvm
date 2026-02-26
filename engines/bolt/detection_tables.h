@@ -43,7 +43,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_USA,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_EXTEND_SCREEN)
 	},
 	{
 		"carnival",
@@ -61,7 +61,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_USA,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_EXTEND_SCREEN)
 	},
 	{
 		"carnival",
@@ -76,7 +76,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::IT_ITA,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DEMO,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_EXTEND_SCREEN)
 	},
 	{
 		"carnival",
@@ -91,7 +91,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::IT_ITA,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DEMO,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_EXTEND_SCREEN)
 	},
 
 	AD_TABLE_END_MARKER

@@ -36,10 +36,9 @@ bool XpLib::initCursor() {
 	}
 
 	g_cursorSprite.pixelData = g_cursorBuffer;
-
-	g_cursorWidth = 16;
-	g_cursorHeight = 16;
-	g_cursorScale = 2;
+	g_cursorSprite.width = 16;
+	g_cursorSprite.height = 16;
+	g_cursorSprite.flags = 2;
 
 	return true;
 }
@@ -48,7 +47,7 @@ void XpLib::shutdownCursor() {
 }
 
 bool XpLib::readCursor(uint16 *outButtons, int16 *outX, int16 *outY) {
-	if (g_cursorHidden == 0)
+	if (g_cursorHidden != 0)
 		return false;
 
 	*outX = g_lastCursorX;

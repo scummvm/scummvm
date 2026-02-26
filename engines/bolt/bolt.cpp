@@ -41,6 +41,8 @@ BoltEngine::BoltEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 	_gameDescription(gameDesc), _randomSource("Bolt") {
 	g_engine = this;
 	_xp = new XpLib(this);
+
+	initCallbacks();
 }
 
 BoltEngine::~BoltEngine() {
@@ -62,7 +64,7 @@ Common::Error BoltEngine::run() {
 	}
 
 	// Initialize paletted graphics mode
-	if (g_extendedViewport) {
+	if (!g_extendedViewport) {
 		initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 	} else {
 		initGraphics(EXTENDED_SCREEN_WIDTH, EXTENDED_SCREEN_HEIGHT);
@@ -71,41 +73,9 @@ Common::Error BoltEngine::run() {
 	// Set the engine's debugger console
 	setDebugger(new Console());
 
-	//
-	//// If a savegame was selected from the launcher, load it
-	//int saveSlot = ConfMan.getInt("save_slot");
-	//if (saveSlot != -1)
-	//	(void)loadGameState(saveSlot);
-	//
-	//// Draw a series of boxes on screen as a sample
-	//for (int i = 0; i < 100; ++i)
-	//	_screen->frameRect(Common::Rect(i, i, 320 - i, 200 - i), i);
-	//_screen->update();
-	//
-	//// Simple event handling loop
-	//byte pal[256 * 3] = { 0 };
-	//Common::Event e;
-	//int offset = 0;
-	//
-	//Graphics::FrameLimiter limiter(g_system, 60);
-	//while (!shouldQuit()) {
-	//	while (g_system->getEventManager()->pollEvent(e)) {
-	//	}
-	//
-	//	// Cycle through a simple palette
-	//	++offset;
-	//	for (int i = 0; i < 256; ++i)
-	//		pal[i * 3 + 1] = (i + offset) % 256;
-	//	g_system->getPaletteManager()->setPalette(pal, 0, 256);
-	//	// Delay for a bit. All events loops should have a delay
-	//	// to prevent the system being unduly loaded
-	//	limiter.delayBeforeSwap();
-	//	_screen->update();
-	//	limiter.startFrame();
-	//}
-
 	_xp->initialize();
 	boltMain();
+	_xp->terminate();
 
 	return Common::kNoError;
 }
@@ -122,13 +92,11 @@ Common::Error BoltEngine::syncGame(Common::Serializer &s) {
 }
 
 void BoltEngine::boltMain() {
-	void *testAlloc;
+	byte *testAlloc;
 	BarkerTable *barkerTable;
-	void *boothSprite;
+	byte *boothSprite;
 
-	// g_callbackPtr = DS:0xCB; 
-
-	testAlloc = _xp->allocMem(0x100000);
+	testAlloc = (byte *)_xp->allocMem(0x100000);
 	if (!testAlloc)
 		return;
 
@@ -136,90 +104,86 @@ void BoltEngine::boltMain() {
 
 	_xp->randomize();
 
-	if (!allocResourceIndex())
-		goto cleanup;
+	if (allocResourceIndex()) {
+		g_boothsBoltLib = nullptr;
 
-	g_boothsBoltLib = 0;
+		if (openBOLTLib(&g_boothsBoltLib, &g_resourceDefaultCallbacks, assetPath("booths.blt"))) {
+			int16 chosenSpecId = g_extendedViewport ? 0 : 1;
 
-	if (!openBOLTLib(&g_boothsBoltLib, &g_boothsBoltIndex, AssetPath("booths.blt")))
-		goto cleanup;
+			if (_xp->setDisplaySpec(&g_displayMode, &g_displaySpecs[chosenSpecId])) {
+				assert(g_displayMode >= 0);
+				g_displayWidth = g_displaySpecs[g_displayMode].width;
+				g_displayHeight = g_displaySpecs[g_displayMode].height;
 
-	if (!_xp->chooseDisplaySpec(&g_displayMode, 2, g_displaySpecs))
-		goto cleanup;
+				// Center within 384x240 virtual coordinate space...
+				g_displayX = (EXTENDED_SCREEN_WIDTH - g_displayWidth) / 2;
+				g_displayY = (EXTENDED_SCREEN_HEIGHT - g_displayHeight) / 2;
 
-	g_displayWidth = g_displaySpecs[g_displayMode].width;
-	g_displayHeight = g_displaySpecs[g_displayMode].height;
+				_xp->setCoordSpec(g_displayX, g_displayY, g_displayWidth, g_displayHeight);
+				
+				if (g_displayMode == 0) {
+					g_rtfHandle = openRTF(assetPath("cc_og.av"));
+				} else {
+					g_rtfHandle = openRTF(assetPath("cc_cr.av"));
+				}
 
-	// Center within 384x240 virtual coordinate space...
-	g_displayX = (384 - g_displayWidth) / 2;
-	g_displayY = (240 - g_displayHeight) / 2;
+				if (g_rtfHandle) {
+					playAV(g_rtfHandle, 0, g_displayWidth, g_displayHeight, g_displayX, g_displayY);
 
-	_xp->setCoordSpec(g_displayX, g_displayY, g_displayWidth, g_displayHeight);
+					boothSprite = getBOLTMember(g_boothsBoltLib, (g_displayMode != 0) ? 0x1701 : 0x1702);
 
-	if (g_displayMode != 0)
-		g_rtfHandle = openRTF(AssetPath("booths.pal"));
-	else
-		g_rtfHandle = openRTF(AssetPath("booths4.pal"));
+					_xp->setTransparency(false);
 
-	if (g_rtfHandle == nullptr)
-		goto cleanup;
+					displayColors(getBOLTMember(g_boothsBoltLib, 0x1700), stFront, 0);
+					displayPic(boothSprite, g_displayX, g_displayY, stFront);
 
-	playAV(g_rtfHandle, 0, g_displayWidth, g_displayHeight, g_displayX, g_displayY);
+					_xp->updateDisplay();
 
-	boothSprite = getBOLTMember(g_boothsBoltLib, (g_displayMode != 0) ? 0x1701 : 0x1702);
+					displayColors(getBOLTMember(g_boothsBoltLib, 0x1700), stBack, 0);
+					displayPic(boothSprite, g_displayX, g_displayY, stBack);
 
-	_xp->setTransparency(false);
+					playAV(g_rtfHandle, 2, g_displayWidth, g_displayHeight, g_displayX, g_displayY);
 
-	displayColors(getBOLTMember(g_boothsBoltLib, 0x1700), 0, 0);
-	displayPic(boothSprite, g_displayX, g_displayY, 0);
+					freeBOLTGroup(g_boothsBoltLib, 0x1700, 1);
 
-	_xp->updateDisplay();
+					if (getBOLTGroup(g_boothsBoltLib, 0, 1)) {
+						setCursorPict(memberAddr(g_boothsBoltLib, 0));
 
-	displayColors(getBOLTMember(g_boothsBoltLib, 0x1700), 1, 0);
-	displayPic(boothSprite, g_displayX, g_displayY, 1);
+						if (initVRam(1500)) {
+							barkerTable = createBarker(2, 17);
+							if (barkerTable) {
+								// Register booth handlers...
+								registerSideShow(barkerTable, &BoltEngine::hucksBooth, 3);
+								registerSideShow(barkerTable, &BoltEngine::fredsBooth, 4);
+								registerSideShow(barkerTable, &BoltEngine::scoobysBooth, 5);
+								registerSideShow(barkerTable, &BoltEngine::yogisBooth, 6);
+								registerSideShow(barkerTable, &BoltEngine::georgesBooth, 7);
+								registerSideShow(barkerTable, &BoltEngine::topCatsBooth, 8);
+								registerSideShow(barkerTable, &BoltEngine::mainEntrance, 9);
+								registerSideShow(barkerTable, &BoltEngine::huckGame, 10);
+								registerSideShow(barkerTable, &BoltEngine::fredGame, 11);
+								registerSideShow(barkerTable, &BoltEngine::scoobyGame, 12);
+								registerSideShow(barkerTable, &BoltEngine::yogiGame, 13);
+								registerSideShow(barkerTable, &BoltEngine::georgeGame, 14);
+								registerSideShow(barkerTable, &BoltEngine::topCatGame, 15);
+								registerSideShow(barkerTable, &BoltEngine::winALetter, 16);
 
-	playAV(g_rtfHandle, 2, g_displayWidth, g_displayHeight, g_displayX, g_displayY);
+								g_lettersWon = 0;
+								_xp->setScreenSaverTimer(1800);
 
-	freeBOLTGroup(g_boothsBoltLib, 0x1700, 1);
+								// The barker function runs the main loop, starting at mainEntrance()...
+								if (!checkError())
+									barker(barkerTable, 9);
 
-	if (!getBOLTGroup(g_boothsBoltLib, 0, 1))
-		goto cleanup;
+								freeBarker(barkerTable);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 
-	setCursorPict(memberAddr(g_boothsBoltLib, 0));
-
-	if (!initVRam(1500))
-		goto cleanup;
-
-	barkerTable = createBarker(17, 2);
-	if (barkerTable == nullptr)
-		goto cleanup;
-
-	// Register booth handlers...
-	registerSideShow(barkerTable, &BoltEngine::hucksBooth, 3);
-	registerSideShow(barkerTable, &BoltEngine::fredsBooth, 4);
-	registerSideShow(barkerTable, &BoltEngine::scoobysBooth, 5);
-	registerSideShow(barkerTable, &BoltEngine::yogisBooth, 6);
-	registerSideShow(barkerTable, &BoltEngine::georgesBooth, 7);
-	registerSideShow(barkerTable, &BoltEngine::topCatsBooth, 8);
-	registerSideShow(barkerTable, &BoltEngine::mainEntrance, 9);
-	registerSideShow(barkerTable, &BoltEngine::huckGame, 10);
-	registerSideShow(barkerTable, &BoltEngine::fredGame, 11);
-	registerSideShow(barkerTable, &BoltEngine::scoobyGame, 12);
-	registerSideShow(barkerTable, &BoltEngine::yogiGame, 13);
-	registerSideShow(barkerTable, &BoltEngine::georgeGame, 14);
-	registerSideShow(barkerTable, &BoltEngine::topCatGame, 15);
-	registerSideShow(barkerTable, &BoltEngine::winALetter, 16);
-
-	g_lettersWon = 0;
-	_xp->setScreenSaverTimer(1800);
-
-	// The barker function runs the main loop, starting at mainEntrance()...
-	if (!checkError())
-		barker(barkerTable, 9);
-
-	freeBarker(barkerTable);
-
-cleanup:
 	freeBOLTGroup(g_boothsBoltLib, 0, 1);
 
 	if (g_boothsBoltLib != 0)
@@ -232,21 +196,23 @@ cleanup:
 	freeResourceIndex();
 }
 
-BarkerTable *BoltEngine::createBarker(int16 minIndex, int16 maxIndex) {
-	return nullptr;
-}
+void BoltEngine::setCursorPict(byte *sprite) {
+	byte cursorBitmap[32]; // 16x16
+	byte *srcPtr = getResolvedPtr(sprite, 0x12);
 
-void BoltEngine::freeBarker(BarkerTable *table) {
-}
+	// Convert 8bpp pixel data to 1bpp monochrome bitmap
+	for (int i = 0; i < 32; i++) {
+		cursorBitmap[i] = 0x00;
+		int16 mask = 0x80;
+		while (mask != 0x00) {
+			if (*srcPtr++ != 0x00)
+				cursorBitmap[i] |= (byte)mask;
 
-void BoltEngine::registerSideShow(BarkerTable *table, SideShowHandler handler, short boothId) {
-}
+			mask >>= 1;
+		}
+	}
 
-void BoltEngine::barker(BarkerTable *table, int16 startBooth) {
-}
-
-bool BoltEngine::checkError() {
-	return false;
+	_xp->setCursorImage(cursorBitmap, 7, 7);
 }
 
 } // End of namespace Bolt

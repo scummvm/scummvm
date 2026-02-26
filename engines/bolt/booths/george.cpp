@@ -19,51 +19,10 @@
  *
  */
 
-#ifndef BOLT_DETECTION_H
-#define BOLT_DETECTION_H
-
-#include "engines/advancedDetector.h"
+#include "bolt/bolt.h"
 
 namespace Bolt {
 
-enum BoltDebugChannels {
-	kDebugGraphics = 1,
-	kDebugPath,
-	kDebugScan,
-	kDebugFilePath,
-	kDebugScript,
-};
 
-extern const PlainGameDescriptor boltGames[];
-
-extern const ADGameDescription gameDescriptions[];
-
-#define GAMEOPTION_EXTEND_SCREEN GUIO_GAMEOPTIONS1
 
 } // End of namespace Bolt
-
-class BoltMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
-	static const DebugChannelDef debugFlagList[];
-
-public:
-	BoltMetaEngineDetection();
-	~BoltMetaEngineDetection() override {}
-
-	const char *getName() const override {
-		return "bolt";
-	}
-
-	const char *getEngineName() const override {
-		return "Bolt";
-	}
-
-	const char *getOriginalCopyright() const override {
-		return "Bolt (C)";
-	}
-
-	const DebugChannelDef *getDebugChannels() const override {
-		return debugFlagList;
-	}
-};
-
-#endif // BOLT_DETECTION_H
