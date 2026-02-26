@@ -114,7 +114,7 @@ void BoltEngine::processPacket(RTFPacket *packet) {
 		// Skip this frame if: low framerate, only 1 behind, or haven't accumulated enough...
 		if (frameRate <= 10 || packet->skipCount > 1 || g_avFrameAccum < g_avSkipLevel) {
 			g_avFrameAccum += packet->duration;
-			warning("BoltEngine::processPacket() WANTS TO RETURN BUT IT WILL SKIP FRAMES");
+			debug(4, "BoltEngine::processPacket(): Skipping frame...");
 			return;
 		}
 

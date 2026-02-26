@@ -35,7 +35,7 @@ void BoltEngine::startCycle(byte *cycleResource) {
 void BoltEngine::displayBooth(int16 page) {
 	_xp->setTransparency(page);
 	_xp->displayPic(&g_boothLetterSprite, g_displayX, g_displayY, page);
-	displayColors(g_boothPalCycleData, 0, page);
+	displayColors(g_boothPalCycleData, page, 0);
 
 	if (page != stFront)
 		_xp->fillDisplay(0, stFront);
@@ -775,10 +775,10 @@ bool BoltEngine::handleButtonPress(int16 hotspot) {
 
 				if (playAV(g_rtfHandle, 3, g_displayWidth, g_displayHeight, g_displayX, g_displayY) == 0) {
 					fadeToBlack(1);
-					_xp->setTransparency(0);
+					_xp->setTransparency(false);
 					displayPic(getBOLTMember(g_boothsBoltLib, g_displayMode ? 0x1802 : 0x1801), g_displayX, g_displayY, 0);
 					_xp->updateDisplay();
-					displayColors(getBOLTMember(g_boothsBoltLib, 0x1800), 0, 0);
+					displayColors(getBOLTMember(g_boothsBoltLib, 0x1800), stFront, 0);
 					_xp->updateDisplay();
 
 					uint32 timer = _xp->startTimer(5000);

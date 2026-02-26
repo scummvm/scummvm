@@ -94,7 +94,7 @@ int16 BoltEngine::barker(BarkerTable *table, int16 startBooth) {
 }
 
 bool BoltEngine::checkError() {
-	return false;
+	return g_curErrorCode != 0;
 }
 
 } // End of namespace Bolt
