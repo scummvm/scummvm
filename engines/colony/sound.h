@@ -38,6 +38,7 @@ public:
 
 	void play(int soundID);
 	void stop();
+	bool isPlaying() const;
 
 	enum {
 		kKlaxon,
@@ -78,6 +79,7 @@ private:
 	ColonyEngine *_vm;
 	Audio::PCSpeaker *_speaker;
 	Common::MacResManager *_resMan;
+	Common::MacResManager *_appResMan;
 	Audio::SoundHandle _handle;
 
 	void playPCSpeaker(int soundID);
