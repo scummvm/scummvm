@@ -202,20 +202,22 @@ Common::Error WaynesWorldEngine::run() {
 	unloadStaticRoomObjects();
 	unloadMainActorSprites();
 
+	delete _midi;
+	delete _sound;
 	delete _logic;
 
-	delete _m00Gxl;
-	delete _m01Gxl;
-	delete _m02Gxl;
-	delete _m03Gxl;
-	delete _m05Gxl;
-
-	delete _r08Gxl;
-	delete _r10Gxl;
-	delete _r14Gxl;
-	delete _r21Gxl;
-	delete _r22Gxl;
 	delete _r33Gxl;
+	delete _r22Gxl;
+	delete _r21Gxl;
+	delete _r14Gxl;
+	delete _r10Gxl;
+	delete _r08Gxl;
+
+	delete _m05Gxl;
+	delete _m03Gxl;
+	delete _m02Gxl;
+	delete _m01Gxl;
+	delete _m00Gxl;
 	
 	delete _fontWW;
 	delete _fontWWInv;
@@ -226,9 +228,6 @@ Common::Error WaynesWorldEngine::run() {
 	delete _inventorySprite;
 	delete _backgroundSurface;
 	delete _screen;
-
-	delete _sound;
-	delete _midi;
 
 	return Common::kNoError;
 }
