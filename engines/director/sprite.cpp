@@ -27,6 +27,7 @@
 #include "director/score.h"
 #include "director/sprite.h"
 #include "director/castmember/castmember.h"
+#include "director/castmember/digitalvideo.h"
 #include "director/castmember/shape.h"
 #include "director/castmember/text.h"
 
@@ -611,6 +612,82 @@ Common::String Sprite::formatInfo() {
 		_puppet, _moveable);
 }
 
+void Sprite::replaceFrom(Sprite *nextSprite, Sprite *puppetSrc) {
+	if (!nextSprite)
+		return;
+
+	// Usually you only want to copy data into the sprite
+	// if its own puppet flag is set.
+	if (!puppetSrc)
+		puppetSrc = this;
+
+	if (puppetSrc->_puppet) {
+		// Whole sprite is in puppet mode.
+		// The only thing we want to copy over is the script ID.
+		_scriptId = nextSprite->_scriptId;
+		return;
+	}
+
+	// if there's a video in the old sprite that's different, stop it before we continue
+	if (_castId != nextSprite->_castId && _cast && _cast->_type == kCastDigitalVideo) {
+		((DigitalVideoCastMember *)_cast)->setChannel(nullptr);
+		((DigitalVideoCastMember *)_cast)->stopVideo();
+		((DigitalVideoCastMember *)_cast)->rewindVideo();
+	}
+
+	// If the cast member is the same, persist the editable flag
+	bool editable = nextSprite->_editable;
+	if (_castId == nextSprite->_castId) {
+		editable = _editable;
+	}
+
+	bool immediate = _immediate;
+
+	// Copy over all the sprite fields from one to another.
+	// For D6+, exclude individual fields with autopuppet switched on
+	_spriteType = nextSprite->_spriteType;
+	_enabled = nextSprite->_enabled;
+	if (!getAutoPuppet(kAPInk)) {
+		_inkData = nextSprite->_inkData;
+		_ink = nextSprite->_ink;
+		_trails = nextSprite->_trails;
+		_stretch = nextSprite->_stretch;
+	}
+	if (!getAutoPuppet(kAPForeColor)) {
+		_foreColor = nextSprite->_foreColor;
+	}
+	if (!getAutoPuppet(kAPBackColor)) {
+		_backColor = nextSprite->_backColor;
+	}
+	if (!getAutoPuppet(kAPCast)) {
+		_castId = nextSprite->_castId;
+		_cast = nextSprite->_cast;
+		_spriteListIdx = nextSprite->_spriteListIdx;
+	}
+	if (!getAutoPuppet(kAPLoc)) {
+		_startPoint = nextSprite->_startPoint;
+	}
+	if (!getAutoPuppet(kAPHeight)) {
+		_height = nextSprite->_height;
+	}
+	if (!getAutoPuppet(kAPWidth)) {
+		_width = nextSprite->_width;
+	}
+	if (!getAutoPuppet(kAPMoveable)) {
+		_colorcode = nextSprite->_colorcode;
+		_editable = nextSprite->_editable;
+		_moveable = nextSprite->_moveable;
+	}
+	_blendAmount = nextSprite->_blendAmount;
+	_thickness = nextSprite->_thickness;
+	_pattern = nextSprite->_pattern;
+
+	// Persist the immediate flag
+	_immediate = immediate;
+
+	_editable = editable;
+
+}
 
 
 } // End of namespace Director

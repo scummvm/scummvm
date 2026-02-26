@@ -511,8 +511,10 @@ void Score::updateCurrentFrame() {
 		// This is specifically because of delta updates; loading the next frame
 		// in the score applies delta changes to _currentFrame, and ideally we want
 		// those deltas to be applied over the top of whatever the current state is.
+		// Importantly we don't want to copy back anything that is overridden
+		// by our friend the puppet flag.
 		for (uint ch = 0; ch < _channels.size(); ch++)
-			*_currentFrame->_sprites[ch] = *_channels[ch]->_sprite;
+			_currentFrame->_sprites[ch]->replaceFrom(_channels[ch]->_sprite, _channels[ch]->_sprite);
 
 		// this copies in the frame data and updates _curFrameNumber
 		loadFrame(nextFrameNumberToLoad, true);

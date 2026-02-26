@@ -573,88 +573,21 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 	if (!nextSprite)
 		return;
 
-	if (_sprite->_puppet) {
-		// Whole sprite is in puppet mode.
-		// The only thing we want to copy over is the script ID.
-		nextSprite->_scriptId = _sprite->_scriptId;
-		return;
-	}
-
-	bool widgetKeeped = _sprite->_cast && _widget;
-
-	// if there's a video in the old sprite that's different, stop it before we continue
-	if (_sprite->_castId != nextSprite->_castId && _sprite->_cast && _sprite->_cast->_type == kCastDigitalVideo) {
-		((DigitalVideoCastMember *)_sprite->_cast)->setChannel(nullptr);
-		((DigitalVideoCastMember *)_sprite->_cast)->stopVideo();
-		((DigitalVideoCastMember *)_sprite->_cast)->rewindVideo();
-	}
-
-	// update the _sprite we stored in channel, and point the originalSprite to the new one
+	bool hasWidget = _sprite->_cast && _widget;
 	// release the widget, because we may having the new one
 	if (_sprite->_cast && !canKeepWidget(_sprite, nextSprite)) {
-		widgetKeeped = false;
 		_sprite->_cast->releaseWidget();
+		hasWidget = false;
 	}
+	int16 width = _sprite->_width;
+	int16 height = _sprite->_height;
 
-	// If the cast member is the same, persist the editable flag
-	bool editable = nextSprite->_editable;
-	if (_sprite->_castId == nextSprite->_castId) {
-		editable = _sprite->_editable;
-	}
-
-
-	int width = _sprite->_width;
-	int height = _sprite->_height;
-	bool immediate = _sprite->_immediate;
-
-	// Copy over all the sprite fields from one to another.
-	// For D6+, exclude individual fields with autopuppet switched on
-	_sprite->_spriteType = nextSprite->_spriteType;
-	_sprite->_enabled = nextSprite->_enabled;
-	if (!_sprite->getAutoPuppet(kAPInk)) {
-		_sprite->_inkData = nextSprite->_inkData;
-		_sprite->_ink = nextSprite->_ink;
-		_sprite->_trails = nextSprite->_trails;
-		_sprite->_stretch = nextSprite->_stretch;
-	}
-	if (!_sprite->getAutoPuppet(kAPForeColor)) {
-		_sprite->_foreColor = nextSprite->_foreColor;
-	}
-	if (!_sprite->getAutoPuppet(kAPBackColor)) {
-		_sprite->_backColor = nextSprite->_backColor;
-	}
-	if (!_sprite->getAutoPuppet(kAPCast)) {
-		_sprite->_castId = nextSprite->_castId;
-		_sprite->_cast = nextSprite->_cast;
-		_sprite->_spriteListIdx = nextSprite->_spriteListIdx;
-	}
-	if (!_sprite->getAutoPuppet(kAPLoc)) {
-		_sprite->_startPoint = nextSprite->_startPoint;
-	}
-	if (!_sprite->getAutoPuppet(kAPHeight)) {
-		_sprite->_height = nextSprite->_height;
-	}
-	if (!_sprite->getAutoPuppet(kAPWidth)) {
-		_sprite->_width = nextSprite->_width;
-	}
-	if (!_sprite->getAutoPuppet(kAPMoveable)) {
-		_sprite->_colorcode = nextSprite->_colorcode;
-		_sprite->_editable = nextSprite->_editable;
-		_sprite->_moveable = nextSprite->_moveable;
-	}
-	_sprite->_blendAmount = nextSprite->_blendAmount;
-	_sprite->_thickness = nextSprite->_thickness;
-	_sprite->_pattern = nextSprite->_pattern;
-
-	// Persist the immediate flag
-	_sprite->_immediate = immediate;
-
-	_sprite->_editable = editable;
+	_sprite->replaceFrom(nextSprite);
 
 	// TODO: auto expand text size is meaning less for us, not all text
 	// since we are using initialRect for the text cast member now, then the sprite size is meaning less for us.
 	// thus, we keep the _sprite size here
-	if (hasTextCastMember(_sprite) && widgetKeeped) {
+	if (hasTextCastMember(_sprite) && hasWidget) {
 		_sprite->_width = width;
 		_sprite->_height = height;
 	}

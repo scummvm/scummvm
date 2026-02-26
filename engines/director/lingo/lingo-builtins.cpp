@@ -3235,6 +3235,7 @@ void LB::b_puppetSprite(int nargs) {
 				// puppetSprite set to FALSE, copy back sprite data from frame cache
 				Channel *chan = sc->getChannelById(spriteId);
 				movie->getWindow()->addDirtyRect(chan->getBbox());
+				chan->_dirty = true;
 				chan->setClean(sc->_currentFrame->_sprites[spriteId]);
 				chan->_dirty = true;
 			}
