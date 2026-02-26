@@ -722,6 +722,9 @@ bool Lingo::execute(int targetFrame) {
 		while (_state->callstack.size()) {
 			popContext(true);
 		}
+		if (_playDone) {
+			_playDone = false;
+		}
 	}
 	_abort = false;
 	_freezeState = false;
