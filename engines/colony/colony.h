@@ -498,7 +498,7 @@ private:
 	bool makeStars(const Common::Rect &r, int btn);
 	bool makeBlackHole();
 	bool timeSquare(const Common::String &str, const Graphics::Font *macFont = nullptr);
-	void drawPict(int resID);
+	bool drawPict(int resID);
 	bool loadAnimation(const Common::String &name);
 	void deleteAnimation();
 	void playAnimation();
