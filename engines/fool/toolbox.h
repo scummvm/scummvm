@@ -861,6 +861,7 @@ private:
 	Common::SharedPtr<Cursor> _cursor;
 	int _cursorLevel = 0;
 	Common::Point _mouse;
+	uint16 _modifiers = 0x80;
 	Common::HashMap<uint16, MenuHandle> _menu;
 
 	Common::List<EventRecord> _events;
