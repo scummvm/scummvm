@@ -52,7 +52,7 @@ void TurningPuzzle::updateGraphics() {
 
 	if (_solveState == kWaitForAnimation) {
 		if (g_nancy->getTotalPlayTime() > _nextTurnTime) {
-			_nextTurnTime = g_nancy->getTotalPlayTime() + (_solveDelayBetweenTurns * 1000 / _currentOrder.size());
+			_nextTurnTime = g_nancy->getTotalPlayTime() + (_solveDelayBetweenTurns * 1000 / _currentOrder.size() / _numFramesPerTurn);
 
 			if (	(_turnFrameID == 0 && _solveAnimFace == 0) ||
 					(_turnFrameID == 1 && _solveAnimFace > 0 && (int)_solveAnimFace < _numFaces - 1)) {
@@ -92,7 +92,7 @@ void TurningPuzzle::updateGraphics() {
 
 	if (_objectCurrentlyTurning != -1) {
 		if (g_nancy->getTotalPlayTime() > _nextTurnTime) {
-			_nextTurnTime = g_nancy->getTotalPlayTime() + (_solveDelayBetweenTurns * 1000 / _currentOrder.size());
+			_nextTurnTime = g_nancy->getTotalPlayTime() + (_solveDelayBetweenTurns * 1000 / _currentOrder.size() / _numFramesPerTurn);
 			++_turnFrameID;
 
 			uint faceID = _currentOrder[_objectCurrentlyTurning];
