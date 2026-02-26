@@ -150,11 +150,9 @@ void AGOSEngine_Simon1::vc22_setPalette() {
 	offs = _curVgaFile1 + 6;
 	src = offs + b * palSize;
 
-	// Acorn Simon 1 Floppy Demo: Palette is missing the entries required for Simon.
-	// As a result, Simon was appearing black, this doesn't happen on real hardware,
-	// The palette actually lives in VGA 0191, but ScummVM is not loading this file.
-	// Check this is the floppy demo, not the cd demo, and the palette range is empty, 
-	// if it is, populate it from acornFloppyDemoPalette.
+	// Acorn Simon 1 floppy demo: Simon renders black because part of the palette
+	// is never populated. The original demo executable loads the palette data from 
+	// VGA 0121 as a special case via the original executable, not via TABLES.
 	if (getGameId() == GID_SIMON1 && getPlatform() == Common::kPlatformAcorn && (_gameDescription->desc.flags & ADGF_DEMO) && !(getFeatures() & GF_TALKIE)) {
 		bool paletteRangeEmpty = true;
 		const int startByte = 32 * 3;
