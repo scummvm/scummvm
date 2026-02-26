@@ -408,7 +408,7 @@ static void drawSidebar1(ImDrawList *dl, ImVec2 startPos, Score *score) {
 		dl->AddRectFilled(rowMin, rowMax, cfg._table_dark_color);
         dl->AddRect(rowMin, rowMax, cfg._border_color);
 
-		float size = cfg._cell_height * 0.45f;   // square size
+		float size = cfg._cell_height * 0.35f;   // square size
 		float pad  = cfg._cell_height * 0.12f;   // inner padding
 		float rounding = size * 0.15f;
 
@@ -808,7 +808,7 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 				color = U32(_state->_colors._contColors[colorIdx]);
 			}
 
-			float rounding = 3.0f;
+			float rounding = 0.0f;
             dl->AddRectFilled(ImVec2(x1, y + pad), ImVec2(x2 - 1.0f, y + cellH - pad), color, rounding);
             // horizontal line through the middle, offset from x1 if circle is present
             dl->AddLine(ImVec2(x1 + (startVisible ? 6.0f : 0.0f), cy), ImVec2(x2 - 6.0f, cy), U32(_state->_colors._line_color), 1.0f);
@@ -831,7 +831,7 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 					snprintf(buf, sizeof(buf), "%s", getDisplayName(cm).c_str());
 				else if (sprite.isQDShape())
 					snprintf(buf, sizeof(buf), "Q");
-				dl->AddText(ImVec2(textX, baseY), U32(_state->_colors._type_color), buf);
+				dl->AddText(ImVec2(textX, baseY), U32(_state->_colors._line_color), buf);
 
 				// Behavior
 				buf[0] = '\0';
@@ -839,14 +839,14 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 					CastMember *sc = cast->getCastMember(sprite._scriptId.member, true);
 					if (sc) snprintf(buf, sizeof(buf), "%s", getDisplayName(sc).c_str());
 				}
-				dl->AddText(ImVec2(textX, baseY + lineH), U32(_state->_colors._type_color), buf);
+				dl->AddText(ImVec2(textX, baseY + lineH), U32(_state->_colors._line_color), buf);
 
 				// Ink
-				dl->AddText(ImVec2(textX, baseY + lineH * 2), U32(_state->_colors._type_color), inkType2str(sprite._ink));
+				dl->AddText(ImVec2(textX, baseY + lineH * 2), U32(_state->_colors._line_color), inkType2str(sprite._ink));
 
 				// Blend
 				snprintf(buf, sizeof(buf), "%d", sprite._blendAmount);
-				dl->AddText(ImVec2(textX, baseY + lineH * 3), U32(_state->_colors._type_color), buf);
+				dl->AddText(ImVec2(textX, baseY + lineH * 3), U32(_state->_colors._line_color), buf);
 
 				// Location
 				snprintf(buf, sizeof(buf), "%d,%d", sprite._startPoint.x, sprite._startPoint.y);
@@ -984,7 +984,7 @@ static void drawMainChannelGrid(ImDrawList *dl, ImVec2 startPos, Score *score) {
 			float cy = y + cfg._cell_height * 0.2;
 			float pad = 0.0f;
 
-			dl->AddRectFilled(ImVec2(x1, y + pad), ImVec2(x2 - 1.0f, y + cfg._cell_height - pad), U32(_state->_colors._contColors[ch % 6]), 3.0f);
+			dl->AddRectFilled(ImVec2(x1, y + pad), ImVec2(x2 - 1.0f, y + cfg._cell_height - pad), U32(_state->_colors._contColors[ch % 6]), 0.0f);
 			dl->AddLine(ImVec2(x1 + (startVisible ? 6.0f : 0.0f), cy), ImVec2(x2 - 6.0f, cy), U32(_state->_colors._line_color), 1.0f);
 			if (startVisible)
 				dl->AddCircle(ImVec2(x1 + 4.0f, cy), 3.0f,  U32(_state->_colors._line_color), 0, 1.5f);
