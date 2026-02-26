@@ -168,7 +168,7 @@ void MusicManager::playMusic(const char *filename, bool loop) {
 	if (size < 4)
 		error("playMusic() wrong music resource size");
 
-	delete _music;
+	delete[] _music;
 	_music = new byte[size];
 	fd.read(_music, size);
 

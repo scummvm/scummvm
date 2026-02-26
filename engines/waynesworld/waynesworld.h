@@ -163,7 +163,7 @@ public:
 	AnimationTimer _animationTimers[kAnimationTimersCount];
 
 	// Input
-	int _mouseX, _mouseY;
+	int _mouseX = 0, _mouseY = 0;
 	int _mouseClickY, _mouseClickX;
 	uint _mouseClickButtons;
 	Common::KeyCode _keyCode;
