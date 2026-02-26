@@ -28,12 +28,12 @@
 namespace WaynesWorld {
 
 void drawSurfaceIntern(Graphics::Surface *destSurface, const Graphics::Surface *surface, int x, int y, bool transparent) {
-	int width, height, skipX = 0, skipY = 0;
+	int skipX = 0, skipY = 0;
 
 	if (x >= destSurface->w || y >= destSurface->h)
 		return;
 
-	height = surface->h;
+	int height = surface->h;
 	if (y < 0) {
 		height += y;
 		if (height <= 0)
@@ -44,7 +44,7 @@ void drawSurfaceIntern(Graphics::Surface *destSurface, const Graphics::Surface *
 	if (y + height > destSurface->h)
 		height = destSurface->h - y;
 
-	width = surface->w;
+	int width = surface->w;
 	if (x < 0) {
 		width += x;
 		if (width <= 0)
