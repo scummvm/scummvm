@@ -45,34 +45,6 @@
 
 namespace Graphics {
 
-static const uint16 w = 11;
-static const uint16 h = 11;
-static const uint16 hotX = 0;
-static const uint16 hotY = 0;
-static const byte key = 0;
-
-// Palette: transparent, light blue, dark blue
-static const byte riscOSPalette[3 * 3] = {
-    0x00, 0x00, 0x00,
-    0x00, 0xFF, 0xFF,
-    0x00, 0x00, 0x99
-};
-
-// 11 x 11 RISC OS 3.11 cursor
-static const byte riscOSCursor[w * h] = {
-    1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    1, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0,
-    1, 2, 2, 2, 1, 1, 0, 0, 0, 0, 0,
-    1, 2, 2, 2, 2, 2, 1, 1, 1, 0, 0,
-    1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1,
-    1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1,
-    1, 2, 1, 1, 1, 2, 2, 1, 0, 0, 0,
-    1, 1, 1, 0, 0, 1, 2, 2, 1, 0, 0,
-    0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0,
-    0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1,
-    0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1
-};
-
 class RiscOSCursor : public Cursor {
 public:
     uint16 getWidth() const override { return w; }
@@ -86,6 +58,38 @@ public:
     byte getKeyColor() const override { return key; }
     byte getPaletteStartIndex() const override { return 0; }
     uint16 getPaletteCount() const override { return 3; }
+
+private:
+    static const uint16 w = 11;
+    static const uint16 h = 11;
+    static const uint16 hotX = 0;
+    static const uint16 hotY = 0;
+    static const byte key = 0;
+
+    static const byte riscOSPalette[3 * 3];
+    static const byte riscOSCursor[w * h];
+};
+
+// Palette: transparent, light blue, dark blue
+const byte RiscOSCursor::riscOSPalette[3 * 3] = {
+    0x00, 0x00, 0x00,
+    0x00, 0xFF, 0xFF,
+    0x00, 0x00, 0x99
+};
+
+// 11 x 11 RISC OS 3.11 cursor
+const byte RiscOSCursor::riscOSCursor[RiscOSCursor::w * RiscOSCursor::h] = {
+    1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0,
+    1, 2, 2, 2, 1, 1, 0, 0, 0, 0, 0,
+    1, 2, 2, 2, 2, 2, 1, 1, 1, 0, 0,
+    1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1,
+    1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1,
+    1, 2, 1, 1, 1, 2, 2, 1, 0, 0, 0,
+    1, 1, 1, 0, 0, 1, 2, 2, 1, 0, 0,
+    0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0,
+    0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1,
+    0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1
 };
 
 Cursor *makeRiscOSCursor() {
