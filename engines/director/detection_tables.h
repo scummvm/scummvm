@@ -102,6 +102,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "blinkyy1",			"Blinky Bill: Play and Learn - Year 1" },
 	{ "blockhead",			"Blockhead" },
 	{ "bobcastle",			"Bob the Builder: Bob's Castle Adventure" },
+	{ "bodyfun",			"Dr. Health'nstein's Body Fun" },
 	{ "bodypark",			"Body Park" },
 	{ "brer",				"Brer Rabbit and the Wonderful Tar Baby" },
 	{ "buzz1",				"Buzz Lightyear 1st Grade" },
@@ -3901,6 +3902,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINDEMO2t_l("blownaway", "Demo", "DEMO.EXE", "db13582be83388b285f634b4165068ce", 745999,
 									 "DEMO2.DXR", "39242284ad536ac5285fc6dfd239138f", 1694128, Common::DE_DEU, 404),
+
+	WINGAME1("bodyfun", "", "BODYFUN.EXE", "t:481f7df6bf4e2834497346fc3c2d2dfa", 731387, 404),
+	MACGAME1("bodyfun", "", "Dr. Health'nstein's Body Fun", "r:8b138db44d4421cc7294a9dc792ccf1b", 310303, 404),
 
 	MACGAME2("bookofnotes", "", "PROJECTOR", "r:77f4098988d5386794d1530065f514cd", 301669,
 								"ETHICSQKT", "r:9627d44e711729978427347962fdbb03", 5409, 400),
