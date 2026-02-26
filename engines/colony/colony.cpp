@@ -54,6 +54,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_centerX = _width / 2;
 	_centerY = _height / 2;
 	_mouseSensitivity = 1;
+	_mouseLocked = false;
 	_showDashBoard = true;
 	_crosshair = true;
 	_insight = false;
@@ -77,6 +78,10 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	
 	_wireframe = (_renderMode != Common::kRenderMacintosh);
 	_speedShift = 2; // DOS default: speedshift=1, but 2 feels better with our frame rate
+	_wm = nullptr;
+	_macMenu = nullptr;
+	_menuSurface = nullptr;
+	_menuBarHeight = 0;
 	
 	memset(_wall, 0, sizeof(_wall));
 	memset(_mapData, 0, sizeof(_mapData));
@@ -151,6 +156,8 @@ ColonyEngine::~ColonyEngine() {
 	delete _gfx;
 	delete _sound;
 	delete _resMan;
+	delete _menuSurface;
+	delete _wm;
 }
 
 
@@ -523,6 +530,122 @@ void ColonyEngine::loadMacColors() {
 	debug("Loaded %d Mac colors", cnum);
 }
 
+void ColonyEngine::menuCommandsCallback(int action, Common::String &text, void *data) {
+	ColonyEngine *engine = (ColonyEngine *)data;
+	engine->handleMenuAction(action);
+}
+
+void ColonyEngine::handleMenuAction(int action) {
+	switch (action) {
+	case kMenuActionAbout:
+		inform("The Colony\nCopyright 1988\nDavid A. Smith", true);
+		break;
+	case kMenuActionNew:
+		loadMap(1);
+		break;
+	case kMenuActionOpen:
+		_system->lockMouse(false);
+		loadGameDialog();
+		_system->lockMouse(true);
+		_system->warpMouse(_centerX, _centerY);
+		_system->getEventManager()->purgeMouseEvents();
+		break;
+	case kMenuActionSave:
+	case kMenuActionSaveAs:
+		_system->lockMouse(false);
+		saveGameDialog();
+		_system->lockMouse(true);
+		_system->warpMouse(_centerX, _centerY);
+		_system->getEventManager()->purgeMouseEvents();
+		break;
+	case kMenuActionQuit:
+		quitGame();
+		break;
+	case kMenuActionSound:
+		// Sound toggle (TODO: implement sound on/off state)
+		break;
+	case kMenuActionCrosshair:
+		_crosshair = !_crosshair;
+		break;
+	case kMenuActionPolyFill:
+		_wireframe = !_wireframe;
+		break;
+	case kMenuActionCursorShoot:
+		// Toggle cursor-based shooting (not yet implemented)
+		break;
+	default:
+		break;
+	}
+}
+
+void ColonyEngine::initMacMenus() {
+	if (_renderMode != Common::kRenderMacintosh) {
+		_menuBarHeight = 0;
+		return;
+	}
+
+	// Create RGBA surface for the MacWindowManager to render into.
+	Graphics::PixelFormat rgba(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	_menuSurface = new Graphics::ManagedSurface(_width, _height, rgba);
+
+	_wm = new Graphics::MacWindowManager(Graphics::kWMModeNoDesktop | Graphics::kWMNoScummVMWallpaper | Graphics::kWMMode32bpp | Graphics::kWMModeNoSystemRedraw);
+
+	// Override WM color values for 32bpp RGBA rendering.
+	// The defaults are palette indices (0-6) which are meaningless in 32bpp mode.
+	_wm->_colorBlack  = rgba.ARGBToColor(255,   0,   0,   0);
+	_wm->_colorGray80 = rgba.ARGBToColor(255, 128, 128, 128);
+	_wm->_colorGray88 = rgba.ARGBToColor(255, 136, 136, 136);
+	_wm->_colorGrayEE = rgba.ARGBToColor(255, 238, 238, 238);
+	_wm->_colorWhite  = rgba.ARGBToColor(255, 255, 255, 255);
+	_wm->_colorGreen  = rgba.ARGBToColor(  0,   0, 255,   0); // transparent key
+	_wm->_colorGreen2 = rgba.ARGBToColor(  0,   0, 207,   0); // transparent key 2
+
+	_wm->setScreen(_menuSurface);
+
+	_macMenu = _wm->addMenu();
+	_macMenu->setCommandsCallback(menuCommandsCallback, this);
+
+	// Build menus matching original Mac Colony (inits.c lines 43-53, gmain.c DoCommand).
+	// addStaticMenus() auto-adds the Apple menu at index 0, so:
+	//   index 0 = Apple, 1 = File, 2 = Edit, 3 = Options
+	// NOTE: menunum=0 is the loop terminator, so Apple submenu items
+	// must be added manually after addStaticMenus() (see WAGE pattern).
+	static const Graphics::MacMenuData menuItems[] = {
+		{-1, "File",            0, 0, true},
+		{-1, "Edit",            0, 0, true},
+		{-1, "Options",         0, 0, true},
+		// File submenu (index 1)
+		{1, "New Game",                     kMenuActionNew, 'N', true},
+		{1, "Open Game...",                 kMenuActionOpen, 'O', true},
+		{1, "Save Game",                    kMenuActionSave, 'S', true},
+		{1, "Save As...",                   kMenuActionSaveAs, 0, true},
+		{1, nullptr,                        0, 0, false},   // separator
+		{1, "Quit",                         kMenuActionQuit, 'Q', true},
+		// Edit submenu (index 2, disabled — original Mac had these but non-functional)
+		{2, "Undo",                         0, 'Z', false},
+		{2, nullptr,                        0, 0, false},
+		{2, "Cut",                          0, 'X', false},
+		{2, "Copy",                         0, 'C', false},
+		{2, "Paste",                        0, 'V', false},
+		// Options submenu (index 3)
+		{3, "Sound",                        kMenuActionSound, 0, true},
+		{3, "Crosshair",                    kMenuActionCrosshair, 0, true},
+		{3, "Polygon Fill",                 kMenuActionPolyFill, 0, true},
+		{3, "Cursor Shoot",                 kMenuActionCursorShoot, 0, true},
+		// Terminator
+		{0, nullptr,                        0, 0, false}
+	};
+	_macMenu->addStaticMenus(menuItems);
+
+	// Add Apple submenu item manually (menunum=0 can't go through addStaticMenus)
+	_macMenu->addSubMenu(nullptr, 0);
+	_macMenu->addMenuItem(_macMenu->getSubmenu(nullptr, 0), "About The Colony", kMenuActionAbout);
+
+	_macMenu->calcDimensions();
+
+	_menuBarHeight = 20;
+}
+
 void ColonyEngine::initTrig() {
 	// Compute standard sin/cos lookup tables (256 steps = full circle, scaled by 128)
 	for (int i = 0; i < 256; i++) {
@@ -578,12 +701,16 @@ Common::Error ColonyEngine::run() {
 
 	_gfx->setPalette(pal, 0, 256);
 
+	initMacMenus();
+	updateViewportLayout(); // Recalculate for menu bar height
+
 	// Frame limiter: target 60fps, like Freescape engine
 	_frameLimiter = new Graphics::FrameLimiter(_system, 60);
 
 	playIntro();
 
 	loadMap(1); // Try to load the first map
+	_mouseLocked = true;
 	_system->lockMouse(true);
 	_system->warpMouse(_centerX, _centerY);
 
@@ -593,6 +720,27 @@ Common::Error ColonyEngine::run() {
 		_frameLimiter->startFrame();
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
+			// Let MacWindowManager handle menu events first
+			if (_wm) {
+				bool wasMenuActive = _wm->isMenuActive();
+				if (_wm->processEvent(event)) {
+					// WM consumed the event (menu interaction)
+					if (!wasMenuActive && _wm->isMenuActive()) {
+						_system->lockMouse(false);
+					}
+					continue;
+				}
+				if (wasMenuActive && !_wm->isMenuActive()) {
+					_system->lockMouse(_mouseLocked);
+					if (_mouseLocked) {
+						_system->warpMouse(_centerX, _centerY);
+						_system->getEventManager()->purgeMouseEvents();
+						mouseDX = mouseDY = 0;
+						mouseMoved = false;
+					}
+				}
+			}
+
 				if (event.type == Common::EVENT_KEYDOWN) {
 					debug("Key down: %d", event.kbd.keycode);
 					const bool allowInteraction = (event.kbd.flags & Common::KBD_CTRL) == 0;
@@ -676,26 +824,39 @@ Common::Error ColonyEngine::run() {
 						_system->lockMouse(false);
 						openMainMenuDialog();
 						_gfx->computeScreenViewport();
-						_system->lockMouse(true);
-						_system->warpMouse(_centerX, _centerY);
-						_system->getEventManager()->purgeMouseEvents();
+						_system->lockMouse(_mouseLocked);
+						if (_mouseLocked) {
+							_system->warpMouse(_centerX, _centerY);
+							_system->getEventManager()->purgeMouseEvents();
+						}
 						break;
-					// Space: shoot or exit forklift (DOS: ScanCode 57)
+					// Space: toggle mouselook / free cursor
 					case Common::KEYCODE_SPACE:
 						if (_fl == 2)
 							dropCarriedObject();
 						else if (_fl == 1)
 							exitForklift();
-						// else: shoot (TODO: implement shooting)
+						else {
+							_mouseLocked = !_mouseLocked;
+							_system->lockMouse(_mouseLocked);
+							if (_mouseLocked) {
+								_system->warpMouse(_centerX, _centerY);
+								_system->getEventManager()->purgeMouseEvents();
+								mouseDX = mouseDY = 0;
+								mouseMoved = false;
+							}
+						}
 						break;
 					// Escape: also opens ScummVM menu
 					case Common::KEYCODE_ESCAPE:
 						_system->lockMouse(false);
 						openMainMenuDialog();
 						_gfx->computeScreenViewport();
-						_system->lockMouse(true);
-						_system->warpMouse(_centerX, _centerY);
-						_system->getEventManager()->purgeMouseEvents();
+						_system->lockMouse(_mouseLocked);
+						if (_mouseLocked) {
+							_system->warpMouse(_centerX, _centerY);
+							_system->getEventManager()->purgeMouseEvents();
+						}
 						break;
 					default:
 						break;
@@ -710,7 +871,7 @@ Common::Error ColonyEngine::run() {
 			}
 		}
 
-		if (mouseMoved) {
+		if (mouseMoved && _mouseLocked) {
 			if (mouseDX != 0) {
 				_me.look = (uint8)((int)_me.look - (mouseDX * _mouseSensitivity));
 			}
@@ -732,6 +893,14 @@ Common::Error ColonyEngine::run() {
 		drawCrosshair();
 		checkCenter();
 		
+		// Draw Mac menu bar overlay (render directly to our surface, skip WM's
+		// g_system->copyRectToScreen which conflicts with the OpenGL backend)
+		if (_macMenu && _menuSurface) {
+			_menuSurface->fillRect(Common::Rect(_width, _height), _menuSurface->format.ARGBToColor(0, 0, 0, 0));
+			_macMenu->draw(_menuSurface, true);
+			_gfx->drawSurface(&_menuSurface->rawSurface(), 0, 0);
+		}
+
 		_displayCount++; // Mac: count++ after Display()
 		_frameLimiter->delayBeforeSwap();
 		_gfx->copyToScreen();

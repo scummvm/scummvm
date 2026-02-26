@@ -64,6 +64,9 @@ public:
 	virtual void setMacColors(uint32 fg, uint32 bg) {}
 	virtual void computeScreenViewport() = 0;
 
+	// Overlay a RGBA software surface onto the GL framebuffer (for Mac menu bar).
+	virtual void drawSurface(const Graphics::Surface *surf, int x, int y) {}
+
 	// Convenience color accessors
 	uint32 white() const { return 255; }
 	uint32 black() const { return 0; }

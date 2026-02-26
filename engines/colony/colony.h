@@ -31,6 +31,8 @@
 #include "common/rendermode.h"
 #include "colony/gfx.h"
 #include "colony/sound.h"
+#include "graphics/macgui/macwindowmanager.h"
+#include "graphics/macgui/macmenu.h"
 
 
 namespace Colony {
@@ -174,6 +176,20 @@ enum ObjColor {
 	kColorBottomSnoop = 60,
 	kColorUPyramid = 68,
 	kColorShadow = 74
+};
+
+// Mac menu action IDs (matching original Mac Colony menu structure)
+enum MenuAction {
+	kMenuActionAbout = 1,
+	kMenuActionNew,
+	kMenuActionOpen,
+	kMenuActionSave,
+	kMenuActionSaveAs,
+	kMenuActionQuit,
+	kMenuActionSound,
+	kMenuActionCrosshair,
+	kMenuActionPolyFill,
+	kMenuActionCursorShoot
 };
 
 static const int kBaseObject = 20;
@@ -339,6 +355,7 @@ private:
 	int _centerX, _centerY;
 	int _width, _height;
 	int _mouseSensitivity;
+	bool _mouseLocked;
 	bool _showDashBoard;
 	bool _crosshair;
 	bool _insight;
@@ -377,6 +394,15 @@ private:
 
 	MacColor _macColors[145];
 	bool _hasMacColors;
+
+	// Mac menu bar (MacWindowManager overlay)
+	Graphics::MacWindowManager *_wm;
+	Graphics::MacMenu *_macMenu;
+	Graphics::ManagedSurface *_menuSurface;
+	int _menuBarHeight;
+	void initMacMenus();
+	void handleMenuAction(int action);
+	static void menuCommandsCallback(int action, Common::String &text, void *data);
 
 	int _frntxWall, _frntyWall;
 	int _sidexWall, _sideyWall;
