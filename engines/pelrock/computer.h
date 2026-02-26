@@ -65,22 +65,9 @@ private:
 	Common::Array<LibraryBook> _libraryBooks;
 	int _currentResult;
 	int _memorizedBookIndex;  // Index of book that was memorized (-1 if none)
+	int _lineHeight;
 
-	const char *_menuTitle;
-	const char *_menuOption1;       // "CONSULTAR POR TITULO"
-	const char *_menuOption2;       // "CONSULTAR POR AUTOR"
-	const char *_menuOption3;       // "CANCELAR"
-	const char *_promptLetter;      // "Teclea una letra (A-Z):"
-	const char *_labelTitle;        // "Titulo    : "
-	const char *_labelAuthor;       // "Autor     : "
-	const char *_labelGenre;        // "Genero    : "
-	const char *_labelSituacion;    // "Situacion : "
-	const char *_statusPhysical;    // "Estante %c, fila %d"
-	const char *_statusCatalogOnly; // "Solo en catalogo"
-	const char *_optMemorizar;      // "(M)emorizar"
-	const char *_optSeguir;         // "(S)eguir"
-	const char *_optCancelar;       // "(C)ancelar"
-	const char *_noResults;         // "No se encontraron libros"
+	Common::Array<Common::StringArray> _computerText;
 
 	void loadBackground();
 	void cleanup();

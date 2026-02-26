@@ -1598,6 +1598,12 @@ void PelrockEngine::gameLoop() {
 		backgroundBook.run();
 		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
 	}
+	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_w) {
+		Computer computer(_events);
+
+		computer.run();
+		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
+	}
 
 	renderScene();
 

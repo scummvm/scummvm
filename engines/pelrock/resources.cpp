@@ -379,6 +379,24 @@ void ResourceManager::getPaletteForRoom28(byte *palette) {
 
 	alfred7.close();
 }
+
+Common::Array<Common::StringArray> ResourceManager::loadComputerText() {
+
+	Common::File exe;
+	if (!exe.open("JUEGO.EXE")) {
+		error("Couldnt find file JUEGO.EXE");
+	}
+	int bufSize = 416;
+	byte *computerTextBuf = new byte[bufSize];
+	exe.seek(0x0004901A, SEEK_SET);
+	exe.read(computerTextBuf, bufSize);
+	Common::Array<Common::StringArray> computerTexts = processTextData(computerTextBuf, bufSize);
+
+	delete[] computerTextBuf;
+
+	exe.close();
+	return computerTexts;
+}
 void ResourceManager::getExtraScreen(int screenIndex, byte *screenBuf, byte *palette) {
 	Common::File alfred7;
 	if (!alfred7.open("ALFRED.7")) {
@@ -416,6 +434,7 @@ Common::Array<Common::StringArray> ResourceManager::processTextData(byte *data, 
 	Common::StringArray lines;
 	Common::Array<Common::StringArray> texts;
 	while (pos < size) {
+		debug("Processing byte %02X at pos %d", data[pos], pos);
 		if (data[pos] == CTRL_END_TEXT) {
 			if (!desc.empty()) {
 

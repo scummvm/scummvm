@@ -39,24 +39,6 @@ Computer::Computer(PelrockEventManager *eventMan)
 	  _memorizedBookIndex(-1),
 	  _events(eventMan) {
 
-	// Initialize UI strings (Spanish - original game language)
-	_menuTitle = "MENU PRINCIPAL";
-	_menuOption1 = "1    CONSULTAR POR TITULO";
-	_menuOption2 = "2    CONSULTAR POR AUTOR";
-	_menuOption3 = "3    CANCELAR";
-	_promptLetter = "Teclea una letra (A-Z):";
-	_labelTitle = "Titulo    : ";
-	_labelAuthor = "Autor     : ";
-	_labelGenre = "Genero    : ";
-	_labelSituacion = "Situacion : ";
-	_statusPhysical = "Estante %c, fila %d";
-	_statusCatalogOnly = "Solo en catalogo";
-	_optMemorizar = "(M)emorizar";
-	_optSeguir = "(S)eguir";
-	_optCancelar = "(C)ancelar";
-	_noResults = "No se encontraron libros";
-	_memorizedMsg = "Bueno... Tendre que buscar en la estanteria de la %c";
-
 	init();
 }
 
@@ -87,19 +69,21 @@ void Computer::init() {
 		_libraryBooks.push_back(book);
 	}
 
-	for(int i = 0; i < _libraryBooks.size(); i++) {
+	for (int i = 0; i < _libraryBooks.size(); i++) {
 		const LibraryBook &book = _libraryBooks[i];
 		debug("Loaded book: title='%s', author='%s', genre='%s', unknown=%d, shelf=%d, available=%d",
 			  book.title.c_str(), book.author.c_str(), book.genre.c_str(),
 			  book.inventoryIndex, book.shelf, book.available);
 	}
 
+	_computerText = g_engine->_res->loadComputerText();
+
 	_searchResults.clear();
 	_currentResult = 0;
 	_searchLetter = 0;
 	_memorizedBookIndex = -1;
+	_lineHeight = g_engine->_smallFont->getFontHeight();
 }
-
 
 Computer::~Computer() {
 	cleanup();
@@ -131,6 +115,7 @@ void Computer::cleanup() {
 int Computer::run() {
 	loadBackground();
 	_state = STATE_MAIN_MENU;
+	g_engine->changeCursor(DEFAULT);
 
 	while (!g_engine->shouldQuit() && _state != STATE_EXIT) {
 		_events->pollEvent();
@@ -166,77 +151,83 @@ void Computer::drawScreen() {
 	// Clear to background
 	memcpy(g_engine->_screen->getPixels(), _backgroundScreen, 640 * 400);
 
-	int textY = 100;
-	int textX = 180;
+	int textY = 97;
+	int textX = 225;
+
+	byte defaultColor = 0; // Light gray
 
 	switch (_state) {
-	case STATE_MAIN_MENU:
-		g_engine->_smallFont->drawString(g_engine->_screen, _menuTitle, textX, textY, 280, 15, Graphics::kTextAlignCenter);
-		g_engine->_smallFont->drawString(g_engine->_screen, _menuOption1, textX, textY + 40, 280, 14);
-		g_engine->_smallFont->drawString(g_engine->_screen, _menuOption2, textX, textY + 60, 280, 14);
-		g_engine->_smallFont->drawString(g_engine->_screen, _menuOption3, textX, textY + 80, 280, 14);
+	case STATE_MAIN_MENU: {
+		int textY = 97;
+		int textX = 225;
+		for (int i = 0; _computerText[0].size() > i; i++) {
+			Common::String line = _computerText[0][i];
+			g_engine->_graphics->drawColoredText(g_engine->_screen, line, textX, textY + i * _lineHeight, 200, defaultColor, g_engine->_smallFont);
+		}
 		break;
+	}
 
 	case STATE_SEARCH_BY_TITLE:
 	case STATE_SEARCH_BY_AUTHOR:
-		g_engine->_smallFont->drawString(g_engine->_screen,
-										 _searchType == 0 ? "CONSULTAR POR TITULO" : "CONSULTAR POR AUTOR",
-										 textX, textY, 280, 15, Graphics::kTextAlignCenter);
-		g_engine->_smallFont->drawString(g_engine->_screen, _promptLetter, textX, textY + 40, 280, 14);
+		for (int i = 0; _computerText[1].size() > i; i++) {
+			Common::String line = _computerText[1][i];
+			g_engine->_graphics->drawColoredText(g_engine->_screen, line, 172, 258 + i * _lineHeight, 200, defaultColor, g_engine->_smallFont);
+		}
 		break;
 
 	case STATE_SHOW_RESULTS: {
-		Common::String header = Common::String::format(
-			"Consulta de %s, letra %c",
-			_searchType == 0 ? "TITULO" : "AUTOR",
-			_searchLetter);
-		g_engine->_smallFont->drawString(g_engine->_screen, header, textX, textY, 280, 15, Graphics::kTextAlignCenter);
 
-		if (_searchResults.empty()) {
-			g_engine->_smallFont->drawString(g_engine->_screen, _noResults, textX, textY + 50, 280, 14);
-		} else {
-			// Display current book
-			int bookIdx = _searchResults[_currentResult];
-			const LibraryBook &book = _libraryBooks[bookIdx];
+		const char *section = _searchType == 0 ? "TITULO " : "AUTOR  ";
+		Common::String title = _computerText[2][0];
+		int replacementIndex = title.findFirstOf("XXXXXXX");
 
-			// Title (may be long, truncate if needed)
-			Common::String titleLine = Common::String::format("%s%s", _labelTitle, book.title.c_str());
-			g_engine->_smallFont->drawString(g_engine->_screen, titleLine, textX - 50, textY + 40, 340, 14);
+		title.replace(replacementIndex, 7, section);
+		int replacementIndex2 = title.findFirstOf("X");
+		title.replace(replacementIndex2, 1, Common::String(1, _searchLetter));
+		g_engine->_graphics->drawColoredText(g_engine->_screen, title, 210, 97, 200, defaultColor, g_engine->_smallFont);
 
-			// Author
-			Common::String authorLine = Common::String::format("%s%s", _labelAuthor, book.author.c_str());
-			g_engine->_smallFont->drawString(g_engine->_screen, authorLine, textX - 50, textY + 60, 340, 14);
+		int textX = 161;
+		int textY = 131;
+		int increment = 28;
 
-			// Genre
-			Common::String genreLine = Common::String::format("%s%s", _labelGenre, book.genre.c_str());
-			g_engine->_smallFont->drawString(g_engine->_screen, genreLine, textX - 50, textY + 80, 340, 14);
+		// Display current book
+		int bookIdx = _searchResults[_currentResult];
+		const LibraryBook &book = _libraryBooks[bookIdx];
 
-			// Situacion (location/availability)
-			Common::String situacionLine;
-			if (book.available) {
-				situacionLine = Common::String::format("%s Estanteria %d",
-													   _labelSituacion, book.shelf);
-			} else {
-				situacionLine = Common::String::format("%s%s",
-													   _labelSituacion, _statusCatalogOnly);
-			}
-			g_engine->_smallFont->drawString(g_engine->_screen, situacionLine, textX - 50, textY + 100, 340,
-											 book.available ? 10 : 8); // Green if physical, gray if catalog-only
+		// Title (may be long, truncate if needed)
+		Common::String titleLine = _computerText[3][0];
+		int titlePlaceholderIndex = titleLine.findFirstOf("XXXX");
 
-			// Show result counter
-			Common::String counter = Common::String::format("Libro %d de %d",
-															_currentResult + 1, (int)_searchResults.size());
-			g_engine->_smallFont->drawString(g_engine->_screen, counter, textX, textY + 130, 280, 14, Graphics::kTextAlignCenter);
+		titleLine.replace(titlePlaceholderIndex, titleLine.size() - titlePlaceholderIndex, book.title);
+		g_engine->_graphics->drawColoredText(g_engine->_screen, titleLine, textX, textY, 340, defaultColor, g_engine->_smallFont);
 
-			// Show navigation options
-			Common::String navOptions;
-			if (book.available) {
-				navOptions = Common::String::format("%s   %s   %s", _optMemorizar, _optSeguir, _optCancelar);
-			} else {
-				navOptions = Common::String::format("%s   %s", _optSeguir, _optCancelar);
-			}
-			g_engine->_smallFont->drawString(g_engine->_screen, navOptions, textX, textY + 160, 280, 8, Graphics::kTextAlignCenter);
+		// Author
+		Common::String authorLine = _computerText[4][0];
+		int authorPlaceholderIndex = authorLine.findFirstOf("XXXX");
+		authorLine.replace(authorPlaceholderIndex, authorLine.size() - authorPlaceholderIndex, book.author);
+		g_engine->_graphics->drawColoredText(g_engine->_screen, authorLine, textX, textY + increment, 340, defaultColor, g_engine->_smallFont);
+
+		// Genre
+		Common::String genreLine = _computerText[5][0];
+		int genrePlaceholderIndex = genreLine.findFirstOf("XXXX");
+		genreLine.replace(genrePlaceholderIndex, genreLine.size() - genrePlaceholderIndex, book.genre);
+		g_engine->_graphics->drawColoredText(g_engine->_screen, genreLine, textX, textY + increment * 2, 340, defaultColor, g_engine->_smallFont);
+
+		// Situacion (location/availability)
+		Common::String situacionLine = _computerText[6][0];
+		int situacionPlaceholderIndex = situacionLine.findFirstOf("XXXX");
+		situacionLine.replace(situacionPlaceholderIndex, situacionLine.size() - situacionPlaceholderIndex, book.available ? "Disponible" : "Prestado");
+		g_engine->_graphics->drawColoredText(g_engine->_screen, situacionLine, textX, textY + increment * 3, 340, defaultColor, g_engine->_smallFont);
+
+		// Show navigation options
+		Common::String navOptions;
+		Common::String actions = _computerText[7][0];
+		if (!book.available) {
+			actions.setChar(180, 1);
+			actions.setChar(180, 4);
 		}
+		g_engine->_graphics->drawColoredText(g_engine->_screen, actions, 174, 258, 325, defaultColor, g_engine->_smallFont);
+
 	} break;
 
 	case STATE_EXIT:
@@ -263,8 +254,13 @@ void Computer::handleSearchInput() {
 		_events->_lastKeyEvent <= Common::KEYCODE_z) {
 		_searchLetter = 'A' + (_events->_lastKeyEvent - Common::KEYCODE_a);
 		performSearch();
-		_currentResult = 0;
-		_state = STATE_SHOW_RESULTS;
+		if (!_searchResults.empty()) {
+			_currentResult = 0;
+			_state = STATE_SHOW_RESULTS;
+		} else {
+			// No results, return to main menu
+			_state = STATE_MAIN_MENU;
+		}
 		_events->_lastKeyEvent = Common::KEYCODE_INVALID;
 	} else if (_events->_lastKeyEvent == Common::KEYCODE_ESCAPE) {
 		_state = STATE_MAIN_MENU;

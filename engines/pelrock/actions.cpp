@@ -707,7 +707,11 @@ void PelrockEngine::noOpAction(HotSpot *hotspot) {
 }
 
 void PelrockEngine::noOpItem(int item, HotSpot *hotspot) {
-	// 154 to 169
+	if(item >= 11 && item <= 47 && hotspot->extra == 358) {
+		_state->removeInventoryItem(item);
+		_dialog->say(_res->_ingameTexts[DEACUERDO_2]);
+		return;
+	}
 	debug("No-op item %d with hotspot %d", item, hotspot->extra);
 	_alfredState.direction = ALFRED_DOWN;
 	byte response = (byte)getRandomNumber(12);
@@ -2024,6 +2028,14 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		break;
 	}
 	default: {
+		if(inventoryObject >= 11 && inventoryObject <= 47) {
+			_res->loadAlfredSpecialAnim(0);
+			_alfredState.animState = ALFRED_SPECIAL_ANIM;
+			waitForSpecialAnimation();
+			_dialog->say(_res->_ingameTexts[LIBRO_ABURRIDO]);
+			return;
+		}
+
 		byte response = (byte)getRandomNumber(12);
 		_dialog->say(_res->_ingameTexts[154 + response]);
 		break;

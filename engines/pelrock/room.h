@@ -172,7 +172,6 @@ private:
 	byte loadMusicTrackForRoom(Common::File *roomFile, int roomOffset);
 	Common::Array<byte> loadRoomSfx(Common::File *roomFile, int roomOffset);
 
-	Common::StringArray _roomNames;
 	byte *_resetData = nullptr;
 };
 
