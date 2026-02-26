@@ -227,6 +227,9 @@ Common::Error WaynesWorldEngine::run() {
 	delete _backgroundSurface;
 	delete _screen;
 
+	delete _sound;
+	delete _midi;
+
 	return Common::kNoError;
 }
 
