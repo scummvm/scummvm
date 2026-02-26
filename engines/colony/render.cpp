@@ -274,13 +274,13 @@ static const byte *setupMacPattern(Renderer *gfx, int pattern, uint32 fg, uint32
 	if (stipple) {
 		gfx->setMacColors(fg, bg);
 		gfx->setStippleData(stipple);
-		gfx->setWireframe(true, (int)bg);
+		gfx->setWireframe(true, bg);
 	} else if (pattern == 4) {
 		// BLACK: solid fg fill
-		gfx->setWireframe(true, (int)fg);
+		gfx->setWireframe(true, fg);
 	} else {
 		// WHITE (0): solid bg fill + fg outline
-		gfx->setWireframe(true, (int)bg);
+		gfx->setWireframe(true, bg);
 	}
 	return stipple;
 }
@@ -1721,7 +1721,7 @@ void ColonyEngine::wallChar(const float corners[4][3], uint8 cnum) {
 			} else {
 				fillColor = 0; // B&W: black
 			}
-			_gfx->setWireframe(true, (int)fillColor);
+			_gfx->setWireframe(true, fillColor);
 			if (cnum == 'b') {
 				// Right arrow head: (0,3)-(3,0)-(3,6)
 				float hu[3] = {u[0], u[1], u[6]};
@@ -1745,7 +1745,7 @@ void ColonyEngine::wallChar(const float corners[4][3], uint8 cnum) {
 			uint32 wallFill = _hasMacColors
 				? packMacColor(_macColors[8 + _level - 1].fg)
 				: (uint32)255;
-			_gfx->setWireframe(true, (int)wallFill);
+			_gfx->setWireframe(true, wallFill);
 		}
 		// Outline in black (or vBLACK for EGA)
 		uint32 lineColor = (_hasMacColors && _renderMode == Common::kRenderMacintosh)
@@ -2277,9 +2277,9 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 					float vb4[4] = {vb, vb, vt, vt};
 					if (val == 4) {
 						// BLACK: solid black fill
-						_gfx->setWireframe(true, (int)(uint32)0xFF000000);
+						_gfx->setWireframe(true, (uint32)0xFF000000);
 						wallPolygon(corners, ub, vb4, 4, 0xFF000000);
-						_gfx->setWireframe(true, (int)packMacColor(_macColors[8 + _level - 1].fg));
+						_gfx->setWireframe(true, packMacColor(_macColors[8 + _level - 1].fg));
 					} else {
 						macFillPoly(ub, vb4, 4, 26 + val); // c_color0 + val
 					}
@@ -2392,13 +2392,13 @@ void ColonyEngine::renderCorridor3D() {
 	// Draw large floor and ceiling quads.
 	// Mac Display(): EraseRect fills ceiling with c_lwall.bg and floor with c_lwall.fg.
 	// Set wireframe fill to each surface's own color so they aren't all wallFill.
-	_gfx->setWireframe(true, (int)floorColor);
+	_gfx->setWireframe(true, floorColor);
 	_gfx->draw3DQuad(-100000.0f, -100000.0f, -160.1f,
 	                100000.0f, -100000.0f, -160.1f,
 	                100000.0f, 100000.0f, -160.1f,
 	                -100000.0f, 100000.0f, -160.1f, floorColor);
 
-	_gfx->setWireframe(true, (int)ceilColor);
+	_gfx->setWireframe(true, ceilColor);
 	_gfx->draw3DQuad(-100000.0f, -100000.0f, 160.1f,
 	                100000.0f, -100000.0f, 160.1f,
 	                100000.0f, 100000.0f, 160.1f,
