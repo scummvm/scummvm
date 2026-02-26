@@ -32,11 +32,28 @@ PelrockConsole::PelrockConsole(PelrockEngine *engine) : GUI::Debugger(), _engine
 	registerCmd("setRoot", WRAP_METHOD(PelrockConsole, cmdSetRoot));
 	registerCmd("setFlag", WRAP_METHOD(PelrockConsole, cmdSetFlag));
 	registerCmd("toJail", WRAP_METHOD(PelrockConsole, cmdToJail));
+	registerCmd("removeSticker", WRAP_METHOD(PelrockConsole, cmdRemoveSticker));
 }
 
 PelrockConsole::~PelrockConsole() {
 }
 
+bool PelrockConsole::cmdRemoveSticker(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: removeSticker <stickerId>");
+		return true;
+	}
+	int stickerId = atoi(argv[1]);
+	for(int i = 0; i < g_engine->_state->stickersPerRoom[g_engine->_room->_currentRoomNumber].size(); i++) {
+		if (g_engine->_state->stickersPerRoom[g_engine->_room->_currentRoomNumber][i].stickerIndex == stickerId) {
+			g_engine->_state->stickersPerRoom[g_engine->_room->_currentRoomNumber].remove_at(i);
+			debugPrintf("Removed sticker %d from room %d\n", stickerId, g_engine->_room->_currentRoomNumber);
+			return true;
+		}
+	}
+	debugPrintf("Removed sticker %d from room %d\n", stickerId, g_engine->_room->_currentRoomNumber);
+	return true;
+}
 
 bool PelrockConsole::cmdSetFlag(int argc, const char **argv) {
 	if (argc < 3) {

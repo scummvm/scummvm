@@ -41,6 +41,7 @@ private:
 public:
 	PelrockConsole(PelrockEngine *engine);
 	~PelrockConsole() override;
+	bool cmdRemoveSticker(int argc, const char **argv);
 };
 
 } // End of namespace Pelrock

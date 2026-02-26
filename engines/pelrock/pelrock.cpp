@@ -160,7 +160,8 @@ void PelrockEngine::init() {
 		// setScreen(41, ALFRED_DOWN);
 		// setScreen(43, ALFRED_DOWN);
 		// setScreen(46, ALFRED_RIGHT);
-		setScreen(0, ALFRED_DOWN);
+		// setScreen(0, ALFRED_DOWN);
+		setScreen(52, ALFRED_DOWN);
 		// setScreen(15, ALFRED_DOWN);
 		// setScreen(2, ALFRED_LEFT);
 		// alfredState.x = 576;
@@ -347,7 +348,7 @@ const int kPasserbyTriggerFrameInterval = 0x3FF;
 void PelrockEngine::frameTriggers() {
 	uint32 frameCount = _chrono->getFrameCount();
 	passerByAnim(frameCount);
-	handleFlightRoomFrame();
+	// make();
 }
 
 void PelrockEngine::passerByAnim(uint32 frameCount) {
@@ -1605,6 +1606,11 @@ void PelrockEngine::gameLoop() {
 		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
 	}
 
+	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_e && _room->_currentRoomNumber == 52) {
+		endingScene();
+		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
+	}
+
 	renderScene();
 
 	_screen->update();
@@ -2023,6 +2029,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 	}
 	case 48: {
 		_dialog->_goodbyeDisabled = true;
+
 		if (_state->getFlag(FLAG_CORRECT_DOOR_CHOSEN) == true) {
 			if (_state->getFlag(FLAG_TRAMPILLA_ABIERTA) == true) {
 

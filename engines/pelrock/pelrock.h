@@ -377,6 +377,7 @@ public:
 	void checkAllSymbols();
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);
+	void endingScene();
 
 	void animateStatuePaletteFade(bool reverse = false);
 	void pickUpMatches(HotSpot *hotspot);

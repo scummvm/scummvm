@@ -707,7 +707,7 @@ void PelrockEngine::noOpAction(HotSpot *hotspot) {
 }
 
 void PelrockEngine::noOpItem(int item, HotSpot *hotspot) {
-	if(item >= 11 && item <= 47 && hotspot->extra == 358) {
+	if (item >= 11 && item <= 47 && hotspot->extra == 358) {
 		_state->removeInventoryItem(item);
 		_dialog->say(_res->_ingameTexts[DEACUERDO_2]);
 		return;
@@ -1834,7 +1834,86 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 		_dialog->say(_res->_ingameTexts[NOSETEOCURRAACERCARTE]);
 		break;
 	}
+	case 375: {
+		endingScene();
+		break;
 	}
+	}
+}
+
+void PelrockEngine::endingScene() {
+	int phase = 0;
+
+	int lines[5][4] = {
+		{57, 176, 301, 322},
+		{138, 159, 283, 292},
+		{213, 156, 325, 277},
+		{460, 163, 370, 292},
+		{530, 167, 353, 320}};
+
+	int stickers[5] = {113, 114, 110, 111, 112};
+
+	while (phase < 5) {
+		debug("Starting ending scene phase %d", phase);
+		for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
+			debug("Current room anim %d: zOrder %d, disableAfterSequence %d", _room->_currentRoomAnims[i].index, _room->_currentRoomAnims[i].zOrder, _room->_currentRoomAnims[i].disableAfterSequence);
+		}
+		Sprite *thisSprite = _room->findSpriteByIndex(phase + 1);
+		thisSprite->animData[0].curFrame = 0;
+		thisSprite->zOrder = 200;
+
+		while (!shouldQuit() && _room->findSpriteByIndex(phase + 1)->zOrder != -1) {
+			_events->pollEvent();
+			renderScene(OVERLAY_NONE);
+			_screen->update();
+			g_system->delayMillis(10);
+		}
+
+		_sound->playSound(_room->_roomSfx[3], 0);
+
+		copyBackgroundToBuffer();
+		placeStickersFirstPass();
+		updateAnimations();
+		presentFrame();
+
+		for (int i = 0; i < 19; i++) {
+			if (shouldQuit()) {
+				return;
+			}
+			int x1 = lines[phase][0];
+			int y1 = lines[phase][1];
+			int x2 = lines[phase][2] + i;
+			int y2 = lines[phase][3];
+			_screen->drawLine(x1, y1, x2, y2, 255);
+		}
+		_screen->markAllDirty();
+		_screen->update();
+		g_system->delayMillis(10);
+
+		if (shouldQuit()) {
+			return;
+		}
+
+		_room->addSticker(stickers[phase]);
+		copyBackgroundToBuffer();
+		placeStickersFirstPass();
+		updateAnimations();
+		presentFrame();
+
+		phase++;
+	}
+
+	_room->addSticker(115);
+	_screen->markAllDirty();
+	_screen->update();
+
+	_dialog->say(_res->_ingameTexts[MAREDEDEU]);
+
+	smokeAnimation(-1, true);
+	_state->setCurrentRoot(48, 1, 0);
+ 	_alfredState.x = 138;
+    _alfredState.y = 255;
+	setScreen(48, ALFRED_DOWN);
 }
 
 void PelrockEngine::useOnAlfred(int inventoryObject) {
@@ -1944,7 +2023,7 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 				debug("Flight spell cast in room %d, spell page: %d", _room->_currentRoomNumber, spell->page);
 				int flightIndex = _room->_currentRoomNumber - 51;
 				debug("Correct page for this spell is = %d", kFlightRooms[flightIndex].spellPage);
-				if(_flightSorcererAppeared && !_flightInBlockingAnim && spell->page == kFlightRooms[flightIndex].spellPage) {
+				if (_flightSorcererAppeared && !_flightInBlockingAnim && spell->page == kFlightRooms[flightIndex].spellPage) {
 					_state->setFlag(FLAG_COMO_ESTAN_LOS_DIOSES, _state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES) | (1 << flightIndex));
 					debug("Flight spell successful, starting animation and updating state");
 					debug("Updated FLAG_COMO_ESTAN_LOS_DIOSES: %d", _state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES));
@@ -1976,23 +2055,20 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 	case 109: {
 
 		if (_state->hasInventoryItem(110) == true) {
-			if(_state->hasInventoryItem(109) == true && _state->hasInventoryItem(108) == true) {
-					_state->removeInventoryItem(110);
-					_state->removeInventoryItem(109);
-					_state->removeInventoryItem(108);
-					addInventoryItem(83);
-					_dialog->say(_res->_ingameTexts[MUNECO_ARREGLADO]);
-					return;
-			}
-			else if(_state->hasInventoryItem(109) == true) {
+			if (_state->hasInventoryItem(109) == true && _state->hasInventoryItem(108) == true) {
+				_state->removeInventoryItem(110);
+				_state->removeInventoryItem(109);
+				_state->removeInventoryItem(108);
+				addInventoryItem(83);
+				_dialog->say(_res->_ingameTexts[MUNECO_ARREGLADO]);
+				return;
+			} else if (_state->hasInventoryItem(109) == true) {
 				_dialog->say(_res->_ingameTexts[NOTENGOPARCHES]);
 
-			}
-			else if(_state->hasInventoryItem(108) == true) {
+			} else if (_state->hasInventoryItem(108) == true) {
 				_dialog->say(_res->_ingameTexts[NOTENGOPEGAMENTO]);
 			}
-		}
-		else {
+		} else {
 			byte response = (byte)getRandomNumber(12);
 			_dialog->say(_res->_ingameTexts[154 + response]);
 		}
@@ -2028,7 +2104,7 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		break;
 	}
 	default: {
-		if(inventoryObject >= 11 && inventoryObject <= 47) {
+		if (inventoryObject >= 11 && inventoryObject <= 47) {
 			_res->loadAlfredSpecialAnim(0);
 			_alfredState.animState = ALFRED_SPECIAL_ANIM;
 			waitForSpecialAnimation();
