@@ -163,7 +163,13 @@ void cga_blitToScreen(int16 dx, int16 dy, int16 w, int16 h) {
 	w = (w + (0x8 / g_vm->_screenBits - 1)) / (0x8 / g_vm->_screenBits);
 
 	for (int16 y = 0; y < h; y++) {
-		byte *src = CGA_SCREENBUFFER + CalcXY(dx, dy + y);
+		uint16 line_start = 0;
+		if (g_vm->_videoMode == Common::RenderMode::kRenderHercG) {
+			line_start = HGA_CALCXY_RAW(dx, dy + y);
+		} else {
+			line_start = cga_CalcXY(dx, dy + y);
+		}
+		byte *src = CGA_SCREENBUFFER + line_start;
 		byte *dst = scrbuffer + (y + dy) * g_vm->_screenW + dx;
 
 		for (int16 x = 0; x < w; x++) {
@@ -218,12 +224,12 @@ void cga_BackBufferToRealFull(void) {
 			odd += 2 * CGA_BYTES_PER_LINE;
 		}
 
-		const int16 START_X_PIXELS = (HGA_WIDTH - (2 * CGA_WIDTH)) / 4;
-		const int16 START_Y = (HGA_HEIGHT - CGA_HEIGHT) / 2;
+		//const int16 START_X_PIXELS = (HGA_WIDTH - (2 * CGA_WIDTH)) / 4;
+		//const int16 START_Y = (HGA_HEIGHT - CGA_HEIGHT) / 2;
 
 		byte *srcPtr = tempBackbuffer;
 		for (int16 row = 0; row < CGA_HEIGHT; row++) {
-			byte *destPtr = CGA_SCREENBUFFER + HGA_CalcXY(START_X_PIXELS, START_Y + row);
+			byte *destPtr = CGA_SCREENBUFFER + HGA_CalcXY(0, row);
 			memmove(destPtr, srcPtr, CGA_BYTES_PER_LINE);
 			srcPtr += CGA_BYTES_PER_LINE;
 		}
@@ -559,8 +565,8 @@ void cga_PrintChar(byte c, byte *target) {
 			cga_blitToScreen((char_draw_coords_x - 1) * g_vm->_fontWidth, char_draw_coords_y,  g_vm->_fontWidth, g_vm->_fontHeight);
 
 	} else if (g_vm->_videoMode == Common::RenderMode::kRenderHercG) {
-		const int16 START_X = char_draw_coords_x++ + (HGA_WIDTH / 8 - (2 * CGA_WIDTH) / 8) / 2; // x + 5
-		const int16 START_Y = char_draw_coords_y + (HGA_HEIGHT - CGA_HEIGHT) / 2;               // y + 74
+		const int16 START_X = char_draw_coords_x++;
+		const int16 START_Y = char_draw_coords_y;           
 		for (i = 0; i < g_vm->_fontHeight; i++) {
 			uint16 ofs = HGA_CalcXY_p(START_X, START_Y + i);
 			c = *font++;
