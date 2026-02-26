@@ -20,6 +20,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/memstream.h"
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
 #include "audio/mididrv.h"
@@ -30,7 +31,6 @@
 #include "audio/miles.h"
 #include "waynesworld/waynesworld.h"
 #include "waynesworld/sound.h"
-
 
 namespace WaynesWorld {
 

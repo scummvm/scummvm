@@ -108,7 +108,15 @@ public:
 	int _r31_scores[3];
 	bool _r31_askedQuestions[25];
 	bool _didScratchTicket;
-// protected:
+
+	int _menuGameState = 0;
+	WWSurface *_menuOffSprite = nullptr;
+	WWSurface *_menuOnSprite = nullptr;
+	WWSurface *_menuSurface = nullptr;
+	bool _menuQuitVisible = false;
+	int _menuIsSaveLoad = 0;
+
+	// protected:
 public://DEBUG So logic functions can be called from the engine class for testing
 	WaynesWorldEngine *_vm;
 
@@ -450,6 +458,15 @@ public://DEBUG So logic functions can be called from the engine class for testin
 	void r39_useExit39();
 	void r39_useExit();
 
+	void menuDrawSoundEnabled();
+	void menuDrawMusicEnabled();
+	void sub_3F906();
+	void toggleSoundEnabled();
+	void toggleMusicEnabled();
+	void handleGameMenu();
+	void menuQuitGame();
+	void menuExit();
+	void closeQuitMenu();
 };
 
 } // End of namespace WaynesWorld

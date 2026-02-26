@@ -1351,15 +1351,26 @@ void GameLogic::r0_refreshRoomBackground() {
 }
 
 void GameLogic::r0_handleRoomEvent1() {
-	// TODO Call the main menu
-	// When 'Exit' is selected in the menu it starts this dialog
-	if (!(_r0_flags & 0x02)) {
-		_r0_flags |= 0x02;
-		_vm->displayText("c11", 0, 0, -1, -1, 0);
-		_vm->setDialogChoices(29, 30, 31, 32, 33);
-		_vm->waitSeconds(2);
-		_vm->startDialog();
-	}
+	_menuGameState = _vm->_gameState;
+	_vm->_gameState = 4;
+
+	if (_vm->_hasRoomAnimationCallback)
+		_vm->stopRoomAnimations();
+
+	GxlArchive *m04Gxl = new GxlArchive("m04");
+	// sysMouseDriver(2);
+	// _menuSurface = new WWSurface(178, 122);
+	_menuSurface = new WWSurface(310, 180);
+	_vm->drawImageToSurface(m04Gxl, "menu.pcx", _menuSurface, 113, 20);
+	_menuOffSprite = m04Gxl->loadSurface("ff.pcx");
+	_menuOnSprite = m04Gxl->loadSurface("n.pcx");
+	
+	menuDrawSoundEnabled();
+	menuDrawMusicEnabled();
+	// sysMouseDriver(1);
+	delete m04Gxl;
+
+	_vm->_screen->drawSurfaceTransparent(_menuSurface, 0, 0);
 }
 
 void GameLogic::r0_handleRoomEvent2() {
@@ -3820,7 +3831,7 @@ void GameLogic::r8_handleRoomEvent1() {
 	if (_r38_flags & 0x08) {
 		_vm->displayTextLines("c04r", 349, 200, 30, 9);
 		_r8_flags |= 0x20;
-		// TODO _quitGame = true;
+		_vm->quitGame();
 	} else {
 		if (_pizzathonListFlags2 & 0x08) {
 			if (_r8_flags & 0x40) {
@@ -8433,6 +8444,159 @@ void GameLogic::r39_useExit() {
 	_r24_mazeHoleNumber = 4;
 	_r24_mazeRoomNumber = 49;
 	_vm->changeRoom(24);
+}
+
+void GameLogic::menuDrawSoundEnabled() {
+	// sysMouseDriver(2);
+	if (_vm->_isSoundEnabled) {
+		Graphics::Surface buttonSurface = _menuOnSprite->getSubArea(Common::Rect(0, 0, 10, 4));
+		_menuSurface->drawSurface(&buttonSurface, 176, 44);
+	} else {
+		Graphics::Surface buttonSurface = _menuOffSprite->getSubArea(Common::Rect(0, 0, 10, 4));
+		_menuSurface->drawSurface(&buttonSurface, 176, 44);
+	}
+	// sysMouseDriver(1);
+}
+
+void GameLogic::menuDrawMusicEnabled() {
+	// sysMouseDriver(2);
+	if (_vm->_isMusicEnabled) {
+		Graphics::Surface buttonSurface = _menuOnSprite->getSubArea(Common::Rect(0, 0, 10, 4));
+		_menuSurface->drawSurface(&buttonSurface, 176, 28);
+	} else {
+		Graphics::Surface buttonSurface = _menuOffSprite->getSubArea(Common::Rect(0, 0, 10, 4));
+		_menuSurface->drawSurface(&buttonSurface, 176, 28);
+	}
+	// sysMouseDriver(1);
+}
+
+void GameLogic::sub_3F906() {
+	GxlArchive *m04Gxl = new GxlArchive("m04");
+	// sysMouseDriver(2);
+	// TODO: Set mouse zone 113, 205, 20, 135
+	_vm->drawImageToSurface(m04Gxl, "menu.pcx", _menuSurface, 113, 20);
+	menuDrawSoundEnabled();
+	menuDrawMusicEnabled();
+	// sysMouseDriver(1);
+	_menuQuitVisible = false;
+	delete m04Gxl;
+
+	_vm->_screen->drawSurfaceTransparent(_menuSurface, 0, 0);
+}
+
+void GameLogic::toggleSoundEnabled() {
+	_vm->_isSoundEnabled = !_vm->_isSoundEnabled;
+}
+
+void GameLogic::toggleMusicEnabled() {
+	_vm->_isMusicEnabled = !_vm->_isMusicEnabled;
+
+	if (_vm->_isMusicEnabled) {
+		_vm->changeMusic();
+	} else {
+		_vm->stopMusic();
+	}
+}
+
+void GameLogic::menuExit() {
+	delete _menuSurface;
+	_menuSurface = nullptr;
+	delete _menuOffSprite;
+	_menuOffSprite = nullptr;
+	delete _menuOnSprite;
+	_menuOnSprite = nullptr;
+
+	_vm->_gameState = _menuGameState;
+	_menuIsSaveLoad = 0;
+	// TODO: Set mouse zone 0, 319, 0, 199
+	_vm->changeRoom(_vm->_currentRoomNumber);
+}
+
+void GameLogic::handleGameMenu() {
+	if (_menuQuitVisible) {
+		if (_vm->_mouseClickX >= 159) {
+			closeQuitMenu();
+		} else {
+			menuExit();
+			_vm->quitGame();
+		}
+	} else if (_menuIsSaveLoad) {
+		int si = 1 + ((_vm->_mouseClickY - 35) / 15);
+		if (si >= 7) {
+			sub_3F906();
+		} else {
+			if (_vm->_mouseClickX > 157)
+				si += 6;
+
+			if (_menuIsSaveLoad == 1)
+				warning("STUB: saveSavegame()");
+			else
+				warning("if (!loadSavegame()) return;");
+
+			menuExit();
+		}
+	} else {
+		switch ((_vm->_mouseClickY - 24) / 16) {
+		case 0:
+			toggleMusicEnabled();
+			menuDrawMusicEnabled();
+			break;
+		case 1:
+			toggleSoundEnabled();
+			menuDrawSoundEnabled();
+			break;
+		case 2:
+			warning("STUB: menuSaveLoadMenu(1)");
+			break;
+		case 3:
+			warning("STUB: menuSaveLoadMenu(0)");
+			break;
+		case 4:
+			warning("STUB: loadSaveGame(0)");
+			menuExit();
+			break;
+		case 5:
+			menuQuitGame();
+			break;
+		case 6:
+			if (!(_r0_flags & 0x02)) {
+				_r0_flags |= 0x02;
+				// menuExit() must absolutely called after r0_flags is set otherwise it reset the menu mode.
+				menuExit();
+
+				// in the original this code is in a separate function r0_startPizzathonDialog 
+				_vm->displayText("c11", 0, 0, -1, -1, 0);
+				_vm->setDialogChoices(29, 30, 31, 32, 33);
+				_vm->waitSeconds(2);
+				_vm->startDialog();
+			} else {
+				menuExit();
+			}
+			return;
+		default:
+			break;
+		}
+	}
+	_vm->_screen->drawSurfaceTransparent(_menuSurface, 0, 0);
+}
+
+void GameLogic::menuQuitGame() {
+	_menuQuitVisible = true;
+	// sysMouseDriver(2);
+	// TODO: Set mouse zone 116, 202, 118, 133
+	GxlArchive *m04Gxl = new GxlArchive("m04");
+	_vm->drawImageToSurface(m04Gxl, "sure.pcx", _menuSurface, 116, 103);
+	delete m04Gxl;
+}
+
+void GameLogic::closeQuitMenu() {
+	GxlArchive *m04Gxl = new GxlArchive("m04");
+	// sysMouseDriver(2);
+	// TODO: Set mouse zone 113, 205, 20, 135
+	_vm->drawImageToSurface(m04Gxl, "menu.pcx", _menuSurface, 113, 20);
+	// sysMouseDriver(1);
+	_menuQuitVisible = false;
+	delete m04Gxl;
 }
 
 } // End of namespace WaynesWorld

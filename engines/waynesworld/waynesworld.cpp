@@ -27,18 +27,14 @@
 #include "waynesworld/objectids.h"
 
 #include "audio/audiostream.h"
-#include "audio/decoders/aiff.h"
 #include "common/config-manager.h"
-#include "common/debug-channels.h"
 #include "common/error.h"
 #include "common/fs.h"
-#include "common/timer.h"
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
-#include "graphics/fontman.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "graphics/paletteman.h"
@@ -338,7 +334,7 @@ bool WaynesWorldEngine::isPointAtGarth(int x, int y) {
 }
 
 void WaynesWorldEngine::updateMouseMove() {
-    // Yet unknown
+    // Game Menu
     if (_gameState == 4)
         return;
 
@@ -449,7 +445,7 @@ void WaynesWorldEngine::handleMouseLeftClick() {
         unusedTicketHandleMouseClick();
         break;
     case 4:
-		warning("STUB - handleMouseClickState4");
+		_logic->handleGameMenu();
 		break;
     case 5:
         extremeCloseUpHandleMouseClick();
@@ -482,7 +478,7 @@ void WaynesWorldEngine::handleMouseRightClick() {
         unusedTicketHandleMouseClick();
         break;
     case 4:
-		warning("STUB - handleMouseClickState4");
+		_logic->handleGameMenu();
         break;
     case 5:
         extremeCloseUpHandleMouseClick();
@@ -705,6 +701,10 @@ void WaynesWorldEngine::changeMusic() {
 	}
 }
 
+void WaynesWorldEngine::stopMusic() {
+	_midi->stopSong();
+}
+
 void WaynesWorldEngine::drawInterface(int verbNum) {
     if (isActorWayne()) {
         drawImageToScreen(_m00Gxl, "winter.pcx", 0, 151);
@@ -733,7 +733,7 @@ void WaynesWorldEngine::selectVerbNumber(int x) {
                 drawInventory();
                 refreshActors();
             } else {
-				warning("STUB r0_handleRoomEvent1()");
+				_logic->r0_handleRoomEvent1();
             }
         }
     } else if (selectedButtonIndex == 0) {

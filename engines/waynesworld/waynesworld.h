@@ -23,21 +23,16 @@
 #ifndef WAYNESWORLD_WAYNESWORLD_H
 #define WAYNESWORLD_WAYNESWORLD_H
 
-#include "audio/mixer.h"
-#include "common/array.h"
 #include "common/events.h"
 #include "common/file.h"
-#include "common/memstream.h"
 #include "common/random.h"
 #include "common/str.h"
-#include "common/substream.h"
 #include "common/system.h"
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
 
 #include "image/pcx.h"
 
-#include "waynesworld/detection.h"
 #include "waynesworld/sound.h"
 
 
@@ -111,6 +106,8 @@ public:
 	~WaynesWorldEngine() override;
 	const Common::String getTargetName() { return _targetName; }
 	const ADGameDescription *_gameDescription;
+	bool _isSoundEnabled = true;
+	bool _isMusicEnabled = true;
 
 private:
 	Graphics::PixelFormat _pixelFormat;
@@ -276,6 +273,7 @@ public:
 	// Audio
 	void playSound(const char *filename, int flag);
 	void changeMusic();
+	void stopMusic();
 
 	// Interface
 	void drawInterface(int verbNum);
