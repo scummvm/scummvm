@@ -129,19 +129,21 @@ void XpLib::stopCycle() {
 
 void XpLib::setScreenBrightness(uint8 percent) {
 	if (percent >= 100) {
-		g_brightnessShift = 2; // Full brightness (VGA DAC is 6-bit)
+		g_brightnessShift = 0; // Full brightness
 	} else if (percent >= 50) {
-		g_brightnessShift = 3; // 50%
+		g_brightnessShift = 1; // 50%
 	} else if (percent >= 25) {
-		g_brightnessShift = 4; // 25%
+		g_brightnessShift = 2; // 25%
 	} else if (percent >= 12) {
-		g_brightnessShift = 5; // 12%
+		g_brightnessShift = 3; // 12%
 	} else {
-		g_brightnessShift = 6; // Near black
+		g_brightnessShift = 4; // Near black
 	}
 
 	// Re-apply entire palette with new brightness...
 	setPalette(256, 0, g_paletteBuffer);
+
+	g_system->updateScreen();
 }
 
 } // End of namespace Bolt
