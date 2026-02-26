@@ -274,7 +274,7 @@ ImColor brightenColor(const ImColor &color, float factor);
 Window *windowListCombo(Common::String *target);
 Common::String formatHandlerName(int scriptId, int castId, Common::String handlerName, ScriptType scriptType, bool childScript);
 
-void showCast();        // dt-cast.cpp
+void showCast();		// dt-cast.cpp
 void showControlPanel(); // dt-controlpanel.cpp
 
 // dt-lists.cpp
@@ -287,8 +287,8 @@ void showArchive();
 void showScore();
 void showChannels();
 
-void renderOldScriptAST(ImGuiScript &script, bool showByteCode, bool scrollTo);    // dt-script-d2.cpp
-void renderScriptAST(ImGuiScript &script, bool showByteCode, bool scrollTo);       // dt-script-d4.cpp
+void renderOldScriptAST(ImGuiScript &script, bool showByteCode, bool scrollTo);	// dt-script-d2.cpp
+void renderScriptAST(ImGuiScript &script, bool showByteCode, bool scrollTo);	   // dt-script-d4.cpp
 
 // dt-scripts.cpp
 void showFuncList();
