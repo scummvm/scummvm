@@ -78,7 +78,13 @@ public:
 	void sub_128_21c8();
 	void sub_128_2202();
 	void sub_128_271a();
+	void sub_128_27d6();
 	void sub_128_2808();
+	void sub_128_2988();
+	void sub_128_2a06();
+	void sub_128_2a92();
+	void sub_128_2ab6();
+	void sub_128_2ae8();
 	void sub_128_2b0a();
 	void sub_128_2bc6();
 	void sub_128_2e3e();
@@ -92,6 +98,7 @@ public:
 	void sub_128_39a0();
 
 	void sub_128_4472();
+	void sub_128_4a92();
 	void sub_128_5b30();
 	void sub_128_5baa();
 	void sub_128_5c20();
@@ -196,12 +203,14 @@ private:
 	// Used as both a pointer and a bitstore
 	uint32 var_i32_bf8;
 	MenuHandle var_menu_bf8;
+	int16 var_i16_c00;
 
 	int16 var_i16_d0c;
 	int16 var_i16_e12;
 	int16 var_i16_e14;
 	int16 var_i16_e16;
 	int16 var_i16_e18;
+	int16 var_i16_e1a;
 	int16 var_i16_e20;
 	Common::U32String var_str_e22;
 	int16 var_i16_f22;

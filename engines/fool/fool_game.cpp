@@ -105,6 +105,9 @@ void FoolGame::sub_128_004() {
 	while (this->var_i16_7c6 != 0x20) {
 		do {
 			this->sub_128_c6a(-1);
+			if (_quit)
+				return;
+
 			if ((this->var_ev_46.where.y >= 0x8c) && (this->var_ev_46.where.y <= 0x11d)) {
 				this->var_i16_7cc = -1;
 			}
@@ -1075,9 +1078,36 @@ void FoolGame::sub_128_271a() {
 	warning("STUB: %s", __func__);
 }
 
+void FoolGame::sub_128_27d6() {
+	warning("STUB: %s", __func__);
+}
+
+
 void FoolGame::sub_128_2808() {
 	warning("STUB: %s", __func__);
 }
+
+void FoolGame::sub_128_2988() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_128_2a06() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_128_2a92() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_128_2ab6() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_128_2ae8() {
+	warning("STUB: %s", __func__);
+}
+
+
 
 void FoolGame::sub_128_2b0a() {
 	warning("STUB: %s", __func__);
@@ -1325,6 +1355,10 @@ void FoolGame::sub_128_4472() {
 
 }
 
+void FoolGame::sub_128_4a92() {
+	warning("STUB: %s", __func__);
+}
+
 void FoolGame::sub_128_5b30() {
 	// 128:5b30
 	if (this->var_i16_e12 == 0) {
@@ -1353,7 +1387,86 @@ void FoolGame::sub_128_5baa() {
 }
 
 void FoolGame::sub_128_5c20() {
-	warning("STUB: %s", __func__);
+	this->var_i16_7c6 = 0;
+	if (this->var_i16_e16 == 1) {
+		this->sub_128_4a92();
+	}
+	if (this->var_i16_e16 == 2) {
+		if (this->var_i16_e18 == 1) {
+			this->sub_128_27d6();
+		} else if (this->var_i16_e18 == 2) {
+		// 128:5c5c
+			this->sub_128_2988();
+		} else if (this->var_i16_e18 == 3) {
+		// 128:5c6c
+			this->sub_128_2a06();
+		} else if (this->var_i16_e18 == 4) {
+			this->sub_128_2a92();
+		} else if (this->var_i16_e18 == 6) {
+			if (this->var_i16_378 == 0) {
+				this->var_i16_378 = 1;
+			} else {
+				this->var_i16_378 = 0;
+			}
+			// 128:5cbc
+			this->sub_128_32c8();
+		// 128:5cc4
+		} else if (this->var_i16_e18 == 7) {
+			this->sub_128_2ae8();
+		} else if (this->var_i16_e18 == 9) {
+			this->sub_128_2ab6();
+		}
+	}
+	// 128:5cea
+	if ((this->var_i16_e16 >= 3) && (this->var_i16_e16 <= 7)) {
+		this->var_i16_e1a = 0;
+		this->var_i16_7dc = this->var_i16_e18 + (this->var_i16_e16 - 3)*0x10;
+		if ((this->var_i16_7dc == 1) && (this->var_ev_46.what == 3)) {
+			this->var_i16_e1a = 1;
+		}
+		// 128:5d56
+		if ((this->var_ev_46.modifiers & 0x800) != 0) {
+			this->var_i16_e1a = 1;
+		} else {
+			// 128:5d74
+			do {
+				this->var_i16_7a8 = g_toolbox->GetNextEvent(0x8, this->var_ev_46);
+				g_toolbox->GlobalToLocal(this->var_ev_46.where);
+				if ((this->var_ev_46.modifiers & 0x800) != 0) {
+					this->var_i16_e1a = 1;
+				}
+			} while (this->var_ev_46.what != kNullEvent);
+		}
+		// 128:5dae
+		if (((this->var_i16_7ce & 1) == 0) && (this->var_i16_e1a == 0) && (this->var_i16_7d0 != this->var_i16_7dc)) {
+			this->sub_128_1c2c(0x40);
+		}
+		// 128:5df6
+		if (((this->var_i16_7ce & 1) == 0) && (this->var_i16_e1a == 1)) {
+			this->sub_128_1c2c(0x40);
+
+		}
+		// 128:5e38
+		if (((this->var_i16_7ce & 1) != 0) && (this->var_i16_e1a == 0)) {
+			this->sub_128_1c2c(0x41);
+		}
+		// 128:5e5e
+		if (((this->var_i16_7ce & 1) == 0) && (this->var_i16_e1a == 1) && (this->var_i16_7d0 != this->var_i16_7dc)) {
+			this->sub_128_1c2c(0x41);
+			this->var_i16_7ce |= 0x4;
+		}
+	}
+	// 128:5eaa
+	if (this->var_i16_e16 == 8) {
+		if (this->var_i16_e18 == 1) {
+			this->sub_128_1c2c(1);
+		}
+		// 128:5ec6
+		if ((this->var_i16_e18 == 3) && (this->var_i16_c00 == 1)) {
+			this->sub_128_1c2c(2);
+		}
+	}
+	// 128:5eee
 }
 
 void FoolGame::sub_128_5ef0() {
