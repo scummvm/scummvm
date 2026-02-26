@@ -112,24 +112,24 @@ typedef struct WindowFlag {
 typedef struct ImGuiState {
 
 	struct ScoreConfig {
-		float _sidebar_width = 60.0f;
-		float _cell_width = 16.0f;
-		float _cell_height = 20.0f;
-		int _visible_frames = 60;
-		int _visible_channels = 25;
-		float _table_width = _cell_width * _visible_frames;
-		float _table_height = _cell_height * _visible_channels;
-		float _ruler_height = 30.0f;
-		float _ruler_width = _cell_width * _visible_frames;
-		float _sidebar1_height = _cell_height * 6;
-		float _cell_height_extended = 5 * _cell_height;
-		ImU32 _table_light_color = IM_COL32(51,  51,  51,  255);
-		ImU32 _table_dark_color = IM_COL32(38, 38, 38, 255);
-		ImU32 _border_color = IM_COL32(102, 102, 102, 255);
+		float _sidebarWidth = 60.0f;
+		float _cellWidth = 16.0f;
+		float _cellHeight = 20.0f;
+		int _visibleFrames = 60;
+		int _visibleChannels = 25;
+		float _tableWidth = _cellWidth * _visibleFrames;
+		float _tableHeight = _cellHeight * _visibleChannels;
+		float _rulerHeight = 30.0f;
+		float _rulerWidth = _cellWidth * _visibleFrames;
+		float _sidebar1Height = _cellHeight * 6;
+		float _cellHeightExtended = 5 * _cellHeight;
+		ImU32 _tableLightColor = IM_COL32(51,  51,  51,  255);
+		ImU32 _tableDarkColor = IM_COL32(38, 38, 38, 255);
+		ImU32 _borderColor = IM_COL32(102, 102, 102, 255);
 	} _scoreCfg;
 
 	struct ScoreState {
-		int sliderX_value = 1; // first visible frame, 1 indexed
+		int xSliderValue = 1; // first visible frame, 1 indexed
 		int channelScrollOffset = 1; // first visible channel, 1 indexed
 	} _scoreState;
 
@@ -191,8 +191,8 @@ typedef struct ImGuiState {
 			ImColor(IM_COL32(0xff, 0xce, 0x9c, 0x80)), // 0xffce9c,
 		};
 
-		ImColor _channel_selected_col = ImColor(IM_COL32(0x94, 0x00, 0xD3, 0xFF));
-		ImColor _channel_hovered_col = ImColor(IM_COL32(0xFF, 0xFF, 0, 0x3C));
+		ImColor _channelSelectedCol = ImColor(IM_COL32(0x94, 0x00, 0xD3, 0xFF));
+		ImColor _channelHoveredCol = ImColor(IM_COL32(0xFF, 0xFF, 0, 0x3C));
 		int _contColorIndex = 0;
 	} _colors;
 

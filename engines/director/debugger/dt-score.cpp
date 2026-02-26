@@ -64,13 +64,13 @@ struct ScoreLayout {
 static ScoreLayout computeLayout(ImVec2 origin, const ImGuiState::ScoreConfig &cfg) {
 	ScoreLayout l;
 	l.sidebar1Pos = ImVec2(origin.x, origin.y);
-	l.mainChannelGridPos = ImVec2(origin.x + cfg._sidebar_width, origin.y);
-	l.modeSelectorPos = ImVec2(origin.x, origin.y + cfg._sidebar1_height);
-	l.rulerPos = ImVec2(origin.x + cfg._sidebar_width, origin.y + cfg._sidebar1_height);
-	l.sidebar2Pos = ImVec2(origin.x, origin.y + cfg._sidebar1_height + cfg._ruler_height);
-	l.gridPos = ImVec2(origin.x + cfg._sidebar_width, origin.y + cfg._sidebar1_height + cfg._ruler_height);
-	l.sliderPos = ImVec2(origin.x + cfg._sidebar_width, origin.y + cfg._sidebar1_height + cfg._ruler_height + cfg._table_height + 8.0f);
-	l.sliderYPos = ImVec2(origin.x + cfg._sidebar_width + cfg._table_width + 8.0f, origin.y + cfg._sidebar1_height + cfg._ruler_height);
+	l.mainChannelGridPos = ImVec2(origin.x + cfg._sidebarWidth, origin.y);
+	l.modeSelectorPos = ImVec2(origin.x, origin.y + cfg._sidebar1Height);
+	l.rulerPos = ImVec2(origin.x + cfg._sidebarWidth, origin.y + cfg._sidebar1Height);
+	l.sidebar2Pos = ImVec2(origin.x, origin.y + cfg._sidebar1Height + cfg._rulerHeight);
+	l.gridPos = ImVec2(origin.x + cfg._sidebarWidth, origin.y + cfg._sidebar1Height + cfg._rulerHeight);
+	l.sliderPos = ImVec2(origin.x + cfg._sidebarWidth, origin.y + cfg._sidebar1Height + cfg._rulerHeight + cfg._tableHeight + 8.0f);
+	l.sliderYPos = ImVec2(origin.x + cfg._sidebarWidth + cfg._tableWidth + 8.0f, origin.y + cfg._sidebar1Height + cfg._rulerHeight);
 	return l;
 }
 
@@ -121,8 +121,8 @@ static void buildContinuationData(Window *window) {
 					prevSprite->_spriteType == sprite._spriteType,
 					prevSprite->_castId == sprite._castId,
 					prevSprite->_startPoint == sprite._startPoint,
-					prevSprite->_width == sprite._width,
-					prevSprite->_height == sprite._height,
+					prevSprite->Width == sprite.Width,
+					prevSprite->Height == sprite.Height,
 					prevSprite->_ink == sprite._ink,
 					prevSprite->_foreColor == sprite._foreColor,
 					prevSprite->_backColor == sprite._backColor,
@@ -161,27 +161,27 @@ static void drawSliderY(ImVec2 pos, int numChannels) {
 	auto &cfg = _state->_scoreCfg;
 	ImGui::SetCursorScreenPos(pos);
 	ImGui::SetNextItemWidth(16.0f);
-	int visibleChannels = (_state->_scoreMode == kModeExtended) ? (int)(cfg._table_height / cfg._cell_height_extended) : cfg._visible_channels;
+	int visibleChannels = (_state->_scoreMode == kModeExtended) ? (int)(cfg._tableHeight / cfg._cellHeightExtended) : cfg._visibleChannels;
 	int maxScroll = MAX(0, numChannels - visibleChannels);
-	ImGui::VSliderInt("##channelSlider", ImVec2(16.0f, cfg._table_height), &_state->_scoreState.channelScrollOffset, maxScroll, 1);
+	ImGui::VSliderInt("##channelSlider", ImVec2(16.0f, cfg._tableHeight), &_state->_scoreState.channelScrollOffset, maxScroll, 1);
 }
 
 static void drawSidebar1(ImDrawList *dl, ImVec2 startPos, Score *score) {
-	float toggle_col_width = 20.0f;
-	float label_col_width = 40.0f;
-	float total_width = toggle_col_width + label_col_width;
+	float toggleColWidth = 20.0f;
+	float labelColWidth = 40.0f;
+	float totalWidth = toggleColWidth + labelColWidth;
 	auto &cfg = _state->_scoreCfg;
 
 	for (int ch = 1; ch <= 6; ch++) {
-		float y = startPos.y + (ch - 1) * cfg._cell_height;
+		float y = startPos.y + (ch - 1) * cfg._cellHeight;
 		ImVec2 rowMin = ImVec2(startPos.x, y);
-		ImVec2 rowMax = ImVec2(startPos.x + total_width, y + cfg._cell_height);
+		ImVec2 rowMax = ImVec2(startPos.x + totalWidth, y + cfg._cellHeight);
 
-		dl->AddRectFilled(rowMin, rowMax, cfg._table_dark_color);
-		dl->AddRect(rowMin, rowMax, cfg._border_color);
+		dl->AddRectFilled(rowMin, rowMax, cfg._tableDarkColor);
+		dl->AddRect(rowMin, rowMax, cfg._borderColor);
 
 		float radius = 5.0f;   // square size
-		float pad  = cfg._cell_height * 0.12f;   // inner padding
+		float pad  = cfg._cellHeight * 0.12f;   // inner padding
 
 		ImVec2 center(rowMin.x + pad + radius, rowMax.y - pad - radius);
 
@@ -191,13 +191,13 @@ static void drawSidebar1(ImDrawList *dl, ImVec2 startPos, Score *score) {
 		ImFont *iconFont = ImGui::GetIO().FontDefault;
 		const char *icon = modes2[(ch - 1) * 2];
 		float textlen = ImGui::CalcTextSize(icon).x;
-		float text_x = startPos.x + toggle_col_width + (label_col_width - textlen) / 2.0f;
-		float text_y = y + (cfg._cell_height - ImGui::GetTextLineHeight()) / 2.0f;
-		dl->AddText(iconFont, 0.0f, ImVec2(text_x, text_y), U32(_state->_colors._type_color), icon);
+		float textX = startPos.x + toggleColWidth + (labelColWidth - textlen) / 2.0f;
+		float textY = y + (cfg._cellHeight - ImGui::GetTextLineHeight()) / 2.0f;
+		dl->AddText(iconFont, 0.0f, ImVec2(textX, textY), U32(_state->_colors._type_color), icon);
 
 		// invisible button covering the row for interaction
 		ImGui::SetCursorScreenPos(rowMin);
-		ImGui::InvisibleButton(Common::String::format("##s1row%d", ch).c_str(), ImVec2(total_width, cfg._cell_height));
+		ImGui::InvisibleButton(Common::String::format("##s1row%d", ch).c_str(), ImVec2(totalWidth, cfg._cellHeight));
 		if (ImGui::IsItemHovered())
 			ImGui::SetTooltip("%s", modes2[(ch - 1) * 2 + 1]);
 
@@ -205,30 +205,30 @@ static void drawSidebar1(ImDrawList *dl, ImVec2 startPos, Score *score) {
 }
 
 static void drawSidebar2(ImDrawList *dl, ImVec2 startPos, Score *score) {
-	float toggle_col_width = 20.0f;
-	float label_col_width  = 40.0f;
-	float total_width = toggle_col_width + label_col_width;
+	float toggleColWidth = 20.0f;
+	float labelColWidth  = 40.0f;
+	float totalWidth = toggleColWidth + labelColWidth;
 	auto &cfg = _state->_scoreCfg;
-	float cellH = (_state->_scoreMode == kModeExtended) ? cfg._cell_height_extended : cfg._cell_height; // using this only for cell height, as only cell height changes in extended mode
-	int visibleChannels = (_state->_scoreMode == kModeExtended) ? (int)(cfg._table_height / cfg._cell_height_extended) : cfg._visible_channels;
+	float cellH = (_state->_scoreMode == kModeExtended) ? cfg._cellHeightExtended : cfg._cellHeight; // using this only for cell height, as only cell height changes in extended mode
+	int visibleChannels = (_state->_scoreMode == kModeExtended) ? (int)(cfg._tableHeight / cfg._cellHeightExtended) : cfg._visibleChannels;
 
 
 	for (int i = 0; i < visibleChannels; i++) {
 		int ch = i + _state->_scoreState.channelScrollOffset;
 		float y = startPos.y + i * cellH;
 		ImVec2 rowMin = ImVec2(startPos.x, y);
-		ImVec2 rowMax = ImVec2(startPos.x + total_width, y + cellH);
+		ImVec2 rowMax = ImVec2(startPos.x + totalWidth, y + cellH);
 
 		if (ch >= (int)score->_channels.size()) break;
 
 
-		dl->AddRectFilled(rowMin, rowMax, cfg._table_dark_color);
-		dl->AddRect(rowMin, rowMax, cfg._border_color);
+		dl->AddRectFilled(rowMin, rowMax, cfg._tableDarkColor);
+		dl->AddRect(rowMin, rowMax, cfg._borderColor);
 
 		// toggle circle
 		// small square at bottom-left of the cell (size relative to cell)
 		float radius = 5.0f;   // square size
-		float pad  = cfg._cell_height * 0.12f;   // inner padding
+		float pad  = cfg._cellHeight * 0.12f;   // inner padding
 
 		ImVec2 center(rowMin.x + pad + radius, rowMax.y - pad - radius);
 
@@ -238,7 +238,7 @@ static void drawSidebar2(ImDrawList *dl, ImVec2 startPos, Score *score) {
 			dl->AddCircle(center, radius, U32(_state->_colors._channel_toggle));
 
 		ImGui::SetCursorScreenPos(rowMin);
-		ImGui::InvisibleButton(Common::String::format("##s2toggle%d", ch).c_str(), ImVec2(toggle_col_width, cellH));
+		ImGui::InvisibleButton(Common::String::format("##s2toggle%d", ch).c_str(), ImVec2(toggleColWidth, cellH));
 		if (ImGui::IsItemHovered())
 			ImGui::SetTooltip("Playback toggle");
 		if (ImGui::IsItemClicked()) { // determines what happens on toggle of the button
@@ -248,19 +248,19 @@ static void drawSidebar2(ImDrawList *dl, ImVec2 startPos, Score *score) {
 		// channel num and extra stuff if extended mode
 		char buf[8];
 		snprintf(buf, sizeof(buf), "%d", ch);
-		float text_x  = startPos.x + toggle_col_width;
+		float textX  = startPos.x + toggleColWidth;
 
 		if (_state->_scoreMode != kModeExtended) {
-			float text_y = y + (cellH - ImGui::GetTextLineHeight()) / 2.0f;
-			dl->AddText(ImVec2(text_x, text_y), U32(_state->_colors._keyword_color), buf);
+			float textY = y + (cellH - ImGui::GetTextLineHeight()) / 2.0f;
+			dl->AddText(ImVec2(textX, textY), U32(_state->_colors._keyword_color), buf);
 		} else { // draw channel number and labels
-			dl->AddText(ImVec2(text_x, y + 2.0f), U32(_state->_colors._keyword_color), buf);
+			dl->AddText(ImVec2(textX, y + 2.0f), U32(_state->_colors._keyword_color), buf);
 			const char *subLabels[] = { "Member", "Behavior", "Ink", "Blend", "Location" };
 			float lineH = ImGui::GetTextLineHeight();
 			for (int s = 0; s < 5; s++) {
-				float sub_x = text_x - 17.0f;
-				float sub_y = y + lineH + 2.0f + s * lineH; // offset below channel number
-				dl->AddText(ImVec2(sub_x, sub_y), U32(_state->_colors._type_color), subLabels[s]);
+				float subX = textX - 17.0f;
+				float subY = y + lineH + 2.0f + s * lineH; // offset below channel number
+				dl->AddText(ImVec2(subX, subY), U32(_state->_colors._type_color), subLabels[s]);
 			}
 		}
 	}
@@ -268,45 +268,45 @@ static void drawSidebar2(ImDrawList *dl, ImVec2 startPos, Score *score) {
 
 static void drawRuler(ImDrawList *dl, ImVec2 startPos) {
 	auto &cfg = _state->_scoreCfg;
-	int start = _state->_scoreState.sliderX_value;
+	int start = _state->_scoreState.xSliderValue;
 	ImVec2 p1 = startPos;
-	ImVec2 p2 = {p1.x + cfg._ruler_width, p1.y + cfg._ruler_height};
+	ImVec2 p2 = {p1.x + cfg._rulerWidth, p1.y + cfg._rulerHeight};
 
-	dl->AddRectFilled(p1, p2, cfg._table_dark_color);
-	dl->AddRect(p1, p2, cfg._border_color);
+	dl->AddRectFilled(p1, p2, cfg._tableDarkColor);
+	dl->AddRect(p1, p2, cfg._borderColor);
 
-	float big_tick_len = cfg._ruler_height * 0.4f;
-	float small_tick_len = cfg._ruler_height * 0.3f;
+	float bigTickLen = cfg._rulerHeight * 0.4f;
+	float smallTickLen = cfg._rulerHeight * 0.3f;
 
-	// i is the real frame number (1-indexed), ruler_x is its pixel position
-	for (int i = start; i < start + cfg._visible_frames; i++) {
-		float ruler_x = p1.x + (i - start) * cfg._cell_width + cfg._cell_width / 2.0f;
-		float len	   = small_tick_len;
+	// i is the real frame number (1-indexed), rulerX is its pixel position
+	for (int i = start; i < start + cfg._visibleFrames; i++) {
+		float rulerX = p1.x + (i - start) * cfg._cellWidth + cfg._cellWidth / 2.0f;
+		float len = smallTickLen;
 		float thickness = 1.0f;
 
 		if (i % 5 == 0) {
-			len = big_tick_len;
+			len = bigTickLen;
 			thickness = 1.5f;
 			char buf[16];
 			snprintf(buf, sizeof(buf), "%d", i);
 			float textlen = ImGui::CalcTextSize(buf).x;
-			dl->AddText(ImVec2(ruler_x - textlen / 2, p1.y + 4.0), U32(_state->_colors._type_color), buf);
+			dl->AddText(ImVec2(rulerX - textlen / 2, p1.y + 4.0), U32(_state->_colors._type_color), buf);
 		}
 
-		dl->AddLine(ImVec2(ruler_x, p2.y), ImVec2(ruler_x, p2.y - len), U32(_state->_colors._line_color), thickness);
+		dl->AddLine(ImVec2(rulerX, p2.y), ImVec2(rulerX, p2.y - len), U32(_state->_colors._line_color), thickness);
 	}
 }
 
 static void drawModeSelector(ImVec2 startPos) {
 	auto &cfg = _state->_scoreCfg;
-	ImGui::SetNextItemWidth(cfg._sidebar_width);
+	ImGui::SetNextItemWidth(cfg._sidebarWidth);
 	ImGui::SetCursorScreenPos(startPos);
 	if (ImGui::BeginCombo("##mode", modes[_state->_scoreMode])) {
 		for (int i = 0; i < IM_ARRAYSIZE(modes); i++) {
-			bool is_selected = (_state->_scoreMode == i);
-			if (ImGui::Selectable(modes[i], is_selected))
+			bool isSelected = (_state->_scoreMode == i);
+			if (ImGui::Selectable(modes[i], isSelected))
 				_state->_scoreMode = i;
-			if (is_selected)
+			if (isSelected)
 				ImGui::SetItemDefaultFocus();
 		}
 		ImGui::EndCombo();
@@ -505,13 +505,13 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 	int total_frames = (int)score->_scoreCache.size();
 
 	auto &cfg = _state->_scoreCfg;
-	float cellH = (_state->_scoreMode == kModeExtended) ? cfg._cell_height_extended : cfg._cell_height;
-	int visibleChannels = (_state->_scoreMode == kModeExtended) ? (int)(cfg._table_height / cfg._cell_height_extended) : cfg._visible_channels;
-	int startFrame = _state->_scoreState.sliderX_value - 1;
+	float cellH = (_state->_scoreMode == kModeExtended) ? cfg._cellHeightExtended : cfg._cellHeight;
+	int visibleChannels = (_state->_scoreMode == kModeExtended) ? (int)(cfg._tableHeight / cfg._cellHeightExtended) : cfg._visibleChannels;
+	int startFrame = _state->_scoreState.xSliderValue - 1;
 	int numChannels = MIN<int>(score->_scoreCache[0]->_sprites.size(), score->_maxChannelsUsed + 10);
 
 	ImVec2 gridMin = startPos;
-	ImVec2 gridMax = ImVec2(startPos.x + cfg._table_width, startPos.y + cfg._table_height);
+	ImVec2 gridMax = ImVec2(startPos.x + cfg._tableWidth, startPos.y + cfg._tableHeight);
 	dl->PushClipRect(gridMin, gridMax, false);
 
 	for (int i = 0; i < visibleChannels; i++) {
@@ -520,18 +520,18 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 		float y = startPos.y + i * cellH;
 
 		// pass 1: draw cell backgrounds
-		for (int f = 0; f < cfg._visible_frames; f++) {
+		for (int f = 0; f < cfg._visibleFrames; f++) {
 			int rf = startFrame + f;
-			float x = startPos.x + f * cfg._cell_width;
+			float x = startPos.x + f * cfg._cellWidth;
 			ImVec2 cellMin = ImVec2(x, y);
-			ImVec2 cellMax = ImVec2(x + cfg._cell_width, y + cellH);
-			ImU32 col = ((rf + 1) % 5 == 0) ? cfg._table_dark_color : cfg._table_light_color;
+			ImVec2 cellMax = ImVec2(x + cfg._cellWidth, y + cellH);
+			ImU32 col = ((rf + 1) % 5 == 0) ? cfg._tableDarkColor : cfg._tableLightColor;
 			dl->AddRectFilled(cellMin, cellMax, col);
-			dl->AddRect(cellMin, cellMax, cfg._border_color);
+			dl->AddRect(cellMin, cellMax, cfg._borderColor);
 		}
 
 		// pass 2: draw sprite span bars on top of cells
-		for (int f = 0; f < cfg._visible_frames; f++) {
+		for (int f = 0; f < cfg._visibleFrames; f++) {
 			int rf = startFrame + f;
 			if (rf >= total_frames) break;
 			Frame &frame = *score->_scoreCache[rf];
@@ -544,15 +544,15 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 			int spanStart = _state->_continuationData[ch][rf].first;
 			int spanEnd = _state->_continuationData[ch][rf].second;
 
-			if (rf != spanStart && f != 0) continue; // fixed the Alpha Accumulation error, rects were being drawn 99% opawue
-			float x1 = startPos.x + MAX<float>(spanStart - startFrame, 0) * cfg._cell_width;
-			float x2 = MIN<float>(startPos.x + (spanEnd - startFrame + 1) * cfg._cell_width, startPos.x + cfg._table_width);
+			if (rf != spanStart && f != 0) continue;
+			float x1 = startPos.x + MAX<float>(spanStart - startFrame, 0) * cfg._cellWidth;
+			float x2 = MIN<float>(startPos.x + (spanEnd - startFrame + 1) * cfg._cellWidth, startPos.x + cfg._tableWidth);
 
 			if (ch >= (int)_state->_continuationData.size()) continue;
 			if (rf >= (int)_state->_continuationData[ch].size()) break;
 
 			bool startVisible = spanStart >= startFrame;
-			bool endVisible   = spanEnd < startFrame + cfg._visible_frames;
+			bool endVisible = spanEnd < startFrame + cfg._visibleFrames;
 
 			// clamp x1 to grid left edge, x2 to right
 			float cy  = y + cellH * ( (_state->_scoreMode == kModeExtended) ? 0.1 : 0.2);
@@ -568,9 +568,9 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 							   _state->_hoveredScoreCast.frame <= spanEnd);
 
 			if (isSelected)
-				color = U32(_state->_colors._channel_selected_col);
+				color = U32(_state->_colors._channelSelectedCol);
 			else if (isHovered)
-				color = U32(_state->_colors._channel_hovered_col);
+				color = U32(_state->_colors._channelHoveredCol);
 			else {
 				int colorIdx = sprite._colorcode & 0x07;
 				if (colorIdx > 5) colorIdx = 0;
@@ -659,12 +659,12 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 		}
 
 		// pass 3, for clickable rects, add invisible buttosn
-		for (int f = 0; f < cfg._visible_frames; f++) {
+		for (int f = 0; f < cfg._visibleFrames; f++) {
 			int rf = startFrame + f;
 			if (rf >= total_frames) break;
-			float x = startPos.x + f * cfg._cell_width;
+			float x = startPos.x + f * cfg._cellWidth;
 			ImGui::SetCursorScreenPos(ImVec2(x, y));
-			ImGui::InvisibleButton(Common::String::format("##cell_%d_%d", ch, f).c_str(), ImVec2(cfg._cell_width, cellH));
+			ImGui::InvisibleButton(Common::String::format("##cell_%d_%d", ch, f).c_str(), ImVec2(cfg._cellWidth, cellH));
 			if (ImGui::IsItemClicked()) {
 				_state->_selectedScoreCast.frame = rf;
 				_state->_selectedScoreCast.channel = ch;
@@ -683,33 +683,33 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 static void drawSliderX(ImVec2 pos, Score *score) {
 	auto &cfg = _state->_scoreCfg;
 	ImGui::SetCursorScreenPos(pos);
-	ImGui::SetNextItemWidth(cfg._ruler_width);
+	ImGui::SetNextItemWidth(cfg._rulerWidth);
 	int total_frames = (int)score->_scoreCache.size();
-	ImGui::SliderInt("##frameSlider", &_state->_scoreState.sliderX_value, 1, total_frames - cfg._visible_frames + 1);
+	ImGui::SliderInt("##frameSlider", &_state->_scoreState.xSliderValue, 1, total_frames - cfg._visibleFrames + 1);
 }
 
 static void drawMainChannelGrid(ImDrawList *dl, ImVec2 startPos, Score *score) {
 	auto &cfg = _state->_scoreCfg;
-	int startFrame = _state->_scoreState.sliderX_value - 1;
+	int startFrame = _state->_scoreState.xSliderValue - 1;
 	int total_frames = (int)score->_scoreCache.size();
 
 	for (int ch = 0; ch < 6; ch++) {
-		float y = startPos.y + ch * cfg._cell_height;
+		float y = startPos.y + ch * cfg._cellHeight;
 
 		// pass 1, backgrounds
-		for (int f = 0; f < cfg._visible_frames; f++) {
+		for (int f = 0; f < cfg._visibleFrames; f++) {
 			int rf = startFrame + f;
-			float x = startPos.x + f * cfg._cell_width;
+			float x = startPos.x + f * cfg._cellWidth;
 			ImVec2 cellMin = ImVec2(x, y);
-			ImVec2 cellMax = ImVec2(x + cfg._cell_width, y + cfg._cell_height);
-			ImU32 col = ((rf + 1) % 5 == 0) ? cfg._table_dark_color : cfg._table_light_color;
+			ImVec2 cellMax = ImVec2(x + cfg._cellWidth, y + cfg._cellHeight);
+			ImU32 col = ((rf + 1) % 5 == 0) ? cfg._tableDarkColor : cfg._tableLightColor;
 			dl->AddRectFilled(cellMin, cellMax, col);
-			dl->AddRect(cellMin, cellMax, cfg._border_color);
+			dl->AddRect(cellMin, cellMax, cfg._borderColor);
 		}
 
 		// pass 2, span bars
 		int f = 0;
-		while (f < cfg._visible_frames) {
+		while (f < cfg._visibleFrames) {
 			int rf = startFrame + f;
 			if (rf >= total_frames) break;
 
@@ -730,7 +730,7 @@ static void drawMainChannelGrid(ImDrawList *dl, ImVec2 startPos, Score *score) {
 
 			// find run end (same value)
 			int runStart = rf, runEnd = rf;
-			for (int nf = rf + 1; nf < total_frames && (nf - startFrame) < cfg._visible_frames; nf++) {
+			for (int nf = rf + 1; nf < total_frames && (nf - startFrame) < cfg._visibleFrames; nf++) {
 				char nextLabel[64] = "";
 				Frame &nframe = *score->_scoreCache[nf];
 				auto &nmc = nframe._mainChannels;
@@ -747,13 +747,13 @@ static void drawMainChannelGrid(ImDrawList *dl, ImVec2 startPos, Score *score) {
 			}
 
 			bool startVisible = (runStart >= startFrame);
-			bool endVisible = (runEnd < startFrame + cfg._visible_frames);
-			float x1 = startPos.x + MAX<float>(runStart - startFrame, 0) * cfg._cell_width;
-			float x2 = MIN<float>(startPos.x + (runEnd - startFrame + 1) * cfg._cell_width, startPos.x + cfg._table_width);
-			float cy = y + cfg._cell_height * 0.2;
+			bool endVisible = (runEnd < startFrame + cfg._visibleFrames);
+			float x1 = startPos.x + MAX<float>(runStart - startFrame, 0) * cfg._cellWidth;
+			float x2 = MIN<float>(startPos.x + (runEnd - startFrame + 1) * cfg._cellWidth, startPos.x + cfg._tableWidth);
+			float cy = y + cfg._cellHeight * 0.2;
 			float pad = 0.0f;
 
-			dl->AddRectFilled(ImVec2(x1, y + pad), ImVec2(x2 - 1.0f, y + cfg._cell_height - pad), U32(_state->_colors._contColors[ch % 6]), 0.0f);
+			dl->AddRectFilled(ImVec2(x1, y + pad), ImVec2(x2 - 1.0f, y + cfg._cellHeight - pad), U32(_state->_colors._contColors[ch % 6]), 0.0f);
 			dl->AddLine(ImVec2(x1 + (startVisible ? 6.0f : 0.0f), cy), ImVec2(x2 - 6.0f, cy), U32(_state->_colors._line_color), 1.0f);
 			if (startVisible)
 				dl->AddCircle(ImVec2(x1 + 4.0f, cy), 3.0f,  U32(_state->_colors._line_color), 0, 1.5f);
@@ -763,14 +763,14 @@ static void drawMainChannelGrid(ImDrawList *dl, ImVec2 startPos, Score *score) {
 		}
 
 		// pass 3: invisible buttons for interaction
-		for (int f = 0; f < cfg._visible_frames; f++) {
+		for (int f = 0; f < cfg._visibleFrames; f++) {
 			int rf = startFrame + f;
 			if (rf >= total_frames) break;
-			float x = startPos.x + f * cfg._cell_width;
+			float x = startPos.x + f * cfg._cellWidth;
 			ImGui::SetCursorScreenPos(ImVec2(x, y));
 			ImGui::InvisibleButton(
 				Common::String::format("##maincell_%d_%d", ch, f).c_str(),
-				ImVec2(cfg._cell_width, cfg._cell_height)
+				ImVec2(cfg._cellWidth, cfg._cellHeight)
 			);
 
 			if (ImGui::IsItemClicked()) {
@@ -834,15 +834,15 @@ static void drawMainChannelGrid(ImDrawList *dl, ImVec2 startPos, Score *score) {
 
 static void drawPlayhead(ImDrawList *dl, ImVec2 rulerPos, ImVec2 mainChannelGridPos, ImVec2 gridPos, Score *score) {
 	auto &cfg = _state->_scoreCfg;
-	int start = _state->_scoreState.sliderX_value;
+	int start = _state->_scoreState.xSliderValue;
 	uint currentFrameNum = score->getCurrentFrameNum();
 
-	if ((int)currentFrameNum < start || (int)currentFrameNum >= start + cfg._visible_frames)
+	if ((int)currentFrameNum < start || (int)currentFrameNum >= start + cfg._visibleFrames)
 		return;
 
-	float px = rulerPos.x + (currentFrameNum - start) * cfg._cell_width;
+	float px = rulerPos.x + (currentFrameNum - start) * cfg._cellWidth;
 	float top = mainChannelGridPos.y; // top of main channel grid
-	float bottom = gridPos.y + cfg._table_height; // bottom of sprite grid
+	float bottom = gridPos.y + cfg._tableHeight; // bottom of sprite grid
 	ImU32 RED = IM_COL32(200, 50, 0, 255);
 
 	dl->AddLine(ImVec2(px, top), ImVec2(px, bottom), RED, 2.0f);
