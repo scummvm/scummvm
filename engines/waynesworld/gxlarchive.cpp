@@ -127,8 +127,11 @@ Image::PCXDecoder *GxlArchive::loadImage(const char *filename) {
 		error("loadImage() Could not find '%s'", filename);
 
 	Image::PCXDecoder *pcx = new Image::PCXDecoder();
-	if (!pcx->loadStream(*createReadStreamForMember(Common::Path(filename))))
+	Common::SeekableReadStream *pcxStr = createReadStreamForMember(Common::Path(filename));
+	if (!pcx->loadStream(*pcxStr))
 		error("loadImage() Could not process '%s'", filename);
+
+	delete pcxStr;
 	
 	return pcx;
 }
