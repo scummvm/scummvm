@@ -679,6 +679,16 @@ void DigitalVideoCastMember::setField(int field, const Datum &d) {
 	case kTheDuration:
 		warning("DigitalVideoCastMember::setField(): Attempt to set read-only field %s of cast %d", g_lingo->entity2str(field), _castId);
 		return;
+	case kTheFileName:
+		// Update the filename, then force the video to be replaced.
+		// Channel dimensions are replaced by the video.
+		CastMember::setField(field, d);
+		loadVideoFromCast();
+		if (_channel) {
+			_channel->setWidth(_initialRect.width());
+			_channel->setHeight(_initialRect.height());
+		}
+		return;
 	case kTheFrameRate:
 		_frameRate = d.asInt();
 		setFrameRate(d.asInt());
