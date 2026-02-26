@@ -86,7 +86,7 @@ public:
 protected:
 	ScummEngine *_vm;
 
-	// flag to enable AkosRenderer's behaviour in paintCelByleRLECommon()
+	// flag to enable AkosRenderer's behaviour in paintCelByleRLECommon() and byleRLEDecode()
 	bool _akosRendering;
 
 	// Destination
