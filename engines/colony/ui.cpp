@@ -48,12 +48,14 @@ void ColonyEngine::updateViewportLayout() {
 			dashWidth = 0;
 	}
 
-	_screenR = makeSafeRect(dashWidth, 0, _width, _height);
+	const int menuTop = _menuBarHeight; // 0 for DOS/EGA, 20 for Mac
+
+	_screenR = makeSafeRect(dashWidth, menuTop, _width, _height);
 	_clip = _screenR;
 	_centerX = (_screenR.left + _screenR.right) >> 1;
 	_centerY = (_screenR.top + _screenR.bottom) >> 1;
 
-	_dashBoardRect = makeSafeRect(0, 0, dashWidth, _height);
+	_dashBoardRect = makeSafeRect(0, menuTop, dashWidth, _height);
 	if (dashWidth == 0) {
 		_compassRect = Common::Rect(0, 0, 0, 0);
 		_headsUpRect = Common::Rect(0, 0, 0, 0);
@@ -62,19 +64,20 @@ void ColonyEngine::updateViewportLayout() {
 	}
 
 	const int pad = 2;
+	const int topPad = menuTop + pad; // Dashboard sub-panels start below menu bar
 	const int unit = MAX(8, (dashWidth - (pad * 2)) / 4);
 	const int blockLeft = pad;
 	const int blockRight = MIN(dashWidth - pad, blockLeft + unit * 4);
 
 	const int compassBottom = _height - MAX(2, unit / 4);
-	const int compassTop = MAX(pad, compassBottom - unit * 4);
+	const int compassTop = MAX(topPad, compassBottom - unit * 4);
 	_compassRect = makeSafeRect(blockLeft, compassTop, blockRight, compassBottom);
 
 	const int headsUpBottom = _compassRect.top - MAX(2, unit / 4) - 4;
 	const int headsUpTop = headsUpBottom - unit * 4;
-	_headsUpRect = makeSafeRect(blockLeft, MAX(pad, headsUpTop), blockRight, MAX(pad, headsUpBottom));
+	_headsUpRect = makeSafeRect(blockLeft, MAX(topPad, headsUpTop), blockRight, MAX(topPad, headsUpBottom));
 
-	_powerRect = makeSafeRect(blockLeft, pad, blockRight, _headsUpRect.top - 4);
+	_powerRect = makeSafeRect(blockLeft, topPad, blockRight, _headsUpRect.top - 4);
 }
 
 void ColonyEngine::drawDashboardStep1() {

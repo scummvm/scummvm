@@ -71,9 +71,11 @@ public:
 		_stippleBgColor = bg;
 	}
 	void computeScreenViewport() override;
+	void drawSurface(const Graphics::Surface *surf, int x, int y) override;
 
 private:
 	void useColor(uint32 color);
+	GLuint _overlayTexId;
 
 	OSystem *_system;
 	int _width;
@@ -113,12 +115,15 @@ OpenGLRenderer::OpenGLRenderer(OSystem *system, int width, int height) : _system
 	glLoadIdentity();
 
 	computeScreenViewport();
-	
+
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
+
+	glGenTextures(1, &_overlayTexId);
 }
 
 OpenGLRenderer::~OpenGLRenderer() {
+	glDeleteTextures(1, &_overlayTexId);
 }
 
 void OpenGLRenderer::setPalette(const byte *palette, uint start, uint count) {
@@ -598,6 +603,77 @@ void OpenGLRenderer::drawPolygon(const int *x, const int *y, int count, uint32 c
 		glVertex2i(x[i], y[i]);
 	}
 	glEnd();
+}
+
+void OpenGLRenderer::drawSurface(const Graphics::Surface *surf, int x, int y) {
+	if (!surf || surf->w <= 0 || surf->h <= 0)
+		return;
+
+	// The surface is expected to be RGBA8888 (4 bytes per pixel).
+	if (surf->format.bytesPerPixel != 4)
+		return;
+
+	// Save GL state
+	glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
+
+	// Set up 2D ortho matching the game's coordinate system
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+
+	float scaleX = (float)_screenViewport.width() / _width;
+	float scaleY = (float)_screenViewport.height() / _height;
+	glOrtho(0, _screenViewport.width(), _screenViewport.height(), 0, -1, 1);
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	glViewport(_screenViewport.left, _system->getHeight() - _screenViewport.bottom,
+	           _screenViewport.width(), _screenViewport.height());
+
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// Upload surface to texture
+	glBindTexture(GL_TEXTURE_2D, _overlayTexId);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surf->w, surf->h, 0,
+	             GL_RGBA, GL_UNSIGNED_BYTE, surf->getPixels());
+
+	// Draw textured quad covering the specified region
+	float dx = x * scaleX;
+	float dy = y * scaleY;
+	float dw = surf->w * scaleX;
+	float dh = surf->h * scaleY;
+
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f); glVertex2f(dx, dy);
+	glTexCoord2f(1.0f, 0.0f); glVertex2f(dx + dw, dy);
+	glTexCoord2f(1.0f, 1.0f); glVertex2f(dx + dw, dy + dh);
+	glTexCoord2f(0.0f, 1.0f); glVertex2f(dx, dy + dh);
+	glEnd();
+
+	// Restore GL state
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+
+	glPopAttrib();
+
+	// Restore the game's 2D ortho viewport
+	glViewport(_screenViewport.left, _system->getHeight() - _screenViewport.bottom,
+	           _screenViewport.width(), _screenViewport.height());
 }
 
 void OpenGLRenderer::copyToScreen() {
