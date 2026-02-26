@@ -24,7 +24,6 @@
 #include "common/file.h"
 #include "common/hash-str.h"
 #include "common/memstream.h"
-#include "common/bufferedstream.h"
 #include "common/textconsole.h"
 
 #include "waynesworld/gxlarchive.h"

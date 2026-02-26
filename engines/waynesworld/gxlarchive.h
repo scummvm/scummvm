@@ -23,7 +23,7 @@
 #define WAYNESWORLD_GXLARCHIVE
 
 #include "common/archive.h"
-#include "gamelogic.h"
+#include "waynesworld/gamelogic.h"
 
 namespace Common {
 class File;
