@@ -38,8 +38,8 @@
 namespace Director {
 namespace DT {
 
-enum { kModeMember, kModeBehavior, kModeLocation, kModeInk, kModeBlend, kModeExtended,
-		kChTempo, kChPalette, kChTransition, kChSound1, kChSound2, kChScript };
+enum { kModeMember, kModeBehavior, kModeLocation, kModeInk, kModeBlend, kModeExtended};
+enum { kChTempo, kChPalette, kChTransition, kChSound1, kChSound2, kChScript };
 const char *modes[] = { "Member", "Behavior", "Location", "Ink", "Blend", "Extended" };
 const char *modes2[] = {
 	ICON_MS_TIMER, "Tempo",					// timer
@@ -77,6 +77,14 @@ static ScoreLayout computeLayout(ImVec2 origin, const ImGuiState::ScoreConfig &c
 // helper to convert color for drawlist
 static inline ImU32 U32(const ImVec4 &c) {
 	return ImGui::GetColorU32(c);
+}
+
+// helper to draw thin rectangles for table grid
+static void addThinRect(ImDrawList *dl, ImVec2 min, ImVec2 max, ImU32 col, float thickness = 0.1f) {
+	dl->AddLine(ImVec2(min.x, min.y), ImVec2(max.x, min.y), col, thickness); // top
+	dl->AddLine(ImVec2(max.x, min.y), ImVec2(max.x, max.y), col, thickness); // right
+	dl->AddLine(ImVec2(max.x, max.y), ImVec2(min.x, max.y), col, thickness); // bottom
+	dl->AddLine(ImVec2(min.x, max.y), ImVec2(min.x, min.y), col, thickness); // left
 }
 
 static void buildContinuationData(Window *window) {
@@ -162,7 +170,7 @@ static void drawSliderY(ImVec2 pos, int numChannels) {
 	ImGui::SetCursorScreenPos(pos);
 	ImGui::SetNextItemWidth(16.0f);
 	int visibleChannels = (_state->_scoreMode == kModeExtended) ? (int)(cfg._tableHeight / cfg._cellHeightExtended) : cfg._visibleChannels;
-	int maxScroll = MAX(0, numChannels - visibleChannels);
+	int maxScroll = MAX(1, numChannels - visibleChannels);
 	ImGui::VSliderInt("##channelSlider", ImVec2(16.0f, cfg._tableHeight), &_state->_scoreState.channelScrollOffset, maxScroll, 1);
 }
 
@@ -178,10 +186,10 @@ static void drawSidebar1(ImDrawList *dl, ImVec2 startPos, Score *score) {
 		ImVec2 rowMax = ImVec2(startPos.x + totalWidth, y + cfg._cellHeight);
 
 		dl->AddRectFilled(rowMin, rowMax, cfg._tableDarkColor);
-		dl->AddRect(rowMin, rowMax, cfg._borderColor);
+		addThinRect(dl, rowMin, rowMax, cfg._borderColor);
 
-		float radius = 5.0f;   // square size
-		float pad  = cfg._cellHeight * 0.12f;   // inner padding
+		float radius = 5.0f;
+		float pad  = cfg._cellHeight * 0.12f; // inner padding
 
 		ImVec2 center(rowMin.x + pad + radius, rowMax.y - pad - radius);
 
@@ -223,7 +231,7 @@ static void drawSidebar2(ImDrawList *dl, ImVec2 startPos, Score *score) {
 
 
 		dl->AddRectFilled(rowMin, rowMax, cfg._tableDarkColor);
-		dl->AddRect(rowMin, rowMax, cfg._borderColor);
+		addThinRect(dl, rowMin, rowMax, cfg._borderColor);
 
 		// toggle circle
 		// small square at bottom-left of the cell (size relative to cell)
@@ -273,7 +281,7 @@ static void drawRuler(ImDrawList *dl, ImVec2 startPos) {
 	ImVec2 p2 = {p1.x + cfg._rulerWidth, p1.y + cfg._rulerHeight};
 
 	dl->AddRectFilled(p1, p2, cfg._tableDarkColor);
-	dl->AddRect(p1, p2, cfg._borderColor);
+	addThinRect(dl, p1, p2, cfg._borderColor);
 
 	float bigTickLen = cfg._rulerHeight * 0.4f;
 	float smallTickLen = cfg._rulerHeight * 0.3f;
@@ -507,7 +515,7 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 	auto &cfg = _state->_scoreCfg;
 	float cellH = (_state->_scoreMode == kModeExtended) ? cfg._cellHeightExtended : cfg._cellHeight;
 	int visibleChannels = (_state->_scoreMode == kModeExtended) ? (int)(cfg._tableHeight / cfg._cellHeightExtended) : cfg._visibleChannels;
-	int startFrame = _state->_scoreState.xSliderValue - 1;
+	int startFrame = MAX(0, _state->_scoreState.xSliderValue - 1);
 	int numChannels = MIN<int>(score->_scoreCache[0]->_sprites.size(), score->_maxChannelsUsed + 10);
 
 	ImVec2 gridMin = startPos;
@@ -527,7 +535,7 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 			ImVec2 cellMax = ImVec2(x + cfg._cellWidth, y + cellH);
 			ImU32 col = ((rf + 1) % 5 == 0) ? cfg._tableDarkColor : cfg._tableLightColor;
 			dl->AddRectFilled(cellMin, cellMax, col);
-			dl->AddRect(cellMin, cellMax, cfg._borderColor);
+			addThinRect(dl, cellMin, cellMax, cfg._borderColor);
 		}
 
 		// pass 2: draw sprite span bars on top of cells
@@ -684,27 +692,29 @@ static void drawSliderX(ImVec2 pos, Score *score) {
 	auto &cfg = _state->_scoreCfg;
 	ImGui::SetCursorScreenPos(pos);
 	ImGui::SetNextItemWidth(cfg._rulerWidth);
-	int total_frames = (int)score->_scoreCache.size();
-	ImGui::SliderInt("##frameSlider", &_state->_scoreState.xSliderValue, 1, total_frames - cfg._visibleFrames + 1);
+	int totalFrames = (int)score->_scoreCache.size();
+	int sliderMin = 1;
+	int sliderMax = MAX(totalFrames - cfg._visibleFrames + 1, 1);
+	ImGui::SliderInt("##frameSlider", &_state->_scoreState.xSliderValue, sliderMin, sliderMax);
 }
 
 static void drawMainChannelGrid(ImDrawList *dl, ImVec2 startPos, Score *score) {
 	auto &cfg = _state->_scoreCfg;
-	int startFrame = _state->_scoreState.xSliderValue - 1;
+	int startFrame = MAX(0, _state->_scoreState.xSliderValue - 1);
 	int total_frames = (int)score->_scoreCache.size();
 
-	for (int ch = 0; ch < 6; ch++) {
+	for (int ch = kChTempo; ch <= kChScript; ch++) {
 		float y = startPos.y + ch * cfg._cellHeight;
 
 		// pass 1, backgrounds
-		for (int f = 0; f < cfg._visibleFrames; f++) {
+		for (int f = 0; f <= cfg._visibleFrames; f++) {
 			int rf = startFrame + f;
 			float x = startPos.x + f * cfg._cellWidth;
 			ImVec2 cellMin = ImVec2(x, y);
 			ImVec2 cellMax = ImVec2(x + cfg._cellWidth, y + cfg._cellHeight);
 			ImU32 col = ((rf + 1) % 5 == 0) ? cfg._tableDarkColor : cfg._tableLightColor;
 			dl->AddRectFilled(cellMin, cellMax, col);
-			dl->AddRect(cellMin, cellMax, cfg._borderColor);
+			addThinRect(dl, cellMin, cellMax, cfg._borderColor);
 		}
 
 		// pass 2, span bars
@@ -716,33 +726,33 @@ static void drawMainChannelGrid(ImDrawList *dl, ImVec2 startPos, Score *score) {
 			// get label for this frame
 			Frame &frame = *score->_scoreCache[rf];
 			auto &mc = frame._mainChannels;
-			char label[64] = "";
+			Common::String label;
 			switch (ch) {
-			case 0: if (mc.tempo) snprintf(label, sizeof(label), "%d", mc.tempo); break;
-			case 1: if (mc.palette.paletteId.member) snprintf(label, sizeof(label), "%d", mc.palette.paletteId.member); break;
-			case 2: if (mc.transType) snprintf(label, sizeof(label), "%d", mc.transType); break;
-			case 3: if (mc.sound1.member) snprintf(label, sizeof(label), "%d", mc.sound1.member); break;
-			case 4: if (mc.sound2.member) snprintf(label, sizeof(label), "%d", mc.sound2.member); break;
-			case 5: if (mc.actionId.member) snprintf(label, sizeof(label), "%d", mc.actionId.member); break;
+			case kChTempo: if (mc.tempo) label = Common::String::format("%d", mc.tempo); break;
+			case kChPalette: if (mc.palette.paletteId.member) label = Common::String::format("%d", mc.palette.paletteId.member); break;
+			case kChTransition: if (mc.transType) label = Common::String::format("%d", mc.transType); break;
+			case kChSound1: if (mc.sound1.member) label = Common::String::format("%d", mc.sound1.member); break;
+			case kChSound2: if (mc.sound2.member) label = Common::String::format("%d", mc.sound2.member); break;
+			case kChScript: if (mc.actionId.member) label = Common::String::format("%d", mc.actionId.member); break;
 			}
 
-			if (!label[0]) { f++; continue; }
+			if (label.empty()) { f++; continue; }
 
 			// find run end (same value)
 			int runStart = rf, runEnd = rf;
 			for (int nf = rf + 1; nf < total_frames && (nf - startFrame) < cfg._visibleFrames; nf++) {
-				char nextLabel[64] = "";
+				Common::String nextLabel;
 				Frame &nframe = *score->_scoreCache[nf];
 				auto &nmc = nframe._mainChannels;
 				switch (ch) {
-				case 0: if (nmc.tempo) snprintf(nextLabel, sizeof(nextLabel), "%d", nmc.tempo); break;
-				case 1: if (nmc.palette.paletteId.member) snprintf(nextLabel, sizeof(nextLabel), "%d", nmc.palette.paletteId.member); break;
-				case 2: if (nmc.transType) snprintf(nextLabel, sizeof(nextLabel), "%d", nmc.transType); break;
-				case 3: if (nmc.sound1.member) snprintf(nextLabel, sizeof(nextLabel), "%d", nmc.sound1.member); break;
-				case 4: if (nmc.sound2.member) snprintf(nextLabel, sizeof(nextLabel), "%d", nmc.sound2.member); break;
-				case 5: if (nmc.actionId.member) snprintf(nextLabel, sizeof(nextLabel), "%d", nmc.actionId.member); break;
+				case kChTempo: if (nmc.tempo) nextLabel = Common::String::format("%d", nmc.tempo); break;
+				case kChPalette: if (nmc.palette.paletteId.member) nextLabel = Common::String::format("%d", nmc.palette.paletteId.member); break;
+				case kChTransition: if (nmc.transType) nextLabel = Common::String::format("%d", nmc.transType); break;
+				case kChSound1: if (nmc.sound1.member) nextLabel = Common::String::format("%d", nmc.sound1.member); break;
+				case kChSound2: if (nmc.sound2.member) nextLabel = Common::String::format("%d", nmc.sound2.member); break;
+				case kChScript: if (nmc.actionId.member) nextLabel = Common::String::format("%d", nmc.actionId.member); break;
 				}
-				if (strcmp(label, nextLabel) == 0) runEnd = nf;
+				if (label == nextLabel) runEnd = nf;
 				else break;
 			}
 
@@ -763,7 +773,7 @@ static void drawMainChannelGrid(ImDrawList *dl, ImVec2 startPos, Score *score) {
 		}
 
 		// pass 3: invisible buttons for interaction
-		for (int f = 0; f < cfg._visibleFrames; f++) {
+		for (f = 0; f < cfg._visibleFrames; f++) {
 			int rf = startFrame + f;
 			if (rf >= total_frames) break;
 			float x = startPos.x + f * cfg._cellWidth;
@@ -780,9 +790,9 @@ static void drawMainChannelGrid(ImDrawList *dl, ImVec2 startPos, Score *score) {
 				Frame &clickedFrame = *score->_scoreCache[rf];
 				auto &mc = clickedFrame._mainChannels;
 				switch (ch) {
-				case 0:
+				case kChTempo:
 					break;
-				case 1: // open cast window focused on palette member
+				case kChPalette: // open cast window focused on palette member
 					if (mc.palette.paletteId.member) {
 						_state->_w.cast = true;
 						// select it in the cast so showCast() highlights it
@@ -793,17 +803,17 @@ static void drawMainChannelGrid(ImDrawList *dl, ImVec2 startPos, Score *score) {
 						}
 					}
 					break;
-				case 2:
+				case kChTransition:
 					break;
-				case 3: // open cast window
+				case kChSound1: // open cast window
 					if (mc.sound1.member)
 						_state->_w.cast = true;
 					break;
-				case 4:
+				case kChSound2:
 					if (mc.sound2.member)
 						_state->_w.cast = true;
 					break;
-				case 5: // open script in script editor
+				case kChScript: // open script in script editor
 					if (mc.actionId.member) {
 						ImGuiScript script = toImGuiScript(kScoreScript, mc.actionId, "");
 						setScriptToDisplay(script);
@@ -814,19 +824,19 @@ static void drawMainChannelGrid(ImDrawList *dl, ImVec2 startPos, Score *score) {
 			}
 
 			if (ImGui::IsItemHovered()) {
-				char label[64] = "";
+				Common::String label;
 				Frame &frame = *score->_scoreCache[rf];
 				auto &mc = frame._mainChannels;
 				switch (ch) {
-				case 0: if (mc.tempo) snprintf(label, sizeof(label), "%d", mc.tempo); break;
-				case 1: if (mc.palette.paletteId.member) snprintf(label, sizeof(label), "%d", mc.palette.paletteId.member); break;
-				case 2: if (mc.transType) snprintf(label, sizeof(label), "%d", mc.transType); break;
-				case 3: if (mc.sound1.member) snprintf(label, sizeof(label), "%d", mc.sound1.member); break;
-				case 4: if (mc.sound2.member) snprintf(label, sizeof(label), "%d", mc.sound2.member); break;
-				case 5: if (mc.actionId.member) snprintf(label, sizeof(label), "%d", mc.actionId.member); break;
+				case kChTempo: if (mc.tempo) label = Common::String::format("%d", mc.tempo); break;
+				case kChPalette: if (mc.palette.paletteId.member) label = Common::String::format("%d", mc.palette.paletteId.member); break;
+				case kChTransition: if (mc.transType) label = Common::String::format("%d", mc.transType); break;
+				case kChSound1: if (mc.sound1.member) label = Common::String::format("%d", mc.sound1.member); break;
+				case kChSound2: if (mc.sound2.member) label = Common::String::format("%d", mc.sound2.member); break;
+				case kChScript: if (mc.actionId.member) label = Common::String::format("%d", mc.actionId.member); break;
 				}
-				if (label[0])
-					ImGui::SetTooltip("%s: %s", modes2[(ch) * 2 + 1], label);
+				if (!label.empty())
+					ImGui::SetTooltip("%s: %s", modes2[(ch) * 2 + 1], label.c_str());
 			}
 		}
 	}

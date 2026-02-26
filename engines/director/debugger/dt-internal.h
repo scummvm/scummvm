@@ -125,7 +125,7 @@ typedef struct ImGuiState {
 		float _cellHeightExtended = 5 * _cellHeight;
 		ImU32 _tableLightColor = IM_COL32(51,  51,  51,  255);
 		ImU32 _tableDarkColor = IM_COL32(38, 38, 38, 255);
-		ImU32 _borderColor = IM_COL32(102, 102, 102, 255);
+		ImU32 _borderColor = IM_COL32(102, 102, 102, 100);
 	} _scoreCfg;
 
 	struct ScoreState {
