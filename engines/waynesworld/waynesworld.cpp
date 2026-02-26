@@ -681,10 +681,14 @@ void WaynesWorldEngine::displayTextLines(const char *filename, int baseIndex, in
 }
 
 void WaynesWorldEngine::playSound(const char *filename, int flag) {
-	_sound->playSound(filename, flag);
+	if (_isSoundEnabled)
+		_sound->playSound(filename, flag);
 }
 
 void WaynesWorldEngine::changeMusic() {
+	if (!_isMusicEnabled)
+		return;
+	
 	switch (_musicIndex) {
 	case 0:
 		_midi->playMusic("pop-a.xmi");
