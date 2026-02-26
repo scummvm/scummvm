@@ -127,12 +127,6 @@ byte ClassicCostumeRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 
 	compData.maskPtr = _vm->getMaskBuffer(0, compData.y, _zbuf);
 
-	// temporarily replace _shadowMode to distinguish from AkosRenderer's _shadowMode
-	byte oldShadowMode = _shadowMode;
-	if (!(_shadowMode & 0x20)) {
-		_shadowMode = 0xff;
-	}
-
 	if (c64Cost) {
 		// The v1 costume renderer needs the actor number, which is
 		// the same thing as the costume renderer's _actorID.
@@ -143,8 +137,6 @@ byte ClassicCostumeRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 		byleRLEDecode_PCEngine(compData);
 	else
 		byleRLEDecode(compData);
-
-	_shadowMode = oldShadowMode;
 
 	return drawFlag;
 }

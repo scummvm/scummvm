@@ -293,7 +293,7 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 
 extern "C" int ClassicProc3RendererShadowARM(
 	int _scaleY,
-	ClassicCostumeRenderer::ByleRLEData *compData,
+	BaseCostumeRenderer::ByleRLEData *compData,
 	int pitch,
 	const byte *src,
 	int height,
@@ -315,7 +315,8 @@ void BaseCostumeRenderer::byleRLEDecode(ByleRLEData &compData, int16 actorHitX, 
 	bool masked;
 
 #ifdef USE_ARM_COSTUME_ASM
-	if ((_shadowMode == 0xff) &&
+	if ((!_akosRendering && (_shadowMode & 0x20) == 0) &&
+		(actorHitResult == NULL) &&
 		(compData.maskPtr != NULL) &&
 		(_shadowTable != NULL))
 	{
@@ -371,46 +372,52 @@ void BaseCostumeRenderer::byleRLEDecode(ByleRLEData &compData, int16 actorHitX, 
 					bool skipColumn = false;
 
 					if (color && !masked) {
-						pcolor = _palette[color];
-						if (_shadowMode == 0xff) {
-							// classic costume, skipColumn = false
-							if (pcolor == 13 && _shadowTable)
+						uint16 pcolor;
+
+						if (!_akosRendering) {
+							if (_shadowMode & 0x20) {
 								pcolor = _shadowTable[*dst];
-						} else if (_shadowMode & 0x20) {
-							// classic costume, skipColumn = false
-							pcolor = _shadowTable[*dst];
-						} else if (_shadowMode == 1) {
-							if (pcolor == 13) {
-								// In shadow mode 1 skipColumn works more or less the same way as in shadow
-								// mode 3. It is only ever checked and applied if pcolor is 13.
-								skipColumn = (lastColumnX == compData.x);
-								pcolor = _shadowTable[*dst];
+							} else {
+								pcolor = _palette[color];
+								if (pcolor == 13 && _shadowTable)
+									pcolor = _shadowTable[*dst];
 							}
-						} else if (_shadowMode == 2) {
-							error("AkosRenderer::byleRLEDecode(): shadowMode 2 not implemented."); // TODO
-						} else if (_shadowMode == 3) {
-							if (_vm->_game.features & GF_16BIT_COLOR) {
-								// I add the column skip here, too, although I don't know whether it always
-								// applies. But this is the only way to prevent recursive shading of pixels.
-								// This might need more fine tuning...
-								skipColumn = (lastColumnX == compData.x);
-								uint16 srcColor = (pcolor >> 1) & 0x7DEF;
-								uint16 dstColor = (READ_UINT16(dst) >> 1) & 0x7DEF;
-								pcolor = srcColor + dstColor;
-							} else if (_vm->_game.heversion >= 90) {
-								// I add the column skip here, too, although I don't know whether it always
-								// applies. But this is the only way to prevent recursive shading of pixels.
-								// This might need more fine tuning...
-								skipColumn = (lastColumnX == compData.x);
-								pcolor = (pcolor << 8) + *dst;
-								pcolor = xmap[pcolor];
-							} else if (pcolor < 8) {
-								// This mode is used in COMI. The column skip only takes place when the shading
-								// is actually applied (for pcolor < 8). The skip avoids shading of pixels that
-								// already have been shaded.
-								skipColumn = (lastColumnX == compData.x);
-								pcolor = (pcolor << 8) + *dst;
-								pcolor = _shadowTable[pcolor];
+						} else {
+							pcolor = _palette[color];
+
+							if (_shadowMode == 1) {
+								if (pcolor == 13) {
+									// In shadow mode 1 skipColumn works more or less the same way as in shadow
+									// mode 3. It is only ever checked and applied if pcolor is 13.
+									skipColumn = (lastColumnX == compData.x);
+									pcolor = _shadowTable[*dst];
+								}
+							} else if (_shadowMode == 2) {
+								error("AkosRenderer::byleRLEDecode(): shadowMode 2 not implemented."); // TODO
+							} else if (_shadowMode == 3) {
+								if (_vm->_game.features & GF_16BIT_COLOR) {
+									// I add the column skip here, too, although I don't know whether it always
+									// applies. But this is the only way to prevent recursive shading of pixels.
+									// This might need more fine tuning...
+									skipColumn = (lastColumnX == compData.x);
+									uint16 srcColor = (pcolor >> 1) & 0x7DEF;
+									uint16 dstColor = (READ_UINT16(dst) >> 1) & 0x7DEF;
+									pcolor = srcColor + dstColor;
+								} else if (_vm->_game.heversion >= 90) {
+									// I add the column skip here, too, although I don't know whether it always
+									// applies. But this is the only way to prevent recursive shading of pixels.
+									// This might need more fine tuning...
+									skipColumn = (lastColumnX == compData.x);
+									pcolor = (pcolor << 8) + *dst;
+									pcolor = xmap[pcolor];
+								} else if (pcolor < 8) {
+									// This mode is used in COMI. The column skip only takes place when the shading
+									// is actually applied (for pcolor < 8). The skip avoids shading of pixels that
+									// already have been shaded.
+									skipColumn = (lastColumnX == compData.x);
+									pcolor = (pcolor << 8) + *dst;
+									pcolor = _shadowTable[pcolor];
+								}
 							}
 						}
 						if (!skipColumn) {
