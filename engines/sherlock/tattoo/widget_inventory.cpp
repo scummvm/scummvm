@@ -277,7 +277,8 @@ void WidgetInventoryVerbs::load() {
 		if (obj._type != INVALID && obj._type != HIDDEN) {
 			for (int useNum = 0; useNum < 6; ++useNum) {
 				if (!obj._use[useNum]._verb.hasPrefix("*") &&
-					!obj._use[useNum]._target.compareToIgnoreCase(inv[_owner->_invSelect]._name)) {
+					(!obj._use[useNum]._target.compareToIgnoreCase(inv[_owner->_invSelect]._name) ||
+					 !obj._use[useNum]._target.compareToIgnoreCase(inv[_owner->_invSelect]._description))) {
 					// Make sure the Verb is not already in the list
 					bool found1 = false;
 					for (uint cmdNum = 0; cmdNum < _inventCommands.size() && !found1; ++cmdNum) {
@@ -306,7 +307,8 @@ void WidgetInventoryVerbs::load() {
 	// Search the NPCs for matches as well
 	for (int idx = 1; idx < MAX_CHARACTERS; ++idx) {
 		for (int useNum = 0; useNum < 2; ++useNum) {
-			if (!people[idx]._use[useNum]._target.compareToIgnoreCase(inv[_owner->_invSelect]._name) &&
+			if ((!people[idx]._use[useNum]._target.compareToIgnoreCase(inv[_owner->_invSelect]._name) ||
+				 !people[idx]._use[useNum]._target.compareToIgnoreCase(inv[_owner->_invSelect]._description)) &&
 				!people[idx]._use[useNum]._verb.empty() && !people[idx]._use[useNum]._verb.hasPrefix(" ")) {
 				bool found1 = false;
 				for (uint cmdNum = 0; cmdNum < _inventCommands.size() && !found1; ++cmdNum) {
@@ -651,7 +653,8 @@ void WidgetInventory::handleEvents() {
 
 						for (int idx = 0; idx < 2; ++idx) {
 							if (!person._use[idx]._verb.compareToIgnoreCase(_verb) &&
-								!person._use[idx]._target.compareToIgnoreCase(_invTarget)) {
+								(!person._use[idx]._target.compareToIgnoreCase(_invTarget) ||
+								 !person._use[idx]._target.compareToIgnoreCase(_invTargetDesc))) {
 								ui.checkAction(person._use[idx], ui._bgFound);
 								found = true;
 							}
@@ -659,7 +662,8 @@ void WidgetInventory::handleEvents() {
 					} else {
 						for (int idx = 0; idx < 6; ++idx) {
 							if (!ui._bgShape->_use[idx]._verb.compareToIgnoreCase(_verb) &&
-									!ui._bgShape->_use[idx]._target.compareToIgnoreCase(_invTarget)) {
+									(!ui._bgShape->_use[idx]._target.compareToIgnoreCase(_invTarget) ||
+									 !ui._bgShape->_use[idx]._target.compareToIgnoreCase(_invTargetDesc))) {
 								ui.checkAction(ui._bgShape->_use[idx], ui._bgFound);
 								found = true;
 							}
@@ -691,7 +695,8 @@ void WidgetInventory::handleEvents() {
 					if (ui._activeObj >= 1000) {
 						// Object was a person, activate anything in his two verb fields
 						for (int idx = 0; idx < 2; ++idx) {
-							if (!people[ui._activeObj - 1000]._use[idx]._target.compareToIgnoreCase(inv[_invSelect]._name)) {
+							if (!people[ui._activeObj - 1000]._use[idx]._target.compareToIgnoreCase(inv[_invSelect]._name) ||
+								!people[ui._activeObj - 1000]._use[idx]._target.compareToIgnoreCase(inv[_invSelect]._description)) {
 								ui.checkAction(people[ui._activeObj - 1000]._use[idx], ui._activeObj);
 								found = true;
 							}
@@ -699,7 +704,8 @@ void WidgetInventory::handleEvents() {
 					} else {
 						// Object was a regular object, activate anything in its verb fields
 						for (int idx = 0; idx < 6; ++idx) {
-							if (!scene._bgShapes[ui._activeObj]._use[idx]._target.compareToIgnoreCase(inv[_invSelect]._name)) {
+							if (!scene._bgShapes[ui._activeObj]._use[idx]._target.compareToIgnoreCase(inv[_invSelect]._name) ||
+								!scene._bgShapes[ui._activeObj]._use[idx]._target.compareToIgnoreCase(inv[_invSelect]._description)) {
 								ui.checkAction(scene._bgShapes[ui._activeObj]._use[idx], ui._activeObj);
 								found = true;
 							}
@@ -718,6 +724,7 @@ void WidgetInventory::handleEvents() {
 						// Keep track of the name of the inventory object so we can check it against the target fields
 						// of verbs when we activate it
 						_invTarget = inv[_invSelect]._name;
+						_invTargetDesc = inv[_invSelect]._description;
 						_swapItems = false;
 
 						_verbList.load();

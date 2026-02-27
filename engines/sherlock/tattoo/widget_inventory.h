@@ -91,6 +91,7 @@ private:
 	bool _swapItems;
 	Surface _menuSurface;
 	Common::String _invTarget;
+	Common::String _invTargetDesc;
 
 	/**
 	 * Draw the bars within the dialog
