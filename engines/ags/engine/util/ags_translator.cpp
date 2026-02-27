@@ -22,6 +22,7 @@
 #include "ags/engine/util/ags_translator.h"
 
 #include "common/archive.h"
+#include "common/debug.h"
 #include "common/formats/json.h"
 #include "common/memstream.h"
 #include "common/path.h"
@@ -37,92 +38,18 @@ AgsTranslator &AgsTranslator::getInstance() {
 	return t;
 }
 
-static bool readAll(Common::InSaveFile *in, Common::String &out) {
-	out.clear();
-	if (!in)
-		return false;
-
-	while (!in->eos() && !in->err()) {
-		char buf[4096];
-		const uint32 n = in->read(buf, sizeof(buf));
-		if (n == 0)
-			break;
-		out += Common::String(buf, n);
-	}
-	return !in->err();
-}
-
-static bool appendTextToSaveFile(const char *filename, const Common::String &line) {
-	Common::SaveFileManager *sfm = g_system->getSavefileManager();
-	if (!sfm)
-		return false;
-
-	// Read existing content if file exists.
-	Common::String existing;
-	{
-		Common::InSaveFile *in = sfm->openForLoading(filename);
-		if (in) {
-			if (!readAll(in, existing)) {
-				delete in;
-				return false;
-			}
-			delete in;
-		}
-	}
-
-	// Rewrite full content + appended line, without compression (text).
-	Common::OutSaveFile *out = sfm->openForSaving(filename, false);
-	if (!out)
-		return false;
-
-	if (!existing.empty())
-		out->write(existing.c_str(), existing.size());
-
-	out->write(line.c_str(), line.size());
-	out->finalize();
-	delete out;
-	return true;
-}
-
-static Common::String jsonEscape(const Common::String &s) {
-	Common::String esc;
-	for (uint i = 0; i < s.size(); i++) {
-		char c = s[i];
-		if (c == '\\')
-			esc += "\\\\";
-		else if (c == '"')
-			esc += "\\\"";
-		else if (c == '\n')
-			esc += "\\n";
-		else if (c == '\r')
-			esc += "\\r";
-		else if (c == '\t')
-			esc += "\\t";
-		else
-			esc += c;
-	}
-	return esc;
-}
-
 void AgsTranslator::logMissingString(const Common::String &src) {
-	Common::String key = src;
-	key.trim();
-	if (key.empty())
-		return;
-
 	// Don't log the same missing string over and over
-	if (_missingStrings.contains(key))
+	if (_missingStrings.contains(src))
 		return;
-	_missingStrings[key] = true;
+	_missingStrings[src] = true;
 
-	Common::String line = Common::String::format(
-		"{\"%s\":\"\"}\n",
-		jsonEscape(key).c_str());
-
-	// Log untranslated strings to a file to assist fan translators in creating their mapping.
-	if (!appendTextToSaveFile("translation_override_missing.jsonl", line)) {
-		warning("AGS Translator: failed to append missing string");
+	Common::String hexStr;
+	for (uint i = 0; i < src.size(); ++i) {
+		hexStr += Common::String::format("%02X ", (unsigned char)src[i]);
 	}
+
+	debug(0, "AGS Translation Missing: '%s' (Hex: %s)", src.c_str(), hexStr.c_str());
 }
 
 const char *AgsTranslator::getTranslation(const char *src) {
@@ -137,8 +64,22 @@ const char *AgsTranslator::getTranslation(const char *src) {
 	}
 
 	const Common::String key = normalizeKey(Common::String(src));
+
+	// If the exact string is already a target translation value, it means
+	// AGS is re-translating an already translated string (e.g., in UI loops).
+	// We should just return it without parsing it as a missing original string.
+	// NOTE: We don't have a reverse lookup right now, but for simplicity we
+	// can just check values. Since checking all values every frame is O(N),
+	// we will add a reverse cache during JSON load!
 	if (_entries.contains(key)) {
 		return _entries[key].c_str();
+	}
+
+	// If the exact string is already a target translation value, it means
+	// AGS is re-translating an already translated string (e.g., in UI loops).
+	// We should just return it without parsing it as a missing original string.
+	if (_translatedValues.contains(src)) {
+		return src;
 	}
 
 	logMissingString(Common::String(src));
@@ -180,7 +121,9 @@ bool AgsTranslator::loadFromJsonIfPresent(const Common::String &filename) {
 		if (it->_value->isString()) {
 			Common::String key = normalizeKey(it->_key);
 			if (!key.empty()) {
-				_entries[key] = it->_value->asString();
+				Common::String val = it->_value->asString();
+				_entries[key] = val;
+				_translatedValues[val] = true;
 			}
 		}
 	}

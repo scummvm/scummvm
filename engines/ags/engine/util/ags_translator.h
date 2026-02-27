@@ -40,11 +40,12 @@ public:
 	// Returns true and sets out if translation exists; otherwise false.
 	bool translate(const Common::String &src, Common::String &out) const;
 
-	// Returns the translated c-string, or the original if not found. Logs the initial lookup.
+	// Returns the translated c-string, or the original if not found.
 	const char *getTranslation(const char *src);
 
 private:
 	Common::HashMap<Common::String, Common::String> _entries;
+	Common::HashMap<Common::String, bool> _translatedValues;
 	Common::HashMap<Common::String, bool> _missingStrings;
 	bool _loaded = false;
 
