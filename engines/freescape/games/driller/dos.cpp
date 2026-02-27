@@ -27,11 +27,6 @@
 
 namespace Freescape {
 
-extern byte kEGADefaultPalette[16][3];
-extern byte kCGAPaletteRedGreen[4][3];
-extern byte kCGAPalettePinkBlue[4][3];
-extern byte kHerculesPaletteGreen[2][3];
-
 void DrillerEngine::initDOS() {
 	if (_renderMode == Common::kRenderEGA)
 		_viewArea = Common::Rect(40, 16, 280, 117);
@@ -156,13 +151,6 @@ Graphics::ManagedSurface *DrillerEngine::load8bitTitleImage(Common::SeekableRead
 	return surface;
 }
 
-byte kCGAPalettePinkBlueWhiteData[4][3] = {
-	{0x00, 0x00, 0x00},
-	{0x55, 0xff, 0xff},
-	{0xff, 0x55, 0xff},
-	{0xff, 0xff, 0xff},
-};
-
 /*
  The following function is only used for decoding images for
  the Driller DOS demo
@@ -244,13 +232,13 @@ void DrillerEngine::loadAssetsDOSFullGame() {
 		file.open("SCN1C.DAT");
 		if (file.isOpen()) {
 			_title = load8bitBinImage(&file, 0x0);
-			_title->setPalette((byte*)&kCGAPalettePinkBlueWhiteData, 0, 4);
+			_title->setPalette((byte*)&kCGAPalettePinkBlueBright, 0, 4);
 		}
 		file.close();
 		file.open("CGATITLE.RL");
 		if (file.isOpen()) {
 			_title = load8bitTitleImage(&file, 0x1b2);
-			_title->setPalette((byte*)&kCGAPalettePinkBlueWhiteData, 0, 4);
+			_title->setPalette((byte*)&kCGAPalettePinkBlueBright, 0, 4);
 		}
 		file.close();
 		file.open("DRILLC.EXE");
@@ -265,7 +253,7 @@ void DrillerEngine::loadAssetsDOSFullGame() {
 		loadGlobalObjects(&file, 0x1fa2, 8);
 		load8bitBinary(&file, 0x7bb0, 4);
 		_border = load8bitBinImage(&file, 0x210);
-		_border->setPalette((byte*)&kCGAPalettePinkBlueWhiteData, 0, 4);
+		_border->setPalette((byte*)&kCGAPalettePinkBlueBright, 0, 4);
 		swapPalette(1);
 	} else if (_renderMode == Common::kRenderHercG) {
 		file.open("SCN1H.DAT");
@@ -309,7 +297,7 @@ void DrillerEngine::loadAssetsDOSDemo() {
 		error("Failed to open 'd1' file");
 
 	_title = load8bitDemoImage(&file, 0x0);
-	_title->setPalette((byte*)&kCGAPalettePinkBlueWhiteData, 0, 4);
+	_title->setPalette((byte*)&kCGAPalettePinkBlueBright, 0, 4);
 
 	file.close();
 	file.open("d2");
@@ -321,7 +309,7 @@ void DrillerEngine::loadAssetsDOSDemo() {
 	loadGlobalObjects(&file, 0x53, 8);
 	load8bitBinary(&file, 0x55b0, 4);
 	_border = load8bitDemoImage(&file, 0x6220);
-	_border->setPalette((byte*)&kCGAPalettePinkBlueWhiteData, 0, 4);
+	_border->setPalette((byte*)&kCGAPalettePinkBlueBright, 0, 4);
 
 	// Fixes corrupted area names in the demo data
 	_areaMap[2]->_name = "LAPIS LAZULI";
