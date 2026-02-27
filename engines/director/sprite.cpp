@@ -616,10 +616,11 @@ void Sprite::replaceFrom(Sprite *nextSprite) {
 	if (!nextSprite)
 		return;
 
+	_scriptId = nextSprite->_scriptId;
+
 	if (_puppet) {
 		// Whole sprite is in puppet mode.
 		// The only thing we want to copy over is the script ID.
-		_scriptId = nextSprite->_scriptId;
 		return;
 	}
 
