@@ -933,16 +933,19 @@ void InsaneRebel2::procSKIP(int32 subSize, Common::SeekableReadStream &b) {
 
 	if (!par2) {
 		// Single ID mode: skip next chunk if this object's bit is set (disabled)
-		if (isBitSet(par1)) {
+		bool bit1 = isBitSet(par1);
+		if (bit1) {
 			_player->_skipNext = true;
-			debug("Rebel2 SKIP: ID=%d bit is set, skipping next chunk", par1);
 		}
+		debug("Rebel2 SKIP: single ID=%d bit=%d skip=%d frame=%d", par1, bit1 ? 1 : 0, _player->_skipNext ? 1 : 0, _player->_frame);
 	} else {
 		// Dual ID mode: skip if bits are different (XOR logic)
-		if (isBitSet(par1) != isBitSet(par2)) {
+		bool bit1 = isBitSet(par1);
+		bool bit2 = isBitSet(par2);
+		if (bit1 != bit2) {
 			_player->_skipNext = true;
-			debug("Rebel2 SKIP: ID=%d and ID=%d bits differ, skipping next chunk", par1, par2);
 		}
+		debug("Rebel2 SKIP: dual ID1=%d(bit=%d) ID2=%d(bit=%d) skip=%d frame=%d", par1, bit1 ? 1 : 0, par2, bit2 ? 1 : 0, _player->_skipNext ? 1 : 0, _player->_frame);
 	}
 }
 
@@ -1184,18 +1187,26 @@ void InsaneRebel2::iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, 
 		// when childId <= 0. The original game's setBit(0)/clearBit(0) affects ALL bits,
 		// which would disable/enable all enemies at once - not the intended linking behavior.
 		if (parentId >= 1 && parentId < 512 && childId >= 1 && childId < 512) {
-			// Shift links
+			// Shift links (original: 4 link slots at DAT_0045797c/817c/897c/917c)
 			_rebelLinks[parentId][2] = _rebelLinks[parentId][1];
 			_rebelLinks[parentId][1] = _rebelLinks[parentId][0];
 			_rebelLinks[parentId][0] = childId;
 
-			// DO NOT modify bits here! All bits are reset to CLEAR by clearBit(0) at level start.
-			// SKIP chunks use XOR logic: skip when bits DIFFER.
-			// - Both bits CLEAR (alive) -> same -> don't skip -> enemy visible
-			// - Parent SET (dead), child SET (disabled) -> same -> skip -> enemy hidden
-			// The bits are only modified when enemies are actually destroyed (setBit/clearBit
-			// calls in processMouse() enemy destruction handling).
-			debug("Rebel2: Linked ID=%d to Parent=%d (Slot 0)", childId, parentId);
+			// Mirror parent's bit state to child (INVERTED):
+			// - Parent alive (bit clear) → setBit(child) → child hidden
+			// - Parent dead (bit set) → clearBit(child) → child shown
+			// From FUN_0041CADB case 0, par3==4:
+			//   bVar3 = FUN_00423970(parentId);
+			//   if (bVar3 == 0) setBit(childId); else clearBit(childId);
+			// This ensures linked children (explosion/death sprites) are hidden
+			// while the parent is alive, and revealed when the parent is destroyed.
+			if (!isBitSet(parentId)) {
+				setBit(childId);
+				debug("Rebel2: Linked ID=%d to Parent=%d (Slot 0) - child DISABLED (parent alive)", childId, parentId);
+			} else {
+				clearBit(childId);
+				debug("Rebel2: Linked ID=%d to Parent=%d (Slot 0) - child ENABLED (parent dead)", childId, parentId);
+			}
 		} else {
 			debug("Rebel2: Skipping link with invalid IDs childId=%d parentId=%d", childId, parentId);
 		}
@@ -1209,15 +1220,22 @@ void InsaneRebel2::iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, 
 		if (targetId < 1 || targetId >= 0x200)
 			return;
 
-		// Handler 8/25: FUN_401234 case 0 / FUN_41E7C2 par3==1, par4!=0
-		// "If enemy type par4 has been killed (bit set in wave state), disable targetId"
-		// This conditionally hides entities based on which enemy groups have been destroyed.
-		// Both Handler 8 (on-foot) and Handler 25 (FPS/cover) use DAT_0047ab98 for wave state.
+		// Handler 8/25: FUN_401234 case 0 / FUN_0041CADB case 0 par3==1
+		// From original FUN_0041CADB:
+		//   if (par4 == 100) clearBit(body0);  // Force enable
+		//   else { bitMask = 1 << (par4 & 0x1f); if (waveState & bitMask) setBit(body0); }
 		if ((_rebelHandler == 8 || _rebelHandler == 25) && value != 0) {
-			int bitMask = 1 << (value & 0x1f);
-			if ((_rebelWaveState & bitMask) != 0) {
-				setBit(targetId);
-				debug("Rebel2 Opcode2 (H%d): Disable target=%d (type %d killed, wave=0x%x)", _rebelHandler, targetId, value, _rebelWaveState);
+			if (value == 100) {
+				// par4==100: Force enable the target (original: FUN_00423a00)
+				clearBit(targetId);
+				debug("Rebel2 Opcode2 (H%d): Force ENABLE target=%d (par4=100)", _rebelHandler, targetId);
+			} else {
+				// Check wave state: if enemy type has been killed, disable target
+				int bitMask = 1 << (value & 0x1f);
+				if ((_rebelWaveState & bitMask) != 0) {
+					setBit(targetId);
+					debug("Rebel2 Opcode2 (H%d): Disable target=%d (type %d killed, wave=0x%x)", _rebelHandler, targetId, value, _rebelWaveState);
+				}
 			}
 			return;
 		}

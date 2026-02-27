@@ -338,6 +338,7 @@ void SmushPlayer::init(int32 speed) {
 	_frame = 0;
 	_speed = speed;
 	_endOfFile = false;
+	_storeFrame = false;
 
 	_vm->_smushVideoShouldFinish = false;
 	_vm->_smushActive = true;
@@ -438,18 +439,20 @@ void SmushPlayer::handleFetch(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFetch()");
 	assert(subSize >= 6);
 
+	// Read FTCH data: 2 unknown + 2 X offset + 2 Y offset
+	// Original (FUN_00423A50 lines 91-103): reads X/Y from chunk data and
+	// re-renders stored FOBJ at position (X + param_3 + DAT_00482c1c, Y + param_4 + DAT_00482c20)
+	int16 ftchUnknown = b.readSint16LE();
+	int16 ftchX = b.readSint16LE();
+	int16 ftchY = b.readSint16LE();
+
+	debug("SmushPlayer::handleFetch: frame=%d unknown=%d x=%d y=%d",
+		_frame, ftchUnknown, ftchX, ftchY);
+
 	// For RA2 Handler 25, skip FTCH because the frame buffer only contains the
 	// par4=5 base background without the overlays (par4=4, 6, 7) that were drawn
 	// immediately in frame 0. Restoring would erase those overlays and make
 	// enemies invisible since they draw on top of the erased areas.
-	//
-	// Handler 25 (Level 2 speeder bike): Corridor overlay is drawn in procPreRendering
-	// BEFORE FOBJs. FTCH would erase the overlay, making enemies draw on wrong background.
-	//
-	// Handler 8 (Level 2 on-foot): FTCH is NOT skipped here. FTCH restores the clean
-	// background each frame, which properly erases old enemy sprite positions before
-	// new FOBJs draw updated positions. procPreRendering also restores _level2Background,
-	// but FTCH provides the authoritative clean slate from frame 0's stored background.
 	if (_vm->_game.id == GID_REBEL2 && _insane != nullptr) {
 		InsaneRebel2 *rebel2 = static_cast<InsaneRebel2 *>(_insane);
 		int handler = rebel2->getHandler();
