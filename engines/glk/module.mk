@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	blorb.o \
 	conf.o \
 	debugger.o \
+	dialogs.o \
 	events.o \
 	fonts.o \
 	glk.o \

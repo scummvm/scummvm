@@ -236,6 +236,9 @@ void WindowStream::setHyperlink(uint linkVal) {
 }
 
 void WindowStream::setZColors(uint fg, uint bg) {
+	// record that the game has spoken a colour command
+	Windows::_gotBgColor = true;
+	
 	if (!_writable || !g_conf->_styleHint)
 		return;
 
@@ -267,21 +270,27 @@ void WindowStream::setZColors(uint fg, uint bg) {
 
 	if (/*bg != zcolor_Transparent &&*/ bg != zcolor_Cursor) {
 		if (bg == zcolor_Default) {
-			_window->_attr.bgset = false;
-			_window->_attr.bgcolor = 0;
-			Windows::_overrideBgSet = false;
-			Windows::_overrideBgVal = 0;
-
-			g_conf->_windowColor = g_conf->_windowSave;
-			g_conf->_borderColor = g_conf->_borderSave;
+			// only process default if neither game nor user override is active
+			if (!Windows::_overrideBgSet && !g_conf->_windowColorOverride) {
+				_window->_attr.bgset = false;
+				_window->_attr.bgcolor = 0;
+				Windows::_overrideBgSet = false;
+				Windows::_overrideBgVal = 0;
+				if (g_conf->_windowColor == g_conf->parseColor("ffffff")) {
+					g_conf->_windowColor = g_conf->_windowSave;
+					g_conf->_borderColor = g_conf->_borderSave;
+				}
+			}
 		} else if (bg != zcolor_Current) {
 			_window->_attr.bgset = true;
 			_window->_attr.bgcolor = bg;
-			Windows::_overrideBgSet = true;
-			Windows::_overrideBgVal = bg;
+			if (!g_conf->_windowColorOverride) {
+				Windows::_overrideBgSet = true;
+				Windows::_overrideBgVal = bg;
 
-			g_conf->_windowColor = back;
-			g_conf->_borderColor = back;
+				g_conf->_windowColor = back;
+				g_conf->_borderColor = back;
+			}
 		}
 	}
 

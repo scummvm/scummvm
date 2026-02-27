@@ -507,7 +507,8 @@ void GlkAPI::glk_stylehint_set(uint wintype, uint style, uint hint, int val) {
 	}
 
 	if (wintype == wintype_TextBuffer && style == style_Normal && hint == stylehint_BackColor) {
-		g_conf->_windowColor = styles[style].bg;
+        if (!g_conf->_windowColorOverride)
+            g_conf->_windowColor = styles[style].bg;
 	}
 
 	if (wintype == wintype_TextBuffer && style == style_Normal && hint == stylehint_TextColor) {
