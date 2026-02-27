@@ -2407,14 +2407,19 @@ void ColonyEngine::renderCorridor3D() {
 	// Walls always use wireframe with fill (opaque walls).
 	_gfx->setWireframe(true, wallFill);
  
-	// Draw ceiling grid (Cuadricule) - Historically only on ceiling
-	for (int i = 0; i <= 32; i++) {
-		float d = i * 256.0f;
-		float maxD = 32.0f * 256.0f;
-		float zCeil = 160.0f;
-		
-		_gfx->draw3DLine(d, 0.0f, zCeil, d, maxD, zCeil, wallColor);
-		_gfx->draw3DLine(0.0f, d, zCeil, maxD, d, zCeil, wallColor);
+	// Draw ceiling grid (Cuadricule) - DOS wireframe mode only.
+	// Mac color mode: original corridor renderer only showed ceiling edges at wall
+	// boundaries (via 2D perspective), not a full-map grid. Wall tops from draw3DWall
+	// already provide the ceiling lines where walls exist.
+	if (!(macMode && _hasMacColors)) {
+		for (int i = 0; i <= 32; i++) {
+			float d = i * 256.0f;
+			float maxD = 32.0f * 256.0f;
+			float zCeil = 160.0f;
+
+			_gfx->draw3DLine(d, 0.0f, zCeil, d, maxD, zCeil, wallColor);
+			_gfx->draw3DLine(0.0f, d, zCeil, maxD, d, zCeil, wallColor);
+		}
 	}
 
 	for (int y = 0; y < 32; y++) {
