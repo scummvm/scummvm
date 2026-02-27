@@ -946,6 +946,28 @@ public:
 	// Queue audio data for playback on a specific track
 	void queueAudioData(int trackIdx, uint8 *data, int32 size, int volume, int pan);
 
+	// ========== Sound Effects (SAD files) ==========
+	// 8 standalone SAUD files in SYSTM/ loaded at init for one-shot SFX.
+	// Slot mapping (from FUN_0042a3b0 init):
+	//   0=BLAST.SAD   1=CRASH.SAD   2=EXPLODE.SAD  3=ALERT.SAD
+	//   4=LOCKON.SAD  5=BONUS.SAD   6=HBLAST.SAD   7=TBLAST.SAD
+
+	static const int kRA2NumSfx = 8;
+
+	byte *_sfxData[kRA2NumSfx];         // Loaded PCM data for each SAD slot
+	uint32 _sfxSize[kRA2NumSfx];        // PCM data size per slot
+	Audio::SoundHandle _sfxHandles[kRA2NumSfx]; // Mixer handles for SFX playback
+
+	// Load all SAD files from SYSTM/ directory
+	void loadSfx();
+
+	// Free all loaded SFX data
+	void freeSfx();
+
+	// Play a one-shot sound effect
+	// slot: 0-7 (SAD file index), volume: 0-127, pan: -127..+127
+	void playSfx(int slot, int volume, int pan);
+
 };
 
 } // End of namespace Insane
