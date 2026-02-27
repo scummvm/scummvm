@@ -48,7 +48,7 @@ void drawRect(Graphics::Surface *surface, int x, int y, int w, int h, byte color
 void drawRect(byte *screenBuffer, int x, int y, int w, int h, byte color) {
 	Graphics::Surface surface;
 	surface.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
-	drawRect(&surface, 0, 0, w, h, color);
+	drawRect(&surface, 0, 0, w - 1, h, color);
 
 	for (int py = 0; py < h; py++) {
 		for (int px = 0; px < w; px++) {

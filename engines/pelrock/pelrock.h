@@ -113,6 +113,8 @@ private:
 
 	void showInventoryOverlay();
 
+	void checkMouseOverInventoryOverlay(int x, int y);
+
 	void gameLoop();
 	void computerLoop();
 	void extraScreenLoop();

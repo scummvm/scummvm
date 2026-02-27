@@ -21,6 +21,7 @@
 #ifndef PELROCK_TYPES_H
 #define PELROCK_TYPES_H
 
+#include "common/rect.h"
 #include "common/debug.h"
 #include "common/scummsys.h"
 #include "common/system.h"
@@ -163,7 +164,14 @@ struct ActionPopupState {
 struct InventoryOverlayState {
 	bool isActive = false;
 	int page = 0;
+	int flashingIconIndex = -1;
+	Common::Rect inventorySelectionArea = Common::Rect(0, 340, 640, 400);
+	Common::Rect ballonInventoryPath = Common::Rect(0, 0, kBalloonWidth, kBalloonHeight);
 	byte *arrows[2] = { nullptr, nullptr };
+
+	bool posInInventorySelectionArea(int x, int y) {
+		return inventorySelectionArea.contains(x, y);
+	}
 };
 
 struct AlfredState {
@@ -172,7 +180,7 @@ struct AlfredState {
 	int curFrame = 0;
 	uint16 movementSpeedX = 6; // pixels per frame
 	uint16 movementSpeedY = 5; // pixels per frame
-	uint16 x = 319;
+	uint16 x = 330;
 	uint16 y = 302;
 	byte w = kAlfredFrameWidth;
 	byte h = kAlfredFrameHeight;

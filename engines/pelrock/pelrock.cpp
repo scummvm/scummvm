@@ -154,7 +154,7 @@ void PelrockEngine::init() {
 	if (gameInitialized == false) {
 		gameInitialized = true;
 		loadAnims();
-		setScreen(0, ALFRED_DOWN);
+		setScreen(0, ALFRED_LEFT);
 		// setScreen(3, ALFRED_RIGHT);
 		// setScreen(22, ALFRED_DOWN);
 		// setScreen(41, ALFRED_DOWN);
@@ -164,7 +164,7 @@ void PelrockEngine::init() {
 		// setScreen(52, ALFRED_DOWN);
 		// setScreen(15, ALFRED_DOWN);
 		// setScreen(2, ALFRED_LEFT);
-		// alfredState.x = 576;
+		// _alfredState.x = 576;
 		// alfredState.y = 374;
 	}
 
@@ -1492,11 +1492,18 @@ bool PelrockEngine::isSpriteUnder(Sprite *sprite, int x, int y) {
 	return false;
 }
 
-Common::Point getPositionInBallonForIndex(int i, int x, int y) {
-	return Common::Point(x + 20 + (i * (kVerbIconWidth + 2)), y + 20);
+Common::Point getPositionInBalloonForIndex(int i, int x, int y) {
+	return Common::Point(4 + x + (i * kVerbIconWidth), y + 18);
+}
+
+Common::Rect getActionArea(int x, int y) {
+	Common::Point p1 = getPositionInBalloonForIndex(0, x, y);
+	Common::Point p2 = getPositionInBalloonForIndex(4, x, y);
+	return Common::Rect(p1.x, p1.y, p2.x + kVerbIconWidth, p2.y + kVerbIconHeight);
 }
 
 void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
+
 	drawSpriteToBuffer(_compositeBuffer, 640, _res->_popUpBalloon + (curFrame * kBalloonHeight * kBalloonWidth), posx, posy, kBalloonWidth, kBalloonHeight, 255);
 	Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
 
@@ -1508,23 +1515,29 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 		if (icon == actions[i] && shouldBlink) {
 			continue;
 		}
-		Common::Point p = getPositionInBallonForIndex(i, posx, posy);
+		Common::Point p = getPositionInBalloonForIndex(i, posx, posy);
 		drawSpriteToBuffer(_compositeBuffer, 640, _res->_verbIcons[actions[i]], p.x, p.y, kVerbIconWidth, kVerbIconHeight, 1);
 	}
 
-	if(icon == ITEM) {
-		if(!_inventoryOverlayState.isActive) {
-			_inventoryOverlayState.isActive = true;
-			// _inventoryOverlayState.page =
-		}
-		showInventoryOverlay();
+	Common::Rect actionArea = getActionArea(posx, posy);
+	// moving mouse over action area outside of the item closes the inventoryoverlay
+	if (actionArea.contains(_events->_mouseX, _events->_mouseY)) {
+		_inventoryOverlayState.isActive = icon == ITEM;
 	}
 
-	if (_state->selectedInventoryItem >= 0 && !_state->inventoryItems.empty()) {
-		if (icon == ITEM && shouldBlink) {
-			return;
+	if(_inventoryOverlayState.isActive) {
+		showInventoryOverlay();
+		if(_inventoryOverlayState.posInInventorySelectionArea(_events->_mouseX, _events->_mouseY)) {
+			checkMouseOverInventoryOverlay(_events->_mouseX, _events->_mouseY);
 		}
-		drawSpriteToBuffer(_compositeBuffer, 640, _res->getIconForObject(_state->selectedInventoryItem).iconData, posx + 20 + (actions.size() * (kVerbIconWidth + 2)), posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
+	}
+
+
+	if (_state->selectedInventoryItem >= 0 && !_state->inventoryItems.empty()) {
+		if (icon != ITEM || !shouldBlink) {
+			Common::Point p = getPositionInBalloonForIndex(actions.size(), posx, posy);
+			drawSpriteToBuffer(_compositeBuffer, 640, _res->getIconForObject(_state->selectedInventoryItem).iconData, p.x, p.y, kVerbIconWidth, kVerbIconHeight, 1);
+		}
 	}
 
 	if (_actionPopupState.curFrame < 3) {
@@ -1532,8 +1545,6 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 	} else {
 		_actionPopupState.curFrame = 0;
 	}
-
-
 }
 
 void PelrockEngine::animateTalkingNPC(Sprite *animSet) {
@@ -1601,10 +1612,42 @@ void PelrockEngine::showInventoryOverlay() {
 
 	for (int i = firstItem; i < invSize && i < firstItem + kInventoryPageSize; i++) {
 		Common::Point p = getPositionInOverlayForIndex(i - firstItem);
+		if( i == _inventoryOverlayState.flashingIconIndex && _chrono->getFrameCount() % kIconBlinkPeriod == 0) {
+			continue;
+		}
 		drawSpriteToBuffer(_compositeBuffer, 640, _res->getIconForObject(_state->inventoryItems[i]).iconData, p.x, p.y, 60, 60, 1);
 	}
+
 	drawSpriteToBuffer(_compositeBuffer, 640, _inventoryOverlayState.arrows[0], 0, 340, 20, 60, 255);
 	drawSpriteToBuffer(_compositeBuffer, 640, _inventoryOverlayState.arrows[1], 620, 340, 20, 60, 255);
+}
+
+void PelrockEngine::checkMouseOverInventoryOverlay(int x, int y) {
+
+	if(x < 20) {
+		// if(_inventoryOverlayState.page > 0) {
+		// 	_inventoryOverlayState.page--;
+		// }
+		debug("left arrow of inventory overlay");
+	} else if(x >= 620) {
+		// uint maxPage = (_state->inventoryItems.size() - 1) / kInventoryPageSize;
+		// if(_inventoryOverlayState.page < maxPage) {
+		// 	_inventoryOverlayState.page++;
+		// }
+		debug("right arrow of inventory overlay");
+	} else {
+		// mouse hover over inventory item, laid out horizontally, y coordinate is not relevant for determining which item is selected
+		int index = (x - 20) / 60 + (_inventoryOverlayState.page * kInventoryPageSize);
+		if(index < _state->inventoryItems.size()) {
+			debug("hovering over inventory item %d at index %d", _state->inventoryItems[index], index);
+			// _state->selectedInventoryItem = index;
+			_inventoryOverlayState.flashingIconIndex = index;
+		} else {
+			debug("hovering over empty slot in inventory overlay, no item at index %d", index);
+			// _state->selectedInventoryItem = -1;
+			_inventoryOverlayState.flashingIconIndex = -1;
+		}
+	}
 }
 
 void PelrockEngine::gameLoop() {
@@ -1772,7 +1815,7 @@ VerbIcon PelrockEngine::isActionUnder(int x, int y) {
 	Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
 	int loopEnd = _state->selectedInventoryItem != -1 ? actions.size() + 1 : actions.size();
 	for (int i = 0; i < loopEnd; i++) {
-		Common::Point p = getPositionInBallonForIndex(i, _actionPopupState.x, _actionPopupState.y);
+		Common::Point p = getPositionInBalloonForIndex(i, _actionPopupState.x, _actionPopupState.y);
 		Common::Rect actionRect = Common::Rect(p.x, p.y, p.x + kVerbIconWidth, p.y + kVerbIconHeight);
 		if (i == actions.size()) {
 			// Check inventory item
