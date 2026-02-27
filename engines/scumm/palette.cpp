@@ -153,14 +153,6 @@ void ScummEngine::resetPalette(bool isBootUp) {
 		{ 0x00, 0x00, 0x00, 0x55, 0xFF, 0xFF, 0xFF, 0x55, 0xFF, 0xFF, 0xFF, 0xFF }
 	};
 
-	static const byte tableHercAPalette[] = {
-		0x00, 0x00, 0x00,	0xAE, 0x69, 0x38
-	};
-
-	static const byte tableHercGPalette[] = {
-		0x00, 0x00, 0x00,	0x00, 0xFF, 0x00
-	};
-
 	// Palette based on Apple IIgs Technical Notes: IIgs 2523063 Master Color Values
 	// Rearranged to match C64 color positions
 	static const byte tableApple2gsPalette[] = {
@@ -195,9 +187,9 @@ void ScummEngine::resetPalette(bool isBootUp) {
 	_enableEGADithering = false;
 
 	if (_renderMode == Common::kRenderHercA) {
-		setPaletteFromTable(tableHercAPalette, sizeof(tableHercAPalette) / 3);
+		setPaletteFromTable(Graphics::HGC_A_PALETTE, sizeof(Graphics::HGC_A_PALETTE) / 3);
 	} else if (_renderMode == Common::kRenderHercG) {
-		setPaletteFromTable(tableHercGPalette, sizeof(tableHercGPalette) / 3);
+		setPaletteFromTable(Graphics::HGC_G_PALETTE, sizeof(Graphics::HGC_G_PALETTE) / 3);
 	} else if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGAComp) {
 		setPaletteFromTable(_cgaColors[cgaPalIndex * 2 + cgaPalIntensity], sizeof(_cgaColors[0]) / 3);
 		// Cursor palette
