@@ -463,6 +463,8 @@ public://DEBUG So logic functions can be called from the engine class for testin
 	void sub_3F906();
 	void toggleSoundEnabled();
 	void toggleMusicEnabled();
+	void menuSaveLoadMenu(bool isLoad);
+	bool loadSavegame(int slot);
 	void handleGameMenu();
 	void menuQuitGame();
 	void menuExit();

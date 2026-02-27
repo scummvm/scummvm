@@ -1089,7 +1089,7 @@ void GameLogic::setPizzathonStatus(int flagNum) {
         _pizzathonListFlags1 |= 0x20;
         break;
     }
-    // _byte_306C8++; Never used
+    // _byte_306C8++; Never used but present in savegames
     if ((_pizzathonListFlags1 & 0x08) && (_pizzathonListFlags1 & 0x40) && (_pizzathonListFlags1 & 0x80) &&
         (_pizzathonListFlags2 & 0x01) && (_pizzathonListFlags2 & 0x02) && (_pizzathonListFlags1 & 0x02) &&
         (_pizzathonListFlags1 & 0x04) && (_pizzathonListFlags1 & 0x10) && (_pizzathonListFlags1 & 0x01) &&
@@ -8485,6 +8485,111 @@ void GameLogic::sub_3F906() {
 	_vm->_screen->drawSurfaceTransparent(_menuSurface, 0, 0);
 }
 
+void GameLogic::menuSaveLoadMenu(bool isLoad) {
+	_menuIsSaveLoad = isLoad ? 2 : 1;
+	
+	GxlArchive *m04Gxl = new GxlArchive("m04");
+	// sysMouseDriver(2);
+	// TODO: Set mouse zone 71, 248, 20, 71
+	_vm->drawImageToSurface(m04Gxl, "savegm.pcx", _menuSurface, 71, 20);
+	if (isLoad)
+		_vm->drawImageToSurface(m04Gxl, "load.pcx", _menuSurface, 71 + 43, 20 + 4);
+
+	// sysMouseDriver(1);
+	delete m04Gxl;
+
+	_vm->_screen->drawSurfaceTransparent(_menuSurface, 0, 0);
+}
+
+bool GameLogic::loadSavegame(int slot) {
+	if (slot != 0) {
+		warning("STUB - loadSavegame %d", slot);
+		return false;
+	}
+
+	Common::File fp;
+	if (!fp.open(Common::Path("ww.rst"))) {
+		error("Couldn't find 'ww.rst'.");
+	}
+
+	_vm->stopRoomAnimations();
+	if (_vm->_isMusicEnabled)
+		toggleMusicEnabled();
+
+	_vm->redrawInventory();
+	_vm->_wayneSpriteX = fp.readSint16LE();
+	_vm->_wayneSpriteY = fp.readSint16LE();
+	_vm->_garthSpriteX = fp.readSint16LE();
+	_vm->_garthSpriteY = fp.readSint16LE();
+	_vm->_wayneActorScale = fp.readSint16LE();
+	_vm->_garthActorScale = fp.readSint16LE();
+	_vm->_actorSpriteValue = fp.readSint16LE();
+	_vm->_inventoryItemsCount = fp.readByte();
+	_vm->_currentActorNum = fp.readByte();
+	_vm->_currentRoomNumber = fp.readByte();
+	_vm->_hoverObjectNumber = fp.readSint16LE();
+	_vm->_objectNumber = fp.readSint16LE();
+	_vm->_verbNumber = fp.readByte();
+	_vm->_verbNumber2 = fp.readByte();
+	_vm->_firstObjectNumber = fp.readSint16LE();
+	_vm->_isMusicEnabled = fp.readSint16LE();
+	_vm->_isSoundEnabled = fp.readSint16LE();
+	_vm->_musicIndex = fp.readByte();
+	_vm->_selectedDialogChoice = fp.readSint16LE();
+	_vm->_roomChangeCtr = fp.readByte();
+	_menuGameState = fp.readByte();
+	_r24_mazeRoomNumber = fp.readSint16LE();
+	_r24_mazeHoleNumber = fp.readSint16LE();
+	byte byte_306C8 = fp.readSint16LE(); // set but not used in pizzathon
+
+	for (int i = 0; i < 5; ++i)
+		_vm->_dialogChoices[i] = fp.readSint16LE();
+
+	for (int i = 0; i < 50; ++i) {
+		_vm->_inventoryItemsObjectMap[i] = fp.readByte();
+		_vm->_wayneInventory[i] = fp.readSint16LE();
+		_vm->_garthInventory[i] = fp.readSint16LE();
+	}
+
+	for (int i = 0; i < 404; ++i)
+		_vm->_roomObjects[i].roomNumber = fp.readSint16LE();
+
+	_pizzathonListFlags1 = fp.readByte();
+	_pizzathonListFlags2 = fp.readByte();
+	_r31_flags = fp.readByte();
+	_r0_flags = fp.readByte();
+	_r4_flags = fp.readByte();
+	_r5_flags = fp.readByte();
+	_r7_flags = fp.readByte();
+	_r11_flags = fp.readByte();
+	_r32_flags = fp.readByte();
+	_r1_flags1 = fp.readByte();
+	_r1_flags2 = fp.readByte();
+	_r2_flags = fp.readByte();
+	_r10_flags = fp.readByte();
+	_r12_flags = fp.readByte();
+	_r19_flags = fp.readByte();
+	_r9_flags = fp.readByte();
+	_r6_flags = fp.readByte();
+	_r8_flags = fp.readByte();
+	_r13_flags = fp.readByte();
+	_r20_flags = fp.readByte();
+	_r29_flags = fp.readByte();
+	_r30_flags = fp.readByte();
+	_r34_flags = fp.readByte();
+	_r35_flags = fp.readByte();
+	_r37_flags = fp.readByte();
+	_r36_flags = fp.readByte();
+	_r38_flags = fp.readByte();
+	_r39_flags = fp.readByte();	
+
+	if (_vm->_isMusicEnabled)
+		_vm->changeMusic();
+
+	fp.close();	
+	return true;
+}
+
 void GameLogic::toggleSoundEnabled() {
 	_vm->_isSoundEnabled = !_vm->_isSoundEnabled;
 }
@@ -8524,17 +8629,18 @@ void GameLogic::handleGameMenu() {
 			refresh = false;
 		}
 	} else if (_menuIsSaveLoad) {
-		int si = 1 + ((_vm->_mouseClickY - 35) / 15);
-		if (si >= 7) {
+		int slot = 1 + ((_vm->_mouseClickY - 35) / 15);
+		if (slot >= 7) {
 			sub_3F906();
 		} else {
 			if (_vm->_mouseClickX > 157)
-				si += 6;
+				slot += 6;
 
 			if (_menuIsSaveLoad == 1)
 				warning("STUB: saveSavegame()");
 			else
-				warning("if (!loadSavegame()) return;");
+				if (!loadSavegame(slot))
+					return;
 
 			menuExit();
 			refresh = false;
@@ -8550,13 +8656,13 @@ void GameLogic::handleGameMenu() {
 			menuDrawSoundEnabled();
 			break;
 		case 2:
-			warning("STUB: menuSaveLoadMenu(1)");
+			menuSaveLoadMenu(true);
 			break;
 		case 3:
-			warning("STUB: menuSaveLoadMenu(0)");
+			menuSaveLoadMenu(false);
 			break;
 		case 4:
-			warning("STUB: loadSaveGame(0)");
+			loadSavegame(0);
 			menuExit();
 			refresh = false;
 			break;
