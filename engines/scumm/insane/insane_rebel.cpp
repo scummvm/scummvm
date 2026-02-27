@@ -1469,6 +1469,8 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 
 		// Reset state when shipLevelMode != 0 && par4 == 1 (FUN_401234 lines 97-103)
 		if (_shipLevelMode != 0 && par4 == 1) {
+			// Clear ALL iactBits — matches FUN_00423880 calling FUN_00423a00(0)
+			clearBit(0);
 			// Clear link tables
 			for (int i = 0; i < 512; i++) {
 				_rebelLinks[i][0] = 0;
@@ -1872,6 +1874,10 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		// Note: This is local_14[4] in the decompiled code, NOT local_14[3] (par4)
 		if (par5 == 1) {
 			_rebelStatusBarSprite = 5;
+			// Clear ALL iactBits — matches FUN_00423880 calling FUN_00423a00(0)
+			// at IACT callback registration time. Each new wave video starts with
+			// a clean bit table so enemy IDs reused across videos work correctly.
+			clearBit(0);
 			// Reset link tables (DAT_0045797c through DAT_0045917c)
 			for (int i = 0; i < 512; i++) {
 				_rebelLinks[i][0] = 0;
@@ -1881,9 +1887,6 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 			// Reset wave state to accumulated phase state (same as Handler 8)
 			// DAT_0047ab98 = DAT_0047ab9c: ensures new wave starts with correct state
 			_rebelWaveState = _rebelPhaseState;
-			// NOTE: autopilot and damageLevel are NOT reset here (verified against
-			// FUN_41CADB case 4 lines 114-121). They persist across video boundaries
-			// so the player keeps their cover state when transitioning between waves.
 			debug("Rebel2 Opcode 6 (Handler 25): Status bar enabled, state reset, wave=0x%x autopilot=%d damageLevel=%d",
 				_rebelWaveState, _rebelAutopilot, _rebelDamageLevel);
 		}
@@ -2078,8 +2081,10 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		_rebelStatusBarSprite = (_rebelLevelType == 5) ? 53 : 5;
 		debug("Rebel2 Opcode 6: Status Bar ENABLED - sprite %d", _rebelStatusBarSprite);
 
+		// Clear ALL iactBits — matches FUN_00423880 calling FUN_00423a00(0)
+		clearBit(0);
+
 		// Clear link tables (DAT_0045797c through DAT_0045917c)
-		// These are 4 tables of 0x400 (1024) shorts each
 		for (int i = 0; i < 512; i++) {
 			_rebelLinks[i][0] = 0;
 			_rebelLinks[i][1] = 0;
