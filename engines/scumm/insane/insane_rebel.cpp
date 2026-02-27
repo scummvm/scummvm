@@ -3467,10 +3467,9 @@ void InsaneRebel2::spawnShot(int x, int y) {
 void InsaneRebel2::spawnTurretShot(int x, int y) {
 	for (int i = 0; i < 2; i++) {
 		if (_turretShots[i].counter == 0) {
-			// Play sound based on level type
-			// FUN_0041189e(-(ushort)(_rebelLevelType == 5) & 7, i + 1, 0x7f, 0, 0)
-			// Sound ID: 0 for type 5, 7 for others
-			// TODO: Play laser sound via audio system
+			// FUN_0041189e(-(ushort)(DAT_004436de == 5) & 7, i + 1, 0x7f, 0, 0)
+			// levelType 5: BLAST.SAD (slot 0), otherwise: TBLAST.SAD (slot 7)
+			playSfx((_rebelLevelType == 5) ? 0 : 7, 127, 0);
 
 			_turretShots[i].counter = getShotMaxDuration();
 			_turretShots[i].seqNum = _turretShotSeqCounter;
@@ -3482,11 +3481,12 @@ void InsaneRebel2::spawnTurretShot(int x, int y) {
 	}
 }
 
-// Handler 8 Vehicle shot spawn (based on FUN_401CCF)
+// Handler 8 Vehicle shot spawn (based on FUN_401CCF lines 65-69)
 void InsaneRebel2::spawnVehicleShot(int x, int y) {
 	for (int i = 0; i < 2; i++) {
 		if (_vehicleShots[i].counter == 0) {
-			// TODO: Play laser sound
+			// FUN_0041189e(6, local_c + 1, 0x7f, 0, 0) — HBLAST.SAD
+			playSfx(6, 127, 0);
 			_vehicleShots[i].counter = getShotMaxDuration();
 			_vehicleShots[i].targetX = x + _viewX;
 			_vehicleShots[i].targetY = y + _viewY;
@@ -3505,8 +3505,8 @@ void InsaneRebel2::spawnHandler25Shot(int x, int y) {
 
 	for (int i = 0; i < 2; i++) {
 		if (_turretShots[i].counter == 0) {
-			// Play sound: FUN_0041189e(6, i + 1, 0x7f, 0, 0)
-			// TODO: Play laser sound
+			// FUN_0041189e(6, local_1c + 1, 0x7f, 0, 0) — HBLAST.SAD
+			playSfx(6, 127, 0);
 
 			_turretShots[i].counter = getShotMaxDuration();
 			_turretShots[i].seqNum = _turretShotSeqCounter;
@@ -3527,8 +3527,8 @@ void InsaneRebel2::spawnHandler25Shot(int x, int y) {
 void InsaneRebel2::spawnSpaceShot(int x, int y) {
 	for (int i = 0; i < 2; i++) {
 		if (_spaceShots[i].counter == 0) {
-			// Play sound: FUN_0041189e(6, i + 1, 0x7f, 0, 0)
-			// TODO: Play laser sound
+			// FUN_0041189e(6, local_2c + 1, 0x7f, 0, 0) — HBLAST.SAD
+			playSfx(6, 127, 0);
 
 			_spaceShots[i].counter = getShotMaxDuration();
 			_spaceShots[i].targetX = x;  // Screen coords
