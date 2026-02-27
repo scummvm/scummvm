@@ -27,22 +27,6 @@
 
 namespace Freescape {
 
-extern byte kEGADefaultPalette[16][3];
-
-byte kDarkCGAPalettePinkBlue[4][3] = {
-	{0x00, 0x00, 0x00},
-	{0x00, 0xaa, 0xaa},
-	{0xaa, 0x00, 0xaa},
-	{0xaa, 0xaa, 0xaa},
-};
-
-byte kDarkCGAPaletteRedGreen[4][3] = {
-	{0x00, 0x00, 0x00},
-	{0x00, 0xaa, 0x00},
-	{0xaa, 0x00, 0x00},
-	{0xaa, 0x55, 0x00},
-};
-
 void DarkEngine::initDOS() {
 	if (_renderMode == Common::kRenderEGA)
 		_viewArea = Common::Rect(40, 24, 280, 125);
@@ -90,7 +74,7 @@ void DarkEngine::loadAssetsDOSDemo() {
 		file.open("SCN1C.DAT");
 		if (file.isOpen()) {
 			_title = load8bitBinImage(&file, 0x0);
-			_title->setPalette((byte *)&kDarkCGAPalettePinkBlue, 0, 4);
+			_title->setPalette((byte *)&kCGAPalettePinkBlue, 0, 4);
 		}
 		file.close();
 		file.open("DSIDEC.EXE");
@@ -105,7 +89,7 @@ void DarkEngine::loadAssetsDOSDemo() {
 		loadGlobalObjects(&file, 0x2554, 23);
 		load8bitBinary(&file, 0x8a70, 4);
 		_border = load8bitBinImage(&file, 0x210);
-		_border->setPalette((byte *)&kDarkCGAPalettePinkBlue, 0, 4);
+		_border->setPalette((byte *)&kCGAPalettePinkBlue, 0, 4);
 
 		swapPalette(1);
 	} else
@@ -146,7 +130,7 @@ void DarkEngine::loadAssetsDOSFullGame() {
 		file.open("SCN1C.DAT");
 		if (file.isOpen()) {
 			_title = load8bitBinImage(&file, 0x0);
-			_title->setPalette((byte *)&kDarkCGAPalettePinkBlue, 0, 4);
+			_title->setPalette((byte *)&kCGAPalettePinkBlue, 0, 4);
 		}
 		file.close();
 		file.open("DSIDEC.EXE");
@@ -155,12 +139,12 @@ void DarkEngine::loadAssetsDOSFullGame() {
 			error("Failed to open DSIDEC.EXE");
 
 		loadSpeakerFxDOS(&file, 0x3077 + 0x200, 0x2f28 + 0x200, 20);
-		loadFonts(&file, 0x8497);
+		loadFonts(&file, 0x8496);
 		loadMessagesFixedSize(&file, 0x2d65, 16, 27);
 		loadGlobalObjects(&file, 0x2554, 23);
 		load8bitBinary(&file, 0x8600, 16);
 		_border = load8bitBinImage(&file, 0x210);
-		_border->setPalette((byte *)&kDarkCGAPalettePinkBlue, 0, 4);
+		_border->setPalette((byte *)&kCGAPalettePinkBlue, 0, 4);
 
 		swapPalette(1);
 	} else
@@ -223,23 +207,23 @@ void DarkEngine::drawDOSUI(Graphics::Surface *surface) {
 	if (shield >= 0) {
 		Common::Rect shieldBar;
 		shieldBar = Common::Rect(72, 140, 151 - (_maxShield - shield), 141); // Upper outer shieldBar
-		surface->fillRect(shieldBar, front);
+		surface->fillRect(shieldBar, blue);
 		shieldBar = Common::Rect(72, 145, 151 - (_maxShield - shield), 146); // Lower outer shieldBar
-		surface->fillRect(shieldBar, front);
+		surface->fillRect(shieldBar, blue);
 
 		shieldBar = Common::Rect(72, 142, 151 - (_maxShield - shield), 144); // Inner shieldBar
-		surface->fillRect(shieldBar, blue);
+		surface->fillRect(shieldBar, front);
 	}
 
 	if (energy >= 0) {
 		Common::Rect energyBar;
 		energyBar = Common::Rect(72, 148, 151 - (_maxEnergy - energy), 149); // Upper outer energyBar
-		surface->fillRect(energyBar, front);
+		surface->fillRect(energyBar, blue);
 		energyBar = Common::Rect(72, 153, 151 - (_maxEnergy - energy), 154); // Lower outer energyBar
-		surface->fillRect(energyBar, front);
+		surface->fillRect(energyBar, blue);
 
 		energyBar = Common::Rect(72, 150, 151 - (_maxEnergy - energy), 152); // Inner energyBar
-		surface->fillRect(energyBar, blue);
+		surface->fillRect(energyBar, front);
 	}
 	uint32 clockColor = _renderMode == Common::kRenderCGA ? front : _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
 	drawBinaryClock(surface, 300, 124, clockColor, back);

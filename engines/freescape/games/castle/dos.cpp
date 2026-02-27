@@ -49,7 +49,6 @@ Common::SeekableReadStream *CastleEngine::decryptFile(const Common::Path &filena
 	return (new Common::MemoryReadStream(encryptedBuffer, size));
 }
 
-extern byte kEGADefaultPalette[16][3];
 extern Common::MemoryReadStream *unpackEXE(Common::File &ms);
 
 byte kEGARiddleFontPalette[16][3] = {

@@ -28,12 +28,6 @@
 
 namespace Freescape {
 
-extern byte kEGADefaultPalette[16][3];
-extern byte kCGAPaletteRedGreen[4][3];
-extern byte kCGAPalettePinkBlue[4][3];
-extern byte kCGAPaletteRedGreenBright[4][3];
-extern byte kCGAPalettePinkBlueBright[4][3];
-
 void EclipseEngine::initDOS() {
 	_viewArea = Common::Rect(40, 33, 280, 133);
 	_soundIndexShoot = 18;

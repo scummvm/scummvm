@@ -138,6 +138,13 @@ enum GameStateControl {
 	kFreescapeGameStateRestart,
 };
 
+extern byte kEGADefaultPalette[16][3];
+extern byte kCGAPaletteRedGreen[4][3];
+extern byte kCGAPalettePinkBlue[4][3];
+extern byte kCGAPalettePinkBlueBright[4][3];
+extern byte kCGAPaletteRedGreenBright[4][3];
+extern byte kHerculesPaletteGreen[2][3];
+
 struct CGAPaletteEntry {
 	int areaId;
 	byte *palette;
