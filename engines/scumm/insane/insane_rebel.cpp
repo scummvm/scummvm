@@ -5627,13 +5627,19 @@ void InsaneRebel2::renderEnemyOverlays(byte *renderBitmap, int pitch, int width,
 	if (_difficulty >= 2)
 		return;
 
+	// FOBJ sprites are rendered with _fobjOffsetX/Y applied (set from _rebelViewOffsetX/Y
+	// for Handler 25). Brackets must use the same offset so they align with the sprites.
+	int fobjOffX = _player ? _player->_fobjOffsetX : 0;
+	int fobjOffY = _player ? _player->_fobjOffsetY : 0;
+
 	Common::Rect viewRect(_viewX, _viewY, _viewX + videoWidth, _viewY + 200);
 
 	for (Common::List<enemy>::iterator it = _enemies.begin(); it != _enemies.end(); ++it) {
 		if (it->destroyed || !it->active || isBitSet(it->id))
 			continue;
 
-		Common::Rect r = it->rect;
+		Common::Rect r(it->rect.left + fobjOffX, it->rect.top + fobjOffY,
+		               it->rect.right + fobjOffX, it->rect.bottom + fobjOffY);
 		if (r.right <= viewRect.left || r.left >= viewRect.right ||
 		    r.bottom <= viewRect.top || r.top >= viewRect.bottom)
 			continue;
