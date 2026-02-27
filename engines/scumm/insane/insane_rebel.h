@@ -533,14 +533,14 @@ public:
 	//   +0x0C-0x1A: X1,Y1,X2,Y2,X3,Y3,X4,Y4 vertex coordinates
 
 	struct CollisionZone {
-		int16 x1, y1;  // Top-left
-		int16 x2, y2;  // Top-right
-		int16 x3, y3;  // Bottom-right
-		int16 x4, y4;  // Bottom-left
-		int16 frameStart;
-		int16 frameEnd;
-		int16 zoneType;
-		int16 subOpcode;  // 0x0D = primary, 0x0E = secondary
+		int16 x1, y1;  // Vertex 1 (body[2], body[3])
+		int16 x2, y2;  // Vertex 2 (body[4], body[5])
+		int16 x3, y3;  // Vertex 3 (body[6], body[7])
+		int16 x4, y4;  // Vertex 4 (body[8], body[9])
+		int16 field1;   // body[0] - control field (frame check: field2 - 1 == field1)
+		int16 field2;   // body[1] - control field
+		int16 filterValue; // par4 from IACT header - used for < 1000 filter
+		int16 subOpcode;   // 0x0D = primary, 0x0E = secondary
 		bool active;
 	};
 
@@ -569,10 +569,15 @@ public:
 	              int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, byte color);
 
 	// Register a collision zone from IACT opcode 5 data
-	void registerCollisionZone(Common::SeekableReadStream &b, int16 subOpcode);
+	void registerCollisionZone(Common::SeekableReadStream &b, int16 subOpcode, int16 par4);
 
 	// Reset collision zone counters (called at end of frame)
 	void resetCollisionZones();
+
+	// Per-frame collision checking against registered zones (FUN_4092D9 first loop)
+	// Tests aim/ship position against primary zone quadrilaterals
+	// Applies collision damage from DAT_0047e0f6 when inside obstacle zone
+	void checkCollisionZones();
 
 	int16 _playerDamage;  // Legacy damage counter (kept for compatibility/telemetry)
 	int16 _playerShield;  // Shields: 0..255 where 255 = full

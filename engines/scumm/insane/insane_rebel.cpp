@@ -1065,7 +1065,9 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 
 		if (par2 == 0x0D || par2 == 0x0E) {
 			// Register the collision zone from the remaining IACT data
-			registerCollisionZone(b, par2);
+			// par4 (userId from IACT header) is the filter value used by FUN_4092D9
+			// for the < 1000 test (offset +6 in the original stored pointer)
+			registerCollisionZone(b, par2, par4);
 		}
 
 	} else if (par1 == 7) {
@@ -1218,18 +1220,77 @@ void InsaneRebel2::iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, 
 	}
 }
 void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4) {
-	// FUN_00401234 case 1 (Handler 8): IACT opcode 3 — damage and hit counter.
+	// IACT opcode 3 — damage and hit counter processing.
+	// Based on FUN_4092D9 (Handler 0x26), FUN_40E35E (Handler 7), FUN_401234 (Handler 8).
 	//
-	// par3 == 5: Damage path — probability check, accumulate damage, trigger visual effect
-	//   Original reads probability from per-level table DAT_0047e0fc[levelIdx]
-	//   and damage amount from DAT_0047e0f8[levelIdx].
-	//   triggerDamageEffect (FUN_0042073B) is called OUTSIDE invulnerability check.
+	// The common dispatcher (FUN_4033CF) stores opcode 3 entries in the projectile impact
+	// list (DAT_0043f9e0). For handlers 0x26/7 these are processed per-frame by the
+	// per-handler collision function (FUN_4092D9/FUN_40E35E). For handlers 8/25 they're
+	// processed immediately during IACT dispatch.
 	//
-	// par3 == 1: Hit counter increment (DAT_0047ab80)
+	// FUN_403ba9() loop in FUN_4092D9 (lines 209-239):
+	//   par3 == 1/2: Direct hit — increment hit counter, apply damage if conditions met
+	//     - body[0] (offset +8): srcId for isBitSet check
+	//     - par4 != 0: damage from DAT_0047e0f4 (direct hit damage table)
+	//     - par3==1: par4 must be 1..9 for damage
+	//     - par3==2: par4 must be > 99, with wave state bit check for par4 >= 101
+	//
+	//   par3 == 5: Probabilistic damage — probability check from DAT_0047e0fc
+	//     - body[1] (offset +10): srcId for isBitSet check (different from par3=1/2!)
+	//     - Damage from DAT_0047e0f8 (probabilistic damage table)
+	//
+	// Stream position on entry: at offset +8 (body[0], first word after 8-byte header)
 
-	if (par3 == 5) {
-		b.skip(2); // Offset +8 (unused)
-		int16 srcId = b.readSint16LE(); // Offset +10: source enemy ID (local_14[5])
+	if (par3 == 1 || par3 == 2) {
+		// Direct hit path — FUN_4092D9 lines 209-227
+		int16 srcId = b.readSint16LE(); // body[0] (offset +8): source enemy ID
+
+		debug("Rebel2 Opcode3: par3=%d par4=%d srcId=%d isBitSet=%d",
+			par3, par4, srcId, isBitSet(srcId));
+
+		// FUN_00423970(srcId): only proceed if source enemy is active (bit clear)
+		if (!isBitSet(srcId)) {
+			// Always increment hit counter (DAT_0047ab80) — line 215
+			_rebelHitCounter++;
+			debug("Rebel2: Incremented hit counter -> %d", _rebelHitCounter);
+
+			// Damage path: par4 must be non-zero AND direct hit damage table > 0
+			// TODO: Read actual damage from per-level table DAT_0047e0f4
+			int directHitDamage = 8 + (_difficulty * 4);
+
+			if (par4 != 0 && directHitDamage > 0) {
+				bool shouldDamage = false;
+
+				if (par3 == 1 && par4 < 10) {
+					// par3=1: simple direct hit, par4 is hit strength (1..9)
+					shouldDamage = true;
+				} else if (par3 == 2 && par4 > 99) {
+					// par3=2: wave-gated hit, par4 > 99 required
+					// Additional check: for par4 >= 101 (0x65), verify wave state bit
+					// Original: (DAT_0047ab9c & (1 << ((par4 + 0x9b) & 0x1f))) == 0
+					if (par4 < 0x65 || (_rebelPhaseState & (1 << ((par4 + 0x9b) & 0x1f))) == 0) {
+						shouldDamage = true;
+					}
+				}
+
+				if (shouldDamage) {
+					// Apply damage unless invulnerable (DAT_0047ab64 == 0)
+					if (!_rebelInvulnerable) {
+						_playerDamage += directHitDamage;
+						if (_playerDamage > 255) _playerDamage = 255;
+						debug("Rebel2: DIRECT HIT damage from enemy %d. par3=%d par4=%d damage=%d total=%d",
+							srcId, par3, par4, directHitDamage, _playerDamage);
+					}
+					// Visual effect — FUN_00420515 (palette flash)
+					initDamageFlash();
+					// TODO: FUN_0041189e(1, 0, 0x7f, 0, 0) — play hit sound
+				}
+			}
+		}
+	} else if (par3 == 5) {
+		// Probabilistic damage path — FUN_4092D9 lines 228-239
+		b.skip(2); // Skip body[0] (offset +8, not used for par3=5)
+		int16 srcId = b.readSint16LE(); // body[1] (offset +10): source enemy ID
 
 		debug("Rebel2 Opcode3: par3=5 srcId=%d isBitSet=%d", srcId, isBitSet(srcId));
 
@@ -1251,7 +1312,8 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 					int damageAmount = 5 + (_difficulty * 2);
 					_playerDamage += damageAmount;
 					if (_playerDamage > 255) _playerDamage = 255;
-					debug("Rebel2: Damage HIT by Enemy %d. Damage=%d", srcId, _playerDamage);
+					debug("Rebel2: PROBABILISTIC damage from enemy %d. Damage=%d total=%d",
+						srcId, damageAmount, _playerDamage);
 				}
 				// Visual effect — called regardless of invulnerability.
 				// Handler 8: FUN_0042073B — palette flash + screen shake
@@ -1264,10 +1326,8 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 				// TODO: FUN_0041189e(1, 0, 0x7f, 0, 0) — play hit sound
 			}
 		}
-	} else if (par3 == 1) {
-		// Hit counter increment: unconditional in original (no isBitSet or par4 check)
-		_rebelHitCounter++;
-		debug("Rebel2: Incremented hit counter DAT_0047ab80 -> %d", _rebelHitCounter);
+	} else {
+		debug("Rebel2 Opcode3: UNHANDLED par3=%d par4=%d", par3, par4);
 	}
 }
 
@@ -3663,31 +3723,39 @@ void InsaneRebel2::drawCornerBrackets(byte *dst, int pitch, int width, int heigh
 // Based on FUN_40E35E, FUN_40C3CC disassembly from info.md
 // Zones are quadrilaterals registered via IACT opcode 5
 
-void InsaneRebel2::registerCollisionZone(Common::SeekableReadStream &b, int16 subOpcode) {
-	// IACT Opcode 5 data layout (from info.md):
-	//   +0x00: opcode (5) - already read by caller
-	//   +0x02: sub-opcode (0x0D or 0x0E) - passed as parameter
-	//   +0x04: par3 (flags)
-	//   +0x06: zoneType
-	//   +0x08: frameStart
-	//   +0x0A: frameEnd
-	//   +0x0C-0x1A: X1,Y1,X2,Y2,X3,Y3,X4,Y4 vertex coordinates
+void InsaneRebel2::registerCollisionZone(Common::SeekableReadStream &b, int16 subOpcode, int16 par4) {
+	// IACT Opcode 5 data layout — corrected from FUN_4033CF / FUN_4092D9 analysis:
 	//
-	// The stream position is currently at offset +0x04 (after opcode and sub-opcode)
+	// Original game stores pointer to full IACT data (starting at opcode).
+	// SmushPlayer reads the first 8 bytes as header (code/flags/unknown/userId),
+	// so our stream starts at body[0] (IACT byte offset +8).
+	//
+	// FUN_4092D9 field mapping (byte offsets from stored pointer):
+	//   +0x00: opcode (5) — already consumed by SmushPlayer
+	//   +0x02: par2 (sub-opcode) — already consumed, passed as parameter
+	//   +0x04: par3 — already consumed by SmushPlayer
+	//   +0x06: par4 (userId) — filter value for < 1000 test, passed as parameter
+	//   +0x08: body[0] (sVar1) — control field 1 (frame check: field2-1 == field1)
+	//   +0x0A: body[1] (sVar2) — control field 2
+	//   +0x0C: body[2] — vertex 1 X
+	//   +0x0E: body[3] — vertex 1 Y
+	//   +0x10: body[4] — vertex 2 X
+	//   +0x12: body[5] — vertex 2 Y
+	//   +0x14: body[6] — vertex 3 X
+	//   +0x16: body[7] — vertex 3 Y
+	//   +0x18: body[8] — vertex 4 X
+	//   +0x1A: body[9] — vertex 4 Y
 
-	int16 par3 = b.readSint16LE();       // +0x04 (flags - unused for now)
-	(void)par3;  // Suppress unused variable warning
-	int16 zoneType = b.readSint16LE();   // +0x06
-	int16 frameStart = b.readSint16LE(); // +0x08
-	int16 frameEnd = b.readSint16LE();   // +0x0A
-	int16 x1 = b.readSint16LE();         // +0x0C
-	int16 y1 = b.readSint16LE();         // +0x0E
-	int16 x2 = b.readSint16LE();         // +0x10
-	int16 y2 = b.readSint16LE();         // +0x12
-	int16 x3 = b.readSint16LE();         // +0x14
-	int16 y3 = b.readSint16LE();         // +0x16
-	int16 x4 = b.readSint16LE();         // +0x18
-	int16 y4 = b.readSint16LE();         // +0x1A
+	int16 field1 = b.readSint16LE();     // body[0] — control field 1
+	int16 field2 = b.readSint16LE();     // body[1] — control field 2
+	int16 x1 = b.readSint16LE();         // body[2] — vertex 1 X
+	int16 y1 = b.readSint16LE();         // body[3] — vertex 1 Y
+	int16 x2 = b.readSint16LE();         // body[4] — vertex 2 X
+	int16 y2 = b.readSint16LE();         // body[5] — vertex 2 Y
+	int16 x3 = b.readSint16LE();         // body[6] — vertex 3 X
+	int16 y3 = b.readSint16LE();         // body[7] — vertex 3 Y
+	int16 x4 = b.readSint16LE();         // body[8] — vertex 4 X
+	int16 y4 = b.readSint16LE();         // body[9] — vertex 4 Y
 
 	CollisionZone zone;
 	zone.x1 = x1;
@@ -3698,24 +3766,22 @@ void InsaneRebel2::registerCollisionZone(Common::SeekableReadStream &b, int16 su
 	zone.y3 = y3;
 	zone.x4 = x4;
 	zone.y4 = y4;
-	zone.frameStart = frameStart;
-	zone.frameEnd = frameEnd;
-	zone.zoneType = zoneType;
+	zone.field1 = field1;
+	zone.field2 = field2;
+	zone.filterValue = par4;
 	zone.subOpcode = subOpcode;
 	zone.active = true;
 
 	// Register zone into appropriate table based on sub-opcode
 	if (subOpcode == 0x0D && _primaryZoneCount < kMaxCollisionZones) {
-		// Primary collision zones (obstacles)
 		_primaryZones[_primaryZoneCount++] = zone;
-		debug("Rebel2: Registered PRIMARY collision zone %d: type=%d frames=[%d-%d] quad=(%d,%d)-(%d,%d)-(%d,%d)-(%d,%d)",
-			_primaryZoneCount - 1, zoneType, frameStart, frameEnd,
+		debug("Rebel2: Registered PRIMARY zone %d: filter=%d fields=[%d,%d] quad=(%d,%d)-(%d,%d)-(%d,%d)-(%d,%d)",
+			_primaryZoneCount - 1, par4, field1, field2,
 			x1, y1, x2, y2, x3, y3, x4, y4);
 	} else if (subOpcode == 0x0E && _secondaryZoneCount < kMaxCollisionZones) {
-		// Secondary collision zones (boundaries)
 		_secondaryZones[_secondaryZoneCount++] = zone;
-		debug("Rebel2: Registered SECONDARY collision zone %d: type=%d frames=[%d-%d] quad=(%d,%d)-(%d,%d)-(%d,%d)-(%d,%d)",
-			_secondaryZoneCount - 1, zoneType, frameStart, frameEnd,
+		debug("Rebel2: Registered SECONDARY zone %d: filter=%d fields=[%d,%d] quad=(%d,%d)-(%d,%d)-(%d,%d)-(%d,%d)",
+			_secondaryZoneCount - 1, par4, field1, field2,
 			x1, y1, x2, y2, x3, y3, x4, y4);
 	} else {
 		debug("Rebel2: WARNING - Could not register zone (subOpcode=%d, primary=%d, secondary=%d)",
@@ -3728,6 +3794,112 @@ void InsaneRebel2::resetCollisionZones() {
 	// This clears the zone tables so they can be rebuilt from the next frame's IACT chunks
 	_primaryZoneCount = 0;
 	_secondaryZoneCount = 0;
+}
+
+void InsaneRebel2::checkCollisionZones() {
+	// Per-frame collision checking — FUN_4092D9 first loop (lines 39-202).
+	// Tests aim/ship position against primary collision zone quadrilaterals.
+	//
+	// Original coordinate system:
+	//   Zone vertices are in 424x260 buffer space, centered by subtracting (0xD4=212, 0x82=130).
+	//   Aim position (DAT_00443668/DAT_0044366a) is in centered coords [-52..52, -45..45].
+	//   In FUN_407FCB: DAT_00443668 is a smoothed mouse-derived position.
+	//
+	// For our implementation:
+	//   Map mouse position to centered coords matching the original range.
+	//   Mouse X 0..320 → centered X ≈ [-52..52] (with smoothing in original)
+	//   Mouse Y 0..200 → centered Y ≈ [-45..45]
+
+	if (_primaryZoneCount == 0) return;
+
+	// Calculate aim position in centered coordinates.
+	// Original: local_10 = mouseOffset + 0xa0, then smoothed and clamped to [-0x34..0x34]
+	// Simplified mapping: mouse 0..320 → [-52..52], mouse 0..200 → [-45..45]
+	int16 aimX = (int16)((_vm->_mouse.x - 160) * 52 / 160);
+	int16 aimY = (int16)((100 - _vm->_mouse.y) * 45 / 100);
+
+	// Clamp to original ranges (DAT_0047a7fc < 1 path)
+	if (aimX > 0x34) aimX = 0x34;
+	if (aimX < -0x34) aimX = -0x34;
+	if (aimY > 0x2d) aimY = 0x2d;
+	if (aimY < -0x2d) aimY = -0x2d;
+
+	for (int i = 0; i < _primaryZoneCount; i++) {
+		CollisionZone &zone = _primaryZones[i];
+		if (!zone.active) continue;
+
+		// Filter: only process zones with filterValue < 1000 (par4 from IACT header)
+		// Original: *(short *)(*local_c + 6) < 1000
+		if (zone.filterValue >= 1000) continue;
+
+		// Frame check: field2 - 1 == field1
+		// Original: sVar2 + -1 == (int)sVar1
+		if (zone.field2 - 1 != zone.field1) continue;
+
+		// Center zone vertices by subtracting buffer center (0xD4=212, 0x82=130)
+		// Original: sVar4 = x1 - 0xD4, sVar8 = y1 - 0x82, etc.
+		int cx1 = zone.x1 - 0xD4;
+		int cy1 = zone.y1 - 0x82;
+		int cx2 = zone.x2 - 0xD4;
+		int cy2 = zone.y2 - 0x82;
+		int cx3 = zone.x3 - 0xD4;
+		int cy3 = zone.y3 - 0x82;
+		int cx4 = zone.x4 - 0xD4;
+		int cy4 = zone.y4 - 0x82;
+
+		// Point-in-quadrilateral test — FUN_4092D9 lines 119-128
+		// Tests if aim position is OUTSIDE the safe corridor (= collision with obstacle).
+		// Original uses 4 edge interpolation tests connected by OR (any failure = collision).
+		//
+		// Edge 1: interpolate Y along top edge (v1→v2) at aim X position
+		//   if aimY < interpolated Y → outside top edge → collision
+		// Edge 2: interpolate Y along bottom edge (v4→v3) at aim X position
+		//   if interpolated Y < aimY → outside bottom edge → collision
+		// Edge 3: interpolate X along left edge (v1→v4) at aim Y position
+		//   if aimX < interpolated X → outside left edge → collision
+		// Edge 4: interpolate X along right edge (v2→v3) at aim Y position
+		//   if interpolated X < aimX → outside right edge → collision
+		bool collision = false;
+
+		// Avoid division by zero for degenerate edges
+		if (cx2 != cx1) {
+			int interpY1 = ((aimX - cx1) * (cy2 - cy1)) / (cx2 - cx1) + cy1;
+			if (aimY < interpY1) collision = true;
+		}
+		if (!collision && cx3 != cx4) {
+			int interpY2 = ((aimX - cx4) * (cy3 - cy4)) / (cx3 - cx4) + cy4;
+			if (interpY2 < aimY) collision = true;
+		}
+		if (!collision && cy4 != cy1) {
+			int interpX1 = ((aimY - cy1) * (cx4 - cx1)) / (cy4 - cy1) + cx1;
+			if (aimX < interpX1) collision = true;
+		}
+		if (!collision && cy3 != cy2) {
+			int interpX2 = ((aimY - cy2) * (cx3 - cx2)) / (cy3 - cy2) + cx2;
+			if (interpX2 < aimX) collision = true;
+		}
+
+		if (collision) {
+			// Collision detected — apply damage from collision damage table
+			// Original: DAT_0047a7ec += DAT_0047e0f6[levelIdx]
+			// TODO: Read from per-level collision damage table DAT_0047e0f6
+			int collisionDamage = 3 + (_difficulty * 2);
+
+			if (!_rebelInvulnerable) {
+				_playerDamage += collisionDamage;
+				if (_playerDamage > 255) _playerDamage = 255;
+				debug("Rebel2: COLLISION damage! zone=%d aim=(%d,%d) damage=%d total=%d",
+					i, aimX, aimY, collisionDamage, _playerDamage);
+			}
+			// Visual effect — FUN_00420515 (palette flash)
+			initDamageFlash();
+			// TODO: FUN_0041189e sound based on collision direction
+		} else {
+			// Safely passed — award score bonus
+			// Original: FUN_0041bf8d(DAT_0047e100[levelIdx])
+			addScore(1);
+		}
+	}
 }
 
 void InsaneRebel2::drawQuad(byte *dst, int pitch, int width, int height,
@@ -4117,6 +4289,12 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	} else if (_rebelHandler == 0x19 || _rebelHandler == 0x26) {
 		// Palette flash only — no screen shake for turret/FPS handlers
 		updateDamageFlashPalette();
+	}
+
+	// Per-frame collision checking against registered zones (FUN_4092D9 first loop)
+	// Active for Handler 0x26 (turret) and Handler 7 (third-person ship)
+	if (_rebelHandler == 0x26 || _rebelHandler == 7) {
+		checkCollisionZones();
 	}
 
 	// Collision zone visualization (debug - for Handler 7/8 pilot modes)
