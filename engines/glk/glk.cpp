@@ -89,6 +89,9 @@ void GlkEngine::initialize() {
 	_streams = new Streams();
 	_windows = new Windows(_screen);
 
+	if (_conf->_windowColorOverride || _conf->_windowColor != _conf->parseColor("ffffff"))
+		Windows::_overrideBgSet = true;
+
 	// Setup mixer
 	syncSoundSettings();
 }

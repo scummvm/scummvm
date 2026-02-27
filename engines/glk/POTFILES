@@ -7,6 +7,7 @@ engines/glk/advsys/advsys.cpp
 engines/glk/advsys/vm.cpp
 engines/glk/alan2/alan2.cpp
 engines/glk/comprehend/game.cpp
+engines/glk/dialogs.cpp
 engines/glk/glulx/glulx.cpp
 engines/glk/magnetic/magnetic.cpp
 engines/glk/quest/quest.cpp

@@ -42,6 +42,9 @@
 		<def var = 'Launcher.HelpButton.Width' value = '16' scalable = 'yes'/> <!-- Button.Width -->
 		<def var = 'Launcher.ShowMainHelp' value = '0'/>
 
+		<def var = 'GlkOptionsDialog.HeadingVerticalOffset' value = '50'/>
+		<def var = 'GlkOptionsDialog.HeadingMinGap' value = '2'/>
+
 		<def var = 'SaveLoadChooser.ExtInfo.Visible' value = '0'/>
 		<def var = 'RecorderDialog.ExtInfo.Visible' value = '0'/>
 		<def var = 'ImageAlbum.ImageInset' value = '16' scalable = 'yes' />

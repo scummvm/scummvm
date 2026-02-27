@@ -41,6 +41,9 @@
 		<def var = 'ListWidget.hlRightPadding' value = '0'/>
 		<def var = 'ListWidget.itemSpacing' value = '2'/>
 
+		<def var = 'GlkOptionsDialog.HeadingVerticalOffset' value = '50'/>
+		<def var = 'GlkOptionsDialog.HeadingMinGap' value = '2'/>
+
 		<def var = 'ShowLauncherLogo' value = '1'/>
 		<def var = 'ShowGlobalMenuLogo' value = '1'/>
 		<def var = 'ShowSearchPic' value = '1'/>
