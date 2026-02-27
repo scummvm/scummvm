@@ -260,10 +260,12 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 		_primaryZones[i].active = false;
 		_secondaryZones[i].active = false;
 	}
+	// Corridor boundaries in game coordinate space (FUN_40C040 lines 21-24)
+	// DAT_00443b0a=0, DAT_00443b0c=0, DAT_00443b0e=0x1a8(424), DAT_00443b10=0x104(260)
 	_corridorLeftX = 0;
 	_corridorTopY = 0;
-	_corridorRightX = 320;
-	_corridorBottomY = 200;
+	_corridorRightX = 0x1A8;   // 424 — full game buffer width
+	_corridorBottomY = 0x104;  // 260 — full game buffer height
 	_hitCooldown = 0;
 
 	// Initialize legacy shot system (backwards compatibility)
@@ -1071,41 +1073,61 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 		}
 
 	} else if (par1 == 7) {
-		// Opcode 7: Sprite/HUD control for Handler 7 (third-person ship levels like Level 3)
-		// par2 = control type (41 = sprite selection?)
-		// par3 = usually 0
-		// par4 = sprite/slot ID (0 or 5 seen in Level 3)
+		// Opcode 7: Handler 7 corridor/velocity control (FUN_40C3CC case 5)
+		// IACT header: par1=7, par2=flags, par3=0, par4=sub-opcode
+		// Body contains 2 int16 values (body[0], body[1])
 		//
-		// This opcode may control which ship direction sprite to display
-		// or reference embedded graphics loaded elsewhere
-		debug("Rebel2 IACT Opcode 7: par2=%d par3=%d par4=%d handler=%d",
-			par2, par3, par4, _rebelHandler);
+		// par4 sub-opcodes (from FUN_40C3CC case 5 switch on param_5[3]):
+		//   0: Set velocity params (DAT_00443b12, DAT_00443b14)
+		//   1: Set left X + top Y corridor boundaries (DAT_00443b0a, DAT_00443b0c)
+		//   2: Set right X + bottom Y corridor boundaries (DAT_00443b0e, DAT_00443b10)
+		//   5: Set flag (DAT_00443b52)
 
-		// Read remaining IACT data to understand structure
-		int64 startPos = b.pos();
-		int64 remaining = b.size() - startPos;
-		if (remaining > 0 && remaining <= 64) {
-			byte payload[64];
-			int bytesRead = b.read(payload, MIN((int64)64, remaining));
-			debug("Rebel2 Opcode 7: payload (%d bytes): %02X %02X %02X %02X %02X %02X %02X %02X",
-				bytesRead,
-				bytesRead > 0 ? payload[0] : 0, bytesRead > 1 ? payload[1] : 0,
-				bytesRead > 2 ? payload[2] : 0, bytesRead > 3 ? payload[3] : 0,
-				bytesRead > 4 ? payload[4] : 0, bytesRead > 5 ? payload[5] : 0,
-				bytesRead > 6 ? payload[6] : 0, bytesRead > 7 ? payload[7] : 0);
-			b.seek(startPos);
+		int16 body0 = 0, body1 = 0;
+		if (b.size() - b.pos() >= 4) {
+			body0 = b.readSint16LE();
+			body1 = b.readSint16LE();
 		}
 
-		// par2 == 41 (0x29) seems to be a common value
-		// This might be a "show sprite" command referencing par4 as the slot
-		if (par2 == 41) {
-			// par4 could be a HUD slot or sprite index
-			// For Handler 7, set which embedded HUD frame to display
-			if (_rebelHandler == 7 && par4 >= 0 && par4 < 16) {
-				// Mark this slot as the active one for direction-based rendering
-				// This will be used in post-rendering to know which frame to show
-				debug("Rebel2 Opcode 7: Activating HUD slot %d for Handler 7", par4);
+		switch (par4) {
+		case 0:
+			// Velocity/wind data — affects ship drift in FUN_40C3CC physics
+			// DAT_00443b12 = horizontal wind, DAT_00443b14 = vertical wind
+			debug("Rebel2 Opcode 7 par4=0: velocity=(%d,%d)", body0, body1);
+			break;
+		case 1:
+			// Set LEFT X boundary and TOP Y boundary
+			_corridorLeftX = body0;
+			_corridorTopY = body1;
+			// Mode-dependent margin adjustment (FUN_40C3CC lines 341-351)
+			if (_flyControlMode == 2) {
+				_corridorLeftX += 15;
+			} else if (_flyControlMode == 0) {
+				_corridorLeftX += 20;
 			}
+			debug("Rebel2 Opcode 7 par4=1: corridor left=%d top=%d (adjusted left=%d)",
+				body0, body1, _corridorLeftX);
+			break;
+		case 2:
+			// Set RIGHT X boundary and BOTTOM Y boundary
+			_corridorRightX = body0;
+			_corridorBottomY = body1;
+			// Mode-dependent margin adjustment (FUN_40C3CC lines 356-365)
+			if (_flyControlMode == 2) {
+				_corridorRightX -= 15;
+			} else if (_flyControlMode == 0) {
+				_corridorRightX -= 20;
+			}
+			debug("Rebel2 Opcode 7 par4=2: corridor right=%d bottom=%d (adjusted right=%d)",
+				body0, body1, _corridorRightX);
+			break;
+		case 5:
+			// Flag value
+			debug("Rebel2 Opcode 7 par4=5: flag=%d", body0);
+			break;
+		default:
+			debug("Rebel2 Opcode 7 par4=%d: body=(%d,%d) — unknown sub-opcode", par4, body0, body1);
+			break;
 		}
 
 	} else if (par1 == 6) {
@@ -1497,24 +1519,38 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 	// Handler 7 specific logic (third-person ship) - FUN_0040d836 / FUN_0040c3cc
 	// Used for Level 3 and similar space combat levels
 	if (_rebelHandler == 7) {
-		// Set control mode (DAT_004437c0 = par3 in FUN_40C3CC case 4)
-		// This determines shooting capability:
-		//   Mode 0: Flight/avoid mode - no shooting
-		//   Mode 1: Alternate flight mode - no shooting
-		//   Mode 2: Combat mode - shooting ENABLED
-		_flyControlMode = par3;
+		// Set control mode: DAT_004437c0 = param_5[3] = par4 in FUN_40C3CC case 4.
+		// This determines collision mode and shooting capability:
+		//   Mode 0: Obstacle avoidance — SECONDARY zones, corridor boundaries
+		//   Mode 1: Tunnel flight — PRIMARY zones, per-edge push-back (hMargin=0x28)
+		//   Mode 2: Combat mode — shooting ENABLED, SECONDARY zones
+		//   Mode 3: Tunnel flight — PRIMARY zones, per-edge push-back (hMargin=0x0f)
+		_flyControlMode = par4;
 		debug("Rebel2 Opcode 6 (Handler 7): Control mode set to %d (shooting %s)",
-			par3, (par3 == 2) ? "ENABLED" : "DISABLED");
+			par4, (par4 == 2) ? "ENABLED" : "DISABLED");
 
-		// If par4 == 1, enable status bar
-		if (par4 == 1) {
+		// Status bar: param_5[4] == 1 in original (first body word, 5th IACT word)
+		// In our parsing, par3 maps to param_5[2] and the body follows par4.
+		// FUN_40C3CC: if (param_5[4] == 1) FUN_0040bb87(DAT_0047a828,5);
+		// par3 is param_5[2], which the original doesn't use here.
+		// The body word for status bar is read separately below.
+		int16 bodyStatusFlag = 0;
+		if (b.size() - b.pos() >= 2) {
+			bodyStatusFlag = b.readSint16LE();
+		}
+		if (bodyStatusFlag == 1) {
 			_rebelStatusBarSprite = 5;  // Status bar sprite
-			debug("Rebel2 Opcode 6 (Handler 7): Status bar enabled");
+			debug("Rebel2 Opcode 6 (Handler 7): Status bar enabled (body flag=%d)", bodyStatusFlag);
 		}
 
-		// Update ship screen position from mouse
-		// Handler 7 uses DAT_0044370c (Y) and DAT_0044370e (X) for screen position
-		// Get raw mouse position
+		// Update ship position from mouse input.
+		// CRITICAL: Ship position is in game coordinate space [20,404]x[20,240],
+		// centered at (212,130) — matching DAT_00443708/DAT_0044370a in the original.
+		// Collision zones are in this same space. Mouse coords must be converted.
+		//
+		// FUN_40C3CC case 4: original uses smoothed mouse velocity → position delta (±12/frame).
+		// Simplified here: direct mouse position mapping with smooth interpolation.
+
 		int16 rawMouseX = _vm->_mouse.x;
 		int16 rawMouseY = _vm->_mouse.y;
 
@@ -1528,66 +1564,97 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 			mouseY = (rawMouseY * 200) / _player->_height;
 		}
 
-		// Clamp to screen bounds (matching FUN_0040c3cc bounds)
-		if (mouseX < 0) mouseX = 0;
-		if (mouseX > 319) mouseX = 319;
-		if (mouseY < 0) mouseY = 0;
-		if (mouseY > 199) mouseY = 199;
+		// Convert mouse coords [0,319]x[0,199] → game coords [20,404]x[20,240]
+		// Game center (212,130) maps to screen center (160,100)
+		int16 targetGameX = (int16)(mouseX * 384 / 319 + 20);
+		int16 targetGameY = (int16)(mouseY * 220 / 199 + 20);
 
-		// Update ship position with smooth interpolation
-		// FUN_0040c3cc uses complex smoothing, we use simpler immediate response
-		const int16 maxStep = 15;
-		if (_shipPosX < mouseX) {
-			_shipPosX = MIN((int16)(_shipPosX + maxStep), mouseX);
-		} else if (_shipPosX > mouseX) {
-			_shipPosX = MAX((int16)(_shipPosX - maxStep), mouseX);
+		// Clamp to game coordinate bounds (FUN_40C3CC lines 245-256)
+		if (targetGameX < 0x14) targetGameX = 0x14;   // 20
+		if (targetGameX > 0x194) targetGameX = 0x194;  // 404
+		if (targetGameY < 0x14) targetGameY = 0x14;    // 20
+		if (targetGameY > 0xF0) targetGameY = 0xF0;    // 240
+
+		// Smooth interpolation (original uses ±12 per frame max delta)
+		const int16 maxStep = 12;
+		if (_flyShipScreenX < targetGameX) {
+			_flyShipScreenX = MIN((int16)(_flyShipScreenX + maxStep), targetGameX);
+		} else if (_flyShipScreenX > targetGameX) {
+			_flyShipScreenX = MAX((int16)(_flyShipScreenX - maxStep), targetGameX);
 		}
-		if (_shipPosY < mouseY) {
-			_shipPosY = MIN((int16)(_shipPosY + maxStep), mouseY);
-		} else if (_shipPosY > mouseY) {
-			_shipPosY = MAX((int16)(_shipPosY - maxStep), mouseY);
+		if (_flyShipScreenY < targetGameY) {
+			_flyShipScreenY = MIN((int16)(_flyShipScreenY + maxStep), targetGameY);
+		} else if (_flyShipScreenY > targetGameY) {
+			_flyShipScreenY = MAX((int16)(_flyShipScreenY - maxStep), targetGameY);
 		}
 
-		// Update Handler 7 screen position (DAT_0044370c/e)
-		// These track the actual on-screen position for direction calculation
-		_flyShipScreenX = _shipPosX;
-		_flyShipScreenY = _shipPosY;
+		// Corridor boundary collision (FUN_40C3CC lines 257-284)
+		// Mode 0/2: Ship X is clamped to corridor boundaries with damage
+		if (_flyControlMode == 0 || _flyControlMode == 2) {
+			// Right boundary collision
+			if (_corridorRightX < _flyShipScreenX) {
+				_flyShipScreenX = _corridorRightX;
+				if (_hitCooldown < 5 && !_rebelInvulnerable) {
+					int damage = 3 + (_difficulty * 2);
+					_playerDamage += damage;
+					if (_playerDamage > 255) _playerDamage = 255;
+					_rebelHitCounter++;
+					_hitCooldown = 10;
+					_spaceShotDirection = 1;
+					initDamageFlash();
+					debug("Rebel2: Handler7 RIGHT CORRIDOR HIT ship=(%d,%d) boundary=%d",
+						_flyShipScreenX, _flyShipScreenY, _corridorRightX);
+				}
+			}
+			// Left boundary collision
+			if (_flyShipScreenX < _corridorLeftX) {
+				_flyShipScreenX = _corridorLeftX;
+				if (_hitCooldown < 5 && !_rebelInvulnerable) {
+					int damage = 3 + (_difficulty * 2);
+					_playerDamage += damage;
+					if (_playerDamage > 255) _playerDamage = 255;
+					_rebelHitCounter++;
+					_hitCooldown = 10;
+					_spaceShotDirection = 0;
+					initDamageFlash();
+					debug("Rebel2: Handler7 LEFT CORRIDOR HIT ship=(%d,%d) boundary=%d",
+						_flyShipScreenX, _flyShipScreenY, _corridorLeftX);
+				}
+			}
+			// Y boundary clamping (no damage, just clamp) — lines 285-292
+			if (_corridorBottomY < _flyShipScreenY) {
+				_flyShipScreenY = _corridorBottomY;
+			}
+			if (_flyShipScreenY < _corridorTopY) {
+				_flyShipScreenY = _corridorTopY;
+			}
+		}
 
-		// Calculate ship direction from position (FUN_0040d836 lines 88-106)
-		// Formula from assembly:
-		//   hDir = (0xa0 - posX) >> 6  (with signed rounding)
-		//   vDir = (0x95 - posY) / 0x2b
-		//   dirIndex = hDir * 7 + vDir
-		//
-		// Note: The assembly formula gives:
-		//   hDir: 0-4 where 2 is center (0xa0=160, range is -96 to +96, >> 6 gives -1 to 1, but clamped to 0-4)
-		//   vDir: 0-6 where 3 is center (0x95=149, 0x2b=43, so 149/43 ≈ 3.5)
-		//
-		// Simplified direction calculation based on mouse position relative to center
+		// Also update _shipPosX/Y for other systems that use screen coords
+		_shipPosX = (int16)((_flyShipScreenX - 20) * 319 / 384);
+		_shipPosY = (int16)((_flyShipScreenY - 20) * 199 / 220);
 
-		// Horizontal direction (0-4, center=2)
-		// Formula: (160 - posX) >> 6, clamped to 0-4
-		int16 hDiff = 160 - _flyShipScreenX;
-		int16 hDir = (hDiff + 64) >> 6;  // Add 64 to shift range, divide by 64
+		// Direction calculation from ship game position
+		// Original FUN_0040d836 uses DAT_0044370c (smoothed velocity) for direction.
+		// Simplified: derive direction from position offset relative to center (212, 130).
+		// hDir: 0-4 where 2=center, based on offset from center X (212)
+		// vDir: 0-6 where 3=center, based on offset from center Y (130)
+		int16 hDiff = 0xD4 - _flyShipScreenX;  // 212 - shipX
+		int16 hDir = (hDiff + 64) >> 6;
 		if (hDir < 0) hDir = 0;
 		if (hDir > 4) hDir = 4;
 
-		// Vertical direction (0-6, center=3)
-		// Formula: (149 - posY) / 43, clamped to 0-6
-		int16 vDir = (149 - _flyShipScreenY) / 43;
+		int16 vDir = (130 - _flyShipScreenY) / 37;  // adjusted divisor for game coord range
 		if (vDir < 0) vDir = 0;
 		if (vDir > 6) vDir = 6;
 
-		// Additional adjustment from assembly (lines 90-105):
-		// If vDir==3 and abs(posY) > 10, adjust by +/-1
-		// If hDir==2 and abs(posX) > 15, adjust by +/-1
-		// This creates a "deadzone" at center to reduce flicker
-		if (vDir == 3 && ABS(_flyShipScreenY - 100) > 10) {
-			if (_flyShipScreenY < 100) vDir = 2;
+		// Deadzone at center to reduce flicker
+		if (vDir == 3 && ABS(_flyShipScreenY - 130) > 13) {
+			if (_flyShipScreenY < 130) vDir = 2;
 			else vDir = 4;
 		}
-		if (hDir == 2 && ABS(_flyShipScreenX - 160) > 15) {
-			if (_flyShipScreenX < 160) hDir = 3;
+		if (hDir == 2 && ABS(_flyShipScreenX - 212) > 20) {
+			if (_flyShipScreenX < 212) hDir = 3;
 			else hDir = 1;
 		}
 
@@ -3902,6 +3969,184 @@ void InsaneRebel2::checkCollisionZones() {
 	}
 }
 
+void InsaneRebel2::checkHandler7CollisionZones() {
+	// FUN_40E35E — Handler 7 per-frame collision system.
+	// Uses ship position (_flyShipScreenX/_flyShipScreenY) in raw buffer coords.
+	// Two modes depending on _flyControlMode:
+	//   Mode 0/2: Obstacle collision using SECONDARY zones (inside quad = hit)
+	//   Mode 1/3: Wall/boundary collision using PRIMARY zones (per-edge push-back)
+
+	// Decrement hit cooldown per frame
+	if (_hitCooldown > 0)
+		_hitCooldown--;
+
+	if (_flyControlMode == 0 || _flyControlMode == 2) {
+		// ---- Mode 0/2: Obstacle collision using SECONDARY zones (FUN_403b5b) ----
+		// Original lines 52-132: Point-in-quad test with 15px inward margin.
+		// Inside the quad = collision with obstacle.
+		const int margin = 15;  // local_14 = 0x0f, local_20 = 0x0f
+
+		for (int i = 0; i < _secondaryZoneCount; i++) {
+			CollisionZone &zone = _secondaryZones[i];
+			if (!zone.active) continue;
+
+			int x1 = zone.x1, y1 = zone.y1;
+			int x2 = zone.x2, y2 = zone.y2;
+			int x3 = zone.x3, y3 = zone.y3;
+			int x4 = zone.x4, y4 = zone.y4;
+
+			// Point-in-quad test (lines 75-89)
+			// Start assuming inside, clear if outside any edge (with margin)
+			bool inside = true;
+
+			// Top edge: interpolate Y along v1→v2 at shipX, +15 margin
+			if (x2 != x1) {
+				int interpY = (_flyShipScreenX - x1) * (y2 - y1) / (x2 - x1) + margin + y1;
+				if (_flyShipScreenY < interpY) inside = false;
+			}
+			// Bottom edge: interpolate Y along v4→v3 at shipX, -15 margin
+			if (inside && x3 != x4) {
+				int interpY = (_flyShipScreenX - x4) * (y3 - y4) / (x3 - x4) + y4 - margin;
+				if (interpY < _flyShipScreenY) inside = false;
+			}
+			// Left edge: interpolate X along v1→v4 at shipY, +15 margin
+			if (inside && y4 != y1) {
+				int interpX = (_flyShipScreenY - y1) * (x4 - x1) / (y4 - y1) + margin + x1;
+				if (_flyShipScreenX < interpX) inside = false;
+			}
+			// Right edge: interpolate X along v2→v3 at shipY, -15 margin
+			if (inside && y3 != y2) {
+				int interpX = (_flyShipScreenY - y2) * (x3 - x2) / (y3 - y2) + x2 - margin;
+				if (interpX < _flyShipScreenX) inside = false;
+			}
+
+			// Frame match: field2 - 1 == field1 (line 90)
+			if (zone.field2 - 1 == zone.field1) {
+				if (inside) {
+					// Collision with obstacle — apply damage and break
+					_hitCooldown = 10;
+					_spaceShotDirection = zone.filterValue + 2;
+
+					int collisionDamage = 3 + (_difficulty * 2);
+					if (!_rebelInvulnerable) {
+						_playerDamage += collisionDamage;
+						if (_playerDamage > 255) _playerDamage = 255;
+					}
+					_rebelHitCounter++;
+					initDamageFlash();
+					debug("Rebel2: Handler7 Mode0/2 OBSTACLE HIT zone=%d ship=(%d,%d) damage=%d",
+						i, _flyShipScreenX, _flyShipScreenY, collisionDamage);
+					break;  // Only one collision per frame (original breaks)
+				} else {
+					// Safely avoided obstacle — award score
+					addScore(1);
+				}
+			}
+		}
+
+		// Corridor boundary proximity (lines 127-131)
+		// These flags are used for directional indicators (not critical for damage)
+
+	} else {
+		// ---- Mode 1/3: Wall/boundary collision using PRIMARY zones (FUN_403b34) ----
+		// Original lines 133-235: Per-edge interpolation with push-back.
+		// Ship position is clamped to wall boundaries when hitting.
+		int16 hMargin = (_flyControlMode == 1) ? 0x28 : 0x0f;  // local_14
+		const int16 vMargin = 0x0f;  // local_20
+
+		for (int i = 0; i < _primaryZoneCount; i++) {
+			CollisionZone &zone = _primaryZones[i];
+			if (!zone.active) continue;
+
+			int x1 = zone.x1, y1 = zone.y1;
+			int x2 = zone.x2, y2 = zone.y2;
+			int x3 = zone.x3, y3 = zone.y3;
+			int x4 = zone.x4, y4 = zone.y4;
+
+			// Top edge: interpolate Y along v1→v2 at shipX (lines 152-166)
+			if (x2 != x1) {
+				int16 edgeY = (int16)((_flyShipScreenX - x1) * (y2 - y1) / (x2 - x1) + y1 + vMargin);
+				if (_flyShipScreenY < edgeY) {
+					// Ship above top wall — push down
+					if (_hitCooldown < 5 && !_rebelInvulnerable) {
+						int damage = 3 + (_difficulty * 2);
+						_playerDamage += damage;
+						if (_playerDamage > 255) _playerDamage = 255;
+						_rebelHitCounter++;
+						_hitCooldown = 10;
+						debug("Rebel2: Handler7 Mode1/3 TOP WALL ship=(%d,%d) edgeY=%d damage=%d",
+							_flyShipScreenX, _flyShipScreenY, edgeY, damage);
+					}
+					_spaceShotDirection = 2;  // Direction: pushed down
+					_flyShipScreenY = edgeY;  // Push-back
+					initDamageFlash();
+				}
+			}
+
+			// Bottom edge: interpolate Y along v4→v3 at shipX (lines 167-183)
+			if (x3 != x4) {
+				int16 edgeY = (int16)((_flyShipScreenX - x4) * (y3 - y4) / (x3 - x4) + y4 - vMargin);
+				_corridorBottomY = vMargin + edgeY;  // DAT_00443b10 update
+				if (edgeY < _flyShipScreenY) {
+					// Ship below bottom wall — push up
+					if (_hitCooldown < 5 && !_rebelInvulnerable) {
+						int damage = 3 + (_difficulty * 2);
+						_playerDamage += damage;
+						if (_playerDamage > 255) _playerDamage = 255;
+						_rebelHitCounter++;
+						_hitCooldown = 10;
+						debug("Rebel2: Handler7 Mode1/3 BOTTOM WALL ship=(%d,%d) edgeY=%d damage=%d",
+							_flyShipScreenX, _flyShipScreenY, edgeY, damage);
+					}
+					_spaceShotDirection = 3;  // Direction: pushed up
+					_flyShipScreenY = edgeY;  // Push-back
+					initDamageFlash();
+				}
+			}
+
+			// Left edge: interpolate X along v1→v4 at shipY (lines 184-199)
+			if (y4 != y1) {
+				int16 edgeX = (int16)((_flyShipScreenY - y1) * (x4 - x1) / (y4 - y1) + x1 + hMargin);
+				if (_flyShipScreenX < edgeX) {
+					// Ship left of left wall — push right
+					_flyShipScreenX = edgeX;  // Push-back
+					if (_hitCooldown < 5 && !_rebelInvulnerable) {
+						int damage = 3 + (_difficulty * 2);
+						_playerDamage += damage;
+						if (_playerDamage > 255) _playerDamage = 255;
+						_rebelHitCounter++;
+						_hitCooldown = 10;
+						debug("Rebel2: Handler7 Mode1/3 LEFT WALL ship=(%d,%d) edgeX=%d damage=%d",
+							_flyShipScreenX, _flyShipScreenY, edgeX, damage);
+					}
+					_spaceShotDirection = 0;  // Direction: pushed right
+					initDamageFlash();
+				}
+			}
+
+			// Right edge: interpolate X along v2→v3 at shipY (lines 200-215)
+			if (y3 != y2) {
+				int16 edgeX = (int16)((_flyShipScreenY - y2) * (x3 - x2) / (y3 - y2) + x2 - hMargin);
+				if (edgeX < _flyShipScreenX) {
+					// Ship right of right wall — push left
+					_flyShipScreenX = edgeX;  // Push-back
+					if (_hitCooldown < 5 && !_rebelInvulnerable) {
+						int damage = 3 + (_difficulty * 2);
+						_playerDamage += damage;
+						if (_playerDamage > 255) _playerDamage = 255;
+						_rebelHitCounter++;
+						_hitCooldown = 10;
+						debug("Rebel2: Handler7 Mode1/3 RIGHT WALL ship=(%d,%d) edgeX=%d damage=%d",
+							_flyShipScreenX, _flyShipScreenY, edgeX, damage);
+					}
+					_spaceShotDirection = 1;  // Direction: pushed left
+					initDamageFlash();
+				}
+			}
+		}
+	}
+}
+
 void InsaneRebel2::drawQuad(byte *dst, int pitch, int width, int height,
                             int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, byte color) {
 	// Draw a quadrilateral by connecting its 4 vertices with lines
@@ -3956,7 +4201,7 @@ void InsaneRebel2::drawCollisionZones(byte *dst, int pitch, int width, int heigh
 	}
 
 	// Draw corridor boundaries as a rectangle (from IACT opcode 7)
-	if (_corridorLeftX != 0 || _corridorRightX != 320) {
+	if (_corridorLeftX != 0 || _corridorRightX != 0x1A8) {
 		const byte corridorColor = 45;  // Cyan for corridor boundaries
 		// Draw vertical lines for left/right boundaries
 		drawLine(dst, pitch, width, height,
@@ -4279,22 +4524,31 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	//   Handler 8:    FUN_401CCF line 119 → FUN_00420754 (palette flash + screen shake)
 	//   Handler 0x19: FUN_41DB5E line 192 → FUN_00420562 (palette flash only, every frame)
 	//   Handler 0x26: FUN_4092D9 lines 135/225/237 → FUN_00420515 trigger + palette flash
-	//   Handler 7:    No damage effects
+	//   Handler 7:    FUN_40E35E → FUN_00420515 trigger + palette flash
 	if (_rebelHandler == 8) {
 		// Full damage effect: palette flash + screen shake
 		// Suppressed during autopilot (mode 4) and cutscene (mode 5)
 		if (_shipLevelMode != 4 && _shipLevelMode != 5) {
 			updateDamageEffect(renderBitmap, pitch, width, height);
 		}
-	} else if (_rebelHandler == 0x19 || _rebelHandler == 0x26) {
-		// Palette flash only — no screen shake for turret/FPS handlers
+	} else if (_rebelHandler == 0x19 || _rebelHandler == 0x26 || _rebelHandler == 7) {
+		// Palette flash only — no screen shake for turret/FPS/ship handlers
 		updateDamageFlashPalette();
 	}
 
-	// Per-frame collision checking against registered zones (FUN_4092D9 first loop)
-	// Active for Handler 0x26 (turret) and Handler 7 (third-person ship)
-	if (_rebelHandler == 0x26 || _rebelHandler == 7) {
+	// Per-frame collision checking against registered zones.
+	//
+	// Handler 0x26 (turret): FUN_4092D9 — aim position vs primary zones (centered coords)
+	//   Zones with filterValue < 1000 tested via point-in-quad against mouse/aim position.
+	//
+	// Handler 7 (ship): FUN_40E35E — ship position vs zones per control mode:
+	//   Mode 0/2: SECONDARY zones (0x0E) — obstacle collision (inside quad = hit)
+	//   Mode 1/3: PRIMARY zones (0x0D) — wall/boundary per-edge with push-back
+	//   Uses ship position in raw buffer coords, hit cooldown, directional damage.
+	if (_rebelHandler == 0x26) {
 		checkCollisionZones();
+	} else if (_rebelHandler == 7) {
+		checkHandler7CollisionZones();
 	}
 
 	// Collision zone visualization (debug - for Handler 7/8 pilot modes)
@@ -4726,10 +4980,11 @@ void InsaneRebel2::renderHandler7Ship(byte *renderBitmap, int pitch, int width, 
 		return;
 
 	// Base position at screen center with direction offset
+	// Ship position is in game coords (center 212,130), convert to screen offset
 	int baseX = 160;
 	int baseY = 105;
-	int16 posOffsetX = (_flyShipScreenX - 160) / 10;
-	int16 posOffsetY = (_flyShipScreenY - 100) / 10;
+	int16 posOffsetX = (_flyShipScreenX - 0xD4) / 13;  // (shipX - 212) / 13
+	int16 posOffsetY = (_flyShipScreenY - 0x82) / 11;   // (shipY - 130) / 11
 	int shipScreenX = baseX + posOffsetX;
 	int shipScreenY = baseY + posOffsetY;
 
