@@ -148,6 +148,9 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 
 ColonyEngine::~ColonyEngine() {
 	deleteAnimation();
+	if (_pictPower) { _pictPower->free(); delete _pictPower; }
+	if (_pictPowerNoArmor) { _pictPowerNoArmor->free(); delete _pictPowerNoArmor; }
+	if (_pictCompass) { _pictCompass->free(); delete _pictCompass; }
 	delete _frameLimiter;
 	delete _gfx;
 	delete _sound;

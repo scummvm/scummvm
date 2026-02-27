@@ -418,6 +418,14 @@ private:
 	Common::Rect _headsUpRect;
 	Common::Rect _powerRect;
 
+	// Cached decoded PICT surfaces for dashboard panels (Mac color mode)
+	Graphics::Surface *_pictPower = nullptr;      // PICT -32755 (normal) or -32760 (trouble)
+	Graphics::Surface *_pictPowerNoArmor = nullptr; // PICT -32761 (no armor, color)
+	Graphics::Surface *_pictCompass = nullptr;     // PICT -32757
+	int _pictPowerID = 0;   // Track which PICT is cached
+	Graphics::Surface *loadPictSurface(int resID);
+	void drawPictAt(Graphics::Surface *surf, int destX, int destY);
+
 	uint8 wallAt(int x, int y) const;
 	const uint8 *mapFeatureAt(int x, int y, int direction) const;
 	bool _visibleCell[32][32];
@@ -464,6 +472,8 @@ private:
 	int tryPassThroughFeature(int fromX, int fromY, int direction, Locate *pobject);
 	void updateViewportLayout();
 	void drawDashboardStep1();
+	void drawDashboardMac();
+	void drawMiniMap(uint32 lineColor);
 	void drawCrosshair();
 	bool clipLineToRect(int &x1, int &y1, int &x2, int &y2, const Common::Rect &clip) const;
 	void wallLine(const float corners[4][3], float u1, float v1, float u2, float v2, uint32 color);

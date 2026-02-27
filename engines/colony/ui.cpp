@@ -28,9 +28,88 @@
 #include "common/events.h"
 #include "graphics/palette.h"
 #include "graphics/fonts/dosfont.h"
+#include "image/pict.h"
 #include <math.h>
 
 namespace Colony {
+
+// Pack RGB into 32-bit ARGB with 0xFF000000 marker for direct RGB rendering.
+static uint32 packRGB(byte r, byte g, byte b) {
+	return 0xFF000000 | ((uint32)r << 16) | ((uint32)g << 8) | b;
+}
+
+// Pack Mac 16-bit RGB into 32-bit ARGB.
+static uint32 packMacColorUI(const uint16 rgb[3]) {
+	return 0xFF000000 | ((rgb[0] >> 8) << 16) | ((rgb[1] >> 8) << 8) | (rgb[2] >> 8);
+}
+
+// Load a PICT resource from the Mac resource fork, returning a new RGB surface.
+// Caller owns the returned surface. Returns nullptr on failure.
+Graphics::Surface *ColonyEngine::loadPictSurface(int resID) {
+	if (!_resMan || !(_resMan->isMacFile() || _resMan->hasResFork()))
+		return nullptr;
+
+	Common::SeekableReadStream *pictStream = _resMan->getResource(MKTAG('P', 'I', 'C', 'T'), (int16)resID);
+	if (!pictStream) {
+		pictStream = _resMan->getResource(MKTAG('P', 'I', 'C', 'T'), resID);
+		if (!pictStream)
+			return nullptr;
+	}
+
+	::Image::PICTDecoder decoder;
+	Graphics::Surface *result = nullptr;
+	if (decoder.loadStream(*pictStream)) {
+		const Graphics::Surface *src = decoder.getSurface();
+		if (src) {
+			// Convert to a persistent RGB surface (decoder surface is transient)
+			result = new Graphics::Surface();
+			result->create(src->w, src->h, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+			for (int y = 0; y < src->h; y++) {
+				for (int x = 0; x < src->w; x++) {
+					byte r, g, b;
+					if (src->format == Graphics::PixelFormat::createFormatCLUT8()) {
+						// For CLUT8, use the decoder's palette
+						byte idx = *((const byte *)src->getBasePtr(x, y));
+						const Graphics::Palette &pal = decoder.getPalette();
+						if (idx < (int)pal.size()) {
+							pal.get(idx, r, g, b);
+						} else {
+							r = g = b = 0;
+						}
+					} else {
+						uint32 pixel = src->getPixel(x, y);
+						src->format.colorToRGB(pixel, r, g, b);
+					}
+					result->setPixel(x, y, result->format.ARGBToColor(255, r, g, b));
+				}
+			}
+			debug("loadPictSurface(%d): %dx%d", resID, result->w, result->h);
+		}
+	}
+	delete pictStream;
+	return result;
+}
+
+// Draw a PICT surface at a specific destination position using packRGB.
+// Matches original DrawPicture(pic, &rect) where rect is positioned at (destX, destY).
+void ColonyEngine::drawPictAt(Graphics::Surface *surf, int destX, int destY) {
+	if (!surf)
+		return;
+	for (int y = 0; y < surf->h; y++) {
+		int sy = destY + y;
+		if (sy < 0 || sy >= _height)
+			continue;
+		for (int x = 0; x < surf->w; x++) {
+			int sx = destX + x;
+			if (sx < 0 || sx >= _width)
+				continue;
+			uint32 pixel = surf->getPixel(x, y);
+			byte a, r, g, b;
+			surf->format.colorToARGB(pixel, a, r, g, b);
+			_gfx->setPixel(sx, sy, packRGB(r, g, b));
+		}
+	}
+}
 
 void ColonyEngine::updateViewportLayout() {
 	auto makeSafeRect = [](int left, int top, int right, int bottom) {
@@ -43,7 +122,13 @@ void ColonyEngine::updateViewportLayout() {
 
 	int dashWidth = 0;
 	if (_showDashBoard) {
-		dashWidth = CLIP<int>(_width / 6, 72, 140);
+		// Mac color mode: original moveWindow was 70px wide (2*CCENTER),
+		// infoWindow ~72px. theWindow started at x=96. Use tighter sizing.
+		const bool macColor = (_renderMode == Common::kRenderMacintosh && _hasMacColors);
+		if (macColor)
+			dashWidth = CLIP<int>(_width / 7, 70, 96);
+		else
+			dashWidth = CLIP<int>(_width / 6, 72, 140);
 		if (_width - dashWidth < 160)
 			dashWidth = 0;
 	}
@@ -63,38 +148,88 @@ void ColonyEngine::updateViewportLayout() {
 		return;
 	}
 
+	const bool macColor = (_renderMode == Common::kRenderMacintosh && _hasMacColors);
 	const int pad = 2;
-	const int topPad = menuTop + pad; // Dashboard sub-panels start below menu bar
-	const int unit = MAX(8, (dashWidth - (pad * 2)) / 4);
-	const int blockLeft = pad;
-	const int blockRight = MIN(dashWidth - pad, blockLeft + unit * 4);
+	const int topPad = menuTop + pad;
 
-	const int compassBottom = _height - MAX(2, unit / 4);
-	const int compassTop = MAX(topPad, compassBottom - unit * 4);
-	_compassRect = makeSafeRect(blockLeft, compassTop, blockRight, compassBottom);
+	if (macColor) {
+		// Original Mac layout: two separate floating windows in a 96px-wide sidebar.
+		// screenR.left = 96. Both windows ~70px wide (2*CCENTER), centered in sidebar.
+		// moveWindow: compRect = (0,0, 70, 105) — compass+map panel
+		// infoWindow: sized from PICT resource, positioned above moveWindow
+		// Visible Mac gray desktop between and around windows.
 
-	const int headsUpBottom = _compassRect.top - MAX(2, unit / 4) - 4;
-	const int headsUpTop = headsUpBottom - unit * 4;
-	_headsUpRect = makeSafeRect(blockLeft, MAX(topPad, headsUpTop), blockRight, MAX(topPad, headsUpBottom));
+		// Load PICT surfaces (cached after first load).
+		// Available PICTs: -32755 (power, armor normal), -32757 (compass).
+		// Color Colony variants (-32760, -32761) may not exist — fall back to -32755.
+		if (!_pictCompass)
+			_pictCompass = loadPictSurface(-32757);
+		if (!_pictPower) {
+			int wantID = _armor ? -32755 : -32761;
+			_pictPower = loadPictSurface(wantID);
+			if (!_pictPower && wantID != -32755)
+				_pictPower = loadPictSurface(-32755); // fall back to normal
+			_pictPowerID = _pictPower ? wantID : 0;
+		}
 
-	_powerRect = makeSafeRect(blockLeft, topPad, blockRight, _headsUpRect.top - 4);
+		// Use PICT dimensions for panel sizes, fall back to original constants
+		const int moveW = _pictCompass ? _pictCompass->w : 70;  // 2*CCENTER
+		const int moveH = _pictCompass ? _pictCompass->h : 105; // 3*CCENTER
+		const int infoW = _pictPower ? _pictPower->w : moveW;
+		const int infoH = _pictPower ? _pictPower->h : 200;
+
+		// Center panels horizontally in the sidebar (original windows were centered)
+		const int centerX = dashWidth / 2;
+
+		// Position moveWindow at the bottom of the sidebar
+		const int moveLeft = MAX(0, centerX - moveW / 2);
+		const int moveTop = _height - pad - moveH;
+		// compRect split: floorRect = (8,8)-(62,62), compass dish area below
+		const int floorBottom = moveTop + moveH * 62 / 105;
+		_headsUpRect = makeSafeRect(moveLeft, moveTop, moveLeft + moveW, floorBottom);
+		_compassRect = makeSafeRect(moveLeft, floorBottom, moveLeft + moveW, moveTop + moveH);
+
+		// Position infoWindow above moveWindow with a gap
+		const int infoLeft = MAX(0, centerX - infoW / 2);
+		const int infoTop = MAX(topPad, moveTop - pad - infoH);
+		_powerRect = makeSafeRect(infoLeft, infoTop, infoLeft + infoW, infoTop + infoH);
+	} else {
+		const int blockLeft = pad;
+		const int blockRight = dashWidth - pad;
+		const int unit = MAX(8, (dashWidth - (pad * 2)) / 4);
+
+		const int compassBottom = _height - MAX(2, unit / 4);
+		const int compassTop = MAX(topPad, compassBottom - unit * 4);
+		_compassRect = makeSafeRect(blockLeft, compassTop, blockRight, compassBottom);
+
+		const int headsUpBottom = _compassRect.top - MAX(2, unit / 4) - 4;
+		const int headsUpTop = headsUpBottom - unit * 4;
+		_headsUpRect = makeSafeRect(blockLeft, MAX(topPad, headsUpTop), blockRight, MAX(topPad, headsUpBottom));
+
+		_powerRect = makeSafeRect(blockLeft, topPad, blockRight, _headsUpRect.top - 4);
+	}
 }
 
 void ColonyEngine::drawDashboardStep1() {
 	if (_dashBoardRect.width() <= 0 || _dashBoardRect.height() <= 0)
 		return;
 
-	const int kFWALLType = 48;
+	const bool macColor = (_renderMode == Common::kRenderMacintosh && _hasMacColors);
 
-	_gfx->fillRect(_dashBoardRect, 0); // Black background underlying
-	_gfx->fillDitherRect(_dashBoardRect, 0, 15); // Dithered 50% gray background (Black/White)
-	_gfx->drawRect(_dashBoardRect, 1); // Blue outer frame
+	if (macColor) {
+		drawDashboardMac();
+		return;
+	}
+
+	// --- DOS/EGA path (unchanged) ---
+	_gfx->fillRect(_dashBoardRect, 0);
+	_gfx->fillDitherRect(_dashBoardRect, 0, 15);
+	_gfx->drawRect(_dashBoardRect, 1);
 
 	const int shiftX = MAX(1, _dashBoardRect.width() / 8);
 	const int shiftY = MAX(1, _dashBoardRect.width() / 8);
 	const Common::Rect r = _dashBoardRect;
 
-	// Bevel lines
 	_gfx->drawLine(r.left, r.top, r.left + shiftX, r.top + shiftY, 0);
 	_gfx->drawLine(r.right - 1, r.top, r.right - 1 - shiftX, r.top + shiftY, 0);
 	_gfx->drawLine(r.left, r.bottom - 1, r.left + shiftX, r.bottom - 1 - shiftY, 0);
@@ -110,12 +245,12 @@ void ColonyEngine::drawDashboardStep1() {
 		const int rx = MAX(2, (_compassRect.width() - 6) >> 1);
 		const int ry = MAX(2, (_compassRect.height() - 6) >> 1);
 
-		_gfx->fillEllipse(cx, cy, rx, ry, 15); // White background
-		_gfx->drawEllipse(cx, cy, rx, ry, 1);  // Blue frame
+		_gfx->fillEllipse(cx, cy, rx, ry, 15);
+		_gfx->drawEllipse(cx, cy, rx, ry, 1);
 
 		const int ex = cx + ((_cost[_me.look] * rx) >> 8);
 		const int ey = cy - ((_sint[_me.look] * ry) >> 8);
-		_gfx->drawLine(cx, cy, ex, ey, 0); // Black mark
+		_gfx->drawLine(cx, cy, ex, ey, 0);
 		_gfx->drawLine(cx - 2, cy, cx + 2, cy, 0);
 		_gfx->drawLine(cx, cy - 2, cx, cy + 2, 0);
 	}
@@ -124,50 +259,203 @@ void ColonyEngine::drawDashboardStep1() {
 		_gfx->drawLine(_screenR.left - 1, _screenR.top, _screenR.left - 1, _screenR.bottom - 1, 15);
 
 	if (_headsUpRect.width() > 4 && _headsUpRect.height() > 4) {
-		_gfx->fillRect(_headsUpRect, 15); // White background
-		_gfx->drawRect(_headsUpRect, 1); // Blue frame
+		_gfx->fillRect(_headsUpRect, 15);
+		_gfx->drawRect(_headsUpRect, 1);
+		drawMiniMap(0);
+	}
 
-		const Common::Rect miniMapClip(_headsUpRect.left + 1, _headsUpRect.top + 1, _headsUpRect.right - 1, _headsUpRect.bottom - 1);
-		auto drawMiniMapLine = [&](int x1, int y1, int x2, int y2, uint32 color) {
-			if (clipLineToRect(x1, y1, x2, y2, miniMapClip))
-				_gfx->drawLine(x1, y1, x2, y2, color);
-		};
+	if (_powerRect.width() > 4 && _powerRect.height() > 4) {
+		_gfx->fillRect(_powerRect, 15);
+		_gfx->drawRect(_powerRect, 1);
+		const int barY = _powerRect.bottom - MAX(3, _powerRect.width() / 8);
+		_gfx->drawLine(_powerRect.left + 1, barY, _powerRect.right - 2, barY, 0);
+	}
+}
 
-		const int lExtBase = _dashBoardRect.width() >> 1;
-		int lExt = lExtBase + (lExtBase >> 1);
-		if (lExt & 1)
-			lExt--;
-		const int sExt = lExt >> 1;
-		const int xloc = (lExt * ((_me.xindex << 8) - _me.xloc)) >> 8;
-		const int yloc = (lExt * ((_me.yindex << 8) - _me.yloc)) >> 8;
-		const int ccenterx = (_headsUpRect.left + _headsUpRect.right) >> 1;
-		const int ccentery = (_headsUpRect.top + _headsUpRect.bottom) >> 1;
-		const int tsin = _sint[_me.look];
-		const int tcos = _cost[_me.look];
+// --- Mac Color path ---
+// Uses actual PICT resources from the Mac resource fork as panel backgrounds,
+// matching the original power.c DrawInfo() and compass.c DrawCompass() exactly.
+// Original Mac had two floating windows (infoWindow + moveWindow) over gray desktop.
 
-		int xcorner[6];
-		int ycorner[6];
-		xcorner[0] = ccenterx + (((long)xloc * tsin - (long)yloc * tcos) >> 8);
-		ycorner[0] = ccentery - (((long)yloc * tsin + (long)xloc * tcos) >> 8);
-		xcorner[1] = ccenterx + (((long)(xloc + lExt) * tsin - (long)yloc * tcos) >> 8);
-		ycorner[1] = ccentery - (((long)yloc * tsin + (long)(xloc + lExt) * tcos) >> 8);
-		xcorner[2] = ccenterx + (((long)(xloc + lExt) * tsin - (long)(yloc + lExt) * tcos) >> 8);
-		ycorner[2] = ccentery - (((long)(yloc + lExt) * tsin + (long)(xloc + lExt) * tcos) >> 8);
-		xcorner[3] = ccenterx + (((long)xloc * tsin - (long)(yloc + lExt) * tcos) >> 8);
-		ycorner[3] = ccentery - (((long)(yloc + lExt) * tsin + (long)xloc * tcos) >> 8);
-		xcorner[4] = ccenterx + (((long)(xloc + sExt) * tsin - (long)(yloc + sExt) * tcos) >> 8);
-		ycorner[4] = ccentery - (((long)(yloc + sExt) * tsin + (long)(xloc + sExt) * tcos) >> 8);
-		xcorner[5] = ccenterx + (((long)(xloc + sExt) * tsin - (long)yloc * tcos) >> 8);
-		ycorner[5] = ccentery - (((long)yloc * tsin + (long)(xloc + sExt) * tcos) >> 8);
+void ColonyEngine::drawDashboardMac() {
+	const uint32 colBlack = packRGB(0, 0, 0);
+	const uint32 colWhite = packRGB(255, 255, 255);
+	const uint32 colWinBg = packMacColorUI(_macColors[7].bg); // Mac desktop gray
+	const uint32 colBlue = packRGB(0, 0, 255); // power.c: ForeColor(blueColor)
 
-		const int dx = xcorner[1] - xcorner[0];
-		const int dy = ycorner[0] - ycorner[1];
-		drawMiniMapLine(xcorner[0] - dx, ycorner[0] + dy, xcorner[1] + dx, ycorner[1] - dy, 0); // Black for walls
-		drawMiniMapLine(xcorner[1] + dy, ycorner[1] + dx, xcorner[2] - dy, ycorner[2] - dx, 0);
-		drawMiniMapLine(xcorner[2] + dx, ycorner[2] - dy, xcorner[3] - dx, ycorner[3] + dy, 0);
-		drawMiniMapLine(xcorner[3] - dy, ycorner[3] - dx, xcorner[0] + dy, ycorner[0] + dx, 0);
+	// Dashboard background — Mac desktop gray, visible between floating windows
+	_gfx->fillRect(_dashBoardRect, colWinBg);
 
-		auto drawMarker = [&](int x, int y, int halfSize, uint32 color) {
+	// Viewport separator
+	if (_screenR.left > 0)
+		_gfx->drawLine(_screenR.left - 1, _screenR.top, _screenR.left - 1, _screenR.bottom - 1, colBlack);
+
+	// ===== Power panel (infoWindow) =====
+	// power.c DrawInfo(): FillRect(&clr,white) → DrawPicture(PICT) → ForeColor(blue) → bars
+	// armor && !trouble → PICT -32755; armor && trouble → PICT -32760;
+	// !armor && depth>=8 → PICT -32761; !armor && depth<8 → PICT -32752
+	if (_powerRect.width() > 4 && _powerRect.height() > 4) {
+		// power.c: FillRect(&clr, white) — white background under PICT
+		_gfx->fillRect(_powerRect, colWhite);
+
+		// Select correct PICT based on armor/trouble state
+		auto qlog = [](int32 x) -> int { int i = 0; while (x > 0) { x >>= 1; i++; } return i; };
+		const int ePower[3] = { qlog(_corePower[0]), qlog(_corePower[1]), qlog(_corePower[2]) };
+		const bool trouble = (ePower[1] < 6);
+		int wantPictID;
+		if (_armor > 0)
+			wantPictID = trouble ? -32760 : -32755;
+		else
+			wantPictID = -32761;
+
+		// Reload PICT if state changed (fall back to -32755 if variant missing)
+		if (_pictPowerID != wantPictID) {
+			if (_pictPower) { _pictPower->free(); delete _pictPower; _pictPower = nullptr; }
+			_pictPower = loadPictSurface(wantPictID);
+			if (!_pictPower && wantPictID != -32755)
+				_pictPower = loadPictSurface(-32755);
+			_pictPowerID = wantPictID;
+		}
+
+		// power.c: SetRect(&info, -2, -2, xSize-2, ySize-2); DrawPicture(inf, &info)
+		if (_pictPower)
+			drawPictAt(_pictPower, _powerRect.left - 2, _powerRect.top - 2);
+
+		// Blue bars only when armored (power.c: if(armor) { ... ForeColor(blueColor) ... })
+		if (_armor > 0 && _pictPower) {
+			// power.c info rect adjustments: left+=3,right+=3,top-=3,bottom-=3, then ++/--
+			// Net effect: info is adjusted relative to PICT position
+			const int infoLeft = _powerRect.left - 2 + 2;  // -2 (PICT offset) +3-1 = 0, +2 net
+			const int infoBottom = _powerRect.top - 2 + _pictPower->h - 2; // PICT bottom adjusted
+			const int bot = infoBottom - 27; // power.c: bot = info.bottom - 27
+
+			for (int i = 0; i < 3; i++) {
+				// power.c: lft = 3 + info.left + i*23
+				const int lft = 3 + infoLeft + i * 23;
+				for (int j = 0; j < ePower[i] && j < 20; j++) {
+					const int ln = bot - 3 * j;
+					if (ln <= _powerRect.top)
+						break;
+					// power.c: MoveTo(lft+1,ln); LineTo(lft+16,ln); — 16px wide, 2 lines
+					_gfx->drawLine(lft + 1, ln, lft + 16, ln, colBlue);
+					if (ln - 1 > _powerRect.top)
+						_gfx->drawLine(lft + 1, ln - 1, lft + 16, ln - 1, colBlue);
+				}
+			}
+		}
+	}
+
+	// ===== Compass + Floor map (moveWindow) =====
+	// compass.c DrawCompass(): DrawPicture(PICT -32757, &compRect) then patXor drawings
+	// compRect = (0,0, 2*CCENTER, 3*CCENTER) = (0,0, 70, 105)
+	const Common::Rect moveRect(_headsUpRect.left, _headsUpRect.top,
+	                            _compassRect.right, _compassRect.bottom);
+	if (moveRect.width() > 4 && moveRect.height() > 4) {
+		// compass.c: SetRect(&compRect, -2, -2, xSize-2, ySize-2); DrawPicture(comp, &compRect)
+		if (_pictCompass)
+			drawPictAt(_pictCompass, moveRect.left - 2, moveRect.top - 2);
+		else
+			_gfx->fillRect(moveRect, colWinBg);
+
+		// compass.c: compRect reset to (0,0, 70, 105)
+		// PenMode(patXor) — all subsequent drawing XORs onto the PICT background
+
+		// Compass dish (compass.c lines 59-70):
+		// r.top=2*CCENTER-4=66; r.bottom=2*CCENTER+28=98;
+		// r.left=CCENTER-16=19; r.right=CCENTER+16=51;
+		// FillOval(&r, black) with patXor
+		// Needle from (CCENTER, 2*CCENTER+12) = (35, 82) using cost[ang]>>3
+		{
+			const int ox = moveRect.left; // origin offset
+			const int oy = moveRect.top;
+			// Use absolute coordinates from original: dish at (35, 82), oval 19-51, 66-98
+			const int dishCX = ox + 35;  // CCENTER
+			const int dishCY = oy + 82;  // 2*CCENTER+12
+
+			// FillOval at (19,66)-(51,98) with patXor black — inverts PICT background
+			_gfx->fillEllipse(dishCX, dishCY, 16, 16, colBlack);
+
+			// Needle: compass.c line 69-70
+			// LineTo(CCENTER+(cost[ang]>>3), (2*CCENTER+12)-(sint[ang]>>3))
+			const int ex = dishCX + (_cost[_me.look] >> 3);
+			const int ey = dishCY - (_sint[_me.look] >> 3);
+			_gfx->drawLine(dishCX, dishCY, ex, ey, colWhite);
+		}
+
+		// Floor map (compass.c lines 72-213):
+		// floorRect = (7,7)-(63,63) → ++/-- → (8,8)-(62,62) = 54x54 inner map area
+		// ClipRect(&floorRect) for all map drawing
+		// Eye icon at (CCENTER-10,CCENTER-5)-(CCENTER+10,CCENTER+5) = (25,30)-(45,40)
+		// Pupil at (CCENTER-5,CCENTER-5)-(CCENTER+5,CCENTER+5) = (30,30)-(40,40)
+		{
+			drawMiniMap(colBlack);
+
+			// Eye icon (compass.c lines 84-88) — drawn with patXor
+			const int ox = moveRect.left;
+			const int oy = moveRect.top;
+			_gfx->drawEllipse(ox + 35, oy + 35, 10, 5, colBlack);  // FrameOval outer eye
+			_gfx->fillEllipse(ox + 35, oy + 35, 5, 5, colBlack);   // FillOval pupil
+		}
+	}
+}
+
+// Draws the mini floor map into _headsUpRect (shared by Mac and DOS paths)
+void ColonyEngine::drawMiniMap(uint32 lineColor) {
+	const int kFWALLType = 48;
+	const Common::Rect miniMapClip(_headsUpRect.left + 1, _headsUpRect.top + 1, _headsUpRect.right - 1, _headsUpRect.bottom - 1);
+	auto drawMiniMapLine = [&](int x1, int y1, int x2, int y2, uint32 color) {
+		if (clipLineToRect(x1, y1, x2, y2, miniMapClip))
+			_gfx->drawLine(x1, y1, x2, y2, color);
+	};
+
+	const int lExtBase = _dashBoardRect.width() >> 1;
+	int lExt = lExtBase + (lExtBase >> 1);
+	if (lExt & 1)
+		lExt--;
+	const int sExt = lExt >> 1;
+	const int xloc = (lExt * ((_me.xindex << 8) - _me.xloc)) >> 8;
+	const int yloc = (lExt * ((_me.yindex << 8) - _me.yloc)) >> 8;
+	const int ccenterx = (_headsUpRect.left + _headsUpRect.right) >> 1;
+	const int ccentery = (_headsUpRect.top + _headsUpRect.bottom) >> 1;
+	const int tsin = _sint[_me.look];
+	const int tcos = _cost[_me.look];
+
+	int xcorner[6];
+	int ycorner[6];
+	xcorner[0] = ccenterx + (((long)xloc * tsin - (long)yloc * tcos) >> 8);
+	ycorner[0] = ccentery - (((long)yloc * tsin + (long)xloc * tcos) >> 8);
+	xcorner[1] = ccenterx + (((long)(xloc + lExt) * tsin - (long)yloc * tcos) >> 8);
+	ycorner[1] = ccentery - (((long)yloc * tsin + (long)(xloc + lExt) * tcos) >> 8);
+	xcorner[2] = ccenterx + (((long)(xloc + lExt) * tsin - (long)(yloc + lExt) * tcos) >> 8);
+	ycorner[2] = ccentery - (((long)(yloc + lExt) * tsin + (long)(xloc + lExt) * tcos) >> 8);
+	xcorner[3] = ccenterx + (((long)xloc * tsin - (long)(yloc + lExt) * tcos) >> 8);
+	ycorner[3] = ccentery - (((long)(yloc + lExt) * tsin + (long)xloc * tcos) >> 8);
+	xcorner[4] = ccenterx + (((long)(xloc + sExt) * tsin - (long)(yloc + sExt) * tcos) >> 8);
+	ycorner[4] = ccentery - (((long)(yloc + sExt) * tsin + (long)(xloc + sExt) * tcos) >> 8);
+	xcorner[5] = ccenterx + (((long)(xloc + sExt) * tsin - (long)yloc * tcos) >> 8);
+	ycorner[5] = ccentery - (((long)yloc * tsin + (long)(xloc + sExt) * tcos) >> 8);
+
+	const int dx = xcorner[1] - xcorner[0];
+	const int dy = ycorner[0] - ycorner[1];
+	drawMiniMapLine(xcorner[0] - dx, ycorner[0] + dy, xcorner[1] + dx, ycorner[1] - dy, lineColor);
+	drawMiniMapLine(xcorner[1] + dy, ycorner[1] + dx, xcorner[2] - dy, ycorner[2] - dx, lineColor);
+	drawMiniMapLine(xcorner[2] + dx, ycorner[2] - dy, xcorner[3] - dx, ycorner[3] + dy, lineColor);
+	drawMiniMapLine(xcorner[3] - dy, ycorner[3] - dx, xcorner[0] + dy, ycorner[0] + dx, lineColor);
+
+	// compass.c: food markers use FrameOval ±3px, robot markers ±5px.
+	// Scale proportionally to panel width (original floorRect was 54px wide).
+	const bool macMarkers = (_renderMode == Common::kRenderMacintosh && _hasMacColors);
+	const int foodR = macMarkers ? MAX(2, _headsUpRect.width() / 18) : 1;   // ~3px at 54px
+	const int robotR = macMarkers ? MAX(3, _headsUpRect.width() / 11) : 2;  // ~5px at 54px
+
+	auto drawMarker = [&](int x, int y, int halfSize, uint32 color) {
+		if (x < _headsUpRect.left + 1 || x >= _headsUpRect.right - 1 ||
+		    y < _headsUpRect.top + 1 || y >= _headsUpRect.bottom - 1)
+			return;
+		if (macMarkers) {
+			// compass.c: FrameOval — circle outline
+			_gfx->drawEllipse(x, y, halfSize, halfSize, color);
+		} else {
 			const int l = MAX<int>(_headsUpRect.left + 1, x - halfSize);
 			const int t = MAX<int>(_headsUpRect.top + 1, y - halfSize);
 			const int r = MIN<int>(_headsUpRect.right - 1, x + halfSize + 1);
@@ -175,64 +463,51 @@ void ColonyEngine::drawDashboardStep1() {
 			if (l >= r || t >= b)
 				return;
 			_gfx->drawRect(Common::Rect(l, t, r, b), color);
-		};
-
-		auto hasRobotAt = [&](int x, int y) -> bool {
-			if (x < 0 || x >= 32 || y < 0 || y >= 32)
-				return false;
-			return _robotArray[x][y] != 0;
-		};
-		auto hasFoodAt = [&](int x, int y) -> bool {
-			if (x < 0 || x >= 32 || y < 0 || y >= 32)
-				return false;
-			const uint8 num = _foodArray[x][y];
-			if (num == 0)
-				return false;
-			if (num <= _objects.size())
-				return _objects[num - 1].type < kFWALLType;
-			return true;
-		};
-
-		if (hasFoodAt(_me.xindex, _me.yindex))
-			drawMarker(xcorner[4], ycorner[4], 1, 0);
-
-		if (_me.yindex > 0 && !(_wall[_me.xindex][_me.yindex] & 0x01)) {
-			if (hasFoodAt(_me.xindex, _me.yindex - 1))
-				drawMarker(xcorner[4] + dy, ycorner[4] + dx, 1, 0);
-			if (hasRobotAt(_me.xindex, _me.yindex - 1))
-				drawMarker(xcorner[4] + dy, ycorner[4] + dx, 2, 0);
 		}
-		if (_me.xindex > 0 && !(_wall[_me.xindex][_me.yindex] & 0x02)) {
-			if (hasFoodAt(_me.xindex - 1, _me.yindex))
-				drawMarker(xcorner[4] - dx, ycorner[4] + dy, 1, 0);
-			if (hasRobotAt(_me.xindex - 1, _me.yindex))
-				drawMarker(xcorner[4] - dx, ycorner[4] + dy, 2, 0);
-		}
-		if (_me.yindex < 30 && !(_wall[_me.xindex][_me.yindex + 1] & 0x01)) {
-			if (hasFoodAt(_me.xindex, _me.yindex + 1))
-				drawMarker(xcorner[4] - dy, ycorner[4] - dx, 1, 0);
-			if (hasRobotAt(_me.xindex, _me.yindex + 1))
-				drawMarker(xcorner[4] - dy, ycorner[4] - dx, 2, 0);
-		}
-		if (_me.xindex < 30 && !(_wall[_me.xindex + 1][_me.yindex] & 0x02)) {
-			if (hasFoodAt(_me.xindex + 1, _me.yindex))
-				drawMarker(xcorner[4] + dx, ycorner[4] - dy, 1, 0);
-			if (hasRobotAt(_me.xindex + 1, _me.yindex))
-				drawMarker(xcorner[4] + dx, ycorner[4] - dy, 2, 0);
-		}
+	};
 
-		// Eye icon in the center
-		const int px = MAX(4, _dashBoardRect.width() / 10);
-		const int py = MAX(2, _dashBoardRect.width() / 24);
-		_gfx->drawEllipse(ccenterx, ccentery, px, py, 0); // Outer frame
-		_gfx->fillEllipse(ccenterx, ccentery, px / 2, py, 0); // Inner pupil
+	auto hasRobotAt = [&](int x, int y) -> bool {
+		if (x < 0 || x >= 32 || y < 0 || y >= 32)
+			return false;
+		return _robotArray[x][y] != 0;
+	};
+	auto hasFoodAt = [&](int x, int y) -> bool {
+		if (x < 0 || x >= 32 || y < 0 || y >= 32)
+			return false;
+		const uint8 num = _foodArray[x][y];
+		if (num == 0)
+			return false;
+		if (num <= _objects.size())
+			return _objects[num - 1].type < kFWALLType;
+		return true;
+	};
+
+	if (hasFoodAt(_me.xindex, _me.yindex))
+		drawMarker(xcorner[4], ycorner[4], foodR, lineColor);
+
+	if (_me.yindex > 0 && !(_wall[_me.xindex][_me.yindex] & 0x01)) {
+		if (hasFoodAt(_me.xindex, _me.yindex - 1))
+			drawMarker(xcorner[4] + dy, ycorner[4] + dx, foodR, lineColor);
+		if (hasRobotAt(_me.xindex, _me.yindex - 1))
+			drawMarker(xcorner[4] + dy, ycorner[4] + dx, robotR, lineColor);
 	}
-
-	if (_powerRect.width() > 4 && _powerRect.height() > 4) {
-		_gfx->fillRect(_powerRect, 15); // White background
-		_gfx->drawRect(_powerRect, 1); // Blue frame
-		const int barY = _powerRect.bottom - MAX(3, _powerRect.width() / 8);
-		_gfx->drawLine(_powerRect.left + 1, barY, _powerRect.right - 2, barY, 0); // Black divider
+	if (_me.xindex > 0 && !(_wall[_me.xindex][_me.yindex] & 0x02)) {
+		if (hasFoodAt(_me.xindex - 1, _me.yindex))
+			drawMarker(xcorner[4] - dx, ycorner[4] + dy, foodR, lineColor);
+		if (hasRobotAt(_me.xindex - 1, _me.yindex))
+			drawMarker(xcorner[4] - dx, ycorner[4] + dy, robotR, lineColor);
+	}
+	if (_me.yindex < 30 && !(_wall[_me.xindex][_me.yindex + 1] & 0x01)) {
+		if (hasFoodAt(_me.xindex, _me.yindex + 1))
+			drawMarker(xcorner[4] - dy, ycorner[4] - dx, foodR, lineColor);
+		if (hasRobotAt(_me.xindex, _me.yindex + 1))
+			drawMarker(xcorner[4] - dy, ycorner[4] - dx, robotR, lineColor);
+	}
+	if (_me.xindex < 30 && !(_wall[_me.xindex + 1][_me.yindex] & 0x02)) {
+		if (hasFoodAt(_me.xindex + 1, _me.yindex))
+			drawMarker(xcorner[4] + dx, ycorner[4] - dy, foodR, lineColor);
+		if (hasRobotAt(_me.xindex + 1, _me.yindex))
+			drawMarker(xcorner[4] + dx, ycorner[4] - dy, robotR, lineColor);
 	}
 }
 
@@ -240,9 +515,17 @@ void ColonyEngine::drawCrosshair() {
 	if (!_crosshair || _screenR.width() <= 0 || _screenR.height() <= 0)
 		return;
 
-	uint32 color = (_weapons > 0) ? 15 : 7;
-	if (_corePower[_coreIndex] > 0)
-		color = 0;
+	const bool macColor = (_renderMode == Common::kRenderMacintosh && _hasMacColors);
+	uint32 color;
+	if (macColor) {
+		// Mac: black when powered, gray when no weapons, white when armed but no power
+		color = (_corePower[_coreIndex] > 0) ? packRGB(0, 0, 0)
+			: (_weapons > 0) ? packRGB(255, 255, 255) : packRGB(128, 128, 128);
+	} else {
+		color = (_weapons > 0) ? 15 : 7;
+		if (_corePower[_coreIndex] > 0)
+			color = 0;
+	}
 
 	const int cx = _centerX;
 	const int cy = _centerY;
