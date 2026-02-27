@@ -167,6 +167,22 @@ void PelrockEngine::init() {
 		// alfredState.x = 576;
 		// alfredState.y = 374;
 	}
+
+	loadInventoryArrows();
+}
+
+void PelrockEngine::loadInventoryArrows() {
+	Common::File alfred7;
+	if(!alfred7.open("ALFRED.7")) {
+		error("Failed to open ALFRED.7 to load inventory arrows");
+		return;
+	}
+	alfred7.seek(3186048, SEEK_SET); // Offset for inventory arrows in ALFRED.7
+	_inventoryOverlayState.arrows[0] = new byte[20 * 60];
+	_inventoryOverlayState.arrows[1] = new byte[20 * 60];
+	alfred7.read(_inventoryOverlayState.arrows[0], 20 * 60);
+	alfred7.read(_inventoryOverlayState.arrows[1], 20 * 60);
+	alfred7.close();
 }
 
 void PelrockEngine::loadAnims() {
@@ -1485,7 +1501,9 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 	Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
 
 	VerbIcon icon = isActionUnder(_events->_mouseX, _events->_mouseY);
+
 	bool shouldBlink = _chrono->getFrameCount() % kIconBlinkPeriod == 0;
+
 	for (uint i = 0; i < actions.size(); i++) {
 		if (icon == actions[i] && shouldBlink) {
 			continue;
@@ -1493,17 +1511,29 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 		Common::Point p = getPositionInBallonForIndex(i, posx, posy);
 		drawSpriteToBuffer(_compositeBuffer, 640, _res->_verbIcons[actions[i]], p.x, p.y, kVerbIconWidth, kVerbIconHeight, 1);
 	}
+
+	if(icon == ITEM) {
+		if(!_inventoryOverlayState.isActive) {
+			_inventoryOverlayState.isActive = true;
+			// _inventoryOverlayState.page =
+		}
+		showInventoryOverlay();
+	}
+
 	if (_state->selectedInventoryItem >= 0 && !_state->inventoryItems.empty()) {
 		if (icon == ITEM && shouldBlink) {
 			return;
 		}
 		drawSpriteToBuffer(_compositeBuffer, 640, _res->getIconForObject(_state->selectedInventoryItem).iconData, posx + 20 + (actions.size() * (kVerbIconWidth + 2)), posy + 20, kVerbIconWidth, kVerbIconHeight, 1);
 	}
+
 	if (_actionPopupState.curFrame < 3) {
 		_actionPopupState.curFrame++;
 	} else {
 		_actionPopupState.curFrame = 0;
 	}
+
+
 }
 
 void PelrockEngine::animateTalkingNPC(Sprite *animSet) {
@@ -1543,11 +1573,11 @@ void PelrockEngine::animateTalkingNPC(Sprite *animSet) {
 }
 
 Common::Point getPositionInOverlayForIndex(uint index) {
-	return Common::Point(5 + index * (60 + 2), 400 - 60 - 5);
+	return Common::Point(20 + index * (60), 340);
 }
 
 void PelrockEngine::pickupIconFlash() {
-	_graphics->showOverlay(65, _compositeBuffer);
+	_graphics->showOverlay(60, _compositeBuffer);
 	if (_newItem == -1)
 		return;
 	uint invSize = _state->inventoryItems.size();
@@ -1562,6 +1592,19 @@ void PelrockEngine::pickupIconFlash() {
 		debug("Drawing pickup icon for item %d at inventory index %d, position %d,%d", _newItem, invSize, p.x, p.y);
 		drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, p.x, p.y, 60, 60, 1);
 	}
+}
+
+void PelrockEngine::showInventoryOverlay() {
+	_graphics->showOverlay(60, _compositeBuffer);
+	uint invSize = _state->inventoryItems.size();
+	int firstItem = _inventoryOverlayState.page * kInventoryPageSize;
+
+	for (int i = firstItem; i < invSize && i < firstItem + kInventoryPageSize; i++) {
+		Common::Point p = getPositionInOverlayForIndex(i - firstItem);
+		drawSpriteToBuffer(_compositeBuffer, 640, _res->getIconForObject(_state->inventoryItems[i]).iconData, p.x, p.y, 60, 60, 1);
+	}
+	drawSpriteToBuffer(_compositeBuffer, 640, _inventoryOverlayState.arrows[0], 0, 340, 20, 60, 255);
+	drawSpriteToBuffer(_compositeBuffer, 640, _inventoryOverlayState.arrows[1], 620, 340, 20, 60, 255);
 }
 
 void PelrockEngine::gameLoop() {

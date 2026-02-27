@@ -83,8 +83,9 @@ const int kChoiceHeight = 16; // Height of each choice line in pixels
 const int kTalkAnimationSpeed = 2; // Frames per update
 const int kAlfredAnimationSpeed = 2; // Frames per update
 
-
 const int kAlfredIdleAnimationFrameCount = 300;
+
+const int kInventoryPageSize = 10;
 
 // Direction flags (bit-packed)
 #define MOVE_RIGHT 0x01 // Move right (positive X)
@@ -157,6 +158,12 @@ struct ActionPopupState {
 	int y = 0;
 	int displayTime = 0;
 	bool isAlfredUnder = false;
+};
+
+struct InventoryOverlayState {
+	bool isActive = false;
+	int page = 0;
+	byte *arrows[2] = { nullptr, nullptr };
 };
 
 struct AlfredState {
@@ -411,6 +418,7 @@ struct PaletteAnim {
 #define PASSERBY_RIGHT 0
 #define PASSERBY_LEFT 1
 #define PASSERBY_DOWN 2
+
 struct PasserByAnim
 {
 	uint32 frameTrigger = 0x3FF;
@@ -484,7 +492,7 @@ struct ResetEntry {
 #define FLAG_PUERTA_BUENA 35
 #define FLAG_PIEDRA_FAKE_MOJADA 34
 #define FLAG_TIENDA_ABIERTA 46
-
+#define FLAG_COMO_ESTAN_LOS_DIOSES 41
 
 
 #define FLAG_VIAJE_A_EGIPTO 12
@@ -503,7 +511,6 @@ struct ResetEntry {
 #define FLAG_A_POR_LA_PRINCESA 38
 #define FLAG_VUELTA_A_EMPEZAR 39
 #define FLAG_A_LOS_PASILLOS 40
-#define FLAG_COMO_ESTAN_LOS_DIOSES 41
 #define FLAG_END_OF_GAME 42
 #define FLAG_FROM_INTRO 43
 #define FLAG_HE_TIRADO_PIEDRA 44
@@ -641,7 +648,6 @@ struct SaveGameData {
 	AlfredDirection alfredDir = ALFRED_DOWN;
 	GameStateData *gameState = nullptr;
 };
-
 
 struct FlightRoomCfg {
 	int roomNumber;

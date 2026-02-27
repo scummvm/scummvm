@@ -65,6 +65,7 @@ private:
 	MenuManager *_menu = nullptr;
 
 	void init();
+	void loadInventoryArrows();
 	void loadAnims();
 
 	/*
@@ -110,6 +111,8 @@ private:
 
 	void playSoundIfNeeded();
 
+	void showInventoryOverlay();
+
 	void gameLoop();
 	void computerLoop();
 	void extraScreenLoop();
@@ -134,6 +137,8 @@ private:
 	byte *_bgScreen = nullptr;
 
 	ActionPopupState _actionPopupState;
+	InventoryOverlayState _inventoryOverlayState;
+
 
 	HotSpot *_currentHotspot = nullptr;
 	int _newItem = -1;
