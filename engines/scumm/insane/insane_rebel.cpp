@@ -280,6 +280,8 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 		_turretShots[i].targetX = 0;
 		_turretShots[i].targetY = 0;
 		_turretShots[i].seqNum = 0;
+		_turretShots[i].gunX = 0;
+		_turretShots[i].gunY = 0;
 	}
 	_turretShotSeqCounter = 0;
 
@@ -3495,8 +3497,11 @@ void InsaneRebel2::spawnVehicleShot(int x, int y) {
 	}
 }
 
-// Handler 25 Speeder bike shot spawn (based on FUN_0041db5e lines 170-190)
-// Similar to turret but with character-based gun position
+// Handler 25 on-foot shot spawn (based on FUN_0041db5e lines 170-190)
+// Gun position computed from GRD002 character sprite.
+// Original stores: DAT_0045791c[i] = gunOffsetTable[spriteIdx] + DAT_00457910 - DAT_0045790c
+//                  DAT_00457920[i] = gunYTable[spriteIdx] + DAT_00457912 - DAT_0045790e
+// Render adds view offset back, so screen gun = table[idx] + spriteOffset.
 void InsaneRebel2::spawnHandler25Shot(int x, int y) {
 	// Handler 25 can only shoot when uncovered (damage == 0)
 	if (_rebelDamageLevel != 0) {
@@ -3516,8 +3521,68 @@ void InsaneRebel2::spawnHandler25Shot(int x, int y) {
 			_turretShots[i].targetX = x;
 			_turretShots[i].targetY = y;
 
-			debug("Rebel2 Handler25: Spawned shot %d target (%d,%d)",
-				i, _turretShots[i].targetX, _turretShots[i].targetY);
+			// Compute gun position from GRD002 character sprite.
+			// Original uses per-direction lookup tables DAT_004578a6/DAT_004578c6.
+			// We approximate from the NUT sprite center + directional offset.
+			if (_grd002Sprite && _grd002Sprite->getNumChars() > 0) {
+				// Compute current sprite index (same logic as renderHandler25Ship)
+				int spriteIdx;
+				if (_rebelDamageLevel == 0) {
+					// Uncovered: compute from crosshair position zones
+					int16 areaLeft = (_corridorLeftX > 0) ? _corridorLeftX : 0;
+					int16 areaRight = (_corridorRightX > 0) ? _corridorRightX : 320;
+					int16 areaTop = (_corridorTopY > 0) ? _corridorTopY : 0;
+					int16 areaBottom = (_corridorBottomY > 0) ? _corridorBottomY : 180;
+					int areaWidth = areaRight - areaLeft;
+					int areaHeight = areaBottom - areaTop;
+					int zoneWidth = (areaWidth > 0) ? (areaWidth + 3) / 4 : 80;
+					int zoneHeight = (areaHeight > 0) ? areaHeight / 2 : 90;
+					int xZone = (zoneWidth > 0) ? ((zoneWidth / 2) + (x - areaLeft)) / zoneWidth : 2;
+					int yZone = (zoneHeight > 0) ? ((zoneHeight / 2) + (y - areaTop)) / zoneHeight : 0;
+					if (xZone < 0) xZone = 0;
+					if (xZone > 4) xZone = 4;
+					if (yZone < 0) yZone = 0;
+					if (yZone > 1) yZone = 1;
+					if (_rebelFlightDir == (yZone & 1)) {
+						xZone = 4 - xZone;
+					}
+					spriteIdx = yZone * 5 + xZone + 5;
+				} else {
+					spriteIdx = (_rebelFlightDir == 0) ? (5 - _rebelDamageLevel) : (25 - _rebelDamageLevel);
+				}
+				int numSprites = _grd002Sprite->getNumChars();
+				if (spriteIdx < 0) spriteIdx = 0;
+				if (spriteIdx >= numSprites) spriteIdx = numSprites - 1;
+
+				// Get sprite rendering position (same as in renderHandler25Ship)
+				int16 spriteXOffset = _grd002Sprite->getCharXOffset(spriteIdx);
+				int16 spriteYOffset = _grd002Sprite->getCharYOffset(spriteIdx);
+				int spriteW = _grd002Sprite->getCharWidth(spriteIdx);
+				int spriteH = _grd002Sprite->getCharHeight(spriteIdx);
+				bool shouldMirror = (_rebelFlightDir != 0 && _rebelDamageLevel == 0);
+
+				int drawX;
+				if (shouldMirror) {
+					drawX = _rebelViewOffset2X + (320 - spriteW - spriteXOffset);
+				} else {
+					drawX = _rebelViewOffset2X + spriteXOffset;
+				}
+				int drawY = spriteYOffset + _rebelViewOffset2Y;
+
+				// Gun barrel is approximately at the character's hand level:
+				// X: center of sprite ± directional offset toward the target
+				// Y: about 60% down the sprite height (hand/arm level)
+				_turretShots[i].gunX = drawX + spriteW / 2;
+				_turretShots[i].gunY = drawY + (spriteH * 3) / 5;
+			} else {
+				// Fallback: approximate center-bottom of character area
+				_turretShots[i].gunX = _rebelViewOffset2X + 160;
+				_turretShots[i].gunY = _rebelViewOffset2Y + 140;
+			}
+
+			debug("Rebel2 Handler25: Spawned shot %d target (%d,%d) gun (%d,%d)",
+				i, _turretShots[i].targetX, _turretShots[i].targetY,
+				_turretShots[i].gunX, _turretShots[i].gunY);
 			break;
 		}
 	}
@@ -6008,16 +6073,10 @@ void InsaneRebel2::renderHandler25LaserShots(byte *renderBitmap, int pitch, int 
 		int16 targetX = _turretShots[i].targetX;
 		int16 targetY = _turretShots[i].targetY;
 
-		// Gun position: In FUN_0041f004, the gun is at a fixed offset based on character sprite
-		// From FUN_0041db5e lines 178-187, the gun position is:
-		// gunX = (spriteOffset + DAT_00457910) - viewOffsetX
-		// gunY = (spriteOffset + DAT_00457912) - viewOffsetY
-		//
-		// For simplicity, use a position near the bottom-center of the screen
-		// where the character's gun would be in the speeder bike cockpit.
-		// The character is typically around (160, 150) in the cockpit view.
-		int16 gunX = 160;  // Center of screen
-		int16 gunY = 170;  // Near bottom where character sits
+		// Gun position computed at spawn time from GRD002 sprite data
+		// Original: DAT_0045791c[i] + DAT_0045790c, DAT_00457920[i] + DAT_0045790e
+		int16 gunX = _turretShots[i].gunX;
+		int16 gunY = _turretShots[i].gunY;
 
 		int16 progress = maxDuration - _turretShots[i].counter;
 
