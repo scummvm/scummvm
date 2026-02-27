@@ -367,6 +367,13 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 		_audioTrackActive[i] = false;
 	}
 
+	// Initialize and load sound effects (SYSTM/*.SAD files)
+	for (i = 0; i < kRA2NumSfx; i++) {
+		_sfxData[i] = nullptr;
+		_sfxSize[i] = 0;
+	}
+	loadSfx();
+
 	// Initialize menu system
 	_gameState = kStateMainMenu;  // Start at main menu
 	_menuSelection = 0;           // First item selected
@@ -433,6 +440,7 @@ InsaneRebel2::~InsaneRebel2() {
 	_vm->_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 
 	terminateAudio();
+	freeSfx();
 	delete _rebelMsgFont;
 	delete _menuFont;
 	delete _smush_dispfontNut;
@@ -809,14 +817,16 @@ int32 InsaneRebel2::processMouse() {
 					}
 				}
 
-				// Play explosion sound.
-				// Handler 8 types 1-4: BLAST.SAD (slot 0) via different sound function
-				// All others: EXPLODE.SAD (slot 2)
-				// TODO: Implement actual SAD sound playback
-				if (_rebelHandler == 8 && it->type >= 1 && it->type <= 4) {
-					debug("Rebel2: BLAST sound for enemy type %d (no visual explosion)", it->type);
-				} else {
-					debug("Rebel2: EXPLODE sound for enemy type %d", it->type);
+				// Play explosion sound (FUN_0041189e).
+				// Pan based on enemy center X position: (screenX - 160) mapped to [-127,127]
+				{
+					int enemyCenterX = (it->rect.left + it->rect.right) / 2 - _viewX;
+					int sfxPan = CLIP((enemyCenterX - 160) * 127 / 160, -127, 127);
+					if (_rebelHandler == 8 && it->type >= 1 && it->type <= 4) {
+						playSfx(0, 127, sfxPan);  // BLAST.SAD for handler 8 types 1-4
+					} else {
+						playSfx(2, 127, sfxPan);  // EXPLODE.SAD for all other enemies
+					}
 				}
 
 				// Award score for destroying enemy (FUN_0041bf8d called from FUN_40A2E0)
@@ -1696,6 +1706,7 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 						if (_playerDamage > 255) _playerDamage = 255;
 					}
 					_rebelHitCounter++;
+					playSfx(1, 127, 100);  // CRASH.SAD, right wall → pan right
 				}
 			}
 			// Left boundary (lines 271-283)
@@ -1712,6 +1723,7 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 						if (_playerDamage > 255) _playerDamage = 255;
 					}
 					_rebelHitCounter++;
+					playSfx(1, 127, -100);  // CRASH.SAD, left wall → pan left
 				}
 			}
 			// Y boundary clamping — no damage (lines 285-292)
@@ -4143,6 +4155,8 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 					}
 					_rebelHitCounter++;
 					initDamageFlash();
+					// Pan based on ship X position relative to screen center
+					playSfx(1, 127, CLIP((_flyShipScreenX - 212) * 127 / 160, -127, 127));
 					debug("Rebel2: Handler7 Mode0/2 OBSTACLE HIT zone=%d ship=(%d,%d) damage=%d",
 						i, _flyShipScreenX, _flyShipScreenY, collisionDamage);
 					break;  // Only one collision per frame (original breaks)
@@ -4183,6 +4197,7 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 						if (_playerDamage > 255) _playerDamage = 255;
 						_rebelHitCounter++;
 						_hitCooldown = 10;
+						playSfx(1, 127, 0);  // CRASH.SAD, top wall → center pan
 						debug("Rebel2: Handler7 Mode1/3 TOP WALL ship=(%d,%d) edgeY=%d damage=%d",
 							_flyShipScreenX, _flyShipScreenY, edgeY, damage);
 					}
@@ -4204,6 +4219,7 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 						if (_playerDamage > 255) _playerDamage = 255;
 						_rebelHitCounter++;
 						_hitCooldown = 10;
+						playSfx(1, 127, 0);  // CRASH.SAD, bottom wall → center pan
 						debug("Rebel2: Handler7 Mode1/3 BOTTOM WALL ship=(%d,%d) edgeY=%d damage=%d",
 							_flyShipScreenX, _flyShipScreenY, edgeY, damage);
 					}
@@ -4225,6 +4241,7 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 						if (_playerDamage > 255) _playerDamage = 255;
 						_rebelHitCounter++;
 						_hitCooldown = 10;
+						playSfx(1, 127, -100);  // CRASH.SAD, left wall → pan left
 						debug("Rebel2: Handler7 Mode1/3 LEFT WALL ship=(%d,%d) edgeX=%d damage=%d",
 							_flyShipScreenX, _flyShipScreenY, edgeX, damage);
 					}
@@ -4245,6 +4262,7 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 						if (_playerDamage > 255) _playerDamage = 255;
 						_rebelHitCounter++;
 						_hitCooldown = 10;
+						playSfx(1, 127, 100);  // CRASH.SAD, right wall → pan right
 						debug("Rebel2: Handler7 Mode1/3 RIGHT WALL ship=(%d,%d) edgeX=%d damage=%d",
 							_flyShipScreenX, _flyShipScreenY, edgeX, damage);
 					}
@@ -6332,6 +6350,121 @@ void InsaneRebel2::processAudioFrame(int16 feedSize) {
 		track.audioRemaining = dispatch.audioRemaining;
 		dispatch.state = track.state;
 	}
+}
+
+// ========== Sound Effects (SAD files) ==========
+// Loads standalone SAUD files from SYSTM/ for one-shot SFX playback.
+// Original game loads these via FUN_0042a3b0 at init into DAT_00456888[0..7].
+
+static const char *const kRA2SfxFiles[InsaneRebel2::kRA2NumSfx] = {
+	"SYSTM/BLAST.SAD",    // 0 - Player laser fire
+	"SYSTM/CRASH.SAD",    // 1 - Corridor/wall collision
+	"SYSTM/EXPLODE.SAD",  // 2 - Enemy explosion
+	"SYSTM/ALERT.SAD",    // 3 - Alert/warning
+	"SYSTM/LOCKON.SAD",   // 4 - Target lock-on
+	"SYSTM/BONUS.SAD",    // 5 - Bonus pickup
+	"SYSTM/HBLAST.SAD",   // 6 - Heavy blast (player weapon)
+	"SYSTM/TBLAST.SAD"    // 7 - TIE blast
+};
+
+void InsaneRebel2::loadSfx() {
+	for (int i = 0; i < kRA2NumSfx; i++) {
+		ScummFile *file = _vm->instantiateScummFile();
+		_vm->openFile(*file, kRA2SfxFiles[i]);
+		if (!file->isOpen()) {
+			debug("InsaneRebel2::loadSfx: Could not open %s", kRA2SfxFiles[i]);
+			delete file;
+			continue;
+		}
+
+		// SAUD file structure: SAUD header (8) + STRK sub-chunk + SDAT sub-chunk
+		// We scan for the SDAT tag to find the PCM data.
+		uint32 fileSize = file->size();
+		if (fileSize < 38) {  // Minimum: 8 (SAUD) + 22 (STRK) + 8 (SDAT header)
+			debug("InsaneRebel2::loadSfx: %s too small (%d bytes)", kRA2SfxFiles[i], fileSize);
+			file->close();
+			delete file;
+			continue;
+		}
+
+		// Verify SAUD tag
+		uint32 tag = file->readUint32BE();
+		if (tag != MKTAG('S', 'A', 'U', 'D')) {
+			debug("InsaneRebel2::loadSfx: %s not a SAUD file (tag=0x%08x)", kRA2SfxFiles[i], tag);
+			file->close();
+			delete file;
+			continue;
+		}
+		file->readUint32BE();  // Skip SAUD size
+
+		// Scan for SDAT chunk (skip STRK and any other sub-chunks)
+		bool foundSdat = false;
+		while (file->pos() + 8 <= (int64)fileSize) {
+			uint32 chunkTag = file->readUint32BE();
+			uint32 chunkSize = file->readUint32BE();
+
+			if (chunkTag == MKTAG('S', 'D', 'A', 'T')) {
+				// Found PCM data
+				uint32 pcmSize = MIN(chunkSize, fileSize - (uint32)file->pos());
+				_sfxData[i] = (byte *)malloc(pcmSize);
+				if (_sfxData[i]) {
+					file->read(_sfxData[i], pcmSize);
+					_sfxSize[i] = pcmSize;
+					debug("InsaneRebel2::loadSfx: Loaded %s (%d bytes PCM)", kRA2SfxFiles[i], pcmSize);
+				}
+				foundSdat = true;
+				break;
+			} else {
+				// Skip this sub-chunk
+				file->seek(chunkSize, SEEK_CUR);
+			}
+		}
+
+		if (!foundSdat) {
+			debug("InsaneRebel2::loadSfx: No SDAT chunk in %s", kRA2SfxFiles[i]);
+		}
+
+		file->close();
+		delete file;
+	}
+}
+
+void InsaneRebel2::freeSfx() {
+	for (int i = 0; i < kRA2NumSfx; i++) {
+		// Stop any playing SFX on this slot
+		_vm->_mixer->stopHandle(_sfxHandles[i]);
+		free(_sfxData[i]);
+		_sfxData[i] = nullptr;
+		_sfxSize[i] = 0;
+	}
+}
+
+void InsaneRebel2::playSfx(int slot, int volume, int pan) {
+	if (slot < 0 || slot >= kRA2NumSfx || !_sfxData[slot] || _sfxSize[slot] == 0) {
+		return;
+	}
+
+	// Stop any previous instance of this SFX slot
+	_vm->_mixer->stopHandle(_sfxHandles[slot]);
+
+	// Make a copy of the PCM data (makeRawStream with DisposeAfterUse::YES will free it)
+	byte *pcmCopy = (byte *)malloc(_sfxSize[slot]);
+	if (!pcmCopy) {
+		return;
+	}
+	memcpy(pcmCopy, _sfxData[slot], _sfxSize[slot]);
+
+	// Create a one-shot raw audio stream: 8-bit unsigned mono at 11025 Hz
+	Audio::SeekableAudioStream *stream = Audio::makeRawStream(
+		pcmCopy, _sfxSize[slot], 11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+
+	// Scale volume from 0-127 to ScummVM's 0-255 range
+	int scaledVolume = (volume * Audio::Mixer::kMaxChannelVolume) / 127;
+
+	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[slot],
+		stream, -1, scaledVolume, pan);
+
+	debug(5, "InsaneRebel2::playSfx: slot=%d vol=%d pan=%d size=%d", slot, volume, pan, _sfxSize[slot]);
 }
 
 // ======================= Menu System Implementation =======================
