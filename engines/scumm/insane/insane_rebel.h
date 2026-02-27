@@ -820,17 +820,33 @@ public:
 	// - DAT_0047fef0: Laser fire sprites (FLY002, par3=3)
 	// - DAT_0047fef8: Targeting overlay (FLY003, par3=2)
 	// - DAT_0047ff00: High-res alternative (FLY004, par3=11)
-	// - DAT_0044370c: Ship Y screen position
-	// - DAT_0044370e: Ship X screen position
+	// - DAT_00443708: Ship X position, DAT_0044370a: Ship Y position
+	// - DAT_0044370c: Smoothed horizontal velocity, DAT_0044370e: Vertical input
 
 	NutRenderer *_flyShipSprite;     // DAT_0047fee8 - FLY001 (35 direction frames)
 	NutRenderer *_flyLaserSprite;    // DAT_0047fef0 - FLY002
 	NutRenderer *_flyTargetSprite;   // DAT_0047fef8 - FLY003
 	NutRenderer *_flyHiResSprite;    // DAT_0047ff00 - FLY004
 
-	// Handler 7 screen position (different from Handler 8's raw positions)
-	int16 _flyShipScreenX;           // DAT_0044370e - Ship X screen position
-	int16 _flyShipScreenY;           // DAT_0044370c - Ship Y screen position
+	// Handler 7 ship state (FUN_40C3CC / FUN_0040d836)
+	// Position in game coordinate space [20,404]x[20,240], center=(212,130)
+	int16 _flyShipScreenX;           // DAT_00443708 - Ship X game position
+	int16 _flyShipScreenY;           // DAT_0044370a - Ship Y game position
+
+	// Physics state (velocity-based movement system from FUN_40C3CC case 4)
+	int16 _smoothedVelocity;         // DAT_0044370c - Averaged horizontal velocity (from history)
+	int16 _verticalInput;            // DAT_0044370e - Stored vertical input component
+	int16 _velocityHistory[25];      // DAT_00443716 - Horizontal velocity ring buffer (25 entries)
+	int16 _windHistoryX[15];         // DAT_00443b16 - Wind X history buffer
+	int16 _windHistoryY[15];         // DAT_00443b34 - Wind Y history buffer
+	int16 _windParamX;               // DAT_00443b12 - Wind X (from opcode 7 par4=0)
+	int16 _windParamY;               // DAT_00443b14 - Wind Y (from opcode 7 par4=0)
+
+	// Perspective view offsets (computed from ship position, used for rendering)
+	int16 _perspectiveX;             // DAT_00443712 - Perspective shift X
+	int16 _perspectiveY;             // DAT_00443714 - Perspective shift Y
+	int16 _viewShift;                // DAT_00443710 - Clamped smoothed velocity for view transform
+	bool _facingRight;               // DAT_0047ab8c - Ship facing right of center
 
 	// ======================= Handler 25 (0x19) GRD Ship System =======================
 	// For mixed mode missions (Level 2 speeder bike, etc.), Handler 25 uses GRD NUT

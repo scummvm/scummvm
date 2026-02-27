@@ -339,6 +339,17 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_flyHiResSprite = nullptr;   // FLY004 - high-res alternative
 	_flyShipScreenX = 0xd4;      // Start at center (212) - matches DAT_00443708 default
 	_flyShipScreenY = 0x82;      // Start at center (130) - matches DAT_0044370a default
+	_smoothedVelocity = 0;       // DAT_0044370c
+	_verticalInput = 0;          // DAT_0044370e
+	memset(_velocityHistory, 0, sizeof(_velocityHistory));  // DAT_00443716
+	memset(_windHistoryX, 0, sizeof(_windHistoryX));         // DAT_00443b16
+	memset(_windHistoryY, 0, sizeof(_windHistoryY));         // DAT_00443b34
+	_windParamX = 0;             // DAT_00443b12
+	_windParamY = 0;             // DAT_00443b14
+	_perspectiveX = 0;           // DAT_00443712
+	_perspectiveY = 0;           // DAT_00443714
+	_viewShift = 0;              // DAT_00443710
+	_facingRight = false;        // DAT_0047ab8c
 
 	// Initialize Handler 25 GRD ship system
 	_grd001Sprite = nullptr;     // DAT_00482240 - GRD001 primary ship
@@ -1093,7 +1104,9 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 		case 0:
 			// Velocity/wind data — affects ship drift in FUN_40C3CC physics
 			// DAT_00443b12 = horizontal wind, DAT_00443b14 = vertical wind
-			debug("Rebel2 Opcode 7 par4=0: velocity=(%d,%d)", body0, body1);
+			_windParamX = body0;
+			_windParamY = body1;
+			debug("Rebel2 Opcode 7 par4=0: wind=(%d,%d)", body0, body1);
 			break;
 		case 1:
 			// Set LEFT X boundary and TOP Y boundary
@@ -1543,85 +1556,165 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 			debug("Rebel2 Opcode 6 (Handler 7): Status bar enabled (body flag=%d)", bodyStatusFlag);
 		}
 
-		// Update ship position from mouse input.
-		// CRITICAL: Ship position is in game coordinate space [20,404]x[20,240],
-		// centered at (212,130) — matching DAT_00443708/DAT_0044370a in the original.
-		// Collision zones are in this same space. Mouse coords must be converted.
+		// ============================================================
+		// Ship position update — FUN_40C3CC case 4, lines 49-327
+		// ============================================================
+		// Velocity-based physics with momentum/inertia:
+		//   Mouse offset from center → scaled input [-127,127]
+		//   → velocity history averaging → physics delta (clamped ±12/frame)
+		//   → position clamping → corridor collision → perspective offsets
 		//
-		// FUN_40C3CC case 4: original uses smoothed mouse velocity → position delta (±12/frame).
-		// Simplified here: direct mouse position mapping with smooth interpolation.
+		// Level data table (DAT_0047e0e8 + level*0x242 + difficulty*0x22):
+		//   offset 0: smoothing param (>>4 +1 = window size)
+		//   offset 2: Y speed          offset 4: X speed (levelSpeed)
+		//   offset 6: wind multiplier  offset 14: corridor damage
+		// We don't have the actual level data, so we use calibrated defaults.
 
-		int16 rawMouseX = _vm->_mouse.x;
-		int16 rawMouseY = _vm->_mouse.y;
+		// --- Step 1: Mouse input as offset from screen center ---
+		// DAT_0047a7e0 = mouseX - 160, DAT_0047a7e2 = mouseY - 100
+		// _vm->_mouse.x/y are in virtual screen coords (0-319, 0-199)
+		// consistent with handler 8 which uses _vm->_mouse.x directly.
+		int16 inputX = (int16)(_vm->_mouse.x - 160);  // DAT_0047a7e0
+		int16 inputY = (int16)(_vm->_mouse.y - 100);  // DAT_0047a7e2
 
-		// Scale mouse to 320x200 logical space if video is larger
-		int16 mouseX = rawMouseX;
-		int16 mouseY = rawMouseY;
-		if (_player && _player->_width > 320) {
-			mouseX = (rawMouseX * 320) / _player->_width;
+		// Clamp: mouse mode uses [-160, 160] for X, [-127, 127] for Y (lines 55-70)
+		if (inputX > 160) inputX = 160;
+		if (inputX < -160) inputX = -160;
+		if (inputY > 127) inputY = 127;
+		if (inputY < -127) inputY = -127;
+
+		// --- Step 2: Scale to [-127, 127] (lines 82-84) ---
+		// Mouse mode: local_c = (DAT_0047a7e0 * 0x7f) / 0xa0
+		int16 local_c = (int16)((inputX * 127) / 160);
+		int16 local_14 = inputY;  // Y already in [-127, 127]
+
+		// --- Step 3: Velocity history + smoothed average (lines 141-157) ---
+		for (int i = 24; i > 0; i--) {
+			_velocityHistory[i] = _velocityHistory[i - 1];
 		}
-		if (_player && _player->_height > 200) {
-			mouseY = (rawMouseY * 200) / _player->_height;
+		_velocityHistory[0] = local_c;
+
+		// Window size = (levelData[0] >> 4) + 1. Calibrated default: 5.
+		const int smoothWindow = 5;
+		int velSum = 0;
+		for (int i = 0; i < smoothWindow; i++) {
+			velSum += _velocityHistory[i];
+		}
+		_smoothedVelocity = (int16)(velSum / smoothWindow);  // DAT_0044370c
+
+		// --- Step 4: Wind history (lines 158-173) ---
+		// Wind multiplier comes from level data[6]. Without data, use 0 (no wind).
+		const int16 windMult = 0;
+		int windSumX = 0, windSumY = 0;
+		for (int i = 14; i > 0; i--) {
+			_windHistoryX[i] = _windHistoryX[i - 1];
+			windSumX += _windHistoryX[i];
+		}
+		_windHistoryX[0] = _windParamX;
+		int16 windEffectX = (int16)((windMult * (windSumX + _windParamX)) / 15);
+
+		for (int i = 14; i > 0; i--) {
+			_windHistoryY[i] = _windHistoryY[i - 1];
+			windSumY += _windHistoryY[i];
+		}
+		_windHistoryY[0] = _windParamY;
+		int16 windEffectY = (int16)((windMult * (windSumY + _windParamY)) / 15);
+
+		// --- Step 5: Position delta (lines 174-242) ---
+		// levelSpeed (offset 4): calibrated so max velocity (127) → delta 12.
+		//   12 = (speed * 127) >> 9 → speed ≈ 48
+		// levelYSpeed (offset 2): calibrated so max input (127) → delta ~8.
+		//   8 = (speed * 127) >> 10 → speed ≈ 64
+		const int16 levelSpeed = 48;
+		const int16 levelYSpeed = 64;
+		int16 absSmoothVel = ABS(_smoothedVelocity);
+		int16 positionDeltaX;
+
+		if (_flyControlMode == 1) {
+			// Mode 1: Full cross-axis coupling (lines 174-186)
+			// Banking: vertical input deflects horizontal movement
+			if (local_c < 1) {
+				positionDeltaX = (int16)((levelSpeed * _smoothedVelocity - absSmoothVel * local_14 - windEffectX) >> 9);
+			} else {
+				positionDeltaX = (int16)((levelSpeed * _smoothedVelocity + absSmoothVel * local_14 - windEffectX) >> 9);
+			}
+		} else {
+			// Mode 0/2/3: Reduced cross-axis coupling (lines 218-230)
+			if (local_c < 1) {
+				positionDeltaX = (int16)((levelSpeed * _smoothedVelocity - (absSmoothVel * local_14 >> 2) - windEffectX) >> 9);
+			} else {
+				positionDeltaX = (int16)((levelSpeed * _smoothedVelocity + (absSmoothVel * local_14 >> 2) - windEffectX) >> 9);
+			}
 		}
 
-		// Convert mouse coords [0,319]x[0,199] → game coords [20,404]x[20,240]
-		// Game center (212,130) maps to screen center (160,100)
-		int16 targetGameX = (int16)(mouseX * 384 / 319 + 20);
-		int16 targetGameY = (int16)(mouseY * 220 / 199 + 20);
+		// Clamp X delta to ±12 per frame (lines 187-192 / 231-236)
+		if (positionDeltaX < -11) positionDeltaX = -12;
+		if (positionDeltaX > 11) positionDeltaX = 12;
 
-		// Clamp to game coordinate bounds (FUN_40C3CC lines 245-256)
-		if (targetGameX < 0x14) targetGameX = 0x14;   // 20
-		if (targetGameX > 0x194) targetGameX = 0x194;  // 404
-		if (targetGameY < 0x14) targetGameY = 0x14;    // 20
-		if (targetGameY > 0xF0) targetGameY = 0xF0;    // 240
+		// Apply X delta (line 193 / 237)
+		_flyShipScreenX += positionDeltaX;
 
-		// Smooth interpolation (original uses ±12 per frame max delta)
-		const int16 maxStep = 12;
-		if (_flyShipScreenX < targetGameX) {
-			_flyShipScreenX = MIN((int16)(_flyShipScreenX + maxStep), targetGameX);
-		} else if (_flyShipScreenX > targetGameX) {
-			_flyShipScreenX = MAX((int16)(_flyShipScreenX - maxStep), targetGameX);
-		}
-		if (_flyShipScreenY < targetGameY) {
-			_flyShipScreenY = MIN((int16)(_flyShipScreenY + maxStep), targetGameY);
-		} else if (_flyShipScreenY > targetGameY) {
-			_flyShipScreenY = MAX((int16)(_flyShipScreenY - maxStep), targetGameY);
+		// Y delta
+		if (_flyControlMode == 1) {
+			// Mode 1: clamped to ±12 with wind (lines 194-216)
+			int yCalc = levelYSpeed * local_14 - (windEffectY >> 1);
+			int yDelta = yCalc >> 10;
+			if (yDelta < -12) yDelta = -12;
+			if (yDelta > 12) yDelta = 12;
+			_flyShipScreenY -= (int16)yDelta;
+		} else {
+			// Mode 0/2/3: unclamped (lines 238-241)
+			_flyShipScreenY -= (int16)((levelYSpeed * local_14) >> 10);
 		}
 
-		// Corridor boundary collision (FUN_40C3CC lines 257-284)
-		// Mode 0/2: Ship X is clamped to corridor boundaries with damage
+		// Store vertical input for direction sprite (line 243)
+		_verticalInput = local_14;  // DAT_0044370e
+
+		// Ship facing direction (line 244)
+		_facingRight = (0xd4 < _smoothedVelocity + _flyShipScreenX);
+
+		// --- Step 6: Position clamping (lines 245-256) ---
+		if (_flyShipScreenX > 0x194) _flyShipScreenX = 0x194;  // 404
+		if (_flyShipScreenY > 0xF0) _flyShipScreenY = 0xF0;    // 240
+		if (_flyShipScreenX < 0x14) _flyShipScreenX = 0x14;    // 20
+		if (_flyShipScreenY < 0x14) _flyShipScreenY = 0x14;    // 20
+
+		// --- Step 7: Corridor collision — mode 0/2 only (lines 257-292) ---
 		if (_flyControlMode == 0 || _flyControlMode == 2) {
-			// Right boundary collision
+			// Right boundary (lines 258-270)
+			// Original: position is ALWAYS clamped; damage/bounce only when cooldown < 5
 			if (_corridorRightX < _flyShipScreenX) {
 				_flyShipScreenX = _corridorRightX;
-				if (_hitCooldown < 5 && !_rebelInvulnerable) {
-					int damage = 3 + (_difficulty * 2);
-					_playerDamage += damage;
-					if (_playerDamage > 255) _playerDamage = 255;
-					_rebelHitCounter++;
+				if (_hitCooldown < 5) {
+					for (int i = 0; i < 25; i++) _velocityHistory[i] = -127;
 					_hitCooldown = 10;
 					_spaceShotDirection = 1;
 					initDamageFlash();
-					debug("Rebel2: Handler7 RIGHT CORRIDOR HIT ship=(%d,%d) boundary=%d",
-						_flyShipScreenX, _flyShipScreenY, _corridorRightX);
+					if (!_rebelInvulnerable) {
+						int damage = 3 + (_difficulty * 2);
+						_playerDamage += damage;
+						if (_playerDamage > 255) _playerDamage = 255;
+					}
+					_rebelHitCounter++;
 				}
 			}
-			// Left boundary collision
+			// Left boundary (lines 271-283)
 			if (_flyShipScreenX < _corridorLeftX) {
 				_flyShipScreenX = _corridorLeftX;
-				if (_hitCooldown < 5 && !_rebelInvulnerable) {
-					int damage = 3 + (_difficulty * 2);
-					_playerDamage += damage;
-					if (_playerDamage > 255) _playerDamage = 255;
-					_rebelHitCounter++;
+				if (_hitCooldown < 5) {
+					for (int i = 0; i < 25; i++) _velocityHistory[i] = 127;
 					_hitCooldown = 10;
 					_spaceShotDirection = 0;
 					initDamageFlash();
-					debug("Rebel2: Handler7 LEFT CORRIDOR HIT ship=(%d,%d) boundary=%d",
-						_flyShipScreenX, _flyShipScreenY, _corridorLeftX);
+					if (!_rebelInvulnerable) {
+						int damage = 3 + (_difficulty * 2);
+						_playerDamage += damage;
+						if (_playerDamage > 255) _playerDamage = 255;
+					}
+					_rebelHitCounter++;
 				}
 			}
-			// Y boundary clamping (no damage, just clamp) — lines 285-292
+			// Y boundary clamping — no damage (lines 285-292)
 			if (_corridorBottomY < _flyShipScreenY) {
 				_flyShipScreenY = _corridorBottomY;
 			}
@@ -1630,49 +1723,66 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 			}
 		}
 
-		// Also update _shipPosX/Y for other systems that use screen coords
-		_shipPosX = (int16)((_flyShipScreenX - 20) * 319 / 384);
-		_shipPosY = (int16)((_flyShipScreenY - 20) * 199 / 220);
+		// --- Step 8: Perspective offsets (lines 293-316) ---
+		// f(x) = (focal * center * |offset|) / ((center - focal) * |offset| + focal * center)
+		// Close view (DAT_0047a7fc < 1): focalX=0x34, focalY=0x2d
+		// Far view (DAT_0047a7fc >= 1): focalX=0x2b, focalY=0x19
+		{
+			int absOffX = ABS(_flyShipScreenX - 0xd4);
+			int16 focalX = 0x2b;  // Far view default for Level 3
+			if (absOffX > 0) {
+				_perspectiveX = (int16)((focalX * 0xd4 * absOffX) /
+					((0xd4 - focalX) * absOffX + focalX * 0xd4));
+			} else {
+				_perspectiveX = 0;
+			}
+			if (_flyShipScreenX < 0xd5) _perspectiveX = -_perspectiveX;
 
-		// Direction calculation from ship game position
-		// Original FUN_0040d836 uses DAT_0044370c (smoothed velocity) for direction.
-		// Simplified: derive direction from position offset relative to center (212, 130).
-		// hDir: 0-4 where 2=center, based on offset from center X (212)
-		// vDir: 0-6 where 3=center, based on offset from center Y (130)
-		int16 hDiff = 0xD4 - _flyShipScreenX;  // 212 - shipX
-		int16 hDir = (hDiff + 64) >> 6;
-		if (hDir < 0) hDir = 0;
-		if (hDir > 4) hDir = 4;
+			int absOffY = ABS(_flyShipScreenY - 0x82);
+			int16 focalY = 0x19;  // Far view default for Level 3
+			if (absOffY > 0) {
+				_perspectiveY = (int16)((focalY * 0x82 * absOffY) /
+					((0x82 - focalY) * absOffY + focalY * 0x82));
+			} else {
+				_perspectiveY = 0;
+			}
+			if (_flyShipScreenY < 0x83) _perspectiveY = -_perspectiveY;
+		}
 
-		int16 vDir = (130 - _flyShipScreenY) / 37;  // adjusted divisor for game coord range
+		// View shift = clamped smoothed velocity (FUN_0040d836 lines 68-74)
+		_viewShift = _smoothedVelocity;
+		if (_viewShift > 127) _viewShift = 127;
+		if (_viewShift < -127) _viewShift = -127;
+
+		// --- Step 9: Direction sprite (FUN_0040d836 lines 88-106) ---
+		// 5x7 grid: vDir(0-4) * 7 + hDir(0-6) = sprite index (0-34)
+		// vDir from vertical input: (0xa0 - verticalInput) >> 6
+		int16 vDir = (int16)(((int)(0xa0 - _verticalInput) + ((0xa0 - _verticalInput) < 0 ? 63 : 0)) >> 6);
 		if (vDir < 0) vDir = 0;
-		if (vDir > 6) vDir = 6;
+		if (vDir > 4) vDir = 4;
 
-		// Deadzone at center to reduce flicker
-		if (vDir == 3 && ABS(_flyShipScreenY - 130) > 13) {
-			if (_flyShipScreenY < 130) vDir = 2;
-			else vDir = 4;
+		// hDir from smoothed velocity: (0x95 - smoothedVelocity) / 0x2b
+		int16 hDir = (int16)((0x95 - _smoothedVelocity) / 0x2b);
+		if (hDir < 0) hDir = 0;
+		if (hDir > 6) hDir = 6;
+
+		// Hysteresis at center (lines 90-97, 98-105)
+		if (hDir == 3 && ABS(_smoothedVelocity) > 10) {
+			hDir = (_smoothedVelocity < 1) ? 4 : 2;
 		}
-		if (hDir == 2 && ABS(_flyShipScreenX - 212) > 20) {
-			if (_flyShipScreenX < 212) hDir = 3;
-			else hDir = 1;
+		if (vDir == 2 && ABS(_verticalInput) > 15) {
+			vDir = (_verticalInput < 1) ? 3 : 1;
 		}
 
-		_shipDirectionH = hDir;
-		_shipDirectionV = vDir;
-		_shipDirectionIndex = hDir * 7 + vDir;
-
-		// Clamp direction index to valid range (0-34)
+		_shipDirectionIndex = vDir * 7 + hDir;
 		if (_shipDirectionIndex < 0) _shipDirectionIndex = 0;
 		if (_shipDirectionIndex > 34) _shipDirectionIndex = 34;
 
-		// Update firing state
-		_shipFiring = (_vm->VAR(_vm->VAR_LEFTBTN_HOLD) != 0);
+		_shipFiring = (_flyControlMode == 2) && (_vm->VAR(_vm->VAR_LEFTBTN_HOLD) != 0);
 
-		debug("Rebel2 Handler7: rawMouse=(%d,%d) scaled=(%d,%d) shipPos=(%d,%d) screenPos=(%d,%d) dir=(%d,%d) idx=%d flySprite=%p",
-			rawMouseX, rawMouseY, mouseX, mouseY, _shipPosX, _shipPosY,
-			_flyShipScreenX, _flyShipScreenY, _shipDirectionH, _shipDirectionV, _shipDirectionIndex,
-			(void*)_flyShipSprite);
+		debug("Rebel2 H7: pos=(%d,%d) vel=%d vIn=%d dx=%d dir=%d mode=%d",
+			_flyShipScreenX, _flyShipScreenY, _smoothedVelocity,
+			_verticalInput, positionDeltaX, _shipDirectionIndex, _flyControlMode);
 
 		return;
 	}
@@ -4974,50 +5084,57 @@ void InsaneRebel2::renderStatusBarSprites(byte *renderBitmap, int pitch, int wid
 
 void InsaneRebel2::renderHandler7Ship(byte *renderBitmap, int pitch, int width, int height) {
 	// Handler 7 Ship Rendering (Third-Person Ship - FLY sprites)
-	// Uses _flyShipSprite (FLY001) with 35 direction frames (5x7 grid)
+	// Based on FUN_0040d836 lines 173-185:
+	//   FUN_004236e0(buf, frameInfo, screenX - 0xd4, screenY - 0x82, 0, sprite, frameIdx, 1, 0)
+	// The ship sprite is drawn at the perspective-transformed position offset from center.
+	// FUN_0041c720 transforms game coords (shipX, shipY) using perspective offsets.
 
 	if (_rebelHandler != 7 || !_flyShipSprite || _shipLevelMode == 5)
 		return;
-
-	// Base position at screen center with direction offset
-	// Ship position is in game coords (center 212,130), convert to screen offset
-	int baseX = 160;
-	int baseY = 105;
-	int16 posOffsetX = (_flyShipScreenX - 0xD4) / 13;  // (shipX - 212) / 13
-	int16 posOffsetY = (_flyShipScreenY - 0x82) / 11;   // (shipY - 130) / 11
-	int shipScreenX = baseX + posOffsetX;
-	int shipScreenY = baseY + posOffsetY;
 
 	int numSprites = _flyShipSprite->getNumChars();
 	int spriteIndex = _shipDirectionIndex;
 	if (spriteIndex < 0) spriteIndex = 0;
 	if (spriteIndex >= numSprites) spriteIndex = numSprites - 1;
 
-	// Center sprite at position
+	// Transform game coordinates to screen coordinates (FUN_0041c720 equivalent)
+	// The perspective transform shifts the ship position based on perspective offsets.
+	// Close view: FOBJ offset = (-52 - perspX, -45 - perspY), ship at screen center.
+	// For now, use a simplified perspective: ship position = center + offset from center
+	// scaled by perspective. In the original, FUN_00424510 shifts all FOBJ sprites.
+	//
+	// Screen position for sprite drawing (FUN_0040d836 line 174):
+	//   drawX = transformedX - 0xd4, drawY = transformedY - 0x82
+	// Where transformedX/Y come from FUN_0041c720(shipX, shipY, perspX, perspY, viewShift)
+	//
+	// Simplified: screenX = 160 + (shipX - 212) * perspFactor
+	// With the perspective formula, objects near center barely move, objects at edges move more.
+	int drawX = (_flyShipScreenX - 0xd4) + _perspectiveX;
+	int drawY = (_flyShipScreenY - 0x82) + _perspectiveY;
+
+	// Convert from game-center-relative to screen coordinates
+	// The sprite system expects coordinates relative to the 320x200 frame
+	// Center of frame = (160, 100), so offset = game position - game center
+	drawX += 160 + _viewX;
+	drawY += 100 + _viewY;
+
+	// Center the sprite on the position
 	int spriteW = _flyShipSprite->getCharWidth(spriteIndex);
 	int spriteH = _flyShipSprite->getCharHeight(spriteIndex);
-	int drawX = shipScreenX - spriteW / 2 + _viewX;
-	int drawY = shipScreenY - spriteH / 2 + _viewY;
+	drawX -= spriteW / 2;
+	drawY -= spriteH / 2;
 
 	renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _flyShipSprite, spriteIndex);
 
-	// Laser overlay if firing
+	// Laser overlay if firing (same position as ship)
 	if (_shipFiring && _flyLaserSprite && _flyLaserSprite->getNumChars() > 0) {
 		int laserIndex = spriteIndex % _flyLaserSprite->getNumChars();
 		renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _flyLaserSprite, laserIndex);
 	}
 
-	// Targeting overlay
-	if (_flyTargetSprite && _flyTargetSprite->getNumChars() > 0) {
-		int targetW = _flyTargetSprite->getCharWidth(0);
-		int targetH = _flyTargetSprite->getCharHeight(0);
-		int targetX = shipScreenX - targetW / 2 + _viewX;
-		int targetY = shipScreenY - targetH / 2 + _viewY;
-		renderNutSprite(renderBitmap, pitch, width, height, targetX, targetY, _flyTargetSprite, 0);
-	}
-
-	debug("Rebel2 Handler7: Ship at (%d,%d) sprite=%d/%d dir=(%d,%d) idx=%d",
-		drawX, drawY, spriteIndex, numSprites, _shipDirectionH, _shipDirectionV, _shipDirectionIndex);
+	debug("Rebel2 Handler7Ship: draw=(%d,%d) sprite=%d/%d shipPos=(%d,%d) persp=(%d,%d) smoothVel=%d vertIn=%d",
+		drawX, drawY, spriteIndex, numSprites, _flyShipScreenX, _flyShipScreenY,
+		_perspectiveX, _perspectiveY, _smoothedVelocity, _verticalInput);
 }
 
 void InsaneRebel2::renderHandler8Ship(byte *renderBitmap, int pitch, int width, int height) {
