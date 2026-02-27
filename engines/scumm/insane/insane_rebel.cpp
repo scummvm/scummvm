@@ -734,11 +734,33 @@ int32 InsaneRebel2::processMouse() {
 					it->id, it->type, mousePos.x, mousePos.y,
 					it->rect.left, it->rect.top, it->rect.right, it->rect.bottom);
 
-				// Spawn explosion using native system
-				// Use width / 2 as the scale parameter
-				spawnExplosion((it->rect.left + it->rect.right) / 2,
-							   (it->rect.top + it->rect.bottom) / 2,
-							   it->rect.width() / 2);
+				// Spawn visual explosion based on handler and enemy type.
+				//
+				// Each handler's explosion rendering (FUN_409FBC, FUN_402696,
+				// FUN_40F1C5, FUN_41F29A) checks a per-level flags field:
+				//   (*(ushort *)(&DAT_0047e108 + chapter*0x242 + level*0x22) & 1) == 0
+				// When bit 0 is SET, explosion NUT sprites are NOT rendered even
+				// though the counter ticks down. The flags come from GAME.TRS.
+				//
+				// Handler 8 (FUN_4028C5 line 94): Only type 0 sets the explosion
+				// counter at all. Types 1-4 get BLAST sound, no visual explosion.
+				//
+				// Handler 25 (FUN_41E7C2 line 74): Types > 3 DO set the counter,
+				// but rendering is suppressed by flags & 1 for on-foot levels.
+				// The counter serves only as a timer (sound panning, tracking).
+				// Handler 25 is specifically for on-foot corridor/FPS sections;
+				// space combat uses handler 7 instead.
+				//
+				// Handlers 0x26, 7: All types get visual explosions.
+				if (_rebelHandler != 8 && _rebelHandler != 25) {
+					spawnExplosion((it->rect.left + it->rect.right) / 2,
+								   (it->rect.top + it->rect.bottom) / 2,
+								   it->rect.width() / 2);
+				} else if (_rebelHandler == 8 && it->type == 0) {
+					spawnExplosion((it->rect.left + it->rect.right) / 2,
+								   (it->rect.top + it->rect.bottom) / 2,
+								   it->rect.width() / 2);
+				}
 
 				// Disable self (prevents sprite from rendering via SKIP chunks)
 				setBit(it->id);
@@ -759,7 +781,7 @@ int32 InsaneRebel2::processMouse() {
 				if (id >= 0 && id < 512) {
 					// Slot 2: Enable (Explosion?)
 					if (_rebelLinks[id][2] != 0) {
-						clearBit(_rebelLinks[id][2]); 
+						clearBit(_rebelLinks[id][2]);
 						debug("Rebel2: Enabled dependency Slot 2 (ID=%d) for Parent %d", _rebelLinks[id][2], id);
 					}
 					// Slot 1: Enable (Explosion?)
@@ -774,9 +796,15 @@ int32 InsaneRebel2::processMouse() {
 					}
 				}
 
-				// Note: Background saving and masking is handled in procPostRendering
-				// where we have access to the render bitmap
-				// TODO: Play explosion sound
+				// Play explosion sound.
+				// Handler 8 types 1-4: BLAST.SAD (slot 0) via different sound function
+				// All others: EXPLODE.SAD (slot 2)
+				// TODO: Implement actual SAD sound playback
+				if (_rebelHandler == 8 && it->type >= 1 && it->type <= 4) {
+					debug("Rebel2: BLAST sound for enemy type %d (no visual explosion)", it->type);
+				} else {
+					debug("Rebel2: EXPLODE sound for enemy type %d", it->type);
+				}
 
 				// Award score for destroying enemy (FUN_0041bf8d called from FUN_40A2E0)
 				// Score value comes from lookup table DAT_0047e0fe indexed by difficulty
@@ -2684,6 +2712,9 @@ void InsaneRebel2::enemyUpdate(byte *renderBitmap, Common::SeekableReadStream &b
 	// In the original (FUN_004028C5/FUN_0041E7C2): sVar5/sVar2 = *(short *)(*local + 6)
 	// This maps to par4 (userId field). Used for DAT_0047ab98 wave state bitmask:
 	//   DAT_0047ab98 |= 1 << (type & 0x1f)
+	debug(5, "Rebel2 Opcode4: handler=%d enemyId=%d par2=%d par3=%d par4/type=%d pos=(%d,%d) size=(%d,%d)",
+		_rebelHandler, enemyId, par2, par3, par4, x, y, w, h);
+
 	bool found = false;
 	Common::List<enemy>::iterator it;
 	for (it = _enemies.begin(); it != _enemies.end(); ++it) {
@@ -3124,8 +3155,15 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 end_parsing:;
 }
 
+// Spawn explosion into the shared 5-slot system.
+// In the original, each handler has its own spawn logic inside its enemy processing function:
+//   Handler 0x26: FUN_40A2E0 (0x40A2E0) — spawns in slot arrays DAT_0044368e[]
+//   Handler 8:    FUN_4028C5 (0x4028C5) — spawns in slot arrays DAT_0043f854[]
+//   Handler 7:    FUN_40F628 (0x40F628) — spawns in slot arrays DAT_00443770[]
+//   Handler 25:   FUN_41E7C2 (0x41E7C2) — spawns in slot arrays DAT_0045792c[]
+// All share the same logic: find first free slot (counter==0), set counter=10,
+// scale=objectHalfWidth, position=enemy center, velocity=0.
 void InsaneRebel2::spawnExplosion(int x, int y, int objectHalfWidth) {
-	// Find first free slot (FUN_40A2E0 logic)
 	for (int i = 0; i < 5; i++) {
 		if (!_explosions[i].active || _explosions[i].counter <= 0) {
 			_explosions[i].active = true;
@@ -3133,7 +3171,6 @@ void InsaneRebel2::spawnExplosion(int x, int y, int objectHalfWidth) {
 			_explosions[i].x = x;
 			_explosions[i].y = y;
 			_explosions[i].scale = objectHalfWidth;
-			// TODO: Play sound via FUN_0041189e equivalent
 			break;
 		}
 	}
@@ -4915,9 +4952,34 @@ void InsaneRebel2::renderEnemyOverlays(byte *renderBitmap, int pitch, int width,
 	}
 }
 
+// Dispatcher — calls per-handler explosion render function.
+// Original code has separate functions per handler, each with its own
+// position transformation, scale thresholds, and secondary NUT rendering.
 void InsaneRebel2::renderExplosions(byte *renderBitmap, int pitch, int width, int height) {
-	// Draw explosion animations from 5-slot system
+	switch (_rebelHandler) {
+	case 0x26:
+		renderTurretExplosions(renderBitmap, pitch, width, height);
+		break;
+	case 8:
+		renderVehicleExplosions(renderBitmap, pitch, width, height);
+		break;
+	case 7:
+		renderSpaceExplosions(renderBitmap, pitch, width, height);
+		break;
+	case 25:
+		renderHandler25Explosions(renderBitmap, pitch, width, height);
+		break;
+	default:
+		break;
+	}
+}
 
+// FUN_409FBC — Handler 0x26 (Turret/Cockpit) explosion rendering.
+// Position: Uses FUN_0041c720 for 3D→2D projection. At low-res, world coords ≈ screen coords.
+// Scale thresholds: Fixed (<11, <21).
+// Secondary NUT: DAT_0047fe80 (rendered if DAT_0047a7fc >= 0).
+// Hi-res: Coordinates doubled when DAT_0047a808 >= 2.
+void InsaneRebel2::renderTurretExplosions(byte *renderBitmap, int pitch, int width, int height) {
 	if (!_smush_iconsNut)
 		return;
 
@@ -4930,25 +4992,165 @@ void InsaneRebel2::renderExplosions(byte *renderBitmap, int pitch, int width, in
 			continue;
 		}
 
-		// Determine base sprite index based on scale (FUN_409FBC logic)
+		// FUN_409FBC: Fixed thresholds (0x0b=11, 0x15=21)
 		int baseIndex;
 		if (_explosions[i].scale < 11) {
-			baseIndex = 9;   // Small/Medium
+			baseIndex = 9;   // Small (sprites 11-20)
 		} else if (_explosions[i].scale < 21) {
-			baseIndex = 19;  // Medium/Large
+			baseIndex = 19;  // Medium (sprites 21-30)
 		} else {
-			baseIndex = 29;  // Large/XL
+			baseIndex = 29;  // Large (sprites 31-40)
 		}
 
-		// Formula: Base + (12 - Counter)
 		int spriteIndex = baseIndex + (12 - _explosions[i].counter);
+
+		// Position: world coords passed through FUN_0041c720 (3D→2D projection).
+		// At 320x200 low-res turret view, projection is effectively identity.
+		int screenX = _explosions[i].x;
+		int screenY = _explosions[i].y;
 
 		if (_smush_iconsNut->getNumChars() > spriteIndex) {
 			int ew = _smush_iconsNut->getCharWidth(spriteIndex);
 			int eh = _smush_iconsNut->getCharHeight(spriteIndex);
-			int cx = _explosions[i].x - ew / 2;
-			int cy = _explosions[i].y - eh / 2;
-			renderNutSprite(renderBitmap, pitch, width, height, cx, cy, _smush_iconsNut, spriteIndex);
+			renderNutSprite(renderBitmap, pitch, width, height,
+				screenX - ew / 2, screenY - eh / 2, _smush_iconsNut, spriteIndex);
+		}
+
+		_explosions[i].counter--;
+	}
+}
+
+// FUN_402696 — Handler 8 (Third-Person On-Foot) explosion rendering.
+// Position: World coords minus camera offset (DAT_0043e006/DAT_0043e008 = _viewX/_viewY).
+// Scale thresholds: Fixed (<11, <21) — same as handler 0x26.
+// Secondary NUT: None (only DAT_0047a828).
+void InsaneRebel2::renderVehicleExplosions(byte *renderBitmap, int pitch, int width, int height) {
+	if (!_smush_iconsNut)
+		return;
+
+	for (int i = 0; i < 5; i++) {
+		if (!_explosions[i].active)
+			continue;
+
+		if (_explosions[i].counter <= 0) {
+			_explosions[i].active = false;
+			continue;
+		}
+
+		// FUN_402696: Fixed thresholds (0x0b=11, 0x15=21)
+		int baseIndex;
+		if (_explosions[i].scale < 11) {
+			baseIndex = 9;
+		} else if (_explosions[i].scale < 21) {
+			baseIndex = 19;
+		} else {
+			baseIndex = 29;
+		}
+
+		int spriteIndex = baseIndex + (12 - _explosions[i].counter);
+
+		// FUN_402696 line 22-23: screenX = worldX - DAT_0043e006, screenY = worldY - DAT_0043e008
+		int screenX = _explosions[i].x - _viewX;
+		int screenY = _explosions[i].y - _viewY;
+
+		if (_smush_iconsNut->getNumChars() > spriteIndex) {
+			int ew = _smush_iconsNut->getCharWidth(spriteIndex);
+			int eh = _smush_iconsNut->getCharHeight(spriteIndex);
+			renderNutSprite(renderBitmap, pitch, width, height,
+				screenX - ew / 2, screenY - eh / 2, _smush_iconsNut, spriteIndex);
+		}
+
+		_explosions[i].counter--;
+	}
+}
+
+// FUN_40F1C5 — Handler 7 (Third-Person Ship) explosion rendering.
+// Position: Uses FUN_0041c720 for 3D→2D projection.
+// Scale thresholds: Resolution-dependent (low-res: <11/<21, high-res: <21/<41).
+// Secondary NUT: DAT_0047ff00 (FLY004, rendered if DAT_0047a7fc >= 0).
+void InsaneRebel2::renderSpaceExplosions(byte *renderBitmap, int pitch, int width, int height) {
+	if (!_smush_iconsNut)
+		return;
+
+	for (int i = 0; i < 5; i++) {
+		if (!_explosions[i].active)
+			continue;
+
+		if (_explosions[i].counter <= 0) {
+			_explosions[i].active = false;
+			continue;
+		}
+
+		// FUN_40F1C5 lines 41-51: Resolution-dependent thresholds.
+		// Low-res (DAT_0047a808 < 2): thresholds 20, 10
+		// High-res: thresholds 40, 20
+		// We run at low-res (320x200), so use 10/20 (same as fixed handlers).
+		int baseIndex;
+		if (_explosions[i].scale < 11) {
+			baseIndex = 9;
+		} else if (_explosions[i].scale < 21) {
+			baseIndex = 19;
+		} else {
+			baseIndex = 29;
+		}
+
+		int spriteIndex = baseIndex + (12 - _explosions[i].counter);
+
+		// Position: world coords through FUN_0041c720 (3D→2D projection).
+		// At low-res, this is close to identity for the ship view.
+		int screenX = _explosions[i].x;
+		int screenY = _explosions[i].y;
+
+		if (_smush_iconsNut->getNumChars() > spriteIndex) {
+			int ew = _smush_iconsNut->getCharWidth(spriteIndex);
+			int eh = _smush_iconsNut->getCharHeight(spriteIndex);
+			renderNutSprite(renderBitmap, pitch, width, height,
+				screenX - ew / 2, screenY - eh / 2, _smush_iconsNut, spriteIndex);
+		}
+
+		_explosions[i].counter--;
+	}
+}
+
+// FUN_41F29A — Handler 25 (FPS/Mixed) explosion rendering.
+// Position: World coords + view offset (DAT_0045790c/DAT_0045790e = _rebelViewOffsetX/_rebelViewOffsetY).
+// Scale thresholds: Resolution-dependent (same formula as Handler 7).
+// Secondary NUT: DAT_00482260 (hi-res HUD alternative, rendered if DAT_0047a7fc >= 0).
+// Note: No per-frame sound panning update (unlike handlers 0x26, 8, 7).
+void InsaneRebel2::renderHandler25Explosions(byte *renderBitmap, int pitch, int width, int height) {
+	if (!_smush_iconsNut)
+		return;
+
+	for (int i = 0; i < 5; i++) {
+		if (!_explosions[i].active)
+			continue;
+
+		if (_explosions[i].counter <= 0) {
+			_explosions[i].active = false;
+			continue;
+		}
+
+		// FUN_41F29A lines 27-37: Resolution-dependent thresholds (same as Handler 7).
+		int baseIndex;
+		if (_explosions[i].scale < 11) {
+			baseIndex = 9;
+		} else if (_explosions[i].scale < 21) {
+			baseIndex = 19;
+		} else {
+			baseIndex = 29;
+		}
+
+		int spriteIndex = baseIndex + (12 - _explosions[i].counter);
+
+		// FUN_41F29A line 22-23: screenX = worldX + DAT_0045790c, screenY = worldY + DAT_0045790e
+		int screenX = _explosions[i].x + _rebelViewOffsetX;
+		int screenY = _explosions[i].y + _rebelViewOffsetY;
+
+		if (_smush_iconsNut->getNumChars() > spriteIndex) {
+			int ew = _smush_iconsNut->getCharWidth(spriteIndex);
+			int eh = _smush_iconsNut->getCharHeight(spriteIndex);
+			renderNutSprite(renderBitmap, pitch, width, height,
+				screenX - ew / 2, screenY - eh / 2, _smush_iconsNut, spriteIndex);
 		}
 
 		_explosions[i].counter--;
