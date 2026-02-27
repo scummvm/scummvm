@@ -1622,11 +1622,11 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 
 		// --- Step 5: Position delta (lines 174-242) ---
 		// levelSpeed (offset 4): calibrated so max velocity (127) → delta 12.
-		//   12 = (speed * 127) >> 9 → speed ≈ 48
-		// levelYSpeed (offset 2): calibrated so max input (127) → delta ~8.
-		//   8 = (speed * 127) >> 10 → speed ≈ 64
-		const int16 levelSpeed = 48;
-		const int16 levelYSpeed = 64;
+		//   8 = (speed * 127) >> 9 → speed ≈ 32
+		// levelYSpeed (offset 2): calibrated so max input (127) → delta ~6.
+		//   6 = (speed * 127) >> 10 → speed ≈ 48
+		const int16 levelSpeed = 32;
+		const int16 levelYSpeed = 48;
 		int16 absSmoothVel = ABS(_smoothedVelocity);
 		int16 positionDeltaX;
 
@@ -4086,9 +4086,8 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 	//   Mode 0/2: Obstacle collision using SECONDARY zones (inside quad = hit)
 	//   Mode 1/3: Wall/boundary collision using PRIMARY zones (per-edge push-back)
 
-	// Decrement hit cooldown per frame
-	if (_hitCooldown > 0)
-		_hitCooldown--;
+	// Note: _hitCooldown is decremented in renderSpaceExplosions (FUN_40F1C5)
+	// to match the original where the decrement happens during rendering.
 
 	if (_flyControlMode == 0 || _flyControlMode == 2) {
 		// ---- Mode 0/2: Obstacle collision using SECONDARY zones (FUN_403b5b) ----
@@ -5622,6 +5621,7 @@ void InsaneRebel2::renderSpaceExplosions(byte *renderBitmap, int pitch, int widt
 	if (!_smush_iconsNut)
 		return;
 
+	// --- Part 1: Space shot explosions (FUN_40F1C5 lines 19-60) ---
 	for (int i = 0; i < 5; i++) {
 		if (!_explosions[i].active)
 			continue;
@@ -5659,6 +5659,59 @@ void InsaneRebel2::renderSpaceExplosions(byte *renderBitmap, int pitch, int widt
 		}
 
 		_explosions[i].counter--;
+	}
+
+	// --- Part 2: Corridor/zone hit explosion (FUN_40F1C5 lines 61-85) ---
+	// Rendered when _hitCooldown > 0 (DAT_0044374c). Decrement happens HERE
+	// (matching original where FUN_40F1C5 decrements DAT_0044374c during render).
+	// _spaceShotDirection (DAT_0044374e) determines explosion side:
+	//   0 = left side (hit left boundary), 1 = right side (hit right boundary)
+	//   2 = bottom (zone push down), 3 = top (zone push up)
+	// Sprite frames: 0x15 - cooldown = 21 - cooldown (frames 12→21 as cooldown 9→0)
+	if (_hitCooldown != 0) {
+		_hitCooldown--;
+
+		int numChars = _smush_iconsNut->getNumChars();
+		int spriteIndex = 0x15 - _hitCooldown;  // 21 - remaining cooldown
+
+		if (spriteIndex >= 0 && spriteIndex < numChars) {
+			// Compute ship screen position (simplified FUN_0041c720 transform)
+			int shipDrawX = (_flyShipScreenX - 0xd4) + _perspectiveX + 160 + _viewX;
+			int shipDrawY = (_flyShipScreenY - 0x82) + _perspectiveY + 100 + _viewY;
+
+			// Per-direction offset from ship center.
+			// Original uses lookup tables (DAT_004438da etc.) indexed by
+			// _shipDirectionIndex (35 entries per direction). We approximate
+			// with fixed offsets since we don't have the table data.
+			int offsetX = 0, offsetY = 0;
+			switch (_spaceShotDirection) {
+			case 0:  // Left wall hit → explosion on left side of ship
+				offsetX = -35;
+				break;
+			case 1:  // Right wall hit → explosion on right side of ship
+				offsetX = 35;
+				break;
+			case 2:  // Zone push down → explosion on bottom
+				offsetY = 20;
+				break;
+			case 3:  // Zone push up → explosion on top
+				offsetY = -20;
+				break;
+			default:
+				break;
+			}
+
+			int drawX = shipDrawX + offsetX;
+			int drawY = shipDrawY + offsetY;
+
+			int ew = _smush_iconsNut->getCharWidth(spriteIndex);
+			int eh = _smush_iconsNut->getCharHeight(spriteIndex);
+			renderNutSprite(renderBitmap, pitch, width, height,
+				drawX - ew / 2, drawY - eh / 2, _smush_iconsNut, spriteIndex);
+
+			debug("Rebel2 H7 corridor explosion: dir=%d frame=%d pos=(%d,%d) cooldown=%d",
+				_spaceShotDirection, spriteIndex, drawX, drawY, _hitCooldown);
+		}
 	}
 }
 
