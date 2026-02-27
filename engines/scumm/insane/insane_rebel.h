@@ -579,6 +579,12 @@ public:
 	// Applies collision damage from DAT_0047e0f6 when inside obstacle zone
 	void checkCollisionZones();
 
+	// Handler 7 collision system (FUN_40E35E)
+	// Mode 0/2: Obstacle collision using secondary zones — inside quad = hit
+	// Mode 1/3: Wall/boundary collision using primary zones — per-edge push-back
+	// Uses ship position (_flyShipScreenX/_flyShipScreenY) in raw buffer coords
+	void checkHandler7CollisionZones();
+
 	int16 _playerDamage;  // Legacy damage counter (kept for compatibility/telemetry)
 	int16 _playerShield;  // Shields: 0..255 where 255 = full
 	int16 _playerLives;
