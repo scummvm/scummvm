@@ -1369,6 +1369,16 @@ void SmushPlayer::handleAnimHeader(int32 subSize, Common::SeekableReadStream &b)
 		if (!_skipPalette) {
 			byte *palettePtr = &headerContent[6];
 			memcpy(_pal, palettePtr, sizeof(_pal));
+
+			// Reset XPAL delta palette state from the new base palette.
+			// Without this, stale _deltaPal/_shiftedDeltaPal values from a
+			// previous video leak into the new one, corrupting the palette
+			// when XPAL command 256 (apply deltas) is encountered.
+			for (int j = 0; j < 768; ++j) {
+				_shiftedDeltaPal[j] = _pal[j] << 7;
+			}
+			memset(_deltaPal, 0, sizeof(_deltaPal));
+
 			setDirtyColors(0, 255);
 		}
 
