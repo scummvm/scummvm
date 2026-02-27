@@ -854,6 +854,7 @@ Common::Array<HotSpot> RoomManager::unifyHotspots(Common::Array<Pelrock::Sprite>
 		thisHotspot.isEnabled = !anims[i].isHotspotDisabled;
 		thisHotspot.isSprite = true;
 		thisHotspot.zOrder = anims[i].zOrder;
+		thisHotspot.innerIndex = anims[i].index;
 		unifiedHotspots.push_back(thisHotspot);
 	}
 
@@ -1213,7 +1214,7 @@ void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
 	readUntilBuda(&talkFile, talkHeader.spritePointer, data, dataSize);
 	size_t decompressedSize = rleDecompress(data, dataSize, 0, dataSize, &decompressed);
 	free(data);
-	debug("Decompressed talking anim A size: %zu, decompressed size: %zu", dataSize, decompressedSize);
+	// debug("Decompressed talking anim A size: %zu, decompressed size: %zu", dataSize, decompressedSize);
 	for (int i = 0; i < talkHeader.numFramesAnimA; i++) {
 		talkHeader.animA[i] = new byte[talkHeader.wAnimA * talkHeader.hAnimA];
 		extractSingleFrame(decompressed, talkHeader.animA[i], i, talkHeader.wAnimA, talkHeader.hAnimA);
@@ -1224,7 +1225,7 @@ void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
 		for (int i = 0; i < talkHeader.numFramesAnimB; i++) {
 			talkHeader.animB[i] = new byte[talkHeader.wAnimB * talkHeader.hAnimB];
 			uint32 offset = animASize + (i * talkHeader.wAnimB * talkHeader.hAnimB);
-			debug("Extracting talking anim B frame %d at offset %d, size = %d", i, animASize + (i * talkHeader.wAnimB * talkHeader.hAnimB), talkHeader.wAnimB * talkHeader.hAnimB);
+			// debug("Extracting talking anim B frame %d at offset %d, size = %d", i, animASize + (i * talkHeader.wAnimB * talkHeader.hAnimB), talkHeader.wAnimB * talkHeader.hAnimB);
 			if (offset + talkHeader.wAnimB * talkHeader.hAnimB >= decompressedSize) {
 				debug("Error: offset %d is beyond decompressed size %zu", offset, decompressedSize);
 				talkHeader.numFramesAnimB = 0;
@@ -1277,7 +1278,7 @@ byte *RoomManager::loadShadowMap(int roomNumber) {
 		debug("Failed to decompress shadow map for room %d", roomNumber);
 		shadows = nullptr;
 	}
-	debug("Decompressed shadow map for room %d, compressed size: %zu, decompressed size: %zu", roomNumber, compressedSize, decompressedSize);
+	// debug("Decompressed shadow map for room %d, compressed size: %zu, decompressed size: %zu", roomNumber, compressedSize, decompressedSize);
 	free(compressed);
 	shadowMapFile.close();
 	return shadows;

@@ -345,7 +345,7 @@ void CDPlayer::loadControls() {
 
 	size_t decompressedSize = rleDecompress(compressedData, outSize, 0, 0, &rawData, true);
 
-	debug("Decompressed CD player controls: %d bytes", decompressedSize);
+	// debug("Decompressed CD player controls: %d bytes", decompressedSize);
 	uint32 pos = 213 * 72;
 	Common::copy(rawData, rawData + pos, _controls);
 	for (int i = 0; i < 5; i++) {

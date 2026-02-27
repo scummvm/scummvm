@@ -1855,9 +1855,6 @@ void PelrockEngine::teletransportToPrincess() {
 
 	while (phase < 5) {
 		debug("Starting ending scene phase %d", phase);
-		for (int i = 0; i < _room->_currentRoomAnims.size(); i++) {
-			debug("Current room anim %d: zOrder %d, disableAfterSequence %d", _room->_currentRoomAnims[i].index, _room->_currentRoomAnims[i].zOrder, _room->_currentRoomAnims[i].disableAfterSequence);
-		}
 		Sprite *thisSprite = _room->findSpriteByIndex(phase + 1);
 		thisSprite->animData[0].curFrame = 0;
 		thisSprite->zOrder = 200;
@@ -2029,7 +2026,21 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 					debug("Updated FLAG_COMO_ESTAN_LOS_DIOSES: %d", _state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES));
 					smokeAnimation(kFlightRooms[flightIndex].spriteIdx, true);
 					_room->addStickerToRoom(_room->_currentRoomNumber, 127 + flightIndex);
+					// if(_state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES) == 0b1111) {
+						HotSpot hotspot = HotSpot();
+						hotspot.actionFlags = 0;
+						hotspot.extra = 999;
+						hotspot.x = 320;
+						hotspot.y = 288;
+						hotspot.w = 35;
+						hotspot.h = 21;
+						hotspot.innerIndex = 0;
+						hotspot.index = 8;
+						_room->changeHotspot(52, hotspot);
+					// }
 				}
+
+
 				break;
 			}
 			default:

@@ -434,7 +434,6 @@ Common::Array<Common::StringArray> ResourceManager::processTextData(byte *data, 
 	Common::StringArray lines;
 	Common::Array<Common::StringArray> texts;
 	while (pos < size) {
-		debug("Processing byte %02X at pos %d", data[pos], pos);
 		if (data[pos] == CTRL_END_TEXT) {
 			if (!desc.empty()) {
 
@@ -524,7 +523,7 @@ void ResourceManager::mergeRleBlocks(Common::SeekableReadStream *stream, uint32 
 		readUntilBuda(stream, stream->pos(), thisBlock, blockSize);
 		uint8_t *block_data = nullptr;
 		size_t decompressedSize = rleDecompress(thisBlock, blockSize, 0, 640 * 400, &block_data, true);
-		debug("Decompressed block %d: %zu bytes, total %zu", i, decompressedSize, combined_size + decompressedSize);
+		// debug("Decompressed block %d: %zu bytes, total %zu", i, decompressedSize, combined_size + decompressedSize);
 		if (combined_size + decompressedSize > 640 * 400) {
 			debug("Warning: decompressed data exceeds output buffer size, truncating");
 			decompressedSize = 640 * 400 - combined_size;

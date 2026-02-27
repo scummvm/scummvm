@@ -187,7 +187,6 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 	// Clear any existing click state
 	_events->_leftMouseClicked = false;
 	_dialogActive = true;
-	g_engine->_chrono->pauseCounter();
 	int curPage = 0;
 
 	// Render loop - display text and wait for click
@@ -239,7 +238,6 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		_curSprite->isTalking = false;
 	}
 	_dialogActive = false;
-	g_engine->_chrono->resumeCounter();
 	g_engine->_alfredState.setState(ALFRED_IDLE);
 }
 
