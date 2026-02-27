@@ -663,6 +663,8 @@ public:
 		int16 targetX;     // DAT_0044367e[i] - target X position
 		int16 targetY;     // DAT_00443682[i] - target Y position
 		int16 seqNum;      // DAT_0044368a[i] - shot sequence (for alternating)
+		int16 gunX;        // DAT_0045791c[i] - gun barrel X (Handler 25, screen coords)
+		int16 gunY;        // DAT_00457920[i] - gun barrel Y (Handler 25, screen coords)
 	};
 	TurretShot _turretShots[2];
 	int16 _turretShotSeqCounter;  // DAT_0047fe94 - global sequence counter
