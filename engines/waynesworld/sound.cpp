@@ -125,7 +125,7 @@ MusicManager::MusicManager(WaynesWorldEngine *vm) : _vm(vm) {
 }
 
 MusicManager::~MusicManager() {
-	delete _music;
+	delete[] _music;
 }
 
 void MusicManager::send(uint32 b) {

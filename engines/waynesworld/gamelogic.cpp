@@ -1359,6 +1359,7 @@ void GameLogic::r0_handleRoomEvent1() {
 
 	GxlArchive *m04Gxl = new GxlArchive("m04");
 	// sysMouseDriver(2);
+	delete _menuSurface;
 	// _menuSurface = new WWSurface(178, 122);
 	_menuSurface = new WWSurface(310, 180);
 	_vm->drawImageToSurface(m04Gxl, "menu.pcx", _menuSurface, 113, 20);
