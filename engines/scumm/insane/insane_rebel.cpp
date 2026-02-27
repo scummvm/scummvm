@@ -1863,11 +1863,11 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 			// Reset wave state to accumulated phase state (same as Handler 8)
 			// DAT_0047ab98 = DAT_0047ab9c: ensures new wave starts with correct state
 			_rebelWaveState = _rebelPhaseState;
-			// Initialize to covered state - player starts behind cover
-			// This ensures the corridor overlay shows the "covered" position initially
-			_rebelAutopilot = 1;    // DAT_00457904 = 1 (covered)
-			_rebelDamageLevel = 5;  // DAT_0045790a = 5 (fully in cover)
-			debug("Rebel2 Opcode 6 (Handler 25): Status bar enabled, state reset, starting COVERED, wave=0x%x", _rebelWaveState);
+			// NOTE: autopilot and damageLevel are NOT reset here (verified against
+			// FUN_41CADB case 4 lines 114-121). They persist across video boundaries
+			// so the player keeps their cover state when transitioning between waves.
+			debug("Rebel2 Opcode 6 (Handler 25): Status bar enabled, state reset, wave=0x%x autopilot=%d damageLevel=%d",
+				_rebelWaveState, _rebelAutopilot, _rebelDamageLevel);
 		}
 
 		// Set sprite mode (DAT_00457900 = local_14[3]) - controls which GRD sprite to render
@@ -8775,6 +8775,12 @@ int InsaneRebel2::runLevel2() {
 		bonusCount = 0;
 		totalKills = 0;
 		totalMisses = 0;
+
+		// Reset Handler 25 cover state — player starts uncovered at level start
+		// DAT_00457904 and DAT_0045790a are zero-initialized globals in the original
+		_rebelAutopilot = 0;
+		_rebelDamageLevel = 0;
+		_rebelControlMode = 0;
 
 		// FUN_0041c7d0: Reset per-attempt state
 		_enemies.clear();
