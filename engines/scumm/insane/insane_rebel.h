@@ -243,6 +243,15 @@ public:
 	int runLevel5();   // FUN_00418EC6 - Single gameplay phase
 	int runLevel6();   // FUN_00419317 - Two phases with per-phase retry
 
+	// Wave state management (FUN_00417b61)
+	// Waits for current video to finish, accumulates kill state, redistributes
+	// kill credits from the budget. Returns credited kill bits, or 0xFFFF on death/quit.
+	// mask: required enemy bits (0x36 for Phase 1, 0x3e for Phases 2/3)
+	// budget: kill credit budget counter (decremented per credit transfer)
+	// threshold: early-exit frame threshold (0=disabled, 0x14=20 for wave loops)
+	// flags: bit 1 = add random unkilled types, bit 0 = limit credits to 2 (else 8)
+	uint16 processWaveEnd(int16 mask, int16 *budget, int16 threshold, uint16 flags);
+
 	// Random number helper (emulates FUN_004233a0)
 	int getRandomVariant(int max);
 
