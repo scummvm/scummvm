@@ -8116,15 +8116,16 @@ void InsaneRebel2::playCinematic(const char *filename) {
 	// Play a cinematic/cutscene video with proper intro mode setup
 	// This helper ensures:
 	// 1. Handler is reset to 0 (no HUD, no shooting)
-	// 2. Video flags are set to 0x20 (cinematic mode)
+	// 2. Video flags are set to 0x28 (cinematic with buffer preserve)
 	//
-	// Original: DAT_0047ee84 is only set by IACT opcode 6 during gameplay videos
-	// Cinematics don't have opcode 6, so handler stays 0
+	// Original: All video wrapper functions (FUN_00417168, FUN_004171c5,
+	// FUN_00417ab2, FUN_00417327) add | 8 to the base flags before calling
+	// FUN_0041f4d0, so the 0x08 bit (preserve buffer) is always set.
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // No status bar during cinematics
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
-	splayer->setCurVideoFlags(0x20);  // Cinematic mode
+	splayer->setCurVideoFlags(0x28);  // Cinematic mode + buffer preserve (0x20 | 0x08)
 	splayer->play(filename, 12);
 }
 
@@ -8182,7 +8183,7 @@ bool InsaneRebel2::playLevelGameplay(int levelId) {
 		// First play the cutscene
 		filename = Common::String::format("%s/%sCUT.SAN", dir.c_str(), prefix.c_str());
 		debug("Rebel2: Playing cutscene %s", filename.c_str());
-		splayer->setCurVideoFlags(0x20);
+		splayer->setCurVideoFlags(0x28);
 		splayer->play(filename.c_str(), 12);
 
 		if (_vm->shouldQuit() || _playerShield == 0) return false;
@@ -8196,14 +8197,17 @@ bool InsaneRebel2::playLevelGameplay(int levelId) {
 		if (_vm->shouldQuit() || _playerShield == 0) return false;
 
 		// Post segment 1
+		_rebelHandler = 0;
+		_rebelStatusBarSprite = 0;
 		filename = Common::String::format("%s/%sPST1.SAN", dir.c_str(), prefix.c_str());
 		debug("Rebel2: Playing %s", filename.c_str());
-		splayer->setCurVideoFlags(0x20);
+		splayer->setCurVideoFlags(0x28);
 		splayer->play(filename.c_str(), 12);
 
 		if (_vm->shouldQuit() || _playerShield == 0) return false;
 
 		// Part 2
+		_rebelHandler = 8;
 		splayer->setCurVideoFlags(0x28);
 		filename = Common::String::format("%s/P2/%sP02_A.SAN", dir.c_str(), prefix.c_str());
 		debug("Rebel2: Playing %s", filename.c_str());
@@ -8212,14 +8216,17 @@ bool InsaneRebel2::playLevelGameplay(int levelId) {
 		if (_vm->shouldQuit() || _playerShield == 0) return false;
 
 		// Post segment 2
+		_rebelHandler = 0;
+		_rebelStatusBarSprite = 0;
 		filename = Common::String::format("%s/%sPST2.SAN", dir.c_str(), prefix.c_str());
 		debug("Rebel2: Playing %s", filename.c_str());
-		splayer->setCurVideoFlags(0x20);
+		splayer->setCurVideoFlags(0x28);
 		splayer->play(filename.c_str(), 12);
 
 		if (_vm->shouldQuit() || _playerShield == 0) return false;
 
 		// Part 3
+		_rebelHandler = 8;
 		splayer->setCurVideoFlags(0x28);
 		filename = Common::String::format("%s/P3/%sP03_A.SAN", dir.c_str(), prefix.c_str());
 		debug("Rebel2: Playing %s", filename.c_str());
@@ -8237,14 +8244,16 @@ bool InsaneRebel2::playLevelGameplay(int levelId) {
 		if (_vm->shouldQuit() || _playerShield == 0) return false;
 
 		// Post segment
+		_rebelHandler = 0;
+		_rebelStatusBarSprite = 0;
 		filename = Common::String::format("%s/%sPOST1.SAN", dir.c_str(), prefix.c_str());
 		debug("Rebel2: Playing %s", filename.c_str());
-		splayer->setCurVideoFlags(0x20);
+		splayer->setCurVideoFlags(0x28);
 		splayer->play(filename.c_str(), 12);
 
 		if (_vm->shouldQuit() || _playerShield == 0) return false;
 
-		// Phase 2
+		// Phase 2 — handler will be re-set by IACT opcode 6
 		splayer->setCurVideoFlags(0x28);
 		filename = Common::String::format("%s/%sPLAY2.SAN", dir.c_str(), prefix.c_str());
 		debug("Rebel2: Playing %s", filename.c_str());
@@ -8256,7 +8265,7 @@ bool InsaneRebel2::playLevelGameplay(int levelId) {
 		// Level 4: Has cutscene, then single gameplay
 		filename = Common::String::format("%s/%sCUT.SAN", dir.c_str(), prefix.c_str());
 		debug("Rebel2: Playing cutscene %s", filename.c_str());
-		splayer->setCurVideoFlags(0x20);
+		splayer->setCurVideoFlags(0x28);
 		splayer->play(filename.c_str(), 12);
 
 		if (_vm->shouldQuit()) return false;
@@ -8283,14 +8292,16 @@ bool InsaneRebel2::playLevelGameplay(int levelId) {
 		if (_vm->shouldQuit() || _playerShield == 0) return false;
 
 		// Post segment
+		_rebelHandler = 0;
+		_rebelStatusBarSprite = 0;
 		filename = Common::String::format("%s/%sPOST1.SAN", dir.c_str(), prefix.c_str());
 		debug("Rebel2: Playing %s", filename.c_str());
-		splayer->setCurVideoFlags(0x20);
+		splayer->setCurVideoFlags(0x28);
 		splayer->play(filename.c_str(), 12);
 
 		if (_vm->shouldQuit() || _playerShield == 0) return false;
 
-		// Phase 2
+		// Phase 2 — handler will be re-set by IACT opcode 6
 		splayer->setCurVideoFlags(0x28);
 		filename = Common::String::format("%s/%sPLAY2.SAN", dir.c_str(), prefix.c_str());
 		debug("Rebel2: Playing %s", filename.c_str());
@@ -8324,7 +8335,8 @@ void InsaneRebel2::playLevelEnd(int levelId) {
 	debug("Rebel2: Playing level %d end: %s", levelId, filename.c_str());
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
-	splayer->setCurVideoFlags(0x20);  // Cinematic mode
+	// Original: FUN_00417327 adds | 8, so flags = 0x20 | 0x08 = 0x28
+	splayer->setCurVideoFlags(0x28);
 	splayer->play(filename.c_str(), 12);
 }
 
@@ -8350,7 +8362,8 @@ void InsaneRebel2::playLevelDeath(int levelId) {
 	debug("Rebel2: Playing level %d death: %s", levelId, filename.c_str());
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
-	splayer->setCurVideoFlags(0x20);
+	// Original: FUN_00417168 adds | 8, so flags = 0x20 | 0x08 = 0x28
+	splayer->setCurVideoFlags(0x28);
 	splayer->play(filename.c_str(), 12);
 }
 
@@ -8368,7 +8381,8 @@ void InsaneRebel2::playLevelRetry(int levelId) {
 	debug("Rebel2: Playing level %d retry: %s", levelId, filename.c_str());
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
-	splayer->setCurVideoFlags(0x20);
+	// Original: FUN_00417168 adds | 8, so flags = 0x20 | 0x08 = 0x28
+	splayer->setCurVideoFlags(0x28);
 	splayer->play(filename.c_str(), 12);
 }
 
@@ -8386,7 +8400,8 @@ void InsaneRebel2::playLevelGameOver(int levelId) {
 	debug("Rebel2: Playing level %d game over: %s", levelId, filename.c_str());
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
-	splayer->setCurVideoFlags(0x20);
+	// Original: FUN_00417ab2 adds | 8, so flags = 0x20 | 0x08 = 0x28
+	splayer->setCurVideoFlags(0x28);
 	splayer->play(filename.c_str(), 12);
 }
 
@@ -8546,7 +8561,8 @@ void InsaneRebel2::playLevelDeathVariant(int levelId, int phase, int frame) {
 	debug("Rebel2: Playing death video: %s (phase=%d, frame=%d)", filename.c_str(), phase, frame);
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
-	splayer->setCurVideoFlags(0x20);
+	// Original: FUN_00417168 adds | 8, so flags = 0x20 | 0x08 = 0x28
+	splayer->setCurVideoFlags(0x28);
 	splayer->play(filename.c_str(), 12);
 }
 
@@ -8571,7 +8587,8 @@ void InsaneRebel2::playLevelRetryVariant(int levelId, int phase) {
 	debug("Rebel2: Playing retry video: %s (phase=%d)", filename.c_str(), phase);
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
-	splayer->setCurVideoFlags(0x20);
+	// Original: FUN_00417168 adds | 8, so flags = 0x20 | 0x08 = 0x28
+	splayer->setCurVideoFlags(0x28);
 	splayer->play(filename.c_str(), 12);
 }
 
@@ -8842,7 +8859,12 @@ int InsaneRebel2::runLevel2() {
 		if (_vm->shouldQuit()) return kLevelQuit;
 
 		// Post segment 1 (02PST1.SAN)
-		splayer->setCurVideoFlags(0x20);
+		// Original: FUN_00417168("02PST1.SAN", 0x20) → flags = 0x20 | 0x08 = 0x28
+		// FUN_00417168 adds | 8 to preserve the screen buffer between gameplay and transition
+		// Reset handler to 0 so procPostRendering skips HUD/sprite drawing during cinematic
+		_rebelHandler = 0;
+		_rebelStatusBarSprite = 0;
+		splayer->setCurVideoFlags(0x28);
 		splayer->play("LEV02/02PST1.SAN", 12);
 		if (_vm->shouldQuit()) return kLevelQuit;
 
@@ -8859,6 +8881,9 @@ int InsaneRebel2::runLevel2() {
 
 		// Initialize Phase 2 budget
 		budget = kLevel2BudgetBase[1] + _vm->_rnd.getRandomNumber(2);
+
+		// Restore handler for gameplay — will be confirmed by IACT opcode 6
+		_rebelHandler = 8;
 
 		// Play A.SAN (background loader)
 		debug("Rebel2: Level 2 Phase 2 - playing 02P02_A.SAN (background) budget=%d", budget);
@@ -8910,7 +8935,11 @@ int InsaneRebel2::runLevel2() {
 		if (_vm->shouldQuit()) return kLevelQuit;
 
 		// Post segment 2 (02PST2.SAN)
-		splayer->setCurVideoFlags(0x20);
+		// Original: FUN_00417168("02PST2.SAN", 0x20) → flags = 0x20 | 0x08 = 0x28
+		// Reset handler to 0 so procPostRendering skips HUD/sprite drawing during cinematic
+		_rebelHandler = 0;
+		_rebelStatusBarSprite = 0;
+		splayer->setCurVideoFlags(0x28);
 		splayer->play("LEV02/02PST2.SAN", 12);
 		if (_vm->shouldQuit()) return kLevelQuit;
 
@@ -8928,6 +8957,9 @@ int InsaneRebel2::runLevel2() {
 
 		// Initialize Phase 3 budget
 		budget = kLevel2BudgetBase[2] + _vm->_rnd.getRandomNumber(2);
+
+		// Restore handler for gameplay — will be confirmed by IACT opcode 6
+		_rebelHandler = 8;
 
 		// Play A.SAN (background loader)
 		debug("Rebel2: Level 2 Phase 3 - playing 02P03_A.SAN (background) budget=%d", budget);
@@ -9091,7 +9123,11 @@ int InsaneRebel2::runLevel3() {
 	if (_vm->shouldQuit()) return kLevelQuit;
 
 	// Post segment 1 (03POST1.SAN)
-	splayer->setCurVideoFlags(0x20);
+	// Original: FUN_00417168 adds | 8, so flags = 0x20 | 0x08 = 0x28
+	// Reset handler to 0 so procPostRendering skips HUD/sprite drawing during cinematic
+	_rebelHandler = 0;
+	_rebelStatusBarSprite = 0;
+	splayer->setCurVideoFlags(0x28);
 	splayer->play("LEV03/03POST1.SAN", 12);
 	if (_vm->shouldQuit()) return kLevelQuit;
 
@@ -9150,7 +9186,8 @@ int InsaneRebel2::runLevel4() {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 
 	// Play cutscene (04CUT.SAN)
-	splayer->setCurVideoFlags(0x20);
+	// Original: FUN_00417168 adds | 8, so flags = 0x20 | 0x08 = 0x28
+	splayer->setCurVideoFlags(0x28);
 	splayer->play("LEV04/04CUT.SAN", 12);
 	if (_vm->shouldQuit()) return kLevelQuit;
 
@@ -9311,7 +9348,11 @@ int InsaneRebel2::runLevel6() {
 	if (_vm->shouldQuit()) return kLevelQuit;
 
 	// Post segment 1 (06POST1.SAN)
-	splayer->setCurVideoFlags(0x20);
+	// Original: FUN_00417168 adds | 8, so flags = 0x20 | 0x08 = 0x28
+	// Reset handler to 0 so procPostRendering skips HUD/sprite drawing during cinematic
+	_rebelHandler = 0;
+	_rebelStatusBarSprite = 0;
+	splayer->setCurVideoFlags(0x28);
 	splayer->play("LEV06/06POST1.SAN", 12);
 	if (_vm->shouldQuit()) return kLevelQuit;
 
