@@ -350,7 +350,7 @@ public:
 	// Draw enemy indicator brackets and erase destroyed enemy areas
 	void renderEnemyOverlays(byte *renderBitmap, int pitch, int width, int height, int videoWidth);
 
-	// Draw explosion animations from 5-slot system
+	// Draw explosion animations from 5-slot system (dispatcher)
 	void renderExplosions(byte *renderBitmap, int pitch, int width, int height);
 
 	// Draw laser shot beams and impacts
@@ -708,6 +708,12 @@ public:
 	void spawnSpaceShot(int x, int y);     // Handler 7
 	void spawnHandler25Shot(int x, int y); // Handler 25 (speeder bike)
 	void spawnShot(int x, int y);          // Dispatcher based on current handler
+
+	// Handler-specific explosion rendering
+	void renderTurretExplosions(byte *renderBitmap, int pitch, int width, int height);     // FUN_409FBC (Handler 0x26)
+	void renderVehicleExplosions(byte *renderBitmap, int pitch, int width, int height);    // FUN_402696 (Handler 8)
+	void renderSpaceExplosions(byte *renderBitmap, int pitch, int width, int height);      // FUN_40F1C5 (Handler 7)
+	void renderHandler25Explosions(byte *renderBitmap, int pitch, int width, int height);  // FUN_41F29A (Handler 25)
 
 	// Handler-specific laser rendering (FUN_40AD63, FUN_402ED0, FUN_40FADF, FUN_0041f004)
 	void renderTurretLaserShots(byte *renderBitmap, int pitch, int width, int height);
