@@ -1288,89 +1288,125 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 	//
 	// Stream position on entry: at offset +8 (body[0], first word after 8-byte header)
 
-	if (par3 == 1 || par3 == 2) {
-		// Direct hit path — FUN_4092D9 lines 209-227
+	// Handler 25 has a different opcode 3 structure (FUN_41CADB case 1):
+	//   par3==5: probabilistic damage WITH cover check (DAT_0045790a < 2)
+	//   par3==1: increment hit counter ONLY (NO damage), requires par4 != 4
+	//   par4==100: direct damage (separate check after par3 branches, NO cover check)
+	// Other handlers (0x26/7/8) use FUN_4092D9/FUN_40E35E/FUN_401234 with different logic.
+	if (_rebelHandler == 25) {
+		// Handler 25 opcode 3 — FUN_41CADB case 1
+		int16 srcIdBody0 = b.readSint16LE(); // body[0] (offset +8)
+		int16 srcIdBody1 = b.readSint16LE(); // body[1] (offset +10)
+
+		if (par3 == 5) {
+			// Probabilistic damage with cover check (lines 81-92)
+			debug("Rebel2 Opcode3: H25 par3=5 srcId=%d isBitSet=%d damageLevel=%d",
+				srcIdBody1, isBitSet(srcIdBody1), _rebelDamageLevel);
+
+			if (_rebelDamageLevel < 2 && !isBitSet(srcIdBody1)) {
+				int probability = 20 + _difficulty * 20;
+				if (probability < 5) probability = 5;
+				if (probability > 90) probability = 90;
+				int roll = _vm->_rnd.getRandomNumber(99);
+				debug("Rebel2 Opcode3: probability=%d roll=%d (need roll < prob)", probability, roll);
+
+				if (roll < probability) {
+					if (!_rebelInvulnerable) {
+						int damageAmount = 5 + (_difficulty * 2);
+						_playerDamage += damageAmount;
+						if (_playerDamage > 255) _playerDamage = 255;
+						debug("Rebel2: H25 PROBABILISTIC damage from %d. Damage=%d total=%d",
+							srcIdBody1, damageAmount, _playerDamage);
+					}
+					initDamageFlash();
+				}
+			} else {
+				debug("Rebel2 Opcode3: H25 par3=5 BLOCKED (damageLevel=%d isBitSet=%d)",
+					_rebelDamageLevel, isBitSet(srcIdBody1));
+			}
+		} else if (par3 == 1 && !isBitSet(srcIdBody0) && par4 != 4) {
+			// Hit counter only — NO damage (lines 94-98)
+			_rebelHitCounter++;
+			debug("Rebel2: H25 hit counter++ -> %d (par3=1 par4=%d, no damage)",
+				_rebelHitCounter, par4);
+		} else {
+			debug("Rebel2 Opcode3: H25 par3=%d par4=%d (no action)", par3, par4);
+		}
+
+		// Direct damage: par4==100, separate from par3 branches (lines 99-111)
+		if (par4 == 100 && !isBitSet(srcIdBody0)) {
+			if (!_rebelInvulnerable) {
+				int directHitDamage = 8 + (_difficulty * 4);
+				_playerDamage += directHitDamage;
+				if (_playerDamage > 255) _playerDamage = 255;
+				debug("Rebel2: H25 DIRECT HIT par4=100 damage=%d total=%d",
+					directHitDamage, _playerDamage);
+			}
+			initDamageFlash();
+		}
+	} else if (par3 == 1 || par3 == 2) {
+		// Non-Handler-25 direct hit path — FUN_4092D9 lines 209-227
 		int16 srcId = b.readSint16LE(); // body[0] (offset +8): source enemy ID
 
 		debug("Rebel2 Opcode3: par3=%d par4=%d srcId=%d isBitSet=%d",
 			par3, par4, srcId, isBitSet(srcId));
 
-		// FUN_00423970(srcId): only proceed if source enemy is active (bit clear)
 		if (!isBitSet(srcId)) {
-			// Always increment hit counter (DAT_0047ab80) — line 215
 			_rebelHitCounter++;
 			debug("Rebel2: Incremented hit counter -> %d", _rebelHitCounter);
 
-			// Damage path: par4 must be non-zero AND direct hit damage table > 0
-			// TODO: Read actual damage from per-level table DAT_0047e0f4
 			int directHitDamage = 8 + (_difficulty * 4);
 
 			if (par4 != 0 && directHitDamage > 0) {
 				bool shouldDamage = false;
 
 				if (par3 == 1 && par4 < 10) {
-					// par3=1: simple direct hit, par4 is hit strength (1..9)
 					shouldDamage = true;
 				} else if (par3 == 2 && par4 > 99) {
-					// par3=2: wave-gated hit, par4 > 99 required
-					// Additional check: for par4 >= 101 (0x65), verify wave state bit
-					// Original: (DAT_0047ab9c & (1 << ((par4 + 0x9b) & 0x1f))) == 0
 					if (par4 < 0x65 || (_rebelPhaseState & (1 << ((par4 + 0x9b) & 0x1f))) == 0) {
 						shouldDamage = true;
 					}
 				}
 
 				if (shouldDamage) {
-					// Apply damage unless invulnerable (DAT_0047ab64 == 0)
 					if (!_rebelInvulnerable) {
 						_playerDamage += directHitDamage;
 						if (_playerDamage > 255) _playerDamage = 255;
 						debug("Rebel2: DIRECT HIT damage from enemy %d. par3=%d par4=%d damage=%d total=%d",
 							srcId, par3, par4, directHitDamage, _playerDamage);
 					}
-					// Visual effect — FUN_00420515 (palette flash)
 					initDamageFlash();
-					// TODO: FUN_0041189e(1, 0, 0x7f, 0, 0) — play hit sound
 				}
 			}
 		}
 	} else if (par3 == 5) {
-		// Probabilistic damage path — FUN_4092D9 lines 228-239
-		b.skip(2); // Skip body[0] (offset +8, not used for par3=5)
-		int16 srcId = b.readSint16LE(); // body[1] (offset +10): source enemy ID
+		// Non-Handler-25 probabilistic damage — FUN_4092D9 lines 228-239
+		b.skip(2); // Skip body[0]
+		int16 srcId = b.readSint16LE(); // body[1] (offset +10)
 
 		debug("Rebel2 Opcode3: par3=5 srcId=%d isBitSet=%d", srcId, isBitSet(srcId));
 
-		// FUN_00423970(srcId): only proceed if source enemy is active (bit clear)
 		if (!isBitSet(srcId)) {
-			// Probability check: original reads from per-level table DAT_0047e0fc
-			// TODO: Use actual per-level probability table instead of hardcoded values
 			int probability = 20 + _difficulty * 20;
 			if (probability < 5) probability = 5;
 			if (probability > 90) probability = 90;
 
-			int roll = _vm->_rnd.getRandomNumber(99); // FUN_004233a0(100) returns [0,99]
+			int roll = _vm->_rnd.getRandomNumber(99);
 			debug("Rebel2 Opcode3: probability=%d roll=%d (need roll < prob)", probability, roll);
 
 			if (roll < probability) {
-				// Apply damage unless invulnerable (DAT_0047ab64 == 0)
 				if (!_rebelInvulnerable) {
-					// TODO: Read damage amount from per-level table DAT_0047e0f8
 					int damageAmount = 5 + (_difficulty * 2);
 					_playerDamage += damageAmount;
 					if (_playerDamage > 255) _playerDamage = 255;
 					debug("Rebel2: PROBABILISTIC damage from enemy %d. Damage=%d total=%d",
 						srcId, damageAmount, _playerDamage);
 				}
-				// Visual effect — called regardless of invulnerability.
-				// Handler 8: FUN_0042073B — palette flash + screen shake
-				// Other handlers: FUN_00420515 — palette flash only (no screen shake)
 				if (_rebelHandler == 8) {
 					triggerDamageEffect();
 				} else {
 					initDamageFlash();
 				}
-				// TODO: FUN_0041189e(1, 0, 0x7f, 0, 0) — play hit sound
 			}
 		}
 	} else {
@@ -8600,6 +8636,99 @@ int InsaneRebel2::runLevel1() {
 }
 
 // =============================================================================
+// Wave State Management - FUN_00417b61
+// Waits for video completion, accumulates kill state, redistributes kill credits.
+// Used by all multi-wave levels (Level 2, 3, 6, etc.) as the core wave loop primitive.
+// =============================================================================
+
+uint16 InsaneRebel2::processWaveEnd(int16 mask, int16 *budget, int16 threshold, uint16 flags) {
+	// FUN_00417b61: Core wave management function
+	// Called after each wave video plays. Handles:
+	// 1. Waiting for video to finish (with early exit on enemy completion)
+	// 2. Copying wave state to accumulated phase state
+	// 3. Redistributing kill credits from the budget
+	//
+	// Returns: kill bits credited this wave, or 0xFFFF on death/quit/completion
+
+	uint16 result = 0;
+
+	// Step 1: Wait for video to finish (lines 21-32)
+	// Original loop: while (damage < 0xff && frame < maxFrame-1 && !escPressed)
+	// The SmushPlayer::play() call already blocks until video ends, so this step
+	// is handled implicitly. The early-exit logic (threshold > 0: if frame > 50
+	// AND all required enemy type bits are set, count up and break when > threshold)
+	// would need per-frame callbacks to work precisely. For now, the primary effect
+	// is covered by the video playing to completion and accumulating state.
+	// TODO: Implement per-frame early exit callback for threshold-based wave termination.
+
+	// Step 2: Copy wave state to phase state (line 33)
+	// DAT_0047ab9c = DAT_0047ab98
+	_rebelPhaseState = _rebelWaveState;
+	debug("Rebel2 processWaveEnd: waveState=0x%x -> phaseState=0x%x mask=0x%x budget=%d threshold=%d flags=%d",
+		_rebelWaveState, _rebelPhaseState, mask, budget ? *budget : -1, threshold, flags);
+
+	// Step 3: Kill redistribution - add random unkilled types (lines 34-47)
+	// Only when (flags & 2) != 0. Level 2 always passes flags=0, so inactive for Level 2.
+	if ((flags & 2) != 0) {
+		// Collect unkilled enemy type bits that are within the mask
+		byte unkilled[8];
+		int16 numUnkilled = 0;
+		for (byte b = 0; (2 << (b & 0x1f)) < (int)(mask & 0x0e); b++) {
+			if ((_rebelPhaseState & (2 << (b & 0x1f))) == 0) {
+				unkilled[numUnkilled] = (byte)(2 << (b & 0x1f));
+				numUnkilled++;
+			}
+		}
+		if (numUnkilled > 0) {
+			// Randomly add one unkilled type to phase state
+			int idx = _vm->_rnd.getRandomNumber(numUnkilled - 1);
+			_rebelPhaseState |= unkilled[idx];
+			if (budget) (*budget)++;
+		}
+	}
+
+	// Step 4: Kill credit transfer (lines 48-73)
+	// Collect all SET enemy type bits from phase state
+	byte killed[8];
+	int16 numKilled = 0;
+	for (byte b = 0; (2 << (b & 0x1f)) < (int)(mask & 0x0e); b++) {
+		if ((_rebelPhaseState & (2 << (b & 0x1f))) != 0) {
+			killed[numKilled] = (byte)(2 << (b & 0x1f));
+			numKilled++;
+		}
+	}
+
+	// Max credits: 8 normally, 2 if flag bit 0 set
+	int16 maxCredits = ((flags & 1) == 0) ? 8 : 2;
+
+	// Transfer kills from phase state to result, limited by budget
+	int16 creditCount = 0;
+	while (creditCount < maxCredits && numKilled > 0 && budget && *budget > 0) {
+		int idx = _vm->_rnd.getRandomNumber(numKilled - 1);
+		_rebelPhaseState -= killed[idx];   // Remove from accumulated state
+		result |= killed[idx];              // Credit to return value
+		(*budget)--;
+
+		// Remove from array (shift remaining elements)
+		for (int i = idx; i + 1 < numKilled; i++) {
+			killed[i] = killed[i + 1];
+		}
+		numKilled--;
+		creditCount++;
+	}
+
+	debug("Rebel2 processWaveEnd: result=0x%x phaseState=0x%x (after redistribution) budget=%d",
+		result, _rebelPhaseState, budget ? *budget : -1);
+
+	// Step 5: Return value (lines 74-78)
+	// Return 0xFFFF if: dead, phase complete, or quit
+	if (_playerDamage >= 255 || (int16)_rebelPhaseState >= mask || _vm->shouldQuit()) {
+		return 0xFFFF;
+	}
+	return result;
+}
+
+// =============================================================================
 // Level 2 Handler - FUN_00418063
 // Multiple parts with P1/P2/P3 subdirectories
 // Random animation variants for each part
@@ -8612,6 +8741,13 @@ int InsaneRebel2::runLevel2() {
 	// Phase 1 mask: 0x06 (enemy types 1,2)
 	// Phase 2 mask: 0x0e (enemy types 1,2,3)
 	// Phase 3 mask: 0x0e (enemy types 1,2,3)
+	//
+	// Kill credit budget (from level data table DAT_0047e0e8):
+	// Each phase gets a budget = tableBase + random(3). processWaveEnd() uses
+	// this budget to randomly redistribute kill credits, creating non-deterministic
+	// wave progression. Using calibrated defaults until exact table values extracted.
+	static const int16 kLevel2BudgetBase[3] = { 3, 3, 3 };  // Phase 1, 2, 3
+
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	int bonusCount = 0;     // local_1c: tracks bonus events (DAT_0047ab9c & 0x10)
 	int totalKills = 0;     // local_c: accumulated kill count across phases
@@ -8623,8 +8759,13 @@ int InsaneRebel2::runLevel2() {
 	if (_vm->shouldQuit()) return kLevelQuit;
 
 	// Play level beginning cinematic (02BEG.SAN)
+	// Original: FUN_004171c5("LEV02/02BEG.SAN", 0x20, 0xab, 0xa0, 10, 2, 0x46)
+	// Includes text overlay from GAME.TRS — deferred until text rendering is ready.
 	playLevelBegin(2);
 	if (_vm->shouldQuit()) return kLevelQuit;
+
+	// FUN_00401000 + FUN_00407d10 + FUN_0040c040: Reset game state (before retry loop)
+	clearBit(0);
 
 	// Main gameplay retry loop (restarts from beginning on death)
 	while (!_vm->shouldQuit()) {
@@ -8635,8 +8776,7 @@ int InsaneRebel2::runLevel2() {
 		totalKills = 0;
 		totalMisses = 0;
 
-		// FUN_00401000 + FUN_00407d10 + FUN_0040c040: Reset game state
-		clearBit(0);
+		// FUN_0041c7d0: Reset per-attempt state
 		_enemies.clear();
 		for (int i = 0; i < 512; i++) {
 			_rebelLinks[i][0] = 0;
@@ -8651,16 +8791,20 @@ int InsaneRebel2::runLevel2() {
 		_rebelPhaseState = 0;
 		_rebelWaveState = 0;
 
-		// Play A.SAN (background loader)
-		debug("Rebel2: Level 2 Phase 1 - playing 02P01_A.SAN (background)");
+		// Initialize kill budget from level data table + random(3)
+		// Original: sVar4 = levelData[phase1Offset]; local_14[0] = sVar4 + random(3)
+		int16 budget = kLevel2BudgetBase[0] + _vm->_rnd.getRandomNumber(2);
+
+		// Play A.SAN (background loader) — flags 0x28 (preserve buffer, gameplay mode)
+		debug("Rebel2: Level 2 Phase 1 - playing 02P01_A.SAN (background) budget=%d", budget);
 		splayer->setCurVideoFlags(0x28);
 		splayer->play("LEV02/P1/02P01_A.SAN", 12);
 		_deathFrame = splayer->_frame;
 
 		if (_vm->shouldQuit()) return kLevelQuit;
 
-		// Copy wave state to phase state after A.SAN
-		_rebelPhaseState = _rebelWaveState;
+		// processWaveEnd after A.SAN (threshold=0, no early exit for background loader)
+		processWaveEnd(0x36, &budget, 0, 0);
 
 		// Phase 1 wave loop: random B/C/D until all type 1,2 enemies killed
 		// Original: while (uVar3 >= 0 && (DAT_0047ab9c & 6) != 6)
@@ -8674,14 +8818,15 @@ int InsaneRebel2::runLevel2() {
 				"LEV02/P1/02P01_C.SAN",
 				"LEV02/P1/02P01_D.SAN"
 			};
-			debug("Rebel2: Phase 1 wave - playing %s (state=0x%x)", variants[variant], _rebelPhaseState);
-			splayer->setCurVideoFlags(0x28);
+			debug("Rebel2: Phase 1 wave - playing %s (state=0x%x budget=%d)", variants[variant], _rebelPhaseState, budget);
+			// Wave videos use flags 0x428 (original: FUN_0041f4d0 param_2=0x428)
+			splayer->setCurVideoFlags(0x428);
 			splayer->play(variants[variant], 12);
 			_deathFrame = splayer->_frame;
 
-			// After wave: copy wave state to phase state (FUN_00417b61 line 33)
-			_rebelPhaseState = _rebelWaveState;
-			debug("Rebel2: Phase 1 wave done - state=0x%x (need 0x06)", _rebelPhaseState);
+			// processWaveEnd with threshold=0x14 (20) — enables early exit when enemies killed
+			processWaveEnd(0x36, &budget, 0x14, 0);
+			debug("Rebel2: Phase 1 wave done - state=0x%x (need 0x06) budget=%d", _rebelPhaseState, budget);
 		}
 
 		// Check for bonus (bit 4 = 0x10)
@@ -8706,21 +8851,23 @@ int InsaneRebel2::runLevel2() {
 		_rebelWaveState = 0;
 		_enemies.clear();
 
+		// Initialize Phase 2 budget
+		budget = kLevel2BudgetBase[1] + _vm->_rnd.getRandomNumber(2);
+
 		// Play A.SAN (background loader)
-		debug("Rebel2: Level 2 Phase 2 - playing 02P02_A.SAN (background)");
+		debug("Rebel2: Level 2 Phase 2 - playing 02P02_A.SAN (background) budget=%d", budget);
 		splayer->setCurVideoFlags(0x28);
 		splayer->play("LEV02/P2/02P02_A.SAN", 12);
 		_deathFrame = splayer->_frame;
 
 		if (_vm->shouldQuit()) return kLevelQuit;
-		_rebelPhaseState = _rebelWaveState;
 
-		// Phase 2 wave loop: state-based variant selection
-		// Original: while (local_10 >= 0 && (DAT_0047ab9c & 0xe) != 0xe)
-		while (_playerDamage < 255 && (_rebelPhaseState & 0x0e) != 0x0e) {
+		// Phase 2 wave loop: processWaveEnd at TOP of loop (matches assembly structure)
+		// Original: local_10 = FUN_00417b61(0x3e, local_14, 0, 0); then switch(local_10)
+		while (true) {
+			uint16 waveSelect = processWaveEnd(0x3e, &budget, 0, 0);
+			if (waveSelect == 0xFFFF || (_rebelPhaseState & 0x0e) == 0x0e) break;
 			if (_vm->shouldQuit()) return kLevelQuit;
-
-			int waveSelect = _rebelPhaseState & 0x0e;  // masked enemy state
 
 			// If no specific pattern: randomize high bits (original lines 71-74)
 			// When (local_10 & 0xc) == 0: add random 0x10/0x11/0x12
@@ -8745,13 +8892,10 @@ int InsaneRebel2::runLevel2() {
 				filename = "LEV02/P2/02P02_D.SAN"; break;
 			}
 
-			debug("Rebel2: Phase 2 wave - playing %s (state=0x%x sel=0x%x)", filename, _rebelPhaseState, waveSelect);
-			splayer->setCurVideoFlags(0x28);
+			debug("Rebel2: Phase 2 wave - playing %s (state=0x%x sel=0x%x budget=%d)", filename, _rebelPhaseState, waveSelect, budget);
+			splayer->setCurVideoFlags(0x428);
 			splayer->play(filename, 12);
 			_deathFrame = splayer->_frame;
-
-			_rebelPhaseState = _rebelWaveState;
-			debug("Rebel2: Phase 2 wave done - state=0x%x (need 0x0e)", _rebelPhaseState);
 		}
 
 		if ((_rebelPhaseState & 0x10) != 0) bonusCount++;
@@ -8776,21 +8920,23 @@ int InsaneRebel2::runLevel2() {
 		_enemies.clear();
 		prevWaveState = 0;
 
+		// Initialize Phase 3 budget
+		budget = kLevel2BudgetBase[2] + _vm->_rnd.getRandomNumber(2);
+
 		// Play A.SAN (background loader)
-		debug("Rebel2: Level 2 Phase 3 - playing 02P03_A.SAN (background)");
+		debug("Rebel2: Level 2 Phase 3 - playing 02P03_A.SAN (background) budget=%d", budget);
 		splayer->setCurVideoFlags(0x28);
 		splayer->play("LEV02/P3/02P03_A.SAN", 12);
 		_deathFrame = splayer->_frame;
 
 		if (_vm->shouldQuit()) return kLevelQuit;
-		_rebelPhaseState = _rebelWaveState;
 
-		// Phase 3 wave loop: state-based with randomization
-		// Original: while (local_10 >= 0 && (DAT_0047ab9c & 0xe) != 0xe)
+		// Phase 3: processWaveEnd at BOTTOM (like Phase 1), waveSelect carried across iterations
+		// Original: local_10 = FUN_00417b61(0x3e, local_14, 0, 0); while (loop) { ...; local_10 = FUN_00417b61(0x3e, local_14, 0x14, 0); }
 		{
-			int waveSelect = _rebelPhaseState & 0x0e;
+			uint16 waveSelect = processWaveEnd(0x3e, &budget, 0, 0);
 
-			while (_playerDamage < 255 && (_rebelPhaseState & 0x0e) != 0x0e) {
+			while (waveSelect != 0xFFFF && (_rebelPhaseState & 0x0e) != 0x0e) {
 				if (_vm->shouldQuit()) return kLevelQuit;
 
 				// Phase 3 randomization (original lines 113-115):
@@ -8823,14 +8969,14 @@ int InsaneRebel2::runLevel2() {
 					filename = "LEV02/P3/02P03_I.SAN"; break;
 				}
 
-				debug("Rebel2: Phase 3 wave - playing %s (state=0x%x sel=0x%x)", filename, _rebelPhaseState, waveSelect);
-				splayer->setCurVideoFlags(0x28);
+				debug("Rebel2: Phase 3 wave - playing %s (state=0x%x sel=0x%x budget=%d)", filename, _rebelPhaseState, waveSelect, budget);
+				splayer->setCurVideoFlags(0x428);
 				splayer->play(filename, 12);
 				_deathFrame = splayer->_frame;
 
-				_rebelPhaseState = _rebelWaveState;
-				waveSelect = _rebelPhaseState & 0x0e;
-				debug("Rebel2: Phase 3 wave done - state=0x%x (need 0x0e)", _rebelPhaseState);
+				// processWaveEnd at BOTTOM with threshold=0x14
+				waveSelect = processWaveEnd(0x3e, &budget, 0x14, 0);
+				debug("Rebel2: Phase 3 wave done - state=0x%x (need 0x0e) budget=%d", _rebelPhaseState, budget);
 			}
 		}
 
@@ -8841,9 +8987,12 @@ int InsaneRebel2::runLevel2() {
 		if (_vm->shouldQuit()) return kLevelQuit;
 
 		// Level completed! Calculate accuracy score.
+		// Original: FUN_00417327 with score thresholds and medal ranks
+		// Score presentation deferred until GAME.TRS text rendering is implemented.
 		{
+			totalMisses += _rebelHitCounter;
 			int accuracy = 0;
-			int totalShots = totalKills + totalMisses + _rebelHitCounter;
+			int totalShots = totalKills + totalMisses;
 			if (totalKills > 0 && totalShots > 0) {
 				accuracy = (totalKills * 100) / totalShots;
 			}
@@ -8857,12 +9006,17 @@ int InsaneRebel2::runLevel2() {
 
 	level2_death:
 		// Player died — play death sequence and retry or game over
+		// Original: FUN_00417168("LEV02/02DIE.SAN", 0x20)
 		debug("Rebel2: Level 2 Phase %d death", _currentPhase);
 		playCinematic("LEV02/02DIE.SAN");
 		if (_vm->shouldQuit()) return kLevelQuit;
 
+		// Original: if (DAT_0047ab5c != 0) DAT_0047a7ee++ (bonus life award)
+		// DAT_0047ab5c is set when player earns a bonus life (e.g., score threshold).
+		// Currently not tracked — will be wired when bonus life system is implemented.
 		_playerLives--;
 		if (_playerLives <= 0) {
+			// Original: FUN_00417ab2("LEV02/02OVER.SAN", 0x20, 2)
 			playLevelGameOver(2);
 			return kLevelGameOver;
 		}
