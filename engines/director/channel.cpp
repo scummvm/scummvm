@@ -451,19 +451,6 @@ void Channel::setClean(Sprite *nextSprite, bool partial) {
 	bool spriteTypeChanged = _sprite->_spriteType != nextSprite->_spriteType;
 
 	if (nextSprite) {
-		if (nextSprite->_cast && (_dirty || _sprite->_castId != nextSprite->_castId)) {
-			if (_sprite->_castId != nextSprite->_castId && nextSprite->_cast->_type == kCastDigitalVideo) {
-				if (((DigitalVideoCastMember *)nextSprite->_cast)->loadVideoFromCast()) {
-					_movieTime = 0;
-					((DigitalVideoCastMember *)nextSprite->_cast)->setChannel(this);
-					((DigitalVideoCastMember *)nextSprite->_cast)->startVideo();
-				}
-			} else if (nextSprite->_cast->_type == kCastFilmLoop || nextSprite->_cast->_type == kCastMovie) {
-				// brand new film loop, reset the frame counter.
-				_filmLoopFrame = 1;
-			}
-		}
-
 		// for the non-puppet QDShape, since we won't use isDirty to check whether the QDShape is changed.
 		// so we may always keep the sprite info because we need it to draw QDShape.
 		if (_sprite->_puppet || _sprite->_autoPuppet || (!nextSprite->isQDShape() && partial)) {
@@ -581,6 +568,27 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 	}
 	int16 width = _sprite->_width;
 	int16 height = _sprite->_height;
+
+	if (!(_sprite->_puppet || _sprite->getAutoPuppet(kAPCast)) && (_sprite->_castId != nextSprite->_castId)) {
+		// if there's a video in the old sprite that's different, stop it before we continue
+		if (_sprite->_cast && _sprite->_cast->_type == kCastDigitalVideo) {
+			((DigitalVideoCastMember *)_sprite->_cast)->setChannel(nullptr);
+			((DigitalVideoCastMember *)_sprite->_cast)->stopVideo();
+			((DigitalVideoCastMember *)_sprite->_cast)->rewindVideo();
+		}
+		// if there's a video in the new sprite that's different, start it before we continue
+		if (nextSprite->_cast && nextSprite->_cast->_type == kCastDigitalVideo) {
+			if (((DigitalVideoCastMember *)nextSprite->_cast)->loadVideoFromCast()) {
+				_movieTime = 0;
+				((DigitalVideoCastMember *)nextSprite->_cast)->setChannel(this);
+				((DigitalVideoCastMember *)nextSprite->_cast)->startVideo();
+			}
+		}
+		// if there's a brand new film loop in the new sprite, reset the frame counter
+		if (nextSprite->_cast && nextSprite->_cast->_type == kCastFilmLoop) {
+			_filmLoopFrame = 1;
+		}
+	}
 
 	_sprite->replaceFrom(nextSprite);
 

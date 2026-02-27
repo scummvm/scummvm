@@ -379,7 +379,7 @@ void DigitalVideoCastMember::startVideo() {
 	else
 		_video->start();
 
-	debugC(2, kDebugImages, "STARTING VIDEO %s", _filename.c_str());
+	debugC(2, kDebugImages, "STARTING VIDEO %s %d/%d", _filename.c_str(), getMovieCurrentTime(), getMovieTotalTime());
 
 	if (_channel && _channel->_stopTime == 0)
 		_channel->_stopTime = getMovieTotalTime();

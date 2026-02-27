@@ -624,13 +624,6 @@ void Sprite::replaceFrom(Sprite *nextSprite) {
 		return;
 	}
 
-	// if there's a video in the old sprite that's different, stop it before we continue
-	if (_castId != nextSprite->_castId && _cast && _cast->_type == kCastDigitalVideo) {
-		((DigitalVideoCastMember *)_cast)->setChannel(nullptr);
-		((DigitalVideoCastMember *)_cast)->stopVideo();
-		((DigitalVideoCastMember *)_cast)->rewindVideo();
-	}
-
 	// If the cast member is the same, persist the editable flag
 	bool editable = nextSprite->_editable;
 	if (_castId == nextSprite->_castId) {
