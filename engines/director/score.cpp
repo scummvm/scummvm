@@ -508,18 +508,11 @@ void Score::updateCurrentFrame() {
 		}
 
 		// Load the current sprite information into the _currentFrame data store.
-		// This is specifically because of delta updates; loading the next frame
-		// in the score applies delta changes to _currentFrame, and ideally we want
-		// those deltas to be applied over the top of whatever the current state is.
-		// Importantly we don't want to copy back anything that is overridden
-		// by our friend the puppet flag.
-		for (uint ch = 0; ch < _channels.size(); ch++)
-			_currentFrame->_sprites[ch]->replaceFrom(_channels[ch]->_sprite, _channels[ch]->_sprite);
-
-		// this copies in the frame data and updates _curFrameNumber
+		// This copies in the frame data and updates _curFrameNumber.
 		loadFrame(nextFrameNumberToLoad, true);
 
-		// finally, update the channels and buffer any dirty rectangles
+		// Finally, update the channels and buffer any dirty rectangles.
+		// This will ignore any channel data that is overridden with the puppet flag.
 		updateSprites(kRenderModeNormal, true);
 	} else if (!_vm->_playbackPaused) {
 		// Loading the same frame; e.g. "go to frame".

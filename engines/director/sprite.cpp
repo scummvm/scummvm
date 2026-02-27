@@ -612,16 +612,11 @@ Common::String Sprite::formatInfo() {
 		_puppet, _moveable);
 }
 
-void Sprite::replaceFrom(Sprite *nextSprite, Sprite *puppetSrc) {
+void Sprite::replaceFrom(Sprite *nextSprite) {
 	if (!nextSprite)
 		return;
 
-	// Usually you only want to copy data into the sprite
-	// if its own puppet flag is set.
-	if (!puppetSrc)
-		puppetSrc = this;
-
-	if (puppetSrc->_puppet) {
+	if (_puppet) {
 		// Whole sprite is in puppet mode.
 		// The only thing we want to copy over is the script ID.
 		_scriptId = nextSprite->_scriptId;

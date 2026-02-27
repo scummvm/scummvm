@@ -111,7 +111,7 @@ public:
 
 	Common::String formatInfo();
 
-	void replaceFrom(Sprite *nextSprite, Sprite *puppetSrc = nullptr);
+	void replaceFrom(Sprite *nextSprite);
 
 	Frame *_frame;
 	Score *_score;
