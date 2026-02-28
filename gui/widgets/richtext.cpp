@@ -109,6 +109,9 @@ void RichTextWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 
 	_mouseDownY = _mouseDownStartY = 0;
 
+	if (!_txtWnd)
+		return;
+
 	Common::String link = _txtWnd->getMouseLink(x - _innerMargin + _scrolledX, y - _innerMargin + _scrolledY).encode();
 
 	if (link.hasPrefixIgnoreCase("http"))
@@ -116,7 +119,7 @@ void RichTextWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 void RichTextWidget::handleMouseMoved(int x, int y, int button) {
-	if (_mouseDownStartY == 0 || _mouseDownY == y)
+	if (_mouseDownStartY == 0 || _mouseDownY == y || !_txtWnd)
 		return;
 
 	int h = _txtWnd->getTextHeight();
@@ -135,6 +138,9 @@ void RichTextWidget::handleMouseMoved(int x, int y, int button) {
 }
 
 void RichTextWidget::handleTooltipUpdate(int x, int y) {
+	if (!_txtWnd)
+		return;
+
 	_tooltip = _txtWnd->getMouseLink(x - _innerMargin + _scrolledX, y - _innerMargin + _scrolledY);
 }
 
@@ -170,29 +176,35 @@ void RichTextWidget::recalc() {
 //		createWidget();
 //	}
 	if (!_surface || _surface->w != _textWidth) {
+		if (_surface) {
+			_surface->free();
+			delete _surface;
+			_surface = nullptr;
+		}
 		delete _txtWnd;
 		_txtWnd = nullptr;
-
-	if (_cachedTextSurface) {
-		_cachedTextSurface->free();
-		delete _cachedTextSurface;
-		_cachedTextSurface = nullptr;
-	}
-		createWidget();
-	} else if (_surface->h != _textHeight)
+		if (_cachedTextSurface) {
+			_cachedTextSurface->free();
+			delete _cachedTextSurface;
+			_cachedTextSurface = nullptr;
+		}
+	} else if (_surface->h != _textHeight) {
 		_surface->create(_textWidth, _textHeight, g_gui.getWM()->_pixelformat);
 
-	int h = _txtWnd->getTextHeight();
-
-	if (h <= _limitH) _scrolledY = 0;
-	if (_scrolledY > h - _limitH) _scrolledY = MAX(0, h - _limitH);
-
-	_verticalScroll->_numEntries = h;
-	_verticalScroll->_currentPos = _scrolledY;
-	_verticalScroll->_entriesPerPage = _limitH;
-	_verticalScroll->_singleStep = _h / 4;
-	_verticalScroll->setPos(_w - _scrollbarWidth, 0);
-	_verticalScroll->setSize(_scrollbarWidth, _h - 1);
+		int h = _txtWnd->getTextHeight();
+		if (h <= _limitH) 
+			_scrolledY = 0;
+		if (_scrolledY > h - _limitH) 
+			_scrolledY = MAX(0, h - _limitH);
+		_verticalScroll->_numEntries = h;
+		_verticalScroll->_currentPos = _scrolledY;
+		_verticalScroll->_entriesPerPage = _limitH;
+		_verticalScroll->_singleStep = _h / 4;
+		_verticalScroll->setPos(_w - _scrollbarWidth, 0);
+		_verticalScroll->setSize(_scrollbarWidth, _h - 1);
+		_verticalScroll->setVisible(_verticalScroll->_numEntries > _limitH); //show when there is something to scroll
+		_verticalScroll->recalc();
+	}
 }
 
 void RichTextWidget::createWidget() {
@@ -213,8 +225,8 @@ void RichTextWidget::createWidget() {
 		newId = wm->_fontMan->registerTTFFont(ttfFamily);
 	else
 		newId = Graphics::kMacFontNewYork;
-	Graphics::MacFont macFont(newId, fontHeight, Graphics::kMacFontRegular);
 
+	Graphics::MacFont macFont(newId, fontHeight, Graphics::kMacFontRegular);
 	_txtWnd = new Graphics::MacText(Common::U32String(), wm, &macFont, fg, bg, _textWidth, Graphics::kTextAlignLeft);
 
 	if (!_imageArchive.empty())
@@ -242,18 +254,37 @@ void RichTextWidget::createWidget() {
     	else
         	_surface = new Graphics::ManagedSurface(_textWidth, _textHeight, wm->_pixelformat);
 	}
+
+	int h = _txtWnd->getTextHeight();
+	if (h <= _limitH) 
+		_scrolledY = 0;
+	if (_scrolledY > h - _limitH) 
+		_scrolledY = MAX(0, h - _limitH);
+	_verticalScroll->_numEntries = h;
+	_verticalScroll->_currentPos = _scrolledY;
+	_verticalScroll->_entriesPerPage = _limitH;
+	_verticalScroll->_singleStep = _h / 4;
+	_verticalScroll->setPos(_w - _scrollbarWidth, 0);
+	_verticalScroll->setSize(_scrollbarWidth, _h - 1);
+	_verticalScroll->setVisible(_verticalScroll->_numEntries > _limitH); //show when there is something to scroll
+	_verticalScroll->recalc();
 }
 
 void RichTextWidget::reflowLayout() {
 	Widget::reflowLayout();
 
 	recalc();
+}
 
-	_verticalScroll->setVisible(_verticalScroll->_numEntries > _limitH); //show when there is something to scroll
-	_verticalScroll->recalc();
+void RichTextWidget::ensureWidget() {
+	if (_txtWnd)
+		return;
+	createWidget();
 }
 
 void RichTextWidget::drawWidget() {
+	ensureWidget();
+
 	if (!_txtWnd)
 		recalc();
 
