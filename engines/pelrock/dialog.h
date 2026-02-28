@@ -67,6 +67,9 @@ struct ConversationEndResult {
 };
 
 class DialogManager {
+	const static int kMaxChoiceChars = 50; // Max characters to show for a choice option (for truncation)
+	const static int kArrowWidth = 8;      // Width of arrow character for scroll
+	const static int kChoicePadding = 16;  // padding for the choice text surface
 private:
 	Graphics::Screen *_screen = nullptr;
 	PelrockEventManager *_events = nullptr;
@@ -87,12 +90,12 @@ private:
 	uint32 skipControlBytes(const byte *data, uint32 dataSize, uint32 position);
 	uint32 peekNextMeaningfulByte(const byte *data, uint32 dataSize, uint32 position);
 	ConversationState initializeConversation(const byte *data, uint32 dataSize, byte npcIndex);
-	bool handleGoBack(const byte *data, Common::Stack<uint32> &positionStack,  uint32 position, ConversationState &state);
+	bool handleGoBack(const byte *data, Common::Stack<uint32> &positionStack, uint32 position, ConversationState &state);
 	uint32 readAndDisplayDialogue(const byte *data, uint32 dataSize, uint32 position);
 	ConversationEndResult checkConversationEnd(const byte *data, uint32 dataSize, uint32 position);
 	void addGoodbyeOptionIfNeeded(Common::Array<ChoiceOption> *choices, int currentChoiceLevel, uint originalChoiceCount);
 	uint32 processChoiceSelection(const byte *data, uint32 dataSize, Common::Array<ChoiceOption> *choices, int selectedIndex, ConversationState &state);
-	void disableChoiceIfNeeded(Common::Array<Pelrock::ChoiceOption> * choices, int selectedIndex, const byte * data, uint32 dataSize, uint32 endPos, Pelrock::ConversationState & state);
+	void disableChoiceIfNeeded(Common::Array<Pelrock::ChoiceOption> *choices, int selectedIndex, const byte *data, uint32 dataSize, uint32 endPos, Pelrock::ConversationState &state);
 
 public:
 	DialogManager(Graphics::Screen *screen, PelrockEventManager *events, GraphicsManager *graphics);
@@ -119,6 +122,9 @@ public:
 
 	// True while a blocking dialog or conversation is on screen.
 	bool _dialogActive = false;
+
+	Common::String _leftArrow = Common::String(17);
+	Common::String _rightArrow = Common::String(16);
 };
 
 } // End of namespace Pelrock

@@ -20,8 +20,8 @@
  */
 #include "common/stack.h"
 
-#include "pelrock/dialog.h"
 #include "dialog.h"
+#include "pelrock/dialog.h"
 #include "pelrock/offsets.h"
 #include "pelrock/pelrock.h"
 #include "pelrock/util.h"
@@ -117,14 +117,44 @@ void DialogManager::displayChoices(Common::Array<ChoiceOption> *choices, byte *c
 	Common::Point overlayPos = _graphics->showOverlay(overlayHeight, compositeBuffer);
 	for (uint i = 0; i < choices->size(); i++) {
 		ChoiceOption choice = (*choices)[i];
-		int choicePadding = 32;
 		int width = g_engine->_doubleSmallFont->getStringWidth(choice.text);
-		Common::Rect bbox(0, overlayPos.y + i * kChoiceHeight, width + choicePadding * 2, overlayPos.y + i * kChoiceHeight + kChoiceHeight);
-		int color = 14;
+		int yPos = overlayPos.y + 2 + i * kChoiceHeight;
+		Common::Rect bbox(kChoicePadding, yPos, kChoicePadding + 600, yPos + kChoiceHeight);
+		Common::Rect leftArrowBox(0, yPos, kChoicePadding, yPos + kChoiceHeight);
+		Common::Rect rightArrowBox(640 - kChoicePadding, yPos, 640, yPos + kChoiceHeight);
+		int choiceColor = 14;
+		int lArrowColor = 14;
+		int rArrowColor = 14;
+
 		if (bbox.contains(_events->_mouseX, _events->_mouseY)) {
-			color = 15;
+			choiceColor = 15;
+		} else if (leftArrowBox.contains(_events->_mouseX, _events->_mouseY)) {
+			if (choice.charOffset > 0) {
+				choice.charOffset--;
+				choices->remove_at(i);
+				choices->insert_at(i, choice);
+			}
+			lArrowColor = 15;
+		} else if (rightArrowBox.contains(_events->_mouseX, _events->_mouseY)) {
+			if (i == 0) {
+				debug("First choice charOffset %d, text length %d", choice.charOffset, choice.text.size());
+			}
+			if (choice.charOffset + 76 < choice.text.size()) {
+				choice.charOffset = choice.charOffset + 1;
+				choices->remove_at(i);
+				choices->insert_at(i, choice);
+				debug("Right arrow clicked, new charOffset %d, text length %d", choice.charOffset, choice.text.size());
+			}
+			rArrowColor = 15;
 		}
-		drawText(compositeBuffer, g_engine->_doubleSmallFont, choice.text, choicePadding, overlayPos.y + 2 + i * kChoiceHeight, 620, color);
+
+		if (choice.charOffset > 0) {
+			drawText(compositeBuffer, g_engine->_doubleSmallFont, _leftArrow, 0, yPos, g_engine->_doubleSmallFont->getCharWidth(17), lArrowColor);
+		}
+		drawText(compositeBuffer, g_engine->_doubleSmallFont, choice.text.substr(choice.charOffset, 76), kChoicePadding, yPos, 620, choiceColor);
+		if (choice.charOffset + 76 < choice.text.size()) {
+			drawText(compositeBuffer, g_engine->_doubleSmallFont, _rightArrow, 640 - kArrowWidth, yPos, g_engine->_doubleSmallFont->getCharWidth(16), rArrowColor);
+		}
 	}
 }
 
@@ -216,10 +246,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 
 		_screen->transBlitFrom(s, s.getRect(), Common::Point(xPos, yPos), 255);
 		drawPos(_screen, xPos, yPos, speakerId);
-		// drawRect(_screen, xPos, yPos,
-		// 		 s.getRect().width(),
-		// 		 s.getRect().height(), speakerId);
-		// Present to screen
+
 		_screen->markAllDirty();
 		_screen->update();
 
@@ -368,8 +395,10 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 						}
 						textPos++;
 					}
-					if (!opt.isDisabled)
+					if (!opt.isDisabled) {
+						opt.text = "  " + opt.text; // Adds three spaces for padding to allow for scrolling past the indentation
 						outChoices->push_back(opt);
+					}
 				} else if (choiceIndex < firstChoiceIndex) {
 					// Hit a choice at a LOWER level - stop scanning
 					// This means we've gone past all choices at our level
@@ -532,11 +561,11 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 
 		if (choices->empty()) {
 			state.position = positionStack.empty() ? 0 : positionStack.pop();
-			if(state.position == 0) {
+			if (state.position == 0) {
 				debug("No choices and no previous position to go back to, ending conversation");
 				break;
 			}
-			checkAllSubBranchesExhausted(conversationData, dataSize, state.position, state.currentChoiceLevel-1);
+			checkAllSubBranchesExhausted(conversationData, dataSize, state.position, state.currentChoiceLevel - 1);
 			debug("No choices found, popping back to previous choice menu, position %u", state.position);
 			skipToChoices = true;
 			// state.position = peekPos;

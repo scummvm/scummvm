@@ -154,9 +154,9 @@ void PelrockEngine::init() {
 	if (gameInitialized == false) {
 		gameInitialized = true;
 		loadAnims();
-		setScreen(0, ALFRED_LEFT);
+		// setScreen(0, ALFRED_LEFT);
 		// setScreen(3, ALFRED_RIGHT);
-		// setScreen(22, ALFRED_DOWN);
+		setScreen(22, ALFRED_DOWN);
 		// setScreen(41, ALFRED_DOWN);
 		// setScreen(43, ALFRED_DOWN);
 		// setScreen(46, ALFRED_RIGHT);
@@ -173,7 +173,7 @@ void PelrockEngine::init() {
 
 void PelrockEngine::loadInventoryArrows() {
 	Common::File alfred7;
-	if(!alfred7.open("ALFRED.7")) {
+	if (!alfred7.open("ALFRED.7")) {
 		error("Failed to open ALFRED.7 to load inventory arrows");
 		return;
 	}
@@ -555,7 +555,6 @@ void PelrockEngine::checkMouse() {
 			_queuedAction = QueuedAction{NO_ACTION, -1, false, false};
 			_currentHotspot = nullptr;
 		}
-
 
 	} else if (_events->_leftMouseClicked) {
 		// Regular click (not during popup mode)
@@ -1532,13 +1531,12 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 		_inventoryOverlayState.flashingIconIndex = -1;
 	}
 
-	if(_inventoryOverlayState.isActive) {
+	if (_inventoryOverlayState.isActive) {
 		showInventoryOverlay();
-		if(_inventoryOverlayState.posInInventorySelectionArea(_events->_mouseX, _events->_mouseY)) {
+		if (_inventoryOverlayState.posInInventorySelectionArea(_events->_mouseX, _events->_mouseY)) {
 			checkMouseOverInventoryOverlay(_events->_mouseX, _events->_mouseY);
 		}
 	}
-
 
 	if (_state->selectedInventoryItem >= 0 && !_state->inventoryItems.empty()) {
 		if (icon != ITEM || !shouldBlink) {
@@ -1619,35 +1617,35 @@ void PelrockEngine::showInventoryOverlay() {
 
 	for (int i = firstItem; i < invSize && i < firstItem + kInventoryPageSize; i++) {
 		Common::Point p = getPositionInOverlayForIndex(i - firstItem);
-		if( i == _inventoryOverlayState.flashingIconIndex && _chrono->getFrameCount() % kIconBlinkPeriod == 0) {
+		if (i == _inventoryOverlayState.flashingIconIndex && _chrono->getFrameCount() % kIconBlinkPeriod == 0) {
 			continue;
 		}
 		drawSpriteToBuffer(_compositeBuffer, 640, _res->getIconForObject(_state->inventoryItems[i]).iconData, p.x, p.y, 60, 60, 1);
 	}
 
-	//draw arrows if there are more items to show in either direction
-	if(_inventoryOverlayState.invStartingPos > 0) {
-		 drawSpriteToBuffer(_compositeBuffer, 640, _inventoryOverlayState.arrows[0], 0, 340, 20, 60, 255);
+	// draw arrows if there are more items to show in either direction
+	if (_inventoryOverlayState.invStartingPos > 0) {
+		drawSpriteToBuffer(_compositeBuffer, 640, _inventoryOverlayState.arrows[0], 0, 340, 20, 60, 255);
 	}
-	if((firstItem + kInventoryPageSize) < invSize) {
+	if ((firstItem + kInventoryPageSize) < invSize) {
 		drawSpriteToBuffer(_compositeBuffer, 640, _inventoryOverlayState.arrows[1], 620, 340, 20, 60, 255);
 	}
 	// drawSpriteToBuffer(_compositeBuffer, 640, _inventoryOverlayState.arrows[0], 0, 340, 20, 60, 255);
 }
 
 void PelrockEngine::checkMouseOverInventoryOverlay(int x, int y) {
-	if(x < 20) {
-		if(_inventoryOverlayState.invStartingPos > 0 && _chrono->getFrameCount() % 2 == 0) {
+	if (x < 20) {
+		if (_inventoryOverlayState.invStartingPos > 0 && _chrono->getFrameCount() % 2 == 0) {
 			_inventoryOverlayState.invStartingPos--;
 		}
-	} else if(x >= 620) {
-		if(_inventoryOverlayState.invStartingPos < (_state->inventoryItems.size() / kInventoryPageSize) && _chrono->getFrameCount() % 2 == 0) {
+	} else if (x >= 620) {
+		if (_inventoryOverlayState.invStartingPos < (_state->inventoryItems.size() / kInventoryPageSize) && _chrono->getFrameCount() % 2 == 0) {
 			_inventoryOverlayState.invStartingPos++;
 		}
 	} else {
 		// mouse hover over inventory item, laid out horizontally, y coordinate is not relevant for determining which item is selected
 		int index = (x - 20) / 60 + (_inventoryOverlayState.invStartingPos * kInventoryPageSize);
-		if(index < _state->inventoryItems.size()) {
+		if (index < _state->inventoryItems.size()) {
 			debug("hovering over inventory item %d at index %d", _state->inventoryItems[index], index);
 			// _state->selectedInventoryItem = index;
 			_inventoryOverlayState.flashingIconIndex = index;
@@ -1660,9 +1658,9 @@ void PelrockEngine::checkMouseOverInventoryOverlay(int x, int y) {
 }
 
 int PelrockEngine::checkMouseClickInventoryOverlay(int x, int y) {
-	if(x < 20) {
+	if (x < 20) {
 		return -1;
-	} else if(x >= 620) {
+	} else if (x >= 620) {
 		return -1;
 	} else {
 		// mouse hover over inventory item, laid out horizontally, y coordinate is not relevant for determining which item is selected

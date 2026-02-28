@@ -21,8 +21,8 @@
 #ifndef PELROCK_TYPES_H
 #define PELROCK_TYPES_H
 
-#include "common/rect.h"
 #include "common/debug.h"
+#include "common/rect.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/types.h"
@@ -81,7 +81,7 @@ const int kAlfredFrameHeight = 102;
 
 const int kChoiceHeight = 16; // Height of each choice line in pixels
 
-const int kTalkAnimationSpeed = 2; // Frames per update
+const int kTalkAnimationSpeed = 2;   // Frames per update
 const int kAlfredAnimationSpeed = 2; // Frames per update
 
 const int kAlfredIdleAnimationFrameCount = 300;
@@ -167,7 +167,7 @@ struct InventoryOverlayState {
 	int flashingIconIndex = -1;
 	Common::Rect inventorySelectionArea = Common::Rect(0, 340, 640, 400);
 	Common::Rect ballonInventoryPath = Common::Rect(0, 0, kBalloonWidth, kBalloonHeight);
-	byte *arrows[2] = { nullptr, nullptr };
+	byte *arrows[2] = {nullptr, nullptr};
 
 	bool posInInventorySelectionArea(int x, int y) {
 		return inventorySelectionArea.contains(x, y);
@@ -246,10 +246,10 @@ struct Sprite {
 	uint16 stride; // 6-7
 	int numAnims;  // 8
 	int curAnimIndex = 0;
-	int8 zOrder; //32-33
+	int8 zOrder; // 32-33
 
-	byte actionFlags;       // 34
-	bool isHotspotDisabled; // 38
+	byte actionFlags;                  // 34
+	bool isHotspotDisabled;            // 38
 	bool disableAfterSequence = false; // 39
 	bool isTalking = false;
 	byte talkingAnimIndex = 0;
@@ -321,8 +321,8 @@ struct WalkBox {
 struct QueuedAction {
 	VerbIcon verb;
 	int hotspotIndex;
-	bool isQueued;        // Alfred is walking/interacting toward the target
-	bool readyToExecute;  // Animation done - execute after the current renderScene
+	bool isQueued;       // Alfred is walking/interacting toward the target
+	bool readyToExecute; // Animation done - execute after the current renderScene
 };
 
 struct ScalingParams {
@@ -346,13 +346,11 @@ enum GameState {
 	COMPUTER = 104
 };
 
-struct SpriteChange
-{
+struct SpriteChange {
 	byte roomNumber;
 	byte spriteIndex;
 	byte zIndex;
 };
-
 
 struct HotSpotChange {
 	byte roomNumber;
@@ -427,8 +425,7 @@ struct PaletteAnim {
 #define PASSERBY_LEFT 1
 #define PASSERBY_DOWN 2
 
-struct PasserByAnim
-{
+struct PasserByAnim {
 	uint32 frameTrigger = 0x3FF;
 	int16 startX;
 	int16 startY;
@@ -447,7 +444,6 @@ struct RoomPasserBys {
 	RoomPasserBys(byte roomNum, byte numAnims) : roomNumber(roomNum), numAnims(numAnims) {}
 };
 
-
 /**
  * Structure to hold a parsed choice option
  */
@@ -460,6 +456,7 @@ struct ChoiceOption {
 	bool shouldDisableOnSelect = false;
 	bool hasConversationEndMarker = false;
 	bool isTerminator = false;
+	int charOffset = 0;
 
 	ChoiceOption() : choiceIndex(-1), dataOffset(0) {}
 };
@@ -501,7 +498,6 @@ struct ResetEntry {
 #define FLAG_PIEDRA_FAKE_MOJADA 34
 #define FLAG_TIENDA_ABIERTA 46
 #define FLAG_COMO_ESTAN_LOS_DIOSES 41
-
 
 #define FLAG_VIAJE_A_EGIPTO 12
 #define FLAG_PUERTA_SECRETA_ABIERTA 16
@@ -635,7 +631,6 @@ struct GameStateData {
 		return -1;
 	}
 
-
 	int booksInInventory() {
 		int l = inventoryItems.size();
 		int count = 0;
@@ -646,7 +641,6 @@ struct GameStateData {
 		}
 		return count;
 	}
-
 };
 
 struct SaveGameData {
