@@ -2685,8 +2685,11 @@ Common::Error ScummEngine::go() {
 			return Common::kNoError;
 		}
 
-		// Full game: Run the main menu loop
-		// This emulates the retail game flow from FUN_004142BD
+		// Full game: Emulates the retail game flow from FUN_004142BD
+		// Case 0: Play intro sequence (Fox logo, LucasArts logo, O_OPEN_A, O_OPEN_B)
+		rebel->playIntroSequence();
+
+		// Cases 1-4: Main menu -> pilot select -> chapter select -> gameplay loop
 		while (!shouldQuit()) {
 			// Run main menu and get result
 			int menuResult = rebel->runMainMenu();
