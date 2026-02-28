@@ -39,6 +39,13 @@ void InsaneRebel2::procPreRendering(byte *renderBitmap) {
 	// Call base class implementation first (handles Full Throttle state machine)
 	Insane::procPreRendering(renderBitmap);
 
+	// Reset opcode 6 init flag at the start of each new video.
+	// This ensures the per-wave init (clearBit, link table reset, wave state)
+	// fires exactly once per wave video, not every frame.
+	if (_player && _player->_frame == 0) {
+		_rebelOp6Initialized = false;
+	}
+
 	// For Level 2 gameplay (Handler 8 only), restore the background BEFORE FOBJ decoding.
 	// The tiny FOBJ sprites (7x10, 9x38 pixels) only draw new sprite positions but don't
 	// clear old ones. By restoring the full background each frame, we ensure old sprite
@@ -573,18 +580,17 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		}
 
 		// Reset state when shipLevelMode != 0 && par4 == 1 (FUN_401234 lines 97-103)
-		if (_shipLevelMode != 0 && par4 == 1) {
-			// Clear ALL iactBits — matches FUN_00423880 calling FUN_00423a00(0)
+		// Guard with _rebelOp6Initialized: runs once per wave video, not per frame.
+		if (_shipLevelMode != 0 && par4 == 1 && !_rebelOp6Initialized) {
 			clearBit(0);
-			// Clear link tables
 			for (int i = 0; i < 512; i++) {
 				_rebelLinks[i][0] = 0;
 				_rebelLinks[i][1] = 0;
 				_rebelLinks[i][2] = 0;
 			}
-			// DAT_0047ab98 = DAT_0047ab9c: Reset wave state to accumulated phase state
 			_rebelWaveState = _rebelPhaseState;
-			debug("Rebel2 Opcode 6 (Handler 8): State reset, wave=0x%x", _rebelWaveState);
+			_rebelOp6Initialized = true;
+			debug("Rebel2 Opcode 6 (Handler 8): Wave init, wave=0x%x", _rebelWaveState);
 		}
 
 		// Skip position calculation for special modes 4 and 5
@@ -979,21 +985,19 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		// Note: This is local_14[4] in the decompiled code, NOT local_14[3] (par4)
 		if (par5 == 1) {
 			_rebelStatusBarSprite = 5;
-			// Clear ALL iactBits — matches FUN_00423880 calling FUN_00423a00(0)
-			// at IACT callback registration time. Each new wave video starts with
-			// a clean bit table so enemy IDs reused across videos work correctly.
-			clearBit(0);
-			// Reset link tables (DAT_0045797c through DAT_0045917c)
-			for (int i = 0; i < 512; i++) {
-				_rebelLinks[i][0] = 0;
-				_rebelLinks[i][1] = 0;
-				_rebelLinks[i][2] = 0;
+			// Guard with _rebelOp6Initialized: runs once per wave video, not per frame.
+			if (!_rebelOp6Initialized) {
+				clearBit(0);
+				for (int i = 0; i < 512; i++) {
+					_rebelLinks[i][0] = 0;
+					_rebelLinks[i][1] = 0;
+					_rebelLinks[i][2] = 0;
+				}
+				_rebelWaveState = _rebelPhaseState;
+				_rebelOp6Initialized = true;
+				debug("Rebel2 Opcode 6 (Handler 25): Wave init, wave=0x%x autopilot=%d damageLevel=%d",
+					_rebelWaveState, _rebelAutopilot, _rebelDamageLevel);
 			}
-			// Reset wave state to accumulated phase state (same as Handler 8)
-			// DAT_0047ab98 = DAT_0047ab9c: ensures new wave starts with correct state
-			_rebelWaveState = _rebelPhaseState;
-			debug("Rebel2 Opcode 6 (Handler 25): Status bar enabled, state reset, wave=0x%x autopilot=%d damageLevel=%d",
-				_rebelWaveState, _rebelAutopilot, _rebelDamageLevel);
 		}
 
 		// Set sprite mode (DAT_00457900 = local_14[3]) - controls which GRD sprite to render
@@ -1184,24 +1188,23 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 	if (par4 == 1) {
 		// Draw status bar sprite 5 (FUN_0040bb87 equivalent)
 		_rebelStatusBarSprite = (_rebelLevelType == 5) ? 53 : 5;
-		debug("Rebel2 Opcode 6: Status Bar ENABLED - sprite %d", _rebelStatusBarSprite);
 
-		// Clear ALL iactBits — matches FUN_00423880 calling FUN_00423a00(0)
-		clearBit(0);
-
-		// Clear link tables (DAT_0045797c through DAT_0045917c)
-		for (int i = 0; i < 512; i++) {
-			_rebelLinks[i][0] = 0;
-			_rebelLinks[i][1] = 0;
-			_rebelLinks[i][2] = 0;
+		// Per-wave init: clear bits, links, reset wave state.
+		// In the original game, FUN_00423880 runs ONCE at video-start callback
+		// registration time, not per-frame. Guard with _rebelOp6Initialized so
+		// this fires once per wave video (reset in procPreRendering at frame 0).
+		if (!_rebelOp6Initialized) {
+			clearBit(0);
+			for (int i = 0; i < 512; i++) {
+				_rebelLinks[i][0] = 0;
+				_rebelLinks[i][1] = 0;
+				_rebelLinks[i][2] = 0;
+			}
+			_rebelWaveState = _rebelPhaseState;
+			_rebelHitCounter = 0;
+			_rebelOp6Initialized = true;
+			debug("Rebel2 Opcode 6: Wave init - cleared bits/links, waveState=0x%x", _rebelWaveState);
 		}
-
-		// DAT_0047ab98 = DAT_0047ab9c: At the start of each wave video,
-		// reset wave state to accumulated phase state. Enemies killed in
-		// previous waves stay killed; new kills add during this wave.
-		_rebelWaveState = _rebelPhaseState;
-		_rebelHitCounter = 0;
-		debug("Rebel2 Opcode 6: Wave state reset to phase state 0x%x", _rebelWaveState);
 	}
 
 	// Step 2: Set level type (DAT_00457900 = par3)
