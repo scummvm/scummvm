@@ -241,7 +241,16 @@ public:
 	int runLevel3();   // FUN_0041885F - Two phases with per-phase retry
 	int runLevel4();   // Cutscene + single gameplay
 	int runLevel5();   // FUN_00418EC6 - Single gameplay phase
-	int runLevel6();   // FUN_00419317 - Two phases with per-phase retry
+	int runLevel6();   // FUN_004190D6 - Two phases with mid-level video switch
+	int runLevel7();   // FUN_0041974C - TIE Training: single + fork at frame 1592
+	int runLevel8();   // FUN_00419976 - Flight to Imdaar: single phase space battle
+	int runLevel9();   // FUN_00419B86 - Mine Field: single phase with mid-events
+	int runLevel10();  // FUN_00419E0A - Speeder Bikes: single phase
+	int runLevel11();  // FUN_0041A00C - Inside the Terror: 3 phases + bridge (Handler 8)
+	int runLevel12();  // FUN_0041AA14 - Sewers: 4 phases FPS (Handler 25)
+	int runLevel13();  // FUN_0041B3E1 - Escaping Star Destroyer: two-phase A→B
+	int runLevel14();  // FUN_0041B6E8 - TIE Attack: single phase
+	int runLevel15();  // FUN_0041B8D7 - Imdaar Alpha: single + level ID switch
 
 	// Wave state management (FUN_00417b61)
 	// Waits for current video to finish, accumulates kill state, redistributes
