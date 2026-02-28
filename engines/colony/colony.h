@@ -500,6 +500,7 @@ private:
 	byte _bottomBG[8];
 	int16 _divideBG;
 	Common::String _animationName;
+	Common::Array<int16> _animBMColors;
 	bool _animationRunning;
 	int _animationResult;
 	bool _doorOpen;
@@ -516,7 +517,8 @@ private:
 	void updateAnimation();
 	void drawAnimation();
 	void drawComplexSprite(int index, int ox, int oy);
-	void drawAnimationImage(Image *img, Image *mask, int x, int y);
+	void drawAnimationImage(Image *img, Image *mask, int x, int y, uint32 fillColor = 0xFFFFFFFF);
+	uint32 resolveAnimColor(int16 bmEntry) const;
 	Image *loadImage(Common::SeekableReadStream &file);
 	void unpackBytes(Common::SeekableReadStream &file, byte *dst, uint32 len);
 	Common::Rect readRect(Common::SeekableReadStream &file);
