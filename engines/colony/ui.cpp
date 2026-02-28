@@ -200,9 +200,10 @@ void ColonyEngine::updateViewportLayout() {
 		// _compassRect = entire moveWindow (used for compass dish drawing)
 		_compassRect = makeSafeRect(moveLeft, moveTop, moveLeft + moveW, moveTop + moveH);
 
-		// Position infoWindow above moveWindow with a gap
+		// Position infoWindow right at the top of the sidebar (below menu bar).
+		// Original: infoWindow starts immediately below the Mac menu bar.
 		const int infoLeft = MAX(0, centerX - infoW / 2);
-		const int infoTop = MAX(topPad, moveTop - pad - infoH);
+		const int infoTop = menuTop;
 		_powerRect = makeSafeRect(infoLeft, infoTop, infoLeft + infoW, infoTop + infoH);
 	} else {
 		const int blockLeft = pad;
@@ -294,8 +295,9 @@ void ColonyEngine::drawDashboardMac() {
 	const uint32 colWinBg = packMacColorUI(_macColors[7].bg); // Mac desktop gray
 	const uint32 colBlue = packRGB(0, 0, 255); // power.c: ForeColor(blueColor)
 
-	// Dashboard background — Mac desktop gray, visible between floating windows
-	_gfx->fillRect(_dashBoardRect, colWinBg);
+	// Dashboard background — Mac desktop dither pattern (classic 50% gray checkerboard).
+	// Original Mac desktop: alternating black/white pixels between floating windows.
+	_gfx->fillDitherRect(_dashBoardRect, colBlack, colWhite);
 
 	// Viewport separator
 	if (_screenR.left > 0)
