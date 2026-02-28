@@ -299,6 +299,7 @@ public:
 	void pickYellowBook(HotSpot *hotspot);
 	void pickUpBrick(HotSpot *hotspot);
 	void openIceCreamShopDoor(HotSpot *hotspot);
+	void pickupGarbageCan(HotSpot *hotspot);
 	void noOpAction(HotSpot *hotspot);
 	void noOpItem(int item, HotSpot *hotspot);
 	void useOnAlfred(int inventoryObject);
@@ -326,6 +327,7 @@ public:
 	void unlockMuseum();
 	void giveMoneyToGuard(int inventoryObject, HotSpot *hotspot);
 	void openMuseumDoor(HotSpot *hotspot);
+	void pickupFruit(HotSpot *hotspot);
 	void useAmuletWithStatue(int inventoryObject, HotSpot *hotspot);
 	void useSecretCodeWithStatue(int inventoryObject, HotSpot *hotspot);
 	void pickUpLetter(HotSpot *hotspot);

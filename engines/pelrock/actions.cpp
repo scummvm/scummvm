@@ -46,6 +46,7 @@ const ActionEntry actionTable[] = {
 	// Room 1
 	{4, PICKUP, &PelrockEngine::pickUpBrick}, // Brick
 	{277, OPEN, &PelrockEngine::openIceCreamShopDoor},
+	{273, PICKUP, &PelrockEngine::pickupGarbageCan},
 	// Room 2
 	{282, OPEN, &PelrockEngine::openMcDoor},
 	{282, CLOSE, &PelrockEngine::closeMcDoor},
@@ -85,6 +86,8 @@ const ActionEntry actionTable[] = {
 	{315, OPEN, &PelrockEngine::openPlug},
 	{316, PICKUP, &PelrockEngine::pickCables},
 	{312, OPEN, &PelrockEngine::openMuseumDoor},
+	{310, PICKUP, &PelrockEngine::pickupFruit},
+	{311, PICKUP, &PelrockEngine::pickupFruit},
 
 	// // Room 5
 	// {},
@@ -756,6 +759,10 @@ void PelrockEngine::openIceCreamShopDoor(HotSpot *hotspot) {
 	_dialog->say(_res->_ingameTexts[HELADERIA_CERRADA]);
 }
 
+void PelrockEngine::pickupGarbageCan(HotSpot *hotspot) {
+	_dialog->say(_res->_ingameTexts[POBRE_PERO_NO_HE_LLEGADO_A_ESO]);
+}
+
 void PelrockEngine::closeRoomDrawer(HotSpot *hotspot) {
 	if (!_room->hasSticker(91)) {
 		_dialog->say(_res->_ingameTexts[YA_CERRADO_M]);
@@ -1080,6 +1087,10 @@ void PelrockEngine::openMuseumDoor(HotSpot *hotspot) {
 	} else {
 		openDoor(hotspot, 1, 22, FEMININE, false);
 	}
+}
+
+void PelrockEngine::pickupFruit(HotSpot *hotspot) {
+	_dialog->say(_res->_ingameTexts[NO_THEY_MAKEYOU_FAT]);
 }
 
 void PelrockEngine::useAmuletWithStatue(int inventoryObject, HotSpot *hotspot) {
