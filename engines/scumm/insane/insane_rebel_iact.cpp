@@ -434,15 +434,14 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 				srcIdBody1, isBitSet(srcIdBody1), _rebelDamageLevel);
 
 			if (_rebelDamageLevel < 2 && !isBitSet(srcIdBody1)) {
-				int probability = 20 + _difficulty * 20;
-				if (probability < 5) probability = 5;
-				if (probability > 90) probability = 90;
+				LevelDifficultyParams params = getDifficultyParams(_selectedLevel);
+				int probability = (params.hitProbability >= 0) ? params.hitProbability : 0;
 				int roll = _vm->_rnd.getRandomNumber(99);
 				debug("Rebel2 Opcode3: probability=%d roll=%d (need roll < prob)", probability, roll);
 
 				if (roll < probability) {
 					if (!_rebelInvulnerable) {
-						int damageAmount = 5 + (_difficulty * 2);
+						int damageAmount = (params.enemyProjectileDamage >= 0) ? params.enemyProjectileDamage : 0;
 						_playerDamage += damageAmount;
 						if (_playerDamage > 255) _playerDamage = 255;
 						debug("Rebel2: H25 PROBABILISTIC damage from %d. Damage=%d total=%d",
@@ -466,7 +465,8 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 		// Direct damage: par4==100, separate from par3 branches (lines 99-111)
 		if (par4 == 100 && !isBitSet(srcIdBody0)) {
 			if (!_rebelInvulnerable) {
-				int directHitDamage = 8 + (_difficulty * 4);
+				LevelDifficultyParams dparams = getDifficultyParams(_selectedLevel);
+				int directHitDamage = (dparams.directHitDamage >= 0) ? dparams.directHitDamage : 0;
 				_playerDamage += directHitDamage;
 				if (_playerDamage > 255) _playerDamage = 255;
 				debug("Rebel2: H25 DIRECT HIT par4=100 damage=%d total=%d",
@@ -485,7 +485,8 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 			_rebelHitCounter++;
 			debug("Rebel2: Incremented hit counter -> %d", _rebelHitCounter);
 
-			int directHitDamage = 8 + (_difficulty * 4);
+			LevelDifficultyParams dparams = getDifficultyParams(_selectedLevel);
+			int directHitDamage = (dparams.directHitDamage >= 0) ? dparams.directHitDamage : 0;
 
 			if (par4 != 0 && directHitDamage > 0) {
 				bool shouldDamage = false;
@@ -517,16 +518,15 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 		debug("Rebel2 Opcode3: par3=5 srcId=%d isBitSet=%d", srcId, isBitSet(srcId));
 
 		if (!isBitSet(srcId)) {
-			int probability = 20 + _difficulty * 20;
-			if (probability < 5) probability = 5;
-			if (probability > 90) probability = 90;
+			LevelDifficultyParams params = getDifficultyParams(_selectedLevel);
+			int probability = (params.hitProbability >= 0) ? params.hitProbability : 0;
 
 			int roll = _vm->_rnd.getRandomNumber(99);
 			debug("Rebel2 Opcode3: probability=%d roll=%d (need roll < prob)", probability, roll);
 
 			if (roll < probability) {
 				if (!_rebelInvulnerable) {
-					int damageAmount = 5 + (_difficulty * 2);
+					int damageAmount = (params.enemyProjectileDamage >= 0) ? params.enemyProjectileDamage : 0;
 					_playerDamage += damageAmount;
 					if (_playerDamage > 255) _playerDamage = 255;
 					debug("Rebel2: PROBABILISTIC damage from enemy %d. Damage=%d total=%d",
@@ -860,6 +860,9 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 
 		// --- Step 7: Corridor collision — mode 0/2 only (lines 257-292) ---
 		if (_flyControlMode == 0 || _flyControlMode == 2) {
+			LevelDifficultyParams wallParams = getDifficultyParams(_selectedLevel);
+			int corridorWallDmg = (wallParams.wallDamage >= 0) ? wallParams.wallDamage : 0;
+
 			// Right boundary (lines 258-270)
 			// Original: position is ALWAYS clamped; damage/bounce only when cooldown < 5
 			if (_corridorRightX < _flyShipScreenX) {
@@ -870,8 +873,7 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 					_spaceShotDirection = 1;
 					initDamageFlash();
 					if (!_rebelInvulnerable) {
-						int damage = 3 + (_difficulty * 2);
-						_playerDamage += damage;
+						_playerDamage += corridorWallDmg;
 						if (_playerDamage > 255) _playerDamage = 255;
 					}
 					_rebelHitCounter++;
@@ -887,8 +889,7 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 					_spaceShotDirection = 0;
 					initDamageFlash();
 					if (!_rebelInvulnerable) {
-						int damage = 3 + (_difficulty * 2);
-						_playerDamage += damage;
+						_playerDamage += corridorWallDmg;
 						if (_playerDamage > 255) _playerDamage = 255;
 					}
 					_rebelHitCounter++;
