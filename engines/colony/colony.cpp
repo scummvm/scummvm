@@ -43,7 +43,153 @@
 
 namespace Colony {
 
+// Mac color indices from colordef.h enum (cColor[] table in Color256).
+enum {
+	mc_dwall = 6, mc_lwall = 7,
+	mc_char0 = 8,    // char0..char6 = 8..14
+	mc_bulkhead = 15, mc_door = 16,
+	mc_desk = 58, mc_desktop = 59, mc_screen = 62,
+	mc_proj = 72, mc_console = 79, mc_powerbase = 81,
+	mc_box1 = 84, mc_forklift = 86, mc_flglass = 87,
+	mc_cryo = 90, mc_ccore = 111,
+	mc_teleport = 93, mc_teledoor = 94,
+	mc_vanity = 96, mc_mirror = 103,
+	mc_airlock = 25, mc_elevator = 23
+};
 
+// Mac Toolbox BackColor() constants.
+enum {
+	kMacWhite = 30, kMacBlack = 33,
+	kMacYellow = 69, kMacMagenta = 137,
+	kMacRed = 205, kMacCyan = 273,
+	kMacGreen = 341, kMacBlue = 409
+};
+
+// BMColor arrays from ganimate.c — per-animation color maps.
+// Index 0 = background top, 1 = background image, 2+ = per-sprite fill.
+// Positive = cColor[] index, negative = -MacSystemColor, 0 = level-based.
+static const int16 kBMC_Desk[] = {
+	0, mc_desktop,
+	-kMacRed, -kMacCyan, -kMacCyan, -kMacCyan, -kMacCyan,
+	-kMacWhite, -kMacWhite, -kMacMagenta, -kMacYellow, mc_desk,
+	mc_desk, mc_desk, mc_desk, mc_desk, mc_desk,
+	-kMacWhite, mc_screen, -kMacMagenta, -kMacCyan, -kMacCyan,
+	-kMacBlue, -kMacWhite, -kMacRed, -kMacWhite, -kMacYellow
+};
+static const int16 kBMC_Vanity[] = {
+	0, mc_vanity,
+	mc_mirror, -kMacRed, -kMacCyan, -kMacWhite, -kMacYellow,
+	-kMacGreen, -kMacBlue, -kMacRed, -kMacMagenta, -kMacRed,
+	mc_vanity, -kMacWhite, -kMacYellow, mc_mirror
+};
+static const int16 kBMC_Reactor[] = {
+	0, mc_console,
+	-kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow,
+	-kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow,
+	-kMacYellow, -kMacYellow, -kMacRed, -kMacRed, -kMacRed,
+	-kMacRed, -kMacRed, -kMacRed, -kMacRed, -kMacRed,
+	-kMacRed, -kMacRed, -kMacRed, -kMacRed, -kMacCyan,
+	-kMacMagenta, -kMacWhite
+};
+static const int16 kBMC_Security[] = {
+	0, mc_console,
+	-kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow,
+	-kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow,
+	-kMacYellow, -kMacYellow, -kMacRed, -kMacRed, -kMacRed,
+	-kMacRed, -kMacRed, -kMacRed, -kMacRed, -kMacRed,
+	-kMacRed, -kMacRed, -kMacRed, -kMacRed, -kMacWhite,
+	-kMacRed, -kMacCyan, -kMacCyan, -kMacCyan, -kMacCyan
+};
+static const int16 kBMC_Teleport[] = {
+	0, mc_teleport, 0, mc_teledoor
+};
+static const int16 kBMC_Creatures[] = {
+	-kMacWhite, 0, -kMacWhite, -kMacCyan, mc_proj,
+	-kMacBlue, -kMacMagenta, -kMacMagenta
+};
+static const int16 kBMC_Controls[] = {
+	0, mc_console,
+	-kMacRed, -kMacYellow, -kMacYellow, -kMacBlue, -kMacYellow, -kMacGreen, mc_screen
+};
+static const int16 kBMC_Lift[] = {
+	0, mc_flglass,
+	mc_teleport, mc_box1, mc_cryo, mc_ccore, 0,
+	-kMacRed, -kMacRed, -kMacCyan, -kMacCyan
+};
+static const int16 kBMC_Powersuit[] = {
+	0, mc_powerbase,
+	-kMacMagenta, -kMacMagenta, -kMacYellow, -kMacYellow, mc_powerbase, -kMacWhite
+};
+static const int16 kBMC_Forklift[] = {
+	0, mc_forklift, mc_forklift, mc_forklift
+};
+static const int16 kBMC_Door[] = {
+	0, mc_bulkhead, 0, mc_door, -kMacYellow
+};
+static const int16 kBMC_Bulkhead[] = {
+	0, mc_bulkhead, 0, mc_bulkhead, -kMacYellow
+};
+static const int16 kBMC_Airlock[] = {
+	0, mc_bulkhead, mc_bulkhead, -kMacRed, mc_airlock
+};
+static const int16 kBMC_Elevator[] = {
+	0, mc_bulkhead, 0, mc_elevator, mc_elevator, -kMacYellow
+};
+static const int16 kBMC_Elevator2[] = {
+	0, mc_bulkhead, 0, -kMacMagenta, mc_elevator, mc_elevator,
+	-kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow
+};
+
+struct AnimColorEntry {
+	const char *name;
+	const int16 *colors;
+	int count;
+};
+
+static const AnimColorEntry kAnimColors[] = {
+	{ "desk",        kBMC_Desk,       ARRAYSIZE(kBMC_Desk) },
+	{ "vanity",      kBMC_Vanity,     ARRAYSIZE(kBMC_Vanity) },
+	{ "reactor",     kBMC_Reactor,    ARRAYSIZE(kBMC_Reactor) },
+	{ "security",    kBMC_Security,   ARRAYSIZE(kBMC_Security) },
+	{ "teleporter",  kBMC_Teleport,   ARRAYSIZE(kBMC_Teleport) },
+	{ "teleporter2", kBMC_Teleport,   ARRAYSIZE(kBMC_Teleport) },
+	{ "slides",      kBMC_Creatures,  ARRAYSIZE(kBMC_Creatures) },
+	{ "slideshow",   kBMC_Creatures,  ARRAYSIZE(kBMC_Creatures) },
+	{ "teleshow",    kBMC_Creatures,  ARRAYSIZE(kBMC_Creatures) },
+	{ "controls",    kBMC_Controls,   ARRAYSIZE(kBMC_Controls) },
+	{ "lift",        kBMC_Lift,       ARRAYSIZE(kBMC_Lift) },
+	{ "lifter",      kBMC_Lift,       ARRAYSIZE(kBMC_Lift) },
+	{ "suit",        kBMC_Powersuit,  ARRAYSIZE(kBMC_Powersuit) },
+	{ "spacesuit",   kBMC_Powersuit,  ARRAYSIZE(kBMC_Powersuit) },
+	{ "forklift",    kBMC_Forklift,   ARRAYSIZE(kBMC_Forklift) },
+	{ "door",        kBMC_Door,       ARRAYSIZE(kBMC_Door) },
+	{ "bulkhead",    kBMC_Bulkhead,   ARRAYSIZE(kBMC_Bulkhead) },
+	{ "airlock",     kBMC_Airlock,    ARRAYSIZE(kBMC_Airlock) },
+	{ "elev",        kBMC_Elevator,   ARRAYSIZE(kBMC_Elevator) },
+	{ "elevator",    kBMC_Elevator,   ARRAYSIZE(kBMC_Elevator) },
+	{ "elevator2",   kBMC_Elevator2,  ARRAYSIZE(kBMC_Elevator2) },
+	{ nullptr, nullptr, 0 }
+};
+
+// Convert Mac Toolbox BackColor constant to ARGB.
+static uint32 macSysColorToARGB(int sysColor) {
+	switch (sysColor) {
+	case kMacWhite:   return 0xFFFFFFFF;
+	case kMacBlack:   return 0xFF000000;
+	case kMacYellow:  return 0xFFFFFF00;
+	case kMacMagenta: return 0xFFFF00FF;
+	case kMacRed:     return 0xFFFF0000;
+	case kMacCyan:    return 0xFF00FFFF;
+	case kMacGreen:   return 0xFF00FF00;
+	case kMacBlue:    return 0xFF0000FF;
+	default:          return 0xFFFFFFFF;
+	}
+}
+
+static uint32 packMacColorBG(const uint16 rgb[3]) {
+	return 0xFF000000 | ((uint32)(rgb[0] >> 8) << 16) |
+	       ((uint32)(rgb[1] >> 8) << 8) | (uint32)(rgb[2] >> 8);
+}
 
 ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst), _gameDescription(gd), _randomSource("colony") {
 	_level = 0;
@@ -1635,6 +1781,19 @@ bool ColonyEngine::loadAnimation(const Common::String &name) {
 	for (int i = 0; i < 6; i++)
 		_animDisplay[i] = 1;
 
+	// Look up per-animation BMColor map (from ganimate.c).
+	_animBMColors.clear();
+	Common::String nameLower = name;
+	nameLower.toLowercase();
+	for (const AnimColorEntry *e = kAnimColors; e->name; e++) {
+		if (nameLower == e->name) {
+			_animBMColors.resize(e->count);
+			for (int i = 0; i < e->count; i++)
+				_animBMColors[i] = e->colors[i];
+			break;
+		}
+	}
+
 	Common::String fileName = name + ".pic";
 	Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(Common::Path(fileName));
 	if (!file) {
@@ -1917,6 +2076,27 @@ void ColonyEngine::updateAnimation() {
 	}
 }
 
+// Resolve a BMColor entry to an ARGB color.
+// bmEntry > 0: cColor index → use _macColors[idx].bg
+// bmEntry < 0: negated Mac system color constant
+// bmEntry == 0: level-based character color (depends on corepower)
+uint32 ColonyEngine::resolveAnimColor(int16 bmEntry) const {
+	if (bmEntry < 0) {
+		return macSysColorToARGB(-bmEntry);
+	} else if (bmEntry > 0) {
+		if (bmEntry < 145)
+			return packMacColorBG(_macColors[bmEntry].bg);
+		return 0xFFFFFFFF;
+	} else {
+		// Zero = level-based (original gamesprt.c DrawlSprite/DrawBackGround):
+		//   if(corepower[coreindex]) RGBBackColor(&cColor[c_char0+level-1].f);
+		//   else RGBBackColor(&cColor[c_dwall].b);
+		if (_corePower[_coreIndex] > 0 && _level >= 1 && _level <= 7)
+			return packMacColorBG(_macColors[mc_char0 + _level - 1].fg);
+		return packMacColorBG(_macColors[mc_dwall].bg);
+	}
+}
+
 void ColonyEngine::drawAnimation() {
 	_gfx->clear(0);
 
@@ -1925,25 +2105,53 @@ void ColonyEngine::drawAnimation() {
 	ox = (ox / 8) * 8;
 	int oy = _screenR.top + (_screenR.height() - 264) / 2;
 
-	// Fill background patterns (416x264 area)
-	for (int y = 0; y < 264; y++) {
-		byte *pat = (y < _divideBG) ? _topBG : _bottomBG;
-		byte row = pat[y % 8];
-		for (int x = 0; x < 416; x++) {
-			bool set = (row & (0x80 >> (x % 8))) != 0;
-			// Pattern bit: 1->Black(0), 0->White(15) based on original inversion
-			// Actually Invert in readanim: ~data.
-			// Let's assume set means "white" (15) and unset "black" (0) or vice versa.
-			// In original: BackColor(Black). Pattern 1s draw ForeColor. 0s draw BackColor.
-			// If we want "not black", we likely want some white pixels.
-			// Let's try: set -> 15 (White), !set -> 0 (Black).
-			_gfx->setPixel(ox + x, oy + y, set ? 15 : 0);
+	const bool useColor = (_hasMacColors && _renderMode == Common::kRenderMacintosh
+	                       && !_animBMColors.empty());
+
+	// Fill background patterns (416x264 area).
+	// Color mode: QuickDraw pattern bit 1 → ForeColor (black), bit 0 → BackColor.
+	// Original DrawBackGround():
+	//   Top: BMColor[0]<0 → system color; ==0 → powered:c_char0+level-1.f, else:c_dwall.b
+	//   Bottom: powered → c_lwall.f; unpowered → inherits top BackColor
+	// B&W/DOS: preserve existing palette-index behavior (bit 1 → 15, bit 0 → 0).
+	if (useColor) {
+		const bool powered = (_corePower[_coreIndex] > 0);
+		uint32 topBG = resolveAnimColor(_animBMColors[0]);
+		// Bottom: only uses c_lwall.f when powered; unpowered inherits top color
+		uint32 botBG = powered ? packMacColorBG(_macColors[mc_lwall].fg) : topBG;
+		for (int y = 0; y < 264; y++) {
+			byte *pat = (y < _divideBG) ? _topBG : _bottomBG;
+			byte row = pat[y % 8];
+			uint32 bg = (y < _divideBG) ? topBG : botBG;
+			for (int x = 0; x < 416; x++) {
+				bool set = (row & (0x80 >> (x % 8))) != 0;
+				_gfx->setPixel(ox + x, oy + y, set ? (uint32)0xFF000000 : bg);
+			}
+		}
+	} else {
+		for (int y = 0; y < 264; y++) {
+			byte *pat = (y < _divideBG) ? _topBG : _bottomBG;
+			byte row = pat[y % 8];
+			for (int x = 0; x < 416; x++) {
+				bool set = (row & (0x80 >> (x % 8))) != 0;
+				_gfx->setPixel(ox + x, oy + y, set ? 15 : 0);
+			}
 		}
 	}
 
-	// Draw background if active
+	// Draw background image if active.
+	// Original: BMColor[1] only applied when corepower[coreindex] > 0.
 	if (_backgroundActive && _backgroundFG) {
-		drawAnimationImage(_backgroundFG, _backgroundMask, ox + _backgroundLocate.left, oy + _backgroundLocate.top);
+		uint32 bgFill = 0xFFFFFFFF; // B&W default
+		if (useColor && _animBMColors.size() > 1) {
+			if (_corePower[_coreIndex] > 0)
+				bgFill = resolveAnimColor(_animBMColors[1]);
+			else
+				bgFill = resolveAnimColor(_animBMColors[0]); // unpowered: inherits top
+		}
+		drawAnimationImage(_backgroundFG, _backgroundMask,
+		                   ox + _backgroundLocate.left, oy + _backgroundLocate.top,
+		                   bgFill);
 	}
 
 	// Draw complex sprites
@@ -1970,28 +2178,51 @@ void ColonyEngine::drawComplexSprite(int index, int ox, int oy) {
 	int x = ox + ls->xloc + ls->objects[cnum].xloc + s->clip.left;
 	int y = oy + ls->yloc + ls->objects[cnum].yloc + s->clip.top;
 
-	drawAnimationImage(s->fg, s->mask, x, y);
+	// Resolve fill color from BMColor[index+2] (ganimate.c DrawlSprite).
+	uint32 fillColor = 0xFFFFFFFF; // B&W default: white
+	const bool useColor = (_hasMacColors && _renderMode == Common::kRenderMacintosh
+	                       && !_animBMColors.empty());
+	if (useColor) {
+		int bmIdx = index + 2;
+		if (bmIdx < (int)_animBMColors.size())
+			fillColor = resolveAnimColor(_animBMColors[bmIdx]);
+		else
+			fillColor = resolveAnimColor(0); // fallback to level-based
+	}
+
+	drawAnimationImage(s->fg, s->mask, x, y, fillColor);
 }
 
-void ColonyEngine::drawAnimationImage(Image *img, Image *mask, int x, int y) {
+void ColonyEngine::drawAnimationImage(Image *img, Image *mask, int x, int y, uint32 fillColor) {
 	if (!img || !img->data)
 		return;
+
+	const bool useColor = (_hasMacColors && _renderMode == Common::kRenderMacintosh);
+	// Mac QuickDraw srcBic+srcOr rendering:
+	//   mask bit=1 → opaque (part of sprite)
+	//   fg bit=1   → ForeColor (black outline)
+	//   fg bit=0   → BackColor (fillColor from BMColor)
+	// B&W/DOS fallback preserves existing palette-index behavior.
+	const uint32 fgColor = useColor ? (uint32)0xFF000000 : 15;
+	const uint32 bgColor = useColor ? fillColor : 0;
 
 	for (int iy = 0; iy < img->height; iy++) {
 		for (int ix = 0; ix < img->width; ix++) {
 			int byteIdx = iy * img->rowBytes + (ix / 8);
 			int bitIdx = 7 - (ix % 8);
-			
+
 			bool maskSet = true;
 			if (mask && mask->data) {
-				maskSet = (mask->data[byteIdx] & (1 << bitIdx)) != 0;
+				int mByteIdx = iy * mask->rowBytes + (ix / 8);
+				int mBitIdx = 7 - (ix % 8);
+				maskSet = (mask->data[mByteIdx] & (1 << mBitIdx)) != 0;
 			}
 
 			if (!maskSet)
 				continue;
 
 			bool fgSet = (img->data[byteIdx] & (1 << bitIdx)) != 0;
-			uint32 color = fgSet ? 15 : 0;
+			uint32 color = fgSet ? fgColor : bgColor;
 
 			_gfx->setPixel(x + ix, y + iy, color);
 		}
