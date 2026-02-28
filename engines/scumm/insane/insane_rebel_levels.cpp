@@ -45,43 +45,38 @@ Common::String InsaneRebel2::getLevelPrefix(int levelId) {
 
 void InsaneRebel2::playIntroSequence() {
 	// Emulates case 0 in FUN_004142BD
-	// Plays the game intro sequence:
-	// 1. CREDITS/O_OPEN_C.SAN - Fox logo (if certain conditions)
-	// 2. CREDITS/O_OPEN_D.SAN - LucasArts logo (if certain conditions)
-	// 3. OPEN/O_OPEN_A.SAN - Main intro
-	// 4. OPEN/O_OPEN_B.SAN - Additional intro (if conditions)
+	//
+	// Original flow:
+	//   - If 'f','o','x' keys all held: play CREDITS/O_OPEN_C.SAN (Fox logo easter egg)
+	//   - If 'b','o','t' keys all held: play CREDITS/O_OPEN_D.SAN (LucasArts logo)
+	//     INSTEAD of the normal intro
+	//   - Else: play OPEN/O_OPEN_A.SAN (main intro - normal path)
+	//   - If DAT_0047ab45 || DAT_0047ab47: play OPEN/O_OPEN_B.SAN (additional intro)
+	//   - Fade out over 10 frames, clear palette, show top pilots, then -> main menu
+	//
+	// We skip the Fox/LucasArts easter eggs (require real-time key state during boot)
+	// and play both O_OPEN_A + O_OPEN_B unconditionally.
 
 	debug("Rebel2: Playing intro sequence");
 
+	_gameState = kStateIntro;
+	_menuInputActive = false;
+
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 
-	// Set intro flags (non-interactive)
-	splayer->setCurVideoFlags(0x20);
-
-	// Play Fox logo (CREDITS/O_OPEN_C.SAN)
-	// In retail, this checks if 'f', 'o', 'x' keys are held (easter egg)
-	// We'll play it unconditionally for now
-	debug("Rebel2: Playing Fox logo");
-	splayer->play("CREDITS/O_OPEN_C.SAN", 12);
-
-	if (_vm->shouldQuit()) return;
-
-	// Play LucasArts logo (CREDITS/O_OPEN_D.SAN)
-	// In retail, this checks if 'b', 'o', 't' keys are held
-	debug("Rebel2: Playing LucasArts logo");
-	splayer->play("CREDITS/O_OPEN_D.SAN", 12);
-
-	if (_vm->shouldQuit()) return;
-
 	// Play main intro (OPEN/O_OPEN_A.SAN)
-	debug("Rebel2: Playing main intro");
+	// Original: FUN_0041f4d0("OPEN/O_OPEN_A.SAN", 0x28, 0xffff, 0xffff, 0)
+	debug("Rebel2: Playing main intro (O_OPEN_A.SAN)");
+	splayer->setCurVideoFlags(0x28);
 	splayer->play("OPEN/O_OPEN_A.SAN", 12);
 
 	if (_vm->shouldQuit()) return;
 
 	// Play additional intro (OPEN/O_OPEN_B.SAN)
-	// In retail, this plays if DAT_0047ab45 or DAT_0047ab47 != 0
-	debug("Rebel2: Playing additional intro");
+	// Original: conditional on DAT_0047ab45 || DAT_0047ab47
+	// We play unconditionally (matches "Continue Intro" menu behavior)
+	debug("Rebel2: Playing additional intro (O_OPEN_B.SAN)");
+	splayer->setCurVideoFlags(0x28);
 	splayer->play("OPEN/O_OPEN_B.SAN", 12);
 }
 
