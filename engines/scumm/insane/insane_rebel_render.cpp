@@ -1177,8 +1177,8 @@ void InsaneRebel2::checkCollisionZones() {
 		if (collision) {
 			// Collision detected — apply damage from collision damage table
 			// Original: DAT_0047a7ec += DAT_0047e0f6[chapter * 0x242 + level * 0x22]
-			LevelDifficultyParams params = getDifficultyParams(_selectedLevel);
-			int collisionDamage = (params.wallDamage >= 0) ? params.wallDamage : 0;
+			LevelDifficultyParams params = getDifficultyParams();
+			int collisionDamage = (params.dodgeDamage >= 0) ? params.dodgeDamage : 0;
 
 			if (!_rebelInvulnerable) {
 				_playerDamage += collisionDamage;
@@ -1192,7 +1192,10 @@ void InsaneRebel2::checkCollisionZones() {
 		} else {
 			// Safely passed — award score bonus
 			// Original: FUN_0041bf8d(DAT_0047e100[levelIdx])
-			addScore(1);
+			LevelDifficultyParams scoreParams = getDifficultyParams();
+			if (scoreParams.dodgePoints > 0) {
+				addScore(scoreParams.dodgePoints);
+			}
 		}
 	}
 }
@@ -1254,8 +1257,8 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 					_hitCooldown = 10;
 					_spaceShotDirection = zone.filterValue + 2;
 
-					LevelDifficultyParams params = getDifficultyParams(_selectedLevel);
-					int collisionDamage = (params.wallDamage >= 0) ? params.wallDamage : 0;
+					LevelDifficultyParams params = getDifficultyParams();
+					int collisionDamage = (params.dodgeDamage >= 0) ? params.dodgeDamage : 0;
 					if (!_rebelInvulnerable) {
 						_playerDamage += collisionDamage;
 						if (_playerDamage > 255) _playerDamage = 255;
@@ -1269,7 +1272,11 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 					break;  // Only one collision per frame (original breaks)
 				} else {
 					// Safely avoided obstacle — award score
-					addScore(1);
+					// Original: FUN_0041bf8d(DAT_0047e100[levelIdx])
+					LevelDifficultyParams scoreParams = getDifficultyParams();
+					if (scoreParams.dodgePoints > 0) {
+						addScore(scoreParams.dodgePoints);
+					}
 				}
 			}
 		}
@@ -1283,8 +1290,8 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 		// Ship position is clamped to wall boundaries when hitting.
 		int16 hMargin = (_flyControlMode == 1) ? 0x28 : 0x0f;  // local_14
 		const int16 vMargin = 0x0f;  // local_20
-		LevelDifficultyParams wallParams = getDifficultyParams(_selectedLevel);
-		int wallDamage = (wallParams.wallDamage >= 0) ? wallParams.wallDamage : 0;
+		LevelDifficultyParams wallParams = getDifficultyParams();
+		int wallDamage = (wallParams.dodgeDamage >= 0) ? wallParams.dodgeDamage : 0;
 
 		for (int i = 0; i < _primaryZoneCount; i++) {
 			CollisionZone &zone = _primaryZones[i];
@@ -2693,7 +2700,25 @@ void InsaneRebel2::renderEnemyOverlays(byte *renderBitmap, int pitch, int width,
 // Dispatcher — calls per-handler explosion render function.
 // Original code has separate functions per handler, each with its own
 // position transformation, scale thresholds, and secondary NUT rendering.
+// Each handler's render function checks DAT_0047e108 flags & 1:
+// when bit 0 is set, explosion NUT sprites are suppressed (counter still ticks).
 void InsaneRebel2::renderExplosions(byte *renderBitmap, int pitch, int width, int height) {
+	// Check flags bit 0: suppress explosion sprite rendering
+	LevelDifficultyParams dparams = getDifficultyParams();
+	bool suppressExplosionSprites = (dparams.flags & 1) != 0;
+
+	// Even when suppressed, still tick down explosion counters
+	if (suppressExplosionSprites) {
+		for (int i = 0; i < 5; i++) {
+			if (_explosions[i].active && _explosions[i].counter > 0) {
+				_explosions[i].counter--;
+				if (_explosions[i].counter <= 0)
+					_explosions[i].active = false;
+			}
+		}
+		return;
+	}
+
 	switch (_rebelHandler) {
 	case 0x26:
 		renderTurretExplosions(renderBitmap, pitch, width, height);
