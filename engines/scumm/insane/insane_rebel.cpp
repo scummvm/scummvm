@@ -127,6 +127,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	memset(_damageSavedPalette, 0, sizeof(_damageSavedPalette));
 
 	// Retail globals mapped: hit counter, cooldown, invulnerability flag
+	_rebelOp6Initialized = false;
 	_rebelHitCounter = 0;
 	_rebelKillCounter = 0;
 	_rebelInvulnerable = false;

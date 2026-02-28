@@ -636,6 +636,7 @@ public:
 	byte _damageSavedPalette[0x300];     // DAT_00459990 - palette snapshot before flash
 
 	// Rebel per-level counters / flags mapped from retail globals
+	bool _rebelOp6Initialized; // Guard: opcode 6 init block (clearBit/links/wave) runs once per video
 	int _rebelHitCounter;    // DAT_0047ab80 - hit counter / state tracker
 	int _rebelKillCounter;   // DAT_0047ab88 - enemies destroyed this phase
 	bool _rebelInvulnerable; // DAT_0047ab64 - toggles invulnerability / state
