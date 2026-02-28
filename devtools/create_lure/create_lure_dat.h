@@ -328,7 +328,6 @@ struct RoomExitIndexedHotspotResource {
 	uint16 hotspotId;
 };
 
-
 #define ROOM_EXIT_COORDINATES_NUM_ENTRIES 6
 #define ROOM_EXIT_COORDINATES_ENTRY_NUM_ROOMS 52
 
@@ -362,6 +361,7 @@ enum AccessMode {
 class File {
 private:
 	FILE *f = nullptr;
+
 public:
 	File() = default;
 	~File() { close(); }

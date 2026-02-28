@@ -19,7 +19,7 @@
  *
  */
 
- // Disable symbol overrides so that we can use system headers.
+// Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include <stdio.h>
@@ -191,6 +191,7 @@ struct Surface {
 class File {
 private:
 	FILE *_f;
+
 public:
 	File(const char *filename) {
 		_f = fopen(filename, "wb");
@@ -198,7 +199,7 @@ public:
 	~File() {
 		fclose(_f);
 	}
-	
+
 	File(const File &) = delete;
 	File(File &&) = delete;
 	File &operator=(const File &) = delete;
@@ -223,7 +224,6 @@ public:
 		fwrite(buf, 1, count, _f);
 	}
 };
-
 
 int main(int argc, char *argv[]) {
 	MemoryReadStream src(FONT);

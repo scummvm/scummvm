@@ -40,8 +40,8 @@ enum AccessMode {
 class File {
 private:
 	FILE *f = nullptr;
-public:
 
+public:
 	File() = default;
 	~File() { close(); }
 	File(const File &) = delete;
@@ -106,9 +106,9 @@ public:
 	}
 	uint32 size() {
 		uint32 position = ftell(f);
-		fseek (f, 0, SEEK_END);
+		fseek(f, 0, SEEK_END);
 		uint32 end = ftell(f);
-		fseek (f, position, SEEK_SET);
+		fseek(f, position, SEEK_SET);
 
 		return end;
 	}

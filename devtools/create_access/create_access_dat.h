@@ -40,6 +40,7 @@ private:
 	FILE *_f;
 	const byte *_memPtr;
 	size_t _offset, _size;
+
 public:
 	File() : _f(nullptr), _memPtr(nullptr), _offset(0), _size(0) {}
 	~File() { close(); }

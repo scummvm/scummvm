@@ -41,15 +41,15 @@ enum DataType {
 class File {
 private:
 	FILE *f = nullptr;
-public:
 
+public:
 	File() = default;
 	~File() { close(); }
 	File(const File &) = delete;
 	File(File &&) = delete;
 	File &operator=(const File &) = delete;
 	File &operator=(File &&) = delete;
-	
+
 	bool open(const char *filename, AccessMode mode = kFileReadMode);
 	void close();
 	int seek(int32 offset, int whence = SEEK_SET);
@@ -67,4 +67,3 @@ public:
 };
 
 File outputFile, mortCom;
-

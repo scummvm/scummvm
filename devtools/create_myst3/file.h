@@ -43,6 +43,7 @@ private:
 	::FILE *_f;
 	const byte *_memPtr;
 	size_t _offset, _size;
+
 public:
 	File() : _f(nullptr), _memPtr(nullptr), _offset(0), _size(0) {}
 	~File() { close(); }
@@ -76,17 +77,17 @@ public:
 			return fseek(_f, offset, whence);
 
 		switch (whence) {
-			case SEEK_SET:
-				_offset = offset;
-				break;
-			case SEEK_CUR:
-				_offset += offset;
-				break;
-			case SEEK_END:
-				_offset = _size + offset;
-				break;
-			default:
-				break;
+		case SEEK_SET:
+			_offset = offset;
+			break;
+		case SEEK_CUR:
+			_offset += offset;
+			break;
+		case SEEK_END:
+			_offset = _size + offset;
+			break;
+		default:
+			break;
 		}
 
 		return _offset;
@@ -212,6 +213,6 @@ public:
 	}
 };
 
-}
+} // namespace Common
 
 #endif

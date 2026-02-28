@@ -37,6 +37,7 @@ typedef unsigned int uint32;
 class File {
 private:
 	FILE *_file;
+
 public:
 	File(const char *filename) {
 		_file = fopen(filename, "rb");
@@ -89,6 +90,7 @@ public:
 class WriteFile {
 private:
 	FILE *_file;
+
 public:
 	WriteFile(const char *filename) {
 		_file = fopen(filename, "wb");

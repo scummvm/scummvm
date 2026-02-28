@@ -132,6 +132,7 @@ class MemFile : public Stream {
 private:
 	byte *_data;
 	size_t _size, _offset;
+
 public:
 	MemFile() : _size(0), _offset(0) {
 		_data = new byte[MAX_MEM_SIZE];
@@ -147,8 +148,7 @@ public:
 		delete[] _data;
 	}
 
-	MemFile(const MemFile &other) 
-	{
+	MemFile(const MemFile &other) {
 		_data = new byte[MAX_MEM_SIZE];
 		_size = other._size;
 		_offset = other._offset;
@@ -156,7 +156,7 @@ public:
 		memcpy(_data, other._data, _size);
 		memset(_data + _size, 0, MAX_MEM_SIZE - _size);
 	}
-	
+
 	MemFile(MemFile &&other) {
 		_data = other._data;
 		_size = other._size;
@@ -166,7 +166,7 @@ public:
 		other._size = 0;
 		other._offset = 0;
 	}
-	
+
 	MemFile &operator=(const MemFile &other) {
 		if (this != &other) {
 			memcpy(_data, other._data, other._size);
@@ -177,7 +177,7 @@ public:
 		}
 		return *this;
 	}
-	
+
 	MemFile &operator=(MemFile &&other) {
 		if (this != &other) {
 			delete[] _data;
@@ -283,6 +283,7 @@ public:
 class File : public Stream {
 private:
 	::FILE *_f;
+
 public:
 	File() : _f(nullptr) {}
 	virtual ~File() { close(); }

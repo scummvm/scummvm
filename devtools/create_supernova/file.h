@@ -37,6 +37,7 @@ enum AccessMode {
 class File {
 private:
 	FILE *f = nullptr;
+
 public:
 	File() = default;
 	~File() { close(); }

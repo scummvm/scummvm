@@ -72,7 +72,7 @@ public:
 	void writeString(const char *msg);
 };
 
-template <class T>
+template<class T>
 void writeToFile(File &file, T &obj) {
 	file.write(&obj, sizeof(obj));
 }
