@@ -878,6 +878,15 @@ static const ExtraGuiOption enableTTS = {
 };
 #endif
 
+static const ExtraGuiOption enableRebel2HiRes = {
+	_s("High resolution mode"),
+	_s("Run the game in 640x400 high resolution mode instead of 320x200."),
+	"rebel2_hires",
+	true,
+	0,
+	0
+};
+
 const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	// Query the GUI options
@@ -919,6 +928,9 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 		options.push_back(enableTTS);
 	}
 #endif
+	if (target.empty() || guiOptions.contains(GAMEOPTION_REBEL2_HIRES)) {
+		options.push_back(enableRebel2HiRes);
+	}
 	if (target.empty() || gameid == "comi") {
 		options.push_back(comiObjectLabelsOption);
 

@@ -38,6 +38,7 @@ namespace Scumm {
 #define GAMEOPTION_COPY_PROTECTION                           GUIO_GAMEOPTIONS7
 #define GAMEOPTION_USE_REMASTERED_AUDIO                      GUIO_GAMEOPTIONS8
 #define GAMEOPTION_TTS                                       GUIO_GAMEOPTIONS9
+#define GAMEOPTION_REBEL2_HIRES                              GUIO_GAMEOPTIONS10
 
 /**
  * Descriptor of a specific SCUMM game. Used internally to store

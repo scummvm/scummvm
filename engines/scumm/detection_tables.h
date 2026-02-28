@@ -49,6 +49,7 @@ static const char *const directoryGlobs[] = {
 	"Contents", // Mac Steam versions
 	"MacOS",    // Mac Steam versions
 	"Resources", // Mac SE/Remastered versions
+	"OPEN",     // RA2 demo detection (O_DEMO.SAN)
 	0
 };
 
@@ -227,8 +228,8 @@ static const GameSettings gameVariantsTable[] = {
 	{"ft",   "Remastered", 0, GID_FT,  7, 0, MDT_NONE, GF_DOUBLEFINE_PAK, UNK, GUIO5(GUIO_NOMIDI, GAMEOPTION_ENHANCEMENTS, GAMEOPTION_ORIGINALGUI, GAMEOPTION_LOWLATENCYAUDIO, GAMEOPTION_TTS)},
 	{"ft",   "Demo", 0, GID_FT,  7, 0, MDT_NONE, GF_DEMO, UNK, GUIO4(GUIO_NOMIDI, GAMEOPTION_ORIGINALGUI, GAMEOPTION_LOWLATENCYAUDIO, GAMEOPTION_TTS)},
 
-	{"rebel2", "", 0, GID_REBEL2, 7, 0, MDT_NONE, 0, Common::kPlatformDOS, GUIO5(GUIO_NOMIDI, GAMEOPTION_ENHANCEMENTS, GAMEOPTION_ORIGINALGUI, GAMEOPTION_LOWLATENCYAUDIO, GAMEOPTION_TTS)},
-	{"rebel2", "Demo", 0, GID_REBEL2, 7, 0, MDT_NONE, GF_DEMO, Common::kPlatformDOS, GUIO5(GUIO_NOMIDI, GAMEOPTION_ENHANCEMENTS, GAMEOPTION_ORIGINALGUI, GAMEOPTION_LOWLATENCYAUDIO, GAMEOPTION_TTS)},
+	{"rebel2", "", 0, GID_REBEL2, 7, 0, MDT_NONE, 0, Common::kPlatformDOS, GUIO2(GUIO_NOMIDI, GAMEOPTION_REBEL2_HIRES)},
+	{"rebel2", "Demo", 0, GID_REBEL2, 7, 0, MDT_NONE, GF_DEMO, Common::kPlatformDOS, GUIO2(GUIO_NOMIDI, GAMEOPTION_REBEL2_HIRES)},
 
 	{"dig",  "", 0, GID_DIG, 7, 0, MDT_NONE, 0, UNK, GUIO5(GUIO_NOMIDI, GAMEOPTION_ENHANCEMENTS, GAMEOPTION_ORIGINALGUI, GAMEOPTION_LOWLATENCYAUDIO, GAMEOPTION_TTS)},
 	{"dig",  "Demo", 0, GID_DIG, 7, 0, MDT_NONE, GF_DEMO, UNK, GUIO4(GUIO_NOMIDI, GAMEOPTION_ORIGINALGUI, GAMEOPTION_LOWLATENCYAUDIO, GAMEOPTION_TTS)},
@@ -498,7 +499,8 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "ft", "Vollgas Data", kGenUnchanged, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "ft", "Vollgas Demo Data", kGenUnchanged, Common::DE_DEU, Common::kPlatformMacintosh, "Demo" },
 
-	{ "rebel2", "REBEL2.EXE", kGenUnchanged, UNK_LANG, Common::kPlatformDOS, 0 },
+	{ "rebel2", "RA2START.EXE", kGenUnchanged, UNK_LANG, Common::kPlatformDOS, "" },
+	{ "rebel2", "O_DEMO.SAN", kGenUnchanged, UNK_LANG, Common::kPlatformDOS, "Demo" },
 
 	{ "comi", "comi.la%d", kGenDiskNum, UNK_LANG, UNK, 0 },
 
