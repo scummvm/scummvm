@@ -535,6 +535,12 @@ public:
 	TextColorData *getTextColorData(TextColor color) const;
 
 	/**
+	 * Returns the background color of the first draw step for a given DrawData item.
+	 * Useful for widgets that need a flat fill matching the theme background.
+	 */
+	bool getDrawDataColor(DrawData ddId, uint8 &r, uint8 &g, uint8 &b) const;
+
+	/**
 	 * Interface for ThemeParser class: Parsed DrawSteps are added via this function.
 	 * There is no return type because DrawSteps can always be added, unless something
 	 * goes horribly wrong.
