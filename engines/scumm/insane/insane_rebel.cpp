@@ -563,81 +563,120 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 }
 
 // Per-level difficulty parameters extracted from RA2WIN95.EXE at VA 0x47e0f0
-// Original: 2D table indexed by DAT_0047a7fa (chapter/difficulty) * 0x242 + DAT_0047a7f8 (level+1) * 0x22
-// -1 = not applicable for this level type (e.g., no walls in turret levels)
-const InsaneRebel2::LevelDifficultyParams InsaneRebel2::kDifficultyTable[5][15] = {
-	// Difficulty 0 (Easy) - levels 1-15
+// Original: 2D table indexed by DAT_0047a7fa (difficulty) * 0x242 + DAT_0047a7f8 (levelType) * 0x22
+// 17 fields per entry (34 bytes), 17 entries per difficulty, 5 difficulties
+// Field names from official Difficulty Editor: {laserDelay, snapDistance, missDamage, dodgeDamage,
+//   shotDamage, specialDamage, shotAccuracy, hitPoints, dodgePoints, timePoints,
+//   levelPoints, specialPoints, flags, rollRate, liftRate, slideRate, driftRate}
+// -1 = not applicable for this level type
+const InsaneRebel2::LevelDifficultyParams InsaneRebel2::kDifficultyTable[5][17] = {
+	// Difficulty 0 (Beginner) - 17 level types
 	{
-		{  30,   15,    3,   75}, {  17,   18,    2,   75}, {  -1,   18,    3,   75},
-		{  19,   -1,    2,   75}, {  27,  180,    3,   75}, {  40,   -1,   -1,   -1},
-		{  -1,   21,    3,   50}, {  30,   15,    4,   60}, {  30,   -1,   70,   75},
-		{  -1,   10,    5,   65}, {  -1,   -1,    6,   65}, {  30,   20,    1,   85},
-		{  -1,   24,    2,   75}, {  -1,   -1,    3,   75}, {  30,  255,    4,   75},
+		{   5,    3,   15,   -1,    2,   -1,   75,   25,   -1,    2,  500,  250,    8,    5,    5,    6,   -1}, // Lv1
+		{   4,    3,   -1,   -1,    2,   -1,   40,   25,   -1,    0,  500,  250,    8,   90,   90,  120,   25}, // Lv2
+		{   6,    5,   15,   30,    3,   12,   75,   25,   50,    2,  500,  250,    8,   -1,   -1,   -1,   -1}, // Lv3
+		{   5,    3,   18,   17,    2,   20,   75,   25,   50,    2,  500,  250,    8,   -1,   -1,   -1,   -1}, // Lv4
+		{   5,    4,   18,   -1,    3,   -1,   75,   25,   -1,    2,  500,  250,    8,   -1,   -1,   -1,   -1}, // Lv5
+		{   5,    5,   -1,   19,    2,   15,   75,   25,   50,    2,  500,   -1,    8,   -1,   -1,   -1,   -1}, // Lv6A
+		{   5,    5,  180,   27,    3,   -1,   75,   25,   50,    2,  500,  250,    8,  120,  120,  120,   75}, // Lv6B
+		{  -1,   -1,   -1,   40,   -1,   -1,   -1,   -1,   50,    2,  500,  250,    8,   -1,   -1,   -1,   -1}, // Lv7
+		{   5,    5,   21,   -1,    3,   -1,   50,   25,   -1,    2,  500,  250,    8,   -1,   -1,   -1,   -1}, // Lv8
+		{   5,    6,   15,   30,    4,   -1,   60,   25,   50,    2,  500,  250,    8,   90,   90,   90,  135}, // Lv9
+		{   5,   15,   -1,   30,   70,   -1,   75,   25,   50,    2,  500,  250,    8,   10,    6,    7,   -1}, // Lv10
+		{   4,    4,   10,   -1,    5,   -1,   65,   25,   -1,    0,  500,  250,    8,    5,    6,    7,    8}, // Lv11
+		{   4,    2,   -1,   -1,    6,   -1,   65,   25,   -1,    2,  500,  250,    8,   -1,   -1,   -1,   -1}, // Lv12
+		{   5,    6,   20,   30,    1,   20,   85,   25,   50,    2,  500,  250,    8,   -1,   -1,   -1,   -1}, // Lv13
+		{   5,    3,   24,   -1,    2,   -1,   75,   25,   -1,    2,  500,  250,    8,   -1,   -1,   -1,   -1}, // Lv14
+		{   5,    8,   -1,   -1,    3,   -1,   75,   25,   -1,    2,  500,   -1,    8,   -1,   -1,   -1,   -1}, // Lv15A
+		{   5,    6,  255,   30,    4,   10,   75,   25,   50,    2,  500,  250,    8,   -1,   -1,   -1,   -1}, // Lv15B
 	},
-	// Difficulty 1 (Medium) - levels 1-15
+	// Difficulty 1 (Easy) - 17 level types
 	{
-		{  35,   17,    5,   75}, {  30,   60,    4,   75}, {  -1,   28,    3,   75},
-		{  25,   -1,    4,   75}, {  35,  190,    4,   75}, {  65,   -1,   -1,   -1},
-		{  -1,   24,    3,   50}, {  45,   17,    5,   75}, {  35,   -1,   75,   75},
-		{  -1,   15,    5,   75}, {  -1,   -1,    8,   75}, {  35,   30,    1,   85},
-		{  -1,   28,    2,   75}, {  -1,   -1,    4,   75}, {  35,  255,    4,   75},
+		{   6,    1,   25,   -1,    3,   -1,   75,   50,   -1,    4, 1000,  500,   16,    6,    6,    7,   -1}, // Lv1
+		{   4,    2,   -1,   -1,    4,   -1,   40,   50,   -1,    0, 1000,  500,   16,  100,  100,  135,   30}, // Lv2
+		{   6,    4,   17,   35,    5,   12,   75,   50,  100,    4, 1000,  500,   16,   -1,   -1,   -1,   -1}, // Lv3
+		{   5,    2,   60,   30,    4,   20,   75,   50,  100,    4, 1000,  500,   16,   -1,   -1,   -1,   -1}, // Lv4
+		{   5,    1,   28,   -1,    3,   -1,   75,   50,   -1,    4, 1000,  500,   16,   -1,   -1,   -1,   -1}, // Lv5
+		{   5,    2,   -1,   25,    4,   15,   75,   50,  100,    4, 1000,   -1,   16,   -1,   -1,   -1,   -1}, // Lv6A
+		{   5,    2,  190,   35,    4,   -1,   75,   50,  100,    4, 1000,  500,   16,  140,  140,  140,   90}, // Lv6B
+		{  -1,   -1,   -1,   65,   -1,   -1,   -1,   -1,  100,    4, 1000,  500,   16,   -1,   -1,   -1,   -1}, // Lv7
+		{   5,    3,   24,   -1,    3,   -1,   50,   50,   -1,    4, 1000,  500,   16,   -1,   -1,   -1,   -1}, // Lv8
+		{   5,    4,   17,   45,    5,   -1,   75,   50,  100,    4, 1000,  500,   16,  100,  100,  100,  140}, // Lv9
+		{   5,   12,   -1,   35,   75,   -1,   75,   50,  100,    4, 1000,  500,   16,   10,    6,    7,   -1}, // Lv10
+		{   4,    2,   15,   -1,    5,   -1,   75,   50,   -1,    0, 1000,  500,   16,    5,    6,    7,    8}, // Lv11
+		{   4,    1,   -1,   -1,    8,   -1,   75,   50,   -1,    4, 1000,  500,   16,   -1,   -1,   -1,   -1}, // Lv12
+		{   5,    5,   30,   35,    1,   20,   85,   50,  100,    4, 1000,  500,   16,   -1,   -1,   -1,   -1}, // Lv13
+		{   5,    2,   28,   -1,    2,   -1,   75,   50,   -1,    4, 1000,  500,   16,   -1,   -1,   -1,   -1}, // Lv14
+		{   5,    7,   -1,   -1,    4,   -1,   75,   50,   -1,    4, 1000,   -1,   16,   -1,   -1,   -1,   -1}, // Lv15A
+		{   5,    6,  255,   35,    4,   10,   75,   50,  100,    4, 1000,  500,   16,   -1,   -1,   -1,   -1}, // Lv15B
 	},
-	// Difficulty 2 (Hard) - levels 1-15
+	// Difficulty 2 (Medium) - 17 level types
 	{
-		{  38,   20,    7,   75}, {  35,  100,    6,   75}, {  -1,   30,    4,   75},
-		{  30,   -1,    6,   75}, {  50,  200,   12,   75}, {  80,   -1,   -1,   -1},
-		{  -1,   27,    3,   60}, {  60,   19,    7,   75}, {  40,   -1,  100,   85},
-		{  -1,   20,    6,   75}, {  -1,   -1,   11,   75}, {  40,   40,    3,   76},
-		{  -1,   38,    4,   75}, {  -1,   -1,    7,   75}, {  40,  255,    7,   75},
+		{   7,    0,   35,   -1,    5,   -1,   75,   75,   -1,    6, 1500,  750,    0,    7,    7,    8,   -1}, // Lv1
+		{   4,    1,   -1,   -1,    6,   -1,   40,   75,   -1,    0, 1500,  750,    0,  110,  110,  150,   35}, // Lv2
+		{   6,    1,   20,   38,    7,   12,   75,   75,  150,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv3
+		{   5,    1,  100,   35,    6,   20,   75,   75,  150,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv4
+		{   6,    1,   30,   -1,    4,   -1,   75,   75,   -1,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv5
+		{   6,    1,   -1,   30,    6,   15,   75,   75,  150,    6, 1500,   -1,    0,   -1,   -1,   -1,   -1}, // Lv6A
+		{   6,    1,  200,   50,   12,   -1,   75,   75,  150,    6, 1500,  750,    0,  160,  160,  160,  105}, // Lv6B
+		{  -1,   -1,   -1,   80,   -1,   -1,   -1,   -1,  150,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv7
+		{   5,    1,   27,   -1,    3,   -1,   60,   75,   -1,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv8
+		{   5,    3,   19,   60,    7,   -1,   75,   75,  150,    6, 1500,  750,    0,  110,  110,  110,  150}, // Lv9
+		{   5,    9,   -1,   40,  100,   -1,   85,   75,  150,    6, 1500,  750,    0,   11,    7,    8,   -1}, // Lv10
+		{   4,    1,   20,   -1,    6,   -1,   75,   75,   -1,    0, 1500,  750,    0,    6,    7,    8,    9}, // Lv11
+		{   4,    0,   -1,   -1,   11,   -1,   75,   75,   -1,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv12
+		{   5,    3,   40,   40,    3,   15,   76,   75,  150,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv13
+		{   5,    0,   38,   -1,    4,   -1,   75,   75,   -1,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv14
+		{   5,    4,   -1,   -1,    7,   -1,   75,   75,   -1,    6, 1500,   -1,    0,   -1,   -1,   -1,   -1}, // Lv15A
+		{   5,    5,  255,   40,    7,   10,   75,   75,  150,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv15B
 	},
-	// Difficulty 3 (Expert) - levels 1-15
+	// Difficulty 3 (Hard) - 17 level types
 	{
-		{  42,   23,   12,   75}, {  50,  120,   16,   75}, {  -1,   55,    4,   75},
-		{  50,    0,   15,   79}, {  90,  220,   15,   90}, {  90,   -1,   -1,   -1},
-		{  -1,   35,    3,   68}, {  75,   30,   20,   80}, {  50,   -1,  110,   90},
-		{  -1,   30,    7,   75}, {  -1,   -1,   13,   75}, {  55,   55,    5,   77},
-		{  -1,   49,    4,   75}, {  -1,   -1,   10,   79}, {  45,  255,    8,   80},
+		{   8,    0,   77,   -1,    7,   -1,   80,  100,   -1,    8, 2000, 1000,    4,    8,    8,    9,   -1}, // Lv1
+		{   4,    0,   -1,   -1,    7,   -1,   40,  100,   -1,    0, 2000, 1000,    4,  120,  120,  165,   40}, // Lv2
+		{   6,    0,   23,   42,   12,   10,   75,  100,  200,    8, 2000, 1000,    4,   -1,   -1,   -1,   -1}, // Lv3
+		{   5,    0,  120,   50,   16,   10,   75,  100,  200,    8, 2000, 1000,    4,   -1,   -1,   -1,   -1}, // Lv4
+		{   5,    0,   55,   -1,    4,   -1,   75,  100,   -1,    8, 2000, 1000,    4,   -1,   -1,   -1,   -1}, // Lv5
+		{   6,    0,    0,   50,   15,   15,   79,  100,  200,    8, 2000,   -1,    4,   -1,   -1,   -1,   -1}, // Lv6A
+		{   6,    0,  220,   90,   15,   -1,   90,  100,  200,    8, 2000, 1000,    4,  180,  180,  180,  140}, // Lv6B
+		{  -1,   -1,   -1,   90,   -1,   -1,   -1,   -1,  200,    8, 2000, 1000,    4,   -1,   -1,   -1,   -1}, // Lv7
+		{   5,    0,   35,   -1,    3,   -1,   68,  100,   -1,    8, 2000, 1000,    4,   -1,   -1,   -1,   -1}, // Lv8
+		{   5,    2,   30,   75,   20,   -1,   80,  100,  200,    8, 2000, 1000,    4,  120,  120,  120,  200}, // Lv9
+		{   5,    8,   -1,   50,  110,   -1,   90,  100,  200,    8, 2000, 1000,    4,   12,    8,    9,   -1}, // Lv10
+		{   4,    0,   30,   -1,    7,   -1,   75,  100,   -1,    0, 2000, 1000,    4,    7,    8,    9,   10}, // Lv11
+		{   4,    0,   -1,   -1,   13,   -1,   75,  100,   -1,    8, 2000, 1000,    4,   -1,   -1,   -1,   -1}, // Lv12
+		{   5,    3,   55,   55,    5,   12,   77,  100,  200,    8, 2000, 1000,    4,   -1,   -1,   -1,   -1}, // Lv13
+		{   5,    0,   49,   -1,    4,   -1,   75,  100,   -1,    8, 2000, 1000,    4,   -1,   -1,   -1,   -1}, // Lv14
+		{   5,    4,   -1,   -1,   10,   -1,   79,  100,   -1,    8, 2000,   -1,    4,   -1,   -1,   -1,   -1}, // Lv15A
+		{   5,    4,  255,   45,    8,    5,   80,  100,  200,    8, 2000, 1000,    4,   -1,   -1,   -1,   -1}, // Lv15B
 	},
-	// Difficulty 4 (identical to difficulty 2 in original data) - levels 1-15
+	// Difficulty 4 (Jedi) — identical to difficulty 2 (Medium) in original data
 	{
-		{  38,   20,    7,   75}, {  35,  100,    6,   75}, {  -1,   30,    4,   75},
-		{  30,   -1,    6,   75}, {  50,  200,   12,   75}, {  80,   -1,   -1,   -1},
-		{  -1,   27,    3,   60}, {  60,   19,    7,   75}, {  40,   -1,  100,   85},
-		{  -1,   20,    6,   75}, {  -1,   -1,   11,   75}, {  40,   40,    3,   76},
-		{  -1,   38,    4,   75}, {  -1,   -1,    7,   75}, {  40,  255,    7,   75},
+		{   7,    0,   35,   -1,    5,   -1,   75,   75,   -1,    6, 1500,  750,    0,    7,    7,    8,   -1}, // Lv1
+		{   4,    1,   -1,   -1,    6,   -1,   40,   75,   -1,    0, 1500,  750,    0,  110,  110,  150,   35}, // Lv2
+		{   6,    1,   20,   38,    7,   12,   75,   75,  150,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv3
+		{   5,    1,  100,   35,    6,   20,   75,   75,  150,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv4
+		{   6,    1,   30,   -1,    4,   -1,   75,   75,   -1,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv5
+		{   6,    1,   -1,   30,    6,   15,   75,   75,  150,    6, 1500,   -1,    0,   -1,   -1,   -1,   -1}, // Lv6A
+		{   6,    1,  200,   50,   12,   -1,   75,   75,  150,    6, 1500,  750,    0,  160,  160,  160,  105}, // Lv6B
+		{  -1,   -1,   -1,   80,   -1,   -1,   -1,   -1,  150,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv7
+		{   5,    1,   27,   -1,    3,   -1,   60,   75,   -1,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv8
+		{   5,    3,   19,   60,    7,   -1,   75,   75,  150,    6, 1500,  750,    0,  110,  110,  110,  150}, // Lv9
+		{   5,    9,   -1,   40,  100,   -1,   85,   75,  150,    6, 1500,  750,    0,   11,    7,    8,   -1}, // Lv10
+		{   4,    1,   20,   -1,    6,   -1,   75,   75,   -1,    0, 1500,  750,    0,    6,    7,    8,    9}, // Lv11
+		{   4,    0,   -1,   -1,   11,   -1,   75,   75,   -1,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv12
+		{   5,    3,   40,   40,    3,   15,   76,   75,  150,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv13
+		{   5,    0,   38,   -1,    4,   -1,   75,   75,   -1,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv14
+		{   5,    4,   -1,   -1,    7,   -1,   75,   75,   -1,    6, 1500,   -1,    0,   -1,   -1,   -1,   -1}, // Lv15A
+		{   5,    5,  255,   40,    7,   10,   75,   75,  150,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv15B
 	},
 };
 
-InsaneRebel2::LevelDifficultyParams InsaneRebel2::getDifficultyParams(int levelId) const {
+InsaneRebel2::LevelDifficultyParams InsaneRebel2::getDifficultyParams() const {
 	int diff = CLIP(_difficulty, 0, 4);
-	int lvIdx = CLIP(levelId - 1, 0, 14);  // levelId 1-15 → index 0-14
+	int lvIdx = CLIP((int)_rebelLevelType, 0, 16);
 	return kDifficultyTable[diff][lvIdx];
 }
-
-// Score lookup tables (from DAT_0047e0fe, DAT_0047e100, DAT_0047e102)
-// These are indexed by: DAT_0047a7fa * 0x242 + DAT_0047a7f8 * 0x22
-// For simplicity, we use fixed values based on difficulty level
-// Values estimated from disassembly patterns (actual values would need extraction from game data)
-const int16 InsaneRebel2::kScoreTableEnemyDestroy[16] = {
-	100, 100, 100, 100,   // Easy (difficulty 0)
-	150, 150, 150, 150,   // Medium (difficulty 1)
-	200, 200, 200, 200,   // Hard (difficulty 2)
-	250, 250, 250, 250    // Expert (difficulty 3)
-};
-
-const int16 InsaneRebel2::kScoreTableSpecial[16] = {
-	50, 50, 50, 50,
-	75, 75, 75, 75,
-	100, 100, 100, 100,
-	125, 125, 125, 125
-};
-
-const int16 InsaneRebel2::kScoreTableTimeBonus[16] = {
-	1, 1, 1, 1,
-	2, 2, 2, 2,
-	3, 3, 3, 3,
-	4, 4, 4, 4
-};
 
 // Score system implementation (FUN_0041bf8d equivalent)
 // Adds points to score and awards bonus life when crossing threshold
@@ -948,29 +987,28 @@ int32 InsaneRebel2::processMouse() {
 					it->id, it->type, mousePos.x, mousePos.y,
 					it->rect.left, it->rect.top, it->rect.right, it->rect.bottom);
 
-				// Spawn visual explosion based on handler and enemy type.
+				// Spawn visual explosion based on handler, enemy type, and flags.
 				//
-				// Each handler's explosion rendering (FUN_409FBC, FUN_402696,
-				// FUN_40F1C5, FUN_41F29A) checks a per-level flags field:
-				//   (*(ushort *)(&DAT_0047e108 + chapter*0x242 + level*0x22) & 1) == 0
-				// When bit 0 is SET, explosion NUT sprites are NOT rendered even
-				// though the counter ticks down. The flags come from GAME.TRS.
+				// Rendering functions (FUN_409FBC, FUN_402696, FUN_40F1C5,
+				// FUN_41F29A) check DAT_0047e108 flags & 1 — when set,
+				// explosion NUT sprites are suppressed. This is checked
+				// during rendering in renderExplosions().
 				//
-				// Handler 8 (FUN_4028C5 line 94): Only type 0 sets the explosion
-				// counter at all. Types 1-4 get BLAST sound, no visual explosion.
-				//
-				// Handler 25 (FUN_41E7C2 line 74): Types > 3 DO set the counter,
-				// but rendering is suppressed by flags & 1 for on-foot levels.
-				// The counter serves only as a timer (sound panning, tracking).
-				// Handler 25 is specifically for on-foot corridor/FPS sections;
-				// space combat uses handler 7 instead.
-				//
+				// Handler 8 (FUN_4028C5): Only type 0 spawns explosion.
+				// Handler 25 (FUN_41E7C2): Types > 3 set counter but
+				// rendering suppressed by flags bit 0.
 				// Handlers 0x26, 7: All types get visual explosions.
 				if (_rebelHandler != 8 && _rebelHandler != 25) {
 					spawnExplosion((it->rect.left + it->rect.right) / 2,
 								   (it->rect.top + it->rect.bottom) / 2,
 								   it->rect.width() / 2);
 				} else if (_rebelHandler == 8 && it->type == 0) {
+					spawnExplosion((it->rect.left + it->rect.right) / 2,
+								   (it->rect.top + it->rect.bottom) / 2,
+								   it->rect.width() / 2);
+				} else if (_rebelHandler == 25 && it->type > 3) {
+					// Counter is set for timing/sound, but rendering
+					// may be suppressed by flags bit 0
 					spawnExplosion((it->rect.left + it->rect.right) / 2,
 								   (it->rect.top + it->rect.bottom) / 2,
 								   it->rect.width() / 2);
@@ -1023,10 +1061,12 @@ int32 InsaneRebel2::processMouse() {
 				}
 
 				// Award score for destroying enemy (FUN_0041bf8d called from FUN_40A2E0)
-				// Score value comes from lookup table DAT_0047e0fe indexed by difficulty
-				int scoreIndex = _difficulty * 4;  // Simplified index
-				if (scoreIndex >= 0 && scoreIndex < 16) {
-					addScore(kScoreTableEnemyDestroy[scoreIndex]);
+				// Score value comes from DAT_0047e0fe indexed by difficulty×level
+				{
+					LevelDifficultyParams dparams = getDifficultyParams();
+					if (dparams.hitPoints > 0) {
+						addScore(dparams.hitPoints);
+					}
 				}
 
 				// Only hit one enemy per click

@@ -983,37 +983,45 @@ public:
 
 	// ======================= Per-Level Difficulty Parameters =======================
 	// Extracted from RA2WIN95.EXE at VA 0x47e0f0
-	// 2D table indexed by difficulty (0-4) × game level (1-15)
-	// Original indexing: &DAT_0047e0f6 + chapter * 0x242 + level * 0x22
-	// -1 = not applicable for this level type (e.g., no walls in turret levels)
+	// 2D table indexed by difficulty (0-4) × level type (0-16)
+	// Original indexing: &DAT_0047e0f0 + chapter * 0x242 + levelType * 0x22
+	// Level type (_rebelLevelType) is set by IACT opcode 6 par3
+	// 17 entries: Lv1-5(0-4), Lv6A/6B(5-6), Lv7-14(7-14), Lv15A/15B(15-16)
+	// -1 = not applicable for this level type
 
 	struct LevelDifficultyParams {
-		int16 wallDamage;           // +0x06 DAT_0047e0f6: Wall/obstacle collision damage
-		int16 directHitDamage;      // +0x04 DAT_0047e0f4: Direct hit damage (par4=100)
-		int16 enemyProjectileDamage;// +0x08 DAT_0047e0f8: Enemy projectile/probabilistic damage
-		int16 hitProbability;       // +0x0C DAT_0047e0fc: Enemy hit chance (0-100, -1=disabled)
+		int16 laserDelay;      // +0x00: Laser fire delay (lower = faster)
+		int16 snapDistance;    // +0x02: Crosshair snap distance to targets
+		int16 missDamage;      // +0x04: Damage from enemy misses / grazing hits
+		int16 dodgeDamage;     // +0x06: Damage from wall/obstacle collisions
+		int16 shotDamage;      // +0x08: Damage from enemy projectile hits
+		int16 specialDamage;   // +0x0A: Damage from special attacks
+		int16 shotAccuracy;    // +0x0C: Enemy shot accuracy (0-100, -1=disabled)
+		int16 hitPoints;       // +0x0E: Points awarded for destroying an enemy
+		int16 dodgePoints;     // +0x10: Points awarded for dodging an obstacle
+		int16 timePoints;      // +0x12: Time bonus points
+		int16 levelPoints;     // +0x14: End-of-level bonus points
+		int16 specialPoints;   // +0x16: Special action bonus points
+		int16 flags;           // +0x18: Behavior flags bitfield
+		int16 rollRate;        // +0x1A: Ship roll rate (flight controls)
+		int16 liftRate;        // +0x1C: Ship lift rate (flight controls)
+		int16 slideRate;       // +0x1E: Ship slide rate (flight controls)
+		int16 driftRate;       // +0x20: Ship drift rate (flight controls)
 	};
 
-	// Table: 5 difficulty levels × 15 game levels
-	// Difficulty 4 is identical to difficulty 2 in the original data
-	static const LevelDifficultyParams kDifficultyTable[5][15];
+	// Table: 5 difficulty levels × 17 level types
+	// Difficulty 4 (Jedi) is identical to difficulty 2 (Medium) in the original data
+	static const LevelDifficultyParams kDifficultyTable[5][17];
 
-	// Look up difficulty parameters for current difficulty and level
-	// Returns the entry from kDifficultyTable, clamping difficulty to 0-4
-	// levelId is 1-based (1-15)
-	LevelDifficultyParams getDifficultyParams(int levelId) const;
+	// Look up difficulty parameters for current _difficulty and _rebelLevelType
+	LevelDifficultyParams getDifficultyParams() const;
 
 	// Score system (FUN_0041bf8d equivalent)
 	// Adds points to score and awards bonus life when crossing threshold
 	void addScore(int points);
 
-	// Score lookup tables (indices into per-level point values)
-	// DAT_0047e0fe: Points for destroying enemies
-	// DAT_0047e100: Points for certain special events
-	// DAT_0047e102: Points awarded per frame (time bonus)
-	static const int16 kScoreTableEnemyDestroy[16];  // Per difficulty/level
-	static const int16 kScoreTableSpecial[16];
-	static const int16 kScoreTableTimeBonus[16];
+	// Score lookup uses LevelDifficultyParams fields:
+	// hitPoints (DAT_0047e0fe), dodgePoints (DAT_0047e100), timePoints (DAT_0047e102)
 
 	// Render score text to HUD (called from procPostRendering)
 	void renderScoreHUD(byte *renderBitmap, int pitch, int width, int height, int statusBarY);
