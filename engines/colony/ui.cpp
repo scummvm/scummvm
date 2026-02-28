@@ -159,41 +159,46 @@ void ColonyEngine::updateViewportLayout() {
 	const int topPad = menuTop + pad;
 
 	if (macColor) {
-		// Original Mac layout: two separate floating windows in a 96px-wide sidebar.
-		// screenR.left = 96. Both windows ~70px wide (2*CCENTER), centered in sidebar.
-		// moveWindow: compRect = (0,0, 70, 105) — compass+map panel
+		// Original Mac layout from inits.c/compass.c/power.c:
+		// screenR.left = 96 — sidebar is 96px wide.
+		// Two floating windows centered in sidebar over gray desktop.
+		// moveWindow: compRect = (0,0, 2*CCENTER, 3*CCENTER) = (0,0, 70, 105)
+		//   floorRect (minimap) = (8,8)-(62,62) — 54x54 inside moveWindow
+		//   compass dish below at (19,66)-(51,98), needle center at (35,82)
 		// infoWindow: sized from PICT resource, positioned above moveWindow
-		// Visible Mac gray desktop between and around windows.
+		const int CCENTER = 35;
 
-		// Load PICT surfaces (cached after first load).
-		// Available PICTs: -32755 (power, armor normal), -32757 (compass).
-		// Color Colony variants (-32760, -32761) may not exist — fall back to -32755.
+		// Load PICT surfaces (cached after first load)
 		if (!_pictCompass)
 			_pictCompass = loadPictSurface(-32757);
 		if (!_pictPower) {
 			int wantID = _armor ? -32755 : -32761;
 			_pictPower = loadPictSurface(wantID);
 			if (!_pictPower && wantID != -32755)
-				_pictPower = loadPictSurface(-32755); // fall back to normal
+				_pictPower = loadPictSurface(-32755);
 			_pictPowerID = _pictPower ? wantID : 0;
 		}
 
-		// Use PICT dimensions for panel sizes, fall back to original constants
-		const int moveW = _pictCompass ? _pictCompass->w : 70;  // 2*CCENTER
-		const int moveH = _pictCompass ? _pictCompass->h : 105; // 3*CCENTER
+		// moveWindow dimensions from original constants
+		const int moveW = 2 * CCENTER; // 70
+		const int moveH = 3 * CCENTER; // 105
 		const int infoW = _pictPower ? _pictPower->w : moveW;
-		const int infoH = _pictPower ? _pictPower->h : 200;
+		const int infoH = _pictPower ? _pictPower->h : moveH;
 
-		// Center panels horizontally in the sidebar (original windows were centered)
+		// Center panels horizontally in sidebar
 		const int centerX = dashWidth / 2;
 
 		// Position moveWindow at the bottom of the sidebar
 		const int moveLeft = MAX(0, centerX - moveW / 2);
 		const int moveTop = _height - pad - moveH;
-		// compRect split: floorRect = (8,8)-(62,62), compass dish area below
-		const int floorBottom = moveTop + moveH * 62 / 105;
-		_headsUpRect = makeSafeRect(moveLeft, moveTop, moveLeft + moveW, floorBottom);
-		_compassRect = makeSafeRect(moveLeft, floorBottom, moveLeft + moveW, moveTop + moveH);
+
+		// _headsUpRect = floorRect (8,8)-(62,62) relative to moveWindow
+		// This is the minimap clipping area — must NOT overlap compass dish
+		_headsUpRect = makeSafeRect(moveLeft + 8, moveTop + 8,
+		                            moveLeft + 2 * CCENTER - 8, moveTop + 2 * CCENTER - 8);
+
+		// _compassRect = entire moveWindow (used for compass dish drawing)
+		_compassRect = makeSafeRect(moveLeft, moveTop, moveLeft + moveW, moveTop + moveH);
 
 		// Position infoWindow above moveWindow with a gap
 		const int infoLeft = MAX(0, centerX - infoW / 2);
@@ -352,56 +357,41 @@ void ColonyEngine::drawDashboardMac() {
 	}
 
 	// ===== Compass + Floor map (moveWindow) =====
-	// compass.c DrawCompass(): DrawPicture(PICT -32757, &compRect) then patXor drawings
+	// compass.c DrawCompass(): All coordinates relative to moveWindow origin.
 	// compRect = (0,0, 2*CCENTER, 3*CCENTER) = (0,0, 70, 105)
-	const Common::Rect moveRect(_headsUpRect.left, _headsUpRect.top,
-	                            _compassRect.right, _compassRect.bottom);
-	if (moveRect.width() > 4 && moveRect.height() > 4) {
+	// CCENTER = 35
+	if (_compassRect.width() > 4 && _compassRect.height() > 4) {
+		const int ox = _compassRect.left; // moveWindow origin X
+		const int oy = _compassRect.top;  // moveWindow origin Y
+
 		// compass.c: SetRect(&compRect, -2, -2, xSize-2, ySize-2); DrawPicture(comp, &compRect)
 		if (_pictCompass)
-			drawPictAt(_pictCompass, moveRect.left - 2, moveRect.top - 2);
+			drawPictAt(_pictCompass, ox - 2, oy - 2);
 		else
-			_gfx->fillRect(moveRect, colWinBg);
-
-		// compass.c: compRect reset to (0,0, 70, 105)
-		// PenMode(patXor) — all subsequent drawing XORs onto the PICT background
-
-		// Compass dish (compass.c lines 59-70):
-		// r.top=2*CCENTER-4=66; r.bottom=2*CCENTER+28=98;
-		// r.left=CCENTER-16=19; r.right=CCENTER+16=51;
-		// FillOval(&r, black) with patXor
-		// Needle from (CCENTER, 2*CCENTER+12) = (35, 82) using cost[ang]>>3
-		{
-			const int ox = moveRect.left; // origin offset
-			const int oy = moveRect.top;
-			// Use absolute coordinates from original: dish at (35, 82), oval 19-51, 66-98
-			const int dishCX = ox + 35;  // CCENTER
-			const int dishCY = oy + 82;  // 2*CCENTER+12
-
-			// FillOval at (19,66)-(51,98) with patXor black — inverts PICT background
-			_gfx->fillEllipse(dishCX, dishCY, 16, 16, colBlack);
-
-			// Needle: compass.c line 69-70
-			// LineTo(CCENTER+(cost[ang]>>3), (2*CCENTER+12)-(sint[ang]>>3))
-			const int ex = dishCX + (_cost[_me.look] >> 3);
-			const int ey = dishCY - (_sint[_me.look] >> 3);
-			_gfx->drawLine(dishCX, dishCY, ex, ey, colWhite);
-		}
+			_gfx->fillRect(_compassRect, colWinBg);
 
 		// Floor map (compass.c lines 72-213):
-		// floorRect = (7,7)-(63,63) → ++/-- → (8,8)-(62,62) = 54x54 inner map area
-		// ClipRect(&floorRect) for all map drawing
-		// Eye icon at (CCENTER-10,CCENTER-5)-(CCENTER+10,CCENTER+5) = (25,30)-(45,40)
-		// Pupil at (CCENTER-5,CCENTER-5)-(CCENTER+5,CCENTER+5) = (30,30)-(40,40)
-		{
-			drawMiniMap(colBlack);
+		// floorRect = (8,8)-(62,62) — clipped to _headsUpRect
+		// Eye icon at center (CCENTER,CCENTER) = (35,35)
+		drawMiniMap(colBlack);
 
-			// Eye icon (compass.c lines 84-88) — drawn with patXor
-			const int ox = moveRect.left;
-			const int oy = moveRect.top;
-			_gfx->drawEllipse(ox + 35, oy + 35, 10, 5, colBlack);  // FrameOval outer eye
-			_gfx->fillEllipse(ox + 35, oy + 35, 5, 5, colBlack);   // FillOval pupil
-		}
+		// Eye icon (compass.c lines 84-88)
+		// FrameOval (CCENTER-10, CCENTER-5)-(CCENTER+10, CCENTER+5) = (25,30)-(45,40)
+		// FillOval (CCENTER-5, CCENTER-5)-(CCENTER+5, CCENTER+5) = (30,30)-(40,40)
+		_gfx->drawEllipse(ox + 35, oy + 35, 10, 5, colBlack);
+		_gfx->fillEllipse(ox + 35, oy + 35, 5, 5, colBlack);
+
+		// Compass dish (compass.c lines 59-70):
+		// FillOval (CCENTER-16, 2*CCENTER-4)-(CCENTER+16, 2*CCENTER+28) = (19,66)-(51,98)
+		// Needle center at (CCENTER, 2*CCENTER+12) = (35, 82)
+		const int dishCX = ox + 35;
+		const int dishCY = oy + 82;
+		_gfx->fillEllipse(dishCX, dishCY, 16, 16, colBlack);
+
+		// Needle: LineTo(CCENTER+(cost[ang]>>3), (2*CCENTER+12)-(sint[ang]>>3))
+		const int ex = dishCX + (_cost[_me.look] >> 3);
+		const int ey = dishCY - (_sint[_me.look] >> 3);
+		_gfx->drawLine(dishCX, dishCY, ex, ey, colWhite);
 	}
 }
 
@@ -414,15 +404,30 @@ void ColonyEngine::drawMiniMap(uint32 lineColor) {
 			_gfx->drawLine(x1, y1, x2, y2, color);
 	};
 
-	const int lExtBase = _dashBoardRect.width() >> 1;
-	int lExt = lExtBase + (lExtBase >> 1);
-	if (lExt & 1)
-		lExt--;
-	const int sExt = lExt >> 1;
-	const int xloc = (lExt * ((_me.xindex << 8) - _me.xloc)) >> 8;
-	const int yloc = (lExt * ((_me.yindex << 8) - _me.yloc)) >> 8;
-	const int ccenterx = (_headsUpRect.left + _headsUpRect.right) >> 1;
-	const int ccentery = (_headsUpRect.top + _headsUpRect.bottom) >> 1;
+	const bool macColor = (_renderMode == Common::kRenderMacintosh && _hasMacColors);
+
+	int lExt, sExt, xloc, yloc, ccenterx, ccentery;
+	if (macColor) {
+		// compass.c: CSIZE=64, CCENTER=35
+		// xloc = ((Me.xindex << 8) - Me.xloc) >> 2
+		// Center at (CCENTER, CCENTER) relative to moveWindow
+		lExt = 64; // CSIZE
+		sExt = 32; // CSIZE/2
+		xloc = ((_me.xindex << 8) - _me.xloc) >> 2;
+		yloc = ((_me.yindex << 8) - _me.yloc) >> 2;
+		ccenterx = _compassRect.left + 35; // CCENTER in screen coords
+		ccentery = _compassRect.top + 35;
+	} else {
+		const int lExtBase = _dashBoardRect.width() >> 1;
+		lExt = lExtBase + (lExtBase >> 1);
+		if (lExt & 1)
+			lExt--;
+		sExt = lExt >> 1;
+		xloc = (lExt * ((_me.xindex << 8) - _me.xloc)) >> 8;
+		yloc = (lExt * ((_me.yindex << 8) - _me.yloc)) >> 8;
+		ccenterx = (_headsUpRect.left + _headsUpRect.right) >> 1;
+		ccentery = (_headsUpRect.top + _headsUpRect.bottom) >> 1;
+	}
 	const int tsin = _sint[_me.look];
 	const int tcos = _cost[_me.look];
 
@@ -449,16 +454,14 @@ void ColonyEngine::drawMiniMap(uint32 lineColor) {
 	drawMiniMapLine(xcorner[3] - dy, ycorner[3] - dx, xcorner[0] + dy, ycorner[0] + dx, lineColor);
 
 	// compass.c: food markers use FrameOval ±3px, robot markers ±5px.
-	// Scale proportionally to panel width (original floorRect was 54px wide).
-	const bool macMarkers = (_renderMode == Common::kRenderMacintosh && _hasMacColors);
-	const int foodR = macMarkers ? MAX(2, _headsUpRect.width() / 18) : 1;   // ~3px at 54px
-	const int robotR = macMarkers ? MAX(3, _headsUpRect.width() / 11) : 2;  // ~5px at 54px
+	const int foodR = macColor ? 3 : 1;
+	const int robotR = macColor ? 5 : 2;
 
 	auto drawMarker = [&](int x, int y, int halfSize, uint32 color) {
 		if (x < _headsUpRect.left + 1 || x >= _headsUpRect.right - 1 ||
 		    y < _headsUpRect.top + 1 || y >= _headsUpRect.bottom - 1)
 			return;
-		if (macMarkers) {
+		if (macColor) {
 			// compass.c: FrameOval — circle outline
 			_gfx->drawEllipse(x, y, halfSize, halfSize, color);
 		} else {
