@@ -976,6 +976,25 @@ void InsaneRebel2::procPreRendering(byte *renderBitmap) {
 	// Handler 25: Corridor overlay and FOBJ position offsets are set during
 	// IACT opcode 6 processing (iactRebel2Opcode6), matching the original
 	// FUN_41CADB architecture. No corridor drawing needed here.
+
+	// Chapter selection: Set FOBJ offset to scroll preview thumbnails in O_LEVEL.SAN.
+	// Original (FUN_00415CF8): offsets start at (0,0) for the first display update,
+	// then FUN_00425170 sets them to (-90, chapter*-50+75) AFTER each frame.
+	// Frame 0 must use (0,0) so the 80x800 preview strip at X=320 renders off-screen
+	// and STOR captures it cleanly. Frames 1+ use the scroll offset so FTCH re-renders
+	// the strip at the correct preview position.
+	if (_gameState == kStateChapterSelect && _player) {
+		if (_player->_frame > 0) {
+			// Clear screen to black before FTCH re-renders the preview strip.
+			// Our FTCH only re-draws the preview area (80px wide at X=230);
+			// without clearing, old menu text and preview artifacts persist.
+			if (renderBitmap) {
+				memset(renderBitmap, 0, _vm->_screenWidth * _vm->_screenHeight);
+			}
+			_player->_fobjOffsetX = _previewOffsetX;
+			_player->_fobjOffsetY = _previewOffsetY;
+		}
+	}
 }
 
 void InsaneRebel2::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -4619,16 +4638,9 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		delete cursor;
 		CursorMan.showMouse(true);
 
-		// Fill screen with BLACK background
-		// The original game plays O_LEVEL.SAN (640x400) which has a dark/black background
-		// with chapter preview thumbnails embedded. For 320x200 mode, we fill with black
-		// to match the visual appearance and overlay the UI elements.
-		// Note: O_MENU_X.SAN (320x200) doesn't contain chapter-specific preview images,
-		// those are only in O_LEVEL.SAN (640x400). We use a styled placeholder instead.
-		// From FUN_00415CF8 line 57: FUN_0041f4d0(s_OPEN_O_LEVEL_SAN_004806e0,8,0xffff,0xffff,0);
-		for (int y = 0; y < height; y++) {
-			memset(renderBitmap + y * pitch, 0, width);
-		}
+		// O_LEVEL.SAN provides the background with chapter preview thumbnails.
+		// The FOBJ offset system (set in procPreRendering) scrolls the correct preview
+		// into the preview box area. No black fill needed — video frame shows through.
 
 		// Process chapter selection input - emulates FUN_00415CF8 input handling
 		int selection = processChapterSelectInput();
@@ -7362,19 +7374,36 @@ int InsaneRebel2::runChapterSelect() {
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 
-	// Chapter selection background - emulates FUN_00415CF8 line 57
-	// Original uses O_LEVEL.SAN (640x400). We use menu video for 320x200 mode.
+	// Initialize preview offset for initial selection
+	_previewOffsetX = -90;
+	_previewOffsetY = _chapterSelection * -50 + 75;
+
+	// Set iactBits for chapter unlock state (FUN_00415CF8 lines 79-86)
+	// Bits 16..1 correspond to chapters 0..15: set if unlocked, clear if locked.
+	// These control SKIP chunks in O_LEVEL.SAN for locked/unlocked preview variants.
+	for (int i = 0; i < 16; i++) {
+		if (_chapterUnlocked[i])
+			setBit(16 - i);
+		else
+			clearBit(16 - i);
+	}
+
+	// Chapter selection background - FUN_00415CF8 line 57:
+	// FUN_0041f4d0(s_OPEN_O_LEVEL_SAN, 8, 0xffff, 0xffff, 0)
+	// O_LEVEL.SAN contains chapter preview thumbnails at specific FOBJ positions.
+	// The FOBJ offset system scrolls the correct preview into the preview box area.
 	while (!_vm->shouldQuit()) {
 		_vm->_smushVideoShouldFinish = false;
 
-		Common::String menuVideo = getRandomMenuVideo();
-		debug("Rebel2: Playing chapter select background: %s", menuVideo.c_str());
+		debug("Rebel2: Playing chapter select background: OPEN/O_LEVEL.SAN");
 
-		// Set video flags for menu mode
+		// Flags: 0x20 (overlay drawing). No 0x08 (preserve) — we want a black
+		// background. O_LEVEL.SAN has no full-screen background FOBJ; the visible
+		// screen area stays black, and preview thumbnails render at X=230 via offset.
 		splayer->setCurVideoFlags(0x20);
 
-		// Play the menu video as chapter selection background
-		splayer->play(menuVideo.c_str(), 12);
+		// Play O_LEVEL.SAN — preview thumbnails are rendered by FOBJ offset
+		splayer->play("OPEN/O_LEVEL.SAN", 12);
 
 		if (_vm->shouldQuit()) {
 			_menuInputActive = false;
@@ -7439,7 +7468,9 @@ int InsaneRebel2::processChapterSelectInput() {
 				if (_chapterSelection < 0) {
 					_chapterSelection = _chapterItemCount - 1;
 				}
-				debug("ChapterSelect: Selection changed to %d (UP)", _chapterSelection);
+				// Update preview offset (FUN_00425170: Y = selected * -50 + 75)
+				_previewOffsetY = _chapterSelection * -50 + 75;
+				debug("ChapterSelect: Selection changed to %d (UP) offsetY=%d", _chapterSelection, _previewOffsetY);
 				break;
 
 			case Common::KEYCODE_DOWN:
@@ -7448,7 +7479,9 @@ int InsaneRebel2::processChapterSelectInput() {
 				if (_chapterSelection >= _chapterItemCount) {
 					_chapterSelection = 0;
 				}
-				debug("ChapterSelect: Selection changed to %d (DOWN)", _chapterSelection);
+				// Update preview offset (FUN_00425170: Y = selected * -50 + 75)
+				_previewOffsetY = _chapterSelection * -50 + 75;
+				debug("ChapterSelect: Selection changed to %d (DOWN) offsetY=%d", _chapterSelection, _previewOffsetY);
 				break;
 
 			case Common::KEYCODE_RETURN:
@@ -7486,19 +7519,28 @@ int InsaneRebel2::processChapterSelectInput() {
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
+			// Click confirms the current selection (original: DAT_0047a7e4 & 1)
+			if (_chapterSelection >= 0 && _chapterSelection < _chapterItemCount) {
+				result = _chapterSelection;
+				debug("ChapterSelect: Item %d confirmed (CLICK)", _chapterSelection);
+			}
+			break;
+
+		case Common::EVENT_MOUSEMOVE:
 			{
-				// Mouse click - check if clicking on a menu item
-				// From FUN_0041F5AE (low-res, left-aligned):
-				// Item Y = 17 * -5 + i * 10 + 104 = 19 + i * 10
-				int baseY = _chapterItemCount * -5 + 0x68;  // = 19
+				// Mouse hover changes highlight (original FUN_0041f5ae mouse mode).
+				// Item Y = numItems * -5 + i * 10 + 0x68
+				int baseY = _chapterItemCount * -5 + 0x68;
 				int mouseY = event.mouse.y;
 
 				for (int i = 0; i < _chapterItemCount; i++) {
 					int itemY = baseY + i * 10;
 					if (mouseY >= itemY - 4 && mouseY < itemY + 6) {
-						_chapterSelection = i;
-						result = i;
-						debug("ChapterSelect: Item %d clicked at Y=%d", i, mouseY);
+						if (i != _chapterSelection) {
+							_chapterSelection = i;
+							_previewOffsetY = _chapterSelection * -50 + 75;
+							debug(5, "ChapterSelect: Hover changed to %d", _chapterSelection);
+						}
 						break;
 					}
 				}
@@ -7741,11 +7783,15 @@ void InsaneRebel2::drawChapterInfoLine(byte *renderBitmap, int pitch, int width,
 void InsaneRebel2::drawChapterSelectOverlay(byte *renderBitmap, int pitch, int width, int height) {
 	// Emulates FUN_00415CF8 rendering via shared drawMenuItems(leftAligned=true)
 	//
-	// Menu structure (18 entries, 17 selectable):
-	//   items[0]     = title = TRS 60 (locked chapter 0 header, contains ^f02 for TITLFONT)
-	//   items[1..16] = chapters 1-16 = TRS 41-56 (unlocked) or TRS 61-76 (locked)
-	//   items[17]    = "RETURN TO PILOTS" = TRS 77
+	// GAME.TRS chapter selection strings:
+	//   TRS 40     = "^f02Chapters" (title)
+	//   TRS 41-56  = unlocked chapter names (e.g. "^f01^c244Chapter 1 - The Dreighton Triangle")
+	//   TRS 57     = "^f01^c240RETURN TO PILOTS"
+	//   TRS 60     = "^f02Chapters" (title, locked section duplicate)
+	//   TRS 61-76  = locked chapter names (e.g. "^f01^c244Chapter 1 -")
+	//   TRS 77     = "^f01^c240RETURN TO PILOTS" (locked section duplicate)
 	//
+	// Menu array: items[0]=title, items[1..16]=chapters, items[17]=RETURN TO PILOTS
 	// FUN_0041f5ae(0, &DAT_004577a8, 0x11, 1): param_3=17, param_4=1 (left-aligned)
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
@@ -7754,9 +7800,9 @@ void InsaneRebel2::drawChapterSelectOverlay(byte *renderBitmap, int pitch, int w
 	// Build items array matching original DAT_004577a8 layout
 	const char *items[18];
 
-	// items[0] = title (always locked version = TRS 60, contains "^f02CHAPTERS")
-	items[0] = splayer->getString(60);
-	if (!items[0] || !items[0][0]) items[0] = "^f02CHAPTERS";
+	// items[0] = title = TRS 40 ("^f02Chapters")
+	items[0] = splayer->getString(40);
+	if (!items[0] || !items[0][0]) items[0] = "^f02Chapters";
 
 	// items[1..16] = chapters, using unlocked (TRS 41-56) or locked (TRS 61-76) strings
 	for (int i = 1; i <= 16; i++) {
@@ -7766,20 +7812,16 @@ void InsaneRebel2::drawChapterSelectOverlay(byte *renderBitmap, int pitch, int w
 		if (!items[i] || !items[i][0]) items[i] = "";
 	}
 
-	// items[17] = "RETURN TO PILOTS" (always locked version = TRS 77)
-	items[17] = splayer->getString(77);
-	if (!items[17] || !items[17][0]) items[17] = "RETURN TO PILOTS";
+	// items[17] = "RETURN TO PILOTS" = TRS 57 ("^f01^c240RETURN TO PILOTS")
+	items[17] = splayer->getString(57);
+	if (!items[17] || !items[17][0]) items[17] = "^f01^c240RETURN TO PILOTS";
 
 	// Render menu using shared renderer with left-aligned mode
 	drawMenuItems(renderBitmap, pitch, width, height, items, 17, _chapterSelection, true);
 
-	// Draw preview box on the right side (FUN_004292d0 calls at lines 128-133)
+	// Draw preview box border on the right side (FUN_004292d0 calls at lines 128-133)
+	// The actual preview image is rendered by O_LEVEL.SAN FOBJ via the offset system
 	drawPreviewBox(renderBitmap, pitch, width, height);
-
-	// Draw preview thumbnail for chapters 0-15 (not RETURN TO PILOTS)
-	if (_chapterSelection >= 0 && _chapterSelection < 16) {
-		drawPreviewThumbnail(renderBitmap, pitch, width, height, _chapterSelection);
-	}
 
 	// Draw score/info line at bottom
 	drawChapterInfoLine(renderBitmap, pitch, width, height);
