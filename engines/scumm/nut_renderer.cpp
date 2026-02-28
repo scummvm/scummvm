@@ -422,14 +422,20 @@ int NutRenderer::drawCharV7(byte *buffer, Common::Rect &clipRect, int x, int y, 
 	char color = (col != -1) ? col : 1;
 
 	if (_vm->_game.id == GID_REBEL2) {
-		// RA2 codec 44 fonts use pixel values 1-4 as body/gradient.
-		// The AHDR palette indices don't match the SMUSH video palette,
-		// so all non-transparent pixels get the caller's text color.
+		// RA2 codec 44 font rendering, matching the original behavior:
+		//   - Pixel value 1 → remapped to the caller's text color
+		//   - Other non-transparent values → used as-is (palette indices)
+		// The font's pixel layout: value 4 = black outline (38% of pixels),
+		// value 1 = body (11%, remapped to color), value 3 = gray AA (2%).
+		// The SMUSH video palette reserves indices 0-4 for text rendering:
+		//   0=(0,0,0), 1=(255,255,255), 2=(188,188,188), 3=(128,128,128), 4=(0,0,0).
 		for (int j = minY; j < height; j++) {
 			for (int i = minX; i < width; i++) {
 				int8 value = *src++;
-				if (value != _chars[chr].transparency)
+				if (value == 1)
 					dst[i] = color;
+				else if (value != _chars[chr].transparency)
+					dst[i] = value;
 			}
 			src += clipWdth;
 			dst += pitch;
