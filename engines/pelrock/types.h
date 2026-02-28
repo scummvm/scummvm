@@ -163,7 +163,7 @@ struct ActionPopupState {
 
 struct InventoryOverlayState {
 	bool isActive = false;
-	int page = 0;
+	int invStartingPos = 0;
 	int flashingIconIndex = -1;
 	Common::Rect inventorySelectionArea = Common::Rect(0, 340, 640, 400);
 	Common::Rect ballonInventoryPath = Common::Rect(0, 0, kBalloonWidth, kBalloonHeight);

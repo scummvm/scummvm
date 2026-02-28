@@ -546,11 +546,17 @@ void PelrockEngine::checkMouse() {
 		} else if (_actionPopupState.isAlfredUnder && actionClicked != NO_ACTION) {
 			debug("Using item on Alfred");
 			useOnAlfred(_state->selectedInventoryItem);
+		} else if (_inventoryOverlayState.isActive && _inventoryOverlayState.posInInventorySelectionArea(_events->_releaseX, _events->_releaseY)) {
+			int item = checkMouseClickInventoryOverlay(_events->_releaseX, _events->_releaseY);
+			_state->selectedInventoryItem = item;
+			walkAndAction(_currentHotspot, ITEM);
 		} else {
 			// Released outside popup - just close it
 			_queuedAction = QueuedAction{NO_ACTION, -1, false, false};
 			_currentHotspot = nullptr;
 		}
+
+
 	} else if (_events->_leftMouseClicked) {
 		// Regular click (not during popup mode)
 		checkMouseClick(_events->_mouseClickX, _events->_mouseClickY);
@@ -1523,6 +1529,7 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 	// moving mouse over action area outside of the item closes the inventoryoverlay
 	if (actionArea.contains(_events->_mouseX, _events->_mouseY)) {
 		_inventoryOverlayState.isActive = icon == ITEM;
+		_inventoryOverlayState.flashingIconIndex = -1;
 	}
 
 	if(_inventoryOverlayState.isActive) {
@@ -1608,7 +1615,7 @@ void PelrockEngine::pickupIconFlash() {
 void PelrockEngine::showInventoryOverlay() {
 	_graphics->showOverlay(60, _compositeBuffer);
 	uint invSize = _state->inventoryItems.size();
-	int firstItem = _inventoryOverlayState.page * kInventoryPageSize;
+	int firstItem = _inventoryOverlayState.invStartingPos * kInventoryPageSize;
 
 	for (int i = firstItem; i < invSize && i < firstItem + kInventoryPageSize; i++) {
 		Common::Point p = getPositionInOverlayForIndex(i - firstItem);
@@ -1618,26 +1625,28 @@ void PelrockEngine::showInventoryOverlay() {
 		drawSpriteToBuffer(_compositeBuffer, 640, _res->getIconForObject(_state->inventoryItems[i]).iconData, p.x, p.y, 60, 60, 1);
 	}
 
-	drawSpriteToBuffer(_compositeBuffer, 640, _inventoryOverlayState.arrows[0], 0, 340, 20, 60, 255);
-	drawSpriteToBuffer(_compositeBuffer, 640, _inventoryOverlayState.arrows[1], 620, 340, 20, 60, 255);
+	//draw arrows if there are more items to show in either direction
+	if(_inventoryOverlayState.invStartingPos > 0) {
+		 drawSpriteToBuffer(_compositeBuffer, 640, _inventoryOverlayState.arrows[0], 0, 340, 20, 60, 255);
+	}
+	if((firstItem + kInventoryPageSize) < invSize) {
+		drawSpriteToBuffer(_compositeBuffer, 640, _inventoryOverlayState.arrows[1], 620, 340, 20, 60, 255);
+	}
+	// drawSpriteToBuffer(_compositeBuffer, 640, _inventoryOverlayState.arrows[0], 0, 340, 20, 60, 255);
 }
 
 void PelrockEngine::checkMouseOverInventoryOverlay(int x, int y) {
-
 	if(x < 20) {
-		// if(_inventoryOverlayState.page > 0) {
-		// 	_inventoryOverlayState.page--;
-		// }
-		debug("left arrow of inventory overlay");
+		if(_inventoryOverlayState.invStartingPos > 0 && _chrono->getFrameCount() % 2 == 0) {
+			_inventoryOverlayState.invStartingPos--;
+		}
 	} else if(x >= 620) {
-		// uint maxPage = (_state->inventoryItems.size() - 1) / kInventoryPageSize;
-		// if(_inventoryOverlayState.page < maxPage) {
-		// 	_inventoryOverlayState.page++;
-		// }
-		debug("right arrow of inventory overlay");
+		if(_inventoryOverlayState.invStartingPos < (_state->inventoryItems.size() / kInventoryPageSize) && _chrono->getFrameCount() % 2 == 0) {
+			_inventoryOverlayState.invStartingPos++;
+		}
 	} else {
 		// mouse hover over inventory item, laid out horizontally, y coordinate is not relevant for determining which item is selected
-		int index = (x - 20) / 60 + (_inventoryOverlayState.page * kInventoryPageSize);
+		int index = (x - 20) / 60 + (_inventoryOverlayState.invStartingPos * kInventoryPageSize);
 		if(index < _state->inventoryItems.size()) {
 			debug("hovering over inventory item %d at index %d", _state->inventoryItems[index], index);
 			// _state->selectedInventoryItem = index;
@@ -1647,6 +1656,18 @@ void PelrockEngine::checkMouseOverInventoryOverlay(int x, int y) {
 			// _state->selectedInventoryItem = -1;
 			_inventoryOverlayState.flashingIconIndex = -1;
 		}
+	}
+}
+
+int PelrockEngine::checkMouseClickInventoryOverlay(int x, int y) {
+	if(x < 20) {
+		return -1;
+	} else if(x >= 620) {
+		return -1;
+	} else {
+		// mouse hover over inventory item, laid out horizontally, y coordinate is not relevant for determining which item is selected
+		int index = (x - 20) / 60 + (_inventoryOverlayState.invStartingPos * kInventoryPageSize);
+		return _state->inventoryItems[index];
 	}
 }
 
