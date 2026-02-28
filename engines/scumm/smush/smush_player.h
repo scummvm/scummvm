@@ -25,6 +25,7 @@
 #include "common/util.h"
 #include "common/list.h"
 #include "common/rect.h"
+#include "scumm/charset_v7.h"
 
 namespace Audio {
 class SoundHandle;
@@ -289,8 +290,29 @@ private:
 	void handleIACT(int32 subSize, Common::SeekableReadStream &);
 	void handleTextResource(uint32 subType, int32 subSize, Common::SeekableReadStream &);
 	void handleDeltaPalette(int32 subSize, Common::SeekableReadStream &);
-	void handleLoad(int32 subSize, Common::SeekableReadStream &);
+	void handleLoad(int32 subSize, Common::SeekableReadStream &);  // RA2 only (impl in smush_player_ra2.cpp)
 	void readPalette(byte *, Common::SeekableReadStream &);
+
+	// RA2-specific methods (implemented in smush_player_ra2.cpp)
+	bool isRA2() const;
+	void ra2InitFields();
+	void ra2DestroyFields();
+	void ra2InitVideo();
+	void ra2ReleaseVideo();
+	void ra2HandleFetch(Common::SeekableReadStream &b);
+	void ra2HandleTextResource(const char *str, int fontId, int color,
+							   int pos_x, int pos_y, int left, int top,
+							   int width, int height, TextStyleFlags flg);
+	void ra2SelectFrameBuffer(int width, int height);
+	void ra2AdjustFrameCoords(int &left, int &top, int &width, int &height, int pitch);
+	bool ra2DecodeCodec(int codec, const uint8 *src, int left, int top,
+						int width, int height, int pitch, int dataSize);
+	void ra2StoreFobjData(int codec, const byte *data, int32 dataSize,
+						  int left, int top, int width, int height);
+	void ra2ResetDeltaPalette();
+	SmushFont *ra2GetFont(int font);
+	void ra2ParseNextFrame();
+	void ra2FixupAnimHeader();
 
 	// LOAD chunk streaming buffer (RA2 - embedded resource data)
 	byte *_loadBuffer;        // Accumulated LOAD data

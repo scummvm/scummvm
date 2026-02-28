@@ -144,8 +144,10 @@ MODULE_OBJS += \
 	smush/codec20.o \
 	smush/codec37.o \
 	smush/codec47.o \
+	smush/codec_ra2.o \
 	smush/smush_multi_font.o \
-	smush/smush_player.o
+	smush/smush_player.o \
+	smush/smush_player_ra2.o
 
 ifdef USE_ARM_SMUSH_ASM
 MODULE_OBJS += \
