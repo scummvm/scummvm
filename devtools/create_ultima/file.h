@@ -100,6 +100,11 @@ public:
 		fclose(_file);
 	}
 
+	WriteFile(const WriteFile &) = delete;
+	WriteFile(WriteFile &&) = delete;
+	WriteFile &operator=(const WriteFile &) = delete;
+	WriteFile &operator=(WriteFile &&) = delete;
+
 	void writeByte(byte val) {
 		fwrite(&val, 1, 1, _file);
 	}
