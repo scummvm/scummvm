@@ -152,6 +152,19 @@ private:
 	byte *_specialBuffer;
 	int _specialBufferSize;
 
+	// RA2: Raw FOBJ data stored by STOR chunk (matching original DAT_00482c04).
+	// The original stores raw FOBJ chunk data and re-decodes it on FTCH with
+	// current FOBJ offsets. This is essential for O_LEVEL.SAN where the stored
+	// FOBJ is the 80x800 preview strip at X=320, and FTCH must re-render it
+	// at the current scroll offset each frame.
+	byte *_storedFobjData;
+	int32 _storedFobjDataSize;
+	int _storedFobjCodec;
+	int _storedFobjLeft;
+	int _storedFobjTop;
+	int _storedFobjWidth;
+	int _storedFobjHeight;
+
 	Common::String _seekFile;
 	uint32 _startFrame;
 	uint32 _startTime;

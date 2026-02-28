@@ -257,6 +257,13 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 	_frameBuffer = nullptr;
 	_specialBuffer = nullptr;
 	_specialBufferSize = 0;
+	_storedFobjData = nullptr;
+	_storedFobjDataSize = 0;
+	_storedFobjCodec = 0;
+	_storedFobjLeft = 0;
+	_storedFobjTop = 0;
+	_storedFobjWidth = 0;
+	_storedFobjHeight = 0;
 
 	_seekPos = -1;
 
@@ -328,6 +335,8 @@ SmushPlayer::~SmushPlayer() {
 	_frameBuffer = nullptr;
 	free(_specialBuffer);
 	_specialBuffer = nullptr;
+	free(_storedFobjData);
+	_storedFobjData = nullptr;
 	free(_loadBuffer);
 	_loadBuffer = nullptr;
 }
@@ -340,11 +349,27 @@ void SmushPlayer::init(int32 speed) {
 	_endOfFile = false;
 	_storeFrame = false;
 
+	// Reset FOBJ offsets between videos. These are set per-video by
+	// procPreRendering (chapter select preview scrolling) or IACT opcode 6
+	// (corridor overlay positioning). Without this, offsets from O_LEVEL.SAN
+	// would persist and shift FOBJs in subsequent videos → buffer overflows.
+	_fobjOffsetX = 0;
+	_fobjOffsetY = 0;
+
 	_vm->_smushVideoShouldFinish = false;
 	_vm->_smushActive = true;
 
 	_vm->setDirtyColors(0, 255);
 	_dst = vs->getPixels(0, 0);
+
+	// For RA2: Re-push the SMUSH palette to the system. Videos like O_LEVEL.SAN
+	// have no NPAL chunk and inherit the palette from the previous video. Since
+	// play() resets _palDirtyMin/Max, the palette would never be pushed otherwise.
+	// This is safe for videos WITH NPAL too — the NPAL handler immediately
+	// overwrites _pal and re-marks dirty.
+	if (_vm->_game.id == GID_REBEL2) {
+		setDirtyColors(0, 255);
+	}
 
 	// For Rebel Assault 2, handle background preservation between videos:
 	// - Cinematic videos (flags 0x20) clear the buffer for a fresh start
@@ -404,6 +429,10 @@ void SmushPlayer::release() {
 	free(_specialBuffer);
 	_specialBuffer = nullptr;
 
+	free(_storedFobjData);
+	_storedFobjData = nullptr;
+	_storedFobjDataSize = 0;
+
 	// For Rebel Assault 2, preserve _frameBuffer across videos so that
 	// gameplay videos (which have no background FOBJ) can use the stored
 	// background from the previous BEG cinematic video.
@@ -462,6 +491,17 @@ void SmushPlayer::handleFetch(int32 subSize, Common::SeekableReadStream &b) {
 		}
 	}
 
+	// RA2: Re-decode stored FOBJ data with current offsets (matching original FUN_004246d0).
+	// The stored FOBJ's original position is combined with the current _fobjOffsetX/Y,
+	// so scrolling the chapter preview works correctly on each FTCH.
+	if (_vm->_game.id == GID_REBEL2 && _storedFobjData != nullptr) {
+		decodeFrameObject(_storedFobjCodec, _storedFobjData,
+			_storedFobjLeft, _storedFobjTop,
+			_storedFobjWidth, _storedFobjHeight,
+			_storedFobjDataSize);
+		return;
+	}
+
 	if (_frameBuffer != nullptr) {
 		memcpy(_dst, _frameBuffer, _width * _height);
 	}
@@ -512,9 +552,9 @@ void SmushPlayer::handleLoad(int32 subSize, Common::SeekableReadStream &b) {
 		_totalLoadChunks = totalChunks;
 
 		// Allocate/reallocate buffer if needed
-		// Estimate buffer size: typical LOAD data per chunk is ~350 bytes
-		// Total expected: totalChunks * 400 bytes (with margin)
-		int32 estimatedSize = totalChunks * 400;
+		// LOAD data per chunk varies (up to ~500 bytes observed).
+		// Allocate generously to avoid overflow.
+		int32 estimatedSize = totalChunks * 600;
 		if (_loadBuffer == nullptr || _loadBufferSize < estimatedSize) {
 			free(_loadBuffer);
 			_loadBufferSize = estimatedSize;
@@ -1160,7 +1200,9 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 		error("Invalid codec for frame object : %d", codec);
 	}
 
-	if (_storeFrame) {
+	// For non-RA2 games, save rendered bitmap when STOR is pending.
+	// RA2 handles STOR in handleFrameObject by saving raw FOBJ data instead.
+	if (_storeFrame && _vm->_game.id != GID_REBEL2) {
 		if (_frameBuffer == nullptr) {
 			_frameBuffer = (byte *)malloc(_width * _height);
 		}
@@ -1223,6 +1265,24 @@ void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b
 	byte *chunk_buffer = (byte *)malloc(chunk_size);
 	assert(chunk_buffer);
 	b.read(chunk_buffer, chunk_size);
+
+	// RA2: When STOR is pending, save raw FOBJ data for later re-decoding by FTCH.
+	// The original (FUN_00423A50 bVar5) stores the next FOBJ's raw chunk data in
+	// DAT_00482c04. FTCH then re-renders from this stored data with current FOBJ
+	// offsets. This is critical for O_LEVEL.SAN where the stored FOBJ is the 80x800
+	// preview strip, and FTCH must re-render it at the current scroll offset.
+	if (_storeFrame && _vm->_game.id == GID_REBEL2) {
+		free(_storedFobjData);
+		_storedFobjData = (byte *)malloc(chunk_size);
+		memcpy(_storedFobjData, chunk_buffer, chunk_size);
+		_storedFobjDataSize = chunk_size;
+		_storedFobjCodec = codec;
+		_storedFobjLeft = left;
+		_storedFobjTop = top;
+		_storedFobjWidth = width;
+		_storedFobjHeight = height;
+		_storeFrame = false;
+	}
 
 	decodeFrameObject(codec, chunk_buffer, left, top, width, height, chunk_size);
 
@@ -1309,6 +1369,13 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 			break;
 		case MKTAG('L','O','A','D'):
 			handleLoad(subSize, b);
+			break;
+		case MKTAG('G','O','S','T'):
+			// GOST = ghost sprite overlay. Re-renders previous FOBJ data at a new
+			// position with priority/transparency flags. Data: 2-byte priority type
+			// (0/1/2 → 0x2000/0x4000/0x6000), 2-byte x, 2-byte y.
+			// TODO: Implement proper ghost rendering by saving previous FOBJ data
+			// and re-rendering it with modified coordinates and priority flags.
 			break;
 		default:
 			error("Unknown frame subChunk found : %s, %d", tag2str(subType), subSize);
