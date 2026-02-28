@@ -40,7 +40,6 @@
 #include "scumm/smush/codec37.h"
 #include "scumm/smush/codec47.h"
 #include "scumm/smush/smush_font.h"
-#include "scumm/smush/smush_multi_font.h"
 #include "scumm/smush/smush_player.h"
 
 #include "scumm/insane/insane.h"
@@ -257,35 +256,15 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 	_frameBuffer = nullptr;
 	_specialBuffer = nullptr;
 	_specialBufferSize = 0;
-	_storedFobjData = nullptr;
-	_storedFobjDataSize = 0;
-	_storedFobjCodec = 0;
-	_storedFobjLeft = 0;
-	_storedFobjTop = 0;
-	_storedFobjWidth = 0;
-	_storedFobjHeight = 0;
 
 	_seekPos = -1;
 
-	_skipNext = false;
-	_ra2FastForwarding = false;
-	_fobjOffsetX = 0;
-	_fobjOffsetY = 0;
 	_dst = nullptr;
-	_storeFrame = false;
 	_compressedFileMode = false;
 	_width = 0;
 	_height = 0;
 
-	// LOAD chunk streaming buffer (RA2)
-	_loadBuffer = nullptr;
-	_loadBufferSize = 0;
-	_loadBufferOffset = 0;
-	_loadReadOffset = 8;  // Original starts reading at offset 8 (skips header)
-	_lastLoadChunkIdx = -1;
-	_totalLoadChunks = 0;
-	_scrollX = 0;
-	_scrollY = 0;
+	ra2InitFields();
 	_IACTpos = 0;
 	_speed = -1;
 	_insanity = false;
@@ -314,11 +293,9 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 	_smushAudioInitialized = false;
 	_smushAudioCallbackEnabled = false;
 
-	// Rebel Assault 2 doesn't use iMUSE for audio, so _imuseDigital may be null
 	if (_imuseDigital) {
 		initAudio(_imuseDigital->getSampleRate(), 200000);
 	} else {
-		// RA2 audio is 11025 Hz
 		initAudio(11025, 200000);
 	}
 }
@@ -326,19 +303,13 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 SmushPlayer::~SmushPlayer() {
 	delete _IACTchannel;
 	delete _compressedFileSoundHandle;
-	delete _multiFont;
-	_multiFont = nullptr;
+	ra2DestroyFields();
 	terminateAudio();
 
-	// Free any preserved frame buffer (RA2 preserves this across videos)
 	free(_frameBuffer);
 	_frameBuffer = nullptr;
 	free(_specialBuffer);
 	_specialBuffer = nullptr;
-	free(_storedFobjData);
-	_storedFobjData = nullptr;
-	free(_loadBuffer);
-	_loadBuffer = nullptr;
 }
 
 void SmushPlayer::init(int32 speed) {
@@ -348,11 +319,6 @@ void SmushPlayer::init(int32 speed) {
 	_speed = speed;
 	_endOfFile = false;
 	_storeFrame = false;
-
-	// Reset FOBJ offsets between videos. These are set per-video by
-	// procPreRendering (chapter select preview scrolling) or IACT opcode 6
-	// (corridor overlay positioning). Without this, offsets from O_LEVEL.SAN
-	// would persist and shift FOBJs in subsequent videos → buffer overflows.
 	_fobjOffsetX = 0;
 	_fobjOffsetY = 0;
 
@@ -362,39 +328,8 @@ void SmushPlayer::init(int32 speed) {
 	_vm->setDirtyColors(0, 255);
 	_dst = vs->getPixels(0, 0);
 
-	// For RA2: Re-push the SMUSH palette to the system. Videos like O_LEVEL.SAN
-	// have no NPAL chunk and inherit the palette from the previous video. Since
-	// play() resets _palDirtyMin/Max, the palette would never be pushed otherwise.
-	// This is safe for videos WITH NPAL too — the NPAL handler immediately
-	// overwrites _pal and re-marks dirty.
-	if (_vm->_game.id == GID_REBEL2) {
-		setDirtyColors(0, 255);
-	}
-
-	// For Rebel Assault 2, handle background preservation between videos:
-	// - Cinematic videos (flags 0x20) clear the buffer for a fresh start
-	// - Gameplay videos (flags 0x28) preserve the existing screen content
-	//
-	// The virtual screen (_dst = vs->getPixels) persists between videos, so
-	// when a gameplay video starts, _dst already contains the last frame of
-	// the previous cinematic video - which is exactly what we want.
-	// We do NOT restore from _frameBuffer because STOR captures frame 0
-	// (often a black initialization frame), not the last frame.
-	if (_vm->_game.id == GID_REBEL2 && _dst != nullptr) {
-		if ((_curVideoFlags & 0x08) == 0) {
-			// Cinematic mode (flags 0x20) - clear buffer for fresh video
-			memset(_dst, 0, vs->w * vs->h);
-		} else {
-			// Gameplay mode (flags 0x28) - do nothing, preserve existing screen content
-			// Count non-zero pixels to verify there's actual content
-			int nonZero = 0;
-			for (int i = 0; i < vs->w * vs->h; i++) {
-				if (_dst[i] != 0) nonZero++;
-			}
-			debug("SmushPlayer::init: Preserving screen for gameplay video (%dx%d, %d%% non-zero)",
-				vs->w, vs->h, (nonZero * 100) / (vs->w * vs->h));
-		}
-	}
+	if (isRA2())
+		ra2InitVideo();
 
 	// HACK HACK HACK: This is an *evil* trick, beware!
 	// We do this to fix bug #1792. A proper solution would change all the
@@ -429,15 +364,9 @@ void SmushPlayer::release() {
 	free(_specialBuffer);
 	_specialBuffer = nullptr;
 
-	free(_storedFobjData);
-	_storedFobjData = nullptr;
-	_storedFobjDataSize = 0;
-
-	// For Rebel Assault 2, preserve _frameBuffer across videos so that
-	// gameplay videos (which have no background FOBJ) can use the stored
-	// background from the previous BEG cinematic video.
-	// The _frameBuffer will be freed in the destructor or reused by the next video.
-	if (_vm->_game.id != GID_REBEL2) {
+	if (isRA2()) {
+		ra2ReleaseVideo();
+	} else {
 		free(_frameBuffer);
 		_frameBuffer = nullptr;
 	}
@@ -468,37 +397,8 @@ void SmushPlayer::handleFetch(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFetch()");
 	assert(subSize >= 6);
 
-	// Read FTCH data: 2 unknown + 2 X offset + 2 Y offset
-	// Original (FUN_00423A50 lines 91-103): reads X/Y from chunk data and
-	// re-renders stored FOBJ at position (X + param_3 + DAT_00482c1c, Y + param_4 + DAT_00482c20)
-	int16 ftchUnknown = b.readSint16LE();
-	int16 ftchX = b.readSint16LE();
-	int16 ftchY = b.readSint16LE();
-
-	debug("SmushPlayer::handleFetch: frame=%d unknown=%d x=%d y=%d",
-		_frame, ftchUnknown, ftchX, ftchY);
-
-	// For RA2 Handler 25, skip FTCH because the frame buffer only contains the
-	// par4=5 base background without the overlays (par4=4, 6, 7) that were drawn
-	// immediately in frame 0. Restoring would erase those overlays and make
-	// enemies invisible since they draw on top of the erased areas.
-	if (_vm->_game.id == GID_REBEL2 && _insane != nullptr) {
-		InsaneRebel2 *rebel2 = static_cast<InsaneRebel2 *>(_insane);
-		int handler = rebel2->getHandler();
-		if (handler == 25) {
-			debug("SmushPlayer::handleFetch: Skipping FTCH for Handler 25 - preserving overlays");
-			return;
-		}
-	}
-
-	// RA2: Re-decode stored FOBJ data with current offsets (matching original FUN_004246d0).
-	// The stored FOBJ's original position is combined with the current _fobjOffsetX/Y,
-	// so scrolling the chapter preview works correctly on each FTCH.
-	if (_vm->_game.id == GID_REBEL2 && _storedFobjData != nullptr) {
-		decodeFrameObject(_storedFobjCodec, _storedFobjData,
-			_storedFobjLeft, _storedFobjTop,
-			_storedFobjWidth, _storedFobjHeight,
-			_storedFobjDataSize);
+	if (isRA2()) {
+		ra2HandleFetch(b);
 		return;
 	}
 
@@ -507,124 +407,23 @@ void SmushPlayer::handleFetch(int32 subSize, Common::SeekableReadStream &b) {
 	}
 }
 
-/**
- * Handle LOAD chunk for Rebel Assault 2
- *
- * LOAD chunks stream embedded resource data (likely audio for streaming playback)
- * across multiple frames. The data is accumulated in a buffer and consumed by
- * the audio system.
- *
- * Chunk format (from FUN_00424450 in original):
- *   Offset 0 (2 bytes): totalChunks - Total number of LOAD chunks in sequence
- *   Offset 2 (2 bytes): chunkIndex - Current chunk index (0-based)
- *   Offset 4 (6 bytes): unknown/padding
- *   Offset 10+: Actual data payload
- *
- * Processing:
- *   - First chunk (index 0) resets the buffer
- *   - Chunks must arrive sequentially (lastIndex + 1 == currentIndex)
- *   - Data is accumulated until all chunks are received
- *   - Consumer reads from buffer via getLoadData() (DAT_00482c18 read offset)
- */
-void SmushPlayer::handleLoad(int32 subSize, Common::SeekableReadStream &b) {
-	debugC(DEBUG_SMUSH, "SmushPlayer::handleLoad()");
-
-	if (subSize < 10) {
-		warning("SmushPlayer::handleLoad: chunk too small (%d bytes)", subSize);
-		return;
-	}
-
-	// Read LOAD header
-	int16 totalChunks = b.readUint16LE();
-	int16 chunkIndex = b.readUint16LE();
-	b.skip(6);  // Unknown/padding
-
-	int32 dataSize = subSize - 10;
-
-	debugC(DEBUG_SMUSH, "SmushPlayer::handleLoad: chunk %d/%d, dataSize=%d, bufferOffset=%d",
-		chunkIndex, totalChunks, dataSize, _loadBufferOffset);
-
-	// First chunk in sequence - reset buffer state
-	if (chunkIndex == 0) {
-		_loadBufferOffset = 0;
-		_loadReadOffset = 8;  // Original skips 8 bytes at start (header in accumulated data?)
-		_lastLoadChunkIdx = -1;
-		_totalLoadChunks = totalChunks;
-
-		// Allocate/reallocate buffer if needed
-		// LOAD data per chunk varies (up to ~500 bytes observed).
-		// Allocate generously to avoid overflow.
-		int32 estimatedSize = totalChunks * 600;
-		if (_loadBuffer == nullptr || _loadBufferSize < estimatedSize) {
-			free(_loadBuffer);
-			_loadBufferSize = estimatedSize;
-			_loadBuffer = (byte *)malloc(_loadBufferSize);
-			if (_loadBuffer == nullptr) {
-				warning("SmushPlayer::handleLoad: Failed to allocate %d bytes for LOAD buffer",
-					_loadBufferSize);
-				_loadBufferSize = 0;
-				return;
-			}
-			debugC(DEBUG_SMUSH, "SmushPlayer::handleLoad: Allocated %d bytes for LOAD buffer",
-				_loadBufferSize);
-		}
-	}
-
-	// Check sequential order (original: DAT_00482c3c - sVar1 == -1)
-	if (_lastLoadChunkIdx + 1 != chunkIndex) {
-		debugC(DEBUG_SMUSH, "SmushPlayer::handleLoad: Non-sequential chunk %d (expected %d), skipping",
-			chunkIndex, _lastLoadChunkIdx + 1);
-		return;
-	}
-
-	// Check buffer capacity (original: DAT_00482c14 + param_2 < DAT_00482c10)
-	if (_loadBuffer == nullptr || _loadBufferOffset + dataSize >= _loadBufferSize) {
-		warning("SmushPlayer::handleLoad: Buffer overflow - offset=%d size=%d limit=%d",
-			_loadBufferOffset, dataSize, _loadBufferSize);
-		return;
-	}
-
-	// Copy data to buffer
-	b.read(_loadBuffer + _loadBufferOffset, dataSize);
-	_loadBufferOffset += dataSize;
-	_lastLoadChunkIdx = chunkIndex;
-
-	debugC(DEBUG_SMUSH, "SmushPlayer::handleLoad: Accumulated %d bytes total", _loadBufferOffset);
-
-	// Check if sequence is complete
-	if (chunkIndex == totalChunks - 1) {
-		debugC(DEBUG_SMUSH, "SmushPlayer::handleLoad: Sequence complete - %d chunks, %d bytes total",
-			totalChunks, _loadBufferOffset);
-	}
-}
-
 void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::IACT()");
 	assert(subSize >= 8);
-
-	// Embedded SAN detection moved to InsaneRebel2::iactRebel2Scene1
-	// (previously handled here in SmushPlayer; centralized to the engine)
-
 
 	int code = b.readUint16LE();
 	int flags = b.readUint16LE();
 	int unknown = b.readSint16LE();
 	int userId = b.readUint16LE();
 
-	debug("SmushPlayer::handleIACT: code=%d flags=%d unknown=%d userId=%d subSize=%d",
+	debugC(DEBUG_SMUSH, "SmushPlayer::handleIACT: code=%d flags=%d unknown=%d userId=%d subSize=%d",
 		code, flags, unknown, userId, subSize);
 
-	// Route to procIACT for:
-	// 1. Non-audio IACT (code != 8 or flags != 46) - Full Throttle uses code=8, flags=46 for audio
-	// 2. ALL Rebel Assault 2 IACTs - RA2 uses a different IACT format where code=opcode, flags=par2
-	//    RA2 audio is handled through PSAD chunks, not IACT, so all RA2 IACTs go to procIACT
+	// Route to procIACT for non-audio IACTs and ALL RA2 IACTs
+	// (RA2 audio uses PSAD chunks, not IACT)
 	bool isAudioIACT = (code == 8) && (flags == 46);
-	bool isRA2 = (_vm->_game.id == GID_REBEL2);
 
-	if (!isAudioIACT || isRA2) {
-		debug("SmushPlayer::handleIACT: Routing to procIACT (isAudioIACT=%d, isRA2=%d)",
-			isAudioIACT, isRA2);
-		// Pass subSize - 8 as the remaining payload size (after 8-byte header)
+	if (!isAudioIACT || isRA2()) {
 		_vm->_insane->procIACT(_dst, 0, 0, 0, b, subSize - 8, 0, code, flags, unknown, userId);
 		return;
 	}
@@ -847,7 +646,7 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 	// RA2: The original game always shows subtitle text during cinematics
 	// (there is no subtitle toggle in the retail options menu). Skip
 	// this check so TRES text is always rendered.
-	if (_vm->_game.id != GID_REBEL2 && (!ConfMan.getBool("subtitles")) && ((flags & 8) == 8))
+	if (!isRA2() && (!ConfMan.getBool("subtitles")) && ((flags & 8) == 8))
 		return;
 
 	bool isCJKComi = (_vm->_game.id == GID_CMI && _vm->_useCJKMode);
@@ -915,28 +714,9 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 	// bit 7 - skip ^ codes (COMI)     0x80        (should be irrelevant for Smush, we strip these commands anyway)
 	// bit 8 - no vertical fix (COMI)  0x100       (COMI handles this in the printing method, but I haven't seen a case where it is used)
 
-	// For Rebel Assault 2, use SmushMultiFont to support inline font switching via ^fXX codes.
-	// The original game uses a linked list of fonts and switches between them mid-string.
-	// Other games (FT, DIG, CMI) only use ^f codes at the start of strings.
-	if (_vm->_game.id == GID_REBEL2) {
-		// Create multi-font renderer on first use
-		if (!_multiFont) {
-			_multiFont = new SmushMultiFont(_vm, this, true);
-		}
-		_multiFont->setDefaultFont(fontId);
-
-		debug("SmushPlayer::handleTextResource: RA2 TRES frame=%d fontId=%d color=%d flags=0x%x flg=%d pos=(%d,%d) clip=(%d,%d,%d,%d) str=\"%.40s\"",
-			  _frame, fontId, color, flags, (int)flg, pos_x, pos_y, left, top, width, height, str);
-
-		if (flg & kStyleWordWrap) {
-			Common::Rect clipRect(MAX<int>(0, left), MAX<int>(0, top), MIN<int>(left + width, _width), MIN<int>(top + height, _height));
-			_multiFont->drawStringWrap(str, _dst, clipRect, pos_x, pos_y, color, flg);
-		} else {
-			Common::Rect clipRect(0, 0, _width, _height);
-			_multiFont->drawString(str, _dst, clipRect, pos_x, pos_y, color, flg);
-		}
+	if (isRA2()) {
+		ra2HandleTextResource(str, fontId, color, pos_x, pos_y, left, top, width, height, flg);
 	} else {
-		// For other games, use single font (original behavior)
 		SmushFont *sf = getFont(fontId);
 		assert(sf != nullptr);
 
@@ -1044,9 +824,6 @@ byte *SmushPlayer::getVideoPalette() {
 
 void smushDecodeRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 void smushDecodeUncompressed(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
-void smushDecodeLineUpdate(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
-void smushDecodeSkipRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
-void smushDecodeRA2Bomp(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize);
 
 void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int top, int width, int height, int dataSize) {
 	if ((height == 242) && (width == 384)) {
@@ -1057,62 +834,8 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 			_specialBufferSize = bufSize;
 		}
 		_dst = _specialBuffer;
-	} else if (_vm->_game.id == GID_REBEL2 && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth))) {
-		// Rebel2 uses SKIP chunks to conditionally skip FOBJ frames for destroyed enemies.
-		// The SKIP chunk mechanism (via procSKIP -> _skipNext) is checked at the START
-		// of handleFrameObject(), so destroyed enemy sprites are already skipped before
-		// reaching this point. No additional skip logic needed here.
-		//
-		// Rebel2 uses a special buffer for all non-matching frames.
-		// Level 1: First frame is 424x260 (background), small sprites reuse same buffer
-		// Level 2: Uses virtual screen directly (handled below when _specialBuffer stays null
-		//          because first frames are small and don't need oversized buffer)
-		// Only allocate/expand buffer for frames LARGER than current buffer or screen
-		int bufSize = width * height;
-		if (bufSize > _vm->_screenWidth * _vm->_screenHeight) {
-			// Frame is larger than screen - need special buffer
-			if (_specialBuffer == nullptr || bufSize > _specialBufferSize) {
-				free(_specialBuffer);
-				_specialBuffer = (byte *)malloc(bufSize);
-				_specialBufferSize = bufSize;
-				_width = width;
-				_height = height;
-			}
-		}
-		// Use special buffer ONLY for oversized frames that need it.
-		// Small enemy sprites (like Level 2's 9x38 stormtroopers) should draw
-		// directly to the virtual screen, not to _specialBuffer.
-		// The special buffer is only needed when the CURRENT frame is larger than screen.
-		if (bufSize > _vm->_screenWidth * _vm->_screenHeight &&
-		    _specialBuffer != nullptr && _specialBufferSize >= bufSize) {
-			_dst = _specialBuffer;
-			debug("SmushPlayer: Using _specialBuffer for oversized FOBJ %dx%d", width, height);
-		} else {
-			// For small RA2 sprites, check if we should use _specialBuffer or virtual screen.
-			//
-			// If _specialBuffer was allocated in this video (by a larger frame like Level 1's
-			// 424x260 background), small sprites should use it too so everything composites
-			// in the same buffer.
-			//
-			// If _specialBuffer is null (no large frames in this video, like Level 2), small
-			// sprites should use the virtual screen directly.
-			//
-			// This is important because release() frees _specialBuffer at the end of each video,
-			// so a new video starts with _specialBuffer = nullptr. Without this check, small
-			// sprites in Level 2 could incorrectly use a stale _specialBuffer pointer (though
-			// release() should have freed it, init() might not reset _dst if video flags are set).
-			if (_specialBuffer == nullptr) {
-				VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
-				_dst = vs->getPixels(0, 0);
-				debug("SmushPlayer: Reset _dst to virtual screen for FOBJ %dx%d at (%d,%d) _dst=%p",
-					width, height, left, top, (void*)_dst);
-			} else {
-				// Large frame was in this video, use _specialBuffer for compositing
-				_dst = _specialBuffer;
-				debug("SmushPlayer: Using _specialBuffer for small FOBJ %dx%d (compositing with large frame)",
-					width, height);
-			}
-		}
+	} else if (isRA2() && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth))) {
+		ra2SelectFrameBuffer(width, height);
 	} else if ((height > _vm->_screenHeight) || (width > _vm->_screenWidth))
 		return;
 	// FT Insane uses smaller frames to draw overlays with moving objects
@@ -1124,10 +847,8 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	if ((height == 242) && (width == 384)) {
 		_width = width;
 		_height = height;
-	} else if (_vm->_game.id == GID_REBEL2 && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth))) {
-		// Do not update _width/_height here - preserve original video size set during
-		// buffer allocation. Small overlay sprites (e.g., 8x7) need to use the background
-		// frame's pitch (424) to be drawn at the correct position in the buffer.
+	} else if (isRA2() && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth))) {
+		// RA2: preserve _width/_height set during buffer allocation
 	} else {
 		_width = _vm->_screenWidth;
 		_height = _vm->_screenHeight;
@@ -1137,31 +858,11 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	if (_dst == _specialBuffer)
 		pitch = _width;
 
-	// RA2: Apply global FOBJ position offsets (matching original FUN_00423A50)
-	// These are set by InsaneRebel2 during IACT opcode 6 processing
-	if (_vm->_game.id == GID_REBEL2) {
-		left += _fobjOffsetX;
-		top += _fobjOffsetY;
+	if (isRA2()) {
+		ra2AdjustFrameCoords(left, top, width, height, pitch);
+		if (width <= 0 || height <= 0)
+			return;
 	}
-
-	// Bounds check: clamp FOBJ to destination buffer dimensions
-	int bufHeight = (_dst == _specialBuffer) ? _height : _vm->_screenHeight;
-	if (top < 0) {
-		height += top;
-		top = 0;
-	}
-	if (left < 0) {
-		width += left;
-		left = 0;
-	}
-	if (top + height > bufHeight) {
-		height = bufHeight - top;
-	}
-	if (left + width > pitch) {
-		width = pitch - left;
-	}
-	if (width <= 0 || height <= 0)
-		return;
 
 	switch (codec) {
 	case SMUSH_CODEC_RLE:
@@ -1181,25 +882,12 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 			_deltaGlyphsCodec->decode(_dst, src);
 		break;
 	case SMUSH_CODEC_UNCOMPRESSED:
-		// Used by Full Throttle Classic (from Remastered)
 		smushDecodeUncompressed(_dst, src, left, top, width, height, _vm->_screenWidth);
 		break;
-	case SMUSH_CODEC_LINE_UPDATE:
-	case SMUSH_CODEC_LINE_UPDATE2:
-		// RA2: Skip/copy with literal pixels (used for fonts and HUD overlays)
-		smushDecodeLineUpdate(_dst, src, left, top, width, height, pitch);
-		break;
-	case SMUSH_CODEC_SKIP_RLE:
-		// RA2: Skip/copy with embedded RLE (used for HUD frames with transparency)
-		smushDecodeSkipRLE(_dst, src, left, top, width, height, pitch);
-		break;
-	case SMUSH_CODEC_RA2_BOMP:
-		// RA2: BOMP RLE with variable header (used for small animation elements)
-		smushDecodeRA2Bomp(_dst, src, left, top, width, height, pitch, dataSize);
-		break;
 	default:
-		if (_vm->_game.id == GID_REBEL2) {
-			// Rebel Assault 2 may have other unknown codecs
+		if (isRA2() && ra2DecodeCodec(codec, src, left, top, width, height, pitch, dataSize))
+			break;
+		if (isRA2()) {
 			debugC(DEBUG_SMUSH, "SmushPlayer::decodeFrameObject: Skipping unknown codec %d (left=%d, top=%d, %dx%d)",
 				codec, left, top, width, height);
 			break;
@@ -1207,9 +895,7 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 		error("Invalid codec for frame object : %d", codec);
 	}
 
-	// For non-RA2 games, save rendered bitmap when STOR is pending.
-	// RA2 handles STOR in handleFrameObject by saving raw FOBJ data instead.
-	if (_storeFrame && _vm->_game.id != GID_REBEL2) {
+	if (_storeFrame && !isRA2()) {
 		if (_frameBuffer == nullptr) {
 			_frameBuffer = (byte *)malloc(_width * _height);
 		}
@@ -1251,7 +937,7 @@ void SmushPlayer::handleZlibFrameObject(int32 subSize, Common::SeekableReadStrea
 void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b) {
 	assert(subSize >= 14);
 	if (_skipNext) {
-		debug("SmushPlayer::handleFrameObject: SKIPPING due to _skipNext, frame=%d", _frame);
+		debugC(DEBUG_SMUSH, "SmushPlayer::handleFrameObject: SKIPPING due to _skipNext, frame=%d", _frame);
 		_skipNext = false;
 		return;
 	}
@@ -1265,7 +951,7 @@ void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b
 	b.readUint16LE();
 	b.readUint16LE();
 
-	debug("SmushPlayer::handleFrameObject: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d",
+	debugC(DEBUG_SMUSH, "SmushPlayer::handleFrameObject: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d",
 		_frame, codec, left, top, width, height, subSize - 14);
 
 	int32 chunk_size = subSize - 14;
@@ -1273,22 +959,8 @@ void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b
 	assert(chunk_buffer);
 	b.read(chunk_buffer, chunk_size);
 
-	// RA2: When STOR is pending, save raw FOBJ data for later re-decoding by FTCH.
-	// The original (FUN_00423A50 bVar5) stores the next FOBJ's raw chunk data in
-	// DAT_00482c04. FTCH then re-renders from this stored data with current FOBJ
-	// offsets. This is critical for O_LEVEL.SAN where the stored FOBJ is the 80x800
-	// preview strip, and FTCH must re-render it at the current scroll offset.
-	if (_storeFrame && _vm->_game.id == GID_REBEL2) {
-		free(_storedFobjData);
-		_storedFobjData = (byte *)malloc(chunk_size);
-		memcpy(_storedFobjData, chunk_buffer, chunk_size);
-		_storedFobjDataSize = chunk_size;
-		_storedFobjCodec = codec;
-		_storedFobjLeft = left;
-		_storedFobjTop = top;
-		_storedFobjWidth = width;
-		_storedFobjHeight = height;
-		_storeFrame = false;
+	if (_storeFrame && isRA2()) {
+		ra2StoreFobjData(codec, chunk_buffer, chunk_size, left, top, width, height);
 	}
 
 	decodeFrameObject(codec, chunk_buffer, left, top, width, height, chunk_size);
@@ -1310,19 +982,10 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 		const int32 subSize = b.readUint32BE();
 		const int32 subOffset = b.pos();
 
-		// Debug: Log all chunk types for first 25 frames
-		if (_vm->_game.id == GID_REBEL2 && _frame < 25) {
-			debug("SmushPlayer::handleFrame: frame=%d chunk=%s size=%d", _frame, tag2str(subType), subSize);
-		}
-
-		// RA2 SKIP mechanism (matching original FUN_00423A50 bVar6):
-		// When _skipNext is set, skip the NEXT chunk of ANY type (FOBJ, PSAD, SKIP, etc.)
-		// In the original, bVar6 is checked at the top of the loop before the type switch,
-		// corrupting the tag so no handler matches. This consumes exactly one chunk.
-		// Critical: this must also skip SKIP chunks to prevent SKIP→SKIP→FOBJ misalignment.
-		if (_vm->_game.id == GID_REBEL2 && _skipNext) {
+		// RA2: When _skipNext is set, skip the NEXT chunk of ANY type
+		if (isRA2() && _skipNext) {
 			_skipNext = false;
-			debug("SmushPlayer::handleFrame: SKIP consumed chunk %s frame=%d", tag2str(subType), _frame);
+			debugC(DEBUG_SMUSH, "SmushPlayer::handleFrame: SKIP consumed chunk %s frame=%d", tag2str(subType), _frame);
 			frameSize -= subSize + 8;
 			b.seek(subOffset + subSize, SEEK_SET);
 			if (subSize & 1) {
@@ -1400,15 +1063,8 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 		_vm->_insane->procPostRendering(_dst, 0, 0, 0, _frame, _nbframes-1);
 	}
 
-	// Debug: Check if updateScreen is being called
-	if (_vm->_game.id == GID_REBEL2 && _frame < 3) {
-		debug("SmushPlayer: frame=%d _width=%d _height=%d _dst=%p", _frame, _width, _height, (void*)_dst);
-	}
-
 	if (_width != 0 && _height != 0) {
 		updateScreen();
-	} else if (_vm->_game.id == GID_REBEL2 && _frame < 3) {
-		debug("SmushPlayer: SKIPPING updateScreen (width=%d height=%d)", _width, _height);
 	}
 
 	_frame++;
@@ -1416,7 +1072,6 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 
 void SmushPlayer::handleAnimHeader(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleAnimHeader()");
-	debug("SmushPlayer::handleAnimHeader: subSize=%d", subSize);
 	assert(subSize >= 0x300 + 6);
 	byte *headerContent = (byte *)malloc(subSize * sizeof(byte));
 
@@ -1447,31 +1102,17 @@ void SmushPlayer::handleAnimHeader(int32 subSize, Common::SeekableReadStream &b)
 			byte *palettePtr = &headerContent[6];
 			memcpy(_pal, palettePtr, sizeof(_pal));
 
-			// Reset XPAL delta palette state from the new base palette.
-			// Without this, stale _deltaPal/_shiftedDeltaPal values from a
-			// previous video leak into the new one, corrupting the palette
-			// when XPAL command 256 (apply deltas) is encountered.
-			for (int j = 0; j < 768; ++j) {
-				_shiftedDeltaPal[j] = _pal[j] << 7;
-			}
-			memset(_deltaPal, 0, sizeof(_deltaPal));
+			if (isRA2())
+				ra2ResetDeltaPalette();
 
 			setDirtyColors(0, 255);
 		}
 
 		_width = READ_LE_UINT16(&headerContent[4]);
 		_height = READ_LE_UINT16(&headerContent[6]);
-		debug("SmushPlayer::handleAnimHeader: nbframes=%d width=%d height=%d", _nbframes, _width, _height);
 
-		// RA2 menu videos (O_MENU*.SAN) report width/height=0 in AHDR, but they DO have
-		// FOBJ frames with full 320x200 images. The FOBJ chunks contain the correct dimensions.
-		// We set default screen dimensions here so updateScreen() gets called and the
-		// _frameBuffer allocation in handleStore/handleFetch uses correct size.
-		if (_vm->_game.id == GID_REBEL2 && _width == 0 && _height == 0) {
-			_width = _vm->_screenWidth;   // 320
-			_height = _vm->_screenHeight; // 200
-			debug("SmushPlayer::handleAnimHeader: RA2 AHDR has 0x0 dims - using screen size %dx%d", _width, _height);
-		}
+		if (isRA2())
+			ra2FixupAnimHeader();
 
 		free(headerContent);
 	}
@@ -1479,15 +1120,8 @@ void SmushPlayer::handleAnimHeader(int32 subSize, Common::SeekableReadStream &b)
 
 void SmushPlayer::setupAnim(const char *file) {
 	if (_insanity) {
-		if (_vm->_game.id == GID_REBEL2) {
-			// Rebel Assault 2 uses SYSTM/GAME.TRS for all subtitle strings
-			// The TRS file is ETRS-encoded (XOR with 0xCC)
+		if (isRA2()) {
 			_strings = getStrings(_vm, "SYSTM/GAME.TRS", true);
-			if (_strings) {
-				debugC(DEBUG_SMUSH, "SmushPlayer::setupAnim: Loaded GAME.TRS string resources successfully");
-			} else {
-				debugC(DEBUG_SMUSH, "SmushPlayer::setupAnim: Failed to load GAME.TRS!");
-			}
 		} else if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))) {
 			readString("mineroad.trs");
 		}
@@ -1518,26 +1152,8 @@ SmushFont *SmushPlayer::getFont(int font) {
 
 			_sf[font] = new SmushFont(_vm, ft_fonts[font], true);
 		}
-	} else if (_vm->_game.id == GID_REBEL2) {
-		// Rebel Assault 2 fonts:
-		// font 0: TALKFONT.NUT - main dialog/subtitle font
-		// font 1: DIHIFONT.NUT - high-res dialog font
-		// font 2: TITLFONT.NUT - title font
-		// font 3: SMALFONT.NUT - small font for HUD
-		const char *ra2_fonts[] = {
-			"SYSTM/TALKFONT.NUT",
-			"SYSTM/DIHIFONT.NUT",
-			"SYSTM/TITLFONT.NUT",
-			"SYSTM/SMALFONT.NUT"
-		};
-		int numFonts = ARRAYSIZE(ra2_fonts);
-		if (font >= 0 && font < numFonts) {
-			_sf[font] = new SmushFont(_vm, ra2_fonts[font], true);
-		} else {
-			// Fallback to font 0 for unknown font indices
-			debugC(DEBUG_SMUSH, "SmushPlayer::getFont: RA2 unknown font %d, using TALKFONT", font);
-			_sf[font] = new SmushFont(_vm, ra2_fonts[0], true);
-		}
+	} else if (isRA2()) {
+		return ra2GetFont(font);
 	} else {
 		int numFonts = (_vm->_game.id == GID_CMI && !(_vm->_game.features & GF_DEMO)) ? 5 : 4;
 		assert(font >= 0 && font < numFonts);
@@ -1627,12 +1243,8 @@ void SmushPlayer::parseNextFrame() {
 	if (_vm->_imuseDigital)
 		_vm->_imuseDigital->flushTracks();
 
-	// Rebel Assault 2 audio processing - call processDispatches directly since no iMUSE
-	if (!_imuseDigital && _vm->_game.id == GID_REBEL2) {
-		// Use a feed size based on frame rate (similar to iMUSE)
-		// 11025 Hz / 12 fps = ~918 samples per frame
-		processDispatches(_smushAudioSampleRate / 12);
-	}
+	if (!_imuseDigital && isRA2())
+		ra2ParseNextFrame();
 }
 
 void SmushPlayer::setPalette(const byte *palette) {
@@ -1749,9 +1361,8 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 
 	// Hide mouse
 	bool oldMouseState = CursorMan.showMouse(false);
-	if (_vm->_game.id == GID_REBEL2) {
+	if (isRA2())
 		insanity(true);
-	}
 
 	// Load the video
 	_seekFile = filename;
@@ -1908,7 +1519,6 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 void SmushPlayer::initAudio(int samplerate, int32 maxChunkSize) {
 	int32 maxSizes[SMUSH_MAX_TRACKS] = {100000, 100000, 100000, 400000};
 
-	// Rebel Assault 2 doesn't use iMUSE for audio
 	if (_imuseDigital)
 		_imuseDigital->setSmushPlayer(this);
 
@@ -2206,9 +1816,8 @@ void SmushPlayer::processDispatches(int16 feedSize) {
 	bool isPlayableTrack;
 	bool speechIsPlaying = false;
 
-	// Rebel Assault 2 doesn't use iMUSE for audio - use InsaneRebel2's audio handler
 	if (!_imuseDigital) {
-		if (_vm->_game.id == GID_REBEL2 && _insane) {
+		if (isRA2() && _insane) {
 			InsaneRebel2 *rebel2 = static_cast<InsaneRebel2 *>(_insane);
 			rebel2->processAudioFrame(feedSize);
 		}
@@ -2644,7 +2253,6 @@ bool SmushPlayer::processAudioCodes(int idx, int32 &tmpFeedSize, int &mixVolume)
 }
 
 void SmushPlayer::sendAudioToDiMUSE(uint8 *mixBuf, int32 mixStartingPoint, int32 mixFeedSize, int32 mixInFrameCount, int volume, int pan) {
-	// Rebel Assault 2 doesn't use iMUSE for audio
 	if (!_imuseDigital)
 		return;
 
@@ -2714,38 +2322,6 @@ void SmushPlayer::feedAudio(uint8 *srcBuf, int groupId, int volume, int pan, int
 
 bool SmushPlayer::isAudioCallbackEnabled() {
 	return _smushAudioCallbackEnabled;
-}
-
-// Only used by Rebel Assault 2
-void SmushPlayer::addMaskedRegion(const Common::Rect &rect) {
-	// Check if the region already exists
-	for (Common::List<Common::Rect>::iterator it = _maskedRegions.begin(); it != _maskedRegions.end(); ++it) {
-		if (*it == rect) {
-			return; // Already exists
-		}
-	}
-	_maskedRegions.push_back(rect);
-}
-
-// Only used by Rebel Assault 2
-void SmushPlayer::removeMaskedRegion(const Common::Rect &rect) {
-	for (Common::List<Common::Rect>::iterator it = _maskedRegions.begin(); it != _maskedRegions.end(); ++it) {
-		if (*it == rect) {
-			_maskedRegions.erase(it);
-			return;
-		}
-	}
-}
-
-// Only used by Rebel Assault 2
-void SmushPlayer::clearMaskedRegions() {
-	_maskedRegions.clear();
-}
-
-// Only used by Rebel Assault 2
-void SmushPlayer::setScrollOffset(int x, int y) { 
-	_scrollX = x;
-	_scrollY = y;
 }
 
 } // End of namespace Scumm
