@@ -82,6 +82,7 @@ protected:
 	void recalc();
 	void drawWidget() override;
 	void createWidget();
+	void ensureWidget();
 	Widget *findWidget(int x, int y) override;
 };
 
