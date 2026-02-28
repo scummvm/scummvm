@@ -1,0 +1,667 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "common/system.h"
+
+#include "scumm/scumm_v7.h"
+
+#include "scumm/smush/smush_player.h"
+
+#include "scumm/insane/insane_rebel.h"
+
+namespace Scumm {
+
+// ======================= Level Loading System =======================
+// Emulates the level handler functions from FUN_00417E53 through FUN_0041BBE8
+// Based on disassembly analysis of the retail Rebel Assault 2 executable.
+
+Common::String InsaneRebel2::getLevelDir(int levelId) {
+	// Returns directory name like "LEV01" for level 1
+	return Common::String::format("LEV%02d", levelId);
+}
+
+Common::String InsaneRebel2::getLevelPrefix(int levelId) {
+	// Returns file prefix like "01" for level 1
+	return Common::String::format("%02d", levelId);
+}
+
+void InsaneRebel2::playIntroSequence() {
+	// Emulates case 0 in FUN_004142BD
+	// Plays the game intro sequence:
+	// 1. CREDITS/O_OPEN_C.SAN - Fox logo (if certain conditions)
+	// 2. CREDITS/O_OPEN_D.SAN - LucasArts logo (if certain conditions)
+	// 3. OPEN/O_OPEN_A.SAN - Main intro
+	// 4. OPEN/O_OPEN_B.SAN - Additional intro (if conditions)
+
+	debug("Rebel2: Playing intro sequence");
+
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+
+	// Set intro flags (non-interactive)
+	splayer->setCurVideoFlags(0x20);
+
+	// Play Fox logo (CREDITS/O_OPEN_C.SAN)
+	// In retail, this checks if 'f', 'o', 'x' keys are held (easter egg)
+	// We'll play it unconditionally for now
+	debug("Rebel2: Playing Fox logo");
+	splayer->play("CREDITS/O_OPEN_C.SAN", 12);
+
+	if (_vm->shouldQuit()) return;
+
+	// Play LucasArts logo (CREDITS/O_OPEN_D.SAN)
+	// In retail, this checks if 'b', 'o', 't' keys are held
+	debug("Rebel2: Playing LucasArts logo");
+	splayer->play("CREDITS/O_OPEN_D.SAN", 12);
+
+	if (_vm->shouldQuit()) return;
+
+	// Play main intro (OPEN/O_OPEN_A.SAN)
+	debug("Rebel2: Playing main intro");
+	splayer->play("OPEN/O_OPEN_A.SAN", 12);
+
+	if (_vm->shouldQuit()) return;
+
+	// Play additional intro (OPEN/O_OPEN_B.SAN)
+	// In retail, this plays if DAT_0047ab45 or DAT_0047ab47 != 0
+	debug("Rebel2: Playing additional intro");
+	splayer->play("OPEN/O_OPEN_B.SAN", 12);
+}
+
+void InsaneRebel2::playMissionBriefing() {
+	// Emulates FUN_00415CF8 (partial - just the video)
+	// Plays OPEN/O_LEVEL.SAN which shows the mission briefing screen
+
+	debug("Rebel2: Playing mission briefing");
+
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	splayer->setCurVideoFlags(0x08);  // Briefing mode flag
+	splayer->play("OPEN/O_LEVEL.SAN", 12);
+}
+
+void InsaneRebel2::playCinematic(const char *filename) {
+	// Play a cinematic/cutscene video with proper intro mode setup
+	// This helper ensures:
+	// 1. Handler is reset to 0 (no HUD, no shooting)
+	// 2. Video flags are set to 0x28 (cinematic with buffer preserve)
+	//
+	// Original: All video wrapper functions (FUN_00417168, FUN_004171c5,
+	// FUN_00417ab2, FUN_00417327) add | 8 to the base flags before calling
+	// FUN_0041f4d0, so the 0x08 bit (preserve buffer) is always set.
+	_rebelHandler = 0;
+	_rebelStatusBarSprite = 0;  // No status bar during cinematics
+
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	splayer->setCurVideoFlags(0x28);  // Cinematic mode + buffer preserve (0x20 | 0x08)
+	splayer->play(filename, 12);
+}
+
+void InsaneRebel2::playLevelBegin(int levelId) {
+	// Play the level beginning cinematic (LEVXX/XXBEG.SAN)
+	// Emulates FUN_004171c5 call in each level handler
+
+	Common::String dir = getLevelDir(levelId);
+	Common::String prefix = getLevelPrefix(levelId);
+	Common::String filename = Common::String::format("%s/%sBEG.SAN", dir.c_str(), prefix.c_str());
+
+	debug("Rebel2: Playing level %d beginning: %s", levelId, filename.c_str());
+	playCinematic(filename.c_str());
+}
+
+bool InsaneRebel2::playLevelGameplay(int levelId) {
+	// Play the main gameplay video(s) for a level
+	// Returns true if level completed (damage < 0xff), false if died
+	//
+	// Different levels have different gameplay structures:
+	// - Level 1, 4, 5: Single gameplay SAN (XXPXX.SAN or XXPLAY.SAN)
+	// - Level 2: Multiple parts with subdirectories (P1/, P2/, P3/)
+	// - Level 3, 6: Two gameplay phases (XXPLAY1.SAN, XXPLAY2.SAN)
+
+	Common::String dir = getLevelDir(levelId);
+	Common::String prefix = getLevelPrefix(levelId);
+	Common::String filename;
+
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+
+	// Set gameplay flags (interactive with HUD)
+	splayer->setCurVideoFlags(0x28);
+
+	// Reset damage/shield for this level
+	_playerShield = 255;
+	_rebelHandler = 0;
+	_rebelStatusBarSprite = 0;  // Will be set by IACT opcode 6 if par4==1
+
+	debug("Rebel2: Starting gameplay for level %d", levelId);
+
+	switch (levelId) {
+	case 1:
+		// Level 1: Single gameplay file (01P01.SAN)
+		// Level 1 uses Handler 0x26 (turret mode) - set before gameplay
+		_rebelHandler = 0x26;
+		filename = Common::String::format("%s/%sP01.SAN", dir.c_str(), prefix.c_str());
+		debug("Rebel2: Playing %s", filename.c_str());
+		splayer->play(filename.c_str(), 12);
+		break;
+
+	case 2:
+		// Level 2: Has cutscene first, then multiple parts
+		// Level 2 uses Handler 8 (third-person on foot mode) - set before gameplay
+		_rebelHandler = 8;
+		// First play the cutscene
+		filename = Common::String::format("%s/%sCUT.SAN", dir.c_str(), prefix.c_str());
+		debug("Rebel2: Playing cutscene %s", filename.c_str());
+		splayer->setCurVideoFlags(0x28);
+		splayer->play(filename.c_str(), 12);
+
+		if (_vm->shouldQuit() || _playerShield == 0) return false;
+
+		// Part 1 (multiple variations - play A for now)
+		splayer->setCurVideoFlags(0x28);
+		filename = Common::String::format("%s/P1/%sP01_A.SAN", dir.c_str(), prefix.c_str());
+		debug("Rebel2: Playing %s", filename.c_str());
+		splayer->play(filename.c_str(), 12);
+
+		if (_vm->shouldQuit() || _playerShield == 0) return false;
+
+		// Post segment 1
+		_rebelHandler = 0;
+		_rebelStatusBarSprite = 0;
+		filename = Common::String::format("%s/%sPST1.SAN", dir.c_str(), prefix.c_str());
+		debug("Rebel2: Playing %s", filename.c_str());
+		splayer->setCurVideoFlags(0x28);
+		splayer->play(filename.c_str(), 12);
+
+		if (_vm->shouldQuit() || _playerShield == 0) return false;
+
+		// Part 2
+		_rebelHandler = 8;
+		splayer->setCurVideoFlags(0x28);
+		filename = Common::String::format("%s/P2/%sP02_A.SAN", dir.c_str(), prefix.c_str());
+		debug("Rebel2: Playing %s", filename.c_str());
+		splayer->play(filename.c_str(), 12);
+
+		if (_vm->shouldQuit() || _playerShield == 0) return false;
+
+		// Post segment 2
+		_rebelHandler = 0;
+		_rebelStatusBarSprite = 0;
+		filename = Common::String::format("%s/%sPST2.SAN", dir.c_str(), prefix.c_str());
+		debug("Rebel2: Playing %s", filename.c_str());
+		splayer->setCurVideoFlags(0x28);
+		splayer->play(filename.c_str(), 12);
+
+		if (_vm->shouldQuit() || _playerShield == 0) return false;
+
+		// Part 3
+		_rebelHandler = 8;
+		splayer->setCurVideoFlags(0x28);
+		filename = Common::String::format("%s/P3/%sP03_A.SAN", dir.c_str(), prefix.c_str());
+		debug("Rebel2: Playing %s", filename.c_str());
+		splayer->play(filename.c_str(), 12);
+		break;
+
+	case 3:
+		// Level 3: Two gameplay phases (third-person ship)
+		// Level 3 uses Handler 7 (third-person ship mode) - FUN_0040d836/FUN_0040c3cc
+		_rebelHandler = 7;
+		filename = Common::String::format("%s/%sPLAY1.SAN", dir.c_str(), prefix.c_str());
+		debug("Rebel2: Playing %s", filename.c_str());
+		splayer->play(filename.c_str(), 12);
+
+		if (_vm->shouldQuit() || _playerShield == 0) return false;
+
+		// Post segment
+		_rebelHandler = 0;
+		_rebelStatusBarSprite = 0;
+		filename = Common::String::format("%s/%sPOST1.SAN", dir.c_str(), prefix.c_str());
+		debug("Rebel2: Playing %s", filename.c_str());
+		splayer->setCurVideoFlags(0x28);
+		splayer->play(filename.c_str(), 12);
+
+		if (_vm->shouldQuit() || _playerShield == 0) return false;
+
+		// Phase 2 — handler will be re-set by IACT opcode 6
+		splayer->setCurVideoFlags(0x28);
+		filename = Common::String::format("%s/%sPLAY2.SAN", dir.c_str(), prefix.c_str());
+		debug("Rebel2: Playing %s", filename.c_str());
+		splayer->play(filename.c_str(), 12);
+		break;
+
+	case 4:
+		_rebelHandler = 0x26;
+		// Level 4: Has cutscene, then single gameplay
+		filename = Common::String::format("%s/%sCUT.SAN", dir.c_str(), prefix.c_str());
+		debug("Rebel2: Playing cutscene %s", filename.c_str());
+		splayer->setCurVideoFlags(0x28);
+		splayer->play(filename.c_str(), 12);
+
+		if (_vm->shouldQuit()) return false;
+
+		splayer->setCurVideoFlags(0x28);
+		filename = Common::String::format("%s/%sPLAY.SAN", dir.c_str(), prefix.c_str());
+		debug("Rebel2: Playing %s", filename.c_str());
+		splayer->play(filename.c_str(), 12);
+		break;
+
+	case 5:
+		// Level 5: Single gameplay file
+		filename = Common::String::format("%s/%sPLAY.SAN", dir.c_str(), prefix.c_str());
+		debug("Rebel2: Playing %s", filename.c_str());
+		splayer->play(filename.c_str(), 12);
+		break;
+
+	case 6:
+		// Level 6: Two gameplay phases
+		filename = Common::String::format("%s/%sPLAY1.SAN", dir.c_str(), prefix.c_str());
+		debug("Rebel2: Playing %s", filename.c_str());
+		splayer->play(filename.c_str(), 12);
+
+		if (_vm->shouldQuit() || _playerShield == 0) return false;
+
+		// Post segment
+		_rebelHandler = 0;
+		_rebelStatusBarSprite = 0;
+		filename = Common::String::format("%s/%sPOST1.SAN", dir.c_str(), prefix.c_str());
+		debug("Rebel2: Playing %s", filename.c_str());
+		splayer->setCurVideoFlags(0x28);
+		splayer->play(filename.c_str(), 12);
+
+		if (_vm->shouldQuit() || _playerShield == 0) return false;
+
+		// Phase 2 — handler will be re-set by IACT opcode 6
+		splayer->setCurVideoFlags(0x28);
+		filename = Common::String::format("%s/%sPLAY2.SAN", dir.c_str(), prefix.c_str());
+		debug("Rebel2: Playing %s", filename.c_str());
+		splayer->play(filename.c_str(), 12);
+		break;
+
+	default:
+		// For levels 7-15 (not in demo), try common patterns
+		// First try XXPLAY.SAN
+		filename = Common::String::format("%s/%sPLAY.SAN", dir.c_str(), prefix.c_str());
+		debug("Rebel2: Trying %s", filename.c_str());
+		splayer->play(filename.c_str(), 12);
+		break;
+	}
+
+	// Return true if player survived (shield > 0), false if died
+	return (_playerShield > 0);
+}
+
+void InsaneRebel2::playLevelEnd(int levelId) {
+	// Play level completion video (LEVXX/XXEND.SAN)
+	// Emulates FUN_00417327 call
+
+	_rebelHandler = 0;
+	_rebelStatusBarSprite = 0;  // No status bar during end cinematic
+
+	Common::String dir = getLevelDir(levelId);
+	Common::String prefix = getLevelPrefix(levelId);
+	Common::String filename = Common::String::format("%s/%sEND.SAN", dir.c_str(), prefix.c_str());
+
+	debug("Rebel2: Playing level %d end: %s", levelId, filename.c_str());
+
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	// Original: FUN_00417327 adds | 8, so flags = 0x20 | 0x08 = 0x28
+	splayer->setCurVideoFlags(0x28);
+	splayer->play(filename.c_str(), 12);
+}
+
+void InsaneRebel2::playLevelDeath(int levelId) {
+	// Play death video (LEVXX/XXDIE_X.SAN)
+	// The variant depends on the frame where player died
+	// For simplicity, we'll play the A variant
+
+	_rebelHandler = 0;
+	_rebelStatusBarSprite = 0;  // No status bar during death cinematic
+
+	Common::String dir = getLevelDir(levelId);
+	Common::String prefix = getLevelPrefix(levelId);
+
+	// Most levels have DIE_A, some have just DIE
+	Common::String filename;
+	if (levelId == 2 || levelId == 4 || levelId == 10 || levelId == 12 || levelId == 14) {
+		filename = Common::String::format("%s/%sDIE.SAN", dir.c_str(), prefix.c_str());
+	} else {
+		filename = Common::String::format("%s/%sDIE_A.SAN", dir.c_str(), prefix.c_str());
+	}
+
+	debug("Rebel2: Playing level %d death: %s", levelId, filename.c_str());
+
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	// Original: FUN_00417168 adds | 8, so flags = 0x20 | 0x08 = 0x28
+	splayer->setCurVideoFlags(0x28);
+	splayer->play(filename.c_str(), 12);
+}
+
+void InsaneRebel2::playLevelRetry(int levelId) {
+	// Play retry prompt video (LEVXX/XXRETRY.SAN)
+	// Reset handler state for the retry cinematic
+
+	_rebelHandler = 0;
+	_rebelStatusBarSprite = 0;  // Reset for retry - will be set by IACT opcode 6 if needed
+
+	Common::String dir = getLevelDir(levelId);
+	Common::String prefix = getLevelPrefix(levelId);
+	Common::String filename = Common::String::format("%s/%sRETRY.SAN", dir.c_str(), prefix.c_str());
+
+	debug("Rebel2: Playing level %d retry: %s", levelId, filename.c_str());
+
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	// Original: FUN_00417168 adds | 8, so flags = 0x20 | 0x08 = 0x28
+	splayer->setCurVideoFlags(0x28);
+	splayer->play(filename.c_str(), 12);
+}
+
+void InsaneRebel2::playLevelGameOver(int levelId) {
+	// Play game over video (LEVXX/XXOVER.SAN)
+	// Emulates FUN_00417ab2 call
+
+	_rebelHandler = 0;
+	_rebelStatusBarSprite = 0;  // No status bar during game over cinematic
+
+	Common::String dir = getLevelDir(levelId);
+	Common::String prefix = getLevelPrefix(levelId);
+	Common::String filename = Common::String::format("%s/%sOVER.SAN", dir.c_str(), prefix.c_str());
+
+	debug("Rebel2: Playing level %d game over: %s", levelId, filename.c_str());
+
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	// Original: FUN_00417ab2 adds | 8, so flags = 0x20 | 0x08 = 0x28
+	splayer->setCurVideoFlags(0x28);
+	splayer->play(filename.c_str(), 12);
+}
+
+void InsaneRebel2::playCreditsSequence() {
+	// Play the end credits (OPEN/O_CREDIT.SAN)
+	// Individual credits are in CREDITS/CRED_XX.SAN
+
+	debug("Rebel2: Playing credits");
+
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	splayer->setCurVideoFlags(0x20);
+	splayer->play("OPEN/O_CREDIT.SAN", 12);
+}
+
+int InsaneRebel2::runLevel(int levelId) {
+	// Main level dispatcher - calls per-level handlers
+	// Each level handler emulates its retail counterpart (FUN_00417E53 etc.)
+
+	debug("Rebel2: Starting level %d", levelId);
+
+	// Validate level ID
+	if (levelId < 1 || levelId > 15) {
+		warning("Rebel2: Invalid level ID %d", levelId);
+		return kLevelReturnToMenu;
+	}
+
+	// Switch to gameplay state to stop menu overlay rendering
+	_gameState = kStateGameplay;
+	_menuInputActive = false;
+
+	// Clear the screen to remove any leftover menu pixels
+	VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
+	memset(vs->getPixels(0, 0), 0, vs->pitch * vs->h);
+	_vm->markRectAsDirty(kMainVirtScreen, 0, vs->w, 0, vs->h);
+
+	// Set the current level
+	_selectedLevel = levelId;
+
+	// Initialize common player state
+	_playerLives = 3;
+	_playerShield = 255;
+	_playerScore = 0;
+	_playerDamage = 0;
+	resetDamageFlash();
+	_damageHighFlashCounter = 0;
+	_damageShakeCounter = 0;
+	_currentPhase = 1;
+	_phaseScore = 0;
+	_phaseMisses = 0;
+
+	// Dispatch to per-level handler
+	switch (levelId) {
+	case 1:
+		return runLevel1();
+	case 2:
+		return runLevel2();
+	case 3:
+		return runLevel3();
+	case 4:
+		return runLevel4();
+	case 5:
+		return runLevel5();
+	case 6:
+		return runLevel6();
+	case 7:
+		return runLevel7();
+	case 8:
+		return runLevel8();
+	case 9:
+		return runLevel9();
+	case 10:
+		return runLevel10();
+	case 11:
+		return runLevel11();
+	case 12:
+		return runLevel12();
+	case 13:
+		return runLevel13();
+	case 14:
+		return runLevel14();
+	case 15:
+		return runLevel15();
+	default:
+		return runLevel1();
+	}
+}
+
+// =============================================================================
+// Helper functions
+// =============================================================================
+
+int InsaneRebel2::getRandomVariant(int max) {
+	// Emulates FUN_004233a0 - returns random number 0 to max-1
+	return _vm->_rnd.getRandomNumber(max - 1);
+}
+
+Common::String InsaneRebel2::selectDeathVideoVariant(int levelId, int phase, int frame) {
+	// Select death video variant based on level, phase, and death frame
+	// Emulates the frame-based death video selection in retail level handlers
+	//
+	// Returns variant suffix: "A", "B", "C", etc.
+
+	switch (levelId) {
+	case 1:
+		// Level 1: Random between A and B
+		return (getRandomVariant(2) == 0) ? "A" : "B";
+
+	case 2:
+		// Level 2: Just "DIE" (no variants)
+		return "";
+
+	case 3:
+		// Level 3: Based on death frame and phase
+		if (phase == 1) {
+			// Phase 1 death video selection (from FUN_0041885F lines 80-96)
+			if (frame < 0x10c) return "B";       // < 268
+			if (frame < 0x1a9) return "A";       // < 425
+			if (frame < 0x247) return "C";       // < 583
+			if (frame < 700) return "A";
+			if (frame < 900) return "B";
+			return "A";
+		} else {
+			// Phase 2 death video selection (from FUN_0041885F lines 53-67)
+			if (frame < 0x2f1) return "A";       // < 753
+			if (frame < 0x347) return "B";       // < 839
+			if (frame < 0x3b1) return "C";       // < 945
+			if (frame < 0x405) return "A";       // < 1029
+			return "C";
+		}
+
+	case 4:
+		// Level 4: Just "DIE" (no variants)
+		return "";
+
+	case 5:
+		// Level 5: Random between A and B (like Level 1)
+		return (getRandomVariant(2) == 0) ? "A" : "B";
+
+	case 6:
+		// Level 6 (FUN_004190D6): Phase-based with detailed frame selection
+		if (phase == 1) {
+			// DAT_0047a7f8 == 5 (phase 1)
+			if (frame < 0x4e) return "D";
+			if (frame < 0xe0) return "A";
+			if (frame < 0x122) return "D";
+			if (frame < 0x1b4) return "B";
+			if (frame < 499) return "D";
+			if (frame < 0x286) return "C";
+			return "D";
+		} else {
+			// DAT_0047a7f8 == 6 (phase 2)
+			if (frame < 0xcc) return "E";
+			if (frame < 0xfe) return "G";
+			if (frame < 0x122) return "E";
+			if (frame < 0x149) return "G";
+			if (frame < 0x166) return "F";
+			if (frame < 0x174) return "E";
+			if (frame < 0x19f) return "F";
+			if (frame < 0x1b2) return "G";
+			if (frame < 0x1c8) return "F";
+			if (frame < 0x207) return "E";
+			if (frame < 0x217) return "F";
+			if (frame < 0x23b) return "G";
+			if (frame < 0x25b) return "F";
+			if (frame < 0x285) return "E";
+			return "G";
+		}
+
+	case 7:
+		// Level 7 (FUN_0041974C): Based on DAT_0047ab8c (fork state)
+		// DAT_0047ab8c != 0 → DIE_B; == 0 → DIE_A
+		// We use phase as a proxy (phase 2 = reached fork)
+		return (phase >= 2) ? "B" : "A";
+
+	case 8:
+		// Level 8 (FUN_00419976): Random A or B
+		return (getRandomVariant(2) == 0) ? "A" : "B";
+
+	case 9:
+		// Level 9 (FUN_00419B86): Based on DAT_0047ab94 (death cause)
+		// 0→A, 1→C, else→B. Use phase as proxy.
+		return "A";  // Default; exact tracking of DAT_0047ab94 deferred
+
+	case 10:
+		// Level 10 (FUN_00419E0A): Single death video (no variant suffix)
+		return "";
+
+	case 11:
+		// Level 11 (FUN_0041A00C): Phase-based death videos
+		// Phase 1 → DIE_A, Phase 2 → DIE_B, Phase 3 → DIE_C
+		if (phase <= 1) return "A";
+		if (phase == 2) return "B";
+		return "C";
+
+	case 12:
+		// Level 12 (FUN_0041AA14): Single death video (no variants)
+		return "";
+
+	case 13:
+		// Level 13 (FUN_0041B3E1): Frame-based
+		if (frame < 0x1c2) return "A";
+		if (frame < 0x302) return "B";
+		if (frame < 0x4ec) return "C";
+		if (frame < 0x5b4) return "B";
+		return "D";
+
+	case 14:
+		// Level 14 (FUN_0041B6E8): Single death video (no variant suffix)
+		return "";
+
+	case 15:
+		// Level 15 (FUN_0041B8D7): Frame-based with many thresholds
+		if (frame < 0x21e) return "A";
+		if (frame < 0x2f9) return "B";
+		if (frame < 0x3e5) return "C";
+		if (frame < 0x4a0) return "B";
+		if (frame < 0x588) return "C";
+		if (frame < 0x65e) return "B";
+		return "D";
+
+	default:
+		return "A";
+	}
+}
+
+void InsaneRebel2::playLevelDeathVariant(int levelId, int phase, int frame) {
+	// Play death video with proper variant selection
+
+	_rebelHandler = 0;
+	_rebelStatusBarSprite = 0;  // No status bar during death cinematic
+
+	Common::String dir = getLevelDir(levelId);
+	Common::String prefix = getLevelPrefix(levelId);
+	Common::String variant = selectDeathVideoVariant(levelId, phase, frame);
+	Common::String filename;
+
+	if (variant.empty()) {
+		// No variant suffix (Level 2, 4)
+		filename = Common::String::format("%s/%sDIE.SAN", dir.c_str(), prefix.c_str());
+	} else {
+		filename = Common::String::format("%s/%sDIE_%s.SAN", dir.c_str(), prefix.c_str(), variant.c_str());
+	}
+
+	debug("Rebel2: Playing death video: %s (phase=%d, frame=%d)", filename.c_str(), phase, frame);
+
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	// Original: FUN_00417168 adds | 8, so flags = 0x20 | 0x08 = 0x28
+	splayer->setCurVideoFlags(0x28);
+	splayer->play(filename.c_str(), 12);
+}
+
+void InsaneRebel2::playLevelRetryVariant(int levelId, int phase) {
+	// Play retry video - phase-specific for multi-phase levels
+
+	_rebelHandler = 0;
+	_rebelStatusBarSprite = 0;  // Reset for retry - will be set by IACT opcode 6 if needed
+
+	Common::String dir = getLevelDir(levelId);
+	Common::String prefix = getLevelPrefix(levelId);
+	Common::String filename;
+
+	if ((levelId == 3 || levelId == 6) && phase == 2) {
+		// Level 3/6 phase 2 has its own retry video: xxRETRYB.SAN
+		filename = Common::String::format("%s/%sRETRYB.SAN", dir.c_str(), prefix.c_str());
+	} else {
+		// Standard retry video
+		filename = Common::String::format("%s/%sRETRY.SAN", dir.c_str(), prefix.c_str());
+	}
+
+	debug("Rebel2: Playing retry video: %s (phase=%d)", filename.c_str(), phase);
+
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	// Original: FUN_00417168 adds | 8, so flags = 0x20 | 0x08 = 0x28
+	splayer->setCurVideoFlags(0x28);
+	splayer->play(filename.c_str(), 12);
+}
+
+
+} // End of namespace Scumm
