@@ -142,6 +142,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 
 	_sound = new Sound(this);
 	_resMan = new Common::MacResManager();
+	_colorResMan = new Common::MacResManager();
 	initTrig();
 }
 
@@ -154,6 +155,7 @@ ColonyEngine::~ColonyEngine() {
 	delete _frameLimiter;
 	delete _gfx;
 	delete _sound;
+	delete _colorResMan;
 	delete _resMan;
 	delete _menuSurface;
 	delete _wm;
@@ -662,6 +664,10 @@ Common::Error ColonyEngine::run() {
 			if (!_resMan->open("Colony.bin")) {
 				warning("Failed to open Colony resource fork");
 			}
+		}
+		// Try to open Color Colony for additional color PICT resources
+		if (!_colorResMan->open("(Color) Colony")) {
+			debug("Color Colony resource fork not found (optional)");
 		}
 		_sound->init();
 	}
@@ -1554,16 +1560,19 @@ bool ColonyEngine::drawPict(int resID) {
 	// Original: DoPicture() in intro.c, lines 861-886
 	// Loads a PICT resource, centers it in the screen rect, draws with srcCopy.
 	// Original applies clip rect inset by 1 pixel on all sides.
-	if (!_resMan || !(_resMan->isMacFile() || _resMan->hasResFork()))
-		return false;
+	Common::SeekableReadStream *pictStream = nullptr;
 
-	Common::SeekableReadStream *pictStream = _resMan->getResource(MKTAG('P', 'I', 'C', 'T'), (int16)resID);
+	// Try Color Colony resource fork first
+	if (_colorResMan && _colorResMan->hasResFork())
+		pictStream = _colorResMan->getResource(MKTAG('P', 'I', 'C', 'T'), (int16)resID);
+
+	// Fall back to B&W Colony resource fork
+	if (!pictStream && _resMan && (_resMan->isMacFile() || _resMan->hasResFork()))
+		pictStream = _resMan->getResource(MKTAG('P', 'I', 'C', 'T'), (int16)resID);
+
 	if (!pictStream) {
-		pictStream = _resMan->getResource(MKTAG('P', 'I', 'C', 'T'), resID);
-		if (!pictStream) {
-			debug("drawPict: PICT %d not found", resID);
-			return false;
-		}
+		debug("drawPict: PICT %d not found", resID);
+		return false;
 	}
 
 	::Image::PICTDecoder decoder;
@@ -1587,89 +1596,27 @@ bool ColonyEngine::drawPict(int resID) {
 			      resID, surface->w, surface->h, x, y,
 			      surface->format.bytesPerPixel * 8, pictPal.size());
 
-			if (isCLUT8 && pictPal.size() > 0) {
-				// CLUT8 PICT with embedded palette (8-bit color).
-				// Install PICT palette at offset 128, draw all pixels with srcCopy.
-				const int palOffset = 128;
-				int nColors = MIN((int)pictPal.size(), 128);
-				_gfx->setPalette(pictPal.data(), palOffset, nColors);
-
-				for (int iy = 0; iy < surface->h; iy++) {
-					int sy = y + iy;
-					if (sy < clipY1 || sy >= clipY2) continue;
-					for (int ix = 0; ix < surface->w; ix++) {
-						int sx = x + ix;
-						if (sx < clipX1 || sx >= clipX2) continue;
+			// Draw PICT pixels using direct RGB (packRGB) for full color support.
+			for (int iy = 0; iy < surface->h; iy++) {
+				int sy = y + iy;
+				if (sy < clipY1 || sy >= clipY2) continue;
+				for (int ix = 0; ix < surface->w; ix++) {
+					int sx = x + ix;
+					if (sx < clipX1 || sx >= clipX2) continue;
+					byte r, g, b;
+					if (isCLUT8) {
 						byte idx = *((const byte *)surface->getBasePtr(ix, iy));
-						int palIdx = (idx < nColors) ? palOffset + idx : 0;
-						_gfx->setPixel(sx, sy, palIdx);
-					}
-				}
-			} else if (isCLUT8) {
-				// CLUT8 without palette — 1-bit B&W PICT.
-				// Mac QuickDraw srcCopy: pixel 0 = background (white),
-				// pixel 1 = foreground (black). Screen is already black,
-				// so we only need to draw the white pixels.
-				for (int iy = 0; iy < surface->h; iy++) {
-					int sy = y + iy;
-					if (sy < clipY1 || sy >= clipY2) continue;
-					for (int ix = 0; ix < surface->w; ix++) {
-						int sx = x + ix;
-						if (sx < clipX1 || sx >= clipX2) continue;
-						byte idx = *((const byte *)surface->getBasePtr(ix, iy));
-						if (idx == 0)
-							_gfx->setPixel(sx, sy, 15); // white
-					}
-				}
-			} else {
-				// RGB surface — build a color palette from unique pixel colors
-				// and install it at offset 128, preserving actual PICT colors.
-				const int palOffset = 128;
-				const int maxColors = 128;
-				byte builtPal[128 * 3];
-				memset(builtPal, 0, sizeof(builtPal));
-				int nUniqueColors = 0;
-
-				Common::HashMap<uint32, byte> colorMap;
-
-				for (int iy = 0; iy < surface->h && nUniqueColors < maxColors; iy++) {
-					for (int ix = 0; ix < surface->w && nUniqueColors < maxColors; ix++) {
-						uint32 pixel = surface->getPixel(ix, iy);
-						byte pr, pg, pb;
-						surface->format.colorToRGB(pixel, pr, pg, pb);
-						if (pr == 0 && pg == 0 && pb == 0)
-							continue;
-						uint32 key = ((uint32)pr << 16) | ((uint32)pg << 8) | pb;
-						if (!colorMap.contains(key)) {
-							builtPal[nUniqueColors * 3 + 0] = pr;
-							builtPal[nUniqueColors * 3 + 1] = pg;
-							builtPal[nUniqueColors * 3 + 2] = pb;
-							colorMap[key] = nUniqueColors;
-							nUniqueColors++;
+						if (pictPal.size() > 0 && idx < (int)pictPal.size()) {
+							pictPal.get(idx, r, g, b);
+						} else {
+							// B&W PICT: 0=white, 1=black
+							r = g = b = (idx == 0) ? 255 : 0;
 						}
-					}
-				}
-
-				if (nUniqueColors > 0)
-					_gfx->setPalette(builtPal, palOffset, nUniqueColors);
-
-				for (int iy = 0; iy < surface->h; iy++) {
-					int sy = y + iy;
-					if (sy < clipY1 || sy >= clipY2) continue;
-					for (int ix = 0; ix < surface->w; ix++) {
-						int sx = x + ix;
-						if (sx < clipX1 || sx >= clipX2) continue;
+					} else {
 						uint32 pixel = surface->getPixel(ix, iy);
-						byte pr, pg, pb;
-						surface->format.colorToRGB(pixel, pr, pg, pb);
-						if (pr == 0 && pg == 0 && pb == 0)
-							continue;
-						uint32 key = ((uint32)pr << 16) | ((uint32)pg << 8) | pb;
-						if (colorMap.contains(key))
-							_gfx->setPixel(sx, sy, palOffset + colorMap[key]);
-						else
-							_gfx->setPixel(sx, sy, 15);
+						surface->format.colorToRGB(pixel, r, g, b);
 					}
+					_gfx->setPixel(sx, sy, 0xFF000000 | ((uint32)r << 16) | ((uint32)g << 8) | b);
 				}
 			}
 			_gfx->copyToScreen();

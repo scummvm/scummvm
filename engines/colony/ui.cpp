@@ -44,17 +44,23 @@ static uint32 packMacColorUI(const uint16 rgb[3]) {
 }
 
 // Load a PICT resource from the Mac resource fork, returning a new RGB surface.
+// Try Color Colony first (has color dashboard PICTs), then fall back to B&W Colony.
 // Caller owns the returned surface. Returns nullptr on failure.
 Graphics::Surface *ColonyEngine::loadPictSurface(int resID) {
-	if (!_resMan || !(_resMan->isMacFile() || _resMan->hasResFork()))
-		return nullptr;
+	Common::SeekableReadStream *pictStream = nullptr;
 
-	Common::SeekableReadStream *pictStream = _resMan->getResource(MKTAG('P', 'I', 'C', 'T'), (int16)resID);
-	if (!pictStream) {
-		pictStream = _resMan->getResource(MKTAG('P', 'I', 'C', 'T'), resID);
-		if (!pictStream)
-			return nullptr;
+	// Try Color Colony resource fork first
+	if (_colorResMan && _colorResMan->hasResFork()) {
+		pictStream = _colorResMan->getResource(MKTAG('P', 'I', 'C', 'T'), (int16)resID);
 	}
+
+	// Fall back to B&W Colony resource fork
+	if (!pictStream && _resMan && (_resMan->isMacFile() || _resMan->hasResFork())) {
+		pictStream = _resMan->getResource(MKTAG('P', 'I', 'C', 'T'), (int16)resID);
+	}
+
+	if (!pictStream)
+		return nullptr;
 
 	::Image::PICTDecoder decoder;
 	Graphics::Surface *result = nullptr;

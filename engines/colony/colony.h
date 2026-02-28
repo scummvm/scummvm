@@ -495,6 +495,7 @@ private:
 	Common::Rect _backgroundLocate;
 	bool _backgroundActive;
 	Common::MacResManager *_resMan;
+	Common::MacResManager *_colorResMan;
 	byte _topBG[8];
 	byte _bottomBG[8];
 	int16 _divideBG;
