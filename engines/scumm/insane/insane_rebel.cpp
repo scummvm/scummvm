@@ -7428,19 +7428,12 @@ int InsaneRebel2::runChapterSelect() {
 		}
 
 		if (_chapterSelection >= 0 && _chapterSelection < 16) {
-			// Chapter selected
-			if (_chapterUnlocked[_chapterSelection]) {
-				// Chapter is unlocked - start it
-				_selectedChapter = _chapterSelection;
-				debug("Rebel2: Chapter %d selected (unlocked)", _selectedChapter + 1);
-				_menuInputActive = false;
-				return kChapterSelectPlay;
-			} else {
-				// Chapter is locked - check password (lines 239-257 of FUN_00415CF8)
-				// For now, just play error sound and continue
-				debug("Rebel2: Chapter %d is locked", _chapterSelection + 1);
-				continue;
-			}
+			// Chapter selected - start it regardless of unlock state.
+			// TODO: locked chapters should require password (FUN_00415CF8 lines 239-257)
+			_selectedChapter = _chapterSelection;
+			debug("Rebel2: Chapter %d selected", _selectedChapter + 1);
+			_menuInputActive = false;
+			return kChapterSelectPlay;
 		}
 	}
 
