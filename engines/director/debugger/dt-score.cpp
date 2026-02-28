@@ -51,6 +51,7 @@ const char *modes2[] = {
 };
 
 struct ScoreLayout {
+	ImVec2 labelBarPos;
 	ImVec2 sidebar1Pos;
 	ImVec2 mainChannelGridPos;
 	ImVec2 modeSelectorPos;
@@ -63,14 +64,15 @@ struct ScoreLayout {
 
 static ScoreLayout computeLayout(ImVec2 origin, const ImGuiState::ScoreConfig &cfg) {
 	ScoreLayout l;
-	l.sidebar1Pos = ImVec2(origin.x, origin.y);
-	l.mainChannelGridPos = ImVec2(origin.x + cfg._sidebarWidth, origin.y);
-	l.modeSelectorPos = ImVec2(origin.x, origin.y + cfg._sidebar1Height);
-	l.rulerPos = ImVec2(origin.x + cfg._sidebarWidth, origin.y + cfg._sidebar1Height);
-	l.sidebar2Pos = ImVec2(origin.x, origin.y + cfg._sidebar1Height + cfg._rulerHeight);
-	l.gridPos = ImVec2(origin.x + cfg._sidebarWidth, origin.y + cfg._sidebar1Height + cfg._rulerHeight);
-	l.sliderPos = ImVec2(origin.x + cfg._sidebarWidth, origin.y + cfg._sidebar1Height + cfg._rulerHeight + cfg._tableHeight + 8.0f);
-	l.sliderYPos = ImVec2(origin.x + cfg._sidebarWidth + cfg._tableWidth + 8.0f, origin.y + cfg._sidebar1Height + cfg._rulerHeight);
+	l.labelBarPos = ImVec2(origin.x + cfg._sidebarWidth, origin.y);
+	l.sidebar1Pos = ImVec2(origin.x, origin.y + cfg._labelBarHeight);
+	l.mainChannelGridPos = ImVec2(origin.x + cfg._sidebarWidth, origin.y + cfg._labelBarHeight);
+	l.modeSelectorPos = ImVec2(origin.x, origin.y + cfg._sidebar1Height + cfg._labelBarHeight);
+	l.rulerPos = ImVec2(origin.x + cfg._sidebarWidth, origin.y + cfg._sidebar1Height + cfg._labelBarHeight);
+	l.sidebar2Pos = ImVec2(origin.x, origin.y + cfg._sidebar1Height + cfg._rulerHeight + cfg._labelBarHeight);
+	l.gridPos = ImVec2(origin.x + cfg._sidebarWidth, origin.y + cfg._sidebar1Height + cfg._rulerHeight + cfg._labelBarHeight);
+	l.sliderPos = ImVec2(origin.x + cfg._sidebarWidth, origin.y + cfg._labelBarHeight + cfg._sidebar1Height + cfg._rulerHeight + cfg._tableHeight + 8.0f);
+	l.sliderYPos = ImVec2(origin.x + cfg._sidebarWidth + cfg._tableWidth + 8.0f, origin.y + cfg._sidebar1Height + cfg._labelBarHeight + cfg._rulerHeight);
 	return l;
 }
 
@@ -163,7 +165,6 @@ static void buildContinuationData(Window *window) {
 
 	_state->_loadedContinuationData = window->getCurrentMovie()->getMacName();
 }
-
 
 static void drawSliderY(ImVec2 pos, int numChannels) {
 	auto &cfg = _state->_scoreCfg;
@@ -599,7 +600,7 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 
 			if (_state->_scoreMode == kModeExtended && startVisible && (sprite._castId.member || sprite.isQDShape())) {
 				float lineH = ImGui::GetTextLineHeight();
-				float textX = x1 + 4.0f;
+				float textX = x1 + 2.0f;
 				float baseY = y + 15.0f;
 				CastMember *cm = cast->getCastMember(sprite._castId.member, true);
 				// Member name
@@ -707,7 +708,7 @@ static void drawMainChannelGrid(ImDrawList *dl, ImVec2 startPos, Score *score) {
 		float y = startPos.y + ch * cfg._cellHeight;
 
 		// pass 1, backgrounds
-		for (int f = 0; f <= cfg._visibleFrames; f++) {
+		for (int f = 0; f < cfg._visibleFrames; f++) {
 			int rf = startFrame + f;
 			float x = startPos.x + f * cfg._cellWidth;
 			ImVec2 cellMin = ImVec2(x, y);
@@ -858,22 +859,99 @@ static void drawPlayhead(ImDrawList *dl, ImVec2 rulerPos, ImVec2 mainChannelGrid
 	dl->AddLine(ImVec2(px, top), ImVec2(px, bottom), RED, 2.0f);
 
 	// triangle marker in the ruler
-	dl->AddTriangleFilled(
-		ImVec2(px - 5.0f, rulerPos.y),
-		ImVec2(px + 5.0f, rulerPos.y),
-		ImVec2(px, rulerPos.y + 8.0f),
-		RED
-	);
+	dl->AddTriangleFilled(ImVec2(px - 5.0f, rulerPos.y), ImVec2(px + 5.0f, rulerPos.y), ImVec2(px, rulerPos.y + 8.0f), RED);
 }
+
+static void handleScrolling(Score *score, int numChannels) {
+	if (ImGui::IsWindowHovered()) {
+		static float accumX = 0.0f;
+		static float accumY = 0.0f;
+
+		auto &cfg = _state->_scoreCfg;
+		int visibleChannels = (_state->_scoreMode == kModeExtended) ? (int)(cfg._tableHeight / cfg._cellHeightExtended) : cfg._visibleChannels;
+		int maxScroll = MAX(1, numChannels - visibleChannels);
+		int totalFrames = (int)score->_scoreCache.size();
+		int sliderMax = MAX(totalFrames - cfg._visibleFrames + 1, 1);
+
+		float scrollY = ImGui::GetIO().MouseWheel;
+		float scrollX = ImGui::GetIO().MouseWheelH;
+
+		if (scrollY != 0.0f) {
+			accumY -= scrollY;
+			int steps = (int)accumY;
+			if (steps != 0) {
+				_state->_scoreState.channelScrollOffset += steps;
+				_state->_scoreState.channelScrollOffset = CLIP(_state->_scoreState.channelScrollOffset, 1, maxScroll);
+				accumY -= steps;
+			}
+		} else {
+			accumY = 0.0f;
+		}
+
+		if (scrollX != 0.0f) {
+			accumX -= scrollX;
+			int steps = (int)accumX;
+			if (steps != 0) {
+				_state->_scoreState.xSliderValue += steps;
+				_state->_scoreState.xSliderValue = CLIP(_state->_scoreState.xSliderValue, 1, sliderMax);
+				accumX -= steps;
+			}
+		} else {
+			accumX = 0.0f;
+		}
+	}
+}
+
+static void drawLabelBar(ImDrawList *dl, ImVec2 pos, Score *score) {
+	auto &cfg = _state->_scoreCfg;
+	int startFrame = MAX(0, _state->_scoreState.xSliderValue - 1);
+
+	// draw background rectangle
+	ImVec2 finalPos = ImVec2(pos.x + cfg._tableWidth, pos.y + cfg._labelBarHeight);
+	dl->AddRectFilled(pos, finalPos, cfg._tableDarkColor);
+	dl->AddRect(pos, finalPos, cfg._tableLightColor);
+
+	for (int f = 0; f < cfg._visibleFrames; f++) {
+		int rf = startFrame + f;
+		Common::String *labelName = score->getFrameLabel((uint)rf);
+		float x = cfg._cellWidth * (f + 0.5f) + pos.x;
+		float y = pos.y;
+
+		// Draw label triangle and add tooltip
+		if (labelName && !labelName->empty()) {
+			float textY = y + (cfg._labelBarHeight - ImGui::GetTextLineHeight()) / 2.0f;
+
+			dl->AddText(ImVec2(x - ImGui::CalcTextSize(ICON_MS_BEENHERE).x / 2.0f, textY),
+						U32(_state->_colors._type_color), ICON_MS_BEENHERE);
+
+			float iconW = ImGui::CalcTextSize(ICON_MS_BEENHERE).x;
+			float textX = x + iconW / 2.0f + 2.0f;
+			float textWidth = ImGui::CalcTextSize(labelName->c_str()).x;
+
+			if (textX + textWidth < finalPos.x) // prevent text being drawn outside the table bounds
+				dl->AddText(ImVec2(textX, textY), U32(_state->_colors._type_color), labelName->c_str());
+
+			float px = pos.x + f * cfg._cellWidth;
+			ImGui::SetCursorScreenPos(ImVec2(pos.x + f * cfg._cellWidth, y));
+			ImGui::InvisibleButton(Common::String::format("##labelcell_%d", f).c_str(), ImVec2(cfg._cellWidth, cfg._labelBarHeight));
+
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("%s", labelName->c_str());
+
+		}
+	}
+}
+
 
 void showScore() {
 	if (!_state->_w.score)
 		return;
 
-	ImVec2 pos(20, 20);
+	ImVec2 pos(40, 40);
 	ImGui::SetNextWindowPos(pos, ImGuiCond_FirstUseEver);
-
-	ImVec2 windowSize = ImGui::GetMainViewport()->Size * 1.5f;
+	float sizeX = 900;
+	float sizeY = 750;
+	ImVec2 windowSize = ImVec2(pos.x + sizeX, pos.y + sizeY);
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Score", &_state->_w.score, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
@@ -897,12 +975,18 @@ void showScore() {
 		if (!numFrames || _state->_selectedScoreCast.channel >= (int)score->_scoreCache[0]->_sprites.size())
 			_state->_selectedScoreCast.channel = 0;
 
+
+
 		drawSpriteInspector(score, cast, numFrames);
+
+		int numChannels = MIN<int>(score->_scoreCache[0]->_sprites.size(), score->_maxChannelsUsed + 10);
+		handleScrolling(score, numChannels);
+
 		ImDrawList *dl	= ImGui::GetWindowDrawList();
 		ImVec2	 origin = ImGui::GetCursorScreenPos();
 		ScoreLayout layout = computeLayout(origin, _state->_scoreCfg);
-		int numChannels = MIN<int>(score->_scoreCache[0]->_sprites.size(), score->_maxChannelsUsed + 10);
 
+		drawLabelBar(dl, layout.labelBarPos, score);
 		drawSidebar1(dl, layout.sidebar1Pos, score);
 		drawMainChannelGrid(dl, layout.mainChannelGridPos, score);
 		drawModeSelector(layout.modeSelectorPos);

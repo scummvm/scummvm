@@ -113,15 +113,16 @@ typedef struct ImGuiState {
 
 	struct ScoreConfig {
 		float _sidebarWidth = 60.0f;
-		float _cellWidth = 16.0f;
-		float _cellHeight = 20.0f;
+		float _cellWidth = 14.0f;
+		float _cellHeight = 22.0f;
 		int _visibleFrames = 60;
-		int _visibleChannels = 25;
+		int _visibleChannels = 20;
 		float _tableWidth = _cellWidth * _visibleFrames;
 		float _tableHeight = _cellHeight * _visibleChannels;
 		float _rulerHeight = 30.0f;
 		float _rulerWidth = _cellWidth * _visibleFrames;
 		float _sidebar1Height = _cellHeight * 6;
+		float _labelBarHeight = _cellHeight;
 		float _cellHeightExtended = 5 * _cellHeight;
 		ImU32 _tableLightColor = IM_COL32(51,  51,  51,  255);
 		ImU32 _tableDarkColor = IM_COL32(38, 38, 38, 255);
