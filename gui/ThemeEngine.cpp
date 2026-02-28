@@ -1721,6 +1721,26 @@ TextColorData *ThemeEngine::getTextColorData(TextColor color) const {
 	return _textColors[color];
 }
 
+bool ThemeEngine::getDrawDataColor(DrawData ddId, uint8 &r, uint8 &g, uint8 &b) const {
+	if (ddId < 0 || ddId >= kDrawDataMAX || !_widgets[ddId])
+		return false;
+
+	const Common::List<Graphics::DrawStep> &steps = _widgets[ddId]->_steps;
+	if (steps.empty())
+		return false;
+
+	const Graphics::DrawStep &step = steps.front();
+
+	if (step.bgColor.set) {
+		r = step.bgColor.r;
+		g = step.bgColor.g; 
+		b = step.bgColor.b;
+	} else
+		return false;
+
+	return true;
+}
+
 DrawData ThemeEngine::parseDrawDataId(const Common::String &name) const {
 	for (int i = 0; i < kDrawDataMAX; ++i)
 		if (name.compareToIgnoreCase(kDrawDataDefaults[i].name) == 0)

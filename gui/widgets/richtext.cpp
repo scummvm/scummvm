@@ -210,9 +210,12 @@ void RichTextWidget::recalc() {
 void RichTextWidget::createWidget() {
 	Graphics::MacWindowManager *wm = g_gui.getWM();
 
-	uint32 themedBg = wm->_pixelformat.ARGBToColor(255, 0xFB, 0xF1, 0xCE);
-	uint32 fallbackBg = wm->_pixelformat.ARGBToColor(0, 0xFF, 0xFF, 0xFF);
-	uint32 bg = themedBg ? themedBg : fallbackBg;
+	uint8 bgR, bgG, bgB;
+	uint32 bg;
+	if (g_gui.theme()->getDrawDataColor(kDDWidgetBackgroundDefault, bgR, bgG, bgB))
+		bg = wm->_pixelformat.ARGBToColor(255, bgR, bgG, bgB);
+	else
+		bg = wm->_pixelformat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
 
 	TextColorData *normal = g_gui.theme()->getTextColorData(kTextColorNormal);
 	uint32 fg = wm->_pixelformat.RGBToColor(normal->r, normal->g, normal->b);
@@ -290,9 +293,12 @@ void RichTextWidget::drawWidget() {
 
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), ThemeEngine::kWidgetBackgroundPlain);
 
-	uint32 themedBg = g_gui.getWM()->_pixelformat.ARGBToColor(255, 0xFB, 0xF1, 0xCE);
-	uint32 fallbackBg = g_gui.getWM()->_pixelformat.ARGBToColor(0, 0xFF, 0xFF, 0xFF);
-	uint32 bg = themedBg ? themedBg : fallbackBg;
+	uint8 bgR, bgG, bgB;
+	uint32 bg;
+	if (g_gui.theme()->getDrawDataColor(kDDWidgetBackgroundDefault, bgR, bgG, bgB))
+		bg = g_gui.getWM()->_pixelformat.ARGBToColor(255, bgR, bgG, bgB);
+	else
+		bg = g_gui.getWM()->_pixelformat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
 
 	_surface->clear(bg);
 
