@@ -2132,55 +2132,60 @@ void InsaneRebel2::renderEmbeddedHudOverlays(byte *renderBitmap, int pitch, int 
 
 void InsaneRebel2::renderStatusBarSprites(byte *renderBitmap, int pitch, int width, int height,
 										  int statusBarY, int32 curFrame) {
-	// Draw DISPFONT.NUT status bar sprites (FUN_0041c012 equivalent)
-	// DISPFONT.NUT contains:
-	//   Sprite 1: Status bar background frame
-	//   Sprites 2-5: Difficulty stars (1-4)
-	//   Sprite 6: Damage bar fill (with clip rect X=63, Y=9, W=64, H=6)
-	//   Sprite 7: Damage alert (flashing red when critical)
+	// FUN_0041c012 equivalent — renders DISPFONT.NUT status bar sprites.
+	// DISPFONT.NUT sprite layout:
+	//   Sprite 1:   Status bar background
+	//   Sprites 2-5: Difficulty variants (full status bar with 1-4 stars)
+	//   Sprite 6:   Bar fill element (reused for both damage and lives bars)
+	//   Sprite 7:   Damage alert overlay (flashing when critical)
 
 	if (!_smush_cockpitNut)
 		return;
 
-	// Sprite 1: Status bar background
-	if (_smush_cockpitNut->getNumChars() > 1) {
-		renderNutSprite(renderBitmap, pitch, width, height, _viewX, statusBarY + _viewY, _smush_cockpitNut, 1);
+	int numSprites = _smush_cockpitNut->getNumChars();
+
+	// --- Sprite 1: Status bar background (always drawn first as base layer) ---
+	if (numSprites > 1) {
+		renderNutSprite(renderBitmap, pitch, width, height,
+			_viewX, statusBarY + _viewY, _smush_cockpitNut, 1);
 	}
 
-	// Difficulty indicator (sprites 2-5)
-	int difficulty = 0;  // TODO: Read from game state
+	// --- Difficulty sprite (2-5) overlaid on top ---
+	// FUN_0041c012 lines 33-43: sprite index = min(difficulty, 4) + 1
+	int difficulty = _difficulty;
 	if (difficulty > 3) difficulty = 3;
 	int difficultySprite = difficulty + 2;
-	if (_smush_cockpitNut->getNumChars() > difficultySprite) {
-		renderNutSprite(renderBitmap, pitch, width, height, _viewX, statusBarY + _viewY, _smush_cockpitNut, difficultySprite);
+	if (numSprites > difficultySprite) {
+		renderNutSprite(renderBitmap, pitch, width, height,
+			_viewX, statusBarY + _viewY, _smush_cockpitNut, difficultySprite);
 	}
 
-	// Damage bar (sprite 6) with clipped width
-	if (_smush_cockpitNut->getNumChars() > 6) {
-		int drawWidth = (64 * _playerDamage) / 255;
-		if (drawWidth < 0) drawWidth = 0;
-		if (drawWidth > 64) drawWidth = 64;
+	// --- Damage/shield bar (sprite 6 within damage clip rect) ---
+	// FUN_0041c012 lines 44-76:
+	//   Clip rect (low-res): {X=0x3f, Y=9, W=0x40, H=6} = {63, 9, 64, 6}
+	//   Bar width = shield_value >> 2 (divide by 4, range 0-63)
+	//   If shield > 0xAA (170): alert blink with sprite 7
+	if (numSprites > 6) {
+		// Bar width from assembly: param_1 >> 2 (low-res)
+		int damageBarWidth = _playerDamage >> 2;
 
 		const byte *src = _smush_cockpitNut->getCharData(6);
 		int sw = _smush_cockpitNut->getCharWidth(6);
 		int sh = _smush_cockpitNut->getCharHeight(6);
 
-		// Clip rect inside sprite: X=63, Y=9, W=64, H=6
-		const int clipX = 63, clipY = 9, clipW = 64, clipH = 6;
+		const int dmgClipX = 63, dmgClipY = 9, dmgClipW = 64, dmgClipH = 6;
 
-		if (src && sw > 0 && sh > 0) {
-			int maxClipW = sw - clipX;
-			if (maxClipW < 0) maxClipW = 0;
-			int drawW = MIN(drawWidth, MIN(clipW, maxClipW));
-			int drawH = MIN(clipH, sh - clipY);
-			if (drawH < 0) drawH = 0;
-
-			for (int y = 0; y < drawH; y++) {
-				for (int x = 0; x < drawW; x++) {
-					int destX = clipX + x + _viewX;
-					int destY = statusBarY + clipY + y + _viewY;
-					if (destX >= 0 && destX < pitch && destY >= 0 && destY < height) {
-						byte pixel = src[(clipY + y) * sw + (clipX + x)];
+		if (src && sw > 0 && sh > 0 && damageBarWidth > 0) {
+			int drawW = MIN(damageBarWidth, MIN(dmgClipW, sw - dmgClipX));
+			int drawH = MIN(dmgClipH, sh - dmgClipY);
+			if (drawW > 0 && drawH > 0) {
+				for (int y = 0; y < drawH; y++) {
+					int destY = statusBarY + dmgClipY + y + _viewY;
+					if (destY < 0 || destY >= height) continue;
+					for (int x = 0; x < drawW; x++) {
+						int destX = dmgClipX + x + _viewX;
+						if (destX < 0 || destX >= pitch) continue;
+						byte pixel = src[(dmgClipY + y) * sw + (dmgClipX + x)];
 						if (pixel != 0) {
 							renderBitmap[destY * pitch + destX] = pixel;
 						}
@@ -2188,12 +2193,70 @@ void InsaneRebel2::renderStatusBarSprites(byte *renderBitmap, int pitch, int wid
 				}
 			}
 		}
+
+		// Damage alert overlay (sprite 7) — FUN_0041c012 lines 68-76:
+		// When damage > 0xAA (170) and frame counter bit 3 is clear, draw sprite 7
+		// at full clip rect width (64 pixels) to show flashing alert
+		if (numSprites > 7 && _playerDamage > 170 && ((curFrame & 8) == 0)) {
+			if (src && sw > 0 && sh > 0) {
+				int alertW = MIN(dmgClipW, sw - dmgClipX);
+				int alertH = MIN(dmgClipH, sh - dmgClipY);
+				if (alertW > 0 && alertH > 0) {
+					const byte *alertSrc = _smush_cockpitNut->getCharData(7);
+					int alertSW = _smush_cockpitNut->getCharWidth(7);
+					int alertSH = _smush_cockpitNut->getCharHeight(7);
+					if (alertSrc && alertSW > 0 && alertSH > 0) {
+						int aW = MIN(alertW, alertSW - dmgClipX);
+						int aH = MIN(alertH, alertSH - dmgClipY);
+						for (int y = 0; y < aH; y++) {
+							int destY = statusBarY + dmgClipY + y + _viewY;
+							if (destY < 0 || destY >= height) continue;
+							for (int x = 0; x < aW; x++) {
+								int destX = dmgClipX + x + _viewX;
+								if (destX < 0 || destX >= pitch) continue;
+								byte pixel = alertSrc[(dmgClipY + y) * alertSW + (dmgClipX + x)];
+								if (pixel != 0) {
+									renderBitmap[destY * pitch + destX] = pixel;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
-	// Damage alert overlay (sprite 7) when damage > 170 and flashing
-	if (_smush_cockpitNut->getNumChars() > 7) {
-		if (_playerDamage > 170 && ((curFrame & 8) == 0)) {
-			renderNutSprite(renderBitmap, pitch, width, height, 63 + _viewX, statusBarY + 9 + _viewY, _smush_cockpitNut, 7);
+	// --- Lives bar (sprite 6 within lives clip rect) ---
+	// FUN_0041c012 lines 99-131:
+	//   Clip rect (low-res): {X=0xa8, Y=7, W=0x32, H=9} = {168, 7, 50, 9}
+	//   Bar width = min((lives * 5 - 5) * 2, 50) — only drawn when lives > 1
+	if (numSprites > 6 && _playerLives > 1) {
+		int livesBarWidth = (_playerLives * 5 - 5) * 2;
+		if (livesBarWidth > 50) livesBarWidth = 50;
+
+		const byte *src = _smush_cockpitNut->getCharData(6);
+		int sw = _smush_cockpitNut->getCharWidth(6);
+		int sh = _smush_cockpitNut->getCharHeight(6);
+
+		const int livClipX = 168, livClipY = 7, livClipW = 50, livClipH = 9;
+
+		if (src && sw > 0 && sh > 0 && livesBarWidth > 0) {
+			int drawW = MIN(livesBarWidth, MIN(livClipW, sw - livClipX));
+			int drawH = MIN(livClipH, sh - livClipY);
+			if (drawW > 0 && drawH > 0) {
+				for (int y = 0; y < drawH; y++) {
+					int destY = statusBarY + livClipY + y + _viewY;
+					if (destY < 0 || destY >= height) continue;
+					for (int x = 0; x < drawW; x++) {
+						int destX = livClipX + x + _viewX;
+						if (destX < 0 || destX >= pitch) continue;
+						byte pixel = src[(livClipY + y) * sw + (livClipX + x)];
+						if (pixel != 0) {
+							renderBitmap[destY * pitch + destX] = pixel;
+						}
+					}
+				}
+			}
 		}
 	}
 }

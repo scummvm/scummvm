@@ -607,74 +607,39 @@ void InsaneRebel2::addScore(int points) {
 	debug("Rebel2: Score +%d = %d", points, _playerScore);
 }
 
-// Render score to HUD (part of FUN_0041c012)
-// Score is drawn using FUN_00434cb0 with format string "%07ld"
-// In retail, score is rendered to a status bar buffer, then blitted to screen at Y=180 (0xb4)
-// The text within the status bar is at local Y=4, so screen Y = 180 + 4 = 184
+// Render score text to HUD (part of FUN_0041c012)
+// FUN_0041c012 lines 133-137: calls FUN_00434cb0 with format "%07ld"
+// Position (low-res): X = 0x101 (257), Y = 4 within status bar → screen Y = 184
 void InsaneRebel2::renderScoreHUD(byte *renderBitmap, int pitch, int width, int height, int statusBarY) {
-	// In retail, score is rendered by FUN_0041c012 which calls FUN_00434cb0
-	// The status bar is blitted to screen at Y = DAT_0047ab2c + 0xb4 (typically 0 + 180 = 180)
-	// Text position within status bar from FUN_0041c012 line 136-137:
-	//   X = ((DAT_0047a808 < 2) - 1 & 0x101) + 0x101 = 0x101 (257) for low-res
-	//   Y = ((DAT_0047a808 < 2) - 1 & 4) + 4 = 4 for low-res
-	// So final screen position: X=257, Y=180+4=184
-	// Format: 7-digit zero-padded decimal ("%07ld")
+	(void)statusBarY;
 
-	(void)statusBarY; // Not used - we use fixed Y positions
-
-	// Use SMALFONT.NUT (NutRenderer) for rendering digits
-	// If not available, skip rendering
-	if (!_smush_dispfontNut) {
-		debug(1, "renderScoreHUD: _smush_dispfontNut is NULL!");
+	if (!_smush_dispfontNut)
 		return;
-	}
 
-	// The SMUSH buffer is 424x260, but the visible screen is 320x200
-	// The view offset (_viewX, _viewY) determines where in the buffer the screen is showing
-	// To render at fixed screen positions, we add the view offset
-
-	// Convert score to 7-digit string
 	char scoreStr[16];
 	Common::sprintf_s(scoreStr, "%07d", _playerScore);
 
-	// Status bar is at Y=180 (0xb4), text within it at Y=4, so total Y=184
-	// Score X position is 257 (0x101)
-	const int STATUS_BAR_Y = 180;  // 0xb4 from FUN_41C012 line 149/152
-	const int SCORE_TEXT_Y = 4;    // Text position within status bar
-
+	// Score position from FUN_0041c012 assembly (low-res mode):
+	//   X = ((DAT_0047a808 < 2) - 1 & 0x101) + 0x101 = 0x101 = 257
+	//   Y = ((DAT_0047a808 < 2) - 1 & 4) + 4 = 4 (within status bar at Y=180)
 	int scoreX = 257 + _viewX;
-	int scoreY = STATUS_BAR_Y + SCORE_TEXT_Y + _viewY;
+	int scoreY = 180 + 4 + _viewY;
 
-	debug(5, "renderScoreHUD: Drawing score=%d at buffer(%d,%d) viewOffset(%d,%d)",
-		  _playerScore, scoreX, scoreY, _viewX, _viewY);
-
-	// Draw each character manually using NutRenderer::drawCharV7
-	Common::Rect clipRect(0, 0, width, height);
+	// Render each digit as a NUT sprite (direct pixel blit with color 0 transparency).
+	// This matches the original's FUN_00434cb0 → FUN_004341a0 text rendering which
+	// uses the NUT font's embedded palette colors (1=white, 3=gray, 4=black outline).
+	// Render each character applying xoffs/yoffs from NUT frame headers,
+	// matching FUN_0042cba0 lines 13-14:
+	//   param_3 = *(short *)(param_6 + 2) + param_3;  // X += xoffs
+	//   param_4 = *(short *)(param_6 + 4) + param_4;  // Y += yoffs
 	int x = scoreX;
 	for (int i = 0; scoreStr[i] != '\0'; i++) {
 		byte ch = (byte)scoreStr[i];
-		int charWidth = _smush_dispfontNut->getCharWidth(ch);
-		if (charWidth > 0) {
-			// Use drawCharV7 with color 255 (white) for visibility
-			_smush_dispfontNut->drawCharV7(renderBitmap, clipRect, x, scoreY, pitch, 255, kStyleAlignLeft, ch, true, true);
-			x += charWidth;
-		}
-	}
-
-	// Also draw lives counter - in status bar at X=168 (0xa8), Y=7 within bar
-	const int LIVES_TEXT_Y = 7;
-	char livesStr[8];
-	Common::sprintf_s(livesStr, "%d", _playerLives);
-	int livesX = 168 + _viewX;
-	int livesY = STATUS_BAR_Y + LIVES_TEXT_Y + _viewY;
-
-	x = livesX;
-	for (int i = 0; livesStr[i] != '\0'; i++) {
-		byte ch = (byte)livesStr[i];
-		int charWidth = _smush_dispfontNut->getCharWidth(ch);
-		if (charWidth > 0) {
-			_smush_dispfontNut->drawCharV7(renderBitmap, clipRect, x, livesY, pitch, 255, kStyleAlignLeft, ch, true, true);
-			x += charWidth;
+		if (ch < _smush_dispfontNut->getNumChars()) {
+			int charX = x + _smush_dispfontNut->getCharXOffset(ch);
+			int charY = scoreY + _smush_dispfontNut->getCharYOffset(ch);
+			renderNutSprite(renderBitmap, pitch, width, height, charX, charY, _smush_dispfontNut, ch);
+			x += _smush_dispfontNut->getCharWidth(ch);
 		}
 	}
 }
