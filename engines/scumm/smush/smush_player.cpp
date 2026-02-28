@@ -843,7 +843,11 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 	// Query ConfMan here. However it may be slower, but
 	// player may want to switch the subtitles on or off during the
 	// playback. This fixes bug #2812
-	if ((!ConfMan.getBool("subtitles")) && ((flags & 8) == 8))
+	//
+	// RA2: The original game always shows subtitle text during cinematics
+	// (there is no subtitle toggle in the retail options menu). Skip
+	// this check so TRES text is always rendered.
+	if (_vm->_game.id != GID_REBEL2 && (!ConfMan.getBool("subtitles")) && ((flags & 8) == 8))
 		return;
 
 	bool isCJKComi = (_vm->_game.id == GID_CMI && _vm->_useCJKMode);
@@ -920,6 +924,9 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 			_multiFont = new SmushMultiFont(_vm, this, true);
 		}
 		_multiFont->setDefaultFont(fontId);
+
+		debug("SmushPlayer::handleTextResource: RA2 TRES frame=%d fontId=%d color=%d flags=0x%x flg=%d pos=(%d,%d) clip=(%d,%d,%d,%d) str=\"%.40s\"",
+			  _frame, fontId, color, flags, (int)flg, pos_x, pos_y, left, top, width, height, str);
 
 		if (flg & kStyleWordWrap) {
 			Common::Rect clipRect(MAX<int>(0, left), MAX<int>(0, top), MIN<int>(left + width, _width), MIN<int>(top + height, _height));
