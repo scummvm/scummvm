@@ -161,7 +161,7 @@ void DialogManager::displayChoices(Common::Array<ChoiceOption> *choices, byte *c
 Graphics::Surface DialogManager::getDialogueSurface(Common::Array<Common::String> dialogueLines, byte speakerId) {
 
 	int maxWidth = 0;
-	int height = dialogueLines.size() * 24;
+	int height = dialogueLines.size() * 25; // Add some padding
 	for (int i = 0; i < dialogueLines.size(); i++) {
 		maxWidth = MAX(maxWidth, g_engine->_largeFont->getStringWidth(dialogueLines[i]));
 	}
