@@ -24,6 +24,7 @@
 #include "engines/engine.h"
 #include "common/system.h"
 #include "common/events.h"
+#include "common/savefile.h"
 #include "common/util.h"
 
 #include "scumm/actor.h"
@@ -409,12 +410,23 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_previewOffsetX = -90;
 	_previewOffsetY = 75;  // Chapter 0: 0 * -50 + 75 = 75
 
+	// Initialize pilot data system
+	_numPilots = 0;
+	_activePilot = 0;
+	for (i = 0; i < kMaxPilots; i++) {
+		_pilots[i].init();
+	}
+	loadPilots(); // Load saved pilots from disk
+
 	// Initialize pilot selection system (FUN_00414A41)
 	// Menu structure: [saved pilots] + 4 fixed options (NEW/DUPE/DELETE/MAIN MENU)
 	_levelSelection = 0;          // First item selected
-	_levelItemCount = 4;          // 0 saved pilots + 4 fixed options
+	_levelItemCount = _numPilots + 4; // N saved pilots + 4 fixed options
 	_selectedLevel = 1;           // Default selected level
 	_difficultySelection = 2;     // Default to 3rd difficulty (matching original init param_3=2)
+	_pilotMenuMode = kPilotModeSelect;
+	_pilotNameInput = "";
+	_pilotEditIndex = -1;
 
 	// Initialize menu input capture system
 	_menuInputActive = false;
@@ -550,6 +562,58 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	return false;
 }
 
+// Per-level difficulty parameters extracted from RA2WIN95.EXE at VA 0x47e0f0
+// Original: 2D table indexed by DAT_0047a7fa (chapter/difficulty) * 0x242 + DAT_0047a7f8 (level+1) * 0x22
+// -1 = not applicable for this level type (e.g., no walls in turret levels)
+const InsaneRebel2::LevelDifficultyParams InsaneRebel2::kDifficultyTable[5][15] = {
+	// Difficulty 0 (Easy) - levels 1-15
+	{
+		{  30,   15,    3,   75}, {  17,   18,    2,   75}, {  -1,   18,    3,   75},
+		{  19,   -1,    2,   75}, {  27,  180,    3,   75}, {  40,   -1,   -1,   -1},
+		{  -1,   21,    3,   50}, {  30,   15,    4,   60}, {  30,   -1,   70,   75},
+		{  -1,   10,    5,   65}, {  -1,   -1,    6,   65}, {  30,   20,    1,   85},
+		{  -1,   24,    2,   75}, {  -1,   -1,    3,   75}, {  30,  255,    4,   75},
+	},
+	// Difficulty 1 (Medium) - levels 1-15
+	{
+		{  35,   17,    5,   75}, {  30,   60,    4,   75}, {  -1,   28,    3,   75},
+		{  25,   -1,    4,   75}, {  35,  190,    4,   75}, {  65,   -1,   -1,   -1},
+		{  -1,   24,    3,   50}, {  45,   17,    5,   75}, {  35,   -1,   75,   75},
+		{  -1,   15,    5,   75}, {  -1,   -1,    8,   75}, {  35,   30,    1,   85},
+		{  -1,   28,    2,   75}, {  -1,   -1,    4,   75}, {  35,  255,    4,   75},
+	},
+	// Difficulty 2 (Hard) - levels 1-15
+	{
+		{  38,   20,    7,   75}, {  35,  100,    6,   75}, {  -1,   30,    4,   75},
+		{  30,   -1,    6,   75}, {  50,  200,   12,   75}, {  80,   -1,   -1,   -1},
+		{  -1,   27,    3,   60}, {  60,   19,    7,   75}, {  40,   -1,  100,   85},
+		{  -1,   20,    6,   75}, {  -1,   -1,   11,   75}, {  40,   40,    3,   76},
+		{  -1,   38,    4,   75}, {  -1,   -1,    7,   75}, {  40,  255,    7,   75},
+	},
+	// Difficulty 3 (Expert) - levels 1-15
+	{
+		{  42,   23,   12,   75}, {  50,  120,   16,   75}, {  -1,   55,    4,   75},
+		{  50,    0,   15,   79}, {  90,  220,   15,   90}, {  90,   -1,   -1,   -1},
+		{  -1,   35,    3,   68}, {  75,   30,   20,   80}, {  50,   -1,  110,   90},
+		{  -1,   30,    7,   75}, {  -1,   -1,   13,   75}, {  55,   55,    5,   77},
+		{  -1,   49,    4,   75}, {  -1,   -1,   10,   79}, {  45,  255,    8,   80},
+	},
+	// Difficulty 4 (identical to difficulty 2 in original data) - levels 1-15
+	{
+		{  38,   20,    7,   75}, {  35,  100,    6,   75}, {  -1,   30,    4,   75},
+		{  30,   -1,    6,   75}, {  50,  200,   12,   75}, {  80,   -1,   -1,   -1},
+		{  -1,   27,    3,   60}, {  60,   19,    7,   75}, {  40,   -1,  100,   85},
+		{  -1,   20,    6,   75}, {  -1,   -1,   11,   75}, {  40,   40,    3,   76},
+		{  -1,   38,    4,   75}, {  -1,   -1,    7,   75}, {  40,  255,    7,   75},
+	},
+};
+
+InsaneRebel2::LevelDifficultyParams InsaneRebel2::getDifficultyParams(int levelId) const {
+	int diff = CLIP(_difficulty, 0, 4);
+	int lvIdx = CLIP(levelId - 1, 0, 14);  // levelId 1-15 → index 0-14
+	return kDifficultyTable[diff][lvIdx];
+}
+
 // Score lookup tables (from DAT_0047e0fe, DAT_0047e100, DAT_0047e102)
 // These are indexed by: DAT_0047a7fa * 0x242 + DAT_0047a7f8 * 0x22
 // For simplicity, we use fixed values based on difficulty level
@@ -642,6 +706,175 @@ void InsaneRebel2::renderScoreHUD(byte *renderBitmap, int pitch, int width, int 
 			x += _smush_dispfontNut->getCharWidth(ch);
 		}
 	}
+}
+
+// ======================= Pilot Data System =======================
+// Save/load pilot profiles using ScummVM's save file system (one pilot per slot).
+// Follows the Hypno/Wetlands pattern: each pilot = one ScummVM save slot.
+// Uses ScummEngine::makeSavegameName() for standard ScummVM file naming.
+// Original: FUN_00411980 (load) / FUN_00411A5D (save)
+
+static const uint32 kPilotSaveMagic = MKTAG('R', 'A', '2', 'P');
+static const uint16 kPilotSaveVersion = 1;
+
+bool InsaneRebel2::loadPilots() {
+	_numPilots = 0;
+
+	for (int i = 0; i < kMaxPilots; i++) {
+		Common::String filename = _vm->makeSavegameName(i, false);
+		Common::InSaveFile *sf = _vm->_saveFileMan->openForLoading(filename);
+		if (!sf)
+			break; // Slots are contiguous
+
+		uint32 magic = sf->readUint32BE();
+		if (magic != kPilotSaveMagic) {
+			delete sf;
+			break;
+		}
+
+		/* uint16 version = */ sf->readUint16LE();
+
+		PilotData &p = _pilots[i];
+		sf->read(p.name, kMaxPilotNameLen + 1);
+		p.name[kMaxPilotNameLen] = '\0';
+		for (int j = 0; j < kNumLevels; j++)
+			p.score[j] = sf->readSint32LE();
+		for (int j = 0; j < kNumLevels; j++)
+			p.lives[j] = sf->readSint32LE();
+		for (int j = 0; j < kNumLevels; j++)
+			p.damage[j] = sf->readSint32LE();
+		p.difficulty = sf->readSint16LE();
+		delete sf;
+
+		_numPilots = i + 1;
+	}
+
+	debug("Rebel2: Loaded %d pilot(s)", _numPilots);
+	return _numPilots > 0;
+}
+
+bool InsaneRebel2::savePilots() {
+	bool ok = true;
+
+	for (int i = 0; i < _numPilots; i++) {
+		Common::String filename = _vm->makeSavegameName(i, false);
+		Common::OutSaveFile *sf = _vm->_saveFileMan->openForSaving(filename, false);
+		if (!sf) {
+			warning("Rebel2: Failed to save pilot %d", i);
+			ok = false;
+			continue;
+		}
+
+		sf->writeUint32BE(kPilotSaveMagic);
+		sf->writeUint16LE(kPilotSaveVersion);
+
+		const PilotData &p = _pilots[i];
+		sf->write(p.name, kMaxPilotNameLen + 1);
+		for (int j = 0; j < kNumLevels; j++)
+			sf->writeSint32LE(p.score[j]);
+		for (int j = 0; j < kNumLevels; j++)
+			sf->writeSint32LE(p.lives[j]);
+		for (int j = 0; j < kNumLevels; j++)
+			sf->writeSint32LE(p.damage[j]);
+		sf->writeSint16LE(p.difficulty);
+
+		sf->finalize();
+		delete sf;
+	}
+
+	// Remove leftover files beyond current count
+	for (int i = _numPilots; i < kMaxPilots; i++) {
+		Common::String filename = _vm->makeSavegameName(i, false);
+		_vm->_saveFileMan->removeSavefile(filename);
+	}
+
+	debug("Rebel2: Saved %d pilot(s)", _numPilots);
+	return ok;
+}
+
+int InsaneRebel2::createNewPilot() {
+	// FUN_00411B9A: Create new pilot slot
+	if (_numPilots >= kMaxPilots)
+		return -1;
+
+	int idx = _numPilots;
+	_pilots[idx].init();
+	_numPilots++;
+	return idx;
+}
+
+void InsaneRebel2::deletePilot(int index) {
+	// FUN_00411D29: Delete pilot and shift remaining down
+	if (index < 0 || index >= _numPilots)
+		return;
+
+	for (int i = index; i < _numPilots - 1; i++) {
+		_pilots[i] = _pilots[i + 1];
+	}
+	_numPilots--;
+
+	// Clear the now-unused last slot
+	_pilots[_numPilots].init();
+}
+
+void InsaneRebel2::copyPilot(int srcIndex) {
+	// Copy pilot from srcIndex to a new slot
+	if (srcIndex < 0 || srcIndex >= _numPilots || _numPilots >= kMaxPilots)
+		return;
+
+	int newIdx = _numPilots;
+	_pilots[newIdx] = _pilots[srcIndex];
+
+	// Append " COPY" or truncate name to fit
+	Common::String name(_pilots[newIdx].name);
+	if (name.size() + 5 <= kMaxPilotNameLen) {
+		name += " COPY";
+	} else if (name.size() > 0) {
+		// Truncate and add marker
+		name = name.substr(0, kMaxPilotNameLen - 2) + " C";
+	}
+	Common::strlcpy(_pilots[newIdx].name, name.c_str(), sizeof(_pilots[newIdx].name));
+
+	_numPilots++;
+}
+
+void InsaneRebel2::updatePilotProgress(int levelIndex, int32 score, int32 lives, int32 damage) {
+	if (_activePilot < 0 || _activePilot >= _numPilots)
+		return;
+	if (levelIndex < 0 || levelIndex >= kNumLevels)
+		return;
+
+	PilotData &pilot = _pilots[_activePilot];
+	pilot.score[levelIndex] = score;
+	pilot.lives[levelIndex] = lives;
+	pilot.damage[levelIndex] = damage;
+
+	// Unlock next level if this one completed with damage < 0xFF
+	if (damage < 0xFF && levelIndex + 1 < kNumLevels) {
+		if (pilot.damage[levelIndex + 1] == 0xFF) {
+			// Initialize next level as playable
+			pilot.score[levelIndex + 1] = 0;
+			pilot.lives[levelIndex + 1] = 4;
+			pilot.damage[levelIndex + 1] = 0;
+		}
+	}
+
+	savePilots();
+}
+
+int InsaneRebel2::getPilotHighestLevel() const {
+	if (_activePilot < 0 || _activePilot >= _numPilots)
+		return 0;
+
+	const PilotData &pilot = _pilots[_activePilot];
+	int highest = 0;
+	for (int i = kNumLevels - 1; i >= 0; i--) {
+		if (pilot.damage[i] < 0xFF) {
+			highest = i;
+			break;
+		}
+	}
+	return highest;
 }
 
 int32 InsaneRebel2::processMouse() {

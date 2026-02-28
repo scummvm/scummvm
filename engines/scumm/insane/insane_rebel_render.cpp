@@ -1176,9 +1176,9 @@ void InsaneRebel2::checkCollisionZones() {
 
 		if (collision) {
 			// Collision detected — apply damage from collision damage table
-			// Original: DAT_0047a7ec += DAT_0047e0f6[levelIdx]
-			// TODO: Read from per-level collision damage table DAT_0047e0f6
-			int collisionDamage = 3 + (_difficulty * 2);
+			// Original: DAT_0047a7ec += DAT_0047e0f6[chapter * 0x242 + level * 0x22]
+			LevelDifficultyParams params = getDifficultyParams(_selectedLevel);
+			int collisionDamage = (params.wallDamage >= 0) ? params.wallDamage : 0;
 
 			if (!_rebelInvulnerable) {
 				_playerDamage += collisionDamage;
@@ -1254,7 +1254,8 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 					_hitCooldown = 10;
 					_spaceShotDirection = zone.filterValue + 2;
 
-					int collisionDamage = 3 + (_difficulty * 2);
+					LevelDifficultyParams params = getDifficultyParams(_selectedLevel);
+					int collisionDamage = (params.wallDamage >= 0) ? params.wallDamage : 0;
 					if (!_rebelInvulnerable) {
 						_playerDamage += collisionDamage;
 						if (_playerDamage > 255) _playerDamage = 255;
@@ -1282,6 +1283,8 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 		// Ship position is clamped to wall boundaries when hitting.
 		int16 hMargin = (_flyControlMode == 1) ? 0x28 : 0x0f;  // local_14
 		const int16 vMargin = 0x0f;  // local_20
+		LevelDifficultyParams wallParams = getDifficultyParams(_selectedLevel);
+		int wallDamage = (wallParams.wallDamage >= 0) ? wallParams.wallDamage : 0;
 
 		for (int i = 0; i < _primaryZoneCount; i++) {
 			CollisionZone &zone = _primaryZones[i];
@@ -1298,7 +1301,7 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 				if (_flyShipScreenY < edgeY) {
 					// Ship above top wall — push down
 					if (_hitCooldown < 5 && !_rebelInvulnerable) {
-						int damage = 3 + (_difficulty * 2);
+						int damage = wallDamage;
 						_playerDamage += damage;
 						if (_playerDamage > 255) _playerDamage = 255;
 						_rebelHitCounter++;
@@ -1320,7 +1323,7 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 				if (edgeY < _flyShipScreenY) {
 					// Ship below bottom wall — push up
 					if (_hitCooldown < 5 && !_rebelInvulnerable) {
-						int damage = 3 + (_difficulty * 2);
+						int damage = wallDamage;
 						_playerDamage += damage;
 						if (_playerDamage > 255) _playerDamage = 255;
 						_rebelHitCounter++;
@@ -1342,7 +1345,7 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 					// Ship left of left wall — push right
 					_flyShipScreenX = edgeX;  // Push-back
 					if (_hitCooldown < 5 && !_rebelInvulnerable) {
-						int damage = 3 + (_difficulty * 2);
+						int damage = wallDamage;
 						_playerDamage += damage;
 						if (_playerDamage > 255) _playerDamage = 255;
 						_rebelHitCounter++;
@@ -1363,7 +1366,7 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 					// Ship right of right wall — push left
 					_flyShipScreenX = edgeX;  // Push-back
 					if (_hitCooldown < 5 && !_rebelInvulnerable) {
-						int damage = 3 + (_difficulty * 2);
+						int damage = wallDamage;
 						_playerDamage += damage;
 						if (_playerDamage > 255) _playerDamage = 255;
 						_rebelHitCounter++;

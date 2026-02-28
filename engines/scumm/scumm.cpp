@@ -2728,12 +2728,17 @@ Common::Error ScummEngine::go() {
 					// Run the complete level (handles BEG, gameplay, END/DIE/RETRY/OVER)
 					int result = rebel->runLevel(selectedLevel);
 
+					// Save pilot progress after level completion
+					if (result == InsaneRebel2::kLevelNextLevel) {
+						rebel->updatePilotProgress(selectedLevel - 1,
+							rebel->_playerScore, rebel->_playerLives, rebel->_playerDamage);
+					}
+
 					if (shouldQuit() || result == InsaneRebel2::kLevelQuit) {
 						break;
 					}
 
 					// After level completion or game over, return to menu
-					// Could also handle kLevelNextLevel to auto-start next level
 				}
 				// If kChapterSelectBack, loop back to main menu
 			}

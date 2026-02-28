@@ -1262,28 +1262,20 @@ int InsaneRebel2::runLevelSelect() {
 	//   kLevelSelectPlay (1) = Go to chapter selection (pilot selected or NEW+difficulty chosen)
 	//   kLevelSelectBack (0) = Return to main menu (MAIN MENU or ESC)
 	//   kLevelSelectQuit (2) = Quit game
-	//
-	// Original action dispatch (FUN_00414A41):
-	//   sel < N        → saved pilot selected → return 3 (start game)
-	//   sel == N       → ADD NEW PILOT → difficulty submenu → loop back
-	//   sel == N+1     → COPY PILOT → source select (no-op if N==0)
-	//   sel == N+2     → DELETE PILOT → confirm select (no-op if N==0)
-	//   sel == N+3     → RETURN TO MAIN MENU → return 1
-	//   ESC            → return 1
 
-	debug("Rebel2: Entering pilot selection (FUN_00414A41)");
+	debug("Rebel2: Entering pilot selection (FUN_00414A41), %d pilots loaded", _numPilots);
 
 	_menuInputActive = true;
 	while (!_menuEventQueue.empty()) _menuEventQueue.pop();
 
-	// Number of saved pilots (TODO: implement save system)
-	int numPilots = 0;
-
 	_levelSelection = 0;
-	_levelItemCount = numPilots + 4;  // N pilots + NEW/COPY/DELETE/MAIN MENU
+	_levelItemCount = _numPilots + 4;  // N pilots + NEW/COPY/DELETE/MAIN MENU
 	_selectedLevel = 1;
 	_menuRepeatDelay = 0;
 	_gameState = kStatePilotSelect;
+	_pilotMenuMode = kPilotModeSelect;
+	_pilotNameInput = "";
+	_pilotEditIndex = -1;
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 
@@ -1292,8 +1284,6 @@ int InsaneRebel2::runLevelSelect() {
 		_vm->_smushVideoShouldFinish = false;
 
 		Common::String menuVideo = getRandomMenuVideo();
-		debug("Rebel2: Playing pilot select background: %s", menuVideo.c_str());
-
 		splayer->setCurVideoFlags(0x20);
 		splayer->play(menuVideo.c_str(), 12);
 
@@ -1302,60 +1292,102 @@ int InsaneRebel2::runLevelSelect() {
 			return kLevelSelectQuit;
 		}
 
-		if (!_vm->_smushVideoShouldFinish) {
+		if (!_vm->_smushVideoShouldFinish)
 			continue;
-		}
 
 		_vm->_smushVideoShouldFinish = false;
 
-		// Dispatch based on current game state
-		if (_gameState == kStateDifficultySelect) {
-			// Difficulty submenu — selection made
-			debug("Rebel2: Difficulty %d selected", _difficultySelection);
-			// Original stores difficulty in pilot record and loops back.
-			// Since we have no save system, proceed to chapter select.
+		// --- Difficulty submenu completed ---
+		if (_pilotMenuMode == kPilotModeDifficulty) {
+			// Store difficulty in the new pilot and save
+			if (_pilotEditIndex >= 0 && _pilotEditIndex < _numPilots) {
+				_pilots[_pilotEditIndex].difficulty = _difficultySelection;
+				_difficulty = _difficultySelection;
+				savePilots();
+				_activePilot = _pilotEditIndex;
+
+				// Update chapter unlock state from pilot data
+				for (int i = 0; i < 16; i++) {
+					_chapterUnlocked[i] = _debugUnlockAll || (_pilots[_activePilot].damage[i] < 0xFF);
+				}
+			}
+			_pilotMenuMode = kPilotModeSelect;
+			_levelItemCount = _numPilots + 4;
 			_gameState = kStatePilotSelect;
 			_menuInputActive = false;
 			return kLevelSelectPlay;
 		}
 
-		// Pilot menu — process selection
-		debug("Rebel2: Pilot selection made: %d (numPilots=%d)", _levelSelection, numPilots);
+		// --- Name input completed ---
+		if (_pilotMenuMode == kPilotModeNameInput) {
+			// Name was confirmed — now show difficulty submenu
+			if (_pilotEditIndex >= 0 && _pilotEditIndex < _numPilots) {
+				Common::strlcpy(_pilots[_pilotEditIndex].name, _pilotNameInput.c_str(),
+				                sizeof(_pilots[_pilotEditIndex].name));
+			}
+			_pilotMenuMode = kPilotModeDifficulty;
+			_gameState = kStateDifficultySelect;
+			_difficultySelection = 2;
+			continue;
+		}
 
-		if (_levelSelection < numPilots) {
-			// Saved pilot selected — go to chapter selection
-			_selectedLevel = _levelSelection + 1;
-			debug("Rebel2: Pilot %d selected - going to chapter selection", _selectedLevel);
+		// --- Normal pilot menu selection ---
+		debug("Rebel2: Pilot selection: %d (numPilots=%d)", _levelSelection, _numPilots);
+
+		if (_levelSelection < _numPilots) {
+			// Existing pilot selected — activate and go to chapter select
+			_activePilot = _levelSelection;
+			_difficulty = _pilots[_activePilot].difficulty;
+
+			// Update chapter unlock state from pilot data
+			for (int i = 0; i < 16; i++) {
+				_chapterUnlocked[i] = _debugUnlockAll || (_pilots[_activePilot].damage[i] < 0xFF);
+			}
+
+			debug("Rebel2: Pilot '%s' selected (slot %d, difficulty %d)",
+			      _pilots[_activePilot].name, _activePilot, _difficulty);
 			_menuInputActive = false;
 			return kLevelSelectPlay;
-		} else if (_levelSelection == numPilots) {
-			// ADD NEW PILOT — show difficulty submenu
-			debug("Rebel2: ADD NEW PILOT - showing difficulty submenu");
-			_gameState = kStateDifficultySelect;
-			_difficultySelection = 2;  // Default to 3rd option (matching original init)
-			// Continue loop — next video frame will render difficulty menu
-			continue;
-		} else if (_levelSelection == numPilots + 1) {
-			// COPY PILOT — no-op when numPilots==0 (original checks local_10 != 0)
-			if (numPilots > 0) {
-				debug("Rebel2: COPY PILOT selected");
-				// TODO: implement copy pilot sub-flow
-			} else {
-				debug("Rebel2: COPY PILOT - no pilots to copy");
+
+		} else if (_levelSelection == _numPilots) {
+			// ADD NEW PILOT — create slot, enter name input mode
+			int newIdx = createNewPilot();
+			if (newIdx >= 0) {
+				_pilotEditIndex = newIdx;
+				_pilotNameInput = "";
+				_pilotMenuMode = kPilotModeNameInput;
+				_levelItemCount = _numPilots + 4;
+				debug("Rebel2: NEW PILOT - entering name for slot %d", newIdx);
 			}
 			continue;
-		} else if (_levelSelection == numPilots + 2) {
-			// DELETE PILOT — no-op when numPilots==0 (original checks local_10 != 0)
-			if (numPilots > 0) {
-				debug("Rebel2: DELETE PILOT selected");
-				// TODO: implement delete pilot sub-flow
-			} else {
-				debug("Rebel2: DELETE PILOT - no pilots to delete");
+
+		} else if (_levelSelection == _numPilots + 1) {
+			// COPY PILOT
+			if (_numPilots > 0 && _numPilots < kMaxPilots) {
+				// Copy first pilot (slot 0) by default — original swaps with selected
+				int srcIdx = (_levelSelection > 0 && _levelSelection <= _numPilots) ? _levelSelection - 1 : 0;
+				copyPilot(srcIdx);
+				savePilots();
+				_levelItemCount = _numPilots + 4;
+				debug("Rebel2: Copied pilot %d, now %d pilots", srcIdx, _numPilots);
 			}
 			continue;
-		} else if (_levelSelection == numPilots + 3) {
+
+		} else if (_levelSelection == _numPilots + 2) {
+			// DELETE PILOT
+			if (_numPilots > 0) {
+				// Delete the first pilot (slot 0) — original has confirm sub-flow
+				deletePilot(0);
+				savePilots();
+				_levelItemCount = _numPilots + 4;
+				if (_levelSelection >= _levelItemCount)
+					_levelSelection = _levelItemCount - 1;
+				debug("Rebel2: Deleted pilot, %d remaining", _numPilots);
+			}
+			continue;
+
+		} else if (_levelSelection == _numPilots + 3) {
 			// RETURN TO MAIN MENU
-			debug("Rebel2: Back to main menu selected");
 			_menuInputActive = false;
 			return kLevelSelectBack;
 		}
@@ -1367,12 +1399,61 @@ int InsaneRebel2::runLevelSelect() {
 
 int InsaneRebel2::processLevelSelectInput() {
 	// Process input for pilot selection and difficulty submenu
-	// Handles both kStatePilotSelect and kStateDifficultySelect modes
+	// Handles kPilotModeSelect, kPilotModeNameInput, and kStateDifficultySelect
 	// Returns: -1 = no action, 0+ = item selected
 
 	int result = -1;
 
-	// Determine which menu mode we're in
+	// Name input mode — keyboard goes to _pilotNameInput instead of menu nav
+	// Original: FUN_00414A41 lines 87-116
+	if (_pilotMenuMode == kPilotModeNameInput) {
+		while (!_menuEventQueue.empty()) {
+			Common::Event event = _menuEventQueue.pop();
+			if (event.type == Common::EVENT_KEYDOWN) {
+				if (event.kbd.keycode == Common::KEYCODE_RETURN ||
+				    event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
+					// Confirm name — signal back to runLevelSelect()
+					if (_pilotNameInput.size() > 0) {
+						_vm->_smushVideoShouldFinish = true;
+						debug("PilotName: confirmed '%s'", _pilotNameInput.c_str());
+					}
+				} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					// Cancel name entry — delete the pilot slot we created
+					if (_pilotEditIndex >= 0 && _pilotEditIndex < _numPilots) {
+						deletePilot(_pilotEditIndex);
+					}
+					_pilotMenuMode = kPilotModeSelect;
+					_levelItemCount = _numPilots + 4;
+					debug("PilotName: cancelled");
+				} else if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
+					// Backspace — remove last character
+					if (_pilotNameInput.size() > 0) {
+						_pilotNameInput.deleteLastChar();
+					}
+				} else {
+					// Printable ASCII (0x20-0x7E), max 15 chars
+					char c = (char)event.kbd.ascii;
+					if (c >= 0x20 && c <= 0x7E &&
+					    (int)_pilotNameInput.size() < kMaxPilotNameLen) {
+						_pilotNameInput += c;
+					}
+				}
+			} else if (event.type == Common::EVENT_MOUSEMOVE) {
+				_vm->_mouse.x = event.mouse.x;
+				_vm->_mouse.y = event.mouse.y;
+			} else if (event.type == Common::EVENT_QUIT ||
+			           event.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+				if (_pilotEditIndex >= 0 && _pilotEditIndex < _numPilots) {
+					deletePilot(_pilotEditIndex);
+				}
+				_pilotMenuMode = kPilotModeSelect;
+				_levelItemCount = _numPilots + 4;
+			}
+		}
+		return -1;
+	}
+
+	// Normal menu navigation (pilot select or difficulty submenu)
 	bool isDifficultyMode = (_gameState == kStateDifficultySelect);
 	int &selection = isDifficultyMode ? _difficultySelection : _levelSelection;
 	int itemCount = isDifficultyMode ? 6 : _levelItemCount;
@@ -1391,8 +1472,6 @@ int InsaneRebel2::processLevelSelectInput() {
 				if (selection < 0) {
 					selection = itemCount - 1;
 				}
-				debug("LevelSelect: Selection changed to %d (UP, %s)",
-				      selection, isDifficultyMode ? "difficulty" : "pilot");
 				break;
 
 			case Common::KEYCODE_DOWN:
@@ -1400,30 +1479,20 @@ int InsaneRebel2::processLevelSelectInput() {
 				if (selection >= itemCount) {
 					selection = 0;
 				}
-				debug("LevelSelect: Selection changed to %d (DOWN, %s)",
-				      selection, isDifficultyMode ? "difficulty" : "pilot");
 				break;
 
 			case Common::KEYCODE_RETURN:
 			case Common::KEYCODE_KP_ENTER:
 				if (selection >= 0 && selection < itemCount) {
 					result = selection;
-					debug("LevelSelect: Item %d selected (ENTER, %s)",
-					      selection, isDifficultyMode ? "difficulty" : "pilot");
 				}
 				break;
 
 			case Common::KEYCODE_ESCAPE:
 				if (isDifficultyMode) {
-					// ESC in difficulty submenu — return to pilot menu
-					// Note: original has no ESC in difficulty submenu, but we add it as a
-					// graceful fallback
 					_gameState = kStatePilotSelect;
-					debug("LevelSelect: ESC in difficulty - back to pilot menu");
 				} else {
-					// ESC in pilot menu — back to main menu (return 1 in original)
 					result = _levelItemCount - 1;  // Last item = MAIN MENU
-					debug("LevelSelect: ESC pressed - back to main menu");
 				}
 				break;
 
@@ -1435,15 +1504,11 @@ int InsaneRebel2::processLevelSelectInput() {
 		case Common::EVENT_LBUTTONDOWN:
 			{
 				int mouseY = event.mouse.y;
-				debug("LevelSelect: Click at Y=%d (%s)", mouseY,
-				      isDifficultyMode ? "difficulty" : "pilot");
-
 				for (int i = 0; i < itemCount; i++) {
 					int itemY = baseY + i * itemHeight;
 					if (mouseY >= itemY - 4 && mouseY < itemY + 6) {
 						selection = i;
 						result = i;
-						debug("LevelSelect: Item %d clicked at Y=%d (itemY=%d)", i, mouseY, itemY);
 						break;
 					}
 				}
@@ -1506,22 +1571,35 @@ void InsaneRebel2::drawLevelSelectOverlay(byte *renderBitmap, int pitch, int wid
 	// Pilot menu - FUN_0041f5ae(0, &DAT_00457768, N+4, 0)
 	// =====================================================================
 	// items[0]    = title (TRS 20)
-	// items[1..N] = saved pilots (formatted with ^f01^c005)
+	// items[1..N] = saved pilots (formatted with ^f01^c005<name>^f00)
 	// items[N+1]  = TRS 21 (ADD NEW PILOT)
 	// items[N+2]  = TRS 22 (COPY PILOT)
 	// items[N+3]  = TRS 23 (DELETE PILOT)
 	// items[N+4]  = TRS 24 (RETURN TO MAIN MENU)
 
-	int numPilots = 0;  // TODO: implement save system
+	// Build pilot name strings with font/color formatting
+	// Original uses "^f01^c005<name>^f00" for pilot entries
+	Common::String pilotNameStrs[kMaxPilots];
+	for (int i = 0; i < _numPilots; i++) {
+		if (_pilotMenuMode == kPilotModeNameInput && i == _pilotEditIndex) {
+			// Show name being typed with cursor (underscore)
+			pilotNameStrs[i] = Common::String::format("^f01^c005%s_^f00", _pilotNameInput.c_str());
+		} else {
+			pilotNameStrs[i] = Common::String::format("^f01^c005%s^f00", _pilots[i].name);
+		}
+	}
 
-	const char *pilotItems[11];
+	// Max items: 1 title + 10 pilots + 4 options = 15
+	const char *pilotItems[15];
 	int idx = 0;
 
 	// Title: TRS 20
 	pilotItems[idx++] = splayer->getString(20);
 
-	// Saved pilot slots would be inserted here (items[1..numPilots])
-	// Each formatted as "^f01^c005<name>^f00" by the original
+	// Saved pilot slots
+	for (int i = 0; i < _numPilots; i++) {
+		pilotItems[idx++] = pilotNameStrs[i].c_str();
+	}
 
 	// Fixed options: TRS 21-24
 	for (int i = 0; i < 4; i++) {
@@ -1534,11 +1612,7 @@ void InsaneRebel2::drawLevelSelectOverlay(byte *renderBitmap, int pitch, int wid
 		}
 	}
 
-	drawMenuItems(renderBitmap, pitch, width, height, pilotItems, numPilots + 4, _levelSelection);
-
-	// Pilot info display at fixed coordinates when saved pilot selected
-	// FUN_00414A41 lines 78-86: FUN_00434cb0 at Y=0xb4(180) and Y=0xbe(190)
-	// TODO: Implement when save system is added
+	drawMenuItems(renderBitmap, pitch, width, height, pilotItems, _numPilots + 4, _levelSelection);
 }
 
 } // End of namespace Scumm

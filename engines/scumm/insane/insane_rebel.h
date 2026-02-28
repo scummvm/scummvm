@@ -156,6 +156,54 @@ public:
 	// Draw score/info display at bottom of chapter select - emulates FUN_00434cb0 calls
 	void drawChapterInfoLine(byte *renderBitmap, int pitch, int width, int height);
 
+	// ================= Pilot Data System (FUN_00411B9A / FUN_00411980 / FUN_00411A5D) ===========
+	// Original: 10 pilot slots × 0x118 (280) bytes at DAT_004568A8
+	// Stored via SaveFileManager in a custom save file
+
+	static const int kMaxPilots = 10;
+	static const int kMaxPilotNameLen = 15;
+	static const int kNumLevels = 16;
+
+	struct PilotData {
+		char name[kMaxPilotNameLen + 1]; // +0x04: Pilot name (15 chars + null)
+		int32 score[kNumLevels];         // +0x2C: Per-level score (0 = default, 0xFF = unplayed)
+		int32 lives[kNumLevels];         // +0x6C: Per-level lives (4 = default, 0xFF = unplayed)
+		int32 damage[kNumLevels];        // +0xAC: Per-level damage (0xFF = unplayed)
+		int16 difficulty;                // +0x10C: Difficulty setting (0-5)
+
+		void init() {
+			memset(name, 0, sizeof(name));
+			difficulty = 2; // Default to 3rd option
+			score[0] = 0;
+			lives[0] = 4;
+			damage[0] = 0;
+			for (int i = 1; i < kNumLevels; i++) {
+				score[i] = 0;
+				lives[i] = 0xFF;
+				damage[i] = 0xFF;
+			}
+		}
+	};
+
+	PilotData _pilots[kMaxPilots];       // DAT_004568A8 pilot array
+	int _numPilots;                      // DAT_00480318 number of valid pilots
+	int _activePilot;                    // DAT_0047a7ea selected pilot index
+
+	// Pilot save/load via SaveFileManager
+	bool loadPilots();
+	bool savePilots();
+
+	// Pilot management (FUN_00411B9A, FUN_00411D29)
+	int createNewPilot();                // Returns index of new pilot, or -1 if full
+	void deletePilot(int index);         // FUN_00411D29: shift remaining pilots down
+	void copyPilot(int srcIndex);        // Copy pilot to new slot
+
+	// Update pilot progress after level completion
+	void updatePilotProgress(int levelIndex, int32 score, int32 lives, int32 damage);
+
+	// Get highest unlocked level for active pilot (checks damage[] < 0xFF)
+	int getPilotHighestLevel() const;
+
 	// ================= Pilot Selection Menu (FUN_00414A41) ====================
 	// This is the pilot/save selection menu (separate from chapter selection)
 
@@ -164,6 +212,18 @@ public:
 		kLevelSelectPlay = 1,     // Play selected level
 		kLevelSelectQuit = 2      // Quit game
 	};
+
+	// Pilot name input state (for NEW PILOT name entry)
+	enum PilotMenuMode {
+		kPilotModeSelect = 0,     // Normal pilot list selection
+		kPilotModeNameInput = 1,  // Typing a new pilot name
+		kPilotModeDifficulty = 2, // Difficulty submenu
+		kPilotModeDeleteConfirm = 3, // Delete confirmation
+		kPilotModeCopySelect = 4  // Copy source selection
+	};
+	PilotMenuMode _pilotMenuMode;
+	Common::String _pilotNameInput;      // Current name being typed
+	int _pilotEditIndex;                 // Index of pilot being edited/created
 
 	int _levelSelection;          // Current level selection (0-based)
 	int _levelItemCount;          // Number of level items (levels + options)
@@ -917,9 +977,31 @@ public:
 	NutRenderer *_hudOverlayNut;     // DAT_0047fe78 - Primary HUD overlay (animated)
 	NutRenderer *_hudOverlay2Nut;    // DAT_0047fe80 - Secondary HUD overlay
 
-	/* Difficulty Level (0, 1, 2 = Easy, Med, Hard) */
+	/* Difficulty Level (0-5, from pilot menu; clamped to 0-4 for table lookup) */
 	int _difficulty;
 	void drawCornerBrackets(byte *dst, int pitch, int width, int height, int x, int y, int w, int h, byte color);
+
+	// ======================= Per-Level Difficulty Parameters =======================
+	// Extracted from RA2WIN95.EXE at VA 0x47e0f0
+	// 2D table indexed by difficulty (0-4) × game level (1-15)
+	// Original indexing: &DAT_0047e0f6 + chapter * 0x242 + level * 0x22
+	// -1 = not applicable for this level type (e.g., no walls in turret levels)
+
+	struct LevelDifficultyParams {
+		int16 wallDamage;           // +0x06 DAT_0047e0f6: Wall/obstacle collision damage
+		int16 directHitDamage;      // +0x04 DAT_0047e0f4: Direct hit damage (par4=100)
+		int16 enemyProjectileDamage;// +0x08 DAT_0047e0f8: Enemy projectile/probabilistic damage
+		int16 hitProbability;       // +0x0C DAT_0047e0fc: Enemy hit chance (0-100, -1=disabled)
+	};
+
+	// Table: 5 difficulty levels × 15 game levels
+	// Difficulty 4 is identical to difficulty 2 in the original data
+	static const LevelDifficultyParams kDifficultyTable[5][15];
+
+	// Look up difficulty parameters for current difficulty and level
+	// Returns the entry from kDifficultyTable, clamping difficulty to 0-4
+	// levelId is 1-based (1-15)
+	LevelDifficultyParams getDifficultyParams(int levelId) const;
 
 	// Score system (FUN_0041bf8d equivalent)
 	// Adds points to score and awards bonus life when crossing threshold
