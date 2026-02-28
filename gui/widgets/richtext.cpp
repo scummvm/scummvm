@@ -23,6 +23,7 @@
 #include "common/unicode-bidi.h"
 
 #include "graphics/macgui/mactext.h"
+#include "graphics/macgui/macfontmanager.h"
 
 #include "gui/gui-manager.h"
 
@@ -175,6 +176,7 @@ void RichTextWidget::recalc() {
 //	} else {
 //		createWidget();
 //	}
+
 	if (!_surface || _surface->w != _textWidth) {
 		if (_surface) {
 			_surface->free();
@@ -229,6 +231,12 @@ void RichTextWidget::createWidget() {
 	else
 		newId = Graphics::kMacFontNewYork;
 
+#ifdef USE_FREETYPE2
+		// Use anti-aliased (light) rendering for the GUI help text.
+		Graphics::TTFRenderMode prevRenderMode = wm->_fontMan->getTTFRenderMode();
+		wm->_fontMan->setTTFRenderMode(Graphics::kTTFRenderModeLight);
+#endif
+
 	Graphics::MacFont macFont(newId, fontHeight, Graphics::kMacFontRegular);
 	_txtWnd = new Graphics::MacText(Common::U32String(), wm, &macFont, fg, bg, _textWidth, Graphics::kTextAlignLeft);
 
@@ -236,6 +244,11 @@ void RichTextWidget::createWidget() {
 		_txtWnd->setImageArchive(_imageArchive);
 
 	_txtWnd->setMarkdownText(_text);
+
+#ifdef USE_FREETYPE2
+	// Restore previous render mode now that all fonts have been loaded
+	wm->_fontMan->setTTFRenderMode(prevRenderMode);
+#endif
 
 	int textHeight = _txtWnd->getTextHeight();
 
@@ -253,7 +266,7 @@ void RichTextWidget::createWidget() {
 
 	if (!_surface || _surface->w != _textWidth || _surface->h != _textHeight) {
     	if (_surface)
-        	_surface->create(_textWidth, _textHeight, g_gui.getWM()->_pixelformat);
+        	_surface->create(_textWidth, _textHeight, wm->_pixelformat);
     	else
         	_surface = new Graphics::ManagedSurface(_textWidth, _textHeight, wm->_pixelformat);
 	}
