@@ -186,8 +186,10 @@ int InsaneRebel2::processMenuInput() {
 				int newSelection = (mouseY + 100 - (numItemsTotal * -5 + 0x67)) / 10;
 
 				// Clamp to valid range
-				if (newSelection < 0) newSelection = 0;
-				if (newSelection >= _menuItemCount) newSelection = _menuItemCount - 1;
+				if (newSelection < 0)
+					newSelection = 0;
+				if (newSelection >= _menuItemCount)
+					newSelection = _menuItemCount - 1;
 
 				// Only update if within menu area (not too far above/below)
 				int topY = baseY - 5;
@@ -282,7 +284,8 @@ void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int h
 	// =====================================================================
 	//   ^^ = literal ^, ^fNN = font switch, ^cNNN = color code, ^l = newline
 	auto parseFormatCode = [&](const char *&str, int &outColor) -> int {
-		if (*str != '^') return -1;
+		if (*str != '^')
+			return -1;
 
 		const char *p = str + 1;
 		if (*p == '^') {
@@ -329,10 +332,12 @@ void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int h
 				curFont = fonts[fontChange] ? fonts[fontChange] : defaultFont;
 				continue;
 			}
-			if (fontChange == -2) continue;
+			if (fontChange == -2)
+				continue;
 
 			byte c = (byte)*str++;
-			if (c >= 'a' && c <= 'z') c = c - 'a' + 'A';
+			if (c >= 'a' && c <= 'z')
+				c = c - 'a' + 'A';
 			if (curFont && c < curFont->getNumChars()) {
 				w += curFont->getCharWidth(c);
 			}
@@ -352,14 +357,18 @@ void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int h
 				curFont = fonts[fontChange] ? fonts[fontChange] : defaultFont;
 				continue;
 			}
-			if (fontChange == -2) continue;
+			if (fontChange == -2)
+				continue;
 
 			byte c = (byte)*str++;
-			if (c >= 'a' && c <= 'z') c = c - 'a' + 'A';
+			if (c >= 'a' && c <= 'z')
+				c = c - 'a' + 'A';
 
-			if (!curFont) continue;
+			if (!curFont)
+				continue;
 			int numChars = curFont->getNumChars();
-			if (c >= numChars) continue;
+			if (c >= numChars)
+				continue;
 
 			int charW = curFont->getCharWidth(c);
 
@@ -416,10 +425,14 @@ void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int h
 
 			int screenW = _vm->_screenWidth;
 			int screenH = _vm->_screenHeight;
-			if (leftX < 0) leftX = 0;
-			if (rightX >= screenW) rightX = screenW - 1;
-			if (topY < 0) topY = 0;
-			if (bottomY >= screenH) bottomY = screenH - 1;
+			if (leftX < 0)
+				leftX = 0;
+			if (rightX >= screenW)
+				rightX = screenW - 1;
+			if (topY < 0)
+				topY = 0;
+			if (bottomY >= screenH)
+				bottomY = screenH - 1;
 
 			// FUN_004292d0 - Draw rectangle border (4 lines)
 			for (int x = leftX; x <= rightX && x < screenW; x++) {
@@ -609,7 +622,8 @@ void InsaneRebel2::showPauseOverlay() {
 		const char *p = pauseText;
 		while (*p) {
 			byte c = (byte)*p++;
-			if (c >= 'a' && c <= 'z') c = c - 'a' + 'A';
+			if (c >= 'a' && c <= 'z')
+				c = c - 'a' + 'A';
 			if (c < numFontChars) {
 				textWidth += font->getCharWidth(c);
 			}
@@ -622,7 +636,8 @@ void InsaneRebel2::showPauseOverlay() {
 		p = pauseText;
 		while (*p) {
 			byte c = (byte)*p++;
-			if (c >= 'a' && c <= 'z') c = c - 'a' + 'A';
+			if (c >= 'a' && c <= 'z')
+				c = c - 'a' + 'A';
 			if (c < numFontChars && textX >= 0 && textY >= 0) {
 				font->drawCharV7(frameBuffer, clipRect, textX, textY, width, -1,
 				                 kStyleAlignLeft, c, true, true);
@@ -654,7 +669,9 @@ int InsaneRebel2::runMainMenu() {
 
 	// Enable menu input capture via EventObserver
 	_menuInputActive = true;
-	while (!_menuEventQueue.empty()) _menuEventQueue.pop();  // Clear any stale events
+	// Clear any stale events
+	while (!_menuEventQueue.empty())
+		_menuEventQueue.pop();
 
 	// Get the SmushPlayer from ScummEngine_v7
 	// Note: _player isn't set until SmushPlayer::initAudio() is called during playback
@@ -789,7 +806,8 @@ int InsaneRebel2::runChapterSelect() {
 
 	// Enable menu input capture
 	_menuInputActive = true;
-	while (!_menuEventQueue.empty()) _menuEventQueue.pop();
+	while (!_menuEventQueue.empty())
+		_menuEventQueue.pop();
 
 	// Initialize chapter selection state
 	// Original (lines 51-54): local_10 = 0xf; while (local_10 > 0 && locked) local_10--;
@@ -1073,21 +1091,24 @@ void InsaneRebel2::drawPreviewThumbnail(byte *renderBitmap, int pitch, int width
 	// This creates a styled placeholder since O_MENU_X.SAN doesn't have previews
 	for (int py = 0; py < thumbH; py++) {
 		int dy = destY + py;
-		if (dy < 0 || dy >= height) continue;
+		if (dy < 0 || dy >= height)
+			continue;
 
 		// Create vertical gradient: darker at top (0x10), lighter at bottom (0x18)
 		byte bgColor = 0x10 + (py * 8 / thumbH);
 
 		for (int px = 0; px < thumbW; px++) {
 			int dx = destX + px;
-			if (dx < 0 || dx >= width) continue;
+			if (dx < 0 || dx >= width)
+				continue;
 			renderBitmap[dy * pitch + dx] = bgColor;
 		}
 	}
 
 	// Draw chapter number overlay in the center of the preview
 	NutRenderer *font = _smush_smalfontNut;
-	if (!font) return;
+	if (!font)
+		return;
 
 	char chapterStr[16];
 	if (chapter < 15) {
@@ -1170,13 +1191,16 @@ void InsaneRebel2::drawPreviewThumbnail(byte *renderBitmap, int pitch, int width
 // For unlocked chapters: score display using TRS 80 at (25, 190)
 // For locked chapters: password prompt at (30, 190)
 void InsaneRebel2::drawChapterInfoLine(byte *renderBitmap, int pitch, int width, int height) {
-	if (_chapterSelection < 0 || _chapterSelection >= 16) return;
+	if (_chapterSelection < 0 || _chapterSelection >= 16)
+		return;
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
-	if (!splayer) return;
+	if (!splayer)
+		return;
 
 	NutRenderer *font = _smush_smalfontNut;
-	if (!font) return;
+	if (!font)
+		return;
 
 	Common::Rect clipRect(0, 0, _vm->_screenWidth, _vm->_screenHeight);
 	int actualPitch = _vm->_screenWidth;
@@ -1184,13 +1208,15 @@ void InsaneRebel2::drawChapterInfoLine(byte *renderBitmap, int pitch, int width,
 	if (_chapterUnlocked[_chapterSelection]) {
 		// Unlocked: show score info using TRS 80 at X=25 (0x19), Y=190 (0xbe)
 		const char *scoreStr = splayer->getString(80);
-		if (!scoreStr || !scoreStr[0]) return;
+		if (!scoreStr || !scoreStr[0])
+			return;
 
 		int curX = 25;
 		int numChars = font->getNumChars();
 		for (const char *c = scoreStr; *c; c++) {
 			byte ch = (byte)*c;
-			if (ch >= 'a' && ch <= 'z') ch = ch - 'a' + 'A';
+			if (ch >= 'a' && ch <= 'z')
+				ch = ch - 'a' + 'A';
 			if (ch < numChars) {
 				int charW = font->getCharWidth(ch);
 				if (curX >= 0 && curX + charW <= width && 190 < height) {
@@ -1220,26 +1246,30 @@ void InsaneRebel2::drawChapterSelectOverlay(byte *renderBitmap, int pitch, int w
 	// FUN_0041f5ae(0, &DAT_004577a8, 0x11, 1): param_3=17, param_4=1 (left-aligned)
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
-	if (!splayer) return;
+	if (!splayer)
+		return;
 
 	// Build items array matching original DAT_004577a8 layout
 	const char *items[18];
 
 	// items[0] = title = TRS 40 ("^f02Chapters")
 	items[0] = splayer->getString(40);
-	if (!items[0] || !items[0][0]) items[0] = "^f02Chapters";
+	if (!items[0] || !items[0][0])
+		items[0] = "^f02Chapters";
 
 	// items[1..16] = chapters, using unlocked (TRS 41-56) or locked (TRS 61-76) strings
 	for (int i = 1; i <= 16; i++) {
 		bool unlocked = (i - 1 < 16) && _chapterUnlocked[i - 1];
 		int trsIdx = unlocked ? (40 + i) : (60 + i);
 		items[i] = splayer->getString(trsIdx);
-		if (!items[i] || !items[i][0]) items[i] = "";
+		if (!items[i] || !items[i][0])
+			items[i] = "";
 	}
 
 	// items[17] = "RETURN TO PILOTS" = TRS 57 ("^f01^c240RETURN TO PILOTS")
 	items[17] = splayer->getString(57);
-	if (!items[17] || !items[17][0]) items[17] = "^f01^c240RETURN TO PILOTS";
+	if (!items[17] || !items[17][0])
+		items[17] = "^f01^c240RETURN TO PILOTS";
 
 	// Render menu using shared renderer with left-aligned mode
 	drawMenuItems(renderBitmap, pitch, width, height, items, 17, _chapterSelection, true);
@@ -1266,7 +1296,8 @@ int InsaneRebel2::runLevelSelect() {
 	debug("Rebel2: Entering pilot selection (FUN_00414A41), %d pilots loaded", _numPilots);
 
 	_menuInputActive = true;
-	while (!_menuEventQueue.empty()) _menuEventQueue.pop();
+	while (!_menuEventQueue.empty())
+		_menuEventQueue.pop();
 
 	_levelSelection = 0;
 	_levelItemCount = _numPilots + 4;  // N pilots + NEW/COPY/DELETE/MAIN MENU

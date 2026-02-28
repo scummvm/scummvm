@@ -70,7 +70,8 @@ void InsaneRebel2::playIntroSequence() {
 	splayer->setCurVideoFlags(0x28);
 	splayer->play("OPEN/O_OPEN_A.SAN", 12);
 
-	if (_vm->shouldQuit()) return;
+	if (_vm->shouldQuit())
+		return;
 
 	// Play additional intro (OPEN/O_OPEN_B.SAN)
 	// Original: conditional on DAT_0047ab45 || DAT_0047ab47
@@ -165,7 +166,8 @@ bool InsaneRebel2::playLevelGameplay(int levelId) {
 		splayer->setCurVideoFlags(0x28);
 		splayer->play(filename.c_str(), 12);
 
-		if (_vm->shouldQuit() || _playerShield == 0) return false;
+		if (_vm->shouldQuit() || _playerShield == 0)
+			return false;
 
 		// Part 1 (multiple variations - play A for now)
 		splayer->setCurVideoFlags(0x28);
@@ -173,7 +175,8 @@ bool InsaneRebel2::playLevelGameplay(int levelId) {
 		debug("Rebel2: Playing %s", filename.c_str());
 		splayer->play(filename.c_str(), 12);
 
-		if (_vm->shouldQuit() || _playerShield == 0) return false;
+		if (_vm->shouldQuit() || _playerShield == 0)
+			return false;
 
 		// Post segment 1
 		_rebelHandler = 0;
@@ -183,7 +186,8 @@ bool InsaneRebel2::playLevelGameplay(int levelId) {
 		splayer->setCurVideoFlags(0x28);
 		splayer->play(filename.c_str(), 12);
 
-		if (_vm->shouldQuit() || _playerShield == 0) return false;
+		if (_vm->shouldQuit() || _playerShield == 0)
+			return false;
 
 		// Part 2
 		_rebelHandler = 8;
@@ -192,7 +196,8 @@ bool InsaneRebel2::playLevelGameplay(int levelId) {
 		debug("Rebel2: Playing %s", filename.c_str());
 		splayer->play(filename.c_str(), 12);
 
-		if (_vm->shouldQuit() || _playerShield == 0) return false;
+		if (_vm->shouldQuit() || _playerShield == 0)
+			return false;
 
 		// Post segment 2
 		_rebelHandler = 0;
@@ -202,7 +207,8 @@ bool InsaneRebel2::playLevelGameplay(int levelId) {
 		splayer->setCurVideoFlags(0x28);
 		splayer->play(filename.c_str(), 12);
 
-		if (_vm->shouldQuit() || _playerShield == 0) return false;
+		if (_vm->shouldQuit() || _playerShield == 0)
+			return false;
 
 		// Part 3
 		_rebelHandler = 8;
@@ -220,7 +226,8 @@ bool InsaneRebel2::playLevelGameplay(int levelId) {
 		debug("Rebel2: Playing %s", filename.c_str());
 		splayer->play(filename.c_str(), 12);
 
-		if (_vm->shouldQuit() || _playerShield == 0) return false;
+		if (_vm->shouldQuit() || _playerShield == 0)
+			return false;
 
 		// Post segment
 		_rebelHandler = 0;
@@ -230,7 +237,8 @@ bool InsaneRebel2::playLevelGameplay(int levelId) {
 		splayer->setCurVideoFlags(0x28);
 		splayer->play(filename.c_str(), 12);
 
-		if (_vm->shouldQuit() || _playerShield == 0) return false;
+		if (_vm->shouldQuit() || _playerShield == 0)
+			return false;
 
 		// Phase 2 — handler will be re-set by IACT opcode 6
 		splayer->setCurVideoFlags(0x28);
@@ -247,7 +255,8 @@ bool InsaneRebel2::playLevelGameplay(int levelId) {
 		splayer->setCurVideoFlags(0x28);
 		splayer->play(filename.c_str(), 12);
 
-		if (_vm->shouldQuit()) return false;
+		if (_vm->shouldQuit())
+			return false;
 
 		splayer->setCurVideoFlags(0x28);
 		filename = Common::String::format("%s/%sPLAY.SAN", dir.c_str(), prefix.c_str());
@@ -268,7 +277,8 @@ bool InsaneRebel2::playLevelGameplay(int levelId) {
 		debug("Rebel2: Playing %s", filename.c_str());
 		splayer->play(filename.c_str(), 12);
 
-		if (_vm->shouldQuit() || _playerShield == 0) return false;
+		if (_vm->shouldQuit() || _playerShield == 0)
+			return false;
 
 		// Post segment
 		_rebelHandler = 0;
@@ -278,7 +288,8 @@ bool InsaneRebel2::playLevelGameplay(int levelId) {
 		splayer->setCurVideoFlags(0x28);
 		splayer->play(filename.c_str(), 12);
 
-		if (_vm->shouldQuit() || _playerShield == 0) return false;
+		if (_vm->shouldQuit() || _playerShield == 0)
+			return false;
 
 		// Phase 2 — handler will be re-set by IACT opcode 6
 		splayer->setCurVideoFlags(0x28);
@@ -496,18 +507,27 @@ Common::String InsaneRebel2::selectDeathVideoVariant(int levelId, int phase, int
 		// Level 3: Based on death frame and phase
 		if (phase == 1) {
 			// Phase 1 death video selection (from FUN_0041885F lines 80-96)
-			if (frame < 0x10c) return "B";       // < 268
-			if (frame < 0x1a9) return "A";       // < 425
-			if (frame < 0x247) return "C";       // < 583
-			if (frame < 700) return "A";
-			if (frame < 900) return "B";
+			if (frame < 0x10c)
+				return "B";       // < 268
+			if (frame < 0x1a9)
+				return "A";       // < 425
+			if (frame < 0x247)
+				return "C";       // < 583
+			if (frame < 700)
+				return "A";
+			if (frame < 900)
+				return "B";
 			return "A";
 		} else {
 			// Phase 2 death video selection (from FUN_0041885F lines 53-67)
-			if (frame < 0x2f1) return "A";       // < 753
-			if (frame < 0x347) return "B";       // < 839
-			if (frame < 0x3b1) return "C";       // < 945
-			if (frame < 0x405) return "A";       // < 1029
+			if (frame < 0x2f1)
+				return "A";       // < 753
+			if (frame < 0x347)
+				return "B";       // < 839
+			if (frame < 0x3b1)
+				return "C";       // < 945
+			if (frame < 0x405)
+				return "A";       // < 1029
 			return "C";
 		}
 
@@ -523,29 +543,49 @@ Common::String InsaneRebel2::selectDeathVideoVariant(int levelId, int phase, int
 		// Level 6 (FUN_004190D6): Phase-based with detailed frame selection
 		if (phase == 1) {
 			// DAT_0047a7f8 == 5 (phase 1)
-			if (frame < 0x4e) return "D";
-			if (frame < 0xe0) return "A";
-			if (frame < 0x122) return "D";
-			if (frame < 0x1b4) return "B";
-			if (frame < 499) return "D";
-			if (frame < 0x286) return "C";
+			if (frame < 0x4e)
+				return "D";
+			if (frame < 0xe0)
+				return "A";
+			if (frame < 0x122)
+				return "D";
+			if (frame < 0x1b4)
+				return "B";
+			if (frame < 499)
+				return "D";
+			if (frame < 0x286)
+				return "C";
 			return "D";
 		} else {
 			// DAT_0047a7f8 == 6 (phase 2)
-			if (frame < 0xcc) return "E";
-			if (frame < 0xfe) return "G";
-			if (frame < 0x122) return "E";
-			if (frame < 0x149) return "G";
-			if (frame < 0x166) return "F";
-			if (frame < 0x174) return "E";
-			if (frame < 0x19f) return "F";
-			if (frame < 0x1b2) return "G";
-			if (frame < 0x1c8) return "F";
-			if (frame < 0x207) return "E";
-			if (frame < 0x217) return "F";
-			if (frame < 0x23b) return "G";
-			if (frame < 0x25b) return "F";
-			if (frame < 0x285) return "E";
+			if (frame < 0xcc)
+				return "E";
+			if (frame < 0xfe)
+				return "G";
+			if (frame < 0x122)
+				return "E";
+			if (frame < 0x149)
+				return "G";
+			if (frame < 0x166)
+				return "F";
+			if (frame < 0x174)
+				return "E";
+			if (frame < 0x19f)
+				return "F";
+			if (frame < 0x1b2)
+				return "G";
+			if (frame < 0x1c8)
+				return "F";
+			if (frame < 0x207)
+				return "E";
+			if (frame < 0x217)
+				return "F";
+			if (frame < 0x23b)
+				return "G";
+			if (frame < 0x25b)
+				return "F";
+			if (frame < 0x285)
+				return "E";
 			return "G";
 		}
 
@@ -571,8 +611,10 @@ Common::String InsaneRebel2::selectDeathVideoVariant(int levelId, int phase, int
 	case 11:
 		// Level 11 (FUN_0041A00C): Phase-based death videos
 		// Phase 1 → DIE_A, Phase 2 → DIE_B, Phase 3 → DIE_C
-		if (phase <= 1) return "A";
-		if (phase == 2) return "B";
+		if (phase <= 1)
+			return "A";
+		if (phase == 2)
+			return "B";
 		return "C";
 
 	case 12:
@@ -581,10 +623,14 @@ Common::String InsaneRebel2::selectDeathVideoVariant(int levelId, int phase, int
 
 	case 13:
 		// Level 13 (FUN_0041B3E1): Frame-based
-		if (frame < 0x1c2) return "A";
-		if (frame < 0x302) return "B";
-		if (frame < 0x4ec) return "C";
-		if (frame < 0x5b4) return "B";
+		if (frame < 0x1c2)
+			return "A";
+		if (frame < 0x302)
+			return "B";
+		if (frame < 0x4ec)
+			return "C";
+		if (frame < 0x5b4)
+			return "B";
 		return "D";
 
 	case 14:
@@ -593,12 +639,18 @@ Common::String InsaneRebel2::selectDeathVideoVariant(int levelId, int phase, int
 
 	case 15:
 		// Level 15 (FUN_0041B8D7): Frame-based with many thresholds
-		if (frame < 0x21e) return "A";
-		if (frame < 0x2f9) return "B";
-		if (frame < 0x3e5) return "C";
-		if (frame < 0x4a0) return "B";
-		if (frame < 0x588) return "C";
-		if (frame < 0x65e) return "B";
+		if (frame < 0x21e)
+			return "A";
+		if (frame < 0x2f9)
+			return "B";
+		if (frame < 0x3e5)
+			return "C";
+		if (frame < 0x4a0)
+			return "B";
+		if (frame < 0x588)
+			return "C";
+		if (frame < 0x65e)
+			return "B";
 		return "D";
 
 	default:

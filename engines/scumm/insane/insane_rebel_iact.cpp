@@ -443,7 +443,8 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 					if (!_rebelInvulnerable) {
 						int damageAmount = (params.shotDamage >= 0) ? params.shotDamage : 0;
 						_playerDamage += damageAmount;
-						if (_playerDamage > 255) _playerDamage = 255;
+						if (_playerDamage > 255)
+							_playerDamage = 255;
 						debug("Rebel2: H25 PROBABILISTIC damage from %d. Damage=%d total=%d",
 							srcIdBody1, damageAmount, _playerDamage);
 					}
@@ -468,7 +469,8 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 				LevelDifficultyParams dparams = getDifficultyParams();
 				int directHitDamage = (dparams.missDamage >= 0) ? dparams.missDamage : 0;
 				_playerDamage += directHitDamage;
-				if (_playerDamage > 255) _playerDamage = 255;
+				if (_playerDamage > 255)
+					_playerDamage = 255;
 				debug("Rebel2: H25 DIRECT HIT par4=100 damage=%d total=%d",
 					directHitDamage, _playerDamage);
 			}
@@ -502,7 +504,8 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 				if (shouldDamage) {
 					if (!_rebelInvulnerable) {
 						_playerDamage += directHitDamage;
-						if (_playerDamage > 255) _playerDamage = 255;
+						if (_playerDamage > 255)
+							_playerDamage = 255;
 						debug("Rebel2: DIRECT HIT damage from enemy %d. par3=%d par4=%d damage=%d total=%d",
 							srcId, par3, par4, directHitDamage, _playerDamage);
 					}
@@ -528,7 +531,8 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 				if (!_rebelInvulnerable) {
 					int damageAmount = (params.shotDamage >= 0) ? params.shotDamage : 0;
 					_playerDamage += damageAmount;
-					if (_playerDamage > 255) _playerDamage = 255;
+					if (_playerDamage > 255)
+						_playerDamage = 255;
 					debug("Rebel2: PROBABILISTIC damage from enemy %d. Damage=%d total=%d",
 						srcId, damageAmount, _playerDamage);
 				}
@@ -631,11 +635,15 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 
 			// Clamp X offset to movement range limit (covered/shooting state)
 			// Based on FUN_00401234 lines 119-136
-			if (mouseOffsetX > _movementRangeLimit) mouseOffsetX = _movementRangeLimit;
-			if (mouseOffsetX < -_movementRangeLimit) mouseOffsetX = -_movementRangeLimit;
+			if (mouseOffsetX > _movementRangeLimit)
+				mouseOffsetX = _movementRangeLimit;
+			if (mouseOffsetX < -_movementRangeLimit)
+				mouseOffsetX = -_movementRangeLimit;
 			// Y offset always uses full range (±127)
-			if (mouseOffsetY > 127) mouseOffsetY = 127;
-			if (mouseOffsetY < -127) mouseOffsetY = -127;
+			if (mouseOffsetY > 127)
+				mouseOffsetY = 127;
+			if (mouseOffsetY < -127)
+				mouseOffsetY = -127;
 
 			// Calculate target positions using the original formula
 			_shipTargetX = (int16)(((mouseOffsetX * 5 + 0x27b) * 0x40) / 0xfe);
@@ -673,20 +681,32 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 			}
 
 			// Horizontal: 5 zones (0=far left, 2=center, 4=far right)
-			if (mouseX < 64) _shipDirectionH = 0;
-			else if (mouseX < 128) _shipDirectionH = 1;
-			else if (mouseX < 192) _shipDirectionH = 2;
-			else if (mouseX < 256) _shipDirectionH = 3;
-			else _shipDirectionH = 4;
+			if (mouseX < 64)
+				_shipDirectionH = 0;
+			else if (mouseX < 128)
+				_shipDirectionH = 1;
+			else if (mouseX < 192)
+				_shipDirectionH = 2;
+			else if (mouseX < 256)
+				_shipDirectionH = 3;
+			else
+				_shipDirectionH = 4;
 
 			// Vertical: 7 zones (0=far up, 3=center, 6=far down)
-			if (mouseY < 28) _shipDirectionV = 0;
-			else if (mouseY < 57) _shipDirectionV = 1;
-			else if (mouseY < 86) _shipDirectionV = 2;
-			else if (mouseY < 114) _shipDirectionV = 3;
-			else if (mouseY < 143) _shipDirectionV = 4;
-			else if (mouseY < 171) _shipDirectionV = 5;
-			else _shipDirectionV = 6;
+			if (mouseY < 28)
+				_shipDirectionV = 0;
+			else if (mouseY < 57)
+				_shipDirectionV = 1;
+			else if (mouseY < 86)
+				_shipDirectionV = 2;
+			else if (mouseY < 114)
+				_shipDirectionV = 3;
+			else if (mouseY < 143)
+				_shipDirectionV = 4;
+			else if (mouseY < 171)
+				_shipDirectionV = 5;
+			else
+				_shipDirectionV = 6;
 
 			_shipDirectionIndex = _shipDirectionH * 7 + _shipDirectionV;
 		}
@@ -757,10 +777,14 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		int16 inputY = (int16)(_vm->_mouse.y - 100);  // DAT_0047a7e2
 
 		// Clamp: mouse mode uses [-160, 160] for X, [-127, 127] for Y (lines 55-70)
-		if (inputX > 160) inputX = 160;
-		if (inputX < -160) inputX = -160;
-		if (inputY > 127) inputY = 127;
-		if (inputY < -127) inputY = -127;
+		if (inputX > 160)
+			inputX = 160;
+		if (inputX < -160)
+			inputX = -160;
+		if (inputY > 127)
+			inputY = 127;
+		if (inputY < -127)
+			inputY = -127;
 
 		// --- Step 2: Scale to [-127, 127] (lines 82-84) ---
 		// Mouse mode: local_c = (DAT_0047a7e0 * 0x7f) / 0xa0
@@ -827,8 +851,10 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		}
 
 		// Clamp X delta to ±12 per frame (lines 187-192 / 231-236)
-		if (positionDeltaX < -11) positionDeltaX = -12;
-		if (positionDeltaX > 11) positionDeltaX = 12;
+		if (positionDeltaX < -11)
+			positionDeltaX = -12;
+		if (positionDeltaX > 11)
+			positionDeltaX = 12;
 
 		// Apply X delta (line 193 / 237)
 		_flyShipScreenX += positionDeltaX;
@@ -838,8 +864,10 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 			// Mode 1: clamped to ±12 with wind (lines 194-216)
 			int yCalc = levelYSpeed * local_14 - (windEffectY >> 1);
 			int yDelta = yCalc >> 10;
-			if (yDelta < -12) yDelta = -12;
-			if (yDelta > 12) yDelta = 12;
+			if (yDelta < -12)
+				yDelta = -12;
+			if (yDelta > 12)
+				yDelta = 12;
 			_flyShipScreenY -= (int16)yDelta;
 		} else {
 			// Mode 0/2/3: unclamped (lines 238-241)
@@ -853,10 +881,14 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		_facingRight = (0xd4 < _smoothedVelocity + _flyShipScreenX);
 
 		// --- Step 6: Position clamping (lines 245-256) ---
-		if (_flyShipScreenX > 0x194) _flyShipScreenX = 0x194;  // 404
-		if (_flyShipScreenY > 0xF0) _flyShipScreenY = 0xF0;    // 240
-		if (_flyShipScreenX < 0x14) _flyShipScreenX = 0x14;    // 20
-		if (_flyShipScreenY < 0x14) _flyShipScreenY = 0x14;    // 20
+		if (_flyShipScreenX > 0x194)
+			_flyShipScreenX = 0x194;  // 404
+		if (_flyShipScreenY > 0xF0)
+			_flyShipScreenY = 0xF0;    // 240
+		if (_flyShipScreenX < 0x14)
+			_flyShipScreenX = 0x14;    // 20
+		if (_flyShipScreenY < 0x14)
+			_flyShipScreenY = 0x14;    // 20
 
 		// --- Step 7: Corridor collision — mode 0/2 only (lines 257-292) ---
 		if (_flyControlMode == 0 || _flyControlMode == 2) {
@@ -868,13 +900,15 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 			if (_corridorRightX < _flyShipScreenX) {
 				_flyShipScreenX = _corridorRightX;
 				if (_hitCooldown < 5) {
-					for (int i = 0; i < 25; i++) _velocityHistory[i] = -127;
+					for (int i = 0; i < 25; i++)
+						_velocityHistory[i] = -127;
 					_hitCooldown = 10;
 					_spaceShotDirection = 1;
 					initDamageFlash();
 					if (!_rebelInvulnerable) {
 						_playerDamage += corridorWallDmg;
-						if (_playerDamage > 255) _playerDamage = 255;
+						if (_playerDamage > 255)
+							_playerDamage = 255;
 					}
 					_rebelHitCounter++;
 					playSfx(1, 127, 100);  // CRASH.SAD, right wall → pan right
@@ -884,13 +918,15 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 			if (_flyShipScreenX < _corridorLeftX) {
 				_flyShipScreenX = _corridorLeftX;
 				if (_hitCooldown < 5) {
-					for (int i = 0; i < 25; i++) _velocityHistory[i] = 127;
+					for (int i = 0; i < 25; i++)
+						_velocityHistory[i] = 127;
 					_hitCooldown = 10;
 					_spaceShotDirection = 0;
 					initDamageFlash();
 					if (!_rebelInvulnerable) {
 						_playerDamage += corridorWallDmg;
-						if (_playerDamage > 255) _playerDamage = 255;
+						if (_playerDamage > 255)
+							_playerDamage = 255;
 					}
 					_rebelHitCounter++;
 					playSfx(1, 127, -100);  // CRASH.SAD, left wall → pan left
@@ -918,7 +954,8 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 			} else {
 				_perspectiveX = 0;
 			}
-			if (_flyShipScreenX < 0xd5) _perspectiveX = -_perspectiveX;
+			if (_flyShipScreenX < 0xd5)
+				_perspectiveX = -_perspectiveX;
 
 			int absOffY = ABS(_flyShipScreenY - 0x82);
 			int16 focalY = 0x19;  // Far view default for Level 3
@@ -928,25 +965,32 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 			} else {
 				_perspectiveY = 0;
 			}
-			if (_flyShipScreenY < 0x83) _perspectiveY = -_perspectiveY;
+			if (_flyShipScreenY < 0x83)
+				_perspectiveY = -_perspectiveY;
 		}
 
 		// View shift = clamped smoothed velocity (FUN_0040d836 lines 68-74)
 		_viewShift = _smoothedVelocity;
-		if (_viewShift > 127) _viewShift = 127;
-		if (_viewShift < -127) _viewShift = -127;
+		if (_viewShift > 127)
+			_viewShift = 127;
+		if (_viewShift < -127)
+			_viewShift = -127;
 
 		// --- Step 9: Direction sprite (FUN_0040d836 lines 88-106) ---
 		// 5x7 grid: vDir(0-4) * 7 + hDir(0-6) = sprite index (0-34)
 		// vDir from vertical input: (0xa0 - verticalInput) >> 6
 		int16 vDir = (int16)(((int)(0xa0 - _verticalInput) + ((0xa0 - _verticalInput) < 0 ? 63 : 0)) >> 6);
-		if (vDir < 0) vDir = 0;
-		if (vDir > 4) vDir = 4;
+		if (vDir < 0)
+			vDir = 0;
+		if (vDir > 4)
+			vDir = 4;
 
 		// hDir from smoothed velocity: (0x95 - smoothedVelocity) / 0x2b
 		int16 hDir = (int16)((0x95 - _smoothedVelocity) / 0x2b);
-		if (hDir < 0) hDir = 0;
-		if (hDir > 6) hDir = 6;
+		if (hDir < 0)
+			hDir = 0;
+		if (hDir > 6)
+			hDir = 6;
 
 		// Hysteresis at center (lines 90-97, 98-105)
 		if (hDir == 3 && ABS(_smoothedVelocity) > 10) {
@@ -957,8 +1001,10 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		}
 
 		_shipDirectionIndex = vDir * 7 + hDir;
-		if (_shipDirectionIndex < 0) _shipDirectionIndex = 0;
-		if (_shipDirectionIndex > 34) _shipDirectionIndex = 34;
+		if (_shipDirectionIndex < 0)
+			_shipDirectionIndex = 0;
+		if (_shipDirectionIndex > 34)
+			_shipDirectionIndex = 34;
 
 		_shipFiring = (_flyControlMode == 2) && (_vm->VAR(_vm->VAR_LEFTBTN_HOLD) != 0);
 
@@ -1165,10 +1211,14 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 
 				if (destX < 0) { srcOffsetX = -destX; drawWidth -= srcOffsetX; destX = 0; }
 				if (destY < 0) { srcOffsetY = -destY; drawHeight -= srcOffsetY; destY = 0; }
-				if (destX + drawWidth > pitch) drawWidth = pitch - destX;
-				if (destY + drawHeight > bufHeight) drawHeight = bufHeight - destY;
-				if (drawWidth > corridorOverlay.width - srcOffsetX) drawWidth = corridorOverlay.width - srcOffsetX;
-				if (drawHeight > corridorOverlay.height - srcOffsetY) drawHeight = corridorOverlay.height - srcOffsetY;
+				if (destX + drawWidth > pitch)
+					drawWidth = pitch - destX;
+				if (destY + drawHeight > bufHeight)
+					drawHeight = bufHeight - destY;
+				if (drawWidth > corridorOverlay.width - srcOffsetX)
+					drawWidth = corridorOverlay.width - srcOffsetX;
+				if (drawHeight > corridorOverlay.height - srcOffsetY)
+					drawHeight = corridorOverlay.height - srcOffsetY;
 
 				if (drawWidth > 0 && drawHeight > 0) {
 					for (int y = 0; y < drawHeight; y++) {
@@ -1961,7 +2011,8 @@ void InsaneRebel2::iactRebel2Opcode9(byte *renderBitmap, Common::SeekableReadStr
 		int textLen = 0;
 		while (textLen < (int)sizeof(textBuffer) - 1) {
 			byte ch = b.readByte();
-			if (ch == 0 || b.eos()) break;
+			if (ch == 0 || b.eos())
+				break;
 			textBuffer[textLen++] = ch;
 		}
 		textBuffer[textLen] = '\0';
@@ -1985,10 +2036,14 @@ void InsaneRebel2::iactRebel2Opcode9(byte *renderBitmap, Common::SeekableReadStr
 
 	// Apply coordinate clamping (from FUN_004033cf disassembly)
 	// Low-res: X clamped to [16, 304], Y clamped to [16, 196]
-	if (posX < 16) posX = 16;
-	if (posX > 304) posX = 304;
-	if (posY < 16) posY = 16;
-	if (posY > 196) posY = 196;
+	if (posX < 16)
+		posX = 16;
+	if (posX > 304)
+		posX = 304;
+	if (posY < 16)
+		posY = 16;
+	if (posY > 196)
+		posY = 196;
 
 	// Use the message font loaded during initialization (DIHIFONT.NUT)
 	if (!_rebelMsgFont) {

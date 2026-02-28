@@ -39,7 +39,8 @@ int InsaneRebel2::runLevel1() {
 
 	// Play level beginning cinematic (01BEG.SAN)
 	playLevelBegin(1);
-	if (_vm->shouldQuit()) return kLevelQuit;
+	if (_vm->shouldQuit())
+		return kLevelQuit;
 
 	// Main gameplay retry loop
 	while (!_vm->shouldQuit()) {
@@ -59,7 +60,8 @@ int InsaneRebel2::runLevel1() {
 		// Store death frame for video selection
 		_deathFrame = splayer->_frame;
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		if (_playerShield > 0) {
 			// Level completed!
@@ -73,7 +75,8 @@ int InsaneRebel2::runLevel1() {
 		debug("Rebel2: Level 1 death at frame %d, lives=%d", _deathFrame, _playerLives - 1);
 		playLevelDeathVariant(1, 1, _deathFrame);
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		_playerLives--;
 		if (_playerLives <= 0) {
@@ -83,7 +86,8 @@ int InsaneRebel2::runLevel1() {
 
 		// Play retry prompt and loop
 		playLevelRetry(1);
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 	}
 
 	return kLevelQuit;
@@ -137,7 +141,8 @@ uint16 InsaneRebel2::processWaveEnd(int16 mask, int16 *budget, int16 threshold, 
 			// Randomly add one unkilled type to phase state
 			int idx = _vm->_rnd.getRandomNumber(numUnkilled - 1);
 			_rebelPhaseState |= unkilled[idx];
-			if (budget) (*budget)++;
+			if (budget)
+				(*budget)++;
 		}
 	}
 
@@ -210,13 +215,15 @@ int InsaneRebel2::runLevel2() {
 
 	// Play cutscene (02CUT.SAN)
 	playCinematic("LEV02/02CUT.SAN");
-	if (_vm->shouldQuit()) return kLevelQuit;
+	if (_vm->shouldQuit())
+		return kLevelQuit;
 
 	// Play level beginning cinematic (02BEG.SAN)
 	// Original: FUN_004171c5("LEV02/02BEG.SAN", 0x20, 0xab, 0xa0, 10, 2, 0x46)
 	// Includes text overlay from GAME.TRS — deferred until text rendering is ready.
 	playLevelBegin(2);
-	if (_vm->shouldQuit()) return kLevelQuit;
+	if (_vm->shouldQuit())
+		return kLevelQuit;
 
 	// FUN_00401000 + FUN_00407d10 + FUN_0040c040: Reset game state (before retry loop)
 	clearBit(0);
@@ -261,7 +268,8 @@ int InsaneRebel2::runLevel2() {
 		splayer->play("LEV02/P1/02P01_A.SAN", 12);
 		_deathFrame = splayer->_frame;
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		// processWaveEnd after A.SAN (threshold=0, no early exit for background loader)
 		processWaveEnd(0x36, &budget, 0, 0);
@@ -269,7 +277,8 @@ int InsaneRebel2::runLevel2() {
 		// Phase 1 wave loop: random B/C/D until all type 1,2 enemies killed
 		// Original: while (uVar3 >= 0 && (DAT_0047ab9c & 6) != 6)
 		while (_playerDamage < 255 && (_rebelPhaseState & 0x06) != 0x06) {
-			if (_vm->shouldQuit()) return kLevelQuit;
+			if (_vm->shouldQuit())
+				return kLevelQuit;
 
 			// Random variant B, C, or D
 			int variant = _vm->_rnd.getRandomNumber(2);  // 0-2
@@ -290,10 +299,13 @@ int InsaneRebel2::runLevel2() {
 		}
 
 		// Check for bonus (bit 4 = 0x10)
-		if ((_rebelPhaseState & 0x10) != 0) bonusCount++;
+		if ((_rebelPhaseState & 0x10) != 0)
+			bonusCount++;
 
-		if (_playerDamage >= 255) goto level2_death;
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_playerDamage >= 255)
+			goto level2_death;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		// Post segment 1 (02PST1.SAN)
 		// Original: FUN_00417168("02PST1.SAN", 0x20) → flags = 0x20 | 0x08 = 0x28
@@ -303,7 +315,8 @@ int InsaneRebel2::runLevel2() {
 		_rebelStatusBarSprite = 0;
 		splayer->setCurVideoFlags(0x28);
 		splayer->play("LEV02/02PST1.SAN", 12);
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		totalKills += _rebelKillCounter;
 		totalMisses += _rebelHitCounter;
@@ -328,14 +341,17 @@ int InsaneRebel2::runLevel2() {
 		splayer->play("LEV02/P2/02P02_A.SAN", 12);
 		_deathFrame = splayer->_frame;
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		// Phase 2 wave loop: processWaveEnd at TOP of loop (matches assembly structure)
 		// Original: local_10 = FUN_00417b61(0x3e, local_14, 0, 0); then switch(local_10)
 		while (true) {
 			uint16 waveSelect = processWaveEnd(0x3e, &budget, 0, 0);
-			if (waveSelect == 0xFFFF || (_rebelPhaseState & 0x0e) == 0x0e) break;
-			if (_vm->shouldQuit()) return kLevelQuit;
+			if (waveSelect == 0xFFFF || (_rebelPhaseState & 0x0e) == 0x0e)
+				break;
+			if (_vm->shouldQuit())
+				return kLevelQuit;
 
 			// If no specific pattern: randomize high bits (original lines 71-74)
 			// When (local_10 & 0xc) == 0: add random 0x10/0x11/0x12
@@ -366,10 +382,13 @@ int InsaneRebel2::runLevel2() {
 			_deathFrame = splayer->_frame;
 		}
 
-		if ((_rebelPhaseState & 0x10) != 0) bonusCount++;
+		if ((_rebelPhaseState & 0x10) != 0)
+			bonusCount++;
 
-		if (_playerDamage >= 255) goto level2_death;
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_playerDamage >= 255)
+			goto level2_death;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		// Post segment 2 (02PST2.SAN)
 		// Original: FUN_00417168("02PST2.SAN", 0x20) → flags = 0x20 | 0x08 = 0x28
@@ -378,7 +397,8 @@ int InsaneRebel2::runLevel2() {
 		_rebelStatusBarSprite = 0;
 		splayer->setCurVideoFlags(0x28);
 		splayer->play("LEV02/02PST2.SAN", 12);
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		totalKills += _rebelKillCounter;
 		totalMisses += _rebelHitCounter;
@@ -404,7 +424,8 @@ int InsaneRebel2::runLevel2() {
 		splayer->play("LEV02/P3/02P03_A.SAN", 12);
 		_deathFrame = splayer->_frame;
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		// Phase 3: processWaveEnd at BOTTOM (like Phase 1), waveSelect carried across iterations
 		// Original: local_10 = FUN_00417b61(0x3e, local_14, 0, 0); while (loop) { ...; local_10 = FUN_00417b61(0x3e, local_14, 0x14, 0); }
@@ -412,7 +433,8 @@ int InsaneRebel2::runLevel2() {
 			uint16 waveSelect = processWaveEnd(0x3e, &budget, 0, 0);
 
 			while (waveSelect != 0xFFFF && (_rebelPhaseState & 0x0e) != 0x0e) {
-				if (_vm->shouldQuit()) return kLevelQuit;
+				if (_vm->shouldQuit())
+					return kLevelQuit;
 
 				// Phase 3 randomization (original lines 113-115):
 				// If previous wave state bit 0 was clear AND random(8)==0, set bit 0
@@ -455,11 +477,14 @@ int InsaneRebel2::runLevel2() {
 			}
 		}
 
-		if ((_rebelPhaseState & 0x10) != 0) bonusCount++;
+		if ((_rebelPhaseState & 0x10) != 0)
+			bonusCount++;
 		totalKills += _rebelKillCounter;
 
-		if (_playerDamage >= 255) goto level2_death;
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_playerDamage >= 255)
+			goto level2_death;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		// Level completed! Calculate accuracy score.
 		// Original: FUN_00417327 with score thresholds and medal ranks
@@ -484,7 +509,8 @@ int InsaneRebel2::runLevel2() {
 		// Original: FUN_00417168("LEV02/02DIE.SAN", 0x20)
 		debug("Rebel2: Level 2 Phase %d death", _currentPhase);
 		playCinematic("LEV02/02DIE.SAN");
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		// Original: if (DAT_0047ab5c != 0) DAT_0047a7ee++ (bonus life award)
 		// DAT_0047ab5c is set when player earns a bonus life (e.g., score threshold).
@@ -497,7 +523,8 @@ int InsaneRebel2::runLevel2() {
 		}
 		playCinematic("LEV02/02RETRY.SAN");
 		_playerDamage = 0;
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 		continue;  // Restart from beginning
 	}
 
@@ -516,7 +543,8 @@ int InsaneRebel2::runLevel3() {
 
 	// Play level beginning cinematic (03BEG.SAN)
 	playLevelBegin(3);
-	if (_vm->shouldQuit()) return kLevelQuit;
+	if (_vm->shouldQuit())
+		return kLevelQuit;
 
 	// ===== PHASE 1 retry loop =====
 	while (!_vm->shouldQuit()) {
@@ -533,7 +561,8 @@ int InsaneRebel2::runLevel3() {
 		splayer->play("LEV03/03PLAY1.SAN", 12);
 		_deathFrame = splayer->_frame;
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		if (_playerShield > 0) {
 			// Phase 1 completed - save score and proceed to phase 2
@@ -544,7 +573,8 @@ int InsaneRebel2::runLevel3() {
 		// Died in phase 1 - frame-based death video
 		debug("Rebel2: Level 3 Phase 1 death at frame %d", _deathFrame);
 		playLevelDeathVariant(3, 1, _deathFrame);
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		_playerLives--;
 		if (_playerLives <= 0) {
@@ -554,10 +584,12 @@ int InsaneRebel2::runLevel3() {
 
 		// Phase 1 retry (03RETRY.SAN)
 		playLevelRetryVariant(3, 1);
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 	}
 
-	if (_vm->shouldQuit()) return kLevelQuit;
+	if (_vm->shouldQuit())
+		return kLevelQuit;
 
 	// Post segment 1 (03POST1.SAN)
 	// Original: FUN_00417168 adds | 8, so flags = 0x20 | 0x08 = 0x28
@@ -566,7 +598,8 @@ int InsaneRebel2::runLevel3() {
 	_rebelStatusBarSprite = 0;
 	splayer->setCurVideoFlags(0x28);
 	splayer->play("LEV03/03POST1.SAN", 12);
-	if (_vm->shouldQuit()) return kLevelQuit;
+	if (_vm->shouldQuit())
+		return kLevelQuit;
 
 	// ===== PHASE 2 retry loop (preserves phase 1 score) =====
 	_currentPhase = 2;
@@ -584,7 +617,8 @@ int InsaneRebel2::runLevel3() {
 		splayer->play("LEV03/03PLAY2.SAN", 12);
 		_deathFrame = splayer->_frame;
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		if (_playerShield > 0) {
 			// Level completed!
@@ -597,7 +631,8 @@ int InsaneRebel2::runLevel3() {
 		// Died in phase 2 - frame-based death video
 		debug("Rebel2: Level 3 Phase 2 death at frame %d", _deathFrame);
 		playLevelDeathVariant(3, 2, _deathFrame);
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		_playerLives--;
 		if (_playerLives <= 0) {
@@ -608,7 +643,8 @@ int InsaneRebel2::runLevel3() {
 
 		// Phase 2 retry (03RETRYB.SAN)
 		playLevelRetryVariant(3, 2);
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 	}
 
 	return kLevelQuit;
@@ -626,11 +662,13 @@ int InsaneRebel2::runLevel4() {
 	// Original: FUN_00417168 adds | 8, so flags = 0x20 | 0x08 = 0x28
 	splayer->setCurVideoFlags(0x28);
 	splayer->play("LEV04/04CUT.SAN", 12);
-	if (_vm->shouldQuit()) return kLevelQuit;
+	if (_vm->shouldQuit())
+		return kLevelQuit;
 
 	// Play level beginning cinematic (04BEG.SAN)
 	playLevelBegin(4);
-	if (_vm->shouldQuit()) return kLevelQuit;
+	if (_vm->shouldQuit())
+		return kLevelQuit;
 
 	// Main gameplay retry loop
 	while (!_vm->shouldQuit()) {
@@ -647,7 +685,8 @@ int InsaneRebel2::runLevel4() {
 		splayer->play("LEV04/04PLAY.SAN", 12);
 		_deathFrame = splayer->_frame;
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		if (_playerShield > 0) {
 			// Level completed!
@@ -660,7 +699,8 @@ int InsaneRebel2::runLevel4() {
 		// Died - play death video (04DIE.SAN, no variants)
 		debug("Rebel2: Level 4 death");
 		playLevelDeathVariant(4, 1, _deathFrame);
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		_playerLives--;
 		if (_playerLives <= 0) {
@@ -669,7 +709,8 @@ int InsaneRebel2::runLevel4() {
 		}
 
 		playLevelRetry(4);
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 	}
 
 	return kLevelQuit;
@@ -686,7 +727,8 @@ int InsaneRebel2::runLevel5() {
 
 	// Play level beginning cinematic (05BEG.SAN)
 	playLevelBegin(5);
-	if (_vm->shouldQuit()) return kLevelQuit;
+	if (_vm->shouldQuit())
+		return kLevelQuit;
 
 	// Main gameplay retry loop
 	while (!_vm->shouldQuit()) {
@@ -703,7 +745,8 @@ int InsaneRebel2::runLevel5() {
 		splayer->play("LEV05/05PLAY.SAN", 12);
 		_deathFrame = splayer->_frame;
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		if (_playerShield > 0) {
 			// Level completed!
@@ -716,7 +759,8 @@ int InsaneRebel2::runLevel5() {
 		// Died - play death video with random A/B variant
 		debug("Rebel2: Level 5 death at frame %d", _deathFrame);
 		playLevelDeathVariant(5, 1, _deathFrame);
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		_playerLives--;
 		if (_playerLives <= 0) {
@@ -725,7 +769,8 @@ int InsaneRebel2::runLevel5() {
 		}
 
 		playLevelRetry(5);
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 	}
 
 	return kLevelQuit;
@@ -750,7 +795,8 @@ int InsaneRebel2::runLevel6() {
 	// Play level beginning cinematic (06BEG.SAN)
 	// Original: FUN_004171c5(s_LEV06_06BEG_SAN, 0x20, 0xaf, 0xa0, 10, 5, 0x4b)
 	playLevelBegin(6);
-	if (_vm->shouldQuit()) return kLevelQuit;
+	if (_vm->shouldQuit())
+		return kLevelQuit;
 
 	// FUN_00401000 + FUN_0041c7d0 + FUN_0040c040 — handler init done by IACT opcode 6
 
@@ -773,13 +819,15 @@ int InsaneRebel2::runLevel6() {
 		// + score checkpoint (FUN_00407f55) — needs per-frame callback
 		_deathFrame = splayer->_frame;
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		if (_playerShield <= 0) {
 			// Died in phase 1
 			debug("Rebel2: Level 6 Phase 1 death at frame %d", _deathFrame);
 			playLevelDeathVariant(6, 1, _deathFrame);
-			if (_vm->shouldQuit()) return kLevelQuit;
+			if (_vm->shouldQuit())
+				return kLevelQuit;
 
 			_playerLives--;
 			if (_playerLives <= 0) {
@@ -789,7 +837,8 @@ int InsaneRebel2::runLevel6() {
 
 			// Phase 1 retry (06RETRY.SAN) → restart outer loop
 			playLevelRetryVariant(6, 1);
-			if (_vm->shouldQuit()) return kLevelQuit;
+			if (_vm->shouldQuit())
+				return kLevelQuit;
 			continue;
 		}
 
@@ -800,7 +849,8 @@ int InsaneRebel2::runLevel6() {
 		_rebelStatusBarSprite = 0;
 		splayer->setCurVideoFlags(0x28);
 		splayer->play("LEV06/06POST1.SAN", 12);
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		// ===== PHASE 2 retry loop (inner while(true) in original) =====
 		while (!_vm->shouldQuit()) {
@@ -813,7 +863,8 @@ int InsaneRebel2::runLevel6() {
 			splayer->play("LEV06/06PLAY2.SAN", 12);
 			_deathFrame = splayer->_frame;
 
-			if (_vm->shouldQuit()) return kLevelQuit;
+			if (_vm->shouldQuit())
+				return kLevelQuit;
 
 			// Accumulate score: local_8 = DAT_0047ab84 + local_8
 			totalScore += _playerScore;
@@ -829,7 +880,8 @@ int InsaneRebel2::runLevel6() {
 			// Died in phase 2
 			debug("Rebel2: Level 6 Phase 2 death at frame %d", _deathFrame);
 			playLevelDeathVariant(6, 2, _deathFrame);
-			if (_vm->shouldQuit()) return kLevelQuit;
+			if (_vm->shouldQuit())
+				return kLevelQuit;
 
 			_playerLives--;
 			if (_playerLives <= 0) {
@@ -839,7 +891,8 @@ int InsaneRebel2::runLevel6() {
 
 			// Phase 2 retry (06RETRYB.SAN) → re-enter phase 2
 			playLevelRetryVariant(6, 2);
-			if (_vm->shouldQuit()) return kLevelQuit;
+			if (_vm->shouldQuit())
+				return kLevelQuit;
 		}
 
 		break;  // Should only reach here on shouldQuit
@@ -861,11 +914,13 @@ int InsaneRebel2::runLevel7() {
 
 	// Play cutscene (07CUT.SAN)
 	playCinematic("LEV07/07CUT.SAN");
-	if (_vm->shouldQuit()) return kLevelQuit;
+	if (_vm->shouldQuit())
+		return kLevelQuit;
 
 	// Play level beginning cinematic (07BEG.SAN)
 	playLevelBegin(7);
-	if (_vm->shouldQuit()) return kLevelQuit;
+	if (_vm->shouldQuit())
+		return kLevelQuit;
 
 	// FUN_00401000 + FUN_0041c7d0 + FUN_00407d10
 	clearBit(0);
@@ -888,7 +943,8 @@ int InsaneRebel2::runLevel7() {
 		splayer->play("LEV07/07PLAY.SAN", 12);
 		_deathFrame = splayer->_frame;
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		if (_playerShield > 0) {
 			debug("Rebel2: Level 7 completed!");
@@ -905,7 +961,8 @@ int InsaneRebel2::runLevel7() {
 		} else {
 			playCinematic("LEV07/07DIE_A.SAN");
 		}
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		_playerLives--;
 		if (_playerLives <= 0) {
@@ -914,7 +971,8 @@ int InsaneRebel2::runLevel7() {
 		}
 
 		playCinematic("LEV07/07RETRY.SAN");
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 	}
 
 	return kLevelQuit;
@@ -933,7 +991,8 @@ int InsaneRebel2::runLevel8() {
 	// No cutscene — starts directly with BEG
 	// Original: FUN_004171c5("08BEG.SAN", 0x20, 0xb1, 0xa0, 10, 5, 0x4b)
 	playLevelBegin(8);
-	if (_vm->shouldQuit()) return kLevelQuit;
+	if (_vm->shouldQuit())
+		return kLevelQuit;
 
 	// FUN_00401000 + FUN_0041c7d0 + FUN_0040c040
 	clearBit(0);
@@ -951,7 +1010,8 @@ int InsaneRebel2::runLevel8() {
 		splayer->play("LEV08/08PLAY.SAN", 12);
 		_deathFrame = splayer->_frame;
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		if (_playerShield > 0) {
 			int accuracy = 0;
@@ -968,7 +1028,8 @@ int InsaneRebel2::runLevel8() {
 		// Original: random(2) → A or B via string pointer arithmetic
 		debug("Rebel2: Level 8 death at frame %d", _deathFrame);
 		playLevelDeathVariant(8, 1, _deathFrame);
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		_playerLives--;
 		if (_playerLives <= 0) {
@@ -977,7 +1038,8 @@ int InsaneRebel2::runLevel8() {
 		}
 
 		playCinematic("LEV08/08RETRY.SAN");
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 	}
 
 	return kLevelQuit;
@@ -997,7 +1059,8 @@ int InsaneRebel2::runLevel9() {
 	// No cutscene — starts directly with BEG
 	// Original: FUN_004171c5("09BEG.SAN", 0x20, 0xb2, 0xa0, 10, 200, 0x10e)
 	playLevelBegin(9);
-	if (_vm->shouldQuit()) return kLevelQuit;
+	if (_vm->shouldQuit())
+		return kLevelQuit;
 
 	// FUN_00401000 + FUN_0041c7d0 + FUN_0040c040
 	clearBit(0);
@@ -1020,7 +1083,8 @@ int InsaneRebel2::runLevel9() {
 		splayer->play("LEV09/09PLAY.SAN", 12);
 		_deathFrame = splayer->_frame;
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		if (_playerShield > 0) {
 			int accuracy = 0;
@@ -1037,7 +1101,8 @@ int InsaneRebel2::runLevel9() {
 		// Original: 0→DIE_A, 1→DIE_C, else→DIE_B
 		debug("Rebel2: Level 9 death at frame %d", _deathFrame);
 		playLevelDeathVariant(9, 1, _deathFrame);
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		_playerLives--;
 		if (_playerLives <= 0) {
@@ -1046,7 +1111,8 @@ int InsaneRebel2::runLevel9() {
 		}
 
 		playCinematic("LEV09/09RETRY.SAN");
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 	}
 
 	return kLevelQuit;
@@ -1064,12 +1130,14 @@ int InsaneRebel2::runLevel10() {
 
 	// Play cutscene (10CUT.SAN)
 	playCinematic("LEV10/10CUT.SAN");
-	if (_vm->shouldQuit()) return kLevelQuit;
+	if (_vm->shouldQuit())
+		return kLevelQuit;
 
 	// Play level beginning cinematic (10BEG.SAN)
 	// Original: FUN_004171c5("10BEG.SAN", 0x20, 0xb3, 0xa0, 10, 2, 0x46)
 	playLevelBegin(10);
-	if (_vm->shouldQuit()) return kLevelQuit;
+	if (_vm->shouldQuit())
+		return kLevelQuit;
 
 	// FUN_00401000 + FUN_0041c7d0 + FUN_00407d10
 	clearBit(0);
@@ -1087,7 +1155,8 @@ int InsaneRebel2::runLevel10() {
 		splayer->play("LEV10/10PLAY.SAN", 12);
 		_deathFrame = splayer->_frame;
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		if (_playerShield > 0) {
 			int accuracy = 0;
@@ -1110,9 +1179,11 @@ int InsaneRebel2::runLevel10() {
 		}
 
 		playCinematic("LEV10/10DIE.SAN");
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 		playCinematic("LEV10/10RETRY.SAN");
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 	}
 
 	return kLevelQuit;
@@ -1141,11 +1212,13 @@ int InsaneRebel2::runLevel11() {
 
 	// Play cutscene (11CUT.SAN)
 	playCinematic("LEV11/11CUT.SAN");
-	if (_vm->shouldQuit()) return kLevelQuit;
+	if (_vm->shouldQuit())
+		return kLevelQuit;
 
 	// Play level beginning cinematic (11BEG.SAN)
 	playLevelBegin(11);
-	if (_vm->shouldQuit()) return kLevelQuit;
+	if (_vm->shouldQuit())
+		return kLevelQuit;
 
 	// FUN_00401000 + FUN_00407d10 + FUN_0040c040: Reset game state
 	clearBit(0);
@@ -1186,7 +1259,8 @@ int InsaneRebel2::runLevel11() {
 		splayer->play("LEV11/P1/11P01_A.SAN", 12);
 		_deathFrame = splayer->_frame;
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		{
 			uint16 waveSelect = processWaveEnd(0x0e, &budget, 0, 0);
@@ -1194,7 +1268,8 @@ int InsaneRebel2::runLevel11() {
 			// Phase 1 wave loop: random(2) | (waveSelect & 8) → variants
 			// 0→D, 1→C, 8→B, 9→A
 			while (waveSelect != 0xFFFF) {
-				if (_vm->shouldQuit()) return kLevelQuit;
+				if (_vm->shouldQuit())
+					return kLevelQuit;
 
 				// Bonus sound check
 				if ((_rebelPhaseState & 0x10) != 0 && (prevPhaseState & 0x10) == 0) {
@@ -1220,15 +1295,18 @@ int InsaneRebel2::runLevel11() {
 			}
 		}
 
-		if (_playerDamage >= 255) goto level11_death_phase1;
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_playerDamage >= 255)
+			goto level11_death_phase1;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		// Post segment 1 (11POST1.SAN)
 		_rebelHandler = 0;
 		_rebelStatusBarSprite = 0;
 		splayer->setCurVideoFlags(0x28);
 		splayer->play("LEV11/11POST1.SAN", 12);
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		totalKills += _rebelKillCounter;
 		totalMisses += _rebelHitCounter;
@@ -1250,7 +1328,8 @@ int InsaneRebel2::runLevel11() {
 		splayer->play("LEV11/P2/11P02_A.SAN", 12);
 		_deathFrame = splayer->_frame;
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		{
 			// Phase 2: flags=3 (maxCredits=2, redistribution ON)
@@ -1258,7 +1337,8 @@ int InsaneRebel2::runLevel11() {
 
 			// Random(4) for variant selection: A, B, C, D
 			while (waveSelect != 0xFFFF) {
-				if (_vm->shouldQuit()) return kLevelQuit;
+				if (_vm->shouldQuit())
+					return kLevelQuit;
 
 				int variant = _vm->_rnd.getRandomNumber(3);
 				const char *filename;
@@ -1278,15 +1358,18 @@ int InsaneRebel2::runLevel11() {
 			}
 		}
 
-		if (_playerDamage >= 255) goto level11_death_phase2;
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_playerDamage >= 255)
+			goto level11_death_phase2;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		// Post segment 2 (11POST2.SAN)
 		_rebelHandler = 0;
 		_rebelStatusBarSprite = 0;
 		splayer->setCurVideoFlags(0x28);
 		splayer->play("LEV11/11POST2.SAN", 12);
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		totalKills += _rebelKillCounter;
 		totalMisses += _rebelHitCounter;
@@ -1309,7 +1392,8 @@ int InsaneRebel2::runLevel11() {
 		splayer->play("LEV11/P3/11P03_A.SAN", 12);
 		_deathFrame = splayer->_frame;
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		{
 			uint16 waveSelect = processWaveEnd(0x7e, &budget, 0, 0);
@@ -1317,7 +1401,8 @@ int InsaneRebel2::runLevel11() {
 
 			// Loop until (phaseState & 0x70) == 0x70 (bridge targets destroyed)
 			while (waveSelect != 0xFFFF && (_rebelPhaseState & 0x70) != 0x70) {
-				if (_vm->shouldQuit()) return kLevelQuit;
+				if (_vm->shouldQuit())
+					return kLevelQuit;
 
 				// Bonus sound: (phaseState & 0xe) == 0xe and previous wasn't
 				if ((_rebelPhaseState & 0x0e) == 0x0e && (prevPhaseState & 0x0e) != 0x0e) {
@@ -1355,8 +1440,10 @@ int InsaneRebel2::runLevel11() {
 			}
 		}
 
-		if (_playerDamage >= 255) goto level11_death_phase3;
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_playerDamage >= 255)
+			goto level11_death_phase3;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		// ===== PHASE 3 BRIDGE CINEMATICS =====
 		{
@@ -1372,7 +1459,8 @@ int InsaneRebel2::runLevel11() {
 			}
 		}
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		// ===== PHASE 3 SECOND HALF: P3/11P03_X (G-L) =====
 		// Reset shots/explosions (FUN_0041ca6a equivalent)
@@ -1395,7 +1483,8 @@ int InsaneRebel2::runLevel11() {
 		splayer->play("LEV11/P3/11P03_G.SAN", 12);
 		_deathFrame = splayer->_frame;
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		// Only enter wave loop if not all basic types killed already
 		if ((_rebelPhaseState & 0x0e) < 0x0e) {
@@ -1403,7 +1492,8 @@ int InsaneRebel2::runLevel11() {
 			uint16 waveSelect = processWaveEnd(0x0e, &budget, 0, 0);
 
 			while (waveSelect != 0xFFFF) {
-				if (_vm->shouldQuit()) return kLevelQuit;
+				if (_vm->shouldQuit())
+					return kLevelQuit;
 
 				// Wider randomization for first few waves
 				if (local_8 < 4) {
@@ -1437,8 +1527,10 @@ int InsaneRebel2::runLevel11() {
 
 		totalKills += _rebelKillCounter;
 
-		if (_playerDamage >= 255) goto level11_death_phase3;
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_playerDamage >= 255)
+			goto level11_death_phase3;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		// ===== LEVEL COMPLETED =====
 		{
@@ -1472,7 +1564,8 @@ int InsaneRebel2::runLevel11() {
 		goto level11_retry;
 
 	level11_retry:
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 		_playerLives--;
 		if (_playerLives <= 0) {
 			playLevelGameOver(11);
@@ -1480,7 +1573,8 @@ int InsaneRebel2::runLevel11() {
 		}
 		playCinematic("LEV11/11RETRY.SAN");
 		_playerDamage = 0;
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 		continue;  // Restart from Phase 1
 	}
 
@@ -1507,11 +1601,13 @@ int InsaneRebel2::runLevel12() {
 
 	// Play cutscene (12CUT.SAN)
 	playCinematic("LEV12/12CUT.SAN");
-	if (_vm->shouldQuit()) return kLevelQuit;
+	if (_vm->shouldQuit())
+		return kLevelQuit;
 
 	// Play level beginning cinematic (12BEG.SAN)
 	playLevelBegin(12);
-	if (_vm->shouldQuit()) return kLevelQuit;
+	if (_vm->shouldQuit())
+		return kLevelQuit;
 
 	// FUN_0041c7d0 + FUN_00407d10 + FUN_0040c040: Reset game state
 	clearBit(0);
@@ -1547,21 +1643,24 @@ int InsaneRebel2::runLevel12() {
 		debug("Rebel2: Level 12 Phase 1 - init 12P05.SAN budget=%d", budget);
 		splayer->setCurVideoFlags(0x28);
 		splayer->play("LEV12/12P05.SAN", 12);
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 		processWaveEnd(1, &budget, 0, 0);
 
 		// First wave (P1/12P01_A.SAN)
 		splayer->setCurVideoFlags(0x428);
 		splayer->play("LEV12/P1/12P01_A.SAN", 12);
 		_deathFrame = splayer->_frame;
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		{
 			uint16 waveSelect = processWaveEnd(6, &budget, 0x14, 0);
 
 			// Wave loop: random(2) | (waveSelect & 2) → 0:C, 1:D, 2:A, 3:B
 			while (waveSelect != 0xFFFF) {
-				if (_vm->shouldQuit()) return kLevelQuit;
+				if (_vm->shouldQuit())
+					return kLevelQuit;
 
 				int sel = _vm->_rnd.getRandomNumber(1) | (waveSelect & 2);
 				const char *filename;
@@ -1581,8 +1680,10 @@ int InsaneRebel2::runLevel12() {
 			}
 		}
 
-		if (_playerDamage >= 255) goto level12_death;
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_playerDamage >= 255)
+			goto level12_death;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		// ===== PHASE 2: 12P06 → P2/12P02_X =====
 		_currentPhase = 2;
@@ -1595,20 +1696,23 @@ int InsaneRebel2::runLevel12() {
 		debug("Rebel2: Level 12 Phase 2 - init 12P06.SAN budget=%d", budget);
 		splayer->setCurVideoFlags(0x428);
 		splayer->play("LEV12/12P06.SAN", 12);
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 		processWaveEnd(1, &budget, 0, 0);
 
 		// First wave (P2/12P02_A.SAN)
 		splayer->setCurVideoFlags(0x428);
 		splayer->play("LEV12/P2/12P02_A.SAN", 12);
 		_deathFrame = splayer->_frame;
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		{
 			uint16 waveSelect = processWaveEnd(6, &budget, 0x14, 0);
 
 			while (waveSelect != 0xFFFF) {
-				if (_vm->shouldQuit()) return kLevelQuit;
+				if (_vm->shouldQuit())
+					return kLevelQuit;
 
 				// Variant selection: (waveSelect & 2) controls which set
 				int local_8;
@@ -1639,8 +1743,10 @@ int InsaneRebel2::runLevel12() {
 			}
 		}
 
-		if (_playerDamage >= 255) goto level12_death;
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_playerDamage >= 255)
+			goto level12_death;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		// ===== PHASE 3: 12P07 → P3/12P03_X =====
 		_currentPhase = 3;
@@ -1653,21 +1759,24 @@ int InsaneRebel2::runLevel12() {
 		debug("Rebel2: Level 12 Phase 3 - init 12P07.SAN budget=%d", budget);
 		splayer->setCurVideoFlags(0x428);
 		splayer->play("LEV12/12P07.SAN", 12);
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 		processWaveEnd(1, &budget, 0, 0);
 
 		// First wave (P3/12P03_A.SAN)
 		splayer->setCurVideoFlags(0x428);
 		splayer->play("LEV12/P3/12P03_A.SAN", 12);
 		_deathFrame = splayer->_frame;
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		{
 			int local_8 = 0;
 			uint16 waveSelect = processWaveEnd(6, &budget, 0x14, 0);
 
 			while (waveSelect != 0xFFFF) {
-				if (_vm->shouldQuit()) return kLevelQuit;
+				if (_vm->shouldQuit())
+					return kLevelQuit;
 
 				// Wider randomization for first few waves
 				if (local_8 < 4) {
@@ -1695,8 +1804,10 @@ int InsaneRebel2::runLevel12() {
 			}
 		}
 
-		if (_playerDamage >= 255) goto level12_death;
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_playerDamage >= 255)
+			goto level12_death;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		// ===== PHASE 4: 12P08 → P4/12P04_X =====
 		_currentPhase = 4;
@@ -1709,21 +1820,24 @@ int InsaneRebel2::runLevel12() {
 		debug("Rebel2: Level 12 Phase 4 - init 12P08.SAN budget=%d", budget);
 		splayer->setCurVideoFlags(0x428);
 		splayer->play("LEV12/12P08.SAN", 12);
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 		processWaveEnd(1, &budget, 0, 0);
 
 		// First wave (P4/12P04_A.SAN)
 		splayer->setCurVideoFlags(0x428);
 		splayer->play("LEV12/P4/12P04_A.SAN", 12);
 		_deathFrame = splayer->_frame;
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		{
 			int local_8 = 0;
 			uint16 waveSelect = processWaveEnd(0x0e, &budget, 0x14, 0);
 
 			while (waveSelect != 0xFFFF) {
-				if (_vm->shouldQuit()) return kLevelQuit;
+				if (_vm->shouldQuit())
+					return kLevelQuit;
 
 				if (local_8 < 4) {
 					local_8 = _vm->_rnd.getRandomNumber(5);  // 0-5
@@ -1750,13 +1864,16 @@ int InsaneRebel2::runLevel12() {
 			}
 		}
 
-		if (_playerDamage >= 255) goto level12_death;
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_playerDamage >= 255)
+			goto level12_death;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		// ===== CLOSING: 12P09.SAN =====
 		splayer->setCurVideoFlags(0x428);
 		splayer->play("LEV12/12P09.SAN", 12);
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 		processWaveEnd(1, &budget, 0, 0);
 
 		// ===== LEVEL COMPLETED =====
@@ -1782,7 +1899,8 @@ int InsaneRebel2::runLevel12() {
 		debug("Rebel2: Level 12 Phase %d death", _currentPhase);
 		playCinematic("LEV12/12DIE.SAN");
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 		_playerLives--;
 		if (_playerLives <= 0) {
 			playLevelGameOver(12);
@@ -1790,7 +1908,8 @@ int InsaneRebel2::runLevel12() {
 		}
 		playCinematic("LEV12/12RETRY.SAN");
 		_playerDamage = 0;
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 		continue;  // Restart from Phase 1
 	}
 
@@ -1812,7 +1931,8 @@ int InsaneRebel2::runLevel13() {
 	// No cutscene — starts directly with BEG
 	// Original: FUN_004171c5("13BEG.SAN", 0x20, 0xb6, 0xa0, 10, 2, 0x46)
 	playLevelBegin(13);
-	if (_vm->shouldQuit()) return kLevelQuit;
+	if (_vm->shouldQuit())
+		return kLevelQuit;
 
 	// FUN_00401000 + FUN_0041c7d0 + FUN_0040c040
 	clearBit(0);
@@ -1833,7 +1953,8 @@ int InsaneRebel2::runLevel13() {
 		splayer->play("LEV13/13PLAY_A.SAN", 12);
 		_deathFrame = splayer->_frame;
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		// If alive after Phase A, play Phase B (reactor destruction loop)
 		// Original: at frame == maxFrame-10, play 13PLAY_B.SAN (0x468)
@@ -1846,7 +1967,8 @@ int InsaneRebel2::runLevel13() {
 			_deathFrame = splayer->_frame;
 		}
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		if (_playerShield > 0) {
 			int accuracy = 0;
@@ -1862,7 +1984,8 @@ int InsaneRebel2::runLevel13() {
 		// Death: frame-based variant selection (FUN_0041B3E1 lines 47-61)
 		debug("Rebel2: Level 13 death at frame %d", _deathFrame);
 		playLevelDeathVariant(13, 1, _deathFrame);
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		_playerLives--;
 		if (_playerLives <= 0) {
@@ -1871,7 +1994,8 @@ int InsaneRebel2::runLevel13() {
 		}
 
 		playCinematic("LEV13/13RETRY.SAN");
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 	}
 
 	return kLevelQuit;
@@ -1889,7 +2013,8 @@ int InsaneRebel2::runLevel14() {
 	// No cutscene — starts directly with BEG
 	// Original: FUN_004171c5("14BEG.SAN", 0x20, 0xb7, 0xa0, 10, 2, 0x46)
 	playLevelBegin(14);
-	if (_vm->shouldQuit()) return kLevelQuit;
+	if (_vm->shouldQuit())
+		return kLevelQuit;
 
 	// FUN_00401000 + FUN_0041c7d0 + FUN_0040c040
 	clearBit(0);
@@ -1907,7 +2032,8 @@ int InsaneRebel2::runLevel14() {
 		splayer->play("LEV14/14PLAY.SAN", 12);
 		_deathFrame = splayer->_frame;
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		if (_playerShield > 0) {
 			int accuracy = 0;
@@ -1923,7 +2049,8 @@ int InsaneRebel2::runLevel14() {
 		// Death: single video (14DIE.SAN)
 		debug("Rebel2: Level 14 death at frame %d", _deathFrame);
 		playCinematic("LEV14/14DIE.SAN");
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		_playerLives--;
 		if (_playerLives <= 0) {
@@ -1932,7 +2059,8 @@ int InsaneRebel2::runLevel14() {
 		}
 
 		playCinematic("LEV14/14RETRY.SAN");
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 	}
 
 	return kLevelQuit;
@@ -1952,12 +2080,14 @@ int InsaneRebel2::runLevel15() {
 
 	// Play cutscene (15CUT.SAN)
 	playCinematic("LEV15/15CUT.SAN");
-	if (_vm->shouldQuit()) return kLevelQuit;
+	if (_vm->shouldQuit())
+		return kLevelQuit;
 
 	// Play level beginning cinematic (15BEG.SAN)
 	// Original: FUN_004171c5("15BEG.SAN", 0x20, 0xb8, 0xa0, 10, 2, 0x46)
 	playLevelBegin(15);
-	if (_vm->shouldQuit()) return kLevelQuit;
+	if (_vm->shouldQuit())
+		return kLevelQuit;
 
 	// FUN_00401000 + FUN_0041c7d0 + FUN_0040c040
 	clearBit(0);
@@ -1981,7 +2111,8 @@ int InsaneRebel2::runLevel15() {
 		splayer->play("LEV15/15PLAY.SAN", 12);
 		_deathFrame = splayer->_frame;
 
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		if (_playerShield > 0) {
 			int accuracy = 0;
@@ -1998,7 +2129,8 @@ int InsaneRebel2::runLevel15() {
 		// Death: frame-based variant selection (FUN_0041B8D7 lines 46-65)
 		debug("Rebel2: Level 15 death at frame %d", _deathFrame);
 		playLevelDeathVariant(15, 1, _deathFrame);
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 
 		_playerLives--;
 		if (_playerLives <= 0) {
@@ -2007,7 +2139,8 @@ int InsaneRebel2::runLevel15() {
 		}
 
 		playCinematic("LEV15/15RETRY.SAN");
-		if (_vm->shouldQuit()) return kLevelQuit;
+		if (_vm->shouldQuit())
+			return kLevelQuit;
 	}
 
 	return kLevelQuit;

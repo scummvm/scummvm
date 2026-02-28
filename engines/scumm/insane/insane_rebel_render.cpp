@@ -57,7 +57,8 @@ void InsaneRebel2::decodeCodec21(byte *dst, const byte *src, int width, int heig
 			int skip = READ_LE_UINT16(src);
 			src += 2;
 			x += skip;
-			if (src >= lineEnd) break;
+			if (src >= lineEnd)
+				break;
 
 			int count = READ_LE_UINT16(src) + 1;
 			src += 2;
@@ -85,7 +86,8 @@ void InsaneRebel2::decodeCodec23(byte *dst, const byte *src, int width, int heig
 			int skip = READ_LE_UINT16(src);
 			src += 2;
 			x += skip;
-			if (src >= lineEnd || x >= width) break;
+			if (src >= lineEnd || x >= width)
+				break;
 
 			int runSize = READ_LE_UINT16(src);
 			src += 2;
@@ -95,7 +97,8 @@ void InsaneRebel2::decodeCodec23(byte *dst, const byte *src, int width, int heig
 			while (src < runEnd && x < width) {
 				byte code = *src++;
 				int num = (code >> 1) + 1;
-				if (num > width - x) num = width - x;
+				if (num > width - x)
+					num = width - x;
 
 				if (code & 1) {
 					// RLE run
@@ -186,7 +189,8 @@ void InsaneRebel2::decodeCodec45(byte *dst, const byte *src, int width, int heig
 		for (int row = 0; row < height && srcPtr < dataEnd; row++) {
 			int lineSize = READ_LE_UINT16(srcPtr);
 			srcPtr += 2;
-			if (lineSize <= 0 || lineSize > (int)(dataEnd - srcPtr)) break;
+			if (lineSize <= 0 || lineSize > (int)(dataEnd - srcPtr))
+				break;
 
 			const byte *lineEnd = srcPtr + lineSize;
 			byte *rowDst = dst + row * width;
@@ -197,7 +201,8 @@ void InsaneRebel2::decodeCodec45(byte *dst, const byte *src, int width, int heig
 				int count = (ctrl >> 1) + 1;
 				if (ctrl & 1) {
 					byte color = (srcPtr < lineEnd) ? *srcPtr++ : 0;
-					for (int i = 0; i < count && x < width; i++) rowDst[x++] = color;
+					for (int i = 0; i < count && x < width; i++)
+						rowDst[x++] = color;
 				} else {
 					for (int i = 0; i < count && x < width && srcPtr < lineEnd; i++)
 						rowDst[x++] = *srcPtr++;
@@ -235,7 +240,8 @@ void InsaneRebel2::decodeCodec45(byte *dst, const byte *src, int width, int heig
 	// Count non-zero pixels for debug
 	int nonZero = 0;
 	for (int i = 0; i < width * height; i++) {
-		if (dst[i] != 0) nonZero++;
+		if (dst[i] != 0)
+			nonZero++;
 	}
 	debug("Rebel2: Decoded codec 45: %dx%d, %d non-zero (%d%%)",
 		width, height, nonZero, (nonZero * 100) / (width * height));
@@ -413,7 +419,8 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 							if (frame.valid) {
 								int nonZeroPixels = 0;
 								for (int i = 0; i < width * height; i++) {
-									if (frame.pixels[i] != 0) nonZeroPixels++;
+									if (frame.pixels[i] != 0)
+										nonZeroPixels++;
 								}
 								debug("Rebel2: Frame userId=%d has %d non-zero pixels (%d%%)",
 									userId, nonZeroPixels, (nonZeroPixels * 100) / (width * height));
@@ -432,13 +439,15 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 				} else {
 					// Skip other sub-chunks (AHDR inside FRME?) or padding
 					stream.seek(nextSubPos);
-					if (subSize & 1) stream.skip(1);
+					if (subSize & 1)
+						stream.skip(1);
 				}
 			}
 		} else {
 			// Skip non-FRME chunks (AHDR, etc at top level)
 			stream.seek(nextChunkPos);
-			if (chunkSize & 1) stream.skip(1);
+			if (chunkSize & 1)
+				stream.skip(1);
 		}
 	}
 	
@@ -580,10 +589,14 @@ void InsaneRebel2::spawnHandler25Shot(int x, int y) {
 					int zoneHeight = (areaHeight > 0) ? areaHeight / 2 : 90;
 					int xZone = (zoneWidth > 0) ? ((zoneWidth / 2) + (x - areaLeft)) / zoneWidth : 2;
 					int yZone = (zoneHeight > 0) ? ((zoneHeight / 2) + (y - areaTop)) / zoneHeight : 0;
-					if (xZone < 0) xZone = 0;
-					if (xZone > 4) xZone = 4;
-					if (yZone < 0) yZone = 0;
-					if (yZone > 1) yZone = 1;
+					if (xZone < 0)
+						xZone = 0;
+					if (xZone > 4)
+						xZone = 4;
+					if (yZone < 0)
+						yZone = 0;
+					if (yZone > 1)
+						yZone = 1;
 					if (_rebelFlightDir == (yZone & 1)) {
 						xZone = 4 - xZone;
 					}
@@ -592,8 +605,10 @@ void InsaneRebel2::spawnHandler25Shot(int x, int y) {
 					spriteIdx = (_rebelFlightDir == 0) ? (5 - _rebelDamageLevel) : (25 - _rebelDamageLevel);
 				}
 				int numSprites = _grd002Sprite->getNumChars();
-				if (spriteIdx < 0) spriteIdx = 0;
-				if (spriteIdx >= numSprites) spriteIdx = numSprites - 1;
+				if (spriteIdx < 0)
+					spriteIdx = 0;
+				if (spriteIdx >= numSprites)
+					spriteIdx = numSprites - 1;
 
 				// Get sprite rendering position (same as in renderHandler25Ship)
 				int16 spriteXOffset = _grd002Sprite->getCharXOffset(spriteIdx);
@@ -659,15 +674,19 @@ void InsaneRebel2::spawnSpaceShot(int x, int y) {
 }
 
 void InsaneRebel2::drawTexturedLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, NutRenderer *nut, int spriteIdx, int v, bool mask231) {
-	if (!nut || spriteIdx >= nut->getNumChars()) return;
+	if (!nut || spriteIdx >= nut->getNumChars())
+		return;
 
 	const byte *srcData = nut->getCharData(spriteIdx);
 	int texW = nut->getCharWidth(spriteIdx);
 	int texH = nut->getCharHeight(spriteIdx);
 	
-	if (!srcData || texW <= 0 || texH <= 0) return;
-	if (v < 0) v = 0;
-	if (v >= texH) v = texH - 1;
+	if (!srcData || texW <= 0 || texH <= 0)
+		return;
+	if (v < 0)
+		v = 0;
+	if (v >= texH)
+		v = texH - 1;
 
 	int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
 	int dy = -abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
@@ -675,7 +694,8 @@ void InsaneRebel2::drawTexturedLine(byte *dst, int pitch, int width, int height,
 	
 	// Total length approximation for UV mapping
 	int totalDist = (abs(dx) > abs(dy)) ? abs(dx) : abs(dy);
-	if (totalDist == 0) totalDist = 1;
+	if (totalDist == 0)
+		totalDist = 1;
 	
 	int currentDist = 0;
 
@@ -683,7 +703,8 @@ void InsaneRebel2::drawTexturedLine(byte *dst, int pitch, int width, int height,
 		if (x0 >= 0 && x0 < width && y0 >= 0 && y0 < height) {
 			// Map currentDist/totalDist to 0..texW (Run along texture width)
 			int u = (currentDist * texW) / totalDist;
-			if (u >= texW) u = texW - 1;
+			if (u >= texW)
+				u = texW - 1;
 			
 			byte color = srcData[v * texW + u];
 			
@@ -693,7 +714,8 @@ void InsaneRebel2::drawTexturedLine(byte *dst, int pitch, int width, int height,
 			}
 		}
 		
-		if (x0 == x1 && y0 == y1) break;
+		if (x0 == x1 && y0 == y1)
+			break;
 		e2 = 2 * err;
 		if (e2 >= dy) { err += dy; x0 += sx; }
 		if (e2 <= dx) { err += dx; y0 += sy; }
@@ -717,14 +739,17 @@ void drawTexturedSegment(byte *dst, int pitch, int width, int height, int param_
 
 	// Clip against screen bounds (translation of original clipping logic)
 	if (px0 == px1) {
-		if (px0 < sVar4 || px0 > sVar7) return;
+		if (px0 < sVar4 || px0 > sVar7)
+			return;
 	} else {
 		if (px0 < sVar4) {
-			if (px1 < sVar4) return;
+			if (px1 < sVar4)
+				return;
 			py0 = py1 + ((py0 - py1) * (sVar4 - px1)) / (px0 - px1);
 			px0 = sVar4;
 		} else if (px0 > sVar7) {
-			if (px1 > sVar7) return;
+			if (px1 > sVar7)
+				return;
 			py0 = py1 + ((py0 - py1) * (sVar7 - px1)) / (px0 - px1);
 			px0 = sVar7;
 		}
@@ -738,14 +763,17 @@ void drawTexturedSegment(byte *dst, int pitch, int width, int height, int param_
 	}
 
 	if (py0 == py1) {
-		if (py0 < sVar1 || py0 > sVar10) return;
+		if (py0 < sVar1 || py0 > sVar10)
+			return;
 	} else {
 		if (py0 < sVar1) {
-			if (py1 < sVar1) return;
+			if (py1 < sVar1)
+				return;
 			px0 = px1 + ((px0 - px1) * (sVar1 - py1)) / (py0 - py1);
 			py0 = sVar1;
 		} else if (py0 > sVar10) {
-			if (py1 > sVar10) return;
+			if (py1 > sVar10)
+				return;
 			px0 = px1 + ((px0 - px1) * (sVar10 - py1)) / (py0 - py1);
 			py0 = sVar10;
 		}
@@ -769,7 +797,8 @@ void drawTexturedSegment(byte *dst, int pitch, int width, int height, int param_
 
 	if (absdx == 0) {
 		if (absdy == 0) {
-			if (*texPtr != 0) baseDst[py0 * pitch + px0] = *texPtr;
+			if (*texPtr != 0)
+				baseDst[py0 * pitch + px0] = *texPtr;
 			return;
 		}
 		// vertical-ish
@@ -778,7 +807,8 @@ void drawTexturedSegment(byte *dst, int pitch, int width, int height, int param_
 		int signY = dy > 0 ? 1 : -1;
 		int iVar9 = step; // adv counter
 		for (int i = 0; i < step; i++) {
-			if (*texPtr != 0) baseDst[curY * pitch + px0] = *texPtr;
+			if (*texPtr != 0)
+				baseDst[curY * pitch + px0] = *texPtr;
 			curY += signY;
 			iVar9 -= param_7;
 			while (iVar9 < 0) { texPtr++; iVar9 += step; }
@@ -793,7 +823,8 @@ void drawTexturedSegment(byte *dst, int pitch, int width, int height, int param_
 		int signX = dx > 0 ? 1 : -1;
 		int iVar11 = step;
 		for (int i = 0; i < step; i++) {
-			if (*texPtr != 0) baseDst[py0 * pitch + curX] = *texPtr;
+			if (*texPtr != 0)
+				baseDst[py0 * pitch + curX] = *texPtr;
 			curX += signX;
 			iVar11 -= param_7;
 			while (iVar11 < 0) { texPtr++; iVar11 += step; }
@@ -811,7 +842,8 @@ void drawTexturedSegment(byte *dst, int pitch, int width, int height, int param_
 
 	for (int i = 0; i < steps; i++) {
 		if (x >= 0 && x < width && y >= 0 && y < height) {
-			if (*texPtr != 0) baseDst[y * pitch + x] = *texPtr;
+			if (*texPtr != 0)
+				baseDst[y * pitch + x] = *texPtr;
 		}
 		int e2 = 2 * err;
 		if (e2 > -absdy) { err -= absdy; x += sx; }
@@ -893,7 +925,8 @@ void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height,
 	byte *texPixels = _laserTexture.pixels;
 
 	// FUN_0040BBF6 line 23: sVar7 = (thickness * animFrame * 16) / maxFrames
-	if (maxFrames == 0) maxFrames = 1;
+	if (maxFrames == 0)
+		maxFrames = 1;
 	int16 sVar7 = (int16)(((int)thickness * (int)animFrame * 16) / (int)maxFrames);
 
 	// FUN_0040BBF6 lines 24-25: Calculate delta with scaling
@@ -978,7 +1011,8 @@ void InsaneRebel2::drawLine(byte *dst, int pitch, int width, int height, int x0,
 		if (x0 >= 0 && x0 < width && y0 >= 0 && y0 < height) {
 			dst[y0 * pitch + x0] = color;
 		}
-		if (x0 == x1 && y0 == y1) break;
+		if (x0 == x1 && y0 == y1)
+			break;
 		e2 = 2 * err;
 		if (e2 >= dy) { err += dy; x0 += sx; }
 		if (e2 <= dx) { err += dx; y0 += sy; }
@@ -989,8 +1023,10 @@ void InsaneRebel2::drawCornerBrackets(byte *dst, int pitch, int width, int heigh
 	// Draw L-shaped brackets at corners of the rect (x,y,w,h)
 	// Bracket size: approx 8 pixels
 	int armLen = 2;
-	if (armLen > w / 2) armLen = w / 2;
-	if (armLen > h / 2) armLen = h / 2;
+	if (armLen > w / 2)
+		armLen = w / 2;
+	if (armLen > h / 2)
+		armLen = h / 2;
 
 	int x2 = x + w - 1;
 	int y2 = y + h - 1;
@@ -1105,7 +1141,8 @@ void InsaneRebel2::checkCollisionZones() {
 	//   Mouse X 0..320 → centered X ≈ [-52..52] (with smoothing in original)
 	//   Mouse Y 0..200 → centered Y ≈ [-45..45]
 
-	if (_primaryZoneCount == 0) return;
+	if (_primaryZoneCount == 0)
+		return;
 
 	// Calculate aim position in centered coordinates.
 	// Original: local_10 = mouseOffset + 0xa0, then smoothed and clamped to [-0x34..0x34]
@@ -1114,22 +1151,29 @@ void InsaneRebel2::checkCollisionZones() {
 	int16 aimY = (int16)((100 - _vm->_mouse.y) * 45 / 100);
 
 	// Clamp to original ranges (DAT_0047a7fc < 1 path)
-	if (aimX > 0x34) aimX = 0x34;
-	if (aimX < -0x34) aimX = -0x34;
-	if (aimY > 0x2d) aimY = 0x2d;
-	if (aimY < -0x2d) aimY = -0x2d;
+	if (aimX > 0x34)
+		aimX = 0x34;
+	if (aimX < -0x34)
+		aimX = -0x34;
+	if (aimY > 0x2d)
+		aimY = 0x2d;
+	if (aimY < -0x2d)
+		aimY = -0x2d;
 
 	for (int i = 0; i < _primaryZoneCount; i++) {
 		CollisionZone &zone = _primaryZones[i];
-		if (!zone.active) continue;
+		if (!zone.active)
+			continue;
 
 		// Filter: only process zones with filterValue < 1000 (par4 from IACT header)
 		// Original: *(short *)(*local_c + 6) < 1000
-		if (zone.filterValue >= 1000) continue;
+		if (zone.filterValue >= 1000)
+			continue;
 
 		// Frame check: field2 - 1 == field1
 		// Original: sVar2 + -1 == (int)sVar1
-		if (zone.field2 - 1 != zone.field1) continue;
+		if (zone.field2 - 1 != zone.field1)
+			continue;
 
 		// Center zone vertices by subtracting buffer center (0xD4=212, 0x82=130)
 		// Original: sVar4 = x1 - 0xD4, sVar8 = y1 - 0x82, etc.
@@ -1159,19 +1203,23 @@ void InsaneRebel2::checkCollisionZones() {
 		// Avoid division by zero for degenerate edges
 		if (cx2 != cx1) {
 			int interpY1 = ((aimX - cx1) * (cy2 - cy1)) / (cx2 - cx1) + cy1;
-			if (aimY < interpY1) collision = true;
+			if (aimY < interpY1)
+				collision = true;
 		}
 		if (!collision && cx3 != cx4) {
 			int interpY2 = ((aimX - cx4) * (cy3 - cy4)) / (cx3 - cx4) + cy4;
-			if (interpY2 < aimY) collision = true;
+			if (interpY2 < aimY)
+				collision = true;
 		}
 		if (!collision && cy4 != cy1) {
 			int interpX1 = ((aimY - cy1) * (cx4 - cx1)) / (cy4 - cy1) + cx1;
-			if (aimX < interpX1) collision = true;
+			if (aimX < interpX1)
+				collision = true;
 		}
 		if (!collision && cy3 != cy2) {
 			int interpX2 = ((aimY - cy2) * (cx3 - cx2)) / (cy3 - cy2) + cx2;
-			if (interpX2 < aimX) collision = true;
+			if (interpX2 < aimX)
+				collision = true;
 		}
 
 		if (collision) {
@@ -1182,7 +1230,8 @@ void InsaneRebel2::checkCollisionZones() {
 
 			if (!_rebelInvulnerable) {
 				_playerDamage += collisionDamage;
-				if (_playerDamage > 255) _playerDamage = 255;
+				if (_playerDamage > 255)
+					_playerDamage = 255;
 				debug("Rebel2: COLLISION damage! zone=%d aim=(%d,%d) damage=%d total=%d",
 					i, aimX, aimY, collisionDamage, _playerDamage);
 			}
@@ -1218,7 +1267,8 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 
 		for (int i = 0; i < _secondaryZoneCount; i++) {
 			CollisionZone &zone = _secondaryZones[i];
-			if (!zone.active) continue;
+			if (!zone.active)
+				continue;
 
 			int x1 = zone.x1, y1 = zone.y1;
 			int x2 = zone.x2, y2 = zone.y2;
@@ -1232,22 +1282,26 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 			// Top edge: interpolate Y along v1→v2 at shipX, +15 margin
 			if (x2 != x1) {
 				int interpY = (_flyShipScreenX - x1) * (y2 - y1) / (x2 - x1) + margin + y1;
-				if (_flyShipScreenY < interpY) inside = false;
+				if (_flyShipScreenY < interpY)
+					inside = false;
 			}
 			// Bottom edge: interpolate Y along v4→v3 at shipX, -15 margin
 			if (inside && x3 != x4) {
 				int interpY = (_flyShipScreenX - x4) * (y3 - y4) / (x3 - x4) + y4 - margin;
-				if (interpY < _flyShipScreenY) inside = false;
+				if (interpY < _flyShipScreenY)
+					inside = false;
 			}
 			// Left edge: interpolate X along v1→v4 at shipY, +15 margin
 			if (inside && y4 != y1) {
 				int interpX = (_flyShipScreenY - y1) * (x4 - x1) / (y4 - y1) + margin + x1;
-				if (_flyShipScreenX < interpX) inside = false;
+				if (_flyShipScreenX < interpX)
+					inside = false;
 			}
 			// Right edge: interpolate X along v2→v3 at shipY, -15 margin
 			if (inside && y3 != y2) {
 				int interpX = (_flyShipScreenY - y2) * (x3 - x2) / (y3 - y2) + x2 - margin;
-				if (interpX < _flyShipScreenX) inside = false;
+				if (interpX < _flyShipScreenX)
+					inside = false;
 			}
 
 			// Frame match: field2 - 1 == field1 (line 90)
@@ -1261,7 +1315,8 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 					int collisionDamage = (params.dodgeDamage >= 0) ? params.dodgeDamage : 0;
 					if (!_rebelInvulnerable) {
 						_playerDamage += collisionDamage;
-						if (_playerDamage > 255) _playerDamage = 255;
+						if (_playerDamage > 255)
+							_playerDamage = 255;
 					}
 					_rebelHitCounter++;
 					initDamageFlash();
@@ -1295,7 +1350,8 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 
 		for (int i = 0; i < _primaryZoneCount; i++) {
 			CollisionZone &zone = _primaryZones[i];
-			if (!zone.active) continue;
+			if (!zone.active)
+				continue;
 
 			int x1 = zone.x1, y1 = zone.y1;
 			int x2 = zone.x2, y2 = zone.y2;
@@ -1310,7 +1366,8 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 					if (_hitCooldown < 5 && !_rebelInvulnerable) {
 						int damage = wallDamage;
 						_playerDamage += damage;
-						if (_playerDamage > 255) _playerDamage = 255;
+						if (_playerDamage > 255)
+							_playerDamage = 255;
 						_rebelHitCounter++;
 						_hitCooldown = 10;
 						playSfx(1, 127, 0);  // CRASH.SAD, top wall → center pan
@@ -1332,7 +1389,8 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 					if (_hitCooldown < 5 && !_rebelInvulnerable) {
 						int damage = wallDamage;
 						_playerDamage += damage;
-						if (_playerDamage > 255) _playerDamage = 255;
+						if (_playerDamage > 255)
+							_playerDamage = 255;
 						_rebelHitCounter++;
 						_hitCooldown = 10;
 						playSfx(1, 127, 0);  // CRASH.SAD, bottom wall → center pan
@@ -1354,7 +1412,8 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 					if (_hitCooldown < 5 && !_rebelInvulnerable) {
 						int damage = wallDamage;
 						_playerDamage += damage;
-						if (_playerDamage > 255) _playerDamage = 255;
+						if (_playerDamage > 255)
+							_playerDamage = 255;
 						_rebelHitCounter++;
 						_hitCooldown = 10;
 						playSfx(1, 127, -100);  // CRASH.SAD, left wall → pan left
@@ -1375,7 +1434,8 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 					if (_hitCooldown < 5 && !_rebelInvulnerable) {
 						int damage = wallDamage;
 						_playerDamage += damage;
-						if (_playerDamage > 255) _playerDamage = 255;
+						if (_playerDamage > 255)
+							_playerDamage = 255;
 						_rebelHitCounter++;
 						_hitCooldown = 10;
 						playSfx(1, 127, 100);  // CRASH.SAD, right wall → pan right
@@ -1410,7 +1470,8 @@ void InsaneRebel2::drawCollisionZones(byte *dst, int pitch, int width, int heigh
 	// Draw primary zones (sub-opcode 0x0D - obstacles)
 	for (int i = 0; i < _primaryZoneCount; i++) {
 		CollisionZone &zone = _primaryZones[i];
-		if (!zone.active) continue;
+		if (!zone.active)
+			continue;
 
 		// Apply view offset to convert from video coords to screen coords
 		int x1 = zone.x1 + _viewX;
@@ -1428,7 +1489,8 @@ void InsaneRebel2::drawCollisionZones(byte *dst, int pitch, int width, int heigh
 	// Draw secondary zones (sub-opcode 0x0E - boundaries)
 	for (int i = 0; i < _secondaryZoneCount; i++) {
 		CollisionZone &zone = _secondaryZones[i];
-		if (!zone.active) continue;
+		if (!zone.active)
+			continue;
 
 		// Apply view offset
 		int x1 = zone.x1 + _viewX;
@@ -1470,7 +1532,8 @@ void InsaneRebel2::renderNutSprite(byte *dst, int pitch, int width, int height, 
 // Render NUT sprite with optional horizontal mirroring
 // Based on FUN_004236e0 disassembly - flags=0x2001 triggers horizontal flip
 void InsaneRebel2::renderNutSpriteMirrored(byte *dst, int pitch, int width, int height, int x, int y, NutRenderer *nut, int spriteIdx, bool mirror) {
-	if (!nut || spriteIdx < 0 || spriteIdx >= nut->getNumChars()) return;
+	if (!nut || spriteIdx < 0 || spriteIdx >= nut->getNumChars())
+		return;
 
 	int w = nut->getCharWidth(spriteIdx);
 	int h = nut->getCharHeight(spriteIdx);
@@ -1502,7 +1565,8 @@ void InsaneRebel2::renderNutSpriteMirrored(byte *dst, int pitch, int width, int 
 		drawH = height - drawY;
 	}
 
-	if (drawW <= 0 || drawH <= 0) return;
+	if (drawW <= 0 || drawH <= 0)
+		return;
 
 	// Draw loop - with optional horizontal mirroring
 	for (int iy = 0; iy < drawH; iy++) {
@@ -1530,8 +1594,10 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// Determine correct pitch for the video buffer (usually 320 for Rebel2)
 	int width = _player->_width;
 	int height = _player->_height;
-	if (width == 0) width = _vm->_screenWidth;
-	if (height == 0) height = _vm->_screenHeight;
+	if (width == 0)
+		width = _vm->_screenWidth;
+	if (height == 0)
+		height = _vm->_screenHeight;
 	int pitch = width;
 
 	// Calculate View/Scroll Offsets
@@ -1541,8 +1607,10 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	int maxScrollX = width - _vm->_screenWidth;
 	int maxScrollY = height - _vm->_screenHeight;
 	
-	if (maxScrollX < 0) maxScrollX = 0;
-	if (maxScrollY < 0) maxScrollY = 0;
+	if (maxScrollX < 0)
+		maxScrollX = 0;
+	if (maxScrollY < 0)
+		maxScrollY = 0;
 	
 	// Simple linear mapping: Center of screen corresponds to center of buffer
 	_viewX = (_vm->_mouse.x * maxScrollX) / _vm->_screenWidth;
@@ -1957,10 +2025,12 @@ void InsaneRebel2::renderStatusBarBackground(byte *renderBitmap, int pitch, int 
 
 	for (int y = statusBarY; y < videoHeight; y++) {
 		int destY = y + _viewY;
-		if (destY >= height) continue;
+		if (destY >= height)
+			continue;
 		for (int x = 0; x < videoWidth; x++) {
 			int destX = x + _viewX;
-			if (destX >= pitch) continue;
+			if (destX >= pitch)
+				continue;
 			renderBitmap[destY * pitch + destX] = statusBarBgColor;
 		}
 	}
@@ -1981,10 +2051,14 @@ void InsaneRebel2::renderTurretHudOverlays(byte *renderBitmap, int pitch, int wi
 	// Calculate mouse offset (clamped to -127..127)
 	int mouseOffsetX = (_vm->_mouse.x - 160);
 	int mouseOffsetY = (_vm->_mouse.y - 100);
-	if (mouseOffsetX > 127) mouseOffsetX = 127;
-	if (mouseOffsetX < -127) mouseOffsetX = -127;
-	if (mouseOffsetY > 127) mouseOffsetY = 127;
-	if (mouseOffsetY < -127) mouseOffsetY = -127;
+	if (mouseOffsetX > 127)
+		mouseOffsetX = 127;
+	if (mouseOffsetX < -127)
+		mouseOffsetX = -127;
+	if (mouseOffsetY > 127)
+		mouseOffsetY = 127;
+	if (mouseOffsetY < -127)
+		mouseOffsetY = -127;
 
 	// Animation frame cycling: (frameCounter / 2) % 6
 	int numSprites = _hudOverlayNut->getNumChars();
@@ -2075,7 +2149,8 @@ void InsaneRebel2::renderEmbeddedHudOverlays(byte *renderBitmap, int pitch, int 
 				EmbeddedSanFrame &selectedFrame = _rebelEmbeddedHud[selectedId];
 				int nonZero = 0;
 				for (int i = 0; i < selectedFrame.width * selectedFrame.height; i++) {
-					if (selectedFrame.pixels[i] != 0) nonZero++;
+					if (selectedFrame.pixels[i] != 0)
+						nonZero++;
 				}
 
 				if (nonZero == 0) {
@@ -2083,7 +2158,8 @@ void InsaneRebel2::renderEmbeddedHudOverlays(byte *renderBitmap, int pitch, int 
 						EmbeddedSanFrame &altFrame = _rebelEmbeddedHud[groupMembers[i]];
 						int altNonZero = 0;
 						for (int j = 0; j < altFrame.width * altFrame.height; j++) {
-							if (altFrame.pixels[j] != 0) altNonZero++;
+							if (altFrame.pixels[j] != 0)
+								altNonZero++;
 						}
 						if (altNonZero > 0) {
 							selectedId = groupMembers[i];
@@ -2163,7 +2239,8 @@ void InsaneRebel2::renderStatusBarSprites(byte *renderBitmap, int pitch, int wid
 	// --- Difficulty sprite (2-5) overlaid on top ---
 	// FUN_0041c012 lines 33-43: sprite index = min(difficulty, 4) + 1
 	int difficulty = _difficulty;
-	if (difficulty > 3) difficulty = 3;
+	if (difficulty > 3)
+		difficulty = 3;
 	int difficultySprite = difficulty + 2;
 	if (numSprites > difficultySprite) {
 		renderNutSprite(renderBitmap, pitch, width, height,
@@ -2191,10 +2268,12 @@ void InsaneRebel2::renderStatusBarSprites(byte *renderBitmap, int pitch, int wid
 			if (drawW > 0 && drawH > 0) {
 				for (int y = 0; y < drawH; y++) {
 					int destY = statusBarY + dmgClipY + y + _viewY;
-					if (destY < 0 || destY >= height) continue;
+					if (destY < 0 || destY >= height)
+						continue;
 					for (int x = 0; x < drawW; x++) {
 						int destX = dmgClipX + x + _viewX;
-						if (destX < 0 || destX >= pitch) continue;
+						if (destX < 0 || destX >= pitch)
+							continue;
 						byte pixel = src[(dmgClipY + y) * sw + (dmgClipX + x)];
 						if (pixel != 0) {
 							renderBitmap[destY * pitch + destX] = pixel;
@@ -2220,10 +2299,12 @@ void InsaneRebel2::renderStatusBarSprites(byte *renderBitmap, int pitch, int wid
 						int aH = MIN(alertH, alertSH - dmgClipY);
 						for (int y = 0; y < aH; y++) {
 							int destY = statusBarY + dmgClipY + y + _viewY;
-							if (destY < 0 || destY >= height) continue;
+							if (destY < 0 || destY >= height)
+								continue;
 							for (int x = 0; x < aW; x++) {
 								int destX = dmgClipX + x + _viewX;
-								if (destX < 0 || destX >= pitch) continue;
+								if (destX < 0 || destX >= pitch)
+									continue;
 								byte pixel = alertSrc[(dmgClipY + y) * alertSW + (dmgClipX + x)];
 								if (pixel != 0) {
 									renderBitmap[destY * pitch + destX] = pixel;
@@ -2242,7 +2323,8 @@ void InsaneRebel2::renderStatusBarSprites(byte *renderBitmap, int pitch, int wid
 	//   Bar width = min((lives * 5 - 5) * 2, 50) — only drawn when lives > 1
 	if (numSprites > 6 && _playerLives > 1) {
 		int livesBarWidth = (_playerLives * 5 - 5) * 2;
-		if (livesBarWidth > 50) livesBarWidth = 50;
+		if (livesBarWidth > 50)
+			livesBarWidth = 50;
 
 		const byte *src = _smush_cockpitNut->getCharData(6);
 		int sw = _smush_cockpitNut->getCharWidth(6);
@@ -2256,10 +2338,12 @@ void InsaneRebel2::renderStatusBarSprites(byte *renderBitmap, int pitch, int wid
 			if (drawW > 0 && drawH > 0) {
 				for (int y = 0; y < drawH; y++) {
 					int destY = statusBarY + livClipY + y + _viewY;
-					if (destY < 0 || destY >= height) continue;
+					if (destY < 0 || destY >= height)
+						continue;
 					for (int x = 0; x < drawW; x++) {
 						int destX = livClipX + x + _viewX;
-						if (destX < 0 || destX >= pitch) continue;
+						if (destX < 0 || destX >= pitch)
+							continue;
 						byte pixel = src[(livClipY + y) * sw + (livClipX + x)];
 						if (pixel != 0) {
 							renderBitmap[destY * pitch + destX] = pixel;
@@ -2283,8 +2367,10 @@ void InsaneRebel2::renderHandler7Ship(byte *renderBitmap, int pitch, int width, 
 
 	int numSprites = _flyShipSprite->getNumChars();
 	int spriteIndex = _shipDirectionIndex;
-	if (spriteIndex < 0) spriteIndex = 0;
-	if (spriteIndex >= numSprites) spriteIndex = numSprites - 1;
+	if (spriteIndex < 0)
+		spriteIndex = 0;
+	if (spriteIndex >= numSprites)
+		spriteIndex = numSprites - 1;
 
 	// Transform game coordinates to screen coordinates (FUN_0041c720 equivalent)
 	// The perspective transform shifts the ship position based on perspective offsets.
@@ -2347,14 +2433,17 @@ void InsaneRebel2::renderHandler8Ship(byte *renderBitmap, int pitch, int width, 
 	// Select sprite based on direction and sprite count
 	if (numSprites >= 35) {
 		spriteIndex = _shipDirectionH * 7 + _shipDirectionV;
-		if (spriteIndex >= numSprites) spriteIndex = numSprites - 1;
+		if (spriteIndex >= numSprites)
+			spriteIndex = numSprites - 1;
 	} else if (numSprites >= 25) {
 		int vDir5 = (_shipDirectionV * 5) / 7;
 		spriteIndex = _shipDirectionH * 5 + vDir5;
-		if (spriteIndex >= numSprites) spriteIndex = numSprites - 1;
+		if (spriteIndex >= numSprites)
+			spriteIndex = numSprites - 1;
 	} else if (numSprites >= 5) {
 		spriteIndex = _shipDirectionH;
-		if (spriteIndex >= numSprites) spriteIndex = numSprites - 1;
+		if (spriteIndex >= numSprites)
+			spriteIndex = numSprites - 1;
 	} else if (numSprites == 2) {
 		spriteIndex = _shipFiring ? 1 : 0;
 	}
@@ -2522,10 +2611,14 @@ void InsaneRebel2::renderHandler25Ship(byte *renderBitmap, int pitch, int width,
 			int yZone = (zoneHeight > 0) ? ((zoneHeight / 2) + (crosshairY - areaTop)) / zoneHeight : 0;
 
 			// Clamp to valid ranges
-			if (xZone < 0) xZone = 0;
-			if (xZone > 4) xZone = 4;
-			if (yZone < 0) yZone = 0;
-			if (yZone > 1) yZone = 1;
+			if (xZone < 0)
+				xZone = 0;
+			if (xZone > 4)
+				xZone = 4;
+			if (yZone < 0)
+				yZone = 0;
+			if (yZone > 1)
+				yZone = 1;
 
 			// Direction-based sprite flip logic (line 161-162 in decompiled)
 			// if (DAT_00457902 == (uVar7 & 1)) { local_58 = 4 - local_58; }
@@ -2550,8 +2643,10 @@ void InsaneRebel2::renderHandler25Ship(byte *renderBitmap, int pitch, int width,
 		}
 
 		// Clamp to valid range
-		if (spriteIdx < 0) spriteIdx = 0;
-		if (spriteIdx >= numSprites) spriteIdx = numSprites - 1;
+		if (spriteIdx < 0)
+			spriteIdx = 0;
+		if (spriteIdx >= numSprites)
+			spriteIdx = numSprites - 1;
 
 		int spriteW = _grd002Sprite->getCharWidth(spriteIdx);
 		int spriteH = _grd002Sprite->getCharHeight(spriteIdx);
@@ -2644,9 +2739,11 @@ void InsaneRebel2::renderFallbackShip(byte *renderBitmap, int pitch, int width, 
 
 	// Blit from embedded HUD
 	for (int y = 0; y < spriteH && (drawY + y) < height; y++) {
-		if (drawY + y < 0) continue;
+		if (drawY + y < 0)
+			continue;
 		for (int x = 0; x < spriteW && (drawX + x) < width; x++) {
-			if (drawX + x < 0) continue;
+			if (drawX + x < 0)
+				continue;
 			int srcIdx = (srcY + y) * shipFrame.width + (srcX + x);
 			byte pixel = shipFrame.pixels[srcIdx];
 			if (pixel != 0 && pixel != 231) {
