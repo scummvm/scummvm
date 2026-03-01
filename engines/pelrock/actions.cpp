@@ -647,9 +647,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_sound->playSound("TWANGZZZ.SMP", 0);
 		break;
 	case 376: {
-		_res->loadAlfredSpecialAnim(14);
-		_alfredState.animState = ALFRED_SPECIAL_ANIM;
-		waitForSpecialAnimation();
+		playAlfredSpecialAnim(14);
 		loadExtraScreenAndPresent(12);
 		_state->setCurrentRoot(45, 2, 0);
 	} break;
@@ -876,13 +874,8 @@ void PelrockEngine::openLamppost(HotSpot *hotspot) {
 
 void PelrockEngine::useBrickWithWindow(int inventoryObject, HotSpot *hotspot) {
 
-	// TODO: Play Alfred's throwing animation
-	// This would require adding a new special animation entry
-	_res->loadAlfredSpecialAnim(4);
-	_alfredState.animState = ALFRED_SPECIAL_ANIM;
-	waitForSpecialAnimation();
+	playAlfredSpecialAnim(4);
 
-	// TODO: Animate sprite 8 (brick projectile) moving to window
 	Sprite *brickSprite = _room->findSpriteByIndex(7);
 	HotSpot *windowHotspot = _room->findHotspotByExtra(294);
 	brickSprite->x = 420;
@@ -892,17 +885,14 @@ void PelrockEngine::useBrickWithWindow(int inventoryObject, HotSpot *hotspot) {
 	while (!shouldQuit()) {
 		_events->pollEvent();
 		renderScene(OVERLAY_NONE);
-		// if (_chrono->_gameTick) {
 		_room->findSpriteByIndex(7)->y -= 10;
 		if (_room->findSpriteByIndex(7)->y <= 70) {
 			_room->findSpriteByIndex(7)->zOrder = -1;
 			break;
 		}
-		// }
 		_screen->update();
 		g_system->delayMillis(10);
 	}
-	// This would involve loading and animating the room sprite
 
 	// Add the broken window sticker
 	_room->addSticker(11);
@@ -1011,24 +1001,17 @@ void PelrockEngine::pickCables(HotSpot *hotspot) {
 		return;
 	}
 	// Duck to pick cables
-	_res->loadAlfredSpecialAnim(2);
-	_alfredState.animState = ALFRED_SPECIAL_ANIM;
-	waitForSpecialAnimation();
-
+	playAlfredSpecialAnim(2);
 	// electric shock
 	int prevX = _alfredState.x;
 	_alfredState.x -= 20;
 	// original incorrectly played door closing sound here
 	_sound->playSound("ELEC3ZZZ.SMP", 0);
-	_res->loadAlfredSpecialAnim(3);
-	_alfredState.animState = ALFRED_SPECIAL_ANIM;
-	waitForSpecialAnimation();
+	playAlfredSpecialAnim(3);
 	_alfredState.x = prevX;
 
 	// Stand up (reverse of duck)
-	_res->loadAlfredSpecialAnim(2, true);
-	_alfredState.animState = ALFRED_SPECIAL_ANIM;
-	waitForSpecialAnimation();
+	playAlfredSpecialAnim(2, true);
 	_room->addSticker(21);
 
 	_dialog->say(_res->_ingameTexts[RELOJ_HA_CAMBIADO]);
@@ -1194,11 +1177,9 @@ void PelrockEngine::usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot) {
 	_sound->playMusicTrack(27);
 	checkIngredients();
 	_dialog->say(_res->_ingameTexts[CUIDADOIMPRUDENTE]);
-	_res->loadAlfredSpecialAnim(5);
-	_alfredState.animState = ALFRED_SPECIAL_ANIM;
 	_alfredState.x -= 10;
 	_alfredState.y += 20;
-	waitForSpecialAnimation();
+	playAlfredSpecialAnim(5);
 	_sound->playSound(_room->_roomSfx[0], 0); // Belch
 	waitForSoundEnd();
 	_graphics->fadeToBlack(10);
@@ -1207,6 +1188,12 @@ void PelrockEngine::usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot) {
 	_alfredState.y = 238;
 	setScreen(28, ALFRED_DOWN);
 	_dialog->say(_res->_ingameTexts[QUEOSCUROESTAESTO]);
+}
+
+void PelrockEngine::playAlfredSpecialAnim(int anim, bool reverse) {
+	_res->loadAlfredSpecialAnim(anim, reverse);
+	_alfredState.animState = ALFRED_SPECIAL_ANIM;
+	waitForSpecialAnimation();
 }
 
 void PelrockEngine::waitForSoundEnd() {
@@ -1406,14 +1393,10 @@ void PelrockEngine::useDollWithBed(int inventoryObject, HotSpot *hotspot) {
 	int y = _alfredState.y;
 	_alfredState.x -= 36;
 	_alfredState.y += 7;
-	_res->loadAlfredSpecialAnim(11);
-	_alfredState.animState = ALFRED_SPECIAL_ANIM;
-	waitForSpecialAnimation();
+	playAlfredSpecialAnim(11);
 	_alfredState.x -= 4;
 	_alfredState.y += 12;
-	_res->loadAlfredSpecialAnim(12);
-	_alfredState.animState = ALFRED_SPECIAL_ANIM;
-	waitForSpecialAnimation();
+	playAlfredSpecialAnim(12);
 	_alfredState.direction = ALFRED_DOWN;
 	_state->setFlag(FLAG_SE_HA_PUESTO_EL_MUNECO, true);
 	_state->removeInventoryItem(83);
@@ -1935,9 +1918,7 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		_dialog->say(_res->_ingameTexts[PERIODICOSENSACIONALISTA], 1);
 		break;
 	case 63: // Recipe
-		_res->loadAlfredSpecialAnim(1);
-		_alfredState.animState = ALFRED_SPECIAL_ANIM;
-		waitForSpecialAnimation();
+		playAlfredSpecialAnim(1);
 
 		loadExtraScreenAndPresent(3);
 		_state->setCurrentRoot(17, 1, 0);
@@ -1947,22 +1928,16 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		break;
 	case 59: // Recipe book
 		if (!_state->hasInventoryItem(64)) {
-			_res->loadAlfredSpecialAnim(0);
-			_alfredState.animState = ALFRED_SPECIAL_ANIM;
-			waitForSpecialAnimation();
+			playAlfredSpecialAnim(0);
 			_dialog->say(_res->_ingameTexts[HOJAENTREPAGINAS]);
 			addInventoryItem(64);
 		} else {
-			_res->loadAlfredSpecialAnim(0);
-			_alfredState.animState = ALFRED_SPECIAL_ANIM;
-			waitForSpecialAnimation();
+			playAlfredSpecialAnim(0);
 			_dialog->say(_res->_ingameTexts[NOENTIENDONADA]);
 		}
 		break;
 	case 17: // Egyptian book
-		_res->loadAlfredSpecialAnim(0);
-		_alfredState.animState = ALFRED_SPECIAL_ANIM;
-		waitForSpecialAnimation();
+		playAlfredSpecialAnim(0);
 		_dialog->say(_res->_ingameTexts[YASEEGIPCIO]);
 		_state->setFlag(FLAG_ALFRED_SABE_EGIPCIO, true);
 		break;
@@ -1971,18 +1946,14 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 			_dialog->say(_res->_ingameTexts[CAPITULOPARADOJAS]);
 			_state->setCurrentRoot(25, 44, 0);
 		} else {
-			_res->loadAlfredSpecialAnim(0);
-			_alfredState.animState = ALFRED_SPECIAL_ANIM;
-			waitForSpecialAnimation();
+			playAlfredSpecialAnim(0);
 			_dialog->say(_res->_ingameTexts[COSASAPRENDIDO]);
 			_state->setFlag(FLAG_ALFRED_INTELIGENTE, true);
 			_state->setCurrentRoot(14, 2, 0);
 		}
 		break;
 	case 64:
-		_res->loadAlfredSpecialAnim(0);
-		_alfredState.animState = ALFRED_SPECIAL_ANIM;
-		waitForSpecialAnimation();
+		playAlfredSpecialAnim(0);
 		loadExtraScreenAndPresent(5);
 		if (_state->getFlag(FLAG_ALFRED_SABE_EGIPCIO)) {
 			_dialog->say(_res->_ingameTexts[FORMULAVIAJETIEMPO]);
@@ -1992,9 +1963,7 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		break;
 	case 88: {
 		SpellBook spellBook = SpellBook(_events, _res);
-		_res->loadAlfredSpecialAnim(0);
-		_alfredState.animState = ALFRED_SPECIAL_ANIM;
-		waitForSpecialAnimation();
+		playAlfredSpecialAnim(0);
 
 		Spell *spell = spellBook.run();
 		if (spell) {
@@ -2061,15 +2030,11 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		break;
 	}
 	case 0: // yellow book
-		_res->loadAlfredSpecialAnim(0);
-		_alfredState.animState = ALFRED_SPECIAL_ANIM;
-		waitForSpecialAnimation();
+		playAlfredSpecialAnim(0);
 		_dialog->say(_res->_ingameTexts[CUENTOPARECIDO]);
 		break;
 	case 101: // combination
-		_res->loadAlfredSpecialAnim(1);
-		_alfredState.animState = ALFRED_SPECIAL_ANIM;
-		waitForSpecialAnimation();
+		playAlfredSpecialAnim(1);
 		_dialog->say(_res->_ingameTexts[PARECE_COMBINACION_CAJAFUERTE]);
 		_state->setFlag(FLAG_CLAVE_CAJA_FUERTE, true);
 		break;
@@ -2097,16 +2062,12 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		break;
 	}
 	case 84: {
-		_res->loadAlfredSpecialAnim(1);
-		_alfredState.animState = ALFRED_SPECIAL_ANIM;
-		waitForSpecialAnimation();
+		playAlfredSpecialAnim(1);
 		loadExtraScreenAndPresent(7);
 		break;
 	}
 	case 97: {
-		_res->loadAlfredSpecialAnim(1);
-		_alfredState.animState = ALFRED_SPECIAL_ANIM;
-		waitForSpecialAnimation();
+		playAlfredSpecialAnim(1);
 		loadExtraScreenAndPresent(11);
 		_dialog->say(_res->_ingameTexts[MEHANTOMADO_EL_PELO]);
 		_state->setCurrentRoot(43, 1, 0);
@@ -2127,9 +2088,7 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 	}
 	default: {
 		if (inventoryObject >= 11 && inventoryObject <= 47) {
-			_res->loadAlfredSpecialAnim(0);
-			_alfredState.animState = ALFRED_SPECIAL_ANIM;
-			waitForSpecialAnimation();
+			playAlfredSpecialAnim(0);
 			_dialog->say(_res->_ingameTexts[LIBRO_ABURRIDO]);
 			return;
 		}
@@ -2142,9 +2101,7 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 }
 
 void PelrockEngine::chooseCorrectDoor() {
-	_res->loadAlfredSpecialAnim(1);
-	_alfredState.animState = ALFRED_SPECIAL_ANIM;
-	waitForSpecialAnimation();
+	playAlfredSpecialAnim(1);
 	byte puertaBuena = _state->getFlag(FLAG_PUERTA_BUENA);
 	if (puertaBuena == 0) { // if not set yet, choose randomly
 		int choice = getRandomNumber(1);
