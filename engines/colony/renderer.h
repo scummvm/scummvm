@@ -63,6 +63,8 @@ public:
 	virtual void setXorMode(bool enable) {}
 	virtual void setStippleData(const byte *data) {}
 	virtual void setMacColors(uint32 fg, uint32 bg) {}
+	virtual void setDepthState(bool testEnabled, bool writeEnabled) {}
+	virtual void setDepthRange(float nearVal, float farVal) {}
 	virtual void computeScreenViewport() = 0;
 
 	// Overlay a RGBA software surface onto the GL framebuffer (for Mac menu bar).
