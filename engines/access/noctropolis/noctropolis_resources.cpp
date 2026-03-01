@@ -23,6 +23,8 @@
 #include "access/noctropolis/noctropolis_game.h"
 #include "access/noctropolis/noctropolis_font.h"
 #include "access/noctropolis/noctropolis_comicviewer.h"
+#include "access/noctropolis/noctropolis_last_comic.h"
+#include "access/noctropolis/noctropolis_special_comic.h"
 #include "access/font.h"
 #include "access/polygon.h"
 
@@ -1945,21 +1947,21 @@ void NoctropolisResources::load(Common::SeekableReadStream &s) {
 	// Load the menu polys
 	int i = 0;
 	while (MENU_POLYS[i] != -1) {
-		Polygon polygon;
+		Polygon poly;
 		int pointsCount = MENU_POLYS[i++];
 		while (pointsCount--) {
 			Common::Point point;
 			point.x = MENU_POLYS[i++];
 			point.y = MENU_POLYS[i++];
-			polygon.points.push_back(point);
+			poly.points.push_back(point);
 		}
-		_menuPolygons.push_back(polygon);
+		_menus.push_back(poly);
 	}
 }
 
-int NoctropolisResources::menuPolygonAt(int16 x, int16 y) const {
-	for (int i = 0; i < (int)_menuPolygons.size(); i++) {
-		if (_menuPolygons[i].pointInside(x, y))
+int NoctropolisResources::menuAt(int16 x, int16 y) const {
+	for (int i = 0; i < (int)_menus.size(); i++) {
+		if (_menus[i].pointInside(x, y))
 			return i;
 	}
 	return -1;
@@ -2119,13 +2121,11 @@ const char *NoctropolisResources::getResponseTitle() const {
 }
 
 const ComicResource *NoctropolisResources::getLastComicResource() const {
-	warning("TODO: Get comic resource for LastPages");
-	return nullptr;
+	return new ComicResource(LastComicPages, 15);
 }
 
 const ComicResource *NoctropolisResources::getSpecialComicResource() const {
-	warning("TODO: Get comic resource for LastPages");
-	return nullptr;
+	return new ComicResource(SpecialComicPages, 7);
 }
 
 } // end namespace Noctropolis

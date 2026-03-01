@@ -22,6 +22,7 @@
 #ifndef ACCESS_NOCTROPOLIS_NOCTROPOLIS_COMICVIEWER_H
 #define ACCESS_NOCTROPOLIS_NOCTROPOLIS_COMICVIEWER_H
 
+#include "common/rect.h"
 #include "access/noctropolis/noctropolis_game.h"
 #include "access/resources.h"
 #include "access/polygon.h"
@@ -30,11 +31,14 @@ namespace Access {
 
 namespace Noctropolis {
 
-struct ComicPageBubble {
+struct ComicBox {
 	byte style;
 	byte textColor;
 	int16 x, y;
-	Common::String text;
+	const char *msgEn;
+	const char *msgFr;
+	const char *msgEs;
+	const char *msgDe;
 };
 
 class PolygonResource : public Resource {
@@ -46,27 +50,35 @@ protected:
 	void internalLoad(Common::SeekableReadStream &source, uint32 size);
 };
 
-struct ComicPageHotspot {
-	PolygonResource polygons;
+struct Comic {
+	short numPoints;
+	Common::Point points[];
+};
+
+struct ComicBlock {
+	struct Polygon *polygon;
 	int32 soundFileIndex, soundResIndex;
-	Common::Array<ComicPageBubble> bubbles;
+	const struct ComicBox *boxes;
+	int32 numBoxes;
 };
 
 struct ComicPage {
 	Common::Path filename;
 	int32 musicFileIndex, musicResIndex;
-	Common::Array<ComicPageHotspot> hotspots;
+	bool musicRepeat;
+	int unk;
+	const struct ComicBlock *blocks;
+	int32 numBlocks;
 };
 
 class ComicResource : public Resource {
 public:
+	ComicResource(const ComicPage *pages[], int npages);
 	uint16 getCount() const { return _pages.size(); }
 	const ComicPage *getPage(int index) const { return _pages[index]; }
-	void free();
+
 protected:
-	Common::Array<ComicPage *> _pages;
-	ComicPageHotspot loadHotspot(Common::SeekableReadStream &source);
-	void internalLoad(Common::SeekableReadStream &source, uint32 size);
+	Common::Array<const ComicPage *> _pages;
 };
 
 
@@ -90,7 +102,7 @@ protected:
 	SpriteResource *_bubbleSprites;
 	int _currPage;
 	PageResult runPage(const ComicPage *page);
-	void drawBubble(const ComicPageBubble &bubble);
+	void drawBubble(const ComicBox &bubble);
 };
 
 } // end namespace Noctropolis

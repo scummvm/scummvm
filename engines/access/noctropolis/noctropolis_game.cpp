@@ -48,6 +48,9 @@ void NoctropolisEngine::initObjects() {
 	_scripts = new NoctropolisScripts(this);
 	_invScript = new NoctropolisScripts(this);
 	_stil = new Player(this);
+
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "comdata");
 }
 
 void NoctropolisEngine::setupGame() {

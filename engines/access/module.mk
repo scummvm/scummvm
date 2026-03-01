@@ -38,9 +38,11 @@ MODULE_OBJS := \
 	noctropolis/noctropolis_font.o \
 	noctropolis/noctropolis_game.o \
 	noctropolis/noctropolis_player.o \
+	noctropolis/noctropolis_last_comic.o \
 	noctropolis/noctropolis_resources.o \
 	noctropolis/noctropolis_room.o \
 	noctropolis/noctropolis_scripts.o \
+	noctropolis/noctropolis_special_comic.o \
 	martian/midiparser_bemd.o \
 	video/movie_decoder.o
 
