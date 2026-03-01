@@ -3,6 +3,12 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2026.1.1 (2026-XX-XX)
 
+ New games:
+   - Added ALG engine for DOS versions of American Laser Games:
+     Crime Patrol, Crime Patrol 2: Drug Wars, The Last Bounty Hunter,
+     Mad Dog McCree, Mad Dog II: The Lost Gold, Space Pirates
+     and Who Shot Johnny Rock?.
+
  General:
    - Improved PC-Speaker emulation.
    - Implemented multiselect in the GUI launcher games list.
