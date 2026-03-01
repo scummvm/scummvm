@@ -243,7 +243,8 @@ bool WaynesWorldEngine::hasFeature(EngineFeature f) const {
 
 void WaynesWorldEngine::updateEvents() {
 	Common::Event event;
-
+	Common::Point clickPt;
+	
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
@@ -253,23 +254,33 @@ void WaynesWorldEngine::updateEvents() {
 			_keyCode = Common::KEYCODE_INVALID;
 			break;
 		case Common::EVENT_MOUSEMOVE:
-  			_mouseX = event.mouse.x;
-  			_mouseY = event.mouse.y;
+			// Restrict mouse move to the mouse allowed zone
+  			_mouseX = CLIP<int>(event.mouse.x, _mouseZone.left, _mouseZone.right - 1);
+  			_mouseY = CLIP<int>(event.mouse.y, _mouseZone.top, _mouseZone.bottom - 1);
+			g_system->warpMouse(_mouseX, _mouseY);
   			break;
 		case Common::EVENT_LBUTTONDOWN:
-			_mouseClickButtons |= kLeftButtonClicked;
-			_mouseClickX = event.mouse.x;
-			_mouseClickY = event.mouse.y;
-			//_mouseClickButtons |= kLeftButtonDown;
+			// Only consider the event if the mouse is in the mouse zone
+			clickPt = event.mouse;
+			if (_mouseZone.contains(clickPt)) {
+				_mouseClickButtons |= kLeftButtonClicked;
+				_mouseClickX = clickPt.x;
+				_mouseClickY = clickPt.y;
+				//_mouseClickButtons |= kLeftButtonDown;
+			}
   			break;
 		case Common::EVENT_LBUTTONUP:
 			//_mouseClickButtons &= ~kLeftButtonDown;
   			break;
 		case Common::EVENT_RBUTTONDOWN:
-			_mouseClickButtons |= kRightButtonClicked;
-			_mouseClickX = event.mouse.x;
-			_mouseClickY = event.mouse.y;
-			//_mouseClickButtons |= kRightButtonDown;
+			// Only consider the event if the mouse is in the mouse zone
+			clickPt = event.mouse;
+			if(_mouseZone.contains(clickPt)) {
+				_mouseClickButtons |= kRightButtonClicked;
+				_mouseClickX = event.mouse.x;
+				_mouseClickY = event.mouse.y;
+				//_mouseClickButtons |= kRightButtonDown;
+			}
   			break;
 		case Common::EVENT_RBUTTONUP:
 			//_mouseClickButtons &= ~kRightButtonDown;
@@ -2122,4 +2133,8 @@ void WaynesWorldEngine::gxCloseLib(GxlArchive *lib) {
 	lib = nullptr;
 }
 
+void WaynesWorldEngine::setMouseBounds(int x1, int x2, int y1, int y2) {
+	// Add one as rect.contains() use a strict < comparison for x2 and y2
+	_mouseZone = Common::Rect(x1, y1, x2 + 1, y2 + 1);
+}
 } // End of namespace WaynesWorld

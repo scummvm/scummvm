@@ -1365,6 +1365,7 @@ void GameLogic::r0_handleRoomEvent1() {
 	delete _menuSurface;
 	// _menuSurface = new WWSurface(178, 122);
 	_menuSurface = new WWSurface(310, 180);
+	_vm->setMouseBounds(113, 205, 20, 135);
 	_vm->drawImageToSurface(m04Gxl, "menu.pcx", _menuSurface, 113, 20);
 	_menuOffSprite = m04Gxl->loadSurface("ff.pcx");
 	_menuOnSprite = m04Gxl->loadSurface("n.pcx");
@@ -8478,10 +8479,11 @@ void GameLogic::closeSaveLoadMenu() {
 	GxlArchive *m04Gxl = new GxlArchive("m04");
 	_menuSurface->clear(0);
 	_menuIsSaveLoad = false;
+	// force a refresh of the screen
 	_vm->redrawInventory();
 
 	// sysMouseDriver(2);
-	// TODO: Set mouse zone 113, 205, 20, 135
+	_vm->setMouseBounds(113, 205, 20, 135);
 	_vm->drawImageToSurface(m04Gxl, "menu.pcx", _menuSurface, 113, 20);
 	menuDrawSoundEnabled();
 	menuDrawMusicEnabled();
@@ -8496,7 +8498,7 @@ void GameLogic::menuSaveLoadMenu(bool isLoad) {
 	
 	GxlArchive *m04Gxl = new GxlArchive("m04");
 	// sysMouseDriver(2);
-	// TODO: Set mouse zone 71, 248, 20, 71
+	_vm->setMouseBounds(71, 248, 35, 141);
 	_vm->drawImageToSurface(m04Gxl, "savegm.pcx", _menuSurface, 71, 20);
 	if (isLoad)
 		_vm->drawImageToSurface(m04Gxl, "load.pcx", _menuSurface, 71 + 43, 20 + 4);
@@ -8661,7 +8663,7 @@ void GameLogic::menuExit() {
 
 	_vm->_gameState = _menuGameState;
 	_menuIsSaveLoad = 0;
-	// TODO: Set mouse zone 0, 319, 0, 199
+	_vm->setMouseBounds(0, 319, 0, 199);
 	_vm->changeRoom(_vm->_currentRoomNumber);
 }
 
@@ -8745,7 +8747,7 @@ void GameLogic::handleGameMenu() {
 void GameLogic::menuQuitGame() {
 	_menuQuitVisible = true;
 	// sysMouseDriver(2);
-	// TODO: Set mouse zone 116, 202, 118, 133
+	_vm->setMouseBounds(116, 202, 118, 133);
 	GxlArchive *m04Gxl = new GxlArchive("m04");
 	_vm->drawImageToSurface(m04Gxl, "sure.pcx", _menuSurface, 116, 103);
 	delete m04Gxl;
@@ -8754,7 +8756,7 @@ void GameLogic::menuQuitGame() {
 void GameLogic::closeQuitMenu() {
 	GxlArchive *m04Gxl = new GxlArchive("m04");
 	// sysMouseDriver(2);
-	// TODO: Set mouse zone 113, 205, 20, 135
+	_vm->setMouseBounds(113, 205, 20, 135);
 	_vm->drawImageToSurface(m04Gxl, "menu.pcx", _menuSurface, 113, 20);
 	// sysMouseDriver(1);
 	_menuQuitVisible = false;

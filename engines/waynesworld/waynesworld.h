@@ -165,6 +165,7 @@ public:
 	// Input
 	int _mouseX = 0, _mouseY = 0;
 	int _mouseClickY, _mouseClickX;
+	Common::Rect _mouseZone = {0, 0, 319, 199};
 	uint _mouseClickButtons;
 	Common::KeyCode _keyCode;
 
@@ -324,6 +325,7 @@ public:
 	bool walkTo(int actor1_destX, int actor1_destY, int direction, int actor2_destX, int actor2_destY);
 
 	void gxCloseLib(GxlArchive *lib);
+	void setMouseBounds(int x1, int x2, int y1, int y2);
 	// Room
 	void openRoomLibrary(int roomNum);
 	void loadRoomBackground();
@@ -419,6 +421,7 @@ public:
 	};
 
 	bool _isSaveAllowed;
+
 	/* TODO
 	bool canLoadGameStateCurrently() override { return _isSaveAllowed; }
 	bool canSaveGameStateCurrently() override { return _isSaveAllowed; }
