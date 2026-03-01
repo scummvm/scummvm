@@ -63,6 +63,14 @@ public:
 		_wireframe = enable;
 		_wireframeFillColor = fillColor;
 	}
+	void setXorMode(bool enable) override {
+		if (enable) {
+			glEnable(GL_COLOR_LOGIC_OP);
+			glLogicOp(GL_XOR);
+		} else {
+			glDisable(GL_COLOR_LOGIC_OP);
+		}
+	}
 	void setStippleData(const byte *data) override {
 		_stippleData = data;
 	}

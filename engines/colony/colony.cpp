@@ -1429,9 +1429,13 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 			_gfx->setPixel(xx, yy, 15);
 	}
 
-	// Initialize moving stars
+	// Initialize moving stars — original uses PenMode(patXor) so stars
+	// don't damage the logo underneath (XOR drawing the same line twice
+	// restores the original pixels).
 	int xang[NSTARS], yang[NSTARS], dist[NSTARS];
 	int xsave1[NSTARS], ysave1[NSTARS], xsave2[NSTARS], ysave2[NSTARS];
+
+	_gfx->setXorMode(true);
 
 	for (int i = 0; i < NSTARS; i++) {
 		int d = dist[i] = _randomSource.getRandomNumber(MAXSTAR);
@@ -1454,13 +1458,12 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 	_gfx->copyToScreen();
 
 	// Animate: original loops ~200 frames or until Mars sound repeats 2x
-	// Original: only modifier+click (OptionKey()) returns true when btn=0
 	for (int k = 0; k < 120; k++) {
-		if (checkSkipRequested()) return true;
+		if (checkSkipRequested()) { _gfx->setXorMode(false); return true; }
 
 		for (int i = 0; i < NSTARS; i++) {
-			// Erase previous
-			_gfx->drawLine(xsave1[i], ysave1[i], xsave2[i], ysave2[i], 0);
+			// Erase previous — XOR the same line again to restore underlying pixels
+			_gfx->drawLine(xsave1[i], ysave1[i], xsave2[i], ysave2[i], 15);
 
 			int s = xang[i];
 			int c = yang[i];
@@ -1481,18 +1484,18 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 			xsave2[i] = centerX + (int)(((long long)s * rr) >> 7);
 			ysave2[i] = centerY + (int)(((long long)c * rr) >> 7);
 
+			// Draw new star position
 			_gfx->drawLine(xsave1[i], ysave1[i], xsave2[i], ysave2[i], 15);
 		}
 		_gfx->copyToScreen();
 		_system->delayMillis(16);
 	}
 
-	// Fade-out phase: stars fly off without resetting
-	// Original: only modifier+click (OptionKey()) returns true when btn=0
+	// Fade-out phase: stars fly off without resetting (trails accumulate via XOR)
 	int nstars = 2 * ((MAXSTAR - 0x030) / deltapd);
 	if (nstars > 200) nstars = 200;
 	for (int k = 0; k < nstars; k++) {
-		if (checkSkipRequested()) return true;
+		if (checkSkipRequested()) { _gfx->setXorMode(false); return true; }
 
 		for (int i = 0; i < NSTARS; i++) {
 			int d = dist[i];
@@ -1517,6 +1520,7 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 		_system->delayMillis(8);
 	}
 
+	_gfx->setXorMode(false);
 	return false;
 }
 
