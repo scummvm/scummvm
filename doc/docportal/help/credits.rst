@@ -223,6 +223,17 @@ Alcachofa
    * - Hermann Noll
      -
 
+ALG
+^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Filippos Karapetis
+     -
+   * - David Kment
+     -
+
 Asylum
 ^^^^^^
 
