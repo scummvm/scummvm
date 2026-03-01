@@ -864,14 +864,15 @@ uint16 GameSpacePirates::sceneToNumber(Common::String sceneName) {
 uint16 GameSpacePirates::randomUnusedScene(uint8 max) {
 	bool found = false;
 	uint8 randomNum = 0;
-	for (int i = 0; i < max && !found; i++) {
+	for (int i = 0; i < max; i++) {
 		randomNum = _rnd->getRandomNumber(max - 1);
 		if (_randomScenesUsed[randomNum] == 0) {
 			found = true;
+			break;
 		}
 	}
 	if (!found) {
-		for (int i = 0; i < max && !found; i++) {
+		for (int i = 0; i < max; i++) {
 			if (_randomScenesUsed[i] == 0) {
 				found = true;
 				randomNum = i;
