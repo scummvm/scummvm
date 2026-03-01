@@ -60,6 +60,7 @@ public:
 	// Buffer management
 	virtual void copyToScreen() = 0;
 	virtual void setWireframe(bool enable, int64_t fillColor = -1) = 0;
+	virtual void setXorMode(bool enable) {}
 	virtual void setStippleData(const byte *data) {}
 	virtual void setMacColors(uint32 fg, uint32 bg) {}
 	virtual void computeScreenViewport() = 0;
