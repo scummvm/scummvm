@@ -1579,6 +1579,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 		ADD_SETTING_QUOTE(tvOS_Debug, "TARGETED_DEVICE_FAMILY", "3");
 		ValueList scummvmTVOSsimulator_defines;
 		ADD_DEFINE(scummvmTVOSsimulator_defines, "\"$(inherited)\"");
+		ADD_DEFINE(scummvmTVOSsimulator_defines, "IPHONE_TVOS");
 		if (CONTAINS_DEFINE(setup.defines, "USE_SDL_NET"))
 			ADD_DEFINE(scummvmTVOSsimulator_defines, "WITHOUT_SDL");
 		ADD_SETTING_LIST(tvOS_Debug, "\"GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvsimulator*]\"", scummvmTVOSsimulator_defines, kSettingsNoQuote | kSettingsAsList, 5);
