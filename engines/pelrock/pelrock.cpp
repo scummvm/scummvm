@@ -1716,7 +1716,7 @@ void PelrockEngine::gameLoop() {
 		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
 	}
 
-	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_f) {
+	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_q) {
 		endingScene();
 		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
 	}

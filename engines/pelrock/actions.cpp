@@ -50,6 +50,8 @@ const ActionEntry actionTable[] = {
 	// Room 2
 	{282, OPEN, &PelrockEngine::openMcDoor},
 	{282, CLOSE, &PelrockEngine::closeMcDoor},
+	{283, PICKUP, &PelrockEngine::pickupBush},
+	{284, PICKUP, &PelrockEngine::pickupBush},
 
 	// Room 12
 	{60, PICKUP, &PelrockEngine::grabKetchup},
@@ -84,8 +86,9 @@ const ActionEntry actionTable[] = {
 
 	// Room 4
 	{315, OPEN, &PelrockEngine::openPlug},
-	{316, PICKUP, &PelrockEngine::pickCables},
 	{312, OPEN, &PelrockEngine::openMuseumDoor},
+	{316, PICKUP, &PelrockEngine::pickCables},
+	{312, CLOSE, &PelrockEngine::closeMuseumDoor},
 	{310, PICKUP, &PelrockEngine::pickupFruit},
 	{311, PICKUP, &PelrockEngine::pickupFruit},
 
@@ -172,6 +175,8 @@ const ActionEntry actionTable[] = {
 
 	// Room 47
 	{628, PICKUP, &PelrockEngine::pickupPyramidMap},
+	{800, OPEN, &PelrockEngine::openArchitectDoorFromInside},
+	{800, CLOSE, &PelrockEngine::closeArchitectDoorFromInside},
 
 	// Generic handlers
 	{WILDCARD, PICKUP, &PelrockEngine::noOpAction}, // Generic pickup action
@@ -808,6 +813,10 @@ void PelrockEngine::closeMcDoor(HotSpot *hotspot) {
 	closeDoor(hotspot, 2, 7, FEMININE, false);
 }
 
+void PelrockEngine::pickupBush(HotSpot *hotspot) {
+	_dialog->say(_res->_ingameTexts[MEHEVUELTOAPINCHAR]);
+}
+
 void PelrockEngine::pickUpAndDisable(HotSpot *hotspot) {
 	addInventoryItem(hotspot->extra);
 	_room->disableHotspot(hotspot);
@@ -1070,6 +1079,10 @@ void PelrockEngine::openMuseumDoor(HotSpot *hotspot) {
 	} else {
 		openDoor(hotspot, 1, 22, FEMININE, false);
 	}
+}
+
+void PelrockEngine::closeMuseumDoor(HotSpot *hotspot) {
+	closeDoor(hotspot, 1, 22, FEMININE, false);
 }
 
 void PelrockEngine::pickupFruit(HotSpot *hotspot) {
@@ -1779,6 +1792,26 @@ void PelrockEngine::pickupPyramidMap(HotSpot *hotspot) {
 	addInventoryItem(98);
 }
 
+void PelrockEngine::openArchitectDoorFromInside(HotSpot *hotspot) {
+	if (!_room->hasSticker(104)) {
+		_dialog->say(_res->_ingameTexts[YA_ABIERTA_F]);
+		return;
+	}
+	_room->enableExit(0, PERSIST_TEMP);
+	_room->removeSticker(104);
+	_sound->playSound(_room->_roomSfx[0]);
+}
+
+void PelrockEngine::closeArchitectDoorFromInside(HotSpot *hotspot) {
+	if (_room->hasSticker(104)) {
+		_dialog->say(_res->_ingameTexts[YA_CERRADA_F]);
+		return;
+	}
+	_room->disableExit(0, PERSIST_TEMP);
+	_room->addSticker(104, PERSIST_TEMP);
+	_sound->playSound(_room->_roomSfx[1]);
+}
+
 void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 	debug("Performing action trigger: %d", actionTrigger);
 	switch (actionTrigger) {
@@ -1835,6 +1868,26 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 	}
 }
 
+// Bresenham line draw using a 256-byte palette remap table (semi-transparent effect).
+// Each pixel on the line is replaced by remapTable[existing_color] instead of a flat color.
+static void drawRemappedLine(byte *buf, int x0, int y0, int x1, int y1, const byte *remapTable) {
+	int dx = ABS(x1 - x0);
+	int dy = ABS(y1 - y0);
+	int sx = (x0 < x1) ? 1 : -1;
+	int sy = (y0 < y1) ? 1 : -1;
+	int err = dx - dy;
+	while (true) {
+		if (x0 >= 0 && x0 < 640 && y0 >= 0 && y0 < 400) {
+			int idx = y0 * 640 + x0;
+			buf[idx] = remapTable[buf[idx]];
+		}
+		if (x0 == x1 && y0 == y1) break;
+		int e2 = 2 * err;
+		if (e2 > -dy) { err -= dy; x0 += sx; }
+		if (e2 < dx)  { err += dx; y0 += sy; }
+	}
+}
+
 void PelrockEngine::teletransportToPrincess() {
 	int phase = 0;
 
@@ -1862,48 +1915,68 @@ void PelrockEngine::teletransportToPrincess() {
 
 		_sound->playSound(_room->_roomSfx[3], 0);
 
+		// Draw 19 semi-transparent remapped lines (behind sprites, matching original)
+		// Original uses shadow_palette_remap_tables[1] — _paletteRemaps[1] from ALFRED.9
 		copyBackgroundToBuffer();
 		placeStickersFirstPass();
 		updateAnimations();
 		presentFrame();
-
+		_screen->update();
+		g_system->delayMillis(10);
 		for (int i = 0; i < 19; i++) {
-			if (shouldQuit()) {
+			if (shouldQuit())
 				return;
-			}
 			int x1 = lines[phase][0];
 			int y1 = lines[phase][1];
 			int x2 = lines[phase][2] + i;
 			int y2 = lines[phase][3];
-			_screen->drawLine(x1, y1, x2, y2, 255);
+			drawRemappedLine(_compositeBuffer, x1, y1, x2, y2, _room->_paletteRemaps[1]);
 		}
-		_screen->markAllDirty();
+		updateAnimations();
+		presentFrame();
 		_screen->update();
 		g_system->delayMillis(10);
-
-		if (shouldQuit()) {
+		_events->pollEvent();
+		if (shouldQuit())
 			return;
-		}
 
+		// Restore clean frame with sticker (lines gone)
 		_room->addSticker(stickers[phase]);
 		copyBackgroundToBuffer();
 		placeStickersFirstPass();
 		updateAnimations();
 		presentFrame();
+		_screen->update();
 
 		phase++;
 	}
+	// small delay before last sticker
+	int delay = 10;
+	while (!shouldQuit() && delay > 0) {
+		_events->pollEvent();
+		bool didRender = renderScene(OVERLAY_NONE);
+		_screen->update();
+		g_system->delayMillis(10);
+		if (didRender) {
+			delay--;
+		}
+	}
 
 	_room->addSticker(115);
-	_screen->markAllDirty();
+	copyBackgroundToBuffer();
+	placeStickersFirstPass();
+	updateAnimations();
+	presentFrame();
 	_screen->update();
 
 	_dialog->say(_res->_ingameTexts[MAREDEDEU]);
 
+	// endgameTransportAnimation();
 	smokeAnimation(-1, true);
+	_state->setFlag(FLAG_END_OF_GAME, 1);
 	_state->setCurrentRoot(48, 1, 0);
- 	_alfredState.x = 138;
-    _alfredState.y = 255;
+	_alfredState.x = 138;
+	_alfredState.y = 255;
 	setScreen(48, ALFRED_DOWN);
 }
 

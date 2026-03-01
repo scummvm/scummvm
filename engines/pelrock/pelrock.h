@@ -327,6 +327,7 @@ public:
 	void unlockMuseum();
 	void giveMoneyToGuard(int inventoryObject, HotSpot *hotspot);
 	void openMuseumDoor(HotSpot *hotspot);
+	void closeMuseumDoor(HotSpot *hotspot);
 	void pickupFruit(HotSpot *hotspot);
 	void useAmuletWithStatue(int inventoryObject, HotSpot *hotspot);
 	void useSecretCodeWithStatue(int inventoryObject, HotSpot *hotspot);
@@ -384,12 +385,16 @@ public:
 	void useWigWithPot(int inventoryObject, HotSpot *hotspot);
 	void magicFormula(int inventoryObject, HotSpot *hotspot);
 	void smokeAnimation(int spriteIndex, bool hide = true);
+	// void endgameTransportAnimation();
 	void openArchitectDoor(HotSpot *hotspot);
 	void closeArchitectDoor(HotSpot *hotspot);
 	void pickupPyramidMap(HotSpot *hotspot);
+	void openArchitectDoorFromInside(HotSpot *hotspot);
+	void closeArchitectDoorFromInside(HotSpot *hotspot);
 	void checkAllSymbols();
 	void openMcDoor(HotSpot *hotspot);
 	void closeMcDoor(HotSpot *hotspot);
+	void pickupBush(HotSpot *hotspot);
 	void teletransportToPrincess();
 
 	void animateStatuePaletteFade(bool reverse = false);
