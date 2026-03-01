@@ -45,10 +45,10 @@ public:
 	void sub_128_342(int16 unk2, int16 unk1);
 	void sub_128_3da(int16 unk1);
 	void sub_128_406(int16 unk1);
-	int16 sub_128_428();
-	int16 sub_128_446();
-	int32 sub_128_462();
-	Common::U32String sub_128_49a();
+	int16 puzzlesReadByte(); // sub_128_428
+	int16 puzzlesReadShort(); // sub_128_446
+	int32 puzzlesReadLong(); // sub_128_462
+	Common::U32String puzzlesReadString(); // sub_128_49a
 	void sub_128_4da(int16 unk1);
 	void sub_128_50e(int16 unk3, int16 unk2, int16 unk1);
 	void sub_128_55c(Common::U32String &unk1);
@@ -56,7 +56,7 @@ public:
 	OSErr sub_128_64c(int16 unk1);
 	void sub_128_69c(int16 unk6, PatternMode unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
 	void sub_128_712(int16 unk3, int16 unk2, int16 unk1);
-	void sub_128_8b4(int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
+	void fillRect(int16 top, int16 left, int16 bottom, int16 right, int16 patternID); // sub_128_8b4
 	void sub_128_918(Common::U32String &unk1);
 	void sub_128_962(int16 unk11, int16 unk10, int16 unk9, int16 unk8, int16 unk7, int16 unk6, int16 unk5, int16 unk4, int16 unk3, PatternMode unk2, int16 unk1);
 	void sub_128_bde(int16 unk6, int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
@@ -66,7 +66,6 @@ public:
 
 	void sub_128_178a(int16 unk2, int16 unk1);
 	void sub_128_1c2c(int16 unk1);
-	void sub_128_1c30();
 	void sub_128_1c4a(int16 unk1);
 	void sub_128_1f1e();
 	void sub_128_1f44();
@@ -76,7 +75,7 @@ public:
 	void sub_128_20d0();
 	void sub_128_2126();
 	void sub_128_21c8();
-	void sub_128_2202();
+	void storyRenderPage();
 	void sub_128_271a();
 	void sub_128_27d6();
 	void sub_128_2808();
@@ -185,11 +184,11 @@ private:
 	int16 var_i16_7ce;
 	int16 var_i16_7d0;
 	int16 var_i16_7d2;
-	int16 var_i16_7d4;
+	int16 storyCurrentPage; // var_i16_7d4
 	int16 var_i16_7d6;
-	int16 var_i16_7d8;
-	int16 var_i16_7da;
-	int16 var_i16_7dc;
+	int16 storyNextPage; // var_i16_7d8
+	int16 storyPageCount; // var_i16_7da
+	int16 selectedMenuChapter; // var_i16_7dc
 	int16 var_i16_7de;
 	int16 var_i16_7e0;
 	int16 var_i16_7e2;
@@ -208,8 +207,8 @@ private:
 	int16 var_i16_d0c;
 	int16 var_i16_e12;
 	int16 var_i16_e14;
-	int16 var_i16_e16;
-	int16 var_i16_e18;
+	int16 selectedMenuID; // var_i16_e16
+	int16 selectedMenuItem; // var_i16_e18
 	int16 var_i16_e1a;
 	int16 var_i16_e20;
 	Common::U32String var_str_e22;
@@ -246,14 +245,14 @@ private:
 
 
 	// FIXME: bounds on the following are guessed! need to trace index range
-	int16 arr_i16_0[202];
-	int16 arr_i16_194[202];
-	int16 arr_i16_bbe[202];
+	int16 pageLineRanges[202]; // arr_i16_0
+	int16 pageLineFace[1301]; // arr_i16_194
+	int16 pageLineBreak[1301]; // arr_i16_bbe
 	int16 arr_i16_15e8[101];
 	int16 arr_i16_16b2[0x100];
 	int16 arr_i16_18b2[101];
 	int16 arr_i16_197c[101];
-	int16 arr_i16_1a46[101];
+	int16 pageToChapter[101]; // arr_i16_1a46
 	int16 arr_i16_1b10[6969];
 	int16 arr_i16_1b90[101];
 	int16 arr_i16_1c5a[16];
