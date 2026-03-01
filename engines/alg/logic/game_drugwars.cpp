@@ -1005,7 +1005,6 @@ void GameDrugWars::sceneNxtscnFinishScenario(Scene *scene) {
 			picked = 0x0109;
 		}
 	} else if (_gotTo[13] != 0) {
-		_stage = 13;
 		_stage = 4;
 		picked = 0x017F;
 	} else {

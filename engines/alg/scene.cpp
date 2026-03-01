@@ -362,7 +362,6 @@ Scene::Scene(const Common::String &name, uint32 startFrame, uint32 endFrame) {
 	_nxtfrm = "DEFAULT";
 	_nxtscn = "DEFAULT";
 	_missedRects = "DEFAULT";
-	_missedRects = "DEFAULT";
 	_scnscrParam = 0;
 	_dataParam1 = 0;
 	_dataParam2 = 0;

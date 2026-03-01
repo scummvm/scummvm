@@ -429,9 +429,6 @@ bool GameJohnnyRock::fired(Common::Point *point) {
 		_buttonDown = false;
 		return false;
 	}
-	if (_leftDown && !_inMenu) {
-		_leftDown = true;
-	}
 	if (_buttonDown) {
 		if (_thisGameTimer - _machGunTimer > 3) {
 			_buttonDown = false;
