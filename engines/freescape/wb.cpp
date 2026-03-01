@@ -54,6 +54,39 @@
 
 namespace Freescape {
 
+namespace WBCommon {
+
+int8 decodeOrderTranspose(byte cmd) {
+	return (int8)((cmd + 0x20) & 0xFF);
+}
+
+byte decodeTickSpeed(byte cmd) {
+	byte speed = cmd & 0x0F;
+	return speed == 0 ? 1 : speed;
+}
+
+byte decodeDuration(byte cmd) {
+	byte duration = cmd & 0x3F;
+	return duration == 0 ? 1 : duration;
+}
+
+byte buildArpeggioTable(const byte intervals[8], byte mask, byte *outTable, byte maxLen, bool includeBase) {
+	byte len = 0;
+	if (includeBase && maxLen > 0)
+		outTable[len++] = 0;
+
+	for (int i = 0; i < 8 && len < maxLen; i++) {
+		if (mask & (1 << i))
+			outTable[len++] = intervals[i];
+	}
+
+	if (includeBase && len <= 1)
+		return 0;
+	return len;
+}
+
+} // End of namespace WBCommon
+
 // TEXT-relative offsets for data tables within HDSMUSIC.AM
 // All addresses verified against disassembly of the 68000 code.
 static const uint32 kPeriodTableOffset    = 0x0AAE; // 48 x uint16 BE (note 0=silence, 1-47=C-1..B-3)
@@ -154,6 +187,13 @@ private:
 		int16 portaTarget;
 		byte arpeggioMask;
 		byte arpeggioPos;
+		byte arpeggioTable[16];
+		byte arpeggioTableLen;
+		byte effect7BBaseNote;
+		byte effect7BRate;
+		byte effect7BCounter;
+		bool effect7BUseBase;
+		bool effect7BActive;
 		byte vibratoPos;
 
 		// Period
@@ -163,6 +203,7 @@ private:
 		// Delay
 		byte delay;
 		byte delayCounter;
+		bool pendingNoteOn;
 
 		bool active;
 	};
@@ -173,10 +214,7 @@ private:
 	bool _musicActive;
 	byte _tickSpeed;    // Ticks between sequencer steps
 	byte _tickCounter;  // Current tick count (counts up to _tickSpeed)
-
-	// Arpeggio working table (built by buildArpeggioTable)
-	byte _arpeggioTable[16];
-	int _arpeggioTableLen;
+	int _pendingSongCommand; // -1=no pending, else mailbox command from $DD
 
 	// --- Methods ---
 
@@ -188,7 +226,7 @@ private:
 	void triggerNote(int ch);
 	void processEffects(int ch);
 	void processEnvelope(int ch);
-	void buildArpeggioTable(byte mask);
+	void buildArpeggioTable(int ch, byte mask);
 	uint16 getPeriod(int note) const;
 
 	byte readDataByte(uint32 offset) const {
@@ -219,7 +257,7 @@ WallyBebenStream::WallyBebenStream(const byte *data, uint32 dataSize,
 	: Paula(stereo, rate, rate / 50), // 50 Hz PAL VBI interrupt rate
 	  _data(data), _dataSize(dataSize),
 	  _musicActive(false), _tickSpeed(6), _tickCounter(0),
-	  _arpeggioTableLen(0), _numPatterns(0), _firstSampleOffset(0) {
+	  _pendingSongCommand(-1), _numPatterns(0), _firstSampleOffset(0) {
 
 	memset(_periods, 0, sizeof(_periods));
 	memset(_instruments, 0, sizeof(_instruments));
@@ -229,7 +267,6 @@ WallyBebenStream::WallyBebenStream(const byte *data, uint32 dataSize,
 	memset(_patternPtrs, 0, sizeof(_patternPtrs));
 	memset(_arpeggioIntervals, 0, sizeof(_arpeggioIntervals));
 	memset(_channels, 0, sizeof(_channels));
-	memset(_arpeggioTable, 0, sizeof(_arpeggioTable));
 
 	// Standard Amiga panning: channels 0,3 left — channels 1,2 right
 	setChannelPanning(0, PANNING_LEFT);
@@ -366,7 +403,7 @@ void WallyBebenStream::startSong(int songNum) {
 	int songIdx = songNum - 1;
 	_tickSpeed = 6;
 	_tickCounter = 0;
-	_arpeggioTableLen = 0;
+	_pendingSongCommand = -1;
 
 	// Silence all Paula channels
 	for (int ch = 0; ch < NUM_VOICES; ch++) {
@@ -374,7 +411,7 @@ void WallyBebenStream::startSong(int songNum) {
 	}
 
 	// Initialize each channel from the song table
-	for (int ch = 0; ch < 4; ch++) {
+	for (int ch = 3; ch >= 0; ch--) {
 		initChannel(ch);
 		_channels[ch].orderListOffset = _songOrderPtrs[songIdx][ch];
 		_channels[ch].orderListPos = 0;
@@ -388,7 +425,7 @@ void WallyBebenStream::startSong(int songNum) {
 	startPaula();
 
 	debug(3, "WB: Song %d started, tickSpeed=%d", songNum, _tickSpeed);
-	for (int ch = 0; ch < 4; ch++) {
+	for (int ch = 3; ch >= 0; ch--) {
 		debug(3, "WB: ch%d orderList=$%X pattern=$%X",
 			ch, _channels[ch].orderListOffset, _channels[ch].patternOffset);
 	}
@@ -405,7 +442,7 @@ void WallyBebenStream::initChannel(int ch) {
 	// $C0 envelope command still produce sound (Env 0 has all zeros = silence)
 	c.attackLevel = 64;
 	c.decayTarget = 64;
-	c.sustainLevel = 0; // Instant transition (no fade)
+	c.sustainLevel = 64;
 	c.releaseRate = 0;
 }
 
@@ -434,7 +471,7 @@ void WallyBebenStream::readOrderList(int ch) {
 		if (cmd > 0xC0) {
 			// Transpose command: transpose = (cmd + 0x20) & 0xFF
 			// Stored as signed offset
-			c.transpose = (int8)((cmd + 0x20) & 0xFF);
+			c.transpose = WBCommon::decodeOrderTranspose(cmd);
 			continue;
 		}
 
@@ -462,7 +499,7 @@ void WallyBebenStream::readOrderList(int ch) {
 // Pattern format: $FF=end-pattern, $FE=end-song, $F0-$FD=speed,
 //   $E0-$EF=instrument, $C0-$DF=envelope, $80-$BF=duration,
 //   $7F/$7E=portamento, $7D/$7C=vibrato, $7B=arpeggio,
-//   $7A=delay, $00-$79=note (0=rest, 1-47=C-1..B-3)
+//   $7A=delay, $00-$5F=note (0=rest, 1-47=C-1..B-3)
 // ---------------------------------------------------------------------------
 
 void WallyBebenStream::readPatternCommands(int ch) {
@@ -488,16 +525,16 @@ void WallyBebenStream::readPatternCommands(int ch) {
 		}
 
 		if (cmd == 0xDD) {
-			// Song change — read parameter byte, ignore for now
+			// Song change command: hand off through mailbox-equivalent path.
+			byte param = readDataByte(c.patternOffset + c.patternPos);
 			c.patternPos++;
-			continue;
+			_pendingSongCommand = param;
+			return;
 		}
 
 		if (cmd >= 0xF0) {
 			// Set speed: low nibble
-			_tickSpeed = cmd & 0x0F;
-			if (_tickSpeed == 0)
-				_tickSpeed = 1;
+			_tickSpeed = WBCommon::decodeTickSpeed(cmd);
 			continue;
 		}
 
@@ -533,16 +570,14 @@ void WallyBebenStream::readPatternCommands(int ch) {
 			if (env.arpeggioMask != 0) {
 				c.effectMode = 2;
 				c.arpeggioMask = env.arpeggioMask;
-				buildArpeggioTable(env.arpeggioMask);
+				buildArpeggioTable(ch, env.arpeggioMask);
 			}
 			continue;
 		}
 
 		if (cmd >= 0x80) {
 			// Set duration: low 6 bits (0-63)
-			c.duration = cmd & 0x3F;
-			if (c.duration == 0)
-				c.duration = 1;
+			c.duration = WBCommon::decodeDuration(cmd);
 			continue;
 		}
 
@@ -551,6 +586,7 @@ void WallyBebenStream::readPatternCommands(int ch) {
 			c.portaUp = true;
 			c.portaDown = false;
 			c.effectMode = 1;
+			c.effect7BActive = false;
 			continue;
 		}
 
@@ -559,6 +595,7 @@ void WallyBebenStream::readPatternCommands(int ch) {
 			c.portaDown = true;
 			c.portaUp = false;
 			c.effectMode = 1;
+			c.effect7BActive = false;
 			continue;
 		}
 
@@ -567,8 +604,9 @@ void WallyBebenStream::readPatternCommands(int ch) {
 			byte param = readDataByte(c.patternOffset + c.patternPos);
 			c.patternPos++;
 			c.effectMode = 1;
+			c.effect7BActive = false;
 			c.arpeggioMask = param;
-			buildArpeggioTable(param);
+			buildArpeggioTable(ch, param);
 			continue;
 		}
 
@@ -577,13 +615,15 @@ void WallyBebenStream::readPatternCommands(int ch) {
 			byte param = readDataByte(c.patternOffset + c.patternPos);
 			c.patternPos++;
 			c.effectMode = 2;
+			c.effect7BActive = false;
 			c.arpeggioMask = param;
-			buildArpeggioTable(param);
+			buildArpeggioTable(ch, param);
 			continue;
 		}
 
 		if (cmd == 0x7B) {
-			// Arpeggio
+			// Dedicated arpeggio/slide mode:
+			//  xx + transpose -> base note, yy -> rate.
 			byte base = readDataByte(c.patternOffset + c.patternPos);
 			c.patternPos++;
 			byte rate = readDataByte(c.patternOffset + c.patternPos);
@@ -591,10 +631,18 @@ void WallyBebenStream::readPatternCommands(int ch) {
 			c.effectMode = 1;
 			c.arpeggioMask = 0;
 			c.arpeggioPos = 0;
-			// Store arpeggio base note with transpose applied
-			_arpeggioTable[0] = base;
-			_arpeggioTable[1] = rate;
-			_arpeggioTableLen = 2;
+			c.arpeggioTableLen = 0;
+			c.effect7BActive = true;
+			c.effect7BCounter = 0;
+			c.effect7BUseBase = true;
+
+			int baseNote = base + c.transpose;
+			if (baseNote < 1)
+				baseNote = 1;
+			if (baseNote > 47)
+				baseNote = 47;
+			c.effect7BBaseNote = (byte)baseNote;
+			c.effect7BRate = rate;
 			continue;
 		}
 
@@ -606,11 +654,24 @@ void WallyBebenStream::readPatternCommands(int ch) {
 			continue;
 		}
 
-		// Note value (0x00-0x79)
+		if (cmd > 0x5F) {
+			// Original command parser accepts notes in range 0x00-0x5F.
+			warning("WallyBeben: ch%d unknown pattern command $%02X", ch, cmd);
+			continue;
+		}
+
+		// Note value (0x00-0x5F)
 		c.prevNote = c.note;
 		c.note = cmd;
-		c.durationCounter = c.duration;
-		triggerNote(ch);
+		if (c.note != 0 && c.delay > 0) {
+			// Delay note-on by c.delay frames.
+			c.delayCounter = c.delay;
+			c.pendingNoteOn = true;
+		} else {
+			c.durationCounter = c.duration;
+			c.pendingNoteOn = false;
+			triggerNote(ch);
+		}
 		return; // One note per sequencer step
 	}
 
@@ -624,12 +685,14 @@ void WallyBebenStream::readPatternCommands(int ch) {
 
 void WallyBebenStream::triggerNote(int ch) {
 	ChannelState &c = _channels[ch];
+	c.pendingNoteOn = false;
 
 	if (c.note == 0) {
 		// Rest — silence channel
 		c.outputPeriod = 0;
 		c.volume = 0;
 		c.envelopePhase = 3;
+		c.effect7BActive = false;
 		setChannelVolume(ch, 0);
 		return;
 	}
@@ -642,6 +705,11 @@ void WallyBebenStream::triggerNote(int ch) {
 	// Look up period
 	c.basePeriod = getPeriod(note);
 	c.outputPeriod = c.basePeriod;
+
+	if (c.effect7BActive) {
+		c.effect7BCounter = 0;
+		c.effect7BUseBase = true;
+	}
 
 	if (c.basePeriod == 0) {
 		warning("WallyBeben: ch%d note %d (raw %d + transpose %d) has period 0",
@@ -681,11 +749,12 @@ void WallyBebenStream::triggerNote(int ch) {
 
 	// setChannelData calls enableChannel internally — do NOT call enableChannel again!
 	if (inst.loopFlag && loopLen > 2 && loopOff + loopLen <= totalLen) {
-		// Looped sample: initial play of full sample, then loop region
+		uint32 initialLen = loopOff + loopLen;
+		// Looped sample: initial play through loop end, then loop region
 		setChannelData(ch,
 			sampleData,                // initial data pointer
 			sampleData + loopOff,      // loop start pointer
-			totalLen,                  // initial length in bytes
+			initialLen,                // initial length in bytes
 			loopLen);                  // loop length in bytes
 	} else {
 		// One-shot: play once, then 1-byte silence loop
@@ -731,6 +800,9 @@ void WallyBebenStream::triggerNote(int ch) {
 void WallyBebenStream::processEffects(int ch) {
 	ChannelState &c = _channels[ch];
 
+	if (c.pendingNoteOn)
+		return;
+
 	if (c.effectMode == 0) {
 		c.outputPeriod = c.basePeriod;
 		return;
@@ -761,16 +833,37 @@ void WallyBebenStream::processEffects(int ch) {
 		return;
 	}
 
+	// Dedicated $7B effect: cycle between base note and current note.
+	if (c.effect7BActive) {
+		int rate = c.effect7BRate;
+		if (rate <= 0)
+			rate = 1;
+
+		c.effect7BCounter++;
+		if (c.effect7BCounter >= rate) {
+			c.effect7BCounter = 0;
+			c.effect7BUseBase = !c.effect7BUseBase;
+		}
+
+		int note = c.effect7BUseBase ? c.effect7BBaseNote : (c.note + c.transpose);
+		if (note < 1)
+			note = 1;
+		if (note > 47)
+			note = 47;
+		c.outputPeriod = getPeriod(note);
+		return;
+	}
+
 	// Arpeggio effect (effectMode 1 or 2)
-	if (_arpeggioTableLen > 0) {
+	if (c.arpeggioTableLen > 0) {
 		int note = c.note + c.transpose;
-		int offset = _arpeggioTable[c.arpeggioPos % _arpeggioTableLen];
+		int offset = c.arpeggioTable[c.arpeggioPos % c.arpeggioTableLen];
 		note += offset;
 		if (note < 1) note = 1;
 		if (note > 47) note = 47;
 		c.outputPeriod = getPeriod(note);
 		c.arpeggioPos++;
-		if (c.arpeggioPos >= _arpeggioTableLen)
+		if (c.arpeggioPos >= c.arpeggioTableLen)
 			c.arpeggioPos = 0;
 	} else {
 		c.outputPeriod = c.basePeriod;
@@ -784,7 +877,7 @@ void WallyBebenStream::processEffects(int ch) {
 // Envelope table bytes (per entry, 8 bytes at TEXT+$D0A):
 //   byte 0 (attackLevel):  initial volume on note-on
 //   byte 1 (decayTarget):  target volume to fade toward and hold
-//   byte 2 (sustainLevel): fade rate (0 = instant jump to target, >0 = per-tick)
+//   byte 2 (sustainLevel): sustain volume while note is active
 //   byte 3 (releaseRate):  volume decrease per tick on note-off
 //   byte 4 (modDepth):     modulation depth
 //   byte 5 (vibratoWave):  vibrato waveform selector
@@ -796,28 +889,22 @@ void WallyBebenStream::processEnvelope(int ch) {
 	ChannelState &c = _channels[ch];
 
 	switch (c.envelopePhase) {
-	case 0: // Attack — volume already set to attackLevel in triggerNote
-		if (c.sustainLevel == 0) {
-			// Instant transition to hold level
-			c.volume = c.decayTarget;
-			c.envelopePhase = 2; // Skip fade, go straight to hold
-		} else {
-			// Begin gradual fade toward target
-			c.envelopePhase = 1;
-		}
+	case 0: // Attack — start from attack level, then enter decay.
+		c.volume = MIN(c.attackLevel, (byte)64);
+		c.envelopePhase = 1;
 		break;
 
-	case 1: // Fade — move volume toward hold level (decayTarget)
-		if (c.volume < c.decayTarget) {
-			c.volume++;
-		} else if (c.volume > c.decayTarget) {
+	case 1: // Decay — decrease toward decay target.
+		if (c.volume > c.decayTarget) {
 			c.volume--;
 		} else {
-			c.envelopePhase = 2; // Reached target
+			c.volume = c.sustainLevel;
+			c.envelopePhase = 2;
 		}
 		break;
 
-	case 2: // Hold — maintain volume until note-off
+	case 2: // Sustain — hold sustain level until note-off.
+		c.volume = c.sustainLevel;
 		break;
 
 	case 3: // Release — decrease volume on note-off
@@ -842,20 +929,10 @@ void WallyBebenStream::processEnvelope(int ch) {
 // Arpeggio table builder — unpacks a bitmask into interval offsets
 // ---------------------------------------------------------------------------
 
-void WallyBebenStream::buildArpeggioTable(byte mask) {
-	_arpeggioTableLen = 0;
-
-	// Always include 0 (base note) as first entry
-	_arpeggioTable[_arpeggioTableLen++] = 0;
-
-	for (int i = 0; i < 8 && _arpeggioTableLen < 16; i++) {
-		if (mask & (1 << i)) {
-			_arpeggioTable[_arpeggioTableLen++] = _arpeggioIntervals[i];
-		}
-	}
-
-	if (_arpeggioTableLen <= 1)
-		_arpeggioTableLen = 0; // No arpeggio if only base note
+void WallyBebenStream::buildArpeggioTable(int ch, byte mask) {
+	ChannelState &c = _channels[ch];
+	c.arpeggioTableLen = WBCommon::buildArpeggioTable(_arpeggioIntervals, mask, c.arpeggioTable, 16, true);
+	c.arpeggioPos = 0;
 }
 
 // ---------------------------------------------------------------------------
@@ -879,8 +956,10 @@ void WallyBebenStream::interrupt() {
 
 	// Sequencer step: when tick counter reaches 0
 	if (_tickCounter == 0) {
-		for (int ch = 0; ch < 4; ch++) {
+		for (int ch = 3; ch >= 0; ch--) {
 			if (!_channels[ch].active)
+				continue;
+			if (_channels[ch].pendingNoteOn)
 				continue;
 
 			if (_channels[ch].durationCounter > 0) {
@@ -898,8 +977,41 @@ void WallyBebenStream::interrupt() {
 		}
 	}
 
+	// Apply pending song command ($DD xx) after parser step.
+	if (_pendingSongCommand != -1) {
+		byte command = (byte)_pendingSongCommand;
+		_pendingSongCommand = -1;
+
+		if (command == 0) {
+			_musicActive = false;
+			for (int ch = 0; ch < NUM_VOICES; ch++)
+				clearVoice(ch);
+			return;
+		}
+		if (command >= 1 && command <= 2) {
+			startSong(command);
+			return;
+		}
+	}
+
+	// Delay-before-note handling ($7A): countdown in frames, then trigger note-on.
+	for (int ch = 3; ch >= 0; ch--) {
+		ChannelState &c = _channels[ch];
+		if (!c.active || !c.pendingNoteOn)
+			continue;
+
+		if (c.delayCounter > 0)
+			c.delayCounter--;
+
+		if (c.delayCounter == 0) {
+			c.pendingNoteOn = false;
+			c.durationCounter = c.duration;
+			triggerNote(ch);
+		}
+	}
+
 	// Every frame: process effects and envelope, update Paula
-	for (int ch = 0; ch < 4; ch++) {
+	for (int ch = 3; ch >= 0; ch--) {
 		if (!_channels[ch].active)
 			continue;
 

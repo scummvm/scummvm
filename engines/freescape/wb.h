@@ -27,6 +27,38 @@
 
 namespace Freescape {
 
+namespace WBCommon {
+
+/**
+ * Decode order-list transpose command ($C1-$FE).
+ * Formula used by Wally Beben engines: (cmd + $20) & $FF.
+ */
+int8 decodeOrderTranspose(byte cmd);
+
+/**
+ * Decode speed command ($F0-$FD): low nibble, with 0 coerced to 1.
+ */
+byte decodeTickSpeed(byte cmd);
+
+/**
+ * Decode duration command ($80-$BF): low 6 bits, with 0 coerced to 1.
+ */
+byte decodeDuration(byte cmd);
+
+/**
+ * Expand an arpeggio bitmask using the 8-byte interval lookup table.
+ *
+ * @param intervals   Source interval table (8 entries)
+ * @param mask        Bitmask selecting entries from intervals
+ * @param outTable    Output sequence buffer
+ * @param maxLen      Capacity of output buffer
+ * @param includeBase Whether to prepend 0 (base note)
+ * @return Number of valid entries in outTable
+ */
+byte buildArpeggioTable(const byte intervals[8], byte mask, byte *outTable, byte maxLen, bool includeBase);
+
+} // End of namespace WBCommon
+
 /**
  * Create a music stream for the Wally Beben custom music engine
  * used in the Amiga version of Dark Side.

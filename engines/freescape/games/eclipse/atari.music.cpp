@@ -38,6 +38,7 @@
 #include "audio/softsynth/ay8912.h"
 
 #include "freescape/freescape.h"
+#include "freescape/wb.h"
 
 #include "common/endian.h"
 #include "common/debug.h"
@@ -121,16 +122,27 @@ private:
 		byte decayTarget;  // Target volume to hold
 		byte attackRate;   // Increment per tick
 		byte releaseRate;  // Decrement per tick
-		byte envelopePhase; // 0=attack, 1=decay, 2=sustain, 3=release
+		byte envelopeFlags; // Instrument byte 4
+		byte envelopeToggle; // Bit7 envelope direction toggle
+		bool envelopeDone; // Mirrors original per-note envelope completion flag
+		bool useHardwareEnvelope;
 
 		// Effects
-		byte effectMode;   // 0=none, 1=vibrato, 2=arpeggio
+		byte effectMode;   // 0=none, 1=pattern FX ($7D), 2=instrument FX ($7C)
 		bool portaUp;
 		bool portaDown;
 		int16 portaStep;
 		int16 portaTarget;
 		byte arpeggioMask;
 		byte arpeggioPos;
+		byte arpeggioTable[16];
+		byte arpeggioTableLen;
+		byte effect7BBaseNote;
+		byte effect7BParam;
+		bool effect7BActive;
+		int16 effect7BPeriod;
+		byte delay;
+		byte delayCounter;
 
 		// Vibrato
 		byte vibratoSpeed;  // Phase increment per tick
@@ -139,8 +151,19 @@ private:
 		int8 vibratoDir;    // +1 or -1
 
 		// Noise
-		bool noiseEnabled;  // Instrument flags bit 1: noise mode
+		bool noiseEnabled;  // Instrument flags bit 0/1: noise mode
+		bool toneEnabled;   // If false, channel uses noise-only mode
+		bool skipTranspose; // Noise-only mode bypasses order-list transpose
 		bool freqSweep;     // Instrument flags bit 2: frequency sweep
+		byte noisePeriod;   // YM noise period source from instrument byte 5
+		byte noiseCounter;  // Instrument flags high nibble countdown ($54)
+
+		// Instrument byte-5 period modulation ($04A2..$05C8 path)
+		byte modParam;      // Raw instrument byte 5
+		byte modSpan;       // High nibble
+		byte modPos;        // Running position (mirrors +$30)
+		int8 modDir;        // -1/1 (mirrors sign of +$2D)
+		int16 modStep;      // Derived note-step delta (mirrors $C9A)
 
 		// Period
 		int16 basePeriod;
@@ -155,10 +178,9 @@ private:
 	byte _tickSpeed;
 	byte _tickCounter;
 	int _tickSampleCount;
-
-	// Arpeggio working table
-	byte _arpeggioTable[16];
-	int _arpeggioTableLen;
+	bool _hwEnvelopeDirty;
+	uint16 _hwEnvelopePeriod;
+	byte _hwEnvelopeShape;
 
 	// --- Methods ---
 	void loadTables();
@@ -169,7 +191,7 @@ private:
 	void triggerNote(int ch);
 	void processEffects(int ch);
 	void processEnvelope(int ch);
-	void buildArpeggioTable(byte mask);
+	void buildArpeggioTable(ChannelState &c, byte mask);
 	void tickUpdate();
 	void writeYMRegisters();
 
@@ -207,8 +229,8 @@ EclipseAtariMusicStream::EclipseAtariMusicStream(const byte *data, uint32 dataSi
 	: AY8912Stream(rate, 2000000), // YM2149 at 2 MHz on Atari ST
 	  _data(data), _dataSize(dataSize),
 	  _musicActive(false), _tickSpeed(6), _tickCounter(0),
-	  _tickSampleCount(0),
-	  _arpeggioTableLen(0), _numPatterns(0) {
+	  _tickSampleCount(0), _hwEnvelopeDirty(false), _hwEnvelopePeriod(0), _hwEnvelopeShape(0),
+	  _numPatterns(0) {
 
 	memset(_periods, 0, sizeof(_periods));
 	memset(_instruments, 0, sizeof(_instruments));
@@ -216,7 +238,6 @@ EclipseAtariMusicStream::EclipseAtariMusicStream(const byte *data, uint32 dataSi
 	memset(_patternPtrs, 0, sizeof(_patternPtrs));
 	memset(_arpeggioIntervals, 0, sizeof(_arpeggioIntervals));
 	memset(_channels, 0, sizeof(_channels));
-	memset(_arpeggioTable, 0, sizeof(_arpeggioTable));
 
 	// Reset all YM registers
 	for (int r = 0; r < 14; r++)
@@ -305,7 +326,9 @@ void EclipseAtariMusicStream::startSong(int songNum) {
 	int songIdx = songNum - 1;
 	_tickSpeed = 6;
 	_tickCounter = 0;
-	_arpeggioTableLen = 0;
+	_hwEnvelopeDirty = false;
+	_hwEnvelopePeriod = 0;
+	_hwEnvelopeShape = 0;
 
 	// Silence all YM channels
 	for (int r = 0; r < 14; r++)
@@ -334,9 +357,11 @@ void EclipseAtariMusicStream::initChannel(int ch) {
 	memset(&c, 0, sizeof(ChannelState));
 	c.duration = 1;
 	c.durationCounter = 0;
-	c.envelopePhase = 3; // Start in release (silent)
 	c.attackLevel = 0x36; // Default from instrument 1
 	c.decayTarget = 0x36;
+	c.toneEnabled = true;
+	c.envelopeDone = true;
+	c.useHardwareEnvelope = false;
 }
 
 // ---------------------------------------------------------------------------
@@ -360,7 +385,7 @@ void EclipseAtariMusicStream::readOrderList(int ch) {
 		}
 
 		if (cmd > 0xC0) {
-			c.transpose = (int8)((cmd + 0x20) & 0xFF);
+			c.transpose = WBCommon::decodeOrderTranspose(cmd);
 			continue;
 		}
 
@@ -407,19 +432,22 @@ void EclipseAtariMusicStream::readPatternCommands(int ch) {
 		}
 
 		if (cmd == 0xFC) {
-			// Song change command — read parameter, restart
-			byte newSong = readDataByte(c.patternOffset + c.patternPos);
+			// Song jump command: mirror TEMUSIC mailbox semantics.
+			byte command = readDataByte(c.patternOffset + c.patternPos);
 			c.patternPos++;
-			if (newSong >= 1 && newSong <= 2) {
-				startSong(newSong);
+			if (command == 0) {
+				_musicActive = false;
+				for (int r = 0; r < 14; r++)
+					setReg(r, 0);
+				setReg(7, 0x3F);
+			} else if (command >= 1 && command <= 2) {
+				startSong(command);
 			}
 			return;
 		}
 
 		if (cmd >= 0xF0) {
-			_tickSpeed = cmd & 0x0F;
-			if (_tickSpeed == 0)
-				_tickSpeed = 1;
+			_tickSpeed = WBCommon::decodeTickSpeed(cmd);
 			continue;
 		}
 
@@ -433,36 +461,52 @@ void EclipseAtariMusicStream::readPatternCommands(int ch) {
 				c.decayTarget = inst.targetVol;
 				c.attackRate = inst.attackRate;
 				c.releaseRate = inst.releaseRate;
+				c.envelopeFlags = inst.envFlags;
 
-				// Instrument effect type: high nibble = vibrato speed,
-				// low nibble = vibrato depth (in period units)
-				if (inst.effectType != 0) {
-					c.effectMode = 1; // vibrato
-					c.vibratoSpeed = (inst.effectType >> 4) & 0x0F;
-					c.vibratoDepth = inst.effectType & 0x0F;
-					c.vibratoPos = 0;
-					c.vibratoDir = 1;
-					c.portaUp = false;
-					c.portaDown = false;
-				} else if (inst.arpeggioData != 0) {
-					c.effectMode = 2; // arpeggio
+				// Instrument byte 5 is used as a PSG/noise control parameter.
+				c.modParam = inst.effectType;
+				c.modSpan = (inst.effectType >> 4) & 0x0F;
+				c.modPos = 0;
+				c.modDir = 1;
+				c.noisePeriod = inst.effectType & 0x3F;
+				c.toneEnabled = true;
+				c.noiseEnabled = false;
+				c.skipTranspose = false;
+				c.freqSweep = false;
+				c.noiseCounter = inst.flags >> 4;
+
+				// Instrument byte 6 preloads the channel interval table and forces mode $7C.
+				if (inst.arpeggioData != 0) {
+					c.effectMode = 2;
 					c.arpeggioMask = inst.arpeggioData;
-					buildArpeggioTable(inst.arpeggioData);
-				} else {
-					c.effectMode = 0;
+					c.arpeggioPos = 0;
+					buildArpeggioTable(c, inst.arpeggioData);
 				}
 
-				// Noise flags from instrument byte 7
-				c.noiseEnabled = (inst.flags & 0x02) != 0;
-				c.freqSweep = (inst.flags & 0x04) != 0;
+				// Instrument byte 7 flags:
+				// bit0/1 noise modes, bit2 frequency sweep, bit3 retrigger.
+				if (inst.flags & 0x01) {
+					// Bit 0: tone + noise with fixed noise seed period.
+					c.noiseEnabled = true;
+					c.noisePeriod = 0x20;
+				} else if (inst.flags & 0x02) {
+					// Bit 1: note-relative noise-only mode.
+					c.noiseEnabled = true;
+					c.toneEnabled = false;
+					c.skipTranspose = true;
+					if (c.noisePeriod == 0)
+						c.noisePeriod = 1;
+				} else if (inst.flags & 0x04) {
+					// Bit 2: tone + noise mode with frequency sweep.
+					c.noiseEnabled = true;
+					c.freqSweep = true;
+				}
 			}
 			continue;
 		}
 
 		if (cmd >= 0x80) {
-			c.duration = cmd & 0x3F;
-			if (c.duration == 0)
-				c.duration = 1;
+			c.duration = WBCommon::decodeDuration(cmd);
 			continue;
 		}
 
@@ -470,40 +514,81 @@ void EclipseAtariMusicStream::readPatternCommands(int ch) {
 			c.portaUp = true;
 			c.portaDown = false;
 			c.effectMode = 1;
-			continue;
+			// Original parser consumes the next byte and uses it as the immediate note.
+			if (c.patternOffset + c.patternPos >= _dataSize)
+				return;
+			c.prevNote = c.note;
+			c.note = readDataByte(c.patternOffset + c.patternPos);
+			c.patternPos++;
+			c.durationCounter = c.duration;
+			triggerNote(ch);
+			return;
 		}
 
 		if (cmd == 0x7E) {
 			c.portaDown = true;
 			c.portaUp = false;
 			c.effectMode = 1;
-			continue;
+			// Original parser consumes the next byte and uses it as the immediate note.
+			if (c.patternOffset + c.patternPos >= _dataSize)
+				return;
+			c.prevNote = c.note;
+			c.note = readDataByte(c.patternOffset + c.patternPos);
+			c.patternPos++;
+			c.durationCounter = c.duration;
+			triggerNote(ch);
+			return;
 		}
 
 		if (cmd == 0x7D) {
-			// Arpeggio / effect mode 1 — param is bitmask into interval table
+			// Pattern effect 1: parameterized interval table (channel-local)
 			byte param = readDataByte(c.patternOffset + c.patternPos);
 			c.patternPos++;
-			c.effectMode = 2; // arpeggio
+			c.effectMode = 1;
 			c.arpeggioMask = param;
 			c.arpeggioPos = 0;
-			buildArpeggioTable(param);
+			buildArpeggioTable(c, param);
 			continue;
 		}
 
 		if (cmd == 0x7C) {
-			// Effect mode 2 — alternate arpeggio/vibrato
-			byte param = readDataByte(c.patternOffset + c.patternPos);
-			c.patternPos++;
-			c.effectMode = 2; // arpeggio
-			c.arpeggioMask = param;
+			// Pattern effect 2: switch mode only (no parameter byte consumed).
+			c.effectMode = 2;
+			continue;
+		}
+
+		if (cmd == 0x7B) {
+			// TEMUSIC delayed slide command:
+			//   byte1 = base note (+transpose), byte2 low nibble = delay window.
+			c.arpeggioTableLen = 0;
 			c.arpeggioPos = 0;
-			buildArpeggioTable(param);
+			c.effectMode = 1;
+			c.effect7BActive = false;
+
+			if (c.patternOffset + c.patternPos < _dataSize) {
+				byte base = readDataByte(c.patternOffset + c.patternPos);
+				c.patternPos++;
+				base = (byte)(base + c.transpose);
+				c.effect7BBaseNote = base;
+
+				int baseNote = c.effect7BBaseNote;
+				if (baseNote < 1)
+					baseNote = 1;
+				if (baseNote >= kTENumPeriods)
+					baseNote = kTENumPeriods - 1;
+				c.effect7BPeriod = getPeriod(baseNote);
+			}
+			if (c.patternOffset + c.patternPos < _dataSize) {
+				c.effect7BParam = readDataByte(c.patternOffset + c.patternPos);
+				c.patternPos++;
+			}
+			c.effect7BActive = true;
 			continue;
 		}
 
 		if (cmd == 0x7A) {
-			// Delay command — skip parameter byte (same as wb.cpp)
+			// Delay command — consumed and copied to per-note delay counter.
+			c.delay = readDataByte(c.patternOffset + c.patternPos);
 			c.patternPos++;
 			continue;
 		}
@@ -526,37 +611,86 @@ void EclipseAtariMusicStream::readPatternCommands(int ch) {
 void EclipseAtariMusicStream::triggerNote(int ch) {
 	ChannelState &c = _channels[ch];
 
-	if (c.note == 0) {
-		// Rest — silence channel
-		c.outputPeriod = 0;
-		c.volume = 0;
-		c.envelopePhase = 3;
-		return;
+	// Apply transpose and clamp
+	int note = c.note;
+	if (!c.skipTranspose)
+		note += c.transpose;
+	bool isRest = (note == 0);
+	if (!isRest) {
+		if (note < 1)
+			note = 1;
+		if (note >= kTENumPeriods)
+			note = kTENumPeriods - 1;
 	}
 
-	// Apply transpose and clamp
-	int note = c.note + c.transpose;
-	if (note < 1) note = 1;
-	if (note >= kTENumPeriods) note = kTENumPeriods - 1;
-
-	c.basePeriod = getPeriod(note);
+	c.basePeriod = isRest ? 0 : getPeriod(note);
 	c.outputPeriod = c.basePeriod;
+	c.useHardwareEnvelope = false;
 
-	if (c.basePeriod == 0) {
+	if (!isRest && c.basePeriod == 0) {
 		warning("TE-Atari: ch%d note %d has period 0", ch, note);
 		return;
 	}
 
 	// Reset envelope
-	c.envelopePhase = 0;
+	c.envelopeToggle = 0;
+	c.envelopeDone = false;
 	c.volume = c.attackLevel;
+	c.delayCounter = c.delay;
+	c.arpeggioPos = 0;
+	c.modStep = 0;
+	const InstrumentDesc &inst = _instruments[c.instrumentIdx];
+	c.noiseCounter = inst.flags >> 4;
+
+	// Reapply byte-7 mixer mode on every note trigger.
+	c.toneEnabled = true;
+	c.noiseEnabled = false;
+	c.skipTranspose = false;
+	c.freqSweep = false;
+	if (inst.flags & 0x01) {
+		c.noiseEnabled = true;
+		c.noisePeriod = 0x20;
+	} else if (inst.flags & 0x02) {
+		c.noiseEnabled = true;
+		c.toneEnabled = false;
+		c.skipTranspose = true;
+		if (c.noisePeriod == 0)
+			c.noisePeriod = 1;
+	} else if (inst.flags & 0x04) {
+		c.noiseEnabled = true;
+		c.freqSweep = true;
+	}
+
+	if (!isRest && c.modParam != 0 && note + 1 < kTENumPeriods) {
+		int16 periodDelta = ABS((int16)getPeriod(note) - (int16)getPeriod(note + 1));
+		byte depth = c.modParam & 0x0F;
+		while (depth > 0) {
+			periodDelta = (periodDelta >> 1) | 1;
+			depth--;
+		}
+		c.modStep = periodDelta;
+	}
+
+	// TEMUSIC instrument byte 4 bit7 selects YM hardware envelope mode.
+	if (!isRest && (c.envelopeFlags & 0x80)) {
+		c.useHardwareEnvelope = true;
+		c.envelopeDone = true;
+
+		// Envelope style comes from low nibble; period follows note pitch scale.
+		_hwEnvelopeShape = c.envelopeFlags & 0x0F;
+		uint16 envPeriod = (c.basePeriod > 0) ? (uint16)MAX(1, c.basePeriod >> 4) : 1;
+		_hwEnvelopePeriod = envPeriod;
+		_hwEnvelopeDirty = true;
+	}
 
 	debugC(3, kFreescapeDebugParser, "TE-Atari: ch%d NOTE note=%d(+%d) period=%d inst=%d vol=%d",
 		ch, c.note, c.transpose, c.basePeriod, c.instrumentIdx, c.volume);
 
 	// Set up portamento if active
-	if (c.portaUp || c.portaDown) {
-		int prevNote = c.prevNote + c.transpose;
+	if (!isRest && (c.portaUp || c.portaDown)) {
+		int prevNote = c.prevNote;
+		if (!c.skipTranspose)
+			prevNote += c.transpose;
 		if (prevNote < 1) prevNote = 1;
 		if (prevNote >= kTENumPeriods) prevNote = kTENumPeriods - 1;
 
@@ -579,6 +713,28 @@ void EclipseAtariMusicStream::triggerNote(int ch) {
 void EclipseAtariMusicStream::processEffects(int ch) {
 	ChannelState &c = _channels[ch];
 
+	// Noise gate: in TEMUSIC, instrument high nibble is a countdown that
+	// can auto-disable channel noise after N ticks.
+	if (c.noiseEnabled) {
+		if (c.noiseCounter > 0) {
+			c.noiseCounter--;
+			if (c.noiseCounter == 0)
+				c.noiseEnabled = false;
+		}
+	}
+
+	int16 period = c.basePeriod;
+
+	// Instrument flag bit2 enables the original per-tick sweep path (+$64, 12-bit wrap),
+	// and advances the shared noise period source.
+	if (c.freqSweep) {
+		c.basePeriod = (c.basePeriod + 0x64) & 0x0FFF;
+		if (c.basePeriod == 0)
+			c.basePeriod = 1;
+		c.noisePeriod = (c.noisePeriod + 1) & 0x1F;
+		period = c.basePeriod;
+	}
+
 	// Portamento takes priority (active during porta regardless of effectMode)
 	if (c.portaUp) {
 		c.basePeriod -= c.portaStep;
@@ -586,52 +742,83 @@ void EclipseAtariMusicStream::processEffects(int ch) {
 			c.basePeriod = c.portaTarget;
 			c.portaUp = false;
 		}
-		c.outputPeriod = c.basePeriod;
-		return;
-	}
-
-	if (c.portaDown) {
+		period = c.basePeriod;
+	} else if (c.portaDown) {
 		c.basePeriod += c.portaStep;
 		if (c.basePeriod >= c.portaTarget) {
 			c.basePeriod = c.portaTarget;
 			c.portaDown = false;
 		}
-		c.outputPeriod = c.basePeriod;
-		return;
-	}
-
-	if (c.effectMode == 1 && c.vibratoDepth > 0) {
-		// Vibrato: triangle wave pitch oscillation around basePeriod
-		c.vibratoPos += c.vibratoDir;
-		if (c.vibratoPos >= (int8)c.vibratoDepth) {
-			c.vibratoPos = c.vibratoDepth;
-			c.vibratoDir = -1;
-		} else if (c.vibratoPos <= -(int8)c.vibratoDepth) {
-			c.vibratoPos = -(int8)c.vibratoDepth;
-			c.vibratoDir = 1;
-		}
-		// Scale vibrato offset by speed (higher speed = faster oscillation)
-		int16 offset = c.vibratoPos * c.vibratoSpeed;
-		c.outputPeriod = c.basePeriod + offset;
-		if (c.outputPeriod < 1) c.outputPeriod = 1;
-		return;
-	}
-
-	if (c.effectMode == 2 && _arpeggioTableLen > 0) {
-		// Arpeggio: cycle through note offsets from interval table
-		int note = c.note + c.transpose;
-		int offset = _arpeggioTable[c.arpeggioPos % _arpeggioTableLen];
+		period = c.basePeriod;
+	} else if (c.effectMode != 0 && c.arpeggioTableLen > 0) {
+		// Channel-local interval cycling (used by $7D/$7C paths).
+		int note = c.note;
+		if (!c.skipTranspose)
+			note += c.transpose;
+		int offset = c.arpeggioTable[c.arpeggioPos % c.arpeggioTableLen];
 		note += offset;
 		if (note < 1) note = 1;
 		if (note >= kTENumPeriods) note = kTENumPeriods - 1;
-		c.outputPeriod = getPeriod(note);
+		period = getPeriod(note);
 		c.arpeggioPos++;
-		if (c.arpeggioPos >= _arpeggioTableLen)
+		if (c.arpeggioPos >= c.arpeggioTableLen)
 			c.arpeggioPos = 0;
-		return;
+	} else if (c.effect7BActive) {
+		// $7B path: delayed slide from a base note period toward current note period.
+		byte window = c.effect7BParam & 0x0F;
+		if ((int)c.durationCounter + (int)window <= (int)c.duration) {
+			int16 target = c.basePeriod;
+			int steps = (_tickSpeed > 0) ? _tickSpeed : 1;
+			int16 delta = ABS(target - c.effect7BPeriod) / steps;
+			if (delta == 0)
+				delta = 1;
+
+			if (c.effect7BPeriod < target) {
+				c.effect7BPeriod += delta;
+				if (c.effect7BPeriod > target)
+					c.effect7BPeriod = target;
+			} else if (c.effect7BPeriod > target) {
+				c.effect7BPeriod -= delta;
+				if (c.effect7BPeriod < target)
+					c.effect7BPeriod = target;
+			}
+			period = c.effect7BPeriod;
+		}
 	}
 
-	c.outputPeriod = c.basePeriod;
+	// TEMUSIC enters byte-5 modulation only while mode is clear.
+	if (c.effectMode == 0 && c.modParam != 0 && c.modStep > 0 && c.modSpan > 0) {
+		// $7A delay applies to this modulation path, not to all effects.
+		if (c.delayCounter > 0) {
+			c.delayCounter--;
+		} else {
+			if (c.modDir < 0) {
+				if (c.modPos > 0) {
+					c.modPos--;
+				} else {
+					c.modDir = 1;
+					if (c.modPos < c.modSpan)
+						c.modPos++;
+				}
+			} else {
+				c.modPos++;
+				if (c.modPos > c.modSpan) {
+					c.modPos = c.modSpan;
+					c.modDir = -1;
+					if (c.modPos > 0)
+						c.modPos--;
+				}
+			}
+
+			int center = c.modSpan >> 1;
+			int offset = (center - c.modPos) * c.modStep;
+			period += offset;
+			if (period < 1)
+				period = 1;
+		}
+	}
+
+	c.outputPeriod = period;
 }
 
 // ---------------------------------------------------------------------------
@@ -641,41 +828,71 @@ void EclipseAtariMusicStream::processEffects(int ch) {
 
 void EclipseAtariMusicStream::processEnvelope(int ch) {
 	ChannelState &c = _channels[ch];
+	// Noise-only instruments may validly run with zero tone period.
+	if (c.outputPeriod == 0 && !c.noiseEnabled)
+		return;
+	if (c.useHardwareEnvelope)
+		return;
 
-	switch (c.envelopePhase) {
-	case 0: // Attack — volume set to attackLevel in triggerNote
-		if (c.attackRate == 0) {
-			c.volume = c.decayTarget;
-			c.envelopePhase = 2;
-		} else {
-			c.envelopePhase = 1;
-		}
-		break;
+	byte env = c.envelopeFlags;
 
-	case 1: // Decay — fade toward target
-		if (c.volume < c.decayTarget) {
-			c.volume++;
-		} else if (c.volume > c.decayTarget) {
-			c.volume--;
-		} else {
-			c.envelopePhase = 2;
-		}
-		break;
-
-	case 2: // Sustain — hold
-		break;
-
-	case 3: // Release
-		if (c.releaseRate > 0) {
-			if (c.volume > c.releaseRate) {
-				c.volume -= c.releaseRate;
+	// Instrument env byte bit7: oscillating level between attackLevel and target.
+	if (env & 0x80) {
+		byte step = env & 0x0F;
+		if (c.envelopeToggle == 0) {
+			if (c.volume == c.decayTarget) {
+				c.envelopeToggle = 1;
+				if (c.volume == c.attackLevel) {
+					c.envelopeToggle = 0;
+				} else {
+					c.volume = (byte)(c.volume + step);
+				}
 			} else {
-				c.volume = 0;
+				c.volume = (byte)(c.volume - step);
+				c.envelopeToggle = 0;
 			}
 		} else {
-			c.volume = 0;
+			if (c.volume == c.attackLevel) {
+				c.envelopeToggle = 0;
+			} else {
+				c.volume = (byte)(c.volume + step);
+			}
 		}
-		break;
+	} else {
+		c.envelopeToggle = 0;
+		// Original routine skips non-bit7 envelope work only when duration counter is exactly zero.
+		if (c.durationCounter == 0)
+			return;
+
+		if (!c.envelopeDone) {
+			if (env == 0x00) {
+				// Special case: immediate jump to target, mark envelope done.
+				c.envelopeDone = true;
+				c.volume = c.decayTarget;
+				if (c.volume > 63)
+					c.volume = 63;
+				return;
+			}
+
+			if (env != 0xFF) {
+				byte div = env & 0x7F;
+				byte triggerPoint = (div != 0) ? (c.duration / div) : 0;
+
+				if (c.durationCounter == triggerPoint) {
+					c.envelopeDone = true;
+				} else if (c.volume != c.decayTarget) {
+					c.volume = (byte)(c.volume + c.attackRate);
+				}
+			}
+		}
+
+		if (c.envelopeDone) {
+			byte next = (byte)(c.volume - c.releaseRate);
+			if ((int8)next < 0)
+				c.volume = 0;
+			else
+				c.volume = next;
+		}
 	}
 
 	if (c.volume > 63)
@@ -686,18 +903,9 @@ void EclipseAtariMusicStream::processEnvelope(int ch) {
 // Arpeggio table builder
 // ---------------------------------------------------------------------------
 
-void EclipseAtariMusicStream::buildArpeggioTable(byte mask) {
-	_arpeggioTableLen = 0;
-	_arpeggioTable[_arpeggioTableLen++] = 0; // Base note
-
-	for (int i = 0; i < 8 && _arpeggioTableLen < 16; i++) {
-		if (mask & (1 << i)) {
-			_arpeggioTable[_arpeggioTableLen++] = _arpeggioIntervals[i];
-		}
-	}
-
-	if (_arpeggioTableLen <= 1)
-		_arpeggioTableLen = 0;
+void EclipseAtariMusicStream::buildArpeggioTable(ChannelState &c, byte mask) {
+	c.arpeggioTableLen = WBCommon::buildArpeggioTable(_arpeggioIntervals, mask, c.arpeggioTable, 16, false);
+	c.arpeggioPos = 0;
 }
 
 // ---------------------------------------------------------------------------
@@ -706,37 +914,56 @@ void EclipseAtariMusicStream::buildArpeggioTable(byte mask) {
 
 void EclipseAtariMusicStream::writeYMRegisters() {
 	byte mixer = 0x3F; // Start with all disabled (bits 0-2=tone, bits 3-5=noise)
+	if (_hwEnvelopeDirty) {
+		setReg(11, _hwEnvelopePeriod & 0xFF);
+		setReg(12, (_hwEnvelopePeriod >> 8) & 0xFF);
+		setReg(13, _hwEnvelopeShape & 0x0F);
+		_hwEnvelopeDirty = false;
+	}
 
-	for (int ch = 0; ch < kTENumChannels; ch++) {
+	// TEMUSIC channel loop runs 2 -> 0; keep that order so global noise register ownership matches.
+	for (int ch = kTENumChannels - 1; ch >= 0; ch--) {
 		ChannelState &c = _channels[ch];
 
-		if (!c.active || c.outputPeriod == 0 || c.volume == 0) {
+		bool hasTone = c.toneEnabled && (c.outputPeriod > 0);
+		bool hasNoise = c.noiseEnabled;
+		bool usesHwEnvelope = c.useHardwareEnvelope;
+		if (!c.active || (!usesHwEnvelope && c.volume == 0) || (!hasTone && !hasNoise)) {
 			// Channel silent
 			setReg(8 + ch, 0); // Volume = 0
 			continue;
 		}
 
-		// Enable tone for this channel (bits 0-2)
-		mixer &= ~(1 << ch);
+		// Enable tone for this channel (bits 0-2), unless in noise-only mode.
+		if (hasTone)
+			mixer &= ~(1 << ch);
 
 		// Enable noise for this channel if instrument has noise flag (bits 3-5)
-		if (c.noiseEnabled) {
+		if (hasNoise) {
 			mixer &= ~(1 << (ch + 3));
-			// Set noise period from note (lower period = higher pitched noise)
-			byte noisePeriod = (c.outputPeriod >> 4) & 0x1F;
-			if (noisePeriod == 0) noisePeriod = 1;
+			byte noisePeriod = c.noisePeriod;
+			if (noisePeriod == 0 && c.outputPeriod > 0)
+				noisePeriod = (c.outputPeriod >> 4) & 0x1F;
+			if (noisePeriod == 0)
+				noisePeriod = 1;
 			setReg(6, noisePeriod);
 		}
 
-		// Set tone period (2 registers per channel)
-		uint16 period = (uint16)c.outputPeriod;
-		setReg(ch * 2, period & 0xFF);       // Fine tune
-		setReg(ch * 2 + 1, (period >> 8) & 0x0F); // Coarse tune
+		// Set tone period (2 registers per channel) when tone path is active.
+		if (hasTone) {
+			uint16 period = (uint16)c.outputPeriod;
+			setReg(ch * 2, period & 0xFF);       // Fine tune
+			setReg(ch * 2 + 1, (period >> 8) & 0x0F); // Coarse tune
+		}
 
 		// Set volume (internal 0-63 → YM 0-15)
-		byte ymVol = c.volume >> 2;
-		if (ymVol > 15) ymVol = 15;
-		setReg(8 + ch, ymVol);
+		if (usesHwEnvelope) {
+			setReg(8 + ch, 0x10); // Enable YM hardware envelope on this channel
+		} else {
+			byte ymVol = c.volume >> 2;
+			if (ymVol > 15) ymVol = 15;
+			setReg(8 + ch, ymVol);
+		}
 	}
 
 	setReg(7, mixer);
@@ -750,41 +977,51 @@ void EclipseAtariMusicStream::tickUpdate() {
 	if (!_musicActive)
 		return;
 
-	// Tick speed gating: the 68000 code uses subq.b #1; bpl; reset which
-	// gives a period of (tickSpeed + 1) ticks before the sequencer advances.
-	// Counter counts: tickSpeed → tickSpeed-1 → ... → 0 → -1(wrap&reset)
-	_tickCounter++;
-	bool sequencerTick = false;
-	if (_tickCounter > _tickSpeed) {
-		_tickCounter = 0;
-		sequencerTick = true;
-	}
+	// Sequencer step occurs when tick counter is zero, then the counter advances.
+	// This matches the original TEMUSIC update loop and wb.cpp behavior.
+	bool sequencerTick = (_tickCounter == 0);
 
 	if (sequencerTick) {
-		for (int ch = 0; ch < kTENumChannels; ch++) {
+		for (int ch = kTENumChannels - 1; ch >= 0; ch--) {
 			if (!_channels[ch].active)
 				continue;
 
-			if (_channels[ch].durationCounter > 0) {
-				_channels[ch].durationCounter--;
-			}
+			_channels[ch].durationCounter--;
 
-			if (_channels[ch].durationCounter == 0) {
-				if (_channels[ch].envelopePhase < 3)
-					_channels[ch].envelopePhase = 3;
+			if (_channels[ch].durationCounter < 0) {
+				// Original step boundary reset: clear transient note/effect flags
+				// before parsing the next command stream, except mode 2 persistence.
+				ChannelState &c = _channels[ch];
+				if (c.effectMode != 2) {
+					c.effectMode = 0;
+					c.arpeggioMask = 0;
+					c.arpeggioPos = 0;
+					c.arpeggioTableLen = 0;
+				}
+				c.effect7BActive = false;
+				c.portaUp = false;
+				c.portaDown = false;
+				c.noiseEnabled = false;
+				c.freqSweep = false;
+				c.envelopeDone = false;
+				c.useHardwareEnvelope = false;
 				readPatternCommands(ch);
 			}
 		}
 	}
 
 	// Every tick: process effects and envelope
-	for (int ch = 0; ch < kTENumChannels; ch++) {
+	for (int ch = kTENumChannels - 1; ch >= 0; ch--) {
 		if (!_channels[ch].active)
 			continue;
 
 		processEffects(ch);
 		processEnvelope(ch);
 	}
+
+	_tickCounter++;
+	if (_tickCounter >= _tickSpeed)
+		_tickCounter = 0;
 
 	writeYMRegisters();
 }
