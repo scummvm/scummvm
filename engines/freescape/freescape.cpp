@@ -616,12 +616,6 @@ void FreescapeEngine::processInput() {
 			case kActionMoveRight:
 				_strafeRight = true;
 				break;
-			case kActionRiseOrFlyUp:
-				_moveUp = true;
-				break;
-			case kActionLowerOrFlyDown:
-				_moveDown = true;
-				break;
 			case kActionShoot:
 				shoot();
 				break;

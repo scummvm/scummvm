@@ -312,6 +312,7 @@ bool FreescapeEngine::rise() {
 	debugC(1, kFreescapeDebugMove, "playerHeightNumber: %d", _playerHeightNumber);
 	int previousAreaID = _currentArea->getAreaID();
 	if (_flyMode) {
+		_moveUp = true;
 		Math::Vector3d destination = _position;
 		destination.y() = destination.y() + _playerSteps[_playerStepIndex];
 		resolveCollisions(destination);
@@ -345,6 +346,7 @@ bool FreescapeEngine::rise() {
 void FreescapeEngine::lower() {
 	debugC(1, kFreescapeDebugMove, "playerHeightNumber: %d", _playerHeightNumber);
 	if (_flyMode) {
+		_moveDown = true;
 		Math::Vector3d destination = _position;
 		destination.y() = destination.y() - _playerSteps[_playerStepIndex];
 		resolveCollisions(destination);
