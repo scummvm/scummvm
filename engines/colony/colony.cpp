@@ -1088,6 +1088,62 @@ Common::Error ColonyEngine::run() {
 	return Common::kNoError;
 }
 
+bool ColonyEngine::checkSkipRequested() {
+	// Non-blocking check for Shift+S skip during intro/animation sequences.
+	// Drains pending events, handles screen refresh and quit events.
+	// Returns true if Shift+S was pressed or shouldQuit() is true.
+	Common::Event event;
+	while (_system->getEventManager()->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
+			return true;
+		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode == Common::KEYCODE_s &&
+			    (event.kbd.flags & Common::KBD_SHIFT))
+				return true;
+			break;
+		case Common::EVENT_SCREEN_CHANGED:
+			_gfx->computeScreenViewport();
+			break;
+		default:
+			break;
+		}
+	}
+	return shouldQuit();
+}
+
+bool ColonyEngine::waitForInput() {
+	// Blocking wait for any key press or mouse click.
+	// Handles screen refresh, quit events, and mouse movement while waiting.
+	// Returns true if Shift+S was pressed (for intro skip propagation).
+	while (!shouldQuit()) {
+		Common::Event event;
+		while (_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+				return false;
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_s &&
+				    (event.kbd.flags & Common::KBD_SHIFT))
+					return true;
+				return false;
+			case Common::EVENT_LBUTTONDOWN:
+				return false;
+			case Common::EVENT_SCREEN_CHANGED:
+				_gfx->computeScreenViewport();
+				break;
+			default:
+				break;
+			}
+		}
+		_system->updateScreen();
+		_system->delayMillis(10);
+	}
+	return false;
+}
+
 void ColonyEngine::playIntro() {
 	if (getPlatform() == Common::kPlatformMacintosh) {
 		// Load the Mac "Commando" font (FOND 190, 12pt) from Colony resources.
@@ -1134,16 +1190,8 @@ void ColonyEngine::playIntro() {
 			_system->delayMillis(10);
 
 		// Original: if(Button()) qt=OptionKey(); — check for skip
-		if (!qt) {
-			Common::Event event;
-			while (_system->getEventManager()->pollEvent(event)) {
-				if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_KEYDOWN) {
-					int mods = _system->getEventManager()->getModifierState();
-					if (mods & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_SHIFT | Common::KBD_META))
-						qt = true;
-				}
-			}
-		}
+		if (!qt)
+			qt = checkSkipRequested();
 
 		if (!qt) {
 			// 3. Logo 1 + PlayMars + makestars
@@ -1301,20 +1349,7 @@ bool ColonyEngine::scrollInfo(const Graphics::Font *macFont) {
 	bool qt = false;
 
 	for (int scrollOff = _height; scrollOff > 0 && !qt; scrollOff -= inc) {
-		Common::Event event;
-		while (_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_KEYDOWN) {
-				// Original: if(Button()) if(qt=OptionKey()) { StopSound(); break; }
-				// Only modifier+click/key skips entire intro
-				int mods = _system->getEventManager()->getModifierState();
-				if (mods & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_SHIFT | Common::KBD_META)) {
-					qt = true;
-					_sound->stop();
-					break;
-				}
-			}
-		}
-		if (shouldQuit()) { qt = true; break; }
+		if (checkSkipRequested()) { qt = true; _sound->stop(); break; }
 
 		_gfx->clear(_gfx->black());
 		for (int i = 0; i < storyLength; i++) {
@@ -1337,39 +1372,14 @@ bool ColonyEngine::scrollInfo(const Graphics::Font *macFont) {
 	}
 
 	// Wait for click (original: while(!Button()); while(Button()&&!qt);)
-	if (!qt) {
-		bool waiting = true;
-		while (waiting && !shouldQuit()) {
-			Common::Event event;
-			while (_system->getEventManager()->pollEvent(event)) {
-				if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_KEYDOWN) {
-					// Check if modifier held — if so, skip entire intro
-					int mods = _system->getEventManager()->getModifierState();
-					if (mods & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_SHIFT | Common::KBD_META))
-						qt = true;
-					waiting = false;
-				}
-			}
-			_system->delayMillis(10);
-		}
-	}
+	if (!qt)
+		qt = waitForInput();
 
 	// Phase 2: Scroll text off the top of the screen
 	// Original: scrollRect continues moving up, text slides upward
 	if (!qt) {
 		for (int scrollOff = 0; scrollOff > -_height && !qt; scrollOff -= inc) {
-			Common::Event event;
-			while (_system->getEventManager()->pollEvent(event)) {
-				if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_KEYDOWN) {
-					int mods = _system->getEventManager()->getModifierState();
-					if (mods & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_SHIFT | Common::KBD_META)) {
-						qt = true;
-						_sound->stop();
-						break;
-					}
-				}
-			}
-			if (shouldQuit()) { qt = true; break; }
+			if (checkSkipRequested()) { qt = true; _sound->stop(); break; }
 
 			_gfx->clear(_gfx->black());
 			for (int i = 0; i < storyLength; i++) {
@@ -1446,15 +1456,7 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 	// Animate: original loops ~200 frames or until Mars sound repeats 2x
 	// Original: only modifier+click (OptionKey()) returns true when btn=0
 	for (int k = 0; k < 120; k++) {
-		Common::Event event;
-		while (_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_KEYDOWN) {
-				int mods = _system->getEventManager()->getModifierState();
-				if (mods & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_SHIFT | Common::KBD_META))
-					return true;
-			}
-		}
-		if (shouldQuit()) return true;
+		if (checkSkipRequested()) return true;
 
 		for (int i = 0; i < NSTARS; i++) {
 			// Erase previous
@@ -1490,15 +1492,7 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 	int nstars = 2 * ((MAXSTAR - 0x030) / deltapd);
 	if (nstars > 200) nstars = 200;
 	for (int k = 0; k < nstars; k++) {
-		Common::Event event;
-		while (_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_KEYDOWN) {
-				int mods = _system->getEventManager()->getModifierState();
-				if (mods & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_SHIFT | Common::KBD_META))
-					return true;
-			}
-		}
-		if (shouldQuit()) return true;
+		if (checkSkipRequested()) return true;
 
 		for (int i = 0; i < NSTARS; i++) {
 			int d = dist[i];
@@ -1588,16 +1582,7 @@ bool ColonyEngine::makeBlackHole() {
 			_gfx->copyToScreen();
 			_system->delayMillis(16);
 
-			Common::Event event;
-			while (_system->getEventManager()->pollEvent(event)) {
-				// Original: if(Button()) if(OptionKey()) return(TRUE);
-				if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_KEYDOWN) {
-					int mods = _system->getEventManager()->getModifierState();
-					if (mods & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_SHIFT | Common::KBD_META))
-						return true;
-				}
-			}
-			if (shouldQuit()) return true;
+			if (checkSkipRequested()) return true;
 		}
 	}
 	_gfx->copyToScreen();
@@ -1653,15 +1638,7 @@ bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *m
 		_gfx->drawString(font, str, x, centery + 2, 176, Graphics::kTextAlignLeft);
 		_gfx->copyToScreen();
 
-		Common::Event event;
-		while (_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_KEYDOWN) {
-				int mods = _system->getEventManager()->getModifierState();
-				if (mods & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_SHIFT | Common::KBD_META))
-					return true;
-			}
-		}
-		if (shouldQuit()) return true;
+		if (checkSkipRequested()) return true;
 		_system->delayMillis(8);
 	}
 
@@ -1670,15 +1647,7 @@ bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *m
 	//   while(!SoundDone()); StopSound(); PlayKlaxon(); InvertRect(&invrt);
 	_sound->stop(); // EndCSound()
 	for (int i = 0; i < 6; i++) {
-		Common::Event event;
-		while (_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_KEYDOWN) {
-				int mods = _system->getEventManager()->getModifierState();
-				if (mods & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_SHIFT | Common::KBD_META))
-					return true;
-			}
-		}
-		if (shouldQuit()) return true;
+		if (checkSkipRequested()) return true;
 
 		// Wait for previous klaxon to finish
 		while (_sound->isPlaying() && !shouldQuit())
@@ -1704,15 +1673,7 @@ bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *m
 		_gfx->drawString(font, str, x, centery + 2, 176, Graphics::kTextAlignLeft);
 		_gfx->copyToScreen();
 
-		Common::Event event;
-		while (_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_KEYDOWN) {
-				int mods = _system->getEventManager()->getModifierState();
-				if (mods & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_SHIFT | Common::KBD_META))
-					return true;
-			}
-		}
-		if (shouldQuit()) return true;
+		if (checkSkipRequested()) return true;
 		_system->delayMillis(8);
 	}
 

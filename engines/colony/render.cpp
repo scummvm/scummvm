@@ -1832,7 +1832,7 @@ void ColonyEngine::drawCellFeature3D(int cellX, int cellY) {
 		float u[4] = {0.0f, 1.0f, 1.0f, 0.0f};
 		float v[4] = {0.0f, 0.0f, 1.0f, 1.0f};
 		if (macMode) {
-			drawHolePoly(u, v, 4, 100); // c_hotplate
+			drawHolePoly(u, v, 4, 31); // c_hotplate
 		} else {
 			// DOS non-polyfill: X pattern (two diagonals)
 			wallLine(corners, 0.0f, 0.0f, 1.0f, 1.0f, holeColor);

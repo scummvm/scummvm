@@ -1256,17 +1256,8 @@ void ColonyEngine::printMessage(const char *text[], bool hold) {
 
 	_gfx->copyToScreen();
 
-	if (hold) {
-		bool waiting = true;
-		while (waiting && !shouldQuit()) {
-			Common::Event event;
-			while (_system->getEventManager()->pollEvent(event)) {
-				if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONDOWN)
-					waiting = false;
-			}
-			_system->delayMillis(10);
-		}
-	}
+	if (hold)
+		waitForInput();
 }
 
 void ColonyEngine::makeMessageRect(Common::Rect &rr) {
@@ -1375,15 +1366,7 @@ void ColonyEngine::doText(int entry, int center) {
 	_gfx->copyToScreen();
 
 	// Wait for key
-	bool waiting = true;
-	while (waiting && !shouldQuit()) {
-		Common::Event event;
-		while (_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONDOWN)
-				waiting = false;
-		}
-		_system->delayMillis(10);
-	}
+	waitForInput();
 
 	free(page);
 }
