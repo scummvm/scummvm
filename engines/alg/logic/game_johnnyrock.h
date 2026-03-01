@@ -119,8 +119,6 @@ private:
 	bool _holster = false;
 	uint8 _oldDifficulty = 1;
 	uint8 _inHolster = 0;
-	int8 _lives = 0;
-	int8 _oldLives = 0;
 	int32 _score = 0;
 	int32 _oldScore = -1;
 	bool _shotFired = false;

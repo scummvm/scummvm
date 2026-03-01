@@ -139,7 +139,6 @@ private:
 	uint8 _currentLevel = 0;
 	uint16 _currentSubLevelSceneId = 0;
 	uint8 _difficulty = 0;
-	uint8 _oldDifficulty = 1;
 	uint32 _firstDrawFrame = 0;
 	int8 _gunfightCount = 0;
 	uint8 _kill3Count = 0;
