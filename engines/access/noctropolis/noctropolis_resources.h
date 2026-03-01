@@ -70,7 +70,7 @@ public:
 	const ComicResource *getLastComicResource() const;
 	const ComicResource *getSpecialComicResource() const;
 
-	int menuPolygonAt(int16 x, int16 y) const;
+	int menuAt(int16 x, int16 y) const;
 
 private:
 	Font *_fontChaleteu;
@@ -81,7 +81,7 @@ private:
 	Font *_fontChaletse;
 	Font *_fontComicseu;
 
-	PolygonArray _menuPolygons;
+	PolygonArray _menus;
 };
 
 } // end namespace Noctropolis

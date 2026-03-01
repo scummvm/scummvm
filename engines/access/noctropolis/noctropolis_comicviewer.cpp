@@ -32,7 +32,7 @@ int PolygonResource::findPolygonAt(int16 x, int16 y) const {
 	}
 	return -1;
 }
-      
+
 void PolygonResource::internalLoad(Common::SeekableReadStream &source, uint32 size) {
 	int polygonCount = source.readUint32LE();
 	while (polygonCount--) {
@@ -47,15 +47,21 @@ void PolygonResource::internalLoad(Common::SeekableReadStream &source, uint32 si
 		_polygons.push_back(polygon);
 	}
 }
-  
+
 void PolygonResource::free() {
 	_polygons.clear();
 }
 
 ////////////////
 
-ComicViewer::ComicViewer(NoctropolisEngine *vm) : _vm(vm)
-{
+ComicResource::ComicResource(const ComicPage *pages[], int npages) {
+	for (int i = 0; i < npages; i++)
+		_pages.push_back(pages[i]);
+}
+
+////////////////
+
+ComicViewer::ComicViewer(NoctropolisEngine *vm) : _vm(vm) {
 }
 
 ComicViewer::~ComicViewer() {
@@ -64,7 +70,7 @@ ComicViewer::~ComicViewer() {
 void ComicViewer::run(const ComicResource *comic) {
 	PageResult result = kPageResultNone;
 	_currPage = 0;
-	
+
 	debug("ComicViewer::run() getCount() = %d", comic->getCount());
 
 	while (result != kPageResultExit) {
@@ -96,7 +102,7 @@ PageResult ComicViewer::runPage(const ComicPage *page) {
 	//vgaScreen->drawScreen(pagePicture, 640, 400);
 
 	while (result == kPageResultNone) {
-	
+
 		_vm->_events->pollEvents();
 		_vm->_events->delayUntilNextFrame();
 
@@ -118,9 +124,9 @@ PageResult ComicViewer::runPage(const ComicPage *page) {
 		}
 
 		int hotspotIndex = -1;
-		for (uint i = 0; i < page->hotspots.size(); i++) {
-			const ComicPageHotspot &hotspot = page->hotspots[i];
-			if (hotspot.polygons.findPolygonAt(_vm->_events->_mousePos.x, _vm->_events->_mousePos.y) != -1) {
+		for (int i = 0; i < page->numBlocks; i++) {
+			const ComicBlock &hotspot = page->blocks[i];
+			if (hotspot.polygon->pointInside(_vm->_events->_mousePos.x, _vm->_events->_mousePos.y)) {
 				hotspotIndex = i;
 				break;
 			}
@@ -130,10 +136,10 @@ PageResult ComicViewer::runPage(const ComicPage *page) {
 			_vm->_events->setCursor(CURSOR_CROSSHAIRS);
 			if (_vm->_events->_leftButton) {
 				_vm->_events->debounceLeft();
-				const ComicPageHotspot &hotspot = page->hotspots[hotspotIndex];
+				const ComicBlock &hotspot = page->blocks[hotspotIndex];
 				// TODO: Play hotspot sound
-				for (uint bubbleIndex = 0; bubbleIndex < hotspot.bubbles.size(); bubbleIndex++) {
-					const ComicPageBubble &bubble = hotspot.bubbles[bubbleIndex];
+				for (int bubbleIndex = 0; bubbleIndex < hotspot.numBoxes; bubbleIndex++) {
+					const ComicBox &bubble = hotspot.boxes[bubbleIndex];
 					drawBubble(bubble);
 					_vm->_events->waitKeyActionMouse();
 					//_vm->drawScreen(pagePicture, 640, 400);
@@ -142,14 +148,13 @@ PageResult ComicViewer::runPage(const ComicPage *page) {
 		} else {
 			_vm->_events->setCursor(CURSOR_ARROW);
 		}
-		
+
 		if (_vm->_events->_rightButton) {
 			result = kPageResultExit;
 			_vm->_events->debounceLeft();
 		}
 
 		_vm->_events->delay();
-
 	}
 
 	delete _bubbleSprites;
@@ -158,7 +163,7 @@ PageResult ComicViewer::runPage(const ComicPage *page) {
 
 }
 
-void ComicViewer::drawBubble(const ComicPageBubble &bubble) {
+void ComicViewer::drawBubble(const ComicBox &bubble) {
 
 	static const struct {
 		struct { int16 px, py; } positions[4];
@@ -181,15 +186,24 @@ void ComicViewer::drawBubble(const ComicPageBubble &bubble) {
 		font = _vm->_fonts.getFont(6);
 	}
 
-	textWidth = font->stringWidth(bubble.text);
-	textHeight = font->stringHeight(bubble.text);
+	const char *text;
+	switch (_vm->getLanguage()) {
+	case Common::EN_ANY: text = bubble.msgEn; break;
+	case Common::FR_FRA: text = bubble.msgFr; break;
+	case Common::ES_ESP: text = bubble.msgEs; break;
+	case Common::DE_DEU: text = bubble.msgDe; break;
+	default: error("Unsupported language in drawBubble");
+	}
+
+	textWidth = font->stringWidth(text);
+	textHeight = font->stringHeight(text);
 
 	if (bubble.style == 0) {
 		_vm->_screen->fillRect(Common::Rect(bubble.x - 4, bubble.y - 4, bubble.x + 4 + textWidth, bubble.y + 4 + textHeight), 243);
 		_vm->_screen->frameRect(Common::Rect(bubble.x - 4, bubble.y - 4, bubble.x + 4 + textWidth, bubble.y + 4 + textHeight), 244);
 		// TODO: is this color the one to set?
 		Font::_fontColors[0] = bubble.textColor;
-		font->drawString(_vm->_screen, bubble.text, Common::Point(bubble.x, bubble.y));
+		font->drawString(_vm->_screen, text, Common::Point(bubble.x, bubble.y));
 	} else {
 
 		int spriteIndex1, spriteIndex2, style, defIndex;
@@ -210,7 +224,7 @@ void ComicViewer::drawBubble(const ComicPageBubble &bubble) {
 			defIndex = 1;
 		else
 			defIndex = 2;
-		
+
 		bubbleX += kBubbleDef[defIndex].positions[style].px;
 		bubbleY += kBubbleDef[defIndex].positions[style].py;
 
@@ -227,11 +241,11 @@ void ComicViewer::drawBubble(const ComicPageBubble &bubble) {
 			spriteIndex2 = kBubbleDef[defIndex].sprites[2];
 			spriteIndex1 += 9;
 		}
-		
+
 		_vm->_screen->plotImage(_bubbleSprites, spriteIndex2, Common::Point(bubble.x, bubble.y));
 		_vm->_screen->plotImage(_bubbleSprites, spriteIndex1, Common::Point(bubbleX, bubbleY));
 		Font::_fontColors[0] = textColor;
-		font->drawString(_vm->_screen, bubble.text, Common::Point(bubble.x + 7, bubble.y + 10));
+		font->drawString(_vm->_screen, text, Common::Point(bubble.x + 7, bubble.y + 10));
 
 	}
 

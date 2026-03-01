@@ -388,7 +388,7 @@ void NoctropolisRoom::roomMenu() {
 			_vm->_events->debounceRight();
 		} else if (_vm->_events->_leftButton) {
 			mousePt = _vm->_events->getMousePos();
-			cmdIndex = ((NoctropolisResources *)_vm->_res)->menuPolygonAt(mousePt.x - baseX, mousePt.y - baseY);
+			cmdIndex = ((NoctropolisResources *)_vm->_res)->menuAt(mousePt.x - baseX, mousePt.y - baseY);
 			_vm->_events->debounceLeft();
 		}
 		_vm->_events->pollEventsAndWait();
