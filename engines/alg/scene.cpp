@@ -147,8 +147,8 @@ void SceneInfo::parseScene(const Common::String &sceneName, uint32 startFrame, u
 			scene->_dataParam2 = atoi(tokenizer.nextToken().c_str());
 			scene->_dataParam3 = atoi(tokenizer.nextToken().c_str());
 			scene->_dataParam4 = atoi(tokenizer.nextToken().c_str());
-			scene->_dataParam5 = atoi(tokenizer.nextToken().c_str());
-			scene->_dataParam6 = atoi(tokenizer.nextToken().c_str());
+			scene->_dataParam5 = tokenizer.nextToken().c_str();
+			scene->_dataParam6 = tokenizer.nextToken().c_str();
 			break;
 		case 11: // DIFF
 			scene->_diff = atoi(tokenizer.nextToken().c_str());
