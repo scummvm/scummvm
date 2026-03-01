@@ -322,6 +322,8 @@ public:
 	int checkwall(int xnew, int ynew, Locate *pobject);
 	void cCommand(int xnew, int ynew, bool allowInteraction);
 	bool scrollInfo(const Graphics::Font *macFont = nullptr);
+	bool checkSkipRequested();
+	bool waitForInput();
 	void checkCenter();
 	void fallThroughHole();
 
