@@ -224,6 +224,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	}
 	
 	_wireframe = (_renderMode != Common::kRenderMacintosh);
+	_fullscreen = false;
 	_speedShift = 2; // DOS default: speedshift=1, but 2 feels better with our frame rate
 	_wm = nullptr;
 	_macMenu = nullptr;
@@ -818,8 +819,16 @@ Common::Error ColonyEngine::run() {
 		_sound->init();
 	}
 
-	_width = 640;
-	_height = 350;
+	// Original Mac Colony: rScreen capped at 640x480 (inits.c lines 111-112).
+	// DOS EGA: 640x350 with non-square pixels displayed at 4:3.
+	// Mac uses square pixels at native 640x480.
+	if (_renderMode == Common::kRenderMacintosh) {
+		_width = 640;
+		_height = 480;
+	} else {
+		_width = 640;
+		_height = 350;
+	}
 
 	if (_widescreen) {
 		_width = _height * 16 / 9;
@@ -992,6 +1001,14 @@ Common::Error ColonyEngine::run() {
 							_system->getEventManager()->purgeMouseEvents();
 						}
 						break;
+					// F11: toggle fullscreen (hide Mac menu bar)
+					case Common::KEYCODE_F11:
+						if (_macMenu) {
+							_fullscreen = !_fullscreen;
+							_menuBarHeight = _fullscreen ? 0 : 20;
+							updateViewportLayout();
+						}
+						break;
 					// Space: toggle mouselook / free cursor
 					case Common::KEYCODE_SPACE:
 						if (_fl == 2)
@@ -1057,7 +1074,7 @@ Common::Error ColonyEngine::run() {
 		
 		// Draw Mac menu bar overlay (render directly to our surface, skip WM's
 		// g_system->copyRectToScreen which conflicts with the OpenGL backend)
-		if (_macMenu && _menuSurface) {
+		if (_macMenu && _menuSurface && !_fullscreen) {
 			_menuSurface->fillRect(Common::Rect(_width, _height), _menuSurface->format.ARGBToColor(0, 0, 0, 0));
 			_macMenu->draw(_menuSurface, true);
 			_gfx->drawSurface(&_menuSurface->rawSurface(), 0, 0);
