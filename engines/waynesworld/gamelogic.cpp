@@ -8474,15 +8474,18 @@ void GameLogic::menuDrawMusicEnabled() {
 	// sysMouseDriver(1);
 }
 
-void GameLogic::sub_3F906() {
+void GameLogic::closeSaveLoadMenu() {
 	GxlArchive *m04Gxl = new GxlArchive("m04");
+	_menuSurface->clear(0);
+	_menuIsSaveLoad = false;
+	_vm->redrawInventory();
+
 	// sysMouseDriver(2);
 	// TODO: Set mouse zone 113, 205, 20, 135
 	_vm->drawImageToSurface(m04Gxl, "menu.pcx", _menuSurface, 113, 20);
 	menuDrawSoundEnabled();
 	menuDrawMusicEnabled();
 	// sysMouseDriver(1);
-	_menuQuitVisible = false;
 	delete m04Gxl;
 
 	_vm->_screen->drawSurfaceTransparent(_menuSurface, 0, 0);
@@ -8675,7 +8678,7 @@ void GameLogic::handleGameMenu() {
 	} else if (_menuIsSaveLoad) {
 		int slot = 1 + ((_vm->_mouseClickY - 35) / 15);
 		if (slot >= 7) {
-			sub_3F906();
+			closeSaveLoadMenu();
 		} else {
 			if (_vm->_mouseClickX > 157)
 				slot += 6;
@@ -8687,8 +8690,8 @@ void GameLogic::handleGameMenu() {
 					return;
 
 			menuExit();
-			refresh = false;
 		}
+		refresh = false;
 	} else {		
 		switch ((_vm->_mouseClickY - 24) / 16) {
 		case 0:

@@ -23,6 +23,7 @@
 #ifndef WAYNESWORLD_GAMELOGIC_H
 #define WAYNESWORLD_GAMELOGIC_H
 
+#include "common/serializer.h"
 #include "waynesworld/waynesworld.h"
 
 namespace WaynesWorld {
@@ -460,10 +461,12 @@ public://DEBUG So logic functions can be called from the engine class for testin
 
 	void menuDrawSoundEnabled();
 	void menuDrawMusicEnabled();
-	void sub_3F906();
+	void closeSaveLoadMenu();
 	void toggleSoundEnabled();
 	void toggleMusicEnabled();
 	void menuSaveLoadMenu(bool isLoad);
+	void synchronize(Common::Serializer &s);
+	bool saveSavegame(int slot);
 	bool loadSavegame(int slot);
 	void handleGameMenu();
 	void menuQuitGame();
