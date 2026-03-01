@@ -36,75 +36,108 @@ static const int g_indexTable[4][10] = {
 	{0, 0,  0, 1,  1,  0,  0, -1,  2, 1}
 };
 
-// Color lookup: maps ObjColor constant → LINECOLOR (EGA palette index)
-// From DOS ROBOCOLR.C lsColor[index][LINECOLOR] (field 4).
-// Default DOS mode is polyfill=False: objects are wireframe-only, no polygon fills.
-// The fill color stays as the wall background; only outline color varies per surface.
-static uint8 lookupLineColor(int colorIdx) {
-	switch (colorIdx) {
-	case kColorClear:     return 0;  // Transparent (skipped before drawing)
-	case kColorBlack:     return 0;  // vBLACK
-	case kColorDkGray:    return 8;  // vDKGRAY
-	case kColorLtGreen:   return 10; // vLTGREEN
-	case kColorBath:      return 0;  // vBLACK
-	case kColorWater:     return 1;  // vBLUE
-	case kColorSilver:    return 1;  // vBLUE
-	case kColorReactor:   return 0;  // vBLACK (LINEFILLCOLOR for fill mode)
-	case kColorBlanket:   return 2;  // vGREEN
-	case kColorSheet:     return 0;  // vBLACK (LINEFILLCOLOR for fill mode)
-	case kColorBed:       return 6;  // vBROWN
-	case kColorBox:       return 6;  // vBROWN
-	case kColorBench:     return 0;  // vBLACK
-	case kColorChair:     return 1;  // vBLUE
-	case kColorChairBase: return 1;  // vBLUE
-	case kColorCouch:     return 4;  // vRED
-	case kColorConsole:   return 4;  // vRED
-	case kColorTV:        return 6;  // vBROWN
-	case kColorTVScreen:  return 8;  // vDKGRAY
-	case kColorDrawer:    return 6;  // vBROWN
-	case kColorDesk:      return 6;  // vBROWN
-	case kColorDeskTop:   return 6;  // vBROWN
-	case kColorDeskChair: return 2;  // vGREEN
-	case kColorMac:       return 0;  // vBLACK
-	case kColorMacScreen: return 8;  // vDKGRAY
-	case kColorCryo:      return 1;  // vBLUE
-	case kColorCryoGlass: return 1;  // vBLUE
-	case kColorCryoBase:  return 1;  // vBLUE
-	case kColorForklift:  return 14; // vYELLOW
-	case kColorTread1:    return 14; // vYELLOW
-	case kColorTread2:    return 14; // vYELLOW
-	case kColorPot:       return 6;  // vBROWN
-	case kColorPlant:     return 2;  // vGREEN
-	case kColorPower:     return 1;  // vBLUE
-	case kColorPBase:     return 1;  // vBLUE
-	case kColorPSource:   return 4;  // vRED
-	case kColorTable:     return 6;  // vBROWN
-	case kColorTableBase: return 6;  // vBROWN
-	case kColorPStand:    return 5;  // vMAGENTA
-	case kColorPLens:     return 0;  // vBLACK
-	case kColorProjector: return 3;  // vCYAN
-	case kColorTele:      return 4;  // vRED
-	case kColorTeleDoor:  return 1;  // vBLUE
-	case kColorWall:      return 0;  // vBLACK
-	case kColorRainbow1:  return 4;  // vRED
-	case kColorRainbow2:  return 14; // vYELLOW
-	// Robot colors (from ROBOCOLR.C fill color column 2)
-	case kColorCube:        return 3;  // vCYAN
-	case kColorDrone:       return 3;  // vCYAN
-	case kColorClaw1:       return 4;  // vRED
-	case kColorClaw2:       return 3;  // vCYAN
-	case kColorEyes:        return 15; // vINTWHITE
-	case kColorEye:         return 15; // vINTWHITE
-	case kColorIris:        return 1;  // vBLUE
-	case kColorPupil:       return 0;  // vBLACK
-	case kColorPyramid:     return 4;  // vRED
-	case kColorQueen:       return 14; // vYELLOW
-	case kColorTopSnoop:    return 3;  // vCYAN
-	case kColorBottomSnoop: return 8;  // vDKGRAY
-	case kColorUPyramid:    return 9;  // vLTBLUE
-	case kColorShadow:      return 8;  // vDKGRAY
-	default:              return 0;  // vBLACK
-	}
+// DOS lsColor table from ROBOCOLR.C — maps color index to EGA rendering attributes.
+// Fields: backColor (BACKCOLOR), fillColor (FILLCOLOR), lineFillColor (LINEFILLCOLOR),
+//         lineColor (LINECOLOR), pattern (PATTERN).
+// DrawPrism uses: polyfill ON → fill with fillColor/backColor/pattern, outline with lineFillColor.
+//                 polyfill OFF → outline only with lineColor.
+struct DOSColorEntry {
+	uint8 backColor;
+	uint8 fillColor;
+	uint8 lineFillColor;
+	uint8 lineColor;
+	uint8 pattern;
+};
+
+static const DOSColorEntry g_dosColors[79] = {
+	/* 0  cCLEAR      */ { 0,  0,  0,  0, 1},
+	/* 1  cBLACK      */ { 0,  0,  0,  0, 1},
+	/* 2  cBLUE       */ { 0,  1,  1,  1, 1},
+	/* 3  cGREEN      */ { 0,  2,  2,  2, 1},
+	/* 4  cCYAN       */ { 0,  3,  3,  3, 1},
+	/* 5  cRED        */ { 0,  4,  4,  4, 1},
+	/* 6  cMAGENTA    */ { 0,  5,  5,  5, 1},
+	/* 7  cBROWN      */ { 0,  6,  6,  6, 1},
+	/* 8  cWHITE      */ { 0,  7,  7,  7, 1},
+	/* 9  cDKGRAY     */ { 0,  8,  8,  8, 1},
+	/* 10 cLTBLUE     */ { 0,  9,  9,  9, 1},
+	/* 11 cLTGREEN    */ { 0, 10, 10, 10, 1},
+	/* 12 cLTCYAN     */ { 0, 11, 11, 11, 1},
+	/* 13 cLTRED      */ { 0, 12, 12, 12, 1},
+	/* 14 cLTMAGENTA  */ { 0, 13, 13, 13, 1},
+	/* 15 cYELLOW     */ { 0, 14, 14, 14, 1},
+	/* 16 cINTWHITE   */ { 0, 15, 15, 15, 1},
+	/* 17 cBATH       */ { 0, 15, 15,  0, 1},
+	/* 18 cWATER      */ { 0,  7,  1,  1, 4},
+	/* 19 cSILVER     */ { 0,  7, 15,  1, 3},
+	/* 20 cREACTOR    */ { 0,  7,  7,  7, 1},
+	/* 21 cBLANKET    */ { 0,  2,  7,  2, 3},
+	/* 22 cSHEET      */ { 0, 15, 15, 15, 1},
+	/* 23 cBED        */ { 0,  6,  4,  6, 4},
+	/* 24 cBOX        */ { 0,  6,  7,  6, 3},
+	/* 25 cBENCH      */ { 0,  6,  6,  6, 1},
+	/* 26 cCHAIR      */ { 1,  9,  7,  1, 3},
+	/* 27 cCHAIRBASE  */ { 1,  1,  9,  1, 3},
+	/* 28 cCOUCH      */ { 0,  4,  3,  4, 3},
+	/* 29 cCONSOLE    */ { 0,  6,  4,  4, 3},
+	/* 30 cTV         */ { 0,  6,  7,  6, 3},
+	/* 31 cTVSCREEN   */ { 8,  8,  7,  8, 1},
+	/* 32 cDRAWER     */ { 0,  6,  7,  6, 3},
+	/* 33 cCRYO       */ { 1,  9, 15,  1, 3},
+	/* 34 cCRYOGLASS  */ { 1, 15,  9,  1, 3},
+	/* 35 cCRYOBASE   */ { 1,  1,  9,  1, 3},
+	/* 36 cCUBE       */ { 0,  3, 15,  3, 3},
+	/* 37 cDESK       */ { 0,  6,  7,  6, 3},
+	/* 38 cDESKTOP    */ { 0,  6,  6,  6, 1},
+	/* 39 cDESKCHAIR  */ { 0,  2,  8,  2, 3},
+	/* 40 cMAC        */ { 0, 15, 15,  0, 1},
+	/* 41 cMACSCREEN  */ { 0,  8,  8,  8, 1},
+	/* 42 cDRONE      */ { 0,  3,  3,  0, 1},
+	/* 43 cCLAW1      */ { 0,  4,  4,  4, 1},
+	/* 44 cCLAW2      */ { 0,  3,  3,  3, 1},
+	/* 45 cEYES       */ {15, 15, 15, 15, 1},
+	/* 46 cEYE        */ {15, 15, 15, 15, 1},
+	/* 47 cIRIS       */ { 0,  1,  7,  1, 3},
+	/* 48 cPUPIL      */ { 0,  0,  0,  0, 3},
+	/* 49 cFORKLIFT   */ { 0, 14,  6, 14, 3},
+	/* 50 cTREAD1     */ { 0, 14,  6, 14, 4},
+	/* 51 cTREAD2     */ { 0, 14,  6, 14, 5},
+	/* 52 cPOT        */ { 0,  6,  6,  6, 1},
+	/* 53 cPLANT      */ { 2,  2,  2,  2, 1},
+	/* 54 cPOWER      */ { 1,  9,  7,  1, 3},
+	/* 55 cPBASE      */ { 1,  9,  7,  1, 3},
+	/* 56 cPSOURCE    */ { 4,  4, 14,  4, 3},
+	/* 57 cPYRAMID    */ { 0,  4, 15,  4, 3},
+	/* 58 cQUEEN      */ {14, 14, 15, 14, 3},
+	/* 59 cTOPSNOOP   */ { 5,  3,  5,  3, 3},
+	/* 60 cBOTTOMSNOOP*/ { 5,  8,  5,  5, 3},
+	/* 61 cTABLE      */ { 6,  6,  7,  6, 3},
+	/* 62 cTABLEBASE  */ { 6,  6,  8,  6, 3},
+	/* 63 cPSTAND     */ { 0,  5,  5,  5, 1},
+	/* 64 cPLENS      */ { 0,  0,  0,  0, 1},
+	/* 65 cPROJECTOR  */ { 0,  3,  3,  3, 1},
+	/* 66 cTELE       */ { 4,  8,  7,  4, 3},
+	/* 67 cTELEDOOR   */ { 0,  7, 15,  1, 3},
+	/* 68 cUPYRAMID   */ { 0,  9, 15,  1, 3},
+	/* 69 cROCK       */ { 4,  4,  4,  4, 1},
+	/* 70 cCOLONY     */ {14, 14, 14, 14, 1},
+	/* 71 cCDOOR      */ {14, 14, 14, 14, 1},
+	/* 72 cSHIP       */ { 9,  9,  9,  9, 1},
+	/* 73 cPROJ       */ { 3,  3,  3,  3, 1},
+	/* 74 cSHADOW     */ { 8,  8,  8,  8, 1},
+	/* 75 cLTGRAY     */ { 8,  8, 15,  8, 3},
+	/* 76 cGRAY       */ { 8,  8,  7,  8, 3},
+	/* 77 cWALL       */ { 0,  7,  7,  0, 3},
+	/* 78 cQUEEN2     */ { 0, 15, 15,  0, 3},
+};
+
+// Look up the DOS lsColor entry for a given ObjColor index.
+// Returns a fallback entry (all zeros) for out-of-range indices.
+static const DOSColorEntry &lookupDOSColor(int colorIdx) {
+	static const DOSColorEntry fallback = {0, 0, 0, 0, 1};
+	if (colorIdx >= 0 && colorIdx < 79)
+		return g_dosColors[colorIdx];
+	return fallback;
 }
 
 // Mac Classic dither patterns (from colorize.c cColor[].pattern).
@@ -195,6 +228,17 @@ static int lookupMacPattern(int colorIdx) {
 	case kColorBottomSnoop: return kPatternDkGray;
 	case kColorClaw1:       return kPatternDkGray;
 	default:              return kPatternGray;   // Most objects = GRAY
+	}
+}
+
+// Map DOS EGA pattern value → GL stipple data for dithered fills.
+// Pattern 1 = solid fill (no stipple). Patterns 3-5 = mixed FILLCOLOR/BACKCOLOR.
+static const byte *dosPatternStipple(int pattern) {
+	switch (pattern) {
+	case 3: return kStippleGray;   // 50% dither
+	case 4: return kStippleDkGray; // 75% foreground
+	case 5: return kStippleLtGray; // 25% foreground
+	default: return nullptr;       // solid (pattern 1) or unknown
 	}
 }
 
@@ -1372,11 +1416,32 @@ void ColonyEngine::draw3DPrism(const Thing &obj, const PrismPartDef &def, bool u
 					_gfx->draw3DPolygon(px, py, pz, count, 0); // black outline
 					_gfx->setStippleData(nullptr);
 				} else {
-					// EGA: global wall fill, per-surface colored outline
-					_gfx->draw3DPolygon(px, py, pz, count, (uint32)lookupLineColor(colorIdx));
+					// EGA: per-surface colors from DOS lsColor table.
+					// polyfill ON  → fill with FILLCOLOR/BACKCOLOR/PATTERN, outline with LINEFILLCOLOR.
+					// polyfill OFF → outline only with LINECOLOR.
+					const DOSColorEntry &dc = lookupDOSColor(colorIdx);
+					if (!_wireframe) {
+						// Polyfill mode: per-surface fill + LINEFILLCOLOR outline.
+						const byte *stipple = dosPatternStipple(dc.pattern);
+						if (stipple) {
+							_gfx->setMacColors((uint32)dc.fillColor, (uint32)dc.backColor);
+							_gfx->setStippleData(stipple);
+							_gfx->setWireframe(true, (uint32)dc.backColor);
+						} else {
+							_gfx->setWireframe(true, (uint32)dc.fillColor);
+						}
+						_gfx->draw3DPolygon(px, py, pz, count, (uint32)dc.lineFillColor);
+						if (stipple) _gfx->setStippleData(nullptr);
+					} else {
+						// Wireframe only: LINECOLOR outline, no fill.
+						_gfx->draw3DPolygon(px, py, pz, count, (uint32)dc.lineColor);
+					}
 				}
 			} else {
-				// Unlit: same for both modes — black fill, white outline
+				// Unlit: black fill, white outline (DOS: PenColor(vINTWHITE))
+				if (!_wireframe) {
+					_gfx->setWireframe(true, 0); // black fill
+				}
 				_gfx->draw3DPolygon(px, py, pz, count, 15);
 			}
 		}
@@ -1509,9 +1574,17 @@ void ColonyEngine::draw3DSphere(const Thing &obj, int pt0x, int pt0y, int pt0z,
 			_gfx->draw3DPolygon(px, py, pz, N, 0);
 			_gfx->setStippleData(nullptr);
 		} else {
-			_gfx->draw3DPolygon(px, py, pz, N, fillColor);
+			// EGA: per-surface fill + outline.
+			if (!_wireframe) {
+				_gfx->setWireframe(true, fillColor);
+			}
+			_gfx->draw3DPolygon(px, py, pz, N, outlineColor);
 		}
 	} else {
+		// Unlit: black fill, white outline.
+		if (!_wireframe) {
+			_gfx->setWireframe(true, 0);
+		}
 		_gfx->draw3DPolygon(px, py, pz, N, outlineColor);
 	}
 }
@@ -2380,8 +2453,8 @@ void ColonyEngine::renderCorridor3D() {
 		// Mac B&W: walls are pure white (c_dwall=WHITE); EGA: light gray (7)
 		wallFill = lit ? (macMode ? 255 : 7) : 0;
 		wallLine = lit ? 0 : (macMode ? 255 : 7);
-		floorColor = macMode ? (lit ? 0 : 255) : wallLine;
-		ceilColor  = macMode ? (lit ? 255 : 0) : wallLine;
+		floorColor = macMode ? (lit ? 0 : 255) : wallFill;
+		ceilColor  = macMode ? (lit ? 255 : 0) : wallFill;
 	}
 
 	_gfx->begin3D(_me.xloc, _me.yloc, 0, _me.look, _me.lookY, _screenR);
