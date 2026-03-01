@@ -21,9 +21,12 @@
  */
 
 #include "waynesworld/gamelogic.h"
+
+#include "common/memstream.h"
 #include "waynesworld/graphics.h"
 #include "waynesworld/gxlarchive.h"
 #include "waynesworld/objectids.h"
+#include "common/savefile.h"
 #include "common/str.h"
 #include "graphics/cursorman.h"
 
@@ -8501,92 +8504,133 @@ void GameLogic::menuSaveLoadMenu(bool isLoad) {
 	_vm->_screen->drawSurfaceTransparent(_menuSurface, 0, 0);
 }
 
-bool GameLogic::loadSavegame(int slot) {
-	if (slot != 0) {
-		warning("STUB - loadSavegame %d", slot);
+void GameLogic::synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(_vm->_wayneSpriteX);
+	s.syncAsSint16LE(_vm->_wayneSpriteY);
+	s.syncAsSint16LE(_vm->_garthSpriteX);
+	s.syncAsSint16LE(_vm->_garthSpriteY);
+	s.syncAsSint16LE(_vm->_wayneActorScale);
+	s.syncAsSint16LE(_vm->_garthActorScale);
+	s.syncAsSint16LE(_vm->_actorSpriteValue);
+	s.syncAsByte(_vm->_inventoryItemsCount);
+	s.syncAsByte(_vm->_currentActorNum);
+	s.syncAsByte(_vm->_currentRoomNumber);
+	s.syncAsSint16LE(_vm->_hoverObjectNumber);
+	s.syncAsSint16LE(_vm->_objectNumber);
+	s.syncAsByte(_vm->_verbNumber);
+	s.syncAsByte(_vm->_verbNumber2);
+	s.syncAsSint16LE(_vm->_firstObjectNumber);
+	s.syncAsSint16LE(_vm->_isMusicEnabled);
+	s.syncAsSint16LE(_vm->_isSoundEnabled);
+	s.syncAsByte(_vm->_musicIndex);
+	s.syncAsSint16LE(_vm->_selectedDialogChoice);
+	s.syncAsByte(_vm->_roomChangeCtr);
+	s.syncAsByte(_menuGameState);
+	s.syncAsSint16LE(_r24_mazeRoomNumber);
+	s.syncAsSint16LE(_r24_mazeHoleNumber);
+	byte byte_306C8 = 0;
+	s.syncAsByte(byte_306C8); // set but not used in pizzathon
+
+	for (int i = 0; i < 5; ++i)
+		s.syncAsSint16LE(_vm->_dialogChoices[i]);
+
+	for (int i = 0; i < 50; ++i) {
+		s.syncAsByte(_vm->_inventoryItemsObjectMap[i]);
+		s.syncAsSint16LE(_vm->_wayneInventory[i]);
+		s.syncAsSint16LE(_vm->_garthInventory[i]);
+	}
+
+	for (int i = 0; i < 404; ++i)
+		s.syncAsSint16LE(_vm->_roomObjects[i].roomNumber);
+
+	s.syncAsByte(_pizzathonListFlags1);
+	s.syncAsByte(_pizzathonListFlags2);
+	s.syncAsByte(_r31_flags);
+	s.syncAsByte(_r0_flags);
+	s.syncAsByte(_r4_flags);
+	s.syncAsByte(_r5_flags);
+	s.syncAsByte(_r7_flags);
+	s.syncAsByte(_r11_flags);
+	s.syncAsByte(_r32_flags);
+	s.syncAsByte(_r1_flags1);
+	s.syncAsByte(_r1_flags2);
+	s.syncAsByte(_r2_flags);
+	s.syncAsByte(_r10_flags);
+	s.syncAsByte(_r12_flags);
+	s.syncAsByte(_r19_flags);
+	s.syncAsByte(_r9_flags);
+	s.syncAsByte(_r6_flags);
+	s.syncAsByte(_r8_flags);
+	s.syncAsByte(_r13_flags);
+	s.syncAsByte(_r20_flags);
+	s.syncAsByte(_r29_flags);
+	s.syncAsByte(_r30_flags);
+	s.syncAsByte(_r34_flags);
+	s.syncAsByte(_r35_flags);
+	s.syncAsByte(_r37_flags);
+	s.syncAsByte(_r36_flags);
+	s.syncAsByte(_r38_flags);
+	s.syncAsByte(_r39_flags);
+}
+
+bool GameLogic::saveSavegame(int slot) {
+	if (slot == 0)
+		error("Can't save on slot 0 - RST file");
+
+	// TODO: we could put the extra ScummVM info after the 1135 bytes of a standard savegame or modify loadSavegame to skip it when it's not a RST file
+	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(Common::String::format("ww%02d.sav", slot), true);
+
+	if (saveFile == nullptr) {
+		warning("Can't create savegame slot %d", slot);
 		return false;
 	}
 
-	Common::File fp;
-	if (!fp.open(Common::Path("ww.rst"))) {
-		error("Couldn't find 'ww.rst'.");
+	_vm->redrawInventory();
+
+	Common::Serializer s(nullptr, saveFile);
+	synchronize(s);
+
+	delete saveFile;
+
+	return true;
+}
+
+bool GameLogic::loadSavegame(int slot) {
+	Common::InSaveFile *saveFile;
+	byte *buffer = nullptr;
+	
+	if (slot == 0) {
+		Common::File fd;
+		if (!fd.open(Common::Path("ww.rst")))
+			error("WaynesWorldEngine::loadSavegame() Could not open ww.rst");
+		const int size = fd.size();
+		buffer = new byte[size];
+		fd.read(buffer, size);
+		saveFile = new Common::MemoryReadStream(buffer, size, DisposeAfterUse::NO);
+		fd.close();
+	} else {
+		saveFile = g_system->getSavefileManager()->openForLoading(Common::String::format("ww%02d.sav", slot));
+
+		if (saveFile == nullptr) {
+			warning("Can't read savegame slot %d", slot);
+			return false;
+		}
 	}
 
 	_vm->stopRoomAnimations();
 	if (_vm->_isMusicEnabled)
 		toggleMusicEnabled();
-
 	_vm->redrawInventory();
-	_vm->_wayneSpriteX = fp.readSint16LE();
-	_vm->_wayneSpriteY = fp.readSint16LE();
-	_vm->_garthSpriteX = fp.readSint16LE();
-	_vm->_garthSpriteY = fp.readSint16LE();
-	_vm->_wayneActorScale = fp.readSint16LE();
-	_vm->_garthActorScale = fp.readSint16LE();
-	_vm->_actorSpriteValue = fp.readSint16LE();
-	_vm->_inventoryItemsCount = fp.readByte();
-	_vm->_currentActorNum = fp.readByte();
-	_vm->_currentRoomNumber = fp.readByte();
-	_vm->_hoverObjectNumber = fp.readSint16LE();
-	_vm->_objectNumber = fp.readSint16LE();
-	_vm->_verbNumber = fp.readByte();
-	_vm->_verbNumber2 = fp.readByte();
-	_vm->_firstObjectNumber = fp.readSint16LE();
-	_vm->_isMusicEnabled = fp.readSint16LE();
-	_vm->_isSoundEnabled = fp.readSint16LE();
-	_vm->_musicIndex = fp.readByte();
-	_vm->_selectedDialogChoice = fp.readSint16LE();
-	_vm->_roomChangeCtr = fp.readByte();
-	_menuGameState = fp.readByte();
-	_r24_mazeRoomNumber = fp.readSint16LE();
-	_r24_mazeHoleNumber = fp.readSint16LE();
-	byte byte_306C8 = fp.readSint16LE(); // set but not used in pizzathon
 
-	for (int i = 0; i < 5; ++i)
-		_vm->_dialogChoices[i] = fp.readSint16LE();
+	Common::Serializer s(saveFile, nullptr);
+	synchronize(s);
 
-	for (int i = 0; i < 50; ++i) {
-		_vm->_inventoryItemsObjectMap[i] = fp.readByte();
-		_vm->_wayneInventory[i] = fp.readSint16LE();
-		_vm->_garthInventory[i] = fp.readSint16LE();
-	}
-
-	for (int i = 0; i < 404; ++i)
-		_vm->_roomObjects[i].roomNumber = fp.readSint16LE();
-
-	_pizzathonListFlags1 = fp.readByte();
-	_pizzathonListFlags2 = fp.readByte();
-	_r31_flags = fp.readByte();
-	_r0_flags = fp.readByte();
-	_r4_flags = fp.readByte();
-	_r5_flags = fp.readByte();
-	_r7_flags = fp.readByte();
-	_r11_flags = fp.readByte();
-	_r32_flags = fp.readByte();
-	_r1_flags1 = fp.readByte();
-	_r1_flags2 = fp.readByte();
-	_r2_flags = fp.readByte();
-	_r10_flags = fp.readByte();
-	_r12_flags = fp.readByte();
-	_r19_flags = fp.readByte();
-	_r9_flags = fp.readByte();
-	_r6_flags = fp.readByte();
-	_r8_flags = fp.readByte();
-	_r13_flags = fp.readByte();
-	_r20_flags = fp.readByte();
-	_r29_flags = fp.readByte();
-	_r30_flags = fp.readByte();
-	_r34_flags = fp.readByte();
-	_r35_flags = fp.readByte();
-	_r37_flags = fp.readByte();
-	_r36_flags = fp.readByte();
-	_r38_flags = fp.readByte();
-	_r39_flags = fp.readByte();	
+	delete saveFile;
+	delete[] buffer;
 
 	if (_vm->_isMusicEnabled)
 		_vm->changeMusic();
 
-	fp.close();	
 	return true;
 }
 
@@ -8637,7 +8681,7 @@ void GameLogic::handleGameMenu() {
 				slot += 6;
 
 			if (_menuIsSaveLoad == 1)
-				warning("STUB: saveSavegame()");
+				saveSavegame(slot);
 			else
 				if (!loadSavegame(slot))
 					return;
