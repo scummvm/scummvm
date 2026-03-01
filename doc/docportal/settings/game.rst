@@ -204,6 +204,22 @@ High Quality
 
 ,,,,,,
 
+.. _ALG:
+
+ALG
+******************
+
+.. _single_speed_videos:
+
+Use lower quality single speed CD-ROM video
+	Some games come with videos in single and double CD-ROM speed.
+	The double CD-ROM speed videos are of slightly higher quality and bandwith.
+	By default the double speed videos are used, this toggle changes to single speed videos.
+
+	*single_speed_videos*
+
+,,,,,,
+
 .. _BLADERUNNER:
 
 Bladerunner
