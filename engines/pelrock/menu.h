@@ -33,6 +33,7 @@ namespace Pelrock {
 const int kQuestionMarkOffset = 3214046;
 const int kInvLeftArrowOffset = 3215906;
 const int kTransparentColor = 15;
+const uint32 kCreditsBackgroundOffset = 3271454;
 
 enum MenuButton {
 	QUESTION_MARK_BUTTON,
@@ -45,6 +46,43 @@ enum MenuButton {
 	LOAD_GAME_BUTTON,
 	SOUNDS_BUTTON,
 	NO_BUTTON
+};
+
+static const int kCreditsOrder[34] = {
+	5, // PROGRAMACION
+	 8, // Juan Jose Gil
+	 20, // Jose Vicente Pons
+	 24, // LuisFer Fernandez
+	 22, // Fernando Perez
+	 7, // GRAFICOS
+	12, // Queral,
+	14, // Ana maria polo
+	18, // Juan Arocas
+	16, // Gost
+	26, // Astorga
+	28, // Santi Sanz
+	2, // Fernando Aparicio
+	11,// INTRODUCCION
+	12, // Queral,
+	26, // Astorga
+	28, // Santi Sanz
+	9, // MUSICA
+	6, // Rufino Acosta
+	13, // GUION
+	8, // Juan Jose Gil
+	19, // DIALOGOS
+	4, // Vicent raul arnau,
+	8, // Juan Jose Gil,
+	21, // PROBADORES
+	0, //David Burgos
+	10, // Alberto Leon
+	1, // Carles Pons
+	3, // Roman Pons
+	25, // Andres Ruiz,
+	27, // Juan Jose Ruiz
+	23, // Marilo
+	15, // PRODUCCION
+	17 // DDM
 };
 
 static const char *inventorySounds[113] = {
@@ -176,6 +214,7 @@ public:
 
 private:
 	void checkMouseClick(int x, int y);
+	void showCredits();
 	bool selectInventoryItem(int i);
 	void loadMenuTexts();
 	void cleanUp();

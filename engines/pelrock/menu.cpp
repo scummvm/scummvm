@@ -84,6 +84,8 @@ void MenuManager::checkMouseClick(int x, int y) {
 	switch (button) {
 	case QUESTION_MARK_BUTTON:
 		debug("Show credits");
+		_events->_leftMouseClicked = false;
+		showCredits();
 		break;
 	case INVENTORY_PREV_BUTTON:
 		if (_curInventoryPage > 0)
@@ -107,6 +109,46 @@ void MenuManager::checkMouseClick(int x, int y) {
 	}
 }
 
+void MenuManager::showCredits() {
+	memset(_compositeBuffer, 0, 640 * 400);
+	Common::File alfred7;
+	if (!alfred7.open(Common::Path("ALFRED.7"))) {
+		error("Could not open ALFRED.7");
+		return;
+	}
+
+	alfred7.seek(kCreditsBackgroundOffset, SEEK_SET);
+	alfred7.read(_compositeBuffer, 640 * 400);
+	byte *creditsBuf = nullptr;
+	size_t creditsSize = 0;
+	int numCredits = 29;
+	int creditWidth = 240;
+	int creditHeight = 22;
+	readUntilBuda(&alfred7, kCreditsBackgroundOffset + 256000, creditsBuf, creditsSize);
+	byte *decompressedCredits = nullptr;
+	rleDecompress(creditsBuf, creditsSize, 0, 0, &decompressedCredits, true);
+	// draw credits in two columns taking the entire height of the screen and stating in y = 0
+	for(int i = 0; i < 34; i++) {
+		byte *singleCredit = new byte[creditWidth * creditHeight];
+		int x = (i < 34 / 2) ? 39 : 359;
+		int y = 3 + (i % (34 / 2)) * (400 / (34 / 2));
+		extractSingleFrame(decompressedCredits, singleCredit, kCreditsOrder[i], creditWidth, creditHeight);
+		drawSpriteToBuffer(_compositeBuffer, 640, singleCredit, x, y, creditWidth, creditHeight, 255);
+		delete[] singleCredit;
+	}
+
+	memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
+	delete[] decompressedCredits;
+	delete[] creditsBuf;
+
+	while(!g_engine->shouldQuit() && !_events->_leftMouseClicked && !_events->_rightMouseClicked) {
+		_events->pollEvent();
+		_screen->markAllDirty();
+		_screen->update();
+		g_system->delayMillis(10);
+	}
+}
+
 bool MenuManager::selectInventoryItem(int i) {
 	if (_curInventoryPage * 4 + i >= g_engine->_state->inventoryItems.size())
 		return false;
@@ -123,6 +165,7 @@ void MenuManager::menuLoop() {
 
 	g_system->getPaletteManager()->setPalette(_mainMenuPalette, 0, 256);
 	g_engine->changeCursor(DEFAULT);
+
 	while (!g_engine->shouldQuit() && !_events->_rightMouseClicked) {
 
 		_events->pollEvent();
