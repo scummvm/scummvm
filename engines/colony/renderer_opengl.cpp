@@ -78,6 +78,16 @@ public:
 		_stippleFgColor = fg;
 		_stippleBgColor = bg;
 	}
+	void setDepthState(bool testEnabled, bool writeEnabled) override {
+		if (testEnabled)
+			glEnable(GL_DEPTH_TEST);
+		else
+			glDisable(GL_DEPTH_TEST);
+		glDepthMask(writeEnabled ? GL_TRUE : GL_FALSE);
+	}
+	void setDepthRange(float nearVal, float farVal) override {
+		glDepthRange(nearVal, farVal);
+	}
 	void computeScreenViewport() override;
 	void drawSurface(const Graphics::Surface *surf, int x, int y) override;
 
@@ -286,15 +296,14 @@ void OpenGLRenderer::draw3DWall(int x1, int y1, int x2, int y2, uint32 color) {
 			glPolygonOffset(1.1f, 4.0f);
 
 			if (_stippleData) {
-				// Two-pass stipple fill (Mac B&W dither pattern)
-				useColor(_stippleBgColor); // White background
+				useColor(_stippleBgColor);
 				glBegin(GL_QUADS);
 				glVertex3f(fx1, fy1, -160.0f); glVertex3f(fx2, fy2, -160.0f);
 				glVertex3f(fx2, fy2, 160.0f);  glVertex3f(fx1, fy1, 160.0f);
 				glEnd();
 				glEnable(GL_POLYGON_STIPPLE);
 				glPolygonStipple(_stippleData);
-				useColor(_stippleFgColor); // Black foreground through stipple mask
+				useColor(_stippleFgColor);
 				glBegin(GL_QUADS);
 				glVertex3f(fx1, fy1, -160.0f); glVertex3f(fx2, fy2, -160.0f);
 				glVertex3f(fx2, fy2, 160.0f);  glVertex3f(fx1, fy1, 160.0f);
@@ -494,6 +503,8 @@ void OpenGLRenderer::draw3DLine(float x1, float y1, float z1, float x2, float y2
 void OpenGLRenderer::end3D() {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glDepthRange(0.0, 1.0);
 	glDisable(GL_SCISSOR_TEST);
 	
 	glViewport(0, 0, _system->getWidth(), _system->getHeight());
