@@ -490,22 +490,29 @@ void OpenGLShaderRenderer::drawCelestialBody(const Math::Vector3d position, floa
 		verts.push_back(z);
 	}
 
-	// === Apply billboard effect to MVP matrix ===
-	// Replicate the legacy code's matrix modification
-	Math::Matrix4 billboardMVP = _mvpMatrix;
-
-	// Zero out rotation for rows 1, 3 (skip row 2), set diagonal to 1.0
-	// This matches: for (int i = 1; i < 4; i++) for (int j = 0; j < 4; j++)
+	// === Apply billboard effect to modelview matrix only ===
+	// Matrix4 operator()(i,j) uses (column, row) convention, matching
+	// OpenGL column-major m[col*4+row]. Zero columns 1 and 3 (skip 2),
+	// set diagonal to 1.0 — same as legacy glGetFloatv billboard.
+	Math::Matrix4 billboardMV = _modelViewMatrix;
 	for (int i = 1; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			if (i == 2)
 				continue;
 			if (i == j)
-				billboardMVP(i, j) = 2.5f;
+				billboardMV(i, j) = 1.0f;
 			else
-				billboardMVP(i, j) = 0.0f;
+				billboardMV(i, j) = 0.0f;
 		}
 	}
+
+	// Recombine with projection (same pattern as positionCamera)
+	Math::Matrix4 proj = _projectionMatrix;
+	Math::Matrix4 model = billboardMV;
+	proj.transpose();
+	model.transpose();
+	Math::Matrix4 billboardMVP = proj * model;
+	billboardMVP.transpose();
 
 	// === Bind VBO ===
 	glBindBuffer(GL_ARRAY_BUFFER, _triangleVBO);
