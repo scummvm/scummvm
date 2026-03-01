@@ -25,7 +25,8 @@
 namespace Bolt {
 
 int16 XpLib::getRandom(int16 range) {
-	return (int16)(((uint32)_bolt->_randomSource.getRandomNumber(UINT_MAX) * (uint32)range) / 0x8000);
+	int16 r = (int16)_bolt->_randomSource.getRandomNumber(0x7FFF); // [0, 32767]
+	return (int16)((int32)r * (int32)(uint16)range / 0x8000L);
 }
 
 void XpLib::randomize() {

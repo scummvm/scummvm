@@ -644,6 +644,9 @@ BOLTCallback BoltEngine::g_defaultMemberFreeCallbacks[25];
 BOLTCallback BoltEngine::g_defaultGroupLoadCallbacks[25];
 BOLTCallback BoltEngine::g_defaultGroupFreeCallbacks[25];
 
+BOLTCallback BoltEngine::g_fredTypeLoadCallbacks[28];
+BOLTCallback BoltEngine::g_fredTypeFreeCallbacks[28];
+
 void BoltEngine::noOpCb() {}
 void BoltEngine::swapAllWordsCb() { ((BoltEngine *)g_engine)->swapAllWords(); }
 void BoltEngine::swapPicHeaderCb() { ((BoltEngine *)g_engine)->swapPicHeader(); }
@@ -654,7 +657,14 @@ void BoltEngine::swapFirstFourWordsCb() { ((BoltEngine *)g_engine)->swapFirstFou
 void BoltEngine::swapSpriteHeaderCb() { ((BoltEngine *)g_engine)->swapSpriteHeader(); }
 void BoltEngine::freeSpriteCleanUpCb() { ((BoltEngine *)g_engine)->freeSpriteCleanUp(); }
 
+void BoltEngine::resolveAllRefsCb() { ((BoltEngine *)g_engine)->resolveAllRefs(); }
+void BoltEngine::swapFredAnimEntryCb() { ((BoltEngine *)g_engine)->swapFredAnimEntry(); }
+void BoltEngine::swapFredAnimDescCb() { ((BoltEngine *)g_engine)->swapFredAnimDesc(); }
+void BoltEngine::swapFredLevelDescCb() { ((BoltEngine *)g_engine)->swapFredLevelDesc(); }
+
 void BoltEngine::initCallbacks() {
+	// --- BOOTHS ---
+
 	for (int i = 0; i < ARRAYSIZE(g_defaultTypeLoadCallbacks); i++) {
 		g_defaultTypeLoadCallbacks[i] = noOpCb;
 	}
@@ -688,12 +698,42 @@ void BoltEngine::initCallbacks() {
 		g_defaultGroupFreeCallbacks[i] = noOpCb;
 	}
 
-	g_resourceDefaultCallbacks.typeLoadCallbacks = g_defaultTypeLoadCallbacks;
-	g_resourceDefaultCallbacks.typeFreeCallbacks = g_defaultTypeFreeCallbacks;
-	g_resourceDefaultCallbacks.memberLoadCallbacks = g_defaultMemberLoadCallbacks;
-	g_resourceDefaultCallbacks.memberFreeCallbacks = g_defaultMemberFreeCallbacks;
-	g_resourceDefaultCallbacks.groupLoadCallbacks = g_defaultGroupLoadCallbacks;
-	g_resourceDefaultCallbacks.groupFreeCallbacks = g_defaultGroupFreeCallbacks;
+	g_boothsBoltCallbacks.typeLoadCallbacks = g_defaultTypeLoadCallbacks;
+	g_boothsBoltCallbacks.typeFreeCallbacks = g_defaultTypeFreeCallbacks;
+	g_boothsBoltCallbacks.memberLoadCallbacks = g_defaultMemberLoadCallbacks;
+	g_boothsBoltCallbacks.memberFreeCallbacks = g_defaultMemberFreeCallbacks;
+	g_boothsBoltCallbacks.groupLoadCallbacks = g_defaultGroupLoadCallbacks;
+	g_boothsBoltCallbacks.groupFreeCallbacks = g_defaultGroupFreeCallbacks;
+
+	// --- FRED ---
+
+	for (int i = 0; i < ARRAYSIZE(g_fredTypeLoadCallbacks); i++) {
+		g_fredTypeLoadCallbacks[i] = noOpCb;
+	}
+
+	g_fredTypeLoadCallbacks[2] = swapAllWordsCb;
+	g_fredTypeLoadCallbacks[6] = resolveAllRefsCb;
+	g_fredTypeLoadCallbacks[8] = swapSpriteHeaderCb;
+	g_fredTypeLoadCallbacks[10] = swapPicHeaderCb;
+	g_fredTypeLoadCallbacks[11] = swapAndResolvePicDescCb;
+	g_fredTypeLoadCallbacks[12] = swapFirstTwoWordsCb;
+	g_fredTypeLoadCallbacks[14] = swapFirstFourWordsCb;
+	g_fredTypeLoadCallbacks[25] = swapFredAnimEntryCb;
+	g_fredTypeLoadCallbacks[26] = swapFredAnimDescCb;
+	g_fredTypeLoadCallbacks[27] = swapFredLevelDescCb;
+
+	for (int i = 0; i < ARRAYSIZE(g_fredTypeFreeCallbacks); i++) {
+		g_fredTypeFreeCallbacks[i] = noOpCb;
+	}
+
+	g_fredTypeFreeCallbacks[8] = freeSpriteCleanUpCb;
+
+	g_fredBoltCallbacks.typeLoadCallbacks = g_fredTypeLoadCallbacks;
+	g_fredBoltCallbacks.typeFreeCallbacks = g_fredTypeFreeCallbacks;
+	g_fredBoltCallbacks.memberLoadCallbacks = g_defaultMemberLoadCallbacks;
+	g_fredBoltCallbacks.memberFreeCallbacks = g_defaultMemberFreeCallbacks;
+	g_fredBoltCallbacks.groupLoadCallbacks = g_defaultGroupLoadCallbacks;
+	g_fredBoltCallbacks.groupFreeCallbacks = g_defaultGroupFreeCallbacks;
 }
 
 } // End of namespace Bolt

@@ -216,6 +216,7 @@ void XpLib::pumpMessages() {
 
 	updateTimers();
 	_bolt->_system->delayMillis(5);
+	_bolt->_system->updateScreen();
 }
 
 void XpLib::handleTimer(uint32 timerId) {
@@ -230,13 +231,13 @@ void XpLib::handleTimer(uint32 timerId) {
 			postEvent(etInactivity, 0);
 	}
 
-	if (g_cursorBlinkCountdown != 0) {
-		g_cursorBlinkCountdown--;
-		if (g_cursorBlinkCountdown == 0)
+	if (g_screensaverCountdown != 0) {
+		g_screensaverCountdown--;
+		if (g_screensaverCountdown == 0)
 			activateScreenSaver();
 	}
 
-	if (g_inactivityCountdown != 0 || g_cursorBlinkCountdown != 0) {
+	if (g_inactivityCountdown != 0 || g_screensaverCountdown != 0) {
 		g_inactivityTimerId = startTimer(1000);
 	} else {
 		g_inactivityTimerId = 0;
@@ -423,7 +424,7 @@ int16 XpLib::setScreenSaverTimer(int16 seconds) {
 	int16 prev = g_screenSaverTimerValue;
 
 	g_screenSaverTimerValue = seconds;
-	g_cursorBlinkCountdown = seconds;
+	g_screensaverCountdown = seconds;
 
 	if (seconds != 0 && g_inactivityTimerId == 0)
 		g_inactivityTimerId = startTimer(1000);
@@ -443,7 +444,7 @@ void XpLib::resetInactivity() {
 	}
 
 	// Reset screensaver countdown
-	g_cursorBlinkCountdown = g_screenSaverTimerValue;
+	g_screensaverCountdown = g_screenSaverTimerValue;
 
 	if (g_screenSaverTimerValue != 0 && g_inactivityTimerId == 0)
 		g_inactivityTimerId = startTimer(1000);

@@ -70,6 +70,9 @@ Common::Error BoltEngine::run() {
 		initGraphics(EXTENDED_SCREEN_WIDTH, EXTENDED_SCREEN_HEIGHT);
 	}
 
+	if ((getFeatures() & ADGF_DEMO) != 0)
+		g_isDemo = true;
+
 	// Set the engine's debugger console
 	setDebugger(new Console());
 
@@ -107,7 +110,7 @@ void BoltEngine::boltMain() {
 	if (allocResourceIndex()) {
 		g_boothsBoltLib = nullptr;
 
-		if (openBOLTLib(&g_boothsBoltLib, &g_resourceDefaultCallbacks, assetPath("booths.blt"))) {
+		if (openBOLTLib(&g_boothsBoltLib, &g_boothsBoltCallbacks, assetPath("booths.blt"))) {
 			int16 chosenSpecId = g_extendedViewport ? 0 : 1;
 
 			if (_xp->setDisplaySpec(&g_displayMode, &g_displaySpecs[chosenSpecId])) {
@@ -128,29 +131,33 @@ void BoltEngine::boltMain() {
 				}
 
 				if (g_rtfHandle) {
-					playAV(g_rtfHandle, 0, g_displayWidth, g_displayHeight, g_displayX, g_displayY);
+					int16 boothGroupBase = g_isDemo ? 0x0E00 : 0x1700;
 
-					boothSprite = getBOLTMember(g_boothsBoltLib, (g_displayMode != 0) ? 0x1701 : 0x1702);
+					if (!g_isDemo) {
+						playAV(g_rtfHandle, 0, g_displayWidth, g_displayHeight, g_displayX, g_displayY);
+					}
+
+					boothSprite = getBOLTMember(g_boothsBoltLib, (g_displayMode != 0) ? (boothGroupBase + 1) : (boothGroupBase + 2));
 
 					_xp->setTransparency(false);
 
-					displayColors(getBOLTMember(g_boothsBoltLib, 0x1700), stFront, 0);
+					displayColors(getBOLTMember(g_boothsBoltLib, boothGroupBase), stFront, 0);
 					displayPic(boothSprite, g_displayX, g_displayY, stFront);
 
 					_xp->updateDisplay();
 
-					displayColors(getBOLTMember(g_boothsBoltLib, 0x1700), stBack, 0);
+					displayColors(getBOLTMember(g_boothsBoltLib, boothGroupBase), stBack, 0);
 					displayPic(boothSprite, g_displayX, g_displayY, stBack);
 
-					playAV(g_rtfHandle, 2, g_displayWidth, g_displayHeight, g_displayX, g_displayY);
+					playAV(g_rtfHandle, g_isDemo ? 0 : 2, g_displayWidth, g_displayHeight, g_displayX, g_displayY);
 
-					freeBOLTGroup(g_boothsBoltLib, 0x1700, 1);
+					freeBOLTGroup(g_boothsBoltLib, boothGroupBase, 1);
 
 					if (getBOLTGroup(g_boothsBoltLib, 0, 1)) {
 						setCursorPict(memberAddr(g_boothsBoltLib, 0));
 
 						if (initVRam(1500)) {
-							barkerTable = createBarker(2, 17);
+							barkerTable = createBarker(2, g_isDemo ? 19 : 17);
 							if (barkerTable) {
 								// Register booth handlers...
 								registerSideShow(barkerTable, &BoltEngine::hucksBooth, 3);
@@ -167,6 +174,11 @@ void BoltEngine::boltMain() {
 								registerSideShow(barkerTable, &BoltEngine::georgeGame, 14);
 								registerSideShow(barkerTable, &BoltEngine::topCatGame, 15);
 								registerSideShow(barkerTable, &BoltEngine::winALetter, 16);
+
+								if (g_isDemo) {
+									registerSideShow(barkerTable, &BoltEngine::displayDemoPict, 17);
+									registerSideShow(barkerTable, &BoltEngine::endDemo, 18);
+								}
 
 								g_lettersWon = 0;
 								_xp->setScreenSaverTimer(1800);
@@ -213,6 +225,27 @@ void BoltEngine::setCursorPict(byte *sprite) {
 	}
 
 	_xp->setCursorImage(cursorBitmap, 7, 7);
+}
+
+int16 BoltEngine::displayDemoPict(int16 prevBooth) {
+	uint32 eventData;
+
+	while (_xp->getEvent(etMouseDown, &eventData) == etMouseDown);
+
+	while (_xp->getEvent(etTimer, &eventData) != etTimer);
+
+	_xp->stopCycle();
+	_xp->setTransparency(false);
+
+	int16 memberId = (g_displayMode != 0) ? 0x1002 : 0x1001;
+	displayPic(getBOLTMember(g_boothsBoltLib, memberId), g_displayX, g_displayY, stFront);
+	displayColors(getBOLTMember(g_boothsBoltLib, 0x1000), stFront, 0);
+
+	_xp->updateDisplay();
+
+	while (_xp->getEvent(etMouseDown, &eventData) != etMouseDown);
+
+	return prevBooth;
 }
 
 } // End of namespace Bolt

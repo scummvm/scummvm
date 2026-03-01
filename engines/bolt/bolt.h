@@ -77,12 +77,12 @@ typedef struct BOLTHeader {
 typedef void (*BOLTCallback)(void);
 
 typedef struct BOLTCallbacks {
-	BOLTCallback *typeLoadCallbacks;   // +0x00: type-based post-load fixup (25 entries)
-	BOLTCallback *typeFreeCallbacks;   // +0x04: type-based post-free cleanup (25 entries)
-	BOLTCallback *memberLoadCallbacks; // +0x08: per-member pre-load callbacks
-	BOLTCallback *memberFreeCallbacks; // +0x0C: per-member pre-free callbacks
-	BOLTCallback *groupLoadCallbacks;  // +0x10: per-group load callbacks
-	BOLTCallback *groupFreeCallbacks;  // +0x14: per-group free callbacks
+	BOLTCallback *typeLoadCallbacks;
+	BOLTCallback *typeFreeCallbacks;
+	BOLTCallback *memberLoadCallbacks;
+	BOLTCallback *memberFreeCallbacks;
+	BOLTCallback *groupLoadCallbacks;
+	BOLTCallback *groupFreeCallbacks;
 
 	BOLTCallbacks() {
 		typeLoadCallbacks = nullptr;
@@ -95,15 +95,14 @@ typedef struct BOLTCallbacks {
 } BOLTCallbacks;
 
 typedef struct BOLTMemberEntry {
-	byte flags;          // +0x00: bit 3 = uncompressed
-	byte preLoadCbIndex; // +0x01: index into lib->userData1 callback table
-	byte preFreeCbIndex; // +0x02: index into lib->userData2 callback table
-	byte typeCbIndex;    // +0x03: index into lib->loadCallbacks (post-load)
-						 //        and lib->freeCallbacks (post-free)
-	uint32 decompSize;   // +0x04: decompressed data size (big-endian in file)
-	uint32 fileOffset;   // +0x08: file offset of compressed/raw data (big-endian in file)
+	byte flags;
+	byte preLoadCbIndex;
+	byte preFreeCbIndex;
+	byte typeCbIndex;
+	uint32 decompSize;
+	uint32 fileOffset;
 	uint32 dataPtrPlaceholder;
-	byte *dataPtr; // +0x0C: pointer to loaded data (NULL if not loaded)
+	byte *dataPtr;
 
 	BOLTMemberEntry() {
 		flags = 0;
@@ -115,16 +114,16 @@ typedef struct BOLTMemberEntry {
 		dataPtrPlaceholder = 0;
 		dataPtr = nullptr;
 	}
-} BOLTMemberEntry; // 0x10 = 16 bytes
+} BOLTMemberEntry;
 
 typedef struct BOLTGroupEntry {
-	byte flags;                     // +0x00: unknown flags
-	byte loadCbIndex;               // +0x01: group load callback index (into lib+0x18)
-	byte freeCbIndex;               // +0x02: group free callback index (into lib+0x1C)
-	byte memberCount;               // +0x03: number of members (0 = 256)
-	uint32 memberDirOffset;         // +0x04: file offset to member directory (big-endian)
-	uint32 memberDataOffset;        // +0x08: file offset to member data (big-endian)
-	uint32 groupDataPtrPlaceholder; // +0x0C: pointer to loaded group data block (NULL if not loaded)
+	byte flags;
+	byte loadCbIndex;
+	byte freeCbIndex;
+	byte memberCount;
+	uint32 memberDirOffset;
+	uint32 memberDataOffset;
+	uint32 groupDataPtrPlaceholder;
 	byte *memberData;
 	BOLTMemberEntry *members;
 
@@ -153,14 +152,14 @@ typedef struct BOLTGroupEntry {
 		members = new BOLTMemberEntry[actualNumber];
 	}
 
-} BOLTGroupEntry;            // 0x10 = 16 bytes
+} BOLTGroupEntry;
 
 typedef struct BOLTLib {
-	int16 refCount;           // +0x00
-	int16 groupCount;         // +0x02 (0 = 256)
-	Common::File *fileHandle; // +0x04
+	int16 refCount;
+	int16 groupCount;
+	Common::File *fileHandle;
 	BOLTCallbacks callbacks;
-	BOLTGroupEntry *groups; // +0x20
+	BOLTGroupEntry *groups;
 
 	BOLTLib(int inGroupCount) {
 		refCount = 0;
@@ -201,16 +200,15 @@ typedef struct RTFResource {
 
 struct RTFPacket;
 typedef struct RTFPacket {
-	uint32 tag;       // +0x00: chunk tag (e.g. MKTAG('A','2','2','8'))
-	uint32 allocSize; // +0x04: total allocated size (including header)
-	uint32 dataSize;  // +0x08: raw data size
-	byte *dataPtr;    // +0x0C: pointer to data (= this + 0x1C)
-	int16 skipCount;  // +0x10: how late this frame is
-	int16 frameRate;    // +0x12: frame rate reference (or 50 if no sound)
-	int16 duration;   // +0x14: sound duration in hundredths of a second
-	int16 timestamp;  // +0x16: cumulative timeline position
-	RTFPacket *next;  // +0x18: next packet in linked list
-	// +0x1C: data begins here
+	uint32 tag;
+	uint32 allocSize;
+	uint32 dataSize;
+	byte *dataPtr;
+	int16 skipCount;
+	int16 frameRate;
+	int16 duration;
+	int16 timestamp;
+	RTFPacket *next;
 	byte *ringBufPtr;
 
 	RTFPacket() {
@@ -225,7 +223,51 @@ typedef struct RTFPacket {
 		next = nullptr;
 		ringBufPtr = nullptr;
 	}
-} RTFPacket; // 0x1C header = 28 bytes
+} RTFPacket;
+
+// FRED GAME
+
+typedef struct FredSoundInfo {
+	byte *data;
+	uint32 size;
+
+	FredSoundInfo() {
+		data = nullptr;
+		size = 0;
+	}
+} FredSoundInfo;
+
+typedef struct FredEntityState {
+	uint16 flags;
+	int16 frameCountdown;
+	int16 animMode;
+	int16 frameIndex;
+	byte *animTable;
+	int16 direction;
+	int32 xPos;
+	int32 yPos;
+	int32 prevXPos;
+	int32 prevYPos;
+	int16 speed;
+	byte *pathTable;
+	int16 pathIndex;
+
+	FredEntityState() {
+		flags = 0;
+		frameCountdown = 0;
+		animMode = 0;
+		frameIndex = 0;
+		animTable = nullptr;
+		direction = 0;
+		xPos = 0;
+		yPos = 0;
+		prevXPos = 0;
+		prevYPos = 0;
+		speed = 0;
+		pathTable = nullptr;
+		pathIndex = 0;
+	}
+} FredEntityState;
 
 class BoltEngine : public Engine {
 friend class XpLib;
@@ -256,17 +298,14 @@ public:
 	}
 
 	bool hasFeature(EngineFeature f) const override {
-		return
-		    (f == kSupportsLoadingDuringRuntime) ||
-		    (f == kSupportsSavingDuringRuntime) ||
-		    (f == kSupportsReturnToLauncher);
+		return (f == kSupportsReturnToLauncher);
 	};
 
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return true;
+		return false;
 	}
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return true;
+		return false;
 	}
 
 	/**
@@ -292,10 +331,12 @@ protected:
 
 	XpLib *_xp = nullptr;
 	bool g_extendedViewport = false;
+	bool g_isDemo = false;
 
 	// xpMain
 	void boltMain();
 	void setCursorPict(byte *sprite);
+	int16 displayDemoPict(int16 prevBooth);
 
 	// Booth
 	void startCycle(byte *cycleResource);
@@ -310,7 +351,7 @@ protected:
 	int16 mainEntrance(int16 prevBooth);
 	bool loadBooth(int16 boothId);
 	void unloadBooth();
-	int16 openBooth(int16 sceneId);
+	int16 openBooth(int16 boothId);
 	void closeBooth();
 	void playTour();
 	void finishPlayingHelp(int16 activeHotspot);
@@ -325,12 +366,13 @@ protected:
 	void loadColors();
 	void shiftColorMap(byte *colorMap, int16 delta);
 	void playBoothAV();
-	void mapIdleAnimation();
-	void boothIdleAnimation();
-	void screensaverStep();
+	void mainEntranceHelpBlink();
+	void boothHelpBlink();
+	void tourPaletteCycleStep();
 	void fadeToBlack(int16 steps);
 	void flushInput();
 	int16 winALetter(int16 prevBooth);
+	int16 endDemo(int16 prevBooth);
 
 	int16 g_lettersWon = 0;
 	bool g_allLettersWonFlag = false;
@@ -354,27 +396,34 @@ protected:
 	byte *g_boothPalCycleData = nullptr;
 	XPPicDesc g_boothLetterSprite;
 	bool g_needInitCursorPos = true;
-	byte *g_boothExitLeft = nullptr;
-	byte *g_boothExitRight = nullptr;
+	byte *g_boothVisitSignOn = nullptr;
+	byte *g_boothVisitSignOff = nullptr;
 	byte g_leftDoorNavTable[3] = {3, 2, 4};
 	byte g_rightDoorNavTable[3] = {1, 0, 5};
 
 	int16 g_cursorX = 0;
 	int16 g_cursorY = 0;
 	int16 g_hoveredHotspot = 0;
-	uint32 g_keyTimer = 0;
+	uint32 g_helpTimer = 0;
 	int16 g_keyReleased = 0;
 	int16 g_keyLeft = 0;
 	int16 g_keyRight = 0;
 	int16 g_keyUp = 0;
 	int16 g_keyDown = 0;
-	int16 g_keyHelp = 0;
+	int16 g_helpFlag = 0;
 	int16 g_keyEnter = 0;
 
-	int16 g_screensaverStep = 0;
+	int16 g_tourStep = 0;
 	int16 g_helpPlaying = 0;
 	int16 g_helpIsIdle = 0;
-	int16 g_idleHelpAvailable = 0;
+	int16 g_idleHelpAudioAvailable = 1;
+
+	int16 g_huckWins = 0;
+	int16 g_fredWins = 0;
+	int16 g_scoobyWins = 0;
+	int16 g_yogiWins = 0;
+	int16 g_georgeWins = 0;
+	int16 g_topCatWins = 0;
 
 	// Barker
 	BarkerTable *createBarker(int16 minIndex, int16 maxIndex);
@@ -432,7 +481,7 @@ protected:
 	void swapAllLongs();
 
 	BOLTLib *g_boothsBoltLib = nullptr;
-	BOLTCallbacks g_resourceDefaultCallbacks;
+	BOLTCallbacks g_boothsBoltCallbacks;
 
 	static BOLTCallback g_defaultTypeLoadCallbacks[25];
 	static BOLTCallback g_defaultTypeFreeCallbacks[25];
@@ -566,22 +615,95 @@ protected:
 
 	// --- MINIGAMES ---
 
-	// Fred
-	int16 fredGame(int16 prevBooth) { return 0; }
+	// --- FRED ---
+	int16 fredGame(int16 prevBooth);
+	bool initFred();
+	void cleanUpFred();
+	bool initFredLevel(int16 levelGroup, int16 palGroup);
+	void termFredLevel(int16 levelGroup, int16 palGroup);
+	void swapFredAnimEntry();
+	void swapFredAnimDesc();
+	void swapFredLevelDesc();
+	int16 playFred();
+	int16 helpFred();
+	void hiliteFredHelpObject(byte *entry, int16 highlight);
+	void helpAnimStep();
+	bool spawnBalloon();
+	int16 calcBalloonSpawnDelay();
+	int16 selectBalloonRow();
+	void setFredAnimMode(FredEntityState *state, int16 mode);
+	void renderFredScene();
+	void getFredSoundInfo(BOLTLib *lib, int16 memberId, FredSoundInfo *soundInfo);
+	void playFredSound(FredSoundInfo *oneShot, FredSoundInfo *loop);
+	void updateFredSound();
 
-	// George
+	static void resolveAllRefsCb();
+	static void swapFredAnimEntryCb();
+	static void swapFredAnimDescCb();
+	static void swapFredLevelDescCb();
+
+	BOLTLib *g_fredBoltLib = nullptr;
+	BOLTCallbacks g_fredBoltCallbacks;
+
+	static BOLTCallback g_fredTypeLoadCallbacks[28];
+	static BOLTCallback g_fredTypeFreeCallbacks[28];
+
+	byte *g_fredLevelPtr = nullptr;
+	byte *g_fredBackground = nullptr;
+	byte *g_fredBalloonString = nullptr;
+	byte *g_fredPalette = nullptr;
+	byte *g_fredFacingLeftRect = nullptr;
+	byte *g_fredFacingRightRect = nullptr;
+	byte *g_fredTurningRect = nullptr;
+	byte *g_fredBalloonRect = nullptr;
+	byte *g_fredHelpEntries = nullptr;
+	byte *g_fredPlayButton = nullptr;
+	byte *g_fredSprites[10] = { nullptr };
+	FredEntityState **g_fredEntitiesTable = nullptr;
+
+	byte *g_fredRowBounds = nullptr;
+	byte *g_fredShuffleTable = nullptr;
+	byte *g_fredCycleRaw = nullptr;
+	byte *g_fredBalloonSprite = nullptr;
+	byte *g_fredPathMatrix = nullptr;
+	byte *g_fredCurrentHelpObject = nullptr;
+	byte *g_fredHoveredEntry = nullptr;
+
+	FredSoundInfo g_fredSounds[4];
+
+	FredSoundInfo *g_fredCurrentSound = nullptr;
+	FredSoundInfo *g_fredLoopSound = nullptr;
+	FredSoundInfo *g_fredPendingOneShot = nullptr;
+	FredSoundInfo *g_fredPendingLoop = nullptr;
+
+	FredEntityState g_fredSprite;
+
+	int16 g_fredSaveData[3] = { 0, 0, 0 };
+	int16 g_fredLevelIndex = 0;
+
+	int16 g_fredBalloonSpawnDelay = 0;
+	int16 g_fredBalloonSearchIdx = 0;
+	uint32 g_fredTimer = 0;
+	int16 g_fredHelpStep = -1;
+	int16 g_fredShowHelp = 1;
+
+	XPCycleState g_fredCycleSpecs[4];
+
+	const char *g_fredSaveFile = "FredBC";
+
+	// --- GEORGE ---
 	int16 georgeGame(int16 prevBooth) { return 0; }
 
-	// Huck
+	// --- HUCK ---
 	int16 huckGame(int16 prevBooth) { return 0; }
 
-	// Scooby
+	// --- SCOOBY ---
 	int16 scoobyGame(int16 prevBooth) { return 0; }
 
-	// TopCat
+	// --- TOPCAT ---
 	int16 topCatGame(int16 prevBooth) { return 0; }
 
-	// Yogi
+	// --- YOGI ---
 	int16 yogiGame(int16 prevBooth) { return 0; }
 };
 

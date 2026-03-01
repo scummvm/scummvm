@@ -525,7 +525,7 @@ void XpLib::compositeToScreen() {
 		cursorY = g_lastCursorY - g_cursorHotspotY;
 
 		// Save background under cursor position...
-		clipAndBlit(&g_cursorBackgroundSave, &g_surfaces[stFront].mainPic, -cursorX, -cursorY, nullptr);
+		clipAndBlit(&g_surfaces[stFront].mainPic, &g_cursorBackgroundSave, -cursorX, -cursorY, nullptr);
 
 		// Draw cursor sprite at position...
 		clipAndBlit(&g_cursorSprite, &g_surfaces[stFront].mainPic, cursorX, cursorY, &g_cursorRect);

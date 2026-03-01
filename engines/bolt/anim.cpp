@@ -26,6 +26,7 @@ namespace Bolt {
 bool BoltEngine::startAnimation(RTFResource *rtf, int16 animIndex) {
 	if (!initAnim(rtf, animIndex)) {
 		cleanUpAnim();
+		debug("BoltEngine::startAnimation(): Failed to start animation %d", animIndex);
 		return false;
 	}
 

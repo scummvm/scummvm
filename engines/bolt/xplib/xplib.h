@@ -381,7 +381,7 @@ protected:
 	uint32 g_inactivityTimerId = 0;
 	int16 g_inactivityCountdown = 0;
 	int16 g_inactivityTimerValue = 0;
-	int16 g_cursorBlinkCountdown = 0;
+	int16 g_screensaverCountdown = 0;
 	int16 g_screenSaverTimerValue = 0;
 	int16 g_inactivityTimeout = 0;
 
