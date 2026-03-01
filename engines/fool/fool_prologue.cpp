@@ -434,7 +434,7 @@ void FoolPrologue::sub_128_e80() {
 		}
 		// keep looping until mouse is seen as up??
 		// see I-252
-		if ((this->var_ev_22.modifiers & 0x80) && (this->var_ev_22.what == kNullEvent)) {
+		if ((this->var_ev_22.modifiers & kModMouseButtonUp) && (this->var_ev_22.what == kNullEvent)) {
 			break;
 		}
 		// wait until next redraw
@@ -1056,7 +1056,7 @@ void FoolPrologue::prologueRun() {
 		// 130:0bee
 		this->var_i16_1ba = g_toolbox->GetNextEvent(2, this->var_ev_22);
 	}
-	while (!((this->var_ev_22.what == kNullEvent) && (this->var_ev_22.modifiers & 0x80))) {
+	while (!((this->var_ev_22.what == kNullEvent) && (this->var_ev_22.modifiers & kModMouseButtonUp))) {
 		// 130:0c0c
 		this->var_i32_2 = g_toolbox->TickCount();
 		this->var_i16_74 += this->var_i16_192;

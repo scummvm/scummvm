@@ -103,6 +103,22 @@ uint32 Toolbox::Delay(uint32 numTicks) {
 	return (uint32)(g_system->getMillis() * 60 / 1000);
 }
 
+void Toolbox::FlushEvents(uint32 eventMask, uint32 stopMask) {
+	if ((eventMask == 0xffffffff) && (stopMask == 0)) {
+		_events.clear();
+		return;
+	}
+	for (auto it = _events.begin(); it != _events.end(); ) {
+		if ((1 << it->what) & stopMask) {
+			return;
+		} else if ((1 << it->what) & eventMask) {
+			it = _events.erase(it);
+		} else {
+			++it;
+		}
+	}
+}
+
 bool Toolbox::GetNextEvent(uint32 eventMask, EventRecord &theEvent) {
 	//warning("STUB: Toolbox::GetNextEvent");
 	_pumpEvents();

@@ -158,6 +158,19 @@ enum EventCode : uint16 {
 	kScummVMReturnToLauncherEvt = 25,
 };
 
+enum ModifierMask : uint16 {
+	kModForegroundSwitch = 0x0001,
+	kModMouseButtonUp = 0x0080,
+	kModCommandKeyDown = 0x0100,
+	kModLShiftKeyDown = 0x0200,
+	kModCapsLockKeyDown = 0x0400,
+	kModLOptionKeyDown = 0x0800,
+	kModLControlKeyDown = 0x1000,
+	kModRShiftKeyDown = 0x2000,
+	kModROptionKeyDown = 0x4000,
+	kModRControlKeyDown = 0x8000,
+};
+
 enum SourceMode : uint16 {
 	kSrcCopy = 0,
 	kSrcOr = 1,
@@ -302,6 +315,14 @@ public:
 	// PROCEDURE Delay (numTicks: LONGINT; VAR finalTicks: LONGINT);
 	// Delay causes the system to wait for the number of ticks (sixtieths of a second) specified by numTicks, and returns in finalTicks the total number of ticks from system startup to the end of the delay.
 	uint32 Delay(uint32 numTicks);
+
+	// PROCEDURE FlushEvents (eventMask, stopMask: INTEGER);
+	// FlushEvents removes events from the event queue as specified by the given event masks. It
+	// removes all events of the type or types specified by eventMask, up to but not including the first
+	// event of any type specified by stopMask; if the event queue doesn't contain any events of the
+	// types specified by eventMask, it does nothing. To remove all events specified by eventMask, use
+	// a stopMask value of 0.
+	void FlushEvents(uint32 eventMask, uint32 stopMask);
 
 	// FUNCTION GetNextEvent (eventMask: INTEGER; VAR theEvent: EventRecord) : BOOLEAN;
 	// GetNextEvent returns the next available event of a specified type or types and, if the event is in
