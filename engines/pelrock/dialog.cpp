@@ -191,8 +191,10 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 			_curSprite->isTalking = false;
 		}
 		// Offset X position for Alfred to avoid overlapping with his sprite
-		xBasePos = g_engine->_alfredState.x;                      //+ kAlfredFrameWidth / 2 - maxWidth / 2;
-		yBasePos = g_engine->_alfredState.y - kAlfredFrameHeight; // Above sprite, adjust for line
+		xBasePos = g_engine->_alfredState.x;
+		// Original game: uses the scaled character height (varies with perspective),
+		// not the fixed kAlfredFrameHeight. _alfredState.h is updated by drawAlfred().
+		yBasePos = g_engine->_alfredState.y - g_engine->_alfredState.h; // Above scaled sprite top
 	} else {
 		g_engine->_alfredState.setState(ALFRED_IDLE);
 		if (_curSprite != nullptr) {
@@ -240,9 +242,9 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 
 		Graphics::Surface s = getDialogueSurface(textLines, speakerId);
 
-		// Clamp to screen bounds
-		xPos = CLIP(xPos, 0, 640 - maxWidth);
-		yPos = CLIP(yPos, 0, 400 - s.getRect().height());
+		// Clamp to screen bounds (original game: min Y = 1, max X = 639 - width)
+		xPos = CLIP(xPos, 0, 639 - maxWidth);
+		yPos = CLIP(yPos, 1, 400 - (int)s.getRect().height());
 
 		_screen->transBlitFrom(s, s.getRect(), Common::Point(xPos, yPos), 255);
 		drawPos(_screen, xPos, yPos, speakerId);
