@@ -93,7 +93,7 @@ public:
 	Common::String _ptrfb;
 	Common::Array<Rect *> _rects;
 	Common::String _next;
-	uint8 _difficulty;
+	uint8 _difficulty = 0;
 	void addRect(int16 left, int16 top, int16 right, int16 bottom, const Common::String scene, uint32 score, const Common::String rectHit, const Common::String unknown);
 	Zone *clone();
 };
