@@ -510,6 +510,32 @@ void FreeGlobals() {
 }
 
 /**
+ * Get number of globals. Used by debugger.
+ */
+int GetGlobalCount() {
+	return g_numGlobals;
+}
+
+/**
+ * Get global value. Used by debugger.
+ */
+int32 GetGlobal(int g) {
+	if (g_pGlobals != nullptr && 0 <= g && g < g_numGlobals) {
+		return g_pGlobals[g];
+	}
+	return 0;
+}
+
+/**
+* Sets global value. Used by debugger.
+*/
+void SetGlobal(int g, int32 value) {
+	if (g_pGlobals != nullptr && 0 <= g  && g < g_numGlobals) {
+		g_pGlobals[g] = value;
+	}
+}
+
+/**
  * (Un)serialize the global data for save/restore game.
  */
 void syncGlobInfo(Common::Serializer &s) {

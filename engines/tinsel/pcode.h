@@ -111,6 +111,11 @@ void SaveInterpretContexts(INT_CONTEXT *sICInfo);
 void RegisterGlobals(int num);
 void FreeGlobals();
 
+// Used by debugger
+int GetGlobalCount();
+int32 GetGlobal(int g);
+void SetGlobal(int g, int32 value);
+
 void AttachInterpret(INT_CONTEXT *pic, Common::PROCESS *pProc);
 
 void WaitInterpret(CORO_PARAM, Common::PPROCESS pWaitProc, bool *result);

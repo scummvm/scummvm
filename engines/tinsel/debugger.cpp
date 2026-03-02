@@ -73,6 +73,9 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("music",		WRAP_METHOD(Console, cmd_music));
 	registerCmd("sound",		WRAP_METHOD(Console, cmd_sound));
 	registerCmd("string",		WRAP_METHOD(Console, cmd_string));
+	registerCmd("globals",		WRAP_METHOD(Console, cmd_globals));
+	registerCmd("global",		WRAP_METHOD(Console, cmd_global));
+	registerCmd("g",		WRAP_METHOD(Console, cmd_global)); // alias
 }
 
 Console::~Console() {
@@ -164,6 +167,37 @@ bool Console::cmd_string(int argc, const char **argv) {
 	LoadStringRes(id, tmp, TBUFSZ);
 	debugPrintf("%s\n", tmp);
 
+	return true;
+}
+
+bool Console::cmd_globals(int argc, const char **argv) {
+	for (int i = 0; i < GetGlobalCount(); i++) {
+		int value = GetGlobal(i);
+		debugPrintf("global %d == %08x (%d)\n", i, value, value);
+	}
+	return true;
+}
+
+bool Console::cmd_global(int argc, const char **argv) {
+	if (!(2 <= argc && argc <= 3)) {
+		debugPrintf("Print or set global variable\n");
+		debugPrintf("usage: %s <global> [new-value]\n", argv[0]);
+		return true;
+	}
+
+	int global = strToInt(argv[1]);
+	if (!(0 <= global && global < GetGlobalCount())) {
+		debugPrintf("maximum global: %d\n", GetGlobalCount() - 1);
+		return true;
+	}
+
+	if (argc == 3) {
+		int newValue = strToInt(argv[2]);
+		SetGlobal(global, newValue);
+	}
+
+	int value = GetGlobal(global);
+	debugPrintf("global %d == %08x (%d)\n", global, value, value);
 	return true;
 }
 
