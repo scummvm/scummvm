@@ -133,8 +133,8 @@ private:
 	uint8 _oldShots = 0;
 	uint8 _whichGun = 0;
 	uint8 _oldWhichGun = 0xFF;
-	long int _minF;
-	long int _maxF;
+	long int _minF = 0;
+	long int _maxF = 0;
 
 	uint16 _dieBits = 0;
 	uint16 _gotTo = 0;
