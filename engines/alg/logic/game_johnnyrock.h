@@ -80,11 +80,11 @@ private:
 	JRScriptFunctionSceneMap _sceneNxtScn;
 
 	// images
-	Common::Array<Graphics::Surface *> *_difficultyIcon;
-	Graphics::Surface *_levelIcon;
-	Graphics::Surface *_bulletholeIcon;
-	Common::Array<Graphics::Surface *> *_gun;
-	Common::Array<Graphics::Surface *> *_numbers;
+	Graphics::Surface *_levelIcon = nullptr;
+	Graphics::Surface *_bulletholeIcon = nullptr;
+	Common::Array<Graphics::Surface *> *_difficultyIcon = nullptr;
+	Common::Array<Graphics::Surface *> *_gun = nullptr;
+	Common::Array<Graphics::Surface *> *_numbers = nullptr;
 
 	// sounds
 	Audio::SeekableAudioStream *_saveSound = nullptr;

@@ -76,21 +76,21 @@ private:
 	BHScriptFunctionSceneMap _sceneNxtScn;
 
 	// images
-	Graphics::Surface *_shotIcon;
-	Graphics::Surface *_emptyIcon;
-	Graphics::Surface *_shellIcon;
-	Graphics::Surface *_liveIcon;
-	Graphics::Surface *_deadIcon;
-	Graphics::Surface *_playersIcon1;
-	Graphics::Surface *_playersIcon2;
-	Graphics::Surface *_textScoreIcon;
-	Graphics::Surface *_textMenuIcon;
-	Graphics::Surface *_textBlackBarIcon;
-	Common::Array<Graphics::Surface *> *_gun;
-	Common::Array<Graphics::Surface *> *_numbers;
-	Common::Array<Graphics::Surface *> *_bagsIcons;
-	Common::Array<Graphics::Surface *> *_bulletHoleIcon;
-	Common::Array<Graphics::Surface *> *_shotgunHoleIcon;
+	Graphics::Surface *_shotIcon = nullptr;
+	Graphics::Surface *_emptyIcon = nullptr;
+	Graphics::Surface *_shellIcon = nullptr;
+	Graphics::Surface *_liveIcon = nullptr;
+	Graphics::Surface *_deadIcon = nullptr;
+	Graphics::Surface *_playersIcon1 = nullptr;
+	Graphics::Surface *_playersIcon2 = nullptr;
+	Graphics::Surface *_textScoreIcon = nullptr;
+	Graphics::Surface *_textMenuIcon = nullptr;
+	Graphics::Surface *_textBlackBarIcon = nullptr;
+	Common::Array<Graphics::Surface *> *_gun = nullptr;
+	Common::Array<Graphics::Surface *> *_numbers = nullptr;
+	Common::Array<Graphics::Surface *> *_bagsIcons = nullptr;
+	Common::Array<Graphics::Surface *> *_bulletHoleIcon = nullptr;
+	Common::Array<Graphics::Surface *> *_shotgunHoleIcon = nullptr;
 
 	// sounds
 	Audio::SeekableAudioStream *_saveSound = nullptr;

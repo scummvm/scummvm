@@ -77,16 +77,16 @@ private:
 	SPScriptFunctionSceneMap _sceneMissedRects;
 
 	// images
-	Graphics::Surface *_shotIcon;
-	Graphics::Surface *_emptyIcon;
-	Graphics::Surface *_deadIcon;
-	Graphics::Surface *_liveIcon1;
-	Graphics::Surface *_liveIcon2;
-	Graphics::Surface *_liveIcon3;
-	Graphics::Surface *_difficultyIcon;
-	Graphics::Surface *_bulletholeIcon;
-	Common::Array<Graphics::Surface *> *_gun;
-	Common::Array<Graphics::Surface *> *_numbers;
+	Graphics::Surface *_shotIcon = nullptr;
+	Graphics::Surface *_emptyIcon = nullptr;
+	Graphics::Surface *_deadIcon = nullptr;
+	Graphics::Surface *_liveIcon1 = nullptr;
+	Graphics::Surface *_liveIcon2 = nullptr;
+	Graphics::Surface *_liveIcon3 = nullptr;
+	Graphics::Surface *_difficultyIcon = nullptr;
+	Graphics::Surface *_bulletholeIcon = nullptr;
+	Common::Array<Graphics::Surface *> *_gun = nullptr;
+	Common::Array<Graphics::Surface *> *_numbers = nullptr;
 
 	// sounds
 	Audio::SeekableAudioStream *_saveSound = nullptr;

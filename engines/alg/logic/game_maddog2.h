@@ -80,16 +80,16 @@ private:
 	MD2ScriptFunctionSceneMap _sceneNxtScn;
 
 	// images
-	Graphics::Surface *_shotIcon;
-	Graphics::Surface *_emptyIcon;
-	Graphics::Surface *_liveIcon;
-	Graphics::Surface *_deadIcon;
-	Graphics::Surface *_reloadIcon;
-	Graphics::Surface *_drawIcon;
-	Graphics::Surface *_knifeIcon;
-	Graphics::Surface *_bulletholeIcon;
-	Common::Array<Graphics::Surface *> *_gun;
-	Common::Array<Graphics::Surface *> *_numbers;
+	Graphics::Surface *_shotIcon = nullptr;
+	Graphics::Surface *_emptyIcon = nullptr;
+	Graphics::Surface *_liveIcon = nullptr;
+	Graphics::Surface *_deadIcon = nullptr;
+	Graphics::Surface *_reloadIcon = nullptr;
+	Graphics::Surface *_drawIcon = nullptr;
+	Graphics::Surface *_knifeIcon = nullptr;
+	Graphics::Surface *_bulletholeIcon = nullptr;
+	Common::Array<Graphics::Surface *> *_gun = nullptr;
+	Common::Array<Graphics::Surface *> *_numbers = nullptr;
 
 	// sounds
 	Audio::SeekableAudioStream *_saveSound = nullptr;
