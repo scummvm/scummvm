@@ -36,6 +36,10 @@ static uint32 alignToWord(uint32 x) {
 	return (x + 1) & ~1U;
 }
 
+static uint32 alignToDword(uint32 x) {
+	return (x + 3) & ~3U;
+}
+
 static uint32 readLE32FromBuf(const byte *p) {
 	return (uint32)p[0] | ((uint32)p[1] << 8) | ((uint32)p[2] << 16) | ((uint32)p[3] << 24);
 }
@@ -292,7 +296,39 @@ private:
 		for (uint32 i = 0; i < (uint32)_hdr.tuneLength; ++i)
 			_sequence[i] = base[positionsOff + i];
 
-		const uint32 patternOffsetsOff = positionsOff + alignToWord(positionsSize);
+		const uint32 patternOffsetsOffWord = positionsOff + alignToWord(positionsSize);
+		const uint32 patternOffsetsOffDword = positionsOff + alignToDword(positionsSize);
+
+		auto scorePatternOffsets = [&](uint32 candOff) -> uint32 {
+			const uint32 need = (uint32)_hdr.numPatterns * 4U + (uint32)_hdr.numPatterns;
+			if (candOff + need > size)
+				return 0;
+
+			uint32 validOffs = 0;
+			for (uint32 i = 0; i < (uint32)_hdr.numPatterns; ++i) {
+				const uint32 po = readLE32FromBuf(base + candOff + (i * 4));
+				if (po != 0 && po < fileSize)
+					validOffs++;
+			}
+
+			uint32 validLens = 0;
+			const uint32 lensOff = candOff + (uint32)_hdr.numPatterns * 4U;
+			for (uint32 i = 0; i < (uint32)_hdr.numPatterns; ++i) {
+				const uint8 rows = base[lensOff + i];
+				if (rows != 0 && rows <= 128)
+					validLens++;
+			}
+
+			if (validOffs == 0)
+				return 0;
+
+			return (validOffs * 2U) + validLens;
+		};
+
+		const uint32 scoreWord = scorePatternOffsets(patternOffsetsOffWord);
+		const uint32 scoreDword = scorePatternOffsets(patternOffsetsOffDword);
+
+		const uint32 patternOffsetsOff = (scoreDword > scoreWord) ? patternOffsetsOffDword : patternOffsetsOffWord;
 		const uint32 patternOffsetsSize = (uint32)_hdr.numPatterns * 4U;
 		if (patternOffsetsOff + patternOffsetsSize > size)
 			error("DesktopTrackerStream: patternOffsets out of range");
@@ -310,7 +346,7 @@ private:
 		for (uint32 i = 0; i < (uint32)_hdr.numPatterns; ++i)
 			_patternLengths[i] = base[patternLengthsOff + i];
 
-		const uint32 samplesOff = patternLengthsOff + alignToWord(patternLengthsSize);
+		const uint32 samplesOff = patternLengthsOff + alignToDword(patternLengthsSize);
 		const uint32 sampleStructSize = 64;
 		const uint32 samplesSize = (uint32)_hdr.numSamples * sampleStructSize;
 		if (samplesOff + samplesSize > size)
