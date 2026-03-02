@@ -86,7 +86,7 @@ const ADGameDescription gameDescriptions[] = {
 		 "textes.txt", "4a0055fb933c8f044a7fa1a321eac7db", 5265),
 	 Common::PT_PRT,
 	 Common::kPlatformWindows,
-	 ADGF_DROPPLATFORM,
+	 ADGF_DROPPLATFORM | ADGF_TESTING,
 	 GUIO1(GUIO_NONE)},
 
 	{"lochness",
