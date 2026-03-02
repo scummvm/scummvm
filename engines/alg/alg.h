@@ -47,11 +47,15 @@ class AlgEngine : public Engine {
 public:
 	AlgEngine(OSystem *syst, const AlgGameDescription *desc);
 	~AlgEngine();
-	Common::Error run();
-	bool hasFeature(EngineFeature f) const;
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
 	Common::Platform getPlatform() const;
 	bool isDemo() const;
 	bool useSingleSpeedVideos() const { return _useSingleSpeedVideos; };
+	Common::Error loadGameState(int slot) override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 private:
 	const AlgGameDescription *_gameDescription;

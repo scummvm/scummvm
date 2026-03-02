@@ -639,13 +639,7 @@ bool GameMaddog::weaponDown() {
 	return false;
 }
 
-bool GameMaddog::saveState() {
-	Common::OutSaveFile *outSaveFile;
-	Common::String saveFileName = _vm->getSaveStateName(0);
-	if (!(outSaveFile = g_system->getSavefileManager()->openForSaving(saveFileName))) {
-		warning("GameMaddog::saveState(): Can't create file '%s', game not saved", saveFileName.c_str());
-		return false;
-	}
+bool GameMaddog::saveState(Common::OutSaveFile *outSaveFile) {
 	outSaveFile->writeUint32BE(MKTAG('A', 'L', 'G', 'S')); // header
 	outSaveFile->writeByte(0);                             // version, unused for now
 	outSaveFile->writeUint16LE(_beenTo);
@@ -674,18 +668,10 @@ bool GameMaddog::saveState() {
 	outSaveFile->writeByte(0);
 	outSaveFile->writeString(_subScene);
 	outSaveFile->writeByte(0);
-	outSaveFile->finalize();
-	delete outSaveFile;
 	return true;
 }
 
-bool GameMaddog::loadState() {
-	Common::InSaveFile *inSaveFile;
-	Common::String saveFileName = _vm->getSaveStateName(0);
-	if (!(inSaveFile = g_system->getSavefileManager()->openForLoading(saveFileName))) {
-		debug("GameMaddog::loadState(): Can't load file '%s', game not loaded", saveFileName.c_str());
-		return false;
-	}
+bool GameMaddog::loadState(Common::InSaveFile *inSaveFile) {
 	uint32 header = inSaveFile->readUint32BE();
 	if (header != MKTAG('A', 'L', 'G', 'S')) {
 		warning("GameMaddog::loadState(): Unkown save file, header: %s", tag2str(header));
@@ -715,7 +701,6 @@ bool GameMaddog::loadState() {
 	_curScene = inSaveFile->readString();
 	_retScene = inSaveFile->readString();
 	_subScene = inSaveFile->readString();
-	delete inSaveFile;
 	changeDifficulty(_difficulty);
 	return true;
 }
@@ -1153,13 +1138,13 @@ void GameMaddog::rectContinue(Rect *rect) {
 }
 
 void GameMaddog::rectSave(Rect *rect) {
-	if (saveState()) {
+	if (_vm->saveGameState(0, "").getCode() == Common::kNoError) {
 		playSound(_saveSound);
 	}
 }
 
 void GameMaddog::rectLoad(Rect *rect) {
-	if (loadState()) {
+	if (_vm->loadGameState(0).getCode() == Common::kNoError) {
 		playSound(_loadSound);
 	}
 }

@@ -178,8 +178,8 @@ private:
 	void moveMouse();
 	void displayScore();
 	bool weaponDown();
-	bool saveState();
-	bool loadState();
+	bool saveState(Common::OutSaveFile *saveFile) override;
+	bool loadState(Common::InSaveFile *inSaveFile) override;
 	Zone *checkZones(Scene *scene, Rect *&hitRect, Common::Point *point);
 
 	// misc game functions

@@ -664,15 +664,9 @@ bool GameSpacePirates::weaponDown() {
 	return false;
 }
 
-bool GameSpacePirates::saveState() {
+bool GameSpacePirates::saveState(Common::OutSaveFile *outSaveFile) {
 	uint16 sceneNum = sceneToNumber(_curScene);
 	if ((sceneNum < 0xAC || sceneNum > 0xB9) && sceneNum != 0x6F) {
-		Common::OutSaveFile *outSaveFile;
-		Common::String saveFileName = _vm->getSaveStateName(0);
-		if (!(outSaveFile = g_system->getSavefileManager()->openForSaving(saveFileName))) {
-			warning("GameSpacePirates::saveState(): Can't create file '%s', game not saved", saveFileName.c_str());
-			return false;
-		}
 		outSaveFile->writeUint32BE(MKTAG('A', 'L', 'G', 'S')); // header
 		outSaveFile->writeByte(0);                             // version, unused for now
 		outSaveFile->writeSByte(_lives);
@@ -707,20 +701,12 @@ bool GameSpacePirates::saveState() {
 		outSaveFile->writeByte(_shotGrinReaperCount);
 		outSaveFile->writeByte(_crystalsShot);
 		outSaveFile->writeUint32LE(_lastExtraLifeScore);
-		outSaveFile->finalize();
-		delete outSaveFile;
 		return true;
 	}
 	return false;
 }
 
-bool GameSpacePirates::loadState() {
-	Common::InSaveFile *inSaveFile;
-	Common::String saveFileName = _vm->getSaveStateName(0);
-	if (!(inSaveFile = g_system->getSavefileManager()->openForLoading(saveFileName))) {
-		debug("GameSpacePirates::loadState(): Can't load file '%s', game not loaded", saveFileName.c_str());
-		return false;
-	}
+bool GameSpacePirates::loadState(Common::InSaveFile *inSaveFile) {
 	uint32 header = inSaveFile->readUint32BE();
 	if (header != MKTAG('A', 'L', 'G', 'S')) {
 		warning("GameSpacePirates::loadState(): Unkown save file, header: %s", tag2str(header));
@@ -759,7 +745,6 @@ bool GameSpacePirates::loadState() {
 	_shotGrinReaperCount = inSaveFile->readByte();
 	_crystalsShot = inSaveFile->readByte();
 	_lastExtraLifeScore = inSaveFile->readUint32LE();
-	delete inSaveFile;
 	_gameLoaded = true;
 	_gameInProgress = true;
 	_livesLoaded = _lives;
@@ -925,13 +910,13 @@ void GameSpacePirates::rectShotMenu(Rect *rect) {
 }
 
 void GameSpacePirates::rectSave(Rect *rect) {
-	if (saveState()) {
+	if (_vm->saveGameState(0, "").getCode() == Common::kNoError) {
 		playSound(_saveSound);
 	}
 }
 
 void GameSpacePirates::rectLoad(Rect *rect) {
-	if (loadState()) {
+	if (_vm->loadGameState(0).getCode() == Common::kNoError) {
 		playSound(_loadSound);
 	}
 }

@@ -40,6 +40,8 @@ public:
 	virtual ~Game();
 	virtual void init();
 	virtual Common::Error run();
+	virtual bool saveState(Common::OutSaveFile *outSaveFile) = 0;
+	virtual bool loadState(Common::InSaveFile *inSaveFile) = 0;
 	bool debug_dumpLibFile();
 	bool _debug_drawRects = false;
 	bool _debug_godMode = false;

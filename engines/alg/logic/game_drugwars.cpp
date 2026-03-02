@@ -540,13 +540,7 @@ bool GameDrugWars::weaponDown() {
 	return false;
 }
 
-bool GameDrugWars::saveState() {
-	Common::OutSaveFile *outSaveFile;
-	Common::String saveFileName = _vm->getSaveStateName(0);
-	if (!(outSaveFile = g_system->getSavefileManager()->openForSaving(saveFileName))) {
-		warning("GameDrugWars::saveState(): Can't create file '%s', game not saved", saveFileName.c_str());
-		return false;
-	}
+bool GameDrugWars::saveState(Common::OutSaveFile *outSaveFile) {
 	outSaveFile->writeUint32BE(MKTAG('A', 'L', 'G', 'S')); // header
 	outSaveFile->writeByte(0);                             // version, unused for now
 	outSaveFile->writeSByte(_stage);
@@ -561,18 +555,10 @@ bool GameDrugWars::saveState() {
 	outSaveFile->writeByte(_difficulty);
 	outSaveFile->writeString(_curScene);
 	outSaveFile->writeByte(0);
-	outSaveFile->finalize();
-	delete outSaveFile;
 	return true;
 }
 
-bool GameDrugWars::loadState() {
-	Common::InSaveFile *inSaveFile;
-	Common::String saveFileName = _vm->getSaveStateName(0);
-	if (!(inSaveFile = g_system->getSavefileManager()->openForLoading(saveFileName))) {
-		debug("GameDrugWars::loadState(): Can't load file '%s', game not loaded", saveFileName.c_str());
-		return false;
-	}
+bool GameDrugWars::loadState(Common::InSaveFile *inSaveFile) {
 	uint32 header = inSaveFile->readUint32BE();
 	if (header != MKTAG('A', 'L', 'G', 'S')) {
 		warning("GameDrugWars::loadState(): Unkown save file, header: %s", tag2str(header));
@@ -590,7 +576,6 @@ bool GameDrugWars::loadState() {
 	_score = inSaveFile->readSint32LE();
 	_difficulty = inSaveFile->readByte();
 	_curScene = inSaveFile->readString();
-	delete inSaveFile;
 	_gameInProgress = true;
 	changeDifficulty(_difficulty);
 	return true;
@@ -708,13 +693,13 @@ void GameDrugWars::rectShotMenu(Rect *rect) {
 }
 
 void GameDrugWars::rectSave(Rect *rect) {
-	if (saveState()) {
+	if (_vm->saveGameState(0, "").getCode() == Common::kNoError) {
 		playSound(_saveSound);
 	}
 }
 
 void GameDrugWars::rectLoad(Rect *rect) {
-	if (loadState()) {
+	if (_vm->loadGameState(0).getCode() == Common::kNoError) {
 		playSound(_loadSound);
 	}
 }

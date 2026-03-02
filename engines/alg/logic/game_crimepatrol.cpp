@@ -597,13 +597,7 @@ bool GameCrimePatrol::weaponDown() {
 	return false;
 }
 
-bool GameCrimePatrol::saveState() {
-	Common::OutSaveFile *outSaveFile;
-	Common::String saveFileName = _vm->getSaveStateName(0);
-	if (!(outSaveFile = g_system->getSavefileManager()->openForSaving(saveFileName))) {
-		warning("GameCrimePatrol::saveState(): Can't create file '%s', game not saved", saveFileName.c_str());
-		return false;
-	}
+bool GameCrimePatrol::saveState(Common::OutSaveFile *outSaveFile) {
 	outSaveFile->writeUint32BE(MKTAG('A', 'L', 'G', 'S')); // header
 	outSaveFile->writeByte(0);                             // version, unused for now
 	outSaveFile->writeSByte(_stage);
@@ -613,18 +607,10 @@ bool GameCrimePatrol::saveState() {
 	outSaveFile->writeSint32LE(_score);
 	outSaveFile->writeUint16LE(_shots);
 	outSaveFile->writeSByte(_lives);
-	outSaveFile->finalize();
-	delete outSaveFile;
 	return true;
 }
 
-bool GameCrimePatrol::loadState() {
-	Common::InSaveFile *inSaveFile;
-	Common::String saveFileName = _vm->getSaveStateName(0);
-	if (!(inSaveFile = g_system->getSavefileManager()->openForLoading(saveFileName))) {
-		debug("GameCrimePatrol::loadState(): Can't load file '%s', game not loaded", saveFileName.c_str());
-		return false;
-	}
+bool GameCrimePatrol::loadState(Common::InSaveFile *inSaveFile) {
 	uint32 header = inSaveFile->readUint32BE();
 	if (header != MKTAG('A', 'L', 'G', 'S')) {
 		warning("GameCrimePatrol::loadState(): Unkown save file, header: %s", tag2str(header));
@@ -638,7 +624,6 @@ bool GameCrimePatrol::loadState() {
 	_score = inSaveFile->readSint32LE();
 	_shots = inSaveFile->readUint16LE();
 	_lives = inSaveFile->readSByte();
-	delete inSaveFile;
 	_gameInProgress = true;
 	sceneNxtscnGeneric(_stage);
 	return true;
@@ -791,13 +776,13 @@ void GameCrimePatrol::rectShotMenu(Rect *rect) {
 }
 
 void GameCrimePatrol::rectSave(Rect *rect) {
-	if (saveState()) {
+	if (_vm->saveGameState(0, "").getCode() == Common::kNoError) {
 		playSound(_saveSound);
 	}
 }
 
 void GameCrimePatrol::rectLoad(Rect *rect) {
-	if (loadState()) {
+	if (_vm->loadGameState(0).getCode() == Common::kNoError) {
 		playSound(_loadSound);
 	}
 }

@@ -664,13 +664,7 @@ bool GameJohnnyRock::weaponDown() {
 	return false;
 }
 
-bool GameJohnnyRock::saveState() {
-	Common::OutSaveFile *outSaveFile;
-	Common::String saveFileName = _vm->getSaveStateName(0);
-	if (!(outSaveFile = g_system->getSavefileManager()->openForSaving(saveFileName))) {
-		warning("GameJohnnyRock::saveState(): Can't create file '%s', game not saved", saveFileName.c_str());
-		return false;
-	}
+bool GameJohnnyRock::saveState(Common::OutSaveFile *outSaveFile) {
 	outSaveFile->writeUint32BE(MKTAG('A', 'L', 'G', 'S')); // header
 	outSaveFile->writeByte(0);                             // version, unused for now
 	outSaveFile->writeUint16LE(_totalDies);
@@ -736,18 +730,10 @@ bool GameJohnnyRock::saveState() {
 	outSaveFile->writeString(_retScene);
 	outSaveFile->writeByte(0);
 	outSaveFile->writeByte(_randomScenesSavestateIndex);
-	outSaveFile->finalize();
-	delete outSaveFile;
 	return true;
 }
 
-bool GameJohnnyRock::loadState() {
-	Common::InSaveFile *inSaveFile;
-	Common::String saveFileName = _vm->getSaveStateName(0);
-	if (!(inSaveFile = g_system->getSavefileManager()->openForLoading(saveFileName))) {
-		debug("GameJohnnyRock::loadState(): Can't load file '%s', game not loaded", saveFileName.c_str());
-		return false;
-	}
+bool GameJohnnyRock::loadState(Common::InSaveFile *inSaveFile) {
 	uint32 header = inSaveFile->readUint32BE();
 	if (header != MKTAG('A', 'L', 'G', 'S')) {
 		warning("GameJohnnyRock::loadState(): Unkown save file, header: %s", tag2str(header));
@@ -813,7 +799,6 @@ bool GameJohnnyRock::loadState() {
 	_subScene = inSaveFile->readString();
 	_retScene = inSaveFile->readString();
 	_randomScenesSavestateIndex = inSaveFile->readByte();
-	delete inSaveFile;
 	// find out where _random_scenes should point
 	uint16 placeIndex = _entranceIndex[_randomScenesSavestateIndex];
 	if (_randomScenesSavestateIndex < 5) {
@@ -1006,13 +991,13 @@ void GameJohnnyRock::rectShotMenu(Rect *rect) {
 }
 
 void GameJohnnyRock::rectSave(Rect *rect) {
-	if (saveState()) {
+	if (_vm->saveGameState(0, "").getCode() == Common::kNoError) {
 		playSound(_saveSound);
 	}
 }
 
 void GameJohnnyRock::rectLoad(Rect *rect) {
-	if (loadState()) {
+	if (_vm->loadGameState(0).getCode() == Common::kNoError) {
 		playSound(_loadSound);
 	}
 }

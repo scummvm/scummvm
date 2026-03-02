@@ -692,13 +692,7 @@ bool GameBountyHunter::weaponDown() {
 	return false;
 }
 
-bool GameBountyHunter::saveState() {
-	Common::OutSaveFile *outSaveFile;
-	Common::String saveFileName = _vm->getSaveStateName(0);
-	if (!(outSaveFile = g_system->getSavefileManager()->openForSaving(saveFileName))) {
-		warning("GameBountyHunter::saveState(): Can't create file '%s', game not saved", saveFileName.c_str());
-		return false;
-	}
+bool GameBountyHunter::saveState(Common::OutSaveFile *outSaveFile) {
 	outSaveFile->writeUint32BE(MKTAG('A', 'L', 'G', 'S')); // header
 	outSaveFile->writeByte(0);                             // version, unused for now
 	outSaveFile->writeByte(_currentLevel);
@@ -712,19 +706,11 @@ bool GameBountyHunter::saveState() {
 	}
 	outSaveFile->writeByte(_difficulty);
 	outSaveFile->writeByte(_numPlayers);
-	outSaveFile->finalize();
 	_restartScene = 0;
-	delete outSaveFile;
 	return true;
 }
 
-bool GameBountyHunter::loadState() {
-	Common::InSaveFile *inSaveFile;
-	Common::String saveFileName = _vm->getSaveStateName(0);
-	if (!(inSaveFile = g_system->getSavefileManager()->openForLoading(saveFileName))) {
-		debug("GameBountyHunter::loadState(): Can't load file '%s', game not loaded", saveFileName.c_str());
-		return false;
-	}
+bool GameBountyHunter::loadState(Common::InSaveFile *inSaveFile) {
 	uint32 header = inSaveFile->readUint32BE();
 	if (header != MKTAG('A', 'L', 'G', 'S')) {
 		warning("GameBountyHunter::loadState(): Unkown save file, header: %s", tag2str(header));
@@ -743,7 +729,6 @@ bool GameBountyHunter::loadState() {
 	_difficulty = inSaveFile->readByte();
 	_numPlayers = inSaveFile->readByte();
 	assert(_numPlayers <= 2);
-	delete inSaveFile;
 	return true;
 }
 
@@ -1054,15 +1039,14 @@ void GameBountyHunter::rectShotMenu(Rect *rect) {
 }
 
 void GameBountyHunter::rectSave(Rect *rect) {
-	if (saveState()) {
+	if (_vm->saveGameState(0, "").getCode() == Common::kNoError) {
 		playSound(_saveSound);
 	}
 }
 
 void GameBountyHunter::rectLoad(Rect *rect) {
-	if (loadState()) {
+	if (_vm->loadGameState(0).getCode() == Common::kNoError) {
 		playSound(_loadSound);
-		_restartScene = 0;
 	}
 }
 

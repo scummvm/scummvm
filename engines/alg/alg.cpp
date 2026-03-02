@@ -20,6 +20,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/savefile.h"
 #include "engines/util.h"
 
 #include "alg/alg.h"
@@ -96,9 +97,41 @@ Common::Error AlgEngine::run() {
 	return _game->run();
 }
 
+Common::Error AlgEngine::loadGameState(int slot) {
+	Common::InSaveFile *inSaveFile = _saveFileMan->openForLoading(getSaveStateName(0));
+
+	Common::Error result = _game->loadState(inSaveFile) ? Common::kNoError : Common::kReadingFailed;
+
+	delete inSaveFile;
+	return result;
+}
+
+bool AlgEngine::canLoadGameStateCurrently(Common::U32String *msg) {
+	return true;
+}
+
+Common::Error AlgEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	Common::OutSaveFile *outSaveFile = _saveFileMan->openForSaving(getSaveStateName(0));
+
+	if (!outSaveFile) {
+		return Common::kWritingFailed;
+	}
+
+	Common::Error result = _game->saveState(outSaveFile) ? Common::kNoError : Common::kWritingFailed;
+	if (result.getCode() == Common::kNoError) {
+		getMetaEngine()->appendExtendedSave(outSaveFile, getTotalPlayTime(), desc, isAutosave);
+	}
+
+	delete outSaveFile;
+	return result;
+}
+
+bool AlgEngine::canSaveGameStateCurrently(Common::U32String *msg) {
+	return true;
+}
+
 bool AlgEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsReturnToLauncher) ||
-		   (f == kSupportsLoadingDuringRuntime) ||
+	return (f == kSupportsLoadingDuringRuntime) ||
 		   (f == kSupportsSavingDuringRuntime);
 }
 

@@ -63,8 +63,7 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override {
-		return
-			(f == kSimpleSavesNames);
+		return checkExtendedSaves(f);
 	}
 	
 	Common::Error createInstance(OSystem *syst, Engine **engine, const Alg::AlgGameDescription *gd) const override;
