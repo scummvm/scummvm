@@ -321,7 +321,14 @@ void ColonyEngine::drawDashboardMac() {
 
 		// Select correct PICT based on armor/trouble state
 		// power.c: !armor && FindDepth()>=8 → -32761 (color); FindDepth()<8 → -32752 (B&W)
-		auto qlog = [](int32 x) -> int { int i = 0; while (x > 0) { x >>= 1; i++; } return i; };
+		auto qlog = [](int32 x) -> int {
+			int i = 0;
+			while (x > 0) {
+				x >>= 1;
+				i++;
+			}
+			return i;
+		};
 		const int ePower[3] = { qlog(_corePower[0]), qlog(_corePower[1]), qlog(_corePower[2]) };
 		const bool trouble = (ePower[1] < 6);
 		int wantPictID;
@@ -332,7 +339,11 @@ void ColonyEngine::drawDashboardMac() {
 
 		// Reload PICT if state changed (fall back to -32755 if variant missing)
 		if (_pictPowerID != wantPictID) {
-			if (_pictPower) { _pictPower->free(); delete _pictPower; _pictPower = nullptr; }
+			if (_pictPower) {
+				_pictPower->free();
+				delete _pictPower;
+				_pictPower = nullptr;
+			}
 			_pictPower = loadPictSurface(wantPictID);
 			if (!_pictPower && wantPictID != -32755)
 				_pictPower = loadPictSurface(-32755);
@@ -674,7 +685,11 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 		if (yind2 > pobject->yindex) {
 			if (!(_wall[pobject->xindex][yind2] & 1))
 				return moveTo();
-			{ int r = tryFeature(kDirNorth); if (r != -2) return r; }
+			{
+				int r = tryFeature(kDirNorth);
+				if (r != -2)
+					return r;
+			}
 			debug("Collision South at x=%d y=%d", pobject->xindex, yind2);
 			_sound->play(Sound::kBang);
 			return -1;
@@ -683,7 +698,11 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 
 		if (!(_wall[pobject->xindex][pobject->yindex] & 1))
 			return moveTo();
-		{ int r = tryFeature(kDirSouth); if (r != -2) return r; }
+		{
+			int r = tryFeature(kDirSouth);
+			if (r != -2)
+				return r;
+		}
 		debug("Collision North at x=%d y=%d", pobject->xindex, pobject->yindex);
 		_sound->play(Sound::kBang);
 		return -1;
@@ -694,7 +713,11 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 		if (xind2 > pobject->xindex) {
 			if (!(_wall[xind2][pobject->yindex] & 2))
 				return moveTo();
-			{ int r = tryFeature(kDirEast); if (r != -2) return r; }
+			{
+				int r = tryFeature(kDirEast);
+				if (r != -2)
+					return r;
+			}
 			debug("Collision East at x=%d y=%d", xind2, pobject->yindex);
 			_sound->play(Sound::kBang);
 			return -1;
@@ -703,7 +726,11 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 
 		if (!(_wall[pobject->xindex][pobject->yindex] & 2))
 			return moveTo();
-		{ int r = tryFeature(kDirWest); if (r != -2) return r; }
+		{
+			int r = tryFeature(kDirWest);
+			if (r != -2)
+				return r;
+		}
 		debug("Collision West at x=%d y=%d", pobject->xindex, pobject->yindex);
 		_sound->play(Sound::kBang);
 		return -1;

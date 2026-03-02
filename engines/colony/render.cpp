@@ -1383,7 +1383,8 @@ void ColonyEngine::draw3DPrism(const Thing &obj, const PrismPartDef &def, bool u
 					// matches fill (invisible). Others: black outline.
 					uint32 outlineColor = (pattern == 4) ? fg : (uint32)0xFF000000;
 					_gfx->draw3DPolygon(px, py, pz, count, outlineColor);
-					if (stipple) _gfx->setStippleData(nullptr);
+					if (stipple)
+					_gfx->setStippleData(nullptr);
 				}
 			} else if (lit) {
 				if (_renderMode == Common::kRenderMacintosh) {
@@ -1540,7 +1541,8 @@ void ColonyEngine::draw3DSphere(const Thing &obj, int pt0x, int pt0y, int pt0z,
 		}
 		const byte *stipple = setupMacPattern(_gfx, pattern, fg, bg);
 		_gfx->draw3DPolygon(px, py, pz, N, fg);
-		if (stipple) _gfx->setStippleData(nullptr);
+		if (stipple)
+			_gfx->setStippleData(nullptr);
 	} else if (lit) {
 		if (_renderMode == Common::kRenderMacintosh) {
 			int pattern = (fillColor == 15) ? kPatternWhite : kPatternGray;
@@ -1850,7 +1852,8 @@ void ColonyEngine::drawCellFeature3D(int cellX, int cellY) {
 			int pat = _macColors[macIdx].pattern;
 			const byte *stipple = setupMacPattern(_gfx, pat, fg, bg);
 			wallPolygon(corners, u, v, cnt, fg);
-			if (stipple) _gfx->setStippleData(nullptr);
+			if (stipple)
+			_gfx->setStippleData(nullptr);
 		} else if (macMode) {
 			_gfx->setStippleData(kStippleGray);
 			wallPolygon(corners, u, v, cnt, 0);
@@ -1904,10 +1907,22 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 	// This prevents backside decorations (like Level 2 lines) from bleeding through.
 	// We use non-inclusive comparisons so features remain visible while standing on the boundary.
 	switch (direction) {
-	case kDirNorth: if (_me.yloc > (cellY + 1) * 256) return; break;
-	case kDirSouth: if (_me.yloc < cellY * 256) return;       break;
-	case kDirWest:  if (_me.xloc < cellX * 256) return;       break;
-	case kDirEast:  if (_me.xloc > (cellX + 1) * 256) return; break;
+	case kDirNorth:
+		if (_me.yloc > (cellY + 1) * 256)
+			return;
+		break;
+	case kDirSouth:
+		if (_me.yloc < cellY * 256)
+			return;
+		break;
+	case kDirWest:
+		if (_me.xloc < cellX * 256)
+			return;
+		break;
+	case kDirEast:
+		if (_me.xloc > (cellX + 1) * 256)
+			return;
+		break;
 	default: break;
 	}
 	
@@ -1924,7 +1939,8 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		uint32 bg = packMacColor(_macColors[macIdx].bg);
 		const byte *stipple = setupMacPattern(_gfx, _macColors[macIdx].pattern, fg, bg);
 		wallPolygon(corners, u, v, cnt, fg);
-		if (stipple) _gfx->setStippleData(nullptr);
+		if (stipple)
+			_gfx->setStippleData(nullptr);
 	};
 
 	switch (map[0]) {

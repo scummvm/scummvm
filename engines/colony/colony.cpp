@@ -296,9 +296,18 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 
 ColonyEngine::~ColonyEngine() {
 	deleteAnimation();
-	if (_pictPower) { _pictPower->free(); delete _pictPower; }
-	if (_pictPowerNoArmor) { _pictPowerNoArmor->free(); delete _pictPowerNoArmor; }
-	if (_pictCompass) { _pictCompass->free(); delete _pictCompass; }
+	if (_pictPower) {
+		_pictPower->free();
+		delete _pictPower;
+	}
+	if (_pictPowerNoArmor) {
+		_pictPowerNoArmor->free();
+		delete _pictPowerNoArmor;
+	}
+	if (_pictCompass) {
+		_pictCompass->free();
+		delete _pictCompass;
+	}
 	delete _frameLimiter;
 	delete _gfx;
 	delete _sound;
@@ -657,7 +666,8 @@ void ColonyEngine::loadMacColors() {
 			delete f;
 		}
 	}
-	if (!file) return;
+	if (!file)
+		return;
 
 	uint32 vers = file->readUint32BE(); // Should be 'v1.0' = 0x76312E30
 	(void)vers; // Ignore
@@ -1349,7 +1359,11 @@ bool ColonyEngine::scrollInfo(const Graphics::Font *macFont) {
 	bool qt = false;
 
 	for (int scrollOff = _height; scrollOff > 0 && !qt; scrollOff -= inc) {
-		if (checkSkipRequested()) { qt = true; _sound->stop(); break; }
+		if (checkSkipRequested()) {
+			qt = true;
+			_sound->stop();
+			break;
+		}
 
 		_gfx->clear(_gfx->black());
 		for (int i = 0; i < storyLength; i++) {
@@ -1379,7 +1393,11 @@ bool ColonyEngine::scrollInfo(const Graphics::Font *macFont) {
 	// Original: scrollRect continues moving up, text slides upward
 	if (!qt) {
 		for (int scrollOff = 0; scrollOff > -_height && !qt; scrollOff -= inc) {
-			if (checkSkipRequested()) { qt = true; _sound->stop(); break; }
+			if (checkSkipRequested()) {
+			qt = true;
+			_sound->stop();
+			break;
+		}
 
 			_gfx->clear(_gfx->black());
 			for (int i = 0; i < storyLength; i++) {
@@ -1448,7 +1466,8 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 		ysave1[i] = centerY + (int)(((long long)c * rr) >> 7);
 
 		int d2 = d - deltapd;
-		if (d2 < 1) d2 = 1;
+		if (d2 < 1)
+			d2 = 1;
 		rr = rtable[d2];
 		xsave2[i] = centerX + (int)(((long long)s * rr) >> 7);
 		ysave2[i] = centerY + (int)(((long long)c * rr) >> 7);
@@ -1459,7 +1478,10 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 
 	// Animate: original loops ~200 frames or until Mars sound repeats 2x
 	for (int k = 0; k < 120; k++) {
-		if (checkSkipRequested()) { _gfx->setXorMode(false); return true; }
+		if (checkSkipRequested()) {
+			_gfx->setXorMode(false);
+			return true;
+		}
 
 		for (int i = 0; i < NSTARS; i++) {
 			// Erase previous — XOR the same line again to restore underlying pixels
@@ -1495,7 +1517,10 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 	int nstars = 2 * ((MAXSTAR - 0x030) / deltapd);
 	if (nstars > 200) nstars = 200;
 	for (int k = 0; k < nstars; k++) {
-		if (checkSkipRequested()) { _gfx->setXorMode(false); return true; }
+		if (checkSkipRequested()) {
+			_gfx->setXorMode(false);
+			return true;
+		}
 
 		for (int i = 0; i < NSTARS; i++) {
 			int d = dist[i];
@@ -1507,7 +1532,8 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 			if (d >= 1 && d <= MAXSTAR) {
 				int rr1 = rtable[d];
 				int d2 = d - deltapd;
-				if (d2 < 1) d2 = 1;
+				if (d2 < 1)
+			d2 = 1;
 				int rr2 = rtable[d2];
 				int x1 = centerX + (int)(((long long)s * rr1) >> 7);
 				int y1 = centerY + (int)(((long long)c * rr1) >> 7);
@@ -1727,10 +1753,12 @@ bool ColonyEngine::drawPict(int resID) {
 			// Draw PICT pixels using direct RGB (packRGB) for full color support.
 			for (int iy = 0; iy < surface->h; iy++) {
 				int sy = y + iy;
-				if (sy < clipY1 || sy >= clipY2) continue;
+				if (sy < clipY1 || sy >= clipY2)
+					continue;
 				for (int ix = 0; ix < surface->w; ix++) {
 					int sx = x + ix;
-					if (sx < clipX1 || sx >= clipX2) continue;
+					if (sx < clipX1 || sx >= clipX2)
+						continue;
 					byte r, g, b;
 					if (isCLUT8) {
 						byte idx = *((const byte *)surface->getBasePtr(ix, iy));
