@@ -291,8 +291,8 @@ bool Sound::playMacSound(int soundID) {
 		return true;
 
 	// Fallback resource IDs for sounds missing from this binary version.
-	// MARS (23390) not in Zounds or Colony — use MARS2 (32291) from Zounds.
-	// BEAMME (5342) not in Zounds or Colony — use 32015 from Zounds.
+	// MARS (23390) not in Zounds or Colony  use MARS2 (32291) from Zounds.
+	// BEAMME (5342) not in Zounds or Colony  use 32015 from Zounds.
 	int altResID = -1;
 	switch (soundID) {
 	case kMars: altResID = 32291; break;   // MARS2

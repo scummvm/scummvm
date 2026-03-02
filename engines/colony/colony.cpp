@@ -65,7 +65,7 @@ enum {
 	kMacGreen = 341, kMacBlue = 409
 };
 
-// BMColor arrays from ganimate.c — per-animation color maps.
+// BMColor arrays from ganimate.c  per-animation color maps.
 // Index 0 = background top, 1 = background image, 2+ = per-sprite fill.
 // Positive = cColor[] index, negative = -MacSystemColor, 0 = level-based.
 static const int16 kBMC_Desk[] = {
@@ -402,7 +402,7 @@ void ColonyEngine::loadMap(int mnum) {
 }
 
 // PATCH.C: Create a new object in _objects and register in _robotArray.
-// Mirrors DOS CreateObject() — sets basic Thing fields for static objects.
+// Mirrors DOS CreateObject()  sets basic Thing fields for static objects.
 void ColonyEngine::createObject(int type, int xloc, int yloc, uint8 ang) {
 	Thing obj;
 	memset(&obj, 0, sizeof(obj));
@@ -441,7 +441,7 @@ void ColonyEngine::createObject(int type, int xloc, int yloc, uint8 ang) {
 		_robotNum = slot + 1;
 }
 
-// PATCH.C: DoPatch() — remove originals and install relocated objects.
+// PATCH.C: DoPatch()  remove originals and install relocated objects.
 void ColonyEngine::doPatch() {
 	// Pass 1: remove objects that were moved away from this level
 	for (uint i = 0; i < _patches.size(); i++) {
@@ -465,7 +465,7 @@ void ColonyEngine::doPatch() {
 	}
 }
 
-// PATCH.C: savewall() — save 5 bytes of map feature data for persistence across level loads.
+// PATCH.C: savewall()  save 5 bytes of map feature data for persistence across level loads.
 void ColonyEngine::saveWall(int x, int y, int direction) {
 	if (_level < 1 || _level > 8)
 		return;
@@ -493,7 +493,7 @@ void ColonyEngine::saveWall(int x, int y, int direction) {
 	ld.size++;
 }
 
-// PATCH.C: getwall() — restore saved wall bytes into _mapData after level load.
+// PATCH.C: getwall()  restore saved wall bytes into _mapData after level load.
 void ColonyEngine::getWall() {
 	if (_level < 1 || _level > 8)
 		return;
@@ -509,7 +509,7 @@ void ColonyEngine::getWall() {
 	}
 }
 
-// PATCH.C: newpatch() — create or update a patch entry.
+// PATCH.C: newpatch()  create or update a patch entry.
 void ColonyEngine::newPatch(int type, const PassPatch &from, const PassPatch &to, const uint8 *mapdata) {
 	// Search for existing patch where 'from' matches an existing 'to'
 	for (uint i = 0; i < _patches.size(); i++) {
@@ -548,7 +548,7 @@ void ColonyEngine::newPatch(int type, const PassPatch &from, const PassPatch &to
 	_patches.push_back(pe);
 }
 
-// PATCH.C: patchmapto() — find patch entry by destination, fill mapdata.
+// PATCH.C: patchmapto()  find patch entry by destination, fill mapdata.
 bool ColonyEngine::patchMapTo(const PassPatch &to, uint8 *mapdata) {
 	for (uint i = 0; i < _patches.size(); i++) {
 		if (to.level == _patches[i].to.level &&
@@ -562,7 +562,7 @@ bool ColonyEngine::patchMapTo(const PassPatch &to, uint8 *mapdata) {
 	return false;
 }
 
-// PATCH.C: patchmapfrom() — find patch entry by source, fill destination into mapdata.
+// PATCH.C: patchmapfrom()  find patch entry by source, fill destination into mapdata.
 bool ColonyEngine::patchMapFrom(const PassPatch &from, uint8 *mapdata) {
 	for (uint i = 0; i < _patches.size(); i++) {
 		if (from.level == _patches[i].from.level &&
@@ -577,7 +577,7 @@ bool ColonyEngine::patchMapFrom(const PassPatch &from, uint8 *mapdata) {
 	return false;
 }
 
-// DOS InitObject() — spawn robots for the current level.
+// DOS InitObject()  spawn robots for the current level.
 // Level 1 = no robots; Level 2 = 25; Level 3-4 = 30; Level 5-7 = 35.
 // Robot #1 = QUEEN, #2 = SNOOP, rest = random type weighted by level.
 void ColonyEngine::initRobots() {
@@ -779,7 +779,7 @@ void ColonyEngine::initMacMenus() {
 		{1, "Save As...",                   kMenuActionSaveAs, 0, true},
 		{1, nullptr,                        0, 0, false},   // separator
 		{1, "Quit",                         kMenuActionQuit, 'Q', true},
-		// Edit submenu (index 2, disabled — original Mac had these but non-functional)
+		// Edit submenu (index 2, disabled  original Mac had these but non-functional)
 		{2, "Undo",                         0, 'Z', false},
 		{2, nullptr,                        0, 0, false},
 		{2, "Cut",                          0, 'X', false},
@@ -1188,7 +1188,7 @@ void ColonyEngine::playIntro() {
 		}
 
 		// Original: intro() in intro.c, lines 40-119
-		// qt flag propagates through sections — only modifier+click sets it
+		// qt flag propagates through sections  only modifier+click sets it
 		bool qt = false;
 
 		// 1. ScrollInfo() - scrolling story text with BeamMe sound
@@ -1199,7 +1199,7 @@ void ColonyEngine::playIntro() {
 		while (!qt && !shouldQuit() && _sound->isPlaying())
 			_system->delayMillis(10);
 
-		// Original: if(Button()) qt=OptionKey(); — check for skip
+		// Original: if(Button()) qt=OptionKey();  check for skip
 		if (!qt)
 			qt = checkSkipRequested();
 
@@ -1262,7 +1262,7 @@ void ColonyEngine::playIntro() {
 			}
 		}
 
-		// 11. Final crash — always runs (even if qt)
+		// 11. Final crash  always runs (even if qt)
 		// Original: FillRect black; if(!qt) while(!SoundDone());
 		_gfx->clear(_gfx->black());
 		_gfx->copyToScreen();
@@ -1413,7 +1413,7 @@ bool ColonyEngine::scrollInfo(const Graphics::Font *macFont) {
 		}
 	}
 
-	// Original does NOT stop the sound here — BeamMe continues playing
+	// Original does NOT stop the sound here  BeamMe continues playing
 	// and intro() waits for it with while(!SoundDone()) after ScrollInfo returns.
 	// Only stop if skipping (qt already stops in the modifier+click handlers above).
 	_gfx->clear(_gfx->black());
@@ -1450,7 +1450,7 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 			_gfx->setPixel(xx, yy, 15);
 	}
 
-	// Initialize moving stars — original uses PenMode(patXor) so stars
+	// Initialize moving stars  original uses PenMode(patXor) so stars
 	// don't damage the logo underneath (XOR drawing the same line twice
 	// restores the original pixels).
 	int xang[NSTARS], yang[NSTARS], dist[NSTARS];
@@ -1487,7 +1487,7 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 		}
 
 		for (int i = 0; i < NSTARS; i++) {
-			// Erase previous — XOR the same line again to restore underlying pixels
+			// Erase previous  XOR the same line again to restore underlying pixels
 			_gfx->drawLine(xsave1[i], ysave1[i], xsave2[i], ysave2[i], 15);
 
 			int s = xang[i];
@@ -1678,7 +1678,7 @@ bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *m
 		_system->delayMillis(8);
 	}
 
-	// Phase 2: Klaxon flash — original: EndCSound(); then 6 iterations of:
+	// Phase 2: Klaxon flash  original: EndCSound(); then 6 iterations of:
 	//   if(Button()) if(qt=OptionKey()) break;
 	//   while(!SoundDone()); StopSound(); PlayKlaxon(); InvertRect(&invrt);
 	_sound->stop(); // EndCSound()
@@ -1692,7 +1692,7 @@ bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *m
 
 		_sound->play(Sound::kKlaxon);
 
-		// InvertRect(&invrt) — toggle the text band
+		// InvertRect(&invrt)  toggle the text band
 		_gfx->fillRect(Common::Rect(0, centery + 1, _width, centery + 16), i % 2 ? 0 : 15);
 		_gfx->drawString(font, str, targetX, centery + 2, i % 2 ? 15 : 0, Graphics::kTextAlignLeft);
 		_gfx->copyToScreen();
@@ -2744,7 +2744,7 @@ void ColonyEngine::handleAnimationClick(int item) {
 				_animationRunning = false;
 			}
 		} else {
-			// Phase 2: inside — floor selection
+			// Phase 2: inside  floor selection
 			if (item >= 6 && item <= 10) {
 				int fl = item - 5;
 				if (fl == _elevatorFloor) {

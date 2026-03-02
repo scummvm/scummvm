@@ -36,8 +36,8 @@ static const int g_indexTable[4][10] = {
 	{0, 0,  0, 1,  1,  0,  0, -1,  2, 1}
 };
 
-// DOS lsColor table from ROBOCOLR.C — maps color index to rendering attributes.
-// Fields: monochrome (MONOCHROME — Mac B&W dither pattern, matches MacPattern enum),
+// DOS lsColor table from ROBOCOLR.C  maps color index to rendering attributes.
+// Fields: monochrome (MONOCHROME  Mac B&W dither pattern, matches MacPattern enum),
 //         backColor (BACKCOLOR), fillColor (FILLCOLOR), lineFillColor (LINEFILLCOLOR),
 //         lineColor (LINECOLOR), pattern (PATTERN).
 // DrawPrism uses: polyfill ON → fill with fillColor/backColor/pattern, outline with lineFillColor.
@@ -213,17 +213,6 @@ static int lookupMacPattern(int colorIdx) {
 	return lookupDOSColor(colorIdx).monochrome;
 }
 
-// Map DOS EGA pattern value → GL stipple data for dithered fills.
-// Pattern 1 = solid fill (no stipple). Patterns 3-5 = mixed FILLCOLOR/BACKCOLOR.
-static const byte *dosPatternStipple(int pattern) {
-	switch (pattern) {
-	case 3: return kStippleGray;   // 50% dither
-	case 4: return kStippleDkGray; // 75% foreground
-	case 5: return kStippleLtGray; // 25% foreground
-	default: return nullptr;       // solid (pattern 1) or unknown
-	}
-}
-
 // Pack Mac 16-bit RGB into 32-bit ARGB with 0xFF000000 marker for direct RGB.
 static uint32 packMacColor(const uint16 rgb[3]) {
 	return 0xFF000000 | ((rgb[0] >> 8) << 16) | ((rgb[1] >> 8) << 8) | (rgb[2] >> 8);
@@ -294,7 +283,7 @@ static int mapObjColorToMacColor(int colorIdx) {
 
 // Helper: set up Mac color stipple rendering for a given cColor[] pattern.
 // Configures setMacColors/setStippleData/setWireframe for the pattern type.
-// Returns the stipple pointer (null for solid patterns) — caller must clear with setStippleData(nullptr).
+// Returns the stipple pointer (null for solid patterns)  caller must clear with setStippleData(nullptr).
 static const byte *setupMacPattern(Renderer *gfx, int pattern, uint32 fg, uint32 bg) {
 	const byte *stipple = (pattern >= 1 && pattern <= 3) ? kMacStippleData[pattern] : nullptr;
 	if (stipple) {
@@ -1405,7 +1394,7 @@ void ColonyEngine::draw3DPrism(const Thing &obj, const PrismPartDef &def, bool u
 					const DOSColorEntry &dc = lookupDOSColor(colorIdx);
 					if (!_wireframe) {
 						// Polyfill mode: B&W fill + colored LINECOLOR outline.
-						// LINECOLOR (not LINEFILLCOLOR) — has proper contrast against B&W fills.
+						// LINECOLOR (not LINEFILLCOLOR)  has proper contrast against B&W fills.
 						if (dc.monochrome == kPatternClear)
 							continue;
 						_gfx->setWireframe(true, 7); // all surfaces white; colored outlines provide distinction
@@ -1584,7 +1573,7 @@ void ColonyEngine::computeVisibleCells() {
 	};
 
 	// BFS from player cell, stopping at walls AND wall features.
-	// This limits visibility to the current "room" — doors, shelves, etc.
+	// This limits visibility to the current "room"  doors, shelves, etc.
 	// act as solid barriers even if the cells are connected via open paths.
 	_visibleCell[px][py] = true;
 	int queueX[1024], queueY[1024];
@@ -1763,7 +1752,7 @@ void ColonyEngine::wallChar(const float corners[4][3], uint8 cnum) {
 		// Mac drawchar(): sets cc=c_char0+level-1, fg=black, pattern=WHITE.
 		// SuperPoly fills with BACKGROUND color = cColor[cc].b.
 		// B&W: bg=black. Color: bg=c_char0.bg (e.g., yellow for level 1).
-		// Arrow shapes are concave — GL_POLYGON only handles convex polys.
+		// Arrow shapes are concave  GL_POLYGON only handles convex polys.
 		// Decompose into convex parts: triangle head + rectangle shaft.
 		if (_renderMode == Common::kRenderMacintosh) {
 			uint32 fillColor;
@@ -2079,7 +2068,7 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		break;
 	}
 	case kWallFeatureUpStairs: {
-		// DOS: draw_up_stairs — staircase ascending into the wall with perspective
+		// DOS: draw_up_stairs  staircase ascending into the wall with perspective
 		const uint32 col = macColors ? (uint32)0xFF000000 : 0; // vBLACK
 
 		// Mac: fill entire wall face (c_upstairs)
@@ -2156,7 +2145,7 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		break;
 	}
 	case kWallFeatureDnStairs: {
-		// DOS: draw_dn_stairs — staircase descending into the wall with perspective
+		// DOS: draw_dn_stairs  staircase descending into the wall with perspective
 		const uint32 col = macColors ? (uint32)0xFF000000 : 0; // vBLACK
 
 		// Mac: fill entire wall face (c_dnstairs)
@@ -2456,7 +2445,7 @@ void ColonyEngine::renderCorridor3D() {
 	uint32 wallColor = wallLine;
 
 	// --- Phase 1: Background (floor + ceiling) ---
-	// No depth test or write — these are pure background, everything overwrites them.
+	// No depth test or write  these are pure background, everything overwrites them.
 	_gfx->setDepthState(false, false);
 
 	// Draw large floor and ceiling quads.
@@ -2508,13 +2497,13 @@ void ColonyEngine::renderCorridor3D() {
 	}
 
 	// --- Phase 3: Wall & cell features ---
-	// Closer depth range than walls — features always beat their own wall surface.
+	// Closer depth range than walls  features always beat their own wall surface.
 	// Depth test still active so far-away features are hidden behind nearer walls.
 	_gfx->setDepthRange(0.005, 1.0);
 	drawWallFeatures3D();
 
 	// --- Phase 4: Objects ---
-	// Full depth range — objects beat walls and features at the same distance.
+	// Full depth range  objects beat walls and features at the same distance.
 	_gfx->setDepthRange(0.0, 1.0);
 
 	// F7 toggles object fill.
@@ -2650,7 +2639,7 @@ bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj) {
 		draw3DPrism(obj, kCryoParts[0], false); // top second
 		break;
 	case kObjProjector:
-		// Projector sits on table — draw table first, then projector parts
+		// Projector sits on table  draw table first, then projector parts
 		_gfx->setDepthRange(0.008, 1.0);
 		draw3DPrism(obj, kTableParts[0], false); // table base
 		_gfx->setDepthRange(0.006, 1.0);
