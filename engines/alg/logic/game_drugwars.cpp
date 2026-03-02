@@ -219,29 +219,29 @@ void GameDrugWars::verifyScriptFunctions() {
 }
 
 void GameDrugWars::unregisterScriptFunctions() {
-	for (auto func : _rectHitFuncs) {
-		delete &func;
+	for (auto &func : _rectHitFuncs) {
+		delete func._value;
 	}
-	for (auto func : _scenePreOps) {
-		delete &func;
+	for (auto &func : _scenePreOps) {
+		delete func._value;
 	}
-	for (auto func : _sceneShowMsg) {
-		delete &func;
+	for (auto &func : _sceneShowMsg) {
+		delete func._value;
 	}
-	for (auto func : _sceneInsOps) {
-		delete &func;
+	for (auto &func : _sceneInsOps) {
+		delete func._value;
 	}
-	for (auto func : _sceneWepDwn) {
-		delete &func;
+	for (auto &func : _sceneWepDwn) {
+		delete func._value;
 	}
-	for (auto func : _sceneScnScr) {
-		delete &func;
+	for (auto &func : _sceneScnScr) {
+		delete func._value;
 	}
-	for (auto func : _sceneNxtFrm) {
-		delete &func;
+	for (auto &func : _sceneNxtFrm) {
+		delete func._value;
 	}
-	for (auto func : _sceneNxtScn) {
-		delete &func;
+	for (auto &func : _sceneNxtScn) {
+		delete func._value;
 	}
 	_rectHitFuncs.clear();
 	_scenePreOps.clear();
