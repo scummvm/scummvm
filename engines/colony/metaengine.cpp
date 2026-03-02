@@ -24,6 +24,9 @@
 #include "common/system.h"
 #include "common/translation.h"
 #include "common/config-manager.h"
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/standard-actions.h"
 
 namespace Colony {
 
@@ -57,7 +60,102 @@ public:
 		*engine = new ColonyEngine(syst, gd);
 		return Common::kNoError;
 	}
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
+
+Common::KeymapArray ColonyMetaEngine::initKeymaps(const char *target) const {
+	Common::Keymap *engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "colony", "The Colony");
+	Common::Action *act;
+
+	act = new Common::Action(Common::kStandardActionMoveUp, _("Move forward"));
+	act->setCustomEngineActionEvent(kActionMoveForward);
+	act->addDefaultInputMapping("UP");
+	act->addDefaultInputMapping("w");
+	act->addDefaultInputMapping("JOY_UP");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action(Common::kStandardActionMoveDown, _("Move backward"));
+	act->setCustomEngineActionEvent(kActionMoveBackward);
+	act->addDefaultInputMapping("DOWN");
+	act->addDefaultInputMapping("s");
+	act->addDefaultInputMapping("JOY_DOWN");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action(Common::kStandardActionMoveLeft, _("Strafe left"));
+	act->setCustomEngineActionEvent(kActionStrafeLeft);
+	act->addDefaultInputMapping("LEFT");
+	act->addDefaultInputMapping("a");
+	act->addDefaultInputMapping("JOY_LEFT");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action(Common::kStandardActionMoveRight, _("Strafe right"));
+	act->setCustomEngineActionEvent(kActionStrafeRight);
+	act->addDefaultInputMapping("RIGHT");
+	act->addDefaultInputMapping("d");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("ROTL", _("Rotate left"));
+	act->setCustomEngineActionEvent(kActionRotateLeft);
+	act->addDefaultInputMapping("q");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("ROTR", _("Rotate right"));
+	act->setCustomEngineActionEvent(kActionRotateRight);
+	act->addDefaultInputMapping("e");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("LOOKL", _("Look left"));
+	act->setCustomEngineActionEvent(kActionLookLeft);
+	act->addDefaultInputMapping("z");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("LOOKR", _("Look right"));
+	act->setCustomEngineActionEvent(kActionLookRight);
+	act->addDefaultInputMapping("c");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("LOOKB", _("Look behind"));
+	act->setCustomEngineActionEvent(kActionLookBehind);
+	act->addDefaultInputMapping("x");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("MOUSE", _("Toggle mouselook"));
+	act->setCustomEngineActionEvent(kActionToggleMouselook);
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("DASH", _("Toggle dashboard"));
+	act->setCustomEngineActionEvent(kActionToggleDashboard);
+	act->addDefaultInputMapping("F7");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("WIRE", _("Toggle wireframe"));
+	act->setCustomEngineActionEvent(kActionToggleWireframe);
+	act->addDefaultInputMapping("F8");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("FULL", _("Toggle fullscreen"));
+	act->setCustomEngineActionEvent(kActionToggleFullscreen);
+	act->addDefaultInputMapping("F11");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("SKIP", _("Skip intro"));
+	act->setCustomEngineActionEvent(kActionSkipIntro);
+	act->addDefaultInputMapping("S+s");
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("ESCAPE", _("Menu"));
+	act->setCustomEngineActionEvent(kActionEscape);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_BACK");
+	engineKeyMap->addAction(act);
+
+	return Common::Keymap::arrayOf(engineKeyMap);
+}
 
 } // End of namespace Colony
 
