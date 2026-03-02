@@ -3,6 +3,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2026.1.1 (2026-XX-XX)
 
+ New games:
+   - Added support for Necronomicon: The Dawning of Darkness.
+
  General:
    - Improved PC-Speaker emulation.
    - Implemented multiselect in the GUI launcher games list.
