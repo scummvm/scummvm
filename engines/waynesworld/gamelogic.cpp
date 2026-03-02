@@ -916,26 +916,19 @@ void GameLogic::handleRoomEvent(int eventNum) {
         r20_handleRoomEvent();
         break;
 	case 24:
-		switch (eventNum) {
-		case 1:
+		if (eventNum == 1) {
 			r24_handleRoomEvent(92, 72, -43, 90, 38, 0);
 			_vm->drawActors(0, 1, 1, 0, 65, 136, 145, 136);
-			break;
-		default:
+		} else {
 			r24_handleRoomEvent(203, 183, -43, 90, 38, 1);
 			_vm->drawActors(0, 1, 1, 0, 167, 136, 250, 136);
-			break;
 		}
 		break;
 	case 28:
-        switch (eventNum) {
-        case 1:
+		if (eventNum == 1)
             r28_handleRoomEvent1();
-            break;
-        default:
-            r28_handleRoomEvent2();
-            break;
-        }
+		else
+    		r28_handleRoomEvent2();
         break;
     case 29:
         r29_handleRoomEvent();
@@ -948,6 +941,8 @@ void GameLogic::handleRoomEvent(int eventNum) {
         case 2:
             r30_handleRoomEvent2();
             break;
+        default:
+			break;
         }
         break;
     case 31:
@@ -1309,7 +1304,7 @@ int GameLogic::r0_handleVerbUse() {
 }
 
 int GameLogic::r0_handleVerbOpen() {
-	int actionTextIndex = -1;
+	int actionTextIndex;
 	switch (_vm->_objectNumber) {
 	case kObjectIdStairs0:
 	case kObjectIdCouch:
@@ -1395,7 +1390,6 @@ void GameLogic::r0_handleRoomEvent1() {
 	GxlArchive *m04Gxl = new GxlArchive("m04");
 	// sysMouseDriver(2);
 	delete _menuSurface;
-	// _menuSurface = new WWSurface(178, 122);
 	_menuSurface = new WWSurface(310, 180);
 	_vm->setMouseBounds(113, 205, 20, 135);
 	_vm->drawImageToSurface(m04Gxl, "menu.pcx", _menuSurface, 113, 20);
@@ -2430,7 +2424,7 @@ int GameLogic::r3_handleVerbUse() {
 }
 
 int GameLogic::r3_handleVerbPickUp() {
-	int actionTextIndex = -1;
+	int actionTextIndex;
 	switch (_vm->_objectNumber) {
 	case kObjectIdCar3:
 		actionTextIndex = 35;
@@ -2522,7 +2516,7 @@ void GameLogic::r3_refreshRoomBackground() {
 }
 
 int GameLogic::r4_handleVerbPickUp() {
-	int actionTextIndex = -1;
+	int actionTextIndex;
 	switch (_vm->_objectNumber) {
 	case kObjectIdOffice4:
 		actionTextIndex = 8;
@@ -2626,7 +2620,7 @@ void GameLogic::r4_handleVerbTalkTo() {
 }
 
 int GameLogic::r4_handleVerbOpen() {
-	int actionTextIndex = -1;
+	int actionTextIndex;
 	switch (_vm->_objectNumber) {
 	case kObjectIdCastleDoor:
 		_vm->playAnimation("opencg", 0, 4, 223, 49, 0, 100);
@@ -2818,7 +2812,7 @@ int GameLogic::r4_useTubeWithShade() {
 }
 
 int GameLogic::r5_handleVerbPickUp() {
-	int actionTextIndex = -1;
+	int actionTextIndex;
 	switch (_vm->_objectNumber) {
 	case kObjectIdFan:
 		actionTextIndex = 51;
@@ -2862,7 +2856,7 @@ int GameLogic::r5_handleVerbUse() {
 }
 
 int GameLogic::r5_handleVerbPush() {
-	int actionTextIndex = -1;
+	int actionTextIndex;
 	switch (_vm->_objectNumber) {
 	case kObjectIdBed:
 		actionTextIndex = 2;
@@ -2875,7 +2869,7 @@ int GameLogic::r5_handleVerbPush() {
 }
 
 int GameLogic::r5_handleVerbOpen() {
-	int actionTextIndex = -1;
+	int actionTextIndex;
 	switch (_vm->_objectNumber) {
 	case kObjectIdDresser:
 		actionTextIndex = 6;
@@ -2915,17 +2909,17 @@ bool GameLogic::r5_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		_r5_flags &= ~0x01;
 		_vm->_gameState = 1;
 		break;
-	case 177:
-		_vm->moveObjectToRoom(kObjectIdInventoryCassContract, 99);
-		_vm->refreshInventory(false);
-		replyTextIndex1 = 95;
-		_vm->_gameState = 1;
-		break;
 	case 175:
 	case 176:
 	case 178:
 		replyTextIndex1 = _vm->_selectedDialogChoice - 82;
 		_r5_flags &= ~0x01;
+		_vm->_gameState = 1;
+		break;
+	case 177:
+		_vm->moveObjectToRoom(kObjectIdInventoryCassContract, 99);
+		_vm->refreshInventory(false);
+		replyTextIndex1 = 95;
 		_vm->_gameState = 1;
 		break;
 	default:
@@ -3053,7 +3047,7 @@ int GameLogic::r6_handleVerbGive() {
 }
 
 int GameLogic::r6_handleVerbOpen() {
-	int actionTextIndex = -1;
+	int actionTextIndex;
 	switch (_vm->_objectNumber) {
 	case kObjectIdFlowerBed6_0:
 		actionTextIndex = 10;
@@ -3106,16 +3100,23 @@ bool GameLogic::r6_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		replyTextIndex1 = 142;
 		continueDialog = true;
 		break;
-	case 205: case 206: case 207:
+	case 205:
+	case 206:
+	case 207:
 		replyTextIndex1 = _vm->_selectedDialogChoice + -62;
 		_vm->_roomEventNum = 1;
 		break;
-	case 211: case 212: case 213: case 214:
+	case 211:
+	case 212:
+	case 213:
+	case 214:
 		replyTextIndex1 = 146;
 		_vm->_gameState = 0;
 		_vm->_roomEventNum = 2;
 		break;
-	case 218: case 219: case 220:
+	case 218:
+	case 219:
+	case 220:
 		replyTextIndex1 = 155;
 		replyTextIndex2 = 156;
 		replyTextIndex3 = 157;
@@ -3324,6 +3325,8 @@ void GameLogic::r7_handleVerbTalkTo() {
 	case kObjectIdProtesters7:
 		_vm->displayTextLines("c04r", 258, 250, 20, 2);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -3428,7 +3431,7 @@ int GameLogic::r7_handleVerbOpen() {
 }
 
 int GameLogic::r7_handleVerbPush() {
-	int actionTextIndex = -1;
+	int actionTextIndex;
 	switch (_vm->_objectNumber) {
 	case kObjectIdCar7:
 		actionTextIndex = 7;
@@ -3441,7 +3444,7 @@ int GameLogic::r7_handleVerbPush() {
 }
 
 int GameLogic::r7_handleVerbPickUp() {
-	int actionTextIndex = -1;
+	int actionTextIndex;
 	switch (_vm->_objectNumber) {
 	case kObjectIdMagiciansCape:
 		_vm->pickupObject(kObjectIdMagiciansCape, _r7_flags, 1, kObjectIdInventoryCape);
@@ -3520,7 +3523,7 @@ void GameLogic::r7_uninitRoomAnimations() {
 
 void GameLogic::r7_updateRoomAnimations() {
 	if (_vm->isAnimationTimerExpired(0)) {
-		int cloudsPositionX = _vm->getAnimationTimerCounter(0) % 230;
+		const int cloudsPositionX = _vm->getAnimationTimerCounter(0) % 230;
 		_vm->drawAnimationSprite(2, 0, 0);
 		_vm->drawAnimationSpriteTransparent(0, cloudsPositionX - 125, 13);
 		_vm->drawAnimationSpriteTransparent(1, 0, 13);
@@ -3788,6 +3791,11 @@ bool GameLogic::r8_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		_vm->stopRoomAnimations();
 		_vm->_gameState = 1;
 		break;
+	case 477:
+	case 481:
+		_vm->_roomEventNum = 3;
+		replyTextIndex1 = 557;
+		break;
 	case 478:
 		_r8_flags &= ~0x08;
 		_vm->stopRoomAnimations();
@@ -3800,10 +3808,6 @@ bool GameLogic::r8_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 	case 480:
 		replyTextIndex1 = 556;
 		continueDialog = true;
-		break;
-	case 477: case 481:
-		_vm->_roomEventNum = 3;
-		replyTextIndex1 = 557;
 		break;
 	case 482:
 		replyTextIndex1 = 560;
@@ -3818,7 +3822,9 @@ bool GameLogic::r8_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		continueDialog = true;
 		_vm->setDialogChoices(485, 486, 487, -1, -1);
 		break;
-	case 485: case 486: case 487:
+	case 485:
+	case 486:
+	case 487:
 		_vm->displayTextLines("c04r2", 26, 200, 30, 1);
 		_vm->displayTextLines("c04", 488, -1, -1, 7);
 		_vm->displayTextLines("c04r2", 27, 200, 30, 1);
@@ -3982,11 +3988,9 @@ void GameLogic::r8_openCloseCabinetDoor2(bool isOpen) {
 }
 
 int GameLogic::r9_handleVerbPickUp() {
-	int actionTextIndex = -1;
+	int actionTextIndex;
 	switch (_vm->_objectNumber) {
 	case kObjectIdEugene9:
-		actionTextIndex = 29;
-		break;
 	case kObjectIdMan9:
 		actionTextIndex = 29;
 		break;
@@ -4068,11 +4072,13 @@ void GameLogic::r9_handleVerbTalkTo() {
 			_vm->setDialogChoices(246, 253, 254, 249, 255);
 		}
 		break;
+	default:
+		break;
 	}
 }
 
 int GameLogic::r9_handleVerbPush() {
-	int actionTextIndex = -1;
+	int actionTextIndex;
 	switch (_vm->_objectNumber) {
 	case kObjectIdEugene9:
 		actionTextIndex = 5;
@@ -4122,11 +4128,14 @@ bool GameLogic::r9_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		replyTextY = 25;
 	}
 	switch (_vm->_selectedDialogChoice) {
-	case 232: case 234:
-		replyTextIndex1 = 178;
-		continueDialog = true;
+	case 187:
+	case 235:
+	case 250:
+	case 255:
+		_vm->_gameState = 0;
 		break;
-	case 231: case 240:
+	case 231:
+	case 240:
 		if (!(_pizzathonListFlags1 & 0x01)) {
 			_vm->setDialogChoices(236, 237, 238, 239, 187);
 			replyTextIndex1 = 177;
@@ -4141,14 +4150,19 @@ bool GameLogic::r9_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 			_vm->moveObjectToRoom(kObjectIdInventoryContract, 99);
 		}
 		break;
+	case 232:
+	case 234:
+		replyTextIndex1 = 178;
+		continueDialog = true;
+		break;
 	case 233:
 		replyTextIndex1 = 179;
 		continueDialog = true;
 		break;
-	case 187: case 235: case 250: case 255:
-		_vm->_gameState = 0;
-		break;
-	case 236: case 237: case 238: case 239:
+	case 236:
+	case 237:
+	case 238:
+	case 239:
 		replyTextIndex1 = _vm->_selectedDialogChoice + -56;
 		if (_r9_dialogFlag == 0) {
 			_vm->setDialogChoices(231, 232, 233, 234, 235);
@@ -4216,6 +4230,8 @@ bool GameLogic::r9_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		replyTextIndex1 = 208;
 		replyTextIndex2 = 209;
 		continueDialog = true;
+		break;
+	default:
 		break;
 	}
 	return continueDialog;
@@ -4430,19 +4446,17 @@ int GameLogic::r10_handleVerbUse() {
 
 void GameLogic::r10_handleVerbTalkTo() {
 	_vm->_dialogChoices[0] = -1;
-	switch (_vm->_objectNumber) {
-	case kObjectIdSalesgirl:
+	if (_vm->_objectNumber == kObjectIdSalesgirl) {
 		if (_vm->isActorWayne()) {
 			_vm->setDialogChoices(0, 5, 2, 3, 4);
 		} else {
 			_vm->setDialogChoices(0, 1, 2, 3, 4);
 		}
-		break;
 	}
 }
 
 int GameLogic::r10_handleVerbPush() {
-	int actionTextIndex = -1;
+	int actionTextIndex;
 	switch (_vm->_objectNumber) {
 	case kObjectIdCigarettes:
 		actionTextIndex = 3;
@@ -4475,7 +4489,7 @@ int GameLogic::r10_handleVerbGive() {
 }
 
 int GameLogic::r10_handleVerbOpen() {
-	int actionTextIndex = -1;
+	int actionTextIndex;
 	switch (_vm->_objectNumber) {
 	case kObjectIdHotDogs:
 		actionTextIndex = 7;
@@ -4504,14 +4518,9 @@ bool GameLogic::r10_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 			continueDialog = false;
 		} else {
 			switch (_vm->_selectedDialogChoice) {
-			case 3:
-				replyTextIndex1 = 0;
-				break;
-			case 5:
-				replyTextIndex1 = 1;
-				replyTextIndex2 = 2;
-				break;
-			case 0: case 1: case 2:
+			case 0:
+			case 1:
+			case 2:
 				_r10_selectedItemToBuy = _vm->_selectedDialogChoice;
 				if (_vm->isActorWayne() && _vm->getWayneInventoryItemQuantity(kObjectIdInventoryDollar) == 0) {
 					_vm->setDialogChoices(8, -1, -1, -1, -1);
@@ -4523,10 +4532,18 @@ bool GameLogic::r10_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 				replyTextIndex1 = 3;
 				continueDialog = true;
 				break;
+			case 3:
+				replyTextIndex1 = 0;
+				break;
+			case 4:
+				_vm->_gameState = 0;
+				break;
+			case 5:
+				replyTextIndex1 = 1;
+				replyTextIndex2 = 2;
+				break;
 			case 6:
 				r10_buyItem();
-				// Fall-through
-			case 4:
 				_vm->_gameState = 0;
 				break;
 			case 8:
@@ -4706,7 +4723,7 @@ int GameLogic::r11_handleVerbUse() {
 }
 
 int GameLogic::r11_handleVerbPush() {
-	int actionTextIndex = -1;
+	int actionTextIndex;
 	switch (_vm->_objectNumber) {
 	case kObjectIdCar11:
 		actionTextIndex = 7;
@@ -4860,7 +4877,7 @@ void GameLogic::r11_usePlungersWithLampPost() {
 }
 
 int GameLogic::r12_handleVerbPickUp() {
-	int actionTextIndex = -1;
+	int actionTextIndex;
 	switch (_vm->_objectNumber) {
 	case kObjectIdExit12:
 		actionTextIndex = 7;
@@ -4944,6 +4961,8 @@ void GameLogic::r12_handleVerbTalkTo() {
 			_vm->displayTextLines("c04r", 360, 250, 20, 1);
 		}
 		break;
+	default:
+		break;
 	}
 }
 
@@ -4972,6 +4991,13 @@ bool GameLogic::r12_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 	replyTextX = 50;
 	replyTextY = 30;
 	switch (_vm->_selectedDialogChoice) {
+	case 187:
+	case 280:
+		if (_r12_talkObjectNumber == 207) {
+			_vm->playAnimation("lawyer", 4, -5, 55, 84, 0, 100);
+		}
+		_vm->_gameState = 0;
+		break;
 	case 269:
 		if (_r12_talkObjectNumber == 207) {
 			replyTextIndex1 = 224;
@@ -5001,13 +5027,9 @@ bool GameLogic::r12_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 		}
 		continueDialog = true;
 		break;
-	case 187: case 280:
-		if (_r12_talkObjectNumber == 207) {
-			_vm->playAnimation("lawyer", 4, -5, 55, 84, 0, 100);
-		}
-		_vm->_gameState = 0;
-		break;
-	case 271: case 272: case 273:
+	case 271:
+	case 272:
+	case 273:
 		replyTextIndex1 = _vm->_selectedDialogChoice - 45;
 		_vm->setDialogChoices(269, 270, 187, -1, -1);
 		continueDialog = true;
@@ -5024,6 +5046,8 @@ bool GameLogic::r12_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 		setPizzathonStatus(10);
 		r12_talkToLawyer();
 		break;
+	default:
+		break;
 	}
 	return continueDialog;
 }
@@ -5037,11 +5061,11 @@ void GameLogic::r12_refreshRoomBackground() {
 		_vm->setStaticRoomObjectPosition(12, 0, 0, -1, 69);
 		_vm->setStaticRoomObjectPosition(12, 2, 2, 198, 69);
 	} else {
-		int peopleIndex = _vm->getRandom(10) % 2;
+		const int peopleIndex = _vm->getRandom(10) % 2;
 		_vm->setStaticRoomObjectPosition(12, 0, 0, 214, 69);
 		_vm->setStaticRoomObjectPosition(12, 2, 2, -1, 69);
 		_vm->moveObjectToNowhere(kObjectIdCecil);
-		Common::String filename = Common::String::format("people%d.pcx", peopleIndex);
+		const Common::String filename = Common::String::format("people%d.pcx", peopleIndex);
 		_vm->drawRoomImageToBackground(filename.c_str(), 73, 81);
 		if (peopleIndex == 0) {
 			_vm->moveObjectToRoom(kObjectIdWoman, 12);
@@ -5153,7 +5177,7 @@ int GameLogic::r13_handleVerbUse() {
 }
 
 int GameLogic::r13_handleVerbPickUp() {
-	int actionTextIndex = -1;
+	int actionTextIndex;
 	switch (_vm->_objectNumber) {
 	case kObjectIdPieceOfPizza:
 		_vm->pickupObject(kObjectIdPieceOfPizza, _r13_flags, 1, kObjectIdInventoryCheesePizza);
@@ -5190,11 +5214,9 @@ int GameLogic::r13_handleVerbPickUp() {
 
 void GameLogic::r13_handleVerbTalkTo() {
 	_vm->_dialogChoices[0] = -1;
-	switch (_vm->_objectNumber) {
-	case kObjectIdPepe13:
+	if (_vm->_objectNumber == kObjectIdPepe13) {
 		_vm->walkTo(98, 84, 6, 101, 80);
 		_vm->setDialogChoices(183, 184, 185, 186, 187);
-		break;
 	}
 }
 
@@ -5278,11 +5300,13 @@ bool GameLogic::r13_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 		continueDialog = true;
 		_vm->setDialogChoices(441, 442, 443, -1, -1);
 		break;
-	case 430: case 431:
+	case 430:
+	case 431:
 		replyTextIndex1 = _vm->_selectedDialogChoice + 43;
 		continueDialog = true;
 		break;
-	case 435: case 437:
+	case 435:
+	case 437:
 		replyTextIndex1 = 475;
 		continueDialog = true;
 		_vm->setDialogChoices(422, 423, 424, -1, -1);
@@ -5291,7 +5315,9 @@ bool GameLogic::r13_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 		replyTextIndex1 = 476;
 		continueDialog = true;
 		break;
-	case 438: case 439: case 440:
+	case 438:
+	case 439:
+	case 440:
 		replyTextIndex1 = 477;
 		continueDialog = true;
 		_vm->setDialogChoices(422, 423, 424, -1, -1);
@@ -5313,10 +5339,14 @@ bool GameLogic::r13_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 		_vm->setDialogChoices(445, 446, 447, -1, -1);
 		continueDialog = true;
 		break;
-	case 445: case 446: case 447:
+	case 445:
+	case 446:
+	case 447:
 		_vm->displayTextLines("c04r", 486, 160, 20, 1);
 		_vm->displayTextLines("c04", 448, -1, -1, 1);
 		_vm->_gameState = 0;
+		break;
+	default:
 		break;
 	}
 	return continueDialog;
@@ -5475,7 +5505,7 @@ void GameLogic::r14_refreshRoomBackground() {
 }
 
 bool GameLogic::r15_handleDialogSelect(int &replyTextX, int &replyTextY, int &replyTextIndex1, int &replyTextIndex2, int &replyTextIndex3) {
-	bool continueDialog = false;
+	const bool continueDialog = false;
 	replyTextIndex3 = -1;
 	replyTextIndex2 = -1;
 	replyTextIndex1 = -1;
@@ -5490,6 +5520,8 @@ bool GameLogic::r15_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 		break;
 	case 56:
 		replyTextIndex1 = 86;
+		break;
+	default:
 		break;
 	}
 	_vm->_gameState = 0;
@@ -5524,6 +5556,8 @@ void GameLogic::r17_handleVerbTalkTo() {
 	case kObjectIdGuard17_0:
 	case kObjectIdGuard17_1:
 		_vm->setDialogChoices(300, 301, 302, 303, -1);
+		break;
+	default:
 		break;
 	}
 }
@@ -5576,7 +5610,9 @@ bool GameLogic::r17_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 	case 315:
 		_r17_dialogCtr = _r17_dialogCtr + 1;
 		// Fall-through
-	case 312: case 313: case 314:
+	case 312:
+	case 313:
+	case 314:
 		replyTextIndex1 = 307;
 		replyTextIndex2 = 308;
 		replyTextIndex3 = 309;
@@ -5586,7 +5622,9 @@ bool GameLogic::r17_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 	case 317:
 		_r17_dialogCtr = _r17_dialogCtr + 1;
 		// Fall-through
-	case 316: case 318: case 319:
+	case 316:
+	case 318:
+	case 319:
 		replyTextIndex1 = 310;
 		replyTextIndex2 = 311;
 		_vm->setDialogChoices(320, 321, 322, 323, -1);
@@ -5595,7 +5633,9 @@ bool GameLogic::r17_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 	case 322:
 		_r17_dialogCtr = _r17_dialogCtr + 1;
 		// Fall-through
-	case 320: case 321: case 323:
+	case 320:
+	case 321:
+	case 323:
 		replyTextIndex1 = 312;
 		replyTextIndex2 = 313;
 		_vm->setDialogChoices(324, 325, 326, 327, -1);
@@ -5604,7 +5644,9 @@ bool GameLogic::r17_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 	case 324:
 		_r17_dialogCtr = _r17_dialogCtr + 1;
 		// Fall-through
-	case 325: case 326: case 327:
+	case 325:
+	case 326:
+	case 327:
 		if (_r17_dialogCtr != 4) {
 			replyTextIndex1 = 314;
 			_vm->_gameState = 0;
@@ -5614,6 +5656,8 @@ bool GameLogic::r17_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 			_vm->_roomEventNum = 2;
 			_vm->_gameState = 0;
 		}
+		break;
+	default:
 		break;
 	}
 	return continueDialog;
@@ -5716,7 +5760,9 @@ bool GameLogic::r19_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 		}
 		continueDialog = true;
 		break;
-	case 260: case 264: case 268:
+	case 260:
+	case 264:
+	case 268:
 		_vm->_gameState = 0;
 		break;
 	case 261:
@@ -5749,17 +5795,23 @@ bool GameLogic::r19_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 		_r19_flags |= 0x02;
 		continueDialog = true;
 		break;
-	case 449: case 450: case 451:
+	case 449:
+	case 450:
+	case 451:
 		replyTextIndex1 = _vm->_selectedDialogChoice + 40;
 		replyTextIndex2 = 492;
 		replyTextIndex3 = 493;
 		continueDialog = true;
 		_vm->setDialogChoices(453, 454, 455, 456, -1);
 		break;
-	case 452: case 460:
+	case 452:
+	case 460:
 		_vm->_gameState = 0;
 		break;
-	case 453: case 454: case 455: case 456:
+	case 453:
+	case 454:
+	case 455:
+	case 456:
 		_vm->displayTextLines("c04r", _vm->_selectedDialogChoice + 41, 300, 20, 1);
 		_vm->displayTextLines("c04r", 498, 300, 20, 4);
 		replyTextIndex1 = 502;
@@ -5836,6 +5888,8 @@ bool GameLogic::r19_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 		continueDialog = true;
 		_vm->setDialogChoices(457, 458, 459, 460, -1);
 		break;
+	default:
+		break;
 	}
 	return continueDialog;
 }
@@ -5850,6 +5904,8 @@ void GameLogic::r19_handleVerbTalkTo() {
 		_vm->drawRoomImageToScreen("mtalk1.pcx", 184, 68);
 		_vm->displayTextLines("c04r", 487, 300, 20, 2);
 		_vm->setDialogChoices(449, 450, 451, 452, -1);
+		break;
+	default:
 		break;
 	}
 }
@@ -6095,11 +6151,10 @@ void GameLogic::r24_refreshRoomBackground() {
 }
 
 void GameLogic::r24_climbLadder(int wayneX, int wayneLadderX, int wayneLadderY, int ladderTopY, int ceilingIndex) {
-	int garthClimbX = wayneX;
-	int garthLadderX = wayneLadderX + 20;
-	int ceilingX = wayneX - 10;
+	const int garthClimbX = wayneX;
+	const int garthLadderX = wayneLadderX + 20;
+	const int ceilingX = wayneX - 10;
 	Common::String tempFilename;
-	WWSurface *workBackground;
 	WWSurface *ceilingSprite;
 	WWSurface *wclimbSprites[4];
 	WWSurface *gclimbSprites[4];
@@ -6116,7 +6171,7 @@ void GameLogic::r24_climbLadder(int wayneX, int wayneLadderX, int wayneLadderY, 
 		getladSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
-	workBackground = new WWSurface(320, 150);
+	WWSurface *workBackground = new WWSurface(320, 150);
 
 	if (_r24_mazeRoomNumber < 49) {
 		tempFilename = Common::String::format("ceil%d", ceilingIndex);
@@ -6185,7 +6240,7 @@ void GameLogic::r24_climbLadder(int wayneX, int wayneLadderX, int wayneLadderY, 
 }
 
 void GameLogic::r24_useMazeHole(int holeIndex) {
-	int nextMazeRoom = kMazeInfos[_r24_mazeRoomNumber][holeIndex];
+	const int nextMazeRoom = kMazeInfos[_r24_mazeRoomNumber][holeIndex];
 	if (nextMazeRoom < 0) {
 		_r24_mazeHoleNumber = nextMazeRoom + 20;
 	} else {
@@ -6195,11 +6250,10 @@ void GameLogic::r24_useMazeHole(int holeIndex) {
 }
 
 void GameLogic::r24_handleRoomEvent(int wayneLadderX, int wayneX, int wayneLadderY, int ladderBottomY, int climbCtrMax, int ceilingIndex) {
-	int garthX = wayneLadderX;
-	int ceilingX = wayneLadderX - 10;
+	const int garthX = wayneLadderX;
+	const int ceilingX = wayneLadderX - 10;
 
 	Common::String tempFilename;
-	WWSurface *workBackground;
 	WWSurface *ceilingSprite;
 	WWSurface *wclimbSprites[4];
 	WWSurface *gclimbSprites[4];
@@ -6218,7 +6272,7 @@ void GameLogic::r24_handleRoomEvent(int wayneLadderX, int wayneX, int wayneLadde
 		getladSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
-	workBackground = new WWSurface(320, 150);
+	WWSurface *workBackground = new WWSurface(320, 150);
 
 	if (_r24_mazeRoomNumber < 49) {
 		tempFilename = Common::String::format("ceil%d", ceilingIndex);
@@ -6311,7 +6365,7 @@ int GameLogic::r25_handleVerbUse() {
 
 void GameLogic::r25_refreshRoomBackground() {
 	if (_r25_holeIndex != -1) {
-		Common::String holeFilename = Common::String::format("hole%d.pcx", _r25_holeIndex % 2);
+		const Common::String holeFilename = Common::String::format("hole%d.pcx", _r25_holeIndex % 2);
 		_vm->drawRoomImageToBackground(holeFilename.c_str(), kRoom25MazeHolePositionsX[_r25_holeIndex], kRoom25MazeHolePositionsY[_r25_holeIndex]);
 	}
 	_vm->setWaynePosition(150, 125);
@@ -6331,29 +6385,31 @@ void GameLogic::r25_updateMazeRoomHole(int mazeRoomNumber) {
 	case 31:
 		_r25_holeIndex = -1;
 		break;
-	case 23:
-		_vm->moveObjectToRoom(kObjectIdOpening_7, 25);
-		_r25_holeIndex = 0;
+	case 11:
+		_vm->moveObjectToRoom(kObjectIdOpening_11, 27);
+		_r25_holeIndex = 4;
 		break;
 	case 17:
 		_vm->moveObjectToRoom(kObjectIdOpening_8, 25);
 		_r25_holeIndex = 1;
 		break;
-	case 47:
-		_vm->moveObjectToRoom(kObjectIdOpening_9, 26);
-		_r25_holeIndex = 2;
-		break;
 	case 20:
 		_vm->moveObjectToRoom(kObjectIdOpening_10, 26);
 		_r25_holeIndex = 3;
 		break;
-	case 11:
-		_vm->moveObjectToRoom(kObjectIdOpening_11, 27);
-		_r25_holeIndex = 4;
+	case 23:
+		_vm->moveObjectToRoom(kObjectIdOpening_7, 25);
+		_r25_holeIndex = 0;
 		break;
 	case 40:
 		_vm->moveObjectToRoom(kObjectIdOpening_12, 27);
 		_r25_holeIndex = 5;
+		break;
+	case 47:
+		_vm->moveObjectToRoom(kObjectIdOpening_9, 26);
+		_r25_holeIndex = 2;
+		break;
+	default:
 		break;
 	}
 }
@@ -6379,16 +6435,25 @@ bool GameLogic::r28_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 	replyTextX = 150;
 	replyTextY = 10;
 	switch (_vm->_selectedDialogChoice) {
-	case 18: case 19: case 20: case 21:
+	case 18:
+	case 19:
+	case 20:
+	case 21:
 		replyTextIndex1 = 35;
 		_vm->setDialogChoices(22, 23, 24, 25, 26);
 		continueDialog = true;
 		break;
-	case 22: case 23: case 24: case 25: case 26:
+	case 22:
+	case 23:
+	case 24:
+	case 25:
+	case 26:
 		replyTextIndex1 = 36;
 		replyTextIndex2 = 37;
 		_vm->_roomEventNum = 2;
 		_vm->_gameState = 0;
+		break;
+	default:
 		break;
 	}
 	return continueDialog;
@@ -6607,6 +6672,15 @@ bool GameLogic::r30_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 	replyTextX = 150;
 	replyTextY = 40;
 	switch (_vm->_selectedDialogChoice) {
+	case 52:
+	case 361:
+	case 362:
+	case 363:
+		_vm->displayTextLines("c04r", 385, 160, 40, 6);
+		_vm->displayTextLines("c04", 364, -1, -1, 1);
+		_vm->_roomEventNum = 2;
+		_vm->_gameState = 0;
+		break;
 	case 343:
 		replyTextIndex1 = 367;
 		_vm->setDialogChoices(347, 348, 349, -1, -1);
@@ -6647,7 +6721,8 @@ bool GameLogic::r30_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 		_vm->setDialogChoices(358, 359, 360, -1, -1);
 		continueDialog = true;
 		break;
-	case 356: case 357:
+	case 356:
+	case 357:
 		replyTextIndex1 = _vm->_selectedDialogChoice + 23;
 		continueDialog = true;
 		break;
@@ -6665,11 +6740,7 @@ bool GameLogic::r30_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 		replyTextIndex2 = 384;
 		continueDialog = true;
 		break;
-	case 52: case 361: case 362: case 363:
-		_vm->displayTextLines("c04r", 385, 160, 40, 6);
-		_vm->displayTextLines("c04", 364, -1, -1, 1);
-		_vm->_roomEventNum = 2;
-		_vm->_gameState = 0;
+	default:
 		break;
 	}
 	return continueDialog;
@@ -6803,7 +6874,7 @@ int GameLogic::r31_handleVerbUse() {
 }
 
 bool GameLogic::r31_handleDialogSelect(int &replyTextX, int &replyTextY, int &replyTextIndex1, int &replyTextIndex2, int &replyTextIndex3) {
-	bool continueDialog = false;
+	const bool continueDialog = false;
 	replyTextIndex3 = -1;
 	replyTextIndex2 = -1;
 	replyTextIndex1 = -1;
@@ -6929,7 +7000,7 @@ void GameLogic::r31_handleRoomEvent4() {
 		_vm->refreshActors();
 
 		// Give the player some time to press the buzzer by clicking the mouse
-		uint32 timeOutTicks = _vm->_system->getMillis() + (uint32)_vm->getRandom(1300) + 200;
+		const uint32 timeOutTicks = _vm->_system->getMillis() + (uint32)_vm->getRandom(1300) + 200;
 		while (_vm->_system->getMillis() < timeOutTicks && _vm->_mouseClickButtons == 0 && !_vm->shouldQuit()) {
 			_vm->updateEvents();
 			_vm->_system->updateScreen();
@@ -7077,22 +7148,22 @@ void GameLogic::r31_runBabeoff() {
 }
 
 void GameLogic::r31_drawCurrentPlayerScore() {
-	int numberX = kRoom31NumberPositionsX[_r31_currentPlayer];
-	int numberY = kRoom31NumberPositionsY[_r31_currentPlayer];
-	int score = _r31_scores[_r31_currentPlayer];
+	const int numberX = kRoom31NumberPositionsX[_r31_currentPlayer];
+	const int numberY = kRoom31NumberPositionsY[_r31_currentPlayer];
+	const int score = _r31_scores[_r31_currentPlayer];
 	if (score > 99) {
-		Common::String numberFilename = Common::String::format("n%d.pcx", score / 100);
+		const Common::String numberFilename = Common::String::format("n%d.pcx", score / 100);
 		_vm->drawRoomImageToBackground(numberFilename.c_str(), numberX, numberY);
 	} else {
 		_vm->_backgroundSurface->fillRect(numberX, numberY, numberX + 3, numberY + 6, 0);
 	}
 	if (score > 9) {
-		Common::String numberFilename = Common::String::format("n%d.pcx", (score % 100) / 10);
+		const Common::String numberFilename = Common::String::format("n%d.pcx", (score % 100) / 10);
 		_vm->drawRoomImageToBackground(numberFilename.c_str(), numberX + 5, numberY);
 	} else {
 		_vm->_backgroundSurface->fillRect(numberX + 5, numberY, numberX + 8, numberY + 6, 0);
 	}
-	Common::String numberFilename = Common::String::format("n%d.pcx", score % 10);
+	const Common::String numberFilename = Common::String::format("n%d.pcx", score % 10);
 	_vm->drawRoomImageToBackground(numberFilename.c_str(), numberX + 10, numberY);
 	_vm->refreshActors();
 }
@@ -7189,8 +7260,7 @@ int GameLogic::r32_handleVerbUse() {
 
 void GameLogic::r32_handleVerbTalkTo() {
 	_vm->_dialogChoices[0] = -1;
-	switch (_vm->_objectNumber) {
-	case kObjectIdJanitor:
+	if (_vm->_objectNumber == kObjectIdJanitor) {
 		if (_r32_flags & 0x04) {
 			_vm->displayTextLines("c04", 419, -1, -1, 1);
 		} else {
@@ -7198,12 +7268,11 @@ void GameLogic::r32_handleVerbTalkTo() {
 			_vm->drawRoomImageToBackground("jtalk1.pcx", 262, 84);
 			_vm->setDialogChoices(402, 403, 404, 405, 406);
 		}
-		break;
 	}
 }
 
 int GameLogic::r32_handleVerbOpen() {
-	int actionTextIndex = -1;
+	int actionTextIndex;
 	switch (_vm->_objectNumber) {
 	case kObjectIdDoor32_0:
 	case kObjectIdDoor32_1:
@@ -7224,7 +7293,8 @@ bool GameLogic::r32_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 	replyTextX = 200;
 	replyTextY = 30;
 	switch (_vm->_selectedDialogChoice) {
-	case 402: case 405:
+	case 402:
+	case 405:
 		replyTextIndex1 = _vm->_selectedDialogChoice + 35;
 		continueDialog = true;
 		break;
@@ -7246,18 +7316,12 @@ bool GameLogic::r32_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 		r32_initRoomAnimations();
 		_vm->_gameState = 0;
 		break;
-	case 407: case 408: case 409: case 410: case 415:
+	case 407:
+	case 408:
+	case 409:
+	case 410:
+	case 415:
 		replyTextIndex1 = _vm->_selectedDialogChoice + 34;
-		continueDialog = true;
-		_vm->setDialogChoices(402, 403, 404, 405, 406);
-		break;
-	case 417: case 418:
-		replyTextIndex1 = _vm->_selectedDialogChoice + 33;
-		continueDialog = true;
-		_vm->setDialogChoices(402, 403, 404, 405, 406);
-		break;
-	case 416:
-		replyTextIndex1 = 442;
 		continueDialog = true;
 		_vm->setDialogChoices(402, 403, 404, 405, 406);
 		break;
@@ -7279,6 +7343,19 @@ bool GameLogic::r32_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 		replyTextIndex1 = 448;
 		continueDialog = true;
 		_vm->setDialogChoices(402, 403, 404, 405, 406);
+		break;
+	case 416:
+		replyTextIndex1 = 442;
+		continueDialog = true;
+		_vm->setDialogChoices(402, 403, 404, 405, 406);
+		break;
+	case 417:
+	case 418:
+		replyTextIndex1 = _vm->_selectedDialogChoice + 33;
+		continueDialog = true;
+		_vm->setDialogChoices(402, 403, 404, 405, 406);
+		break;
+	default:
 		break;
 	}
 	return continueDialog;
@@ -7410,8 +7487,7 @@ int GameLogic::r34_handleVerbUse() {
 
 void GameLogic::r34_handleVerbTalkTo() {
 	_vm->_dialogChoices[0] = -1;
-	switch (_vm->_objectNumber) {
-	case kObjectIdMan34:
+	if (_vm->_objectNumber == kObjectIdMan34) {
 		_vm->playAnimation("mantalk", 0, 1, 198, 68, 0, 1);
 		r34_uninitRoomAnimations();
 		_vm->displayTextLines("c04r", 279, 275, 30, 1);
@@ -7420,7 +7496,6 @@ void GameLogic::r34_handleVerbTalkTo() {
 		} else {
 			_vm->setDialogChoices(291, 292, 293, 295, -1);
 		}
-		break;
 	}
 }
 
@@ -7489,6 +7564,8 @@ bool GameLogic::r34_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 		_vm->playAnimation("towel", 0, 1, 198, 68, 0, 1);
 		r34_initRoomAnimations();
 		_vm->_gameState = 0;
+		break;
+	default:
 		break;
 	}
 	return continueDialog;
@@ -7560,11 +7637,8 @@ int GameLogic::r35_handleVerbUse() {
 
 void GameLogic::r35_handleVerbTalkTo() {
 	_vm->_dialogChoices[0] = -1;
-	switch (_vm->_objectNumber) {
-	case kObjectIdCassandra35:
+	if (_vm->_objectNumber == kObjectIdCassandra35)
 		r35_talkToCassandra();
-		break;
-	}
 }
 
 bool GameLogic::r35_handleDialogSelect(int &replyTextX, int &replyTextY, int &replyTextIndex1, int &replyTextIndex2, int &replyTextIndex3) {
@@ -7575,7 +7649,9 @@ bool GameLogic::r35_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 	replyTextX = 150;
 	replyTextY = 20;
 	switch (_vm->_selectedDialogChoice) {
-	case 328: case 329: case 330:
+	case 328:
+	case 329:
+	case 330:
 		for (int textIndex = 323; textIndex < 326; textIndex++) {
 			_vm->playAnimationLoops("cass", 0, 2, 179, 68, 0, 100, 4);
 			_vm->displayTextLines("c04r", textIndex, replyTextX, replyTextY, 1);
@@ -7636,6 +7712,8 @@ bool GameLogic::r35_handleDialogSelect(int &replyTextX, int &replyTextY, int &re
 		break;
 	case 340:
 		_vm->_gameState = 0;
+		break;
+	default:
 		break;
 	}
 	return continueDialog;
@@ -7759,7 +7837,7 @@ void GameLogic::r36_handleRoomEvent() {
 }
 
 int GameLogic::r37_handleVerbPickUp() {
-	int actionTextIndex = -1;
+	int actionTextIndex;
 	switch (_vm->_objectNumber) {
 	case kObjectIdMoney:
 		_vm->pickupObject(kObjectIdMoney, _r37_flags, 16, kObjectIdInventory50000);
@@ -7844,7 +7922,7 @@ void GameLogic::r37_refreshRoomBackground() {
 		_vm->_roomEventNum = 1;
 	}
 	if (!(_r37_flags & 0x04)) {
-		Common::String lockFilename = Common::String::format("lock%d.pcx", _r37_safeCombinationLockIndex);
+		const Common::String lockFilename = Common::String::format("lock%d.pcx", _r37_safeCombinationLockIndex);
 		_vm->drawRoomImageToBackground(lockFilename.c_str(), 109, 97);
 	} else {
 		_vm->drawRoomImageToBackground("opensafe.pcx", 92, 84);
@@ -7859,7 +7937,6 @@ void GameLogic::r37_refreshRoomBackground() {
 
 void GameLogic::r37_climbExitLadderUp() {
 	Common::String tempFilename;
-	WWSurface *workBackground;
 	WWSurface *wclimbSprites[4];
 	WWSurface *gclimbSprites[4];
 	WWSurface *getldrSprites[3];
@@ -7875,7 +7952,7 @@ void GameLogic::r37_climbExitLadderUp() {
 		getldrSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 	
-	workBackground = new WWSurface(320, 150);
+	WWSurface *workBackground = new WWSurface(320, 150);
 
 	for (int index = 0; index < 3; index++) {
 		workBackground->drawSurface(_vm->_backgroundSurface, 0, 0);
@@ -7937,7 +8014,6 @@ void GameLogic::r37_climbExitLadderUp() {
 void GameLogic::r37_climbLadderDown() {
 	Common::String tempFilename;
 
-	WWSurface *workBackground;
 	WWSurface *wclimbSprites[4];
 	WWSurface *gclimbSprites[4];
 	WWSurface *wgetldlSprites[3];
@@ -7958,7 +8034,7 @@ void GameLogic::r37_climbLadderDown() {
 		ggetldlSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
-	workBackground = new WWSurface(320, 150);
+	WWSurface *workBackground = new WWSurface(320, 150);
 
 	for (int index = 0; index < 3; index++) {
 		workBackground->drawSurface(_vm->_backgroundSurface, 0, 0);
@@ -8046,7 +8122,6 @@ void GameLogic::r37_climbLadderDown() {
 
 void GameLogic::r37_climbLadderUp() {
 	Common::String tempFilename;
-	WWSurface *workBackground;
 	WWSurface *wclimbSprites[4];
 	WWSurface *gclimbSprites[4];
 	WWSurface *wgetldlSprites[3];
@@ -8067,7 +8142,7 @@ void GameLogic::r37_climbLadderUp() {
 		ggetldlSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
-	workBackground = new WWSurface(320, 150);
+	WWSurface *workBackground = new WWSurface(320, 150);
 
 	for (int index = 0; index < 3; index++) {
 		workBackground->drawSurface(_vm->_backgroundSurface, 0, 0);
@@ -8196,7 +8271,6 @@ void GameLogic::r37_pullHandle() {
 
 void GameLogic::r37_climbEnterLadderDown() {
 	Common::String tempFilename;
-	WWSurface *workBackground;
 	WWSurface *wclimbSprites[4];
 	WWSurface *gclimbSprites[4];
 	WWSurface *getldrSprites[3];
@@ -8214,7 +8288,7 @@ void GameLogic::r37_climbEnterLadderDown() {
 		getldrSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
-	workBackground = new WWSurface(320, 150);
+	WWSurface *workBackground = new WWSurface(320, 150);
 
 	int climbCtr = 0, wayneLadderY = -46, garthLadderY = -46;
 	while (climbCtr < 24) {
@@ -8295,8 +8369,6 @@ int GameLogic::r38_handleVerbUse() {
 		actionTextIndex = 77;
 		break;
 	case kObjectIdPipes:
-		actionTextIndex = 7;
-		break;
 	case kObjectIdRag:
 		actionTextIndex = 7;
 		break;
