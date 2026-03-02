@@ -763,8 +763,15 @@ void Engine::showHotspots(bool show) {
 void Engine::getHotspotPositions(Common::Array<Graphics::HotspotInfo> &hotspots) {
 }
 
+bool Engine::hotspotDirty() const {
+	return true;
+}
+
 void Engine::drawHotspots() {
 	if (!_showHotspots)
+		return;
+
+	if (!hotspotDirty())
 		return;
 
 	Common::Array<Graphics::HotspotInfo> hotspots;

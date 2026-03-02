@@ -537,6 +537,18 @@ protected:
 	 */
 	virtual void drawHotspots();
 
+	/**
+	 * Returns whether hotspot markers need to be re-rendered this frame.
+	 *
+	 * The default implementation always returns true. Engines may override
+	 * this to return false when hotspot positions have not changed (e.g. no
+	 * object state change, no screen pan), avoiding an unnecessary overlay
+	 * redraw.
+	 *
+	 * @return true if hotspots should be re-rendered, false to skip
+	 */
+	virtual bool hotspotDirty() const;
+
 	 /** @} */
 
 
