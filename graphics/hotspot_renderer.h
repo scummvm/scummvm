@@ -48,9 +48,9 @@ struct HotspotInfo {
  * Marker shape types.
  */
 enum MarkerShape {
-	MARKER_CROSSHAIR,
-	MARKER_SQUARE,
-	MARKER_POINT
+	kMarkerCrosshair,
+	kMarkerSquare,
+	kMarkerPoint
 };
 
 /**

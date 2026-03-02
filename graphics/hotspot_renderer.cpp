@@ -73,13 +73,13 @@ void HotspotRenderer::drawMarker(Surface *surface, int x, int y, const PixelForm
 	int height = surface->h;
 
 	switch (markerShape) {
-	case MARKER_CROSSHAIR:
+	case kMarkerCrosshair:
 		drawCrosshairMarker(surface, x, y, width, height, format);
 		break;
-	case MARKER_SQUARE:
+	case kMarkerSquare:
 		drawSquareMarker(surface, x, y, width, height, format);
 		break;
-	case MARKER_POINT:
+	case kMarkerPoint:
 		drawPointMarker(surface, x, y, width, height, format);
 		break;
 	}

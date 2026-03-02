@@ -2780,9 +2780,9 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 
 	_hotspotMarkerPopUpDesc = new StaticTextWidget(boss, prefix + "HotspotMarkerPopupDesc", _("Hotspot marker:"));
 	_hotspotMarkerPopUp = new PopUpWidget(boss, prefix + "HotspotMarkerPopup");
-	_hotspotMarkerPopUp->appendEntry(_("Point"), Graphics::MARKER_POINT);
-	_hotspotMarkerPopUp->appendEntry(_("Square"), Graphics::MARKER_SQUARE);
-	_hotspotMarkerPopUp->appendEntry(_("Crosshair"), Graphics::MARKER_CROSSHAIR);
+	_hotspotMarkerPopUp->appendEntry(_("Point"), Graphics::kMarkerPoint);
+	_hotspotMarkerPopUp->appendEntry(_("Square"), Graphics::kMarkerSquare);
+	_hotspotMarkerPopUp->appendEntry(_("Crosshair"), Graphics::kMarkerCrosshair);
 
 	_showHotspotTextCheckbox = new CheckboxWidget(boss, prefix + "ShowHotspotText",
 		_("Show hotspot labels"),
