@@ -147,6 +147,12 @@ void GameMaddog::init() {
 	_screen->copyRectToSurface(_background->getPixels(), _background->pitch, 0, 0, _background->w, _background->h);
 
 	moveMouse();
+
+	delete bullet;
+	delete hat;
+	delete shootout;
+	delete knife;
+	delete hole;
 }
 
 void GameMaddog::registerScriptFunctions() {

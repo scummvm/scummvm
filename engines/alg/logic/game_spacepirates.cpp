@@ -143,6 +143,10 @@ void GameSpacePirates::init() {
 	_screen->copyRectToSurface(_background->getPixels(), _background->pitch, 0, 0, _background->w, _background->h);
 
 	moveMouse();
+
+	delete bullets;
+	delete lives;
+	delete hole;
 }
 
 void GameSpacePirates::registerScriptFunctions() {
