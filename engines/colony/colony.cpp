@@ -2234,10 +2234,29 @@ Image *ColonyEngine::loadImage(Common::SeekableReadStream &file) {
 	int16 tf = readSint16(file);
 	uint32 size;
 	if (tf) {
-		/* uint32 bsize = */ readUint32(file);
+		// Mac original loadbitmap: reads bsize bytes into a buffer, then
+		// decompresses from that buffer. We must read exactly bsize bytes
+		// from the stream to keep file position aligned.
+		uint32 bsize = readUint32(file);
 		size = readUint32(file);
 		im->data = (byte *)malloc(size);
-		unpackBytes(file, im->data, size);
+		byte *packed = (byte *)calloc(bsize + 8, 1); // +8 matches original NewPtr(bsize+8)
+		file.read(packed, bsize);
+		// Decompress: exact match of Mac UnPackBytes(src, dst, len).
+		// Buffer is pairs of (count, value). Count is decremented in-place;
+		// when it reaches 0, advance to next pair.
+		byte *sp = packed;
+		for (uint32 di = 0; di < size; di++) {
+			if (*sp) {
+				im->data[di] = *(sp + 1);
+				(*sp)--;
+			} else {
+				sp += 2;
+				im->data[di] = *(sp + 1);
+				(*sp)--;
+			}
+		}
+		free(packed);
 	} else {
 		size = readUint32(file);
 		im->data = (byte *)malloc(size);
@@ -2258,19 +2277,22 @@ void ColonyEngine::unpackBytes(Common::SeekableReadStream &file, byte *dst, uint
 }
 
 Common::Rect ColonyEngine::readRect(Common::SeekableReadStream &file) {
+	int16 top, left, bottom, right;
 	if (getPlatform() == Common::kPlatformMacintosh) {
-		int16 top = readSint16(file);
-		int16 left = readSint16(file);
-		int16 bottom = readSint16(file);
-		int16 right = readSint16(file);
-		return Common::Rect(left, top, right, bottom);
+		top = readSint16(file);
+		left = readSint16(file);
+		bottom = readSint16(file);
+		right = readSint16(file);
 	} else {
-		int16 left = readSint16(file);
-		int16 top = readSint16(file);
-		int16 right = readSint16(file);
-		int16 bottom = readSint16(file);
-		return Common::Rect(left, top, right, bottom);
+		left = readSint16(file);
+		top = readSint16(file);
+		right = readSint16(file);
+		bottom = readSint16(file);
 	}
+	// Guard against invalid rects from animation data
+	if (left > right || top > bottom)
+		return Common::Rect();
+	return Common::Rect(left, top, right, bottom);
 }
 
 int16 ColonyEngine::readSint16(Common::SeekableReadStream &s) {
