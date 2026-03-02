@@ -153,6 +153,7 @@ void WaynesWorldEngine::gameMapHandleMouseMove(int objectNumber) {
 
     if (_hoverObjectNumber == -1) {
         if (_currentMapItemIndex == 6) {
+			warning("STUB gameMapHandleMouseMove - _currentMapItemIndex == 6");
             // TODO gameMapPaletteHandlerStop();
             // TODO paletteFadeColor(36, 4, 21, 2, 64);
             // TODO gameMapPaletteHandlerStart();
@@ -179,7 +180,8 @@ void WaynesWorldEngine::gameMapHandleMouseMove(int objectNumber) {
         tagX = item.tagX;
         tagY = item.tagY;
     } else if (_hoverObjectNumber == 6 || (_hoverObjectNumber >= 22 && _hoverObjectNumber <= 27)) {
-        // TODO gameMapPaletteHandlerStop();
+		warning("STUB gameMapHandleMouseMove - _hoverObjectNumber == 6");
+		// TODO gameMapPaletteHandlerStop();
         // TODO paletteFadeColor(36, 63, 0, 0, 64);
         // TODO gameMapPaletteHandlerStart();
         _currentMapItemIndex = 6;
