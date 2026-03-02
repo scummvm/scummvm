@@ -154,7 +154,7 @@ void PelrockEngine::init() {
 	if (gameInitialized == false) {
 		gameInitialized = true;
 		loadAnims();
-		setScreen(0, ALFRED_LEFT);
+		setScreenAndPrepare(0, ALFRED_LEFT);
 		// setScreen(3, ALFRED_RIGHT);
 		// setScreen(22, ALFRED_DOWN);
 		// setScreen(41, ALFRED_DOWN);
@@ -241,6 +241,8 @@ void sortAnimsByZOrder(Common::Array<Sprite> &anims) {
 }
 
 void PelrockEngine::playSoundIfNeeded() {
+	if (_disableAmbientSounds)
+		return;
 	// Get ambient slot offset (0-3) or -1 if no sound this frame
 	int ambientSlotOffset = _sound->tickAmbientSound(_chrono->getFrameCount());
 	if (ambientSlotOffset >= 0) {
@@ -938,7 +940,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 					exitTriggers(exit);
 					_alfredState.x = exit->targetX;
 					_alfredState.y = exit->targetY;
-					setScreen(exit->targetRoom, exit->dir);
+					setScreenAndPrepare(exit->targetRoom, exit->dir);
 				}
 			}
 		} else {
@@ -1946,7 +1948,7 @@ void PelrockEngine::checkMouseHover() {
 	}
 }
 
-void PelrockEngine::setScreen(int roomNumber, AlfredDirection dir) {
+void PelrockEngine::setScreen(int roomNumber) {
 	Common::File roomFile;
 	if (!roomFile.open(Common::Path("ALFRED.1"))) {
 		error("Could not open ALFRED.1");
@@ -1955,8 +1957,6 @@ void PelrockEngine::setScreen(int roomNumber, AlfredDirection dir) {
 	changeCursor(DEFAULT);
 	_sound->stopAllSounds();
 	_currentHotspot = nullptr;
-	_alfredState.direction = dir;
-	_alfredState.setState(ALFRED_IDLE);
 	_currentStep = 0;
 	int roomOffset = roomNumber * kRoomStructSize;
 	_alfredState.curFrame = 0;
@@ -1964,18 +1964,30 @@ void PelrockEngine::setScreen(int roomNumber, AlfredDirection dir) {
 	byte *palette = new byte[256 * 3];
 	_room->getPalette(&roomFile, roomOffset, palette);
 
-	byte *background = new byte[640 * 400];
-	_room->getBackground(&roomFile, roomOffset, background);
+	if (_currentBackground != nullptr) {
+		delete[] _currentBackground;
+	}
+	_currentBackground = new byte[640 * 400];
+	_room->getBackground(&roomFile, roomOffset, _currentBackground);
 
 	_screen->clear();
-	_screen->markAllDirty();
-	_screen->update();
 
-	Common::copy(background, background + 640 * 400, _currentBackground);
 	copyBackgroundToBuffer();
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 
 	_room->loadRoomMetadata(&roomFile, roomNumber);
+
+	_screen->markAllDirty();
+	_screen->update();
+
+	roomFile.close();
+	delete[] palette;
+}
+
+void PelrockEngine::setScreenAndPrepare(int roomNumber, AlfredDirection dir) {
+	setScreen(roomNumber);
+	_alfredState.direction = dir;
+	_alfredState.setState(ALFRED_IDLE);
 	_room->loadRoomTalkingAnimations(roomNumber);
 	if (_room->_musicTrack > 0)
 		_sound->playMusicTrack(_room->_musicTrack);
@@ -1989,13 +2001,7 @@ void PelrockEngine::setScreen(int roomNumber, AlfredDirection dir) {
 		_alfredState.y = w.y;
 	}
 
-	_screen->markAllDirty();
-	_screen->update();
-
 	doExtraActions(roomNumber);
-	roomFile.close();
-	delete[] background;
-	delete[] palette;
 }
 
 void PelrockEngine::loadExtraScreenAndPresent(int screenIndex) {
@@ -2140,38 +2146,37 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 	case 48: {
 		_dialog->_goodbyeDisabled = true;
 
-		if (_state->getFlag(FLAG_CORRECT_DOOR_CHOSEN) == true) {
-			if (_state->getFlag(FLAG_TRAMPILLA_ABIERTA) == true) {
+		if (_state->getFlag(FLAG_END_OF_GAME) == true) {
 
-				_dialog->say(_res->_ingameTexts[OHMISALVADOR]);
-				_dialog->say(_res->_ingameTexts[VOYPORTI_PRINCESA]);
-				_state->setCurrentRoot(48, 1, 0);
-				walkAndAction(_room->findHotspotByExtra(634), TALK);
+			_dialog->say(_res->_ingameTexts[OHMISALVADOR]);
+			_dialog->say(_res->_ingameTexts[VOYPORTI_PRINCESA]);
+			_state->setCurrentRoot(48, 1, 0);
+			walkAndAction(_room->findHotspotByExtra(634), TALK);
 
-				endingScene();
+			endingScene();
 
-			} else {
-				_dialog->say(_res->_ingameTexts[OHMISALVADOR]);
-				_dialog->say(_res->_ingameTexts[VOYPORTI_PRINCESA]);
-				_state->setFlag(FLAG_TRAMPILLA_ABIERTA, true);
-				walkAndAction(_room->findHotspotByExtra(634), TALK);
-				_room->addSticker(134);
-				// wait a few frames
-				int framesToWait = 0;
-				while (!shouldQuit() && framesToWait < 10) {
-					_events->pollEvent();
+		} else if (_state->getFlag(FLAG_CORRECT_DOOR_CHOSEN) == true) {
+			_dialog->say(_res->_ingameTexts[OHMISALVADOR]);
+			_dialog->say(_res->_ingameTexts[VOYPORTI_PRINCESA]);
+			_state->setFlag(FLAG_TRAMPILLA_ABIERTA, true);
+			walkAndAction(_room->findHotspotByExtra(634), TALK);
+			_room->addSticker(134);
+			// wait a few frames
+			int framesToWait = 0;
+			while (!shouldQuit() && framesToWait < 10) {
+				_events->pollEvent();
 
-					bool didRender = renderScene(OVERLAY_NONE);
-					if (didRender)
-						framesToWait++;
-					_screen->update();
-					g_system->delayMillis(10);
-				}
-				_alfredState.x = 294;
-				_alfredState.y = 387;
-				_room->addSticker(136);
-				setScreen(49, ALFRED_UP);
+				bool didRender = renderScene(OVERLAY_NONE);
+				if (didRender)
+					framesToWait++;
+				_screen->update();
+				g_system->delayMillis(10);
 			}
+			_alfredState.x = 294;
+			_alfredState.y = 387;
+			_room->addSticker(136);
+			setScreenAndPrepare(49, ALFRED_UP);
+
 		} else {
 			_dialog->say(_res->_ingameTexts[OHMISALVADOR]);
 			_dialog->say(_res->_ingameTexts[VOYPORTI_PRINCESA]);
@@ -2285,13 +2290,14 @@ void PelrockEngine::endingScene() {
 	int y2 = 400 / 2 + bbox1.height() / 2;
 	int ticks = 0;
 	_sound->playMusicTrack(3);
+	// Loop runs indefinitely — original game waits for any keypress before advancing to credits.
+	_events->_lastKeyEvent = Common::KEYCODE_INVALID;
 	while (!shouldQuit()) {
 		_events->pollEvent();
 
 		_chrono->updateChrono();
 
 		if (_chrono->_gameTick) {
-
 			memcpy(_compositeBuffer, _bgScreen, 640 * 400);
 
 			for (Sprite *sprite : sprites) {
@@ -2299,15 +2305,18 @@ void PelrockEngine::endingScene() {
 			}
 
 			memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
-			if (ticks > 30 && ticks < 180) {
+			// Title text visible frames 21–149 (original: frame > 0x14 && frame < 0x96)
+			if (ticks > 20 && ticks < 150) {
 				drawText(_largeFont, "ALFRED PELROCK", 0, y1, 640, 255);
 				drawText(_largeFont, "En busca de un sue\x80o", 0, y2, 640, 255);
 			}
-
-			if (ticks > 200) {
-				break;
-			}
 			ticks++;
+		}
+
+		// Any keypress advances to credits (original: infinite loop until input)
+		if (_events->_lastKeyEvent != Common::KEYCODE_INVALID) {
+			_events->_lastKeyEvent = Common::KEYCODE_INVALID;
+			break;
 		}
 
 		g_system->delayMillis(10);
@@ -2317,12 +2326,10 @@ void PelrockEngine::endingScene() {
 
 	memset(_screen->getPixels(), 0, 640 * 400);
 	g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
-	free(_bgScreen);
+	delete[] _bgScreen;
 	_bgScreen = nullptr;
 
 	CursorMan.showMouse(true);
-	delete[] _bgScreen;
-	_bgScreen = nullptr;
 	delete[] palette;
 	_screen->markAllDirty();
 	_screen->update();
@@ -2332,8 +2339,102 @@ void PelrockEngine::endingScene() {
 }
 
 void PelrockEngine::credits() {
+	// 25-page room slideshow: each page loads a game room and overlays credit texts.
+	static const int kNumCreditPages = 25;
+	static const int kCreditRooms[kNumCreditPages] = {
+		22, 27, 36, 23, 24, 37, 25, 26, 49, 43, 35, 52, 29,
+		39, 40, 41, 45, 47, 21, 50, 46, 42, 34, 30, 14};
+	static const int kFramesPerPage = 35;
 
-	debug("Starting credits sequence");
+	Common::Array<Common::StringArray> creditTexts = _res->getCredits();
+
+	Common::File roomFile;
+	if (!roomFile.open(Common::Path("ALFRED.1"))) {
+		error("Could not open ALFRED.1 for credits");
+		return;
+	}
+
+	byte *bg = new byte[640 * 400];
+	byte *palette = new byte[768];
+	CursorMan.showMouse(false);
+
+	// Outer restart loop — keypress during display restarts from page 0
+	bool restart = false;
+	_alfredState.setState(ALFRED_SKIP_DRAWING);
+	_disableAmbientSounds = true;
+	do {
+		restart = false;
+		for (int page = 0; page < kNumCreditPages && !shouldQuit(); page++) {
+			debug("Credits: loading page %d (room %d)", page, kCreditRooms[page]);
+			setScreen(kCreditRooms[page]);
+
+			Common::StringArray lines;
+
+			if (page < (int)creditTexts.size()) {
+				for (const Common::String &block : creditTexts[page]) {
+					Common::String cur;
+					for (uint ci = 0; ci < block.size(); ci++) {
+						byte b = (byte)block[ci];
+						if (b == 0xB1) {
+							if (!cur.empty()) {
+								lines.push_back(cur);
+								cur.clear();
+							}
+						} else if (b >= 0x20) {
+							cur += (char)b;
+						}
+					}
+					if (!cur.empty())
+						lines.push_back(cur);
+				}
+			}
+
+			// Compute vertical centering (LargeFont: CHAR_HEIGHT = 24px per line)
+			int lineH = _largeFont->getFontHeight();
+			int totalH = (int)lines.size() * lineH;
+			int startY = (400 - totalH) / 2;
+
+			byte speakerId;
+			_dialog->processColorAndTrim(lines, speakerId);
+			Graphics::Surface s = _dialog->getDialogueSurface(lines, speakerId);
+
+			int frames = 0;
+			_events->_lastKeyEvent = Common::KEYCODE_INVALID;
+			while (!shouldQuit() && frames < kFramesPerPage) {
+				debug("Credits page %d, frame %d/%d", page, frames, kFramesPerPage);
+				_events->pollEvent();
+				bool didRender = renderScene(OVERLAY_NONE);
+
+				if (didRender) {
+					_screen->transBlitFrom(s, s.getRect(), Common::Point(0, startY), 255);
+
+					if (_chrono->getFrameCount() % 2 == 0) // Original game increments frame counter every other frame
+						frames++;
+				}
+				_screen->markAllDirty();
+				_screen->update();
+				g_system->delayMillis(10);
+
+				// Keypress → restart slideshow from page 0 (original behaviour)
+				if (_events->_lastKeyEvent != Common::KEYCODE_INVALID) {
+					_events->_lastKeyEvent = Common::KEYCODE_INVALID;
+					restart = true;
+					break;
+				}
+			}
+
+			_screen->markAllDirty();
+			_screen->update();
+			if (restart)
+				break;
+		}
+	} while (restart && !shouldQuit());
+
+	_disableAmbientSounds = false;
+	delete[] bg;
+	delete[] palette;
+	roomFile.close();
+	CursorMan.showMouse(true);
 }
 
 void PelrockEngine::initGodsSequences(int roomNumber) {
@@ -2414,7 +2515,7 @@ void PelrockEngine::handleFlightRoomFrame() {
 			_alfredState.x = 294;
 			_alfredState.y = 387;
 			_alfredState.direction = ALFRED_UP;
-			setScreen(49, ALFRED_UP);
+			setScreenAndPrepare(49, ALFRED_UP);
 		}
 	}
 }

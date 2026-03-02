@@ -167,7 +167,7 @@ Graphics::Surface DialogManager::getDialogueSurface(Common::Array<Common::String
 	}
 
 	Graphics::Surface s;
-	s.create(maxWidth, height, Graphics::PixelFormat::createFormatCLUT8());
+	s.create(maxWidth + 1, height + 1, Graphics::PixelFormat::createFormatCLUT8());
 	s.fillRect(s.getRect(), 255); // Clear surface
 
 	for (int i = 0; i < dialogueLines.size(); i++) {
@@ -215,7 +215,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 	if (dialogueLines.empty()) {
 		return;
 	}
-
+	_dismissDialog = false;
 	// Clear any existing click state
 	_events->_leftMouseClicked = false;
 	_dialogActive = true;
@@ -258,8 +258,12 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 			if (curPage < (int)dialogueLines.size() - 1) {
 				curPage++;
 			} else {
-				break; // Exit dialogue on last page click
+				_dismissDialog = true;
 			}
+		}
+		if(_dismissDialog) {
+			_dismissDialog = false;
+			break; // Exit dialogue if dismissed programmatically
 		}
 		g_system->delayMillis(10);
 	}
@@ -761,7 +765,7 @@ ConversationEndResult DialogManager::checkConversationEnd(const byte *data, uint
 
 	if (controlByte == CTRL_ACTION_AND_END) {
 		result.actionCode = data[position + 1] | (data[position + 2] << 8);
-		debug("Action trigger %d encountered!", result.actionCode);
+		debug("Action-and-end trigger %d encountered!", result.actionCode);
 		result.shouldEnd = true;
 		result.hasAction = true;
 		return result;
@@ -771,7 +775,7 @@ ConversationEndResult DialogManager::checkConversationEnd(const byte *data, uint
 		// 0xEB: action-and-continue — dispatch the action but do NOT exit the conversation.
 		if (position + 2 < dataSize) {
 			result.actionCode = data[position + 1] | (data[position + 2] << 8);
-			debug("Action-and-continue trigger %d encountered (0xEB)", result.actionCode);
+			debug("Action-and-continue trigger %d encountered", result.actionCode);
 			result.hasAction = true;
 		}
 		result.shouldEnd = false;

@@ -728,7 +728,7 @@ void PelrockEngine::toJail() {
 	_graphics->fadeToBlack(10);
 	_alfredState.x = 342;
 	_alfredState.y = 277;
-	setScreen(31, ALFRED_DOWN);
+	setScreenAndPrepare(31, ALFRED_DOWN);
 	_state->setFlag(FLAG_A_LA_CARCEL, true);
 	_room->moveHotspot(_room->findHotspotByExtra(101), 444, 166);
 }
@@ -1223,7 +1223,7 @@ void PelrockEngine::usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot) {
 	// update conversaton state
 	_alfredState.x = 300;
 	_alfredState.y = 238;
-	setScreen(28, ALFRED_DOWN);
+	setScreenAndPrepare(28, ALFRED_DOWN);
 	_dialog->say(_res->_ingameTexts[QUEOSCUROESTAESTO]);
 }
 
@@ -1672,7 +1672,7 @@ void PelrockEngine::swimmingPoolCutscene(HotSpot *hotspot) {
 	_graphics->fadeToBlack(10);
 	_alfredState.x = 271;
 	_alfredState.y = 385;
-	setScreen(40, ALFRED_UP);
+	setScreenAndPrepare(40, ALFRED_UP);
 	walkAndAction(_room->findHotspotByExtra(640), TALK);
 	if (shouldQuit()) {
 		return;
@@ -1680,7 +1680,7 @@ void PelrockEngine::swimmingPoolCutscene(HotSpot *hotspot) {
 	_graphics->fadeToBlack(10);
 	_alfredState.x = 271;
 	_alfredState.y = 385;
-	setScreen(41, ALFRED_UP);
+	setScreenAndPrepare(41, ALFRED_UP);
 }
 
 void PelrockEngine::pickUpStones(HotSpot *hotspot) {
@@ -1755,7 +1755,7 @@ void PelrockEngine::magicFormula(int inventoryObject, HotSpot *hotspot) {
 
 		smokeAnimation(-1);
 		_alfredState.setState(ALFRED_IDLE);
-		setScreen(39, ALFRED_UP);
+		setScreenAndPrepare(39, ALFRED_UP);
 	}
 }
 
@@ -2009,7 +2009,7 @@ void PelrockEngine::teletransportToPrincess() {
 	_state->setCurrentRoot(48, 1, 0);
 	_alfredState.x = 138;
 	_alfredState.y = 255;
-	setScreen(48, ALFRED_DOWN);
+	setScreenAndPrepare(48, ALFRED_DOWN);
 }
 
 void PelrockEngine::useOnAlfred(int inventoryObject) {
@@ -2093,7 +2093,7 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 
 					_alfredState.x = 145;
 					_alfredState.y = 312;
-					setScreen(25, ALFRED_RIGHT);
+					setScreenAndPrepare(25, ALFRED_RIGHT);
 					_dialog->say(_res->_ingameTexts[MENUDAAVENTURA]);
 				}
 				break;

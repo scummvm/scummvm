@@ -189,6 +189,7 @@ public:
 	bool _flightSpellCast = false;
 	int _flightSpellFrameCounter = 0;
 	bool _flightInBlockingAnim = false;
+	bool _disableAmbientSounds = false;
 
 	GameStateData *_state = new GameStateData();
 
@@ -247,7 +248,8 @@ public:
 		return syncGame(s);
 	}
 
-	void setScreen(int s, AlfredDirection dir);
+	void setScreen(int s);
+	void setScreenAndPrepare(int s, AlfredDirection dir);
 	void loadExtraScreenAndPresent(int screenIndex);
 	void waitForSpecialAnimation();
 	bool renderScene(int overlayMode = OVERLAY_NONE);

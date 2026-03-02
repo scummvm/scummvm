@@ -373,7 +373,7 @@ void PelrockEngine::loadGame(SaveGameData &saveGame) {
 	_alfredState.direction = (AlfredDirection)saveGame.alfredDir;
 	_state = saveGame.gameState;
 
-	setScreen(saveGame.currentRoom, _alfredState.direction);
+	setScreenAndPrepare(saveGame.currentRoom, _alfredState.direction);
 	_state->stateGame = GAME;
 }
 
