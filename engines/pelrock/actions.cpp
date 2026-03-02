@@ -1490,7 +1490,18 @@ void PelrockEngine::giveWaterToGuard(int inventoryObject, HotSpot *hotspot) {
 }
 
 void PelrockEngine::pickUpStone(HotSpot *hotspot) {
+	_room->addSticker(117);
+	_state->setFlag(FLAG_PIRAMIDE_JODIDA, true);
+	_sound->playSound("QUAKE2ZZ.SMP", 0, 0);
+	_shakeEffectState.enable();
 	checkIngredients();
+	_dialog->say(_res->_ingameTexts[AYAYAY]);
+	_alfredState.direction = ALFRED_DOWN;
+	_dialog->say(_res->_ingameTexts[NADIELOHAVISTO]);
+
+	_alfredState.direction = ALFRED_LEFT;
+	_disableAction = true;
+	walkTo(592, 306);
 }
 
 void PelrockEngine::playSpecialAnim(uint32 offset, bool compressed, int x, int y, int width, int height, int numFrames) {

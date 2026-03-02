@@ -193,23 +193,42 @@ struct AlfredState {
 	}
 };
 
-typedef struct {
+struct ShakeEffectState
+{
+	bool enabled = false;
+	int shakeX = 0;
+	int shakeY = 0;
+
+	void enable() {
+		enabled = true;
+	}
+
+	void disable() {
+		enabled = false;
+		shakeX = 0;
+		shakeY = 0;
+		g_system->setShakePos(0, 0);
+	}
+};
+
+
+struct MovementStep {
 	uint8_t flags;      /* Direction flags (see MOVE_* constants) */
 	uint16_t distanceX; // Horizontal distance to move
 	uint16_t distanceY; // Vertical distance to move
-} MovementStep;
+};
 
 /**
  * Pathfinding context
  */
-typedef struct {
+struct PathContext {
 	uint8_t *pathBuffer;          // Sequence of walkbox indices
 	MovementStep *movementBuffer; // Array of movement steps
 	uint8_t *compressed_path;     // Final compressed path
 	uint16_t pathLength;
 	uint16_t movementCount;
 	uint16_t compressed_length;
-} PathContext;
+};
 
 struct Anim {
 	int nframes;
@@ -488,6 +507,7 @@ struct ResetEntry {
 #define FLAG_A_LA_CARCEL 18
 #define FLAG_SE_HA_PUESTO_EL_MUNECO 20
 #define FLAG_VIGILANTE_BEBE_AGUA 21
+#define FLAG_PIRAMIDE_JODIDA 23
 #define FLAG_FORMULA_MAGICA 26
 #define FLAG_DA_PIEDRA 31
 #define FLAG_PIEDRAS_COGIDAS 32
@@ -515,7 +535,6 @@ struct ResetEntry {
 #define FLAG_VIAJE_A_EGIPTO 12
 #define FLAG_PUERTA_SECRETA_ABIERTA 16
 #define FLAG_VIGILANTE_MEANDO 22
-#define FLAG_PIRAMIDE_JODIDA 23
 #define FLAG_PIRAMIDE_JODIDA2 24
 #define FLAG_VIGILANTE_PAJEANDOSE 25
 #define FLAG_VIAJA_AL_PASADO 27

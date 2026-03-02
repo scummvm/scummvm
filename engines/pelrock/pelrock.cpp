@@ -367,6 +367,21 @@ void PelrockEngine::frameTriggers() {
 	uint32 frameCount = _chrono->getFrameCount();
 	passerByAnim(frameCount);
 	handleFlightRoomFrame();
+	shakeEffect();
+}
+
+void PelrockEngine::shakeEffect() {
+	if(!_shakeEffectState.enabled) {
+		return;
+	}
+	if(_room->_currentRoomNumber == 36) {
+		_shakeEffectState.disable();
+		return;
+	}
+
+	_shakeEffectState.shakeX = (_chrono->getFrameCount() % 4 < 2) ? 2 : -2;
+	g_system->setShakePos(_shakeEffectState.shakeX, _shakeEffectState.shakeY);
+	_alfredState.x += (_shakeEffectState.shakeX/2); // Adjust Alfred's position to counteract shake for better readability
 }
 
 void PelrockEngine::passerByAnim(uint32 frameCount) {
@@ -2397,7 +2412,6 @@ void PelrockEngine::credits() {
 			byte speakerId;
 			_dialog->processColorAndTrim(lines, speakerId);
 			Graphics::Surface s = _dialog->getDialogueSurface(lines, speakerId);
-
 			int frames = 0;
 			_events->_lastKeyEvent = Common::KEYCODE_INVALID;
 			while (!shouldQuit() && frames < kFramesPerPage) {

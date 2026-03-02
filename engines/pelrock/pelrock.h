@@ -179,6 +179,7 @@ public:
 	ChronoManager *_chrono = nullptr;
 	PelrockEventManager *_events = nullptr;
 	AlfredState _alfredState;
+	ShakeEffectState _shakeEffectState;
 	byte *_compositeBuffer = nullptr; // Working composition buffer
 
 	bool _mouseDisabled = false;
@@ -255,6 +256,7 @@ public:
 	bool renderScene(int overlayMode = OVERLAY_NONE);
 	void mouseHoverForMap();
 	void frameTriggers();
+	void shakeEffect();
 	void handleFlightRoomFrame();
 
 	void passerByAnim(uint32 frameCount);

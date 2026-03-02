@@ -59,16 +59,16 @@ void SoundManager::playSound(byte index, int channel) {
 	}
 }
 
-void SoundManager::playSound(const char *filename, int channel) {
+void SoundManager::playSound(const char *filename, int channel, int loopCount) {
 	auto it = _soundMap.find(filename);
 	if (it != _soundMap.end()) {
-		playSound(it->_value, channel);
+		playSound(it->_value, channel, loopCount);
 	} else {
 		debug("Sound file %s not found in sound map", filename);
 	}
 }
 
-void SoundManager::playSound(SonidoFile sound, int channel) {
+void SoundManager::playSound(SonidoFile sound, int channel, int loopCount) {
 	Common::File sonidosFile;
 	if (!sonidosFile.open(Common::Path("SONIDOS.DAT"))) {
 		debug("Failed to open SONIDOS.DAT");
@@ -82,7 +82,7 @@ void SoundManager::playSound(SonidoFile sound, int channel) {
 
 	SoundFormat format = detectFormat(data, sound.size);
 	uint32_t sampleRate = getSampleRate(data, format);
-	Audio::AudioStream *stream = nullptr;
+	Audio::SeekableAudioStream *stream = nullptr;
 
 	if (format == SOUND_FORMAT_RIFF) {
 		// For WAV/RIFF files, use the wave decoder
@@ -117,7 +117,9 @@ void SoundManager::playSound(SonidoFile sound, int channel) {
 				_mixer->stopHandle(_sfxHandles[channel]);
 			}
 		}
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], stream, -1, 255U, 0, DisposeAfterUse::YES);
+		Audio::AudioStream *finalStream = loopCount == -1 ? stream : Audio::makeLoopingAudioStream(stream, 0);
+
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], finalStream, loopCount, 255U, 0, DisposeAfterUse::YES);
 	}
 }
 

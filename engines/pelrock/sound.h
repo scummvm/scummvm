@@ -29,12 +29,12 @@
 
 namespace Pelrock {
 
-typedef struct {
+struct SonidoFile {
 	Common::String filename;
 	uint32_t offset;
 	uint32_t size;
 	unsigned char *data;
-} SonidoFile;
+};
 
 static const char *SOUND_FILENAMES[] = {
 	"NO_SOUND.SMP", // 0 - Silence/disabled
@@ -158,7 +158,7 @@ public:
 	SoundManager(Audio::Mixer *mixer);
 	~SoundManager();
 	void playSound(byte index, int channel = -1);
-	void playSound(const char *filename, int channel);
+	void playSound(const char *filename, int channel, int loopCount = 1);
 	void playSound(byte *soundData, uint32 size);
 	void stopAllSounds();
 	void stopSound(int channel);
@@ -183,7 +183,7 @@ public:
 	byte _currentMusicTrack = 0;
 
 private:
-	void playSound(SonidoFile sound, int channel = -1);
+	void playSound(SonidoFile sound, int channel = -1, int loopCount = 1);
 	SoundFormat detectFormat(byte *data, uint32 size);
 	int getSampleRate(byte *data, SoundFormat format);
 	int findFreeChannel();

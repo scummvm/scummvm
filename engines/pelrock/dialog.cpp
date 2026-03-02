@@ -240,11 +240,19 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		int xPos = xBasePos - maxWidth / 2;
 		int yPos = yBasePos - height;
 
+
 		Graphics::Surface s = getDialogueSurface(textLines, speakerId);
 
 		// Clamp to screen bounds (original game: min Y = 1, max X = 639 - width)
 		xPos = CLIP(xPos, 0, 639 - maxWidth);
 		yPos = CLIP(yPos, 1, 400 - (int)s.getRect().height());
+
+		if(g_engine->_shakeEffectState.enabled) {
+			debug("Applying shake effect to dialogue, shakeX: %d", g_engine->_shakeEffectState.shakeX);
+			xPos -= g_engine->_shakeEffectState.shakeX;
+		} else {
+			debug("No shake effect applied to dialogue");
+		}
 
 		_screen->transBlitFrom(s, s.getRect(), Common::Point(xPos, yPos), 255);
 		drawPos(_screen, xPos, yPos, speakerId);
