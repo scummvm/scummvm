@@ -87,9 +87,9 @@ uint32 DialogManager::readTextBlock(
 		byte b = data[pos];
 
 		// End markers - stop reading text
-		if (b == CTRL_END_TEXT || b == CTRL_END_CONVERSATION || b == CTRL_ACTION_TRIGGER ||
+		if (b == CTRL_END_TEXT || b == CTRL_END_CONVERSATION || b == CTRL_ACTION_AND_END ||
 			b == CTRL_END_BRANCH || b == CTRL_DIALOGUE_MARKER || b == CTRL_DIALOGUE_MARKER_ONEOFF ||
-			b == CTRL_TEXT_TERMINATOR || b == CTRL_ALT_END_MARKER_1 || b == CTRL_ALT_END_MARKER_2 ||
+			b == CTRL_TEXT_TERMINATOR || b == CTRL_ALT_END_MARKER_1 || b == CTRL_ACTION_AND_CONTINUE ||
 			b == CTRL_GO_BACK || b == CTRL_SPEAKER_ID) {
 			break;
 		}
@@ -378,7 +378,7 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 									break;
 								}
 								// Found a conversation terminator - this choice ends the conversation
-								if (sb == CTRL_END_CONVERSATION || sb == CTRL_ACTION_TRIGGER) {
+								if (sb == CTRL_END_CONVERSATION || sb == CTRL_ACTION_AND_END) {
 									opt.hasConversationEndMarker = true;
 									break;
 								}
@@ -521,10 +521,11 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 
 		if (!skipToChoices) {
 			ConversationEndResult endResult = checkConversationEnd(conversationData, dataSize, state.position);
+			// Dispatch action for both 0xF8 (action+end) and 0xEB (action+continue)
+			if (endResult.hasAction) {
+				g_engine->dialogActionTrigger(endResult.actionCode, g_engine->_room->_currentRoomNumber, state.currentRoot);
+			}
 			if (endResult.shouldEnd) {
-				if (endResult.hasAction) {
-					g_engine->dialogActionTrigger(endResult.actionCode, g_engine->_room->_currentRoomNumber, state.currentRoot);
-				}
 				break;
 			}
 			state.position = endResult.nextPosition;
@@ -658,10 +659,11 @@ uint32 DialogManager::findSpeaker(byte npcIndex, uint32 dataSize, const byte *co
 }
 
 // Skip control bytes that should be ignored
+// NOTE: 0xEB (CTRL_ALT_END_MARKER_2) must NOT be skipped here — it is an action-and-continue
+// trigger that must be processed by checkConversationEnd, not silently discarded.
 uint32 DialogManager::skipControlBytes(const byte *data, uint32 dataSize, uint32 position) {
 	while (position < dataSize &&
-		   (data[position] == CTRL_ALT_END_MARKER_1 ||
-			data[position] == CTRL_ALT_END_MARKER_2)) {
+		   data[position] == CTRL_ALT_END_MARKER_1) {
 		position++;
 	}
 	return position;
@@ -672,7 +674,6 @@ uint32 DialogManager::peekNextMeaningfulByte(const byte *data, uint32 dataSize, 
 	uint32 peekPos = position;
 	while (peekPos < dataSize &&
 		   (data[peekPos] == CTRL_ALT_END_MARKER_1 ||
-			data[peekPos] == CTRL_ALT_END_MARKER_2 ||
 			data[peekPos] == CTRL_TEXT_TERMINATOR)) {
 		peekPos++;
 	}
@@ -758,11 +759,23 @@ ConversationEndResult DialogManager::checkConversationEnd(const byte *data, uint
 		return result;
 	}
 
-	if (controlByte == CTRL_ACTION_TRIGGER) {
+	if (controlByte == CTRL_ACTION_AND_END) {
 		result.actionCode = data[position + 1] | (data[position + 2] << 8);
 		debug("Action trigger %d encountered!", result.actionCode);
 		result.shouldEnd = true;
 		result.hasAction = true;
+		return result;
+	}
+
+	if (controlByte == CTRL_ACTION_AND_CONTINUE) {
+		// 0xEB: action-and-continue — dispatch the action but do NOT exit the conversation.
+		if (position + 2 < dataSize) {
+			result.actionCode = data[position + 1] | (data[position + 2] << 8);
+			debug("Action-and-continue trigger %d encountered (0xEB)", result.actionCode);
+			result.hasAction = true;
+		}
+		result.shouldEnd = false;
+		result.nextPosition = position + 3;
 		return result;
 	}
 
@@ -848,7 +861,7 @@ uint32 DialogManager::processChoiceSelection(
 	if (position < dataSize) {
 		byte endByte = data[position];
 		if (endByte == CTRL_END_TEXT || endByte == CTRL_END_BRANCH ||
-			endByte == CTRL_ACTION_TRIGGER) {
+			endByte == CTRL_ACTION_AND_END) {
 			position++;
 		}
 	}
@@ -1022,7 +1035,7 @@ bool DialogManager::processColorAndTrim(Common::StringArray &lines, byte &speake
 }
 
 bool isEndMarker(unsigned char char_byte) {
-	return char_byte == CTRL_END_TEXT || char_byte == CTRL_END_CONVERSATION || char_byte == CTRL_ACTION_TRIGGER || char_byte == CTRL_GO_BACK;
+	return char_byte == CTRL_END_TEXT || char_byte == CTRL_END_CONVERSATION || char_byte == CTRL_ACTION_AND_END || char_byte == CTRL_GO_BACK;
 }
 
 int calculateWordLength(Common::String text, int startPos, bool &isEnd) {
@@ -1041,7 +1054,7 @@ int calculateWordLength(Common::String text, int startPos, bool &isEnd) {
 		isEnd = true;
 	}
 	if (pos < text.size() && !isEnd) {
-		if (text[pos] == CTRL_ACTION_TRIGGER) { // 0xF8 (-8) special case
+		if (text[pos] == CTRL_ACTION_AND_END) { // 0xF8 (-8) special case
 			wordLength += 3;
 		} else {
 			// Count all consecutive spaces

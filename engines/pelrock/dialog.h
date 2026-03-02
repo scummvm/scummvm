@@ -41,14 +41,14 @@ namespace Pelrock {
 #define CTRL_DIALOGUE_MARKER 0xF1        /* Choice marker that sticks */
 #define CTRL_DISABLED_CHOICE 0xFA        /* Disabled choice marker */
 #define CTRL_PAGE_BREAK_CONV 0xF9        /* Page break in conversation */
-#define CTRL_ACTION_TRIGGER 0xF8         /* Action trigger */
+#define CTRL_ACTION_AND_END 0xF8         /* Action trigger */
 #define CTRL_END_BRANCH 0xF7             /* End of branch */
 #define CTRL_LINE_CONTINUE 0xF6          /* Line continue/newline */
 #define CTRL_ALT_END_MARKER_1 0xF5       /* Alt end marker - do nothing */
 #define CTRL_END_CONVERSATION 0xF4       /* End conversation and disable option */
 #define CTRL_DIALOGUE_MARKER_ONEOFF 0xFB /* Alt choice marker that disappears */
 #define CTRL_GO_BACK 0xF0                /* Go back in conversation */
-#define CTRL_ALT_END_MARKER_2 0xEB       /* Alt end marker 2 */
+#define CTRL_ACTION_AND_CONTINUE 0xEB       /* Action-and-continue: dispatch action, conversation keeps going (unlike 0xF8 which exits) */
 #define CTRL_ALT_SPEAKER_ROOT 0xFE       /* Separates conversations from different speakers */
 
 // Helper structures for conversation state management

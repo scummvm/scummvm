@@ -271,6 +271,8 @@ public:
 	void performActionTrigger(uint16 actionTrigger);
 	void dialogActionTrigger(uint16 actionTrigger, byte room, byte rootIndex);
 
+	void turnLightsOff();
+
 	void givenItems();
 	void advanceQuotesConversation(byte rootIndex, byte room);
 	void toJail();

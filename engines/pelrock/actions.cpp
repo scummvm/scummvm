@@ -679,10 +679,34 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 378:
 		_state->setCurrentRoot(49, 3, 0);
 		break;
+	case 380:
+		turnLightsOff();
+		break;
 	default:
 		debug("Got actionTrigger %d in dialogActionTrigger, but no handler defined", actionTrigger);
 		break;
 	}
+}
+
+/**
+ * Turns the screen all dark by changing all palette colors except those of the dialog text for both
+ * Alfred and the princess.
+ */
+void PelrockEngine::turnLightsOff() {
+	memset(_currentBackground, 0, 640 * 400);
+	memset(_compositeBuffer, 0, 640 * 400);
+	memset(_screen->getPixels(), 0, 640 * 400);
+	byte darkPalette[768] = {};
+	darkPalette[238 * 3 + 0] = 60 << 2; // R = 240
+	darkPalette[238 * 3 + 1] = 57 << 2; // G = 228
+	darkPalette[238 * 3 + 2] = 57 << 2; // B = 228
+	darkPalette[13 * 3 + 0] = 63 << 2;  // R = 252
+	darkPalette[13 * 3 + 1] = 21 << 2;  // G = 84
+	darkPalette[13 * 3 + 2] = 63 << 2;  // B = 252
+	g_system->getPaletteManager()->setPalette(darkPalette, 0, 256);
+	memcpy(_room->_roomPalette, darkPalette, 768);
+	_screen->markAllDirty();
+	_screen->update();
 }
 
 void PelrockEngine::givenItems() {
@@ -1881,10 +1905,17 @@ static void drawRemappedLine(byte *buf, int x0, int y0, int x1, int y1, const by
 			int idx = y0 * 640 + x0;
 			buf[idx] = remapTable[buf[idx]];
 		}
-		if (x0 == x1 && y0 == y1) break;
+		if (x0 == x1 && y0 == y1)
+			break;
 		int e2 = 2 * err;
-		if (e2 > -dy) { err -= dy; x0 += sx; }
-		if (e2 < dx)  { err += dx; y0 += sy; }
+		if (e2 > -dy) {
+			err -= dy;
+			x0 += sx;
+		}
+		if (e2 < dx) {
+			err += dx;
+			y0 += sy;
+		}
 	}
 }
 
@@ -1932,6 +1963,7 @@ void PelrockEngine::teletransportToPrincess() {
 			int y2 = lines[phase][3];
 			drawRemappedLine(_compositeBuffer, x1, y1, x2, y2, _room->_paletteRemaps[1]);
 		}
+
 		updateAnimations();
 		presentFrame();
 		_screen->update();
@@ -1973,7 +2005,7 @@ void PelrockEngine::teletransportToPrincess() {
 
 	// endgameTransportAnimation();
 	smokeAnimation(-1, true);
-	_state->setFlag(FLAG_END_OF_GAME, 1);
+	_state->setFlag(FLAG_END_OF_GAME, true);
 	_state->setCurrentRoot(48, 1, 0);
 	_alfredState.x = 138;
 	_alfredState.y = 255;
@@ -2080,19 +2112,18 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 					smokeAnimation(kFlightRooms[flightIndex].spriteIdx, true);
 					_room->addStickerToRoom(_room->_currentRoomNumber, 127 + flightIndex);
 					// if(_state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES) == 0b1111) {
-						HotSpot hotspot = HotSpot();
-						hotspot.actionFlags = 0;
-						hotspot.extra = 999;
-						hotspot.x = 320;
-						hotspot.y = 288;
-						hotspot.w = 35;
-						hotspot.h = 21;
-						hotspot.innerIndex = 0;
-						hotspot.index = 8;
-						_room->changeHotspot(52, hotspot);
+					HotSpot hotspot = HotSpot();
+					hotspot.actionFlags = 0;
+					hotspot.extra = 999;
+					hotspot.x = 320;
+					hotspot.y = 288;
+					hotspot.w = 35;
+					hotspot.h = 21;
+					hotspot.innerIndex = 0;
+					hotspot.index = 8;
+					_room->changeHotspot(52, hotspot);
 					// }
 				}
-
 
 				break;
 			}
