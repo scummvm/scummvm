@@ -111,6 +111,13 @@ typedef struct WindowFlag {
 
 typedef struct ImGuiState {
 
+	struct WatchLogEntry {
+		Common::String varName;
+		Common::String value;
+		Common::String scriptRef;
+		bool isWrite;
+	};
+
 	struct ScoreConfig {
 		float _sidebarWidth = 60.0f;
 		float _cellWidth = 14.0f;
@@ -124,9 +131,27 @@ typedef struct ImGuiState {
 		float _sidebar1Height = _cellHeight * 6;
 		float _labelBarHeight = _cellHeight;
 		float _cellHeightExtended = 5 * _cellHeight;
-		ImU32 _tableLightColor = IM_COL32(51,  51,  51,  255);
-		ImU32 _tableDarkColor = IM_COL32(38, 38, 38, 255);
-		ImU32 _borderColor = IM_COL32(102, 102, 102, 100);
+
+		// dark theme colors
+		ImU32 _darkTableLight = IM_COL32(51, 51, 51, 255);
+		ImU32 _darkTableDark = IM_COL32(38, 38, 38, 255);
+		ImU32 _darkBorder = IM_COL32(102, 102, 102, 100);
+
+		// light theme colors
+		ImU32 _lightTableLight = IM_COL32(240, 240, 240, 255);
+		ImU32 _lightTableDark = IM_COL32(210, 210, 210, 255);
+		ImU32 _lightBorder = IM_COL32(150, 150, 150, 150);
+
+		// text colors
+		ImU32 _sidebarTextColor = IM_COL32(200, 200, 200, 255);
+		static constexpr ImU32 _gridTextColor = IM_COL32(30, 30, 30, 255);
+
+		// active colors
+		ImU32 _tableLightColor = _darkTableLight;
+		ImU32 _tableDarkColor = _darkTableDark;
+		ImU32 _borderColor = _darkBorder;
+
+		bool _isLightTheme = false;
 	} _scoreCfg;
 
 	struct ScoreState {
@@ -232,13 +257,14 @@ typedef struct ImGuiState {
 	Common::Array<Common::Array<Common::Pair<uint, uint>>> _continuationData;
 	Common::String _loadedContinuationData;
 
+	Common::Array<WatchLogEntry> _watchLog;
+
 	Common::String _scoreWindow;
 	Common::String _channelsWindow;
 	Common::String _castWindow;
 	int _scoreMode = 0;
 	int _scoreFrameOffset = 1;
 	int _scorePageSlider = 0;
-
 	int _selectedChannel = -1;
 
 	ImFont *_tinyFont = nullptr;

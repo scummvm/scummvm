@@ -51,6 +51,7 @@ const char *modes2[] = {
 };
 
 struct ScoreLayout {
+	ImVec2 themeSelectorPos;
 	ImVec2 labelBarPos;
 	ImVec2 sidebar1Pos;
 	ImVec2 mainChannelGridPos;
@@ -62,8 +63,21 @@ struct ScoreLayout {
 	ImVec2 sliderYPos;
 };
 
-static ScoreLayout computeLayout(ImVec2 origin, const ImGuiState::ScoreConfig &cfg) {
+static ScoreLayout computeLayout(ImVec2 origin, ImGuiState::ScoreConfig &cfg) {
 	ScoreLayout l;
+	ImVec2 size = ImGui::GetWindowSize();
+	float paddingX = cfg._sidebarWidth + 50.0f;
+	float paddingY = cfg._rulerHeight + cfg._cellHeight * 7 + 150.0f;
+	cfg._visibleFrames = MAX<int>((size.x - paddingX) / cfg._cellWidth, 10);
+	cfg._visibleChannels = MAX<int>((size.y - paddingY) / cfg._cellHeight, 10);
+	cfg._tableWidth = cfg._cellWidth * cfg._visibleFrames;
+	cfg._tableHeight = cfg._cellHeight * cfg._visibleChannels;
+	cfg._rulerWidth = cfg._tableWidth;
+	cfg._sidebar1Height = cfg._cellHeight * 6;
+	cfg._labelBarHeight = cfg._cellHeight;
+	cfg._cellHeightExtended = 5 * cfg._cellHeight;
+
+	l.themeSelectorPos = ImVec2(origin.x, origin.y);
 	l.labelBarPos = ImVec2(origin.x + cfg._sidebarWidth, origin.y);
 	l.sidebar1Pos = ImVec2(origin.x, origin.y + cfg._labelBarHeight);
 	l.mainChannelGridPos = ImVec2(origin.x + cfg._sidebarWidth, origin.y + cfg._labelBarHeight);
@@ -202,7 +216,7 @@ static void drawSidebar1(ImDrawList *dl, ImVec2 startPos, Score *score) {
 		float textlen = ImGui::CalcTextSize(icon).x;
 		float textX = startPos.x + toggleColWidth + (labelColWidth - textlen) / 2.0f;
 		float textY = y + (cfg._cellHeight - ImGui::GetTextLineHeight()) / 2.0f;
-		dl->AddText(iconFont, 0.0f, ImVec2(textX, textY), U32(_state->_colors._type_color), icon);
+		dl->AddText(iconFont, 0.0f, ImVec2(textX, textY), cfg._sidebarTextColor, icon);
 
 		// invisible button covering the row for interaction
 		ImGui::SetCursorScreenPos(rowMin);
@@ -261,15 +275,15 @@ static void drawSidebar2(ImDrawList *dl, ImVec2 startPos, Score *score) {
 
 		if (_state->_scoreMode != kModeExtended) {
 			float textY = y + (cellH - ImGui::GetTextLineHeight()) / 2.0f;
-			dl->AddText(ImVec2(textX, textY), U32(_state->_colors._keyword_color), buf);
+			dl->AddText(ImVec2(textX, textY), cfg._sidebarTextColor, buf);
 		} else { // draw channel number and labels
-			dl->AddText(ImVec2(textX, y + 2.0f), U32(_state->_colors._keyword_color), buf);
+			dl->AddText(ImVec2(textX, y + 2.0f), cfg._sidebarTextColor, buf);
 			const char *subLabels[] = { "Member", "Behavior", "Ink", "Blend", "Location" };
 			float lineH = ImGui::GetTextLineHeight();
 			for (int s = 0; s < 5; s++) {
 				float subX = textX - 17.0f;
 				float subY = y + lineH + 2.0f + s * lineH; // offset below channel number
-				dl->AddText(ImVec2(subX, subY), U32(_state->_colors._type_color), subLabels[s]);
+				dl->AddText(ImVec2(subX, subY), cfg._sidebarTextColor, subLabels[s]);
 			}
 		}
 	}
@@ -609,7 +623,7 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 					snprintf(buf, sizeof(buf), "%s", getDisplayName(cm).c_str());
 				else if (sprite.isQDShape())
 					snprintf(buf, sizeof(buf), "Q");
-				dl->AddText(ImVec2(textX, baseY), U32(_state->_colors._line_color), buf);
+				dl->AddText(ImVec2(textX, baseY), cfg._gridTextColor, buf);
 
 				// Behavior
 				buf[0] = '\0';
@@ -617,18 +631,18 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 					CastMember *sc = cast->getCastMember(sprite._scriptId.member, true);
 					if (sc) snprintf(buf, sizeof(buf), "%s", getDisplayName(sc).c_str());
 				}
-				dl->AddText(ImVec2(textX, baseY + lineH), U32(_state->_colors._line_color), buf);
+				dl->AddText(ImVec2(textX, baseY + lineH), cfg._gridTextColor, buf);
 
 				// Ink
-				dl->AddText(ImVec2(textX, baseY + lineH * 2), U32(_state->_colors._line_color), inkType2str(sprite._ink));
+				dl->AddText(ImVec2(textX, baseY + lineH * 2), cfg._gridTextColor, inkType2str(sprite._ink));
 
 				// Blend
 				snprintf(buf, sizeof(buf), "%d", sprite._blendAmount);
-				dl->AddText(ImVec2(textX, baseY + lineH * 3), U32(_state->_colors._line_color), buf);
+				dl->AddText(ImVec2(textX, baseY + lineH * 3), cfg._gridTextColor, buf);
 
 				// Location
 				snprintf(buf, sizeof(buf), "%d,%d", sprite._startPoint.x, sprite._startPoint.y);
-				dl->AddText(ImVec2(textX, baseY + lineH *4), U32(_state->_colors._line_color), buf);
+				dl->AddText(ImVec2(textX, baseY + lineH *4), cfg._gridTextColor, buf);
 			}
 
 			if (startVisible && _state->_scoreMode != kModeExtended) {
@@ -661,7 +675,7 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 					break;
 				}
 				if (label[0])
-					dl->AddText(ImVec2(x1 + 4.0f, y + (cellH - ImGui::GetTextLineHeight()) / 2.0f), U32(_state->_colors._line_color), label);
+					dl->AddText(ImVec2(x1 + 4.0f, y + (cellH - ImGui::GetTextLineHeight()) / 2.0f), cfg._gridTextColor, label);
 
 			}
 
@@ -922,14 +936,14 @@ static void drawLabelBar(ImDrawList *dl, ImVec2 pos, Score *score) {
 			float textY = y + (cfg._labelBarHeight - ImGui::GetTextLineHeight()) / 2.0f;
 
 			dl->AddText(ImVec2(x - ImGui::CalcTextSize(ICON_MS_BEENHERE).x / 2.0f, textY),
-						U32(_state->_colors._type_color), ICON_MS_BEENHERE);
+						cfg._sidebarTextColor, ICON_MS_BEENHERE);
 
 			float iconW = ImGui::CalcTextSize(ICON_MS_BEENHERE).x;
 			float textX = x + iconW / 2.0f + 2.0f;
 			float textWidth = ImGui::CalcTextSize(labelName->c_str()).x;
 
 			if (textX + textWidth < finalPos.x) // prevent text being drawn outside the table bounds
-				dl->AddText(ImVec2(textX, textY), U32(_state->_colors._type_color), labelName->c_str());
+				dl->AddText(ImVec2(textX, textY), cfg._sidebarTextColor, labelName->c_str());
 
 			float px = pos.x + f * cfg._cellWidth;
 			ImGui::SetCursorScreenPos(ImVec2(px, y));
@@ -942,6 +956,23 @@ static void drawLabelBar(ImDrawList *dl, ImVec2 pos, Score *score) {
 	}
 }
 
+static void drawThemeButton(ImVec2 pos) {
+	ImGui::SetCursorScreenPos(pos);
+	if (ImGui::Button(ICON_MS_LIGHT_MODE)) {
+		auto &cfg = _state->_scoreCfg;
+		cfg._isLightTheme = !cfg._isLightTheme;
+		cfg._sidebarTextColor = cfg._isLightTheme ? cfg._gridTextColor : cfg._sidebarTextColor;
+		if (cfg._isLightTheme) {
+			cfg._tableLightColor = cfg._lightTableLight;
+			cfg._tableDarkColor = cfg._lightTableDark;
+			cfg._borderColor = cfg._lightBorder;
+		} else {
+			cfg._tableLightColor = cfg._darkTableLight;
+			cfg._tableDarkColor = cfg._darkTableDark;
+			cfg._borderColor = cfg._darkBorder;
+		}
+	}
+}
 
 void showScore() {
 	if (!_state->_w.score)
@@ -975,17 +1006,15 @@ void showScore() {
 		if (!numFrames || _state->_selectedScoreCast.channel >= (int)score->_scoreCache[0]->_sprites.size())
 			_state->_selectedScoreCast.channel = 0;
 
-
-
 		drawSpriteInspector(score, cast, numFrames);
-
 		int numChannels = MIN<int>(score->_scoreCache[0]->_sprites.size(), score->_maxChannelsUsed + 10);
 		handleScrolling(score, numChannels);
 
 		ImDrawList *dl	= ImGui::GetWindowDrawList();
-		ImVec2	 origin = ImGui::GetCursorScreenPos();
+		ImVec2 origin = ImGui::GetCursorScreenPos();
 		ScoreLayout layout = computeLayout(origin, _state->_scoreCfg);
 
+		drawThemeButton(layout.themeSelectorPos);
 		drawLabelBar(dl, layout.labelBarPos, score);
 		drawSidebar1(dl, layout.sidebar1Pos, score);
 		drawMainChannelGrid(dl, layout.mainChannelGridPos, score);
