@@ -141,22 +141,23 @@ static const byte fragment5[] = {OP_IMM | OPSIZE16, FRAGMENT_WORD(901), OP_JUMP 
 static const byte fragment6[] = {OP_IMM | OPSIZE16, FRAGMENT_WORD(903), OP_JUMP | OPSIZE16, FRAGMENT_WORD(516)};
 static const byte fragment7[] = {OP_IMM | OPSIZE16, FRAGMENT_WORD(908), OP_JUMP | OPSIZE16, FRAGMENT_WORD(616)};
 static const byte fragment8[] = {OP_IMM | OPSIZE16, FRAGMENT_WORD(910), OP_JUMP | OPSIZE16, FRAGMENT_WORD(644)};
-static const byte fragment9[] = {OP_JUMP | OPSIZE8, 123};
-static const byte fragment10[] = {OP_IMM | OPSIZE16, FRAGMENT_WORD(160), OP_JUMP | OPSIZE16, FRAGMENT_WORD(136)};
-static const byte fragment11[] = {OP_JMPTRUE | OPSIZE16, FRAGMENT_WORD(1572),
+static const byte fragment9[] = {OP_JUMP | OPSIZE8, 115};
+static const byte fragment10[] = {OP_JUMP | OPSIZE8, 123};
+static const byte fragment11[] = {OP_IMM | OPSIZE16, FRAGMENT_WORD(160), OP_JUMP | OPSIZE16, FRAGMENT_WORD(136)};
+static const byte fragment12[] = {OP_JMPTRUE | OPSIZE16, FRAGMENT_WORD(1572),
 		OP_ONE, OP_LIBCALL | OPSIZE8, 14,									// Re-show the cursor
 		OP_IMM | OPSIZE16, FRAGMENT_WORD(322), OP_LIBCALL | OPSIZE8, 46,	// Give back the whistle
 		OP_JUMP | OPSIZE16, FRAGMENT_WORD(1661)};
-static const byte fragment12[] = {OP_JMPTRUE | OPSIZE16, FRAGMENT_WORD(1491),
+static const byte fragment13[] = {OP_JMPTRUE | OPSIZE16, FRAGMENT_WORD(1491),
 		OP_ONE, OP_LIBCALL | OPSIZE8, 14,									// Re-show the cursor
 		OP_IMM | OPSIZE16, FRAGMENT_WORD(322), OP_LIBCALL | OPSIZE8, 46,	// Give back the whistle
 		OP_JUMP | OPSIZE16, FRAGMENT_WORD(1568)};
-static const byte fragment13[] = {OP_ZERO, OP_GSTORE | OPSIZE16, FRAGMENT_WORD(306)};
-static const byte fragment14[] = {OP_LIBCALL | OPSIZE8, 58,
+static const byte fragment14[] = {OP_ZERO, OP_GSTORE | OPSIZE16, FRAGMENT_WORD(306)};
+static const byte fragment15[] = {OP_LIBCALL | OPSIZE8, 58,
 		OP_IMM, FRAGMENT_DWORD((42 << 23)), OP_ONE, OP_ZERO, OP_LIBCALL | OPSIZE8, 44,
 		OP_LIBCALL | OPSIZE8, 97, OP_JUMP | OPSIZE16, FRAGMENT_WORD(2220)
 };
-static const byte fragment15[] = { OP_JMPFALSE | OPSIZE16, FRAGMENT_WORD(154) };
+static const byte fragment16[] = { OP_JMPFALSE | OPSIZE16, FRAGMENT_WORD(154) };
 
 #if NOIR_SKIP_INTRO
 static const byte fragment_noir_skip_intro_1[] = {
@@ -201,11 +202,16 @@ const WorkaroundEntry workaroundList[] = {
 	{TINSEL_V1, false, false, Common::kPlatformUnknown, 310506872, 613, sizeof(fragment7), fragment7},
 	{TINSEL_V1, false, false, Common::kPlatformUnknown, 310506872, 641, sizeof(fragment8), fragment8},
 
-	// DW1-SCN: The script for the lovable street-Starfish does a
+	// DW1: The script for the lovable street-Starfish does a
 	// 'StopSample' after flicking the coin to ensure it's sound is
 	// stopped, but which also accidentally can stop any active
-	// conversation with the Amazon.
-	{TINSEL_V1, true, false, Common::kPlatformUnknown, 394640351, 121, sizeof(fragment9), fragment9},
+	// conversation with the Amazon. This occurs in GRA and early
+	// SCN versions (Mac English-only, DOS English-only), and was
+	// fixed in later versions by removing the `StopSample` call.
+	// Fixes bugs #4588, #6013
+	{TINSEL_V1, false, false, Common::kPlatformUnknown,   386244920, 113, sizeof(fragment9),  fragment9},  // All .GRA
+	{TINSEL_V1, true,  false, Common::kPlatformMacintosh, 395378742, 113, sizeof(fragment9),  fragment9},  // Mac .SCN
+	{TINSEL_V1, true,  false, Common::kPlatformDOS,       394640351, 121, sizeof(fragment10), fragment10}, // DOS .SCN
 
 	// DW2: In the garden, global #490 is set when the bees begin their
 	// 'out of hive' animation, and reset when done. But if the game is
@@ -222,26 +228,26 @@ const WorkaroundEntry workaroundList[] = {
 
 	// DW1-GRA: Corrects text being drawn partially off-screen during
 	// the blackboard description of the Librarian.
-	{TINSEL_V1, false, false, Common::kPlatformUnknown, 293831402, 133, sizeof(fragment10), fragment10},
+	{TINSEL_V1, false, false, Common::kPlatformUnknown, 293831402, 133, sizeof(fragment11), fragment11},
 
 	// DW1-GRA/SCN: Corrects the dead-end of being able to give the
 	// whistle back to the pirate before giving him the parrot.
 	// See bug report #4755.
-	{TINSEL_V1, true, false, Common::kPlatformUnknown, 352601285, 1569, sizeof(fragment11), fragment11},
-	{TINSEL_V1, false, false, Common::kPlatformUnknown, 352602304, 1488, sizeof(fragment12), fragment12},
+	{TINSEL_V1, true, false, Common::kPlatformUnknown, 352601285, 1569, sizeof(fragment12), fragment12},
+	{TINSEL_V1, false, false, Common::kPlatformUnknown, 352602304, 1488, sizeof(fragment13), fragment13},
 
 	// DW2: Corrects a bug with global 306 not being cleared if you leave
 	// the marketplace scene whilst D'Blah is talking (even if it's not
 	// actually audible); returning to the scene and clicking on him multiple
 	// times would cause the game to crash
-	{TINSEL_V2, true, false, Common::kPlatformUnknown, 1109294728, 0, sizeof(fragment13), fragment13},
+	{TINSEL_V2, true, false, Common::kPlatformUnknown, 1109294728, 0, sizeof(fragment14), fragment14},
 
 	// DW1 PSX DEMO: Alters a script in the PSX DW1 demo to show the Idle animation scene rather than
 	// quitting the game when no user input happens for a while
-	{TINSEL_V1, true, true, Common::kPlatformPSX, 0, 2186, sizeof(fragment14), fragment14},
+	{TINSEL_V1, true, true, Common::kPlatformPSX, 0, 2186, sizeof(fragment15), fragment15},
 
 	// DW1-GRA: Fixes hang in Temple, when trying to use items on the big hammer
-	{TINSEL_V1, false, false, Common::kPlatformUnknown, 276915849, 0x98, sizeof(fragment15), fragment15},
+	{TINSEL_V1, false, false, Common::kPlatformUnknown, 276915849, 0x98, sizeof(fragment16), fragment16},
 
 #if NOIR_SKIP_INTRO
 	// NOIR: Skip the menu and intro, and skip the first conversation.
