@@ -418,6 +418,11 @@ void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 		currentHeight = height;
 	}
 
+	if (dpiScale < 0.01f || dpiScale > 100.0f) {
+		warning("OpenGLSdlGraphicsManager::notifyResize: Unreasonable DPI scale factor %f, ignoring it", dpiScale);
+		dpiScale = 2.0f;
+	}
+
 	debug(3, "req: %d x %d  cur: %d x %d, scale: %f", width, height, currentWidth, currentHeight, dpiScale);
 
 	if (ConfMan.getBool("force_resize", Common::ConfigManager::kApplicationDomain)) {
