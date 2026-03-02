@@ -43,6 +43,8 @@ private:
 	bool cmd_music(int argc, const char **argv);
 	bool cmd_sound(int argc, const char **argv);
 	bool cmd_string(int argc, const char **argv);
+	bool cmd_globals(int argc, const char **argv);
+	bool cmd_global(int argc, const char **argv);
 };
 
 } // End of namespace Tinsel
