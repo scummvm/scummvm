@@ -32,7 +32,7 @@
 namespace WaynesWorld {
 
 GxlArchive::GxlArchive(const Common::String name) : _gxlFile(new Common::File()) {
-	Common::Path filename = Common::Path(name + ".GXL");
+	const Common::Path filename = Common::Path(name + ".GXL");
 	if (!_gxlFile->open(filename)) {
 		warning("GlxArchive::GlxArchive(): Could not find the archive file %s", filename.baseName().c_str());
 		delete _gxlFile;
@@ -40,14 +40,14 @@ GxlArchive::GxlArchive(const Common::String name) : _gxlFile(new Common::File())
 		return;
 	}
 
-	uint16 sign = _gxlFile->readUint16BE();
+	const uint16 sign = _gxlFile->readUint16BE();
 	if (sign != 0x01CA) {
 		error("Invalid GXL signature");
 	}
 
 	// signature (2) + copyright (50) + version (2) + garbage(40)
 	_gxlFile->seek(94);
-	uint16 count = _gxlFile->readUint16LE();
+	const uint16 count = _gxlFile->readUint16LE();
 	
 	GxlHeader header;
 	_gxlFile->seek(128);

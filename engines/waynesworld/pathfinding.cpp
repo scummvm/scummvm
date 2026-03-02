@@ -95,8 +95,9 @@ void WaynesWorldEngine::walkCalcOtherActorDest(int flag, int &x, int &y) {
     } else {
         direction = walkCalcDirection(x - _wayneSpriteX, y - _wayneSpriteY);
     }
-    int actorScale = getActorScaleFromY(y);
-    int actorDistance = (actorScale * 20) / 100;
+
+    const int actorScale = getActorScaleFromY(y);
+    const int actorDistance = (actorScale * 20) / 100;
     switch (direction) {
     case 0:
         y += actorDistance;
@@ -104,24 +105,30 @@ void WaynesWorldEngine::walkCalcOtherActorDest(int flag, int &x, int &y) {
     case 1:
         x += actorDistance;
         break;
+
     case 2:
         x += actorDistance;
         // fallthrough
     case 3:
         y -= actorDistance;
         break;
+
     case 4:
         y -= actorDistance;
         // fallthrough
     case 5:
         x -= actorDistance;
         break;
+
     case 6:
         x -= actorDistance;
         // fallthrough
     case 7:
         y += actorDistance;
         break;
+  
+    default:
+    	break;
     }
     walkAdjustDestPoint(x, y);
 }
@@ -321,7 +328,7 @@ int WaynesWorldEngine::walkCalcDirection(int deltaX, int deltaY) {
 
 int WaynesWorldEngine::walkAddWalkLine(int flag, int x1, int y1, int x2, int y2, int pointsCount) {
     WalkPoint *walkPoints = flag == 0 ? _wayneWalkPoints : _garthWalkPoints;
-    int newDirection = walkCalcDirection(x1 - x2, y1 - y2);
+    const int newDirection = walkCalcDirection(x1 - x2, y1 - y2);
 	// debug("walkAddWalkLine() %d, %d, %d, %d", x1, y1, x2, y2);
 
     if (pointsCount == 0 || walkPoints[pointsCount - 1].x != x1 || walkPoints[pointsCount - 1].y != y1) {
@@ -421,14 +428,11 @@ bool WaynesWorldEngine::walkTo(int actor1_destX, int actor1_destY, int direction
         walkAdjustDestPoint(actor2WalkDestX, actor2WalkDestY);
     }
 
-    int actor1PointsCount, actor2PointsCount;
-
-    actor1PointsCount = walkCalcPath(flag1, actor1X, actor1Y, actor1_destX, actor1_destY, 0);
+    const int actor1PointsCount = walkCalcPath(flag1, actor1X, actor1Y, actor1_destX, actor1_destY, 0);
+	int actor2PointsCount = 0;
 
     if (actor2X != actor2WalkDestX || actor2Y != actor2WalkDestY) {
         actor2PointsCount = walkCalcPath(flag2, actor2X, actor2Y, actor2WalkDestX, actor2WalkDestY, 0);
-    } else {
-        actor2PointsCount = 0;
     }
 
     if (actor1PointsCount + 20 < actor2PointsCount) {
@@ -461,6 +465,7 @@ bool WaynesWorldEngine::walkTo(int actor1_destX, int actor1_destY, int direction
         // }
         waitMillis(100); // TODO Fix this
         if (_scrollRemaining == 0) {
+			warning("STUB - Missing scrolling in WalkTo");
             // TOOD
             // if (updateGame()) {
             //     return true;

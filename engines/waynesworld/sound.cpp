@@ -88,7 +88,7 @@ MusicManager::MusicManager(WaynesWorldEngine *vm) : _vm(vm) {
 	_isLooping = false;
 	_driver = nullptr;
 
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
+	const MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
 	MusicType musicType = MidiDriver::getMusicType(dev);
 
 	switch (musicType) {

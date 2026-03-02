@@ -162,10 +162,10 @@ void GFTFont::loadFromFile(const char *filename) {
 	fd.seek(0x24);
 	_firstChar = fd.readUint16LE();
 	_lastChar = fd.readUint16LE();
-	uint16 charCount = _lastChar - _firstChar + 2;
+	const uint16 charCount = _lastChar - _firstChar + 2;
 	fd.seek(0x48);
-	uint32 charTableOfs = fd.readUint32LE();
-	uint32 charDataOfs = fd.readUint32LE();
+	const uint32 charTableOfs = fd.readUint32LE();
+	const uint32 charDataOfs = fd.readUint32LE();
 	_formWidth = fd.readSint16LE();
 	_formHeight = fd.readSint16LE();
 	fd.seek(charTableOfs);
@@ -177,7 +177,7 @@ void GFTFont::loadFromFile(const char *filename) {
     for (int y = 0; y < _formHeight; y++) {
         int x = 0;
         for (int formPos = 0; formPos < _formWidth; formPos++) {
-            byte charByte = fd.readByte();
+	        const byte charByte = fd.readByte();
             for (int bitNum = 0; bitNum < 8; bitNum++) {
                 _fontData[x + y * _formWidth * 8] = ((charByte & (1 << (7 - bitNum))) != 0) ? 1 : 0;
                 x++;
@@ -196,12 +196,12 @@ void GFTFont::drawText(Graphics::Surface *surface, const char *text, int x, int 
 void GFTFont::drawWrappedText(Graphics::Surface *surface, const char *text, int x, int y, int maxWidth, byte color) {
     const char *textP = text;
     const char *lineStartP = text, *lastSpaceP = nullptr;
-	int textX = x;
+    const int textX = x;
     int lineWidth = 0;
     while (*textP) {
         if (textP > text && textP[-1] == 32)
             lastSpaceP = textP - 1;
-        int charWidth = getCharWidth(*textP);
+        const int charWidth = getCharWidth(*textP);
         if (lineWidth + charWidth > maxWidth) {
 			const char *lineEndP = lastSpaceP ? lastSpaceP : textP + 1;
 			for (const char *p = lineStartP; p < lineEndP; p++) {
@@ -230,7 +230,7 @@ int GFTFont::drawChar(Graphics::Surface *surface, byte ch, int x, int y, byte co
 		return 0;
 	const uint charIndex = ch - _firstChar;
 	byte *charData = _fontData + _charTable[charIndex];
-	int charWidth = getCharWidth(ch);
+	const int charWidth = getCharWidth(ch);
 	for (int yc = 0; yc < _formHeight; yc++) {
 		byte *destRow = (byte*)surface->getBasePtr(x, y + yc);
 		for (int xc = 0; xc < charWidth; xc++) {
@@ -348,8 +348,8 @@ ScreenEffect::ScreenEffect(WaynesWorldEngine *vm, Graphics::Surface *surface, in
 	: _vm(vm), _surface(surface), _x(x), _y(y), _grainWidth(grainWidth), _grainHeight(grainHeight), _blockCtr(0) {
     _blockCountW = _surface->w / _grainWidth + (_surface->w % _grainWidth > 0 ? 1 : 0);
 	_blockCountH = _surface->h / _grainHeight + (_surface->h % _grainHeight > 0 ? 1 : 0);
-	int blockCount = _blockCountW * _blockCountH;
-	int duration = blockCount / 5; // Approximate time this effect should take in ms
+    const int blockCount = _blockCountW * _blockCountH;
+    const int duration = blockCount / 5; // Approximate time this effect should take in ms
 	_timePerSlice = 50; // Time after which the screen should be updated
 	_blocksPerSlice = blockCount / (duration / _timePerSlice);
 }
@@ -363,9 +363,8 @@ void ScreenEffect::drawSpiralEffect() {
 	_totalSliceTicks = g_system->getMillis();
 	_vm->_screen->beginUpdate();
 	while (startBlock >= 0 && !_vm->shouldQuit()) {
-		int blockX, blockY;
-		blockX = startBlock;
-		blockY = startBlock;
+		int blockX = startBlock;
+		int blockY = startBlock;
 		while (++blockX < sideLenW) {
 			drawBlock(blockX, blockY);
 		}
@@ -392,16 +391,17 @@ void ScreenEffect::drawSpiralEffect() {
 }
 
 void ScreenEffect::drawRandomEffect() {
-	uint bitCountW = getBitCount(_blockCountW);
-	uint bitCountH = getBitCount(_blockCountH);
-	uint bitCount = bitCountW + bitCountH;
-	uint mask = (1 << bitCountW) - 1;
-	uint rvalue = getSeed(bitCount), value = 1;
+	const uint bitCountW = getBitCount(_blockCountW);
+	const uint bitCountH = getBitCount(_blockCountH);
+	const uint bitCount = bitCountW + bitCountH;
+	const uint mask = (1 << bitCountW) - 1;
+	const uint rvalue = getSeed(bitCount);
+	uint value = 1;
 	_totalSliceTicks = g_system->getMillis();
 	_vm->_screen->beginUpdate();
 	do {
-		int blockX = value & mask;
-		int blockY = value >> bitCountW;
+		const int blockX = value & mask;
+		const int blockY = value >> bitCountW;
 		drawBlock(blockX, blockY);
 		if (value & 1) {
 			value >>= 1;
@@ -416,7 +416,8 @@ void ScreenEffect::drawRandomEffect() {
 
 void ScreenEffect::drawBlock(int blockX, int blockY) {
 	if (blockX < _blockCountW && blockY < _blockCountH) {
-		int sourceLeft = blockX * _grainWidth, sourceTop = blockY * _grainHeight;
+		const int sourceLeft = blockX * _grainWidth;
+		const int sourceTop = blockY * _grainHeight;
 		int sourceRight = sourceLeft + _grainWidth, sourceBottom = sourceTop + _grainHeight;
 		sourceRight = MIN<int>(_surface->w, sourceRight);
 		sourceBottom = MIN<int>(_surface->h, sourceBottom);
@@ -425,13 +426,13 @@ void ScreenEffect::drawBlock(int blockX, int blockY) {
 		_vm->_screen->drawSurface(&blockSurface, _x + sourceLeft, _y + sourceTop);
 		if (++_blockCtr == _blocksPerSlice) {
 			_vm->_screen->endUpdate();
-			uint32 currTicks = g_system->getMillis();
+			const uint32 currTicks = g_system->getMillis();
 			_blockCtr = 0;
 			_totalSliceTicks += _timePerSlice;
 			// Check if the system is faster than the current slice ticks
 			// and wait for the difference.
 			if (currTicks < _totalSliceTicks) {
-				uint32 waitTicks = _totalSliceTicks - currTicks;
+				const uint32 waitTicks = _totalSliceTicks - currTicks;
 				_vm->waitMillis(waitTicks);
 			} else {
 				_vm->updateEvents();
