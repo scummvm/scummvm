@@ -181,7 +181,7 @@ void dumpAllDialogs(const Common::String &message) {
 					   0};
 
 	// HACK: Pass info to backend to force window resize
-	ConfMan.setBool("force_resize", true, Common::ConfigManager::kApplicationDomain);
+	ConfMan.setBool("dumper_force_resize", true, Common::ConfigManager::kApplicationDomain);
 	Common::FSNode dumpDir("snapshots");
 
 	if (!dumpDir.isDirectory())
@@ -220,7 +220,10 @@ void dumpAllDialogs(const Common::String &message) {
 	// Clean up the temporary flag.
 	// Since we are still within the same method where we added,
 	// there is no need to flush config to the disk
-	ConfMan.removeKey("force_resize", Common::ConfigManager::kApplicationDomain);
+	ConfMan.removeKey("dumper_force_resize", Common::ConfigManager::kApplicationDomain);
+	ConfMan.flushToDisk();
+
+	warning("ALL DIALOGS DUMPED");
 }
 
 } // End of namespace GUI
