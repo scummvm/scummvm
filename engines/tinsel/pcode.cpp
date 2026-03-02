@@ -158,6 +158,7 @@ static const byte fragment15[] = {OP_LIBCALL | OPSIZE8, 58,
 		OP_LIBCALL | OPSIZE8, 97, OP_JUMP | OPSIZE16, FRAGMENT_WORD(2220)
 };
 static const byte fragment16[] = { OP_JMPFALSE | OPSIZE16, FRAGMENT_WORD(154) };
+static const byte fragment17[] = { OP_IMM | OPSIZE8, 21, OP_LIBCALL | OPSIZE8, 0x29 }; // KillTag(21), city guard
 
 #if NOIR_SKIP_INTRO
 static const byte fragment_noir_skip_intro_1[] = {
@@ -248,6 +249,12 @@ const WorkaroundEntry workaroundList[] = {
 
 	// DW1-GRA: Fixes hang in Temple, when trying to use items on the big hammer
 	{TINSEL_V1, false, false, Common::kPlatformUnknown, 276915849, 0x98, sizeof(fragment16), fragment16},
+
+	// DW1-GRA: Fixes Act 4 invisible city guard. Talking to him crashes the game.
+	// The guard's polygon has the wrong ID, preventing `KillTag` from disabling it.
+	// The ID was fixed in SCN versions. We fix this by adding a `KillTag` with
+	// the actual polygon ID. Fixes bug #10659
+	{TINSEL_V1, false, false, Common::kPlatformUnknown, 184651316, 10, sizeof(fragment17), fragment17},
 
 #if NOIR_SKIP_INTRO
 	// NOIR: Skip the menu and intro, and skip the first conversation.
