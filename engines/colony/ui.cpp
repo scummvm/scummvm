@@ -128,7 +128,7 @@ void ColonyEngine::updateViewportLayout() {
 
 	int dashWidth = 0;
 	if (_showDashBoard) {
-		// Mac mode: original inits.c sets screenR.left=96 — fixed 96px sidebar.
+		// Mac mode: original inits.c sets screenR.left=96  fixed 96px sidebar.
 		// Two floating windows (infoWindow + moveWindow) centered in sidebar.
 		const bool isMac = (_renderMode == Common::kRenderMacintosh);
 		if (isMac)
@@ -160,10 +160,10 @@ void ColonyEngine::updateViewportLayout() {
 
 	if (isMac) {
 		// Original Mac layout from inits.c/compass.c/power.c:
-		// screenR.left = 96 — sidebar is 96px wide.
+		// screenR.left = 96  sidebar is 96px wide.
 		// Two floating windows centered in sidebar over gray desktop.
 		// moveWindow: compRect = (0,0, 2*CCENTER, 3*CCENTER) = (0,0, 70, 105)
-		//   floorRect (minimap) = (8,8)-(62,62) — 54x54 inside moveWindow
+		//   floorRect (minimap) = (8,8)-(62,62)  54x54 inside moveWindow
 		//   compass dish below at (19,66)-(51,98), needle center at (35,82)
 		// infoWindow: sized from PICT resource, positioned above moveWindow
 		const int CCENTER = 35;
@@ -198,7 +198,7 @@ void ColonyEngine::updateViewportLayout() {
 		const int moveTop = _height - pad - moveH;
 
 		// _headsUpRect = floorRect (8,8)-(62,62) relative to moveWindow
-		// This is the minimap clipping area — must NOT overlap compass dish
+		// This is the minimap clipping area  must NOT overlap compass dish
 		_headsUpRect = makeSafeRect(moveLeft + 8, moveTop + 8,
 		                            moveLeft + 2 * CCENTER - 8, moveTop + 2 * CCENTER - 8);
 
@@ -300,10 +300,10 @@ void ColonyEngine::drawDashboardMac() {
 	const uint32 colBlack = packRGB(0, 0, 0);
 	const uint32 colWhite = packRGB(255, 255, 255);
 	const uint32 colWinBg = macColor ? packMacColorUI(_macColors[7].bg) : colWhite;
-	// power.c: ForeColor(blueColor) — on 1-bit display, blue maps to black
+	// power.c: ForeColor(blueColor)  on 1-bit display, blue maps to black
 	const uint32 colBlue = macColor ? packRGB(0, 0, 255) : colBlack;
 
-	// Dashboard background — Mac desktop dither pattern (classic 50% gray checkerboard).
+	// Dashboard background  Mac desktop dither pattern (classic 50% gray checkerboard).
 	// Original Mac desktop: alternating black/white pixels between floating windows.
 	_gfx->fillDitherRect(_dashBoardRect, colBlack, colWhite);
 
@@ -316,7 +316,7 @@ void ColonyEngine::drawDashboardMac() {
 	// armor && !trouble → PICT -32755; armor && trouble → PICT -32760;
 	// !armor && depth>=8 → PICT -32761; !armor && depth<8 → PICT -32752
 	if (_powerRect.width() > 4 && _powerRect.height() > 4) {
-		// power.c: FillRect(&clr, white) — white background under PICT
+		// power.c: FillRect(&clr, white)  white background under PICT
 		_gfx->fillRect(_powerRect, colWhite);
 
 		// Select correct PICT based on armor/trouble state
@@ -369,7 +369,7 @@ void ColonyEngine::drawDashboardMac() {
 					const int ln = bot - 3 * j;
 					if (ln <= _powerRect.top)
 						break;
-					// power.c: MoveTo(lft+1,ln); LineTo(lft+16,ln); — 16px wide, 2 lines
+					// power.c: MoveTo(lft+1,ln); LineTo(lft+16,ln);  16px wide, 2 lines
 					_gfx->drawLine(lft + 1, ln, lft + 16, ln, colBlue);
 					if (ln - 1 > _powerRect.top)
 						_gfx->drawLine(lft + 1, ln - 1, lft + 16, ln - 1, colBlue);
@@ -393,7 +393,7 @@ void ColonyEngine::drawDashboardMac() {
 			_gfx->fillRect(_compassRect, colWinBg);
 
 		// Floor map (compass.c lines 72-213):
-		// floorRect = (8,8)-(62,62) — clipped to _headsUpRect
+		// floorRect = (8,8)-(62,62)  clipped to _headsUpRect
 		// Eye icon at center (CCENTER,CCENTER) = (35,35)
 		drawMiniMap(colBlack);
 
@@ -484,7 +484,7 @@ void ColonyEngine::drawMiniMap(uint32 lineColor) {
 		    y < _headsUpRect.top + 1 || y >= _headsUpRect.bottom - 1)
 			return;
 		if (isMac) {
-			// compass.c: FrameOval — circle outline
+			// compass.c: FrameOval  circle outline
 			_gfx->drawEllipse(x, y, halfSize, halfSize, color);
 		} else {
 			const int l = MAX<int>(_headsUpRect.left + 1, x - halfSize);
@@ -666,7 +666,7 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 	auto tryFeature = [&](int dir) -> int {
 		int r = tryPassThroughFeature(pobject->xindex, pobject->yindex, dir, pobject);
 		if (r == 2)
-			return 0; // teleported — position already updated by the feature
+			return 0; // teleported  position already updated by the feature
 		if (r == 1)
 			return moveTo();
 		return -2; // blocked, caller handles
@@ -842,7 +842,7 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 	switch (map[0]) {
 	case kWallFeatureDoor:
 		if (map[1] == 0)
-			return 1; // already open — pass through
+			return 1; // already open  pass through
 		if (pobject != &_me)
 			return 0; // robots can't open doors
 		// DOS DoDoor: play door animation, player clicks handle to open
@@ -864,7 +864,7 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 		}
 	case kWallFeatureAirlock:
 		if (map[1] == 0)
-			return 1; // already open — pass through
+			return 1; // already open  pass through
 		if (pobject != &_me)
 			return 0;
 		// DOS DoAirLock: play airlock animation
@@ -896,7 +896,7 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 		const int targetY = map[4];
 
 		if (targetMap == 0 && targetX == 0 && targetY == 0)
-			return 1; // no destination data — just pass through
+			return 1; // no destination data  just pass through
 
 		// Special cases from DOS
 		if (targetMap == 100) {
@@ -987,7 +987,7 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 			debug("Elevator: level=%d pos=(%d,%d)", _level, pobject->xindex, pobject->yindex);
 			return 2; // teleported
 		}
-		// Player entered but stayed on same floor — turn around
+		// Player entered but stayed on same floor  turn around
 		if (entered) {
 			pobject->ang += 128;
 			pobject->look = pobject->ang;
@@ -1060,7 +1060,7 @@ void ColonyEngine::interactWithObject(int objNum) {
 	case kObjTeleport:
 	{
 		if (_fl == 1) {
-			// In empty forklift — pick up the teleporter itself
+			// In empty forklift  pick up the teleporter itself
 			if (loadAnimation("lift")) {
 				_animationResult = 0;
 				playAnimation();
@@ -1185,7 +1185,7 @@ void ColonyEngine::interactWithObject(int objNum) {
 	case kObjBox2:
 	case kObjCryo:
 		if (_fl == 1) {
-			// In empty forklift — pick up object
+			// In empty forklift  pick up object
 			if (loadAnimation("lift")) {
 				_animationResult = 0;
 				playAnimation();
@@ -1211,13 +1211,13 @@ void ColonyEngine::interactWithObject(int objNum) {
 				}
 			}
 		} else if (_fl == 0 && obj.type == kObjCryo) {
-			// Not in forklift — read cryo text
+			// Not in forklift  read cryo text
 			doText(_action0, 0);
 		}
 		break;
 	case kObjReactor:
 		if (_fl == 1 && _coreState[_coreIndex] == 1) {
-			// Empty forklift at open reactor — pick up reactor core
+			// Empty forklift at open reactor  pick up reactor core
 			if (loadAnimation("lift")) {
 				_animationResult = 0;
 				playAnimation();
@@ -1230,7 +1230,7 @@ void ColonyEngine::interactWithObject(int objNum) {
 				}
 			}
 		} else if (_fl == 2 && _carryType == kObjReactor && _coreState[_coreIndex] == 2) {
-			// Carrying reactor core — drop it into reactor
+			// Carrying reactor core  drop it into reactor
 			if (loadAnimation("lift")) {
 				_animationResult = 0;
 				playAnimation();
@@ -1431,7 +1431,7 @@ void ColonyEngine::fallThroughHole() {
 
 	_sound->play(Sound::kClatter);
 
-	// DOS tunnel(pt=TRUE): falling animation — nested rectangles shrinking toward
+	// DOS tunnel(pt=TRUE): falling animation  nested rectangles shrinking toward
 	// center, simulating falling down a shaft. White outlines on black background.
 	// DOS runs 10 steps × 2 frames = 20 display frames at ~15fps = ~1.3 seconds.
 	// At 60fps we use 80 frames for the same duration, paced by the frame limiter.
@@ -1450,7 +1450,7 @@ void ColonyEngine::fallThroughHole() {
 
 			float progress = (float)frame / totalFrames;
 
-			// Draw nested rectangles — outer ring shrinks in, inner rings follow
+			// Draw nested rectangles  outer ring shrinks in, inner rings follow
 			// The number of visible rings decreases as we fall deeper
 			int visibleRings = maxRings - (int)(progress * (maxRings - 1));
 			for (int ring = 0; ring < visibleRings; ring++) {
@@ -1491,7 +1491,7 @@ void ColonyEngine::fallThroughHole() {
 		_robotArray[targetX][targetY] = kMeNum;
 	}
 
-	// DOS: if(map) load_mapnum(map, TRUE) — always reload when map != 0
+	// DOS: if(map) load_mapnum(map, TRUE)  always reload when map != 0
 	if (targetMap > 0)
 		loadMap(targetMap);
 
@@ -1508,7 +1508,7 @@ void ColonyEngine::checkCenter() {
 		return;
 
 	switch (cellType) {
-	case 1: { // SMHOLEFLR — small floor hole, must be near center
+	case 1: { // SMHOLEFLR  small floor hole, must be near center
 		// DOS: xcheck=abs(xloc-(xindex<<8)); if(xcheck>64&&xcheck<192)
 		int xcheck = ABS(_me.xloc - (_me.xindex << 8));
 		int ycheck = ABS(_me.yloc - (_me.yindex << 8));
@@ -1516,10 +1516,10 @@ void ColonyEngine::checkCenter() {
 			fallThroughHole();
 		break;
 	}
-	case 2: // LGHOLEFLR — large floor hole, full cell
+	case 2: // LGHOLEFLR  large floor hole, full cell
 		fallThroughHole();
 		break;
-	case 5: // HOTFOOT — electric floor, damages power
+	case 5: // HOTFOOT  electric floor, damages power
 		// DOS: SetPower(-(5<<level),-(5<<level),-(5<<level))
 		for (int i = 0; i < 3; i++)
 			_corePower[i] -= (5 << _level);
@@ -1602,7 +1602,7 @@ void ColonyEngine::dropCarriedObject() {
 		_animationResult = 0;
 		playAnimation();
 		if (!_animationResult) {
-			// Animation was cancelled — don't drop
+			// Animation was cancelled  don't drop
 			return;
 		}
 	}
