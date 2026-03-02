@@ -84,6 +84,10 @@ public:
 	bool ValidHandle(SCNHANDLE offset);
 #endif
 
+	// Used by debugger
+	int GetSceneCount();
+	Common::String GetSceneName(int index);
+
 private:
 	void LoadFile(MEMHANDLE *pH); // load a memory block as a file
 	void OpenCDGraphFile();

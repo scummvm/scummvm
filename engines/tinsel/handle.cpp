@@ -594,6 +594,28 @@ bool Handle::ValidHandle(SCNHANDLE offset) {
 #endif
 
 /**
+ * Get number of scenes. Used by debugger.
+ */
+int Handle::GetSceneCount() {
+	return _numHandles;
+}
+
+/**
+ * Get scene file name. Used by debugger.
+ */
+Common::String Handle::GetSceneName(int index) {
+	if (0 <= index && index < (int)_numHandles) {
+		// extract and zero terminate the filename
+		const MEMHANDLE *handle = &_handleTable[index];
+		char szFilename[sizeof(handle->szName) + 1];
+		memcpy(szFilename, handle->szName, sizeof(handle->szName));
+		szFilename[sizeof(handle->szName)] = 0;
+		return szFilename;
+	}
+	return "";
+}
+
+/**
  * TouchMem
  * @param offset			Handle and offset to data
  */
