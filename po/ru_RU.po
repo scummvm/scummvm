@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-03-02 21:20+0000\n"
+"POT-Creation-Date: 2026-03-02 22:17+0000\n"
 "PO-Revision-Date: 2026-03-01 23:52+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -116,7 +116,7 @@ msgstr "Вверх"
 #: gui/saveload-dialog.cpp:456 gui/saveload-dialog.cpp:540
 #: gui/saveload-dialog.cpp:839 gui/saveload-dialog.cpp:1243
 #: gui/shaderbrowser-dialog.cpp:80 gui/themebrowser.cpp:54
-#: gui/unknown-game-dialog.cpp:53 base/main.cpp:594
+#: gui/unknown-game-dialog.cpp:53 base/main.cpp:597
 #: dists/android.strings.xml.cpp:46 engines/engine.cpp:808
 #: engines/engine.cpp:833 backends/dialogs/gtk/gtk-dialogs.cpp:65
 #: backends/events/default/default-events.cpp:193
@@ -328,7 +328,7 @@ msgstr "Сейчас работает другое хранилище. Вы хо
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:428 gui/launcher.cpp:457
 #: gui/launcher.cpp:530 gui/launcher.cpp:1909 gui/options.cpp:3485
-#: gui/options.cpp:3859 base/main.cpp:594
+#: gui/options.cpp:3859 base/main.cpp:597
 #: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:598
 #: engines/chamber/metaengine.cpp:91 engines/director/events.cpp:102
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:139
@@ -375,7 +375,7 @@ msgstr "Содержимое кода JSON имеет неверный форм�
 #: gui/fluidsynth-dialog.cpp:154 gui/massadd.cpp:90 gui/message.cpp:156
 #: gui/message.cpp:160 gui/message.cpp:231 gui/message.cpp:270
 #: gui/message.cpp:274 gui/options.cpp:2418 gui/predictivedialog.cpp:69
-#: gui/saveload-dialog.cpp:1244 base/main.cpp:661 base/main.cpp:686
+#: gui/saveload-dialog.cpp:1244 base/main.cpp:664 base/main.cpp:689
 #: dists/android.strings.xml.cpp:33 backends/platform/wii/options.cpp:46
 #: engines/buried/buried.cpp:622 engines/buried/saveload.cpp:83
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:123
@@ -3050,12 +3050,12 @@ msgstr "Играть"
 msgid "Saves"
 msgstr "Сохранения"
 
-#: base/main.cpp:594
+#: base/main.cpp:597
 msgid "Bad config file format. overwrite?"
 msgstr "Неверный формат файла конфигурации. Переписать его?"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
-#: base/main.cpp:643
+#: base/main.cpp:646
 msgid ""
 "In this new version of ScummVM for Android, significant changes were made to "
 "the file access system to allow support for modern versions of the Android "
@@ -3099,12 +3099,12 @@ msgstr ""
 "Повторите шаги 1 и 6 для каждой игры."
 
 #. I18N: A button caption to dismiss a message and read it later
-#: base/main.cpp:663 base/main.cpp:688
+#: base/main.cpp:666 base/main.cpp:691
 msgid "Read Later"
 msgstr "Читать позже"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
-#: base/main.cpp:670
+#: base/main.cpp:673
 msgid ""
 "In this new version of ScummVM for Android, significant changes were made to "
 "the file access system to allow support for modern versions of the Android "
@@ -3142,7 +3142,7 @@ msgstr ""
 "\"Выбрать\".\n"
 "Повторите шаги 1 и 6 для каждой игры."
 
-#: base/main.cpp:834 base/main.cpp:883
+#: base/main.cpp:837 base/main.cpp:886
 msgid "Error running game:"
 msgstr "Ошибка запуска игры:"
 
