@@ -37,6 +37,7 @@ GameMaddog::GameMaddog(AlgEngine *vm, const AlgGameDescription *gd) : Game(vm) {
 }
 
 GameMaddog::~GameMaddog() {
+	unregisterScriptFunctions();
 	if (_shotIcon) {
 		_shotIcon->free();
 		delete _shotIcon;
@@ -273,6 +274,41 @@ void GameMaddog::verifyScriptFunctions() {
 			}
 		}
 	}
+}
+
+void GameMaddog::unregisterScriptFunctions() {
+	for (auto func : _rectHitFuncs) {
+		delete &func;
+	}
+	for (auto func : _scenePreOps) {
+		delete &func;
+	}
+	for (auto func : _sceneShowMsg) {
+		delete &func;
+	}
+	for (auto func : _sceneInsOps) {
+		delete &func;
+	}
+	for (auto func : _sceneWepDwn) {
+		delete &func;
+	}
+	for (auto func : _sceneScnScr) {
+		delete &func;
+	}
+	for (auto func : _sceneNxtFrm) {
+		delete &func;
+	}
+	for (auto func : _sceneNxtScn) {
+		delete &func;
+	}
+	_rectHitFuncs.clear();
+	_scenePreOps.clear();
+	_sceneShowMsg.clear();
+	_sceneInsOps.clear();
+	_sceneWepDwn.clear();
+	_sceneScnScr.clear();
+	_sceneNxtFrm.clear();
+	_sceneNxtScn.clear();
 }
 
 MDScriptFunctionPoint GameMaddog::getScriptFunctionZonePtrFb(Common::String name) {

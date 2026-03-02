@@ -61,6 +61,7 @@ private:
 	void init() override;
 	void registerScriptFunctions();
 	void verifyScriptFunctions();
+	void unregisterScriptFunctions();
 	BHScriptFunctionRect getScriptFunctionRectHit(Common::String name);
 	BHScriptFunctionScene getScriptFunctionScene(SceneFuncType type, Common::String name);
 	void callScriptFunctionRectHit(Common::String name, Rect *rect);

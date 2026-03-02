@@ -37,6 +37,7 @@ GameBountyHunter::GameBountyHunter(AlgEngine *vm, const AlgGameDescription *gd) 
 }
 
 GameBountyHunter::~GameBountyHunter() {
+	unregisterScriptFunctions();
 	if (_shotIcon) {
 		_shotIcon->free();
 		delete _shotIcon;
@@ -327,6 +328,41 @@ void GameBountyHunter::verifyScriptFunctions() {
 			}
 		}
 	}
+}
+
+void GameBountyHunter::unregisterScriptFunctions() {
+	for (auto func : _rectHitFuncs) {
+		delete &func;
+	}
+	for (auto func : _scenePreOps) {
+		delete &func;
+	}
+	for (auto func : _sceneShowMsg) {
+		delete &func;
+	}
+	for (auto func : _sceneInsOps) {
+		delete &func;
+	}
+	for (auto func : _sceneWepDwn) {
+		delete &func;
+	}
+	for (auto func : _sceneScnScr) {
+		delete &func;
+	}
+	for (auto func : _sceneNxtFrm) {
+		delete &func;
+	}
+	for (auto func : _sceneNxtScn) {
+		delete &func;
+	}
+	_rectHitFuncs.clear();
+	_scenePreOps.clear();
+	_sceneShowMsg.clear();
+	_sceneInsOps.clear();
+	_sceneWepDwn.clear();
+	_sceneScnScr.clear();
+	_sceneNxtFrm.clear();
+	_sceneNxtScn.clear();
 }
 
 BHScriptFunctionRect GameBountyHunter::getScriptFunctionRectHit(Common::String name) {

@@ -60,6 +60,7 @@ private:
 	void init() override;
 	void registerScriptFunctions();
 	void verifyScriptFunctions();
+	void unregisterScriptFunctions();
 	void fixScriptBugs();
 	SPScriptFunctionRect getScriptFunctionRectHit(Common::String name);
 	SPScriptFunctionScene getScriptFunctionScene(SceneFuncType type, Common::String name);

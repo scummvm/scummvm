@@ -62,6 +62,7 @@ private:
 	void init() override;
 	void registerScriptFunctions();
 	void verifyScriptFunctions();
+	void unregisterScriptFunctions();
 	MD2ScriptFunctionPoint getScriptFunctionZonePtrFb(Common::String name);
 	MD2ScriptFunctionRect getScriptFunctionRectHit(Common::String name);
 	MD2ScriptFunctionScene getScriptFunctionScene(SceneFuncType type, Common::String name);

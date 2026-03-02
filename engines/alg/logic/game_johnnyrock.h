@@ -62,6 +62,7 @@ private:
 	void init() override;
 	void registerScriptFunctions();
 	void verifyScriptFunctions();
+	void unregisterScriptFunctions();
 	JRScriptFunctionPoint getScriptFunctionZonePtrFb(Common::String name);
 	JRScriptFunctionRect getScriptFunctionRectHit(Common::String name);
 	JRScriptFunctionScene getScriptFunctionScene(SceneFuncType type, Common::String name);

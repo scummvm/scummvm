@@ -37,6 +37,7 @@ GameJohnnyRock::GameJohnnyRock(AlgEngine *vm, const AlgGameDescription *gd) : Ga
 }
 
 GameJohnnyRock::~GameJohnnyRock() {
+	unregisterScriptFunctions();
 	for (auto item : *_difficultyIcon) {
 		item->free();
 		delete item;
@@ -120,7 +121,6 @@ void GameJohnnyRock::init() {
 	delete hole;
 }
 
-// FIXME: Need to unregisterScriptFunctions() in destructor to delete all allocated JRScriptFunctionRect and prevent reallocation to fix memory leakage here...
 void GameJohnnyRock::registerScriptFunctions() {
 #define RECT_HIT_FUNCTION(name, func) _rectHitFuncs[name] = new JRScriptFunctionRect(this, &GameJohnnyRock::func);
 	RECT_HIT_FUNCTION("DEFAULT", rectNewScene);
@@ -251,6 +251,41 @@ void GameJohnnyRock::verifyScriptFunctions() {
 			}
 		}
 	}
+}
+
+void GameJohnnyRock::unregisterScriptFunctions() {
+	for (auto func : _rectHitFuncs) {
+		delete &func;
+	}
+	for (auto func : _scenePreOps) {
+		delete &func;
+	}
+	for (auto func : _sceneShowMsg) {
+		delete &func;
+	}
+	for (auto func : _sceneInsOps) {
+		delete &func;
+	}
+	for (auto func : _sceneWepDwn) {
+		delete &func;
+	}
+	for (auto func : _sceneScnScr) {
+		delete &func;
+	}
+	for (auto func : _sceneNxtFrm) {
+		delete &func;
+	}
+	for (auto func : _sceneNxtScn) {
+		delete &func;
+	}
+	_rectHitFuncs.clear();
+	_scenePreOps.clear();
+	_sceneShowMsg.clear();
+	_sceneInsOps.clear();
+	_sceneWepDwn.clear();
+	_sceneScnScr.clear();
+	_sceneNxtFrm.clear();
+	_sceneNxtScn.clear();
 }
 
 JRScriptFunctionPoint GameJohnnyRock::getScriptFunctionZonePtrFb(Common::String name) {

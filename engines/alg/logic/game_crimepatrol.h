@@ -59,6 +59,7 @@ private:
 	Common::Error run() override;
 	void registerScriptFunctions();
 	void verifyScriptFunctions();
+	void unregisterScriptFunctions();
 	CPScriptFunctionRect getScriptFunctionRectHit(Common::String name);
 	CPScriptFunctionScene getScriptFunctionScene(SceneFuncType type, Common::String name);
 	void callScriptFunctionRectHit(Common::String name, Rect *rect);

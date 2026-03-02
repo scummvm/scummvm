@@ -59,6 +59,7 @@ private:
 	void init() override;
 	void registerScriptFunctions();
 	void verifyScriptFunctions();
+	void unregisterScriptFunctions();
 	DWScriptFunctionRect getScriptFunctionRectHit(const Common::String &name);
 	DWScriptFunctionScene getScriptFunctionScene(SceneFuncType type, const Common::String &name);
 	void callScriptFunctionRectHit(const Common::String &name, Rect *rect);
