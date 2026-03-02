@@ -1461,7 +1461,8 @@ void OpenGLGraphicsManager::grabPalette(byte *colors, uint start, uint num) cons
 
 void OpenGLGraphicsManager::handleResizeImpl(const int width, const int height) {
 	if (!_targetBuffer) {
-		error("PANIC: Resizing with empty context target buffer");
+		warning("PANIC: Resizing with empty context target buffer, ignoring");
+		return;
 	}
 
 	// Setup backbuffer size.
