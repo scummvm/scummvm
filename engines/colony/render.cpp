@@ -36,12 +36,15 @@ static const int g_indexTable[4][10] = {
 	{0, 0,  0, 1,  1,  0,  0, -1,  2, 1}
 };
 
-// DOS lsColor table from ROBOCOLR.C — maps color index to EGA rendering attributes.
-// Fields: backColor (BACKCOLOR), fillColor (FILLCOLOR), lineFillColor (LINEFILLCOLOR),
+// DOS lsColor table from ROBOCOLR.C — maps color index to rendering attributes.
+// Fields: monochrome (MONOCHROME — Mac B&W dither pattern, matches MacPattern enum),
+//         backColor (BACKCOLOR), fillColor (FILLCOLOR), lineFillColor (LINEFILLCOLOR),
 //         lineColor (LINECOLOR), pattern (PATTERN).
 // DrawPrism uses: polyfill ON → fill with fillColor/backColor/pattern, outline with lineFillColor.
 //                 polyfill OFF → outline only with lineColor.
+// Mac B&W uses: monochrome field for dither pattern (WHITE/LTGRAY/GRAY/DKGRAY/BLACK/CLEAR).
 struct DOSColorEntry {
+	uint8 monochrome;
 	uint8 backColor;
 	uint8 fillColor;
 	uint8 lineFillColor;
@@ -50,91 +53,92 @@ struct DOSColorEntry {
 };
 
 static const DOSColorEntry g_dosColors[79] = {
-	/* 0  cCLEAR      */ { 0,  0,  0,  0, 1},
-	/* 1  cBLACK      */ { 0,  0,  0,  0, 1},
-	/* 2  cBLUE       */ { 0,  1,  1,  1, 1},
-	/* 3  cGREEN      */ { 0,  2,  2,  2, 1},
-	/* 4  cCYAN       */ { 0,  3,  3,  3, 1},
-	/* 5  cRED        */ { 0,  4,  4,  4, 1},
-	/* 6  cMAGENTA    */ { 0,  5,  5,  5, 1},
-	/* 7  cBROWN      */ { 0,  6,  6,  6, 1},
-	/* 8  cWHITE      */ { 0,  7,  7,  7, 1},
-	/* 9  cDKGRAY     */ { 0,  8,  8,  8, 1},
-	/* 10 cLTBLUE     */ { 0,  9,  9,  9, 1},
-	/* 11 cLTGREEN    */ { 0, 10, 10, 10, 1},
-	/* 12 cLTCYAN     */ { 0, 11, 11, 11, 1},
-	/* 13 cLTRED      */ { 0, 12, 12, 12, 1},
-	/* 14 cLTMAGENTA  */ { 0, 13, 13, 13, 1},
-	/* 15 cYELLOW     */ { 0, 14, 14, 14, 1},
-	/* 16 cINTWHITE   */ { 0, 15, 15, 15, 1},
-	/* 17 cBATH       */ { 0, 15, 15,  0, 1},
-	/* 18 cWATER      */ { 0,  7,  1,  1, 4},
-	/* 19 cSILVER     */ { 0,  7, 15,  1, 3},
-	/* 20 cREACTOR    */ { 0,  7,  7,  7, 1},
-	/* 21 cBLANKET    */ { 0,  2,  7,  2, 3},
-	/* 22 cSHEET      */ { 0, 15, 15, 15, 1},
-	/* 23 cBED        */ { 0,  6,  4,  6, 4},
-	/* 24 cBOX        */ { 0,  6,  7,  6, 3},
-	/* 25 cBENCH      */ { 0,  6,  6,  6, 1},
-	/* 26 cCHAIR      */ { 1,  9,  7,  1, 3},
-	/* 27 cCHAIRBASE  */ { 1,  1,  9,  1, 3},
-	/* 28 cCOUCH      */ { 0,  4,  3,  4, 3},
-	/* 29 cCONSOLE    */ { 0,  6,  4,  4, 3},
-	/* 30 cTV         */ { 0,  6,  7,  6, 3},
-	/* 31 cTVSCREEN   */ { 8,  8,  7,  8, 1},
-	/* 32 cDRAWER     */ { 0,  6,  7,  6, 3},
-	/* 33 cCRYO       */ { 1,  9, 15,  1, 3},
-	/* 34 cCRYOGLASS  */ { 1, 15,  9,  1, 3},
-	/* 35 cCRYOBASE   */ { 1,  1,  9,  1, 3},
-	/* 36 cCUBE       */ { 0,  3, 15,  3, 3},
-	/* 37 cDESK       */ { 0,  6,  7,  6, 3},
-	/* 38 cDESKTOP    */ { 0,  6,  6,  6, 1},
-	/* 39 cDESKCHAIR  */ { 0,  2,  8,  2, 3},
-	/* 40 cMAC        */ { 0, 15, 15,  0, 1},
-	/* 41 cMACSCREEN  */ { 0,  8,  8,  8, 1},
-	/* 42 cDRONE      */ { 0,  3,  3,  0, 1},
-	/* 43 cCLAW1      */ { 0,  4,  4,  4, 1},
-	/* 44 cCLAW2      */ { 0,  3,  3,  3, 1},
-	/* 45 cEYES       */ {15, 15, 15, 15, 1},
-	/* 46 cEYE        */ {15, 15, 15, 15, 1},
-	/* 47 cIRIS       */ { 0,  1,  7,  1, 3},
-	/* 48 cPUPIL      */ { 0,  0,  0,  0, 3},
-	/* 49 cFORKLIFT   */ { 0, 14,  6, 14, 3},
-	/* 50 cTREAD1     */ { 0, 14,  6, 14, 4},
-	/* 51 cTREAD2     */ { 0, 14,  6, 14, 5},
-	/* 52 cPOT        */ { 0,  6,  6,  6, 1},
-	/* 53 cPLANT      */ { 2,  2,  2,  2, 1},
-	/* 54 cPOWER      */ { 1,  9,  7,  1, 3},
-	/* 55 cPBASE      */ { 1,  9,  7,  1, 3},
-	/* 56 cPSOURCE    */ { 4,  4, 14,  4, 3},
-	/* 57 cPYRAMID    */ { 0,  4, 15,  4, 3},
-	/* 58 cQUEEN      */ {14, 14, 15, 14, 3},
-	/* 59 cTOPSNOOP   */ { 5,  3,  5,  3, 3},
-	/* 60 cBOTTOMSNOOP*/ { 5,  8,  5,  5, 3},
-	/* 61 cTABLE      */ { 6,  6,  7,  6, 3},
-	/* 62 cTABLEBASE  */ { 6,  6,  8,  6, 3},
-	/* 63 cPSTAND     */ { 0,  5,  5,  5, 1},
-	/* 64 cPLENS      */ { 0,  0,  0,  0, 1},
-	/* 65 cPROJECTOR  */ { 0,  3,  3,  3, 1},
-	/* 66 cTELE       */ { 4,  8,  7,  4, 3},
-	/* 67 cTELEDOOR   */ { 0,  7, 15,  1, 3},
-	/* 68 cUPYRAMID   */ { 0,  9, 15,  1, 3},
-	/* 69 cROCK       */ { 4,  4,  4,  4, 1},
-	/* 70 cCOLONY     */ {14, 14, 14, 14, 1},
-	/* 71 cCDOOR      */ {14, 14, 14, 14, 1},
-	/* 72 cSHIP       */ { 9,  9,  9,  9, 1},
-	/* 73 cPROJ       */ { 3,  3,  3,  3, 1},
-	/* 74 cSHADOW     */ { 8,  8,  8,  8, 1},
-	/* 75 cLTGRAY     */ { 8,  8, 15,  8, 3},
-	/* 76 cGRAY       */ { 8,  8,  7,  8, 3},
-	/* 77 cWALL       */ { 0,  7,  7,  0, 3},
-	/* 78 cQUEEN2     */ { 0, 15, 15,  0, 3},
+	//                     MONO BK  FILL LFIL LINE PAT
+	/* 0  cCLEAR      */ { 5,  0,  0,  0,  0, 1},
+	/* 1  cBLACK      */ { 4,  0,  0,  0,  0, 1},
+	/* 2  cBLUE       */ { 2,  0,  1,  1,  1, 1},
+	/* 3  cGREEN      */ { 1,  0,  2,  2,  2, 1},
+	/* 4  cCYAN       */ { 2,  0,  3,  3,  3, 1},
+	/* 5  cRED        */ { 2,  0,  4,  4,  4, 1},
+	/* 6  cMAGENTA    */ { 2,  0,  5,  5,  5, 1},
+	/* 7  cBROWN      */ { 3,  0,  6,  6,  6, 1},
+	/* 8  cWHITE      */ { 0,  0,  7,  7,  7, 1},
+	/* 9  cDKGRAY     */ { 3,  0,  8,  8,  8, 1},
+	/* 10 cLTBLUE     */ { 2,  0,  9,  9,  9, 1},
+	/* 11 cLTGREEN    */ { 1,  0, 10, 10, 10, 1},
+	/* 12 cLTCYAN     */ { 1,  0, 11, 11, 11, 1},
+	/* 13 cLTRED      */ { 1,  0, 12, 12, 12, 1},
+	/* 14 cLTMAGENTA  */ { 1,  0, 13, 13, 13, 1},
+	/* 15 cYELLOW     */ { 0,  0, 14, 14, 14, 1},
+	/* 16 cINTWHITE   */ { 0,  0, 15, 15, 15, 1},
+	/* 17 cBATH       */ { 0,  0, 15, 15,  0, 1},
+	/* 18 cWATER      */ { 1,  0,  7,  1,  1, 4},
+	/* 19 cSILVER     */ { 1,  0,  7, 15,  1, 3},
+	/* 20 cREACTOR    */ { 0,  0,  7,  7,  7, 1},
+	/* 21 cBLANKET    */ { 2,  0,  2,  7,  2, 3},
+	/* 22 cSHEET      */ { 0,  0, 15, 15, 15, 1},
+	/* 23 cBED        */ { 3,  0,  6,  4,  6, 4},
+	/* 24 cBOX        */ { 2,  0,  6,  7,  6, 3},
+	/* 25 cBENCH      */ { 2,  0,  6,  6,  6, 1},
+	/* 26 cCHAIR      */ { 1,  1,  9,  7,  1, 3},
+	/* 27 cCHAIRBASE  */ { 3,  1,  1,  9,  1, 3},
+	/* 28 cCOUCH      */ { 2,  0,  4,  3,  4, 3},
+	/* 29 cCONSOLE    */ { 1,  0,  6,  4,  4, 3},
+	/* 30 cTV         */ { 2,  0,  6,  7,  6, 3},
+	/* 31 cTVSCREEN   */ { 3,  8,  8,  7,  8, 1},
+	/* 32 cDRAWER     */ { 2,  0,  6,  7,  6, 3},
+	/* 33 cCRYO       */ { 2,  1,  9, 15,  1, 3},
+	/* 34 cCRYOGLASS  */ { 1,  1, 15,  9,  1, 3},
+	/* 35 cCRYOBASE   */ { 3,  1,  1,  9,  1, 3},
+	/* 36 cCUBE       */ { 1,  0,  3, 15,  3, 3},
+	/* 37 cDESK       */ { 2,  0,  6,  7,  6, 3},
+	/* 38 cDESKTOP    */ { 3,  0,  6,  6,  6, 1},
+	/* 39 cDESKCHAIR  */ { 1,  0,  2,  8,  2, 3},
+	/* 40 cMAC        */ { 0,  0, 15, 15,  0, 1},
+	/* 41 cMACSCREEN  */ { 3,  0,  8,  8,  8, 1},
+	/* 42 cDRONE      */ { 1,  0,  3,  3,  0, 1},
+	/* 43 cCLAW1      */ { 3,  0,  4,  4,  4, 1},
+	/* 44 cCLAW2      */ { 1,  0,  3,  3,  3, 1},
+	/* 45 cEYES       */ { 0, 15, 15, 15, 15, 1},
+	/* 46 cEYE        */ { 0, 15, 15, 15, 15, 1},
+	/* 47 cIRIS       */ { 1,  0,  1,  7,  1, 3},
+	/* 48 cPUPIL      */ { 4,  0,  0,  0,  0, 3},
+	/* 49 cFORKLIFT   */ { 1,  0, 14,  6, 14, 3},
+	/* 50 cTREAD1     */ { 3,  0, 14,  6, 14, 4},
+	/* 51 cTREAD2     */ { 3,  0, 14,  6, 14, 5},
+	/* 52 cPOT        */ { 2,  0,  6,  6,  6, 1},
+	/* 53 cPLANT      */ { 2,  2,  2,  2,  2, 1},
+	/* 54 cPOWER      */ { 1,  1,  9,  7,  1, 3},
+	/* 55 cPBASE      */ { 3,  1,  9,  7,  1, 3},
+	/* 56 cPSOURCE    */ { 2,  4,  4, 14,  4, 3},
+	/* 57 cPYRAMID    */ { 2,  0,  4, 15,  4, 3},
+	/* 58 cQUEEN      */ { 2, 14, 14, 15, 14, 3},
+	/* 59 cTOPSNOOP   */ { 2,  5,  3,  5,  3, 3},
+	/* 60 cBOTTOMSNOOP*/ { 3,  5,  8,  5,  5, 3},
+	/* 61 cTABLE      */ { 2,  6,  6,  7,  6, 3},
+	/* 62 cTABLEBASE  */ { 3,  6,  6,  8,  6, 3},
+	/* 63 cPSTAND     */ { 3,  0,  5,  5,  5, 1},
+	/* 64 cPLENS      */ { 4,  0,  0,  0,  0, 1},
+	/* 65 cPROJECTOR  */ { 2,  0,  3,  3,  3, 1},
+	/* 66 cTELE       */ { 1,  4,  8,  7,  4, 3},
+	/* 67 cTELEDOOR   */ { 1,  0,  7, 15,  1, 3},
+	/* 68 cUPYRAMID   */ { 1,  0,  9, 15,  1, 3},
+	/* 69 cROCK       */ { 2,  4,  4,  4,  4, 1},
+	/* 70 cCOLONY     */ { 2, 14, 14, 14, 14, 1},
+	/* 71 cCDOOR      */ { 2, 14, 14, 14, 14, 1},
+	/* 72 cSHIP       */ { 2,  9,  9,  9,  9, 1},
+	/* 73 cPROJ       */ { 2,  3,  3,  3,  3, 1},
+	/* 74 cSHADOW     */ { 3,  8,  8,  8,  8, 1},
+	/* 75 cLTGRAY     */ { 1,  8,  8, 15,  8, 3},
+	/* 76 cGRAY       */ { 2,  8,  8,  7,  8, 3},
+	/* 77 cWALL       */ { 0,  0,  7,  7,  0, 3},
+	/* 78 cQUEEN2     */ { 2,  0, 15, 15,  0, 3},
 };
 
 // Look up the DOS lsColor entry for a given ObjColor index.
-// Returns a fallback entry (all zeros) for out-of-range indices.
+// Returns a fallback entry for out-of-range indices.
 static const DOSColorEntry &lookupDOSColor(int colorIdx) {
-	static const DOSColorEntry fallback = {0, 0, 0, 0, 1};
+	static const DOSColorEntry fallback = {2, 0, 0, 0, 0, 1}; // GRAY monochrome
 	if (colorIdx >= 0 && colorIdx < 79)
 		return g_dosColors[colorIdx];
 	return fallback;
@@ -202,33 +206,11 @@ static const byte *kMacStippleData[] = {
 	nullptr         // kPatternClear  - outline only
 };
 
-// Map ObjColor constant → Mac dither pattern.
-// From colorize.c cColor[] array: ~90% of objects use GRAY,
-// special cases: c_dwall=WHITE, c_lwall=LTGRAY, c_window=DKGRAY,
-// c_desktop=WHITE, c_shelves=LTGRAY.
+// Map ObjColor → Mac B&W dither pattern (from ROBOCOLR.C MONOCHROME field).
+// The monochrome field in the DOS table matches MacPattern enum values directly:
+// WHITE=0, LTGRAY=1, GRAY=2, DKGRAY=3, BLACK=4, CLEAR=5.
 static int lookupMacPattern(int colorIdx) {
-	switch (colorIdx) {
-	case kColorClear:     return kPatternClear;
-	case kColorBlack:     return kPatternBlack;
-	case kColorWall:      return kPatternWhite;  // c_dwall = WHITE
-	case kColorDeskTop:   return kPatternWhite;  // c_desktop = WHITE
-	case kColorSheet:     return kPatternWhite;  // c_bedsheet = WHITE (bright surface)
-	case kColorBath:      return kPatternWhite;  // c_bath = WHITE (porcelain)
-	case kColorMac:       return kPatternWhite;  // c_computer = WHITE (bright casing)
-	case kColorSilver:    return kPatternLtGray; // c_mirror = LTGRAY
-	case kColorReactor:   return kPatternLtGray; // c_reactor = LTGRAY
-	case kColorTVScreen:  return kPatternDkGray; // c_tvscreen = DKGRAY
-	case kColorMacScreen: return kPatternDkGray; // c_screen = DKGRAY
-	case kColorWater:     return kPatternDkGray; // c_water = DKGRAY
-	// Robot colors (from ROBOCOLR.C Mac pattern column 0)
-	case kColorEyes:        return kPatternWhite;
-	case kColorEye:         return kPatternWhite;
-	case kColorPupil:       return kPatternBlack;
-	case kColorShadow:      return kPatternDkGray;
-	case kColorBottomSnoop: return kPatternDkGray;
-	case kColorClaw1:       return kPatternDkGray;
-	default:              return kPatternGray;   // Most objects = GRAY
-	}
+	return lookupDOSColor(colorIdx).monochrome;
 }
 
 // Map DOS EGA pattern value → GL stipple data for dithered fills.
@@ -2453,7 +2435,7 @@ void ColonyEngine::renderCorridor3D() {
 		// Mac B&W: walls are pure white (c_dwall=WHITE); EGA: light gray (7)
 		wallFill = lit ? (macMode ? 255 : 7) : 0;
 		wallLine = lit ? 0 : (macMode ? 255 : 7);
-		floorColor = macMode ? (lit ? 0 : 255) : wallFill;
+		floorColor = macMode ? (lit ? 255 : 0) : wallFill;
 		ceilColor  = macMode ? (lit ? 255 : 0) : wallFill;
 	}
 
