@@ -36,7 +36,7 @@ const ADGameDescription gameDescriptions[] = {
 		 "textes.txt", "f795f35b079cb8ef599724a2a7336c7e", 5319),
 	 Common::EN_USA,
 	 Common::kPlatformWindows,
-	 ADGF_DROPPLATFORM,
+	 ADGF_DROPPLATFORM | ADGF_TESTING,
 	 GUIO1(GUIO_NONE)},
 
 	{"necrono",
@@ -46,7 +46,7 @@ const ADGameDescription gameDescriptions[] = {
 		 "textes.txt", "542b626e7d56e4b3b5a73616e772a246", 5503),
 	 Common::FR_FRA,
 	 Common::kPlatformWindows,
-	 ADGF_DROPPLATFORM,
+	 ADGF_DROPPLATFORM | ADGF_TESTING,
 	 GUIO1(GUIO_NONE)},
 
 	{"necrono",
@@ -56,7 +56,7 @@ const ADGameDescription gameDescriptions[] = {
 		 "textes.txt", "8a6fde4fbe90262cad639903a0469863", 5394),
 	 Common::IT_ITA,
 	 Common::kPlatformWindows,
-	 ADGF_DROPPLATFORM,
+	 ADGF_DROPPLATFORM | ADGF_TESTING,
 	 GUIO1(GUIO_NONE)},
 
 	{"necrono",
@@ -66,7 +66,7 @@ const ADGameDescription gameDescriptions[] = {
 		 "textes.txt", "c3af2d55b4fa55d200b047b6ec0d9f73", 5507),
 	 Common::DE_DEU,
 	 Common::kPlatformWindows,
-	 ADGF_DROPPLATFORM,
+	 ADGF_DROPPLATFORM | ADGF_TESTING,
 	 GUIO1(GUIO_NONE)},
 
 	{"necrono",
@@ -76,7 +76,7 @@ const ADGameDescription gameDescriptions[] = {
 		 "textes.txt", "e54b9e37d3b96b52f78e7ca266116c4b", 5423),
 	 Common::ES_ESP,
 	 Common::kPlatformWindows,
-	 ADGF_DROPPLATFORM,
+	 ADGF_DROPPLATFORM | ADGF_TESTING,
 	 GUIO1(GUIO_NONE)},
 
 	{"necrono",
