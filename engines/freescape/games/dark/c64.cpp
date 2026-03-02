@@ -162,8 +162,18 @@ void DarkEngine::loadAssetsC64FullGame() {
 	colorFile2.open("darkside.c64.title.colors2");
 
 	_title = loadAndConvertDoodleImage(&file, &colorFile1, &colorFile2, (byte *)&kC64Palette);
+
+	// TODO: SFX and music both need a SID instance, but only one can be active at a time.
+	// Disable SFX for now so the music player can work.
+	//_playerC64Sfx = new DarkSideC64SFXPlayer();
+	_playerC64Music = new DarkSideC64MusicPlayer();
 }
 
+void DarkEngine::playSoundC64(int index) {
+	debugC(1, kFreescapeDebugMedia, "Playing Dark Side C64 SFX %d", index);
+	if (_playerC64Sfx)
+		_playerC64Sfx->playSfx(index);
+}
 
 void DarkEngine::drawC64UI(Graphics::Surface *surface) {
 	uint8 r, g, b;

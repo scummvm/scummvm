@@ -34,6 +34,9 @@
 namespace Freescape {
 
 DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
+	_playerC64Sfx = nullptr;
+	_playerC64Music = nullptr;
+
 	// These sounds can be overriden by the class of each platform
 	_soundIndexShoot = 1;
 	_soundIndexCollide = -1;
@@ -86,6 +89,11 @@ DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEn
 	_initialShield = 15;
 
 	_jetFuelSeconds = _initialEnergy * 6;
+}
+
+DarkEngine::~DarkEngine() {
+	delete _playerC64Sfx;
+	delete _playerC64Music;
 }
 
 void DarkEngine::addECDs(Area *area) {
@@ -304,6 +312,9 @@ void DarkEngine::initGameState() {
 				&_musicHandle, musicStream);
 		}
 	}
+
+	if (isC64() && _playerC64Music)
+		_playerC64Music->startMusic();
 }
 
 void DarkEngine::loadAssets() {
