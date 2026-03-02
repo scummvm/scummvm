@@ -8,6 +8,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Mehrfach-Auswahl in der Spiele-Liste im ScummVM-Launcher hinzugefügt.
    - ImGui-Bibliothek auf Version 1.92.6-docker aktualisiert.
    - Intelligente Suche in der Icon-Ansicht im ScummVM-Launcher korrigiert.
+   - Simulation eines MT-32-Displays für Nachrichten hinzugefügt.
+   - Übersetzungen können jetzt direkt aus einem lokal vorliegenden Verzeichnis
+     /po geladen werden. Das ist hilfreich für Übersetzer, da hier keine Neuerstellung
+     der translations.dat-Datei erforderlich ist.
 
  Bagel:
    - Verhalten der Enter-/Escape-Taste im Raten-Dialog in The Guessing Game korrigiert.
