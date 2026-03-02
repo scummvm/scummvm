@@ -97,10 +97,12 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_borderExtra = nullptr;
 	_borderExtraTexture = nullptr;
 	_playerSid = nullptr;
+	_playerC64Sfx = nullptr;
 }
 
 DrillerEngine::~DrillerEngine() {
 	delete _playerSid;
+	delete _playerC64Sfx;
 	delete _drillBase;
 
 	if (_borderExtra) {
@@ -262,9 +264,11 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	_gameStateVars[0x1f] = 0;
 
 	if (areaID == _startArea && entranceID == _startEntrance) {
-		if (isC64())
-			_playerSid->startMusic();
-		else {
+		if (isC64()) {
+			// TODO: Re-enable music once SFX coexistence is resolved
+			// _playerSid->startMusic();
+			playSound(_soundIndexStart, true, _soundFxHandle);
+		} else {
 			playSound(_soundIndexStart, true, _soundFxHandle);
 			// Start playing music, if any, in any supported format
 			playMusic("Matt Gray - The Best Of Reformation - 07 Driller Theme");

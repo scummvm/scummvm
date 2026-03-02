@@ -40,6 +40,11 @@ void FreescapeEngine::playSound(int index, bool sync, Audio::SoundHandle &handle
 	_syncSound = sync;
 
 	debugC(1, kFreescapeDebugMedia, "Playing sound %d with sync: %d", index, sync);
+	if (isC64()) {
+		playSoundC64(index);
+		return;
+	}
+
 	if (isAmiga() || isAtariST()) {
 		playSoundFx(index, sync);
 		return;
@@ -67,6 +72,10 @@ void FreescapeEngine::playSound(int index, bool sync, Audio::SoundHandle &handle
 	playWav(filename);
 	_syncSound = sync;
 }
+void FreescapeEngine::playSoundC64(int index) {
+	debugC(1, kFreescapeDebugMedia, "C64 sound %d not implemented for this engine", index);
+}
+
 void FreescapeEngine::playWav(const Common::Path &filename) {
 
 	Common::SeekableReadStream *s = _dataBundle->createReadStreamForMember(filename);

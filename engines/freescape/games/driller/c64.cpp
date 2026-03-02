@@ -158,7 +158,35 @@ void DrillerEngine::loadAssetsC64FullGame() {
 	} else
 		error("Unknown C64 release");
 
-	_playerSid = new DrillerSIDPlayer();
+	// TODO: Re-enable music player once SFX coexistence is resolved.
+	// The SID emulator enforces a singleton, so only one instance can exist.
+	// _playerSid = new DrillerSIDPlayer();
+	_playerC64Sfx = new DrillerC64SFXPlayer();
+
+	// C64 SFX index mapping
+	// Based on analysis of the C64 binary SFX routines
+	_soundIndexShoot = 2;           // SFX #2 - Dual-voice noise sweep (explosion/drilling)
+	_soundIndexCollide = 3;         // SFX #3 - Noise pitch slide (collision)
+	_soundIndexStepUp = 5;          // SFX #5 - Pulse slide up
+	_soundIndexStepDown = 4;        // SFX #4 - Pulse slide down
+	_soundIndexFall = 11;           // SFX #11 - Triangle slide down fast (falling)
+	_soundIndexStart = 8;           // SFX #8 - Triangle slide up (teleporter/energy)
+	_soundIndexMenu = 6;            // SFX #6 - Triangle blip
+	_soundIndexAreaChange = 8;      // SFX #8 - Triangle slide up
+	_soundIndexHit = 7;             // SFX #7 - Dual noise burst
+	_soundIndexNoShield = 9;        // SFX #9 - Dual slide noise (damage)
+	_soundIndexNoEnergy = 9;        // SFX #9 - Dual slide noise (damage)
+	_soundIndexFallen = 18;         // SFX #18 - Major explosion
+	_soundIndexTimeout = 10;        // SFX #10 - Programmed noise bursts (alarm)
+	_soundIndexForceEndGame = 18;   // SFX #18 - Major explosion
+	_soundIndexCrushed = 18;        // SFX #18 - Major explosion
+	_soundIndexMissionComplete = 14; // SFX #14 - 3-step chord
+}
+
+void DrillerEngine::playSoundC64(int index) {
+	debugC(1, kFreescapeDebugMedia, "Playing C64 SFX %d", index);
+	if (_playerC64Sfx)
+		_playerC64Sfx->playSfx(index);
 }
 
 

@@ -492,6 +492,7 @@ public:
 	void playSoundDOS(soundSpeakerFx *speakerFxInfo, bool sync, Audio::SoundHandle &handle);
 
 	void playSoundCPC(int index, Audio::SoundHandle &handle);
+	virtual void playSoundC64(int index);
 	virtual void playSoundFx(int index, bool sync);
 	virtual void loadSoundsFx(Common::SeekableReadStream *file, int offset, int number);
 	Common::HashMap<uint16, soundFx *> _soundsFx;

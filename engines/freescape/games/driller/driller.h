@@ -23,6 +23,7 @@
 #include "audio/mixer.h"
 
 #include "engines/freescape/games/driller/c64.music.h"
+#include "engines/freescape/games/driller/c64.sfx.h"
 
 namespace Freescape {
 
@@ -45,6 +46,9 @@ public:
 	bool _useAutomaticDrilling;
 
 	DrillerSIDPlayer *_playerSid;
+	DrillerC64SFXPlayer *_playerC64Sfx;
+
+	void playSoundC64(int index) override;
 
 	// Only used for Amiga and Atari ST
 	Font _fontSmall;
