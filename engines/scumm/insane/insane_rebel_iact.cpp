@@ -2195,10 +2195,14 @@ void InsaneRebel2::enemyUpdate(byte *renderBitmap, Common::SeekableReadStream &b
 		if (it->id == enemyId) {
 			it->rect = Common::Rect(x, y, x + w, y + h);
 			it->type = par4;  // Enemy type from IACT offset +6 (userId)
-			// Only re-activate if not destroyed
-			if (!it->destroyed) {
-				it->active = true;
-			}
+			// The _iactBits[] bit table is the authoritative alive/dead state.
+			// We only reach here when isBitSet(enemyId) == false, meaning
+			// the game considers this enemy alive. Reset destroyed/active
+			// to match — this is critical when clearBit(0) re-enables all
+			// enemies at wave start but the _enemies list still has stale
+			// destroyed=true from a previous wave.
+			it->active = true;
+			it->destroyed = false;
 			found = true;
 			break;
 		}
