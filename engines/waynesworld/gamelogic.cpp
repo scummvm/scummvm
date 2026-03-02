@@ -252,6 +252,8 @@ int GameLogic::handleVerbPickUp() {
         return r36_handleVerbPickUp();
     case 37:
         return r37_handleVerbPickUp();
+	default:
+		break;
     }
 	return 0;
 }
@@ -326,6 +328,8 @@ int GameLogic::handleVerbUse() {
         return r38_handleVerbUse();
     case 39:
         return r39_handleVerbUse();
+	default:
+		break;
     }
 	return 0;
 }
@@ -377,6 +381,8 @@ void GameLogic::handleVerbTalkTo() {
     case 17:
         r17_handleVerbTalkTo();
         break;
+	default:
+		break;
     }
 }
 
@@ -447,6 +453,8 @@ int GameLogic::handleVerbOpen() {
         return r34_handleVerbOpen();
     case 39:
         return r39_handleVerbOpen();
+	default:
+		break;
     }
 	return 0;
 }
@@ -460,6 +468,8 @@ int GameLogic::handleVerbClose() {
         return r8_handleVerbClose();
     case 34:
         return r34_handleVerbClose();
+	default:
+		break;
     }
 	return 0;
 }
@@ -505,14 +515,16 @@ int GameLogic::handleVerbGive() {
         return r2_handleVerbGive();
     case 6:
         return r6_handleVerbGive();
-    case 10:
+	case 9:
+		return r9_handleVerbGive();
+	case 10:
         return r10_handleVerbGive();
     case 13:
         return r13_handleVerbGive();
     case 12:
         return r12_handleVerbGive();
-    case 9:
-        return r9_handleVerbGive();
+	default:
+		break;
     }
 	return 0;
 }
@@ -622,39 +634,41 @@ bool GameLogic::handleDialogSelect(int &replyTextX, int &replyTextY, int &replyT
         return r5_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
     case 6:
         return r6_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
-    case 9:
+	case 8:
+		return r8_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
+	case 9:
         return r9_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
     case 10:
         return r10_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
     case 13:
         return r13_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
-    case 8:
-        return r8_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
-    case 32:
-        return r32_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
-    case 19:
-    case 20:
-        return r19_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
     case 12:
         return r12_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
     case 15:
         return r15_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
-    case 23:
+	case 17:
+		return r17_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
+	case 19:
+	case 20:
+		return r19_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
+	case 23:
         return r3_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
-    case 30:
+	case 28:
+		return r28_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
+	case 30:
         return r30_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
-    case 28:
-        return r28_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
     case 31:
         return r31_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
-    case 34:
+	case 32:
+		return r32_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
+	case 34:
         return r34_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
     case 35:
         return r35_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
-    case 17:
-        return r17_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
+	default:
+		break;
     }
-	return 0;
+	return false;
 }
 
 void GameLogic::refreshRoomBackground(int roomNum) {
@@ -686,7 +700,10 @@ void GameLogic::refreshRoomBackground(int roomNum) {
     case 8:
         r8_refreshRoomBackground();
         break;
-    case 10:
+	case 9:
+		r9_refreshRoomBackground();
+		break;
+	case 10:
         r10_refreshRoomBackground();
         break;
     case 11:
@@ -695,26 +712,26 @@ void GameLogic::refreshRoomBackground(int roomNum) {
     case 12:
         r12_refreshRoomBackground();
         break;
-    case 16:
+	case 13:
+		r13_refreshRoomBackground();
+		break;
+	case 14:
+		r14_refreshRoomBackground();
+		break;
+	case 16:
         r16_refreshRoomBackground();
         break;
-    case 13:
-        r13_refreshRoomBackground();
-        break;
-    case 14:
-        r14_refreshRoomBackground();
-        break;
-    case 19:
+	case 17:
+		r17_refreshRoomBackground();
+		break;
+	case 18:
+		r18_refreshRoomBackground();
+		break;
+	case 19:
         r19_refreshRoomBackground();
         break;
     case 20:
         r20_refreshRoomBackground();
-        break;
-    case 9:
-        r9_refreshRoomBackground();
-        break;
-    case 18:
-        r18_refreshRoomBackground();
         break;
     case 22:
         r22_refreshRoomBackground();
@@ -760,12 +777,11 @@ void GameLogic::refreshRoomBackground(int roomNum) {
     case 38:
         r38_refreshRoomBackground();
         break;
-    case 17:
-        r17_refreshRoomBackground();
-        break;
     case 39:
         r39_refreshRoomBackground();
         break;
+	default:
+		break;
     }
 }
 
@@ -810,6 +826,8 @@ void GameLogic::updateRoomAnimations() {
 	case 38:
 		r38_updateRoomAnimations();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -831,7 +849,10 @@ void GameLogic::handleRoomEvent(int eventNum) {
     case 1:
         r1_handleRoomEvent(false);
         break;
-    case 5:
+	case 4:
+		r4_handleRoomEvent();
+		break;
+	case 5:
         r5_handleRoomEvent();
         break;
     case 6:
@@ -848,40 +869,65 @@ void GameLogic::handleRoomEvent(int eventNum) {
         case 4:
             r6_handleRoomEvent4();
             break;
+        default:
+			break;
         }
         break;
-    case 4:
-        r4_handleRoomEvent();
-        break;
-    case 19:
+	case 8:
+		switch (eventNum) {
+		case 1:
+			r8_handleRoomEvent1();
+			break;
+		case 2:
+			r8_handleRoomEvent2();
+			break;
+		case 3:
+			r8_handleRoomEvent3();
+			break;
+		case 4:
+			r8_handleRoomEvent4();
+			break;
+		default:
+			break;
+		}
+		break;
+	case 13:
+		r13_handleRoomEvent();
+		break;
+	case 17:
+		switch (eventNum) {
+		case 1:
+			r17_handleRoomEvent1();
+			break;
+		case 2:
+			r17_handleRoomEvent2();
+			break;
+		case 3:
+			r17_handleRoomEvent3();
+			break;
+		default:
+			break;
+		}
+		break;
+	case 19:
         r19_handleRoomEvent();
         break;
     case 20:
         r20_handleRoomEvent();
         break;
-    case 13:
-        r13_handleRoomEvent();
-        break;
-    case 8:
-        switch (eventNum) {
-        case 1:
-            r8_handleRoomEvent1();
-            break;
-        case 2:
-            r8_handleRoomEvent2();
-            break;
-        case 3:
-            r8_handleRoomEvent3();
-            break;
-        case 4:
-            r8_handleRoomEvent4();
-            break;
-        }
-        break;
-    case 32:
-        r32_handleRoomEvent();
-        break;
-    case 28:
+	case 24:
+		switch (eventNum) {
+		case 1:
+			r24_handleRoomEvent(92, 72, -43, 90, 38, 0);
+			_vm->drawActors(0, 1, 1, 0, 65, 136, 145, 136);
+			break;
+		default:
+			r24_handleRoomEvent(203, 183, -43, 90, 38, 1);
+			_vm->drawActors(0, 1, 1, 0, 167, 136, 250, 136);
+			break;
+		}
+		break;
+	case 28:
         switch (eventNum) {
         case 1:
             r28_handleRoomEvent1();
@@ -893,18 +939,6 @@ void GameLogic::handleRoomEvent(int eventNum) {
         break;
     case 29:
         r29_handleRoomEvent();
-        break;
-    case 24:
-        switch (eventNum) {
-        case 1:
-            r24_handleRoomEvent(92, 72, -43, 90, 38, 0);
-            _vm->drawActors(0, 1, 1, 0, 65, 136, 145, 136);
-            break;
-        default:
-            r24_handleRoomEvent(203, 183, -43, 90, 38, 1);
-            _vm->drawActors(0, 1, 1, 0, 167, 136, 250, 136);
-            break;
-        }
         break;
     case 30:
         switch (eventNum) {
@@ -933,30 +967,24 @@ void GameLogic::handleRoomEvent(int eventNum) {
         case 5:
             r31_handleRoomEvent5();
             break;
+		default:
+			break;
         }
         break;
-    case 35:
+	case 32:
+		r32_handleRoomEvent();
+		break;
+	case 35:
         r35_talkToCassandra();
         break;
-    case 37:
+	case 36:
+		r36_handleRoomEvent();
+		break;
+	case 37:
         r37_climbEnterLadderDown();
         break;
-    case 36:
-        r36_handleRoomEvent();
-        break;
-    case 17:
-        switch (eventNum) {
-        case 1:
-            r17_handleRoomEvent1();
-            break;
-        case 2:
-            r17_handleRoomEvent2();
-            break;
-        case 3:
-            r17_handleRoomEvent3();
-            break;
-        }
-        break;
+	default:
+		break;
     }
 }
 
@@ -991,6 +1019,10 @@ int GameLogic::getActorScaleFromY(int actorY) {
 	case 22:
 		scale = actorY - 20;
 		break;
+	case 9:
+	case 15:
+		scale = actorY * 2 - 115;
+		break;
 	case 11:
 		scale = actorY - 60;
 		break;
@@ -1008,9 +1040,8 @@ int GameLogic::getActorScaleFromY(int actorY) {
 	case 16:
 		scale = actorY * 2 - 100;
 		break;
-	case 9:
-	case 15:
-		scale = actorY * 2 - 115;
+	case 17:
+		scale = actorY * 1.5 - 100;
 		break;
 	case 18:
 		scale = actorY - 15;
@@ -1052,8 +1083,7 @@ int GameLogic::getActorScaleFromY(int actorY) {
 	case 38:
 		scale = actorY - 31;
 		break;
-	case 17:
-		scale = actorY * 1.5 - 100;
+	default:
 		break;
 	}
     return CLIP(scale, 20, 100);
@@ -1091,6 +1121,8 @@ void GameLogic::setPizzathonStatus(int flagNum) {
     case 10:
         _pizzathonListFlags1 |= 0x20;
         break;
+	default:
+		break;
     }
     // _byte_306C8++; Never used but present in savegames
     if ((_pizzathonListFlags1 & 0x08) && (_pizzathonListFlags1 & 0x40) && (_pizzathonListFlags1 & 0x80) &&
@@ -1406,7 +1438,7 @@ void GameLogic::r0_updatePizzathonDialogChoices(int selectedDialogChoice) {
 			_r0_pizzathonChoicesUsed[index] = false;
 		}
 		for (int index = 0; index < 5; index++) {
-			int choiceIndex = _vm->_dialogChoices[index];
+			const int choiceIndex = _vm->_dialogChoices[index];
 			if (choiceIndex >= 47) {
 				_r0_pizzathonChoicesUsed[choiceIndex - 47 + 10] = true;
 			}
@@ -1675,6 +1707,8 @@ bool GameLogic::r1_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		replyTextIndex1 = 435;
 		replyTextIndex2 = 436;
 		_vm->_gameState = 0;
+		break;
+	default:
 		break;
 	}
 	return continueDialog;
@@ -2016,8 +2050,6 @@ int GameLogic::r2_handleVerbUse() {
 		actionTextIndex = 38;
 		break;
 	case kObjectIdCounter2_0:
-		actionTextIndex = 79;
-		break;
 	case kObjectIdCounter2_1:
 		actionTextIndex = 79;
 		break;
@@ -2103,7 +2135,17 @@ bool GameLogic::r2_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		replyTextX = 260;
 		replyTextY = 20;
 	}
+
 	switch (_vm->_selectedDialogChoice) {
+	case 187:
+		if (_r2_flags & 0x01) {
+			replyTextIndex1 = 295;
+		} else {
+			replyTextIndex1 = 287;
+			replyTextIndex2 = 296;
+		}
+		_vm->_gameState = 0;
+		break;
 	case 296:
 		if (_r2_flags & 0x01) {
 			replyTextIndex1 = 292;
@@ -2132,47 +2174,15 @@ bool GameLogic::r2_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		}
 		_vm->_gameState = 0;
 		break;
-	case 187:
-		if (_r2_flags & 0x01) {
-			replyTextIndex1 = 295;
-		} else {
-			replyTextIndex1 = 287;
-			replyTextIndex2 = 296;
-		}
-		_vm->_gameState = 0;
-		break;
-	case 369: case 384:
-		if (_vm->isActorWayne() && _vm->getWayneInventoryItemQuantity(kObjectIdInventoryDollar) < 1) {
-			replyTextIndex1 = 579;
-			continueDialog = true;
-		} else if (_vm->isActorGarth() && _vm->getGarthInventoryItemQuantity(kObjectIdInventoryDollar) < 1) {
-			replyTextIndex1 = 579;
-			continueDialog = true;
-		} else {
-			r2_handleDialogSelect369();
-		}
-		_vm->_gameState = 0;
-		break;
-	case 385:
-		if (_vm->isActorWayne() && _vm->getWayneInventoryItemQuantity(kObjectIdInventoryDollar) < 10) {
-			replyTextIndex1 = 579;
-			continueDialog = true;
-		} else if (_vm->isActorGarth() && _vm->getGarthInventoryItemQuantity(kObjectIdInventoryDollar) < 10) {
-			replyTextIndex1 = 579;
-			continueDialog = true;
-		} else {
-			r2_handleDialogSelect385();
-		}
-		_vm->_gameState = 0;
-		break;
-	case 366: case 386:
-		_vm->_gameState = 0;
-		break;
 	case 365:
 		replyTextIndex1 = 392;
 		continueDialog = true;
 		_r2_flags |= 0x08;
 		_vm->setDialogChoices(369, 370, 366, -1, -1);
+		break;
+	case 366:
+	case 386:
+		_vm->_gameState = 0;
 		break;
 	case 367:
 		replyTextIndex1 = 393;
@@ -2184,11 +2194,25 @@ bool GameLogic::r2_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		replyTextIndex1 = 395;
 		_vm->_gameState = 0;
 		break;
+	case 369:
+	case 384:
+		if (_vm->isActorWayne() && _vm->getWayneInventoryItemQuantity(kObjectIdInventoryDollar) < 1) {
+			replyTextIndex1 = 579;
+			continueDialog = true;
+		} else if (_vm->isActorGarth() && _vm->getGarthInventoryItemQuantity(kObjectIdInventoryDollar) < 1) {
+			replyTextIndex1 = 579;
+			continueDialog = true;
+		} else {
+			r2_handleDialogSelect369();
+		}
+		_vm->_gameState = 0;
+		break;
 	case 370:
 		replyTextIndex1 = 398;
 		_vm->_gameState = 0;
 		break;
-	case 372: case 373:
+	case 372:
+	case 373:
 		replyTextIndex1 = _vm->_selectedDialogChoice + 27;
 		continueDialog = true;
 		break;
@@ -2252,6 +2276,20 @@ bool GameLogic::r2_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		replyTextIndex1 = 408;
 		continueDialog = true;
 		_vm->setDialogChoices(369, 370, 366, -1, -1);
+		break;
+	case 385:
+		if (_vm->isActorWayne() && _vm->getWayneInventoryItemQuantity(kObjectIdInventoryDollar) < 10) {
+			replyTextIndex1 = 579;
+			continueDialog = true;
+		} else if (_vm->isActorGarth() && _vm->getGarthInventoryItemQuantity(kObjectIdInventoryDollar) < 10) {
+			replyTextIndex1 = 579;
+			continueDialog = true;
+		} else {
+			r2_handleDialogSelect385();
+		}
+		_vm->_gameState = 0;
+		break;
+	default:
 		break;
 	}
 	return continueDialog;
@@ -2353,6 +2391,8 @@ void GameLogic::r3_handleVerbTalkTo() {
 	case kObjectIdProtesters3:
 		_vm->displayTextLines("c04r", 256, 100, 20, 2);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2434,6 +2474,9 @@ bool GameLogic::r3_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 	replyTextX = 50;
 	replyTextY = 35;
 	switch (_vm->_selectedDialogChoice) {
+	case 187:
+		_vm->_gameState = 0;
+		break;
 	case 227:
 		replyTextIndex1 = 167;
 		continueDialog = true;
@@ -2461,8 +2504,7 @@ bool GameLogic::r3_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		}
 		continueDialog = true;
 		break;
-	case 187:
-		_vm->_gameState = 0;
+	default:
 		break;
 	}
 	return continueDialog;
@@ -2578,6 +2620,8 @@ void GameLogic::r4_handleVerbTalkTo() {
 			}
 		}
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2596,13 +2640,22 @@ int GameLogic::r4_handleVerbOpen() {
 }
 
 bool GameLogic::r4_handleDialogSelect(int &replyTextX, int &replyTextY, int &replyTextIndex1, int &replyTextIndex2, int &replyTextIndex3) {
-	bool continueDialog = false;
+	const bool continueDialog = false;
 	replyTextIndex3 = -1;
 	replyTextIndex2 = -1;
 	replyTextIndex1 = -1;
 	replyTextX = 200;
 	replyTextY = 20;
 	switch (_vm->_selectedDialogChoice) {
+	case 285:
+		replyTextIndex1 = 242;
+		replyTextIndex2 = 243;
+		break;
+	case 286:
+	case 287:
+		replyTextIndex1 = 244;
+		replyTextIndex2 = 245;
+		break;
 	case 288:
 		if (!(_r4_flags & 0x01)) {
 			_vm->displayTextLines("c04r", 246, 200, 20, 2);
@@ -2613,13 +2666,7 @@ bool GameLogic::r4_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		_vm->loadRoomBackground();
 		_vm->_gameState = 0;
 		break;
-	case 285:
-		replyTextIndex1 = 242;
-		replyTextIndex2 = 243;
-		break;
-	case 286: case 287:
-		replyTextIndex1 = 244;
-		replyTextIndex2 = 245;
+	default:
 		break;
 	}
 	return continueDialog;
@@ -2673,7 +2720,7 @@ void GameLogic::r4_refreshRoomBackground() {
 		chainVisible = true;
 	}
 	if (chainVisible) {
-		Common::String filename = Common::String::format("%c%cchain%c.pcx", chainCheeseIn, chainUpDown1, chainUpDown2);
+		const Common::String filename = Common::String::format("%c%cchain%c.pcx", chainCheeseIn, chainUpDown1, chainUpDown2);
 		_vm->drawRoomImageToBackground(filename.c_str(), 224, 57);
 	}
 	if (_r4_flags & 0x20) {
@@ -2852,14 +2899,15 @@ bool GameLogic::r5_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		replyTextIndex1 = 88;
 		continueDialog = true;
 		break;
-	case 172: case 173:
-		replyTextIndex1 = _vm->_selectedDialogChoice - 81;
-		continueDialog = true;
-		break;
 	case 171:
 		replyTextIndex1 = 89;
 		replyTextIndex2 = 90;
 		_vm->setDialogChoices(175, 176, 177, 178, -1);
+		continueDialog = true;
+		break;
+	case 172:
+	case 173:
+		replyTextIndex1 = _vm->_selectedDialogChoice - 81;
 		continueDialog = true;
 		break;
 	case 174:
@@ -2873,10 +2921,14 @@ bool GameLogic::r5_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		replyTextIndex1 = 95;
 		_vm->_gameState = 1;
 		break;
-	case 175: case 176: case 178:
+	case 175:
+	case 176:
+	case 178:
 		replyTextIndex1 = _vm->_selectedDialogChoice - 82;
 		_r5_flags &= ~0x01;
 		_vm->_gameState = 1;
+		break;
+	default:
 		break;
 	}
 	return continueDialog;
@@ -2893,6 +2945,7 @@ void GameLogic::r5_handleRoomEvent() {
 	_vm->walkTo(195, 102, -1, 209, 96);
 	// TODO sub_185C0("wcass2", 0, 4, 0, 104, 170, 104, 26, 46, 8, 1);
 	// TODO sub_185C0("scass", 2, 1, 170, 104, 171, 104, 15, 46, 2, 0);
+	warning("STUB - r5_handleRoomEvent - sub_185C0?");
 	_vm->displayTextLines("c04r", 87, 150, 30, 1);
 	_vm->setDialogChoices(170, 171, 172, 173, 174);
 	_vm->startDialog();
@@ -2905,14 +2958,10 @@ int GameLogic::r6_handleVerbPickUp() {
 		actionTextIndex = 53;
 		break;
 	case kObjectIdWindow6:
-		actionTextIndex = 56;
-		break;
 	case kObjectIdFrontDoor6:
 		actionTextIndex = 56;
 		break;
 	case kObjectIdFlowerBed6_0:
-		actionTextIndex = 29;
-		break;
 	case kObjectIdFlowerBed6_1:
 		actionTextIndex = 29;
 		break;
@@ -3081,7 +3130,12 @@ bool GameLogic::r6_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		_vm->_roomEventNum = 4;
 		_vm->_gameState = 0;
 		break;
-	case 224: case 226:
+	case 223:
+		replyTextIndex1 = 164;
+		continueDialog = true;
+		break;
+	case 224:
+	case 226:
 		_vm->displayTextLines("c04r", 160, 100, 60, 1);
 		replyTextIndex1 = 161;
 		replyTextIndex2 = 162;
@@ -3089,13 +3143,11 @@ bool GameLogic::r6_handleDialogSelect(int &replyTextX, int &replyTextY, int &rep
 		_vm->_gameState = 0;
 		_vm->_roomEventNum = 4;
 		break;
-	case 223:
-		replyTextIndex1 = 164;
-		continueDialog = true;
-		break;
 	case 225:
 		replyTextIndex1 = 165;
 		continueDialog = true;
+		break;
+	default:
 		break;
 	}
 	return continueDialog;

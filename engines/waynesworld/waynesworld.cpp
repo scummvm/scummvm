@@ -149,34 +149,13 @@ Common::Error WaynesWorldEngine::run() {
 	setWayneInventoryItemQuantity(kObjectIdInventoryDollar, 5);
 	setGarthInventoryItemQuantity(kObjectIdInventoryDrumstick, 1);
 
-#if 0
-	while (!shouldQuit()) {
-		updateEvents();
-	}
-#endif
-
-#if 1
-//	loadPalette("m01/wstand0");
-//	g_system->getPaletteManager()->setPalette(_palette2, 0, 256);
-
 	CursorMan.showMouse(true);
-
-//	drawImageToScreen("r00/backg", 0, 0);
 
 	drawInterface(2);
 	changeRoom(0);
 	changeMusic();
 	
-	// _wayneSpriteX = -1; _garthSpriteX = -1;
-	// changeRoom(31); // DEBUG
-	// _logic->r31_displayCategories();
-	// _logic->_r1_eventFlag = 1;
-	// _logic->_r1_eventCtr = 3;
-
 	_gameState = 0; // DEBUG Initial _gameState 0 is set by room event in room 0
-	// _gameState = 1; // DEBUG Open map
-
-	// lookAtUnusedTicket();
 
 	while (!shouldQuit()) {
 		_mouseClickButtons = 0;
@@ -194,10 +173,7 @@ Common::Error WaynesWorldEngine::run() {
 		}
 		updateRoomAnimations();
 		g_system->updateScreen();
-		// g_system->delayMillis(20);
 	}
-
-#endif
 
 	unloadStaticRoomObjects();
 	unloadMainActorSprites();
@@ -295,7 +271,7 @@ void WaynesWorldEngine::updateEvents() {
 }
 
 int WaynesWorldEngine::getRandom(int max) {
-	return max == 0 ? 0 : _random->getRandomNumber(max - 1);
+	return max <= 1 ? 0 : _random->getRandomNumber(max - 1);
 }
 
 void WaynesWorldEngine::waitMillis(uint millis) {
@@ -524,7 +500,7 @@ void WaynesWorldEngine::paletteFadeIn(int index, int count, int stepsSize) {
 	while (!isDone) {
 		isDone = true;
 		for (int fadeIndex = fadeStartIndex; fadeIndex < fadeEndIndex; fadeIndex++) {
-			byte destValue = _palette2[fadeIndex];
+			const byte destValue = _palette2[fadeIndex];
 			if (fadePalette[fadeIndex] < destValue) {
 				fadePalette[fadeIndex] = MIN<int>(fadePalette[fadeIndex] + stepsSize, destValue);
 				isDone = false;
@@ -1046,6 +1022,7 @@ int WaynesWorldEngine::drawActors(int direction, int wayneKind, int garthKind, i
 
     if (_scrollPosition != 0) {
         // drawStaticRoomObjects2(tempBackground);
+		warning("CHECKME - drawActors - drawStaticRoomObjects2(tempBackground);");
     }
 
     if (_inventoryItemsCount > 0) {
@@ -1100,7 +1077,6 @@ void WaynesWorldEngine::pickupObject(int objectId, byte &flags, byte flagsSet, i
 }
 
 void WaynesWorldEngine::playAnimation(const char *prefix, int startIndex, int count, int x, int y, int flag, uint ticks) {
-//    char filename[32];
 	Common::String filename;
     // sysMouseDriver(2);
 	if (count > 0) {
@@ -1218,31 +1194,21 @@ void WaynesWorldEngine::changeRoomScrolling() {
     _scrollWidth = 0;
     _scrollRemaining = 0;
     switch (_currentRoomNumber) {
-    case 14:
+	case 8:
+		if (isActorWayne()) {
+			_garthSpriteX = 319;
+			_garthSpriteY = 131;
+		} else {
+			_wayneSpriteX = 319;
+			_wayneSpriteY = 131;
+		}
+		roomNumber = 21;
+		break;
+	case 14:
         roomNumber = 19;
         break;
     case 19:
         roomNumber = 14;
-        break;
-    case 8:
-        if (isActorWayne()) {
-            _garthSpriteX = 319;
-            _garthSpriteY = 131;
-        } else {
-            _wayneSpriteX = 319;
-            _wayneSpriteY = 131;
-        }
-        roomNumber = 21;
-        break;
-    case 22:
-        if (isActorWayne()) {
-            _garthSpriteX = 2;
-            _garthSpriteY = 131;
-        } else {
-            _wayneSpriteX = 2;
-            _wayneSpriteY = 131;
-        }
-        roomNumber = 21;
         break;
     case 21:
         if (_hoverObjectNumber == kObjectIdFoyer) {
@@ -1265,12 +1231,25 @@ void WaynesWorldEngine::changeRoomScrolling() {
             roomNumber = 22;
         }
         break;
-    case 32:
+	case 22:
+		if (isActorWayne()) {
+			_garthSpriteX = 2;
+			_garthSpriteY = 131;
+		} else {
+			_wayneSpriteX = 2;
+			_wayneSpriteY = 131;
+		}
+		roomNumber = 21;
+		break;
+	case 32:
         roomNumber = 33;
         break;
     case 33:
         roomNumber = 32;
         break;
+
+    default:
+		break;
     }
     unloadStaticRoomObjects();
     openRoomLibrary(roomNumber);
@@ -1702,6 +1681,8 @@ void WaynesWorldEngine::handleVerb(int verbFlag) {
     case 10:
         handleVerbClose();
         break;
+	default:
+		break;
     }
 
     if (_scrollWidth != 0) {
@@ -1729,17 +1710,17 @@ void WaynesWorldEngine::handleVerbPickUp() {
     }
 
     switch (actionTextIndex) {
-    case 7:
-        playSound("sv18.snd", 1);
-        playSound("sv28.snd", 1);
-        break;
     case 0:
     case 10:
     case 44:
     case 54:
         playSound("sv32.snd", 1);
         break;
-    case 13:
+	case 7:
+		playSound("sv18.snd", 1);
+		playSound("sv28.snd", 1);
+		break;
+	case 13:
         playSound("sv19.snd", 1);
         break;
     case 50:
@@ -1758,6 +1739,8 @@ void WaynesWorldEngine::handleVerbPickUp() {
     case 56:
         playSound("sv38.snd", 1);
         break;
+	default:
+		break;
     }
 
 }
@@ -2017,29 +2000,30 @@ void WaynesWorldEngine::handleVerbOpen() {
     }
 
     switch (actionTextIndex) {
-    case 5:
-        playSound("sv31.snd", 1);
-        break;
-    case 7:
-        playSound("ss07.snd", 1);
-        break;
-    case 8:
-        playSound("sv47.snd", 1);
-        break;
     case 0:
         playSound("sv28.snd", 1);
         break;
     case 1:
         playSound("sv38.snd", 1);
         break;
-    case 10:
+	case 5:
+		playSound("sv31.snd", 1);
+		break;
+	case 7:
+		playSound("ss07.snd", 1);
+		break;
+	case 8:
+		playSound("sv47.snd", 1);
+		break;
+	case 10:
         playSound("sv28.snd", 1);
         break;
     case 11:
         playSound("sv21.snd", 1);
         break;
+	default:
+		break;
     }
-
 }
 
 void WaynesWorldEngine::handleVerbClose() {
@@ -2061,6 +2045,8 @@ void WaynesWorldEngine::handleVerbClose() {
     case 1:
         playSound("sv21.snd", 1);
         break;
+    default:
+		break;
     }
 
 }
