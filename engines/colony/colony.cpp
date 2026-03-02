@@ -1338,16 +1338,19 @@ bool ColonyEngine::scrollInfo(const Graphics::Font *macFont) {
 	int totalHeight = lineHeight * storyLength;
 	int ht = (_height - totalHeight) / 2;
 
-	// Set up blue gradient palette entries (200-213) for story text
+	// Set up gradient palette entries (200-213) for story text
 	// Mac original: tColor.blue starts at 0xFFFF and decreases by 4096 per visible line
+	// B&W Mac: white gradient instead of blue
+	const bool bwMac = (macFont && !_hasMacColors);
 	byte pal[14 * 3]; // storyLength entries
 	memset(pal, 0, sizeof(pal));
 	for (int i = 0; i < storyLength; i++) {
-		int blue = 255 - i * 16;
-		if (blue < 0) blue = 0;
-		pal[i * 3 + 0] = 0;     // R
-		pal[i * 3 + 1] = 0;     // G
-		pal[i * 3 + 2] = blue;  // B
+		int val = 255 - i * 16;
+		if (val < 0)
+			val = 0;
+		pal[i * 3 + 0] = bwMac ? val : 0;  // R
+		pal[i * 3 + 1] = bwMac ? val : 0;  // G
+		pal[i * 3 + 2] = val;               // B
 	}
 	_gfx->setPalette(pal, 200, storyLength);
 
@@ -1637,17 +1640,20 @@ bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *m
 
 	int centery = _height / 2 - 10;
 
-	// Set up gradient palette entries (160-175) for the blue gradient lines
+	// Set up gradient palette entries (160-175) for the gradient lines
 	// Mac original: blue starts at 0xFFFF and decreases by 4096 per line pair
+	// B&W Mac: white gradient instead of blue
+	const bool bwMac = (macFont && !_hasMacColors);
 	for (int i = 0; i < 16; i++) {
-		int blue = 255 - i * 16; // 255, 239, 223, ... 15
-		if (blue < 0) blue = 0;
-		byte pal[3] = { 0, 0, (byte)blue };
+		int val = 255 - i * 16; // 255, 239, 223, ... 15
+		if (val < 0)
+			val = 0;
+		byte pal[3] = { (byte)(bwMac ? val : 0), (byte)(bwMac ? val : 0), (byte)val };
 		_gfx->setPalette(pal, 160 + i, 1);
 	}
-	// Set palette entry 176 for red text
+	// Set palette entry 176 for text (red in color, white in B&W)
 	{
-		byte pal[3] = { 255, 0, 0 };
+		byte pal[3] = { 255, (byte)(bwMac ? 255 : 0), (byte)(bwMac ? 255 : 0) };
 		_gfx->setPalette(pal, 176, 1);
 	}
 
