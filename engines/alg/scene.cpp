@@ -254,13 +254,13 @@ void SceneInfo::addZonesToScenes() {
 					zone = zone->clone();
 					zone->_difficulty = 0;
 					scene->_zones.push_back(zone);
-				}
-				if (zone->_next.empty()) {
-					break;
-				} else {
-					zone = findZone(zone->_next);
-					if (zone == nullptr) {
+					if (zone->_next.empty()) {
 						break;
+					} else {
+						zone = findZone(zone->_next);
+						if (zone == nullptr) {
+							break;
+						}
 					}
 				}
 			}
@@ -272,13 +272,13 @@ void SceneInfo::addZonesToScenes() {
 					zone = zone->clone();
 					zone->_difficulty = 1;
 					scene->_zones.push_back(zone);
-				}
-				if (zone->_next.empty()) {
-					break;
-				} else {
-					zone = findZone(zone->_next);
-					if (zone == nullptr) {
+					if (zone->_next.empty()) {
 						break;
+					} else {
+						zone = findZone(zone->_next);
+						if (zone == nullptr) {
+							break;
+						}
 					}
 				}
 			}
@@ -290,13 +290,13 @@ void SceneInfo::addZonesToScenes() {
 					zone = zone->clone();
 					zone->_difficulty = 2;
 					scene->_zones.push_back(zone);
-				}
-				if (zone->_next.empty()) {
-					break;
-				} else {
-					zone = findZone(zone->_next);
-					if (zone == nullptr) {
+					if (zone->_next.empty()) {
 						break;
+					} else {
+						zone = findZone(zone->_next);
+						if (zone == nullptr) {
+							break;
+						}
 					}
 				}
 			}
