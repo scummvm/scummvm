@@ -25,7 +25,7 @@
 class EventsTestSuite : public CxxTest::TestSuite {
 public:
 	void test_engine_action_hotspot_toggle() {
-		TS_ASSERT_EQUALS(Common::kEngineActionHotspotToggle, 1);
+		TS_ASSERT_EQUALS(Common::kEngineActionHotspotToggle, 20000);
 	}
 
 	void test_custom_engine_action_event() {

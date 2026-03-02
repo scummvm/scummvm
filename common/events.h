@@ -134,10 +134,11 @@ enum EventType {
 
 /**
  * Custom engine action types for EVENT_CUSTOM_ENGINE_ACTION_START/END.
- * These are used by cross-engine features.
+ * These are used by cross-engine features. Values start at 20000 to avoid
+ * clashing with engine-specific custom action ids, which start from 0.
  */
 enum EngineAction {
-	kEngineActionHotspotToggle = 1
+	kEngineActionHotspotToggle = 20000
 };
 
 const int16 JOYAXIS_MIN = -32768;
