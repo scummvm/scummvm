@@ -638,6 +638,8 @@ protected:
 	}
 
 	void getHotspotPositions(Common::Array< ::Graphics::HotspotInfo> &hotspots) override;
+	bool hotspotDirty() const override;
+	void rebuildHotspotSnapshot() const;
 
 	void setupOpcodes();
 	void op_nop();
@@ -912,6 +914,28 @@ protected:
 	uint8 _paletteBuffer[256 * 3];
 	Common::Rect _dirtyRectsTable[NUM_DIRTY_RECTS];
 	int _dirtyRectsTableCount;
+
+	struct HotspotSnapshot {
+		struct HitBoxEntry {
+			int16 item;
+			int16 lockedTop;
+			int16 str;
+			int16 defaultStr;
+			Common::Rect hitBox0;
+		};
+		struct CharEntry {
+			uint16 num;
+			uint16 flags;
+			Common::Rect prevBoundingRect;
+		};
+		int16 flag618;
+		int16 scrollX;
+		int16 scrollY;
+		int currentEpisodeNum;
+		Common::Array<HitBoxEntry> hitBoxes;
+		CharEntry chars[NUM_KEYCHARS];
+	};
+	mutable HotspotSnapshot _hotspotSnapshot;
 
 	static const uint8 _directionsTable[NUM_DIRECTIONS];
 };
