@@ -86,7 +86,7 @@ void HotspotRenderer::drawMarker(Surface *surface, int x, int y, const PixelForm
 }
 
 void HotspotRenderer::drawHotspotLabel(Surface *surface, int overlayX, int overlayY,
-		const Common::String &label, int overlayWidth, int overlayHeight,
+		const Common::U32String &label, int overlayWidth, int overlayHeight,
 		const PixelFormat &format, const Font *font) {
 	int textX = overlayX + kMarkerSize / 2 + 8;
 	int textY = overlayY - font->getFontHeight() / 2;

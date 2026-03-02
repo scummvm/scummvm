@@ -24,7 +24,7 @@
 
 #include "common/array.h"
 #include "common/rect.h"
-#include "common/str.h"
+#include "common/ustr.h"
 
 namespace Graphics {
 
@@ -37,10 +37,10 @@ struct PixelFormat;
  */
 struct HotspotInfo {
 	Common::Point position; ///< Position in game coordinates
-	Common::String name;    ///< Display name
+	Common::U32String name; ///< Display name
 
 	HotspotInfo() {}
-	HotspotInfo(const Common::Point &pos, const Common::String &n)
+	HotspotInfo(const Common::Point &pos, const Common::U32String &n)
 		: position(pos), name(n) {}
 };
 
@@ -94,7 +94,7 @@ private:
 	void drawCrosshairMarker(Surface *surface, int x, int y, int width, int height, const PixelFormat &format);
 	void drawSquareMarker(Surface *surface, int x, int y, int width, int height, const PixelFormat &format);
 	void drawPointMarker(Surface *surface, int x, int y, int width, int height, const PixelFormat &format);
-	void drawHotspotLabel(Surface *surface, int overlayX, int overlayY, const Common::String &label,
+	void drawHotspotLabel(Surface *surface, int overlayX, int overlayY, const Common::U32String &label,
 		int overlayWidth, int overlayHeight, const PixelFormat &format, const Font *font);
 	void drawLabelBox(Surface *surface, int x, int y, int w, int h,
 		int overlayWidth, int overlayHeight, const PixelFormat &format);
