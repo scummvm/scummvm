@@ -753,7 +753,7 @@ void Engine::pauseEngineIntern(bool pause) {
 	_mixer->pauseAll(pause);
 }
 
-void Engine::setShowHotspots(bool show) {
+void Engine::showHotspots(bool show) {
 	_showHotspots = show;
 
 	if (!show && g_system->isOverlayVisible())

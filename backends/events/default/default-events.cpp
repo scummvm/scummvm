@@ -123,7 +123,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 		if (event.customType == Common::kEngineActionHotspotToggle && g_engine) {
 			if (ConfMan.getBool("enable_hotspots", Common::ConfigManager::kApplicationDomain)) {
-				g_engine->setShowHotspots(true);
+				g_engine->showHotspots(true);
 			}
 		}
 		break;
@@ -131,7 +131,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
 		if (event.customType == Common::kEngineActionHotspotToggle && g_engine) {
 			if (ConfMan.getBool("enable_hotspots", Common::ConfigManager::kApplicationDomain)) {
-				g_engine->setShowHotspots(false);
+				g_engine->showHotspots(false);
 			}
 		}
 		break;

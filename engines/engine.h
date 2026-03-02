@@ -547,7 +547,7 @@ public:
 	 *
 	 * @param show true to show hotspots, false to hide them
 	 */
-	virtual void setShowHotspots(bool show);
+	virtual void showHotspots(bool show);
 
 	/**
 	 * Request the engine to quit.
