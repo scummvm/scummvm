@@ -37,6 +37,25 @@
 
 namespace Colony {
 
+enum ColonyAction {
+	kActionNone,
+	kActionMoveForward,
+	kActionMoveBackward,
+	kActionStrafeLeft,
+	kActionStrafeRight,
+	kActionRotateLeft,
+	kActionRotateRight,
+	kActionLookLeft,
+	kActionLookRight,
+	kActionLookBehind,
+	kActionToggleMouselook,
+	kActionToggleDashboard,
+	kActionToggleWireframe,
+	kActionToggleFullscreen,
+	kActionSkipIntro,
+	kActionEscape
+};
+
 enum WallFeatureType {
 	kWallFeatureNone = 0,
 	kWallFeatureDoor = 2,
@@ -368,6 +387,14 @@ private:
 	bool _widescreen;
 	bool _fullscreen;
 	int _speedShift; // 1-5, movement speed = 1 << (_speedShift - 1)
+
+	// Continuous movement flags (set/cleared by keymapper action events)
+	bool _moveForward;
+	bool _moveBackward;
+	bool _strafeLeft;
+	bool _strafeRight;
+	bool _rotateLeft;
+	bool _rotateRight;
 
 	Common::RandomSource _randomSource;
 	uint8 _decode1[4];

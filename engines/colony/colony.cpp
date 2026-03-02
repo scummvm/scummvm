@@ -226,6 +226,12 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_wireframe = (_renderMode != Common::kRenderMacintosh);
 	_fullscreen = false;
 	_speedShift = 2; // DOS default: speedshift=1, but 2 feels better with our frame rate
+	_moveForward = false;
+	_moveBackward = false;
+	_strafeLeft = false;
+	_strafeRight = false;
+	_rotateLeft = false;
+	_rotateRight = false;
 	_wm = nullptr;
 	_macMenu = nullptr;
 	_menuSurface = nullptr;
@@ -897,6 +903,7 @@ Common::Error ColonyEngine::run() {
 
 	int mouseDX = 0, mouseDY = 0;
 	bool mouseMoved = false;
+	uint32 lastMoveTick = _system->getMillis();
 	while (!shouldQuit()) {
 		_frameLimiter->startFrame();
 		Common::Event event;
@@ -922,135 +929,115 @@ Common::Error ColonyEngine::run() {
 				}
 			}
 
-				if (event.type == Common::EVENT_KEYDOWN) {
-					debug("Key down: %d", event.kbd.keycode);
-					const bool allowInteraction = (event.kbd.flags & Common::KBD_CTRL) == 0;
-					// DOS movement: xai[ang] << speedshift, where xai[i] = cost[i] >> 4
-					const int moveX = (_cost[_me.look] * (1 << _speedShift)) >> 4;
-					const int moveY = (_sint[_me.look] * (1 << _speedShift)) >> 4;
-					const int rotSpeed = 1 << (_speedShift - 1); // DOS: speed = 1 << (speedshift-1)
-					switch (event.kbd.keycode) {
-					// Move forward (DOS: w / 8 / up)
-					case Common::KEYCODE_UP:
-					case Common::KEYCODE_w:
-						cCommand(_me.xloc + moveX, _me.yloc + moveY, allowInteraction);
-						break;
-					// Move backward (DOS: s / 5 / down)
-					case Common::KEYCODE_DOWN:
-					case Common::KEYCODE_s:
-						cCommand(_me.xloc - moveX, _me.yloc - moveY, allowInteraction);
-						break;
-					// Strafe left (DOS: a / 4 / left)
-					case Common::KEYCODE_LEFT:
-					case Common::KEYCODE_a:
-					{
-						uint8 strafeAngle = (uint8)((int)_me.look + 64);
-						int sx = (_cost[strafeAngle] * (1 << _speedShift)) >> 4;
-						int sy = (_sint[strafeAngle] * (1 << _speedShift)) >> 4;
-						cCommand(_me.xloc + sx, _me.yloc + sy, allowInteraction);
-						break;
+			if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+				switch (event.customType) {
+				case kActionMoveForward:
+					_moveForward = true;
+					break;
+				case kActionMoveBackward:
+					_moveBackward = true;
+					break;
+				case kActionStrafeLeft:
+					_strafeLeft = true;
+					break;
+				case kActionStrafeRight:
+					_strafeRight = true;
+					break;
+				case kActionRotateLeft:
+					_rotateLeft = true;
+					break;
+				case kActionRotateRight:
+					_rotateRight = true;
+					break;
+				case kActionLookLeft:
+					_me.look = _me.ang + 64;
+					break;
+				case kActionLookRight:
+					_me.look = _me.ang - 64;
+					break;
+				case kActionLookBehind:
+					_me.look = _me.ang + 128;
+					break;
+				case kActionToggleDashboard:
+					_showDashBoard = !_showDashBoard;
+					break;
+				case kActionToggleWireframe:
+					_wireframe = !_wireframe;
+					debug("Polyfill: %s", _wireframe ? "off (wireframe)" : "on (filled)");
+					break;
+				case kActionToggleFullscreen:
+					if (_macMenu) {
+						_fullscreen = !_fullscreen;
+						_menuBarHeight = _fullscreen ? 0 : 20;
+						updateViewportLayout();
 					}
-					// Strafe right (DOS: d / 6 / right)
-					case Common::KEYCODE_RIGHT:
-					case Common::KEYCODE_d:
-					{
-						uint8 strafeAngle = (uint8)((int)_me.look - 64);
-						int sx = (_cost[strafeAngle] * (1 << _speedShift)) >> 4;
-						int sy = (_sint[strafeAngle] * (1 << _speedShift)) >> 4;
-						cCommand(_me.xloc + sx, _me.yloc + sy, allowInteraction);
-						break;
-					}
-					// Rotate left (DOS: q / 7)
-					case Common::KEYCODE_q:
-						_me.ang += rotSpeed;
-						_me.look += rotSpeed;
-						break;
-					// Rotate right (DOS: e / 9)
-					case Common::KEYCODE_e:
-						_me.ang -= rotSpeed;
-						_me.look -= rotSpeed;
-						break;
-					// Look left (DOS: z / 1)
-					case Common::KEYCODE_z:
-						_me.look = _me.ang + 64;
-						break;
-					// Look right (DOS: c / 3)
-					case Common::KEYCODE_c:
-						_me.look = _me.ang - 64;
-						break;
-					// Look behind (DOS: x / 2)
-					case Common::KEYCODE_x:
-						_me.look = _me.ang + 128;
-						break;
-					// Speed 1-5 (DOS: keys 1-5)
-					case Common::KEYCODE_1:
-					case Common::KEYCODE_2:
-					case Common::KEYCODE_3:
-					case Common::KEYCODE_4:
-					case Common::KEYCODE_5:
-						_speedShift = event.kbd.keycode - Common::KEYCODE_1 + 1;
-						debug("Speed: %d", _speedShift);
-						break;
-					// F7: toggle dashboard (DOS: doFunctionKey case 7)
-					case Common::KEYCODE_F7:
-						_showDashBoard = !_showDashBoard;
-						break;
-					// F8: toggle polyfill (DOS: doFunctionKey case 8)
-					case Common::KEYCODE_F8:
-						_wireframe = !_wireframe;
-						debug("Polyfill: %s", _wireframe ? "off (wireframe)" : "on (filled)");
-						break;
-					// F10: ScummVM menu (replaces DOS F10 pause)
-					case Common::KEYCODE_F10:
-						_system->lockMouse(false);
-						openMainMenuDialog();
-						_gfx->computeScreenViewport();
+					break;
+				case kActionToggleMouselook:
+					if (_fl == 2)
+						dropCarriedObject();
+					else if (_fl == 1)
+						exitForklift();
+					else {
+						_mouseLocked = !_mouseLocked;
 						_system->lockMouse(_mouseLocked);
 						if (_mouseLocked) {
 							_system->warpMouse(_centerX, _centerY);
 							_system->getEventManager()->purgeMouseEvents();
+							mouseDX = mouseDY = 0;
+							mouseMoved = false;
 						}
-						break;
-					// F11: toggle fullscreen (hide Mac menu bar)
-					case Common::KEYCODE_F11:
-						if (_macMenu) {
-							_fullscreen = !_fullscreen;
-							_menuBarHeight = _fullscreen ? 0 : 20;
-							updateViewportLayout();
-						}
-						break;
-					// Space: toggle mouselook / free cursor
-					case Common::KEYCODE_SPACE:
-						if (_fl == 2)
-							dropCarriedObject();
-						else if (_fl == 1)
-							exitForklift();
-						else {
-							_mouseLocked = !_mouseLocked;
-							_system->lockMouse(_mouseLocked);
-							if (_mouseLocked) {
-								_system->warpMouse(_centerX, _centerY);
-								_system->getEventManager()->purgeMouseEvents();
-								mouseDX = mouseDY = 0;
-								mouseMoved = false;
-							}
-						}
-						break;
-					// Escape: also opens ScummVM menu
-					case Common::KEYCODE_ESCAPE:
-						_system->lockMouse(false);
-						openMainMenuDialog();
-						_gfx->computeScreenViewport();
-						_system->lockMouse(_mouseLocked);
-						if (_mouseLocked) {
-							_system->warpMouse(_centerX, _centerY);
-							_system->getEventManager()->purgeMouseEvents();
-						}
-						break;
-					default:
-						break;
 					}
-				debug("Me: x=%d y=%d", _me.xloc, _me.yloc);
+					break;
+				case kActionEscape:
+					_system->lockMouse(false);
+					openMainMenuDialog();
+					_gfx->computeScreenViewport();
+					_system->lockMouse(_mouseLocked);
+					if (_mouseLocked) {
+						_system->warpMouse(_centerX, _centerY);
+						_system->getEventManager()->purgeMouseEvents();
+					}
+					break;
+				default:
+					break;
+				}
+			} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
+				switch (event.customType) {
+				case kActionMoveForward:
+					_moveForward = false;
+					break;
+				case kActionMoveBackward:
+					_moveBackward = false;
+					break;
+				case kActionStrafeLeft:
+					_strafeLeft = false;
+					break;
+				case kActionStrafeRight:
+					_strafeRight = false;
+					break;
+				case kActionRotateLeft:
+					_rotateLeft = false;
+					break;
+				case kActionRotateRight:
+					_rotateRight = false;
+					break;
+				default:
+					break;
+				}
+			} else if (event.type == Common::EVENT_KEYDOWN) {
+				// Speed keys 1-5 remain as raw keyboard events
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_1:
+				case Common::KEYCODE_2:
+				case Common::KEYCODE_3:
+				case Common::KEYCODE_4:
+				case Common::KEYCODE_5:
+					_speedShift = event.kbd.keycode - Common::KEYCODE_1 + 1;
+					debug("Speed: %d", _speedShift);
+					break;
+				default:
+					break;
+				}
 			} else if (event.type == Common::EVENT_MOUSEMOVE) {
 				mouseDX += event.relMouse.x;
 				mouseDY += event.relMouse.y;
@@ -1075,8 +1062,43 @@ Common::Error ColonyEngine::run() {
 			mouseDX = mouseDY = 0;
 		}
 
+		// Apply continuous movement/rotation from held keys,
+		// throttled to ~15 ticks/sec to match original key-repeat feel
+		uint32 now = _system->getMillis();
+		if (now - lastMoveTick >= 66) {
+			lastMoveTick = now;
+			const int moveX = (_cost[_me.look] * (1 << _speedShift)) >> 4;
+			const int moveY = (_sint[_me.look] * (1 << _speedShift)) >> 4;
+			const int rotSpeed = 1 << (_speedShift - 1);
+
+			if (_moveForward)
+				cCommand(_me.xloc + moveX, _me.yloc + moveY, true);
+			if (_moveBackward)
+				cCommand(_me.xloc - moveX, _me.yloc - moveY, true);
+			if (_strafeLeft) {
+				uint8 strafeAngle = (uint8)((int)_me.look + 64);
+				int sx = (_cost[strafeAngle] * (1 << _speedShift)) >> 4;
+				int sy = (_sint[strafeAngle] * (1 << _speedShift)) >> 4;
+				cCommand(_me.xloc + sx, _me.yloc + sy, true);
+			}
+			if (_strafeRight) {
+				uint8 strafeAngle = (uint8)((int)_me.look - 64);
+				int sx = (_cost[strafeAngle] * (1 << _speedShift)) >> 4;
+				int sy = (_sint[strafeAngle] * (1 << _speedShift)) >> 4;
+				cCommand(_me.xloc + sx, _me.yloc + sy, true);
+			}
+			if (_rotateLeft) {
+				_me.ang += rotSpeed;
+				_me.look += rotSpeed;
+			}
+			if (_rotateRight) {
+				_me.ang -= rotSpeed;
+				_me.look -= rotSpeed;
+			}
+		}
+
 		_gfx->clear((_corePower[_coreIndex] > 0) ? 15 : 0);
-		
+
 		corridor();
 		drawDashboardStep1();
 		drawCrosshair();
@@ -1099,18 +1121,17 @@ Common::Error ColonyEngine::run() {
 }
 
 bool ColonyEngine::checkSkipRequested() {
-	// Non-blocking check for Shift+S skip during intro/animation sequences.
+	// Non-blocking check for skip during intro/animation sequences.
 	// Drains pending events, handles screen refresh and quit events.
-	// Returns true if Shift+S was pressed or shouldQuit() is true.
+	// Returns true if skip action fired or shouldQuit() is true.
 	Common::Event event;
 	while (_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RETURN_TO_LAUNCHER:
 			return true;
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_s &&
-			    (event.kbd.flags & Common::KBD_SHIFT))
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			if (event.customType == kActionSkipIntro)
 				return true;
 			break;
 		case Common::EVENT_SCREEN_CHANGED:
@@ -1126,7 +1147,13 @@ bool ColonyEngine::checkSkipRequested() {
 bool ColonyEngine::waitForInput() {
 	// Blocking wait for any key press or mouse click.
 	// Handles screen refresh, quit events, and mouse movement while waiting.
-	// Returns true if Shift+S was pressed (for intro skip propagation).
+	// Returns true if skip action was triggered (for intro skip propagation).
+
+	// Clear movement flags so held keys don't re-trigger on return
+	_moveForward = _moveBackward = false;
+	_strafeLeft = _strafeRight = false;
+	_rotateLeft = _rotateRight = false;
+
 	while (!shouldQuit()) {
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
@@ -1134,11 +1161,11 @@ bool ColonyEngine::waitForInput() {
 			case Common::EVENT_QUIT:
 			case Common::EVENT_RETURN_TO_LAUNCHER:
 				return false;
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_s &&
-				    (event.kbd.flags & Common::KBD_SHIFT))
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionSkipIntro)
 					return true;
 				return false;
+			case Common::EVENT_KEYDOWN:
 			case Common::EVENT_LBUTTONDOWN:
 				return false;
 			case Common::EVENT_SCREEN_CHANGED:
@@ -1904,6 +1931,14 @@ void ColonyEngine::deleteAnimation() {
 }
 
 void ColonyEngine::playAnimation() {
+	// Clear movement flags so held keys don't re-trigger on return
+	_moveForward = false;
+	_moveBackward = false;
+	_strafeLeft = false;
+	_strafeRight = false;
+	_rotateLeft = false;
+	_rotateRight = false;
+
 	_animationRunning = true;
 	_system->lockMouse(false);
 	_system->showMouse(true);
