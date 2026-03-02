@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-03-01 23:53+0000\n"
-"PO-Revision-Date: 2026-02-26 11:31+0000\n"
+"PO-Revision-Date: 2026-03-02 15:40+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -13585,16 +13585,12 @@ msgid "Display all exits on current location"
 msgstr "현재 위치의 모든 나가기 표시"
 
 #: engines/stark/metaengine.cpp:306
-#, fuzzy
-#| msgid "Scroll list up"
 msgid "Scroll dialogs up"
-msgstr "목록 위로 스크롤"
+msgstr "스크롤 대화 상자를 위로"
 
 #: engines/stark/metaengine.cpp:312
-#, fuzzy
-#| msgid "Scroll list down"
 msgid "Scroll dialogs down"
-msgstr "목록 아래로 스크롤"
+msgstr "스크롤 대화 상자를 아래로"
 
 #: engines/stark/metaengine.cpp:318
 msgid "Go to next dialog"
