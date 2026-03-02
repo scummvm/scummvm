@@ -21,10 +21,10 @@
 
 #include "common/config-manager.h"
 #include "engines/advancedDetector.h"
-#include "common/events.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
+#include "common/events.h"
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"

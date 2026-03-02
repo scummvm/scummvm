@@ -75,12 +75,12 @@ public:
 	 * @param showText      Whether to display text labels
 	 */
 	void render(Surface *surface,
-				const Common::Array<HotspotInfo> &hotspots,
-				int gameWidth, int gameHeight,
-				int overlayWidth, int overlayHeight,
-				const PixelFormat &format,
-				MarkerShape markerShape,
-				bool showText);
+		const Common::Array<HotspotInfo> &hotspots,
+		int gameWidth, int gameHeight,
+		int overlayWidth, int overlayHeight,
+		const PixelFormat &format,
+		MarkerShape markerShape,
+		bool showText);
 
 private:
 	enum {
@@ -95,20 +95,19 @@ private:
 	void drawSquareMarker(Surface *surface, int x, int y, int width, int height, const PixelFormat &format);
 	void drawPointMarker(Surface *surface, int x, int y, int width, int height, const PixelFormat &format);
 	void drawHotspotLabel(Surface *surface, int overlayX, int overlayY, const Common::String &label,
-						  int overlayWidth, int overlayHeight, const PixelFormat &format, const Font *font);
+		int overlayWidth, int overlayHeight, const PixelFormat &format, const Font *font);
 	void drawLabelBox(Surface *surface, int x, int y, int w, int h,
-					  int overlayWidth, int overlayHeight, const PixelFormat &format);
+		int overlayWidth, int overlayHeight, const PixelFormat &format);
 	void drawRectWithGlow(Surface *surface, int x, int y, int w, int h,
-						  int overlayWidth, int overlayHeight, const PixelFormat &format);
+		int overlayWidth, int overlayHeight, const PixelFormat &format);
 
 	void drawLineWithGlow(Surface *surface, int x1, int y1, int x2, int y2,
-						  int width, int height, const PixelFormat &format,
-						  int lineThickness);
+		int width, int height, const PixelFormat &format, int lineThickness);
 
 	void blendPixelWithGlow(Surface *surface, int px, int py, const PixelFormat &format,
-							int distance, int solidSize);
+		int distance, int solidSize);
 };
 
 } // End of namespace Graphics
 
-#endif
+#endif // GRAPHICS_HOTSPOT_RENDERER_H

@@ -25,7 +25,6 @@
 #include "graphics/fontman.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
-#include <math.h>
 
 namespace Graphics {
 
@@ -36,12 +35,12 @@ HotspotRenderer::~HotspotRenderer() {
 }
 
 void HotspotRenderer::render(Surface *surface,
-							 const Common::Array<HotspotInfo> &hotspots,
-							 int gameWidth, int gameHeight,
-							 int overlayWidth, int overlayHeight,
-							 const PixelFormat &format,
-							 MarkerShape markerShape,
-							 bool showText) {
+		const Common::Array<HotspotInfo> &hotspots,
+		int gameWidth, int gameHeight,
+		int overlayWidth, int overlayHeight,
+		const PixelFormat &format,
+		MarkerShape markerShape,
+		bool showText) {
 	if (!surface || hotspots.empty())
 		return;
 
@@ -64,7 +63,7 @@ void HotspotRenderer::render(Surface *surface,
 
 		if (font && !hotspots[i].name.empty()) {
 			drawHotspotLabel(surface, overlayX, overlayY, hotspots[i].name,
-							 overlayWidth, overlayHeight, format, font);
+				overlayWidth, overlayHeight, format, font);
 		}
 	}
 }
@@ -86,8 +85,9 @@ void HotspotRenderer::drawMarker(Surface *surface, int x, int y, const PixelForm
 	}
 }
 
-void HotspotRenderer::drawHotspotLabel(Surface *surface, int overlayX, int overlayY, const Common::String &label,
-									   int overlayWidth, int overlayHeight, const PixelFormat &format, const Font *font) {
+void HotspotRenderer::drawHotspotLabel(Surface *surface, int overlayX, int overlayY,
+		const Common::String &label, int overlayWidth, int overlayHeight,
+		const PixelFormat &format, const Font *font) {
 	int textX = overlayX + kMarkerSize / 2 + 8;
 	int textY = overlayY - font->getFontHeight() / 2;
 
@@ -100,14 +100,15 @@ void HotspotRenderer::drawHotspotLabel(Surface *surface, int overlayX, int overl
 	int bgH = textHeight + 4;
 
 	drawLabelBox(surface, bgX, bgY, bgW, bgH,
-				 overlayWidth, overlayHeight, format);
+		overlayWidth, overlayHeight, format);
 
 	uint32 textColor = format.RGBToColor(255, 255, 255);
 	font->drawString(surface, label, textX, textY,
-					 overlayWidth - textX, textColor, kTextAlignLeft);
+		overlayWidth - textX, textColor, kTextAlignLeft);
 }
 
-void HotspotRenderer::drawCrosshairMarker(Surface *surface, int x, int y, int width, int height, const PixelFormat &format) {
+void HotspotRenderer::drawCrosshairMarker(Surface *surface, int x, int y,
+		int width, int height, const PixelFormat &format) {
 	if (format.bytesPerPixel != 2)
 		return;
 
@@ -117,7 +118,8 @@ void HotspotRenderer::drawCrosshairMarker(Surface *surface, int x, int y, int wi
 	drawLineWithGlow(surface, x, y - lineLength, x, y + lineLength, width, height, format, kLineThickness);
 }
 
-void HotspotRenderer::drawSquareMarker(Surface *surface, int x, int y, int width, int height, const PixelFormat &format) {
+void HotspotRenderer::drawSquareMarker(Surface *surface, int x, int y,
+		int width, int height, const PixelFormat &format) {
 	if (format.bytesPerPixel != 2)
 		return;
 
@@ -128,7 +130,8 @@ void HotspotRenderer::drawSquareMarker(Surface *surface, int x, int y, int width
 	drawRectWithGlow(surface, rectX, rectY, size, size, width, height, format);
 }
 
-void HotspotRenderer::drawPointMarker (Surface *surface, int x, int y, int width, int height, const PixelFormat &format) {
+void HotspotRenderer::drawPointMarker(Surface *surface, int x, int y,
+		int width, int height, const PixelFormat &format) {
 	if (format.bytesPerPixel != 2)
 		return;
 
@@ -150,8 +153,8 @@ void HotspotRenderer::drawPointMarker (Surface *surface, int x, int y, int width
 	}
 }
 
-void HotspotRenderer::blendPixelWithGlow(Surface *surface, int px, int py, const PixelFormat &format,
-										 int distance, int solidSize) {
+void HotspotRenderer::blendPixelWithGlow(Surface *surface, int px, int py,
+		const PixelFormat &format, int distance, int solidSize) {
 	uint16 *destPixel = (uint16 *)surface->getBasePtr(px, py);
 	byte bgR, bgG, bgB, bgA;
 	format.colorToARGB(*destPixel, bgA, bgR, bgG, bgB);
@@ -177,8 +180,7 @@ void HotspotRenderer::blendPixelWithGlow(Surface *surface, int px, int py, const
 }
 
 void HotspotRenderer::drawLineWithGlow(Surface *surface, int x1, int y1, int x2, int y2,
-									   int width, int height, const PixelFormat &format,
-									   int lineThickness) {
+		int width, int height, const PixelFormat &format, int lineThickness) {
 	if (format.bytesPerPixel != 2)
 		return;
 
@@ -221,7 +223,7 @@ void HotspotRenderer::drawLineWithGlow(Surface *surface, int x1, int y1, int x2,
 }
 
 void HotspotRenderer::drawRectWithGlow(Surface *surface, int x, int y, int w, int h,
-									   int overlayWidth, int overlayHeight, const PixelFormat &format) {
+		int overlayWidth, int overlayHeight, const PixelFormat &format) {
 	drawLineWithGlow(surface, x, y, x + w - 1, y, overlayWidth, overlayHeight, format, kLineThickness);
 	drawLineWithGlow(surface, x, y + h - 1, x + w - 1, y + h - 1, overlayWidth, overlayHeight, format, kLineThickness);
 	drawLineWithGlow(surface, x, y + 1, x, y + h - 2, overlayWidth, overlayHeight, format, kLineThickness);
@@ -229,7 +231,7 @@ void HotspotRenderer::drawRectWithGlow(Surface *surface, int x, int y, int w, in
 }
 
 void HotspotRenderer::drawLabelBox(Surface *surface, int x, int y, int w, int h,
-									int overlayWidth, int overlayHeight, const PixelFormat &format) {
+		int overlayWidth, int overlayHeight, const PixelFormat &format) {
 	if (format.bytesPerPixel != 2)
 		return;
 
