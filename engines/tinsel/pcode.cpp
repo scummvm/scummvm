@@ -166,6 +166,14 @@ static const byte fragment18[] = {
 	OP_MINUSONE, OP_ZERO, OP_ONE,
 	OP_LIBCALL | OPSIZE8, 0x51 // TopPlay(0B015A30, 82, 141, -1, 0, 1), city gate "calculate odds" button
 };
+static const byte fragment19[] = {
+	OP_DUP,
+	OP_IMM | OPSIZE16, FRAGMENT_WORD(331), // stop conversation icon
+	OP_EQUAL,
+	OP_JMPFALSE | OPSIZE16, FRAGMENT_WORD(69), // jmpfalse to alloc -1, jump to alloc -1, halt
+	OP_IMM | OPSIZE8, 2,
+	OP_LIBCALL | OPSIZE8, 0x0f // Conversation(2), close conversation window
+};
 
 #if NOIR_SKIP_INTRO
 static const byte fragment_noir_skip_intro_1[] = {
@@ -268,6 +276,11 @@ const WorkaroundEntry workaroundList[] = {
 	// This was fixed in SCN versions. We work around this by playing the click-button
 	// film when clicking outside the window, as it removes the button. Fixes bug #10658
 	{TINSEL_V1, false, false, Common::kPlatformUnknown, 184641238, 39, sizeof(fragment18), fragment18},
+
+	// DW1-GRA: Fixes barman conversation window not closing in L-Space.
+	// The `SCANICON` switch statement is missing a handler, preventing
+	// the stop-conversation icon from working. Fixes bug #10661
+	{TINSEL_V1, false, false, Common::kPlatformUnknown, 553821320, 465, sizeof(fragment19), fragment19},
 
 #if NOIR_SKIP_INTRO
 	// NOIR: Skip the menu and intro, and skip the first conversation.
