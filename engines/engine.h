@@ -192,6 +192,13 @@ protected:
 	 */
 	bool _showHotspots;
 
+	/**
+	 * Flag to force one redraw after hotspots are shown (e.g. after button press
+	 * re-enables the overlay), so engines that cache dirty state don't skip the
+	 * first render after the overlay was hidden.
+	 */
+	bool _hotspotForceRedraw;
+
 private:
 	/**
 	 * The associated metaengine
