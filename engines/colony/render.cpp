@@ -1399,21 +1399,16 @@ void ColonyEngine::draw3DPrism(const Thing &obj, const PrismPartDef &def, bool u
 					_gfx->setStippleData(nullptr);
 				} else {
 					// EGA: per-surface colors from DOS lsColor table.
-					// polyfill ON  → fill with FILLCOLOR/BACKCOLOR/PATTERN, outline with LINEFILLCOLOR.
+					// polyfill ON  → B&W fill (from MONOCHROME field), colored LINECOLOR outline.
 					// polyfill OFF → outline only with LINECOLOR.
 					const DOSColorEntry &dc = lookupDOSColor(colorIdx);
 					if (!_wireframe) {
-						// Polyfill mode: per-surface fill + LINEFILLCOLOR outline.
-						const byte *stipple = dosPatternStipple(dc.pattern);
-						if (stipple) {
-							_gfx->setMacColors((uint32)dc.fillColor, (uint32)dc.backColor);
-							_gfx->setStippleData(stipple);
-							_gfx->setWireframe(true, (uint32)dc.backColor);
-						} else {
-							_gfx->setWireframe(true, (uint32)dc.fillColor);
-						}
-						_gfx->draw3DPolygon(px, py, pz, count, (uint32)dc.lineFillColor);
-						if (stipple) _gfx->setStippleData(nullptr);
+						// Polyfill mode: B&W fill + colored LINECOLOR outline.
+						// LINECOLOR (not LINEFILLCOLOR) — has proper contrast against B&W fills.
+						if (dc.monochrome == kPatternClear)
+							continue;
+						_gfx->setWireframe(true, 7); // all surfaces white; colored outlines provide distinction
+						_gfx->draw3DPolygon(px, py, pz, count, (uint32)dc.lineColor);
 					} else {
 						// Wireframe only: LINECOLOR outline, no fill.
 						_gfx->draw3DPolygon(px, py, pz, count, (uint32)dc.lineColor);
