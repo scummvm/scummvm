@@ -128,11 +128,11 @@ void ColonyEngine::updateViewportLayout() {
 
 	int dashWidth = 0;
 	if (_showDashBoard) {
-		// Mac color mode: original moveWindow was 70px wide (2*CCENTER),
-		// infoWindow ~72px. theWindow started at x=96. Use tighter sizing.
-		const bool macColor = (_renderMode == Common::kRenderMacintosh && _hasMacColors);
-		if (macColor)
-			dashWidth = CLIP<int>(_width / 7, 70, 96);
+		// Mac mode: original inits.c sets screenR.left=96 — fixed 96px sidebar.
+		// Two floating windows (infoWindow + moveWindow) centered in sidebar.
+		const bool isMac = (_renderMode == Common::kRenderMacintosh);
+		if (isMac)
+			dashWidth = MIN(96, _width / 2);
 		else
 			dashWidth = CLIP<int>(_width / 6, 72, 140);
 		if (_width - dashWidth < 160)
@@ -154,11 +154,11 @@ void ColonyEngine::updateViewportLayout() {
 		return;
 	}
 
-	const bool macColor = (_renderMode == Common::kRenderMacintosh && _hasMacColors);
+	const bool isMac = (_renderMode == Common::kRenderMacintosh);
 	const int pad = 2;
 	const int topPad = menuTop + pad;
 
-	if (macColor) {
+	if (isMac) {
 		// Original Mac layout from inits.c/compass.c/power.c:
 		// screenR.left = 96 — sidebar is 96px wide.
 		// Two floating windows centered in sidebar over gray desktop.
@@ -172,7 +172,12 @@ void ColonyEngine::updateViewportLayout() {
 		if (!_pictCompass)
 			_pictCompass = loadPictSurface(-32757);
 		if (!_pictPower) {
-			int wantID = _armor ? -32755 : -32761;
+			// power.c: !armor → FindDepth()>=8 ? -32761 (color) : -32752 (B&W)
+			int wantID;
+			if (_armor > 0)
+				wantID = -32755;
+			else
+				wantID = _hasMacColors ? -32761 : -32752;
 			_pictPower = loadPictSurface(wantID);
 			if (!_pictPower && wantID != -32755)
 				_pictPower = loadPictSurface(-32755);
@@ -200,10 +205,11 @@ void ColonyEngine::updateViewportLayout() {
 		// _compassRect = entire moveWindow (used for compass dish drawing)
 		_compassRect = makeSafeRect(moveLeft, moveTop, moveLeft + moveW, moveTop + moveH);
 
-		// Position infoWindow right at the top of the sidebar (below menu bar).
-		// Original: infoWindow starts immediately below the Mac menu bar.
+		// Position infoWindow below the Mac menu bar.
+		// Original PICT is drawn at (-2,-2) in window-local coords, so offset
+		// the panel by 2px to prevent the PICT from overlapping the menu bar.
 		const int infoLeft = MAX(0, centerX - infoW / 2);
-		const int infoTop = menuTop;
+		const int infoTop = menuTop + pad;
 		_powerRect = makeSafeRect(infoLeft, infoTop, infoLeft + infoW, infoTop + infoH);
 	} else {
 		const int blockLeft = pad;
@@ -226,9 +232,9 @@ void ColonyEngine::drawDashboardStep1() {
 	if (_dashBoardRect.width() <= 0 || _dashBoardRect.height() <= 0)
 		return;
 
-	const bool macColor = (_renderMode == Common::kRenderMacintosh && _hasMacColors);
+	const bool isMac = (_renderMode == Common::kRenderMacintosh);
 
-	if (macColor) {
+	if (isMac) {
 		drawDashboardMac();
 		return;
 	}
@@ -290,10 +296,12 @@ void ColonyEngine::drawDashboardStep1() {
 // Original Mac had two floating windows (infoWindow + moveWindow) over gray desktop.
 
 void ColonyEngine::drawDashboardMac() {
+	const bool macColor = _hasMacColors;
 	const uint32 colBlack = packRGB(0, 0, 0);
 	const uint32 colWhite = packRGB(255, 255, 255);
-	const uint32 colWinBg = packMacColorUI(_macColors[7].bg); // Mac desktop gray
-	const uint32 colBlue = packRGB(0, 0, 255); // power.c: ForeColor(blueColor)
+	const uint32 colWinBg = macColor ? packMacColorUI(_macColors[7].bg) : colWhite;
+	// power.c: ForeColor(blueColor) — on 1-bit display, blue maps to black
+	const uint32 colBlue = macColor ? packRGB(0, 0, 255) : colBlack;
 
 	// Dashboard background — Mac desktop dither pattern (classic 50% gray checkerboard).
 	// Original Mac desktop: alternating black/white pixels between floating windows.
@@ -312,6 +320,7 @@ void ColonyEngine::drawDashboardMac() {
 		_gfx->fillRect(_powerRect, colWhite);
 
 		// Select correct PICT based on armor/trouble state
+		// power.c: !armor && FindDepth()>=8 → -32761 (color); FindDepth()<8 → -32752 (B&W)
 		auto qlog = [](int32 x) -> int { int i = 0; while (x > 0) { x >>= 1; i++; } return i; };
 		const int ePower[3] = { qlog(_corePower[0]), qlog(_corePower[1]), qlog(_corePower[2]) };
 		const bool trouble = (ePower[1] < 6);
@@ -319,7 +328,7 @@ void ColonyEngine::drawDashboardMac() {
 		if (_armor > 0)
 			wantPictID = trouble ? -32760 : -32755;
 		else
-			wantPictID = -32761;
+			wantPictID = macColor ? -32761 : -32752;
 
 		// Reload PICT if state changed (fall back to -32755 if variant missing)
 		if (_pictPowerID != wantPictID) {
@@ -406,10 +415,10 @@ void ColonyEngine::drawMiniMap(uint32 lineColor) {
 			_gfx->drawLine(x1, y1, x2, y2, color);
 	};
 
-	const bool macColor = (_renderMode == Common::kRenderMacintosh && _hasMacColors);
+	const bool isMac = (_renderMode == Common::kRenderMacintosh);
 
 	int lExt, sExt, xloc, yloc, ccenterx, ccentery;
-	if (macColor) {
+	if (isMac) {
 		// compass.c: CSIZE=64, CCENTER=35
 		// xloc = ((Me.xindex << 8) - Me.xloc) >> 2
 		// Center at (CCENTER, CCENTER) relative to moveWindow
@@ -456,14 +465,14 @@ void ColonyEngine::drawMiniMap(uint32 lineColor) {
 	drawMiniMapLine(xcorner[3] - dy, ycorner[3] - dx, xcorner[0] + dy, ycorner[0] + dx, lineColor);
 
 	// compass.c: food markers use FrameOval ±3px, robot markers ±5px.
-	const int foodR = macColor ? 3 : 1;
-	const int robotR = macColor ? 5 : 2;
+	const int foodR = isMac ? 3 : 1;
+	const int robotR = isMac ? 5 : 2;
 
 	auto drawMarker = [&](int x, int y, int halfSize, uint32 color) {
 		if (x < _headsUpRect.left + 1 || x >= _headsUpRect.right - 1 ||
 		    y < _headsUpRect.top + 1 || y >= _headsUpRect.bottom - 1)
 			return;
-		if (macColor) {
+		if (isMac) {
 			// compass.c: FrameOval — circle outline
 			_gfx->drawEllipse(x, y, halfSize, halfSize, color);
 		} else {
@@ -526,12 +535,16 @@ void ColonyEngine::drawCrosshair() {
 	if (!_crosshair || _screenR.width() <= 0 || _screenR.height() <= 0)
 		return;
 
-	const bool macColor = (_renderMode == Common::kRenderMacintosh && _hasMacColors);
+	const bool isMac = (_renderMode == Common::kRenderMacintosh);
 	uint32 color;
-	if (macColor) {
+	if (isMac) {
 		// Mac: black when powered, gray when no weapons, white when armed but no power
-		color = (_corePower[_coreIndex] > 0) ? packRGB(0, 0, 0)
-			: (_weapons > 0) ? packRGB(255, 255, 255) : packRGB(128, 128, 128);
+		// B&W: no gray, so powered=black, else white
+		if (_hasMacColors)
+			color = (_corePower[_coreIndex] > 0) ? packRGB(0, 0, 0)
+				: (_weapons > 0) ? packRGB(255, 255, 255) : packRGB(128, 128, 128);
+		else
+			color = (_corePower[_coreIndex] > 0) ? packRGB(0, 0, 0) : packRGB(255, 255, 255);
 	} else {
 		color = (_weapons > 0) ? 15 : 7;
 		if (_corePower[_coreIndex] > 0)
