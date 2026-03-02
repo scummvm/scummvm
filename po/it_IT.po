@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-03-01 23:53+0000\n"
+"POT-Creation-Date: 2026-03-02 21:20+0000\n"
 "PO-Revision-Date: 2026-02-26 13:38+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -4355,37 +4355,37 @@ msgstr "Stira l'immagine per riempire la finestra"
 msgid "Fit to window (4:3)"
 msgstr "Adatta alla finestra (4:3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:961
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:966
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Risoluzione: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:1005
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:1010
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2882
 msgid "Active graphics filter:"
 msgstr "Filtro grafico attivo:"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:1026
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:1031
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2916
 msgid "Enabled aspect ratio correction"
 msgstr "Correzione proporzioni attivata"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:1028
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:1033
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2922
 msgid "Disabled aspect ratio correction"
 msgstr "Correzione proporzioni disattivata"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:1041
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:1046
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2938
 msgid "Filtering enabled"
 msgstr "Filtro video attivato"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:1043
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:1048
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2940
 msgid "Filtering disabled"
 msgstr "Filtro video disattivato"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:1069
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:1074
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2967
 msgid "Stretch mode"
 msgstr "Ridimensionamento"
