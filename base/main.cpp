@@ -472,6 +472,9 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// Update the config file
 	ConfMan.set("versioninfo", gScummVMVersion, Common::ConfigManager::kApplicationDomain);
 
+	// Immediately remove possible residue for Dump All Dialogs feature
+	ConfMan.removeKey("dumper_force_resize", Common::ConfigManager::kApplicationDomain);
+
 	// Load and setup the debuglevel and the debug flags. We do this at the
 	// soonest possible moment to ensure debug output starts early on, if
 	// requested.
@@ -701,9 +704,9 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	CloudMan.syncSaves();
 #endif
 
-#if 0
-	GUI::dumpAllDialogs();
-#endif
+	if (ConfMan.hasKey("dump_all_dialogs")) {
+		GUI::dumpAllDialogs();
+	}
 
 // Print out CPU extension info
 // Separate block to keep the stack clean
@@ -738,13 +741,13 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	}
 
 	// Unless a game was specified, show the launcher dialog
-	if (nullptr == ConfMan.getActiveDomain())
+	if (nullptr == ConfMan.getActiveDomain() && !ConfMan.hasKey("dump_all_dialogs"))
 		launcherDialog();
 
 	// FIXME: We're now looping the launcher. This, of course, doesn't
 	// work as well as it should. In theory everything should be destroyed
 	// cleanly, so this is now enabled to encourage people to fix bits :)
-	while (nullptr != ConfMan.getActiveDomain()) {
+	while (nullptr != ConfMan.getActiveDomain() && !ConfMan.hasKey("dump_all_dialogs")) {
 		saveLastLaunchedTarget(ConfMan.getActiveDomainName());
 
 		EngineMan.upgradeTargetIfNecessary(ConfMan.getActiveDomainName());

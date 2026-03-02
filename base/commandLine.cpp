@@ -994,6 +994,10 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION_PATH("themepath")
 			END_OPTION
 
+			// This is for internal use only, intentianally not documented
+			DO_LONG_OPTION_BOOL("dump-all-dialogs")
+			END_OPTION
+
 			DO_LONG_OPTION("shader")
 				Common::SearchSet _shaderSet;
 				Common::generateZipSet(_shaderSet, "shaders.dat", "shaders*.dat");
@@ -2308,6 +2312,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		"render-mode",
 		"random-seed",
 		"renderer",
+		"dump-all-dialogs",
 		nullptr
 	};
 
