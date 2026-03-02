@@ -120,7 +120,7 @@ U32String TranslationManager::getTranslation(const char *message) const {
 	return getTranslation(message, nullptr);
 }
 
-U32String TranslationManager::getPoTranslation(const char* message) const {
+U32String TranslationManager::getPoTranslation(const char *message) const {
 	if (_currentTranslationMessages.empty() || *message == '\0')
 		return U32String(message);
 
@@ -132,9 +132,27 @@ U32String TranslationManager::getPoTranslation(const char* message) const {
 	return _currentTranslationMessages[messageIndex].msgstr.decode();
 }
 
+U32String TranslationManager::getPoTranslation(const char *message, const char *context) const {
+	if (_currentTranslationMessages.empty() || *message == '\0')
+		return U32String(message);
+
+	Common::String key = message;
+	if (context && *context != '\0') {
+		key += "\x04"; // Use the same separation mark as gettext does for context
+		key += context;
+	}
+
+	int messageIndex = _poTranslations.getValOrDefault(key.c_str(), -1);
+
+	if (messageIndex == -1)
+		return U32String(message);
+
+	return _currentTranslationMessages[messageIndex].msgstr.decode();
+}
+
 U32String TranslationManager::getTranslation(const char *message, const char *context) const {
 	if (_usingPo)
-		return getPoTranslation(message);
+		return getPoTranslation(message, context);
 
 	// If no language is set or message is empty, return msgid as is
 	if (_currentTranslationMessages.empty() || *message == '\0')
@@ -447,8 +465,14 @@ bool TranslationManager::loadLanguagePo(int index) {
 		_currentTranslationMessages.reserve(numEntries);
 		for (int i = 0; i < numEntries; ++i) {
 			const Common::PlainPoMessageEntry *entry = poData->entry(i);
+			Common::String key = entry->msgid;
 
-			_poTranslations[entry->msgid] = i;
+			if (entry->msgctxt) {
+				key += "\x04"; // Use the same separation mark as gettext does for context
+				key += entry->msgctxt;
+			}
+
+			_poTranslations[key] = i;
 			PoMessageEntry engineEntry;
 			engineEntry.msgid = i;
 			engineEntry.msgstr = entry->msgstr;

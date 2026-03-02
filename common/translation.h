@@ -257,11 +257,12 @@ private:
 
 	/**
 	 * Return the translation of @p message into the current language loaded from a .po file.
-	 * 
+	 *
 	 * In case the message is not found in the translation catalog,
 	 * return the original untranslated message, as a U32String.
 	 */
 	U32String getPoTranslation(const char *message) const;
+	U32String getPoTranslation(const char *message, const char *context) const;
 
 	/**
 	 * Load the translation for the given language from its .po file.
