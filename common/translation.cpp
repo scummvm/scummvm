@@ -126,7 +126,7 @@ U32String TranslationManager::getPoTranslation(const char *message) const {
 
 	int messageIndex = _poTranslations.getValOrDefault(message, -1);
 
-	if (messageIndex == -1)
+	if (messageIndex == -1 || messageIndex >= (int)_currentTranslationMessages.size())
 		return U32String(message);
 
 	return _currentTranslationMessages[messageIndex].msgstr.decode();
@@ -144,7 +144,7 @@ U32String TranslationManager::getPoTranslation(const char *message, const char *
 
 	int messageIndex = _poTranslations.getValOrDefault(key.c_str(), -1);
 
-	if (messageIndex == -1)
+	if (messageIndex == -1 || messageIndex >= (int)_currentTranslationMessages.size())
 		return U32String(message);
 
 	return _currentTranslationMessages[messageIndex].msgstr.decode();
