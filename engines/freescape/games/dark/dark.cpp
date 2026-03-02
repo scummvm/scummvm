@@ -36,6 +36,7 @@ namespace Freescape {
 DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
 	_playerC64Sfx = nullptr;
 	_playerC64Music = nullptr;
+	_c64UseSFX = false;
 
 	// These sounds can be overriden by the class of each platform
 	_soundIndexShoot = 1;
@@ -971,12 +972,17 @@ void DarkEngine::drawInfoMenu() {
 					_eventManager->purgeKeyboardEvents();
 					saveGameDialog();
 					_gfx->setViewport(_viewArea);
+				} else if (isC64() && event.customType == kActionToggleSound) {
+					toggleC64Sound();
+					_eventManager->purgeKeyboardEvents();
 				} else if (isDOS() && event.customType == kActionToggleSound) {
 					playSound(6, true, _soundFxHandle);
+					_eventManager->purgeKeyboardEvents();
 				} else if (event.customType == kActionEscape) {
 					_forceEndGame = true;
 					cont = false;
-				}
+				} else
+					cont = false;
 				break;
 				case Common::EVENT_KEYDOWN:
 					cont = false;

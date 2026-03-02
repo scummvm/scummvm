@@ -110,7 +110,9 @@ public:
 
 	DarkSideC64SFXPlayer *_playerC64Sfx;
 	DarkSideC64MusicPlayer *_playerC64Music;
+	bool _c64UseSFX;
 	void playSoundC64(int index) override;
+	void toggleC64Sound();
 
 	Common::Array<byte> _musicData; // HDSMUSIC.AM TEXT segment (Amiga)
 

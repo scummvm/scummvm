@@ -213,6 +213,7 @@ void DarkSideC64MusicPlayer::ChannelState::reset() {
 }
 
 DarkSideC64MusicPlayer::DarkSideC64MusicPlayer() {
+	_sid = nullptr;
 	_musicActive = false;
 	_speedDiv = 1;
 	_speedCounter = 1;
@@ -222,12 +223,23 @@ DarkSideC64MusicPlayer::DarkSideC64MusicPlayer() {
 }
 
 DarkSideC64MusicPlayer::~DarkSideC64MusicPlayer() {
-	if (_sid)
+	destroySID();
+}
+
+void DarkSideC64MusicPlayer::destroySID() {
+	if (_sid) {
 		_sid->stop();
-	delete _sid;
+		delete _sid;
+		_sid = nullptr;
+	}
 }
 
 void DarkSideC64MusicPlayer::initSID() {
+	if (_sid) {
+		_sid->stop();
+		delete _sid;
+	}
+
 	_sid = SID::Config::create(SID::Config::kSidPAL);
 	if (!_sid || !_sid->init()) {
 		warning("DarkSideC64MusicPlayer: Failed to create SID emulator");

@@ -221,9 +221,14 @@ DarkSideC64SFXPlayer::DarkSideC64SFXPlayer()
 }
 
 DarkSideC64SFXPlayer::~DarkSideC64SFXPlayer() {
+	destroySID();
+}
+
+void DarkSideC64SFXPlayer::destroySID() {
 	if (_sid) {
 		_sid->stop();
 		delete _sid;
+		_sid = nullptr;
 	}
 }
 

@@ -220,10 +220,11 @@ public:
 	~DrillerSIDPlayer();
 	void startMusic(int tuneIndex = 1);
 	void stopMusic();
+	void initSID();
+	void destroySID();
 
 private:
 	void SID_Write(int reg, uint8_t data);
-	void initSID();
 	void onTimer();
 	void handleChangeTune(int tuneIndex);
 	void handleResetVoices();

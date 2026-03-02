@@ -36,12 +36,13 @@ public:
 	void startMusic();
 	void stopMusic();
 	bool isPlaying() const;
+	void initSID();
+	void destroySID();
 
 private:
 	SID::SID *_sid;
 
 	void sidWrite(int reg, uint8 data);
-	void initSID();
 	void onTimer();
 
 	// Song setup

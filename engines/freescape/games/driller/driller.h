@@ -47,8 +47,10 @@ public:
 
 	DrillerSIDPlayer *_playerSid;
 	DrillerC64SFXPlayer *_playerC64Sfx;
+	bool _c64UseSFX;
 
 	void playSoundC64(int index) override;
+	void toggleC64Sound();
 
 	// Only used for Amiga and Atari ST
 	Font _fontSmall;

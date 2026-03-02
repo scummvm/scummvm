@@ -158,10 +158,12 @@ void DrillerEngine::loadAssetsC64FullGame() {
 	} else
 		error("Unknown C64 release");
 
-	// TODO: Re-enable music player once SFX coexistence is resolved.
-	// The SID emulator enforces a singleton, so only one instance can exist.
-	// _playerSid = new DrillerSIDPlayer();
+	// Only one SID instance can be active at a time; music is the default.
+	// Create the inactive player first so its SID is destroyed before
+	// the active player's SID is created.
 	_playerC64Sfx = new DrillerC64SFXPlayer();
+	_playerC64Sfx->destroySID();
+	_playerSid = new DrillerSIDPlayer();
 
 	// C64 SFX index mapping
 	// Based on analysis of the C64 binary SFX routines
@@ -185,10 +187,27 @@ void DrillerEngine::loadAssetsC64FullGame() {
 
 void DrillerEngine::playSoundC64(int index) {
 	debugC(1, kFreescapeDebugMedia, "Playing C64 SFX %d", index);
-	if (_playerC64Sfx)
+	if (_playerC64Sfx && _c64UseSFX)
 		_playerC64Sfx->playSfx(index);
 }
 
+void DrillerEngine::toggleC64Sound() {
+	if (_c64UseSFX) {
+		if (_playerC64Sfx)
+			_playerC64Sfx->destroySID();
+		if (_playerSid) {
+			_playerSid->initSID();
+			_playerSid->startMusic();
+		}
+		_c64UseSFX = false;
+	} else {
+		if (_playerSid)
+			_playerSid->destroySID();
+		if (_playerC64Sfx)
+			_playerC64Sfx->initSID();
+		_c64UseSFX = true;
+	}
+}
 
 void DrillerEngine::drawC64UI(Graphics::Surface *surface) {
 

@@ -192,12 +192,16 @@ DrillerSIDPlayer::DrillerSIDPlayer() : _sid(nullptr),
 }
 
 DrillerSIDPlayer::~DrillerSIDPlayer() {
+	destroySID();
+	debug(DEBUG_LEVEL >= 1, "Driller SID Player Destroyed");
+}
+
+void DrillerSIDPlayer::destroySID() {
 	if (_sid) {
 		_sid->stop();
 		delete _sid;
+		_sid = nullptr;
 	}
-
-	debug(DEBUG_LEVEL >= 1, "Driller SID Player Destroyed");
 }
 
 // Tune 0 seems unused, Tune 1 is the main theme

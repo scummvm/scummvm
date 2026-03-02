@@ -98,6 +98,7 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 	_borderExtraTexture = nullptr;
 	_playerSid = nullptr;
 	_playerC64Sfx = nullptr;
+	_c64UseSFX = false;
 }
 
 DrillerEngine::~DrillerEngine() {
@@ -265,8 +266,8 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	if (areaID == _startArea && entranceID == _startEntrance) {
 		if (isC64()) {
-			// TODO: Re-enable music once SFX coexistence is resolved
-			// _playerSid->startMusic();
+			if (!_c64UseSFX && _playerSid)
+				_playerSid->startMusic();
 			playSound(_soundIndexStart, true, _soundFxHandle);
 		} else {
 			playSound(_soundIndexStart, true, _soundFxHandle);
@@ -427,8 +428,12 @@ void DrillerEngine::drawInfoMenu() {
 	} else if (isSpectrum()) {
 		drawStringInSurface("l-load s-save 1-abort", 76, 97, front, black, surface);
 		drawStringInSurface("any other key-continue", 76, 105, front, black, surface);
-	} else if (isAmiga() || isAtariST())
+	} else if (isAmiga() || isAtariST()) {
 		drawStringInSurface("press any key to continue", 66, 97, front, black, surface);
+	} else if (isC64())	{
+		drawStringInSurface("l-load s-save run/stop-abort", 76, 97, front, black, surface);
+		drawStringInSurface("t-toggle effect/music", 76, 105, front, black, surface);
+	}
 
 	Texture *menuTexture = _gfx->createTexture(surface);
 	Common::Event event;
@@ -449,6 +454,8 @@ void DrillerEngine::drawInfoMenu() {
 					_eventManager->purgeKeyboardEvents();
 					saveGameDialog();
 					_gfx->setViewport(_viewArea);
+				} else if (isC64() && event.customType == kActionToggleSound) {
+					toggleC64Sound();
 				} else if (isDOS() && event.customType == kActionToggleSound) {
 					// TODO
 				} else if ((isDOS() || isCPC() || isSpectrum()) && event.customType == kActionEscape) {

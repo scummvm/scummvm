@@ -68,12 +68,13 @@ public:
 	void stopAllSfx();
 
 	bool isSfxActive() const;
+	void initSID();
+	void destroySID();
 
 private:
 	SID::SID *_sid;
 
 	void sidWrite(int reg, uint8 data);
-	void initSID();
 
 	// Voice 1 pitch slide state ($CC5B-$CC61)
 	uint8 _v1Counter;      // 0xFF=inactive, 0=expired (marked 0xFF next tick)

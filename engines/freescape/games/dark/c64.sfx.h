@@ -85,12 +85,13 @@ public:
 	void stopAllSfx();
 
 	bool isSfxActive() const;
+	void initSID();
+	void destroySID();
 
 private:
 	SID::SID *_sid;
 
 	void sidWrite(int reg, uint8 data);
-	void initSID();
 	void onTimer();
 
 	// State machine ($C801 equivalent)
