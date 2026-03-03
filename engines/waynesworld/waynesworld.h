@@ -115,6 +115,11 @@ private:
 #ifdef USE_TRANSLATION
 	Common::String _oldGUILanguage;
 #endif
+	bool introPt1();
+	bool introPt2();
+	bool introPt3(bool flag);
+	
+	WWSurface *_demoPt2Surface = nullptr;
 
 public:
 	Common::RandomSource *_random;
@@ -230,6 +235,8 @@ public:
 	int _currentMapItemIndex;
 	int _gameMapDestinationRoomNum;
 	bool _gameMapFlag;
+
+	void runIntro();
 
 	// Utils
 	int getRandom(int max);

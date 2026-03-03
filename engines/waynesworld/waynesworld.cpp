@@ -67,10 +67,129 @@ WaynesWorldEngine::~WaynesWorldEngine() {
 
 }
 
+bool WaynesWorldEngine::introPt1() {
+	static int16 array1[] = {179, 179, 181, 183, 186, 189, 192, 198, 208, 212, 217, 223, 234, 233, 236, 240, 241, 238, 238, 238, 225, 218, 218, 192, 164, 133, 103, 87};
+	static int16 array2[] = {97, 97, 98, 98, 97, 96, 94, 91, 88, 85, 84, 82, 81, 78, 76, 76, 75, 74, 72, 72, 71, 69, 68, 68, 67, 67, 66, 68};
+	static int16 array3[] = {80, 80, 69, 37, 0, 0, 0, 0};
+	static int16 array4[] = {67, 67, 64, 54, 41, 27, 27, 27};
+
+	GxlArchive *oa2Gxl = new GxlArchive("oa2");
+	loadPalette(oa2Gxl, "paramnt.pcx");
+
+	_musicIndex = 0;
+	changeMusic();
+
+	// "Paramount" background
+	drawImageToScreen(oa2Gxl, "paramnt.pcx", 0, 0);
+	waitSeconds(1);
+
+	WWSurface *paramaSprite = new WWSurface(190, 112);
+	// "And" animation
+	drawImageToSurface(oa2Gxl, "parama.pcx", paramaSprite, 0, 0);
+	drawRandomEffect(paramaSprite, 66, 30, 2, 2);
+	delete paramaSprite;
+
+	waitSeconds(2);
+
+	paletteFadeOut(0, 256, 6);
+
+	loadPalette(oa2Gxl, "backg.pcx");
+	drawImageToScreen(oa2Gxl, "backg.pcx", 0, 0);
+
+	// "Capstone logo" animation
+	for (int i = 1; i < 29; ++i) {
+		Common::String filename = Common::String::format("cap%02d.pcx", i);
+		drawImageToScreen(oa2Gxl, filename.c_str(), array1[i - 1], array2[i - 1]);
+		waitMillis(30);
+	}
+	waitSeconds(1);
+
+	// "The pinnacle of entertainment software" animation
+	for (int i = 1; i < 10; ++i) {
+		Common::String filename = Common::String::format("txt%02d.pcx", i);
+		drawImageToScreen(oa2Gxl, filename.c_str(), 0, 138);
+		waitMillis(30);
+	}
+	waitSeconds(1);
+
+	// Shining "Capstone" animation
+	for (int i = 1; i < 12; ++i) {
+		Common::String filename = Common::String::format("captxt%02d.pcx", i);
+		drawImageToScreen(oa2Gxl, filename.c_str(), 113, 89);
+		waitMillis(30);
+	}
+	waitSeconds(1);
+
+	// Removing "The pinnacle of entertainment software" animation
+	for (int i = 9; i > 0; --i) {
+		Common::String filename = Common::String::format("txt%02d.pcx", i);
+		drawImageToScreen(oa2Gxl, filename.c_str(), 0, 138);
+		waitMillis(30);
+	}
+	waitSeconds(1);
+
+	drawImageToScreen(oa2Gxl, "txtbkg.pcx", 0, 138);
+	waitMillis(30);
+	waitSeconds(1);
+
+	for (int i = 1; i < 7; ++i) {
+		Common::String filename = Common::String::format("capsp%02d.pcx", i);
+		drawImageToScreen(oa2Gxl, filename.c_str(), 76, 66);
+		waitMillis(30);
+	}
+
+	for (int i = 1; i < 12; ++i) {
+		Common::String filename = Common::String::format("presnt%02d.pcx", i);
+		drawImageToScreen(oa2Gxl, filename.c_str(), 117, 112);
+		waitMillis(60);
+	}
+
+	for (int i = 1; i < 9; ++i) {
+		Common::String filename = Common::String::format("capawy%02d.pcx", i);
+		drawImageToScreen(oa2Gxl, filename.c_str(), array3[i - 1], array4[i - 1]);
+		waitMillis(30);
+	}
+
+	delete oa2Gxl;
+
+	// TODO add a check at each step to return false if ESC is pressed
+	return true;
+}
+
+bool WaynesWorldEngine::introPt2() {
+	paletteFadeOut(0, 256, 64);
+
+	GxlArchive *oanGxl = new GxlArchive("oa2");
+	loadPalette(oanGxl, "backg2.pcx");
+	_demoPt2Surface = new WWSurface(320, 200);
+	_midi->stopSong();
+
+	// TODO add a check at each step to return false if ESC is pressed
+	return true;
+}
+
+bool WaynesWorldEngine::introPt3(bool flag) {
+	// sub1
+	
+	
+	// TODO add a check at each step to return false if ESC is pressed
+	return true;
+}
+
+void WaynesWorldEngine::runIntro() {
+	if (!introPt1())
+		return;
+
+	if (!introPt2())
+		return;
+
+	if (!introPt3(false))
+		return;
+}
+
 Common::Error WaynesWorldEngine::run() {
-
-	_isSaveAllowed = false;
-
+	_isSaveAllowed = false;	
+	
 	for (uint i = 0; i < kRoomAnimationsCount; i++)
 		_roomAnimations[i] = nullptr;
 
@@ -84,6 +203,12 @@ Common::Error WaynesWorldEngine::run() {
 	_inventorySprite = new WWSurface(312, 52);
 	_walkMap = new byte[kWalkMapSize];
 	_backgroundScrollSurface = nullptr;
+	_sound = new SoundManager(this, _mixer);
+	_midi = new MusicManager(this);
+
+	syncSoundSettings();
+
+	runIntro();
 
 	_fontWW = new GFTFont();
 	_fontWWInv = new GFTFont();
@@ -134,11 +259,6 @@ Common::Error WaynesWorldEngine::run() {
 	_currentMapItemIndex = -1;
 	_musicIndex = 0;
 	
-	_sound = new SoundManager(this, _mixer);
-	_midi = new MusicManager(this);
-
-	syncSoundSettings();
-
 	loadMainActorSprites();
 
 	initRoomObjects();
@@ -677,6 +797,8 @@ void WaynesWorldEngine::playSound(const char *filename, int flag) {
 void WaynesWorldEngine::changeMusic() {
 	if (!_isMusicEnabled)
 		return;
+
+	_midi->stopSong();
 	
 	switch (_musicIndex) {
 	case 0:
