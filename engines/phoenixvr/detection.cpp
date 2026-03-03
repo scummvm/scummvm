@@ -39,6 +39,7 @@ const DebugChannelDef PhoenixVRMetaEngineDetection::debugFlagList[] = {
 
 PhoenixVRMetaEngineDetection::PhoenixVRMetaEngineDetection() : AdvancedMetaEngineDetection(
 																   PhoenixVR::gameDescriptions, PhoenixVR::phoenixvrGames) {
+	_flags = kADFlagMatchFullPaths;
 }
 
 REGISTER_PLUGIN_STATIC(PHOENIXVR_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, PhoenixVRMetaEngineDetection);
