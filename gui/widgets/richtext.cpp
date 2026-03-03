@@ -324,7 +324,7 @@ void RichTextWidget::drawWidget() {
 	} else
 		_txtWnd->draw(_surface, 0, _scrolledY, _textWidth, _textHeight, 0, 0);
 	
-	g_gui.theme()->drawManagedSurface(Common::Point(_x + _innerMargin, _y + _innerMargin), *_surface, Graphics::ALPHA_FULL);
+	g_gui.theme()->drawManagedSurface(Common::Point(_x + _innerMargin, _y + _innerMargin), *_surface, Graphics::ALPHA_OPAQUE);
 }
 
 void RichTextWidget::draw() {
