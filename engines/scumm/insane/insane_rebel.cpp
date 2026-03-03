@@ -518,7 +518,8 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 		case Common::KEYCODE_ESCAPE:
 			// ESC handling depends on game state:
 			// - In menus: Select quit option and confirm
-			// - During gameplay/cutscenes: Skip video
+			// - During gameplay: Pause and open ScummVM menu
+			// - During cutscenes/intros: Skip video
 			if (splayer) {
 				if (_menuInputActive && (_gameState == kStateMainMenu ||
 				                          _gameState == kStatePilotSelect ||
@@ -529,10 +530,23 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 					_menuSelection = _menuItemCount - 1;  // Select last item (quit/back)
 					_menuSelectionConfirmed = true;
 					debug("Rebel2: ESC pressed in menu - selecting quit (item %d)", _menuSelection);
+					_vm->_smushVideoShouldFinish = true;
+				} else if (_gameState == kStateGameplay && _rebelHandler != 0) {
+					// During active gameplay (handler != 0): pause and open ScummVM menu.
+					// _rebelHandler is non-zero (7, 8, 0x19, 0x26) only during interactive
+					// gameplay sections, and 0 during intro/cutscene/post videos within a level.
+					debug("Rebel2: ESC pressed during gameplay - opening ScummVM menu");
+					bool wasPaused = splayer->_paused;
+					if (!wasPaused)
+						splayer->pause();
+					_vm->openMainMenuDialog();
+					if (!wasPaused)
+						splayer->unpause();
 				} else {
+					// During cutscenes/intros/mission briefings: skip video
 					debug("Rebel2: ESC pressed - skipping video");
+					_vm->_smushVideoShouldFinish = true;
 				}
-				_vm->_smushVideoShouldFinish = true;
 				return true;  // Consume the event
 			}
 			break;
