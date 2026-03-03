@@ -210,12 +210,12 @@ struct GrafPort {
 	Common::Rect portRect;
 	RgnHandle visRgn;
 	RgnHandle clipRgn;
-	Pattern bkPat = { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff } };
-	Pattern fillPat = { { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } };
+	Pattern bkPat = { { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } }; // white
+	Pattern fillPat = { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff } }; // black
 	Common::Point pnLoc = {0, 0};
 	Common::Point pnSize = {1, 1};
 	PatternMode pnMode = kPatCopy;
-	Pattern pnPat = { { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } };
+	Pattern pnPat = { { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff } }; // black
 	uint16 pnVis = 0;
 	uint16 txFont = 0;
 	uint16 txFace;
@@ -605,7 +605,7 @@ public:
 	// the background pattern of the current graphics port. This effectively erases the rounded
 	// rectangle. Use the ovalWidth and ovalHeight parameters to specify the diameters of
 	// curvature for the corners of the rounded rectangle.
-	void EraseRoundRect(const Common::Rect &r, int16 ovalWidth, int16 ovalHeight);
+	void EraseRoundRect(const Common::Rect &r, uint16 ovalWidth, uint16 ovalHeight);
 
 	// PROCEDURE EndUpdate (theWindow: WindowPtr);
 	// Call EndUpdate to restore the normal visRgn of theWindow's grafPort, which was changed by
@@ -648,7 +648,7 @@ public:
 	// port, the FrameRoundRect procedure draws an outline just inside the rounded
 	// rectangle bounded by the rectangle that you specify in the r parameter. The outline is as
 	// wide as the pen width and as tall as the pen height. The pen location does not change.
-	void FrameRoundRect(const Common::Rect &r, int16 ovalWidth, int16 ovalHeight);
+	void FrameRoundRect(const Common::Rect &r, uint16 ovalWidth, uint16 ovalHeight);
 
 	// PROCEDURE GetCPixel (h,v: INTEGER; VAR cPix: RGBColor);
 	// The GetCPixel function returns the RGB of the pixel at the specified position in the current
@@ -720,7 +720,7 @@ public:
 	// black and every black pixel becomes white. The ovalWidth and ovalHeight
 	// parameters specify the diameters of curvature for the corners. The pen location does not
 	// change.
-	void InvertRoundRect(const Common::Rect &r, int16 ovalWidth, int16 ovalHeight);
+	void InvertRoundRect(const Common::Rect &r, uint16 ovalWidth, uint16 ovalHeight);
 
 	// PROCEDURE KillPoly (poly: PolyHandle);
 	// KillPoly releases the memory occupied by the given polygon. Use this only when you're completely
@@ -795,7 +795,7 @@ public:
 	// PaintRoundRect procedure draws the interior of the rounded rectangle bounded by
 	// the rectangle that you specify in the r parameter. Use the ovalWidth and ovalHeight
 	// parameters to specify the diameters of curvature for the corners of the rounded rectangle.
-	void PaintRoundRect(const Common::Rect &r, int16 ovalWidth, int16 ovalHeight);
+	void PaintRoundRect(const Common::Rect &r, uint16 ovalWidth, uint16 ovalHeight);
 
 	// PROCEDURE PenMode (mode: INTEGER);
 	// PenMode sets the transfer mode through which the pen pattern is transferred onto the bit map
@@ -922,6 +922,7 @@ private:
 	void _pumpEvents();
 	void _updateScreen();
 	void _drawRect(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor);
+	void _drawRoundRect(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor, uint16 ovalWidth, uint16 ovalHeight);
 	void _copyBits(const BitMap &srcBits, const BitMap &mask, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, SourceMode mode, RgnHandle maskRgn);
 };
 

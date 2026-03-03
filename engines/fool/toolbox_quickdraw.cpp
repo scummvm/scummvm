@@ -140,8 +140,10 @@ void Toolbox::EraseRect(const Common::Rect &r) {
 	}
 }
 
-void Toolbox::EraseRoundRect(const Common::Rect &r, int16 ovalWidth, int16 ovalHeight) {
-	warning("STUB: Toolbox::EraseRoundRect");
+void Toolbox::EraseRoundRect(const Common::Rect &r, uint16 ovalWidth, uint16 ovalHeight) {
+	if (_port) {
+		_drawRoundRect(r, _port->bkPat, kPatCopy, false, _port->fgColor, _port->bkColor, ovalWidth, ovalHeight);
+	}
 }
 
 void Toolbox::EndUpdate(WindowRecord &theWindow) {
@@ -190,6 +192,40 @@ void Toolbox::_drawRect(const Common::Rect &r, const Pattern &pat, PatternMode m
 	}
 }
 
+void Toolbox::_drawRoundRect(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor, uint16 ovalWidth, uint16 ovalHeight) {
+	if (_port && _port->pnVis == 0) {
+		BitMap intermediate(new Graphics::ManagedSurface(r.width(), r.height()));
+		BitMap mask(new Graphics::ManagedSurface(r.width(), r.height()));
+
+		Common::Point destPos(r.left, r.top);
+		Graphics::MacPatterns macpat({pat.data});
+
+		Graphics::MacPlotData pd(intermediate.get(), mask.get(), &macpat, 1, destPos.x, destPos.y, _port->pnSize, bkColor);
+		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
+		// For thicker outlines, the shape should be adjusted inward
+		Common::Rect destRect = intermediate->getBounds();
+		destRect.right -= _port->pnSize.x - 1;
+		destRect.bottom -= _port->pnSize.y - 1;
+
+		if (ovalWidth != ovalHeight) {
+			warning("Toolbox::_drawRoundRect: different corner diameters not supported");
+		}
+		pm.drawRoundRect(destRect, ovalHeight/2, fgColor, !frame, &pd);
+
+		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, mode);
+
+		if (debugChannelSet(5, kDebugGraphics)) {
+			debugC(5, kDebugGraphics, "Toolbox::_drawRoundRect: dstRect (%d, %d) %dx%d, pattern %s, mode %d, frame %d, fgColor %08x, bkColor %08x, ovalWidth %d, ovalHeight %d", dstRect.left, dstRect.top, dstRect.width(), dstRect.height(), pat.format().c_str(), mode, frame, fgColor, bkColor, ovalWidth, ovalHeight);
+		}
+
+		// Dirty rects check
+		if (_port->portBits == _defaultBits) {
+			_defaultWindow->addDirtyRect(dstRect);
+			_defaultWindow->setDirty(true);
+		}
+	}
+}
+
 void Toolbox::FillRect(const Common::Rect &r, const Pattern &pat) {
 	if (_port) {
 		_drawRect(r, pat, kPatCopy, false, _port->fgColor, _port->bkColor);
@@ -226,8 +262,10 @@ void Toolbox::FrameRect(const Common::Rect &r) {
 	}
 }
 
-void Toolbox::FrameRoundRect(const Common::Rect &r, int16 ovalWidth, int16 ovalHeight) {
-	warning("STUB: Toolbox::FrameRoundRect");
+void Toolbox::FrameRoundRect(const Common::Rect &r, uint16 ovalWidth, uint16 ovalHeight) {
+	if (_port) {
+		_drawRoundRect(r, _port->pnPat, _port->pnMode, true, _port->fgColor, _port->bkColor, ovalWidth, ovalHeight);
+	}
 }
 
 void Toolbox::GetCPixel(int16 h, int16 v, RGBColor &cPix) {
@@ -304,8 +342,12 @@ void Toolbox::InvertRect(const Common::Rect &r) {
 	}
 }
 
-void Toolbox::InvertRoundRect(const Common::Rect &r, int16 ovalWidth, int16 ovalHeight) {
-	warning("STUB: Toolbox::InvertRoundRect");
+void Toolbox::InvertRoundRect(const Common::Rect &r, uint16 ovalWidth, uint16 ovalHeight) {
+	if (_port) {
+		// set pattern to full black
+		Pattern pat({0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff});
+		_drawRoundRect(r, pat, kPatXor, false, g_engine->_wm._colorBlack, g_engine->_wm._colorWhite, ovalWidth, ovalHeight);
+	}
 }
 
 
@@ -394,8 +436,10 @@ void Toolbox::PaintRect(const Common::Rect &r) {
 	}
 }
 
-void Toolbox::PaintRoundRect(const Common::Rect &r, int16 ovalWidth, int16 ovalHeight) {
-	warning("STUB: Toolbox::PaintRoundRect");
+void Toolbox::PaintRoundRect(const Common::Rect &r, uint16 ovalWidth, uint16 ovalHeight) {
+	if (_port) {
+		_drawRoundRect(r, _port->pnPat, _port->pnMode, false, _port->fgColor, _port->bkColor, ovalWidth, ovalHeight);
+	}
 }
 
 void Toolbox::PenMode(PatternMode mode) {

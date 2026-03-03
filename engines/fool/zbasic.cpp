@@ -525,6 +525,10 @@ void ZBasic::unk_6(int16 unk1, int32 unk2, int16 unk3, int16 unk4) {
 	warning("STUB: ZBasic::unk_6");
 }
 
+void ZBasic::unk_11(int16 unk1) {
+	warning("STUB: ZBasic::unk_11");
+}
+
 void ZBasic::unk_20() {
 	warning("STUB: ZBasic::unk_20");
 }
