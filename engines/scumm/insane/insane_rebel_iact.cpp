@@ -573,9 +573,12 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		// Set ship level mode (DAT_0043e000 = par3)
 		_shipLevelMode = par3;
 
-		// If par4 == 1, enable status bar
+		// If par4 == 1, enable status bar and re-render laser texture (FUN_0040bb87)
 		if (par4 == 1) {
-			_rebelStatusBarSprite = 5;  // Status bar sprite for Handler 8
+			_rebelStatusBarSprite = 5;
+			if (_smush_iconsNut && _smush_iconsNut->getNumChars() > 5) {
+				initLaserTexture(_smush_iconsNut, 5);
+			}
 		}
 
 		// Reset state when shipLevelMode != 0 && par4 == 1 (FUN_401234 lines 97-103)
@@ -746,7 +749,10 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 			bodyStatusFlag = b.readSint16LE();
 		}
 		if (bodyStatusFlag == 1) {
-			_rebelStatusBarSprite = 5;  // Status bar sprite
+			_rebelStatusBarSprite = 5;
+			if (_smush_iconsNut && _smush_iconsNut->getNumChars() > 5) {
+				initLaserTexture(_smush_iconsNut, 5);
+			}
 			debug("Rebel2 Opcode 6 (Handler 7): Status bar enabled (body flag=%d)", bodyStatusFlag);
 		}
 
@@ -1027,6 +1033,9 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		// Note: This is local_14[4] in the decompiled code, NOT local_14[3] (par4)
 		if (par5 == 1) {
 			_rebelStatusBarSprite = 5;
+			if (_smush_iconsNut && _smush_iconsNut->getNumChars() > 5) {
+				initLaserTexture(_smush_iconsNut, 5);
+			}
 			// Guard with _rebelOp6Initialized: runs once per wave video, not per frame.
 			if (!_rebelOp6Initialized) {
 				clearBit(0);
@@ -1230,15 +1239,50 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		return;
 	}
 
-	// Step 1: If par4 == 1, initialize/reset state (lines 114-121)
-	if (par4 == 1) {
-		// Draw status bar sprite 5 (FUN_0040bb87 equivalent)
-		_rebelStatusBarSprite = (_rebelLevelType == 5) ? 53 : 5;
+	// Handler 0x26: FUN_407FCB line 77-79 — set level type from par4, read par5 for init trigger
+	// param_5[3] = par4 = levelType, param_5[4] = par5 = init flag
+	if (_rebelHandler == 0x26) {
+		_rebelLevelType = par4;
 
-		// Per-wave init: clear bits, links, reset wave state.
-		// In the original game, FUN_00423880 runs ONCE at video-start callback
-		// registration time, not per-frame. Guard with _rebelOp6Initialized so
-		// this fires once per wave video (reset in procPreRendering at frame 0).
+		// Read par5 from IACT body (param_5[4])
+		int16 par5 = 0;
+		if (b.pos() + 2 <= b.size()) {
+			int64 savedPos = b.pos();
+			par5 = b.readSint16LE();
+			b.seek(savedPos);
+		}
+
+		if (par5 == 1) {
+			// Re-render laser texture for this level (FUN_0040bb87)
+			// levelType 5 uses sprite 53, all others use sprite 5
+			_rebelStatusBarSprite = (_rebelLevelType == 5) ? 53 : 5;
+			if (_smush_iconsNut && _smush_iconsNut->getNumChars() > _rebelStatusBarSprite) {
+				initLaserTexture(_smush_iconsNut, _rebelStatusBarSprite);
+			}
+
+			if (!_rebelOp6Initialized) {
+				clearBit(0);
+				for (int i = 0; i < 512; i++) {
+					_rebelLinks[i][0] = 0;
+					_rebelLinks[i][1] = 0;
+					_rebelLinks[i][2] = 0;
+				}
+				_rebelWaveState = _rebelPhaseState;
+				_rebelHitCounter = 0;
+				_rebelOp6Initialized = true;
+				debug("Rebel2 Opcode 6 (Handler 0x26): Wave init, levelType=%d waveState=0x%x",
+					_rebelLevelType, _rebelWaveState);
+			}
+		}
+	}
+
+	// Other handlers: par4 == 1 triggers init (NOT level type)
+	if (_rebelHandler != 0x26 && par4 == 1) {
+		_rebelStatusBarSprite = 5;
+		if (_smush_iconsNut && _smush_iconsNut->getNumChars() > 5) {
+			initLaserTexture(_smush_iconsNut, 5);
+		}
+
 		if (!_rebelOp6Initialized) {
 			clearBit(0);
 			for (int i = 0; i < 512; i++) {
@@ -1252,9 +1296,6 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 			debug("Rebel2 Opcode 6: Wave init - cleared bits/links, waveState=0x%x", _rebelWaveState);
 		}
 	}
-
-	// Step 2: Set level type (DAT_00457900 = par3)
-	_rebelLevelType = par3;
 
 	// Step 3: Autopilot/control mode logic (lines 123-146)
 	// This determines whether the ship flies on autopilot or manual control
@@ -1435,6 +1476,29 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 			return;
 		}
 		b.seek(startPos);
+	}
+
+	// ===== Edge Blend Table Loading (par4 == 1000) =====
+	// FUN_405663: After all handler-specific opcode 8 processing, checks if par4==1000.
+	// If so, loads a per-level 256x256 color blend table from the IACT chunk data.
+	// This table controls the edge glow color of laser beams (e.g. red vs green).
+	// Data starts at byte offset 18 in the IACT chunk (in_stack_00000014 + 9 shorts).
+	if (par4 == 1000 && remaining >= 18 + 8 + 32896) {
+		// Read the raw edge table data from the stream
+		// Layout: 18 bytes IACT header params already consumed by caller,
+		// but 'b' is positioned at startPos which is after par1..par4.
+		// The original code passes (param + 9 shorts) = data at byte offset 18 from chunk start.
+		// Since our stream starts after the 6 par shorts (12 bytes), the data is at offset 6 from startPos.
+		byte *edgeData = (byte *)malloc(8 + 32896);
+		if (edgeData) {
+			b.seek(startPos + 6);  // Skip 3 remaining shorts (par2, par3, par4 already read; 3 more padding shorts)
+			b.read(edgeData, 8 + 32896);
+			initEdgeTable(edgeData);
+			free(edgeData);
+			debug("Rebel2 Opcode 8: Loaded per-level edge blend table (par4=1000)");
+		}
+		b.seek(startPos);
+		return;
 	}
 
 	// ===== Sound Loading (par3 21-47) =====
