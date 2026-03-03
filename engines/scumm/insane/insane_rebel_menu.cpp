@@ -829,10 +829,12 @@ int InsaneRebel2::runChapterSelect() {
 
 		debug("Rebel2: Playing chapter select background: OPEN/O_LEVEL.SAN");
 
-		// Flags: 0x20 (overlay drawing). No 0x08 (preserve) — we want a black
-		// background. O_LEVEL.SAN has no full-screen background FOBJ; the visible
-		// screen area stays black, and preview thumbnails render at X=230 via offset.
-		splayer->setCurVideoFlags(0x20);
+		// Flags: 0x20 (overlay/menu rendering) | 0x08 (preserve buffer, suppress
+		// AHDR speed override). Matches original FUN_0041f4d0 parameter 8.
+		// O_LEVEL.SAN AHDR specifies 15fps; flag 0x08 suppresses this override
+		// so we use our intended 12fps. The preview screen is cleared each frame
+		// by procPreRendering's memset, so buffer preservation is harmless.
+		splayer->setCurVideoFlags(0x28);
 
 		// Play O_LEVEL.SAN — preview thumbnails are rendered by FOBJ offset
 		splayer->play("OPEN/O_LEVEL.SAN", 12);
@@ -874,8 +876,8 @@ int InsaneRebel2::runChapterSelect() {
 			    _pilots[_activePilot].difficulty < 6 && _chapterSelection > 0) {
 				Common::String expected = getChapterPassword(
 					_chapterSelection, _pilots[_activePilot].difficulty);
-				if (expected.empty() || _passwordInput.equalsIgnoreCase(expected)) {
-					// Password accepted — unlock chapter
+				if (!expected.empty() && _passwordInput.equalsIgnoreCase(expected)) {
+					// Password accepted — unlock chapter (FUN_00415CF8 lines 253-257)
 					PilotData &pilot = _pilots[_activePilot];
 					pilot.score[_chapterSelection] = 0;
 					pilot.damage[_chapterSelection] = 0;
@@ -883,6 +885,8 @@ int InsaneRebel2::runChapterSelect() {
 					pilot.rating[_chapterSelection] = 0;
 					savePilots();
 					_chapterUnlocked[_chapterSelection] = true;
+					// Update iactBit for video preview (original jumps to LAB_00415d88)
+					setBit(16 - _chapterSelection);
 					_passwordInput.clear();
 					debug("Rebel2: Chapter %d unlocked via password", _chapterSelection + 1);
 					continue;  // Re-render with updated unlock state
@@ -1211,13 +1215,46 @@ Common::String InsaneRebel2::getRankString(int rating) {
 }
 
 // Password table lookup - emulates FUN_0041BCE0
-// Original: 90-entry table at DAT_00481af0, 20 bytes each, XOR 0xAA
-// Index formula: (difficulty + (level * 3 - 3) * 2) * 20, level is 1-based
+// 90 entries: 15 levels × 6 difficulty slots, extracted from RA2WIN95.EXE at 0x481AF0
+// Index formula: difficulty + (level * 3 - 3) * 2, level is 1-based (1-15), difficulty 0-5
+static const char *const kPasswordTable[90] = {
+	// Level 1:  diff 0-5
+	"JABBA",    "EWOKS",    "BANTHA",   "ANAKIN",   "WOOKIEE",  "WOOKIEE",
+	// Level 2:  diff 0-5
+	"ENDOR",    "CHEWIE",   "KATANA",   "KENOBI",   "DROID",    "DROID",
+	// Level 3:  diff 0-5
+	"LACHTON",  "DANKIN",   "DENGAR",   "FORTUNA",  "RODIAN",   "RODIAN",
+	// Level 4:  diff 0-5
+	"BORSK",    "NOGHRI",   "PELLAEON", "MODON",    "BPFASSH",  "BPFASSH",
+	// Level 5:  diff 0-5
+	"KROYIES",  "CHAMMA",   "ITHULL",   "OMMIN",    "KSHYY",    "KSHYY",
+	// Level 6:  diff 0-5
+	"AURIL",    "BOGGA",    "STENNESS", "REKKON",   "TORVE",    "TORVE",
+	// Level 7:  diff 0-5
+	"KAMPL",    "INCOM",    "MYRKR",    "SHAZEEN",  "SLUISSI",  "SLUISSI",
+	// Level 8:  diff 0-5
+	"FERRIER",  "KOTHLIS",  "CHURBA",   "KIIRIUM",  "PALANHI",  "PALANHI",
+	// Level 9:  diff 0-5
+	"GALIA",    "KRATH",    "ARTOO",    "GUNDARK",  "DROKKO",   "DROKKO",
+	// Level 10: diff 0-5
+	"DENARII",  "SIOSK",    "SATAL",    "DIANOGA",  "NATTH",    "NATTH",
+	// Level 11: diff 0-5
+	"SADOW",    "ADEGAN",   "LOBUE",    "ATUARRE",  "SABACC",   "SABACC",
+	// Level 12: diff 0-5
+	"ONDERON",  "AMANOA",   "DENEBA",   "ESSADA",   "ANDUR",    "ANDUR",
+	// Level 13: diff 0-5
+	"ALEEMA",   "AMBRIA",   "STURM",    "PAPLOO",   "ARKANIA",  "ARKANIA",
+	// Level 14: diff 0-5
+	"CATHAR",   "SYLVAR",   "CRADO",    "NASHTAH",  "DIATH",    "DIATH",
+	// Level 15: diff 0-5
+	"DOMINIS",  "MIRALUKA", "CARRACK",  "PESTAGE",  "DREEBO",   "DREEBO",
+};
+
 Common::String InsaneRebel2::getChapterPassword(int level, int difficulty) {
-	// TODO: Extract actual password table from game binary (FUN_0041BCE0)
-	// Table: 90 entries x 20 bytes at exe offset 0x481AF0, XOR 0xAA
-	// For now, return empty string (no password required — debug mode)
-	return "";
+	if (level < 1 || level > 15 || difficulty < 0 || difficulty > 5)
+		return "";
+	int idx = difficulty + (level * 3 - 3) * 2;
+	return kPasswordTable[idx];
 }
 
 // Draw score/info line at bottom of chapter select - emulates FUN_00434cb0 calls
@@ -1364,22 +1401,24 @@ void InsaneRebel2::drawChapterSelectOverlay(byte *renderBitmap, int pitch, int w
 	// Build items array matching original DAT_004577a8 layout
 	const char *items[18];
 
-	// items[0] = title = TRS 40 ("^f02Chapters")
-	items[0] = splayer->getString(40);
+	// Original (FUN_00415CF8 lines 55-77): starts with ALL locked strings,
+	// then overrides unlocked chapters individually.
+	// items[0] = title = TRS 60 ("^f02Chapters")
+	items[0] = splayer->getString(60);
 	if (!items[0] || !items[0][0])
 		items[0] = "^f02Chapters";
 
 	// items[1..16] = chapters, using unlocked (TRS 41-56) or locked (TRS 61-76) strings
 	for (int i = 1; i <= 16; i++) {
-		bool unlocked = (i - 1 < 16) && _chapterUnlocked[i - 1];
+		bool unlocked = _chapterUnlocked[i - 1];
 		int trsIdx = unlocked ? (40 + i) : (60 + i);
 		items[i] = splayer->getString(trsIdx);
 		if (!items[i] || !items[i][0])
 			items[i] = "";
 	}
 
-	// items[17] = "RETURN TO PILOTS" = TRS 57 ("^f01^c240RETURN TO PILOTS")
-	items[17] = splayer->getString(57);
+	// items[17] = "RETURN TO PILOTS" = TRS 77
+	items[17] = splayer->getString(77);
 	if (!items[17] || !items[17][0])
 		items[17] = "^f01^c240RETURN TO PILOTS";
 
@@ -1387,7 +1426,8 @@ void InsaneRebel2::drawChapterSelectOverlay(byte *renderBitmap, int pitch, int w
 	drawMenuItems(renderBitmap, pitch, width, height, items, 17, _chapterSelection, true);
 
 	// Draw preview box border on the right side (FUN_004292d0 calls at lines 128-133)
-	// The actual preview image is rendered by O_LEVEL.SAN FOBJ via the offset system
+	// The preview thumbnail is rendered by O_LEVEL.SAN via FOBJ offset + STOR/FTCH.
+	// SKIP chunks in O_LEVEL.SAN use iactBits to show locked/unlocked preview variants.
 	drawPreviewBox(renderBitmap, pitch, width, height);
 
 	// Draw score/info line at bottom

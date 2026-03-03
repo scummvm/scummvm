@@ -304,7 +304,7 @@ private:
 							   int pos_x, int pos_y, int left, int top,
 							   int width, int height, TextStyleFlags flg);
 	void ra2SelectFrameBuffer(int width, int height);
-	void ra2AdjustFrameCoords(int &left, int &top, int &width, int &height, int pitch);
+	void ra2AdjustFrameCoords(int &left, int &top, int &width, int &height, int pitch, int *srcSkipY = nullptr);
 	bool ra2DecodeCodec(int codec, const uint8 *src, int left, int top,
 						int width, int height, int pitch, int dataSize);
 	void ra2StoreFobjData(int codec, const byte *data, int32 dataSize,

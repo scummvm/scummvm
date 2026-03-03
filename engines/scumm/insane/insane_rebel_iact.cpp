@@ -70,23 +70,18 @@ void InsaneRebel2::procPreRendering(byte *renderBitmap) {
 	// IACT opcode 6 processing (iactRebel2Opcode6), matching the original
 	// FUN_41CADB architecture. No corridor drawing needed here.
 
-	// Chapter selection: Set FOBJ offset to scroll preview thumbnails in O_LEVEL.SAN.
-	// Original (FUN_00415CF8): offsets start at (0,0) for the first display update,
-	// then FUN_00425170 sets them to (-90, chapter*-50+75) AFTER each frame.
-	// Frame 0 must use (0,0) so the 80x800 preview strip at X=320 renders off-screen
-	// and STOR captures it cleanly. Frames 1+ use the scroll offset so FTCH re-renders
-	// the strip at the correct preview position.
+	// Chapter selection: Set FOBJ offset for O_LEVEL.SAN preview strip.
+	// The 80x800 FOBJ strip is at left=320. With offset X=-90, it renders at
+	// X=230 (inside the preview box). The Y offset scrolls the strip vertically
+	// so only the selected chapter's 50px slice appears at Y=75.
+	// STOR captures raw FOBJ data regardless of screen rendering, so the
+	// offset on frame 0 doesn't affect the STOR/FTCH mechanism.
 	if (_gameState == kStateChapterSelect && _player) {
-		if (_player->_frame > 0) {
-			// Clear screen to black before FTCH re-renders the preview strip.
-			// Our FTCH only re-draws the preview area (80px wide at X=230);
-			// without clearing, old menu text and preview artifacts persist.
-			if (renderBitmap) {
-				memset(renderBitmap, 0, _vm->_screenWidth * _vm->_screenHeight);
-			}
-			_player->_fobjOffsetX = _previewOffsetX;
-			_player->_fobjOffsetY = _previewOffsetY;
+		if (renderBitmap) {
+			memset(renderBitmap, 0, _vm->_screenWidth * _vm->_screenHeight);
 		}
+		_player->_fobjOffsetX = _previewOffsetX;
+		_player->_fobjOffsetY = _previewOffsetY;
 	}
 }
 
