@@ -858,16 +858,26 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	if (_dst == _specialBuffer)
 		pitch = _width;
 
+	int srcSkipY = 0;
 	if (isRA2()) {
-		ra2AdjustFrameCoords(left, top, width, height, pitch);
+		ra2AdjustFrameCoords(left, top, width, height, pitch, &srcSkipY);
 		if (width <= 0 || height <= 0)
 			return;
+	}
+
+	// For RLE codecs, skip source rows that were clipped from the top.
+	// Each RLE row has a 2-byte size prefix, so we can advance past them.
+	const uint8 *adjustedSrc = src;
+	if (srcSkipY > 0 && (codec == SMUSH_CODEC_RLE || codec == SMUSH_CODEC_RLE_ALT)) {
+		for (int i = 0; i < srcSkipY; i++) {
+			adjustedSrc += READ_LE_UINT16(adjustedSrc) + 2;
+		}
 	}
 
 	switch (codec) {
 	case SMUSH_CODEC_RLE:
 	case SMUSH_CODEC_RLE_ALT:
-		smushDecodeRLE(_dst, src, left, top, width, height, pitch);
+		smushDecodeRLE(_dst, adjustedSrc, left, top, width, height, pitch);
 		break;
 	case SMUSH_CODEC_DELTA_BLOCKS:
 		if (!_deltaBlocksCodec)

@@ -304,13 +304,17 @@ void SmushPlayer::ra2SelectFrameBuffer(int width, int height) {
 /**
  * Apply RA2 FOBJ position offsets and clamp to buffer bounds.
  * Modifies left, top, width, height in place.
+ * When srcSkipY is non-null, outputs the number of source rows to skip
+ * when top is clipped from negative (for codecs with row-size prefixes).
  */
-void SmushPlayer::ra2AdjustFrameCoords(int &left, int &top, int &width, int &height, int pitch) {
+void SmushPlayer::ra2AdjustFrameCoords(int &left, int &top, int &width, int &height, int pitch, int *srcSkipY) {
 	left += _fobjOffsetX;
 	top += _fobjOffsetY;
 
 	int bufHeight = (_dst == _specialBuffer) ? _height : _vm->_screenHeight;
 	if (top < 0) {
+		if (srcSkipY)
+			*srcSkipY = -top;
 		height += top;
 		top = 0;
 	}
