@@ -127,6 +127,14 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_damageShakeCounter = 0;
 	memset(_damageSavedPalette, 0, sizeof(_damageSavedPalette));
 
+	// Text overlay state (FUN_004171c5 chapter title rendering)
+	_textOverlayActive = false;
+	_textOverlayID = 0;
+	_textOverlayX = 0;
+	_textOverlayY = 0;
+	_textOverlayFadeIn = 0;
+	_textOverlayFadeOut = 0;
+
 	// Retail globals mapped: hit counter, cooldown, invulnerability flag
 	_rebelOp6Initialized = false;
 	_rebelHitCounter = 0;
