@@ -344,6 +344,9 @@ public:
 	int _textOverlayFadeIn;       // Frame to start progressive text reveal
 	int _textOverlayFadeOut;      // Frame to stop text rendering
 
+	// Render chapter title text overlay (emulates FUN_004341a0 in FUN_004171c5)
+	void renderTextOverlay(byte *renderBitmap, int pitch, int width, int height, int curFrame);
+
 	// Play death video with proper variant selection
 	void playLevelDeathVariant(int levelId, int phase, int frame);
 
