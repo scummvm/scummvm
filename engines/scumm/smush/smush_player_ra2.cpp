@@ -158,10 +158,15 @@ void SmushPlayer::ra2HandleFetch(Common::SeekableReadStream &b) {
 
 	// Re-decode stored FOBJ data with current offsets (matching original FUN_004246d0).
 	if (_storedFobjData != nullptr) {
+		debug("SmushPlayer FTCH: Re-decoding stored FOBJ codec=%d pos=(%d,%d) size=%dx%d dataSize=%d",
+			_storedFobjCodec, _storedFobjLeft, _storedFobjTop,
+			_storedFobjWidth, _storedFobjHeight, _storedFobjDataSize);
 		decodeFrameObject(_storedFobjCodec, _storedFobjData,
 			_storedFobjLeft, _storedFobjTop,
 			_storedFobjWidth, _storedFobjHeight,
 			_storedFobjDataSize);
+	} else {
+		debug("SmushPlayer FTCH: No stored FOBJ data! (frame=%d)", _frame);
 	}
 }
 
@@ -279,6 +284,9 @@ void SmushPlayer::ra2SelectFrameBuffer(int width, int height) {
 			_specialBufferSize = bufSize;
 			_width = width;
 			_height = height;
+			// Zero-fill the new buffer to avoid garbage in areas not written by FOBJ codec
+			memset(_specialBuffer, 0, bufSize);
+			debug("SmushPlayer: Allocated new _specialBuffer %dx%d (%d bytes)", width, height, bufSize);
 		}
 	}
 

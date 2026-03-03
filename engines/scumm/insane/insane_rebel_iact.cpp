@@ -52,9 +52,17 @@ void InsaneRebel2::procPreRendering(byte *renderBitmap) {
 	// positions are erased before new ones are drawn.
 	//
 	// This is called at the start of handleFrame(), before any FOBJ chunks are processed.
+	//
+	// IMPORTANT: Only restore when the render buffer pitch matches the background pitch (320).
+	// Levels like Level 12 (Sewers) use oversized buffers (640x260) where FOBJ/FETCH handles
+	// background restoration. Copying the 320-wide background into a 640-wide buffer with
+	// hardcoded pitch=320 would corrupt the corridor rendering.
 	if (_rebelHandler == 8 && _level2BackgroundLoaded && _level2Background && renderBitmap) {
-		for (int y = 0; y < 200; y++) {
-			memcpy(renderBitmap + y * 320, _level2Background + y * 320, 320);
+		int bufferPitch = (_player && _player->_width > 0) ? _player->_width : 320;
+		if (bufferPitch == 320) {
+			for (int y = 0; y < 200; y++) {
+				memcpy(renderBitmap + y * 320, _level2Background + y * 320, 320);
+			}
 		}
 	}
 
@@ -1971,12 +1979,21 @@ bool InsaneRebel2::loadLevel2Background(byte *animData, int32 size, byte *render
 						_level2BackgroundLoaded = true;
 						foundBackground = true;
 
-						// Copy to render bitmap immediately if provided
+						// Copy to render bitmap immediately if provided.
+						// Only copy when render buffer pitch is 320 (standard screen size).
+						// For oversized buffers (e.g., Level 12's 640x260 corridor),
+						// the FOBJ/FETCH system handles background rendering and copying
+						// 320-wide data into a wider buffer would corrupt the corridor.
 						if (renderBitmap) {
-							for (int by = 0; by < 200; by++) {
-								memcpy(renderBitmap + by * 320, _level2Background + by * 320, 320);
+							int bufferPitch = (_player && _player->_width > 0) ? _player->_width : 320;
+							if (bufferPitch == 320) {
+								for (int by = 0; by < 200; by++) {
+									memcpy(renderBitmap + by * 320, _level2Background + by * 320, 320);
+								}
+								debug("Rebel2 loadLevel2Background: Copied to renderBitmap (pitch=%d)", bufferPitch);
+							} else {
+								debug("Rebel2 loadLevel2Background: Skipping renderBitmap copy (pitch=%d != 320)", bufferPitch);
 							}
-							debug("Rebel2 loadLevel2Background: Copied to renderBitmap");
 						}
 					}
 					break;
