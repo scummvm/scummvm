@@ -1764,150 +1764,9 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 				  _player->_curVideoFlags, _gameState);
 		}
 
-		// Text overlay rendering for FUN_004171c5-style cinematics
-		// Draws progressive chapter title text during [fadeInFrame, fadeOutFrame)
-		if (_textOverlayActive && curFrame >= _textOverlayFadeIn && curFrame < _textOverlayFadeOut) {
-			SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
-			const char *text = splayer->getString(_textOverlayID);
-			debug(5, "Rebel2: Text overlay frame %d/%d-%d textID=0x%x text='%s'",
-			      curFrame, _textOverlayFadeIn, _textOverlayFadeOut, _textOverlayID,
-			      text ? text : "(null)");
-			if (text) {
-				// Progressive reveal: display length = currentFrame + 10 - fadeInFrame
-				// Capped at 0xBE (190) visible chars per original
-				int displayLen = curFrame + 10 - _textOverlayFadeIn;
-				if (displayLen > 0xBE)
-					displayLen = 0xBE;
-				if (displayLen < 0)
-					displayLen = 0;
-
-				// Font system — same as menu text (FUN_00434d10 / FUN_00433da0)
-				// ^fNN = font switch, ^cNNN = color code
-				NutRenderer *fonts[3] = {
-					_smush_talkfontNut,
-					_smush_smalfontNut,
-					_smush_titlefontNut
-				};
-				NutRenderer *defaultFont = fonts[0] ? fonts[0] : _smush_smalfontNut;
-				if (!defaultFont)
-					goto textOverlayDone;
-
-				{
-					Common::Rect clipRect(0, 0, width, height);
-
-					// Format code parser (same as drawMenuItems)
-					auto parseFormat = [&](const char *&s, NutRenderer *&curFont, int &curColor) {
-						if (*s != '^')
-							return false;
-						const char *p = s + 1;
-						if (*p == '^') { s = p; return false; }  // ^^ = literal ^
-						if (*p == 'f') {
-							p++;
-							int idx = 0;
-							while (*p >= '0' && *p <= '9') { idx = idx * 10 + (*p - '0'); p++; }
-							s = p;
-							curFont = (idx >= 0 && idx < 3 && fonts[idx]) ? fonts[idx] : defaultFont;
-							return true;
-						}
-						if (*p == 'c') {
-							p++;
-							int col = 0;
-							while (*p >= '0' && *p <= '9') { col = col * 10 + (*p - '0'); p++; }
-							s = p;
-							curColor = col;
-							return true;
-						}
-						return false;
-					};
-
-					// FUN_004341a0 splits on \n and renders each line centered independently.
-					// The TRS parser joins multi-line strings with spaces (stripping \n//),
-					// so " ^f" marks where a line break was in the original TRS file.
-					// We split the text into lines first, then render each centered.
-
-					// Split text into lines at " ^f" boundaries
-					Common::Array<Common::String> lines;
-					{
-						Common::String cur;
-						const char *s = text;
-						while (*s) {
-							// Check for line break: space followed by ^f (font switch)
-							if (*s == ' ' && s[1] == '^' && s[2] == 'f') {
-								lines.push_back(cur);
-								cur.clear();
-								s++; // skip the space, keep the ^f for the next line
-								continue;
-							}
-							cur += *s++;
-						}
-						if (!cur.empty())
-							lines.push_back(cur);
-					}
-
-					int drawY = _textOverlayY;
-					int visCount = 0;
-
-					for (uint lineIdx = 0; lineIdx < lines.size() && visCount < displayLen; lineIdx++) {
-						const char *lineStr = lines[lineIdx].c_str();
-						const char *lineEnd = lineStr + lines[lineIdx].size();
-
-						// Measure this line's width (only visible chars up to displayLen)
-						int lineWidth = 0;
-						int lineVisCount = 0;
-						NutRenderer *lineFont = defaultFont;
-						{
-							const char *s = lineStr;
-							NutRenderer *mFont = defaultFont;
-							int mColor = 1;
-							while (s < lineEnd && (visCount + lineVisCount) < displayLen) {
-								if (parseFormat(s, mFont, mColor))
-									continue;
-								lineFont = mFont; // track font for line height
-								byte c = (byte)*s++;
-								if (c >= 'a' && c <= 'z')
-									c = c - 'a' + 'A';
-								if (mFont && c < mFont->getNumChars())
-									lineWidth += mFont->getCharWidth(c);
-								lineVisCount++;
-							}
-						}
-
-						// Draw this line centered at textX
-						int drawX = _textOverlayX - lineWidth / 2;
-						int lineCharsDrawn = 0;
-						{
-							const char *s = lineStr;
-							NutRenderer *curFont = defaultFont;
-							int curColor = 1;
-							while (s < lineEnd && (visCount + lineCharsDrawn) < displayLen) {
-								if (parseFormat(s, curFont, curColor))
-									continue;
-								byte c = (byte)*s++;
-								if (c >= 'a' && c <= 'z')
-									c = c - 'a' + 'A';
-								if (!curFont || c >= curFont->getNumChars()) {
-									lineCharsDrawn++;
-									continue;
-								}
-								int charW = curFont->getCharWidth(c);
-								if (drawX >= 0 && drawY >= 0 && charW > 0) {
-									curFont->drawCharV7(renderBitmap, clipRect, drawX, drawY,
-									                    pitch, curColor, kStyleAlignLeft, c, false, false);
-								}
-								drawX += charW;
-								lineCharsDrawn++;
-							}
-						}
-						visCount += lineCharsDrawn;
-
-						// Advance to next line — use the line's font height for spacing
-						int lineHeight = lineFont->getCharHeight('A') + 2;
-						drawY += lineHeight;
-					}
-				}
-			}
-		}
-		textOverlayDone:
+		// Chapter title text overlay (FUN_004171c5)
+		if (_textOverlayActive)
+			renderTextOverlay(renderBitmap, pitch, width, height, curFrame);
 
 		// Skip all HUD rendering during intro - subtitles are rendered via opcode 9
 		return;
@@ -2161,6 +2020,140 @@ void InsaneRebel2::updateDamageEffect(byte *renderBitmap, int pitch, int width, 
 
 // ======================= Rendering Helper Functions =======================
 // These are extracted from procPostRendering for better readability
+
+void InsaneRebel2::renderTextOverlay(byte *renderBitmap, int pitch, int width, int height, int curFrame) {
+	// Emulates FUN_004171c5 text overlay: progressive chapter title during [fadeIn, fadeOut)
+	if (curFrame < _textOverlayFadeIn || curFrame >= _textOverlayFadeOut)
+		return;
+
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	const char *text = splayer->getString(_textOverlayID);
+	debug(5, "Rebel2: Text overlay frame %d/%d-%d textID=0x%x text='%s'",
+	      curFrame, _textOverlayFadeIn, _textOverlayFadeOut, _textOverlayID,
+	      text ? text : "(null)");
+	if (!text)
+		return;
+
+	// Progressive reveal: displayLen = currentFrame + 10 - fadeInFrame, capped at 0xBE (190)
+	int displayLen = curFrame + 10 - _textOverlayFadeIn;
+	if (displayLen > 0xBE)
+		displayLen = 0xBE;
+	if (displayLen < 0)
+		return;
+
+	// Font system — ^fNN = font switch, ^cNNN = color code
+	NutRenderer *fonts[3] = { _smush_talkfontNut, _smush_smalfontNut, _smush_titlefontNut };
+	NutRenderer *defaultFont = fonts[0] ? fonts[0] : _smush_smalfontNut;
+	if (!defaultFont)
+		return;
+
+	Common::Rect clipRect(0, 0, width, height);
+
+	// Format code parser (same as drawMenuItems / FUN_00434d10)
+	auto parseFormat = [&](const char *&s, NutRenderer *&curFont, int &curColor) {
+		if (*s != '^')
+			return false;
+		const char *p = s + 1;
+		if (*p == '^') { s = p; return false; }
+		if (*p == 'f') {
+			p++;
+			int idx = 0;
+			while (*p >= '0' && *p <= '9') { idx = idx * 10 + (*p - '0'); p++; }
+			s = p;
+			curFont = (idx >= 0 && idx < 3 && fonts[idx]) ? fonts[idx] : defaultFont;
+			return true;
+		}
+		if (*p == 'c') {
+			p++;
+			int col = 0;
+			while (*p >= '0' && *p <= '9') { col = col * 10 + (*p - '0'); p++; }
+			s = p;
+			curColor = col;
+			return true;
+		}
+		return false;
+	};
+
+	// The TRS parser joins multi-line strings with spaces (stripping \n//),
+	// so " ^f" marks where a line break was in the original TRS file.
+	// Split into lines, then render each centered at textX (FUN_004341a0).
+	Common::Array<Common::String> lines;
+	{
+		Common::String cur;
+		const char *s = text;
+		while (*s) {
+			if (*s == ' ' && s[1] == '^' && s[2] == 'f') {
+				lines.push_back(cur);
+				cur.clear();
+				s++; // skip the space, keep ^f for the next line
+				continue;
+			}
+			cur += *s++;
+		}
+		if (!cur.empty())
+			lines.push_back(cur);
+	}
+
+	int drawY = _textOverlayY;
+	int visCount = 0;
+
+	for (uint lineIdx = 0; lineIdx < lines.size() && visCount < displayLen; lineIdx++) {
+		const char *lineStr = lines[lineIdx].c_str();
+		const char *lineEnd = lineStr + lines[lineIdx].size();
+
+		// Measure visible chars up to displayLen
+		int lineWidth = 0;
+		int lineVisCount = 0;
+		NutRenderer *lineFont = defaultFont;
+		{
+			const char *s = lineStr;
+			NutRenderer *mFont = defaultFont;
+			int mColor = 1;
+			while (s < lineEnd && (visCount + lineVisCount) < displayLen) {
+				if (parseFormat(s, mFont, mColor))
+					continue;
+				lineFont = mFont;
+				byte c = (byte)*s++;
+				if (c >= 'a' && c <= 'z')
+					c = c - 'a' + 'A';
+				if (mFont && c < mFont->getNumChars())
+					lineWidth += mFont->getCharWidth(c);
+				lineVisCount++;
+			}
+		}
+
+		// Draw line centered at textX
+		int drawX = _textOverlayX - lineWidth / 2;
+		int lineCharsDrawn = 0;
+		{
+			const char *s = lineStr;
+			NutRenderer *curFont = defaultFont;
+			int curColor = 1;
+			while (s < lineEnd && (visCount + lineCharsDrawn) < displayLen) {
+				if (parseFormat(s, curFont, curColor))
+					continue;
+				byte c = (byte)*s++;
+				if (c >= 'a' && c <= 'z')
+					c = c - 'a' + 'A';
+				if (!curFont || c >= curFont->getNumChars()) {
+					lineCharsDrawn++;
+					continue;
+				}
+				int charW = curFont->getCharWidth(c);
+				if (drawX >= 0 && drawY >= 0 && charW > 0) {
+					curFont->drawCharV7(renderBitmap, clipRect, drawX, drawY,
+					                    pitch, curColor, kStyleAlignLeft, c, false, false);
+				}
+				drawX += charW;
+				lineCharsDrawn++;
+			}
+		}
+		visCount += lineCharsDrawn;
+
+		int lineHeight = lineFont->getCharHeight('A') + 2;
+		drawY += lineHeight;
+	}
+}
 
 void InsaneRebel2::renderStatusBarBackground(byte *renderBitmap, int pitch, int width, int height,
 											 int videoWidth, int videoHeight, int statusBarY) {
