@@ -82,6 +82,16 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	if (_smush_iconsNut && _smush_iconsNut->getNumChars() > 5) {
 		initLaserTexture(_smush_iconsNut, 5);
 	}
+
+	// Initialize edge blend table with default identity table (FUN_404BCE -> FUN_410510(NULL))
+	// Per-level tables are loaded later via IACT opcode 8 par4=1000
+	initEdgeTable(nullptr);
+	// DAT_0047a7fc: Controls edge highlight rendering and widescreen features.
+	// Set from param_10 of FUN_403BD0 (main game init). Values:
+	//   < 0: Edge highlights disabled (low-detail mode)
+	//   >= 0: Edge highlights enabled, >= 1: high-detail (secondary NUTs, widescreen)
+	// Always use high detail in ScummVM.
+	_rebelDetailMode = 1;
 	_smush_cockpitNut = new NutRenderer(_vm, "SYSTM/DISPFONT.NUT");
 
 	// Load SMALFONT.NUT for HUD score/lives rendering (DAT_00482200 equivalent)

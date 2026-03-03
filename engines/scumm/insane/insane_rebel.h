@@ -517,12 +517,42 @@ public:
 	};
 	LaserTexture _laserTexture;  // DAT_0047fee4
 
+	// ======================= Edge Blend Table (DAT_0046a7d0) =======================
+	// 256x256 lookup table used by drawEdgeHighlightLine() (FUN_410962) to compute
+	// glow colors at beam edges. For each pixel on the beam edge, the table maps
+	// [adjacent_pixel_above][adjacent_pixel_below] -> output color, producing a
+	// color-blended highlight that gives beams their distinctive glow.
+	//
+	// Default table (FUN_410510 with NULL): table[a][b] = min(a,b) (identity/transparent).
+	// Per-level tables loaded via IACT opcode 8 par4=1000 (FUN_405663 -> FUN_410510).
+	// The per-level table tunes the glow to the current palette (red for some levels,
+	// green for others).
+	//
+	// _rebelDetailMode (DAT_0047a7fc): Controls whether edge highlights are drawn.
+	// Set from IACT opcode 6. When >= 0, edge highlights are enabled.
+	byte _edgeTable[256 * 256];       // DAT_0046a7d0 - primary edge blend table
+	byte _edgeTableAlt[256 * 256];    // DAT_00443fb0 - secondary blend table (hi-res mode)
+	int16 _rebelDetailMode;           // DAT_0047a7fc - edge highlight enable flag
+
+	// Initialize edge blend table (FUN_410510)
+	// data == nullptr: fill with default identity table (min(a,b))
+	// data != nullptr: load 256x256 symmetric table from data (skips 8-byte header)
+	void initEdgeTable(const byte *data);
+
+	// Draw edge highlight line using the edge blend table (FUN_410962)
+	// Each pixel is blended from its perpendicular neighbors via _edgeTable lookup.
+	// For horizontal-dominant beams, reads pixels above/below the line.
+	// For vertical-dominant beams, reads pixels left/right of the line.
+	void drawEdgeHighlightLine(byte *dst, int pitch, int width, int height,
+	                           int16 x0, int16 y0, int16 x1, int16 y1);
+
 	// Initialize laser texture from NUT sprite (FUN_0040BAB0)
 	void initLaserTexture(NutRenderer *nut, int spriteIdx);
 	void freeLaserTexture();
 
 	// Draw laser beam using pre-initialized texture (FUN_0040BBF6)
-	// Parameters match the original assembly function
+	// Two-layer rendering: textured scanlines (beam body) + edge highlights (glow).
+	// Edge highlights are only drawn when _rebelDetailMode >= 0.
 	void drawLaserBeam(byte *dst, int pitch, int width, int height,
 	                   int16 gunX, int16 gunY, int16 targetX, int16 targetY,
 	                   int16 animFrame, int16 maxFrames,

@@ -478,11 +478,17 @@ void InsaneRebel2::spawnExplosion(int x, int y, int objectHalfWidth) {
 }
 
 // Get max shot duration from level table (DAT_0047e0f0 indexed by DAT_0047a7fa/DAT_0047a7f8)
-// For now, use a reasonable default based on observed values
+// The original reads from a per-level per-difficulty table. The field at offset +0x00
+// (DAT_0047e0f0) is the first field of each record — our laserDelay field.
+// This value is used both as the initial shot counter AND as maxFrames for beam rendering.
 int16 InsaneRebel2::getShotMaxDuration() {
-	// The original uses: DAT_0047e0f0 + DAT_0047a7fa * 0x242 + DAT_0047a7f8 * 0x22
-	// Typical values observed: 2-5 frames
-	return 4;
+	LevelDifficultyParams params = getDifficultyParams();
+	// laserDelay = DAT_0047e0f0 field: shot duration in frames
+	// Clamp to reasonable range to avoid division by zero or extreme beams
+	int16 duration = params.laserDelay;
+	if (duration <= 0)
+		duration = 4;  // Fallback for -1 entries (disabled levels)
+	return duration;
 }
 
 // Dispatcher - calls appropriate spawn function based on current handler
@@ -838,7 +844,7 @@ void drawTexturedSegment(byte *dst, int pitch, int width, int height, int param_
 	int sx = dx > 0 ? 1 : -1;
 	int sy = dy > 0 ? 1 : -1;
 	int err = absdx - absdy;
-	int iVar12 = steps;
+	int iVar12 = steps - 1; // Original starts at majorAxis, not majorAxis+1
 
 	for (int i = 0; i < steps; i++) {
 		if (x >= 0 && x < width && y >= 0 && y < height) {
@@ -849,7 +855,7 @@ void drawTexturedSegment(byte *dst, int pitch, int width, int height, int param_
 		if (e2 > -absdy) { err -= absdy; x += sx; }
 		if (e2 < absdx) { err += absdx; y += sy; }
 		iVar12 -= param_7;
-		if (iVar12 < 0) { texPtr++; iVar12 += steps; }
+		while (iVar12 < 0) { texPtr++; iVar12 += steps; }
 	}
 }
 
@@ -890,6 +896,31 @@ void InsaneRebel2::initLaserTexture(NutRenderer *nut, int spriteIdx) {
 	}
 
 	debug("Rebel2: Initialized laser texture %dx%d from sprite %d", texWidth, texHeight, spriteIdx);
+
+	// Diagnostic: dump texture pixel stats to verify data is loaded correctly
+	if (_laserTexture.pixels && texWidth > 0 && texHeight > 0) {
+		int third = texWidth / 3;
+		int band1 = 0, band2 = 0, band3 = 0;
+		for (int row = 0; row < texHeight; row++) {
+			for (int col = 0; col < texWidth; col++) {
+				if (_laserTexture.pixels[row * texWidth + col] != 0) {
+					if (col < third) band1++;
+					else if (col < third * 2) band2++;
+					else band3++;
+				}
+			}
+		}
+		debug("Rebel2: Texture non-zero pixels by band: [0-%d]=%d  [%d-%d]=%d  [%d-%d]=%d",
+			third - 1, band1, third, third * 2 - 1, band2, third * 2, texWidth - 1, band3);
+
+		// Dump first row hex (first 64 bytes)
+		Common::String hexRow;
+		int dumpLen = MIN(texWidth, (int16)64);
+		for (int col = 0; col < dumpLen; col++) {
+			hexRow += Common::String::format("%02x ", _laserTexture.pixels[col]);
+		}
+		debug("Rebel2: Texture row 0 (first %d): %s", dumpLen, hexRow.c_str());
+	}
 }
 
 // Free laser texture buffer (FUN_0040BBD1)
@@ -900,8 +931,300 @@ void InsaneRebel2::freeLaserTexture() {
 	_laserTexture.height = 0;
 }
 
+// Initialize edge blend tables (FUN_410510)
+// When data is nullptr, fills with default tables:
+//   _edgeTable[a*256+b] = min(a,b) (symmetric identity blend)
+//   _edgeTableAlt[a*256+b] = special blend for hi-res mode
+// When data is non-null, loads the primary table from data+8 (upper triangle, symmetric).
+void InsaneRebel2::initEdgeTable(const byte *data) {
+	if (data == nullptr) {
+		// Default table initialization (FUN_410510 param_1==NULL path, lines 12-36)
+		for (int a = 0; a < 256; a++) {
+			for (int b = a; b < 256; b++) {
+				// Primary table: table[a][b] = a (i.e. min(a,b) since b >= a)
+				_edgeTable[a + b * 256] = (byte)a;
+				_edgeTable[b + a * 256] = (byte)a;
+
+				// Secondary table: special blend rules (FUN_410510 lines 17-31)
+				if (a < 0x10 || b > 0x4f) {
+					// Outside blend range: use b if b==0, or (0xf < b && b < 0x50), or b==4
+					if (b == 0 || (b > 0xf && b < 0x50) || b == 4) {
+						_edgeTableAlt[a + b * 256] = (byte)b;
+					} else {
+						_edgeTableAlt[a + b * 256] = (byte)a;
+					}
+				} else {
+					// Blend range [0x10..0x4f]: average of a and b
+					_edgeTableAlt[a + b * 256] = (byte)((a + b) / 2);
+				}
+				_edgeTableAlt[b + a * 256] = _edgeTableAlt[a + b * 256];
+			}
+		}
+		// Special entries (FUN_410510 lines 33-36)
+		_edgeTable[0x42 * 256 + 0xf1] = 0x42;   // DAT_00447ff1
+		_edgeTable[0x42 + 0xf0 * 256] = 0x42;   // DAT_004480f0 (symmetric)
+		_edgeTable[0x41 * 256 + 0xb0] = 0x41;   // DAT_00447fb0
+		_edgeTableAlt[0x41 * 256 + 0xf0] = 0x41; // DAT_00443ff0
+	} else {
+		// Load table from IACT data (FUN_410510 non-NULL path, lines 39-47)
+		// Data format: 8-byte header + upper triangle of 256x256 symmetric table
+		const byte *src = data + 8;
+		for (int a = 0; a < 256; a++) {
+			for (int b = a; b < 256; b++) {
+				_edgeTable[a + b * 256] = *src;
+				_edgeTable[b + a * 256] = *src;
+				src++;
+			}
+		}
+	}
+}
+
+// Draw edge highlight line using the edge blend table (FUN_410962)
+// For each pixel along the line, reads the two adjacent pixels perpendicular to
+// the line direction and uses _edgeTable[above*256+below] as the output color.
+// This creates a glow/blend effect at beam edges.
+//
+// For horizontal-dominant lines (dx > dy), reads pixels above and below.
+// For vertical-dominant lines (dy > dx), reads pixels left and right.
+//
+// param_1 = dst buffer info (base pointer at [0], pitch at [1], width at word [1], height at byte offset 6)
+// param_2 = clip rect (or NULL for full buffer)
+// param_3..param_6 = x0, y0, x1, y1 line endpoints
+void InsaneRebel2::drawEdgeHighlightLine(byte *dst, int pitch, int width, int height,
+                                          int16 x0, int16 y0, int16 x1, int16 y1) {
+	// Clip region (FUN_410962 lines 19-30, simplified for our buffer layout)
+	int16 clipLeft = 1;
+	int16 clipTop = 1;
+	int16 clipRight = width - 2;
+	int16 clipBottom = height - 2;
+
+	// Clip X endpoints (FUN_410962 lines 35-69)
+	if (x0 == x1) {
+		if (x0 < clipLeft || x0 > clipRight)
+			return;
+	} else {
+		if (x0 < clipLeft) {
+			if (x1 < clipLeft) return;
+			y0 = y1 + (int16)(((int)(y0 - y1) * (int)(clipLeft - x1)) / (int)(x0 - x1));
+			x0 = clipLeft;
+		} else if (x0 > clipRight) {
+			if (x1 > clipRight) return;
+			y0 = y1 + (int16)(((int)(y0 - y1) * (int)(clipRight - x1)) / (int)(x0 - x1));
+			x0 = clipRight;
+		}
+		if (x1 < clipLeft) {
+			y1 = y0 + (int16)(((int)(y1 - y0) * (int)(clipLeft - x0)) / (int)(x1 - x0));
+			x1 = clipLeft;
+		} else if (x1 > clipRight) {
+			y1 = y0 + (int16)(((int)(y1 - y0) * (int)(clipRight - x0)) / (int)(x1 - x0));
+			x1 = clipRight;
+		}
+	}
+
+	// Clip Y endpoints (FUN_410962 lines 71-106)
+	if (y0 == y1) {
+		if (y0 < clipTop || y0 > clipBottom)
+			return;
+	} else {
+		if (y0 < clipTop) {
+			if (y1 < clipTop) return;
+			x0 = x1 + (int16)(((int)(x0 - x1) * (int)(clipTop - y1)) / (int)(y0 - y1));
+			y0 = clipTop;
+		} else if (y0 > clipBottom) {
+			if (y1 > clipBottom) return;
+			x0 = x1 + (int16)(((int)(x0 - x1) * (int)(clipBottom - y1)) / (int)(y0 - y1));
+			y0 = clipBottom;
+		}
+		if (y1 < clipTop) {
+			x1 = x0 + (int16)(((int)(x1 - x0) * (int)(clipTop - y0)) / (int)(y1 - y0));
+			y1 = clipTop;
+		} else if (y1 > clipBottom) {
+			x1 = x0 + (int16)(((int)(x1 - x0) * (int)(clipBottom - y0)) / (int)(y1 - y0));
+			y1 = clipBottom;
+		}
+	}
+
+	// Calculate starting pixel address and deltas (FUN_410962 lines 107-110)
+	byte *pixel = dst + y0 * pitch + x0;
+	int16 dx = x1 - x0;
+	int16 dy = y1 - y0;
+
+	// Bresenham line with perpendicular neighbor lookup (FUN_410962 lines 111-270)
+	// The key insight: for each pixel, the blend reads neighbors PERPENDICULAR to the line.
+	// - Horizontal lines: blend pixel_above * 256 + pixel_below
+	// - Vertical lines: blend pixel_left * 256 + pixel_right (reversed: left=[-1], right=[+1])
+	if (dx == 0) {
+		if (dy == 0) {
+			// Single pixel: blend from above/below
+			*pixel = _edgeTable[(uint)pixel[pitch] + (uint)pixel[-pitch] * 256];
+		} else if (dy < 0) {
+			// Vertical line going up: read left/right neighbors
+			while (dy < 1) {
+				*pixel = _edgeTable[(uint)pixel[1] + (uint)pixel[-1] * 256];
+				pixel -= pitch;
+				dy++;
+			}
+		} else {
+			// Vertical line going down: read left/right neighbors
+			while (dy >= 0) {
+				*pixel = _edgeTable[(uint)pixel[1] + (uint)pixel[-1] * 256];
+				pixel += pitch;
+				dy--;
+			}
+		}
+	} else if (dy == 0) {
+		if (dx < 0) {
+			// Horizontal line going left: read above/below neighbors
+			while (dx < 1) {
+				*pixel = _edgeTable[(uint)pixel[pitch] + (uint)pixel[-pitch] * 256];
+				pixel--;
+				dx++;
+			}
+		} else {
+			// Horizontal line going right: read above/below neighbors
+			while (dx >= 0) {
+				*pixel = _edgeTable[(uint)pixel[pitch] + (uint)pixel[-pitch] * 256];
+				pixel++;
+				dx--;
+			}
+		}
+	} else if (dx < 0 || dy < 0) {
+		// Mixed negative direction cases (FUN_410962 lines 149-240)
+		if (dy < 0) {
+			if (dx < 0) {
+				// Both negative: going up-left
+				if (dx < dy) {
+					// X-major (|dx| > |dy|): read above/below
+					int err = (-dx) >> 1;
+					int steps = 1 - dx;
+					while (steps > 0) {
+						*pixel = _edgeTable[(uint)pixel[pitch] + (uint)pixel[-pitch] * 256];
+						pixel--;
+						err += dy;
+						steps--;
+						if (err < 0) {
+							err -= dx;
+							pixel -= pitch;
+						}
+					}
+				} else {
+					// Y-major (|dy| > |dx|): read left/right
+					int err = (-dy) >> 1;
+					int steps = 1 - dy;
+					while (steps > 0) {
+						*pixel = _edgeTable[(uint)pixel[1] + (uint)pixel[-1] * 256];
+						pixel -= pitch;
+						err += dx;
+						steps--;
+						if (err < 0) {
+							err -= dy;
+							pixel--;
+						}
+					}
+				}
+			} else {
+				// dx > 0, dy < 0: going right-up
+				if (-dy < dx) {
+					// X-major: read above/below
+					int err = dx >> 1;
+					int steps = dx + 1;
+					while (steps > 0) {
+						*pixel = _edgeTable[(uint)pixel[pitch] + (uint)pixel[-pitch] * 256];
+						pixel++;
+						err += dy;
+						steps--;
+						if (err < 0) {
+							err += dx;
+							pixel -= pitch;
+						}
+					}
+				} else {
+					// Y-major: read left/right
+					int err = (-dy) >> 1;
+					int steps = 1 - dy;
+					while (steps > 0) {
+						*pixel = _edgeTable[(uint)pixel[1] + (uint)pixel[-1] * 256];
+						pixel -= pitch;
+						err -= dx;
+						steps--;
+						if (err < 0) {
+							err -= dy;
+							pixel++;
+						}
+					}
+				}
+			}
+		} else {
+			// dx < 0, dy > 0: going left-down
+			if (-dx == dy || -dx < dy) {
+				// Y-major: read left/right
+				int err = dy >> 1;
+				int steps = dy + 1;
+				while (steps > 0) {
+					*pixel = _edgeTable[(uint)pixel[1] + (uint)pixel[-1] * 256];
+					pixel += pitch;
+					err += dx;
+					steps--;
+					if (err < 0) {
+						err += dy;
+						pixel--;
+					}
+				}
+			} else {
+				// X-major: read above/below
+				int err = (-dx) >> 1;
+				int steps = 1 - dx;
+				while (steps > 0) {
+					*pixel = _edgeTable[(uint)pixel[pitch] + (uint)pixel[-pitch] * 256];
+					pixel--;
+					err -= dy;
+					steps--;
+					if (err < 0) {
+						err -= dx;
+						pixel += pitch;
+					}
+				}
+			}
+		}
+	} else {
+		// Both positive: going right-down (FUN_410962 lines 242-270)
+		if (dy < dx) {
+			// X-major: read above/below
+			int err = dx >> 1;
+			int steps = dx + 1;
+			while (steps > 0) {
+				*pixel = _edgeTable[(uint)pixel[pitch] + (uint)pixel[-pitch] * 256];
+				pixel++;
+				err -= dy;
+				steps--;
+				if (err < 0) {
+					err += dx;
+					pixel += pitch;
+				}
+			}
+		} else {
+			// Y-major: read left/right
+			int err = dy >> 1;
+			int steps = dy + 1;
+			while (steps > 0) {
+				*pixel = _edgeTable[(uint)pixel[1] + (uint)pixel[-1] * 256];
+				pixel += pitch;
+				err -= dx;
+				steps--;
+				if (err < 0) {
+					err += dy;
+					pixel++;
+				}
+			}
+		}
+	}
+}
+
 // Draw laser beam using pre-initialized texture (FUN_0040BBF6)
-// This is a direct port of the assembly function
+// This is a direct port of the assembly function.
+// Two-layer rendering:
+//   Layer 1: Textured scanlines (beam body) via drawTexturedSegment()
+//   Layer 2: Edge highlights (glow) via drawEdgeHighlightLine(), gated by _rebelDetailMode >= 0
 //
 // Parameters (matching FUN_0040bbf6):
 //   dst, pitch, width, height: destination buffer info
@@ -946,6 +1269,10 @@ void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height,
 	// FUN_0040BBF6 line 30: Get texture pixel pointer
 	byte *local_28 = texPixels;
 
+	debug(5, "Rebel2: drawLaserBeam gun(%d,%d) tgt(%d,%d) start(%d,%d) end(%d,%d) anim=%d/%d ws=%d hs=%d th=%d",
+		gunX, gunY, targetX, targetY, startX, startY, endX, endY,
+		animFrame, maxFrames, widthScale, heightScale, thickness);
+
 	// FUN_0040BBF6 lines 31-32: Calculate abs differences (FUN_004356e4 = abs)
 	int iVar2 = abs(startY - endY);  // |dy| of beam
 	int iVar3 = abs(startX - endX);  // |dx| of beam
@@ -960,9 +1287,8 @@ void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height,
 		int16 local_24 = -numLines;
 		int16 halfLines = numLines >> 1;
 
-		// FUN_0040BBF6 lines 39-46: Draw parallel lines
+		// FUN_0040BBF6 lines 39-46: Draw parallel textured scanlines (beam body)
 		for (int16 lineIdx = 0; lineIdx < numLines; lineIdx++) {
-			// Draw one textured segment (vertical offset for this scanline)
 			drawTexturedSegment(dst, pitch, width, height,
 			                    startX, (startY - halfLines) + lineIdx,
 			                    endX, (endY - halfLines) + lineIdx,
@@ -972,6 +1298,16 @@ void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height,
 			for (local_24 = texH + local_24; local_24 > 0; local_24 -= numLines) {
 				local_28 += texW;
 			}
+		}
+
+		// FUN_0040BBF6 lines 47-51: Edge highlights along top and bottom beam edges
+		if (_rebelDetailMode >= 0) {
+			drawEdgeHighlightLine(dst, pitch, width, height,
+			                      startX, startY - halfLines,
+			                      endX, endY - halfLines);
+			drawEdgeHighlightLine(dst, pitch, width, height,
+			                      startX, (startY - halfLines) + numLines - 1,
+			                      endX, (endY - halfLines) + numLines - 1);
 		}
 	} else {
 		// Mostly vertical beam - draw horizontal scanlines
@@ -987,9 +1323,8 @@ void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height,
 
 		int16 halfLines = numLines >> 1;
 
-		// FUN_0040BBF6 lines 61-68: Draw parallel lines
+		// FUN_0040BBF6 lines 61-68: Draw parallel textured scanlines (beam body)
 		for (int16 lineIdx = 0; lineIdx < numLines; lineIdx++) {
-			// Draw one textured segment (horizontal offset for this scanline)
 			drawTexturedSegment(dst, pitch, width, height,
 			                    (startX - halfLines) + lineIdx, startY,
 			                    (endX - halfLines) + lineIdx, endY,
@@ -999,6 +1334,16 @@ void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height,
 			for (local_24 = texH + local_24; local_24 > 0; local_24 -= numLines) {
 				local_28 += texW;
 			}
+		}
+
+		// FUN_0040BBF6 lines 69-73: Edge highlights along left and right beam edges
+		if (_rebelDetailMode >= 0) {
+			drawEdgeHighlightLine(dst, pitch, width, height,
+			                      startX - halfLines, startY,
+			                      endX - halfLines, endY);
+			drawEdgeHighlightLine(dst, pitch, width, height,
+			                      (startX - halfLines) + numLines - 1, startY,
+			                      (endX - halfLines) + numLines - 1, endY);
 		}
 	}
 }
@@ -1793,22 +2138,19 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// background persists. FOBJ sprites (enemies) are then decoded on top by SMUSH.
 	// We do NOT redraw the background here as that would overwrite FOBJ content.
 
-	// --- HUD Drawing Order (from FUN_004089ab assembly analysis) ---
-	// 1. FUN_004288c0: Fill status bar background at Y=0xb4 (180)
-	// 2. FUN_004089ab: Draw turret overlays, targeting reticle, crosshair
-	// 3. FUN_0041c012: Draw status bar sprites LAST (on top)
+	// --- HUD Drawing Order (from FUN_004089ab / FUN_40D836 assembly analysis) ---
+	// Original assembly render order for handler 0x26:
+	//   1. FUN_004288c0: Fill status bar background
+	//   2. FUN_004092d9: Collision/hit processing
+	//   3. FUN_00409fbc: Explosion rendering
+	//   4. FUN_0040ad63: LASER SHOTS (drawn BEFORE cockpit overlays)
+	//   5. FUN_004236e0: Crosshair + cockpit NUT overlays (drawn ON TOP of lasers)
+	//   6. FUN_0041c012: Status bar text/numbers
+	// The cockpit frame covers laser beam edges, giving the appearance
+	// that beams emerge from behind the cockpit.
 
 	// STEP 0: Fill status bar background (FUN_004288c0)
 	renderStatusBarBackground(renderBitmap, pitch, width, height, videoWidth, videoHeight, statusBarY);
-
-	// STEP 1A: Draw NUT-based HUD overlays for Handler 0x26/0x19 (FUN_004089ab lines 195-226)
-	renderTurretHudOverlays(renderBitmap, pitch, width, height, curFrame);
-
-	// STEP 1B: Draw embedded SAN HUD overlays (from IACT chunks)
-	renderEmbeddedHudOverlays(renderBitmap, pitch, width, height);
-
-	// STEP 2: Draw DISPFONT.NUT status bar sprites (FUN_0041c012)
-	renderStatusBarSprites(renderBitmap, pitch, width, height, statusBarY, curFrame);
 
 	// Ship rendering (FUN_00401ccf for Handler 8, FUN_0040d836 for Handler 7)
 	debug("Rebel2 Ship Check: handler=%d shipSprite=%p flyShipSprite=%p shipLevelMode=%d numSprites=%d/%d",
@@ -1826,11 +2168,21 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// Enemy indicators and destroyed enemy area erase
 	renderEnemyOverlays(renderBitmap, pitch, width, height, videoWidth);
 
-	// Explosion animations (FUN_409FBC)
+	// Explosion animations (FUN_409FBC) — drawn before lasers in original
 	renderExplosions(renderBitmap, pitch, width, height);
 
-	// Laser shot beams and impacts
+	// Laser shot beams — drawn BEFORE cockpit/HUD overlays so cockpit covers beam edges
 	renderLaserShots(renderBitmap, pitch, width, height);
+
+	// STEP 1A: Draw NUT-based HUD overlays for Handler 0x26/0x19 (FUN_004089ab lines 195-226)
+	// These are cockpit frame, crosshair, and reticle — drawn ON TOP of laser beams
+	renderTurretHudOverlays(renderBitmap, pitch, width, height, curFrame);
+
+	// STEP 1B: Draw embedded SAN HUD overlays (from IACT chunks)
+	renderEmbeddedHudOverlays(renderBitmap, pitch, width, height);
+
+	// STEP 2: Draw DISPFONT.NUT status bar sprites (FUN_0041c012)
+	renderStatusBarSprites(renderBitmap, pitch, width, height, statusBarY, curFrame);
 
 	// Damage visual effects — handler-specific per original architecture:
 	//   Handler 8:    FUN_401CCF line 119 → FUN_00420754 (palette flash + screen shake)
@@ -3260,16 +3612,16 @@ void InsaneRebel2::renderTurretLaserShots(byte *renderBitmap, int pitch, int wid
 		switch (_rebelLevelType) {
 		case 1:
 			// Type 1: 3 guns (triple cannon configuration)
-			// Gun 1: (0x136, 0xaa) = (310, 170)
-			// Gun 2: (0xa0, 0x17c) = (160, 380)
-			// Gun 3: (0x0a, 0xaa) = (10, 170)
+			// Gun 1: (0x136, 0xaa) = (310, 170) - right
+			// Gun 2: (0xa0, 0x17c) = (160, 380) - center bottom (off-screen, clipped)
+			// Gun 3: (0x0a, 0xaa) = (10, 170) - left
 			drawLaserBeam(renderBitmap, pitch, width, height,
 				310 + _viewX, 170 + _viewY, targetX, targetY,
 				progress, maxDuration, 12, 8, 12);
 
 			drawLaserBeam(renderBitmap, pitch, width, height,
 				160 + _viewX, 380 + _viewY, targetX, targetY,
-				progress, maxDuration, 12, 8, 12);
+				progress, maxDuration, 8, 5, 12);
 
 			drawLaserBeam(renderBitmap, pitch, width, height,
 				10 + _viewX, 170 + _viewY, targetX, targetY,
@@ -3281,49 +3633,51 @@ void InsaneRebel2::renderTurretLaserShots(byte *renderBitmap, int pitch, int wid
 			// Type 2/5: 2 guns (wing cannons)
 			// Left: (0x6e, 0xe6) = (110, 230)
 			// Right: (0xd2, 0xe6) = (210, 230)
-			// Assembly uses widthScale=0x19(25) for these types
+			// Assembly: widthScale=0x19(25), heightScale=8, thickness=0xC(12)
 			drawLaserBeam(renderBitmap, pitch, width, height,
 				110 + _viewX, 230 + _viewY, targetX, targetY,
-				progress, maxDuration, 25, 8, 25);
+				progress, maxDuration, 25, 8, 12);
 
 			drawLaserBeam(renderBitmap, pitch, width, height,
 				210 + _viewX, 230 + _viewY, targetX, targetY,
-				progress, maxDuration, 25, 8, 25);
+				progress, maxDuration, 25, 8, 12);
 			break;
 
 		case 6:
 			// Type 6: 2 guns (offscreen - cinematic effect)
 			// Gun 1: (-100, 0)
 			// Gun 2: (0, 0)
+			// Assembly: widthScale=0x19(25), heightScale=8, thickness=0xC(12)
 			drawLaserBeam(renderBitmap, pitch, width, height,
 				-100 + _viewX, 0 + _viewY, targetX, targetY,
-				progress, maxDuration, 25, 8, 25);
+				progress, maxDuration, 25, 8, 12);
 
 			drawLaserBeam(renderBitmap, pitch, width, height,
 				0 + _viewX, 0 + _viewY, targetX, targetY,
-				progress, maxDuration, 25, 8, 25);
+				progress, maxDuration, 25, 8, 12);
 			break;
 
 		default:
 			// Default: 2 guns with alternating pattern based on shot sequence
 			// When seqNum & 1 == 0: Left (10, 50), Right (310, 130)
 			// When seqNum & 1 == 1: Left (310, 50), Right (10, 130)
+			// Assembly: widthScale=0x19(25), heightScale=8, thickness=0xC(12)
 			if ((_turretShots[i].seqNum & 1) == 0) {
 				drawLaserBeam(renderBitmap, pitch, width, height,
 					10 + _viewX, 50 + _viewY, targetX, targetY,
-					progress, maxDuration, 25, 8, 25);
+					progress, maxDuration, 25, 8, 12);
 
 				drawLaserBeam(renderBitmap, pitch, width, height,
 					310 + _viewX, 130 + _viewY, targetX, targetY,
-					progress, maxDuration, 25, 8, 25);
+					progress, maxDuration, 25, 8, 12);
 			} else {
 				drawLaserBeam(renderBitmap, pitch, width, height,
 					310 + _viewX, 50 + _viewY, targetX, targetY,
-					progress, maxDuration, 25, 8, 25);
+					progress, maxDuration, 25, 8, 12);
 
 				drawLaserBeam(renderBitmap, pitch, width, height,
 					10 + _viewX, 130 + _viewY, targetX, targetY,
-					progress, maxDuration, 25, 8, 25);
+					progress, maxDuration, 25, 8, 12);
 			}
 			break;
 		}
