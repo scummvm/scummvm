@@ -1663,6 +1663,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		// If a selection was confirmed, signal video to stop
 		if (selection >= 0) {
 			debug("Rebel2: Pilot selection confirmed: %d", selection);
+			_menuSelectionConfirmed = true;
 			_vm->_smushVideoShouldFinish = true;
 		}
 
@@ -1692,6 +1693,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		// If a selection was confirmed, signal video to stop
 		if (selection >= 0) {
 			debug("Rebel2: Chapter selection confirmed: %d", selection);
+			_menuSelectionConfirmed = true;
 			_vm->_smushVideoShouldFinish = true;
 		}
 
@@ -1736,6 +1738,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		// If a selection was confirmed, signal video to stop
 		if (selection >= 0) {
 			debug("Rebel2: Menu selection confirmed: %d", selection);
+			_menuSelectionConfirmed = true;
 			_vm->_smushVideoShouldFinish = true;
 		}
 

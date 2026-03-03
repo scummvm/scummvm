@@ -41,6 +41,7 @@
 
 #include "scumm/insane/insane_rebel.h"
 
+#include "common/config-manager.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 
@@ -390,6 +391,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_menuInactivityTimer = 0;
 	_lastMenuVariant = -1;        // No previous menu video
 	_menuRepeatDelay = 0;
+	_menuSelectionConfirmed = false;
 	for (i = 0; i < 16; i++) {
 		_levelUnlocked[i] = (i == 0);  // Only level 1 unlocked initially
 	}
@@ -404,7 +406,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	// Debug flag to unlock all chapters for testing
 	// Based on original debug mode (DAT_0047ab34 == 'd') from FUN_00415CF8
 	// Set to true to bypass normal unlock progression
-	_debugUnlockAll = true;  // TODO: Set to false for release, or read from ScummVM config
+	_debugUnlockAll = ConfMan.getBool("rebel2_unlock_all");
 
 	for (i = 0; i < 16; i++) {
 		// If debug unlock is enabled, unlock all chapters
@@ -515,6 +517,7 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 					// In menu mode: Select quit option and confirm selection
 					// This emulates the assembly behavior from FUN_0041f5ae
 					_menuSelection = _menuItemCount - 1;  // Select last item (quit/back)
+					_menuSelectionConfirmed = true;
 					debug("Rebel2: ESC pressed in menu - selecting quit (item %d)", _menuSelection);
 				} else {
 					debug("Rebel2: ESC pressed - skipping video");
@@ -762,7 +765,7 @@ void InsaneRebel2::renderScoreHUD(byte *renderBitmap, int pitch, int width, int 
 // Original: FUN_00411980 (load) / FUN_00411A5D (save)
 
 static const uint32 kPilotSaveMagic = MKTAG('R', 'A', '2', 'P');
-static const uint16 kPilotSaveVersion = 1;
+static const uint16 kPilotSaveVersion = 2;
 
 bool InsaneRebel2::loadPilots() {
 	_numPilots = 0;
@@ -779,7 +782,7 @@ bool InsaneRebel2::loadPilots() {
 			break;
 		}
 
-		/* uint16 version = */ sf->readUint16LE();
+		uint16 version = sf->readUint16LE();
 
 		PilotData &p = _pilots[i];
 		sf->read(p.name, kMaxPilotNameLen + 1);
@@ -791,6 +794,10 @@ bool InsaneRebel2::loadPilots() {
 		for (int j = 0; j < kNumLevels; j++)
 			p.damage[j] = sf->readSint32LE();
 		p.difficulty = sf->readSint16LE();
+		if (version >= 2) {
+			for (int j = 0; j < kNumLevels; j++)
+				p.rating[j] = sf->readSint16LE();
+		}
 		delete sf;
 
 		_numPilots = i + 1;
@@ -824,6 +831,8 @@ bool InsaneRebel2::savePilots() {
 		for (int j = 0; j < kNumLevels; j++)
 			sf->writeSint32LE(p.damage[j]);
 		sf->writeSint16LE(p.difficulty);
+		for (int j = 0; j < kNumLevels; j++)
+			sf->writeSint16LE(p.rating[j]);
 
 		sf->finalize();
 		delete sf;
