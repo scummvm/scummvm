@@ -132,10 +132,10 @@ void showControlPanel() {
 		Score *score = movie->getScore();
 		ImDrawList *dl = ImGui::GetWindowDrawList();
 
-		ImU32 color = ImGui::GetColorU32(ImVec4(0.8f, 0.8f, 0.8f, 1.0f));
-		ImU32 color_red = ImGui::GetColorU32(ImVec4(1.0f, 0.6f, 0.6f, 1.0f));
-		ImU32 active_color = ImGui::GetColorU32(ImVec4(1.0f, 1.0f, 0.4f, 1.0f));
-		ImU32 bgcolor = ImGui::GetColorU32(ImVec4(0.2f, 0.2f, 1.0f, 1.0f));
+		ImU32 color = ImGui::GetColorU32(_state->theme->cp_color);
+		ImU32 color_red = ImGui::GetColorU32(_state->theme->cp_color_red);
+		ImU32 active_color = ImGui::GetColorU32(_state->theme->cp_active_color);
+		ImU32 bgcolor = ImGui::GetColorU32(_state->theme->cp_bgcolor);
 		ImVec2 p = ImGui::GetCursorScreenPos();
 		ImVec2 buttonSize(20, 14);
 		float bgX1 = -4.0f, bgX2 = 21.0f;
@@ -248,7 +248,7 @@ void showControlPanel() {
 				dl->AddRectFilled(ImVec2(p.x + bgX1, p.y + bgX1), ImVec2(p.x + bgX2, p.y + bgX2), bgcolor, 3.0f, ImDrawFlags_RoundCornersAll);
 
 			if (score->_playState == kPlayStarted)
-				color = ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 1.0f, 1.0f));
+				color = ImGui::GetColorU32(_state->theme->cp_playing_color);
 
 			dl->AddTriangleFilled(ImVec2(p.x, p.y), ImVec2(p.x, p.y + 16), ImVec2(p.x + 14, p.y + 8), color);
 
@@ -266,7 +266,7 @@ void showControlPanel() {
 
 		{
 			ImGui::Separator();
-			ImGui::TextColored(ImVec4(0.9f, 0.8f, 0.5f, 1.0f), movie->getArchive()->getPathName().toString().c_str());
+			ImGui::TextColored(_state->theme->cp_path_color, movie->getArchive()->getPathName().toString().c_str());
 			ImGui::SetItemTooltip(movie->getArchive()->getPathName().toString().c_str());
 		}
 

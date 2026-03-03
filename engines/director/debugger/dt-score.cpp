@@ -200,15 +200,15 @@ static void drawSidebar1(ImDrawList *dl, ImVec2 startPos, Score *score) {
 		ImVec2 rowMin = ImVec2(startPos.x, y);
 		ImVec2 rowMax = ImVec2(startPos.x + totalWidth, y + cfg._cellHeight);
 
-		dl->AddRectFilled(rowMin, rowMax, cfg._tableDarkColor);
-		addThinRect(dl, rowMin, rowMax, cfg._borderColor);
+		dl->AddRectFilled(rowMin, rowMax, _state->theme->tableDarkColor);
+		addThinRect(dl, rowMin, rowMax, _state->theme->borderColor);
 
 		float radius = 5.0f;
 		float pad  = cfg._cellHeight * 0.12f; // inner padding
 
 		ImVec2 center(rowMin.x + pad + radius, rowMax.y - pad - radius);
 
-		dl->AddCircleFilled(center, radius, U32(_state->_colors._channel_toggle));
+		dl->AddCircleFilled(center, radius, _state->theme->channel_toggle);
 
 		// channel number centered in the right column
 		ImFont *iconFont = ImGui::GetIO().FontDefault;
@@ -216,7 +216,7 @@ static void drawSidebar1(ImDrawList *dl, ImVec2 startPos, Score *score) {
 		float textlen = ImGui::CalcTextSize(icon).x;
 		float textX = startPos.x + toggleColWidth + (labelColWidth - textlen) / 2.0f;
 		float textY = y + (cfg._cellHeight - ImGui::GetTextLineHeight()) / 2.0f;
-		dl->AddText(iconFont, 0.0f, ImVec2(textX, textY), cfg._sidebarTextColor, icon);
+		dl->AddText(iconFont, 0.0f, ImVec2(textX, textY), _state->theme->sidebarTextColor, icon);
 
 		// invisible button covering the row for interaction
 		ImGui::SetCursorScreenPos(rowMin);
@@ -245,8 +245,8 @@ static void drawSidebar2(ImDrawList *dl, ImVec2 startPos, Score *score) {
 		if (ch >= (int)score->_channels.size()) break;
 
 
-		dl->AddRectFilled(rowMin, rowMax, cfg._tableDarkColor);
-		addThinRect(dl, rowMin, rowMax, cfg._borderColor);
+		dl->AddRectFilled(rowMin, rowMax, _state->theme->tableDarkColor);
+		addThinRect(dl, rowMin, rowMax, _state->theme->borderColor);
 
 		// toggle circle
 		// small square at bottom-left of the cell (size relative to cell)
@@ -256,9 +256,9 @@ static void drawSidebar2(ImDrawList *dl, ImVec2 startPos, Score *score) {
 		ImVec2 center(rowMin.x + pad + radius, rowMax.y - pad - radius);
 
 		if (score->_channels[ch]->_visible)
-			dl->AddCircleFilled(center, radius, U32(_state->_colors._channel_toggle));
+			dl->AddCircleFilled(center, radius, _state->theme->channel_toggle);
 		else
-			dl->AddCircle(center, radius, U32(_state->_colors._channel_toggle));
+			dl->AddCircle(center, radius, _state->theme->channel_toggle);
 
 		ImGui::SetCursorScreenPos(rowMin);
 		ImGui::InvisibleButton(Common::String::format("##s2toggle%d", ch).c_str(), ImVec2(toggleColWidth, cellH));
@@ -275,15 +275,15 @@ static void drawSidebar2(ImDrawList *dl, ImVec2 startPos, Score *score) {
 
 		if (_state->_scoreMode != kModeExtended) {
 			float textY = y + (cellH - ImGui::GetTextLineHeight()) / 2.0f;
-			dl->AddText(ImVec2(textX, textY), cfg._sidebarTextColor, buf);
+			dl->AddText(ImVec2(textX, textY), _state->theme->sidebarTextColor, buf);
 		} else { // draw channel number and labels
-			dl->AddText(ImVec2(textX, y + 2.0f), cfg._sidebarTextColor, buf);
+			dl->AddText(ImVec2(textX, y + 2.0f), _state->theme->sidebarTextColor, buf);
 			const char *subLabels[] = { "Member", "Behavior", "Ink", "Blend", "Location" };
 			float lineH = ImGui::GetTextLineHeight();
 			for (int s = 0; s < 5; s++) {
 				float subX = textX - 17.0f;
 				float subY = y + lineH + 2.0f + s * lineH; // offset below channel number
-				dl->AddText(ImVec2(subX, subY), cfg._sidebarTextColor, subLabels[s]);
+				dl->AddText(ImVec2(subX, subY), _state->theme->sidebarTextColor, subLabels[s]);
 			}
 		}
 	}
@@ -295,8 +295,8 @@ static void drawRuler(ImDrawList *dl, ImVec2 startPos) {
 	ImVec2 p1 = startPos;
 	ImVec2 p2 = {p1.x + cfg._rulerWidth, p1.y + cfg._rulerHeight};
 
-	dl->AddRectFilled(p1, p2, cfg._tableDarkColor);
-	addThinRect(dl, p1, p2, cfg._borderColor);
+	dl->AddRectFilled(p1, p2, _state->theme->tableDarkColor);
+	addThinRect(dl, p1, p2, _state->theme->borderColor);
 
 	float bigTickLen = cfg._rulerHeight * 0.4f;
 	float smallTickLen = cfg._rulerHeight * 0.3f;
@@ -313,10 +313,10 @@ static void drawRuler(ImDrawList *dl, ImVec2 startPos) {
 			char buf[16];
 			snprintf(buf, sizeof(buf), "%d", i);
 			float textlen = ImGui::CalcTextSize(buf).x;
-			dl->AddText(ImVec2(rulerX - textlen / 2, p1.y + 4.0), U32(_state->_colors._type_color), buf);
+			dl->AddText(ImVec2(rulerX - textlen / 2, p1.y + 4.0), U32(_state->theme->type_color), buf);
 		}
 
-		dl->AddLine(ImVec2(rulerX, p2.y), ImVec2(rulerX, p2.y - len), U32(_state->_colors._line_color), thickness);
+		dl->AddLine(ImVec2(rulerX, p2.y), ImVec2(rulerX, p2.y - len), U32(_state->theme->line_color), thickness);
 	}
 }
 
@@ -548,9 +548,9 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 			float x = startPos.x + f * cfg._cellWidth;
 			ImVec2 cellMin = ImVec2(x, y);
 			ImVec2 cellMax = ImVec2(x + cfg._cellWidth, y + cellH);
-			ImU32 col = ((rf + 1) % 5 == 0) ? cfg._tableDarkColor : cfg._tableLightColor;
+			ImU32 col = ((rf + 1) % 5 == 0) ? _state->theme->tableDarkColor : _state->theme->tableLightColor;
 			dl->AddRectFilled(cellMin, cellMax, col);
-			addThinRect(dl, cellMin, cellMax, cfg._borderColor);
+			addThinRect(dl, cellMin, cellMax, _state->theme->borderColor);
 		}
 
 		// pass 2: draw sprite span bars on top of cells
@@ -591,25 +591,25 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 							   _state->_hoveredScoreCast.frame <= spanEnd);
 
 			if (isSelected)
-				color = U32(_state->_colors._channelSelectedCol);
+				color = _state->theme->channelSelectedCol;
 			else if (isHovered)
-				color = U32(_state->_colors._channelHoveredCol);
+				color = _state->theme->channelHoveredCol;
 			else {
 				int colorIdx = sprite._colorcode & 0x07;
 				if (colorIdx > 5) colorIdx = 0;
-				color = U32(_state->_colors._contColors[colorIdx]);
+				color = _state->theme->contColors[colorIdx];
 			}
 
 			float rounding = 0.0f;
 			dl->AddRectFilled(ImVec2(x1, y + pad), ImVec2(x2 - 1.0f, y + cellH - pad), color, rounding);
 			// horizontal line through the middle, offset from x1 if circle is present
-			dl->AddLine(ImVec2(x1 + (startVisible ? 6.0f : 0.0f), cy), ImVec2(x2 - 6.0f, cy), U32(_state->_colors._line_color), 1.0f);
+			dl->AddLine(ImVec2(x1 + (startVisible ? 6.0f : 0.0f), cy), ImVec2(x2 - 6.0f, cy), U32(_state->theme->line_color), 1.0f);
 
 			if (startVisible)
-				dl->AddCircle(ImVec2(x1 + 4.0f, cy), 3.0f, U32(_state->_colors._line_color), 0, 1.5f);
+				dl->AddCircle(ImVec2(x1 + 4.0f, cy), 3.0f, U32(_state->theme->line_color), 0, 1.5f);
 
 			if (endVisible)
-				dl->AddRect(ImVec2(x2 - 7.0f, cy - 3.0f), ImVec2(x2 - 1.0f, cy + 3.0f), U32(_state->_colors._line_color), 0.0f, 0, 1.5f);
+				dl->AddRect(ImVec2(x2 - 7.0f, cy - 3.0f), ImVec2(x2 - 1.0f, cy + 3.0f), U32(_state->theme->line_color), 0.0f, 0, 1.5f);
 
 
 			if (_state->_scoreMode == kModeExtended && startVisible && (sprite._castId.member || sprite.isQDShape())) {
@@ -623,7 +623,7 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 					snprintf(buf, sizeof(buf), "%s", getDisplayName(cm).c_str());
 				else if (sprite.isQDShape())
 					snprintf(buf, sizeof(buf), "Q");
-				dl->AddText(ImVec2(textX, baseY), cfg._gridTextColor, buf);
+				dl->AddText(ImVec2(textX, baseY), _state->theme->gridTextColor, buf);
 
 				// Behavior
 				buf[0] = '\0';
@@ -631,18 +631,18 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 					CastMember *sc = cast->getCastMember(sprite._scriptId.member, true);
 					if (sc) snprintf(buf, sizeof(buf), "%s", getDisplayName(sc).c_str());
 				}
-				dl->AddText(ImVec2(textX, baseY + lineH), cfg._gridTextColor, buf);
+				dl->AddText(ImVec2(textX, baseY + lineH), _state->theme->gridTextColor, buf);
 
 				// Ink
-				dl->AddText(ImVec2(textX, baseY + lineH * 2), cfg._gridTextColor, inkType2str(sprite._ink));
+				dl->AddText(ImVec2(textX, baseY + lineH * 2), _state->theme->gridTextColor, inkType2str(sprite._ink));
 
 				// Blend
 				snprintf(buf, sizeof(buf), "%d", sprite._blendAmount);
-				dl->AddText(ImVec2(textX, baseY + lineH * 3), cfg._gridTextColor, buf);
+				dl->AddText(ImVec2(textX, baseY + lineH * 3), _state->theme->gridTextColor, buf);
 
 				// Location
 				snprintf(buf, sizeof(buf), "%d,%d", sprite._startPoint.x, sprite._startPoint.y);
-				dl->AddText(ImVec2(textX, baseY + lineH *4), cfg._gridTextColor, buf);
+				dl->AddText(ImVec2(textX, baseY + lineH *4), _state->theme->gridTextColor, buf);
 			}
 
 			if (startVisible && _state->_scoreMode != kModeExtended) {
@@ -675,7 +675,7 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 					break;
 				}
 				if (label[0])
-					dl->AddText(ImVec2(x1 + 4.0f, y + (cellH - ImGui::GetTextLineHeight()) / 2.0f), cfg._gridTextColor, label);
+					dl->AddText(ImVec2(x1 + 4.0f, y + (cellH - ImGui::GetTextLineHeight()) / 2.0f), _state->theme->gridTextColor, label);
 
 			}
 
@@ -727,9 +727,9 @@ static void drawMainChannelGrid(ImDrawList *dl, ImVec2 startPos, Score *score) {
 			float x = startPos.x + f * cfg._cellWidth;
 			ImVec2 cellMin = ImVec2(x, y);
 			ImVec2 cellMax = ImVec2(x + cfg._cellWidth, y + cfg._cellHeight);
-			ImU32 col = ((rf + 1) % 5 == 0) ? cfg._tableDarkColor : cfg._tableLightColor;
+			ImU32 col = ((rf + 1) % 5 == 0) ? _state->theme->tableDarkColor : _state->theme->tableLightColor;
 			dl->AddRectFilled(cellMin, cellMax, col);
-			addThinRect(dl, cellMin, cellMax, cfg._borderColor);
+			addThinRect(dl, cellMin, cellMax, _state->theme->borderColor);
 		}
 
 		// pass 2, span bars
@@ -778,12 +778,12 @@ static void drawMainChannelGrid(ImDrawList *dl, ImVec2 startPos, Score *score) {
 			float cy = y + cfg._cellHeight * 0.2;
 			float pad = 0.0f;
 
-			dl->AddRectFilled(ImVec2(x1, y + pad), ImVec2(x2 - 1.0f, y + cfg._cellHeight - pad), U32(_state->_colors._contColors[ch % 6]), 0.0f);
-			dl->AddLine(ImVec2(x1 + (startVisible ? 6.0f : 0.0f), cy), ImVec2(x2 - 6.0f, cy), U32(_state->_colors._line_color), 1.0f);
+			dl->AddRectFilled(ImVec2(x1, y + pad), ImVec2(x2 - 1.0f, y + cfg._cellHeight - pad), _state->theme->contColors[ch % 6], 0.0f);
+			dl->AddLine(ImVec2(x1 + (startVisible ? 6.0f : 0.0f), cy), ImVec2(x2 - 6.0f, cy), U32(_state->theme->line_color), 1.0f);
 			if (startVisible)
-				dl->AddCircle(ImVec2(x1 + 4.0f, cy), 3.0f,  U32(_state->_colors._line_color), 0, 1.5f);
+				dl->AddCircle(ImVec2(x1 + 4.0f, cy), 3.0f,  U32(_state->theme->line_color), 0, 1.5f);
 			if (endVisible)
-				dl->AddRect(ImVec2(x2 - 7.0f, cy - 3.0f), ImVec2(x2 - 1.0f, cy + 3.0f), U32(_state->_colors._line_color), 0.0f, 0, 1.5f);
+				dl->AddRect(ImVec2(x2 - 7.0f, cy - 3.0f), ImVec2(x2 - 1.0f, cy + 3.0f), U32(_state->theme->line_color), 0.0f, 0, 1.5f);
 			f = (runEnd - startFrame) + 1; // skip to after the run
 		}
 
@@ -868,12 +868,11 @@ static void drawPlayhead(ImDrawList *dl, ImVec2 rulerPos, ImVec2 mainChannelGrid
 	float px = rulerPos.x + (currentFrameNum - start) * cfg._cellWidth;
 	float top = mainChannelGridPos.y; // top of main channel grid
 	float bottom = gridPos.y + cfg._tableHeight; // bottom of sprite grid
-	ImU32 RED = IM_COL32(200, 50, 0, 255);
 
-	dl->AddLine(ImVec2(px, top), ImVec2(px, bottom), RED, 2.0f);
+	dl->AddLine(ImVec2(px, top), ImVec2(px, bottom), _state->theme->playhead_color, 2.0f);
 
 	// triangle marker in the ruler
-	dl->AddTriangleFilled(ImVec2(px - 5.0f, rulerPos.y), ImVec2(px + 5.0f, rulerPos.y), ImVec2(px, rulerPos.y + 8.0f), RED);
+	dl->AddTriangleFilled(ImVec2(px - 5.0f, rulerPos.y), ImVec2(px + 5.0f, rulerPos.y), ImVec2(px, rulerPos.y + 8.0f), _state->theme->playhead_color);
 }
 
 static void handleScrolling(Score *score, int numChannels) {
@@ -922,8 +921,8 @@ static void drawLabelBar(ImDrawList *dl, ImVec2 pos, Score *score) {
 
 	// draw background rectangle
 	ImVec2 finalPos = ImVec2(pos.x + cfg._tableWidth, pos.y + cfg._labelBarHeight);
-	dl->AddRectFilled(pos, finalPos, cfg._tableDarkColor);
-	dl->AddRect(pos, finalPos, cfg._tableLightColor);
+	dl->AddRectFilled(pos, finalPos, _state->theme->tableDarkColor);
+	dl->AddRect(pos, finalPos, _state->theme->tableLightColor);
 
 	for (int f = 0; f < cfg._visibleFrames; f++) {
 		int rf = startFrame + f;
@@ -936,14 +935,14 @@ static void drawLabelBar(ImDrawList *dl, ImVec2 pos, Score *score) {
 			float textY = y + (cfg._labelBarHeight - ImGui::GetTextLineHeight()) / 2.0f;
 
 			dl->AddText(ImVec2(x - ImGui::CalcTextSize(ICON_MS_BEENHERE).x / 2.0f, textY),
-						cfg._sidebarTextColor, ICON_MS_BEENHERE);
+						_state->theme->sidebarTextColor, ICON_MS_BEENHERE);
 
 			float iconW = ImGui::CalcTextSize(ICON_MS_BEENHERE).x;
 			float textX = x + iconW / 2.0f + 2.0f;
 			float textWidth = ImGui::CalcTextSize(labelName->c_str()).x;
 
 			if (textX + textWidth < finalPos.x) // prevent text being drawn outside the table bounds
-				dl->AddText(ImVec2(textX, textY), cfg._sidebarTextColor, labelName->c_str());
+				dl->AddText(ImVec2(textX, textY), _state->theme->sidebarTextColor, labelName->c_str());
 
 			float px = pos.x + f * cfg._cellWidth;
 			ImGui::SetCursorScreenPos(ImVec2(px, y));
@@ -952,24 +951,6 @@ static void drawLabelBar(ImDrawList *dl, ImVec2 pos, Score *score) {
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("%s", labelName->c_str());
 
-		}
-	}
-}
-
-static void drawThemeButton(ImVec2 pos) {
-	ImGui::SetCursorScreenPos(pos);
-	if (ImGui::Button(ICON_MS_LIGHT_MODE)) {
-		auto &cfg = _state->_scoreCfg;
-		cfg._isLightTheme = !cfg._isLightTheme;
-		cfg._sidebarTextColor = cfg._isLightTheme ? cfg._gridTextColor : cfg._sidebarTextColor;
-		if (cfg._isLightTheme) {
-			cfg._tableLightColor = cfg._lightTableLight;
-			cfg._tableDarkColor = cfg._lightTableDark;
-			cfg._borderColor = cfg._lightBorder;
-		} else {
-			cfg._tableLightColor = cfg._darkTableLight;
-			cfg._tableDarkColor = cfg._darkTableDark;
-			cfg._borderColor = cfg._darkBorder;
 		}
 	}
 }
@@ -1014,7 +995,6 @@ void showScore() {
 		ImVec2 origin = ImGui::GetCursorScreenPos();
 		ScoreLayout layout = computeLayout(origin, _state->_scoreCfg);
 
-		drawThemeButton(layout.themeSelectorPos);
 		drawLabelBar(dl, layout.labelBarPos, score);
 		drawSidebar1(dl, layout.sidebar1Pos, score);
 		drawMainChannelGrid(dl, layout.mainChannelGridPos, score);
@@ -1126,9 +1106,9 @@ void showChannels() {
 					}
 
 					if (score->_channels[i]->_visible)
-						dl->AddCircleFilled(mid, 4.0f, U32(_state->_colors._channel_toggle));
+						dl->AddCircleFilled(mid, 4.0f, _state->theme->channel_toggle);
 					else
-						dl->AddCircle(mid, 4.0f, U32(_state->_colors._channel_toggle));
+						dl->AddCircle(mid, 4.0f, _state->theme->channel_toggle);
 
 					ImGui::PopID();
 				}

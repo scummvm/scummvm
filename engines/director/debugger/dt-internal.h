@@ -110,6 +110,67 @@ typedef struct WindowFlag {
 	bool *flag;
 } WindowFlag;
 
+enum ThemeID {
+	kThemeDark = 0,
+	kThemeLight,
+	kThemeCount
+};
+
+struct DebuggerTheme {
+	ImU32 tableLightColor;
+	ImU32 tableDarkColor;
+	ImU32 borderColor;
+	ImU32 sidebarTextColor;
+	ImU32 gridTextColor;
+	ImU32 playhead_color;
+	ImU32 current_statement_bg;
+	ImU32 channel_toggle;
+	ImU32 channelSelectedCol;
+	ImU32 channelHoveredCol;
+	ImU32 contColors[6];
+
+	// Breakpoints
+	ImVec4 bp_color_disabled;
+	ImVec4 bp_color_enabled;
+	ImVec4 bp_color_hover;
+
+	// Syntax Highlighting
+	ImVec4 current_statement;
+	ImVec4 line_color;
+	ImVec4 call_color;
+	ImVec4 builtin_color;
+	ImVec4 var_color;
+	ImVec4 literal_color;
+	ImVec4 comment_color;
+	ImVec4 type_color;
+	ImVec4 keyword_color;
+	ImVec4 the_color;
+
+	// Variable / Script References
+	ImVec4 script_ref;
+	ImVec4 var_ref;
+	ImVec4 var_ref_changed;
+	ImVec4 var_ref_out_of_scope;
+
+	// Control Panel
+	ImVec4 cp_color;
+	ImVec4 cp_color_red;
+	ImVec4 cp_active_color;
+	ImVec4 cp_bgcolor;
+	ImVec4 cp_playing_color;
+	ImVec4 cp_path_color;
+
+	// Logger
+	ImVec4 logger_error_b;
+	ImVec4 logger_warning_b;
+	ImVec4 logger_info_b;
+	ImVec4 logger_debug_b;
+	ImVec4 logger_error;
+	ImVec4 logger_warning;
+	ImVec4 logger_info;
+	ImVec4 logger_debug;
+};
+
 typedef struct ImGuiState {
 
 	struct WatchLogEntry {
@@ -132,27 +193,6 @@ typedef struct ImGuiState {
 		float _sidebar1Height = _cellHeight * 6;
 		float _labelBarHeight = _cellHeight;
 		float _cellHeightExtended = 5 * _cellHeight;
-
-		// dark theme colors
-		ImU32 _darkTableLight = IM_COL32(51, 51, 51, 255);
-		ImU32 _darkTableDark = IM_COL32(38, 38, 38, 255);
-		ImU32 _darkBorder = IM_COL32(102, 102, 102, 100);
-
-		// light theme colors
-		ImU32 _lightTableLight = IM_COL32(240, 240, 240, 255);
-		ImU32 _lightTableDark = IM_COL32(210, 210, 210, 255);
-		ImU32 _lightBorder = IM_COL32(150, 150, 150, 150);
-
-		// text colors
-		ImU32 _sidebarTextColor = IM_COL32(200, 200, 200, 255);
-		static constexpr ImU32 _gridTextColor = IM_COL32(30, 30, 30, 255);
-
-		// active colors
-		ImU32 _tableLightColor = _darkTableLight;
-		ImU32 _tableDarkColor = _darkTableDark;
-		ImU32 _borderColor = _darkBorder;
-
-		bool _isLightTheme = false;
 	} _scoreCfg;
 
 	struct ScoreState {
@@ -184,47 +224,6 @@ typedef struct ImGuiState {
 		uint _lastLinePC = 0;
 		uint _callstackSize = 0;
 	} _dbg;
-
-	struct {
-		ImVec4 _bp_color_disabled = ImVec4(0.9f, 0.08f, 0.0f, 0.0f);
-		ImVec4 _bp_color_enabled = ImVec4(0.9f, 0.08f, 0.0f, 1.0f);
-		ImVec4 _bp_color_hover = ImVec4(0.42f, 0.17f, 0.13f, 1.0f);
-
-		ImVec4 _channel_toggle = ImColor(IM_COL32(0x30, 0x30, 0xFF, 0xFF));
-
-		ImVec4 _current_statement = ImColor(IM_COL32(0xFF, 0xFF, 0x00, 0xFF));
-		//ImVec4 _line_color = ImVec4(0.44f, 0.44f, 0.44f, 1.0f);
-		ImVec4 _line_color = ImColor(IM_COL32(0x2F, 0x2F, 0x2F, 0xFF)); // added for better contrast
-		ImVec4 _call_color = ImColor(IM_COL32(0xFF, 0xC5, 0x5C, 0xFF));
-		ImVec4 _builtin_color = ImColor(IM_COL32(0x60, 0x7C, 0xFF, 0xFF));
-		ImVec4 _var_color = ImColor(IM_COL32(0x4B, 0xCD, 0x5E, 0xFF));
-		ImVec4 _literal_color = ImColor(IM_COL32(0xFF, 0x9F, 0xDA, 0x9E));
-		ImVec4 _comment_color = ImColor(IM_COL32(0xFF, 0xA5, 0x9D, 0x95));
-		//ImVec4 _type_color = ImColor(IM_COL32(0x13, 0xC5, 0xF9, 0xFF));
-		ImVec4 _type_color = ImColor(IM_COL32(0xB8, 0xB8, 0xB8, 0xC0)); // added this instead because better contrast
-		ImVec4 _keyword_color = ImColor(IM_COL32(0xC1, 0xC1, 0xC1, 0xFF));
-		ImVec4 _the_color = ImColor(IM_COL32(0xFF, 0x49, 0xEF, 0xFF));
-
-		ImVec4 _script_ref = ImColor(IM_COL32(0x7f, 0x7f, 0xff, 0xfff));
-		ImVec4 _var_ref = ImColor(IM_COL32(0xe6, 0xe6, 0x00, 0xff));
-		ImVec4 _var_ref_changed = ImColor(IM_COL32(0xFF, 0x00, 0x00, 0xFF));
-		ImVec4 _var_ref_out_of_scope = ImColor(IM_COL32(0xFF, 0x00, 0xFF, 0xFF));
-
-		// Colors to show continuation data
-		// They come from the Authoring tool
-		ImColor _contColors[6] = {
-			ImColor(IM_COL32(0xce, 0xce, 0xff, 0x80)), // 0xceceff,
-			ImColor(IM_COL32(0xff, 0xff, 0xce, 0x80)), // 0xffffce,
-			ImColor(IM_COL32(0xce, 0xff, 0xce, 0x80)), // 0xceffce,
-			ImColor(IM_COL32(0xce, 0xff, 0xff, 0x80)), // 0xceffff,
-			ImColor(IM_COL32(0xff, 0xce, 0xff, 0x80)), // 0xffceff,
-			ImColor(IM_COL32(0xff, 0xce, 0x9c, 0x80)), // 0xffce9c,
-		};
-
-		ImColor _channelSelectedCol = ImColor(IM_COL32(0x94, 0x00, 0xD3, 0xFF));
-		ImColor _channelHoveredCol = ImColor(IM_COL32(0xFF, 0xFF, 0, 0x3C));
-		int _contColorIndex = 0;
-	} _colors;
 
 
 	struct {
@@ -273,6 +272,9 @@ typedef struct ImGuiState {
 
 	ImFont *_tinyFont = nullptr;
 
+	int _activeThemeID = kThemeLight;
+	const DebuggerTheme *theme = nullptr;
+
 	struct {
 		Common::Path path;
 		uint32 resType = 0;
@@ -305,6 +307,7 @@ void displayVariable(const Common::String &name, bool changed, bool outOfScope =
 ImColor brightenColor(const ImColor &color, float factor);
 Window *windowListCombo(Common::String *target);
 Common::String formatHandlerName(int scriptId, int castId, Common::String handlerName, ScriptType scriptType, bool childScript);
+void setTheme(int themeIndex);
 
 void showCast();		// dt-cast.cpp
 void showCastDetails();	// dt-castdetails.cpp

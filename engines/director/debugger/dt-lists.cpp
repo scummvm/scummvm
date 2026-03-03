@@ -195,26 +195,26 @@ void showBreakpointList() {
 				ImVec2 pos = ImGui::GetCursorScreenPos();
 				const ImVec2 mid(pos.x + 7, pos.y + 7);
 
-				ImVec4 color = bps[i].enabled ? _state->_colors._bp_color_enabled : _state->_colors._bp_color_disabled;
+				ImVec4 color = bps[i].enabled ? _state->theme->bp_color_enabled : _state->theme->bp_color_disabled;
 				ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
 				if (ImGui::IsItemClicked(0)) {
 					if (bps[i].enabled) {
 						bps[i].enabled = false;
-						color = _state->_colors._bp_color_disabled;
+						color = _state->theme->bp_color_disabled;
 					} else {
 						bps[i].enabled = true;
-						color = _state->_colors._bp_color_enabled;
+						color = _state->theme->bp_color_enabled;
 					}
 				}
 
 				if (!bps[i].enabled && ImGui::IsItemHovered()) {
-					color = _state->_colors._bp_color_hover;
+					color = _state->theme->bp_color_hover;
 				}
 
 				if (bps[i].enabled)
 					dl->AddCircleFilled(mid, 4.0f, ImColor(color));
 				else
-					dl->AddCircle(mid, 4.0f, ImColor(_state->_colors._line_color));
+					dl->AddCircle(mid, 4.0f, ImColor(_state->theme->line_color));
 
 				// enabled column
 				ImGui::TableNextColumn();
