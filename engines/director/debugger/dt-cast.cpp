@@ -310,10 +310,10 @@ void showCast() {
 							const ImVec2 p1 = ImGui::GetItemRectMax();
 							ImGui::PushClipRect(p0, p1, true);
 							ImDrawList *draw_list = ImGui::GetWindowDrawList();
-							draw_list->AddRect(p0, p1, IM_COL32_WHITE);
+							draw_list->AddRect(p0, p1, _state->theme->borderColor);
 							const ImVec2 pos = p0 + ImVec2((thumbnailSize - textWidth) * 0.5f, (thumbnailSize - textHeight) * 0.5f);
-							draw_list->AddText(nullptr, 0.f, pos, IM_COL32_WHITE, name.c_str(), 0, thumbnailSize);
-							draw_list->AddText(nullptr, 0.f, p1 - ImVec2(16, 16), IM_COL32_WHITE, toIcon(castMember._value->_type));
+							draw_list->AddText(nullptr, 0.f, pos, _state->theme->gridTextColor, name.c_str(), 0, thumbnailSize);
+							draw_list->AddText(nullptr, 0.f, p1 - ImVec2(16, 16), _state->theme->gridTextColor, toIcon(castMember._value->_type));
 							ImGui::PopClipRect();
 						}
 						ImGui::EndGroup();

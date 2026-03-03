@@ -60,34 +60,34 @@ static void renderCastScript(Symbol &sym) {
 		const ImVec2 mid(pos.x + 7, pos.y + 7);
 		Common::String bpName = Common::String::format("%s-%d", handlerName.c_str(), pc);
 
-		color = _state->_colors._bp_color_disabled;
+		color = _state->theme->bp_color_disabled;
 
 		Director::Breakpoint *bp = getBreakpoint(handlerName, sym.ctx->_id, pc);
 		if (bp)
-			color = _state->_colors._bp_color_enabled;
+			color = _state->theme->bp_color_enabled;
 
 		ImGui::PushID(pc);
 		ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
 		if (ImGui::IsItemClicked(0)) {
 			if (bp) {
 				g_lingo->delBreakpoint(bp->id);
-				color = _state->_colors._bp_color_disabled;
+				color = _state->theme->bp_color_disabled;
 			} else {
 				Director::Breakpoint newBp;
 				newBp.type = kBreakpointFunction;
 				newBp.funcName = handlerName;
 				newBp.funcOffset = pc;
 				g_lingo->addBreakpoint(newBp);
-				color = _state->_colors._bp_color_enabled;
+				color = _state->theme->bp_color_enabled;
 			}
 		}
 
-		if (color == _state->_colors._bp_color_disabled && ImGui::IsItemHovered()) {
-			color = _state->_colors._bp_color_hover;
+		if (color == _state->theme->bp_color_disabled && ImGui::IsItemHovered()) {
+			color = _state->theme->bp_color_hover;
 		}
 
 		dl->AddCircleFilled(mid, 4.0f, ImColor(color));
-		dl->AddLine(ImVec2(pos.x + 16.0f, pos.y), ImVec2(pos.x + 16.0f, pos.y + 17), ImColor(_state->_colors._line_color));
+		dl->AddLine(ImVec2(pos.x + 16.0f, pos.y), ImVec2(pos.x + 16.0f, pos.y + 17), ImColor(_state->theme->line_color));
 
 		ImGui::SetItemTooltip("Click to add a breakpoint");
 
