@@ -573,9 +573,9 @@ void InsaneRebel2::spawnHandler25Shot(int x, int y) {
 			_turretShots[i].seqNum = _turretShotSeqCounter;
 			_turretShotSeqCounter++;
 
-			// Target position is where player clicked (screen coords)
-			_turretShots[i].targetX = x;
-			_turretShots[i].targetY = y;
+			// Target position is where player clicked, in buffer coords
+			_turretShots[i].targetX = x + _viewX;
+			_turretShots[i].targetY = y + _viewY;
 
 			// Compute gun position from GRD002 character sprite.
 			// Original uses per-direction lookup tables DAT_004578a6/DAT_004578c6.
@@ -625,11 +625,11 @@ void InsaneRebel2::spawnHandler25Shot(int x, int y) {
 
 				int drawX;
 				if (shouldMirror) {
-					drawX = _rebelViewOffset2X + (320 - spriteW - spriteXOffset);
+					drawX = _rebelViewOffset2X + (320 - spriteW - spriteXOffset) + _viewX;
 				} else {
-					drawX = _rebelViewOffset2X + spriteXOffset;
+					drawX = _rebelViewOffset2X + spriteXOffset + _viewX;
 				}
-				int drawY = spriteYOffset + _rebelViewOffset2Y;
+				int drawY = spriteYOffset + _rebelViewOffset2Y + _viewY;
 
 				// Gun barrel is approximately at the character's hand level:
 				// X: center of sprite ± directional offset toward the target
@@ -638,8 +638,8 @@ void InsaneRebel2::spawnHandler25Shot(int x, int y) {
 				_turretShots[i].gunY = drawY + (spriteH * 3) / 5;
 			} else {
 				// Fallback: approximate center-bottom of character area
-				_turretShots[i].gunX = _rebelViewOffset2X + 160;
-				_turretShots[i].gunY = _rebelViewOffset2Y + 140;
+				_turretShots[i].gunX = _rebelViewOffset2X + 160 + _viewX;
+				_turretShots[i].gunY = _rebelViewOffset2Y + 140 + _viewY;
 			}
 
 			debug("Rebel2 Handler25: Spawned shot %d target (%d,%d) gun (%d,%d)",
@@ -2909,60 +2909,82 @@ void InsaneRebel2::renderHandler7Ship(byte *renderBitmap, int pitch, int width, 
 void InsaneRebel2::renderHandler8Ship(byte *renderBitmap, int pitch, int width, int height) {
 	// Handler 8 Ship Rendering (Third-Person On Foot - POV sprites)
 	// Uses _shipSprite (POV001) with position-based offset
+	//
+	// Original FUN_00401CCF lines 87-94:
+	//   FUN_004236e0(bitmap, param_2,
+	//       (short)(shipPosX - 0xa0) >> 3,    // small X offset
+	//       (short)(shipPosY - 0x28) >> 2,    // small Y offset
+	//       0, DAT_0047e010, param_5 & 1, 1, 0);
+	//
+	// FUN_004236e0 adds the NUT sprite's internal X/Y offsets to the position
+	// parameters. The sprite's built-in offsets encode where it should appear
+	// on screen (e.g., center for Level 2/11, bottom for Level 12 FPS gun).
 
 	if (_rebelHandler != 8 || !_shipSprite || _shipLevelMode == 5)
 		return;
 
-	// Calculate display offset from raw ship position (FUN_00401ccf lines 88-89)
+	// Small position offsets from dampened ship movement (FUN_00401ccf lines 88-89)
 	int16 displayOffsetX = (_shipPosX - 0xa0) >> 3;
 	int16 displayOffsetY = (_shipPosY - 0x28) >> 2;
 
-	// Base screen position (low-res: X=160, Y=105)
-	int shipScreenX = 0xa0 + displayOffsetX;
-	int shipScreenY = 0x69 + displayOffsetY;
-
 	int numSprites = _shipSprite->getNumChars();
-	int spriteIndex = 0;
+	// Original uses param_5 & 1 (firing flag) as sprite index — NOT direction-based
+	int spriteIndex = _shipFiring ? 1 : 0;
+	if (spriteIndex >= numSprites)
+		spriteIndex = 0;
 
-	// Select sprite based on direction and sprite count
-	if (numSprites >= 35) {
-		spriteIndex = _shipDirectionH * 7 + _shipDirectionV;
-		if (spriteIndex >= numSprites)
-			spriteIndex = numSprites - 1;
-	} else if (numSprites >= 25) {
-		int vDir5 = (_shipDirectionV * 5) / 7;
-		spriteIndex = _shipDirectionH * 5 + vDir5;
-		if (spriteIndex >= numSprites)
-			spriteIndex = numSprites - 1;
-	} else if (numSprites >= 5) {
-		spriteIndex = _shipDirectionH;
-		if (spriteIndex >= numSprites)
-			spriteIndex = numSprites - 1;
-	} else if (numSprites == 2) {
-		spriteIndex = _shipFiring ? 1 : 0;
-	}
-
-	// Center sprite at position
-	int spriteW = _shipSprite->getCharWidth(spriteIndex);
-	int spriteH = _shipSprite->getCharHeight(spriteIndex);
-	int drawX = shipScreenX - spriteW / 2 + _viewX;
-	int drawY = shipScreenY - spriteH / 2 + _viewY;
+	// FUN_004236e0 adds sprite internal offsets to the x/y parameters.
+	// The internal offsets position the sprite correctly for each level type
+	// (centered for Level 2/11 third-person, bottom for Level 12 FPS).
+	int16 spriteXOffset = _shipSprite->getCharXOffset(spriteIndex);
+	int16 spriteYOffset = _shipSprite->getCharYOffset(spriteIndex);
+	int drawX = displayOffsetX + spriteXOffset + _viewX;
+	int drawY = displayOffsetY + spriteYOffset + _viewY;
 
 	renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _shipSprite, spriteIndex);
 
 	// Shadow sprite (POV004 / DAT_0047e028): drawn at same position as primary ship.
-	// Original FUN_401CCF lines 91-92 uses param_5 & 1 (firing flag) as sprite index
-	// for both primary and shadow, NOT the direction-based spriteIndex.
+	// Original FUN_401CCF lines 91-92 uses param_5 & 1 (firing flag) as sprite index.
 	if (_shipSprite2) {
 		int shadowIndex = _shipFiring ? 1 : 0;
 		if (shadowIndex < _shipSprite2->getNumChars()) {
-			renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _shipSprite2, shadowIndex);
+			int16 shadowXOff = _shipSprite2->getCharXOffset(shadowIndex);
+			int16 shadowYOff = _shipSprite2->getCharYOffset(shadowIndex);
+			int shadowX = displayOffsetX + shadowXOff + _viewX;
+			int shadowY = displayOffsetY + shadowYOff + _viewY;
+			renderNutSprite(renderBitmap, pitch, width, height, shadowX, shadowY, _shipSprite2, shadowIndex);
 		}
 	}
 
-	debug("Rebel2 Handler8: Ship at (%d,%d) raw(%d,%d) offset(%d,%d) sprite=%d/%d dir=(%d,%d)",
+	// Also render ship overlays (POV002 / POV003) if loaded.
+	// These are weapon/character overlays loaded via IACT opcode 8 par4=6,7.
+	if (_shipOverlay1) {
+		int overlayIdx = _shipFiring ? 1 : 0;
+		if (overlayIdx >= _shipOverlay1->getNumChars())
+			overlayIdx = 0;
+		int16 ovlXOff = _shipOverlay1->getCharXOffset(overlayIdx);
+		int16 ovlYOff = _shipOverlay1->getCharYOffset(overlayIdx);
+		int ovlX = displayOffsetX + ovlXOff + _viewX;
+		int ovlY = displayOffsetY + ovlYOff + _viewY;
+		renderNutSprite(renderBitmap, pitch, width, height, ovlX, ovlY, _shipOverlay1, overlayIdx);
+	}
+	if (_shipOverlay2) {
+		int overlayIdx = _shipFiring ? 1 : 0;
+		if (overlayIdx >= _shipOverlay2->getNumChars())
+			overlayIdx = 0;
+		int16 ovlXOff = _shipOverlay2->getCharXOffset(overlayIdx);
+		int16 ovlYOff = _shipOverlay2->getCharYOffset(overlayIdx);
+		int ovlX = displayOffsetX + ovlXOff + _viewX;
+		int ovlY = displayOffsetY + ovlYOff + _viewY;
+		renderNutSprite(renderBitmap, pitch, width, height, ovlX, ovlY, _shipOverlay2, overlayIdx);
+	}
+
+	int sprW = _shipSprite->getCharWidth(spriteIndex);
+	int sprH = _shipSprite->getCharHeight(spriteIndex);
+	debug("Rebel2 Handler8: Ship at (%d,%d) raw(%d,%d) offset(%d,%d) nutOff(%d,%d) size(%d,%d) bottom=%d view(%d,%d) sprite=%d/%d",
 		drawX, drawY, _shipPosX, _shipPosY, displayOffsetX, displayOffsetY,
-		spriteIndex, numSprites, _shipDirectionH, _shipDirectionV);
+		spriteXOffset, spriteYOffset, sprW, sprH, drawY + sprH - _viewY,
+		_viewX, _viewY, spriteIndex, numSprites);
 }
 
 // Handler 25: Draw GRD001 (wall/cockpit overlay) in procPostRendering.
@@ -2979,9 +3001,10 @@ void InsaneRebel2::renderHandler25ShipPre(byte *renderBitmap, int pitch, int wid
 	if (!_grd001Sprite || _grd001Sprite->getNumChars() <= 0)
 		return;
 
-	// CRITICAL: Clip height to 180 (0xb4) to avoid drawing over status bar
-	const int clipHeight = 180;
-	int renderHeight = MIN(height, clipHeight);
+	// CRITICAL: Clip height to 180 (0xb4) + viewport Y to avoid drawing over status bar.
+	// For oversized buffers (e.g., Level 12's 640x260), the status bar is at
+	// Y = 180 + _viewY in buffer coordinates.
+	int renderHeight = MIN(height, 180 + _viewY);
 
 	// Draw _grd001Sprite based on _grdSpriteMode (DAT_00457900)
 	// Each mode has specific conditions from FUN_0041db5e:
@@ -3015,8 +3038,12 @@ void InsaneRebel2::renderHandler25ShipPre(byte *renderBitmap, int pitch, int wid
 		int16 spriteXOffset = _grd001Sprite->getCharXOffset(0);
 		int16 spriteYOffset = _grd001Sprite->getCharYOffset(0);
 
-		int drawX = _rebelViewOffset2X + spriteXOffset;
-		int drawY = _rebelViewOffset2Y + spriteYOffset;
+		// Add viewport offset so sprite follows the visible area.
+		// For 320x200 buffers (Level 2), _viewX/_viewY are 0 — no change.
+		// For oversized buffers (Level 12's 640x260), the viewport scrolls
+		// and sprites must be drawn at the correct position within it.
+		int drawX = _rebelViewOffset2X + spriteXOffset + _viewX;
+		int drawY = _rebelViewOffset2Y + spriteYOffset + _viewY;
 
 		// Apply width-halving logic from original assembly:
 		// When damage==0 (uncovered), the original halves DAT_00482234 (buffer width)
@@ -3053,9 +3080,8 @@ void InsaneRebel2::renderHandler25Ship(byte *renderBitmap, int pitch, int width,
 	if (_rebelHandler != 25)
 		return;
 
-	// CRITICAL: Clip height to 180 (0xb4) to avoid drawing over status bar
-	const int clipHeight = 180;
-	int renderHeight = MIN(height, clipHeight);
+	// CRITICAL: Clip height to 180 (0xb4) + viewport Y to avoid drawing over status bar.
+	int renderHeight = MIN(height, 180 + _viewY);
 
 	// _grd002Sprite (GRD002) is always drawn if it exists (from FUN_41DB5E line 230)
 	// The sprite index is calculated based on damage level and aiming position
@@ -3167,16 +3193,16 @@ void InsaneRebel2::renderHandler25Ship(byte *renderBitmap, int pitch, int width,
 		if (shouldMirror) {
 			// Mirrored position: X = DAT_00457910 + (320 - sprite_width - sprite_x_offset)
 			// From assembly lines 240-243
-			drawX = _rebelViewOffset2X + (320 - spriteW - spriteXOffset);
+			drawX = _rebelViewOffset2X + (320 - spriteW - spriteXOffset) + _viewX;
 		} else {
 			// Normal position: X = DAT_00457910 + sprite_internal_x_offset
 			// From assembly line 238
-			drawX = _rebelViewOffset2X + spriteXOffset;
+			drawX = _rebelViewOffset2X + spriteXOffset + _viewX;
 		}
 
 		// Y = sprite_internal_y_offset + DAT_00457912
 		// From assembly line 246
-		drawY = spriteYOffset + _rebelViewOffset2Y;
+		drawY = spriteYOffset + _rebelViewOffset2Y + _viewY;
 
 		renderNutSpriteMirrored(renderBitmap, pitch, width, renderHeight, drawX, drawY, _grd002Sprite, spriteIdx, shouldMirror);
 

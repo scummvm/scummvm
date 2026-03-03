@@ -652,8 +652,14 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 				mouseOffsetY = -127;
 
 			// Calculate target positions using the original formula
+			// Original FUN_00401234 lines 151-166:
+			//   local_18 = ((mouseX * 5 + 0x27b) * 0x40) / 0xfe    -> X target
+			//   local_1c = ((mouseY * 5 + 0x27b) * 0x10) / 0xfe    -> Y target
+			//   _DAT_0043e004 = -local_1c   (stored negated for cursor display)
+			// The interpolation (lines 181-193) uses local_1c (positive), NOT _DAT_0043e004.
+			// So the interpolation target must be the positive formula result.
 			_shipTargetX = (int16)(((mouseOffsetX * 5 + 0x27b) * 0x40) / 0xfe);
-			_shipTargetY = (int16)(-((mouseOffsetY * 5 + 0x27b) * 0x10) / 0xfe);
+			_shipTargetY = (int16)(((mouseOffsetY * 5 + 0x27b) * 0x10) / 0xfe);
 
 			// Smooth interpolation toward target (max 50 pixels per frame)
 			const int16 maxStep = 50;  // 0x32 in hex
