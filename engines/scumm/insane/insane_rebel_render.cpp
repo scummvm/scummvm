@@ -1963,6 +1963,17 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	
 	_player->setScrollOffset(_viewX, _viewY);
 
+	// Death check: original game (FUN_417E53 line 25) exits video playback
+	// when DAT_0047a7ec >= 0xff (damage accumulator reaches 255).
+	// Sync _playerShield from _playerDamage and break out of video on death.
+	if (_rebelHandler != 0) {
+		_playerShield = 255 - _playerDamage;
+		if (_playerShield <= 0) {
+			_playerShield = 0;
+			_vm->_smushVideoShouldFinish = true;
+		}
+	}
+
 	// --- HUD Drawing Order (from FUN_004089ab assembly analysis) ---
 	// Based on FUN_004089ab:
 	// 1. Line 156: FUN_004288c0 fills status bar background at Y=0xb4 (180)

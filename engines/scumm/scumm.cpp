@@ -2725,20 +2725,33 @@ Common::Error ScummEngine::go() {
 					int selectedLevel = rebel->_selectedChapter + 1;
 					debug("ScummEngine: Starting chapter %d (level %d)", rebel->_selectedChapter + 1, selectedLevel);
 
-					// Run the complete level (handles BEG, gameplay, END/DIE/RETRY/OVER)
-					int result = rebel->runLevel(selectedLevel);
+					// Level progression loop: on success, advance to next level
+					// Original game chains levels directly (e.g. FUN_0040598c(FUN_00418063,0))
+					while (!shouldQuit() && selectedLevel >= 1 && selectedLevel <= 15) {
+						int result = rebel->runLevel(selectedLevel);
 
-					// Save pilot progress after level completion
-					if (result == InsaneRebel2::kLevelNextLevel) {
-						rebel->updatePilotProgress(selectedLevel - 1,
-							rebel->_playerScore, rebel->_playerLives, rebel->_playerDamage);
+						if (result == InsaneRebel2::kLevelNextLevel) {
+							rebel->updatePilotProgress(selectedLevel - 1,
+								rebel->_playerScore, rebel->_playerLives, rebel->_playerDamage);
+							selectedLevel++;
+							if (selectedLevel > 15) {
+								// Beat the game — play credits
+								rebel->playCreditsSequence();
+								break;
+							}
+						} else {
+							// kLevelGameOver, kLevelQuit, kLevelReturnToMenu — back to menu
+							if (shouldQuit() || result == InsaneRebel2::kLevelQuit) {
+								// Propagate quit to outer loop
+								break;
+							}
+							break;
+						}
 					}
 
-					if (shouldQuit() || result == InsaneRebel2::kLevelQuit) {
+					if (shouldQuit()) {
 						break;
 					}
-
-					// After level completion or game over, return to menu
 				}
 				// If kChapterSelectBack, loop back to main menu
 			}
