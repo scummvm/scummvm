@@ -589,8 +589,7 @@ void VideoPlayer::updateVideo(int slot, bool force) {
 	}
 
 	if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) {
-		if (video->decoder->hasVideo() &&
-			!video->properties.noWaitSound)
+		if (video->decoder->hasVideo() || !video->properties.noWaitSound)
 			return;
 
 		video->properties.startFrame = video->decoder->getCurFrame();
