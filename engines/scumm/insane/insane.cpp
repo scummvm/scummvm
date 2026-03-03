@@ -184,7 +184,7 @@ void Insane::initvars() {
 		for (j = 0; j < 9; j++)
 			_enHdlVar[i][j] = 0;
 
-	for (i = 0; i < 0x200; i++)
+	for (i = 0; i < 0x401; i++)
 		_iactBits[i] = 0;
 
 

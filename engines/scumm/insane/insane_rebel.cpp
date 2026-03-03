@@ -252,7 +252,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 		for (j = 0; j < 9; j++)
 			_enHdlVar[i][j] = 0;
 
-	for (i = 0; i < 0x200; i++)
+	for (i = 0; i < 0x401; i++)
 		_iactBits[i] = 0;
 
 	for (i = 0; i < 512; i++) {
@@ -1124,7 +1124,7 @@ bool InsaneRebel2::isBitSet(int n) {
 	if (n < 1) {
 		return false;
 	}
-	assert (n < 0x200);
+	assert (n < 0x401);
 
 	return (_iactBits[n] != 0);
 }
@@ -1133,11 +1133,11 @@ void InsaneRebel2::setBit(int n) {
 	// FUN_004239b0: When n < 1 (i.e., n == 0 or negative), set ALL bits to 1 (disable all objects)
 	// This is used to disable all enemies/objects at once
 	if (n < 1) {
-		for (int i = 0; i < 0x200; i++)
+		for (int i = 0; i < 0x401; i++)
 			_iactBits[i] = 1;
 		return;
 	}
-	assert (n < 0x200);
+	assert (n < 0x401);
 	_iactBits[n] = 1;
 }
 
@@ -1146,11 +1146,11 @@ void InsaneRebel2::clearBit(int n) {
 	// This is called by FUN_00423880 at the start of video playback to reset the bit table,
 	// ensuring all enemies are visible when a new level/segment starts.
 	if (n < 1) {
-		for (int i = 0; i < 0x200; i++)
+		for (int i = 0; i < 0x401; i++)
 			_iactBits[i] = 0;
 		return;
 	}
-	assert (n < 0x200);
+	assert (n < 0x401);
 	_iactBits[n] = 0;
 }
 
