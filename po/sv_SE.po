@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-03-03 07:23+0000\n"
-"PO-Revision-Date: 2026-02-26 11:31+0000\n"
+"PO-Revision-Date: 2026-03-03 13:59+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -6836,10 +6836,8 @@ msgid "Don't fade every screen to black when leaving a room."
 msgstr "Tona inte ut varje skärm till svart när ett rum lämnas."
 
 #: engines/agos/dialogs.cpp:93
-#, fuzzy
-#| msgid "Use original save/load screens"
 msgid "Use original Acorn system cursor"
-msgstr "Använd originalskärmar för spara/läs in"
+msgstr "Använd ursprunglig Acorn-systempekare"
 
 #: engines/agos/dialogs.cpp:94
 msgid "Toggle between the system cursor and the default cursor."
@@ -13775,16 +13773,12 @@ msgid "Display all exits on current location"
 msgstr "Visa alla utgångar på aktuell plats"
 
 #: engines/stark/metaengine.cpp:306
-#, fuzzy
-#| msgid "Scroll list up"
 msgid "Scroll dialogs up"
-msgstr "Bläddra listan uppåt"
+msgstr "Rulla dialoger uppåt"
 
 #: engines/stark/metaengine.cpp:312
-#, fuzzy
-#| msgid "Scroll list down"
 msgid "Scroll dialogs down"
-msgstr "Bläddra listan nedåt"
+msgstr "Rulla dialoger nedåt"
 
 #: engines/stark/metaengine.cpp:318
 msgid "Go to next dialog"
