@@ -128,6 +128,7 @@ public:
 	void loadMenuResource(Common::MacResManager *resFork, uint16 id);
 	void loadMenuBarResource(Common::MacResManager *resFork, uint16 id);
 	void createSubMenuFromString(int id, const char *string, int commandId);
+	void appendMenu(MacMenuSubMenu *submenu, const Common::String &string, int commandId);
 	void clearSubMenu(int id);
 
 	MacMenuSubMenu *getSubmenu(MacMenuSubMenu *submenu, int index);
