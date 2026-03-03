@@ -154,7 +154,9 @@ void PelrockEngine::init() {
 	if (gameInitialized == false) {
 		gameInitialized = true;
 		loadAnims();
-		setScreenAndPrepare(0, ALFRED_LEFT);
+		// setScreenAndPrepare(0, ALFRED_LEFT);
+				setScreenAndPrepare(36, ALFRED_LEFT);
+
 		// setScreen(3, ALFRED_RIGHT);
 		// setScreen(22, ALFRED_DOWN);
 		// setScreen(41, ALFRED_DOWN);
@@ -372,10 +374,6 @@ void PelrockEngine::frameTriggers() {
 
 void PelrockEngine::shakeEffect() {
 	if(!_shakeEffectState.enabled) {
-		return;
-	}
-	if(_room->_currentRoomNumber == 36) {
-		_shakeEffectState.disable();
 		return;
 	}
 
@@ -1737,6 +1735,12 @@ void PelrockEngine::gameLoop() {
 		endingScene();
 		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
 	}
+	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_u) {
+		if(_room->_currentRoomNumber == 36) {
+			pyramidCollapse();
+		}
+		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
+	}
 
 	renderScene();
 
@@ -2142,6 +2146,20 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		}
 		break;
 	}
+	case 36: {
+		if(_shakeEffectState.enabled) {
+			_shakeEffectState.disable();
+		}
+		if(_state->getFlag(FLAG_PIRAMIDE_JODIDA) == true &&
+		// _state->getFlag(FLAG_VIGILANTE_MEANDO) == true &&
+		_state->getFlag(FLAG_PIRAMIDE_JODIDA2) == false) {
+			_state->setFlag(FLAG_VIGILANTE_MEANDO, false);
+			_state->setFlag(FLAG_PIRAMIDE_JODIDA2, true);
+			debug("Pyramid is now active!");
+			pyramidCollapse();
+		}
+		break;
+	}
 	case 39:
 	case 40:
 		// Rooms 39/40 are the pharaoh's guard and throne room — all conversation
@@ -2222,6 +2240,128 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 	default:
 		break;
 	}
+}
+
+void PelrockEngine::pyramidCollapse() {
+	// === Pyramid Collapse Sequence (Room 36 per-frame handler at 0x1098F) ===
+	// Binary: sprite index 2 = collapse animation, sprite index 0 = NPC guard.
+	// Original sprite table indices are offset by 2 from ScummVM indices due
+	// to the 2 header sprite slots in the room data.
+
+	// Hide NPC initially — binary sets sprite_2 field 0x21 = 0xFF (zOrder = -1)
+	Sprite *npc = _room->findSpriteByIndex(0);
+	if (npc)
+		npc->zOrder = -1;
+
+	// Start collapse animation — binary sets sprite_4 field 0x21 = 0xFE (zOrder = 254)
+	Sprite *collapseSprite = _room->findSpriteByIndex(2);
+	if (collapseSprite)
+		collapseSprite->zOrder = 254;
+
+	// Play collapse sound
+	_sound->playSound("QUAKE1ZZ.SMP", 0);
+
+	// ----- PHASE 1: Wait for collapse animation frame 5 -----
+	// Binary: loop sleep(0x69) + tick + render, check sprite_4 field 0x20 == 5
+	while (!shouldQuit()) {
+		_events->pollEvent();
+		renderScene(OVERLAY_NONE);
+		_screen->update();
+		g_system->delayMillis(10);
+		collapseSprite = _room->findSpriteByIndex(2);
+		if (!collapseSprite || collapseSprite->animData[collapseSprite->curAnimIndex].curFrame >= 5) {
+			collapseSprite->zOrder = -1; // Hide collapse animation sprite after frame 5
+			break;
+		}
+	}
+	debug("Collapse animation reached frame 5, applying background changes");
+
+	// ----- PHASE 2: Background tile copies (hide pyramid top) -----
+	// Copy 1: 99×45 from secondary buffer to front buffer (fills collapsed area)
+	{
+		static const int srcX = 240, srcY = 145;
+		// static const int dstX = 510, dstY = 33;
+		static const int copyW = 99, copyH = 45;
+		for (int row = 0; row < copyH; row++) {
+			memcpy(
+				_currentBackground + (srcY + row) * 640 + srcX,
+				_compositeBuffer + (srcY + row) * 640 + srcX,
+				copyW);
+		}
+	}
+	_room->findSpriteByIndex(2)->zOrder = -1;
+
+	_dialog->say(_res->_ingameTexts[YANOSEHACEONCOMOANTES]);
+	npc = _room->findSpriteByIndex(0);
+	if (npc)
+		npc->zOrder = 254;
+
+	npc = _room->findSpriteByIndex(0);
+	npc->animData[0].nframes = 5;
+	if (npc) {
+		npc->animData[npc->curAnimIndex].movementFlags = 0x1C;
+		npc->y -= 25; // One-time nudge upward to emerge from behind pyramid
+	}
+	while (!shouldQuit()) {
+		_events->pollEvent();
+		renderScene(OVERLAY_NONE);
+		_screen->update();
+		g_system->delayMillis(10);
+		npc = _room->findSpriteByIndex(0);
+		if (!npc || npc->x >= 339) break;
+	}
+
+	npc = _room->findSpriteByIndex(0);
+	if (npc)
+		npc->animData[npc->curAnimIndex].movementFlags = 0x340;
+	while (!shouldQuit()) {
+		_events->pollEvent();
+		renderScene(OVERLAY_NONE);
+		_screen->update();
+		g_system->delayMillis(10);
+		npc = _room->findSpriteByIndex(0);
+		if (!npc || npc->y >= 206) break;
+	}
+
+	npc = _room->findSpriteByIndex(0);
+	if (npc)
+		npc->animData[npc->curAnimIndex].movementFlags = 0x14;
+	while (!shouldQuit()) {
+		_events->pollEvent();
+		renderScene(OVERLAY_NONE);
+		_screen->update();
+		g_system->delayMillis(10);
+		npc = _room->findSpriteByIndex(0);
+		if (!npc || npc->x <= 307) break;
+	}
+
+	// Stop NPC movement
+	npc = _room->findSpriteByIndex(0);
+	npc->animData[0].nframes = 1;
+	if (npc)
+		npc->animData[npc->curAnimIndex].movementFlags = 0;
+
+	_dialog->say(_res->_ingameTexts[POR5MINUTOS], 0);
+
+	_room->disableExit(36, 0);
+
+	_room->addStickerToRoom(21, 79);
+	_room->disableExit(21, 2, PERSIST_BOTH);
+	HotSpot *pyramidHotspot = new HotSpot();
+	pyramidHotspot->x = 510;
+	pyramidHotspot->y = 33;
+	pyramidHotspot->w = 99;
+	pyramidHotspot->h = 45;
+	pyramidHotspot->extra = 411;
+	pyramidHotspot->isEnabled = false;
+	pyramidHotspot->innerIndex = 2;
+	pyramidHotspot->index = 7;
+	_room->disableHotspot(21, pyramidHotspot, PERSIST_BOTH);
+
+	_dialog->say(_res->_ingameTexts[TALUEGOLUCAS]);
+
+	// Walk Alfred to right edge exit -> room 21
+	walkLoop(603, 212, ALFRED_RIGHT);
 }
 
 void PelrockEngine::endingScene() {

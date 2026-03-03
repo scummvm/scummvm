@@ -267,6 +267,7 @@ public:
 
 	// Actions
 	void doExtraActions(int roomNumber);
+void pyramidCollapse();
 	void endingScene();
 	void credits();
 	void initGodsSequences(int roomNumber);
@@ -379,6 +380,7 @@ public:
 	void useDollWithBed(int inventoryObject, HotSpot *hotspot);
 	void giveMagazineToGuard(int inventoryObject, HotSpot *hotspot);
 	void giveWaterToGuard(int inventoryObject, HotSpot *hotspot);
+	void guardMovement();
 	void pickUpStone(HotSpot *hotspot);
 	void playSpecialAnim(uint32 offset, bool compressed, int x, int y, int width, int height, int numFrames);
 	void giveStoneToSlaves(int inventoryObject, HotSpot *hotspot);

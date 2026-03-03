@@ -117,7 +117,8 @@ void SoundManager::playSound(SonidoFile sound, int channel, int loopCount) {
 				_mixer->stopHandle(_sfxHandles[channel]);
 			}
 		}
-		Audio::AudioStream *finalStream = loopCount == -1 ? stream : Audio::makeLoopingAudioStream(stream, 0);
+		debug("Playing sound with loop count %d on channel %d", loopCount, channel);
+		Audio::AudioStream *finalStream = loopCount != -1 ? stream : Audio::makeLoopingAudioStream(stream, 0);
 
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], finalStream, loopCount, 255U, 0, DisposeAfterUse::YES);
 	}

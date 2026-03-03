@@ -1454,34 +1454,10 @@ void PelrockEngine::giveWaterToGuard(int inventoryObject, HotSpot *hotspot) {
 	_dialog->say(_res->_ingameTexts[ALACONUSTED]);
 	_state->removeInventoryItem(86);
 	addInventoryItem(76);
-	if (_state->getFlag(FLAG_VIGILANTE_BEBE_AGUA) == 1) {
+	if (_state->getFlag(FLAG_VIGILANTE_BEBE_AGUA) == 3) {
 		_dialog->say(_res->_ingameTexts[MEMEO]);
-
-		// guard running
-		Sprite *sprite = _room->findSpriteByIndex(0);
-		sprite->animData[0].nframes = 5;
-		sprite->animData[0].movementFlags = 0x1C; // Move right
-		byte state = 0;
-		// Basic loop to wait until the sprite has reached the door
-		while (!shouldQuit()) {
-			_events->pollEvent();
-			renderScene();
-			if (sprite->x >= 339 && state == 0) {
-				state = 1;
-				sprite->animData[0].movementFlags = 0x240; // Move up
-			}
-			if (sprite->y <= 188 && state == 1) {
-				state = 2;
-				sprite->animData[0].movementFlags = 0x14; // Move left
-			}
-			if (sprite->x <= 327 && state == 2) {
-				sprite->zOrder = -1; // Hide sprite
-				break;
-			}
-			debug("Guard position: (%d, %d), state: %d", sprite->x, sprite->y, state);
-			_screen->update();
-			g_system->delayMillis(10);
-		}
+		_state->setFlag(FLAG_VIGILANTE_MEANDO, true);
+		guardMovement();
 		_room->disableSprite(36, 0, PERSIST_BOTH);
 		_room->enableExit(0, PERSIST_BOTH);
 	} else {
@@ -1489,10 +1465,39 @@ void PelrockEngine::giveWaterToGuard(int inventoryObject, HotSpot *hotspot) {
 	}
 }
 
+void PelrockEngine::guardMovement() {
+
+	// guard running
+	Sprite *sprite = _room->findSpriteByIndex(0);
+	sprite->animData[0].nframes = 5;
+	sprite->animData[0].movementFlags = 0x1C; // Move right
+	byte state = 0;
+	// Basic loop to wait until the sprite has reached the door
+	while (!shouldQuit()) {
+		_events->pollEvent();
+		renderScene();
+		if (sprite->x >= 339 && state == 0) {
+			state = 1;
+			sprite->animData[0].movementFlags = 0x240; // Move up
+		}
+		if (sprite->y <= 188 && state == 1) {
+			state = 2;
+			sprite->animData[0].movementFlags = 0x14; // Move left
+		}
+		if (sprite->x <= 327 && state == 2) {
+			sprite->zOrder = -1; // Hide sprite
+			break;
+		}
+		debug("Guard position: (%d, %d), state: %d", sprite->x, sprite->y, state);
+		_screen->update();
+		g_system->delayMillis(10);
+	}
+}
+
 void PelrockEngine::pickUpStone(HotSpot *hotspot) {
 	_room->addSticker(117);
 	_state->setFlag(FLAG_PIRAMIDE_JODIDA, true);
-	_sound->playSound("QUAKE2ZZ.SMP", 0, 0);
+	_sound->playSound("QUAKE2ZZ.SMP", 0, -1);
 	_shakeEffectState.enable();
 	checkIngredients();
 	_dialog->say(_res->_ingameTexts[AYAYAY]);
