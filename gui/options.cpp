@@ -55,7 +55,6 @@
 #include "audio/fmopl.h"
 #include "widgets/scrollcontainer.h"
 #include "widgets/edittext.h"
-#include "graphics/hotspot_renderer.h"
 
 #ifdef USE_CLOUD
 #include "backends/cloud/cloudmanager.h"
@@ -114,7 +113,6 @@ enum {
 	kFullscreenToggled		= 'oful',
 	kRandomSeedClearCmd     = 'rndc',
 	kViewLogCmd             = 'vwlg',
-	kEnableHotspotsCmd		= 'enhs',
 };
 
 enum {
@@ -2181,8 +2179,6 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_rendererPopUp = nullptr;
 	_autosavePeriodPopUpDesc = nullptr;
 	_autosavePeriodPopUp = nullptr;
-	_hotspotMarkerPopUpDesc = nullptr;
-	_hotspotMarkerPopUp = nullptr;
 	_guiLanguagePopUpDesc = nullptr;
 	_guiLanguagePopUp = nullptr;
 	_guiLanguageUseGameLanguageCheckbox = nullptr;
@@ -2483,20 +2479,6 @@ void GlobalOptionsDialog::build() {
 
 	_debugLevelPopUp->setSelected(gDebugLevel + 1);
 
-	bool hotspotsEnabled = ConfMan.getBool("enable_hotspots", Common::ConfigManager::kApplicationDomain);
-	_enableHotspotsCheckbox->setState(hotspotsEnabled);
-	_hotspotMarkerPopUpDesc->setEnabled(hotspotsEnabled);
-	_hotspotMarkerPopUp->setEnabled(hotspotsEnabled);
-
-	int hotspotMarker = ConfMan.getInt("hotspot_marker", Common::ConfigManager::kApplicationDomain);
-	_hotspotMarkerPopUp->setSelectedTag(hotspotMarker);
-
-	bool showHotspotText = ConfMan.getBool("show_hotspot_text", Common::ConfigManager::kApplicationDomain);
-	if (!ConfMan.hasKey("show_hotspot_text", Common::ConfigManager::kApplicationDomain))
-		showHotspotText = true;
-	_showHotspotTextCheckbox->setState(showHotspotText);
-	_showHotspotTextCheckbox->setEnabled(hotspotsEnabled);
-
 	ThemeEngine::GraphicsMode mode = ThemeEngine::findMode(ConfMan.get("gui_renderer"));
 	if (mode == ThemeEngine::kGfxDisabled)
 		mode = ThemeEngine::_defaultRendererMode;
@@ -2771,23 +2753,6 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 
 	// I18N: Debug level 11, all messages
 	_debugLevelPopUp->appendEntry(_("11 (all)"), 11);
-
-	_enableHotspotsCheckbox = new CheckboxWidget(boss, prefix + "EnableHotspots",
-		_("Enable hotspot display"),
-		_("Enable visual markers and labels for interactive objects"),
-		kEnableHotspotsCmd
-	);
-
-	_hotspotMarkerPopUpDesc = new StaticTextWidget(boss, prefix + "HotspotMarkerPopupDesc", _("Hotspot marker:"));
-	_hotspotMarkerPopUp = new PopUpWidget(boss, prefix + "HotspotMarkerPopup");
-	_hotspotMarkerPopUp->appendEntry(_("Point"), Graphics::kMarkerPoint);
-	_hotspotMarkerPopUp->appendEntry(_("Square"), Graphics::kMarkerSquare);
-	_hotspotMarkerPopUp->appendEntry(_("Crosshair"), Graphics::kMarkerCrosshair);
-
-	_showHotspotTextCheckbox = new CheckboxWidget(boss, prefix + "ShowHotspotText",
-		_("Show hotspot labels"),
-		_("Display text labels next to hotspot markers")
-	);
 
 #ifdef USE_DISCORD
 	_discordRpcCheckbox = new CheckboxWidget(boss, prefix + "DiscordRpc",
@@ -3095,10 +3060,6 @@ void GlobalOptionsDialog::apply() {
 
 		warning("Debug level set to %d", gDebugLevel);
 	}
-
-	ConfMan.setBool("enable_hotspots", _enableHotspotsCheckbox->getState(), Common::ConfigManager::kApplicationDomain);
-	ConfMan.setInt("hotspot_marker", _hotspotMarkerPopUp->getSelectedTag(), Common::ConfigManager::kApplicationDomain);
-	ConfMan.setBool("show_hotspot_text", _showHotspotTextCheckbox->getState(), Common::ConfigManager::kApplicationDomain);
 
 #ifdef USE_UPDATES
 	if (g_system->getUpdateManager()) {
@@ -3473,14 +3434,6 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			_curTheme->setLabel(browser.getSelectedName());
 			_curTheme->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 		}
-		break;
-	}
-	case kEnableHotspotsCmd: {
-		bool enabled = _enableHotspotsCheckbox->getState();
-		_hotspotMarkerPopUpDesc->setEnabled(enabled);
-		_hotspotMarkerPopUp->setEnabled(enabled);
-		_showHotspotTextCheckbox->setEnabled(enabled);
-		g_gui.scheduleTopDialogRedraw();
 		break;
 	}
 	case kRandomSeedClearCmd: {

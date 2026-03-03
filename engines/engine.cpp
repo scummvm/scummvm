@@ -799,11 +799,11 @@ void Engine::drawHotspots() {
 	overlayBuffer.create(overlayWidth, overlayHeight, overlayFormat);
 	g_system->grabOverlay(overlayBuffer);
 
-	bool showText = ConfMan.getBool("show_hotspot_text", Common::ConfigManager::kApplicationDomain);
-	if (!ConfMan.hasKey("show_hotspot_text", Common::ConfigManager::kApplicationDomain))
+	bool showText = ConfMan.getBool("show_hotspot_text");
+	if (!ConfMan.hasKey("show_hotspot_text"))
 		showText = true;
 
-	int markerType = ConfMan.getInt("hotspot_marker", Common::ConfigManager::kApplicationDomain);
+	int markerType = ConfMan.getInt("hotspot_marker");
 
 	Graphics::HotspotRenderer renderer;
 	renderer.render(&overlayBuffer, hotspots, gameWidth, gameHeight,
