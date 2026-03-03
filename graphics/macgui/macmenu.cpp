@@ -399,14 +399,14 @@ MacMenuSubMenu *MacMenu::addSubMenu(MacMenuSubMenu *submenu, int index) {
 			index = _items.size() - 1;
 
 		if (_items[index]->submenu != nullptr)
-			warning("Overwritting submenu #%d", index);
+			warning("MacMenu::addSubMenu: Overwriting submenu #%d", index);
 		return (_items[index]->submenu = new MacMenuSubMenu());
 	} else {
 		if (index == -1)
 			index = submenu->items.size() - 1;
 
 		if (submenu->items[index]->submenu != nullptr)
-			warning("Overwritting submenu #%d", index);
+			warning("MacMenu::addSubMenu: Overwriting submenu #%d", index);
 		return (submenu->items[index]->submenu = new MacMenuSubMenu());
 	}
 }
@@ -692,11 +692,15 @@ void MacMenu::createSubMenuFromString(int id, const char *str, int commandId) {
 	clearSubMenu(id);
 
 	Common::String string(str);
-	Common::String item;
 	MacMenuSubMenu *submenu = getSubmenu(nullptr, id);
 
 	if (submenu == nullptr)
 		submenu = addSubMenu(nullptr, id);
+	appendMenu(submenu, string, commandId);
+}
+
+void MacMenu::appendMenu(MacMenuSubMenu *submenu, const Common::String &string, int commandId) {
+	Common::String item;
 
 	for (uint i = 0; i < string.size(); i++) {
 		while (i < string.size() && (string[i] != ';' && string[i] != '\r')) // Read token, consume \r for popup menu (MacPopUp)
@@ -718,7 +722,7 @@ void MacMenu::createSubMenuFromString(int id, const char *str, int commandId) {
 			item = Common::String(item.c_str(), p - 1);
 		}
 
-		if (item == "(-") {
+		if ((item == "(-") || (item.hasPrefix("-"))) {
 			addMenuItem(submenu, NULL, 0);
 		} else {
 			bool enabled = true;
