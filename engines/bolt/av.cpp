@@ -99,6 +99,7 @@ bool BoltEngine::playAV(RTFResource *rtfHandle, int16 animIndex, int16 width, in
 
 	// Not in the original, but it helps cleaning up
 	// if the user wants to quit during a video...
+	assert(shouldQuit());
 	killRTF(nullptr);
 	cleanUpAV();
 	return false;

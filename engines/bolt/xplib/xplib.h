@@ -66,13 +66,13 @@ struct XPCycleState {
 };
 
 typedef struct XPPicDesc {
-	byte *pixelData;     // +0x00: pixel buffer (8bpp)
-	int16 width;         // +0x04: image width
-	int16 height;        // +0x06: image height
-	byte *palette;       // +0x08: RGB palette data
-	int16 paletteStart;  // +0x0C: first palette index
-	int16 paletteCount;  // +0x0E: number of palette entries
-	int16 flags;         // +0x10: bit 0 = transparent, bit 1 = RLE
+	byte *pixelData;
+	int16 width;
+	int16 height;
+	byte *palette;
+	int16 paletteStart;
+	int16 paletteCount;
+	int16 flags;
 
 	XPPicDesc() {
 		pixelData = nullptr;
@@ -93,14 +93,14 @@ enum XPSurfaceType : int {
 typedef struct XPSurface {
 	XPPicDesc mainPic;
 	XPPicDesc overlayPic;
-	int16 dirtyPalStart; // +0x24
-	int16 dirtyPalEnd;   // +0x26
+	int16 dirtyPalStart;
+	int16 dirtyPalEnd;
 
 	XPSurface() {
 		dirtyPalStart = 0;
 		dirtyPalEnd = 0;
 	}
-} XPSurface;             // total: 0x28 = 40 bytes
+} XPSurface;
 
 enum XPEventTypes : int16 {
 	etEmpty      = 0,
@@ -129,12 +129,14 @@ typedef struct XPEvent {
 	XPEvent *next;
 	XPEventTypes type;
 	uint32 payload;
+	byte *payloadPtr;
 
 	XPEvent() {
 		prev = nullptr;
 		next = nullptr;
 		type = etEmpty;
 		payload = 0;
+		payloadPtr = nullptr;
 	}
 } XPEvent;
 
@@ -182,9 +184,9 @@ public:
 	void updateCursorPosition();
 
 	// Events
-	int16 getEvent(int16 filter, uint32 *outData);
-	int16 peekEvent(int16 filter, uint32 *outData);
-	void postEvent(XPEventTypes type, uint32 data);
+	int16 getEvent(int16 filter, uint32 *outData, byte **outPtrData = nullptr);
+	int16 peekEvent(int16 filter, uint32 *outData, byte **outPtrData = nullptr);
+	void postEvent(XPEventTypes type, uint32 data, byte *ptrData = nullptr);
 	int16 setInactivityTimer(int16 seconds);
 	int16 setScreenSaverTimer(int16 seconds);
 	bool enableController();
@@ -213,7 +215,6 @@ public:
 	void freeMem(void *mem);
 
 	// Sound
-	void waveCb();
 	bool playSound(byte *data, uint32 size, int16 sampleRate);
 	bool pauseSound();
 	bool resumeSound();
@@ -346,7 +347,6 @@ protected:
 	Common::Rect g_prevOverlayCursorRect;
 
 	byte *g_vgaFramebuffer = nullptr;
-	//Graphics::Surface *g_videoSurface = nullptr;
 	byte *g_rowDirtyFlags = nullptr;
 	byte g_cursorBackgroundSaveBuffer[16 * 16];
 
@@ -357,7 +357,7 @@ protected:
 	void fileError(const char *message);
 
 	// Sound
-	bool pollSound(uint32 *outData);
+	bool pollSound(byte **outData);
 	bool initSound();
 	void shutdownSound();
 
@@ -373,6 +373,7 @@ protected:
 	int16 _sndSampleRate = 22050;
 	uint32 _sndNextDeadline = 0;
 	uint32 _sndBufferQueueTime = 0;
+	Common::Queue<byte *> _bufferSourceQueue;
 
 	// Timer
 	bool initTimer();

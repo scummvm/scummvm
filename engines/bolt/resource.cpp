@@ -647,8 +647,12 @@ BOLTCallback BoltEngine::g_defaultGroupFreeCallbacks[25];
 BOLTCallback BoltEngine::g_fredTypeLoadCallbacks[28];
 BOLTCallback BoltEngine::g_fredTypeFreeCallbacks[28];
 
+BOLTCallback BoltEngine::g_topCatTypeLoadCallbacks[26];
+BOLTCallback BoltEngine::g_topCatTypeFreeCallbacks[26];
+
 void BoltEngine::noOpCb() {}
 void BoltEngine::swapAllWordsCb() { ((BoltEngine *)g_engine)->swapAllWords(); }
+void BoltEngine::swapAllLongsCb() { ((BoltEngine *)g_engine)->swapAllLongs(); }
 void BoltEngine::swapPicHeaderCb() { ((BoltEngine *)g_engine)->swapPicHeader(); }
 void BoltEngine::swapAndResolvePicDescCb() { ((BoltEngine *)g_engine)->swapAndResolvePicDesc(); }
 void BoltEngine::swapFirstWordCb() { ((BoltEngine *)g_engine)->swapFirstWord(); }
@@ -661,6 +665,8 @@ void BoltEngine::resolveAllRefsCb() { ((BoltEngine *)g_engine)->resolveAllRefs()
 void BoltEngine::swapFredAnimEntryCb() { ((BoltEngine *)g_engine)->swapFredAnimEntry(); }
 void BoltEngine::swapFredAnimDescCb() { ((BoltEngine *)g_engine)->swapFredAnimDesc(); }
 void BoltEngine::swapFredLevelDescCb() { ((BoltEngine *)g_engine)->swapFredLevelDesc(); }
+
+void BoltEngine::swapTopCatHelpEntryCb() { ((BoltEngine *)g_engine)->swapTopCatHelpEntry(); }
 
 void BoltEngine::initCallbacks() {
 	// --- BOOTHS ---
@@ -734,6 +740,33 @@ void BoltEngine::initCallbacks() {
 	g_fredBoltCallbacks.memberFreeCallbacks = g_defaultMemberFreeCallbacks;
 	g_fredBoltCallbacks.groupLoadCallbacks = g_defaultGroupLoadCallbacks;
 	g_fredBoltCallbacks.groupFreeCallbacks = g_defaultGroupFreeCallbacks;
+
+	// --- TOPCAT ---
+	for (int i = 0; i < ARRAYSIZE(g_topCatTypeLoadCallbacks); i++) {
+		g_topCatTypeLoadCallbacks[i] = noOpCb;
+	}
+
+	g_topCatTypeLoadCallbacks[2] = swapAllWordsCb;
+	g_topCatTypeLoadCallbacks[4] = swapAllLongsCb;
+	g_topCatTypeLoadCallbacks[6] = resolveAllRefsCb;
+	g_topCatTypeLoadCallbacks[8] = swapSpriteHeaderCb;
+	g_topCatTypeLoadCallbacks[10] = swapPicHeaderCb;
+	g_topCatTypeLoadCallbacks[11] = swapAndResolvePicDescCb;
+	g_topCatTypeLoadCallbacks[12] = swapFirstTwoWordsCb;
+	g_topCatTypeLoadCallbacks[25] = swapTopCatHelpEntryCb;
+
+	for (int i = 0; i < ARRAYSIZE(g_topCatTypeFreeCallbacks); i++) {
+		g_topCatTypeFreeCallbacks[i] = noOpCb;
+	}
+
+	g_topCatTypeFreeCallbacks[8] = freeSpriteCleanUpCb;
+
+	g_topCatBoltCallbacks.typeLoadCallbacks = g_topCatTypeLoadCallbacks;
+	g_topCatBoltCallbacks.typeFreeCallbacks = g_topCatTypeFreeCallbacks;
+	g_topCatBoltCallbacks.memberLoadCallbacks = g_defaultMemberLoadCallbacks;
+	g_topCatBoltCallbacks.memberFreeCallbacks = g_defaultMemberFreeCallbacks;
+	g_topCatBoltCallbacks.groupLoadCallbacks = g_defaultGroupLoadCallbacks;
+	g_topCatBoltCallbacks.groupFreeCallbacks = g_defaultGroupFreeCallbacks;
 }
 
 } // End of namespace Bolt

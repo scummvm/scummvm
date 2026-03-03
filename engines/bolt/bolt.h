@@ -269,6 +269,20 @@ typedef struct FredEntityState {
 	}
 } FredEntityState;
 
+typedef struct TopCatAnim {
+	int16 animType; // + 00
+	int16 animIndex;// + 02
+	int16 transitionToNextQuestionFlag;// + 04
+	int16 *seqPtr;  // + 04
+
+	TopCatAnim() {
+		animType = 0;
+		animIndex = 0;
+		transitionToNextQuestionFlag = 0;
+		seqPtr = nullptr;
+	}
+} TopCatAnim;
+
 class BoltEngine : public Engine {
 friend class XpLib;
 
@@ -493,6 +507,7 @@ protected:
 	static void noOpCb();
 
 	static void swapAllWordsCb();
+	static void swapAllLongsCb();
 	static void swapPicHeaderCb();
 	static void swapAndResolvePicDescCb();
 	static void swapFirstWordCb();
@@ -701,7 +716,104 @@ protected:
 	int16 scoobyGame(int16 prevBooth) { return 0; }
 
 	// --- TOPCAT ---
-	int16 topCatGame(int16 prevBooth) { return 0; }
+	int16 topCatGame(int16 prevBooth);
+	bool initTopCat();
+	void cleanUpTopCat();
+	int16 playTopCat();
+	int16 handleActionButton(int16 *result);
+	void queueAnim(int16 animType, int16 param);
+	bool maintainAnim(int16 soundEvent);
+	void maintainIdleSound(int16 decrement);
+	bool startNextAnim(int16 *playAnswerAnim);
+	void setAnimType(int16 newType);
+	void highlightObject(byte *entry, int16 highlight);
+	bool setupNextQuestion();
+	void adjustColors(byte *pic, int8 shift);
+	void shuffleTopCatQuestions();
+	void shuffleTopCatPermutations();
+	void getTopCatSoundInfo(BOLTLib *lib, int16 memberId, FredSoundInfo *soundInfo);
+	void setScoreLights(int16 litMask);
+	void swapTopCatHelpEntry();
+
+	static void swapTopCatHelpEntryCb();
+
+	RTFResource *g_topCatRtfHandle = nullptr;
+	RTFResource *g_topCatAvHandle = nullptr;
+	BOLTLib *g_topCatBoltLib = nullptr;
+	BOLTCallbacks g_topCatBoltCallbacks;
+
+	static BOLTCallback g_topCatTypeLoadCallbacks[26];
+	static BOLTCallback g_topCatTypeFreeCallbacks[26];
+
+	byte *g_topCatBackgroundPalette = nullptr;
+	byte *g_topCatBackground = nullptr;
+	byte *g_topCatBackgroundAnimationPalette = nullptr;
+	byte *g_topCatGraphicsAssets = nullptr;
+
+	int16 g_topCatBackgroundAnimFrame = 0;
+	int16 g_topCatMaxBackgroundAnimFrames = 0;
+	int16 g_topCatCurrentAnimType = 0;
+	int16 g_topCatAnimStateMachineStep = 0;
+	int16 g_topCatAnimQueueSize = 0;
+	int16 g_topCatQueuedSoundFrames = 0;
+	byte *g_topCatButtonsPalette = nullptr;
+	byte *g_topCatBlinkEntries = nullptr;
+	byte *g_topCatLightsPalette = nullptr;
+	int16 *g_topCatBlinkSeqPtr = nullptr;
+	byte *g_topCatSelectedChoiceOverlayGfx = nullptr;
+	byte *g_topCatCycleData = nullptr;
+	XPCycleState g_topCatCycleSpecs[4];
+	byte *g_topCatShuffledQuestions = nullptr;
+	byte *g_topCatShuffledAnswers = nullptr;
+	byte *g_topCatAnswersPermutations = nullptr;
+	byte *g_topCatAnswers = nullptr;
+	byte *g_topCatAnswersScreenPositions = nullptr;
+	int16 g_topCatSavedScore = 0;
+	int16 g_topCatSaveHistory = 0;
+	const char *g_topCatSaveFileName = "TopCatBF";
+	const char *g_topCatStaticSaveFileName = "TopCatBFStatic";
+	int16 g_topCatScore = 0;
+	int16 g_topCatShuffledQuestionsArrayIdx = 0;
+	uint32 g_topCatBlinkTimer = 0;
+	FredSoundInfo g_topCatSoundInfo;
+	byte g_topCatSavedShuffledQuestions[60] = { 0 };
+	byte g_topCatSavedShuffledAnswers[60] = { 0 };
+	byte g_topCatSavedAnswersPermutations[60 * 3] = { 0 };
+	byte g_topCatSaveBuffer[302] = { 0 };
+	byte *g_topCatHoveredEntry = nullptr;
+	byte *g_topCatHelpButton = nullptr;
+	byte *g_topCatBackButton = nullptr;
+	byte *g_topCatBlinkEntry = nullptr;
+	int16 g_topCatCycleStep = 0;
+	int16 g_topCatDrawnQuestionId = 0;
+	int16 g_topCatCurrentAnswerIdx = 0;
+	XPCycleState g_topCatChoiceCycleState[4];
+	TopCatAnim g_topCatAnimQueue[3];
+	int16 g_topCatCorrectAnimIdx = 0;
+	int16 g_topCatWrongAnimIdx = 0;
+	int16 g_topCatShouldPlayAnswerAnim = 0;
+	int16 g_topCatMaintainSoundFlag = 0;
+	int16 g_topCatPermTableA[3] = { 0, 1, 2 };
+	int16 g_topCatPermTableB[3] = { 0, 1, 2 };
+	int16 g_topCatBlinkSeq0[5] = { 0x01, 0x00, 0x01, 0x00, 0x01 };
+	int16 g_topCatBlinkSeq1[5] = { 0x03, 0x01, 0x03, 0x01, 0x03 };
+	int16 g_topCatBlinkSeq2[5] = { 0x07, 0x03, 0x07, 0x03, 0x07 };
+	int16 g_topCatBlinkSeq3[5] = { 0x0F, 0x07, 0x0F, 0x07, 0x0F };
+	int16 g_topCatBlinkSeq4[5] = { 0x1F, 0x0F, 0x1F, 0x0F, 0x1F };
+	int16 g_topCatBlinkSeq5[5] = { 0x3F, 0x1F, 0x3F, 0x1F, 0x3F };
+	int16 g_topCatBlinkSeq6[25] = {
+		0x09, 0x12, 0x24, 0x09, 0x12, 0x24,
+		0x09, 0x12, 0x24, 0x09, 0x12, 0x24,
+		0x09, 0x12, 0x24, 0x09, 0x12, 0x24,
+		0x09, 0x12, 0x24, 0x09, 0x12, 0x24,
+		0x3F
+	};
+
+	int16 *g_topCatBlinkSeqTable[7] = {
+		g_topCatBlinkSeq0, g_topCatBlinkSeq1, g_topCatBlinkSeq2,
+		g_topCatBlinkSeq3, g_topCatBlinkSeq4, g_topCatBlinkSeq5,
+		g_topCatBlinkSeq6
+	};
 
 	// --- YOGI ---
 	int16 yogiGame(int16 prevBooth) { return 0; }

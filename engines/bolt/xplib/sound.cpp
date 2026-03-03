@@ -47,8 +47,9 @@ bool XpLib::initSound() {
 	return true;
 }
 
-bool XpLib::pollSound(uint32 *outData) {
-	*outData = 0;
+bool XpLib::pollSound(byte **outData) {
+	if (outData)
+		*outData = nullptr;
 
 	if (_sndQueued == 0 || _sndPaused)
 		return false;
@@ -92,9 +93,16 @@ bool XpLib::pollSound(uint32 *outData) {
 	if (!ready)
 		return false;
 
-	*outData = 1; // The original puts the elapsed buffer data in here...
-
 	// Buffer completed!
+	byte *sourcePtr = nullptr;
+	if (!_bufferSourceQueue.empty()) {
+		sourcePtr = _bufferSourceQueue.front();
+		_bufferSourceQueue.pop();
+	}
+
+	if (outData)
+		*outData = sourcePtr;
+
 	_sndCompletedCount--;
 	_sndQueued--;
 
@@ -136,9 +144,10 @@ bool XpLib::playSound(byte *data, uint32 size, int16 sampleRate) {
 	// Drain completed buffers if full...
 	int retries = 0;
 	while (_audioStream->numQueuedStreams() >= 50) {
-		uint32 eventData;
+		byte *eventData;
+		uint32 dummy = 0;
 		if (pollSound(&eventData))
-			postEvent(etSound, eventData);
+			postEvent(etSound, dummy, eventData);
 
 		_bolt->_system->delayMillis(1);
 		if (++retries > 5000) {
@@ -168,6 +177,7 @@ bool XpLib::playSound(byte *data, uint32 size, int16 sampleRate) {
 
 	_sndQueued++;
 	_durationQueue.push(durationMs);
+	_bufferSourceQueue.push(data);
 
 	return true;
 }
@@ -206,6 +216,9 @@ bool XpLib::stopSound() {
 
 	while (!_durationQueue.empty())
 		_durationQueue.pop();
+
+	while (!_bufferSourceQueue.empty())
+		_bufferSourceQueue.pop();
 
 	uint32 dummy;
 	while (getEvent(etSound, &dummy) == etSound);

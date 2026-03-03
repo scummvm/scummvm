@@ -53,7 +53,7 @@ void XpLib::shutdownEvents() {
 	}
 }
 
-int16 XpLib::getEvent(int16 filter, uint32 *outData) {
+int16 XpLib::getEvent(int16 filter, uint32 *outData, byte **outPtrData) {
 	pumpMessages();
 
 	// Search event queue for matching event type...
@@ -75,6 +75,8 @@ int16 XpLib::getEvent(int16 filter, uint32 *outData) {
 
 	// Copy event data to caller...
 	*outData = node->payload;
+	if (outPtrData)
+		*outPtrData = node->payloadPtr;
 
 	// Return node to free list...
 	node->next = g_eventFreeList;
@@ -83,7 +85,7 @@ int16 XpLib::getEvent(int16 filter, uint32 *outData) {
 	return node->type;
 }
 
-int16 XpLib::peekEvent(int16 filter, uint32 *outData) {
+int16 XpLib::peekEvent(int16 filter, uint32 *outData, byte **outPtrData) {
 	pumpMessages();
 
 	XPEvent *node = g_eventQueueHead;
@@ -140,13 +142,14 @@ void XpLib::enqueueEvent(XPEvent *node) {
 
 void XpLib::pumpMessages() {
 	Common::Event event;
-	uint32 timerData;
+	uint32 dummy = 0;
+	byte *soundDataPtr;
 	bool mouseMoved = false;
 
 	// Drain any pending sound events...
-	while (pollSound(&timerData) && !_bolt->shouldQuit()) {
+	while (pollSound(&soundDataPtr) && !_bolt->shouldQuit()) {
 		updateTimers();
-		postEvent(etSound, timerData);
+		postEvent(etSound, dummy, soundDataPtr);
 	}
 
 	cycleColors();
@@ -347,7 +350,7 @@ void XpLib::postJoystickEvent(int16 source, int16 dx, int16 dy) {
 	}
 }
 
-void XpLib::postEvent(XPEventTypes type, uint32 data) {
+void XpLib::postEvent(XPEventTypes type, uint32 data, byte *ptrData) {
 	if (type == etMouseMove) {
 		if (g_lastMouseEventData == data)
 			return;
@@ -387,6 +390,11 @@ void XpLib::postEvent(XPEventTypes type, uint32 data) {
 	node->type = type;
 	node->payload = data;
 	node->next = nullptr;
+
+	if (type == etSound) {
+		node->payloadPtr = ptrData;
+	}
+
 	enqueueEvent(node);
 }
 
