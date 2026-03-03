@@ -173,7 +173,7 @@ void FoolGame::sub_128_004() {
 			this->sub_128_2e3e();
 		}
 		if (this->var_i16_7c6 & 0x40) {
-			this->sub_128_2126();
+			this->menuChapterSelect();
 		}
 		if (this->var_i16_7c6 & 0x200) {
 			this->sub_128_1f44();
@@ -220,8 +220,8 @@ void FoolGame::sub_128_0a2(int16 unk2, int16 unk1) {
 
 void FoolGame::sub_128_11c(Common::U32String &unk2, Common::U32String &unk1) {
 	// 128:011c
-	g_zbasic->unk_110(this->var_str_272, unk1);
-	g_zbasic->unk_110(this->var_str_172, unk2);
+	g_zbasic->stringCopy(this->var_str_272, unk1);
+	g_zbasic->stringCopy(this->var_str_172, unk2);
 	this->var_str_384 = g_zbasic->str(3);
 
 	this->var_i16_586 = 0;
@@ -250,7 +250,7 @@ void FoolGame::sub_128_11c(Common::U32String &unk2, Common::U32String &unk1) {
 
 void FoolGame::sub_128_1e4(Common::U32String &unk1) {
 	// 128:01e4
-	g_zbasic->unk_110(this->var_str_172, unk1);
+	g_zbasic->stringCopy(this->var_str_172, unk1);
 	this->var_str_588 = g_zbasic->str(4);
 	this->var_i16_688 = 0;
 
@@ -390,7 +390,7 @@ void FoolGame::sub_128_50e(int16 unk3, int16 unk2, int16 unk1) {
 
 void FoolGame::sub_128_55c(Common::U32String &unk1) {
 	// 128:055c
-	g_zbasic->unk_110(this->var_str_172, unk1);
+	g_zbasic->stringCopy(this->var_str_172, unk1);
 	g_toolbox->PenNormal();
 	g_toolbox->SetRect(this->arr_rect_1910c, 0x6c, 0x127, 0x84, 0x137);
 	g_toolbox->EraseRoundRect(this->arr_rect_1910c, 0x8, 0x7);
@@ -463,7 +463,7 @@ void FoolGame::fillRect(int16 top, int16 left, int16 bottom, int16 right, int16 
 
 void FoolGame::sub_128_918(Common::U32String &unk1) {
 	// 128:0918
-	g_zbasic->unk_110(unk1, this->var_str_172);
+	g_zbasic->stringCopy(this->var_str_172, unk1);
 	this->var_i16_30 = g_toolbox->StringWidth(this->var_str_172);
 	g_toolbox->MoveTo(0x100 - (this->var_i16_30 / 2), this->var_i16_7a2);
 	g_toolbox->DrawString(this->var_str_172);
@@ -941,7 +941,7 @@ void FoolGame::sub_128_20d0() {
 	this->storyRenderPage();
 }
 
-void FoolGame::sub_128_2126() {
+void FoolGame::menuChapterSelect() {
 	this->sub_128_1c4a(0x40);
 	// 128:2132
 	for (int i = this->selectedMenuChapter; i <= this->storyPageCount; i++) {
@@ -1997,7 +1997,7 @@ void FoolGame::sub_129_123a() {
 	g_toolbox->SetPort(this->var_i32_8);
 	this->fillRect(0, 7, 0x13, this->var_i16_5a - 7, 0);
 	g_zbasic->text(0, 0xc, 0, kSrcOr);
-	// Loading Game text
+	// Loading Game text during initial puzzle load
 	this->var_str_172 = Common::U32String::format("%s %d%s", g_zbasic->str(158).encode().c_str(), this->var_i16_68a, g_zbasic->str(159).encode().c_str());
 	this->var_i16_30 = g_toolbox->StringWidth(this->var_str_172);
 	g_toolbox->MoveTo((this->var_i16_5a / 2) - (this->var_i16_30 / 2), 0xe);

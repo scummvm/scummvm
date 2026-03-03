@@ -73,9 +73,9 @@ public:
 	void sub_128_1fee();
 	void sub_128_2078();
 	void sub_128_20d0();
-	void sub_128_2126();
+	void menuChapterSelect(); // sub_128_2126
 	void sub_128_21c8();
-	void storyRenderPage();
+	void storyRenderPage(); // sub_128_2202
 	void sub_128_271a();
 	void sub_128_27d6();
 	void sub_128_2808();

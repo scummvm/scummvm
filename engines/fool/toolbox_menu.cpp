@@ -19,17 +19,48 @@
  *
  */
 
+#include "common/tokenizer.h"
 #include "graphics/macgui/macmenu.h"
-#include "graphics/macgui/mactext-canvas.h"
-#include "graphics/macgui/mactext.h"
-#include "graphics/managed_surface.h"
-#include "graphics/pixelformat.h"
 
-#include "fool/fool.h"
+#include "fool/detection.h"
 #include "fool/toolbox.h"
-#include "fool/utils.h"
 
 namespace Fool {
+
+void Toolbox::AppendMenu(MenuHandle &theMenu, const Common::U32String &data) {
+	if (!theMenu) {
+		error("Toolbox::AppendMenu: Invalid menu handle");
+		return;
+	}
+
+	debugC(5, kDebugLoading, "Toolbox::AppendMenu: menuID %d, data \"%s\"", theMenu->menuID, data.encode().c_str());
+
+	if (_defaultMenu) {
+		Graphics::MacMenuSubMenu *sub = _defaultMenu->getSubmenu(nullptr, theMenu->menuID-1);
+		if (!sub) {
+			warning("Toolbox::AppendMenu: menu ID %d not found, skipping", theMenu->menuID);
+			return;
+		}
+		_defaultMenu->appendMenu(sub, data.encode(Common::kMacRoman), 0);
+		Common::U32StringTokenizer tok(data, "\r;");
+		while (!tok.empty()) {
+			Common::U32String token = tok.nextToken();
+			theMenu->menuData.push_back(token);
+		}
+	}
+}
+
+void Toolbox::CheckItem(MenuHandle &theMenu, uint16 item, bool checked) {
+	if (!theMenu) {
+		warning("Toolbox::CheckItem: empty menu handle");
+		return;
+	}
+	if (theMenu->menuData.size() < (uint)(item + 1)) {
+		warning("Toolbox::CheckItem: item %d out of range for menu %d", item, theMenu->menuID);
+		return;
+	}
+	warning("STUB: Toolbox::CheckItem");
+}
 
 void Toolbox::ClearMenuBar() {
 	if (_defaultMenu) {
@@ -37,13 +68,41 @@ void Toolbox::ClearMenuBar() {
 	}
 }
 
+uint16 Toolbox::CountMItems(MenuHandle &theMenu) {
+	if (!theMenu) {
+		error("Toolbox::CountMItems: Invalid menu handle");
+		return 0;
+	}
+	return theMenu->menuData.size();
+}
+
 void Toolbox::DeleteMenu(uint16 menuID) {
+	debugC(5, kDebugLoading, "Toolbox::DeleteMenu: menuID %d", menuID);
 	if (_menu.contains(menuID)) {
 		_menu.erase(menuID);
 	}
 	if (_defaultMenu) {
 		_defaultMenu->clearSubMenu(menuID-1);
+		_defaultMenu->removeMenuItem(nullptr, menuID-1);
+		_defaultMenu->insertMenuItem(nullptr, "", menuID-1);
 	}
+}
+
+void Toolbox::DisableItem(MenuHandle &theMenu, uint16 item) {
+	if (!theMenu) {
+		warning("Toolbox::DisableItem: empty menu handle");
+		return;
+	}
+	if (theMenu->menuData.size() < (uint)(item + 1)) {
+		warning("Toolbox::DisableItem: item %d out of range for menu %d", item, theMenu->menuID);
+		return;
+	}
+	warning("STUB: Toolbox::DisableItem");
+}
+
+void Toolbox::DisposeMenu(MenuHandle &theMenu) {
+	// only frees memory, DeleteMenu is responsible for removing it from the menu state
+	theMenu = nullptr;
 }
 
 void Toolbox::DrawMenuBar() {
@@ -52,10 +111,18 @@ void Toolbox::DrawMenuBar() {
 	}
 }
 
-void Toolbox::DisposeMenu(MenuHandle &theMenu) {
-	// only frees memory, DeleteMenu is responsible for removing it from the menu state
-	theMenu = nullptr;
+void Toolbox::EnableItem(MenuHandle &theMenu, uint16 item) {
+	if (!theMenu) {
+		warning("Toolbox::EnableItem: empty menu handle");
+		return;
+	}
+	if (theMenu->menuData.size() < (uint)(item + 1)) {
+		warning("Toolbox::EnableItem: item %d out of range for menu %d", item, theMenu->menuID);
+		return;
+	}
+	warning("STUB: Toolbox::EnableItem");
 }
+
 
 MenuHandle Toolbox::GetMHandle(uint16 menuID) {
 	MenuHandle result;
@@ -104,8 +171,8 @@ MenuHandle Toolbox::NewMenu(uint16 menuID, const Common::U32String &menuTitle) {
 		}
 		_defaultMenu->clearSubMenu(menuID-1);
 		Graphics::MacMenuItem *item = _defaultMenu->getMenuItem(menuID-1);
-		item->unicodeText = menuTitle;
-		item->unicode = true;
+		item->text = menuTitle.encode(Common::kMacRoman);
+		item->unicode = false;
 		_defaultMenu->addSubMenu(nullptr, menuID-1);
 	}
 	return handle;

@@ -285,8 +285,7 @@ public:
 	void unk_20();
 	bool incrAndCheck(int16 &a0, int16 d1, int16 d0);
 	void unk_44(int16 unk1);
-	// string copy? dest, src
-	void unk_110(Common::U32String &unk1, Common::U32String &unk2);
+	void stringCopy(Common::U32String &dest, const Common::U32String &src);
 	void unk_130(int16 unk1);
 	void unk_158();
 	void unk_331(uint16 unk1, int16 unk2);
