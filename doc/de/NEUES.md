@@ -3,6 +3,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
 #### 2026.1.1 (xx.xx.2026)
 
+ Neue Spiele:
+   - Unterstützung für Necronomicon: The Dawning of Darkness hinzugefügt.
+
  Allgemein:
    - Verbesserte PC-Speaker-Emulation.
    - Unterstützung für Mehrfach-Auswahl in der Spiele-Liste im ScummVM-Launcher hinzugefügt.
