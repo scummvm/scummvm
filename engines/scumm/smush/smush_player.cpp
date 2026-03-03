@@ -391,6 +391,9 @@ void SmushPlayer::handleStore(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleStore()");
 	assert(subSize >= 4);
 	_storeFrame = true;
+	if (isRA2()) {
+		debug("SmushPlayer STOR: frame=%d - will store next FOBJ", _frame);
+	}
 }
 
 void SmushPlayer::handleFetch(int32 subSize, Common::SeekableReadStream &b) {
@@ -858,6 +861,12 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	if (_dst == _specialBuffer)
 		pitch = _width;
 
+	// Save original FOBJ dimensions before clipping. Codec 37/47 (delta block/glyph)
+	// decode the full frame into the buffer starting at (0,0) regardless of FOBJ
+	// left/top position. They must use the original un-clipped dimensions.
+	int origWidth = width;
+	int origHeight = height;
+
 	int srcSkipY = 0;
 	if (isRA2()) {
 		ra2AdjustFrameCoords(left, top, width, height, pitch, &srcSkipY);
@@ -880,19 +889,22 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 		smushDecodeRLE(_dst, adjustedSrc, left, top, width, height, pitch);
 		break;
 	case SMUSH_CODEC_DELTA_BLOCKS:
+		// Codec 37 writes the full frame to dst via memcpy — always uses original
+		// FOBJ dimensions, not position-clipped dimensions.
 		if (!_deltaBlocksCodec)
-			_deltaBlocksCodec = new SmushDeltaBlocksDecoder(width, height);
+			_deltaBlocksCodec = new SmushDeltaBlocksDecoder(origWidth, origHeight);
 		if (_deltaBlocksCodec)
 			_deltaBlocksCodec->decode(_dst, src);
 		break;
 	case SMUSH_CODEC_DELTA_GLYPHS:
+		// Codec 47 also writes the full frame — use original dimensions.
 		if (!_deltaGlyphsCodec)
-			_deltaGlyphsCodec = new SmushDeltaGlyphsDecoder(width, height);
+			_deltaGlyphsCodec = new SmushDeltaGlyphsDecoder(origWidth, origHeight);
 		if (_deltaGlyphsCodec)
 			_deltaGlyphsCodec->decode(_dst, src);
 		break;
 	case SMUSH_CODEC_UNCOMPRESSED:
-		smushDecodeUncompressed(_dst, src, left, top, width, height, _vm->_screenWidth);
+		smushDecodeUncompressed(_dst, src, left, top, width, height, pitch);
 		break;
 	default:
 		if (isRA2() && ra2DecodeCodec(codec, src, left, top, width, height, pitch, dataSize))
@@ -903,6 +915,25 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 			break;
 		}
 		error("Invalid codec for frame object : %d", codec);
+	}
+
+	// RA2 debug: check buffer fill after decode
+	if (isRA2() && _dst == _specialBuffer && _frame < 3) {
+		int nonZero = 0;
+		int total = _width * _height;
+		for (int i = 0; i < total; i++) {
+			if (_dst[i] != 0) nonZero++;
+		}
+		// Sample bottom half
+		int bottomNonZero = 0;
+		int bottomStart = (_height / 2) * _width;
+		int bottomTotal = total - bottomStart;
+		for (int i = bottomStart; i < total; i++) {
+			if (_dst[i] != 0) bottomNonZero++;
+		}
+		debug("SmushPlayer FOBJ decode done: frame=%d codec=%d buf=%dx%d total=%d nonzero=%d (%d%%) bottomHalf=%d/%d (%d%%)",
+			_frame, codec, _width, _height, total, nonZero, (nonZero * 100) / total,
+			bottomNonZero, bottomTotal, bottomTotal > 0 ? (bottomNonZero * 100) / bottomTotal : 0);
 	}
 
 	if (_storeFrame && !isRA2()) {
@@ -963,6 +994,11 @@ void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b
 
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFrameObject: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d",
 		_frame, codec, left, top, width, height, subSize - 14);
+
+	if (isRA2()) {
+		debug("SmushPlayer FOBJ: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d storeFrame=%d _width=%d _height=%d",
+			_frame, codec, left, top, width, height, subSize - 14, _storeFrame, _width, _height);
+	}
 
 	int32 chunk_size = subSize - 14;
 	byte *chunk_buffer = (byte *)malloc(chunk_size);
