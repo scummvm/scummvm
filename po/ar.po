@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-03-03 07:23+0000\n"
+"POT-Creation-Date: 2026-03-03 17:08+0000\n"
 "PO-Revision-Date: 2026-02-24 22:26+0000\n"
 "Last-Translator: Mohamed Shaaban <mohmedbashamedo@hotmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -14798,7 +14798,7 @@ msgstr "استعادة المشاهد المفقودة"
 msgid "Restore some scenes originally in the Windows edition"
 msgstr "استعادة بعض المشاهد في الأصل في إصدار Windows"
 
-#: engines/tinsel/detection_tables.h:481
+#: engines/tinsel/detection_tables.h:498 engines/tinsel/detection_tables.h:515
 msgid "Saturn CD version is not yet supported"
 msgstr "نسخة Saturn CD غير مدعومة حتى الآن"
 

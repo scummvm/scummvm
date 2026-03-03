@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-03-03 07:23+0000\n"
+"POT-Creation-Date: 2026-03-03 17:08+0000\n"
 "PO-Revision-Date: 2026-02-07 15:22+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -14431,7 +14431,7 @@ msgstr "Palauta puuttuvat näkymät"
 msgid "Restore some scenes originally in the Windows edition"
 msgstr "Palauta jotkin Windows-versiossa olleet näkymät"
 
-#: engines/tinsel/detection_tables.h:481
+#: engines/tinsel/detection_tables.h:498 engines/tinsel/detection_tables.h:515
 msgid "Saturn CD version is not yet supported"
 msgstr "Saturn CD-versio ei ole vielä tuettu"
 

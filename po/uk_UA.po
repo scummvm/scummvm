@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-03-03 07:23+0000\n"
+"POT-Creation-Date: 2026-03-03 17:08+0000\n"
 "PO-Revision-Date: 2026-02-26 23:58+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -14077,7 +14077,7 @@ msgstr "Відновити пропущені сцени"
 msgid "Restore some scenes originally in the Windows edition"
 msgstr "Відновити деяки сцени, присутні в версії Windows"
 
-#: engines/tinsel/detection_tables.h:481
+#: engines/tinsel/detection_tables.h:498 engines/tinsel/detection_tables.h:515
 msgid "Saturn CD version is not yet supported"
 msgstr "Saturn CD версія ще не підтримується"
 

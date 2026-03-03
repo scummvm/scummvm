@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-03-03 07:23+0000\n"
+"POT-Creation-Date: 2026-03-03 17:08+0000\n"
 "PO-Revision-Date: 2026-02-18 22:40+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -12986,7 +12986,7 @@ msgstr "ნაკლული სცენების აღდგენა"
 msgid "Restore some scenes originally in the Windows edition"
 msgstr ""
 
-#: engines/tinsel/detection_tables.h:481
+#: engines/tinsel/detection_tables.h:498 engines/tinsel/detection_tables.h:515
 msgid "Saturn CD version is not yet supported"
 msgstr ""
 
