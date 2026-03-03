@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-03-02 22:17+0000\n"
+"POT-Creation-Date: 2026-03-03 07:23+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -7441,8 +7441,8 @@ msgstr "Veksle muslåsing"
 #: engines/dgds/metaengine.cpp:75 engines/dm/metaengine.cpp:174
 #: engines/drascula/metaengine.cpp:285 engines/efh/metaengine.cpp:272
 #: engines/freescape/games/castle/castle.cpp:359
-#: engines/freescape/games/dark/dark.cpp:188
-#: engines/freescape/games/driller/driller.cpp:120
+#: engines/freescape/games/dark/dark.cpp:197
+#: engines/freescape/games/driller/driller.cpp:123
 #: engines/freescape/games/eclipse/eclipse.cpp:236
 #: engines/hopkins/metaengine.cpp:236 engines/hugo/metaengine.cpp:165
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:192
@@ -7470,8 +7470,8 @@ msgstr "Lagra spel:"
 #: engines/dgds/metaengine.cpp:74 engines/drascula/metaengine.cpp:260
 #: engines/efh/metaengine.cpp:279 engines/efh/metaengine.cpp:613
 #: engines/freescape/games/castle/castle.cpp:364
-#: engines/freescape/games/dark/dark.cpp:193
-#: engines/freescape/games/driller/driller.cpp:125
+#: engines/freescape/games/dark/dark.cpp:202
+#: engines/freescape/games/driller/driller.cpp:128
 #: engines/freescape/games/eclipse/eclipse.cpp:241
 #: engines/hopkins/metaengine.cpp:242 engines/made/metaengine.cpp:198
 #: engines/mohawk/myst_stacks/menu.cpp:283
@@ -7521,8 +7521,8 @@ msgstr ""
 #: engines/darkseed/metaengine.cpp:60 engines/dragons/metaengine.cpp:223
 #: engines/efh/metaengine.cpp:373 engines/efh/metaengine.cpp:619
 #: engines/freescape/games/castle/castle.cpp:372
-#: engines/freescape/games/dark/dark.cpp:198
-#: engines/freescape/games/driller/driller.cpp:130
+#: engines/freescape/games/dark/dark.cpp:207
+#: engines/freescape/games/driller/driller.cpp:133
 #: engines/freescape/games/eclipse/eclipse.cpp:246
 #: engines/mads/metaengine.cpp:361 engines/phoenixvr/metaengine.cpp:80
 #: engines/saga/metaengine.cpp:437 engines/sherlock/metaengine.cpp:359
@@ -8957,8 +8957,8 @@ msgid "Select princess"
 msgstr "Vel eit tema"
 
 #: engines/freescape/games/castle/castle.cpp:377
-#: engines/freescape/games/dark/dark.cpp:208
-#: engines/freescape/games/driller/driller.cpp:138
+#: engines/freescape/games/dark/dark.cpp:217
+#: engines/freescape/games/driller/driller.cpp:141
 #: engines/freescape/games/eclipse/eclipse.cpp:254
 #: engines/hugo/metaengine.cpp:154
 #, fuzzy
@@ -8966,8 +8966,8 @@ msgid "Toggle sound"
 msgstr "Veksle muslåsing"
 
 #: engines/freescape/games/castle/castle.cpp:382
-#: engines/freescape/games/dark/dark.cpp:214
-#: engines/freescape/games/driller/driller.cpp:144
+#: engines/freescape/games/dark/dark.cpp:223
+#: engines/freescape/games/driller/driller.cpp:147
 #: engines/freescape/games/eclipse/eclipse.cpp:259
 #, fuzzy
 #| msgid "Slide Left"
@@ -8975,8 +8975,8 @@ msgid "Rotate left"
 msgstr "Skli til Venstre"
 
 #: engines/freescape/games/castle/castle.cpp:387
-#: engines/freescape/games/dark/dark.cpp:219
-#: engines/freescape/games/driller/driller.cpp:149
+#: engines/freescape/games/dark/dark.cpp:228
+#: engines/freescape/games/driller/driller.cpp:152
 #: engines/freescape/games/eclipse/eclipse.cpp:264
 #, fuzzy
 #| msgid "Slide Right"
@@ -8994,73 +8994,73 @@ msgstr ""
 msgid "Face forward"
 msgstr "Beveg Framover"
 
-#: engines/freescape/games/dark/dark.cpp:224
-#: engines/freescape/games/driller/driller.cpp:183
+#: engines/freescape/games/dark/dark.cpp:233
+#: engines/freescape/games/driller/driller.cpp:186
 #: engines/ultima/ultima8/metaengine.cpp:97
 #, fuzzy
 msgid "Roll left"
 msgstr "Skli til Venstre"
 
-#: engines/freescape/games/dark/dark.cpp:229
-#: engines/freescape/games/driller/driller.cpp:188
+#: engines/freescape/games/dark/dark.cpp:238
+#: engines/freescape/games/driller/driller.cpp:191
 #: engines/ultima/ultima8/metaengine.cpp:98
 #, fuzzy
 msgid "Roll right"
 msgstr "Skli til Høyre"
 
 #. I18N: Illustrates the angle at which you turn left or right.
-#: engines/freescape/games/dark/dark.cpp:235
-#: engines/freescape/games/driller/driller.cpp:155
+#: engines/freescape/games/dark/dark.cpp:244
+#: engines/freescape/games/driller/driller.cpp:158
 #, fuzzy
 #| msgid "Increasing Volume"
 msgid "Increase turn angle"
 msgstr "Auker Volum"
 
-#: engines/freescape/games/dark/dark.cpp:240
-#: engines/freescape/games/driller/driller.cpp:160
+#: engines/freescape/games/dark/dark.cpp:249
+#: engines/freescape/games/driller/driller.cpp:163
 #, fuzzy
 #| msgid "Decreasing Volume"
 msgid "Decrease turn angle"
 msgstr "Senkar Volum"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
-#: engines/freescape/games/dark/dark.cpp:246
-#: engines/freescape/games/driller/driller.cpp:166
+#: engines/freescape/games/dark/dark.cpp:255
+#: engines/freescape/games/driller/driller.cpp:169
 #, fuzzy
 msgid "Increase step size"
 msgstr "Øk/Minsk skaleringsfaktor"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
-#: engines/freescape/games/dark/dark.cpp:252
-#: engines/freescape/games/driller/driller.cpp:172
+#: engines/freescape/games/dark/dark.cpp:261
+#: engines/freescape/games/driller/driller.cpp:175
 #, fuzzy
 msgid "Decrease step size"
 msgstr "Øk/Minsk skaleringsfaktor"
 
-#: engines/freescape/games/dark/dark.cpp:257
-#: engines/freescape/games/driller/driller.cpp:177
+#: engines/freescape/games/dark/dark.cpp:266
+#: engines/freescape/games/driller/driller.cpp:180
 msgid "Rise / Fly up"
 msgstr ""
 
-#: engines/freescape/games/dark/dark.cpp:263
-#: engines/freescape/games/driller/driller.cpp:193
+#: engines/freescape/games/dark/dark.cpp:272
+#: engines/freescape/games/driller/driller.cpp:196
 #, fuzzy
 #| msgid "Fly down"
 msgid "Lower / Fly down"
 msgstr "Fly ned"
 
-#: engines/freescape/games/dark/dark.cpp:269
+#: engines/freescape/games/dark/dark.cpp:278
 #, fuzzy
 msgid "Enable / Disable jetpack"
 msgstr "Klarte ikkje lagre spel"
 
 #. I18N: drilling rig is an in game item
-#: engines/freescape/games/driller/driller.cpp:200
+#: engines/freescape/games/driller/driller.cpp:203
 msgid "Deploy drilling rig"
 msgstr ""
 
 #. I18N: drilling rig is an in game item
-#: engines/freescape/games/driller/driller.cpp:207
+#: engines/freescape/games/driller/driller.cpp:210
 msgid "Collect drilling rig"
 msgstr ""
 
