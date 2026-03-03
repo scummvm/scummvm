@@ -70,12 +70,12 @@ public:
 	void sub_128_1f1e();
 	void sub_128_1f44();
 	void sub_128_1f76();
-	void sub_128_1fee();
 	void sub_128_2078();
 	void sub_128_20d0();
 	void menuChapterSelect(); // sub_128_2126
 	void sub_128_21c8();
 	void storyRenderPage(); // sub_128_2202
+	void sub_128_26f6();
 	void sub_128_271a();
 	void sub_128_27d6();
 	void sub_128_2808();
@@ -95,9 +95,15 @@ public:
 	void sub_128_3774();
 	void sub_128_378a();
 	void sub_128_39a0();
+	void sub_128_3de6();
+	void sub_128_3fb6();
 
+	void sub_128_4168();
+	void sub_128_41aa();
+	void sub_128_41d8();
 	void sub_128_4472();
 	void sub_128_4a92();
+	void sub_128_5140();
 	void sub_128_5b30();
 	void sub_128_5baa();
 	void sub_128_5c20();
@@ -116,8 +122,21 @@ public:
 	void sub_129_123a();
 
 	void sub_130_004();
-
+	void sub_131_004();
+	void sub_132_004();
+	void sub_133_004();
+	void sub_134_004();
+	void sub_135_004();
+	void sub_136_004();
+	void sub_137_004();
 	void sub_138_004();
+	void sub_139_004();
+	void sub_140_004();
+	void sub_141_004();
+
+	void sub_142_004();
+	void sub_142_852();
+	void sub_142_12ac();
 	void sub_144_004();
 
 private:
@@ -186,6 +205,8 @@ private:
 	int16 var_i16_7d2;
 	int16 storyCurrentPage; // var_i16_7d4
 	int16 var_i16_7d6;
+	int16 var_i16_7d8;
+	int16 var_i16_7da;
 	int16 storyNextPage; // var_i16_7d8
 	int16 storyPageCount; // var_i16_7da
 	int16 selectedMenuChapter; // var_i16_7dc
@@ -203,6 +224,9 @@ private:
 	uint32 var_i32_bf8;
 	MenuHandle var_menu_bf8;
 	int16 var_i16_c00;
+	int16 var_i16_c02;
+	int16 var_i16_c04;
+	Common::U32String var_str_c06;
 
 	int16 var_i16_d0c;
 	int16 var_i16_e12;
@@ -210,6 +234,8 @@ private:
 	int16 selectedMenuID; // var_i16_e16
 	int16 selectedMenuItem; // var_i16_e18
 	int16 var_i16_e1a;
+	int16 var_i16_e1c;
+	int16 var_i16_e1e;
 	int16 var_i16_e20;
 	Common::U32String var_str_e22;
 	int16 var_i16_f22;
@@ -257,6 +283,9 @@ private:
 	int16 arr_i16_1b90[101];
 	int16 arr_i16_1c5a[16];
 	int16 arr_i16_1c7a[16];
+	int16 arr_i16_1cc2;
+	int16 arr_i16_1cd8;
+	int16 arr_i16_1cea;
 	int16 arr_i16_1d24[202];
 	int16 arr_i16_1dee[202];
 	int16 arr_i16_1eb8[4];

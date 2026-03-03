@@ -282,6 +282,7 @@ public:
 	void unk_4(); // possibly quit?
 	int16 unk_5();
 	void unk_6(int16 unk1, int32 unk2, int16 unk3, int16 unk4);
+	void unk_11(int16 unk1);
 	void unk_20();
 	bool incrAndCheck(int16 &a0, int16 d1, int16 d0);
 	void unk_44(int16 unk1);
