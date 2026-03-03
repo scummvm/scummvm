@@ -158,7 +158,7 @@ void DialogManager::displayChoices(Common::Array<ChoiceOption> *choices, byte *c
 	}
 }
 
-Graphics::Surface DialogManager::getDialogueSurface(Common::Array<Common::String> dialogueLines, byte speakerId) {
+Graphics::Surface DialogManager::getDialogueSurface(Common::Array<Common::String> dialogueLines, byte speakerId, Graphics::TextAlign alignment) {
 
 	int maxWidth = 0;
 	int height = dialogueLines.size() * 25; // Add some padding
@@ -174,7 +174,8 @@ Graphics::Surface DialogManager::getDialogueSurface(Common::Array<Common::String
 
 		int xPos = 0;
 		int yPos = i * 25; // Above sprite, adjust for line
-		g_engine->_largeFont->drawString(&s, dialogueLines[i], xPos, yPos, maxWidth, speakerId, Graphics::kTextAlignCenter);
+		debug("Drawing dialogue line %d: \"%s\" at position (%d, %d) with speaker ID %d", i, dialogueLines[i].c_str(), xPos, yPos, speakerId);
+		g_engine->_largeFont->drawString(&s, dialogueLines[i], xPos, yPos, maxWidth, speakerId, alignment);
 	}
 
 	return s;
@@ -1028,20 +1029,24 @@ bool DialogManager::processColorAndTrim(Common::StringArray &lines, byte &speake
 	speakerId = lines[0][1];
 
 	if (speakerMarker == '@') {
-
 		for (int i = 0; i < lines.size(); i++) {
 			// Remove first two marker bytes
-			if (lines[i].size() > 2) {
-				lines[i] = lines[i].substr(2);
-
-				if (lines[i][0] == 0x78 && lines[i][1] == 0x78) { // Remove additional control chars
+			if (i == 0) {
+				if (lines[i].size() > 2) {
 					lines[i] = lines[i].substr(2);
+
+					if (lines[i][0] == 0x78 && lines[i][1] == 0x78) { // Remove additional control chars
+						lines[i] = lines[i].substr(2);
+					}
+				} else {
+					lines[i] = "";
 				}
-			} else {
-				lines[i] = "";
 			}
 		}
 		return true;
+	}
+	else {
+		debug("No speaker marker found, defaulting to Alfred");
 	}
 	return false;
 }
@@ -1080,7 +1085,7 @@ int calculateWordLength(Common::String text, int startPos, bool &isEnd) {
 }
 
 Common::Array<Common::Array<Common::String>> DialogManager::wordWrap(Common::String text) {
-
+	debug("Word-wrapping text: \"%s\"", text.c_str());
 	Common::Array<Common::Array<Common::String>> pages;
 	Common::Array<Common::String> currentPage;
 	Common::Array<Common::String> currentLine;
@@ -1090,9 +1095,9 @@ Common::Array<Common::Array<Common::String>> DialogManager::wordWrap(Common::Str
 	while (position < text.size()) {
 		bool isEnd = false;
 		int wordLength = calculateWordLength(text, position, isEnd);
-		// # Extract the word (including trailing spaces)
+		// Extract the word (including trailing spaces)
 		Common::String word = text.substr(position, wordLength);
-		// # Key decision: if word_length > chars_remaining, wrap to next line
+		// if word_length > chars_remaining, wrap to next line
 		if (wordLength > charsRemaining) {
 			// Word is longer than the entire line - need to split
 			currentPage.push_back(joinStrings(currentLine, ""));
@@ -1137,32 +1142,63 @@ Common::Array<Common::Array<Common::String>> DialogManager::wordWrap(Common::Str
 			break;
 		}
 	}
-	if (currentLine.empty() == false) {
+
+	if (!currentLine.empty()) {
 		Common::String lineText = joinStrings(currentLine, "");
 		while (lineText.lastChar() == CHAR_SPACE) {
 			lineText = lineText.substr(0, lineText.size() - 1);
 		}
 		currentPage.push_back(lineText);
 	}
-	if (currentPage.empty() == false) {
+
+	if (!currentPage.empty()) {
 		pages.push_back(currentPage);
 	}
-	for (int i = 0; i < pages.size(); i++) {
-		for (int j = 0; j < pages[i].size(); j++) {
-		}
+
+	//print all the pages and lines for debugging
+	for (uint i = 0; i < pages.size(); i++) {
+		debug("Page %d:", i);
+		for (uint j = 0; j < pages[i].size(); j++) {
+			debug(" Line %d: \"%s\"", j, pages[i][j].c_str());
+				}
 	}
 	return pages;
 }
 
-Common::Array<Common::Array<Common::String>> DialogManager::wordWrap(Common::StringArray texts) {
-	Common::Array<Common::Array<Common::String>> allWrappedLines;
-	for (int i = 0; i < texts.size(); i++) {
-		Common::Array<Common::Array<Common::String>> wrapped = wordWrap(texts[i]);
-		for (int j = 0; j < wrapped.size(); j++) {
-			allWrappedLines.push_back(wrapped[j]);
+Common::Array<Common::StringArray> DialogManager::wordWrap(Common::StringArray texts) {
+	// Sometimes we already get a pre-processed list of strings the character has to speak
+	// but we still need to add line breaks if they exceed the max chars.
+	// That means if we receive 3 lines but one is longer than the max we need to make 4 lines.
+	// if we already have 5 pages, but one of them exceeds the max, we need to construct a new page.
+	// for this is not enough to just push the result of wordWrap(String) becasue we still need to calculate new pages.
+
+	Common::Array<Common::StringArray> pages;
+	Common::Array<Common::String> currentPage;
+	int currentLineNum = 0;
+	for (uint i = 0; i < texts.size(); i++) {
+		Common::String thisLine = texts[i];
+		Common::Array<Common::Array<Common::String>> wrapped = wordWrap(thisLine);
+		debug("Wrapped line %s, %d into %d pages", thisLine.c_str(), thisLine.size(), wrapped.size());
+		for (uint j = 0; j < wrapped.size(); j++) {
+			for (int i = 0; i < wrapped[j].size(); i++)
+			{
+				if(currentLineNum < MAX_LINES) {
+					currentPage.push_back(wrapped[j][i]);
+					currentLineNum++;
+				} else {
+					pages.push_back(currentPage);
+					currentPage.clear();
+					currentPage.push_back(wrapped[j][i]);
+					currentLineNum = 1;
+				}
+			}
 		}
 	}
-	return allWrappedLines;
-}
 
+	if (!currentPage.empty()) {
+		pages.push_back(currentPage);
+	}
+
+	return pages;
+}
 } // namespace Pelrock

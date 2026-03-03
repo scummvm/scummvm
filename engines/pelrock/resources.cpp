@@ -435,13 +435,10 @@ Common::Array<Common::StringArray> ResourceManager::processTextData(byte *data, 
 	Common::Array<Common::StringArray> texts;
 	while (pos < size) {
 		if (data[pos] == CTRL_END_TEXT) {
-			if (!desc.empty()) {
-
 				lines.push_back(desc);
 				texts.push_back(lines);
 				lines.clear();
 				desc = Common::String();
-			}
 			pos++;
 			continue;
 		}
@@ -458,8 +455,11 @@ Common::Array<Common::StringArray> ResourceManager::processTextData(byte *data, 
 
 			continue;
 		}
-		if (data[pos] == 0xC8) {
-			lines.push_back(desc);
+
+		if (data[pos] == 0xC8 || data[pos] == 0xB1) {
+			if(!desc.empty() || data[pos] == 0xC8) {
+				lines.push_back(desc);
+			}
 			desc = Common::String();
 			pos++;
 			continue;

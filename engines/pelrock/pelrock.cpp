@@ -155,7 +155,7 @@ void PelrockEngine::init() {
 		gameInitialized = true;
 		loadAnims();
 		// setScreenAndPrepare(0, ALFRED_LEFT);
-				setScreenAndPrepare(36, ALFRED_LEFT);
+		setScreenAndPrepare(36, ALFRED_LEFT);
 
 		// setScreen(3, ALFRED_RIGHT);
 		// setScreen(22, ALFRED_DOWN);
@@ -373,13 +373,13 @@ void PelrockEngine::frameTriggers() {
 }
 
 void PelrockEngine::shakeEffect() {
-	if(!_shakeEffectState.enabled) {
+	if (!_shakeEffectState.enabled) {
 		return;
 	}
 
 	_shakeEffectState.shakeX = (_chrono->getFrameCount() % 4 < 2) ? 2 : -2;
 	g_system->setShakePos(_shakeEffectState.shakeX, _shakeEffectState.shakeY);
-	_alfredState.x += (_shakeEffectState.shakeX/2); // Adjust Alfred's position to counteract shake for better readability
+	_alfredState.x += (_shakeEffectState.shakeX / 2); // Adjust Alfred's position to counteract shake for better readability
 }
 
 void PelrockEngine::passerByAnim(uint32 frameCount) {
@@ -1736,10 +1736,14 @@ void PelrockEngine::gameLoop() {
 		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
 	}
 	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_u) {
-		if(_room->_currentRoomNumber == 36) {
+		if (_room->_currentRoomNumber == 36) {
 			pyramidCollapse();
 		}
 		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
+	}
+
+	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_k) {
+		credits();
 	}
 
 	renderScene();
@@ -2147,12 +2151,12 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		break;
 	}
 	case 36: {
-		if(_shakeEffectState.enabled) {
+		if (_shakeEffectState.enabled) {
 			_shakeEffectState.disable();
 		}
-		if(_state->getFlag(FLAG_PIRAMIDE_JODIDA) == true &&
-		// _state->getFlag(FLAG_VIGILANTE_MEANDO) == true &&
-		_state->getFlag(FLAG_PIRAMIDE_JODIDA2) == false) {
+		if (_state->getFlag(FLAG_PIRAMIDE_JODIDA) == true &&
+			// _state->getFlag(FLAG_VIGILANTE_MEANDO) == true &&
+			_state->getFlag(FLAG_PIRAMIDE_JODIDA2) == false) {
 			_state->setFlag(FLAG_VIGILANTE_MEANDO, false);
 			_state->setFlag(FLAG_PIRAMIDE_JODIDA2, true);
 			debug("Pyramid is now active!");
@@ -2308,7 +2312,8 @@ void PelrockEngine::pyramidCollapse() {
 		_screen->update();
 		g_system->delayMillis(10);
 		npc = _room->findSpriteByIndex(0);
-		if (!npc || npc->x >= 339) break;
+		if (!npc || npc->x >= 339)
+			break;
 	}
 
 	npc = _room->findSpriteByIndex(0);
@@ -2320,7 +2325,8 @@ void PelrockEngine::pyramidCollapse() {
 		_screen->update();
 		g_system->delayMillis(10);
 		npc = _room->findSpriteByIndex(0);
-		if (!npc || npc->y >= 206) break;
+		if (!npc || npc->y >= 206)
+			break;
 	}
 
 	npc = _room->findSpriteByIndex(0);
@@ -2332,7 +2338,8 @@ void PelrockEngine::pyramidCollapse() {
 		_screen->update();
 		g_system->delayMillis(10);
 		npc = _room->findSpriteByIndex(0);
-		if (!npc || npc->x <= 307) break;
+		if (!npc || npc->x <= 307)
+			break;
 	}
 
 	// Stop NPC movement
@@ -2494,101 +2501,87 @@ void PelrockEngine::endingScene() {
 }
 
 void PelrockEngine::credits() {
+	_sound->playMusicTrack(3);
 	// 25-page room slideshow: each page loads a game room and overlays credit texts.
 	static const int kNumCreditPages = 25;
 	static const int kCreditRooms[kNumCreditPages] = {
 		22, 27, 36, 23, 24, 37, 25, 26, 49, 43, 35, 52, 29,
 		39, 40, 41, 45, 47, 21, 50, 46, 42, 34, 30, 14};
-	static const int kFramesPerPage = 35;
+	static const int kFramesPerPage = 45;
 
 	Common::Array<Common::StringArray> creditTexts = _res->getCredits();
 
-	Common::File roomFile;
-	if (!roomFile.open(Common::Path("ALFRED.1"))) {
-		error("Could not open ALFRED.1 for credits");
-		return;
-	}
-
-	byte *bg = new byte[640 * 400];
-	byte *palette = new byte[768];
 	CursorMan.showMouse(false);
 
 	// Outer restart loop — keypress during display restarts from page 0
 	bool restart = false;
 	_alfredState.setState(ALFRED_SKIP_DRAWING);
 	_disableAmbientSounds = true;
+	_disableAction = true;
+	bool keyPressed = false;
 	do {
-		restart = false;
 		for (int page = 0; page < kNumCreditPages && !shouldQuit(); page++) {
-			debug("Credits: loading page %d (room %d)", page, kCreditRooms[page]);
+			// loads screen
 			setScreen(kCreditRooms[page]);
 
-			Common::StringArray lines;
+			byte speakerId;
+			_dialog->processColorAndTrim(creditTexts[page], speakerId);
 
-			if (page < (int)creditTexts.size()) {
-				for (const Common::String &block : creditTexts[page]) {
-					Common::String cur;
-					for (uint ci = 0; ci < block.size(); ci++) {
-						byte b = (byte)block[ci];
-						if (b == 0xB1) {
-							if (!cur.empty()) {
-								lines.push_back(cur);
-								cur.clear();
-							}
-						} else if (b >= 0x20) {
-							cur += (char)b;
-						}
-					}
-					if (!cur.empty())
-						lines.push_back(cur);
-				}
+			// Text is already encoded for new lines but should also be wrapped to respect the max chars per line!
+			creditTexts[page] = _dialog->wordWrap(creditTexts[page])[0];
+			// all lines start with a space but the first one contains the trailing space of the speakerId
+			creditTexts[page][0] = creditTexts[page][0].substr(1, creditTexts[page][0].size() - 1);
+
+			int height = creditTexts[page].size() * 25; // Add some padding
+
+			Graphics::Surface s;
+			s.create(640, height + 1, Graphics::PixelFormat::createFormatCLUT8());
+			s.fillRect(s.getRect(), 255); // Clear surface
+
+			int maxWidth = 0;
+			/**
+			 * Last line is less indented for some reason, so skip that for calculation
+			 */
+			for (int i = 0; i < creditTexts[page].size(); i++) {
+				maxWidth = MAX(maxWidth, g_engine->_largeFont->getStringWidth(creditTexts[page][i]));
 			}
 
-			// Compute vertical centering (LargeFont: CHAR_HEIGHT = 24px per line)
-			int lineH = _largeFont->getFontHeight();
-			int totalH = (int)lines.size() * lineH;
-			int startY = (400 - totalH) / 2;
+			int startX = 320 - (maxWidth / 2);
+			int startY = (400 - s.getRect().height()) / 2 - 10;
 
-			byte speakerId;
-			_dialog->processColorAndTrim(lines, speakerId);
-			Graphics::Surface s = _dialog->getDialogueSurface(lines, speakerId);
+			for (int i = 0; i < creditTexts[page].size(); i++) {
+				// subtract that extra negative identation
+				int xPos = i == creditTexts[page].size() - 1 ? startX - 10 : startX;
+				int yPos = i * 25; // Above sprite, adjust for line
+				g_engine->_largeFont->drawString(&s, creditTexts[page][i], xPos, yPos, 640, speakerId, Graphics::kTextAlignLeft);
+			}
+
 			int frames = 0;
 			_events->_lastKeyEvent = Common::KEYCODE_INVALID;
 			while (!shouldQuit() && frames < kFramesPerPage) {
-				debug("Credits page %d, frame %d/%d", page, frames, kFramesPerPage);
 				_events->pollEvent();
 				bool didRender = renderScene(OVERLAY_NONE);
 
 				if (didRender) {
 					_screen->transBlitFrom(s, s.getRect(), Common::Point(0, startY), 255);
-
-					if (_chrono->getFrameCount() % 2 == 0) // Original game increments frame counter every other frame
-						frames++;
+					frames++;
 				}
 				_screen->markAllDirty();
 				_screen->update();
 				g_system->delayMillis(10);
-
-				// Keypress → restart slideshow from page 0 (original behaviour)
 				if (_events->_lastKeyEvent != Common::KEYCODE_INVALID) {
-					_events->_lastKeyEvent = Common::KEYCODE_INVALID;
-					restart = true;
+					// Any key press exits credits
+					keyPressed = true;
 					break;
 				}
 			}
-
-			_screen->markAllDirty();
-			_screen->update();
-			if (restart)
+			if (keyPressed) {
 				break;
+			}
 		}
-	} while (restart && !shouldQuit());
+	} while (restart && !shouldQuit() && !keyPressed);
 
-	_disableAmbientSounds = false;
-	delete[] bg;
-	delete[] palette;
-	roomFile.close();
-	CursorMan.showMouse(true);
+	g_engine->quitGame();
 }
 
 void PelrockEngine::initGodsSequences(int roomNumber) {

@@ -61,7 +61,6 @@ private:
 	Common::RandomSource _randomSource;
 	VideoManager *_videoManager = nullptr;
 	SoundManager *_sound = nullptr;
-	DialogManager *_dialog = nullptr;
 	MenuManager *_menu = nullptr;
 
 	void init();
@@ -178,6 +177,7 @@ public:
 	RoomManager *_room = nullptr;
 	ChronoManager *_chrono = nullptr;
 	PelrockEventManager *_events = nullptr;
+	DialogManager *_dialog = nullptr;
 	AlfredState _alfredState;
 	ShakeEffectState _shakeEffectState;
 	byte *_compositeBuffer = nullptr; // Working composition buffer
@@ -267,7 +267,7 @@ public:
 
 	// Actions
 	void doExtraActions(int roomNumber);
-void pyramidCollapse();
+	void pyramidCollapse();
 	void endingScene();
 	void credits();
 	void initGodsSequences(int roomNumber);

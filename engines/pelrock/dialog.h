@@ -111,7 +111,7 @@ public:
 	void say(Common::StringArray texts, byte spriteIndex = 0);
 	void say(Common::StringArray texts, int16 x, int16 y);
 	bool processColorAndTrim(Common::StringArray &lines, byte &speakerId);
-	Graphics::Surface getDialogueSurface(Common::Array<Common::String> dialogueLines, byte speakerId);
+	Graphics::Surface getDialogueSurface(Common::Array<Common::String> dialogueLines, byte speakerId, Graphics::TextAlign alignment = Graphics::kTextAlignCenter);
 
 	Common::Array<Common::Array<Common::String>> wordWrap(Common::String text);
 	Common::Array<Common::Array<Common::String>> wordWrap(Common::StringArray texts);
