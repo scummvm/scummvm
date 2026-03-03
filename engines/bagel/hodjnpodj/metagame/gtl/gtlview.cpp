@@ -26,6 +26,7 @@
 #include "bagel/hodjnpodj/metagame/gtl/gtlview.h"
 #include "bagel/hodjnpodj/metagame/gtl/gtlfrm.h"
 #include "bagel/hodjnpodj/hnplibs/rules.h"
+#include "bagel/detection.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -412,6 +413,7 @@ void CGtlView::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int 
 void CGtlView::OnLButtonDown(unsigned int nFlags, CPoint cMousePoint) {
 	CGtlDoc* xpDoc = GetDocument() ;
 
+	debugC(2, kDebugRandom, "Mouse click (%d, %d)", cMousePoint.x, cMousePoint.y);
 	xpDoc->m_xpGtlData->AcceptClick(this, cMousePoint, CLICK_LDOWN) ;
 
 	if (bExitMetaDLL)

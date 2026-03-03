@@ -72,4 +72,10 @@ void BagelEngine::enableKeymapper(bool enabled) {
 	getEventManager()->getKeymapper()->setEnabled(enabled);
 }
 
+uint32 BagelEngine::getRandomNumber(uint maxNum) {
+	uint32 result = _randomSource.getRandomNumber(maxNum);
+	debugC(9, kDebugRandom, "getRandomNumber(%d) = %d", maxNum, result);
+	return result;
+}
+
 } // End of namespace Bagel
