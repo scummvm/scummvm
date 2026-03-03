@@ -46,7 +46,7 @@ bool SmushPlayer::isRA2() const {
 
 // Forward declarations for RA2 codec functions (defined in codec_ra2.cpp)
 void smushDecodeLineUpdate(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
-void smushDecodeSkipRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
+void smushDecodeSkipRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize);
 void smushDecodeRA2Bomp(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize);
 
 /**
@@ -350,7 +350,7 @@ bool SmushPlayer::ra2DecodeCodec(int codec, const uint8 *src, int left, int top,
 		smushDecodeLineUpdate(_dst, src, left, top, width, height, pitch);
 		return true;
 	case SMUSH_CODEC_SKIP_RLE:
-		smushDecodeSkipRLE(_dst, src, left, top, width, height, pitch);
+		smushDecodeSkipRLE(_dst, src, left, top, width, height, pitch, dataSize);
 		return true;
 	case SMUSH_CODEC_RA2_BOMP:
 		smushDecodeRA2Bomp(_dst, src, left, top, width, height, pitch, dataSize);
