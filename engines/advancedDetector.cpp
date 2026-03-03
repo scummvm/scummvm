@@ -727,8 +727,8 @@ ADDetectedGames AdvancedMetaEngineDetectionBase::detectGame(const Common::FSNode
 			MD5Properties md5prop = gameFileToMD5Props(fileDesc, g->flags);
 			Common::String fname = fileDesc->fileName;
 			Common::String key = md5PropToCachePrefix(md5prop);
-				key += ':';
-				key += fname;
+			key += ':';
+			key += fname;
 
 			if (filesProps.contains(key))
 				continue;
@@ -745,6 +745,7 @@ ADDetectedGames AdvancedMetaEngineDetectionBase::detectGame(const Common::FSNode
 	}
 
 	int maxFilesMatched = 0;
+	int maxCandidateFiles = 0;
 	bool gotAnyMatchesWithAllFiles = false;
 
 	// MD5 based matching
@@ -772,6 +773,7 @@ ADDetectedGames AdvancedMetaEngineDetectionBase::detectGame(const Common::FSNode
 		ADDetectedGame game(g);
 		bool allFilesPresent = true;
 		int curFilesMatched = 0;
+		int numFilesInEntry = 0;
 
 		// Try to match all files for this game
 		for (fileDesc = game.desc->filesDescriptions; fileDesc->fileName; fileDesc++) {
@@ -780,6 +782,8 @@ ADDetectedGames AdvancedMetaEngineDetectionBase::detectGame(const Common::FSNode
 			Common::String key = md5PropToCachePrefix(md5prop);
 				key += ':';
 				key += tstr;
+
+			numFilesInEntry++;
 
 			if (!filesProps.contains(key) || filesProps[key].size == -1) {
 				allFilesPresent = false;
@@ -811,6 +815,9 @@ ADDetectedGames AdvancedMetaEngineDetectionBase::detectGame(const Common::FSNode
 			curFilesMatched++;
 		}
 
+		debugC(3, kDebugGlobalDetection, "Game '%s' matched %d files all files present: %d has unknown files: %d, total files: %d",
+				g->gameId, curFilesMatched, allFilesPresent, game.hasUnknownFiles, numFilesInEntry);
+
 		// We found at least one entry with all required files present.
 		// That means that we got new variant of the game.
 		//
@@ -828,13 +835,22 @@ ADDetectedGames AdvancedMetaEngineDetectionBase::detectGame(const Common::FSNode
 				continue;
 			}
 
-			if (matched.empty() || strcmp(matched.back().desc->gameId, g->gameId) != 0)
+			if (matched.empty() || strcmp(matched.back().desc->gameId, g->gameId) != 0 || numFilesInEntry > maxCandidateFiles) {
+				if (numFilesInEntry > maxCandidateFiles) {
+					debugC(2, kDebugGlobalDetection, " ... new best candidate match, removing all previous candidates");
+					maxCandidateFiles = numFilesInEntry;
+
+					matched.clear();	// Remove any prior, lower ranked matches.
+				}
+
+				debugC(2, kDebugGlobalDetection, " ... adding candidate match");
 				matched.push_back(game);
+			}
 		}
 
 		if (allFilesPresent && !game.hasUnknownFiles) {
 			debugC(2, kDebugGlobalDetection, "Found game: %s (%s %s/%s) (%d)", g->gameId, g->extra,
-			 getPlatformDescription(g->platform), getLanguageDescription(g->language), i);
+							getPlatformDescription(g->platform), getLanguageDescription(g->language), i);
 
 			if (curFilesMatched > maxFilesMatched) {
 				debugC(2, kDebugGlobalDetection, " ... new best match, removing all previous candidates");
@@ -843,6 +859,7 @@ ADDetectedGames AdvancedMetaEngineDetectionBase::detectGame(const Common::FSNode
 				matched.clear();	// Remove any prior, lower ranked matches.
 				matched.push_back(game);
 			} else if (curFilesMatched == maxFilesMatched) {
+				debugC(2, kDebugGlobalDetection, " ... same number of files matched as the current best match, adding to candidates");
 				matched.push_back(game);
 			} else {
 				debugC(2, kDebugGlobalDetection, " ... skipped");
@@ -851,7 +868,7 @@ ADDetectedGames AdvancedMetaEngineDetectionBase::detectGame(const Common::FSNode
 			gotAnyMatchesWithAllFiles = true;
 		} else {
 			debugC(7, kDebugGlobalDetection, "Skipping game: %s (%s %s/%s) (%d)", g->gameId, g->extra,
-			 getPlatformDescription(g->platform), getLanguageDescription(g->language), i);
+							getPlatformDescription(g->platform), getLanguageDescription(g->language), i);
 		}
 	}
 
