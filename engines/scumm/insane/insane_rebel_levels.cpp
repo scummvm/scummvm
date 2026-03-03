@@ -109,16 +109,82 @@ void InsaneRebel2::playCinematic(const char *filename) {
 	splayer->play(filename, 12);
 }
 
+void InsaneRebel2::playVideoWithText(const char *filename, int textID, int textX, int textY,
+                                     int fadeInFrame, int fadeOutFrame) {
+	// Emulates FUN_004171c5: plays video with progressive text overlay
+	// Text string loaded from GAME.TRS via getString(textID)
+	// During frame range [fadeInFrame, fadeOutFrame):
+	//   displayLength = currentFrame + 10 - fadeInFrame, capped at 0xBE (190) chars
+	//   Text rendered at (textX, textY) using FUN_004341a0
+
+	_rebelHandler = 0;
+	_rebelStatusBarSprite = 0;
+
+	// Set up text overlay state — procPostRendering reads these each frame
+	_textOverlayActive = true;
+	_textOverlayID = textID;
+	_textOverlayX = textX;
+	_textOverlayY = textY;
+	_textOverlayFadeIn = fadeInFrame;
+	_textOverlayFadeOut = fadeOutFrame;
+
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	splayer->setCurVideoFlags(0x28);
+	splayer->play(filename, 12);
+
+	_textOverlayActive = false;
+}
+
 void InsaneRebel2::playLevelBegin(int levelId) {
 	// Play the level beginning cinematic (LEVXX/XXBEG.SAN)
 	// Emulates FUN_004171c5 call in each level handler
+	//
+	// Per-level text overlay parameters from original disassembly:
+	// All levels use FUN_004171c5 with a chapter title overlay from GAME.TRS.
+
+	struct TextOverlayParams {
+		int textID;      // TRS string ID (-1 = no text overlay)
+		int textX;
+		int textY;
+		int fadeInFrame;
+		int fadeOutFrame;
+	};
+
+	// Table of per-level text overlay parameters
+	// All levels use FUN_004171c5 (verified against decompiled level handlers)
+	// Text IDs are sequential: 0xAA (level 1) through 0xB8 (level 15)
+	static const TextOverlayParams levelTextParams[16] = {
+		{ -1,   0,  0,   0,    0},    // Level 0 (unused)
+		{0xAA, 0xA0, 10,   5, 0x4B},  // Level 1:  FUN_00417E53
+		{0xAB, 0xA0, 10,   2, 0x46},  // Level 2:  FUN_00418063
+		{0xAC, 0xA0, 10,   2, 0x46},  // Level 3:  FUN_0041885F
+		{0xAD, 0xA0, 10,   2,  100},  // Level 4:  FUN_00418CC4
+		{0xAE, 0xA0, 10,   5, 0x3C},  // Level 5:  FUN_00418EC6
+		{0xAF, 0xA0, 10,   5, 0x4B},  // Level 6:  FUN_004190D6
+		{0xB0, 0xA0, 10,   5, 0x4B},  // Level 7:  FUN_0041974C
+		{0xB1, 0xA0, 10,   5, 0x4B},  // Level 8:  FUN_00419976
+		{0xB2, 0xA0, 10, 200, 0x10E}, // Level 9:  FUN_00419B86
+		{0xB3, 0xA0, 10,   2, 0x46},  // Level 10: FUN_00419E0A
+		{0xB4, 0xA0, 10,   2, 0x46},  // Level 11: FUN_0041A00C
+		{0xB5, 0xA0, 10,   5, 0x4B},  // Level 12: FUN_0041A3EB
+		{0xB6, 0xA0, 10,   2, 0x46},  // Level 13: FUN_0041A806
+		{0xB7, 0xA0, 10,   2, 0x46},  // Level 14: FUN_0041ABB2
+		{0xB8, 0xA0, 10,   2, 0x46},  // Level 15: FUN_0041AEE8
+	};
 
 	Common::String dir = getLevelDir(levelId);
 	Common::String prefix = getLevelPrefix(levelId);
 	Common::String filename = Common::String::format("%s/%sBEG.SAN", dir.c_str(), prefix.c_str());
 
 	debug("Rebel2: Playing level %d beginning: %s", levelId, filename.c_str());
-	playCinematic(filename.c_str());
+
+	if (levelId >= 1 && levelId <= 15 && levelTextParams[levelId].textID >= 0) {
+		const TextOverlayParams &p = levelTextParams[levelId];
+		playVideoWithText(filename.c_str(), p.textID, p.textX, p.textY,
+		                  p.fadeInFrame, p.fadeOutFrame);
+	} else {
+		playCinematic(filename.c_str());
+	}
 }
 
 bool InsaneRebel2::playLevelGameplay(int levelId) {

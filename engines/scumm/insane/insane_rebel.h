@@ -331,6 +331,19 @@ public:
 	// Play cinematic video by filename
 	void playCinematic(const char *filename);
 
+	// Play cinematic with text overlay (emulates FUN_004171c5)
+	// Text is progressively revealed during [fadeInFrame, fadeOutFrame)
+	void playVideoWithText(const char *filename, int textID, int textX, int textY,
+	                       int fadeInFrame, int fadeOutFrame);
+
+	// Text overlay state (active during playVideoWithText cinematics)
+	bool _textOverlayActive;      // True when text overlay should render
+	int _textOverlayID;           // TRS string ID
+	int _textOverlayX;            // X position for text rendering
+	int _textOverlayY;            // Y position for text rendering
+	int _textOverlayFadeIn;       // Frame to start progressive text reveal
+	int _textOverlayFadeOut;      // Frame to stop text rendering
+
 	// Play death video with proper variant selection
 	void playLevelDeathVariant(int levelId, int phase, int frame);
 
