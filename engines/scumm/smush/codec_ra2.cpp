@@ -94,26 +94,33 @@ void smushDecodeLineUpdate(byte *dst, const byte *src, int left, int top, int wi
  * Format: Each line has 2-byte size, then (skip, runSize, RLE_data) triplets.
  * Note: Skip regions preserve previous frame content (delta compression).
  */
-void smushDecodeSkipRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch) {
+void smushDecodeSkipRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize) {
 	dst += top * pitch + left;
+	const byte *srcEnd = src + dataSize;
 
 	for (int row = 0; row < height; row++) {
+		if (src + 2 > srcEnd)
+			break;
 		int lineDataSize = READ_LE_UINT16(src);
 		src += 2;
 		const byte *lineEnd = src + lineDataSize;
+		if (lineEnd > srcEnd)
+			lineEnd = srcEnd;
 		byte *lineDst = dst;
 		int x = 0;
 
-		while (src < lineEnd && x < width) {
+		while (src + 2 <= lineEnd && x < width) {
 			int skip = READ_LE_UINT16(src);
 			src += 2;
 			x += skip;  // Skip preserves previous frame content
-			if (src >= lineEnd || x >= width)
+			if (src + 2 > lineEnd || x >= width)
 				break;
 
 			int runSize = READ_LE_UINT16(src);
 			src += 2;
 			const byte *runEnd = src + runSize;
+			if (runEnd > lineEnd)
+				runEnd = lineEnd;
 
 			// Decode RLE within this run - write ALL colors including 0
 			while (src < runEnd && x < width) {
