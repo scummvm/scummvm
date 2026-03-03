@@ -87,6 +87,7 @@ public:
 	int _menuInactivityTimer;       // Timeout counter (300 frames = ~10 sec)
 	int _lastMenuVariant;           // Last random menu video shown (DAT_00482400)
 	int _menuRepeatDelay;           // Delay for key repeat (DAT_00459ce0)
+	bool _menuSelectionConfirmed;   // True only when user explicitly confirmed a selection
 	bool _levelUnlocked[16];        // Which levels are available (progress flags)
 
 	// Run the main menu loop - returns when game should start or quit
@@ -156,6 +157,12 @@ public:
 	// Draw score/info display at bottom of chapter select - emulates FUN_00434cb0 calls
 	void drawChapterInfoLine(byte *renderBitmap, int pitch, int width, int height);
 
+	// Rating-to-medal string conversion (FUN_0042001f)
+	Common::String getRankString(int rating);
+
+	// Password table lookup (FUN_0041BCE0)
+	Common::String getChapterPassword(int level, int difficulty);
+
 	// ================= Pilot Data System (FUN_00411B9A / FUN_00411980 / FUN_00411A5D) ===========
 	// Original: 10 pilot slots × 0x118 (280) bytes at DAT_004568A8
 	// Stored via SaveFileManager in a custom save file
@@ -169,10 +176,12 @@ public:
 		int32 score[kNumLevels];         // +0x2C: Per-level score (0 = default, 0xFF = unplayed)
 		int32 lives[kNumLevels];         // +0x6C: Per-level lives (4 = default, 0xFF = unplayed)
 		int32 damage[kNumLevels];        // +0xAC: Per-level damage (0xFF = unplayed)
+		int16 rating[kNumLevels];        // +0xEC: Per-level difficulty rating (0-50)
 		int16 difficulty;                // +0x10C: Difficulty setting (0-5)
 
 		void init() {
 			memset(name, 0, sizeof(name));
+			memset(rating, 0, sizeof(rating));
 			difficulty = 2; // Default to 3rd option
 			score[0] = 0;
 			lives[0] = 4;

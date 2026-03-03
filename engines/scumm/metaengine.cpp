@@ -887,6 +887,15 @@ static const ExtraGuiOption enableRebel2HiRes = {
 	0
 };
 
+static const ExtraGuiOption enableRebel2UnlockAll = {
+	_s("Unlock all levels"),
+	_s("All levels will be available without requiring passwords."),
+	"rebel2_unlock_all",
+	false,
+	0,
+	0
+};
+
 const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	// Query the GUI options
@@ -930,6 +939,9 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 #endif
 	if (target.empty() || guiOptions.contains(GAMEOPTION_REBEL2_HIRES)) {
 		options.push_back(enableRebel2HiRes);
+	}
+	if (target.empty() || guiOptions.contains(GAMEOPTION_REBEL2_UNLOCK_ALL)) {
+		options.push_back(enableRebel2UnlockAll);
 	}
 	if (target.empty() || gameid == "comi") {
 		options.push_back(comiObjectLabelsOption);

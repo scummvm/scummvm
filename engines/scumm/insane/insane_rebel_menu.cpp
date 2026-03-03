@@ -42,6 +42,7 @@ void InsaneRebel2::resetMenu() {
 	_menuSelection = 0;
 	_menuInactivityTimer = 0;
 	_menuRepeatDelay = 0;
+	_menuSelectionConfirmed = false;
 }
 
 // Unlock all chapters for testing
@@ -49,7 +50,6 @@ void InsaneRebel2::resetMenu() {
 // where DAT_0047ab34 == 'd' enables level unlock via special codes
 void InsaneRebel2::unlockAllChapters() {
 	debug("Rebel2: Unlocking all chapters for testing");
-	_debugUnlockAll = true;
 	for (int i = 0; i < 16; i++) {
 		_chapterUnlocked[i] = true;
 		_levelUnlocked[i] = true;
@@ -154,26 +154,8 @@ int InsaneRebel2::processMenuInput() {
 
 		case Common::EVENT_LBUTTONDOWN:
 			_menuInactivityTimer = 0;
-			{
-				// Get mouse position from the event
-				int mouseY = event.mouse.y;
-
-				debug("Menu: Left click at Y=%d", mouseY);
-
-				// Check which item was clicked
-				// From FUN_0041f5ae mouse mode: selection = (mouseY + 100 - baseY) / 10
-				// But we use a simpler direct hit-test approach
-				for (int i = 0; i < _menuItemCount; i++) {
-					int itemY = baseY + i * itemSpacing;
-					// Hit area: itemY - 2 to itemY + 8 (10 pixel height)
-					if (mouseY >= itemY - 2 && mouseY < itemY + 8) {
-						_menuSelection = i;
-						result = i;
-						debug("Menu: Item %d clicked (itemY=%d)", i, itemY);
-						break;
-					}
-				}
-			}
+			// TODO: Re-enable click-to-confirm (currently disabled for easier testing)
+			// Original behavior: clicking on a menu item both highlights and confirms it.
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
@@ -701,15 +683,15 @@ int InsaneRebel2::runMainMenu() {
 			return 0;
 		}
 
-		// If video ended naturally (not by selection), loop back
-		if (!_vm->_smushVideoShouldFinish) {
-			// Video ended without selection (reached end or ESC during video)
-			// Continue looping menu videos
+		// Only process selection if user explicitly confirmed (ENTER/ESC),
+		// not when video ended naturally (EOF sets _smushVideoShouldFinish too)
+		if (!_menuSelectionConfirmed) {
 			continue;
 		}
 
-		// Clear the flag
+		// Clear the flags
 		_vm->_smushVideoShouldFinish = false;
+		_menuSelectionConfirmed = false;
 
 		// A selection was made - process it
 		debug("Rebel2: Menu video ended with selection=%d", _menuSelection);
@@ -860,12 +842,13 @@ int InsaneRebel2::runChapterSelect() {
 			return kChapterSelectQuit;
 		}
 
-		// If video ended without selection, continue looping
-		if (!_vm->_smushVideoShouldFinish) {
+		// Only process selection if user explicitly confirmed
+		if (!_menuSelectionConfirmed) {
 			continue;
 		}
 
 		_vm->_smushVideoShouldFinish = false;
+		_menuSelectionConfirmed = false;
 
 		debug("Rebel2: Chapter selection made: %d", _chapterSelection);
 
@@ -878,12 +861,36 @@ int InsaneRebel2::runChapterSelect() {
 		}
 
 		if (_chapterSelection >= 0 && _chapterSelection < 16) {
-			// Chapter selected - start it regardless of unlock state.
-			// TODO: locked chapters should require password (FUN_00415CF8 lines 239-257)
-			_selectedChapter = _chapterSelection;
-			debug("Rebel2: Chapter %d selected", _selectedChapter + 1);
-			_menuInputActive = false;
-			return kChapterSelectPlay;
+			if (_chapterUnlocked[_chapterSelection]) {
+				// Unlocked chapter — play it
+				_selectedChapter = _chapterSelection;
+				debug("Rebel2: Chapter %d selected (unlocked)", _selectedChapter + 1);
+				_menuInputActive = false;
+				return kChapterSelectPlay;
+			}
+
+			// Locked chapter — validate password (FUN_00415CF8 lines 239-257)
+			if (_activePilot >= 0 && _activePilot < _numPilots &&
+			    _pilots[_activePilot].difficulty < 6 && _chapterSelection > 0) {
+				Common::String expected = getChapterPassword(
+					_chapterSelection, _pilots[_activePilot].difficulty);
+				if (expected.empty() || _passwordInput.equalsIgnoreCase(expected)) {
+					// Password accepted — unlock chapter
+					PilotData &pilot = _pilots[_activePilot];
+					pilot.score[_chapterSelection] = 0;
+					pilot.damage[_chapterSelection] = 0;
+					pilot.lives[_chapterSelection] = 3;
+					pilot.rating[_chapterSelection] = 0;
+					savePilots();
+					_chapterUnlocked[_chapterSelection] = true;
+					_passwordInput.clear();
+					debug("Rebel2: Chapter %d unlocked via password", _chapterSelection + 1);
+					continue;  // Re-render with updated unlock state
+				}
+			}
+			// Wrong password or no password entered
+			_passwordInput.clear();
+			debug("Rebel2: Password rejected for chapter %d", _chapterSelection + 1);
 		}
 	}
 
@@ -911,6 +918,7 @@ int InsaneRebel2::processChapterSelectInput() {
 				if (_chapterSelection < 0) {
 					_chapterSelection = _chapterItemCount - 1;
 				}
+				_passwordInput.clear();
 				// Update preview offset (FUN_00425170: Y = selected * -50 + 75)
 				_previewOffsetY = _chapterSelection * -50 + 75;
 				debug("ChapterSelect: Selection changed to %d (UP) offsetY=%d", _chapterSelection, _previewOffsetY);
@@ -922,6 +930,7 @@ int InsaneRebel2::processChapterSelectInput() {
 				if (_chapterSelection >= _chapterItemCount) {
 					_chapterSelection = 0;
 				}
+				_passwordInput.clear();
 				// Update preview offset (FUN_00425170: Y = selected * -50 + 75)
 				_previewOffsetY = _chapterSelection * -50 + 75;
 				debug("ChapterSelect: Selection changed to %d (DOWN) offsetY=%d", _chapterSelection, _previewOffsetY);
@@ -962,11 +971,8 @@ int InsaneRebel2::processChapterSelectInput() {
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
-			// Click confirms the current selection (original: DAT_0047a7e4 & 1)
-			if (_chapterSelection >= 0 && _chapterSelection < _chapterItemCount) {
-				result = _chapterSelection;
-				debug("ChapterSelect: Item %d confirmed (CLICK)", _chapterSelection);
-			}
+			// TODO: Re-enable click-to-confirm (currently disabled for easier testing)
+			// Original behavior: any click confirms current selection (DAT_0047a7e4 & 1)
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
@@ -1187,9 +1193,36 @@ void InsaneRebel2::drawPreviewThumbnail(byte *renderBitmap, int pitch, int width
 	}
 }
 
+// Rating-to-medal string conversion - emulates FUN_0042001f
+// Converts a rating value (0-50) to a string of medal characters for TALKFONT.NUT:
+//   Every 9 points → big medal (DAT_00482550)
+//   Every 3 points → medium medal (DAT_00482558)
+//   Every 1 point  → small medal (DAT_00482560)
+Common::String InsaneRebel2::getRankString(int rating) {
+	if (rating > 50)
+		rating = 50;
+	Common::String result;
+	// TODO: Medal char bytes are placeholders — verify against actual NUT font glyphs
+	// from DAT_00482550/58/60 in the game binary
+	while (rating >= 9) { result += '\x83'; rating -= 9; }  // big medal
+	while (rating >= 3) { result += '\x82'; rating -= 3; }  // medium medal
+	while (rating >= 1) { result += '\x81'; rating -= 1; }  // small medal
+	return result;
+}
+
+// Password table lookup - emulates FUN_0041BCE0
+// Original: 90-entry table at DAT_00481af0, 20 bytes each, XOR 0xAA
+// Index formula: (difficulty + (level * 3 - 3) * 2) * 20, level is 1-based
+Common::String InsaneRebel2::getChapterPassword(int level, int difficulty) {
+	// TODO: Extract actual password table from game binary (FUN_0041BCE0)
+	// Table: 90 entries x 20 bytes at exe offset 0x481AF0, XOR 0xAA
+	// For now, return empty string (no password required — debug mode)
+	return "";
+}
+
 // Draw score/info line at bottom of chapter select - emulates FUN_00434cb0 calls
 // For unlocked chapters: score display using TRS 80 at (25, 190)
-// For locked chapters: password prompt at (30, 190)
+// For locked chapters: password prompt using TRS 81 at (30, 190)
 void InsaneRebel2::drawChapterInfoLine(byte *renderBitmap, int pitch, int width, int height) {
 	if (_chapterSelection < 0 || _chapterSelection >= 16)
 		return;
@@ -1198,34 +1231,113 @@ void InsaneRebel2::drawChapterInfoLine(byte *renderBitmap, int pitch, int width,
 	if (!splayer)
 		return;
 
-	NutRenderer *font = _smush_smalfontNut;
-	if (!font)
+	// Font system — same as drawMenuItems()
+	NutRenderer *fonts[3] = {
+		_smush_talkfontNut,
+		_smush_smalfontNut,
+		_smush_titlefontNut
+	};
+	NutRenderer *defaultFont = fonts[0] ? fonts[0] : _smush_smalfontNut;
+	if (!defaultFont)
 		return;
 
 	Common::Rect clipRect(0, 0, _vm->_screenWidth, _vm->_screenHeight);
 	int actualPitch = _vm->_screenWidth;
 
+	// Format code parser — same as drawMenuItems()
+	auto parseFormatCode = [&](const char *&str, int &outColor) -> int {
+		if (*str != '^')
+			return -1;
+		const char *p = str + 1;
+		if (*p == '^') { str = p; return -1; }
+		if (*p == 'f') {
+			p++;
+			int fontIdx = 0;
+			while (*p >= '0' && *p <= '9') { fontIdx = fontIdx * 10 + (*p - '0'); p++; }
+			str = p;
+			return (fontIdx >= 0 && fontIdx < 3) ? fontIdx : 0;
+		}
+		if (*p == 'c') {
+			p++;
+			int color = 0;
+			while (*p >= '0' && *p <= '9') { color = color * 10 + (*p - '0'); p++; }
+			str = p;
+			outColor = color;
+			return -2;
+		}
+		return -1;
+	};
+
+	// String rendering with format codes
+	auto drawString = [&](const char *str, int x, int y) {
+		NutRenderer *curFont = defaultFont;
+		int curColor = 1;
+
+		while (*str) {
+			int fontChange = parseFormatCode(str, curColor);
+			if (fontChange >= 0) {
+				curFont = fonts[fontChange] ? fonts[fontChange] : defaultFont;
+				continue;
+			}
+			if (fontChange == -2)
+				continue;
+
+			byte c = (byte)*str++;
+			if (c >= 'a' && c <= 'z')
+				c = c - 'a' + 'A';
+			if (!curFont)
+				continue;
+			int numChars = curFont->getNumChars();
+			if (c >= numChars)
+				continue;
+			int charW = curFont->getCharWidth(c);
+			if (x >= 0 && y >= 0 && charW > 0) {
+				curFont->drawCharV7(renderBitmap, clipRect, x, y, actualPitch, curColor,
+				                    kStyleAlignLeft, c, false, false);
+			}
+			x += charW;
+		}
+	};
+
 	if (_chapterUnlocked[_chapterSelection]) {
 		// Unlocked: show score info using TRS 80 at X=25 (0x19), Y=190 (0xbe)
-		const char *scoreStr = splayer->getString(80);
-		if (!scoreStr || !scoreStr[0])
+		// TRS 80 = "^f01^c248Pilots: %hd  Score: %ld  Rank: ^f00%s"
+		const char *fmtStr = splayer->getString(80);
+		if (!fmtStr || !fmtStr[0])
 			return;
 
-		int curX = 25;
-		int numChars = font->getNumChars();
-		for (const char *c = scoreStr; *c; c++) {
-			byte ch = (byte)*c;
-			if (ch >= 'a' && ch <= 'z')
-				ch = ch - 'a' + 'A';
-			if (ch < numChars) {
-				int charW = font->getCharWidth(ch);
-				if (curX >= 0 && curX + charW <= width && 190 < height) {
-					font->drawCharV7(renderBitmap, clipRect, curX, 190, actualPitch, 1,
-					                 kStyleAlignLeft, ch, false, false);
-				}
-				curX += charW;
-			}
+		// Get pilot data for this chapter
+		int32 pilotLives = 0;
+		int32 pilotScore = 0;
+		int16 pilotRating = 0;
+		if (_activePilot >= 0 && _activePilot < _numPilots) {
+			pilotLives = _pilots[_activePilot].lives[_chapterSelection];
+			pilotScore = _pilots[_activePilot].score[_chapterSelection];
+			pilotRating = _pilots[_activePilot].rating[_chapterSelection];
 		}
+		Common::String rankStr = getRankString(pilotRating);
+
+		// sprintf substitution: %hd → lives, %ld → score, %s → rank
+		Common::String displayStr = Common::String::format(fmtStr,
+			(short)pilotLives, (long)pilotScore, rankStr.c_str());
+
+		drawString(displayStr.c_str(), 25, 190);
+	} else {
+		// Locked: show password prompt using TRS 81 at X=30 (0x1e), Y=190 (0xbe)
+		// Format: "%s ^c005%s%c" (TRS 81 + green password input + blinking cursor)
+		const char *lockStr = splayer->getString(81);
+		if (!lockStr || !lockStr[0])
+			lockStr = "^f01^c248UNREGISTERED - PASSCODE REQUIRED";
+
+		// Blinking cursor: alternate '_' and ' ' (original uses bit 1 of frame counter)
+		static int cursorCounter = 0;
+		cursorCounter++;
+		char cursor = ((cursorCounter / 8) & 1) ? '_' : ' ';
+
+		Common::String displayStr = Common::String::format("%s ^c005%s%c",
+			lockStr, _passwordInput.c_str(), cursor);
+
+		drawString(displayStr.c_str(), 30, 190);
 	}
 }
 
@@ -1323,10 +1435,11 @@ int InsaneRebel2::runLevelSelect() {
 			return kLevelSelectQuit;
 		}
 
-		if (!_vm->_smushVideoShouldFinish)
+		if (!_menuSelectionConfirmed)
 			continue;
 
 		_vm->_smushVideoShouldFinish = false;
+		_menuSelectionConfirmed = false;
 
 		// --- Difficulty submenu completed ---
 		if (_pilotMenuMode == kPilotModeDifficulty) {
@@ -1445,6 +1558,7 @@ int InsaneRebel2::processLevelSelectInput() {
 				    event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
 					// Confirm name — signal back to runLevelSelect()
 					if (_pilotNameInput.size() > 0) {
+						_menuSelectionConfirmed = true;
 						_vm->_smushVideoShouldFinish = true;
 						debug("PilotName: confirmed '%s'", _pilotNameInput.c_str());
 					}
@@ -1491,7 +1605,6 @@ int InsaneRebel2::processLevelSelectInput() {
 
 	// Mouse hit Y positions — must match drawMenuItems() formula
 	const int baseY = itemCount * -5 + 0x68;
-	const int itemHeight = 10;
 
 	while (!_menuEventQueue.empty()) {
 		Common::Event event = _menuEventQueue.pop();
@@ -1533,17 +1646,7 @@ int InsaneRebel2::processLevelSelectInput() {
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
-			{
-				int mouseY = event.mouse.y;
-				for (int i = 0; i < itemCount; i++) {
-					int itemY = baseY + i * itemHeight;
-					if (mouseY >= itemY - 4 && mouseY < itemY + 6) {
-						selection = i;
-						result = i;
-						break;
-					}
-				}
-			}
+			// TODO: Re-enable click-to-confirm (currently disabled for easier testing)
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
