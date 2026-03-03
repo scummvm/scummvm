@@ -371,9 +371,8 @@ PolyHandle Toolbox::OpenPoly() {
 
 void Toolbox::OpenPort(GrafPtr port) {
 	// source: QuickDraw Routines I-163
-	//port->portBits = screenBits;
-	//port->portRect = screenBits.bounds;
 	port->portBits = _defaultBits;
+	port->portRect = Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT);
 	port->visRgn = RgnHandle(new Region({ 1, Common::Rect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT ) }));
 	port->fgColor = g_engine->_wm._colorBlack;
 	port->bkColor = g_engine->_wm._colorWhite;

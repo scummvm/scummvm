@@ -456,16 +456,47 @@ public:
 
 	// toolbox_menu.cpp
 
+	// PROCEDURE AppendMenu(theMenu: MenuHandle; data: Str255);
+	// AppendMenu adds an item or items to the end of the given menu, which must previously have
+	// been allocated by NewMenu or read from a resource file by GetMenu. The data string consists of
+	// the text of the menu item; it may be blank but should not be the empty string. If it begins with a
+	// hyphen (-), the item will be a dividing line across the width of the menu. As described in the
+	// section "Creating a Menu in Your Program", meta-characters may be embedded in the data string.
+	void AppendMenu(MenuHandle &theMenu, const Common::U32String &data);
+
+	// PROCEDURE CheckItem (theMenu: MenuHandle; item: INTEGER, checked: BOOLEAN);
+	// CheckItem places or removes a check mark at the left of the given menu item. After you call
+	// CheckItem with checked=TRUE, a check mark will appear each subsequent time the menu is
+	// pulled down. Calling CheckItem with checked=FALSE removes the check mark from the menu
+	// item (or, if it's marked with a different character, removes that mark).
+	void CheckItem(MenuHandle &theMenu, uint16 item, bool checked);
+
 	// PROCEDURE ClearMenuBar;
 	// Call ClearMenuBar to remove all menus from the menu list when you want to start afresh with all
 	// new menus. Be sure to call DrawMenuBar to update the menu bar.
 	void ClearMenuBar();
+
+	// FUNCTION CountMItems (theMenu: MenuHandle): INTEGER;
+	// CountMItems returns the number of menu items in the given menu.
+	uint16 CountMItems(MenuHandle &theMenu);
 
 	// PROCEDURE DeleteMenu(menuID: INTEGER);
 	// DeleteMenu deletes a menu from the menu list. If there's no menu with the given menu ID in the
 	// menu list, DeleteMenu has no effect. Be sure to call DrawMenuBar to update the menu bar; the
 	// menu tides following the deleted menu will move over to fill the vacancy.
 	void DeleteMenu(uint16 menuID);
+
+	// PROCEDURE DisableItem(theMenu: MenuHandle; item: INTEGER);
+	// Given a menu item number in the item parameter, Disableltem disables that menu item; given 0 in
+	// the item parameter, it disables the entire menu.
+	void DisableItem(MenuHandle &theMenu, uint16 item);
+
+	// PROCEDURE DisposeMenu(theMenu: MenuHandle);
+	// Call DisposeMenu to release the memory occupied by a menu that you allocated with NewMenu.
+	// (For menus read from a resource file with GetMenu, use the Resource Manager procedure
+	// ReleaseResource instead.) This is useful if you've created temporary menus that you no longer
+	// need.
+	void DisposeMenu(MenuHandle &theMenu);
 
 	// PROCEDURE DrawMenuBar;
 	// DrawMenuBar redraws the menu bar according to the menu list, incorporating any changes since
@@ -474,12 +505,11 @@ public:
 	// changes the menu list.
 	void DrawMenuBar();
 
-	// PROCEDURE DisposeMenu(theMenu: MenuHandle);
-	// Call DisposeMenu to release the memory occupied by a menu that you allocated with NewMenu.
-	// (For menus read from a resource file with GetMenu, use the Resource Manager procedure
-	// ReleaseResource instead.) This is useful if you've created temporary menus that you no longer
-	// need.
-	void DisposeMenu(MenuHandle &theMenu);
+	// PROCEDURE EnableItem(theMenu: MenuHandle; item: INTEGER);
+	// Given a menu item number in the item parameter, EnableItem enables the item (which may have
+	// been disabled with the Disableltem procedure, or with the "(" meta-character in the AppendMenu
+	// string).
+	void EnableItem(MenuHandle &theMenu, uint16 item);
 
 	// FUNCTION GetMHandle(menuID: INTEGER): MenuHandle;
 	// Given the menu ID of a menu currentiy installed in the menu list, GetMHandle returns a handle to

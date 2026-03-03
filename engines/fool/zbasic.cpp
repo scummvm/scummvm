@@ -24,7 +24,7 @@
 #include "common/memstream.h"
 #include "common/str-enc.h"
 #include "common/stream.h"
-#include "graphics/fontman.h"
+#include "common/tokenizer.h"
 #include "graphics/managed_surface.h"
 
 #include "fool/fool.h"
@@ -246,11 +246,83 @@ uint32 ZBasic::mem(int16 index) {
 }
 
 void ZBasic::menu(uint16 menuNo, uint16 itemNo, uint16 state, const Common::U32String &title) {
+	debugC(5, kDebugLoading, "ZBasic::menu: menuNo %d, itemNo %d, state %d, title \"%s\"", menuNo, itemNo, state, title.encode().c_str());
 	MenuHandle handle = _toolbox->GetMHandle(menuNo);
 	if (!handle) {
 		handle = _toolbox->NewMenu(menuNo, Common::U32String());
 	}
-	_toolbox->SetItem(handle, itemNo, title);
+
+	int menuCount = _toolbox->CountMItems(handle);
+	if (title.empty()) {
+		// no text, modify the state of an existing item
+		if (itemNo <= menuCount) {
+			if (state == 0) {
+				_toolbox->DisableItem(handle, itemNo);
+				_toolbox->CheckItem(handle, itemNo, false);
+			} else if (state == 1) {
+				_toolbox->EnableItem(handle, itemNo);
+				_toolbox->CheckItem(handle, itemNo, false);
+			} else if (state == 2) {
+				_toolbox->EnableItem(handle, itemNo);
+				_toolbox->CheckItem(handle, itemNo, true);
+			} else if (state >= 3) {
+				warning("ZBasic::menu: custom checkmarks not supported");
+				_toolbox->EnableItem(handle, itemNo);
+				_toolbox->CheckItem(handle, itemNo, true);
+			}
+		} else {
+			warning("ZBasic::menu: no item %d in menu %d, ignoring", itemNo, menuNo);
+		}
+		return;
+	}
+
+	// if requested location is further ahead, pad menu with blanks
+	if (itemNo > menuCount + 1) {
+		for (; menuCount < itemNo-1; menuCount++) {
+			_toolbox->SetItem(handle, menuCount+1, Common::U32String());
+		}
+	}
+
+	Common::U32StringTokenizer tok(title, "\r;");
+	Common::Array<Common::U32String> tokList = tok.split();
+	for (auto &it : tokList) {
+		if (state == 0) {
+			it = Common::U32String("(") + it;
+		} else if (state == 2) {
+			it = Common::U32String("!√") + it;
+		} else if (state >= 3) {
+			warning("ZBasic::menu: custom checkmarks not supported");
+			it = Common::U32String("!√") + it;
+		}
+	}
+
+	if (itemNo != 0 && itemNo == menuCount) {
+		for (auto &it : tokList) {
+			_toolbox->AppendMenu(handle, it);
+		}
+	} else {
+		// the Toolbox API only provides AppendMenu for adding
+		// entries to the end of the list using macro text.
+		// ZBasic wraps it so that it is positional.
+		// need to cut around the stuff that gets overwritten
+
+		Common::Array<Common::U32String> after;
+		for (size_t i = 0; i < (itemNo); i++) {
+			after.push_back(handle->menuData[i]);
+		}
+		for (auto &it : tokList) {
+			after.push_back(it);
+		}
+		for (size_t i = (itemNo)+tokList.size(); i < handle->menuData.size(); i++) {
+			after.push_back(handle->menuData[i]);
+		}
+		_toolbox->DeleteMenu(menuNo);
+		handle = _toolbox->NewMenu(menuNo, after.remove_at(0));
+		for (auto &it : after) {
+			_toolbox->AppendMenu(handle, it);
+		}
+	}
+
 }
 
 
@@ -466,8 +538,9 @@ void ZBasic::unk_44(int16 unk1) {
 	warning("STUB: ZBasic::unk_44");
 }
 
-void ZBasic::unk_110(Common::U32String &unk1, Common::U32String &unk2) {
-	warning("STUB: ZBasic::unk_110");
+void ZBasic::stringCopy(Common::U32String &target, const Common::U32String &src) {
+	// was: unk_110
+	target = src;
 }
 
 void ZBasic::unk_130(int16 unk1) {
