@@ -2126,6 +2126,58 @@ void InsaneRebel2::renderNutSprite(byte *dst, int pitch, int width, int height, 
 	renderNutSpriteMirrored(dst, pitch, width, height, x, y, nut, spriteIdx, false);
 }
 
+static void renderNutSpriteClipped(byte *dst, int pitch, int dstH,
+		int clipLeft, int clipTop, int clipRight, int clipBottom,
+		int x, int y, NutRenderer *nut, int spriteIdx) {
+	if (!nut || spriteIdx < 0 || spriteIdx >= nut->getNumChars())
+		return;
+
+	if (clipLeft < 0)
+		clipLeft = 0;
+	if (clipTop < 0)
+		clipTop = 0;
+	if (clipRight > pitch)
+		clipRight = pitch;
+	if (clipBottom > dstH)
+		clipBottom = dstH;
+	if (clipLeft >= clipRight || clipTop >= clipBottom)
+		return;
+
+	int w = nut->getCharWidth(spriteIdx);
+	int h = nut->getCharHeight(spriteIdx);
+	const byte *src = nut->getCharData(spriteIdx);
+	if (!src || w <= 0 || h <= 0)
+		return;
+
+	for (int iy = 0; iy < h; ++iy) {
+		int dstY = y + iy;
+		if (dstY < clipTop || dstY >= clipBottom)
+			continue;
+
+		const byte *s = src + iy * w;
+		byte *d = dst + dstY * pitch;
+
+		int dstStart = x;
+		int dstEnd = x + w;
+		int srcStart = 0;
+		if (dstStart < clipLeft) {
+			srcStart = clipLeft - dstStart;
+			dstStart = clipLeft;
+		}
+		if (dstEnd > clipRight)
+			dstEnd = clipRight;
+		if (dstStart >= dstEnd)
+			continue;
+
+		int copyCount = dstEnd - dstStart;
+		for (int ix = 0; ix < copyCount; ++ix) {
+			byte px = s[srcStart + ix];
+			if (px != 0)
+				d[dstStart + ix] = px;
+		}
+	}
+}
+
 // Render NUT sprite with optional horizontal mirroring
 // Based on FUN_004236e0 disassembly - flags=0x2001 triggers horizontal flip
 void InsaneRebel2::renderNutSpriteMirrored(byte *dst, int pitch, int width, int height, int x, int y, NutRenderer *nut, int spriteIdx, bool mirror) {
@@ -3314,33 +3366,26 @@ void InsaneRebel2::renderHandler25ShipPre(byte *renderBitmap, int pitch, int wid
 		int drawX = _rebelViewOffset2X + spriteXOffset + _viewX;
 		int drawY = _rebelViewOffset2Y + spriteYOffset + _viewY;
 
-		// Apply width-halving logic from original assembly:
-		// When damage==0 (uncovered), the original halves DAT_00482234 (buffer width)
-		// This clips the sprite to only half the screen.
-		int renderWidth = width;
-		byte *dstBitmap = renderBitmap;
-
+		// Apply half-width clipping from FUN_41DB5E:
+		// - mode1 uncovered: left half
+		// - mode4 uncovered: right half
+		int clipLeft = 0;
+		int clipRight = width;
 		if (useHalfWidth) {
-			renderWidth = width / 2;  // Clip to half width (160 pixels)
-
-			if (useRightHalf) {
-				// Mode 4: Draw to right half by offsetting the destination buffer
-				// Original: DAT_00482230 += DAT_00482234 (adds 160 to buffer start)
-				// This makes drawing appear on the right half (pixels 160-319)
-				dstBitmap = renderBitmap + (width / 2);
-			}
+			const int halfWidth = width / 2;
+			clipLeft = useRightHalf ? halfWidth : 0;
+			clipRight = clipLeft + halfWidth;
 		}
 
-		// GRD001 uses transparent rendering (color 0 = transparent).
-		// The original uses flags=0 (opaque) in FUN_004236e0, but the NUT pre-decode
-		// already fills color-0 positions with kDefaultTransparentColor (0).
-		// Using transparent rendering here lets the corridor show through any
-		// color-0 border/padding pixels in GRD001, avoiding black-over-corridor artifacts.
-		renderNutSprite(dstBitmap, pitch, renderWidth, renderHeight, drawX, drawY, _grd001Sprite, 0);
+		// FUN_41DB5E mode-4 uncovered mutates DAT_00482230/34 (clip region),
+		// not DAT_00457910 (draw X). Keep drawX unchanged and clip only.
+		renderNutSpriteClipped(renderBitmap, pitch, renderHeight,
+			clipLeft, 0, clipRight, renderHeight,
+			drawX, drawY, _grd001Sprite, 0);
 
-		debug("Rebel2 Handler25 PRE: GRD001 at (%d,%d) nutOff(%d,%d) viewOff(%d,%d) size(%d,%d) mode=%d dmg=%d halfW=%d rightHalf=%d renderW=%d",
+		debug("Rebel2 Handler25 PRE: GRD001 at (%d,%d) nutOff(%d,%d) viewOff(%d,%d) size(%d,%d) mode=%d dmg=%d halfW=%d rightHalf=%d clip=[%d,%d)",
 			drawX, drawY, spriteXOffset, spriteYOffset, _rebelViewOffset2X, _rebelViewOffset2Y,
-			spriteW, spriteH, _grdSpriteMode, _rebelDamageLevel, useHalfWidth ? 1 : 0, useRightHalf ? 1 : 0, renderWidth);
+			spriteW, spriteH, _grdSpriteMode, _rebelDamageLevel, useHalfWidth ? 1 : 0, useRightHalf ? 1 : 0, clipLeft, clipRight);
 	}
 }
 

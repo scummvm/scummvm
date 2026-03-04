@@ -367,6 +367,7 @@ public:
 	int _deathFrame;          // Frame number where player died (for death video selection)
 	int _phaseScore;          // Accumulated score from previous phases (preserved on phase retry)
 	int _phaseMisses;         // Accumulated misses from previous phases
+	bool _skipSectionRequested; // Debug shortcut (Shift+S): force current gameplay section to end
 
 	// =============================================================
 

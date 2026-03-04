@@ -110,6 +110,16 @@ uint16 InsaneRebel2::processWaveEnd(int16 mask, int16 *budget, int16 threshold, 
 
 	uint16 result = 0;
 
+	// Debug shortcut path: force-end current section when requested via Shift+S.
+	// This returns the same sentinel (0xFFFF) used for section completion/death/quit.
+	if (_skipSectionRequested) {
+		_skipSectionRequested = false;
+		_rebelPhaseState = mask;
+		_rebelWaveState = mask;
+		debug("Rebel2 processWaveEnd: Shift+S skip consumed (mask=0x%x)", (uint16)mask);
+		return 0xFFFF;
+	}
+
 	// Step 1: Wait for video to finish (lines 21-32)
 	// Original loop: while (damage < 0xff && frame < maxFrame-1 && !escPressed)
 	// The SmushPlayer::play() call already blocks until video ends, so this step
