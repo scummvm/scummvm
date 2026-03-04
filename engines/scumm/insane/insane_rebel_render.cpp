@@ -146,8 +146,7 @@ void InsaneRebel2::decodeCodec45(byte *dst, const byte *src, int width, int heig
 			int testLineSize = READ_LE_UINT16(src + testOffset);
 			// A valid first line size should be: > 0, <= width*2
 			if (testLineSize > 0 && testLineSize <= width * 2 && testLineSize < dataSize - testOffset) {
-				// Validate by summing line sizes
-				int sumTest = 0;
+				// Validate line-size sequence
 				int linesTest = 0;
 				const byte *testPtr = src + testOffset;
 				bool validSum = true;
@@ -158,7 +157,6 @@ void InsaneRebel2::decodeCodec45(byte *dst, const byte *src, int width, int heig
 						validSum = false;
 						break;
 					}
-					sumTest += ls + 2;
 					testPtr += ls + 2;
 					linesTest++;
 				}
@@ -530,14 +528,14 @@ void InsaneRebel2::spawnTurretShot(int x, int y) {
 			// levelType 5: BLAST.SAD (slot 0), otherwise: TBLAST.SAD (slot 7)
 			playSfx((_rebelLevelType == 5) ? 0 : 7, 127, 0);
 
-			_turretShots[i].counter = getShotMaxDuration();
-			_turretShots[i].seqNum = _turretShotSeqCounter;
-			_turretShotSeqCounter++;
-			_turretShots[i].targetX = x + _viewX;  // DAT_0044366e in original
-			_turretShots[i].targetY = y + _viewY;  // DAT_00443670 in original
-			break;
+				_turretShots[i].counter = getShotMaxDuration();
+				_turretShots[i].seqNum = _turretShotSeqCounter;
+				_turretShotSeqCounter++;
+				_turretShots[i].targetX = x + _viewX;  // DAT_0044366e in original
+				_turretShots[i].targetY = y + _viewY;  // DAT_00443670 in original
+				break;
+			}
 		}
-	}
 }
 
 // Handler 8 Vehicle shot spawn (based on FUN_401CCF lines 65-69)
@@ -578,10 +576,12 @@ void InsaneRebel2::spawnHandler25Shot(int x, int y) {
 			_turretShots[i].targetX = x + _viewX;
 			_turretShots[i].targetY = y + _viewY;
 
-			// Compute gun position from GRD002 character sprite.
-			// Original uses per-direction lookup tables DAT_004578a6/DAT_004578c6.
-			// We approximate from the NUT sprite center + directional offset.
-			if (_grd002Sprite && _grd002Sprite->getNumChars() > 0) {
+			// Compute gun position from retail lookup tables.
+			// Original (FUN_41DB5E) stores:
+			//   DAT_0045791c[i] = gunXTable[spriteIdx] + DAT_00457910 - DAT_0045790c
+			//   DAT_00457920[i] = gunYTable[spriteIdx] + DAT_00457912 - DAT_0045790e
+			// where gunXTable/gunYTable are loaded by opcode 8, par4=8.
+			if (_grdShotOriginTableLoaded) {
 				// Compute current sprite index (same logic as renderHandler25Ship)
 				int spriteIdx;
 				if (_rebelDamageLevel == 0) {
@@ -611,34 +611,23 @@ void InsaneRebel2::spawnHandler25Shot(int x, int y) {
 				} else {
 					spriteIdx = (_rebelFlightDir == 0) ? (5 - _rebelDamageLevel) : (25 - _rebelDamageLevel);
 				}
-				int numSprites = _grd002Sprite->getNumChars();
 				if (spriteIdx < 0)
 					spriteIdx = 0;
-				if (spriteIdx >= numSprites)
-					spriteIdx = numSprites - 1;
+				if (spriteIdx >= ARRAYSIZE(_grdShotOriginX))
+					spriteIdx = ARRAYSIZE(_grdShotOriginX) - 1;
 
-				// Get sprite rendering position (same as in renderHandler25Ship)
-				int16 spriteXOffset = _grd002Sprite->getCharXOffset(spriteIdx);
-				int16 spriteYOffset = _grd002Sprite->getCharYOffset(spriteIdx);
-				int spriteW = _grd002Sprite->getCharWidth(spriteIdx);
-				int spriteH = _grd002Sprite->getCharHeight(spriteIdx);
-				bool shouldMirror = (_rebelFlightDir != 0 && _rebelDamageLevel == 0);
+				int16 gunXTable = _grdShotOriginX[spriteIdx];
+				int16 gunYTable = _grdShotOriginY[spriteIdx];
 
-				int drawX;
-				if (shouldMirror) {
-					drawX = _rebelViewOffset2X + (320 - spriteW - spriteXOffset) + _viewX;
-				} else {
-					drawX = _rebelViewOffset2X + spriteXOffset + _viewX;
+				// Mirrored X when DAT_00457902 != 0 in retail.
+				if (_rebelFlightDir != 0) {
+					gunXTable = 320 - gunXTable;
 				}
-				int drawY = spriteYOffset + _rebelViewOffset2Y + _viewY;
 
-				// Gun barrel is approximately at the character's hand level:
-				// X: center of sprite ± directional offset toward the target
-				// Y: about 60% down the sprite height (hand/arm level)
-				_turretShots[i].gunX = drawX + spriteW / 2;
-				_turretShots[i].gunY = drawY + (spriteH * 3) / 5;
+				_turretShots[i].gunX = gunXTable + _rebelViewOffset2X - _rebelViewOffsetX + _viewX;
+				_turretShots[i].gunY = gunYTable + _rebelViewOffset2Y - _rebelViewOffsetY + _viewY;
 			} else {
-				// Fallback: approximate center-bottom of character area
+				// Fallback when table payload (opcode 8/par4=8) was not loaded.
 				_turretShots[i].gunX = _rebelViewOffset2X + 160 + _viewX;
 				_turretShots[i].gunY = _rebelViewOffset2Y + 140 + _viewY;
 			}
@@ -732,131 +721,344 @@ void InsaneRebel2::drawTexturedLine(byte *dst, int pitch, int width, int height,
 }
 
 // Helper: draw a textured segment between two points using the game's original routine (FUN_00429360 port)
-void drawTexturedSegment(byte *dst, int pitch, int width, int height, int param_3, int param_4, int param_5, int param_6, int param_7, const byte *param_8) {
-	// Ported from FUN_00429360 (decompiled). Only 0 in texture is transparent.
-	int sVar4 = 0;                // left
-	int sVar1 = 0;                // top
-	int sVar7 = width - 1;        // right
-	int sVar10 = height - 1;      // bottom
+void drawTexturedSegment(byte *dst, int pitch, int width, int height,
+                         int param_3, int param_4, int param_5, int param_6, int param_7, const byte *param_8,
+                         int clipLeft, int clipTop, int clipRight, int clipBottom) {
+	// Near-direct port of FUN_00429360.
+	// Only color 0 is transparent.
+	int sVar4 = clipLeft;
+	int sVar1 = clipTop;
+	int sVar7 = clipRight;
+	int sVar10 = clipBottom;
+	int p3 = param_3;
+	int p4 = param_4;
+	int p5 = param_5;
+	int p6 = param_6;
 
-	int px0 = param_3;
-	int py0 = param_4;
-	int px1 = param_5;
-	int py1 = param_6;
-
-	// Clip against screen bounds (translation of original clipping logic)
-	if (px0 == px1) {
-		if (px0 < sVar4 || px0 > sVar7)
+	if (p5 == p3) {
+		if (p5 < sVar4 || sVar7 < p5)
 			return;
 	} else {
-		if (px0 < sVar4) {
-			if (px1 < sVar4)
+		if (p3 < sVar4) {
+			if (p5 < sVar4)
 				return;
-			py0 = py1 + ((py0 - py1) * (sVar4 - px1)) / (px0 - px1);
-			px0 = sVar4;
-		} else if (px0 > sVar7) {
-			if (px1 > sVar7)
+			p4 = p6 + (((p4 - p6) * (sVar4 - p5)) / (p3 - p5));
+			p3 = sVar4;
+		} else if (sVar7 < p3) {
+			if (sVar7 < p5)
 				return;
-			py0 = py1 + ((py0 - py1) * (sVar7 - px1)) / (px0 - px1);
-			px0 = sVar7;
+			p4 = p6 + (((p4 - p6) * (sVar7 - p5)) / (p3 - p5));
+			p3 = sVar7;
 		}
-		if (px1 < sVar4) {
-			py1 = py0 + ((py1 - py0) * (sVar4 - px0)) / (px1 - px0);
-			px1 = sVar4;
-		} else if (px1 > sVar7) {
-			py1 = py0 + ((py1 - py0) * (sVar7 - px0)) / (px1 - px0);
-			px1 = sVar7;
+		if (p5 < sVar4) {
+			p6 = p4 + (((p6 - p4) * (sVar4 - p3)) / (p5 - p3));
+			p5 = sVar4;
+		} else if (sVar7 < p5) {
+			p6 = p4 + (((p6 - p4) * (sVar7 - p3)) / (p5 - p3));
+			p5 = sVar7;
 		}
 	}
 
-	if (py0 == py1) {
-		if (py0 < sVar1 || py0 > sVar10)
+	if (p6 == p4) {
+		if (p6 < sVar1 || sVar10 < p6)
 			return;
 	} else {
-		if (py0 < sVar1) {
-			if (py1 < sVar1)
+		if (p4 < sVar1) {
+			if (p6 < sVar1)
 				return;
-			px0 = px1 + ((px0 - px1) * (sVar1 - py1)) / (py0 - py1);
-			py0 = sVar1;
-		} else if (py0 > sVar10) {
-			if (py1 > sVar10)
+			p3 = p5 + (((p3 - p5) * (sVar1 - p6)) / (p4 - p6));
+			p4 = sVar1;
+		} else if (sVar10 < p4) {
+			if (sVar10 < p6)
 				return;
-			px0 = px1 + ((px0 - px1) * (sVar10 - py1)) / (py0 - py1);
-			py0 = sVar10;
+			p3 = p5 + (((p3 - p5) * (sVar10 - p6)) / (p4 - p6));
+			p4 = sVar10;
 		}
-		if (py1 < sVar1) {
-			px1 = px0 + ((px1 - px0) * (sVar1 - py0)) / (py1 - py0);
-			py1 = sVar1;
-		} else if (py1 > sVar10) {
-			px1 = px0 + ((px1 - px0) * (sVar10 - py0)) / (py1 - py0);
-			py1 = sVar10;
+		if (p6 < sVar1) {
+			p5 = (((p5 - p3) * (sVar1 - p4)) / (p6 - p4)) + p3;
+			p6 = sVar1;
+		} else if (sVar10 < p6) {
+			p5 = (((p5 - p3) * (sVar10 - p4)) / (p6 - p4)) + p3;
+			p6 = sVar10;
 		}
 	}
 
-	int dx = px1 - px0;
-	int dy = py1 - py0;
-	int absdx = dx < 0 ? -dx : dx;
-	int absdy = dy < 0 ? -dy : dy;
-
-	// pointer into destination and texture
-	byte *baseDst = dst;
+	int iVar5 = pitch;
+	int sD = p5 - p3;
+	int sE = p6 - p4;
+	byte *pcVar6 = dst + p4 * iVar5 + p3;
 	const byte *texPtr = param_8;
 
-	if (absdx == 0) {
-		if (absdy == 0) {
+	if (sD == 0) {
+		if (sE == 0) {
 			if (*texPtr != 0)
-				baseDst[py0 * pitch + px0] = *texPtr;
+				*pcVar6 = *texPtr;
+			return;
+		} else if (sE < 1) {
+			int iVar9 = -(sE - 1);
+			if (iVar9 <= 0)
+				return;
+			int iVar11 = iVar9;
+			do {
+				iVar11--;
+				if (*texPtr != 0)
+					*pcVar6 = *texPtr;
+				pcVar6 -= iVar5;
+				for (iVar9 = iVar9 - param_7; iVar9 < 0; iVar9 = iVar9 - (sE - 1))
+					texPtr++;
+			} while (0 < iVar11);
+			return;
+		} else {
+			int iVar9 = sE + 1;
+			if (iVar9 <= 0)
+				return;
+			int iVar8 = iVar9;
+			int iVar11 = iVar9;
+			do {
+				iVar11--;
+				if (*texPtr != 0)
+					*pcVar6 = *texPtr;
+				pcVar6 += iVar5;
+				for (iVar8 = iVar8 - param_7; iVar8 < 0; iVar8 += iVar9)
+					texPtr++;
+			} while (0 < iVar11);
 			return;
 		}
-		// vertical-ish
-		int step = absdy + 1;
-		int curY = py0;
-		int signY = dy > 0 ? 1 : -1;
-		int iVar9 = step; // adv counter
-		for (int i = 0; i < step; i++) {
-			if (*texPtr != 0)
-				baseDst[curY * pitch + px0] = *texPtr;
-			curY += signY;
-			iVar9 -= param_7;
-			while (iVar9 < 0) { texPtr++; iVar9 += step; }
+	} else if (sE == 0) {
+		if (sD < 1) {
+			int iVar5h = -(sD - 1);
+			if (iVar5h <= 0)
+				return;
+			int iVar9 = iVar5h;
+			do {
+				iVar9--;
+				if (*texPtr != 0)
+					*pcVar6 = *texPtr;
+				pcVar6 -= 1;
+				for (iVar5h = iVar5h - param_7; iVar5h < 0; iVar5h = iVar5h - (sD - 1))
+					texPtr++;
+			} while (0 < iVar9);
+			return;
+		} else {
+			int iVar5h = sD + 1;
+			if (iVar5h <= 0)
+				return;
+			int iVar11 = iVar5h;
+			int iVar9 = iVar5h;
+			do {
+				iVar9--;
+				if (*texPtr != 0)
+					*pcVar6 = *texPtr;
+				pcVar6 += 1;
+				for (iVar11 = iVar11 - param_7; iVar11 < 0; iVar11 += iVar5h)
+					texPtr++;
+			} while (0 < iVar9);
+			return;
 		}
+	}
+
+	if (sD < 0) {
+		if (-1 < sE) {
+			int iVar11 = sD;
+			int iVar8 = sE;
+			int iVar9 = -iVar11;
+			if (-iVar8 == iVar11 || iVar9 < iVar8) {
+				iVar9 = sE >> 1;
+				if (iVar8 + 1 < 1)
+					return;
+				int iVar3 = iVar8;
+				int iVar12 = iVar8;
+				do {
+					if (*texPtr != 0)
+						*pcVar6 = *texPtr;
+					pcVar6 += iVar5;
+					iVar9 += iVar11;
+					if (iVar9 < 0) {
+						iVar9 += iVar8;
+						pcVar6 -= 1;
+					}
+					for (iVar12 = iVar12 - param_7; iVar12 < 0; iVar12 = iVar8 + 1 + iVar12)
+						texPtr++;
+					bool bVar2 = 0 < iVar3;
+					iVar3--;
+					if (!bVar2)
+						break;
+				} while (true);
+				return;
+			}
+			int iVar12 = iVar9 >> 1;
+			if (-iVar11 + 1 < 1)
+				return;
+			int iVar3 = -iVar11;
+			do {
+				if (*texPtr != 0)
+					*pcVar6 = *texPtr;
+				pcVar6 -= 1;
+				iVar12 -= iVar8;
+				if (iVar12 < 0) {
+					iVar12 -= iVar11;
+					pcVar6 += iVar5;
+				}
+				for (iVar9 = iVar9 - param_7; iVar9 < 0; iVar9 = (iVar9 - iVar11) + 1)
+					texPtr++;
+				bool bVar2 = 0 < iVar3;
+				iVar3--;
+				if (!bVar2)
+					break;
+			} while (true);
+			return;
+		}
+	} else if (-1 < sE) {
+		if (sD <= sE) {
+			int iVar11 = sE;
+			int iVar9 = sE >> 1;
+			if (iVar11 + 1 < 1)
+				return;
+			int iVar8 = iVar11;
+			int iVar12 = iVar11;
+			do {
+				if (*texPtr != 0)
+					*pcVar6 = *texPtr;
+				pcVar6 += iVar5;
+				iVar9 -= sD;
+				if (iVar9 < 0) {
+					iVar9 += iVar11;
+					pcVar6 += 1;
+				}
+				for (iVar8 = iVar8 - param_7; iVar8 < 0; iVar8 = iVar11 + 1 + iVar8)
+					texPtr++;
+				bool bVar2 = 0 < iVar12;
+				iVar12--;
+				if (!bVar2)
+					break;
+			} while (true);
+			return;
+		}
+		int iVar11 = sD;
+		int iVar9 = sD >> 1;
+		if (iVar11 + 1 < 1)
+			return;
+		int iVar8 = iVar11;
+		int iVar12 = iVar11;
+		do {
+			if (*texPtr != 0)
+				*pcVar6 = *texPtr;
+			pcVar6 += 1;
+			iVar9 -= sE;
+			if (iVar9 < 0) {
+				iVar9 += iVar11;
+				pcVar6 += iVar5;
+			}
+			for (iVar8 = iVar8 - param_7; iVar8 < 0; iVar8 = iVar11 + 1 + iVar8)
+				texPtr++;
+			bool bVar2 = 0 < iVar12;
+			iVar12--;
+			if (!bVar2)
+				break;
+		} while (true);
 		return;
 	}
 
-	if (absdy == 0) {
-		// horizontal-ish
-		int step = absdx + 1;
-		int curX = px0;
-		int signX = dx > 0 ? 1 : -1;
-		int iVar11 = step;
-		for (int i = 0; i < step; i++) {
-			if (*texPtr != 0)
-				baseDst[py0 * pitch + curX] = *texPtr;
-			curX += signX;
-			iVar11 -= param_7;
-			while (iVar11 < 0) { texPtr++; iVar11 += step; }
+	if (sD < 0) {
+		if (sD < sE) {
+			int iVar11 = sD;
+			int iVar9 = -iVar11;
+			int iVar8 = iVar9 >> 1;
+			if (0 < -iVar11 + 1) {
+				int iVar12 = -iVar11;
+				do {
+					if (*texPtr != 0)
+						*pcVar6 = *texPtr;
+					pcVar6 -= 1;
+					iVar8 += sE;
+					if (iVar8 < 0) {
+						iVar8 -= iVar11;
+						pcVar6 -= iVar5;
+					}
+					for (iVar9 = iVar9 - param_7; iVar9 < 0; iVar9 = (iVar9 - iVar11) + 1)
+						texPtr++;
+					bool bVar2 = 0 < iVar12;
+					iVar12--;
+					if (!bVar2)
+						break;
+				} while (true);
+				return;
+			}
+		} else {
+			int iVar11 = sE;
+			int iVar9 = -iVar11;
+			int iVar8 = iVar9 >> 1;
+			if (0 < -iVar11 + 1) {
+				int iVar12 = -iVar11;
+				do {
+					if (*texPtr != 0)
+						*pcVar6 = *texPtr;
+					pcVar6 -= iVar5;
+					iVar8 += sD;
+					if (iVar8 < 0) {
+						iVar8 -= iVar11;
+						pcVar6 -= 1;
+					}
+					for (iVar9 = iVar9 - param_7; iVar9 < 0; iVar9 = (iVar9 - iVar11) + 1)
+						texPtr++;
+					bool bVar2 = 0 < iVar12;
+					iVar12--;
+					if (!bVar2)
+						break;
+				} while (true);
+				return;
+			}
 		}
-		return;
-	}
-
-	// general case
-	int steps = (absdx > absdy) ? absdx + 1 : absdy + 1;
-	int x = px0, y = py0;
-	int sx = dx > 0 ? 1 : -1;
-	int sy = dy > 0 ? 1 : -1;
-	int err = absdx - absdy;
-	int iVar12 = steps - 1; // Original starts at majorAxis, not majorAxis+1
-
-	for (int i = 0; i < steps; i++) {
-		if (x >= 0 && x < width && y >= 0 && y < height) {
-			if (*texPtr != 0)
-				baseDst[y * pitch + x] = *texPtr;
+	} else {
+		int iVar11 = sE;
+		int iVar8 = sD;
+		int iVar9 = -iVar11;
+		if (iVar9 < iVar8) {
+			iVar9 = sD >> 1;
+			if (0 < iVar8 + 1) {
+				int iVar3 = iVar8;
+				int iVar12 = iVar8;
+				do {
+					if (*texPtr != 0)
+						*pcVar6 = *texPtr;
+					pcVar6 += 1;
+					iVar9 += iVar11;
+					if (iVar9 < 0) {
+						iVar9 += iVar8;
+						pcVar6 -= iVar5;
+					}
+					for (iVar12 = iVar12 - param_7; iVar12 < 0; iVar12 = iVar8 + 1 + iVar12)
+						texPtr++;
+					bool bVar2 = 0 < iVar3;
+					iVar3--;
+					if (!bVar2)
+						break;
+				} while (true);
+				return;
+			}
+		} else {
+			int iVar12 = iVar9 >> 1;
+			if (0 < -iVar11 + 1) {
+				int iVar3 = -iVar11;
+				do {
+					if (*texPtr != 0)
+						*pcVar6 = *texPtr;
+					pcVar6 -= iVar5;
+					iVar12 -= iVar8;
+					if (iVar12 < 0) {
+						iVar12 -= iVar11;
+						pcVar6 += 1;
+					}
+					for (iVar9 = iVar9 - param_7; iVar9 < 0; iVar9 = (iVar9 - iVar11) + 1)
+						texPtr++;
+					bool bVar2 = 0 < iVar3;
+					iVar3--;
+					if (!bVar2)
+						break;
+				} while (true);
+				return;
+			}
 		}
-		int e2 = 2 * err;
-		if (e2 > -absdy) { err -= absdy; x += sx; }
-		if (e2 < absdx) { err += absdx; y += sy; }
-		iVar12 -= param_7;
-		while (iVar12 < 0) { texPtr++; iVar12 += steps; }
 	}
 }
 
@@ -887,16 +1089,38 @@ void InsaneRebel2::initLaserTexture(NutRenderer *nut, int spriteIdx) {
 	if (!_laserTexture.pixels)
 		return;
 
-	// Render sprite into buffer (FUN_0040BAB0 lines 23-24)
-	// We copy the sprite data directly since it's already in the right format
+	// FUN_0040BAB0 draws the sprite through the normal NUT blitter (FUN_004236e0),
+	// so we must honor x/y offsets and transparency, not just memcpy glyph rows.
 	const byte *srcData = nut->getCharData(spriteIdx);
-	if (srcData) {
-		int srcHeight = nut->getCharHeight(spriteIdx);
-		int copyHeight = MIN(texHeight, (int16)srcHeight);
-		memcpy(_laserTexture.pixels, srcData, texWidth * copyHeight);
+	const int srcWidth = nut->getCharWidth(spriteIdx);
+	const int srcHeight = nut->getCharHeight(spriteIdx);
+	const int srcXOff = nut->getCharXOffset(spriteIdx);
+	const int srcYOff = nut->getCharYOffset(spriteIdx);
+	if (srcData && srcWidth > 0 && srcHeight > 0) {
+		for (int sy = 0; sy < srcHeight; sy++) {
+			int dy = srcYOff + sy;
+			if (dy < 0 || dy >= texHeight)
+				continue;
+
+			const byte *srcRow = srcData + sy * srcWidth;
+			byte *dstRow = _laserTexture.pixels + dy * texWidth;
+			for (int sx = 0; sx < srcWidth; sx++) {
+				int dx = srcXOff + sx;
+				if (dx < 0 || dx >= texWidth)
+					continue;
+
+				byte px = srcRow[sx];
+				// FUN_00429360 (beam raster) only treats 0 as transparent.
+				// Keep 231 pixels from the source texture to avoid dropping beam sub-segments.
+				if (px != 0) {
+					dstRow[dx] = px;
+				}
+			}
+		}
 	}
 
-	debug("Rebel2: Initialized laser texture %dx%d from sprite %d", texWidth, texHeight, spriteIdx);
+	debug("Rebel2: Initialized laser texture %dx%d from sprite %d (xoff=%d yoff=%d src=%dx%d)",
+	      texWidth, texHeight, spriteIdx, srcXOff, srcYOff, srcWidth, srcHeight);
 
 	// Diagnostic: dump texture pixel stats to verify data is loaded correctly
 	if (_laserTexture.pixels && texWidth > 0 && texHeight > 0) {
@@ -992,12 +1216,15 @@ void InsaneRebel2::initEdgeTable(const byte *data) {
 // param_2 = clip rect (or NULL for full buffer)
 // param_3..param_6 = x0, y0, x1, y1 line endpoints
 void InsaneRebel2::drawEdgeHighlightLine(byte *dst, int pitch, int width, int height,
-                                          int16 x0, int16 y0, int16 x1, int16 y1) {
-	// Clip region (FUN_410962 lines 19-30, simplified for our buffer layout)
-	int16 clipLeft = 1;
-	int16 clipTop = 1;
-	int16 clipRight = width - 2;
-	int16 clipBottom = height - 2;
+                                          int16 x0, int16 y0, int16 x1, int16 y1,
+                                          int16 clipLeftIn, int16 clipTopIn, int16 clipRightIn, int16 clipBottomIn) {
+	// Clip region (FUN_410962 lines 19-30). Clip is provided by caller (gameplay viewport).
+	int16 clipLeft = CLIP<int16>(clipLeftIn, 1, width - 2);
+	int16 clipTop = CLIP<int16>(clipTopIn, 1, height - 2);
+	int16 clipRight = CLIP<int16>(clipRightIn, 1, width - 2);
+	int16 clipBottom = CLIP<int16>(clipBottomIn, 1, height - 2);
+	if (clipLeft > clipRight || clipTop > clipBottom)
+		return;
 
 	// Clip X endpoints (FUN_410962 lines 35-69)
 	if (x0 == x1) {
@@ -1249,9 +1476,13 @@ void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height,
 	byte *texPixels = _laserTexture.pixels;
 
 	// FUN_0040BBF6 line 23: sVar7 = (thickness * animFrame * 16) / maxFrames
+	// Tuned beam segment spacing: 60% of original.
+	constexpr int kBeamAnimScaleNumerator = 48;   // 16 * 0.6 * 5
+	constexpr int kBeamAnimScaleDenominator = 5;
 	if (maxFrames == 0)
 		maxFrames = 1;
-	int16 sVar7 = (int16)(((int)thickness * (int)animFrame * 16) / (int)maxFrames);
+	int16 sVar7 = (int16)(((int)thickness * (int)animFrame * kBeamAnimScaleNumerator) /
+	                      ((int)maxFrames * kBeamAnimScaleDenominator));
 
 	// FUN_0040BBF6 lines 24-25: Calculate delta with scaling
 	int16 dx = targetX - gunX;
@@ -1269,6 +1500,19 @@ void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height,
 
 	// FUN_0040BBF6 line 30: Get texture pixel pointer
 	byte *local_28 = texPixels;
+
+	// Original callers pass a clip rect for the gameplay viewport (excluding status bar).
+	// This preserves texture phase at the viewport edge and avoids visibly "chopped" beams.
+	int clipLeft = CLIP<int>(_viewX, 0, width - 1);
+	int clipTop = CLIP<int>(_viewY, 0, height - 1);
+	int clipRight = CLIP<int>(_viewX + 319, 0, width - 1);
+	int clipBottom = CLIP<int>(_viewY + 179, 0, height - 1);
+	if (clipLeft > clipRight || clipTop > clipBottom)
+		return;
+	int edgeClipLeft = CLIP<int>(clipLeft + 1, 1, width - 2);
+	int edgeClipTop = CLIP<int>(clipTop + 1, 1, height - 2);
+	int edgeClipRight = CLIP<int>(clipRight - 1, 1, width - 2);
+	int edgeClipBottom = CLIP<int>(clipBottom - 1, 1, height - 2);
 
 	debug(5, "Rebel2: drawLaserBeam gun(%d,%d) tgt(%d,%d) start(%d,%d) end(%d,%d) anim=%d/%d ws=%d hs=%d th=%d",
 		gunX, gunY, targetX, targetY, startX, startY, endX, endY,
@@ -1293,7 +1537,8 @@ void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height,
 			drawTexturedSegment(dst, pitch, width, height,
 			                    startX, (startY - halfLines) + lineIdx,
 			                    endX, (endY - halfLines) + lineIdx,
-			                    texW, local_28);
+			                    texW, local_28,
+			                    clipLeft, clipTop, clipRight, clipBottom);
 
 			// Advance texture pointer (step through texture rows)
 			for (local_24 = texH + local_24; local_24 > 0; local_24 -= numLines) {
@@ -1302,13 +1547,15 @@ void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height,
 		}
 
 		// FUN_0040BBF6 lines 47-51: Edge highlights along top and bottom beam edges
-		if (_rebelDetailMode >= 0) {
+		if (_rebelDetailMode >= 0 && edgeClipLeft <= edgeClipRight && edgeClipTop <= edgeClipBottom) {
 			drawEdgeHighlightLine(dst, pitch, width, height,
 			                      startX, startY - halfLines,
-			                      endX, endY - halfLines);
+			                      endX, endY - halfLines,
+			                      edgeClipLeft, edgeClipTop, edgeClipRight, edgeClipBottom);
 			drawEdgeHighlightLine(dst, pitch, width, height,
 			                      startX, (startY - halfLines) + numLines - 1,
-			                      endX, (endY - halfLines) + numLines - 1);
+			                      endX, (endY - halfLines) + numLines - 1,
+			                      edgeClipLeft, edgeClipTop, edgeClipRight, edgeClipBottom);
 		}
 	} else {
 		// Mostly vertical beam - draw horizontal scanlines
@@ -1329,7 +1576,8 @@ void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height,
 			drawTexturedSegment(dst, pitch, width, height,
 			                    (startX - halfLines) + lineIdx, startY,
 			                    (endX - halfLines) + lineIdx, endY,
-			                    texW, local_28);
+			                    texW, local_28,
+			                    clipLeft, clipTop, clipRight, clipBottom);
 
 			// Advance texture pointer
 			for (local_24 = texH + local_24; local_24 > 0; local_24 -= numLines) {
@@ -1338,15 +1586,18 @@ void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height,
 		}
 
 		// FUN_0040BBF6 lines 69-73: Edge highlights along left and right beam edges
-		if (_rebelDetailMode >= 0) {
+		if (_rebelDetailMode >= 0 && edgeClipLeft <= edgeClipRight && edgeClipTop <= edgeClipBottom) {
 			drawEdgeHighlightLine(dst, pitch, width, height,
 			                      startX - halfLines, startY,
-			                      endX - halfLines, endY);
+			                      endX - halfLines, endY,
+			                      edgeClipLeft, edgeClipTop, edgeClipRight, edgeClipBottom);
 			drawEdgeHighlightLine(dst, pitch, width, height,
 			                      (startX - halfLines) + numLines - 1, startY,
-			                      (endX - halfLines) + numLines - 1, endY);
+			                      (endX - halfLines) + numLines - 1, endY,
+			                      edgeClipLeft, edgeClipTop, edgeClipRight, edgeClipBottom);
 		}
 	}
+
 }
 void InsaneRebel2::drawLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, byte color) {
 	int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
@@ -3842,14 +4093,13 @@ void InsaneRebel2::renderHandler25LaserShots(byte *renderBitmap, int pitch, int 
 		pan = CLIP<int16>(pan, -127, 127);
 		// TODO: Apply panning to sound channel i+1
 
-		// Target position (where player clicked)
-		int16 targetX = _turretShots[i].targetX;
-		int16 targetY = _turretShots[i].targetY;
+		// Retail adds DAT_0045790c/0e at render time to both gun and target.
+		int16 targetX = _turretShots[i].targetX + _rebelViewOffsetX;
+		int16 targetY = _turretShots[i].targetY + _rebelViewOffsetY;
 
-		// Gun position computed at spawn time from GRD002 sprite data
-		// Original: DAT_0045791c[i] + DAT_0045790c, DAT_00457920[i] + DAT_0045790e
-		int16 gunX = _turretShots[i].gunX;
-		int16 gunY = _turretShots[i].gunY;
+		// Gun position computed at spawn time in base coords (DAT_0045791c/20).
+		int16 gunX = _turretShots[i].gunX + _rebelViewOffsetX;
+		int16 gunY = _turretShots[i].gunY + _rebelViewOffsetY;
 
 		int16 progress = maxDuration - _turretShots[i].counter;
 

@@ -492,6 +492,10 @@ public:
 	// Load Handler 25 GRD NUT sprites from ANIM data (par4 = sprite type: 1,2)
 	bool loadHandler25GrdSprites(byte *animData, int32 size, int16 par4);
 
+	// Parse Handler 25 shot-origin table text from opcode 8 (par4 = 8).
+	// Retail stores values into DAT_004578a6 / DAT_004578c6 (indices 5..19).
+	bool loadHandler25ShotOriginTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining);
+
 	// Load Level 2 background from embedded ANIM
 	bool loadLevel2Background(byte *animData, int32 size, byte *renderBitmap);
 
@@ -544,7 +548,8 @@ public:
 	// For horizontal-dominant beams, reads pixels above/below the line.
 	// For vertical-dominant beams, reads pixels left/right of the line.
 	void drawEdgeHighlightLine(byte *dst, int pitch, int width, int height,
-	                           int16 x0, int16 y0, int16 x1, int16 y1);
+	                           int16 x0, int16 y0, int16 x1, int16 y1,
+	                           int16 clipLeft, int16 clipTop, int16 clipRight, int16 clipBottom);
 
 	// Initialize laser texture from NUT sprite (FUN_0040BAB0)
 	void initLaserTexture(NutRenderer *nut, int spriteIdx);
@@ -797,8 +802,8 @@ public:
 		int16 targetX;     // DAT_0044367e[i] - target X position
 		int16 targetY;     // DAT_00443682[i] - target Y position
 		int16 seqNum;      // DAT_0044368a[i] - shot sequence (for alternating)
-		int16 gunX;        // DAT_0045791c[i] - gun barrel X (Handler 25, screen coords)
-		int16 gunY;        // DAT_00457920[i] - gun barrel Y (Handler 25, screen coords)
+		int16 gunX;        // DAT_0045791c[i] - gun barrel X (Handler 25 base coords; render adds view offset)
+		int16 gunY;        // DAT_00457920[i] - gun barrel Y (Handler 25 base coords; render adds view offset)
 	};
 	TurretShot _turretShots[2];
 	int16 _turretShotSeqCounter;  // DAT_0047fe94 - global sequence counter
@@ -1000,6 +1005,13 @@ public:
 	NutRenderer *_grd001Sprite;      // DAT_00482240 - GRD001 primary ship NUT
 	NutRenderer *_grd002Sprite;      // DAT_00482238 - GRD002 secondary ship NUT
 
+	// Handler 25 shot-origin lookup tables from opcode 8/par4=8 text payload.
+	// Indices 5..19 are filled by the retail "%hd %hd ..." parser (FUN_0041CADB case 6).
+	// Uncovered Level 2 firing uses indices 5..14.
+	int16 _grdShotOriginX[30];       // DAT_004578a6 equivalent
+	int16 _grdShotOriginY[30];       // DAT_004578c6 equivalent
+	bool _grdShotOriginTableLoaded;
+
 	// Handler 25 sprite mode (DAT_00457900) - set by opcode 6 par3
 	// Controls which sprite variant to draw:
 	//   1: Draw _grd001Sprite normally
@@ -1032,13 +1044,13 @@ public:
 	NutRenderer *_hudOverlayNut;     // DAT_0047fe78 - Primary HUD overlay (animated)
 	NutRenderer *_hudOverlay2Nut;    // DAT_0047fe80 - Secondary HUD overlay
 
-	/* Difficulty Level (0-5, from pilot menu; clamped to 0-4 for table lookup) */
+	/* Difficulty Level (0-5, from pilot menu; maps directly to table rows) */
 	int _difficulty;
 	void drawCornerBrackets(byte *dst, int pitch, int width, int height, int x, int y, int w, int h, byte color);
 
 	// ======================= Per-Level Difficulty Parameters =======================
 	// Extracted from RA2WIN95.EXE at VA 0x47e0f0
-	// 2D table indexed by difficulty (0-4) × level type (0-16)
+	// 2D table indexed by difficulty (0-5) × level type (0-16)
 	// Original indexing: &DAT_0047e0f0 + chapter * 0x242 + levelType * 0x22
 	// Level type (_rebelLevelType) is set by IACT opcode 6 par3
 	// 17 entries: Lv1-5(0-4), Lv6A/6B(5-6), Lv7-14(7-14), Lv15A/15B(15-16)
@@ -1064,9 +1076,10 @@ public:
 		int16 driftRate;       // +0x20: Ship drift rate (flight controls)
 	};
 
-	// Table: 5 difficulty levels × 17 level types
-	// Difficulty 4 (Jedi) is identical to difficulty 2 (Medium) in the original data
-	static const LevelDifficultyParams kDifficultyTable[5][17];
+	// Table: 6 difficulty levels × 17 level types.
+	// Menu labels in GAME.TRS are: Beginner, Novice, Standard, Expert, Custom1, Custom2.
+	// Custom1 is identical to Standard; Custom2 matches Custom1 except Lv15B drift fields.
+	static const LevelDifficultyParams kDifficultyTable[6][17];
 
 	// Look up difficulty parameters for current _difficulty and _rebelLevelType
 	LevelDifficultyParams getDifficultyParams() const;
