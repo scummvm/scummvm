@@ -287,6 +287,7 @@ typedef struct ImGuiState {
 	} _archive;
 
 	ImGuiEx::ImGuiLogger *_logger = nullptr;
+	bool _ignoreMouse = false;
 } ImGuiState;
 
 // debugtools.cpp

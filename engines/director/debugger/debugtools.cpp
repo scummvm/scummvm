@@ -649,6 +649,10 @@ static void showSettings() {
 		}
 
 		_state->_logger->drawColorOptions();
+
+		ImGui::SeparatorText("Debugger Behavior");
+		ImGui::Checkbox("Ignore Mouse Events", &_state->_ignoreMouse);
+		ImGui::SetItemTooltip("Block mouse events from reaching Director.\nHold SHIFT to temporarily allow them.\nPress Ctrl+F1 to toggle this setting.");
 	}
 	ImGui::End();
 }
@@ -708,6 +712,13 @@ void onImGuiRender() {
 
 	ImGuiIO &io = ImGui::GetIO();
 	io.ConfigFlags &= ~(ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse);
+
+	if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_F1)) {
+		_state->_ignoreMouse = !_state->_ignoreMouse;
+
+		Common::String msg = Common::String::format("Debug Mouse Ignore: %s", _state->_ignoreMouse ? "ON" : "OFF");
+		g_system->displayMessageOnOSD(Common::U32String(msg));
+	}
 
 	ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
 
@@ -791,6 +802,18 @@ void onImGuiCleanup() {
 
 int getSelectedChannel(){
 	return _state ? _state->_selectedChannel : -1;
+}
+
+bool isMouseInputIgnored() {
+	if (!_state || !_state->_ignoreMouse)
+		return false;
+
+	// Holding Shift temporarily allows mouse events to pass to the engine
+	ImGuiIO &io = ImGui::GetIO();
+	if (io.KeyShift)
+		return false;
+
+	return true;
 }
 
 Common::String formatHandlerName(int scriptId, int castId, Common::String handlerName, ScriptType scriptType, bool childScript) {
