@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-03-03 17:08+0000\n"
-"PO-Revision-Date: 2026-03-01 23:52+0000\n"
+"PO-Revision-Date: 2026-03-04 23:56+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -8070,7 +8070,7 @@ msgstr "Закрыть окно диалога"
 #: engines/lab/metaengine.cpp:151 engines/sherlock/metaengine.cpp:338
 #: engines/sherlock/metaengine.cpp:790 engines/tot/metaengine.cpp:104
 msgid "Quit dialog keymappings"
-msgstr "Раскладка клавиш панели выхода"
+msgstr "Раскладка клавиш диалога выхода"
 
 #: engines/cine/metaengine.cpp:57
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -11509,16 +11509,12 @@ msgid "Inventory item 4"
 msgstr "Предмет инвентаря 4"
 
 #: engines/queen/metaengine.cpp:235
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Skip cutaway / dialog"
-msgstr "Пропустить диалог"
+msgstr "Пропустить звставку / диалог"
 
 #: engines/queen/metaengine.cpp:240
-#, fuzzy
-#| msgid "Show journal"
 msgid "Use journal"
-msgstr "Показать журнал"
+msgstr "Использовать журнал"
 
 #: engines/queen/metaengine.cpp:284 engines/saga/metaengine.cpp:359
 #: engines/scumm/help.cpp:144 engines/scumm/help.cpp:169
@@ -11539,10 +11535,8 @@ msgid "Talk to"
 msgstr "Говорить с"
 
 #: engines/queen/metaengine.cpp:299
-#, fuzzy
-#| msgid "Show journal"
 msgid "Close journal"
-msgstr "Показать журнал"
+msgstr "Закрыть журнал"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:875
@@ -11564,34 +11558,24 @@ msgid "I Have No Mouth support not compiled in"
 msgstr "Поддержка для I Have No Mouth не скомпилирована"
 
 #: engines/saga/metaengine.cpp:269
-#, fuzzy
-#| msgid "Option panel keymapping"
 msgid "Option panel keymappings"
 msgstr "Раскладка клавиш панели опций"
 
 #: engines/saga/metaengine.cpp:270
-#, fuzzy
-#| msgid "Save panel keymapping"
 msgid "Save panel keymappings"
 msgstr "Раскладка клавиш панели сохранения"
 
 #: engines/saga/metaengine.cpp:271
-#, fuzzy
-#| msgid "Load panel keymapping"
 msgid "Load panel keymappings"
 msgstr "Раскладка клавиш панели загрузки"
 
 #: engines/saga/metaengine.cpp:272
-#, fuzzy
-#| msgid "Quit panel keymapping"
 msgid "Quit panel keymappings"
 msgstr "Раскладка клавиш панели выхода"
 
 #: engines/saga/metaengine.cpp:273
-#, fuzzy
-#| msgid "Converse panel keymapping"
 msgid "Converse panel keymappings"
-msgstr "Раскладка клавиш панели диалогов"
+msgstr "Раскладка клавиш панели разговоров"
 
 #. I18N: the boss key is a feature,
 #. that allows players to quickly switch to a fake screen that looks like a business application,
@@ -11628,8 +11612,6 @@ msgid "Abort speech"
 msgstr "Прервать речь"
 
 #: engines/saga/metaengine.cpp:344
-#, fuzzy
-#| msgid "Show dialogue"
 msgid "Show dialog"
 msgstr "Показать диалог"
 
@@ -12963,10 +12945,8 @@ msgid "Enable demo/kiosk mode in the full retail version of Maniac Mansion."
 msgstr "Включите режим демо/киоска в полной версии Maniac Mansion."
 
 #: engines/scumm/metaengine.cpp:839
-#, fuzzy
-#| msgid "Playback"
 msgid "Disable Playback"
-msgstr "Воспроизвести"
+msgstr "Выключить воспроизведение"
 
 #: engines/scumm/metaengine.cpp:840
 msgid ""
@@ -12991,26 +12971,18 @@ msgid "Enable ambience sounds."
 msgstr "Включить звуки фона."
 
 #: engines/scumm/metaengine.cpp:1001
-#, fuzzy
-#| msgid "Down Left"
 msgid "Down left"
 msgstr "Вниз-влево"
 
 #: engines/scumm/metaengine.cpp:1014
-#, fuzzy
-#| msgid "Down Right"
 msgid "Down right"
 msgstr "Вниз-вправо"
 
 #: engines/scumm/metaengine.cpp:1034
-#, fuzzy
-#| msgid "Upper left item"
 msgid "Up left"
-msgstr "Верхний левый предмет"
+msgstr "Вверх-влево"
 
 #: engines/scumm/metaengine.cpp:1047
-#, fuzzy
-#| msgid "Up Right"
 msgid "Up right"
 msgstr "Вверх-вправо"
 
@@ -13390,10 +13362,8 @@ msgid "Movie keymappings"
 msgstr "Раскладка клавиш ролика"
 
 #: engines/sherlock/metaengine.cpp:349
-#, fuzzy
-#| msgid "Use Selected Object"
 msgid "Skip / Deselect verb"
-msgstr "Использовать выбранный объект"
+msgstr "Пропустить / Убрать выбор дейстаия"
 
 #: engines/sherlock/metaengine.cpp:450
 #: engines/wintermute/keymapper_tables.h:1614
@@ -13403,10 +13373,8 @@ msgid "Settings"
 msgstr "Настройки"
 
 #: engines/sherlock/metaengine.cpp:472
-#, fuzzy
-#| msgid "Tileset"
 msgid "Files"
-msgstr "Плитки"
+msgstr "Файлы"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go back 10 pages in the journal
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 10 pages in the journal
@@ -13417,10 +13385,8 @@ msgstr ""
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go forward 10 pages in the journal
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 10 pages in the journal
 #: engines/sherlock/metaengine.cpp:507 engines/sherlock/metaengine.cpp:895
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go forward 10 pages"
-msgstr "Показать журнал"
+msgstr "Вперёд на 10 страниц"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go to the first page of the journal
 #: engines/sherlock/metaengine.cpp:521 engines/sherlock/metaengine.cpp:924
@@ -13435,40 +13401,28 @@ msgid "Last page"
 msgstr "Последняя страница"
 
 #: engines/sherlock/metaengine.cpp:578
-#, fuzzy
-#| msgid "Move left"
 msgid "Scroll left"
-msgstr "Идти влево"
+msgstr "Прокрутить влево"
 
 #: engines/sherlock/metaengine.cpp:584
-#, fuzzy
-#| msgid "Move right"
 msgid "Scroll right"
-msgstr "Идти вправо"
+msgstr "Прокрутить вправо"
 
 #: engines/sherlock/metaengine.cpp:649 engines/sherlock/metaengine.cpp:938
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select option"
-msgstr "Выбрать актера 1"
+msgstr "Выбрать опцию"
 
 #: engines/sherlock/metaengine.cpp:692
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle portraits"
-msgstr "Переключить режим боя"
+msgstr "Переключить портреты"
 
 #: engines/sherlock/metaengine.cpp:697
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change font style"
-msgstr "Изменить размер шрифта"
+msgstr "Изменить начертание шрифта"
 
 #: engines/sherlock/metaengine.cpp:707
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle windows mode"
-msgstr "Переключить быстрый режим"
+msgstr "Переключить оконный режим"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an auto-help feature, this action is used to change the auto-help location between left and right
 #: engines/sherlock/metaengine.cpp:713
