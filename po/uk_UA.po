@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-03-03 17:08+0000\n"
-"PO-Revision-Date: 2026-02-26 23:58+0000\n"
+"PO-Revision-Date: 2026-03-04 23:56+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -13754,16 +13754,12 @@ msgid "Display all exits on current location"
 msgstr "Показати всі виходи з поточної локації"
 
 #: engines/stark/metaengine.cpp:306
-#, fuzzy
-#| msgid "Scroll list up"
 msgid "Scroll dialogs up"
-msgstr "Прокручення списку догори"
+msgstr "Прокручення діалогів догори"
 
 #: engines/stark/metaengine.cpp:312
-#, fuzzy
-#| msgid "Scroll list down"
 msgid "Scroll dialogs down"
-msgstr "Прокручення списку донизу"
+msgstr "Прокручення діалогів донизу"
 
 #: engines/stark/metaengine.cpp:318
 msgid "Go to next dialog"
