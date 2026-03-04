@@ -192,6 +192,7 @@ public:
 	int _flightSpellFrameCounter = 0;
 	bool _flightInBlockingAnim = false;
 	bool _disableAmbientSounds = false;
+	bool _isDogPeeing = false;
 
 	GameStateData *_state = new GameStateData();
 
@@ -257,6 +258,7 @@ public:
 	bool renderScene(int overlayMode = OVERLAY_NONE);
 	void mouseHoverForMap();
 	void frameTriggers();
+	void maybeHaveDogPee();
 	void maybePlayPostIntro();
 	void shakeEffect();
 	void handleFlightRoomFrame();

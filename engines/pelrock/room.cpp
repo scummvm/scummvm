@@ -666,12 +666,13 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		Sprite *mouse = findSpriteByIndex(2);
 		Sprite *blank = findSpriteByIndex(4);
 		mouse->animData[0].loopCount = 3;
+		mouse->animData[0].movementFlags = 0x1F;
 		mouse->animData[1].loopCount = 1;
 		mouse->animData[1].movementFlags = 0x3FF;
 		mouse->animData[2].loopCount = 1;
-		mouse->animData[2].movementFlags = 0x801F;
+		mouse->animData[2].movementFlags = 0x1F;
 		mouse->animData[3].loopCount = 4;
-		mouse->animData[3].movementFlags = 0x3C0;
+		mouse->animData[3].movementFlags = 0x3E0;
 
 		anims = new RoomPasserBys(roomNumber, 1);
 		PasserByAnim anim;

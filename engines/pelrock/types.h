@@ -448,7 +448,8 @@ struct PaletteAnim {
 #define PASSERBY_DOWN 2
 
 struct PasserByAnim {
-	uint32 frameTrigger = 0x3FF;
+	// uint32 frameTrigger = 0x3FF;
+	uint32 frameTrigger = 0x96;
 	int16 startX;
 	int16 startY;
 	int16 resetCoord;
@@ -553,8 +554,9 @@ struct ResetEntry {
 #define FLAG_HE_TIRADO_PIEDRA 44
 #define FLAG_HA_USADO_AGUA 45
 #define FLAG_NUMERO_DE_COPAS 47
+#define FLAG_PIGEON_DEAD 61
 
-const int kNumGameFlags = 61;
+const int kNumGameFlags = 62;
 
 struct GameStateData {
 	byte flags[kNumGameFlags];

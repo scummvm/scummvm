@@ -370,6 +370,35 @@ void PelrockEngine::frameTriggers() {
 	passerByAnim(frameCount);
 	handleFlightRoomFrame();
 	shakeEffect();
+	maybeHaveDogPee();
+}
+
+void PelrockEngine::maybeHaveDogPee() {
+
+	if (_room->_currentRoomNumber != 19) {
+		return;
+	}
+	Sprite * dog = _room->findSpriteByIndex(2);
+
+	if(_alfredState.x < 146 && !_isDogPeeing) {
+		_isDogPeeing = true;
+		dog->animData[0].nframes = 24;
+		while(!shouldQuit() && dog->animData[0].curFrame < 23) {
+			_events->pollEvent();
+			renderScene(OVERLAY_NONE);
+
+			_screen->update();
+			g_system->delayMillis(10);
+		}
+		dog->animData[0].nframes = 9;
+		dog->animData[0].curFrame = 0;
+
+		_dialog->say(_res->_ingameTexts[QUEASCO_CASIMEMEA]);
+		_currentHotspot = nullptr; // Clear so arrival direction isn't overridden by dog hotspot
+		walkTo(152, _alfredState.y);
+		_isDogPeeing = false;
+	}
+
 }
 
 void PelrockEngine::maybePlayPostIntro() {
@@ -1325,7 +1354,7 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 				animData.curFrame = 0;
 				animData.curLoop++;
 			} else {
-				if (sprite->disableAfterSequence) {
+				if (sprite->disableAfterSequence && sprite->curAnimIndex == sprite->numAnims - 1) {
 					sprite->zOrder = -1;
 					return;
 				}
@@ -1925,18 +1954,6 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 	_curWalkTarget = walkTarget;
 
 	walkTo(walkTarget.x, walkTarget.y);
-
-	// { // For quick room navigation
-	// 	Exit *exit = isExitUnder(walkTarget.x, walkTarget.y);
-
-	// 	if (exit != nullptr) {
-	// 		alfredState.x = exit->targetX;
-	// 		alfredState.y = exit->targetY;
-
-	// 		setScreen(exit->targetRoom, exit->dir);
-	// 	} else {
-	// 	}
-	// }
 }
 
 void PelrockEngine::changeCursor(Cursor cursor) {
@@ -2098,6 +2115,38 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			_dialog->say(_res->_ingameTexts[PINTA_BUENAPERSONA]);
 			break;
 		}
+	case 19: {
+		Sprite *dog = _room->findSpriteByIndex(2);
+		dog->animData[0].nframes = 9;
+		break;
+	}
+	case 24: {
+		_room->findSpriteByIndex(1)->numAnims = 1;
+
+		if(_state->hasInventoryItem(88) && _state->getFlag(FLAG_PIGEON_DEAD) == false) {
+			_dialog->say(_res->_ingameTexts[PROBARLIBRO]);
+			playAlfredSpecialAnim(0);
+			Sprite *pigeons = _room->findSpriteByIndex(1);
+			pigeons->numAnims = 4;
+			pigeons->curAnimIndex = 0;
+			pigeons->disableAfterSequence = true;
+			pigeons->animData[0].curFrame = 0;
+			while(!g_engine->shouldQuit() && pigeons->zOrder != -1) {
+				_events->pollEvent();
+				renderScene();
+				_screen->update();
+				// debug("Pigeons animation, current anim index %d, current frame %d", pigeons->curAnimIndex, pigeons->animData[pigeons->curAnimIndex].curFrame);
+				// if(pigeons->curAnimIndex == 3 && pigeons->animData[3].curFrame == 3) {
+				// 	debug("Pigeons animation finished, hiding pigeons and enabling next part of the scene");
+				// 	pigeons->zOrder = -1;
+				// }
+				g_system->delayMillis(10);
+			}
+			_dialog->say(_res->_ingameTexts[PRACTICAR_MAS]);
+			_state->setFlag(FLAG_PIGEON_DEAD, true);
+		}
+		break;
+	}
 	case 38: {
 		if (_room->_prevRoomNumber == 30) {
 			int x = _alfredState.x;
@@ -2548,6 +2597,10 @@ void PelrockEngine::credits() {
 		for (int page = 0; page < kNumCreditPages && !shouldQuit(); page++) {
 			// loads screen
 			setScreen(kCreditRooms[page]);
+			if(kCreditRooms[page] == 24) {
+				Sprite *pigeons = _room->findSpriteByIndex(1);
+				pigeons->disableAfterSequence = true;
+			}
 
 			byte speakerId;
 			_dialog->processColorAndTrim(creditTexts[page], speakerId);
