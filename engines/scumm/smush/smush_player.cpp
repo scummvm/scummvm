@@ -964,8 +964,8 @@ void SmushPlayer::handleZlibFrameObject(int32 subSize, Common::SeekableReadStrea
 
 	byte *ptr = fobjBuffer;
 	int codec = READ_LE_UINT16(ptr); ptr += 2;
-	int left = READ_LE_UINT16(ptr); ptr += 2;
-	int top = READ_LE_UINT16(ptr); ptr += 2;
+	int left = isRA2() ? (int16)READ_LE_UINT16(ptr) : (int)READ_LE_UINT16(ptr); ptr += 2;
+	int top = isRA2() ? (int16)READ_LE_UINT16(ptr) : (int)READ_LE_UINT16(ptr); ptr += 2;
 	int width = READ_LE_UINT16(ptr); ptr += 2;
 	int height = READ_LE_UINT16(ptr); ptr += 2;
 
@@ -984,8 +984,8 @@ void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b
 	}
 
 	int codec = b.readUint16LE();
-	int left = b.readUint16LE();
-	int top = b.readUint16LE();
+	int left = isRA2() ? (int)b.readSint16LE() : (int)b.readUint16LE();
+	int top = isRA2() ? (int)b.readSint16LE() : (int)b.readUint16LE();
 	int width = b.readUint16LE();
 	int height = b.readUint16LE();
 
@@ -1005,6 +1005,10 @@ void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b
 	assert(chunk_buffer);
 	b.read(chunk_buffer, chunk_size);
 
+	if (isRA2()) {
+		ra2RememberLastFobj(codec, chunk_buffer, chunk_size, left, top, width, height);
+	}
+
 	if (_storeFrame && isRA2()) {
 		ra2StoreFobjData(codec, chunk_buffer, chunk_size, left, top, width, height);
 	}
@@ -1018,6 +1022,8 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFrame(%d)", _frame);
 	uint8 *audioChunk = nullptr;
 	_skipNext = false;
+	if (isRA2())
+		_hasFrameFobjForGost = false;
 
 	if (_insanity) {
 		_vm->_insane->procPreRendering(_dst);
@@ -1087,11 +1093,8 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 			handleLoad(subSize, b);
 			break;
 		case MKTAG('G','O','S','T'):
-			// GOST = ghost sprite overlay. Re-renders previous FOBJ data at a new
-			// position with priority/transparency flags. Data: 2-byte priority type
-			// (0/1/2 → 0x2000/0x4000/0x6000), 2-byte x, 2-byte y.
-			// TODO: Implement proper ghost rendering by saving previous FOBJ data
-			// and re-rendering it with modified coordinates and priority flags.
+			if (isRA2())
+				ra2HandleGost(subSize, b);
 			break;
 		default:
 			error("Unknown frame subChunk found : %s, %d", tag2str(subType), subSize);

@@ -61,6 +61,14 @@ void SmushPlayer::ra2InitFields() {
 	_storedFobjTop = 0;
 	_storedFobjWidth = 0;
 	_storedFobjHeight = 0;
+	_lastFobjData = nullptr;
+	_lastFobjDataSize = 0;
+	_lastFobjCodec = 0;
+	_lastFobjLeft = 0;
+	_lastFobjTop = 0;
+	_lastFobjWidth = 0;
+	_lastFobjHeight = 0;
+	_hasFrameFobjForGost = false;
 	_skipNext = false;
 	_ra2FastForwarding = false;
 	_fobjOffsetX = 0;
@@ -84,6 +92,8 @@ void SmushPlayer::ra2DestroyFields() {
 	_multiFont = nullptr;
 	free(_storedFobjData);
 	_storedFobjData = nullptr;
+	free(_lastFobjData);
+	_lastFobjData = nullptr;
 	free(_loadBuffer);
 	_loadBuffer = nullptr;
 }
@@ -127,6 +137,10 @@ void SmushPlayer::ra2ReleaseVideo() {
 	free(_storedFobjData);
 	_storedFobjData = nullptr;
 	_storedFobjDataSize = 0;
+	free(_lastFobjData);
+	_lastFobjData = nullptr;
+	_lastFobjDataSize = 0;
+	_hasFrameFobjForGost = false;
 	// Preserve _frameBuffer across videos so that gameplay videos (which have no
 	// background FOBJ) can use the stored background from the previous BEG video.
 }
@@ -375,6 +389,82 @@ void SmushPlayer::ra2StoreFobjData(int codec, const byte *data, int32 dataSize,
 	_storedFobjWidth = width;
 	_storedFobjHeight = height;
 	_storeFrame = false;
+}
+
+/**
+ * Cache the most recent frame FOBJ for GOST re-rendering.
+ */
+void SmushPlayer::ra2RememberLastFobj(int codec, const byte *data, int32 dataSize,
+									  int left, int top, int width, int height) {
+	if (dataSize <= 0) {
+		_hasFrameFobjForGost = false;
+		return;
+	}
+
+	byte *newData = (byte *)realloc(_lastFobjData, dataSize);
+	if (newData == nullptr) {
+		warning("SmushPlayer::ra2RememberLastFobj: Failed to allocate %d bytes", dataSize);
+		free(_lastFobjData);
+		_lastFobjData = nullptr;
+		_lastFobjDataSize = 0;
+		_hasFrameFobjForGost = false;
+		return;
+	}
+
+	_lastFobjData = newData;
+	memcpy(_lastFobjData, data, dataSize);
+	_lastFobjDataSize = dataSize;
+	_lastFobjCodec = codec;
+	_lastFobjLeft = left;
+	_lastFobjTop = top;
+	_lastFobjWidth = width;
+	_lastFobjHeight = height;
+	_hasFrameFobjForGost = true;
+}
+
+/**
+ * RA2 GOST chunk handler.
+ * Re-renders the most recent frame FOBJ at the supplied ghost position.
+ */
+void SmushPlayer::ra2HandleGost(int32 subSize, Common::SeekableReadStream &b) {
+	if (subSize < 6) {
+		warning("SmushPlayer::ra2HandleGost: chunk too small (%d bytes)", subSize);
+		return;
+	}
+
+	int16 ghostType = b.readSint16LE();
+	int16 ghostX = b.readSint16LE();
+	int16 ghostY = b.readSint16LE();
+
+	if (!_hasFrameFobjForGost || _lastFobjData == nullptr || _lastFobjDataSize <= 0) {
+		debug("SmushPlayer GOST: frame=%d ignored (no current-frame FOBJ cached)", _frame);
+		return;
+	}
+
+	uint16 priorityFlags = 0;
+	if (ghostType == 0) {
+		priorityFlags = 0x2000;
+	} else if (ghostType == 1) {
+		priorityFlags = 0x4000;
+	} else if (ghostType == 2) {
+		priorityFlags = 0x6000;
+	}
+
+	// Match FUN_0042cba0 default behavior (flags bit 0 clear): GOST coordinates
+	// are relative to the cached FOBJ header position.
+	int left = _lastFobjLeft + ghostX;
+	int top = _lastFobjTop + ghostY;
+
+	debug("SmushPlayer GOST: frame=%d type=%d flags=0x%04x gostPos=(%d,%d) basePos=(%d,%d) finalPos=(%d,%d) size=%dx%d codec=%d",
+		_frame, ghostType, priorityFlags, ghostX, ghostY,
+		_lastFobjLeft, _lastFobjTop, left, top,
+		_lastFobjWidth, _lastFobjHeight, _lastFobjCodec);
+
+	// Priority bits (0x2000/0x4000/0x6000) are currently not modeled in
+	// ScummVM's SMUSH decoders. Coordinate-correct re-decode restores expected
+	// RA2 chapter preview behavior.
+	decodeFrameObject(_lastFobjCodec, _lastFobjData, left, top,
+		_lastFobjWidth, _lastFobjHeight, _lastFobjDataSize);
 }
 
 /**
