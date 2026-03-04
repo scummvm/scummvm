@@ -389,6 +389,12 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	}
 	loadSfx();
 
+	// Initialize auxiliary sound buffers (4 × 30000 bytes, loaded from IACT stream)
+	for (i = 0; i < kRA2NumAuxSfx; i++) {
+		_auxSfxData[i] = (byte *)calloc(kRA2AuxBufSize, 1);
+		_auxSfxSize[i] = 0;
+	}
+
 	// Initialize menu system
 	_gameState = kStateMainMenu;  // Start at main menu
 	_menuSelection = 0;           // First item selected
@@ -1089,15 +1095,19 @@ int32 InsaneRebel2::processMouse() {
 					}
 				}
 
-				// Play explosion sound (FUN_0041189e).
+				// Play enemy death sound.
 				// Pan based on enemy center X position: (screenX - 160) mapped to [-127,127]
 				{
 					int enemyCenterX = (it->rect.left + it->rect.right) / 2 - _viewX;
 					int sfxPan = CLIP((enemyCenterX - 160) * 127 / 160, -127, 127);
 					if (_rebelHandler == 8 && it->type >= 1 && it->type <= 4) {
-						playSfx(0, 127, sfxPan);  // BLAST.SAD for handler 8 types 1-4
+						// Handler 8 soldier types 1-4: play from auxiliary buffer 0
+						// Original: FUN_00411931(0, slot+3, 0x7f, pan, 0)
+						playAuxSfx(0, 127, sfxPan);
 					} else {
-						playSfx(2, 127, sfxPan);  // EXPLODE.SAD for all other enemies
+						// All other enemies: EXPLODE.SAD
+						// Original: FUN_0041189e(2, slot+3, 0x7f, pan, 0)
+						playSfx(2, 127, sfxPan);
 					}
 				}
 

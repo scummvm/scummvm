@@ -341,6 +341,12 @@ void InsaneRebel2::freeSfx() {
 		_sfxData[i] = nullptr;
 		_sfxSize[i] = 0;
 	}
+	for (int i = 0; i < kRA2NumAuxSfx; i++) {
+		_vm->_mixer->stopHandle(_auxSfxHandles[i]);
+		free(_auxSfxData[i]);
+		_auxSfxData[i] = nullptr;
+		_auxSfxSize[i] = 0;
+	}
 }
 
 void InsaneRebel2::playSfx(int slot, int volume, int pan) {
@@ -369,6 +375,67 @@ void InsaneRebel2::playSfx(int slot, int volume, int pan) {
 		stream, -1, scaledVolume, pan);
 
 	debug(5, "InsaneRebel2::playSfx: slot=%d vol=%d pan=%d size=%d", slot, volume, pan, _sfxSize[slot]);
+}
+
+void InsaneRebel2::loadAuxSfx(int buffer, const byte *data, uint32 size) {
+	if (buffer < 0 || buffer >= kRA2NumAuxSfx || !data || size == 0) {
+		return;
+	}
+	if ((int)size > kRA2AuxBufSize) {
+		debug("InsaneRebel2::loadAuxSfx: buffer %d size %d exceeds max %d, truncating",
+			buffer, size, kRA2AuxBufSize);
+		size = kRA2AuxBufSize;
+	}
+
+	memcpy(_auxSfxData[buffer], data, size);
+	_auxSfxSize[buffer] = size;
+
+	debug(5, "InsaneRebel2::loadAuxSfx: buffer=%d size=%d", buffer, size);
+}
+
+void InsaneRebel2::playAuxSfx(int buffer, int volume, int pan) {
+	if (buffer < 0 || buffer >= kRA2NumAuxSfx || !_auxSfxData[buffer] || _auxSfxSize[buffer] == 0) {
+		return;
+	}
+
+	_vm->_mixer->stopHandle(_auxSfxHandles[buffer]);
+
+	// The auxiliary buffer data goes through FUN_00425fc0 (format dispatch) in the original.
+	// Check if data has SAUD header; if so, extract PCM from SDAT chunk.
+	// Otherwise treat as raw 8-bit unsigned PCM at 11025 Hz.
+	const byte *pcmStart = _auxSfxData[buffer];
+	uint32 pcmSize = _auxSfxSize[buffer];
+
+	if (pcmSize > 8 && READ_BE_UINT32(pcmStart) == MKTAG('S', 'A', 'U', 'D')) {
+		// Parse SAUD container to find SDAT chunk
+		uint32 pos = 8; // Skip SAUD tag + size
+		while (pos + 8 <= pcmSize) {
+			uint32 chunkTag = READ_BE_UINT32(pcmStart + pos);
+			uint32 chunkSize = READ_BE_UINT32(pcmStart + pos + 4);
+			if (chunkTag == MKTAG('S', 'D', 'A', 'T')) {
+				pcmStart = pcmStart + pos + 8;
+				pcmSize = MIN(chunkSize, pcmSize - pos - 8);
+				break;
+			}
+			pos += 8 + chunkSize;
+		}
+	}
+
+	byte *pcmCopy = (byte *)malloc(pcmSize);
+	if (!pcmCopy) {
+		return;
+	}
+	memcpy(pcmCopy, pcmStart, pcmSize);
+
+	Audio::SeekableAudioStream *stream = Audio::makeRawStream(
+		pcmCopy, pcmSize, 11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+
+	int scaledVolume = (volume * Audio::Mixer::kMaxChannelVolume) / 127;
+
+	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_auxSfxHandles[buffer],
+		stream, -1, scaledVolume, pan);
+
+	debug(5, "InsaneRebel2::playAuxSfx: buffer=%d vol=%d pan=%d pcmSize=%d", buffer, volume, pan, pcmSize);
 }
 
 } // End of namespace Scumm
