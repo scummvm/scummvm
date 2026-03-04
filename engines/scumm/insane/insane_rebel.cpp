@@ -799,11 +799,11 @@ void InsaneRebel2::addScore(int points) {
 
 // Render score text to HUD (part of FUN_0041c012)
 // FUN_0041c012 lines 133-137: calls FUN_00434cb0 with format "%07ld"
-// Position (low-res): X = 0x101 (257), Y = 4 within status bar → screen Y = 184
+// using DAT_00482200 (DISPFONT in low-res mode).
 void InsaneRebel2::renderScoreHUD(byte *renderBitmap, int pitch, int width, int height, int statusBarY) {
-	(void)statusBarY;
-
-	if (!_smush_dispfontNut)
+	// In low-res mode, score text shares the same NUT as the status bar sprites.
+	NutRenderer *statusFont = _smush_cockpitNut;
+	if (!statusFont)
 		return;
 
 	char scoreStr[16];
@@ -811,9 +811,9 @@ void InsaneRebel2::renderScoreHUD(byte *renderBitmap, int pitch, int width, int 
 
 	// Score position from FUN_0041c012 assembly (low-res mode):
 	//   X = ((DAT_0047a808 < 2) - 1 & 0x101) + 0x101 = 0x101 = 257
-	//   Y = ((DAT_0047a808 < 2) - 1 & 4) + 4 = 4 (within status bar at Y=180)
+	//   Y = ((DAT_0047a808 < 2) - 1 & 4) + 4 = 4 (within status bar)
 	int scoreX = 257 + _viewX;
-	int scoreY = 180 + 4 + _viewY;
+	int scoreY = statusBarY + 4 + _viewY;
 
 	// Render each digit as a NUT sprite (direct pixel blit with color 0 transparency).
 	// This matches the original's FUN_00434cb0 → FUN_004341a0 text rendering which
@@ -825,11 +825,11 @@ void InsaneRebel2::renderScoreHUD(byte *renderBitmap, int pitch, int width, int 
 	int x = scoreX;
 	for (int i = 0; scoreStr[i] != '\0'; i++) {
 		byte ch = (byte)scoreStr[i];
-		if (ch < _smush_dispfontNut->getNumChars()) {
-			int charX = x + _smush_dispfontNut->getCharXOffset(ch);
-			int charY = scoreY + _smush_dispfontNut->getCharYOffset(ch);
-			renderNutSprite(renderBitmap, pitch, width, height, charX, charY, _smush_dispfontNut, ch);
-			x += _smush_dispfontNut->getCharWidth(ch);
+		if (ch < statusFont->getNumChars()) {
+			int charX = x + statusFont->getCharXOffset(ch);
+			int charY = scoreY + statusFont->getCharYOffset(ch);
+			renderNutSprite(renderBitmap, pitch, width, height, charX, charY, statusFont, ch);
+			x += statusFont->getCharWidth(ch);
 		}
 	}
 }

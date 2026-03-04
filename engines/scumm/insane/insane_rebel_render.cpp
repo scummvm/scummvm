@@ -2493,7 +2493,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	renderCrosshair(renderBitmap, pitch, width, height);
 
 	// HUD score/lives rendering (FUN_0041c012)
-	renderScoreHUD(renderBitmap, pitch, width, height, 0);
+	renderScoreHUD(renderBitmap, pitch, width, height, statusBarY);
 
 	// Reset FOBJ position offsets (FUN_00424510(0,0) in original FUN_0041DB5E line 271)
 	if (_player) {
