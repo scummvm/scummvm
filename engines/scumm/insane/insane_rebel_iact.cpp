@@ -1555,6 +1555,18 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 		return;
 	}
 
+	// ===== Handler 25 (0x19): Shot-Origin Lookup Table (par4 == 8) =====
+	// FUN_0041CADB case 6 pushes 30 short pointers into sscanf with format at 0x482360:
+	//   "%hd %hd  %hd %hd ... %hd %hd" (15 X/Y pairs).
+	// Parsed values are written into DAT_004578a6 / DAT_004578c6 at indices 5..19.
+	if (_rebelHandler == 25 && par4 == 8) {
+		bool loaded = loadHandler25ShotOriginTable(b, startPos, remaining);
+		if (loaded) {
+			b.seek(startPos);
+			return;
+		}
+	}
+
 	// ===== Scan for embedded ANIM data =====
 	// Remaining handlers require finding ANIM tag in the stream
 	debug("Rebel2 Opcode 8: Scanning for ANIM tag (startPos=%lld remaining=%lld)",
@@ -1691,6 +1703,93 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 	free(animData);
 	free(scanBuf);
 	b.seek(startPos);
+}
+
+bool InsaneRebel2::loadHandler25ShotOriginTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining) {
+	// IACT layout at this point:
+	// - stream is positioned after par1..par4 (8 bytes consumed by caller)
+	// - retail parser reads from offset +18 relative to IACT start -> startPos + 10
+	// - payload size for this opcode family is at offset +14 -> startPos + 6
+	if (remaining < 12)
+		return false;
+
+	int64 savedPos = b.pos();
+	b.seek(startPos + 6);
+	uint32 textSize = b.readUint32LE();
+
+	int64 textPos = startPos + 10;
+	int64 maxAvail = remaining - 10;
+	if (maxAvail <= 0) {
+		b.seek(savedPos);
+		return false;
+	}
+
+	int64 bytesToRead = maxAvail;
+	if (textSize > 0 && (int64)textSize <= maxAvail) {
+		bytesToRead = textSize;
+	}
+
+	char *buf = new char[(size_t)bytesToRead + 1];
+
+	b.seek(textPos);
+	b.read((byte *)buf, bytesToRead);
+	buf[bytesToRead] = '\0';
+
+	// Parse signed 16-bit integers from the ASCII payload.
+	int16 vals[30];
+	int count = 0;
+	const char *p = buf;
+	const char *end = buf + bytesToRead;
+	while (p < end && count < 30) {
+		while (p < end && *p != '-' && *p != '+' && !Common::isDigit(*p))
+			++p;
+		if (p >= end)
+			break;
+
+		int sign = 1;
+		if (*p == '-' || *p == '+') {
+			if (*p == '-')
+				sign = -1;
+			++p;
+		}
+
+		if (p >= end || !Common::isDigit(*p))
+			continue;
+
+		int value = 0;
+		while (p < end && Common::isDigit(*p)) {
+			value = value * 10 + (*p - '0');
+			if (value > 32768)
+				value = 32768; // Keep accumulation bounded before sign/clamp.
+			++p;
+		}
+
+		vals[count++] = (int16)CLIP<int>(sign * value, -32768, 32767);
+	}
+
+	delete[] buf;
+	b.seek(savedPos);
+
+	if (count < 20) {
+		debug("Rebel2 Opcode 8: Handler25 par4=8 parse failed (count=%d, expected up to 30)", count);
+		return false;
+	}
+
+	// Retail mapping (from FUN_41CADB disassembly):
+	// token1->0x4578b0 (X index 5), token2->0x4578d0 (Y index 5), ...
+	// token29->0x4578cc (X index 19), token30->0x4578ec (Y index 19).
+	for (int i = 0; i < 15; ++i) {
+		int pair = i * 2;
+		if (pair + 1 >= count)
+			break;
+		_grdShotOriginX[5 + i] = vals[pair];
+		_grdShotOriginY[5 + i] = vals[pair + 1];
+	}
+	_grdShotOriginTableLoaded = true;
+
+	debug("Rebel2 Opcode 8: Loaded Handler25 shot-origin table (pairs=%d) idx5=(%d,%d) idx14=(%d,%d)",
+		count / 2, _grdShotOriginX[5], _grdShotOriginY[5], _grdShotOriginX[14], _grdShotOriginY[14]);
+	return true;
 }
 
 // ======================= Opcode 8 Helper Functions =======================

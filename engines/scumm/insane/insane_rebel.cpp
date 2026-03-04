@@ -370,6 +370,9 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_grd001Sprite = nullptr;     // DAT_00482240 - GRD001 primary ship
 	_grd002Sprite = nullptr;     // DAT_00482238 - GRD002 secondary ship
 	_grdSpriteMode = 0;          // DAT_00457900 - sprite mode (1,2,3,4)
+	memset(_grdShotOriginX, 0, sizeof(_grdShotOriginX));
+	memset(_grdShotOriginY, 0, sizeof(_grdShotOriginY));
+	_grdShotOriginTableLoaded = false;
 
 	// Initialize Handler 0x26 turret HUD overlay system
 	_hudOverlayNut = nullptr;    // DAT_0047fe78 - Primary HUD overlay (GRD files, animated)
@@ -605,12 +608,12 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 
 // Per-level difficulty parameters extracted from RA2WIN95.EXE at VA 0x47e0f0
 // Original: 2D table indexed by DAT_0047a7fa (difficulty) * 0x242 + DAT_0047a7f8 (levelType) * 0x22
-// 17 fields per entry (34 bytes), 17 entries per difficulty, 5 difficulties
+// 17 fields per entry (34 bytes), 17 entries per difficulty, 6 difficulties
 // Field names from official Difficulty Editor: {laserDelay, snapDistance, missDamage, dodgeDamage,
 //   shotDamage, specialDamage, shotAccuracy, hitPoints, dodgePoints, timePoints,
 //   levelPoints, specialPoints, flags, rollRate, liftRate, slideRate, driftRate}
 // -1 = not applicable for this level type
-const InsaneRebel2::LevelDifficultyParams InsaneRebel2::kDifficultyTable[5][17] = {
+const InsaneRebel2::LevelDifficultyParams InsaneRebel2::kDifficultyTable[6][17] = {
 	// Difficulty 0 (Beginner) - 17 level types
 	{
 		{   5,    3,   15,   -1,    2,   -1,   75,   25,   -1,    2,  500,  250,    8,    5,    5,    6,   -1}, // Lv1
@@ -631,7 +634,7 @@ const InsaneRebel2::LevelDifficultyParams InsaneRebel2::kDifficultyTable[5][17] 
 		{   5,    8,   -1,   -1,    3,   -1,   75,   25,   -1,    2,  500,   -1,    8,   -1,   -1,   -1,   -1}, // Lv15A
 		{   5,    6,  255,   30,    4,   10,   75,   25,   50,    2,  500,  250,    8,   -1,   -1,   -1,   -1}, // Lv15B
 	},
-	// Difficulty 1 (Easy) - 17 level types
+	// Difficulty 1 (Novice) - 17 level types
 	{
 		{   6,    1,   25,   -1,    3,   -1,   75,   50,   -1,    4, 1000,  500,   16,    6,    6,    7,   -1}, // Lv1
 		{   4,    2,   -1,   -1,    4,   -1,   40,   50,   -1,    0, 1000,  500,   16,  100,  100,  135,   30}, // Lv2
@@ -651,7 +654,7 @@ const InsaneRebel2::LevelDifficultyParams InsaneRebel2::kDifficultyTable[5][17] 
 		{   5,    7,   -1,   -1,    4,   -1,   75,   50,   -1,    4, 1000,   -1,   16,   -1,   -1,   -1,   -1}, // Lv15A
 		{   5,    6,  255,   35,    4,   10,   75,   50,  100,    4, 1000,  500,   16,   -1,   -1,   -1,   -1}, // Lv15B
 	},
-	// Difficulty 2 (Medium) - 17 level types
+	// Difficulty 2 (Standard) - 17 level types
 	{
 		{   7,    0,   35,   -1,    5,   -1,   75,   75,   -1,    6, 1500,  750,    0,    7,    7,    8,   -1}, // Lv1
 		{   4,    1,   -1,   -1,    6,   -1,   40,   75,   -1,    0, 1500,  750,    0,  110,  110,  150,   35}, // Lv2
@@ -671,7 +674,7 @@ const InsaneRebel2::LevelDifficultyParams InsaneRebel2::kDifficultyTable[5][17] 
 		{   5,    4,   -1,   -1,    7,   -1,   75,   75,   -1,    6, 1500,   -1,    0,   -1,   -1,   -1,   -1}, // Lv15A
 		{   5,    5,  255,   40,    7,   10,   75,   75,  150,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv15B
 	},
-	// Difficulty 3 (Hard) - 17 level types
+	// Difficulty 3 (Expert) - 17 level types
 	{
 		{   8,    0,   77,   -1,    7,   -1,   80,  100,   -1,    8, 2000, 1000,    4,    8,    8,    9,   -1}, // Lv1
 		{   4,    0,   -1,   -1,    7,   -1,   40,  100,   -1,    0, 2000, 1000,    4,  120,  120,  165,   40}, // Lv2
@@ -691,7 +694,7 @@ const InsaneRebel2::LevelDifficultyParams InsaneRebel2::kDifficultyTable[5][17] 
 		{   5,    4,   -1,   -1,   10,   -1,   79,  100,   -1,    8, 2000,   -1,    4,   -1,   -1,   -1,   -1}, // Lv15A
 		{   5,    4,  255,   45,    8,    5,   80,  100,  200,    8, 2000, 1000,    4,   -1,   -1,   -1,   -1}, // Lv15B
 	},
-	// Difficulty 4 (Jedi) — identical to difficulty 2 (Medium) in original data
+	// Difficulty 4 (Custom1) — identical to difficulty 2 (Standard) in original data
 	{
 		{   7,    0,   35,   -1,    5,   -1,   75,   75,   -1,    6, 1500,  750,    0,    7,    7,    8,   -1}, // Lv1
 		{   4,    1,   -1,   -1,    6,   -1,   40,   75,   -1,    0, 1500,  750,    0,  110,  110,  150,   35}, // Lv2
@@ -711,11 +714,54 @@ const InsaneRebel2::LevelDifficultyParams InsaneRebel2::kDifficultyTable[5][17] 
 		{   5,    4,   -1,   -1,    7,   -1,   75,   75,   -1,    6, 1500,   -1,    0,   -1,   -1,   -1,   -1}, // Lv15A
 		{   5,    5,  255,   40,    7,   10,   75,   75,  150,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv15B
 	},
+	// Difficulty 5 (Custom2) — same as Custom1 except Lv15B roll/lift/slide/drift are 0
+	{
+		{   7,    0,   35,   -1,    5,   -1,   75,   75,   -1,    6, 1500,  750,    0,    7,    7,    8,   -1}, // Lv1
+		{   4,    1,   -1,   -1,    6,   -1,   40,   75,   -1,    0, 1500,  750,    0,  110,  110,  150,   35}, // Lv2
+		{   6,    1,   20,   38,    7,   12,   75,   75,  150,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv3
+		{   5,    1,  100,   35,    6,   20,   75,   75,  150,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv4
+		{   6,    1,   30,   -1,    4,   -1,   75,   75,   -1,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv5
+		{   6,    1,   -1,   30,    6,   15,   75,   75,  150,    6, 1500,   -1,    0,   -1,   -1,   -1,   -1}, // Lv6A
+		{   6,    1,  200,   50,   12,   -1,   75,   75,  150,    6, 1500,  750,    0,  160,  160,  160,  105}, // Lv6B
+		{  -1,   -1,   -1,   80,   -1,   -1,   -1,   -1,  150,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv7
+		{   5,    1,   27,   -1,    3,   -1,   60,   75,   -1,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv8
+		{   5,    3,   19,   60,    7,   -1,   75,   75,  150,    6, 1500,  750,    0,  110,  110,  110,  150}, // Lv9
+		{   5,    9,   -1,   40,  100,   -1,   85,   75,  150,    6, 1500,  750,    0,   11,    7,    8,   -1}, // Lv10
+		{   4,    1,   20,   -1,    6,   -1,   75,   75,   -1,    0, 1500,  750,    0,    6,    7,    8,    9}, // Lv11
+		{   4,    0,   -1,   -1,   11,   -1,   75,   75,   -1,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv12
+		{   5,    3,   40,   40,    3,   15,   76,   75,  150,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv13
+		{   5,    0,   38,   -1,    4,   -1,   75,   75,   -1,    6, 1500,  750,    0,   -1,   -1,   -1,   -1}, // Lv14
+		{   5,    4,   -1,   -1,    7,   -1,   75,   75,   -1,    6, 1500,   -1,    0,   -1,   -1,   -1,   -1}, // Lv15A
+		{   5,    5,  255,   40,    7,   10,   75,   75,  150,    6, 1500,  750,    0,    0,    0,    0,    0}, // Lv15B
+	},
 };
 
 InsaneRebel2::LevelDifficultyParams InsaneRebel2::getDifficultyParams() const {
-	int diff = CLIP(_difficulty, 0, 4);
-	int lvIdx = CLIP((int)_rebelLevelType, 0, 16);
+	int diff = CLIP(_difficulty, 0, 5);
+	int lvIdx = 0;
+
+	// Retail uses DAT_0047a7f8 as the per-segment difficulty table index.
+	// This is NOT the same as handler 0x26's gun "levelType" from opcode 6.
+	//
+	// Index mapping reconstructed from level handlers:
+	//   Lv1->0, Lv2->1, Lv3->2, Lv4->3, Lv5->4,
+	//   Lv6A->5, Lv6B->6, Lv7->7 ... Lv14->14, Lv15A->15, Lv15B->16.
+	// Our Level 6 phase flow sets _currentPhase to 1/2 accordingly.
+	// Level 15 phase switch to 16 is currently approximated by _currentPhase >= 2.
+	if (_selectedLevel <= 0) {
+		// Fallback during non-gameplay contexts before level selection is initialized.
+		lvIdx = CLIP((int)_rebelLevelType, 0, 16);
+	} else if (_selectedLevel <= 5) {
+		lvIdx = _selectedLevel - 1;
+	} else if (_selectedLevel == 6) {
+		lvIdx = (_currentPhase >= 2) ? 6 : 5;
+	} else if (_selectedLevel <= 14) {
+		lvIdx = _selectedLevel;
+	} else { // _selectedLevel == 15
+		lvIdx = (_currentPhase >= 2) ? 16 : 15;
+	}
+
+	lvIdx = CLIP(lvIdx, 0, 16);
 	return kDifficultyTable[diff][lvIdx];
 }
 
@@ -1004,10 +1050,11 @@ int32 InsaneRebel2::processMouse() {
 		}
 	}
 
-	// Left button: Trigger shot on button press (not hold)
-	// From FUN_0040d836 (Handler 7) line 141: shots only spawn when DAT_004437c0 == 2
-	// From FUN_00401CCF (Handler 8) line 82-84: mode 4 disables shooting
-	if (leftPressed && !leftWasPressed && isShootingAllowed()) {
+	// Shot trigger behavior:
+	// - Handler 25 keeps edge-triggered clicks due cover-toggle/sticky input semantics.
+	// - Other gameplay handlers fire while button is held; slot counters still rate-limit.
+	bool triggerShot = (_rebelHandler == 25) ? (leftPressed && !leftWasPressed) : leftPressed;
+	if (triggerShot && isShootingAllowed()) {
 		Common::Point mousePos(_vm->_mouse.x, _vm->_mouse.y);
 		debug("Rebel2 Click: Mouse=(%d,%d) Enemies=%d",
 			mousePos.x, mousePos.y, _enemies.size());
