@@ -48,24 +48,24 @@ public:
 	bool _debug_unlimitedAmmo = false;
 
 protected:
-	AlgEngine *_vm;
-	AlgVideoDecoder *_videoDecoder;
-	SceneInfo *_sceneInfo;
-	Common::RandomSource *_rnd;
+	AlgEngine *_vm = nullptr;
+	AlgVideoDecoder *_videoDecoder = nullptr;
+	SceneInfo *_sceneInfo = nullptr;
+	Common::RandomSource *_rnd = nullptr;
 
 	Common::File _libFile;
 	Common::HashMap<Common::String, uint32> _libFileEntries;
 
-	uint8 *_palette;
-	bool _paletteDirty;
+	uint8 *_palette  = nullptr;
+	bool _paletteDirty = false;
 
-	Graphics::Surface *_background;
-	Graphics::Surface *_screen;
+	Graphics::Surface *_background = nullptr;
+	Graphics::Surface *_screen = nullptr;
 
 	Audio::SoundHandle _sfxAudioHandle;
 
-	Zone *_menuZone;
-	Zone *_subMenuZone;
+	Zone *_menuZone = nullptr;
+	Zone *_subMenuZone = nullptr;
 
 	bool _leftDown = false;
 	bool _rightDown = false;
@@ -115,7 +115,7 @@ protected:
 
 	bool _buttonDown = false;
 	bool _fired = 0;
-	uint32 _currentFrame;
+	uint32 _currentFrame = 0;
 	bool _gameInProgress = false;
 	bool _hadPause = false;
 	bool _inMenu = false;
@@ -123,8 +123,8 @@ protected:
 	bool _sceneSkipped = false;
 	uint32 _videoFrameSkip = 3;
 	uint32 _nextFrameTime = 0;
-	uint16 _videoPosX;
-	uint16 _videoPosY;
+	uint16 _videoPosX = 0;
+	uint16 _videoPosY = 0;
 
 	Common::String _curScene;
 	Common::String _startScene;

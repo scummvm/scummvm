@@ -59,8 +59,8 @@ public:
 
 private:
 	const AlgGameDescription *_gameDescription;
-	Game *_game;
-	GUI::Debugger *_debugger;
+	Game *_game = nullptr;
+	GUI::Debugger *_debugger = nullptr;
 	bool _useSingleSpeedVideos = false;
 };
 
