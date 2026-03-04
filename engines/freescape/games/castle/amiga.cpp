@@ -177,10 +177,18 @@ void CastleEngine::loadAssetsAmigaDemo() {
 	_border = loadFrameFromPlanesVertical(&file, 160, 200);
 	_border->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
 
-	// Menu background: 224x54 interleaved 4-plane (memory 0x36B9A, file 0x36BB6)
-	file.seek(0x36bb6);
-	_menu = loadFrameFromPlanesInterleaved(&file, 14, 54);
+	// Menu image used by drawInfoMenu:
+	// Assembly at ~0x1AE0 copies from mem 0x350CA in a 14-word x 116-row loop.
+	// File offset = mem + 0x1C header => 0x350E6.
+	file.seek(0x350e6);
+	_menu = loadFrameFromPlanesInterleaved(&file, 14, 116);
 	_menu->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
+
+	// Additional 224x54 menu-related block (memory 0x36B9A, file 0x36BB6).
+	// Kept as a separate parsed surface for future use.
+	file.seek(0x36bb6);
+	_menuButtons = loadFrameFromPlanesInterleaved(&file, 14, 54);
+	_menuButtons->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
 
 	file.seek(0x38952); // Spirit meter indicator background (memory 0x38936)
 	_spiritsMeterIndicatorBackgroundFrame = loadFrameFromPlanesInterleaved(&file, 5, 10);
