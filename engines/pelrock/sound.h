@@ -190,9 +190,7 @@ private:
 
 private:
 	Audio::Mixer *_mixer;
-	bool _isMusicPlaying = false;
 	int _currentVolume;
-	Common::File *_musicFile;
 	Audio::SoundHandle _musicHandle;
 	Audio::SoundHandle _sfxHandles[kMaxChannels];
 	Common::HashMap<Common::String, SonidoFile> _soundMap;

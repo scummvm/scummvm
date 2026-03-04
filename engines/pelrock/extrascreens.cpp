@@ -225,7 +225,6 @@ void CDPlayer::loadTrackNames() {
 
 	for (int i = 0; i < 31; i++) {
 		trackNames[i] = juegoFile.readString(0, 30);
-		debug("Loaded track name: %s", trackNames[i].c_str());
 	}
 
 	juegoFile.close();
@@ -310,13 +309,13 @@ void CDPlayer::checkMouse(int x, int y) {
 		default:
 			break;
 		}
-		_selectedButton = NO_BUTTON;
+		_selectedButton = NO_CDBUTTON;
 		_events->_leftMouseClicked = false;
 	}
 
-	if (_events->_leftMouseButton != 0 && _selectedButton == NO_BUTTON) {
+	if (_events->_leftMouseButton != 0 && _selectedButton == NO_CDBUTTON) {
 		_selectedButton = isButtonClicked(_events->_mouseX, _events->_mouseY);
-		if(_selectedButton != NO_BUTTON) {
+		if(_selectedButton != NO_CDBUTTON) {
 			_sound->playSound("11ZZZZZZ.SMP", 0);
 		}
 	}
@@ -328,7 +327,7 @@ CDPlayer::CDControls CDPlayer::isButtonClicked(int x, int y) {
 			return static_cast<CDControls>(i);
 		}
 	}
-	return NO_BUTTON;
+	return NO_CDBUTTON;
 }
 
 void CDPlayer::loadControls() {
@@ -343,7 +342,7 @@ void CDPlayer::loadControls() {
 	readUntilBuda(&alfred7, 2214760, compressedData, outSize);
 	byte *rawData = nullptr;
 
-	size_t decompressedSize = rleDecompress(compressedData, outSize, 0, 0, &rawData, true);
+	rleDecompress(compressedData, outSize, 0, 0, &rawData, true);
 
 	// debug("Decompressed CD player controls: %d bytes", decompressedSize);
 	uint32 pos = 213 * 72;
@@ -414,7 +413,7 @@ void BackgroundBook::checkMouse(int x, int y) {
 		default:
 			break;
 		}
-		_selectedButton = NO_BUTTON;
+		_selectedButton = NO_BG_BUTTON;
 
 		int firstItem = _selectedPage * kItemsPerPage;
 		if (y >= 72 && y < 72 + (kItemsPerPage * g_engine->_smallFont->getFontHeight()) && x >= 37 && x <= 37 + 200) {
@@ -428,7 +427,7 @@ void BackgroundBook::checkMouse(int x, int y) {
 		_events->_leftMouseClicked = false;
 	}
 
-	if (_events->_leftMouseButton != 0 && _selectedButton == NO_BUTTON) {
+	if (_events->_leftMouseButton != 0 && _selectedButton == NO_BG_BUTTON) {
 		_selectedButton = isButtonClicked(_events->_mouseX, _events->_mouseY);
 	}
 }
@@ -439,7 +438,7 @@ BackgroundBook::Buttons BackgroundBook::isButtonClicked(int x, int y) {
 			return static_cast<Buttons>(i);
 		}
 	}
-	return NO_BUTTON;
+	return NO_BG_BUTTON;
 }
 
 void BackgroundBook::loadRoomNames() {

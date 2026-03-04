@@ -96,7 +96,7 @@ enum CDControls {
 	PLAY_BUTTON,
 	PREVIOUS_BUTTON,
 	NEXT_BUTTON,
-	NO_BUTTON
+	NO_CDBUTTON
 };
 
 public:
@@ -132,7 +132,7 @@ private:
 		Common::Rect(Common::Point(168, 44), 41, 28) // Next
 	};
 	int _selectedTrack = 2;
-	CDControls _selectedButton = NO_BUTTON;
+	CDControls _selectedButton = NO_CDBUTTON;
 
 };
 
@@ -141,7 +141,7 @@ class BackgroundBook {
 enum Buttons {
 	PREVIOUS_BUTTON,
 	NEXT_BUTTON,
-	NO_BUTTON
+	NO_BG_BUTTON
 };
 	int kItemsPerPage = 22;
 
@@ -168,7 +168,7 @@ private:
 	byte *_compositeScreen;
 	byte *_palette;
 	byte *_buttons[2][2];
-	Buttons _selectedButton = NO_BUTTON;
+	Buttons _selectedButton = NO_BG_BUTTON;
 	int _selectedPage = 0;
 
 	Common::Rect _buttonRects[2] = {

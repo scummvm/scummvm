@@ -121,7 +121,6 @@ void MenuManager::showCredits() {
 	alfred7.read(_compositeBuffer, 640 * 400);
 	byte *creditsBuf = nullptr;
 	size_t creditsSize = 0;
-	int numCredits = 29;
 	int creditWidth = 240;
 	int creditHeight = 22;
 	readUntilBuda(&alfred7, kCreditsBackgroundOffset + 256000, creditsBuf, creditsSize);
@@ -270,12 +269,6 @@ void MenuManager::loadMenu() {
 		alfred7.seek(2563266, SEEK_SET);
 		alfred7.read(_mainMenu + curPos, 92160);
 	} else {
-		Common::File alfred7;
-		if (!alfred7.open(Common::Path("ALFRED.7"))) {
-			error("Could not open ALFRED.7");
-			return;
-		}
-
 		_mainMenu = new byte[640 * 400];
 
 		alfred7.seek(kAlternateSettingsPaletteOffset, SEEK_SET);

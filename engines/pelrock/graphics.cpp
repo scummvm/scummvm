@@ -204,7 +204,6 @@ void GraphicsManager::drawColoredText(byte *buf, const Common::String &text, int
 
 	for(int j = 0; j < tempSurface.h; j++) {
 		for(int i = 0; i < tempSurface.w; i++) {
-			int idx = j * tempSurface.w + i;
 			if (y + j < 400 && x + i < 640) {
 				byte pixel = *((byte *)tempSurface.getBasePtr(i, j));
 				if (pixel != 0) { // Assuming 0 is transparent

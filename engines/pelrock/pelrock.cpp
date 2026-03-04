@@ -365,8 +365,6 @@ void PelrockEngine::mouseHoverForMap() {
 	}
 }
 
-const int kPasserbyTriggerFrameInterval = 0x3FF;
-
 void PelrockEngine::frameTriggers() {
 	uint32 frameCount = _chrono->getFrameCount();
 	passerByAnim(frameCount);
@@ -375,7 +373,7 @@ void PelrockEngine::frameTriggers() {
 }
 
 void PelrockEngine::maybePlayPostIntro() {
-	if (_state->getFlag(FLAG_FROM_INTRO)) {
+	if (_state->getFlag(FLAG_FROM_INTRO) == true) {
 		setScreenAndPrepare(0, ALFRED_LEFT);
 		_alfredState.x = 396;
 		_alfredState.y = 267;
@@ -1091,7 +1089,6 @@ void PelrockEngine::exitTriggers(Pelrock::Exit *exit) {
 	} else if (exit->targetRoom == 48 && _room->_currentRoomNumber == 46) {
 		smokeAnimation(-1);
 		uint16 x = _alfredState.x;
-		uint16 y = _alfredState.y;
 		if (x < 282) {
 			if (_state->getFlag(FLAG_PUERTA_BUENA) == 1) {
 				_state->setFlag(FLAG_CORRECT_DOOR_CHOSEN, true);
@@ -1310,7 +1307,6 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 		return;
 	}
 
-	int frameSize = sprite->stride;
 	int curFrame = animData.curFrame;
 	if (curFrame >= animData.nframes) {
 		debug("Warning: curFrame %d exceeds nframes %d for sprite %d anim %d", curFrame, animData.nframes, sprite->index, sprite->curAnimIndex);
@@ -2244,8 +2240,6 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			_dialog->say(_res->_ingameTexts[OHMISALVADOR]);
 			_dialog->say(_res->_ingameTexts[VOYPORTI_PRINCESA]);
 			// _state->setCurrentRoot(48, 0, 1);
-			Sprite *thinMummy = _room->findSpriteByIndex(0);
-			Sprite *thickMummy = _room->findSpriteByIndex(1);
 			HotSpot *fatMummy = nullptr;
 			for (uint i = 0; i < _room->_currentRoomHotspots.size(); i++) {
 				if (_room->_currentRoomHotspots[i].isSprite && _room->_currentRoomHotspots[i].index == 1) {
@@ -2437,8 +2431,8 @@ void PelrockEngine::endingScene() {
 		sprite->w = animValues[i][2];
 		sprite->h = animValues[i][3];
 		sprite->stride = animValues[i][2] * animValues[i][3];
-		bool idleAnim = animValues[i][7] > 0;
-		if (idleAnim) {
+		bool isIdleAnim = animValues[i][7] > 0;
+		if (isIdleAnim) {
 			sprite->numAnims = 2;
 		} else {
 			sprite->numAnims = 1;
@@ -2458,7 +2452,7 @@ void PelrockEngine::endingScene() {
 			extractSingleFrame(legsAnimData, mainAnim.animData[j], j, sprite->w, sprite->h);
 		}
 
-		if (idleAnim) {
+		if (isIdleAnim) {
 			Anim idleAnim;
 			idleAnim.nframes = 1;
 			idleAnim.loopCount = 1;
@@ -2478,7 +2472,6 @@ void PelrockEngine::endingScene() {
 	}
 
 	Common::Rect bbox1 = _largeFont->getBoundingBox("ALFRED PELROCK");
-	Common::Rect bbox2 = _largeFont->getBoundingBox("En busca de un sueño");
 	int y1 = 400 / 2 - bbox1.height() / 2;
 	int y2 = 400 / 2 + bbox1.height() / 2;
 	int ticks = 0;

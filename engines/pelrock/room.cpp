@@ -960,14 +960,14 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 			uint32_t totalBytesPerFrame = sprite.w * sprite.h * anim.nframes;
 			anim.animData = new byte *[anim.nframes];
 			if (sprite.w > 0 && sprite.h > 0 && anim.nframes > 0) {
-				for (int i = 0; i < anim.nframes; i++) {
+				for (int k = 0; k < anim.nframes; k++) {
 					if(picOffset >= pixelDataSize) {
-						debug("Pixel data offset out of bounds for sprite %d anim %d, offset %d, size %d", i, j, picOffset, pixelDataSize);
+						debug("Pixel data offset out of bounds for sprite %d anim %d, offset %u, size %lu", i, j, picOffset, pixelDataSize);
 						break;
 					}
-					anim.animData[i] = new byte[sprite.w * sprite.h];
+					anim.animData[k] = new byte[sprite.w * sprite.h];
 					// debug("Extracting frame %d for anim %d-%d, w=%d h=%d, pixelDataSize=%d, current offset %d", i, j, anim.nframes, sprite.w, sprite.h, pixelDataSize, picOffset);
-					extractSingleFrame(pixelData + picOffset, anim.animData[i], i, sprite.w, sprite.h);
+					extractSingleFrame(pixelData + picOffset, anim.animData[k], k, sprite.w, sprite.h);
 				}
 				sprite.animData[j] = anim;
 				// debug("  Anim %d-%d: x=%d y=%d w=%d h=%d nframes=%d loopCount=%d speed=%d", i, j, anim.x, anim.y, anim.w, anim.h, anim.nframes, anim.loopCount, anim.speed);
@@ -1224,10 +1224,10 @@ void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
 		talkHeader.animB = new byte *[talkHeader.numFramesAnimB];
 		for (int i = 0; i < talkHeader.numFramesAnimB; i++) {
 			talkHeader.animB[i] = new byte[talkHeader.wAnimB * talkHeader.hAnimB];
-			uint32 offset = animASize + (i * talkHeader.wAnimB * talkHeader.hAnimB);
+			uint32 animBFrameOffset = animASize + (i * talkHeader.wAnimB * talkHeader.hAnimB);
 			// debug("Extracting talking anim B frame %d at offset %d, size = %d", i, animASize + (i * talkHeader.wAnimB * talkHeader.hAnimB), talkHeader.wAnimB * talkHeader.hAnimB);
-			if (offset + talkHeader.wAnimB * talkHeader.hAnimB >= decompressedSize) {
-				debug("Error: offset %d is beyond decompressed size %zu", offset, decompressedSize);
+			if (animBFrameOffset + talkHeader.wAnimB * talkHeader.hAnimB >= decompressedSize) {
+				debug("Error: offset %d is beyond decompressed size %zu", animBFrameOffset, decompressedSize);
 				talkHeader.numFramesAnimB = 0;
 			} else {
 				extractSingleFrame(decompressed + animASize, talkHeader.animB[i], i, talkHeader.wAnimB, talkHeader.hAnimB);

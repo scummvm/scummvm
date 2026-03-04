@@ -63,7 +63,6 @@ void VideoManager::playIntro() {
 	_textSurface.fillRect(Common::Rect(0, 0, 640, 400), 255);
 	for (int sequence = 0; sequence < 1; sequence++) {
 		uint16 frameCounter = 0;
-		int chunksInBuffer = 0;
 		bool videoExitFlag = false;
 
 		while (!videoExitFlag && !g_engine->shouldQuit() && _events->_lastKeyEvent != Common::KEYCODE_ESCAPE) {

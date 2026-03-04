@@ -80,6 +80,7 @@ uint32 DialogManager::readTextBlock(
 	}
 
 	int lineIndex = data[++pos];
+	debug("Line index %d", lineIndex);
 	pos++; // blank
 	// debug("Reading text block starting at pos %u, line index %d, speaker ID %d", startPos, lineIndex, outSpeakerId);
 	// Read text until control byte
@@ -117,7 +118,6 @@ void DialogManager::displayChoices(Common::Array<ChoiceOption> *choices, byte *c
 	Common::Point overlayPos = _graphics->showOverlay(overlayHeight, compositeBuffer);
 	for (uint i = 0; i < choices->size(); i++) {
 		ChoiceOption choice = (*choices)[i];
-		int width = g_engine->_doubleSmallFont->getStringWidth(choice.text);
 		int yPos = overlayPos.y + 2 + i * kChoiceHeight;
 		Common::Rect bbox(kChoicePadding, yPos, kChoicePadding + 600, yPos + kChoiceHeight);
 		Common::Rect leftArrowBox(0, yPos, kChoicePadding, yPos + kChoiceHeight);
@@ -1193,14 +1193,14 @@ Common::Array<Common::StringArray> DialogManager::wordWrap(Common::StringArray t
 		Common::Array<Common::Array<Common::String>> wrapped = wordWrap(thisLine);
 		debug("Wrapped line %s, %d into %d pages", thisLine.c_str(), thisLine.size(), wrapped.size());
 		for (uint j = 0; j < wrapped.size(); j++) {
-			for (int i = 0; i < wrapped[j].size(); i++) {
+			for (int k = 0; k < wrapped[j].size(); k++) {
 				if (currentLineNum < MAX_LINES) {
-					currentPage.push_back(wrapped[j][i]);
+					currentPage.push_back(wrapped[j][k]);
 					currentLineNum++;
 				} else {
 					pages.push_back(currentPage);
 					currentPage.clear();
-					currentPage.push_back(wrapped[j][i]);
+					currentPage.push_back(wrapped[j][k]);
 					currentLineNum = 1;
 				}
 			}

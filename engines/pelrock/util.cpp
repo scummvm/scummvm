@@ -213,7 +213,6 @@ size_t rleDecompress(
 }
 
 void readUntilBuda(Common::SeekableReadStream *stream, uint32_t startPos, byte *&buffer, size_t &outSize) {
-	const char marker[] = "BUDA";
 	const int markerLen = 4;
 	size_t bufferSize = 4096;
 	size_t pos = 0;

@@ -45,7 +45,7 @@ struct LibraryBook {
     bool available;  // true = can be found on shelf, false = catalog only
 };
 
-const LibraryBook noBook = {"", "", "", 0, 0, false};
+static const LibraryBook noBook = {"", "", "", 0, 0, false};
 
 
 // static const int kLibraryBookCount = 125;

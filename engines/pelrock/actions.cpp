@@ -332,13 +332,11 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		w1.y = 356;
 		w1.w = 4;
 		w1.h = 14;
-		w1.flags = 0;
 		WalkBox w2;
 		w2.x = 440;
 		w2.y = 368;
 		w2.w = 148;
 		w2.h = 2;
-		w2.flags = 0;
 
 		_room->addWalkbox(w1);
 		_room->addWalkbox(w2);
@@ -914,7 +912,6 @@ void PelrockEngine::useBrickWithWindow(int inventoryObject, HotSpot *hotspot) {
 	brickSprite->x = 420;
 	brickSprite->y = 241;
 	brickSprite->zOrder = 10; // Make it visible
-	int target = windowHotspot->y + windowHotspot->h / 2;
 	while (!shouldQuit()) {
 		_events->pollEvent();
 		renderScene(OVERLAY_NONE);
@@ -1511,7 +1508,6 @@ void PelrockEngine::pickUpStone(HotSpot *hotspot) {
 
 void PelrockEngine::playSpecialAnim(uint32 offset, bool compressed, int x, int y, int width, int height, int numFrames) {
 	size_t frameSize = width * height;
-	debug("Frame size: %d bytes", frameSize);
 	size_t bufSize = frameSize * numFrames;
 	byte *animData = new byte[bufSize];
 	_res->loadOtherSpecialAnim(offset, compressed, animData, bufSize);
@@ -1519,7 +1515,6 @@ void PelrockEngine::playSpecialAnim(uint32 offset, bool compressed, int x, int y
 	Graphics::Surface animSurface;
 	animSurface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	int curFrame = 0;
-	bool firstFrame = true;
 	while (!shouldQuit()) {
 		_events->pollEvent();
 
@@ -1588,8 +1583,8 @@ void PelrockEngine::giveStoneToSlaves(int inventoryObject, HotSpot *hotspot) {
 
 		_room->addSticker(116);
 
-		WalkBox w1 = {3, 187, 374, 5, 17};
-		WalkBox w2 = {4, 141, 374, 46, 4};
+		WalkBox w1 = {3, 187, 374, 5, 17, 0};
+		WalkBox w2 = {4, 141, 374, 46, 4, 0};
 		_room->addWalkbox(w1);
 		_room->addWalkbox(w2);
 		_state->setFlag(FLAG_GUARDIAS_BORRACHOS, true);
@@ -1643,10 +1638,9 @@ void PelrockEngine::swimmingPoolCutscene(HotSpot *hotspot) {
 		sprite->disableAfterSequence = true;
 
 		sprite->animData[0].animData = new byte *[sprite->animData[0].nframes];
-		byte *spriteFrames[sprite->animData[0].nframes];
-		for (int i = 0; i < sprite->animData[0].nframes; i++) {
-			sprite->animData[0].animData[i] = new byte[sprite->w * sprite->h];
-			extractSingleFrame(buffer + acc, sprite->animData[0].animData[i], i, sprite->w, sprite->h);
+		for (int j = 0; j < sprite->animData[0].nframes; j++) {
+			sprite->animData[0].animData[j] = new byte[sprite->w * sprite->h];
+			extractSingleFrame(buffer + acc, sprite->animData[0].animData[j], j, sprite->w, sprite->h);
 		}
 		acc += sprite->w * sprite->h * sprite->animData[0].nframes;
 	}

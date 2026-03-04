@@ -50,8 +50,6 @@ void Computer::init() {
 	}
 
 	alfred7File.seek(kBookDataOffset, SEEK_SET);
-	int index = 0;
-	int index2 = 0;
 	while (alfred7File.pos() < kBookDataEnd) {
 		LibraryBook book;
 
@@ -150,9 +148,6 @@ int Computer::run() {
 void Computer::drawScreen() {
 	// Clear to background
 	memcpy(g_engine->_screen->getPixels(), _backgroundScreen, 640 * 400);
-
-	int textY = 97;
-	int textX = 225;
 
 	byte defaultColor = 0; // Light gray
 

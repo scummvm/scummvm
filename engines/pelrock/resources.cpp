@@ -127,7 +127,6 @@ void ResourceManager::loadInteractionIcons() {
 
 	int iconSize = kVerbIconHeight * kVerbIconWidth;
 	for (int i = 0; i < kNumVerbIcons; i++) {
-		uint32_t iconOffset = i * iconSize;
 		_verbIcons[i] = new byte[iconSize];
 		alfred4File.read(_verbIcons[i], iconSize);
 	}
@@ -146,8 +145,6 @@ void ResourceManager::loadAlfredAnims() {
 	alfred3.read(bufferFile, alfred3Size);
 	alfred3.close();
 
-	int index = 0;
-	int index3 = 0;
 	uint32_t capacity = 3060 * 102 + 2340 * 55;
 	unsigned char *completePic = new unsigned char[capacity];
 	rleDecompress(bufferFile, alfred3Size, 0, capacity, &completePic);
@@ -241,7 +238,7 @@ void ResourceManager::loadAlfredAnims() {
 	size_t alfredCombLeftSize;
 	readUntilBuda(&alfred7, ALFRED7_ALFRED_COMB_L, alfredCombLeftRaw, alfredCombLeftSize);
 	byte *alfredCombLeft = nullptr;
-	size_t outSize = rleDecompress(alfredCombLeftRaw, alfredCombLeftSize, 0, spriteMapSize, &alfredCombLeft);
+	rleDecompress(alfredCombLeftRaw, alfredCombLeftSize, 0, spriteMapSize, &alfredCombLeft);
 
 	for (int i = 0; i < 11; i++) {
 		alfredCombFrames[1][i] = new byte[frameSize];
@@ -333,7 +330,6 @@ void ResourceManager::loadInventoryItems() {
 	alfred4File.seek(42366, SEEK_SET);
 	alfred4File.read(iconData, iconsSize);
 
-	int iconSize = 60 * 60; // each icon has 30 bytes of header
 	for (int i = 0; i < 69; i++) {
 		_inventoryIcons[i].index = i;
 		extractSingleFrame(iconData, _inventoryIcons[i].iconData, i, 60, 60);
@@ -523,7 +519,6 @@ void ResourceManager::mergeRleBlocks(Common::SeekableReadStream *stream, uint32 
 	for (int i = 0; i < numBlocks; i++) {
 		byte *thisBlock = nullptr;
 		size_t blockSize = 0;
-		uint32 pos = stream->pos();
 		readUntilBuda(stream, stream->pos(), thisBlock, blockSize);
 		uint8_t *block_data = nullptr;
 		size_t decompressedSize = rleDecompress(thisBlock, blockSize, 0, 640 * 400, &block_data, true);

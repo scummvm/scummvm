@@ -39,7 +39,7 @@
 namespace Pelrock {
 
 SoundManager::SoundManager(Audio::Mixer *mixer)
-	: _mixer(mixer), _currentVolume(128), _musicFile(nullptr) {
+	: _mixer(mixer), _currentVolume(128) {
 	// TODO: Initialize sound manager
 	g_system->getAudioCDManager()->open();
 }
@@ -117,7 +117,6 @@ void SoundManager::playSound(SonidoFile sound, int channel, int loopCount) {
 				_mixer->stopHandle(_sfxHandles[channel]);
 			}
 		}
-		debug("Playing sound with loop count %d on channel %d", loopCount, channel);
 		Audio::AudioStream *finalStream = loopCount != -1 ? stream : Audio::makeLoopingAudioStream(stream, 0);
 
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], finalStream, loopCount, 255U, 0, DisposeAfterUse::YES);
