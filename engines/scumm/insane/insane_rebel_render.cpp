@@ -35,8 +35,9 @@
 
 namespace Scumm {
 
-// External codec functions from codec1.cpp
+// External codec functions from codec1.cpp / codec_ra2.cpp
 extern void smushDecodeRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
+extern void smushDecodeRLEOpaque(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 extern void smushDecodeUncompressed(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 
 
@@ -2171,9 +2172,6 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 
 	renderHandler7Ship(renderBitmap, pitch, width, height);
 	renderHandler8Ship(renderBitmap, pitch, width, height);
-	// GRD001 (wall/cockpit) drawn AFTER FOBJs per original FUN_0041DB5E lines 202-210
-	renderHandler25ShipPre(renderBitmap, pitch, width, height);
-	renderHandler25Ship(renderBitmap, pitch, width, height);
 	renderFallbackShip(renderBitmap, pitch, width, height);
 
 	// Enemy indicators and destroyed enemy area erase
@@ -2184,6 +2182,15 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 
 	// Laser shot beams — drawn BEFORE cockpit/HUD overlays so cockpit covers beam edges
 	renderLaserShots(renderBitmap, pitch, width, height);
+
+	// Handler 25 GRD sprites drawn AFTER enemies/explosions/lasers per original FUN_0041DB5E:
+	//   Line 193: FUN_0041f29a (enemies)
+	//   Line 194: FUN_0041e7c2 (explosions)
+	//   Line 201: FUN_0041f004 (lasers)
+	//   Lines 202-229: GRD001 (wall, opaque, covers enemies behind wall)
+	//   Lines 230-248: GRD002 (character, transparent, drawn last)
+	renderHandler25ShipPre(renderBitmap, pitch, width, height);
+	renderHandler25Ship(renderBitmap, pitch, width, height);
 
 	// STEP 1A: Draw NUT-based HUD overlays for Handler 0x26/0x19 (FUN_004089ab lines 195-226)
 	// These are cockpit frame, crosshair, and reticle — drawn ON TOP of laser beams
@@ -3073,6 +3080,11 @@ void InsaneRebel2::renderHandler25ShipPre(byte *renderBitmap, int pitch, int wid
 			}
 		}
 
+		// GRD001 uses transparent rendering (color 0 = transparent).
+		// The original uses flags=0 (opaque) in FUN_004236e0, but the NUT pre-decode
+		// already fills color-0 positions with kDefaultTransparentColor (0).
+		// Using transparent rendering here lets the corridor show through any
+		// color-0 border/padding pixels in GRD001, avoiding black-over-corridor artifacts.
 		renderNutSprite(dstBitmap, pitch, renderWidth, renderHeight, drawX, drawY, _grd001Sprite, 0);
 
 		debug("Rebel2 Handler25 PRE: GRD001 at (%d,%d) nutOff(%d,%d) viewOff(%d,%d) size(%d,%d) mode=%d dmg=%d halfW=%d rightHalf=%d renderW=%d",
