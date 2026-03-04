@@ -315,6 +315,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "letsdiscover",		"Let's Discover" },
 	{ "letters",			"Letters" },
 	{ "lostfoundvol1",		"Lost & Found: Volume 1" },
+	{ "lotusspring",		"The Legend of Lotus Spring" },
 	{ "louiscatorze",		"Louis Cat Orze: The Mystery of the Queen's Necklace" },
 	{ "luxor",				"Secrets of the Luxor" },
 	{ "madcc12",			"Madeline Classroom Companion: 1st & 2nd Grade" },
@@ -8787,6 +8788,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original Mac filename is Löwenzahn 3
 	MACGAME1_l("loewe3", "", "xn--Lwenzahn 3-ecb",					"rt:e03c6cc5f2cdeef199f75c02928edafe", 1032378, Common::DE_DEU, 602),
 	WINGAME1_l("loewe3", "", "DATA/LOEWE3/SETUP/WIN95/LOEWE95.exe",	"t:0772adacde0f8fa5a9767de25be13527",  1514451, Common::DE_DEU, 602),
+
+	// Windows version requires installation, setup.exe, Setup Factory v4
+	MACGAME2("lotusspring", "", "LotusSpring/LS",				"r:4ea19c8b2483a9ae71df8000cae1097d", 1034669,
+								"LotusSpring/DXR/ChangeCD.dxr", "t:f1fc18e4479a4e26299cef2160315f19", 459346, 650),
+	WINGAME2("lotusspring", "", "LS.exe",						"t:c7e3b8162d6ab37b1960872efbb44ada", 1722439,
+								"DXR/ChangeCD.dxr", 			"t:f1fc18e4479a4e26299cef2160315f19", 459326, 600),
 
 	MACDEMO1("macos85", "Demo", "Mac OS 8.5 Demo", "49cc011560110af5e19d0cd1ee22b821", 1032397, 650),
 

@@ -54,6 +54,7 @@
 #include "director/lingo/xlibs/d/dpwavi.h"
 #include "director/lingo/xlibs/d/dpwqtw.h"
 #include "director/lingo/xlibs/d/draw.h"
+#include "director/lingo/xlibs/e/ecdctrl.h"
 #include "director/lingo/xlibs/e/ednox.h"
 #include "director/lingo/xlibs/e/eventq.h"
 #include "director/lingo/xlibs/f/fadegammadownxcmd.h"
@@ -115,8 +116,9 @@
 #include "director/lingo/xlibs/p/processxobj.h"
 #include "director/lingo/xlibs/p/putcurs.h"
 #include "director/lingo/xlibs/p/playsoundmoviexobj.h"
-#include "director/lingo/xlibs/q/qtmovie.h"
 #include "director/lingo/xlibs/q/qtcatmovieplayerxobj.h"
+#include "director/lingo/xlibs/q/qtsupport.h"
+#include "director/lingo/xlibs/q/qtmovie.h"
 #include "director/lingo/xlibs/q/qtvr.h"
 #include "director/lingo/xlibs/q/quicktime.h"
 #include "director/lingo/xlibs/r/registercomponent.h"
@@ -275,6 +277,7 @@ static const struct XLibProto {
 	XLIBDEF(DirectsoundXtra,	kXtraObj,		500),	// D5
 	XLIBDEF(DisplayResXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(DrawXObj,			kXObj,			400),	// D4
+	XLIBDEF(ECDCtrlXObj,			kXObj,					400),	// D4
 	XLIBDEF(Ednox,				kXObj,			300),	// D3
 	XLIBDEF(EventQXObj,			kXObj,			400),	// D4
 	XLIBDEF(FEDraculXObj,		kXObj,			400),	// D4
@@ -344,6 +347,7 @@ static const struct XLibProto {
 	XLIBDEF(PutcursXObj,		kXObj,			400),	// D4
 	XLIBDEF(QTCatMoviePlayerXObj,kXObj,			400),	// D4
 	XLIBDEF(QTMovie,			kXObj,			400),	// D4
+	XLIBDEF(QTSupport,			kXObj,			600),	// D4
 	XLIBDEF(QTVR,				kXObj,			400),	// D4
 	XLIBDEF(QtvrxtraXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(Quicktime,			kXObj,			300),	// D3

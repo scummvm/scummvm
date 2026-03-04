@@ -85,6 +85,7 @@ MODULE_OBJS = \
 	lingo/xlibs/d/dpwavi.o \
 	lingo/xlibs/d/dpwqtw.o \
 	lingo/xlibs/d/draw.o \
+	lingo/xlibs/e/ecdctrl.o \
 	lingo/xlibs/e/ednox.o \
 	lingo/xlibs/e/eventq.o \
 	lingo/xlibs/f/fadegammadownxcmd.o \
@@ -151,6 +152,7 @@ MODULE_OBJS = \
 	lingo/xlibs/p/putcurs.o \
 	lingo/xlibs/q/qtcatmovieplayerxobj.o \
 	lingo/xlibs/q/qtmovie.o \
+	lingo/xlibs/q/qtsupport.o \
 	lingo/xlibs/q/qtvr.o \
 	lingo/xlibs/q/quicktime.o \
 	lingo/xlibs/r/registercomponent.o \
