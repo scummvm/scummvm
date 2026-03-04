@@ -42,6 +42,7 @@
 #include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-the.h"
+#include "director/debugger/debugtools.h"
 
 namespace Director {
 
@@ -856,7 +857,11 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		}
 		break;
 	case kTheMouseDown:
-		d = g_system->getEventManager()->getButtonState() & (1 << Common::MOUSE_BUTTON_LEFT | 1 << Common::MOUSE_BUTTON_RIGHT) ? 1 : 0;
+		if (Director::DT::isMouseInputIgnored()) {
+			d = 0;
+		} else {
+			d = g_system->getEventManager()->getButtonState() & (1 << Common::MOUSE_BUTTON_LEFT | 1 << Common::MOUSE_BUTTON_RIGHT) ? 1 : 0;
+		}
 		break;
 	case kTheMouseDownScript:
 		d.type = STRING;
@@ -896,7 +901,11 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		}
 		break;
 	case kTheMouseUp:
-		d = g_system->getEventManager()->getButtonState() & (1 << Common::MOUSE_BUTTON_LEFT | 1 << Common::MOUSE_BUTTON_RIGHT) ? 0 : 1;
+		if (Director::DT::isMouseInputIgnored()) {
+			d = 1;
+		} else {
+			d = g_system->getEventManager()->getButtonState() & (1 << Common::MOUSE_BUTTON_LEFT | 1 << Common::MOUSE_BUTTON_RIGHT) ? 0 : 1;
+		}
 		break;
 	case kTheMouseUpScript:
 		d.type = STRING;
@@ -1003,10 +1012,18 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = g_lingo->_theResult;
 		break;
 	case kTheRightMouseDown:
-		d = g_system->getEventManager()->getButtonState() & (1 << Common::MOUSE_BUTTON_RIGHT) ? 1 : 0;
+		if (Director::DT::isMouseInputIgnored()) {
+			d = 0;
+		} else {
+			d = g_system->getEventManager()->getButtonState() & (1 << Common::MOUSE_BUTTON_RIGHT) ? 1 : 0;
+		}
 		break;
 	case kTheRightMouseUp:
-		d = g_system->getEventManager()->getButtonState() & (1 << Common::MOUSE_BUTTON_RIGHT) ? 0 : 1;
+		if (Director::DT::isMouseInputIgnored()) {
+			d = 1;
+		} else {
+			d = g_system->getEventManager()->getButtonState() & (1 << Common::MOUSE_BUTTON_RIGHT) ? 0 : 1;
+		}
 		break;
 	case kTheRollOver:
 		d = score->getSpriteIDFromPos(g_director->getCurrentWindow()->getMousePos());
@@ -1119,7 +1136,11 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		}
 		break;
 	case kTheStillDown:
-		d = _vm->_wm->_mouseDown;
+		if (Director::DT::isMouseInputIgnored()) {
+			d = 0;
+		} else {
+			d = _vm->_wm->_mouseDown;
+		}
 		break;
 	case kTheSwitchColorDepth:
 		getTheEntitySTUB(kTheSwitchColorDepth);
