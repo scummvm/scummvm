@@ -56,7 +56,7 @@ void SoundManager::playSound(const char *filename, int flag) {
 	fd.read(buffer, size);
 
 	Common::SeekableReadStream *rawStream = new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES);
-	Audio::RewindableAudioStream *audioStream = Audio::makeRawStream(rawStream, 8000, Audio::FLAG_UNSIGNED);
+	Audio::RewindableAudioStream *audioStream = Audio::makeRawStream(rawStream, 9000, Audio::FLAG_UNSIGNED);
 
 /*	
 	if (loop)
