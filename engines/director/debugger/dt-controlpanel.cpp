@@ -141,6 +141,7 @@ void showControlPanel() {
 		float bgX1 = -4.0f, bgX2 = 21.0f;
 
 		int frameNum = score->getCurrentFrameNum();
+		int maxFrame = score->getFramesNum() - 1;
 
 		if (_state->_prevFrame != -1 && _state->_prevFrame != frameNum) {
 			score->_playState = kPlayPaused;
@@ -152,7 +153,9 @@ void showControlPanel() {
 
 			if (ImGui::IsItemClicked(0)) {
 				score->_playState = kPlayStarted;
-				score->setCurrentFrame(1);
+				Datum frameDatum(1);
+				Datum movieDatum;
+				g_lingo->func_goto(frameDatum, movieDatum, true);
 			}
 
 			if (ImGui::IsItemHovered())
@@ -172,7 +175,11 @@ void showControlPanel() {
 			if (ImGui::IsItemClicked(0)) {
 				score->_playState = kPlayStarted;
 
-				score->setCurrentFrame(frameNum - 1);
+				int targetFrame = (frameNum <= 1) ? maxFrame : (frameNum - 1);
+				Datum frameDatum(targetFrame);
+				Datum movieDatum;
+				g_lingo->func_goto(frameDatum, movieDatum, true);
+
 				_state->_prevFrame = frameNum;
 			}
 
@@ -216,7 +223,11 @@ void showControlPanel() {
 			if (ImGui::IsItemClicked(0)) {
 				score->_playState = kPlayStarted;
 
-				score->setCurrentFrame(frameNum + 1);
+				int targetFrame = (frameNum >= maxFrame) ? 1 : (frameNum + 1);
+				Datum frameDatum(targetFrame);
+				Datum movieDatum;
+				g_lingo->func_goto(frameDatum, movieDatum, true);
+
 				_state->_prevFrame = frameNum;
 			}
 
@@ -261,7 +272,20 @@ void showControlPanel() {
 		snprintf(buf, 6, "%d", score->getCurrentFrameNum());
 
 		ImGui::SetNextItemWidth(35);
-		ImGui::InputText("##frame", buf, 5, ImGuiInputTextFlags_CharsDecimal);
+		if (ImGui::InputText("##frame", buf, 5, ImGuiInputTextFlags_CharsDecimal | ImGuiInputTextFlags_EnterReturnsTrue)) {
+			int newFrame = atoi(buf);
+			newFrame = (newFrame < 1) ? 1 : (newFrame > maxFrame ? maxFrame : newFrame);
+
+			if (newFrame != frameNum) {
+				score->_playState = kPlayStarted;
+
+				Datum frameDatum(newFrame);
+				Datum movieDatum;
+				g_lingo->func_goto(frameDatum, movieDatum, true);
+
+				_state->_prevFrame = frameNum;
+			}
+		}
 		ImGui::SetItemTooltip("Frame");
 
 		{
