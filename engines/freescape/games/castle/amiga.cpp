@@ -177,6 +177,12 @@ void CastleEngine::loadAssetsAmigaDemo() {
 	_border = loadFrameFromPlanesVertical(&file, 160, 200);
 	_border->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
 
+	// Mountains skybox panorama used by FUN_3E38.
+	// Source at memory 0x406A (file 0x4086), 63 words x 22 rows, interleaved 4-plane.
+	file.seek(0x4086);
+	_background = loadFrameFromPlanesInterleaved(&file, 63, 22);
+	_background->convertToInPlace(_gfx->_texturePixelFormat, (byte *)kAmigaCastlePalette, 16);
+
 	// Menu image used by drawInfoMenu:
 	// Assembly at ~0x1AE0 copies from mem 0x350CA in a 14-word x 116-row loop.
 	// File offset = mem + 0x1C header => 0x350E6.
