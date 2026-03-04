@@ -109,6 +109,24 @@ Gui::Gui(WageEngine *engine) {
 	_menu->addSubMenu(nullptr, kMenuAbout);
 	_menu->addMenuItem(_menu->getSubmenu(nullptr, kMenuAbout), _engine->_world->getAboutMenuItemName(), kMenuActionAbout);
 
+	if (!_engine->_world->_fileMenu.empty()) {
+		_menu->setName(_menu->getMenuItem(kMenuFile), _engine->_world->_fileMenuName);
+		_menu->createSubMenuFromString(kMenuFile, _engine->_world->_fileMenu.c_str(), 0);
+
+		Graphics::MacMenuSubMenu *submenu = _menu->getSubmenu(nullptr, kMenuFile);
+		if (submenu) {
+			int fileActions[] = {
+				kMenuActionNew, kMenuActionOpen, kMenuActionClose,
+				kMenuActionSave, kMenuActionSaveAs, kMenuActionRevert,
+				kMenuActionQuit};
+			int actionIdx = 0;
+			for (uint i = 0; i < submenu->items.size() && actionIdx < 7; i++) {
+				if (submenu->items[i]->text.empty())
+					continue;
+				_menu->setAction(submenu->items[i], fileActions[actionIdx++]);
+			}
+		}
+	}
 	_commandsMenuId = _menu->addMenuItem(nullptr, _engine->_world->_commandsMenuName);
 	regenCommandsMenu();
 

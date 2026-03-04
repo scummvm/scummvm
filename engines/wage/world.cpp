@@ -362,6 +362,18 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		delete menu;
 		delete res;
 	}
+	res = resMan->getResource(MKTAG('M', 'E', 'N', 'U'), 2002);
+	if (res != NULL) {
+		Common::StringArray *menu = Graphics::MacMenu::readMenuFromResource(res);
+		if (menu->size() >= 2) {
+			_fileMenuName = menu->operator[](0);
+			_fileMenu = menu->operator[](1);
+			debugC(1, kDebugLoading, "MENU: File name: %s", toPrintable(_fileMenuName).c_str());
+			debugC(1, kDebugLoading, "MENU: File menu: %s", toPrintable(_fileMenu).c_str());
+		}
+		delete menu;
+		delete res;
+	}
 	res = resMan->getResource(MKTAG('M','E','N','U'), 2004);
 	if (res != NULL) {
 		Common::StringArray *menu = Graphics::MacMenu::readMenuFromResource(res);
