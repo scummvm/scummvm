@@ -52,6 +52,7 @@ const AlfredSpecialAnimOffset ResourceManager::alfredSpecialAnims[] = {
 	{11, 98, 138, 1, 7, 1526432, 1},     // 13 - Munheco 3
 	{4, 51, 102, 1, 7, 2972568, 1},      // 14 - descamisa
 	{13, 95, 99, 1, 7, 1749464, 1},      // 15 - alfred enters secret passage
+	{14, 71, 66, 1, 7, 3038454, 1, 2}, // 16- Alfred in bed
 };
 
 ResourceManager::~ResourceManager() {
@@ -212,6 +213,7 @@ void ResourceManager::loadAlfredAnims() {
 
 	free(bufferFile);
 
+
 	Common::File alfred7;
 	if (!alfred7.open(Common::Path("ALFRED.7"))) {
 		error("Could not open ALFRED.7");
@@ -219,6 +221,7 @@ void ResourceManager::loadAlfredAnims() {
 	}
 	int spriteMapSize = frameSize * 11;
 
+	/* Combing */
 	byte *alfredCombRightRaw;
 	size_t alfredCombRightSize;
 
@@ -245,9 +248,10 @@ void ResourceManager::loadAlfredAnims() {
 		extractSingleFrame(alfredCombLeft, alfredCombFrames[1][i], i, kAlfredFrameWidth, kAlfredFrameHeight);
 	}
 
-	alfred7.close();
 	free(alfredCombRightRaw);
 	free(alfredCombLeftRaw);
+
+	alfred7.close();
 }
 
 void ResourceManager::loadOtherSpecialAnim(uint32 offset, bool rleCompressed, byte *&buffer, size_t &bufferSize) {

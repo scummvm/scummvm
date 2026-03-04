@@ -116,6 +116,7 @@ private:
 	int checkMouseClickInventoryOverlay(int x, int y);
 
 	void gameLoop();
+	void firstScene();
 	void computerLoop();
 	void extraScreenLoop();
 	void walkLoop(int16 x, int16 y, AlfredDirection direction);
@@ -256,6 +257,7 @@ public:
 	bool renderScene(int overlayMode = OVERLAY_NONE);
 	void mouseHoverForMap();
 	void frameTriggers();
+	void maybePlayPostIntro();
 	void shakeEffect();
 	void handleFlightRoomFrame();
 

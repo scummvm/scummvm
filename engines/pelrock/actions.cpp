@@ -357,7 +357,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 279:
 		travelToEgypt();
 		break;
-		// moros
+		// merchants
 
 	case 330:
 		// Two oranges
@@ -435,7 +435,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_dialog->say(_res->_ingameTexts[PARAUNAVEZ], 0);
 		_dialog->say(_res->_ingameTexts[MEJORMELARGO], 1);
 		break;
-		// end moros
+		// end merchants
 	case 353:
 		_state->setCurrentRoot(room, rootIndex + 2, 0);
 		break;

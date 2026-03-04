@@ -122,9 +122,11 @@ Common::Error PelrockEngine::run() {
 			_menu->menuLoop();
 			_state->stateGame = GAME;
 		} else if (_state->stateGame == GAME) {
+			maybePlayPostIntro();
 			gameLoop();
 		} else if (_state->stateGame == INTRO) {
 			_videoManager->playIntro();
+			_state->setFlag(FLAG_FROM_INTRO, true);
 			_state->stateGame = GAME;
 		} else if (_state->stateGame == COMPUTER) {
 			computerLoop();
@@ -154,8 +156,8 @@ void PelrockEngine::init() {
 	if (gameInitialized == false) {
 		gameInitialized = true;
 		loadAnims();
-		// setScreenAndPrepare(0, ALFRED_LEFT);
-		setScreenAndPrepare(36, ALFRED_LEFT);
+		setScreenAndPrepare(0, ALFRED_DOWN);
+		// setScreenAndPrepare(36, ALFRED_LEFT);
 
 		// setScreen(3, ALFRED_RIGHT);
 		// setScreen(22, ALFRED_DOWN);
@@ -370,6 +372,29 @@ void PelrockEngine::frameTriggers() {
 	passerByAnim(frameCount);
 	handleFlightRoomFrame();
 	shakeEffect();
+}
+
+void PelrockEngine::maybePlayPostIntro() {
+	if (_state->getFlag(FLAG_FROM_INTRO)) {
+		setScreenAndPrepare(0, ALFRED_LEFT);
+		_alfredState.x = 396;
+		_alfredState.y = 267;
+
+		_res->loadAlfredSpecialAnim(16, false);
+		_alfredState.animState = ALFRED_SPECIAL_ANIM;
+		_dialog->_disableClickToAdvance = true;
+		_dialog->say(_res->_ingameTexts[VAYASUENHO]);
+		_dialog->_disableClickToAdvance = false;
+		waitForSpecialAnimation();
+		_graphics->fadeToBlack(20);
+		g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
+		_state->setFlag(FLAG_FROM_INTRO, false);
+		_alfredState.direction = ALFRED_DOWN;
+		_alfredState.x = kAlfredInitialPosX;
+		_alfredState.y = kAlfredInitialPosY;
+		// setScreenAndPrepare(0, ALFRED_DOWN);
+		_dialog->say(_res->_ingameTexts[MENSAJEOTRAEPOCA]);
+	}
 }
 
 void PelrockEngine::shakeEffect() {
@@ -1751,6 +1776,7 @@ void PelrockEngine::gameLoop() {
 	_screen->update();
 }
 
+
 void PelrockEngine::computerLoop() {
 	Computer computer(_events);
 	computer.run();
@@ -2231,7 +2257,12 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			smokeAnimation(1, false);
 
 			walkAndAction(fatMummy, TALK);
-			debug("Restart game now!");
+			_state->clear();
+			_alfredState.x = kAlfredInitialPosX;
+			_alfredState.y = kAlfredInitialPosY;
+			_graphics->fadeToBlack(20);
+			_state->setFlag(FLAG_FROM_INTRO, true);
+			setScreenAndPrepare(0, ALFRED_LEFT);
 		}
 		break;
 	}

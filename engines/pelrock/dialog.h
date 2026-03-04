@@ -123,6 +123,7 @@ public:
 	// True while a blocking dialog or conversation is on screen.
 	bool _dialogActive = false;
 	bool _dismissDialog = false; // When true, the current dialog will be dismissed on the next iteration of the conversation loop (used for programmatically closing dialogs, e.g. when exiting a room)
+	bool _disableClickToAdvance = false;
 
 	Common::String _leftArrow = Common::String(17);
 	Common::String _rightArrow = Common::String(16);

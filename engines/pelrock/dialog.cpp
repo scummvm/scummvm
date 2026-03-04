@@ -174,7 +174,7 @@ Graphics::Surface DialogManager::getDialogueSurface(Common::Array<Common::String
 
 		int xPos = 0;
 		int yPos = i * 25; // Above sprite, adjust for line
-		debug("Drawing dialogue line %d: \"%s\" at position (%d, %d) with speaker ID %d", i, dialogueLines[i].c_str(), xPos, yPos, speakerId);
+		// debug("Drawing dialogue line %d: \"%s\" at position (%d, %d) with speaker ID %d", i, dialogueLines[i].c_str(), xPos, yPos, speakerId);
 		g_engine->_largeFont->drawString(&s, dialogueLines[i], xPos, yPos, maxWidth, speakerId, alignment);
 	}
 
@@ -185,7 +185,10 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 	int16 xBasePos = 0;
 	int16 yBasePos = 0;
 	if (speakerId == ALFRED_COLOR) {
-		if (g_engine->_alfredState.animState != ALFRED_TALKING) {
+		if (g_engine->_state->getFlag(FLAG_FROM_INTRO) == true) {
+			debug("Setting special anim");
+			g_engine->_alfredState.setState(ALFRED_SPECIAL_ANIM);
+		} else {
 			g_engine->_alfredState.setState(ALFRED_TALKING);
 		}
 		if (_curSprite != nullptr) {
@@ -221,7 +224,8 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 	_events->_leftMouseClicked = false;
 	_dialogActive = true;
 	int curPage = 0;
-
+	bool fromIntro = g_engine->_state->getFlag(FLAG_FROM_INTRO) == true;
+	debug("Displaying dialog, from intro = %d", fromIntro);
 	// Render loop - display text and wait for click
 	while (!g_engine->shouldQuit()) {
 		_events->pollEvent();
@@ -241,18 +245,15 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		int xPos = xBasePos - maxWidth / 2;
 		int yPos = yBasePos - height;
 
-
 		Graphics::Surface s = getDialogueSurface(textLines, speakerId);
 
 		// Clamp to screen bounds (original game: min Y = 1, max X = 639 - width)
 		xPos = CLIP(xPos, 0, 639 - maxWidth);
 		yPos = CLIP(yPos, 1, 400 - (int)s.getRect().height());
 
-		if(g_engine->_shakeEffectState.enabled) {
+		if (g_engine->_shakeEffectState.enabled) {
 			debug("Applying shake effect to dialogue, shakeX: %d", g_engine->_shakeEffectState.shakeX);
 			xPos -= g_engine->_shakeEffectState.shakeX;
-		} else {
-			debug("No shake effect applied to dialogue");
 		}
 
 		_screen->transBlitFrom(s, s.getRect(), Common::Point(xPos, yPos), 255);
@@ -263,17 +264,25 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 
 		if (_events->_leftMouseClicked) {
 			_events->_leftMouseClicked = false;
-			// debug("Dialogue click to advance, current page: %d, totalPages: %d", curPage, (int)dialogueLines.size());
-			if (curPage < (int)dialogueLines.size() - 1) {
-				curPage++;
-			} else {
-				_dismissDialog = true;
+			if (!_disableClickToAdvance) {
+				// debug("Dialogue click to advance, current page: %d, totalPages: %d", curPage, (int)dialogueLines.size());
+				if (curPage < (int)dialogueLines.size() - 1) {
+					curPage++;
+				} else {
+					_dismissDialog = true;
+				}
 			}
 		}
-		if(_dismissDialog) {
+		if (_dismissDialog) {
 			_dismissDialog = false;
 			break; // Exit dialogue if dismissed programmatically
 		}
+
+		if(fromIntro && g_engine->_res->_isSpecialAnimFinished) {
+			debug("Dismissing due to speciawl anim ending!");
+			break;
+		}
+
 		g_system->delayMillis(10);
 	}
 	if (_curSprite != nullptr) {
@@ -970,7 +979,12 @@ void DialogManager::disableChoiceIfNeeded(Common::Array<Pelrock::ChoiceOption> *
 	}
 }
 void DialogManager::sayAlfred(Common::StringArray texts) {
-	g_engine->_alfredState.setState(ALFRED_TALKING);
+	if (g_engine->_state->getFlag(FLAG_FROM_INTRO) == true) {
+		debug("Setting special anim");
+		g_engine->_alfredState.setState(ALFRED_SPECIAL_ANIM);
+	} else {
+		g_engine->_alfredState.setState(ALFRED_TALKING);
+	}
 
 	_curSprite = nullptr;
 	Common::Array<Common::StringArray> textLines = wordWrap(texts);
@@ -1044,8 +1058,7 @@ bool DialogManager::processColorAndTrim(Common::StringArray &lines, byte &speake
 			}
 		}
 		return true;
-	}
-	else {
+	} else {
 		debug("No speaker marker found, defaulting to Alfred");
 	}
 	return false;
@@ -1155,12 +1168,12 @@ Common::Array<Common::Array<Common::String>> DialogManager::wordWrap(Common::Str
 		pages.push_back(currentPage);
 	}
 
-	//print all the pages and lines for debugging
+	// print all the pages and lines for debugging
 	for (uint i = 0; i < pages.size(); i++) {
 		debug("Page %d:", i);
 		for (uint j = 0; j < pages[i].size(); j++) {
 			debug(" Line %d: \"%s\"", j, pages[i][j].c_str());
-				}
+		}
 	}
 	return pages;
 }
@@ -1180,9 +1193,8 @@ Common::Array<Common::StringArray> DialogManager::wordWrap(Common::StringArray t
 		Common::Array<Common::Array<Common::String>> wrapped = wordWrap(thisLine);
 		debug("Wrapped line %s, %d into %d pages", thisLine.c_str(), thisLine.size(), wrapped.size());
 		for (uint j = 0; j < wrapped.size(); j++) {
-			for (int i = 0; i < wrapped[j].size(); i++)
-			{
-				if(currentLineNum < MAX_LINES) {
+			for (int i = 0; i < wrapped[j].size(); i++) {
+				if (currentLineNum < MAX_LINES) {
 					currentPage.push_back(wrapped[j][i]);
 					currentLineNum++;
 				} else {

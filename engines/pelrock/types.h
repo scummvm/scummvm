@@ -88,6 +88,9 @@ const int kAlfredIdleAnimationFrameCount = 300;
 
 const int kInventoryPageSize = 10;
 
+const int kAlfredInitialPosX = 235;
+const int kAlfredInitialPosY = 279;
+
 // Direction flags (bit-packed)
 #define MOVE_RIGHT 0x01 // Move right (positive X)
 #define MOVE_LEFT 0x02  // Move left (negative X)
@@ -118,7 +121,8 @@ enum AlfredAnimState {
 	ALFRED_INTERACTING,
 	ALFRED_COMB,
 	ALFRED_SPECIAL_ANIM,
-	ALFRED_SKIP_DRAWING
+	ALFRED_SKIP_DRAWING,
+	ALFRED_IN_BED
 };
 
 enum AlfredDirection {
@@ -180,8 +184,8 @@ struct AlfredState {
 	int curFrame = 0;
 	uint16 movementSpeedX = 6; // pixels per frame
 	uint16 movementSpeedY = 5; // pixels per frame
-	uint16 x = 330;
-	uint16 y = 302;
+	uint16 x = kAlfredInitialPosX;
+	uint16 y = kAlfredInitialPosY;
 	byte w = kAlfredFrameWidth;
 	byte h = kAlfredFrameHeight;
 	int idleFrameCounter = 0;
@@ -572,15 +576,31 @@ struct GameStateData {
 	Common::HashMap<byte, Common::Array<SpriteChange>> spriteChanges;
 
 	GameStateData() {
-		memset(conversationCurrentRoot, 0, 112); // Initialize all to 0xFF (not set)
-		for (int i = 0; i < kNumGameFlags; i++)
-			flags[i] = 0;
-		flags[FLAG_ENTRA_EN_TIENDA_PRIMERA_VEZ] = true;
+		clear();
 	}
 
 	~GameStateData() {
 		delete[] conversationCurrentRoot;
 		conversationCurrentRoot = nullptr;
+	}
+
+	void clear() {
+		memset(conversationCurrentRoot, 0, 112); // Initialize all to 0xFF (not set)
+		for (int i = 0; i < kNumGameFlags; i++)
+			flags[i] = 0;
+		flags[FLAG_ENTRA_EN_TIENDA_PRIMERA_VEZ] = true;
+		disabledBranches.clear();
+		inventoryItems.clear();
+		stickersPerRoom.clear();
+		roomExitChanges.clear();
+		roomWalkBoxChanges.clear();
+		roomHotSpotChanges.clear();
+		spriteChanges.clear();
+		disabledBranches.clear();
+		libraryShelf = -1;
+		selectedBookIndex = -1;
+		bookLetter = '\0';
+		stateGame = GAME;
 	}
 
 	void addDisabledBranch(ResetEntry entry) {
