@@ -413,6 +413,10 @@ void Window::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Mana
 }
 
 Common::Point Window::getMousePos() {
+	if (Director::DT::isMouseInputIgnored() && _currentMovie) {
+		return _currentMovie->_lastMousePos;
+	}
+
 	Common::Rect innerDims = _window->getInnerDimensions();
 	return g_system->getEventManager()->getMousePos() - Common::Point(innerDims.left, innerDims.top);
 }

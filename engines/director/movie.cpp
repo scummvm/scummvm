@@ -55,6 +55,7 @@ Movie::Movie(Window *window) {
 	_lastKeyTime = _lastEventTime;
 	_lastClickTime = _lastEventTime;
 	_lastClickTime2 = 0;
+	_lastMousePos = Common::Point(0, 0);
 	_lastRollTime = _lastEventTime;
 	_lastTimerReset = _lastEventTime;
 	_nextEventId = 0;

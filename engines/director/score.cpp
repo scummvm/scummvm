@@ -49,6 +49,7 @@
 #include "director/castmember/castmember.h"
 #include "director/castmember/filmloop.h"
 #include "director/castmember/transition.h"
+#include "director/debugger/debugtools.h"
 
 namespace Director {
 
@@ -363,7 +364,8 @@ void Score::step() {
 			_soundManager->processCuePoints();
 		} else 	if (_version >= kFileVer500) {
 			// In D5, these events are only generated if a mouse button is pressed
-			if (_movie->_currentHoveredSpriteId && g_system->getEventManager()->getButtonState() != 0) {
+			bool isButtonDown = !Director::DT::isMouseInputIgnored() && (g_system->getEventManager()->getButtonState() != 0);
+			if (_movie->_currentHoveredSpriteId && isButtonDown) {
 				_movie->processEvent(kEventMouseWithin, _movie->_currentHoveredSpriteId);
 			}
 		}
@@ -1398,6 +1400,10 @@ void Score::renderPaletteCycle(RenderMode mode) {
 }
 
 void Score::renderCursor(Common::Point pos, bool forceUpdate) {
+	if (Director::DT::isMouseInputIgnored()) {
+		pos = _movie->_lastMousePos;
+	}
+
 	if (_window != _vm->getCursorWindow()) {
 		// The cursor is outside of this window.
 		return;

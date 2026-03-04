@@ -94,6 +94,7 @@ void saveCurrentState() {
 	json["ScoreWindow"] = new Common::JSONValue(_state->_scoreWindow);
 	json["ChannelsWindow"] = new Common::JSONValue(_state->_channelsWindow);
 	json["CastWindow"] = new Common::JSONValue(_state->_castWindow);
+	json["IgnoreMouse"] = new Common::JSONValue(_state->_ignoreMouse);
 
 	// Save the JSON
 	Common::JSONValue save(json);
@@ -177,6 +178,7 @@ void loadSavedState() {
 	_state->_scoreWindow = saved->asObject()["ScoreWindow"]->asString();
 	_state->_channelsWindow = saved->asObject()["ChannelsWindow"]->asString();
 	_state->_castWindow = saved->asObject()["CastWindow"]->asString();
+	_state->_ignoreMouse = saved->asObject()["IgnoreMouse"]->asBool();
 
 	free(data);
 	delete saved;
