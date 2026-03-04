@@ -1515,10 +1515,43 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 		return;
 	}
 
-	// ===== Sound Loading (par3 21-47) =====
-	if (par3 >= 21 && par3 <= 47) {
-		debug("Rebel2 Opcode 8: Sound loading subcase %d (not implemented)", par3);
-		// TODO: Implement sound loading via FUN_004118df equivalent
+	// ===== Auxiliary Sound Buffer Loading (par4 20-47) =====
+	// FUN_401234 case 6 (handler 8): par4 0x14-0x1b (20-27) → aux buffer 0
+	// FUN_41CADB case 6 (handler 25): par4 0x15-0x1b (21-27) → aux buffer 0,
+	//   0x1f-0x25 (31-37) → aux buffer 1, 0x28 (40) → aux buffer 3,
+	//   0x29-0x2f (41-47) → aux buffer 2
+	// Data layout: offset 14 = uint32 data size, offset 18 = PCM data start.
+	// Stream is at offset 8 (after par1-par4), so data size at +6, PCM at +10.
+	if (par4 >= 20 && par4 <= 47) {
+		int auxBuffer = -1;
+		if (par4 >= 20 && par4 <= 27) {
+			auxBuffer = 0;
+		} else if (par4 >= 31 && par4 <= 37) {
+			auxBuffer = 1;
+		} else if (par4 == 40) {
+			auxBuffer = 3;
+		} else if (par4 >= 41 && par4 <= 47) {
+			auxBuffer = 2;
+		}
+
+		if (auxBuffer >= 0 && remaining >= 10) {
+			b.seek(startPos + 6); // Skip to data size field (byte offset 14 from IACT start)
+			uint32 dataSize = b.readUint32LE();
+			if (dataSize > 0 && remaining >= (int64)(10 + dataSize)) {
+				byte *soundData = (byte *)malloc(dataSize);
+				if (soundData) {
+					b.read(soundData, dataSize);
+					loadAuxSfx(auxBuffer, soundData, dataSize);
+					free(soundData);
+					debug("Rebel2 Opcode 8: Loaded %d bytes into aux sound buffer %d (par4=%d)",
+						dataSize, auxBuffer, par4);
+				}
+			} else {
+				debug("Rebel2 Opcode 8: Aux sound par4=%d dataSize=%d exceeds remaining=%lld",
+					par4, dataSize, (long long)remaining);
+			}
+		}
+		b.seek(startPos);
 		return;
 	}
 

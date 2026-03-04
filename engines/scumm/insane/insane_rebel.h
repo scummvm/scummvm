@@ -1134,6 +1134,23 @@ public:
 	// slot: 0-7 (SAD file index), volume: 0-127, pan: -127..+127
 	void playSfx(int slot, int volume, int pan);
 
+	// ========== Auxiliary Sound Buffers ==========
+	// 4 pre-allocated buffers (30000 bytes each) loaded from IACT stream data.
+	// Original: DAT_00480308[0..3], loaded via FUN_004118df, played via FUN_00411931.
+	// Used for embedded sound effects (e.g., soldier death sounds in handler 8 levels).
+	static const int kRA2NumAuxSfx = 4;
+	static const int kRA2AuxBufSize = 30000;
+
+	byte *_auxSfxData[kRA2NumAuxSfx];     // Pre-allocated buffer pointers
+	uint32 _auxSfxSize[kRA2NumAuxSfx];    // Current data size in each buffer
+	Audio::SoundHandle _auxSfxHandles[kRA2NumAuxSfx]; // Mixer handles
+
+	// Load sound data into auxiliary buffer (FUN_004118df equivalent)
+	void loadAuxSfx(int buffer, const byte *data, uint32 size);
+
+	// Play from auxiliary buffer (FUN_00411931 equivalent)
+	void playAuxSfx(int buffer, int volume, int pan);
+
 };
 
 } // End of namespace Insane
