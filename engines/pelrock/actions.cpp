@@ -340,6 +340,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 
 		_room->addWalkbox(w1);
 		_room->addWalkbox(w2);
+		break;
 	case 274:
 	case 275:
 	case 276:
