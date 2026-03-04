@@ -166,6 +166,17 @@ private:
 	int _storedFobjWidth;
 	int _storedFobjHeight;
 
+	// RA2: Most recently decoded FOBJ in the current frame, used by GOST chunks
+	// to re-render the same sprite payload at a different position.
+	byte *_lastFobjData;
+	int32 _lastFobjDataSize;
+	int _lastFobjCodec;
+	int _lastFobjLeft;
+	int _lastFobjTop;
+	int _lastFobjWidth;
+	int _lastFobjHeight;
+	bool _hasFrameFobjForGost;
+
 	Common::String _seekFile;
 	uint32 _startFrame;
 	uint32 _startTime;
@@ -309,6 +320,9 @@ private:
 						int width, int height, int pitch, int dataSize);
 	void ra2StoreFobjData(int codec, const byte *data, int32 dataSize,
 						  int left, int top, int width, int height);
+	void ra2RememberLastFobj(int codec, const byte *data, int32 dataSize,
+							 int left, int top, int width, int height);
+	void ra2HandleGost(int32 subSize, Common::SeekableReadStream &b);
 	void ra2ResetDeltaPalette();
 	SmushFont *ra2GetFont(int font);
 	void ra2ParseNextFrame();
