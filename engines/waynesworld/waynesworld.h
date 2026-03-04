@@ -115,11 +115,18 @@ private:
 #ifdef USE_TRANSLATION
 	Common::String _oldGUILanguage;
 #endif
+	void wwEffect(int arg0, int arg1, bool flag);
+	
 	bool introPt1();
 	bool introPt2();
 	bool introPt3(bool flag);
 	
 	WWSurface *_demoPt2Surface = nullptr;
+	WWSurface *_backg2Surface = nullptr;
+	WWSurface *_logoSurface = nullptr;
+	WWSurface *_outlineSurface = nullptr;
+
+	GxlArchive *_oanGxl = nullptr;
 
 public:
 	Common::RandomSource *_random;
