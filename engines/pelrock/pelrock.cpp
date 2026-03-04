@@ -2096,6 +2096,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			_dialog->say(_res->_ingameTexts[GAMBERROS]);
 			_dialog->say(_res->_ingameTexts[QUIENYO]);
 			_dialog->say(_res->_ingameTexts[PINTA_BUENAPERSONA]);
+			break;
 		}
 	case 38: {
 		if (_room->_prevRoomNumber == 30) {
