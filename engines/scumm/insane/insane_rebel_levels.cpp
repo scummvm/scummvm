@@ -507,6 +507,7 @@ int InsaneRebel2::runLevel(int levelId) {
 	_currentPhase = 1;
 	_phaseScore = 0;
 	_phaseMisses = 0;
+	_skipSectionRequested = false;
 
 	// Dispatch to per-level handler
 	switch (levelId) {

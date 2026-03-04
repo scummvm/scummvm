@@ -465,6 +465,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_deathFrame = 0;
 	_phaseScore = 0;
 	_phaseMisses = 0;
+	_skipSectionRequested = false;
 
 	// Register as EventObserver to capture input events before ScummEngine consumes them
 	_vm->_system->getEventManager()->getEventDispatcher()->registerObserver(this, 1, false);
@@ -573,6 +574,19 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 					// Show the pause overlay with dimming effect and "PAUSED" text
 					showPauseOverlay();
 				}
+				return true;  // Consume the event
+			}
+			break;
+
+		case Common::KEYCODE_s:
+			// Debug shortcut: Shift+S skips the current gameplay section.
+			if (splayer &&
+			    _gameState == kStateGameplay &&
+			    _rebelHandler != 0 &&
+			    event.kbd.hasFlags(Common::KBD_SHIFT)) {
+				_skipSectionRequested = true;
+				debug("Rebel2: Shift+S pressed - requesting gameplay section skip");
+				_vm->_smushVideoShouldFinish = true;
 				return true;  // Consume the event
 			}
 			break;
