@@ -2101,81 +2101,6 @@ void InsaneRebel2::checkHandler7CollisionZones(byte *renderBitmap, int pitch, in
 	}
 }
 
-void InsaneRebel2::drawQuad(byte *dst, int pitch, int width, int height,
-                            int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, byte color) {
-	// Draw a quadrilateral by connecting its 4 vertices with lines
-	// Vertex order: top-left (1), top-right (2), bottom-right (3), bottom-left (4)
-	drawLine(dst, pitch, width, height, x1, y1, x2, y2, color);  // Top edge
-	drawLine(dst, pitch, width, height, x2, y2, x3, y3, color);  // Right edge
-	drawLine(dst, pitch, width, height, x3, y3, x4, y4, color);  // Bottom edge
-	drawLine(dst, pitch, width, height, x4, y4, x1, y1, color);  // Left edge
-}
-
-void InsaneRebel2::drawCollisionZones(byte *dst, int pitch, int width, int height, byte color) {
-	// Draw all active collision zones as wireframe quadrilaterals for debugging
-	// Uses different colors for primary vs secondary zones
-
-	const byte primaryColor = 44;    // Bright red for primary (obstacle) zones
-	const byte secondaryColor = 47;  // Yellow for secondary (boundary) zones
-
-	// Draw primary zones (sub-opcode 0x0D - obstacles)
-	for (int i = 0; i < _primaryZoneCount; i++) {
-		CollisionZone &zone = _primaryZones[i];
-		if (!zone.active)
-			continue;
-
-		// Apply view offset to convert from video coords to screen coords
-		int x1 = zone.x1 + _viewX;
-		int y1 = zone.y1 + _viewY;
-		int x2 = zone.x2 + _viewX;
-		int y2 = zone.y2 + _viewY;
-		int x3 = zone.x3 + _viewX;
-		int y3 = zone.y3 + _viewY;
-		int x4 = zone.x4 + _viewX;
-		int y4 = zone.y4 + _viewY;
-
-		drawQuad(dst, pitch, width, height, x1, y1, x2, y2, x3, y3, x4, y4, primaryColor);
-	}
-
-	// Draw secondary zones (sub-opcode 0x0E - boundaries)
-	for (int i = 0; i < _secondaryZoneCount; i++) {
-		CollisionZone &zone = _secondaryZones[i];
-		if (!zone.active)
-			continue;
-
-		// Apply view offset
-		int x1 = zone.x1 + _viewX;
-		int y1 = zone.y1 + _viewY;
-		int x2 = zone.x2 + _viewX;
-		int y2 = zone.y2 + _viewY;
-		int x3 = zone.x3 + _viewX;
-		int y3 = zone.y3 + _viewY;
-		int x4 = zone.x4 + _viewX;
-		int y4 = zone.y4 + _viewY;
-
-		drawQuad(dst, pitch, width, height, x1, y1, x2, y2, x3, y3, x4, y4, secondaryColor);
-	}
-
-	// Draw corridor boundaries as a rectangle (from IACT opcode 7)
-	if (_corridorLeftX != 0 || _corridorRightX != 0x1A8) {
-		const byte corridorColor = 45;  // Cyan for corridor boundaries
-		// Draw vertical lines for left/right boundaries
-		drawLine(dst, pitch, width, height,
-			_corridorLeftX + _viewX, _corridorTopY + _viewY,
-			_corridorLeftX + _viewX, _corridorBottomY + _viewY, corridorColor);
-		drawLine(dst, pitch, width, height,
-			_corridorRightX + _viewX, _corridorTopY + _viewY,
-			_corridorRightX + _viewX, _corridorBottomY + _viewY, corridorColor);
-		// Draw horizontal lines for top/bottom boundaries
-		drawLine(dst, pitch, width, height,
-			_corridorLeftX + _viewX, _corridorTopY + _viewY,
-			_corridorRightX + _viewX, _corridorTopY + _viewY, corridorColor);
-		drawLine(dst, pitch, width, height,
-			_corridorLeftX + _viewX, _corridorBottomY + _viewY,
-			_corridorRightX + _viewX, _corridorBottomY + _viewY, corridorColor);
-	}
-}
-
 void InsaneRebel2::renderNutSprite(byte *dst, int pitch, int width, int height, int x, int y, NutRenderer *nut, int spriteIdx) {
 	renderNutSpriteMirrored(dst, pitch, width, height, x, y, nut, spriteIdx, false);
 }
@@ -2588,11 +2513,6 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		checkCollisionZones();
 	} else if (_rebelHandler == 7) {
 		checkHandler7CollisionZones(renderBitmap, pitch, width, height, curFrame);
-	}
-
-	// Collision zone visualization (debug - for Handler 7/8 pilot modes)
-	if (_rebelHandler == 7 || _rebelHandler == 8) {
-		drawCollisionZones(renderBitmap, pitch, width, height, 0);
 	}
 
 	// Crosshair/reticle (FUN_004089ab, FUN_0040d836)
