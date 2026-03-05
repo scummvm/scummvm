@@ -592,6 +592,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 			g_system->delayMillis(10);
 		}
 		_room->disableSprite(0);
+		_state->setCurrentRoot(room, 2, 0);
 	} break;
 	case 313:
 		_state->setCurrentRoot(room, rootIndex + 1, 0);

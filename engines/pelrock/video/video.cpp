@@ -61,88 +61,106 @@ void VideoManager::playIntro() {
 
 	_videoSurface.fillRect(Common::Rect(0, 0, 640, 400), 0);
 	_textSurface.fillRect(Common::Rect(0, 0, 640, 400), 255);
-	for (int sequence = 0; sequence < 1; sequence++) {
-		uint16 frameCounter = 0;
-		bool videoExitFlag = false;
 
-		while (!videoExitFlag && !g_engine->shouldQuit() && _events->_lastKeyEvent != Common::KEYCODE_ESCAPE) {
-			_chrono->updateChrono();
-			_events->pollEvent();
+	uint16 frameCounter = 0;
+	bool videoExitFlag = false;
+
+	while (!videoExitFlag && !g_engine->shouldQuit() && _events->_lastKeyEvent != Common::KEYCODE_ESCAPE) {
+		_events->pollEvent();
+
+		ChunkHeader chunk;
+		readChunk(videoFile, chunk);
+		debug("Read chunk type %d at frame %d", chunk.chunkType, frameCounter);
+
+		switch (chunk.chunkType) {
+		case 1:
+		case 2: {
+			// Visual frame: wait for chrono timing before presenting
+			// Fix Bug 2/3: only visual frames (types 1/2) participate in chrono gating
 			Subtitle *subtitle = getSubtitleForFrame(frameCounter);
 			int frameSkip = subtitle != nullptr ? 4 : 2;
-			if (_chrono->_gameTick && _chrono->getFrameCount() % frameSkip == 0) {
-				ChunkHeader chunk;
-				readChunk(videoFile, chunk);
-				debug("Read chunk type %d at frame %d", chunk.chunkType, frameCounter);
-				switch (chunk.chunkType) {
-				case 1:
-				case 2:
-					processFrame(chunk, frameCounter++);
+			while (!g_engine->shouldQuit() && _events->_lastKeyEvent != Common::KEYCODE_ESCAPE) {
+				_chrono->updateChrono();
+				_events->pollEvent();
+				if (_chrono->_gameTick && _chrono->getFrameCount() % frameSkip == 0)
 					break;
-				case 3:
-					videoExitFlag = true;
-					break;
-				case 4:
-					loadPalette(chunk);
-					break;
-				default:
-					debug("Unknown chunk type %d encountered", chunk.chunkType);
-					break;
-				}
-
-				if (_voiceEffect.contains(frameCounter)) {
-					// Wait for any playing voice to finish before starting new one
-					while (_sound->isPlaying(0)) {
-						_events->pollEvent();
-						g_system->delayMillis(10);
-						if (g_engine->shouldQuit() || _events->_lastKeyEvent == Common::KEYCODE_ESCAPE) {
-							break;
-						}
-					}
-					AudioEffect voice = _voiceEffect[frameCounter];
-					debug("Playing voice effect: '%s'", voice.filename.c_str());
-					VoiceData voiceData = _sounds[voice.filename];
-					_introSndFile.seek(voiceData.offset, SEEK_SET);
-					byte *voiceBuffer = new byte[voiceData.length];
-					_introSndFile.read(voiceBuffer, voiceData.length);
-					_sound->playSound(voiceBuffer, voiceData.length, 0);
-				}
-
-				if(_sfxEffect.contains(frameCounter)) {
-					AudioEffect sfx = _sfxEffect[frameCounter];
-					debug("Playing SFX effect: '%s'", sfx.filename.c_str());
-					VoiceData sfxData = _sounds[sfx.filename];
-					_introSndFile.seek(sfxData.offset, SEEK_SET);
-					byte *sfxBuffer = new byte[sfxData.length];
-					_introSndFile.read(sfxBuffer, sfxData.length);
-					_sound->playSound(sfxBuffer, sfxData.length, 1);
-				}
-
-				if(_musicEffect.contains(frameCounter)) {
-					MusicEffect music = _musicEffect[frameCounter];
-					_sound->playMusicTrack(music.trackNumber, true);
-				}
-
-				if (subtitle != nullptr) {
-					Common::StringArray lines = _dialog->wordWrap(subtitle->text)[0];
-
-					byte color;
-					_dialog->processColorAndTrim(lines, color);
-					Graphics::Surface s = _dialog->getDialogueSurface(lines, color);
-					_textSurface.transBlitFrom(s, Common::Point(subtitle->x, subtitle->y), 255);
-
-					drawPos(&_textSurface, subtitle->x, subtitle->y, color);
-					drawRect(&_textSurface, subtitle->x, subtitle->y,
-							 s.getRect().width(),
-							 s.getRect().height(), color);
-				}
-
-				presentFrame();
+				g_system->delayMillis(10);
 			}
-			g_system->delayMillis(10);
+
+			// Fix Bug 1: capture current frame BEFORE increment so audio fires at the correct frame
+			int currentFrame = frameCounter++;
+			processFrame(chunk, currentFrame);
+
+			// Fix Bug 1: all audio checks use currentFrame (not the already-incremented frameCounter)
+			if (_voiceEffect.contains(currentFrame)) {
+				// Wait for any playing voice to finish before starting new one
+				while (_sound->isPlaying(0)) {
+					_events->pollEvent();
+					g_system->delayMillis(10);
+					if (g_engine->shouldQuit() || _events->_lastKeyEvent == Common::KEYCODE_ESCAPE)
+						break;
+				}
+				AudioEffect voice = _voiceEffect[currentFrame];
+				debug("Playing voice effect: '%s'", voice.filename.c_str());
+				VoiceData voiceData = _sounds[voice.filename];
+				_introSndFile.seek(voiceData.offset, SEEK_SET);
+				byte *voiceBuffer = new byte[voiceData.length];
+				_introSndFile.read(voiceBuffer, voiceData.length);
+				_sound->playSound(voiceBuffer, voiceData.length, 0);
+			}
+
+			if (_sfxEffect.contains(currentFrame)) {
+				AudioEffect sfx = _sfxEffect[currentFrame];
+				debug("Playing SFX effect: '%s'", sfx.filename.c_str());
+				VoiceData sfxData = _sounds[sfx.filename];
+				_introSndFile.seek(sfxData.offset, SEEK_SET);
+				byte *sfxBuffer = new byte[sfxData.length];
+				_introSndFile.read(sfxBuffer, sfxData.length);
+				_sound->playSound(sfxBuffer, sfxData.length, 1);
+			}
+
+			if (_musicEffect.contains(currentFrame)) {
+				MusicEffect music = _musicEffect[currentFrame];
+				_sound->playMusicTrack(music.trackNumber, true);
+			}
+
+			// Fix Bug 4: subtitles are suppressed in the blackout range (frames 571-669)
+			bool inBlackoutRange = (currentFrame >= 571 && currentFrame <= 669);
+			if (subtitle != nullptr && !inBlackoutRange) {
+				Common::StringArray lines = _dialog->wordWrap(subtitle->text)[0];
+
+				byte color;
+				_dialog->processColorAndTrim(lines, color);
+				Graphics::Surface s = _dialog->getDialogueSurface(lines, color);
+				_textSurface.transBlitFrom(s, Common::Point(subtitle->x, subtitle->y), 255);
+
+				drawPos(&_textSurface, subtitle->x, subtitle->y, color);
+				drawRect(&_textSurface, subtitle->x, subtitle->y,
+						 s.getRect().width(),
+						 s.getRect().height(), color);
+			}
+
+			presentFrame();
+			break;
 		}
-		debug("Total frames played: %d", frameCounter);
+		case 3:
+			videoExitFlag = true;
+			break;
+		case 4:
+			loadPalette(chunk);
+			break;
+		case 6:
+			// Fix Bug 3: type 6 is a timing pad. Original costs ~20ms per chunk.
+			// Do NOT gate on chrono — process immediately with a short delay.
+			g_system->delayMillis(20);
+			break;
+		default:
+			debug("Unknown chunk type %d encountered", chunk.chunkType);
+			break;
+		}
 	}
+
+	debug("Total frames played: %d", frameCounter);
 	videoFile.close();
 }
 
