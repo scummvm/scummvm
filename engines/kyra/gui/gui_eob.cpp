@@ -1343,9 +1343,9 @@ int EoBCoreEngine::clickedSpellbookAbort(Button *button) {
 	_screen->fillRect(64, 121, 175, 176, 0, 0);
 	_screen->fillRect(64, 121, 175, 176, 0, 2);
 	_screen->copyRegion(0, 0, 64, _flags.platform == Common::kPlatformSegaCD ? 120 : 121, 112, 56, Screen_EoB::kSpellbookBackupPage, 0, Screen::CR_NO_P_CHECK);
-	_screen->updateScreen();
 	gui_drawCompass(true);
 	gui_toggleButtons();
+	_screen->updateScreen();
 	return button->index;
 }
 
