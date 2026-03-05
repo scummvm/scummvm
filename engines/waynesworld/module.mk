@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	gamemap.o \
 	gxlarchive.o \
 	graphics.o \
+	intro.o \
 	metaengine.o \
 	pathfinding.o \
 	sound.o \
