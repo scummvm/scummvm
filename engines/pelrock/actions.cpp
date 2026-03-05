@@ -320,9 +320,12 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		// skip to root after the next one
 		_state->setCurrentRoot(room, rootIndex + 2, 0);
 		break;
-	case 267:
+	case 267: {
 		_state->setCurrentRoot(7, 2, 0);
+		addInventoryItem(8);
+		animateStatuePaletteFade(true);
 		break;
+	}
 	case 272:
 		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
@@ -1122,8 +1125,6 @@ void PelrockEngine::useAmuletWithStatue(int inventoryObject, HotSpot *hotspot) {
 		animateStatuePaletteFade(false);
 		walkAndAction(statueHotspot, TALK);
 		waitForActionEnd();
-		animateStatuePaletteFade(true);
-		addInventoryItem(8);
 	}
 }
 

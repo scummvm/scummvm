@@ -2101,6 +2101,10 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			loadExtraScreenAndPresent(4);
 		}
 		break;
+	case 7: { // not in the original but it was clearly a bug
+		_dialog->_goodbyeDisabled = true;
+		break;
+	}
 	case 15:
 		if (_state->getFlag(FLAG_ENTRA_EN_TIENDA_PRIMERA_VEZ)) {
 			_state->setFlag(FLAG_ENTRA_EN_TIENDA_PRIMERA_VEZ, false);
