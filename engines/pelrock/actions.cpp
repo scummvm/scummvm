@@ -687,9 +687,9 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
  * Alfred and the princess.
  */
 void PelrockEngine::turnLightsOff() {
-	memset(_currentBackground, 0, 640 * 400);
-	memset(_compositeBuffer, 0, 640 * 400);
-	memset(_screen->getPixels(), 0, 640 * 400);
+	_currentBackground.clear(0);
+	_compositeBuffer.clear(0);
+	_screen->clear(0);
 	byte darkPalette[768] = {};
 	darkPalette[238 * 3 + 0] = 60 << 2; // R = 240
 	darkPalette[238 * 3 + 1] = 57 << 2; // G = 228
@@ -1972,7 +1972,7 @@ void PelrockEngine::teletransportToPrincess() {
 			int y1 = lines[phase][1];
 			int x2 = lines[phase][2] + i;
 			int y2 = lines[phase][3];
-			drawRemappedLine(_compositeBuffer, x1, y1, x2, y2, _room->_paletteRemaps[1]);
+			drawRemappedLine((byte *)_compositeBuffer.getPixels(), x1, y1, x2, y2, _room->_paletteRemaps[1]);
 		}
 
 		updateAnimations();
@@ -2078,7 +2078,7 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		}
 		break;
 	case 88: {
-		SpellBook spellBook = SpellBook(_events, _res);
+		SpellBook spellBook(_events, _res);
 		playAlfredSpecialAnim(0);
 
 		Spell *spell = spellBook.run();
@@ -2197,7 +2197,7 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		break;
 	}
 	case 95: {
-		CDPlayer player = CDPlayer(_events, _res, _sound);
+		CDPlayer player(_events, _res, _sound);
 		player.run();
 		break;
 	}

@@ -22,6 +22,7 @@
 #define PELROCK_MENU_H
 
 #include "graphics/font.h"
+#include "graphics/managed_surface.h"
 #include "graphics/screen.h"
 
 #include "pelrock/events.h"
@@ -225,8 +226,8 @@ private:
 	PelrockEventManager *_events = nullptr;
 	ResourceManager *_res = nullptr;
 	SoundManager *_sound = nullptr;
-	byte *_mainMenu = nullptr;
-	byte *_compositeBuffer = nullptr;
+	Graphics::ManagedSurface _mainMenu;
+	Graphics::ManagedSurface _compositeBuffer;
 
 	Common::Rect _saveGameRect = Common::Rect(Common::Point(132, 186), 81, 34);
 	byte *_saveButtons[2] = {nullptr};

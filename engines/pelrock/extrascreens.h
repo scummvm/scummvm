@@ -22,6 +22,8 @@
 #ifndef PELROCK_EXTRASCREENS_H
 #define PELROCK_EXTRASCREENS_H
 
+#include "graphics/managed_surface.h"
+
 #include "pelrock/pelrock.h"
 
 namespace Pelrock {
@@ -72,8 +74,8 @@ public:
 private:
 	PelrockEventManager *_events;
 	ResourceManager *_res;
-	byte *_backgroundScreen;
-	byte *_compositeScreen;
+	Graphics::ManagedSurface _backgroundScreen;
+	Graphics::ManagedSurface _compositeScreen;
 	byte *_palette;
 
 	Spell *_spell = nullptr;
@@ -118,8 +120,8 @@ private:
 	ResourceManager *_res;
 	SoundManager *_sound;
 	PelrockEventManager *_events;
-	byte *_backgroundScreen;
-	byte *_compositeScreen;
+	Graphics::ManagedSurface _backgroundScreen;
+	Graphics::ManagedSurface _compositeScreen;
 	byte *_palette;
 	byte *_controls;
 	Common::String trackNames[31];
@@ -164,8 +166,8 @@ private:
 
 	PelrockEventManager *_events;
 	ResourceManager *_res;
-	byte *_backgroundScreen;
-	byte *_compositeScreen;
+	Graphics::ManagedSurface _backgroundScreen;
+	Graphics::ManagedSurface _compositeScreen;
 	byte *_palette;
 	byte *_buttons[2][2];
 	Buttons _selectedButton = NO_BG_BUTTON;

@@ -30,8 +30,7 @@
 namespace Pelrock {
 
 Computer::Computer(PelrockEventManager *eventMan)
-	: _backgroundScreen(nullptr),
-	  _palette(nullptr),
+	: _palette(nullptr),
 	  _state(STATE_MAIN_MENU),
 	  _searchLetter(0),
 	  _searchType(0),
@@ -85,17 +84,14 @@ Computer::~Computer() {
 
 void Computer::loadBackground() {
 	_palette = new byte[768];
-	_backgroundScreen = new byte[640 * 400];
+	_backgroundScreen.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 
-	g_engine->_res->getExtraScreen(1, _backgroundScreen, _palette);
+	g_engine->_res->getExtraScreen(1, (byte *)_backgroundScreen.getPixels(), _palette);
 	g_system->getPaletteManager()->setPalette(_palette, 0, 256);
 }
 
 void Computer::cleanup() {
-	if (_backgroundScreen) {
-		delete[] _backgroundScreen;
-		_backgroundScreen = nullptr;
-	}
+	_backgroundScreen.free();
 	if (_palette) {
 		// Restore room palette
 		g_system->getPaletteManager()->setPalette(g_engine->_room->_roomPalette, 0, 256);
@@ -143,7 +139,7 @@ int Computer::run() {
 
 void Computer::drawScreen() {
 	// Clear to background
-	memcpy(g_engine->_screen->getPixels(), _backgroundScreen, 640 * 400);
+	g_engine->_screen->blitFrom(_backgroundScreen);
 
 	byte defaultColor = 0; // Light gray
 

@@ -35,38 +35,37 @@ GraphicsManager::GraphicsManager() {
 GraphicsManager::~GraphicsManager() {
 }
 
-Common::Point GraphicsManager::showOverlay(int height, byte *buf) {
+Common::Point GraphicsManager::showOverlay(int height, Graphics::ManagedSurface &buf) {
 	int overlayY = 400 - height;
 	int overlayX = 0;
 	for (int x = 0; x < 640; x++) {
 		for (int y = overlayY; y < 400; y++) {
-			int index = y * 640 + x;
-			buf[index] = g_engine->_room->_paletteRemaps[2][buf[index]];
+			byte pixel = (byte)buf.getPixel(x, y);
+			buf.setPixel(x, y, g_engine->_room->_paletteRemaps[2][pixel]);
 		}
 	}
 	return Common::Point(overlayX, overlayY);
 }
 
-byte *GraphicsManager::grabBackgroundSlice(byte *buf, int x, int y, int w, int h) {
+byte *GraphicsManager::grabBackgroundSlice(Graphics::ManagedSurface &buf, int x, int y, int w, int h) {
 	byte *bg = new byte[w * h];
 	for (int j = 0; j < w; j++) {
 		for (int i = 0; i < h; i++) {
 			int idx = i * w + j;
 			if (y + i < 400 && x + j < 640) {
-				*(bg + idx) = buf[(y + i) * 640 + (x + j)];
+				*(bg + idx) = (byte)buf.getPixel(x + j, y + i);
 			}
 		}
 	}
 	return bg;
 }
 
-void GraphicsManager::putBackgroundSlice(byte *buf, int x, int y, int w, int h, byte *slice) {
+void GraphicsManager::putBackgroundSlice(Graphics::ManagedSurface &buf, int x, int y, int w, int h, byte *slice) {
 	for (int i = 0; i < w; i++) {
 		for (int j = 0; j < h; j++) {
 			int index = (j * w + i);
 			if (x + i < 640 && y + j < 400) {
-				buf[(y + j) * 640 + (x + i)] = slice[index];
-				// *(byte *)_screen->getBasePtr(x + i, y + j) = slice[index];
+				buf.setPixel(x + i, y + j, slice[index]);
 			}
 		}
 	}
@@ -144,7 +143,7 @@ void GraphicsManager::fadePaletteToTarget(byte *targetPalette, int stepSize) {
 }
 
 void GraphicsManager::clearScreen() {
-	memset(g_engine->_screen->getPixels(), 0, g_engine->_screen->pitch * g_engine->_screen->h);
+	g_engine->_screen->clear(0);
 }
 
 void GraphicsManager::drawColoredText(Graphics::ManagedSurface *screen, const Common::String &text, int x, int y, int w, byte &defaultColor, Graphics::Font *font) {
@@ -172,7 +171,7 @@ void GraphicsManager::drawColoredText(Graphics::ManagedSurface *screen, const Co
 	}
 }
 
-void GraphicsManager::drawColoredText(byte *buf, const Common::String &text, int x, int y, int w, byte &defaultColor, Graphics::Font *font) {
+void GraphicsManager::drawColoredText(Graphics::ManagedSurface &buf, const Common::String &text, int x, int y, int w, byte &defaultColor, Graphics::Font *font) {
 
 	Graphics::Surface tempSurface;
 	Common::Rect r = font->getBoundingBox(text); // Ensure font metrics are loaded before creating surface
@@ -202,17 +201,9 @@ void GraphicsManager::drawColoredText(byte *buf, const Common::String &text, int
 		font->drawString(&tempSurface, segment, currentX, y, w, defaultColor);
 	}
 
-	for(int j = 0; j < tempSurface.h; j++) {
-		for(int i = 0; i < tempSurface.w; i++) {
-			if (y + j < 400 && x + i < 640) {
-				byte pixel = *((byte *)tempSurface.getBasePtr(i, j));
-				if (pixel != 0) { // Assuming 0 is transparent
-					debug("Drawing pixel at (%d, %d) with color %d", x + i, y + j, pixel);
-					buf[(y + j) * 640 + (x + i)] = pixel;
-				}
-			}
-		}
-	}
+	// Use transBlitFrom to blit non-zero pixels
+	buf.transBlitFrom(tempSurface, Common::Point(x, y), 0);
+	tempSurface.free();
 }
 
 void GraphicsManager::drawColoredTexts(Graphics::ManagedSurface *surface, const Common::StringArray &text, int x, int y, int w, int yPadding, Graphics::Font *font) {
@@ -224,7 +215,7 @@ void GraphicsManager::drawColoredTexts(Graphics::ManagedSurface *surface, const 
 	}
 }
 
-void GraphicsManager::drawColoredTexts(byte *buf, const Common::StringArray &text, int x, int y, int w, int yPadding, Graphics::Font *font) {
+void GraphicsManager::drawColoredTexts(Graphics::ManagedSurface &buf, const Common::StringArray &text, int x, int y, int w, int yPadding, Graphics::Font *font) {
 	int currentX = x;
 	byte currentColor = 255;
 

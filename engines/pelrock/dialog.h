@@ -23,6 +23,7 @@
 
 #include "common/scummsys.h"
 #include "common/stack.h"
+#include "graphics/managed_surface.h"
 #include "graphics/screen.h"
 
 #include "pelrock/events.h"
@@ -101,8 +102,8 @@ public:
 	DialogManager(Graphics::Screen *screen, PelrockEventManager *events, GraphicsManager *graphics);
 	~DialogManager();
 
-	void displayChoices(Common::Array<ChoiceOption> *choices, byte *compositeBuffer);
-	int selectChoice(Common::Array<Common::String> &choices, byte *compositeBuffer);
+	void displayChoices(Common::Array<ChoiceOption> *choices, Graphics::ManagedSurface &compositeBuffer);
+	int selectChoice(Common::Array<Common::String> &choices, Graphics::ManagedSurface &compositeBuffer);
 	void startConversation(const byte *conversationData, uint32 dataSize, byte npcIndex, Sprite *alfredAnimSet = nullptr);
 	uint32 findRoot(int npc, int &currentRoot, uint32 position, uint32 dataSize, const byte *conversationData);
 	uint32 findSpeaker(byte npcIndex, uint32 dataSize, const byte *conversationData);

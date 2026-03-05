@@ -29,8 +29,7 @@
 namespace Pelrock {
 
 SpellBook::SpellBook(PelrockEventManager *eventMan, ResourceManager *res)
-	: _backgroundScreen(nullptr),
-	  _palette(nullptr),
+	: _palette(nullptr),
 	  _events(eventMan),
 	  _res(res),
 	  _spell(nullptr) {
@@ -56,14 +55,14 @@ Spell *SpellBook::run() {
 		g_engine->_screen->update();
 		g_system->delayMillis(10);
 	}
-	memset(g_engine->_screen->getPixels(), 0, 640 * 400);
+	g_engine->_screen->clear(0);
 	// Restore room palette
 	g_system->getPaletteManager()->setPalette(g_engine->_room->_roomPalette, 0, 256);
 	return _selectedSpell;
 }
 
 void SpellBook::init() {
-	_compositeScreen = new byte[640 * 400];
+	_compositeScreen.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 
 	// selectPage(0);
 }
@@ -113,34 +112,32 @@ void SpellBook::selectPage(int page) {
 }
 
 void SpellBook::drawScreen() {
-	memcpy(_compositeScreen, _backgroundScreen, 640 * 400);
+	_compositeScreen.blitFrom(_backgroundScreen);
 
 	int textY = 83;
 	int textX = 317;
 
 	if (_spell != nullptr) {
-		drawSpriteToBuffer(_compositeScreen, 640, _spell->image, 168, 143, 119, 99, 207);
+		drawSpriteToBuffer(_compositeScreen, _spell->image, 168, 143, 119, 99, 207);
 		g_engine->_graphics->drawColoredTexts(_compositeScreen, _spell->text, textX, textY, 640, 0, g_engine->_smallFont);
 	}
 
-	memcpy(g_engine->_screen->getPixels(), _compositeScreen, 640 * 400);
+	g_engine->_screen->blitFrom(_compositeScreen);
 	if (_spell != nullptr) {
 		g_engine->_graphics->drawColoredTexts(g_engine->_screen, _spell->text, textX, textY, 640, 0, g_engine->_smallFont);
 	}
 }
 
 void SpellBook::loadBackground() {
-	_backgroundScreen = new byte[640 * 400];
+	_backgroundScreen.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 	_palette = new byte[768];
-	_res->getExtraScreen(8, _backgroundScreen, _palette);
+	_res->getExtraScreen(8, (byte *)_backgroundScreen.getPixels(), _palette);
 	g_system->getPaletteManager()->setPalette(_palette, 0, 256);
 }
 
 void SpellBook::cleanup() {
-	if (_backgroundScreen) {
-		delete[] _backgroundScreen;
-		_backgroundScreen = nullptr;
-	}
+	_backgroundScreen.free();
+	_compositeScreen.free();
 	if (_palette) {
 		delete[] _palette;
 		_palette = nullptr;
@@ -202,7 +199,7 @@ void CDPlayer::run() {
 		g_engine->_screen->update();
 		g_system->delayMillis(10);
 	}
-	memset(g_engine->_screen->getPixels(), 0, 640 * 400);
+	g_engine->_screen->clear(0);
 	// Restore room palette
 	g_system->getPaletteManager()->setPalette(g_engine->_room->_roomPalette, 0, 256);
 	_sound->stopMusic();
@@ -210,7 +207,7 @@ void CDPlayer::run() {
 }
 
 void CDPlayer::init() {
-	_compositeScreen = new byte[640 * 400];
+	_compositeScreen.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 	loadBackground();
 	loadControls();
 	loadTrackNames();
@@ -231,12 +228,12 @@ void CDPlayer::loadTrackNames() {
 }
 
 void CDPlayer::drawScreen() {
-	memcpy(_compositeScreen, _backgroundScreen, 640 * 400);
-	drawSpriteToBuffer(_compositeScreen, 640, _controls, 1, 1, 213, 72, 207);
+	_compositeScreen.blitFrom(_backgroundScreen);
+	drawSpriteToBuffer(_compositeScreen, _controls, 1, 1, 213, 72, 207);
 
 	drawButtons();
 
-	memcpy(g_engine->_screen->getPixels(), _compositeScreen, 640 * 400);
+	g_engine->_screen->blitFrom(_compositeScreen);
 	g_engine->_smallFont->drawString(g_engine->_screen, trackNames[_selectedTrack - 2], 26, 17, 640, 255, Graphics::kTextAlignLeft);
 }
 
@@ -244,25 +241,23 @@ void CDPlayer::drawButtons() {
 
 	for (int i = 0; i < 5; i++) {
 		if (_selectedButton == i) {
-			drawSpriteToBuffer(_compositeScreen, 640, buttons[i][1], _buttonRects[i].left, _buttonRects[i].top, _buttonRects[i].width(), _buttonRects[i].height(), 207);
+			drawSpriteToBuffer(_compositeScreen, buttons[i][1], _buttonRects[i].left, _buttonRects[i].top, _buttonRects[i].width(), _buttonRects[i].height(), 207);
 		} else {
-			drawSpriteToBuffer(_compositeScreen, 640, buttons[i][0], _buttonRects[i].left, _buttonRects[i].top, _buttonRects[i].width(), _buttonRects[i].height(), 207);
+			drawSpriteToBuffer(_compositeScreen, buttons[i][0], _buttonRects[i].left, _buttonRects[i].top, _buttonRects[i].width(), _buttonRects[i].height(), 207);
 		}
 	}
 }
 
 void CDPlayer::loadBackground() {
-	_backgroundScreen = new byte[640 * 400];
+	_backgroundScreen.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 	_palette = new byte[768];
-	_res->getExtraScreen(10, _backgroundScreen, _palette);
+	_res->getExtraScreen(10, (byte *)_backgroundScreen.getPixels(), _palette);
 	g_system->getPaletteManager()->setPalette(_palette, 0, 256);
 }
 
 void CDPlayer::cleanup() {
-	if (_backgroundScreen) {
-		delete[] _backgroundScreen;
-		_backgroundScreen = nullptr;
-	}
+	_backgroundScreen.free();
+	_compositeScreen.free();
 
 	if (_palette) {
 		delete[] _palette;
@@ -385,13 +380,13 @@ void BackgroundBook::run() {
 		g_engine->_screen->update();
 		g_system->delayMillis(10);
 	}
-	memset(g_engine->_screen->getPixels(), 0, 640 * 400);
+	g_engine->_screen->clear(0);
 	// Restore room palette
 	g_system->getPaletteManager()->setPalette(g_engine->_room->_roomPalette, 0, 256);
 }
 
 void BackgroundBook::init() {
-	_compositeScreen = new byte[640 * 400];
+	_compositeScreen.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 	loadBackground();
 	loadButtons();
 	loadRoomNames();
@@ -476,9 +471,9 @@ void BackgroundBook::loadRoomNames() {
 
 
 void BackgroundBook::drawScreen() {
-	memcpy(_compositeScreen, _backgroundScreen, 640 * 400);
+	_compositeScreen.blitFrom(_backgroundScreen);
 	drawButtons();
-	memcpy(g_engine->_screen->getPixels(), _compositeScreen, 640 * 400);
+	g_engine->_screen->blitFrom(_compositeScreen);
 
 
 	int firstItem = _selectedPage * kItemsPerPage;
@@ -495,17 +490,17 @@ void BackgroundBook::drawScreen() {
 void BackgroundBook::drawButtons() {
 	for (int i = 0; i < 2; i++) {
 		if (_selectedButton == i) {
-			drawSpriteToBuffer(_compositeScreen, 640, _buttons[i][0], _buttonRects[i].left, _buttonRects[i].top, _buttonRects[i].width(), _buttonRects[i].height(), 207);
+			drawSpriteToBuffer(_compositeScreen, _buttons[i][0], _buttonRects[i].left, _buttonRects[i].top, _buttonRects[i].width(), _buttonRects[i].height(), 207);
 		} else {
-			drawSpriteToBuffer(_compositeScreen, 640, _buttons[i][1], _buttonRects[i].left, _buttonRects[i].top, _buttonRects[i].width(), _buttonRects[i].height(), 207);
+			drawSpriteToBuffer(_compositeScreen, _buttons[i][1], _buttonRects[i].left, _buttonRects[i].top, _buttonRects[i].width(), _buttonRects[i].height(), 207);
 		}
 	}
 }
 
 void BackgroundBook::loadBackground() {
-	_backgroundScreen = new byte[640 * 400];
+	_backgroundScreen.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 	_palette = new byte[768];
-	_res->getExtraScreen(13, _backgroundScreen, _palette);
+	_res->getExtraScreen(13, (byte *)_backgroundScreen.getPixels(), _palette);
 	g_system->getPaletteManager()->setPalette(_palette, 0, 256);
 }
 
@@ -528,14 +523,8 @@ void BackgroundBook::loadButtons() {
 }
 
 void BackgroundBook::cleanup() {
-	if (_compositeScreen) {
-		delete[] _compositeScreen;
-		_compositeScreen = nullptr;
-	}
-	if (_backgroundScreen) {
-		delete[] _backgroundScreen;
-		_backgroundScreen = nullptr;
-	}
+	_compositeScreen.free();
+	_backgroundScreen.free();
 	if (_palette) {
 		delete[] _palette;
 		_palette = nullptr;

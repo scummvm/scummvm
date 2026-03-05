@@ -112,7 +112,7 @@ uint32 DialogManager::readTextBlock(
 	return pos;
 }
 
-void DialogManager::displayChoices(Common::Array<ChoiceOption> *choices, byte *compositeBuffer) {
+void DialogManager::displayChoices(Common::Array<ChoiceOption> *choices, Graphics::ManagedSurface &compositeBuffer) {
 
 	int overlayHeight = choices->size() * kChoiceHeight + 2;
 	Common::Point overlayPos = _graphics->showOverlay(overlayHeight, compositeBuffer);
@@ -301,7 +301,7 @@ void DialogManager::displayDialogue(Common::String text, byte speakerId) {
  * Select a choice from displayed options
  * Returns the index of the selected choice in the choices array
  */
-int DialogManager::selectChoice(Common::Array<Common::String> &choices, byte *compositeBuffer) {
+int DialogManager::selectChoice(Common::Array<Common::String> &choices, Graphics::ManagedSurface &compositeBuffer) {
 	_events->_leftMouseClicked = false;
 	_dialogActive = true;
 	g_engine->_chrono->pauseCounter();

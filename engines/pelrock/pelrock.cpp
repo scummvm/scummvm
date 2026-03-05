@@ -58,10 +58,6 @@ PelrockEngine::PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 }
 
 PelrockEngine::~PelrockEngine() {
-	if (_compositeBuffer)
-		delete[] _compositeBuffer;
-	if (_currentBackground)
-		delete[] _currentBackground;
 	delete _largeFont;
 	delete _smallFont;
 	delete _doubleSmallFont;
@@ -147,8 +143,8 @@ void PelrockEngine::init() {
 	_menu->loadMenu();
 
 	calculateScalingMasks();
-	_compositeBuffer = new byte[640 * 400];
-	_currentBackground = new byte[640 * 400];
+	_compositeBuffer.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
+	_currentBackground.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 
 	changeCursor(DEFAULT);
 	CursorMan.showMouse(true);
@@ -266,14 +262,14 @@ void PelrockEngine::travelToEgypt() {
 
 	_sound->playMusicTrack(26, 1);
 	byte *palette = new byte[768];
-	if (_bgScreen == nullptr) {
-		_bgScreen = new byte[640 * 400];
+	if (!_bgScreen.getPixels()) {
+		_bgScreen.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 	}
-	_res->getExtraScreen(6, _bgScreen, palette);
+	_res->getExtraScreen(6, (byte *)_bgScreen.getPixels(), palette);
 	CursorMan.showMouse(false);
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 
-	memcpy(_screen->getPixels(), _bgScreen, 640 * 400);
+	_screen->blitFrom(_bgScreen);
 	int frameCount = 0;
 	while (!shouldQuit() && frameCount < 96) {
 		_events->pollEvent();
@@ -295,10 +291,8 @@ void PelrockEngine::travelToEgypt() {
 	_graphics->clearScreen();
 
 	g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
-	free(_bgScreen);
-	_bgScreen = nullptr;
+	_bgScreen.free();
 	CursorMan.showMouse(true);
-	delete[] _bgScreen;
 	delete[] palette;
 	_screen->markAllDirty();
 	_screen->update();
@@ -534,9 +528,12 @@ void PelrockEngine::reflectionEffect(byte *buf, int x, int y, int width, int hei
 			byte pixel = buf[(height - 1 - row) * width + col]; // Read from bottom up for mirror
 			// Only reflect pixels 0-15 (high nibble must be 0)
 			if (pixel != 255 && (pixel & 0xF0) == 0) {
-				byte bgPixel = _compositeBuffer[reflectY * 640 + x + col];
-				if (bgPixel >= 223 && bgPixel < 228) { // Is water (0xDF-0xE3)
-					_compositeBuffer[reflectY * 640 + x + col] = _room->_paletteRemaps[4][pixel];
+				int px = x + col;
+				if (px >= 0 && px < 640) {
+					byte bgPixel = (byte)_compositeBuffer.getPixel(px, reflectY);
+					if (bgPixel >= 223 && bgPixel < 228) { // Is water (0xDF-0xE3)
+						_compositeBuffer.setPixel(px, reflectY, _room->_paletteRemaps[4][pixel]);
+					}
 				}
 			}
 		}
@@ -640,7 +637,7 @@ void PelrockEngine::checkMouse() {
 
 void PelrockEngine::copyBackgroundToBuffer() {
 	// copy background to buffer
-	memcpy(_compositeBuffer, _currentBackground, 640 * 400);
+	_compositeBuffer.blitFrom(_currentBackground);
 }
 
 // Calculate Alfred's z-order based on Y position
@@ -685,7 +682,7 @@ void PelrockEngine::updateAnimations() {
 }
 
 void PelrockEngine::presentFrame() {
-	memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
+	_screen->blitFrom(_compositeBuffer);
 	paintDebugLayer();
 	_screen->markAllDirty();
 }
@@ -749,7 +746,7 @@ void PelrockEngine::paintDebugLayer() {
 	drawPos(_screen, _curWalkTarget.x, _curWalkTarget.y, 100);
 
 	if (showShadows) {
-		memcpy(_screen->getPixels(), _room->_pixelsShadows, 640 * 400);
+		_screen->copyRectToSurface(_room->_pixelsShadows, 640, 0, 0, 640, 400);
 	}
 	_smallFont->drawString(_screen, Common::String::format("Room number: %d", _room->_currentRoomNumber), 0, 4, 640, 13);
 	_smallFont->drawString(_screen, Common::String::format("Alfred pos: %d, %d (%d)", _alfredState.x, _alfredState.y, _alfredState.y - kAlfredFrameHeight), 0, 18, 640, 13);
@@ -777,18 +774,18 @@ void PelrockEngine::placeStickersSecondPass() {
 }
 
 void PelrockEngine::placeSticker(Sticker sticker) {
-	for (int y = 0; y < sticker.h; y++) {
-		for (int x = 0; x < sticker.w; x++) {
-			byte pixel = sticker.stickerData[y * sticker.w + x];
-			// if (pixel != 0) {
-			int bgX = sticker.x + x;
-			int bgY = sticker.y + y;
-			if (bgX >= 0 && bgX < 640 && bgY >= 0 && bgY < 400) {
-				_compositeBuffer[bgY * 640 + bgX] = pixel;
-			}
-			// }
-		}
-	}
+	// Wrap sticker data as a surface and blit (no transparency - all pixels copied)
+	Graphics::Surface stickerSurf;
+	stickerSurf.init(sticker.w, sticker.h, sticker.w, sticker.stickerData, Graphics::PixelFormat::createFormatCLUT8());
+	// Clip to screen bounds
+	Common::Rect destRect(sticker.x, sticker.y, sticker.x + sticker.w, sticker.y + sticker.h);
+	Common::Rect screenRect(0, 0, 640, 400);
+	destRect.clip(screenRect);
+	if (destRect.isEmpty())
+		return;
+	Common::Rect srcRect(destRect.left - sticker.x, destRect.top - sticker.y,
+						 destRect.right - sticker.x, destRect.bottom - sticker.y);
+	_compositeBuffer.blitFrom(stickerSurf, srcRect, Common::Point(destRect.left, destRect.top));
 }
 
 void PelrockEngine::renderOverlay(int overlayMode) {
@@ -1018,7 +1015,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			}
 			if (_alfredState.animState == ALFRED_WALKING) { // in case it changed to idle above
 				debug("Drawing crawl frame %d for direction %d", _alfredState.curFrame, _alfredState.direction);
-				drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredCrawlFrames[_alfredState.direction][_alfredState.curFrame], _alfredState.x, _alfredState.y - 55, 130, 55, 255);
+				drawSpriteToBuffer(_compositeBuffer, _res->alfredCrawlFrames[_alfredState.direction][_alfredState.curFrame], _alfredState.x, _alfredState.y - 55, 130, 55, 255);
 				_alfredState.curFrame++;
 			}
 		} else {
@@ -1078,7 +1075,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			drawAlfred(frame);
 		} else {
 			// Scale special anim frame to Alfred size before drawing
-			drawSpriteToBuffer(_compositeBuffer, 640, frame, _alfredState.x, _alfredState.y - _res->_currentSpecialAnim->h, _res->_currentSpecialAnim->w, _res->_currentSpecialAnim->h, 255);
+			drawSpriteToBuffer(_compositeBuffer, frame, _alfredState.x, _alfredState.y - _res->_currentSpecialAnim->h, _res->_currentSpecialAnim->w, _res->_currentSpecialAnim->h, 255);
 		}
 		debug("Playing special anim frame %d/%d, speed %d", _res->_currentSpecialAnim->curFrame, _res->_currentSpecialAnim->numFrames, _res->_currentSpecialAnim->speed);
 		if (_chrono->getFrameCount() % _res->_currentSpecialAnim->speed == 0) {
@@ -1134,7 +1131,7 @@ void PelrockEngine::exitTriggers(Pelrock::Exit *exit) {
 
 void PelrockEngine::drawIdleFrame() {
 	if (_room->_currentRoomNumber == 55) {
-		drawSpriteToBuffer(_compositeBuffer, 640, _res->alfredCrawlFrames[_alfredState.direction][0], _alfredState.x, _alfredState.y - 55, 130, 55, 255);
+		drawSpriteToBuffer(_compositeBuffer, _res->alfredCrawlFrames[_alfredState.direction][0], _alfredState.x, _alfredState.y - 55, 130, 55, 255);
 	} else {
 		drawAlfred(_res->alfredIdle[_alfredState.direction]);
 	}
@@ -1279,7 +1276,7 @@ void PelrockEngine::drawAlfred(byte *buf) {
 		}
 	}
 
-	drawSpriteToBuffer(_compositeBuffer, 640, _alfredSprite, _alfredState.x, _alfredState.y - finalHeight, finalWidth, finalHeight, 255);
+	drawSpriteToBuffer(_compositeBuffer, _alfredSprite, _alfredState.x, _alfredState.y - finalHeight, finalWidth, finalHeight, 255);
 
 	// Water reflection (rooms 25 and 45 only)
 	if ((_room->_currentRoomNumber == 25 || _room->_currentRoomNumber == 45) && _alfredState.y >= 299) {
@@ -1343,7 +1340,7 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 		debug("Warning: curFrame %d exceeds nframes %d for sprite %d anim %d", curFrame, animData.nframes, sprite->index, sprite->curAnimIndex);
 		curFrame = 0;
 	}
-	drawSpriteToBuffer(_compositeBuffer, 640, animData.animData[curFrame], x, y, w, h, 255);
+	drawSpriteToBuffer(_compositeBuffer, animData.animData[curFrame], x, y, w, h, 255);
 
 	// Original in the game: increment FIRST, then check (not check-then-increment)
 	animData.elpapsedFrames++;
@@ -1572,7 +1569,7 @@ Common::Rect getActionArea(int x, int y) {
 
 void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 
-	drawSpriteToBuffer(_compositeBuffer, 640, _res->_popUpBalloon + (curFrame * kBalloonHeight * kBalloonWidth), posx, posy, kBalloonWidth, kBalloonHeight, 255);
+	drawSpriteToBuffer(_compositeBuffer, _res->_popUpBalloon + (curFrame * kBalloonHeight * kBalloonWidth), posx, posy, kBalloonWidth, kBalloonHeight, 255);
 	Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
 
 	VerbIcon icon = isActionUnder(_events->_mouseX, _events->_mouseY);
@@ -1584,7 +1581,7 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 			continue;
 		}
 		Common::Point p = getPositionInBalloonForIndex(i, posx, posy);
-		drawSpriteToBuffer(_compositeBuffer, 640, _res->_verbIcons[actions[i]], p.x, p.y, kVerbIconWidth, kVerbIconHeight, 1);
+		drawSpriteToBuffer(_compositeBuffer, _res->_verbIcons[actions[i]], p.x, p.y, kVerbIconWidth, kVerbIconHeight, 1);
 	}
 
 	Common::Rect actionArea = getActionArea(posx, posy);
@@ -1604,7 +1601,7 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 	if (_state->selectedInventoryItem >= 0 && !_state->inventoryItems.empty()) {
 		if (icon != ITEM || !shouldBlink) {
 			Common::Point p = getPositionInBalloonForIndex(actions.size(), posx, posy);
-			drawSpriteToBuffer(_compositeBuffer, 640, _res->getIconForObject(_state->selectedInventoryItem).iconData, p.x, p.y, kVerbIconWidth, kVerbIconHeight, 1);
+			drawSpriteToBuffer(_compositeBuffer, _res->getIconForObject(_state->selectedInventoryItem).iconData, p.x, p.y, kVerbIconWidth, kVerbIconHeight, 1);
 		}
 	}
 
@@ -1648,7 +1645,7 @@ void PelrockEngine::animateTalkingNPC(Sprite *animSet) {
 	}
 	byte *frame = index ? animHeader->animB[curFrame] : animHeader->animA[curFrame];
 
-	drawSpriteToBuffer(_compositeBuffer, 640, frame, x, y, w, h, 255);
+	drawSpriteToBuffer(_compositeBuffer, frame, x, y, w, h, 255);
 }
 
 Common::Point getPositionInOverlayForIndex(uint index) {
@@ -1662,14 +1659,14 @@ void PelrockEngine::pickupIconFlash() {
 	uint invSize = _state->inventoryItems.size();
 	for (int i = 0; i < invSize; i++) {
 		Common::Point p = getPositionInOverlayForIndex(i);
-		drawSpriteToBuffer(_compositeBuffer, 640, _res->getIconForObject(_state->inventoryItems[i]).iconData, p.x, p.y, 60, 60, 1);
+		drawSpriteToBuffer(_compositeBuffer, _res->getIconForObject(_state->inventoryItems[i]).iconData, p.x, p.y, 60, 60, 1);
 	}
 
 	InventoryObject item = _res->getIconForObject(_newItem);
 	if (_chrono->getFrameCount() % kIconBlinkPeriod == 0) {
 		Common::Point p = getPositionInOverlayForIndex(invSize);
 		debug("Drawing pickup icon for item %d at inventory index %d, position %d,%d", _newItem, invSize, p.x, p.y);
-		drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, p.x, p.y, 60, 60, 1);
+		drawSpriteToBuffer(_compositeBuffer, item.iconData, p.x, p.y, 60, 60, 1);
 	}
 }
 
@@ -1685,15 +1682,15 @@ void PelrockEngine::showInventoryOverlay() {
 		if (i == _inventoryOverlayState.flashingIconIndex && _chrono->getFrameCount() % kIconBlinkPeriod == 0) {
 			continue;
 		}
-		drawSpriteToBuffer(_compositeBuffer, 640, _res->getIconForObject(_state->inventoryItems[i]).iconData, p.x, p.y, 60, 60, 1);
+		drawSpriteToBuffer(_compositeBuffer, _res->getIconForObject(_state->inventoryItems[i]).iconData, p.x, p.y, 60, 60, 1);
 	}
 
 	// draw arrows if there are more items to show in either direction
 	if (_inventoryOverlayState.invStartingPos > 0) {
-		drawSpriteToBuffer(_compositeBuffer, 640, _inventoryOverlayState.arrows[0], 0, 340, 20, 60, 255);
+		drawSpriteToBuffer(_compositeBuffer, _inventoryOverlayState.arrows[0], 0, 340, 20, 60, 255);
 	}
 	if (firstItem + kInventoryPageSize < (int)invSize) {
-		drawSpriteToBuffer(_compositeBuffer, 640, _inventoryOverlayState.arrows[1], 620, 340, 20, 60, 255);
+		drawSpriteToBuffer(_compositeBuffer, _inventoryOverlayState.arrows[1], 620, 340, 20, 60, 255);
 	}
 }
 
@@ -1815,7 +1812,7 @@ void PelrockEngine::computerLoop() {
 }
 
 void PelrockEngine::extraScreenLoop() {
-	memcpy(_screen->getPixels(), _bgScreen, 640 * 400);
+	_screen->blitFrom(_bgScreen);
 	while (!shouldQuit()) {
 		_events->pollEvent();
 
@@ -1829,8 +1826,7 @@ void PelrockEngine::extraScreenLoop() {
 	}
 
 	g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
-	free(_bgScreen);
-	_bgScreen = nullptr;
+	_bgScreen.free();
 }
 
 void PelrockEngine::walkLoop(int16 x, int16 y, AlfredDirection direction) {
@@ -2028,11 +2024,8 @@ void PelrockEngine::setScreen(int roomNumber) {
 	byte *palette = new byte[256 * 3];
 	_room->getPalette(&roomFile, roomOffset, palette);
 
-	if (_currentBackground != nullptr) {
-		delete[] _currentBackground;
-	}
-	_currentBackground = new byte[640 * 400];
-	_room->getBackground(&roomFile, roomOffset, _currentBackground);
+	_currentBackground.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
+	_room->getBackground(&roomFile, roomOffset, (byte *)_currentBackground.getPixels());
 
 	_screen->clear();
 
@@ -2071,16 +2064,15 @@ void PelrockEngine::setScreenAndPrepare(int roomNumber, AlfredDirection dir) {
 void PelrockEngine::loadExtraScreenAndPresent(int screenIndex) {
 
 	byte *palette = new byte[768];
-	if (_bgScreen == nullptr) {
-		_bgScreen = new byte[640 * 400];
+	if (!_bgScreen.getPixels()) {
+		_bgScreen.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 	}
-	_res->getExtraScreen(screenIndex, _bgScreen, palette);
+	_res->getExtraScreen(screenIndex, (byte *)_bgScreen.getPixels(), palette);
 	CursorMan.showMouse(false);
 	_graphics->clearScreen();
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 	extraScreenLoop();
 	CursorMan.showMouse(true);
-	delete[] _bgScreen;
 	delete[] palette;
 	_screen->markAllDirty();
 	_screen->update();
@@ -2363,12 +2355,8 @@ void PelrockEngine::pyramidCollapse() {
 		static const int srcX = 240, srcY = 145;
 		// static const int dstX = 510, dstY = 33;
 		static const int copyW = 99, copyH = 45;
-		for (int row = 0; row < copyH; row++) {
-			memcpy(
-				_currentBackground + (srcY + row) * 640 + srcX,
-				_compositeBuffer + (srcY + row) * 640 + srcX,
-				copyW);
-		}
+		Common::Rect copyRect(srcX, srcY, srcX + copyW, srcY + copyH);
+		_currentBackground.blitFrom(_compositeBuffer, copyRect, Common::Point(srcX, srcY));
 	}
 	_room->findSpriteByIndex(2)->zOrder = -1;
 
@@ -2450,10 +2438,10 @@ void PelrockEngine::pyramidCollapse() {
 
 void PelrockEngine::endingScene() {
 	byte *palette = new byte[768];
-	if (_bgScreen == nullptr) {
-		_bgScreen = new byte[640 * 400];
+	if (!_bgScreen.getPixels()) {
+		_bgScreen.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 	}
-	_res->getExtraScreen(14, _bgScreen, palette);
+	_res->getExtraScreen(14, (byte *)_bgScreen.getPixels(), palette);
 	CursorMan.showMouse(false);
 	_graphics->clearScreen();
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
@@ -2536,13 +2524,13 @@ void PelrockEngine::endingScene() {
 		_chrono->updateChrono();
 
 		if (_chrono->_gameTick) {
-			memcpy(_compositeBuffer, _bgScreen, 640 * 400);
+			_compositeBuffer.blitFrom(_bgScreen);
 
 			for (Sprite *sprite : sprites) {
 				drawNextFrame(sprite);
 			}
 
-			memcpy(_screen->getPixels(), _compositeBuffer, 640 * 400);
+			_screen->blitFrom(_compositeBuffer);
 			// Title text visible frames 21–149 (original: frame > 0x14 && frame < 0x96)
 			if (ticks > 20 && ticks < 150) {
 				drawText(_largeFont, "ALFRED PELROCK", 0, y1, 640, 255);
@@ -2562,10 +2550,9 @@ void PelrockEngine::endingScene() {
 		_screen->update();
 	}
 
-	memset(_screen->getPixels(), 0, 640 * 400);
+	_screen->clear(0);
 	g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
-	delete[] _bgScreen;
-	_bgScreen = nullptr;
+	_bgScreen.free();
 
 	CursorMan.showMouse(true);
 	delete[] palette;

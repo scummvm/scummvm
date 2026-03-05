@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/str.h"
+#include "graphics/managed_surface.h"
 
 #include "pelrock/events.h"
 #include "pelrock/library_books.h"
@@ -56,7 +57,7 @@ private:
 	};
 
 	PelrockEventManager *_events;
-	byte *_backgroundScreen;
+	Graphics::ManagedSurface _backgroundScreen;
 	byte *_palette;
 
 	// State variables

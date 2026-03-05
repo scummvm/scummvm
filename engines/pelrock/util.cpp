@@ -114,6 +114,32 @@ void drawText(Graphics::Font *font, Common::String text, int x, int y, int w, by
 	font->drawString(g_engine->_screen, text.c_str(), x, y, w, color, Graphics::kTextAlignCenter);
 }
 
+void drawText(Graphics::ManagedSurface &dest, Graphics::Font *font, Common::String text, int x, int y, int w, byte color, Graphics::TextAlign align) {
+	Common::Rect rect = font->getBoundingBox(text.c_str());
+	int bboxW = rect.width();
+	int bboxH = rect.height();
+
+	Graphics::Surface surface;
+	surface.create(bboxW, bboxH, Graphics::PixelFormat::createFormatCLUT8());
+	surface.fillRect(Common::Rect(0, 0, bboxW, bboxH), 255);
+	if (x + bboxW > 640) {
+		x = 640 - bboxW - 2;
+	}
+	if (y + bboxH > 400) {
+		y = 400 - bboxH - 2;
+	}
+	if (x < 0) {
+		x = 0;
+	}
+	if (y < 0) {
+		y = 0;
+	}
+
+	font->drawString(&surface, text.c_str(), 0, 0, bboxW, color, align);
+	dest.transBlitFrom(surface, Common::Point(x, y), 255);
+	surface.free();
+}
+
 size_t rleDecompress(
 	const uint8_t *input,
 	size_t inputSize,
@@ -268,6 +294,13 @@ void drawSpriteToBuffer(byte *buffer, int bufferWidth, byte *sprite, int x, int 
 	}
 }
 
+// ManagedSurface overload: wraps sprite data in a Surface and uses transBlitFrom
+void drawSpriteToBuffer(Graphics::ManagedSurface &dest, byte *sprite, int x, int y, int width, int height, int transparentColor) {
+	Graphics::Surface spriteSurf;
+	spriteSurf.init(width, height, width, sprite, Graphics::PixelFormat::createFormatCLUT8());
+	dest.transBlitFrom(spriteSurf, Common::Point(x, y), transparentColor);
+}
+
 void blitSurfaceToBuffer(Graphics::Surface *surface, byte *buffer, int bufferWidth, int bufferHeight, int destX, int destY) {
 	for (int y = 0; y < surface->h; y++) {
 		for (int x = 0; x < surface->w; x++) {
@@ -390,6 +423,24 @@ void drawPaletteSquares(byte *screenBuffer, byte *palette) {
 				}
 			}
 		}
+	}
+}
+
+void drawPaletteSquares(Graphics::ManagedSurface &dest, byte *palette) {
+	const int squareSize = 6;
+	const int colorsPerRow = 16;
+	const int startX = 10;
+	const int startY = 10;
+	const int spacing = 1;
+
+	for (int colorIndex = 0; colorIndex < 256; colorIndex++) {
+		int row = colorIndex / colorsPerRow;
+		int col = colorIndex % colorsPerRow;
+
+		int x = startX + col * (squareSize + spacing);
+		int y = startY + row * (squareSize + spacing);
+
+		dest.fillRect(Common::Rect(x, y, x + squareSize, y + squareSize), colorIndex);
 	}
 }
 

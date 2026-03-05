@@ -33,6 +33,7 @@
 #include "common/util.h"
 #include "engines/engine.h"
 #include "engines/savestate.h"
+#include "graphics/managed_surface.h"
 #include "graphics/screen.h"
 #include "image/png.h"
 
@@ -136,8 +137,8 @@ private:
 	int _currentStep = 0;
 	PathContext _currentContext;
 
-	byte *_currentBackground = nullptr; // Clean background - NEVER modified
-	byte *_bgScreen = nullptr;
+	Graphics::ManagedSurface _currentBackground; // Clean background - NEVER modified
+	Graphics::ManagedSurface _bgScreen;
 
 	ActionPopupState _actionPopupState;
 	InventoryOverlayState _inventoryOverlayState;
@@ -174,7 +175,7 @@ public:
 	DialogManager *_dialog = nullptr;
 	AlfredState _alfredState;
 	ShakeEffectState _shakeEffectState;
-	byte *_compositeBuffer = nullptr; // Working composition buffer
+	Graphics::ManagedSurface _compositeBuffer; // Working composition buffer
 
 	bool _mouseDisabled = false;
 
