@@ -2414,7 +2414,7 @@ void PelrockEngine::antiPiracyEffect() {
 	}
 
 	// Play the noise
-	_sound->playSound(noiseData, kNoiseLength + 44);
+	_sound->playSound(noiseData, kNoiseLength + 44, 0);
 
 	byte *screenPixels = (byte *)_screen->getPixels();
 	int screenSize = _screen->pitch * _screen->h;
@@ -2443,7 +2443,7 @@ void PelrockEngine::antiPiracyEffect() {
 			}
 		}
 		if (!_sound->isPlaying()) {
-			_sound->playSound(noiseData, kNoiseLength + 44);
+			_sound->playSound(noiseData, kNoiseLength + 44, 0);
 		}
 
 		_screen->markAllDirty();

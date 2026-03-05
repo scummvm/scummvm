@@ -151,7 +151,7 @@ private:
 
 	bool showShadows = false;
 
-	bool shouldPlayIntro = false;
+	bool shouldPlayIntro = true;
 	bool gameInitialized = false;
 	bool screenReady = false;
 
@@ -159,13 +159,6 @@ private:
 	byte *_alfredSprite = nullptr;
 
 	int _numPressedX = 0;
-
-	// int prevDirX = 0;
-	// int prevDirY = 0;
-	// Common::String objectToShow = "";
-	// int prevWhichScreen = 0;
-	// int whichScreen = 0;
-	// byte *pixelsShadows; // =new int[640*400];
 
 protected:
 	// Engine APIs

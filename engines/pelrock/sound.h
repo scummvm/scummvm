@@ -159,7 +159,7 @@ public:
 	~SoundManager();
 	void playSound(byte index, int channel = -1);
 	void playSound(const char *filename, int channel, int loopCount = 1);
-	void playSound(byte *soundData, uint32 size);
+	void playSound(byte *soundData, uint32 size, int channel);
 	void stopAllSounds();
 	void stopSound(int channel);
 	void setVolume(int volume);

@@ -42,6 +42,7 @@ struct Effect {
 };
 
 struct AudioEffect : Effect {
+	Common::String filename;
 };
 
 struct Subtitle : Effect {
@@ -52,16 +53,8 @@ struct Subtitle : Effect {
 	Common::String text;
 };
 
-struct Voice : AudioEffect {
-	Common::String filename;
-};
-
-struct Sfx : AudioEffect {
-	uint32 soundId;
-};
-
-struct ExtraSound : AudioEffect {
-	Common::String filename;
+struct MusicEffect : Effect {
+	uint32 trackNumber;
 };
 
 struct VoiceData {
@@ -112,7 +105,8 @@ private:
 	void initMetadata();
 	void readSubtitle(Common::File &metadataFile, Pelrock::Subtitle &subtitle);
 	Subtitle readSubtitle(Common::File &metadataFile);
-	Voice readVoice(Common::File &metadataFile);
+	MusicEffect readMusicEffect(Common::File &metadataFile);
+	AudioEffect readAudioEffect(Common::File &metadataFile);
 	char decodeChar(byte c);
 	Subtitle *getSubtitleForFrame(uint16 frameNumber);
 	int _currentSubtitleIndex = 0;
@@ -120,7 +114,9 @@ private:
 	Graphics::ManagedSurface _textSurface = Graphics::ManagedSurface();
 	Common::Array<ChunkHeader> _chunkBuffer;
 	Common::Array<Subtitle> _subtitles;
-	Common::HashMap<uint16, Voice> _voiceEffect;
+	Common::HashMap<uint16, AudioEffect> _voiceEffect;
+	Common::HashMap<uint16, AudioEffect> _sfxEffect;
+	Common::HashMap<uint16, MusicEffect> _musicEffect;
 	Common::HashMap<Common::String, VoiceData> _sounds;
 	Common::File _introSndFile;
 };

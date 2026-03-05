@@ -92,22 +92,36 @@ void VideoManager::playIntro() {
 
 				if (_voiceEffect.contains(frameCounter)) {
 					// Wait for any playing voice to finish before starting new one
-					while (_sound->isPlaying()) {
+					while (_sound->isPlaying(0)) {
 						_events->pollEvent();
 						g_system->delayMillis(10);
 						if (g_engine->shouldQuit() || _events->_lastKeyEvent == Common::KEYCODE_ESCAPE) {
 							break;
 						}
 					}
-					Voice voice = _voiceEffect[frameCounter];
+					AudioEffect voice = _voiceEffect[frameCounter];
 					debug("Playing voice effect: '%s'", voice.filename.c_str());
 					VoiceData voiceData = _sounds[voice.filename];
 					_introSndFile.seek(voiceData.offset, SEEK_SET);
 					byte *voiceBuffer = new byte[voiceData.length];
 					_introSndFile.read(voiceBuffer, voiceData.length);
-					_sound->playSound(voiceBuffer, voiceData.length);
+					_sound->playSound(voiceBuffer, voiceData.length, 0);
 				}
 
+				if(_sfxEffect.contains(frameCounter)) {
+					AudioEffect sfx = _sfxEffect[frameCounter];
+					debug("Playing SFX effect: '%s'", sfx.filename.c_str());
+					VoiceData sfxData = _sounds[sfx.filename];
+					_introSndFile.seek(sfxData.offset, SEEK_SET);
+					byte *sfxBuffer = new byte[sfxData.length];
+					_introSndFile.read(sfxBuffer, sfxData.length);
+					_sound->playSound(sfxBuffer, sfxData.length, 1);
+				}
+
+				if(_musicEffect.contains(frameCounter)) {
+					MusicEffect music = _musicEffect[frameCounter];
+					_sound->playMusicTrack(music.trackNumber, true);
+				}
 
 				if (subtitle != nullptr) {
 					Common::StringArray lines = _dialog->wordWrap(subtitle->text)[0];
@@ -272,21 +286,57 @@ void VideoManager::initMetadata() {
 				Subtitle subtitle = readSubtitle(metadataFile);
 				_subtitles.push_back(subtitle);
 			} else if (nextChar == 'x') {
-				Voice voice = readVoice(metadataFile);
+				AudioEffect voice = readAudioEffect(metadataFile);
 				// Read filename (up to 12 bytes, null-terminated)
 				_voiceEffect[voice.startFrame] = voice;
+			} else if (nextChar == 'f') {
+				AudioEffect sfx = readAudioEffect(metadataFile);
+				_sfxEffect[sfx.startFrame] = sfx;
+			}
+			else if (nextChar == 'c') {
+				MusicEffect music = readMusicEffect(metadataFile);
+				_musicEffect[music.startFrame] = music;
 			}
 		}
 	}
 
 	debug("Loaded %d subtitles", _subtitles.size());
-	debug("Loaded %d audio effects", _voiceEffect.size());
+	debug("Loaded %d speech files", _voiceEffect.size());
 
 	metadataFile.close();
 }
 
-Voice VideoManager::readVoice(Common::File &metadataFile) {
-	Voice voice;
+MusicEffect VideoManager::readMusicEffect(Common::File &metadataFile) {
+	MusicEffect music;
+	Common::String buffer;
+
+	// Skip spaces after "/c"
+	while (!metadataFile.eos() && metadataFile.readByte() == ' ')
+		;
+	metadataFile.seek(-1, SEEK_CUR); // Step back one byte
+
+	bool frameCountRead = false;
+	while (!metadataFile.eos()) {
+		char c = metadataFile.readByte();
+		if (c == ' ') {
+			if (!buffer.empty() && !frameCountRead) {
+				music.startFrame = atoi(buffer.c_str());
+				buffer.clear();
+				frameCountRead = true;
+			}
+		} else if (c == 0x0D || c == 0x0A) {
+			break;
+		} else {
+			buffer += c;
+		}
+	}
+	music.trackNumber = atoi(buffer.c_str());
+	debug("Loaded music effect: frame %d, track %d", music.startFrame, music.trackNumber);
+	return music;
+}
+
+AudioEffect VideoManager::readAudioEffect(Common::File &metadataFile) {
+	AudioEffect voice;
 	Common::String buffer;
 
 	// Skip spaces after "/x"
