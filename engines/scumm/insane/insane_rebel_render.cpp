@@ -469,8 +469,9 @@ end_parsing:;
 
 // Spawn explosion into the shared 5-slot system.
 // spawnExplosion -- Allocate an explosion slot at the given position.
-// Per-handler FUN_40A2E0/FUN_4028C5/FUN_40F628/FUN_41E7C2: find first free
-// slot (counter==0), set counter=10, scale=objectHalfWidth, position=center.
+// Per-handler slot arrays: 0x26=DAT_0044368e[], 8=DAT_0043f854[],
+// 7=DAT_00443770[], 25=DAT_0045792c[]. All share same logic: find first
+// free slot (counter==0), set counter=10, scale=objectHalfWidth, position=center.
 void InsaneRebel2::spawnExplosion(int x, int y, int objectHalfWidth) {
 	for (int i = 0; i < 5; i++) {
 		if (!_explosions[i].active || _explosions[i].counter <= 0) {
@@ -485,6 +486,7 @@ void InsaneRebel2::spawnExplosion(int x, int y, int objectHalfWidth) {
 }
 
 // getShotMaxDuration -- Shot duration from per-level difficulty table (DAT_0047e0f0).
+// Used both as initial shot counter AND maxFrames for beam rendering.
 int16 InsaneRebel2::getShotMaxDuration() {
 	LevelDifficultyParams params = getDifficultyParams();
 	// laserDelay = DAT_0047e0f0 field: shot duration in frames
@@ -558,7 +560,9 @@ void InsaneRebel2::spawnVehicleShot(int x, int y) {
 }
 
 // spawnHandler25Shot -- Handler 25 on-foot shot spawn (FUN_0041db5e).
-// Gun position computed from GRD002 character sprite offset tables.
+// Gun position from GRD002 offset tables:
+//   DAT_0045791c[i] = gunOffsetTable[spriteIdx] + DAT_00457910 - DAT_0045790c
+//   DAT_00457920[i] = gunYTable[spriteIdx] + DAT_00457912 - DAT_0045790e
 void InsaneRebel2::spawnHandler25Shot(int x, int y) {
 	// Handler 25 can only shoot when uncovered (damage == 0)
 	if (_rebelDamageLevel != 0) {
@@ -2556,8 +2560,12 @@ void InsaneRebel2::triggerDamageEffect() {
 //
 // updateDamageFlashPalette -- Per-frame palette modification (FUN_00420562).
 //
-// Normal hit flash: alternating inverted-to-original blend on even counter.
-// High-damage red pulse: R-channel only modification at max damage.
+// Normal hit flash (_damageHighFlashCounter == 0 or odd):
+//   Blend formula: output[i] = 0xFF - ((0xFF - saved[i]) * (0x10 - counter)) >> 4
+//   Counter 5->4(apply)->3(skip)->2(apply)->1(skip)->0(apply=original) = strobe.
+//
+// High-damage red pulse (_playerDamage >= 0xFF, even counter):
+//   R channel only (every 3rd byte) using same formula with _damageHighFlashCounter.
 //
 void InsaneRebel2::updateDamageFlashPalette() {
 	// High-damage mode: persistent red pulsing when damage is maxed out
@@ -2602,7 +2610,8 @@ void InsaneRebel2::updateDamageFlashPalette() {
 }
 
 // updateDamageEffect -- Per-frame screen shake + palette flash (FUN_00420754).
-// Randomly shifts scanlines for visual distortion, diminishing over 10 frames.
+// Shifts counter*5 random scanlines per frame, diminishing over 10 frames.
+// Only called when not in cutscene modes (DAT_0043e000 != 4 && != 5).
 void InsaneRebel2::updateDamageEffect(byte *renderBitmap, int pitch, int width, int height) {
 	if (_damageShakeCounter != 0) {
 		_damageShakeCounter--;
@@ -3312,9 +3321,11 @@ void InsaneRebel2::renderHandler8Ship(byte *renderBitmap, int pitch, int width, 
 }
 
 // Handler 25: Draw GRD001 (wall/cockpit overlay) in procPostRendering.
-// renderHandler25ShipPre -- Handler 25 GRD001 pre-rendering (FUN_0041DB5E).
-// GRD sprites are drawn AFTER FOBJ enemies, before GRD002. Mode-based
-// half-width clipping for cover/uncover transitions.
+// renderHandler25ShipPre -- Handler 25 GRD001 pre-rendering (FUN_0041DB5E lines 202-221).
+// GRD sprites drawn AFTER FOBJ enemies, before GRD002. Mode-based clipping:
+//   Mode 1, damage==0: left half only (pixels 0-159)
+//   Mode 4, damage==0: right half only (pixels 160-319)
+//   All other cases: full width (320 pixels)
 void InsaneRebel2::renderHandler25ShipPre(byte *renderBitmap, int pitch, int width, int height) {
 	if (_rebelHandler != 25)
 		return;
@@ -3669,6 +3680,7 @@ void InsaneRebel2::renderEnemyOverlays(byte *renderBitmap, int pitch, int width,
 }
 
 // renderExplosions -- Dispatch to per-handler explosion renderer.
+// DAT_0047e108 flags & 1: suppress explosion sprites (counters still tick).
 void InsaneRebel2::renderExplosions(byte *renderBitmap, int pitch, int width, int height) {
 	// Check flags bit 0: suppress explosion sprite rendering
 	LevelDifficultyParams dparams = getDifficultyParams();
@@ -3705,6 +3717,8 @@ void InsaneRebel2::renderExplosions(byte *renderBitmap, int pitch, int width, in
 }
 
 // renderTurretExplosions -- Handler 0x26 turret explosion rendering (FUN_409FBC).
+// Position: FUN_0041c720 3D->2D projection (identity at low-res).
+// Scale thresholds: <11, <21. Secondary NUT: DAT_0047fe80 (if DAT_0047a7fc >= 0).
 void InsaneRebel2::renderTurretExplosions(byte *renderBitmap, int pitch, int width, int height) {
 	if (!_smush_iconsNut)
 		return;
@@ -3747,6 +3761,8 @@ void InsaneRebel2::renderTurretExplosions(byte *renderBitmap, int pitch, int wid
 }
 
 // renderVehicleExplosions -- Handler 8 on-foot explosion rendering (FUN_402696).
+// Position: world coords minus camera offset (DAT_0043e006/08 = _viewX/_viewY).
+// Scale thresholds: <11, <21. No secondary NUT.
 void InsaneRebel2::renderVehicleExplosions(byte *renderBitmap, int pitch, int width, int height) {
 	if (!_smush_iconsNut)
 		return;
@@ -3788,6 +3804,9 @@ void InsaneRebel2::renderVehicleExplosions(byte *renderBitmap, int pitch, int wi
 }
 
 // renderSpaceExplosions -- Handler 7 space explosion rendering (FUN_40F1C5).
+// Position: FUN_0041c720 3D->2D projection.
+// Scale thresholds: resolution-dependent (low-res: <11/<21, hi-res: <21/<41).
+// Secondary NUT: DAT_0047ff00 (FLY004, if DAT_0047a7fc >= 0).
 void InsaneRebel2::renderSpaceExplosions(byte *renderBitmap, int pitch, int width, int height) {
 	if (!_smush_iconsNut)
 		return;
@@ -3887,6 +3906,8 @@ void InsaneRebel2::renderSpaceExplosions(byte *renderBitmap, int pitch, int widt
 }
 
 // renderHandler25Explosions -- Handler 25 FPS explosion rendering (FUN_41F29A).
+// Position: world coords + view offset (DAT_0045790c/0e = _rebelViewOffsetX/Y).
+// Scale thresholds: resolution-dependent (same as Handler 7). No sound panning.
 void InsaneRebel2::renderHandler25Explosions(byte *renderBitmap, int pitch, int width, int height) {
 	if (!_smush_iconsNut)
 		return;
@@ -4049,6 +4070,7 @@ void InsaneRebel2::renderTurretLaserShots(byte *renderBitmap, int pitch, int wid
 }
 
 // renderVehicleLaserShots -- Handler 8 vehicle laser rendering (FUN_402ED0).
+// In the original, the laser is a short muzzle flash, NOT a traveling projectile.
 void InsaneRebel2::renderVehicleLaserShots(byte *renderBitmap, int pitch, int width, int height) {
 	// No NUT check needed - uses pre-initialized _laserTexture
 

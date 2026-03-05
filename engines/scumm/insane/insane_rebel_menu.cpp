@@ -49,7 +49,7 @@ void InsaneRebel2::resetMenu() {
 	_menuSelectionConfirmed = false;
 }
 
-// unlockAllChapters -- Debug mode unlock (FUN_00415CF8).
+// unlockAllChapters -- Debug mode unlock (FUN_00415CF8 lines 60-71, DAT_0047ab34=='d').
 void InsaneRebel2::unlockAllChapters() {
 	debug("Rebel2: Unlocking all chapters for testing");
 	for (int i = 0; i < 16; i++) {
@@ -59,7 +59,9 @@ void InsaneRebel2::unlockAllChapters() {
 }
 
 // getRandomMenuVideo -- Select random menu video variant (FUN_0041FDC8).
-// Always uses O_MENU_X.SAN (A-O) instead of audio-only O_MENU.SAN.
+// Original plays O_MENU.SAN when no progress flags are set, but that file
+// contains ONLY audio (no FOBJ frames) resulting in a black background.
+// We always use O_MENU_X.SAN (A-O) which have 320x200 background images.
 Common::String InsaneRebel2::getRandomMenuVideo() {
 
 	// Select random variant (0-14 maps to A-O), ensuring different from last
@@ -80,7 +82,8 @@ Common::String InsaneRebel2::getRandomMenuVideo() {
 //
 // Returns -1 (no action) or 0-4 (menu item selected).
 // Events captured by notifyEvent() before ScummEngine consumes them.
-// Keyboard: Up/Down navigate, Enter confirms. Mouse: Y maps to selection.
+// Keyboard: Up=0x148, Down=0x150, Enter=0x0d, ESC=0x1b.
+// Mouse mode (DAT_0047a806 == 1): Y position maps to selection.
 //
 int InsaneRebel2::processMenuInput() {
 
@@ -1784,10 +1787,16 @@ void InsaneRebel2::drawLevelSelectOverlay(byte *renderBitmap, int pitch, int wid
 // Top Pilots Screen (FUN_00420116)
 // ---------------------------------------------------------------------------
 // Ranked pilot scores with animated reveal over a menu background video.
-// 0x4a-byte records (max 15): name, score, rating, difficulty, chapter.
+// 0x4a (74) byte records (max 15, from FUN_00410271):
+//   +0x00 (4): timestamp, +0x04 (40): name, +0x36 (4): score,
+//   +0x3a (4): rating, +0x3e (2): difficulty tier (1-3, TRS=value+0x9b),
+//   +0x40 (2): highest chapter (1-15).
 // Column X positions (low-res): medals=43, name=88, diff=195, ch=245, score=295.
+// Row Y: sVar1 * 10 + 42.
 
 // initDefaultRankings -- Fill ranking table with defaults (FUN_0040FF00).
+// Generates 15 placeholder entries: score=(15-i)*1500, rating=(15-i)*2,
+// difficulty=((15-i)*3+14)/15, chapter=((15-i)*15+14)/15.
 void InsaneRebel2::initDefaultRankings() {
 	_numRankings = 0;
 	memset(_rankings, 0, sizeof(_rankings));
@@ -1950,7 +1959,8 @@ void InsaneRebel2::drawTopPilotsOverlay(byte *renderBitmap, int pitch, int width
 // Options Menu (FUN_004167A6)
 // ---------------------------------------------------------------------------
 // Toggle labels and slider items. Settings at DAT_00482e20[0..3].
-// Menu items: Music, SFX, Voices, Text, Controls, Rapid Fire, Volume, Back.
+// TRS IDs: Title=89, Music=90/91, SFX=92/93, Voices=94/95, Text=96/97,
+// Controls=98/99, Rapid Fire=100/101, Volume=103 "%hd%%", Back=107.
 
 // showOptionsMenu -- Options menu loop (FUN_00416787).
 void InsaneRebel2::showOptionsMenu() {

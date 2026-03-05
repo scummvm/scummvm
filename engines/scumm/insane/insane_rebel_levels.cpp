@@ -91,6 +91,7 @@ void InsaneRebel2::playMissionBriefing() {
 
 // playCinematic -- Play a cinematic/cutscene video.
 // Resets handler to 0 (no HUD) and sets flags to 0x28 (cinematic + buffer preserve).
+// All wrapper functions (FUN_00417168/4171c5/417ab2/417327) add | 8 before calling FUN_0041f4d0.
 void InsaneRebel2::playCinematic(const char *filename) {
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // No status bar during cinematics
@@ -101,7 +102,8 @@ void InsaneRebel2::playCinematic(const char *filename) {
 }
 
 // playVideoWithText -- Video with progressive text overlay (FUN_004171c5).
-// Text is progressively revealed during [fadeInFrame, fadeOutFrame).
+// displayLength = currentFrame + 10 - fadeInFrame, capped at 0xBE (190) chars.
+// Text rendered at (textX, textY) via FUN_004341a0.
 void InsaneRebel2::playVideoWithText(const char *filename, int textID, int textX, int textY,
                                      int fadeInFrame, int fadeOutFrame) {
 

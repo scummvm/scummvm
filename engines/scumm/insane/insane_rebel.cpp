@@ -540,6 +540,7 @@ InsaneRebel2::~InsaneRebel2() {
 }
 
 // notifyEvent -- EventObserver callback for global input dispatch.
+// Handles ESC (skip) and SPACE (pause) regardless of menu state.
 bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	if (event.type == Common::EVENT_KEYDOWN) {
 		SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
@@ -1292,7 +1293,9 @@ bool InsaneRebel2::isShootingAllowed() {
 }
 
 // procSKIP -- Conditional FOBJ/PSAD skip via bit table (FUN_00423A50).
-// RA2 uses SKIP chunks to hide destroyed enemy sprites.
+// Same mechanism as Full Throttle, but RA2 uses it for enemy objects:
+// when setBit(enemy_id) is called on destruction, SKIP chunks containing
+// that ID cause the next FOBJ (enemy sprite) to be skipped.
 void InsaneRebel2::procSKIP(int32 subSize, Common::SeekableReadStream &b) {
 
 	int16 par1, par2;
