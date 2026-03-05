@@ -115,10 +115,12 @@ private:
 	int16 _smoothedVelocity;         // Averaged horizontal velocity
 	int16 _verticalInput;            // Stored vertical input component
 	int16 _velocityHistory[25];      // Horizontal velocity ring buffer
-	int16 _windHistoryX[15];         // Wind X history buffer
-	int16 _windHistoryY[15];         // Wind Y history buffer
-	int16 _windParamX;               // Wind X (from GAME opcode 0x07 sub-opcode 0)
-	int16 _windParamY;               // Wind Y (from GAME opcode 0x07 sub-opcode 0)
+
+	// Per-frame drift bias from GAME 0x07 field3 (multiplied by tuning "drift" param)
+	// Original pipeline: xDelta added to 32-bit accumulator, position = accum >> 8
+	// field4 is unused in the original assembly
+	int16 _driftParam;
+	int32 _driftAccum;           // 32-bit drift accumulator (position = accum >> 8)
 
 	// Perspective view offsets
 	int16 _perspectiveX;
