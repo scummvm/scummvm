@@ -61,6 +61,7 @@ struct ScoreLayout {
 	ImVec2 gridPos;
 	ImVec2 sliderPos;
 	ImVec2 sliderYPos;
+	ImVec2 centerButtonPos;
 };
 
 static ScoreLayout computeLayout(ImVec2 origin, ImGuiState::ScoreConfig &cfg) {
@@ -87,6 +88,7 @@ static ScoreLayout computeLayout(ImVec2 origin, ImGuiState::ScoreConfig &cfg) {
 	l.gridPos = ImVec2(origin.x + cfg._sidebarWidth, origin.y + cfg._sidebar1Height + cfg._rulerHeight + cfg._labelBarHeight);
 	l.sliderPos = ImVec2(origin.x + cfg._sidebarWidth, origin.y + cfg._labelBarHeight + cfg._sidebar1Height + cfg._rulerHeight + cfg._tableHeight + 8.0f);
 	l.sliderYPos = ImVec2(origin.x + cfg._sidebarWidth + cfg._tableWidth + 8.0f, origin.y + cfg._sidebar1Height + cfg._labelBarHeight + cfg._rulerHeight);
+	l.centerButtonPos = ImVec2(origin.x, origin.y + cfg._labelBarHeight + cfg._sidebar1Height + cfg._rulerHeight + cfg._tableHeight + 8.0f);
 	return l;
 }
 
@@ -101,6 +103,45 @@ static void addThinRect(ImDrawList *dl, ImVec2 min, ImVec2 max, ImU32 col, float
 	dl->AddLine(ImVec2(max.x, min.y), ImVec2(max.x, max.y), col, thickness); // right
 	dl->AddLine(ImVec2(max.x, max.y), ImVec2(min.x, max.y), col, thickness); // bottom
 	dl->AddLine(ImVec2(min.x, max.y), ImVec2(min.x, min.y), col, thickness); // left
+}
+
+// help to draw tool tip with wrapped text
+static void setTooltip(const char *fmt, ...) {
+	va_list args;
+	va_start(args, fmt);
+	// format the string first
+	Common::String text = Common::String::vformat(fmt, args);
+	va_end(args);
+
+	float textWidth = ImGui::CalcTextSize(text.c_str(), nullptr, false, 300.0f).x;
+	ImGui::SetNextWindowSize(ImVec2(MIN(textWidth + 16.0f, 300.0f), 0.0f));
+	ImGui::BeginTooltip();
+	ImGui::TextWrapped("%s", text.c_str());
+	ImGui::EndTooltip();
+}
+
+static Common::String clipText(const Common::String &text, float availWidth) {
+	if (availWidth <= 0.0f || text.empty())
+		return "";
+	if (ImGui::CalcTextSize(text.c_str()).x <= availWidth)
+		return text;
+	float ellipsisW = ImGui::CalcTextSize("..").x;
+	float budget = availWidth - ellipsisW;
+	if (budget <= 0.0f)
+		return "..";
+
+	// binary search for the cut point instead of linear scan
+	int lo = 0, hi = (int)text.size();
+	while (lo < hi) {
+		int mid = (lo + hi + 1) / 2;
+		if (ImGui::CalcTextSize(text.substr(0, mid).c_str()).x <= budget)
+			lo = mid;
+		else
+			hi = mid - 1;
+	}
+	if (lo == 0)
+		return "..";
+	return text.substr(0, lo) + "..";
 }
 
 static void buildContinuationData(Window *window) {
@@ -222,7 +263,7 @@ static void drawSidebar1(ImDrawList *dl, ImVec2 startPos, Score *score) {
 		ImGui::SetCursorScreenPos(rowMin);
 		ImGui::InvisibleButton(Common::String::format("##s1row%d", ch).c_str(), ImVec2(totalWidth, cfg._cellHeight));
 		if (ImGui::IsItemHovered())
-			ImGui::SetTooltip("%s", modes2[(ch - 1) * 2 + 1]);
+			setTooltip("%s", modes2[(ch - 1) * 2 + 1]);
 
 	}
 }
@@ -263,21 +304,20 @@ static void drawSidebar2(ImDrawList *dl, ImVec2 startPos, Score *score) {
 		ImGui::SetCursorScreenPos(rowMin);
 		ImGui::InvisibleButton(Common::String::format("##s2toggle%d", ch).c_str(), ImVec2(toggleColWidth, cellH));
 		if (ImGui::IsItemHovered())
-			ImGui::SetTooltip("Playback toggle");
+			setTooltip("Playback toggle");
 		if (ImGui::IsItemClicked()) { // determines what happens on toggle of the button
 			score->_channels[ch]->_visible = !score->_channels[ch]->_visible;
 		}
 
 		// channel num and extra stuff if extended mode
-		char buf[8];
-		snprintf(buf, sizeof(buf), "%d", ch);
+		Common::String chStr = Common::String::format("%d", ch);
 		float textX  = startPos.x + toggleColWidth;
 
 		if (_state->_scoreMode != kModeExtended) {
 			float textY = y + (cellH - ImGui::GetTextLineHeight()) / 2.0f;
-			dl->AddText(ImVec2(textX, textY), _state->theme->sidebarTextColor, buf);
+			dl->AddText(ImVec2(textX, textY), _state->theme->sidebarTextColor, chStr.c_str());
 		} else { // draw channel number and labels
-			dl->AddText(ImVec2(textX, y + 2.0f), _state->theme->sidebarTextColor, buf);
+			dl->AddText(ImVec2(textX, y + 2.0f), _state->theme->sidebarTextColor, chStr.c_str());
 			const char *subLabels[] = { "Member", "Behavior", "Ink", "Blend", "Location" };
 			float lineH = ImGui::GetTextLineHeight();
 			for (int s = 0; s < 5; s++) {
@@ -310,10 +350,9 @@ static void drawRuler(ImDrawList *dl, ImVec2 startPos) {
 		if (i % 5 == 0) {
 			len = bigTickLen;
 			thickness = 1.5f;
-			char buf[16];
-			snprintf(buf, sizeof(buf), "%d", i);
-			float textlen = ImGui::CalcTextSize(buf).x;
-			dl->AddText(ImVec2(rulerX - textlen / 2, p1.y + 4.0), U32(_state->theme->type_color), buf);
+			Common::String frameStr = Common::String::format("%d", i);
+			float textlen = ImGui::CalcTextSize(frameStr.c_str()).x;
+			dl->AddText(ImVec2(rulerX - textlen / 2, p1.y + 4.0), U32(_state->theme->type_color), frameStr.c_str());
 		}
 
 		dl->AddLine(ImVec2(rulerX, p2.y), ImVec2(rulerX, p2.y - len), U32(_state->theme->line_color), thickness);
@@ -560,7 +599,7 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 			Frame &frame = *score->_scoreCache[rf];
 			Sprite &sprite = *frame._sprites[ch];
 
-			if (!sprite._castId.member && !sprite.isQDShape()) continue; // empty cell
+			if (!sprite._castId.member && !sprite.isQDShape()) continue;
 			if (ch >= (int)_state->_continuationData.size()) continue;
 			if (rf >= (int)_state->_continuationData[ch].size()) break;
 
@@ -577,11 +616,9 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 			bool startVisible = spanStart >= startFrame;
 			bool endVisible = spanEnd < startFrame + cfg._visibleFrames;
 
-			// clamp x1 to grid left edge, x2 to right
-			float cy  = y + cellH * ( (_state->_scoreMode == kModeExtended) ? 0.1 : 0.2);
-			float pad = 0.0f; // vertical padding so bar doesnt touch cell borders
+			float cy  = y + cellH * ((_state->_scoreMode == kModeExtended) ? 0.1 : 0.2);
+			float pad = 0.0f;
 
-			// color selection based on if the sprite is selected or not
 			ImU32 color;
 			bool isSelected = (_state->_selectedScoreCast.channel == ch &&
 							   _state->_selectedScoreCast.frame >= spanStart &&
@@ -600,103 +637,174 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 				color = _state->theme->contColors[colorIdx];
 			}
 
-			float rounding = 0.0f;
-			dl->AddRectFilled(ImVec2(x1, y + pad), ImVec2(x2 - 1.0f, y + cellH - pad), color, rounding);
-			// horizontal line through the middle, offset from x1 if circle is present
+			dl->AddRectFilled(ImVec2(x1, y + pad), ImVec2(x2 - 1.0f, y + cellH - pad), color, 0.0f);
 			dl->AddLine(ImVec2(x1 + (startVisible ? 6.0f : 0.0f), cy), ImVec2(x2 - 6.0f, cy), U32(_state->theme->line_color), 1.0f);
 
 			if (startVisible)
 				dl->AddCircle(ImVec2(x1 + 4.0f, cy), 3.0f, U32(_state->theme->line_color), 0, 1.5f);
-
 			if (endVisible)
 				dl->AddRect(ImVec2(x2 - 7.0f, cy - 3.0f), ImVec2(x2 - 1.0f, cy + 3.0f), U32(_state->theme->line_color), 0.0f, 0, 1.5f);
 
+			float spanWidth = x2 - x1 - 8.0f; // available width inside the span bar
+			CastMember *cm = cast->getCastMember(sprite._castId.member, true);
+			if (spanWidth < 4.0f) continue;
 
 			if (_state->_scoreMode == kModeExtended && startVisible && (sprite._castId.member || sprite.isQDShape())) {
 				float lineH = ImGui::GetTextLineHeight();
 				float textX = x1 + 2.0f;
 				float baseY = y + 15.0f;
-				CastMember *cm = cast->getCastMember(sprite._castId.member, true);
-				// Member name
-				char buf[64] = "";
-				if (cm)
-					snprintf(buf, sizeof(buf), "%s", getDisplayName(cm).c_str());
-				else if (sprite.isQDShape())
-					snprintf(buf, sizeof(buf), "Q");
-				dl->AddText(ImVec2(textX, baseY), _state->theme->gridTextColor, buf);
 
-				// Behavior
-				buf[0] = '\0';
+				Common::String member = cm ? getDisplayName(cm) : (sprite.isQDShape() ? "Q" : "");
+				Common::String behavior;
 				if (sprite._scriptId.member) {
 					CastMember *sc = cast->getCastMember(sprite._scriptId.member, true);
-					if (sc) snprintf(buf, sizeof(buf), "%s", getDisplayName(sc).c_str());
+					if (sc) behavior = getDisplayName(sc);
 				}
-				dl->AddText(ImVec2(textX, baseY + lineH), _state->theme->gridTextColor, buf);
+				Common::String ink = inkType2str(sprite._ink);
+				Common::String blend = Common::String::format("%d", sprite._blendAmount);
+				Common::String location = Common::String::format("%d,%d", sprite._startPoint.x, sprite._startPoint.y);
 
-				// Ink
-				dl->AddText(ImVec2(textX, baseY + lineH * 2), _state->theme->gridTextColor, inkType2str(sprite._ink));
-
-				// Blend
-				snprintf(buf, sizeof(buf), "%d", sprite._blendAmount);
-				dl->AddText(ImVec2(textX, baseY + lineH * 3), _state->theme->gridTextColor, buf);
-
-				// Location
-				snprintf(buf, sizeof(buf), "%d,%d", sprite._startPoint.x, sprite._startPoint.y);
-				dl->AddText(ImVec2(textX, baseY + lineH *4), _state->theme->gridTextColor, buf);
+				// draw each row clipped to span width
+				dl->AddText(ImVec2(textX, baseY), _state->theme->gridTextColor, clipText(member, spanWidth).c_str());
+				dl->AddText(ImVec2(textX, baseY + lineH), _state->theme->gridTextColor, clipText(behavior, spanWidth).c_str());
+				dl->AddText(ImVec2(textX, baseY + lineH*2), _state->theme->gridTextColor, clipText(ink, spanWidth).c_str());
+				dl->AddText(ImVec2(textX, baseY + lineH*3), _state->theme->gridTextColor, clipText(blend, spanWidth).c_str());
+				dl->AddText(ImVec2(textX, baseY + lineH*4), _state->theme->gridTextColor, clipText(location, spanWidth).c_str());
 			}
 
 			if (startVisible && _state->_scoreMode != kModeExtended) {
-				char label[64] = "";
-				CastMember *cm = cast->getCastMember(sprite._castId.member, true);
+				Common::String label;
 				switch (_state->_scoreMode) {
 				case kModeMember:
 					if (cm)
-						snprintf(label, sizeof(label), "%s", getDisplayName(cm).c_str());
+						label = getDisplayName(cm);
 					else if (sprite.isQDShape())
-						snprintf(label, sizeof(label), "Q");
+						label = "Q";
 					break;
 				case kModeBehavior:
 					if (sprite._scriptId.member) {
 						CastMember *script = cast->getCastMember(sprite._scriptId.member, true);
-						if (script)
-							snprintf(label, sizeof(label), "%s", getDisplayName(script).c_str());
+						if (script) label = getDisplayName(script);
 					}
 					break;
 				case kModeInk:
-					snprintf(label, sizeof(label), "%s", inkType2str(sprite._ink));
+					label = inkType2str(sprite._ink);
 					break;
 				case kModeLocation:
-					snprintf(label, sizeof(label), "%d,%d", sprite._startPoint.x, sprite._startPoint.y);
+					label = Common::String::format("%d,%d", sprite._startPoint.x, sprite._startPoint.y);
 					break;
 				case kModeBlend:
-					snprintf(label, sizeof(label), "%d", sprite._blendAmount);
+					label = Common::String::format("%d", sprite._blendAmount);
 					break;
 				default:
 					break;
 				}
-				if (label[0])
-					dl->AddText(ImVec2(x1 + 4.0f, y + (cellH - ImGui::GetTextLineHeight()) / 2.0f), _state->theme->gridTextColor, label);
 
+				if (!label.empty()) {
+					float textY = y + (cellH - ImGui::GetTextLineHeight()) / 2.0f;
+					dl->AddText(ImVec2(x1 + 4.0f, textY), _state->theme->gridTextColor, clipText(label, spanWidth).c_str());
+				}
 			}
-
 		}
 
-		// pass 3, for clickable rects, add invisible buttosn
+		// pass 3: invisible buttons for interaction + tooltips
 		for (int f = 0; f < cfg._visibleFrames; f++) {
 			int rf = startFrame + f;
 			if (rf >= total_frames) break;
-			float x = startPos.x + f * cfg._cellWidth;
-			ImGui::SetCursorScreenPos(ImVec2(x, y));
-			ImGui::InvisibleButton(Common::String::format("##cell_%d_%d", ch, f).c_str(), ImVec2(cfg._cellWidth, cellH));
-			if (ImGui::IsItemClicked()) {
-				_state->_selectedScoreCast.frame = rf;
-				_state->_selectedScoreCast.channel = ch;
-				_state->_selectedScoreCast.isMainChannel = false;
-			}
 
-			if (ImGui::IsItemHovered()) {
-				_state->_hoveredScoreCast.frame = rf;
-				_state->_hoveredScoreCast.channel = ch;
+			// recompute span info for tooltip
+			if (ch < (int)_state->_continuationData.size() && rf < (int)_state->_continuationData[ch].size()) {
+				Frame &frame = *score->_scoreCache[rf];
+				Sprite &sprite = *frame._sprites[ch];
+				int spanStart = _state->_continuationData[ch][rf].first;
+				int spanEnd   = _state->_continuationData[ch][rf].second;
+				float x1 = startPos.x + MAX<float>(spanStart - startFrame, 0) * cfg._cellWidth;
+				float x2 = MIN<float>(startPos.x + (spanEnd - startFrame + 1) * cfg._cellWidth, startPos.x + cfg._tableWidth);
+				float spanWidth = x2 - x1 - 8.0f;
+
+				float x = startPos.x + f * cfg._cellWidth;
+				ImGui::SetCursorScreenPos(ImVec2(x, y));
+				ImGui::InvisibleButton(Common::String::format("##cell_%d_%d", ch, f).c_str(), ImVec2(cfg._cellWidth, cellH));
+
+				if (ImGui::IsItemClicked()) {
+					_state->_selectedScoreCast.frame = rf;
+					_state->_selectedScoreCast.channel = ch;
+					_state->_selectedScoreCast.isMainChannel = false;
+				}
+
+				if (ImGui::IsItemHovered()) {
+					_state->_hoveredScoreCast.frame = rf;
+					_state->_hoveredScoreCast.channel = ch;
+
+					if (sprite._castId.member || sprite.isQDShape()) {
+						CastMember *cm = cast->getCastMember(sprite._castId.member, true);
+
+						if (_state->_scoreMode == kModeExtended) {
+							// build multi-line tooltip for extended mode
+							Common::String member = cm ? getDisplayName(cm) : (sprite.isQDShape() ? "Q" : "");
+							Common::String behavior;
+							if (sprite._scriptId.member) {
+								CastMember *sc = cast->getCastMember(sprite._scriptId.member, true);
+								if (sc) behavior = getDisplayName(sc);
+							}
+							Common::String ink = inkType2str(sprite._ink);
+							Common::String blend = Common::String::format("%d", sprite._blendAmount);
+							Common::String location = Common::String::format("%d,%d", sprite._startPoint.x, sprite._startPoint.y);
+
+							// check if any row is clipped
+							bool anyClipped = ImGui::CalcTextSize(member.c_str()).x > spanWidth ||
+											  ImGui::CalcTextSize(behavior.c_str()).x > spanWidth ||
+											  ImGui::CalcTextSize(ink.c_str()).x > spanWidth;
+
+							if (anyClipped) {
+								setTooltip("Member: %s\nBehavior: %s\nInk: %s\nBlend: %s\nLocation: %s",
+									member.c_str(), behavior.c_str(), ink.c_str(), blend.c_str(), location.c_str());
+							}
+						} else {
+							Common::String label;
+							switch (_state->_scoreMode) {
+							case kModeMember:
+								if (cm) label = getDisplayName(cm);
+								else if (sprite.isQDShape()) label = "Q";
+								break;
+							case kModeBehavior:
+								if (sprite._scriptId.member) {
+									CastMember *sc = cast->getCastMember(sprite._scriptId.member, true);
+									if (sc) label = getDisplayName(sc);
+								}
+								break;
+							case kModeInk:
+								label = inkType2str(sprite._ink);
+								break;
+							case kModeLocation:
+								label = Common::String::format("%d,%d", sprite._startPoint.x, sprite._startPoint.y);
+								break;
+							case kModeBlend:
+								label = Common::String::format("%d", sprite._blendAmount);
+								break;
+							default:
+								break;
+							}
+							if (!label.empty() && ImGui::CalcTextSize(label.c_str()).x > spanWidth)
+								setTooltip("%s", label.c_str());
+						}
+					}
+					_state->_hoveredScoreCast.frame = rf;
+					_state->_hoveredScoreCast.channel = ch;
+				}
+			} else {
+				float x = startPos.x + f * cfg._cellWidth;
+				ImGui::SetCursorScreenPos(ImVec2(x, y));
+				ImGui::InvisibleButton(Common::String::format("##cell_%d_%d", ch, f).c_str(), ImVec2(cfg._cellWidth, cellH));
+				if (ImGui::IsItemClicked()) {
+					_state->_selectedScoreCast.frame = rf;
+					_state->_selectedScoreCast.channel = ch;
+					_state->_selectedScoreCast.isMainChannel = false;
+				}
+				if (ImGui::IsItemHovered()) {
+					_state->_hoveredScoreCast.frame = rf;
+					_state->_hoveredScoreCast.channel = ch;
+				}
 			}
 		}
 	}
@@ -711,6 +819,8 @@ static void drawSliderX(ImVec2 pos, Score *score) {
 	int sliderMin = 1;
 	int sliderMax = MAX(totalFrames - cfg._visibleFrames + 1, 1);
 	ImGui::SliderInt("##frameSlider", &_state->_scoreState.xSliderValue, sliderMin, sliderMax);
+	ImGui::SameLine();
+	ImGui::Text("%d", totalFrames);
 }
 
 static void drawMainChannelGrid(ImDrawList *dl, ImVec2 startPos, Score *score) {
@@ -851,7 +961,7 @@ static void drawMainChannelGrid(ImDrawList *dl, ImVec2 startPos, Score *score) {
 				case kChScript: if (mc.actionId.member) label = Common::String::format("%d", mc.actionId.member); break;
 				}
 				if (!label.empty())
-					ImGui::SetTooltip("%s: %s", modes2[(ch) * 2 + 1], label.c_str());
+					setTooltip("%s: %s", modes2[(ch) * 2 + 1], label.c_str());
 			}
 		}
 	}
@@ -934,25 +1044,43 @@ static void drawLabelBar(ImDrawList *dl, ImVec2 pos, Score *score) {
 		if (labelName && !labelName->empty()) {
 			float textY = y + (cfg._labelBarHeight - ImGui::GetTextLineHeight()) / 2.0f;
 
-			dl->AddText(ImVec2(x - ImGui::CalcTextSize(ICON_MS_BEENHERE).x / 2.0f, textY),
-						_state->theme->sidebarTextColor, ICON_MS_BEENHERE);
-
 			float iconW = ImGui::CalcTextSize(ICON_MS_BEENHERE).x;
-			float textX = x + iconW / 2.0f + 2.0f;
-			float textWidth = ImGui::CalcTextSize(labelName->c_str()).x;
+			float textW = ImGui::CalcTextSize(labelName->c_str()).x;
+			float totalW = iconW + 2.0f + textW;
 
-			if (textX + textWidth < finalPos.x) // prevent text being drawn outside the table bounds
+			// draw background rect sized to icon + text
+			ImVec2 rectMin = ImVec2(x, y);
+			ImVec2 rectMax = ImVec2(MIN(x + totalW + 4.0f, finalPos.x), y + cfg._labelBarHeight);
+			dl->AddRectFilled(rectMin, rectMax, _state->theme->tableDarkColor);
+
+			// draw icon
+			dl->AddText(ImVec2(x + 2.0f, textY), _state->theme->sidebarTextColor, ICON_MS_BEENHERE);
+
+			// draw text if it fits
+			float textX = x + 2.0f + iconW + 2.0f;
+			if (textX + textW < finalPos.x)
 				dl->AddText(ImVec2(textX, textY), _state->theme->sidebarTextColor, labelName->c_str());
 
-			float px = pos.x + f * cfg._cellWidth;
-			ImGui::SetCursorScreenPos(ImVec2(px, y));
+			ImGui::SetCursorScreenPos(ImVec2(x, y));
 			ImGui::InvisibleButton(Common::String::format("##labelcell_%d", f).c_str(), ImVec2(cfg._cellWidth, cfg._labelBarHeight));
-
 			if (ImGui::IsItemHovered())
-				ImGui::SetTooltip("%s", labelName->c_str());
+				setTooltip("%s", labelName->c_str());
 
 		}
 	}
+}
+
+static void drawCenterButton(ImVec2 pos, Score *score) {
+	ImGui::SetCursorScreenPos(pos);
+	int totalFrames = (int)score->_scoreCache.size();
+	if (ImGui::Button(ICON_MS_ALIGN_JUSTIFY_CENTER)) {
+		auto &cfg = _state->_scoreCfg;
+		uint currentFrame = score->getCurrentFrameNum();
+		int newStart = (int)currentFrame - cfg._visibleFrames / 2;
+		int sliderMax = MAX(totalFrames - cfg._visibleFrames + 1, 1);
+		_state->_scoreState.xSliderValue = CLIP(newStart, 1, sliderMax);
+	}
+	ImGui::SetItemTooltip("Center view to playhead");
 }
 
 void showScore() {
@@ -1005,6 +1133,7 @@ void showScore() {
 		drawPlayhead(dl, layout.rulerPos, layout.mainChannelGridPos, layout.gridPos, score);
 		drawSliderX(layout.sliderPos, score);
 		drawSliderY(layout.sliderYPos, numChannels);
+		drawCenterButton(layout.centerButtonPos, score);
 
 	}
 	ImGui::End();
