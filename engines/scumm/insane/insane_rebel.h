@@ -57,7 +57,9 @@ public:
 	Common::Queue<Common::Event> _menuEventQueue;
 	bool _menuInputActive;  // True when we're capturing menu input events
 
-	// ======================= Menu System =======================
+	// ---------------------------------------------------------------------------
+	// Menu System
+	// ---------------------------------------------------------------------------
 	// Main game states (emulates retail state machine from FUN_004142BD)
 	enum GameState {
 		kStateIntro = 0,        // Stage 0: Intro/Credits sequence
@@ -119,9 +121,11 @@ public:
 	// Reset menu state for fresh start
 	void resetMenu();
 
-	// ================= Chapter Selection Screen (FUN_00415CF8) ====================
-	// This is the actual level/chapter selection screen with preview thumbnail
-	// Distinct from pilot selection (FUN_00414A41)
+	// ---------------------------------------------------------------------------
+	// Chapter Selection Screen (FUN_00415CF8)
+	// ---------------------------------------------------------------------------
+	// Actual level/chapter selection screen with preview thumbnail.
+	// Distinct from pilot selection (FUN_00414A41).
 
 	enum ChapterSelectResult {
 		kChapterSelectBack = 2,   // Return to main menu (ESC or BACK selected)
@@ -168,9 +172,11 @@ public:
 	// Password table lookup (FUN_0041BCE0)
 	Common::String getChapterPassword(int level, int difficulty);
 
-	// ================= Top Pilots Screen (FUN_00420116) ====================
-	// Shows ranked pilot scores with animated reveal, played over menu video
-	// Original: DAT_00443b58 ranking table, 0x4a-byte records, max 15 entries
+	// ---------------------------------------------------------------------------
+	// Top Pilots Screen (FUN_00420116)
+	// ---------------------------------------------------------------------------
+	// Ranked pilot scores with animated reveal, played over menu video.
+	// Original: DAT_00443b58 ranking table, 0x4a-byte records, max 15 entries.
 
 	static const int kMaxRankings = 15;
 
@@ -200,7 +206,9 @@ public:
 	int _topPilotsFrameCount;     // Animation frame counter (pilots revealed one per frame)
 	int _topPilotsMaxFrames;      // Total frames to display (120 or 240)
 
-	// ================= Options Menu (FUN_004167A6) ====================
+	// ---------------------------------------------------------------------------
+	// Options Menu (FUN_004167A6)
+	// ---------------------------------------------------------------------------
 	// TRS strings: 89 (title), 90-101 (toggle labels), 103 (volume), 107/109 (back)
 	// Original settings array at DAT_00482e20[0..4]:
 	//   [0]=auto control, [1]=music, [2]=voices, [3]=sound
@@ -222,9 +230,11 @@ public:
 	bool _optRapidFire;
 	int _optVolumeLevel;       // 0-127 (DAT_0047a804)
 
-	// ================= Pilot Data System (FUN_00411B9A / FUN_00411980 / FUN_00411A5D) ===========
-	// Original: 10 pilot slots × 0x118 (280) bytes at DAT_004568A8
-	// Stored via SaveFileManager in a custom save file
+	// ---------------------------------------------------------------------------
+	// Pilot Data System (FUN_00411B9A / FUN_00411980 / FUN_00411A5D)
+	// ---------------------------------------------------------------------------
+	// 10 pilot slots × 0x118 (280) bytes at DAT_004568A8.
+	// Stored via SaveFileManager in a custom save file.
 
 	static const int kMaxPilots = 10;
 	static const int kMaxPilotNameLen = 15;
@@ -272,8 +282,10 @@ public:
 	// Get highest unlocked level for active pilot (checks damage[] < 0xFF)
 	int getPilotHighestLevel() const;
 
-	// ================= Pilot Selection Menu (FUN_00414A41) ====================
-	// This is the pilot/save selection menu (separate from chapter selection)
+	// ---------------------------------------------------------------------------
+	// Pilot Selection Menu (FUN_00414A41)
+	// ---------------------------------------------------------------------------
+	// Pilot/save selection menu (separate from chapter selection).
 
 	enum LevelSelectResult {
 		kLevelSelectBack = 0,     // Return to main menu
@@ -307,8 +319,10 @@ public:
 	// Process pilot select input - returns -1 (no action) or action code
 	int processLevelSelectInput();
 
-	// ======================= Level Loading System =======================
-	// Emulates the level handler functions FUN_00417E53 through FUN_0041BBE8
+	// ---------------------------------------------------------------------------
+	// Level Loading System
+	// ---------------------------------------------------------------------------
+	// Emulates the level handler functions FUN_00417E53 through FUN_0041BBE8.
 	// Each level has: BEG (intro), gameplay SANs, END (completion), DIE variants,
 	// RETRY, and OVER (game over) videos.
 
@@ -428,7 +442,9 @@ public:
 	int _phaseMisses;         // Accumulated misses from previous phases
 	bool _skipSectionRequested; // Debug shortcut (Shift+S): force current gameplay section to end
 
-	// =============================================================
+	// ---------------------------------------------------------------------------
+	// Resources and Fonts
+	// ---------------------------------------------------------------------------
 
 	NutRenderer *_smush_cockpitNut;
 
@@ -484,8 +500,10 @@ public:
 					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 					  int16 par1, int16 par2, int16 par3, int16 par4) override;
 
-	// ======================= Rendering Helper Functions =======================
-	// These are extracted from procPostRendering for better readability
+	// ---------------------------------------------------------------------------
+	// Rendering Helper Functions
+	// ---------------------------------------------------------------------------
+	// Extracted from procPostRendering for better readability.
 
 	// Fill status bar background area (FUN_004288c0 equivalent)
 	void renderStatusBarBackground(byte *renderBitmap, int pitch, int width, int height,
@@ -525,8 +543,10 @@ public:
 	// Reset enemy active flags and collision zones at frame end
 	void frameEndCleanup();
 
-	// ======================= Opcode 6 Helper Functions =======================
-	// Handler-specific setup extracted from iactRebel2Opcode6
+	// ---------------------------------------------------------------------------
+	// Opcode 6 Helper Functions
+	// ---------------------------------------------------------------------------
+	// Handler-specific setup extracted from iactRebel2Opcode6.
 
 	// Handler 8 (third-person on foot) setup - FUN_00401234 case 4
 	void opcode6Handler8Setup(int16 par3, int16 par4);
@@ -537,8 +557,10 @@ public:
 	// Calculate view offsets based on level type (lines 182-213)
 	void opcode6CalcViewOffsets();
 
-	// ======================= Opcode 8 Helper Functions =======================
-	// Resource loading extracted from iactRebel2Opcode8
+	// ---------------------------------------------------------------------------
+	// Opcode 8 Helper Functions
+	// ---------------------------------------------------------------------------
+	// Resource loading extracted from iactRebel2Opcode8.
 
 	// Load Handler 7 FLY NUT sprites from IACT data
 	bool loadHandler7FlySprites(Common::SeekableReadStream &b, int64 remaining, int16 par4);
@@ -570,8 +592,10 @@ public:
 	// mask231: when true, color 231 is treated as transparent (legacy sprites). For laser beams set false.
 	void drawTexturedLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, NutRenderer *nut, int spriteIdx, int v, bool mask231 = true);
 
-	// ======================= Laser Texture Buffer (DAT_0047fee4) =======================
-	// Pre-rendered laser texture used by FUN_0040BBF6
+	// ---------------------------------------------------------------------------
+	// Laser Texture Buffer (DAT_0047fee4)
+	// ---------------------------------------------------------------------------
+	// Pre-rendered laser texture used by FUN_0040BBF6.
 	// Initialized from CPITIMAG.NUT sprite 0 via initLaserTexture() (FUN_0040BAB0)
 	struct LaserTexture {
 		byte *pixels;      // Pixel data (rendered from NUT sprite)
@@ -580,7 +604,9 @@ public:
 	};
 	LaserTexture _laserTexture;  // DAT_0047fee4
 
-	// ======================= Edge Blend Table (DAT_0046a7d0) =======================
+	// ---------------------------------------------------------------------------
+	// Edge Blend Table (DAT_0046a7d0)
+	// ---------------------------------------------------------------------------
 	// 256x256 lookup table used by drawEdgeHighlightLine() (FUN_410962) to compute
 	// glow colors at beam edges. For each pixel on the beam edge, the table maps
 	// [adjacent_pixel_above][adjacent_pixel_below] -> output color, producing a
@@ -678,8 +704,10 @@ public:
 	// userId: HUD slot (1-4), animData: raw ANIM data, size: data size, renderBitmap: current frame buffer
 	void loadEmbeddedSan(int userId, byte *animData, int32 size, byte *renderBitmap) override;
 
-	// ======================= Embedded Frame Codec Decoders =======================
-	// These functions decode different codec formats used in embedded ANIM/FOBJ data
+	// ---------------------------------------------------------------------------
+	// Embedded Frame Codec Decoders
+	// ---------------------------------------------------------------------------
+	// Decode different codec formats used in embedded ANIM/FOBJ data.
 	// Based on retail FUN_0042C590 (codec 1), FUN_0042BD60 (codec 21), etc.
 
 	// Decode codec 21/44 (Line Update) - skip/copy pairs per line
@@ -715,8 +743,10 @@ public:
 	Explosion _explosions[5];
 	void spawnExplosion(int x, int y, int objectHalfWidth);
 
-	// ======================= Collision Zone System =======================
-	// For Level 3 "pilot" ship obstacle avoidance (FUN_40E35E, FUN_40C3CC)
+	// ---------------------------------------------------------------------------
+	// Collision Zone System
+	// ---------------------------------------------------------------------------
+	// For Level 3 "pilot" ship obstacle avoidance (FUN_40E35E, FUN_40C3CC).
 	// Collision zones are quadrilaterals defined by IACT Opcode 5
 	// The player's ship position is tested against these zones each frame
 	//
@@ -783,7 +813,9 @@ public:
 	int _viewX;
 	int _viewY;
 
-	// ======================= Damage Visual Effect System =======================
+	// ---------------------------------------------------------------------------
+	// Damage Visual Effect System
+	// ---------------------------------------------------------------------------
 	// Palette flash + screen shake on taking damage.
 	// Original functions: FUN_420515, FUN_420562, FUN_420754, FUN_42073B
 	//
@@ -841,8 +873,10 @@ public:
 	int _rebelLastCounter;         // Mirrors DAT_0047ab90 (last updated counter)
 
 
-	// ======================= Handler 0x26 Turret Shot System =======================
-	// Based on FUN_40AD63 disassembly - Turret laser rendering
+	// ---------------------------------------------------------------------------
+	// Handler 0x26 Turret Shot System
+	// ---------------------------------------------------------------------------
+	// Based on FUN_40AD63 disassembly - Turret laser rendering.
 	// DAT_0044367a[2]: Shot duration counter (0=inactive)
 	// DAT_0044367e[2]: Target X position
 	// DAT_00443682[2]: Target Y position
@@ -860,8 +894,10 @@ public:
 	TurretShot _turretShots[2];
 	int16 _turretShotSeqCounter;  // DAT_0047fe94 - global sequence counter
 
-	// ======================= Handler 8 Vehicle Shot System =======================
-	// Based on FUN_402ED0 disassembly - Vehicle laser rendering
+	// ---------------------------------------------------------------------------
+	// Handler 8 Vehicle Shot System
+	// ---------------------------------------------------------------------------
+	// Based on FUN_402ED0 disassembly - Vehicle laser rendering.
 	// DAT_0043e00a[2]: Shot duration counter
 	// DAT_0043e00e[2]: Target X position
 	// DAT_0043e012[2]: Target Y position
@@ -874,8 +910,10 @@ public:
 	};
 	VehicleShot _vehicleShots[2];
 
-	// ======================= Handler 7 Third-Person Ship Shot System =======================
-	// Based on FUN_40FADF disassembly - Third-Person Ship laser rendering
+	// ---------------------------------------------------------------------------
+	// Handler 7 Third-Person Ship Shot System
+	// ---------------------------------------------------------------------------
+	// Based on FUN_40FADF disassembly - Third-Person Ship laser rendering.
 	// DAT_00443750[2]: Shot duration counter
 	// DAT_00443754[2]: Target X position
 	// DAT_00443758[2]: Target Y position
@@ -928,7 +966,9 @@ public:
 	// Get max shot duration from level table (DAT_0047e0f0 indexed by DAT_0047a7fa/DAT_0047a7f8)
 	int16 getShotMaxDuration();
 
-	// ======================= Handler 8 Ship System =======================
+	// ---------------------------------------------------------------------------
+	// Handler 8 Ship System
+	// ---------------------------------------------------------------------------
 	// For third-person on foot missions (Level 2, 11), the player controls Rookie One
 	// that can turn in different directions. The ship sprite comes from
 	// NUT files loaded via IACT opcode 8.
@@ -1003,7 +1043,9 @@ public:
 	// Helper to load a NUT file from IACT chunk data
 	NutRenderer *loadNutFromIact(Common::SeekableReadStream &b, int dataSize);
 
-	// ======================= Handler 7 FLY Ship System =======================
+	// ---------------------------------------------------------------------------
+	// Handler 7 FLY Ship System
+	// ---------------------------------------------------------------------------
 	// For third-person ship missions (Level 3, etc.), Handler 7 uses a 35-frame
 	// direction-based ship sprite system. The ship visually banks and turns
 	// based on player position using a 5x7 grid of sprites.
@@ -1043,7 +1085,9 @@ public:
 	int16 _viewShift;                // DAT_00443710 - Clamped smoothed velocity for view transform
 	bool _facingRight;               // DAT_0047ab8c - Ship facing right of center
 
-	// ======================= Handler 25 (0x19) GRD Ship System =======================
+	// ---------------------------------------------------------------------------
+	// Handler 25 (0x19) GRD Ship System
+	// ---------------------------------------------------------------------------
 	// For mixed mode missions (Level 2 speeder bike, etc.), Handler 25 uses GRD NUT
 	// sprites loaded via IACT opcode 8. The ship is rendered based on DAT_00457900 mode.
 	//
@@ -1080,7 +1124,9 @@ public:
 	void renderHandler25ShipPre(byte *renderBitmap, int pitch, int width, int height);
 	void renderHandler25Ship(byte *renderBitmap, int pitch, int width, int height);
 
-	// ======================= Handler 0x26 Turret HUD Overlays =======================
+	// ---------------------------------------------------------------------------
+	// Handler 0x26 Turret HUD Overlays
+	// ---------------------------------------------------------------------------
 	// For turret missions (Level 1, etc.), Handler 0x26 uses NUT-based HUD overlays
 	// loaded via IACT opcode 8. These contain animated cockpit panel elements.
 	//
@@ -1101,8 +1147,10 @@ public:
 	/* Difficulty Level (0-5, from pilot menu; maps directly to table rows) */
 	int _difficulty;
 
-	// ======================= Per-Level Difficulty Parameters =======================
-	// Extracted from RA2WIN95.EXE at VA 0x47e0f0
+	// ---------------------------------------------------------------------------
+	// Per-Level Difficulty Parameters
+	// ---------------------------------------------------------------------------
+	// Extracted from RA2WIN95.EXE at VA 0x47e0f0.
 	// 2D table indexed by difficulty (0-5) × level type (0-16)
 	// Original indexing: &DAT_0047e0f0 + chapter * 0x242 + levelType * 0x22
 	// Level type (_rebelLevelType) is set by IACT opcode 6 par3
@@ -1147,16 +1195,20 @@ public:
 	// Render score text to HUD (called from procPostRendering)
 	void renderScoreHUD(byte *renderBitmap, int pitch, int width, int height, int statusBarY);
 
-	// ======================= Pause Overlay =======================
-	// Show pause overlay with dimming effect and "PAUSED" text
+	// ---------------------------------------------------------------------------
+	// Pause Overlay
+	// ---------------------------------------------------------------------------
+	// Show pause overlay with dimming effect and "PAUSED" text.
 	// Emulates FUN_405A21 pause rendering (lines 242-305)
 	void showPauseOverlay();
 
 	// Target lock timer (DAT_00443676) - set to 7 when crosshair is over enemy
 	int _targetLockTimer;
 
-	// ========== Audio Handling ==========
-	// Rebel Assault 2 doesn't use iMUSE - audio is handled directly here
+	// ---------------------------------------------------------------------------
+	// Audio Handling
+	// ---------------------------------------------------------------------------
+	// RA2 doesn't use iMUSE -- audio is handled directly through the mixer.
 
 	static const int kRA2MaxAudioTracks = 4;
 
@@ -1178,7 +1230,9 @@ public:
 	// Queue audio data for playback on a specific track
 	void queueAudioData(int trackIdx, uint8 *data, int32 size, int volume, int pan);
 
-	// ========== Sound Effects (SAD files) ==========
+	// ---------------------------------------------------------------------------
+	// Sound Effects (SAD files)
+	// ---------------------------------------------------------------------------
 	// 8 standalone SAUD files in SYSTM/ loaded at init for one-shot SFX.
 	// Slot mapping (from FUN_0042a3b0 init):
 	//   0=BLAST.SAD   1=CRASH.SAD   2=EXPLODE.SAD  3=ALERT.SAD
@@ -1200,7 +1254,9 @@ public:
 	// slot: 0-7 (SAD file index), volume: 0-127, pan: -127..+127
 	void playSfx(int slot, int volume, int pan);
 
-	// ========== Auxiliary Sound Buffers ==========
+	// ---------------------------------------------------------------------------
+	// Auxiliary Sound Buffers
+	// ---------------------------------------------------------------------------
 	// 4 pre-allocated buffers (30000 bytes each) loaded from IACT stream data.
 	// Original: DAT_00480308[0..3], loaded via FUN_004118df, played via FUN_00411931.
 	// Used for embedded sound effects (e.g., soldier death sounds in handler 8 levels).

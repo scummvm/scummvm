@@ -35,8 +35,13 @@ namespace Scumm {
 // External codec functions from codec1.cpp
 extern void smushDecodeRLEOpaque(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 
+//
+// procPreRendering -- Pre-frame setup: background restore and corridor overlays.
+//
+// Restores Level 2 background before FOBJ decoding (Handler 8) and handles
+// Handler 25 corridor overlay positioning.
+//
 void InsaneRebel2::procPreRendering(byte *renderBitmap) {
-	// Call base class implementation first (handles Full Throttle state machine)
 	Insane::procPreRendering(renderBitmap);
 
 	// Reset opcode 6 init flag at the start of each new video.
@@ -93,10 +98,10 @@ void InsaneRebel2::procPreRendering(byte *renderBitmap) {
 	}
 }
 
+// procIACT -- Main IACT chunk dispatcher (overrides Insane::procIACT).
 void InsaneRebel2::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 					  int16 par1, int16 par2, int16 par3, int16 par4) {
-	// Debug: Log all IACT opcodes
 	debug("Rebel2 IACT: opcode=%d par2=%d par3=%d par4=%d gameState=%d sceneId=%d",
 		par1, par2, par3, par4, _gameState, _currSceneId);
 
@@ -162,7 +167,7 @@ void InsaneRebel2::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan
 		iactRebel2Scene1(renderBitmap, codecparam, setupsan12, setupsan13, b, size, flags, par1, par2, par3, par4);
 }
 
-
+// iactRebel2Scene1 -- Scene 1 IACT dispatcher (FUN_4028C5 / FUN_4033CF).
 void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 				  int16 par1, int16 par2, int16 par3, int16 par4) {
@@ -290,6 +295,8 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 		debug("Rebel2 IACT: Unknown Opcode %d (par2=%d par3=%d par4=%d)", par1, par2, par3, par4);
 	}
 }
+
+// iactRebel2Opcode2 -- Link table and state setup (FUN_00407fcb).
 void InsaneRebel2::iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4) {
 	// Handle IACT opcode 2 subcases based on par3 (type). Mirrors FUN_00407fcb behavior where relevant.
 	// Keep existing linking behavior (par3 == 4) for compatibility.
@@ -400,6 +407,8 @@ void InsaneRebel2::iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, 
 		debug("Rebel2 IACT Opcode2: Unhandled par3=%d par4=%d", par3, par4);
 	}
 }
+
+// iactRebel2Opcode3 -- Damage and hit counter processing (FUN_4092D9 / FUN_40E35E / FUN_401234).
 void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4) {
 	// IACT opcode 3 — damage and hit counter processing.
 	// Based on FUN_4092D9 (Handler 0x26), FUN_40E35E (Handler 7), FUN_401234 (Handler 8).
@@ -552,6 +561,13 @@ void InsaneRebel2::iactRebel2Opcode3(Common::SeekableReadStream &b, int16 par2, 
 	}
 }
 
+//
+// iactRebel2Opcode6 -- Level setup / mode switch (FUN_41CADB case 4)
+//
+// Per-wave initialization: clears bit table, resets link tables, configures
+// handler mode (ship/turret/corridor), and loads collision zones. Called once
+// per wave video on frame 0.
+//
 void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStream &b, int32 chunkSize, int16 par2, int16 par3, int16 par4) {
 	// Opcode 6: Level setup / mode switch
 	// Based on FUN_41CADB case 4 (switch on *local_14 - 2 == 4, meaning opcode 6)
@@ -1464,16 +1480,19 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 	}
 }
 
+//
+// iactRebel2Opcode8 -- HUD/Ship resource loading (FUN_0040c3cc / FUN_00401234 / FUN_00407fcb)
+//
+// Decodes embedded ANIM data from IACT chunks and dispatches to
+// handler-specific loaders for NUT sprites, HUD overlays, and backgrounds.
+//
+// Handler-specific routing:
+//   Handler 7  (FLY):  FLY NUT sprites via par4 (1, 2, 3, 11)
+//   Handler 8  (POV):  POV NUT sprites via par3 (1, 3, 6, 7) or background via par4=5
+//   Handler 0x26 (turret): Turret HUD NUT via par3 (1-4)
+//   Handler 0x19: Mixed turret mode, similar to 0x26
+//
 void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStream &b, int32 chunkSize, int16 par2, int16 par3, int16 par4) {
-	// Opcode 8: HUD/Ship resource loading
-	// Dispatches to handler-specific loading functions based on current handler and parameters.
-	//
-	// Handler-specific routing (based on retail disassembly):
-	//   Handler 7 (FUN_0040c3cc):  FLY NUT sprites via par4 (1, 2, 3, 11)
-	//   Handler 8 (FUN_00401234):  POV NUT sprites via par3 (1, 3, 6, 7) or background via par4=5
-	//   Handler 0x26 (FUN_00407fcb): Turret HUD NUT via par3 (1-4)
-	//   Handler 0x19: Mixed turret mode, similar to 0x26
-	//
 	// Sound loading: par3 in range 21-47
 
 	debug("Rebel2 IACT Opcode 8: handler=%d par2=%d par3=%d par4=%d (gameState=%d)",
@@ -1706,6 +1725,7 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 	b.seek(startPos);
 }
 
+// loadHandler25ShotOriginTable -- Parse shot origin coordinate pairs from IACT payload.
 bool InsaneRebel2::loadHandler25ShotOriginTable(Common::SeekableReadStream &b, int64 startPos, int64 remaining) {
 	// IACT layout at this point:
 	// - stream is positioned after par1..par4 (8 bytes consumed by caller)
@@ -1793,10 +1813,13 @@ bool InsaneRebel2::loadHandler25ShotOriginTable(Common::SeekableReadStream &b, i
 	return true;
 }
 
-// ======================= Opcode 8 Helper Functions =======================
-// These helper functions are extracted from the original monolithic iactRebel2Opcode8
-// to improve code readability and match the retail FUN_* function structure.
+// ---------------------------------------------------------------------------
+// Opcode 8 Helper Functions
+// ---------------------------------------------------------------------------
+// Extracted from the original monolithic iactRebel2Opcode8 to match
+// the retail FUN_* function structure.
 
+// loadHandler7FlySprites -- Handler 7 FLY NUT loading (FUN_0040c3cc case 6).
 bool InsaneRebel2::loadHandler7FlySprites(Common::SeekableReadStream &b, int64 remaining, int16 par4) {
 	// Handler 7 FLY NUT loading - FUN_0040c3cc case 6 (opcode 8)
 	// IACT structure after par1-par4 (we're at offset +8):
@@ -1908,6 +1931,7 @@ bool InsaneRebel2::loadHandler7FlySprites(Common::SeekableReadStream &b, int64 r
 	return assigned;
 }
 
+// loadTurretHudOverlay -- Handler 0x26/0x19 turret HUD loading (FUN_00407fcb case 8).
 bool InsaneRebel2::loadTurretHudOverlay(byte *animData, int32 size, int16 par3) {
 	// Handler 0x26/0x19 turret HUD overlay loading - FUN_00407fcb case 8
 	// Resolution-dependent loading:
@@ -1953,6 +1977,7 @@ bool InsaneRebel2::loadTurretHudOverlay(byte *animData, int32 size, int16 par3) 
 	return true;
 }
 
+// loadHandler8ShipSprites -- Handler 8 POV NUT loading (FUN_00401234 case 6).
 bool InsaneRebel2::loadHandler8ShipSprites(byte *animData, int32 size, int16 par4) {
 	// Handler 8 ship POV NUT loading - FUN_00401234 case 6 (opcode 8)
 	// par4 values (from IACT data offset +6, NOT par3 which is always 0):
@@ -2005,6 +2030,7 @@ bool InsaneRebel2::loadHandler8ShipSprites(byte *animData, int32 size, int16 par
 	return true;
 }
 
+// loadHandler25GrdSprites -- Handler 25 GRD NUT loading (FUN_0041cadb case 6).
 bool InsaneRebel2::loadHandler25GrdSprites(byte *animData, int32 size, int16 par4) {
 	// Handler 25 GRD ship NUT loading - FUN_0041cadb case 6 (opcode 8)
 	// par4 values (from IACT data offset +6):
@@ -2049,6 +2075,7 @@ bool InsaneRebel2::loadHandler25GrdSprites(byte *animData, int32 size, int16 par
 	return true;
 }
 
+// loadLevel2Background -- Decode Level 2 background from embedded ANIM (FUN_00401234 case 5).
 bool InsaneRebel2::loadLevel2Background(byte *animData, int32 size, byte *renderBitmap) {
 	// Level 2 background loading from embedded ANIM - FUN_00401234 case 5
 	// par4=5 contains the background image embedded as ANIM with FOBJ codec 3
@@ -2149,6 +2176,13 @@ bool InsaneRebel2::loadLevel2Background(byte *animData, int32 size, byte *render
 	return foundBackground;
 }
 
+//
+// iactRebel2Opcode9 -- Text/subtitle display via IACT chunk
+//
+// Handles inline text in IACT chunks. Most RA2 subtitles use TRES chunks
+// (handled by SmushPlayer::handleTextResource); this opcode is less common.
+// Supports multi-line wrapping, centered/shadowed text, and clip regions.
+//
 void InsaneRebel2::iactRebel2Opcode9(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4) {
 	// Opcode 9: Text/Subtitle Display via IACT chunk
 	// Note: Most RA2 subtitles use TRES chunks handled by SmushPlayer::handleTextResource()
@@ -2370,6 +2404,7 @@ void InsaneRebel2::iactRebel2Opcode9(byte *renderBitmap, Common::SeekableReadStr
 		posX, posY, textFlags, clipX, clipY, clipW, clipH);
 }
 
+// enemyUpdate -- Opcode 4: update enemy position and state (FUN_004028C5 / FUN_0041E7C2).
 void InsaneRebel2::enemyUpdate(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4) {
 	// Opcode 4: Enemy position update
 	// Read 5 shorts from the stream (offset +8 through +16)
@@ -2427,6 +2462,7 @@ void InsaneRebel2::enemyUpdate(byte *renderBitmap, Common::SeekableReadStream &b
 	}
 }
 
+// init_enemyStruct -- Create and append a new enemy entry.
 void InsaneRebel2::init_enemyStruct(int id, int32 x, int32 y, int32 w, int32 h, bool active, bool destroyed, int32 explosionFrame, int type) {
 	enemy e;
 	e.id = id;

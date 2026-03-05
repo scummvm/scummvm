@@ -29,10 +29,10 @@
 
 namespace Scumm {
 
-// =============================================================================
+// ---------------------------------------------------------------------------
 // Level 1 Handler - FUN_00417E53
 // Single gameplay phase (01P01.SAN)
-// =============================================================================
+// ---------------------------------------------------------------------------
 
 int InsaneRebel2::runLevel1() {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
@@ -93,11 +93,11 @@ int InsaneRebel2::runLevel1() {
 	return kLevelQuit;
 }
 
-// =============================================================================
+// ---------------------------------------------------------------------------
 // Wave State Management - FUN_00417b61
 // Waits for video completion, accumulates kill state, redistributes kill credits.
 // Used by all multi-wave levels (Level 2, 3, 6, etc.) as the core wave loop primitive.
-// =============================================================================
+// ---------------------------------------------------------------------------
 
 uint16 InsaneRebel2::processWaveEnd(int16 mask, int16 *budget, int16 threshold, uint16 flags) {
 	// FUN_00417b61: Core wave management function
@@ -197,11 +197,11 @@ uint16 InsaneRebel2::processWaveEnd(int16 mask, int16 *budget, int16 threshold, 
 	return result;
 }
 
-// =============================================================================
+// ---------------------------------------------------------------------------
 // Level 2 Handler - FUN_00418063
 // Multiple parts with P1/P2/P3 subdirectories
 // Random animation variants for each part
-// =============================================================================
+// ---------------------------------------------------------------------------
 
 int InsaneRebel2::runLevel2() {
 	// FUN_00418063: Level 2 "Corellia Star" - Third-person on-foot shooting
@@ -541,11 +541,11 @@ int InsaneRebel2::runLevel2() {
 	return kLevelQuit;
 }
 
-// =============================================================================
+// ---------------------------------------------------------------------------
 // Level 3 Handler - FUN_0041885F
 // Two phases with per-phase retry handling
 // Phase 1: 03PLAY1.SAN, Phase 2: 03PLAY2.SAN
-// =============================================================================
+// ---------------------------------------------------------------------------
 
 int InsaneRebel2::runLevel3() {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
@@ -660,10 +660,10 @@ int InsaneRebel2::runLevel3() {
 	return kLevelQuit;
 }
 
-// =============================================================================
+// ---------------------------------------------------------------------------
 // Level 4 Handler
 // Cutscene + single gameplay phase
-// =============================================================================
+// ---------------------------------------------------------------------------
 
 int InsaneRebel2::runLevel4() {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
@@ -726,11 +726,11 @@ int InsaneRebel2::runLevel4() {
 	return kLevelQuit;
 }
 
-// =============================================================================
+// ---------------------------------------------------------------------------
 // Level 5 Handler - FUN_00418EC6
 // Single gameplay phase (05PLAY.SAN)
 // Random A/B death video like Level 1
-// =============================================================================
+// ---------------------------------------------------------------------------
 
 int InsaneRebel2::runLevel5() {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
@@ -786,11 +786,11 @@ int InsaneRebel2::runLevel5() {
 	return kLevelQuit;
 }
 
-// =============================================================================
+// ---------------------------------------------------------------------------
 // Level 6 Handler - FUN_00419317
 // Two phases with per-phase retry (like Level 3)
 // Phase 1: 06PLAY1.SAN, Phase 2: 06PLAY2.SAN
-// =============================================================================
+// ---------------------------------------------------------------------------
 
 int InsaneRebel2::runLevel6() {
 	// FUN_004190d6 — Mos Eisley: two-phase on-foot (Handler 8)
@@ -911,12 +911,12 @@ int InsaneRebel2::runLevel6() {
 	return kLevelQuit;
 }
 
-// =============================================================================
+// ---------------------------------------------------------------------------
 // Level 7 Handler - FUN_0041974C
 // "TIE Training" - Canyon flight with fork at frame 1592
 // Single gameplay phase (07PLAY.SAN), optional second segment (07PLAYB.SAN)
 // Death: DAT_0047ab8c-based (fork reached → DIE_B, not reached → DIE_A)
-// =============================================================================
+// ---------------------------------------------------------------------------
 
 int InsaneRebel2::runLevel7() {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
@@ -988,12 +988,12 @@ int InsaneRebel2::runLevel7() {
 	return kLevelQuit;
 }
 
-// =============================================================================
+// ---------------------------------------------------------------------------
 // Level 8 Handler - FUN_00419976
 // "Flight to Imdaar" - Y-Wing space battle (single phase)
 // No cutscene (starts with BEG). flags=0x08 for gameplay.
 // Death: random A or B
-// =============================================================================
+// ---------------------------------------------------------------------------
 
 int InsaneRebel2::runLevel8() {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
@@ -1055,13 +1055,13 @@ int InsaneRebel2::runLevel8() {
 	return kLevelQuit;
 }
 
-// =============================================================================
+// ---------------------------------------------------------------------------
 // Level 9 Handler - FUN_00419B86
 // "The Mine Field" - Navigate through force fields (single phase)
 // No cutscene. Initial phaseState = 0xfffffffe (all bits set except bit 0).
 // Mid-events at frames 0x19f (415) and 0x352 (850): FUN_00407f55 (score checkpoint)
 // Death: DAT_0047ab94-based (0→A, 1→C, else→B)
-// =============================================================================
+// ---------------------------------------------------------------------------
 
 int InsaneRebel2::runLevel9() {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
@@ -1128,12 +1128,12 @@ int InsaneRebel2::runLevel9() {
 	return kLevelQuit;
 }
 
-// =============================================================================
+// ---------------------------------------------------------------------------
 // Level 10 Handler - FUN_00419E0A
 // "Speeder Bikes" - Forest speeder chase (single phase)
 // Has cutscene. Single death video (10DIE.SAN, no variants).
 // Original plays DIE then RETRY in sequence (no separate check).
-// =============================================================================
+// ---------------------------------------------------------------------------
 
 int InsaneRebel2::runLevel10() {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
@@ -1199,7 +1199,7 @@ int InsaneRebel2::runLevel10() {
 	return kLevelQuit;
 }
 
-// =============================================================================
+// ---------------------------------------------------------------------------
 // Level 11 Handler - FUN_0041A00C
 // "Inside the Terror" - Three phases + bridge puzzle (Handler 8, on-foot)
 //
@@ -1209,7 +1209,7 @@ int InsaneRebel2::runLevel10() {
 //   Exit when (phaseState & 0x70) == 0x70
 // POST3/POST3B/POST3C bridge cinematics
 // Phase 3 second half: P3/11P03_X (G-L) - after bridge, mask 0x0e
-// =============================================================================
+// ---------------------------------------------------------------------------
 
 int InsaneRebel2::runLevel11() {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
@@ -1591,7 +1591,7 @@ int InsaneRebel2::runLevel11() {
 	return kLevelQuit;
 }
 
-// =============================================================================
+// ---------------------------------------------------------------------------
 // Level 12 Handler - FUN_0041AA14
 // "Sewers" - Four phases FPS corridor shooting (Handler 25)
 //
@@ -1601,7 +1601,7 @@ int InsaneRebel2::runLevel11() {
 // Phase 3: P3/12P03_X (A,B,C,D,F) mask=6
 // Phase 4: P4/12P04_X (A,B,C,D,E,F) mask=0xe
 // Closing: 12P09.SAN
-// =============================================================================
+// ---------------------------------------------------------------------------
 
 int InsaneRebel2::runLevel12() {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
@@ -1926,14 +1926,14 @@ int InsaneRebel2::runLevel12() {
 	return kLevelQuit;
 }
 
-// =============================================================================
+// ---------------------------------------------------------------------------
 // Level 13 Handler - FUN_0041B3E1
 // "Escaping the Star Destroyer" - Two-phase flight/escape
 // Phase A: 13PLAY_A.SAN (main flight), transitions to Phase B at maxFrame-10
 // Phase B: 13PLAY_B.SAN (reactor loop, flags 0x468) — plays until
 //   (DAT_0047ab90 == 0 && DAT_0047ab7c == 0) meaning all targets destroyed.
 // Death: frame-based (A/B/C/B/D pattern)
-// =============================================================================
+// ---------------------------------------------------------------------------
 
 int InsaneRebel2::runLevel13() {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
@@ -2011,11 +2011,11 @@ int InsaneRebel2::runLevel13() {
 	return kLevelQuit;
 }
 
-// =============================================================================
+// ---------------------------------------------------------------------------
 // Level 14 Handler - FUN_0041B6E8
 // "TIE Attack" - Final space battle (single phase)
 // No cutscene. Single death video (14DIE.SAN, no variants).
-// =============================================================================
+// ---------------------------------------------------------------------------
 
 int InsaneRebel2::runLevel14() {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
@@ -2076,14 +2076,14 @@ int InsaneRebel2::runLevel14() {
 	return kLevelQuit;
 }
 
-// =============================================================================
+// ---------------------------------------------------------------------------
 // Level 15 Handler - FUN_0041B8D7
 // "Imdaar Alpha" - Final mission (single long phase with level ID switch)
 // Has cutscene. Mid-level: DAT_0047a7f8 changes from 0xf to 0x10 at frame 0x21e.
 // This represents a transition from the tunnel section to the core section.
 // Death: frame-based (A/B/C/B/C/B/D pattern with 7 thresholds)
 // On completion → FUN_0041BBE8 (credits/end game, not a playable level)
-// =============================================================================
+// ---------------------------------------------------------------------------
 
 int InsaneRebel2::runLevel15() {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
