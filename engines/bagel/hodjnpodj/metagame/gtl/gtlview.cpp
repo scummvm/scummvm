@@ -418,6 +418,7 @@ void CGtlView::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int 
 void CGtlView::OnLButtonDown(unsigned int nFlags, CPoint cMousePoint) {
 	CGtlDoc* xpDoc = GetDocument() ;
 
+	debugC(2, kDebugRandom, "Mouse click (%d, %d)", cMousePoint.x, cMousePoint.y);
 #ifndef RELEASE_BUILD
 	if (g_engine->_metagameClicks.size() < 20)
 		g_engine->_metagameClicks.push_back(Common::Point(cMousePoint.x, cMousePoint.y));
