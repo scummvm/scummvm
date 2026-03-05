@@ -305,3 +305,6 @@ scummvm.prg
 
 #Ignore Python generated files
 __pycache__/
+
+#Ignore vcpkg generated files
+/vcpkg_installed/
