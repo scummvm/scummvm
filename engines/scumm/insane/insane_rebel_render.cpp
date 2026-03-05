@@ -1846,7 +1846,7 @@ void InsaneRebel2::checkCollisionZones() {
 	}
 }
 
-void InsaneRebel2::checkHandler7CollisionZones() {
+void InsaneRebel2::checkHandler7CollisionZones(byte *renderBitmap, int pitch, int width, int height, int32 curFrame) {
 	// FUN_40E35E — Handler 7 per-frame collision system.
 	// Uses ship position (_flyShipScreenX/_flyShipScreenY) in raw buffer coords.
 	// Two modes depending on _flyControlMode:
@@ -1855,6 +1855,10 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 
 	// Note: _hitCooldown is decremented in renderSpaceExplosions (FUN_40F1C5)
 	// to match the original where the decrement happens during rendering.
+	//
+	// local_c in FUN_40E35E: proximity mask for nearby danger-zone shadow cues.
+	// bit 0=left, bit 1=right, bit 2=top, bit 3=bottom
+	uint16 warningMask = 0;
 
 	if (_flyControlMode == 0 || _flyControlMode == 2) {
 		// ---- Mode 0/2: Obstacle collision using SECONDARY zones (FUN_403b5b) ----
@@ -1931,10 +1935,20 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 					}
 				}
 			}
+
+			// FUN_40E35E line 104: mark near-danger proximity for shadow cue rendering.
+			// Uses the low byte of zone.filterValue (retail local_1c) to pick direction bits.
+			if (zone.field2 - 13 < zone.field1) {
+				uint32 bit = 4u << ((byte)zone.filterValue & 0x1f);
+				warningMask = (uint16)(warningMask | (uint16)bit);
+			}
 		}
 
-		// Corridor boundary proximity (lines 127-131)
-		// These flags are used for directional indicators (not critical for damage)
+		// Corridor side proximity (FUN_40E35E lines 127-131)
+		if (_flyShipScreenX < _corridorLeftX + 0x28)
+			warningMask |= 1;
+		if (_corridorRightX - 0x28 < _flyShipScreenX)
+			warningMask |= 2;
 
 	} else {
 		// ---- Mode 1/3: Wall/boundary collision using PRIMARY zones (FUN_403b34) ----
@@ -1967,13 +1981,15 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 							_playerDamage = 255;
 						_rebelHitCounter++;
 						_hitCooldown = 10;
-						playSfx(1, 127, 0);  // CRASH.SAD, top wall → center pan
 						debug("Rebel2: Handler7 Mode1/3 TOP WALL ship=(%d,%d) edgeY=%d damage=%d",
 							_flyShipScreenX, _flyShipScreenY, edgeY, damage);
 					}
 					_spaceShotDirection = 2;  // Direction: pushed down
 					_flyShipScreenY = edgeY;  // Push-back
+					playSfx(1, 127, 0);  // CRASH.SAD, top wall → center pan (always)
 					initDamageFlash();
+				} else if (_flyShipScreenY < edgeY + 0x28) {
+					warningMask |= 4;
 				}
 			}
 
@@ -1990,13 +2006,15 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 							_playerDamage = 255;
 						_rebelHitCounter++;
 						_hitCooldown = 10;
-						playSfx(1, 127, 0);  // CRASH.SAD, bottom wall → center pan
 						debug("Rebel2: Handler7 Mode1/3 BOTTOM WALL ship=(%d,%d) edgeY=%d damage=%d",
 							_flyShipScreenX, _flyShipScreenY, edgeY, damage);
 					}
 					_spaceShotDirection = 3;  // Direction: pushed up
 					_flyShipScreenY = edgeY;  // Push-back
+					playSfx(1, 127, 0);  // CRASH.SAD, bottom wall → center pan (always)
 					initDamageFlash();
+				} else if (edgeY - 0x28 < _flyShipScreenY) {
+					warningMask |= 8;
 				}
 			}
 
@@ -2006,6 +2024,12 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 				if (_flyShipScreenX < edgeX) {
 					// Ship left of left wall — push right
 					_flyShipScreenX = edgeX;  // Push-back
+
+					// FUN_40E35E resets horizontal history to force immediate rightward correction.
+					for (int j = 0; j < ARRAYSIZE(_velocityHistory); j++) {
+						_velocityHistory[j] = 127;
+					}
+
 					if (_hitCooldown < 5 && !_rebelInvulnerable) {
 						int damage = wallDamage;
 						_playerDamage += damage;
@@ -2013,11 +2037,11 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 							_playerDamage = 255;
 						_rebelHitCounter++;
 						_hitCooldown = 10;
-						playSfx(1, 127, -100);  // CRASH.SAD, left wall → pan left
 						debug("Rebel2: Handler7 Mode1/3 LEFT WALL ship=(%d,%d) edgeX=%d damage=%d",
 							_flyShipScreenX, _flyShipScreenY, edgeX, damage);
 					}
 					_spaceShotDirection = 0;  // Direction: pushed right
+					playSfx(1, 127, -100);  // CRASH.SAD, left wall → pan left (always)
 					initDamageFlash();
 				}
 			}
@@ -2028,6 +2052,12 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 				if (edgeX < _flyShipScreenX) {
 					// Ship right of right wall — push left
 					_flyShipScreenX = edgeX;  // Push-back
+
+					// FUN_40E35E resets horizontal history to force immediate leftward correction.
+					for (int j = 0; j < ARRAYSIZE(_velocityHistory); j++) {
+						_velocityHistory[j] = -127;
+					}
+
 					if (_hitCooldown < 5 && !_rebelInvulnerable) {
 						int damage = wallDamage;
 						_playerDamage += damage;
@@ -2035,14 +2065,38 @@ void InsaneRebel2::checkHandler7CollisionZones() {
 							_playerDamage = 255;
 						_rebelHitCounter++;
 						_hitCooldown = 10;
-						playSfx(1, 127, 100);  // CRASH.SAD, right wall → pan right
 						debug("Rebel2: Handler7 Mode1/3 RIGHT WALL ship=(%d,%d) edgeX=%d damage=%d",
 							_flyShipScreenX, _flyShipScreenY, edgeX, damage);
 					}
 					_spaceShotDirection = 1;  // Direction: pushed left
+					playSfx(1, 127, 100);  // CRASH.SAD, right wall → pan right (always)
 					initDamageFlash();
 				}
 			}
+		}
+	}
+
+	// FUN_40E35E tail: draw proximity danger shadow cues when enabled by frame/flags.
+	// Note: These are cue sprites (often perceived as "shadows"), not the aiming reticle.
+	LevelDifficultyParams dparams = getDifficultyParams();
+	if ((curFrame & 2) != 0 && (dparams.flags & 8) != 0 && _smush_iconsNut) {
+		int scale = (_vm->_screenWidth > 320 || _vm->_screenHeight > 200) ? 2 : 1;
+
+		if ((warningMask & 1) != 0 && _smush_iconsNut->getNumChars() > 0x2d) {
+			renderNutSprite(renderBitmap, pitch, width, height,
+				0xd7 * scale + _viewX, 0x55 * scale + _viewY, _smush_iconsNut, 0x2d);
+		}
+		if ((warningMask & 2) != 0 && _smush_iconsNut->getNumChars() > 0x2c) {
+			renderNutSprite(renderBitmap, pitch, width, height,
+				0x69 * scale + _viewX, 0x55 * scale + _viewY, _smush_iconsNut, 0x2c);
+		}
+		if ((warningMask & 4) != 0 && _smush_iconsNut->getNumChars() > 0x2b) {
+			renderNutSprite(renderBitmap, pitch, width, height,
+				0xa0 * scale + _viewX, 0x82 * scale + _viewY, _smush_iconsNut, 0x2b);
+		}
+		if ((warningMask & 8) != 0 && _smush_iconsNut->getNumChars() > 0x2a) {
+			renderNutSprite(renderBitmap, pitch, width, height,
+				0xa0 * scale + _viewX, 0x28 * scale + _viewY, _smush_iconsNut, 0x2a);
 		}
 	}
 }
@@ -2533,7 +2587,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	if (_rebelHandler == 0x26) {
 		checkCollisionZones();
 	} else if (_rebelHandler == 7) {
-		checkHandler7CollisionZones();
+		checkHandler7CollisionZones(renderBitmap, pitch, width, height, curFrame);
 	}
 
 	// Collision zone visualization (debug - for Handler 7/8 pilot modes)
@@ -3187,44 +3241,84 @@ void InsaneRebel2::renderHandler7Ship(byte *renderBitmap, int pitch, int width, 
 	if (spriteIndex >= numSprites)
 		spriteIndex = numSprites - 1;
 
-	// Transform game coordinates to screen coordinates (FUN_0041c720 equivalent)
-	// The perspective transform shifts the ship position based on perspective offsets.
-	// Close view: FOBJ offset = (-52 - perspX, -45 - perspY), ship at screen center.
-	// For now, use a simplified perspective: ship position = center + offset from center
-	// scaled by perspective. In the original, FUN_00424510 shifts all FOBJ sprites.
-	//
-	// Screen position for sprite drawing (FUN_0040d836 line 174):
-	//   drawX = transformedX - 0xd4, drawY = transformedY - 0x82
-	// Where transformedX/Y come from FUN_0041c720(shipX, shipY, perspX, perspY, viewShift)
-	//
-	// Simplified: screenX = 160 + (shipX - 212) * perspFactor
-	// With the perspective formula, objects near center barely move, objects at edges move more.
-	int drawX = (_flyShipScreenX - 0xd4) + _perspectiveX;
-	int drawY = (_flyShipScreenY - 0x82) + _perspectiveY;
+	// Simplified FUN_41C720-like transform to current render buffer coordinates.
+	int shipCenterX = (_flyShipScreenX - 0xd4) + _perspectiveX + 160 + _viewX;
+	int shipCenterY = (_flyShipScreenY - 0x82) + _perspectiveY + 100 + _viewY;
 
-	// Convert from game-center-relative to screen coordinates
-	// The sprite system expects coordinates relative to the 320x200 frame
-	// Center of frame = (160, 100), so offset = game position - game center
-	drawX += 160 + _viewX;
-	drawY += 100 + _viewY;
+	// FUN_40D836 lines 108-136: FLY002 proximity cues near corridor danger.
+	if (_flyLaserSprite && _flyLaserSprite->getNumChars() > 0) {
+		const int laserChars = _flyLaserSprite->getNumChars();
+		_flyEffectAnimCounter++;
+
+		if (_flyControlMode == 0) {
+			int16 leftDist = _flyShipScreenX - _corridorLeftX;
+			if (leftDist < 0x32) {
+				int cueIndex = _flyEffectAnimCounter % 10;
+				if (cueIndex >= 0 && cueIndex < laserChars) {
+					int cueX = ((shipCenterX - 0x28) - leftDist) - leftDist / 2;
+					renderNutSprite(renderBitmap, pitch, width, height, cueX, shipCenterY, _flyLaserSprite, cueIndex);
+				}
+			}
+
+			int16 rightDist = _corridorRightX - _flyShipScreenX;
+			if (rightDist < 0x32) {
+				int cueIndex = (_flyEffectAnimCounter % 10) + 10;
+				if (cueIndex >= 0 && cueIndex < laserChars) {
+					int cueX = rightDist / 2 + rightDist + shipCenterX + 0x28;
+					renderNutSprite(renderBitmap, pitch, width, height, cueX, shipCenterY, _flyLaserSprite, cueIndex);
+				}
+			}
+		} else {
+			int16 bottomDist = _corridorBottomY - _flyShipScreenY;
+			int bottomX = shipCenterX;
+			int bottomY = (_corridorBottomY - 0x82) + _perspectiveY + 100 + _viewY;
+
+			if (bottomDist < 0x19) {
+				_flyEffectAnimCounter++;
+				int cueIndex = _flyEffectAnimCounter % 10;
+				if (cueIndex >= 0 && cueIndex < laserChars)
+					renderNutSprite(renderBitmap, pitch, width, height, bottomX, bottomY, _flyLaserSprite, cueIndex);
+			}
+			if (bottomDist < 0x32) {
+				_flyEffectAnimCounter++;
+				int cueIndex = _flyEffectAnimCounter % 10;
+				if (cueIndex >= 0 && cueIndex < laserChars)
+					renderNutSprite(renderBitmap, pitch, width, height, bottomX, bottomY, _flyLaserSprite, cueIndex);
+			}
+
+			int cueIndex = _flyEffectAnimCounter % 10;
+			if (cueIndex >= 0 && cueIndex < laserChars)
+				renderNutSprite(renderBitmap, pitch, width, height, bottomX, bottomY, _flyLaserSprite, cueIndex);
+		}
+	}
 
 	// Center the sprite on the position
 	int spriteW = _flyShipSprite->getCharWidth(spriteIndex);
 	int spriteH = _flyShipSprite->getCharHeight(spriteIndex);
-	drawX -= spriteW / 2;
-	drawY -= spriteH / 2;
+	int drawX = shipCenterX - spriteW / 2;
+	int drawY = shipCenterY - spriteH / 2;
 
 	renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _flyShipSprite, spriteIndex);
 
-	// Laser overlay if firing (same position as ship)
-	if (_shipFiring && _flyLaserSprite && _flyLaserSprite->getNumChars() > 0) {
-		int laserIndex = spriteIndex % _flyLaserSprite->getNumChars();
-		renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _flyLaserSprite, laserIndex);
+	// FUN_40D836 lines 176-180: optional FLY002 overlay pass at ship position.
+	if (_flyLaserSprite && _flyOverlayRepeatCount > 0) {
+		int overlayIndex = spriteIndex + 0x14;
+		if (overlayIndex >= 0 && overlayIndex < _flyLaserSprite->getNumChars()) {
+			for (int i = 0; i < _flyOverlayRepeatCount; i++) {
+				renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _flyLaserSprite, overlayIndex);
+			}
+		}
 	}
 
-	debug("Rebel2 Handler7Ship: draw=(%d,%d) sprite=%d/%d shipPos=(%d,%d) persp=(%d,%d) smoothVel=%d vertIn=%d",
+	// FUN_40D836 lines 181-183: optional FLY003 overlay in high detail mode.
+	if (_flyTargetSprite && _rebelDetailMode >= 0 &&
+		spriteIndex >= 0 && spriteIndex < _flyTargetSprite->getNumChars()) {
+		renderNutSprite(renderBitmap, pitch, width, height, drawX, drawY, _flyTargetSprite, spriteIndex);
+	}
+
+	debug("Rebel2 Handler7Ship: draw=(%d,%d) sprite=%d/%d shipPos=(%d,%d) persp=(%d,%d) smoothVel=%d vertIn=%d fxCtr=%d fxRep=%d",
 		drawX, drawY, spriteIndex, numSprites, _flyShipScreenX, _flyShipScreenY,
-		_perspectiveX, _perspectiveY, _smoothedVelocity, _verticalInput);
+		_perspectiveX, _perspectiveY, _smoothedVelocity, _verticalInput, _flyEffectAnimCounter, _flyOverlayRepeatCount);
 }
 
 void InsaneRebel2::renderHandler8Ship(byte *renderBitmap, int pitch, int width, int height) {

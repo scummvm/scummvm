@@ -722,7 +722,8 @@ public:
 	// Mode 0/2: Obstacle collision using secondary zones — inside quad = hit
 	// Mode 1/3: Wall/boundary collision using primary zones — per-edge push-back
 	// Uses ship position (_flyShipScreenX/_flyShipScreenY) in raw buffer coords
-	void checkHandler7CollisionZones();
+	// and draws proximity shadow cues for nearby danger zones.
+	void checkHandler7CollisionZones(byte *renderBitmap, int pitch, int width, int height, int32 curFrame);
 
 	int16 _playerDamage;  // Legacy damage counter (kept for compatibility/telemetry)
 	int16 _playerShield;  // Shields: 0..255 where 255 = full
@@ -959,16 +960,18 @@ public:
 	//
 	// Based on FUN_0040c3cc and FUN_0040d836 disassembly:
 	// - DAT_0047fee8: Ship direction sprites (FLY001, par3=1, 35 frames)
-	// - DAT_0047fef0: Laser fire sprites (FLY002, par3=3)
+	// - DAT_0047fef0: Ship effect sprites (FLY002, par3=3)
 	// - DAT_0047fef8: Targeting overlay (FLY003, par3=2)
 	// - DAT_0047ff00: High-res alternative (FLY004, par3=11)
 	// - DAT_00443708: Ship X position, DAT_0044370a: Ship Y position
 	// - DAT_0044370c: Smoothed horizontal velocity, DAT_0044370e: Vertical input
 
 	NutRenderer *_flyShipSprite;     // DAT_0047fee8 - FLY001 (35 direction frames)
-	NutRenderer *_flyLaserSprite;    // DAT_0047fef0 - FLY002
+	NutRenderer *_flyLaserSprite;    // DAT_0047fef0 - FLY002 (danger/overlay effects)
 	NutRenderer *_flyTargetSprite;   // DAT_0047fef8 - FLY003
 	NutRenderer *_flyHiResSprite;    // DAT_0047ff00 - FLY004
+	int16 _flyEffectAnimCounter;     // DAT_0047ff1c - animated FLY002 cue counter
+	int16 _flyOverlayRepeatCount;    // DAT_00443b52 - repeats for ship overlay effect
 
 	// Handler 7 ship state (FUN_40C3CC / FUN_0040d836)
 	// Position in game coordinate space [20,404]x[20,240], center=(212,130)

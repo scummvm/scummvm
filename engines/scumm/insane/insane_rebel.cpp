@@ -349,9 +349,11 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 
 	// Initialize Handler 7 FLY ship system
 	_flyShipSprite = nullptr;    // FLY001 - 35 direction frames
-	_flyLaserSprite = nullptr;   // FLY002 - laser sprites
+	_flyLaserSprite = nullptr;   // FLY002 - effect sprites (danger/overlay cues)
 	_flyTargetSprite = nullptr;  // FLY003 - targeting overlay
 	_flyHiResSprite = nullptr;   // FLY004 - high-res alternative
+	_flyEffectAnimCounter = 0;   // DAT_0047ff1c
+	_flyOverlayRepeatCount = 0;  // DAT_00443b52
 	_flyShipScreenX = 0xd4;      // Start at center (212) - matches DAT_00443708 default
 	_flyShipScreenY = 0x82;      // Start at center (130) - matches DAT_0044370a default
 	_smoothedVelocity = 0;       // DAT_0044370c
