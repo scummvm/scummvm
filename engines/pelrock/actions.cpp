@@ -370,7 +370,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_dialog->say(_res->_ingameTexts[MEHANTOMADO_EL_PELO]);
 		break;
 	case 334:
-		addInventoryItem(86);
+		addInventoryItem(76);
 		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
 	case 335:
@@ -1203,8 +1203,8 @@ void PelrockEngine::closeTravelAgencyDoor(HotSpot *hotspot) {
 }
 
 void PelrockEngine::usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot) {
-	_state->removeInventoryItem(76);
-	addInventoryItem(86);
+	_state->removeInventoryItem(86);
+	addInventoryItem(76);
 	_sound->playMusicTrack(27);
 	checkIngredients();
 	_dialog->say(_res->_ingameTexts[CUIDADOIMPRUDENTE]);
@@ -1213,10 +1213,13 @@ void PelrockEngine::usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot) {
 	playAlfredSpecialAnim(5);
 	_sound->playSound(_room->_roomSfx[0], 0); // Belch
 	waitForSoundEnd();
+	_alfredState.animState = ALFRED_SKIP_DRAWING;
 	_graphics->fadeToBlack(10);
 	// update conversaton state
 	_alfredState.x = 300;
 	_alfredState.y = 238;
+	waitForSoundEnd();
+	_alfredState.animState = ALFRED_IDLE;
 	setScreenAndPrepare(28, ALFRED_DOWN);
 	_dialog->say(_res->_ingameTexts[QUEOSCUROESTAESTO]);
 }
@@ -1879,6 +1882,7 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 		HotSpot *floorTile = _room->findHotspotByExtra(462);
 		floorTile->actionFlags = ACTION_MASK_OPEN;
 		_room->changeHotSpot(*floorTile);
+		break;
 	}
 
 	case 307: {
