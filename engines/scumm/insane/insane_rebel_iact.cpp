@@ -265,8 +265,9 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 				body0, body1, _corridorRightX);
 			break;
 		case 5:
-			// Flag value
-			debug("Rebel2 Opcode 7 par4=5: flag=%d", body0);
+			// DAT_00443b52: repeats FLY002 ship overlay in FUN_40D836.
+			_flyOverlayRepeatCount = body0;
+			debug("Rebel2 Opcode 7 par4=5: flyOverlayRepeat=%d", _flyOverlayRepeatCount);
 			break;
 		default:
 			debug("Rebel2 Opcode 7 par4=%d: body=(%d,%d) — unknown sub-opcode", par4, body0, body1);
