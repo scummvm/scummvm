@@ -28,6 +28,9 @@ namespace HodjNPodj {
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("dumpres", WRAP_METHOD(Console, cmdDumpRes));
+#ifndef RELEASE_BUILD
+	registerCmd("clicks", WRAP_METHOD(Console, cmdClicks));
+#endif
 }
 
 Console::~Console() {
@@ -73,6 +76,23 @@ bool Console::cmdDumpRes(int argc, const char **argv) {
 
 	return true;
 }
+
+#ifndef RELEASE_BUILD
+bool Console::cmdClicks(int argc, const char **argv) {
+	debugPrintf("Initial seed: %u\n", g_engine->getRandomSeed());
+
+	auto &clicks = g_engine->_metagameClicks;
+	if (clicks.empty()) {
+		debugPrintf("No boardgame clicks yet.\n");
+	} else {
+		debugPrintf("Boardgame clicks:\n");
+		for (const Common::Point &pt : clicks)
+			debugPrintf("(%d, %d)\n", pt.x, pt.y);
+	}
+
+	return true;
+}
+#endif
 
 } // namespace HodjNPodj
 } // namespace Bagel

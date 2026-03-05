@@ -26,6 +26,7 @@
 #include "bagel/hodjnpodj/metagame/gtl/gtlview.h"
 #include "bagel/hodjnpodj/metagame/gtl/gtlfrm.h"
 #include "bagel/hodjnpodj/hnplibs/rules.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/detection.h"
 
 namespace Bagel {
@@ -74,6 +75,10 @@ CGtlView::CGtlView() {
 
 	if (GetDocument())
 		GetDocument()->FixChecks() ;
+
+#ifndef RELEASE_BUILD
+	g_engine->_metagameClicks.clear();
+#endif
 
 	gpMyView = this;
 }
@@ -413,7 +418,11 @@ void CGtlView::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int 
 void CGtlView::OnLButtonDown(unsigned int nFlags, CPoint cMousePoint) {
 	CGtlDoc* xpDoc = GetDocument() ;
 
-	debugC(2, kDebugRandom, "Mouse click (%d, %d)", cMousePoint.x, cMousePoint.y);
+#ifndef RELEASE_BUILD
+	if (g_engine->_metagameClicks.size() < 20)
+		g_engine->_metagameClicks.push_back(Common::Point(cMousePoint.x, cMousePoint.y));
+#endif
+
 	xpDoc->m_xpGtlData->AcceptClick(this, cMousePoint, CLICK_LDOWN) ;
 
 	if (bExitMetaDLL)

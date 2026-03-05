@@ -41,6 +41,9 @@ public:
 	Common::String _gameId;
 	Metagame::CBfcMgr _bfcMgr;
 	Graphics::Surface _boardgameThumbnail;
+#ifndef RELEASE_BUILD
+	Common::Array<Common::Point> _metagameClicks;
+#endif
 
 public:
 	HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -53,6 +56,9 @@ public:
 	 */
 	uint32 getRandomNumber(uint maxNum) {
 		return BagelEngine::getRandomNumber(maxNum);
+	}
+	uint32 getRandomSeed() const {
+		return _randomSource.getSeed();
 	}
 
 	bool hasFeature(EngineFeature f) const override {
