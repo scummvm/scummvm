@@ -397,6 +397,8 @@ int NutRenderer::drawCharV7(byte *buffer, Common::Rect &clipRect, int x, int y, 
 	if (chr >= _numChars)
 		return 0;
 
+
+
 	if (_direction < 0)
 		x -= _chars[chr].width;
 

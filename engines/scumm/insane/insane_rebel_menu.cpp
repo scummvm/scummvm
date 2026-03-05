@@ -433,8 +433,100 @@ void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int h
 	}
 }
 
+// Format-code-aware string width calculation
+// Handles ^fNN (font switch), ^cNNN (color), ^^ (literal ^)
+int InsaneRebel2::getMenuStringWidth(const char *str) const {
+	NutRenderer *fonts[3] = { _smush_talkfontNut, _smush_smalfontNut, _smush_titlefontNut };
+	NutRenderer *defaultFont = fonts[0] ? fonts[0] : _smush_smalfontNut;
+	if (!defaultFont)
+		return 0;
+
+	int w = 0;
+	NutRenderer *curFont = defaultFont;
+	while (*str) {
+		if (*str == '^') {
+			const char *p = str + 1;
+			if (*p == '^') { str = p + 1; continue; }
+			if (*p == 'f') {
+				p++;
+				int idx = 0;
+				while (*p >= '0' && *p <= '9') idx = idx * 10 + (*p++ - '0');
+				curFont = (idx >= 0 && idx < 3 && fonts[idx]) ? fonts[idx] : defaultFont;
+				str = p;
+				continue;
+			}
+			if (*p == 'c' || *p == 'l') {
+				p++;
+				while (*p >= '0' && *p <= '9') p++;
+				str = p;
+				continue;
+			}
+		}
+		byte c = (byte)*str++;
+		if (c >= 'a' && c <= 'z') c = c - 'a' + 'A';
+		if (curFont && c < curFont->getNumChars())
+			w += curFont->getCharWidth(c);
+	}
+	return w;
+}
+
+// Format-code-aware string rendering at (x, y)
+void InsaneRebel2::drawMenuString(byte *renderBitmap, const char *str, int x, int y, int defaultColor) {
+	NutRenderer *fonts[3] = { _smush_talkfontNut, _smush_smalfontNut, _smush_titlefontNut };
+	NutRenderer *defaultFont = fonts[0] ? fonts[0] : _smush_smalfontNut;
+	if (!defaultFont)
+		return;
+
+	Common::Rect clipRect(0, 0, _vm->_screenWidth, _vm->_screenHeight);
+	int pitch = _vm->_screenWidth;
+
+	NutRenderer *curFont = defaultFont;
+	int curColor = defaultColor;
+	while (*str) {
+		if (*str == '^') {
+			const char *p = str + 1;
+			if (*p == '^') { str = p + 1; continue; }
+			if (*p == 'f') {
+				p++;
+				int idx = 0;
+				while (*p >= '0' && *p <= '9') idx = idx * 10 + (*p++ - '0');
+				curFont = (idx >= 0 && idx < 3 && fonts[idx]) ? fonts[idx] : defaultFont;
+				str = p;
+				continue;
+			}
+			if (*p == 'c') {
+				p++;
+				int color = 0;
+				while (*p >= '0' && *p <= '9') color = color * 10 + (*p++ - '0');
+				curColor = color;
+				str = p;
+				continue;
+			}
+			if (*p == 'l') { str = p + 1; continue; }
+		}
+		byte c = (byte)*str++;
+		if (c >= 'a' && c <= 'z') c = c - 'a' + 'A';
+		if (!curFont) continue;
+		if (c >= curFont->getNumChars()) continue;
+		int charW = curFont->getCharWidth(c);
+		if (x >= 0 && y >= 0 && charW > 0)
+			curFont->drawCharV7(renderBitmap, clipRect, x, y, pitch, curColor,
+			                    kStyleAlignLeft, c, false, false);
+		x += charW;
+	}
+}
+
+void InsaneRebel2::drawMenuStringCentered(byte *renderBitmap, const char *str, int cx, int y, int defaultColor) {
+	int w = getMenuStringWidth(str);
+	drawMenuString(renderBitmap, str, cx - w / 2, y, defaultColor);
+}
+
+void InsaneRebel2::drawMenuStringRight(byte *renderBitmap, const char *str, int rx, int y, int defaultColor) {
+	int w = getMenuStringWidth(str);
+	drawMenuString(renderBitmap, str, rx - w, y, defaultColor);
+}
+
 void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int height) {
-	// =====================================================================
 	// Main menu renderer - calls shared drawMenuItems()
 	// Emulates FUN_004147b2 -> FUN_0041f5ae with param_3=7, param_4=0
 	// =====================================================================
@@ -742,9 +834,9 @@ int InsaneRebel2::runMainMenu() {
 			_menuInputActive = true;
 			break;
 
-		case 4:  // Show Top Pilots -> high score display
+		case 4:  // Show Top Pilots -> high score display (FUN_00420116(-1))
 			debug("Rebel2: Show Top Pilots selected");
-			// TODO: Implement high score display (FUN_00420116(-1))
+			showTopPilots();
 			break;
 
 		case 5:  // Show Credits -> play credits video
@@ -1197,20 +1289,14 @@ void InsaneRebel2::drawPreviewThumbnail(byte *renderBitmap, int pitch, int width
 	}
 }
 
-// Rating-to-medal string conversion - emulates FUN_0042001f
-// Converts a rating value (0-50) to a string of medal characters for TALKFONT.NUT:
-//   Every 9 points → big medal (DAT_00482550)
-//   Every 3 points → medium medal (DAT_00482558)
-//   Every 1 point  → small medal (DAT_00482560)
+// Rating to medal string (FUN_0042001f): TALKFONT glyphs 3=big, 2=medium, 1=small
 Common::String InsaneRebel2::getRankString(int rating) {
 	if (rating > 50)
 		rating = 50;
 	Common::String result;
-	// TODO: Medal char bytes are placeholders — verify against actual NUT font glyphs
-	// from DAT_00482550/58/60 in the game binary
-	while (rating >= 9) { result += '\x83'; rating -= 9; }  // big medal
-	while (rating >= 3) { result += '\x82'; rating -= 3; }  // medium medal
-	while (rating >= 1) { result += '\x81'; rating -= 1; }  // small medal
+	while (rating >= 9) { result += (char)3; rating -= 9; }
+	while (rating >= 3) { result += (char)2; rating -= 3; }
+	while (rating >= 1) { result += (char)1; rating -= 1; }
 	return result;
 }
 
@@ -1257,9 +1343,7 @@ Common::String InsaneRebel2::getChapterPassword(int level, int difficulty) {
 	return kPasswordTable[idx];
 }
 
-// Draw score/info line at bottom of chapter select - emulates FUN_00434cb0 calls
-// For unlocked chapters: score display using TRS 80 at (25, 190)
-// For locked chapters: password prompt using TRS 81 at (30, 190)
+// Draw score/info line at bottom of chapter select
 void InsaneRebel2::drawChapterInfoLine(byte *renderBitmap, int pitch, int width, int height) {
 	if (_chapterSelection < 0 || _chapterSelection >= 16)
 		return;
@@ -1267,74 +1351,6 @@ void InsaneRebel2::drawChapterInfoLine(byte *renderBitmap, int pitch, int width,
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	if (!splayer)
 		return;
-
-	// Font system — same as drawMenuItems()
-	NutRenderer *fonts[3] = {
-		_smush_talkfontNut,
-		_smush_smalfontNut,
-		_smush_titlefontNut
-	};
-	NutRenderer *defaultFont = fonts[0] ? fonts[0] : _smush_smalfontNut;
-	if (!defaultFont)
-		return;
-
-	Common::Rect clipRect(0, 0, _vm->_screenWidth, _vm->_screenHeight);
-	int actualPitch = _vm->_screenWidth;
-
-	// Format code parser — same as drawMenuItems()
-	auto parseFormatCode = [&](const char *&str, int &outColor) -> int {
-		if (*str != '^')
-			return -1;
-		const char *p = str + 1;
-		if (*p == '^') { str = p; return -1; }
-		if (*p == 'f') {
-			p++;
-			int fontIdx = 0;
-			while (*p >= '0' && *p <= '9') { fontIdx = fontIdx * 10 + (*p - '0'); p++; }
-			str = p;
-			return (fontIdx >= 0 && fontIdx < 3) ? fontIdx : 0;
-		}
-		if (*p == 'c') {
-			p++;
-			int color = 0;
-			while (*p >= '0' && *p <= '9') { color = color * 10 + (*p - '0'); p++; }
-			str = p;
-			outColor = color;
-			return -2;
-		}
-		return -1;
-	};
-
-	// String rendering with format codes
-	auto drawString = [&](const char *str, int x, int y) {
-		NutRenderer *curFont = defaultFont;
-		int curColor = 1;
-
-		while (*str) {
-			int fontChange = parseFormatCode(str, curColor);
-			if (fontChange >= 0) {
-				curFont = fonts[fontChange] ? fonts[fontChange] : defaultFont;
-				continue;
-			}
-			if (fontChange == -2)
-				continue;
-
-			byte c = (byte)*str++;
-			if (c >= 'a' && c <= 'z')
-				c = c - 'a' + 'A';
-			if (!curFont)
-				continue;
-			int numChars = curFont->getNumChars();
-			if (c >= numChars)
-				continue;
-			int charW = curFont->getCharWidth(c);
-			if (x >= 0 && y >= 0 && charW > 0) {
-				curFont->drawCharV7(renderBitmap, clipRect, x, y, actualPitch, curColor,
-				                    kStyleAlignLeft, c, false, false);
-			}
-			x += charW;
-		}
-	};
 
 	if (_chapterUnlocked[_chapterSelection]) {
 		// Unlocked: show score info using TRS 80 at X=25 (0x19), Y=190 (0xbe)
@@ -1358,15 +1374,12 @@ void InsaneRebel2::drawChapterInfoLine(byte *renderBitmap, int pitch, int width,
 		Common::String displayStr = Common::String::format(fmtStr,
 			(short)pilotLives, (long)pilotScore, rankStr.c_str());
 
-		drawString(displayStr.c_str(), 25, 190);
+		drawMenuString(renderBitmap, displayStr.c_str(), 25, 190);
 	} else {
-		// Locked: show password prompt using TRS 81 at X=30 (0x1e), Y=190 (0xbe)
-		// Format: "%s ^c005%s%c" (TRS 81 + green password input + blinking cursor)
 		const char *lockStr = splayer->getString(81);
 		if (!lockStr || !lockStr[0])
 			lockStr = "^f01^c248UNREGISTERED - PASSCODE REQUIRED";
 
-		// Blinking cursor: alternate '_' and ' ' (original uses bit 1 of frame counter)
 		static int cursorCounter = 0;
 		cursorCounter++;
 		char cursor = ((cursorCounter / 8) & 1) ? '_' : ' ';
@@ -1374,7 +1387,7 @@ void InsaneRebel2::drawChapterInfoLine(byte *renderBitmap, int pitch, int width,
 		Common::String displayStr = Common::String::format("%s ^c005%s%c",
 			lockStr, _passwordInput.c_str(), cursor);
 
-		drawString(displayStr.c_str(), 30, 190);
+		drawMenuString(renderBitmap, displayStr.c_str(), 30, 190);
 	}
 }
 
@@ -1787,6 +1800,191 @@ void InsaneRebel2::drawLevelSelectOverlay(byte *renderBitmap, int pitch, int wid
 	}
 
 	drawMenuItems(renderBitmap, pitch, width, height, pilotItems, _numPilots + 4, _levelSelection);
+}
+
+// ==================== Top Pilots Screen (FUN_00420116) ====================
+// Displays ranked pilot scores with animated reveal over a menu background video.
+//
+// Original FUN_00420116 at 0x420116:
+// - Plays random menu video as background (FUN_0041fdc8)
+// - Draws title from TRS string 0x96 (150) centered at (152, 10) in low-res
+// - Iterates through ranking table (DAT_00443b58, 0x4a-byte records, max 15)
+// - Each row shows: rank medals, pilot name, difficulty, chapter, total score
+// - Rows appear one per frame (animated reveal up to local_10)
+// - param_1 == -2: 240 frame loop (from options); else 120 frames (from main menu)
+// - Exits on mouse click (DAT_0047a7e4 & 1) or any keypress (DAT_0047a7e8 != 0)
+//
+// Ranking table record (0x4a = 74 bytes, from FUN_00410271):
+//   +0x00 (4): timestamp
+//   +0x04 (40): pilot name (or "-----" for defaults)
+//   +0x36 (4): total score
+//   +0x3a (4): total rating
+//   +0x3e (2): difficulty tier (1-3) — TRS lookup: value + 0x9b (155)
+//   +0x40 (2): highest chapter completed (1-15)
+//
+// Column X positions (low-res 320x200):
+//   Rank medals: 43 (0x2b)  - FUN_004341a0, alignment=1
+//   Name:        88 (0x58)  - FUN_00434cb0, alignment=0 (left), "^f01%s"
+//   Difficulty: 195 (0xc3)  - FUN_00434cb0, alignment=1, "^f01%s" (TRS)
+//   Chapter:    245 (0xf5)  - FUN_00434cb0, alignment=1, "^f01%hd"
+//   Score:      295 (0x127) - FUN_00434cb0, alignment=2, "^f01%ld"
+// Row Y: sVar1 * 10 + 42 (0x2a)
+
+// Initialize ranking table with 15 default entries (FUN_0040FF00)
+// Called when no ranking save file exists. Generates placeholder entries with:
+//   name = "-----", score = (15-i)*1500, rating = (15-i)*2,
+//   difficulty = ((15-i)*3+14)/15, chapter = ((15-i)*15+14)/15
+void InsaneRebel2::initDefaultRankings() {
+	_numRankings = 0;
+	memset(_rankings, 0, sizeof(_rankings));
+	for (int i = 0; i < kMaxRankings; i++) {
+		int k = kMaxRankings - i;  // 15 down to 1
+		RankingEntry &r = _rankings[_numRankings];
+		Common::strlcpy(r.name, "-----", sizeof(r.name));
+		r.score = k * 1500;
+		r.rating = k * 2;
+		r.difficulty = (int16)((k * 3 + 14) / 15);
+		r.chapter = (int16)((k * 15 + 14) / 15);
+		_numRankings++;
+	}
+}
+
+// Insert a new entry into the sorted ranking table (FUN_00410271)
+// Maintains descending score order, max kMaxRankings entries
+void InsaneRebel2::insertRanking(const char *name, int32 score, int32 rating,
+                                  int16 difficulty, int16 chapter) {
+	if (score == 0)
+		return;
+
+	// Find insertion point (first entry with score < new score)
+	int insertPos = 0;
+	while (insertPos < _numRankings && score <= _rankings[insertPos].score) {
+		insertPos++;
+	}
+	if (insertPos > kMaxRankings - 1)
+		return;
+
+	// Remove any existing entry with same name
+	for (int i = 0; i < _numRankings; i++) {
+		if (strcmp(_rankings[i].name, name) == 0) {
+			if (score <= _rankings[i].score)
+				return;  // Existing entry has higher score
+			// Remove old entry by shifting
+			for (int j = i; j < _numRankings - 1; j++)
+				_rankings[j] = _rankings[j + 1];
+			_numRankings--;
+			if (insertPos > i)
+				insertPos--;
+			break;
+		}
+	}
+
+	// Shift entries down to make room
+	int lastIdx = MIN(_numRankings, kMaxRankings - 1);
+	for (int i = lastIdx; i > insertPos; i--)
+		_rankings[i] = _rankings[i - 1];
+
+	// Insert new entry
+	RankingEntry &r = _rankings[insertPos];
+	Common::strlcpy(r.name, name, sizeof(r.name));
+	r.score = score;
+	r.rating = rating;
+	r.difficulty = difficulty;
+	r.chapter = chapter;
+
+	if (_numRankings < kMaxRankings)
+		_numRankings++;
+}
+
+void InsaneRebel2::showTopPilots() {
+	debug("Rebel2: Showing Top Pilots screen (FUN_00420116)");
+
+	_menuInputActive = true;
+	while (!_menuEventQueue.empty())
+		_menuEventQueue.pop();
+
+	// param_1 = -1 from main menu: maxFrames = 120 (0x78)
+	_topPilotsMaxFrames = 120;
+	_topPilotsFrameCount = 0;
+
+	_gameState = kStateTopPilots;
+
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+
+	_vm->_smushVideoShouldFinish = false;
+
+	Common::String menuVideo = getRandomMenuVideo();
+	splayer->setCurVideoFlags(0x20);
+	splayer->play(menuVideo.c_str(), 12);
+
+	_gameState = kStateMainMenu;
+	_menuInputActive = true;
+
+	debug("Rebel2: Top Pilots screen finished");
+}
+
+void InsaneRebel2::drawTopPilotsOverlay(byte *renderBitmap, int pitch, int width, int height) {
+	if (_topPilotsFrameCount >= _topPilotsMaxFrames) {
+		_vm->_smushVideoShouldFinish = true;
+		return;
+	}
+
+	while (!_menuEventQueue.empty()) {
+		Common::Event event = _menuEventQueue.pop();
+		if (event.type == Common::EVENT_KEYDOWN ||
+		    event.type == Common::EVENT_LBUTTONDOWN) {
+			_vm->_smushVideoShouldFinish = true;
+			return;
+		}
+	}
+
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	if (!splayer)
+		return;
+
+	// Title + column headers: TRS 150 centered at X=152, Y=10
+	const char *titleStr = splayer->getString(150);
+	if (!titleStr || !titleStr[0])
+		titleStr = "^f02Top Pilots ^f01^c005      Rank        Name               Difficulty  Chapter  Score";
+	drawMenuStringCentered(renderBitmap, titleStr, 152, 10);
+
+	// Animated reveal: show up to _topPilotsFrameCount entries
+	int showCount = MIN(_topPilotsFrameCount, _numRankings);
+
+	for (int row = 0; row < showCount; row++) {
+		const RankingEntry &r = _rankings[row];
+		int rowY = row * 10 + 42;
+		int color = 244;  // 0xF4
+
+		// Column 1: Rank medals at X=43, centered (font 0 = TALKFONT)
+		Common::String rankStr = getRankString(r.rating);
+		if (!rankStr.empty()) {
+			Common::String rankFmt = Common::String::format("^f00%s", rankStr.c_str());
+			drawMenuStringCentered(renderBitmap, rankFmt.c_str(), 43, rowY, color);
+		}
+
+		// Column 2: Pilot name at X=88, left-aligned (font 1 = SMALFONT)
+		Common::String nameFmt = Common::String::format("^f01%s", r.name);
+		drawMenuString(renderBitmap, nameFmt.c_str(), 88, rowY, color);
+
+		// Column 3: Difficulty at X=195, centered - TRS (difficulty + 155)
+		int trsIdx = CLIP((int)r.difficulty, 0, 5) + 155;
+		const char *diffStr = splayer->getString(trsIdx);
+		if (diffStr && diffStr[0]) {
+			Common::String diffFmt = Common::String::format("^f01%s", diffStr);
+			drawMenuStringCentered(renderBitmap, diffFmt.c_str(), 195, rowY, color);
+		}
+
+		// Column 4: Highest chapter at X=245, centered
+		Common::String chFmt = Common::String::format("^f01%d", (int)r.chapter);
+		drawMenuStringCentered(renderBitmap, chFmt.c_str(), 245, rowY, color);
+
+		// Column 5: Total score at X=295, right-aligned
+		Common::String scoreFmt = Common::String::format("^f01%ld", (long)r.score);
+		drawMenuStringRight(renderBitmap, scoreFmt.c_str(), 295, rowY, color);
+	}
+
+	_topPilotsFrameCount++;
 }
 
 } // End of namespace Scumm
