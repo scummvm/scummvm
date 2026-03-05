@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-03-03 17:08+0000\n"
-"PO-Revision-Date: 2026-03-04 19:22+0000\n"
+"PO-Revision-Date: 2026-03-05 12:51+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -10489,10 +10489,8 @@ msgid "Switch to main display"
 msgstr "Μετάβαση σε κανονική προβολή"
 
 #: engines/lab/metaengine.cpp:317
-#, fuzzy
-#| msgid "Save / Load dialog"
 msgid "Open save / load dialog"
-msgstr "Διάλογος Αποθήκευσης / Φόρτωσης"
+msgstr "Διάλογος αποθήκευσης / φόρτωσης"
 
 #: engines/lab/metaengine.cpp:329
 #, fuzzy
@@ -10501,20 +10499,16 @@ msgid "Look at scene"
 msgstr "Κοίτα προς"
 
 #: engines/lab/metaengine.cpp:335
-#, fuzzy
-#| msgid "Inventory"
 msgid "Previous inventory item"
-msgstr "Υπάρχοντα"
+msgstr "Προηγούμενο αντικείμενο στα υπάρχοντα"
 
 #: engines/lab/metaengine.cpp:342
-#, fuzzy
-#| msgid "Animated inventory items"
 msgid "Next inventory item"
-msgstr "Κινούμενα αντικείμενα στα υπάρχοντα"
+msgstr "Επόμενο αντικείμενο στα υπάρχοντα"
 
 #: engines/lab/metaengine.cpp:373
 msgid "Exit map display"
-msgstr ""
+msgstr "Έξοδος από την προβολή χάρτη"
 
 #: engines/lab/metaengine.cpp:379
 msgid "Up one level"
@@ -10525,22 +10519,16 @@ msgid "Down one level"
 msgstr "Ένα επίπεδο κάτω"
 
 #: engines/lab/metaengine.cpp:391
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go back in journal"
-msgstr "Προβολή ημερολογίου"
+msgstr "Επιστροφή στο ημερολόγιο"
 
 #: engines/lab/metaengine.cpp:397
-#, fuzzy
-#| msgid "Show journal"
 msgid "Exit journal"
-msgstr "Προβολή ημερολογίου"
+msgstr "Έξοδος από το ημερολόγιο"
 
 #: engines/lab/metaengine.cpp:402
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go forward in journal"
-msgstr "Προβολή ημερολογίου"
+msgstr "Παρακάτω στο ημερολόγιο"
 
 #: engines/lab/processroom.cpp:320
 msgid ""
@@ -10636,6 +10624,9 @@ msgid ""
 "original .exe file. Otherwise, it will use lower resolution cursors from the "
 "data files."
 msgstr ""
+"Αν επιλεγεί, το παιχνίδι θα χρησιμοποιήσει δείκτες ποντικιού των Windows που "
+"εμπεριέχονται στο πρωτότυπο αρχείο .exe. Αλλιώς, θα χρησιμοποιήσει "
+"χαμηλότερης ανάλυσης δείκτες από τα αρχεία δεδομένων."
 
 #: engines/made/metaengine.cpp:158
 msgid "Cursor up"
@@ -10747,40 +10738,28 @@ msgstr ""
 "(πόντοι για υγεία) και spell points (πόντοι για ξόρκια)."
 
 #: engines/mm/mm1/metaengine.cpp:54
-#, fuzzy
-#| msgid "View Party Member 1"
 msgid "View party member 1"
-msgstr "Δες το 1ο Μέλος Ομάδας"
+msgstr "Δες το 1ο μέλος ομάδας"
 
 #: engines/mm/mm1/metaengine.cpp:55
-#, fuzzy
-#| msgid "View Party Member 2"
 msgid "View party member 2"
-msgstr "Δες το 2ο Μέλος Ομάδας"
+msgstr "Δες το 2ο μέλος ομάδας"
 
 #: engines/mm/mm1/metaengine.cpp:56
-#, fuzzy
-#| msgid "View Party Member 3"
 msgid "View party member 3"
-msgstr "Δες το 3ο Μέλος Ομάδας"
+msgstr "Δες το 3ο μέλος ομάδας"
 
 #: engines/mm/mm1/metaengine.cpp:57
-#, fuzzy
-#| msgid "View Party Member 4"
 msgid "View party member 4"
-msgstr "Δες το 4ο Μέλος Ομάδας"
+msgstr "Δες το 4ο μέλος ομάδας"
 
 #: engines/mm/mm1/metaengine.cpp:58
-#, fuzzy
-#| msgid "View Party Member 5"
 msgid "View party member 5"
-msgstr "Δες το 5ο Μέλος Ομάδας"
+msgstr "Δες το 5ο μέλος ομάδας"
 
 #: engines/mm/mm1/metaengine.cpp:59
-#, fuzzy
-#| msgid "View Party Member 6"
 msgid "View party member 6"
-msgstr "Δες το 6ο Μέλος Ομάδας"
+msgstr "Δες το 6ο μέλος ομάδας"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:69 engines/ultima/ultima4/metaengine.cpp:50
@@ -10800,10 +10779,8 @@ msgstr "Μάχη"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:75 engines/mm/mm1/metaengine.cpp:116
-#, fuzzy
-#| msgid "Quick Reference"
 msgid "Quick reference"
-msgstr "Γρήγορη Αναφορά"
+msgstr "Γρήγορη αναφορά"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:77
@@ -10832,16 +10809,12 @@ msgid "Backwards"
 msgstr "Προς τα πίσω"
 
 #: engines/mm/mm1/metaengine.cpp:104
-#, fuzzy
-#| msgid "Toggle Minimap"
 msgid "Toggle minimap"
-msgstr "Εναλλαγή Συνοπτικού Χάρτη"
+msgstr "Εναλλαγή συνοπτικού χάρτη"
 
 #: engines/mm/mm1/metaengine.cpp:105
-#, fuzzy
-#| msgid "Reorder Party"
 msgid "Reorder party"
-msgstr "Αναδιάταξη Ομάδας"
+msgstr "Αναδιάταξη ομάδας"
 
 #. I18N: Action of hero party in Might & Magic 1
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to search the journal
@@ -11041,12 +11014,14 @@ msgstr "Βέλτιστες"
 
 #: engines/mohawk/dialogs.cpp:456
 msgid "Fix audio pops/clicks"
-msgstr ""
+msgstr "Διόρθωση προβλημάτων ήχου"
 
 #: engines/mohawk/dialogs.cpp:457
 msgid ""
 "Reduces audible pops at the end of some sound effects (Non Myst/Riven only)."
 msgstr ""
+"Μειώνει ανεπιθύμητα παράσιτα (μικρούς κρότους) ακουστά στο τέλος κάποιων από "
+"τα ηχητικά εφέ (για παιχνίδια εκτός των Myst / Riven)."
 
 #: engines/mohawk/metaengine.cpp:291
 msgid "Myst ME support not compiled in"
@@ -11071,10 +11046,8 @@ msgstr ""
 
 #: engines/mohawk/myst.cpp:578 engines/mohawk/riven.cpp:859
 #: engines/sludge/keymapper_tables.h:113 engines/sludge/keymapper_tables.h:162
-#, fuzzy
-#| msgid "Load Game"
 msgid "Load save"
-msgstr "Φόρτωση Παιχνιδιού"
+msgstr "Φόρτωση αποθηκευμένου παιχνιδιού"
 
 #: engines/mohawk/myst.cpp:588 engines/mohawk/riven.cpp:869
 msgid "Show options menu"
@@ -11357,10 +11330,8 @@ msgid "Nancy Drew - Maze"
 msgstr "Nancy Drew - Λαβύρινθος"
 
 #: engines/nancy/input.cpp:236
-#, fuzzy
-#| msgid "Show/hide maze map"
 msgid "Show / hide maze map"
-msgstr "Προβολή/απόκρυψη χάρτη λαβυρίνθου"
+msgstr "Προβολή / απόκρυψη χάρτη λαβυρίνθου"
 
 #: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"
@@ -17534,10 +17505,8 @@ msgid ""
 msgstr ""
 
 #: engines/zvision/metaengine.cpp:114
-#, fuzzy
-#| msgid "Enable hit point bar graphs"
 msgid "Enable high quality panoramas"
-msgstr "Ενεργοποίηση ραβδογραμμάτων για hit points"
+msgstr "Ενεργοποίηση πανοραμάτων υψηλής ποιότητας"
 
 #: engines/zvision/metaengine.cpp:115
 msgid "Apply bilinear filtering to panoramic backgrounds"
