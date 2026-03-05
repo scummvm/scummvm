@@ -49,8 +49,8 @@ struct RA1SpriteBank {
 };
 
 /**
- * Proof-of-concept for Star Wars: Rebel Assault (RA1).
- * Loads level 1 and renders the player ship sprite.
+ * Star Wars: Rebel Assault (RA1) game logic.
+ * Adapts RA2 Handler 7 (ship flight) physics for RA1's 384x242 resolution.
  */
 class InsaneRebel1 : public Insane {
 public:
@@ -72,20 +72,59 @@ public:
 private:
 	bool loadRA1Nut(const char *filename, RA1SpriteBank &bank);
 	void loadLevelSprites(int level);
+	void updateShipPhysics();
 	void renderShip(byte *dst, int pitch, int width, int height);
+	void renderHUD(byte *dst, int pitch, int width, int height);
 	void renderSprite(byte *dst, int pitch, int width, int height,
 					  int x, int y, const RA1Sprite &sprite);
 
 	ScummEngine_v7 *_vm;
 
 	RA1SpriteBank _shipBank;
+	RA1SpriteBank _displayBank;   // SYS/DISPLAY.NUT — bottom status bar
 
-	int _shipPosX;
-	int _shipPosY;
-	int _shipDirIndex;
-
+	// RA1 screen dimensions (384x242)
 	int _screenWidth;
 	int _screenHeight;
+
+	// Ship game-coordinate position (adapted from RA2's [20,404]x[20,240])
+	// RA1 coordinate space: [18,366]x[18,224], center=(192,121)
+	int16 _shipPosX;
+	int16 _shipPosY;
+
+	// Direction sprite index (5x7 grid = 35 sprites, vDir*7 + hDir)
+	int16 _shipDirIndex;
+
+	// Corridor boundaries (set by GAME opcode 0x07)
+	int16 _corridorLeftX;
+	int16 _corridorTopY;
+	int16 _corridorRightX;
+	int16 _corridorBottomY;
+
+	// Physics state (velocity-based movement from RA2 Handler 7)
+	int16 _smoothedVelocity;         // Averaged horizontal velocity
+	int16 _verticalInput;            // Stored vertical input component
+	int16 _velocityHistory[25];      // Horizontal velocity ring buffer
+	int16 _windHistoryX[15];         // Wind X history buffer
+	int16 _windHistoryY[15];         // Wind Y history buffer
+	int16 _windParamX;               // Wind X (from GAME opcode 0x07 sub-opcode 0)
+	int16 _windParamY;               // Wind Y (from GAME opcode 0x07 sub-opcode 0)
+
+	// Perspective view offsets
+	int16 _perspectiveX;
+	int16 _perspectiveY;
+	int16 _viewShift;                // Clamped smoothed velocity for view transform
+
+	// Control mode (from GAME opcode 0x5E)
+	int16 _flyControlMode;
+
+	// Hit cooldown timer
+	int16 _hitCooldown;
+
+	// HUD state
+	int16 _playerDamage;    // 0-255, higher = more damage
+	int _score;
+	int _pilots;            // Lives remaining
 };
 
 } // End of namespace Scumm

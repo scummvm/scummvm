@@ -29,6 +29,20 @@
 
 namespace Scumm {
 
+// RA1 coordinate constants (scaled from RA2's 424x260 → 384x242)
+// RA2 center: (212, 130), RA1 center: (192, 121)
+// RA2 bounds: [20, 404]x[20, 240], RA1 bounds: [18, 366]x[18, 224]
+static const int16 kCenterX = 192;
+static const int16 kCenterY = 121;
+static const int16 kMinX = 18;
+static const int16 kMaxX = 366;
+static const int16 kMinY = 18;
+static const int16 kMaxY = 224;
+
+// Perspective focal lengths (scaled from RA2: focalX=0x2b, focalY=0x19)
+static const int16 kFocalX = 39;   // 0x2b * 384/424 ≈ 39
+static const int16 kFocalY = 23;   // 0x19 * 242/260 ≈ 23
+
 // Decode BOMP RLE (codec 21) sprite data into a flat pixel buffer.
 // Same algorithm as NutRenderer::codec21 but without palette tracking.
 static void decodeBomp(byte *dst, const byte *src, int width, int height, int pitch) {
@@ -58,11 +72,36 @@ static void decodeBomp(byte *dst, const byte *src, int width, int height, int pi
 }
 
 InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
-	_shipPosX = 192;
-	_shipPosY = 160;
-	_shipDirIndex = 0;
 	_screenWidth = 384;
 	_screenHeight = 242;
+
+	_shipPosX = kCenterX;
+	_shipPosY = kCenterY;
+	_shipDirIndex = 17;  // Center of 5x7 grid (2*7 + 3)
+
+	_corridorLeftX = kMinX;
+	_corridorTopY = kMinY;
+	_corridorRightX = kMaxX;
+	_corridorBottomY = kMaxY;
+
+	_smoothedVelocity = 0;
+	_verticalInput = 0;
+	memset(_velocityHistory, 0, sizeof(_velocityHistory));
+	memset(_windHistoryX, 0, sizeof(_windHistoryX));
+	memset(_windHistoryY, 0, sizeof(_windHistoryY));
+	_windParamX = 0;
+	_windParamY = 0;
+
+	_perspectiveX = 0;
+	_perspectiveY = 0;
+	_viewShift = 0;
+
+	_flyControlMode = 0;
+	_hitCooldown = 0;
+
+	_playerDamage = 0;
+	_score = 0;
+	_pilots = 3;
 
 	// Null out Insane base class pointers that the default constructor doesn't initialize
 	_smush_roadrashRip = nullptr;
@@ -178,6 +217,7 @@ bool InsaneRebel1::loadRA1Nut(const char *filename, RA1SpriteBank &bank) {
 void InsaneRebel1::loadLevelSprites(int level) {
 	Common::String filename = Common::String::format("LVL%d/L%dBANK1.NUT", level, level);
 	loadRA1Nut(filename.c_str(), _shipBank);
+	loadRA1Nut("SYS/DISPLAY.NUT", _displayBank);
 }
 
 void InsaneRebel1::procPreRendering(byte *renderBitmap) {
@@ -195,23 +235,164 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	if (height == 0) height = _screenHeight;
 	int pitch = width;
 
-	// Read mouse position and map to normalized range (-1.0 to 1.0)
-	Common::Point mousePos = g_system->getEventManager()->getMousePos();
-	float normX = CLIP((float)(mousePos.x - width / 2) / (float)(width / 2), -1.0f, 1.0f);
-	float normY = CLIP((float)(mousePos.y - height / 2) / (float)(height / 2), -1.0f, 1.0f);
-
-	// Smooth ship position toward mouse (max 8 pixels/frame horizontal, 6 vertical)
-	int targetX = width / 2 + (int)(normX * width / 4);
-	int targetY = height / 2 + (int)(normY * height / 4);
-	_shipPosX += CLIP(targetX - _shipPosX, -8, 8);
-	_shipPosY += CLIP(targetY - _shipPosY, -6, 6);
-
-	// Map mouse to direction index (5 horizontal x 7 vertical = 35 core sprites).
-	int hZone = CLIP((int)((normX + 1.0f) * 2.5f), 0, 4);
-	int vZone = CLIP((int)((normY + 1.0f) * 3.5f), 0, 6);
-	_shipDirIndex = CLIP(hZone * 7 + vZone, 0, _shipBank.numSprites - 1);
-
+	updateShipPhysics();
 	renderShip(renderBitmap, pitch, width, height);
+	renderHUD(renderBitmap, pitch, width, height);
+}
+
+// Velocity-based ship physics adapted from RA2 Handler 7 (FUN_40C3CC case 4).
+// Mouse input → velocity history averaging → position delta → corridor collision → perspective.
+void InsaneRebel1::updateShipPhysics() {
+	// Decrement hit cooldown
+	if (_hitCooldown > 0)
+		_hitCooldown--;
+
+	// --- Step 1: Mouse input as offset from screen center ---
+	// RA2 uses _vm->_mouse (0-319, 0-199), center (160, 100)
+	// RA1 uses event manager mouse pos, center (192, 121)
+	Common::Point mousePos = g_system->getEventManager()->getMousePos();
+	int16 inputX = (int16)(mousePos.x - kCenterX);
+	int16 inputY = (int16)(mousePos.y - kCenterY);
+
+	// Clamp to ±kCenterX horizontal, ±127 vertical
+	inputX = CLIP<int16>(inputX, -kCenterX, kCenterX);
+	inputY = CLIP<int16>(inputY, -127, 127);
+
+	// --- Step 2: Scale to [-127, 127] ---
+	int16 scaledInputX = (int16)((inputX * 127) / kCenterX);
+	int16 scaledInputY = inputY;
+
+	// --- Step 3: Velocity history + smoothed average ---
+	for (int i = 24; i > 0; i--)
+		_velocityHistory[i] = _velocityHistory[i - 1];
+	_velocityHistory[0] = scaledInputX;
+
+	const int smoothWindow = 5;
+	int velSum = 0;
+	for (int i = 0; i < smoothWindow; i++)
+		velSum += _velocityHistory[i];
+	_smoothedVelocity = (int16)(velSum / smoothWindow);
+
+	// --- Step 4: Wind history ---
+	for (int i = 14; i > 0; i--)
+		_windHistoryX[i] = _windHistoryX[i - 1];
+	_windHistoryX[0] = _windParamX;
+
+	for (int i = 14; i > 0; i--)
+		_windHistoryY[i] = _windHistoryY[i - 1];
+	_windHistoryY[0] = _windParamY;
+
+	// Wind effect (multiplier = 0 for now, no level data)
+	int16 windEffectX = 0;
+	int16 windEffectY = 0;
+
+	// --- Step 5: Position delta ---
+	const int16 levelSpeed = 32;
+	const int16 levelYSpeed = 48;
+	int16 absSmoothVel = ABS(_smoothedVelocity);
+	int16 positionDeltaX;
+
+	if (_flyControlMode == 1) {
+		// Mode 1: Full cross-axis coupling
+		if (scaledInputX < 1)
+			positionDeltaX = (int16)((levelSpeed * _smoothedVelocity - absSmoothVel * scaledInputY - windEffectX) >> 9);
+		else
+			positionDeltaX = (int16)((levelSpeed * _smoothedVelocity + absSmoothVel * scaledInputY - windEffectX) >> 9);
+	} else {
+		// Mode 0/2/3: Reduced cross-axis coupling
+		if (scaledInputX < 1)
+			positionDeltaX = (int16)((levelSpeed * _smoothedVelocity - (absSmoothVel * scaledInputY >> 2) - windEffectX) >> 9);
+		else
+			positionDeltaX = (int16)((levelSpeed * _smoothedVelocity + (absSmoothVel * scaledInputY >> 2) - windEffectX) >> 9);
+	}
+
+	// Clamp X delta to ±12 per frame
+	positionDeltaX = CLIP<int16>(positionDeltaX, -12, 12);
+	_shipPosX += positionDeltaX;
+
+	// Y delta
+	if (_flyControlMode == 1) {
+		int yDelta = (levelYSpeed * scaledInputY - (windEffectY >> 1)) >> 10;
+		yDelta = CLIP(yDelta, -12, 12);
+		_shipPosY -= (int16)yDelta;
+	} else {
+		_shipPosY -= (int16)((levelYSpeed * scaledInputY) >> 10);
+	}
+
+	_verticalInput = scaledInputY;
+
+	// --- Step 6: Position clamping ---
+	_shipPosX = CLIP<int16>(_shipPosX, kMinX, kMaxX);
+	_shipPosY = CLIP<int16>(_shipPosY, kMinY, kMaxY);
+
+	// --- Step 7: Corridor collision (modes 0 and 2) ---
+	if (_flyControlMode == 0 || _flyControlMode == 2) {
+		if (_corridorRightX < _shipPosX) {
+			_shipPosX = _corridorRightX;
+			if (_hitCooldown < 5) {
+				for (int i = 0; i < 25; i++)
+					_velocityHistory[i] = -127;
+				_hitCooldown = 10;
+			}
+		}
+		if (_shipPosX < _corridorLeftX) {
+			_shipPosX = _corridorLeftX;
+			if (_hitCooldown < 5) {
+				for (int i = 0; i < 25; i++)
+					_velocityHistory[i] = 127;
+				_hitCooldown = 10;
+			}
+		}
+		if (_corridorBottomY < _shipPosY)
+			_shipPosY = _corridorBottomY;
+		if (_shipPosY < _corridorTopY)
+			_shipPosY = _corridorTopY;
+	}
+
+	// --- Step 8: Perspective offsets ---
+	{
+		int absOffX = ABS(_shipPosX - kCenterX);
+		if (absOffX > 0)
+			_perspectiveX = (int16)((kFocalX * kCenterX * absOffX) /
+				((kCenterX - kFocalX) * absOffX + kFocalX * kCenterX));
+		else
+			_perspectiveX = 0;
+		if (_shipPosX < kCenterX + 1)
+			_perspectiveX = -_perspectiveX;
+
+		int absOffY = ABS(_shipPosY - kCenterY);
+		if (absOffY > 0)
+			_perspectiveY = (int16)((kFocalY * kCenterY * absOffY) /
+				((kCenterY - kFocalY) * absOffY + kFocalY * kCenterY));
+		else
+			_perspectiveY = 0;
+		if (_shipPosY < kCenterY + 1)
+			_perspectiveY = -_perspectiveY;
+	}
+
+	_viewShift = CLIP<int16>(_smoothedVelocity, -127, 127);
+
+	// --- Step 9: Direction sprite (5x7 grid with hysteresis) ---
+	// vDir from vertical input: (0xa0 - verticalInput) >> 6
+	int16 vDir = (int16)(((int)(0xa0 - _verticalInput) + ((0xa0 - _verticalInput) < 0 ? 63 : 0)) >> 6);
+	vDir = CLIP<int16>(vDir, 0, 4);
+
+	// hDir from smoothed velocity: (0x95 - smoothedVelocity) / 0x2b
+	int16 hDir = (int16)((0x95 - _smoothedVelocity) / 0x2b);
+	hDir = CLIP<int16>(hDir, 0, 6);
+
+	// Hysteresis at center positions
+	if (hDir == 3 && ABS(_smoothedVelocity) > 10)
+		hDir = (_smoothedVelocity < 1) ? 4 : 2;
+	if (vDir == 2 && ABS(_verticalInput) > 15)
+		vDir = (_verticalInput < 1) ? 3 : 1;
+
+	_shipDirIndex = CLIP<int16>(vDir * 7 + hDir, 0, _shipBank.numSprites - 1);
+
+	debug(7, "RA1 ship: pos=(%d,%d) vel=%d vIn=%d dx=%d dir=%d corridor=[%d,%d]-[%d,%d]",
+		_shipPosX, _shipPosY, _smoothedVelocity, _verticalInput,
+		positionDeltaX, _shipDirIndex,
+		_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY);
 }
 
 void InsaneRebel1::renderShip(byte *dst, int pitch, int width, int height) {
@@ -219,9 +400,115 @@ void InsaneRebel1::renderShip(byte *dst, int pitch, int width, int height) {
 		return;
 
 	const RA1Sprite &spr = _shipBank.sprites[_shipDirIndex];
-	int drawX = _shipPosX - spr.width / 2;
-	int drawY = _shipPosY - spr.height / 2;
+
+	// Position: game coords → screen coords via perspective transform
+	// Adapted from RA2's renderHandler7Ship:
+	//   shipCenterX = (shipX - center) + perspX + screenCenterX
+	int drawX = (_shipPosX - kCenterX) + _perspectiveX + kCenterX - spr.width / 2;
+	int drawY = (_shipPosY - kCenterY) + _perspectiveY + kCenterY - spr.height / 2;
+
 	renderSprite(dst, pitch, width, height, drawX, drawY, spr);
+}
+
+// Render bottom status bar from DISPLAY.NUT with dynamic damage bar and score.
+// Original layout (320-wide): DAMAGE [green bar] | PILOTS [3 icons] | SCORE [number]
+void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
+	if (_displayBank.numSprites == 0)
+		return;
+
+	const RA1Sprite &bar = _displayBank.sprites[0];
+
+	// DISPLAY.NUT sprite is 320×19 at xoffs=0, yoffs=176 in the original game.
+	// Video FOBJs fill the full 384×242 buffer from (0,0), so use sprite offsets directly.
+	int hudX = bar.xoffs;
+	int hudY = bar.yoffs;
+
+	// Draw the status bar background with transparency (pixel 0 = transparent)
+	if (bar.data && bar.width > 0 && bar.height > 0) {
+		int drawX = hudX, drawY = hudY, drawW = bar.width, drawH = bar.height;
+		int srcOffX = 0, srcOffY = 0;
+		if (drawX < 0) { srcOffX = -drawX; drawW += drawX; drawX = 0; }
+		if (drawY < 0) { srcOffY = -drawY; drawH += drawY; drawY = 0; }
+		if (drawX + drawW > width) drawW = width - drawX;
+		if (drawY + drawH > height) drawH = height - drawY;
+
+		for (int iy = 0; iy < drawH; iy++) {
+			const byte *s = bar.data + (srcOffY + iy) * bar.width + srcOffX;
+			byte *d = dst + (drawY + iy) * pitch + drawX;
+			for (int ix = 0; ix < drawW; ix++) {
+				byte px = s[ix];
+				if (px != 0)
+					d[ix] = px;
+			}
+		}
+
+		debug(5, "RA1 HUD: drawn at (%d,%d) size=%dx%d",
+			hudX, hudY, bar.width, bar.height);
+	}
+
+	// Draw damage bar (green rectangle).
+	// From the screenshot: bar starts around x=56, y=8 within the HUD sprite,
+	// max width ~76 pixels, height ~5 pixels. Green = palette index ~0xA0.
+	{
+		int barMaxW = 76;
+		int barH = 5;
+		int barX = hudX + 56;
+		int barY = hudY + 8;
+		int fillW = barMaxW - (barMaxW * _playerDamage / 255);
+		if (fillW < 0) fillW = 0;
+		if (fillW > barMaxW) fillW = barMaxW;
+
+		// Find a green palette index — use 0xA0 (common green in RA1 palette)
+		byte greenColor = 0xA0;
+
+		for (int iy = 0; iy < barH && barY + iy < height; iy++) {
+			byte *d = dst + (barY + iy) * pitch + barX;
+			for (int ix = 0; ix < fillW && barX + ix < width; ix++) {
+				d[ix] = greenColor;
+			}
+		}
+	}
+
+	// Draw score as decimal digits.
+	// From screenshot: score area starts around x=265 within HUD, using palette text color.
+	// For now, just draw simple 4×7 digit bitmaps.
+	{
+		char scoreStr[8];
+		snprintf(scoreStr, sizeof(scoreStr), "%06d", _score);
+		int digitX = hudX + 265;
+		int digitY = hudY + 7;
+		byte textColor = 0xFF;  // White
+
+		for (int c = 0; c < 6 && scoreStr[c]; c++) {
+			int digit = scoreStr[c] - '0';
+			// Simple 3×5 digit rendering
+			static const uint16 digitPatterns[10] = {
+				0x7B6F, // 0: 111 011 011 011 111
+				0x2492, // 1: 010 010 010 010 010
+				0x73E7, // 2: 111 001 111 100 111
+				0x73CF, // 3: 111 001 111 001 111
+				0x5BC9, // 4: 101 101 111 001 001
+				0x7E3F, // 5: 111 110 111 001 111
+				0x7E7F, // 6: 111 110 111 101 111
+				0x7249, // 7: 111 001 001 001 001
+				0x7FFF, // 8: 111 111 111 111 111  (simplified)
+				0x7FCF, // 9: 111 111 111 001 111
+			};
+			if (digit < 0 || digit > 9) digit = 0;
+			uint16 pat = digitPatterns[digit];
+			for (int py = 0; py < 5; py++) {
+				for (int px = 0; px < 3; px++) {
+					int bit = 14 - (py * 3 + px);
+					if (pat & (1 << bit)) {
+						int sx = digitX + c * 5 + px;
+						int sy = digitY + py;
+						if (sx >= 0 && sx < width && sy >= 0 && sy < height)
+							dst[sy * pitch + sx] = textColor;
+					}
+				}
+			}
+		}
+	}
 }
 
 void InsaneRebel1::renderSprite(byte *dst, int pitch, int width, int height,
@@ -258,6 +545,7 @@ void InsaneRebel1::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan
 void InsaneRebel1::procSKIP(int32 subSize, Common::SeekableReadStream &b) {
 }
 
+// Parse RA1 GAME chunks.
 void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b) {
 	if (subSize < 8)
 		return;
@@ -267,23 +555,67 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 
 	switch (opcode) {
 	case 0x5E:
-		debug(5, "InsaneRebel1: GAME 0x5E (mode) param=%d", param1);
+		// Mode control
+		_flyControlMode = (int16)param1;
+		debug(5, "RA1 GAME 0x5E: flyControlMode=%d", _flyControlMode);
 		break;
+
 	case 0x5D:
-		debug(5, "InsaneRebel1: GAME 0x5D (link) param=%d", param1);
+		debug(5, "RA1 GAME 0x5D (link) param=%d", param1);
 		break;
+
 	case 0x5F:
-		debug(5, "InsaneRebel1: GAME 0x5F (event) param=%d", param1);
+		debug(5, "RA1 GAME 0x5F (event) param=%d", param1);
 		break;
-	case 0x07: case 0x08: case 0x09: case 0x0A: case 0x0B:
-	case 0x19: case 0x1A:
-	case 0x0D: case 0x0E:
+
+	case 0x07:
+		// Per-frame metadata (param1=counter, param2=constant, param3/4=wind?)
 		if (subSize >= 20) {
-			b.readUint32BE(); b.readUint32BE(); b.readUint32BE();
+			uint32 param2 = b.readUint32BE();
+			uint32 param3 = b.readUint32BE();
+			uint32 param4 = b.readUint32BE();
+			_windParamX = (int16)param3;
+			_windParamY = (int16)param4;
+			debug(7, "RA1 GAME 0x07: idx=%d val=%d wind=(%d,%d)",
+				param1, param2, _windParamX, _windParamY);
 		}
 		break;
+
+	case 0x0D:
+		// Corridor boundaries: per-frame flight corridor
+		// Raw: 0x0D, left, top, right, bottom (all 32-bit BE)
+		if (subSize >= 20) {
+			_corridorLeftX = (int16)param1;
+			_corridorTopY = (int16)b.readUint32BE();
+			_corridorRightX = (int16)b.readUint32BE();
+			_corridorBottomY = (int16)b.readUint32BE();
+			debug(5, "RA1 GAME 0x0D: corridor left=%d top=%d right=%d bottom=%d",
+				_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY);
+		}
+		break;
+
+	case 0x0E:
+		// Secondary collision zone
+		if (subSize >= 20) {
+			uint32 param2 = b.readUint32BE();
+			uint32 param3 = b.readUint32BE();
+			uint32 param4 = b.readUint32BE();
+			debug(7, "RA1 GAME 0x0E: params=(%d,%d,%d,%d)", param1, param2, param3, param4);
+		}
+		break;
+
+	case 0x08: case 0x09: case 0x0A: case 0x0B:
+	case 0x19: case 0x1A:
+		if (subSize >= 20) {
+			uint32 param2 = b.readUint32BE();
+			uint32 param3 = b.readUint32BE();
+			uint32 param4 = b.readUint32BE();
+			debug(7, "RA1 GAME 0x%02x: params=(%d,%d,%d,%d)", opcode, param1, param2, param3, param4);
+		}
+		break;
+
 	default:
-		debug(7, "InsaneRebel1: GAME unknown 0x%02x size=%d", opcode, subSize);
+		debug(7, "RA1 GAME unknown 0x%02x size=%d", opcode, subSize);
 		break;
 	}
 }
