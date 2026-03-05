@@ -663,7 +663,7 @@ public:
 		int savedBgHeight;        // Height of saved background
 	};
 
-	void init_enemyStruct(int id, int32 x, int32 y, int32 w, int32 h, bool active, bool destroyed, int32 explosionFrame, int type = 0);
+	void initEnemyStruct(int id, int32 x, int32 y, int32 w, int32 h, bool active, bool destroyed, int32 explosionFrame, int type = 0);
 	void enemyUpdate(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
 
 	Common::List<enemy> _enemies;
