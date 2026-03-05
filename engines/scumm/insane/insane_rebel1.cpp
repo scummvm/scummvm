@@ -22,6 +22,8 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "common/endian.h"
+#include "graphics/cursorman.h"
+#include "graphics/wincursor.h"
 #include "scumm/scumm_v7.h"
 #include "scumm/scumm.h"
 #include "scumm/smush/smush_player.h"
@@ -248,18 +250,17 @@ void InsaneRebel1::updateShipPhysics() {
 		_hitCooldown--;
 
 	// --- Step 1: Mouse input as offset from screen center ---
-	// RA2 uses _vm->_mouse (0-319, 0-199), center (160, 100)
-	// RA1 uses event manager mouse pos, center (192, 121)
-	Common::Point mousePos = g_system->getEventManager()->getMousePos();
-	int16 inputX = (int16)(mousePos.x - kCenterX);
-	int16 inputY = (int16)(mousePos.y - kCenterY);
+	// Use _vm->_mouse (0-319, 0-199 virtual screen coords), same as RA2.
+	// Center = (160, 100) in virtual screen space.
+	int16 inputX = (int16)(_vm->_mouse.x - 160);
+	int16 inputY = (int16)(_vm->_mouse.y - 100);
 
-	// Clamp to ±kCenterX horizontal, ±127 vertical
-	inputX = CLIP<int16>(inputX, -kCenterX, kCenterX);
+	// Clamp: [-160, 160] horizontal, [-127, 127] vertical (same as RA2)
+	inputX = CLIP<int16>(inputX, -160, 160);
 	inputY = CLIP<int16>(inputY, -127, 127);
 
-	// --- Step 2: Scale to [-127, 127] ---
-	int16 scaledInputX = (int16)((inputX * 127) / kCenterX);
+	// --- Step 2: Scale to [-127, 127] (same as RA2: scaledInputX = inputX * 127 / 160) ---
+	int16 scaledInputX = (int16)((inputX * 127) / 160);
 	int16 scaledInputY = inputY;
 
 	// --- Step 3: Velocity history + smoothed average ---
@@ -628,7 +629,15 @@ void InsaneRebel1::playLevel(int level) {
 
 	SmushPlayer *splayer = _vm->_splayer;
 	_player = splayer;
+
+	// Center mouse, hide cursor, and lock mouse to window (like RA2 flight)
+	smush_warpMouse(160, 100, -1);
+	CursorMan.showMouse(false);
+	g_system->lockMouse(true);
+
 	splayer->play(filename.c_str(), 12);
+
+	g_system->lockMouse(false);
 }
 
 } // End of namespace Scumm
