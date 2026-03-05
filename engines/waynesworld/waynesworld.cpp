@@ -103,12 +103,7 @@ Common::Error WaynesWorldEngine::run() {
 	_m03Gxl = new GxlArchive("m03");
 	_m05Gxl = new GxlArchive("m05");
 
-	_r08Gxl = new GxlArchive("r08");
 	_r10Gxl = new GxlArchive("r10");
-	_r14Gxl = new GxlArchive("r14");
-	_r21Gxl = new GxlArchive("r21");
-	_r22Gxl = new GxlArchive("r22");
-	_r33Gxl = new GxlArchive("r33");
 
 	_logic = new GameLogic(this);
 
@@ -182,12 +177,7 @@ Common::Error WaynesWorldEngine::run() {
 	delete _sound;
 	delete _logic;
 
-	delete _r33Gxl;
-	delete _r22Gxl;
-	delete _r21Gxl;
-	delete _r14Gxl;
 	delete _r10Gxl;
-	delete _r08Gxl;
 
 	delete _m05Gxl;
 	delete _m03Gxl;
@@ -1272,33 +1262,43 @@ void WaynesWorldEngine::loadScrollSprite() {
         _doScrollRight = true;
     } else if (_currentRoomNumber == 19 && _hoverObjectNumber == kObjectIdStore) {
         _backgroundScrollSurface = new WWSurface(112, 150);
-        drawImageToSurface(_r14Gxl, "backg.pcx", _backgroundScrollSurface, 0, 0);
-        _scrollRemaining = 112;
+		GxlArchive *r14Gxl = new GxlArchive("r14");
+		drawImageToSurface(r14Gxl, "backg.pcx", _backgroundScrollSurface, 0, 0);
+		delete r14Gxl;
+		_scrollRemaining = 112;
         _scrollWidth = 112;
         _doScrollRight = false;
     } else if (_currentRoomNumber == 8 && _hoverObjectNumber == kObjectIdHallway8) {
         stopRoomAnimations();
         _backgroundScrollSurface = new WWSurface(320, 150);
-        drawImageToSurface(_r21Gxl, "backg.pcx", _backgroundScrollSurface, 0, 0);
-        _scrollRemaining = 320;
+		GxlArchive *r21Gxl = new GxlArchive("r21");
+		drawImageToSurface(r21Gxl, "backg.pcx", _backgroundScrollSurface, 0, 0);
+		delete r21Gxl;
+		_scrollRemaining = 320;
         _scrollWidth = 320;
         _doScrollRight = false;
     } else if (_currentRoomNumber == 21 && _hoverObjectNumber == kObjectIdFoyer) {
         _backgroundScrollSurface = new WWSurface(320, 150);
-        drawImageToSurface(_r08Gxl, "backg.pcx", _backgroundScrollSurface, 0, 0);
-        _scrollRemaining = 320;
+		GxlArchive *r08Gxl = new GxlArchive("r08");
+		drawImageToSurface(r08Gxl, "backg.pcx", _backgroundScrollSurface, 0, 0);
+		delete r08Gxl;
+		_scrollRemaining = 320;
         _scrollWidth = 320;
         _doScrollRight = true;
     } else if (_currentRoomNumber == 21 && _hoverObjectNumber == kObjectIdOffice21) {
         _backgroundScrollSurface = new WWSurface(320, 150);
-        drawImageToSurface(_r22Gxl, "backg.pcx", _backgroundScrollSurface, 0, 0);
-        _scrollRemaining = 320;
+		GxlArchive *r22Gxl = new GxlArchive("r22");
+		drawImageToSurface(r22Gxl, "backg.pcx", _backgroundScrollSurface, 0, 0);
+		delete r22Gxl;
+		_scrollRemaining = 320;
         _scrollWidth = 320;
         _doScrollRight = false;
     } else if (_currentRoomNumber == 22 && _hoverObjectNumber == kObjectIdHallway22) {
         _backgroundScrollSurface = new WWSurface(320, 150);
-		drawImageToSurface(_r21Gxl, "backg.pcx", _backgroundScrollSurface, 0, 0);
-        _scrollRemaining = 320;
+		GxlArchive *r21Gxl = new GxlArchive("r21");
+		drawImageToSurface(r21Gxl, "backg.pcx", _backgroundScrollSurface, 0, 0);
+		delete r21Gxl;
+		_scrollRemaining = 320;
         _scrollWidth = 320;
         _doScrollRight = true;
     } else if (_currentRoomNumber == 32 && _hoverObjectNumber == kObjectIdOffice) {
@@ -1309,8 +1309,10 @@ void WaynesWorldEngine::loadScrollSprite() {
             walkTo(150, 140, 6, 160, 140);
             stopRoomAnimations();
             _backgroundScrollSurface = new WWSurface(168, 150);
-            drawImageToSurface(_r33Gxl, "backg.pcx", _backgroundScrollSurface, 0, 0);
-            _scrollRemaining = 168;
+			GxlArchive *r33Gxl = new GxlArchive("r33");
+			drawImageToSurface(r33Gxl, "backg.pcx", _backgroundScrollSurface, 0, 0);
+			delete r33Gxl;
+			_scrollRemaining = 168;
             _scrollWidth = 168;
             _doScrollRight = false;
         }

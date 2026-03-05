@@ -149,12 +149,7 @@ public:
 	GxlArchive *_m03Gxl = nullptr;
 	GxlArchive *_m05Gxl = nullptr;
 
-	GxlArchive *_r08Gxl = nullptr;
 	GxlArchive *_r10Gxl = nullptr;
-	GxlArchive *_r14Gxl = nullptr;
-	GxlArchive *_r21Gxl = nullptr;
-	GxlArchive *_r22Gxl = nullptr;
-	GxlArchive *_r33Gxl = nullptr;
 
 	// Sound and Music
 	SoundManager *_sound;
