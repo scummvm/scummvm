@@ -622,7 +622,7 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 
 		// Skip position calculation for special modes 4 and 5
 		if (_shipLevelMode != 4 && _shipLevelMode != 5) {
-			// ===== Movement Range Transition (Covered vs Shooting) =====
+			// ----- Movement Range Transition (Covered vs Shooting) -----
 			// Based on FUN_00401234 lines 85-120:
 			// Mode 2 = "Covered" state - contract movement range to 41 (0x29)
 			// Other modes = "Shooting" state - expand movement range to 127 (0x7f)
@@ -787,9 +787,9 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 			debug("Rebel2 Opcode 6 (Handler 7): Status bar enabled (body flag=%d)", bodyStatusFlag);
 		}
 
-		// ============================================================
+		// ------------------------------------------------------------
 		// Ship position update — FUN_40C3CC case 4, lines 49-327
-		// ============================================================
+		// ------------------------------------------------------------
 		// Velocity-based physics with momentum/inertia:
 		//   Mouse offset from center → scaled input [-127,127]
 		//   → velocity history averaging → physics delta (clamped ±12/frame)
@@ -1501,7 +1501,7 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 	int64 startPos = b.pos();
 	int64 remaining = (chunkSize > 0) ? chunkSize : (b.size() - startPos);
 
-	// ===== Handler 7: FLY NUT Loading (Third-Person Ship) =====
+	// ----- Handler 7: FLY NUT Loading (Third-Person Ship) -----
 	// FUN_0040c3cc case 6: par4 determines FLY sprite slot
 	bool isHandler7FLY = (_rebelHandler == 7 && (par4 == 1 || par4 == 2 || par4 == 3 || par4 == 11));
 	if (isHandler7FLY && remaining >= 14) {
@@ -1512,7 +1512,7 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 		b.seek(startPos);
 	}
 
-	// ===== Edge Blend Table Loading (par4 == 1000) =====
+	// ----- Edge Blend Table Loading (par4 == 1000) -----
 	// FUN_405663: After all handler-specific opcode 8 processing, checks if par4==1000.
 	// If so, loads a per-level 256x256 color blend table from the IACT chunk data.
 	// This table controls the edge glow color of laser beams (e.g. red vs green).
@@ -1535,7 +1535,7 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 		return;
 	}
 
-	// ===== Auxiliary Sound Buffer Loading (par4 20-47) =====
+	// ----- Auxiliary Sound Buffer Loading (par4 20-47) -----
 	// FUN_401234 case 6 (handler 8): par4 0x14-0x1b (20-27) → aux buffer 0
 	// FUN_41CADB case 6 (handler 25): par4 0x15-0x1b (21-27) → aux buffer 0,
 	//   0x1f-0x25 (31-37) → aux buffer 1, 0x28 (40) → aux buffer 3,
@@ -1575,7 +1575,7 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 		return;
 	}
 
-	// ===== Handler 25 (0x19): Shot-Origin Lookup Table (par4 == 8) =====
+	// ----- Handler 25 (0x19): Shot-Origin Lookup Table (par4 == 8) -----
 	// FUN_0041CADB case 6 pushes 30 short pointers into sscanf with format at 0x482360:
 	//   "%hd %hd  %hd %hd ... %hd %hd" (15 X/Y pairs).
 	// Parsed values are written into DAT_004578a6 / DAT_004578c6 at indices 5..19.
@@ -1587,7 +1587,7 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 		}
 	}
 
-	// ===== Scan for embedded ANIM data =====
+	// ----- Scan for embedded ANIM data -----
 	// Remaining handlers require finding ANIM tag in the stream
 	debug("Rebel2 Opcode 8: Scanning for ANIM tag (startPos=%lld remaining=%lld)",
 		(long long)startPos, (long long)remaining);
@@ -1643,7 +1643,7 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 
 	bool handled = false;
 
-	// ===== Handler 0x26/0x19: Turret HUD Overlays =====
+	// ----- Handler 0x26/0x19: Turret HUD Overlays -----
 	// FUN_00407fcb case 8: par3 1-4 for HUD NUT loading
 	if (!handled && (_rebelHandler == 0x26 || _rebelHandler == 0x19)) {
 		if (par3 >= 1 && par3 <= 4) {
@@ -1651,7 +1651,7 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 		}
 	}
 
-	// ===== Handler 8: POV Ship Sprites or Background =====
+	// ----- Handler 8: POV Ship Sprites or Background -----
 	// FUN_00401234 case 6: par4 selects POV NUT type (1,3,6,7) or background (5)
 	// NOTE: par3 is always 0 for Handler 8; par4 contains the actual sprite type
 	if (!handled && _rebelHandler == 8) {
@@ -1665,7 +1665,7 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 		}
 	}
 
-	// ===== Handler 25 (0x19): Level 2 GRD Ship Sprites and Background =====
+	// ----- Handler 25 (0x19): Level 2 GRD Ship Sprites and Background -----
 	// FUN_0041cadb case 6 (opcode 8): Uses PAR4 for switch selection
 	//   par4=1: GRD001 - Primary ship sprite -> DAT_00482240 / _grd001Sprite
 	//   par4=2: GRD002 - Secondary ship sprite -> DAT_00482238 / _grd002Sprite
@@ -1689,7 +1689,7 @@ void InsaneRebel2::iactRebel2Opcode8(byte *renderBitmap, Common::SeekableReadStr
 		}
 	}
 
-	// ===== Fallback: Embedded SAN HUD overlays =====
+	// ----- Fallback: Embedded SAN HUD overlays -----
 	// For other cases, load as embedded SAN frame to HUD overlay slots
 	if (!handled) {
 		// Skip high-res data (par3 == 2, 4)

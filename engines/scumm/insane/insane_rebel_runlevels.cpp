@@ -261,7 +261,7 @@ int InsaneRebel2::runLevel2() {
 			_rebelLinks[i][2] = 0;
 		}
 
-		// ===== PHASE 1: P1/02P01_X.SAN =====
+		// ----- PHASE 1: P1/02P01_X.SAN -----
 		// FUN_0041c7d0: Reset per-phase counters
 		_rebelKillCounter = 0;
 		_rebelHitCounter = 0;
@@ -331,7 +331,7 @@ int InsaneRebel2::runLevel2() {
 		totalKills += _rebelKillCounter;
 		totalMisses += _rebelHitCounter;
 
-		// ===== PHASE 2: P2/02P02_X.SAN =====
+		// ----- PHASE 2: P2/02P02_X.SAN -----
 		_currentPhase = 2;
 		_rebelKillCounter = 0;
 		_rebelHitCounter = 0;
@@ -413,7 +413,7 @@ int InsaneRebel2::runLevel2() {
 		totalKills += _rebelKillCounter;
 		totalMisses += _rebelHitCounter;
 
-		// ===== PHASE 3: P3/02P03_X.SAN =====
+		// ----- PHASE 3: P3/02P03_X.SAN -----
 		_currentPhase = 3;
 		_rebelKillCounter = 0;
 		_rebelHitCounter = 0;
@@ -556,7 +556,7 @@ int InsaneRebel2::runLevel3() {
 	if (_vm->shouldQuit())
 		return kLevelQuit;
 
-	// ===== PHASE 1 retry loop =====
+	// ----- PHASE 1 retry loop -----
 	while (!_vm->shouldQuit()) {
 		_playerShield = 255;
 		_playerDamage = 0;
@@ -611,7 +611,7 @@ int InsaneRebel2::runLevel3() {
 	if (_vm->shouldQuit())
 		return kLevelQuit;
 
-	// ===== PHASE 2 retry loop (preserves phase 1 score) =====
+	// ----- PHASE 2 retry loop (preserves phase 1 score) -----
 	_currentPhase = 2;
 
 	while (!_vm->shouldQuit()) {
@@ -818,7 +818,7 @@ int InsaneRebel2::runLevel6() {
 		// DAT_0047ab9c = 0xffffffff — init phase state
 		_rebelPhaseState = 0xffffffff;
 
-		// ===== PHASE 1 =====
+		// ----- PHASE 1 -----
 		_rebelLevelType = 5;  // DAT_0047a7f8 = 5
 		_currentPhase = 1;
 
@@ -862,7 +862,7 @@ int InsaneRebel2::runLevel6() {
 		if (_vm->shouldQuit())
 			return kLevelQuit;
 
-		// ===== PHASE 2 retry loop (inner while(true) in original) =====
+		// ----- PHASE 2 retry loop (inner while(true) in original) -----
 		while (!_vm->shouldQuit()) {
 			_rebelLevelType = 6;  // DAT_0047a7f8 = 6
 			_currentPhase = 2;
@@ -1255,7 +1255,7 @@ int InsaneRebel2::runLevel11() {
 			_rebelLinks[i][2] = 0;
 		}
 
-		// ===== PHASE 1: P1/11P01_X.SAN =====
+		// ----- PHASE 1: P1/11P01_X.SAN -----
 		_rebelKillCounter = 0;
 		_rebelHitCounter = 0;
 		_rebelPhaseState = 0;
@@ -1321,7 +1321,7 @@ int InsaneRebel2::runLevel11() {
 		totalKills += _rebelKillCounter;
 		totalMisses += _rebelHitCounter;
 
-		// ===== PHASE 2: P2/11P02_X.SAN =====
+		// ----- PHASE 2: P2/11P02_X.SAN -----
 		_currentPhase = 2;
 		_rebelKillCounter = 0;
 		_rebelHitCounter = 0;
@@ -1384,7 +1384,7 @@ int InsaneRebel2::runLevel11() {
 		totalKills += _rebelKillCounter;
 		totalMisses += _rebelHitCounter;
 
-		// ===== PHASE 3 FIRST HALF: P3/11P03_X (A-F) =====
+		// ----- PHASE 3 FIRST HALF: P3/11P03_X (A-F) -----
 		// Bridge puzzle — exit when (phaseState & 0x70) == 0x70
 		_currentPhase = 3;
 		_rebelKillCounter = 0;
@@ -1455,7 +1455,7 @@ int InsaneRebel2::runLevel11() {
 		if (_vm->shouldQuit())
 			return kLevelQuit;
 
-		// ===== PHASE 3 BRIDGE CINEMATICS =====
+		// ----- PHASE 3 BRIDGE CINEMATICS -----
 		{
 			bool allBasicKilled = (_rebelPhaseState & 0x0e) >= 0x0e;
 			if (!allBasicKilled) {
@@ -1472,7 +1472,7 @@ int InsaneRebel2::runLevel11() {
 		if (_vm->shouldQuit())
 			return kLevelQuit;
 
-		// ===== PHASE 3 SECOND HALF: P3/11P03_X (G-L) =====
+		// ----- PHASE 3 SECOND HALF: P3/11P03_X (G-L) -----
 		// Reset shots/explosions (FUN_0041ca6a equivalent)
 		for (int i = 0; i < 5; i++) {
 			_explosions[i].active = false;
@@ -1542,7 +1542,7 @@ int InsaneRebel2::runLevel11() {
 		if (_vm->shouldQuit())
 			return kLevelQuit;
 
-		// ===== LEVEL COMPLETED =====
+		// ----- LEVEL COMPLETED -----
 		{
 			totalMisses += _rebelHitCounter;
 			int accuracy = 0;
@@ -1640,7 +1640,7 @@ int InsaneRebel2::runLevel12() {
 			_rebelLinks[i][2] = 0;
 		}
 
-		// ===== PHASE 1: 12P05 → P1/12P01_X =====
+		// ----- PHASE 1: 12P05 → P1/12P01_X -----
 		// FUN_00401000: Reset at top of each retry
 		_rebelKillCounter = 0;
 		_rebelHitCounter = 0;
@@ -1695,7 +1695,7 @@ int InsaneRebel2::runLevel12() {
 		if (_vm->shouldQuit())
 			return kLevelQuit;
 
-		// ===== PHASE 2: 12P06 → P2/12P02_X =====
+		// ----- PHASE 2: 12P06 → P2/12P02_X -----
 		_currentPhase = 2;
 		_rebelPhaseState = 0;
 		_rebelWaveState = 0;
@@ -1758,7 +1758,7 @@ int InsaneRebel2::runLevel12() {
 		if (_vm->shouldQuit())
 			return kLevelQuit;
 
-		// ===== PHASE 3: 12P07 → P3/12P03_X =====
+		// ----- PHASE 3: 12P07 → P3/12P03_X -----
 		_currentPhase = 3;
 		_rebelPhaseState = 0;
 		_rebelWaveState = 0;
@@ -1819,7 +1819,7 @@ int InsaneRebel2::runLevel12() {
 		if (_vm->shouldQuit())
 			return kLevelQuit;
 
-		// ===== PHASE 4: 12P08 → P4/12P04_X =====
+		// ----- PHASE 4: 12P08 → P4/12P04_X -----
 		_currentPhase = 4;
 		_rebelPhaseState = 0;
 		_rebelWaveState = 0;
@@ -1879,14 +1879,14 @@ int InsaneRebel2::runLevel12() {
 		if (_vm->shouldQuit())
 			return kLevelQuit;
 
-		// ===== CLOSING: 12P09.SAN =====
+		// ----- CLOSING: 12P09.SAN -----
 		splayer->setCurVideoFlags(0x428);
 		splayer->play("LEV12/12P09.SAN", 12);
 		if (_vm->shouldQuit())
 			return kLevelQuit;
 		processWaveEnd(1, &budget, 0, 0);
 
-		// ===== LEVEL COMPLETED =====
+		// ----- LEVEL COMPLETED -----
 		{
 			int accuracy = 0;
 			if (_rebelKillCounter > 0) {
