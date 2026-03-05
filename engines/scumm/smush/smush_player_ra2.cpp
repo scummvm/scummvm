@@ -40,6 +40,10 @@
 
 namespace Scumm {
 
+bool SmushPlayer::isRA1() const {
+	return _vm->_game.id == GID_REBEL1;
+}
+
 bool SmushPlayer::isRA2() const {
 	return _vm->_game.id == GID_REBEL2;
 }

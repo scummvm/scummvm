@@ -78,6 +78,8 @@ namespace Scumm {
 
 #define SMUSH_CODEC_RLE          1
 #define SMUSH_CODEC_RLE_ALT      3
+#define SMUSH_CODEC_RA1_DELTA    4    // RA1: Delta block codec (skip on idx 0x80)
+#define SMUSH_CODEC_RA1_BLOCK    5    // RA1: Block-based frame codec (no skip)
 #define SMUSH_CODEC_UNCOMPRESSED 20
 #define SMUSH_CODEC_LINE_UPDATE  21   // RA2: Skip/copy with literal pixels
 #define SMUSH_CODEC_SKIP_RLE     23   // RA2: Skip/copy with embedded RLE
@@ -289,7 +291,7 @@ private:
 	void tryCmpFile(const char *filename);
 
 	bool readString(const char *file);
-	void decodeFrameObject(int codec, const uint8 *src, int left, int top, int width, int height, int dataSize = 0);
+	void decodeFrameObject(int codec, const uint8 *src, int left, int top, int width, int height, int dataSize = 0, uint8 ra1Param = 0, uint16 ra1Parm2 = 0);
 	void handleAnimHeader(int32 subSize, Common::SeekableReadStream &);
 	void handleFrame(int32 frameSize, Common::SeekableReadStream &);
 	void handleNewPalette(int32 subSize, Common::SeekableReadStream &);
@@ -304,7 +306,8 @@ private:
 	void handleLoad(int32 subSize, Common::SeekableReadStream &);  // RA2 only (impl in smush_player_ra2.cpp)
 	void readPalette(byte *, Common::SeekableReadStream &);
 
-	// RA2-specific methods (implemented in smush_player_ra2.cpp)
+	// RA1/RA2 identification
+	bool isRA1() const;
 	bool isRA2() const;
 	void ra2InitFields();
 	void ra2DestroyFields();

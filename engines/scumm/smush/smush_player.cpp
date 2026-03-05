@@ -44,6 +44,7 @@
 
 #include "scumm/insane/insane.h"
 #include "scumm/insane/insane_rebel.h"
+#include "scumm/insane/insane_rebel1.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
@@ -827,8 +828,161 @@ byte *SmushPlayer::getVideoPalette() {
 
 void smushDecodeRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 void smushDecodeUncompressed(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
+void smushDecodeRA1Block(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize, uint8 param, uint16 parm2, int codec);
 
-void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int top, int width, int height, int dataSize) {
+/**
+ * RA1 codec 4/5: Block-based frame decoder.
+ * Adapted from FFmpeg's libavcodec/sanm.c old_codec4() (LGPL 2.1+).
+ *
+ * Two tile tables (c4tbl[2][256][16]):
+ *   Table 0: Generated dither patterns from 16-color sub-palette
+ *   Table 1: Loaded from frame data (4bpp nibble-split tiles)
+ *
+ * Each 4x4 block is decoded by reading a bit flag (from mask bytes)
+ * and an index byte. c4tbl[bit][index] gives the 16-pixel pattern.
+ * Codec 4: index 0x80 means "skip block" (delta frame).
+ * Codec 5: all indices are drawn (keyframe).
+ */
+
+// Persistent tile table state for RA1 codec 4/5
+static uint8 s_ra1C4Tbl[2][256][16];
+static uint16 s_ra1C4Param = 0xFFFF;
+
+static void ra1Codec4GenTiles(uint16 param1) {
+	uint8 *dst = &s_ra1C4Tbl[0][0][0];
+
+	for (int i = 1; i < 16; i += 2) {
+		for (int k = 0; k < 16; k++) {
+			int j = i + param1;
+			int l = k + param1;
+			int m = (j + l) / 2;
+			int n = (j + m) / 2;
+			int o = (l + m) / 2;
+			if (j == m || l == m) {
+				*dst++ = l; *dst++ = j; *dst++ = l; *dst++ = j;
+				*dst++ = j; *dst++ = l; *dst++ = j; *dst++ = j;
+				*dst++ = l; *dst++ = j; *dst++ = l; *dst++ = j;
+				*dst++ = l; *dst++ = l; *dst++ = j; *dst++ = l;
+			} else {
+				*dst++ = m; *dst++ = m; *dst++ = n; *dst++ = j;
+				*dst++ = m; *dst++ = m; *dst++ = n; *dst++ = j;
+				*dst++ = o; *dst++ = o; *dst++ = m; *dst++ = n;
+				*dst++ = l; *dst++ = l; *dst++ = o; *dst++ = m;
+			}
+		}
+	}
+
+	for (int i = 0; i < 16; i += 2) {
+		for (int k = 0; k < 16; k++) {
+			int j = i + param1;
+			int l = k + param1;
+			int m = (j + l) / 2;
+			int n = (j + m) / 2;
+			int o = (l + m) / 2;
+			if (m == j || m == l) {
+				*dst++ = j; *dst++ = j; *dst++ = l; *dst++ = j;
+				*dst++ = j; *dst++ = j; *dst++ = j; *dst++ = l;
+				*dst++ = l; *dst++ = j; *dst++ = l; *dst++ = l;
+				*dst++ = j; *dst++ = l; *dst++ = j; *dst++ = l;
+			} else {
+				*dst++ = j; *dst++ = j; *dst++ = n; *dst++ = m;
+				*dst++ = j; *dst++ = j; *dst++ = n; *dst++ = m;
+				*dst++ = n; *dst++ = n; *dst++ = m; *dst++ = o;
+				*dst++ = m; *dst++ = m; *dst++ = o; *dst++ = l;
+			}
+		}
+	}
+}
+
+static bool ra1Codec4LoadTiles(const byte *&src, int &remaining, uint16 param2, uint8 clr) {
+	uint8 *dst = &s_ra1C4Tbl[1][0][0];
+	int loop = param2 * 8;
+
+	if (param2 > 256 || remaining < loop)
+		return false;
+
+	for (int i = 0; i < loop; i++) {
+		byte c = *src++;
+		remaining--;
+		*dst++ = (c >> 4) + clr;
+		*dst++ = (c & 0xF) + clr;
+	}
+	return true;
+}
+
+void smushDecodeRA1Block(byte *dst, const byte *src, int left, int top, int width, int height,
+						 int pitch, int dataSize, uint8 param, uint16 parm2, int codec) {
+	const int mx = pitch;  // framebuffer width
+	const int my = height; // framebuffer height
+
+	// Generate dither tile table if palette base changed
+	if (s_ra1C4Param != param) {
+		ra1Codec4GenTiles(param);
+		s_ra1C4Param = param;
+	}
+
+	// Load frame-specific tiles from data stream (4bpp nibble-split)
+	int remaining = dataSize;
+	const byte *data = src;
+	if (parm2 > 0) {
+		if (!ra1Codec4LoadTiles(data, remaining, parm2, param)) {
+			warning("smushDecodeRA1Block: not enough data for tile load (parm2=%d)", parm2);
+			return;
+		}
+	}
+
+	// Decode blocks: iterate columns by 4, then rows by 4 (column-major order)
+	for (int j = 0; j < width; j += 4) {
+		byte mask = 0, bits = 0;
+		int x = left + j;
+		for (int i = 0; i < height; i += 4) {
+			int y = top + i;
+			int bit = 0;
+
+			if (parm2 > 0) {
+				if (bits == 0) {
+					if (remaining < 1)
+						return;
+					mask = *data++;
+					remaining--;
+					bits = 8;
+				}
+				bit = !!(mask & 0x80);
+				mask <<= 1;
+				bits--;
+			}
+
+			if (remaining < 1)
+				return;
+			byte idx = *data++;
+			remaining--;
+
+			// Codec 4: index 0x80 = skip (delta). Codec 5: no skip.
+			if (bit == 0 && idx == 0x80 && codec != 5)
+				continue;
+			if (y >= my || (y + 4) < 0 || (x + 4) < 0 || x >= mx)
+				continue;
+
+			const byte *gs = &s_ra1C4Tbl[bit][idx][0];
+			if (y >= 0 && x >= 0 && (y + 4) <= my && (x + 4) <= mx) {
+				// Fast path: fully within bounds
+				for (int k = 0; k < 4; k++, gs += 4)
+					memcpy(dst + x + (y + k) * pitch, gs, 4);
+			} else {
+				// Slow path: clipping
+				for (int k = 0; k < 4; k++) {
+					for (int l = 0; l < 4; l++, gs++) {
+						int yo = y + k, xo = x + l;
+						if (yo >= 0 && yo < my && xo >= 0 && xo < mx)
+							*(dst + yo * pitch + xo) = *gs;
+					}
+				}
+			}
+		}
+	}
+}
+
+void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int top, int width, int height, int dataSize, uint8 ra1Param, uint16 ra1Parm2) {
 	if ((height == 242) && (width == 384)) {
 		int bufSize = 242 * 384;
 		if (_specialBuffer == nullptr || bufSize > _specialBufferSize) {
@@ -903,13 +1057,17 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 		if (_deltaGlyphsCodec)
 			_deltaGlyphsCodec->decode(_dst, src);
 		break;
+	case SMUSH_CODEC_RA1_DELTA:
+	case SMUSH_CODEC_RA1_BLOCK:
+		smushDecodeRA1Block(_dst, src, left, top, width, height, pitch, dataSize, ra1Param, ra1Parm2, codec);
+		break;
 	case SMUSH_CODEC_UNCOMPRESSED:
 		smushDecodeUncompressed(_dst, src, left, top, width, height, pitch);
 		break;
 	default:
 		if (isRA2() && ra2DecodeCodec(codec, src, left, top, width, height, pitch, dataSize))
 			break;
-		if (isRA2()) {
+		if (isRA1() || isRA2()) {
 			debugC(DEBUG_SMUSH, "SmushPlayer::decodeFrameObject: Skipping unknown codec %d (left=%d, top=%d, %dx%d)",
 				codec, left, top, width, height);
 			break;
@@ -984,13 +1142,19 @@ void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b
 	}
 
 	int codec = b.readUint16LE();
+	uint8 ra1Param = 0;   // RA1: palette base byte (FOBJ byte[1])
+	uint16 ra1Parm2 = 0;  // RA1: tile count (FOBJ bytes[12-13])
+	if (isRA1()) {
+		ra1Param = (codec >> 8) & 0xFF; // byte[1] = palette base (e.g. 0xF0)
+		codec &= 0xFF;                  // byte[0] = actual codec number
+	}
 	int left = isRA2() ? (int)b.readSint16LE() : (int)b.readUint16LE();
 	int top = isRA2() ? (int)b.readSint16LE() : (int)b.readUint16LE();
 	int width = b.readUint16LE();
 	int height = b.readUint16LE();
 
 	b.readUint16LE();
-	b.readUint16LE();
+	ra1Parm2 = b.readUint16LE();
 
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFrameObject: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d",
 		_frame, codec, left, top, width, height, subSize - 14);
@@ -1013,7 +1177,7 @@ void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b
 		ra2StoreFobjData(codec, chunk_buffer, chunk_size, left, top, width, height);
 	}
 
-	decodeFrameObject(codec, chunk_buffer, left, top, width, height, chunk_size);
+	decodeFrameObject(codec, chunk_buffer, left, top, width, height, chunk_size, ra1Param, ra1Parm2);
 
 	free(chunk_buffer);
 }
@@ -1096,6 +1260,24 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 			if (isRA2())
 				ra2HandleGost(subSize, b);
 			break;
+		// RA1-specific chunk types: skip gracefully
+		case MKTAG('G','A','M','E'):
+			if (isRA1()) {
+				InsaneRebel1 *rebel1 = (InsaneRebel1 *)_vm->_insane;
+				rebel1->handleGameChunk(subSize, b);
+			}
+			break;
+		case MKTAG('G','A','M','2'):
+		case MKTAG('F','A','D','E'):
+		case MKTAG('S','E','G','A'):
+		case MKTAG('A','D','L',' '):
+		case MKTAG('A','D','L','2'):
+		case MKTAG('S','B','L',' '):
+		case MKTAG('S','B','L','2'):
+		case MKTAG('P','S','D','2'):
+		case MKTAG('P','V','O','C'):
+			debugC(DEBUG_SMUSH, "SmushPlayer::handleFrame: skipping RA1 chunk %s (%d bytes)", tag2str(subType), subSize);
+			break;
 		default:
 			error("Unknown frame subChunk found : %s, %d", tag2str(subType), subSize);
 		}
@@ -1157,8 +1339,15 @@ void SmushPlayer::handleAnimHeader(int32 subSize, Common::SeekableReadStream &b)
 			setDirtyColors(0, 255);
 		}
 
-		_width = READ_LE_UINT16(&headerContent[4]);
-		_height = READ_LE_UINT16(&headerContent[6]);
+		if (isRA1()) {
+			// v1 AHDR: offset 4-5 is not width/height, palette starts at offset 6
+			// RA1 resolution is always 384x242, set from first FOBJ
+			_width = 384;
+			_height = 242;
+		} else {
+			_width = READ_LE_UINT16(&headerContent[4]);
+			_height = READ_LE_UINT16(&headerContent[6]);
+		}
 
 		if (isRA2())
 			ra2FixupAnimHeader();
