@@ -100,6 +100,7 @@ class Insane;
 
 class SmushPlayer {
 	friend class Insane;
+	friend class InsaneRebel1;
 	friend class InsaneRebel2;
 	friend class SmushMultiFont;
 private:
