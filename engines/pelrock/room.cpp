@@ -315,6 +315,7 @@ void RoomManager::addWalkbox(WalkBox walkbox, int persist) {
 		_currentRoomWalkboxes.push_back(walkbox);
 	}
 	if (persist & PERSIST_PERM) {
+		debug("Adding walkbox change for room %d, index %d, x=%d y=%d w=%d h=%d", _currentRoomNumber, walkbox.index, walkbox.x, walkbox.y, walkbox.w, walkbox.h);
 		g_engine->_state->roomWalkBoxChanges[_currentRoomNumber].push_back({_currentRoomNumber, walkbox.index, walkbox});
 	}
 }
@@ -1007,16 +1008,18 @@ Common::Array<WalkBox> RoomManager::loadWalkboxes(byte *data, size_t size) {
 		int16 w = READ_LE_INT16(data + boxOffset + 4);
 		int16 h = READ_LE_INT16(data + boxOffset + 6);
 		byte flags = data[boxOffset + 8];
-		// debug("Walkbox %d: x1=%d y1=%d w=%d h=%d", i, x1, y1, w, h);
+		debug("Walkbox %d: x1=%d y1=%d w=%d h=%d", i, x1, y1, w, h);
 		WalkBox box;
 		box.index = i;
 		bool isChanged = false;
 		if (g_engine->_state->roomWalkBoxChanges.contains(_currentRoomNumber)) {
+			debug("Checking for changes to walkbox %d in room %d", i, _currentRoomNumber);
 			// if the walkbox has been changed, load the changed version
 			for (int j = 0; j < g_engine->_state->roomWalkBoxChanges[_currentRoomNumber].size(); j++) {
 				if (g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkboxIndex == i) {
 					walkboxes.push_back(g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkbox);
 					isChanged = true;
+					debug("Walkbox %d has been changed, loading changed version, x1=%d y1=%d w=%d h=%d", i, g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkbox.x, g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkbox.y, g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkbox.w, g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkbox.h);
 					break;
 				}
 			}
@@ -1042,11 +1045,12 @@ Common::Array<WalkBox> RoomManager::loadWalkboxes(byte *data, size_t size) {
 				}
 			}
 			if (!found) {
+				debug("Adding new walkbox for room %d at index %d", _currentRoomNumber, g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkboxIndex);
 				walkboxes.push_back(g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkbox);
 			}
 		}
 	}
-
+	debug("Total walkboxes for room %d: %d", _currentRoomNumber, walkboxes.size());
 	return walkboxes;
 }
 

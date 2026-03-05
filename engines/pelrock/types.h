@@ -448,8 +448,7 @@ struct PaletteAnim {
 #define PASSERBY_DOWN 2
 
 struct PasserByAnim {
-	// uint32 frameTrigger = 0x3FF;
-	uint32 frameTrigger = 0x96;
+	uint32 frameTrigger = 0x3FF;
 	int16 startX;
 	int16 startY;
 	int16 resetCoord;

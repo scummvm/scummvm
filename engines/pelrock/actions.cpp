@@ -326,21 +326,14 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 272:
 		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
-	case 273:
-		WalkBox w1;
-		w1.x = 436;
-		w1.y = 356;
-		w1.w = 4;
-		w1.h = 14;
-		WalkBox w2;
-		w2.x = 440;
-		w2.y = 368;
-		w2.w = 148;
-		w2.h = 2;
+	case 273: {
+		WalkBox w1 = { 3, 436, 356, 4, 14, 0 };
+		WalkBox w2 = { 4, 440, 368,148, 2, 0 };
 
 		_room->addWalkbox(w1);
 		_room->addWalkbox(w2);
 		break;
+	}
 	case 274:
 	case 275:
 	case 276:
