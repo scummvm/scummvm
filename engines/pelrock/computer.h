@@ -42,7 +42,7 @@ public:
 	 * @return Book index if a book was memorized, -1 otherwise
 	 */
 	int run();
-	const char *_memorizedMsg;      // "Bueno... Tendre que buscar en la estanteria de la %c"
+	Common::String _memorizedMsg;      // "Bueno... Tendre que buscar en la estanteria de la %c"
 
 private:
 	enum ComputerState {

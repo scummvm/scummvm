@@ -925,6 +925,7 @@ void PelrockEngine::useBrickWithWindow(int inventoryObject, HotSpot *hotspot) {
 		g_system->delayMillis(10);
 	}
 
+	debug("Brick hit the window");
 	// Add the broken window sticker
 	_room->addSticker(11);
 	_sound->playSound(_room->_roomSfx[2]); // Play glass breaking sound
@@ -1273,7 +1274,7 @@ void PelrockEngine::pickUpBook(int i) {
 		}
 
 		_alfredState.isWalkingCancelable = false;
-		walkAndAction(_room->findHotspotByExtra(102), TALK);
+		walkAndAction(_room->findHotspotByExtra(358), TALK);
 		if (!_state->hasInventoryItem(3)) {
 
 			_state->setCurrentRoot(9, 0, 0);

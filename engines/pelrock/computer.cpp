@@ -67,19 +67,13 @@ void Computer::init() {
 		_libraryBooks.push_back(book);
 	}
 
-	for (int i = 0; i < _libraryBooks.size(); i++) {
-		const LibraryBook &book = _libraryBooks[i];
-		debug("Loaded book: title='%s', author='%s', genre='%s', unknown=%d, shelf=%d, available=%d",
-			  book.title.c_str(), book.author.c_str(), book.genre.c_str(),
-			  book.inventoryIndex, book.shelf, book.available);
-	}
-
 	_computerText = g_engine->_res->loadComputerText();
 
 	_searchResults.clear();
 	_currentResult = 0;
 	_searchLetter = 0;
 	_memorizedBookIndex = -1;
+	_memorizedMsg = _computerText[10][0].substr(16, _computerText[10][0].size() - 16); // "Bueno... Tendre que buscar en la estanteria de la %c"
 	_lineHeight = g_engine->_smallFont->getFontHeight();
 }
 
@@ -211,7 +205,7 @@ void Computer::drawScreen() {
 		// Situacion (location/availability)
 		Common::String situacionLine = _computerText[6][0];
 		int situacionPlaceholderIndex = situacionLine.findFirstOf("XXXX");
-		situacionLine.replace(situacionPlaceholderIndex, situacionLine.size() - situacionPlaceholderIndex, book.available ? "Disponible" : "Prestado");
+		situacionLine.replace(situacionPlaceholderIndex, situacionLine.size() - situacionPlaceholderIndex, book.available ? _computerText[8][0] : _computerText[9][0]);
 		g_engine->_graphics->drawColoredText(g_engine->_screen, situacionLine, textX, textY + increment * 3, 340, defaultColor, g_engine->_smallFont);
 
 		// Show navigation options

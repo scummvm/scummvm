@@ -40,7 +40,7 @@ const AlfredSpecialAnimOffset ResourceManager::alfredSpecialAnims[] = {
 	{10, 51, 102, 1, 7, 578943, 1},      // 1 - READ RECIPE
 	{3, 45, 87, 0, 7, 37000, 1},         // 2 -  ELECTRIC SHOCK 1
 	{2, 82, 58, 0, 7, 53106, 20, 1},        // 3 - ELECTRIC SHOCK 3
-	{3, 71, 110, 1, 2, 20724, 1, 62480}, // 4 - Throw
+	{3, 71, 110, 1, 2, 20724, 1, 1, 62480}, // 4 - Throw
 	{14, 171, 107, 1, 7, 1556540, 1},    // 5 - crocodile
 	{12, 113, 103, 1, 7, 1583702, 1},    // 6 - exit through manhole
 	{11, 33, 72, 1, 7, 1761234, 1},      // 7 - alfred climbs down
@@ -386,12 +386,19 @@ Common::Array<Common::StringArray> ResourceManager::loadComputerText() {
 	if (!exe.open("JUEGO.EXE")) {
 		error("Couldnt find file JUEGO.EXE");
 	}
-	int bufSize = 416;
+	int bufSize = 490;
 	byte *computerTextBuf = new byte[bufSize];
 	exe.seek(0x0004901A, SEEK_SET);
 	exe.read(computerTextBuf, bufSize);
 	Common::Array<Common::StringArray> computerTexts = processTextData(computerTextBuf, bufSize);
 
+	for(int i = 0; i < computerTexts.size(); i++) {
+		debug("Computer text %d:", i);
+		Common::StringArray &lines = computerTexts[i];
+		for (int j = 0; j < lines.size(); j++) {
+			debug("  Line %d: '%s'", j, lines[j].c_str());
+		}
+	}
 	delete[] computerTextBuf;
 
 	exe.close();

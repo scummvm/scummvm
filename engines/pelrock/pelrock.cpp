@@ -1079,6 +1079,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			// Scale special anim frame to Alfred size before drawing
 			drawSpriteToBuffer(_compositeBuffer, 640, frame, _alfredState.x, _alfredState.y - _res->_currentSpecialAnim->h, _res->_currentSpecialAnim->w, _res->_currentSpecialAnim->h, 255);
 		}
+		debug("Playing special anim frame %d/%d, speed %d", _res->_currentSpecialAnim->curFrame, _res->_currentSpecialAnim->numFrames, _res->_currentSpecialAnim->speed);
 		if (_chrono->getFrameCount() % _res->_currentSpecialAnim->speed == 0) {
 			_res->_currentSpecialAnim->curFrame++;
 
@@ -1807,7 +1808,7 @@ void PelrockEngine::computerLoop() {
 	computer.run();
 	if (_state->selectedBookIndex != -1 && _state->bookLetter != '\0') {
 		Common::StringArray lines;
-		lines.push_back(Common::String::format(computer._memorizedMsg, _state->bookLetter));
+		lines.push_back(computer._memorizedMsg + _state->bookLetter);
 		_dialog->sayAlfred(lines);
 	}
 }
@@ -2087,8 +2088,8 @@ void PelrockEngine::loadExtraScreenAndPresent(int screenIndex) {
 void PelrockEngine::waitForSpecialAnimation() {
 	while (!g_engine->shouldQuit() && !_res->_isSpecialAnimFinished) {
 		_events->pollEvent();
+		debug("Waiting for special animation to finish, current frame %d", _res->_currentSpecialAnim->curFrame);
 		renderScene(OVERLAY_NONE);
-		// _events->waitForKey();
 		_screen->update();
 		g_system->delayMillis(10);
 	}
