@@ -100,11 +100,15 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_viewShift = 0;
 
 	_flyControlMode = 0;
-	_hitCooldown = 0;
 
-	_playerDamage = 0;
+	_health = kMaxHealth;
+	_lives = 3;
 	_score = 0;
-	_pilots = 3;
+	_damageFlags = 0;
+	_damageCooldown = 0;
+	_deathTimer = 0;
+	_screenFlash = 0;
+	_frameCounter = 0;
 
 	// Audio
 	initAudio(11025);
@@ -422,9 +426,11 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 // Velocity-based ship physics adapted from RA2 Handler 7 (FUN_40C3CC case 4).
 // Mouse input → velocity history averaging → position delta → corridor collision → perspective.
 void InsaneRebel1::updateShipPhysics() {
-	// Decrement hit cooldown
-	if (_hitCooldown > 0)
-		_hitCooldown--;
+	_frameCounter++;
+
+	// Decrement cooldown
+	if (_damageCooldown > 0)
+		_damageCooldown--;
 
 	// --- Step 1: Mouse input as offset from screen center ---
 	// Use _vm->_mouse (0-319, 0-199 virtual screen coords), same as RA2.
@@ -508,27 +514,33 @@ void InsaneRebel1::updateShipPhysics() {
 	_shipPosY = CLIP<int16>(_shipPosY, kMinY, kMaxY);
 
 	// --- Step 7: Corridor collision (modes 0 and 2) ---
+	// From FUN_1C54D: wall contact sets damageFlags bits 0-3 (directional)
+	// and pushes velocity history to bounce away from the wall.
 	if (_flyControlMode == 0 || _flyControlMode == 2) {
 		if (_corridorRightX < _shipPosX) {
 			_shipPosX = _corridorRightX;
-			if (_hitCooldown < 5) {
+			_damageFlags |= 0x02;  // Right wall
+			if (_damageCooldown < 5) {
 				for (int i = 0; i < 25; i++)
 					_velocityHistory[i] = -127;
-				_hitCooldown = 10;
 			}
 		}
 		if (_shipPosX < _corridorLeftX) {
 			_shipPosX = _corridorLeftX;
-			if (_hitCooldown < 5) {
+			_damageFlags |= 0x04;  // Left wall
+			if (_damageCooldown < 5) {
 				for (int i = 0; i < 25; i++)
 					_velocityHistory[i] = 127;
-				_hitCooldown = 10;
 			}
 		}
-		if (_corridorBottomY < _shipPosY)
+		if (_corridorBottomY < _shipPosY) {
 			_shipPosY = _corridorBottomY;
-		if (_shipPosY < _corridorTopY)
+			_damageFlags |= 0x01;  // Bottom wall
+		}
+		if (_shipPosY < _corridorTopY) {
 			_shipPosY = _corridorTopY;
+			_damageFlags |= 0x08;  // Top wall
+		}
 	}
 
 	// --- Step 8: Perspective offsets ---
@@ -571,9 +583,42 @@ void InsaneRebel1::updateShipPhysics() {
 
 	_shipDirIndex = CLIP<int16>(vDir * 7 + hDir, 0, _shipBank.numSprites - 1);
 
-	debug(7, "RA1 ship: pos=(%d,%d) vel=%d vIn=%d dx=%d dir=%d corridor=[%d,%d]-[%d,%d]",
+	// --- Step 10: Damage processing (from FUN_1DEB5 decompilation) ---
+	// damageFlags & 0x96 = bits 1,2,4,7 = wall collisions (0x16) + projectile hit (0x80)
+	if ((_damageFlags & 0x96) != 0 && _damageCooldown == 0 &&
+		_health >= 0 && _deathTimer <= 0) {
+		// Projectile hit (bit 7 = 0x80)
+		if (_damageFlags & 0x80)
+			_health -= kHeavyDamage;
+		// Wall collision (bits 1,2,4 = 0x16)
+		if (_damageFlags & 0x16)
+			_health -= kLightDamage;
+
+		if (_health < 0)
+			_deathTimer = kDeathTimerInit;
+
+		_damageCooldown = kDamageCooldownInit;
+		_screenFlash = 3;
+	}
+
+	// Death animation countdown
+	if (_health < 0 && _deathTimer > 0)
+		_deathTimer--;
+
+	// Health regeneration: +1 every 32 frames (from original asm)
+	if (_health >= 0 && _health < kMaxHealth && (_frameCounter & 0x1F) == 0)
+		_health++;
+
+	// Screen flash decay
+	if (_screenFlash > 0)
+		_screenFlash--;
+
+	// Clear per-frame damage flags
+	_damageFlags = 0;
+
+	debug(7, "RA1 ship: pos=(%d,%d) vel=%d vIn=%d dx=%d dir=%d health=%d corridor=[%d,%d]-[%d,%d]",
 		_shipPosX, _shipPosY, _smoothedVelocity, _verticalInput,
-		positionDeltaX, _shipDirIndex,
+		positionDeltaX, _shipDirIndex, _health,
 		_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY);
 }
 
@@ -628,25 +673,35 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 			hudX, hudY, bar.width, bar.height);
 	}
 
-	// Draw damage bar (green rectangle).
-	// From the screenshot: bar starts around x=56, y=8 within the HUD sprite,
-	// max width ~76 pixels, height ~5 pixels. Green = palette index ~0xA0.
+	// Draw health bar (from FUN_1BBCB decompilation).
+	// Bar starts at x=56, y=8 within HUD, max width ~76px, height ~5px.
+	// Color thresholds: green (>50%), yellow (25-50%), red (<25%).
 	{
 		int barMaxW = 76;
 		int barH = 5;
 		int barX = hudX + 56;
 		int barY = hudY + 8;
-		int fillW = barMaxW - (barMaxW * _playerDamage / 255);
-		if (fillW < 0) fillW = 0;
-		if (fillW > barMaxW) fillW = barMaxW;
+		int damage = kMaxHealth - CLIP<int16>(_health, 0, kMaxHealth);
+		int fillW = barMaxW * damage / kMaxHealth;
+		fillW = CLIP(fillW, 0, barMaxW);
 
-		// Find a green palette index — use 0xA0 (common green in RA1 palette)
-		byte greenColor = 0xA0;
+		// Color based on damage level (matching original thresholds from FUN_1BBCB)
+		byte barColor;
+		if (_health > kMaxHealth / 2)
+			barColor = 0xA0;  // Green — low damage
+		else if (_health > kMaxHealth / 4)
+			barColor = 0x2C;  // Yellow — moderate damage
+		else
+			barColor = 0x30;  // Red — critical
+
+		// Flash effect on damage
+		if (_screenFlash > 0)
+			barColor = 0xFF;  // White flash
 
 		for (int iy = 0; iy < barH && barY + iy < height; iy++) {
 			byte *d = dst + (barY + iy) * pitch + barX;
 			for (int ix = 0; ix < fillW && barX + ix < width; ix++) {
-				d[ix] = greenColor;
+				d[ix] = barColor;
 			}
 		}
 	}
@@ -776,12 +831,18 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 		break;
 
 	case 0x0E:
-		// Secondary collision zone
+		// Secondary collision zone (FUN_1C6E9): AABB test, sets damageFlags bit 4 (0x10)
 		if (subSize >= 20) {
-			uint32 param2 = b.readUint32BE();
-			uint32 param3 = b.readUint32BE();
-			uint32 param4 = b.readUint32BE();
-			debug(7, "RA1 GAME 0x0E: params=(%d,%d,%d,%d)", param1, param2, param3, param4);
+			int16 zoneLeft = (int16)param1;
+			int16 zoneTop = (int16)b.readUint32BE();
+			int16 zoneRight = (int16)b.readUint32BE();
+			int16 zoneBottom = (int16)b.readUint32BE();
+			if (_shipPosX >= zoneLeft && _shipPosX <= zoneRight &&
+				_shipPosY >= zoneTop && _shipPosY <= zoneBottom) {
+				_damageFlags |= 0x10;
+			}
+			debug(7, "RA1 GAME 0x0E: zone=[%d,%d]-[%d,%d] flags=0x%02x",
+				zoneLeft, zoneTop, zoneRight, zoneBottom, _damageFlags);
 		}
 		break;
 

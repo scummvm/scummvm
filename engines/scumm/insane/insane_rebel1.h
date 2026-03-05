@@ -130,13 +130,23 @@ private:
 	// Control mode (from GAME opcode 0x5E)
 	int16 _flyControlMode;
 
-	// Hit cooldown timer
-	int16 _hitCooldown;
+	// Damage system (from Ghidra decompilation of FUN_1DEB5)
+	int16 _health;               // 0x7560: current health (init=98, negative=dead, max=98)
+	int16 _lives;                // 0x7562: remaining extra lives
+	int _score;                  // 0x7564: current score
+	byte _damageFlags;           // 0x74D4: per-frame collision bitmask (cleared each frame)
+	int16 _damageCooldown;       // 0x74D8: invulnerability timer (10 frames after hit)
+	int16 _deathTimer;           // 0x756A: death animation countdown (30 on death)
+	int16 _screenFlash;          // 0x7736: screen flash timer on hit
+	uint32 _frameCounter;        // 0x7740: global frame counter
 
-	// HUD state
-	int16 _playerDamage;    // 0-255, higher = more damage
-	int _score;
-	int _pilots;            // Lives remaining
+	static const int16 kMaxHealth = 98;
+	static const int16 kDeathTimerInit = 30;
+	static const int16 kDamageCooldownInit = 10;
+
+	// Tuning damage values (TODO: load from data section per difficulty/level)
+	static const int16 kLightDamage = 5;   // "wham" — wall/zone collision
+	static const int16 kHeavyDamage = 15;  // "shot" — projectile hit
 
 	// Audio state (same structure as RA2)
 	static const int kMaxAudioTracks = 4;
