@@ -134,6 +134,7 @@ MODULE_OBJS += \
 	insane/insane_scenes.o \
 	insane/insane_iact.o \
 	insane/insane_rebel.o \
+	insane/insane_rebel1.o \
 	insane/insane_rebel_audio.o \
 	insane/insane_rebel_iact.o \
 	insane/insane_rebel_levels.o \

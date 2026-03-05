@@ -53,6 +53,7 @@
 #include "scumm/players/player_towns.h"
 #include "scumm/insane/insane.h"
 #include "scumm/insane/insane_rebel.h"
+#include "scumm/insane/insane_rebel1.h"
 #include "scumm/he/animation_he.h"
 #include "scumm/he/font_he.h"
 #include "scumm/he/intern_he.h"
@@ -1158,7 +1159,7 @@ Common::Error ScummEngine::init() {
 
 			_filenamePattern.pattern = "%.2d.LFL";
 			_filenamePattern.genMethod = kGenRoomNum;
-		} else if (_game.id == GID_REBEL2) {
+		} else if (_game.id == GID_REBEL1 || _game.id == GID_REBEL2) {
 			_fileHandle = new ScummFile(this);
 		} else if (_game.platform == Common::kPlatformMacintosh) {
 			// The mac versions of Indy4, Sam&Max, DOTT, FT and The Dig used a
@@ -1507,7 +1508,7 @@ Common::Error ScummEngine::init() {
 
 	setupScumm(macResourceFile);
 
-	if (_game.id == GID_REBEL2) {
+	if (_game.id == GID_REBEL1 || _game.id == GID_REBEL2) {
 		_setupIsComplete = true;
 		return Common::kNoError;
 	}
@@ -1786,6 +1787,38 @@ void ScummEngine::setupScumm(const Common::Path &macResourceFile) {
 
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::setupScumm(const Common::Path &macResourceFile) {
+	if (_game.id == GID_REBEL1) {
+		_res->allocResTypeData(rtBuffer, 0, 10, kDynamicResTypeMode);
+		initScreens(0, 200);
+
+		_numVariables = 256;
+		_scummVars = (int32 *)calloc(_numVariables, sizeof(int32));
+
+		_numArray = 50;
+		_res->allocResTypeData(rtString, 0, _numArray, kDynamicResTypeMode);
+		_res->allocResTypeData(rtSound, 0, 200, kDynamicResTypeMode);
+		_res->allocResTypeData(rtCostume, 0, 200, kDynamicResTypeMode);
+		_res->allocResTypeData(rtRoom, 0, 20, kDynamicResTypeMode);
+
+		defineArray(0, kIntArray, 0, 1000);
+		_numActors = 0;
+
+		setupScummVars();
+
+		_useOriginalGUI = false;
+
+		_sound = new Sound(this, _mixer, false);
+		_musicEngine = _imuseDigital = nullptr;
+		_insane = new InsaneRebel1(this);
+		_splayer = new SmushPlayer(this, nullptr, _insane);
+
+		_macGui = nullptr;
+		_charset = new CharsetRendererV7(this);
+
+		initBanners();
+		return;
+	}
+
 	if (_game.id == GID_REBEL2) {
 		_res->allocResTypeData(rtBuffer, 0, 10, kDynamicResTypeMode);
 		initScreens(0, 200);
@@ -2674,6 +2707,13 @@ int ScummEngine::getTalkSpeed() {
 
 Common::Error ScummEngine::go() {
 #ifdef ENABLE_SCUMM_7_8
+	if (_game.id == GID_REBEL1) {
+		ScummEngine_v7 *vm7 = (ScummEngine_v7 *)this;
+		InsaneRebel1 *rebel = (InsaneRebel1 *)vm7->getInsane();
+		rebel->playLevel(1);
+		return Common::kNoError;
+	}
+
 	if (_game.id == GID_REBEL2) {
 		ScummEngine_v7 *vm7 = (ScummEngine_v7 *)this;
 		InsaneRebel2 *rebel = (InsaneRebel2 *)vm7->getInsane();
@@ -4177,7 +4217,7 @@ void ScummEngine_v7::scummLoop_handleSound() {
 		_imuseDigital->refreshScripts();
 	}
 
-	if (_game.id == GID_REBEL2)
+	if (_game.id == GID_REBEL1 || _game.id == GID_REBEL2)
 		return;
 
 	_splayer->setChanFlag(0, VAR(VAR_VOICE_MODE) != 0);
