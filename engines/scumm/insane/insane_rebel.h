@@ -699,14 +699,6 @@ public:
 	// Hit cooldown timer (DAT_0044374c) - prevents rapid damage stacking
 	int16 _hitCooldown;
 
-	// Draw collision zone quadrilaterals for visualization/debugging
-	// Called from procPostRendering when collision zones should be visible
-	void drawCollisionZones(byte *dst, int pitch, int width, int height, byte color);
-
-	// Draw a single quadrilateral (4 edges)
-	void drawQuad(byte *dst, int pitch, int width, int height, 
-	              int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, byte color);
-
 	// Register a collision zone from IACT opcode 5 data
 	void registerCollisionZone(Common::SeekableReadStream &b, int16 subOpcode, int16 par4);
 
