@@ -92,10 +92,8 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_smoothedVelocity = 0;
 	_verticalInput = 0;
 	memset(_velocityHistory, 0, sizeof(_velocityHistory));
-	memset(_windHistoryX, 0, sizeof(_windHistoryX));
-	memset(_windHistoryY, 0, sizeof(_windHistoryY));
-	_windParamX = 0;
-	_windParamY = 0;
+	_driftParam = 0;
+	_driftAccum = 0;
 
 	_perspectiveX = 0;
 	_perspectiveY = 0;
@@ -438,6 +436,11 @@ void InsaneRebel1::updateShipPhysics() {
 	inputX = CLIP<int16>(inputX, -160, 160);
 	inputY = CLIP<int16>(inputY, -127, 127);
 
+	// Dead zone: ignore small offsets from center to prevent drift
+	const int16 kDeadZone = 8;
+	if (ABS(inputX) < kDeadZone) inputX = 0;
+	if (ABS(inputY) < kDeadZone) inputY = 0;
+
 	// --- Step 2: Scale to [-127, 127] (same as RA2: scaledInputX = inputX * 127 / 160) ---
 	int16 scaledInputX = (int16)((inputX * 127) / 160);
 	int16 scaledInputY = inputY;
@@ -453,20 +456,7 @@ void InsaneRebel1::updateShipPhysics() {
 		velSum += _velocityHistory[i];
 	_smoothedVelocity = (int16)(velSum / smoothWindow);
 
-	// --- Step 4: Wind history ---
-	for (int i = 14; i > 0; i--)
-		_windHistoryX[i] = _windHistoryX[i - 1];
-	_windHistoryX[0] = _windParamX;
-
-	for (int i = 14; i > 0; i--)
-		_windHistoryY[i] = _windHistoryY[i - 1];
-	_windHistoryY[0] = _windParamY;
-
-	// Wind effect (multiplier = 0 for now, no level data)
-	int16 windEffectX = 0;
-	int16 windEffectY = 0;
-
-	// --- Step 5: Position delta ---
+	// --- Step 4: Position delta ---
 	const int16 levelSpeed = 32;
 	const int16 levelYSpeed = 48;
 	int16 absSmoothVel = ABS(_smoothedVelocity);
@@ -475,29 +465,41 @@ void InsaneRebel1::updateShipPhysics() {
 	if (_flyControlMode == 1) {
 		// Mode 1: Full cross-axis coupling
 		if (scaledInputX < 1)
-			positionDeltaX = (int16)((levelSpeed * _smoothedVelocity - absSmoothVel * scaledInputY - windEffectX) >> 9);
+			positionDeltaX = (int16)((levelSpeed * _smoothedVelocity - absSmoothVel * scaledInputY) >> 9);
 		else
-			positionDeltaX = (int16)((levelSpeed * _smoothedVelocity + absSmoothVel * scaledInputY - windEffectX) >> 9);
+			positionDeltaX = (int16)((levelSpeed * _smoothedVelocity + absSmoothVel * scaledInputY) >> 9);
 	} else {
 		// Mode 0/2/3: Reduced cross-axis coupling
 		if (scaledInputX < 1)
-			positionDeltaX = (int16)((levelSpeed * _smoothedVelocity - (absSmoothVel * scaledInputY >> 2) - windEffectX) >> 9);
+			positionDeltaX = (int16)((levelSpeed * _smoothedVelocity - (absSmoothVel * scaledInputY >> 2)) >> 9);
 		else
-			positionDeltaX = (int16)((levelSpeed * _smoothedVelocity + (absSmoothVel * scaledInputY >> 2) - windEffectX) >> 9);
+			positionDeltaX = (int16)((levelSpeed * _smoothedVelocity + (absSmoothVel * scaledInputY >> 2)) >> 9);
 	}
+
+	// Original asm drift pipeline (0x1e3fc-0x1e5cb):
+	//   xDelta = (random(200) - 100 - driftTuning * _driftParam) / 2
+	//   accumX += xDelta  (32-bit accumulator)
+	//   shipDeltaX = accumX >> 8  (divide by 256 for pixel position)
+	// So drift contributes ~±0.2 px/frame. We approximate by accumulating and shifting.
+	const int16 kDriftTuning = 3; // TODO: load from per-difficulty/level tuning table
+	int16 driftBias = (int16)(_vm->_rnd.getRandomNumber(199) - 100 - kDriftTuning * _driftParam);
+	_driftAccum += driftBias >> 1;
+	_driftAccum = CLIP<int32>(_driftAccum, -0x8200, 0x8200);
+	positionDeltaX += (int16)(_driftAccum >> 8);
 
 	// Clamp X delta to ±12 per frame
 	positionDeltaX = CLIP<int16>(positionDeltaX, -12, 12);
 	_shipPosX += positionDeltaX;
 
-	// Y delta
+	// Y delta (no drift in original assembly — field4 is unused)
+	int16 positionDeltaY;
 	if (_flyControlMode == 1) {
-		int yDelta = (levelYSpeed * scaledInputY - (windEffectY >> 1)) >> 10;
-		yDelta = CLIP(yDelta, -12, 12);
-		_shipPosY -= (int16)yDelta;
+		positionDeltaY = (int16)((levelYSpeed * scaledInputY) >> 10);
+		positionDeltaY = CLIP<int16>(positionDeltaY, -12, 12);
 	} else {
-		_shipPosY -= (int16)((levelYSpeed * scaledInputY) >> 10);
+		positionDeltaY = (int16)((levelYSpeed * scaledInputY) >> 10);
 	}
+	_shipPosY -= positionDeltaY;
 
 	_verticalInput = scaledInputY;
 
@@ -749,15 +751,14 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 		break;
 
 	case 0x07:
-		// Per-frame metadata (param1=counter, param2=constant, param3/4=wind?)
+		// Per-frame corridor data: f1=frame index, f2=constant(788), f3=drift bias, f4=unused
+		// Original asm: drift bias * tuning "drift" param, combined with random turbulence
+		// f4 is never referenced in the original handler function
 		if (subSize >= 20) {
-			uint32 param2 = b.readUint32BE();
-			uint32 param3 = b.readUint32BE();
-			uint32 param4 = b.readUint32BE();
-			_windParamX = (int16)param3;
-			_windParamY = (int16)param4;
-			debug(7, "RA1 GAME 0x07: idx=%d val=%d wind=(%d,%d)",
-				param1, param2, _windParamX, _windParamY);
+			b.readUint32BE(); // f2 (constant 788, unused in physics)
+			_driftParam = (int16)(int32)b.readUint32BE();
+			b.readUint32BE(); // f4 (unused in original assembly)
+			debug(7, "RA1 GAME 0x07: frame=%d driftParam=%d", param1, _driftParam);
 		}
 		break;
 
