@@ -33,9 +33,12 @@
 
 namespace Scumm {
 
-// ========== Audio Handling for Rebel Assault 2 ==========
-// RA2 doesn't use iMUSE - we handle audio directly through the mixer
+// ---------------------------------------------------------------------------
+// Audio Handling
+// ---------------------------------------------------------------------------
+// RA2 doesn't use iMUSE -- audio is handled directly through the mixer.
 
+// initAudio -- Initialize audio system for RA2.
 void InsaneRebel2::initAudio(int sampleRate) {
 	_audioSampleRate = sampleRate;
 	for (int i = 0; i < kRA2MaxAudioTracks; i++) {
@@ -44,6 +47,7 @@ void InsaneRebel2::initAudio(int sampleRate) {
 	}
 }
 
+// terminateAudio -- Stop all tracks and release audio streams.
 void InsaneRebel2::terminateAudio() {
 	for (int i = 0; i < kRA2MaxAudioTracks; i++) {
 		if (_audioTrackActive[i]) {
@@ -57,6 +61,8 @@ void InsaneRebel2::terminateAudio() {
 	}
 }
 
+// queueAudioData -- Queue raw PCM data for playback on a track.
+// Creates the queuing stream on first use. RA2 audio is 8-bit unsigned mono.
 void InsaneRebel2::queueAudioData(int trackIdx, uint8 *data, int32 size, int volume, int pan) {
 	if (trackIdx < 0 || trackIdx >= kRA2MaxAudioTracks || size <= 0 || !data) {
 		debug(5, "InsaneRebel2::queueAudioData: Invalid params trackIdx=%d size=%d data=%p", trackIdx, size, (void*)data);
@@ -95,6 +101,13 @@ void InsaneRebel2::queueAudioData(int trackIdx, uint8 *data, int32 size, int vol
 	_vm->_mixer->setChannelBalance(_audioHandles[trackIdx], scaledPan);
 }
 
+//
+// processAudioFrame -- Per-frame audio dispatch (replaces iMUSE path)
+//
+// Iterates SmushPlayer audio tracks, handles FADING->PLAYING transitions,
+// and feeds PCM data through queueAudioData. Called from SmushPlayer when
+// iMUSE is null.
+//
 void InsaneRebel2::processAudioFrame(int16 feedSize) {
 	if (!_player) {
 		return;
@@ -256,9 +269,11 @@ void InsaneRebel2::processAudioFrame(int16 feedSize) {
 	}
 }
 
-// ========== Sound Effects (SAD files) ==========
-// Loads standalone SAUD files from SYSTM/ for one-shot SFX playback.
-// Original game loads these via FUN_0042a3b0 at init into DAT_00456888[0..7].
+// ---------------------------------------------------------------------------
+// Sound Effects (SAD files)
+// ---------------------------------------------------------------------------
+// Standalone SAUD files from SYSTM/ loaded at init for one-shot SFX.
+// Original: FUN_0042a3b0 loads into DAT_00456888[0..7].
 
 static const char *const kRA2SfxFiles[InsaneRebel2::kRA2NumSfx] = {
 	"SYSTM/BLAST.SAD",    // 0 - Player laser fire
@@ -271,6 +286,7 @@ static const char *const kRA2SfxFiles[InsaneRebel2::kRA2NumSfx] = {
 	"SYSTM/TBLAST.SAD"    // 7 - TIE blast
 };
 
+// loadSfx -- Load all SAD files from SYSTM/ directory (FUN_0042a3b0).
 void InsaneRebel2::loadSfx() {
 	for (int i = 0; i < kRA2NumSfx; i++) {
 		ScummFile *file = _vm->instantiateScummFile();
@@ -333,6 +349,7 @@ void InsaneRebel2::loadSfx() {
 	}
 }
 
+// freeSfx -- Free all loaded SFX data and auxiliary buffers.
 void InsaneRebel2::freeSfx() {
 	for (int i = 0; i < kRA2NumSfx; i++) {
 		// Stop any playing SFX on this slot
@@ -349,6 +366,7 @@ void InsaneRebel2::freeSfx() {
 	}
 }
 
+// playSfx -- Play a one-shot sound effect (8-bit unsigned mono, 11025 Hz).
 void InsaneRebel2::playSfx(int slot, int volume, int pan) {
 	if (slot < 0 || slot >= kRA2NumSfx || !_sfxData[slot] || _sfxSize[slot] == 0) {
 		return;
@@ -377,6 +395,7 @@ void InsaneRebel2::playSfx(int slot, int volume, int pan) {
 	debug(5, "InsaneRebel2::playSfx: slot=%d vol=%d pan=%d size=%d", slot, volume, pan, _sfxSize[slot]);
 }
 
+// loadAuxSfx -- Load sound data into auxiliary buffer (FUN_004118df).
 void InsaneRebel2::loadAuxSfx(int buffer, const byte *data, uint32 size) {
 	if (buffer < 0 || buffer >= kRA2NumAuxSfx || !data || size == 0) {
 		return;
@@ -393,6 +412,8 @@ void InsaneRebel2::loadAuxSfx(int buffer, const byte *data, uint32 size) {
 	debug(5, "InsaneRebel2::loadAuxSfx: buffer=%d size=%d", buffer, size);
 }
 
+// playAuxSfx -- Play from auxiliary buffer (FUN_00411931).
+// Handles both raw PCM and SAUD-wrapped data.
 void InsaneRebel2::playAuxSfx(int buffer, int volume, int pan) {
 	if (buffer < 0 || buffer >= kRA2NumAuxSfx || !_auxSfxData[buffer] || _auxSfxSize[buffer] == 0) {
 		return;

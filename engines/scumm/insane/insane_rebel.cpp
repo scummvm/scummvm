@@ -539,9 +539,8 @@ InsaneRebel2::~InsaneRebel2() {
 	}
 }
 
+// notifyEvent -- EventObserver callback for global input dispatch.
 bool InsaneRebel2::notifyEvent(const Common::Event &event) {
-	// Handle global key events (ESC to skip, SPACE to pause)
-	// These work regardless of menu state
 	if (event.type == Common::EVENT_KEYDOWN) {
 		SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 
@@ -771,6 +770,7 @@ const InsaneRebel2::LevelDifficultyParams InsaneRebel2::kDifficultyTable[6][17] 
 	},
 };
 
+// getDifficultyParams -- Look up difficulty parameters for current level.
 InsaneRebel2::LevelDifficultyParams InsaneRebel2::getDifficultyParams() const {
 	int diff = CLIP(_difficulty, 0, 5);
 	int lvIdx = 0;
@@ -800,8 +800,7 @@ InsaneRebel2::LevelDifficultyParams InsaneRebel2::getDifficultyParams() const {
 	return kDifficultyTable[diff][lvIdx];
 }
 
-// Score system implementation (FUN_0041bf8d equivalent)
-// Adds points to score and awards bonus life when crossing threshold
+// addScore -- Score system with bonus life awards (FUN_0041bf8d).
 void InsaneRebel2::addScore(int points) {
 	// Calculate bonus life threshold based on difficulty (DAT_0047a7fa)
 	// From FUN_0041bf8d:
@@ -869,15 +868,16 @@ void InsaneRebel2::renderScoreHUD(byte *renderBitmap, int pitch, int width, int 
 	}
 }
 
-// ======================= Pilot Data System =======================
-// Save/load pilot profiles using ScummVM's save file system (one pilot per slot).
-// Follows the Hypno/Wetlands pattern: each pilot = one ScummVM save slot.
-// Uses ScummEngine::makeSavegameName() for standard ScummVM file naming.
-// Original: FUN_00411980 (load) / FUN_00411A5D (save)
+// ---------------------------------------------------------------------------
+// Pilot Data System
+// ---------------------------------------------------------------------------
+// Save/load pilot profiles using ScummVM's save file system.
+// Original: FUN_00411980 (load) / FUN_00411A5D (save).
 
 static const uint32 kPilotSaveMagic = MKTAG('R', 'A', '2', 'P');
 static const uint16 kPilotSaveVersion = 2;
 
+// loadPilots -- Load all pilot profiles from save files (FUN_00411980).
 bool InsaneRebel2::loadPilots() {
 	_numPilots = 0;
 
@@ -918,6 +918,7 @@ bool InsaneRebel2::loadPilots() {
 	return _numPilots > 0;
 }
 
+// savePilots -- Save all pilot profiles to save files (FUN_00411A5D).
 bool InsaneRebel2::savePilots() {
 	bool ok = true;
 
@@ -1044,6 +1045,7 @@ int InsaneRebel2::getPilotHighestLevel() const {
 	return highest;
 }
 
+// processMouse -- Mouse input with edge detection for buttons.
 int32 InsaneRebel2::processMouse() {
 	int32 buttons = 0;
 
@@ -1262,10 +1264,8 @@ void InsaneRebel2::clearBit(int n) {
 	_iactBits[n] = 0;
 }
 
-// Check if shooting is allowed based on current handler and control mode
-// From FUN_0040d836 (Handler 7): shooting only allowed when DAT_004437c0 == 2
-// From FUN_00401CCF (Handler 8): mode 4/5 disable shooting
-// From FUN_41DB5E (Handler 25): only shoot when fully uncovered (DAT_0045790a == 0)
+// isShootingAllowed -- Check control mode before spawning shots.
+// Handler 7: only mode 2. Handler 8: not mode 4/5. Handler 25: not damaged.
 bool InsaneRebel2::isShootingAllowed() {
 	// Handler 7 (Third-Person Ship): Only mode 2 allows shooting
 	// FUN_0040d836 line 141: if (DAT_004437c0 == 2) { /* spawn shots, draw crosshair */ }
@@ -1291,18 +1291,9 @@ bool InsaneRebel2::isShootingAllowed() {
 	return (_rebelHandler != 0);
 }
 
+// procSKIP -- Conditional FOBJ/PSAD skip via bit table (FUN_00423A50).
+// RA2 uses SKIP chunks to hide destroyed enemy sprites.
 void InsaneRebel2::procSKIP(int32 subSize, Common::SeekableReadStream &b) {
-	// Rebel Assault 2 uses SKIP chunks to conditionally skip the next FOBJ/PSAD chunk.
-	// The SKIP chunk contains one or two object IDs. If the bit for the object is set
-	// (i.e., the object is disabled/destroyed), skip the next chunk.
-	//
-	// This is the same mechanism as Full Throttle, but RA2 uses it for enemy objects:
-	// - When an enemy is destroyed, setBit(enemy_id) is called
-	// - SKIP chunks in the video contain the enemy ID
-	// - If the bit is set, the next FOBJ (enemy sprite) is skipped
-	// - This prevents destroyed enemy sprites from being rendered
-	//
-	// The original game's FUN_00423A50 chunk reader uses this mechanism.
 
 	int16 par1, par2;
 	_player->_skipNext = false;

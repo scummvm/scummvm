@@ -29,34 +29,32 @@
 
 namespace Scumm {
 
-// ======================= Level Loading System =======================
-// Emulates the level handler functions from FUN_00417E53 through FUN_0041BBE8
+// ---------------------------------------------------------------------------
+// Level Loading System
+// ---------------------------------------------------------------------------
+// Emulates the level handler functions from FUN_00417E53 through FUN_0041BBE8.
 // Based on disassembly analysis of the retail Rebel Assault 2 executable.
 
 Common::String InsaneRebel2::getLevelDir(int levelId) {
-	// Returns directory name like "LEV01" for level 1
 	return Common::String::format("LEV%02d", levelId);
 }
 
 Common::String InsaneRebel2::getLevelPrefix(int levelId) {
-	// Returns file prefix like "01" for level 1
 	return Common::String::format("%02d", levelId);
 }
 
+//
+// playIntroSequence -- Intro sequence (FUN_004142BD case 0)
+//
+// Original flow:
+//   - If 'f','o','x' keys all held: play CREDITS/O_OPEN_C.SAN (Fox logo easter egg)
+//   - If 'b','o','t' keys all held: play CREDITS/O_OPEN_D.SAN (LucasArts logo)
+//   - Else: play OPEN/O_OPEN_A.SAN (main intro)
+//   - If DAT_0047ab45 || DAT_0047ab47: play OPEN/O_OPEN_B.SAN (additional intro)
+//
+// We skip the easter eggs and play both O_OPEN_A + O_OPEN_B unconditionally.
+//
 void InsaneRebel2::playIntroSequence() {
-	// Emulates case 0 in FUN_004142BD
-	//
-	// Original flow:
-	//   - If 'f','o','x' keys all held: play CREDITS/O_OPEN_C.SAN (Fox logo easter egg)
-	//   - If 'b','o','t' keys all held: play CREDITS/O_OPEN_D.SAN (LucasArts logo)
-	//     INSTEAD of the normal intro
-	//   - Else: play OPEN/O_OPEN_A.SAN (main intro - normal path)
-	//   - If DAT_0047ab45 || DAT_0047ab47: play OPEN/O_OPEN_B.SAN (additional intro)
-	//   - Fade out over 10 frames, clear palette, show top pilots, then -> main menu
-	//
-	// We skip the Fox/LucasArts easter eggs (require real-time key state during boot)
-	// and play both O_OPEN_A + O_OPEN_B unconditionally.
-
 	debug("Rebel2: Playing intro sequence");
 
 	_gameState = kStateIntro;
@@ -81,9 +79,8 @@ void InsaneRebel2::playIntroSequence() {
 	splayer->play("OPEN/O_OPEN_B.SAN", 12);
 }
 
+// playMissionBriefing -- Mission briefing screen (FUN_00415CF8).
 void InsaneRebel2::playMissionBriefing() {
-	// Emulates FUN_00415CF8 (partial - just the video)
-	// Plays OPEN/O_LEVEL.SAN which shows the mission briefing screen
 
 	debug("Rebel2: Playing mission briefing");
 
@@ -92,15 +89,9 @@ void InsaneRebel2::playMissionBriefing() {
 	splayer->play("OPEN/O_LEVEL.SAN", 12);
 }
 
+// playCinematic -- Play a cinematic/cutscene video.
+// Resets handler to 0 (no HUD) and sets flags to 0x28 (cinematic + buffer preserve).
 void InsaneRebel2::playCinematic(const char *filename) {
-	// Play a cinematic/cutscene video with proper intro mode setup
-	// This helper ensures:
-	// 1. Handler is reset to 0 (no HUD, no shooting)
-	// 2. Video flags are set to 0x28 (cinematic with buffer preserve)
-	//
-	// Original: All video wrapper functions (FUN_00417168, FUN_004171c5,
-	// FUN_00417ab2, FUN_00417327) add | 8 to the base flags before calling
-	// FUN_0041f4d0, so the 0x08 bit (preserve buffer) is always set.
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // No status bar during cinematics
 
@@ -109,13 +100,10 @@ void InsaneRebel2::playCinematic(const char *filename) {
 	splayer->play(filename, 12);
 }
 
+// playVideoWithText -- Video with progressive text overlay (FUN_004171c5).
+// Text is progressively revealed during [fadeInFrame, fadeOutFrame).
 void InsaneRebel2::playVideoWithText(const char *filename, int textID, int textX, int textY,
                                      int fadeInFrame, int fadeOutFrame) {
-	// Emulates FUN_004171c5: plays video with progressive text overlay
-	// Text string loaded from GAME.TRS via getString(textID)
-	// During frame range [fadeInFrame, fadeOutFrame):
-	//   displayLength = currentFrame + 10 - fadeInFrame, capped at 0xBE (190) chars
-	//   Text rendered at (textX, textY) using FUN_004341a0
 
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;
@@ -135,12 +123,9 @@ void InsaneRebel2::playVideoWithText(const char *filename, int textID, int textX
 	_textOverlayActive = false;
 }
 
+// playLevelBegin -- Level beginning cinematic (LEVXX/XXBEG.SAN).
+// Uses per-level text overlay parameters from GAME.TRS via FUN_004171c5.
 void InsaneRebel2::playLevelBegin(int levelId) {
-	// Play the level beginning cinematic (LEVXX/XXBEG.SAN)
-	// Emulates FUN_004171c5 call in each level handler
-	//
-	// Per-level text overlay parameters from original disassembly:
-	// All levels use FUN_004171c5 with a chapter title overlay from GAME.TRS.
 
 	struct TextOverlayParams {
 		int textID;      // TRS string ID (-1 = no text overlay)
@@ -187,14 +172,13 @@ void InsaneRebel2::playLevelBegin(int levelId) {
 	}
 }
 
+//
+// playLevelGameplay -- Main gameplay video(s) for a level
+//
+// Returns true if level completed (shield > 0), false if died.
+// Structures vary by level: single SAN, multi-part subdirs, or two phases.
+//
 bool InsaneRebel2::playLevelGameplay(int levelId) {
-	// Play the main gameplay video(s) for a level
-	// Returns true if level completed (damage < 0xff), false if died
-	//
-	// Different levels have different gameplay structures:
-	// - Level 1, 4, 5: Single gameplay SAN (XXPXX.SAN or XXPLAY.SAN)
-	// - Level 2: Multiple parts with subdirectories (P1/, P2/, P3/)
-	// - Level 3, 6: Two gameplay phases (XXPLAY1.SAN, XXPLAY2.SAN)
 
 	Common::String dir = getLevelDir(levelId);
 	Common::String prefix = getLevelPrefix(levelId);
@@ -377,9 +361,8 @@ bool InsaneRebel2::playLevelGameplay(int levelId) {
 	return (_playerShield > 0);
 }
 
+// playLevelEnd -- Level completion video (FUN_00417327).
 void InsaneRebel2::playLevelEnd(int levelId) {
-	// Play level completion video (LEVXX/XXEND.SAN)
-	// Emulates FUN_00417327 call
 
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // No status bar during end cinematic
@@ -396,10 +379,8 @@ void InsaneRebel2::playLevelEnd(int levelId) {
 	splayer->play(filename.c_str(), 12);
 }
 
+// playLevelDeath -- Death video (LEVXX/XXDIE_X.SAN, FUN_00417168).
 void InsaneRebel2::playLevelDeath(int levelId) {
-	// Play death video (LEVXX/XXDIE_X.SAN)
-	// The variant depends on the frame where player died
-	// For simplicity, we'll play the A variant
 
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // No status bar during death cinematic
@@ -423,9 +404,8 @@ void InsaneRebel2::playLevelDeath(int levelId) {
 	splayer->play(filename.c_str(), 12);
 }
 
+// playLevelRetry -- Retry prompt video (LEVXX/XXRETRY.SAN, FUN_00417168).
 void InsaneRebel2::playLevelRetry(int levelId) {
-	// Play retry prompt video (LEVXX/XXRETRY.SAN)
-	// Reset handler state for the retry cinematic
 
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // Reset for retry - will be set by IACT opcode 6 if needed
@@ -442,9 +422,8 @@ void InsaneRebel2::playLevelRetry(int levelId) {
 	splayer->play(filename.c_str(), 12);
 }
 
+// playLevelGameOver -- Game over video (FUN_00417ab2).
 void InsaneRebel2::playLevelGameOver(int levelId) {
-	// Play game over video (LEVXX/XXOVER.SAN)
-	// Emulates FUN_00417ab2 call
 
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // No status bar during game over cinematic
@@ -461,9 +440,8 @@ void InsaneRebel2::playLevelGameOver(int levelId) {
 	splayer->play(filename.c_str(), 12);
 }
 
+// playCreditsSequence -- End credits (OPEN/O_CREDIT.SAN).
 void InsaneRebel2::playCreditsSequence() {
-	// Play the end credits (OPEN/O_CREDIT.SAN)
-	// Individual credits are in CREDITS/CRED_XX.SAN
 
 	debug("Rebel2: Playing credits");
 
@@ -472,9 +450,8 @@ void InsaneRebel2::playCreditsSequence() {
 	splayer->play("OPEN/O_CREDIT.SAN", 12);
 }
 
+// runLevel -- Main level dispatcher, calls per-level handlers.
 int InsaneRebel2::runLevel(int levelId) {
-	// Main level dispatcher - calls per-level handlers
-	// Each level handler emulates its retail counterpart (FUN_00417E53 etc.)
 
 	debug("Rebel2: Starting level %d", levelId);
 
@@ -546,20 +523,23 @@ int InsaneRebel2::runLevel(int levelId) {
 	}
 }
 
-// =============================================================================
-// Helper functions
-// =============================================================================
+// ---------------------------------------------------------------------------
+// Helper Functions
+// ---------------------------------------------------------------------------
 
+// Emulates FUN_004233a0.
 int InsaneRebel2::getRandomVariant(int max) {
-	// Emulates FUN_004233a0 - returns random number 0 to max-1
 	return _vm->_rnd.getRandomNumber(max - 1);
 }
 
+//
+// selectDeathVideoVariant -- Frame-based death video selection
+//
+// Returns variant suffix ("A", "B", "C", etc.) based on level, phase,
+// and the frame where the player died. Emulates the per-level frame
+// threshold tables in the retail level handlers.
+//
 Common::String InsaneRebel2::selectDeathVideoVariant(int levelId, int phase, int frame) {
-	// Select death video variant based on level, phase, and death frame
-	// Emulates the frame-based death video selection in retail level handlers
-	//
-	// Returns variant suffix: "A", "B", "C", etc.
 
 	switch (levelId) {
 	case 1:
@@ -725,8 +705,8 @@ Common::String InsaneRebel2::selectDeathVideoVariant(int levelId, int phase, int
 	}
 }
 
+// playLevelDeathVariant -- Death video with variant selection.
 void InsaneRebel2::playLevelDeathVariant(int levelId, int phase, int frame) {
-	// Play death video with proper variant selection
 
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // No status bar during death cinematic
@@ -751,8 +731,8 @@ void InsaneRebel2::playLevelDeathVariant(int levelId, int phase, int frame) {
 	splayer->play(filename.c_str(), 12);
 }
 
+// playLevelRetryVariant -- Phase-specific retry video.
 void InsaneRebel2::playLevelRetryVariant(int levelId, int phase) {
-	// Play retry video - phase-specific for multi-phase levels
 
 	_rebelHandler = 0;
 	_rebelStatusBarSprite = 0;  // Reset for retry - will be set by IACT opcode 6 if needed

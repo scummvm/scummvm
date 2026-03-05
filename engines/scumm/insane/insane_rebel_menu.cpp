@@ -37,8 +37,10 @@
 
 namespace Scumm {
 
-// ======================= Menu System Implementation =======================
-// Emulates retail menu system from FUN_004147B2 and FUN_0041FDC8
+// ---------------------------------------------------------------------------
+// Menu System Implementation
+// ---------------------------------------------------------------------------
+// Emulates retail menu system from FUN_004147B2 and FUN_0041FDC8.
 
 void InsaneRebel2::resetMenu() {
 	_menuSelection = 0;
@@ -47,9 +49,7 @@ void InsaneRebel2::resetMenu() {
 	_menuSelectionConfirmed = false;
 }
 
-// Unlock all chapters for testing
-// Emulates the debug mode from original FUN_00415CF8 (lines 60-71)
-// where DAT_0047ab34 == 'd' enables level unlock via special codes
+// unlockAllChapters -- Debug mode unlock (FUN_00415CF8).
 void InsaneRebel2::unlockAllChapters() {
 	debug("Rebel2: Unlocking all chapters for testing");
 	for (int i = 0; i < 16; i++) {
@@ -58,16 +58,9 @@ void InsaneRebel2::unlockAllChapters() {
 	}
 }
 
+// getRandomMenuVideo -- Select random menu video variant (FUN_0041FDC8).
+// Always uses O_MENU_X.SAN (A-O) instead of audio-only O_MENU.SAN.
 Common::String InsaneRebel2::getRandomMenuVideo() {
-	// Emulates FUN_0041FDC8 - selects random menu video variant
-	//
-	// NOTE: The original game plays O_MENU.SAN when no progress flags are set,
-	// but that file contains ONLY audio (no FOBJ video frames). The O_MENU_X.SAN
-	// variants (A through O) contain actual 320x200 background images in Frame 0.
-	//
-	// We ALWAYS use a random variant to ensure a proper background is displayed.
-	// The original behavior of showing O_MENU.SAN (audio-only) would result in
-	// a black/undefined background which doesn't match the intended experience.
 
 	// Select random variant (0-14 maps to A-O), ensuring different from last
 	int variant;
@@ -82,18 +75,14 @@ Common::String InsaneRebel2::getRandomMenuVideo() {
 	return Common::String::format("OPEN/O_MENU_%c.SAN", letter);
 }
 
+//
+// processMenuInput -- Menu input handling (FUN_0041f5ae)
+//
+// Returns -1 (no action) or 0-4 (menu item selected).
+// Events captured by notifyEvent() before ScummEngine consumes them.
+// Keyboard: Up/Down navigate, Enter confirms. Mouse: Y maps to selection.
+//
 int InsaneRebel2::processMenuInput() {
-	// Emulates FUN_0041f5ae menu input handling
-	// Returns: -1 = no action, 0-4 = menu item selected
-	//
-	// Events are captured by notifyEvent() (EventObserver) which runs before
-	// ScummEngine::parseEvents() consumes them. This ensures we don't miss
-	// any input events even though we only process them on video frames.
-	//
-	// From FUN_0041f5ae disassembly:
-	// - Keyboard: Up/Down arrows navigate, Enter confirms
-	// - Mouse mode (DAT_0047a806 == 1): Y position maps to selection
-	// - Key codes: Up=0x148, Down=0x150, Enter=0x0d, ESC=0x1b
 
 	int result = -1;
 
@@ -208,13 +197,12 @@ int InsaneRebel2::processMenuInput() {
 	return result;
 }
 
+//
+// drawMenuItems -- Shared menu item renderer (FUN_0041f5ae)
+//
 void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int height,
                                   const char **items, int numItems, int selection,
                                   bool leftAligned) {
-	// =====================================================================
-	// Shared menu renderer - Emulates FUN_0041f5ae
-	// Address: 0x41F5AE
-	// =====================================================================
 	//
 	// items[0] = title string, items[1..numItems] = selectable items
 	// numItems = number of selectable items (FUN_0041f5ae param_3)
@@ -431,8 +419,7 @@ void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int h
 	}
 }
 
-// Format-code-aware string width calculation
-// Fixed-width codes: ^fNN (2-digit font), ^cNNN (3-digit color), ^^ (literal ^)
+// getMenuStringWidth -- Format-code-aware string width (^fNN, ^cNNN, ^^).
 int InsaneRebel2::getMenuStringWidth(const char *str) const {
 	NutRenderer *fonts[3] = { _smush_talkfontNut, _smush_smalfontNut, _smush_titlefontNut };
 	NutRenderer *defaultFont = fonts[0] ? fonts[0] : _smush_smalfontNut;
@@ -561,9 +548,11 @@ void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int
 	drawMenuItems(renderBitmap, pitch, width, height, menuItems, 7, _menuSelection);
 }
 
-// ======================= Pause Overlay =======================
-// Emulates FUN_405A21 pause rendering (lines 242-305)
-// Creates a dimmed overlay effect and displays "PAUSED" text
+// ---------------------------------------------------------------------------
+// Pause Overlay
+// ---------------------------------------------------------------------------
+
+// showPauseOverlay -- Dimmed overlay with "PAUSED" text (FUN_405A21).
 void InsaneRebel2::showPauseOverlay() {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	if (!splayer) {
@@ -728,13 +717,9 @@ void InsaneRebel2::showPauseOverlay() {
 	debug("showPauseOverlay: Overlay displayed");
 }
 
+// runMainMenu -- Main menu loop (FUN_004147B2).
+// Returns kMenuNewGame, kMenuContinue, kMenuCredits, or 0 (quit).
 int InsaneRebel2::runMainMenu() {
-	// Main menu loop - emulates FUN_004147B2
-	// Returns:
-	//   kMenuNewGame (2) = Start new game
-	//   kMenuContinue (4) = Continue game (level select)
-	//   kMenuCredits (1) = Show credits then return to menu
-	//   0 = Quit game
 
 	debug("Rebel2: Entering main menu");
 
@@ -863,16 +848,13 @@ int InsaneRebel2::runMainMenu() {
 	return 0;
 }
 
-// ==================== Chapter Selection Screen ====================
-// Emulates FUN_00415CF8 - Chapter selection with preview and password input
-// This is the actual level/chapter selection that players see after pilot select
+// ---------------------------------------------------------------------------
+// Chapter Selection Screen
+// ---------------------------------------------------------------------------
 
+// runChapterSelect -- Chapter selection with preview (FUN_00415CF8).
+// Returns kChapterSelectPlay, kChapterSelectBack, or kChapterSelectQuit.
 int InsaneRebel2::runChapterSelect() {
-	// Chapter selection screen loop - emulates FUN_00415CF8
-	// Returns:
-	//   kChapterSelectPlay (5) = Play selected chapter
-	//   kChapterSelectBack (2) = Return to main menu (ESC or BACK)
-	//   kChapterSelectQuit (0) = Quit game
 
 	debug("Rebel2: Entering chapter selection (FUN_00415CF8)");
 
@@ -1445,16 +1427,14 @@ void InsaneRebel2::drawChapterSelectOverlay(byte *renderBitmap, int pitch, int w
 	drawChapterInfoLine(renderBitmap, pitch, width, height);
 }
 
-// ==================== Pilot Selection Menu (FUN_00414A41) ====================
-// Emulates FUN_00414A41 - Pilot/save selection menu
-// This appears before chapter selection. All options go to chapter selection except MAIN MENU.
+// ---------------------------------------------------------------------------
+// Pilot Selection Menu (FUN_00414A41)
+// ---------------------------------------------------------------------------
+// Pilot/save selection before chapter selection.
 
+// runLevelSelect -- Pilot selection menu (FUN_00414A41).
+// Returns kLevelSelectPlay, kLevelSelectBack, or kLevelSelectQuit.
 int InsaneRebel2::runLevelSelect() {
-	// Pilot selection menu loop - emulates FUN_00414A41
-	// Returns:
-	//   kLevelSelectPlay (1) = Go to chapter selection (pilot selected or NEW+difficulty chosen)
-	//   kLevelSelectBack (0) = Return to main menu (MAIN MENU or ESC)
-	//   kLevelSelectQuit (2) = Quit game
 
 	debug("Rebel2: Entering pilot selection (FUN_00414A41), %d pilots loaded", _numPilots);
 
@@ -1800,38 +1780,14 @@ void InsaneRebel2::drawLevelSelectOverlay(byte *renderBitmap, int pitch, int wid
 	drawMenuItems(renderBitmap, pitch, width, height, pilotItems, _numPilots + 4, _levelSelection);
 }
 
-// ==================== Top Pilots Screen (FUN_00420116) ====================
-// Displays ranked pilot scores with animated reveal over a menu background video.
-//
-// Original FUN_00420116 at 0x420116:
-// - Plays random menu video as background (FUN_0041fdc8)
-// - Draws title from TRS string 0x96 (150) centered at (152, 10) in low-res
-// - Iterates through ranking table (DAT_00443b58, 0x4a-byte records, max 15)
-// - Each row shows: rank medals, pilot name, difficulty, chapter, total score
-// - Rows appear one per frame (animated reveal up to local_10)
-// - param_1 == -2: 240 frame loop (from options); else 120 frames (from main menu)
-// - Exits on mouse click (DAT_0047a7e4 & 1) or any keypress (DAT_0047a7e8 != 0)
-//
-// Ranking table record (0x4a = 74 bytes, from FUN_00410271):
-//   +0x00 (4): timestamp
-//   +0x04 (40): pilot name (or "-----" for defaults)
-//   +0x36 (4): total score
-//   +0x3a (4): total rating
-//   +0x3e (2): difficulty tier (1-3) — TRS lookup: value + 0x9b (155)
-//   +0x40 (2): highest chapter completed (1-15)
-//
-// Column X positions (low-res 320x200):
-//   Rank medals: 43 (0x2b)  - FUN_004341a0, alignment=1
-//   Name:        88 (0x58)  - FUN_00434cb0, alignment=0 (left), "^f01%s"
-//   Difficulty: 195 (0xc3)  - FUN_00434cb0, alignment=1, "^f01%s" (TRS)
-//   Chapter:    245 (0xf5)  - FUN_00434cb0, alignment=1, "^f01%hd"
-//   Score:      295 (0x127) - FUN_00434cb0, alignment=2, "^f01%ld"
-// Row Y: sVar1 * 10 + 42 (0x2a)
+// ---------------------------------------------------------------------------
+// Top Pilots Screen (FUN_00420116)
+// ---------------------------------------------------------------------------
+// Ranked pilot scores with animated reveal over a menu background video.
+// 0x4a-byte records (max 15): name, score, rating, difficulty, chapter.
+// Column X positions (low-res): medals=43, name=88, diff=195, ch=245, score=295.
 
-// Initialize ranking table with 15 default entries (FUN_0040FF00)
-// Called when no ranking save file exists. Generates placeholder entries with:
-//   name = "-----", score = (15-i)*1500, rating = (15-i)*2,
-//   difficulty = ((15-i)*3+14)/15, chapter = ((15-i)*15+14)/15
+// initDefaultRankings -- Fill ranking table with defaults (FUN_0040FF00).
 void InsaneRebel2::initDefaultRankings() {
 	_numRankings = 0;
 	memset(_rankings, 0, sizeof(_rankings));
@@ -1847,8 +1803,7 @@ void InsaneRebel2::initDefaultRankings() {
 	}
 }
 
-// Insert a new entry into the sorted ranking table (FUN_00410271)
-// Maintains descending score order, max kMaxRankings entries
+// insertRanking -- Insert into sorted ranking table (FUN_00410271).
 void InsaneRebel2::insertRanking(const char *name, int32 score, int32 rating,
                                   int16 difficulty, int16 chapter) {
 	if (score == 0)
@@ -1991,23 +1946,13 @@ void InsaneRebel2::drawTopPilotsOverlay(byte *renderBitmap, int pitch, int width
 	_topPilotsFrameCount++;
 }
 
-// ======================= Options Menu (FUN_004167A6) =======================
-// Original: FUN_00416787 calls FUN_0041fdc8 (init video) + FUN_004167a6(1)
-// FUN_004167a6 runs a loop over FUN_0041f5ae (drawMenuItems) with dynamic
-// toggle labels and slider items. Settings stored at DAT_00482e20[0..3]
-// (get/set via FUN_00425d30/FUN_00425d40) and DAT_0047a7fe, DAT_0047a80a.
-//
-// Menu items for keyboard mode (9 selectable):
-//   [0] Title:    TRS 89  "Game Options"
-//   [1] Music:    TRS 90/91
-//   [2] SFX:      TRS 92/93
-//   [3] Voices:   TRS 94/95
-//   [4] Text:     TRS 96/97
-//   [5] Controls: TRS 98/99
-//   [6] Rapid Fire: TRS 100/101
-//   [7] Volume:   TRS 103 "Volume Level: %hd%%"  (slider, left/right ±4)
-//   [8] Back:     TRS 107 "Return to Main Menu"
+// ---------------------------------------------------------------------------
+// Options Menu (FUN_004167A6)
+// ---------------------------------------------------------------------------
+// Toggle labels and slider items. Settings at DAT_00482e20[0..3].
+// Menu items: Music, SFX, Voices, Text, Controls, Rapid Fire, Volume, Back.
 
+// showOptionsMenu -- Options menu loop (FUN_00416787).
 void InsaneRebel2::showOptionsMenu() {
 	debug("Rebel2: Showing Options menu (FUN_00416787)");
 
