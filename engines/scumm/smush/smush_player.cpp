@@ -1486,6 +1486,9 @@ void SmushPlayer::parseNextFrame() {
 
 	if (!_imuseDigital && isRA2())
 		ra2ParseNextFrame();
+
+	if (!_imuseDigital && isRA1())
+		processDispatches(_smushAudioSampleRate / 15);
 }
 
 void SmushPlayer::setPalette(const byte *palette) {
@@ -2061,6 +2064,9 @@ void SmushPlayer::processDispatches(int16 feedSize) {
 		if (isRA2() && _insane) {
 			InsaneRebel2 *rebel2 = static_cast<InsaneRebel2 *>(_insane);
 			rebel2->processAudioFrame(feedSize);
+		} else if (isRA1() && _insane) {
+			InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
+			rebel1->processAudioFrame(feedSize);
 		}
 		return;
 	}

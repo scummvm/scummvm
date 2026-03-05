@@ -22,6 +22,8 @@
 #if !defined(SCUMM_INSANE_REBEL1_H) && defined(ENABLE_SCUMM_7_8)
 #define SCUMM_INSANE_REBEL1_H
 
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 #include "scumm/insane/insane.h"
 
 namespace Scumm {
@@ -78,6 +80,14 @@ private:
 	void renderSprite(byte *dst, int pitch, int width, int height,
 					  int x, int y, const RA1Sprite &sprite);
 
+	// Audio
+	void initAudio(int sampleRate);
+	void terminateAudio();
+	void queueAudioData(int trackIdx, uint8 *data, int32 size, int volume, int pan);
+public:
+	void processAudioFrame(int16 feedSize);
+private:
+
 	ScummEngine_v7 *_vm;
 
 	RA1SpriteBank _shipBank;
@@ -125,6 +135,13 @@ private:
 	int16 _playerDamage;    // 0-255, higher = more damage
 	int _score;
 	int _pilots;            // Lives remaining
+
+	// Audio state (same structure as RA2)
+	static const int kMaxAudioTracks = 4;
+	Audio::QueuingAudioStream *_audioStreams[kMaxAudioTracks];
+	Audio::SoundHandle _audioHandles[kMaxAudioTracks];
+	bool _audioTrackActive[kMaxAudioTracks];
+	int _audioSampleRate;
 };
 
 } // End of namespace Scumm
