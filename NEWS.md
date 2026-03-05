@@ -5,6 +5,10 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  New games:
    - Added support for Necronomicon: The Dawning of Darkness.
+   - Added ALG engine for DOS versions of American Laser Games:
+     Crime Patrol, Crime Patrol 2: Drug Wars, The Last Bounty Hunter,
+     Mad Dog McCree, Mad Dog II: The Lost Gold, Space Pirates
+     and Who Shot Johnny Rock?.
 
  General:
    - Improved PC-Speaker emulation.
