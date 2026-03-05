@@ -233,9 +233,9 @@ void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int h
 	const int itemBaseY = numItems * -5 + 0x68;
 	const int itemSpacing = 10;
 
-	// =====================================================================
+	// -------------------------------------------------------------------
 	// Font system - Emulates linked list from FUN_00403bd0
-	// =====================================================================
+	// -------------------------------------------------------------------
 	//   Font 0 (^f00): TALKFONT.NUT
 	//   Font 1 (^f01): SMALFONT.NUT (menu items)
 	//   Font 2 (^f02): TITLFONT.NUT (title)
@@ -254,9 +254,9 @@ void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int h
 	Common::Rect clipRect(0, 0, _vm->_screenWidth, _vm->_screenHeight);
 	int actualPitch = _vm->_screenWidth;
 
-	// =====================================================================
+	// -------------------------------------------------------------------
 	// Format code parser - Emulates FUN_00434d10 / FUN_00433da0
-	// =====================================================================
+	// -------------------------------------------------------------------
 	//   ^^ = literal ^, ^fNN = font switch, ^cNNN = color code, ^l = newline
 	// Fixed-width format codes: ^fNN (2-digit font), ^cNNN (3-digit color)
 	auto parseFormatCode = [&](const char *&str, int &outColor) -> int {
@@ -351,22 +351,22 @@ void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int h
 		}
 	};
 
-	// =====================================================================
+	// -------------------------------------------------------------------
 	// Draw title - items[0]
 	// Centered: X = center - titleWidth/2
 	// Left-aligned: X = 40 (0x28)
-	// =====================================================================
+	// -------------------------------------------------------------------
 	{
 		int titleWidth = getStringWidth(items[0]);
 		int titleX = leftAligned ? 40 : (centerX - titleWidth / 2);
 		drawString(items[0], titleX, titleY);
 	}
 
-	// =====================================================================
+	// -------------------------------------------------------------------
 	// Draw selectable items with selection highlight box
 	// Centered: item X = center - textWidth/2, box X = center - bracketWidth/2
 	// Left-aligned: item X = 23 (0x17), box X = 20 (0x14)
-	// =====================================================================
+	// -------------------------------------------------------------------
 	for (int i = 0; i < numItems; i++) {
 		int itemY = itemBaseY + i * itemSpacing;
 		const char *text = items[i + 1];
@@ -519,7 +519,7 @@ void InsaneRebel2::drawMenuStringRight(byte *renderBitmap, const char *str, int 
 void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int height) {
 	// Main menu renderer - calls shared drawMenuItems()
 	// Emulates FUN_004147b2 -> FUN_0041f5ae with param_3=7, param_4=0
-	// =====================================================================
+	// -------------------------------------------------------------------
 	//
 	// Menu strings loaded from GAME.TRS (keyboard mode indices 10-17):
 	//   TRS index 10: "^f02Game Main Menu"           -> Title (uses TITLFONT)
@@ -1706,10 +1706,10 @@ int InsaneRebel2::processLevelSelectInput() {
 }
 
 void InsaneRebel2::drawLevelSelectOverlay(byte *renderBitmap, int pitch, int width, int height) {
-	// =====================================================================
+	// -------------------------------------------------------------------
 	// Pilot selection / difficulty submenu renderer
 	// Emulates FUN_00414A41 → FUN_0041f5ae
-	// =====================================================================
+	// -------------------------------------------------------------------
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	if (!splayer) {
@@ -1718,12 +1718,12 @@ void InsaneRebel2::drawLevelSelectOverlay(byte *renderBitmap, int pitch, int wid
 	}
 
 	if (_gameState == kStateDifficultySelect) {
-		// =====================================================================
+		// -------------------------------------------------------------------
 		// Difficulty submenu - LAB_00414ff6
 		// FUN_0041f5ae(0, &DAT_00457458, 6, 0)
 		// DAT_00457458 = 7 entries loaded from TRS 110-116 (FUN_00414073 lines 47-50)
 		// param_3 = 6 → items[0]=title(TRS 110), items[1..6]=selectable(TRS 111-116)
-		// =====================================================================
+		// -------------------------------------------------------------------
 		const char *diffItems[7];
 		for (int i = 0; i < 7; i++) {
 			diffItems[i] = splayer->getString(110 + i);
@@ -1735,9 +1735,9 @@ void InsaneRebel2::drawLevelSelectOverlay(byte *renderBitmap, int pitch, int wid
 		return;
 	}
 
-	// =====================================================================
+	// -------------------------------------------------------------------
 	// Pilot menu - FUN_0041f5ae(0, &DAT_00457768, N+4, 0)
-	// =====================================================================
+	// -------------------------------------------------------------------
 	// items[0]    = title (TRS 20)
 	// items[1..N] = saved pilots (formatted with ^f01^c005<name>^f00)
 	// items[N+1]  = TRS 21 (ADD NEW PILOT)
