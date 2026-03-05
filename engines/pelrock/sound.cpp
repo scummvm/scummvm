@@ -119,7 +119,7 @@ void SoundManager::playSound(SonidoFile sound, int channel, int loopCount) {
 		}
 		Audio::AudioStream *finalStream = loopCount != -1 ? stream : Audio::makeLoopingAudioStream(stream, 0);
 
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], finalStream, loopCount, 255U, 0, DisposeAfterUse::YES);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], finalStream, loopCount, _currentVolume, 0, DisposeAfterUse::YES);
 	}
 }
 
@@ -129,7 +129,7 @@ void SoundManager::playSound(byte *soundData, uint32 size, int channel) {
 		if (_mixer->isSoundHandleActive(_sfxHandles[channel])) {
 				_mixer->stopHandle(_sfxHandles[channel]);
 		}
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], stream, -1, 255U, 0, DisposeAfterUse::YES);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], stream, -1, _currentVolume, 0, DisposeAfterUse::YES);
 	}
 }
 
@@ -233,9 +233,11 @@ bool SoundManager::isMusicPlaying() {
 void SoundManager::playMusicTrack(int trackNumber, bool loop) {
 	if (!_isPaused && _currentMusicTrack == trackNumber && isMusicPlaying()) {
 		// Already playing this track
+		debug("Track %d is already playing", trackNumber);
 		return;
 	}
 	_currentMusicTrack = trackNumber;
+	debug("Playing music track %d, loop=%d", trackNumber, loop);
 
 	if(!_isPaused) {
 		_cdTrackStart = 0;

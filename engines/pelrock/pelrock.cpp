@@ -263,7 +263,8 @@ void PelrockEngine::playSoundIfNeeded() {
 
 void PelrockEngine::travelToEgypt() {
 	_graphics->fadeToBlack(10);
-	_sound->playMusicTrack(26, false);
+
+	_sound->playMusicTrack(26, 1);
 	byte *palette = new byte[768];
 	if (_bgScreen == nullptr) {
 		_bgScreen = new byte[640 * 400];
@@ -287,7 +288,6 @@ void PelrockEngine::travelToEgypt() {
 			g_system->getPaletteManager()->setPalette(palette, 0, 256);
 			frameCount++;
 		}
-		drawPaletteSquares((byte *)_screen->getPixels(), palette);
 
 		_screen->markAllDirty();
 		_screen->update();
@@ -302,6 +302,7 @@ void PelrockEngine::travelToEgypt() {
 	delete[] palette;
 	_screen->markAllDirty();
 	_screen->update();
+	setScreenAndPrepare(21, ALFRED_DOWN);
 }
 
 bool PelrockEngine::renderScene(int overlayMode) {
@@ -2104,7 +2105,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 	case 0:
 		if (_state->getFlag(FLAG_PUESTA_SALSA_PICANTE) && !_state->getFlag(FLAG_JEFE_ENCARCELADO)) {
 			_state->setFlag(FLAG_JEFE_ENCARCELADO, true);
-			_room->disableSprite(13, 0, true);
+			_room->disableSprite(13, 0, PERSIST_BOTH);
 			loadExtraScreenAndPresent(4);
 		}
 		break;

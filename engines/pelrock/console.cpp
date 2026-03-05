@@ -31,6 +31,7 @@ PelrockConsole::PelrockConsole(PelrockEngine *engine) : GUI::Debugger(), _engine
 	registerCmd("give", WRAP_METHOD(PelrockConsole, cmdGiveItems));
 	registerCmd("setRoot", WRAP_METHOD(PelrockConsole, cmdSetRoot));
 	registerCmd("setFlag", WRAP_METHOD(PelrockConsole, cmdSetFlag));
+	registerCmd("getFlag", WRAP_METHOD(PelrockConsole, cmdGetFlag));
 	registerCmd("toJail", WRAP_METHOD(PelrockConsole, cmdToJail));
 	registerCmd("removeSticker", WRAP_METHOD(PelrockConsole, cmdRemoveSticker));
 }
@@ -64,6 +65,17 @@ bool PelrockConsole::cmdSetFlag(int argc, const char **argv) {
 	int value = atoi(argv[2]);
 	_engine->_state->setFlag(flagIndex, value);
 	debugPrintf("Set flag %d to %d\n", flagIndex, value);
+	return true;
+}
+
+bool PelrockConsole::cmdGetFlag(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: getFlag <flagIndex>");
+		return true;
+	}
+	int flagIndex = atoi(argv[1]);
+	int value = _engine->_state->getFlag(flagIndex);
+	debugPrintf("Flag %d is %d\n", flagIndex, value);
 	return true;
 }
 

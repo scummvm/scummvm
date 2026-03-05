@@ -37,6 +37,7 @@ private:
 	bool cmdTest(int argc, const char **argv);
 	bool cmdSetRoot(int argc, const char **argv);
 	bool cmdSetFlag(int argc, const char **argv);
+	bool cmdGetFlag(int argc, const char **argv);
 	bool cmdRemoveSticker(int argc, const char **argv);
 
 public:

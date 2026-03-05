@@ -346,14 +346,16 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 278:
 		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
-	case 279:
+	case 279:{
+		_state->removeInventoryItem(75);
 		travelToEgypt();
+
 		break;
 		// merchants
-
+	}
 	case 330:
 		// Two oranges
-		addInventoryItem(103);
+		addInventoryItem(102);
 		break;
 	case 331:
 		_dialog->say(_res->_ingameTexts[HECHOELPRIMO]);
@@ -373,7 +375,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		break;
 	case 335:
 		// many oranges
-		addInventoryItem(104);
+		addInventoryItem(103);
 		break;
 	case 336:
 		_dialog->say(_res->_ingameTexts[PESADO_UNRATO]);
