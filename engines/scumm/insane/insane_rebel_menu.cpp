@@ -23,6 +23,8 @@
 #include "common/events.h"
 #include "common/util.h"
 
+#include "audio/mixer.h"
+
 #include "graphics/cursorman.h"
 #include "graphics/wincursor.h"
 
@@ -802,11 +804,9 @@ int InsaneRebel2::runMainMenu() {
 			_menuInputActive = false;
 			return kMenuNewGame;  // Return 2 (kMenuNewGame)
 
-		case 1:  // Options -> show options menu
+		case 1:  // Options -> show options menu (FUN_00416787)
 			debug("Rebel2: Options selected");
-			// TODO: Implement options menu (FUN_004167a6)
-			// Options: Music, Sound, Voices, Auto Control, Indicators,
-			// Arrows, Difficulty (0-5), Music Volume, SFX Volume
+			showOptionsMenu();
 			break;
 
 		case 2:  // Calibrate Joystick
@@ -1989,6 +1989,222 @@ void InsaneRebel2::drawTopPilotsOverlay(byte *renderBitmap, int pitch, int width
 	}
 
 	_topPilotsFrameCount++;
+}
+
+// ======================= Options Menu (FUN_004167A6) =======================
+// Original: FUN_00416787 calls FUN_0041fdc8 (init video) + FUN_004167a6(1)
+// FUN_004167a6 runs a loop over FUN_0041f5ae (drawMenuItems) with dynamic
+// toggle labels and slider items. Settings stored at DAT_00482e20[0..3]
+// (get/set via FUN_00425d30/FUN_00425d40) and DAT_0047a7fe, DAT_0047a80a.
+//
+// Menu items for keyboard mode (9 selectable):
+//   [0] Title:    TRS 89  "Game Options"
+//   [1] Music:    TRS 90/91
+//   [2] SFX:      TRS 92/93
+//   [3] Voices:   TRS 94/95
+//   [4] Text:     TRS 96/97
+//   [5] Controls: TRS 98/99
+//   [6] Rapid Fire: TRS 100/101
+//   [7] Volume:   TRS 103 "Volume Level: %hd%%"  (slider, left/right ±4)
+//   [8] Back:     TRS 107 "Return to Main Menu"
+
+void InsaneRebel2::showOptionsMenu() {
+	debug("Rebel2: Showing Options menu (FUN_00416787)");
+
+	_menuInputActive = true;
+	while (!_menuEventQueue.empty())
+		_menuEventQueue.pop();
+
+	_optionsSelection = 0;
+	_optionsItemCount = 8;
+	_optionsExitRequested = false;
+
+	_gameState = kStateOptions;
+
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+
+	// Loop videos until user exits options (same pattern as runMainMenu)
+	while (!_vm->shouldQuit() && !_optionsExitRequested) {
+		_vm->_smushVideoShouldFinish = false;
+
+		Common::String menuVideo = getRandomMenuVideo();
+		splayer->setCurVideoFlags(0x20);
+		splayer->play(menuVideo.c_str(), 12);
+	}
+
+	_gameState = kStateMainMenu;
+	_menuInputActive = true;
+
+	debug("Rebel2: Options menu finished");
+}
+
+int InsaneRebel2::processOptionsInput() {
+	while (!_menuEventQueue.empty()) {
+		Common::Event event = _menuEventQueue.pop();
+
+		if (event.type == Common::EVENT_KEYDOWN) {
+			_menuInactivityTimer = 0;
+
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_UP:
+				_optionsSelection--;
+				if (_optionsSelection < 0)
+					_optionsSelection = _optionsItemCount - 1;
+				return -1;
+
+			case Common::KEYCODE_DOWN:
+				_optionsSelection++;
+				if (_optionsSelection >= _optionsItemCount)
+					_optionsSelection = 0;
+				return -1;
+
+			case Common::KEYCODE_LEFT:
+				// Volume slider: decrease by 4 (original step size)
+				if (_optionsSelection == 6) {
+					_optVolumeLevel = MAX(0, _optVolumeLevel - 4);
+					_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType,
+					    CLIP<int>(_optVolumeLevel * 2, 0, (int)Audio::Mixer::kMaxMixerVolume));
+					_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType,
+					    CLIP<int>(_optVolumeLevel * 2, 0, (int)Audio::Mixer::kMaxMixerVolume));
+				}
+				return -1;
+
+			case Common::KEYCODE_RIGHT:
+				// Volume slider: increase by 4
+				if (_optionsSelection == 6) {
+					_optVolumeLevel = MIN(127, _optVolumeLevel + 4);
+					_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType,
+					    CLIP<int>(_optVolumeLevel * 2, 0, (int)Audio::Mixer::kMaxMixerVolume));
+					_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType,
+					    CLIP<int>(_optVolumeLevel * 2, 0, (int)Audio::Mixer::kMaxMixerVolume));
+				}
+				return -1;
+
+			case Common::KEYCODE_RETURN:
+			case Common::KEYCODE_KP_ENTER:
+				// Toggle items 0-5, back item 7
+				switch (_optionsSelection) {
+				case 0:  // Music toggle
+					_optMusicEnabled = !_optMusicEnabled;
+					_vm->_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, !_optMusicEnabled);
+					break;
+				case 1:  // SFX toggle
+					_optSfxEnabled = !_optSfxEnabled;
+					_vm->_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, !_optSfxEnabled);
+					break;
+				case 2:  // Voices toggle
+					_optVoicesEnabled = !_optVoicesEnabled;
+					_vm->_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, !_optVoicesEnabled);
+					break;
+				case 3:  // Text toggle
+					_optTextEnabled = !_optTextEnabled;
+					break;
+				case 4:  // Controls toggle
+					_optControlsFlipped = !_optControlsFlipped;
+					break;
+				case 5:  // Rapid fire toggle
+					_optRapidFire = !_optRapidFire;
+					break;
+				case 6:  // Volume (handled by left/right)
+					break;
+				case 7:  // Back
+					_optionsExitRequested = true;
+					_vm->_smushVideoShouldFinish = true;
+					return 7;
+				}
+				return _optionsSelection;
+
+			case Common::KEYCODE_ESCAPE:
+				_optionsExitRequested = true;
+				_vm->_smushVideoShouldFinish = true;
+				return -2;
+
+			default:
+				break;
+			}
+		}
+
+		if (event.type == Common::EVENT_LBUTTONDOWN) {
+			// Mouse click on items — match drawMenuItems Y positions
+			int mouseY = event.mouse.y;
+			int baseY = _optionsItemCount * -5 + 0x68;
+			for (int i = 0; i < _optionsItemCount; i++) {
+				int itemY = baseY + i * 10;
+				if (mouseY >= itemY - 1 && mouseY < itemY + 9) {
+					_optionsSelection = i;
+					// Simulate enter for this item
+					Common::Event enterEvent;
+					enterEvent.type = Common::EVENT_KEYDOWN;
+					enterEvent.kbd.keycode = Common::KEYCODE_RETURN;
+					_menuEventQueue.push(enterEvent);
+					return -1;
+				}
+			}
+		}
+	}
+	return -1;
+}
+
+void InsaneRebel2::drawOptionsOverlay(byte *renderBitmap, int pitch, int width, int height) {
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	if (!splayer)
+		return;
+
+	// Build items array from TRS strings based on current toggle states
+	// TRS 89: title, 90/91: music, 92/93: sfx, 94/95: voices,
+	// 96/97: text, 98/99: controls, 100/101: rapid fire, 103: volume, 107: back
+	const char *items[10];  // title + up to 9 selectable
+
+	// [0] Title
+	items[0] = splayer->getString(89);
+	if (!items[0] || !items[0][0])
+		items[0] = "^f02Game Options";
+
+	// [1] Music On/Off
+	items[1] = splayer->getString(_optMusicEnabled ? 90 : 91);
+	if (!items[1] || !items[1][0])
+		items[1] = _optMusicEnabled ? "^f01^c005Music is On" : "^f01^c005Music is Off";
+
+	// [2] SFX On/Off
+	items[2] = splayer->getString(_optSfxEnabled ? 92 : 93);
+	if (!items[2] || !items[2][0])
+		items[2] = _optSfxEnabled ? "^f01^c005SFX are On" : "^f01^c005SFX are Off";
+
+	// [3] Voices On/Off
+	items[3] = splayer->getString(_optVoicesEnabled ? 94 : 95);
+	if (!items[3] || !items[3][0])
+		items[3] = _optVoicesEnabled ? "^f01^c005Voices are On" : "^f01^c005Voices are Off";
+
+	// [4] Text On/Off
+	items[4] = splayer->getString(_optTextEnabled ? 96 : 97);
+	if (!items[4] || !items[4][0])
+		items[4] = _optTextEnabled ? "^f01^c005Text is On" : "^f01^c005Text is Off";
+
+	// [5] Controls Normal/Flipped
+	items[5] = splayer->getString(_optControlsFlipped ? 99 : 98);
+	if (!items[5] || !items[5][0])
+		items[5] = _optControlsFlipped ? "^f01^c005Controls are Flipped" : "^f01^c005Controls are Normal";
+
+	// [6] Rapid Fire On/Off
+	items[6] = splayer->getString(_optRapidFire ? 100 : 101);
+	if (!items[6] || !items[6][0])
+		items[6] = _optRapidFire ? "^f01^c005Rapid Fire On" : "^f01^c005Rapid Fire Off";
+
+	// [7] Volume Level (slider) — TRS 103 = "^f01^c005Volume Level: %hd%%"
+	static char volumeBuf[64];
+	const char *volFmt = splayer->getString(103);
+	if (volFmt && volFmt[0])
+		Common::sprintf_s(volumeBuf, volFmt, (short)(_optVolumeLevel * 100 / 127));
+	else
+		Common::sprintf_s(volumeBuf, "^f01^c005Volume Level: %hd%%", (short)(_optVolumeLevel * 100 / 127));
+	items[7] = volumeBuf;
+
+	// [8] Back — TRS 107
+	items[8] = splayer->getString(107);
+	if (!items[8] || !items[8][0])
+		items[8] = "^f01^c240Return to Main Menu";
+
+	drawMenuItems(renderBitmap, pitch, width, height, items, _optionsItemCount, _optionsSelection);
 }
 
 } // End of namespace Scumm
