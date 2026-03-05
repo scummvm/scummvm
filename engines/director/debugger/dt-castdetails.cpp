@@ -459,8 +459,8 @@ void drawBaseCMprops(CastMember *member) {
 
 				showProperty("height", "%d", member->_initialRect.height());
 
-				showProperty("rect", "rect(%d, %d, %d, %d)", 
-					member->_initialRect.left, 
+				showProperty("rect", "rect(%d, %d, %d, %d)",
+					member->_initialRect.left,
 					member->_initialRect.top,
 					member->_initialRect.right,
 					member->_initialRect.bottom);
@@ -515,6 +515,19 @@ void drawCMTypeProps(CastMember *member) {
 		break;
 	case kCastShape:
 		drawShapeCMprops(static_cast<ShapeCastMember *>(member));
+		break;
+	case kCastTypeAny:
+	case kCastTypeNull:
+	case kCastFilmLoop:
+	case kCastPalette:
+	case kCastPicture:
+	case kCastSound:
+	case kCastMovie:
+	case kCastDigitalVideo:
+	case kCastLingoScript:
+	case kCastTransition:
+	case kCastXtra:
+		// TODO
 		break;
 	}
 }
