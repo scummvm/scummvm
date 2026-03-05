@@ -45,7 +45,7 @@ static const uint32_t kSettingsPaletteOffset = 0x2884c2;         // 640 * 480
 #define DESCRIPTION_BASE_OFFSET 0x4715D
 #define NUM_DESCRIPTIONS 113
 
-static const uint32 kInventoryDescriptionsOffset = 0x4715D;
+static const uint32 kInventoryDescriptionsOffset = 0x4715E;
 static const uint32 kInventoryDescriptionsSize = 7868;
 static const uint32 kMenuTextOffset = 0x49203;
 static const uint32 kMenuTextSize = 230;

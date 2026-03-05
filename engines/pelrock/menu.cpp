@@ -69,8 +69,10 @@ void MenuManager::checkMouseClick(int x, int y) {
 
 	bool selectedItem = false;
 	for (int i = 0; i < 4; i++) {
-		if (x >= 140 + (82 * i) && x <= 140 + (82 * i) + 64 &&
-			y >= 115 - (8 * i) && y <= 115 - (8 * i) + 64) {
+
+		Common::Rect itemRect = Common::Rect(_inventorySlots[i], 60, 60);
+
+		if (itemRect.contains(x, y)) {
 			selectedItem = selectInventoryItem(i);
 			return;
 		}
@@ -127,7 +129,7 @@ void MenuManager::showCredits() {
 	byte *decompressedCredits = nullptr;
 	rleDecompress(creditsBuf, creditsSize, 0, 0, &decompressedCredits, true);
 	// draw credits in two columns taking the entire height of the screen and stating in y = 0
-	for(int i = 0; i < 34; i++) {
+	for (int i = 0; i < 34; i++) {
 		byte *singleCredit = new byte[creditWidth * creditHeight];
 		int x = (i < 34 / 2) ? 39 : 359;
 		int y = 3 + (i % (34 / 2)) * (400 / (34 / 2));
@@ -140,7 +142,7 @@ void MenuManager::showCredits() {
 	delete[] decompressedCredits;
 	delete[] creditsBuf;
 
-	while(!g_engine->shouldQuit() && !_events->_leftMouseClicked && !_events->_rightMouseClicked) {
+	while (!g_engine->shouldQuit() && !_events->_leftMouseClicked && !_events->_rightMouseClicked) {
 		_events->pollEvent();
 		_screen->markAllDirty();
 		_screen->update();
@@ -208,10 +210,11 @@ void MenuManager::drawInventoryIcons() {
 		if (g_engine->_state->inventoryItems.size() <= itemIndex)
 			continue;
 		InventoryObject item = g_engine->_res->getIconForObject(g_engine->_state->inventoryItems[itemIndex]);
-		drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, 140 + (82 * i), 115 - (8 * i), 60, 60, 1);
+		Common::Point slot = _inventorySlots[i];
+		drawSpriteToBuffer(_compositeBuffer, 640, item.iconData, slot.x, slot.y, 60, 60, 1);
 		if (debugIcons) {
-			drawRect(_compositeBuffer, 140 + (82 * i), 115 - (8 * i), 60, 60, 13);
-			drawText(_compositeBuffer, g_engine->_smallFont, Common::String::format("ID %d", g_engine->_state->inventoryItems[itemIndex]), 140 + (82 * i) + 2, 115 - (8 * i) + 2, 640, 13);
+			drawRect(_compositeBuffer, slot.x, slot.y, 60, 60, 13);
+			drawText(_compositeBuffer, g_engine->_smallFont, Common::String::format("ID %d", g_engine->_state->inventoryItems[itemIndex]), slot.x + 2, slot.y + 2, 640, 13);
 		}
 	}
 }
@@ -294,6 +297,10 @@ void MenuManager::loadMenu() {
 
 	_menuText = _menuTexts[0];
 	alfred7.close();
+
+	for (int i = 0; i < 4; i++) {
+		_inventorySlots.push_back(Common::Point(140 + (82 * i), 115 - (8 * i)));
+	}
 }
 
 void MenuManager::readButton(Common::File &alfred7, uint32 offset, byte *outBuffer[2], Common::Rect rect) {
@@ -317,6 +324,9 @@ void MenuManager::loadMenuTexts() {
 	exe.seek(kInventoryDescriptionsOffset, SEEK_SET);
 	exe.read(descBuffer, kInventoryDescriptionsSize);
 	_inventoryDescriptions = _res->processTextData(descBuffer, kInventoryDescriptionsSize, true);
+	for(size_t i = 0; i < _inventoryDescriptions.size(); i++) {
+		debug("Inventory description %d: %s", i, _inventoryDescriptions[i][0].c_str());
+	}
 	delete[] descBuffer;
 
 	Common::String desc = "";

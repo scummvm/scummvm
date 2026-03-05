@@ -73,6 +73,8 @@ void Computer::init() {
 	_currentResult = 0;
 	_searchLetter = 0;
 	_memorizedBookIndex = -1;
+	_titleMsg = _computerText[10][0].substr(0, 7);
+	_authorMsg = _computerText[10][0].substr(7, 6);
 	_memorizedMsg = _computerText[10][0].substr(16, _computerText[10][0].size() - 16); // "Bueno... Tendre que buscar en la estanteria de la %c"
 	_lineHeight = g_engine->_smallFont->getFontHeight();
 }
@@ -166,7 +168,7 @@ void Computer::drawScreen() {
 
 	case STATE_SHOW_RESULTS: {
 
-		const char *section = _searchType == 0 ? "TITULO " : "AUTOR  ";
+		const char *section = _searchType == 0 ? _titleMsg.c_str() : _authorMsg.c_str();
 		Common::String title = _computerText[2][0];
 		int replacementIndex = title.findFirstOf("XXXXXXX");
 

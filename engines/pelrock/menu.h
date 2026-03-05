@@ -261,6 +261,7 @@ private:
 	int _curInventoryPage = 0;
 	Common::StringArray _menuText;
 	Common::Array<Common::StringArray> _inventoryDescriptions;
+	Common::Array<Common::Point> _inventorySlots;
 
 	bool showButtons = true;
 };

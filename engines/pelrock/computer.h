@@ -42,6 +42,8 @@ public:
 	 * @return Book index if a book was memorized, -1 otherwise
 	 */
 	int run();
+	Common::String _titleMsg;
+	Common::String _authorMsg;
 	Common::String _memorizedMsg;      // "Bueno... Tendre que buscar en la estanteria de la %c"
 
 private:
