@@ -1004,6 +1004,9 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	if ((height == 242) && (width == 384)) {
 		_width = width;
 		_height = height;
+	} else if (isRA1() && _dst == _specialBuffer) {
+		// RA1: small overlay FOBJs (codec 1) should not override dimensions
+		// set by the main 384x242 codec 5 FOBJ
 	} else if (isRA2() && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth))) {
 		// RA2: preserve _width/_height set during buffer allocation
 	} else {
@@ -1599,7 +1602,7 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 
 	// Hide mouse
 	bool oldMouseState = CursorMan.showMouse(false);
-	if (isRA2())
+	if (isRA1() || isRA2())
 		insanity(true);
 
 	// Load the video

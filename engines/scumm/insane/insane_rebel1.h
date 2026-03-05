@@ -29,9 +29,28 @@ namespace Scumm {
 class ScummEngine_v7;
 class SmushPlayer;
 
+// Simple sprite bank for RA1 NUT files (ANIM v1 with odd-alignment padding).
+// Separate from NutRenderer to avoid modifying shared NUT parsing code.
+struct RA1Sprite {
+	int16 xoffs;
+	int16 yoffs;
+	uint16 width;
+	uint16 height;
+	byte *data;  // Decoded pixel data (width * height bytes, 0 = transparent)
+};
+
+struct RA1SpriteBank {
+	int numSprites;
+	RA1Sprite *sprites;
+	byte *decodedData;  // Single allocation for all decoded pixels
+
+	RA1SpriteBank() : numSprites(0), sprites(nullptr), decodedData(nullptr) {}
+	~RA1SpriteBank() { delete[] sprites; free(decodedData); }
+};
+
 /**
- * Minimal stub for Star Wars: Rebel Assault (RA1).
- * This is a proof-of-concept to load level 1.
+ * Proof-of-concept for Star Wars: Rebel Assault (RA1).
+ * Loads level 1 and renders the player ship sprite.
  */
 class InsaneRebel1 : public Insane {
 public:
@@ -51,7 +70,22 @@ public:
 	void playLevel(int level);
 
 private:
+	bool loadRA1Nut(const char *filename, RA1SpriteBank &bank);
+	void loadLevelSprites(int level);
+	void renderShip(byte *dst, int pitch, int width, int height);
+	void renderSprite(byte *dst, int pitch, int width, int height,
+					  int x, int y, const RA1Sprite &sprite);
+
 	ScummEngine_v7 *_vm;
+
+	RA1SpriteBank _shipBank;
+
+	int _shipPosX;
+	int _shipPosY;
+	int _shipDirIndex;
+
+	int _screenWidth;
+	int _screenHeight;
 };
 
 } // End of namespace Scumm
