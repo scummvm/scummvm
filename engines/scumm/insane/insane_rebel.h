@@ -451,7 +451,7 @@ public:
 	// Draw fallback ship using embedded HUD frame
 	void renderFallbackShip(byte *renderBitmap, int pitch, int width, int height);
 
-	// Draw enemy indicator brackets and erase destroyed enemy areas
+	// Draw per-enemy target indicators from the cockpit icon sheet.
 	void renderEnemyOverlays(byte *renderBitmap, int pitch, int width, int height, int videoWidth);
 
 	// Draw explosion animations from 5-slot system (dispatcher)
@@ -508,7 +508,6 @@ public:
 	// This is called at the start of each frame, before FOBJ sprites are decoded
 	void procPreRendering(byte *renderBitmap) override;
 
-	void drawLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, byte color);
 	// mask231: when true, color 231 is treated as transparent (legacy sprites). For laser beams set false.
 	void drawTexturedLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, NutRenderer *nut, int spriteIdx, int v, bool mask231 = true);
 
@@ -1042,7 +1041,6 @@ public:
 
 	/* Difficulty Level (0-5, from pilot menu; maps directly to table rows) */
 	int _difficulty;
-	void drawCornerBrackets(byte *dst, int pitch, int width, int height, int x, int y, int w, int h, byte color);
 
 	// ======================= Per-Level Difficulty Parameters =======================
 	// Extracted from RA2WIN95.EXE at VA 0x47e0f0

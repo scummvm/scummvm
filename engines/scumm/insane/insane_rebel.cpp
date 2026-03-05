@@ -1088,7 +1088,7 @@ int32 InsaneRebel2::processMouse() {
 				it->id, it->active, it->destroyed,
 				it->rect.left, it->rect.top, it->rect.right, it->rect.bottom,
 				it->rect.contains(worldMousePos));
-				
+
 			if (it->active && it->rect.contains(worldMousePos)) {
 				// Enemy hit!
 				it->active = false;
@@ -1097,10 +1097,21 @@ int32 InsaneRebel2::processMouse() {
 					it->id, it->type, mousePos.x, mousePos.y,
 					it->rect.left, it->rect.top, it->rect.right, it->rect.bottom);
 
+				// Explosion scale is handler-specific in retail:
+				// - H8/H7/H26 use object half-width
+				// - H25 uses half-width + snapDistance (and type 100 doubles it)
+				int explosionHalfWidth = it->rect.width() / 2;
+				if (_rebelHandler == 25) {
+					LevelDifficultyParams dparams = getDifficultyParams();
+					explosionHalfWidth += dparams.snapDistance;
+					if (it->type == 100)
+						explosionHalfWidth *= 2;
+				}
+
 				// Spawn visual explosion based on handler, enemy type, and flags.
 				//
 				// Rendering functions (FUN_409FBC, FUN_402696, FUN_40F1C5,
-				// FUN_41F29A) check DAT_0047e108 flags & 1 — when set,
+				// FUN_41F29A) check DAT_0047e108 flags & 1 - when set,
 				// explosion NUT sprites are suppressed. This is checked
 				// during rendering in renderExplosions().
 				//
@@ -1111,17 +1122,17 @@ int32 InsaneRebel2::processMouse() {
 				if (_rebelHandler != 8 && _rebelHandler != 25) {
 					spawnExplosion((it->rect.left + it->rect.right) / 2,
 								   (it->rect.top + it->rect.bottom) / 2,
-								   it->rect.width() / 2);
+								   explosionHalfWidth);
 				} else if (_rebelHandler == 8 && it->type == 0) {
 					spawnExplosion((it->rect.left + it->rect.right) / 2,
 								   (it->rect.top + it->rect.bottom) / 2,
-								   it->rect.width() / 2);
+								   explosionHalfWidth);
 				} else if (_rebelHandler == 25 && it->type > 3) {
 					// Counter is set for timing/sound, but rendering
 					// may be suppressed by flags bit 0
 					spawnExplosion((it->rect.left + it->rect.right) / 2,
 								   (it->rect.top + it->rect.bottom) / 2,
-								   it->rect.width() / 2);
+								   explosionHalfWidth);
 				}
 
 				// Disable self (prevents sprite from rendering via SKIP chunks)
@@ -1138,9 +1149,14 @@ int32 InsaneRebel2::processMouse() {
 				// Increment kill counter (DAT_0047ab88)
 				_rebelKillCounter++;
 
-				// Handle dependencies
+				// Handle dependencies.
+				// Handler 25 (FUN_41E7C2) has two kill paths:
+				// - type <= 3: process dependency tables
+				// - type > 3 (and 100): skip dependency handling
+				// Other handlers always use link-table side effects.
+				bool handleDependencies = !(_rebelHandler == 25 && it->type > 3);
 				int id = it->id;
-				if (id >= 0 && id < 512) {
+				if (handleDependencies && id >= 0 && id < 512) {
 					// Slot 2: Enable (Explosion?)
 					if (_rebelLinks[id][2] != 0) {
 						clearBit(_rebelLinks[id][2]);
@@ -1175,7 +1191,7 @@ int32 InsaneRebel2::processMouse() {
 				}
 
 				// Award score for destroying enemy (FUN_0041bf8d called from FUN_40A2E0)
-				// Score value comes from DAT_0047e0fe indexed by difficulty×level
+				// Score value comes from DAT_0047e0fe indexed by difficulty*level
 				{
 					LevelDifficultyParams dparams = getDifficultyParams();
 					if (dparams.hitPoints > 0) {

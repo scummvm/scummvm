@@ -1599,52 +1599,6 @@ void InsaneRebel2::drawLaserBeam(byte *dst, int pitch, int width, int height,
 	}
 
 }
-void InsaneRebel2::drawLine(byte *dst, int pitch, int width, int height, int x0, int y0, int x1, int y1, byte color) {
-	int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
-	int dy = -abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
-	int err = dx + dy, e2;
-
-	for (;;) {
-		if (x0 >= 0 && x0 < width && y0 >= 0 && y0 < height) {
-			dst[y0 * pitch + x0] = color;
-		}
-		if (x0 == x1 && y0 == y1)
-			break;
-		e2 = 2 * err;
-		if (e2 >= dy) { err += dy; x0 += sx; }
-		if (e2 <= dx) { err += dx; y0 += sy; }
-	}
-}
-
-void InsaneRebel2::drawCornerBrackets(byte *dst, int pitch, int width, int height, int x, int y, int w, int h, byte color) {
-	// Draw L-shaped brackets at corners of the rect (x,y,w,h)
-	// Bracket size: approx 8 pixels
-	int armLen = 2;
-	if (armLen > w / 2)
-		armLen = w / 2;
-	if (armLen > h / 2)
-		armLen = h / 2;
-
-	int x2 = x + w - 1;
-	int y2 = y + h - 1;
-
-	// Top-Left Corner
-	drawLine(dst, pitch, width, height, x, y, x + armLen, y, color);
-	drawLine(dst, pitch, width, height, x, y, x, y + armLen, color);
-
-	// Top-Right Corner
-	drawLine(dst, pitch, width, height, x2 - armLen, y, x2, y, color);
-	drawLine(dst, pitch, width, height, x2, y, x2, y + armLen, color);
-
-	// Bottom-Left Corner
-	drawLine(dst, pitch, width, height, x, y2, x + armLen, y2, color);
-	drawLine(dst, pitch, width, height, x, y2 - armLen, x, y2, color);
-
-	// Bottom-Right Corner
-	drawLine(dst, pitch, width, height, x2 - armLen, y2, x2, y2, color);
-	drawLine(dst, pitch, width, height, x2, y2 - armLen, x2, y2, color);
-}
-
 // ============================================================
 // COLLISION ZONE SYSTEM (for Level 3 pilot ship obstacle avoidance)
 // ============================================================
@@ -2456,7 +2410,7 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	renderHandler8Ship(renderBitmap, pitch, width, height);
 	renderFallbackShip(renderBitmap, pitch, width, height);
 
-	// Enemy indicators and destroyed enemy area erase
+	// Enemy target indicators (handler-specific; sprite-based in turret mode)
 	renderEnemyOverlays(renderBitmap, pitch, width, height, videoWidth);
 
 	// Explosion animations (FUN_409FBC) — drawn before lasers in original
@@ -3611,26 +3565,26 @@ void InsaneRebel2::renderFallbackShip(byte *renderBitmap, int pitch, int width, 
 }
 
 void InsaneRebel2::renderEnemyOverlays(byte *renderBitmap, int pitch, int width, int height, int videoWidth) {
-	// Draw enemy indicator brackets for active enemies
+	// Original per-enemy target indicator behavior comes from FUN_40A2E0 (handler 0x26):
+	// - Draws cockpit icon sprites 6..10 at enemy centers.
+	// - Enabled when level flags bit 2 (0x04) is clear.
+	// - Sprite index depends on object half-width bucket.
 	//
-	// NOTE: Do NOT fill destroyed enemy areas with black. The original game does not do this.
-	// When an enemy is destroyed:
-	// 1. setBit(enemy_id) disables the enemy in the bit table
-	// 2. clearBit(dependency_id) enables dependent objects (explosion animations)
-	// 3. SKIP chunks in the video cause enemy FOBJ sprites to be skipped (via procSKIP)
-	// 4. renderExplosions() draws the explosion animation from the 5-slot system
-	// 5. The background video shows through where the enemy was
-
-	// Draw green brackets for active enemies (Easy/Medium difficulty only)
-	if (_difficulty >= 2)
+	// It is not a generic all-handler bracket overlay.
+	if (_rebelHandler != 0x26 || !_smush_iconsNut)
 		return;
 
-	// FOBJ sprites are rendered with _fobjOffsetX/Y applied (set from _rebelViewOffsetX/Y
-	// for Handler 25). Brackets must use the same offset so they align with the sprites.
+	LevelDifficultyParams dparams = getDifficultyParams();
+	if ((dparams.flags & 4) != 0)
+		return;
+
+	// FOBJ sprites are rendered with _fobjOffsetX/Y applied. Use the same offsets
+	// so indicators stay aligned with decoded enemy sprites.
 	int fobjOffX = _player ? _player->_fobjOffsetX : 0;
 	int fobjOffY = _player ? _player->_fobjOffsetY : 0;
 
 	Common::Rect viewRect(_viewX, _viewY, _viewX + videoWidth, _viewY + 200);
+	const int sizeClamp = dparams.specialDamage; // DAT_0047e0fa in FUN_40A2E0
 
 	for (Common::List<enemy>::iterator it = _enemies.begin(); it != _enemies.end(); ++it) {
 		if (it->destroyed || !it->active || isBitSet(it->id))
@@ -3642,8 +3596,40 @@ void InsaneRebel2::renderEnemyOverlays(byte *renderBitmap, int pitch, int width,
 		    r.bottom <= viewRect.top || r.top >= viewRect.bottom)
 			continue;
 
-		const byte color = 5;  // Green
-		drawCornerBrackets(renderBitmap, pitch, width, height, r.left, r.top, r.width(), r.height(), color);
+		int halfW = r.width() / 2;
+		int halfH = r.height() / 2;
+		if (halfW <= 0 || halfH <= 0)
+			continue;
+
+		// Match size-bucket selection from FUN_40A2E0:
+		// class 0..4 -> sprite 6..10.
+		int indicatorHalfW = halfW;
+		if (sizeClamp > 0)
+			indicatorHalfW = MIN(indicatorHalfW, sizeClamp / 2);
+
+		int sizeClass;
+		if (indicatorHalfW < 3) {
+			sizeClass = 0;
+		} else if (indicatorHalfW < 6) {
+			sizeClass = 1;
+		} else if (indicatorHalfW < 9) {
+			sizeClass = 2;
+		} else if (indicatorHalfW < 12) {
+			sizeClass = 3;
+		} else {
+			sizeClass = 4;
+		}
+
+		int spriteIndex = sizeClass + 6;
+		if (spriteIndex < 0 || spriteIndex >= _smush_iconsNut->getNumChars())
+			continue;
+
+		int centerX = r.left + halfW;
+		int centerY = r.top + halfH;
+		int iw = _smush_iconsNut->getCharWidth(spriteIndex);
+		int ih = _smush_iconsNut->getCharHeight(spriteIndex);
+		renderNutSprite(renderBitmap, pitch, width, height,
+			centerX - iw / 2, centerY - ih / 2, _smush_iconsNut, spriteIndex);
 	}
 }
 
@@ -3897,6 +3883,9 @@ void InsaneRebel2::renderHandler25Explosions(byte *renderBitmap, int pitch, int 
 			continue;
 		}
 
+		// Match FUN_41F29A exactly: decrement first, then select frame.
+		_explosions[i].counter--;
+
 		// FUN_41F29A lines 27-37: Resolution-dependent thresholds (same as Handler 7).
 		int baseIndex;
 		if (_explosions[i].scale < 11) {
@@ -3919,8 +3908,6 @@ void InsaneRebel2::renderHandler25Explosions(byte *renderBitmap, int pitch, int 
 			renderNutSprite(renderBitmap, pitch, width, height,
 				screenX - ew / 2, screenY - eh / 2, _smush_iconsNut, spriteIndex);
 		}
-
-		_explosions[i].counter--;
 	}
 }
 
