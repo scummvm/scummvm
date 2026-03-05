@@ -265,6 +265,7 @@ void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int h
 	// Format code parser - Emulates FUN_00434d10 / FUN_00433da0
 	// =====================================================================
 	//   ^^ = literal ^, ^fNN = font switch, ^cNNN = color code, ^l = newline
+	// Fixed-width format codes: ^fNN (2-digit font), ^cNNN (3-digit color)
 	auto parseFormatCode = [&](const char *&str, int &outColor) -> int {
 		if (*str != '^')
 			return -1;
@@ -276,21 +277,16 @@ void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int h
 		}
 		if (*p == 'f') {
 			p++;
-			int fontIdx = 0;
-			while (*p >= '0' && *p <= '9') {
-				fontIdx = fontIdx * 10 + (*p - '0');
-				p++;
-			}
+			int fontIdx = (*p >= '0' && *p <= '9') ? (*p++ - '0') : 0;
+			fontIdx = fontIdx * 10 + ((*p >= '0' && *p <= '9') ? (*p++ - '0') : 0);
 			str = p;
 			return (fontIdx >= 0 && fontIdx < 3) ? fontIdx : 0;
 		}
 		if (*p == 'c') {
 			p++;
 			int color = 0;
-			while (*p >= '0' && *p <= '9') {
-				color = color * 10 + (*p - '0');
-				p++;
-			}
+			for (int d = 0; d < 3 && *p >= '0' && *p <= '9'; d++)
+				color = color * 10 + (*p++ - '0');
 			str = p;
 			outColor = color;
 			return -2;
@@ -434,7 +430,7 @@ void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int h
 }
 
 // Format-code-aware string width calculation
-// Handles ^fNN (font switch), ^cNNN (color), ^^ (literal ^)
+// Fixed-width codes: ^fNN (2-digit font), ^cNNN (3-digit color), ^^ (literal ^)
 int InsaneRebel2::getMenuStringWidth(const char *str) const {
 	NutRenderer *fonts[3] = { _smush_talkfontNut, _smush_smalfontNut, _smush_titlefontNut };
 	NutRenderer *defaultFont = fonts[0] ? fonts[0] : _smush_smalfontNut;
@@ -449,18 +445,19 @@ int InsaneRebel2::getMenuStringWidth(const char *str) const {
 			if (*p == '^') { str = p + 1; continue; }
 			if (*p == 'f') {
 				p++;
-				int idx = 0;
-				while (*p >= '0' && *p <= '9') idx = idx * 10 + (*p++ - '0');
+				int idx = (*p >= '0' && *p <= '9') ? (*p++ - '0') : 0;
+				idx = idx * 10 + ((*p >= '0' && *p <= '9') ? (*p++ - '0') : 0);
 				curFont = (idx >= 0 && idx < 3 && fonts[idx]) ? fonts[idx] : defaultFont;
 				str = p;
 				continue;
 			}
-			if (*p == 'c' || *p == 'l') {
+			if (*p == 'c') {
 				p++;
-				while (*p >= '0' && *p <= '9') p++;
+				for (int d = 0; d < 3 && *p >= '0' && *p <= '9'; d++) p++;
 				str = p;
 				continue;
 			}
+			if (*p == 'l') { str = p + 1; continue; }
 		}
 		byte c = (byte)*str++;
 		if (c >= 'a' && c <= 'z') c = c - 'a' + 'A';
@@ -488,8 +485,8 @@ void InsaneRebel2::drawMenuString(byte *renderBitmap, const char *str, int x, in
 			if (*p == '^') { str = p + 1; continue; }
 			if (*p == 'f') {
 				p++;
-				int idx = 0;
-				while (*p >= '0' && *p <= '9') idx = idx * 10 + (*p++ - '0');
+				int idx = (*p >= '0' && *p <= '9') ? (*p++ - '0') : 0;
+				idx = idx * 10 + ((*p >= '0' && *p <= '9') ? (*p++ - '0') : 0);
 				curFont = (idx >= 0 && idx < 3 && fonts[idx]) ? fonts[idx] : defaultFont;
 				str = p;
 				continue;
@@ -497,7 +494,8 @@ void InsaneRebel2::drawMenuString(byte *renderBitmap, const char *str, int x, in
 			if (*p == 'c') {
 				p++;
 				int color = 0;
-				while (*p >= '0' && *p <= '9') color = color * 10 + (*p++ - '0');
+				for (int d = 0; d < 3 && *p >= '0' && *p <= '9'; d++)
+					color = color * 10 + (*p++ - '0');
 				curColor = color;
 				str = p;
 				continue;
@@ -1942,11 +1940,17 @@ void InsaneRebel2::drawTopPilotsOverlay(byte *renderBitmap, int pitch, int width
 	if (!splayer)
 		return;
 
-	// Title + column headers: TRS 150 centered at X=152, Y=10
-	const char *titleStr = splayer->getString(150);
-	if (!titleStr || !titleStr[0])
-		titleStr = "^f02Top Pilots ^f01^c005      Rank        Name               Difficulty  Chapter  Score";
-	drawMenuStringCentered(renderBitmap, titleStr, 152, 10);
+	// Title centered at X=152, Y=10 (TITLFONT)
+	drawMenuStringCentered(renderBitmap, "^f02Top Pilots", 152, 10);
+
+	// Column headers at Y=30 (SMALFONT), positioned to match data columns
+	int headerY = 30;
+	int headerColor = 5;
+	drawMenuStringCentered(renderBitmap, "^f01Rank", 43, headerY, headerColor);
+	drawMenuString(renderBitmap, "^f01Name", 88, headerY, headerColor);
+	drawMenuStringCentered(renderBitmap, "^f01Difficulty", 195, headerY, headerColor);
+	drawMenuStringCentered(renderBitmap, "^f01Chapter", 245, headerY, headerColor);
+	drawMenuStringRight(renderBitmap, "^f01Score", 295, headerY, headerColor);
 
 	// Animated reveal: show up to _topPilotsFrameCount entries
 	int showCount = MIN(_topPilotsFrameCount, _numRankings);
