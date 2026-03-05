@@ -120,7 +120,24 @@ private:
 	bool introPt1();
 	bool introPt2();
 	bool introPt3(bool flag);
-	
+	bool introPt4();
+
+	WWSurface *_introBackg1Image = nullptr;
+	WWSurface *_introWbodyImage = nullptr;
+	WWSurface *_introGbodyImage = nullptr;
+	WWSurface *_introWhead1[8] = {nullptr};
+	WWSurface *_introGhead1[11] = {nullptr};
+
+	void introPt4_sub1();
+	bool introPt4_sub2();
+	bool introPt4_sub3();
+	bool introPt4_sub4();
+	bool introPt4_sub5();
+	bool introPt4_sub6();
+	bool introPt4_sub7();
+	void introPt4_sub8();
+	bool introPt4_sub9();
+
 	WWSurface *_demoPt2Surface = nullptr;
 	WWSurface *_backg2Surface = nullptr;
 	WWSurface *_logoSurface = nullptr;

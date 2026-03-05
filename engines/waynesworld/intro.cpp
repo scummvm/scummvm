@@ -36,6 +36,10 @@ void WaynesWorldEngine::runIntro() {
 		return;
 	if (!introPt3(false))
 		return;
+	if (!introPt4())
+		return;
+	if (!introPt3(true))
+		return;
 }
 
 bool WaynesWorldEngine::introPt1() {
@@ -247,7 +251,9 @@ bool WaynesWorldEngine::introPt3(bool flag) {
 		waitMillis(30);
 
 	waitSeconds(1);
-
+	
+	paletteFadeOut(0, 256, 4); 
+	
 	delete _outlineSurface;
 	delete _logoSurface;
 	delete _backg2Surface;
@@ -256,5 +262,91 @@ bool WaynesWorldEngine::introPt3(bool flag) {
 	return true;
 }
 
+bool WaynesWorldEngine::introPt4() {
+	bool retVal = true;
+	introPt4_sub1();
+
+	if (!introPt4_sub2()) {
+		retVal = false;
+	} else if (!introPt4_sub3()) {
+		retVal = false;
+	} else if (!introPt4_sub4()) {
+		retVal = false;
+	} else if (!introPt4_sub5()) {
+		retVal = false;
+	} else if (!introPt4_sub6()) {
+		retVal = false;
+	} else if (!introPt4_sub7()) {
+		retVal = false;
+	}
+	
+	introPt4_sub8();
+
+	if (retVal)
+		retVal = introPt4_sub9();
+	
+	return retVal;
+}
+
+void WaynesWorldEngine::introPt4_sub1() {
+	_fontWW = new GFTFont();
+	_fontWW->loadFromFile("ww.gft");
+	
+	_musicIndex = 2;
+	changeMusic();
+
+	_introBackg1Image = new WWSurface(320, 170);
+	drawImageToSurface(_oanGxl, "backg1.pcx", _introBackg1Image, 0, 0);
+	_introWbodyImage = new WWSurface(145, 118);
+	drawImageToSurface(_oanGxl, "wbody0.pcx", _introWbodyImage, 0, 0);
+	_introGbodyImage = new WWSurface(160, 149);
+	drawImageToSurface(_oanGxl, "gbody0.pcx", _introGbodyImage, 0, 0);
+
+	for (int i = 0; i < 8; ++i) {
+		_introWhead1[i] = new WWSurface(98, 71);
+		Common::String filename = Common::String::format("whead1%d.pcx", i);
+		drawImageToSurface(_oanGxl, filename.c_str(), _introWhead1[i], 0, 0);
+	}
+
+	for (int i = 0; i < 11; ++i) {
+		_introGhead1[i] = new WWSurface(138, 80);
+		Common::String filename = Common::String::format("ghead1%d.pcx", i);
+		drawImageToSurface(_oanGxl, filename.c_str(), _introGhead1[i], 0, 0);
+	}
+
+	drawImageToScreen(_oanGxl, "backg1.pcx", 0, 15);
+	paletteFadeIn(0, 256, 2);
+}
+
+bool WaynesWorldEngine::introPt4_sub2() {
+	// TODO add a check at each step to return false if ESC is pressed
+	return true;
+}
+bool WaynesWorldEngine::introPt4_sub3() {
+	// TODO add a check at each step to return false if ESC is pressed
+	return true;
+}
+bool WaynesWorldEngine::introPt4_sub4() {
+	// TODO add a check at each step to return false if ESC is pressed
+	return true;
+}
+bool WaynesWorldEngine::introPt4_sub5() {
+	// TODO add a check at each step to return false if ESC is pressed
+	return true;
+}
+bool WaynesWorldEngine::introPt4_sub6() {
+	// TODO add a check at each step to return false if ESC is pressed
+	return true;
+}
+bool WaynesWorldEngine::introPt4_sub7() {
+	// TODO add a check at each step to return false if ESC is pressed
+	return true;
+}
+void WaynesWorldEngine::introPt4_sub8() {
+}
+bool WaynesWorldEngine::introPt4_sub9() {
+	// TODO add a check at each step to return false if ESC is pressed
+	return true;
+}
 
 } // End of namespace WaynesWorld
