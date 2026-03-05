@@ -23,9 +23,12 @@
 
 #include "engines/engine.h"
 #include "common/system.h"
+#include "common/config-manager.h"
 #include "common/events.h"
 #include "common/savefile.h"
 #include "common/util.h"
+
+#include "audio/mixer.h"
 
 #include "scumm/actor.h"
 #include "scumm/file.h"
@@ -463,6 +466,17 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_topPilotsFrameCount = 0;
 	_topPilotsMaxFrames = 120;
 	initDefaultRankings();
+
+	// Initialize options menu state (FUN_004167A6 defaults)
+	_optionsSelection = 0;
+	_optionsItemCount = 9;
+	_optMusicEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kMusicSoundType);
+	_optSfxEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kSFXSoundType);
+	_optVoicesEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kSpeechSoundType);
+	_optTextEnabled = true;
+	_optControlsFlipped = false;
+	_optRapidFire = false;
+	_optVolumeLevel = _vm->_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 2;
 
 	// Initialize menu input capture system
 	_menuInputActive = false;

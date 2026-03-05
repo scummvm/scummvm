@@ -68,7 +68,8 @@ public:
 		kStateCredits = 5,      // Credits sequence
 		kStateQuit = 6,         // Exit game
 		kStateTopPilots = 8,    // Top Pilots score display (FUN_00420116)
-		kStateDifficultySelect = 7 // Difficulty submenu within pilot select
+		kStateDifficultySelect = 7, // Difficulty submenu within pilot select
+		kStateOptions = 9       // Options menu (FUN_004167A6)
 	};
 
 	// Menu selection results (return values from FUN_004147B2)
@@ -198,6 +199,28 @@ public:
 
 	int _topPilotsFrameCount;     // Animation frame counter (pilots revealed one per frame)
 	int _topPilotsMaxFrames;      // Total frames to display (120 or 240)
+
+	// ================= Options Menu (FUN_004167A6) ====================
+	// TRS strings: 89 (title), 90-101 (toggle labels), 103 (volume), 107/109 (back)
+	// Original settings array at DAT_00482e20[0..4]:
+	//   [0]=auto control, [1]=music, [2]=voices, [3]=sound
+	// Additional flags: DAT_0047a7fe (text/indicators), DAT_0047a80a (rapid fire/arrows)
+	// Volume: DAT_0047a804 (0-127), SFX vol: DAT_0047a802 (127-768)
+
+	void showOptionsMenu();
+	void drawOptionsOverlay(byte *renderBitmap, int pitch, int width, int height);
+	int processOptionsInput();
+
+	int _optionsSelection;
+	int _optionsItemCount;
+	bool _optionsExitRequested;
+	bool _optMusicEnabled;
+	bool _optSfxEnabled;
+	bool _optVoicesEnabled;
+	bool _optTextEnabled;
+	bool _optControlsFlipped;
+	bool _optRapidFire;
+	int _optVolumeLevel;       // 0-127 (DAT_0047a804)
 
 	// ================= Pilot Data System (FUN_00411B9A / FUN_00411980 / FUN_00411A5D) ===========
 	// Original: 10 pilot slots × 0x118 (280) bytes at DAT_004568A8

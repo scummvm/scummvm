@@ -2301,6 +2301,14 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		return;
 	}
 
+	// Handle Options menu (FUN_004167A6)
+	bool optionsMode = (introPlaying && _gameState == kStateOptions);
+	if (optionsMode) {
+		processOptionsInput();
+		drawOptionsOverlay(renderBitmap, pitch, width, height);
+		return;
+	}
+
 	// Handle menu input and rendering if in menu mode
 	if (menuMode) {
 		// The original game uses the standard Windows arrow cursor (IDC_ARROW)
