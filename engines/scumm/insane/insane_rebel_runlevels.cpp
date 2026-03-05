@@ -221,7 +221,7 @@ int InsaneRebel2::runLevel2() {
 	int bonusCount = 0;     // local_1c: tracks bonus events (DAT_0047ab9c & 0x10)
 	int totalKills = 0;     // local_c: accumulated kill count across phases
 	int totalMisses = 0;    // Accumulated misses (sVar1 + sVar2 from hit counters)
-	int prevWaveState = 0;  // local_8: previous wave's state for Phase 3 randomization
+	int prevWaveState = 0;  // variantIdx: previous wave's state for Phase 3 randomization
 
 	// Play cutscene (02CUT.SAN)
 	playCinematic("LEV02/02CUT.SAN");
@@ -853,7 +853,7 @@ int InsaneRebel2::runLevel6() {
 		}
 
 		// Phase 1 survived — save score, play POST1
-		totalScore = _playerScore;  // local_8 = DAT_0047ab84
+		totalScore = _playerScore;  // variantIdx = DAT_0047ab84
 
 		_rebelHandler = 0;
 		_rebelStatusBarSprite = 0;
@@ -876,7 +876,7 @@ int InsaneRebel2::runLevel6() {
 			if (_vm->shouldQuit())
 				return kLevelQuit;
 
-			// Accumulate score: local_8 = DAT_0047ab84 + local_8
+			// Accumulate score: variantIdx = DAT_0047ab84 + variantIdx
 			totalScore += _playerScore;
 
 			if (_playerShield > 0) {
@@ -1407,7 +1407,7 @@ int InsaneRebel2::runLevel11() {
 
 		{
 			uint16 waveSelect = processWaveEnd(0x7e, &budget, 0, 0);
-			int local_8 = 0;  // Tracks variant for randomization threshold
+			int variantIdx = 0;  // Tracks variant for randomization threshold
 
 			// Loop until (phaseState & 0x70) == 0x70 (bridge targets destroyed)
 			while (waveSelect != 0xFFFF && (_rebelPhaseState & 0x70) != 0x70) {
@@ -1421,14 +1421,14 @@ int InsaneRebel2::runLevel11() {
 				prevPhaseState = _rebelPhaseState;
 
 				// Randomization: wider range for first few waves
-				if (local_8 < 3) {
-					local_8 = _vm->_rnd.getRandomNumber(7);  // 0-7
+				if (variantIdx < 3) {
+					variantIdx = _vm->_rnd.getRandomNumber(7);  // 0-7
 				} else {
-					local_8 = _vm->_rnd.getRandomNumber(2);  // 0-2
+					variantIdx = _vm->_rnd.getRandomNumber(2);  // 0-2
 				}
 
 				const char *filename;
-				switch (local_8) {
+				switch (variantIdx) {
 				case 0:  filename = "LEV11/P3/11P03_A.SAN"; break;
 				case 1:  filename = "LEV11/P3/11P03_B.SAN"; break;
 				case 2:  filename = "LEV11/P3/11P03_C.SAN"; break;
@@ -1439,13 +1439,13 @@ int InsaneRebel2::runLevel11() {
 				default: filename = "LEV11/P3/11P03_E.SAN"; break;  // duplicate E
 				}
 
-				debug("Rebel2: Level 11 Phase 3a wave - %s (state=0x%x local_8=%d)", filename, _rebelPhaseState, local_8);
+				debug("Rebel2: Level 11 Phase 3a wave - %s (state=0x%x variantIdx=%d)", filename, _rebelPhaseState, variantIdx);
 				splayer->setCurVideoFlags(0x428);
 				splayer->play(filename, 12);
 				_deathFrame = splayer->_frame;
 
-				// Threshold only for higher variants (original: (2 < local_8) - 1 & 0x14)
-				int16 threshold = (local_8 > 2) ? 0x14 : 0;
+				// Threshold only for higher variants (original: (2 < variantIdx) - 1 & 0x14)
+				int16 threshold = (variantIdx > 2) ? 0x14 : 0;
 				waveSelect = processWaveEnd(0x7e, &budget, threshold, 0);
 			}
 		}
@@ -1498,7 +1498,7 @@ int InsaneRebel2::runLevel11() {
 
 		// Only enter wave loop if not all basic types killed already
 		if ((_rebelPhaseState & 0x0e) < 0x0e) {
-			int local_8 = 0;
+			int variantIdx = 0;
 			uint16 waveSelect = processWaveEnd(0x0e, &budget, 0, 0);
 
 			while (waveSelect != 0xFFFF) {
@@ -1506,14 +1506,14 @@ int InsaneRebel2::runLevel11() {
 					return kLevelQuit;
 
 				// Wider randomization for first few waves
-				if (local_8 < 4) {
-					local_8 = _vm->_rnd.getRandomNumber(8);  // 0-8
+				if (variantIdx < 4) {
+					variantIdx = _vm->_rnd.getRandomNumber(8);  // 0-8
 				} else {
-					local_8 = _vm->_rnd.getRandomNumber(2);  // 0-2
+					variantIdx = _vm->_rnd.getRandomNumber(2);  // 0-2
 				}
 
 				const char *filename;
-				switch (local_8) {
+				switch (variantIdx) {
 				case 0:  filename = "LEV11/P3/11P03_G.SAN"; break;
 				case 1:  filename = "LEV11/P3/11P03_H.SAN"; break;
 				case 2:  filename = "LEV11/P3/11P03_I.SAN"; break;
@@ -1525,12 +1525,12 @@ int InsaneRebel2::runLevel11() {
 				default: filename = "LEV11/P3/11P03_L.SAN"; break;
 				}
 
-				debug("Rebel2: Level 11 Phase 3b wave - %s (state=0x%x local_8=%d)", filename, _rebelPhaseState, local_8);
+				debug("Rebel2: Level 11 Phase 3b wave - %s (state=0x%x variantIdx=%d)", filename, _rebelPhaseState, variantIdx);
 				splayer->setCurVideoFlags(0x428);
 				splayer->play(filename, 12);
 				_deathFrame = splayer->_frame;
 
-				int16 threshold = (local_8 > 2) ? 0x14 : 0;
+				int16 threshold = (variantIdx > 2) ? 0x14 : 0;
 				waveSelect = processWaveEnd(0x0e, &budget, threshold, 0);
 			}
 		}
@@ -1725,15 +1725,15 @@ int InsaneRebel2::runLevel12() {
 					return kLevelQuit;
 
 				// Variant selection: (waveSelect & 2) controls which set
-				int local_8;
+				int variantIdx;
 				if ((waveSelect & 2) == 0) {
-					local_8 = _vm->_rnd.getRandomNumber(2) + 3;  // 3, 4, or 5
+					variantIdx = _vm->_rnd.getRandomNumber(2) + 3;  // 3, 4, or 5
 				} else {
-					local_8 = _vm->_rnd.getRandomNumber(2);      // 0, 1, or 2
+					variantIdx = _vm->_rnd.getRandomNumber(2);      // 0, 1, or 2
 				}
 
 				const char *filename;
-				switch (local_8) {
+				switch (variantIdx) {
 				case 0:  filename = "LEV12/P2/12P02_A.SAN"; break;
 				case 1:  filename = "LEV12/P2/12P02_B.SAN"; break;
 				case 2:  filename = "LEV12/P2/12P02_E.SAN"; break;
@@ -1742,13 +1742,13 @@ int InsaneRebel2::runLevel12() {
 				default: filename = "LEV12/P2/12P02_F.SAN"; break;
 				}
 
-				debug("Rebel2: Level 12 Phase 2 wave - %s (state=0x%x local_8=%d)", filename, _rebelPhaseState, local_8);
+				debug("Rebel2: Level 12 Phase 2 wave - %s (state=0x%x variantIdx=%d)", filename, _rebelPhaseState, variantIdx);
 				splayer->setCurVideoFlags(0x428);
 				splayer->play(filename, 12);
 				_deathFrame = splayer->_frame;
 
 				// Variants E(2) and F(5) reset threshold to 0
-				int16 threshold = (local_8 == 2 || local_8 == 5) ? 0 : 0x14;
+				int16 threshold = (variantIdx == 2 || variantIdx == 5) ? 0 : 0x14;
 				waveSelect = processWaveEnd(6, &budget, threshold, 0);
 			}
 		}
@@ -1781,7 +1781,7 @@ int InsaneRebel2::runLevel12() {
 			return kLevelQuit;
 
 		{
-			int local_8 = 0;
+			int variantIdx = 0;
 			uint16 waveSelect = processWaveEnd(6, &budget, 0x14, 0);
 
 			while (waveSelect != 0xFFFF) {
@@ -1789,14 +1789,14 @@ int InsaneRebel2::runLevel12() {
 					return kLevelQuit;
 
 				// Wider randomization for first few waves
-				if (local_8 < 4) {
-					local_8 = _vm->_rnd.getRandomNumber(5);  // 0-5
+				if (variantIdx < 4) {
+					variantIdx = _vm->_rnd.getRandomNumber(5);  // 0-5
 				} else {
-					local_8 = _vm->_rnd.getRandomNumber(3);  // 0-3
+					variantIdx = _vm->_rnd.getRandomNumber(3);  // 0-3
 				}
 
 				const char *filename;
-				switch (local_8) {
+				switch (variantIdx) {
 				case 0:  filename = "LEV12/P3/12P03_C.SAN"; break;
 				case 1:  filename = "LEV12/P3/12P03_D.SAN"; break;
 				case 2:  filename = "LEV12/P3/12P03_A.SAN"; break;
@@ -1805,7 +1805,7 @@ int InsaneRebel2::runLevel12() {
 				default: filename = "LEV12/P3/12P03_F.SAN"; break;  // duplicate F
 				}
 
-				debug("Rebel2: Level 12 Phase 3 wave - %s (state=0x%x local_8=%d)", filename, _rebelPhaseState, local_8);
+				debug("Rebel2: Level 12 Phase 3 wave - %s (state=0x%x variantIdx=%d)", filename, _rebelPhaseState, variantIdx);
 				splayer->setCurVideoFlags(0x428);
 				splayer->play(filename, 12);
 				_deathFrame = splayer->_frame;
@@ -1842,21 +1842,21 @@ int InsaneRebel2::runLevel12() {
 			return kLevelQuit;
 
 		{
-			int local_8 = 0;
+			int variantIdx = 0;
 			uint16 waveSelect = processWaveEnd(0x0e, &budget, 0x14, 0);
 
 			while (waveSelect != 0xFFFF) {
 				if (_vm->shouldQuit())
 					return kLevelQuit;
 
-				if (local_8 < 4) {
-					local_8 = _vm->_rnd.getRandomNumber(5);  // 0-5
+				if (variantIdx < 4) {
+					variantIdx = _vm->_rnd.getRandomNumber(5);  // 0-5
 				} else {
-					local_8 = _vm->_rnd.getRandomNumber(3);  // 0-3
+					variantIdx = _vm->_rnd.getRandomNumber(3);  // 0-3
 				}
 
 				const char *filename;
-				switch (local_8) {
+				switch (variantIdx) {
 				case 0:  filename = "LEV12/P4/12P04_C.SAN"; break;
 				case 1:  filename = "LEV12/P4/12P04_D.SAN"; break;
 				case 2:  filename = "LEV12/P4/12P04_A.SAN"; break;
@@ -1865,7 +1865,7 @@ int InsaneRebel2::runLevel12() {
 				default: filename = "LEV12/P4/12P04_F.SAN"; break;
 				}
 
-				debug("Rebel2: Level 12 Phase 4 wave - %s (state=0x%x local_8=%d)", filename, _rebelPhaseState, local_8);
+				debug("Rebel2: Level 12 Phase 4 wave - %s (state=0x%x variantIdx=%d)", filename, _rebelPhaseState, variantIdx);
 				splayer->setCurVideoFlags(0x428);
 				splayer->play(filename, 12);
 				_deathFrame = splayer->_frame;

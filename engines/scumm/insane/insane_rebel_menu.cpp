@@ -452,7 +452,8 @@ int InsaneRebel2::getMenuStringWidth(const char *str) const {
 			if (*p == 'l') { str = p + 1; continue; }
 		}
 		byte c = (byte)*str++;
-		if (c >= 'a' && c <= 'z') c = c - 'a' + 'A';
+		if (c >= 'a' && c <= 'z')
+			c = c - 'a' + 'A';
 		if (curFont && c < curFont->getNumChars())
 			w += curFont->getCharWidth(c);
 	}
@@ -495,9 +496,12 @@ void InsaneRebel2::drawMenuString(byte *renderBitmap, const char *str, int x, in
 			if (*p == 'l') { str = p + 1; continue; }
 		}
 		byte c = (byte)*str++;
-		if (c >= 'a' && c <= 'z') c = c - 'a' + 'A';
-		if (!curFont) continue;
-		if (c >= curFont->getNumChars()) continue;
+		if (c >= 'a' && c <= 'z')
+			c = c - 'a' + 'A';
+		if (!curFont)
+			continue;
+		if (c >= curFont->getNumChars())
+			continue;
 		int charW = curFont->getCharWidth(c);
 		if (x >= 0 && y >= 0 && charW > 0)
 			curFont->drawCharV7(renderBitmap, clipRect, x, y, pitch, curColor,

@@ -1135,9 +1135,12 @@ void InsaneRebel2::initLaserTexture(NutRenderer *nut, int spriteIdx) {
 		for (int row = 0; row < texHeight; row++) {
 			for (int col = 0; col < texWidth; col++) {
 				if (_laserTexture.pixels[row * texWidth + col] != 0) {
-					if (col < third) band1++;
-					else if (col < third * 2) band2++;
-					else band3++;
+					if (col < third)
+						band1++;
+					else if (col < third * 2)
+						band2++;
+					else
+						band3++;
 				}
 			}
 		}
@@ -1242,11 +1245,13 @@ void InsaneRebel2::drawEdgeHighlightLine(byte *dst, int pitch, int width, int he
 			return;
 	} else {
 		if (x0 < clipLeft) {
-			if (x1 < clipLeft) return;
+			if (x1 < clipLeft)
+				return;
 			y0 = y1 + (int16)(((int)(y0 - y1) * (int)(clipLeft - x1)) / (int)(x0 - x1));
 			x0 = clipLeft;
 		} else if (x0 > clipRight) {
-			if (x1 > clipRight) return;
+			if (x1 > clipRight)
+				return;
 			y0 = y1 + (int16)(((int)(y0 - y1) * (int)(clipRight - x1)) / (int)(x0 - x1));
 			x0 = clipRight;
 		}
@@ -1265,11 +1270,13 @@ void InsaneRebel2::drawEdgeHighlightLine(byte *dst, int pitch, int width, int he
 			return;
 	} else {
 		if (y0 < clipTop) {
-			if (y1 < clipTop) return;
+			if (y1 < clipTop)
+				return;
 			x0 = x1 + (int16)(((int)(x0 - x1) * (int)(clipTop - y1)) / (int)(y0 - y1));
 			y0 = clipTop;
 		} else if (y0 > clipBottom) {
-			if (y1 > clipBottom) return;
+			if (y1 > clipBottom)
+				return;
 			x0 = x1 + (int16)(((int)(x0 - x1) * (int)(clipBottom - y1)) / (int)(y0 - y1));
 			y0 = clipBottom;
 		}

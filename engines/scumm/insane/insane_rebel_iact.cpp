@@ -819,15 +819,15 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 			inputY = -127;
 
 		// --- Step 2: Scale to [-127, 127] (lines 82-84) ---
-		// Mouse mode: local_c = (DAT_0047a7e0 * 0x7f) / 0xa0
-		int16 local_c = (int16)((inputX * 127) / 160);
-		int16 local_14 = inputY;  // Y already in [-127, 127]
+		// Mouse mode: scaledInputX = (DAT_0047a7e0 * 0x7f) / 0xa0
+		int16 scaledInputX = (int16)((inputX * 127) / 160);
+		int16 scaledInputY = inputY;  // Y already in [-127, 127]
 
 		// --- Step 3: Velocity history + smoothed average (lines 141-157) ---
 		for (int i = 24; i > 0; i--) {
 			_velocityHistory[i] = _velocityHistory[i - 1];
 		}
-		_velocityHistory[0] = local_c;
+		_velocityHistory[0] = scaledInputX;
 
 		// Window size = (levelData[0] >> 4) + 1. Calibrated default: 5.
 		const int smoothWindow = 5;
@@ -868,17 +868,17 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		if (_flyControlMode == 1) {
 			// Mode 1: Full cross-axis coupling (lines 174-186)
 			// Banking: vertical input deflects horizontal movement
-			if (local_c < 1) {
-				positionDeltaX = (int16)((levelSpeed * _smoothedVelocity - absSmoothVel * local_14 - windEffectX) >> 9);
+			if (scaledInputX < 1) {
+				positionDeltaX = (int16)((levelSpeed * _smoothedVelocity - absSmoothVel * scaledInputY - windEffectX) >> 9);
 			} else {
-				positionDeltaX = (int16)((levelSpeed * _smoothedVelocity + absSmoothVel * local_14 - windEffectX) >> 9);
+				positionDeltaX = (int16)((levelSpeed * _smoothedVelocity + absSmoothVel * scaledInputY - windEffectX) >> 9);
 			}
 		} else {
 			// Mode 0/2/3: Reduced cross-axis coupling (lines 218-230)
-			if (local_c < 1) {
-				positionDeltaX = (int16)((levelSpeed * _smoothedVelocity - (absSmoothVel * local_14 >> 2) - windEffectX) >> 9);
+			if (scaledInputX < 1) {
+				positionDeltaX = (int16)((levelSpeed * _smoothedVelocity - (absSmoothVel * scaledInputY >> 2) - windEffectX) >> 9);
 			} else {
-				positionDeltaX = (int16)((levelSpeed * _smoothedVelocity + (absSmoothVel * local_14 >> 2) - windEffectX) >> 9);
+				positionDeltaX = (int16)((levelSpeed * _smoothedVelocity + (absSmoothVel * scaledInputY >> 2) - windEffectX) >> 9);
 			}
 		}
 
@@ -894,7 +894,7 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		// Y delta
 		if (_flyControlMode == 1) {
 			// Mode 1: clamped to ±12 with wind (lines 194-216)
-			int yCalc = levelYSpeed * local_14 - (windEffectY >> 1);
+			int yCalc = levelYSpeed * scaledInputY - (windEffectY >> 1);
 			int yDelta = yCalc >> 10;
 			if (yDelta < -12)
 				yDelta = -12;
@@ -903,11 +903,11 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 			_flyShipScreenY -= (int16)yDelta;
 		} else {
 			// Mode 0/2/3: unclamped (lines 238-241)
-			_flyShipScreenY -= (int16)((levelYSpeed * local_14) >> 10);
+			_flyShipScreenY -= (int16)((levelYSpeed * scaledInputY) >> 10);
 		}
 
 		// Store vertical input for direction sprite (line 243)
-		_verticalInput = local_14;  // DAT_0044370e
+		_verticalInput = scaledInputY;  // DAT_0044370e
 
 		// Ship facing direction (line 244)
 		_facingRight = (0xd4 < _smoothedVelocity + _flyShipScreenX);
@@ -2458,12 +2458,12 @@ void InsaneRebel2::enemyUpdate(byte *renderBitmap, Common::SeekableReadStream &b
 		}
 	}
 	if (!found) {
-		init_enemyStruct(enemyId, x, y, w, h, true, false, -1, par4);
+		initEnemyStruct(enemyId, x, y, w, h, true, false, -1, par4);
 	}
 }
 
-// init_enemyStruct -- Create and append a new enemy entry.
-void InsaneRebel2::init_enemyStruct(int id, int32 x, int32 y, int32 w, int32 h, bool active, bool destroyed, int32 explosionFrame, int type) {
+// initEnemyStruct -- Create and append a new enemy entry.
+void InsaneRebel2::initEnemyStruct(int id, int32 x, int32 y, int32 w, int32 h, bool active, bool destroyed, int32 explosionFrame, int type) {
 	enemy e;
 	e.id = id;
 	e.type = type;
