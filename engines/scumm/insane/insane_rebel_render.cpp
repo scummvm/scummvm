@@ -2294,6 +2294,13 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		return;
 	}
 
+	// Handle Top Pilots screen (FUN_00420116)
+	bool topPilotsMode = (introPlaying && _gameState == kStateTopPilots);
+	if (topPilotsMode) {
+		drawTopPilotsOverlay(renderBitmap, pitch, width, height);
+		return;
+	}
+
 	// Handle menu input and rendering if in menu mode
 	if (menuMode) {
 		// The original game uses the standard Windows arrow cursor (IDC_ARROW)

@@ -459,6 +459,11 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_pilotNameInput = "";
 	_pilotEditIndex = -1;
 
+	// Initialize top pilots display state and ranking table (FUN_0040FF00)
+	_topPilotsFrameCount = 0;
+	_topPilotsMaxFrames = 120;
+	initDefaultRankings();
+
 	// Initialize menu input capture system
 	_menuInputActive = false;
 

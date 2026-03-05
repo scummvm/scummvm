@@ -67,6 +67,7 @@ public:
 		kStateGameplay = 4,     // Stage 4: Gameplay (FUN_00416787)
 		kStateCredits = 5,      // Credits sequence
 		kStateQuit = 6,         // Exit game
+		kStateTopPilots = 8,    // Top Pilots score display (FUN_00420116)
 		kStateDifficultySelect = 7 // Difficulty submenu within pilot select
 	};
 
@@ -97,10 +98,13 @@ public:
 	// Process menu input (keyboard/mouse) - returns selected item or -1
 	int processMenuInput();
 
+	// Format-code-aware string rendering (^fNN=font, ^cNNN=color)
+	int getMenuStringWidth(const char *str) const;
+	void drawMenuString(byte *renderBitmap, const char *str, int x, int y, int defaultColor = 1);
+	void drawMenuStringCentered(byte *renderBitmap, const char *str, int cx, int y, int defaultColor = 1);
+	void drawMenuStringRight(byte *renderBitmap, const char *str, int rx, int y, int defaultColor = 1);
+
 	// Shared menu item renderer - emulates FUN_0041F5AE
-	// items[0] = title, items[1..numItems] = selectable items, selection = highlighted item
-	// leftAligned=false: param_4==0 (centered, for main menu / pilot select)
-	// leftAligned=true:  param_4==1 (left-aligned, for chapter select)
 	void drawMenuItems(byte *renderBitmap, int pitch, int width, int height,
 	                   const char **items, int numItems, int selection,
 	                   bool leftAligned = false);
@@ -162,6 +166,38 @@ public:
 
 	// Password table lookup (FUN_0041BCE0)
 	Common::String getChapterPassword(int level, int difficulty);
+
+	// ================= Top Pilots Screen (FUN_00420116) ====================
+	// Shows ranked pilot scores with animated reveal, played over menu video
+	// Original: DAT_00443b58 ranking table, 0x4a-byte records, max 15 entries
+
+	static const int kMaxRankings = 15;
+
+	struct RankingEntry {
+		char name[40];       // +0x04: Pilot name (or "-----" for defaults)
+		int32 score;         // +0x36: Total score
+		int32 rating;        // +0x3a: Total rating (converted to rank medals)
+		int16 difficulty;    // +0x3e: Difficulty tier (0-5), TRS index = difficulty + 155
+		int16 chapter;       // +0x40: Highest chapter completed (1-15)
+	};
+
+	RankingEntry _rankings[kMaxRankings];
+	int _numRankings;
+
+	// Initialize ranking table with defaults (FUN_0040FF00)
+	void initDefaultRankings();
+
+	// Insert pilot score into sorted ranking table (FUN_00410271)
+	void insertRanking(const char *name, int32 score, int32 rating, int16 difficulty, int16 chapter);
+
+	// Run top pilots display - called from main menu "Show Top Pilots"
+	void showTopPilots();
+
+	// Draw top pilots overlay on current frame during video playback
+	void drawTopPilotsOverlay(byte *renderBitmap, int pitch, int width, int height);
+
+	int _topPilotsFrameCount;     // Animation frame counter (pilots revealed one per frame)
+	int _topPilotsMaxFrames;      // Total frames to display (120 or 240)
 
 	// ================= Pilot Data System (FUN_00411B9A / FUN_00411980 / FUN_00411A5D) ===========
 	// Original: 10 pilot slots × 0x118 (280) bytes at DAT_004568A8
