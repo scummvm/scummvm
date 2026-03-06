@@ -653,6 +653,16 @@ static void showSettings() {
 		ImGui::SeparatorText("Debugger Behavior");
 		ImGui::Checkbox("Ignore Mouse Events", &_state->_ignoreMouse);
 		ImGui::SetItemTooltip("Block mouse events from reaching Director.\nHold SHIFT to temporarily allow them.\nPress Ctrl+F1 to toggle this setting.");
+
+		ImGuiIO &io = ImGui::GetIO();
+		if (ImGui::Checkbox("Enable Multi-Viewport", &_state->_enableMultiViewport)) {
+			if (_state->_enableMultiViewport) {
+				io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+			} else {
+				io.ConfigFlags &= ~ImGuiConfigFlags_ViewportsEnable;
+			}
+		}
+		ImGui::SetItemTooltip("When disabled, all debugger windows are forced to stay inside the main ScummVM window.");
 	}
 	ImGui::End();
 }
