@@ -263,10 +263,12 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 
 					if (!video->highColorMap)
 						video->highColorMap = new uint32[256];
+
+					bool useSpecialBlackWhiteValues = _vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4;
 					Surface::computeHighColorMap(video->highColorMap,
 												 video->decoder->getPalette(),
 												 _vm->getPixelFormat(),
-												 _vm->getGameType() == kGameTypeAdibou2);
+												 useSpecialBlackWhiteValues);
 					video->decoder->setSurfaceMemory(video->tmpSurfBppConversion->getPixels(),
 													 video->tmpSurfBppConversion->w,
 													 video->tmpSurfBppConversion->h,
