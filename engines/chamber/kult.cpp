@@ -69,7 +69,7 @@ Graphics::Surface *loadSplash(const char *filename) {
 
 	Graphics::Surface *surface = new Graphics::Surface();
 	int width = (g_vm->_videoMode == Common::kRenderHercG) ? 640 : 320;
-	int height = (g_vm->_videoMode == Common::kRenderHercG) ? 640 : 200;
+	int height = 200;
 	surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
 	decompress(scratch_mem1 + 8, backbuffer);
@@ -232,30 +232,26 @@ Common::Error ChamberEngine::init() {
 	byte c;
 
 	// Initialize graphics using following:
-	if (_videoMode == Common::RenderMode::kRenderCGA) {
-		// 320x200x2
-		_screenW = 320;
-		_screenH = 200;
-		_screenBits = 2;
-		_screenPPB = 8 / _screenBits;
-		_screenBPL = _screenW / _screenPPB;
-		_line_offset = 0x2000;
-		_fontHeight = 6;
-		_fontWidth = 4;
-		initGraphics(_screenW, _screenH);
-	} else if (_videoMode == Common::RenderMode::kRenderHercG) {
-		// 720x348x1
-		_screenW = 720;
-		_screenH = 348;
-		_screenBits = 1;
-		_screenPPB = 8 / _screenBits;
-		_screenBPL = _screenW / _screenPPB;
-		_line_offset = 0x2000;
-		_line_offset2 = 0x2000;
-		_fontHeight = 6;
-		_fontWidth = 4;
+	bool isCustomHerc = false;
+	if (_videoMode == Common::RenderMode::kRenderHercG) {
+		isCustomHerc = true;
+		_videoMode = Common::RenderMode::kRenderCGA;
+	}
+	_screenW = 320;
+	_screenH = 200;
+	_screenBits = 2;
+	_screenPPB = 8 / _screenBits;
+	_screenBPL = _screenW / _screenPPB;
+	_line_offset = 0x2000;
+	_line_offset2 = 0x2000;
+	_fontHeight = 6;
+	_fontWidth = 4;
+	if (isCustomHerc) {
+		initGraphics(720, 348); 
+	} else {
 		initGraphics(_screenW, _screenH);
 	}
+	
 	initSound();
 
 	/*TODO: DetectCPU*/
@@ -285,21 +281,15 @@ Common::Error ChamberEngine::init() {
 			exitGame();
 	}
 
-	if (_videoMode == Common::RenderMode::kRenderCGA) {
+	if (!isCustomHerc) {
 		/* Select intense cyan-mageta palette */
 		cga_ColorSelect(0x30);
 		cga_BackBufferToRealFull();
-	} else if (_videoMode == Common::RenderMode::kRenderHercG) {
-		/* Select intense cyan-mageta palette */
-		cga_ColorSelect(0x30);
+	} else {
+		/* Set authentic Hercules Green phosphor palette */
+		g_system->getPaletteManager()->setPalette(Graphics::HGC_G_PALETTE, 0, 2);
 		cga_BackBufferToRealFull();
 	}
-
-    int splash_x = getX(0);
-    int splash_y = getY(0);
-   
-    g_system->copyRectToScreen(splash->getPixels(), splash->pitch, splash_x, splash_y, splash->w, splash->h);
-    g_system->updateScreen(); 
 
     splash->free();
     delete splash;
