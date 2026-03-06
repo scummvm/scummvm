@@ -311,12 +311,12 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 	debug("playMovie %s", movie.c_str());
 	Video::FourXMDecoder dec;
 
-	auto *stream = open(movie);
+	Common::ScopedPtr<Common::SeekableReadStream> stream(open(movie));
 	if (!stream) {
 		warning("can't load movie %s", movie.c_str());
 		return;
 	}
-	if (dec.loadStream(stream)) {
+	if (dec.loadStream(stream.get())) {
 		dec.start();
 
 		bool playing = true;
@@ -351,8 +351,8 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 	} else {
 		warning("playMovie %s failed", movie.c_str());
 	}
-	delete stream;
 }
+
 void PhoenixVREngine::playAnimation(const Common::String &name, const Common::String &var, int varValue, float speed) {
 	_vr.playAnimation(name, var, varValue, speed);
 }
