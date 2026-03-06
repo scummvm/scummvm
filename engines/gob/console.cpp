@@ -27,6 +27,7 @@
 
 #include "gob/console.h"
 #include "gob/gob.h"
+#include "gob/game.h"
 #include "gob/inter.h"
 #include "gob/dataio.h"
 #include "gob/cheater.h"
@@ -44,6 +45,7 @@ GobConsole::GobConsole(GobEngine *vm) : GUI::Debugger(), _vm(vm), _cheater(nullp
 	registerCmd("varString",    WRAP_METHOD(GobConsole, cmd_varString));
 	registerCmd("cheat",        WRAP_METHOD(GobConsole, cmd_cheat));
 	registerCmd("listArchives", WRAP_METHOD(GobConsole, cmd_listArchives));
+	registerCmd("gobStack",     WRAP_METHOD(GobConsole, cmd_gobStack));
 }
 
 GobConsole::~GobConsole() {
@@ -79,6 +81,10 @@ bool GobConsole::cmd_Help(int, const char **) {
 	debugPrintf(" var16 - manipulates 16-bit variables; usage: var16 <var offset> (<value>)\n");
 	debugPrintf(" var32 - manipulates 32-bit variables; usage: var32 <var offset> (<value>)\n");
 	debugPrintf(" varString - manipulates string references; usage: varString <var offset> (<value>)\n");
+	debugPrintf("\n");
+	debugPrintf("Scripts\n");
+	debugPrintf("------\n");
+	debugPrintf(" gobStack - prints the TOT scripts call stack (requires Gameflow debug flag)\n");
 	debugPrintf("\n");
 	return true;
 }
@@ -218,6 +224,11 @@ bool GobConsole::cmd_listArchives(int argc, const char **argv) {
 		if (!it->name.empty())
 		debugPrintf("%13s |   %d  | %d\n", it->name.c_str(), it->base, it->fileCount);
 
+	return true;
+}
+
+bool GobConsole::cmd_gobStack(int argc, const char **argv) {
+	debugPrintf("%s", _vm->_game->getGobStack().c_str());
 	return true;
 }
 

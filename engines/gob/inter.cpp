@@ -85,6 +85,8 @@ void Inter::executeOpcodeDraw(byte i) {
 void Inter::executeOpcodeFunc(byte i, byte j, OpFuncParams &params) {
 	debugC(1, kDebugFuncOp, "%s:%08d: opcodeFunc %d.%d [0x%X.0x%X] (%s)",
 		   _vm->_game->_curTotFile.c_str(), _vm->_game->_script->pos(), i, j, i, j, getDescOpcodeFunc(i, j));
+	if (debugChannelSet(1, kDebugGameFlow))
+		_vm->_game->_script->_currentOpcodePos = _vm->_game->_script->pos();
 
 	int n = i * 16 + j;
 	if ((i <= 4) && (j <= 15) && _opcodesFunc[n].proc && _opcodesFunc[n].proc->isValid())
@@ -352,8 +354,11 @@ void Inter::callSub(int16 retFlag) {
 		block = _vm->_game->_script->peekByte();
 		if (block == 1)
 			funcBlock(retFlag);
-		else if (block == 2)
+		else if (block == 2) {
+			if (!_vm->_game->_globalFuncCallStack.empty())
+				_vm->_game->_globalFuncCallStack.top().type = kEvaluateHotspots;
 			_vm->_game->_hotspots->evaluate();
+		}
 		else
 			error("Unknown block type %d in Inter::callSub()", block);
 	}

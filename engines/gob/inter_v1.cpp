@@ -736,10 +736,16 @@ void Inter_v1::o1_callSub(OpFuncParams &params) {
 		return;
 	}
 
+	_vm->_game->pushOnGlobalCallStack(kCallSub,
+									  _vm->_game->_curTotFile, _vm->_game->_script->_currentOpcodePos,
+									  _vm->_game->_curTotFile, offset);
+
 	_vm->_game->_script->call(offset);
 
 	if ((params.counter == params.cmdCount) && (params.retFlag == 2)) {
 		_vm->_game->_script->pop(false);
+		if (!_vm->_game->_globalFuncCallStack.empty())
+			_vm->_game->_globalFuncCallStack.top().tailCall = true;
 		params.doReturn = true;
 		return;
 	}
@@ -747,6 +753,7 @@ void Inter_v1::o1_callSub(OpFuncParams &params) {
 	callSub(2);
 
 	_vm->_game->_script->pop();
+	_vm->_game->popGlobalCallStack();
 }
 
 void Inter_v1::o1_printTotText(OpFuncParams &params) {

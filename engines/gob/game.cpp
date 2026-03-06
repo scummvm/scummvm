@@ -444,7 +444,13 @@ bool TotFunctions::call(const Tot &tot, uint16 offset) const {
 	_vm->_game->_resources  = tot.resources;
 	_vm->_game->_curTotFile = tot.file;
 
+	_vm->_game->pushOnGlobalCallStack(kNamedFunctionSub,
+									  curtotFile, script->_currentOpcodePos,
+									  tot.file, offset);
+
 	_vm->_game->playTot(offset);
+
+	_vm->_game->popGlobalCallStack();
 
 	_vm->_game->_script     = script;
 	_vm->_game->_resources  = resources;
@@ -616,6 +622,8 @@ void Game::playTot(int32 function) {
 				_vm->_inter->allocateVars(_script->getVariablesCount() & 0xFFFF);
 
 			_script->seek(_script->getFunctionOffset(TOTFile::kFunctionStart));
+			if (!_globalFuncCallStack.empty())
+				_globalFuncCallStack.top().calleeOffset = _script->pos();
 
 			_vm->_inter->renewTimeInVars();
 
@@ -679,6 +687,8 @@ void Game::playTot(int32 function) {
 		else
 			_script->seek(_script->getFunctionOffset(function + 1));
 
+		if (!_globalFuncCallStack.empty())
+			_globalFuncCallStack.top().calleeOffset = _script->pos();
 		_vm->_inter->callSub(2);
 
 		if (_vm->_inter->_terminate != 0)
@@ -887,13 +897,42 @@ int16 Game::checkKeys(int16 *pMouseX, int16 *pMouseY,
 
 void Game::start() {
 	prepareStart();
+
+	pushOnGlobalCallStack(kStartGame, "(entry)", -1, _curTotFile, -1);
+
 	playTot(-2);
+
+	popGlobalCallStack();
 
 	_vm->_draw->closeScreen();
 
 	for (int i = 0; i < Draw::kSpriteCount; i++)
 		_vm->_draw->freeSprite(i);
 	_vm->_draw->_scummvmCursor.reset();
+}
+
+void Game::pushOnGlobalCallStack(FuncCallType type,
+								 const Common::String &callingTot, int32 callSiteOffset,
+								 const Common::String &calledTot, int32 calleeOffset) {
+	if (!debugChannelSet(1, kDebugGameFlow))
+		return;
+
+	FuncCall fc;
+	fc.type = type;
+	fc.callingTot = callingTot;
+	fc.callSiteOffset = callSiteOffset;
+	fc.calledTot = calledTot;
+	fc.calleeOffset = calleeOffset;
+	_globalFuncCallStack.push(fc);
+}
+
+void Game::popGlobalCallStack() {
+	if (_globalFuncCallStack.empty())
+		return;
+
+	FuncCall call = _globalFuncCallStack.pop();
+	while (!_globalFuncCallStack.empty() && call.tailCall)
+		call = _globalFuncCallStack.pop();
 }
 
 // flagbits: 0 = freeInterVariables, 1 = function -1
@@ -911,6 +950,9 @@ void Game::totSub(int8 flags, const Common::String &totFile) {
 	debugC(4, kDebugGameFlow,
 		   "Pushing current env (index %d, script %s) to stack, opening env (index %d, script %s.TOT)",
 		   _numEnvironments, _curTotFile.c_str(), _numEnvironments + 1, totFile.c_str());
+
+	int32 callerOff = _script->_currentOpcodePos;
+
 	_environments.set(_numEnvironments);
 
 	if (flags == 18) {
@@ -926,11 +968,14 @@ void Game::totSub(int8 flags, const Common::String &totFile) {
 	_script = new Script(_vm);
 	_resources = new Resources(_vm);
 
+	Common::String calledTot = totFile + ".TOT";
+
+	pushOnGlobalCallStack(kTotSub, _curTotFile, callerOff, calledTot, -1);
+
 	if (flags & 5)
 		_vm->_inter->_variables = nullptr;
 
-	_curTotFile = totFile + ".TOT";
-
+	_curTotFile = calledTot;
 
 	bool copyPreviousMatchingEnv = flags & 0x80;
 	if (copyPreviousMatchingEnv) {
@@ -948,6 +993,7 @@ void Game::totSub(int8 flags, const Common::String &totFile) {
 
 		if (matchingEnvFoundP) {
 			if (_vm->_inter->_terminate != 0) {
+				popGlobalCallStack();
 				clearUnusedEnvironment();
 				return;
 			}
@@ -967,6 +1013,7 @@ void Game::totSub(int8 flags, const Common::String &totFile) {
 		}
 	} else {
 		if (_vm->_inter->_terminate != 0) {
+			popGlobalCallStack();
 			clearUnusedEnvironment();
 			return;
 		}
@@ -990,6 +1037,8 @@ void Game::totSub(int8 flags, const Common::String &totFile) {
 		if ((flags & 5) && _vm->_inter->_variables)
 			_vm->_inter->delocateVars();
 	}
+
+	popGlobalCallStack();
 
 	clearUnusedEnvironment();
 
@@ -1026,6 +1075,9 @@ void Game::switchTotSub(int16 index, int16 function) {
 	     _environments.getTotFile(newPos).equalsIgnoreCase("gob06.tot"))
 		return;
 
+	Common::String callingTot = _curTotFile;
+	int32 callSiteOff = _script->_currentOpcodePos;
+
 	curBackupPos = _curEnvironment;
 	backupedCount = _numEnvironments;
 	if (_curEnvironment == _numEnvironments)
@@ -1044,6 +1096,8 @@ void Game::switchTotSub(int16 index, int16 function) {
 		return;
 	}
 
+	pushOnGlobalCallStack(kSwitchTotSub, callingTot, callSiteOff, _curTotFile, function);
+
 	_hotspots->push(0, true);
 	playTot(function);
 
@@ -1051,6 +1105,8 @@ void Game::switchTotSub(int16 index, int16 function) {
 		_vm->_inter->_terminate = 0;
 
 	_hotspots->pop();
+
+	popGlobalCallStack();
 
 	clearUnusedEnvironment();
 
@@ -1117,6 +1173,82 @@ Common::String Game::getFunctionName(const Common::String &tot, uint16 offset) {
 		loadFunctions(tot, 0);
 
 	return _totFunctions.getFunctionName(tot, offset);
+}
+
+Common::String Game::formatSubNameInCallStack(const Common::String &totFile, int32 offset) {
+	if (offset < 0)
+		return "???";
+
+	Common::String name = _totFunctions.getFunctionName(totFile, (uint16)offset);
+	if (!name.empty()) {
+		const char *space = strchr(name.c_str(), ' ');
+		if (space)
+			name = Common::String(space + 1);
+	}
+	if (!name.empty())
+		return Common::String::format("sub_%d_%s", offset, name.c_str());
+	return Common::String::format("sub_%d", offset);
+}
+
+Common::String Game::getGobStack() {
+	uint stackSize = _globalFuncCallStack.size();
+
+	Common::Array<Common::String> positions;
+	Common::Array<Common::String> functions;
+	Common::Array<Common::String> tags;
+
+	for (uint i = 1; i < stackSize; i++) {
+		const FuncCall &fc = _globalFuncCallStack[i];
+		const FuncCall &previousFc = _globalFuncCallStack[i - 1];
+
+		functions.push_back(formatSubNameInCallStack(previousFc.calledTot, previousFc.calleeOffset));
+		const Common::String &callingTot = fc.callingTot;
+		positions.push_back(Common::String::format("%s:%05d", callingTot.c_str(), fc.callSiteOffset));
+
+		switch (fc.type) {
+		case kStartGame:        tags.push_back("[start]"); break; // Never met
+		case kCallSub:          tags.push_back("[callSub]"); break;
+		case kEvaluateHotspots: tags.push_back("[hotspots:evaluate]"); break;
+		case kTotSub:           tags.push_back("[totSub]"); break;
+		case kSwitchTotSub:     tags.push_back("[switchTotSub]"); break;
+		case kNamedFunctionSub: tags.push_back("[namedFunc]"); break;
+		case kHotspotEnter:     tags.push_back("[hotspot:enter]"); break;
+		case kHotspotLeave:     tags.push_back("[hotspot:leave]"); break;
+		}
+	}
+
+	if (_script && _script->isLoaded() && !_globalFuncCallStack.empty()) {
+		const FuncCall &fc = _globalFuncCallStack.top();
+		functions.push_back(formatSubNameInCallStack(fc.calledTot, fc.calleeOffset));
+		positions.push_back(Common::String::format("%s:%05d", _curTotFile.c_str(), _script->pos()));
+		tags.push_back("[current]");
+	}
+
+	// Compute column widths
+	uint lineCount = positions.size();
+	uint maxFrameW = 1, maxFuncW = 1, maxPosW = 1;
+	for (uint i = 0; i < lineCount; i++) {
+		Common::String frameStr = Common::String::format("#%d", i);
+		if (frameStr.size() > maxFrameW) maxFrameW = (uint)frameStr.size();
+		if (functions[i].size() > maxFuncW) maxFuncW = (uint)functions[i].size();
+		if (positions[i].size() > maxPosW) maxPosW = (uint)positions[i].size();
+	}
+
+	Common::String result = "--- TOT Scripts Stack ---\n";
+	for (int i = (int)lineCount - 1; i >= 0; i--) {
+		Common::String frameStr = Common::String::format("#%d", (int)lineCount - 1 - i);
+		result += Common::String::format("  %-*s | %-*s | %*s %s\n",
+										 maxFrameW, frameStr.c_str(),
+										 maxFuncW, functions[i].c_str(),
+										 maxPosW, positions[i].c_str(),
+										 tags[i].c_str());
+	}
+	result += "------------------------\n";
+	return result;
+}
+
+void Game::printGobStack() {
+	debug("%s", getGobStack().c_str());
 }
 
 } // End of namespace Gob
