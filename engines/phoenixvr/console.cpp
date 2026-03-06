@@ -26,6 +26,7 @@ namespace PhoenixVR {
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("warp", WRAP_METHOD(Console, cmdWarp));
+	registerCmd("script", WRAP_METHOD(Console, cmdScript));
 }
 
 Console::~Console() {
@@ -37,6 +38,15 @@ bool Console::cmdWarp(int argc, const char **argv) {
 		return true;
 	}
 	g_engine->goToWarp(argv[1]);
+	return true;
+}
+
+bool Console::cmdScript(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("script <script.lst>");
+		return true;
+	}
+	g_engine->setNextScript(argv[1]);
 	return true;
 }
 

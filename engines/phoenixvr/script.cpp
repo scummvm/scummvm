@@ -215,8 +215,9 @@ public:
 			auto image = nextWord();
 			expect(',');
 			auto warp = nextWord();
-			expect(',');
-			auto idx = nextInt();
+			int idx = 0;
+			if (maybe(','))
+				idx = nextInt();
 			return CommandPtr(new SetCursor(Common::move(image), Common::move(warp), idx));
 		} else if (keyword("hidecursor")) {
 			auto warp = nextWord();
