@@ -395,6 +395,9 @@ void SmushPlayer::handleStore(int32 subSize, Common::SeekableReadStream &b) {
 	if (isRA2()) {
 		debug("SmushPlayer STOR: frame=%d - will store next FOBJ", _frame);
 	}
+	if (isRA1()) {
+		debug("RA1 STOR: frame=%d", _frame);
+	}
 }
 
 void SmushPlayer::handleFetch(int32 subSize, Common::SeekableReadStream &b) {
@@ -404,6 +407,11 @@ void SmushPlayer::handleFetch(int32 subSize, Common::SeekableReadStream &b) {
 	if (isRA2()) {
 		ra2HandleFetch(b);
 		return;
+	}
+
+	if (isRA1()) {
+		debug("RA1 FTCH: frame=%d _frameBuffer=%p _dst=%p _width=%d _height=%d",
+			_frame, (void*)_frameBuffer, (void*)_dst, _width, _height);
 	}
 
 	if (_frameBuffer != nullptr) {
@@ -797,6 +805,10 @@ void SmushPlayer::handleDeltaPalette(int32 subSize, Common::SeekableReadStream &
 			_pal[i] = CLIP<int32>(_shiftedDeltaPal[i] >> 7, 0, 255);
 		}
 
+		if (isRA1()) {
+			_pal[0] = _pal[1] = _pal[2] = 0;
+		}
+
 		setDirtyColors(0, 255);
 	} else {
 		for (int j = 0; j < 768; ++j) {
@@ -819,6 +831,11 @@ void SmushPlayer::handleNewPalette(int32 subSize, Common::SeekableReadStream &b)
 		return;
 
 	readPalette(_pal, b);
+
+	if (isRA1()) {
+		_pal[0] = _pal[1] = _pal[2] = 0;
+	}
+
 	setDirtyColors(0, 255);
 }
 
@@ -827,8 +844,90 @@ byte *SmushPlayer::getVideoPalette() {
 }
 
 void smushDecodeRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
+void smushDecodeRA1Transparent(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 void smushDecodeUncompressed(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 void smushDecodeRA1Block(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize, uint8 param, uint16 parm2, int codec);
+
+/**
+ * RA1 codec 21: Skip/copy line codec (FUN_10D41).
+ *
+ * Each line: [u16 lineSize] then alternating [u16 skip] [u16 copyLen]
+ * followed by (copyLen+1) literal bytes. Destination advances by pitch
+ * per line, source advances by lineSize+2 per line.
+ */
+static void smushDecodeRA1SkipCopy(byte *dst, const byte *src, int left, int top, int width, int height, int pitch) {
+	dst += top * pitch + left;
+
+	for (int row = 0; row < height; row++) {
+		uint16 lineSize = READ_LE_UINT16(src);
+		const byte *lineData = src + 2;
+		const byte *lineEnd = lineData + lineSize;
+		byte *dstRow = dst;
+		int remaining = width;
+
+		while (remaining > 0 && lineData < lineEnd) {
+			// Read skip distance
+			if (lineData + 2 > lineEnd)
+				break;
+			uint16 skip = READ_LE_UINT16(lineData);
+			lineData += 2;
+			dstRow += skip;
+			remaining -= skip;
+			if (remaining <= 0)
+				break;
+
+			// Read copy count (+1)
+			if (lineData + 2 > lineEnd)
+				break;
+			uint16 copyLen = READ_LE_UINT16(lineData) + 1;
+			lineData += 2;
+
+			int toCopy = MIN<int>(copyLen, remaining);
+			if (lineData + toCopy > lineEnd)
+				toCopy = (int)(lineEnd - lineData);
+			if (toCopy > 0) {
+				memcpy(dstRow, lineData, toCopy);
+				lineData += toCopy;
+				dstRow += toCopy;
+				remaining -= toCopy;
+			}
+			// If copyLen was clamped by remaining, skip rest of source
+			if (copyLen > toCopy)
+				lineData += (copyLen - toCopy);
+		}
+
+		src += lineSize + 2;
+		dst += pitch;
+	}
+}
+
+/**
+ * RA1 codec 2: Scatter/point draw (FUN_110D7).
+ *
+ * Draws individual pixels at accumulated offsets — used for starfield
+ * backgrounds. Each 4-byte entry: [dx:int16_le, dy:uint8, pixel:uint8].
+ * Position starts at (left, top) and accumulates (dx, dy) per entry.
+ * Pixel is drawn if position is within buffer bounds.
+ */
+static void smushDecodeRA1Scatter(byte *dst, const byte *src, int left, int top, int bufWidth, int bufHeight, int pitch, int dataSize) {
+	int curX = left;
+	int curY = top;
+
+	while (dataSize >= 4) {
+		int16 dx = (int16)READ_LE_UINT16(src);
+		uint8 dy = src[2];
+		uint8 pixel = src[3];
+		src += 4;
+		dataSize -= 4;
+
+		curX += dx;
+		curY += dy;
+
+		if (curX >= 0 && curY >= 0 && curX < bufWidth && curY < bufHeight) {
+			dst[curY * pitch + curX] = pixel;
+		}
+	}
+}
 
 /**
  * RA1 codec 4/5: Block-based frame decoder.
@@ -991,6 +1090,17 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 			_specialBufferSize = bufSize;
 		}
 		_dst = _specialBuffer;
+	} else if (isRA1()) {
+		// RA1 sub-fullscreen frames (e.g. O1OPTION.ANM uses ~319x196 codec 2
+		// frames for the starfield animation). Render into _specialBuffer at
+		// their (left, top) offset position.
+		int bufSize = 384 * 242;
+		if (_specialBuffer == nullptr || bufSize > _specialBufferSize) {
+			free(_specialBuffer);
+			_specialBuffer = (byte *)calloc(bufSize, 1);
+			_specialBufferSize = bufSize;
+		}
+		_dst = _specialBuffer;
 	} else if (isRA2() && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth))) {
 		ra2SelectFrameBuffer(width, height);
 	} else if ((height > _vm->_screenHeight) || (width > _vm->_screenWidth))
@@ -1005,8 +1115,12 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 		_width = width;
 		_height = height;
 	} else if (isRA1() && _dst == _specialBuffer) {
-		// RA1: small overlay FOBJs (codec 1) should not override dimensions
-		// set by the main 384x242 codec 5 FOBJ
+		// RA1: sub-fullscreen FOBJs should not override the 384x242 dimensions.
+		// Set dimensions on first use if not yet established.
+		if (_width == 0 || _height == 0) {
+			_width = 384;
+			_height = 242;
+		}
 	} else if (isRA2() && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth))) {
 		// RA2: preserve _width/_height set during buffer allocation
 	} else {
@@ -1018,9 +1132,11 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	if (_dst == _specialBuffer)
 		pitch = _width;
 
-	// Save original FOBJ dimensions before clipping. Codec 37/47 (delta block/glyph)
-	// decode the full frame into the buffer starting at (0,0) regardless of FOBJ
-	// left/top position. They must use the original un-clipped dimensions.
+	// Save original FOBJ position and dimensions before clipping. Codec 37/47
+	// (delta block/glyph) decode the full frame starting at (0,0). Codec 2
+	// (scatter draw) needs the original start position for accumulation.
+	int origLeft = left;
+	int origTop = top;
 	int origWidth = width;
 	int origHeight = height;
 
@@ -1034,7 +1150,7 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	// For RLE codecs, skip source rows that were clipped from the top.
 	// Each RLE row has a 2-byte size prefix, so we can advance past them.
 	const uint8 *adjustedSrc = src;
-	if (isRA1() && srcSkipY > 0 && (codec == SMUSH_CODEC_RLE || codec == SMUSH_CODEC_RLE_ALT)) {
+	if (isRA1() && srcSkipY > 0 && (codec == SMUSH_CODEC_RLE || codec == SMUSH_CODEC_RLE_ALT || codec == SMUSH_CODEC_LINE_UPDATE)) {
 		for (int i = 0; i < srcSkipY; i++) {
 			adjustedSrc += READ_LE_UINT16(adjustedSrc) + 2;
 		}
@@ -1042,8 +1158,21 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 
 	switch (codec) {
 	case SMUSH_CODEC_RLE:
+		if (isRA1()) {
+			// RA1 codec 1: pixel 0 is transparent (background shows through)
+			smushDecodeRA1Transparent(_dst, adjustedSrc, left, top, width, height, pitch);
+		} else {
+			smushDecodeRLE(_dst, adjustedSrc, left, top, width, height, pitch);
+		}
+		break;
 	case SMUSH_CODEC_RLE_ALT:
+		// Codec 3: all pixels opaque (pixel 0 is written)
 		smushDecodeRLE(_dst, adjustedSrc, left, top, width, height, pitch);
+		break;
+	case SMUSH_CODEC_RA1_SCATTER:
+		// Codec 2: Scatter draw uses absolute buffer coords, not clipped FOBJ coords.
+		// Pass full buffer dimensions for clipping (not the FOBJ width/height).
+		smushDecodeRA1Scatter(_dst, src, origLeft, origTop, _width, _height, pitch, dataSize);
 		break;
 	case SMUSH_CODEC_DELTA_BLOCKS:
 		// Codec 37 writes the full frame to dst via memcpy — always uses original
@@ -1067,6 +1196,12 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	case SMUSH_CODEC_UNCOMPRESSED:
 		smushDecodeUncompressed(_dst, src, left, top, width, height, pitch);
 		break;
+	case SMUSH_CODEC_LINE_UPDATE:
+		if (isRA1()) {
+			smushDecodeRA1SkipCopy(_dst, adjustedSrc, left, top, width, height, pitch);
+			break;
+		}
+		// Fall through for RA2
 	default:
 		if (isRA2() && ra2DecodeCodec(codec, src, left, top, width, height, pitch, dataSize))
 			break;
@@ -1166,6 +1301,10 @@ void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b
 		debug("SmushPlayer FOBJ: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d storeFrame=%d _width=%d _height=%d",
 			_frame, codec, left, top, width, height, subSize - 14, _storeFrame, _width, _height);
 	}
+	if (isRA1()) {
+		debug("RA1 FOBJ: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d storeFrame=%d",
+			_frame, codec, left, top, width, height, subSize - 14, _storeFrame);
+	}
 
 	int32 chunk_size = subSize - 14;
 	byte *chunk_buffer = (byte *)malloc(chunk_size);
@@ -1194,6 +1333,15 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 
 	if (_insanity) {
 		_vm->_insane->procPreRendering(_dst);
+	}
+
+	// RA1: Clear framebuffer before each frame's first draw operation.
+	// Matches FFmpeg's first_fob memset: process_frame_obj() zeroes fbuf
+	// before the first FOBJ (or FTCH re-decode) of each frame. Without this,
+	// codec 1's transparent pixels (pixel 0 = skip) show previous frame
+	// content, causing ghost trails on the Star Wars opening crawl.
+	if (isRA1() && _dst && _width > 0 && _height > 0) {
+		memset(_dst, 0, _width * _height);
 	}
 
 	while (frameSize > 0) {
@@ -1336,6 +1484,14 @@ void SmushPlayer::handleAnimHeader(int32 subSize, Common::SeekableReadStream &b)
 			byte *palettePtr = &headerContent[6];
 			memcpy(_pal, palettePtr, sizeof(_pal));
 
+			if (isRA1()) {
+				// RA1: force palette index 0 to black. Some ANM files store
+				// non-black values (e.g. O1OPEN.ANM has palette[0] = blue)
+				// but the original engine always displays index 0 as black.
+				// XPAL delta animation skips index 0, so it's never corrected.
+				_pal[0] = _pal[1] = _pal[2] = 0;
+			}
+
 			if (isRA2())
 				ra2ResetDeltaPalette();
 
@@ -1343,11 +1499,20 @@ void SmushPlayer::handleAnimHeader(int32 subSize, Common::SeekableReadStream &b)
 		}
 
 		if (isRA1()) {
-			// v1 AHDR: offset 4-5 is not width/height, palette starts at offset 6.
-			// Keep dimensions unset here and let FOBJ decoding select buffer and
-			// effective width/height (screen-sized or 384x242 special buffer).
+			// v1 AHDR: pre-allocate 384x242 special buffer and set _dst so that
+			// procPostRendering has a valid target. Keep _width/_height at 0 so
+			// updateScreen() is NOT called until the first FOBJ sets dimensions —
+			// this avoids blitting an empty buffer with palette[0] (which may be
+			// non-black, e.g. O1OPEN.ANM has palette[0] = blue).
 			_width = 0;
 			_height = 0;
+			int bufSize = 384 * 242;
+			if (_specialBuffer == nullptr || bufSize > _specialBufferSize) {
+				free(_specialBuffer);
+				_specialBuffer = (byte *)calloc(bufSize, 1);
+				_specialBufferSize = bufSize;
+			}
+			_dst = _specialBuffer;
 		} else {
 			_width = READ_LE_UINT16(&headerContent[4]);
 			_height = READ_LE_UINT16(&headerContent[6]);

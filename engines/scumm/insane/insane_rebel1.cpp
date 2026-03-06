@@ -115,6 +115,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_menuActive = false;
 	_menuConfirmed = false;
 	_menuSelection = 0;
+	_menuFrameCounter = 0;
 	if (loadRA1Nut("SYS/TALKFONT.NUT", _hudFontBank)) {
 		debug(1, "InsaneRebel1: HUD/menu glyph font loaded from SYS/TALKFONT.NUT (%d chars)", _hudFontBank.numSprites);
 	} else if (loadRA1Nut("SYS/TECHFONT.NUT", _hudFontBank)) {
@@ -596,41 +597,97 @@ void InsaneRebel1::drawFontBankString(byte *dst, int pitch, int width, int heigh
 	}
 }
 
+// getFontBankStringWidth -- Measure pixel width of a string using the HUD font bank.
+// Matches the pre-pass width calculation in the original drawString (FUN_221B7).
+int InsaneRebel1::getFontBankStringWidth(const char *text) {
+	if (!text || _hudFontBank.numSprites <= 0)
+		return 0;
+
+	int w = 0;
+	for (int i = 0; text[i] != '\0'; i++) {
+		const byte ch = (byte)text[i];
+		if (ch == ' ') {
+			w += 6;
+			continue;
+		}
+		if (ch < 0x21) {
+			w += 4;
+			continue;
+		}
+		const int fontIdx = (int)ch - 0x21;
+		if (fontIdx < 0 || fontIdx >= _hudFontBank.numSprites) {
+			w += 4;
+			continue;
+		}
+		const RA1Sprite &glyph = _hudFontBank.sprites[fontIdx];
+		w += glyph.width > 0 ? glyph.width : 4;
+	}
+	return w;
+}
+
+// renderMainMenuOverlay -- Draw menu text and selection highlight box.
+// Original menu strings from assault_data_3.bin at 0x5822.
+// Highlight uses RA2-style flashing border box (FUN_004292d0 pattern).
 void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int height) {
 	static const char *kMenuItems[5] = {
 		"START NEW GAME",
 		"GAME OPTIONS",
 		"ENTER PASSCODE",
 		"CONTINUE DEMO",
-		"EXIT"
+		"EXIT TO DOS"
 	};
 
-	const int menuX = 92;
+	_menuFrameCounter++;
+
+	// Center title
+	const int titleW = getFontBankStringWidth("MAIN MENU");
+	const int titleX = (width - titleW) / 2;
+	drawFontBankString(dst, pitch, width, height, titleX, 36, "MAIN MENU");
+
+	// Draw menu items centered horizontally
 	const int menuY = 60;
 	const int rowH = 16;
-	const int boxW = 190;
 
 	for (int i = 0; i < 5; i++) {
+		const int textW = getFontBankStringWidth(kMenuItems[i]);
+		const int textX = (width - textW) / 2;
 		const int y = menuY + i * rowH;
+
+		drawFontBankString(dst, pitch, width, height, textX, y + 1, kMenuItems[i]);
+
+		// Selection highlight box — flashing border (FUN_004292d0 pattern from RA2)
 		if (i == _menuSelection) {
-			for (int yy = 0; yy < 12; yy++) {
-				const int sy = y + yy;
-				if (sy < 0 || sy >= height)
-					continue;
-				for (int xx = 0; xx < boxW; xx++) {
-					const int sx = menuX + xx;
-					if (sx < 0 || sx >= width)
-						continue;
-					if (xx < 2 || yy < 2 || xx >= boxW - 2 || yy >= 10)
-						dst[sy * pitch + sx] = 0xFF;
-				}
+			// Flash between two palette colors every 8 frames
+			byte highlightColor = ((_menuFrameCounter / 8) & 1) ? 248 : 240;
+
+			int bracketWidth = textW + 12;
+			int bracketHeight = rowH;
+			int leftX = textX - 6;
+			int rightX = leftX + bracketWidth;
+			int topY = y - 1;
+			int bottomY = y + bracketHeight - 2;
+
+			// Clamp
+			if (leftX < 0) leftX = 0;
+			if (rightX >= width) rightX = width - 1;
+			if (topY < 0) topY = 0;
+			if (bottomY >= height) bottomY = height - 1;
+
+			// Draw rectangle border (4 lines)
+			for (int x = leftX; x <= rightX && x < width; x++) {
+				if (topY >= 0 && topY < height)
+					dst[topY * pitch + x] = highlightColor;
+				if (bottomY >= 0 && bottomY < height)
+					dst[bottomY * pitch + x] = highlightColor;
+			}
+			for (int py = topY; py <= bottomY && py < height; py++) {
+				if (leftX >= 0 && leftX < width)
+					dst[py * pitch + leftX] = highlightColor;
+				if (rightX >= 0 && rightX < width)
+					dst[py * pitch + rightX] = highlightColor;
 			}
 		}
-
-		drawFontBankString(dst, pitch, width, height, menuX + 10, y + 1, kMenuItems[i]);
 	}
-
-	drawFontBankString(dst, pitch, width, height, 118, 36, "MAIN MENU");
 }
 
 // Velocity-based ship physics adapted from RA2 Handler 7 (FUN_40C3CC case 4).
@@ -1139,6 +1196,8 @@ int InsaneRebel1::runMainMenu() {
 	while (!_vm->shouldQuit()) {
 		_menuActive = true;
 		_menuConfirmed = false;
+		_menuFrameCounter = 0;
+		clearVideoBuffer();
 		playCinematic("OPEN/O1OPTION.ANM");
 		_menuActive = false;
 

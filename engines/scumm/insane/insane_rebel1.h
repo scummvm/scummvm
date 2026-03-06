@@ -102,6 +102,7 @@ private:
 	void renderHUD(byte *dst, int pitch, int width, int height);
 	void renderMainMenuOverlay(byte *dst, int pitch, int width, int height);
 	void drawFontBankString(byte *dst, int pitch, int width, int height, int x, int y, const char *text);
+	int getFontBankStringWidth(const char *text);
 	void renderSprite(byte *dst, int pitch, int width, int height,
 					  int x, int y, const RA1Sprite &sprite);
 
@@ -191,6 +192,7 @@ private:
 	bool _menuActive;
 	bool _menuConfirmed;
 	int _menuSelection; // 0..4 maps to return values 1..5
+	int _menuFrameCounter;
 };
 
 } // End of namespace Scumm

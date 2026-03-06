@@ -77,6 +77,7 @@ namespace Scumm {
 #define TRK_USERID_SFX    3
 
 #define SMUSH_CODEC_RLE          1
+#define SMUSH_CODEC_RA1_SCATTER  2    // RA1: Scatter/point draw (starfield)
 #define SMUSH_CODEC_RLE_ALT      3
 #define SMUSH_CODEC_RA1_DELTA    4    // RA1: Delta block codec (skip on idx 0x80)
 #define SMUSH_CODEC_RA1_BLOCK    5    // RA1: Block-based frame codec (no skip)
