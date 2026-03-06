@@ -105,6 +105,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_lives = 3;
 	_score = 0;
 	_damageFlags = 0;
+	_prevDamageFlags = 0;
 	_gameLatch5D = 0;
 	_gameLatch5F = 0;
 	_damageCooldown = 0;
@@ -505,6 +506,9 @@ void InsaneRebel1::loadLevelSprites(int level) {
 	Common::String filename = Common::String::format("LVL%d/L%dBANK1.NUT", level, level);
 	loadRA1Nut(filename.c_str(), _shipBank);
 	loadRA1Nut("SYS/DISPLAY.NUT", _displayBank);
+
+	Common::String bangFile = Common::String::format("LVL%d/L%dBANG.NUT", level, level);
+	loadRA1Nut(bangFile.c_str(), _bangBank);
 }
 
 void InsaneRebel1::procPreRendering(byte *renderBitmap) {
@@ -532,6 +536,7 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 
 	updateShipPhysics();
 	renderShip(renderBitmap, pitch, width, height);
+	renderExplosions(renderBitmap, pitch, width, height);
 	renderHUD(renderBitmap, pitch, width, height);
 }
 
@@ -868,6 +873,7 @@ void InsaneRebel1::updateShipPhysics() {
 		if (_health < 0)
 			_deathTimer = kDeathTimerInit;
 
+		_prevDamageFlags = _damageFlags;
 		_damageCooldown = kDamageCooldownInit;
 		_screenFlash = 3;
 	}
@@ -902,6 +908,11 @@ void InsaneRebel1::updateShipPhysics() {
 }
 
 void InsaneRebel1::renderShip(byte *dst, int pitch, int width, int height) {
+	// From FUN_1DEB5 LAB_1e2b2: ship drawn when health >= 0 OR deathTimer > 20
+	// Hidden during last 20 frames of death sequence (deathTimer 20→0)
+	if (_health < 0 && _deathTimer <= 20)
+		return;
+
 	if (_shipDirIndex < 0 || _shipDirIndex >= _shipBank.numSprites)
 		return;
 
@@ -914,6 +925,65 @@ void InsaneRebel1::renderShip(byte *dst, int pitch, int width, int height) {
 	int drawY = (_shipPosY - kCenterY) + _perspectiveY + kCenterY - spr.height / 2;
 
 	renderSprite(dst, pitch, width, height, drawX, drawY, spr);
+}
+
+// Render explosion sprites during damage cooldown and death sequence.
+// From FUN_1DEB5 at LAB_1e185 (damage hit) and LAB_1e0e3 (death shake).
+void InsaneRebel1::renderExplosions(byte *dst, int pitch, int width, int height) {
+	if (_bangBank.numSprites <= 0)
+		return;
+
+	// Ship screen center position (matches assembly: DAT_74b6+DAT_74ba, DAT_74b8+DAT_74bc)
+	int shipScreenX = (_shipPosX - kCenterX) + _perspectiveX + kCenterX;
+	int shipScreenY = (_shipPosY - kCenterY) + _perspectiveY + kCenterY;
+
+	// --- Death shake explosions (FUN_1DEB5 LAB_1e0e3) ---
+	// When dead and deathTimer > 10: random explosion sprites scatter around ship
+	if (_health < 0 && _deathTimer > 10) {
+		int intensity = _deathTimer - 10;  // 20→1 as timer goes 30→11
+		if (intensity > 10)
+			intensity = 20 - intensity;     // Triangle: 0→10→0
+
+		// di = intensity * 4 + 1 (vertical scatter range)
+		// si = -20 + intensity * 4 (horizontal scatter range, DAT_75d8 is 0)
+		int rangeY = intensity * 4 + 1;
+		int rangeX = -20 + intensity * 4;
+		if (rangeX < 1) rangeX = 1;
+
+		for (int i = 0; i < intensity; i++) {
+			// Random sprite from bang bank (FUN_21db0(10))
+			int sprIdx = _vm->_rnd.getRandomNumber(_bangBank.numSprites - 1);
+
+			// Random position around ship (matching assembly random scatter)
+			int randX = (int)_vm->_rnd.getRandomNumber(rangeX * 2) - rangeX;
+			int randY = (int)_vm->_rnd.getRandomNumber(rangeY * 2) - rangeY;
+
+			int drawX = shipScreenX + randX;
+			int drawY = shipScreenY + randY;
+
+			const RA1Sprite &spr = _bangBank.sprites[sprIdx];
+			renderSprite(dst, pitch, width, height,
+				drawX - spr.width / 2, drawY - spr.height / 2, spr);
+		}
+		return;
+	}
+
+	// --- Damage hit explosion (FUN_1DEB5 LAB_1e185) ---
+	// When alive, in cooldown, and bang bank loaded
+	if (_health >= 0 && _damageCooldown > 0) {
+		// Sprite index = 10 - damageCooldown (frames 0→9 as cooldown 10→1)
+		int sprIdx = _bangBank.numSprites - _damageCooldown;
+		if (sprIdx < 0 || sprIdx >= _bangBank.numSprites)
+			return;
+
+		// Position at ship center (DAT_75d8 is always 0 in RA1)
+		int drawX = shipScreenX;
+		int drawY = shipScreenY;
+
+		const RA1Sprite &spr = _bangBank.sprites[sprIdx];
+		renderSprite(dst, pitch, width, height,
+			drawX - spr.width / 2, drawY - spr.height / 2, spr);
+	}
 }
 
 // Render bottom status bar from DISPLAY.NUT with dynamic damage bar and score.
@@ -1044,6 +1114,7 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 		// RA1 dispatcher inline reset/init path (FUN_1BE1B case 0x5E).
 		// This is not a pure control-mode assignment.
 		_damageFlags = 0;
+		_prevDamageFlags = 0;
 		_damageCooldown = 0;
 		_deathTimer = 0;
 		_screenFlash = 0;
@@ -1243,6 +1314,7 @@ bool InsaneRebel1::runLevel1() {
 		// Reset health for this attempt
 		_health = kMaxHealth;
 		_damageFlags = 0;
+		_prevDamageFlags = 0;
 		_damageCooldown = 0;
 		_deathTimer = 0;
 		_screenFlash = 0;
