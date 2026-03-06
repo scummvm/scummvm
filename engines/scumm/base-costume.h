@@ -100,7 +100,7 @@ protected:
 	int _xMove, _yMove;
 
 	// whether to draw the actor mirrored
-	bool _mirror;
+	bool _drawActorToRight;
 
 	int _numBlocks;
 
@@ -147,7 +147,7 @@ public:
 		_numStrips = -1;
 		_srcPtr = nullptr;
 		_xMove = _yMove = 0;
-		_mirror = false;
+		_drawActorToRight = false;
 		_width = _height = 0;
 		_skipLimbs = false;
 		_paletteNum = 0;

@@ -220,7 +220,7 @@ void ClassicCostumeRenderer::byleRLEDecode_C64(ByleRLEData &compData, int actor)
 				color = *src++;
 
 			if (0 <= y && y < _out.h && 0 <= compData.x && compData.x < _out.w) {
-				if (!_mirror) {
+				if (!_drawActorToRight) {
 					LINE(0, 0); LINE(2, 2); LINE(4, 4); LINE(6, 6);
 				} else {
 					LINE(6, 0); LINE(4, 2); LINE(2, 4); LINE(0, 6);
@@ -350,7 +350,7 @@ void ClassicCostumeRenderer::byleRLEDecode_PCEngine(ByleRLEData &compData) {
 	if (_numBlocks == 0)
 		return;
 
-	xStep = _mirror ? +1 : -1;
+	xStep = _drawActorToRight ? +1 : -1;
 
 	for (uint x = 0; x < width; ++x) {
 		yPos = 0;
@@ -655,11 +655,11 @@ byte ClassicCostumeRenderer::drawLimb(const Actor *a, int limb) {
 			// We adjust the positioning a bit, and make sure the
 			// lid is always mirrored the same way.
 
-			bool mirror = _mirror;
+			bool mirror = _drawActorToRight;
 
 			if (_vm->_game.id == GID_TENTACLE && _vm->_currentRoom == 61 && a->_number == 1 && _loaded._id == 324 && _vm->enhancementEnabled(kEnhMinorBugFixes)) {
 				if (limb == 0) {
-					_mirror = true;
+					_drawActorToRight = true;
 					xmoveCur--;
 				} else {
 					if (a->getFacing() == 270) {
@@ -672,7 +672,7 @@ byte ClassicCostumeRenderer::drawLimb(const Actor *a, int limb) {
 
 			byte result = paintCelByleRLE(xmoveCur, ymoveCur);
 
-			_mirror = mirror;
+			_drawActorToRight = mirror;
 			return result;
 		}
 	}
@@ -829,7 +829,7 @@ void ClassicCostumeRenderer::setPalette(uint16 *palette) {
 }
 
 void ClassicCostumeRenderer::setFacing(const Actor *a) {
-	_mirror = newDirToOldDir(a->getFacing()) != 0 || _loaded._mirror;
+	_drawActorToRight = newDirToOldDir(a->getFacing()) != 0 || _loaded._mirror;
 }
 
 void ClassicCostumeRenderer::setCostume(int costume, int shadow) {

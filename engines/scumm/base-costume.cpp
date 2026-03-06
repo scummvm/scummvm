@@ -102,7 +102,7 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 			compData.scaleXStep = 1;
 		}
 
-		if (_mirror) {
+		if (_drawActorToRight) {
 			/* Adjust X position */
 			startScaleIndexX = j = (scaletableSize - xMoveCur) & compData.scaleIndexMask;
 			for (i = 0; i < xMoveCur; i++) {
@@ -166,13 +166,13 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 				rect.bottom++;
 		}
 	} else {
-		if (!_mirror)
+		if (!_drawActorToRight)
 			xMoveCur = -xMoveCur;
 
 		compData.x += xMoveCur;
 		compData.y += yMoveCur;
 
-		if (_mirror) {
+		if (_drawActorToRight) {
 			rect.left = compData.x;
 			rect.right = compData.x + _width;
 		} else {
@@ -190,7 +190,7 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 	compData.scaleXIndex = startScaleIndexX;
 	compData.scaleYIndex = startScaleIndexY;
 	compData.skipWidth = _width;
-	compData.scaleXStep = _mirror ? 1 : -1;
+	compData.scaleXStep = _drawActorToRight ? 1 : -1;
 
 	markAsDirty(rect, compData, decode);
 	if (!decode)
@@ -208,7 +208,7 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 
 	compData.repLen = 0;
 
-	if (_mirror) {
+	if (_drawActorToRight) {
 		if (!actorIsScaled)
 			linesToSkip = compData.boundsRect.left - compData.x;
 		if (linesToSkip > 0) {
@@ -251,7 +251,7 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 		}
 	}
 
-	if (compData.skipWidth <= 0 || (_akosRendering && _height <= 0)) {
+	if (compData.skipWidth <= 0) {
 		decode = false;
 		return 0;
 	}
