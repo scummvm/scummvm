@@ -101,6 +101,7 @@ private:
 	void renderShip(byte *dst, int pitch, int width, int height);
 	void renderHUD(byte *dst, int pitch, int width, int height);
 	void renderMainMenuOverlay(byte *dst, int pitch, int width, int height);
+	void renderExplosions(byte *dst, int pitch, int width, int height);
 	void renderSprite(byte *dst, int pitch, int width, int height,
 					  int x, int y, const RA1Sprite &sprite);
 
@@ -119,6 +120,7 @@ private:
 	RA1SpriteBank _shipBank;
 	RA1SpriteBank _displayBank;   // SYS/DISPLAY.NUT — bottom status bar
 	RA1SpriteBank _hudFontBank;   // RA1 HUD text glyphs (TECHFONT/TALKFONT via RA1 loader)
+	RA1SpriteBank _bangBank;      // LxBANG.NUT — impact/explosion sprites (10 frames)
 	SmushFont *_menuFont;         // Use engine text renderer for correct TALKFONT character mapping
 
 	// RA1 screen dimensions (384x242)
@@ -163,6 +165,7 @@ private:
 	int16 _lives;                // 0x7562: remaining extra lives
 	int _score;                  // 0x7564: current score
 	byte _damageFlags;           // 0x74D4: per-frame collision bitmask (cleared each frame)
+	byte _prevDamageFlags;       // 0x74D6: previous frame's damage flags (for explosion direction)
 	uint16 _gameLatch5D;         // 0x75D2: GAME 0x5D latch (scene/obstacle/event trigger)
 	uint16 _gameLatch5F;         // 0x75D4: GAME 0x5F latch (probabilistic hit trigger)
 	int16 _damageCooldown;       // 0x74D8: invulnerability timer (10 frames after hit)
