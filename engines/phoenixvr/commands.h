@@ -77,7 +77,7 @@ struct Play_AnimBloc : public Script::Command {
 	int dstVarValue;
 	float speed; // ticks per second
 
-	Play_AnimBloc(const Common::Array<Common::String> &args) : name(args[0]), dstVar(args[1]), dstVarValue(atoi(args[2].c_str())), speed(atof(args[3].c_str())) {}
+	Play_AnimBloc(const Common::Array<Common::String> &args) : name(args[0]), dstVar(args[1]), dstVarValue(atoi(args[2].c_str())), speed(args.size() >= 4 ? atof(args[3].c_str()) : 25) {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		debug("Play_AnimBloc %s %s %d, %g", name.c_str(), dstVar.c_str(), dstVarValue, speed);
 		g_engine->playAnimation(name, dstVar, dstVarValue, speed);
@@ -102,7 +102,7 @@ struct Play_AnimBloc_Number : public Script::Command {
 
 	Play_AnimBloc_Number(const Common::Array<Common::String> &args) : prefix(args[0]), var(args[1]),
 																	  dstVar(args[2]), dstVarValue(atoi(args[3].c_str())),
-																	  speed(atof(args[4].c_str())) {}
+																	  speed(args.size() >= 5 ? atof(args[4].c_str()) : 25) {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		debug("Play_AnimBloc_Number %s %s %s %d, %g", prefix.c_str(), var.c_str(), dstVar.c_str(), dstVarValue, speed);
 		int value = g_engine->getVariable(var);
@@ -428,6 +428,160 @@ struct LoadSave_Test_Slot : public Script::Command {
 	}
 };
 
+struct Set : public Script::Command {
+	Common::String var;
+	Common::String value;
+	Set(const Common::Array<Common::String> &args) {
+		switch (args.size()) {
+		case 2:
+			var = args[0];
+			value = args[1];
+			break;
+		case 1: {
+			auto pos = args[0].rfind('=');
+			if (pos == Common::String::npos)
+				pos = args[0].size();
+			var = args[0].substr(0, pos);
+			value = args[0].c_str() + pos + 1;
+		} break;
+		default:
+			error("invalid plugin set signature");
+		}
+	}
+	void exec(Script::ExecutionContext &ctx) const override {
+		g_engine->setVariable(var, valueOf(value));
+	}
+};
+
+struct Set_Global_Pan : public Script::Command {
+	Common::String arg;
+	Set_Global_Pan(const Common::Array<Common::String> &args) : arg(args[0]) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		auto value = valueOf(arg);
+		warning("set_global_pan %s -> %d", arg.c_str(), value);
+	}
+};
+
+struct Set_Global_Volume : public Script::Command {
+	Common::String arg;
+	Set_Global_Volume(const Common::Array<Common::String> &args) : arg(args[0]) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		auto value = valueOf(arg);
+		debug("set_global_volume %s -> %d", arg.c_str(), value);
+		g_engine->setGlobalVolume(value);
+	}
+};
+
+struct Op : public Script::Command {
+	Common::String var;
+	Common::String negativeVar;
+	Common::String arg;
+	Op(const Common::Array<Common::String> &args) : var(args[0]), negativeVar(args[1]), arg(args[2]) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		int value = g_engine->getVariable(arg);
+		g_engine->setVariable(var, value);
+		g_engine->setVariable(negativeVar, !value);
+	}
+};
+
+struct Preload : public Script::Command {
+	Common::String arg;
+	Preload(const Common::Array<Common::String> &args) : arg(args[0]) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		debug("preload %s", arg.c_str());
+		if (!arg.empty() && Common::isDigit(arg[0])) {
+			g_engine->loadGameState(atoi(arg.c_str()));
+		} else {
+			auto loaded = g_engine->enterScript();
+			g_engine->setVariable(arg, loaded);
+			if (loaded) {
+				ctx.running = false;
+				g_engine->returnToWarp();
+			}
+		}
+	}
+};
+
+// Old loadsave/save plugins found in Amerzone.
+struct LoadSave : public Script::Command {
+	Common::Array<Common::String> args;
+	LoadSave(const Common::Array<Common::String> &args_) : args(args_) {}
+
+	static bool testSlot(int slot) {
+		auto status = g_engine->testSaveSlot(slot);
+		if (!status)
+			return false;
+
+		static const int faces[] = {4, 3, 5, 1};
+		int face = faces[(slot - 1) / 2];
+		bool odd = (slot - 1) & 1;
+		// taken from necronomicon - misaligned
+		int x = odd ? 275 : 97;
+		int y = 200;
+		g_engine->drawSlot(slot, face, x, y);
+		return true;
+	}
+
+	void exec(Script::ExecutionContext &ctx) const override {
+		uint n = args.size();
+		if (n == 3) {
+			auto slot = atoi(args[0].c_str());
+			auto &var = args[1];
+			auto &negativeVar = args[2];
+			debug("LoadSave %d %s %s", slot, var.c_str(), negativeVar.c_str());
+			int status = 0;
+			// Amerzone script checks those:
+			// 99 -> true, 98 -> false: continue
+			// 99 -> true, 98 -> true: initial main menu
+			// 99 -> false, 98 -> true: new game
+			// false, false -> black screen
+			bool restarted = g_engine->wasRestarted();
+			bool loaded = g_engine->wasLoaded();
+			debug("engine status, loaded: %d, restarted: %d", loaded, restarted);
+			if (slot == 99) {
+				// special save idx - continue game
+				status = !restarted;
+			} else if (slot == 98) {
+				// special save idx - new game started
+				status = !loaded;
+			} else if (slot >= 1 && slot <= 8) {
+				status = testSlot(slot);
+			} else {
+				warning("LoadSave slot %d", slot);
+			}
+			g_engine->setVariable(var, status);
+			g_engine->setVariable(negativeVar, !status);
+		} else if (n == 2) {
+			auto &srcVar = args[0];
+			auto &dstVar = args[1];
+			auto value = g_engine->getVariable(srcVar);
+			g_engine->setVariable(srcVar, 0);
+			g_engine->setVariable(dstVar, value);
+			if (!value) {
+				for (int slot = 1; slot <= 8; ++slot)
+					testSlot(slot);
+			}
+		} else {
+			warning("LoadSave, %u args", n);
+			for (uint i = 0; i < n; ++i)
+				warning("LoadSave %u: %s", i, args[i].c_str());
+		}
+	}
+};
+
+struct Save : public Script::Command {
+	int slot;
+	Save(const Common::Array<Common::String> &args) : slot(atoi(args[0].c_str())) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		debug("Save %d", slot);
+		g_engine->setContextLabel("Amerzone");
+		g_engine->captureContext();
+		auto err = g_engine->saveGameState(slot, {});
+		if (err.getCode() != Common::ErrorCode::kNoError)
+			error("saving state failed %d", slot);
+	}
+};
+
 struct LoadSave_Capture_Context : public Script::Command {
 	LoadSave_Capture_Context(const Common::Array<Common::String> &args) {}
 	void exec(Script::ExecutionContext &ctx) const override {
@@ -493,6 +647,13 @@ struct Reset : public Script::Command {
 	Reset(const Common::Array<Common::String> &args) {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		warning("Reset");
+	}
+};
+
+struct Restart : public Script::Command {
+	Restart(const Common::Array<Common::String> &args) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		g_engine->restart();
 	}
 };
 
@@ -578,6 +739,7 @@ struct LoadVariable : public Script::Command {
 struct End : public Script::Command {
 	End(const Common::Array<Common::String> &args) {}
 	void exec(Script::ExecutionContext &ctx) const override {
+		debug("plugin end (quit)");
 		g_engine->quitGame();
 	}
 };
@@ -605,6 +767,11 @@ struct End : public Script::Command {
 	E(SaveCoffre)                    \
 	E(SelectPorteF)                  \
 	E(SelectCoffre)                  \
+	E(Op)                            \
+	E(Set)                           \
+	E(Preload)                       \
+	E(LoadSave)                      \
+	E(Save)                          \
 	E(LoadSave_Capture_Context)      \
 	E(LoadSave_Context_Restored)     \
 	E(LoadSave_Enter_Script)         \
@@ -623,6 +790,7 @@ struct End : public Script::Command {
 	E(Play_AnimBloc_Number)          \
 	E(Play_Movie)                    \
 	E(Reset)                         \
+	E(Restart)                       \
 	E(RemoveObject)                  \
 	E(Rollover)                      \
 	E(RolloverMalette)               \
@@ -630,6 +798,8 @@ struct End : public Script::Command {
 	E(PorteFRollover)                \
 	E(SaveVariable)                  \
 	E(Select)                        \
+	E(Set_Global_Pan)                \
+	E(Set_Global_Volume)             \
 	E(Scroll)                        \
 	E(Stop_AnimBloc)                 \
 	E(DoAction)                      \
@@ -689,11 +859,11 @@ struct IfOr : public Script::Conditional {
 	}
 };
 
-struct Set : public Script::Command {
+struct SetVar : public Script::Command {
 	Common::String name;
 	int value;
 
-	Set(Common::String n, int v) : name(Common::move(n)), value(v) {}
+	SetVar(Common::String n, int v) : name(Common::move(n)), value(v) {}
 	void exec(Script::ExecutionContext &ctx) const override {
 		g_engine->setVariable(name, value);
 	}
@@ -740,7 +910,8 @@ struct SetCursorDefault : public Script::Command {
 	Common::String fname;
 	SetCursorDefault(int i, Common::String f) : idx(i), fname(Common::move(f)) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		g_engine->setCursorDefault(idx, fname);
+		if (idx >= 0)
+			g_engine->setCursorDefault(idx, fname);
 	}
 };
 
@@ -825,13 +996,23 @@ struct SetAngle : public Script::Command {
 	}
 };
 
+struct SetNord : public Script::Command {
+	float angle;
+	SetNord(float a) : angle(a) {}
+
+	void exec(Script::ExecutionContext &ctx) const override {
+		g_engine->setNord(angle);
+	}
+};
+
 struct InterpolAngle : public Script::Command {
 	float x, y;
 	int unk;
-	InterpolAngle(float x_, float y_, int u) : x(x_), y(y_), unk(u) {}
+	int zoom;
+	InterpolAngle(float x_, float y_, int u, int z) : x(x_), y(y_), unk(u), zoom(z) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("interpolangle %g,%g %d", x, y, unk);
+		warning("interpolangle %g,%g %d %d", x, y, unk, zoom);
 	}
 };
 
@@ -857,6 +1038,16 @@ struct PlaySound : public Script::Command {
 
 	void exec(Script::ExecutionContext &ctx) const override {
 		g_engine->playSound(sound, type, volume, loops);
+	}
+};
+
+struct PlayRandomSound : public PlaySound {
+	int unk;
+
+	PlayRandomSound(Common::String s, int v, int u, int l) : PlaySound(Common::move(s), v, l), unk(u) {}
+
+	void exec(Script::ExecutionContext &ctx) const override {
+		warning("PlayRandomSound %s %d %d %d", sound.c_str(), volume, unk, loops);
 	}
 };
 

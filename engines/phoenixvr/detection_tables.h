@@ -22,10 +22,13 @@
 #include "advancedDetector.h"
 namespace PhoenixVR {
 
+// clang-format off
+
 const PlainGameDescriptor phoenixvrGames[] = {
 	{"necrono", "Necronomicon: The Dawning of Darkness"},
 	{"lochness", "The Cameron Files: The Secret at Loch Ness"},
 	{"messenger", "The Messenger/Louvre: The Final Curse"},
+	{"amerzone", "Amerzone: The Explorer's Legacy"},
 	{0, 0}
 };
 
@@ -172,7 +175,18 @@ const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// GOG release
+	{"amerzone",
+		nullptr,
+		AD_ENTRY1s("amerzone.pak", "bd580dcfe91be9923da608fba72bf128", 314),
+		Common::EN_USA,
+		Common::kPlatformWindows,
+		ADGF_DROPPLATFORM | ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+
 	AD_TABLE_END_MARKER
 };
+// clang-format on
 
 } // End of namespace PhoenixVR

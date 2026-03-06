@@ -28,6 +28,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("warp", WRAP_METHOD(Console, cmdWarp));
 	registerCmd("script", WRAP_METHOD(Console, cmdScript));
 	registerCmd("stop_all_sounds", WRAP_METHOD(Console, cmdStopAllSounds));
+	registerCmd("next_level", WRAP_METHOD(Console, cmdNextLevel));
 }
 
 Console::~Console() {
@@ -53,6 +54,12 @@ bool Console::cmdScript(int argc, const char **argv) {
 
 bool Console::cmdStopAllSounds(int argc, const char **argv) {
 	g_engine->stopAllSounds();
+	return false;
+}
+
+bool Console::cmdNextLevel(int argc, const char **argv) {
+	if (g_engine->setNextLevel())
+		g_engine->stopAllSounds();
 	return false;
 }
 

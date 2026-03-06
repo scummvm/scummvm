@@ -165,6 +165,10 @@ public:
 		_angleY.set(baseX + x);
 	}
 
+	void setNord(float a) {
+		_angleX.set(a);
+	}
+
 	bool testSaveSlot(int idx) const;
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
@@ -177,11 +181,18 @@ public:
 	bool enterScript();
 	bool isLoading() const { return !_loadedState.empty(); }
 
+	bool wasRestarted() const { return _restarted; }
+	bool wasLoaded() const { return _loaded; }
+
 	void saveVariables();
 	void loadVariables();
 
 	void rollover(int textId, RolloverType type);
 	void showWaves();
+	void restart();
+	bool setNextLevel();
+
+	void setGlobalVolume(int vol);
 
 private:
 	static Common::String removeDrive(const Common::String &path);
@@ -263,6 +274,12 @@ private:
 
 	Common::ScopedPtr<Graphics::ManagedSurface> _text;
 	Common::Rect _textRect;
+
+	Common::Array<Common::String> _levels;
+	uint _currentLevel = 0;
+
+	bool _restarted = false;
+	bool _loaded = false;
 };
 
 extern PhoenixVREngine *g_engine;

@@ -18,6 +18,11 @@ public:
 	}
 
 	void skip() {
+		// comment found in amerzone ",*****"
+		if (_pos == 0 && _line[_pos] == ',') {
+			_pos = _line.size();
+			return;
+		}
 		while (_pos < _line.size() && Common::isSpace(_line[_pos]))
 			++_pos;
 		if (_pos < _line.size() && _line[_pos] == ';')
@@ -93,7 +98,7 @@ public:
 		do {
 			auto ch = next();
 			if (ch < '0' || ch > '9')
-				error("expected digit at %d, line: %s", _pos, _line.c_str());
+				error("expected digit at %d, line: %u, %s", _pos, _lineno, _line.c_str());
 			value = value * 10 + (ch - '0');
 		} while (Common::isDigit(peek()));
 		return negative ? -value : value;
@@ -140,9 +145,12 @@ public:
 	Script::CommandPtr parseCommand() {
 		using CommandPtr = Script::CommandPtr;
 		if (keyword("setcursordefault")) {
-			auto idx = nextInt();
+			auto idx = nextWord();
 			expect(',');
-			return CommandPtr(new SetCursorDefault(idx, nextWord()));
+			bool valid = !idx.empty() && Common::isDigit(idx[0]);
+			// this skips garbage cursor default found in Amerzone
+			// e.g. `setcursordefault cursor1.pcx,cursor1`
+			return CommandPtr(new SetCursorDefault(valid ? atoi(idx.c_str()) : -1, nextWord()));
 		} else if (keyword("lockkey")) {
 			auto idx = nextInt();
 			expect(',');
@@ -167,7 +175,15 @@ public:
 			expect(',');
 			auto a1 = toAngle(nextInt());
 			return CommandPtr(new SetAngle(a0, a1));
-		} else if (keyword("interpolangle")) {
+		} else if (maybe("setnord=")) {
+			auto i0 = nextInt();
+			if (i0 > 4095)
+				i0 -= 8192;
+			auto a0 = toAngle(i0);
+			return CommandPtr(new SetNord(a0));
+		} else if (keyword("interpolangle") || keyword("interpolanglezoom")) {
+			maybe(',');
+			maybe('=');
 			auto i0 = nextInt();
 			if (i0 > 4095)
 				i0 -= 8192;
@@ -176,7 +192,10 @@ public:
 			auto a1 = toAngle(nextInt());
 			expect(',');
 			int unk = nextInt();
-			return CommandPtr(new InterpolAngle(a0, a1, unk));
+			int zoom = 0;
+			if (maybe(','))
+				zoom = nextInt();
+			return CommandPtr(new InterpolAngle(a0, a1, unk, zoom));
 		} else if (maybe("anglexmax=")) {
 			return CommandPtr(new AngleXMax(toAngle(nextInt())));
 		} else if (maybe("angleymax=")) {
@@ -192,8 +211,9 @@ public:
 			auto arg0 = nextInt();
 			expect(',');
 			auto arg1 = nextInt();
-			expect(',');
-			auto arg2 = nextInt();
+			int arg2 = 0;
+			if (maybe(','))
+				arg2 = nextInt();
 			return CommandPtr(new PlaySound3D(Common::move(sound), arg0, toAngle(arg1), arg2));
 		} else if (keyword("playmusique")) {
 			auto sound = nextWord();
@@ -205,16 +225,27 @@ public:
 			auto sound = nextWord();
 			expect(',');
 			auto arg0 = nextInt();
+			int arg1 = 0;
+			if (maybe(','))
+				arg1 = nextInt();
+			return CommandPtr(new PlaySound(Common::move(sound), arg0, arg1));
+		} else if (keyword("playrndsound")) {
+			auto sound = nextWord();
+			expect(',');
+			auto arg0 = nextInt();
 			expect(',');
 			auto arg1 = nextInt();
-			return CommandPtr(new PlaySound(Common::move(sound), arg0, arg1));
+			int arg2 = 0;
+			if (maybe(','))
+				arg2 = nextInt();
+			return CommandPtr(new PlayRandomSound(Common::move(sound), arg0, arg1, arg2));
 		} else if (keyword("stopsound3d")) {
 			return CommandPtr(new StopSound3D(nextWord()));
 		} else if (keyword("stopsound") || keyword("stopmusique")) {
 			return CommandPtr(new StopSound(nextWord()));
 		} else if (keyword("setcursor")) {
 			auto image = nextWord();
-			expect(',');
+			maybe(',');
 			auto warp = nextWord();
 			int idx = 0;
 			if (maybe(','))
@@ -227,9 +258,18 @@ public:
 			return CommandPtr(new HideCursor(Common::move(warp), idx));
 		} else if (keyword("set")) {
 			auto var = nextWord();
-			expect('=');
-			auto value = nextInt();
-			return CommandPtr(new Set(Common::move(var), value));
+			if (maybe(',')) {
+				// this is typo in amerzone, this meant to be setCursor
+				auto warp = nextWord();
+				int idx = 0;
+				if (maybe(','))
+					idx = nextInt();
+				return CommandPtr(new SetCursor(Common::move(var), Common::move(warp), idx));
+			}
+			int value = 0;
+			if (maybe('='))
+				value = nextInt();
+			return CommandPtr(new SetVar(Common::move(var), value));
 		} else if (keyword("not")) {
 			auto var = nextWord();
 			return CommandPtr(new Not(Common::move(var)));
@@ -283,13 +323,14 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 		return;
 
 	if (p.maybe('[')) {
-		if (p.maybe("bool]=") || p.maybe("bool)=")) {
+		if (p.maybe("bool]=") || p.maybe("bool)=") || p.maybe("b\x00\x00ool]=")) {
 			_vars.push_back(p.nextWord());
 		} else if (p.maybe("warp]=")) {
 			auto vr = p.nextWord();
-			p.expect(',');
-			auto test = p.nextWord();
-			_currentWarp.reset(new Warp{vr, test, {}});
+			Common::String test;
+			if (p.maybe(','))
+				test = p.nextWord();
+			_currentWarp.reset(new Warp{vr, Common::move(test), {}});
 			_warpsIndex[vr] = _warps.size();
 			_warps.push_back(_currentWarp);
 			_warpNames.push_back(vr);

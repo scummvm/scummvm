@@ -32,6 +32,7 @@ private:
 	bool cmdWarp(int argc, const char **argv);
 	bool cmdScript(int argc, const char **argv);
 	bool cmdStopAllSounds(int argc, const char **argv);
+	bool cmdNextLevel(int argc, const char **argv);
 
 public:
 	Console();

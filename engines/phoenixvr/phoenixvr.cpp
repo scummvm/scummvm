@@ -75,6 +75,15 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 	}
 	if (!pixelFormatFound)
 		error("Couldn't find 16/32-bit pixel format");
+
+	if (getGameId() == "amerzone") {
+		_levels.push_back("01VR_PHARE");
+		_levels.push_back("02VR_ILE");
+		_levels.push_back("03VR_PUEBLO");
+		_levels.push_back("04VR_FLEUVE");
+		_levels.push_back("05VR_VILLAGEMARAIS");
+		_levels.push_back("07VRTEMPLE_VOLCAN");
+	}
 }
 
 PhoenixVREngine::~PhoenixVREngine() {
@@ -139,6 +148,17 @@ Common::SeekableReadStream *PhoenixVREngine::open(const Common::String &filename
 	return nullptr;
 }
 
+bool PhoenixVREngine::setNextLevel() {
+	if (_currentLevel < _levels.size()) {
+		auto &level = _levels[_currentLevel++];
+		debug("next level is %s", level.c_str());
+		setNextScript(level + "\\" + getGameId() + ".lst");
+		_loaded = true;
+		return true;
+	} else
+		return false;
+}
+
 void PhoenixVREngine::setNextScript(const Common::String &nextScript) {
 	debug("setNextScript %s", nextScript.c_str());
 	_contextScript = nextScript;
@@ -166,6 +186,8 @@ void PhoenixVREngine::loadNextScript() {
 	_script.reset(new Script(*s));
 	for (auto &var : _script->getVarNames())
 		declareVariable(var);
+	if (getGameId() == "amerzone")
+		declareVariable("oeuf_pose"); // crash in chapter 7
 
 	int numWarps = _script->numWarps();
 	_cursors.clear();
@@ -181,8 +203,10 @@ void PhoenixVREngine::end() {
 	debug("end");
 	stopAllSounds();
 	if (_nextScript.empty() && _nextWarp < 0) {
-		debug("quit game");
-		quitGame();
+		if (!setNextLevel()) {
+			debug("quit game");
+			quitGame();
+		}
 	}
 }
 
@@ -238,6 +262,14 @@ void PhoenixVREngine::wait(float seconds) {
 		_screen->update();
 		frameDuration = limiter.startFrame();
 	}
+}
+
+void PhoenixVREngine::restart() {
+	debug("restart");
+	_restarted = true;
+	_currentLevel = 0;
+	setNextLevel();
+	_loaded = false;
 }
 
 bool PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
@@ -731,7 +763,7 @@ void PhoenixVREngine::tick(float dt) {
 		}
 
 		{
-			Common::ScopedPtr<Common::SeekableReadStream> stream(open(_warp->testFile));
+			Common::ScopedPtr<Common::SeekableReadStream> stream(!_warp->testFile.empty() ? open(_warp->testFile) : nullptr);
 			if (stream)
 				_regSet.reset(new RegionSet(*stream));
 			else
@@ -745,6 +777,7 @@ void PhoenixVREngine::tick(float dt) {
 			test->scope.exec(ctx);
 		else
 			warning("no default script!");
+		_restarted = false;
 	}
 
 	if (_nextTest >= 0) {
@@ -839,7 +872,12 @@ Common::Error PhoenixVREngine::run() {
 			debug("loaded %u textes", _textes.size());
 		}
 	}
-	setNextScript("script.lst");
+
+	// try load level-specific script first (amerzone)
+	if (setNextLevel())
+		_loaded = false; // reset flag or interface.vr will skip menu
+	else
+		setNextScript("script.lst");
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
@@ -1165,8 +1203,22 @@ bool PhoenixVREngine::enterScript() {
 Common::Error PhoenixVREngine::loadGameStream(Common::SeekableReadStream *slot) {
 	auto state = GameState::load(*slot);
 
+	_loaded = true;
 	killTimer();
 	setNextScript(state.script);
+	if (!_levels.empty()) {
+		uint i = 0, n = _levels.size();
+		for (; i != n; ++i) {
+			auto &level = _levels[i];
+			if (state.script.hasPrefixIgnoreCase(level)) {
+				debug("current level is %u", i);
+				_currentLevel = i + 1;
+				break;
+			}
+		}
+		if (i == n)
+			warning("couldn't find current level index for script %s", state.script.c_str());
+	}
 	// keep it alive until loading finishes.
 	auto currentScript = Common::move(_script);
 	assert(!_nextScript.empty());
@@ -1178,6 +1230,7 @@ Common::Error PhoenixVREngine::loadGameStream(Common::SeekableReadStream *slot) 
 		Script::ExecutionContext ctx;
 		test->scope.exec(ctx);
 	}
+	_loaded = false;
 
 	return Common::kNoError;
 }
@@ -1258,6 +1311,12 @@ void PhoenixVREngine::drawSlot(int idx, int face, int x, int y) {
 	}
 	src->free();
 	delete src;
+}
+
+void PhoenixVREngine::setGlobalVolume(int volume) {
+	ConfMan.setInt("music_volume", volume);
+	ConfMan.setInt("sfx_volume", volume);
+	syncSoundSettings();
 }
 
 void PhoenixVREngine::syncSoundSettings() {
