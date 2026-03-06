@@ -19,6 +19,17 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added possibility to load GUI strings from the local po/
      directory. Useful for translators since it does not require
      regeneration of the translations.dat file.
+   - Significantly reduced compilation time and memory usage when
+     building the TinyGL component.
+
+ AGOS:
+   - Improved support of the Acorn releases of Simon the Sorcerer.
+     Original cursor is now implemented, along with support of the
+     Desktop Tracker format used for its music.
+   - Improved font rendering accuracy for DOS Personal Nightmare and
+     the Amiga Elvira 1 demo.
+   - Fixed Simon's sprite having no color in the Acorn floppy demo
+     of Simon the Sorcerer 1.
 
  Bagel:
    - Fix Enter/Escape keys in The Guessing Game guess dialog.
@@ -51,17 +62,36 @@ For a more comprehensive changelog of the latest experimental code, see:
      main menu in widescreen mod.
 
  SCUMM:
-   - Added the original splash screens to MM NES (works only with PRG files).
+   - Added support for original splash screens in Maniac Mansion NES (when
+     playing from PRG files).
    - Added support for original playback file in Monkey Island 2 Non-Interactive
      DOS demo.
+   - Implemented original cursor for the Apple II release of Maniac Mansion.
+   - Fixed Maniac Mansion NES logo scroll getting stuck during the intro.
 
- TEENAGENT:
-   - Fixed 'could not locate language block' error when starting the Polish and Russian versions.
+ Teenagent:
+   - Fixed 'could not locate language block' error when starting the Polish and
+     Russian versions.
+
+ Tinsel:
+   - Fixed Amazon speech accidentally stopped by the Starfish flicking a coin,
+     in Act 2 of all Discworld 1 releases having this original script bug.
+   - Fixed "calculate odds" button not always erased from the screen when asking
+     the guard for probabilities, in Act 3 of early Discworld 1 releases
+     (original script bug).
+   - Fixed crash when trying to interact with (invisible) City Guards in Act 4
+     of Discworld 1, due to an original script oversight in early releases.
+   - Fixed conversation window not closing when being done talking with the
+     barman in Discworld 1 L-Space (original script bug in early releases).
 
  WAGE:
    - Implemented combat system.
    - Numerous visual fixes.
    - Implemented mouse scrolling of text window.
+
+ macOS port:
+   - Added support for the newer Text-to-Speech API of macOS 10.14+.
+   - Restored Help menu and Copy from clipboard features for macOS 10.4-10.5.
 
  iOS port:
    - Added support for Text-to-Speech.
@@ -150,7 +180,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added Text-to-Speech support.
 
  Grim:
-  - Added support for the fantranslated Polish version of Grim Fandango.
+   - Added support for the fantranslated Polish version of Grim Fandango.
 
  Hugo:
    - Added Text-to-Speech support.
@@ -940,7 +970,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for macOS versions of Syberia and Syberia II.
    - Added support for The Vampire Diaries, Nancy Drew: Secrets Can Kill,
      Nancy Drew: Stay Tuned for Danger, Nancy Drew: Message in a Haunted Mansion,
-	 Nancy Drew: Treasure in the Royal Tower and Nancy Drew: The Final Scene.
+     Nancy Drew: Treasure in the Royal Tower and Nancy Drew: The Final Scene.
    - Added support for Reah: Face the Unknown and Schizm: Mysterious Journey.
    - Added support for Might and Magic Book One.
    - Added support for Muppet Treasure Island.
