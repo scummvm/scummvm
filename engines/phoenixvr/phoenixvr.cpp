@@ -223,10 +223,13 @@ void PhoenixVREngine::wait(float seconds) {
 
 void PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
 	debug("gotowarp %s, save prev: %d", warp.c_str(), savePrev);
-	if (warp != "N3M09L03W515E1.vr") // typo in Script4.lst
-		_nextWarp = _script->getWarp(warp);
-	else
+
+	// Typo in Necronomicon's Script4.lst
+	if (getGameId() == "necrono" && warp == "N3M09L03W515E1.vr")
 		_nextWarp = _script->getWarp("N3M09L03W51E1.vr");
+	else
+		_nextWarp = _script->getWarp(warp);
+
 	_hoverIndex = -1;
 	if (savePrev) {
 		assert(_warpIdx >= 0);
