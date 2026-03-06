@@ -249,9 +249,6 @@ bool WaynesWorldEngine::introPt3(bool flag) {
 
 	_sound->playSound("sv16.snd", false);
 
-	while (_sound->isSFXPlaying())
-		waitMillis(30);
-
 	waitSeconds(1);
 	
 	paletteFadeOut(0, 256, 4); 
@@ -290,9 +287,43 @@ bool WaynesWorldEngine::introPt4() {
 	return retVal;
 }
 
+void WaynesWorldEngine::sub3009A(int textId) {
+	int startPos;
+	int textColor;
+	int textType = 0;
+	Common::String filename;
+	
+	switch (textId) {
+	case 0:
+		filename = "oaw";
+		startPos = _startOawPos;
+		textColor = 147;
+		break;
+	case 1:
+		filename = "oag";
+		startPos = _startOagPos;
+		textColor = 41;
+		break;
+	default:
+		filename = "oao";
+		startPos = _startOaoPos;
+		++_startOaoPos;
+		textColor = 11;
+		textType = 1;
+		break;
+	}
+
+	Common::String displayTxt = loadString(filename.c_str(), startPos, 0);
+
+	if (textType)
+		_fontWW->drawText(_demoPt2Surface, displayTxt.c_str(), 0, 187, textColor);
+	else
+		_fontWW->drawText(_demoPt2Surface, displayTxt.c_str(), 0, 2, textColor);
+}
+
 void WaynesWorldEngine::sub2FEFB(int arg_refreshBackgFl, int arg_wBodyIndex, int arg_gBodyIndex, int arg_wHead1Index, int arg_gHead1Index, int arg_TextId) {
-	_screen->fillRect(0, 0, 319, 14, 0);
-	_screen->fillRect(0, 185, 319, 199, 0);
+	_demoPt2Surface->fillRect(0, 0, 319, 14, 0);
+	_demoPt2Surface->fillRect(0, 185, 319, 199, 0);
 
 	if (arg_refreshBackgFl != _old_arg_refreshBackgFl) {
 		_demoPt2Surface->clear(0);
@@ -323,15 +354,19 @@ void WaynesWorldEngine::sub2FEFB(int arg_refreshBackgFl, int arg_wBodyIndex, int
 	}
 
 	if (arg_TextId != -1) {
-		warning("STUB - sub_3009A(arg_TextId);");
+		sub3009A(arg_TextId);
 	}
 	
 	_screen->drawSurface(_demoPt2Surface, 0, 0);
+	waitMillis(170);
 }
 
 void WaynesWorldEngine::introPt4_sub1() {
 	_fontWW = new GFTFont();
 	_fontWW->loadFromFile("ww.gft");
+
+	while(_sound->isSFXPlaying())
+		waitMillis(30);;
 	
 	_musicIndex = 2;
 	changeMusic();
@@ -366,7 +401,23 @@ bool WaynesWorldEngine::introPt4_sub2() {
 		int index = getRandom(3);
 		sub2FEFB(1, 0, 1, index, 9, 0);
 	}
+
+	++_startOawPos;
+	while (_sound->isSFXPlaying())
+		waitMillis(30);
 	
+	_sound->playSound("sv25.snd", false);
+
+	for (int i = 0; i < 8; ++i) {
+		int index = getRandom(3);
+		sub2FEFB(1, 0, 1, index, 9, 0);
+	}
+	
+	while (_sound->isSFXPlaying())
+		waitMillis(30);
+
+	_sound->playSound("sv20.snd", false);
+
 	// TODO add a check at each step to return false if ESC is pressed
 	return true;
 }
