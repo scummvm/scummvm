@@ -197,9 +197,10 @@ public:
 			return CommandPtr(new PlaySound3D(Common::move(sound), arg0, toAngle(arg1), arg2));
 		} else if (keyword("playmusique")) {
 			auto sound = nextWord();
-			expect(',');
-			auto arg0 = nextInt();
-			return CommandPtr(new PlayMusique(Common::move(sound), arg0));
+			int vol = 255;
+			if (maybe(','))
+				vol = nextInt();
+			return CommandPtr(new PlayMusique(Common::move(sound), vol));
 		} else if (keyword("playsound")) {
 			auto sound = nextWord();
 			expect(',');
@@ -282,7 +283,7 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 		return;
 
 	if (p.maybe('[')) {
-		if (p.maybe("bool]=")) {
+		if (p.maybe("bool]=") || p.maybe("bool)=")) {
 			_vars.push_back(p.nextWord());
 		} else if (p.maybe("warp]=")) {
 			auto vr = p.nextWord();
@@ -309,11 +310,11 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 		}
 	} else if (_currentTest) {
 		auto &commands = _currentTest->scope.commands;
-		if (p.maybe("ifand=")) {
+		if (p.maybe("ifand=") || p.maybe("ifand")) {
 			if (_pluginScope)
 				error("ifand in plugin scope");
 			_conditional.reset(new IfAnd(p.readStringList()));
-		} else if (p.maybe("ifor=")) {
+		} else if (p.maybe("ifor=") || p.maybe("ifor")) {
 			if (_pluginScope)
 				error("ifor in plugin scope");
 			_conditional.reset(new IfOr(p.readStringList()));
