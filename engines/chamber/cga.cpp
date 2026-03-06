@@ -21,6 +21,7 @@
 
 #include "common/system.h"
 #include "graphics/paletteman.h"
+#include "graphics/surface.h"
 
 #include "chamber/chamber.h"
 #include "chamber/common.h"
@@ -64,7 +65,7 @@ uint16 HGA_CalcXY(uint16 x, uint16 y) {
 
 extern byte backbuffer[0xB800]; ///< CGA: 0x4000, HGS: 0xB800
 byte CGA_SCREENBUFFER[0xB800];
-byte scrbuffer[720*348];		///< Screen buffer for blitting, it is intentionally left larger instead of dynamic memory allocation
+Graphics::Surface *mainSurface = nullptr;
 
 extern byte *scratch_mem2;
 
@@ -119,7 +120,11 @@ static const uint8 PALETTE_CGA2[4 * 3] = {
   Switch to CGA 320x200x2bpp mode
 */
 void switchToGraphicsMode(void) {
-	g_system->getPaletteManager()->setPalette(PALETTE_CGA, 0, 4);
+	if (g_system->getWidth() == 720) {
+		g_system->getPaletteManager()->setPalette(Graphics::HGC_G_PALETTE, 0, 2);
+	} else {
+		g_system->getPaletteManager()->setPalette(PALETTE_CGA, 0, 4);
+	}
 }
 
 /*
@@ -135,63 +140,116 @@ void waitVBlank(void) {
 }
 
 void cga_ColorSelect(byte csel) {
-	const byte *pal;
-	if (csel & 0x10)
-		pal = PALETTE_CGA;
-	else
-		pal = PALETTE_CGA2;
+	if (g_system->getWidth() == 720) {
+		g_system->getPaletteManager()->setPalette(Graphics::HGC_G_PALETTE, 0, 2);
+		g_system->setCursorPalette(Graphics::HGC_G_PALETTE, 0, 2);
+	} else {
+		const byte *pal;
+		if (csel & 0x10)
+			pal = PALETTE_CGA;
+		else
+			pal = PALETTE_CGA2;
 
-	g_system->getPaletteManager()->setPalette(pal, 0, 4);
-	g_system->setCursorPalette(pal, 0, 4);
+		g_system->getPaletteManager()->setPalette(pal, 0, 4);
+		g_system->setCursorPalette(pal, 0, 4);
+	}
 }
 
 void cga_blitToScreen(int16 dx, int16 dy, int16 w, int16 h) {
-	dx = dy = 0;
-	w = g_vm->_screenW; h = g_vm->_screenH;
-
-	int16 align = dx & (0x8 / g_vm->_screenBits - 1);
-
-	dx -= align;
-	w += align;
-
-	if (dy + h >= g_vm->_screenH)
-		h = g_vm->_screenH - dy;
-
-	if (dx + w >= g_vm->_screenW)
-		w = g_vm->_screenW - dx;
-
-	w = (w + (0x8 / g_vm->_screenBits - 1)) / (0x8 / g_vm->_screenBits);
-
-	for (int16 y = 0; y < h; y++) {
-		uint16 line_start = 0;
-		if (g_vm->_videoMode == Common::RenderMode::kRenderHercG) {
-			line_start = HGA_CALCXY_RAW(dx, dy + y);
-		} else {
-			line_start = cga_CalcXY(dx, dy + y);
+	if (!mainSurface) {
+		mainSurface = new Graphics::Surface();
+	}
+	if (g_system->getWidth() != 720) {
+		if (mainSurface->w != g_vm->_screenW) {
+			mainSurface->free();
+			mainSurface->create(g_vm->_screenW, g_vm->_screenH, Graphics::PixelFormat::createFormatCLUT8());
 		}
-		byte *src = CGA_SCREENBUFFER + line_start;
-		byte *dst = scrbuffer + (y + dy) * g_vm->_screenW + dx;
+		dx = dy = 0;
+		w = g_vm->_screenW; h = g_vm->_screenH;
 
-		for (int16 x = 0; x < w; x++) {
-			byte colors = *src++;
-			if (g_vm->_videoMode == Common::RenderMode::kRenderCGA) {
+		int16 align = dx & (0x8 / g_vm->_screenBits - 1);
+
+		dx -= align;
+		w += align;
+
+		if (dy + h >= g_vm->_screenH)
+			h = g_vm->_screenH - dy;
+
+		if (dx + w >= g_vm->_screenW)
+			w = g_vm->_screenW - dx;
+
+		w = (w + (0x8 / g_vm->_screenBits - 1)) / (0x8 / g_vm->_screenBits);
+
+		for (int16 y = 0; y < h; y++) {
+			uint16 line_start = cga_CalcXY(dx, dy + y);
+			byte *src = CGA_SCREENBUFFER + line_start;
+			byte *dst = (byte *)mainSurface->getBasePtr(dx, y + dy);
+
+			for (int16 x = 0; x < w; x++) {
+				byte colors = *src++;
 				for (int16 c = 0; c < 4; c++) {
 					byte color = (colors & 0xC0) >> 6;
 					colors <<= 2;
-					*dst++ = color;
+					*dst++ = color;	
 				}
-			} else if (g_vm->_videoMode == Common::RenderMode::kRenderHercG) {
-				for (int16 c = 0; c < 8; c++) {
-					byte color = (colors & 0x80) >> 7;
-					colors <<= 1;
-					*dst++ = color;
-				}
+			}
+        }
+
+		g_system->copyRectToScreen((const byte *)mainSurface->getBasePtr(dx, dy), mainSurface->pitch, dx, dy, w * (0x8 / g_vm->_screenBits), h);
+		g_system->updateScreen();
+		return;
+	} 
+	dx = 0;
+	dy = 0;
+	w = 320;
+	h = 200;
+
+	if (mainSurface->w != 720) {
+		mainSurface->free();
+		mainSurface->create(720, 348, Graphics::PixelFormat::createFormatCLUT8());
+		memset(mainSurface->getPixels(), 0, 720 * 348); 
+	}
+
+	int16 startY = dy;
+	int16 endY = dy + h;
+
+	if (endY > 200) 
+		endY = 200;
+
+	int16 startX_bytes = dx / 4; 
+	int16 endX_bytes = (dx + w + 3) / 4; 
+		
+	if (endX_bytes > 80) 
+		endX_bytes = 80;
+
+	for (int y = startY; y < endY; y++) {
+		uint16 bank = (y % 2) * 8192;
+		uint16 line = (y / 2) * 80;
+		
+		int destY = y + 74; 
+		int destX = 40 + (startX_bytes * 8);
+		
+		byte *dst = (byte *)mainSurface->getBasePtr(destX, destY); 
+		
+		for (int x_bytes = startX_bytes; x_bytes < endX_bytes; x_bytes++) {
+			byte cga_byte = CGA_SCREENBUFFER[bank + line + x_bytes];
+			for (int p = 0; p < 4; p++) {
+				byte color = (cga_byte >> (6 - p * 2)) & 3;
+				byte finalColor = (color == 0) ? 0 : 1;
+				*dst++ = finalColor;
+				*dst++ = finalColor; 
 			}
 		}
 	}
-
-	g_system->copyRectToScreen(scrbuffer + dy * g_vm->_screenW + dx, g_vm->_screenW, dx, dy, w * (0x8 / g_vm->_screenBits), h);
+		
+	int renderX = 40 + (startX_bytes * 8);
+	int renderY = startY + 74;
+	int renderW = (endX_bytes - startX_bytes) * 8;
+	int renderH = endY - startY;
+	
+	g_system->copyRectToScreen((const byte *)mainSurface->getBasePtr(renderX, renderY), mainSurface->pitch, renderX, renderY, renderW, renderH);
 	g_system->updateScreen();
+	return;
 }
 
 void cga_blitToScreen(int16 ofs, int16 w, int16 h) {
