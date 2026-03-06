@@ -35,18 +35,19 @@
 namespace Scumm {
 
 // RA1 coordinate constants (scaled from RA2's 424x260 → 384x242)
-// RA2 center: (212, 130), RA1 center: (192, 121)
-// RA2 bounds: [20, 404]x[20, 240], RA1 bounds: [18, 366]x[18, 224]
-static const int16 kCenterX = 192;
-static const int16 kCenterY = 121;
-static const int16 kMinX = 18;
-static const int16 kMaxX = 366;
-static const int16 kMinY = 18;
-static const int16 kMaxY = 224;
+// Original coordinate space: 320x200 game viewport at (0,0) in the 384x242 buffer.
+// Ship base position in the original: (0xA0, 100) = (160, 100) = center of 320x200.
+// Accumulator range: ±0x82 (~±130), so ship can reach ~(30..290, -30..230).
+static const int16 kCenterX = 160;  // _DAT_74B6 init = 0xA0
+static const int16 kCenterY = 100;  // _DAT_74B8 init = 100
+static const int16 kMinX = 20;
+static const int16 kMaxX = 300;
+static const int16 kMinY = 20;
+static const int16 kMaxY = 180;
 
-// Perspective focal lengths (scaled from RA2: focalX=0x2b, focalY=0x19)
-static const int16 kFocalX = 39;   // 0x2b * 384/424 ≈ 39
-static const int16 kFocalY = 23;   // 0x19 * 242/260 ≈ 23
+// Perspective focal lengths (from original tuning table)
+static const int16 kFocalX = 43;    // 0x2b
+static const int16 kFocalY = 25;    // 0x19
 
 // Decode BOMP RLE (codec 21) sprite data into a flat pixel buffer.
 // Same algorithm as NutRenderer::codec21 but without palette tracking.
@@ -89,15 +90,14 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_corridorRightX = kMaxX;
 	_corridorBottomY = kMaxY;
 
-	_smoothedVelocity = 0;
-	_verticalInput = 0;
-	memset(_velocityHistory, 0, sizeof(_velocityHistory));
+	_rollAccum = 0;
+	_liftSmooth = 0;
+	_posAccumX = 0;
+	_posAccumY = 0;
 	_driftParam = 0;
-	_driftAccum = 0;
 
 	_perspectiveX = 0;
 	_perspectiveY = 0;
-	_viewShift = 0;
 
 	_flyControlMode = 0;
 
@@ -119,6 +119,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_menuConfirmed = false;
 	_menuSelection = 0;
 	_menuFrameCounter = 0;
+	_turbulenceEnabled = false;
 	if (loadRA1Nut("SYS/TALKFONT.NUT", _hudFontBank)) {
 		debug(1, "InsaneRebel1: HUD/menu glyph font loaded from SYS/TALKFONT.NUT (%d chars)", _hudFontBank.numSprites);
 	} else if (loadRA1Nut("SYS/TECHFONT.NUT", _hudFontBank)) {
@@ -697,8 +698,9 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 	}
 }
 
-// Velocity-based ship physics adapted from RA2 Handler 7 (FUN_40C3CC case 4).
-// Mouse input → velocity history averaging → position delta → corridor collision → perspective.
+// Ship physics matching FUN_1DEB5 (accumulator-based position system).
+// Roll accumulator (_74CA) driven by input, position accumulators (_74C2/_74C6)
+// driven by roll + drift + cross-coupling. Ship position = base + accum >> 8.
 void InsaneRebel1::updateShipPhysics() {
 	_frameCounter++;
 
@@ -707,108 +709,102 @@ void InsaneRebel1::updateShipPhysics() {
 		_damageCooldown--;
 
 	// --- Step 1: Mouse input as offset from screen center ---
-	// Use _vm->_mouse (0-319, 0-199 virtual screen coords), same as RA2.
-	// Center = (160, 100) in virtual screen space.
+	// Original: _DAT_756C (horizontal), _DAT_756E (vertical)
 	int16 inputX = (int16)(_vm->_mouse.x - 160);
 	int16 inputY = (int16)(_vm->_mouse.y - 100);
-
-	// Clamp: [-160, 160] horizontal, [-127, 127] vertical (same as RA2)
-	inputX = CLIP<int16>(inputX, -160, 160);
+	inputX = CLIP<int16>(inputX, -127, 127);
 	inputY = CLIP<int16>(inputY, -127, 127);
 
-	// --- Step 2: Scale to [-127, 127] (same as RA2: scaledInputX = inputX * 127 / 160) ---
-	int16 scaledInputX = (int16)((inputX * 127) / 160);
-	int16 scaledInputY = inputY;
+	// --- Step 2: Roll accumulator (_74CA) ---
+	// Tuning values for Level 1 difficulty 0 (from data section)
+	static const int16 kRoll = 100;   // tuning[0x1B1B]
+	static const int16 kLift = 100;   // tuning[0x1B1D]
+	static const int16 kSlide = 60;   // tuning[0x1B1F]
+	static const int16 kDrift = 110;  // tuning[0x1B21]
 
-	// --- Step 3: Velocity history + smoothed average ---
-	for (int i = 24; i > 0; i--)
-		_velocityHistory[i] = _velocityHistory[i - 1];
-	_velocityHistory[0] = scaledInputX;
+	// Normal mode: accumulate; mode 0x10: snap to input
+	_rollAccum += (kRoll * (int32)inputX) >> 5;
+	_rollAccum = CLIP<int32>(_rollAccum, -0x47F, 0x47F);
 
-	const int smoothWindow = 5;
-	int velSum = 0;
-	for (int i = 0; i < smoothWindow; i++)
-		velSum += _velocityHistory[i];
-	_smoothedVelocity = (int16)(velSum / smoothWindow);
+	// --- Step 3: Vertical smoothing (_74CE) ---
+	// Exponential decay toward -inputY
+	_liftSmooth += (-_liftSmooth - (int32)inputY) >> 1;
+	_liftSmooth = CLIP<int32>(_liftSmooth, -0x20, 0x20);
 
-	// --- Step 4: Position delta ---
-	const int16 levelSpeed = 32;
-	const int16 levelYSpeed = 48;
-	int16 absSmoothVel = ABS(_smoothedVelocity);
-	int16 positionDeltaX;
+	// --- Step 4: Position accumulator deltas ---
+	// X delta: drift + slide coupling - cross-coupling
+	int32 rng = _turbulenceEnabled ? (int32)_vm->_rnd.getRandomNumber(199) : 100;  // 0-199, centered at 100
+	int32 crossTermX;
+	if (_liftSmooth < 0)
+		crossTermX = (kLift * _liftSmooth * _rollAccum) >> 11;
+	else
+		crossTermX = (kLift * _liftSmooth * _rollAccum) >> 12;
 
-	if (_flyControlMode == 1) {
-		// Mode 1: Full cross-axis coupling
-		if (scaledInputX < 1)
-			positionDeltaX = (int16)((levelSpeed * _smoothedVelocity - absSmoothVel * scaledInputY) >> 9);
-		else
-			positionDeltaX = (int16)((levelSpeed * _smoothedVelocity + absSmoothVel * scaledInputY) >> 9);
-	} else {
-		// Mode 0/2/3: Reduced cross-axis coupling
-		if (scaledInputX < 1)
-			positionDeltaX = (int16)((levelSpeed * _smoothedVelocity - (absSmoothVel * scaledInputY >> 2)) >> 9);
-		else
-			positionDeltaX = (int16)((levelSpeed * _smoothedVelocity + (absSmoothVel * scaledInputY >> 2)) >> 9);
-	}
+	int32 deltaX = (((rng - 100) - (int32)kDrift * _driftParam) >> 1)
+	             + ((kSlide * _rollAccum) >> 7)
+	             - crossTermX;
 
-	// Original asm drift pipeline (0x1e3fc-0x1e5cb):
-	//   xDelta = (random(200) - 100 - driftTuning * _driftParam) / 2
-	//   accumX += xDelta  (32-bit accumulator)
-	//   shipDeltaX = accumX >> 8  (divide by 256 for pixel position)
-	// So drift contributes ~±0.2 px/frame. We approximate by accumulating and shifting.
-	const int16 kDriftTuning = 3; // TODO: load from per-difficulty/level tuning table
-	int16 driftBias = (int16)(_vm->_rnd.getRandomNumber(199) - 100 - kDriftTuning * _driftParam);
-	_driftAccum += driftBias >> 1;
-	_driftAccum = CLIP<int32>(_driftAccum, -0x8200, 0x8200);
-	positionDeltaX += (int16)(_driftAccum >> 8);
+	// Y delta: roll magnitude + lift cross-coupling
+	int32 absRoll = ABS(_rollAccum);
+	int32 crossTermY;
+	if (_liftSmooth < 0)
+		crossTermY = (kLift * (0x7DE - absRoll) * _liftSmooth) >> 12;
+	else
+		crossTermY = (kLift * (0x7DE - absRoll) * _liftSmooth) >> 13;
 
-	// Clamp X delta to ±12 per frame
-	positionDeltaX = CLIP<int16>(positionDeltaX, -12, 12);
-	_shipPosX += positionDeltaX;
+	int32 deltaY = (absRoll >> 1) + crossTermY;
 
-	// Y delta (no drift in original assembly — field4 is unused)
-	int16 positionDeltaY;
-	if (_flyControlMode == 1) {
-		positionDeltaY = (int16)((levelYSpeed * scaledInputY) >> 10);
-		positionDeltaY = CLIP<int16>(positionDeltaY, -12, 12);
-	} else {
-		positionDeltaY = (int16)((levelYSpeed * scaledInputY) >> 10);
-	}
-	_shipPosY -= positionDeltaY;
+	// --- Step 5: Update position accumulators ---
+	_posAccumX += deltaX;
+	_posAccumX = CLIP<int32>(_posAccumX, -0x8200, 0x8200);
+	_posAccumY += deltaY;
+	_posAccumY = CLIP<int32>(_posAccumY, -0x3200, 0x4600);
 
-	_verticalInput = scaledInputY;
+	// --- Step 6: Derive pixel position from accumulators ---
+	// Original: _74BA = _74C2 >> 8, _74BC = _74C6 >> 8
+	// Ship position = base + offset
+	_shipPosX = kCenterX + (int16)(_posAccumX >> 8);
+	_shipPosY = kCenterY + (int16)(_posAccumY >> 8);
 
-	// --- Step 6: Position clamping ---
+	// Clamp to screen bounds
 	_shipPosX = CLIP<int16>(_shipPosX, kMinX, kMaxX);
 	_shipPosY = CLIP<int16>(_shipPosY, kMinY, kMaxY);
 
-	// --- Step 7: Corridor collision (modes 0 and 2) ---
-	// From FUN_1C54D: wall contact sets damageFlags bits 0-3 (directional)
-	// and pushes velocity history to bounce away from the wall.
-	if (_flyControlMode == 0 || _flyControlMode == 2) {
-		if (_corridorRightX < _shipPosX) {
+	// --- Step 7: Corridor collision (FUN_1C54D) ---
+	// Wall contact forces position accumulators to corridor edge and sets
+	// damage flags. Flag bit 0x10 (zone hit) suppresses damage bits only.
+	{
+		bool hasZoneHit = (_damageFlags & 0x10) != 0;
+
+		if (_shipPosX > _corridorRightX) {
+			_posAccumX = (_corridorRightX - kCenterX) << 8;
 			_shipPosX = _corridorRightX;
-			_damageFlags |= 0x02;  // Right wall
-			if (_damageCooldown < 5) {
-				for (int i = 0; i < 25; i++)
-					_velocityHistory[i] = -127;
+			if (!hasZoneHit) {
+				if (_rollAccum > -0x100)
+					_rollAccum = -0x100;  // Push left
+				_damageFlags |= 0x02;  // Right wall
 			}
 		}
 		if (_shipPosX < _corridorLeftX) {
+			_posAccumX = (_corridorLeftX - kCenterX) << 8;
 			_shipPosX = _corridorLeftX;
-			_damageFlags |= 0x04;  // Left wall
-			if (_damageCooldown < 5) {
-				for (int i = 0; i < 25; i++)
-					_velocityHistory[i] = 127;
+			if (!hasZoneHit) {
+				if (_rollAccum < 0x100)
+					_rollAccum = 0x100;   // Push right
+				_damageFlags |= 0x04;  // Left wall
 			}
 		}
-		if (_corridorBottomY < _shipPosY) {
-			_shipPosY = _corridorBottomY;
-			_damageFlags |= 0x01;  // Bottom wall
-		}
 		if (_shipPosY < _corridorTopY) {
+			_posAccumY = ((_corridorTopY - kCenterY) << 8) + 0x100;
 			_shipPosY = _corridorTopY;
-			_damageFlags |= 0x08;  // Top wall
+			if (!hasZoneHit)
+				_damageFlags |= 0x01;
+		}
+		if (_shipPosY > _corridorBottomY) {
+			_posAccumY = ((_corridorBottomY - kCenterY) << 8) - 0x100;
+			_shipPosY = _corridorBottomY;
+			if (!hasZoneHit)
+				_damageFlags |= 0x08;
 		}
 	}
 
@@ -833,24 +829,25 @@ void InsaneRebel1::updateShipPhysics() {
 			_perspectiveY = -_perspectiveY;
 	}
 
-	_viewShift = CLIP<int16>(_smoothedVelocity, -127, 127);
+	// --- Step 9: Direction sprite index (FUN_1DEB5 LAB_1e23e) ---
+	// Horizontal component from _74CA (rollAccum):
+	//   |rollAccum| <= 0x80: center (0)
+	//   rollAccum > 0x80:  ((rollAccum - 0x80) >> 8) * 5 + 5   (right: 5,10,15,20)
+	//   rollAccum < -0x80: ((abs(rollAccum) - 0x80) >> 8) * 5 + 25 (left: 25,30,35,40)
+	int hComponent;
+	if (_rollAccum > 0x80) {
+		hComponent = ((_rollAccum - 0x80) >> 8) * 5 + 5;
+	} else if (_rollAccum < -0x80) {
+		hComponent = ((-_rollAccum - 0x80) >> 8) * 5 + 25;
+	} else {
+		hComponent = 0;
+	}
 
-	// --- Step 9: Direction sprite (5x7 grid with hysteresis) ---
-	// vDir from vertical input: (0xa0 - verticalInput) >> 6
-	int16 vDir = (int16)(((int)(0xa0 - _verticalInput) + ((0xa0 - _verticalInput) < 0 ? 63 : 0)) >> 6);
-	vDir = CLIP<int16>(vDir, 0, 4);
+	// Vertical component from _74CE (liftSmooth):
+	//   (_74CE + 0x20) * 5 / 0x41  → 0..4  (5 rows)
+	int vComponent = (_liftSmooth + 0x20) * 5 / 0x41;
 
-	// hDir from smoothed velocity: (0x95 - smoothedVelocity) / 0x2b
-	int16 hDir = (int16)((0x95 - _smoothedVelocity) / 0x2b);
-	hDir = CLIP<int16>(hDir, 0, 6);
-
-	// Hysteresis at center positions
-	if (hDir == 3 && ABS(_smoothedVelocity) > 10)
-		hDir = (_smoothedVelocity < 1) ? 4 : 2;
-	if (vDir == 2 && ABS(_verticalInput) > 15)
-		vDir = (_verticalInput < 1) ? 3 : 1;
-
-	_shipDirIndex = CLIP<int16>(vDir * 7 + hDir, 0, _shipBank.numSprites - 1);
+	_shipDirIndex = CLIP<int16>((int16)(vComponent + hComponent), 0, _shipBank.numSprites - 1);
 
 	// --- Step 10: Damage/event bit synthesis + damage processing ---
 	// RA1 FUN_1B297-style latches from GAME opcodes:
@@ -918,9 +915,9 @@ void InsaneRebel1::updateShipPhysics() {
 		}
 	}
 
-	debug(7, "RA1 ship: pos=(%d,%d) vel=%d vIn=%d dx=%d dir=%d health=%d corridor=[%d,%d]-[%d,%d]",
-		_shipPosX, _shipPosY, _smoothedVelocity, _verticalInput,
-		positionDeltaX, _shipDirIndex, _health,
+	debug(7, "RA1 ship: pos=(%d,%d) roll=%d lift=%d accX=%d accY=%d dir=%d health=%d corridor=[%d,%d]-[%d,%d]",
+		_shipPosX, _shipPosY, _rollAccum, _liftSmooth,
+		_posAccumX, _posAccumY, _shipDirIndex, _health,
 		_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY);
 }
 
@@ -1138,10 +1135,10 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
 		_driftParam = 0;
-		_driftAccum = 0;
-		_smoothedVelocity = 0;
-		_verticalInput = 0;
-		memset(_velocityHistory, 0, sizeof(_velocityHistory));
+		_rollAccum = 0;
+		_liftSmooth = 0;
+		_posAccumX = 0;
+		_posAccumY = 0;
 
 		// Field1 == 0 corresponds to baseline recenter behavior in the original.
 		if ((int32)param1 == 0) {
@@ -1178,26 +1175,33 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 
 	case 0x0D:
 		// Corridor boundaries: per-frame flight corridor
-		// Raw: 0x0D, left, top, right, bottom (all 32-bit BE)
+		// Original params: left, top, WIDTH, HEIGHT (not right/bottom!)
+		// FUN_1C54D computes center = (left+width/2, top+height/2), transforms, then checks edges.
 		if (subSize >= 20) {
 			_corridorLeftX = (int16)param1;
 			_corridorTopY = (int16)b.readUint32BE();
-			_corridorRightX = (int16)b.readUint32BE();
-			_corridorBottomY = (int16)b.readUint32BE();
-			debug(5, "RA1 GAME 0x0D: corridor left=%d top=%d right=%d bottom=%d",
-				_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY);
+			int16 corridorWidth = (int16)b.readUint32BE();
+			int16 corridorHeight = (int16)b.readUint32BE();
+			_corridorRightX = _corridorLeftX + corridorWidth;
+			_corridorBottomY = _corridorTopY + corridorHeight;
+			debug(5, "RA1 GAME 0x0D: corridor left=%d top=%d right=%d bottom=%d (w=%d h=%d)",
+				_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY,
+				corridorWidth, corridorHeight);
 		}
 		break;
 
 	case 0x0E:
 		// Secondary collision zone (FUN_1C6E9): AABB test, sets damageFlags bit 4 (0x10)
+		// Original params: left, top, WIDTH, HEIGHT (same as 0x0D)
 		if (subSize >= 20) {
 			int16 zoneLeft = (int16)param1;
 			int16 zoneTop = (int16)b.readUint32BE();
-			int16 zoneRight = (int16)b.readUint32BE();
-			int16 zoneBottom = (int16)b.readUint32BE();
-			if (_shipPosX >= zoneLeft && _shipPosX <= zoneRight &&
-				_shipPosY >= zoneTop && _shipPosY <= zoneBottom) {
+			int16 zoneWidth = (int16)b.readUint32BE();
+			int16 zoneHeight = (int16)b.readUint32BE();
+			int16 zoneRight = zoneLeft + zoneWidth;
+			int16 zoneBottom = zoneTop + zoneHeight;
+			if (_shipPosX > zoneLeft && _shipPosX < zoneRight &&
+				_shipPosY > zoneTop && _shipPosY < zoneBottom) {
 				_damageFlags |= 0x10;
 			}
 			debug(7, "RA1 GAME 0x0E: zone=[%d,%d]-[%d,%d] flags=0x%02x",

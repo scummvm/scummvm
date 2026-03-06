@@ -128,35 +128,35 @@ private:
 	int _screenWidth;
 	int _screenHeight;
 
-	// Ship game-coordinate position (adapted from RA2's [20,404]x[20,240])
-	// RA1 coordinate space: [18,366]x[18,224], center=(192,121)
+	// Ship screen position = kCenter + (accumulator >> 8)
+	// Original: _DAT_74B6/_74B8 (base=160,100) + _DAT_74BA/_74BC (offset)
 	int16 _shipPosX;
 	int16 _shipPosY;
 
 	// Direction sprite index (5x7 grid = 35 sprites, vDir*7 + hDir)
 	int16 _shipDirIndex;
 
-	// Corridor boundaries (set by GAME opcode 0x07)
+	// Corridor boundaries (set by GAME opcode 0x0D, computed as left+width, top+height)
 	int16 _corridorLeftX;
 	int16 _corridorTopY;
 	int16 _corridorRightX;
 	int16 _corridorBottomY;
 
-	// Physics state (velocity-based movement from RA2 Handler 7)
-	int16 _smoothedVelocity;         // Averaged horizontal velocity
-	int16 _verticalInput;            // Stored vertical input component
-	int16 _velocityHistory[25];      // Horizontal velocity ring buffer
+	// Physics state (accumulator-based, matching FUN_1DEB5)
+	// _74CA: horizontal roll accumulator, driven by input * roll_tuning
+	int32 _rollAccum;
+	// _74CE: vertical smoothing, exponential decay toward -inputY
+	int32 _liftSmooth;
+	// _74C2/_74C6: position accumulators (32-bit), pixel offset = accum >> 8
+	int32 _posAccumX;
+	int32 _posAccumY;
 
-	// Per-frame drift bias from GAME 0x07 field3 (multiplied by tuning "drift" param)
-	// Original pipeline: xDelta added to 32-bit accumulator, position = accum >> 8
-	// field4 is unused in the original assembly
+	// Per-frame drift bias from GAME 0x07 field3
 	int16 _driftParam;
-	int32 _driftAccum;           // 32-bit drift accumulator (position = accum >> 8)
 
 	// Perspective view offsets
 	int16 _perspectiveX;
 	int16 _perspectiveY;
-	int16 _viewShift;                // Clamped smoothed velocity for view transform
 
 	// Control mode (from GAME opcode 0x5E)
 	int16 _flyControlMode;
@@ -204,6 +204,8 @@ private:
 	bool _menuConfirmed;
 	int _menuSelection; // 0..4 maps to return values 1..5
 	int _menuFrameCounter;
+
+	bool _turbulenceEnabled;  // Random per-frame jitter in deltaX (original has it on)
 };
 
 } // End of namespace Scumm
