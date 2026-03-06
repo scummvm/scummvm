@@ -29,6 +29,7 @@
 #include "graphics/wincursor.h"
 #include "scumm/scumm_v7.h"
 #include "scumm/scumm.h"
+#include "scumm/nut_renderer.h"
 #include "scumm/smush/smush_player.h"
 #include "scumm/insane/insane_rebel1.h"
 
@@ -105,11 +106,36 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_lives = 3;
 	_score = 0;
 	_damageFlags = 0;
+	_gameLatch5D = 0;
+	_gameLatch5F = 0;
 	_damageCooldown = 0;
 	_deathTimer = 0;
 	_screenFlash = 0;
 	_frameCounter = 0;
 	_interactiveVideoActive = false;
+	_hudFont = nullptr;
+	const char *hudFontCandidates[] = {
+		"SYS/TECHFONT.NUT",
+		"SYS/TALKFONT.NUT",
+		"SYS/SMALFONT.NUT",
+		"SYSTM/SMALFONT.NUT"
+	};
+	for (uint i = 0; i < ARRAYSIZE(hudFontCandidates); i++) {
+		ScummFile *fontFile = _vm->instantiateScummFile();
+		_vm->openFile(*fontFile, hudFontCandidates[i]);
+		const bool found = fontFile->isOpen();
+		if (found)
+			fontFile->close();
+		delete fontFile;
+
+		if (found) {
+			_hudFont = new NutRenderer(_vm, hudFontCandidates[i]);
+			debug(1, "InsaneRebel1: HUD font loaded from %s", hudFontCandidates[i]);
+			break;
+		}
+	}
+	if (!_hudFont)
+		warning("InsaneRebel1: no HUD font found (TECHFONT/TALKFONT/SMALFONT), HUD numbers disabled");
 
 	// Audio
 	initAudio(11025);
@@ -134,6 +160,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 
 InsaneRebel1::~InsaneRebel1() {
 	_vm->_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
+	delete _hudFont;
 	terminateAudio();
 }
 
@@ -458,11 +485,6 @@ void InsaneRebel1::updateShipPhysics() {
 	inputX = CLIP<int16>(inputX, -160, 160);
 	inputY = CLIP<int16>(inputY, -127, 127);
 
-	// Dead zone: ignore small offsets from center to prevent drift
-	const int16 kDeadZone = 8;
-	if (ABS(inputX) < kDeadZone) inputX = 0;
-	if (ABS(inputY) < kDeadZone) inputY = 0;
-
 	// --- Step 2: Scale to [-127, 127] (same as RA2: scaledInputX = inputX * 127 / 160) ---
 	int16 scaledInputX = (int16)((inputX * 127) / 160);
 	int16 scaledInputY = inputY;
@@ -599,7 +621,16 @@ void InsaneRebel1::updateShipPhysics() {
 
 	_shipDirIndex = CLIP<int16>(vDir * 7 + hDir, 0, _shipBank.numSprites - 1);
 
-	// --- Step 10: Damage processing (from FUN_1DEB5 decompilation) ---
+	// --- Step 10: Damage/event bit synthesis + damage processing ---
+	// RA1 FUN_1B297-style latches from GAME opcodes:
+	//   0x5D latch 0xFFFF -> bit 0x40 (obstacle/contact)
+	//   0x5F non-zero + RNG -> bit 0x80 (projectile-like hit)
+	if (_gameLatch5D == 0xFFFF)
+		_damageFlags |= 0x40;
+	if (_gameLatch5F != 0 && _vm->_rnd.getRandomNumber((uint16)(_gameLatch5F - 1)) == 0)
+		_damageFlags |= 0x80;
+
+	// Damage guard/mask from FUN_1DEB5: (_damageFlags & 0x96) != 0
 	// damageFlags & 0x96 = bits 1,2,4,7 = wall collisions (0x16) + projectile hit (0x80)
 	if ((_damageFlags & 0x96) != 0 && _damageCooldown == 0 &&
 		_health >= 0 && _deathTimer <= 0) {
@@ -617,13 +648,21 @@ void InsaneRebel1::updateShipPhysics() {
 		_screenFlash = 3;
 	}
 
+	// Latches are per-frame event inputs in the original pipeline.
+	_gameLatch5D = 0;
+	_gameLatch5F = 0;
+
 	// Death animation countdown
 	if (_health < 0 && _deathTimer > 0)
 		_deathTimer--;
 
 	// Health regeneration: +1 every 32 frames (from original asm)
-	if (_health >= 0 && _health < kMaxHealth && (_frameCounter & 0x1F) == 0)
-		_health++;
+	if ((_frameCounter & 0x1F) == 0) {
+		if (_health >= 0 && _health < kMaxHealth)
+			_health++;
+		if (_health >= 0)
+			_score += 1;
+	}
 
 	// Screen flash decay
 	if (_screenFlash > 0)
@@ -689,23 +728,22 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 			hudX, hudY, bar.width, bar.height);
 	}
 
-	// Draw health bar (from FUN_1BBCB decompilation).
-	// Bar starts at x=56, y=8 within HUD, max width ~76px, height ~5px.
-	// Color thresholds: green (>50%), yellow (25-50%), red (<25%).
+	// Draw health bar from FUN_1BBCB behavior.
+	// Original logic uses current health as fill width and computes x as (0x92 - health),
+	// so the bar is right-anchored and shrinks from left to right as damage increases.
 	{
-		int barMaxW = 76;
+		int barMaxW = kMaxHealth;
 		int barH = 5;
-		int barX = hudX + 56;
+		int healthWidth = CLIP<int16>(_health, 0, kMaxHealth);
+		int barX = hudX + (0x92 - healthWidth);
 		int barY = hudY + 8;
-		int damage = kMaxHealth - CLIP<int16>(_health, 0, kMaxHealth);
-		int fillW = barMaxW * damage / kMaxHealth;
-		fillW = CLIP(fillW, 0, barMaxW);
+		int fillW = CLIP(healthWidth, 0, barMaxW);
 
 		// Color based on damage level (matching original thresholds from FUN_1BBCB)
 		byte barColor;
-		if (_health > kMaxHealth / 2)
+		if (_health > kHeavyDamage * 2)
 			barColor = 0xA0;  // Green — low damage
-		else if (_health > kMaxHealth / 4)
+		else if (_health > kLightDamage * 2)
 			barColor = 0x2C;  // Yellow — moderate damage
 		else
 			barColor = 0x30;  // Red — critical
@@ -722,46 +760,50 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 		}
 	}
 
-	// Draw score as decimal digits.
-	// From screenshot: score area starts around x=265 within HUD, using palette text color.
-	// For now, just draw simple 4×7 digit bitmaps.
-	{
-		char scoreStr[8];
-		snprintf(scoreStr, sizeof(scoreStr), "%06d", _score);
-		int digitX = hudX + 265;
-		int digitY = hudY + 7;
-		byte textColor = 0xFF;  // White
+	// Draw lives and score using the RA1 small NUT font (RA2-style glyph blit).
+	if (_hudFont && _hudFont->getNumChars() > 0) {
+		auto drawHudString = [&](const char *text, int x, int y) {
+			for (int i = 0; text[i] != '\0'; i++) {
+				byte ch = (byte)text[i];
+				if (ch >= _hudFont->getNumChars()) {
+					x += 4;
+					continue;
+				}
 
-		for (int c = 0; c < 6 && scoreStr[c]; c++) {
-			int digit = scoreStr[c] - '0';
-			// Simple 3×5 digit rendering
-			static const uint16 digitPatterns[10] = {
-				0x7B6F, // 0: 111 011 011 011 111
-				0x2492, // 1: 010 010 010 010 010
-				0x73E7, // 2: 111 001 111 100 111
-				0x73CF, // 3: 111 001 111 001 111
-				0x5BC9, // 4: 101 101 111 001 001
-				0x7E3F, // 5: 111 110 111 001 111
-				0x7E7F, // 6: 111 110 111 101 111
-				0x7249, // 7: 111 001 001 001 001
-				0x7FFF, // 8: 111 111 111 111 111  (simplified)
-				0x7FCF, // 9: 111 111 111 001 111
-			};
-			if (digit < 0 || digit > 9) digit = 0;
-			uint16 pat = digitPatterns[digit];
-			for (int py = 0; py < 5; py++) {
-				for (int px = 0; px < 3; px++) {
-					int bit = 14 - (py * 3 + px);
-					if (pat & (1 << bit)) {
-						int sx = digitX + c * 5 + px;
-						int sy = digitY + py;
-						if (sx >= 0 && sx < width && sy >= 0 && sy < height)
-							dst[sy * pitch + sx] = textColor;
+				const byte *glyph = _hudFont->getCharData(ch);
+				int gw = _hudFont->getCharWidth(ch);
+				int gh = _hudFont->getCharHeight(ch);
+				int gx = x + _hudFont->getCharXOffset(ch);
+				int gy = y + _hudFont->getCharYOffset(ch);
+
+				if (glyph && gw > 0 && gh > 0) {
+					for (int py = 0; py < gh; py++) {
+						int sy = gy + py;
+						if (sy < 0 || sy >= height)
+							continue;
+						for (int px = 0; px < gw; px++) {
+							int sx = gx + px;
+							if (sx < 0 || sx >= width)
+								continue;
+							byte pixel = glyph[py * gw + px];
+							if (pixel != 0)
+								dst[sy * pitch + sx] = pixel;
+						}
 					}
 				}
+				x += gw > 0 ? gw : 4;
 			}
-		}
+		};
+
+		char livesStr[8];
+		Common::sprintf_s(livesStr, "%d", MAX<int>(_lives, 0));
+		drawHudString(livesStr, hudX + 180, hudY + 6);
+
+		char scoreStr[16];
+		Common::sprintf_s(scoreStr, "%07d", MAX<int>(_score, 0));
+		drawHudString(scoreStr, hudX + 257, hudY + 4);
 	}
+
 }
 
 void InsaneRebel1::renderSprite(byte *dst, int pitch, int width, int height,
@@ -808,17 +850,39 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 
 	switch (opcode) {
 	case 0x5E:
-		// Mode control
-		_flyControlMode = (int16)param1;
-		debug(5, "RA1 GAME 0x5E: flyControlMode=%d", _flyControlMode);
+		// RA1 dispatcher inline reset/init path (FUN_1BE1B case 0x5E).
+		// This is not a pure control-mode assignment.
+		_damageFlags = 0;
+		_damageCooldown = 0;
+		_deathTimer = 0;
+		_screenFlash = 0;
+		_gameLatch5D = 0;
+		_gameLatch5F = 0;
+		_driftParam = 0;
+		_driftAccum = 0;
+		_smoothedVelocity = 0;
+		_verticalInput = 0;
+		memset(_velocityHistory, 0, sizeof(_velocityHistory));
+
+		// Field1 == 0 corresponds to baseline recenter behavior in the original.
+		if ((int32)param1 == 0) {
+			_shipPosX = kCenterX;
+			_shipPosY = kCenterY;
+		}
+
+		// Keep a conservative default mode after reset.
+		_flyControlMode = 0;
+		debug(5, "RA1 GAME 0x5E: reset state field1=%d", (int32)param1);
 		break;
 
 	case 0x5D:
-		debug(5, "RA1 GAME 0x5D (link) param=%d", param1);
+		_gameLatch5D = (uint16)param1;
+		debug(5, "RA1 GAME 0x5D (link/event latch) param=%u", _gameLatch5D);
 		break;
 
 	case 0x5F:
-		debug(5, "RA1 GAME 0x5F (event) param=%d", param1);
+		_gameLatch5F = (uint16)param1;
+		debug(5, "RA1 GAME 0x5F (random-hit latch) param=%u", _gameLatch5F);
 		break;
 
 	case 0x07:
