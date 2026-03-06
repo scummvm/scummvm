@@ -5,6 +5,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Neue Spiele:
    - Unterstützung für Necronomicon: The Dawning of Darkness hinzugefügt.
+   - Unterstützung für die DOS-Versionen von American Laser Games hinzugefügt:
+     Crime Patrol, Crime Patrol 2: Drug Wars, The Last Bounty Hunter,
+     Mad Dog McCree, Mad Dog II: The Lost Gold, Space Pirates und
+     Who Shot Johnny Rock?.
 
  Allgemein:
    - Verbesserte PC-Speaker-Emulation.
