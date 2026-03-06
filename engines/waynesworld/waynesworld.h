@@ -128,6 +128,14 @@ private:
 	WWSurface *_introWhead1[8] = {nullptr};
 	WWSurface *_introGhead1[11] = {nullptr};
 
+	int _old_arg_refreshBackgFl = -1;
+	int _old_arg_wBodyIndex = -1;
+	int _old_arg_gBodyIndex = -1;
+	int _old_argWHead1Index = -1;
+	int _old_argGHead1Index = -1;
+	
+	void sub2FEFB(int arg_refreshBackgFl, int arg_wBodyIndex, int arg_gBodyIndex, int arg_wHead1Index, int arg_gHead1Index, int arg_TextId);
+
 	void introPt4_sub1();
 	bool introPt4_sub2();
 	bool introPt4_sub3();

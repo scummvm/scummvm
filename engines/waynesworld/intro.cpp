@@ -30,8 +30,10 @@
 namespace WaynesWorld {
 
 void WaynesWorldEngine::runIntro() {
+#if 0
 	if (!introPt1())
 		return;
+#endif
 	if (!introPt2())
 		return;
 	if (!introPt3(false))
@@ -288,6 +290,45 @@ bool WaynesWorldEngine::introPt4() {
 	return retVal;
 }
 
+void WaynesWorldEngine::sub2FEFB(int arg_refreshBackgFl, int arg_wBodyIndex, int arg_gBodyIndex, int arg_wHead1Index, int arg_gHead1Index, int arg_TextId) {
+	_screen->fillRect(0, 0, 319, 14, 0);
+	_screen->fillRect(0, 185, 319, 199, 0);
+
+	if (arg_refreshBackgFl != _old_arg_refreshBackgFl) {
+		_demoPt2Surface->clear(0);
+		_demoPt2Surface->drawSurface(_introBackg1Image, 0, 15);
+		_old_arg_refreshBackgFl = arg_refreshBackgFl;
+	}
+
+	if (arg_wBodyIndex != _old_arg_wBodyIndex) {
+		if (arg_wBodyIndex)
+			error("Unexpected value %d", arg_wBodyIndex);
+		_demoPt2Surface->drawSurface(_introWbodyImage, 0, 21);
+		_old_arg_wBodyIndex = arg_wBodyIndex;
+	}
+
+	if (arg_gBodyIndex != _old_arg_gBodyIndex) {
+		_demoPt2Surface->drawSurface(_introGbodyImage, 160, 25);
+		_old_arg_gBodyIndex = arg_gBodyIndex;
+	}
+
+	if (arg_wHead1Index != _old_argWHead1Index) {
+		_demoPt2Surface->drawSurface(_introWhead1[arg_wHead1Index], 12, 22);
+		_old_argWHead1Index = arg_wHead1Index;
+	}
+
+	if (arg_gHead1Index != _old_argGHead1Index) {
+		_demoPt2Surface->drawSurface(_introGhead1[arg_gHead1Index], 182, 21);
+		_old_argGHead1Index = arg_gHead1Index;
+	}
+
+	if (arg_TextId != -1) {
+		warning("STUB - sub_3009A(arg_TextId);");
+	}
+	
+	_screen->drawSurface(_demoPt2Surface, 0, 0);
+}
+
 void WaynesWorldEngine::introPt4_sub1() {
 	_fontWW = new GFTFont();
 	_fontWW->loadFromFile("ww.gft");
@@ -319,6 +360,13 @@ void WaynesWorldEngine::introPt4_sub1() {
 }
 
 bool WaynesWorldEngine::introPt4_sub2() {
+	_sound->playSound("sv27.snd", false);
+
+	for (int i = 0; i < 12; ++i) {
+		int index = getRandom(3);
+		sub2FEFB(1, 0, 1, index, 9, 0);
+	}
+	
 	// TODO add a check at each step to return false if ESC is pressed
 	return true;
 }
@@ -343,8 +391,28 @@ bool WaynesWorldEngine::introPt4_sub7() {
 	return true;
 }
 void WaynesWorldEngine::introPt4_sub8() {
+	delete _fontWW;
+	_fontWW = nullptr;
+	delete _introBackg1Image;
+	_introBackg1Image = nullptr;
+	delete _introWbodyImage;
+	_introWbodyImage = nullptr;
+	delete _introGbodyImage;
+	_introGbodyImage = nullptr;
+	for (int i = 0; i < 7; ++i) {
+		delete _introWhead1[i];
+		_introWhead1[i] = nullptr;
+	}
+	for (int i = 0; i < 11; ++i) {
+		delete _introGhead1[i];
+		_introGhead1[i] = nullptr;
+	}
 }
+
 bool WaynesWorldEngine::introPt4_sub9() {
+	warning("STUB - intro 4 pt 9");
+	
+	_midi->stopSong();
 	// TODO add a check at each step to return false if ESC is pressed
 	return true;
 }
