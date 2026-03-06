@@ -113,6 +113,8 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_screenFlash = 0;
 	_frameCounter = 0;
 	_interactiveVideoActive = false;
+	_pathBranchEnabled = false;
+	_rightPathSelected = false;
 	_menuActive = false;
 	_menuConfirmed = false;
 	_menuSelection = 0;
@@ -901,6 +903,21 @@ void InsaneRebel1::updateShipPhysics() {
 	// Clear per-frame damage flags
 	_damageFlags = 0;
 
+	// --- Path branching detection ---
+	// Original enables branching at frame 394 (nextSceneA/nextSceneB in FUN_1B297).
+	// After this frame, if the ship is on the right side of the screen, the player
+	// has chosen the right/easy path. We signal the video to stop so runLevel1()
+	// can switch to L1PLAY1R.
+	if (_pathBranchEnabled && !_rightPathSelected && _frameCounter > (uint32)kPathBranchFrame) {
+		// Ship past center-right threshold = right path chosen
+		static const int16 kRightPathThreshold = kCenterX + 40;
+		if (_shipPosX > kRightPathThreshold) {
+			_rightPathSelected = true;
+			_vm->_smushVideoShouldFinish = true;
+			debug(1, "RA1: Right path selected at frame %d (shipX=%d)", _frameCounter, _shipPosX);
+		}
+	}
+
 	debug(7, "RA1 ship: pos=(%d,%d) vel=%d vIn=%d dx=%d dir=%d health=%d corridor=[%d,%d]-[%d,%d]",
 		_shipPosX, _shipPosY, _smoothedVelocity, _verticalInput,
 		positionDeltaX, _shipDirIndex, _health,
@@ -1210,13 +1227,16 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 
 // Play a passive cinematic (no game callback, skippable).
 // Reuses RA2's pattern: reset handler, set cinematic flags, play video.
-void InsaneRebel1::playCinematic(const char *filename) {
-	debug(1, "InsaneRebel1::playCinematic('%s')", filename);
+// startFrame > 0: fast-forward (decode without display/audio) to that frame.
+void InsaneRebel1::playCinematic(const char *filename, int32 startFrame) {
+	debug(1, "InsaneRebel1::playCinematic('%s', startFrame=%d)", filename, startFrame);
 	SmushPlayer *splayer = _vm->_splayer;
 	_player = splayer;
 	_interactiveVideoActive = false;
 	_vm->_smushVideoShouldFinish = false;
 	splayer->setCurVideoFlags(0x28);  // Cinematic mode + buffer preserve
+	if (startFrame > 0)
+		splayer->setFastForwardToFrame(startFrame);
 	splayer->play(filename, 12);
 }
 
@@ -1282,36 +1302,41 @@ int InsaneRebel1::runMainMenu() {
 	return 5;
 }
 
-// Level 1 flow (0x16100-0x16737):
+// Level 1 flow (0x16100-0x167A2, from disassembly):
 //   1. Load NUTs (L1BANK1, L1BANK2, L1EXPLD, L1BANG, L1LASER)
-//   2. L1HANGAR.ANM — Hangar departure cutscene
-//   3. L1CU1.ANM — Pre-flight cutscene
-//   4. L1PLAY1L.ANM or L1PLAY1R.ANM — Stage 1 flight (alternative paths)
-//      L1PLAY1L = "Hard" left path (788 frames), L1PLAY1R = "Easy" right path (396 frames)
-//      Original branches at frame 394 via nextSceneA/nextSceneB collision zones
+//   2. L1HANGAR.ANM — Full hangar departure cutscene (782 frames, flags 0x0420)
+//   3. L1CU1.ANM — Pre-flight cutscene (flags 0x0400)
+//   4. L1PLAY1L.ANM — Stage 1 flight, hard/left path (788 frames)
+//      At frame 394, if player steers right → L1PLAY1R (easy path, 396 frames)
 //   5. L1CU2.ANM — Mid-level cutscene
-//   6. L1PLAY2.ANM — Stage 2 turret — INTERACTIVE
-//   7. L1END.ANM — Level end cutscene
-//   Death: L1CRASHA/B.ANM → L1DEATH.ANM → L1RETRY.ANM → retry from L1NEW
+//   6. L1PLAY2.ANM — Stage 2 turret
+//      If score < 5 (0x75D0): L1RETRY → retry Stage 2
+//   7. L1END.ANM — Level complete
+//   Death (health<0): L1CRASHA/B → lives check:
+//     lives>0: L1NEW → jump back to Stage 1 (skip L1HANGAR/L1CU1)
+//     lives==0: L1DEATH → return to menu
+
 bool InsaneRebel1::runLevel1() {
 	debug(1, "InsaneRebel1: Running level 1");
 
 	// Load level sprites (original: pushes L1BANK1..L1BANG NUT filenames)
 	loadLevelSprites(1);
 
-	// L1HANGAR.ANM — Hangar departure intro (original: 0x5918, flags 0x0420)
+	// L1HANGAR.ANM — Hangar departure (original: 0x5918, flags 0x0420)
+	// Plays once at level start, never replayed on retry.
 	playCinematic("LVL1/L1HANGAR.ANM");
 	if (_vm->shouldQuit())
 		return false;
 
 	// L1CU1.ANM — Pre-flight cutscene (original: 0x5944, flags 0x0400)
+	// Plays once at level start, never replayed on retry.
 	playCinematic("LVL1/L1CU1.ANM");
 	if (_vm->shouldQuit())
 		return false;
 
-	// Retry loop
+	// Retry loop — on death with lives, L1NEW plays then jumps back here
 	while (!_vm->shouldQuit()) {
-		// Reset health for this attempt
+		// Reset health for this attempt (original: MOV WORD [0x7560], 98 at 0x16214)
 		_health = kMaxHealth;
 		_damageFlags = 0;
 		_prevDamageFlags = 0;
@@ -1319,14 +1344,22 @@ bool InsaneRebel1::runLevel1() {
 		_deathTimer = 0;
 		_screenFlash = 0;
 		_frameCounter = 0;
+		_pathBranchEnabled = true;
+		_rightPathSelected = false;
 
-		// Stage 1 flight — L1PLAY1L (hard/left) or L1PLAY1R (easy/right).
-		// Original selects path via collision zones at frame 394 using
-		// nextSceneA(0x67)/nextSceneB(0x69). For now, always play PLAY1L.
-		// TODO: Implement path branching based on player ship position.
+		// Stage 1 flight — L1PLAY1L (hard/left path)
 		playInteractiveVideo("LVL1/L1PLAY1L.ANM");
 		if (_vm->shouldQuit())
 			return false;
+
+		if (_rightPathSelected && _health >= 0) {
+			debug(1, "InsaneRebel1: Switching to right path (L1PLAY1R)");
+			_pathBranchEnabled = false;
+			playInteractiveVideo("LVL1/L1PLAY1R.ANM");
+			if (_vm->shouldQuit())
+				return false;
+		}
+		_pathBranchEnabled = false;
 
 		if (_health >= 0) {
 			// L1CU2.ANM — Mid-level cutscene (original: 0x5977)
@@ -1339,12 +1372,15 @@ bool InsaneRebel1::runLevel1() {
 			if (_vm->shouldQuit())
 				return false;
 
+			// TODO: Check score threshold (original: CMP WORD [0x75D0], 5)
+			// If score < 5: L1RETRY → retry Stage 2
+
 			// L1END.ANM — Level complete! (original: 0x59a3)
 			playCinematic("LVL1/L1END.ANM");
 			return true;
 		}
 
-		// Death sequence (original: 0x165e8-0x16737)
+		// Death sequence (original: 0x165dd-0x166bb)
 		// Random crash variant A or B
 		if (_vm->_rnd.getRandomNumber(1) == 0)
 			playCinematic("LVL1/L1CRASHA.ANM");
@@ -1353,30 +1389,21 @@ bool InsaneRebel1::runLevel1() {
 		if (_vm->shouldQuit())
 			return false;
 
-		// L1DEATH.ANM (original: 0x5a4b)
-		playCinematic("LVL1/L1DEATH.ANM");
-		if (_vm->shouldQuit())
-			return false;
-
+		// Check lives (original: CMP WORD [0x7562], 0 at 0x1666B)
 		_lives--;
 		if (_lives <= 0) {
-			// Game over — no more retries
+			// Game over — L1DEATH then return (original: 0x166C0)
+			playCinematic("LVL1/L1DEATH.ANM");
 			debug(1, "InsaneRebel1: Game over (no lives left)");
 			return false;
 		}
 
-		// L1RETRY.ANM — Retry prompt (original: 0x5a5c)
-		// After retry, original jumps back to L1NEW→L1PLAY1L (0x16214→0x16680)
-		playCinematic("LVL1/L1RETRY.ANM");
-		if (_vm->shouldQuit())
-			return false;
-
-		// L1NEW.ANM — Briefing before retry (original: 0x5a3c at retry path 0x16680)
+		// Lives remaining — L1NEW briefing then retry (original: 0x16675)
 		playCinematic("LVL1/L1NEW.ANM");
 		if (_vm->shouldQuit())
 			return false;
 
-		// Loop back to gameplay
+		// Loop back to gameplay (original: JMP 0x16214 — health reset + Stage 1)
 	}
 
 	return false;

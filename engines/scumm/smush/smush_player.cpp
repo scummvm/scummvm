@@ -326,6 +326,7 @@ void SmushPlayer::init(int32 speed) {
 	_fobjOffsetY = 0;
 	_scrollX = 0;
 	_scrollY = 0;
+	_fastForwardToFrame = 0;
 
 	_vm->_smushVideoShouldFinish = false;
 	_vm->_smushActive = true;
@@ -1384,7 +1385,7 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 			handleZlibFrameObject(subSize, b);
 			break;
 		case MKTAG('P','S','A','D'):
-			if (!_compressedFileMode) {
+			if (!_compressedFileMode && _fastForwardToFrame == 0) {
 				audioChunk = (uint8 *)malloc(subSize + 8);
 				b.seek(-8, SEEK_CUR);
 				b.read(audioChunk, subSize + 8);
@@ -1433,7 +1434,7 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 			// RA1 voice-over audio: same 12-byte header format as PSAD
 			// (3 × BE32: trackId, seqNum, param) followed by SAUD data.
 			// Feed to audio system identically to PSAD.
-			if (!_compressedFileMode) {
+			if (!_compressedFileMode && _fastForwardToFrame == 0) {
 				audioChunk = (uint8 *)malloc(subSize + 8);
 				b.seek(-8, SEEK_CUR);
 				b.read(audioChunk, subSize + 8);
@@ -1942,7 +1943,15 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 	for (;;) {
 		bool skipFrame = false;
 
-		if (!_paused) {
+		// RA1 fast-forward: process frames rapidly without display/audio
+		// until reaching the target frame. Used to skip recap sections.
+		bool fastForwarding = (_fastForwardToFrame > 0 && _frame < _fastForwardToFrame);
+
+		if (fastForwarding) {
+			// Process frame immediately without timing
+			timerCallback();
+			_updateNeeded = false;
+		} else if (!_paused) {
 			uint32 now, elapsed;
 
 			if (_insanity) {
@@ -1980,10 +1989,20 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 			}
 		}
 
-		_vm->parseEvents();
-		_vm->processInput();
+		// When fast-forwarding completes, reset timing so playback
+		// starts from the correct point without trying to catch up.
+		if (_fastForwardToFrame > 0 && _frame >= _fastForwardToFrame) {
+			_startFrame = _frame;
+			_startTime = _vm->_system->getMillis();
+			_fastForwardToFrame = 0;
+		}
 
-		if (!_paused) {
+		if (!fastForwarding) {
+			_vm->parseEvents();
+			_vm->processInput();
+		}
+
+		if (!_paused && !fastForwarding) {
 			if (_palDirtyMax >= _palDirtyMin) {
 				// Apply gamma correction for Mac versions
 				if (_vm->_macScreen) {
@@ -2076,7 +2095,8 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 			_vm->_system->updateScreen();
 		}
 
-		_vm->_system->delayMillis(10);
+		if (!fastForwarding)
+			_vm->_system->delayMillis(10);
 	}
 
 	release();

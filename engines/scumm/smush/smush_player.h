@@ -190,6 +190,7 @@ private:
 	bool _skipNext;
 	bool _ra2FastForwarding;  // Fast-forwarding RA2 BEG video to establish background
 	uint32 _frame;
+	uint32 _fastForwardToFrame;  // RA1: skip display/audio until this frame (0 = disabled)
 
 	// RA2: Global FOBJ position offsets (DAT_00482c1c / DAT_00482c20 in original)
 	// Set by InsaneRebel2 during IACT opcode 6 processing, reset in procPostRendering.
@@ -255,6 +256,7 @@ public:
 	bool isAudioCallbackEnabled();
 	byte *getVideoPalette();
 	void setCurVideoFlags(int16 flags);
+	void setFastForwardToFrame(uint32 frame) { _fastForwardToFrame = frame; }
 
 	// Masked regions - areas where video should not update (e.g., destroyed enemies)
 	// The Insane class can add/remove regions, and decodeFrameObject will restore

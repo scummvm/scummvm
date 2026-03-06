@@ -91,7 +91,8 @@ private:
 	bool runLevel1();
 
 	// Play a passive cinematic (no game callback, skippable)
-	void playCinematic(const char *filename);
+	// startFrame > 0: fast-forward (decode without display) to that frame
+	void playCinematic(const char *filename, int32 startFrame = 0);
 
 	// Play interactive gameplay video (with ship physics + HUD)
 	void playInteractiveVideo(const char *filename);
@@ -190,6 +191,13 @@ private:
 
 	// True only while an interactive gameplay SMUSH is running.
 	bool _interactiveVideoActive;
+
+	// Path branching for levels with left/right alternative videos.
+	// Original sets nextSceneA/nextSceneB at frame 394 to enable branching.
+	// In our implementation, we check ship position after the branch frame.
+	static const int kPathBranchFrame = 394;
+	bool _pathBranchEnabled;     // True after branch frame is reached
+	bool _rightPathSelected;     // True if player chose the right/easy path
 
 	// Main menu state (for O1OPTION interactive overlay)
 	bool _menuActive;
