@@ -739,6 +739,19 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 					}
 				}
 
+				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+					score->_playState = kPlayStarted;
+
+					Datum frameDatum(rf + 1);
+					Datum movieDatum;
+					g_lingo->func_goto(frameDatum, movieDatum, true);
+
+					_state->_prevFrame = score->getCurrentFrameNum();
+
+					Director::DT::setSelectedChannel(ch);
+					window->render(true);
+				}
+
 				if (ImGui::IsItemHovered()) {
 					_state->_hoveredScoreCast.frame = rf;
 					_state->_hoveredScoreCast.channel = ch;
