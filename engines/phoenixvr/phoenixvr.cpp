@@ -769,23 +769,23 @@ Common::Error PhoenixVREngine::run() {
 	}
 	{
 		Common::File textes;
-		if (!textes.open(Common::Path("textes.txt")))
-			error("can't read textes.txt");
-		while (!textes.eos()) {
-			auto text = textes.readLine();
-			if (text.empty() || text[0] != '*')
-				continue;
-			uint pos = 1;
-			while (pos < text.size() && Common::isSpace(text[pos]))
-				++pos;
-			int textId = atoi(text.c_str() + pos);
-			while (pos < text.size() && Common::isDigit(text[pos]))
-				++pos;
-			while (pos < text.size() && Common::isSpace(text[pos]))
-				++pos;
-			_textes.setVal(textId, text.substr(pos));
+		if (textes.open(Common::Path("textes.txt"))) {
+			while (!textes.eos()) {
+				auto text = textes.readLine();
+				if (text.empty() || text[0] != '*')
+					continue;
+				uint pos = 1;
+				while (pos < text.size() && Common::isSpace(text[pos]))
+					++pos;
+				int textId = atoi(text.c_str() + pos);
+				while (pos < text.size() && Common::isDigit(text[pos]))
+					++pos;
+				while (pos < text.size() && Common::isSpace(text[pos]))
+					++pos;
+				_textes.setVal(textId, text.substr(pos));
+			}
+			debug("loaded %u textes", _textes.size());
 		}
-		debug("loaded %u textes", _textes.size());
 	}
 	setNextScript("script.lst");
 
