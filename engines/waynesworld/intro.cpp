@@ -30,10 +30,8 @@
 namespace WaynesWorld {
 
 void WaynesWorldEngine::runIntro() {
-#if 0
 	if (!introPt1())
 		return;
-#endif
 	if (!introPt2())
 		return;
 	if (!introPt3(false))
@@ -334,6 +332,7 @@ void WaynesWorldEngine::sub2FEFB(int arg_refreshBackgFl, int arg_wBodyIndex, int
 	if (arg_wBodyIndex != _old_arg_wBodyIndex) {
 		if (arg_wBodyIndex)
 			error("Unexpected value %d", arg_wBodyIndex);
+
 		_demoPt2Surface->drawSurface(_introWbodyImage, 0, 21);
 		_old_arg_wBodyIndex = arg_wBodyIndex;
 	}
@@ -412,12 +411,27 @@ bool WaynesWorldEngine::introPt4_sub2() {
 		int index = getRandom(3);
 		sub2FEFB(1, 0, 1, index, 9, 0);
 	}
-	
+
+	++_startOawPos;
 	while (_sound->isSFXPlaying())
 		waitMillis(30);
 
 	_sound->playSound("sv20.snd", false);
 
+	for (int i = 0; i < 5; ++i) {
+		int index = getRandom(11);
+		sub2FEFB(1, 0, 1, 0, index, 1);
+	}
+	
+	++_startOagPos;
+
+	for (int i = 0; i < 15; ++i) {
+		int index = getRandom(3);
+		sub2FEFB(1, 0, 1, index, 9, 0);
+	}
+
+	++_startOawPos;
+	
 	// TODO add a check at each step to return false if ESC is pressed
 	return true;
 }
