@@ -140,6 +140,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_screenFlash = 0;
 	_frameCounter = 0;
 	_interactiveVideoActive = false;
+	_gameCounter = 0;
 	_pathBranchEnabled = false;
 	_rightPathSelected = false;
 	_menuActive = false;
@@ -993,17 +994,15 @@ void InsaneRebel1::updateShipPhysics() {
 	_damageFlags = 0;
 
 	// --- Path branching detection ---
-	// Original enables branching at frame 394 (nextSceneA/nextSceneB in FUN_1B297).
-	// After this frame, if the ship is on the right side of the screen, the player
-	// has chosen the right/easy path. We signal the video to stop so runLevel1()
-	// can switch to L1PLAY1R.
-	if (_pathBranchEnabled && !_rightPathSelected && _frameCounter > (uint32)kPathBranchFrame) {
-		// Ship past center-right threshold = right path chosen
-		static const int16 kRightPathThreshold = kCenterX + 40;
-		if (_shipPosX > kRightPathThreshold) {
+	// Original (FUN_1B297): at GAME counter 394 (0x18A), sets nextSceneA=0x67/nextSceneB=0x69.
+	// After this point, drift goes strongly negative (pushing ship left for the hard path).
+	// If ship is right of center, player chose the right/easy path → switch to L1PLAY1R.
+	// The check fires once when the game counter first reaches the branch point.
+	if (_pathBranchEnabled && !_rightPathSelected && _gameCounter >= kPathBranchCounter) {
+		if (_shipPosX > kCenterX) {
 			_rightPathSelected = true;
 			_vm->_smushVideoShouldFinish = true;
-			debug(1, "RA1: Right path selected at frame %d (shipX=%d)", _frameCounter, _shipPosX);
+			debug(1, "RA1: Right path selected (counter=%d, shipX=%d)", _gameCounter, _shipPosX);
 		}
 	}
 
@@ -1254,14 +1253,15 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 		break;
 
 	case 0x07:
-		// Per-frame corridor data: f1=frame index, f2=constant(788), f3=drift bias, f4=unused
-		// Original asm: drift bias * tuning "drift" param, combined with random turbulence
-		// f4 is never referenced in the original handler function
+		// Per-frame corridor data: f1=frame counter, f2=max frames, f3=drift bias, f4=unused
+		// f1 is the original's _DAT_7740 (game frame counter)
+		// f3 is the drift/wind parameter combined with tuning table
+		_gameCounter = param1;
 		if (subSize >= 20) {
-			b.readUint32BE(); // f2 (constant 788, unused in physics)
+			b.readUint32BE(); // f2 (max frames, unused in physics)
 			_driftParam = (int16)(int32)b.readUint32BE();
 			b.readUint32BE(); // f4 (unused in original assembly)
-			debug(7, "RA1 GAME 0x07: frame=%d driftParam=%d", param1, _driftParam);
+			debug(7, "RA1 GAME 0x07: counter=%d driftParam=%d", _gameCounter, _driftParam);
 		}
 		break;
 
@@ -1476,10 +1476,13 @@ bool InsaneRebel1::runLevel1() {
 		_deathTimer = 0;
 		_screenFlash = 0;
 		_frameCounter = 0;
+		_gameCounter = 0;
 		_pathBranchEnabled = true;
 		_rightPathSelected = false;
 
 		// Stage 1 flight — L1PLAY1L (hard/left path)
+		// The first 394 frames are the common section. At counter 394, if
+		// ship is right of center, we switch to L1PLAY1R (easy path).
 		playInteractiveVideo("LVL1/L1PLAY1L.ANM");
 		if (_vm->shouldQuit())
 			return false;
@@ -1587,6 +1590,10 @@ void InsaneRebel1::runGame() {
 // Play interactive gameplay video (with ship physics + HUD).
 void InsaneRebel1::playInteractiveVideo(const char *filename) {
 	debug(1, "InsaneRebel1::playInteractiveVideo('%s')", filename);
+
+	// Stop any leftover audio from previous video
+	terminateAudio();
+	initAudio(_audioSampleRate);
 
 	SmushPlayer *splayer = _vm->_splayer;
 	_player = splayer;

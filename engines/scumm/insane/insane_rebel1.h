@@ -205,10 +205,11 @@ private:
 	bool _interactiveVideoActive;
 
 	// Path branching for levels with left/right alternative videos.
-	// Original sets nextSceneA/nextSceneB at frame 394 to enable branching.
-	// In our implementation, we check ship position after the branch frame.
-	static const int kPathBranchFrame = 394;
-	bool _pathBranchEnabled;     // True after branch frame is reached
+	// Original sets nextSceneA/nextSceneB when GAME 0x07 counter == 394 (0x18A).
+	// We check ship position at that counter value to decide left vs right path.
+	static const int32 kPathBranchCounter = 394;  // GAME 0x07 field1 value
+	int32 _gameCounter;          // GAME 0x07 field1 — the original's _DAT_7740
+	bool _pathBranchEnabled;     // True when branching is active for this video
 	bool _rightPathSelected;     // True if player chose the right/easy path
 
 	// Main menu / options state
