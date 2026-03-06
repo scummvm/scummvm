@@ -38,7 +38,7 @@ bool Console::cmdWarp(int argc, const char **argv) {
 		return true;
 	}
 	g_engine->goToWarp(argv[1]);
-	return true;
+	return false;
 }
 
 bool Console::cmdScript(int argc, const char **argv) {
@@ -47,7 +47,7 @@ bool Console::cmdScript(int argc, const char **argv) {
 		return true;
 	}
 	g_engine->setNextScript(argv[1]);
-	return true;
+	return false;
 }
 
 } // End of namespace PhoenixVR
