@@ -252,6 +252,7 @@ void PelrockEngine::addInventoryItem(int item) {
 	}
 	_newItem = item;
 	int frameCounter = 0;
+	_state->addInventoryItem(item);
 	while (frameCounter < kIconFlashDuration) {
 		_events->pollEvent();
 
@@ -262,7 +263,6 @@ void PelrockEngine::addInventoryItem(int item) {
 		}
 		g_system->delayMillis(10);
 	}
-	_state->addInventoryItem(item);
 
 	checkObjectsForPart2();
 }
@@ -1205,25 +1205,27 @@ void PelrockEngine::closeTravelAgencyDoor(HotSpot *hotspot) {
 }
 
 void PelrockEngine::usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot) {
-	_state->removeInventoryItem(86);
-	addInventoryItem(76);
-	_sound->playMusicTrack(27);
-	checkIngredients();
-	_dialog->say(_res->_ingameTexts[CUIDADOIMPRUDENTE]);
-	_alfredState.x -= 10;
-	_alfredState.y += 20;
-	playAlfredSpecialAnim(5);
-	_sound->playSound(_room->_roomSfx[0], 0); // Belch
-	waitForSoundEnd();
-	_alfredState.animState = ALFRED_SKIP_DRAWING;
-	_graphics->fadeToBlack(10);
-	// update conversaton state
-	_alfredState.x = 300;
-	_alfredState.y = 238;
-	waitForSoundEnd();
-	_alfredState.animState = ALFRED_IDLE;
-	setScreenAndPrepare(28, ALFRED_DOWN);
-	_dialog->say(_res->_ingameTexts[QUEOSCUROESTAESTO]);
+	_state->removeInventoryItem(76);
+	addInventoryItem(86);
+	if(_state->getFlag(FLAG_CROCODILLO_ENCENDIDO) == false) {
+		_sound->playMusicTrack(27);
+		checkIngredients();
+		_dialog->say(_res->_ingameTexts[CUIDADOIMPRUDENTE]);
+		_alfredState.x -= 10;
+		_alfredState.y += 20;
+		playAlfredSpecialAnim(5);
+		_sound->playSound(_room->_roomSfx[0], 0); // Belch
+		waitForSoundEnd();
+		_alfredState.animState = ALFRED_SKIP_DRAWING;
+		_graphics->fadeToBlack(10);
+		// update conversaton state
+		_alfredState.x = 300;
+		_alfredState.y = 238;
+		waitForSoundEnd();
+		_alfredState.animState = ALFRED_IDLE;
+		setScreenAndPrepare(28, ALFRED_DOWN);
+		_dialog->say(_res->_ingameTexts[QUEOSCUROESTAESTO]);
+	}
 }
 
 void PelrockEngine::playAlfredSpecialAnim(int anim, bool reverse) {
@@ -1761,6 +1763,9 @@ void PelrockEngine::useWigWithPot(int inventoryObject, HotSpot *hotspot) {
 }
 
 void PelrockEngine::magicFormula(int inventoryObject, HotSpot *hotspot) {
+	if(inventoryObject == 86) {
+		addInventoryItem(76);
+	}
 	_state->removeInventoryItem(inventoryObject);
 	_state->setFlag(FLAG_FORMULA_MAGICA, _state->getFlag(FLAG_FORMULA_MAGICA) + 1);
 	if (_state->getFlag(FLAG_FORMULA_MAGICA) == 4) {

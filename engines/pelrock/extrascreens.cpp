@@ -63,8 +63,6 @@ Spell *SpellBook::run() {
 
 void SpellBook::init() {
 	_compositeScreen.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
-
-	// selectPage(0);
 }
 
 void SpellBook::selectPage(int page) {
@@ -93,7 +91,7 @@ void SpellBook::selectPage(int page) {
 	_spell->image = new byte[w * h];
 	extractSingleFrame(spriteData, _spell->image, page, w, h);
 
-	juegoFile.seek(0x0004661C, SEEK_SET);
+	juegoFile.seek(0x0004661D, SEEK_SET);
 	byte *textData = new byte[2861];
 	juegoFile.read(textData, 2861);
 
@@ -103,7 +101,6 @@ void SpellBook::selectPage(int page) {
 	}
 
 	Common::Array<Common::StringArray> spells = _res->processTextData(textData, 2861, true);
-
 	_spell->text = spells[page];
 	delete[] compressedData;
 	delete[] spriteData;

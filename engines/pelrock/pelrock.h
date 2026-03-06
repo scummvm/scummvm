@@ -84,6 +84,8 @@ private:
 
 	void showActionBalloon(int posx, int posy, int curFrame);
 
+	int getScrollPositionForItem(int item);
+
 	void checkMouse();
 	void copyBackgroundToBuffer();
 	void updateAnimations();

@@ -1391,6 +1391,7 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 		// This means the balloon bottom overlaps Alfred's head by ~10 pixels.
 		_actionPopupState.y = MAX(10, (int)_alfredState.y - (int)kAlfredFrameHeight - 102);
 		_actionPopupState.isActive = true;
+		_inventoryOverlayState.invStartingPos = -1;
 		_actionPopupState.curFrame = 0;
 		debug("Setting alfred under popup: %d", alfredUnder);
 		_actionPopupState.isAlfredUnder = alfredUnder;
@@ -1592,8 +1593,14 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 	}
 
 	if (_inventoryOverlayState.isActive) {
+		// find selectedInventoryItem index in inventoryItems, set invStartingPos to that index if found, otherwise 0
+		int scrollPos = getScrollPositionForItem(_state->selectedInventoryItem);
+		if(_inventoryOverlayState.invStartingPos == -1) {
+			_inventoryOverlayState.invStartingPos = scrollPos != -1 ? scrollPos : 0;
+		}
 		showInventoryOverlay();
 		if (_inventoryOverlayState.posInInventorySelectionArea(_events->_mouseX, _events->_mouseY)) {
+			_inventoryOverlayState.flashingIconIndex = -1;
 			checkMouseOverInventoryOverlay(_events->_mouseX, _events->_mouseY);
 		}
 	}
@@ -1610,6 +1617,23 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 	} else {
 		_actionPopupState.curFrame = 0;
 	}
+}
+
+int PelrockEngine::getScrollPositionForItem(int item) {
+	int selectedIndex = -1;
+	for (size_t i = 0; i < _state->inventoryItems.size(); i++) {
+		if (_state->inventoryItems[i] == item) {
+			selectedIndex = i;
+			break;
+		}
+	}
+	if (selectedIndex != -1) {
+		// put the selected item at the end in the overlay
+		if (_state->inventoryItems.size() > kInventoryPageSize) {
+			selectedIndex = CLIP(selectedIndex, 0, (int)_state->inventoryItems.size() - kInventoryPageSize);
+		}
+	}
+	return selectedIndex;
 }
 
 void PelrockEngine::animateTalkingNPC(Sprite *animSet) {
@@ -1653,21 +1677,10 @@ Common::Point getPositionInOverlayForIndex(uint index) {
 }
 
 void PelrockEngine::pickupIconFlash() {
-	_graphics->showOverlay(60, _compositeBuffer);
-	if (_newItem == -1)
-		return;
 	uint invSize = _state->inventoryItems.size();
-	for (int i = 0; i < invSize; i++) {
-		Common::Point p = getPositionInOverlayForIndex(i);
-		drawSpriteToBuffer(_compositeBuffer, _res->getIconForObject(_state->inventoryItems[i]).iconData, p.x, p.y, 60, 60, 1);
-	}
-
-	InventoryObject item = _res->getIconForObject(_newItem);
-	if (_chrono->getFrameCount() % kIconBlinkPeriod == 0) {
-		Common::Point p = getPositionInOverlayForIndex(invSize);
-		debug("Drawing pickup icon for item %d at inventory index %d, position %d,%d", _newItem, invSize, p.x, p.y);
-		drawSpriteToBuffer(_compositeBuffer, item.iconData, p.x, p.y, 60, 60, 1);
-	}
+	_inventoryOverlayState.invStartingPos = getScrollPositionForItem(_state->inventoryItems[invSize - 1]);
+	_inventoryOverlayState.flashingIconIndex = invSize - 1;
+	showInventoryOverlay();
 }
 
 void PelrockEngine::showInventoryOverlay() {
@@ -1675,6 +1688,12 @@ void PelrockEngine::showInventoryOverlay() {
 	uint invSize = _state->inventoryItems.size();
 	// invStartingPos is an ITEM index (not a page number).
 	// The original game scrolls 1 item at a time, not 1 page at a time.
+	if(_inventoryOverlayState.invStartingPos == -1) {
+		_inventoryOverlayState.invStartingPos = getScrollPositionForItem(_state->selectedInventoryItem);
+		if(_inventoryOverlayState.invStartingPos == -1) {
+			_inventoryOverlayState.invStartingPos = 0;
+		}
+	}
 	int firstItem = _inventoryOverlayState.invStartingPos;
 
 	for (int i = firstItem; i < (int)invSize && i < firstItem + kInventoryPageSize; i++) {
@@ -1701,10 +1720,12 @@ void PelrockEngine::checkMouseOverInventoryOverlay(int x, int y) {
 		if (_inventoryOverlayState.invStartingPos > 0) {
 			_inventoryOverlayState.invStartingPos--;
 		}
+		debug("Mouse at x=%d triggers scroll left, new invStartingPos=%d", x, _inventoryOverlayState.invStartingPos);
 	} else if (x >= 620) {
 		if (_inventoryOverlayState.invStartingPos + kInventoryPageSize < (int)_state->inventoryItems.size()) {
 			_inventoryOverlayState.invStartingPos++;
 		}
+		debug("Mouse at x=%d triggers scroll right, new invStartingPos=%d", x, _inventoryOverlayState.invStartingPos);
 	} else {
 		// mouse hover over inventory item, laid out horizontally, y coordinate is not relevant
 		int index = (x - 20) / 60 + _inventoryOverlayState.invStartingPos;
@@ -1959,6 +1980,10 @@ void PelrockEngine::changeCursor(Cursor cursor) {
 }
 
 void PelrockEngine::checkMouseHover() {
+	if(_actionPopupState.isActive) {
+		debug("Mouse hover ignored because action popup is active");
+		return;
+	}
 
 	bool hotspotDetected = false;
 	int hotspotIndex = isHotspotUnder(_events->_mouseX, _events->_mouseY);

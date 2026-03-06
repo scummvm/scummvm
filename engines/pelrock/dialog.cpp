@@ -838,7 +838,7 @@ void DialogManager::addGoodbyeOptionIfNeeded(Common::Array<ChoiceOption> *choice
 		termChoice.isTerminator = true;
 		termChoice.isDisabled = false;
 		termChoice.shouldDisableOnSelect = false;
-		termChoice.text = g_engine->_res->_conversationTerminator;
+		termChoice.text = "  " + g_engine->_res->_conversationTerminator;
 		choices->push_back(termChoice);
 	}
 }
