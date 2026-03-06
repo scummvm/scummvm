@@ -1025,7 +1025,7 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	int origHeight = height;
 
 	int srcSkipY = 0;
-	if (isRA2()) {
+	if (isRA1() || isRA2()) {
 		ra2AdjustFrameCoords(left, top, width, height, pitch, &srcSkipY);
 		if (width <= 0 || height <= 0)
 			return;
@@ -1034,7 +1034,7 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	// For RLE codecs, skip source rows that were clipped from the top.
 	// Each RLE row has a 2-byte size prefix, so we can advance past them.
 	const uint8 *adjustedSrc = src;
-	if (srcSkipY > 0 && (codec == SMUSH_CODEC_RLE || codec == SMUSH_CODEC_RLE_ALT)) {
+	if (isRA1() && srcSkipY > 0 && (codec == SMUSH_CODEC_RLE || codec == SMUSH_CODEC_RLE_ALT)) {
 		for (int i = 0; i < srcSkipY; i++) {
 			adjustedSrc += READ_LE_UINT16(adjustedSrc) + 2;
 		}
@@ -1125,8 +1125,8 @@ void SmushPlayer::handleZlibFrameObject(int32 subSize, Common::SeekableReadStrea
 
 	byte *ptr = fobjBuffer;
 	int codec = READ_LE_UINT16(ptr); ptr += 2;
-	int left = isRA2() ? (int16)READ_LE_UINT16(ptr) : (int)READ_LE_UINT16(ptr); ptr += 2;
-	int top = isRA2() ? (int16)READ_LE_UINT16(ptr) : (int)READ_LE_UINT16(ptr); ptr += 2;
+	int left = (int16)READ_LE_UINT16(ptr); ptr += 2;
+	int top = (int16)READ_LE_UINT16(ptr); ptr += 2;
 	int width = READ_LE_UINT16(ptr); ptr += 2;
 	int height = READ_LE_UINT16(ptr); ptr += 2;
 
@@ -1151,8 +1151,8 @@ void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b
 		ra1Param = (codec >> 8) & 0xFF; // byte[1] = palette base (e.g. 0xF0)
 		codec &= 0xFF;                  // byte[0] = actual codec number
 	}
-	int left = isRA2() ? (int)b.readSint16LE() : (int)b.readUint16LE();
-	int top = isRA2() ? (int)b.readSint16LE() : (int)b.readUint16LE();
+	int left = (int)b.readSint16LE();
+	int top = (int)b.readSint16LE();
 	int width = b.readUint16LE();
 	int height = b.readUint16LE();
 
@@ -1343,10 +1343,11 @@ void SmushPlayer::handleAnimHeader(int32 subSize, Common::SeekableReadStream &b)
 		}
 
 		if (isRA1()) {
-			// v1 AHDR: offset 4-5 is not width/height, palette starts at offset 6
-			// RA1 resolution is always 384x242, set from first FOBJ
-			_width = 384;
-			_height = 242;
+			// v1 AHDR: offset 4-5 is not width/height, palette starts at offset 6.
+			// Keep dimensions unset here and let FOBJ decoding select buffer and
+			// effective width/height (screen-sized or 384x242 special buffer).
+			_width = 0;
+			_height = 0;
 		} else {
 			_width = READ_LE_UINT16(&headerContent[4]);
 			_height = READ_LE_UINT16(&headerContent[6]);
@@ -1395,6 +1396,8 @@ SmushFont *SmushPlayer::getFont(int font) {
 		}
 	} else if (isRA2()) {
 		return ra2GetFont(font);
+	} else if (isRA1()) {
+		return ra1GetFont(font);
 	} else {
 		int numFonts = (_vm->_game.id == GID_CMI && !(_vm->_game.features & GF_DEMO)) ? 5 : 4;
 		assert(font >= 0 && font < numFonts);
@@ -1404,6 +1407,43 @@ SmushFont *SmushPlayer::getFont(int font) {
 	}
 
 	assert(_sf[font]);
+	return _sf[font];
+}
+
+SmushFont *SmushPlayer::ra1GetFont(int font) {
+	const char *ra1Fonts[] = {
+		"SYS/TALKFONT.NUT",
+		"SYS/TECHFONT.NUT",
+		"SYS/TITLFONT.NUT",
+		"SYS/DISPLAY.NUT"
+	};
+	const char *ra2FallbackFonts[] = {
+		"SYSTM/TALKFONT.NUT",
+		"SYSTM/SMALFONT.NUT",
+		"SYSTM/TITLFONT.NUT",
+		"SYSTM/SMALFONT.NUT"
+	};
+
+	int numFonts = ARRAYSIZE(ra1Fonts);
+	if (font < 0 || font >= numFonts) {
+		debugC(DEBUG_SMUSH, "SmushPlayer::ra1GetFont: unknown font %d, using TALKFONT", font);
+		font = 0;
+	}
+
+	if (_sf[font])
+		return _sf[font];
+
+	const char *fontPath = ra1Fonts[font];
+	ScummFile *testFile = _vm->instantiateScummFile();
+	bool ok = _vm->openFile(*testFile, Common::Path(fontPath));
+	if (ok)
+		testFile->close();
+	delete testFile;
+
+	if (!ok)
+		fontPath = ra2FallbackFonts[font];
+
+	_sf[font] = new SmushFont(_vm, fontPath, true);
 	return _sf[font];
 }
 
@@ -1714,13 +1754,36 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 				if (!skipFrame) {
 					// WORKAROUND for bug #2415: "FT DEMO: assertion triggered
 					// when playing movie". Some frames there are 384 x 224
-					int frameWidth = MIN(_width, _vm->_screenWidth);
-					int frameHeight = MIN(_height, _vm->_screenHeight);
+					int frameWidth;
+					int frameHeight;
+					const byte *dst;
 
-					const byte *dst = _dst + _scrollY * _width + _scrollX;
+					if (isRA1()) {
+						if (_dst == nullptr || _width <= 0 || _height <= 0) {
+							_updateNeeded = false;
+							continue;
+						}
+
+						const int srcX = CLIP(_scrollX, 0, _width - 1);
+						const int srcY = CLIP(_scrollY, 0, _height - 1);
+
+						frameWidth = MIN(_width - srcX, _vm->_screenWidth);
+						frameHeight = MIN(_height - srcY, _vm->_screenHeight);
+						if (frameWidth <= 0 || frameHeight <= 0) {
+							_updateNeeded = false;
+							continue;
+						}
+
+						dst = _dst + srcY * _width + srcX;
+					} else {
+						frameWidth = MIN(_width, _vm->_screenWidth);
+						frameHeight = MIN(_height, _vm->_screenHeight);
+						dst = _dst + _scrollY * _width + _scrollX;
+					}
 
 					if (_vm->_macScreen) {
-						_vm->mac_drawBufferToScreen(dst, frameWidth, 0, 0, frameWidth, frameHeight);
+						int srcPitch = isRA1() ? _width : frameWidth;
+						_vm->mac_drawBufferToScreen(dst, srcPitch, 0, 0, frameWidth, frameHeight);
 					} else {
 						_vm->_system->copyRectToScreen(dst, _width, 0, 0, frameWidth, frameHeight);
 					}

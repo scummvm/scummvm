@@ -143,18 +143,37 @@ void NutRenderer::loadFont(const char *filename) {
 	// whole of the undecoded font file.
 
 	_numChars = READ_LE_UINT16(dataSrc + 10);
-	assert(_numChars <= ARRAYSIZE(_chars));
+	if (_numChars > ARRAYSIZE(_chars)) {
+		warning("NutRenderer::loadFont(%s) numChars (%d) exceeds max, clamping", filename, _numChars);
+		_numChars = ARRAYSIZE(_chars);
+	}
 
 	uint32 offset = 0;
 	uint32 decodedLength = 0;
 	int l;
 
 	for (l = 0; l < _numChars; l++) {
-		offset += READ_BE_UINT32(dataSrc + offset + 4) + 16;
+		if (offset + 8 > length) {
+			warning("NutRenderer::loadFont(%s) truncated before char %d (offset %x), clamping", filename, l, offset);
+			break;
+		}
+		uint32 chunkSize = READ_BE_UINT32(dataSrc + offset + 4);
+		uint64 nextOffset = (uint64)offset + chunkSize + 16 + (chunkSize & 1);
+		if (nextOffset + 18 > length) {
+			warning("NutRenderer::loadFont(%s) font chunk exceeds file at char %d (offset %x), clamping", filename, l, offset);
+			break;
+		}
+		offset = (uint32)nextOffset;
 		int width = READ_LE_UINT16(dataSrc + offset + 14);
 		_fontHeight = READ_LE_UINT16(dataSrc + offset + 16);
 		decodedLength += width * _fontHeight;
 	}
+
+	if (l < _numChars)
+		_numChars = l;
+
+	if (_numChars <= 0 || decodedLength == 0)
+		error("NutRenderer::loadFont(%s) no decodable characters", filename);
 
 	debug(1, "NutRenderer::loadFont('%s') - decodedLength = %d", filename, decodedLength);
 
@@ -163,14 +182,28 @@ void NutRenderer::loadFont(const char *filename) {
 
 	offset = 0;
 	for (l = 0; l < _numChars; l++) {
-		offset += READ_BE_UINT32(dataSrc + offset + 4) + 8;
+		if (offset + 8 > length) {
+			warning("NutRenderer::loadFont(%s) invalid font chunk header %d (offset %x), stopping decode", filename, l, offset);
+			break;
+		}
+		uint32 chunkSize = READ_BE_UINT32(dataSrc + offset + 4);
+		uint64 nextOffset = (uint64)offset + chunkSize + 8 + (chunkSize & 1);
+		if (nextOffset + 8 > length) {
+			warning("NutRenderer::loadFont(%s) FRME chunk exceeds file %d (offset %x), stopping decode", filename, l, offset);
+			break;
+		}
+		offset = (uint32)nextOffset;
 		if (READ_BE_UINT32(dataSrc + offset) != MKTAG('F','R','M','E')) {
-			error("NutRenderer::loadFont(%s) there is no FRME chunk %d (offset %x)", filename, l, offset);
+			warning("NutRenderer::loadFont(%s) no FRME chunk %d (offset %x), stopping decode", filename, l, offset);
 			break;
 		}
 		offset += 8;
+		if (offset + 22 > length) {
+			warning("NutRenderer::loadFont(%s) FOBJ chunk exceeds file %d (offset %x), stopping decode", filename, l, offset);
+			break;
+		}
 		if (READ_BE_UINT32(dataSrc + offset) != MKTAG('F','O','B','J')) {
-			error("NutRenderer::loadFont(%s) there is no FOBJ chunk in FRME chunk %d (offset %x)", filename, l, offset);
+			warning("NutRenderer::loadFont(%s) no FOBJ chunk in FRME chunk %d (offset %x), stopping decode", filename, l, offset);
 			break;
 		}
 		int codec = READ_LE_UINT16(dataSrc + offset + 8);
@@ -258,9 +291,11 @@ void NutRenderer::loadFontFromData(const byte *data, int32 dataSize) {
 	for (l = 0; l < _numChars; l++) {
 		if (offset + 8 > length)
 			break;
-		offset += READ_BE_UINT32(dataSrc + offset + 4) + 16;
-		if (offset + 18 > length)
+		uint32 chunkSize = READ_BE_UINT32(dataSrc + offset + 4);
+		uint64 nextOffset = (uint64)offset + chunkSize + 16 + (chunkSize & 1);
+		if (nextOffset + 18 > length)
 			break;
+		offset = (uint32)nextOffset;
 		int width = READ_LE_UINT16(dataSrc + offset + 14);
 		_fontHeight = READ_LE_UINT16(dataSrc + offset + 16);
 		decodedLength += width * _fontHeight;
@@ -275,7 +310,11 @@ void NutRenderer::loadFontFromData(const byte *data, int32 dataSize) {
 	for (l = 0; l < _numChars; l++) {
 		if (offset + 8 > length)
 			break;
-		offset += READ_BE_UINT32(dataSrc + offset + 4) + 8;
+		uint32 chunkSize = READ_BE_UINT32(dataSrc + offset + 4);
+		uint64 nextOffset = (uint64)offset + chunkSize + 8 + (chunkSize & 1);
+		if (nextOffset + 8 > length)
+			break;
+		offset = (uint32)nextOffset;
 		if (offset + 8 > length)
 			break;
 		if (READ_BE_UINT32(dataSrc + offset) != MKTAG('F','R','M','E')) {

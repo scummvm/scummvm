@@ -328,6 +328,7 @@ private:
 							 int left, int top, int width, int height);
 	void ra2HandleGost(int32 subSize, Common::SeekableReadStream &b);
 	void ra2ResetDeltaPalette();
+	SmushFont *ra1GetFont(int font);
 	SmushFont *ra2GetFont(int font);
 	void ra2ParseNextFrame();
 	void ra2FixupAnimHeader();

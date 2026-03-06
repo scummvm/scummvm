@@ -548,8 +548,8 @@ void SmushPlayer::clearMaskedRegions() {
 }
 
 void SmushPlayer::setScrollOffset(int x, int y) {
-	_scrollX = x;
-	_scrollY = y;
+	_scrollX = MAX(0, x);
+	_scrollY = MAX(0, y);
 }
 
 } // End of namespace Scumm
