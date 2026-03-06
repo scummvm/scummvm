@@ -301,9 +301,9 @@ void AkosRenderer::setCostume(int costume, int shadow) {
 }
 
 void AkosRenderer::setFacing(const Actor *a) {
-	_mirror = (newDirToOldDir(a->getFacing()) != 0 || READ_LE_UINT16(&_akhd->costumeFlags) & 1);
+	_drawActorToRight = (newDirToOldDir(a->getFacing()) != 0 || READ_LE_UINT16(&_akhd->costumeFlags) & 1);
 	if (a->_flip)
-		_mirror = !_mirror;
+		_drawActorToRight = !_drawActorToRight;
 }
 
 byte AkosRenderer::drawLimb(const Actor *a, int limb) {
@@ -678,7 +678,7 @@ byte AkosRenderer::paintCelCDATRLE(int xmoveCur, int ymoveCur) {
 		return 0;
 	}
 
-	if (!_mirror) {
+	if (!_drawActorToRight) {
 		clip.left = (_actorX - xmoveCur - _width) + 1;
 	} else {
 		clip.left = _actorX + xmoveCur - 1;
@@ -705,7 +705,7 @@ byte AkosRenderer::paintCelCDATRLE(int xmoveCur, int ymoveCur) {
 	BompDrawData bdd;
 
 	bdd.dst = _out;
-	if (!_mirror) {
+	if (!_drawActorToRight) {
 		bdd.x = (_actorX - xmoveCur - _width) + 1;
 	} else {
 		bdd.x = _actorX + xmoveCur;
@@ -727,7 +727,7 @@ byte AkosRenderer::paintCelCDATRLE(int xmoveCur, int ymoveCur) {
 
 	bdd.actorPalette = _useBompPalette ? _palette : nullptr;
 
-	bdd.mirror = !_mirror;
+	bdd.mirror = !_drawActorToRight;
 
 	drawBomp(bdd);
 
@@ -789,7 +789,7 @@ byte AkosRenderer::paintCelMajMin(int xMoveCur, int yMoveCur) {
 		return 0;
 	}
 
-	if (!_mirror) {
+	if (!_drawActorToRight) {
 		clip.left = (_actorX - xMoveCur - _width) + 1;
 	} else {
 		clip.left = _actorX + xMoveCur;
@@ -857,7 +857,7 @@ byte AkosRenderer::paintCelMajMin(int xMoveCur, int yMoveCur) {
 	heightUnk = clip.top;
 	int32 dir;
 
-	if (!_mirror) {
+	if (!_drawActorToRight) {
 		dir = -1;
 
 		int tmpSkipX = skipX;
@@ -908,7 +908,7 @@ byte AkosRenderer::hePaintCel(int actor, int drawToBack, int celX, int celY, int
 	Actor *a = _vm->derefActor(actor, "hePaintCel");
 
 	if (allowFlip) {
-		xFlipFlag = _mirror;
+		xFlipFlag = _drawActorToRight;
 	} else {
 		xFlipFlag = false;
 	}
