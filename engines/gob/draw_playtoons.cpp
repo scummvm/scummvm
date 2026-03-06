@@ -128,7 +128,7 @@ void Draw_Playtoons::printTotText(int16 id) {
 	if (*ptrEnd == 16)
 		_backColor = -1;
 	else
-		_backColor = *ptr + _colorOffset;
+		_backColor = *ptrEnd + _colorOffset;
 
 	_transparency = 1;
 
