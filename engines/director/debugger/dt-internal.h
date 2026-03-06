@@ -269,6 +269,7 @@ typedef struct ImGuiState {
 	int _scoreFrameOffset = 1;
 	int _scorePageSlider = 0;
 	int _selectedChannel = -1;
+	bool _scrollToChannel = false;
 
 	ImFont *_tinyFont = nullptr;
 

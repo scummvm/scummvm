@@ -1217,6 +1217,11 @@ void showChannels() {
 
 				ImGui::TableNextRow();
 
+				if (_state->_selectedChannel == i + 1 && _state->_scrollToChannel) {
+					ImGui::SetScrollHereY(0.5f);
+					_state->_scrollToChannel = false;
+				}
+
 				{ // Playback toggle
 					ImGui::TableNextColumn();
 
