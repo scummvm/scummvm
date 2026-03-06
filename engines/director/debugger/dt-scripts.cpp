@@ -221,11 +221,6 @@ void showScriptCasts() {
 	}
 }
 
-static void addToOpenHandlers(ImGuiScript handler) {
-	_state->_openHandlers.erase(handler.id.member);
-	_state->_openHandlers[handler.id.member] = handler;
-}
-
 static bool showHandler(ImGuiScript handler) {
 	ScriptContext *ctx = getScriptContext(handler.id);
 	Common::String wName;

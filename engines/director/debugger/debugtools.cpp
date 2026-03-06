@@ -397,6 +397,11 @@ static void addScriptCastToDisplay(CastMemberID &id) {
 	_state->_scriptCasts.push_back(id);
 }
 
+void addToOpenHandlers(ImGuiScript handler) {
+	_state->_openHandlers.erase(handler.id.member);
+	_state->_openHandlers[handler.id.member] = handler;
+}
+
 void setScriptToDisplay(const ImGuiScript &script) {
 	ScriptData *scriptData = &_state->_functions._windowScriptData.getOrCreateVal(g_director->getCurrentWindow());
 	uint index = scriptData->_scripts.size();
