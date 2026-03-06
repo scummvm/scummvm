@@ -130,6 +130,19 @@ void WageEngine::playSound(Common::String soundName, bool blocking) {
 	}
 }
 
+void WageEngine::playStartupSound(byte *stream, uint32 size, int divisor) {
+	Audio::AudioStream *audioStream = Audio::makeRawStream(
+		stream,
+		size,
+		22254 / divisor,  // 22254 is default Macintosh frequency
+		Audio::FLAG_UNSIGNED,
+		DisposeAfterUse::YES
+	);
+
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, audioStream,
+		-1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+}
+
 static void soundTimer(void *refCon) {
 	Scene *scene = (Scene *)refCon;
 	WageEngine *engine = (WageEngine *)g_engine;
