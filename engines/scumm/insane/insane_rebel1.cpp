@@ -29,7 +29,6 @@
 #include "graphics/wincursor.h"
 #include "scumm/scumm_v7.h"
 #include "scumm/scumm.h"
-#include "scumm/nut_renderer.h"
 #include "scumm/smush/smush_player.h"
 #include "scumm/insane/insane_rebel1.h"
 
@@ -113,29 +112,16 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_screenFlash = 0;
 	_frameCounter = 0;
 	_interactiveVideoActive = false;
-	_hudFont = nullptr;
-	const char *hudFontCandidates[] = {
-		"SYS/TECHFONT.NUT",
-		"SYS/TALKFONT.NUT",
-		"SYS/SMALFONT.NUT",
-		"SYSTM/SMALFONT.NUT"
-	};
-	for (uint i = 0; i < ARRAYSIZE(hudFontCandidates); i++) {
-		ScummFile *fontFile = _vm->instantiateScummFile();
-		_vm->openFile(*fontFile, hudFontCandidates[i]);
-		const bool found = fontFile->isOpen();
-		if (found)
-			fontFile->close();
-		delete fontFile;
-
-		if (found) {
-			_hudFont = new NutRenderer(_vm, hudFontCandidates[i]);
-			debug(1, "InsaneRebel1: HUD font loaded from %s", hudFontCandidates[i]);
-			break;
-		}
+	_menuActive = false;
+	_menuConfirmed = false;
+	_menuSelection = 0;
+	if (loadRA1Nut("SYS/TALKFONT.NUT", _hudFontBank)) {
+		debug(1, "InsaneRebel1: HUD/menu glyph font loaded from SYS/TALKFONT.NUT (%d chars)", _hudFontBank.numSprites);
+	} else if (loadRA1Nut("SYS/TECHFONT.NUT", _hudFontBank)) {
+		debug(1, "InsaneRebel1: HUD/menu glyph font loaded from SYS/TECHFONT.NUT (%d chars)", _hudFontBank.numSprites);
+	} else {
+		warning("InsaneRebel1: failed to load RA1 HUD font bank (TECHFONT/TALKFONT)");
 	}
-	if (!_hudFont)
-		warning("InsaneRebel1: no HUD font found (TECHFONT/TALKFONT/SMALFONT), HUD numbers disabled");
 
 	// Audio
 	initAudio(11025);
@@ -160,11 +146,45 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 
 InsaneRebel1::~InsaneRebel1() {
 	_vm->_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
-	delete _hudFont;
 	terminateAudio();
 }
 
 bool InsaneRebel1::notifyEvent(const Common::Event &event) {
+	if (_menuActive && event.type == Common::EVENT_KEYDOWN) {
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_UP:
+		case Common::KEYCODE_w:
+			_menuSelection = (_menuSelection + 4) % 5;
+			return true;
+		case Common::KEYCODE_DOWN:
+		case Common::KEYCODE_s:
+			_menuSelection = (_menuSelection + 1) % 5;
+			return true;
+		case Common::KEYCODE_RETURN:
+		case Common::KEYCODE_KP_ENTER:
+		case Common::KEYCODE_SPACE:
+			_menuConfirmed = true;
+			_vm->_smushVideoShouldFinish = true;
+			return true;
+		case Common::KEYCODE_1:
+		case Common::KEYCODE_2:
+		case Common::KEYCODE_3:
+		case Common::KEYCODE_4:
+		case Common::KEYCODE_5:
+			_menuSelection = event.kbd.keycode - Common::KEYCODE_1;
+			_menuConfirmed = true;
+			_vm->_smushVideoShouldFinish = true;
+			return true;
+		case Common::KEYCODE_ESCAPE:
+			_menuSelection = 4;
+			_menuConfirmed = true;
+			_vm->_smushVideoShouldFinish = true;
+			return true;
+		default:
+			break;
+		}
+	}
+
 	if (event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 		if (_player) {
 			debug("Rebel1: ESC pressed - skipping video");
@@ -380,63 +400,103 @@ bool InsaneRebel1::loadRA1Nut(const char *filename, RA1SpriteBank &bank) {
 		return false;
 	}
 
-	bank.numSprites = READ_LE_UINT16(data + 10);
+	const uint16 expectedSprites = READ_LE_UINT16(data + 10);
+	bank.numSprites = expectedSprites;
 	bank.sprites = new RA1Sprite[bank.numSprites];
+	memset(bank.sprites, 0, sizeof(RA1Sprite) * bank.numSprites);
 
-	// Pass 1: Walk chunks with alignment to compute total decoded size.
-	uint32 offset = 0;
-	uint32 decodedSize = 0;
-	for (int i = 0; i < bank.numSprites; i++) {
-		// Skip current chunk (AHDR or previous FRME)
-		uint32 chunkSize = READ_BE_UINT32(data + offset + 4);
-		offset += chunkSize + 8;
-		if (chunkSize & 1) offset++;  // Word-align
-
-		// Now at FRME; skip its header to reach FOBJ
-		offset += 8;
-		if (offset + 22 > animSize) break;
-
-		uint16 w = READ_LE_UINT16(data + offset + 14);
-		uint16 h = READ_LE_UINT16(data + offset + 16);
-		decodedSize += w * h;
+	uint32 *fobjOffsets = (uint32 *)calloc(expectedSprites, sizeof(uint32));
+	if (!fobjOffsets) {
+		free(data);
+		return false;
 	}
 
-	bank.decodedData = (byte *)calloc(decodedSize, 1);
+	// Pass 1: Parse ANIM chunks properly and collect FRME->FOBJ offsets in-order.
+	uint32 decodedSize = 0;
+	uint16 foundSprites = 0;
+	uint32 chunkOffset = 0;
+	while (chunkOffset + 8 <= animSize && foundSprites < expectedSprites) {
+		uint32 chunkTag = READ_BE_UINT32(data + chunkOffset);
+		uint32 chunkSize = READ_BE_UINT32(data + chunkOffset + 4);
+		uint32 chunkDataOffset = chunkOffset + 8;
+		uint32 chunkEnd = chunkDataOffset + chunkSize;
+		if (chunkEnd > animSize)
+			break;
+
+		if (chunkTag == MKTAG('F','R','M','E')) {
+			bool foundFobj = false;
+			uint32 subOffset = chunkDataOffset;
+			while (subOffset + 8 <= chunkEnd) {
+				uint32 subTag = READ_BE_UINT32(data + subOffset);
+				uint32 subSize = READ_BE_UINT32(data + subOffset + 4);
+				uint32 subDataOffset = subOffset + 8;
+				uint32 subEnd = subDataOffset + subSize;
+				if (subEnd > chunkEnd)
+					break;
+
+				if (subTag == MKTAG('F','O','B','J') && subOffset + 22 <= animSize) {
+					uint16 w = READ_LE_UINT16(data + subOffset + 14);
+					uint16 h = READ_LE_UINT16(data + subOffset + 16);
+					decodedSize += (uint32)w * (uint32)h;
+					fobjOffsets[foundSprites] = subOffset;
+					foundFobj = true;
+					break;
+				}
+
+				subOffset = subEnd;
+				if (subSize & 1)
+					subOffset++;
+			}
+			// Always increment for every FRME to preserve char-to-glyph alignment.
+			// Empty FRMEs (no FOBJ) keep fobjOffsets[i] = 0, decoded as blank sprites.
+			foundSprites++;
+		}
+
+		chunkOffset = chunkEnd;
+		if (chunkSize & 1)
+			chunkOffset++;
+	}
+
+	bank.decodedData = (byte *)calloc(decodedSize ? decodedSize : 1, 1);
+	bank.decodedSize = decodedSize;
 	byte *decPtr = bank.decodedData;
 
-	// Pass 2: Decode sprites.
-	offset = 0;
-	for (int i = 0; i < bank.numSprites; i++) {
-		uint32 chunkSize = READ_BE_UINT32(data + offset + 4);
-		offset += chunkSize + 8;
-		if (chunkSize & 1) offset++;
+	// Pass 2: Decode collected FOBJ entries.
+	for (uint16 i = 0; i < foundSprites; i++) {
+		uint32 fobjOffset = fobjOffsets[i];
+		if (fobjOffset == 0) {
+			// Empty FRME (no FOBJ) — leave sprite as blank (zeroed by memset).
+			continue;
+		}
 
-		offset += 8;  // Skip FRME header → now at FOBJ
-		if (offset + 22 > animSize) break;
-
-		int codec = READ_LE_UINT16(data + offset + 8);
-		bank.sprites[i].xoffs = READ_LE_INT16(data + offset + 10);
-		bank.sprites[i].yoffs = READ_LE_INT16(data + offset + 12);
-		bank.sprites[i].width = READ_LE_UINT16(data + offset + 14);
-		bank.sprites[i].height = READ_LE_UINT16(data + offset + 16);
-		bank.sprites[i].data = decPtr;
+		int codec = READ_LE_UINT16(data + fobjOffset + 8);
+		bank.sprites[i].xoffs = READ_LE_INT16(data + fobjOffset + 10);
+		bank.sprites[i].yoffs = READ_LE_INT16(data + fobjOffset + 12);
+		bank.sprites[i].width = READ_LE_UINT16(data + fobjOffset + 14);
+		bank.sprites[i].height = READ_LE_UINT16(data + fobjOffset + 16);
 
 		int pixelCount = bank.sprites[i].width * bank.sprites[i].height;
-		const byte *fobjData = data + offset + 22;
+		const byte *fobjData = data + fobjOffset + 22;
 
 		if (codec == 21) {
+			bank.sprites[i].data = decPtr;
 			decodeBomp(decPtr, fobjData, bank.sprites[i].width,
 					   bank.sprites[i].height, bank.sprites[i].width);
 		} else {
+			bank.sprites[i].width = 0;
+			bank.sprites[i].height = 0;
+			bank.sprites[i].data = nullptr;
 			warning("InsaneRebel1::loadRA1Nut: unsupported codec %d in sprite %d", codec, i);
 		}
 
 		decPtr += pixelCount;
 	}
 
+	free(fobjOffsets);
+
 	free(data);
-	debug(1, "InsaneRebel1::loadRA1Nut('%s'): %d sprites, %d bytes decoded",
-		  filename, bank.numSprites, decodedSize);
+	debug(1, "InsaneRebel1::loadRA1Nut('%s'): expected=%d found=%d decoded=%d bytes",
+		  filename, expectedSprites, foundSprites, decodedSize);
 	return true;
 }
 
@@ -451,6 +511,14 @@ void InsaneRebel1::procPreRendering(byte *renderBitmap) {
 
 void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	int32 setupsan13, int32 curFrame, int32 maxFrame) {
+	if (_menuActive && renderBitmap) {
+		int width = _player ? _player->_width : 0;
+		int height = _player ? _player->_height : 0;
+		if (width == 0) width = _screenWidth;
+		if (height == 0) height = _screenHeight;
+		int pitch = width;
+		renderMainMenuOverlay(renderBitmap, pitch, width, height);
+	}
 
 	if (!_interactiveVideoActive || _shipBank.numSprites == 0 || !renderBitmap)
 		return;
@@ -464,6 +532,105 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	updateShipPhysics();
 	renderShip(renderBitmap, pitch, width, height);
 	renderHUD(renderBitmap, pitch, width, height);
+}
+
+void InsaneRebel1::drawFontBankString(byte *dst, int pitch, int width, int height, int x, int y, const char *text) {
+	if (!dst || !text || _hudFontBank.numSprites <= 0)
+		return;
+
+	for (int i = 0; text[i] != '\0'; i++) {
+		const byte ch = (byte)text[i];
+
+		if (ch == ' ') {
+			x += 6;
+			continue;
+		}
+
+		// RA1 font renderer indexes printable characters from '!' (0x21), not raw ASCII.
+		if (ch < 0x21) {
+			x += 4;
+			continue;
+		}
+		const int fontIdx = (int)ch - 0x21;
+		if (fontIdx < 0 || fontIdx >= _hudFontBank.numSprites) {
+			x += 4;
+			continue;
+		}
+
+		const RA1Sprite &glyph = _hudFontBank.sprites[fontIdx];
+		const int gw = glyph.width;
+		const int gh = glyph.height;
+		const int gx = x + glyph.xoffs;
+		const int gy = y + glyph.yoffs;
+		const uint64 glyphPixels = (uint64)gw * (uint64)gh;
+		if (!glyph.data || gw <= 0 || gh <= 0 || glyphPixels == 0 || glyphPixels > 0x10000) {
+			x += 4;
+			continue;
+		}
+		if (!(_hudFontBank.decodedData && _hudFontBank.decodedSize > 0)) {
+			x += 4;
+			continue;
+		}
+		const byte *bankStart = _hudFontBank.decodedData;
+		const byte *bankEnd = _hudFontBank.decodedData + _hudFontBank.decodedSize;
+		if (glyph.data < bankStart || glyph.data >= bankEnd || glyph.data + glyphPixels > bankEnd) {
+			x += 4;
+			continue;
+		}
+
+		for (int py = 0; py < gh; py++) {
+			const int sy = gy + py;
+			if (sy < 0 || sy >= height)
+				continue;
+			for (int px = 0; px < gw; px++) {
+				const int sx = gx + px;
+				if (sx < 0 || sx >= width)
+					continue;
+				const byte pixel = glyph.data[py * gw + px];
+				if (pixel != 0)
+					dst[sy * pitch + sx] = pixel;
+			}
+		}
+
+		x += gw > 0 ? gw : 4;
+	}
+}
+
+void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int height) {
+	static const char *kMenuItems[5] = {
+		"START NEW GAME",
+		"GAME OPTIONS",
+		"ENTER PASSCODE",
+		"CONTINUE DEMO",
+		"EXIT"
+	};
+
+	const int menuX = 92;
+	const int menuY = 60;
+	const int rowH = 16;
+	const int boxW = 190;
+
+	for (int i = 0; i < 5; i++) {
+		const int y = menuY + i * rowH;
+		if (i == _menuSelection) {
+			for (int yy = 0; yy < 12; yy++) {
+				const int sy = y + yy;
+				if (sy < 0 || sy >= height)
+					continue;
+				for (int xx = 0; xx < boxW; xx++) {
+					const int sx = menuX + xx;
+					if (sx < 0 || sx >= width)
+						continue;
+					if (xx < 2 || yy < 2 || xx >= boxW - 2 || yy >= 10)
+						dst[sy * pitch + sx] = 0xFF;
+				}
+			}
+		}
+
+		drawFontBankString(dst, pitch, width, height, menuX + 10, y + 1, kMenuItems[i]);
+	}
+
+	drawFontBankString(dst, pitch, width, height, 118, 36, "MAIN MENU");
 }
 
 // Velocity-based ship physics adapted from RA2 Handler 7 (FUN_40C3CC case 4).
@@ -760,48 +927,15 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 		}
 	}
 
-	// Draw lives and score using the RA1 small NUT font (RA2-style glyph blit).
-	if (_hudFont && _hudFont->getNumChars() > 0) {
-		auto drawHudString = [&](const char *text, int x, int y) {
-			for (int i = 0; text[i] != '\0'; i++) {
-				byte ch = (byte)text[i];
-				if (ch >= _hudFont->getNumChars()) {
-					x += 4;
-					continue;
-				}
-
-				const byte *glyph = _hudFont->getCharData(ch);
-				int gw = _hudFont->getCharWidth(ch);
-				int gh = _hudFont->getCharHeight(ch);
-				int gx = x + _hudFont->getCharXOffset(ch);
-				int gy = y + _hudFont->getCharYOffset(ch);
-
-				if (glyph && gw > 0 && gh > 0) {
-					for (int py = 0; py < gh; py++) {
-						int sy = gy + py;
-						if (sy < 0 || sy >= height)
-							continue;
-						for (int px = 0; px < gw; px++) {
-							int sx = gx + px;
-							if (sx < 0 || sx >= width)
-								continue;
-							byte pixel = glyph[py * gw + px];
-							if (pixel != 0)
-								dst[sy * pitch + sx] = pixel;
-						}
-					}
-				}
-				x += gw > 0 ? gw : 4;
-			}
-		};
-
+	// Draw lives and score from DISPLAY.NUT glyphs.
+	if (_hudFontBank.numSprites > 0) {
 		char livesStr[8];
 		Common::sprintf_s(livesStr, "%d", MAX<int>(_lives, 0));
-		drawHudString(livesStr, hudX + 180, hudY + 6);
+		drawFontBankString(dst, pitch, width, height, hudX + 180, hudY + 6, livesStr);
 
 		char scoreStr[16];
 		Common::sprintf_s(scoreStr, "%07d", MAX<int>(_score, 0));
-		drawHudString(scoreStr, hudX + 257, hudY + 4);
+		drawFontBankString(dst, pitch, width, height, hudX + 257, hudY + 4, scoreStr);
 	}
 
 }
@@ -1001,21 +1135,21 @@ void InsaneRebel1::playIntroSequence() {
 int InsaneRebel1::runMainMenu() {
 	debug(1, "InsaneRebel1: Main menu");
 
-	// Play menu background video
-	playCinematic("OPEN/O1OPTION.ANM");
+	_menuSelection = 0;
+	while (!_vm->shouldQuit()) {
+		_menuActive = true;
+		_menuConfirmed = false;
+		playCinematic("OPEN/O1OPTION.ANM");
+		_menuActive = false;
 
-	if (_vm->shouldQuit())
-		return 5;  // Exit
+		if (_vm->shouldQuit())
+			return 5;
 
-	// TODO: Render menu items overlay:
-	//   "MAIN MENU"         (x=160, y=30)
-	//   "START NEW GAME"    (x=160, y=60)
-	//   "GAME OPTIONS"      (x=160, y=75)
-	//   "ENTER PASSCODE"    (x=160, y=90)
-	//   "CONTINUE DEMO"     (x=160, y=105)
-	//   "EXIT TO DOS"       (x=160, y=120)
-	// For now, auto-select "Start New Game"
-	return 1;
+		if (_menuConfirmed)
+			return _menuSelection + 1;
+	}
+
+	return 5;
 }
 
 // Level 1 flow (0x16100-0x16737):
