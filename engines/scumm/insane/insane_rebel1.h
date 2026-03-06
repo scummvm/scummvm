@@ -24,6 +24,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "common/events.h"
 #include "scumm/insane/insane.h"
 
 namespace Scumm {
@@ -54,10 +55,12 @@ struct RA1SpriteBank {
  * Star Wars: Rebel Assault (RA1) game logic.
  * Adapts RA2 Handler 7 (ship flight) physics for RA1's 384x242 resolution.
  */
-class InsaneRebel1 : public Insane {
+class InsaneRebel1 : public Insane, public Common::EventObserver {
 public:
 	InsaneRebel1(ScummEngine_v7 *scumm);
 	~InsaneRebel1() override;
+
+	bool notifyEvent(const Common::Event &event) override;
 
 	void procPreRendering(byte *renderBitmap) override;
 	void procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -69,9 +72,27 @@ public:
 
 	void handleGameChunk(int32 subSize, Common::SeekableReadStream &b);
 
-	void playLevel(int level);
+	// Game flow (matching original at 0x15597)
+	void runGame();
 
 private:
+	// Intro sequence: O1LOGO → O1OPEN (0x155ef-0x158f8)
+	void playIntroSequence();
+	void clearVideoBuffer();
+
+	// Main menu loop on O1OPTION.ANM background (0x15968)
+	// Returns: 1=Start New Game, 2=Game Options, 3=Enter Passcode, 4=Continue Demo, 5=Exit
+	int runMainMenu();
+
+	// Level 1 flow (0x16100): hangar → CU1 → gameplay → CU2 → turret → end
+	// Returns true if level completed, false if player quit
+	bool runLevel1();
+
+	// Play a passive cinematic (no game callback, skippable)
+	void playCinematic(const char *filename);
+
+	// Play interactive gameplay video (with ship physics + HUD)
+	void playInteractiveVideo(const char *filename);
 	bool loadRA1Nut(const char *filename, RA1SpriteBank &bank);
 	void loadLevelSprites(int level);
 	void updateShipPhysics();
@@ -154,6 +175,9 @@ private:
 	Audio::SoundHandle _audioHandles[kMaxAudioTracks];
 	bool _audioTrackActive[kMaxAudioTracks];
 	int _audioSampleRate;
+
+	// True only while an interactive gameplay SMUSH is running.
+	bool _interactiveVideoActive;
 };
 
 } // End of namespace Scumm

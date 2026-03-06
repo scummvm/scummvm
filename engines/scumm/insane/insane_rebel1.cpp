@@ -109,6 +109,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_deathTimer = 0;
 	_screenFlash = 0;
 	_frameCounter = 0;
+	_interactiveVideoActive = false;
 
 	// Audio
 	initAudio(11025);
@@ -127,10 +128,25 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_smush_bencutNut = nullptr;
 	_smush_iconsNut = nullptr;
 	_smush_icons2Nut = nullptr;
+
+	_vm->_system->getEventManager()->getEventDispatcher()->registerObserver(this, 1, false);
 }
 
 InsaneRebel1::~InsaneRebel1() {
+	_vm->_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 	terminateAudio();
+}
+
+bool InsaneRebel1::notifyEvent(const Common::Event &event) {
+	if (event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+		if (_player) {
+			debug("Rebel1: ESC pressed - skipping video");
+			_vm->_smushVideoShouldFinish = true;
+			return true;
+		}
+	}
+
+	return false;
 }
 
 // ---------------------------------------------------------------------------
@@ -409,7 +425,7 @@ void InsaneRebel1::procPreRendering(byte *renderBitmap) {
 void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	int32 setupsan13, int32 curFrame, int32 maxFrame) {
 
-	if (_shipBank.numSprites == 0 || !renderBitmap)
+	if (!_interactiveVideoActive || _shipBank.numSprites == 0 || !renderBitmap)
 		return;
 
 	int width = _player->_width;
@@ -862,21 +878,243 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 	}
 }
 
-void InsaneRebel1::playLevel(int level) {
-	loadLevelSprites(level);
+// ---------------------------------------------------------------------------
+// Game flow (matching original at 0x15597)
+// ---------------------------------------------------------------------------
 
-	Common::String filename = Common::String::format("LVL%d/L%dPLAY1L.ANM", level, level);
-	debug(1, "InsaneRebel1::playLevel(%d): playing %s", level, filename.c_str());
+// Play a passive cinematic (no game callback, skippable).
+// Reuses RA2's pattern: reset handler, set cinematic flags, play video.
+void InsaneRebel1::playCinematic(const char *filename) {
+	debug(1, "InsaneRebel1::playCinematic('%s')", filename);
+	SmushPlayer *splayer = _vm->_splayer;
+	_player = splayer;
+	_interactiveVideoActive = false;
+	_vm->_smushVideoShouldFinish = false;
+	splayer->setCurVideoFlags(0x28);  // Cinematic mode + buffer preserve
+	splayer->play(filename, 12);
+}
+
+void InsaneRebel1::clearVideoBuffer() {
+	if (_vm->_screenWidth <= 0 || _vm->_screenHeight <= 0)
+		return;
+
+	const int pixelCount = _vm->_screenWidth * _vm->_screenHeight;
+	byte *clearBuffer = (byte *)calloc(pixelCount, 1);
+	if (!clearBuffer)
+		return;
+
+	if (_vm->_macScreen) {
+		_vm->mac_drawBufferToScreen(clearBuffer, _vm->_screenWidth, 0, 0, _vm->_screenWidth, _vm->_screenHeight);
+	} else {
+		_vm->_system->copyRectToScreen(clearBuffer, _vm->_screenWidth, 0, 0, _vm->_screenWidth, _vm->_screenHeight);
+	}
+	_vm->_system->updateScreen();
+
+	free(clearBuffer);
+}
+
+// Intro sequence (0x155ef-0x158f8):
+//   1. O1LOGO.ANM — LucasArts logo
+//   2. O1OPEN.ANM — Star Wars opening crawl
+void InsaneRebel1::playIntroSequence() {
+	debug(1, "InsaneRebel1: Playing intro sequence");
+
+	// LucasArts logo (original: PUSH 0x57cc, CALL FUN_1BA32 with flags 0x0420)
+	playCinematic("OPEN/O1LOGO.ANM");
+	if (_vm->shouldQuit())
+		return;
+	clearVideoBuffer();
+
+	// Star Wars opening crawl (original: PUSH 0x5800, CALL FUN_1BA32)
+	playCinematic("OPEN/O1OPEN.ANM");
+}
+
+// Main menu on O1OPTION.ANM background (0x15968).
+// Original renders text overlay with 5 menu items via FUN_21F7A.
+// For now, we play the menu video as a passive cinematic (non-interactive)
+// and return "Start New Game" immediately.
+// TODO: Implement interactive menu with keyboard/mouse selection.
+int InsaneRebel1::runMainMenu() {
+	debug(1, "InsaneRebel1: Main menu");
+
+	// Play menu background video
+	playCinematic("OPEN/O1OPTION.ANM");
+
+	if (_vm->shouldQuit())
+		return 5;  // Exit
+
+	// TODO: Render menu items overlay:
+	//   "MAIN MENU"         (x=160, y=30)
+	//   "START NEW GAME"    (x=160, y=60)
+	//   "GAME OPTIONS"      (x=160, y=75)
+	//   "ENTER PASSCODE"    (x=160, y=90)
+	//   "CONTINUE DEMO"     (x=160, y=105)
+	//   "EXIT TO DOS"       (x=160, y=120)
+	// For now, auto-select "Start New Game"
+	return 1;
+}
+
+// Level 1 flow (0x16100-0x16737):
+//   1. Load NUTs (L1BANK1, L1BANK2, L1EXPLD, L1BANG, L1LASER)
+//   2. L1HANGAR.ANM — Hangar departure cutscene
+//   3. "Chapter 1" text
+//   4. L1CU1.ANM — Pre-flight cutscene
+//   5. L1PLAY1L.ANM — Stage 1 gameplay (left path) — INTERACTIVE
+//   6. L1PLAY1R.ANM — Stage 1 gameplay (right path) — INTERACTIVE
+//   7. L1CU2.ANM — Mid-level cutscene
+//   8. L1PLAY2.ANM — Stage 2 turret — INTERACTIVE
+//   9. L1END.ANM — Level end cutscene
+//   Death: L1CRASHA/B.ANM → L1DEATH.ANM → L1RETRY.ANM → retry from L1NEW
+bool InsaneRebel1::runLevel1() {
+	debug(1, "InsaneRebel1: Running level 1");
+
+	// Load level sprites (original: pushes L1BANK1..L1BANG NUT filenames)
+	loadLevelSprites(1);
+
+	// L1HANGAR.ANM — Hangar departure intro (original: 0x5918, flags 0x0420)
+	playCinematic("LVL1/L1HANGAR.ANM");
+	if (_vm->shouldQuit())
+		return false;
+
+	// L1CU1.ANM — Pre-flight cutscene (original: 0x5944, flags 0x0400)
+	playCinematic("LVL1/L1CU1.ANM");
+	if (_vm->shouldQuit())
+		return false;
+
+	// Retry loop
+	while (!_vm->shouldQuit()) {
+		// Reset health for this attempt
+		_health = kMaxHealth;
+		_damageFlags = 0;
+		_damageCooldown = 0;
+		_deathTimer = 0;
+		_screenFlash = 0;
+		_frameCounter = 0;
+
+		// L1PLAY1L.ANM — Stage 1 gameplay (left path, original: 0x5953)
+		playInteractiveVideo("LVL1/L1PLAY1L.ANM");
+		if (_vm->shouldQuit())
+			return false;
+
+		if (_health >= 0) {
+			// Survived stage 1 — continue to right path
+			// L1PLAY1R.ANM (original: 0x5965, flags with seekframe=0x187)
+			playInteractiveVideo("LVL1/L1PLAY1R.ANM");
+			if (_vm->shouldQuit())
+				return false;
+
+			if (_health >= 0) {
+				// L1CU2.ANM — Mid-level cutscene (original: 0x5977)
+				playCinematic("LVL1/L1CU2.ANM");
+				if (_vm->shouldQuit())
+					return false;
+
+				// L1PLAY2.ANM — Stage 2 turret (original: 0x5986)
+				playInteractiveVideo("LVL1/L1PLAY2.ANM");
+				if (_vm->shouldQuit())
+					return false;
+
+				// L1END.ANM — Level complete! (original: 0x59a3)
+				playCinematic("LVL1/L1END.ANM");
+				return true;
+			}
+		}
+
+		// Death sequence (original: 0x165e8-0x16737)
+		// Random crash variant A or B
+		if (_vm->_rnd.getRandomNumber(1) == 0)
+			playCinematic("LVL1/L1CRASHA.ANM");
+		else
+			playCinematic("LVL1/L1CRASHB.ANM");
+		if (_vm->shouldQuit())
+			return false;
+
+		// L1DEATH.ANM (original: 0x5a4b)
+		playCinematic("LVL1/L1DEATH.ANM");
+		if (_vm->shouldQuit())
+			return false;
+
+		_lives--;
+		if (_lives <= 0) {
+			// Game over — no more retries
+			debug(1, "InsaneRebel1: Game over (no lives left)");
+			return false;
+		}
+
+		// L1RETRY.ANM — Retry prompt (original: 0x5a5c)
+		// After retry, original jumps back to L1NEW→L1PLAY1L (0x16214→0x16680)
+		playCinematic("LVL1/L1RETRY.ANM");
+		if (_vm->shouldQuit())
+			return false;
+
+		// L1NEW.ANM — Briefing before retry (original: 0x5a3c at retry path 0x16680)
+		playCinematic("LVL1/L1NEW.ANM");
+		if (_vm->shouldQuit())
+			return false;
+
+		// Loop back to gameplay
+	}
+
+	return false;
+}
+
+// Main game entry point — called from ScummEngine::go().
+// Matches original flow at 0x15597: intro → menu → level.
+void InsaneRebel1::runGame() {
+	// Play intro sequence (logo + opening)
+	playIntroSequence();
+	if (_vm->shouldQuit())
+		return;
+
+	// Main menu → gameplay loop
+	while (!_vm->shouldQuit()) {
+		int menuResult = runMainMenu();
+		if (_vm->shouldQuit())
+			return;
+
+		switch (menuResult) {
+		case 1: {
+			// Start New Game — play L1NEW briefing then level 1
+			playCinematic("LVL1/L1NEW.ANM");
+			if (_vm->shouldQuit())
+				return;
+
+			bool completed = runLevel1();
+			if (completed) {
+				debug(1, "InsaneRebel1: Level 1 completed!");
+				// TODO: Continue to level 2
+			}
+			// Return to menu after level ends
+			break;
+		}
+		case 5:
+			// Exit
+			return;
+		default:
+			// Options, Passcode, Demo — not yet implemented, return to menu
+			break;
+		}
+	}
+}
+
+// Play interactive gameplay video (with ship physics + HUD).
+void InsaneRebel1::playInteractiveVideo(const char *filename) {
+	debug(1, "InsaneRebel1::playInteractiveVideo('%s')", filename);
 
 	SmushPlayer *splayer = _vm->_splayer;
 	_player = splayer;
+	clearBit(0);
+	_interactiveVideoActive = true;
+	_vm->_smushVideoShouldFinish = false;
+	splayer->setCurVideoFlags(0x28);
 
 	// Center mouse, hide cursor, and lock mouse to window (like RA2 flight)
 	smush_warpMouse(160, 100, -1);
 	CursorMan.showMouse(false);
 	g_system->lockMouse(true);
 
-	splayer->play(filename.c_str(), 12);
+	splayer->play(filename, 12);
+	_interactiveVideoActive = false;
 
 	g_system->lockMouse(false);
 }

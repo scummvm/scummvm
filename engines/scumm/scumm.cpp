@@ -1809,6 +1809,9 @@ void ScummEngine_v7::setupScumm(const Common::Path &macResourceFile) {
 
 		_sound = new Sound(this, _mixer, false);
 		_musicEngine = _imuseDigital = nullptr;
+		_res->allocResTypeData(rtBuffer, 0, 10, kDynamicResTypeMode);
+		initScreens(0, 200);
+
 		_insane = new InsaneRebel1(this);
 		_splayer = new SmushPlayer(this, nullptr, _insane);
 
@@ -2710,7 +2713,7 @@ Common::Error ScummEngine::go() {
 	if (_game.id == GID_REBEL1) {
 		ScummEngine_v7 *vm7 = (ScummEngine_v7 *)this;
 		InsaneRebel1 *rebel = (InsaneRebel1 *)vm7->getInsane();
-		rebel->playLevel(1);
+		rebel->runGame();
 		return Common::kNoError;
 	}
 
