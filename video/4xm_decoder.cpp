@@ -34,6 +34,10 @@
 
 namespace Video {
 
+FourXMDecoder::~FourXMDecoder() {
+	close();
+}
+
 Common::Rational floatToRational(float value) {
 	int num = static_cast<int>(1000 * value);
 	int denom = 1000;
