@@ -24,6 +24,7 @@
 #include "backends/imgui/IconsMaterialSymbols.h"
 #include "director/director.h"
 #include "director/debugger/dt-internal.h"
+#include "director/debugger/debugtools.h"
 
 #include "director/cast.h"
 #include "director/castmember/castmember.h"
@@ -730,6 +731,12 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 					_state->_selectedScoreCast.frame = rf;
 					_state->_selectedScoreCast.channel = ch;
 					_state->_selectedScoreCast.isMainChannel = false;
+
+					int playheadIdx = score->getCurrentFrameNum() - 1;
+					if (playheadIdx >= spanStart && playheadIdx <= spanEnd) {
+						Director::DT::setSelectedChannel(ch);
+						window->render(true);
+					}
 				}
 
 				if (ImGui::IsItemHovered()) {
