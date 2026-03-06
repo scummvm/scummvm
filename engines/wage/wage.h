@@ -220,6 +220,7 @@ public:
 	Audio::PCSpeaker *_speaker;
 
 	void playSound(Common::String soundName, bool blocking = true);
+	void playStartupSound(byte *stream, uint32 size, int divisor);
 	void updateSoundTimerForScene(Scene *scene, bool firstTime);
 	void setMenu(Common::String soundName);
 	void appendText(const char *str);

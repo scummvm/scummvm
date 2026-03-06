@@ -47,6 +47,7 @@
 #include "common/timer.h"
 #include "common/system.h"
 #include "common/config-manager.h"
+#include "common/macresman.h"
 
 #include "audio/softsynth/pcspk.h"
 
@@ -62,6 +63,7 @@
 #include "wage/entities.h"
 #include "wage/gui.h"
 #include "wage/world.h"
+#include "wage/sound.h"
 
 namespace Wage {
 
@@ -108,6 +110,10 @@ Gui::Gui(WageEngine *engine) {
 	_menu->addStaticMenus(menuSubItems);
 	_menu->addSubMenu(nullptr, kMenuAbout);
 	_menu->addMenuItem(_menu->getSubmenu(nullptr, kMenuAbout), _engine->_world->getAboutMenuItemName(), kMenuActionAbout);
+	if (Common::File::exists("StartUpScreen"))
+		_menu->addMenuItem(_menu->getSubmenu(nullptr, kMenuAbout), "Startup Screen", kMenuActionStartupScreen);
+	if (Common::File::exists("StartupSound"))
+		_menu->addMenuItem(_menu->getSubmenu(nullptr, kMenuAbout), "Startup Sound", kMenuActionStartupSound);
 
 	if (!_engine->_world->_fileMenu.empty()) {
 		_menu->setName(_menu->getMenuItem(kMenuFile), _engine->_world->_fileMenuName);
@@ -356,6 +362,24 @@ void menuCommandsCallback(int action, Common::String &text, void *data) {
 	g->executeMenuCommand(action, text);
 }
 
+bool Gui::decodeStartupScreen() {
+	Common::SeekableReadStream *stream = Common::MacResManager::openFileOrDataFork("StartupScreen");
+	if (!stream)
+		return false;
+
+	for (int y = 0; y < kScreenHeight; y++) {
+		for (int x = 0; x < kScreenWidth / 8; x++) {
+			byte b = stream->readByte();
+
+			for (int z = 0; z < 8; z++) {
+				_screen.setPixel(8 * x + z, y, (b & (0x80 >> z)) ? kColorBlack : kColorWhite);
+			}
+		}
+	}
+
+	return true;
+}
+
 void Gui::executeMenuCommand(int action, Common::String &text) {
 	switch(action) {
 	case kMenuActionAbout:
@@ -428,6 +452,35 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 			_engine->processTurn(&text, NULL);
 			break;
 		}
+	case kMenuActionStartupScreen: {
+		if (!decodeStartupScreen()) {
+			warning("StartUpScreen file not found");
+			break;
+		}
+		g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch,
+								   0, 0, _screen.w, _screen.h);
+
+		uint32 now = g_system->getMillis();
+		bool earlyExit = false;
+
+		while (g_system->getMillis() < now + 3000 && !_engine->shouldQuit() && !earlyExit) {
+			Common::Event event;
+
+			while (_engine->getEventManager()->pollEvent(event)) {
+				if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONUP) {
+					earlyExit = true;
+					break;
+				}
+			}
+
+			g_system->updateScreen();
+			g_system->delayMillis(10);
+		}
+		break;
+	}
+	case kMenuActionStartupSound:
+		actionStartupSound();
+		break;
 	default:
 		warning("Unknown action: %d", action);
 
@@ -507,6 +560,121 @@ void Gui::actionCut() {
 
 	_menu->enableCommand(kMenuEdit, kMenuActionUndo, true);
 	_menu->enableCommand(kMenuEdit, kMenuActionPaste, true);
+}
+
+// HCOM file structure and algorithm adapted from https://stuff.mit.edu/afs/net/dev/contrib/audio/src/sox/hcom.c
+void Gui::actionStartupSound() {
+	Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork("StartupSound");
+	if (!file) {
+		return;
+	}
+
+	// Huffman tree node structure
+	struct DictEnt {
+		int16 leftson;
+		int16 rightson;
+	};
+
+	uint32 magic = file->readUint32BE();
+	if (magic != MKTAG('H','C','O','M')) {
+		delete file;
+		return;
+	}
+
+	uint32 huffCount = file->readUint32BE(); ///< Sample count
+	file->readUint32BE(); ///< Unused checksum
+	uint32 compressType = file->readUint32BE(); ///< 0 = value compression, 1 = delta compression
+	uint32 divisor = file->readUint32BE(); ///< Sample rate divisor, only between 1 and 4
+	uint16 dictSize = file->readUint16BE(); ///< Number of dictionary entries
+
+	if (compressType > 1) {
+		delete file;
+		return;
+	}
+
+	if (divisor == 0 || divisor > 4) {
+		delete file;
+		return;
+	}
+
+	// Read Huffman tree
+	Common::Array<DictEnt> dictionary(dictSize);
+	for (uint16 i = 0; i < dictSize; i++) {
+		dictionary[i].leftson  = file->readSint16BE();
+		dictionary[i].rightson = file->readSint16BE();
+	}
+
+	file->readByte(); // Skip pad byte
+	// First byte is uncompressed
+	uint8 currentHuff = file->readByte();
+	uint32 huffsRemaining = huffCount;
+
+	byte *byteStream = (byte *)malloc(huffCount);
+	if (!byteStream) {
+		delete file;
+		return;
+	}
+
+	byte *out = byteStream;
+	if (huffsRemaining > 0) {
+		*out++ = currentHuff;
+		huffsRemaining--;
+	}
+
+	uint32 currentBits = 0;
+	int bitsLeft = 0;
+	int dictEntry = 0;
+
+	// Bit-by-bit decompression
+	while (huffsRemaining > 0 && !file->eos()) {
+		// Work 32 bits at a time
+		if (bitsLeft == 0) {
+			currentBits = file->readUint32BE();
+			bitsLeft = 32;
+		}
+
+		// Read most significant bit
+		bool bit = (currentBits & 0x80000000) != 0;
+		currentBits <<= 1;
+		bitsLeft--;
+
+		// Traverse Huffman tree
+		if (bit) {
+			dictEntry = dictionary[dictEntry].rightson;
+		} else {
+			dictEntry = dictionary[dictEntry].leftson;
+		}
+
+		// Validate data
+		if (dictEntry < 0 || dictEntry >= dictSize) {
+			break;
+		}
+
+		// Negative leftson means we've reached leaf node
+		if (dictionary[dictEntry].leftson < 0) {
+			int16 datum = dictionary[dictEntry].rightson; // Value is stored in rightson
+
+			// Absolute values
+			if (compressType == 0) {
+				currentHuff = 0;
+			}
+
+			currentHuff = (currentHuff + datum) & 0xFF; // Sample
+
+			*out++ = currentHuff;
+			huffsRemaining--;
+			dictEntry = 0;
+		}
+	}
+
+	delete file;
+
+	if (huffCount - huffsRemaining == 0) {
+		free(byteStream);
+		return;
+	}
+
+	_engine->playStartupSound(byteStream, huffCount - huffsRemaining, divisor);
 }
 
 void Gui::disableUndo() {
