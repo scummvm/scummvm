@@ -804,6 +804,17 @@ int getSelectedChannel(){
 	return _state ? _state->_selectedChannel : -1;
 }
 
+void setSelectedChannel(int channel) {
+	if (_state) {
+		_state->_selectedChannel = channel;
+
+		if (channel > 0) {
+			_state->_scrollToChannel = true; 
+			_state->_w.channels = true;
+		}
+	}
+}
+
 bool isMouseInputIgnored() {
 	if (!_state || !_state->_ignoreMouse)
 		return false;

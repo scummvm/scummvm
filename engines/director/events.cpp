@@ -61,6 +61,19 @@ bool DirectorEngine::processEvents(bool captureClick, bool skipWindowManager) {
 	while (pollEvent(event)) {
 		if (Director::DT::isMouseInputIgnored()) {
 			if (Common::isMouseEvent(event)) {
+				if (event.type == Common::EVENT_LBUTTONDOWN) {
+					Window *window = g_director->getCurrentWindow();
+					Score *score = window->getCurrentMovie()->getScore();
+					uint16 spriteId = 0;
+
+					if (g_director->getVersion() < 400)
+						spriteId = score->getActiveSpriteIDFromPos(event.mouse);
+					else
+						spriteId = score->getMouseSpriteIDFromPos(event.mouse);
+
+					Director::DT::setSelectedChannel(spriteId);
+					window->render(true);
+				}
 				continue;
 			}
 		}
