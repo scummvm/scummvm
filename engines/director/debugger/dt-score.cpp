@@ -941,8 +941,7 @@ static void drawMainChannelGrid(ImDrawList *dl, ImVec2 startPos, Score *score) {
 				case kChScript: // open script in script editor
 					if (mc.actionId.member) {
 						ImGuiScript script = toImGuiScript(kScoreScript, mc.actionId, "");
-						setScriptToDisplay(script);
-						_state->_w.funcList = true;
+						addToOpenHandlers(script);
 					}
 					break;
 				}
