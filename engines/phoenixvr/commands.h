@@ -526,6 +526,13 @@ struct Scroll : public Script::Command {
 	}
 };
 
+struct Waves : public Script::Command {
+	Waves(const Common::Array<Common::String> &args) {}
+	void exec(Script::ExecutionContext &ctx) const override {
+		g_engine->showWaves();
+	}
+};
+
 struct Rollover : public Script::Command {
 	int textId;
 	RolloverType type;
@@ -629,6 +636,7 @@ struct End : public Script::Command {
 	E(Sub)                           \
 	E(Until)                         \
 	E(While)                         \
+	E(Waves)                         \
 	/* */
 
 #define ADD_PLUGIN(NAME)             \

@@ -83,6 +83,10 @@ PhoenixVREngine::~PhoenixVREngine() {
 	delete _screen;
 }
 
+void PhoenixVREngine::showWaves() {
+	_vr.showWaves();
+}
+
 uint32 PhoenixVREngine::getFeatures() const {
 	return _gameDescription->flags;
 }

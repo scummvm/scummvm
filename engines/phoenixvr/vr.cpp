@@ -471,6 +471,10 @@ void VR::render(Graphics::Screen *screen, float ax, float ay, float fov, float d
 			hint = fmod(_hint + dt * kTau, kTau);
 			_hint = hint;
 		}
+
+		if (_showWaves)
+			_wavesT += dt * 20;
+
 		for (int dstY = 0; dstY != h; ++dstY, line += incrementY) {
 			if (regSet) {
 				regX = ax - fov / 2;
@@ -478,6 +482,15 @@ void VR::render(Graphics::Screen *screen, float ax, float ay, float fov, float d
 					regX += kTau;
 				if (regX >= kTau)
 					regX -= kTau;
+			}
+			int y = dstY;
+			if (_showWaves) {
+				auto d = static_cast<int>(sin((dstY * 0.039269909f + _wavesT * 0.40000001f)) * -3);
+				y += d;
+				if (y < 0)
+					y = 0;
+				else if (y >= screen->h)
+					y = screen->h - 1;
 			}
 			Vector3d pixel = line;
 			int dx = regSet ? static_cast<int>(5 * cosf(hint + 100.0f * dstY / h)) : 0;
@@ -510,7 +523,7 @@ void VR::render(Graphics::Screen *screen, float ax, float ay, float fov, float d
 					x = 0;
 				else if (x >= screen->w)
 					x = screen->w - 1;
-				screen->setPixel(x, dstY, color);
+				screen->setPixel(x, y, color);
 			}
 			if (regSet) {
 				regY += regDY;

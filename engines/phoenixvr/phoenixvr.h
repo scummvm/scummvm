@@ -178,6 +178,7 @@ public:
 	void loadVariables();
 
 	void rollover(int textId, RolloverType type);
+	void showWaves();
 
 private:
 	static Common::String removeDrive(const Common::String &path);

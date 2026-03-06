@@ -60,6 +60,8 @@ class VR {
 	};
 	Common::Array<Animation> _animations;
 	float _hint = 0;
+	bool _showWaves = false;
+	float _wavesT = 0;
 
 public:
 	static VR loadStatic(const Graphics::PixelFormat &format, Common::SeekableReadStream &s);
@@ -68,6 +70,7 @@ public:
 	void playAnimation(const Common::String &name, const Common::String &variable, int value, float speed);
 	void stopAnimation(const Common::String &name);
 	Graphics::Surface &getSurface() { return *_pic->surfacePtr(); }
+	void showWaves() { _showWaves = true; }
 };
 } // namespace PhoenixVR
 
