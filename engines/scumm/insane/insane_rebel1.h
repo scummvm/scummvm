@@ -31,6 +31,7 @@ namespace Scumm {
 
 class ScummEngine_v7;
 class SmushPlayer;
+class NutRenderer;
 
 // Simple sprite bank for RA1 NUT files (ANIM v1 with odd-alignment padding).
 // Separate from NutRenderer to avoid modifying shared NUT parsing code.
@@ -113,6 +114,7 @@ private:
 
 	RA1SpriteBank _shipBank;
 	RA1SpriteBank _displayBank;   // SYS/DISPLAY.NUT — bottom status bar
+	NutRenderer *_hudFont;        // SMALFONT.NUT (SYS or SYSTM) — numeric HUD text (score/lives)
 
 	// RA1 screen dimensions (384x242)
 	int _screenWidth;
@@ -156,6 +158,8 @@ private:
 	int16 _lives;                // 0x7562: remaining extra lives
 	int _score;                  // 0x7564: current score
 	byte _damageFlags;           // 0x74D4: per-frame collision bitmask (cleared each frame)
+	uint16 _gameLatch5D;         // 0x75D2: GAME 0x5D latch (scene/obstacle/event trigger)
+	uint16 _gameLatch5F;         // 0x75D4: GAME 0x5F latch (probabilistic hit trigger)
 	int16 _damageCooldown;       // 0x74D8: invulnerability timer (10 frames after hit)
 	int16 _deathTimer;           // 0x756A: death animation countdown (30 on death)
 	int16 _screenFlash;          // 0x7736: screen flash timer on hit
