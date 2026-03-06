@@ -618,6 +618,13 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 }
 
 void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::SeekableReadStream &b) {
+	// RA1 TEXT chunks have a different format: 2 × BE32 header + text data.
+	// Route to dedicated handler.
+	if (isRA1() && subType == MKTAG('T','E','X','T')) {
+		ra1HandleText(subSize, b);
+		return;
+	}
+
 	int pos_x = b.readSint16LE();
 	int pos_y = b.readSint16LE();
 	int flags = b.readSint16LE();
@@ -1418,6 +1425,19 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 				rebel1->handleGameChunk(subSize, b);
 			}
 			break;
+		case MKTAG('P','V','O','C'):
+			// RA1 voice-over audio: same 12-byte header format as PSAD
+			// (3 × BE32: trackId, seqNum, param) followed by SAUD data.
+			// Feed to audio system identically to PSAD.
+			if (!_compressedFileMode) {
+				audioChunk = (uint8 *)malloc(subSize + 8);
+				b.seek(-8, SEEK_CUR);
+				b.read(audioChunk, subSize + 8);
+				feedAudio(audioChunk, 0, 127, 0, 0);
+				free(audioChunk);
+				audioChunk = nullptr;
+			}
+			break;
 		case MKTAG('G','A','M','2'):
 		case MKTAG('F','A','D','E'):
 		case MKTAG('S','E','G','A'):
@@ -1426,7 +1446,6 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 		case MKTAG('S','B','L',' '):
 		case MKTAG('S','B','L','2'):
 		case MKTAG('P','S','D','2'):
-		case MKTAG('P','V','O','C'):
 			debugC(DEBUG_SMUSH, "SmushPlayer::handleFrame: skipping RA1 chunk %s (%d bytes)", tag2str(subType), subSize);
 			break;
 		default:
@@ -1612,6 +1631,80 @@ SmushFont *SmushPlayer::ra1GetFont(int font) {
 	return _sf[font];
 }
 
+/**
+ * RA1 TEXT chunk handler.
+ *
+ * RA1 TEXT format (different from SCUMM7/COMI TRES):
+ *   Bytes 0-3 (BE32): y position on screen
+ *   Bytes 4-7 (BE32): parameter (x hint or style)
+ *   Bytes 8+:         text content with 0x00 as line separator
+ *                     '<' / '>' switch font layers (multi-font markup)
+ *
+ * Text is rendered centered horizontally at the given y position.
+ * The '<' font-switch prefix is stripped before rendering.
+ */
+void SmushPlayer::ra1HandleText(int32 subSize, Common::SeekableReadStream &b) {
+	if (subSize < 8 || !_dst || _width <= 0 || _height <= 0)
+		return;
+
+	InsaneRebel1 *rebel1 = (InsaneRebel1 *)_vm->_insane;
+	if (!rebel1)
+		return;
+
+	int yPos = b.readUint32BE();
+	/*int param =*/ b.readUint32BE();
+
+	int textLen = subSize - 8;
+	if (textLen <= 0)
+		return;
+
+	char *textBuf = (char *)malloc(textLen + 1);
+	b.read(textBuf, textLen);
+	textBuf[textLen] = '\0';
+
+	int pitch = _width;
+
+	// Split on 0x00 line separators and render each line centered.
+	// Strip '<' / '>' font layer markers (multi-font not yet supported).
+	const char *lineStart = textBuf;
+	int lineY = yPos;
+	int lineHeight = 10;
+
+	while (lineStart < textBuf + textLen) {
+		const char *lineEnd = lineStart;
+		while (lineEnd < textBuf + textLen && *lineEnd != '\0')
+			lineEnd++;
+
+		int len = (int)(lineEnd - lineStart);
+		if (len > 0) {
+			const char *cleaned = lineStart;
+			while (cleaned < lineEnd && (*cleaned == '<' || *cleaned == '>'))
+				cleaned++;
+
+			int cleanLen = (int)(lineEnd - cleaned);
+			if (cleanLen > 0 && lineY >= 0 && lineY < _height) {
+				char *line = (char *)malloc(cleanLen + 1);
+				memcpy(line, cleaned, cleanLen);
+				line[cleanLen] = '\0';
+
+				// Center the line horizontally
+				int strWidth = rebel1->getFontBankStringWidth(line);
+				int x = (_width - strWidth) / 2;
+				if (x < 0) x = 0;
+
+				rebel1->drawFontBankString(_dst, pitch, _width, _height, x, lineY, line);
+
+				free(line);
+				lineY += lineHeight;
+			}
+		}
+
+		lineStart = lineEnd + 1;
+	}
+
+	free(textBuf);
+}
+
 void SmushPlayer::parseNextFrame() {
 
 	if (_seekPos >= 0) {
@@ -1693,7 +1786,7 @@ void SmushPlayer::parseNextFrame() {
 		ra2ParseNextFrame();
 
 	if (!_imuseDigital && isRA1())
-		processDispatches(_smushAudioSampleRate / 15);
+		processDispatches(_smushAudioSampleRate / _speed);
 }
 
 void SmushPlayer::setPalette(const byte *palette) {

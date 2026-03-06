@@ -101,8 +101,6 @@ private:
 	void renderShip(byte *dst, int pitch, int width, int height);
 	void renderHUD(byte *dst, int pitch, int width, int height);
 	void renderMainMenuOverlay(byte *dst, int pitch, int width, int height);
-	void drawFontBankString(byte *dst, int pitch, int width, int height, int x, int y, const char *text);
-	int getFontBankStringWidth(const char *text);
 	void renderSprite(byte *dst, int pitch, int width, int height,
 					  int x, int y, const RA1Sprite &sprite);
 
@@ -111,6 +109,8 @@ private:
 	void terminateAudio();
 	void queueAudioData(int trackIdx, uint8 *data, int32 size, int volume, int pan);
 public:
+	void drawFontBankString(byte *dst, int pitch, int width, int height, int x, int y, const char *text);
+	int getFontBankStringWidth(const char *text);
 	void processAudioFrame(int16 feedSize);
 private:
 
