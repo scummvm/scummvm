@@ -101,23 +101,37 @@ Common::String PhoenixVREngine::removeDrive(const Common::String &path) {
 	else
 		return path.substr(2);
 }
-Common::SeekableReadStream *PhoenixVREngine::open(const Common::String &name) {
-	debug("open %s", name.c_str());
-	auto packed = name.hasSuffixIgnoreCase(".lst");
-	auto filename = packed ? name.substr(0, name.size() - 4) + ".pak" : name;
-	auto p = _currentScriptPath.append(filename, '\\').normalize();
+
+Common::SeekableReadStream *PhoenixVREngine::tryOpen(const Common::Path &name) {
 	Common::ScopedPtr<Common::File> s(new Common::File());
-	debug("trying %s", p.toString().c_str());
-	if (s->open(p)) {
-		debug("opening %s: %s", name.c_str(), p.toString().c_str());
-		return packed ? unpack(*s) : s.release();
+	if (s->open(name)) {
+		auto nameStr = name.toString();
+		debug("opened %s", nameStr.c_str());
+		return s.release();
 	}
-	p = filename;
-	debug("trying %s", p.toString().c_str());
-	if (s->open(p)) {
-		debug("opening %s: %s", name.c_str(), p.toString().c_str());
-		return packed ? unpack(*s) : s.release();
+	auto pakName = name.toString();
+	auto dotPos = pakName.rfind('.');
+	if (dotPos == pakName.npos)
+		return nullptr;
+	pakName = pakName.substr(0, dotPos) + ".pak";
+	if (s->open(Common::Path{pakName})) {
+		debug("opened %s", pakName.c_str());
+		return unpack(*s);
 	}
+
+	return nullptr;
+}
+
+Common::SeekableReadStream *PhoenixVREngine::open(Common::String filename) {
+	debug("open %s", filename.c_str());
+	auto *stream = tryOpen(_currentScriptPath.append(filename, '\\').normalize());
+	if (stream)
+		return stream;
+
+	stream = tryOpen(Common::Path{filename});
+	if (stream)
+		return stream;
+
 	return nullptr;
 }
 
