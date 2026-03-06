@@ -351,6 +351,7 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 	} else {
 		warning("playMovie %s failed", movie.c_str());
 	}
+	delete stream;
 }
 void PhoenixVREngine::playAnimation(const Common::String &name, const Common::String &var, int varValue, float speed) {
 	_vr.playAnimation(name, var, varValue, speed);
