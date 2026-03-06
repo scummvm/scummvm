@@ -31,7 +31,7 @@ namespace Scumm {
 
 class ScummEngine_v7;
 class SmushPlayer;
-class NutRenderer;
+class SmushFont;
 
 // Simple sprite bank for RA1 NUT files (ANIM v1 with odd-alignment padding).
 // Separate from NutRenderer to avoid modifying shared NUT parsing code.
@@ -47,8 +47,9 @@ struct RA1SpriteBank {
 	int numSprites;
 	RA1Sprite *sprites;
 	byte *decodedData;  // Single allocation for all decoded pixels
+	uint32 decodedSize;
 
-	RA1SpriteBank() : numSprites(0), sprites(nullptr), decodedData(nullptr) {}
+	RA1SpriteBank() : numSprites(0), sprites(nullptr), decodedData(nullptr), decodedSize(0) {}
 	~RA1SpriteBank() { delete[] sprites; free(decodedData); }
 };
 
@@ -99,6 +100,8 @@ private:
 	void updateShipPhysics();
 	void renderShip(byte *dst, int pitch, int width, int height);
 	void renderHUD(byte *dst, int pitch, int width, int height);
+	void renderMainMenuOverlay(byte *dst, int pitch, int width, int height);
+	void drawFontBankString(byte *dst, int pitch, int width, int height, int x, int y, const char *text);
 	void renderSprite(byte *dst, int pitch, int width, int height,
 					  int x, int y, const RA1Sprite &sprite);
 
@@ -114,7 +117,8 @@ private:
 
 	RA1SpriteBank _shipBank;
 	RA1SpriteBank _displayBank;   // SYS/DISPLAY.NUT — bottom status bar
-	NutRenderer *_hudFont;        // SMALFONT.NUT (SYS or SYSTM) — numeric HUD text (score/lives)
+	RA1SpriteBank _hudFontBank;   // RA1 HUD text glyphs (TECHFONT/TALKFONT via RA1 loader)
+	SmushFont *_menuFont;         // Use engine text renderer for correct TALKFONT character mapping
 
 	// RA1 screen dimensions (384x242)
 	int _screenWidth;
@@ -182,6 +186,11 @@ private:
 
 	// True only while an interactive gameplay SMUSH is running.
 	bool _interactiveVideoActive;
+
+	// Main menu state (for O1OPTION interactive overlay)
+	bool _menuActive;
+	bool _menuConfirmed;
+	int _menuSelection; // 0..4 maps to return values 1..5
 };
 
 } // End of namespace Scumm
