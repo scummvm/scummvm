@@ -69,6 +69,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Implemented original cursor for the Apple II release of Maniac Mansion.
    - Fixed Maniac Mansion NES logo scroll getting stuck during the intro.
 
+ Sherlock:
+   - Fixed occasional crash when using inventory items in Rose Tattoo.
+   - Fixed crash when using keyboard keys while playing darts in Rose Tattoo.
+   - Fixed score board layout and logic for dart games in Rose Tattoo.
+
  Teenagent:
    - Fixed 'could not locate language block' error when starting the Polish and
      Russian versions.
