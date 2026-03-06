@@ -31,6 +31,8 @@ namespace Video {
  */
 class FourXMDecoder : public Video::VideoDecoder {
 public:
+	~FourXMDecoder();
+
 	bool loadStream(Common::SeekableReadStream *stream) override;
 	bool useAudioSync() const override { return false; }
 
