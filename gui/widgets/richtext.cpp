@@ -88,8 +88,11 @@ RichTextWidget::~RichTextWidget() {
 
 	if (_surface)
 		_surface->free();
-
 	delete _surface;
+
+	if (_cachedTextSurface)
+		_cachedTextSurface->free();
+	delete _cachedTextSurface;
 }
 
 void RichTextWidget::handleMouseWheel(int x, int y, int direction) {
