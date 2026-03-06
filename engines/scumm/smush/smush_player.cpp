@@ -264,6 +264,8 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 	_compressedFileMode = false;
 	_width = 0;
 	_height = 0;
+	_scrollX = 0;
+	_scrollY = 0;
 
 	ra2InitFields();
 	_IACTpos = 0;
@@ -322,6 +324,8 @@ void SmushPlayer::init(int32 speed) {
 	_storeFrame = false;
 	_fobjOffsetX = 0;
 	_fobjOffsetY = 0;
+	_scrollX = 0;
+	_scrollY = 0;
 
 	_vm->_smushVideoShouldFinish = false;
 	_vm->_smushActive = true;

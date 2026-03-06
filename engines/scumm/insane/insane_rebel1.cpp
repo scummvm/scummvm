@@ -1285,13 +1285,13 @@ int InsaneRebel1::runMainMenu() {
 // Level 1 flow (0x16100-0x16737):
 //   1. Load NUTs (L1BANK1, L1BANK2, L1EXPLD, L1BANG, L1LASER)
 //   2. L1HANGAR.ANM — Hangar departure cutscene
-//   3. "Chapter 1" text
-//   4. L1CU1.ANM — Pre-flight cutscene
-//   5. L1PLAY1L.ANM — Stage 1 gameplay (left path) — INTERACTIVE
-//   6. L1PLAY1R.ANM — Stage 1 gameplay (right path) — INTERACTIVE
-//   7. L1CU2.ANM — Mid-level cutscene
-//   8. L1PLAY2.ANM — Stage 2 turret — INTERACTIVE
-//   9. L1END.ANM — Level end cutscene
+//   3. L1CU1.ANM — Pre-flight cutscene
+//   4. L1PLAY1L.ANM or L1PLAY1R.ANM — Stage 1 flight (alternative paths)
+//      L1PLAY1L = "Hard" left path (788 frames), L1PLAY1R = "Easy" right path (396 frames)
+//      Original branches at frame 394 via nextSceneA/nextSceneB collision zones
+//   5. L1CU2.ANM — Mid-level cutscene
+//   6. L1PLAY2.ANM — Stage 2 turret — INTERACTIVE
+//   7. L1END.ANM — Level end cutscene
 //   Death: L1CRASHA/B.ANM → L1DEATH.ANM → L1RETRY.ANM → retry from L1NEW
 bool InsaneRebel1::runLevel1() {
 	debug(1, "InsaneRebel1: Running level 1");
@@ -1320,33 +1320,28 @@ bool InsaneRebel1::runLevel1() {
 		_screenFlash = 0;
 		_frameCounter = 0;
 
-		// L1PLAY1L.ANM — Stage 1 gameplay (left path, original: 0x5953)
+		// Stage 1 flight — L1PLAY1L (hard/left) or L1PLAY1R (easy/right).
+		// Original selects path via collision zones at frame 394 using
+		// nextSceneA(0x67)/nextSceneB(0x69). For now, always play PLAY1L.
+		// TODO: Implement path branching based on player ship position.
 		playInteractiveVideo("LVL1/L1PLAY1L.ANM");
 		if (_vm->shouldQuit())
 			return false;
 
 		if (_health >= 0) {
-			// Survived stage 1 — continue to right path
-			// L1PLAY1R.ANM (original: 0x5965, flags with seekframe=0x187)
-			playInteractiveVideo("LVL1/L1PLAY1R.ANM");
+			// L1CU2.ANM — Mid-level cutscene (original: 0x5977)
+			playCinematic("LVL1/L1CU2.ANM");
 			if (_vm->shouldQuit())
 				return false;
 
-			if (_health >= 0) {
-				// L1CU2.ANM — Mid-level cutscene (original: 0x5977)
-				playCinematic("LVL1/L1CU2.ANM");
-				if (_vm->shouldQuit())
-					return false;
+			// L1PLAY2.ANM — Stage 2 turret (original: 0x5986)
+			playInteractiveVideo("LVL1/L1PLAY2.ANM");
+			if (_vm->shouldQuit())
+				return false;
 
-				// L1PLAY2.ANM — Stage 2 turret (original: 0x5986)
-				playInteractiveVideo("LVL1/L1PLAY2.ANM");
-				if (_vm->shouldQuit())
-					return false;
-
-				// L1END.ANM — Level complete! (original: 0x59a3)
-				playCinematic("LVL1/L1END.ANM");
-				return true;
-			}
+			// L1END.ANM — Level complete! (original: 0x59a3)
+			playCinematic("LVL1/L1END.ANM");
+			return true;
 		}
 
 		// Death sequence (original: 0x165e8-0x16737)
