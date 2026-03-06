@@ -49,6 +49,16 @@ static const int16 kMaxY = 180;
 static const int16 kFocalX = 43;    // 0x2b
 static const int16 kFocalY = 25;    // 0x19
 
+// Per-difficulty tuning tables from assault_data_3.bin
+// Indexed: difficulty * 0x28B + level * 0x1F + offset
+// Level 1 values (level index 0):
+//                                roll  lift  slide drift wham  shot
+static const int16 kTuningLevel1[3][6] = {
+	{ 100, 100,  60, 110,  15,   0 },  // Easy
+	{ 100, 105,  60, 115,  25,   0 },  // Normal
+	{ 105, 110,  65, 120,  30,   0 },  // Hard
+};
+
 // Decode BOMP RLE (codec 21) sprite data into a flat pixel buffer.
 // Same algorithm as NutRenderer::codec21 but without palette tracking.
 static void decodeBomp(byte *dst, const byte *src, int width, int height, int pitch) {
@@ -77,6 +87,20 @@ static void decodeBomp(byte *dst, const byte *src, int width, int height, int pi
 	}
 }
 
+void InsaneRebel1::loadTuningForLevel(int level) {
+	int d = CLIP(_difficulty, 0, 2);
+	// Currently only Level 1 tuning is hardcoded; extend for other levels later
+	(void)level;
+	_tuning.roll  = kTuningLevel1[d][0];
+	_tuning.lift  = kTuningLevel1[d][1];
+	_tuning.slide = kTuningLevel1[d][2];
+	_tuning.drift = kTuningLevel1[d][3];
+	_tuning.wham  = kTuningLevel1[d][4];
+	_tuning.shot  = kTuningLevel1[d][5];
+	debug(1, "RA1: Loaded tuning for difficulty %d: roll=%d lift=%d slide=%d drift=%d wham=%d shot=%d",
+		d, _tuning.roll, _tuning.lift, _tuning.slide, _tuning.drift, _tuning.wham, _tuning.shot);
+}
+
 InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_screenWidth = 384;
 	_screenHeight = 242;
@@ -95,6 +119,9 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_posAccumX = 0;
 	_posAccumY = 0;
 	_driftParam = 0;
+
+	_difficulty = 0;  // Easy by default
+	loadTuningForLevel(0);
 
 	_perspectiveX = 0;
 	_perspectiveY = 0;
@@ -119,6 +146,8 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_menuConfirmed = false;
 	_menuSelection = 0;
 	_menuFrameCounter = 0;
+	_optionsActive = false;
+	_optionsSel = 0;
 	_turbulenceEnabled = false;
 	if (loadRA1Nut("SYS/TALKFONT.NUT", _hudFontBank)) {
 		debug(1, "InsaneRebel1: HUD/menu glyph font loaded from SYS/TALKFONT.NUT (%d chars)", _hudFontBank.numSprites);
@@ -155,7 +184,33 @@ InsaneRebel1::~InsaneRebel1() {
 }
 
 bool InsaneRebel1::notifyEvent(const Common::Event &event) {
-	if (_menuActive && event.type == Common::EVENT_KEYDOWN) {
+	if (_menuActive && _optionsActive && event.type == Common::EVENT_KEYDOWN) {
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_UP:
+		case Common::KEYCODE_w:
+			_optionsSel = (_optionsSel + 2) % 3;
+			return true;
+		case Common::KEYCODE_DOWN:
+		case Common::KEYCODE_s:
+			_optionsSel = (_optionsSel + 1) % 3;
+			return true;
+		case Common::KEYCODE_RETURN:
+		case Common::KEYCODE_KP_ENTER:
+		case Common::KEYCODE_SPACE:
+			_menuConfirmed = true;
+			_vm->_smushVideoShouldFinish = true;
+			return true;
+		case Common::KEYCODE_ESCAPE:
+			_optionsSel = 2;  // Back
+			_menuConfirmed = true;
+			_vm->_smushVideoShouldFinish = true;
+			return true;
+		default:
+			break;
+		}
+	}
+
+	if (_menuActive && !_optionsActive && event.type == Common::EVENT_KEYDOWN) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_UP:
 		case Common::KEYCODE_w:
@@ -637,6 +692,51 @@ int InsaneRebel1::getFontBankStringWidth(const char *text) {
 // Original menu strings from assault_data_3.bin at 0x5822.
 // Highlight uses RA2-style flashing border box (FUN_004292d0 pattern).
 void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int height) {
+	_menuFrameCounter++;
+
+	if (_optionsActive) {
+		// --- Options submenu ---
+		static const char *kDiffNames[3] = { "EASY", "NORMAL", "HARD" };
+
+		const int titleW = getFontBankStringWidth("GAME OPTIONS");
+		drawFontBankString(dst, pitch, width, height, (width - titleW) / 2, 36, "GAME OPTIONS");
+
+		// Build dynamic option strings
+		char diffLine[64];
+		snprintf(diffLine, sizeof(diffLine), "DIFFICULTY: %s", kDiffNames[CLIP(_difficulty, 0, 2)]);
+		const char *turbLine = _turbulenceEnabled ? "TURBULENCE: ON" : "TURBULENCE: OFF";
+		const char *kOptionsItems[3] = { diffLine, turbLine, "BACK" };
+
+		const int menuY = 60;
+		const int rowH = 16;
+
+		for (int i = 0; i < 3; i++) {
+			const int textW = getFontBankStringWidth(kOptionsItems[i]);
+			const int textX = (width - textW) / 2;
+			const int y = menuY + i * rowH;
+			drawFontBankString(dst, pitch, width, height, textX, y + 1, kOptionsItems[i]);
+
+			if (i == _optionsSel) {
+				byte highlightColor = ((_menuFrameCounter / 8) & 1) ? 248 : 240;
+				int bracketWidth = textW + 12;
+				int leftX = CLIP(textX - 6, 0, width - 1);
+				int rightX = CLIP(leftX + bracketWidth, 0, width - 1);
+				int topY = CLIP(y - 1, 0, height - 1);
+				int bottomY = CLIP(y + rowH - 2, 0, height - 1);
+				for (int x = leftX; x <= rightX; x++) {
+					dst[topY * pitch + x] = highlightColor;
+					dst[bottomY * pitch + x] = highlightColor;
+				}
+				for (int py = topY; py <= bottomY; py++) {
+					dst[py * pitch + leftX] = highlightColor;
+					dst[py * pitch + rightX] = highlightColor;
+				}
+			}
+		}
+		return;
+	}
+
+	// --- Main menu ---
 	static const char *kMenuItems[5] = {
 		"START NEW GAME",
 		"GAME OPTIONS",
@@ -644,8 +744,6 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 		"CONTINUE DEMO",
 		"EXIT TO DOS"
 	};
-
-	_menuFrameCounter++;
 
 	// Center title
 	const int titleW = getFontBankStringWidth("MAIN MENU");
@@ -716,14 +814,8 @@ void InsaneRebel1::updateShipPhysics() {
 	inputY = CLIP<int16>(inputY, -127, 127);
 
 	// --- Step 2: Roll accumulator (_74CA) ---
-	// Tuning values for Level 1 difficulty 0 (from data section)
-	static const int16 kRoll = 100;   // tuning[0x1B1B]
-	static const int16 kLift = 100;   // tuning[0x1B1D]
-	static const int16 kSlide = 60;   // tuning[0x1B1F]
-	static const int16 kDrift = 110;  // tuning[0x1B21]
-
 	// Normal mode: accumulate; mode 0x10: snap to input
-	_rollAccum += (kRoll * (int32)inputX) >> 5;
+	_rollAccum += (_tuning.roll * (int32)inputX) >> 5;
 	_rollAccum = CLIP<int32>(_rollAccum, -0x47F, 0x47F);
 
 	// --- Step 3: Vertical smoothing (_74CE) ---
@@ -736,21 +828,21 @@ void InsaneRebel1::updateShipPhysics() {
 	int32 rng = _turbulenceEnabled ? (int32)_vm->_rnd.getRandomNumber(199) : 100;  // 0-199, centered at 100
 	int32 crossTermX;
 	if (_liftSmooth < 0)
-		crossTermX = (kLift * _liftSmooth * _rollAccum) >> 11;
+		crossTermX = ((int32)_tuning.lift * _liftSmooth * _rollAccum) >> 11;
 	else
-		crossTermX = (kLift * _liftSmooth * _rollAccum) >> 12;
+		crossTermX = ((int32)_tuning.lift * _liftSmooth * _rollAccum) >> 12;
 
-	int32 deltaX = (((rng - 100) - (int32)kDrift * _driftParam) >> 1)
-	             + ((kSlide * _rollAccum) >> 7)
+	int32 deltaX = (((rng - 100) - (int32)_tuning.drift * _driftParam) >> 1)
+	             + (((int32)_tuning.slide * _rollAccum) >> 7)
 	             - crossTermX;
 
 	// Y delta: roll magnitude + lift cross-coupling
 	int32 absRoll = ABS(_rollAccum);
 	int32 crossTermY;
 	if (_liftSmooth < 0)
-		crossTermY = (kLift * (0x7DE - absRoll) * _liftSmooth) >> 12;
+		crossTermY = ((int32)_tuning.lift * (0x7DE - absRoll) * _liftSmooth) >> 12;
 	else
-		crossTermY = (kLift * (0x7DE - absRoll) * _liftSmooth) >> 13;
+		crossTermY = ((int32)_tuning.lift * (0x7DE - absRoll) * _liftSmooth) >> 13;
 
 	int32 deltaY = (absRoll >> 1) + crossTermY;
 
@@ -864,10 +956,10 @@ void InsaneRebel1::updateShipPhysics() {
 		_health >= 0 && _deathTimer <= 0) {
 		// Projectile hit (bit 7 = 0x80)
 		if (_damageFlags & 0x80)
-			_health -= kHeavyDamage;
+			_health -= _tuning.shot;
 		// Wall collision (bits 1,2,4 = 0x16)
 		if (_damageFlags & 0x16)
-			_health -= kLightDamage;
+			_health -= _tuning.wham;
 
 		if (_health < 0)
 			_deathTimer = kDeathTimerInit;
@@ -1049,9 +1141,9 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 
 		// Color based on damage level (matching original thresholds from FUN_1BBCB)
 		byte barColor;
-		if (_health > kHeavyDamage * 2)
+		if (_health > _tuning.shot * 2)
 			barColor = 0xA0;  // Green — low damage
-		else if (_health > kLightDamage * 2)
+		else if (_health > _tuning.wham * 2)
 			barColor = 0x2C;  // Yellow — moderate damage
 		else
 			barColor = 0x30;  // Red — critical
@@ -1306,6 +1398,42 @@ int InsaneRebel1::runMainMenu() {
 	return 5;
 }
 
+void InsaneRebel1::runOptionsMenu() {
+	_optionsSel = 0;
+	_optionsActive = true;
+
+	while (!_vm->shouldQuit()) {
+		_menuActive = true;
+		_menuConfirmed = false;
+		_menuFrameCounter = 0;
+		clearVideoBuffer();
+		playCinematic("OPEN/O1OPTION.ANM");
+		_menuActive = false;
+
+		if (_vm->shouldQuit())
+			break;
+
+		if (_menuConfirmed) {
+			switch (_optionsSel) {
+			case 0:
+				// Cycle difficulty
+				_difficulty = (_difficulty + 1) % 3;
+				loadTuningForLevel(0);
+				break;
+			case 1:
+				// Toggle turbulence
+				_turbulenceEnabled = !_turbulenceEnabled;
+				break;
+			case 2:
+				// Back to main menu
+				_optionsActive = false;
+				return;
+			}
+		}
+	}
+	_optionsActive = false;
+}
+
 // Level 1 flow (0x16100-0x167A2, from disassembly):
 //   1. Load NUTs (L1BANK1, L1BANK2, L1EXPLD, L1BANG, L1LASER)
 //   2. L1HANGAR.ANM — Full hangar departure cutscene (782 frames, flags 0x0420)
@@ -1442,11 +1570,15 @@ void InsaneRebel1::runGame() {
 			// Return to menu after level ends
 			break;
 		}
+		case 2:
+			// Game Options
+			runOptionsMenu();
+			break;
 		case 5:
 			// Exit
 			return;
 		default:
-			// Options, Passcode, Demo — not yet implemented, return to menu
+			// Passcode, Demo — not yet implemented, return to menu
 			break;
 		}
 	}

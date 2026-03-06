@@ -161,6 +161,22 @@ private:
 	// Control mode (from GAME opcode 0x5E)
 	int16 _flyControlMode;
 
+	// Difficulty (0=easy, 1=normal, 2=hard) — matches original DAT_22BC
+	int _difficulty;
+
+	// Per-difficulty tuning (from assault_data_3.bin, indexed: difficulty * 0x28B + level * 0x1F)
+	struct TuningParams {
+		int16 roll;    // 0x1B1B: horizontal speed/sensitivity
+		int16 lift;    // 0x1B1D: vertical speed/sensitivity
+		int16 slide;   // 0x1B1F: cross-axis coupling
+		int16 drift;   // 0x1B21: drift/turbulence multiplier
+		int16 wham;    // 0x1B27: light/wall damage
+		int16 shot;    // 0x1B29: heavy/projectile damage
+	};
+	TuningParams _tuning;
+
+	void loadTuningForLevel(int level);
+
 	// Damage system (from Ghidra decompilation of FUN_1DEB5)
 	int16 _health;               // 0x7560: current health (init=98, negative=dead, max=98)
 	int16 _lives;                // 0x7562: remaining extra lives
@@ -177,10 +193,6 @@ private:
 	static const int16 kMaxHealth = 98;
 	static const int16 kDeathTimerInit = 30;
 	static const int16 kDamageCooldownInit = 10;
-
-	// Tuning damage values (TODO: load from data section per difficulty/level)
-	static const int16 kLightDamage = 5;   // "wham" — wall/zone collision
-	static const int16 kHeavyDamage = 15;  // "shot" — projectile hit
 
 	// Audio state (same structure as RA2)
 	static const int kMaxAudioTracks = 4;
@@ -199,11 +211,16 @@ private:
 	bool _pathBranchEnabled;     // True after branch frame is reached
 	bool _rightPathSelected;     // True if player chose the right/easy path
 
-	// Main menu state (for O1OPTION interactive overlay)
+	// Main menu / options state
+	void runOptionsMenu();
 	bool _menuActive;
 	bool _menuConfirmed;
 	int _menuSelection; // 0..4 maps to return values 1..5
 	int _menuFrameCounter;
+
+	// Options submenu state
+	bool _optionsActive;     // True when showing options instead of main menu
+	int _optionsSel;         // 0=difficulty, 1=turbulence, 2=back
 
 	bool _turbulenceEnabled;  // Random per-frame jitter in deltaX (original has it on)
 };
