@@ -289,6 +289,7 @@ typedef struct ImGuiState {
 
 	ImGuiEx::ImGuiLogger *_logger = nullptr;
 	bool _ignoreMouse = false;
+	bool _enableMultiViewport = true;
 } ImGuiState;
 
 // debugtools.cpp
