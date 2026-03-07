@@ -202,7 +202,9 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 		bool shouldClear = true;
 		Channel *trailChannel = nullptr;
 		for (auto &j : _dirtyChannels) {
-			if (j->_visible && r == j->getBbox() && j->isTrail()) {
+			bool isHidden = false;
+			isHidden = j->_hideFromStage;
+			if (j->_visible && !isHidden && r == j->getBbox() && j->isTrail()) {
 				shouldClear = false;
 				trailChannel = j;
 				break;
@@ -226,6 +228,9 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 					if (pass == 1)
 						continue;
 				}
+
+				if (j->_hideFromStage)
+					continue;
 
 				if (j->_visible) {
 					if (j->hasSubChannels()) {

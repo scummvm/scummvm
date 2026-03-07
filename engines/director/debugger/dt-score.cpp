@@ -297,7 +297,17 @@ static void drawSidebar2(ImDrawList *dl, ImVec2 startPos, Score *score) {
 
 		ImVec2 center(rowMin.x + pad + radius, rowMax.y - pad - radius);
 
-		if (score->_channels[ch]->_visible)
+		bool isEngineVis = score->_channels[ch]->_visible;
+		bool isHiddenFromStage = score->_channels[ch]->_hideFromStage;
+
+		if (isHiddenFromStage) {
+			float offset = 6.0f;
+			ImVec2 boxMin(center.x - offset, center.y - offset);
+			ImVec2 boxMax(center.x + offset, center.y + offset);
+			dl->AddRectFilled(boxMin, boxMax, _state->theme->channel_hide_bg);
+		}
+
+		if (isEngineVis)
 			dl->AddCircleFilled(center, radius, _state->theme->channel_toggle);
 		else
 			dl->AddCircle(center, radius, _state->theme->channel_toggle);
@@ -307,7 +317,7 @@ static void drawSidebar2(ImDrawList *dl, ImVec2 startPos, Score *score) {
 		if (ImGui::IsItemHovered())
 			setTooltip("Playback toggle");
 		if (ImGui::IsItemClicked()) { // determines what happens on toggle of the button
-			score->_channels[ch]->_visible = !score->_channels[ch]->_visible;
+			score->_channels[ch]->_hideFromStage = !isHiddenFromStage;
 		}
 
 		// channel num and extra stuff if extended mode
@@ -1242,6 +1252,9 @@ void showChannels() {
 					_state->_scrollToChannel = false;
 				}
 
+				bool isEngineVis = channel._visible;
+				bool isHiddenFromStage = channel._hideFromStage;
+
 				{ // Playback toggle
 					ImGui::TableNextColumn();
 
@@ -1254,12 +1267,18 @@ void showChannels() {
 					ImGui::SetItemTooltip("Playback toggle");
 
 					if (ImGui::IsItemClicked(0)) {
-						score->_channels[i]->_visible = !score->_channels[i]->_visible;
-
+						channel._hideFromStage = !isHiddenFromStage;
 						selectedWindow->render(true);
 					}
 
-					if (score->_channels[i]->_visible)
+					if (isHiddenFromStage) {
+						float offset = 6.0f;
+						ImVec2 boxMin(mid.x - offset, mid.y - offset);
+						ImVec2 boxMax(mid.x + offset, mid.y + offset);
+						dl->AddRectFilled(boxMin, boxMax, _state->theme->channel_hide_bg);
+					}
+
+					if (isEngineVis)
 						dl->AddCircleFilled(mid, 4.0f, _state->theme->channel_toggle);
 					else
 						dl->AddCircle(mid, 4.0f, _state->theme->channel_toggle);
@@ -1290,7 +1309,9 @@ void showChannels() {
 					ImGui::Text("%s", sprite._castId.asString().c_str());
 					ImGui::TableNextColumn();
 					colN = "##vis" + chNum;
-					ImGui::Checkbox(colN.c_str(), &channel._visible);
+					if (ImGui::Checkbox(colN.c_str(), &channel._visible)) {
+						selectedWindow->render(true);
+					}
 					ImGui::TableNextColumn();
 					ImGui::Text("0x%02x", sprite._inkData);
 					ImGui::TableNextColumn();
