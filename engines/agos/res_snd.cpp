@@ -36,6 +36,7 @@
 #include "audio/audiostream.h"
 #include "audio/mods/protracker.h"
 #include "audio/mods/desktoptracker.h"
+#include "drivers/atari_st_ym.h"
 
 namespace AGOS {
 
@@ -487,7 +488,68 @@ void AGOSEngine::playMusic(uint16 music, uint16 track) {
 	if (getPlatform() == Common::kPlatformAmiga) {
 		playModule(music);
 	} else if (getPlatform() == Common::kPlatformAtariST) {
-		// TODO: Add support for music formats used
+		if (getGameType() == GType_ELVIRA2) {
+			Common::File *file = new Common::File();
+			if (!file->open(Common::Path(Common::String::format("%dTUNE.PKD", music))))
+				error("playMusic: Can't load music from '%dTUNE.PKD'", music);
+
+			const uint32 outRate = g_system->getMixer()->getOutputRate();
+			Audio::AudioStream *stream = new Audio::AtariSTYMStream(file, outRate);
+
+			g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_digitalMusicHandle, stream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
+		} else if (getGameType() == GType_ELVIRA1) {
+			// Elvira 1 Atari ST scripts do not pass direct driver tune numbers.
+			// The original prg remaps the script music IDs to PRG subtunes:
+			//   1 -> 4
+			//   4 -> 2
+			//   7 -> 5
+			//   8 -> 7
+			//   9 -> 7
+			//  10 -> 6
+			//  14 -> 7
+			// 1 and 3 appear to be unused by the
+			// game's script-level music requests.
+			uint16 prgTune = 0;
+			switch (music) {
+			case 1:
+				prgTune = 4;
+				break;
+			case 4:
+				prgTune = 2;
+				break;
+			case 7:
+				prgTune = 5;
+				break;
+			case 8:
+			case 9:
+			case 14:
+				prgTune = 7;
+				break;
+			case 10:
+				prgTune = 6;
+				break;
+			default:
+				warning("playMusic: unsupported Elvira 1 Atari ST music id %d", music);
+				return;
+			}
+
+			Common::File *file = new Common::File();
+			if (!file->open(Common::Path("ELVIRA.PRG"))) {
+				warning("playMusic: Can't load Atari ST ELVIRA.PRG for music id %d", music);
+				delete file;
+				return;
+			}
+
+			const uint32 outRate = g_system->getMixer()->getOutputRate();
+			Audio::AtariSTYMStream *stream = new Audio::AtariSTYMStream(file, outRate, prgTune);
+			if (!stream->isValid()) {
+				warning("playMusic: Unsupported or unreadable Atari ST ELVIRA.PRG, skipping music id %d", music);
+				delete stream;
+				return;
+			}
+
+			g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_digitalMusicHandle, stream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
+		}
 	} else {
 		_midi->setLoop(true); // Must do this BEFORE loading music.
 

@@ -156,6 +156,10 @@ Common::Error AGOSEngine_Elvira1::init() {
 		else
 			error("AGOSEngine_Elvira1::init(): Failed to load SJIS font.");
 	}
+	// Automatically start the Atari ST music driver with tune 1
+	if (getPlatform() == Common::kPlatformAtariST && (getFeatures() & GF_DEMO)) {
+		playMusic(1, 0);
+	}
 	return ret;
 }
 
