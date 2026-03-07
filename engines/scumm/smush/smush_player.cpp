@@ -43,7 +43,7 @@
 #include "scumm/smush/smush_player.h"
 
 #include "scumm/insane/insane.h"
-#include "scumm/insane/insane_rebel.h"
+#include "scumm/insane/insane_rebel2.h"
 #include "scumm/insane/insane_rebel1.h"
 
 #include "audio/audiostream.h"

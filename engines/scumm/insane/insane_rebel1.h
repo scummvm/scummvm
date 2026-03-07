@@ -53,6 +53,16 @@ struct RA1SpriteBank {
 	~RA1SpriteBank() { delete[] sprites; free(decodedData); }
 };
 
+// RA1 coordinate constants (scaled from RA2's 424x260 → 384x242)
+static const int16 kRA1CenterX = 160;
+static const int16 kRA1CenterY = 100;
+static const int16 kRA1MinX = 20;
+static const int16 kRA1MaxX = 300;
+static const int16 kRA1MinY = 20;
+static const int16 kRA1MaxY = 180;
+static const int16 kRA1FocalX = 43;
+static const int16 kRA1FocalY = 25;
+
 /**
  * Star Wars: Rebel Assault (RA1) game logic.
  * Adapts RA2 Handler 7 (ship flight) physics for RA1's 384x242 resolution.

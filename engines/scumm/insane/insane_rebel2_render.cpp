@@ -31,7 +31,7 @@
 #include "scumm/smush/smush_player.h"
 #include "scumm/smush/smush_font.h"
 
-#include "scumm/insane/insane_rebel.h"
+#include "scumm/insane/insane_rebel2.h"
 
 namespace Scumm {
 
