@@ -449,7 +449,7 @@ Common::Array<Common::StringArray> ResourceManager::processTextData(byte *data, 
 			pos++;
 			continue;
 		}
-		if (data[pos] == 0x00 || data[pos] == 0x78) {
+		if (data[pos] == 0x00) {
 			pos++;
 			continue;
 		}
