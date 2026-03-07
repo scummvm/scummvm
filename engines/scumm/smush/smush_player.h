@@ -266,6 +266,8 @@ public:
 	bool isAudioCallbackEnabled();
 	byte *getVideoPalette();
 	void setCurVideoFlags(int16 flags);
+	SmushMultiFont *getMultiFont() const { return _multiFont; }
+	void ensureMultiFont();
 	void setFastForwardToFrame(uint32 frame) { _fastForwardToFrame = frame; }
 
 	// Masked regions - areas where video should not update (e.g., destroyed enemies)

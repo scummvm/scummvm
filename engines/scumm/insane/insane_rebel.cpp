@@ -27,6 +27,7 @@
 #include "common/events.h"
 #include "common/savefile.h"
 #include "common/util.h"
+#include "graphics/paletteman.h"
 
 #include "audio/mixer.h"
 
@@ -116,6 +117,8 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 
 	// SmushFont for menu text rendering - uses SMALFONT with proper drawString support
 	_menuFont = new SmushFont(_vm, "SYSTM/SMALFONT.NUT", true);
+	_pauseOverlayActive = false;
+	memset(_savedPausePalette, 0, sizeof(_savedPausePalette));
 
 	// MSTOVER.NUT - Mouse Over background overlay (NOT a cursor!)
 	// This is loaded into DAT_0047aba8 and used as a background overlay via FUN_004236e0
@@ -541,9 +544,29 @@ InsaneRebel2::~InsaneRebel2() {
 
 // notifyEvent -- EventObserver callback for global input dispatch.
 // Handles ESC (skip) and SPACE (pause) regardless of menu state.
+// Pause behavior matches original FUN_405A21: SPACE pauses, ANY key unpauses.
 bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 	if (event.type == Common::EVENT_KEYDOWN) {
 		SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+
+		// When paused during gameplay, ANY key unpauses (FUN_405A21 line 360-365).
+		// ESC additionally opens the ScummVM menu (original: quit key exits level).
+		if (splayer && splayer->_paused && _gameState == kStateGameplay) {
+			debug("Rebel2: Key pressed while paused - unpausing");
+			// Restore the original palette saved by showPauseOverlay
+			if (_pauseOverlayActive) {
+				_vm->_system->getPaletteManager()->setPalette(_savedPausePalette, 0, 256);
+				_pauseOverlayActive = false;
+			}
+			splayer->unpause();
+			if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _rebelHandler != 0) {
+				debug("Rebel2: ESC during pause - opening ScummVM menu");
+				splayer->pause();
+				_vm->openMainMenuDialog();
+				splayer->unpause();
+			}
+			return true;
+		}
 
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_ESCAPE:
@@ -564,8 +587,6 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 					_vm->_smushVideoShouldFinish = true;
 				} else if (_gameState == kStateGameplay && _rebelHandler != 0) {
 					// During active gameplay (handler != 0): pause and open ScummVM menu.
-					// _rebelHandler is non-zero (7, 8, 0x19, 0x26) only during interactive
-					// gameplay sections, and 0 during intro/cutscene/post videos within a level.
 					debug("Rebel2: ESC pressed during gameplay - opening ScummVM menu");
 					bool wasPaused = splayer->_paused;
 					if (!wasPaused)
@@ -583,19 +604,13 @@ bool InsaneRebel2::notifyEvent(const Common::Event &event) {
 			break;
 
 		case Common::KEYCODE_SPACE:
-			// SPACE toggles pause (emulates FUN_405A21 pause handling)
-			// Only allow pausing during gameplay, not in menus
-			if (splayer && _gameState == kStateGameplay) {
-				if (splayer->_paused) {
-					debug("Rebel2: SPACE pressed - unpausing");
-					splayer->unpause();
-				} else {
-					debug("Rebel2: SPACE pressed - pausing");
-					splayer->pause();
-					// Show the pause overlay with dimming effect and "PAUSED" text
-					showPauseOverlay();
-				}
-				return true;  // Consume the event
+			// SPACE pauses during gameplay (FUN_405A21).
+			// Unpausing is handled above (any key while paused).
+			if (splayer && _gameState == kStateGameplay && !splayer->_paused) {
+				debug("Rebel2: SPACE pressed - pausing");
+				splayer->pause();
+				showPauseOverlay();
+				return true;
 			}
 			break;
 

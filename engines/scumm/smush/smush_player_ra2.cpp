@@ -273,16 +273,19 @@ void SmushPlayer::handleLoad(int32 subSize, Common::SeekableReadStream &b) {
 	}
 }
 
+void SmushPlayer::ensureMultiFont() {
+	if (!_multiFont) {
+		_multiFont = new SmushMultiFont(_vm, this, true);
+	}
+}
+
 /**
  * RA2-specific text rendering using SmushMultiFont for inline font switching.
  */
 void SmushPlayer::ra2HandleTextResource(const char *str, int fontId, int color,
 										int pos_x, int pos_y, int left, int top,
 										int width, int height, TextStyleFlags flg) {
-	// Create multi-font renderer on first use
-	if (!_multiFont) {
-		_multiFont = new SmushMultiFont(_vm, this, true);
-	}
+	ensureMultiFont();
 	_multiFont->setDefaultFont(fontId);
 
 	debug("SmushPlayer::handleTextResource: RA2 TRES frame=%d fontId=%d color=%d flags=0x%x flg=%d pos=(%d,%d) clip=(%d,%d,%d,%d) str=\"%.40s\"",
