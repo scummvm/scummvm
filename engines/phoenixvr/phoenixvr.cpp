@@ -36,6 +36,7 @@
 #include "graphics/fonts/ttf.h"
 #include "graphics/framelimiter.h"
 #include "graphics/managed_surface.h"
+#include "graphics/palette.h"
 #include "image/pcx.h"
 #include "phoenixvr/console.h"
 #include "phoenixvr/game_state.h"
@@ -45,6 +46,7 @@
 #include "phoenixvr/script.h"
 #include "phoenixvr/vr.h"
 #include "video/4xm_decoder.h"
+#include "video/smk_decoder.h"
 
 namespace PhoenixVR {
 
@@ -330,19 +332,29 @@ void PhoenixVREngine::stopSound(const Common::String &sound) {
 
 void PhoenixVREngine::playMovie(const Common::String &movie) {
 	debug("playMovie %s", movie.c_str());
-	Video::FourXMDecoder dec;
+	Common::ScopedPtr<Video::VideoDecoder> dec;
+	if (movie.hasSuffixIgnoreCase(".4xm")) {
+		dec.reset(new Video::FourXMDecoder);
+	} else if (movie.hasSuffixIgnoreCase(".smk")) {
+		dec.reset(new Video::SmackerDecoder);
+	} else {
+		warning("can't play %s", movie.c_str());
+		return;
+	}
 
 	Common::ScopedPtr<Common::SeekableReadStream> stream(open(movie));
 	if (!stream) {
 		warning("can't load movie %s", movie.c_str());
 		return;
 	}
-	if (dec.loadStream(stream.release())) {
-		dec.start();
+
+	Common::ScopedPtr<Graphics::Palette> palette;
+	if (dec->loadStream(stream.release())) {
+		dec->start();
 
 		bool playing = true;
 		Graphics::FrameLimiter limiter(g_system, kFPSLimit);
-		while (!shouldQuit() && playing && !dec.endOfVideo()) {
+		while (!shouldQuit() && playing && !dec->endOfVideo()) {
 			Common::Event event;
 			while (g_system->getEventManager()->pollEvent(event)) {
 				switch (event.type) {
@@ -357,10 +369,15 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 					break;
 				}
 			}
-			if (dec.needsUpdate()) {
-				auto *s = dec.decodeNextFrame();
-				if (s)
-					_screen->simpleBlitFrom(*s);
+			if (dec->hasDirtyPalette()) {
+				palette.reset(new Graphics::Palette(dec->getPalette(), 256));
+			}
+			if (dec->needsUpdate()) {
+				auto *s = dec->decodeNextFrame();
+				if (s) {
+					if (!s->format.isCLUT8() || palette)
+						_screen->simpleBlitFrom(*s, Graphics::FLIP_NONE, false, 0xff, palette.get());
+				}
 			}
 
 			// Delay for a bit. All events loops should have a delay
