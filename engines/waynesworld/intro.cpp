@@ -636,6 +636,61 @@ bool WaynesWorldEngine::introPt4_sub5() {
 	return true;
 }
 bool WaynesWorldEngine::introPt4_sub6() {
+	for (int i = 0; i < 5; ++i) {
+		sub2FEFB(1, 0, 1, getRandom(3), getRandom(11), 2);
+		waitSeconds(3);
+	}
+
+	for (int i = 0; i < 10; ++i) {
+		int index = getRandom(3);
+		sub2FEFB(1, 0, 1, index, 9, 0);
+	}
+	++_startOawPos;
+
+	for (int i = 0; i < 5; ++i) {
+		sub2FEFB(1, 0, 1, getRandom(3), getRandom(11), 0);
+	}
+	++_startOawPos;
+	++_startOagPos;
+	_sound->playSound("sv46.snd", true);
+
+	for (int j = 0; j < 2; ++j) {
+		for (int i = 0; i < 15; ++i) {
+			int index = getRandom(3);
+			sub2FEFB(1, 0, 1, index, 9, 0);
+		}
+		++_startOawPos;
+	}
+
+	_sound->playSound("sv31.snd", false);
+
+	for (int i = 0; i < 5; ++i) {
+		sub2FEFB(1, 0, 1, getRandom(3), getRandom(11), 0);
+	}
+
+	++_startOawPos;
+	++_startOagPos;
+
+	for (int i = 0; i < 2; ++i) {
+		sub2FEFB(1, 0, 1, getRandom(3), getRandom(11), 2);
+		waitSeconds(2);
+	}
+
+	for (int j = 0; j < 4; ++j) {
+		for (int i = 0; i < 15; ++i) {
+			int index = getRandom(3);
+			sub2FEFB(1, 0, 1, index, 9, 0);
+		}
+		++_startOawPos;
+	}
+	_sound->playSound("sv39.snd", false);
+
+	for (int i = 0; i < 8; ++i) {
+		sub2FEFB(1, 0, 1, getRandom(3), getRandom(11), 0);
+	}
+	++_startOawPos;
+	++_startOagPos;
+
 	// TODO add a check at each step to return false if ESC is pressed
 	return true;
 }
