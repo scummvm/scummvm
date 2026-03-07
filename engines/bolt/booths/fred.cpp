@@ -1206,12 +1206,12 @@ void BoltEngine::renderFredScene() {
 	}
 }
 
-void BoltEngine::getFredSoundInfo(BOLTLib *lib, int16 memberId, FredSoundInfo *soundInfo) {
+void BoltEngine::getFredSoundInfo(BOLTLib *lib, int16 memberId, SoundInfo *soundInfo) {
 	soundInfo->data = memberAddr(lib, memberId);
 	soundInfo->size = memberSize(lib, memberId);
 }
 
-void BoltEngine::playFredSound(FredSoundInfo *oneShot, FredSoundInfo *loop) {
+void BoltEngine::playFredSound(SoundInfo *oneShot, SoundInfo *loop) {
 	g_fredPendingOneShot = oneShot;
 	g_fredPendingLoop = loop; 
 
@@ -1253,12 +1253,12 @@ void BoltEngine::updateFredSound() {
 
 	if (g_fredCurrentSound != nullptr) {
 		// Play the current sound...
-		FredSoundInfo *snd = g_fredCurrentSound;
+		SoundInfo *snd = g_fredCurrentSound;
 		_xp->playSound(snd->data, snd->size, 22050);
 
 		if (startLoop) {
 			// Queue loop sound twice...
-			FredSoundInfo *loopSnd = g_fredLoopSound;
+			SoundInfo *loopSnd = g_fredLoopSound;
 			_xp->playSound(loopSnd->data, loopSnd->size, 22050);
 			_xp->playSound(loopSnd->data, loopSnd->size, 22050);
 		}

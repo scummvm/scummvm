@@ -225,17 +225,88 @@ typedef struct RTFPacket {
 	}
 } RTFPacket;
 
+struct SSprite;
+
+typedef void (*SSpriteUpdateFunc)(void);
+typedef void (*SSpritePathCallback)(SSprite *);
+
+typedef struct SSprite {
+	int16 flags;
+	int16 x;
+	int16 y;
+	int16 frameCount;
+	int16 currentFrame;
+	byte **frameData;
+	SSpriteUpdateFunc updateFunc;
+	SSpritePathCallback pathCallback;
+	int16 frameTimer;
+	int16 frameRate;
+	int16 startFrame;
+	int16 stopFrame;
+	int16 velocityX;
+	int16 velocityY;
+	int16 xLimitLow;
+	int16 xLimitHigh;
+	int16 yLimitLow;
+	int16 yLimitHigh;
+	int16 accelX;
+	int16 accelY;
+	int16 dragX;
+	int16 dragY;
+	byte *pathData;
+	int16 pathOffset;
+	int16 pathLength;
+	int16 collX;
+	int16 collY;
+	int16 collW;
+	int16 collH;
+	int16 userInfo;
+
+	SSprite() {
+		flags = 0;
+		x = 0;
+		y = 0;
+		frameCount = 0;
+		currentFrame = 0;
+		frameData = nullptr;
+		updateFunc = nullptr;
+		pathCallback = nullptr;
+		frameTimer = 0;
+		frameRate = 0;
+		startFrame = 0;
+		stopFrame = 0;
+		velocityX = 0;
+		velocityY = 0;
+		xLimitLow = 0;
+		xLimitHigh = 0;
+		yLimitLow = 0;
+		yLimitHigh = 0;
+		accelX = 0;
+		accelY = 0;
+		dragX = 0;
+		dragY = 0;
+		pathData = nullptr;
+		pathOffset = 0;
+		pathLength = 0;
+		collX = 0;
+		collY = 0;
+		collW = 0;
+		collH = 0;
+		userInfo = 0;
+	}
+} SSprite;
+
 // FRED GAME
 
-typedef struct FredSoundInfo {
+typedef struct SoundInfo {
 	byte *data;
 	uint32 size;
 
-	FredSoundInfo() {
+	SoundInfo() {
 		data = nullptr;
 		size = 0;
 	}
-} FredSoundInfo;
+} SoundInfo;
 
 typedef struct FredEntityState {
 	uint16 flags;
@@ -268,6 +339,83 @@ typedef struct FredEntityState {
 		pathIndex = 0;
 	}
 } FredEntityState;
+
+// SCOOBY GAME
+
+typedef struct ScoobyState {
+	int16 levelNumber;
+	int16 slotIndex[10];
+	int16 levelComplete;
+	int16 wallStates[25][4];
+	int16 scoobyCell;
+	int16 scoobySavedCell;
+	int16 leftNeighbor;
+	int16 rightNeighbor;
+	int16 upNeighbor;
+	int16 downNeighbor;
+	int16 activeLevel;
+	int16 scoobyX;
+	int16 scoobyY;
+	int16 velocityX;
+	int16 velocityY;
+	int16 targetVelocityX;
+	int16 targetVelocityY;
+	int16 transitionTarget;
+	int16 currentAnim;
+	int16 direction;
+	int16 spriteFrameCount;
+	byte *frameData[6];
+
+	ScoobyState() {
+		levelNumber = 0;
+
+		for (int i = 0; i < 10; i++)
+			slotIndex[i] = 0;
+
+		levelComplete = 0;
+
+		for (int i = 0; i < 25; i++)
+			for (int j = 0; j < 4; j++)
+				wallStates[i][j] = 0;
+
+		scoobyCell = 0;
+		scoobySavedCell = 0;
+		leftNeighbor = 0;
+		rightNeighbor = 0;
+		upNeighbor = 0;
+		downNeighbor = 0;
+		activeLevel = 0;
+		scoobyX = 0;
+		scoobyY = 0;
+		velocityX = 0;
+		velocityY = 0;
+		targetVelocityX = 0;
+		targetVelocityY = 0;
+		transitionTarget = 0;
+		currentAnim = 0;
+		direction = 0;
+		spriteFrameCount = 0;
+
+		for (int i = 0; i < 6; i++)
+			frameData[i] = nullptr;
+	}
+} ScoobyState;
+
+typedef struct ScoobyRect {
+	int16 left;
+	int16 right;
+	int16 top;
+	int16 bottom;
+
+	ScoobyRect() {
+		left = 0;
+		right = 0;
+		top = 0;
+		bottom = 0;
+	}
+} ScoobyRect;
+
+// TOPCAT GAME
 
 typedef struct TopCatAnim {
 	int16 animType; // + 00
@@ -628,6 +776,49 @@ protected:
 	byte *g_animRingBuffer = nullptr;
 	Common::File *g_animFileHandle = nullptr;
 
+	// SSprite
+	void setUpSSprite(SSprite *sprite, int16 frameCount, byte **frameData, int16 frameRate, int16 velocityX, int16 velocityY);
+	void animateSSprite(SSprite *sprite, int16 page);
+	void displaySSprite(SSprite *sprite, int16 x, int16 y);
+	void eraseSSprite(SSprite *sprite);
+	void setSSpriteFrames(SSprite *sprite, int16 frameCount, byte **frameData, int16 frameRate);
+	void setSSpriteDrag(SSprite *sprite, int16 dragX, int16 dragY);
+	void setSSpriteAccel(SSprite *sprite, int16 accelX, int16 accelY);
+	void reverseSSpriteAccel(SSprite *sprite);
+	void addSSpriteAccel(SSprite *sprite, int16 dx, int16 dy);
+	void setSSpriteVelocity(SSprite *sprite, int16 vx, int16 vy);
+	void reverseSSpriteVelocity(SSprite *sprite);
+	void setSSpriteStart(SSprite *sprite, int16 startFrame, int16 x, int16 y);
+	void setSSpriteStop(SSprite *sprite, int16 stopFrame);
+	void setSSpritePath(SSprite *sprite, byte *pathData, int16 pathCount, SSpritePathCallback callback);
+	bool inSSprite(SSprite *sprite, int16 x, int16 y);
+	bool sSpriteCollide(SSprite *spriteA, SSprite *spriteB);
+	void setSSpriteCollision(SSprite *sprite, int16 *bounds);
+	bool sSpriteAlive(SSprite *sprite);
+	void getSSpriteLoc(SSprite *sprite, Common::Point *out);
+	void getSSpriteAccel(SSprite *sprite, int16 *out);
+	void getSSpriteVelocity(SSprite *sprite, int16 *out);
+	void getSSpriteDrag(SSprite *sprite, int16 *out);
+	void setSSpriteXLimit(SSprite *sprite, int16 high, int16 low);
+	void setSSpriteYLimit(SSprite *sprite, int16 high, int16 low);
+	void setSSpriteInfo(SSprite *sprite, int16 info);
+	int16 getSSpriteInfo(SSprite *sprite);
+	void freezeSSprite(SSprite *sprite);
+	void unfreezeSSprite(SSprite *sprite);
+
+	int16 g_spriteCollTempX = 0;
+	int16 g_spriteCollTempY = 0;
+	int16 g_spriteCollTempW = 0;
+	int16 g_spriteCollTempH = 0;
+	int16 g_spriteScreenX = 0;
+	int16 g_spriteScreenY = 0;
+	int16 g_spriteCollTempA[4] = { 0 };
+	int16 g_spriteCollTempB[4] = { 0 };
+	int16 g_spriteScreenAX = 0;
+	int16 g_spriteScreenAY = 0;
+	int16 g_spriteScreenBX = 0;
+	int16 g_spriteScreenBY = 0;
+
 	// --- MINIGAMES ---
 
 	// --- FRED ---
@@ -648,8 +839,8 @@ protected:
 	int16 selectBalloonRow();
 	void setFredAnimMode(FredEntityState *state, int16 mode);
 	void renderFredScene();
-	void getFredSoundInfo(BOLTLib *lib, int16 memberId, FredSoundInfo *soundInfo);
-	void playFredSound(FredSoundInfo *oneShot, FredSoundInfo *loop);
+	void getFredSoundInfo(BOLTLib *lib, int16 memberId, SoundInfo *soundInfo);
+	void playFredSound(SoundInfo *oneShot, SoundInfo *loop);
 	void updateFredSound();
 
 	static void resolveAllRefsCb();
@@ -684,12 +875,12 @@ protected:
 	byte *g_fredCurrentHelpObject = nullptr;
 	byte *g_fredHoveredEntry = nullptr;
 
-	FredSoundInfo g_fredSounds[4];
+	SoundInfo g_fredSounds[4];
 
-	FredSoundInfo *g_fredCurrentSound = nullptr;
-	FredSoundInfo *g_fredLoopSound = nullptr;
-	FredSoundInfo *g_fredPendingOneShot = nullptr;
-	FredSoundInfo *g_fredPendingLoop = nullptr;
+	SoundInfo *g_fredCurrentSound = nullptr;
+	SoundInfo *g_fredLoopSound = nullptr;
+	SoundInfo *g_fredPendingOneShot = nullptr;
+	SoundInfo *g_fredPendingLoop = nullptr;
 
 	FredEntityState g_fredSprite;
 
@@ -713,7 +904,79 @@ protected:
 	int16 huckGame(int16 prevBooth) { return 0; }
 
 	// --- SCOOBY ---
-	int16 scoobyGame(int16 prevBooth) { return 0; }
+	bool loadScoobyBaseAssets();
+	void cleanUpScoobyBaseAssets();
+	void displayPicClipHack(byte *pic, int16 offsetX, int16 offsetY, int16 *clipRect, int16 displayMode);
+	void drawMovingWalls(int16 cellIdx, int16 direction, int16 picFrame, int16 bgFrame);
+	void drawAllMovingWalls();
+	void animateTransition(int16 memberIdx);
+	void clearPictMSb(byte *pic);
+	void initScoobyLevelGraphics();
+	bool initScoobyLevelAssets();
+	void cleanUpScoobyLevelGraphics();
+	void setScoobySpriteDirection(int16 startMember);
+	void playSoundMapScooby(int16 memberIdx);
+	void playWallSound();
+	void animateWalls();
+	void decideDirection();
+	void updateScoobySound();
+	void setScoobySound(int16 mode);
+	void updateScoobyLocation();
+	void updateScoobyWalls();
+	void updateScoobyDirection(int16 inputDir);
+	void updateScoobyTransition();
+	bool initScoobyLevel();
+	bool resumeScoobyLevel();
+	bool initScooby();
+	void cleanUpScooby();
+	int16 helpScooby();
+	void hiliteScoobyHelpObject(byte *entry, int16 highlight);
+	int16 xpDirToBOLTDir(uint32 xpDir);
+	int16 playScooby();
+	int16 scoobyGame(int16 prevBooth);
+	void swapScoobyHelpEntry();
+	void swapScoobyWordArray();
+
+	static void swapScoobyHelpEntryCb();
+	static void swapScoobyWordArrayCb();
+
+	BOLTLib *g_scoobyBoltLib = nullptr;
+	BOLTCallbacks g_scoobyBoltCallbacks;
+
+	static BOLTCallback g_scoobyTypeLoadCallbacks[28];
+	static BOLTCallback g_scoobyTypeFreeCallbacks[28];
+
+	int16 g_scoobySoundMode = 0;
+	int16 g_scoobySoundPlaying = 0;
+	int16 g_scoobyShowHelp = 1;
+
+	int16 g_scoobyLastInputDir = 0;
+	int16 g_scoobyTransitionFrom = 0;
+	int16 g_scoobyTransitionTarget = 0;
+	int16 g_scoobyTransitionVelX = 0;
+	int16 g_scoobyTransitionVelY = 0;
+	XPPicDesc g_scoobyTempPic;
+	byte g_scoobyGlobalSaveData[0x3C] = { 0 };
+	ScoobyState g_scoobyGameState;
+	SSprite g_scoobySprite;
+	byte *g_scoobyBaseData = nullptr;
+	byte *g_scoobyBgPic = nullptr;
+	byte *g_scoobyWallPicsA[4] = { nullptr };
+	byte *g_scoobyWallPicsB[5] = { nullptr };
+	ScoobyRect g_scoobyCellBounds[25];
+	Common::Point g_scoobyLevelStartXY[25];
+	byte *g_scoobyLevelData = nullptr;
+	int16 g_scoobySelectedGraphicsGroup = 0;
+	int16 g_scoobyDifficulty = 0;
+	int16 g_scoobyLevelCount = 0;
+	int16 g_scoobyMoveRequested = 0;
+	int16 g_scoobyTransitioning = 0;
+	int16 g_scoobyDesiredDir = 0;
+	int16 g_scoobyInputHoldCount = 0;
+	int16 g_scoobyWallAnimating = 0;
+	int16 g_scoobyWallAnimStep = 0;
+	int16 g_scoobyWallsToOpen = 0;
+	int16 g_scoobyWallsToClose = 0;
 
 	// --- TOPCAT ---
 	int16 topCatGame(int16 prevBooth);
@@ -731,7 +994,7 @@ protected:
 	void adjustColors(byte *pic, int8 shift);
 	void shuffleTopCatQuestions();
 	void shuffleTopCatPermutations();
-	void getTopCatSoundInfo(BOLTLib *lib, int16 memberId, FredSoundInfo *soundInfo);
+	void getTopCatSoundInfo(BOLTLib *lib, int16 memberId, SoundInfo *soundInfo);
 	void setScoreLights(int16 litMask);
 	void swapTopCatHelpEntry();
 
@@ -775,7 +1038,7 @@ protected:
 	int16 g_topCatScore = 0;
 	int16 g_topCatShuffledQuestionsArrayIdx = 0;
 	uint32 g_topCatBlinkTimer = 0;
-	FredSoundInfo g_topCatSoundInfo;
+	SoundInfo g_topCatSoundInfo;
 	byte g_topCatSavedShuffledQuestions[60] = { 0 };
 	byte g_topCatSavedShuffledAnswers[60] = { 0 };
 	byte g_topCatSavedAnswersPermutations[60 * 3] = { 0 };

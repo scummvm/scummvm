@@ -1100,7 +1100,7 @@ void BoltEngine::shuffleTopCatPermutations() {
 	}
 }
 
-void BoltEngine::getTopCatSoundInfo(BOLTLib *lib, int16 memberId, FredSoundInfo *soundInfo) {
+void BoltEngine::getTopCatSoundInfo(BOLTLib *lib, int16 memberId, SoundInfo *soundInfo) {
 	soundInfo->data = memberAddr(lib, memberId);
 	soundInfo->size = memberSize(lib, memberId);
 }

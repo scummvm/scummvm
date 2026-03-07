@@ -647,6 +647,9 @@ BOLTCallback BoltEngine::g_defaultGroupFreeCallbacks[25];
 BOLTCallback BoltEngine::g_fredTypeLoadCallbacks[28];
 BOLTCallback BoltEngine::g_fredTypeFreeCallbacks[28];
 
+BOLTCallback BoltEngine::g_scoobyTypeLoadCallbacks[28];
+BOLTCallback BoltEngine::g_scoobyTypeFreeCallbacks[28];
+
 BOLTCallback BoltEngine::g_topCatTypeLoadCallbacks[26];
 BOLTCallback BoltEngine::g_topCatTypeFreeCallbacks[26];
 
@@ -666,11 +669,13 @@ void BoltEngine::swapFredAnimEntryCb() { ((BoltEngine *)g_engine)->swapFredAnimE
 void BoltEngine::swapFredAnimDescCb() { ((BoltEngine *)g_engine)->swapFredAnimDesc(); }
 void BoltEngine::swapFredLevelDescCb() { ((BoltEngine *)g_engine)->swapFredLevelDesc(); }
 
+void BoltEngine::swapScoobyHelpEntryCb() { ((BoltEngine *)g_engine)->swapScoobyHelpEntry(); }
+void BoltEngine::swapScoobyWordArrayCb() { ((BoltEngine *)g_engine)->swapScoobyWordArray(); }
+
 void BoltEngine::swapTopCatHelpEntryCb() { ((BoltEngine *)g_engine)->swapTopCatHelpEntry(); }
 
 void BoltEngine::initCallbacks() {
 	// --- BOOTHS ---
-
 	for (int i = 0; i < ARRAYSIZE(g_defaultTypeLoadCallbacks); i++) {
 		g_defaultTypeLoadCallbacks[i] = noOpCb;
 	}
@@ -712,7 +717,6 @@ void BoltEngine::initCallbacks() {
 	g_boothsBoltCallbacks.groupFreeCallbacks = g_defaultGroupFreeCallbacks;
 
 	// --- FRED ---
-
 	for (int i = 0; i < ARRAYSIZE(g_fredTypeLoadCallbacks); i++) {
 		g_fredTypeLoadCallbacks[i] = noOpCb;
 	}
@@ -740,6 +744,31 @@ void BoltEngine::initCallbacks() {
 	g_fredBoltCallbacks.memberFreeCallbacks = g_defaultMemberFreeCallbacks;
 	g_fredBoltCallbacks.groupLoadCallbacks = g_defaultGroupLoadCallbacks;
 	g_fredBoltCallbacks.groupFreeCallbacks = g_defaultGroupFreeCallbacks;
+
+	// --- SCOOBY ---
+	for (int i = 0; i < ARRAYSIZE(g_scoobyTypeLoadCallbacks); i++) {
+		g_scoobyTypeLoadCallbacks[i] = noOpCb;
+	}
+
+	g_scoobyTypeLoadCallbacks[8] = swapSpriteHeaderCb;
+	g_scoobyTypeLoadCallbacks[10] = swapPicHeaderCb;
+	g_scoobyTypeLoadCallbacks[11] = swapAndResolvePicDescCb;
+	g_scoobyTypeLoadCallbacks[12] = swapFirstTwoWordsCb;
+	g_scoobyTypeLoadCallbacks[26] = swapScoobyHelpEntryCb;
+	g_scoobyTypeLoadCallbacks[27] = swapScoobyWordArrayCb;
+
+	for (int i = 0; i < ARRAYSIZE(g_scoobyTypeFreeCallbacks); i++) {
+		g_scoobyTypeFreeCallbacks[i] = noOpCb;
+	}
+
+	g_scoobyTypeFreeCallbacks[8] = freeSpriteCleanUpCb;
+
+	g_scoobyBoltCallbacks.typeLoadCallbacks = g_scoobyTypeLoadCallbacks;
+	g_scoobyBoltCallbacks.typeFreeCallbacks = g_scoobyTypeFreeCallbacks;
+	g_scoobyBoltCallbacks.memberLoadCallbacks = g_defaultMemberLoadCallbacks;
+	g_scoobyBoltCallbacks.memberFreeCallbacks = g_defaultMemberFreeCallbacks;
+	g_scoobyBoltCallbacks.groupLoadCallbacks = g_defaultGroupLoadCallbacks;
+	g_scoobyBoltCallbacks.groupFreeCallbacks = g_defaultGroupFreeCallbacks;
 
 	// --- TOPCAT ---
 	for (int i = 0; i < ARRAYSIZE(g_topCatTypeLoadCallbacks); i++) {

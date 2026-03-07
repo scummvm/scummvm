@@ -68,6 +68,8 @@ RTFResource *BoltEngine::openRTF(const char *fileName) {
 								rtf->indexTable[i] = indexDataStream->readUint32BE();
 							}
 
+							delete indexDataStream;
+
 							return rtf;
 						}
 					}
