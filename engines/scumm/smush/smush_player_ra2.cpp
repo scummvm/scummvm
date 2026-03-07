@@ -498,11 +498,17 @@ void SmushPlayer::ra2ResetDeltaPalette() {
  * RA2 font path table.
  */
 SmushFont *SmushPlayer::ra2GetFont(int font) {
+	// Font table for low-res mode (320x200). Original exe uses pointer
+	// arithmetic to select hi/lo font pairs (e.g. TKHIFONT+0x14=TALKFONT).
+	// Font 0: TALKFONT (TKHIFONT hi-res)
+	// Font 1: SMALFONT (SMHIFONT hi-res)
+	// Font 2: TITLFONT (TIHIFONT hi-res)
+	// Font 3: POVFONT  (POHIFONT hi-res)
 	const char *ra2_fonts[] = {
 		"SYSTM/TALKFONT.NUT",
-		"SYSTM/DIHIFONT.NUT",
+		"SYSTM/SMALFONT.NUT",
 		"SYSTM/TITLFONT.NUT",
-		"SYSTM/SMALFONT.NUT"
+		"SYSTM/POVFONT.NUT"
 	};
 	int numFonts = ARRAYSIZE(ra2_fonts);
 	if (font >= 0 && font < numFonts) {

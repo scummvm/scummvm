@@ -71,13 +71,15 @@ private:
 	int _nbStrings;
 	int _lastId;
 	const char *_lastString;
+	bool _preserveNewlines;
 
 public:
 
 	StringResource() :
 		_nbStrings(0),
 		_lastId(-1),
-		_lastString(nullptr) {
+		_lastString(nullptr),
+		_preserveNewlines(false) {
 		for (int i = 0; i < MAX_STRINGS; i++) {
 			_strings[i].id = 0;
 			_strings[i].string = nullptr;
@@ -88,6 +90,8 @@ public:
 			delete[] _strings[i].string;
 		}
 	}
+
+	void setPreserveNewlines(bool preserve) { _preserveNewlines = preserve; }
 
 	bool init(char *buffer, int32 length) {
 		char *def_start = strchr(buffer, '#');
@@ -168,11 +172,20 @@ public:
 				line_start = line_end+1;
 				if (line_start[0] == '/' && line_start[1] == '/') {
 					line_start += 2;
-					if	(line_end[-1] == '\r')
-						line_end[-1] = ' ';
-					else
-						*line_end++ = ' ';
-					memmove(line_end, line_start, strlen(line_start)+1);
+					// RA2: preserve newlines for multi-line TRES text
+					// (credits, cast lists). Other games join with spaces.
+					if (_preserveNewlines) {
+						if (line_end[-1] == '\r')
+							line_end[-1] = '\n';
+						// else line_end already points to '\n'
+						memmove(line_end + 1, line_start, strlen(line_start)+1);
+					} else {
+						if	(line_end[-1] == '\r')
+							line_end[-1] = ' ';
+						else
+							*line_end++ = ' ';
+						memmove(line_end, line_start, strlen(line_start)+1);
+					}
 				}
 			}
 			_strings[_nbStrings].id = id;
@@ -231,6 +244,7 @@ static StringResource *getStrings(ScummEngine *vm, const char *file, bool is_enc
 	}
 	StringResource *sr = new StringResource;
 	assert(sr);
+	sr->setPreserveNewlines(vm->_game.id == GID_REBEL2);
 	sr->init(filebuffer, length);
 	delete[] filebuffer;
 	return sr;
