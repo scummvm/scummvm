@@ -127,38 +127,58 @@ void showVars() {
 }
 
 void showWatchedVars() {
-	if (!_state->_w.watchedVars)
-		return;
+    if (!_state->_w.watchedVars)
+        return;
 
-	cacheVars();
+    cacheVars();
 
-	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(300, 250), ImGuiCond_FirstUseEver);
-	if (ImGui::Begin("Watched Vars", &_state->_w.watchedVars)) {
-		int id = -1;
-		for (auto &v : _state->_variables) {
-			Datum name(v._key);
-			name.type = VARREF;
-			Datum val = g_lingo->varFetch(name, true);
+    ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(300, 250), ImGuiCond_FirstUseEver);
+    if (ImGui::Begin("Watched Vars", &_state->_w.watchedVars)) {
+        int id = -1;
+        for (auto &v : _state->_variables) {
+            Datum name(v._key);
+            name.type = VARREF;
+            Datum val = g_lingo->varFetch(name, true);
 
-			bool outOfScope = false;
-			if (val.type == VOID) {
-				outOfScope = true;
-			}
+            bool outOfScope = (val.type == VOID);
 
-			id += 1;
-			ImGui::PushID(id);
-			displayVariable(v._key, false, outOfScope);
-			ImGui::PopID();
+            id += 1;
+            ImGui::PushID(id);
+            displayVariable(v._key, false, outOfScope);
+            ImGui::PopID();
 
-			ImGui::SameLine();
-			ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
-		}
+            ImGui::SameLine();
+            ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
+        }
 
-		if (_state->_variables.empty())
-			ImGui::Text("(no watched variables)");
-	}
-	ImGui::End();
+        if (_state->_variables.empty())
+            ImGui::Text("(no watched variables)");
+
+        ImGui::Separator();
+        if (ImGui::CollapsingHeader("Write Log")) {
+            if (ImGui::BeginChild("##watchlog", ImVec2(0, 150), true)) {
+                for (int i = (int)_state->_watchLog.size() - 1; i >= 0; i--) {
+                    ImGuiState::WatchLogEntry &entry = _state->_watchLog[i];
+                    ImGui::TextColored(
+                        ImVec4(1.0f, 0.4f, 0.4f, 1.0f),
+                        "write '%s': %s  [%s]",
+                        entry.varName.c_str(),
+                        entry.value.c_str(),
+                        entry.scriptRef.c_str()
+                    );
+                }
+
+                if (_state->_watchLog.empty())
+                    ImGui::Text("(no writes logged)");
+            }
+            ImGui::EndChild();
+
+            if (ImGui::Button("Clear Log"))
+                _state->_watchLog.clear();
+        }
+    }
+    ImGui::End();
 }
 
 // Make the UI compact because there are so many fields

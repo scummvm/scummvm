@@ -79,6 +79,9 @@ const LingoDec::Handler *getHandler(const Cast *cast, CastMemberID id, const Com
 
 const LingoDec::Handler *getHandler(CastMemberID id, const Common::String &handlerId) {
 	const Director::Movie *movie = g_director->getCurrentMovie();
+	if (id.castLib == SHARED_CAST_LIB)
+        return getHandler(movie->getSharedCast(), id, handlerId);
+
 	const Cast *cast = movie->getCasts()->getVal(id.castLib);
 
 	const LingoDec::Handler *handler = getHandler(cast, id, handlerId);
@@ -125,6 +128,11 @@ ImGuiScript toImGuiScript(ScriptType scriptType, CastMemberID id, const Common::
 ScriptContext *getScriptContext(CastMemberID id) {
 	const Director::Movie *movie = g_director->getCurrentMovie();;
 	const Cast *cast = movie->getCasts()->getVal(id.castLib);
+
+	if (id.castLib == SHARED_CAST_LIB)
+		cast = movie->getSharedCast();
+	else
+		cast = movie->getCasts()->getVal(id.castLib);
 
 	if (!cast) {
 		return nullptr;
@@ -774,6 +782,7 @@ void onImGuiRender() {
 
 			ImGui::MenuItem("Control Panel", NULL, &_state->_w.controlPanel);
 			ImGui::MenuItem("Score", NULL, &_state->_w.score);
+			ImGui::MenuItem("Search", NULL, &_state->_w.search);
 			ImGui::MenuItem("Functions", NULL, &_state->_w.funcList);
 			ImGui::MenuItem("Cast", NULL, &_state->_w.cast);
 			ImGui::MenuItem("Channels", NULL, &_state->_w.channels);
@@ -810,6 +819,7 @@ void onImGuiRender() {
 	showCastDetails();
 	showFuncList();
 	showScore();
+	showSearchBar();
 	showBreakpointList();
 	showSettings();
 	showArchive();
