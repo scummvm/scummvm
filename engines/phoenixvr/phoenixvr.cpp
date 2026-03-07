@@ -1140,7 +1140,7 @@ Common::Error PhoenixVREngine::saveGameStream(Common::WriteStream *slot, bool is
 	TimeDate td = {};
 	g_system->getTimeAndDate(td);
 	// Saturday 03 01 2026[\x00]23 h 17
-	state.info = Common::String::format("%s %02d %02d %04d%c%02d h %02d", wday[td.tm_wday], td.tm_mday, td.tm_mon + 1, td.tm_year, 0, td.tm_hour, td.tm_min);
+	state.info = Common::String::format("%s %02d %02d %04d%c%02d h %02d", wday[td.tm_wday], td.tm_mday, td.tm_mon + 1, td.tm_year + 1900, 0, td.tm_hour, td.tm_min);
 
 	state.thumbWidth = _thumbnail.w;
 	state.thumbHeight = _thumbnail.h;
