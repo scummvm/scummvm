@@ -39,11 +39,11 @@ bool findPath(int sourceX, int sourceY, int targetX, int targetY, Common::Array<
  * @return                  Calculated walk target point.
  */
 Common::Point calculateWalkTarget(Common::Array<WalkBox> &walkboxes, int sourceX, int sourceY, bool mouseHoverState, HotSpot *hotspot);
-uint8_t findWalkboxForPoint(Common::Array<WalkBox> &walkboxes, uint16_t x, uint16_t y);
-uint8_t getAdjacentWalkbox(Common::Array<WalkBox> &walkboxes, uint8_t current_box_index);
-uint16_t buildWalkboxPath(Common::Array<WalkBox> &walkboxes, uint8_t start_box, uint8_t dest_box, uint8_t *path_buffer);
-uint16_t generateMovementSteps(Common::Array<WalkBox> &walkboxes, uint8_t *path_buffer, uint16_t path_length, uint16_t start_x, uint16_t start_y, uint16_t dest_x, uint16_t dest_y, MovementStep *movement_buffer);
-bool isPointInWalkbox(WalkBox *box, uint16_t x, uint16_t y);
+byte findWalkboxForPoint(Common::Array<WalkBox> &walkboxes, uint16 x, uint16 y);
+byte getAdjacentWalkbox(Common::Array<WalkBox> &walkboxes, byte current_box_index);
+uint16 buildWalkboxPath(Common::Array<WalkBox> &walkboxes, byte start_box, byte dest_box, byte *path_buffer);
+uint16 generateMovementSteps(Common::Array<WalkBox> &walkboxes, byte *path_buffer, uint16 path_length, uint16 start_x, uint16 start_y, uint16 dest_x, uint16 dest_y, MovementStep *movement_buffer);
+bool isPointInWalkbox(WalkBox *box, uint16 x, uint16 y);
 void clearVisitedFlags(Common::Array<WalkBox> &walkboxes);
 
 } // End of namespace Pelrock

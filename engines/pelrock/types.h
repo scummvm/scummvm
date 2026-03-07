@@ -37,14 +37,14 @@ enum Cursor {
 	COMBINATION
 };
 
-#define ACTION_MASK_NONE 0
-#define ACTION_MASK_OPEN 1
-#define ACTION_MASK_CLOSE 2
-#define ACTION_MASK_UNKNOWN 4
-#define ACTION_MASK_PICKUP 8
-#define ACTION_MASK_TALK 16
-#define ACTION_MASK_PUSH 32
-#define ACTION_MASK_PULL 128
+const byte kActionMaskNone    = 0;
+const byte kActionMaskOpen    = 1;
+const byte kActionMaskClose   = 2;
+const byte kActionMaskUnknown = 4;
+const byte kActionMaskPickup  = 8;
+const byte kActionMaskTalk    = 16;
+const byte kActionMaskPush    = 32;
+const byte kActionMaskPull    = 128;
 
 enum VerbIcon {
 	PICKUP,
@@ -60,7 +60,7 @@ enum VerbIcon {
 	NO_ACTION
 };
 
-static const uint32 kLongClickDuration = 500; // 500ms for long click
+const uint32 kLongClickDuration = 500; // 500ms for long click
 const int kCursorWidth = 16;
 const int kCursorHeight = 18;
 const int kCursorSize = 288; // 16 * 18
@@ -92,25 +92,32 @@ const int kAlfredInitialPosX = 235;
 const int kAlfredInitialPosY = 279;
 
 // Direction flags (bit-packed)
-#define MOVE_RIGHT 0x01 // Move right (positive X)
-#define MOVE_LEFT 0x02  // Move left (negative X)
-#define MOVE_HORIZ 0x03 // Horizontal movement mask
-#define MOVE_DOWN 0x04  // Move down (positive Y)
-#define MOVE_UP 0x08    // Move up (negative Y)
-#define MOVE_VERT 0x0C  // Vertical movement mask
-#define MAX_PATH_LENGTH 100
-#define MAX_MOVEMENT_STEPS 100 // 500 bytes / 5 bytes per step
-#define PATH_END 0xFF          // End of path marker
+const byte kMoveRight = 0x01; // Move right (positive X)
+const byte kMoveLeft  = 0x02; // Move left (negative X)
+const byte kMoveHoriz = 0x03; // Horizontal movement mask
+const byte kMoveDown  = 0x04; // Move down (positive Y)
+const byte kMoveUp    = 0x08; // Move up (negative Y)
+const byte kMoveVert  = 0x0C; // Vertical movement mask
+const int  kMaxPathLength     = 100;
+const int  kMaxMovementSteps  = 100; // 500 bytes / 5 bytes per step
+const byte kPathEnd           = 0xFF; // End of path marker
 
-#define MAX_CHARS_PER_LINE 0x2F // 47 characters
-#define MAX_LINES 5             // Maximum number of lines per page (0-indexed check against 4)
+const int  kMaxCharsPerLine   = 0x2F; // 47 characters
+const int  kMaxLines          = 5;    // Maximum number of lines per page
 
-#define ALFRED_COLOR 0x0D
+const byte kAlfredColor = 0x0D;
 
-#define OVERLAY_NONE 0
-#define OVERLAY_CHOICES 1
-#define OVERLAY_PICKUP_ICON 2
-#define OVERLAY_ACTION 3
+enum OverlayMode {
+	OVERLAY_NONE        = 0,
+	OVERLAY_CHOICES     = 1,
+	OVERLAY_PICKUP_ICON = 2,
+	OVERLAY_ACTION      = 3
+};
+
+// Passerby direction constants
+const byte kPasserbyRight = 0;
+const byte kPasserbyLeft  = 1;
+const byte kPasserbyDown  = 2;
 
 const byte kIconBlinkPeriod = 4;
 
@@ -216,21 +223,21 @@ struct ShakeEffectState
 
 
 struct MovementStep {
-	uint8_t flags;      /* Direction flags (see MOVE_* constants) */
-	uint16_t distanceX; // Horizontal distance to move
-	uint16_t distanceY; // Vertical distance to move
+	byte   flags;     /* Direction flags (see kMove* constants) */
+	uint16 distanceX; // Horizontal distance to move
+	uint16 distanceY; // Vertical distance to move
 };
 
 /**
  * Pathfinding context
  */
 struct PathContext {
-	uint8_t *pathBuffer;          // Sequence of walkbox indices
+	byte   *pathBuffer;          // Sequence of walkbox indices
 	MovementStep *movementBuffer; // Array of movement steps
-	uint8_t *compressed_path;     // Final compressed path
-	uint16_t pathLength;
-	uint16_t movementCount;
-	uint16_t compressed_length;
+	byte   *compressed_path;     // Final compressed path
+	uint16  pathLength;
+	uint16  movementCount;
+	uint16  compressed_length;
 };
 
 struct Anim {
@@ -443,10 +450,6 @@ struct PaletteAnim {
 	byte tickCount = 0;
 };
 
-#define PASSERBY_RIGHT 0
-#define PASSERBY_LEFT 1
-#define PASSERBY_DOWN 2
-
 struct PasserByAnim {
 	uint32 frameTrigger = 0x3FF;
 	int16 startX;
@@ -567,7 +570,7 @@ struct GameStateData {
 
 	int libraryShelf = -1;
 	int selectedBookIndex = -1;
-	unsigned char bookLetter = '\0';
+	char bookLetter = '\0';
 	Common::HashMap<byte, Common::Array<Sticker>> stickersPerRoom;
 	Common::HashMap<byte, Common::Array<ExitChange>> roomExitChanges;
 	Common::HashMap<byte, Common::Array<WalkBoxChange>> roomWalkBoxChanges;
@@ -585,7 +588,7 @@ struct GameStateData {
 	}
 
 	void clear() {
-		memset(conversationCurrentRoot, 0, 112); // Initialize all to 0xFF (not set)
+		memset(conversationCurrentRoot, 0xFF, 112); // Initialize all to 0xFF (not set)
 		for (int i = 0; i < kNumGameFlags; i++)
 			flags[i] = 0;
 		flags[FLAG_ENTRA_EN_TIENDA_PRIMERA_VEZ] = true;

@@ -47,7 +47,7 @@ uint32 DialogManager::readTextBlock(
 	byte &outSpeakerId) {
 
 	uint32 pos = startPos;
-	outSpeakerId = ALFRED_COLOR; // Default to Alfred's color
+	outSpeakerId = kAlfredColor; // Default to Alfred's color
 	outText = "";
 
 	// Skip control bytes at start
@@ -75,7 +75,7 @@ uint32 DialogManager::readTextBlock(
 			pos++;
 		}
 		// Choice text is always spoken by ALFRED
-		outSpeakerId = ALFRED_COLOR;
+		outSpeakerId = kAlfredColor;
 		pos += 2;
 	}
 
@@ -162,7 +162,7 @@ Graphics::Surface DialogManager::getDialogueSurface(Common::Array<Common::String
 
 	int maxWidth = 0;
 	int height = dialogueLines.size() * 25; // Add some padding
-	for (int i = 0; i < dialogueLines.size(); i++) {
+	for (uint i = 0; i < dialogueLines.size(); i++) {
 		maxWidth = MAX(maxWidth, g_engine->_largeFont->getStringWidth(dialogueLines[i]));
 	}
 
@@ -170,7 +170,7 @@ Graphics::Surface DialogManager::getDialogueSurface(Common::Array<Common::String
 	s.create(maxWidth + 1, height + 1, Graphics::PixelFormat::createFormatCLUT8());
 	s.fillRect(s.getRect(), 255); // Clear surface
 
-	for (int i = 0; i < dialogueLines.size(); i++) {
+	for (uint i = 0; i < dialogueLines.size(); i++) {
 
 		int xPos = 0;
 		int yPos = i * 25; // Above sprite, adjust for line
@@ -184,7 +184,7 @@ Graphics::Surface DialogManager::getDialogueSurface(Common::Array<Common::String
 void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>> dialogueLines, byte speakerId) {
 	int16 xBasePos = 0;
 	int16 yBasePos = 0;
-	if (speakerId == ALFRED_COLOR) {
+	if (speakerId == kAlfredColor) {
 		if (g_engine->_state->getFlag(FLAG_FROM_INTRO) == true) {
 			debug("Setting special anim");
 			g_engine->_alfredState.setState(ALFRED_SPECIAL_ANIM);
@@ -238,7 +238,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 
 		int maxWidth = 0;
 		int height = textLines.size() * 24;
-		for (int i = 0; i < textLines.size(); i++) {
+		for (uint i = 0; i < textLines.size(); i++) {
 			maxWidth = MAX(maxWidth, g_engine->_largeFont->getStringWidth(textLines[i]));
 		}
 
@@ -859,7 +859,7 @@ uint32 DialogManager::processChoiceSelection(
 	state.lastSelectedChoice = (*choices)[selectedIndex];
 
 	if (state.lastSelectedChoice.isTerminator) {
-		displayDialogue(state.lastSelectedChoice.text, ALFRED_COLOR);
+		displayDialogue(state.lastSelectedChoice.text, kAlfredColor);
 		return dataSize; // End conversation
 	}
 
@@ -872,7 +872,7 @@ uint32 DialogManager::processChoiceSelection(
 	uint32 endPos = readTextBlock(data, dataSize, position, choiceText, choiceSpeakerId);
 
 	if (!choiceText.empty() && choiceText.size() > 1) {
-		displayDialogue(choiceText, ALFRED_COLOR);
+		displayDialogue(choiceText, kAlfredColor);
 		debug("Will check if choice should be disabled after displaying dialogue");
 		disableChoiceIfNeeded(choices, selectedIndex, data, dataSize, endPos, state);
 	}
@@ -988,7 +988,7 @@ void DialogManager::sayAlfred(Common::StringArray texts) {
 
 	_curSprite = nullptr;
 	Common::Array<Common::StringArray> textLines = wordWrap(texts);
-	displayDialogue(textLines, ALFRED_COLOR);
+	displayDialogue(textLines, kAlfredColor);
 }
 
 void DialogManager::sayAlfred(Description description) {
@@ -1009,7 +1009,7 @@ void DialogManager::say(Common::StringArray texts, byte spriteIndex) {
 	bool wasProcessed = processColorAndTrim(texts, speakerId);
 
 	if (wasProcessed) {
-		if (speakerId == ALFRED_COLOR) {
+		if (speakerId == kAlfredColor) {
 			sayAlfred(texts);
 			return;
 		} else {
@@ -1043,7 +1043,7 @@ bool DialogManager::processColorAndTrim(Common::StringArray &lines, byte &speake
 	speakerId = lines[0][1];
 
 	if (speakerMarker == '@') {
-		for (int i = 0; i < lines.size(); i++) {
+		for (uint i = 0; i < lines.size(); i++) {
 			// Remove first two marker bytes
 			if (i == 0) {
 				if (lines[i].size() > 2) {
@@ -1064,7 +1064,7 @@ bool DialogManager::processColorAndTrim(Common::StringArray &lines, byte &speake
 	return false;
 }
 
-bool isEndMarker(unsigned char char_byte) {
+bool isEndMarker(byte char_byte) {
 	return char_byte == CTRL_END_TEXT || char_byte == CTRL_END_CONVERSATION || char_byte == CTRL_ACTION_AND_END || char_byte == CTRL_GO_BACK;
 }
 
@@ -1084,7 +1084,7 @@ int calculateWordLength(Common::String text, int startPos, bool &isEnd) {
 		isEnd = true;
 	}
 	if (pos < text.size() && !isEnd) {
-		if (text[pos] == CTRL_ACTION_AND_END) { // 0xF8 (-8) special case
+		if ((byte)text[pos] == CTRL_ACTION_AND_END) { // 0xF8 (-8) special case
 			wordLength += 3;
 		} else {
 			// Count all consecutive spaces
@@ -1101,7 +1101,7 @@ Common::Array<Common::Array<Common::String>> DialogManager::wordWrap(Common::Str
 	Common::Array<Common::Array<Common::String>> pages;
 	Common::Array<Common::String> currentPage;
 	Common::Array<Common::String> currentLine;
-	int charsRemaining = MAX_CHARS_PER_LINE;
+	int charsRemaining = kMaxCharsPerLine;
 	int position = 0;
 	int currentLineNum = 0;
 	while (position < text.size()) {
@@ -1114,10 +1114,10 @@ Common::Array<Common::Array<Common::String>> DialogManager::wordWrap(Common::Str
 			// Word is longer than the entire line - need to split
 			currentPage.push_back(joinStrings(currentLine, ""));
 			currentLine.clear();
-			charsRemaining = MAX_CHARS_PER_LINE;
+			charsRemaining = kMaxCharsPerLine;
 			currentLineNum++;
 
-			if (currentLineNum >= MAX_LINES) {
+			if (currentLineNum >= kMaxLines) {
 				pages.push_back(currentPage);
 				currentPage.clear();
 				currentLineNum = 0;
@@ -1137,10 +1137,10 @@ Common::Array<Common::Array<Common::String>> DialogManager::wordWrap(Common::Str
 				currentPage.push_back(lineText);
 				//  current_line = [' ' * trailing_spaces]
 				Common::String current_line(trailingSpaces, ' ');
-				charsRemaining = MAX_CHARS_PER_LINE - trailingSpaces;
+				charsRemaining = kMaxCharsPerLine - trailingSpaces;
 				currentLineNum += 1;
 
-				if (currentLineNum >= MAX_LINES) {
+				if (currentLineNum >= kMaxLines) {
 					pages.push_back(currentPage);
 					currentPage.clear();
 					currentLineNum = 0;
@@ -1193,7 +1193,7 @@ Common::Array<Common::StringArray> DialogManager::wordWrap(Common::StringArray t
 		debug("Wrapped line %s, %d into %d pages", thisLine.c_str(), thisLine.size(), wrapped.size());
 		for (uint j = 0; j < wrapped.size(); j++) {
 			for (int k = 0; k < wrapped[j].size(); k++) {
-				if (currentLineNum < MAX_LINES) {
+				if (currentLineNum < kMaxLines) {
 					currentPage.push_back(wrapped[j][k]);
 					currentLineNum++;
 				} else {

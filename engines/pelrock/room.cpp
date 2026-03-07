@@ -74,18 +74,18 @@ void RoomManager::getBackground(Common::File *roomFile, int roomOffset, byte *ba
 	// get screen
 	size_t combined_size = 0;
 	for (int pair_idx = 0; pair_idx < 8; pair_idx++) {
-		uint32_t pair_offset = roomOffset + (pair_idx * 8);
+		uint32 pair_offset = roomOffset + (pair_idx * 8);
 		if (pair_offset + 8 > roomFile->size())
 			continue;
 
 		roomFile->seek(pair_offset, SEEK_SET);
-		uint32_t offset = roomFile->readUint32LE();
-		uint32_t size = roomFile->readUint32LE();
+		uint32 offset = roomFile->readUint32LE();
+		uint32 size = roomFile->readUint32LE();
 		if (offset > 0 && size > 0 && offset < roomFile->size()) {
 			byte *data = new byte[size];
 			roomFile->seek(offset, SEEK_SET);
 			roomFile->read(data, size);
-			uint8_t *block_data = NULL;
+			byte *block_data = nullptr;
 			size_t block_size = rleDecompress(data, size, 0, 640 * 400, &block_data);
 			if (block_size + combined_size > 640 * 400) {
 				debug(" Warning: decompressed background size exceeds buffer size!");
@@ -365,7 +365,7 @@ PaletteAnim *RoomManager::getPaletteAnimForRoom(int roomNumber) {
 		debug("Could not open JUEGO.EXE for palette animation!");
 		return nullptr;
 	}
-	uint32_t offset = 0;
+	uint32 offset = 0;
 	switch (roomNumber) {
 	case 0:
 		offset = 0x0004B88C;
@@ -471,7 +471,7 @@ Common::Array<Exit> RoomManager::loadExits(byte *data, size_t size) {
 
 		if (g_engine->_state->roomExitChanges.contains(_currentRoomNumber)) {
 			// if the exit has been changed, load the changed version
-			for (int j = 0; j < g_engine->_state->roomExitChanges[_currentRoomNumber].size(); j++) {
+			for (uint j = 0; j < g_engine->_state->roomExitChanges[_currentRoomNumber].size(); j++) {
 				if (g_engine->_state->roomExitChanges[_currentRoomNumber][j].exitIndex == i) {
 					exit.isEnabled = g_engine->_state->roomExitChanges[_currentRoomNumber][j].enabled;
 					break;
@@ -500,7 +500,7 @@ Common::Array<HotSpot> RoomManager::loadHotspots(byte *data, size_t size) {
 		bool isChanged = false;
 		if (g_engine->_state->roomHotSpotChanges.contains(_currentRoomNumber)) {
 			// if the hotspot has been changed, load the changed version
-			for (int j = 0; j < g_engine->_state->roomHotSpotChanges[_currentRoomNumber].size(); j++) {
+			for (uint j = 0; j < g_engine->_state->roomHotSpotChanges[_currentRoomNumber].size(); j++) {
 				if (g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspotIndex == spot.innerIndex) {
 					debug("Hotspot %d has been changed, loading changed version, Hotspot x=%d, y = %d, extra = %d, isEnabled=%d", spot.innerIndex, g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot.x, g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot.y, g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot.extra, g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot.isEnabled);
 					hotspots.push_back(g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot);
@@ -573,10 +573,10 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	_roomSfx = loadRoomSfx(roomFile, roomOffset);
 
 	// Pair 10
-	uint32_t pair10offset = roomOffset + (10 * 8);
+	uint32 pair10offset = roomOffset + (10 * 8);
 	roomFile->seek(pair10offset, SEEK_SET);
-	uint32_t pair10dataOffset = roomFile->readUint32LE();
-	uint32_t pair10size = roomFile->readUint32LE();
+	uint32 pair10dataOffset = roomFile->readUint32LE();
+	uint32 pair10size = roomFile->readUint32LE();
 
 	byte *pair10 = new byte[pair10size];
 	roomFile->seek(pair10dataOffset, SEEK_SET);
@@ -597,10 +597,10 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	// Pair 11 is the palette, already loaded
 
 	// Pair 12 - Room Texts
-	uint32_t pair12offset = roomOffset + (12 * 8);
+	uint32 pair12offset = roomOffset + (12 * 8);
 	roomFile->seek(pair12offset, SEEK_SET);
-	uint32_t pair12dataOffset = roomFile->readUint32LE();
-	uint32_t pair12size = roomFile->readUint32LE();
+	uint32 pair12dataOffset = roomFile->readUint32LE();
+	uint32 pair12size = roomFile->readUint32LE();
 
 	byte *pair12 = new byte[pair12size];
 	roomFile->seek(pair12dataOffset, SEEK_SET);
@@ -617,7 +617,7 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 
 	loadRemaps(roomNumber);
 
-	for (int i = 0; i < _currentRoomHotspots.size(); i++) {
+	for (uint i = 0; i < _currentRoomHotspots.size(); i++) {
 		HotSpot hotspot = _currentRoomHotspots[i];
 		drawRect(g_engine->_screen, hotspot.x, hotspot.y, hotspot.w, hotspot.h, 200 + i);
 	}
@@ -681,7 +681,7 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		anim.spriteIndex = 2;
 		anim.startX = mouse->x;
 		anim.startY = mouse->y;
-		anim.dir = PASSERBY_DOWN;
+		anim.dir = kPasserbyDown;
 		anim.targetZIndex = blank->zOrder + 1;
 		anim.resetCoord = blank->y;
 		anims->passerByAnims[0] = anim;
@@ -701,7 +701,7 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		Sprite *camel = findSpriteByIndex(anim.spriteIndex);
 		anim.startX = camel->x;
 		anim.startY = camel->y;
-		anim.dir = PASSERBY_RIGHT;
+		anim.dir = kPasserbyRight;
 		anim.frameTrigger = 0x1FFF;
 		anim.targetZIndex = 1;
 		anim.resetCoord = 639 + camel->w;
@@ -716,7 +716,7 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		Sprite *camel = findSpriteByIndex(3);
 		anim.startX = camel->x;
 		anim.startY = camel->y;
-		anim.dir = PASSERBY_LEFT;
+		anim.dir = kPasserbyLeft;
 		anim.resetCoord = 0 - camel->w;
 		anim.targetZIndex = 1;
 
@@ -732,7 +732,7 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		animA.spriteIndex = 2;
 		animA.startX = carLeft->x;
 		animA.startY = carLeft->y;
-		animA.dir = PASSERBY_LEFT;
+		animA.dir = kPasserbyLeft;
 		animA.resetCoord = carRight->x + carRight->w - carLeft->w;
 		animA.targetZIndex = 100;
 
@@ -741,7 +741,7 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		animB.spriteIndex = 3;
 		animB.startX = carRight->x;
 		animB.startY = carRight->y;
-		animB.dir = PASSERBY_RIGHT;
+		animB.dir = kPasserbyRight;
 		animB.targetZIndex = 100;
 		animB.resetCoord = 639 + carRight->w;
 		anims->passerByAnims[1] = animB;
@@ -756,7 +756,7 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		anim.spriteIndex = 2;
 		anim.startX = walker->x;
 		anim.startY = walker->y;
-		anim.dir = PASSERBY_RIGHT;
+		anim.dir = kPasserbyRight;
 		anim.resetCoord = dark->x;
 		anim.targetZIndex = dark->zOrder + 1;
 		anims->passerByAnims[0] = anim;
@@ -771,7 +771,7 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		animA.spriteIndex = 2;
 		animA.startX = catRight->x;
 		animA.startY = catRight->y;
-		animA.dir = PASSERBY_RIGHT;
+		animA.dir = kPasserbyRight;
 		animA.resetCoord = catLeft->x;
 		animA.targetZIndex = blank->zOrder + 1;
 
@@ -780,7 +780,7 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		animB.spriteIndex = 3;
 		animB.startX = catLeft->x;
 		animB.startY = catLeft->y;
-		animB.dir = PASSERBY_LEFT;
+		animB.dir = kPasserbyLeft;
 		animB.resetCoord = blank->x;
 		animB.targetZIndex = blank->zOrder + 1;
 		anims->passerByAnims[1] = animB;
@@ -796,7 +796,7 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		animA.spriteIndex = 3;
 		animA.startX = mouseRight->x;
 		animA.startY = mouseRight->y;
-		animA.dir = PASSERBY_RIGHT;
+		animA.dir = kPasserbyRight;
 		animA.resetCoord = mouseLeft->x;
 		animA.targetZIndex = papers->zOrder + 1;
 		anims->passerByAnims[0] = animA;
@@ -805,7 +805,7 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		animB.spriteIndex = 4;
 		animB.startX = mouseLeft->x;
 		animB.startY = mouseLeft->y;
-		animB.dir = PASSERBY_LEFT;
+		animB.dir = kPasserbyLeft;
 		animB.resetCoord = mouseRight->x;
 		animB.targetZIndex = papers->zOrder + 1;
 		anims->passerByAnims[1] = animB;
@@ -820,7 +820,7 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		animA.spriteIndex = 2;
 		animA.startX = mummyLeft->x;
 		animA.startY = mummyLeft->y;
-		animA.dir = PASSERBY_LEFT;
+		animA.dir = kPasserbyLeft;
 		animA.resetCoord = 0 - mummyLeft->w;
 		animA.targetZIndex = 1;
 
@@ -829,7 +829,7 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		animB.spriteIndex = 3;
 		animB.startX = mummyRight->x;
 		animB.startY = mummyRight->y;
-		animB.dir = PASSERBY_RIGHT;
+		animB.dir = kPasserbyRight;
 		animB.targetZIndex = 1;
 		animB.resetCoord = 639 + mummyRight->w;
 		anims->passerByAnims[1] = animB;
@@ -845,7 +845,7 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 
 Common::Array<HotSpot> RoomManager::unifyHotspots(Common::Array<Pelrock::Sprite> &anims, Common::Array<Pelrock::HotSpot> &staticHotspots) {
 	Common::Array<HotSpot> unifiedHotspots;
-	for (int i = 0; i < anims.size(); i++) {
+	for (uint i = 0; i < anims.size(); i++) {
 		HotSpot thisHotspot;
 		thisHotspot.index = i;
 		thisHotspot.x = anims[i].x;
@@ -862,7 +862,7 @@ Common::Array<HotSpot> RoomManager::unifyHotspots(Common::Array<Pelrock::Sprite>
 	}
 
 	// debug("total descriptions = %d, anims = %d, hotspots = %d", descriptions.size(), anims.size(), staticHotspots.size());
-	for (int i = 0; i < staticHotspots.size(); i++) {
+	for (uint i = 0; i < staticHotspots.size(); i++) {
 		HotSpot hotspot = staticHotspots[i];
 		hotspot.index = anims.size() + i;
 		unifiedHotspots.push_back(hotspot);
@@ -882,10 +882,10 @@ void RoomManager::init() {
 }
 
 void RoomManager::loadAnimationPixelData(Common::File *roomFile, int roomOffset, byte *&buffer, size_t &outSize) {
-	uint32_t pair_offset = roomOffset + (8 * 8);
+	uint32 pair_offset = roomOffset + (8 * 8);
 	roomFile->seek(pair_offset, SEEK_SET);
-	uint32_t offset = roomFile->readUint32LE();
-	uint32_t size = roomFile->readUint32LE();
+	uint32 offset = roomFile->readUint32LE();
+	uint32 size = roomFile->readUint32LE();
 
 	byte *pixelData = new byte[size];
 	roomFile->seek(offset, SEEK_SET);
@@ -908,16 +908,16 @@ void RoomManager::loadAnimationPixelData(Common::File *roomFile, int roomOffset,
 Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pixelDataSize, byte *data, size_t size) {
 
 	Common::Array<Sprite> anims = Common::Array<Sprite>();
-	uint32_t spriteCountPos = 5;
+	uint32 spriteCountPos = 5;
 	byte spriteCount = data[spriteCountPos] - 2;
 	debug("Sprite count: %d", spriteCount);
-	uint32_t metadata_start = spriteCountPos + (44 * 2 + 5);
-	uint32_t picOffset = 0;
+	uint32 metadata_start = spriteCountPos + (44 * 2 + 5);
+	uint32 picOffset = 0;
 
 	Common::Array<SpriteChange> spriteChanges = g_engine->_state->spriteChanges[_currentRoomNumber];
 	int talkingAnims = 0;
 	for (int i = 0; i < spriteCount; i++) {
-		uint32_t animOffset = metadata_start + (i * 44);
+		uint32 animOffset = metadata_start + (i * 44);
 		Sprite sprite;
 		sprite.index = i;
 		sprite.x = READ_LE_INT16(data + animOffset + 0);
@@ -930,12 +930,12 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 		sprite.extra = READ_LE_INT16(data + animOffset + 32);
 		debug("Sprite %d: x=%d y=%d w=%d h=%d stride=%d numAnims=%d zOrder=%d extra=%d", i, sprite.x, sprite.y, sprite.w, sprite.h, sprite.stride, sprite.numAnims, sprite.zOrder, sprite.extra);
 		sprite.actionFlags = data[animOffset + 34];
-		if(sprite.actionFlags & ACTION_MASK_TALK) {
+		if(sprite.actionFlags & kActionMaskTalk) {
 			sprite.talkingAnimIndex = talkingAnims++;
 		}
 		sprite.isHotspotDisabled = data[animOffset + 38];
 		sprite.disableAfterSequence = data[animOffset + 39];
-		for (int j = 0; j < spriteChanges.size(); j++) {
+		for (uint j = 0; j < spriteChanges.size(); j++) {
 			if (spriteChanges[j].spriteIndex == sprite.index) {
 				debug("Sprite %d has been changed, loading changed version with zOrder %d", sprite.index, spriteChanges[j].zIndex);
 				sprite.zOrder = spriteChanges[j].zIndex;
@@ -960,7 +960,7 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 			anim.speed = data[subAnimOffset + 8 + j];
 			anim.movementFlags = data[subAnimOffset + 14 + (j * 2)] | (data[subAnimOffset + 14 + (j * 2) + 1] << 8);
 
-			uint32_t totalBytesPerFrame = sprite.w * sprite.h * anim.nframes;
+			uint32 totalBytesPerFrame = sprite.w * sprite.h * anim.nframes;
 			anim.animData = new byte *[anim.nframes];
 			if (sprite.w > 0 && sprite.h > 0 && anim.nframes > 0) {
 				for (int k = 0; k < anim.nframes; k++) {
@@ -1000,10 +1000,10 @@ Common::Array<WalkBox> RoomManager::loadWalkboxes(byte *data, size_t size) {
 	byte walkboxCount = data[walkboxCountOffset];
 
 	// debug("Walkbox count: %d", walkbox_count);
-	uint32_t walkboxOffset = 0x218;
+	uint32 walkboxOffset = 0x218;
 	Common::Array<WalkBox> walkboxes;
 	for (int i = 0; i < walkboxCount; i++) {
-		uint32_t boxOffset = walkboxOffset + i * 9;
+		uint32 boxOffset = walkboxOffset + i * 9;
 		int16 x1 = READ_LE_INT16(data + boxOffset);
 		int16 y1 = READ_LE_INT16(data + boxOffset + 2);
 		int16 w = READ_LE_INT16(data + boxOffset + 4);
@@ -1016,7 +1016,7 @@ Common::Array<WalkBox> RoomManager::loadWalkboxes(byte *data, size_t size) {
 		if (g_engine->_state->roomWalkBoxChanges.contains(_currentRoomNumber)) {
 			debug("Checking for changes to walkbox %d in room %d", i, _currentRoomNumber);
 			// if the walkbox has been changed, load the changed version
-			for (int j = 0; j < g_engine->_state->roomWalkBoxChanges[_currentRoomNumber].size(); j++) {
+			for (uint j = 0; j < g_engine->_state->roomWalkBoxChanges[_currentRoomNumber].size(); j++) {
 				if (g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkboxIndex == i) {
 					walkboxes.push_back(g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkbox);
 					isChanged = true;
@@ -1037,9 +1037,9 @@ Common::Array<WalkBox> RoomManager::loadWalkboxes(byte *data, size_t size) {
 
 	if (g_engine->_state->roomWalkBoxChanges.contains(_currentRoomNumber)) {
 		// Add any new walkboxes that were added
-		for (int j = 0; j < g_engine->_state->roomWalkBoxChanges[_currentRoomNumber].size(); j++) {
+		for (uint j = 0; j < g_engine->_state->roomWalkBoxChanges[_currentRoomNumber].size(); j++) {
 			bool found = false;
-			for (int i = 0; i < walkboxes.size(); i++) {
+			for (uint i = 0; i < walkboxes.size(); i++) {
 				if (g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkboxIndex == walkboxes[i].index) {
 					found = true;
 					break;
@@ -1056,8 +1056,8 @@ Common::Array<WalkBox> RoomManager::loadWalkboxes(byte *data, size_t size) {
 }
 
 uint32 RoomManager::loadDescriptions(byte *pair12data, size_t pair12size, Common::Array<Description> &outDescriptions) {
-	uint32_t pos = 0;
-	uint32_t lastDescPos = 0;
+	uint32 pos = 0;
+	uint32 lastDescPos = 0;
 	outDescriptions.clear();
 	while (pos < (pair12size)) {
 		if (pair12data[pos] == 0xFF) {
@@ -1115,7 +1115,7 @@ void RoomManager::applyDisabledChoices(byte roomNumber, byte *conversationData, 
 		return;
 	}
 	debug("Disabling %d conversation branches for room %d", disabledBranches.size(), roomNumber);
-	for (int i = 0; i < disabledBranches.size(); i++) {
+	for (uint i = 0; i < disabledBranches.size(); i++) {
 		ResetEntry resetEntry = disabledBranches[i];
 		applyDisabledChoice(resetEntry, conversationData, conversationDataSize);
 	}
@@ -1248,7 +1248,7 @@ void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
 
 ScalingParams RoomManager::loadScalingParams(byte *data, size_t size) {
 
-	uint32_t scalingParamsOffset = 0x214;
+	uint32 scalingParamsOffset = 0x214;
 
 	ScalingParams scalingParams;
 	scalingParams.yThreshold = READ_LE_INT16(data + scalingParamsOffset);
@@ -1309,9 +1309,9 @@ void RoomManager::loadRemaps(int roomNumber) {
 }
 
 byte RoomManager::loadMusicTrackForRoom(Common::File *roomFile, int roomOffset) {
-	uint32_t pair9offset = roomOffset + (9 * 8);
+	uint32 pair9offset = roomOffset + (9 * 8);
 	roomFile->seek(pair9offset, SEEK_SET);
-	uint32_t pair9_data_offset = roomFile->readUint32LE();
+	uint32 pair9_data_offset = roomFile->readUint32LE();
 
 	roomFile->seek(pair9_data_offset, SEEK_SET);
 	byte musicTrack = roomFile->readByte();
@@ -1320,9 +1320,9 @@ byte RoomManager::loadMusicTrackForRoom(Common::File *roomFile, int roomOffset) 
 }
 
 Common::Array<byte> RoomManager::loadRoomSfx(Common::File *roomFile, int roomOffset) {
-	uint32_t pair9offset = roomOffset + (9 * 8);
+	uint32 pair9offset = roomOffset + (9 * 8);
 	roomFile->seek(pair9offset, SEEK_SET);
-	uint32_t pair9_data_offset = roomFile->readUint32LE();
+	uint32 pair9_data_offset = roomFile->readUint32LE();
 
 	roomFile->seek(pair9_data_offset, SEEK_SET);
 	roomFile->skip(1); // skip music track byte

@@ -281,8 +281,8 @@ void VideoManager::initMetadata() {
 		char signature[5] = {0};
 		_introSndFile.read(signature, 4);
 		if (strcmp(signature, "PACK") == 0) {
-			uint32_t numFiles = _introSndFile.readUint32LE();
-			for (uint32_t i = 0; i < numFiles; ++i) {
+			uint32 numFiles = _introSndFile.readUint32LE();
+			for (uint32 i = 0; i < numFiles; ++i) {
 				VoiceData sound;
 				Common::String filename = _introSndFile.readString();
 				// _introSndFile.skip(1);

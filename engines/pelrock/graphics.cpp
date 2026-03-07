@@ -210,7 +210,7 @@ void GraphicsManager::drawColoredTexts(Graphics::ManagedSurface *surface, const 
 	int currentX = x;
 	byte currentColor = 255;
 
-	for(int i =0; i < text.size(); i++) {
+	for (uint i = 0; i < text.size(); i++) {
 		drawColoredText(surface, text[i], currentX, y + i * (font->getFontHeight() + yPadding), w, currentColor, font);
 	}
 }
@@ -219,7 +219,7 @@ void GraphicsManager::drawColoredTexts(Graphics::ManagedSurface &buf, const Comm
 	int currentX = x;
 	byte currentColor = 255;
 
-	for(int i =0; i < text.size(); i++) {
+	for (uint i = 0; i < text.size(); i++) {
 		drawColoredText(buf, text[i], currentX, y + i * (font->getFontHeight() + yPadding), w, currentColor, font);
 	}
 }

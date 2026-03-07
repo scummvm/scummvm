@@ -32,9 +32,9 @@
 namespace Pelrock {
 
 const int EXPECTED_SIZE = 640 * 400;
-size_t rleDecompress(const uint8_t *data, size_t data_size, uint32_t offset, uint32_t size, uint8_t **out_data, bool untilBuda = true);
-void readUntilBuda(Common::SeekableReadStream *stream, uint32_t startPos, byte *&buffer, size_t &outSize);
-void rleDecompressSingleBuda(Common::SeekableReadStream *stream, uint32_t startPos, byte *&buffer, size_t &outSize);
+size_t rleDecompress(const byte *data, size_t data_size, uint32 offset, uint32 size, byte **out_data, bool untilBuda = true);
+void readUntilBuda(Common::SeekableReadStream *stream, uint32 startPos, byte *&buffer, size_t &outSize);
+void rleDecompressSingleBuda(Common::SeekableReadStream *stream, uint32 startPos, byte *&buffer, size_t &outSize);
 void drawSpriteToBuffer(byte *buffer, int bufferWidth, byte *sprite, int x, int y, int width, int height, int transparentColor);
 void drawSpriteToBuffer(Graphics::ManagedSurface &dest, byte *sprite, int x, int y, int width, int height, int transparentColor);
 void blitSurfaceToBuffer(Graphics::Surface *surface, byte *buffer, int bufferWidth, int bufferHeight, int destX, int destY);

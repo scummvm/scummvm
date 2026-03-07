@@ -25,25 +25,25 @@
 
 namespace Pelrock {
 
-static const uint32_t cursor_offsets[5] = {
+static const uint32 cursor_offsets[5] = {
 	0x0FDDFD,
 	0x0FDCDD,
 	0x0FDF1D,
 	0x0FE33D,
 	0x367EF0};
 
-static const uint32_t kBalloonFramesOffset = 2176936;
-static const uint32_t kBalloonFramesSize = 24950;
+static const uint32 kBalloonFramesOffset = 2176936;
+static const uint32 kBalloonFramesSize = 24950;
 
-static const uint32_t ALFRED7_ALFRED_COMB_R = 67768;
-static const uint32_t ALFRED7_ALFRED_COMB_L = 88408;
+static const uint32 ALFRED7_ALFRED_COMB_R = 67768;
+static const uint32 ALFRED7_ALFRED_COMB_L = 88408;
 
-static const uint32_t kAlternateSettingsMenuOffset = 910097;
-static const uint32_t kAlternateSettingsPaletteOffset = 1038141; // 640 * 480
-static const uint32_t kSettingsPaletteOffset = 0x2884c2;         // 640 * 480
+static const uint32 kAlternateSettingsMenuOffset = 910097;
+static const uint32 kAlternateSettingsPaletteOffset = 1038141; // 640 * 480
+static const uint32 kSettingsPaletteOffset = 0x2884c2;         // 640 * 480
 
-#define DESCRIPTION_BASE_OFFSET 0x4715D
-#define NUM_DESCRIPTIONS 113
+const uint32 kDescriptionBaseOffset = 0x4715D;
+const uint16 kNumDescriptions = 113;
 
 static const uint32 kInventoryDescriptionsOffset = 0x4715E;
 static const uint32 kInventoryDescriptionsSize = 7868;
@@ -55,7 +55,7 @@ static const uint32 kAlfredResponsesSize = 12143;
 static const uint32 kCreditsOffset = 0x49F60;
 static const uint32 kCreditsSize = 2540;
 
-const uint32_t pegatina_offsets[137] = {
+static const uint32 pegatina_offsets[137] = {
 	0x000000, 0x00005B, 0x0000B6, 0x000298, 0x00047A, 0x0023C8, 0x004316, 0x004376,
 	0x005119, 0x005EBC, 0x0083ED, 0x008529, 0x0092C4, 0x00A3AA, 0x00B490, 0x00B6A6,
 	0x00C05A, 0x00CA0E, 0x00D3D0, 0x00D46E, 0x00F036, 0x00FB8F, 0x00FC55, 0x0119D7,
@@ -75,7 +75,7 @@ const uint32_t pegatina_offsets[137] = {
 	0x07ECED, 0x07F52F, 0x07FD71, 0x080591, 0x080B24, 0x080B84, 0x080F39, 0x0812F5,
 	0x0816B1};
 
-const byte pegatina_rooms[140] = {
+static const byte pegatina_rooms[140] = {
 	0, 0, 0, 0, 0, 0, 0,                            // Sprites 0-6: Room 0
 	2, 2,                                           // Sprites 7-8: Room 2
 	3, 3, 3, 3, 3, 3, 3, 3,                         // Sprites 9-16: Room 3
@@ -319,8 +319,8 @@ enum TextIndices {
 	LASPUERTAS_DELCIELO,
 };
 
-// Description offsets relative to DESCRIPTION_BASE_OFFSET
-const uint16_t description_offsets[NUM_DESCRIPTIONS] = {
+// Description offsets relative to kDescriptionBaseOffset
+static const uint16 description_offsets[kNumDescriptions] = {
 	0x0000, // Object 0: Historia de la Princesa Zenna y su amante insatisfecho
 	0x0058, // Object 1: Nombre: Alfred Pelrock
 	0x00C4, // Object 2: La tipica tarjeta por la que te sacan commisiones
@@ -444,7 +444,7 @@ struct ExtraImages {
 	byte numChunks;
 };
 
-const ExtraImages extraScreens[] = {
+static const ExtraImages extraScreens[] = {
 	{0x00, // 0 - Portrait above bed
 	 0x7984,
 	 8},

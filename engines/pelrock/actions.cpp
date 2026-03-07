@@ -1135,7 +1135,7 @@ void PelrockEngine::useSecretCodeWithStatue(int inventoryObject, HotSpot *hotspo
 
 void PelrockEngine::pickUpLetter(HotSpot *hotspot) {
 	addInventoryItem(9);
-	_room->setActionMask(hotspot, ACTION_MASK_NONE); // Disable hotspot
+	_room->setActionMask(hotspot, kActionMaskNone); // Disable hotspot
 }
 
 void PelrockEngine::openLibraryOutdoorsDoor(HotSpot *hotspot) {
@@ -1885,14 +1885,14 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 		break;
 	case 294: {
 		HotSpot *floorTile = _room->findHotspotByExtra(462);
-		floorTile->actionFlags = ACTION_MASK_OPEN;
+		floorTile->actionFlags = kActionMaskOpen;
 		_room->changeHotSpot(*floorTile);
 		break;
 	}
 
 	case 307: {
 		HotSpot *stone = _room->findHotspotByExtra(90);
-		stone->actionFlags = ACTION_MASK_PICKUP;
+		stone->actionFlags = kActionMaskPickup;
 		_room->changeHotSpot(*stone);
 		break;
 	}

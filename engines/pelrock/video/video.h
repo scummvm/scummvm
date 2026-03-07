@@ -30,9 +30,9 @@
 namespace Pelrock {
 
 struct ChunkHeader {
-    uint32_t blockCount;      // +0x00: Number of 0x5000-byte blocks
-    uint32_t dataOffset;      // +0x04: Varies by chunk type
-    uint8_t  chunkType;       // +0x08: 1=RLE, 2=BlockCopy, 3=End, 4=Palette, 6=Special
+    uint32 blockCount;      // +0x00: Number of 0x5000-byte blocks
+    uint32 dataOffset;      // +0x04: Varies by chunk type
+    byte   chunkType;       // +0x08: 1=RLE, 2=BlockCopy, 3=End, 4=Palette, 6=Special
     // +0x0D: Frame data begins
 	byte *data;
 };

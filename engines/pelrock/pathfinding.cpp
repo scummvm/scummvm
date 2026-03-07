@@ -27,24 +27,24 @@
 
 namespace Pelrock {
 
-Common::String printMovementFlags(uint8_t flags) {
+Common::String printMovementFlags(byte flags) {
 	Common::String result;
-	if (flags & MOVE_HORIZ) {
+	if (flags & kMoveHoriz) {
 		result += "HORIZ ";
 	}
-	if (flags & MOVE_VERT) {
+	if (flags & kMoveVert) {
 		result += "VERT ";
 	}
-	if (flags & MOVE_DOWN) {
+	if (flags & kMoveDown) {
 		result += "DOWN ";
 	}
-	if (flags & MOVE_LEFT) {
+	if (flags & kMoveLeft) {
 		result += "LEFT ";
 	}
-	if (flags & MOVE_UP) {
+	if (flags & kMoveUp) {
 		result += "UP ";
 	}
-	if (flags & MOVE_RIGHT) {
+	if (flags & kMoveRight) {
 		result += "RIGHT ";
 	}
 	return result;
@@ -52,11 +52,11 @@ Common::String printMovementFlags(uint8_t flags) {
 
 bool findPath(int sourceX, int sourceY, int targetX, int targetY, Common::Array<WalkBox> &walkboxes, PathContext *context, HotSpot *hotspot) {
 
-	if (context->pathBuffer == NULL) {
-		context->pathBuffer = (uint8_t *)malloc(MAX_PATH_LENGTH);
+	if (context->pathBuffer == nullptr) {
+		context->pathBuffer = (byte *)malloc(kMaxPathLength);
 	}
-	if (context->movementBuffer == NULL) {
-		context->movementBuffer = (MovementStep *)malloc(MAX_MOVEMENT_STEPS * sizeof(MovementStep));
+	if (context->movementBuffer == nullptr) {
+		context->movementBuffer = (MovementStep *)malloc(kMaxMovementSteps * sizeof(MovementStep));
 	}
 
 	int startX = sourceX;
@@ -66,8 +66,8 @@ bool findPath(int sourceX, int sourceY, int targetX, int targetY, Common::Array<
 	targetY = target.y;
 	// debug("Startx= %d, starty= %d, destx= %d, desty= %d", startX, startY, targetX, targetY);
 
-	uint8_t startBox = findWalkboxForPoint(walkboxes, startX, startY);
-	uint8_t destBox = findWalkboxForPoint(walkboxes, targetX, targetY);
+	byte startBox = findWalkboxForPoint(walkboxes, startX, startY);
+	byte destBox = findWalkboxForPoint(walkboxes, targetX, targetY);
 
 	// debug("Pathfinding from (%d, %d) in box %d to (%d, %d) in box %d\n", startX, startY, startBox, targetX, targetY, destBox);
 	// Check if both points are in valid walkboxes
@@ -82,18 +82,18 @@ bool findPath(int sourceX, int sourceY, int targetX, int targetY, Common::Array<
 		direct_step.flags = 0;
 		if (startX < targetX) {
 			direct_step.distanceX = targetX - startX;
-			direct_step.flags |= MOVE_RIGHT;
+			direct_step.flags |= kMoveRight;
 		} else {
 			direct_step.distanceX = startX - targetX;
-			direct_step.flags |= MOVE_LEFT;
+			direct_step.flags |= kMoveLeft;
 		}
 
 		if (startY < targetY) {
 			direct_step.distanceY = targetY - startY;
-			direct_step.flags |= MOVE_DOWN;
+			direct_step.flags |= kMoveDown;
 		} else {
 			direct_step.distanceY = startY - targetY;
-			direct_step.flags |= MOVE_UP;
+			direct_step.flags |= kMoveUp;
 		}
 
 		context->movementBuffer[0] = direct_step;
@@ -193,8 +193,8 @@ Common::Point calculateWalkTarget(Common::Array<WalkBox> &walkboxes,
 	return target;
 }
 
-uint8_t findWalkboxForPoint(Common::Array<WalkBox> &walkboxes, uint16_t x, uint16_t y) {
-	for (uint8_t i = 0; i < walkboxes.size(); i++) {
+byte findWalkboxForPoint(Common::Array<WalkBox> &walkboxes, uint16 x, uint16 y) {
+	for (byte i = 0; i < walkboxes.size(); i++) {
 		if (isPointInWalkbox(&walkboxes[i], x, y)) {
 			return i;
 		}
@@ -202,7 +202,7 @@ uint8_t findWalkboxForPoint(Common::Array<WalkBox> &walkboxes, uint16_t x, uint1
 	return 0xFF; // Not found
 }
 
-bool isPointInWalkbox(WalkBox *box, uint16_t x, uint16_t y) {
+bool isPointInWalkbox(WalkBox *box, uint16 x, uint16 y) {
 	return (x >= box->x &&
 			x <= box->x + box->w &&
 			y >= box->y &&
@@ -213,10 +213,10 @@ bool isPointInWalkbox(WalkBox *box, uint16_t x, uint16_t y) {
  * Check if two walkboxes overlap or touch (are adjacent)
  */
 bool areWalkboxesAdjacent(WalkBox *box1, WalkBox *box2) {
-	uint16_t box1_x_max = box1->x + box1->w;
-	uint16_t box1_y_max = box1->y + box1->h;
-	uint16_t box2_x_max = box2->x + box2->w;
-	uint16_t box2_y_max = box2->y + box2->h;
+	uint16 box1_x_max = box1->x + box1->w;
+	uint16 box1_y_max = box1->y + box1->h;
+	uint16 box2_x_max = box2->x + box2->w;
+	uint16 box2_y_max = box2->y + box2->h;
 
 	// Check if X ranges overlap
 	bool xOverlap = (box1->x <= box2_x_max) && (box2->x <= box1_x_max);
@@ -227,14 +227,14 @@ bool areWalkboxesAdjacent(WalkBox *box1, WalkBox *box2) {
 	return xOverlap && yOverlap;
 }
 
-uint8_t getAdjacentWalkbox(Common::Array<WalkBox> &walkboxes, uint8_t currentBoxIndex) {
+byte getAdjacentWalkbox(Common::Array<WalkBox> &walkboxes, byte currentBoxIndex) {
 	WalkBox *currentBox = &walkboxes[currentBoxIndex];
 
 	// Mark current walkbox as visited
 	currentBox->flags = 0x01;
 
 	// Search for adjacent unvisited walkbox
-	for (uint8_t i = 0; i < walkboxes.size(); i++) {
+	for (byte i = 0; i < walkboxes.size(); i++) {
 		// Skip current walkbox
 		if (i == currentBoxIndex) {
 			continue;
@@ -260,10 +260,10 @@ void clearVisitedFlags(Common::Array<WalkBox> &walkboxes) {
 	}
 }
 
-uint16_t buildWalkboxPath(Common::Array<WalkBox> &walkboxes, uint8_t startBox, uint8_t destBox, uint8_t *pathBuffer) {
+uint16 buildWalkboxPath(Common::Array<WalkBox> &walkboxes, byte startBox, byte destBox, byte *pathBuffer) {
 
-	uint16_t pathIndex = 0;
-	uint8_t currentBox = startBox;
+	uint16 pathIndex = 0;
+	byte currentBox = startBox;
 
 	// Initialize path with start walkbox
 	pathBuffer[pathIndex++] = startBox;
@@ -272,8 +272,8 @@ uint16_t buildWalkboxPath(Common::Array<WalkBox> &walkboxes, uint8_t startBox, u
 	clearVisitedFlags(walkboxes);
 
 	// Breadth-first search through walkboxes
-	while (currentBox != destBox && pathIndex < MAX_PATH_LENGTH - 1) {
-		uint8_t nextBox = getAdjacentWalkbox(walkboxes, currentBox);
+	while (currentBox != destBox && pathIndex < kMaxPathLength - 1) {
+		byte nextBox = getAdjacentWalkbox(walkboxes, currentBox);
 
 		if (nextBox == 0xFF) {
 			// Dead end - backtrack
@@ -296,7 +296,7 @@ uint16_t buildWalkboxPath(Common::Array<WalkBox> &walkboxes, uint8_t startBox, u
 	}
 
 	// Terminate path
-	pathBuffer[pathIndex] = PATH_END;
+	pathBuffer[pathIndex] = kPathEnd;
 	debug("Built walkbox path of length %d", pathIndex);
 	return pathIndex;
 }
@@ -304,7 +304,7 @@ uint16_t buildWalkboxPath(Common::Array<WalkBox> &walkboxes, uint8_t startBox, u
 /**
  * Calculate movement needed to reach a target within a walkbox
  */
-void calculateMovementToTarget(uint16_t currentX, uint16_t currentY, uint16_t targetX, uint16_t targetY, WalkBox *box, MovementStep *step) {
+void calculateMovementToTarget(uint16 currentX, uint16 currentY, uint16 targetX, uint16 targetY, WalkBox *box, MovementStep *step) {
 	step->flags = 0;
 	step->distanceX = 0;
 	step->distanceY = 0;
@@ -313,22 +313,22 @@ void calculateMovementToTarget(uint16_t currentX, uint16_t currentY, uint16_t ta
 	if (currentX < box->x) {
 		// Need to move right to enter walkbox
 		step->distanceX = box->x - currentX;
-		step->flags |= MOVE_RIGHT;
+		step->flags |= kMoveRight;
 	} else if (currentX > box->x + box->w) {
 		// Need to move left to enter walkbox
 		step->distanceX = currentX - (box->x + box->w);
-		step->flags |= MOVE_LEFT;
+		step->flags |= kMoveLeft;
 	}
 
 	// Calculate vertical movement
 	if (currentY < box->y) {
 		// Need to move down to enter walkbox
 		step->distanceY = box->y - currentY;
-		step->flags |= MOVE_DOWN;
+		step->flags |= kMoveDown;
 	} else if (currentY > box->y + box->h) {
 		// Need to move up to enter walkbox
 		step->distanceY = currentY - (box->y + box->h);
-		step->flags |= MOVE_UP;
+		step->flags |= kMoveUp;
 	}
 }
 
@@ -336,19 +336,19 @@ void calculateMovementToTarget(uint16_t currentX, uint16_t currentY, uint16_t ta
  * Generate movement steps from walkbox path
  * Returns: number of movement steps generated
  */
-uint16_t generateMovementSteps(Common::Array<WalkBox> &walkboxes,
-							   uint8_t *pathBuffer,
-							   uint16_t pathLength,
-							   uint16_t startX, uint16_t startY,
-							   uint16_t destX, uint16_t destY,
+uint16 generateMovementSteps(Common::Array<WalkBox> &walkboxes,
+							   byte *pathBuffer,
+							   uint16 pathLength,
+							   uint16 startX, uint16 startY,
+							   uint16 destX, uint16 destY,
 							   MovementStep *movementBuffer) {
-	uint16_t currentX = startX;
-	uint16_t currentY = startY;
-	uint16_t movementIndex = 0;
+	uint16 currentX = startX;
+	uint16 currentY = startY;
+	uint16 movementIndex = 0;
 
 	// Generate movements for each walkbox in path
-	for (uint16_t i = 0; i < pathLength && pathBuffer[i] != PATH_END; i++) {
-		uint8_t boxIndex = pathBuffer[i];
+	for (uint16 i = 0; i < pathLength && pathBuffer[i] != kPathEnd; i++) {
+		byte boxIndex = pathBuffer[i];
 		WalkBox *box = &walkboxes[boxIndex];
 
 		MovementStep step;
@@ -358,15 +358,15 @@ uint16_t generateMovementSteps(Common::Array<WalkBox> &walkboxes,
 			movementBuffer[movementIndex++] = step;
 
 			// Update current position
-			if (step.flags & MOVE_RIGHT) {
+			if (step.flags & kMoveRight) {
 				currentX = box->x;
-			} else if (step.flags & MOVE_LEFT) {
+			} else if (step.flags & kMoveLeft) {
 				currentX = box->x + box->w;
 			}
 
-			if (step.flags & MOVE_DOWN) {
+			if (step.flags & kMoveDown) {
 				currentY = box->y;
-			} else if (step.flags & MOVE_UP) {
+			} else if (step.flags & kMoveUp) {
 				currentY = box->y + box->h;
 			}
 		}
@@ -378,20 +378,20 @@ uint16_t generateMovementSteps(Common::Array<WalkBox> &walkboxes,
 
 	if (currentX < destX) {
 		final_step.distanceX = destX - currentX;
-		final_step.flags |= MOVE_RIGHT;
+		final_step.flags |= kMoveRight;
 	} else if (currentX > destX) {
 		final_step.distanceX = currentX - destX;
-		final_step.flags |= MOVE_LEFT;
+		final_step.flags |= kMoveLeft;
 	} else {
 		final_step.distanceX = 0;
 	}
 
 	if (currentY < destY) {
 		final_step.distanceY = destY - currentY;
-		final_step.flags |= MOVE_DOWN;
+		final_step.flags |= kMoveDown;
 	} else if (currentY > destY) {
 		final_step.distanceY = currentY - destY;
-		final_step.flags |= MOVE_UP;
+		final_step.flags |= kMoveUp;
 	} else {
 		final_step.distanceY = 0;
 	}

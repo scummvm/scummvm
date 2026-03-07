@@ -37,20 +37,36 @@ namespace Pelrock {
 // Control character codes (negative values in signed char)
 #define CHAR_SPACE 0x20                  /* ' ' */
 #define CTRL_SPEAKER_ID 0x08             /* Next byte is speaker ID (color) */
-#define CTRL_END_TEXT 0xFD               /* End of text segment */
-#define CTRL_TEXT_TERMINATOR 0xFC        /* Text terminator */
-#define CTRL_DIALOGUE_MARKER 0xF1        /* Choice marker that sticks */
-#define CTRL_DISABLED_CHOICE 0xFA        /* Disabled choice marker */
-#define CTRL_PAGE_BREAK_CONV 0xF9        /* Page break in conversation */
-#define CTRL_ACTION_AND_END 0xF8         /* Action trigger */
-#define CTRL_END_BRANCH 0xF7             /* End of branch */
-#define CTRL_LINE_CONTINUE 0xF6          /* Line continue/newline */
-#define CTRL_ALT_END_MARKER_1 0xF5       /* Alt end marker - do nothing */
-#define CTRL_END_CONVERSATION 0xF4       /* End conversation and disable option */
-#define CTRL_DIALOGUE_MARKER_ONEOFF 0xFB /* Alt choice marker that disappears */
-#define CTRL_GO_BACK 0xF0                /* Go back in conversation */
-#define CTRL_ACTION_AND_CONTINUE 0xEB       /* Action-and-continue: dispatch action, conversation keeps going (unlike 0xF8 which exits) */
-#define CTRL_ALT_SPEAKER_ROOT 0xFE       /* Separates conversations from different speakers */
+const byte kCtrlEndText             = 0xFD; /* End of text segment */
+const byte kCtrlTextTerminator      = 0xFC; /* Text terminator */
+const byte kCtrlDialogueMarker      = 0xF1; /* Choice marker that sticks */
+const byte kCtrlDisabledChoice      = 0xFA; /* Disabled choice marker */
+const byte kCtrlPageBreakConv       = 0xF9; /* Page break in conversation */
+const byte kCtrlActionAndEnd        = 0xF8; /* Action trigger */
+const byte kCtrlEndBranch           = 0xF7; /* End of branch */
+const byte kCtrlLineContinue        = 0xF6; /* Line continue/newline */
+const byte kCtrlAltEndMarker1       = 0xF5; /* Alt end marker - do nothing */
+const byte kCtrlEndConversation     = 0xF4; /* End conversation and disable option */
+const byte kCtrlDialogueMarkerOneoff = 0xFB; /* Alt choice marker that disappears */
+const byte kCtrlGoBack              = 0xF0; /* Go back in conversation */
+const byte kCtrlActionAndContinue   = 0xEB; /* Action-and-continue: dispatch action, conversation keeps going (unlike 0xF8 which exits) */
+const byte kCtrlAltSpeakerRoot      = 0xFE; /* Separates conversations from different speakers */
+
+// Keep old names as aliases for compatibility
+#define CTRL_END_TEXT           kCtrlEndText
+#define CTRL_TEXT_TERMINATOR    kCtrlTextTerminator
+#define CTRL_DIALOGUE_MARKER    kCtrlDialogueMarker
+#define CTRL_DISABLED_CHOICE    kCtrlDisabledChoice
+#define CTRL_PAGE_BREAK_CONV    kCtrlPageBreakConv
+#define CTRL_ACTION_AND_END     kCtrlActionAndEnd
+#define CTRL_END_BRANCH         kCtrlEndBranch
+#define CTRL_LINE_CONTINUE      kCtrlLineContinue
+#define CTRL_ALT_END_MARKER_1   kCtrlAltEndMarker1
+#define CTRL_END_CONVERSATION   kCtrlEndConversation
+#define CTRL_DIALOGUE_MARKER_ONEOFF kCtrlDialogueMarkerOneoff
+#define CTRL_GO_BACK            kCtrlGoBack
+#define CTRL_ACTION_AND_CONTINUE kCtrlActionAndContinue
+#define CTRL_ALT_SPEAKER_ROOT   kCtrlAltSpeakerRoot
 
 // Helper structures for conversation state management
 struct ConversationState {

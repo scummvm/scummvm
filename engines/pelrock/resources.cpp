@@ -81,8 +81,20 @@ ResourceManager::~ResourceManager() {
 		delete[] alfredIdle[i];
 	}
 
+	for (int i = 0; i < 11; i++) {
+		delete[] alfredCombFrames[0][i];
+		delete[] alfredCombFrames[1][i];
+	}
 	delete[] alfredCombFrames[0];
 	delete[] alfredCombFrames[1];
+
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 9; j++) {
+			delete[] alfredCrawlFrames[i][j];
+		}
+		delete[] alfredCrawlFrames[i];
+	}
+
 	delete[] _inventoryIcons;
 }
 
@@ -92,7 +104,7 @@ void ResourceManager::loadCursors() {
 		error("Couldnt find file ALFRED.7");
 	}
 	for (int i = 0; i < 5; i++) {
-		uint32_t cursorOffset = cursor_offsets[i];
+		uint32 cursorOffset = cursor_offsets[i];
 		alfred7File.seek(cursorOffset);
 		_cursorMasks[i] = new byte[kCursorSize];
 		alfred7File.read(_cursorMasks[i], kCursorSize);
@@ -108,10 +120,10 @@ void ResourceManager::loadInteractionIcons() {
 
 	alfred7File.seek(kBalloonFramesOffset, SEEK_SET);
 
-	uint32_t totalBalloonSize = kBalloonWidth * kBalloonHeight * kBalloonFrames;
+	uint32 totalBalloonSize = kBalloonWidth * kBalloonHeight * kBalloonFrames;
 	_popUpBalloon = new byte[totalBalloonSize];
 
-	uint32_t compressedSize = kBalloonFramesSize;
+	uint32 compressedSize = kBalloonFramesSize;
 
 	byte *raw = new byte[compressedSize];
 	alfred7File.read(raw, compressedSize);
@@ -140,13 +152,13 @@ void ResourceManager::loadAlfredAnims() {
 		return;
 	}
 	int alfred3Size = alfred3.size();
-	unsigned char *bufferFile = (unsigned char *)malloc(alfred3Size);
+	byte *bufferFile = (byte *)malloc(alfred3Size);
 	alfred3.seek(0, SEEK_SET);
 	alfred3.read(bufferFile, alfred3Size);
 	alfred3.close();
 
-	uint32_t capacity = 3060 * 102 + 2340 * 55;
-	unsigned char *completePic = new unsigned char[capacity];
+	uint32 capacity = 3060 * 102 + 2340 * 55;
+	byte *completePic = new byte[capacity];
 	rleDecompress(bufferFile, alfred3Size, 0, capacity, &completePic);
 
 	byte *stdFramesPic = new byte[3060 * 102];
@@ -208,6 +220,9 @@ void ResourceManager::loadAlfredAnims() {
 		}
 	}
 
+	delete[] crawlFramesPic;
+	delete[] stdFramesPic;
+	delete[] completePic;
 	free(bufferFile);
 
 
@@ -245,6 +260,8 @@ void ResourceManager::loadAlfredAnims() {
 		extractSingleFrame(alfredCombLeft, alfredCombFrames[1][i], i, kAlfredFrameWidth, kAlfredFrameHeight);
 	}
 
+	free(alfredCombRight);
+	free(alfredCombLeft);
 	free(alfredCombRightRaw);
 	free(alfredCombLeftRaw);
 
@@ -355,6 +372,7 @@ void ResourceManager::loadHardcodedText() {
 	exe.seek(kConversationTerminatorOffset, SEEK_SET);
 	exe.read(terminatorBuffer, 39);
 	_conversationTerminator = Common::String((const char *)terminatorBuffer, 39);
+	delete[] terminatorBuffer;
 	delete[] descBuffer;
 	exe.close();
 }
@@ -527,7 +545,7 @@ void ResourceManager::mergeRleBlocks(Common::SeekableReadStream *stream, uint32 
 		byte *thisBlock = nullptr;
 		size_t blockSize = 0;
 		readUntilBuda(stream, stream->pos(), thisBlock, blockSize);
-		uint8_t *block_data = nullptr;
+		byte *block_data = nullptr;
 		size_t decompressedSize = rleDecompress(thisBlock, blockSize, 0, 640 * 400, &block_data, true);
 		// debug("Decompressed block %d: %zu bytes, total %zu", i, decompressedSize, combined_size + decompressedSize);
 		if (combined_size + decompressedSize > 640 * 400) {

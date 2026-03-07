@@ -141,15 +141,15 @@ void drawText(Graphics::ManagedSurface &dest, Graphics::Font *font, Common::Stri
 }
 
 size_t rleDecompress(
-	const uint8_t *input,
+	const byte *input,
 	size_t inputSize,
-	uint32_t offset,
-	uint32_t expectedSize,
-	uint8_t **out_data,
+	uint32 offset,
+	uint32 expectedSize,
+	byte **out_data,
 	bool untilBuda) {
 	// Check for uncompressed markers
 	if (inputSize == 0x8000 || inputSize == 0x6800) {
-		*out_data = (uint8_t *)malloc(inputSize);
+		*out_data = (byte *)malloc(inputSize);
 		if (!*out_data)
 			return 0;
 		memcpy(*out_data, input + offset, inputSize);
@@ -159,27 +159,27 @@ size_t rleDecompress(
 	// RLE compressed
 	size_t bufferCapacity;
 	size_t result_size = 0;
-	uint32_t pos = offset;
-	uint8_t last_value = 0;
+	uint32 pos = offset;
+	byte last_value = 0;
 
 	if (untilBuda || expectedSize == 0) {
 		// Dynamic allocation mode - grow buffer as needed
 		bufferCapacity = 4096;
-		*out_data = (uint8_t *)malloc(bufferCapacity);
+		*out_data = (byte *)malloc(bufferCapacity);
 		if (!*out_data)
 			return 0;
 	} else {
 		// Fixed size mode
 		bufferCapacity = expectedSize;
-		*out_data = (uint8_t *)malloc(bufferCapacity);
+		*out_data = (byte *)malloc(bufferCapacity);
 		if (!*out_data)
 			return 0;
 	}
 
 	while (pos + 2 <= inputSize) {
 		// Read the RLE pair
-		uint8_t count = input[pos];
-		uint8_t value = input[pos + 1];
+		byte count = input[pos];
+		byte value = input[pos + 1];
 		last_value = value;
 
 		// Write pixels for this pair
@@ -195,7 +195,7 @@ size_t rleDecompress(
 					break;
 
 				}
-				uint8_t *newBuf = (uint8_t *)realloc(*out_data, bufferCapacity);
+				byte *newBuf = (byte *)realloc(*out_data, bufferCapacity);
 				if (!newBuf) {
 					free(*out_data);
 					*out_data = nullptr;
@@ -217,7 +217,7 @@ size_t rleDecompress(
 			// Grow buffer if needed
 			if (result_size >= bufferCapacity) {
 				bufferCapacity++;
-				uint8_t *newBuf = (uint8_t *)realloc(*out_data, bufferCapacity);
+				byte *newBuf = (byte *)realloc(*out_data, bufferCapacity);
 				if (!newBuf) {
 					free(*out_data);
 					*out_data = nullptr;
@@ -238,7 +238,7 @@ size_t rleDecompress(
 	return result_size;
 }
 
-void readUntilBuda(Common::SeekableReadStream *stream, uint32_t startPos, byte *&buffer, size_t &outSize) {
+void readUntilBuda(Common::SeekableReadStream *stream, uint32 startPos, byte *&buffer, size_t &outSize) {
 	const int markerLen = 4;
 	size_t bufferSize = 4096;
 	size_t pos = 0;
@@ -265,7 +265,7 @@ void readUntilBuda(Common::SeekableReadStream *stream, uint32_t startPos, byte *
 	outSize = pos;
 }
 
-void rleDecompressSingleBuda(Common::SeekableReadStream *stream, uint32_t startPos, byte *&outBuffer, size_t &outSize){
+void rleDecompressSingleBuda(Common::SeekableReadStream *stream, uint32 startPos, byte *&outBuffer, size_t &outSize){
 	byte *buffer = nullptr;
 	size_t size = 0;
 	readUntilBuda(stream, startPos, buffer, size);

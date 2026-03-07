@@ -71,6 +71,14 @@ PelrockEngine::~PelrockEngine() {
 	delete _dialog;
 	delete _menu;
 	delete _graphics;
+	delete _state;
+	delete[] _alfredSprite;
+	delete[] _inventoryOverlayState.arrows[0];
+	delete[] _inventoryOverlayState.arrows[1];
+	// Free path-finding buffers (allocated via malloc in findPath)
+	free(_currentContext.pathBuffer);
+	free(_currentContext.movementBuffer);
+	free(_currentContext.compressed_path);
 }
 
 uint32 PelrockEngine::getFeatures() const {
@@ -196,25 +204,25 @@ Common::Array<VerbIcon> PelrockEngine::availableActions(HotSpot *hotspot) {
 	Common::Array<VerbIcon> verbs;
 	verbs.push_back(LOOK);
 
-	if (hotspot->actionFlags & ACTION_MASK_OPEN) {
+	if (hotspot->actionFlags & kActionMaskOpen) {
 		verbs.push_back(OPEN);
 	}
-	if (hotspot->actionFlags & ACTION_MASK_CLOSE) {
+	if (hotspot->actionFlags & kActionMaskClose) {
 		verbs.push_back(CLOSE);
 	}
-	if (hotspot->actionFlags & ACTION_MASK_UNKNOWN) {
+	if (hotspot->actionFlags & kActionMaskUnknown) {
 		verbs.push_back(UNKNOWN);
 	}
-	if (hotspot->actionFlags & ACTION_MASK_PICKUP) {
+	if (hotspot->actionFlags & kActionMaskPickup) {
 		verbs.push_back(PICKUP);
 	}
-	if (hotspot->actionFlags & ACTION_MASK_TALK) {
+	if (hotspot->actionFlags & kActionMaskTalk) {
 		verbs.push_back(TALK);
 	}
-	if (hotspot->actionFlags & ACTION_MASK_PUSH) {
+	if (hotspot->actionFlags & kActionMaskPush) {
 		verbs.push_back(PUSH);
 	}
-	if (hotspot->actionFlags & ACTION_MASK_PULL) {
+	if (hotspot->actionFlags & kActionMaskPull) {
 		verbs.push_back(PULL);
 	}
 	return verbs;
@@ -356,7 +364,7 @@ bool PelrockEngine::renderScene(int overlayMode) {
 void PelrockEngine::mouseHoverForMap() {
 	if (_room->_currentRoomNumber == 21 && !_hoveredMapLocation.empty()) {
 		Common::Rect r = _largeFont->getBoundingBox(_hoveredMapLocation.c_str());
-		drawText(_compositeBuffer, _largeFont, _hoveredMapLocation.c_str(), _events->_mouseX - r.width() / 2, _events->_mouseY - r.height(), 640, ALFRED_COLOR);
+		drawText(_compositeBuffer, _largeFont, _hoveredMapLocation.c_str(), _events->_mouseX - r.width() / 2, _events->_mouseY - r.height(), 640, kAlfredColor);
 	}
 }
 
@@ -457,7 +465,7 @@ void PelrockEngine::passerByAnim(uint32 frameCount) {
 		int startY = anim.startY;
 		// debug("Checking passerby anim %d for sprite %d, direction %d", _room->_passerByAnims->currentAnimIndex, spriteIndex, direction);
 		Sprite *sprite = _room->findSpriteByIndex(spriteIndex);
-		if (direction == PASSERBY_RIGHT) {
+		if (direction == kPasserbyRight) {
 			// debug("Checking passerby anim for sprite %d moving RIGHT, curpos is %d", spriteIndex, sprite->x);
 			if (sprite->x >= anim.resetCoord) {
 				sprite->x = startX;
@@ -467,7 +475,7 @@ void PelrockEngine::passerByAnim(uint32 frameCount) {
 				sprite->animData[0].curFrame = 0;
 				_room->_passerByAnims->latch = false;
 			}
-		} else if (direction == PASSERBY_LEFT) {
+		} else if (direction == kPasserbyLeft) {
 			// debug("Checking passerby anim for sprite %d moving LEFT, curpos is %d", spriteIndex, sprite->x);
 
 			if (sprite->x <= anim.resetCoord) {
@@ -478,7 +486,7 @@ void PelrockEngine::passerByAnim(uint32 frameCount) {
 				sprite->animData[0].curFrame = 0;
 				_room->_passerByAnims->latch = false;
 			}
-		} else if (direction == PASSERBY_DOWN) {
+		} else if (direction == kPasserbyDown) {
 			// debug("Checking passerby anim for sprite %d moving DOWN, curpos is %d, reset %d", spriteIndex, sprite->y, anim.resetCoord);
 			if (sprite->y >= anim.resetCoord) {
 				sprite->x = startX;
@@ -939,21 +947,21 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 	case ALFRED_WALKING: {
 		MovementStep step = _currentContext.movementBuffer[_currentStep];
 		if (step.distanceX > 0) {
-			if (step.flags & MOVE_RIGHT) {
+			if (step.flags & kMoveRight) {
 				_alfredState.direction = ALFRED_RIGHT;
 				_alfredState.x += MIN(_alfredState.movementSpeedX, step.distanceX);
 			}
-			if (step.flags & MOVE_LEFT) {
+			if (step.flags & kMoveLeft) {
 				_alfredState.direction = ALFRED_LEFT;
 				_alfredState.x -= MIN(_alfredState.movementSpeedX, step.distanceX);
 			}
 		}
 		if (step.distanceY > 0) {
-			if (step.flags & MOVE_DOWN) {
+			if (step.flags & kMoveDown) {
 				_alfredState.direction = ALFRED_DOWN;
 				_alfredState.y += MIN(_alfredState.movementSpeedY, step.distanceY);
 			}
-			if (step.flags & MOVE_UP) {
+			if (step.flags & kMoveUp) {
 				_alfredState.direction = ALFRED_UP;
 				_alfredState.y -= MIN(_alfredState.movementSpeedY, step.distanceY);
 			}
@@ -1286,7 +1294,7 @@ void PelrockEngine::drawAlfred(byte *buf) {
 	}
 }
 
-void applyMovement(int16_t *x, int16_t *y, int8_t *z, uint16_t flags) {
+void applyMovement(int16 *x, int16 *y, int8 *z, uint16 flags) {
 	// X-axis movement
 	if (flags & 0x10) {            // Bit 4: X movement enabled
 		int amount = flags & 0x07; // Bits 0-2: pixels per frame
@@ -2644,14 +2652,14 @@ void PelrockEngine::credits() {
 			/**
 			 * Last line is less indented for some reason, so skip that for calculation
 			 */
-			for (int i = 0; i < creditTexts[page].size(); i++) {
+			for (uint i = 0; i < creditTexts[page].size(); i++) {
 				maxWidth = MAX(maxWidth, g_engine->_largeFont->getStringWidth(creditTexts[page][i]));
 			}
 
 			int startX = 320 - (maxWidth / 2);
 			int startY = (400 - s.getRect().height()) / 2 - 10;
 
-			for (int i = 0; i < creditTexts[page].size(); i++) {
+			for (uint i = 0; i < creditTexts[page].size(); i++) {
 				// subtract that extra negative identation
 				int xPos = i == creditTexts[page].size() - 1 ? startX - 10 : startX;
 				int yPos = i * 25; // Above sprite, adjust for line

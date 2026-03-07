@@ -41,8 +41,8 @@ public:
 	bool _longClicked = false;
 	bool _rightMouseClicked = false;
 	bool _popupSelectionMode = false;
-	bool _leftMouseButton = 0;
-	bool _rightMouseButton = 0;
+	bool _leftMouseButton = false;
+	bool _rightMouseButton = false;
 	Common::KeyCode _lastKeyEvent = Common::KEYCODE_INVALID;
 	PelrockEventManager();
 	void pollEvent();
