@@ -1736,6 +1736,7 @@ void Lingo::varAssign(const Datum &var, const Datum &value) {
 		// So while we require other variable types to be initialized before assigning to them,
 		// let's not enforce that for globals.
 		_globalvars[*var.u.s] = value;
+		g_debugger->varWriteHook(*var.u.s);
 		break;
 	case LOCALREF:
 		{
