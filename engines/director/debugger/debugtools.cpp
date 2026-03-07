@@ -80,7 +80,7 @@ const LingoDec::Handler *getHandler(const Cast *cast, CastMemberID id, const Com
 const LingoDec::Handler *getHandler(CastMemberID id, const Common::String &handlerId) {
 	const Director::Movie *movie = g_director->getCurrentMovie();
 	if (id.castLib == SHARED_CAST_LIB)
-        return getHandler(movie->getSharedCast(), id, handlerId);
+		return getHandler(movie->getSharedCast(), id, handlerId);
 
 	const Cast *cast = movie->getCasts()->getVal(id.castLib);
 
@@ -515,7 +515,7 @@ static const DebuggerTheme themes[kThemeCount] = {
 		IM_COL32(0xB4, 0x32, 0x32, 0xC8), // channel_hide_bg
 		IM_COL32(0x94, 0x00, 0xD3, 0xFF), // channelSelectedCol
 		IM_COL32(0xFF, 0xFF, 0x00, 0x3C), // channelHoveredCol
-		{                                 // contColors
+		{								 // contColors
 			IM_COL32(0xCE, 0xCE, 0xFF, 0x80),
 			IM_COL32(0xFF, 0xFF, 0xCE, 0x80),
 			IM_COL32(0xCE, 0xFF, 0xCE, 0x80),
@@ -573,7 +573,7 @@ static const DebuggerTheme themes[kThemeCount] = {
 		IM_COL32(0xDC, 0x3C, 0x3C, 0xC8), // channel_hide_bg
 		IM_COL32(0x94, 0x00, 0xD3, 0xFF), // channelSelectedCol
 		IM_COL32(0xD0, 0x90, 0x00, 0x50), // channelHoveredCol
-		{                                 // contColors
+		{								 // contColors
 			IM_COL32(0xCE, 0xCE, 0xFF, 0x80),
 			IM_COL32(0xFF, 0xFF, 0xCE, 0x80),
 			IM_COL32(0xCE, 0xFF, 0xCE, 0x80),
@@ -602,21 +602,21 @@ static const DebuggerTheme themes[kThemeCount] = {
 		ImVec4(0.80f, 0.00f, 0.00f, 1.0f), // var_ref_changed
 		ImVec4(0.60f, 0.00f, 0.60f, 1.0f), // var_ref_out_of_scope
 
-		ImVec4(0.1f, 0.1f, 0.1f, 1.0f),    // cp_color
-		ImVec4(0.8f, 0.0f, 0.0f, 1.0f),    // cp_color_red
-		ImVec4(0.8f, 0.4f, 0.0f, 1.0f),    // cp_active_color
-		ImVec4(0.7f, 0.8f, 1.0f, 0.5f),    // cp_bgcolor
-		ImVec4(0.0f, 0.0f, 0.8f, 1.0f),    // cp_playing_color
+		ImVec4(0.1f, 0.1f, 0.1f, 1.0f),	// cp_color
+		ImVec4(0.8f, 0.0f, 0.0f, 1.0f),	// cp_color_red
+		ImVec4(0.8f, 0.4f, 0.0f, 1.0f),	// cp_active_color
+		ImVec4(0.7f, 0.8f, 1.0f, 0.5f),	// cp_bgcolor
+		ImVec4(0.0f, 0.0f, 0.8f, 1.0f),	// cp_playing_color
 		ImVec4(0.55f, 0.42f, 0.05f, 1.0f), // cp_path_color
 
-		ImVec4(0.8f, 0.0f, 0.0f, 1.0f),    // logger_error_b
-		ImVec4(0.8f, 0.4f, 0.0f, 1.0f),    // logger_warning_b
-		ImVec4(0.1f, 0.1f, 0.1f, 1.0f),    // logger_info_b
-		ImVec4(0.4f, 0.4f, 0.4f, 1.0f),    // logger_debug_b
-		ImVec4(0.7f, 0.0f, 0.0f, 1.0f),    // logger_error
-		ImVec4(0.7f, 0.4f, 0.0f, 1.0f),    // logger_warning
+		ImVec4(0.8f, 0.0f, 0.0f, 1.0f),	// logger_error_b
+		ImVec4(0.8f, 0.4f, 0.0f, 1.0f),	// logger_warning_b
+		ImVec4(0.1f, 0.1f, 0.1f, 1.0f),	// logger_info_b
+		ImVec4(0.4f, 0.4f, 0.4f, 1.0f),	// logger_debug_b
+		ImVec4(0.7f, 0.0f, 0.0f, 1.0f),	// logger_error
+		ImVec4(0.7f, 0.4f, 0.0f, 1.0f),	// logger_warning
 		ImVec4(0.15f, 0.15f, 0.15f, 1.0f), // logger_info
-		ImVec4(0.4f, 0.4f, 0.4f, 1.0f)     // logger_debug
+		ImVec4(0.4f, 0.4f, 0.4f, 1.0f)	 // logger_debug
 	}
 };
 

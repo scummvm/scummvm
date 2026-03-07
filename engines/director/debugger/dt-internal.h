@@ -119,9 +119,9 @@ enum ThemeID {
 };
 
 enum SearchMode {
-    kSearchAll = 0,
-    kSearchHandlerNames,
-    kSearchScriptBody,
+	kSearchAll = 0,
+	kSearchHandlerNames,
+	kSearchScriptBody,
 };
 
 struct DebuggerTheme {
