@@ -1098,7 +1098,6 @@ int calculateWordLength(Common::String text, int startPos, bool &isEnd) {
 }
 
 Common::Array<Common::Array<Common::String>> DialogManager::wordWrap(Common::String text) {
-	debug("Word-wrapping text: \"%s\"", text.c_str());
 	Common::Array<Common::Array<Common::String>> pages;
 	Common::Array<Common::String> currentPage;
 	Common::Array<Common::String> currentLine;
@@ -1169,12 +1168,12 @@ Common::Array<Common::Array<Common::String>> DialogManager::wordWrap(Common::Str
 	}
 
 	// print all the pages and lines for debugging
-	for (uint i = 0; i < pages.size(); i++) {
-		debug("Page %d:", i);
-		for (uint j = 0; j < pages[i].size(); j++) {
-			debug(" Line %d: \"%s\"", j, pages[i][j].c_str());
-		}
-	}
+	// for (uint i = 0; i < pages.size(); i++) {
+	// 	debug("Page %d:", i);
+	// 	for (uint j = 0; j < pages[i].size(); j++) {
+	// 		debug(" Line %d: \"%s\"", j, pages[i][j].c_str());
+	// 	}
+	// }
 	return pages;
 }
 

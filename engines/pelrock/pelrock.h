@@ -356,7 +356,7 @@ public:
 	void closeTravelAgencyDoor(HotSpot *hotspot);
 	void usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot);
 	void playAlfredSpecialAnim(int anim, bool reverse = false);
-	void waitForSoundEnd();
+	void waitForSoundEnd(int channel = 0);
 	void pickupSunflower(HotSpot *hotspot);
 	void checkIngredients();
 	void pickUpBook(int i);

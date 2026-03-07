@@ -1740,6 +1740,7 @@ void PelrockEngine::checkMouseOverInventoryOverlay(int x, int y) {
 }
 
 int PelrockEngine::checkMouseClickInventoryOverlay(int x, int y) {
+
 	if (x < 20) {
 		return -1;
 	} else if (x >= 620) {
@@ -1872,6 +1873,10 @@ void PelrockEngine::walkTo(int x, int y) {
 }
 
 void PelrockEngine::walkAndAction(HotSpot *hotspot, VerbIcon action) {
+	if(_currentHotspot == nullptr) {
+		debug("Error: walkAndAction called with null hotspot");
+		return;
+	}
 	_disableAction = true;
 	walkTo(hotspot->x + hotspot->w / 2, hotspot->y + hotspot->h);
 	_queuedAction = QueuedAction{action, hotspot->index, true, false};
@@ -1981,7 +1986,6 @@ void PelrockEngine::changeCursor(Cursor cursor) {
 
 void PelrockEngine::checkMouseHover() {
 	if(_actionPopupState.isActive) {
-		debug("Mouse hover ignored because action popup is active");
 		return;
 	}
 

@@ -157,7 +157,7 @@ class SoundManager {
 public:
 	SoundManager(Audio::Mixer *mixer);
 	~SoundManager();
-	void playSound(byte index, int channel = -1);
+	void playSound(byte index, int channel = -1, int loopCount = 1);
 	void playSound(const char *filename, int channel, int loopCount = 1);
 	void playSound(byte *soundData, uint32 size, int channel);
 	void stopAllSounds();

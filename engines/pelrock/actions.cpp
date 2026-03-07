@@ -600,7 +600,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 308: {
 		int targetBranch = rootIndex + 1;
 		if (targetBranch > 17) {
-			targetBranch = 3;
+			targetBranch = 2;
 		}
 		_state->setCurrentRoot(room, targetBranch, 0);
 		break;
@@ -1234,8 +1234,8 @@ void PelrockEngine::playAlfredSpecialAnim(int anim, bool reverse) {
 	waitForSpecialAnimation();
 }
 
-void PelrockEngine::waitForSoundEnd() {
-	while (!shouldQuit() && _sound->isPlaying(0)) {
+void PelrockEngine::waitForSoundEnd(int channel) {
+	while (!shouldQuit() && _sound->isPlaying(channel)) {
 		_events->pollEvent();
 		renderScene(OVERLAY_NONE);
 		_screen->update();
@@ -1563,17 +1563,19 @@ void PelrockEngine::giveStoneToSlaves(int inventoryObject, HotSpot *hotspot) {
 
 	_dialog->say(_res->_ingameTexts[HAYQUECELEBRARLO]);
 
+	byte counter = _state->getFlag(FLAG_DA_PIEDRA);
 	// drinking animation and sound
-	_sound->playSound(_room->_roomSfx[1], 0);
+	_sound->playSound(_room->_roomSfx[1], 2);
 
-	_room->disableSprite(0);
-	playSpecialAnim(1473360, true, mastersX - 5, mastersY - 1, 152, 83, 7);
+	_room->findSpriteByIndex(0)->zOrder = -1;
+
+	playSpecialAnim(1473360, true, mastersX - 6, mastersY - 1, 152, 83, 7);
 
 	// Increment stone delivery counter (tracks 0→1→2→3)
-	byte counter = _state->getFlag(FLAG_DA_PIEDRA);
 	debug("Current stone delivery count: %d", counter);
 	if (counter < 3) {
 		_state->setFlag(FLAG_DA_PIEDRA, ++counter);
+		_room->findSpriteByIndex(0)->zOrder = zIndex;
 	}
 	debug("New stone delivery count: %d", _state->getFlag(FLAG_DA_PIEDRA));
 	// At 2nd stone delivery: masters starts singing (conversation root 2)
@@ -1583,18 +1585,14 @@ void PelrockEngine::giveStoneToSlaves(int inventoryObject, HotSpot *hotspot) {
 
 	// At 3rd stone delivery: masters get wasted
 	if (counter == 3) {
+		_room->disableSprite(0, PERSIST_BOTH);
 		playSpecialAnim(1512060, true, mastersX - 28, mastersY - 6, 172, 96, 3);
-
 		_room->addSticker(116);
-
 		WalkBox w1 = {3, 187, 374, 5, 17, 0};
 		WalkBox w2 = {4, 141, 374, 46, 4, 0};
 		_room->addWalkbox(w1);
 		_room->addWalkbox(w2);
 		_state->setFlag(FLAG_GUARDIAS_BORRACHOS, true);
-	} else {
-		debug("Re-enabling master sprite with zIndex %d", zIndex);
-		_room->enableSprite(0, zIndex);
 	}
 }
 

@@ -49,11 +49,11 @@ SoundManager::~SoundManager() {
 	stopMusic();
 }
 
-void SoundManager::playSound(byte index, int channel) {
+void SoundManager::playSound(byte index, int channel, int loopCount) {
 	// debug("Playing sound index %d (%s)", index, SOUND_FILENAMES[index]);
 	auto it = _soundMap.find(SOUND_FILENAMES[index]);
 	if (it != _soundMap.end()) {
-		playSound(it->_value, channel);
+		playSound(it->_value, channel, loopCount);
 	} else {
 		debug("Sound file %s not found in sound map", SOUND_FILENAMES[index]);
 	}
@@ -115,11 +115,15 @@ void SoundManager::playSound(SonidoFile sound, int channel, int loopCount) {
 		} else {
 			if (_mixer->isSoundHandleActive(_sfxHandles[channel])) {
 				_mixer->stopHandle(_sfxHandles[channel]);
+				debug("Stopped active sound on channel %d to play new sound %s", channel, sound.filename.c_str());
+			}
+			else {
+				debug("Warning: channel %d is already free when trying to play sound %s", channel, sound.filename.c_str());
 			}
 		}
 		Audio::AudioStream *finalStream = loopCount != -1 ? stream : Audio::makeLoopingAudioStream(stream, 0);
 
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], finalStream, loopCount, _currentVolume, 0, DisposeAfterUse::YES);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], finalStream, -1, _currentVolume, 0, DisposeAfterUse::YES);
 	}
 }
 
