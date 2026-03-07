@@ -96,6 +96,7 @@ typedef struct ImGuiWindows {
 	bool archive = false;
 	bool watchedVars = false;
 	bool executionContext = false;
+	bool search = false;
 } ImGuiWindows;
 
 typedef struct ScriptData {
@@ -114,6 +115,12 @@ enum ThemeID {
 	kThemeDark = 0,
 	kThemeLight,
 	kThemeCount
+};
+
+enum SearchMode {
+    kSearchAll = 0,
+    kSearchHandlerNames,
+    kSearchScriptBody,
 };
 
 struct DebuggerTheme {
@@ -225,6 +232,12 @@ typedef struct ImGuiState {
 		uint _callstackSize = 0;
 	} _dbg;
 
+	struct {
+		char input[256] = {};
+		bool dirty = false;
+		int mode = kSearchAll;
+		Common::Array<ImGuiScript> results;
+	} _search;
 
 	struct {
 		DatumHash _locals;
@@ -337,6 +350,9 @@ void showHandlers();
 void saveCurrentState();
 void loadSavedState();
 Common::Array<WindowFlag> getWindowFlags();
+
+// dt-search.cpp
+void showSearchBar();
 
 extern ImGuiState *_state;
 
