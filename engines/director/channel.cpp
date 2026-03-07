@@ -62,6 +62,7 @@ Channel::Channel(Score *sc, Sprite *sp, int priority) {
 
 	_visible = true;
 	_dirty = true;
+	_hideFromStage = false;
 
 	if (sp) {
 		_startFrame = sp->_spriteInfo.startFrame;
@@ -95,6 +96,7 @@ Channel& Channel::operator=(const Channel &channel) {
 
 	_visible = channel._visible;
 	_dirty = channel._dirty;
+	_hideFromStage = channel._hideFromStage;
 
 	_startFrame = channel._startFrame;
 	_endFrame = channel._endFrame;

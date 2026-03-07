@@ -125,6 +125,7 @@ struct DebuggerTheme {
 	ImU32 playhead_color;
 	ImU32 current_statement_bg;
 	ImU32 channel_toggle;
+	ImU32 channel_hide_bg;
 	ImU32 channelSelectedCol;
 	ImU32 channelHoveredCol;
 	ImU32 contColors[6];

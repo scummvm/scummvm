@@ -107,6 +107,7 @@ public:
 
 	bool _dirty;
 	bool _visible;
+	bool _hideFromStage; // Used in DT for hiding the channel from rendering
 	uint _constraint;
 	Graphics::ManagedSurface *_mask;
 
