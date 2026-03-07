@@ -25,6 +25,7 @@
 #include "common/str-enc.h"
 #include "common/stream.h"
 #include "common/tokenizer.h"
+#include "common/ustr.h"
 #include "graphics/managed_surface.h"
 
 #include "fool/fool.h"
@@ -325,6 +326,11 @@ void ZBasic::menu(uint16 menuNo, uint16 itemNo, uint16 state, const Common::U32S
 
 }
 
+Common::U32String ZBasic::midStr(const Common::U32String &str, int16 expr1, int16 expr2) {
+	Common::U32String result = str.substr(expr1-1, expr2);
+	return result;
+}
+
 
 void ZBasic::openR(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo) {
 	if (_fileStreams.contains(fileNo)) {
@@ -535,7 +541,7 @@ void ZBasic::unk_20() {
 
 bool ZBasic::incrAndCheck(int16 &a0, int16 d1, int16 d0) {
 	a0 += d0;
-	return (d0 < 0) ? (a0 < d1) : (d1 < a0);
+	return (d0 < 0) ? (a0 >= d1) : (a0 <= d1);
 }
 
 void ZBasic::unk_44(int16 unk1) {
@@ -547,12 +553,26 @@ void ZBasic::stringCopy(Common::U32String &target, const Common::U32String &src)
 	target = src;
 }
 
+Common::U32String ZBasic::unk_88(uint16 unk1) {
+	Common::U32String result;
+	result.push_back(unk1 >> 8);
+	result.push_back(unk1 & 0xff);
+	return result;
+}
+
 void ZBasic::unk_130(int16 unk1) {
 	warning("STUB: ZBasic::unk_130");
 }
 
 void ZBasic::unk_158() {
 	warning("STUB: ZBasic::unk_158");
+}
+
+uint16 ZBasic::unk_310(const Common::U32String &unk1) {
+	uint16 result = 0;
+	result |= unk1[0] << 8;
+	result |= unk1[1];
+	return result;
 }
 
 void ZBasic::unk_331(uint16 unk1, int16 unk2) {
@@ -574,6 +594,7 @@ void ZBasic::indexSet(const Common::U32String &value, int16 table, int16 index) 
 	if (_index[table].size() <= (uint)index) {
 		_index[table].resize(index+1);
 	}
+	debugC(5, kDebugLoading, "ZBasic::indexSet: [%d][%d] = %s", table, index, value.encode().c_str());
 	_index[table][index] = value;
 }
 
@@ -590,6 +611,7 @@ Common::U32String ZBasic::index(int16 table, int16 index) {
 		warning("ZBasic::index: asked for index %d but only %d entries in table %d", index, _index[table].size(), table);
 		return Common::U32String();
 	}
+	debugC(5, kDebugLoading, "ZBasic::indexSet: [%d][%d] = %s", table, index, _index[table][index].encode().c_str());
 	return _index[table][index];
 }
 

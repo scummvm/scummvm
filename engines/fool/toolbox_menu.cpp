@@ -151,11 +151,17 @@ uint32 Toolbox::MenuSelect(const Common::Point &startPt) {
 			int menuItem = _defaultMenu->getLastSelectedMenuItem();
 			int menuSubItem = _defaultMenu->getLastSelectedSubmenuItem();
 			if ((menuItem != -1) && (menuSubItem != -1)) {
-				result |= ((menuItem + 1) & 0xffff) << 16;
-				result |= ((menuSubItem + 1) & 0xffff);
+				Graphics::MacMenuItem *sub = _defaultMenu->getMenuItem(menuItem);
+				Graphics::MacMenuItem *item = _defaultMenu->getSubMenuItem(sub, menuSubItem);
+				if (item->enabled) {
+					result |= ((menuItem + 1) & 0xffff) << 16;
+					result |= ((menuSubItem + 1) & 0xffff);
+				}
 			}
 		}
 	}
+	// we've eaten a ton of events, fix the mouseUp modifier
+	_modifiers |= kModMouseButtonUp;
 	warning("Toolbox::MenuSelect: %08x", result);
 	return result;
 }

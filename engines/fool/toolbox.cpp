@@ -106,6 +106,7 @@ uint32 Toolbox::Delay(uint32 numTicks) {
 void Toolbox::FlushEvents(uint32 eventMask, uint32 stopMask) {
 	if ((eventMask == 0xffffffff) && (stopMask == 0)) {
 		_events.clear();
+		_modifiers = kModMouseButtonUp;
 		return;
 	}
 	for (auto it = _events.begin(); it != _events.end(); ) {
@@ -116,6 +117,9 @@ void Toolbox::FlushEvents(uint32 eventMask, uint32 stopMask) {
 		} else {
 			++it;
 		}
+	}
+	if (eventMask & 0x6) {
+		_modifiers = kModMouseButtonUp;
 	}
 }
 
