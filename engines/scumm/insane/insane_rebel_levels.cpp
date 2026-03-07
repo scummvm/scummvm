@@ -444,10 +444,57 @@ void InsaneRebel2::playLevelGameOver(int levelId) {
 	splayer->play(filename.c_str(), 12);
 }
 
-// playCreditsSequence -- End credits (OPEN/O_CREDIT.SAN).
+// playEndingSequence -- Finale + credits + epilogue (FUN_0041bbe8).
+//
+// Original flow:
+//   1. Play difficulty-dependent finale video:
+//      - Difficulty 2: FINAL/F_FIN_B.SAN
+//      - Difficulty 3: FINAL/F_FIN_C.SAN
+//      - Default:      FINAL/F_FIN_A.SAN
+//   2. Play credits: FINAL/F_CREDIT.SAN
+//   3. Play epilogue: FINAL/F_EPILOG.SAN
+//   4. Return to main menu
+//
+void InsaneRebel2::playEndingSequence() {
+
+	debug("Rebel2: Playing ending sequence (difficulty=%d)", _difficulty);
+
+	// Switch to gameplay state to stop menu overlay rendering
+	_gameState = kStateGameplay;
+	_menuInputActive = false;
+
+	// Clear the screen to remove any leftover menu pixels
+	VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
+	memset(vs->getPixels(0, 0), 0, vs->pitch * vs->h);
+	_vm->markRectAsDirty(kMainVirtScreen, 0, vs->w, 0, vs->h);
+
+	// Difficulty-dependent finale video
+	if (_difficulty == 2) {
+		playCinematic("FINAL/F_FIN_B.SAN");
+	} else if (_difficulty == 3) {
+		playCinematic("FINAL/F_FIN_C.SAN");
+	} else {
+		playCinematic("FINAL/F_FIN_A.SAN");
+	}
+
+	if (_vm->shouldQuit())
+		return;
+
+	// Credits
+	playCinematic("FINAL/F_CREDIT.SAN");
+
+	if (_vm->shouldQuit())
+		return;
+
+	// Epilogue
+	playCinematic("FINAL/F_EPILOG.SAN");
+}
+
+// playCreditsSequence -- Main menu credits (OPEN/O_CREDIT.SAN).
+// This is the credits accessible from the main menu, NOT the ending credits.
 void InsaneRebel2::playCreditsSequence() {
 
-	debug("Rebel2: Playing credits");
+	debug("Rebel2: Playing menu credits");
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	splayer->setCurVideoFlags(0x20);
@@ -476,6 +523,16 @@ int InsaneRebel2::runLevel(int levelId) {
 
 	// Set the current level
 	_selectedLevel = levelId;
+
+	// Set the level type for difficulty table lookup (DAT_0047a7f8).
+	// Each original level function sets this before gameplay starts.
+	// Levels 1-6 use types 0-5, but Level 6 also uses type 6 mid-level.
+	// Levels 7-15 use types 7-15 (gap at type 6 which is Level 6 phase 2).
+	// Level 15 also switches to type 16 mid-level at frame 0x21e.
+	static const int kLevelTypeMap[16] = {
+		-1, 0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15
+	};
+	_rebelLevelType = kLevelTypeMap[levelId];
 
 	// Lock the mouse to the game window during gameplay.
 	// The original hides the cursor (ShowCursor(0)) and relies on Windows confining
@@ -579,7 +636,8 @@ Common::String InsaneRebel2::selectDeathVideoVariant(int levelId, int phase, int
 	switch (levelId) {
 	case 1:
 		// Level 1: Random between A and B
-		return (getRandomVariant(2) == 0) ? "A" : "B";
+		// Original: random!=0 → A (offset 0), random==0 → B (offset 0x14)
+		return (getRandomVariant(2) == 0) ? "B" : "A";
 
 	case 2:
 		// Level 2: Just "DIE" (no variants)
@@ -614,12 +672,13 @@ Common::String InsaneRebel2::selectDeathVideoVariant(int levelId, int phase, int
 		}
 
 	case 4:
-		// Level 4: Just "DIE" (no variants)
-		return "";
+		// Level 4: Single variant "A" (original plays 04DIE_A.SAN)
+		return "A";
 
 	case 5:
-		// Level 5: Random between A and B (like Level 1)
-		return (getRandomVariant(2) == 0) ? "A" : "B";
+		// Level 5: Random between A and B
+		// Original: random!=0 → A (offset 0), random==0 → B (offset 0x14)
+		return (getRandomVariant(2) == 0) ? "B" : "A";
 
 	case 6:
 		// Level 6 (FUN_004190D6): Phase-based with detailed frame selection
@@ -679,7 +738,8 @@ Common::String InsaneRebel2::selectDeathVideoVariant(int levelId, int phase, int
 
 	case 8:
 		// Level 8 (FUN_00419976): Random A or B
-		return (getRandomVariant(2) == 0) ? "A" : "B";
+		// Original: random!=0 → A (offset 0), random==0 → B (offset 0x14)
+		return (getRandomVariant(2) == 0) ? "B" : "A";
 
 	case 9:
 		// Level 9 (FUN_00419B86): Based on DAT_0047ab94 (death cause)

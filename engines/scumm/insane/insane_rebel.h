@@ -367,7 +367,10 @@ public:
 	// Play game over video (LEVXX/XXOVER.SAN)
 	void playLevelGameOver(int levelId);
 
-	// Play the ending/credits sequence
+	// Play the full ending sequence: finale + credits + epilogue (FUN_0041bbe8)
+	void playEndingSequence();
+
+	// Play main menu credits video (OPEN/O_CREDIT.SAN)
 	void playCreditsSequence();
 
 	// Get the directory name for a level (e.g., "LEV01" for level 1)

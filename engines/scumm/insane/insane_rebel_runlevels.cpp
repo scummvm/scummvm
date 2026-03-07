@@ -2102,6 +2102,9 @@ int InsaneRebel2::runLevel15() {
 	// FUN_00401000 + FUN_0041c7d0 + FUN_0040c040
 	clearBit(0);
 
+	// Original sets DAT_0047a7f8 = 0xf before the gameplay loop
+	_rebelLevelType = 0xf;
+
 	while (!_vm->shouldQuit()) {
 		_playerShield = 255;
 		_playerDamage = 0;
@@ -2109,11 +2112,10 @@ int InsaneRebel2::runLevel15() {
 
 		clearBit(0);
 
-		// Original: DAT_0047a7f8 = 0xf (level 15) before gameplay
-		// At frame 0x21e (542): DAT_0047a7f8 = 0x10 (switches to "level 16" internally)
-		// After gameplay: DAT_0047a7f8 = 0x10 (stays at 16)
-		// This level ID switch affects which difficulty data is used mid-level.
-		// The IACT callbacks handle gameplay regardless of this ID.
+		// Original: DAT_0047a7f8 = 0xf again at start of each retry
+		// At frame 0x21e (542): switches to 0x10 (affects difficulty lookup mid-level)
+		// The frame-based switch is handled by IACT opcode 6 in the video data.
+		_rebelLevelType = 0xf;
 
 		// Play gameplay (15PLAY.SAN)
 		// Original: FUN_0041f4d0("15PLAY.SAN", 0x28, -1, -1, 0)
