@@ -185,14 +185,10 @@ void DrillerEngine::loadAssetsC64FullGame() {
 	_soundIndexMissionComplete = 14; // SFX #14 - 3-step chord
 }
 
-void DrillerEngine::playSoundC64(int index) {
-	debugC(1, kFreescapeDebugMedia, "Playing C64 SFX %d", index);
-	if (_playerC64Sfx && _c64UseSFX)
-		_playerC64Sfx->playSfx(index);
-}
-
 void DrillerEngine::toggleC64Sound() {
 	if (_c64UseSFX) {
+		if (_sound == _playerC64Sfx)
+			_sound = nullptr;
 		if (_playerC64Sfx)
 			_playerC64Sfx->destroySID();
 		if (_playerSid) {
@@ -205,6 +201,8 @@ void DrillerEngine::toggleC64Sound() {
 			_playerSid->destroySID();
 		if (_playerC64Sfx)
 			_playerC64Sfx->initSID();
+		if (_sound == nullptr)
+			_sound = _playerC64Sfx;
 		_c64UseSFX = true;
 	}
 }

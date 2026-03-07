@@ -491,7 +491,6 @@ public:
 	void playWav(const Common::Path &filename);
 	void playMusic(const Common::Path &filename);
 
-	virtual void playSoundC64(int index);
 	virtual void playSoundFx(int index, bool sync, Sound::Type type = Sound::kTypeNormal) {}
 	Sound *loadSoundsFx(Common::SeekableReadStream *file, int offset, int number);
 	Sound *loadSoundsFxDOS(Common::SeekableReadStream *file, int offset, int number);

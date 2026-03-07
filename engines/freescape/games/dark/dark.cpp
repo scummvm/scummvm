@@ -93,7 +93,8 @@ DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEn
 }
 
 DarkEngine::~DarkEngine() {
-	delete _playerC64Sfx;
+	if (_sound != _playerC64Sfx)
+		delete _playerC64Sfx;
 	delete _playerC64Music;
 }
 
