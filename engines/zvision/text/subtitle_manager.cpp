@@ -116,9 +116,12 @@ uint16 SubtitleManager::create(const Common::Path &subname, Audio::SoundHandle h
 	return _subId;
 }
 
-uint16 SubtitleManager::create(const Common::String &str) {
+uint16 SubtitleManager::create(const Common::U32String &str) {
 	_subId++;
-	debugC(2, kDebugSubtitle, "Creating simple subtitle, subId=%d, message %s", _subId, str.c_str());
+	if (debugChannelSet(2, kDebugSubtitle)) {
+		const Common::String utf8str = str.encode();
+		debugC(2, kDebugSubtitle, "Creating simple subtitle, subId=%d, message %s", _subId, utf8str.c_str());
+	}
 	_subsList[_subId] = new Subtitle(_engine, str, _textArea);
 	_subsFocus.set(_subId);
 	return _subId;
@@ -138,17 +141,23 @@ void SubtitleManager::destroy(uint16 id, int16 delay) {
 	}
 }
 
-void SubtitleManager::timedMessage(const Common::String &str, uint16 milsecs) {
+void SubtitleManager::timedMessage(const Common::U32String &str, uint16 milsecs) {
 	uint16 msgid = create(str);
-	debugC(1, kDebugSubtitle, "initiating timed message: %s to subtitle id %d, time %d", str.c_str(), msgid, milsecs);
+	if (debugChannelSet(1, kDebugSubtitle)) {
+		const Common::String utf8str = str.encode();
+		debugC(1, kDebugSubtitle, "initiating timed message: %s to subtitle id %d, time %d", utf8str.c_str(), msgid, milsecs);
+	}
 	update(0, msgid);
 	process(0);
 	destroy(msgid, milsecs);
 }
 
-bool SubtitleManager::askQuestion(const Common::String &str, bool streaming, bool safeDefault) {
+bool SubtitleManager::askQuestion(const Common::U32String &str, bool streaming, bool safeDefault) {
 	uint16 msgid = create(str);
-	debugC(1, kDebugSubtitle, "initiating user question: %s to subtitle id %d", str.c_str(), msgid);
+	if (debugChannelSet(1, kDebugSubtitle)) {
+		const Common::String utf8str = str.encode();
+		debugC(1, kDebugSubtitle, "initiating user question: %s to subtitle id %d", utf8str.c_str(), msgid);
+	}
 	update(0, msgid);
 	process(0);
 	if(streaming)
@@ -225,9 +234,12 @@ bool SubtitleManager::askQuestion(const Common::String &str, bool streaming, boo
 	return result == 2;
 }
 
-void SubtitleManager::delayedMessage(const Common::String &str, uint16 milsecs) {
+void SubtitleManager::delayedMessage(const Common::U32String &str, uint16 milsecs) {
 	uint16 msgid = create(str);
-	debugC(1, kDebugSubtitle, "initiating delayed message: %s to subtitle id %d, delay %dms", str.c_str(), msgid, milsecs);
+	if (debugChannelSet(1, kDebugSubtitle)) {
+		const Common::String utf8str = str.encode();
+		debugC(1, kDebugSubtitle, "initiating delayed message: %s to subtitle id %d, delay %dms", utf8str.c_str(), msgid, milsecs);
+	}
 	update(0, msgid);
 	process(0);
 	_renderManager->renderSceneToScreen(true);
@@ -275,9 +287,12 @@ void SubtitleManager::delayedMessage(const Common::String &str, uint16 milsecs) 
 	_engine->startClock();
 }
 
-void SubtitleManager::showDebugMsg(const Common::String &msg, int16 delay) {
+void SubtitleManager::showDebugMsg(const Common::U32String &msg, int16 delay) {
 	uint16 msgid = create(msg);
-	debugC(1, kDebugSubtitle, "initiating in-game debug message: %s to subtitle id %d, delay %dms", msg.c_str(), msgid, delay);
+	if (debugChannelSet(1, kDebugSubtitle)) {
+		const Common::String utf8msg = msg.encode();
+		debugC(1, kDebugSubtitle, "initiating in-game debug message: %s to subtitle id %d, delay %dms", utf8msg.c_str(), msgid, delay);
+	}
 	update(0, msgid);
 	process(0);
 	destroy(msgid, delay);
@@ -320,11 +335,10 @@ Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool vob) :
 				Common::File txtFile;
 				if (txtFile.open(Common::Path(filename))) {
 					while (!txtFile.eos()) {
-						Common::String txtline = readWideLine(txtFile).encode();
 						Line curLine;
 						curLine.start = -1;
 						curLine.stop = -1;
-						curLine.subStr = txtline;
+						curLine.subStr = readWideLine(txtFile);
 						_lines.push_back(curLine);
 					}
 					txtFile.close();
@@ -352,7 +366,7 @@ Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool vob) :
 	subFile.close();
 }
 
-Subtitle::Subtitle(ZVision *engine, const Common::String &str, const Common::Rect &textArea) :
+Subtitle::Subtitle(ZVision *engine, const Common::U32String &str, const Common::Rect &textArea) :
 	_engine(engine),
 	_lineId(-1),
 	_timer(-1),

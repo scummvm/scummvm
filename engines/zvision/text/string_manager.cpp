@@ -31,6 +31,7 @@
 namespace ZVision {
 
 StringManager::StringManager(ZVision *engine) {
+	_engine = engine;
 }
 
 StringManager::~StringManager() {
@@ -51,14 +52,14 @@ void StringManager::loadStrFile(const Common::Path &fileName) {
 
 	uint lineNumber = 0;
 	while (!file.eos()) {
-		_lines[lineNumber] = readWideLine(file).encode();
+		_lines[lineNumber] = readWideLine(file);
 
 		lineNumber++;
 		assert(lineNumber <= NUM_TEXT_LINES);
 	}
 }
 
-const Common::String StringManager::getTextLine(uint stringNumber) {
+const Common::U32String StringManager::getTextLine(uint stringNumber) {
 	return _lines[stringNumber];
 }
 

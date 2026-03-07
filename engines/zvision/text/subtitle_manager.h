@@ -34,7 +34,7 @@ class Subtitle {
 	friend class SubtitleManager;
 public:
 	Subtitle(ZVision *engine, const Common::Path &subname, bool vob = false); // For scripted subtitles
-	Subtitle(ZVision *engine, const Common::String &str, const Common::Rect &textArea);  // For other text messages
+	Subtitle(ZVision *engine, const Common::U32String &str, const Common::Rect &textArea);  // For other text messages
 	virtual ~Subtitle();
 	bool update(int32 count); // Return true if necessary to redraw
 	virtual bool selfUpdate() {
@@ -53,7 +53,7 @@ protected:
 	struct Line {
 		int start;
 		int stop;
-		Common::String subStr;
+		Common::U32String subStr;
 	};
 	// NB: start & stop do not always use the same units between different instances of this struct!
 	// Sound effect & music subtitles use milliseconds
@@ -111,16 +111,16 @@ public:
 	// Create subtitle object and return ID
 	uint16 create(const Common::Path &subname, bool vob = false);
 	uint16 create(const Common::Path &subname, Audio::SoundHandle handle);  // NB this creates an automatic subtitle
-	uint16 create(const Common::String &str);
+	uint16 create(const Common::U32String &str);
 
 	// Delete subtitle object by ID
 	void destroy(uint16 id);
 	void destroy(uint16 id, int16 delay);
 
-	bool askQuestion(const Common::String &str, bool streaming = false, bool safeDefault = false);
-	void delayedMessage(const Common::String &str, uint16 milsecs);
-	void timedMessage(const Common::String &str, uint16 milsecs);
-	void showDebugMsg(const Common::String &msg, int16 delay = 3000);
+	bool askQuestion(const Common::U32String &str, bool streaming = false, bool safeDefault = false);
+	void delayedMessage(const Common::U32String &str, uint16 milsecs);
+	void timedMessage(const Common::U32String &str, uint16 milsecs);
+	void showDebugMsg(const Common::U32String &msg, int16 delay = 3000);
 };
 
 }

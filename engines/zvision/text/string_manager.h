@@ -51,11 +51,12 @@ private:
 	};
 
 private:
-	Common::String _lines[NUM_TEXT_LINES];
+	Common::U32String _lines[NUM_TEXT_LINES];
+	ZVision *_engine;
 
 public:
 	void initialize(ZVisionGameId gameId);
-	const Common::String getTextLine(uint stringNumber);
+	const Common::U32String getTextLine(uint stringNumber);
 
 private:
 	void loadStrFile(const Common::Path &fileName);

@@ -74,11 +74,11 @@ void ZVision::cheatCodes(uint8 key) {
 	if (getGameId() == GID_GRANDINQUISITOR) {
 		if (checkCode("IMNOTDEAF")) {
 			// Unknown cheat
-			_subtitleManager->showDebugMsg(Common::String::format("IMNOTDEAF cheat or debug, not implemented"));
+			_subtitleManager->showDebugMsg(Common::U32String::format("IMNOTDEAF cheat or debug, not implemented"));
 		}
 
 		if (checkCode("3100OPB")) {
-			_subtitleManager->showDebugMsg(Common::String::format("Current location: %c%c%c%c",
+			_subtitleManager->showDebugMsg(Common::U32String::format("Current location: %c%c%c%c",
 			                               _scriptManager->getStateValue(StateKey_World),
 			                               _scriptManager->getStateValue(StateKey_Room),
 			                               _scriptManager->getStateValue(StateKey_Node),
@@ -105,7 +105,7 @@ void ZVision::cheatCodes(uint8 key) {
 		}
 
 		if (checkCode("77MASSAVE")) {
-			_subtitleManager->showDebugMsg(Common::String::format("Current location: %c%c%c%c",
+			_subtitleManager->showDebugMsg(Common::U32String::format("Current location: %c%c%c%c",
 			                               _scriptManager->getStateValue(StateKey_World),
 			                               _scriptManager->getStateValue(StateKey_Room),
 			                               _scriptManager->getStateValue(StateKey_Node),
@@ -134,12 +134,11 @@ void ZVision::cheatCodes(uint8 key) {
 	}
 
 	if (checkCode("FRAME")) {
-		Common::String fpsStr = Common::String::format("FPS: %d", getFPS());
-		_subtitleManager->showDebugMsg(fpsStr);
+		_subtitleManager->showDebugMsg(Common::U32String::format("FPS: %d", getFPS()));
 	}
 
 	if (checkCode("COMPUTERARCH"))
-		_subtitleManager->showDebugMsg("COMPUTERARCH: var-viewer not implemented");
+		_subtitleManager->showDebugMsg(Common::U32String("COMPUTERARCH: var-viewer not implemented"));
 
 	// This cheat essentially toggles the GOxxxx cheat below
 	if (checkCode("XYZZY"))
@@ -241,8 +240,7 @@ void ZVision::processEvents() {
 				break;
 
 			case kZVisionActionShowFPS: {
-				Common::String fpsStr = Common::String::format("FPS: %d", getFPS());
-				_subtitleManager->showDebugMsg(fpsStr);
+				_subtitleManager->showDebugMsg(Common::U32String::format("FPS: %d", getFPS()));
 			}
 			break;
 			default:

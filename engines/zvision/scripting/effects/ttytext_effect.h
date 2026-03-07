@@ -66,7 +66,7 @@ private:
 
 	void newline();
 	void scroll();
-	void outchar(uint16 chr);
+	void outchar(uint32 chr);
 };
 
 } // End of namespace ZVision
