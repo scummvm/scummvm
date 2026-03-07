@@ -188,7 +188,7 @@ bool SubtitleManager::askQuestion(const Common::U32String &str, bool streaming, 
 					// TODO: Handle this using the keymapper
 					switch (evnt.kbd.keycode) {
 					case Common::KEYCODE_y:
-						if (_engine->getLanguage() == Common::EN_ANY)
+						if (_engine->getLanguage() == Common::EN_ANY || _engine->getLanguage() == Common::RU_RUS)
 							result = 2;
 						break;
 					case Common::KEYCODE_j:
@@ -339,6 +339,10 @@ Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool vob) :
 						curLine.start = -1;
 						curLine.stop = -1;
 						curLine.subStr = readWideLine(txtFile);
+
+						if (_engine->getLanguage() == Common::RU_RUS)
+							fixPseudo1251(&curLine.subStr);
+
 						_lines.push_back(curLine);
 					}
 					txtFile.close();

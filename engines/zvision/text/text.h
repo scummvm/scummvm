@@ -83,6 +83,7 @@ private:
 };
 
 Common::U32String readWideLine(Common::SeekableReadStream &stream);
+void fixPseudo1251(Common::U32String *str);
 
 } // End of namespace ZVision
 

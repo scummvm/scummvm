@@ -51,6 +51,8 @@ ttyTextNode::ttyTextNode(ZVision *engine, uint32 key, const Common::Path &file, 
 			if (asciiLine.empty()) {
 				continue;
 			}
+			if (engine->getLanguage() == Common::RU_RUS)
+				fixPseudo1251(&asciiLine);
 			_txtbuf += asciiLine;
 		}
 

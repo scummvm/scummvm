@@ -20,6 +20,7 @@
  */
 
 #include "common/debug.h"
+#include "common/enc-internal.h"
 #include "common/file.h"
 #include "common/rect.h"
 #include "common/scummsys.h"
@@ -534,6 +535,14 @@ Common::U32String readWideLine(Common::SeekableReadStream &stream) {
 		asciiString += value;
 	}
 	return asciiString;
+}
+
+void fixPseudo1251(Common::U32String *str) {
+	for (uint32 i = 0; i < str->size(); i++) {
+		uint32 c = str->operator[](i);
+		if (c >= 0x80 && c < 0x100)
+			str->operator[](i) = Common::kWindows1251ConversionTable[c & 0x7f];
+	}
 }
 
 } // End of namespace ZVision

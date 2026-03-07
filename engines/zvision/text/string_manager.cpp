@@ -54,6 +54,9 @@ void StringManager::loadStrFile(const Common::Path &fileName) {
 	while (!file.eos()) {
 		_lines[lineNumber] = readWideLine(file);
 
+		if (_engine->getLanguage() == Common::RU_RUS)
+			fixPseudo1251(&_lines[lineNumber]);
+
 		lineNumber++;
 		assert(lineNumber <= NUM_TEXT_LINES);
 	}
