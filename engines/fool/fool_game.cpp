@@ -469,6 +469,8 @@ void FoolGame::sub_128_918(Common::U32String &unk1) {
 }
 
 void FoolGame::sub_128_962(int16 unk11, int16 unk10, int16 unk9, int16 unk8, int16 unk7, int16 unk6, int16 unk5, int16 unk4, int16 unk3, PatternMode unk2, int16 unk1) {
+	// Zoom-fill the screen with checkerboard pattern
+	// after e.g. clicking a story button.
 	// 128:0962
 	this->arr_rect_5b7c.top = unk11;
 	this->arr_rect_5b7c.left = unk10;
@@ -487,22 +489,24 @@ void FoolGame::sub_128_962(int16 unk11, int16 unk10, int16 unk9, int16 unk8, int
 	this->arr_bcd_5dbc[1] = (float)(this->arr_rect_5b7c.left);
 	this->arr_bcd_5dbc[2] = (float)(this->arr_rect_5b7c.bottom);
 	this->arr_bcd_5dbc[3] = (float)(this->arr_rect_5b7c.right);
-	this->arr_bcd_5dbc[4] = (float)((this->arr_rect_5b84.top) - (this->arr_rect_5b7c.top))/(float)(this->var_i16_44);
-	this->arr_bcd_5dbc[5] = (float)((this->arr_rect_5b84.left) - (this->arr_rect_5b7c.left))/(float)(this->var_i16_44);
-	this->arr_bcd_5dbc[6] = (float)((this->arr_rect_5b84.bottom) - (this->arr_rect_5b7c.bottom))/(float)(this->var_i16_44);
-	this->arr_bcd_5dbc[7] = (float)((this->arr_rect_5b84.right) - (this->arr_rect_5b7c.right))/(float)(this->var_i16_44);
+	this->arr_bcd_5dbc[4] = (float)((this->arr_rect_5b84.top) - (this->arr_rect_5b7c.top))/(float)(unk1);
+	this->arr_bcd_5dbc[5] = (float)((this->arr_rect_5b84.left) - (this->arr_rect_5b7c.left))/(float)(unk1);
+	this->arr_bcd_5dbc[6] = (float)((this->arr_rect_5b84.bottom) - (this->arr_rect_5b7c.bottom))/(float)(unk1);
+	this->arr_bcd_5dbc[7] = (float)((this->arr_rect_5b84.right) - (this->arr_rect_5b7c.right))/(float)(unk1);
 	// 128:0af0
 	g_toolbox->PaintRect(this->arr_rect_5b7c);
-	for (int i = 1; i < this->var_i16_44-1; i++) {
+	for (int i = 1; i < unk1-1; i++) {
 		for (int j = 0; j <= 3; j++) {
 			this->arr_bcd_5dbc[j] = (float)this->arr_bcd_5dbc[j] + (float)this->arr_bcd_5dbc[j+4];
 		}
-		this->arr_rect_5b7c.top = (int)this->arr_bcd_5dbc[0];
-		this->arr_rect_5b7c.left = (int)this->arr_bcd_5dbc[1];
-		this->arr_rect_5b7c.bottom = (int)this->arr_bcd_5dbc[2];
-		this->arr_rect_5b7c.right = (int)this->arr_bcd_5dbc[3];
+		this->arr_rect_5b92.top = (int)this->arr_bcd_5dbc[0];
+		this->arr_rect_5b92.left = (int)this->arr_bcd_5dbc[1];
+		this->arr_rect_5b92.bottom = (int)this->arr_bcd_5dbc[2];
+		this->arr_rect_5b92.right = (int)this->arr_bcd_5dbc[3];
 		// 128:0ba6
 		g_toolbox->PaintRect(this->arr_rect_5b92);
+		// new: force a redraw delay
+		g_toolbox->Delay(0);
 	}
 	// 128:0bc8
 	g_toolbox->PaintRect(this->arr_rect_5b84);
