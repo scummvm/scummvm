@@ -343,24 +343,24 @@ public:
 		if (!_valid)
 			return;
 		_savedD7 = 0;
-		write32(_labels.L003E, 0x00010001);
-		write16(_labels.L003E + 4, 1);
-		write32(_labels.L0040 + 0, _labels.L0068);
-		write32(_labels.L003F + 0, _labels.L0068);
-		write32(_labels.L0040 + 4, _labels.L0068);
-		write32(_labels.L003F + 4, _labels.L0068);
-		write32(_labels.L0040 + 8, _labels.L0068);
-		write32(_labels.L003F + 8, _labels.L0068);
+		WRITE_BE_UINT32(&_mem[_labels.L003E], 0x00010001);
+		WRITE_BE_UINT16(&_mem[_labels.L003E + 4], 1);
+		WRITE_BE_UINT32(&_mem[_labels.L0040 + 0], _labels.L0068);
+		WRITE_BE_UINT32(&_mem[_labels.L003F + 0], _labels.L0068);
+		WRITE_BE_UINT32(&_mem[_labels.L0040 + 4], _labels.L0068);
+		WRITE_BE_UINT32(&_mem[_labels.L003F + 4], _labels.L0068);
+		WRITE_BE_UINT32(&_mem[_labels.L0040 + 8], _labels.L0068);
+		WRITE_BE_UINT32(&_mem[_labels.L003F + 8], _labels.L0068);
 
 		uint16 d0w = (uint16)((tune1Based - 1) << 4);
 		uint32 a1 = _labels.tunetab;
-		write32(_labels.L0041 + 0, read32(a1 + d0w + 0));
-		write32(_labels.L0041 + 4, read32(a1 + d0w + 4));
-		write32(_labels.L0041 + 8, read32(a1 + d0w + 8));
-		write16(_labels.L0049, 0xFFFF);
-		write16(_labels.L0048 + 0, 0);
-		write16(_labels.L0048 + 2, 0);
-		write16(_labels.L0047, 0);
+		WRITE_BE_UINT32(&_mem[_labels.L0041 + 0], READ_BE_UINT32(&_mem[a1 + d0w + 0]));
+		WRITE_BE_UINT32(&_mem[_labels.L0041 + 4], READ_BE_UINT32(&_mem[a1 + d0w + 4]));
+		WRITE_BE_UINT32(&_mem[_labels.L0041 + 8], READ_BE_UINT32(&_mem[a1 + d0w + 8]));
+		WRITE_BE_UINT16(&_mem[_labels.L0049], 0xFFFF);
+		WRITE_BE_UINT16(&_mem[_labels.L0048 + 0], 0);
+		WRITE_BE_UINT16(&_mem[_labels.L0048 + 2], 0);
+		WRITE_BE_UINT16(&_mem[_labels.L0047], 0);
 	}
 
 	void vbl() {
@@ -377,8 +377,8 @@ public:
 		uint16 d0 = 0;
 		uint32 a0 = _labels.L003E;
 		while (true) {
-			uint16 v = (uint16)(read16(a0 + d0) - 1);
-			write16(a0 + d0, v);
+			uint16 v = (uint16)(READ_BE_UINT16(&_mem[a0 + d0]) - 1);
+			WRITE_BE_UINT16(&_mem[a0 + d0], v);
 			if (v == 0)
 				processChannelCommandStream_L0004(d0);
 			d0 = (uint16)(d0 + 2);
@@ -397,21 +397,8 @@ private:
 	uint8 read8(uint32 a) const {
 		return _mem[a];
 	}
-	uint16 read16(uint32 a) const {
-		return READ_BE_UINT16(&_mem[a]);
-	}
-	uint32 read32(uint32 a) const {
-		return READ_BE_UINT32(&_mem[a]);
-	}
 	void write8(uint32 a, uint8 v) {
 		_mem[a] = v;
-	}
-	void write16(uint32 a, uint16 v) {
-		_mem[a] = (uint8)(v >> 8);
-		_mem[a + 1] = (uint8)v;
-	}
-	void write32(uint32 a, uint32 v) {
-		WRITE_BE_UINT32(&_mem[a], v);
 	}
 	void psgWrite(uint8 reg, uint8 val) {
 		_owner->writeReg((int)reg, val);
@@ -438,38 +425,38 @@ void ElviraPrgDriver::processChannelCommandStream_L0004(uint16 d0) {
 	uint16 d6 = (uint16)(d0 >> 1);
 	uint16 d5x2 = (uint16)(d5 + d5);
 
-	uint16 slotOffset = read16(_labels.L004B + d0);
-	uint16 instrumentOffset = read16(_labels.L004A + d0);
+	uint16 slotOffset = READ_BE_UINT16(&_mem[_labels.L004B + d0]);
+	uint16 instrumentOffset = READ_BE_UINT16(&_mem[_labels.L004A + d0]);
 
 	uint32 liveVoice = _labels.L004C;
 	uint32 instrumentBase = _labels.L0051;
 	write8(liveVoice + slotOffset + 1, read8(instrumentBase + instrumentOffset + 1));
-	write32(liveVoice + slotOffset + 6, read32(instrumentBase + instrumentOffset + 6));
-	write16(liveVoice + slotOffset + 10, read16(instrumentBase + instrumentOffset + 10));
+	WRITE_BE_UINT32(&_mem[liveVoice + slotOffset + 6], READ_BE_UINT32(&_mem[instrumentBase + instrumentOffset + 6]));
+	WRITE_BE_UINT16(&_mem[liveVoice + slotOffset + 10], READ_BE_UINT16(&_mem[instrumentBase + instrumentOffset + 10]));
 	write8(liveVoice + slotOffset + 13, read8(instrumentBase + instrumentOffset + 13));
-	write32(liveVoice + slotOffset + 14, read32(instrumentBase + instrumentOffset + 14));
-	write32(liveVoice + slotOffset + 18, read32(instrumentBase + instrumentOffset + 18));
-	write16(liveVoice + slotOffset + 22, read16(instrumentBase + instrumentOffset + 22));
+	WRITE_BE_UINT32(&_mem[liveVoice + slotOffset + 14], READ_BE_UINT32(&_mem[instrumentBase + instrumentOffset + 14]));
+	WRITE_BE_UINT32(&_mem[liveVoice + slotOffset + 18], READ_BE_UINT32(&_mem[instrumentBase + instrumentOffset + 18]));
+	WRITE_BE_UINT16(&_mem[liveVoice + slotOffset + 22], READ_BE_UINT16(&_mem[instrumentBase + instrumentOffset + 22]));
 	write8(liveVoice + slotOffset + 24, read8(instrumentBase + instrumentOffset + 24));
 
-	uint16 seqBase = read16(_labels.L0045 + d0);
-	write16(_labels.L0046 + seqBase + 2, 0);
+	uint16 seqBase = READ_BE_UINT16(&_mem[_labels.L0045 + d0]);
+	WRITE_BE_UINT16(&_mem[_labels.L0046 + seqBase + 2], 0);
 
 	uint32 patternBlob = _labels.L0068;
 	uint32 patternPtrTable = _labels.L003F;
-	uint32 a3 = read32(patternPtrTable + d5x2);
-	uint16 cmd = read16(a3);
+	uint32 a3 = READ_BE_UINT32(&_mem[patternPtrTable + d5x2]);
+	uint16 cmd = READ_BE_UINT16(&_mem[a3]);
 	a3 += 2;
 
 	if ((int16)cmd < 0) {
 		uint32 seqCursorTable = _labels.L0040;
-		uint32 seqCursor = read32(seqCursorTable + d5x2);
-		uint32 sequenceWord = read16(seqCursor);
+		uint32 seqCursor = READ_BE_UINT32(&_mem[seqCursorTable + d5x2]);
+		uint32 sequenceWord = READ_BE_UINT16(&_mem[seqCursor]);
 		seqCursor += 2;
 
 		if ((uint16)sequenceWord == 0xFFFF) {
-			seqCursor = read32(_labels.L0041 + d5x2);
-			sequenceWord = read16(seqCursor);
+			seqCursor = READ_BE_UINT32(&_mem[_labels.L0041 + d5x2]);
+			sequenceWord = READ_BE_UINT16(&_mem[seqCursor]);
 			seqCursor += 2;
 		}
 
@@ -480,10 +467,10 @@ void ElviraPrgDriver::processChannelCommandStream_L0004(uint16 d0) {
 			sequenceWord &= 0x7FFF;
 		}
 
-		write32(seqCursorTable + d5x2, seqCursor);
-		uint16 patternOff = read16(_labels.L0067 + (uint16)(sequenceWord * 2));
+		WRITE_BE_UINT32(&_mem[seqCursorTable + d5x2], seqCursor);
+		uint16 patternOff = READ_BE_UINT16(&_mem[_labels.L0067 + (uint16)(sequenceWord * 2)]);
 		a3 = patternBlob + patternOff;
-		cmd = read16(a3);
+		cmd = READ_BE_UINT16(&_mem[a3]);
 		a3 += 2;
 	}
 
@@ -496,38 +483,38 @@ void ElviraPrgDriver::processChannelCommandStream_L0004(uint16 d0) {
 	if (cmd & 0x0010)
 		setupSequenceTableCommand_L001B(d0, d6, a3);
 	if (cmd & 0x0008)
-		write16(_labels.L0047, (uint16)(read16(_labels.L0047) | 1));
+		WRITE_BE_UINT16(&_mem[_labels.L0047], (uint16)(READ_BE_UINT16(&_mem[_labels.L0047]) | 1));
 
 	uint16 slideArmed = 0;
 	if (cmd & 0x0004)
 		setupPitchSlideCommand_L0015(d0, d5x2, d6, a3, slideArmed);
 
-	uint16 wait = read16(a3);
+	uint16 wait = READ_BE_UINT16(&_mem[a3]);
 	a3 += 2;
-	write16(_labels.L003E + d0, wait);
+	WRITE_BE_UINT16(&_mem[_labels.L003E + d0], wait);
 
-	uint16 mask = read16(_labels.L003D + d0);
-	uint16 note = read16(a3);
+	uint16 mask = READ_BE_UINT16(&_mem[_labels.L003D + d0]);
+	uint16 note = READ_BE_UINT16(&_mem[a3]);
 	a3 += 2;
 	if (_labels.L003B)
-		write16(_labels.L003B, note);
+		WRITE_BE_UINT16(&_mem[_labels.L003B], note);
 	note = addByteToLowWord(note, read8(_labels.L0048 + d6));
 	write8(_labels.L0044 + d6, (uint8)(note & 0xFF));
 
-	uint16 slot = read16(_labels.L004B + d0);
+	uint16 slot = READ_BE_UINT16(&_mem[_labels.L004B + d0]);
 	note = addByteToLowWord(note, read8(_labels.L004C + slot + 23));
 	uint16 idx = (uint16)((note & 0xFF) * 2);
-	uint16 period = read16(_labels.L003C + idx);
-	write16(_labels.L0043 + d0, period);
+	uint16 period = READ_BE_UINT16(&_mem[_labels.L003C + idx]);
+	WRITE_BE_UINT16(&_mem[_labels.L0043 + d0], period);
 
 	if (slideArmed)
 		finalizePitchSlideStep_L0016(d5x2, period);
 
-	if (read16(_labels.L0047) != 0) {
-		write16(_labels.L0047, 0);
+	if (READ_BE_UINT16(&_mem[_labels.L0047]) != 0) {
+		WRITE_BE_UINT16(&_mem[_labels.L0047], 0);
 		psgWrite((uint8)d0, (uint8)(period & 0xFF));
 		psgWrite((uint8)(d0 + 1), (uint8)(period >> 8));
-		write32(_labels.L003F + d5x2, a3);
+		WRITE_BE_UINT32(&_mem[_labels.L003F + d5x2], a3);
 		return;
 	}
 
@@ -542,9 +529,9 @@ void ElviraPrgDriver::processChannelCommandStream_L0004(uint16 d0) {
 	if (mode == 2)
 		psgWrite(6, read8(_labels.L004C + slot + 12));
 
-	uint16 mixer = read16(_labels.L0049);
+	uint16 mixer = READ_BE_UINT16(&_mem[_labels.L0049]);
 	mixer = updateMixerWordForVoiceType(mixer, mask, mode == 2 ? 2 : 0);
-	write16(_labels.L0049, mixer);
+	WRITE_BE_UINT16(&_mem[_labels.L0049], mixer);
 	psgWrite(7, (uint8)(mixer & 0xFF));
 
 	psgWrite((uint8)(8 + d6), read8(_labels.L004C + slot + 1));
@@ -555,27 +542,27 @@ void ElviraPrgDriver::processChannelCommandStream_L0004(uint16 d0) {
 		psgWrite(0x0C, read8(_labels.L004C + slot + 2));
 	}
 
-	write32(_labels.L003F + d5x2, a3);
+	WRITE_BE_UINT32(&_mem[_labels.L003F + d5x2], a3);
 }
 
 void ElviraPrgDriver::applyImmediateMuteCommand_L0012(uint16 d0, uint16 d5x2, uint16 d6, uint32 &a3) {
-	uint16 wait = read16(a3);
+	uint16 wait = READ_BE_UINT16(&_mem[a3]);
 	a3 += 2;
-	write16(_labels.L003E + d0, wait);
+	WRITE_BE_UINT16(&_mem[_labels.L003E + d0], wait);
 
-	uint16 mask = read16(_labels.L003D + d0);
-	uint16 mixer = read16(_labels.L0049);
+	uint16 mask = READ_BE_UINT16(&_mem[_labels.L003D + d0]);
+	uint16 mixer = READ_BE_UINT16(&_mem[_labels.L0049]);
 	mixer &= (uint16)~mask;
-	write16(_labels.L0049, mixer);
+	WRITE_BE_UINT16(&_mem[_labels.L0049], mixer);
 	psgWrite((uint8)(8 + d6), 0);
-	write32(_labels.L003F + d5x2, a3);
+	WRITE_BE_UINT32(&_mem[_labels.L003F + d5x2], a3);
 
-	uint16 slot = read16(_labels.L004B + d0);
+	uint16 slot = READ_BE_UINT16(&_mem[_labels.L004B + d0]);
 	write8(_labels.L004C + slot + 14, 0);
 }
 
 void ElviraPrgDriver::loadVoiceInstrument_L0013(uint16 d0, uint32 &a3) {
-	uint16 instId = read16(a3);
+	uint16 instId = READ_BE_UINT16(&_mem[a3]);
 	a3 += 2;
 
 	uint16 d2 = (uint16)(instId * 2);
@@ -586,19 +573,19 @@ void ElviraPrgDriver::loadVoiceInstrument_L0013(uint16 d0, uint32 &a3) {
 	d2a = (uint16)(d2a + d3);
 	d2a = (uint16)(d2a + d4);
 
-	write16(_labels.L004A + d0, d2a);
+	WRITE_BE_UINT16(&_mem[_labels.L004A + d0], d2a);
 
-	uint16 slot = read16(_labels.L004B + d0);
+	uint16 slot = READ_BE_UINT16(&_mem[_labels.L004B + d0]);
 	uint32 dst = _labels.L004C + slot;
 	uint32 src = _labels.L0051 + d2a;
 	for (int i = 0; i <= 0x0C; ++i) {
-		write16(dst, read16(src));
+		WRITE_BE_UINT16(&_mem[dst], READ_BE_UINT16(&_mem[src]));
 		src += 2;
 		dst += 2;
 	}
 
-	uint16 seqBase = read16(_labels.L0045 + d0);
-	write16(_labels.L0046 + seqBase + 0, 0);
+	uint16 seqBase = READ_BE_UINT16(&_mem[_labels.L0045 + d0]);
+	WRITE_BE_UINT16(&_mem[_labels.L0046 + seqBase + 0], 0);
 }
 
 void ElviraPrgDriver::setupPitchSlideCommand_L0015(uint16 d0, uint16 d5x2, uint16 d6, uint32 &a3, uint16 &slideArmed) {
@@ -607,18 +594,18 @@ void ElviraPrgDriver::setupPitchSlideCommand_L0015(uint16 d0, uint16 d5x2, uint1
 	uint32 periodTable = _labels.L003C;
 	uint16 d3 = (uint16)(d5x2 + d5x2);
 
-	uint16 noteWord = read16(a3);
+	uint16 noteWord = READ_BE_UINT16(&_mem[a3]);
 	a3 += 2;
 	noteWord = addByteToLowWord(noteWord, channelTranspose);
 
-	write16(slideState + d3 + 2, read16(a3));
+	WRITE_BE_UINT16(&_mem[slideState + d3 + 2], READ_BE_UINT16(&_mem[a3]));
 	a3 += 2;
 
 	uint16 idx = (uint16)((noteWord & 0xFF) * 2);
-	uint16 targetPeriod = read16(periodTable + idx);
-	write16(slideState + d3 + 4, targetPeriod);
-	write16(slideState + d3 + 0, targetPeriod);
-	write16(slideState + d3 + 6, read16(a3));
+	uint16 targetPeriod = READ_BE_UINT16(&_mem[periodTable + idx]);
+	WRITE_BE_UINT16(&_mem[slideState + d3 + 4], targetPeriod);
+	WRITE_BE_UINT16(&_mem[slideState + d3 + 0], targetPeriod);
+	WRITE_BE_UINT16(&_mem[slideState + d3 + 6], READ_BE_UINT16(&_mem[a3]));
 	a3 += 2;
 
 	slideArmed = 1;
@@ -627,30 +614,30 @@ void ElviraPrgDriver::setupPitchSlideCommand_L0015(uint16 d0, uint16 d5x2, uint1
 void ElviraPrgDriver::finalizePitchSlideStep_L0016(uint16 d5x2, uint16 period) {
 	uint32 slideState = _labels.L0042;
 	uint16 d4 = (uint16)(d5x2 + d5x2);
-	uint32 d1u32 = (uint32)read16(slideState + d4);
+	uint32 d1u32 = (uint32)READ_BE_UINT16(&_mem[slideState + d4]);
 	int32 dividend = (int32)d1u32 - (int32)((uint32)period & 0xFFFF);
-	int16 divisor = (int16)read16(slideState + d4 + 2);
+	int16 divisor = (int16)READ_BE_UINT16(&_mem[slideState + d4 + 2]);
 	int32 quotient = 0;
 	if (divisor != 0)
 		quotient = dividend / (int32)divisor;
-	write16(slideState + d4, (uint16)(quotient & 0xFFFF));
+	WRITE_BE_UINT16(&_mem[slideState + d4], (uint16)(quotient & 0xFFFF));
 }
 
 void ElviraPrgDriver::emitNoiseModeNote_L000F(uint16 d0, uint16 d5x2, uint16 d6, uint32 &a3) {
-	uint16 rawNote = _labels.L003B ? read16(_labels.L003B) : 0;
-	write16(_labels.L0043 + d0, rawNote);
+	uint16 rawNote = _labels.L003B ? READ_BE_UINT16(&_mem[_labels.L003B]) : 0;
+	WRITE_BE_UINT16(&_mem[_labels.L0043 + d0], rawNote);
 	psgWrite(6, (uint8)(rawNote & 0xFF));
 
-	uint16 mask = read16(_labels.L003D + d0);
-	uint16 mixer = read16(_labels.L0049);
+	uint16 mask = READ_BE_UINT16(&_mem[_labels.L003D + d0]);
+	uint16 mixer = READ_BE_UINT16(&_mem[_labels.L0049]);
 	mixer |= mask;
 	uint16 d2 = shiftLeft16(mask, 3);
 	d2 = (uint16)~d2;
 	mixer &= d2;
-	write16(_labels.L0049, mixer);
+	WRITE_BE_UINT16(&_mem[_labels.L0049], mixer);
 	psgWrite(7, (uint8)(mixer & 0xFF));
 
-	uint16 slot = read16(_labels.L004B + d0);
+	uint16 slot = READ_BE_UINT16(&_mem[_labels.L004B + d0]);
 	psgWrite((uint8)(8 + d6), read8(_labels.L004C + slot + 1));
 	uint8 shape = read8(_labels.L004C + slot + 5);
 	if (shape != 0) {
@@ -659,11 +646,11 @@ void ElviraPrgDriver::emitNoiseModeNote_L000F(uint16 d0, uint16 d5x2, uint16 d6,
 		psgWrite(0x0C, read8(_labels.L004C + slot + 2));
 	}
 
-	write32(_labels.L003F + d5x2, a3);
+	WRITE_BE_UINT32(&_mem[_labels.L003F + d5x2], a3);
 }
 
 void ElviraPrgDriver::setupSequenceTableCommand_L001B(uint16 d0, uint16 d6, uint32 &a3) {
-	uint16 slot = read16(_labels.L004B + d0);
+	uint16 slot = READ_BE_UINT16(&_mem[_labels.L004B + d0]);
 
 	uint8 saveD7 = _savedD7;
 	_savedD7 = read8(_labels.L004C + slot + 0) != 0 ? 1 : 0;
@@ -671,28 +658,28 @@ void ElviraPrgDriver::setupSequenceTableCommand_L001B(uint16 d0, uint16 d6, uint
 	uint32 sequenceTranspose = _labels.L0048;
 	uint32 sequenceState = _labels.L0046;
 	uint32 sequenceStateIndex = _labels.L0045;
-	uint16 stateBase = read16(sequenceStateIndex + d0);
+	uint16 stateBase = READ_BE_UINT16(&_mem[sequenceStateIndex + d0]);
 
 	uint32 periodTable = _labels.L003C;
-	uint16 count = read16(a3);
+	uint16 count = READ_BE_UINT16(&_mem[a3]);
 	a3 += 2;
-	write16(sequenceState + stateBase + 0, 0);
+	WRITE_BE_UINT16(&_mem[sequenceState + stateBase + 0], 0);
 	uint16 countTimes2 = (uint16)(count + count);
-	write16(sequenceState + stateBase + 2, countTimes2);
+	WRITE_BE_UINT16(&_mem[sequenceState + stateBase + 2], countTimes2);
 	uint16 halfCount = (uint16)(countTimes2 >> 1);
-	write16(sequenceState + stateBase + 4, 1);
-	write16(sequenceState + stateBase + 6, read16(a3));
+	WRITE_BE_UINT16(&_mem[sequenceState + stateBase + 4], 1);
+	WRITE_BE_UINT16(&_mem[sequenceState + stateBase + 6], READ_BE_UINT16(&_mem[a3]));
 	a3 += 2;
 
 	for (int16 loop = (int16)(halfCount - 2); loop >= 0; --loop) {
-		uint16 d4 = read16(a3);
+		uint16 d4 = READ_BE_UINT16(&_mem[a3]);
 		a3 += 2;
 		d4 = addByteToLowWord(d4, read8(sequenceTranspose + d6));
 		if (_savedD7 != 0) {
-			write16(sequenceState + stateBase + 10, d4);
+			WRITE_BE_UINT16(&_mem[sequenceState + stateBase + 10], d4);
 		} else {
 			uint16 idx = (uint16)(d4 + d4);
-			write16(sequenceState + stateBase + 10, read16(periodTable + idx));
+			WRITE_BE_UINT16(&_mem[sequenceState + stateBase + 10], READ_BE_UINT16(&_mem[periodTable + idx]));
 		}
 		stateBase = (uint16)(stateBase + 2);
 	}
@@ -708,29 +695,29 @@ void ElviraPrgDriver::updateActivePitchSlides_L0017() {
 	uint32 a1 = _labels.L0043;
 
 	while (true) {
-		int16 delta = (int16)read16(a0);
+		int16 delta = (int16)READ_BE_UINT16(&_mem[a0]);
 		if (delta != 0) {
-			int16 countdown = (int16)read16(a0 + 6);
+			int16 countdown = (int16)READ_BE_UINT16(&_mem[a0 + 6]);
 			bool doStep = false;
 			if (countdown < 0) {
 				doStep = true;
 			} else {
 				countdown = (int16)(countdown - 1);
-				write16(a0 + 6, (uint16)countdown);
+				WRITE_BE_UINT16(&_mem[a0 + 6], (uint16)countdown);
 				if (countdown < 0)
 					doStep = true;
 			}
 
 			if (doStep) {
-				uint16 t = (uint16)((int16)read16(a1) + (int16)read16(a0));
+				uint16 t = (uint16)((int16)READ_BE_UINT16(&_mem[a1]) + (int16)READ_BE_UINT16(&_mem[a0]));
 				WRITE_BE_UINT16(&_mem[a1], t);
 				psgWrite((uint8)d2, (uint8)(t & 0xFF));
 				psgWrite((uint8)(d2 + 1), (uint8)(t >> 8));
 
-				uint16 count = (uint16)(read16(a0 + 2) - 1);
-				write16(a0 + 2, count);
+				uint16 count = (uint16)(READ_BE_UINT16(&_mem[a0 + 2]) - 1);
+				WRITE_BE_UINT16(&_mem[a0 + 2], count);
 				if (count == 0) {
-					uint16 target = read16(a0 + 4);
+					uint16 target = READ_BE_UINT16(&_mem[a0 + 4]);
 					psgWrite((uint8)d2, (uint8)(target & 0xFF));
 					psgWrite((uint8)(d2 + 1), (uint8)(target >> 8));
 					WRITE_BE_UINT16(&_mem[a1], target);
@@ -755,20 +742,20 @@ void ElviraPrgDriver::updateSequencePitchLayers_L0020() {
 	int16 channelCount = 2;
 
 	while (true) {
-		uint16 basePeriod = read16(currentPeriods);
-		write16(sequenceState + 8, basePeriod);
+		uint16 basePeriod = READ_BE_UINT16(&_mem[currentPeriods]);
+		WRITE_BE_UINT16(&_mem[sequenceState + 8], basePeriod);
 		currentPeriods += 2;
 
-		uint16 seqLen = read16(sequenceState + 2);
+		uint16 seqLen = READ_BE_UINT16(&_mem[sequenceState + 2]);
 		if (seqLen != 0) {
-			uint16 countdown = (uint16)(read16(sequenceState + 4) - 1);
-			write16(sequenceState + 4, countdown);
+			uint16 countdown = (uint16)(READ_BE_UINT16(&_mem[sequenceState + 4]) - 1);
+			WRITE_BE_UINT16(&_mem[sequenceState + 4], countdown);
 			if (countdown == 0) {
-				uint16 reload = read16(sequenceState + 6);
-				write16(sequenceState + 4, reload);
+				uint16 reload = READ_BE_UINT16(&_mem[sequenceState + 6]);
+				WRITE_BE_UINT16(&_mem[sequenceState + 4], reload);
 
-				uint16 idx = read16(sequenceState + 0);
-				uint16 tablePeriod = read16(sequenceState + 8 + idx);
+				uint16 idx = READ_BE_UINT16(&_mem[sequenceState + 0]);
+				uint16 tablePeriod = READ_BE_UINT16(&_mem[sequenceState + 8 + idx]);
 				tablePeriod = addByteToLowWord(tablePeriod, read8(voiceState + 6));
 
 				if (read8(voiceState + 0) == 1) {
@@ -781,7 +768,7 @@ void ElviraPrgDriver::updateSequencePitchLayers_L0020() {
 				uint16 nextIdx = (uint16)(idx + 2);
 				if (nextIdx >= seqLen)
 					nextIdx = 0;
-				write16(sequenceState + 0, nextIdx);
+				WRITE_BE_UINT16(&_mem[sequenceState + 0], nextIdx);
 			}
 		}
 
@@ -825,8 +812,8 @@ void ElviraPrgDriver::updatePerChannelVibrato_L0025() {
 						write8(vibratoState + 2, (uint8)(read8(vibratoState + 2) ^ 1));
 				}
 
-				if (read16(sequenceState + 2) == 0) {
-					uint16 out = (uint16)((int16)read16(currentPeriods) + (int16)(int8)pos);
+				if (READ_BE_UINT16(&_mem[sequenceState + 2]) == 0) {
+					uint16 out = (uint16)((int16)READ_BE_UINT16(&_mem[currentPeriods]) + (int16)(int8)pos);
 					psgWrite((uint8)channelReg, (uint8)(out & 0xFF));
 					psgWrite((uint8)(channelReg + 1), (uint8)(out >> 8));
 				}
@@ -852,8 +839,8 @@ void ElviraPrgDriver::updatePendingMixerRestores_L002B() {
 			uint8 v = (uint8)(read8(delayState) - 1);
 			write8(delayState, v);
 			if (v == 0) {
-				uint16 mixer = (uint16)(read16(_labels.L0049) | mixerMask);
-				write16(_labels.L0049, mixer);
+				uint16 mixer = (uint16)(READ_BE_UINT16(&_mem[_labels.L0049]) | mixerMask);
+				WRITE_BE_UINT16(&_mem[_labels.L0049], mixer);
 				psgWrite(7, (uint8)(mixer & 0xFF));
 			}
 		}
