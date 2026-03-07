@@ -53,6 +53,11 @@ void SmushMultiFont::drawString(const char *str, byte *buffer, Common::Rect &cli
 	_textRenderer->drawString(str, buffer, clipRect, x, y, _vm->_screenWidth, col, flags);
 }
 
+void SmushMultiFont::drawString(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags) {
+	_currentFont = _defaultFont;
+	_textRenderer->drawString(str, buffer, clipRect, x, y, pitch, col, flags);
+}
+
 void SmushMultiFont::drawStringWrap(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int16 col, TextStyleFlags flags) {
 	// Reset to default font before drawing
 	_currentFont = _defaultFont;

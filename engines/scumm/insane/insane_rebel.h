@@ -471,6 +471,10 @@ public:
 	// SmushFont for menu text rendering (uses SMALFONT.NUT with proper string drawing)
 	SmushFont *_menuFont;
 
+	// Saved palette for pause overlay restoration (FUN_405A21)
+	byte _savedPausePalette[768];
+	bool _pauseOverlayActive;
+
 	// MSTOVER.NUT - Mouse Over background overlay (NOT a cursor!)
 	// Loaded into DAT_0047aba8 and rendered via FUN_004236e0 as background
 	NutRenderer *_smush_mouseoverNut;

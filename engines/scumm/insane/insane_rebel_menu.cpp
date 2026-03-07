@@ -22,6 +22,7 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "common/util.h"
+#include "graphics/paletteman.h"
 
 #include "audio/mixer.h"
 
@@ -32,6 +33,7 @@
 
 #include "scumm/smush/smush_player.h"
 #include "scumm/smush/smush_font.h"
+#include "scumm/smush/smush_multi_font.h"
 
 #include "scumm/insane/insane_rebel.h"
 
@@ -559,169 +561,120 @@ void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int
 // Pause Overlay
 // ---------------------------------------------------------------------------
 
-// showPauseOverlay -- Dimmed overlay with "PAUSED" text (FUN_405A21).
+// pauseFillRect -- Helper to fill a rectangle in the frame buffer with bounds checking.
+static void pauseFillRect(byte *buf, int bufW, int bufH, int x, int y, int w, int h, byte color) {
+	if (x < 0) { w += x; x = 0; }
+	if (y < 0) { h += y; y = 0; }
+	if (x + w > bufW) w = bufW - x;
+	if (y + h > bufH) h = bufH - y;
+	if (w <= 0 || h <= 0) return;
+	for (int row = y; row < y + h; row++)
+		memset(buf + row * bufW + x, color, w);
+}
+
+// showPauseOverlay -- Dimmed overlay with metallic frame and "PAUSED" text.
+// Reproduces FUN_405A21 from the original executable.
+//
+// The original dims pixels using a green-channel formula that produces palette
+// indices 16-79, relying on a built-in grayscale ramp at those positions.
+// We instead dim the system palette (25% brightness) which achieves the same
+// visual effect regardless of palette layout. The pixel buffer is only modified
+// for the frame decorations and text — the game frame pixels stay unchanged.
+// The original palette is saved in _savedPausePalette and restored on unpause.
 void InsaneRebel2::showPauseOverlay() {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
-	if (!splayer) {
-		debug("showPauseOverlay: No SmushPlayer active");
+	if (!splayer)
 		return;
-	}
 
-	// Get frame buffer and palette from SmushPlayer
-	// _dst points to the virtual screen pixels (the actual rendering destination)
-	// _frameBuffer is only used for store/fetch operations, not general rendering
 	byte *frameBuffer = splayer->_dst;
 	byte *palette = splayer->_pal;
 	int width = splayer->_width;
 	int height = splayer->_height;
 
-	if (!frameBuffer || !palette || width <= 0 || height <= 0) {
-		debug("showPauseOverlay: No frame buffer (%p), palette (%p), or invalid dimensions (%dx%d)",
-		      (void*)frameBuffer, (void*)palette, width, height);
+	if (!frameBuffer || !palette || width <= 0 || height <= 0)
 		return;
+
+	int screenW = MIN(width, (int)_vm->_screenWidth);
+	int screenH = MIN(height, (int)_vm->_screenHeight);
+
+	// Step 1: Save current palette and create a dimmed version.
+	memcpy(_savedPausePalette, palette, 768);
+	_pauseOverlayActive = true;
+
+	byte dimPal[768];
+	memcpy(dimPal, palette, 768);
+	for (int i = 0; i < 768; i++)
+		dimPal[i] >>= 2;  // 25% brightness
+
+	// Override specific palette entries for UI elements.
+	// Frame bars (0x50): medium gray
+	dimPal[0x50 * 3 + 0] = 80; dimPal[0x50 * 3 + 1] = 80; dimPal[0x50 * 3 + 2] = 80;
+	// Rivet outline (0x51): slightly lighter gray
+	dimPal[0x51 * 3 + 0] = 110; dimPal[0x51 * 3 + 1] = 110; dimPal[0x51 * 3 + 2] = 110;
+	// RA2 NUT fonts use hardcoded palette indices 1-4 for rendering:
+	//   1=body color (remapped to col param), 2=highlight, 3=anti-alias, 4=outline
+	// Index 5 is used by TRS ^c005 escape code as the text body color.
+	dimPal[1 * 3 + 0] = 255; dimPal[1 * 3 + 1] = 255; dimPal[1 * 3 + 2] = 255;
+	dimPal[2 * 3 + 0] = 188; dimPal[2 * 3 + 1] = 188; dimPal[2 * 3 + 2] = 188;
+	dimPal[3 * 3 + 0] = 128; dimPal[3 * 3 + 1] = 128; dimPal[3 * 3 + 2] = 128;
+	dimPal[4 * 3 + 0] = 0;   dimPal[4 * 3 + 1] = 0;   dimPal[4 * 3 + 2] = 0;
+	dimPal[5 * 3 + 0] = 252; dimPal[5 * 3 + 1] = 252; dimPal[5 * 3 + 2] = 252;
+
+	_vm->_system->getPaletteManager()->setPalette(dimPal, 0, 256);
+
+	// Step 2: Draw the metallic frame (FUN_405A21 lines 261-283).
+	// Horizontal border lines: 2px thick at y=23 and y=175
+	pauseFillRect(frameBuffer, width, height, 0, 0x17, 0x140, 2, 0x50);
+	pauseFillRect(frameBuffer, width, height, 0, 0xAF, 0x140, 2, 0x50);
+
+	// Thick side bars: 40px wide on left and right
+	pauseFillRect(frameBuffer, width, height, 0,     0, 0x28, 200, 0x50);
+	pauseFillRect(frameBuffer, width, height, 0x118, 0, 0x28, 200, 0x50);
+
+	// Rivet decorations along left side bar.
+	// Layered rectangles: outer ring (0x51), inner fill (4).
+	for (int i = 0; i < 6; i++) {
+		int yOff = i * 0x24;  // i * 36
+		pauseFillRect(frameBuffer, width, height, 0x0C, yOff,     0x19, 0x11, 0x51);
+		pauseFillRect(frameBuffer, width, height, 0x0B, yOff + 1, 0x1B, 0x0F, 0x51);
+		pauseFillRect(frameBuffer, width, height, 0x0D, yOff,     0x17, 0x11, 4);
+		pauseFillRect(frameBuffer, width, height, 0x0B, yOff + 2, 0x1B, 0x0D, 4);
+		pauseFillRect(frameBuffer, width, height, 0x0C, yOff + 1, 0x19, 0x0F, 4);
 	}
 
-	debug("showPauseOverlay: Applying dimming effect to %dx%d buffer", width, height);
-
-	// Apply dimming effect (emulates FUN_405A21 lines 242-251)
-	// Original algorithm:
-	//   For each pixel, take the green component of its palette entry
-	//   and the green component of the previous pixel's palette entry,
-	//   add them, divide by 8, add 16.
-	// This creates a dark dimmed effect.
-	int bufferSize = width * height;
-	byte prevPixel = 0;
-
-	for (int i = 0; i < bufferSize; i++) {
-		byte curPixel = frameBuffer[i];
-
-		// Get green components from palette (offset +1 in RGB triplets)
-		int greenCur = palette[curPixel * 3 + 1];
-		int greenPrev = palette[prevPixel * 3 + 1];
-
-		// Apply dimming formula: (green1 + green2) >> 3 + 0x10
-		byte dimmedValue = ((greenCur + greenPrev) >> 3) + 0x10;
-
-		frameBuffer[i] = dimmedValue;
-		prevPixel = curPixel;
+	// Right side bar rivets: same pattern at x=282 (0x11A).
+	for (int i = 0; i < 6; i++) {
+		int yOff = i * 0x24;
+		int xBase = 0x11A;
+		pauseFillRect(frameBuffer, width, height, xBase,     yOff,     0x19, 0x11, 0x51);
+		pauseFillRect(frameBuffer, width, height, xBase - 1, yOff + 1, 0x1B, 0x0F, 0x51);
+		pauseFillRect(frameBuffer, width, height, xBase + 1, yOff,     0x17, 0x11, 4);
+		pauseFillRect(frameBuffer, width, height, xBase - 1, yOff + 2, 0x1B, 0x0D, 4);
+		pauseFillRect(frameBuffer, width, height, xBase,     yOff + 1, 0x19, 0x0F, 4);
 	}
 
-	// Draw border decorations (simplified version of FUN_405A21 lines 261-283)
-	// Draw horizontal lines at top and bottom of a centered box
-	int boxLeft = 12;
-	int boxRight = width - 12;
-	int boxTop = 23;   // 0x17
-	int boxBottom = height - 23;  // ~175 for 200 height
+	// Step 3: Draw "Game Paused" text using TRS string 0x78 (120).
+	// Original: FUN_00434cb0(-1, buf, NULL, x=10, y=10, align=1, fg=4, bg=0x10, text)
+	// fg=4 is the foreground color (used by ^cNNN in the TRS string itself).
+	const char *pauseText = splayer->getString(0x78);
+	if (!pauseText || !pauseText[0])
+		pauseText = "Game Paused";
 
-	byte borderColor = 0x50;  // Gray border color
-
-	// Top and bottom borders
-	for (int x = boxLeft; x < boxRight; x++) {
-		if (boxTop >= 0 && boxTop < height)
-			frameBuffer[boxTop * width + x] = borderColor;
-		if (boxBottom >= 0 && boxBottom < height)
-			frameBuffer[boxBottom * width + x] = borderColor;
+	SmushMultiFont *multiFont = splayer->getMultiFont();
+	if (!multiFont) {
+		splayer->ensureMultiFont();
+		multiFont = splayer->getMultiFont();
+	}
+	if (multiFont) {
+		Common::Rect clipRect(0, 0, screenW, screenH);
+		// Original uses x=10, y=10 (single-buffer mode) or y=20 (double-buffer mode).
+		// We use single-buffer mode (y=10).
+		multiFont->drawString(pauseText, frameBuffer, clipRect, 10, 10, width, 4, kStyleAlignLeft);
 	}
 
-	// Left and right borders
-	for (int y = boxTop; y < boxBottom; y++) {
-		if (boxLeft >= 0 && boxLeft < width)
-			frameBuffer[y * width + boxLeft] = borderColor;
-		if (boxRight >= 0 && boxRight < width)
-			frameBuffer[y * width + boxRight] = borderColor;
-	}
-
-	// Draw corner decorations (simplified)
-	byte cornerColor = 0x51;  // Slightly brighter for corners
-	for (int i = 0; i < 5; i++) {
-		// Top-left corner
-		if (boxTop + i < height && boxLeft + 5 < width)
-			frameBuffer[(boxTop + i) * width + boxLeft + 5] = cornerColor;
-		if (boxTop + 5 < height && boxLeft + i < width)
-			frameBuffer[(boxTop + 5) * width + boxLeft + i] = cornerColor;
-
-		// Top-right corner
-		if (boxTop + i < height && boxRight - 5 >= 0)
-			frameBuffer[(boxTop + i) * width + boxRight - 5] = cornerColor;
-		if (boxTop + 5 < height && boxRight - i >= 0)
-			frameBuffer[(boxTop + 5) * width + boxRight - i] = cornerColor;
-
-		// Bottom-left corner
-		if (boxBottom - i >= 0 && boxLeft + 5 < width)
-			frameBuffer[(boxBottom - i) * width + boxLeft + 5] = cornerColor;
-		if (boxBottom - 5 >= 0 && boxLeft + i < width)
-			frameBuffer[(boxBottom - 5) * width + boxLeft + i] = cornerColor;
-
-		// Bottom-right corner
-		if (boxBottom - i >= 0 && boxRight - 5 >= 0)
-			frameBuffer[(boxBottom - i) * width + boxRight - 5] = cornerColor;
-		if (boxBottom - 5 >= 0 && boxRight - i >= 0)
-			frameBuffer[(boxBottom - 5) * width + boxRight - i] = cornerColor;
-	}
-
-	// Draw "PAUSED" text centered
-	// Try to load from TRS - the exact index may vary by language version
-	// TRS index 80 (0x50) is likely "PAUSED" or equivalent (from DAT_004573f8)
-	// Note: splayer is already defined at the start of this function
-	const char *pauseText = splayer ? splayer->getString(80) : nullptr;
-	if (!pauseText || !pauseText[0]) {
-		// Fallback only if TRS string not available
-		pauseText = "PAUSED";
-	}
-
-	// Draw text using SmushFont if available
-	if (_menuFont) {
-		Common::Rect clipRect(0, 0, width, height);
-
-		// Calculate centered position
-		// Text should be centered horizontally and vertically in the box
-		int textX = width / 2;  // SmushFont handles centering with kStyleAlignCenter
-		int textY = height / 2 - 4;  // Slightly above center
-
-		// Draw with color 4 and background 0x10 (matching original parameters)
-		// FUN_00434cb0 params: x=10, y=10 or 20, color=4, bg=0x10
-		_menuFont->drawString(pauseText, frameBuffer, clipRect, textX, textY, 0x10, kStyleAlignCenter);
-	} else if (_smush_smalfontNut) {
-		// Fallback: draw using NutRenderer directly
-		NutRenderer *font = _smush_smalfontNut;
-		int numFontChars = font->getNumChars();
-		Common::Rect clipRect(0, 0, width, height);
-
-		// Calculate text width
-		int textWidth = 0;
-		const char *p = pauseText;
-		while (*p) {
-			byte c = (byte)*p++;
-			if (c >= 'a' && c <= 'z')
-				c = c - 'a' + 'A';
-			if (c < numFontChars) {
-				textWidth += font->getCharWidth(c);
-			}
-		}
-
-		// Draw centered
-		int textX = (width - textWidth) / 2;
-		int textY = height / 2 - 4;
-
-		p = pauseText;
-		while (*p) {
-			byte c = (byte)*p++;
-			if (c >= 'a' && c <= 'z')
-				c = c - 'a' + 'A';
-			if (c < numFontChars && textX >= 0 && textY >= 0) {
-				font->drawCharV7(frameBuffer, clipRect, textX, textY, width, -1,
-				                 kStyleAlignLeft, c, true, true);
-				textX += font->getCharWidth(c);
-			}
-		}
-	}
-
-	// Update the screen to show the pause overlay
-	// SmushPlayer uses copyRectToScreen to transfer the buffer to the display backend
-	_vm->_system->copyRectToScreen(frameBuffer, width, 0, 0, width, height);
+	// Step 4: Push to screen.
+	_vm->_system->copyRectToScreen(frameBuffer, width, 0, 0, screenW, screenH);
 	_vm->_system->updateScreen();
-
-	debug("showPauseOverlay: Overlay displayed");
 }
 
 // runMainMenu -- Main menu loop (FUN_004147B2).
