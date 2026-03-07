@@ -65,6 +65,42 @@ const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"carnival",
+		nullptr,
+		{
+			{"BOOTHS.BLT", 0, "c4d7ce39d1dd754a50bd909c1c2ed695", 1328201},
+			{"FRED.BLT",   0, "2491420b98c2421e19a751422c223cc8", 302133 },
+			{"GEORGE.BLT", 0, "b86116c9dc113d4bb7d6744d378c805c", 1017533},
+			{"HUCK.BLT",   0, "394407bb42a1f0abbe7db73fd0e9b873", 1225354},
+			{"SCOOBY.BLT", 0, "acf03553bc48c070adf57679307c900c", 3733392},
+			{"TOPCAT.BLT", 0, "116facccce1982111a1edf962bec3771", 567135 },
+			{"YOGI.BLT",   0, "ba3d148cbd10cd51f323be7895f52145", 5533358},
+			AD_LISTEND
+		},
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO1(GAMEOPTION_EXTEND_SCREEN)
+	},
+	{
+		"carnival",
+		nullptr,
+		{
+			{"ASSETS/BOOTHS.BLT", 0, "c4d7ce39d1dd754a50bd909c1c2ed695", 1328201},
+			{"ASSETS/FRED.BLT",   0, "2491420b98c2421e19a751422c223cc8", 302133 },
+			{"ASSETS/GEORGE.BLT", 0, "b86116c9dc113d4bb7d6744d378c805c", 1017533},
+			{"ASSETS/HUCK.BLT",   0, "394407bb42a1f0abbe7db73fd0e9b873", 1225354},
+			{"ASSETS/SCOOBY.BLT", 0, "acf03553bc48c070adf57679307c900c", 3733392},
+			{"ASSETS/TOPCAT.BLT", 0, "116facccce1982111a1edf962bec3771", 567135 },
+			{"ASSETS/YOGI.BLT",   0, "ba3d148cbd10cd51f323be7895f52145", 5533358},
+			AD_LISTEND
+		},
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO1(GAMEOPTION_EXTEND_SCREEN)
+	},
+	{
+		"carnival",
 		"Demo",
 		{
 			{"BOOTHS.BLT", 0, "3fc80c0feaaa300720a3ed921496233a", 878177 },
@@ -95,6 +131,7 @@ const ADGameDescription gameDescriptions[] = {
 	},
 
 	AD_TABLE_END_MARKER
+
 };
 
 } // End of namespace Bolt
