@@ -1330,7 +1330,7 @@ Common::Array<byte> RoomManager::loadRoomSfx(Common::File *roomFile, int roomOff
 	for (int i = 0; i < kNumSfxPerRoom; i++) {
 		byte sfx = roomFile->readByte();
 		roomSfx[i] = sfx;
-		// debug("SFX %d for room at offset %d is %d (%s)", i, roomOffset, sfx, SOUND_FILENAMES[sfx]);
+		debug("SFX %d for room at offset %d is %d (%s)", i, roomOffset, sfx, SOUND_FILENAMES[sfx]);
 	}
 	return roomSfx;
 }

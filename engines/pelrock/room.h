@@ -29,7 +29,7 @@
 
 namespace Pelrock {
 
-static const int kNumSfxPerRoom = 8;
+static const int kNumSfxPerRoom = 9;
 static const int unpickableHotspotExtras[] = {
 	308, // lamppost cable
 	65, // objects in shop

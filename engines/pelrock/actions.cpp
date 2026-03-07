@@ -1902,7 +1902,7 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 		break;
 	}
 	case 375: {
-		teletransportToPrincess();
+		teleportToPrincess();
 		break;
 	}
 	}
@@ -1935,7 +1935,7 @@ static void drawRemappedLine(byte *buf, int x0, int y0, int x1, int y1, const by
 	}
 }
 
-void PelrockEngine::teletransportToPrincess() {
+void PelrockEngine::teleportToPrincess() {
 	int phase = 0;
 
 	int lines[5][4] = {
@@ -1948,7 +1948,6 @@ void PelrockEngine::teletransportToPrincess() {
 	int stickers[5] = {113, 114, 110, 111, 112};
 
 	while (phase < 5) {
-		debug("Starting ending scene phase %d", phase);
 		Sprite *thisSprite = _room->findSpriteByIndex(phase + 1);
 		thisSprite->animData[0].curFrame = 0;
 		thisSprite->zOrder = 200;
@@ -1957,19 +1956,17 @@ void PelrockEngine::teletransportToPrincess() {
 			_events->pollEvent();
 			renderScene(OVERLAY_NONE);
 			_screen->update();
-			g_system->delayMillis(10);
 		}
 
 		_sound->playSound(_room->_roomSfx[3], 0);
 
-		// Draw 19 semi-transparent remapped lines (behind sprites, matching original)
-		// Original uses shadow_palette_remap_tables[1] — _paletteRemaps[1] from ALFRED.9
+		// Draw 19 semi-transparent remapped lines
 		copyBackgroundToBuffer();
 		placeStickersFirstPass();
 		updateAnimations();
 		presentFrame();
 		_screen->update();
-		g_system->delayMillis(10);
+
 		for (int i = 0; i < 19; i++) {
 			if (shouldQuit())
 				return;
@@ -1983,7 +1980,7 @@ void PelrockEngine::teletransportToPrincess() {
 		updateAnimations();
 		presentFrame();
 		_screen->update();
-		g_system->delayMillis(10);
+
 		_events->pollEvent();
 		if (shouldQuit())
 			return;
@@ -1995,7 +1992,6 @@ void PelrockEngine::teletransportToPrincess() {
 		updateAnimations();
 		presentFrame();
 		_screen->update();
-
 		phase++;
 	}
 	// small delay before last sticker
@@ -2019,7 +2015,6 @@ void PelrockEngine::teletransportToPrincess() {
 
 	_dialog->say(_res->_ingameTexts[MAREDEDEU]);
 
-	// endgameTransportAnimation();
 	smokeAnimation(-1, true);
 	_state->setFlag(FLAG_END_OF_GAME, true);
 	_state->setCurrentRoot(48, 1, 0);
@@ -2089,9 +2084,9 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		Spell *spell = spellBook.run();
 		if (spell) {
 			_alfredState.direction = ALFRED_LEFT;
-			_dialog->say(_res->_ingameTexts[DIOSHALCON + spell->page], 1);
 			switch (_room->_currentRoomNumber) {
 			case 28: {
+				_dialog->say(_res->_ingameTexts[DIOSHALCON + spell->page], 1);
 				if (spell->page == 12) {
 					_graphics->clearScreen();
 					int waitFrames = 0;
@@ -2118,6 +2113,8 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 			case 52:
 			case 53:
 			case 54: {
+				_sound->playSound(_room->_roomSfx[8], 0);
+				_dialog->say(_res->_ingameTexts[DIOSHALCON + spell->page], 1);
 				debug("Flight spell cast in room %d, spell page: %d", _room->_currentRoomNumber, spell->page);
 				int flightIndex = _room->_currentRoomNumber - 51;
 				debug("Correct page for this spell is = %d", kFlightRooms[flightIndex].spellPage);
@@ -2125,22 +2122,25 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 					_state->setFlag(FLAG_COMO_ESTAN_LOS_DIOSES, _state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES) | (1 << flightIndex));
 					debug("Flight spell successful, starting animation and updating state");
 					debug("Updated FLAG_COMO_ESTAN_LOS_DIOSES: %d", _state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES));
+					_sound->playSound(_room->_roomSfx[1], 0);
 					smokeAnimation(kFlightRooms[flightIndex].spriteIdx, true);
 					_room->addStickerToRoom(_room->_currentRoomNumber, 127 + flightIndex);
-					// if(_state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES) == 0b1111) {
-					HotSpot hotspot = HotSpot();
-					hotspot.actionFlags = 0;
-					hotspot.extra = 999;
-					hotspot.x = 320;
-					hotspot.y = 288;
-					hotspot.w = 35;
-					hotspot.h = 21;
-					hotspot.innerIndex = 0;
-					hotspot.index = 8;
-					_room->changeHotspot(52, hotspot);
-					// }
+					if(_state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES) == 0b1111) {
+						HotSpot hotspot = HotSpot();
+						hotspot.actionFlags = 0;
+						hotspot.extra = 999;
+						hotspot.x = 320;
+						hotspot.y = 288;
+						hotspot.w = 35;
+						hotspot.h = 21;
+						hotspot.innerIndex = 0;
+						hotspot.index = 8;
+						_room->changeHotspot(52, hotspot);
+					}
 				}
-
+				else {
+					_sound->playSound(_room->_roomSfx[2], 0);
+				}
 				break;
 			}
 			default:

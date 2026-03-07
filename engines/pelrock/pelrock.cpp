@@ -1798,7 +1798,7 @@ void PelrockEngine::gameLoop() {
 	}
 
 	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_e && _room->_currentRoomNumber == 52) {
-		teletransportToPrincess();
+		teleportToPrincess();
 		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
 	}
 
