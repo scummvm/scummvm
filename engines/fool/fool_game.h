@@ -123,7 +123,17 @@ public:
 
 	void sub_130_004();
 	void sub_131_004();
+
 	void sub_132_004();
+	void sub_132_518();
+	void sub_132_67a();
+	void sub_132_962();
+	void sub_132_e5a();
+	void sub_132_ed8();
+	void sub_132_1384();
+	void sub_132_13ea();
+	void sub_132_1444();
+
 	void sub_133_004();
 	void sub_134_004();
 	void sub_135_004();
@@ -177,7 +187,10 @@ private:
 	int16 var_i16_68c;
 	uint32 var_i32_68e;
 	uint32 var_i32_692;
+	// this is normally a raw pointer to some memory,
+	// instead we track it as a handle + offset
 	uint32 var_ptr_696;
+	Handle var_bytes_696;
 	Common::U32String var_str_69a;
 	int16 var_i16_78a;
 	int16 var_i16_79e;
@@ -269,6 +282,13 @@ private:
 	Common::U32String var_str_1272;
 	int16 var_i16_1372;
 
+	int16 var_i16_1a9e;
+	int16 var_i16_1aa0;
+	int16 var_i16_1aa4;
+	int16 var_i16_1aa6;
+	int16 var_i16_1aa8;
+	int16 var_i16_1aaa;
+
 
 	// FIXME: bounds on the following are guessed! need to trace index range
 	int16 pageLineRanges[202]; // arr_i16_0
@@ -288,16 +308,18 @@ private:
 	int16 arr_i16_1cea;
 	int16 arr_i16_1d24[202];
 	int16 arr_i16_1dee[202];
-	int16 arr_i16_1eb8[4];
-	Common::Rect arr_rect_1ec0;
-	Common::Rect arr_rect_1ec8;
-	Common::Point arr_pt_1ed0;
-	Common::Rect arr_rect_1f38[3];
+	int16 arr_i16_1eb8[0x29];
+	Common::Rect arr_rect_1f38[0x200];
 	int16 arr_i16_2f38[0xc00]; // 96x32?
+	int16 arr_i16_3738[0x400];
 	int16 arr_i16_3b38[0xc00]; // 96x32?
 	Common::Rect arr_rect_4338;
-	uint16 arr_i16_4738[16];
-	uint16 arr_i16_4758[6];
+	int16 arr_i16_4738[16];
+	int16 arr_i16_4758[11];
+	Common::Rect arr_rect_476e;
+	Common::Rect arr_rect_4776;
+	int16 arr_i16_47d8[0x100];
+	int16 arr_i16_49d8[0x100];
 	int16 arr_i16_4bd8[0x52];
 	int16 arr_i16_4c7c[0x52];
 	int16 arr_i16_4d20[48];
@@ -311,7 +333,9 @@ private:
 	float arr_bcd_5dbc[8];
 	Handle arr_bytes_5dfc; // used for data buffering
 	BitMap arr_bmp_5dfc; // 22000, close to a screen page
+	BitMap arr_jigsaw_5dfc[128];
 	BitMap arr_bmp_b3ec;
+	Handle arr_bytes_109dc; // used for data buffering
 	BitMap arr_bmp_109dc;
 	BitMap arr_bmp_15fcc;
 	GrafPort arr_grafport_18eae;

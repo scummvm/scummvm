@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	siphash/halfsip.o \
 	fool.o \
 	fool_game.o \
+	fool_jigsaw.o \
 	fool_prologue.o \
 	toolbox.o \
 	toolbox_fileman.o \

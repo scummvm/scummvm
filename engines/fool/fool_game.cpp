@@ -213,7 +213,7 @@ void FoolGame::sub_128_0a2(int16 unk2, int16 unk1) {
 	// 128:00e6
 	if (this->var_i16_30 == 1) {
 		// FIXME: use var_i16_32 to choose start offset??
-		g_zbasic->put(0, 0, 0, 0, this->arr_bmp_5dfc, kPutCopy);
+		g_zbasic->put(0, 0, this->arr_bmp_5dfc, kPutCopy);
 
 	}
 }
@@ -281,12 +281,11 @@ void FoolGame::sub_128_1e4(Common::U32String &unk1) {
 }
 
 void FoolGame::sub_128_2be(int16 unk2, int16 unk1) {
-	// FIXME: why is the point inverted in the code??
 	this->var_i16_68c = unk1;
 	this->var_i16_68a = unk2;
-	this->var_i16_68a = (this->var_ev_46.where.x - this->arr_rect_1ec0.top) / (this->arr_rect_1ec0.bottom);
+	this->var_i16_68a = (this->var_ev_46.where.x - this->arr_i16_1eb8[4]) / (this->arr_i16_1eb8[6]);
 
-	this->var_i16_68c = (this->var_ev_46.where.y - this->arr_rect_1ec0.left) / (this->arr_rect_1ec0.right);
+	this->var_i16_68c = (this->var_ev_46.where.y - this->arr_i16_1eb8[5]) / (this->arr_i16_1eb8[7]);
 }
 
 void FoolGame::sub_128_342(int16 unk2, int16 unk1) {
@@ -324,7 +323,7 @@ void FoolGame::sub_128_406(int16 unk1) {
 int16 FoolGame::puzzlesReadByte() {
 	// 128:0428
 	// read a byte
-	this->var_i16_30 = *(byte *)(&arr_bytes_5dfc->data()[this->var_ptr_696]);
+	this->var_i16_30 = *(byte *)(&var_bytes_696->data()[this->var_ptr_696]);
 	debugC(8, kDebugLoading, "Read[%04x]: %02x", this->var_ptr_696, this->var_i16_30);
 	this->var_ptr_696 += 1;
 	return this->var_i16_30;
@@ -334,7 +333,7 @@ int16 FoolGame::puzzlesReadByte() {
 int16 FoolGame::puzzlesReadShort() {
 	// 128:0446
 	// read a short
-	this->var_i16_30 = READ_BE_INT16(&arr_bytes_5dfc->data()[this->var_ptr_696]);
+	this->var_i16_30 = READ_BE_INT16(&var_bytes_696->data()[this->var_ptr_696]);
 	debugC(8, kDebugLoading, "Read[%04x]: %04x", this->var_ptr_696, this->var_i16_30);
 	this->var_ptr_696 += 2;
 	return this->var_i16_30;
@@ -343,7 +342,7 @@ int16 FoolGame::puzzlesReadShort() {
 int32 FoolGame::puzzlesReadLong() {
 	// 128:0462
 	// read a long
-	this->var_i32_68e = READ_BE_INT32(&arr_bytes_5dfc->data()[this->var_ptr_696]);
+	this->var_i32_68e = READ_BE_INT32(&var_bytes_696->data()[this->var_ptr_696]);
 	debugC(8, kDebugLoading, "Read[%04x]: %08x", this->var_ptr_696, this->var_i32_68e);
 	this->var_ptr_696 += 4;
 	return this->var_i32_68e;
@@ -352,8 +351,8 @@ int32 FoolGame::puzzlesReadLong() {
 Common::U32String FoolGame::puzzlesReadString() {
 	// 128:049a
 	// read a pascal string
-	this->var_i16_79e = *(byte *)(&arr_bytes_5dfc->data()[this->var_ptr_696]);
-	this->var_str_69a = Common::U32String((const char *)&arr_bytes_5dfc->data()[this->var_ptr_696+1], this->var_i16_79e, Common::kMacRoman);
+	this->var_i16_79e = *(byte *)(&var_bytes_696->data()[this->var_ptr_696]);
+	this->var_str_69a = Common::U32String((const char *)&var_bytes_696->data()[this->var_ptr_696+1], this->var_i16_79e, Common::kMacRoman);
 	debugC(8, kDebugLoading, "Read[%04x]: %s", this->var_ptr_696, this->var_str_69a.encode().c_str());
 	this->var_ptr_696 += this->var_i16_79e + 1;
 	return this->var_str_69a;
@@ -1076,9 +1075,10 @@ void FoolGame::sub_128_271a() {
 	// offset at record
 	this->var_i16_7e4 = (this->arr_i32_19454[this->var_i16_7e2] - 1) % 1000;
 	g_zbasic->record(1, this->var_i16_484, this->var_i16_7e4);
+	this->var_ptr_696 = 0;
+	this->arr_bytes_109dc = g_zbasic->readFile(1, this->arr_i32_19454[this->var_i16_7e2 + 1] - this->arr_i32_19454[this->var_i16_7e2]);
+	this->var_bytes_696 = this->arr_bytes_109dc;
 
-
-	warning("STUB: %s", __func__);
 }
 
 void FoolGame::sub_128_27d6() {
@@ -1353,7 +1353,7 @@ void FoolGame::sub_128_39a0() {
 	this->sub_128_4168();
 	// 128:3a22
 	// 128:3a38: JSR - "ZBASIC_115"
-	switch (this->arr_i16_18b2[this->var_i16_7d0]) {
+	switch (this->arr_i16_18b2[this->var_i16_7d0]-1) {
 	case 0:
 	case 1:
 	case 2:
@@ -1798,7 +1798,8 @@ void FoolGame::sub_128_61ec() {
 		if (this->var_ev_46.what == kDiskEvt) {
 			this->sub_128_6154();
 		}
-		g_toolbox->Delay(1);
+		if (this->var_ev_46.what == kNullEvent)
+			g_toolbox->Delay(1);
 	} while (!((this->var_ev_46.what == kNullEvent) && (this->var_ev_46.modifiers & kModMouseButtonUp)));
 	this->var_i16_7c0 = 0;
 }
@@ -2070,6 +2071,7 @@ void FoolGame::sub_129_068() {
 
 	// read into pointer
 	this->arr_bytes_5dfc = g_zbasic->readFile(1, this->var_i32_1036);
+	this->var_bytes_696 = this->arr_bytes_5dfc;
 
 	// 129:0a0a
 	this->var_i16_68a = 0x50;
@@ -2297,22 +2299,22 @@ void FoolGame::sub_130_004() {
 	}
 	// 130:0066
 	this->var_i16_484 = 0;
-	this->var_i16_68c = this->arr_rect_1ec8.top;
+	this->var_i16_68c = this->arr_i16_1eb8[8];
 	do {
-		this->var_i16_68a = this->arr_rect_1ec8.bottom;
+		this->var_i16_68a = this->arr_i16_1eb8[10];
 		do {
 			this->var_i16_484++;
 			g_toolbox->SetRect(
 				this->arr_rect_1f38[this->var_i16_484],
 				this->var_i16_68a,
 				this->var_i16_68c,
-				this->var_i16_68a + this->arr_pt_1ed0.x,
-				this->var_i16_68c + this->arr_pt_1ed0.y
+				this->var_i16_68a + this->arr_i16_1eb8[13],
+				this->var_i16_68c + this->arr_i16_1eb8[12]
 			);
 			// 130:00f6
-		} while (g_zbasic->incrAndCheck(this->var_i16_68a, this->arr_rect_1ec8.right, this->arr_rect_1ec0.bottom));
+		} while (g_zbasic->incrAndCheck(this->var_i16_68a, this->arr_i16_1eb8[11], this->arr_i16_1eb8[6]));
 	// 130:0126
-	} while (g_zbasic->incrAndCheck(this->var_i16_68c, this->arr_rect_1ec8.left, this->arr_rect_1ec0.right));
+	} while (g_zbasic->incrAndCheck(this->var_i16_68c, this->arr_i16_1eb8[9], this->arr_i16_1eb8[7]));
 	// 130:0156
 	if ((this->var_i16_105a & 0x2) == this->var_i16_105a) {
 		this->var_i16_105c = this->puzzlesReadShort();
@@ -2399,11 +2401,81 @@ void FoolGame::sub_131_004() {
 	warning("STUB: %s", __func__);
 }
 
-void FoolGame::sub_132_004() {
-	warning("STUB: %s", __func__);
-}
 
 void FoolGame::sub_133_004() {
+	// 133:0004
+	this->sub_128_271a();
+	this->var_i16_c00 = 1;
+	for (int i = 0; i <= 0x11; i++) {
+		this->arr_i16_1eb8[i] = this->puzzlesReadShort();
+	}
+	// 133:003c
+	this->var_str_384 = this->puzzlesReadString();
+	// "the completed puzzle will reveal..."
+	this->var_str_384 = g_zbasic->str(209) + this->var_str_384 + g_zbasic->str(210);
+	g_zbasic->menu(8, 0xf, 1, this->var_str_384);
+	this->var_i16_484 = 0;
+	this->var_i16_68c = this->arr_i16_1eb8[8];
+	do {
+		// 133:009e
+		this->var_i16_68a = this->arr_i16_1eb8[10];
+		do {
+			// 133:00b2
+			this->var_i16_484 += 1;
+			g_toolbox->SetRect(
+				this->arr_rect_1f38[this->var_i16_484],
+				this->var_i16_68a,
+				this->var_i16_68c,
+				this->var_i16_68a + this->arr_i16_1eb8[13],
+				this->var_i16_68c + this->arr_i16_1eb8[12]
+			);
+			// 133:0112
+		} while (g_zbasic->incrAndCheck(
+			this->var_i16_68a,
+			this->arr_i16_1eb8[11],
+			this->arr_i16_1eb8[6]
+		));
+		// 133:0142
+	} while (g_zbasic->incrAndCheck(
+		this->var_i16_68c,
+		this->arr_i16_1eb8[9],
+		this->arr_i16_1eb8[7]
+	));
+	// 133:0172
+	this->var_i16_484 = 0;
+	for (int j = 1; j <= this->arr_i16_1eb8[1]; j++) {
+		for (int i = 1; i <= this->arr_i16_1eb8[0]; i++) {
+			// 133:0184
+			this->var_i16_484++;
+			this->arr_i16_2f38[i*32 + j] = 0;
+			this->arr_i16_3b38[i*32 + j] = this->var_i16_484;
+		}
+	}
+	// 133:01fa
+	for (int i = 0x12; i <= 0x19; i++) {
+		this->arr_i16_1eb8[i] = this->puzzlesReadShort();
+	}
+	// 133:0228
+	g_toolbox->SetPort(this->var_i32_f24);
+	g_zbasic->text(0xfb, 0x18, 0, kSrcOr);
+	this->var_i16_7cc = 1;
+	this->var_i16_103a = this->puzzlesReadShort();
+	for (int i = 0; i <= 4; i++) {
+		this->arr_i16_47d8[this->var_i16_7cc*8 + i] = this->puzzlesReadShort();
+	}
+	// 133:0284
+	for (int i = 5; i <= 6; i++) {
+		this->arr_i16_47d8[this->var_i16_7cc*8 + i] = this->arr_i16_47d8[this->var_i16_7cc*8 + i - 2];
+	}
+	// 133:02de
+	if (this->var_str_c06 != g_zbasic->str(211)) {
+		if (this->var_i16_7cc != 1)  {
+			this->var_i16_1aa8 = 1;
+		}
+		this->var_i16_1aaa = 3;
+		//this->arr_i16_47d8[this->var_i16_7cc*8 + this->var_i16_1aaa], this->var_str_c06
+	}
+	// 133:0356
 	warning("STUB: %s", __func__);
 }
 
@@ -2427,6 +2499,7 @@ void FoolGame::sub_138_004() {
 	warning("STUB: %s", __func__);
 }
 
+// wheel of fortune game
 void FoolGame::sub_139_004() {
 	warning("STUB: %s", __func__);
 }
