@@ -21,6 +21,8 @@
 
 #include "common/system.h"
 
+#include "graphics/cursorman.h"
+
 #include "scumm/scumm_v7.h"
 
 #include "scumm/smush/smush_player.h"
@@ -475,6 +477,14 @@ int InsaneRebel2::runLevel(int levelId) {
 	// Set the current level
 	_selectedLevel = levelId;
 
+	// Lock the mouse to the game window during gameplay.
+	// The original hides the cursor (ShowCursor(0)) and relies on Windows confining
+	// the mouse to the game window. Without locking, the cursor can escape the
+	// ScummVM window making the ship uncontrollable.
+	smush_warpMouse(160, 100, -1);
+	CursorMan.showMouse(false);
+	g_system->lockMouse(true);
+
 	// Initialize common player state
 	_playerLives = 3;
 	_playerShield = 255;
@@ -489,40 +499,63 @@ int InsaneRebel2::runLevel(int levelId) {
 	_skipSectionRequested = false;
 
 	// Dispatch to per-level handler
+	int result;
 	switch (levelId) {
 	case 1:
-		return runLevel1();
+		result = runLevel1();
+		break;
 	case 2:
-		return runLevel2();
+		result = runLevel2();
+		break;
 	case 3:
-		return runLevel3();
+		result = runLevel3();
+		break;
 	case 4:
-		return runLevel4();
+		result = runLevel4();
+		break;
 	case 5:
-		return runLevel5();
+		result = runLevel5();
+		break;
 	case 6:
-		return runLevel6();
+		result = runLevel6();
+		break;
 	case 7:
-		return runLevel7();
+		result = runLevel7();
+		break;
 	case 8:
-		return runLevel8();
+		result = runLevel8();
+		break;
 	case 9:
-		return runLevel9();
+		result = runLevel9();
+		break;
 	case 10:
-		return runLevel10();
+		result = runLevel10();
+		break;
 	case 11:
-		return runLevel11();
+		result = runLevel11();
+		break;
 	case 12:
-		return runLevel12();
+		result = runLevel12();
+		break;
 	case 13:
-		return runLevel13();
+		result = runLevel13();
+		break;
 	case 14:
-		return runLevel14();
+		result = runLevel14();
+		break;
 	case 15:
-		return runLevel15();
+		result = runLevel15();
+		break;
 	default:
-		return runLevel1();
+		result = runLevel1();
+		break;
 	}
+
+	// Unlock the mouse when returning to menu
+	g_system->lockMouse(false);
+	CursorMan.showMouse(true);
+
+	return result;
 }
 
 // ---------------------------------------------------------------------------
