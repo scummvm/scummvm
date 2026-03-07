@@ -24,19 +24,21 @@
 
 #include "audio/sid.h"
 #include "freescape/sid.h"
+#include "freescape/sound.h"
 
 namespace Freescape {
 
-class EclipseC64SFXPlayer {
+class EclipseC64SFXPlayer : public Sound {
 public:
 	EclipseC64SFXPlayer();
 	~EclipseC64SFXPlayer();
 
-	void playSfx(int sfxIndex);
-	void sfxTick();
-	void stopAllSfx();
+	void playSound(int sfxIndex, Type type) override;
+	void stopSound(Type type) override;
+	bool isPlayingSound(Type type) const override;
 
-	bool isSfxActive() const;
+	void sfxTick();
+
 	void initSID();
 	void destroySID();
 

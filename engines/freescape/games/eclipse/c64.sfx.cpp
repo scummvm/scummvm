@@ -236,11 +236,11 @@ void EclipseC64SFXPlayer::onTimer() {
 	sfxTick();
 }
 
-bool EclipseC64SFXPlayer::isSfxActive() const {
+bool EclipseC64SFXPlayer::isPlayingSound(Type type) const {
 	return _state != 0;
 }
 
-void EclipseC64SFXPlayer::stopAllSfx() {
+void EclipseC64SFXPlayer::stopSound(Type type) {
 	_state = 0;
 	silenceAll();
 }
@@ -296,7 +296,7 @@ void EclipseC64SFXPlayer::setupSfx(int index) {
 	_state = 1;
 }
 
-void EclipseC64SFXPlayer::playSfx(int sfxIndex) {
+void EclipseC64SFXPlayer::playSound(int sfxIndex, Type type) {
 	if (sfxIndex < 1 || sfxIndex > 21) {
 		debugC(1, kFreescapeDebugMedia, "Eclipse C64 SFX: invalid index %d", sfxIndex);
 		return;

@@ -24,19 +24,21 @@
 
 #include "audio/sid.h"
 #include "freescape/sid.h"
+#include "freescape/sound.h"
 
 namespace Freescape {
 
-class DarkSideC64SFXPlayer {
+class DarkSideC64SFXPlayer : public Sound {
 public:
 	DarkSideC64SFXPlayer();
 	~DarkSideC64SFXPlayer();
 
-	void playSfx(int sfxIndex);
-	void sfxTick();
-	void stopAllSfx();
+	void playSound(int sfxIndex, Type type) override;
+	void stopSound(Type type) override;
+	bool isPlayingSound(Type type) const override;
 
-	bool isSfxActive() const;
+	void sfxTick();
+
 	void initSID();
 	void destroySID();
 

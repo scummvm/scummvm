@@ -100,7 +100,8 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 
 DrillerEngine::~DrillerEngine() {
 	delete _playerMusic;
-	delete _playerC64Sfx;
+	if (_sound != _playerC64Sfx)
+		delete _playerC64Sfx;
 
 	if (_borderExtra) {
 		delete _borderExtra;
