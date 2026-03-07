@@ -68,6 +68,11 @@ void SoundManager::playSound(const char *filename, int flag) {
 	if (!_mixer->isSoundHandleActive(*_effectsHandle)) {
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, _effectsHandle, audioStream, -1, _mixer->kMaxChannelVolume, 0, DisposeAfterUse::NO);
 	}
+
+	if (flag) {
+		while (isSFXPlaying())
+			_vm->waitMillis(10);
+	}
 }
 
 bool SoundManager::isSFXPlaying() {
