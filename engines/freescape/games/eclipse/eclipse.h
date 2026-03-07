@@ -122,7 +122,6 @@ public:
 	Common::Array<byte> _c64MusicData;
 	EclipseC64SFXPlayer *_playerC64Sfx;
 	bool _c64UseSFX;
-	void playSoundC64(int index) override;
 	void toggleC64Sound();
 
 	MusicPlayer *_playerMusic;

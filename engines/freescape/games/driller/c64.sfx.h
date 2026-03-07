@@ -24,19 +24,21 @@
 
 #include "audio/sid.h"
 #include "freescape/sid.h"
+#include "freescape/sound.h"
 
 namespace Freescape {
 
-class DrillerC64SFXPlayer {
+class DrillerC64SFXPlayer : public Sound {
 public:
 	DrillerC64SFXPlayer();
 	~DrillerC64SFXPlayer();
 
-	void playSfx(int sfxIndex);
-	void sfxTick();           // Called every frame (50Hz) from onTimer
-	void stopAllSfx();
+	void playSound(int sfxIndex, Type type) override;
+	void stopSound(Type type) override;
+	bool isPlayingSound(Type type) const override;
 
-	bool isSfxActive() const;
+	void sfxTick();           // Called every frame (50Hz) from onTimer
+
 	void initSID();
 	void destroySID();
 

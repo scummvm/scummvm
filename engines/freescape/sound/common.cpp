@@ -44,19 +44,11 @@ void FreescapeEngine::playSound(int index, bool sync, Sound::Type type) {
 		return;
 	}
 
-	if (isC64()) {
-		playSoundC64(index);
-		return;
-	}
-
 	Common::Path filename;
 	filename = Common::String::format("%s-%d.wav", _targetName.c_str(), index);
 	debugC(1,  kFreescapeDebugMedia, "Playing sound %s", filename.toString().c_str());
 	playWav(filename);
 	_syncSound = sync;
-}
-void FreescapeEngine::playSoundC64(int index) {
-	debugC(1, kFreescapeDebugMedia, "C64 sound %d not implemented for this engine", index);
 }
 
 void FreescapeEngine::playWav(const Common::Path &filename) {

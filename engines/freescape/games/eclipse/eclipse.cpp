@@ -169,7 +169,8 @@ EclipseEngine::~EclipseEngine() {
 	if (_soundFx)
 		delete _soundFx;
 	delete _playerMusic;
-	delete _playerC64Sfx;
+	if (_sound != _playerC64Sfx)
+		delete _playerC64Sfx;
 }
 
 void EclipseEngine::initGameState() {

@@ -152,14 +152,10 @@ void EclipseEngine::loadAssetsC64FullGame() {
 	_playerC64Sfx->destroySID();
 }
 
-void EclipseEngine::playSoundC64(int index) {
-	debugC(1, kFreescapeDebugMedia, "Playing Eclipse C64 SFX %d", index);
-	if (_playerC64Sfx && _c64UseSFX)
-		_playerC64Sfx->playSfx(index);
-}
-
 void EclipseEngine::toggleC64Sound() {
 	if (_c64UseSFX) {
+		if (_sound == _playerC64Sfx)
+			_sound = nullptr;
 		if (_playerC64Sfx)
 			_playerC64Sfx->destroySID();
 		if (_playerMusic)
@@ -170,6 +166,8 @@ void EclipseEngine::toggleC64Sound() {
 			_playerMusic->stopMusic();
 		if (_playerC64Sfx)
 			_playerC64Sfx->initSID();
+		if (_sound == nullptr)
+			_sound = _playerC64Sfx;
 		_c64UseSFX = true;
 	}
 }
