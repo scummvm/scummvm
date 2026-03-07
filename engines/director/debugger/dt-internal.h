@@ -34,6 +34,7 @@
 #include "backends/imgui/components/imgui_memory_editor.h"
 
 #include "director/types.h"
+#include "director/window.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingodec/ast.h"
 #include "director/lingo/lingodec/handler.h"
@@ -291,6 +292,8 @@ typedef struct ImGuiState {
 	ImGuiEx::ImGuiLogger *_logger = nullptr;
 	bool _ignoreMouse = false;
 	bool _enableMultiViewport = true;
+
+	Window *_windowToRedraw = nullptr;
 } ImGuiState;
 
 // debugtools.cpp

@@ -745,7 +745,7 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 					int playheadIdx = score->getCurrentFrameNum() - 1;
 					if (playheadIdx >= spanStart && playheadIdx <= spanEnd) {
 						Director::DT::setSelectedChannel(ch);
-						window->render(true);
+						_state->_windowToRedraw = window;
 					}
 				}
 
@@ -759,7 +759,7 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 					_state->_prevFrame = score->getCurrentFrameNum();
 
 					Director::DT::setSelectedChannel(ch);
-					window->render(true);
+					_state->_windowToRedraw = window;
 				}
 
 				if (ImGui::IsItemHovered()) {
@@ -1268,7 +1268,7 @@ void showChannels() {
 
 					if (ImGui::IsItemClicked(0)) {
 						channel._hideFromStage = !isHiddenFromStage;
-						selectedWindow->render(true);
+						_state->_windowToRedraw = selectedWindow;
 					}
 
 					if (isHiddenFromStage) {
@@ -1298,7 +1298,7 @@ void showChannels() {
 						_state->_selectedChannel = i + 1;
 					 }
 
-					selectedWindow->render(true);
+					_state->_windowToRedraw = selectedWindow;
 				}
 
 				ImGui::TableNextColumn();
@@ -1312,7 +1312,7 @@ void showChannels() {
 					ImGui::TableNextColumn();
 					colN = "##vis" + chNum;
 					if (ImGui::Checkbox(colN.c_str(), &channel._visible)) {
-						selectedWindow->render(true);
+						_state->_windowToRedraw = selectedWindow;
 					}
 					ImGui::TableNextColumn();
 					ImGui::Text("0x%02x", sprite._inkData);
