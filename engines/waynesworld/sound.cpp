@@ -44,6 +44,9 @@ SoundManager::~SoundManager() {
 }
 
 void SoundManager::playSound(const char *filename, int flag) {
+	while (isSFXPlaying())
+		_vm->waitMillis(10);
+
 	_filename = Common::String(filename);
 	
 	Common::File fd;
