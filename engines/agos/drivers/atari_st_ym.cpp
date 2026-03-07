@@ -45,6 +45,7 @@
 
 #include "atari_st_ym.h"
 
+#include "common/endian.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "common/debug.h"
@@ -63,29 +64,17 @@ struct ElviraPrgTosImage {
 	uint32 symSize = 0;
 	uint32 memSize = 0;
 
-	static uint16 readBE16Local(const uint8 *p) {
-		return (uint16)((p[0] << 8) | p[1]);
-	}
-	static uint32 readBE32Local(const uint8 *p) {
-		return (uint32)p[0] << 24 | (uint32)p[1] << 16 | (uint32)p[2] << 8 | (uint32)p[3];
-	}
-	static void writeBE32Local(uint8 *p, uint32 v) {
-		p[0] = (uint8)(v >> 24);
-		p[1] = (uint8)(v >> 16);
-		p[2] = (uint8)(v >> 8);
-		p[3] = (uint8)v;
-	}
 
 	bool load(const Common::Array<uint8> &prgBytes) {
 		if (prgBytes.size() < 28)
 			return false;
-		if (readBE16Local(prgBytes.begin()) != 0x601A)
+		if (READ_BE_UINT16(prgBytes.begin()) != 0x601A)
 			return false;
 
-		textSize = readBE32Local(prgBytes.begin() + 2);
-		dataSize = readBE32Local(prgBytes.begin() + 6);
-		bssSize = readBE32Local(prgBytes.begin() + 10);
-		symSize = readBE32Local(prgBytes.begin() + 14);
+		textSize = READ_BE_UINT32(prgBytes.begin() + 2);
+		dataSize = READ_BE_UINT32(prgBytes.begin() + 6);
+		bssSize = READ_BE_UINT32(prgBytes.begin() + 10);
+		symSize = READ_BE_UINT32(prgBytes.begin() + 14);
 
 		const uint32 offText = 28;
 		const uint32 offData = offText + textSize;
@@ -105,14 +94,14 @@ struct ElviraPrgTosImage {
 		const uint8 *rel = prgBytes.begin() + offRel;
 		const uint32 relSize = (uint32)prgBytes.size() - offRel;
 
-		uint32 ofs = readBE32Local(rel);
+		uint32 ofs = READ_BE_UINT32(rel);
 		uint32 pos = 4;
 
 		auto applyAt = [&](uint32 addr) {
 			if (addr + 4 > mem.size())
 				return;
-			uint32 v = readBE32Local(&mem[addr]);
-			writeBE32Local(&mem[addr], v);
+			uint32 v = READ_BE_UINT32(&mem[addr]);
+			WRITE_BE_UINT32(&mem[addr], v);
 		};
 
 		if (ofs != 0)
@@ -154,9 +143,9 @@ static uint32 findTuneTable(const Common::Array<uint8> &mem) {
 		bool ok = true;
 		for (uint32 e = 0; e < 7; ++e) {
 			uint32 base = off + e * 16;
-			uint32 p0 = ElviraPrgTosImage::readBE32Local(&mem[base + 0]);
-			uint32 p1 = ElviraPrgTosImage::readBE32Local(&mem[base + 4]);
-			uint32 p2 = ElviraPrgTosImage::readBE32Local(&mem[base + 8]);
+			uint32 p0 = READ_BE_UINT32(&mem[base + 0]);
+			uint32 p1 = READ_BE_UINT32(&mem[base + 4]);
+			uint32 p2 = READ_BE_UINT32(&mem[base + 8]);
 			if (mem[base + 12] || mem[base + 13] || mem[base + 14] || mem[base + 15]) {
 				ok = false;
 				break;
@@ -409,10 +398,10 @@ private:
 		return _mem[a];
 	}
 	uint16 read16(uint32 a) const {
-		return ElviraPrgTosImage::readBE16Local(&_mem[a]);
+		return READ_BE_UINT16(&_mem[a]);
 	}
 	uint32 read32(uint32 a) const {
-		return ElviraPrgTosImage::readBE32Local(&_mem[a]);
+		return READ_BE_UINT32(&_mem[a]);
 	}
 	void write8(uint32 a, uint8 v) {
 		_mem[a] = v;
@@ -422,7 +411,7 @@ private:
 		_mem[a + 1] = (uint8)v;
 	}
 	void write32(uint32 a, uint32 v) {
-		ElviraPrgTosImage::writeBE32Local(&_mem[a], v);
+		WRITE_BE_UINT32(&_mem[a], v);
 	}
 	void psgWrite(uint8 reg, uint8 val) {
 		_owner->writeReg((int)reg, val);
@@ -734,7 +723,7 @@ void ElviraPrgDriver::updateActivePitchSlides_L0017() {
 
 			if (doStep) {
 				uint16 t = (uint16)((int16)read16(a1) + (int16)read16(a0));
-				write16(a1, t);
+				WRITE_BE_UINT16(&_mem[a1], t);
 				psgWrite((uint8)d2, (uint8)(t & 0xFF));
 				psgWrite((uint8)(d2 + 1), (uint8)(t >> 8));
 
@@ -744,8 +733,8 @@ void ElviraPrgDriver::updateActivePitchSlides_L0017() {
 					uint16 target = read16(a0 + 4);
 					psgWrite((uint8)d2, (uint8)(target & 0xFF));
 					psgWrite((uint8)(d2 + 1), (uint8)(target >> 8));
-					write16(a1, target);
-					write16(a0, 0);
+					WRITE_BE_UINT16(&_mem[a1], target);
+					WRITE_BE_UINT16(&_mem[a0], 0);
 				}
 			}
 		}
@@ -940,7 +929,7 @@ void ElviraPrgDriver::updateAutomaticEnvelopeWrites_L0037() {
 	}
 }
 
-const AtariSTYMStream::ymu32 AtariSTYMStream::YmVolume4to5[32] = {
+const uint32 AtariSTYMStream::YmVolume4to5[32] = {
 	0, 1, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31,
 	0, 1, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31
 };
@@ -970,9 +959,9 @@ const int AtariSTYMStream::YmEnvDef[16][3] = {
  * Data measured by Paulo Simoes. Copyright 2012 Paulo Simoes.
  */
 
-AtariSTYMStream::ymu16 AtariSTYMStream::YmEnvWaves[16][32 * 3];
+uint16 AtariSTYMStream::YmEnvWaves[16][32 * 3];
 
-const AtariSTYMStream::ymu16 AtariSTYMStream::volumeTable[16][16][16] =
+const uint16 AtariSTYMStream::volumeTable[16][16][16] =
 {
 	{
 		{     0,   120,   251,   385,   598,   840,  1258,  1725,  2536,  3483,  5151,  7054, 10367, 14634, 22931, 34469 },
@@ -1264,12 +1253,12 @@ const AtariSTYMStream::ymu16 AtariSTYMStream::volumeTable[16][16][16] =
 	}
 };
 
-AtariSTYMStream::ymu16 AtariSTYMStream::ymout5_u16[32][32][32];
-AtariSTYMStream::yms16 *AtariSTYMStream::ymout5 = (AtariSTYMStream::yms16 *)AtariSTYMStream::ymout5_u16;
+uint16 AtariSTYMStream::ymout5_u16[32][32][32];
+int16 *AtariSTYMStream::ymout5 = (int16 *)AtariSTYMStream::ymout5_u16;
 bool AtariSTYMStream::_tablesBuilt = false;
 
-AtariSTYMStream::ymu16 AtariSTYMStream::mergeVoice(ymu16 c, ymu16 b, ymu16 a) {
-	return (ymu16)((c << 10) | (b << 5) | a);
+uint16 AtariSTYMStream::mergeVoice(uint16 c, uint16 b, uint16 a) {
+	return (uint16)((c << 10) | (b << 5) | a);
 }
 
 void AtariSTYMStream::envBuild() {
@@ -1301,14 +1290,14 @@ void AtariSTYMStream::envBuild() {
 			}
 
 			for (int i = 0; i < 32; i++) {
-				YmEnvWaves[env][block * 32 + i] = mergeVoice((ymu16)vol, (ymu16)vol, (ymu16)vol);
+				YmEnvWaves[env][block * 32 + i] = mergeVoice((uint16)vol, (uint16)vol, (uint16)vol);
 				vol += inc;
 			}
 		}
 	}
 }
 
-void AtariSTYMStream::interpolateVolumetable(ymu16 volumetable[32][32][32]) {
+void AtariSTYMStream::interpolateVolumetable(uint16 volumetable[32][32][32]) {
 	for (int i = 1; i < 32; i += 2) {
 		for (int j = 1; j < 32; j += 2) {
 			for (int k = 1; k < 32; k += 2) {
@@ -1316,18 +1305,18 @@ void AtariSTYMStream::interpolateVolumetable(ymu16 volumetable[32][32][32]) {
 			}
 			volumetable[i][j][0] = volumetable[i][j][1];
 			volumetable[i][j][1] = volumetable[i][j][3];
-			volumetable[i][j][3] = (ymu16)(0.5 + std::sqrt((double)volumetable[i][j][1] * (double)volumetable[i][j][5]));
+			volumetable[i][j][3] = (uint16)(0.5 + std::sqrt((double)volumetable[i][j][1] * (double)volumetable[i][j][5]));
 			for (int k = 2; k < 32; k += 2)
-				volumetable[i][j][k] = (ymu16)(0.5 + std::sqrt((double)volumetable[i][j][k - 1] * (double)volumetable[i][j][k + 1]));
+				volumetable[i][j][k] = (uint16)(0.5 + std::sqrt((double)volumetable[i][j][k - 1] * (double)volumetable[i][j][k + 1]));
 		}
 		for (int k = 0; k < 32; k++) {
 			volumetable[i][0][k] = volumetable[i][1][k];
 			volumetable[i][1][k] = volumetable[i][3][k];
-			volumetable[i][3][k] = (ymu16)(0.5 + std::sqrt((double)volumetable[i][1][k] * (double)volumetable[i][5][k]));
+			volumetable[i][3][k] = (uint16)(0.5 + std::sqrt((double)volumetable[i][1][k] * (double)volumetable[i][5][k]));
 		}
 		for (int j = 2; j < 32; j += 2) {
 			for (int k = 0; k < 32; k++)
-				volumetable[i][j][k] = (ymu16)(0.5 + std::sqrt((double)volumetable[i][j - 1][k] * (double)volumetable[i][j + 1][k]));
+				volumetable[i][j][k] = (uint16)(0.5 + std::sqrt((double)volumetable[i][j - 1][k] * (double)volumetable[i][j + 1][k]));
 		}
 	}
 
@@ -1335,19 +1324,19 @@ void AtariSTYMStream::interpolateVolumetable(ymu16 volumetable[32][32][32]) {
 		for (int k = 0; k < 32; k++) {
 			volumetable[0][j][k] = volumetable[1][j][k];
 			volumetable[1][j][k] = volumetable[3][j][k];
-			volumetable[3][j][k] = (ymu16)(0.5 + std::sqrt((double)volumetable[1][j][k] * (double)volumetable[5][j][k]));
+			volumetable[3][j][k] = (uint16)(0.5 + std::sqrt((double)volumetable[1][j][k] * (double)volumetable[5][j][k]));
 		}
 	}
 
 	for (int i = 2; i < 32; i += 2) {
 		for (int j = 0; j < 32; j++) {
 			for (int k = 0; k < 32; k++)
-				volumetable[i][j][k] = (ymu16)(0.5 + std::sqrt((double)volumetable[i - 1][j][k] * (double)volumetable[i + 1][j][k]));
+				volumetable[i][j][k] = (uint16)(0.5 + std::sqrt((double)volumetable[i - 1][j][k] * (double)volumetable[i + 1][j][k]));
 		}
 	}
 }
 
-void AtariSTYMStream::normalise5bitTable(ymu16 *in5bit, yms16 *out5bit, unsigned int level) {
+void AtariSTYMStream::normalise5bitTable(uint16 *in5bit, int16 *out5bit, unsigned int level) {
 	unsigned int minv = 0xffffffffu;
 	unsigned int maxv = 0;
 
@@ -1368,7 +1357,7 @@ void AtariSTYMStream::normalise5bitTable(ymu16 *in5bit, yms16 *out5bit, unsigned
 			iv = 32767;
 		if (iv < -32768)
 			iv = -32768;
-		out5bit[i] = (yms16)iv;
+		out5bit[i] = (int16)iv;
 	}
 }
 
@@ -1382,21 +1371,21 @@ void AtariSTYMStream::initOnce() {
 	normalise5bitTable(&ymout5_u16[0][0][0], ymout5, 0x7fff);
 }
 
-AtariSTYMStream::ymu16 AtariSTYMStream::tonePer(ymu8 rHigh, ymu8 rLow) {
-	ymu16 per = (ymu16)(((ymu16)rHigh & 0x0f) << 8) | (ymu16)rLow;
+uint16 AtariSTYMStream::tonePer(uint8 rHigh, uint8 rLow) {
+	uint16 per = (uint16)(((uint16)rHigh & 0x0f) << 8) | (uint16)rLow;
 	return per;
 }
 
-AtariSTYMStream::ymu16 AtariSTYMStream::noisePer(ymu8 rNoise) {
-	return (ymu16)(rNoise & 0x1f);
+uint16 AtariSTYMStream::noisePer(uint8 rNoise) {
+	return (uint16)(rNoise & 0x1f);
 }
 
-AtariSTYMStream::ymu16 AtariSTYMStream::envPer(ymu8 rHigh, ymu8 rLow) {
-	return (ymu16)(((ymu16)rHigh << 8) | (ymu16)rLow);
+uint16 AtariSTYMStream::envPer(uint8 rHigh, uint8 rLow) {
+	return (uint16)(((uint16)rHigh << 8) | (uint16)rLow);
 }
 
-AtariSTYMStream::ymu32 AtariSTYMStream::rndCompute() {
-	ymu32 b = (((_rndRack >> 16) ^ (_rndRack >> 13)) & 1);
+uint32 AtariSTYMStream::rndCompute() {
+	uint32 b = (((_rndRack >> 16) ^ (_rndRack >> 13)) & 1);
 	_rndRack = (_rndRack >> 1) | (b << 16);
 	return (_rndRack & 1) ? 0xffff : 0;
 }
@@ -1441,7 +1430,7 @@ void AtariSTYMStream::reset() {
 	_YMBuffer250PosRead = 0;
 	_YMBuffer250PosWrite = 0;
 
-	for (int r = 0; r < 14; r++)
+	for (int r = 0; r < ARRAYSIZE(_soundRegs); r++)
 		writeReg(r, 0);
 }
 
@@ -1573,7 +1562,7 @@ void AtariSTYMStream::doSamples250(int samplesToGenerate250) {
 
 		if (_noiseCount >= _noisePer) {
 			_noiseCount = 0;
-			_noiseVal = (ymu16)rndCompute();
+			_noiseVal = (uint16)rndCompute();
 		}
 
 		_toneACount++;
@@ -1602,19 +1591,19 @@ void AtariSTYMStream::doSamples250(int samplesToGenerate250) {
 				_envPos -= 2 * 32;
 		}
 
-		ymu16 env3 = YmEnvWaves[_envShape][_envPos];
+		uint16 env3 = YmEnvWaves[_envShape][_envPos];
 		env3 &= _envMask3Voices;
 
-		ymu32 bt = ((ymu32)_toneAVal | _mixerTA) & ((ymu32)_noiseVal | _mixerNA);
-		ymu16 tone3 = (ymu16)(bt & YM_MASK_1VOICE);
+		uint32 bt = ((uint32)_toneAVal | _mixerTA) & ((uint32)_noiseVal | _mixerNA);
+		uint16 tone3 = (uint16)(bt & YM_MASK_1VOICE);
 
-		bt = ((ymu32)_toneBVal | _mixerTB) & ((ymu32)_noiseVal | _mixerNB);
-		tone3 |= (ymu16)((bt & YM_MASK_1VOICE) << 5);
+		bt = ((uint32)_toneBVal | _mixerTB) & ((uint32)_noiseVal | _mixerNB);
+		tone3 |= (uint16)((bt & YM_MASK_1VOICE) << 5);
 
-		bt = ((ymu32)_toneCVal | _mixerTC) & ((ymu32)_noiseVal | _mixerNC);
-		tone3 |= (ymu16)((bt & YM_MASK_1VOICE) << 10);
+		bt = ((uint32)_toneCVal | _mixerTC) & ((uint32)_noiseVal | _mixerNC);
+		tone3 |= (uint16)((bt & YM_MASK_1VOICE) << 10);
 
-		tone3 &= (ymu16)(env3 | _vol3Voices);
+		tone3 &= (uint16)(env3 | _vol3Voices);
 
 		_YMBuffer250[pos] = ymout5[(int)tone3];
 		pos = (pos + 1) & YM_BUFFER_250_SIZE_MASK;
@@ -1623,7 +1612,7 @@ void AtariSTYMStream::doSamples250(int samplesToGenerate250) {
 	_YMBuffer250PosWrite = pos;
 }
 
-AtariSTYMStream::ymsample AtariSTYMStream::nextSample() {
+int16 AtariSTYMStream::nextSample() {
 	const uint32 intervalFract = (uint32)(((uint64)YM_ATARI_CLOCK_COUNTER * 0x10000ULL) / (uint64)_rate);
 	int64 total = 0;
 
@@ -1660,7 +1649,7 @@ AtariSTYMStream::ymsample AtariSTYMStream::nextSample() {
 		total += ((int64)_YMBuffer250[_YMBuffer250PosRead]) * (int64)_posFractWeightedN;
 	}
 
-	return (ymsample)(total / (int64)intervalFract);
+	return (int16)(total / (int64)intervalFract);
 }
 
 AtariSTYMStream::AtariSTYMStream(Common::SeekableReadStream *stream, uint32 outputRate)
