@@ -133,14 +133,20 @@ MODULE_OBJS += \
 	insane/insane_enemy.o \
 	insane/insane_scenes.o \
 	insane/insane_iact.o \
-	insane/insane_rebel.o \
 	insane/insane_rebel1.o \
-	insane/insane_rebel_audio.o \
-	insane/insane_rebel_iact.o \
-	insane/insane_rebel_levels.o \
-	insane/insane_rebel_menu.o \
-	insane/insane_rebel_render.o \
-	insane/insane_rebel_runlevels.o \
+	insane/insane_rebel1_audio.o \
+	insane/insane_rebel1_iact.o \
+	insane/insane_rebel1_levels.o \
+	insane/insane_rebel1_menu.o \
+	insane/insane_rebel1_render.o \
+	insane/insane_rebel1_runlevels.o \
+	insane/insane_rebel2.o \
+	insane/insane_rebel2_audio.o \
+	insane/insane_rebel2_iact.o \
+	insane/insane_rebel2_levels.o \
+	insane/insane_rebel2_menu.o \
+	insane/insane_rebel2_render.o \
+	insane/insane_rebel2_runlevels.o \
 	smush/codec1.o \
 	smush/codec20.o \
 	smush/codec37.o \

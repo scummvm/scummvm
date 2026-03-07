@@ -52,7 +52,7 @@
 #include "scumm/smush/smush_player.h"
 #include "scumm/players/player_towns.h"
 #include "scumm/insane/insane.h"
-#include "scumm/insane/insane_rebel.h"
+#include "scumm/insane/insane_rebel2.h"
 #include "scumm/insane/insane_rebel1.h"
 #include "scumm/he/animation_he.h"
 #include "scumm/he/font_he.h"

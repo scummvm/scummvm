@@ -19,8 +19,8 @@
  *
  */
 
-#if !defined(SCUMM_INSANE_REBEL_H) && defined(ENABLE_SCUMM_7_8)
-#define SCUMM_INSANE_REBEL_H
+#if !defined(SCUMM_INSANE_REBEL2_H) && defined(ENABLE_SCUMM_7_8)
+#define SCUMM_INSANE_REBEL2_H
 
 #include "scumm/nut_renderer.h"
 
