@@ -1873,8 +1873,7 @@ void PelrockEngine::walkTo(int x, int y) {
 }
 
 void PelrockEngine::walkAndAction(HotSpot *hotspot, VerbIcon action) {
-	if(_currentHotspot == nullptr) {
-		debug("Error: walkAndAction called with null hotspot");
+	if(hotspot == nullptr) {
 		return;
 	}
 	_disableAction = true;
@@ -2610,7 +2609,6 @@ void PelrockEngine::credits() {
 	CursorMan.showMouse(false);
 
 	// Outer restart loop — keypress during display restarts from page 0
-	bool restart = false;
 	_alfredState.setState(ALFRED_SKIP_DRAWING);
 	_disableAmbientSounds = true;
 	_disableAction = true;
@@ -2679,7 +2677,7 @@ void PelrockEngine::credits() {
 				break;
 			}
 		}
-	} while (restart && !shouldQuit() && !keyPressed);
+	} while (!shouldQuit() && !keyPressed);
 
 	g_engine->quitGame();
 }

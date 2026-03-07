@@ -1761,10 +1761,10 @@ void PelrockEngine::useWigWithPot(int inventoryObject, HotSpot *hotspot) {
 }
 
 void PelrockEngine::magicFormula(int inventoryObject, HotSpot *hotspot) {
+	_state->removeInventoryItem(inventoryObject);
 	if(inventoryObject == 86) {
 		addInventoryItem(76);
 	}
-	_state->removeInventoryItem(inventoryObject);
 	_state->setFlag(FLAG_FORMULA_MAGICA, _state->getFlag(FLAG_FORMULA_MAGICA) + 1);
 	if (_state->getFlag(FLAG_FORMULA_MAGICA) == 4) {
 
