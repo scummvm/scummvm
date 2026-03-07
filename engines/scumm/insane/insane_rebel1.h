@@ -90,6 +90,9 @@ private:
 	// Returns true if level completed, false if player quit
 	bool runLevel1();
 
+	// Level 2 flow: NEW → INTRO → PLAY (asteroid dodge) → END/DEATH
+	bool runLevel2();
+
 	// Play a passive cinematic (no game callback, skippable)
 	// startFrame > 0: fast-forward (decode without display) to that frame
 	void playCinematic(const char *filename, int32 startFrame = 0);
@@ -103,6 +106,7 @@ private:
 	void renderHUD(byte *dst, int pitch, int width, int height);
 	void renderMainMenuOverlay(byte *dst, int pitch, int width, int height);
 	void renderExplosions(byte *dst, int pitch, int width, int height);
+	void renderCrosshair(byte *dst, int pitch, int width, int height);
 	void renderSprite(byte *dst, int pitch, int width, int height,
 					  int x, int y, const RA1Sprite &sprite);
 
@@ -154,9 +158,24 @@ private:
 	// Per-frame drift bias from GAME 0x07 field3
 	int16 _driftParam;
 
-	// Perspective view offsets
+	// Perspective view offsets (0x74B6/0x74B8: viewport scroll base)
 	int16 _perspectiveX;
 	int16 _perspectiveY;
+
+	// Input history buffers for 0x0B handler (FUN_1CDA7) — 10-frame averaging
+	static const int kInputHistorySize = 10;
+	int16 _inputHistoryX[kInputHistorySize];  // 0x7580: horizontal input history
+	int16 _inputHistoryY[kInputHistorySize];  // 0x7594: vertical input history
+	int16 _viewHistoryX[kInputHistorySize];   // 0x75A8: viewport horizontal history
+	int16 _viewHistoryY[kInputHistorySize];   // 0x75BC: viewport vertical history
+	int16 _avgInputX;    // smoothed horizontal input (clamped to [-0xA0, 0xA0])
+	int16 _avgInputY;    // smoothed vertical input (clamped to [-0x46, 0x41])
+
+	// 0x0B handler physics update (asteroid/surface levels)
+	void updateAsteroidPhysics();
+
+	// Current level index (0-based: 0=LVL1, 1=LVL2, etc.)
+	int _currentLevel;
 
 	// Control mode (from GAME opcode 0x5E)
 	int16 _flyControlMode;
@@ -170,8 +189,11 @@ private:
 		int16 lift;    // 0x1B1D: vertical speed/sensitivity
 		int16 slide;   // 0x1B1F: cross-axis coupling
 		int16 drift;   // 0x1B21: drift/turbulence multiplier
+		int16 snap;    // 0x1B23: hit radius for shooting targets
+		int16 miss;    // 0x1B25: obstacle collision damage (0x0B bit 0x40)
 		int16 wham;    // 0x1B27: light/wall damage
 		int16 shot;    // 0x1B29: heavy/projectile damage
+		int16 kill;    // 0x1B2B: score per target kill
 	};
 	TuningParams _tuning;
 
@@ -181,6 +203,7 @@ private:
 	int16 _health;               // 0x7560: current health (init=98, negative=dead, max=98)
 	int16 _lives;                // 0x7562: remaining extra lives
 	int _score;                  // 0x7564: current score
+	int _prevScore;              // 0x8288: previous score (for extra life bonus at 10k intervals)
 	byte _damageFlags;           // 0x74D4: per-frame collision bitmask (cleared each frame)
 	byte _prevDamageFlags;       // 0x74D6: previous frame's damage flags (for explosion direction)
 	uint16 _gameLatch5D;         // 0x75D2: GAME 0x5D latch (scene/obstacle/event trigger)

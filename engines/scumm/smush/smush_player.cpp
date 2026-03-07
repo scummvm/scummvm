@@ -53,6 +53,7 @@
 #include "audio/decoders/vorbis.h"
 
 #include "common/compression/deflate.h"
+#include "common/memstream.h"
 
 namespace Scumm {
 
@@ -1357,9 +1358,31 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 	}
 
 	while (frameSize > 0) {
-		const uint32 subType = b.readUint32BE();
-		const int32 subSize = b.readUint32BE();
-		const int32 subOffset = b.pos();
+		const int32 chunkStart = b.pos();
+		uint32 subType = b.readUint32BE();
+		int32 subSize = b.readUint32BE();
+		int32 subOffset = b.pos();
+
+		// RA1 workaround: some frames have missing padding bytes after
+		// odd-sized sub-chunks (authoring tool bug in 4 frames of L2PLAY.ANM).
+		// If the tag looks invalid, back up 1 byte and retry.
+		if (isRA1() && frameSize > 8) {
+			byte b0 = (subType >> 24) & 0xFF;
+			byte b1 = (subType >> 16) & 0xFF;
+			byte b2 = (subType >> 8) & 0xFF;
+			byte b3 = subType & 0xFF;
+			bool validTag = (b0 >= 0x20 && b0 <= 0x7E) && (b1 >= 0x20 && b1 <= 0x7E) &&
+			                (b2 >= 0x20 && b2 <= 0x7E) && (b3 >= 0x00 && b3 <= 0x7E);
+			if (!validTag) {
+				// Try 1 byte earlier (missing padding byte)
+				b.seek(chunkStart - 1, SEEK_SET);
+				subType = b.readUint32BE();
+				subSize = b.readUint32BE();
+				subOffset = b.pos();
+				frameSize++;
+				debugC(DEBUG_SMUSH, "SmushPlayer::handleFrame: RA1 realigned to %s at frame %d", tag2str(subType), _frame);
+			}
+		}
 
 		// RA2: When _skipNext is set, skip the NEXT chunk of ANY type
 		if (isRA2() && _skipNext) {
@@ -1453,6 +1476,77 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 		case MKTAG('P','S','D','2'):
 			debugC(DEBUG_SMUSH, "SmushPlayer::handleFrame: skipping RA1 chunk %s (%d bytes)", tag2str(subType), subSize);
 			break;
+		case MKTAG('O','B','J','\0'):
+			// RA1 object overlay chunk: variable-size header + embedded FOBJ
+			// sprites (including the cockpit overlay), GAME, and PSAD chunks.
+			// The reported size field is unreliable — remaining FRME data after
+			// OBJ\0 contains unstructured data between the reported end and
+			// subsequent sub-chunks. Read ALL remaining FRME data and scan for
+			// embedded sub-chunks, then stop frame parsing.
+			if (isRA1()) {
+				int32 objDataSize = frameSize - 8;
+				if (objDataSize > 0) {
+					byte *objBuf = (byte *)malloc(objDataSize);
+					b.read(objBuf, objDataSize);
+
+					int32 objPos = 0;
+					while (objPos + 8 < objDataSize) {
+						uint32 embTag = READ_BE_UINT32(objBuf + objPos);
+						uint32 embSize = READ_BE_UINT32(objBuf + objPos + 4);
+						int32 embRemaining = objDataSize - objPos - 8;
+
+						bool recognized = (embTag == MKTAG('F','O','B','J') ||
+						                   embTag == MKTAG('G','A','M','E') ||
+						                   embTag == MKTAG('P','S','A','D'));
+
+						if (!recognized || embSize > (uint32)embRemaining) {
+							// Not a recognized tag or size exceeds remaining data.
+							// Advance byte-by-byte through the OBJ header.
+							objPos++;
+							continue;
+						}
+
+						if (embTag == MKTAG('F','O','B','J') && embSize >= 14) {
+							Common::MemoryReadStream embStream(objBuf + objPos + 8, embSize);
+							handleFrameObject(embSize, embStream);
+
+							// Save the largest OBJ embedded FOBJ as the cockpit overlay
+							// to re-render every subsequent frame.
+							if (_ra1ObjOverlayData == nullptr ||
+							    (int32)embSize > _ra1ObjOverlayDataSize) {
+								free(_ra1ObjOverlayData);
+								_ra1ObjOverlayDataSize = embSize;
+								_ra1ObjOverlayData = (byte *)malloc(embSize);
+								memcpy(_ra1ObjOverlayData, objBuf + objPos + 8, embSize);
+								// Parse FOBJ header for codec/position/size
+								_ra1ObjOverlayCodec = objBuf[objPos + 8] & 0xFF;
+								_ra1ObjOverlayLeft = (int16)READ_LE_UINT16(objBuf + objPos + 10);
+								_ra1ObjOverlayTop = (int16)READ_LE_UINT16(objBuf + objPos + 12);
+								_ra1ObjOverlayWidth = READ_LE_UINT16(objBuf + objPos + 14);
+								_ra1ObjOverlayHeight = READ_LE_UINT16(objBuf + objPos + 16);
+							}
+						} else if (embTag == MKTAG('G','A','M','E')) {
+							Common::MemoryReadStream embStream(objBuf + objPos + 8, embSize);
+							InsaneRebel1 *rebel1 = (InsaneRebel1 *)_vm->_insane;
+							rebel1->handleGameChunk(embSize, embStream);
+						} else if (embTag == MKTAG('P','S','A','D')) {
+							if (!_compressedFileMode && _fastForwardToFrame == 0) {
+								uint8 *audioBuf = (uint8 *)malloc(embSize + 8);
+								memcpy(audioBuf, objBuf + objPos, embSize + 8);
+								feedAudio(audioBuf, 0, 127, 0, 0);
+								free(audioBuf);
+							}
+						}
+
+						objPos += 8 + embSize;
+						if (embSize & 1) objPos++;
+					}
+					free(objBuf);
+				}
+				frameSize = 0;
+				continue;
+			}
+			break;
 		default:
 			error("Unknown frame subChunk found : %s, %d", tag2str(subType), subSize);
 		}
@@ -1463,6 +1557,13 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 			b.skip(1);
 			frameSize--;
 		}
+	}
+
+	// RA1: Re-render saved OBJ cockpit overlay every frame (drawn once in
+	// frame 0's OBJ chunk, then scene FOBJs overwrite it each frame).
+	if (isRA1() && _ra1ObjOverlayData != nullptr && _frame > 0) {
+		Common::MemoryReadStream overlayStream(_ra1ObjOverlayData, _ra1ObjOverlayDataSize);
+		handleFrameObject(_ra1ObjOverlayDataSize, overlayStream);
 	}
 
 	if (_insanity) {

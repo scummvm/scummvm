@@ -51,13 +51,22 @@ static const int16 kFocalY = 25;    // 0x19
 
 // Per-difficulty tuning tables from assault_data_3.bin
 // Indexed: difficulty * 0x28B + level * 0x1F + offset
-// Level 1 values (level index 0):
-//                                roll  lift  slide drift wham  shot
-static const int16 kTuningLevel1[3][6] = {
-	{ 100, 100,  60, 110,  15,   0 },  // Easy
-	{ 100, 105,  60, 115,  25,   0 },  // Normal
-	{ 105, 110,  65, 120,  30,   0 },  // Hard
+// Fields: roll, lift, slide, drift, snap, miss, wham, shot, kill
+static const int16 kTuningTable[2][3][9] = {
+	// Level 1 (Flight Training)
+	{
+		{ 100, 100,  60, 110,   0,   0,  15,   0,   0 },  // Easy
+		{ 100, 105,  60, 115,   0,   0,  25,   0,   0 },  // Normal
+		{ 105, 110,  65, 120,   0,   0,  30,   0,   0 },  // Hard
+	},
+	// Level 2 (Asteroid Field Training)
+	{
+		{ 100,  16, 120,   0,   7,   0,  15,   0,  25 },  // Easy
+		{ 100,  18, 120,   0,   5,   0,  20,   0,  50 },  // Normal
+		{ 100,  20, 150,   0,   1,   0,  25,   0,  75 },  // Hard
+	},
 };
+static const int kNumTunedLevels = 2;
 
 // Decode BOMP RLE (codec 21) sprite data into a flat pixel buffer.
 // Same algorithm as NutRenderer::codec21 but without palette tracking.
@@ -89,16 +98,19 @@ static void decodeBomp(byte *dst, const byte *src, int width, int height, int pi
 
 void InsaneRebel1::loadTuningForLevel(int level) {
 	int d = CLIP(_difficulty, 0, 2);
-	// Currently only Level 1 tuning is hardcoded; extend for other levels later
-	(void)level;
-	_tuning.roll  = kTuningLevel1[d][0];
-	_tuning.lift  = kTuningLevel1[d][1];
-	_tuning.slide = kTuningLevel1[d][2];
-	_tuning.drift = kTuningLevel1[d][3];
-	_tuning.wham  = kTuningLevel1[d][4];
-	_tuning.shot  = kTuningLevel1[d][5];
-	debug(1, "RA1: Loaded tuning for difficulty %d: roll=%d lift=%d slide=%d drift=%d wham=%d shot=%d",
-		d, _tuning.roll, _tuning.lift, _tuning.slide, _tuning.drift, _tuning.wham, _tuning.shot);
+	int l = CLIP(level, 0, kNumTunedLevels - 1);
+	_tuning.roll  = kTuningTable[l][d][0];
+	_tuning.lift  = kTuningTable[l][d][1];
+	_tuning.slide = kTuningTable[l][d][2];
+	_tuning.drift = kTuningTable[l][d][3];
+	_tuning.snap  = kTuningTable[l][d][4];
+	_tuning.miss  = kTuningTable[l][d][5];
+	_tuning.wham  = kTuningTable[l][d][6];
+	_tuning.shot  = kTuningTable[l][d][7];
+	_tuning.kill  = kTuningTable[l][d][8];
+	debug(1, "RA1: Loaded tuning level=%d diff=%d: roll=%d lift=%d slide=%d snap=%d miss=%d wham=%d shot=%d kill=%d",
+		level, d, _tuning.roll, _tuning.lift, _tuning.slide, _tuning.snap, _tuning.miss,
+		_tuning.wham, _tuning.shot, _tuning.kill);
 }
 
 InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
@@ -126,11 +138,20 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_perspectiveX = 0;
 	_perspectiveY = 0;
 
+	memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
+	memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
+	memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
+	memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
+	_avgInputX = 0;
+	_avgInputY = 0;
+
+	_currentLevel = 0;
 	_flyControlMode = 0;
 
 	_health = kMaxHealth;
 	_lives = 3;
 	_score = 0;
+	_prevScore = 0;
 	_damageFlags = 0;
 	_prevDamageFlags = 0;
 	_gameLatch5D = 0;
@@ -562,12 +583,19 @@ bool InsaneRebel1::loadRA1Nut(const char *filename, RA1SpriteBank &bank) {
 }
 
 void InsaneRebel1::loadLevelSprites(int level) {
-	Common::String filename = Common::String::format("LVL%d/L%dBANK1.NUT", level, level);
-	loadRA1Nut(filename.c_str(), _shipBank);
+	// Ship direction bank — not all levels have one (e.g. Level 2 is first-person)
+	Common::String bankFile = Common::String::format("LVL%d/L%dBANK1.NUT", level, level);
+	if (!loadRA1Nut(bankFile.c_str(), _shipBank)) {
+		debug(1, "InsaneRebel1: No BANK1 for level %d (first-person level)", level);
+	}
 	loadRA1Nut("SYS/DISPLAY.NUT", _displayBank);
 
+	// Explosion sprites — try BANG first, then EXPLD
 	Common::String bangFile = Common::String::format("LVL%d/L%dBANG.NUT", level, level);
-	loadRA1Nut(bangFile.c_str(), _bangBank);
+	if (!loadRA1Nut(bangFile.c_str(), _bangBank)) {
+		Common::String expldFile = Common::String::format("LVL%d/L%dEXPLD.NUT", level, level);
+		loadRA1Nut(expldFile.c_str(), _bangBank);
+	}
 }
 
 void InsaneRebel1::procPreRendering(byte *renderBitmap) {
@@ -584,7 +612,7 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		renderMainMenuOverlay(renderBitmap, pitch, width, height);
 	}
 
-	if (!_interactiveVideoActive || _shipBank.numSprites == 0 || !renderBitmap)
+	if (!_interactiveVideoActive || !renderBitmap)
 		return;
 
 	int width = _player->_width;
@@ -593,10 +621,64 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	if (height == 0) height = _screenHeight;
 	int pitch = width;
 
-	updateShipPhysics();
-	renderShip(renderBitmap, pitch, width, height);
+	if (_currentLevel == 1) {
+		// Level 2: first-person asteroid dodge — no ship sprite, input averaging physics
+		updateAsteroidPhysics();
+	} else {
+		// Level 1 (and others): third-person ship flight with accumulators
+		if (_shipBank.numSprites > 0) {
+			updateShipPhysics();
+			renderShip(renderBitmap, pitch, width, height);
+		}
+	}
 	renderExplosions(renderBitmap, pitch, width, height);
+	renderCrosshair(renderBitmap, pitch, width, height);
 	renderHUD(renderBitmap, pitch, width, height);
+}
+
+// Draw crosshair/pointer at mouse position into the render buffer.
+// The original DOS game uses the INT 33h hardware mouse cursor (a red crosshair).
+// We replicate it by drawing a red cross into the render buffer each frame.
+void InsaneRebel1::renderCrosshair(byte *dst, int pitch, int width, int height) {
+	int cx = _vm->_mouse.x;
+	int cy = _vm->_mouse.y;
+
+	// Palette index 119 = (255,0,0) pure red in L2PLAY.ANM palette.
+	// Palette index 15 = (255,255,255) white, used as outline for visibility.
+	const byte colorInner = 119;
+	const byte colorOutline = 15;
+	const int size = 7;  // arm length
+
+	// Helper lambda to draw a pixel with outline
+	auto drawPx = [&](int x, int y, byte c) {
+		if (x >= 0 && x < width && y >= 0 && y < height)
+			dst[y * pitch + x] = c;
+	};
+
+	// Draw outline first (1px border around each arm pixel)
+	for (int d = -size; d <= size; d++) {
+		if (d >= -1 && d <= 1) continue; // skip center area for outline
+		// Horizontal arm outline
+		drawPx(cx + d, cy - 1, colorOutline);
+		drawPx(cx + d, cy + 1, colorOutline);
+		// Vertical arm outline
+		drawPx(cx - 1, cy + d, colorOutline);
+		drawPx(cx + 1, cy + d, colorOutline);
+	}
+	// Arm endpoints
+	drawPx(cx - size - 1, cy, colorOutline);
+	drawPx(cx + size + 1, cy, colorOutline);
+	drawPx(cx, cy - size - 1, colorOutline);
+	drawPx(cx, cy + size + 1, colorOutline);
+
+	// Draw red cross arms
+	for (int d = -size; d <= size; d++) {
+		if (d == 0) continue; // gap at center
+		drawPx(cx + d, cy, colorInner);  // horizontal
+		drawPx(cx, cy + d, colorInner);  // vertical
+	}
+	// Center dot
+	drawPx(cx, cy, colorInner);
 }
 
 void InsaneRebel1::drawFontBankString(byte *dst, int pitch, int width, int height, int x, int y, const char *text) {
@@ -1012,6 +1094,101 @@ void InsaneRebel1::updateShipPhysics() {
 		_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY);
 }
 
+// Level 2+ asteroid/surface physics (FUN_1CDA7).
+// Uses 10-frame input history averaging instead of accumulators.
+// Ship position = averaged input + center offset.
+// Viewport = second history buffer for smooth camera scrolling.
+void InsaneRebel1::updateAsteroidPhysics() {
+	// Health regeneration (FUN_1BB0E): +1 every 32 frames when alive
+	if (_health >= 0 && _health < kMaxHealth && (_frameCounter & 0x1F) == 0) {
+		_health++;
+	}
+
+	// Damage application (FUN_1CDA7 lines 20-41)
+	// No cooldown — all three damage types can stack each frame
+	if (_damageFlags != 0 && _health >= 0 && _deathTimer < 1) {
+		_screenFlash = 5;
+		if (_damageFlags & 0x80)
+			_health -= _tuning.shot;
+		if (_damageFlags & 0x40)
+			_health -= _tuning.miss;
+		if (_damageFlags & 0x20)
+			_health -= _tuning.wham;
+		if (_health < 0) {
+			_deathTimer = 15;  // 0x0F — shorter than Level 1's 30
+		}
+		_damageFlags = 0;
+	}
+
+	// Death fade countdown
+	if (_deathTimer > 1 && _health < 0) {
+		_deathTimer--;
+	}
+
+	// Screen flash countdown
+	if (_screenFlash > 0) {
+		_screenFlash--;
+	}
+
+	// Input history shift and averaging (FUN_1CDA7 lines 107-131)
+	// Shift history: [9] = [8], [8] = [7], ... [1] = [0], [0] = current input
+	for (int i = kInputHistorySize - 1; i > 0; i--) {
+		_inputHistoryX[i] = _inputHistoryX[i - 1];
+		_inputHistoryY[i] = _inputHistoryY[i - 1];
+	}
+
+	// Read current mouse input (mapped to -160..+160 range)
+	int mouseX = 0, mouseY = 0;
+	if (_vm->_mouse.x >= 0) {
+		mouseX = CLIP<int>(_vm->_mouse.x - kCenterX, -kCenterX, kCenterX);
+		mouseY = CLIP<int>(_vm->_mouse.y - kCenterY, -kCenterY, kCenterY);
+	}
+	_inputHistoryX[0] = (int16)mouseX;
+	_inputHistoryY[0] = (int16)mouseY;
+
+	// Average over 10 frames
+	int16 sumX = 0, sumY = 0;
+	for (int i = 0; i < kInputHistorySize; i++) {
+		sumX += _inputHistoryX[i];
+		sumY -= _inputHistoryY[i]; // original negates Y: sVar5 = sVar5 - history[i]
+	}
+	_avgInputX = (int16)(sumX / kInputHistorySize);
+	_avgInputY = (int16)(sumY / kInputHistorySize);
+
+	// Clamp (original: [-0xA0, 0xA0] horizontal, [-0x46, 0x41] vertical)
+	_avgInputX = CLIP<int16>(_avgInputX, -0xA0, 0xA0);
+	_avgInputY = CLIP<int16>(_avgInputY, -0x46, 0x41);
+
+	// Ship position = average + center offset
+	// Original: _74BE = _75A8 + 0xA0, _74C0 = _75BC + 0x46
+	_shipPosX = _avgInputX + 0xA0;
+	_shipPosY = _avgInputY + 0x46;
+
+	// Viewport history shift and averaging (FUN_1CDA7 lines 134-157)
+	for (int i = kInputHistorySize - 1; i > 0; i--) {
+		_viewHistoryX[i] = _viewHistoryX[i - 1];
+		_viewHistoryY[i] = _viewHistoryY[i - 1];
+	}
+	_viewHistoryX[0] = _avgInputX;
+	_viewHistoryY[0] = _avgInputY;
+
+	int16 viewSumX = 0, viewSumY = 0;
+	for (int i = 0; i < kInputHistorySize; i++) {
+		viewSumX += _viewHistoryX[i];
+		viewSumY += _viewHistoryY[i];
+	}
+	// Original: _74B6 = (viewAvgX >> 1) + 0x20, clamped [0, 0x40]
+	// Original: _74B8 = (viewAvgY >> 1) + 0x17, clamped [0, 0x2E]
+	_perspectiveX = CLIP<int16>((int16)(viewSumX / kInputHistorySize >> 1) + 0x20, 0, 0x40);
+	_perspectiveY = CLIP<int16>((int16)(viewSumY / kInputHistorySize >> 1) + 0x17, 0, 0x2E);
+
+	_frameCounter++;
+
+	debug(7, "RA1 asteroid: pos=(%d,%d) avg=(%d,%d) view=(%d,%d) health=%d flash=%d",
+		_shipPosX, _shipPosY, _avgInputX, _avgInputY,
+		_perspectiveX, _perspectiveY, _health, _screenFlash);
+}
+
 void InsaneRebel1::renderShip(byte *dst, int pitch, int width, int height) {
 	// From FUN_1DEB5 LAB_1e2b2: ship drawn when health >= 0 OR deathTimer > 20
 	// Hidden during last 20 frames of death sequence (deathTimer 20→0)
@@ -1097,6 +1274,12 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 	if (_displayBank.numSprites == 0)
 		return;
 
+	// Extra life bonus: every 10,000 points (FUN_1BBCB lines 11-27)
+	if (_score / 10000 > _prevScore / 10000) {
+		_lives++;
+	}
+	_prevScore = _score;
+
 	const RA1Sprite &bar = _displayBank.sprites[0];
 
 	// DISPLAY.NUT sprite is 320×19 at xoffs=0, yoffs=176 in the original game.
@@ -1139,13 +1322,14 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 		int fillW = CLIP(healthWidth, 0, barMaxW);
 
 		// Color based on damage level (matching original thresholds from FUN_1BBCB)
+		// Palette indices: 0xD0-0xD7 = greens, 0x60-0x67 = yellows, 0xD8-0xDF = reds
 		byte barColor;
 		if (_health > _tuning.shot * 2)
-			barColor = 0xA0;  // Green — low damage
+			barColor = 0xD5;  // Green (0,192,0) — low damage
 		else if (_health > _tuning.wham * 2)
-			barColor = 0x2C;  // Yellow — moderate damage
+			barColor = 0x63;  // Yellow (255,255,31) — moderate damage
 		else
-			barColor = 0x30;  // Red — critical
+			barColor = 0xDD;  // Red (192,0,0) — critical
 
 		// Flash effect on damage
 		if (_screenFlash > 0)
@@ -1159,15 +1343,29 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 		}
 	}
 
-	// Draw lives and score from DISPLAY.NUT glyphs.
-	if (_hudFontBank.numSprites > 0) {
-		char livesStr[8];
-		Common::sprintf_s(livesStr, "%d", MAX<int>(_lives, 0));
-		drawFontBankString(dst, pitch, width, height, hudX + 180, hudY + 6, livesStr);
+	// Lives: black out excess pilot icons embedded in DISPLAY.NUT background.
+	// Original FUN_1BBCB: FUN_21D66(buf, lives*10+186, 6, 51-lives*10, 9, 0, 320)
+	// Icons are 5 slots at x=186..236, each ~10px wide. Cover unused slots with black.
+	if (_lives >= 0 && _lives < 5) {
+		int coverX = hudX + _lives * 10 + 186;
+		int coverY = hudY + 6;
+		int coverW = 51 - _lives * 10;
+		int coverH = 9;
+		if (coverX >= 0 && coverY >= 0) {
+			for (int iy = 0; iy < coverH && coverY + iy < height; iy++) {
+				byte *d = dst + (coverY + iy) * pitch + coverX;
+				for (int ix = 0; ix < coverW && coverX + ix < width; ix++) {
+					d[ix] = 0x00;
+				}
+			}
+		}
+	}
 
+	// Score: 6-digit zero-padded at x=273, y=5 (original format '<<%%06ld' at 0x111,5)
+	if (_hudFontBank.numSprites > 0) {
 		char scoreStr[16];
-		Common::sprintf_s(scoreStr, "%07d", MAX<int>(_score, 0));
-		drawFontBankString(dst, pitch, width, height, hudX + 257, hudY + 4, scoreStr);
+		Common::sprintf_s(scoreStr, "%06d", MAX<int>(_score, 0));
+		drawFontBankString(dst, pitch, width, height, hudX + 273, hudY + 5, scoreStr);
 	}
 
 }
@@ -1230,6 +1428,12 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 		_liftSmooth = 0;
 		_posAccumX = 0;
 		_posAccumY = 0;
+		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
+		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
+		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
+		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
+		_avgInputX = 0;
+		_avgInputY = 0;
 
 		// Field1 == 0 corresponds to baseline recenter behavior in the original.
 		if ((int32)param1 == 0) {
@@ -1301,7 +1505,19 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 		}
 		break;
 
-	case 0x08: case 0x09: case 0x0A: case 0x0B:
+	case 0x0B:
+		// Asteroid/surface per-frame handler (FUN_1CDA7).
+		// field1 = frame counter, field2 = max frames
+		_gameCounter = param1;
+		if (subSize >= 20) {
+			b.readUint32BE(); // field2 (max frames)
+			b.readUint32BE(); // field3
+			b.readUint32BE(); // field4
+		}
+		debug(7, "RA1 GAME 0x0B: counter=%d", _gameCounter);
+		break;
+
+	case 0x08: case 0x09: case 0x0A:
 	case 0x19: case 0x1A:
 		if (subSize >= 20) {
 			uint32 param2 = b.readUint32BE();
@@ -1544,6 +1760,69 @@ bool InsaneRebel1::runLevel1() {
 	return false;
 }
 
+// Level 2: Asteroid Field Training
+// Flow: L2NEW → L2INTRO → L2PLAY (interactive) → L2END/L2DEATH
+bool InsaneRebel1::runLevel2() {
+	debug(1, "InsaneRebel1: Running level 2");
+
+	_currentLevel = 1;
+	loadLevelSprites(2);
+	loadTuningForLevel(1);
+
+	// L2INTRO.ANM — intro cutscene (481 frames)
+	playCinematic("LVL2/L2INTRO.ANM");
+	if (_vm->shouldQuit())
+		return false;
+
+	// Retry loop
+	while (!_vm->shouldQuit()) {
+		// Reset state for this attempt
+		_health = kMaxHealth;
+		_damageFlags = 0;
+		_prevDamageFlags = 0;
+		_damageCooldown = 0;
+		_deathTimer = 0;
+		_screenFlash = 0;
+		_frameCounter = 0;
+		_gameCounter = 0;
+		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
+		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
+		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
+		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
+		_avgInputX = 0;
+		_avgInputY = 0;
+
+		// L2PLAY.ANM — asteroid dodge (800 frames, interactive)
+		playInteractiveVideo("LVL2/L2PLAY.ANM");
+		if (_vm->shouldQuit())
+			return false;
+
+		if (_health >= 0) {
+			// Level complete!
+			playCinematic("LVL2/L2END.ANM");
+			return true;
+		}
+
+		// Death
+		playCinematic("LVL2/L2DEATH.ANM");
+		if (_vm->shouldQuit())
+			return false;
+
+		_lives--;
+		if (_lives <= 0) {
+			debug(1, "InsaneRebel1: Game over (no lives left)");
+			return false;
+		}
+
+		// Retry briefing
+		playCinematic("LVL2/L2NEW.ANM");
+		if (_vm->shouldQuit())
+			return false;
+	}
+
+	return false;
+}
+
 // Main game entry point — called from ScummEngine::go().
 // Matches original flow at 0x15597: intro → menu → level.
 void InsaneRebel1::runGame() {
@@ -1560,16 +1839,24 @@ void InsaneRebel1::runGame() {
 
 		switch (menuResult) {
 		case 1: {
+#if 0 // Skip level 1 for testing — jump straight to level 2
 			// Start New Game — play L1NEW briefing then level 1
 			playCinematic("LVL1/L1NEW.ANM");
 			if (_vm->shouldQuit())
 				return;
 
 			bool completed = runLevel1();
-			if (completed) {
-				debug(1, "InsaneRebel1: Level 1 completed!");
-				// TODO: Continue to level 2
+#else
+			bool completed = true;
+#endif
+			if (completed && !_vm->shouldQuit()) {
+				completed = runLevel2();
+				if (completed) {
+					debug(1, "InsaneRebel1: Level 2 completed!");
+					// TODO: Continue to level 3
+				}
 			}
+			_currentLevel = 0;
 			// Return to menu after level ends
 			break;
 		}
@@ -1602,7 +1889,7 @@ void InsaneRebel1::playInteractiveVideo(const char *filename) {
 	_vm->_smushVideoShouldFinish = false;
 	splayer->setCurVideoFlags(0x28);
 
-	// Center mouse, hide cursor, and lock mouse to window (like RA2 flight)
+	// Center mouse, hide system cursor (we draw our own), lock mouse to window
 	smush_warpMouse(160, 100, -1);
 	CursorMan.showMouse(false);
 	g_system->lockMouse(true);
