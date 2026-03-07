@@ -170,6 +170,16 @@ private:
 	int _storedFobjWidth;
 	int _storedFobjHeight;
 
+	// RA1: OBJ\0 embedded cockpit overlay FOBJ — drawn once in frame 0,
+	// saved here and re-rendered every subsequent frame after scene FOBJs.
+	byte *_ra1ObjOverlayData;
+	int32 _ra1ObjOverlayDataSize;
+	int _ra1ObjOverlayCodec;
+	int _ra1ObjOverlayLeft;
+	int _ra1ObjOverlayTop;
+	int _ra1ObjOverlayWidth;
+	int _ra1ObjOverlayHeight;
+
 	// RA2: Most recently decoded FOBJ in the current frame, used by GOST chunks
 	// to re-render the same sprite payload at a different position.
 	byte *_lastFobjData;

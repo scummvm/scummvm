@@ -73,6 +73,13 @@ void SmushPlayer::ra2InitFields() {
 	_lastFobjWidth = 0;
 	_lastFobjHeight = 0;
 	_hasFrameFobjForGost = false;
+	_ra1ObjOverlayData = nullptr;
+	_ra1ObjOverlayDataSize = 0;
+	_ra1ObjOverlayCodec = 0;
+	_ra1ObjOverlayLeft = 0;
+	_ra1ObjOverlayTop = 0;
+	_ra1ObjOverlayWidth = 0;
+	_ra1ObjOverlayHeight = 0;
 	_skipNext = false;
 	_ra2FastForwarding = false;
 	_fobjOffsetX = 0;
@@ -100,6 +107,8 @@ void SmushPlayer::ra2DestroyFields() {
 	_lastFobjData = nullptr;
 	free(_loadBuffer);
 	_loadBuffer = nullptr;
+	free(_ra1ObjOverlayData);
+	_ra1ObjOverlayData = nullptr;
 }
 
 /**
@@ -144,6 +153,9 @@ void SmushPlayer::ra2ReleaseVideo() {
 	free(_lastFobjData);
 	_lastFobjData = nullptr;
 	_lastFobjDataSize = 0;
+	free(_ra1ObjOverlayData);
+	_ra1ObjOverlayData = nullptr;
+	_ra1ObjOverlayDataSize = 0;
 	_hasFrameFobjForGost = false;
 	// Preserve _frameBuffer across videos so that gameplay videos (which have no
 	// background FOBJ) can use the stored background from the previous BEG video.
