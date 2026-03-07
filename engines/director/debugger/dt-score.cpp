@@ -1289,7 +1289,9 @@ void showChannels() {
 				ImGui::TableNextColumn();
 
 				bool isSelected = (_state->_selectedChannel == i + 1);
-				if (ImGui::Selectable(Common::String::format("%-3d", i + 1).c_str(), isSelected, ImGuiSelectableFlags_SpanAllColumns)) {
+				int numLines = (score->_version >= kFileVer600) ? MAX<int>(1, sprite._behaviors.size()) : 1;
+				float rowHeight = (ImGui::GetTextLineHeightWithSpacing() * numLines) + (ImGui::GetStyle().CellPadding.y * 2);
+				if (ImGui::Selectable(Common::String::format("%-3d", i + 1).c_str(), isSelected, ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap, ImVec2(0, rowHeight))) {
 					if (isSelected) {
 						_state->_selectedChannel = -1;
 					 } else {
