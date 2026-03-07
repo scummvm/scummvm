@@ -1131,7 +1131,7 @@ void BoltEngine::setFredAnimMode(FredEntityState *state, int16 mode) {
 		int16 typeIdx = mode - 0x0B;
 		state->animTable = getResolvedPtr(g_fredBalloonSprite, typeIdx * 4);
 		state->frameIndex = 0;
-		state->frameCountdown = READ_UINT16(g_fredBalloonSprite + typeIdx * 4 + 4);
+		state->frameCountdown = READ_UINT16(state->animTable + 4);
 		return;
 	}
 
@@ -1144,12 +1144,10 @@ void BoltEngine::setFredAnimMode(FredEntityState *state, int16 mode) {
 
 	// Standard Fred animation...
 	state->animMode = mode;
-
-	byte *animTable = g_fredSprites[mode];
-	state->animTable = animTable;
+	state->animTable = g_fredSprites[mode];
 
 	state->frameIndex = 0;
-	state->frameCountdown = READ_UINT16(animTable + 4);
+	state->frameCountdown = READ_UINT16(state->animTable + 4);
 
 	// Play sound based on mode...
 	switch (mode) {
