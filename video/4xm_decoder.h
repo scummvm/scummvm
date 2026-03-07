@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/ptr.h"
 #include "video/video_decoder.h"
 
 namespace Video {
@@ -50,7 +51,7 @@ private:
 
 	uint32 _dataRate = 0;
 	Common::Rational _frameRate;
-	Common::SeekableReadStream *_stream;
+	Common::ScopedPtr<Common::SeekableReadStream> _stream;
 	Common::Array<Frame> _frames;
 	uint _curFrame = 0;
 	FourXMVideoTrack *_video = nullptr;

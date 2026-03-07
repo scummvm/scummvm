@@ -337,7 +337,7 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 		warning("can't load movie %s", movie.c_str());
 		return;
 	}
-	if (dec.loadStream(stream.get())) {
+	if (dec.loadStream(stream.release())) {
 		dec.start();
 
 		bool playing = true;
