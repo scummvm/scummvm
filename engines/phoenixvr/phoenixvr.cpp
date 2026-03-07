@@ -369,11 +369,11 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 					break;
 				}
 			}
-			if (dec->hasDirtyPalette()) {
-				palette.reset(new Graphics::Palette(dec->getPalette(), 256));
-			}
 			if (dec->needsUpdate()) {
 				auto *s = dec->decodeNextFrame();
+				if (dec->hasDirtyPalette()) {
+					palette.reset(new Graphics::Palette(dec->getPalette(), 256));
+				}
 				if (s) {
 					if (!s->format.isCLUT8() || palette)
 						_screen->simpleBlitFrom(*s, Graphics::FLIP_NONE, false, 0xff, palette.get());
