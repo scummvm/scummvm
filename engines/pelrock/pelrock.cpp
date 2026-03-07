@@ -2605,10 +2605,22 @@ void PelrockEngine::credits() {
 	static const int kFramesPerPage = 45;
 
 	Common::Array<Common::StringArray> creditTexts = _res->getCredits();
+	Common::Array<int> creditsSpeakerId;
+	// Preprocess credit texts: extract speaker IDs and apply word wrapping
+	for(int i = 0; i < creditTexts.size(); i++) {
+		byte speakerId;
+		_dialog->processColorAndTrim(creditTexts[i], speakerId);
+		creditsSpeakerId.push_back(speakerId);
+		// Text is already encoded for new lines but should also be wrapped to respect the max chars per line!
+		creditTexts[i] = _dialog->wordWrap(creditTexts[i])[0];
+		// all lines start with a space but the first one contains the trailing space of the speakerId
+		creditTexts[i][0] = creditTexts[i][0].substr(1, creditTexts[i][0].size() - 1);
+	}
 
 	CursorMan.showMouse(false);
 
 	// Outer restart loop — keypress during display restarts from page 0
+
 	_alfredState.setState(ALFRED_SKIP_DRAWING);
 	_disableAmbientSounds = true;
 	_disableAction = true;
@@ -2621,14 +2633,6 @@ void PelrockEngine::credits() {
 				Sprite *pigeons = _room->findSpriteByIndex(1);
 				pigeons->disableAfterSequence = true;
 			}
-
-			byte speakerId;
-			_dialog->processColorAndTrim(creditTexts[page], speakerId);
-
-			// Text is already encoded for new lines but should also be wrapped to respect the max chars per line!
-			creditTexts[page] = _dialog->wordWrap(creditTexts[page])[0];
-			// all lines start with a space but the first one contains the trailing space of the speakerId
-			creditTexts[page][0] = creditTexts[page][0].substr(1, creditTexts[page][0].size() - 1);
 
 			int height = creditTexts[page].size() * 25; // Add some padding
 
@@ -2651,7 +2655,7 @@ void PelrockEngine::credits() {
 				// subtract that extra negative identation
 				int xPos = i == creditTexts[page].size() - 1 ? startX - 10 : startX;
 				int yPos = i * 25; // Above sprite, adjust for line
-				g_engine->_largeFont->drawString(&s, creditTexts[page][i], xPos, yPos, 640, speakerId, Graphics::kTextAlignLeft);
+				g_engine->_largeFont->drawString(&s, creditTexts[page][i], xPos, yPos, 640, creditsSpeakerId[page], Graphics::kTextAlignLeft);
 			}
 
 			int frames = 0;
