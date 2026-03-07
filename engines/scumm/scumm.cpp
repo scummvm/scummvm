@@ -2768,6 +2768,11 @@ Common::Error ScummEngine::go() {
 					int selectedLevel = rebel->_selectedChapter + 1;
 					debug("ScummEngine: Starting chapter %d (level %d)", rebel->_selectedChapter + 1, selectedLevel);
 
+					// Ending selected directly from chapter select (FUN_0041bbe8, case 0xf)
+					if (selectedLevel == 16) {
+						rebel->playEndingSequence();
+					}
+
 					// Level progression loop: on success, advance to next level
 					// Original game chains levels directly (e.g. FUN_0040598c(FUN_00418063,0))
 					while (!shouldQuit() && selectedLevel >= 1 && selectedLevel <= 15) {
@@ -2778,8 +2783,8 @@ Common::Error ScummEngine::go() {
 								rebel->_playerScore, rebel->_playerLives, rebel->_playerDamage);
 							selectedLevel++;
 							if (selectedLevel > 15) {
-								// Beat the game — play credits
-								rebel->playCreditsSequence();
+								// Beat the game — play ending sequence (FUN_0041bbe8)
+								rebel->playEndingSequence();
 								break;
 							}
 						} else {
