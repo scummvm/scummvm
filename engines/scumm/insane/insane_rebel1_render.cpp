@@ -264,6 +264,13 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		// Level 1 (and others): third-person ship flight with accumulators
 		if (_shipBank.numSprites > 0) {
 			updateShipPhysics();
+			// LVL1 assembly flow exits gameplay loops as soon as health drops below 0
+			// (see 0x1626E/0x162EE -> 0x165DD and 0x1640B -> 0x16614), then plays crash video.
+			// Do not render the in-engine death overlay in this path; finish immediately.
+			if (_currentLevel == 0 && _health < 0) {
+				_vm->_smushVideoShouldFinish = true;
+				return;
+			}
 			renderShip(renderBitmap, pitch, width, height);
 		}
 	}
