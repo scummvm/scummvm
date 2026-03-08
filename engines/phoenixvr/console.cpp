@@ -27,6 +27,7 @@ namespace PhoenixVR {
 Console::Console() : GUI::Debugger() {
 	registerCmd("warp", WRAP_METHOD(Console, cmdWarp));
 	registerCmd("script", WRAP_METHOD(Console, cmdScript));
+	registerCmd("stop_all_sounds", WRAP_METHOD(Console, cmdStopAllSounds));
 }
 
 Console::~Console() {
@@ -34,7 +35,7 @@ Console::~Console() {
 
 bool Console::cmdWarp(int argc, const char **argv) {
 	if (argc < 2) {
-		debugPrintf("warp <location.vr>");
+		debugPrintf("warp <location.vr>\n");
 		return true;
 	}
 	g_engine->goToWarp(argv[1]);
@@ -43,10 +44,15 @@ bool Console::cmdWarp(int argc, const char **argv) {
 
 bool Console::cmdScript(int argc, const char **argv) {
 	if (argc < 2) {
-		debugPrintf("script <script.lst>");
+		debugPrintf("script <script.lst>\n");
 		return true;
 	}
 	g_engine->setNextScript(argv[1]);
+	return false;
+}
+
+bool Console::cmdStopAllSounds(int argc, const char **argv) {
+	g_engine->stopAllSounds();
 	return false;
 }
 

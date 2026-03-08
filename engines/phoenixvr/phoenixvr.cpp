@@ -179,6 +179,7 @@ void PhoenixVREngine::loadNextScript() {
 
 void PhoenixVREngine::end() {
 	debug("end");
+	stopAllSounds();
 	if (_nextScript.empty() && _nextWarp < 0) {
 		debug("quit game");
 		quitGame();
@@ -336,6 +337,12 @@ void PhoenixVREngine::stopSound(const Common::String &sound) {
 		_mixer->stopHandle(it->_value.handle);
 		_sounds.erase(it);
 	}
+}
+
+void PhoenixVREngine::stopAllSounds() {
+	_mixer->stopAll();
+	_currentMusic.clear();
+	_sounds.clear();
 }
 
 void PhoenixVREngine::playMovie(const Common::String &movie) {

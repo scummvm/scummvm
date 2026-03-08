@@ -119,6 +119,7 @@ public:
 
 	void playSound(const Common::String &sound, Audio::Mixer::SoundType type, uint8 volume, int loops, bool spatial = false, float angle = 0);
 	void stopSound(const Common::String &sound);
+	void stopAllSounds();
 	void playMovie(const Common::String &movie);
 
 	void declareVariable(const Common::String &name);
