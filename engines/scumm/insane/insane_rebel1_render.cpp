@@ -533,7 +533,11 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 	int hudOriginY = 0;
 	if (_interactiveVideoActive && _player) {
 		hudOriginX = _player->_ra1ViewportOffsetX;
-		hudOriginY = _player->_ra1ViewportOffsetY;
+		// Asteroid path (opcode 0x0B / FUN_1CDA7) applies Y correction through
+		// FUN_223FE coordinate transforms in the original renderer, not as a
+		// simple global framebuffer Y window shift.
+		if (_activeGameOpcode != 0x0B)
+			hudOriginY = _player->_ra1ViewportOffsetY;
 	}
 
 	int hudX = hudOriginX + bar.xoffs;

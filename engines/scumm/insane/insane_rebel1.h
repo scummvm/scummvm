@@ -85,6 +85,7 @@ public:
 	void handleGameChunk(int32 subSize, Common::SeekableReadStream &b);
 	bool isInteractiveVideoActive() const { return _interactiveVideoActive; }
 	int getCurrentLevel() const { return _currentLevel; }
+	uint16 getActiveGameOpcode() const { return _activeGameOpcode; }
 
 	// Game flow (matching original at 0x15597)
 	void runGame();
