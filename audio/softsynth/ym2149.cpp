@@ -47,9 +47,7 @@
 #include "audio/softsynth/ym2149.h"
 
 #include "common/util.h"
-
-#include <cstring>
-#include <cmath>
+#include "common/scummsys.h"
 
 namespace Audio {
 
@@ -456,18 +454,18 @@ void YM2149Emu::interpolateVolumetable(uint16 volumetable[32][32][32]) {
 			}
 			volumetable[i][j][0] = volumetable[i][j][1];
 			volumetable[i][j][1] = volumetable[i][j][3];
-			volumetable[i][j][3] = (uint16)(0.5 + std::sqrt((double)volumetable[i][j][1] * (double)volumetable[i][j][5]));
+			volumetable[i][j][3] = (uint16)(0.5 + sqrt((double)volumetable[i][j][1] * (double)volumetable[i][j][5]));
 			for (int k = 2; k < 32; k += 2)
-				volumetable[i][j][k] = (uint16)(0.5 + std::sqrt((double)volumetable[i][j][k - 1] * (double)volumetable[i][j][k + 1]));
+				volumetable[i][j][k] = (uint16)(0.5 + sqrt((double)volumetable[i][j][k - 1] * (double)volumetable[i][j][k + 1]));
 		}
 		for (int k = 0; k < 32; k++) {
 			volumetable[i][0][k] = volumetable[i][1][k];
 			volumetable[i][1][k] = volumetable[i][3][k];
-			volumetable[i][3][k] = (uint16)(0.5 + std::sqrt((double)volumetable[i][1][k] * (double)volumetable[i][5][k]));
+			volumetable[i][3][k] = (uint16)(0.5 + sqrt((double)volumetable[i][1][k] * (double)volumetable[i][5][k]));
 		}
 		for (int j = 2; j < 32; j += 2) {
 			for (int k = 0; k < 32; k++)
-				volumetable[i][j][k] = (uint16)(0.5 + std::sqrt((double)volumetable[i][j - 1][k] * (double)volumetable[i][j + 1][k]));
+				volumetable[i][j][k] = (uint16)(0.5 + sqrt((double)volumetable[i][j - 1][k] * (double)volumetable[i][j + 1][k]));
 		}
 	}
 
@@ -475,14 +473,14 @@ void YM2149Emu::interpolateVolumetable(uint16 volumetable[32][32][32]) {
 		for (int k = 0; k < 32; k++) {
 			volumetable[0][j][k] = volumetable[1][j][k];
 			volumetable[1][j][k] = volumetable[3][j][k];
-			volumetable[3][j][k] = (uint16)(0.5 + std::sqrt((double)volumetable[1][j][k] * (double)volumetable[5][j][k]));
+			volumetable[3][j][k] = (uint16)(0.5 + sqrt((double)volumetable[1][j][k] * (double)volumetable[5][j][k]));
 		}
 	}
 
 	for (int i = 2; i < 32; i += 2) {
 		for (int j = 0; j < 32; j++) {
 			for (int k = 0; k < 32; k++)
-				volumetable[i][j][k] = (uint16)(0.5 + std::sqrt((double)volumetable[i - 1][j][k] * (double)volumetable[i + 1][j][k]));
+				volumetable[i][j][k] = (uint16)(0.5 + sqrt((double)volumetable[i - 1][j][k] * (double)volumetable[i + 1][j][k]));
 		}
 	}
 }
@@ -503,7 +501,7 @@ void YM2149Emu::normalise5bitTable(uint16 *in5bit, int16 *out5bit, unsigned int 
 	for (int i = 0; i < 32 * 32 * 32; i++) {
 		double v = (double)in5bit[i];
 		v = (v - (double)minv) * scale;
-		int iv = (int)std::lround(v);
+		int iv = (int)lround(v);
 		if (iv > 32767)
 			iv = 32767;
 		if (iv < -32768)
@@ -689,7 +687,7 @@ void YM2149Emu::generate(int16 *dst, int count) {
 	if (count <= 0)
 		return;
 
-	const int desired250Unclamped = (int)std::ceil((double)count * (double)YM_ATARI_CLOCK_COUNTER / (double)_rate) + 32;
+	const int desired250Unclamped = (int)ceil((double)count * (double)YM_ATARI_CLOCK_COUNTER / (double)_rate) + 32;
 	const int desired250 = (desired250Unclamped < (YM_BUFFER_250_SIZE - 1)) ? desired250Unclamped : (YM_BUFFER_250_SIZE - 1);
 
 	const int available250 = (_YMBuffer250PosWrite - _YMBuffer250PosRead) & YM_BUFFER_250_SIZE_MASK;
@@ -803,10 +801,6 @@ int16 YM2149Emu::nextSample() {
 	return (int16)(total / (int64)intervalFract);
 }
 
-
-void YM2149Emu::writeReg(int reg, int value) {
-	writeReg(reg, (uint8)value);
-}
 
 void YM2149Emu::generateSamples(int16 *buffer, int numSamples) {
 	generate(buffer, numSamples);

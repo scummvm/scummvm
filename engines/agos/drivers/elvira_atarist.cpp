@@ -19,30 +19,6 @@
  *
  */
 
-/* Adapted from Hatari - https://framagit.org/hatari/hatari/
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Soft-
- * ware Foundation; either version 2 of the License, or (at your option) any
- * later version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, see <https://www.gnu.org/licenses/>.
- *
- * Linking Hatari statically or dynamically with other modules is making a
- * combined work based on Hatari. Thus, the terms and conditions of the GNU
- * General Public License cover the whole combination.\n
- *
- * In addition, as a special exception, the copyright holders of Hatari give you
- * permission to combine Hatari with free software programs or libraries that are
- * released under the GNU LGPL and with code included in the standard release
- * of the IPF support library (a.k.a. libcapsimage) under the Software Preservation
- * Society Licence Agreement.
- */
-
 #include "engines/agos/drivers/elvira_atarist.h"
 
 #include "audio/ym2149.h"

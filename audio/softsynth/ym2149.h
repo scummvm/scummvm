@@ -33,7 +33,7 @@ public:
 
 	bool init() override;
 	void reset() override;
-	void writeReg(int reg, int value) override;
+	void writeReg(int reg, uint8 value) override;
 	bool isStereo() const override { return false; }
 
 protected:
@@ -95,7 +95,6 @@ private:
 	uint32 _posFractWeightedN;
 	int _rate;
 
-	void writeReg(int reg, uint8 data);
 	void setOutputRate(int outputRate);
 	void generate(int16 *dst, int count);
 	static uint16 mergeVoice(uint16 c, uint16 b, uint16 a);

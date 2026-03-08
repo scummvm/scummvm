@@ -23,6 +23,7 @@
 #define AUDIO_YM2149_H
 
 #include "audio/chip.h"
+#include "common/scummsys.h"
 
 namespace YM2149 {
 
@@ -62,7 +63,7 @@ public:
 	 * @param r		hardware register number to write to
 	 * @param v		value, which will be written
 	 */
-	virtual void writeReg(int r, int v) = 0;
+	virtual void writeReg(int r, uint8 v) = 0;
 };
 
 } // End of namespace YM2149
