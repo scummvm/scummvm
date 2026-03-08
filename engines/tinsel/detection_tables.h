@@ -440,7 +440,8 @@ static const TinselGameDescription gameDescriptions[] = {
 		{
 			"dw",
 			"CD",
-			AD_ENTRY1s("dw.scn", "0b34bb57cd3961e4528e4bce48cc0ab9", 339764),
+			AD_ENTRY2s("discwld.lfi", "10588d11b85d490f1337af9b5aa5ee3d", 10100,
+					   "discwld.lfd", "ddd05e47488065f88ca116c6572318c8", 511459328),
 			Common::DE_DEU,
 			Common::kPlatformPSX,
 			ADGF_CD,
@@ -456,7 +457,8 @@ static const TinselGameDescription gameDescriptions[] = {
 		{
 			"dw",
 			"CD",
-			AD_ENTRY1s("dw.scn", "bd2e47010565998641ec45a9c9285be0", 328048),
+			AD_ENTRY2s("discwld.lfi", "10588d11b85d490f1337af9b5aa5ee3d", 10120,
+					   "discwld.lfd", "ddd05e47488065f88ca116c6572318c8", 550049792),
 			Common::JA_JPN,
 			Common::kPlatformPSX,
 			ADGF_CD | ADGF_UNSTABLE,
