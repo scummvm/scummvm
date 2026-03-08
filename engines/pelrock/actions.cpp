@@ -1855,7 +1855,7 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 	debug("Performing action trigger: %d", actionTrigger);
 	switch (actionTrigger) {
 	case 257: // look portrait
-		_sound->playMusicTrack(25);
+		_sound->playMusicTrack(25, false);
 		loadExtraScreenAndPresent(9);
 		_dialog->say(_res->_ingameTexts[QUEBUENA_ESTA]);
 		_screen->markAllDirty();

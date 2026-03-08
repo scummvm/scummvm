@@ -268,7 +268,7 @@ void PelrockEngine::playSoundIfNeeded() {
 void PelrockEngine::travelToEgypt() {
 	_graphics->fadeToBlack(10);
 
-	_sound->playMusicTrack(26, 1);
+	_sound->playMusicTrack(26, false);
 	byte *palette = new byte[768];
 	if (!_bgScreen.getPixels()) {
 		_bgScreen.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());

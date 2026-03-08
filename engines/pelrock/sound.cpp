@@ -348,7 +348,7 @@ void SoundManager::playMusicTrack(int trackNumber, bool loop) {
 		_cdPlayStartTime = g_system->getMillis();
 	}
 	g_system->getAudioCDManager()->stop();
-	g_system->getAudioCDManager()->play(trackNumber, loop ? -1 : 0, _cdTrackStart, _cdTrackDuration);
+	g_system->getAudioCDManager()->play(trackNumber, loop ? -1 : 1, _cdTrackStart, _cdTrackDuration);
 }
 
 void SoundManager::loadSoundIndex() {
