@@ -86,6 +86,7 @@ public:
 	bool isInteractiveVideoActive() const { return _interactiveVideoActive; }
 	int getCurrentLevel() const { return _currentLevel; }
 	uint16 getActiveGameOpcode() const { return _activeGameOpcode; }
+	int16 getPerspectiveX() const { return _perspectiveX; }
 
 	// Game flow (matching original at 0x15597)
 	void runGame();
@@ -117,10 +118,12 @@ private:
 	void loadLevelSprites(int level);
 	void updateShipPhysics();
 	void updateTurretPhysics();
+	void preprocessMouseAxes(int16 &inputX, int16 &inputY);
 	void renderShip(byte *dst, int pitch, int width, int height);
 	void renderHUD(byte *dst, int pitch, int width, int height);
 	void renderMainMenuOverlay(byte *dst, int pitch, int width, int height);
 	void renderExplosions(byte *dst, int pitch, int width, int height);
+	void renderTargetBoxes(byte *dst, int pitch, int width, int height);
 	void renderTargeting(byte *dst, int pitch, int width, int height);
 	void renderGostSlots(byte *dst, int pitch, int width, int height);
 	void renderLaserShots(byte *dst, int pitch, int width, int height);
@@ -197,6 +200,14 @@ private:
 	int16 _viewHistoryY[kInputHistorySize];   // 0x75BC: viewport vertical history
 	int16 _avgInputX;    // smoothed horizontal input (clamped to [-0xA0, 0xA0])
 	int16 _avgInputY;    // smoothed vertical input (clamped to [-0x46, 0x41])
+	int16 _mouseOffsetX; // 0x9762-style accumulated recenter offset in DOS 640-space
+	int16 _mouseOffsetY; // 0x9760-style accumulated recenter offset in DOS 200-space
+	int16 _mouseBiasX;   // 0x9774: current preprocessed horizontal bias
+	int16 _mouseBiasY;   // 0x9772: current preprocessed vertical bias
+	int16 _mousePrevBiasX; // 0x9770: previous-frame biasX
+	int16 _mousePrevBiasY; // 0x976E: previous-frame biasY
+	bool _mouseBiasLatch;  // 0x4486: one-frame large-jump latch
+	bool _mouseRecentering; // 0x976D: suppress recursive updates during warp
 
 	// 0x0B handler physics update (asteroid/surface levels)
 	void updateAsteroidPhysics();
@@ -302,12 +313,18 @@ private:
 	};
 	ShotSlot _shotSlots[kMaxShotSlots];
 	int16 _shotAlternator;   // 0x241F: alternates between 0/1
+	bool _shotSideToggle;    // 0x2423: 0x0B side-toggle for mode-1 beam emitters
 
 	// Targeting state — FUN_1C0EF (0x1C0EF)
 	int16 _targetProximity;  // 0x7558: 0=none, 1=near, 2=on-target
 	int16 _prevTargetProx;   // 0x755A: previous frame's proximity
+	int16 _targetAnimCounter; // 0x755C: lock-marker animation counter
 	int16 _targetCount;      // 0x7552: active targets this frame
 	int16 _prevTargetCount;  // 0x7554: previous frame target count
+	static const int kMaxTargetBoxes = 20;
+	int16 _targetBoxX[kMaxTargetBoxes];       // 0x74DA: per-target overlay X
+	int16 _targetBoxY[kMaxTargetBoxes];       // 0x7502: per-target overlay Y
+	int16 _targetBoxVariant[kMaxTargetBoxes]; // 0x752A: size/near bucket ('i' + bucket)
 
 	// GOST hit animation slots (10 slots) — FUN_1C9CD (0x1C9CD)
 	static const int kMaxGostSlots = 10;

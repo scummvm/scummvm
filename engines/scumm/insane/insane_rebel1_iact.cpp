@@ -43,6 +43,42 @@ static void transformPoint223FE(int16 &x, int16 &y, int16 cameraX, int16 cameraY
 	y = (int16)(y - cameraY);
 }
 
+// preprocessMouseAxes — FUN_231BE (0x231BE) centered-axis output law, adapted to
+// ScummVM's absolute 320x200 mouse space.
+// The original DOS path combines a full-scale centered axis term with an extra
+// mouse-bias term `(rawX-0x140)>>2`, `(rawY-100)>>1` maintained by
+// FUN_23115/FUN_231BE recenter globals. In ScummVM, mirroring the DOS recenter
+// box makes LVL2 control unusably constrained, so keep the FUN_231BE output law
+// (normalized axis + bias) but feed it directly from logical mouse coordinates.
+// That preserves the handler's expected `_DAT_756C/_DAT_756E` amplitude without
+// introducing the DOS safe-window box or extra latency.
+void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY) {
+	int16 logicalX = (int16)CLIP<int>(_vm->_mouse.x, 0, 319);
+	int16 logicalY = (int16)CLIP<int>(_vm->_mouse.y, 0, 199);
+	const int16 rawX = (int16)(logicalX << 1);
+	const int16 rawY = logicalY;
+	const int16 deltaX = (int16)(logicalX - kRA1CenterX);
+	const int16 deltaY = (int16)(logicalY - kRA1CenterY);
+	const int16 normX = (int16)(((int32)deltaX * 127) / 160);
+	const int16 normY = (int16)(((int32)deltaY * 127) / 100);
+	const int16 biasX = (int16)((rawX - 0x140) >> 2);
+	const int16 biasY = (int16)((rawY - 100) >> 1);
+	const int16 scaledX = (int16)(normX + biasX);
+	const int16 scaledY = (int16)(normY + biasY);
+
+	_mouseBiasX = scaledX;
+	_mouseBiasY = scaledY;
+	_mousePrevBiasX = scaledX;
+	_mousePrevBiasY = scaledY;
+	_mouseBiasLatch = false;
+	_mouseRecentering = false;
+	_mouseOffsetX = 0;
+	_mouseOffsetY = 0;
+
+	inputX = CLIP<int16>(scaledX, -0xA0, 0xA0);
+	inputY = CLIP<int16>(scaledY, -127, 127);
+}
+
 // updateShipPhysics — FUN_1DEB5 (0x1DEB5). Accumulator-based position system.
 // Roll accumulator (_74CA) driven by input, position accumulators (_74C2/_74C6)
 // driven by roll + drift + cross-coupling. Ship position = base + accum >> 8.
@@ -456,18 +492,9 @@ void InsaneRebel1::updateAsteroidPhysics() {
 
 	// --- Cursor and perspective smoothing (FUN_1CDA7) ---
 	// _inputHistory* maps to 0x7580/0x7594, _viewHistory* to 0x75A8/0x75BC.
-	int16 mouseX = (int16)_vm->_mouse.x;
-	int16 mouseY = (int16)_vm->_mouse.y;
-	if (_player && _player->_width > 0 && _player->_height > 0 &&
-		(mouseX >= 320 || mouseY >= 200)) {
-		mouseX = (int16)((mouseX * 320) / _player->_width);
-		mouseY = (int16)((mouseY * 200) / _player->_height);
-	}
-	int16 inputX = (int16)(mouseX - kRA1CenterX);
-	// Assembly uses an inverted-Y convention in the averaging path.
-	// In ScummVM screen coords (Y grows downward), convert here so moving
-	// mouse up moves the pointer up on screen.
-	int16 inputY = (int16)(kRA1CenterY - mouseY);
+	int16 inputX = 0;
+	int16 inputY = 0;
+	preprocessMouseAxes(inputX, inputY);
 	inputX = CLIP<int16>(inputX, -0xA0, 0xA0);
 	inputY = CLIP<int16>(inputY, -100, 100);
 
@@ -559,16 +586,29 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
 		_avgInputX = 0;
 		_avgInputY = 0;
+		_mouseOffsetX = 0;
+		_mouseOffsetY = 0;
+		_mouseBiasX = 0;
+		_mouseBiasY = 0;
+		_mousePrevBiasX = 0;
+		_mousePrevBiasY = 0;
+		_mouseBiasLatch = false;
+		_mouseRecentering = false;
 
 		// Shooting/targeting reset
 		_playerFired = false;
 		_fireCooldown = 0;
 		memset(_shotSlots, 0, sizeof(_shotSlots));
 		_shotAlternator = 0;
+		_shotSideToggle = false;
 		_targetProximity = 0;
 		_prevTargetProx = 0;
+		_targetAnimCounter = 0;
 		_targetCount = 0;
 		_prevTargetCount = 0;
+		memset(_targetBoxX, 0, sizeof(_targetBoxX));
+		memset(_targetBoxY, 0, sizeof(_targetBoxY));
+		memset(_targetBoxVariant, 0, sizeof(_targetBoxVariant));
 		memset(_gostSlots, 0, sizeof(_gostSlots));
 		_gostSlotIdx = 0;
 		_killCount = 0;
@@ -764,6 +804,20 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 	int16 snap = _tuning.snap;
 	int16 curX = _shipPosX;
 	int16 curY = _shipPosY;
+	const int slot = _targetCount;
+
+	if (slot < kMaxTargetBoxes) {
+		_targetBoxX[slot] = (int16)((left + right) / 2);
+		_targetBoxY[slot] = (int16)((top + bottom) / 2);
+
+		const int height = bottom - top;
+		int16 glyphVariant = 0;
+		if (height >= 0x10)
+			glyphVariant = 2;
+		else if (height > 3)
+			glyphVariant = 1;
+		_targetBoxVariant[slot] = glyphVariant;
+	}
 
 	_targetCount++;
 
@@ -772,6 +826,8 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 		curY > top - snap - 5 && curY < bottom + snap + 5) {
 		if (_targetProximity == 0)
 			_targetProximity = 1;  // Near
+		if (slot < kMaxTargetBoxes)
+			_targetBoxVariant[slot] = CLIP<int16>((int16)(_targetBoxVariant[slot] + 3), 0, 5);
 
 		// Check tight lock: cursor within target + snap (no extra margin)
 		if (curX > left - snap && curX < right + snap &&

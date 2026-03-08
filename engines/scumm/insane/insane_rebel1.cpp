@@ -104,6 +104,14 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
 	_avgInputX = 0;
 	_avgInputY = 0;
+	_mouseOffsetX = 0;
+	_mouseOffsetY = 0;
+	_mouseBiasX = 0;
+	_mouseBiasY = 0;
+	_mousePrevBiasX = 0;
+	_mousePrevBiasY = 0;
+	_mouseBiasLatch = false;
+	_mouseRecentering = false;
 
 	_currentLevel = 0;
 	_flyControlMode = 0;
@@ -145,10 +153,15 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_fireCooldown = 0;
 	memset(_shotSlots, 0, sizeof(_shotSlots));
 	_shotAlternator = 0;
+	_shotSideToggle = false;
 	_targetProximity = 0;
 	_prevTargetProx = 0;
+	_targetAnimCounter = 0;
 	_targetCount = 0;
 	_prevTargetCount = 0;
+	memset(_targetBoxX, 0, sizeof(_targetBoxX));
+	memset(_targetBoxY, 0, sizeof(_targetBoxY));
+	memset(_targetBoxVariant, 0, sizeof(_targetBoxVariant));
 	memset(_gostSlots, 0, sizeof(_gostSlots));
 	_gostSlotIdx = 0;
 	_killCount = 0;
