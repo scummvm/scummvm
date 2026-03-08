@@ -27,6 +27,15 @@
 
 namespace Scumm {
 
+// FUN_223FE (0x223FE) coordinate transform used by FUN_1C54D/FUN_1C6E9.
+// The original applies camera X offset directly and a Y term derived from
+// DAT_41A2 (+ curve-table contribution). In current RA1 integration we keep
+// the camera-offset part, which fixes left/right corridor asymmetry.
+static void transformPoint223FE(int16 &x, int16 &y, int16 cameraX, int16 cameraY) {
+	x = (int16)(x - cameraX);
+	y = (int16)(y - cameraY);
+}
+
 // updateShipPhysics — FUN_1DEB5 (0x1DEB5). Accumulator-based position system.
 // Roll accumulator (_74CA) driven by input, position accumulators (_74C2/_74C6)
 // driven by roll + drift + cross-coupling. Ship position = base + accum >> 8.
@@ -449,15 +458,23 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 		// Original params: left, top, WIDTH, HEIGHT (not right/bottom!)
 		// FUN_1C54D computes center = (left+width/2, top+height/2), transforms, then checks edges.
 		if (subSize >= 20) {
-			_corridorLeftX = (int16)param1;
-			_corridorTopY = (int16)b.readUint32BE();
+			int16 corridorLeft = (int16)param1;
+			int16 corridorTop = (int16)b.readUint32BE();
 			int16 corridorWidth = (int16)b.readUint32BE();
 			int16 corridorHeight = (int16)b.readUint32BE();
+
+			int16 centerX = corridorLeft + corridorWidth / 2;
+			int16 centerY = corridorTop + corridorHeight / 2;
+			transformPoint223FE(centerX, centerY, _perspectiveX, _perspectiveY);
+
+			_corridorLeftX = centerX - corridorWidth / 2;
+			_corridorTopY = centerY - corridorHeight / 2;
 			_corridorRightX = _corridorLeftX + corridorWidth;
 			_corridorBottomY = _corridorTopY + corridorHeight;
-			debug(5, "RA1 GAME 0x0D: corridor left=%d top=%d right=%d bottom=%d (w=%d h=%d)",
-				_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY,
-				corridorWidth, corridorHeight);
+			debug(5, "RA1 GAME 0x0D: raw=[%d,%d]+(%d,%d) cam=(%d,%d) transformed=[%d,%d]-[%d,%d]",
+				corridorLeft, corridorTop, corridorWidth, corridorHeight,
+				_perspectiveX, _perspectiveY,
+				_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY);
 		}
 		break;
 
@@ -469,14 +486,21 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 			int16 zoneTop = (int16)b.readUint32BE();
 			int16 zoneWidth = (int16)b.readUint32BE();
 			int16 zoneHeight = (int16)b.readUint32BE();
+
+			int16 centerX = zoneLeft + zoneWidth / 2;
+			int16 centerY = zoneTop + zoneHeight / 2;
+			transformPoint223FE(centerX, centerY, _perspectiveX, _perspectiveY);
+
+			zoneLeft = centerX - zoneWidth / 2;
+			zoneTop = centerY - zoneHeight / 2;
 			int16 zoneRight = zoneLeft + zoneWidth;
 			int16 zoneBottom = zoneTop + zoneHeight;
 			if (_shipPosX > zoneLeft && _shipPosX < zoneRight &&
 				_shipPosY > zoneTop && _shipPosY < zoneBottom) {
 				_damageFlags |= 0x10;
 			}
-			debug(7, "RA1 GAME 0x0E: zone=[%d,%d]-[%d,%d] flags=0x%02x",
-				zoneLeft, zoneTop, zoneRight, zoneBottom, _damageFlags);
+			debug(7, "RA1 GAME 0x0E: zone=[%d,%d]-[%d,%d] cam=(%d,%d) flags=0x%02x",
+				zoneLeft, zoneTop, zoneRight, zoneBottom, _perspectiveX, _perspectiveY, _damageFlags);
 		}
 		break;
 
