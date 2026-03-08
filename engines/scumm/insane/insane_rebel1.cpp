@@ -158,6 +158,14 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 		warning("InsaneRebel1: failed to load RA1 HUD font bank (TECHFONT/TALKFONT)");
 	}
 
+	if (loadRA1Nut("SYS/TITLFONT.NUT", _titleFontBank)) {
+		debug(1, "InsaneRebel1: title glyph font loaded from SYS/TITLFONT.NUT (%d chars)", _titleFontBank.numSprites);
+	} else if (loadRA1Nut("SYS/TALKFONT.NUT", _titleFontBank)) {
+		debug(1, "InsaneRebel1: title glyph font fallback loaded from SYS/TALKFONT.NUT (%d chars)", _titleFontBank.numSprites);
+	} else {
+		warning("InsaneRebel1: failed to load title font bank (TITLFONT/TALKFONT)");
+	}
+
 	// FUN_1CB22 uses "<<" layer markers that resolve to TECHFONT in the original.
 	// Keep a dedicated TECH font bank for targeting markers/lock indicators.
 	if (loadRA1Nut("SYS/TECHFONT.NUT", _techFontBank)) {

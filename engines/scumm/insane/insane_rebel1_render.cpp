@@ -442,8 +442,9 @@ void InsaneRebel1::drawFontBankString(byte *dst, int pitch, int width, int heigh
 		return;
 
 	// Original FUN_221B7 layer mapping is table-driven at DAT_2D56 (0x406-byte entries).
-	// Current RA1 integration mirrors the gameplay-relevant subset:
-	//   layer 0/1 -> HUD font bank
+	// Current RA1 integration maps subtitle/HUD-relevant layers as:
+	//   layer 0   -> TITLE font bank
+	//   layer 1   -> TALK/HUD font bank
 	//   layer 2+  -> TECH font bank
 	int layer = 0;
 	for (int i = 0; text[i] != '\0'; i++) {
@@ -458,8 +459,12 @@ void InsaneRebel1::drawFontBankString(byte *dst, int pitch, int width, int heigh
 		}
 
 		const bool techLayer = (layer >= 2);
-		const RA1SpriteBank &bank =
-			(techLayer && _techFontBank.numSprites > 0) ? _techFontBank : _hudFontBank;
+		const bool talkLayer = (layer == 1);
+		const RA1SpriteBank &bank = techLayer ?
+			((_techFontBank.numSprites > 0) ? _techFontBank : _hudFontBank) :
+			(talkLayer ?
+				_hudFontBank :
+				((_titleFontBank.numSprites > 0) ? _titleFontBank : _hudFontBank));
 		if (bank.numSprites <= 0)
 			return;
 
@@ -499,8 +504,12 @@ int InsaneRebel1::getFontBankStringWidth(const char *text) {
 		}
 
 		const bool techLayer = (layer >= 2);
-		const RA1SpriteBank &bank =
-			(techLayer && _techFontBank.numSprites > 0) ? _techFontBank : _hudFontBank;
+		const bool talkLayer = (layer == 1);
+		const RA1SpriteBank &bank = techLayer ?
+			((_techFontBank.numSprites > 0) ? _techFontBank : _hudFontBank) :
+			(talkLayer ?
+				_hudFontBank :
+				((_titleFontBank.numSprites > 0) ? _titleFontBank : _hudFontBank));
 		if (bank.numSprites <= 0)
 			return w;
 

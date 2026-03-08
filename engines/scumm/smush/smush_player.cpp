@@ -1884,74 +1884,68 @@ SmushFont *SmushPlayer::ra1GetFont(int font) {
 }
 
 /**
- * RA1 TEXT chunk handler.
- *
- * RA1 TEXT format (different from SCUMM7/COMI TRES):
- *   Bytes 0-3 (BE32): y position on screen
- *   Bytes 4-7 (BE32): parameter (x hint or style)
- *   Bytes 8+:         text content with 0x00 as line separator
- *                     '<' / '>' switch font layers (multi-font markup)
- *
- * Text is rendered centered horizontally at the given y position.
- * The '<' font-switch prefix is stripped before rendering.
+ * RA1 TEXT chunk handler (assembly parity):
+ *   FUN_1FDBC (0x1FDBC) TEXT path -> FUN_221B7 (0x221B7)
+ *   - payload uses two BE32 fields + text bytes with 0x00 separators
+ *   - if first byte is '.', skip that sentinel before rendering
+ *   - '<'/'>' switch font layers (handled by RA1 font-bank renderer)
  */
 void SmushPlayer::ra1HandleText(int32 subSize, Common::SeekableReadStream &b) {
 	if (subSize < 8 || !_dst || _width <= 0 || _height <= 0)
 		return;
 
-	InsaneRebel1 *rebel1 = (InsaneRebel1 *)_vm->_insane;
+	InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_vm->_insane);
 	if (!rebel1)
 		return;
 
-	int yPos = b.readUint32BE();
-	/*int param =*/ b.readUint32BE();
+	// Keep RA1 on-screen placement path stable (first BE32 drives baseline Y
+	// in current renderer integration), while preserving original text markers.
+	int16 cursorY = (int16)b.readUint32BE();
+	/*int16 xParam =*/ (void)b.readUint32BE();
 
 	int textLen = subSize - 8;
 	if (textLen <= 0)
 		return;
 
-	char *textBuf = (char *)malloc(textLen + 1);
+	byte *textBuf = (byte *)malloc(textLen);
+	if (!textBuf)
+		return;
 	b.read(textBuf, textLen);
-	textBuf[textLen] = '\0';
 
-	int pitch = _width;
+	// FUN_1FDBC checks first byte at payload+8 and skips a leading '.'
+	// when present (TEXT-at-0x2E sentinel path).
+	int start = 0;
+	if (textLen > 0 && textBuf[0] == '.')
+		start = 1;
 
-	// Split on 0x00 line separators and render each line centered.
-	// Strip '<' / '>' font layer markers (multi-font not yet supported).
-	const char *lineStart = textBuf;
-	int lineY = yPos;
-	int lineHeight = 10;
+	int remaining = textLen - start;
 
-	while (lineStart < textBuf + textLen) {
-		const char *lineEnd = lineStart;
-		while (lineEnd < textBuf + textLen && *lineEnd != '\0')
-			lineEnd++;
+	while (remaining > 0) {
+		int lineLen = 0;
+		while (lineLen < remaining && textBuf[start + lineLen] != 0)
+			lineLen++;
 
-		int len = (int)(lineEnd - lineStart);
-		if (len > 0) {
-			const char *cleaned = lineStart;
-			while (cleaned < lineEnd && (*cleaned == '<' || *cleaned == '>'))
-				cleaned++;
+		if (lineLen > 0) {
+			char *line = (char *)malloc(lineLen + 1);
+			if (line) {
+				memcpy(line, textBuf + start, lineLen);
+				line[lineLen] = '\0';
 
-			int cleanLen = (int)(lineEnd - cleaned);
-			if (cleanLen > 0 && lineY >= 0 && lineY < _height) {
-				char *line = (char *)malloc(cleanLen + 1);
-				memcpy(line, cleaned, cleanLen);
-				line[cleanLen] = '\0';
+				int drawX = (_width - rebel1->getFontBankStringWidth(line)) / 2;
+				if (drawX < 0)
+					drawX = 0;
 
-				// Center the line horizontally
-				int strWidth = rebel1->getFontBankStringWidth(line);
-				int x = (_width - strWidth) / 2;
-				if (x < 0) x = 0;
-
-				rebel1->drawFontBankString(_dst, pitch, _width, _height, x, lineY, line);
-
+				rebel1->drawFontBankString(_dst, _width, _width, _height, drawX, cursorY, line);
 				free(line);
-				lineY += lineHeight;
 			}
 		}
 
-		lineStart = lineEnd + 1;
+		cursorY += 10;
+		int consumed = lineLen;
+		if (consumed < remaining && textBuf[start + consumed] == 0)
+			consumed++;
+		start += consumed;
+		remaining -= consumed;
 	}
 
 	free(textBuf);
