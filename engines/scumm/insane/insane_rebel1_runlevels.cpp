@@ -284,11 +284,9 @@ void InsaneRebel1::runGame() {
 		case 1: {
 			bool completed = false;
 			if (_startLevel <= 1) {
-				// Start from Level 1 (default flow)
-				playCinematic("LVL1/L1NEW.ANM");
-				if (_vm->shouldQuit())
-					return;
-
+				// Start from Level 1 (default flow).
+				// Assembly Level 1 entry (0x16100) starts with L1HANGAR/L1CU1,
+				// not with L1NEW (L1NEW is retry-only at 0x16675).
 				completed = runLevel1();
 				if (completed && !_vm->shouldQuit()) {
 					completed = runLevel2();
@@ -298,10 +296,8 @@ void InsaneRebel1::runGame() {
 					}
 				}
 			} else if (_startLevel == 2) {
-				// Direct Level 2 start from Level Select menu
-				playCinematic("LVL2/L2NEW.ANM");
-				if (_vm->shouldQuit())
-					return;
+				// Direct Level 2 start from Level Select menu.
+				// Assembly Level 2 entry (0x16757) starts at L2INTRO; L2NEW is retry-only.
 				completed = runLevel2();
 				if (completed) {
 					debug(1, "InsaneRebel1: Level 2 completed!");
