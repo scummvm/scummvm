@@ -22,6 +22,7 @@
 #include "common/macresman.h"
 #include "common/memorypool.h"
 #include "common/memstream.h"
+#include "common/savefile.h"
 #include "common/str-enc.h"
 #include "common/stream.h"
 #include "common/tokenizer.h"
@@ -191,6 +192,9 @@ void ZBasic::close(int16 fileNo) {
 	if (this->_fileStreams.contains(fileNo)) {
 		this->_fileStreams.erase(fileNo);
 	}
+	if (this->_fileWriteStreams.contains(fileNo)) {
+		this->_fileWriteStreams.erase(fileNo);
+	}
 	if (this->_fileLineSize.contains(fileNo)) {
 		this->_fileLineSize.erase(fileNo);
 	}
@@ -198,6 +202,11 @@ void ZBasic::close(int16 fileNo) {
 
 void ZBasic::coordinateWindow() {
 	warning("STUB: ZBasic::coordinateWindow");
+}
+
+void ZBasic::defOpen(const Common::U32String &str) {
+	_fileType = str.substr(0, 4).encode(Common::kMacRoman);
+	_fileCreator = str.substr(4, 4).encode(Common::kMacRoman);
 }
 
 void ZBasic::get(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &dest, bool preserveDims) {
@@ -310,13 +319,13 @@ void ZBasic::menu(uint16 menuNo, uint16 itemNo, uint16 state, const Common::U32S
 
 		Common::Array<Common::U32String> after;
 		for (size_t i = 0; i < (itemNo); i++) {
-			after.push_back(handle->menuData[i]);
+			after.push_back(i < handle->menuData.size() ? handle->menuData[i] : Common::U32String());
 		}
 		for (auto &it : tokList) {
 			after.push_back(it);
 		}
 		for (size_t i = (itemNo)+tokList.size(); i < handle->menuData.size(); i++) {
-			after.push_back(handle->menuData[i]);
+			after.push_back(i < handle->menuData.size() ? handle->menuData[i] : Common::U32String());
 		}
 		_toolbox->DeleteMenu(menuNo);
 		handle = _toolbox->NewMenu(menuNo, after.remove_at(0));
@@ -338,11 +347,33 @@ void ZBasic::openR(int16 fileNo, const Common::U32String &fileName, uint32 lineS
 		this->close(fileNo);
 	}
 	Common::MacResManager resMan;
-	Common::SeekableReadStream *result = resMan.openFileOrDataFork(Common::Path(fileName, ':'));
+	Common::SaveFileManager *saves = g_system->getSavefileManager();
+	// first load from the save manager
+	Common::SeekableReadStream *result = saves->openForLoading(fileName.encode());
+	if (!result) {
+		// if that fails, load from the filesystem
+		result = resMan.openFileOrDataFork(Common::Path(fileName, ':'));
+	}
 	if (!result) {
 		error("ZBasic::openR: couldn't open %s", fileName.encode().c_str());
 	}
 	_fileStreams[fileNo] = Common::SharedPtr<Common::SeekableReadStream>(result);
+	_fileWriteStreams[fileNo] = nullptr;
+	_fileLineSize[fileNo] = lineSize;
+}
+
+void ZBasic::openW(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo) {
+	if (_fileStreams.contains(fileNo)) {
+		this->close(fileNo);
+	}
+	Common::MacResManager resMan;
+	Common::SaveFileManager *saves = g_system->getSavefileManager();
+	Common::SeekableWriteStream *result = saves->openForSaving(fileName, false);
+	if (!result) {
+		error("ZBasic::openW: couldn't open %s", fileName.encode().c_str());
+	}
+	_fileStreams[fileNo] = nullptr;
+	_fileWriteStreams[fileNo] = Common::SharedPtr<Common::SeekableWriteStream>(result);
 	_fileLineSize[fileNo] = lineSize;
 }
 
@@ -472,8 +503,7 @@ Common::U32String ZBasic::readFileStr(int16 fileNo, int16 length) {
 	if (!_fileStreams.contains(fileNo)) {
 		error("ZBasic::readFileStr: unknown fileNo %d", fileNo);
 	}
-	warning("STUB: ZBasic::readFileStr");
-	return Common::U32String();
+	return _fileStreams[fileNo]->readString(0, length).decode(Common::kMacRoman);
 }
 
 void ZBasic::record(int16 fileNo, int16 recordNo, int16 location) {
@@ -553,6 +583,27 @@ void ZBasic::unk_44(int16 unk1) {
 void ZBasic::stringCopy(Common::U32String &target, const Common::U32String &src) {
 	// was: unk_110
 	target = src;
+}
+
+void ZBasic::writeFileStr(int16 fileNo, const Common::U32String &str) {
+	if (!_fileWriteStreams.contains(fileNo)) {
+		error("ZBasic::writeFileStr: unknown fileNo %d", fileNo);
+	}
+	_fileWriteStreams[fileNo]->writeString(str.encode(Common::kMacRoman));
+}
+
+void ZBasic::writeFileInt(int16 fileNo, int16 data) {
+	if (!_fileWriteStreams.contains(fileNo)) {
+		error("ZBasic::writeFileInt: unknown fileNo %d", fileNo);
+	}
+	_fileWriteStreams[fileNo]->writeSint16BE(data);
+}
+
+void ZBasic::writeFileDblInt(int16 fileNo, int32 data) {
+	if (!_fileWriteStreams.contains(fileNo)) {
+		error("ZBasic::writeFileDblInt: unknown fileNo %d", fileNo);
+	}
+	_fileWriteStreams[fileNo]->writeSint32BE(data);
 }
 
 Common::U32String ZBasic::unk_88(uint16 unk1) {

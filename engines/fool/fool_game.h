@@ -39,8 +39,8 @@ public:
 
 	void sub_128_004();
 	void sub_128_0a2(int16 unk2, int16 unk1);
-	void sub_128_11c(Common::U32String &unk2, Common::U32String &unk1);
-	void sub_128_1e4(Common::U32String &unk1);
+	void sub_128_11c(const Common::U32String &unk2, const Common::U32String &unk1);
+	void sub_128_1e4(const Common::U32String &unk1);
 	void sub_128_2be(int16 unk2, int16 unk1);
 	void sub_128_342(int16 unk2, int16 unk1);
 	void sub_128_3da(int16 unk1);
@@ -82,6 +82,7 @@ public:
 	void sub_128_2808();
 	void sub_128_2988();
 	void sub_128_2a06();
+	void sub_128_2a0e();
 	void sub_128_2a92();
 	void sub_128_2ab6();
 	void sub_128_2ae8();
@@ -91,10 +92,13 @@ public:
 
 	void sub_128_3032();
 	void sub_128_32c8();
+	void sub_128_32fa();
 	void sub_128_3536();
 	void sub_128_3744();
 	void sub_128_3774();
 	void sub_128_378a();
+	void sub_128_37ce();
+	void sub_128_388a();
 	void sub_128_39a0();
 	void sub_128_3de6();
 	void sub_128_3fb6();
@@ -126,6 +130,7 @@ public:
 	void sub_130_004();
 	void sub_131_004();
 
+	// fool_jigsaw.cpp
 	void sub_132_004();
 	void sub_132_518();
 	void sub_132_67a();
@@ -230,10 +235,14 @@ private:
 	int16 var_i16_7e2;
 	int16 var_i16_7e4;
 	int16 var_i16_7e6;
+	Common::U32String var_str_7e8;
+	int16 var_i16_8e8;
 	Common::U32String var_str_8ec;
 	int16 var_i16_9ec;
 	int16 var_i16_9f2;
 	Common::U32String var_str_9f4;
+
+	Common::U32String var_str_af4;
 
 	// Used as both a pointer and a bitstore
 	uint32 var_i32_bf8;
