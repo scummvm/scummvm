@@ -230,6 +230,7 @@ bool InsaneRebel1::runLevel2() {
 		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
 		_avgInputX = 0;
 		_avgInputY = 0;
+		_killCount = 0;
 
 		// L2PLAY.ANM — asteroid dodge (800 frames, interactive)
 		playInteractiveVideo("LVL2/L2PLAY.ANM");

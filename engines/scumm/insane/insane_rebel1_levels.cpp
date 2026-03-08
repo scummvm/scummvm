@@ -110,7 +110,6 @@ bool InsaneRebel1::loadRA1Nut(const char *filename, RA1SpriteBank &bank) {
 			break;
 
 		if (chunkTag == MKTAG('F','R','M','E')) {
-			bool foundFobj = false;
 			uint32 subOffset = chunkDataOffset;
 			while (subOffset + 8 <= chunkEnd) {
 				uint32 subTag = READ_BE_UINT32(data + subOffset);
@@ -125,7 +124,6 @@ bool InsaneRebel1::loadRA1Nut(const char *filename, RA1SpriteBank &bank) {
 					uint16 h = READ_LE_UINT16(data + subOffset + 16);
 					decodedSize += (uint32)w * (uint32)h;
 					fobjOffsets[foundSprites] = subOffset;
-					foundFobj = true;
 					break;
 				}
 
@@ -200,6 +198,10 @@ void InsaneRebel1::loadLevelSprites(int level) {
 		Common::String expldFile = Common::String::format("LVL%d/L%dEXPLD.NUT", level, level);
 		loadRA1Nut(expldFile.c_str(), _bangBank);
 	}
+
+	// Laser/shot effect sprites
+	Common::String laserFile = Common::String::format("LVL%d/L%dLASER.NUT", level, level);
+	loadRA1Nut(laserFile.c_str(), _laserBank);
 }
 
 } // End of namespace Scumm

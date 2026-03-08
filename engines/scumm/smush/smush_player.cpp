@@ -390,6 +390,17 @@ void SmushPlayer::release() {
 	} else {
 		free(_frameBuffer);
 		_frameBuffer = nullptr;
+		if (isRA1()) {
+			free(_storedFobjData);
+			_storedFobjData = nullptr;
+			_storedFobjDataSize = 0;
+			_storedFobjCodec = 0;
+			_storedFobjParm2 = 0;
+			_storedFobjLeft = 0;
+			_storedFobjTop = 0;
+			_storedFobjWidth = 0;
+			_storedFobjHeight = 0;
+		}
 	}
 
 	_IACTstream = nullptr;
@@ -422,7 +433,10 @@ void SmushPlayer::handleStore(int32 subSize, Common::SeekableReadStream &b) {
 
 void SmushPlayer::handleFetch(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFetch()");
-	assert(subSize >= 6);
+	if (isRA1())
+		assert(subSize >= 4);
+	else
+		assert(subSize >= 6);
 
 	if (isRA2()) {
 		ra2HandleFetch(b);
@@ -430,8 +444,37 @@ void SmushPlayer::handleFetch(int32 subSize, Common::SeekableReadStream &b) {
 	}
 
 	if (isRA1()) {
-		debug("RA1 FTCH: frame=%d _frameBuffer=%p _dst=%p _width=%d _height=%d",
-			_frame, (void*)_frameBuffer, (void*)_dst, _width, _height);
+		// RA1 FTCH re-decodes the raw FOBJ captured by STOR (not a framebuffer memcpy).
+		// Chunk layout: BE32 id/flags, BE32 fetchX, BE32 fetchY.
+		uint32 fetchId = 0;
+		int32 fetchX = 0;
+		int32 fetchY = 0;
+		if (subSize >= 4)
+			fetchId = b.readUint32BE();
+		if (subSize >= 12) {
+			fetchX = b.readSint32BE();
+			fetchY = b.readSint32BE();
+		}
+
+		if (_storedFobjData != nullptr && _storedFobjDataSize > 0) {
+			const int storedCodec = _storedFobjCodec & 0xFF;
+			const uint8 storedParam = (uint8)((_storedFobjCodec >> 8) & 0xFF);
+			int left = _storedFobjLeft + fetchX;
+			int top = _storedFobjTop + fetchY;
+
+			// Apply the same interactive viewport offset used for regular FOBJ chunks.
+			left -= _ra1ViewportOffsetX;
+			top -= _ra1ViewportOffsetY;
+
+			debug("RA1 FTCH: frame=%d id=0x%08x pos=(%d,%d) using stored FOBJ codec=%d size=%dx%d",
+				_frame, fetchId, left, top, storedCodec, _storedFobjWidth, _storedFobjHeight);
+			decodeFrameObject(storedCodec, _storedFobjData, left, top,
+				_storedFobjWidth, _storedFobjHeight, _storedFobjDataSize,
+				storedParam, _storedFobjParm2);
+		} else {
+			debug("RA1 FTCH: frame=%d id=0x%08x with no stored FOBJ data", _frame, fetchId);
+		}
+		return;
 	}
 
 	if (_frameBuffer != nullptr) {
@@ -1259,7 +1302,7 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 			bottomNonZero, bottomTotal, bottomTotal > 0 ? (bottomNonZero * 100) / bottomTotal : 0);
 	}
 
-	if (_storeFrame && !isRA2()) {
+	if (_storeFrame && !isRA1() && !isRA2()) {
 		if (_frameBuffer == nullptr) {
 			_frameBuffer = (byte *)malloc(_width * _height);
 		}
@@ -1315,6 +1358,8 @@ void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b
 	}
 	int left = (int)b.readSint16LE();
 	int top = (int)b.readSint16LE();
+	const int rawLeft = left;
+	const int rawTop = top;
 	int width = b.readUint16LE();
 	int height = b.readUint16LE();
 
@@ -1329,6 +1374,14 @@ void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b
 			_frame, codec, left, top, width, height, subSize - 14, _storeFrame, _width, _height);
 	}
 	if (isRA1()) {
+		// Viewport scroll for interactive gameplay (FUN_224FD sets _41A0/_41A2).
+		// Original renders FOBJs at raw positions, then displays a 320x200 window
+		// starting at (perspectiveX, perspectiveY) within the 384x242 buffer.
+		// FUN_22605/FUN_2289D subtract _41A0 from FOBJ X coords during rendering.
+		// We simulate the display window shift by subtracting from decode position.
+		left -= _ra1ViewportOffsetX;
+		top -= _ra1ViewportOffsetY;
+
 		debug("RA1 FOBJ: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d storeFrame=%d",
 			_frame, codec, left, top, width, height, subSize - 14, _storeFrame);
 	}
@@ -1344,6 +1397,23 @@ void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b
 
 	if (_storeFrame && isRA2()) {
 		ra2StoreFobjData(codec, chunk_buffer, chunk_size, left, top, width, height);
+	}
+	if (_storeFrame && isRA1()) {
+		free(_storedFobjData);
+		_storedFobjData = (byte *)malloc(chunk_size);
+		if (_storedFobjData != nullptr) {
+			memcpy(_storedFobjData, chunk_buffer, chunk_size);
+			_storedFobjDataSize = chunk_size;
+			_storedFobjCodec = codec | ((int)ra1Param << 8);
+			_storedFobjParm2 = ra1Parm2;
+			_storedFobjLeft = rawLeft;
+			_storedFobjTop = rawTop;
+			_storedFobjWidth = width;
+			_storedFobjHeight = height;
+		} else {
+			_storedFobjDataSize = 0;
+		}
+		_storeFrame = false;
 	}
 
 	decodeFrameObject(codec, chunk_buffer, left, top, width, height, chunk_size, ra1Param, ra1Parm2);
@@ -1372,30 +1442,38 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 	}
 
 	while (frameSize > 0) {
-		const int32 chunkStart = b.pos();
+		// RA1 parser exits when <=1 byte remains in a frame (FUN_1FDBC).
+		// Treat any tiny tail as frame trailer/padding and stop cleanly.
+		if (isRA1() && frameSize <= 1) {
+			if (frameSize == 1)
+				b.skip(1);
+			break;
+		}
+
+		// RA1: Top-of-loop alignment check matching original assembly FUN_1FDBC:
+		// if ((ptr & 1) && (*ptr == 0)) { ptr++; remaining--; }
+		if (isRA1() && (b.pos() & 1) && frameSize > 0) {
+			byte peek = b.readByte();
+			if (peek == 0) {
+				frameSize--;
+			} else {
+				b.seek(-1, SEEK_CUR);
+			}
+		}
+
+		if (frameSize < 8) {
+			b.skip(frameSize);
+			break;
+		}
+
 		uint32 subType = b.readUint32BE();
 		int32 subSize = b.readUint32BE();
 		int32 subOffset = b.pos();
 
-		// RA1 workaround: some frames have missing padding bytes after
-		// odd-sized sub-chunks (authoring tool bug in 4 frames of L2PLAY.ANM).
-		// If the tag looks invalid, back up 1 byte and retry.
-		if (isRA1() && frameSize > 8) {
-			byte b0 = (subType >> 24) & 0xFF;
-			byte b1 = (subType >> 16) & 0xFF;
-			byte b2 = (subType >> 8) & 0xFF;
-			byte b3 = subType & 0xFF;
-			bool validTag = (b0 >= 0x20 && b0 <= 0x7E) && (b1 >= 0x20 && b1 <= 0x7E) &&
-			                (b2 >= 0x20 && b2 <= 0x7E) && (b3 >= 0x00 && b3 <= 0x7E);
-			if (!validTag) {
-				// Try 1 byte earlier (missing padding byte)
-				b.seek(chunkStart - 1, SEEK_SET);
-				subType = b.readUint32BE();
-				subSize = b.readUint32BE();
-				subOffset = b.pos();
-				frameSize++;
-				debugC(DEBUG_SMUSH, "SmushPlayer::handleFrame: RA1 realigned to %s at frame %d", tag2str(subType), _frame);
-			}
+		// Guard against consuming the next frame marker as an in-frame chunk.
+		if (isRA1() && subType == MKTAG('F','R','M','E')) {
+			b.seek(-8, SEEK_CUR);
+			break;
 		}
 
 		// RA2: When _skipNext is set, skip the NEXT chunk of ANY type
@@ -1457,7 +1535,7 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 			handleLoad(subSize, b);
 			break;
 		case MKTAG('G','O','S','T'):
-			if (isRA2())
+			if (isRA2() || isRA1())
 				ra2HandleGost(subSize, b);
 			break;
 		// RA1-specific chunk types: skip gracefully
@@ -1562,12 +1640,25 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 			}
 			break;
 		default:
+			if (isRA1()) {
+				// Original FUN_1FDBC lines 163-168: unknown tag with all uppercase
+				// letters (A-Z) → silently return. Otherwise error.
+				byte tb0 = (subType >> 24) & 0xFF, tb1 = (subType >> 16) & 0xFF;
+				byte tb2 = (subType >> 8) & 0xFF, tb3 = subType & 0xFF;
+				if (tb0 > 0x40 && tb0 < 0x5B && tb1 > 0x40 && tb1 < 0x5B &&
+				    tb2 > 0x40 && tb2 < 0x5B && tb3 > 0x40 && tb3 < 0x5B) {
+					debug(5, "RA1: unknown uppercase tag %s at frame %d, stopping frame parse", tag2str(subType), _frame);
+					frameSize = 0;
+					continue;
+				}
+			}
 			error("Unknown frame subChunk found : %s, %d", tag2str(subType), subSize);
 		}
 
 		frameSize -= subSize + 8;
 		b.seek(subOffset + subSize, SEEK_SET);
-		if (subSize & 1) {
+		// RA1 uses top-of-loop alignment (matching FUN_1FDBC), not bottom-of-loop padding.
+		if (!isRA1() && (subSize & 1)) {
 			b.skip(1);
 			frameSize--;
 		}

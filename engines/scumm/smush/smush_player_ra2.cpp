@@ -61,6 +61,7 @@ void SmushPlayer::ra2InitFields() {
 	_storedFobjData = nullptr;
 	_storedFobjDataSize = 0;
 	_storedFobjCodec = 0;
+	_storedFobjParm2 = 0;
 	_storedFobjLeft = 0;
 	_storedFobjTop = 0;
 	_storedFobjWidth = 0;
@@ -80,6 +81,8 @@ void SmushPlayer::ra2InitFields() {
 	_ra1ObjOverlayTop = 0;
 	_ra1ObjOverlayWidth = 0;
 	_ra1ObjOverlayHeight = 0;
+	_ra1ViewportOffsetX = 0;
+	_ra1ViewportOffsetY = 0;
 	_skipNext = false;
 	_ra2FastForwarding = false;
 	_fobjOffsetX = 0;
@@ -150,6 +153,7 @@ void SmushPlayer::ra2ReleaseVideo() {
 	free(_storedFobjData);
 	_storedFobjData = nullptr;
 	_storedFobjDataSize = 0;
+	_storedFobjParm2 = 0;
 	free(_lastFobjData);
 	_lastFobjData = nullptr;
 	_lastFobjDataSize = 0;
@@ -403,6 +407,7 @@ void SmushPlayer::ra2StoreFobjData(int codec, const byte *data, int32 dataSize,
 	memcpy(_storedFobjData, data, dataSize);
 	_storedFobjDataSize = dataSize;
 	_storedFobjCodec = codec;
+	_storedFobjParm2 = 0;
 	_storedFobjLeft = left;
 	_storedFobjTop = top;
 	_storedFobjWidth = width;
