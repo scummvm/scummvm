@@ -213,19 +213,15 @@ static void renderSpriteWithFlags(byte *dst, int pitch, int width, int height,
 	}
 }
 
-// procPreRendering — Sets viewport scroll offset before FOBJ decoding (FUN_224FD at 0x224FD).
-// For interactive levels, shifts the FOBJ decode position based on mouse-controlled perspective.
+// procPreRendering — Sets viewport window offset (FUN_224FD at 0x224FD).
+// RA1 decodes FOBJs at chunk coordinates, then displays a scrolled 320x200
+// window inside the 384x242 framebuffer.
 void InsaneRebel1::procPreRendering(byte *renderBitmap) {
 	if (_interactiveVideoActive && _player) {
 		// FUN_224FD stores absolute 320x200 window origin in a 384x242 frame:
 		// X in [0..0x40], Y in [0..0x2E], centered at (0x20,0x17).
-		// Keep L2 on assembly-oriented X mapping used by FUN_223FE/FUN_2245B
-		// emulation; preserve legacy L1 mapping to avoid flight-section regressions.
-		if (_currentLevel == 1)
-			_player->_ra1ViewportOffsetX = _perspectiveX - 0x20;
-		else
-			_player->_ra1ViewportOffsetX = 0x20 - _perspectiveX;
-		_player->_ra1ViewportOffsetY = _perspectiveY - 0x17;
+		_player->_ra1ViewportOffsetX = _perspectiveX;
+		_player->_ra1ViewportOffsetY = _perspectiveY;
 	} else if (_player) {
 		_player->_ra1ViewportOffsetX = 0;
 		_player->_ra1ViewportOffsetY = 0;
@@ -529,9 +525,19 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 	const RA1Sprite &bar = _displayBank.sprites[0];
 
 	// DISPLAY.NUT sprite is 320×19 at xoffs=0, yoffs=176 in the original game.
-	// Video FOBJs fill the full 384×242 buffer from (0,0), so use sprite offsets directly.
-	int hudX = bar.xoffs;
-	int hudY = bar.yoffs;
+	// FUN_224FD (0x224FD) sets the 320x200 window origin inside the 384x242 buffer.
+	// FUN_1BBCB (0x1BBCB) HUD coordinates are screen-space, so when we emulate
+	// perspective via source-window cropping, anchor HUD at window origin to keep
+	// it fixed on-screen.
+	int hudOriginX = 0;
+	int hudOriginY = 0;
+	if (_interactiveVideoActive && _player) {
+		hudOriginX = _player->_ra1ViewportOffsetX;
+		hudOriginY = _player->_ra1ViewportOffsetY;
+	}
+
+	int hudX = hudOriginX + bar.xoffs;
+	int hudY = hudOriginY + bar.yoffs;
 
 	// Draw the status bar background with transparency (pixel 0 = transparent)
 	if (bar.data && bar.width > 0 && bar.height > 0) {

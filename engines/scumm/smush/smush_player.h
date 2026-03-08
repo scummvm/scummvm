@@ -156,6 +156,9 @@ private:
 	byte *_frameBuffer;
 	byte *_specialBuffer;
 	int _specialBufferSize;
+	byte *_ra1CleanFrame;
+	int32 _ra1CleanFrameSize;
+	bool _ra1HasCleanFrame;
 
 	// RA2: Raw FOBJ data stored by STOR chunk (matching original DAT_00482c04).
 	// The original stores raw FOBJ chunk data and re-decodes it on FTCH with
