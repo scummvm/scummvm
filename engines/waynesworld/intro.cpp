@@ -275,12 +275,10 @@ bool WaynesWorldEngine::introPt4() {
 		retVal = false;
 	} else if (!introPt4_caller4()) {
 		retVal = false;
-	}
-	
-	introPt4_cleanup();
-
-	if (retVal)
+	} else
 		retVal = introPt4_playGuitar();
+
+	introPt4_cleanup();
 	
 	return retVal;
 }
@@ -369,8 +367,11 @@ void WaynesWorldEngine::introPt4_init() {
 
 	_introBackg1Image = new WWSurface(320, 170);
 	drawImageToSurface(_oanGxl, "backg1.pcx", _introBackg1Image, 0, 0);
-	_introWbodyImage[0] = new WWSurface(145, 118);
-	drawImageToSurface(_oanGxl, "wbody0.pcx", _introWbodyImage[0], 0, 0);
+	for (int i = 0; i < 5; ++i) {
+		_introWbodyImage[i] = new WWSurface(145, 118);
+		Common::String filename = Common::String::format("wbody%d.pcx", i == 0 ? 0 : i + 8);
+		drawImageToSurface(_oanGxl, filename.c_str(), _introWbodyImage[i], 0, 0);
+	}
 	_introGbodyImage = new WWSurface(160, 149);
 	drawImageToSurface(_oanGxl, "gbody0.pcx", _introGbodyImage, 0, 0);
 
@@ -806,8 +807,10 @@ void WaynesWorldEngine::introPt4_cleanup() {
 	_fontWW = nullptr;
 	delete _introBackg1Image;
 	_introBackg1Image = nullptr;
-	delete _introWbodyImage[0];
-	_introWbodyImage[0] = nullptr;
+	for (int i = 0; i < 5; ++i) {
+		delete _introWbodyImage[i];
+		_introWbodyImage[i] = nullptr;
+	}
 	delete _introGbodyImage;
 	_introGbodyImage = nullptr;
 	for (int i = 0; i < 7; ++i) {
@@ -821,21 +824,10 @@ void WaynesWorldEngine::introPt4_cleanup() {
 }
 
 bool WaynesWorldEngine::introPt4_playGuitar() {
-	for (int i = 1; i < 5; ++i) {
-		_introWbodyImage[i] = new WWSurface(145, 118);
-		Common::String filename = Common::String::format("wbody%d.pcx", i);
-		drawImageToSurface(_oanGxl, filename.c_str(), _introWbodyImage[i], 0, 0);
-	}
-
 	sub2FEFB(1, 1, 1, 0, 9, -1);
 	sub2FEFB(1, 2, 1, 0, 9, -1);
 	sub2FEFB(1, 3, 1, 0, 9, -1);
 	sub2FEFB(1, 4, 1, 0, 9, -1);
-
-	for (int i = 1; i < 5; ++i) {
-		delete _introWbodyImage[i];
-		_introWbodyImage[i] = nullptr;
-	}
 	
 	_midi->stopSong();
 	// TODO add a check at each step to return false if ESC is pressed
