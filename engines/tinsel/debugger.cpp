@@ -24,6 +24,7 @@
 #include "tinsel/dialogs.h"
 #include "tinsel/handle.h"
 #include "tinsel/pcode.h"
+#include "tinsel/psx_archive.h"
 #include "tinsel/scene.h"
 #include "tinsel/sound.h"
 #include "tinsel/music.h"
@@ -78,6 +79,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("globals",		WRAP_METHOD(Console, cmd_globals));
 	registerCmd("global",		WRAP_METHOD(Console, cmd_global));
 	registerCmd("g",		WRAP_METHOD(Console, cmd_global)); // alias
+	registerCmd("psxdump",		WRAP_METHOD(Console, cmd_psxdump));
 }
 
 Console::~Console() {
@@ -219,6 +221,44 @@ bool Console::cmd_global(int argc, const char **argv) {
 
 	int value = GetGlobal(global);
 	debugPrintf("global %d == %08x (%d)\n", global, value, value);
+	return true;
+}
+
+bool Console::cmd_psxdump(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Dumps PSX resource files to disk\n");
+		debugPrintf("usage: %s <file>\n", argv[0]);
+		debugPrintf("       <file> may be '*' to dump all files\n");
+		return true;
+	}
+
+	if (!TinselV1PSX) {
+		return true;
+	}
+
+	PsxArchive psxArchive;
+	if (!psxArchive.open("discwld.lfi", "discwld.lfd", TinselVersion)) {
+		return true;
+	}
+
+	bool dumpAll = !strcmp(argv[1], "*");
+	Common::ArchiveMemberList members;
+	psxArchive.listMembers(members);
+	Common::sort(members.begin(), members.end(), Common::ArchiveMemberListComparator());
+	for (auto &member : members) {
+		if (dumpAll || member->getName().equalsIgnoreCase(argv[1])) {
+			Common::Path path = member->getPathInArchive();
+			Common::ScopedPtr<Common::SeekableReadStream> resource(psxArchive.createReadStreamForMember(path));
+			if (resource) {
+				Common::DumpFile dumpFile;
+				if (dumpFile.open(member->getPathInArchive())) {
+					debugPrintf("Writing %s to disk\n", member->getName().c_str());
+					dumpFile.writeStream(resource.get());
+				}
+			}
+		}
+	}
+
 	return true;
 }
 
