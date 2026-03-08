@@ -218,7 +218,7 @@ void FoolGame::sub_128_0a2(int16 unk2, int16 unk1) {
 	}
 }
 
-void FoolGame::sub_128_11c(Common::U32String &unk2, Common::U32String &unk1) {
+void FoolGame::sub_128_11c(const Common::U32String &unk2, const Common::U32String &unk1) {
 	// 128:011c
 	g_zbasic->stringCopy(this->var_str_272, unk1);
 	g_zbasic->stringCopy(this->var_str_172, unk2);
@@ -248,7 +248,7 @@ void FoolGame::sub_128_11c(Common::U32String &unk2, Common::U32String &unk1) {
 
 }
 
-void FoolGame::sub_128_1e4(Common::U32String &unk1) {
+void FoolGame::sub_128_1e4(const Common::U32String &unk1) {
 	// 128:01e4
 	g_zbasic->stringCopy(this->var_str_172, unk1);
 	this->var_str_588 = g_zbasic->str(4);
@@ -1101,34 +1101,115 @@ void FoolGame::sub_128_271a() {
 
 }
 
+// new game
 void FoolGame::sub_128_27d6() {
 	warning("STUB: %s", __func__);
 }
 
 
 void FoolGame::sub_128_2808() {
-	warning("STUB: %s", __func__);
+	// 128:2808
+	this->var_i16_7e6 = 0;
+	// 128:280e: LEA - [0x3808],A0
+	// 128:2812: MOVE.L - A0,-0x8ee(A5)
+	g_zbasic->openR(2, this->var_str_588, 0x400, this->var_i16_688);
+	this->var_str_7e8 = g_zbasic->readFileStr(2, 0x11);
+	if (this->var_str_7e8 == g_zbasic->str(16)) {
+		this->var_i16_8e8 = g_zbasic->readFileInt(2);
+		this->var_i16_8e8 = g_zbasic->readFileInt(2);
+		this->var_i16_8e8 = g_zbasic->readFileInt(2);
+		this->var_i16_8e8 = g_zbasic->readFileInt(2);
+		for (int i = 1; i <= 0x64; i++) {
+			this->var_i16_8e8 = g_zbasic->readFileInt(2);
+			this->var_i16_8e8 = g_zbasic->readFileInt(2);
+			this->var_i16_8e8 = g_zbasic->readFileInt(2);
+			this->var_i16_8e8 = g_zbasic->readFileInt(2);
+			this->var_str_7e8 = g_zbasic->readFileStr(2, this->var_i16_8e8);
+		}
+		// 128:28c8
+		for (int i = 1; i <= 0x51; i++) {
+			this->var_i16_8e8 = g_zbasic->readFileInt(2);
+		}
+
+	} else {
+		// 128:28ec
+		this->var_i16_7e6 = 1;
+	}
+	g_zbasic->close(2);
+	// 128:28f8: LEA - [0x3818],A0
+	// 128:28fc: MOVE.L - A0,-0x8ee(A5)
+	if (this->var_i16_7e6 != 0) {
+		this->arr_str_1a8d8[0] = g_zbasic->str(17) + this->var_str_588 + g_zbasic->str(18);
+		this->arr_str_1a8d8[1] = g_zbasic->str(19);
+		this->sub_128_dfe(0, 0, 1, 1);
+		this->var_str_588 = g_zbasic->str(20);
+		this->var_i16_7e6 = 0;
+	}
 }
 
 void FoolGame::sub_128_2988() {
+	// 128:2988
 	// File -> Open
-	warning("STUB: %s", __func__);
+	this->sub_128_1e4(g_zbasic->str(21)); // FOOL
+	if (this->var_str_588 == g_zbasic->str(22)) { // empty
+		return;
+	}
+	this->sub_128_2808();
+	if (this->var_str_588 == g_zbasic->str(23)) {
+		return;
+	}
+	this->sub_128_32fa();
+	// 128:29d4
+	if (this->var_i16_7be != 3) {
+		if ((this->var_i16_7ce & 1) != 0) {
+			this->sub_128_1c2c(0x11);
+		} else {
+			// 128:29fa
+			this->sub_128_1c2c(0x10);
+		}
+		this->sub_128_3774();
+	}
 }
 
 void FoolGame::sub_128_2a06() {
+	// 128:2a06
 	// File -> Save
-	warning("STUB: %s", __func__);
+	this->sub_128_1c2c(4);
+}
+
+void FoolGame::sub_128_2a0e() {
+	// 128:2a0e
+	if (this->var_str_8ec == g_zbasic->str(24)) {
+		// 128:2a28
+		this->sub_128_11c(g_zbasic->str(25), g_zbasic->str(26)); // name of game, blank
+	} else {
+		// 128:2a48
+		this->sub_128_11c(g_zbasic->str(27), this->var_str_8ec); // New Name?
+	}
+	// 128:2a60
+	if (this->var_str_486 != g_zbasic->str(28)) { // empty
+		this->var_str_8ec = this->var_str_486;
+		this->var_i16_9ec = this->var_i16_586;
+		// 128:2a90
+	}
 }
 
 void FoolGame::sub_128_2a92() {
+	// 128:2a92
 	// File -> Save As
-	warning("STUB: %s", __func__);
+	this->sub_128_2a0e();
+	if (this->var_str_486 != g_zbasic->str(29)) { // empty
+		this->sub_128_1c2c(4);
+	}
+
 }
 
+// quit
 void FoolGame::sub_128_2ab6() {
 	warning("STUB: %s", __func__);
 }
 
+// print story
 void FoolGame::sub_128_2ae8() {
 	warning("STUB: %s", __func__);
 }
@@ -1219,7 +1300,7 @@ void FoolGame::sub_128_2e3e() {
 	this->var_str_8ec = this->var_str_588;
 	this->var_i16_9ec = this->var_i16_688;
 	this->var_i16_7e6 = 0;
-	// FIXME: disk handler??
+	// FIXME: disk error handler??
 	// 128:2e68: LEA - [0x3808],A0
 	// 128:2e6c: MOVE.L - A0,-0x8ee(A5)
 	// 128:2e70: SF - 0x8,D0
@@ -1239,7 +1320,24 @@ void FoolGame::sub_128_2e3e() {
 		g_zbasic->indexSet(this->var_str_384, i, 2);
 	}
 	// 128:2f54
-	warning("STUB: %s", __func__);
+	for (int i = 1; i <= 0x51; i++) {
+		this->arr_i16_4bd8[i] = g_zbasic->readFileInt(2);
+	}
+	// 128:2f84
+	g_zbasic->close(2);
+	if (this->var_i16_7e6 != 0) {
+		this->arr_str_1a8d8[0] = g_zbasic->str(34) + this->var_str_8ec + g_zbasic->str(35); // file cannot be opened
+		this->arr_str_1a8d8[1] = g_zbasic->str(36);
+		this->var_i16_7e6 = 0;
+		if ((this->var_i16_7ce & 1) == 0) {
+			this->sub_128_1c2c(9);
+		} else {
+			this->sub_128_1c2c(8);
+		}
+	} else {
+		// 128:302c
+		this->sub_128_3032();
+	}
 
 }
 
@@ -1315,8 +1413,100 @@ void FoolGame::sub_128_32c8() {
 	}
 }
 
+void FoolGame::sub_128_32fa() {
+	// 128:32fa
+	if (this->var_i16_7ce == 0x29a) {
+		return;
+	}
+	this->var_i16_7be = 0;
+	if (this->var_str_8ec == g_zbasic->str(42)) {
+		this->arr_str_1a8d8[0] = g_zbasic->str(43); // do you wish to save this game
+		this->arr_str_1a8d8[1] = g_zbasic->str(44); // yes
+		this->arr_str_1a8d8[2] = g_zbasic->str(45); // no
+		this->arr_str_1a8d8[3] = g_zbasic->str(46); // cancel
+		this->sub_128_dfe(0, 0, 3, 0);
+		if (this->var_i16_7be > 1) {
+			return;
+		}
+		this->sub_128_2a0e();
+		if (this->var_str_8ec == g_zbasic->str(47)) {
+			// 128:33da
+			this->var_i16_7be = 3;
+			return;
+		}
+	}
+	// 128:33e2
+	this->sub_128_1c2c(4);
+
+}
+
 void FoolGame::sub_128_3536() {
-	warning("STUB: %s", __func__);
+	// write save file
+	this->sub_128_1c4a(4);
+	if (this->var_i16_7ce == 0x29a)
+		return;
+	// 128:3548
+	if (this->var_str_8ec == g_zbasic->str(57)) { // empty
+		this->sub_128_2a0e();
+		if (this->var_str_8ec == g_zbasic->str(58)) { // empty
+			return;
+		}
+	}
+	// 128:3580
+	if ((this->var_i16_7ce & 1) != 0) {
+		this->sub_128_41aa();
+	}
+	// 128:3594
+	do {
+		this->sub_128_3774();
+		// 128:3598
+		this->var_i16_7e6 = 0;
+		// 128:359e: LEA - [0x3808],A0
+		// 128:35a2: MOVE.L - A0,-0x8ee(A5)
+		g_zbasic->defOpen(g_zbasic->str(59)); // FOOLgf87
+		g_zbasic->openW(2, this->var_str_8ec, 0x400, this->var_i16_9ec);
+
+		if (this->var_i16_7e6 != 0xa) {
+			this->var_str_af4 = g_zbasic->str(60); // The Fool's Errand
+			g_zbasic->writeFileStr(2, this->var_str_af4.encode(Common::kMacRoman));
+			g_zbasic->writeFileInt(2, this->var_i16_7d8);
+			g_zbasic->writeFileInt(2, this->var_i16_7e2);
+			g_zbasic->writeFileInt(2, this->var_i16_7ce);
+			g_zbasic->writeFileInt(2, this->var_i16_7d2);
+			for (int i = 1; i <= 0x64; i++) {
+				g_zbasic->writeFileInt(2, this->arr_i16_1d24[i]);
+				g_zbasic->writeFileInt(2, this->arr_i16_1c5a[i]);
+				g_zbasic->writeFileInt(2, this->arr_i16_1b90[i]);
+				this->var_str_af4 = g_zbasic->index(2, i);
+				g_zbasic->writeFileInt(2, (int16)this->var_str_af4.size());
+				g_zbasic->writeFileStr(2, this->var_str_af4);
+			}
+			// 128:36ba
+			for (int i = 1; i <= 0x51; i++) {
+				g_zbasic->writeFileInt(2, this->arr_i16_4bd8[i]);
+			}
+			g_zbasic->close(2);
+		}
+		// 128:36fe
+		if (this->var_i16_7e6 != 0) {
+			// problem with saving
+			this->sub_128_388a();
+			do {
+				this->sub_128_2a0e();
+			} while (this->var_str_8ec == g_zbasic->str(61));  // empty
+			// 128:3726: BRA - [0x3594]
+
+		} else {
+			break;
+		}
+	} while (true);
+	// 128:372a
+	// 128:372a: LEA - [0x3818],A0
+	// 128:372e: MOVE.L - A0,-0x8ee(A5)
+	if (this->var_i16_7c6 == 0) {
+		this->sub_128_37ce();
+		g_toolbox->InitCursor();
+	}
 }
 
 void FoolGame::sub_128_3744() {
@@ -1352,6 +1542,23 @@ void FoolGame::sub_128_378a() {
 	}
 
 	this->var_i16_7b2 = 0xa;
+}
+
+void FoolGame::sub_128_37ce() {
+	// 128:37ce
+	for (int i = 7; i <= 0xf; i++) {
+		g_toolbox->SetCursor(this->arr_curs_4d88[i]);
+		this->sub_128_3da(4);
+	}
+	this->var_i16_7b2 = 0xa;
+}
+
+void FoolGame::sub_128_388a() {
+	// 128:388a
+	if ((this->var_i16_7e6 & 0xff) == 2) {
+		// problem with saving
+	}
+	warning("STUB: %s", __func__);
 }
 
 void FoolGame::sub_128_39a0() {
@@ -1495,7 +1702,7 @@ void FoolGame::sub_128_39a0() {
 			// 128:3d3a
 			this->var_i16_484 = 3 + ((this->var_i16_7d0 - 1) / 0x10);
 			this->var_i16_7e4 = 1 + ((this->var_i16_7d0 - 1) % 0x10);
-			g_zbasic->menu(this->var_i16_7e4, this->var_i16_484, 1, Common::U32String());
+			g_zbasic->menu(this->var_i16_484, this->var_i16_7e4, 1, Common::U32String());
 			this->sub_128_3de6();
 		}
 	}
@@ -1641,6 +1848,7 @@ void FoolGame::sub_128_4472() {
 
 }
 
+// about screen
 void FoolGame::sub_128_4a92() {
 	warning("STUB: %s", __func__);
 }
@@ -2322,6 +2530,7 @@ void FoolGame::sub_129_123a() {
 	g_toolbox->SetPort(this->var_i32_0);
 }
 
+// word jumble/substitute puzzle
 void FoolGame::sub_130_004() {
 	// 130:0004
 	this->var_i16_d0c = 0;
@@ -2434,11 +2643,12 @@ void FoolGame::sub_130_004() {
 	warning("STUB: %s", __func__);
 }
 
+// word search game
 void FoolGame::sub_131_004() {
 	warning("STUB: %s", __func__);
 }
 
-
+// polyomino puzzle
 void FoolGame::sub_133_004() {
 	// 133:0004
 	this->sub_128_271a();
@@ -2516,6 +2726,7 @@ void FoolGame::sub_133_004() {
 	warning("STUB: %s", __func__);
 }
 
+// mask reveal puzzle
 void FoolGame::sub_134_004() {
 	warning("STUB: %s", __func__);
 }
@@ -2528,6 +2739,7 @@ void FoolGame::sub_136_004() {
 	warning("STUB: %s", __func__);
 }
 
+// the sun's map
 void FoolGame::sub_137_004() {
 	warning("STUB: %s", __func__);
 }
@@ -2541,10 +2753,12 @@ void FoolGame::sub_139_004() {
 	warning("STUB: %s", __func__);
 }
 
+// high priestess challenge
 void FoolGame::sub_140_004() {
 	warning("STUB: %s", __func__);
 }
 
+// death
 void FoolGame::sub_141_004() {
 	warning("STUB: %s", __func__);
 }
@@ -2553,10 +2767,12 @@ void FoolGame::sub_142_004() {
 	warning("STUB: %s", __func__);
 }
 
+// lights on
 void FoolGame::sub_142_852() {
 	warning("STUB: %s", __func__);
 }
 
+// hermit key trace
 void FoolGame::sub_142_12ac() {
 	warning("STUB: %s", __func__);
 }
