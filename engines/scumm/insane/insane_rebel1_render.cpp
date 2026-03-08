@@ -190,6 +190,32 @@ static int ra1ShotDirectionBucket(int dir) {
 	return 10;
 }
 
+struct RA1ShotEmitterPair {
+	int16 x1;
+	int16 y1;
+	int16 x2;
+	int16 y2;
+};
+
+// DAT_244A and DAT_251A in ASSAULT.EXE data section, used by FUN_1D79C.
+static const RA1ShotEmitterPair kRA1ShotEmitters244A[27] = {
+	{ 11, -11, -11, 0 }, { 16, -9, -16, -1 }, { 20, -6, -19, -3 }, { 20, -5, -21, -4 }, { -20, -6, 20, -5 },
+	{ -18, -9, 16, -1 }, { -13, -11, 13, 0 }, { -7, -13, 8, 2 }, { 1, -10, 3, 2 }, { 11, -16, -11, 4 },
+	{ 16, -14, -15, 1 }, { 19, -10, -19, -2 }, { 20, -5, -20, -4 }, { -20, -8, 19, -2 }, { -17, -11, 17, 1 },
+	{ -12, -15, 14, 3 }, { -7, -17, 8, 3 }, { 0, -18, 3, 0 }, { 10, -17, -10, 8 }, { 15, -14, -15, 5 },
+	{ 18, -10, -19, 1 }, { 20, -8, -19, -3 }, { -19, -8, 18, -6 }, { -16, -12, 17, 1 }, { -12, -16, 12, 3 },
+	{ -5, -18, 9, 6 }, { -1, -11, -3, -6 }
+};
+
+static const RA1ShotEmitterPair kRA1ShotEmitters251A[27] = {
+	{ -1, -11, -3, -6 }, { 7, -12, -8, 1 }, { 14, -11, -12, 0 }, { 18, -9, -17, -1 }, { 21, -7, -19, -4 },
+	{ -20, -6, 21, -5 }, { -18, -8, 19, -2 }, { -16, -10, 16, -1 }, { -11, -12, 11, 0 }, { 1, -18, -2, -1 },
+	{ 8, -17, -5, 1 }, { 13, -15, -12, 2 }, { 17, -13, -15, 0 }, { 21, -8, -19, -2 }, { -19, -6, 21, -4 },
+	{ -18, -10, 19, -3 }, { -15, -14, 17, 1 }, { -10, -15, 11, 4 }, { 1, -19, -2, 6 }, { 7, -18, -7, 8 },
+	{ 13, -16, -11, 5 }, { 18, -12, -14, 3 }, { 19, -8, -18, -2 }, { -17, -7, 20, -3 }, { -17, -10, 19, 1 },
+	{ -15, -14, 16, 5 }, { 0, -38, -14, 37 }
+};
+
 // Small subset of FUN_20D43 draw flags used by RA1 shot sprites.
 static void renderSpriteWithFlags(byte *dst, int pitch, int width, int height,
 	int x, int y, const RA1Sprite &spr, uint32 flags) {
@@ -280,27 +306,40 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	int pitch = width;
 
 	if (_currentLevel == 1) {
-		// Level 2: first-person asteroid dodge — no ship sprite, input averaging physics
+		// Level 2: first-person asteroid dodge — opcode 0x0B (FUN_1CDA7).
 		updateAsteroidPhysics();
 	} else {
-		// Level 1 (and others): third-person ship flight with accumulators
-		if (_shipBank.numSprites > 0) {
+		const bool turretMode = (_activeGameOpcode == 0x08 || _activeGameOpcode == 0x0A);
+		const bool flightMode = (_activeGameOpcode == 0x07 || _activeGameOpcode == 0x09 ||
+								 _activeGameOpcode == 0x19 || _activeGameOpcode == 0x1A);
+
+		// Dispatch movement path by GAME handler family:
+		//   0x08/0x0A -> FUN_1E6A7/FUN_1D79C (turret/cockpit)
+		//   0x07/0x09/0x19/0x1A -> flight-family handlers
+		if (turretMode) {
+			updateTurretPhysics();
+		} else if (_shipBank.numSprites > 0 && flightMode) {
 			updateShipPhysics();
-			// LVL1 assembly flow exits gameplay loops as soon as health drops below 0
-			// (see 0x1626E/0x162EE -> 0x165DD and 0x1640B -> 0x16614), then plays crash video.
-			// Do not render the in-engine death overlay in this path; finish immediately.
-			if (_currentLevel == 0 && _health < 0) {
-				_vm->_smushVideoShouldFinish = true;
-				return;
-			}
-			renderShip(renderBitmap, pitch, width, height);
 		}
+
+		// LVL1 assembly flow exits gameplay loops as soon as health drops below 0
+		// (see 0x1626E/0x162EE -> 0x165DD and 0x1640B -> 0x16614), then plays crash video.
+		// Do not render the in-engine death overlay in this path; finish immediately.
+		if (_currentLevel == 0 && _health < 0) {
+			_vm->_smushVideoShouldFinish = true;
+			return;
+		}
+
+		// Ship sprite is present in both flight (0x07 family) and 0x08 turret path.
+		if (flightMode || turretMode)
+			renderShip(renderBitmap, pitch, width, height);
 	}
 
 	// Assembly dispatch (FUN_1BE1B) only runs the targeting/shot overlay pipeline
-	// in handlers 0x09/0x0A/0x0B/0x1A (FUN_1DABB/FUN_1D79C/FUN_1CDA7/FUN_1D57E).
+	// in handlers 0x09/0x0A/0x0B/0x1A. In LVL1 stage-2 samples, 0x08 drives
+	// turret mode and needs the same targeting overlays enabled.
 	const bool hasTargetingPipeline =
-		(_activeGameOpcode == 0x09 || _activeGameOpcode == 0x0A ||
+		(_activeGameOpcode == 0x08 || _activeGameOpcode == 0x09 || _activeGameOpcode == 0x0A ||
 		 _activeGameOpcode == 0x0B || _activeGameOpcode == 0x1A);
 	if (hasTargetingPipeline) {
 		processShot();
@@ -390,9 +429,7 @@ void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) 
 	}
 }
 
-// renderLaserShots — FUN_1CDA7/FUN_1D79C shot visual path:
-// per active slot, compute left/right direction with FUN_1C794, pick one
-// of 3x5 sprite bands, and render interpolated sprite positions via FUN_20BD3.
+// renderLaserShots — FUN_1CDA7/FUN_1D79C shot visual path.
 void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height) {
 	if (_laserBank.numSprites <= 0)
 		return;
@@ -403,6 +440,9 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 	const int spritesPerSet = 5;
 	const int leftStartX = 0;
 	const int rightStartX = 0x13F; // 319
+	const bool turretMode = (_activeGameOpcode == 0x08 || _activeGameOpcode == 0x0A);
+	const int shipBaseX = turretMode ? (kRA1CenterX + (_perspectiveX - 0x20)) : _shipPosX;
+	const int shipBaseY = turretMode ? (kRA1CenterY + (_perspectiveY - 0x17)) : _shipPosY;
 
 	for (int i = 0; i < kMaxShotSlots; i++) {
 		if (_shotSlots[i].timer > 0 && _shotSlots[i].timer <= spritesPerSet) {
@@ -412,13 +452,59 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 			const int targetX = CLIP<int>(_shipPosX, 0, width - 1);
 			const int targetY = CLIP<int>(_shipPosY, 0, height - 1);
 
+			if (turretMode) {
+				// FUN_1D79C chooses emitters in two ways:
+				// - DAT_75E4 == 2: use DAT_75DC..DAT_75E2 fixed offsets
+				// - otherwise: table path DAT_244A/DAT_251A keyed by DAT_74D2
+				int start1X = 0;
+				int start1Y = 0;
+				int start2X = 0;
+				int start2Y = 0;
+				bool haveEmitters = false;
+				if (_flyControlMode == 2) {
+					start1X = shipBaseX - _turretEmitterLeftX;
+					start1Y = shipBaseY + _turretEmitterLeftY;
+					start2X = shipBaseX + _turretEmitterRightX;
+					start2Y = shipBaseY + _turretEmitterRightY;
+					haveEmitters = true;
+				} else if (_shipDirIndex >= 0 && _shipDirIndex < 27) {
+					const RA1ShotEmitterPair &emit =
+						(_shotSlots[i].variant != 0) ? kRA1ShotEmitters244A[_shipDirIndex]
+													 : kRA1ShotEmitters251A[_shipDirIndex];
+					start1X = shipBaseX + emit.x1;
+					start1Y = shipBaseY + emit.y1;
+					start2X = shipBaseX + emit.x2;
+					start2Y = shipBaseY + emit.y2;
+					haveEmitters = true;
+				}
+
+				if (!haveEmitters)
+					continue;
+
+				const int dir1 = ra1ShotDirection((int16)start1X, (int16)start1Y, (int16)targetX, (int16)targetY);
+				const int dir2 = ra1ShotDirection((int16)start2X, (int16)start2Y, (int16)targetX, (int16)targetY);
+				const int sprIdx1 = MIN<int>(ABS(dir1), _laserBank.numSprites - 1);
+				const int sprIdx2 = MIN<int>(ABS(dir2), _laserBank.numSprites - 1);
+				const uint32 flags1 = 0x83 | ((dir1 < 0) ? 0x2000 : 0);
+				const uint32 flags2 = 0x83 | ((dir2 < 0) ? 0x2000 : 0);
+				const int interp1X = start1X + (((targetX - start1X) * lerp) >> 3);
+				const int interp1Y = start1Y + (((targetY - start1Y) * lerp) >> 3);
+				const int interp2X = start2X + (((targetX - start2X) * lerp) >> 3);
+				const int interp2Y = start2Y + (((targetY - start2Y) * lerp) >> 3);
+
+				renderSpriteWithFlags(dst, pitch, width, height,
+					interp1X, interp1Y, _laserBank.sprites[sprIdx1], flags1);
+				renderSpriteWithFlags(dst, pitch, width, height,
+					interp2X, interp2Y, _laserBank.sprites[sprIdx2], flags2);
+				continue;
+			}
+
+			// Fallback for non-turret handlers that still run shot overlays.
 			int leftStartY = 0x96;
 			int rightStartY = 0x96;
 			uint32 leftFlags = 0x83;
 			uint32 rightFlags = 0x2083;
 
-			// FUN_1CDA7 special mode branch (_DAT_75E4 == 1): toggles emitter origin
-			// and flip flags via DAT_2423. Keep behavior for parity when mode is used.
 			if (_flyControlMode == 1) {
 				if (_shotAlternator != 0) {
 					leftFlags = 0x4083;
@@ -439,7 +525,6 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 			const int bucketRight = ra1ShotDirectionBucket(dirRight);
 			const int sprIdxLeft = frame + bucketLeft;
 			const int sprIdxRight = frame + bucketRight;
-
 			const int interpLeftX = leftStartX + (((targetX - leftStartX) * lerp) >> 3);
 			const int interpLeftY = leftStartY + (((targetY - leftStartY) * lerp) >> 3);
 			const int interpRightX = rightStartX + (((targetX - rightStartX) * lerp) >> 3);
@@ -559,15 +644,26 @@ void InsaneRebel1::renderShip(byte *dst, int pitch, int width, int height) {
 	if (_health < 0 && _deathTimer <= 20)
 		return;
 
-	if (_shipDirIndex < 0 || _shipDirIndex >= _shipBank.numSprites)
+	const RA1SpriteBank *shipBank = &_shipBank;
+	if (_currentLevel == 0 && _flyControlMode == 2 && _shipBankAlt.numSprites > 0)
+		shipBank = &_shipBankAlt;
+
+	if (_shipDirIndex < 0 || _shipDirIndex >= shipBank->numSprites)
 		return;
 
-	const RA1Sprite &spr = _shipBank.sprites[_shipDirIndex];
+	const RA1Sprite &spr = shipBank->sprites[_shipDirIndex];
 
-	// FUN_1DEB5 draws at (_74B6 + _74BA, _74B8 + _74BC).
-	// In the current mapping, _shipPosX/_shipPosY already store that screen position.
-	int drawX = _shipPosX - spr.width / 2;
-	int drawY = _shipPosY - spr.height / 2;
+	// In 0x08/0x0A turret handlers, _shipPos holds pointer center (_74BE/_74C0),
+	// while ship sprite center is still (_74B6+_74BA, _74B8+_74BC).
+	int shipScreenX = _shipPosX;
+	int shipScreenY = _shipPosY;
+	if (_activeGameOpcode == 0x08 || _activeGameOpcode == 0x0A) {
+		shipScreenX = kRA1CenterX + (_perspectiveX - 0x20);
+		shipScreenY = kRA1CenterY + (_perspectiveY - 0x17);
+	}
+
+	int drawX = shipScreenX - spr.width / 2;
+	int drawY = shipScreenY - spr.height / 2;
 
 	renderSprite(dst, pitch, width, height, drawX, drawY, spr);
 }
@@ -578,9 +674,14 @@ void InsaneRebel1::renderExplosions(byte *dst, int pitch, int width, int height)
 	if (_bangBank.numSprites <= 0)
 		return;
 
-	// Ship screen center position (matches assembly DAT_74B6+DAT_74BA, DAT_74B8+DAT_74BC).
+	// In 0x08/0x0A turret handlers, explosion anchors use ship center
+	// (_74B6+_74BA, _74B8+_74BC), not pointer center (_74BE/_74C0).
 	int shipScreenX = _shipPosX;
 	int shipScreenY = _shipPosY;
+	if (_activeGameOpcode == 0x08 || _activeGameOpcode == 0x0A) {
+		shipScreenX = kRA1CenterX + (_perspectiveX - 0x20);
+		shipScreenY = kRA1CenterY + (_perspectiveY - 0x17);
+	}
 
 	// --- Death shake explosions (FUN_1DEB5 LAB_1e0e3) ---
 	// When dead and deathTimer > 10: random explosion sprites scatter around ship

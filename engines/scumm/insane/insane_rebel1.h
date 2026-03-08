@@ -116,6 +116,7 @@ private:
 	bool loadRA1Nut(const char *filename, RA1SpriteBank &bank);
 	void loadLevelSprites(int level);
 	void updateShipPhysics();
+	void updateTurretPhysics();
 	void renderShip(byte *dst, int pitch, int width, int height);
 	void renderHUD(byte *dst, int pitch, int width, int height);
 	void renderMainMenuOverlay(byte *dst, int pitch, int width, int height);
@@ -145,6 +146,7 @@ private:
 	ScummEngine_v7 *_vm;
 
 	RA1SpriteBank _shipBank;
+	RA1SpriteBank _shipBankAlt; // Secondary ship bank (e.g. L1BANK2 mode-2 sprites)
 	RA1SpriteBank _displayBank;   // SYS/DISPLAY.NUT — bottom status bar
 	RA1SpriteBank _titleFontBank; // SYS/TITLFONT.NUT — default subtitle/title layer
 	RA1SpriteBank _hudFontBank;   // RA1 HUD text glyphs (TECHFONT/TALKFONT via RA1 loader)
@@ -204,6 +206,11 @@ private:
 
 	// Control mode (from GAME opcode 0x5E)
 	int16 _flyControlMode;
+	// Mode-2 emitter offsets used by FUN_1D79C when _DAT_75E4 == 2.
+	int16 _turretEmitterLeftX;
+	int16 _turretEmitterLeftY;
+	int16 _turretEmitterRightX;
+	int16 _turretEmitterRightY;
 	// Last per-frame GAME movement handler opcode (0x07/0x08/0x09/0x0A/0x0B/0x1A).
 	// Used to mirror assembly handler-specific overlay pipeline behavior.
 	uint16 _activeGameOpcode;
@@ -291,6 +298,7 @@ private:
 		int16 posY;      // 0x75F6: cursor Y at time of shot
 		int16 centerX;   // 0x75EA: perspective-adjusted X
 		int16 centerY;   // 0x75EE: perspective-adjusted Y
+		int16 variant;   // 0x75FA: emitter table selector (DAT_241F snapshot)
 	};
 	ShotSlot _shotSlots[kMaxShotSlots];
 	int16 _shotAlternator;   // 0x241F: alternates between 0/1

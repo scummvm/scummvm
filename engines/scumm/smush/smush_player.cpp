@@ -351,6 +351,17 @@ void SmushPlayer::init(int32 speed) {
 	_fastForwardToFrame = 0;
 	_ra1HasCleanFrame = false;
 
+	// RA1 OBJ overlay chunks are video-local. Reset cached overlay state for each
+	// new ANM so data from a previous segment isn't re-applied.
+	free(_ra1ObjOverlayData);
+	_ra1ObjOverlayData = nullptr;
+	_ra1ObjOverlayDataSize = 0;
+	_ra1ObjOverlayCodec = 0;
+	_ra1ObjOverlayLeft = 0;
+	_ra1ObjOverlayTop = 0;
+	_ra1ObjOverlayWidth = 0;
+	_ra1ObjOverlayHeight = 0;
+
 	_vm->_smushVideoShouldFinish = false;
 	_vm->_smushActive = true;
 
