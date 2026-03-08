@@ -978,6 +978,8 @@ TinselEngine::~TinselEngine() {
 	RebootTimers();       // timers.cpp
 	ResetVarsTinlib();	// tinlib.cpp
 	ResetVarsTinsel();	// tinsel.cpp
+
+	CoroScheduler.destroy();
 }
 
 Common::String TinselEngine::getSavegameFilename(int16 saveNum) const {
