@@ -38,9 +38,16 @@ void InsaneRebel1::updateShipPhysics() {
 		_damageCooldown--;
 
 	// --- Step 1: Mouse input as offset from screen center ---
-	// Original: _DAT_756C (horizontal), _DAT_756E (vertical)
-	int16 inputX = (int16)(_vm->_mouse.x - 160);
-	int16 inputY = (int16)(_vm->_mouse.y - 100);
+	// Original: _DAT_756C (horizontal), _DAT_756E (vertical) in 320x200 space.
+	int16 mouseX = (int16)_vm->_mouse.x;
+	int16 mouseY = (int16)_vm->_mouse.y;
+	if (_player && _player->_width > 0 && _player->_height > 0 &&
+		(mouseX >= 320 || mouseY >= 200)) {
+		mouseX = (int16)((mouseX * 320) / _player->_width);
+		mouseY = (int16)((mouseY * 200) / _player->_height);
+	}
+	int16 inputX = (int16)(mouseX - 160);
+	int16 inputY = (int16)(mouseY - 100);
 	inputX = CLIP<int16>(inputX, -127, 127);
 	inputY = CLIP<int16>(inputY, -127, 127);
 
@@ -132,25 +139,11 @@ void InsaneRebel1::updateShipPhysics() {
 	}
 
 	// --- Step 8: Perspective offsets ---
-	{
-		int absOffX = ABS(_shipPosX - kRA1CenterX);
-		if (absOffX > 0)
-			_perspectiveX = (int16)((kRA1FocalX * kRA1CenterX * absOffX) /
-				((kRA1CenterX - kRA1FocalX) * absOffX + kRA1FocalX * kRA1CenterX));
-		else
-			_perspectiveX = 0;
-		if (_shipPosX < kRA1CenterX + 1)
-			_perspectiveX = -_perspectiveX;
-
-		int absOffY = ABS(_shipPosY - kRA1CenterY);
-		if (absOffY > 0)
-			_perspectiveY = (int16)((kRA1FocalY * kRA1CenterY * absOffY) /
-				((kRA1CenterY - kRA1FocalY) * absOffY + kRA1FocalY * kRA1CenterY));
-		else
-			_perspectiveY = 0;
-		if (_shipPosY < kRA1CenterY + 1)
-			_perspectiveY = -_perspectiveY;
-	}
+	// FUN_1DEB5 computes these linearly from ship offsets:
+	//   viewX = clamp((_74BA + 0x20), 0, 0x40)
+	//   viewY = clamp((_74BC + 0x17), 0, 0x2E)
+	_perspectiveX = CLIP<int16>((int16)(_shipPosX - kRA1CenterX + 0x20), 0, 0x40);
+	_perspectiveY = CLIP<int16>((int16)(_shipPosY - kRA1CenterY + 0x17), 0, 0x2E);
 
 	// --- Step 9: Direction sprite index (FUN_1DEB5 LAB_1e23e) ---
 	// Horizontal component from _74CA (rollAccum):
@@ -291,29 +284,60 @@ void InsaneRebel1::updateAsteroidPhysics() {
 		_screenFlash--;
 	}
 
-	// --- Cursor position: direct mouse mapping (like RA2 first-person levels) ---
-	// RA2 crosshair = _vm->_mouse.x/y directly. RA1's original (FUN_1CDA7) averaged
-	// 10 frames of DOS mouse deltas; with ScummVM absolute coords, use direct mapping.
-	_shipPosX = CLIP<int16>((int16)_vm->_mouse.x, 0, 319);
-	_shipPosY = CLIP<int16>((int16)_vm->_mouse.y, 0, 199);
+	// --- Cursor and perspective smoothing (FUN_1CDA7) ---
+	// _inputHistory* maps to 0x7580/0x7594, _viewHistory* to 0x75A8/0x75BC.
+	int16 mouseX = (int16)_vm->_mouse.x;
+	int16 mouseY = (int16)_vm->_mouse.y;
+	if (_player && _player->_width > 0 && _player->_height > 0 &&
+		(mouseX >= 320 || mouseY >= 200)) {
+		mouseX = (int16)((mouseX * 320) / _player->_width);
+		mouseY = (int16)((mouseY * 200) / _player->_height);
+	}
+	int16 inputX = (int16)(mouseX - kRA1CenterX);
+	int16 inputY = (int16)(mouseY - kRA1CenterY);
+	inputX = CLIP<int16>(inputX, -0xA0, 0xA0);
+	inputY = CLIP<int16>(inputY, -100, 100);
 
-	// Viewport parallax: smoothed offset from center for background scrolling
-	int16 mouseOffX = (int16)(_vm->_mouse.x - kRA1CenterX);
-	int16 mouseOffY = (int16)(_vm->_mouse.y - kRA1CenterY);
+	for (int i = kInputHistorySize - 1; i > 0; i--) {
+		_inputHistoryX[i] = _inputHistoryX[i - 1];
+		_inputHistoryY[i] = _inputHistoryY[i - 1];
+	}
+	_inputHistoryX[0] = inputX;
+	_inputHistoryY[0] = inputY;
+
+	int sumInputX = 0;
+	int sumInputY = 0;
+	for (int i = 0; i < kInputHistorySize; i++) {
+		sumInputX += _inputHistoryX[i];
+		sumInputY += _inputHistoryY[i];
+	}
+
+	_avgInputX = (int16)(sumInputX / kInputHistorySize);
+	_avgInputY = (int16)(-sumInputY / kInputHistorySize);
+	_avgInputX = CLIP<int16>(_avgInputX, -0xA0, 0xA0);
+	_avgInputY = CLIP<int16>(_avgInputY, -0x46, 0x41);
+
+	_shipPosX = _avgInputX + 0xA0;
+	_shipPosY = _avgInputY + 0x46;
+
 	for (int i = kInputHistorySize - 1; i > 0; i--) {
 		_viewHistoryX[i] = _viewHistoryX[i - 1];
 		_viewHistoryY[i] = _viewHistoryY[i - 1];
 	}
-	_viewHistoryX[0] = mouseOffX;
-	_viewHistoryY[0] = mouseOffY;
+	_viewHistoryX[0] = _avgInputX;
+	_viewHistoryY[0] = _avgInputY;
 
-	int16 viewSumX = 0, viewSumY = 0;
+	int sumViewX = 0;
+	int sumViewY = 0;
 	for (int i = 0; i < kInputHistorySize; i++) {
-		viewSumX += _viewHistoryX[i];
-		viewSumY += _viewHistoryY[i];
+		sumViewX += _viewHistoryX[i];
+		sumViewY += _viewHistoryY[i];
 	}
-	_perspectiveX = CLIP<int16>((int16)(viewSumX / kInputHistorySize >> 1) + 0x20, 0, 0x40);
-	_perspectiveY = CLIP<int16>((int16)(viewSumY / kInputHistorySize >> 1) + 0x17, 0, 0x2E);
+
+	int16 avgViewX = (int16)(sumViewX / kInputHistorySize);
+	int16 avgViewY = (int16)(sumViewY / kInputHistorySize);
+	_perspectiveX = CLIP<int16>((int16)((avgViewX >> 1) + 0x20), 0, 0x40);
+	_perspectiveY = CLIP<int16>((int16)((avgViewY >> 1) + 0x17), 0, 0x2E);
 
 	_frameCounter++;
 
@@ -505,14 +529,10 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 // processShot — FUN_1CCA0 (0x1CCA0). Spawns shot into explosion slot when fired.
 // Called once per frame during interactive rendering.
 void InsaneRebel1::processShot() {
-	if (!_playerFired || _fireCooldown > 0) {
-		_playerFired = false;
-		if (_fireCooldown > 0)
-			_fireCooldown--;
+	if (!_playerFired)
 		return;
-	}
 
-	// Find an available slot (timer <= 0 or timer > 5)
+	// Find first available slot (timer < 1 or > 5), matching FUN_1CCA0.
 	int slot = -1;
 	for (int i = 0; i < kMaxShotSlots; i++) {
 		if (_shotSlots[i].timer <= 0 || _shotSlots[i].timer > 5) {
@@ -525,14 +545,14 @@ void InsaneRebel1::processShot() {
 		return;
 	}
 
-	// Record shot at current cursor position
-	_shotSlots[slot].timer = 5;  // 5 frames active (original: uVar1 = 5 or 2 based on DAT_75FF)
+	// Record shot at current cursor position.
+	_shotSlots[slot].timer = 5;
 	_shotSlots[slot].posX = _shipPosX;
 	_shotSlots[slot].posY = _shipPosY;
-	_shotSlots[slot].centerX = _perspectiveX + (_shipPosX - kRA1CenterX) + kRA1CenterX;
-	_shotSlots[slot].centerY = _perspectiveY + (_shipPosY - kRA1CenterY) + kRA1CenterY;
+	_shotSlots[slot].centerX = _shipPosX;
+	_shotSlots[slot].centerY = _shipPosY;
+	_shotAlternator = 1 - _shotAlternator;
 
-	_fireCooldown = 3;  // Minimum frames between shots
 	_playerFired = false;
 
 	debug(5, "RA1 shot: slot=%d pos=(%d,%d)", slot, _shotSlots[slot].posX, _shotSlots[slot].posY);
