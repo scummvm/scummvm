@@ -21,6 +21,7 @@
 
 #include "common/system.h"
 #include "common/events.h"
+#include "common/str.h"
 
 #include "scumm/scumm_v7.h"
 #include "scumm/smush/smush_player.h"
@@ -137,13 +138,32 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 
 void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int height) {
 	_menuFrameCounter++;
+	auto makeTalkText = [](const char *text) {
+		Common::String out("<");
+		out += text;
+		return out;
+	};
+	auto getTalkTextWidth = [&](const char *text) {
+		Common::String styled = makeTalkText(text);
+		return getFontBankStringWidth(styled.c_str());
+	};
+	auto drawTalkText = [&](int x, int y, const char *text) {
+		Common::String styled = makeTalkText(text);
+		drawFontBankString(dst, pitch, width, height, x, y, styled.c_str());
+	};
+	auto getTitleTextWidth = [&](const char *text) {
+		return getFontBankStringWidth(text);
+	};
+	auto drawTitleText = [&](int x, int y, const char *text) {
+		drawFontBankString(dst, pitch, width, height, x, y, text);
+	};
 
 	if (_optionsActive) {
 		// --- Options submenu ---
 		static const char *kDiffNames[3] = { "EASY", "NORMAL", "HARD" };
 
-		const int titleW = getFontBankStringWidth("GAME OPTIONS");
-		drawFontBankString(dst, pitch, width, height, (width - titleW) / 2, 36, "GAME OPTIONS");
+		const int titleW = getTalkTextWidth("GAME OPTIONS");
+		drawTalkText((width - titleW) / 2, 36, "GAME OPTIONS");
 
 		// Build dynamic option strings
 		char diffLine[64];
@@ -155,10 +175,10 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 		const int rowH = 16;
 
 		for (int i = 0; i < 3; i++) {
-			const int textW = getFontBankStringWidth(kOptionsItems[i]);
+			const int textW = getTalkTextWidth(kOptionsItems[i]);
 			const int textX = (width - textW) / 2;
 			const int y = menuY + i * rowH;
-			drawFontBankString(dst, pitch, width, height, textX, y + 1, kOptionsItems[i]);
+			drawTalkText(textX, y + 1, kOptionsItems[i]);
 
 			if (i == _optionsSel) {
 				byte highlightColor = ((_menuFrameCounter / 8) & 1) ? 248 : 240;
@@ -182,8 +202,8 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 
 	if (_levelSelectActive) {
 		// --- Level select submenu ---
-		const int titleW = getFontBankStringWidth("LEVEL SELECT");
-		drawFontBankString(dst, pitch, width, height, (width - titleW) / 2, 36, "LEVEL SELECT");
+		const int titleW = getTalkTextWidth("LEVEL SELECT");
+		drawTalkText((width - titleW) / 2, 36, "LEVEL SELECT");
 
 		const char *kLevelItems[3] = {
 			"LEVEL 1: FLIGHT TRAINING",
@@ -195,13 +215,13 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 		const int rowH = 16;
 
 		for (int i = 0; i < 3; i++) {
-			const int textW = getFontBankStringWidth(kLevelItems[i]);
+			const int textW = getTalkTextWidth(kLevelItems[i]);
 			const int textX = (width - textW) / 2;
 			const int y = menuY + i * rowH;
-			drawFontBankString(dst, pitch, width, height, textX, y + 1, kLevelItems[i]);
+			drawTalkText(textX, y + 1, kLevelItems[i]);
 
 			if (i == _startLevel - 1) {
-				drawFontBankString(dst, pitch, width, height, textX - 12, y + 1, ">");
+				drawTalkText(textX - 12, y + 1, ">");
 			}
 
 			if (i == _levelSelectSel) {
@@ -234,20 +254,20 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 	};
 
 	// Center title
-	const int titleW = getFontBankStringWidth("MAIN MENU");
+	const int titleW = getTitleTextWidth("MAIN MENU");
 	const int titleX = (width - titleW) / 2;
-	drawFontBankString(dst, pitch, width, height, titleX, 36, "MAIN MENU");
+	drawTitleText(titleX, 36, "MAIN MENU");
 
 	// Draw menu items centered horizontally
 	const int menuY = 60;
 	const int rowH = 16;
 
 	for (int i = 0; i < 5; i++) {
-		const int textW = getFontBankStringWidth(kMenuItems[i]);
+		const int textW = getTalkTextWidth(kMenuItems[i]);
 		const int textX = (width - textW) / 2;
 		const int y = menuY + i * rowH;
 
-		drawFontBankString(dst, pitch, width, height, textX, y + 1, kMenuItems[i]);
+		drawTalkText(textX, y + 1, kMenuItems[i]);
 
 		// Selection highlight box — flashing border (FUN_004292d0 pattern from RA2)
 		if (i == _menuSelection) {
