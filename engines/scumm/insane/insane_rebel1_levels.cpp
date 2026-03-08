@@ -28,6 +28,9 @@
 
 namespace Scumm {
 
+// From smush/codec1.cpp
+void smushDecodeRA1Transparent(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
+
 static void decodeBomp(byte *dst, const byte *src, int width, int height, int pitch) {
 	while (height--) {
 		byte *dstNext = dst + pitch;
@@ -166,6 +169,12 @@ bool InsaneRebel1::loadRA1Nut(const char *filename, RA1SpriteBank &bank) {
 			bank.sprites[i].data = decPtr;
 			decodeBomp(decPtr, fobjData, bank.sprites[i].width,
 					   bank.sprites[i].height, bank.sprites[i].width);
+		} else if (codec == 1) {
+			// RA1 codec 1 in NUTs (e.g. LVL2/L2LASER.NUT): RLE where color 0 is transparent.
+			// Decode into a zero-cleared sprite buffer so skipped pixels stay transparent.
+			bank.sprites[i].data = decPtr;
+			smushDecodeRA1Transparent(decPtr, fobjData, 0, 0,
+				bank.sprites[i].width, bank.sprites[i].height, bank.sprites[i].width);
 		} else {
 			bank.sprites[i].width = 0;
 			bank.sprites[i].height = 0;
