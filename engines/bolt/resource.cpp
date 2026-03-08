@@ -650,6 +650,9 @@ BOLTCallback BoltEngine::g_fredTypeFreeCallbacks[28];
 BOLTCallback BoltEngine::g_georgeTypeLoadCallbacks[28];
 BOLTCallback BoltEngine::g_georgeTypeFreeCallbacks[28];
 
+BOLTCallback BoltEngine::g_huckTypeLoadCallbacks[27];
+BOLTCallback BoltEngine::g_huckTypeFreeCallbacks[27];
+
 BOLTCallback BoltEngine::g_scoobyTypeLoadCallbacks[28];
 BOLTCallback BoltEngine::g_scoobyTypeFreeCallbacks[28];
 
@@ -672,14 +675,17 @@ void BoltEngine::swapFredAnimEntryCb() { ((BoltEngine *)g_engine)->swapFredAnimE
 void BoltEngine::swapFredAnimDescCb() { ((BoltEngine *)g_engine)->swapFredAnimDesc(); }
 void BoltEngine::swapFredLevelDescCb() { ((BoltEngine *)g_engine)->swapFredLevelDesc(); }
 
+void BoltEngine::swapGeorgeFrameArrayCb() { ((BoltEngine *)g_engine)->swapGeorgeFrameArray(); }
+void BoltEngine::swapGeorgeHelpEntryCb() { ((BoltEngine *)g_engine)->swapGeorgeHelpEntry(); }
+void BoltEngine::swapGeorgeThresholdsCb() { ((BoltEngine *)g_engine)->swapGeorgeThresholds(); }
+
+void BoltEngine::swapHuckWordArrayCb() { ((BoltEngine *)g_engine)->swapHuckWordArray(); }
+void BoltEngine::swapHuckWordsCb() { ((BoltEngine *)g_engine)->swapHuckWords(); }
+
 void BoltEngine::swapScoobyHelpEntryCb() { ((BoltEngine *)g_engine)->swapScoobyHelpEntry(); }
 void BoltEngine::swapScoobyWordArrayCb() { ((BoltEngine *)g_engine)->swapScoobyWordArray(); }
 
 void BoltEngine::swapTopCatHelpEntryCb() { ((BoltEngine *)g_engine)->swapTopCatHelpEntry(); }
-
-void BoltEngine::swapGeorgeFrameArrayCb() { ((BoltEngine *)g_engine)->swapGeorgeFrameArray(); }
-void BoltEngine::swapGeorgeHelpEntryCb() { ((BoltEngine *)g_engine)->swapGeorgeHelpEntry(); }
-void BoltEngine::swapGeorgeThresholdsCb() { ((BoltEngine *)g_engine)->swapGeorgeThresholds(); }
 
 void BoltEngine::initCallbacks() {
 	// --- BOOTHS ---
@@ -780,6 +786,34 @@ void BoltEngine::initCallbacks() {
 	g_georgeBoltCallbacks.memberFreeCallbacks = g_defaultMemberFreeCallbacks;
 	g_georgeBoltCallbacks.groupLoadCallbacks = g_defaultGroupLoadCallbacks;
 	g_georgeBoltCallbacks.groupFreeCallbacks = g_defaultGroupFreeCallbacks;
+
+	// --- HUCK ---
+	for (int i = 0; i < ARRAYSIZE(g_huckTypeLoadCallbacks); i++) {
+		g_huckTypeLoadCallbacks[i] = noOpCb;
+	}
+
+	g_huckTypeLoadCallbacks[2] = swapAllWordsCb;
+	g_huckTypeLoadCallbacks[6] = resolveAllRefsCb;
+	g_huckTypeLoadCallbacks[8] = swapSpriteHeaderCb;
+	g_huckTypeLoadCallbacks[10] = swapPicHeaderCb;
+	g_huckTypeLoadCallbacks[11] = swapAndResolvePicDescCb;
+	g_huckTypeLoadCallbacks[12] = swapFirstTwoWordsCb;
+	g_huckTypeLoadCallbacks[14] = swapFirstFourWordsCb;
+	g_huckTypeLoadCallbacks[25] = swapHuckWordArrayCb;
+	g_huckTypeLoadCallbacks[26] = swapHuckWordsCb;
+
+	for (int i = 0; i < ARRAYSIZE(g_huckTypeFreeCallbacks); i++) {
+		g_huckTypeFreeCallbacks[i] = noOpCb;
+	}
+
+	g_huckTypeFreeCallbacks[8] = freeSpriteCleanUpCb;
+
+	g_huckBoltCallbacks.typeLoadCallbacks = g_huckTypeLoadCallbacks;
+	g_huckBoltCallbacks.typeFreeCallbacks = g_huckTypeFreeCallbacks;
+	g_huckBoltCallbacks.memberLoadCallbacks = g_defaultMemberLoadCallbacks;
+	g_huckBoltCallbacks.memberFreeCallbacks = g_defaultMemberFreeCallbacks;
+	g_huckBoltCallbacks.groupLoadCallbacks = g_defaultGroupLoadCallbacks;
+	g_huckBoltCallbacks.groupFreeCallbacks = g_defaultGroupFreeCallbacks;
 
 	// --- SCOOBY ---
 	for (int i = 0; i < ARRAYSIZE(g_scoobyTypeLoadCallbacks); i++) {

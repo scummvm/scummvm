@@ -312,6 +312,7 @@ typedef struct SoundInfo {
 	}
 } SoundInfo;
 
+
 typedef struct FredEntityState {
 	uint16 flags;
 	int16 frameCountdown;
@@ -343,6 +344,38 @@ typedef struct FredEntityState {
 		pathIndex = 0;
 	}
 } FredEntityState;
+
+// HUCK GAME
+
+typedef struct HuckState {
+	int16 levelNumber;
+	int16 slotIndex[10];
+	int16 levelComplete;
+	int16 drawTable1[24];
+	int16 drawTable2[24];
+	int16 giftCount;
+	int16 hasCycle;
+	int16 selectionPending;
+	int16 selected1Slot;
+	int16 selected2Slot;
+	int16 selected1SpriteId;
+	int16 selected2SpriteId;
+
+	HuckState() {
+		levelNumber = 0;
+		memset(slotIndex, 0, sizeof(slotIndex));
+		levelComplete = 0;
+		memset(drawTable1, 0, sizeof(drawTable1));
+		memset(drawTable2, 0, sizeof(drawTable2));
+		giftCount = 0;
+		hasCycle = 0;
+		selectionPending = 0;
+		selected1Slot = 0;
+		selected2Slot = 0;
+		selected1SpriteId = 0;
+		selected2SpriteId = 0;
+	}
+} HuckState;
 
 // GEORGE GAME
 
@@ -645,10 +678,10 @@ protected:
 
 	// Utils
 	void displayColors(byte *palette, int16 page, int16 flags);
-	void sub_11035();
+	byte getPixel(byte *sprite, int16 localX, int16 localY);
 	void boltPict2Pict(XPPicDesc *dest, byte *boltSprite);
 	void displayPic(byte *boltSprite, int16 xOff, int16 yOff, int16 page);
-	void sub_11131();
+	bool pointInRect(Common::Rect *rect, int16 x, int16 y);
 	const char *assetPath(const char *fileName);
 	void boltCycleToXPCycle(byte *srcData, XPCycleState *cycleDesc);
 	void unpackColors(int16 count, byte *packedColors);
@@ -725,7 +758,7 @@ protected:
 	BOLTMemberEntry *g_boltCurrentMemberEntry = nullptr;
 	int16 g_pendingFixupCount = 0;
 
-	// Game state
+	// Game levelNumber
 	bool initVRam(int16 poolSize);
 	void freeVRam();
 	bool vLoad(void *dest, const char *name);
@@ -1032,7 +1065,70 @@ protected:
 	int16 *g_georgeThresholds = nullptr;
 
 	// --- HUCK ---
-	int16 huckGame(int16 prevBooth) { return 0; }
+	void playSoundMapHuck(int16 memberId);
+	void waitSoundMapHuck();
+	void setHuckColors(int16 which);
+	void restoreHuckColors(int16 which);
+	void startHuckShuffleTimer();
+	bool intersectRect(const Common::Rect *a, const Common::Rect *b, Common::Rect *out);
+	void drawGift(int16 slot);
+	void drawHuckGifts();
+	void checkHuckLevelComplete();
+	bool initHuckDisplay();
+	bool loadHuckResources();
+	void unloadHuckResources();
+	bool initHuckLevel();
+	bool resumeHuckLevel();
+	bool initHuck();
+	void huckToggleBlinking(int16 *state, int16 which);
+	void huckUpdateHotSpots(int16 x, int16 y);
+	int16 findGift(int16 x, int16 y);
+	bool handleGiftSelect(int16 x, int16 y);
+	void huckHandleActionButton(int16 x, int16 y);
+	void giftSwap();
+	void resolveHuckSelection();
+	void handleEvent(int16 eventType, uint32 eventData);
+	void playHuck();
+	void cleanUpHuck();
+	int16 huckGame(int16 prevBooth);
+	void swapHuckWordArray();
+	void swapHuckWords();
+
+	static void swapHuckWordArrayCb();
+	static void swapHuckWordsCb();
+
+	BOLTLib *g_huckBoltLib = nullptr;
+	BOLTCallbacks g_huckBoltCallbacks;
+
+	static BOLTCallback g_huckTypeLoadCallbacks[27];
+	static BOLTCallback g_huckTypeFreeCallbacks[27];
+
+	int16 g_huckSoundPlaying = 0;
+	int16 g_huckHotSpotCount = 0;
+	int16 g_huckActionState = 0;
+	uint32 g_huckScreensaverTimer = 0;
+	uint32 g_huckBlinkTimer = 0;
+	int16 g_huckScreensaverFlag = 0;
+	int16 g_huckBlinkFlag = 0;
+	uint32 g_huckShuffleTimer = 0;
+	int16 g_huckGlobal[30] = { 0 };
+	HuckState g_huckState;
+	byte *g_huckGiftPic = nullptr;
+	byte *g_huckBgPic = nullptr;
+	int16 g_huckGiftGroupId = 0;
+	int16 g_huckVariantGroupId = 0;
+	byte *g_huckBgDisplayPic = nullptr;
+	int16 g_huckScrollOffset = 0;
+	int16 g_huckPalRange[8] = { 0 };
+	int16 g_returnBooth = 0;
+	int16 g_huckExitFlag = 0;
+	int16 g_huckCursorX = 0;
+	int16 g_huckCursorY = 0;
+	byte g_huckPalSave0[15] = { 0 };
+	byte g_huckPalHighlight0[15] = { 0 };
+	byte g_huckPalSave1[15] = { 0 };
+	byte g_huckPalHighlight1[15] = { 0 };
+	XPPicDesc g_huckScratchPic;
 
 	// --- SCOOBY ---
 	bool loadScoobyBaseAssets();

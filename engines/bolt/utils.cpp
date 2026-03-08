@@ -62,7 +62,10 @@ void BoltEngine::displayColors(byte *palette, int16 page, int16 flags) {
 	_xp->displayPic(&picDesc, 0, 0, page);
 }
 
-void BoltEngine::sub_11035() {
+byte BoltEngine::getPixel(byte *sprite, int16 localX, int16 localY) {
+	int16 sprH = READ_UINT16(sprite + 0x0A);
+	byte *pixels = getResolvedPtr(sprite, 0x12);
+	return pixels[localX * sprH + localY];
 }
 
 void BoltEngine::boltPict2Pict(XPPicDesc *dest, byte *boltSprite) {
@@ -95,7 +98,9 @@ void BoltEngine::displayPic(byte *boltSprite, int16 xOff, int16 yOff, int16 page
 		page);
 }
 
-void BoltEngine::sub_11131() {
+bool BoltEngine::pointInRect(Common::Rect *rect, int16 x, int16 y) {
+	// Slightly different from our rect.contains() method...
+	return rect->left <= x && x <= rect->right && rect->top <= y && y <= rect->bottom;
 }
 
 const char *BoltEngine::assetPath(const char *fileName) {
