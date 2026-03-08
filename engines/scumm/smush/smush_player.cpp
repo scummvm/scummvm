@@ -485,6 +485,19 @@ void SmushPlayer::handleFetch(int32 subSize, Common::SeekableReadStream &b) {
 			int left = _storedFobjLeft + fetchX;
 			int top = _storedFobjTop + fetchY;
 
+			if (_insane) {
+				InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
+				// FUN_1FDBC routes FTCH through FUN_28D0A, which forces FUN_20D43
+				// flag 0x8 instead of replaying a plain raw FOBJ blit. In LVL2,
+				// the stored object is the 320-wide gameplay-window patch, so under
+				// ScummVM's 384-buffer crop emulation it must be anchored to the
+				// current window origin rather than left in raw chunk space.
+				if (rebel1->isInteractiveVideoActive() && rebel1->getActiveGameOpcode() == 0x0B &&
+					_storedFobjWidth == _vm->_screenWidth) {
+					left += _ra1ViewportOffsetX;
+				}
+			}
+
 			debug("RA1 FTCH: frame=%d id=0x%08x pos=(%d,%d) using stored FOBJ codec=%d size=%dx%d",
 				_frame, fetchId, left, top, storedCodec, _storedFobjWidth, _storedFobjHeight);
 			decodeFrameObject(storedCodec, _storedFobjData, left, top,
