@@ -1220,4 +1220,16 @@ void PhoenixVREngine::drawSlot(int idx, int face, int x, int y) {
 	delete src;
 }
 
+void PhoenixVREngine::syncSoundSettings() {
+	int musicVolume = ConfMan.getInt("music_volume");
+	int sfxVolume = ConfMan.getInt("sfx_volume");
+	debug("syncSoundSettings, music: %d, sfx: %d", musicVolume, sfxVolume);
+	bool muted = false;
+	if (ConfMan.hasKey("mute")) {
+		muted = ConfMan.getBool("mute");
+	}
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, muted ? 0 : musicVolume);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, muted ? 0 : sfxVolume);
+}
+
 } // End of namespace PhoenixVR

@@ -107,6 +107,8 @@ public:
 		return false;
 	}
 
+	void syncSoundSettings() override;
+
 	// Script API
 	void setNextScript(const Common::String &path);
 	void goToWarp(const Common::String &warp, bool savePrev = false);
