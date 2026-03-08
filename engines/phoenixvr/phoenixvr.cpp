@@ -1002,13 +1002,14 @@ void PhoenixVREngine::captureContext() {
 	};
 	Common::Array<SoundState> sounds, sounds3d;
 	for (auto &kv : _sounds) {
+		auto &name = kv._key;
 		auto &sound = kv._value;
-		if (sound.loops >= 0)
+		if (sound.loops >= 0 || name == _currentMusic)
 			continue;
 		if (sound.spatial)
-			sounds3d.push_back({kv._key, sound.volume, fromAngle(sound.angle)});
+			sounds3d.push_back({name, sound.volume, fromAngle(sound.angle)});
 		else
-			sounds.push_back({kv._key, sound.volume, 0});
+			sounds.push_back({name, sound.volume, 0});
 	}
 
 	// sound samples
@@ -1105,7 +1106,7 @@ bool PhoenixVREngine::enterScript() {
 		auto vol = ms.readUint32LE();
 		auto flags = ms.readUint32LE();
 		debug("sound: %s vol: %u flags: %u", name.c_str(), vol, flags);
-		if (!name.empty())
+		if (!name.empty() && name != _currentMusic)
 			playSound(name, Audio::Mixer::kSFXSoundType, vol, -1);
 	}
 
