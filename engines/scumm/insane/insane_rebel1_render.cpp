@@ -116,6 +116,15 @@ static int getBankStringWidth(const RA1SpriteBank &bank, const char *text) {
 	return w;
 }
 
+// Approximate FUN_221B7/FUN_20BD3 space-advance behavior from available NUT glyphs.
+// The original reads per-font space width from metadata tables and caps it to 8.
+static int getBankSpaceAdvance(const RA1SpriteBank &bank) {
+	const int exclWidth = getBankStringWidth(bank, "!");
+	if (exclWidth <= 0)
+		return 6;
+	return MIN(exclWidth, 8);
+}
+
 // FUN_1C794: direction bucket in range -4..4 from two points.
 static int ra1ShotDirection(int16 x1, int16 y1, int16 x2, int16 y2) {
 	int dx = x2 - x1;
@@ -419,15 +428,84 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 	}
 }
 
-// drawFontBankString — Simplified version of FUN_221B7 (0x221B7).
-// Original is a multi-font markup-capable renderer; this uses a single font bank.
+// drawFontBankString — FUN_221B7 (0x221B7), partial parity:
+// supports '<'/'>' layer markup and layer-2 space handling used by RA1 HUD/targeting strings.
 void InsaneRebel1::drawFontBankString(byte *dst, int pitch, int width, int height, int x, int y, const char *text) {
-	drawBankString(_hudFontBank, dst, pitch, width, height, x, y, text);
+	if (!text || !dst)
+		return;
+
+	// Original FUN_221B7 layer mapping is table-driven at DAT_2D56 (0x406-byte entries).
+	// Current RA1 integration mirrors the gameplay-relevant subset:
+	//   layer 0/1 -> HUD font bank
+	//   layer 2+  -> TECH font bank
+	int layer = 0;
+	for (int i = 0; text[i] != '\0'; i++) {
+		char ch = text[i];
+		if (ch == '<') {
+			layer++;
+			continue;
+		}
+		if (ch == '>') {
+			layer = MAX(0, layer - 1);
+			continue;
+		}
+
+		const bool techLayer = (layer >= 2);
+		const RA1SpriteBank &bank =
+			(techLayer && _techFontBank.numSprites > 0) ? _techFontBank : _hudFontBank;
+		if (bank.numSprites <= 0)
+			return;
+
+		// FUN_221B7 special-case: when layer==2 and char is space, remap to '!'.
+		if (ch == ' ') {
+			if (techLayer) {
+				drawBankString(bank, dst, pitch, width, height, x, y, "!");
+				x += getBankStringWidth(bank, "!");
+			} else {
+				x += getBankSpaceAdvance(bank);
+			}
+			continue;
+		}
+
+		char glyph[2] = { ch, '\0' };
+		drawBankString(bank, dst, pitch, width, height, x, y, glyph);
+		x += getBankStringWidth(bank, glyph);
+	}
 }
 
-// getFontBankStringWidth — Pre-pass width calculation from FUN_221B7 (0x221B7).
+// getFontBankStringWidth — Width pre-pass from FUN_221B7 (0x221B7), including '<'/'>' markup.
 int InsaneRebel1::getFontBankStringWidth(const char *text) {
-	return getBankStringWidth(_hudFontBank, text);
+	if (!text)
+		return 0;
+
+	int w = 0;
+	int layer = 0;
+	for (int i = 0; text[i] != '\0'; i++) {
+		char ch = text[i];
+		if (ch == '<') {
+			layer++;
+			continue;
+		}
+		if (ch == '>') {
+			layer = MAX(0, layer - 1);
+			continue;
+		}
+
+		const bool techLayer = (layer >= 2);
+		const RA1SpriteBank &bank =
+			(techLayer && _techFontBank.numSprites > 0) ? _techFontBank : _hudFontBank;
+		if (bank.numSprites <= 0)
+			return w;
+
+		if (ch == ' ') {
+			w += techLayer ? getBankStringWidth(bank, "!") : getBankSpaceAdvance(bank);
+			continue;
+		}
+
+		char glyph[2] = { ch, '\0' };
+		w += getBankStringWidth(bank, glyph);
+	}
+	return w;
 }
 
 // renderShip — Ship sprite rendering from FUN_1DEB5 (0x1DEB5) at LAB_1e2b2.
@@ -510,17 +588,16 @@ void InsaneRebel1::renderExplosions(byte *dst, int pitch, int width, int height)
 	}
 }
 
-// renderHUD — FUN_1BBCB (0x1BBCB). Status bar from DISPLAY.NUT with health bar and score.
-// Original layout (320-wide): DAMAGE [green bar] | PILOTS [3 icons] | SCORE [number]
+// renderHUD — FUN_1BBCB (0x1BBCB). Status bar from DISPLAY.NUT with health/lives/score overlays.
 void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
-	if (_displayBank.numSprites == 0)
-		return;
-
 	// Extra life bonus: every 10,000 points (FUN_1BBCB lines 11-27)
 	if (_score / 10000 > _prevScore / 10000) {
 		_lives++;
 	}
 	_prevScore = _score;
+
+	if (_displayBank.numSprites == 0)
+		return;
 
 	const RA1Sprite &bar = _displayBank.sprites[0];
 
@@ -566,9 +643,9 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 			hudX, hudY, bar.width, bar.height);
 	}
 
-	// Draw health bar from FUN_1BBCB behavior.
-	// Original logic uses current health as fill width and computes x as (0x92 - health),
-	// so the bar is right-anchored and shrinks from left to right as damage increases.
+	// Draw health bar from FUN_1BBCB (0x1BBCB) + FUN_21D66 (0x21D66):
+	// fill rect at (0x92-health, 8), width=health, height=5, color=0.
+	// This is a black "remaining health" fill over the HUD template.
 	{
 		int barMaxW = kMaxHealth;
 		int barH = 5;
@@ -577,24 +654,10 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 		int barY = hudY + 8;
 		int fillW = CLIP(healthWidth, 0, barMaxW);
 
-		// Color based on damage level (matching original thresholds from FUN_1BBCB)
-		// Palette indices: 0xD0-0xD7 = greens, 0x60-0x67 = yellows, 0xD8-0xDF = reds
-		byte barColor;
-		if (_health > _tuning.shot * 2)
-			barColor = 0xD5;  // Green (0,192,0) — low damage
-		else if (_health > _tuning.wham * 2)
-			barColor = 0x63;  // Yellow (255,255,31) — moderate damage
-		else
-			barColor = 0xDD;  // Red (192,0,0) — critical
-
-		// Flash effect on damage
-		if (_screenFlash > 0)
-			barColor = 0xFF;  // White flash
-
 		for (int iy = 0; iy < barH && barY + iy < height; iy++) {
 			byte *d = dst + (barY + iy) * pitch + barX;
 			for (int ix = 0; ix < fillW && barX + ix < width; ix++) {
-				d[ix] = barColor;
+				d[ix] = 0x00;
 			}
 		}
 	}
@@ -617,11 +680,33 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 		}
 	}
 
-	// Score: 6-digit zero-padded at x=273, y=5 (original format '<<%%06ld' at 0x111,5)
-	if (_hudFontBank.numSprites > 0) {
-		char scoreStr[16];
-		Common::sprintf_s(scoreStr, "%06d", MAX<int>(_score, 0));
+	// Score: FUN_1BBCB (0x1BBCB) -> FUN_21FAF (0x21FAF) with format at 0x6713: "<<%06ld".
+	// Keep the leading "<<" markup so FUN_221B7-equivalent path selects TECH font layer.
+	if (_hudFontBank.numSprites > 0 || _techFontBank.numSprites > 0) {
+		char scoreStr[24];
+		Common::sprintf_s(scoreStr, "<<%06d", MAX<int>(_score, 0));
 		drawFontBankString(dst, pitch, width, height, hudX + 273, hudY + 5, scoreStr);
+	}
+
+	// Low-health indicator from FUN_1BBCB (0x1BBCB):
+	// if (health < miss*2 || health < wham*2 || health < shot*2) and (frame & 8),
+	// draw warning glyph at (0x49, 0x07). Two variants:
+	//   "<<[" when above critical thresholds, "<<\\" when critical.
+	{
+		const bool lowHealthBand =
+			((_health < _tuning.miss * 2) ||
+			 (_health < _tuning.wham * 2) ||
+			 (_health < _tuning.shot * 2)) &&
+			((_frameCounter & 8) != 0);
+		if (lowHealthBand) {
+			const bool aboveCritical =
+				(_health > _tuning.miss) &&
+				(_health > _tuning.wham) &&
+				(_health > _tuning.shot);
+			// FUN_1BBCB pushes string pointers 0x671b ("<<[") or 0x671f ("<<\\") into FUN_221B7.
+			const char *warningStr = aboveCritical ? "<<[" : "<<\\";
+			drawFontBankString(dst, pitch, width, height, hudX + 0x49, hudY + 0x07, warningStr);
+		}
 	}
 
 }
