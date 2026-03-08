@@ -1433,9 +1433,12 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 	if (isRA1() && _insane) {
 		InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
 		interactiveRA1 = rebel1->isInteractiveVideoActive();
-		// Level 2 asteroid stream composes many partial codec1/2+FTCH layers.
-		// Clear per frame for this mode to avoid stale-trail ghosting.
-		forceInteractiveClearRA1 = interactiveRA1 && (rebel1->getCurrentLevel() == 1);
+		const uint16 activeOpcode = rebel1->getActiveGameOpcode();
+		// Opcode 0x0B path (FUN_1CDA7) uses heavy partial-layer composition
+		// (codec1/2 + FTCH). Force clear there to avoid stale-trail ghosting.
+		// Keep a conservative fallback for early L2 frames before first 0x0B arrives.
+		forceInteractiveClearRA1 = interactiveRA1 &&
+			(activeOpcode == 0x0B || (activeOpcode == 0 && rebel1->getCurrentLevel() == 1));
 	}
 
 	// Keep the previous decoded frame (without post-render overlays) as delta source.
