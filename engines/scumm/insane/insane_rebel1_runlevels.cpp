@@ -106,26 +106,21 @@ void InsaneRebel1::playIntroSequence() {
 bool InsaneRebel1::runLevel1() {
 	debug(1, "InsaneRebel1: Running level 1");
 
-	// Load level sprites (original: pushes L1BANK1..L1BANG NUT filenames)
+	_currentLevel = 0;
+	loadTuningForLevel(0);
 	loadLevelSprites(1);
 
-	// L1HANGAR.ANM — Hangar departure (original: 0x5918, flags 0x0420)
-	// Plays once at level start, never replayed on retry.
 	playCinematic("LVL1/L1HANGAR.ANM");
 	if (_vm->shouldQuit())
 		return false;
 
-	// L1CU1.ANM — Pre-flight cutscene (original: 0x5944, flags 0x0400)
-	// Plays once at level start, never replayed on retry.
 	playCinematic("LVL1/L1CU1.ANM");
 	if (_vm->shouldQuit())
 		return false;
 
-	// Retry loop — on death with lives, L1NEW plays then jumps back here
 	while (!_vm->shouldQuit()) {
 		bool stage2Started = false;
 
-		// Reset health for this attempt (original: MOV WORD [0x7560], 98 at 0x16214)
 		_health = kMaxHealth;
 		_damageFlags = 0;
 		_prevDamageFlags = 0;
@@ -134,56 +129,74 @@ bool InsaneRebel1::runLevel1() {
 		_screenFlash = 0;
 		_frameCounter = 0;
 		_gameCounter = 0;
+		_activeGameOpcode = 0;
+		_gameLatch5D = 0;
+		_gameLatch5F = 0;
+		_killCount = 0;
+		_targetCount = 0;
+		_prevTargetCount = 0;
+		_lastHitTarget = 0;
+		_shipPosX = kRA1CenterX;
+		_shipPosY = kRA1CenterY;
+		_shipDirIndex = 17;
+		_rollAccum = 0;
+		_liftSmooth = 0;
+		_posAccumX = 0;
+		_posAccumY = 0;
+		_perspectiveX = 0;
+		_perspectiveY = 0;
 		_pathBranchEnabled = true;
 		_rightPathSelected = false;
 		_flyControlMode = 1;
 
-		// Stage 1 flight — L1PLAY1L (hard/left path)
-		// The first 394 frames are the common section. At counter 394, if
-		// ship is right of center, we switch to L1PLAY1R (easy path).
 		playInteractiveVideo("LVL1/L1PLAY1L.ANM");
 		if (_vm->shouldQuit())
 			return false;
 
 		if (_rightPathSelected && _health >= 0) {
-			debug(1, "InsaneRebel1: Switching to right path (L1PLAY1R)");
 			_pathBranchEnabled = false;
 			_flyControlMode = 1;
-			playInteractiveVideo("LVL1/L1PLAY1R.ANM");
+			playInteractiveVideo("LVL1/L1PLAY1R.ANM", 0x187);
 			if (_vm->shouldQuit())
 				return false;
 		}
 		_pathBranchEnabled = false;
 
 		if (_health >= 0) {
-			// L1CU2.ANM — Mid-level cutscene (original: 0x5977)
 			playCinematic("LVL1/L1CU2.ANM");
 			if (_vm->shouldQuit())
 				return false;
 
-			// L1PLAY2.ANM — Stage 2 turret (original: 0x5986)
-			// Assembly @0x16396..0x163E5 switches to mode 2 and sets
-			// FUN_1D79C emitter offsets in DAT_75DC..DAT_75E2.
-			_flyControlMode = 2;
-			_turretEmitterLeftX = 10;
-			_turretEmitterLeftY = -5;
-			_turretEmitterRightX = 10;
-			_turretEmitterRightY = -5;
-			stage2Started = true;
-			playInteractiveVideo("LVL1/L1PLAY2.ANM");
-			if (_vm->shouldQuit())
-				return false;
+			while (!_vm->shouldQuit()) {
+				_flyControlMode = 2;
+				_turretEmitterLeftX = 10;
+				_turretEmitterLeftY = -5;
+				_turretEmitterRightX = 10;
+				_turretEmitterRightY = -5;
+				_activeGameOpcode = 0;
+				_gameLatch5D = 0;
+				_gameLatch5F = 0;
+				_killCount = 0;
+				stage2Started = true;
 
-			// TODO: Check score threshold (original: CMP WORD [0x75D0], 5)
-			// If score < 5: L1RETRY → retry Stage 2
+				playInteractiveVideo("LVL1/L1PLAY2.ANM");
+				if (_vm->shouldQuit())
+					return false;
 
-			// L1END.ANM — Level complete! (original: 0x59a3)
-			playCinematic("LVL1/L1END.ANM");
-			return true;
+				if (_health < 0)
+					break;
+
+				if (_killCount > 4) {
+					playCinematic("LVL1/L1END.ANM");
+					return !_vm->shouldQuit();
+				}
+
+				playCinematic("LVL1/L1RETRY.ANM");
+				if (_vm->shouldQuit())
+					return false;
+			}
 		}
 
-		// Death sequence (assembly-verified: 0x165dd / 0x16614):
-		// Stage 1 deaths use L1CRASHA; Stage 2 deaths use L1CRASHB.
 		if (stage2Started)
 			playCinematic("LVL1/L1CRASHB.ANM");
 		else
@@ -191,44 +204,33 @@ bool InsaneRebel1::runLevel1() {
 		if (_vm->shouldQuit())
 			return false;
 
-		// Assembly order (0x1666B): check lives first; decrement only on retry path.
 		if (_lives <= 0) {
-			// Game over — L1DEATH then return (original: 0x166C0)
 			playCinematic("LVL1/L1DEATH.ANM");
-			debug(1, "InsaneRebel1: Game over (no lives left)");
 			return false;
 		}
 
-		// Lives remaining — L1NEW briefing then retry (original: 0x16675)
 		playCinematic("LVL1/L1NEW.ANM");
 		if (_vm->shouldQuit())
 			return false;
 		_lives--;
-
-		// Loop back to gameplay (original: JMP 0x16214 — health reset + Stage 1)
 	}
 
 	return false;
 }
 
-// Level 2: Asteroid Field Training
-// Flow: L2NEW → L2INTRO → L2PLAY (interactive) → L2END/L2DEATH
 bool InsaneRebel1::runLevel2() {
 	debug(1, "InsaneRebel1: Running level 2");
 
 	_currentLevel = 1;
-	_flyControlMode = 1;
 	loadLevelSprites(2);
 	loadTuningForLevel(1);
 
-	// L2INTRO.ANM — intro cutscene (481 frames)
 	playCinematic("LVL2/L2INTRO.ANM");
 	if (_vm->shouldQuit())
 		return false;
 
-	// Retry loop
 	while (!_vm->shouldQuit()) {
-		// Reset state for this attempt
+		_flyControlMode = 0;
 		_health = kMaxHealth;
 		_damageFlags = 0;
 		_prevDamageFlags = 0;
@@ -244,33 +246,297 @@ bool InsaneRebel1::runLevel2() {
 		_avgInputX = 0;
 		_avgInputY = 0;
 		_killCount = 0;
+		_activeGameOpcode = 0;
+		_gameLatch5D = 0;
+		_gameLatch5F = 0;
 
-		// L2PLAY.ANM — asteroid dodge (800 frames, interactive)
 		playInteractiveVideo("LVL2/L2PLAY.ANM");
 		if (_vm->shouldQuit())
 			return false;
 
 		if (_health >= 0) {
-			// Level complete!
 			playCinematic("LVL2/L2END.ANM");
-			return true;
+			return !_vm->shouldQuit();
 		}
 
-		// Death
+		if (_lives > 0) {
+			playCinematic("LVL2/L2NEW.ANM");
+			if (_vm->shouldQuit())
+				return false;
+			_lives--;
+			continue;
+		}
+
 		playCinematic("LVL2/L2DEATH.ANM");
+		return false;
+	}
+
+	return false;
+}
+
+bool InsaneRebel1::runLevel3() {
+	debug(1, "InsaneRebel1: Running level 3");
+
+	_currentLevel = 2;
+	loadLevelSprites(3);
+	loadTuningForLevel(2);
+
+	playCinematic("LVL3/L3INTRO.ANM");
+	if (_vm->shouldQuit())
+		return false;
+
+	while (!_vm->shouldQuit()) {
+		_flyControlMode = 1;
+		_health = kMaxHealth;
+		_damageFlags = 0;
+		_prevDamageFlags = 0;
+		_damageCooldown = 0;
+		_deathTimer = 0;
+		_screenFlash = 0;
+		_frameCounter = 0;
+		_gameCounter = 0;
+		_activeGameOpcode = 0;
+		_gameLatch5D = 0;
+		_gameLatch5F = 0;
+		_killCount = 0;
+		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
+		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
+		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
+		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
+		_avgInputX = 0;
+		_avgInputY = 0;
+
+		playInteractiveVideo("LVL3/L3PLAY.ANM");
 		if (_vm->shouldQuit())
 			return false;
 
-		_lives--;
-		if (_lives <= 0) {
-			debug(1, "InsaneRebel1: Game over (no lives left)");
+		if (_health >= 0) {
+			playCinematic("LVL3/L3END.ANM");
+			return !_vm->shouldQuit();
+		}
+
+		if (_lives > 0) {
+			playCinematic("LVL3/L3NEW.ANM");
+			if (_vm->shouldQuit())
+				return false;
+			_lives--;
+			continue;
+		}
+
+		playCinematic("LVL3/L3DEATH.ANM");
+		return false;
+	}
+
+	return false;
+}
+
+bool InsaneRebel1::runLevel4() {
+	debug(1, "InsaneRebel1: Running level 4");
+
+	_currentLevel = 3;
+	loadLevelSprites(4);
+	loadTuningForLevel(3);
+
+	playCinematic("LVL4/L4INTRO.ANM");
+	if (_vm->shouldQuit())
+		return false;
+
+	while (!_vm->shouldQuit()) {
+		_flyControlMode = 1;
+		_health = kMaxHealth;
+		_damageFlags = 0;
+		_prevDamageFlags = 0;
+		_damageCooldown = 0;
+		_deathTimer = 0;
+		_screenFlash = 0;
+		_frameCounter = 0;
+		_gameCounter = 0;
+		_activeGameOpcode = 0;
+		_gameLatch5D = 0;
+		_gameLatch5F = 0;
+		_killCount = 0;
+
+		playInteractiveVideo("LVL4/L4PLAY1.ANM");
+		if (_vm->shouldQuit())
+			return false;
+
+		if (_health >= 0) {
+			_activeGameOpcode = 0;
+			_gameLatch5D = 0;
+			_gameLatch5F = 0;
+			_killCount = 0;
+			playInteractiveVideo("LVL4/L4PLAY2.ANM");
+			if (_vm->shouldQuit())
+				return false;
+		}
+
+		if (_health >= 0) {
+			playCinematic((_killCount != 0) ? "LVL4/L4END1.ANM" : "LVL4/L4END2.ANM");
+			return !_vm->shouldQuit();
+		}
+
+		if (_lives > 0) {
+			playCinematic("LVL4/L4NEW.ANM");
+			if (_vm->shouldQuit())
+				return false;
+			_lives--;
+			continue;
+		}
+
+		playCinematic("LVL4/L4DEATH.ANM");
+		return false;
+	}
+
+	return false;
+}
+
+bool InsaneRebel1::runLevel5() {
+	debug(1, "InsaneRebel1: Running level 5");
+
+	_currentLevel = 4;
+	loadLevelSprites(5);
+	loadTuningForLevel(4);
+
+	playCinematic("LVL5/L5INTRO.ANM");
+	if (_vm->shouldQuit())
+		return false;
+
+	while (!_vm->shouldQuit()) {
+		loadRA1Nut("LVL5/L5LASER.NUT", _laserBank);
+		_flyControlMode = 1;
+		_health = kMaxHealth;
+		_damageFlags = 0;
+		_prevDamageFlags = 0;
+		_damageCooldown = 0;
+		_deathTimer = 0;
+		_screenFlash = 0;
+		_frameCounter = 0;
+		_gameCounter = 0;
+		_activeGameOpcode = 0;
+		_gameLatch5D = 0;
+		_gameLatch5F = 0;
+		_killCount = 0;
+		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
+		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
+		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
+		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
+		_avgInputX = 0;
+		_avgInputY = 0;
+
+		playInteractiveVideo("LVL5/L5PLAY.ANM");
+		if (_vm->shouldQuit())
+			return false;
+
+		if (_health < 0) {
+			if (_lives > 0) {
+				playCinematic("LVL5/L5NEW.ANM");
+				if (_vm->shouldQuit())
+					return false;
+				_lives--;
+				continue;
+			}
+
+			playCinematic("LVL5/L5DEATH.ANM");
 			return false;
 		}
 
-		// Retry briefing
-		playCinematic("LVL2/L2NEW.ANM");
+		if (_killCount <= 2) {
+			if (_lives > 0) {
+				playCinematic("LVL5/L5RETRY.ANM");
+				if (_vm->shouldQuit())
+					return false;
+				_lives--;
+				continue;
+			}
+
+			playCinematic("LVL5/L5DEATH2.ANM");
+			return false;
+		}
+
+		playCinematic("LVL5/L5BINTRO.ANM");
 		if (_vm->shouldQuit())
 			return false;
+
+		loadRA1Nut("LVL5/L5LASER2.NUT", _laserBank);
+		_activeGameOpcode = 0;
+		_gameLatch5D = 0;
+		_gameLatch5F = 0;
+		_killCount = 0;
+		playInteractiveVideo("LVL5/L5PLAY2.ANM");
+		if (_vm->shouldQuit())
+			return false;
+
+		if (_health >= 0) {
+			playCinematic("LVL5/L5END.ANM");
+			return !_vm->shouldQuit();
+		}
+
+		if (_lives > 0) {
+			playCinematic("LVL5/L5NEW.ANM");
+			if (_vm->shouldQuit())
+				return false;
+			_lives--;
+			continue;
+		}
+
+		playCinematic("LVL5/L5DEATH.ANM");
+		return false;
+	}
+
+	return false;
+}
+
+bool InsaneRebel1::runLevel6() {
+	debug(1, "InsaneRebel1: Running level 6");
+
+	_currentLevel = 5;
+	loadLevelSprites(6);
+	loadTuningForLevel(5);
+
+	playCinematic("LVL6/L6INTRO.ANM");
+	if (_vm->shouldQuit())
+		return false;
+
+	while (!_vm->shouldQuit()) {
+		_flyControlMode = 1;
+		_health = kMaxHealth;
+		_damageFlags = 0;
+		_prevDamageFlags = 0;
+		_damageCooldown = 0;
+		_deathTimer = 0;
+		_screenFlash = 0;
+		_frameCounter = 0;
+		_gameCounter = 0;
+		_activeGameOpcode = 0;
+		_gameLatch5D = 0;
+		_gameLatch5F = 0;
+		_killCount = 0;
+		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
+		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
+		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
+		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
+		_avgInputX = 0;
+		_avgInputY = 0;
+
+		playInteractiveVideo("LVL6/L6PLAY.ANM");
+		if (_vm->shouldQuit())
+			return false;
+
+		if (_health >= 0) {
+			playCinematic("LVL6/L6END.ANM");
+			return !_vm->shouldQuit();
+		}
+
+		if (_lives > 0) {
+			playCinematic("LVL6/L6NEW.ANM");
+			if (_vm->shouldQuit())
+				return false;
+			_lives--;
+			continue;
+		}
+
+		playCinematic("LVL6/L6DEATH.ANM");
+		return false;
 	}
 
 	return false;
@@ -279,6 +545,16 @@ bool InsaneRebel1::runLevel2() {
 // Main game entry point — called from ScummEngine::go().
 // Matches original flow at 0x15597: intro → menu → level.
 void InsaneRebel1::runGame() {
+	typedef bool (InsaneRebel1::*RunLevelMethod)();
+	static const RunLevelMethod kLevelRunners[] = {
+		&InsaneRebel1::runLevel1,
+		&InsaneRebel1::runLevel2,
+		&InsaneRebel1::runLevel3,
+		&InsaneRebel1::runLevel4,
+		&InsaneRebel1::runLevel5,
+		&InsaneRebel1::runLevel6
+	};
+
 	// Play intro sequence (logo + opening)
 	playIntroSequence();
 	if (_vm->shouldQuit())
@@ -292,29 +568,15 @@ void InsaneRebel1::runGame() {
 
 		switch (menuResult) {
 		case 1: {
-			bool completed = false;
-			if (_startLevel <= 1) {
-				// Start from Level 1 (default flow).
-				// Assembly Level 1 entry (0x16100) starts with L1HANGAR/L1CU1,
-				// not with L1NEW (L1NEW is retry-only at 0x16675).
-				completed = runLevel1();
-				if (completed && !_vm->shouldQuit()) {
-					completed = runLevel2();
-					if (completed) {
-						debug(1, "InsaneRebel1: Level 2 completed!");
-						// TODO: Continue to level 3
-					}
-				}
-			} else if (_startLevel == 2) {
-				// Direct Level 2 start from Level Select menu.
-				// Assembly Level 2 entry (0x16757) starts at L2INTRO; L2NEW is retry-only.
-				completed = runLevel2();
-				if (completed) {
-					debug(1, "InsaneRebel1: Level 2 completed!");
-				}
+			const int startLevel = CLIP<int>(_startLevel, 1, sizeof(kLevelRunners) / sizeof(kLevelRunners[0]));
+			bool completed = true;
+
+			for (int level = startLevel;
+				 level <= (int)(sizeof(kLevelRunners) / sizeof(kLevelRunners[0])) && completed && !_vm->shouldQuit();
+				 ++level) {
+				completed = (this->*kLevelRunners[level - 1])();
 			}
 			_currentLevel = 0;
-			// Return to menu after level ends
 			break;
 		}
 		case 2:
@@ -336,8 +598,8 @@ void InsaneRebel1::runGame() {
 }
 
 // Play interactive gameplay video (with ship physics + HUD).
-void InsaneRebel1::playInteractiveVideo(const char *filename) {
-	debug(1, "InsaneRebel1::playInteractiveVideo('%s')", filename);
+void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) {
+	debug(1, "InsaneRebel1::playInteractiveVideo('%s', startFrame=%d)", filename, startFrame);
 
 	// Stop any leftover audio from previous video
 	terminateAudio();
@@ -349,6 +611,8 @@ void InsaneRebel1::playInteractiveVideo(const char *filename) {
 	_interactiveVideoActive = true;
 	_vm->_smushVideoShouldFinish = false;
 	splayer->setCurVideoFlags(0x28);
+	if (startFrame > 0)
+		splayer->setFastForwardToFrame(startFrame);
 
 	// Center mouse, hide system cursor (we draw our own), lock mouse to window
 	smush_warpMouse(160, 100, -1);

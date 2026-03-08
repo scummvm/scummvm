@@ -29,16 +29,19 @@
 
 namespace Scumm {
 
+static const int kRA1LevelSelectItemCount = 7;
+static const int kRA1LastImplementedLevel = 6;
+
 bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 	if (_menuActive && _levelSelectActive && event.type == Common::EVENT_KEYDOWN) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_UP:
 		case Common::KEYCODE_w:
-			_levelSelectSel = (_levelSelectSel + 2) % 3;
+			_levelSelectSel = (_levelSelectSel + kRA1LevelSelectItemCount - 1) % kRA1LevelSelectItemCount;
 			return true;
 		case Common::KEYCODE_DOWN:
 		case Common::KEYCODE_s:
-			_levelSelectSel = (_levelSelectSel + 1) % 3;
+			_levelSelectSel = (_levelSelectSel + 1) % kRA1LevelSelectItemCount;
 			return true;
 		case Common::KEYCODE_RETURN:
 		case Common::KEYCODE_KP_ENTER:
@@ -47,7 +50,7 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			_vm->_smushVideoShouldFinish = true;
 			return true;
 		case Common::KEYCODE_ESCAPE:
-			_levelSelectSel = 2; // Back
+			_levelSelectSel = kRA1LevelSelectItemCount - 1; // Back
 			_menuConfirmed = true;
 			_vm->_smushVideoShouldFinish = true;
 			return true;
@@ -205,16 +208,20 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 		const int titleW = getTalkTextWidth("LEVEL SELECT");
 		drawTalkText((width - titleW) / 2, 36, "LEVEL SELECT");
 
-		const char *kLevelItems[3] = {
+		const char *kLevelItems[kRA1LevelSelectItemCount] = {
 			"LEVEL 1: FLIGHT TRAINING",
 			"LEVEL 2: ASTEROID FIELD",
+			"LEVEL 3: PLANET KOLAADOR",
+			"LEVEL 4: STAR DESTROYER",
+			"LEVEL 5: TATOOINE ATTACK",
+			"LEVEL 6: ASTEROID CHASE",
 			"BACK"
 		};
 
 		const int menuY = 60;
 		const int rowH = 16;
 
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < kRA1LevelSelectItemCount; i++) {
 			const int textW = getTalkTextWidth(kLevelItems[i]);
 			const int textX = (width - textW) / 2;
 			const int y = menuY + i * rowH;
@@ -363,7 +370,7 @@ void InsaneRebel1::runOptionsMenu() {
 }
 
 void InsaneRebel1::runLevelSelectMenu() {
-	_levelSelectSel = CLIP(_startLevel - 1, 0, 1);
+	_levelSelectSel = CLIP(_startLevel - 1, 0, kRA1LastImplementedLevel - 1);
 	_levelSelectActive = true;
 
 	while (!_vm->shouldQuit()) {
@@ -378,19 +385,14 @@ void InsaneRebel1::runLevelSelectMenu() {
 			break;
 
 		if (_menuConfirmed) {
-			switch (_levelSelectSel) {
-			case 0:
-				_startLevel = 1;
-				_levelSelectActive = false;
-				return;
-			case 1:
-				_startLevel = 2;
-				_levelSelectActive = false;
-				return;
-			case 2:
+			if (_levelSelectSel < kRA1LastImplementedLevel) {
+				_startLevel = _levelSelectSel + 1;
 				_levelSelectActive = false;
 				return;
 			}
+
+			_levelSelectActive = false;
+			return;
 		}
 	}
 	_levelSelectActive = false;

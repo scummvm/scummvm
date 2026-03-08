@@ -39,7 +39,7 @@ namespace Scumm {
 // Per-difficulty tuning tables from assault_data_3.bin
 // Indexed: difficulty * 0x28B + level * 0x1F + offset
 // Fields: roll, lift, slide, drift, snap, miss, wham, shot, kill
-static const int16 kTuningTable[2][3][9] = {
+static const int16 kTuningTable[6][3][9] = {
 	// Level 1 (Flight Training)
 	{
 		{ 100, 100,  60, 110,   0,   0,  15,   0,   0 },  // Easy
@@ -52,8 +52,32 @@ static const int16 kTuningTable[2][3][9] = {
 		{ 100,  18, 120,   0,   5,   0,  20,   0,  50 },  // Normal
 		{ 100,  20, 150,   0,   1,   0,  25,   0,  75 },  // Hard
 	},
+	// Level 3 (Planet Kolaador)
+	{
+		{   0,   0,   0,   0,   4,  15,  25,   0,  25 },  // Easy
+		{   0,   0,   0,   0,   2,  18,  30,   0,  50 },  // Normal
+		{   0,   0,   0,   0,   0,  20,  35,   0,  75 },  // Hard
+	},
+	// Level 4 (Star Destroyer Attack)
+	{
+		{  70, 100, 150,  90,   0,   0,  20,   0,   0 },  // Easy
+		{  72, 105, 155, 105,   0,   0,  25,   0,   0 },  // Normal
+		{  75, 110, 160, 110,   0,   0,  28,   0,   0 },  // Hard
+	},
+	// Level 5 (Tatooine Attack)
+	{
+		{   0,   0,   0,   0,   2,  11,   0,   4,  25 },  // Easy
+		{   0,   0,   0,   0,   1,  25,   0,   6,  50 },  // Normal
+		{   0,   0,   0,   0,   1,  28,   0,   6,  75 },  // Hard
+	},
+	// Level 6 (Asteroid Field Chase)
+	{
+		{   0,   0,   0,   0,   3,  20,   0,   2,  50 },  // Easy
+		{   0,   0,   0,   0,   1,  25,   0,   5, 100 },  // Normal
+		{   0,   0,   0,   0,   1,  28,   0,   6, 200 },  // Hard
+	},
 };
-static const int kNumTunedLevels = 2;
+static const int kNumTunedLevels = 6;
 
 
 void InsaneRebel1::loadTuningForLevel(int level) {

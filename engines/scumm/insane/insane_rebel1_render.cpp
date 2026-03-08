@@ -315,8 +315,9 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	if (height == 0) height = _screenHeight;
 	int pitch = width;
 
-	if (_currentLevel == 1) {
-		// Level 2: first-person asteroid dodge — opcode 0x0B (FUN_1CDA7).
+	const bool asteroidMode = (_activeGameOpcode == 0x0B);
+	if (asteroidMode) {
+		// First-person asteroid/surface handler — opcode 0x0B (FUN_1CDA7).
 		updateAsteroidPhysics();
 	} else {
 		const bool turretMode = (_activeGameOpcode == 0x08 || _activeGameOpcode == 0x0A);
@@ -328,7 +329,7 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		//   0x07/0x09/0x19/0x1A -> flight-family handlers
 		if (turretMode) {
 			updateTurretPhysics();
-		} else if (_shipBank.numSprites > 0 && flightMode) {
+		} else if (flightMode) {
 			updateShipPhysics();
 		}
 
@@ -350,7 +351,7 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// before HUD/screen copy so 0x0B doesn't lag one frame behind the mouse.
 	if (_player) {
 		_player->_ra1ViewportOffsetX = _perspectiveX;
-		_player->_ra1ViewportOffsetY = (_activeGameOpcode == 0x0B) ? 0 : _perspectiveY;
+		_player->_ra1ViewportOffsetY = asteroidMode ? 0 : _perspectiveY;
 	}
 
 	// Assembly dispatch (FUN_1BE1B) only runs the targeting/shot overlay pipeline
