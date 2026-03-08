@@ -61,6 +61,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed scaling issues for subtitles, draggable items, inventory bar and
      main menu in widescreen mod.
 
+ QdEngine:
+   - Fixed pathfinding bugs on Windows optimized (release) build.
+
  SCUMM:
    - Added support for original splash screens in Maniac Mansion NES (when
      playing from PRG files).
