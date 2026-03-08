@@ -116,14 +116,111 @@ static int getBankStringWidth(const RA1SpriteBank &bank, const char *text) {
 	return w;
 }
 
+// FUN_1C794: direction bucket in range -4..4 from two points.
+static int ra1ShotDirection(int16 x1, int16 y1, int16 x2, int16 y2) {
+	int dx = x2 - x1;
+	int dy = y1 - y2;
+	if (dy < 0) {
+		dy = -dy;
+		dx = -dx;
+	}
+
+	if (dx >= 0) {
+		if (dy > dx * 5)
+			return 0;
+		if (dx * 3 < dy * 2)
+			return 1;
+		if (dx * 2 < dy * 3)
+			return 2;
+		if (dx * 2 < dy * 9)
+			return 3;
+		return 4;
+	}
+
+	const int adx = -dx;
+	if (dy > adx * 5)
+		return 0;
+	if (adx * 3 < dy * 2)
+		return -1;
+	if (adx * 2 < dy * 3)
+		return -2;
+	if (adx * 2 < dy * 9)
+		return -3;
+	return -4;
+}
+
+// FUN_1CDA7 maps abs(FUN_1C794) to sprite base index: <=1 -> 0, ==2 -> 5, else -> 10.
+static int ra1ShotDirectionBucket(int dir) {
+	const int absDir = ABS(dir);
+	if (absDir <= 1)
+		return 0;
+	if (absDir == 2)
+		return 5;
+	return 10;
+}
+
+// Small subset of FUN_20D43 draw flags used by RA1 shot sprites.
+static void renderSpriteWithFlags(byte *dst, int pitch, int width, int height,
+	int x, int y, const RA1Sprite &spr, uint32 flags) {
+	if (!spr.data || spr.width <= 0 || spr.height <= 0)
+		return;
+
+	int drawX = x;
+	int drawY = y;
+	if ((flags & 0x1) == 0) {
+		drawX += spr.xoffs;
+		drawY += spr.yoffs;
+	}
+	if (flags & 0x2) {
+		drawX -= spr.width / 2;
+		drawY -= spr.height / 2;
+	}
+
+	const bool flipX = (flags & 0x2000) != 0;
+	const bool flipY = (flags & 0x4000) != 0;
+
+	int srcOffsetX = 0;
+	int srcOffsetY = 0;
+	int drawW = spr.width;
+	int drawH = spr.height;
+
+	if (drawX < 0) {
+		srcOffsetX = -drawX;
+		drawW += drawX;
+		drawX = 0;
+	}
+	if (drawY < 0) {
+		srcOffsetY = -drawY;
+		drawH += drawY;
+		drawY = 0;
+	}
+	if (drawX + drawW > width)
+		drawW = width - drawX;
+	if (drawY + drawH > height)
+		drawH = height - drawY;
+	if (drawW <= 0 || drawH <= 0)
+		return;
+
+	for (int iy = 0; iy < drawH; iy++) {
+		const int srcY = flipY ? (spr.height - 1 - (srcOffsetY + iy)) : (srcOffsetY + iy);
+		byte *d = dst + (drawY + iy) * pitch + drawX;
+		for (int ix = 0; ix < drawW; ix++) {
+			const int srcX = flipX ? (spr.width - 1 - (srcOffsetX + ix)) : (srcOffsetX + ix);
+			const byte px = spr.data[srcY * spr.width + srcX];
+			if (px != 0)
+				d[ix] = px;
+		}
+	}
+}
+
 // procPreRendering — Sets viewport scroll offset before FOBJ decoding (FUN_224FD at 0x224FD).
 // For interactive levels, shifts the FOBJ decode position based on mouse-controlled perspective.
 void InsaneRebel1::procPreRendering(byte *renderBitmap) {
 	if (_interactiveVideoActive && _player) {
 		// FUN_224FD stores absolute 320x200 window origin in a 384x242 frame:
 		// X in [0..0x40], Y in [0..0x2E], centered at (0x20,0x17).
-		// ScummVM presents the full 384x242 frame, so use center-relative delta
-		// to avoid exposing black border over cockpit edges.
+		// Apply center-relative deltas so right aim shifts scene left, matching
+		// FUN_223FE/FUN_2245B subtracting _41A0 from world-space X.
 		_player->_ra1ViewportOffsetX = _perspectiveX - 0x20;
 		_player->_ra1ViewportOffsetY = _perspectiveY - 0x17;
 	} else if (_player) {
@@ -243,26 +340,69 @@ void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) 
 	}
 }
 
-// renderLaserShots — FUN_1CCA0 visual output. Renders laser sprites from _laserBank
-// when shot slots are active (timer > 0). Each set of 5 sprites is a laser animation
-// converging from the ship toward center screen. Timer 5→1 maps to sprite frames 0→4.
+// renderLaserShots — FUN_1CDA7/FUN_1D79C shot visual path:
+// per active slot, compute left/right direction with FUN_1C794, pick one
+// of 3x5 sprite bands, and render interpolated sprite positions via FUN_20BD3.
 void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height) {
 	if (_laserBank.numSprites <= 0)
 		return;
 
-	int spritesPerSet = 5;
+	// DAT_2407 lookup used by FUN_1CDA7/FUN_1D79C for timer 1..5 interpolation.
+	// Entry 0 unused.
+	static const int kShotLerpByTimer[6] = { 0, 8, 7, 6, 4, 0 };
+	const int spritesPerSet = 5;
+	const int leftStartX = 0;
+	const int rightStartX = 0x13F; // 319
+
 	for (int i = 0; i < kMaxShotSlots; i++) {
 		if (_shotSlots[i].timer > 0 && _shotSlots[i].timer <= spritesPerSet) {
-			int frame = spritesPerSet - _shotSlots[i].timer;
-			int sprIdx = frame;
-			if (sprIdx >= _laserBank.numSprites)
-				continue;
+			const int timer = _shotSlots[i].timer;
+			const int lerp = kShotLerpByTimer[timer];
+			const int frame = spritesPerSet - timer;
+			const int targetX = CLIP<int>(_shipPosX, 0, width - 1);
+			const int targetY = CLIP<int>(_shipPosY, 0, height - 1);
 
-			const RA1Sprite &spr = _laserBank.sprites[sprIdx];
-			// LASER sprite offsets are authored in screen space.
-			int drawX = spr.xoffs;
-			int drawY = spr.yoffs;
-			renderSprite(dst, pitch, width, height, drawX, drawY, spr);
+			int leftStartY = 0x96;
+			int rightStartY = 0x96;
+			uint32 leftFlags = 0x83;
+			uint32 rightFlags = 0x2083;
+
+			// FUN_1CDA7 special mode branch (_DAT_75E4 == 1): toggles emitter origin
+			// and flip flags via DAT_2423. Keep behavior for parity when mode is used.
+			if (_flyControlMode == 1) {
+				if (_shotAlternator != 0) {
+					leftFlags = 0x4083;
+					leftStartY = 0;
+					rightStartY = 0x96;
+				} else {
+					rightFlags = 0x6083;
+					leftStartY = 0x96;
+					rightStartY = 0;
+				}
+				if (timer == 1)
+					_shotAlternator = 1 - _shotAlternator;
+			}
+
+			const int dirLeft = ra1ShotDirection(targetX, targetY, leftStartX, leftStartY);
+			const int dirRight = ra1ShotDirection(rightStartX, targetY, targetX, rightStartY);
+			const int bucketLeft = ra1ShotDirectionBucket(dirLeft);
+			const int bucketRight = ra1ShotDirectionBucket(dirRight);
+			const int sprIdxLeft = frame + bucketLeft;
+			const int sprIdxRight = frame + bucketRight;
+
+			const int interpLeftX = leftStartX + (((targetX - leftStartX) * lerp) >> 3);
+			const int interpLeftY = leftStartY + (((targetY - leftStartY) * lerp) >> 3);
+			const int interpRightX = rightStartX + (((targetX - rightStartX) * lerp) >> 3);
+			const int interpRightY = rightStartY + (((targetY - rightStartY) * lerp) >> 3);
+
+			if (sprIdxLeft >= 0 && sprIdxLeft < _laserBank.numSprites) {
+				renderSpriteWithFlags(dst, pitch, width, height,
+					interpLeftX, interpLeftY, _laserBank.sprites[sprIdxLeft], leftFlags);
+			}
+			if (sprIdxRight >= 0 && sprIdxRight < _laserBank.numSprites) {
+				renderSpriteWithFlags(dst, pitch, width, height,
+					interpRightX, interpRightY, _laserBank.sprites[sprIdxRight], rightFlags);
+			}
 		}
 	}
 }

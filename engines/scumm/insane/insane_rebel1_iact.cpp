@@ -240,6 +240,10 @@ void InsaneRebel1::updateShipPhysics() {
 // Ship position = averaged input + center offset.
 // Viewport = second history buffer for smooth camera scrolling.
 void InsaneRebel1::updateAsteroidPhysics() {
+	// Control feel tweak: original uses full 10-sample average in FUN_1CDA7.
+	// We keep the same pipeline but average over fewer samples for responsiveness.
+	const int kAsteroidSmoothWindow = 2;
+
 	// RA1 FUN_1B297-style per-frame latches for 0x0B sections:
 	//   0x5D latch 0xFFFF -> bit 0x40 (scripted obstacle/contact)
 	//   0x5F non-zero + RNG -> bit 0x80 (scripted random hit)
@@ -294,7 +298,10 @@ void InsaneRebel1::updateAsteroidPhysics() {
 		mouseY = (int16)((mouseY * 200) / _player->_height);
 	}
 	int16 inputX = (int16)(mouseX - kRA1CenterX);
-	int16 inputY = (int16)(mouseY - kRA1CenterY);
+	// Assembly uses an inverted-Y convention in the averaging path.
+	// In ScummVM screen coords (Y grows downward), convert here so moving
+	// mouse up moves the pointer up on screen.
+	int16 inputY = (int16)(kRA1CenterY - mouseY);
 	inputX = CLIP<int16>(inputX, -0xA0, 0xA0);
 	inputY = CLIP<int16>(inputY, -100, 100);
 
@@ -307,13 +314,13 @@ void InsaneRebel1::updateAsteroidPhysics() {
 
 	int sumInputX = 0;
 	int sumInputY = 0;
-	for (int i = 0; i < kInputHistorySize; i++) {
+	for (int i = 0; i < kAsteroidSmoothWindow; i++) {
 		sumInputX += _inputHistoryX[i];
 		sumInputY += _inputHistoryY[i];
 	}
 
-	_avgInputX = (int16)(sumInputX / kInputHistorySize);
-	_avgInputY = (int16)(-sumInputY / kInputHistorySize);
+	_avgInputX = (int16)(sumInputX / kAsteroidSmoothWindow);
+	_avgInputY = (int16)(-sumInputY / kAsteroidSmoothWindow);
 	_avgInputX = CLIP<int16>(_avgInputX, -0xA0, 0xA0);
 	_avgInputY = CLIP<int16>(_avgInputY, -0x46, 0x41);
 
@@ -329,13 +336,13 @@ void InsaneRebel1::updateAsteroidPhysics() {
 
 	int sumViewX = 0;
 	int sumViewY = 0;
-	for (int i = 0; i < kInputHistorySize; i++) {
+	for (int i = 0; i < kAsteroidSmoothWindow; i++) {
 		sumViewX += _viewHistoryX[i];
 		sumViewY += _viewHistoryY[i];
 	}
 
-	int16 avgViewX = (int16)(sumViewX / kInputHistorySize);
-	int16 avgViewY = (int16)(sumViewY / kInputHistorySize);
+	int16 avgViewX = (int16)(sumViewX / kAsteroidSmoothWindow);
+	int16 avgViewY = (int16)(sumViewY / kAsteroidSmoothWindow);
 	_perspectiveX = CLIP<int16>((int16)((avgViewX >> 1) + 0x20), 0, 0x40);
 	_perspectiveY = CLIP<int16>((int16)((avgViewY >> 1) + 0x17), 0, 0x2E);
 

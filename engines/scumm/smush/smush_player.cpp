@@ -462,10 +462,6 @@ void SmushPlayer::handleFetch(int32 subSize, Common::SeekableReadStream &b) {
 			int left = _storedFobjLeft + fetchX;
 			int top = _storedFobjTop + fetchY;
 
-			// Apply the same interactive viewport offset used for regular FOBJ chunks.
-			left -= _ra1ViewportOffsetX;
-			top -= _ra1ViewportOffsetY;
-
 			debug("RA1 FTCH: frame=%d id=0x%08x pos=(%d,%d) using stored FOBJ codec=%d size=%dx%d",
 				_frame, fetchId, left, top, storedCodec, _storedFobjWidth, _storedFobjHeight);
 			decodeFrameObject(storedCodec, _storedFobjData, left, top,
