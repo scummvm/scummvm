@@ -57,11 +57,22 @@ static void decodeBomp(byte *dst, const byte *src, int width, int height, int pi
 	}
 }
 
+static void resetSpriteBank(RA1SpriteBank &bank) {
+	delete[] bank.sprites;
+	bank.sprites = nullptr;
+	free(bank.decodedData);
+	bank.decodedData = nullptr;
+	bank.numSprites = 0;
+	bank.decodedSize = 0;
+}
+
 // Load an RA1 NUT sprite file (ANIM v1).
 // RA1 NUTs can have odd-size FOBJ chunks padded to 2-byte alignment within
 // FRME containers. This loader handles that padding properly, unlike the
 // shared NutRenderer::loadFont which assumes even-size chunks.
 bool InsaneRebel1::loadRA1Nut(const char *filename, RA1SpriteBank &bank) {
+	resetSpriteBank(bank);
+
 	ScummFile *file = _vm->instantiateScummFile();
 	_vm->openFile(*file, filename);
 	if (!file->isOpen()) {
@@ -199,6 +210,13 @@ void InsaneRebel1::loadLevelSprites(int level) {
 	if (!loadRA1Nut(bankFile.c_str(), _shipBank)) {
 		debug(1, "InsaneRebel1: No BANK1 for level %d (first-person level)", level);
 	}
+
+	// Secondary ship bank used by some level-specific handlers (e.g. LVL1 mode-2).
+	Common::String bankFileAlt = Common::String::format("LVL%d/L%dBANK2.NUT", level, level);
+	if (!loadRA1Nut(bankFileAlt.c_str(), _shipBankAlt)) {
+		debug(1, "InsaneRebel1: No BANK2 for level %d", level);
+	}
+
 	loadRA1Nut("SYS/DISPLAY.NUT", _displayBank);
 
 	// Explosion sprites — try BANG first, then EXPLD

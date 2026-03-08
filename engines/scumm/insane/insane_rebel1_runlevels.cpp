@@ -136,6 +136,7 @@ bool InsaneRebel1::runLevel1() {
 		_gameCounter = 0;
 		_pathBranchEnabled = true;
 		_rightPathSelected = false;
+		_flyControlMode = 1;
 
 		// Stage 1 flight — L1PLAY1L (hard/left path)
 		// The first 394 frames are the common section. At counter 394, if
@@ -147,6 +148,7 @@ bool InsaneRebel1::runLevel1() {
 		if (_rightPathSelected && _health >= 0) {
 			debug(1, "InsaneRebel1: Switching to right path (L1PLAY1R)");
 			_pathBranchEnabled = false;
+			_flyControlMode = 1;
 			playInteractiveVideo("LVL1/L1PLAY1R.ANM");
 			if (_vm->shouldQuit())
 				return false;
@@ -160,6 +162,13 @@ bool InsaneRebel1::runLevel1() {
 				return false;
 
 			// L1PLAY2.ANM — Stage 2 turret (original: 0x5986)
+			// Assembly @0x16396..0x163E5 switches to mode 2 and sets
+			// FUN_1D79C emitter offsets in DAT_75DC..DAT_75E2.
+			_flyControlMode = 2;
+			_turretEmitterLeftX = 10;
+			_turretEmitterLeftY = -5;
+			_turretEmitterRightX = 10;
+			_turretEmitterRightY = -5;
 			stage2Started = true;
 			playInteractiveVideo("LVL1/L1PLAY2.ANM");
 			if (_vm->shouldQuit())
@@ -208,6 +217,7 @@ bool InsaneRebel1::runLevel2() {
 	debug(1, "InsaneRebel1: Running level 2");
 
 	_currentLevel = 1;
+	_flyControlMode = 1;
 	loadLevelSprites(2);
 	loadTuningForLevel(1);
 

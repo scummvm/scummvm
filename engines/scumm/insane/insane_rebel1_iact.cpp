@@ -247,6 +247,148 @@ void InsaneRebel1::updateShipPhysics() {
 		_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY);
 }
 
+// updateTurretPhysics — FUN_1E6A7 (0x1E6A7), opcode 0x08 path.
+// Stage-2 cockpit mode uses different smoothing/clamps than FUN_1DEB5.
+void InsaneRebel1::updateTurretPhysics() {
+	_frameCounter++;
+
+	// FUN_1E6A7 consumes GAME field1 as frame counter (arg6 in dispatcher call).
+	// The 0x10/0x40 gates come from dispatcher arg4 (callback control bits),
+	// not from GAME payload fields.
+	const int32 counter = _gameCounter;
+	const byte modeFlags = 0;
+
+	// RA1 latches consumed by handler family in FUN_1B297.
+	if (_gameLatch5D == 0xFFFF)
+		_damageFlags |= 0x40;
+	if (_gameLatch5F != 0 && _vm->_rnd.getRandomNumber((uint16)(_gameLatch5F - 1)) == 0)
+		_damageFlags |= 0x80;
+
+	if (counter == 0) {
+		_posAccumX = 0;
+		_posAccumY = 0;
+		_rollAccum = 0;
+		_liftSmooth = 0;
+		_shipPosX = kRA1CenterX;
+		_shipPosY = kRA1CenterY;
+		_damageFlags = 0;
+		_prevDamageFlags = 0;
+		_damageCooldown = 0;
+	}
+
+	// Damage gate from FUN_1E6A7.
+	if (_damageFlags != 0 && _damageCooldown == 0 && _health >= 0 && _deathTimer <= 0) {
+		if (_damageFlags == 0x80)
+			_health -= _tuning.shot;
+		else
+			_health -= _tuning.wham;
+
+		if (_health < 0)
+			_deathTimer = kDeathTimerInit;
+
+		_prevDamageFlags = _damageFlags;
+		_damageCooldown = kDamageCooldownInit;
+		_screenFlash = 3;
+	}
+
+	if (_damageCooldown > 0)
+		_damageCooldown--;
+
+	if (_health < 0 && _deathTimer > 0)
+		_deathTimer--;
+
+	// FUN_1E6A7 movement gate: counter > 8 or flags bit 0x40.
+	if (counter > 8 || (modeFlags & 0x40)) {
+		int16 mouseX = (int16)_vm->_mouse.x;
+		int16 mouseY = (int16)_vm->_mouse.y;
+		if (_player && _player->_width > 0 && _player->_height > 0 &&
+			(mouseX >= 320 || mouseY >= 200)) {
+			mouseX = (int16)((mouseX * 320) / _player->_width);
+			mouseY = (int16)((mouseY * 200) / _player->_height);
+		}
+
+		int16 inputX = CLIP<int16>((int16)(mouseX - 160), -127, 127);
+		int16 inputY = CLIP<int16>((int16)(mouseY - 100), -127, 127);
+
+		_rollAccum += (_tuning.roll * (int32)inputX) >> 4;
+		_rollAccum = (_rollAccum * 3) >> 2;
+		_rollAccum = CLIP<int32>(_rollAccum, -0x480, 0x480);
+
+		_liftSmooth += (((int32)_liftSmooth - (int32)inputY) * (int32)_tuning.lift) >> 8;
+		_liftSmooth = (_liftSmooth * 3) >> 2;
+		_liftSmooth = CLIP<int32>(_liftSmooth, -0x32, 0x32);
+
+		if ((modeFlags & 0x10) == 0) {
+			_posAccumX += ((int32)_tuning.slide * _rollAccum) >> 6;
+			_posAccumY -= ((int32)_liftSmooth * 64);
+			_posAccumX = CLIP<int32>(_posAccumX, -0x8C00, 0x8C00);
+			_posAccumY = CLIP<int32>(_posAccumY, -0x4600, 0x3C00);
+		}
+	}
+
+	const int16 offsetX = (int16)(_posAccumX >> 8);
+	const int16 offsetY = (int16)(_posAccumY >> 8);
+
+	// FUN_1D79C tail sets pointer center from offsets:
+	//   _74BE = _74B6 + _74BA
+	//   _74C0 = (_74B8 + _74BC - 0x23) - (_74BC >> 3)
+	_shipPosX = CLIP<int16>((int16)(kRA1CenterX + offsetX), kRA1MinX, kRA1MaxX);
+	_shipPosY = CLIP<int16>((int16)((kRA1CenterY + offsetY - 0x23) - (offsetY >> 3)),
+		kRA1MinY, kRA1MaxY);
+
+	_perspectiveX = CLIP<int16>((int16)(offsetX + 0x20), 0, 0x40);
+	_perspectiveY = CLIP<int16>((int16)(offsetY + 0x17), 0, 0x2E);
+
+	// Direction bucket synthesis from FUN_1E6A7.
+	int dir = 0;
+	if (_flyControlMode == 2) {
+		if (_rollAccum > 0x380) dir = 4;
+		else if (_rollAccum > 0x280) dir = 3;
+		else if (_rollAccum > 0x180) dir = 2;
+		else if (_rollAccum > 0x80) dir = 1;
+		else if (_rollAccum > -0x80) dir = 0;
+		else if (_rollAccum > -0x180) dir = 5;
+		else if (_rollAccum > -0x280) dir = 6;
+		else if (_rollAccum > -0x380) dir = 7;
+		else dir = 8;
+	} else {
+		if (_rollAccum > 0x380) dir = 8;
+		else if (_rollAccum > 0x280) dir = 7;
+		else if (_rollAccum > 0x180) dir = 6;
+		else if (_rollAccum > 0x80) dir = 5;
+		else if (_rollAccum > -0x80) dir = 4;
+		else if (_rollAccum > -0x180) dir = 3;
+		else if (_rollAccum > -0x280) dir = 2;
+		else if (_rollAccum > -0x380) dir = 1;
+		else dir = 0;
+
+		if (offsetY < -0x1E)
+			dir += 0x12;
+		else if (offsetY < 0x1E)
+			dir += 9;
+	}
+	const RA1SpriteBank *shipBank = &_shipBank;
+	if (_currentLevel == 0 && _flyControlMode == 2 && _shipBankAlt.numSprites > 0)
+		shipBank = &_shipBankAlt;
+	if (shipBank->numSprites > 0)
+		_shipDirIndex = CLIP<int16>((int16)dir, 0, shipBank->numSprites - 1);
+
+	// Regeneration via FUN_1BB0E call in this path.
+	if ((_frameCounter & 0x1F) == 0) {
+		if (_health >= 0 && _health < kMaxHealth)
+			_health++;
+		if (_health >= 0)
+			_score += 1;
+	}
+
+	if (_screenFlash > 0)
+		_screenFlash--;
+
+	_gameLatch5D = 0;
+	_gameLatch5F = 0;
+	_damageFlags = 0;
+}
+
 // updateAsteroidPhysics — FUN_1CDA7 (0x1CDA7). Opcode 0x0B handler.
 // Uses 10-frame input history averaging instead of accumulators.
 // Ship position = averaged input + center offset.
@@ -426,10 +568,8 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 			_shipPosY = kRA1CenterY;
 		}
 
-		// Keep a conservative default mode after reset.
-		_flyControlMode = 0;
 		_activeGameOpcode = 0;
-		debug(5, "RA1 GAME 0x5E: reset state field1=%d", (int32)param1);
+		debug(5, "RA1 GAME 0x5E: reset state field1=%d mode=%d", (int32)param1, (int)_flyControlMode);
 		break;
 
 	case 0x5D:
@@ -553,11 +693,13 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 	case 0x19:
 	case 0x1A:
 		_activeGameOpcode = (uint16)opcode;
+		_gameCounter = param1;
 		if (subSize >= 20) {
 			uint32 param2 = b.readUint32BE();
 			uint32 param3 = b.readUint32BE();
 			uint32 param4 = b.readUint32BE();
-			debug(5, "RA1 GAME 0x%02x: params=(%d,%d,%d,%d)", opcode, param1, param2, param3, param4);
+			debug(5, "RA1 GAME 0x%02x: counter=%d params=(%d,%d,%d)",
+				opcode, _gameCounter, param2, param3, param4);
 		}
 		break;
 
@@ -587,11 +729,16 @@ void InsaneRebel1::processShot() {
 	}
 
 	// Record shot at current cursor position.
+	const bool turretMode = (_activeGameOpcode == 0x08 || _activeGameOpcode == 0x0A);
+	const int16 shipCenterX = turretMode ? (int16)(kRA1CenterX + (_perspectiveX - 0x20)) : _shipPosX;
+	const int16 shipCenterY = turretMode ? (int16)(kRA1CenterY + (_perspectiveY - 0x17)) : _shipPosY;
+
 	_shotSlots[slot].timer = 5;
 	_shotSlots[slot].posX = _shipPosX;
 	_shotSlots[slot].posY = _shipPosY;
-	_shotSlots[slot].centerX = _shipPosX;
-	_shotSlots[slot].centerY = _shipPosY;
+	_shotSlots[slot].centerX = shipCenterX;
+	_shotSlots[slot].centerY = shipCenterY;
+	_shotSlots[slot].variant = _shotAlternator;
 	_shotAlternator = 1 - _shotAlternator;
 
 	_playerFired = false;
