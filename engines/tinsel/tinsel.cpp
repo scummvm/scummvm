@@ -57,6 +57,7 @@
 #include "tinsel/object.h"
 #include "tinsel/pid.h"
 #include "tinsel/polygons.h"
+#include "tinsel/psx_archive.h"
 #include "tinsel/savescn.h"
 #include "tinsel/scn.h"
 #include "tinsel/sound.h"
@@ -990,6 +991,9 @@ void TinselEngine::initializePath(const Common::FSNode &gamePath) {
 	if (TinselV1PSX) {
 		// Add subfolders needed for PSX versions of Discworld 1
 		SearchMan.addDirectory(gamePath, 0, 3, true);
+
+		// Add PSX archive if it exists (German, Japanese)
+		addPsxArchive("discwld.lfi", "discwld.lfd");
 	} else {
 		// Add DW2 subfolder to search path in case user is running directly from the CDs
 		SearchMan.addSubDirectoryMatching(gamePath, "dw2");
@@ -1427,6 +1431,15 @@ const char *TinselEngine::getSceneFile(LANGUAGE lang) {
 		lang = TXT_ENGLISH; // fallback to ENGLISH.SCN if <LANG>.IDX is not found
 
 	return _sceneFiles[lang];
+}
+
+void TinselEngine::addPsxArchive(const char *indexFileName, const char *dataFileName) {
+	PsxArchive *psxArchive = new PsxArchive();
+	if (psxArchive->open(indexFileName, dataFileName, TinselVersion)) {
+		SearchMan.add(dataFileName, psxArchive);
+	} else {
+		delete psxArchive;
+	}
 }
 
 } // End of namespace Tinsel

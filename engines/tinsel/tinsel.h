@@ -231,6 +231,7 @@ private:
 	void ChopDrivers();
 	void ProcessKeyEvent(const Common::Event &event);
 	bool pollEvent();
+	void addPsxArchive(const char *indexFileName, const char *dataFileName);
 
 public:
 	const Common::String getTargetName() const { return _targetName; }

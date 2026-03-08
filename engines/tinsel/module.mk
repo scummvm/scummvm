@@ -35,6 +35,7 @@ MODULE_OBJS := \
 	pdisplay.o \
 	play.o \
 	polygons.o \
+	psx_archive.o \
 	saveload.o \
 	savescn.o \
 	scene.o \
