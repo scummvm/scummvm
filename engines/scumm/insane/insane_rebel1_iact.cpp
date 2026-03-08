@@ -106,35 +106,35 @@ void InsaneRebel1::updateShipPhysics() {
 	{
 		bool hasZoneHit = (_damageFlags & 0x10) != 0;
 
-		if (_shipPosX > _corridorRightX) {
-			_posAccumX = (_corridorRightX - kRA1CenterX) << 8;
-			_shipPosX = _corridorRightX;
-			if (!hasZoneHit) {
-				if (_rollAccum > -0x100)
+			if (_shipPosX > _corridorRightX) {
+				_posAccumX = (int32)(_corridorRightX - kRA1CenterX) * 0x100;
+				_shipPosX = _corridorRightX;
+				if (!hasZoneHit) {
+					if (_rollAccum > -0x100)
 					_rollAccum = -0x100;  // Push left
 				_damageFlags |= 0x02;  // Right wall
 			}
-		}
-		if (_shipPosX < _corridorLeftX) {
-			_posAccumX = (_corridorLeftX - kRA1CenterX) << 8;
-			_shipPosX = _corridorLeftX;
-			if (!hasZoneHit) {
-				if (_rollAccum < 0x100)
+			}
+			if (_shipPosX < _corridorLeftX) {
+				_posAccumX = (int32)(_corridorLeftX - kRA1CenterX) * 0x100;
+				_shipPosX = _corridorLeftX;
+				if (!hasZoneHit) {
+					if (_rollAccum < 0x100)
 					_rollAccum = 0x100;   // Push right
 				_damageFlags |= 0x04;  // Left wall
 			}
-		}
-		if (_shipPosY < _corridorTopY) {
-			_posAccumY = ((_corridorTopY - kRA1CenterY) << 8) + 0x100;
-			_shipPosY = _corridorTopY;
-			if (!hasZoneHit)
-				_damageFlags |= 0x01;
-		}
-		if (_shipPosY > _corridorBottomY) {
-			_posAccumY = ((_corridorBottomY - kRA1CenterY) << 8) - 0x100;
-			_shipPosY = _corridorBottomY;
-			if (!hasZoneHit)
-				_damageFlags |= 0x08;
+			}
+			if (_shipPosY < _corridorTopY) {
+				_posAccumY = (int32)(_corridorTopY - kRA1CenterY) * 0x100 + 0x100;
+				_shipPosY = _corridorTopY;
+				if (!hasZoneHit)
+					_damageFlags |= 0x01;
+			}
+			if (_shipPosY > _corridorBottomY) {
+				_posAccumY = (int32)(_corridorBottomY - kRA1CenterY) * 0x100 - 0x100;
+				_shipPosY = _corridorBottomY;
+				if (!hasZoneHit)
+					_damageFlags |= 0x08;
 		}
 	}
 
@@ -416,6 +416,7 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 
 		// Keep a conservative default mode after reset.
 		_flyControlMode = 0;
+		_activeGameOpcode = 0;
 		debug(5, "RA1 GAME 0x5E: reset state field1=%d", (int32)param1);
 		break;
 
@@ -430,6 +431,7 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 		break;
 
 	case 0x07:
+		_activeGameOpcode = 0x07;
 		// Per-frame corridor data: f1=frame counter, f2=max frames, f3=drift bias, f4=unused
 		// f1 is the original's _DAT_7740 (game frame counter)
 		// f3 is the drift/wind parameter combined with tuning table
@@ -479,6 +481,7 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 		break;
 
 	case 0x0B:
+		_activeGameOpcode = 0x0B;
 		// Asteroid/surface per-frame handler (FUN_1CDA7).
 		// field1 = frame counter, field2 = max frames
 		_gameCounter = param1;
@@ -517,8 +520,12 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 		}
 		break;
 
-	case 0x08: case 0x09: case 0x0A:
-	case 0x19: case 0x1A:
+	case 0x08:
+	case 0x09:
+	case 0x0A:
+	case 0x19:
+	case 0x1A:
+		_activeGameOpcode = (uint16)opcode;
 		if (subSize >= 20) {
 			uint32 param2 = b.readUint32BE();
 			uint32 param3 = b.readUint32BE();

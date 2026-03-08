@@ -199,6 +199,9 @@ private:
 
 	// Control mode (from GAME opcode 0x5E)
 	int16 _flyControlMode;
+	// Last per-frame GAME movement handler opcode (0x07/0x08/0x09/0x0A/0x0B/0x1A).
+	// Used to mirror assembly handler-specific overlay pipeline behavior.
+	uint16 _activeGameOpcode;
 
 	// Difficulty (0=easy, 1=normal, 2=hard) — matches original DAT_22BC
 	int _difficulty;

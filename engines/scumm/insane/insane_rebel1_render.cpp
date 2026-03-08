@@ -219,9 +219,12 @@ void InsaneRebel1::procPreRendering(byte *renderBitmap) {
 	if (_interactiveVideoActive && _player) {
 		// FUN_224FD stores absolute 320x200 window origin in a 384x242 frame:
 		// X in [0..0x40], Y in [0..0x2E], centered at (0x20,0x17).
-		// Apply center-relative deltas so right aim shifts scene left, matching
-		// FUN_223FE/FUN_2245B subtracting _41A0 from world-space X.
-		_player->_ra1ViewportOffsetX = _perspectiveX - 0x20;
+		// Keep L2 on assembly-oriented X mapping used by FUN_223FE/FUN_2245B
+		// emulation; preserve legacy L1 mapping to avoid flight-section regressions.
+		if (_currentLevel == 1)
+			_player->_ra1ViewportOffsetX = _perspectiveX - 0x20;
+		else
+			_player->_ra1ViewportOffsetX = 0x20 - _perspectiveX;
 		_player->_ra1ViewportOffsetY = _perspectiveY - 0x17;
 	} else if (_player) {
 		_player->_ra1ViewportOffsetX = 0;
@@ -260,18 +263,31 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		}
 	}
 
-	// FUN_1CDA7 (0x0B) still executes targeting/shot overlay pipeline
-	// (FUN_1C940, FUN_1CCA0, FUN_1C9CD, FUN_1CB22) while alive.
-	processShot();
-	for (int i = 0; i < kMaxShotSlots; i++) {
-		if (_shotSlots[i].timer > 0)
-			_shotSlots[i].timer--;
+	// Assembly dispatch (FUN_1BE1B) only runs the targeting/shot overlay pipeline
+	// in handlers 0x09/0x0A/0x0B/0x1A (FUN_1DABB/FUN_1D79C/FUN_1CDA7/FUN_1D57E).
+	const bool hasTargetingPipeline =
+		(_activeGameOpcode == 0x09 || _activeGameOpcode == 0x0A ||
+		 _activeGameOpcode == 0x0B || _activeGameOpcode == 0x1A);
+	if (hasTargetingPipeline) {
+		processShot();
+		for (int i = 0; i < kMaxShotSlots; i++) {
+			if (_shotSlots[i].timer > 0)
+				_shotSlots[i].timer--;
+		}
+		renderLaserShots(renderBitmap, pitch, width, height);
+		renderGostSlots(renderBitmap, pitch, width, height);
+		renderTargeting(renderBitmap, pitch, width, height);
+	} else {
+		// Keep lock/target accumulators quiescent when current handler doesn't
+		// execute FUN_1C940/FUN_1CCA0/FUN_1C9CD/FUN_1CB22.
+		_targetProximity = 0;
+		_prevTargetProx = 0;
+		_targetCount = 0;
+		_prevTargetCount = 0;
+		_lastHitTarget = 0;
 	}
 
-	renderLaserShots(renderBitmap, pitch, width, height);
 	renderExplosions(renderBitmap, pitch, width, height);
-	renderGostSlots(renderBitmap, pitch, width, height);
-	renderTargeting(renderBitmap, pitch, width, height);
 	renderHUD(renderBitmap, pitch, width, height);
 }
 
