@@ -75,6 +75,7 @@ public:
 	void menuChapterSelect(); // sub_128_2126
 	void sub_128_21c8();
 	void storyRenderPage(); // sub_128_2202
+	void sub_128_2664();
 	void sub_128_26f6();
 	void sub_128_271a();
 	void sub_128_27d6();
@@ -114,6 +115,7 @@ public:
 	void sub_128_5fea();
 	void sub_128_6154();
 	void sub_128_6186();
+	void sub_128_61c2();
 	void sub_128_61ec();
 	void sub_128_6244();
 
