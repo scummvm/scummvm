@@ -123,8 +123,17 @@ Common::SeekableReadStream *GxlArchive::createReadStreamForMember(const Common::
 }
 
 Image::PCXDecoder *GxlArchive::loadImage(const char *filename) {
-	if (!hasFile(Common::Path(filename)))
+	const char *posDot = strrchr(filename, '.');
+	Common::String searchName;
+	if (!posDot)
+		searchName = Common::String::format("%s.PCX", filename);
+	else
+		searchName = Common::String(filename);
+	
+	Common::Path pathName = Common::Path(searchName);
+	if (!hasFile(pathName)) {
 		error("loadImage() Could not find '%s'", filename);
+	}
 
 	Image::PCXDecoder *pcx = new Image::PCXDecoder();
 	Common::SeekableReadStream *pcxStr = createReadStreamForMember(Common::Path(filename));
