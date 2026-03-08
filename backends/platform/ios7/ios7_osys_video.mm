@@ -169,9 +169,11 @@ void OSystem_iOS7::virtualController(bool connect) {
 
 bool OSystem_iOS7::isiOSAppOnMac() const {
 	__block bool isiOSAppOnMac = false;
+#if TARGET_OS_IOS
 	execute_on_main_thread(^ {
 		isiOSAppOnMac = [[iOS7AppDelegate iPhoneView] isiOSAppOnMac];
 	});
+#endif
 	return isiOSAppOnMac;
 }
 

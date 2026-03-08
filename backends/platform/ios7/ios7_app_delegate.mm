@@ -160,12 +160,6 @@
 	return appDelegate->_view;
 }
 
-#if TARGET_OS_IOS
-+ (UIInterfaceOrientation)currentOrientation {
-	iOS7AppDelegate *appDelegate = [self iOS7AppDelegate];
-	return [appDelegate->_controller currentOrientation];
-}
-
 + (void)setKeyWindow:(UIWindow *)window {
 	iOS7AppDelegate *appDelegate = [self iOS7AppDelegate];
 	appDelegate->_window = window;
@@ -173,6 +167,13 @@
 	[appDelegate->_window setRootViewController:appDelegate->_controller];
 	[appDelegate->_window makeKeyAndVisible];
 }
+
+#if TARGET_OS_IOS
++ (UIInterfaceOrientation)currentOrientation {
+	iOS7AppDelegate *appDelegate = [self iOS7AppDelegate];
+	return [appDelegate->_controller currentOrientation];
+}
+
 #endif
 
 @end
