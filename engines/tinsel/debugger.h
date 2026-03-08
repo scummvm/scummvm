@@ -46,6 +46,7 @@ private:
 	bool cmd_string(int argc, const char **argv);
 	bool cmd_globals(int argc, const char **argv);
 	bool cmd_global(int argc, const char **argv);
+	bool cmd_psxdump(int argc, const char **argv);
 };
 
 } // End of namespace Tinsel
