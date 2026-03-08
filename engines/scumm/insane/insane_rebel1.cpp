@@ -107,6 +107,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 
 	_currentLevel = 0;
 	_flyControlMode = 0;
+	_activeGameOpcode = 0;
 
 	_health = kMaxHealth;
 	_lives = 3;
