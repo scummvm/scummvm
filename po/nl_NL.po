@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-03-08 05:40+0000\n"
+"POT-Creation-Date: 2026-03-08 14:42+0000\n"
 "PO-Revision-Date: 2026-02-11 14:23+0000\n"
 "Last-Translator: SecularSteve <fairfull.playing@gmail.com>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -14186,7 +14186,7 @@ msgstr "Ontbrekende scènes herstellen"
 msgid "Restore some scenes originally in the Windows edition"
 msgstr "Herstel enkele scènes die oorspronkelijk in de Windows-editie stonden"
 
-#: engines/tinsel/detection_tables.h:498 engines/tinsel/detection_tables.h:515
+#: engines/tinsel/detection_tables.h:500 engines/tinsel/detection_tables.h:517
 msgid "Saturn CD version is not yet supported"
 msgstr "Saturn CD versie wordt nog niet ondersteund"
 
@@ -14225,7 +14225,7 @@ msgstr "Ga naar het begin van het menu opslaan/laden"
 msgid "Go to end of save / load menu"
 msgstr "Ga naar het einde van het menu opslaan/laden"
 
-#: engines/tinsel/tinsel.cpp:1042
+#: engines/tinsel/tinsel.cpp:1046
 msgid "Discworld Noir needs ScummVM with TinyGL enabled"
 msgstr "Discworld Noir vereist ScummVM met TinyGL ingeschakeld"
 

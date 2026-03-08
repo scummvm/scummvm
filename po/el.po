@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-03-08 05:40+0000\n"
+"POT-Creation-Date: 2026-03-08 14:42+0000\n"
 "PO-Revision-Date: 2026-03-06 15:22+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -14603,7 +14603,7 @@ msgstr "Επαναφορά σκηνών που λείπουν"
 msgid "Restore some scenes originally in the Windows edition"
 msgstr "Επαναφέρει κάποιες σκηνές που υπήρχαν στην έκδοση για Windows"
 
-#: engines/tinsel/detection_tables.h:498 engines/tinsel/detection_tables.h:515
+#: engines/tinsel/detection_tables.h:500 engines/tinsel/detection_tables.h:517
 msgid "Saturn CD version is not yet supported"
 msgstr "Η έκδοση για Saturn CD δεν υποστηρίζεται ακόμα"
 
@@ -14651,7 +14651,7 @@ msgstr "Έναρξη του μενού αποθήκευσης/φόρτωσης"
 msgid "Go to end of save / load menu"
 msgstr "Τέλος του μενού απόθήκευσης/φόρτωσης"
 
-#: engines/tinsel/tinsel.cpp:1042
+#: engines/tinsel/tinsel.cpp:1046
 msgid "Discworld Noir needs ScummVM with TinyGL enabled"
 msgstr ""
 

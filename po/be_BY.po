@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-03-08 05:40+0000\n"
+"POT-Creation-Date: 2026-03-08 14:42+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -14513,7 +14513,7 @@ msgstr ""
 msgid "Restore some scenes originally in the Windows edition"
 msgstr ""
 
-#: engines/tinsel/detection_tables.h:498 engines/tinsel/detection_tables.h:515
+#: engines/tinsel/detection_tables.h:500 engines/tinsel/detection_tables.h:517
 #, fuzzy
 msgid "Saturn CD version is not yet supported"
 msgstr "Game id не падтрымваецца"
@@ -14555,7 +14555,7 @@ msgstr "Устаўце дыск з захаваннямі"
 msgid "Go to end of save / load menu"
 msgstr "Устаўце дыск з захаваннямі"
 
-#: engines/tinsel/tinsel.cpp:1042
+#: engines/tinsel/tinsel.cpp:1046
 msgid "Discworld Noir needs ScummVM with TinyGL enabled"
 msgstr ""
 
