@@ -25,7 +25,7 @@
 #include "common/stream.h"
 
 namespace PhoenixVR {
-Common::SeekableReadStream *unpack(Common::SeekableReadStream &input);
+Common::SeekableReadStream *unpack(Common::SeekableReadStream &input, Common::String *filename);
 }
 
 #endif

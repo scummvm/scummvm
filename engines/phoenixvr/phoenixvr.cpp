@@ -37,6 +37,7 @@
 #include "graphics/framelimiter.h"
 #include "graphics/managed_surface.h"
 #include "graphics/palette.h"
+#include "image/gif.h"
 #include "image/pcx.h"
 #include "phoenixvr/console.h"
 #include "phoenixvr/game_state.h"
@@ -104,7 +105,7 @@ Common::String PhoenixVREngine::removeDrive(const Common::String &path) {
 		return path.substr(2);
 }
 
-Common::SeekableReadStream *PhoenixVREngine::tryOpen(const Common::Path &name) {
+Common::SeekableReadStream *PhoenixVREngine::tryOpen(const Common::Path &name, Common::String *origName) {
 	Common::ScopedPtr<Common::File> s(new Common::File());
 	if (s->open(name)) {
 		auto nameStr = name.toString();
@@ -118,19 +119,19 @@ Common::SeekableReadStream *PhoenixVREngine::tryOpen(const Common::Path &name) {
 	pakName = pakName.substr(0, dotPos) + ".pak";
 	if (s->open(Common::Path{pakName})) {
 		debug("opened %s", pakName.c_str());
-		return unpack(*s);
+		return unpack(*s, origName);
 	}
 
 	return nullptr;
 }
 
-Common::SeekableReadStream *PhoenixVREngine::open(Common::String filename) {
+Common::SeekableReadStream *PhoenixVREngine::open(const Common::String &filename, Common::String *origName) {
 	debug("open %s", filename.c_str());
-	auto *stream = tryOpen(_currentScriptPath.append(filename, '\\').normalize());
+	auto *stream = tryOpen(_currentScriptPath.append(filename, '\\').normalize(), origName);
 	if (stream)
 		return stream;
 
-	stream = tryOpen(Common::Path{filename});
+	stream = tryOpen(Common::Path{filename}, origName);
 	if (stream)
 		return stream;
 
@@ -409,26 +410,32 @@ void PhoenixVREngine::lockKey(int idx, const Common::String &warp) {
 }
 
 Graphics::Surface *PhoenixVREngine::loadSurface(const Common::String &path) {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(open(path));
+	Common::String filename = path;
+	Common::ScopedPtr<Common::SeekableReadStream> stream(open(path, &filename));
 	if (!stream) {
 		warning("can't find image %s", path.c_str());
 		return nullptr;
 	}
-	if (path.hasSuffix(".pcx")) {
-		Image::PCXDecoder pcx;
-		if (pcx.loadStream(*stream)) {
-			auto *s = pcx.getSurface()->convertTo(Graphics::BlendBlit::getSupportedPixelFormat(), pcx.hasPalette() ? pcx.getPalette().data() : nullptr);
-			if (s) {
-				byte r = 0, g = 0, b = 0;
-				s->applyColorKey(r, g, b);
-			}
-			return s;
-		}
-		warning("pcx decode failed on %s", path.c_str());
+	Common::ScopedPtr<Image::ImageDecoder> dec;
+	if (filename.hasSuffixIgnoreCase(".pcx")) {
+		dec.reset(new Image::PCXDecoder);
+	} else if (filename.hasSuffixIgnoreCase(".gif")) {
+		dec.reset(new Image::GIFDecoder);
+	} else {
+		warning("can't find decoder for %s", filename.c_str());
 		return nullptr;
 	}
-	warning("can't find decoder for %s", path.c_str());
-	return nullptr;
+	if (!dec->loadStream(*stream)) {
+		warning("decoding %s failed", filename.c_str());
+		return nullptr;
+	}
+	auto *palette = dec->hasPalette() ? dec->getPalette().data() : nullptr;
+	auto *s = dec->getSurface()->convertTo(Graphics::BlendBlit::getSupportedPixelFormat(), palette);
+	if (s) {
+		byte r = 0, g = 0, b = 0;
+		s->applyColorKey(r, g, b);
+	}
+	return s;
 }
 
 Graphics::Surface *PhoenixVREngine::loadCursor(const Common::String &path) {

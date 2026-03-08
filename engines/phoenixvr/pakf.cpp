@@ -65,7 +65,7 @@ void unpack_3(uint8 *dstBegin, uint32 dstSize, Common::SeekableReadStream &input
 }
 } // namespace
 
-Common::SeekableReadStream *unpack(Common::SeekableReadStream &input) {
+Common::SeekableReadStream *unpack(Common::SeekableReadStream &input, Common::String *filename) {
 	input.seek(0);
 	byte header[0x24];
 	input.read(header, sizeof(header));
@@ -77,11 +77,15 @@ Common::SeekableReadStream *unpack(Common::SeekableReadStream &input) {
 	if (fsize != input.size())
 		error("invalid PAKF size");
 
-	ms.skip(16); // original name
+	if (filename)
+		*filename = ms.readString(0, 16);
+	else
+		ms.skip(16);
+
 	auto method = ms.readUint32();
 	auto csize = ms.readUint32();
 	auto usize = ms.readUint32();
-	debug("method %u, compressed size: %u, uncompressed size: %u", method, csize, usize);
+	debug("method %u, compressed size: %u, uncompressed size: %u %s", method, csize, usize, filename ? filename->c_str() : "");
 	Common::SharedPtr<byte> mem(new uint8[usize], Common::ArrayDeleter<byte>());
 	switch (method) {
 	case 3:
