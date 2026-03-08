@@ -123,6 +123,8 @@ bool InsaneRebel1::runLevel1() {
 
 	// Retry loop — on death with lives, L1NEW plays then jumps back here
 	while (!_vm->shouldQuit()) {
+		bool stage2Started = false;
+
 		// Reset health for this attempt (original: MOV WORD [0x7560], 98 at 0x16214)
 		_health = kMaxHealth;
 		_damageFlags = 0;
@@ -158,6 +160,7 @@ bool InsaneRebel1::runLevel1() {
 				return false;
 
 			// L1PLAY2.ANM — Stage 2 turret (original: 0x5986)
+			stage2Started = true;
 			playInteractiveVideo("LVL1/L1PLAY2.ANM");
 			if (_vm->shouldQuit())
 				return false;
@@ -170,17 +173,16 @@ bool InsaneRebel1::runLevel1() {
 			return true;
 		}
 
-		// Death sequence (original: 0x165dd-0x166bb)
-		// Random crash variant A or B
-		if (_vm->_rnd.getRandomNumber(1) == 0)
-			playCinematic("LVL1/L1CRASHA.ANM");
-		else
+		// Death sequence (assembly-verified: 0x165dd / 0x16614):
+		// Stage 1 deaths use L1CRASHA; Stage 2 deaths use L1CRASHB.
+		if (stage2Started)
 			playCinematic("LVL1/L1CRASHB.ANM");
+		else
+			playCinematic("LVL1/L1CRASHA.ANM");
 		if (_vm->shouldQuit())
 			return false;
 
-		// Check lives (original: CMP WORD [0x7562], 0 at 0x1666B)
-		_lives--;
+		// Assembly order (0x1666B): check lives first; decrement only on retry path.
 		if (_lives <= 0) {
 			// Game over — L1DEATH then return (original: 0x166C0)
 			playCinematic("LVL1/L1DEATH.ANM");
@@ -192,6 +194,7 @@ bool InsaneRebel1::runLevel1() {
 		playCinematic("LVL1/L1NEW.ANM");
 		if (_vm->shouldQuit())
 			return false;
+		_lives--;
 
 		// Loop back to gameplay (original: JMP 0x16214 — health reset + Stage 1)
 	}
