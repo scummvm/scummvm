@@ -37,14 +37,14 @@ enum Cursor {
 	COMBINATION
 };
 
-const byte kActionMaskNone    = 0;
-const byte kActionMaskOpen    = 1;
-const byte kActionMaskClose   = 2;
+const byte kActionMaskNone = 0;
+const byte kActionMaskOpen = 1;
+const byte kActionMaskClose = 2;
 const byte kActionMaskUnknown = 4;
-const byte kActionMaskPickup  = 8;
-const byte kActionMaskTalk    = 16;
-const byte kActionMaskPush    = 32;
-const byte kActionMaskPull    = 128;
+const byte kActionMaskPickup = 8;
+const byte kActionMaskTalk = 16;
+const byte kActionMaskPush = 32;
+const byte kActionMaskPull = 128;
 
 enum VerbIcon {
 	PICKUP,
@@ -93,31 +93,31 @@ const int kAlfredInitialPosY = 279;
 
 // Direction flags (bit-packed)
 const byte kMoveRight = 0x01; // Move right (positive X)
-const byte kMoveLeft  = 0x02; // Move left (negative X)
+const byte kMoveLeft = 0x02;  // Move left (negative X)
 const byte kMoveHoriz = 0x03; // Horizontal movement mask
-const byte kMoveDown  = 0x04; // Move down (positive Y)
-const byte kMoveUp    = 0x08; // Move up (negative Y)
-const byte kMoveVert  = 0x0C; // Vertical movement mask
-const int  kMaxPathLength     = 100;
-const int  kMaxMovementSteps  = 100; // 500 bytes / 5 bytes per step
-const byte kPathEnd           = 0xFF; // End of path marker
+const byte kMoveDown = 0x04;  // Move down (positive Y)
+const byte kMoveUp = 0x08;    // Move up (negative Y)
+const byte kMoveVert = 0x0C;  // Vertical movement mask
+const int kMaxPathLength = 100;
+const int kMaxMovementSteps = 100; // 500 bytes / 5 bytes per step
+const byte kPathEnd = 0xFF;        // End of path marker
 
-const int  kMaxCharsPerLine   = 0x2F; // 47 characters
-const int  kMaxLines          = 5;    // Maximum number of lines per page
+const int kMaxCharsPerLine = 0x2F; // 47 characters
+const int kMaxLines = 5;           // Maximum number of lines per page
 
 const byte kAlfredColor = 0x0D;
 
 enum OverlayMode {
-	OVERLAY_NONE        = 0,
-	OVERLAY_CHOICES     = 1,
+	OVERLAY_NONE = 0,
+	OVERLAY_CHOICES = 1,
 	OVERLAY_PICKUP_ICON = 2,
-	OVERLAY_ACTION      = 3
+	OVERLAY_ACTION = 3
 };
 
 // Passerby direction constants
 const byte kPasserbyRight = 0;
-const byte kPasserbyLeft  = 1;
-const byte kPasserbyDown  = 2;
+const byte kPasserbyLeft = 1;
+const byte kPasserbyDown = 2;
 
 const byte kIconBlinkPeriod = 4;
 
@@ -203,8 +203,7 @@ struct AlfredState {
 	}
 };
 
-struct ShakeEffectState
-{
+struct ShakeEffectState {
 	bool enabled = false;
 	int shakeX = 0;
 	int shakeY = 0;
@@ -221,9 +220,8 @@ struct ShakeEffectState
 	}
 };
 
-
 struct MovementStep {
-	byte   flags;     /* Direction flags (see kMove* constants) */
+	byte flags;       /* Direction flags (see kMove* constants) */
 	uint16 distanceX; // Horizontal distance to move
 	uint16 distanceY; // Vertical distance to move
 };
@@ -232,12 +230,11 @@ struct MovementStep {
  * Pathfinding context
  */
 struct PathContext {
-	byte   *pathBuffer;          // Sequence of walkbox indices
+	byte *pathBuffer;             // Sequence of walkbox indices
 	MovementStep *movementBuffer; // Array of movement steps
-	byte   *compressed_path;     // Final compressed path
-	uint16  pathLength;
-	uint16  movementCount;
-	uint16  compressed_length;
+	uint16 pathLength;
+	uint16 movementCount;
+	uint16 compressed_length;
 };
 
 struct Anim {
@@ -630,7 +627,14 @@ struct GameStateData {
 		for (uint i = 0; i < inventoryItems.size(); i++) {
 			if (inventoryItems[i] == id) {
 				inventoryItems.remove_at(i);
-				return;
+				break;
+			}
+		}
+		if (selectedInventoryItem == id) {
+			if (inventoryItems.size() > 0) {
+				selectedInventoryItem = inventoryItems[0];
+			} else {
+				selectedInventoryItem = -1;
 			}
 		}
 	}

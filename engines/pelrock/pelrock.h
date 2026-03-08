@@ -137,7 +137,7 @@ private:
 
 	// walking
 	int _currentStep = 0;
-	PathContext _currentContext;
+	PathContext _currentContext = {nullptr, nullptr, 0, 0, 0};
 
 	Graphics::ManagedSurface _currentBackground; // Clean background - NEVER modified
 	Graphics::ManagedSurface _bgScreen;

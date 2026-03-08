@@ -166,7 +166,7 @@ void MenuManager::menuLoop() {
 
 	g_system->getPaletteManager()->setPalette(_mainMenuPalette, 0, 256);
 	g_engine->changeCursor(DEFAULT);
-
+	_menuText = _menuTexts[0];
 	while (!g_engine->shouldQuit() && !_events->_rightMouseClicked) {
 
 		_events->pollEvent();
@@ -221,7 +221,6 @@ void MenuManager::drawInventoryIcons() {
 
 void MenuManager::loadMenu() {
 
-	bool alternateMenu = false;
 	Common::File alfred7;
 	if (!alfred7.open(Common::Path("ALFRED.7"))) {
 		error("Could not open ALFRED.7");
@@ -231,59 +230,45 @@ void MenuManager::loadMenu() {
 	_compositeBuffer.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 	_mainMenu.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 	loadMenuTexts();
-	if (!alternateMenu) {
-		alfred7.seek(kSettingsPaletteOffset, SEEK_SET);
-		alfred7.read(_mainMenuPalette, 768);
-		for (int i = 0; i < 256; i++) {
-			_mainMenuPalette[i * 3] = _mainMenuPalette[i * 3] << 2;
-			_mainMenuPalette[i * 3 + 1] = _mainMenuPalette[i * 3 + 1] << 2;
-			_mainMenuPalette[i * 3 + 2] = _mainMenuPalette[i * 3 + 2] << 2;
-		}
-
-		uint32 curPos = 0;
-		alfred7.seek(2405266, SEEK_SET);
-		alfred7.read(_mainMenu.getPixels(), 65536);
-
-		curPos += 65536;
-
-		byte *compressedPart1 = new byte[29418];
-		alfred7.read(compressedPart1, 29418);
-		byte *decompressedPart1 = nullptr;
-		size_t decompressedSize = rleDecompress(compressedPart1, 29418, 0, 0, &decompressedPart1, true);
-
-		memcpy((byte *)_mainMenu.getPixels() + curPos, decompressedPart1, decompressedSize);
-		curPos += decompressedSize;
-
-		delete[] compressedPart1;
-		delete[] decompressedPart1;
-		alfred7.seek(2500220, SEEK_SET);
-		alfred7.read((byte *)_mainMenu.getPixels() + curPos, 32768);
-		curPos += 32768;
-		byte *compressedPart2 = new byte[30288];
-		alfred7.read(compressedPart2, 30288);
-		byte *decompressedPart2 = nullptr;
-		decompressedSize = rleDecompress(compressedPart2, 30288, 0, 0, &decompressedPart2, true);
-
-		memcpy((byte *)_mainMenu.getPixels() + curPos, decompressedPart2, decompressedSize);
-		curPos += decompressedSize;
-		debug("Settings menu size loaded: %d, with last block %d", curPos, curPos + 92160);
-		delete[] compressedPart2;
-		delete[] decompressedPart2;
-		alfred7.seek(2563266, SEEK_SET);
-		alfred7.read((byte *)_mainMenu.getPixels() + curPos, 92160);
-	} else {
-		_mainMenu.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
-
-		alfred7.seek(kAlternateSettingsPaletteOffset, SEEK_SET);
-		alfred7.read(_mainMenuPalette, 768);
-		for (int i = 0; i < 256; i++) {
-			_mainMenuPalette[i * 3] = _mainMenuPalette[i * 3] << 2;
-			_mainMenuPalette[i * 3 + 1] = _mainMenuPalette[i * 3 + 1] << 2;
-			_mainMenuPalette[i * 3 + 2] = _mainMenuPalette[i * 3 + 2] << 2;
-		}
-
-		g_engine->_res->mergeRleBlocks(&alfred7, kAlternateSettingsMenuOffset, 8, (byte *)_mainMenu.getPixels());
+	alfred7.seek(kSettingsPaletteOffset, SEEK_SET);
+	alfred7.read(_mainMenuPalette, 768);
+	for (int i = 0; i < 256; i++) {
+		_mainMenuPalette[i * 3] = _mainMenuPalette[i * 3] << 2;
+		_mainMenuPalette[i * 3 + 1] = _mainMenuPalette[i * 3 + 1] << 2;
+		_mainMenuPalette[i * 3 + 2] = _mainMenuPalette[i * 3 + 2] << 2;
 	}
+
+	uint32 curPos = 0;
+	alfred7.seek(2405266, SEEK_SET);
+	alfred7.read(_mainMenu.getPixels(), 65536);
+
+	curPos += 65536;
+
+	byte *compressedPart1 = new byte[29418];
+	alfred7.read(compressedPart1, 29418);
+	byte *decompressedPart1 = nullptr;
+	size_t decompressedSize = rleDecompress(compressedPart1, 29418, 0, 0, &decompressedPart1, true);
+
+	memcpy((byte *)_mainMenu.getPixels() + curPos, decompressedPart1, decompressedSize);
+	curPos += decompressedSize;
+
+	delete[] compressedPart1;
+	delete[] decompressedPart1;
+	alfred7.seek(2500220, SEEK_SET);
+	alfred7.read((byte *)_mainMenu.getPixels() + curPos, 32768);
+	curPos += 32768;
+	byte *compressedPart2 = new byte[30288];
+	alfred7.read(compressedPart2, 30288);
+	byte *decompressedPart2 = nullptr;
+	decompressedSize = rleDecompress(compressedPart2, 30288, 0, 0, &decompressedPart2, true);
+
+	memcpy((byte *)_mainMenu.getPixels() + curPos, decompressedPart2, decompressedSize);
+	curPos += decompressedSize;
+	debug("Settings menu size loaded: %d, with last block %d", curPos, curPos + 92160);
+	delete[] compressedPart2;
+	delete[] decompressedPart2;
+	alfred7.seek(2563266, SEEK_SET);
+	alfred7.read((byte *)_mainMenu.getPixels() + curPos, 92160);
 
 	readButton(alfred7, 3193376, _saveButtons, _saveGameRect);
 	readButton(alfred7, alfred7.pos(), _loadButtons, _loadGameRect);
@@ -324,9 +309,6 @@ void MenuManager::loadMenuTexts() {
 	exe.seek(kInventoryDescriptionsOffset, SEEK_SET);
 	exe.read(descBuffer, kInventoryDescriptionsSize);
 	_inventoryDescriptions = _res->processTextData(descBuffer, kInventoryDescriptionsSize, true);
-	for(size_t i = 0; i < _inventoryDescriptions.size(); i++) {
-		debug("Inventory description %d: %s", i, _inventoryDescriptions[i][0].c_str());
-	}
 	delete[] descBuffer;
 
 	Common::String desc = "";

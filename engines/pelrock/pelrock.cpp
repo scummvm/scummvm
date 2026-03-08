@@ -76,9 +76,12 @@ PelrockEngine::~PelrockEngine() {
 	delete[] _inventoryOverlayState.arrows[0];
 	delete[] _inventoryOverlayState.arrows[1];
 	// Free path-finding buffers (allocated via malloc in findPath)
-	free(_currentContext.pathBuffer);
-	free(_currentContext.movementBuffer);
-	free(_currentContext.compressed_path);
+	if(_currentContext.pathBuffer) {
+		free(_currentContext.pathBuffer);
+	}
+	if(_currentContext.movementBuffer) {
+		free(_currentContext.movementBuffer);
+	}
 }
 
 uint32 PelrockEngine::getFeatures() const {
@@ -1874,7 +1877,7 @@ void PelrockEngine::walkLoop(int16 x, int16 y, AlfredDirection direction) {
 
 void PelrockEngine::walkTo(int x, int y) {
 	_currentStep = 0;
-	PathContext context = {nullptr, nullptr, nullptr, 0, 0, 0};
+	PathContext context = {nullptr, nullptr, 0, 0, 0};
 	findPath(_alfredState.x, _alfredState.y, x, y, _room->_currentRoomWalkboxes, &context, _currentHotspot);
 	_currentContext = context;
 	_alfredState.setState(ALFRED_WALKING);
