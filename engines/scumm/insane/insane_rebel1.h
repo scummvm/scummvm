@@ -83,6 +83,8 @@ public:
 	void procSKIP(int32 subSize, Common::SeekableReadStream &b) override;
 
 	void handleGameChunk(int32 subSize, Common::SeekableReadStream &b);
+	bool isInteractiveVideoActive() const { return _interactiveVideoActive; }
+	int getCurrentLevel() const { return _currentLevel; }
 
 	// Game flow (matching original at 0x15597)
 	void runGame();

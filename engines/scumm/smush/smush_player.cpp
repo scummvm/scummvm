@@ -272,6 +272,9 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 	_frameBuffer = nullptr;
 	_specialBuffer = nullptr;
 	_specialBufferSize = 0;
+	_ra1CleanFrame = nullptr;
+	_ra1CleanFrameSize = 0;
+	_ra1HasCleanFrame = false;
 
 	_seekPos = -1;
 
@@ -328,6 +331,10 @@ SmushPlayer::~SmushPlayer() {
 	_frameBuffer = nullptr;
 	free(_specialBuffer);
 	_specialBuffer = nullptr;
+	free(_ra1CleanFrame);
+	_ra1CleanFrame = nullptr;
+	_ra1CleanFrameSize = 0;
+	_ra1HasCleanFrame = false;
 }
 
 void SmushPlayer::init(int32 speed) {
@@ -342,6 +349,7 @@ void SmushPlayer::init(int32 speed) {
 	_scrollX = 0;
 	_scrollY = 0;
 	_fastForwardToFrame = 0;
+	_ra1HasCleanFrame = false;
 
 	_vm->_smushVideoShouldFinish = false;
 	_vm->_smushActive = true;
@@ -384,6 +392,10 @@ void SmushPlayer::release() {
 
 	free(_specialBuffer);
 	_specialBuffer = nullptr;
+	free(_ra1CleanFrame);
+	_ra1CleanFrame = nullptr;
+	_ra1CleanFrameSize = 0;
+	_ra1HasCleanFrame = false;
 
 	if (isRA2()) {
 		ra2ReleaseVideo();
@@ -1370,14 +1382,6 @@ void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b
 			_frame, codec, left, top, width, height, subSize - 14, _storeFrame, _width, _height);
 	}
 	if (isRA1()) {
-		// Viewport scroll for interactive gameplay (FUN_224FD sets _41A0/_41A2).
-		// Original renders FOBJs at raw positions, then displays a 320x200 window
-		// starting at (perspectiveX, perspectiveY) within the 384x242 buffer.
-		// FUN_22605/FUN_2289D subtract _41A0 from FOBJ X coords during rendering.
-		// We simulate the display window shift by subtracting from decode position.
-		left -= _ra1ViewportOffsetX;
-		top -= _ra1ViewportOffsetY;
-
 		debug("RA1 FOBJ: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d storeFrame=%d",
 			_frame, codec, left, top, width, height, subSize - 14, _storeFrame);
 	}
@@ -1424,17 +1428,37 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 	if (isRA2())
 		_hasFrameFobjForGost = false;
 
+	bool interactiveRA1 = false;
+	bool forceInteractiveClearRA1 = false;
+	if (isRA1() && _insane) {
+		InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
+		interactiveRA1 = rebel1->isInteractiveVideoActive();
+		// Level 2 asteroid stream composes many partial codec1/2+FTCH layers.
+		// Clear per frame for this mode to avoid stale-trail ghosting.
+		forceInteractiveClearRA1 = interactiveRA1 && (rebel1->getCurrentLevel() == 1);
+	}
+
+	// Keep the previous decoded frame (without post-render overlays) as delta source.
+	// FUN_1FDBC (0x1FDBC) decodes frame data first; gameplay overlays from
+	// FUN_1BBCB/FUN_1CB22/FUN_1CDA7 are presentation-stage effects.
+	if (isRA1() && interactiveRA1 && !forceInteractiveClearRA1 &&
+		_ra1HasCleanFrame && _ra1CleanFrame &&
+		_dst && _width > 0 && _height > 0) {
+		const int frameBytes = _width * _height;
+		if (_ra1CleanFrameSize >= frameBytes)
+			memcpy(_dst, _ra1CleanFrame, frameBytes);
+	}
+
 	if (_insanity) {
 		_vm->_insane->procPreRendering(_dst);
 	}
 
-	// RA1: Clear framebuffer before each frame's first draw operation.
-	// Matches FFmpeg's first_fob memset: process_frame_obj() zeroes fbuf
-	// before the first FOBJ (or FTCH re-decode) of each frame. Without this,
-	// codec 1's transparent pixels (pixel 0 = skip) show previous frame
-	// content, causing ghost trails on the Star Wars opening crawl.
+	// RA1: gameplay/interactivity relies on previous-frame history (delta codecs),
+	// but passive cinematics in current implementation need a per-frame clear to
+	// avoid trails in intro/text sequences.
 	if (isRA1() && _dst && _width > 0 && _height > 0) {
-		memset(_dst, 0, _width * _height);
+		if (!interactiveRA1 || forceInteractiveClearRA1)
+			memset(_dst, 0, _width * _height);
 	}
 
 	while (frameSize > 0) {
@@ -1665,6 +1689,24 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 	if (isRA1() && _ra1ObjOverlayData != nullptr && _frame > 0) {
 		Common::MemoryReadStream overlayStream(_ra1ObjOverlayData, _ra1ObjOverlayDataSize);
 		handleFrameObject(_ra1ObjOverlayDataSize, overlayStream);
+	}
+
+	// Snapshot decoded frame before post-render overlays so next frame starts from
+	// clean video data (avoids ghost trails from moving HUD/cursor overlays).
+	if (isRA1() && interactiveRA1 && !forceInteractiveClearRA1 &&
+		_dst && _width > 0 && _height > 0) {
+		const int frameBytes = _width * _height;
+		byte *newClean = (byte *)realloc(_ra1CleanFrame, frameBytes);
+		if (newClean != nullptr) {
+			_ra1CleanFrame = newClean;
+			_ra1CleanFrameSize = frameBytes;
+			memcpy(_ra1CleanFrame, _dst, frameBytes);
+			_ra1HasCleanFrame = true;
+		} else {
+			_ra1HasCleanFrame = false;
+		}
+	} else if (isRA1() && forceInteractiveClearRA1) {
+		_ra1HasCleanFrame = false;
 	}
 
 	if (_insanity) {
@@ -2247,8 +2289,8 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 							continue;
 						}
 
-						const int srcX = CLIP(_scrollX, 0, _width - 1);
-						const int srcY = CLIP(_scrollY, 0, _height - 1);
+						const int srcX = CLIP(_scrollX + _ra1ViewportOffsetX, 0, _width - 1);
+						const int srcY = CLIP(_scrollY + _ra1ViewportOffsetY, 0, _height - 1);
 
 						frameWidth = MIN(_width - srcX, _vm->_screenWidth);
 						frameHeight = MIN(_height - srcY, _vm->_screenHeight);
