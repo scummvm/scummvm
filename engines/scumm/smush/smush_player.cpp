@@ -1898,10 +1898,10 @@ void SmushPlayer::ra1HandleText(int32 subSize, Common::SeekableReadStream &b) {
 	if (!rebel1)
 		return;
 
-	// Keep RA1 on-screen placement path stable (first BE32 drives baseline Y
-	// in current renderer integration), while preserving original text markers.
-	int16 cursorY = (int16)b.readUint32BE();
-	/*int16 xParam =*/ (void)b.readUint32BE();
+	// FUN_1FDBC TEXT path passes BE32 x/y from payload to FUN_221B7 with 0x200
+	// center-alignment flag, so x is an anchor and y is line baseline.
+	const int textAnchorX = b.readSint32BE();
+	int cursorY = b.readSint32BE();
 
 	int textLen = subSize - 8;
 	if (textLen <= 0)
@@ -1927,20 +1927,20 @@ void SmushPlayer::ra1HandleText(int32 subSize, Common::SeekableReadStream &b) {
 
 		if (lineLen > 0) {
 			char *line = (char *)malloc(lineLen + 1);
-			if (line) {
+			if (!line) {
+				cursorY += 12;
+			} else {
 				memcpy(line, textBuf + start, lineLen);
 				line[lineLen] = '\0';
 
-				int drawX = (_width - rebel1->getFontBankStringWidth(line)) / 2;
-				if (drawX < 0)
-					drawX = 0;
-
+				const int drawX = textAnchorX - (rebel1->getFontBankStringWidth(line) / 2);
 				rebel1->drawFontBankString(_dst, _width, _width, _height, drawX, cursorY, line);
+				cursorY += rebel1->getFontBankLineAdvance(line);
 				free(line);
 			}
+		} else {
+			cursorY += rebel1->getFontBankLineAdvance(nullptr);
 		}
-
-		cursorY += 10;
 		int consumed = lineLen;
 		if (consumed < remaining && textBuf[start + consumed] == 0)
 			consumed++;

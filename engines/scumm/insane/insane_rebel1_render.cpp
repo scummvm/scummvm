@@ -125,6 +125,28 @@ static int getBankSpaceAdvance(const RA1SpriteBank &bank) {
 	return MIN(exclWidth, 8);
 }
 
+static const RA1SpriteBank &selectLayerBank(const RA1SpriteBank &titleBank,
+		const RA1SpriteBank &hudBank, const RA1SpriteBank &techBank, int layer) {
+	const bool techLayer = (layer >= 2);
+	const bool talkLayer = (layer == 1);
+	if (techLayer)
+		return (techBank.numSprites > 0) ? techBank : hudBank;
+	if (talkLayer)
+		return hudBank;
+	return (titleBank.numSprites > 0) ? titleBank : hudBank;
+}
+
+static int getBankSpaceHeight(const RA1SpriteBank &bank) {
+	// In FUN_221B7 line advance is derived from the layer's space-glyph height (+4).
+	// With current NUT decoding we approximate that using the '!' glyph (index 0).
+	if (bank.numSprites > 0) {
+		const RA1Sprite &glyph = bank.sprites[0];
+		if (glyph.height > 0)
+			return glyph.height;
+	}
+	return 8;
+}
+
 // FUN_1C794: direction bucket in range -4..4 from two points.
 static int ra1ShotDirection(int16 x1, int16 y1, int16 x2, int16 y2) {
 	int dx = x2 - x1;
@@ -459,12 +481,7 @@ void InsaneRebel1::drawFontBankString(byte *dst, int pitch, int width, int heigh
 		}
 
 		const bool techLayer = (layer >= 2);
-		const bool talkLayer = (layer == 1);
-		const RA1SpriteBank &bank = techLayer ?
-			((_techFontBank.numSprites > 0) ? _techFontBank : _hudFontBank) :
-			(talkLayer ?
-				_hudFontBank :
-				((_titleFontBank.numSprites > 0) ? _titleFontBank : _hudFontBank));
+		const RA1SpriteBank &bank = selectLayerBank(_titleFontBank, _hudFontBank, _techFontBank, layer);
 		if (bank.numSprites <= 0)
 			return;
 
@@ -504,12 +521,7 @@ int InsaneRebel1::getFontBankStringWidth(const char *text) {
 		}
 
 		const bool techLayer = (layer >= 2);
-		const bool talkLayer = (layer == 1);
-		const RA1SpriteBank &bank = techLayer ?
-			((_techFontBank.numSprites > 0) ? _techFontBank : _hudFontBank) :
-			(talkLayer ?
-				_hudFontBank :
-				((_titleFontBank.numSprites > 0) ? _titleFontBank : _hudFontBank));
+		const RA1SpriteBank &bank = selectLayerBank(_titleFontBank, _hudFontBank, _techFontBank, layer);
 		if (bank.numSprites <= 0)
 			return w;
 
@@ -522,6 +534,21 @@ int InsaneRebel1::getFontBankStringWidth(const char *text) {
 		w += getBankStringWidth(bank, glyph);
 	}
 	return w;
+}
+
+int InsaneRebel1::getFontBankLineAdvance(const char *text) {
+	int layer = 0;
+	if (text) {
+		for (int i = 0; text[i] != '\0'; i++) {
+			if (text[i] == '<')
+				layer++;
+			else if (text[i] == '>')
+				layer = MAX(layer - 1, 0);
+		}
+	}
+
+	const RA1SpriteBank &bank = selectLayerBank(_titleFontBank, _hudFontBank, _techFontBank, layer);
+	return getBankSpaceHeight(bank) + 4;
 }
 
 // renderShip — Ship sprite rendering from FUN_1DEB5 (0x1DEB5) at LAB_1e2b2.

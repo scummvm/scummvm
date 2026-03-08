@@ -138,6 +138,7 @@ private:
 public:
 	void drawFontBankString(byte *dst, int pitch, int width, int height, int x, int y, const char *text);
 	int getFontBankStringWidth(const char *text);
+	int getFontBankLineAdvance(const char *text);
 	void processAudioFrame(int16 feedSize);
 private:
 
