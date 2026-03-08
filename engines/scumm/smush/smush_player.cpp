@@ -350,17 +350,9 @@ void SmushPlayer::init(int32 speed) {
 	_scrollY = 0;
 	_fastForwardToFrame = 0;
 	_ra1HasCleanFrame = false;
-
 	// RA1 OBJ overlay chunks are video-local. Reset cached overlay state for each
 	// new ANM so data from a previous segment isn't re-applied.
-	free(_ra1ObjOverlayData);
-	_ra1ObjOverlayData = nullptr;
-	_ra1ObjOverlayDataSize = 0;
-	_ra1ObjOverlayCodec = 0;
-	_ra1ObjOverlayLeft = 0;
-	_ra1ObjOverlayTop = 0;
-	_ra1ObjOverlayWidth = 0;
-	_ra1ObjOverlayHeight = 0;
+	resetGameVideoState();
 
 	_vm->_smushVideoShouldFinish = false;
 	_vm->_smushActive = true;
@@ -413,18 +405,8 @@ void SmushPlayer::release() {
 	} else {
 		free(_frameBuffer);
 		_frameBuffer = nullptr;
-		if (isRA1()) {
-			free(_storedFobjData);
-			_storedFobjData = nullptr;
-			_storedFobjDataSize = 0;
-			_storedFobjCodec = 0;
-			_storedFobjParm2 = 0;
-			_storedFobjLeft = 0;
-			_storedFobjTop = 0;
-			_storedFobjWidth = 0;
-			_storedFobjHeight = 0;
-		}
 	}
+	releaseGameVideoState();
 
 	_IACTstream = nullptr;
 
@@ -456,58 +438,16 @@ void SmushPlayer::handleStore(int32 subSize, Common::SeekableReadStream &b) {
 
 void SmushPlayer::handleFetch(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFetch()");
-	if (isRA1())
-		assert(subSize >= 4);
-	else
-		assert(subSize >= 6);
+	assert(subSize >= (isRA1() ? 4 : 6));
 
 	if (isRA2()) {
 		ra2HandleFetch(b);
 		return;
 	}
 
-	if (isRA1()) {
-		// RA1 FTCH re-decodes the raw FOBJ captured by STOR (not a framebuffer memcpy).
-		// Chunk layout: BE32 id/flags, BE32 fetchX, BE32 fetchY.
-		uint32 fetchId = 0;
-		int32 fetchX = 0;
-		int32 fetchY = 0;
-		if (subSize >= 4)
-			fetchId = b.readUint32BE();
-		if (subSize >= 12) {
-			fetchX = b.readSint32BE();
-			fetchY = b.readSint32BE();
-		}
-
-		if (_storedFobjData != nullptr && _storedFobjDataSize > 0) {
-			const int storedCodec = _storedFobjCodec & 0xFF;
-			const uint8 storedParam = (uint8)((_storedFobjCodec >> 8) & 0xFF);
-			int left = _storedFobjLeft + fetchX;
-			int top = _storedFobjTop + fetchY;
-
-			if (_insane) {
-				InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
-				// FUN_1FDBC routes FTCH through FUN_28D0A, which forces FUN_20D43
-				// flag 0x8 instead of replaying a plain raw FOBJ blit. In LVL2,
-				// the stored object is the 320-wide gameplay-window patch, so under
-				// ScummVM's 384-buffer crop emulation it must be anchored to the
-				// current window origin rather than left in raw chunk space.
-				if (rebel1->isInteractiveVideoActive() && rebel1->getActiveGameOpcode() == 0x0B &&
-					_storedFobjWidth == _vm->_screenWidth) {
-					left += _ra1ViewportOffsetX;
-				}
-			}
-
-			debug("RA1 FTCH: frame=%d id=0x%08x pos=(%d,%d) using stored FOBJ codec=%d size=%dx%d",
-				_frame, fetchId, left, top, storedCodec, _storedFobjWidth, _storedFobjHeight);
-			decodeFrameObject(storedCodec, _storedFobjData, left, top,
-				_storedFobjWidth, _storedFobjHeight, _storedFobjDataSize,
-				storedParam, _storedFobjParm2);
-		} else {
-			debug("RA1 FTCH: frame=%d id=0x%08x with no stored FOBJ data", _frame, fetchId);
-		}
+	// RA1 FTCH re-decodes the raw FOBJ captured by STOR (not a framebuffer memcpy).
+	if (handleGameFetch(subSize, b))
 		return;
-	}
 
 	if (_frameBuffer != nullptr) {
 		memcpy(_dst, _frameBuffer, _width * _height);
@@ -715,10 +655,8 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::SeekableReadStream &b) {
 	// RA1 TEXT chunks have a different format: 2 × BE32 header + text data.
 	// Route to dedicated handler.
-	if (isRA1() && subType == MKTAG('T','E','X','T')) {
-		ra1HandleText(subSize, b);
+	if (handleGameTextResource(subType, subSize, b))
 		return;
-	}
 
 	int pos_x = b.readSint16LE();
 	int pos_y = b.readSint16LE();
@@ -907,9 +845,7 @@ void SmushPlayer::handleDeltaPalette(int32 subSize, Common::SeekableReadStream &
 			_pal[i] = CLIP<int32>(_shiftedDeltaPal[i] >> 7, 0, 255);
 		}
 
-		if (isRA1()) {
-			_pal[0] = _pal[1] = _pal[2] = 0;
-		}
+		adjustGamePalette();
 
 		setDirtyColors(0, 255);
 	} else {
@@ -933,10 +869,7 @@ void SmushPlayer::handleNewPalette(int32 subSize, Common::SeekableReadStream &b)
 		return;
 
 	readPalette(_pal, b);
-
-	if (isRA1()) {
-		_pal[0] = _pal[1] = _pal[2] = 0;
-	}
+	adjustGamePalette();
 
 	setDirtyColors(0, 255);
 }
@@ -1678,7 +1611,8 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 						}
 
 						objPos += 8 + embSize;
-						if (embSize & 1) objPos++;
+						if (embSize & 1)
+							objPos++;
 					}
 					free(objBuf);
 				}
@@ -1711,15 +1645,11 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 		}
 	}
 
-	// RA1: Re-render saved OBJ cockpit overlay every frame (drawn once in
-	// frame 0's OBJ chunk, then scene FOBJs overwrite it each frame).
 	if (isRA1() && _ra1ObjOverlayData != nullptr && _frame > 0) {
 		Common::MemoryReadStream overlayStream(_ra1ObjOverlayData, _ra1ObjOverlayDataSize);
 		handleFrameObject(_ra1ObjOverlayDataSize, overlayStream);
 	}
 
-	// Snapshot decoded frame before post-render overlays so next frame starts from
-	// clean video data (avoids ghost trails from moving HUD/cursor overlays).
 	if (isRA1() && interactiveRA1 && !forceInteractiveClearRA1 &&
 		_dst && _width > 0 && _height > 0) {
 		const int frameBytes = _width * _height;
@@ -1778,14 +1708,7 @@ void SmushPlayer::handleAnimHeader(int32 subSize, Common::SeekableReadStream &b)
 		if (!_skipPalette) {
 			byte *palettePtr = &headerContent[6];
 			memcpy(_pal, palettePtr, sizeof(_pal));
-
-			if (isRA1()) {
-				// RA1: force palette index 0 to black. Some ANM files store
-				// non-black values (e.g. O1OPEN.ANM has palette[0] = blue)
-				// but the original engine always displays index 0 as black.
-				// XPAL delta animation skips index 0, so it's never corrected.
-				_pal[0] = _pal[1] = _pal[2] = 0;
-			}
+			adjustGamePalette();
 
 			if (isRA2())
 				ra2ResetDeltaPalette();
@@ -1793,22 +1716,7 @@ void SmushPlayer::handleAnimHeader(int32 subSize, Common::SeekableReadStream &b)
 			setDirtyColors(0, 255);
 		}
 
-		if (isRA1()) {
-			// v1 AHDR: pre-allocate 384x242 special buffer and set _dst so that
-			// procPostRendering has a valid target. Keep _width/_height at 0 so
-			// updateScreen() is NOT called until the first FOBJ sets dimensions —
-			// this avoids blitting an empty buffer with palette[0] (which may be
-			// non-black, e.g. O1OPEN.ANM has palette[0] = blue).
-			_width = 0;
-			_height = 0;
-			int bufSize = 384 * 242;
-			if (_specialBuffer == nullptr || bufSize > _specialBufferSize) {
-				free(_specialBuffer);
-				_specialBuffer = (byte *)calloc(bufSize, 1);
-				_specialBufferSize = bufSize;
-			}
-			_dst = _specialBuffer;
-		} else {
+		if (!handleGameAnimHeader(headerContent)) {
 			_width = READ_LE_UINT16(&headerContent[4]);
 			_height = READ_LE_UINT16(&headerContent[6]);
 		}
@@ -1841,6 +1749,9 @@ SmushFont *SmushPlayer::getFont(int font) {
 	if (_sf[font])
 		return _sf[font];
 
+	if (SmushFont *gameFont = getGameFont(font))
+		return gameFont;
+
 	if (_vm->_game.id == GID_FT) {
 		if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))) {
 			const char *ft_fonts[] = {
@@ -1856,8 +1767,6 @@ SmushFont *SmushPlayer::getFont(int font) {
 		}
 	} else if (isRA2()) {
 		return ra2GetFont(font);
-	} else if (isRA1()) {
-		return ra1GetFont(font);
 	} else {
 		int numFonts = (_vm->_game.id == GID_CMI && !(_vm->_game.features & GF_DEMO)) ? 5 : 4;
 		assert(font >= 0 && font < numFonts);
@@ -1907,23 +1816,14 @@ SmushFont *SmushPlayer::ra1GetFont(int font) {
 	return _sf[font];
 }
 
-/**
- * RA1 TEXT chunk handler (assembly parity):
- *   FUN_1FDBC (0x1FDBC) TEXT path -> FUN_221B7 (0x221B7)
- *   - payload uses two BE32 fields + text bytes with 0x00 separators
- *   - if first byte is '.', skip that sentinel before rendering
- *   - '<'/'>' switch font layers (handled by RA1 font-bank renderer)
- */
 void SmushPlayer::ra1HandleText(int32 subSize, Common::SeekableReadStream &b) {
 	if (subSize < 8 || !_dst || _width <= 0 || _height <= 0)
 		return;
 
-	InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_vm->_insane);
+	InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
 	if (!rebel1)
 		return;
 
-	// FUN_1FDBC TEXT path passes BE32 x/y from payload to FUN_221B7 with 0x200
-	// center-alignment flag, so x is an anchor and y is line baseline.
 	const int textAnchorX = b.readSint32BE();
 	int cursorY = b.readSint32BE();
 
@@ -1936,14 +1836,11 @@ void SmushPlayer::ra1HandleText(int32 subSize, Common::SeekableReadStream &b) {
 		return;
 	b.read(textBuf, textLen);
 
-	// FUN_1FDBC checks first byte at payload+8 and skips a leading '.'
-	// when present (TEXT-at-0x2E sentinel path).
 	int start = 0;
 	if (textLen > 0 && textBuf[0] == '.')
 		start = 1;
 
 	int remaining = textLen - start;
-
 	while (remaining > 0) {
 		int lineLen = 0;
 		while (lineLen < remaining && textBuf[start + lineLen] != 0)
@@ -1956,7 +1853,6 @@ void SmushPlayer::ra1HandleText(int32 subSize, Common::SeekableReadStream &b) {
 			} else {
 				memcpy(line, textBuf + start, lineLen);
 				line[lineLen] = '\0';
-
 				const int drawX = textAnchorX - (rebel1->getFontBankStringWidth(line) / 2);
 				rebel1->drawFontBankString(_dst, _width, _width, _height, drawX, cursorY, line);
 				cursorY += rebel1->getFontBankLineAdvance(line);
@@ -1965,6 +1861,7 @@ void SmushPlayer::ra1HandleText(int32 subSize, Common::SeekableReadStream &b) {
 		} else {
 			cursorY += rebel1->getFontBankLineAdvance(nullptr);
 		}
+
 		int consumed = lineLen;
 		if (consumed < remaining && textBuf[start + consumed] == 0)
 			consumed++;

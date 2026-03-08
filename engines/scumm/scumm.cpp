@@ -1813,7 +1813,7 @@ void ScummEngine_v7::setupScumm(const Common::Path &macResourceFile) {
 		initScreens(0, 200);
 
 		_insane = new InsaneRebel1(this);
-		_splayer = new SmushPlayer(this, nullptr, _insane);
+		_splayer = new SmushPlayerRebel1(this, nullptr, _insane);
 
 		_macGui = nullptr;
 		_charset = new CharsetRendererV7(this);

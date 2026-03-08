@@ -98,11 +98,13 @@ class SmushDeltaBlocksDecoder;
 class SmushDeltaGlyphsDecoder;
 class IMuseDigital;
 class Insane;
+class SmushPlayerRebel1;
 
 class SmushPlayer {
 	friend class Insane;
 	friend class InsaneRebel1;
 	friend class InsaneRebel2;
+	friend class SmushPlayerRebel1;
 	friend class SmushMultiFont;
 private:
 	struct SmushAudioDispatch {
@@ -261,7 +263,7 @@ private:
 
 public:
 	SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *_imuseDigital, Insane *insane);
-	~SmushPlayer();
+	virtual ~SmushPlayer();
 
 	void pause();
 	void unpause();
@@ -306,6 +308,15 @@ protected:
 	void setScrollOffset(int x, int y);
 	void seekSan(const char *file, int32 pos, int32 contFrame);
 	const char *getString(int id);
+	virtual void initGamePlayerFields() {}
+	virtual void destroyGamePlayerFields() {}
+	virtual void resetGameVideoState() {}
+	virtual void releaseGameVideoState() {}
+	virtual bool handleGameFetch(int32 subSize, Common::SeekableReadStream &b) { return false; }
+	virtual bool handleGameTextResource(uint32 subType, int32 subSize, Common::SeekableReadStream &b) { return false; }
+	virtual SmushFont *getGameFont(int font) { return nullptr; }
+	virtual void adjustGamePalette() {}
+	virtual bool handleGameAnimHeader(byte *headerContent) { return false; }
 
 private:
 	SmushFont *getFont(int font);
@@ -378,6 +389,23 @@ private:
 	void sendAudioToDiMUSE(uint8 *mixBuf, int32 mixStartingPoint, int32 mixFeedSize, int32 mixInFrameCount, int volume, int pan);
 
 	void timerCallback();
+};
+
+class SmushPlayerRebel1 : public SmushPlayer {
+public:
+	SmushPlayerRebel1(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insane *insane);
+	~SmushPlayerRebel1() override;
+
+protected:
+	void initGamePlayerFields() override;
+	void destroyGamePlayerFields() override;
+	void resetGameVideoState() override;
+	void releaseGameVideoState() override;
+	bool handleGameFetch(int32 subSize, Common::SeekableReadStream &b) override;
+	bool handleGameTextResource(uint32 subType, int32 subSize, Common::SeekableReadStream &b) override;
+	SmushFont *getGameFont(int font) override;
+	void adjustGamePalette() override;
+	bool handleGameAnimHeader(byte *headerContent) override;
 };
 
 } // End of namespace Scumm
