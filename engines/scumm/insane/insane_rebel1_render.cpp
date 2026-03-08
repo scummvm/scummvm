@@ -100,6 +100,40 @@ static void drawBankString(const RA1SpriteBank &bank, byte *dst, int pitch, int 
 	}
 }
 
+static const RA1Sprite *lookupBankGlyph(const RA1SpriteBank &bank, char ch) {
+	if (bank.numSprites <= 0)
+		return nullptr;
+	if ((byte)ch < 0x21)
+		return nullptr;
+
+	const int fontIdx = (int)(byte)ch - 0x21;
+	if (fontIdx < 0 || fontIdx >= bank.numSprites)
+		return nullptr;
+
+	const RA1Sprite &glyph = bank.sprites[fontIdx];
+	if (!glyph.data || glyph.width <= 0 || glyph.height <= 0)
+		return nullptr;
+
+	return &glyph;
+}
+
+// Glyph markers in FUN_1C940/FUN_1CB22 go through DrawStringEx(..., flags=3),
+// which centers the glyph and ignores the NUT x/y offsets. Use the same anchor
+// rules here instead of the generic left-anchored text path.
+static void drawCenteredBankGlyph(const RA1SpriteBank &bank, byte *dst, int pitch, int width, int height,
+	int centerX, int centerY, char ch) {
+	char glyphStr[2] = { ch, '\0' };
+	const RA1Sprite *glyph = lookupBankGlyph(bank, ch);
+	if (!glyph) {
+		drawBankString(bank, dst, pitch, width, height, centerX, centerY, glyphStr);
+		return;
+	}
+
+	const int drawX = centerX - glyph->xoffs - (int)glyph->width / 2;
+	const int drawY = centerY - glyph->yoffs - (int)glyph->height / 2;
+	drawBankString(bank, dst, pitch, width, height, drawX, drawY, glyphStr);
+}
+
 static int getBankStringWidth(const RA1SpriteBank &bank, const char *text) {
 	if (!text || bank.numSprites <= 0)
 		return 0;
@@ -387,13 +421,21 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 // renderTargetBoxes — FUN_1C940 (0x1C940). Per-target green box overlays.
 void InsaneRebel1::renderTargetBoxes(byte *dst, int pitch, int width, int height) {
 	const int overlayX = ra1OverlayViewOffsetX(this);
+	const RA1SpriteBank &markerBank = (_techFontBank.numSprites > 0) ? _techFontBank : _hudFontBank;
+	const bool projectTargetMarkers = (_activeGameOpcode == 0x0B);
 
 	for (int i = _targetCount - 1; i >= 0; --i) {
 		if (i >= kMaxTargetBoxes)
 			continue;
 
-		char box[4] = { '<', '<', (char)('i' + CLIP<int16>(_targetBoxVariant[i], 0, 5)), '\0' };
-		drawFontBankString(dst, pitch, width, height, overlayX + _targetBoxX[i], _targetBoxY[i], box);
+		int16 drawX = _targetBoxX[i];
+		int16 drawY = _targetBoxY[i];
+		if (projectTargetMarkers)
+			drawX = (int16)(drawX - _perspectiveX);
+
+		const char boxGlyph = (char)('i' + CLIP<int16>(_targetBoxVariant[i], 0, 5));
+		drawCenteredBankGlyph(markerBank, dst, pitch, width, height,
+			overlayX + drawX, drawY, boxGlyph);
 	}
 
 	_prevTargetCount = _targetCount;
@@ -414,9 +456,9 @@ void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) 
 		// Lock indicator at fixed center positions:
 		// FUN_1CB22 draws marker strings at (0xA0,0x78) and (0xA0,0x7E).
 		if (_targetProximity > 0) {
-			drawBankString(markerBank, dst, pitch, width, height, overlayX + 0xA0, 0x78, "]");
+			drawCenteredBankGlyph(markerBank, dst, pitch, width, height, overlayX + 0xA0, 0x78, ']');
 			if (_targetProximity > 1)
-				drawBankString(markerBank, dst, pitch, width, height, overlayX + 0xA0, 0x7E, "a");
+				drawCenteredBankGlyph(markerBank, dst, pitch, width, height, overlayX + 0xA0, 0x7E, 'a');
 		}
 
 		// Pointer glyph at current aim position. Original uses two variants:
@@ -429,8 +471,7 @@ void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) 
 
 		int cursorX = CLIP<int>(overlayX + _shipPosX, 0, width - 1);
 		int cursorY = CLIP<int>(_shipPosY, 0, height - 1);
-		int markerW = getBankStringWidth(markerBank, marker);
-		drawBankString(markerBank, dst, pitch, width, height, cursorX - markerW / 2, cursorY, marker);
+		drawCenteredBankGlyph(markerBank, dst, pitch, width, height, cursorX, cursorY, marker[0]);
 	}
 
 	// Save previous proximity for next frame
@@ -446,6 +487,7 @@ void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) 
 		return;
 
 	const int overlayX = ra1OverlayViewOffsetX(this);
+	const bool projectGostMarkers = (_activeGameOpcode == 0x0B);
 	for (int i = 0; i < kMaxGostSlots; i++) {
 		if (_gostSlots[i].targetId != 0 && _gostSlots[i].frame < 10) {
 			int sprIdx = _gostSlots[i].frame;
@@ -453,8 +495,13 @@ void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) 
 				sprIdx = _bangBank.numSprites - 1;
 
 			const RA1Sprite &spr = _bangBank.sprites[sprIdx];
-			int drawX = overlayX + _gostSlots[i].posX - spr.width / 2;
-			int drawY = _gostSlots[i].posY - spr.height / 2;
+			int16 centerX = _gostSlots[i].posX;
+			int16 centerY = _gostSlots[i].posY;
+			if (projectGostMarkers)
+				centerX = (int16)(centerX - _perspectiveX);
+
+			int drawX = overlayX + centerX - spr.width / 2;
+			int drawY = centerY - spr.height / 2;
 			renderSprite(dst, pitch, width, height, drawX, drawY, spr);
 
 			_gostSlots[i].frame++;
