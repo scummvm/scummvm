@@ -310,6 +310,10 @@ int PhoenixVREngine::getVariable(const Common::String &name) const {
 void PhoenixVREngine::playSound(const Common::String &sound, Audio::Mixer::SoundType type, uint8 volume, int loops, bool spatial, float angle) {
 	const bool music = type == Audio::Mixer::kMusicSoundType;
 	debug("play sound %s %d %d, music: %d, 3d: %d, angle: %g", sound.c_str(), volume, loops, music, spatial, angle);
+	if (_sounds.contains(sound)) {
+		debug("already playing, skipping...");
+		return;
+	}
 	Audio::SoundHandle h;
 	Common::ScopedPtr<Common::SeekableReadStream> stream(open(sound));
 	if (!stream) {
