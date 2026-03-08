@@ -155,6 +155,10 @@ void Toolbox::FillOval(const Common::Rect &r, const Pattern &pat) {
 }
 
 void Toolbox::_drawRect(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor) {
+	if (!r.isValidRect()) {
+		warning("Toolbox::_drawRect: invalid rect %d %d %d %d", r.left, r.top, r.right, r.bottom);
+		return;
+	}
 	if (_port && _port->pnVis == 0) {
 		BitMap intermediate(new Graphics::ManagedSurface(r.width(), r.height()));
 		// special case because rect fills the entire surface

@@ -205,6 +205,7 @@ void ZBasic::get(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &dest, bool pres
 	_toolbox->GetPort(port);
 	Common::Rect srcRect(x1, y1, x2, y2);
 	Common::Rect dstRect(srcRect.width(), srcRect.height());
+	debugC(8,  kDebugGraphics, "ZBasic::get: (%d, %d) (%d, %d) -> %p", x1, y1, x2, y2, (void *)dest.get());
 	// Real ZBasic uses a raw array for storage.
 	// Some graphical effects expect there to be a full screen page that only has part
 	// of it copied over, so we have this flag.
@@ -373,6 +374,7 @@ void ZBasic::put(int16 x, int16 y, BitMap &src, ZBasicPutMode mode) {
 }
 
 void ZBasic::put(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &src, ZBasicPutMode mode) {
+	debugC(8, kDebugGraphics, "ZBasic::put: %p -> (%d, %d) (%d, %d)", (void *)src.get(), x1, y1, x2, y2);
 	Common::Rect destRect(x1, y1, x2, y2);
 	SourceMode sm = kSrcCopy;
 	if (mode == kPutXOR) {
