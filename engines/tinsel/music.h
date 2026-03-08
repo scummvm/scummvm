@@ -40,6 +40,10 @@ public:
 		_midiBuffer.size = 0;
 	}
 
+	~Music() {
+		DeleteMidiBuffer();
+	}
+
 	bool PlayMidiSequence(		// Plays the specified MIDI sequence through the sound driver
 		uint32 dwFileOffset,		// handle of MIDI sequence data
 		bool bLoop);			// Whether to loop the sequence
