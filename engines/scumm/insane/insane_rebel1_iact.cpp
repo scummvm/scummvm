@@ -34,13 +34,55 @@ static inline bool isL1Stage2DamageLatch(uint16 code) {
 	return code >= 6 && code <= 18;
 }
 
-// FUN_223FE (0x223FE) coordinate transform used by FUN_1C54D/FUN_1C6E9.
-// The original applies camera X offset directly and a Y term derived from
-// DAT_41A2 (+ curve-table contribution). In current RA1 integration we keep
-// the camera-offset part, which fixes left/right corridor asymmetry.
-static void transformPoint223FE(int16 &x, int16 &y, int16 cameraX, int16 cameraY) {
-	x = (int16)(x - cameraX);
-	y = (int16)(y - cameraY);
+void InsaneRebel1::rebuildProjectionTable(int16 curveStep, int16 curveExtent) {
+	_projectionCurveExtent = curveExtent;
+
+	int step = curveStep >> 1;
+	int accum = 0;
+	int threshold = 0;
+	int value = step;
+
+	for (int i = 0; i < kProjectionTableSize / 2; i++) {
+		if (step < 0) {
+			accum -= step;
+			if (threshold < accum) {
+				threshold += kProjectionTableSize / 2;
+				value += 1;
+			}
+		} else {
+			accum += step;
+			if (threshold < accum) {
+				threshold += kProjectionTableSize / 2;
+				value -= 1;
+			}
+		}
+
+		_projectionTable[i] = (int16)value;
+		_projectionTable[kProjectionTableSize - 1 - i] = (int16)-value;
+	}
+}
+
+void InsaneRebel1::resetProjectionTable() {
+	rebuildProjectionTable(0, 1);
+}
+
+void InsaneRebel1::projectGameplayPoint(int16 &x, int16 &y) const {
+	x = (int16)(x - _perspectiveX);
+
+	int curveIndex = 0x4F - (x >> 2);
+	curveIndex = CLIP<int>(curveIndex, 0, kProjectionTableSize - 1);
+
+	const int yCompensation = (_perspectiveY + (_projectionCurveExtent >> 1)) - _projectionTable[curveIndex];
+	y = (int16)(y - yCompensation);
+}
+
+void InsaneRebel1::unprojectGameplayPoint(int16 &x, int16 &y) const {
+	int curveIndex = 0x4F - (x >> 2);
+	curveIndex = CLIP<int>(curveIndex, 0, kProjectionTableSize - 1);
+
+	const int yCompensation = (_perspectiveY + (_projectionCurveExtent >> 1)) - _projectionTable[curveIndex];
+	y = (int16)(y + yCompensation);
+	x = (int16)(x + _perspectiveX);
 }
 
 // preprocessMouseAxes — FUN_231BE (0x231BE) centered-axis output law, adapted to
@@ -196,6 +238,11 @@ void InsaneRebel1::updateShipPhysics() {
 	//   viewY = clamp((_74BC + 0x17), 0, 0x2E)
 	_perspectiveX = CLIP<int16>((int16)(_shipPosX - kRA1CenterX + 0x20), 0, 0x40);
 	_perspectiveY = CLIP<int16>((int16)(_shipPosY - kRA1CenterY + 0x17), 0, 0x2E);
+
+	// FUN_1DEB5 updates the curve table via FUN_22549 after SetCameraOffset.
+	// The full DOS path blends a few roll-history terms; use the current roll
+	// accumulator so side-looking still bends the gameplay projection.
+	rebuildProjectionTable(CLIP<int16>((int16)(-(_rollAccum >> 7)), -0x1A, 0x1A), 0x1A);
 
 	// --- Step 9: Direction sprite index (FUN_1DEB5 LAB_1e23e) ---
 	// Horizontal component from _74CA (rollAccum):
@@ -387,6 +434,10 @@ void InsaneRebel1::updateTurretPhysics() {
 	_perspectiveX = CLIP<int16>((int16)(offsetX + 0x20), 0, 0x40);
 	_perspectiveY = CLIP<int16>((int16)(offsetY + 0x17), 0, 0x2E);
 
+	// FUN_1E6A7 rebuilds the side-look curve with a shallower table than the
+	// main flight handler, derived directly from roll.
+	rebuildProjectionTable((int16)(-(_rollAccum >> 9)), 0x0D);
+
 	// Direction bucket synthesis from FUN_1E6A7.
 	int dir = 0;
 	if (_flyControlMode == 2) {
@@ -538,6 +589,7 @@ void InsaneRebel1::updateAsteroidPhysics() {
 	int16 avgViewY = (int16)(sumViewY / kAsteroidSmoothWindow);
 	_perspectiveX = CLIP<int16>((int16)((avgViewX >> 1) + 0x20), 0, 0x40);
 	_perspectiveY = CLIP<int16>((int16)((avgViewY >> 1) + 0x17), 0, 0x2E);
+	resetProjectionTable();
 
 	_frameCounter++;
 
@@ -621,6 +673,7 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 		}
 
 		_activeGameOpcode = 0;
+		resetProjectionTable();
 		debug(5, "RA1 GAME 0x5E: reset state field1=%d mode=%d", (int32)param1, (int)_flyControlMode);
 		break;
 
@@ -660,7 +713,7 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 
 			int16 centerX = corridorLeft + corridorWidth / 2;
 			int16 centerY = corridorTop + corridorHeight / 2;
-			transformPoint223FE(centerX, centerY, _perspectiveX, _perspectiveY);
+			projectGameplayPoint(centerX, centerY);
 
 			_corridorLeftX = centerX - corridorWidth / 2;
 			_corridorTopY = centerY - corridorHeight / 2;
@@ -684,7 +737,7 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 
 			int16 centerX = zoneLeft + zoneWidth / 2;
 			int16 centerY = zoneTop + zoneHeight / 2;
-			transformPoint223FE(centerX, centerY, _perspectiveX, _perspectiveY);
+			projectGameplayPoint(centerX, centerY);
 
 			zoneLeft = centerX - zoneWidth / 2;
 			zoneTop = centerY - zoneHeight / 2;
@@ -804,6 +857,8 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 	int16 curY = _shipPosY;
 	const int slot = _targetCount;
 
+	unprojectGameplayPoint(curX, curY);
+
 	if (slot < kMaxTargetBoxes) {
 		_targetBoxX[slot] = (int16)((left + right) / 2);
 		_targetBoxY[slot] = (int16)((top + bottom) / 2);
@@ -848,10 +903,13 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 						_score += _tuning.kill;
 						_killCount++;
 
-						// Snap cursor to target center (original: _DAT_74BE/74C0 = target center)
+						// Snap cursor to target center and re-project it, matching FUN_1C0EF.
 						if (snap > 0) {
-							_shipPosX = (left + right) / 2;
-							_shipPosY = (top + bottom) / 2;
+							int16 lockX = (left + right) / 2;
+							int16 lockY = (top + bottom) / 2;
+							projectGameplayPoint(lockX, lockY);
+							_shipPosX = lockX;
+							_shipPosY = lockY;
 						}
 
 						debug(5, "RA1 HIT: target=%d score=%d kills=%d", targetIdx, _score, _killCount);
