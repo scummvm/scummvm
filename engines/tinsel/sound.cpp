@@ -188,7 +188,7 @@ void SoundManager::playDW1MacMusic(Common::File &s, uint32 length) {
 	if (s.read(soundData, length) != length)
 		error(FILE_IS_CORRUPT, MIDI_FILE);
 
-	Common::SeekableReadStream *memStream = new Common::MemoryReadStream(soundData, length);
+	Common::SeekableReadStream *memStream = new Common::MemoryReadStream(soundData, length, DisposeAfterUse::YES);
 
 	Audio::SoundHandle *handle = &_channels[kChannelDW1MacMusic].handle;
 
