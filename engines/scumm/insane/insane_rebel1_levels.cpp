@@ -208,7 +208,9 @@ void InsaneRebel1::loadLevelSprites(int level) {
 	// Ship direction bank — not all levels have one (e.g. Level 2 is first-person)
 	Common::String bankFile = Common::String::format("LVL%d/L%dBANK1.NUT", level, level);
 	if (!loadRA1Nut(bankFile.c_str(), _shipBank)) {
-		debug(1, "InsaneRebel1: No BANK1 for level %d (first-person level)", level);
+		Common::String legacyBankFile = Common::String::format("LVL%d/L%dBANK.NUT", level, level);
+		if (!loadRA1Nut(legacyBankFile.c_str(), _shipBank))
+			debug(1, "InsaneRebel1: No BANK1/BANK for level %d", level);
 	}
 
 	// Secondary ship bank used by some level-specific handlers (e.g. LVL1 mode-2).

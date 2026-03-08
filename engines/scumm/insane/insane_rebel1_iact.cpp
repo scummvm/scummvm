@@ -709,14 +709,12 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 			b.readUint32BE(); // field3
 			b.readUint32BE(); // field4
 
-			// RA1 scripts drive progression with GAME counters. In LVL2, finish the
-			// interactive SMUSH once the script counter reaches the terminal frame.
-			// This avoids getting stuck if container/frame parsing continues past the
-			// intended gameplay endpoint.
-			if (_interactiveVideoActive && _currentLevel == 1 && maxFrames > 0 &&
+			// RA1 scripts drive progression with GAME counters. Finish 0x0B-driven
+			// interactive videos once the script counter reaches the terminal frame.
+			if (_interactiveVideoActive && maxFrames > 0 &&
 				_gameCounter >= (int32)maxFrames - 1) {
 				_vm->_smushVideoShouldFinish = true;
-				debug(1, "RA1 L2: finishing interactive video at GAME 0x0B counter=%d/%u", _gameCounter, maxFrames);
+				debug(1, "RA1: finishing 0x0B interactive video at counter=%d/%u", _gameCounter, maxFrames);
 			}
 		}
 		debug(7, "RA1 GAME 0x0B: counter=%d", _gameCounter);

@@ -107,13 +107,17 @@ private:
 
 	// Level 2 flow: NEW → INTRO → PLAY (asteroid dodge) → END/DEATH
 	bool runLevel2();
+	bool runLevel3();
+	bool runLevel4();
+	bool runLevel5();
+	bool runLevel6();
 
 	// Play a passive cinematic (no game callback, skippable)
 	// startFrame > 0: fast-forward (decode without display) to that frame
 	void playCinematic(const char *filename, int32 startFrame = 0);
 
 	// Play interactive gameplay video (with ship physics + HUD)
-	void playInteractiveVideo(const char *filename);
+	void playInteractiveVideo(const char *filename, int32 startFrame = 0);
 	bool loadRA1Nut(const char *filename, RA1SpriteBank &bank);
 	void loadLevelSprites(int level);
 	void updateShipPhysics();
