@@ -69,6 +69,8 @@ class SeekableAudioStream;
 
 namespace AGOS {
 
+class ElviraAtariSTPlayer;
+
 enum {
 	kDebugOpcode = 1,
 	kDebugVGAOpcode,
@@ -625,6 +627,7 @@ protected:
 	Audio::SoundHandle _modHandle;
 	Audio::SoundHandle _digitalMusicHandle;
 	Audio::SeekableAudioStream *_digitalMusicStream = nullptr;
+	ElviraAtariSTPlayer *_elviraAtariSTPlayer = nullptr;
 
 	Sound *_sound;
 

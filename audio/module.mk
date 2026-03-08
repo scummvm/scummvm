@@ -28,6 +28,7 @@ MODULE_OBJS := \
 	null.o \
 	rate.o \
 	sid.o \
+	ym2149.o \
 	timestamp.o \
 	decoders/3do.o \
 	decoders/aac.o \
@@ -69,7 +70,8 @@ MODULE_OBJS := \
 	softsynth/fluidsynth.o \
 	softsynth/eas.o \
 	softsynth/pcspk.o \
-	softsynth/ay8912.o
+	softsynth/ay8912.o \
+	softsynth/ym2149.o
 
 ifndef DISABLE_NUKED_OPL
 MODULE_OBJS += \

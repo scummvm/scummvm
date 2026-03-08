@@ -19,72 +19,27 @@
  *
  */
 
-#ifndef AUDIO_ATARI_STYM_STREAM_H
-#define AUDIO_ATARI_STYM_STREAM_H
+#ifndef AUDIO_SOFTSYNTH_YM2149_H
+#define AUDIO_SOFTSYNTH_YM2149_H
 
-#include "audio/audiostream.h"
-#include "common/array.h"
-#include "common/endian.h"
-#include "common/ptr.h"
-#include "common/stream.h"
+#include "audio/ym2149.h"
 
 namespace Audio {
 
-class ElviraPrgDriver;
-
-class AtariSTYMStream final : public AudioStream {
+class YM2149Emu final : public YM2149::YM2149, public EmulatedChip {
 public:
-	AtariSTYMStream(Common::SeekableReadStream *stream, uint32 outputRate);
-	AtariSTYMStream(Common::SeekableReadStream *stream, uint32 outputRate, uint16 elvira1Tune);
-	~AtariSTYMStream() override;
+	YM2149Emu();
+	~YM2149Emu() override;
 
-	bool isValid() const {
-		return _isValid;
-	}
+	bool init() override;
+	void reset() override;
+	void writeReg(int reg, int value) override;
+	bool isStereo() const override { return false; }
 
-	int readBuffer(int16 *buffer, const int numSamples) override;
-	bool isStereo() const override {
-		return false;
-	}
-	int getRate() const override {
-		return (int)_rate;
-	}
-	bool endOfData() const override {
-		return _ended && _samplesLeftInWait == 0;
-	}
+protected:
+	void generateSamples(int16 *buffer, int numSamples) override;
 
 private:
-	friend class ElviraPrgDriver;
-
-	static const uint32 kDefaultFrameHz = 25;
-	static const uint32 kElvira1PrgFrameHz = 50;
-
-	Common::ScopedPtr<Common::SeekableReadStream> _stream;
-	Common::Array<uint8> _data;
-	size_t _pos = 0;
-
-	uint32 _rate = 44100;
-	uint32 _samplesPerFrame = 882;
-	uint32 _frameHz = kDefaultFrameHz;
-	uint32 _samplesLeftInWait = 0;
-	bool _ended = false;
-	uint16 _elvira1Tune = 1;
-	ElviraPrgDriver *_elviraPrgDriver = nullptr;
-	bool _isValid = true;
-
-	void resetSynth();
-
-	enum Mode {
-		kModeElvira2PKD,
-		kModeElvira1PRG,
-	};
-
-	Mode _mode = kModeElvira2PKD;
-
-
-	void parseUntilWait();
-
-
 	static const int YM_ATARI_CLOCK = 2000000;
 	static const int YM_ATARI_CLOCK_COUNTER = (YM_ATARI_CLOCK / 8);
 
@@ -100,7 +55,6 @@ private:
 	static const int YmEnvDef[16][3];
 
 	static uint16 YmEnvWaves[16][32 * 3];
-
 	static const uint16 volumeTable[16][16][16];
 	static uint16 ymout5_u16[32][32][32];
 	static int16 *ymout5;
@@ -114,37 +68,36 @@ private:
 	static const uint16 YM_SQUARE_UP = 0x1f;
 	static const uint16 YM_SQUARE_DOWN = 0x00;
 
-	uint16 _toneAPer = 1, _toneACount = 0, _toneAVal = YM_SQUARE_UP;
-	uint16 _toneBPer = 1, _toneBCount = 0, _toneBVal = YM_SQUARE_UP;
-	uint16 _toneCPer = 1, _toneCCount = 0, _toneCVal = YM_SQUARE_UP;
-	uint16 _noisePer = 1, _noiseCount = 0, _noiseVal = 0;
-	uint16 _envPer = 1, _envCount = 0;
+	uint16 _toneAPer, _toneACount, _toneAVal;
+	uint16 _toneBPer, _toneBCount, _toneBVal;
+	uint16 _toneCPer, _toneCCount, _toneCVal;
+	uint16 _noisePer, _noiseCount, _noiseVal;
+	uint16 _envPer, _envCount;
 
-	uint32 _envPos = 0;
-	int _envShape = 0;
+	uint32 _envPos;
+	int _envShape;
 
-	uint32 _mixerTA = 0, _mixerTB = 0, _mixerTC = 0;
-	uint32 _mixerNA = 0, _mixerNB = 0, _mixerNC = 0;
+	uint32 _mixerTA, _mixerTB, _mixerTC;
+	uint32 _mixerNA, _mixerNB, _mixerNC;
 
-	uint32 _rndRack = 1;
-	uint16 _freqDiv2 = 0;
+	uint32 _rndRack;
+	uint16 _freqDiv2;
 
-	uint16 _envMask3Voices = 0;
-	uint16 _vol3Voices = 0;
+	uint16 _envMask3Voices;
+	uint16 _vol3Voices;
 
 	uint8 _soundRegs[14];
 
 	int16 _YMBuffer250[YM_BUFFER_250_SIZE];
-	int _YMBuffer250PosWrite = 0;
-	int _YMBuffer250PosRead = 0;
+	int _YMBuffer250PosWrite;
+	int _YMBuffer250PosRead;
 
-	uint32 _posFractWeightedN = 0;
+	uint32 _posFractWeightedN;
+	int _rate;
 
-	void setOutputRate(int outputRate);
-	void reset();
 	void writeReg(int reg, uint8 data);
+	void setOutputRate(int outputRate);
 	void generate(int16 *dst, int count);
-
 	static uint16 mergeVoice(uint16 c, uint16 b, uint16 a);
 	static void envBuild();
 	static void interpolateVolumetable(uint16 volumetable[32][32][32]);
@@ -153,12 +106,11 @@ private:
 	static uint16 tonePer(uint8 rHigh, uint8 rLow);
 	static uint16 noisePer(uint8 rNoise);
 	static uint16 envPer(uint8 rHigh, uint8 rLow);
-
 	uint32 rndCompute();
 	void doSamples250(int samplesToGenerate250);
 	int16 nextSample();
 };
 
-} // namespace Audio
+} // End of namespace Audio
 
 #endif

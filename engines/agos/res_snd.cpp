@@ -30,13 +30,13 @@
 #include "agos/midi.h"
 #include "agos/sound.h"
 #include "agos/vga.h"
+#include "drivers/elvira_atarist.h"
 
 #include "backends/audiocd/audiocd.h"
 
 #include "audio/audiostream.h"
 #include "audio/mods/protracker.h"
 #include "audio/mods/desktoptracker.h"
-#include "drivers/atari_st_ym.h"
 
 namespace AGOS {
 
@@ -493,10 +493,10 @@ void AGOSEngine::playMusic(uint16 music, uint16 track) {
 			if (!file->open(Common::Path(Common::String::format("%dTUNE.PKD", music))))
 				error("playMusic: Can't load music from '%dTUNE.PKD'", music);
 
-			const uint32 outRate = g_system->getMixer()->getOutputRate();
-			Audio::AudioStream *stream = new Audio::AtariSTYMStream(file, outRate);
+			delete _elviraAtariSTPlayer;
+			_elviraAtariSTPlayer = nullptr;
 
-			g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_digitalMusicHandle, stream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
+			_elviraAtariSTPlayer = new ElviraAtariSTPlayer(file);
 		} else if (getGameType() == GType_ELVIRA1) {
 			// Elvira 1 Atari ST scripts do not pass direct driver tune numbers.
 			// The original prg remaps the script music IDs to PRG subtunes:
@@ -540,15 +540,16 @@ void AGOSEngine::playMusic(uint16 music, uint16 track) {
 				return;
 			}
 
-			const uint32 outRate = g_system->getMixer()->getOutputRate();
-			Audio::AtariSTYMStream *stream = new Audio::AtariSTYMStream(file, outRate, prgTune);
-			if (!stream->isValid()) {
+			delete _elviraAtariSTPlayer;
+			_elviraAtariSTPlayer = nullptr;
+
+			_elviraAtariSTPlayer = new ElviraAtariSTPlayer(file, prgTune);
+			if (!_elviraAtariSTPlayer->isValid()) {
 				warning("playMusic: Unsupported or unreadable Atari ST ELVIRA.PRG, skipping music id %d", music);
-				delete stream;
+				delete _elviraAtariSTPlayer;
+				_elviraAtariSTPlayer = nullptr;
 				return;
 			}
-
-			g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_digitalMusicHandle, stream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
 		}
 	} else {
 		_midi->setLoop(true); // Must do this BEFORE loading music.
@@ -578,6 +579,9 @@ void AGOSEngine::stopMusic() {
 	}
 	_mixer->stopHandle(_modHandle);
 	_mixer->stopHandle(_digitalMusicHandle);
+
+	delete _elviraAtariSTPlayer;
+	_elviraAtariSTPlayer = nullptr;
 
 	debug(1, "AGOSEngine::stopMusic()");
 }
