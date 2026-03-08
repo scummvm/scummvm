@@ -395,8 +395,7 @@ bool WaynesWorldEngine::introPt4_intro() {
 	_sound->playSound("sv27.snd", false);
 
 	for (int i = 0; i < 12; ++i) {
-		int index = getRandom(3);
-		sub2FEFB(1, 0, 1, index, 9, 0);
+		sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
 	}
 
 	++_startOawPos;
@@ -406,8 +405,7 @@ bool WaynesWorldEngine::introPt4_intro() {
 	_sound->playSound("sv25.snd", false);
 
 	for (int i = 0; i < 8; ++i) {
-		int index = getRandom(3);
-		sub2FEFB(1, 0, 1, index, 9, 0);
+		sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
 	}
 
 	++_startOawPos;
@@ -417,15 +415,13 @@ bool WaynesWorldEngine::introPt4_intro() {
 	_sound->playSound("sv20.snd", false);
 
 	for (int i = 0; i < 5; ++i) {
-		int index = getRandom(11);
-		sub2FEFB(1, 0, 1, 0, index, 1);
+		sub2FEFB(1, 0, 1, 0, getRandom(11), 1);
 	}
 	
 	++_startOagPos;
 
 	for (int i = 0; i < 15; ++i) {
-		int index = getRandom(3);
-		sub2FEFB(1, 0, 1, index, 9, 0);
+		sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
 	}
 
 	++_startOawPos;
@@ -455,29 +451,25 @@ bool WaynesWorldEngine::introPt4_displayCallInTime() {
 bool WaynesWorldEngine::introPt4_caller1() {
 	for (int i = 0; i < 3; ++i) {
 		for (int j = 0; j < 15; ++j) {
-			int index = getRandom(3);
-			sub2FEFB(1, 0, 1, index, 9, 0);
+			sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
 		}
 		++_startOawPos;
 	}
 
 	for (int i = 0; i < 3; ++i) {
 		for (int j = 0; j < 5; ++j) {
-			int index = getRandom(11);
-			sub2FEFB(1, 0, 1, 0, index, 1);
+			sub2FEFB(1, 0, 1, 0, getRandom(11), 1);
 		}
 		++_startOagPos;
 		for (int j = 0; j < 10; ++j) {
-			int index = getRandom(3);
-			sub2FEFB(1, 0, 1, index, 9, 0);
+			sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
 		}
 		++_startOawPos;
 	}
 
 	_sound->playSound("sv33.snd", 0);
 	for (int j = 0; j < 10; ++j) {
-		int index = getRandom(3);
-		sub2FEFB(1, 0, 1, index, 9, 0);
+		sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
 	}
 	++_startOawPos;
 
@@ -489,8 +481,7 @@ bool WaynesWorldEngine::introPt4_caller1() {
 	_sound->playSound("sv38.snd", 0);
 
 	for (int j = 0; j < 10; ++j) {
-		int index = getRandom(3);
-		sub2FEFB(1, 0, 1, index, 9, 0);
+		sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
 	}
 	++_startOawPos;
 
@@ -500,8 +491,7 @@ bool WaynesWorldEngine::introPt4_caller1() {
 	}
 
 	for (int j = 0; j < 15; ++j) {
-		int index = getRandom(11);
-		sub2FEFB(1, 0, 1, 0, index, 1);
+		sub2FEFB(1, 0, 1, 0, getRandom(11), 1);
 	}
 	++_startOagPos;
 	_sound->playSound("sv31.snd", 0);
@@ -513,16 +503,14 @@ bool WaynesWorldEngine::introPt4_caller1() {
 
 	for (int i = 0; i < 2; ++i) {
 		for (int j = 0; j < 10; ++j) {
-			int index = getRandom(3);
-			sub2FEFB(1, 0, 1, index, 9, 0);
+			sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
 		}
 		++_startOawPos;
 	}
 	_sound->playSound("sv28.snd", 0);
 
 	for (int j = 0; j < 5; ++j) {
-		int index = getRandom(3);
-		sub2FEFB(1, 0, 1, index, 9, 0);
+		sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
 	}
 	++_startOawPos;
 	_sound->playSound("sv21.snd", 0);
@@ -534,8 +522,7 @@ bool WaynesWorldEngine::introPt4_caller1() {
 
 	for (int i = 0; i < 3; ++i) {
 		for (int j = 0; j < 15; ++j) {
-			int index = getRandom(3);
-			sub2FEFB(1, 0, 1, index, 9, 0);
+			sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
 		}
 		++_startOawPos;
 	}
@@ -548,8 +535,7 @@ bool WaynesWorldEngine::introPt4_caller1() {
 
 	for (int i = 0; i < 3; ++i) {
 		for (int j = 0; j < 10; ++j) {
-			int index = getRandom(3);
-			sub2FEFB(1, 0, 1, index, 9, 0);
+			sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
 		}
 		++_startOawPos;
 	}
@@ -567,8 +553,7 @@ bool WaynesWorldEngine::introPt4_caller2() {
 
 	for (int i = 0; i < 4; ++i) {
 		for (int j = 0; j < 10; ++j) {
-			int index = getRandom(11);
-			sub2FEFB(1, 0, 1, 0, index, 1);
+			sub2FEFB(1, 0, 1, 0, getRandom(11), 1);
 		}
 		++_startOagPos;
 	}
@@ -579,8 +564,7 @@ bool WaynesWorldEngine::introPt4_caller2() {
 	}
 
 	for (int j = 0; j < 10; ++j) {
-		int index = getRandom(3);
-		sub2FEFB(1, 0, 1, index, 9, 0);
+		sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
 	}
 	++_startOawPos;
 	sub2FEFB(1, 0, 1, getRandom(3), getRandom(11), 2);
@@ -588,8 +572,7 @@ bool WaynesWorldEngine::introPt4_caller2() {
 
 	for (int i = 0; i < 3; ++i) {
 		for (int j = 0; j < 10; ++j) {
-			int index = getRandom(11);
-			sub2FEFB(1, 0, 1, 0, index, 1);
+			sub2FEFB(1, 0, 1, 0, getRandom(11), 1);
 		}
 		++_startOagPos;
 	}
@@ -602,8 +585,7 @@ bool WaynesWorldEngine::introPt4_caller2() {
 	_sound->playSound("sv15.snd", false);
 
 	for (int j = 0; j < 10; ++j) {
-		int index = getRandom(3);
-		sub2FEFB(1, 0, 1, index, 9, 0);
+		sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
 	}
 	++_startOawPos;
 
@@ -615,8 +597,7 @@ bool WaynesWorldEngine::introPt4_caller2() {
 
 	for (int i = 0; i < 3; ++i) {
 		for (int j = 0; j < 10; ++j) {
-			int index = getRandom(11);
-			sub2FEFB(1, 0, 1, 0, index, 1);
+			sub2FEFB(1, 0, 1, 0, getRandom(11), 1);
 		}
 		++_startOagPos;
 	}
@@ -624,8 +605,7 @@ bool WaynesWorldEngine::introPt4_caller2() {
 
 	for (int i = 0; i < 2; ++i) {
 		for (int j = 0; j < 10; ++j) {
-			int index = getRandom(3);
-			sub2FEFB(1, 0, 1, index, 9, 0);
+			sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
 		}
 		++_startOawPos;
 	}
@@ -640,8 +620,7 @@ bool WaynesWorldEngine::introPt4_caller3() {
 	}
 
 	for (int i = 0; i < 10; ++i) {
-		int index = getRandom(3);
-		sub2FEFB(1, 0, 1, index, 9, 0);
+		sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
 	}
 	++_startOawPos;
 
@@ -654,8 +633,7 @@ bool WaynesWorldEngine::introPt4_caller3() {
 
 	for (int j = 0; j < 2; ++j) {
 		for (int i = 0; i < 15; ++i) {
-			int index = getRandom(3);
-			sub2FEFB(1, 0, 1, index, 9, 0);
+			sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
 		}
 		++_startOawPos;
 	}
@@ -676,8 +654,7 @@ bool WaynesWorldEngine::introPt4_caller3() {
 
 	for (int j = 0; j < 4; ++j) {
 		for (int i = 0; i < 15; ++i) {
-			int index = getRandom(3);
-			sub2FEFB(1, 0, 1, index, 9, 0);
+			sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
 		}
 		++_startOawPos;
 	}
@@ -696,8 +673,7 @@ bool WaynesWorldEngine::introPt4_caller3() {
 bool WaynesWorldEngine::introPt4_caller4() {
 	for (int j = 0; j < 2; ++j) {
 		for (int i = 0; i < 15; ++i) {
-			int index = getRandom(3);
-			sub2FEFB(1, 0, 1, index, 9, 0);
+			sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
 		}
 		++_startOawPos;
 	}
@@ -706,15 +682,13 @@ bool WaynesWorldEngine::introPt4_caller4() {
 	waitSeconds(2);
 
 	for (int i = 0; i < 15; ++i) {
-		int index = getRandom(3);
-		sub2FEFB(1, 0, 1, index, 9, 0);
+		sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
 	}
 	++_startOawPos;
 	
 	for (int j = 0; j < 2; ++j) {
 		for (int i = 0; i < 15; ++i) {
-			int index = getRandom(11);
-			sub2FEFB(1, 0, 1, 0, index, 1);
+			sub2FEFB(1, 0, 1, 0, getRandom(11), 1);
 		}
 		++_startOagPos;
 	}
@@ -723,8 +697,7 @@ bool WaynesWorldEngine::introPt4_caller4() {
 	_sound->playSound("sv24.snd", true);
 
 	for (int i = 0; i < 15; ++i) {
-		int index = getRandom(3);
-		sub2FEFB(1, 0, 1, index, 9, 0);
+		sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
 	}
 	++_startOawPos;
 
@@ -734,8 +707,7 @@ bool WaynesWorldEngine::introPt4_caller4() {
 	_sound->playSound("sv06.snd", false);
 
 	for (int i = 0; i < 3; ++i) {
-		int index = getRandom(3);
-		sub2FEFB(1, 0, 1, index, 9, 0);
+		sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
 	}
 	++_startOawPos;
 
@@ -746,8 +718,7 @@ bool WaynesWorldEngine::introPt4_caller4() {
 	_sound->playSound("sv32.snd", false);
 
 	for (int i = 0; i < 5; ++i) {
-		int index = getRandom(11);
-		sub2FEFB(1, 0, 1, 0, index, 1);
+		sub2FEFB(1, 0, 1, 0, getRandom(11), 1);
 	}
 	++_startOagPos;
 
@@ -756,8 +727,7 @@ bool WaynesWorldEngine::introPt4_caller4() {
 
 	for (int j = 0; j < 3; ++j) {
 		for (int i = 0; i < 8; ++i) {
-			int index = getRandom(3);
-			sub2FEFB(1, 0, 1, index, 9, 0);
+			sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
 		}
 		++_startOawPos;	
 	}
@@ -770,8 +740,7 @@ bool WaynesWorldEngine::introPt4_caller4() {
 	_sound->playSound("sv18.snd", false);
 
 	for (int i = 0; i < 8; ++i) {
-		int index = getRandom(3);
-		sub2FEFB(1, 0, 1, index, 9, 0);
+		sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
 	}
 	++_startOawPos;
 
@@ -784,8 +753,7 @@ bool WaynesWorldEngine::introPt4_caller4() {
 	
 	for (int j = 0; j < 3; ++j) {
 		for (int i = 0; i < 8; ++i) {
-			int index = getRandom(3);
-			sub2FEFB(1, 0, 1, index, 9, 0);
+			sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
 		}
 		++_startOawPos;
 	}
@@ -793,8 +761,7 @@ bool WaynesWorldEngine::introPt4_caller4() {
 	_sound->playSound("sv34.snd", false);
 
 	for (int i = 0; i < 5; ++i) {
-		int index = getRandom(11);
-		sub2FEFB(1, 0, 1, 0, index, 1);
+		sub2FEFB(1, 0, 1, 0, getRandom(11), 1);
 	}
 	++_startOagPos;
 
