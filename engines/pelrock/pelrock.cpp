@@ -307,7 +307,19 @@ void PelrockEngine::travelToEgypt() {
 	delete[] palette;
 	_screen->markAllDirty();
 	_screen->update();
+
+	_alfredState.x = 575;
+	_alfredState.y = 210;
 	setScreenAndPrepare(21, ALFRED_DOWN);
+
+	// Original gives 4 items after room load (items 17, 64, 24, 59)
+	_state->inventoryItems.clear();
+	_state->selectedInventoryItem = -1;
+	// we dont want a flashing animation in this case!
+	_state->addInventoryItem(17);
+	_state->addInventoryItem(64);
+	_state->addInventoryItem(24);
+	_state->addInventoryItem(59);
 }
 
 bool PelrockEngine::renderScene(int overlayMode) {
