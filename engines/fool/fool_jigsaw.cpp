@@ -19,12 +19,12 @@
  *
  */
 
-#include "common/ustr.h"
+#include "graphics/managed_surface.h"
+
 #include "fool/fool.h"
 #include "fool/fool_game.h"
 #include "fool/toolbox.h"
 #include "fool/zbasic.h"
-#include "graphics/managed_surface.h"
 
 namespace Fool {
 
@@ -68,13 +68,13 @@ void FoolGame::sub_132_004() {
 			);
 			//this->var_i16_1aa2 = 0x2af8 + this->var_i16_1aa0*(this->arr_i16_3738[this->var_i16_484] - 1);
 			// 132:0216
-			this->arr_jigsaw_5dfc[this->var_i16_484] = BitMap(new Graphics::ManagedSurface());
+			this->arr_jigsaw_5dfc[this->arr_i16_3738[this->var_i16_484]] = BitMap(new Graphics::ManagedSurface());
 			g_zbasic->get(
 				this->arr_rect_1f38[this->var_i16_484].left,
 				this->arr_rect_1f38[this->var_i16_484].top,
 				this->arr_rect_1f38[this->var_i16_484].right,
 				this->arr_rect_1f38[this->var_i16_484].bottom,
-				this->arr_jigsaw_5dfc[this->var_i16_484]
+				this->arr_jigsaw_5dfc[this->arr_i16_3738[this->var_i16_484]]
 			);
 		} while (g_zbasic->incrAndCheck(
 			this->var_i16_68a,
@@ -103,7 +103,7 @@ void FoolGame::sub_132_004() {
 			g_zbasic->put(
 				this->arr_rect_1f38[i].left,
 				this->arr_rect_1f38[i].top,
-				this->arr_jigsaw_5dfc[i],
+				this->arr_jigsaw_5dfc[this->arr_i16_3738[i]],
 				kPutCopy
 			);
 		// 132:0452
@@ -148,6 +148,7 @@ void FoolGame::sub_132_004() {
 }
 
 void FoolGame::sub_132_518() {
+	warning("call: %s", __func__);
 	// 132:0518
 	this->sub_128_2be(this->var_i16_68a, this->var_i16_68c);
 	if ((this->var_i16_68a < 1) || ((this->var_i16_68a - (this->arr_i16_1eb8[0])) > 0) || (this->var_i16_68c < 1) || ((this->var_i16_68c - (this->arr_i16_1eb8[1])) > 0)) {
@@ -162,13 +163,20 @@ void FoolGame::sub_132_518() {
 	// 132:05c4
 	this->arr_i16_4758[0] = this->var_i16_68a;
 	this->arr_i16_4758[1] = this->var_i16_68c;
+
+	// change select area while mouse button held down
 	this->sub_132_67a();
+	// leave an XOR outline on the page for the selected block
 	g_toolbox->FrameRect(this->arr_rect_476e);
 	this->arr_i16_4758[0] -= this->var_i16_68a;
 	this->arr_i16_4758[1] -= this->var_i16_68c;
+
 	// 132:0642
+	// move select area to new target
 	this->sub_132_962();
+	// remove XOR outline
 	g_toolbox->FrameRect(this->arr_rect_476e);
+
 	this->sub_132_ed8();
 	this->sub_132_13ea();
 	this->sub_128_6186();
@@ -177,6 +185,8 @@ void FoolGame::sub_132_518() {
 }
 
 void FoolGame::sub_132_67a() {
+	// change select area while mouse button held down
+	warning("call: %s", __func__);
 	do {
 		this->sub_128_c6a(4);
 		this->sub_128_2be(this->var_i16_68a, this->var_i16_68c);
@@ -212,6 +222,8 @@ void FoolGame::sub_132_67a() {
 }
 
 void FoolGame::sub_132_962() {
+	// move select area to new target
+	warning("call: %s", __func__);
 	do {
 		this->sub_128_c6a(2);
 		this->sub_128_2be(this->var_i16_68a, this->var_i16_68c);
@@ -265,10 +277,11 @@ void FoolGame::sub_132_962() {
 		g_toolbox->FrameRect(this->arr_rect_4776);
 		this->sub_128_3da(1);
 	}
-	while ((this->var_ev_46.what == kMouseDown) && (this->var_ev_46.where.y > 0x14));
+	while (!((this->var_ev_46.what == kMouseDown) && (this->var_ev_46.where.y > 0x14)));
 }
 
 void FoolGame::sub_132_e5a() {
+	warning("call: %s", __func__);
 	// 132:0e5a
 	this->var_i16_7c6 = 0;
 	g_zbasic->swapInt(this->arr_i16_4758[2], this->arr_i16_4758[4]);
@@ -279,51 +292,79 @@ void FoolGame::sub_132_e5a() {
 }
 
 void FoolGame::sub_132_ed8() {
+	warning("call: %s", __func__);
 	// 132:0ed8
+	// skip the tile pointer to past the end of the list
 	this->var_i16_1aa4 = this->var_i16_1a9e;
-	this->var_i16_68c = this->arr_i16_4758[6];
+
+	// arr_i16_4758[2]: src_left
+	// arr_i16_4758[3]: src_right
+	// arr_i16_4758[4]: dest_left
+	// arr_i16_4758[5]: dest_right
+	// arr_i16_4758[6]: src_top
+	// arr_i16_4758[7]: src_bottom
+	// arr_i16_4758[8]: dest_top
+	// arr_i16_4758[9]: dest_bottom
+
+	// iterate through src tile positions
 	for (int j = this->arr_i16_4758[6]; j <=  this->arr_i16_4758[7]; j++) {
 		for (int i = this->arr_i16_4758[2]; i <= this->arr_i16_4758[3]; i++) {
 			this->var_i16_1aa4++;
+			// buffer 1: make a copy of source tile positions
 			this->arr_i16_3738[this->var_i16_1aa4] = this->arr_i16_3738[this->arr_i16_2f38[i*32 + j]];
+			debug(8, "(%d, %d) [src]: %d -> buffer 1", i, j, this->arr_i16_3738[this->arr_i16_2f38[i*32 + j]]);
 			// 132:0f54
+			// buffer 0: zero out source tiles
 			this->arr_i16_3738[this->arr_i16_2f38[i*32 + j]] = 0;
 		}
 	}
 	// 132:0fbc
+	// tile pointer to buffer 2
 	this->var_i16_1aa6 = this->var_i16_1aa4;
 	this->var_i16_1aa4 = this->var_i16_1a9e;
+
 	// 132:0fc8
+	// iterate through dest tile positions
 	for (int j = this->arr_i16_4758[8]; j <= this->arr_i16_4758[9]; j++) {
 		for (int i = this->arr_i16_4758[4]; i <= this->arr_i16_4758[5]; i++) {
 			this->var_i16_1aa4++;
+
+			// if the dest tile isn't part of the src tile set, copy to buffer 2
 			if (this->arr_i16_3738[this->arr_i16_2f38[i*32 + j]] > 0) {
 				this->var_i16_1aa6++;
+				debug(8, "(%d, %d) [dest]: %d -> buffer 2", i, j, this->arr_i16_3738[this->arr_i16_2f38[i*32 + j]]);
 				this->arr_i16_3738[this->var_i16_1aa6] = this->arr_i16_3738[this->arr_i16_2f38[i*32 + j]];
 			}
 			// 132:1076
+			// write src tile from buffer 1 to dest position
 			this->arr_i16_3738[this->arr_i16_2f38[i*32 + j]] = this->arr_i16_3738[this->var_i16_1aa4];
+			debug(8, "(%d, %d) [dest]: %d <- buffer 1", i, j, this->arr_i16_3738[this->var_i16_1aa4]);
 			// 132:10ba
 			// 0x2af8, this->var_i16_1aa0 * (this->arr_i16_3738[this->arr_i16_2f38[i*32 + j]] - 1)
+			// blit tiles to screen
 			g_zbasic->put(
 				this->arr_rect_1f38[this->arr_i16_2f38[i*32 + j]].left,
 				this->arr_rect_1f38[this->arr_i16_2f38[i*32 + j]].top,
-				this->arr_jigsaw_5dfc[this->arr_i16_2f38[i*32 + j]],
+				this->arr_jigsaw_5dfc[this->arr_i16_3738[this->arr_i16_2f38[i*32 + j]]],
 				kPutCopy
 			);
 		}
 	}
 	// 132:11c8
+	// tile pointer to buffer 2
 	this->var_i16_1aa6 = this->var_i16_1aa4;
+	// iterate through source tile positions
 	for (int j = this->arr_i16_4758[6]; j <= this->arr_i16_4758[7]; j++) {
 		for (int i = this->arr_i16_4758[2]; i <= this->arr_i16_4758[3]; i++) {
+			// if the source tile has been zeroed out, fill it with tile from buffer 2
 			if (this->arr_i16_3738[this->arr_i16_2f38[i*32 + j]] == 0) {
 				this->var_i16_1aa6++;
+				debug(8, "(%d, %d) [src]: %d <- buffer 2", i, j, this->arr_i16_3738[this->var_i16_1aa6]);
 				this->arr_i16_3738[this->arr_i16_2f38[i*32+j]] = this->arr_i16_3738[this->var_i16_1aa6];
 				g_zbasic->put(
 					this->arr_rect_1f38[this->arr_i16_2f38[i*32+j]].left,
 					this->arr_rect_1f38[this->arr_i16_2f38[i*32+j]].top,
-					this->arr_jigsaw_5dfc[this->arr_i16_2f38[i*32 + j]],
+					this->arr_jigsaw_5dfc[this->arr_i16_3738[this->arr_i16_2f38[i*32 + j]]],
 					kPutCopy
 				);
 			}
@@ -333,6 +374,8 @@ void FoolGame::sub_132_ed8() {
 }
 
 void FoolGame::sub_132_1384() {
+	// convert jigsaw positions to string
+	warning("call: %s", __func__);
 	// 132:1384
 	this->var_str_c06 = g_zbasic->str(208);
 	for (int i = 1; i <= this->var_i16_1a9e; i++) {
@@ -343,12 +386,14 @@ void FoolGame::sub_132_1384() {
 
 
 void FoolGame::sub_132_13ea() {
+	// check if puzzle is solved
+	warning("call: %s", __func__);
 	// 132:13ea
 	this->var_i16_d0c = 1;
 	for (int i = 1; i <= this->var_i16_1a9e; i++) {
 		if (this->arr_i16_3738[i] != i) {
 			this->var_i16_d0c = 0;
-			this->var_i16_68a = this->var_i16_1a9e;
+			i = this->var_i16_1a9e;
 		}
 	// 132:1420
 	}
@@ -359,7 +404,19 @@ void FoolGame::sub_132_13ea() {
 }
 
 void FoolGame::sub_132_1444() {
-	warning("STUB: %s", __func__);
+	// strobe puzzle pieces once on victory
+	if (this->var_i16_c04 < 0x64) {
+		this->var_i16_c04 = 0x64;
+		for (int j = 0; j <= 1; j++) {
+			for (int i = 1; i <= this->var_i16_1a9e; i++) {
+				g_toolbox->InvertRect(this->arr_rect_1f38[i]);
+				this->sub_128_3da(1);
+			}
+		}
+	}
+	// 132:149c
+	this->sub_128_2664();
+	this->sub_128_61c2();
 }
 
 };
