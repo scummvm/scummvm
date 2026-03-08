@@ -834,8 +834,10 @@ struct GoToWarp : public Script::Command {
 	GoToWarp(Common::String w) : warp(Common::move(w)) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		g_engine->goToWarp(warp);
-		ctx.running = false; // terminate script after warp
+		// terminate script after successful warp.
+		// continue if not (for instance, goto to the same location)
+		if (g_engine->goToWarp(warp))
+			ctx.running = false;
 	}
 };
 

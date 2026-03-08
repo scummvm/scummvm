@@ -240,8 +240,12 @@ void PhoenixVREngine::wait(float seconds) {
 	}
 }
 
-void PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
+bool PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
 	debug("gotowarp %s, save prev: %d", warp.c_str(), savePrev);
+	if (_warp && _warp->vrFile == warp) {
+		debug("already at this location, skipping");
+		return false;
+	}
 
 	// Typo in Necronomicon's Script4.lst
 	if (getGameId() == "necrono" && warp == "N3M09L03W515E1.vr")
@@ -258,6 +262,7 @@ void PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
 		screenshot->convertToInPlace(_rgb565);
 		_thumbnail.simpleBlitFrom(*screenshot, Graphics::FLIP_V);
 	}
+	return true;
 }
 
 void PhoenixVREngine::returnToWarp() {

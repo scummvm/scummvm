@@ -111,7 +111,7 @@ public:
 
 	// Script API
 	void setNextScript(const Common::String &path);
-	void goToWarp(const Common::String &warp, bool savePrev = false);
+	bool goToWarp(const Common::String &warp, bool savePrev = false);
 	void returnToWarp();
 	void setCursorDefault(int idx, const Common::String &path);
 	void setCursor(const Common::String &path, const Common::String &warp, int idx);
