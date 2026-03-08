@@ -229,13 +229,16 @@ void InsaneRebel1::updateShipPhysics() {
 	// Original (FUN_1B297): at GAME counter 394 (0x18A), sets nextSceneA=0x67/nextSceneB=0x69.
 	// After this point, drift goes strongly negative (pushing ship left for the hard path).
 	// If ship is right of center, player chose the right/easy path → switch to L1PLAY1R.
-	// The check fires once when the game counter first reaches the branch point.
-	if (_pathBranchEnabled && !_rightPathSelected && _gameCounter >= kPathBranchCounter) {
+	// Keep this as a one-shot decision: once threshold is reached, lock path.
+	if (_pathBranchEnabled && _gameCounter >= kPathBranchCounter) {
 		if (_shipPosX > kRA1CenterX) {
 			_rightPathSelected = true;
 			_vm->_smushVideoShouldFinish = true;
 			debug(1, "RA1: Right path selected (counter=%d, shipX=%d)", _gameCounter, _shipPosX);
+		} else {
+			debug(1, "RA1: Left path retained (counter=%d, shipX=%d)", _gameCounter, _shipPosX);
 		}
+		_pathBranchEnabled = false;
 	}
 
 	debug(7, "RA1 ship: pos=(%d,%d) roll=%d lift=%d accX=%d accY=%d dir=%d health=%d corridor=[%d,%d]-[%d,%d]",
