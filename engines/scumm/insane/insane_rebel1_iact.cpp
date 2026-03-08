@@ -27,6 +27,13 @@
 
 namespace Scumm {
 
+// LVL1 stage-2 0x5D damage/event codes observed in L1PLAY2.ANM.
+// Original DOS loop uses table/mask-driven latch routing before FUN_1E6A7;
+// in ScummVM's direct GAME dispatch path, map this known range explicitly.
+static inline bool isL1Stage2DamageLatch(uint16 code) {
+	return code >= 6 && code <= 18;
+}
+
 // FUN_223FE (0x223FE) coordinate transform used by FUN_1C54D/FUN_1C6E9.
 // The original applies camera X offset directly and a Y term derived from
 // DAT_41A2 (+ curve-table contribution). In current RA1 integration we keep
@@ -178,7 +185,8 @@ void InsaneRebel1::updateShipPhysics() {
 	// RA1 FUN_1B297-style latches from GAME opcodes:
 	//   0x5D latch 0xFFFF -> bit 0x40 (obstacle/contact)
 	//   0x5F non-zero + RNG -> bit 0x80 (projectile-like hit)
-	if (_gameLatch5D == 0xFFFF)
+	if (_gameLatch5D == 0xFFFF || (_currentLevel == 0 && _flyControlMode == 2 &&
+		isL1Stage2DamageLatch(_gameLatch5D)))
 		_damageFlags |= 0x40;
 	if (_gameLatch5F != 0 && _vm->_rnd.getRandomNumber((uint16)(_gameLatch5F - 1)) == 0)
 		_damageFlags |= 0x80;
@@ -259,7 +267,8 @@ void InsaneRebel1::updateTurretPhysics() {
 	const byte modeFlags = 0;
 
 	// RA1 latches consumed by handler family in FUN_1B297.
-	if (_gameLatch5D == 0xFFFF)
+	if (_gameLatch5D == 0xFFFF || (_currentLevel == 0 && _flyControlMode == 2 &&
+		isL1Stage2DamageLatch(_gameLatch5D)))
 		_damageFlags |= 0x40;
 	if (_gameLatch5F != 0 && _vm->_rnd.getRandomNumber((uint16)(_gameLatch5F - 1)) == 0)
 		_damageFlags |= 0x80;
@@ -307,7 +316,11 @@ void InsaneRebel1::updateTurretPhysics() {
 			mouseY = (int16)((mouseY * 200) / _player->_height);
 		}
 
-		int16 inputX = CLIP<int16>((int16)(mouseX - 160), -127, 127);
+		// FUN_1F3F8/FUN_231BE preprocesses mouse deltas before FUN_1E6A7 consumes
+		// DAT_756C/DAT_756E. Keep X in 320-space then scale to ±127 (RA2 parity),
+		// Y clamped to ±127.
+		int16 rawInputX = CLIP<int16>((int16)(mouseX - 160), -160, 160);
+		int16 inputX = (int16)((rawInputX * 127) / 160);
 		int16 inputY = CLIP<int16>((int16)(mouseY - 100), -127, 127);
 
 		_rollAccum += (_tuning.roll * (int32)inputX) >> 4;
@@ -332,9 +345,8 @@ void InsaneRebel1::updateTurretPhysics() {
 	// FUN_1D79C tail sets pointer center from offsets:
 	//   _74BE = _74B6 + _74BA
 	//   _74C0 = (_74B8 + _74BC - 0x23) - (_74BC >> 3)
-	_shipPosX = CLIP<int16>((int16)(kRA1CenterX + offsetX), kRA1MinX, kRA1MaxX);
-	_shipPosY = CLIP<int16>((int16)((kRA1CenterY + offsetY - 0x23) - (offsetY >> 3)),
-		kRA1MinY, kRA1MaxY);
+	_shipPosX = (int16)(kRA1CenterX + offsetX);
+	_shipPosY = (int16)((kRA1CenterY + offsetY - 0x23) - (offsetY >> 3));
 
 	_perspectiveX = CLIP<int16>((int16)(offsetX + 0x20), 0, 0x40);
 	_perspectiveY = CLIP<int16>((int16)(offsetY + 0x17), 0, 0x2E);
