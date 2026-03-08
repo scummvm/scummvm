@@ -22,11 +22,21 @@
 #include "common/system.h"
 
 #include "scumm/scumm_v7.h"
+#include "scumm/smush/smush_player.h"
 #include "scumm/insane/insane_rebel1.h"
 
 namespace Scumm {
 
+// procPreRendering — Sets viewport scroll offset before FOBJ decoding (FUN_224FD at 0x224FD).
+// For interactive levels, shifts the FOBJ decode position based on mouse-controlled perspective.
 void InsaneRebel1::procPreRendering(byte *renderBitmap) {
+	if (_interactiveVideoActive && _player) {
+		_player->_ra1ViewportOffsetX = _perspectiveX;
+		_player->_ra1ViewportOffsetY = _perspectiveY;
+	} else if (_player) {
+		_player->_ra1ViewportOffsetX = 0;
+		_player->_ra1ViewportOffsetY = 0;
+	}
 }
 
 void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -59,53 +69,135 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			renderShip(renderBitmap, pitch, width, height);
 		}
 	}
-	renderExplosions(renderBitmap, pitch, width, height);
-	renderCrosshair(renderBitmap, pitch, width, height);
+
+	// Shooting/targeting pipeline applies to ship/turret gameplay.
+	// LVL2 (opcode 0x0B asteroid dodge) is avoidance-only.
+	if (_currentLevel != 1) {
+		processShot();
+		for (int i = 0; i < kMaxShotSlots; i++) {
+			if (_shotSlots[i].timer > 0)
+				_shotSlots[i].timer--;
+		}
+
+		renderLaserShots(renderBitmap, pitch, width, height);
+		renderExplosions(renderBitmap, pitch, width, height);
+		renderGostSlots(renderBitmap, pitch, width, height);
+		renderTargeting(renderBitmap, pitch, width, height);
+	}
 	renderHUD(renderBitmap, pitch, width, height);
 }
 
-void InsaneRebel1::renderCrosshair(byte *dst, int pitch, int width, int height) {
-	int cx = _vm->_mouse.x;
-	int cy = _vm->_mouse.y;
+// renderTargeting — FUN_1CB22 (0x1CB22). Targeting/lock-on crosshair at cursor position.
+// Draws a crosshair that changes color based on target proximity:
+//   0 (none) = dim grey, 1 (near) = yellow, 2 (on-target) = bright red
+void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) {
+	int cx = _shipPosX;
+	int cy = _shipPosY;
 
-	// Palette index 119 = (255,0,0) pure red in L2PLAY.ANM palette.
-	// Palette index 15 = (255,255,255) white, used as outline for visibility.
-	const byte colorInner = 119;
-	const byte colorOutline = 15;
-	const int size = 7;  // arm length
+	// Color based on proximity state
+	// Palette indices chosen for L2PLAY visibility:
+	//   0xD7 = bright green (0,255,0), 0x63 = yellow (255,255,31), 0xDD = red (192,0,0)
+	byte color;
+	if (_targetProximity >= 2)
+		color = 0xDD;  // Red — on target
+	else if (_targetProximity == 1)
+		color = 0x63;  // Yellow — near
+	else
+		color = 0xD7;  // Green — no target
 
-	// Helper lambda to draw a pixel with outline
-	auto drawPx = [&](int x, int y, byte c) {
-		if (x >= 0 && x < width && y >= 0 && y < height)
-			dst[y * pitch + x] = c;
-	};
+	// Animated crosshair: size pulses with frame counter
+	int armLen = 6 + ((_frameCounter >> 2) & 3);
+	int gap = 2;  // Gap around center
 
-	// Draw outline first (1px border around each arm pixel)
-	for (int d = -size; d <= size; d++) {
-		if (d >= -1 && d <= 1) continue; // skip center area for outline
-		// Horizontal arm outline
-		drawPx(cx + d, cy - 1, colorOutline);
-		drawPx(cx + d, cy + 1, colorOutline);
-		// Vertical arm outline
-		drawPx(cx - 1, cy + d, colorOutline);
-		drawPx(cx + 1, cy + d, colorOutline);
+	// Horizontal arms
+	for (int i = gap; i <= armLen; i++) {
+		int lx = cx - i, rx = cx + i;
+		if (cy >= 0 && cy < height) {
+			if (lx >= 0 && lx < width)
+				dst[cy * pitch + lx] = color;
+			if (rx >= 0 && rx < width)
+				dst[cy * pitch + rx] = color;
+		}
 	}
-	// Arm endpoints
-	drawPx(cx - size - 1, cy, colorOutline);
-	drawPx(cx + size + 1, cy, colorOutline);
-	drawPx(cx, cy - size - 1, colorOutline);
-	drawPx(cx, cy + size + 1, colorOutline);
-
-	// Draw red cross arms
-	for (int d = -size; d <= size; d++) {
-		if (d == 0) continue; // gap at center
-		drawPx(cx + d, cy, colorInner);  // horizontal
-		drawPx(cx, cy + d, colorInner);  // vertical
+	// Vertical arms
+	for (int i = gap; i <= armLen; i++) {
+		int uy = cy - i, dy = cy + i;
+		if (cx >= 0 && cx < width) {
+			if (uy >= 0 && uy < height)
+				dst[uy * pitch + cx] = color;
+			if (dy >= 0 && dy < height)
+				dst[dy * pitch + cx] = color;
+		}
 	}
-	// Center dot
-	drawPx(cx, cy, colorInner);
+
+	// Center dot for on-target
+	if (_targetProximity >= 2 && cx >= 0 && cx < width && cy >= 0 && cy < height) {
+		dst[cy * pitch + cx] = color;
+	}
+
+	// Save previous proximity for next frame
+	_prevTargetProx = _targetProximity;
+	_targetProximity = 0;
+
+	// Reset per-frame target count — FUN_1C940 (0x1C940)
+	_prevTargetCount = _targetCount;
+	_targetCount = 0;
+	_lastHitTarget = 0;
 }
 
+// renderGostSlots — FUN_1C9CD (0x1C9CD). Hit explosion animations at target positions.
+// Renders explosion sprites from bangBank at each GOST slot's recorded position.
+void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) {
+	if (_bangBank.numSprites <= 0)
+		return;
+
+	for (int i = 0; i < kMaxGostSlots; i++) {
+		if (_gostSlots[i].targetId != 0 && _gostSlots[i].frame < 10) {
+			int sprIdx = _gostSlots[i].frame;
+			if (sprIdx >= _bangBank.numSprites)
+				sprIdx = _bangBank.numSprites - 1;
+
+			const RA1Sprite &spr = _bangBank.sprites[sprIdx];
+			int drawX = _gostSlots[i].posX - spr.width / 2;
+			int drawY = _gostSlots[i].posY - spr.height / 2;
+			renderSprite(dst, pitch, width, height, drawX, drawY, spr);
+
+			_gostSlots[i].frame++;
+			if (_gostSlots[i].frame >= 10)
+				_gostSlots[i].targetId = 0;  // Animation complete
+		}
+	}
+}
+
+// renderLaserShots — FUN_1CCA0 visual output. Renders laser sprites from _laserBank
+// when shot slots are active (timer > 0). Each set of 5 sprites is a laser animation
+// converging from the ship toward center screen. Timer 5→1 maps to sprite frames 0→4.
+void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height) {
+	if (_laserBank.numSprites <= 0)
+		return;
+
+	int spritesPerSet = 5;
+	for (int i = 0; i < kMaxShotSlots; i++) {
+		if (_shotSlots[i].timer > 0 && _shotSlots[i].timer <= spritesPerSet) {
+			// Frame index: timer 5→1 maps to sprite 0→4
+			int frame = spritesPerSet - _shotSlots[i].timer;
+			// Alternate between sprite sets for left/right shots
+			int setOffset = (i % 3) * spritesPerSet;
+			int sprIdx = setOffset + frame;
+			if (sprIdx >= _laserBank.numSprites)
+				continue;
+
+			const RA1Sprite &spr = _laserBank.sprites[sprIdx];
+			// LASER sprites have embedded positions relative to screen center
+			int drawX = spr.xoffs + _perspectiveX;
+			int drawY = spr.yoffs + _perspectiveY;
+			renderSprite(dst, pitch, width, height, drawX, drawY, spr);
+		}
+	}
+}
+
+// drawFontBankString — Simplified version of FUN_221B7 (0x221B7).
+// Original is a multi-font markup-capable renderer; this uses a single font bank.
 void InsaneRebel1::drawFontBankString(byte *dst, int pitch, int width, int height, int x, int y, const char *text) {
 	if (!dst || !text || _hudFontBank.numSprites <= 0)
 		return;
@@ -168,8 +260,7 @@ void InsaneRebel1::drawFontBankString(byte *dst, int pitch, int width, int heigh
 	}
 }
 
-// getFontBankStringWidth -- Measure pixel width of a string using the HUD font bank.
-// Matches the pre-pass width calculation in the original drawString (FUN_221B7).
+// getFontBankStringWidth — Pre-pass width calculation from FUN_221B7 (0x221B7).
 int InsaneRebel1::getFontBankStringWidth(const char *text) {
 	if (!text || _hudFontBank.numSprites <= 0)
 		return 0;
@@ -196,6 +287,8 @@ int InsaneRebel1::getFontBankStringWidth(const char *text) {
 	return w;
 }
 
+// renderShip — Ship sprite rendering from FUN_1DEB5 (0x1DEB5) at LAB_1e2b2.
+// Also used by FUN_1E6A7 (0x1E6A7) turret handler via FUN_20BD3.
 void InsaneRebel1::renderShip(byte *dst, int pitch, int width, int height) {
 	// From FUN_1DEB5 LAB_1e2b2: ship drawn when health >= 0 OR deathTimer > 20
 	// Hidden during last 20 frames of death sequence (deathTimer 20→0)
@@ -216,8 +309,8 @@ void InsaneRebel1::renderShip(byte *dst, int pitch, int width, int height) {
 	renderSprite(dst, pitch, width, height, drawX, drawY, spr);
 }
 
-// Render explosion sprites during damage cooldown and death sequence.
-// From FUN_1DEB5 at LAB_1e185 (damage hit) and LAB_1e0e3 (death shake).
+// renderExplosions — Explosion sprites from FUN_1DEB5 (0x1DEB5) LAB_1e185 (damage hit)
+// and LAB_1e0e3 (death shake). See also FUN_1CCA0 (0x1CCA0) explosion spawner.
 void InsaneRebel1::renderExplosions(byte *dst, int pitch, int width, int height) {
 	if (_bangBank.numSprites <= 0)
 		return;
@@ -275,7 +368,7 @@ void InsaneRebel1::renderExplosions(byte *dst, int pitch, int width, int height)
 	}
 }
 
-// Render bottom status bar from DISPLAY.NUT with dynamic damage bar and score.
+// renderHUD — FUN_1BBCB (0x1BBCB). Status bar from DISPLAY.NUT with health bar and score.
 // Original layout (320-wide): DAMAGE [green bar] | PILOTS [3 icons] | SCORE [number]
 void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 	if (_displayBank.numSprites == 0)
@@ -377,6 +470,8 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 
 }
 
+// renderSprite — Simplified version of FUN_20BD3 (0x20BD3) glyph/sprite renderer.
+// Original dispatches through full codec pipeline; this does flat pixel blit with transparency.
 void InsaneRebel1::renderSprite(byte *dst, int pitch, int width, int height,
 								int x, int y, const RA1Sprite &spr) {
 	if (!spr.data || spr.width <= 0 || spr.height <= 0)

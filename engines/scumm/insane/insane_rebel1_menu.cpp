@@ -90,6 +90,15 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		}
 	}
 
+	// Shooting: mouse button during interactive gameplay — FUN_1CCA0 (0x1CCA0)
+	if (_interactiveVideoActive && !_menuActive) {
+		if (event.type == Common::EVENT_LBUTTONDOWN) {
+			if (_currentLevel != 1)
+				_playerFired = true;
+			return true;
+		}
+	}
+
 	if (event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 		if (_player) {
 			debug("Rebel1: ESC pressed - skipping video");

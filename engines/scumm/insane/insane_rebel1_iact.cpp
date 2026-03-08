@@ -27,7 +27,7 @@
 
 namespace Scumm {
 
-// Ship physics matching FUN_1DEB5 (accumulator-based position system).
+// updateShipPhysics — FUN_1DEB5 (0x1DEB5). Accumulator-based position system.
 // Roll accumulator (_74CA) driven by input, position accumulators (_74C2/_74C6)
 // driven by roll + drift + cross-coupling. Ship position = base + accum >> 8.
 void InsaneRebel1::updateShipPhysics() {
@@ -242,11 +242,19 @@ void InsaneRebel1::updateShipPhysics() {
 		_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY);
 }
 
-// Level 2+ asteroid/surface physics (FUN_1CDA7).
+// updateAsteroidPhysics — FUN_1CDA7 (0x1CDA7). Opcode 0x0B handler.
 // Uses 10-frame input history averaging instead of accumulators.
 // Ship position = averaged input + center offset.
 // Viewport = second history buffer for smooth camera scrolling.
 void InsaneRebel1::updateAsteroidPhysics() {
+	// RA1 FUN_1B297-style per-frame latches for 0x0B sections:
+	//   0x5D latch 0xFFFF -> bit 0x40 (scripted obstacle/contact)
+	//   0x5F non-zero + RNG -> bit 0x80 (scripted random hit)
+	if (_gameLatch5D == 0xFFFF)
+		_damageFlags |= 0x40;
+	if (_gameLatch5F != 0 && _vm->_rnd.getRandomNumber((uint16)(_gameLatch5F - 1)) == 0)
+		_damageFlags |= 0x80;
+
 	// Health regeneration (FUN_1BB0E): +1 every 32 frames when alive
 	if (_health >= 0 && _health < kMaxHealth && (_frameCounter & 0x1F) == 0) {
 		_health++;
@@ -265,8 +273,13 @@ void InsaneRebel1::updateAsteroidPhysics() {
 		if (_health < 0) {
 			_deathTimer = 15;  // 0x0F — shorter than Level 1's 30
 		}
+		_prevDamageFlags = _damageFlags;
 		_damageFlags = 0;
 	}
+
+	// Latches are frame-local event inputs in the original pipeline.
+	_gameLatch5D = 0;
+	_gameLatch5F = 0;
 
 	// Death fade countdown
 	if (_deathTimer > 1 && _health < 0) {
@@ -278,55 +291,27 @@ void InsaneRebel1::updateAsteroidPhysics() {
 		_screenFlash--;
 	}
 
-	// Input history shift and averaging (FUN_1CDA7 lines 107-131)
-	// Shift history: [9] = [8], [8] = [7], ... [1] = [0], [0] = current input
-	for (int i = kInputHistorySize - 1; i > 0; i--) {
-		_inputHistoryX[i] = _inputHistoryX[i - 1];
-		_inputHistoryY[i] = _inputHistoryY[i - 1];
-	}
+	// --- Cursor position: direct mouse mapping (like RA2 first-person levels) ---
+	// RA2 crosshair = _vm->_mouse.x/y directly. RA1's original (FUN_1CDA7) averaged
+	// 10 frames of DOS mouse deltas; with ScummVM absolute coords, use direct mapping.
+	_shipPosX = CLIP<int16>((int16)_vm->_mouse.x, 0, 319);
+	_shipPosY = CLIP<int16>((int16)_vm->_mouse.y, 0, 199);
 
-	// Read current mouse input (mapped to -160..+160 range)
-	int mouseX = 0, mouseY = 0;
-	if (_vm->_mouse.x >= 0) {
-		mouseX = CLIP<int>(_vm->_mouse.x - kRA1CenterX, -kRA1CenterX, kRA1CenterX);
-		mouseY = CLIP<int>(_vm->_mouse.y - kRA1CenterY, -kRA1CenterY, kRA1CenterY);
-	}
-	_inputHistoryX[0] = (int16)mouseX;
-	_inputHistoryY[0] = (int16)mouseY;
-
-	// Average over 10 frames
-	int16 sumX = 0, sumY = 0;
-	for (int i = 0; i < kInputHistorySize; i++) {
-		sumX += _inputHistoryX[i];
-		sumY -= _inputHistoryY[i]; // original negates Y: sVar5 = sVar5 - history[i]
-	}
-	_avgInputX = (int16)(sumX / kInputHistorySize);
-	_avgInputY = (int16)(sumY / kInputHistorySize);
-
-	// Clamp (original: [-0xA0, 0xA0] horizontal, [-0x46, 0x41] vertical)
-	_avgInputX = CLIP<int16>(_avgInputX, -0xA0, 0xA0);
-	_avgInputY = CLIP<int16>(_avgInputY, -0x46, 0x41);
-
-	// Ship position = average + center offset
-	// Original: _74BE = _75A8 + 0xA0, _74C0 = _75BC + 0x46
-	_shipPosX = _avgInputX + 0xA0;
-	_shipPosY = _avgInputY + 0x46;
-
-	// Viewport history shift and averaging (FUN_1CDA7 lines 134-157)
+	// Viewport parallax: smoothed offset from center for background scrolling
+	int16 mouseOffX = (int16)(_vm->_mouse.x - kRA1CenterX);
+	int16 mouseOffY = (int16)(_vm->_mouse.y - kRA1CenterY);
 	for (int i = kInputHistorySize - 1; i > 0; i--) {
 		_viewHistoryX[i] = _viewHistoryX[i - 1];
 		_viewHistoryY[i] = _viewHistoryY[i - 1];
 	}
-	_viewHistoryX[0] = _avgInputX;
-	_viewHistoryY[0] = _avgInputY;
+	_viewHistoryX[0] = mouseOffX;
+	_viewHistoryY[0] = mouseOffY;
 
 	int16 viewSumX = 0, viewSumY = 0;
 	for (int i = 0; i < kInputHistorySize; i++) {
 		viewSumX += _viewHistoryX[i];
 		viewSumY += _viewHistoryY[i];
 	}
-	// Original: _74B6 = (viewAvgX >> 1) + 0x20, clamped [0, 0x40]
-	// Original: _74B8 = (viewAvgY >> 1) + 0x17, clamped [0, 0x2E]
 	_perspectiveX = CLIP<int16>((int16)(viewSumX / kInputHistorySize >> 1) + 0x20, 0, 0x40);
 	_perspectiveY = CLIP<int16>((int16)(viewSumY / kInputHistorySize >> 1) + 0x17, 0, 0x2E);
 
@@ -346,7 +331,8 @@ void InsaneRebel1::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan
 void InsaneRebel1::procSKIP(int32 subSize, Common::SeekableReadStream &b) {
 }
 
-// Parse RA1 GAME chunks.
+// handleGameChunk — FUN_1BE1B (0x1BE1B). Central GAME opcode dispatcher.
+// Reads 7x32-bit BE integers from GAME chunk, routes to per-opcode handlers.
 void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b) {
 	if (subSize < 8)
 		return;
@@ -376,6 +362,20 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
 		_avgInputX = 0;
 		_avgInputY = 0;
+
+		// Shooting/targeting reset
+		_playerFired = false;
+		_fireCooldown = 0;
+		memset(_shotSlots, 0, sizeof(_shotSlots));
+		_shotAlternator = 0;
+		_targetProximity = 0;
+		_prevTargetProx = 0;
+		_targetCount = 0;
+		_prevTargetCount = 0;
+		memset(_gostSlots, 0, sizeof(_gostSlots));
+		_gostSlotIdx = 0;
+		_killCount = 0;
+		_lastHitTarget = 0;
 
 		// Field1 == 0 corresponds to baseline recenter behavior in the original.
 		if ((int32)param1 == 0) {
@@ -452,11 +452,38 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 		// field1 = frame counter, field2 = max frames
 		_gameCounter = param1;
 		if (subSize >= 20) {
-			b.readUint32BE(); // field2 (max frames)
+			uint32 maxFrames = b.readUint32BE(); // field2 (max frames)
 			b.readUint32BE(); // field3
 			b.readUint32BE(); // field4
+
+			// RA1 scripts drive progression with GAME counters. In LVL2, finish the
+			// interactive SMUSH once the script counter reaches the terminal frame.
+			// This avoids getting stuck if container/frame parsing continues past the
+			// intended gameplay endpoint.
+			if (_interactiveVideoActive && _currentLevel == 1 && maxFrames > 0 &&
+				_gameCounter >= (int32)maxFrames - 1) {
+				_vm->_smushVideoShouldFinish = true;
+				debug(1, "RA1 L2: finishing interactive video at GAME 0x0B counter=%d/%u", _gameCounter, maxFrames);
+			}
 		}
 		debug(7, "RA1 GAME 0x0B: counter=%d", _gameCounter);
+		break;
+
+	case 0x5A:
+		// Target detection — FUN_1C0EF (0x1C0EF). AABB from video stream.
+		// Params: targetIdx, left, top, width, height
+		if (subSize >= 24) {
+			int16 targetIdx = (int16)param1;
+			int16 left = (int16)b.readUint32BE();
+			int16 top = (int16)b.readUint32BE();
+			int16 w = (int16)b.readUint32BE();
+			int16 h = (int16)b.readUint32BE();
+			int16 right = left + w;
+			int16 bottom = top + h;
+			checkTargetHit(targetIdx, left, top, right, bottom);
+			debug(5, "RA1 GAME 0x5A: target=%d rect=[%d,%d]-[%d,%d] prox=%d",
+				targetIdx, left, top, right, bottom, _targetProximity);
+		}
 		break;
 
 	case 0x08: case 0x09: case 0x0A:
@@ -465,13 +492,100 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 			uint32 param2 = b.readUint32BE();
 			uint32 param3 = b.readUint32BE();
 			uint32 param4 = b.readUint32BE();
-			debug(7, "RA1 GAME 0x%02x: params=(%d,%d,%d,%d)", opcode, param1, param2, param3, param4);
+			debug(5, "RA1 GAME 0x%02x: params=(%d,%d,%d,%d)", opcode, param1, param2, param3, param4);
 		}
 		break;
 
 	default:
 		debug(7, "RA1 GAME unknown 0x%02x size=%d", opcode, subSize);
 		break;
+	}
+}
+
+// processShot — FUN_1CCA0 (0x1CCA0). Spawns shot into explosion slot when fired.
+// Called once per frame during interactive rendering.
+void InsaneRebel1::processShot() {
+	if (!_playerFired || _fireCooldown > 0) {
+		_playerFired = false;
+		if (_fireCooldown > 0)
+			_fireCooldown--;
+		return;
+	}
+
+	// Find an available slot (timer <= 0 or timer > 5)
+	int slot = -1;
+	for (int i = 0; i < kMaxShotSlots; i++) {
+		if (_shotSlots[i].timer <= 0 || _shotSlots[i].timer > 5) {
+			slot = i;
+			break;
+		}
+	}
+	if (slot < 0) {
+		_playerFired = false;
+		return;
+	}
+
+	// Record shot at current cursor position
+	_shotSlots[slot].timer = 5;  // 5 frames active (original: uVar1 = 5 or 2 based on DAT_75FF)
+	_shotSlots[slot].posX = _shipPosX;
+	_shotSlots[slot].posY = _shipPosY;
+	_shotSlots[slot].centerX = _perspectiveX + (_shipPosX - kRA1CenterX) + kRA1CenterX;
+	_shotSlots[slot].centerY = _perspectiveY + (_shipPosY - kRA1CenterY) + kRA1CenterY;
+
+	_fireCooldown = 3;  // Minimum frames between shots
+	_playerFired = false;
+
+	debug(5, "RA1 shot: slot=%d pos=(%d,%d)", slot, _shotSlots[slot].posX, _shotSlots[slot].posY);
+}
+
+// checkTargetHit — FUN_1C0EF (0x1C0EF). AABB target detection with snap tolerance.
+// Called from GAME 0x5A handler. Checks cursor proximity and shot hits.
+void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 right, int16 bottom) {
+	int16 snap = _tuning.snap;
+	int16 curX = _shipPosX;
+	int16 curY = _shipPosY;
+
+	_targetCount++;
+
+	// Check proximity: cursor within target + snap + 5 margin
+	if (curX > left - snap - 5 && curX < right + snap + 5 &&
+		curY > top - snap - 5 && curY < bottom + snap + 5) {
+		if (_targetProximity == 0)
+			_targetProximity = 1;  // Near
+
+		// Check tight lock: cursor within target + snap (no extra margin)
+		if (curX > left - snap && curX < right + snap &&
+			curY > top - snap && curY < bottom + snap) {
+			_targetProximity = 2;  // On-target
+
+			// Check if any active shot slot hits this target
+			if (_lastHitTarget != targetIdx + 1) {
+				for (int i = 0; i < kMaxShotSlots; i++) {
+					if (_shotSlots[i].timer == 1) {  // Shot in final frame = impact
+						// Hit! Record in GOST slot for explosion animation
+						int gi = _gostSlotIdx;
+						_gostSlots[gi].targetId = targetIdx + 1;
+						_gostSlots[gi].frame = 0;
+						_gostSlots[gi].posX = (left + right) / 2;
+						_gostSlots[gi].posY = (top + bottom) / 2;
+						_gostSlotIdx = (_gostSlotIdx + 1) % kMaxGostSlots;
+
+						_lastHitTarget = targetIdx + 1;
+						_score += _tuning.kill;
+						_killCount++;
+
+						// Snap cursor to target center (original: _DAT_74BE/74C0 = target center)
+						if (snap > 0) {
+							_shipPosX = (left + right) / 2;
+							_shipPosY = (top + bottom) / 2;
+						}
+
+						debug(5, "RA1 HIT: target=%d score=%d kills=%d", targetIdx, _score, _killCount);
+						return;
+					}
+				}
+			}
+		}
 	}
 }
 

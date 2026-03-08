@@ -131,6 +131,21 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_optionsActive = false;
 	_optionsSel = 0;
 	_turbulenceEnabled = false;
+
+	// Shooting/targeting state
+	_playerFired = false;
+	_fireCooldown = 0;
+	memset(_shotSlots, 0, sizeof(_shotSlots));
+	_shotAlternator = 0;
+	_targetProximity = 0;
+	_prevTargetProx = 0;
+	_targetCount = 0;
+	_prevTargetCount = 0;
+	memset(_gostSlots, 0, sizeof(_gostSlots));
+	_gostSlotIdx = 0;
+	_killCount = 0;
+	_lastHitTarget = 0;
+
 	if (loadRA1Nut("SYS/TALKFONT.NUT", _hudFontBank)) {
 		debug(1, "InsaneRebel1: HUD/menu glyph font loaded from SYS/TALKFONT.NUT (%d chars)", _hudFontBank.numSprites);
 	} else if (loadRA1Nut("SYS/TECHFONT.NUT", _hudFontBank)) {

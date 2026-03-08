@@ -165,6 +165,7 @@ private:
 	byte *_storedFobjData;
 	int32 _storedFobjDataSize;
 	int _storedFobjCodec;
+	uint16 _storedFobjParm2; // RA1: FOBJ bytes[12..13] needed by codec 4/5
 	int _storedFobjLeft;
 	int _storedFobjTop;
 	int _storedFobjWidth;
@@ -179,6 +180,11 @@ private:
 	int _ra1ObjOverlayTop;
 	int _ra1ObjOverlayWidth;
 	int _ra1ObjOverlayHeight;
+
+	// RA1: Viewport scroll offset for interactive gameplay (FUN_224FD at 0x224FD).
+	// Set by InsaneRebel1::procPreRendering(), applied to FOBJ decode positions.
+	int _ra1ViewportOffsetX;
+	int _ra1ViewportOffsetY;
 
 	// RA2: Most recently decoded FOBJ in the current frame, used by GOST chunks
 	// to re-render the same sprite payload at a different position.

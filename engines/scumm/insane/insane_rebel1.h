@@ -116,9 +116,16 @@ private:
 	void renderHUD(byte *dst, int pitch, int width, int height);
 	void renderMainMenuOverlay(byte *dst, int pitch, int width, int height);
 	void renderExplosions(byte *dst, int pitch, int width, int height);
-	void renderCrosshair(byte *dst, int pitch, int width, int height);
+	void renderTargeting(byte *dst, int pitch, int width, int height);
+	void renderGostSlots(byte *dst, int pitch, int width, int height);
+	void renderLaserShots(byte *dst, int pitch, int width, int height);
 	void renderSprite(byte *dst, int pitch, int width, int height,
 					  int x, int y, const RA1Sprite &sprite);
+
+	// Shooting pipeline — FUN_1CCA0 (0x1CCA0) shot spawner,
+	// FUN_1C0EF (0x1C0EF) target detection, FUN_1C940 (0x1C940) shot processing
+	void processShot();
+	void checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 right, int16 bottom);
 
 	// Audio
 	void initAudio(int sampleRate);
@@ -136,6 +143,7 @@ private:
 	RA1SpriteBank _displayBank;   // SYS/DISPLAY.NUT — bottom status bar
 	RA1SpriteBank _hudFontBank;   // RA1 HUD text glyphs (TECHFONT/TALKFONT via RA1 loader)
 	RA1SpriteBank _bangBank;      // LxBANG.NUT — impact/explosion sprites (10 frames)
+	RA1SpriteBank _laserBank;     // LxLASER.NUT — laser/shot effect sprites
 	SmushFont *_menuFont;         // Use engine text renderer for correct TALKFONT character mapping
 
 	// RA1 screen dimensions (384x242)
@@ -257,6 +265,42 @@ private:
 	int _optionsSel;         // 0=difficulty, 1=turbulence, 2=back
 
 	bool _turbulenceEnabled;  // Random per-frame jitter in deltaX (original has it on)
+
+	// Shooting state — FUN_1CCA0 (0x1CCA0)
+	bool _playerFired;       // 0x7570: fire button pressed this frame
+	int16 _fireCooldown;     // 0x757C: frames until next shot allowed
+
+	// Explosion shot slots (2 slots) — FUN_1CCA0 (0x1CCA0)
+	static const int kMaxShotSlots = 2;
+	struct ShotSlot {
+		int16 timer;     // 0x75E6: countdown (5 or 2, 0=inactive)
+		int16 posX;      // 0x75F2: cursor X at time of shot
+		int16 posY;      // 0x75F6: cursor Y at time of shot
+		int16 centerX;   // 0x75EA: perspective-adjusted X
+		int16 centerY;   // 0x75EE: perspective-adjusted Y
+	};
+	ShotSlot _shotSlots[kMaxShotSlots];
+	int16 _shotAlternator;   // 0x241F: alternates between 0/1
+
+	// Targeting state — FUN_1C0EF (0x1C0EF)
+	int16 _targetProximity;  // 0x7558: 0=none, 1=near, 2=on-target
+	int16 _prevTargetProx;   // 0x755A: previous frame's proximity
+	int16 _targetCount;      // 0x7552: active targets this frame
+	int16 _prevTargetCount;  // 0x7554: previous frame target count
+
+	// GOST hit animation slots (10 slots) — FUN_1C9CD (0x1C9CD)
+	static const int kMaxGostSlots = 10;
+	struct GostSlot {
+		int16 targetId;  // 0x23C3: target identifier (0=empty)
+		int16 frame;     // 0x23D7: animation frame (0-9, >=10 = done)
+		int16 posX;      // 0x239B: screen X
+		int16 posY;      // 0x23AF: screen Y
+	};
+	GostSlot _gostSlots[kMaxGostSlots];
+	int16 _gostSlotIdx;      // 0x23EB: next slot to write (circular 0-9)
+
+	int16 _killCount;        // 0x75D0: targets destroyed this stage
+	int16 _lastHitTarget;    // 0x75D6: prevents double-hit on same target
 };
 
 } // End of namespace Scumm
