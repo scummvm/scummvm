@@ -1152,8 +1152,6 @@ Common::Error TinselEngine::run() {
 	_vm->_config->writeToDisk();
 
 	EndScene();
-	if (_bg)
-		_bg->ResetBackground();
 
 	return Common::kNoError;
 }
