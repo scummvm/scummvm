@@ -21,10 +21,10 @@
 
 #include "common/events.h"
 #include "common/system.h"
+#include "graphics/cursorman.h"
 #include "graphics/paletteman.h"
 
 #include "pelrock/computer.h"
-#include "pelrock/library_books.h"
 #include "pelrock/pelrock.h"
 
 namespace Pelrock {
@@ -41,6 +41,22 @@ Computer::Computer(PelrockEventManager *eventMan)
 	init();
 }
 
+Common::StringArray split(const Common::String &str) {
+	Common::StringArray result;
+	Common::String token;
+
+	for (uint i = 0; i < str.size(); i++) {
+		if ((unsigned char)str[i] == 0xC8) {
+			result.push_back(token);
+			token.clear();
+		} else {
+			token += str[i];
+		}
+	}
+	result.push_back(token); // last token
+	return result;
+}
+
 void Computer::init() {
 	Common::File alfred7File;
 	if (!alfred7File.open("ALFRED.7")) {
@@ -51,12 +67,13 @@ void Computer::init() {
 	alfred7File.seek(kBookDataOffset, SEEK_SET);
 	while (alfred7File.pos() < kBookDataEnd) {
 		LibraryBook book;
-
-		book.title = alfred7File.readString(0, kBookTitleSize);
-		book.author = alfred7File.readString(0, kBookAuthorSize);
+		Common::String title = alfred7File.readString(0, kBookTitleSize);
+		title.trim();
+		book.title = split(title);
+		Common::String author = alfred7File.readString(0, kBookAuthorSize);
+		author.trim();
+		book.author = split(author);
 		book.genre = alfred7File.readString(0, kBookGenreSize);
-		book.title.trim();
-		book.author.trim();
 		book.genre.trim();
 		book.inventoryIndex = alfred7File.readByte() - 55;
 		book.shelf = alfred7File.readByte();
@@ -100,11 +117,13 @@ void Computer::cleanup() {
 	}
 	g_engine->_screen->markAllDirty();
 	g_engine->_screen->update();
+	CursorMan.showMouse(true);
 }
 
 int Computer::run() {
 	loadBackground();
 	_state = STATE_MAIN_MENU;
+	CursorMan.showMouse(false);
 	g_engine->changeCursor(DEFAULT);
 
 	while (!g_engine->shouldQuit() && _state != STATE_EXIT) {
@@ -185,14 +204,35 @@ void Computer::drawScreen() {
 		Common::String titleLine = _computerText[3][0];
 		int titlePlaceholderIndex = titleLine.findFirstOf("XXXX");
 
-		titleLine.replace(titlePlaceholderIndex, titleLine.size() - titlePlaceholderIndex, book.title);
-		g_engine->_graphics->drawColoredText(g_engine->_screen, titleLine, textX, textY, 340, defaultColor, g_engine->_smallFont);
+		int titleIndex = 0;
+		while(titleIndex < book.title.size()) {
+			Common::String thisLine;
+			if(titleIndex == 0) {
+				thisLine = titleLine;
+				thisLine.replace(titlePlaceholderIndex, titleLine.size() - titlePlaceholderIndex, book.title[titleIndex]);
+			} else {
+				thisLine = book.title[titleIndex];
+			}
+			g_engine->_graphics->drawColoredText(g_engine->_screen, thisLine, textX, textY + _lineHeight * titleIndex, 340, defaultColor, g_engine->_smallFont);
+			titleIndex++;
+		}
 
 		// Author
 		Common::String authorLine = _computerText[4][0];
 		int authorPlaceholderIndex = authorLine.findFirstOf("XXXX");
-		authorLine.replace(authorPlaceholderIndex, authorLine.size() - authorPlaceholderIndex, book.author);
-		g_engine->_graphics->drawColoredText(g_engine->_screen, authorLine, textX, textY + increment, 340, defaultColor, g_engine->_smallFont);
+		int authorIndex = 0;
+
+		while(authorIndex < book.author.size()) {
+			Common::String thisLine;
+			if(authorIndex == 0) {
+				thisLine = authorLine;
+				thisLine.replace(authorPlaceholderIndex, authorLine.size() - authorPlaceholderIndex, book.author[authorIndex]);
+			} else {
+				thisLine = book.author[authorIndex];
+			}
+			g_engine->_graphics->drawColoredText(g_engine->_screen, thisLine, textX, textY + increment + _lineHeight * authorIndex, 340, defaultColor, g_engine->_smallFont);
+			authorIndex++;
+		}
 
 		// Genre
 		Common::String genreLine = _computerText[5][0];
@@ -258,7 +298,9 @@ void Computer::handleSearchInput() {
 void Computer::handleResultsDisplay() {
 	if (_events->_lastKeyEvent == Common::KEYCODE_s) {
 		if (!_searchResults.empty()) {
-			_currentResult = (_currentResult + 1) % _searchResults.size();
+			_currentResult = (_currentResult + 1);
+			if(_currentResult >= _searchResults.size())
+				_state = STATE_MAIN_MENU;
 		}
 		_events->_lastKeyEvent = Common::KEYCODE_INVALID;
 	} else if (_events->_lastKeyEvent == Common::KEYCODE_m) {
@@ -292,16 +334,16 @@ void Computer::memorizeBook(int bookIndex) {
 
 	g_engine->_state->libraryShelf = book.shelf; // 0-based shelf index
 	g_engine->_state->selectedBookIndex = book.inventoryIndex;
-	g_engine->_state->bookLetter = book.title[0];
+	g_engine->_state->bookLetter = book.title[0][0];
 
-	debug("Memorized book '%s' with index %d, shelf %d, letter %c", book.title.c_str(), g_engine->_state->selectedBookIndex, g_engine->_state->libraryShelf, g_engine->_state->bookLetter);
+	debug("Memorized book '%s' with index %d, shelf %d, letter %c", book.title[0].c_str(), g_engine->_state->selectedBookIndex, g_engine->_state->libraryShelf, g_engine->_state->bookLetter);
 }
 
 void Computer::performSearch() {
 	_searchResults.clear();
 
 	for (int i = 0; i < _libraryBooks.size(); i++) {
-		Common::String searchField = _searchType == 0 ? _libraryBooks[i].title : _libraryBooks[i].author;
+		Common::String searchField = _searchType == 0 ? _libraryBooks[i].title[0] : _libraryBooks[i].author[0];
 
 		// Check if first letter matches (case-insensitive)
 		char firstChar = searchField[0];

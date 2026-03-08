@@ -27,11 +27,34 @@
 #include "graphics/managed_surface.h"
 
 #include "pelrock/events.h"
-#include "pelrock/library_books.h"
 
 namespace Pelrock {
 
-class PelrockEngine;
+// Book data location in ALFRED.7
+static const uint32 kBookDataOffset = 0x309E0;
+static const uint32 kBookDataEnd = 0x33F05;
+static const int kBookEntrySize = 108;  // 55 + 30 + 20 + 1 + 1 + 1
+
+// Field sizes
+static const int kBookTitleSize = 55;
+static const int kBookAuthorSize = 30;
+static const int kBookGenreSize = 20;
+
+// Status byte values
+static const byte kBookStatusCatalogOnly = 0x01;  // No physical copy
+static const byte kBookStatusPhysical = 0x02;     // Has physical copy on shelf
+
+struct LibraryBook {
+    Common::StringArray title; //55 bytes for title
+    Common::StringArray author; //30 bytes for author
+    Common::String genre; //20 bytes for genre
+    byte inventoryIndex;
+    byte shelf;       // 1-3 for row number, 0 if catalog-only
+    bool available;  // true = can be found on shelf, false = catalog only
+};
+
+
+static const LibraryBook noBook = { Common::StringArray(), Common::StringArray(), "", 0, 0, false};
 
 class Computer {
 public:
