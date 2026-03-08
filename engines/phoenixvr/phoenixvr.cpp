@@ -78,6 +78,7 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 }
 
 PhoenixVREngine::~PhoenixVREngine() {
+	_system->lockMouse(false);
 	for (auto it = _cursorCache.begin(); it != _cursorCache.end(); ++it) {
 		auto *s = it->_value;
 		s->free();
