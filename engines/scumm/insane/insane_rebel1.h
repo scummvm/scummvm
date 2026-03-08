@@ -145,6 +145,7 @@ private:
 
 	RA1SpriteBank _shipBank;
 	RA1SpriteBank _displayBank;   // SYS/DISPLAY.NUT — bottom status bar
+	RA1SpriteBank _titleFontBank; // SYS/TITLFONT.NUT — default subtitle/title layer
 	RA1SpriteBank _hudFontBank;   // RA1 HUD text glyphs (TECHFONT/TALKFONT via RA1 loader)
 	RA1SpriteBank _techFontBank;  // SYS/TECHFONT.NUT — targeting glyph layer ("<<" markers)
 	RA1SpriteBank _bangBank;      // LxBANG.NUT — impact/explosion sprites (10 frames)
