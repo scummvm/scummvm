@@ -192,6 +192,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_gostSlotIdx = 0;
 	_killCount = 0;
 	_lastHitTarget = 0;
+	resetFrameObjectState();
 
 	if (loadRA1Nut("SYS/TALKFONT.NUT", _hudFontBank)) {
 		debug(1, "InsaneRebel1: HUD/menu glyph font loaded from SYS/TALKFONT.NUT (%d chars)", _hudFontBank.numSprites);

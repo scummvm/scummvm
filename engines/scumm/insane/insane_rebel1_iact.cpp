@@ -34,6 +34,80 @@ static inline bool isL1Stage2DamageLatch(uint16 code) {
 	return code >= 6 && code <= 18;
 }
 
+void InsaneRebel1::resetFrameObjectState() {
+	memset(_frameObjectState, 0, sizeof(_frameObjectState));
+	for (int i = 0x50; i < 0x96; i++)
+		_frameObjectState[i] = 0xFF;
+}
+
+void InsaneRebel1::updateGostSlotPosition(int16 targetIdx, int16 left, int16 top, int16 right, int16 bottom) {
+	const int16 targetKey = targetIdx + 1;
+	for (int i = 0; i < kMaxGostSlots; i++) {
+		if (_gostSlots[i].targetId == targetKey && _gostSlots[i].frame < 10) {
+			_gostSlots[i].posX = (left + right) / 2;
+			_gostSlots[i].posY = (top + bottom) / 2;
+		}
+	}
+}
+
+void InsaneRebel1::applyFrameObjectHitState(int16 targetIdx) {
+	if (targetIdx < 0)
+		return;
+
+	const int byteIndex = targetIdx >> 3;
+	if (byteIndex < 0 || byteIndex >= 0x96 || byteIndex >= kFrameObjectStateBytes)
+		return;
+
+	const byte bit = (byte)(0x80 >> (targetIdx & 7));
+	const int altIndex = byteIndex + 0x96;
+	if (altIndex >= kFrameObjectStateBytes)
+		return;
+
+	if ((_frameObjectState[altIndex] & bit) == 0)
+		_frameObjectState[byteIndex] |= bit;
+	else
+		_frameObjectState[altIndex] &= ~bit;
+}
+
+bool InsaneRebel1::handleFrameObjectTarget(int16 objectId, int16 left, int16 top, int16 width, int16 height,
+		int codec, uint8 &ra1Param) {
+	if (!_interactiveVideoActive)
+		return true;
+
+	int absObjectId = (objectId < 0) ? -objectId : objectId;
+	if (absObjectId == 0)
+		return true;
+
+	const int bitIndex = absObjectId - 1;
+	const int byteIndex = bitIndex >> 3;
+	if (byteIndex < 0 || byteIndex >= 0x96 || byteIndex >= kFrameObjectStateBytes)
+		return true;
+
+	const byte bit = (byte)(0x80 >> (bitIndex & 7));
+	const int altIndex = byteIndex + 0x96;
+	const bool primarySet = (_frameObjectState[byteIndex] & bit) != 0;
+	const bool secondarySet = (altIndex < kFrameObjectStateBytes) && ((_frameObjectState[altIndex] & bit) != 0);
+	const int16 right = left + width;
+	const int16 bottom = top + height;
+
+	if (objectId > 0 && objectId < 0x280) {
+		if (!primarySet || secondarySet)
+			checkTargetHit(objectId - 1, left, top, right, bottom);
+		else
+			updateGostSlotPosition(objectId - 1, left, top, right, bottom);
+	}
+
+	const bool updatedPrimarySet = (_frameObjectState[byteIndex] & bit) != 0;
+	const bool updatedSecondarySet = (altIndex < kFrameObjectStateBytes) && ((_frameObjectState[altIndex] & bit) != 0);
+	if (updatedPrimarySet)
+		return false;
+
+	if (updatedSecondarySet && codec == 0x17)
+		ra1Param = (uint8)(ra1Param - 0x10);
+
+	return true;
+}
+
 void InsaneRebel1::rebuildProjectionTable(int16 curveStep, int16 curveExtent) {
 	_projectionCurveExtent = curveExtent;
 
@@ -850,14 +924,14 @@ void InsaneRebel1::processShot() {
 }
 
 // checkTargetHit — FUN_1C0EF (0x1C0EF). AABB target detection with snap tolerance.
-// Called from GAME 0x5A handler. Checks cursor proximity and shot hits.
+// The original compares target bounds against the cursor after
+// UnprojectScreenPoint(), then reprojects the snapped cursor center after a hit.
 void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 right, int16 bottom) {
 	int16 snap = _tuning.snap;
 	int16 curX = _shipPosX;
 	int16 curY = _shipPosY;
-	const int slot = _targetCount;
-
 	unprojectGameplayPoint(curX, curY);
+	const int slot = _targetCount;
 
 	if (slot < kMaxTargetBoxes) {
 		_targetBoxX[slot] = (int16)((left + right) / 2);
@@ -902,14 +976,14 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 						_lastHitTarget = targetIdx + 1;
 						_score += _tuning.kill;
 						_killCount++;
+						applyFrameObjectHitState(targetIdx);
 
-						// Snap cursor to target center and re-project it, matching FUN_1C0EF.
+						// Match FUN_1C0EF: snap in unprojected space, then project back
+						// into the current gameplay window before rendering the pointer.
 						if (snap > 0) {
-							int16 lockX = (left + right) / 2;
-							int16 lockY = (top + bottom) / 2;
-							projectGameplayPoint(lockX, lockY);
-							_shipPosX = lockX;
-							_shipPosY = lockY;
+							_shipPosX = (left + right) / 2;
+							_shipPosY = (top + bottom) / 2;
+							projectGameplayPoint(_shipPosX, _shipPosY);
 						}
 
 						debug(5, "RA1 HIT: target=%d score=%d kills=%d", targetIdx, _score, _killCount);

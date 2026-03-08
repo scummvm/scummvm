@@ -1316,6 +1316,7 @@ void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b
 
 	int codec = b.readUint16LE();
 	uint8 ra1Param = 0;   // RA1: palette base byte (FOBJ byte[1])
+	uint16 ra1ObjectId = 0; // RA1: object id / event target id (FOBJ bytes[10-11])
 	uint16 ra1Parm2 = 0;  // RA1: tile count (FOBJ bytes[12-13])
 	if (isRA1()) {
 		ra1Param = (codec >> 8) & 0xFF; // byte[1] = palette base (e.g. 0xF0)
@@ -1328,7 +1329,7 @@ void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b
 	int width = b.readUint16LE();
 	int height = b.readUint16LE();
 
-	b.readUint16LE();
+	ra1ObjectId = b.readUint16LE();
 	ra1Parm2 = b.readUint16LE();
 
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFrameObject: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d",
@@ -1339,8 +1340,8 @@ void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b
 			_frame, codec, left, top, width, height, subSize - 14, _storeFrame, _width, _height);
 	}
 	if (isRA1()) {
-		debug("RA1 FOBJ: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d storeFrame=%d",
-			_frame, codec, left, top, width, height, subSize - 14, _storeFrame);
+		debug("RA1 FOBJ: frame=%d codec=%d object=%d pos=(%d,%d) size=%dx%d dataSize=%d storeFrame=%d",
+			_frame, codec, ra1ObjectId, left, top, width, height, subSize - 14, _storeFrame);
 	}
 
 	int32 chunk_size = subSize - 14;
@@ -1371,6 +1372,15 @@ void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b
 			_storedFobjDataSize = 0;
 		}
 		_storeFrame = false;
+	}
+
+	if (isRA1() && _insane) {
+		InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
+		if (!rebel1->handleFrameObjectTarget((int16)ra1ObjectId, (int16)rawLeft, (int16)rawTop,
+				(int16)width, (int16)height, codec, ra1Param)) {
+			free(chunk_buffer);
+			return;
+		}
 	}
 
 	decodeFrameObject(codec, chunk_buffer, left, top, width, height, chunk_size, ra1Param, ra1Parm2);
