@@ -301,10 +301,14 @@ typedef struct SSprite {
 typedef struct SoundInfo {
 	byte *data;
 	uint32 size;
+	byte priority;
+	byte channel;
 
 	SoundInfo() {
 		data = nullptr;
 		size = 0;
+		priority = 0;
+		channel = 0;
 	}
 } SoundInfo;
 
@@ -339,6 +343,48 @@ typedef struct FredEntityState {
 		pathIndex = 0;
 	}
 } FredEntityState;
+
+// GEORGE GAME
+
+typedef struct GeorgeEntityState {
+	uint16 flags;
+	int16 frameCountdown;
+	int16 animMode;
+	int16 variant;
+	int16 frameIndex;
+	byte *animTable;
+	int32 joyInput;
+	int32 x;
+	int32 y;
+	int32 prevX;
+	int32 prevY;
+	int32 velX;
+	int32 velY;
+	int32 accelX;
+	int32 accelY;
+	byte *pathTable;
+	int16 pathIndex;
+
+	GeorgeEntityState() {
+		flags = 0;
+		frameCountdown = 0;
+		animMode = 0;
+		variant = 0;
+		frameIndex = 0;
+		animTable = nullptr;
+		joyInput = 0;
+		x = 0;
+		y = 0;
+		prevX = 0;
+		prevY = 0;
+		velX = 0;
+		velY = 0;
+		accelX = 0;
+		accelY = 0;
+		pathTable = nullptr;
+		pathIndex = 0;
+	}
+} GeorgeEntityState;
 
 // SCOOBY GAME
 
@@ -418,10 +464,10 @@ typedef struct ScoobyRect {
 // TOPCAT GAME
 
 typedef struct TopCatAnim {
-	int16 animType; // + 00
-	int16 animIndex;// + 02
-	int16 transitionToNextQuestionFlag;// + 04
-	int16 *seqPtr;  // + 04
+	int16 animType;
+	int16 animIndex;
+	int16 transitionToNextQuestionFlag;
+	int16 *seqPtr;
 
 	TopCatAnim() {
 		animType = 0;
@@ -898,7 +944,92 @@ protected:
 	const char *g_fredSaveFile = "FredBC";
 
 	// --- GEORGE ---
-	int16 georgeGame(int16 prevBooth) { return 0; }
+	int16 georgeGame(int16 prevBooth);
+	bool initGeorge();
+	void cleanUpGeorge();
+	bool initGeorgeLevel(int16 level, int16 variant);
+	void termGeorgeLevel(int16 level, int16 variant);
+	void swapGeorgeFrameArray();
+	void swapGeorgeHelpEntry();
+	void swapGeorgeThresholds();
+	int16 playGeorge();
+	int16 helpGeorge();
+	void hiliteGeorgeHelpObject(byte *entry, int16 highlight);
+	void advanceHelpAnimation();
+	bool spawnSatellite();
+	int16 getRandomSatelliteWait();
+	int16 getRandomAsteroidRow();
+	bool confirmAsteroidHitTest();
+	bool spawnAsteroid();
+	int16 getRandomAsteroidWait();
+	int16 getAsteroidRow();
+	void setGeorgeAnimMode(GeorgeEntityState *sat, int16 mode);
+	void setSatelliteAnimMode(GeorgeEntityState *sat, int16 mode, int16 variant);
+	void setAsteroidAnimMode(GeorgeEntityState *sat, int16 mode, int16 variant);
+	void drawFlyingObjects();
+	void getGeorgeSoundInfo(BOLTLib *boltLib, int16 member, SoundInfo *outInfo, byte priority);
+	void playGeorgeSound(SoundInfo *newSound, SoundInfo *nextSound);
+	void updateGeorgeSound();
+
+	static void swapGeorgeFrameArrayCb();
+	static void swapGeorgeHelpEntryCb();
+	static void swapGeorgeThresholdsCb();
+
+	BOLTLib *g_georgeBoltLib = nullptr;
+	BOLTCallbacks g_georgeBoltCallbacks;
+
+	static BOLTCallback g_georgeTypeLoadCallbacks[28];
+	static BOLTCallback g_georgeTypeFreeCallbacks[28];
+
+	byte *g_georgePrevActiveHelpObject = nullptr;
+	byte *g_georgeActiveHelpObject = nullptr;
+	int16 g_georgeHelpStep = -1;
+	int16 g_georgeHelpActive = 1;
+	const char *g_georgeSaveFileName = "GeorgeBE";
+
+	GeorgeEntityState **g_georgeEntityList = nullptr;
+	int16 g_georgeCarIdx = 0;
+	int16 g_georgeNumSatellites = 0;
+	int16 g_georgeFirstAsteroidIdx = 0;
+	int16 g_georgeTotalSatellites = 0;
+	byte *g_georgeCarPics[3] = { nullptr };
+	byte *g_georgeHelpObjects = nullptr;
+	byte *g_georgeHelpSequence = nullptr;
+	uint32 g_georgeHelpTimer = 0;
+	byte *g_georgeSatelliteShuffleTable = nullptr;
+	byte *g_georgeAsteroidShuffleTable = nullptr;
+	int16 *g_georgeSatelliteThresholds = nullptr;
+	int16 *g_georgeAsteroidThresholds = nullptr;
+	byte *g_georgeSatellitePaths = nullptr;
+	byte *g_georgeAsteroidPaths = nullptr;
+	byte *g_georgeCollisionRect = nullptr;
+	byte *g_georgeSatelliteCollisionRects = nullptr;
+	byte *g_georgeAsteroidCollisionRects = nullptr;
+	byte *g_georgeSatelliteGfx = nullptr;
+	byte *g_georgeAsteroidGfx = nullptr;
+	int16 g_georgeSatelliteWait = 0;
+	int16 g_georgeAsteroidWait = 0;
+	int16 g_georgeSatelliteSearchIdx = 0;
+	int16 g_georgeAsteroidSearchIdx = 0;
+	int16 g_georgeHitSearchIdx = 0;
+	byte *g_georgeBgPic = nullptr;
+	byte *g_georgePalette = nullptr;
+	byte *g_georgePalCycleRawData = nullptr;
+	XPCycleState g_georgePalCycleSpecs[4];
+	int16 g_georgeCollectedSatellitesNum = 0;
+	SoundInfo g_georgeSoundCarStartUp;
+	SoundInfo g_georgeSoundCarGoesAway;
+	SoundInfo g_georgeSoundCarLoopHi;
+	SoundInfo g_georgeSoundCarLoopLo;
+	SoundInfo g_georgeSoundCarTumble;
+	SoundInfo **g_georgeSatelliteSoundList = nullptr;
+	byte g_georgeSoundChannelCounter = 0;
+	SoundInfo *g_georgeSoundToPlay = nullptr;
+	SoundInfo *g_georgeSoundCurrent = nullptr;
+	SoundInfo *g_georgeSoundQueued = nullptr;
+	SoundInfo *g_georgeSoundNext = nullptr;
+	int16 g_georgeSaveData[3] = { 0 };
+	int16 *g_georgeThresholds = nullptr;
 
 	// --- HUCK ---
 	int16 huckGame(int16 prevBooth) { return 0; }

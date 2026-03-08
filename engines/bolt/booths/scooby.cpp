@@ -835,7 +835,7 @@ void BoltEngine::updateScoobyLocation() {
 	// Scroll Scooby off-screen
 	int16 halfW = READ_UINT16(g_scoobyBaseData + 0x0A) / 2;
 
-	while (true) {
+	while (!shouldQuit()) {
 		if (g_displayX - halfW >= g_scoobyGameState.scoobyX)
 			break;
 
@@ -1654,7 +1654,7 @@ int16 BoltEngine::helpScooby() {
 	hiliteScoobyHelpObject(helpButton, 1);
 
 	// Event loop
-	while (true) {
+	while (!shouldQuit()) {
 		// Handle ongoing audio playback
 		if (isPlaying != 0) {
 			if (!maintainAudioPlay(soundParam)) {
@@ -1886,7 +1886,7 @@ int16 BoltEngine::playScooby() {
 	_xp->enableController();
 
 	// Main game loop
-	while (true) {
+	while (!shouldQuit()) {
 		updateScoobyLocation();
 
 		// Level complete?
@@ -1926,6 +1926,8 @@ int16 BoltEngine::playScooby() {
 		updateScoobyWalls();
 		_xp->updateDisplay();
 	}
+
+	return 0;
 }
 
 int16 BoltEngine::scoobyGame(int16 prevBooth) {
