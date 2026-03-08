@@ -130,6 +130,9 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_menuFrameCounter = 0;
 	_optionsActive = false;
 	_optionsSel = 0;
+	_levelSelectActive = false;
+	_levelSelectSel = 0;
+	_startLevel = 1;
 	_turbulenceEnabled = false;
 
 	// Shooting/targeting state
@@ -152,6 +155,16 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 		debug(1, "InsaneRebel1: HUD/menu glyph font loaded from SYS/TECHFONT.NUT (%d chars)", _hudFontBank.numSprites);
 	} else {
 		warning("InsaneRebel1: failed to load RA1 HUD font bank (TECHFONT/TALKFONT)");
+	}
+
+	// FUN_1CB22 uses "<<" layer markers that resolve to TECHFONT in the original.
+	// Keep a dedicated TECH font bank for targeting markers/lock indicators.
+	if (loadRA1Nut("SYS/TECHFONT.NUT", _techFontBank)) {
+		debug(1, "InsaneRebel1: targeting glyph font loaded from SYS/TECHFONT.NUT (%d chars)", _techFontBank.numSprites);
+	} else if (loadRA1Nut("SYS/TALKFONT.NUT", _techFontBank)) {
+		debug(1, "InsaneRebel1: targeting glyph font fallback loaded from SYS/TALKFONT.NUT (%d chars)", _techFontBank.numSprites);
+	} else {
+		warning("InsaneRebel1: failed to load targeting font bank (TECHFONT/TALKFONT)");
 	}
 
 	// Audio

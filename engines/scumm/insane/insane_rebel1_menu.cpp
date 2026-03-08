@@ -29,6 +29,32 @@
 namespace Scumm {
 
 bool InsaneRebel1::notifyEvent(const Common::Event &event) {
+	if (_menuActive && _levelSelectActive && event.type == Common::EVENT_KEYDOWN) {
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_UP:
+		case Common::KEYCODE_w:
+			_levelSelectSel = (_levelSelectSel + 2) % 3;
+			return true;
+		case Common::KEYCODE_DOWN:
+		case Common::KEYCODE_s:
+			_levelSelectSel = (_levelSelectSel + 1) % 3;
+			return true;
+		case Common::KEYCODE_RETURN:
+		case Common::KEYCODE_KP_ENTER:
+		case Common::KEYCODE_SPACE:
+			_menuConfirmed = true;
+			_vm->_smushVideoShouldFinish = true;
+			return true;
+		case Common::KEYCODE_ESCAPE:
+			_levelSelectSel = 2; // Back
+			_menuConfirmed = true;
+			_vm->_smushVideoShouldFinish = true;
+			return true;
+		default:
+			break;
+		}
+	}
+
 	if (_menuActive && _optionsActive && event.type == Common::EVENT_KEYDOWN) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_UP:
@@ -55,7 +81,7 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		}
 	}
 
-	if (_menuActive && !_optionsActive && event.type == Common::EVENT_KEYDOWN) {
+	if (_menuActive && !_optionsActive && !_levelSelectActive && event.type == Common::EVENT_KEYDOWN) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_UP:
 		case Common::KEYCODE_w:
@@ -93,8 +119,7 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 	// Shooting: mouse button during interactive gameplay — FUN_1CCA0 (0x1CCA0)
 	if (_interactiveVideoActive && !_menuActive) {
 		if (event.type == Common::EVENT_LBUTTONDOWN) {
-			if (_currentLevel != 1)
-				_playerFired = true;
+			_playerFired = true;
 			return true;
 		}
 	}
@@ -155,11 +180,55 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 		return;
 	}
 
+	if (_levelSelectActive) {
+		// --- Level select submenu ---
+		const int titleW = getFontBankStringWidth("LEVEL SELECT");
+		drawFontBankString(dst, pitch, width, height, (width - titleW) / 2, 36, "LEVEL SELECT");
+
+		const char *kLevelItems[3] = {
+			"LEVEL 1: FLIGHT TRAINING",
+			"LEVEL 2: ASTEROID FIELD",
+			"BACK"
+		};
+
+		const int menuY = 60;
+		const int rowH = 16;
+
+		for (int i = 0; i < 3; i++) {
+			const int textW = getFontBankStringWidth(kLevelItems[i]);
+			const int textX = (width - textW) / 2;
+			const int y = menuY + i * rowH;
+			drawFontBankString(dst, pitch, width, height, textX, y + 1, kLevelItems[i]);
+
+			if (i == _startLevel - 1) {
+				drawFontBankString(dst, pitch, width, height, textX - 12, y + 1, ">");
+			}
+
+			if (i == _levelSelectSel) {
+				byte highlightColor = ((_menuFrameCounter / 8) & 1) ? 248 : 240;
+				int bracketWidth = textW + 12;
+				int leftX = CLIP(textX - 6, 0, width - 1);
+				int rightX = CLIP(leftX + bracketWidth, 0, width - 1);
+				int topY = CLIP(y - 1, 0, height - 1);
+				int bottomY = CLIP(y + rowH - 2, 0, height - 1);
+				for (int x = leftX; x <= rightX; x++) {
+					dst[topY * pitch + x] = highlightColor;
+					dst[bottomY * pitch + x] = highlightColor;
+				}
+				for (int py = topY; py <= bottomY; py++) {
+					dst[py * pitch + leftX] = highlightColor;
+					dst[py * pitch + rightX] = highlightColor;
+				}
+			}
+		}
+		return;
+	}
+
 	// --- Main menu ---
 	static const char *kMenuItems[5] = {
 		"START NEW GAME",
 		"GAME OPTIONS",
-		"ENTER PASSCODE",
+		"LEVEL SELECT",
 		"CONTINUE DEMO",
 		"EXIT TO DOS"
 	};
@@ -271,6 +340,40 @@ void InsaneRebel1::runOptionsMenu() {
 		}
 	}
 	_optionsActive = false;
+}
+
+void InsaneRebel1::runLevelSelectMenu() {
+	_levelSelectSel = CLIP(_startLevel - 1, 0, 1);
+	_levelSelectActive = true;
+
+	while (!_vm->shouldQuit()) {
+		_menuActive = true;
+		_menuConfirmed = false;
+		_menuFrameCounter = 0;
+		clearVideoBuffer();
+		playCinematic("OPEN/O1OPTION.ANM");
+		_menuActive = false;
+
+		if (_vm->shouldQuit())
+			break;
+
+		if (_menuConfirmed) {
+			switch (_levelSelectSel) {
+			case 0:
+				_startLevel = 1;
+				_levelSelectActive = false;
+				return;
+			case 1:
+				_startLevel = 2;
+				_levelSelectActive = false;
+				return;
+			case 2:
+				_levelSelectActive = false;
+				return;
+			}
+		}
+	}
+	_levelSelectActive = false;
 }
 
 } // End of namespace Scumm

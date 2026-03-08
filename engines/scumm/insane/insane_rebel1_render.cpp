@@ -27,12 +27,105 @@
 
 namespace Scumm {
 
+static void drawBankString(const RA1SpriteBank &bank, byte *dst, int pitch, int width, int height,
+	int x, int y, const char *text) {
+	if (!dst || !text || bank.numSprites <= 0)
+		return;
+
+	for (int i = 0; text[i] != '\0'; i++) {
+		const byte ch = (byte)text[i];
+
+		if (ch == ' ') {
+			x += 6;
+			continue;
+		}
+
+		// RA1 font renderer indexes printable characters from '!' (0x21), not raw ASCII.
+		if (ch < 0x21) {
+			x += 4;
+			continue;
+		}
+		const int fontIdx = (int)ch - 0x21;
+		if (fontIdx < 0 || fontIdx >= bank.numSprites) {
+			x += 4;
+			continue;
+		}
+
+		const RA1Sprite &glyph = bank.sprites[fontIdx];
+		const int gw = glyph.width;
+		const int gh = glyph.height;
+		const int gx = x + glyph.xoffs;
+		const int gy = y + glyph.yoffs;
+		const uint64 glyphPixels = (uint64)gw * (uint64)gh;
+		if (!glyph.data || gw <= 0 || gh <= 0 || glyphPixels == 0 || glyphPixels > 0x10000) {
+			x += 4;
+			continue;
+		}
+		if (!(bank.decodedData && bank.decodedSize > 0)) {
+			x += 4;
+			continue;
+		}
+		const byte *bankStart = bank.decodedData;
+		const byte *bankEnd = bank.decodedData + bank.decodedSize;
+		if (glyph.data < bankStart || glyph.data >= bankEnd || glyph.data + glyphPixels > bankEnd) {
+			x += 4;
+			continue;
+		}
+
+		for (int py = 0; py < gh; py++) {
+			const int sy = gy + py;
+			if (sy < 0 || sy >= height)
+				continue;
+			for (int px = 0; px < gw; px++) {
+				const int sx = gx + px;
+				if (sx < 0 || sx >= width)
+					continue;
+				const byte pixel = glyph.data[py * gw + px];
+				if (pixel != 0)
+					dst[sy * pitch + sx] = pixel;
+			}
+		}
+
+		x += gw > 0 ? gw : 4;
+	}
+}
+
+static int getBankStringWidth(const RA1SpriteBank &bank, const char *text) {
+	if (!text || bank.numSprites <= 0)
+		return 0;
+
+	int w = 0;
+	for (int i = 0; text[i] != '\0'; i++) {
+		const byte ch = (byte)text[i];
+		if (ch == ' ') {
+			w += 6;
+			continue;
+		}
+		if (ch < 0x21) {
+			w += 4;
+			continue;
+		}
+		const int fontIdx = (int)ch - 0x21;
+		if (fontIdx < 0 || fontIdx >= bank.numSprites) {
+			w += 4;
+			continue;
+		}
+		const RA1Sprite &glyph = bank.sprites[fontIdx];
+		w += glyph.width > 0 ? glyph.width : 4;
+	}
+	return w;
+}
+
 // procPreRendering — Sets viewport scroll offset before FOBJ decoding (FUN_224FD at 0x224FD).
 // For interactive levels, shifts the FOBJ decode position based on mouse-controlled perspective.
 void InsaneRebel1::procPreRendering(byte *renderBitmap) {
 	if (_interactiveVideoActive && _player) {
-		_player->_ra1ViewportOffsetX = _perspectiveX;
-		_player->_ra1ViewportOffsetY = _perspectiveY;
+		// FUN_224FD stores absolute 320x200 window origin in a 384x242 frame:
+		// X in [0..0x40], Y in [0..0x2E], centered at (0x20,0x17).
+		// ScummVM presents the full 384x242 frame, so use center-relative delta
+		// to avoid exposing black border over cockpit edges.
+		_player->_ra1ViewportOffsetX = _perspectiveX - 0x20;
+		_player->_ra1ViewportOffsetY = _perspectiveY - 0x17;
 	} else if (_player) {
 		_player->_ra1ViewportOffsetX = 0;
 		_player->_ra1ViewportOffsetY = 0;
@@ -70,69 +163,50 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		}
 	}
 
-	// Shooting/targeting pipeline applies to ship/turret gameplay.
-	// LVL2 (opcode 0x0B asteroid dodge) is avoidance-only.
-	if (_currentLevel != 1) {
-		processShot();
-		for (int i = 0; i < kMaxShotSlots; i++) {
-			if (_shotSlots[i].timer > 0)
-				_shotSlots[i].timer--;
-		}
-
-		renderLaserShots(renderBitmap, pitch, width, height);
-		renderExplosions(renderBitmap, pitch, width, height);
-		renderGostSlots(renderBitmap, pitch, width, height);
-		renderTargeting(renderBitmap, pitch, width, height);
+	// FUN_1CDA7 (0x0B) still executes targeting/shot overlay pipeline
+	// (FUN_1C940, FUN_1CCA0, FUN_1C9CD, FUN_1CB22) while alive.
+	processShot();
+	for (int i = 0; i < kMaxShotSlots; i++) {
+		if (_shotSlots[i].timer > 0)
+			_shotSlots[i].timer--;
 	}
+
+	renderLaserShots(renderBitmap, pitch, width, height);
+	renderExplosions(renderBitmap, pitch, width, height);
+	renderGostSlots(renderBitmap, pitch, width, height);
+	renderTargeting(renderBitmap, pitch, width, height);
 	renderHUD(renderBitmap, pitch, width, height);
 }
 
-// renderTargeting — FUN_1CB22 (0x1CB22). Targeting/lock-on crosshair at cursor position.
-// Draws a crosshair that changes color based on target proximity:
-//   0 (none) = dim grey, 1 (near) = yellow, 2 (on-target) = bright red
+// renderTargeting — FUN_1CB22 (0x1CB22). Targeting/lock-on indicator.
+// The original does not draw a hardcoded pixel cross; it renders glyph markers
+// whose state depends on _targetProximity.
 void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) {
-	int cx = _shipPosX;
-	int cy = _shipPosY;
+	const RA1SpriteBank &markerBank = (_techFontBank.numSprites > 0) ? _techFontBank : _hudFontBank;
+	if (markerBank.numSprites > 0) {
+		// FUN_1CB22 can switch marker sets via DAT_75FF bit 1.
+		// Baseline RA1 targeting uses '^' and animation e..h.
+		const bool altMarkerSet = false;
 
-	// Color based on proximity state
-	// Palette indices chosen for L2PLAY visibility:
-	//   0xD7 = bright green (0,255,0), 0x63 = yellow (255,255,31), 0xDD = red (192,0,0)
-	byte color;
-	if (_targetProximity >= 2)
-		color = 0xDD;  // Red — on target
-	else if (_targetProximity == 1)
-		color = 0x63;  // Yellow — near
-	else
-		color = 0xD7;  // Green — no target
-
-	// Animated crosshair: size pulses with frame counter
-	int armLen = 6 + ((_frameCounter >> 2) & 3);
-	int gap = 2;  // Gap around center
-
-	// Horizontal arms
-	for (int i = gap; i <= armLen; i++) {
-		int lx = cx - i, rx = cx + i;
-		if (cy >= 0 && cy < height) {
-			if (lx >= 0 && lx < width)
-				dst[cy * pitch + lx] = color;
-			if (rx >= 0 && rx < width)
-				dst[cy * pitch + rx] = color;
+		// Lock indicator at fixed center positions:
+		// FUN_1CB22 draws marker strings at (0xA0,0x78) and (0xA0,0x7E).
+		if (_targetProximity > 0) {
+			drawBankString(markerBank, dst, pitch, width, height, 0xA0, 0x78, "]");
+			if (_targetProximity > 1)
+				drawBankString(markerBank, dst, pitch, width, height, 0xA0, 0x7E, "a");
 		}
-	}
-	// Vertical arms
-	for (int i = gap; i <= armLen; i++) {
-		int uy = cy - i, dy = cy + i;
-		if (cx >= 0 && cx < width) {
-			if (uy >= 0 && uy < height)
-				dst[uy * pitch + cx] = color;
-			if (dy >= 0 && dy < height)
-				dst[dy * pitch + cx] = color;
-		}
-	}
 
-	// Center dot for on-target
-	if (_targetProximity >= 2 && cx >= 0 && cx < width && cy >= 0 && cy < height) {
-		dst[cy * pitch + cx] = color;
+		// Pointer glyph at current aim position. Original uses two variants:
+		// default marker ('^' or 'x') and animated lock marker (e..h or y..|).
+		char marker[2] = { (char)(altMarkerSet ? 'x' : '^'), '\0' };
+		if (_targetProximity > 1) {
+			marker[0] = (char)((altMarkerSet ? 'y' : 'e') + (_frameCounter & 3));
+		}
+
+		int cursorX = CLIP<int>(_shipPosX, 0, width - 1);
+		int cursorY = CLIP<int>(_shipPosY, 0, height - 1);
+		int markerW = getBankStringWidth(markerBank, marker);
+		drawBankString(markerBank, dst, pitch, width, height, cursorX - markerW / 2, cursorY, marker);
 	}
 
 	// Save previous proximity for next frame
@@ -179,18 +253,15 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 	int spritesPerSet = 5;
 	for (int i = 0; i < kMaxShotSlots; i++) {
 		if (_shotSlots[i].timer > 0 && _shotSlots[i].timer <= spritesPerSet) {
-			// Frame index: timer 5→1 maps to sprite 0→4
 			int frame = spritesPerSet - _shotSlots[i].timer;
-			// Alternate between sprite sets for left/right shots
-			int setOffset = (i % 3) * spritesPerSet;
-			int sprIdx = setOffset + frame;
+			int sprIdx = frame;
 			if (sprIdx >= _laserBank.numSprites)
 				continue;
 
 			const RA1Sprite &spr = _laserBank.sprites[sprIdx];
-			// LASER sprites have embedded positions relative to screen center
-			int drawX = spr.xoffs + _perspectiveX;
-			int drawY = spr.yoffs + _perspectiveY;
+			// LASER sprite offsets are authored in screen space.
+			int drawX = spr.xoffs;
+			int drawY = spr.yoffs;
 			renderSprite(dst, pitch, width, height, drawX, drawY, spr);
 		}
 	}
@@ -199,92 +270,12 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 // drawFontBankString — Simplified version of FUN_221B7 (0x221B7).
 // Original is a multi-font markup-capable renderer; this uses a single font bank.
 void InsaneRebel1::drawFontBankString(byte *dst, int pitch, int width, int height, int x, int y, const char *text) {
-	if (!dst || !text || _hudFontBank.numSprites <= 0)
-		return;
-
-	for (int i = 0; text[i] != '\0'; i++) {
-		const byte ch = (byte)text[i];
-
-		if (ch == ' ') {
-			x += 6;
-			continue;
-		}
-
-		// RA1 font renderer indexes printable characters from '!' (0x21), not raw ASCII.
-		if (ch < 0x21) {
-			x += 4;
-			continue;
-		}
-		const int fontIdx = (int)ch - 0x21;
-		if (fontIdx < 0 || fontIdx >= _hudFontBank.numSprites) {
-			x += 4;
-			continue;
-		}
-
-		const RA1Sprite &glyph = _hudFontBank.sprites[fontIdx];
-		const int gw = glyph.width;
-		const int gh = glyph.height;
-		const int gx = x + glyph.xoffs;
-		const int gy = y + glyph.yoffs;
-		const uint64 glyphPixels = (uint64)gw * (uint64)gh;
-		if (!glyph.data || gw <= 0 || gh <= 0 || glyphPixels == 0 || glyphPixels > 0x10000) {
-			x += 4;
-			continue;
-		}
-		if (!(_hudFontBank.decodedData && _hudFontBank.decodedSize > 0)) {
-			x += 4;
-			continue;
-		}
-		const byte *bankStart = _hudFontBank.decodedData;
-		const byte *bankEnd = _hudFontBank.decodedData + _hudFontBank.decodedSize;
-		if (glyph.data < bankStart || glyph.data >= bankEnd || glyph.data + glyphPixels > bankEnd) {
-			x += 4;
-			continue;
-		}
-
-		for (int py = 0; py < gh; py++) {
-			const int sy = gy + py;
-			if (sy < 0 || sy >= height)
-				continue;
-			for (int px = 0; px < gw; px++) {
-				const int sx = gx + px;
-				if (sx < 0 || sx >= width)
-					continue;
-				const byte pixel = glyph.data[py * gw + px];
-				if (pixel != 0)
-					dst[sy * pitch + sx] = pixel;
-			}
-		}
-
-		x += gw > 0 ? gw : 4;
-	}
+	drawBankString(_hudFontBank, dst, pitch, width, height, x, y, text);
 }
 
 // getFontBankStringWidth — Pre-pass width calculation from FUN_221B7 (0x221B7).
 int InsaneRebel1::getFontBankStringWidth(const char *text) {
-	if (!text || _hudFontBank.numSprites <= 0)
-		return 0;
-
-	int w = 0;
-	for (int i = 0; text[i] != '\0'; i++) {
-		const byte ch = (byte)text[i];
-		if (ch == ' ') {
-			w += 6;
-			continue;
-		}
-		if (ch < 0x21) {
-			w += 4;
-			continue;
-		}
-		const int fontIdx = (int)ch - 0x21;
-		if (fontIdx < 0 || fontIdx >= _hudFontBank.numSprites) {
-			w += 4;
-			continue;
-		}
-		const RA1Sprite &glyph = _hudFontBank.sprites[fontIdx];
-		w += glyph.width > 0 ? glyph.width : 4;
-	}
-	return w;
+	return getBankStringWidth(_hudFontBank, text);
 }
 
 // renderShip — Ship sprite rendering from FUN_1DEB5 (0x1DEB5) at LAB_1e2b2.
@@ -300,11 +291,10 @@ void InsaneRebel1::renderShip(byte *dst, int pitch, int width, int height) {
 
 	const RA1Sprite &spr = _shipBank.sprites[_shipDirIndex];
 
-	// Position: game coords → screen coords via perspective transform
-	// Adapted from RA2's renderHandler7Ship:
-	//   shipCenterX = (shipX - center) + perspX + screenCenterX
-	int drawX = (_shipPosX - kRA1CenterX) + _perspectiveX + kRA1CenterX - spr.width / 2;
-	int drawY = (_shipPosY - kRA1CenterY) + _perspectiveY + kRA1CenterY - spr.height / 2;
+	// FUN_1DEB5 draws at (_74B6 + _74BA, _74B8 + _74BC).
+	// In the current mapping, _shipPosX/_shipPosY already store that screen position.
+	int drawX = _shipPosX - spr.width / 2;
+	int drawY = _shipPosY - spr.height / 2;
 
 	renderSprite(dst, pitch, width, height, drawX, drawY, spr);
 }
@@ -315,9 +305,9 @@ void InsaneRebel1::renderExplosions(byte *dst, int pitch, int width, int height)
 	if (_bangBank.numSprites <= 0)
 		return;
 
-	// Ship screen center position (matches assembly: DAT_74b6+DAT_74ba, DAT_74b8+DAT_74bc)
-	int shipScreenX = (_shipPosX - kRA1CenterX) + _perspectiveX + kRA1CenterX;
-	int shipScreenY = (_shipPosY - kRA1CenterY) + _perspectiveY + kRA1CenterY;
+	// Ship screen center position (matches assembly DAT_74B6+DAT_74BA, DAT_74B8+DAT_74BC).
+	int shipScreenX = _shipPosX;
+	int shipScreenY = _shipPosY;
 
 	// --- Death shake explosions (FUN_1DEB5 LAB_1e0e3) ---
 	// When dead and deathTimer > 10: random explosion sprites scatter around ship

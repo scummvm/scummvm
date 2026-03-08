@@ -93,8 +93,9 @@ private:
 	void clearVideoBuffer();
 
 	// Main menu loop on O1OPTION.ANM background (0x15968)
-	// Returns: 1=Start New Game, 2=Game Options, 3=Enter Passcode, 4=Continue Demo, 5=Exit
+	// Returns: 1=Start New Game, 2=Game Options, 3=Level Select, 4=Continue Demo, 5=Exit
 	int runMainMenu();
+	void runLevelSelectMenu();
 
 	// Level 1 flow (0x16100): hangar → CU1 → gameplay → CU2 → turret → end
 	// Returns true if level completed, false if player quit
@@ -142,6 +143,7 @@ private:
 	RA1SpriteBank _shipBank;
 	RA1SpriteBank _displayBank;   // SYS/DISPLAY.NUT — bottom status bar
 	RA1SpriteBank _hudFontBank;   // RA1 HUD text glyphs (TECHFONT/TALKFONT via RA1 loader)
+	RA1SpriteBank _techFontBank;  // SYS/TECHFONT.NUT — targeting glyph layer ("<<" markers)
 	RA1SpriteBank _bangBank;      // LxBANG.NUT — impact/explosion sprites (10 frames)
 	RA1SpriteBank _laserBank;     // LxLASER.NUT — laser/shot effect sprites
 	SmushFont *_menuFont;         // Use engine text renderer for correct TALKFONT character mapping
@@ -263,12 +265,15 @@ private:
 	// Options submenu state
 	bool _optionsActive;     // True when showing options instead of main menu
 	int _optionsSel;         // 0=difficulty, 1=turbulence, 2=back
+	bool _levelSelectActive; // True when showing level-select submenu
+	int _levelSelectSel;     // 0=Level1, 1=Level2, 2=Back
+	int _startLevel;         // 1-based start level for "Start New Game"
 
 	bool _turbulenceEnabled;  // Random per-frame jitter in deltaX (original has it on)
 
 	// Shooting state — FUN_1CCA0 (0x1CCA0)
 	bool _playerFired;       // 0x7570: fire button pressed this frame
-	int16 _fireCooldown;     // 0x757C: frames until next shot allowed
+	int16 _fireCooldown;     // 0x757C: button-edge gate in original input pipeline
 
 	// Explosion shot slots (2 slots) — FUN_1CCA0 (0x1CCA0)
 	static const int kMaxShotSlots = 2;

@@ -279,21 +279,29 @@ void InsaneRebel1::runGame() {
 
 		switch (menuResult) {
 		case 1: {
-#if 0 // Skip level 1 for testing — jump straight to level 2
-			// Start New Game — play L1NEW briefing then level 1
-			playCinematic("LVL1/L1NEW.ANM");
-			if (_vm->shouldQuit())
-				return;
+			bool completed = false;
+			if (_startLevel <= 1) {
+				// Start from Level 1 (default flow)
+				playCinematic("LVL1/L1NEW.ANM");
+				if (_vm->shouldQuit())
+					return;
 
-			bool completed = runLevel1();
-#else
-			bool completed = true;
-#endif
-			if (completed && !_vm->shouldQuit()) {
+				completed = runLevel1();
+				if (completed && !_vm->shouldQuit()) {
+					completed = runLevel2();
+					if (completed) {
+						debug(1, "InsaneRebel1: Level 2 completed!");
+						// TODO: Continue to level 3
+					}
+				}
+			} else if (_startLevel == 2) {
+				// Direct Level 2 start from Level Select menu
+				playCinematic("LVL2/L2NEW.ANM");
+				if (_vm->shouldQuit())
+					return;
 				completed = runLevel2();
 				if (completed) {
 					debug(1, "InsaneRebel1: Level 2 completed!");
-					// TODO: Continue to level 3
 				}
 			}
 			_currentLevel = 0;
@@ -303,6 +311,10 @@ void InsaneRebel1::runGame() {
 		case 2:
 			// Game Options
 			runOptionsMenu();
+			break;
+		case 3:
+			// Level Select
+			runLevelSelectMenu();
 			break;
 		case 5:
 			// Exit
