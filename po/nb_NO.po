@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-03-08 14:42+0000\n"
+"POT-Creation-Date: 2026-03-08 19:00+0000\n"
 "PO-Revision-Date: 2026-02-07 15:22+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -331,7 +331,7 @@ msgstr "Et annet fillager er aktivt. Ønsker du å avbryte det?"
 #: gui/launcher.cpp:530 gui/launcher.cpp:1909 gui/options.cpp:3485
 #: gui/options.cpp:3859 base/main.cpp:597
 #: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:598
-#: engines/chamber/metaengine.cpp:91 engines/director/events.cpp:102
+#: engines/chamber/metaengine.cpp:91 engines/director/events.cpp:122
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:139
 #: engines/efh/metaengine.cpp:362 engines/grim/grim.cpp:366
 #: engines/hypno/metaengine.cpp:192 engines/kyra/gui/saveload_eob.cpp:611
@@ -349,7 +349,7 @@ msgstr "Ja"
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:428 gui/launcher.cpp:457
 #: gui/launcher.cpp:530 gui/launcher.cpp:1910 gui/options.cpp:3485
 #: gui/options.cpp:3859 engines/buried/buried.cpp:598
-#: engines/chamber/metaengine.cpp:97 engines/director/events.cpp:102
+#: engines/chamber/metaengine.cpp:97 engines/director/events.cpp:122
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:139
 #: engines/efh/metaengine.cpp:368 engines/grim/grim.cpp:366
 #: engines/hypno/metaengine.cpp:198 engines/kyra/gui/saveload_eob.cpp:611
@@ -8801,7 +8801,7 @@ msgstr "Plukk opp / Bruk"
 msgid "Activate Inventory Object"
 msgstr "Aktiver utstyrslisteobjekt"
 
-#: engines/director/events.cpp:101
+#: engines/director/events.cpp:121
 msgid ""
 "The game prevents quitting at this moment. Are you sure you want to quit "
 "anyway?"
