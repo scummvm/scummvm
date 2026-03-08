@@ -261,26 +261,26 @@ bool WaynesWorldEngine::introPt3(bool flag) {
 
 bool WaynesWorldEngine::introPt4() {
 	bool retVal = true;
-	introPt4_sub1();
+	introPt4_init();
 
-	if (!introPt4_sub2()) {
+	if (!introPt4_intro()) {
 		retVal = false;
-	} else if (!introPt4_sub3()) {
+	} else if (!introPt4_displayCallInTime()) {
 		retVal = false;
-	} else if (!introPt4_sub4()) {
+	} else if (!introPt4_caller1()) {
 		retVal = false;
-	} else if (!introPt4_sub5()) {
+	} else if (!introPt4_caller2()) {
 		retVal = false;
-	} else if (!introPt4_sub6()) {
+	} else if (!introPt4_caller3()) {
 		retVal = false;
-	} else if (!introPt4_sub7()) {
+	} else if (!introPt4_caller4()) {
 		retVal = false;
 	}
 	
-	introPt4_sub8();
+	introPt4_cleanup();
 
 	if (retVal)
-		retVal = introPt4_sub9();
+		retVal = introPt4_playGuitar();
 	
 	return retVal;
 }
@@ -330,10 +330,7 @@ void WaynesWorldEngine::sub2FEFB(int arg_refreshBackgFl, int arg_wBodyIndex, int
 	}
 
 	if (arg_wBodyIndex != _old_arg_wBodyIndex) {
-		if (arg_wBodyIndex)
-			error("Unexpected value %d", arg_wBodyIndex);
-
-		_demoPt2Surface->drawSurface(_introWbodyImage, 0, 21);
+		_demoPt2Surface->drawSurface(_introWbodyImage[arg_wBodyIndex], 0, 21);
 		_old_arg_wBodyIndex = arg_wBodyIndex;
 	}
 
@@ -360,7 +357,7 @@ void WaynesWorldEngine::sub2FEFB(int arg_refreshBackgFl, int arg_wBodyIndex, int
 	waitMillis(170);
 }
 
-void WaynesWorldEngine::introPt4_sub1() {
+void WaynesWorldEngine::introPt4_init() {
 	_fontWW = new GFTFont();
 	_fontWW->loadFromFile("ww.gft");
 
@@ -372,8 +369,8 @@ void WaynesWorldEngine::introPt4_sub1() {
 
 	_introBackg1Image = new WWSurface(320, 170);
 	drawImageToSurface(_oanGxl, "backg1.pcx", _introBackg1Image, 0, 0);
-	_introWbodyImage = new WWSurface(145, 118);
-	drawImageToSurface(_oanGxl, "wbody0.pcx", _introWbodyImage, 0, 0);
+	_introWbodyImage[0] = new WWSurface(145, 118);
+	drawImageToSurface(_oanGxl, "wbody0.pcx", _introWbodyImage[0], 0, 0);
 	_introGbodyImage = new WWSurface(160, 149);
 	drawImageToSurface(_oanGxl, "gbody0.pcx", _introGbodyImage, 0, 0);
 
@@ -393,7 +390,7 @@ void WaynesWorldEngine::introPt4_sub1() {
 	paletteFadeIn(0, 256, 2);
 }
 
-bool WaynesWorldEngine::introPt4_sub2() {
+bool WaynesWorldEngine::introPt4_intro() {
 	_sound->playSound("sv27.snd", false);
 
 	for (int i = 0; i < 12; ++i) {
@@ -435,7 +432,7 @@ bool WaynesWorldEngine::introPt4_sub2() {
 	// TODO add a check at each step to return false if ESC is pressed
 	return true;
 }
-bool WaynesWorldEngine::introPt4_sub3() {
+bool WaynesWorldEngine::introPt4_displayCallInTime() {
 	WWSurface *pt4Sub3Surface1 = new WWSurface(178, 21);
 	WWSurface *pt4Sub3Surface2 = new WWSurface(178, 21);
 	pt4Sub3Surface2->clear(0);
@@ -454,7 +451,7 @@ bool WaynesWorldEngine::introPt4_sub3() {
 	// TODO add a check at each step to return false if ESC is pressed
 	return true;
 }
-bool WaynesWorldEngine::introPt4_sub4() {
+bool WaynesWorldEngine::introPt4_caller1() {
 	for (int i = 0; i < 3; ++i) {
 		for (int j = 0; j < 15; ++j) {
 			int index = getRandom(3);
@@ -559,7 +556,7 @@ bool WaynesWorldEngine::introPt4_sub4() {
 	// TODO add a check at each step to return false if ESC is pressed
 	return true;
 }
-bool WaynesWorldEngine::introPt4_sub5() {
+bool WaynesWorldEngine::introPt4_caller2() {
 	for (int i = 0; i < 4; ++i) {
 		sub2FEFB(1, 0, 1, getRandom(3), getRandom(11), 2);
 		waitSeconds(2);
@@ -635,7 +632,7 @@ bool WaynesWorldEngine::introPt4_sub5() {
 	// TODO add a check at each step to return false if ESC is pressed
 	return true;
 }
-bool WaynesWorldEngine::introPt4_sub6() {
+bool WaynesWorldEngine::introPt4_caller3() {
 	for (int i = 0; i < 5; ++i) {
 		sub2FEFB(1, 0, 1, getRandom(3), getRandom(11), 2);
 		waitSeconds(3);
@@ -695,7 +692,7 @@ bool WaynesWorldEngine::introPt4_sub6() {
 	return true;
 }
 
-bool WaynesWorldEngine::introPt4_sub7() {
+bool WaynesWorldEngine::introPt4_caller4() {
 	for (int j = 0; j < 2; ++j) {
 		for (int i = 0; i < 15; ++i) {
 			int index = getRandom(3);
@@ -804,13 +801,13 @@ bool WaynesWorldEngine::introPt4_sub7() {
 	return true;
 }
 
-void WaynesWorldEngine::introPt4_sub8() {
+void WaynesWorldEngine::introPt4_cleanup() {
 	delete _fontWW;
 	_fontWW = nullptr;
 	delete _introBackg1Image;
 	_introBackg1Image = nullptr;
-	delete _introWbodyImage;
-	_introWbodyImage = nullptr;
+	delete _introWbodyImage[0];
+	_introWbodyImage[0] = nullptr;
 	delete _introGbodyImage;
 	_introGbodyImage = nullptr;
 	for (int i = 0; i < 7; ++i) {
@@ -823,8 +820,22 @@ void WaynesWorldEngine::introPt4_sub8() {
 	}
 }
 
-bool WaynesWorldEngine::introPt4_sub9() {
-	warning("STUB - intro 4 pt 9");
+bool WaynesWorldEngine::introPt4_playGuitar() {
+	for (int i = 1; i < 5; ++i) {
+		_introWbodyImage[i] = new WWSurface(145, 118);
+		Common::String filename = Common::String::format("wbody%d.pcx", i);
+		drawImageToSurface(_oanGxl, filename.c_str(), _introWbodyImage[i], 0, 0);
+	}
+
+	sub2FEFB(1, 1, 1, 0, 9, -1);
+	sub2FEFB(1, 2, 1, 0, 9, -1);
+	sub2FEFB(1, 3, 1, 0, 9, -1);
+	sub2FEFB(1, 4, 1, 0, 9, -1);
+
+	for (int i = 1; i < 5; ++i) {
+		delete _introWbodyImage[i];
+		_introWbodyImage[i] = nullptr;
+	}
 	
 	_midi->stopSong();
 	// TODO add a check at each step to return false if ESC is pressed

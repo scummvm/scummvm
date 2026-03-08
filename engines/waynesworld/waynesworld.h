@@ -123,7 +123,7 @@ private:
 	bool introPt4();
 
 	WWSurface *_introBackg1Image = nullptr;
-	WWSurface *_introWbodyImage = nullptr;
+	WWSurface *_introWbodyImage[5] = {nullptr};
 	WWSurface *_introGbodyImage = nullptr;
 	WWSurface *_introWhead1[8] = {nullptr};
 	WWSurface *_introGhead1[11] = {nullptr};
@@ -140,15 +140,15 @@ private:
 	void sub3009A(int textId);
 	void sub2FEFB(int arg_refreshBackgFl, int arg_wBodyIndex, int arg_gBodyIndex, int arg_wHead1Index, int arg_gHead1Index, int arg_TextId);
 
-	void introPt4_sub1();
-	bool introPt4_sub2();
-	bool introPt4_sub3();
-	bool introPt4_sub4();
-	bool introPt4_sub5();
-	bool introPt4_sub6();
-	bool introPt4_sub7();
-	void introPt4_sub8();
-	bool introPt4_sub9();
+	void introPt4_init();
+	bool introPt4_intro();
+	bool introPt4_displayCallInTime();
+	bool introPt4_caller1();
+	bool introPt4_caller2();
+	bool introPt4_caller3();
+	bool introPt4_caller4();
+	void introPt4_cleanup();
+	bool introPt4_playGuitar();
 
 	WWSurface *_demoPt2Surface = nullptr;
 	WWSurface *_backg2Surface = nullptr;
