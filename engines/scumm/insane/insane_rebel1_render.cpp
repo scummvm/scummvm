@@ -386,14 +386,15 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 
 // renderTargetBoxes — FUN_1C940 (0x1C940). Per-target green box overlays.
 void InsaneRebel1::renderTargetBoxes(byte *dst, int pitch, int width, int height) {
-	const int overlayX = ra1OverlayViewOffsetX(this);
-
 	for (int i = _targetCount - 1; i >= 0; --i) {
 		if (i >= kMaxTargetBoxes)
 			continue;
 
 		char box[4] = { '<', '<', (char)('i' + CLIP<int16>(_targetBoxVariant[i], 0, 5)), '\0' };
-		drawFontBankString(dst, pitch, width, height, overlayX + _targetBoxX[i], _targetBoxY[i], box);
+		int16 drawX = _targetBoxX[i];
+		int16 drawY = _targetBoxY[i];
+		projectGameplayPoint(drawX, drawY);
+		drawFontBankString(dst, pitch, width, height, drawX, drawY, box);
 	}
 
 	_prevTargetCount = _targetCount;
@@ -445,7 +446,6 @@ void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) 
 	if (_bangBank.numSprites <= 0)
 		return;
 
-	const int overlayX = ra1OverlayViewOffsetX(this);
 	for (int i = 0; i < kMaxGostSlots; i++) {
 		if (_gostSlots[i].targetId != 0 && _gostSlots[i].frame < 10) {
 			int sprIdx = _gostSlots[i].frame;
@@ -453,8 +453,11 @@ void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) 
 				sprIdx = _bangBank.numSprites - 1;
 
 			const RA1Sprite &spr = _bangBank.sprites[sprIdx];
-			int drawX = overlayX + _gostSlots[i].posX - spr.width / 2;
-			int drawY = _gostSlots[i].posY - spr.height / 2;
+			int16 drawX = _gostSlots[i].posX;
+			int16 drawY = _gostSlots[i].posY;
+			projectGameplayPoint(drawX, drawY);
+			drawX -= spr.width / 2;
+			drawY -= spr.height / 2;
 			renderSprite(dst, pitch, width, height, drawX, drawY, spr);
 
 			_gostSlots[i].frame++;

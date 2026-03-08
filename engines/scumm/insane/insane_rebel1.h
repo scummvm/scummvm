@@ -87,6 +87,8 @@ public:
 	int getCurrentLevel() const { return _currentLevel; }
 	uint16 getActiveGameOpcode() const { return _activeGameOpcode; }
 	int16 getPerspectiveX() const { return _perspectiveX; }
+	void projectGameplayPoint(int16 &x, int16 &y) const;
+	void unprojectGameplayPoint(int16 &x, int16 &y) const;
 
 	// Game flow (matching original at 0x15597)
 	void runGame();
@@ -123,6 +125,8 @@ private:
 	void updateShipPhysics();
 	void updateTurretPhysics();
 	void preprocessMouseAxes(int16 &inputX, int16 &inputY);
+	void rebuildProjectionTable(int16 curveStep, int16 curveExtent);
+	void resetProjectionTable();
 	void renderShip(byte *dst, int pitch, int width, int height);
 	void renderHUD(byte *dst, int pitch, int width, int height);
 	void renderMainMenuOverlay(byte *dst, int pitch, int width, int height);
@@ -195,6 +199,9 @@ private:
 	// Perspective view offsets (0x74B6/0x74B8: viewport scroll base)
 	int16 _perspectiveX;
 	int16 _perspectiveY;
+	static const int kProjectionTableSize = 80;
+	int16 _projectionCurveExtent;
+	int16 _projectionTable[kProjectionTableSize];
 
 	// Input history buffers for 0x0B handler (FUN_1CDA7) — 10-frame averaging
 	static const int kInputHistorySize = 10;

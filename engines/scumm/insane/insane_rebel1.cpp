@@ -121,6 +121,8 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 
 	_perspectiveX = 0;
 	_perspectiveY = 0;
+	_projectionCurveExtent = 1;
+	memset(_projectionTable, 0, sizeof(_projectionTable));
 
 	memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
 	memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
