@@ -1099,7 +1099,7 @@ bool PhoenixVREngine::enterScript() {
 		_lockKey[i] = lockKey;
 	}
 
-	_mixer->stopAll();
+	stopAllSounds();
 
 	_currentMusic = ms.readString(0, 257);
 	_currentMusicVolume = ms.readUint32LE();
