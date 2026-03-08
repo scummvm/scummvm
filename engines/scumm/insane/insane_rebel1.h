@@ -89,6 +89,9 @@ public:
 	int16 getPerspectiveX() const { return _perspectiveX; }
 	void projectGameplayPoint(int16 &x, int16 &y) const;
 	void unprojectGameplayPoint(int16 &x, int16 &y) const;
+	bool handleFrameObjectTarget(int16 objectId, int16 left, int16 top, int16 width, int16 height,
+		int codec, uint8 &ra1Param);
+	void resetFrameObjectState();
 
 	// Game flow (matching original at 0x15597)
 	void runGame();
@@ -137,6 +140,8 @@ private:
 	void renderLaserShots(byte *dst, int pitch, int width, int height);
 	void renderSprite(byte *dst, int pitch, int width, int height,
 					  int x, int y, const RA1Sprite &sprite);
+	void updateGostSlotPosition(int16 targetIdx, int16 left, int16 top, int16 right, int16 bottom);
+	void applyFrameObjectHitState(int16 targetIdx);
 
 	// Shooting pipeline — FUN_1CCA0 (0x1CCA0) shot spawner,
 	// FUN_1C0EF (0x1C0EF) target detection, FUN_1C940 (0x1C940) shot processing
@@ -350,6 +355,9 @@ private:
 
 	int16 _killCount;        // 0x75D0: targets destroyed this stage
 	int16 _lastHitTarget;    // 0x75D6: prevents double-hit on same target
+
+	static const int kFrameObjectStateBytes = 300;
+	byte _frameObjectState[kFrameObjectStateBytes];
 };
 
 } // End of namespace Scumm

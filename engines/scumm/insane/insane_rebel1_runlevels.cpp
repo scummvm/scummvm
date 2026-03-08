@@ -609,6 +609,7 @@ void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) 
 	_player = splayer;
 	clearBit(0);
 	_interactiveVideoActive = true;
+	resetFrameObjectState();
 	_vm->_smushVideoShouldFinish = false;
 	splayer->setCurVideoFlags(0x28);
 	if (startFrame > 0)
