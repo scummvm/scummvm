@@ -2206,6 +2206,11 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		player.run();
 		break;
 	}
+	case 96: {
+		BackgroundBook book(_events, _res);
+		book.run();
+		break;
+	}
 	default: {
 		if (inventoryObject >= 11 && inventoryObject <= 47) {
 			playAlfredSpecialAnim(0);

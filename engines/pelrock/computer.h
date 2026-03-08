@@ -53,9 +53,6 @@ struct LibraryBook {
     bool available;  // true = can be found on shelf, false = catalog only
 };
 
-
-static const LibraryBook noBook = { Common::StringArray(), Common::StringArray(), "", 0, 0, false};
-
 class Computer {
 public:
 	Computer(PelrockEventManager *eventMan);
