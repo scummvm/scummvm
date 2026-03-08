@@ -28,7 +28,6 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "common/debug.h"
-#include "common/scummsys.h"
 
 namespace AGOS {
 
