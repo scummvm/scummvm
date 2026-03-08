@@ -233,8 +233,12 @@ private:
 	Graphics::MacMenu *_menu;
 
 	Common::HashMap<int16, Common::SharedPtr<Common::SeekableReadStream>> _fileStreams;
+	Common::HashMap<int16, Common::SharedPtr<Common::SeekableWriteStream>> _fileWriteStreams;
 	Common::HashMap<int16, uint32> _fileLineSize;
 	Common::HashMap<int16, Common::Array<Common::U32String>> _index;
+
+	Common::String _fileType;
+	Common::String _fileCreator;
 
 public:
 
@@ -249,6 +253,7 @@ public:
 	Common::U32String chr(uint16 code);
 	void close(int16 fileNo);
 	void coordinateWindow();
+	void defOpen(const Common::U32String &str);
 	void get(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &dest, bool preserveDims = false);
 	int16 instr(int16 expression, const Common::U32String &string1, const Common::U32String &string2);
 	Common::U32String files(int16 expression, const Common::U32String &prompt, const Common::U32String &defaultFilename, int16 &volume);
@@ -258,6 +263,7 @@ public:
 	void menu(uint16 menuNo, uint16 itemNo, uint16 state, const Common::U32String &title);
 	Common::U32String midStr(const Common::U32String &str, int16 expr1, int16 expr2);
 	void openR(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo);
+	void openW(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo);
 	void picture(int16 x, int16 y, PicHandle &src);
 	void picture(int16 x1, int16 y1, int16 x2, int16 y2, PicHandle &src);
 	void put(int16 x, int16 y, BitMap &src, ZBasicPutMode mode);
@@ -276,6 +282,9 @@ public:
 	void swapInt(int16 &a, int16 &b);
 	void text(uint16 font, uint16 size, uint16 face, SourceMode mode);
 	void window(int16 windowNumber, const Common::String &title, int16 x1, int16 y1, int16 x2, int16 y2, ZBasicWindowType type);
+	void writeFileStr(int16 fileNo, const Common::U32String &str);
+	void writeFileInt(int16 fileNo, int16 data);
+	void writeFileDblInt(int16 fileNo, int32 data);
 
 	const Common::U32String &str(size_t index);
 
@@ -283,6 +292,7 @@ public:
 	void unk_4(); // possibly quit?
 	int16 unk_5();
 	void unk_6(int16 unk1, int32 unk2, int16 unk3, int16 unk4);
+	void unk_10();
 	void unk_11(int16 unk1);
 	void unk_20();
 	bool incrAndCheck(int16 &a0, int16 d1, int16 d0);

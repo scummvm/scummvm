@@ -59,7 +59,15 @@ void Toolbox::CheckItem(MenuHandle &theMenu, uint16 item, bool checked) {
 		warning("Toolbox::CheckItem: item %d out of range for menu %d", item, theMenu->menuID);
 		return;
 	}
-	warning("STUB: Toolbox::CheckItem");
+	if (_defaultMenu) {
+		Graphics::MacMenuItem *sub = _defaultMenu->getMenuItem(theMenu->menuID-1);
+		if (sub) {
+			Graphics::MacMenuItem *it = _defaultMenu->getSubMenuItem(sub, item);
+			if (it) {
+				it->checked = checked;
+			}
+		}
+	}
 }
 
 void Toolbox::ClearMenuBar() {
@@ -97,7 +105,15 @@ void Toolbox::DisableItem(MenuHandle &theMenu, uint16 item) {
 		warning("Toolbox::DisableItem: item %d out of range for menu %d", item, theMenu->menuID);
 		return;
 	}
-	warning("STUB: Toolbox::DisableItem");
+	if (_defaultMenu) {
+		Graphics::MacMenuItem *sub = _defaultMenu->getMenuItem(theMenu->menuID-1);
+		if (sub) {
+			Graphics::MacMenuItem *it = _defaultMenu->getSubMenuItem(sub, item);
+			if (it) {
+				it->enabled = false;
+			}
+		}
+	}
 }
 
 void Toolbox::DisposeMenu(MenuHandle &theMenu) {
@@ -120,7 +136,15 @@ void Toolbox::EnableItem(MenuHandle &theMenu, uint16 item) {
 		warning("Toolbox::EnableItem: item %d out of range for menu %d", item, theMenu->menuID);
 		return;
 	}
-	warning("STUB: Toolbox::EnableItem");
+	if (_defaultMenu) {
+		Graphics::MacMenuItem *sub = _defaultMenu->getMenuItem(theMenu->menuID-1);
+		if (sub) {
+			Graphics::MacMenuItem *it = _defaultMenu->getSubMenuItem(sub, item);
+			if (it) {
+				it->enabled = true;
+			}
+		}
+	}
 }
 
 
@@ -177,9 +201,13 @@ MenuHandle Toolbox::NewMenu(uint16 menuID, const Common::U32String &menuTitle) {
 		}
 		_defaultMenu->clearSubMenu(menuID-1);
 		Graphics::MacMenuItem *item = _defaultMenu->getMenuItem(menuID-1);
-		item->text = menuTitle.encode(Common::kMacRoman);
-		item->unicode = false;
-		_defaultMenu->addSubMenu(nullptr, menuID-1);
+		if (!item) {
+			warning("NewMenu: new menu didn't add for some reason??");
+		} else {
+			item->text = menuTitle.encode(Common::kMacRoman);
+			item->unicode = false;
+			_defaultMenu->addSubMenu(nullptr, menuID-1);
+		}
 	}
 	return handle;
 }
