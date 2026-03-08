@@ -843,21 +843,17 @@ struct PlaySound : public Script::Command {
 	Common::String sound;
 	int volume;
 	int loops;
+	Audio::Mixer::SoundType type;
 
-	PlaySound(Common::String s, int v, int l) : sound(Common::move(s)), volume(v), loops(l) {}
+	PlaySound(Common::String s, int v, int l, Audio::Mixer::SoundType t = Audio::Mixer::kSFXSoundType) : sound(Common::move(s)), volume(v), loops(l), type(t) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		g_engine->playSound(sound, volume, loops);
+		g_engine->playSound(sound, type, volume, loops);
 	}
 };
 
 struct PlayMusique : public PlaySound {
-	PlayMusique(Common::String s, int v) : PlaySound(Common::move(s), v, -1) {}
-
-	void exec(Script::ExecutionContext &ctx) const override {
-		g_engine->setCurrentMusic(sound, volume);
-		PlaySound::exec(ctx);
-	}
+	PlayMusique(Common::String s, int v) : PlaySound(Common::move(s), v, -1, Audio::Mixer::kMusicSoundType) {}
 };
 
 struct StopSound : public Script::Command {
@@ -879,7 +875,7 @@ struct PlaySound3D : public Script::Command {
 	PlaySound3D(Common::String s, int v, float a, int l) : sound(Common::move(s)), volume(v), angle(a), loops(l) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		g_engine->playSound(sound, volume, loops, true, angle);
+		g_engine->playSound(sound, Audio::Mixer::kSFXSoundType, volume, loops, true, angle);
 	}
 };
 

@@ -115,13 +115,9 @@ public:
 	void setCursor(const Common::String &path, const Common::String &warp, int idx);
 	void hideCursor(const Common::String &warp, int idx);
 
-	void playSound(const Common::String &sound, uint8 volume, int loops, bool spatial = false, float angle = 0);
+	void playSound(const Common::String &sound, Audio::Mixer::SoundType type, uint8 volume, int loops, bool spatial = false, float angle = 0);
 	void stopSound(const Common::String &sound);
 	void playMovie(const Common::String &movie);
-	void setCurrentMusic(const Common::String &name, int volume) {
-		_currentMusic = name;
-		_currentMusicVolume = volume;
-	}
 
 	void declareVariable(const Common::String &name);
 	void setVariable(const Common::String &name, int value);

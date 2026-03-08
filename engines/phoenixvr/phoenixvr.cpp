@@ -305,8 +305,9 @@ int PhoenixVREngine::getVariable(const Common::String &name) const {
 	return _variables.getVal(name);
 }
 
-void PhoenixVREngine::playSound(const Common::String &sound, uint8 volume, int loops, bool spatial, float angle) {
-	debug("play sound %s %d %d 3d: %d, angle: %g", sound.c_str(), volume, loops, spatial, angle);
+void PhoenixVREngine::playSound(const Common::String &sound, Audio::Mixer::SoundType type, uint8 volume, int loops, bool spatial, float angle) {
+	const bool music = type == Audio::Mixer::kMusicSoundType;
+	debug("play sound %s %d %d, music: %d, 3d: %d, angle: %g", sound.c_str(), volume, loops, music, spatial, angle);
 	Audio::SoundHandle h;
 	Common::ScopedPtr<Common::SeekableReadStream> stream(open(sound));
 	if (!stream) {
@@ -314,8 +315,13 @@ void PhoenixVREngine::playSound(const Common::String &sound, uint8 volume, int l
 		return;
 	}
 
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &h, Audio::makeWAVStream(stream.release(), DisposeAfterUse::YES), -1, volume);
-	if (loops < 0)
+	if (music) {
+		_currentMusic = sound;
+		_currentMusicVolume = volume;
+	}
+
+	_mixer->playStream(type, &h, Audio::makeWAVStream(stream.release(), DisposeAfterUse::YES), -1, volume);
+	if (loops < 0 || music)
 		_mixer->loopChannel(h);
 	_sounds[sound] = Sound{h, spatial, angle, volume, loops};
 }
@@ -1090,7 +1096,7 @@ bool PhoenixVREngine::enterScript() {
 	_currentMusicVolume = ms.readUint32LE();
 	debug("current music %s, volume: %u", _currentMusic.c_str(), _currentMusicVolume);
 	if (!_currentMusic.empty() && _currentMusicVolume > 0)
-		playSound(_currentMusic, _currentMusicVolume, -1);
+		playSound(_currentMusic, Audio::Mixer::kMusicSoundType, _currentMusicVolume, -1);
 
 	// sound samples
 	for (uint i = 0; i != 8; ++i) {
@@ -1099,7 +1105,7 @@ bool PhoenixVREngine::enterScript() {
 		auto flags = ms.readUint32LE();
 		debug("sound: %s vol: %u flags: %u", name.c_str(), vol, flags);
 		if (!name.empty())
-			playSound(name, vol, -1);
+			playSound(name, Audio::Mixer::kSFXSoundType, vol, -1);
 	}
 
 	// sound samples 3D
@@ -1110,7 +1116,7 @@ bool PhoenixVREngine::enterScript() {
 		auto flags = ms.readUint32LE();
 		debug("3d sound: %s vol: %u flags: %u angle: %u", name.c_str(), vol, flags, angle);
 		if (!name.empty())
-			playSound(name, vol, -1, true, static_cast<float>(angle) * kPi);
+			playSound(name, Audio::Mixer::kSFXSoundType, vol, -1, true, static_cast<float>(angle) * kPi);
 	}
 	_loadedState.clear();
 	return true;
