@@ -1234,9 +1234,18 @@ void InsaneRebel1::updateOnFootPhysics() {
 	_shipPosX = inputX + kOnFootCenterX + _onFootCharX;
 	_shipPosY = inputYNeg + kOnFootCenterY + _onFootCharY - 0x32;
 
-	// --- Damage handling (from 0x19) ---
+	// --- Scripted damage latches → damageFlags (matching FUN_1B297 pattern) ---
+	// GAME 0x5D/0x5F set latches; convert to damage flags before the check.
+	if (_gameLatch5D == 0xFFFF)
+		_damageFlags |= 0x40;
+	if (_gameLatch5F != 0 &&
+		_vm->_rnd.getRandomNumber((uint16)(_gameLatch5F - 1)) == 0)
+		_damageFlags |= 0x80;
+
+	// --- Damage handling (from HandleGameOp19_OnFootSequence) ---
+	// On-foot uses single tuning value (DAT_00001b29 offset = miss) for all damage types.
 	if (_damageFlags != 0 && _damageCooldown == 0 && _health >= 0 && _deathTimer < 1) {
-		_health -= _tuning.miss;  // On-foot uses DAT_00001b29 offset = miss tuning
+		_health -= _tuning.miss;
 		if (_health < 0)
 			_deathTimer = 15;
 		_prevDamageFlags = _damageFlags;
@@ -1462,8 +1471,8 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 		break;
 
 	case 0x5A:
-		// Target detection — FUN_1C0EF (0x1C0EF). AABB from video stream.
-		// Params: targetIdx, left, top, width, height
+		// Target detection — HandleGameOp5A (0x1C0EF). AABB from video stream.
+		// Original checks event mask: if target already killed, skip to GOST update.
 		if (subSize >= 24) {
 			int16 targetIdx = (int16)param1;
 			int16 left = (int16)b.readUint32BE();
@@ -1472,7 +1481,25 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 			int16 h = (int16)b.readUint32BE();
 			int16 right = left + w;
 			int16 bottom = top + h;
-			checkTargetHit(targetIdx, left, top, right, bottom);
+
+			if (targetIdx >= 0) {
+				const int byteIdx = targetIdx >> 3;
+				if (byteIdx >= 0 && byteIdx < 0x96 && byteIdx < kFrameObjectStateBytes) {
+					const byte bit = (byte)(0x80 >> (targetIdx & 7));
+					const int altIdx = byteIdx + 0x96;
+					const bool primarySet = (_frameObjectState[byteIdx] & bit) != 0;
+					const bool secondarySet = (altIdx < kFrameObjectStateBytes) &&
+						((_frameObjectState[altIdx] & bit) != 0);
+
+					if (!primarySet || secondarySet) {
+						checkTargetHit(targetIdx, left, top, right, bottom);
+					} else {
+						updateGostSlotPosition(targetIdx, left, top, right, bottom);
+					}
+				} else {
+					checkTargetHit(targetIdx, left, top, right, bottom);
+				}
+			}
 			debug(5, "RA1 GAME 0x5A: target=%d rect=[%d,%d]-[%d,%d] prox=%d",
 				targetIdx, left, top, right, bottom, _targetProximity);
 		}
@@ -1507,6 +1534,14 @@ void InsaneRebel1::processShot() {
 	if (!_playerFired || _fireCooldown != 0)
 		return;
 
+	// On-foot mode: only spawn when in aiming stance (dirIndex 11-19) or flags force it.
+	// Original: if (((10 < g_shipDirIndex) && (g_shipDirIndex < 0x14)) || ((DAT_000075fe & 8) != 0))
+	const bool onFootMode = (_activeGameOpcode == 0x19 || _activeGameOpcode == 0x1A);
+	if (onFootMode) {
+		if (!(_shipDirIndex > 10 && _shipDirIndex < 20) && !(_gameplayFlags75fe & 8))
+			return;
+	}
+
 	// Find first available slot (timer < 1 or > 5), matching FUN_1CCA0.
 	int slot = -1;
 	for (int i = 0; i < kMaxShotSlots; i++) {
@@ -1519,21 +1554,34 @@ void InsaneRebel1::processShot() {
 		return;
 	}
 
-	// Record shot at current cursor position.
+	// Shot origin depends on game mode:
+	// On-foot: character position (g_shipOffsetX + g_perspectiveX)
+	// Turret: perspective-adjusted center
+	// Flight: cursor position
 	const bool turretMode = (_activeGameOpcode == 0x08 || _activeGameOpcode == 0x0A);
-	const int16 shipCenterX = turretMode ? (int16)(kRA1CenterX + (_perspectiveX - 0x20)) : _shipPosX;
-	const int16 shipCenterY = turretMode ? (int16)(kRA1CenterY + (_perspectiveY - 0x17)) : _shipPosY;
+	int16 originX, originY;
+	if (onFootMode) {
+		originX = _onFootCharX + kOnFootCenterX;
+		originY = _onFootCharY + kOnFootCenterY;
+	} else if (turretMode) {
+		originX = (int16)(kRA1CenterX + (_perspectiveX - 0x20));
+		originY = (int16)(kRA1CenterY + (_perspectiveY - 0x17));
+	} else {
+		originX = _shipPosX;
+		originY = _shipPosY;
+	}
 
 	_shotSlots[slot].timer = (_gameplayFlags75ff & 0x2) ? 2 : 5;
 	_shotSlots[slot].posX = _shipPosX;
 	_shotSlots[slot].posY = _shipPosY;
-	_shotSlots[slot].centerX = shipCenterX;
-	_shotSlots[slot].centerY = shipCenterY;
+	_shotSlots[slot].centerX = originX;
+	_shotSlots[slot].centerY = originY;
 	_shotSlots[slot].variant = _shotAlternator;
 	_shotAlternator = 1 - _shotAlternator;
 	playSfx(kSfxLaserShot, 127, 0);
 
-	debug(5, "RA1 shot: slot=%d pos=(%d,%d)", slot, _shotSlots[slot].posX, _shotSlots[slot].posY);
+	debug(5, "RA1 shot: slot=%d pos=(%d,%d) origin=(%d,%d)", slot,
+		_shotSlots[slot].posX, _shotSlots[slot].posY, originX, originY);
 }
 
 // checkTargetHit — FUN_1C0EF (0x1C0EF). AABB target detection with snap tolerance.
@@ -1604,7 +1652,9 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 							projectGameplayPoint(_shipPosX, _shipPosY);
 						}
 
-						debug(5, "RA1 HIT: target=%d score=%d kills=%d", targetIdx, _score, _killCount);
+						debug(3, "RA1 HIT: target=%d gost=%d pos=(%d,%d) score=%d kills=%d bangSprites=%d",
+							targetIdx, gi, _gostSlots[gi].posX, _gostSlots[gi].posY,
+							_score, _killCount, _bangBank.numSprites);
 						return;
 					}
 				}

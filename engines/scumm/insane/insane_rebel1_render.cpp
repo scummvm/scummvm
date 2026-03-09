@@ -454,11 +454,13 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			(!haveFrameGameOpcodes && _activeGameOpcode == 0x0A);
 		renderTargetBoxes(renderBitmap, pitch, width, height);
 		processShot();
+		renderLaserShots(renderBitmap, pitch, width, height);
+		// Timer decrement AFTER rendering (original decrements inside the render loop).
+		// This ensures timer==5 first frame is rendered with gun barrel offset and lerp=1.
 		for (int i = 0; i < kMaxShotSlots; i++) {
 			if (_shotSlots[i].timer > 0)
 				_shotSlots[i].timer--;
 		}
-		renderLaserShots(renderBitmap, pitch, width, height);
 		renderGostSlots(renderBitmap, pitch, width, height);
 		renderTargeting(renderBitmap, pitch, width, height);
 
@@ -553,8 +555,17 @@ void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) 
 // renderGostSlots — FUN_1C9CD (0x1C9CD). Hit explosion animations at target positions.
 // Renders explosion sprites from bangBank at each GOST slot's recorded position.
 void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) {
-	if (_bangBank.numSprites <= 0)
+	if (_bangBank.numSprites <= 0) {
+		// Warn if there are active GOST slots but no bang sprites to render
+		for (int i = 0; i < kMaxGostSlots; i++) {
+			if (_gostSlots[i].targetId != 0 && _gostSlots[i].frame < 10) {
+				debug(1, "RA1 renderGostSlots: bangBank empty but gost slot %d active (target=%d frame=%d)",
+					i, _gostSlots[i].targetId, _gostSlots[i].frame);
+				_gostSlots[i].targetId = 0;  // Clear stale slot
+			}
+		}
 		return;
+	}
 
 	const int overlayX = ra1OverlayViewOffsetX(this);
 	const bool projectGostMarkers = (_activeGameOpcode == 0x0B);
@@ -581,7 +592,7 @@ void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) 
 	}
 }
 
-// renderLaserShots — FUN_1CDA7/FUN_1D79C shot visual path.
+// renderLaserShots — FUN_1CDA7/FUN_1D79C/HandleGameOp1A shot visual path.
 void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height) {
 	if (_laserBank.numSprites <= 0)
 		return;
@@ -589,11 +600,24 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 	// DAT_2407 lookup used by FUN_1CDA7/FUN_1D79C for timer 1..5 interpolation.
 	// Entry 0 unused.
 	static const int kShotLerpByTimer[6] = { 0, 8, 7, 6, 4, 0 };
+	// DAT_2413: on-foot lerp table (timer 5 = 1, not 0 like flight mode).
+	static const int kOnFootShotLerp[6] = { 0, 8, 7, 6, 4, 1 };
+	// DAT_240e: gun barrel X offset indexed by shipDirIndex (for timer==5 first frame).
+	static const int16 kOnFootGunBarrelX[20] = {
+		4, 0, 8, 8, 7, 6, 4, 1, 0, 0,
+		0, -56, -47, -23, -13, 0, 13, 30, 54, 59
+	};
+	// DAT_2420: gun barrel Y offset indexed by shipDirIndex (for timer==5 first frame).
+	static const int16 kOnFootGunBarrelY[20] = {
+		0, 0, -56, -47, -23, -13, 0, 13, 30, 54,
+		59, -3, -19, -24, -30, -28, -30, -29, -20, -5
+	};
 	const int spritesPerSet = 5;
 	const int overlayX = ra1OverlayViewOffsetX(this);
 	const int overlayY = ra1OverlayViewOffsetY(this);
 	const int leftStartX = 0;
 	const int rightStartX = 0x13F; // 319
+	const bool onFootMode = (_activeGameOpcode == 0x19 || _activeGameOpcode == 0x1A);
 	const bool turretMode = (_activeGameOpcode == 0x08 || _activeGameOpcode == 0x0A);
 	const int shipBaseX = turretMode ? (kRA1CenterX + (_perspectiveX - 0x20)) : _shipPosX;
 	const int shipBaseY = turretMode ? (kRA1CenterY + (_perspectiveY - 0x17)) : (overlayY + _shipPosY);
@@ -601,10 +625,40 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 	for (int i = 0; i < kMaxShotSlots; i++) {
 		if (_shotSlots[i].timer > 0 && _shotSlots[i].timer <= spritesPerSet) {
 			const int timer = _shotSlots[i].timer;
-			const int lerp = kShotLerpByTimer[timer];
 			const int frame = spritesPerSet - timer;
 			const int targetX = CLIP<int>(overlayX + _shipPosX, 0, width - 1);
 			const int targetY = CLIP<int>(overlayY + _shipPosY, 0, height - 1);
+
+			if (onFootMode) {
+				// HandleGameOp1A_OnFootVariant: single beam from character to crosshair.
+				// Gun barrel offset on first frame (timer==5, dirIndex in aiming range).
+				if (timer == 5 && _shipDirIndex > 10 && _shipDirIndex < 20) {
+					_shotSlots[i].centerX += kOnFootGunBarrelX[_shipDirIndex];
+					_shotSlots[i].centerY += kOnFootGunBarrelY[_shipDirIndex];
+				}
+
+				// Skip visible rendering when flags indicate invisible shots (auto-fire).
+				if ((_gameplayFlags75fe & 8) != 0)
+					continue;
+
+				const int srcX = _shotSlots[i].centerX;
+				const int srcY = _shotSlots[i].centerY;
+				const int dstX = _shotSlots[i].posX;
+				const int dstY = _shotSlots[i].posY;
+				const int dir = ra1ShotDirection((int16)srcX, (int16)srcY,
+					(int16)dstX, (int16)dstY);
+				const int sprIdx = MIN<int>(ABS(dir), _laserBank.numSprites - 1);
+				const uint32 flags = 0x83 | ((dir < 0) ? 0x2000 : 0);
+				const int onFootLerp = kOnFootShotLerp[timer];
+				const int interpX = srcX + (((dstX - srcX) * onFootLerp) >> 3);
+				const int interpY = srcY + (((dstY - srcY) * onFootLerp) >> 3);
+
+				renderSpriteWithFlags(dst, pitch, width, height,
+					interpX, interpY, _laserBank.sprites[sprIdx], flags);
+				continue;
+			}
+
+			const int lerp = kShotLerpByTimer[timer];
 
 			if (turretMode) {
 				// FUN_1D79C chooses emitters in two ways:

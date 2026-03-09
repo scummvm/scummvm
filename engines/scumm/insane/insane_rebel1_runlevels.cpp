@@ -1089,6 +1089,7 @@ void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) 
 	clearBit(0);
 	_interactiveVideoActive = true;
 	_levelRouteChoice = 0;
+	_onFootInitialized = false;  // Reset so each segment triggers counter==0 init
 	resetFrameObjectState();
 	_vm->_smushVideoShouldFinish = false;
 	splayer->setCurVideoFlags(0x28);
