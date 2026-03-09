@@ -157,11 +157,12 @@ int MidiDriver_CORE::open() {
 	// Disable reverb mode, as that sucks up a lot of CPU power, which can
 	// be painful on low end machines.
 	// TODO: Make this customizable via a config key?
-	UInt32 usesReverb = 0;
-	AudioUnitSetProperty (_synth, kMusicDeviceProperty_UsesInternalReverb,
-		kAudioUnitScope_Global, 0, &usesReverb, sizeof (usesReverb));
+	{
+		UInt32 usesReverb = 0;
+		AudioUnitSetProperty(_synth, kMusicDeviceProperty_UsesInternalReverb,
+			kAudioUnitScope_Global, 0, &usesReverb, sizeof(usesReverb));
+	}
 #endif
-
 
 	// Finally: Start the graph!
 	RequireNoErr(AUGraphStart(_auGraph));
