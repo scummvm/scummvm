@@ -214,7 +214,7 @@ public:
 	byte _mainMenuPalette[768] = {0};
 
 private:
-	void checkMouseClick(int x, int y);
+	bool checkMouseClick(int x, int y);
 	void showCredits();
 	bool selectInventoryItem(int i);
 	void loadMenuTexts();

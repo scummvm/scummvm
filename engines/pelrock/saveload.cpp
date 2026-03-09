@@ -384,6 +384,7 @@ SaveGameData *PelrockEngine::createSaveGameData() const {
 	saveGame->alfredY = _alfredState.y;
 	saveGame->alfredDir = _alfredState.direction;
 	saveGame->gameState = g_engine->_state;
+	_state->stateGame = GAME;
 	return saveGame;
 }
 

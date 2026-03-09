@@ -89,7 +89,7 @@ MenuButton MenuManager::isButtonClicked(int x, int y) {
 	return NO_BUTTON; // Default fallback
 }
 
-void MenuManager::checkMouseClick(int x, int y) {
+bool MenuManager::checkMouseClick(int x, int y) {
 
 	bool selectedItem = false;
 	for (int i = 0; i < 4; i++) {
@@ -98,7 +98,7 @@ void MenuManager::checkMouseClick(int x, int y) {
 
 		if (itemRect.contains(x, y)) {
 			selectedItem = selectInventoryItem(i);
-			return;
+			return false;
 		}
 	}
 	if (!selectedItem) {
@@ -122,10 +122,10 @@ void MenuManager::checkMouseClick(int x, int y) {
 			_curInventoryPage++;
 		break;
 	case SAVE_GAME_BUTTON:
-		g_engine->saveGameDialog();
+		return g_engine->saveGameDialog();
 		break;
 	case LOAD_GAME_BUTTON:
-		g_engine->loadGameDialog();
+		return g_engine->loadGameDialog();
 		break;
 	case EXIT_MENU_BUTTON:
 		g_engine->quitGame();
@@ -133,6 +133,7 @@ void MenuManager::checkMouseClick(int x, int y) {
 	default:
 		break;
 	}
+	return false;
 }
 
 void MenuManager::showCredits() {
@@ -191,15 +192,19 @@ void MenuManager::menuLoop() {
 	g_system->getPaletteManager()->setPalette(_mainMenuPalette, 0, 256);
 	g_engine->changeCursor(DEFAULT);
 	_menuText = _menuTexts[0];
-	while (!g_engine->shouldQuit() && !_events->_rightMouseClicked) {
+	while (!g_engine->shouldQuit()) {
 
 		_events->pollEvent();
 
 		if (_events->_leftMouseClicked) {
-			checkMouseClick(_events->_mouseX, _events->_mouseY);
+			if(checkMouseClick(_events->_mouseX, _events->_mouseY)) {
+				break;
+			}
 			_events->_leftMouseClicked = false;
 		}
-
+		if(_events->_rightMouseClicked) {
+			break;
+		}
 		drawScreen();
 		_screen->markAllDirty();
 		_screen->update();
@@ -207,6 +212,7 @@ void MenuManager::menuLoop() {
 	}
 	g_engine->_graphics->clearScreen();
 	_events->_rightMouseClicked = false;
+	_events->_leftMouseClicked = false;
 	g_system->getPaletteManager()->setPalette(g_engine->_room->_roomPalette, 0, 256);
 	cleanUp();
 }
