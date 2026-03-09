@@ -132,20 +132,20 @@ Image::PCXDecoder *GxlArchive::loadImage(const char *filename) {
 
 	Common::Path pathName = Common::Path(searchName);
 	if (!hasFile(pathName))
-		error("loadImage() Could not find '%s'", filename);
+		error("loadImage() Could not find '%s'", searchName.c_str());
 
 	Image::PCXDecoder *pcx = new Image::PCXDecoder();
 	if (pcx)
 	{
-		Common::SeekableReadStream *pcxStr = createReadStreamForMember(Common::Path(filename));
+		Common::SeekableReadStream *pcxStr = createReadStreamForMember(pathName);
 		if (pcxStr)
 		{
 			if (!pcx->loadStream(*pcxStr))
-				error("loadImage() Could not process '%s'", filename);
+				error("loadImage() Could not process '%s'", searchName.c_str());
 		}
 		else
 		{
-			warning("loadImage() failed to create read stream for \"%s\"", filename);
+			warning("loadImage() failed to create read stream for \"%s\"", searchName.c_str());
 		}
 		delete pcxStr;
 	}
