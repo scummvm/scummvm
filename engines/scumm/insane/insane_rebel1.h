@@ -108,7 +108,7 @@ private:
 	// Main menu loop on O1OPTION.ANM background (0x15968)
 	// Returns: 1=Start New Game, 2=Game Options, 3=Level Select, 4=Continue Demo, 5=Exit
 	int runMainMenu();
-	void runLevelSelectMenu();
+	int runLevelSelectMenu();
 
 	// Level 1 flow (0x16100): hangar → CU1 → gameplay → CU2 → turret → end
 	// Returns true if level completed, false if player quit
