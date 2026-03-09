@@ -378,7 +378,6 @@ void WaynesWorldEngine::introPt6() {
 		return;
 
 	GxlArchive *oa3Gxl = new GxlArchive("oa3");
-	oa3Gxl->dumpArchive(Common::Path("."));
 	for (int i = 0; i < 5; ++i) {
 		introPt6Surface[i] = new WWSurface(320, 200);
 		Common::String filename = Common::String::format("sign%d.pcx",  i);
