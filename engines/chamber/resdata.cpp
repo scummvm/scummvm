@@ -29,7 +29,7 @@
 namespace Chamber {
 
 extern void askDisk2(void);
-extern int16 loadSplash(const char *filename);
+extern Graphics::Surface *loadSplash(const char *filename);
 
 /*
 Get bank entry
