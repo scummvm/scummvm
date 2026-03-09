@@ -82,8 +82,9 @@ public:
 	 *         Add kAmbientSoundSlotBase (4) to get room sound index
 	 */
 	int tickAmbientSound(uint32 frameCount);
-	bool _isPaused = false;
-	byte _currentMusicTrack = 0;
+
+	bool isPaused() const { return _isPaused; }
+	byte getCurrentMusicTrack() const { return _currentMusicTrack; }
 
 private:
 	void playSound(SonidoFile sound, int channel = -1, int loopCount = 1);
@@ -97,6 +98,8 @@ private:
 	Audio::SoundHandle _musicHandle;
 	Audio::SoundHandle _sfxHandles[kMaxChannels];
 	Common::HashMap<Common::String, SonidoFile> _soundMap;
+	bool _isPaused = false;
+	byte _currentMusicTrack = 0;
 
 
 	uint32 _cdTrackStart = 0;

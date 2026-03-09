@@ -21,11 +21,13 @@
 
 #include "graphics/paletteman.h"
 
-#include "pelrock.h"
+
 #include "pelrock/actions.h"
-#include "pelrock/extrascreens.h"
+#include "pelrock/backgroundbook.h"
+#include "pelrock/cdplayer.h"
 #include "pelrock/offsets.h"
 #include "pelrock/pelrock.h"
+#include "pelrock/spellbook.h"
 #include "pelrock/util.h"
 
 namespace Pelrock {

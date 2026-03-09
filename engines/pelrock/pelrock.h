@@ -163,6 +163,18 @@ private:
 
 	int _numPressedX = 0;
 
+	bool _mouseDisabled = false;
+
+	int _flightFrameCounter = 0;
+	int _flightSorcererSpriteIdx = -1;
+	bool _flightSorcererAppeared = false;
+	bool _flightSpellCast = false;
+	int _flightSpellFrameCounter = 0;
+	bool _flightInBlockingAnim = false;
+	bool _disableAmbientSounds = false;
+	bool _isDogPeeing = false;
+	bool _disableAction = false;
+
 protected:
 	// Engine APIs
 	Common::Error run() override;
@@ -179,23 +191,11 @@ public:
 	ShakeEffectState _shakeEffectState;
 	Graphics::ManagedSurface _compositeBuffer; // Working composition buffer
 
-	bool _mouseDisabled = false;
-
-	int _flightFrameCounter = 0;
-	int _flightSorcererSpriteIdx = -1;
-	bool _flightSorcererAppeared = false;
-	bool _flightSpellCast = false;
-	int _flightSpellFrameCounter = 0;
-	bool _flightInBlockingAnim = false;
-	bool _disableAmbientSounds = false;
-	bool _isDogPeeing = false;
-
 	GameStateData *_state = new GameStateData();
 
 	SmallFont *_smallFont = nullptr;
 	LargeFont *_largeFont = nullptr;
 	DoubleSmallFont *_doubleSmallFont = nullptr;
-	bool _disableAction = false;
 
 public:
 	PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc);

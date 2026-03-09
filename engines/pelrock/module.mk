@@ -21,7 +21,9 @@ MODULE_OBJS = \
 	menu.o \
 	graphics.o \
 	saveload.o \
-	extrascreens.o
+	spellbook.o \
+	cdplayer.o \
+	backgroundbook.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_PELROCK), DYNAMIC_PLUGIN)

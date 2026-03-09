@@ -34,12 +34,10 @@
 
 #include "backends/audiocd/audiocd.h"
 
-#include "pelrock.h"
 #include "pelrock/actions.h"
 #include "pelrock/computer.h"
 #include "pelrock/console.h"
 #include "pelrock/detection.h"
-#include "pelrock/extrascreens.h"
 #include "pelrock/fonts/small_font.h"
 #include "pelrock/offsets.h"
 #include "pelrock/pathfinding.h"
@@ -1795,24 +1793,7 @@ void PelrockEngine::gameLoop() {
 		antiPiracyEffect();
 		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
 	}
-	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_s) {
-		SpellBook spellBook(_events, _res);
-		Spell *selectedSpell = spellBook.run();
-		if (selectedSpell != nullptr) {
-			_dialog->sayAlfred(selectedSpell->text);
-		}
-		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
-	}
-	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_c) {
-		CDPlayer cdPlayer(_events, _res, _sound);
-		cdPlayer.run();
-		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
-	}
-	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_b) {
-		BackgroundBook backgroundBook(_events, _res, _room);
-		backgroundBook.run();
-		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
-	}
+
 	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_w) {
 		Computer computer(_events);
 
