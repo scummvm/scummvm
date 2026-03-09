@@ -243,6 +243,14 @@ private:
 	// Current level index (0-based: 0=LVL1, 1=LVL2, etc.)
 	int _currentLevel;
 
+	// Intro title overlay (RunTwoLineTextSplash from original)
+	bool _introTextActive;
+	int32 _introTextStartFrame;  // revealBaseY: frame at which text begins appearing
+	int32 _introTextEndFrame;    // stopY: frame after which text stops
+	int _introTextLevel;         // index into kLevelTitles
+	void beginLevelTitleOverlay(int level);
+	void drawLevelTitleOverlay(byte *dst, int pitch, int width, int height, int32 curFrame, int32 maxFrame);
+
 	// Control mode (from GAME opcode 0x5E)
 	int16 _flyControlMode;
 	// Mode-2 emitter offsets used by FUN_1D79C when _DAT_75E4 == 2.

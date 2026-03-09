@@ -266,6 +266,10 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 		_levelRouteChoice = 0;
 		_levelGameplayPhase = 0;
 		_menuActive = false;
+	_introTextActive = false;
+	_introTextStartFrame = 0;
+	_introTextEndFrame = 0;
+	_introTextLevel = 0;
 	_menuConfirmed = false;
 	_menuSelection = 0;
 	_menuFrameCounter = 0;

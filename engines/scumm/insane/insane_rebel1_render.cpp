@@ -350,6 +350,15 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		renderMainMenuOverlay(renderBitmap, pitch, width, height);
 	}
 
+	// Intro title overlay (RunTwoLineTextSplash) — drawn during intro cinematics
+	if (_introTextActive && renderBitmap) {
+		int w = _player ? _player->_width : _screenWidth;
+		int h = _player ? _player->_height : _screenHeight;
+		if (w == 0) w = _screenWidth;
+		if (h == 0) h = _screenHeight;
+		drawLevelTitleOverlay(renderBitmap, w, w, h, curFrame, maxFrame);
+	}
+
 	if (!_interactiveVideoActive || !renderBitmap)
 		return;
 
@@ -663,6 +672,73 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 			}
 		}
 	}
+}
+
+// Level intro title data (from RunTwoLineTextSplash calls in original binary).
+// titleText is drawn at y=10, subtitleText at y=25 (matching original DrawUiString positions).
+// revealStartFrame/revealEndFrame control the frame range during which text is visible.
+static const struct {
+	const char *titleText;      // Top line (chapter number)
+	const char *subtitleText;   // Bottom line (level name)
+	int16 revealStartFrame;     // Frame at which text begins appearing
+	int16 revealEndFrame;       // Frame after which text stops
+} kLevelTitles[] = {
+	{ "Chapter 1",  "Flight Training",        -80, -30 },  // Original computes totalFrames-0x50..totalFrames-0x1e
+	{ "Chapter 2",  "Asteroid Field Training",  40, 100 },
+	{ "Chapter 3",  "Planet Kolaador",           0,  50 },
+	{ "Chapter 4",  "Star Destroyer Attack",     5,  50 },
+	{ "Chapter 5",  "Tatooine Attack",         346, 390 },
+	{ "Chapter 6",  "Asteroid Field Chase",     30,  80 },
+	{ "Chapter 7",  "Imperial Probe Droids",   166, 230 },
+	{ "Chapter 8",  "Imperial Walkers",         30,  75 },
+	{ "Chapter 9",  "Stormtroopers",             2,  45 },
+	{ "Chapter 10", "Protect Rebel Transport",  10,  75 },
+	{ "Chapter 11", "Yavin Training",            1,  45 },
+	{ "Chapter 12", "Tie Attack",               15,  70 },
+	{ "Chapter 13", "Death Star Surface",       10,  60 },
+	{ "Chapter 14", "Surface Cannon",          122, 175 },
+	{ "Chapter 15", "Death Star Trench",         1,  49 },
+};
+
+void InsaneRebel1::beginLevelTitleOverlay(int level) {
+	if (level < 0 || level >= ARRAYSIZE(kLevelTitles)) {
+		_introTextActive = false;
+		return;
+	}
+	_introTextActive = true;
+	_introTextLevel = level;
+	_introTextStartFrame = kLevelTitles[level].revealStartFrame;
+	_introTextEndFrame = kLevelTitles[level].revealEndFrame;
+}
+
+void InsaneRebel1::drawLevelTitleOverlay(byte *dst, int pitch, int width, int height, int32 curFrame, int32 maxFrame) {
+	if (!_introTextActive || _introTextLevel < 0 || _introTextLevel >= ARRAYSIZE(kLevelTitles))
+		return;
+
+	// Resolve negative frame values (relative to end of video, e.g. Chapter 1)
+	if (_introTextStartFrame < 0)
+		_introTextStartFrame = maxFrame + _introTextStartFrame;
+	if (_introTextEndFrame < 0)
+		_introTextEndFrame = maxFrame + _introTextEndFrame;
+
+	// Only draw within the frame window
+	if (curFrame < _introTextStartFrame || curFrame >= _introTextEndFrame) {
+		if (curFrame >= _introTextEndFrame)
+			_introTextActive = false;
+		return;
+	}
+
+	const char *title = kLevelTitles[_introTextLevel].titleText;
+	const char *subtitle = kLevelTitles[_introTextLevel].subtitleText;
+
+	// Center horizontally (matching original DrawUiString x_center=0xA0=160)
+	int titleW = getFontBankStringWidth(title);
+	int subtitleW = getFontBankStringWidth(subtitle);
+	int centerX = width / 2;
+
+	// Original positions: title at y=10, subtitle at y=25 (0x19)
+	drawFontBankString(dst, pitch, width, height, centerX - titleW / 2, 10, title);
+	drawFontBankString(dst, pitch, width, height, centerX - subtitleW / 2, 25, subtitle);
 }
 
 // drawFontBankString — FUN_221B7 (0x221B7), partial parity:
