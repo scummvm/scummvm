@@ -659,6 +659,9 @@ BOLTCallback BoltEngine::g_scoobyTypeFreeCallbacks[28];
 BOLTCallback BoltEngine::g_topCatTypeLoadCallbacks[26];
 BOLTCallback BoltEngine::g_topCatTypeFreeCallbacks[26];
 
+BOLTCallback BoltEngine::g_yogiTypeLoadCallbacks[27];
+BOLTCallback BoltEngine::g_yogiTypeFreeCallbacks[27];
+
 void BoltEngine::noOpCb() {}
 void BoltEngine::swapAllWordsCb() { ((BoltEngine *)g_engine)->swapAllWords(); }
 void BoltEngine::swapAllLongsCb() { ((BoltEngine *)g_engine)->swapAllLongs(); }
@@ -686,6 +689,9 @@ void BoltEngine::swapScoobyHelpEntryCb() { ((BoltEngine *)g_engine)->swapScoobyH
 void BoltEngine::swapScoobyWordArrayCb() { ((BoltEngine *)g_engine)->swapScoobyWordArray(); }
 
 void BoltEngine::swapTopCatHelpEntryCb() { ((BoltEngine *)g_engine)->swapTopCatHelpEntry(); }
+
+void BoltEngine::swapYogiAllWordsCb() { ((BoltEngine *)g_engine)->swapYogiAllWords(); }
+void BoltEngine::swapYogiFirstWordCb() { ((BoltEngine *)g_engine)->swapYogiFirstWord(); }
 
 void BoltEngine::initCallbacks() {
 	// --- BOOTHS ---
@@ -866,6 +872,31 @@ void BoltEngine::initCallbacks() {
 	g_topCatBoltCallbacks.memberFreeCallbacks = g_defaultMemberFreeCallbacks;
 	g_topCatBoltCallbacks.groupLoadCallbacks = g_defaultGroupLoadCallbacks;
 	g_topCatBoltCallbacks.groupFreeCallbacks = g_defaultGroupFreeCallbacks;
+
+	// --- YOGI ---
+	for (int i = 0; i < ARRAYSIZE(g_yogiTypeLoadCallbacks); i++) {
+		g_yogiTypeLoadCallbacks[i] = noOpCb;
+	}
+
+	g_yogiTypeLoadCallbacks[2] = swapAllWordsCb;
+	g_yogiTypeLoadCallbacks[8] = swapSpriteHeaderCb;
+	g_yogiTypeLoadCallbacks[10] = swapPicHeaderCb;
+	g_yogiTypeLoadCallbacks[14] = swapFirstFourWordsCb;
+	g_yogiTypeLoadCallbacks[25] = swapYogiFirstWordCb;
+	g_yogiTypeLoadCallbacks[26] = swapYogiAllWordsCb;
+
+	for (int i = 0; i < ARRAYSIZE(g_yogiTypeFreeCallbacks); i++) {
+		g_yogiTypeFreeCallbacks[i] = noOpCb;
+	}
+
+	g_yogiTypeFreeCallbacks[8] = freeSpriteCleanUpCb;
+
+	g_yogiBoltCallbacks.typeLoadCallbacks = g_yogiTypeLoadCallbacks;
+	g_yogiBoltCallbacks.typeFreeCallbacks = g_yogiTypeFreeCallbacks;
+	g_yogiBoltCallbacks.memberLoadCallbacks = g_defaultMemberLoadCallbacks;
+	g_yogiBoltCallbacks.memberFreeCallbacks = g_defaultMemberFreeCallbacks;
+	g_yogiBoltCallbacks.groupLoadCallbacks = g_defaultGroupLoadCallbacks;
+	g_yogiBoltCallbacks.groupFreeCallbacks = g_defaultGroupFreeCallbacks;
 }
 
 } // End of namespace Bolt

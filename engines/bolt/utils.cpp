@@ -158,4 +158,9 @@ void BoltEngine::unpackColors(int16 count, byte *packedColors) {
 	}
 }
 
+bool BoltEngine::intersectRect(const Common::Rect *a, const Common::Rect *b, Common::Rect *out) {
+	*out = a->findIntersectingRect(*b);
+	return !out->isEmpty();
+}
+
 } // End of namespace Bolt

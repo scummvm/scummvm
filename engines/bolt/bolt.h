@@ -510,6 +510,42 @@ typedef struct TopCatAnim {
 	}
 } TopCatAnim;
 
+// YOGI GAME
+
+typedef struct YogiState {
+	int16 levelNumber;
+	int16 currentSlot;
+	int16 levelIndex[10];
+	int16 slotIndex[10];
+	int16 levelComplete;
+	int16 basketSound[24];
+	int16 basketState[24];
+	int16 basketCount;
+	int16 matchCount;
+	int16 selectionPending;
+	int16 selected1Slot;
+	int16 selected2Slot;
+	int16 sound1;
+	int16 sound2;
+
+	YogiState() {
+		levelNumber = 0;
+		currentSlot = 0;
+		memset(levelIndex, 0, sizeof(levelIndex));
+		memset(slotIndex, 0, sizeof(slotIndex));
+		levelComplete = 0;
+		memset(basketSound, 0, sizeof(basketSound));
+		memset(basketState, 0, sizeof(basketState));
+		basketCount = 0;
+		matchCount = 0;
+		selectionPending = 0;
+		selected1Slot = 0;
+		selected2Slot = 0;
+		sound1 = 0;
+		sound2 = 0;
+	}
+} YogiState;
+
 class BoltEngine : public Engine {
 friend class XpLib;
 
@@ -685,6 +721,7 @@ protected:
 	const char *assetPath(const char *fileName);
 	void boltCycleToXPCycle(byte *srcData, XPCycleState *cycleDesc);
 	void unpackColors(int16 count, byte *packedColors);
+	bool intersectRect(const Common::Rect *a, const Common::Rect *b, Common::Rect *out);
 
 	// Swap
 	void swapPicHeader();
@@ -1070,7 +1107,6 @@ protected:
 	void setHuckColors(int16 which);
 	void restoreHuckColors(int16 which);
 	void startHuckShuffleTimer();
-	bool intersectRect(const Common::Rect *a, const Common::Rect *b, Common::Rect *out);
 	void drawGift(int16 slot);
 	void drawHuckGifts();
 	void checkHuckLevelComplete();
@@ -1120,7 +1156,7 @@ protected:
 	byte *g_huckBgDisplayPic = nullptr;
 	int16 g_huckScrollOffset = 0;
 	int16 g_huckPalRange[8] = { 0 };
-	int16 g_returnBooth = 0;
+	int16 g_huckReturnBooth = 0;
 	int16 g_huckExitFlag = 0;
 	int16 g_huckCursorX = 0;
 	int16 g_huckCursorY = 0;
@@ -1306,7 +1342,74 @@ protected:
 	};
 
 	// --- YOGI ---
-	int16 yogiGame(int16 prevBooth) { return 0; }
+	void playSoundMapYogi(int16 memberId);
+	void waitSoundMapYogi();
+	void stopSoundYogi();
+	void setYogiColors(int16 which);
+	void restoreYogiColors(int16 which);
+	void drawBasket(int16 slot, byte *basketSprite);
+	void drawAllBaskets();
+	void handleYogiMatch();
+	bool loadYogiBgPic();
+	void unloadYogiBgPic();
+	void drawYogiLevel();
+	bool loadYogiLevel();
+	void unloadYogiResources();
+	bool initYogiLevel();
+	bool resumeYogiLevel();
+	bool initYogi();
+	void yogiToggleBlinking(int16 which, int16 *state);
+	void yogiUpdateHotSpots(int16 x, int16 y);
+	int16 findBasket(int16 x, int16 y);
+	void resolveYogiSelection();
+	bool handleBasketSelect(int16 x, int16 y);
+	void yogiHandleActionButton(int16 x, int16 y);
+	void handleYogiEvent(int16 eventType, uint32 eventData);
+	void playYogi();
+	void cleanUpYogi();
+	int16 yogiGame(int16 prevBooth);
+
+	void swapYogiAllWords();
+	void swapYogiFirstWord();
+
+	static void swapYogiAllWordsCb();
+	static void swapYogiFirstWordCb();
+
+	BOLTLib *g_yogiBoltLib = nullptr;
+	BOLTCallbacks g_yogiBoltCallbacks;
+
+	static BOLTCallback g_yogiTypeLoadCallbacks[27];
+	static BOLTCallback g_yogiTypeFreeCallbacks[27];
+
+	int16 g_yogiSoundPlaying = 0;
+	int16 g_yogiSoundActive = 0;
+	int16 g_yogiHotSpotCount = 0;
+	int16 g_yogiAnimActive = 0;
+	uint32 g_yogiBlinkTimer1 = 0;
+	uint32 g_yogiBlinkTimer2 = 0;
+	int16 g_yogiBlinkState1 = 0;
+	int16 g_yogiBlinkState2 = 0;
+	int16 g_yogiGlobal[0xA0] = { 0 };
+	YogiState g_yogiState;
+	byte *g_yogiBasketPic = nullptr;
+	int16 g_yogiLevelGroupId = 0;
+	byte *g_yogiBgPic = nullptr;
+	byte *g_yogiNormalSprite = nullptr;
+	byte *g_yogiHlSprite = nullptr;
+	byte *g_yogiAnimSprite = nullptr;
+	int16 g_yogiSpriteStride = 0;
+	int16 g_yogiSpriteHeight = 0;
+	int16 g_yogiPalRange[8] = { 0 };
+	int16 g_yogiReturnBooth = 0;
+	int16 g_yogiExitFlag = 0;
+	int16 g_yogiLevelId = 0;
+	int16 g_yogiCursorX = 0;
+	int16 g_yogiCursorY = 0;
+	byte g_yogiPalSave0[15] = { 0 };
+	byte g_yogiPalHighlight0[15] = { 0 };
+	byte g_yogiPalSave1[15] = { 0 };
+	byte g_yogiPalHighlight1[15] = { 0 };
+	XPPicDesc g_yogiScratchBuf;
 };
 
 extern BoltEngine *g_engine;

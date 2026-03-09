@@ -76,11 +76,6 @@ void BoltEngine::startHuckShuffleTimer() {
 	}
 }
 
-bool BoltEngine::intersectRect(const Common::Rect *a, const Common::Rect *b, Common::Rect *out) {
-	*out = a->findIntersectingRect(*b);
-	return !out->isEmpty();
-}
-
 void BoltEngine::drawGift(int16 slot) {
 	byte *giftSprite = memberAddr(g_huckBoltLib, g_huckState.drawTable1[slot]);
 	int16 sprStride = READ_UINT16(giftSprite + 0x0A);
@@ -598,7 +593,7 @@ void BoltEngine::huckHandleActionButton(int16 x, int16 y) {
 		if (exitRect.contains(x, y)) {
 			setHuckColors(1);
 			restoreHuckColors(0);
-			g_returnBooth = 3;
+			g_huckReturnBooth = 3;
 			g_huckExitFlag = 1;
 		}
 	}
@@ -829,7 +824,7 @@ void BoltEngine::handleEvent(int16 eventType, uint32 eventData) {
 }
 
 void BoltEngine::playHuck() {
-	g_returnBooth = 0x10;
+	g_huckReturnBooth = 0x10;
 
 	while (!shouldQuit()) {
 		if (g_huckExitFlag)
@@ -837,6 +832,7 @@ void BoltEngine::playHuck() {
 
 		uint32 eventData = 0;
 		int16 eventType = _xp->getEvent(etEmpty, &eventData);
+
 		if (eventType)
 			handleEvent(eventType, eventData);
 
@@ -848,7 +844,7 @@ void BoltEngine::playHuck() {
 	}
 
 	if (shouldQuit())
-		g_returnBooth = 0;
+		g_huckReturnBooth = 0;
 }
 
 void BoltEngine::cleanUpHuck() {
@@ -898,7 +894,7 @@ void BoltEngine::cleanUpHuck() {
 
 int16 BoltEngine::huckGame(int16 prevBooth) {
 	if (!openBOLTLib(&g_huckBoltLib, &g_huckBoltCallbacks, assetPath("huck.blt")))
-		return g_returnBooth;
+		return g_huckReturnBooth;
 
 	int16 savedTimer = _xp->setInactivityTimer(30);
 
@@ -910,7 +906,7 @@ int16 BoltEngine::huckGame(int16 prevBooth) {
 	_xp->setInactivityTimer(savedTimer);
 	closeBOLTLib(&g_huckBoltLib);
 
-	return g_returnBooth;
+	return g_huckReturnBooth;
 }
 
 void BoltEngine::swapHuckWordArray() {
