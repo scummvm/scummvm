@@ -79,10 +79,7 @@ public:
 
 	uint32 getFeatures() const;
 
-	/**
-	 * Returns the game Id
-	 */
-	Common::String getGameId() const;
+	bool gameIdMatches(const char *gameId) const;
 
 	/**
 	 * Gets a random number

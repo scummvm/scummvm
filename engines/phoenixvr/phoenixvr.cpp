@@ -76,7 +76,7 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 	if (!pixelFormatFound)
 		error("Couldn't find 16/32-bit pixel format");
 
-	if (getGameId() == "amerzone") {
+	if (gameIdMatches("amerzone")) {
 		_levels.push_back("01VR_PHARE");
 		_levels.push_back("02VR_ILE");
 		_levels.push_back("03VR_PUEBLO");
@@ -104,8 +104,8 @@ uint32 PhoenixVREngine::getFeatures() const {
 	return _gameDescription->flags;
 }
 
-Common::String PhoenixVREngine::getGameId() const {
-	return _gameDescription->gameId;
+bool PhoenixVREngine::gameIdMatches(const char *gameId) const {
+	return strcmp(_gameDescription->gameId, gameId) == 0;
 }
 
 Common::String PhoenixVREngine::removeDrive(const Common::String &path) {
@@ -152,7 +152,7 @@ bool PhoenixVREngine::setNextLevel() {
 	if (_currentLevel < _levels.size()) {
 		auto &level = _levels[_currentLevel++];
 		debug("next level is %s", level.c_str());
-		setNextScript(level + "\\" + getGameId() + ".lst");
+		setNextScript(Common::String::format("%s\\%s.lst", level.c_str(), _gameDescription->gameId));
 		_loaded = true;
 		return true;
 	} else
@@ -186,7 +186,7 @@ void PhoenixVREngine::loadNextScript() {
 	_script.reset(new Script(*s));
 	for (auto &var : _script->getVarNames())
 		declareVariable(var);
-	if (getGameId() == "amerzone")
+	if (gameIdMatches("amerzone"))
 		declareVariable("oeuf_pose"); // crash in chapter 7
 
 	int numWarps = _script->numWarps();
@@ -280,7 +280,7 @@ bool PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
 	}
 
 	// Typo in Necronomicon's Script4.lst
-	if (getGameId() == "necrono" && warp == "N3M09L03W515E1.vr")
+	if (gameIdMatches("necrono") && warp == "N3M09L03W515E1.vr")
 		_nextWarp = _script->getWarp("N3M09L03W51E1.vr");
 	else
 		_nextWarp = _script->getWarp(warp);
@@ -359,7 +359,7 @@ void PhoenixVREngine::setVariable(const Common::String &name, int value) {
 }
 
 int PhoenixVREngine::getVariable(const Common::String &name) const {
-	if (getGameId() == "lochness" && name == "tumuAccpet")
+	if (gameIdMatches("lochness") && name == "tumuAccpet")
 		return _variables.getVal("tumuAccept");
 	return _variables.getVal(name);
 }
@@ -621,7 +621,7 @@ void PhoenixVREngine::rollover(int textId, RolloverType type) {
 	bool bold = false;
 	uint16 color = 0xFFFF;
 
-	if (getGameId() == "lochness") {
+	if (gameIdMatches("lochness")) {
 		size = 12;
 		bold = false;
 		switch (type) {
