@@ -146,7 +146,11 @@ private:
 	void renderTargetBoxes(byte *dst, int pitch, int width, int height);
 	void renderTargeting(byte *dst, int pitch, int width, int height);
 	void renderGostSlots(byte *dst, int pitch, int width, int height);
+	void renderGostScorePopup(byte *dst, int pitch, int width, int height,
+							  int16 centerX, int16 centerY, int16 frame);
 	void renderLaserShots(byte *dst, int pitch, int width, int height);
+	void renderLevel8Overlay(byte *dst, int pitch, int width, int height);
+	void updateLevel8WalkerState();
 	void renderSprite(byte *dst, int pitch, int width, int height,
 					  int x, int y, const RA1Sprite &sprite);
 	void updateGostSlotPosition(int16 targetIdx, int16 left, int16 top, int16 right, int16 bottom);
@@ -410,6 +414,31 @@ private:
 
 	int16 _killCount;        // 0x75D0: targets destroyed this stage
 	int16 _lastHitTarget;    // 0x75D6: prevents double-hit on same target
+
+	// Level 8 walker-specific state — RunLevel8Flow (0x18546)
+	int16 _walkerHealth;     // Walker health percentage (0-100), init=100
+	int16 _walkerTimer;      // Attack window countdown (100→0)
+	int16 _walkerBranchChoice; // Directional choice: 0=none, 1=left, 2=right
+
+	// Attack window frame numbers per route (3 routes × 3 windows)
+	// Route 0: 2588/1709/262, Route 1: 2323/1444/-2, Route 2: 877/-2/-2
+	// -2 = disabled (no window at that slot for this route)
+	static const int16 kWalkerAttackWindow1[3];
+	static const int16 kWalkerAttackWindow2[3];
+	static const int16 kWalkerAttackWindow3[3];
+
+	// Per-route damage frame tables — FUN_12fe1/FUN_130c9/FUN_13195
+	// Each entry: {frameNumber, hitboxType} where hitboxType determines the check
+	struct WalkerDamageFrame {
+		int16 frame;
+		int16 type;    // 0=proximity(41,32), 1=offsetY(15), 2=offsetX(24), 3=proximity(40,31), 4=offsetY(31)
+	};
+	static const WalkerDamageFrame kWalkerDamageRoute0[];
+	static const WalkerDamageFrame kWalkerDamageRoute1[];
+	static const WalkerDamageFrame kWalkerDamageRoute2[];
+	static const int kWalkerDamageRoute0Count;
+	static const int kWalkerDamageRoute1Count;
+	static const int kWalkerDamageRoute2Count;
 
 	static const int kFrameObjectStateBytes = 300;
 	byte _frameObjectState[kFrameObjectStateBytes];
