@@ -396,16 +396,17 @@ void VR::stopAnimation(const Common::String &name) {
 
 void VR::Animation::renderNextFrame(Graphics::Surface &pic) {
 	assert(active);
-	if (frameIndex >= frames.size()) {
-		active = false;
-		g_engine->setVariable(variable, variableValue);
-	} else {
+	if (frameIndex < frames.size()) {
 		auto &frame = frames[frameIndex++];
 		frame.render(pic);
 		if (frame.restartAtFrame >= 0) {
 			frameIndex = frame.restartAtFrame;
 			t = 1;
 		}
+	}
+	if (frameIndex >= frames.size()) {
+		active = false;
+		g_engine->setVariable(variable, variableValue);
 	}
 }
 
