@@ -99,6 +99,259 @@ static const int16 kLevel8BranchFrames[3][3] = {
 	{  877,   -2,   -2 }
 };
 
+static inline bool isLevel4DamageLatch(uint16 code) {
+	switch (code) {
+	case 0x0008:
+	case 0x000A:
+	case 0x000C:
+	case 0x0010:
+	case 0x0018:
+	case 0x001C:
+	case 0x001E:
+	case 0x0024:
+	case 0x0026:
+	case 0x0028:
+	case 0x002D:
+		return true;
+	default:
+		return false;
+	}
+}
+
+static inline bool isLevel6DamageLatch(uint16 code) {
+	switch (code) {
+	case 0x0003:
+	case 0x0008:
+	case 0x0009:
+	case 0x000D:
+	case 0x000F:
+	case 0x0028:
+		return true;
+	default:
+		return false;
+	}
+}
+
+static inline bool isLevel10DamageLatch(uint16 code) {
+	if (code < 0x7F) {
+		if (code > 0x3D) {
+			if (code > 0x3E) {
+				if (code < 0x5C) {
+					if (code < 0x54) {
+						if (code < 0x44)
+							return false;
+						if (code > 0x44)
+							return code == 0x4F;
+					} else if (code > 0x54) {
+						if (code < 0x58)
+							return code == 0x56;
+						if (code < 0x59)
+							return true;
+						return code == 0x5A;
+					}
+				} else if (code > 0x5C) {
+					if (code < 0x73) {
+						if (code < 0x6A)
+							return false;
+						if (code > 0x6A)
+							return code == 0x6F;
+					} else if (code > 0x73) {
+						if (code < 0x77)
+							return code == 0x75;
+						if (code < 0x78)
+							return true;
+						return code == 0x7B;
+					}
+				}
+			}
+			return true;
+		}
+
+		if (code > 0x1F) {
+			if (code > 0x20) {
+				if (code < 0x2E) {
+					if (code < 0x22)
+						return false;
+					if (code > 0x22)
+						return code == 0x24;
+				} else if (code > 0x2E) {
+					if (code < 0x35)
+						return code == 0x32;
+					if (code < 0x36)
+						return false;
+					return code == 0x3C;
+				}
+			}
+			return true;
+		}
+
+		if (code > 0x0E) {
+			if (code > 0x0F) {
+				if (code < 0x14)
+					return false;
+				if (code > 0x14)
+					return code == 0x1A;
+			}
+			return true;
+		}
+
+		return code > 3 && (code < 5 || code == 6);
+	}
+
+	if (code > 0x7F) {
+		if (code < 0xC7) {
+			if (code < 0xA2) {
+				if (code < 0x95) {
+					if (code < 0x83)
+						return false;
+					if (code > 0x83)
+						return code == 0x90;
+				} else if (code > 0x95) {
+					if (code < 0x9E)
+						return false;
+					if (code > 0x9E)
+						return code == 0xA0;
+				}
+			} else if (code > 0xA2) {
+				if (code < 0xB7) {
+					if (code < 0xA5)
+						return false;
+					if (code > 0xA5)
+						return code == 0xAD;
+				} else if (code > 0xB7) {
+					if (code < 0xBB)
+						return code == 0xB9;
+					if (code < 0xBC)
+						return true;
+					return code == 0xBE;
+				}
+			}
+			return true;
+		}
+
+		if (code > 0xC7) {
+			if (code < 0xE6) {
+				if (code < 0xD7) {
+					if (code < 0xC9)
+						return false;
+					if (code > 0xC9)
+						return code == 0xCF;
+				} else if (code > 0xD9) {
+					if (code < 0xDD)
+						return code == 0xDB;
+					if (code < 0xDE)
+						return true;
+					return code == 0xDF;
+				}
+			} else if (code > 0xE6) {
+				if (code < 0xF5) {
+					if (code < 0xF0)
+						return false;
+					if (code > 0xF0)
+						return code == 0xF3;
+				} else if (code > 0xF5) {
+					if (code < 0xFF)
+						return code == 0xFD;
+					if (code < 0x100)
+						return true;
+					return code == 0x103;
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+static inline bool hasLevel6PerspectiveHazard(uint16 frame, int16 perspectiveX, int16 perspectiveY) {
+	switch (frame) {
+	case 0x006A:
+	case 0x00FD:
+	case 0x011C:
+	case 0x0563:
+		return perspectiveX < 0x18;
+	case 0x0144:
+		return perspectiveX < 0x29 && perspectiveY < 0x20;
+	case 0x016F:
+	case 0x0222:
+	case 0x02EB:
+		return perspectiveX < 0x29;
+	case 0x01DE:
+	case 0x0492:
+		return perspectiveX < 8;
+	case 0x024A:
+		return perspectiveY < 0x27;
+	case 0x0318:
+		return perspectiveY < 0x0F;
+	case 0x0397:
+		return perspectiveX < 0x18 && perspectiveY < 0x20;
+	case 0x0405:
+		return perspectiveX > 0x28;
+	case 0x0462:
+		return perspectiveY < 0x20;
+	case 0x04F1:
+		return perspectiveX < 0x29 && perspectiveY >= 0x0F;
+	case 0x04FF:
+		return perspectiveX < 0x29 && perspectiveY < 0x20;
+	case 0x0617:
+		return !(perspectiveX > 7 && perspectiveX < 0x29 &&
+			perspectiveY > 0x0E && perspectiveY < 0x20);
+	default:
+		return false;
+	}
+}
+
+static inline bool hasLevel8PerspectiveHazardRoute0(uint16 frame, int16 perspectiveX, int16 perspectiveY) {
+	switch (frame) {
+	case 0x00CD:
+		return perspectiveX < 0x29;
+	case 0x00EF:
+		return perspectiveY < 0x0F;
+	case 0x0294:
+	case 0x04BE:
+	case 0x076C:
+		return perspectiveX < 0x29 && perspectiveY < 0x20;
+	case 0x03A2:
+		return perspectiveX < 0x18;
+	case 0x05C9:
+	case 0x085A:
+	case 0x096F:
+		return perspectiveY < 0x20;
+	default:
+		return false;
+	}
+}
+
+static inline bool hasLevel8PerspectiveHazardRoute1(uint16 frame, int16 perspectiveX, int16 perspectiveY) {
+	switch (frame) {
+	case 0x0189:
+		return perspectiveY < 0x0F;
+	case 0x0297:
+		return perspectiveX < 0x18;
+	case 0x03B3:
+	case 0x0661:
+		return perspectiveX < 0x29 && perspectiveY < 0x20;
+	case 0x04BE:
+	case 0x074F:
+	case 0x0864:
+		return perspectiveY < 0x20;
+	default:
+		return false;
+	}
+}
+
+static inline bool hasLevel8PerspectiveHazardRoute2(uint16 frame, int16 perspectiveX, int16 perspectiveY) {
+	switch (frame) {
+	case 0x00BB:
+		return perspectiveX < 0x29 && perspectiveY < 0x20;
+	case 0x01A9:
+	case 0x02BE:
+		return perspectiveY < 0x20;
+	default:
+		return false;
+	}
+}
+
 void InsaneRebel1::resetFrameObjectState() {
 	memset(_frameObjectState, 0, sizeof(_frameObjectState));
 	for (int i = 0x50; i < 0x96; i++)
@@ -235,20 +488,31 @@ void InsaneRebel1::checkDynamicLevelBranch() {
 		const int frame = (int)_frameCounter;
 		const int leftBlockedFrame = kLevel8BranchFrames[route][2];
 		const int rightBlockedFrame = kLevel8BranchFrames[route][1];
+		const bool shotEdge = _playerFired && _fireCooldown == 0;
 		int nextRoute = -1;
 
 		for (int i = 0; i < 3; ++i) {
 			const int triggerFrame = kLevel8BranchFrames[route][i];
-			if (triggerFrame >= 0 && frame == triggerFrame) {
-				if (_shipPosX < kRA1CenterX) {
-					if (frame != leftBlockedFrame)
-						nextRoute = 1;
-				} else {
-					if (frame != rightBlockedFrame)
-						nextRoute = 2;
-				}
-				break;
+			if (triggerFrame < 0)
+				continue;
+
+			if (shotEdge && frame > triggerFrame - 0x32 && frame <= triggerFrame)
+				_levelRouteChoice = (_shipPosX < kRA1CenterX) ? 1 : 2;
+
+			if (frame != triggerFrame)
+				continue;
+
+			const bool chooseLeft = (_levelRouteChoice == 1) ||
+				((_shipPosX < kRA1CenterX) && (_levelRouteChoice != 2));
+			if (chooseLeft) {
+				if (frame != leftBlockedFrame)
+					nextRoute = 1;
+			} else {
+				if (frame != rightBlockedFrame)
+					nextRoute = 2;
 			}
+			_levelRouteChoice = 0;
+			break;
 		}
 
 		if (nextRoute >= 0 && nextRoute != route) {
@@ -757,10 +1021,37 @@ void InsaneRebel1::updateAsteroidPhysics() {
 	// RA1 FUN_1B297-style per-frame latches for 0x0B sections:
 	//   0x5D latch 0xFFFF -> bit 0x40 (scripted obstacle/contact)
 	//   0x5F non-zero + RNG -> bit 0x80 (scripted random hit)
-	if (_gameLatch5D == 0xFFFF)
+	if (_gameLatch5D == 0xFFFF ||
+		(_currentLevel == 3 && isLevel4DamageLatch(_gameLatch5D)) ||
+		(_currentLevel == 5 && isLevel6DamageLatch(_gameLatch5D)) ||
+		(_currentLevel == 9 && isLevel10DamageLatch(_gameLatch5D)))
 		_damageFlags |= 0x40;
-	if (_gameLatch5F != 0 && _vm->_rnd.getRandomNumber((uint16)(_gameLatch5F - 1)) == 0)
+	if (_gameLatch5F != 0 &&
+		((_currentLevel == 3 || _currentLevel == 9)
+			? (_vm->_rnd.getRandomNumber(2) == 0)
+			: (_vm->_rnd.getRandomNumber((uint16)(_gameLatch5F - 1)) == 0)))
 		_damageFlags |= 0x80;
+
+	if (_currentLevel == 5 && hasLevel6PerspectiveHazard((uint16)_frameCounter, _perspectiveX, _perspectiveY))
+		_damageFlags |= 0x20;
+
+	if (_currentLevel == 7) {
+		bool walkerHazard = false;
+		switch (CLIP<int>(_levelRouteIndex, 0, 2)) {
+		case 0:
+			walkerHazard = hasLevel8PerspectiveHazardRoute0((uint16)_frameCounter, _perspectiveX, _perspectiveY);
+			break;
+		case 1:
+			walkerHazard = hasLevel8PerspectiveHazardRoute1((uint16)_frameCounter, _perspectiveX, _perspectiveY);
+			break;
+		case 2:
+			walkerHazard = hasLevel8PerspectiveHazardRoute2((uint16)_frameCounter, _perspectiveX, _perspectiveY);
+			break;
+		}
+
+		if (walkerHazard)
+			_damageFlags |= 0x20;
+	}
 
 	// Health regeneration (FUN_1BB0E): +1 every 32 frames when alive
 	if (_health >= 0 && _health < kMaxHealth && (_frameCounter & 0x1F) == 0) {
@@ -849,6 +1140,10 @@ void InsaneRebel1::updateAsteroidPhysics() {
 	resetProjectionTable();
 
 	_frameCounter++;
+
+	if (_currentLevel == 3 && _levelGameplayPhase == 2 && _frameCounter == 0x3E)
+		_gameplayFlags75ff |= 2;
+
 	checkDynamicLevelBranch();
 
 	debug(7, "RA1 asteroid: pos=(%d,%d) avg=(%d,%d) view=(%d,%d) health=%d flash=%d",
