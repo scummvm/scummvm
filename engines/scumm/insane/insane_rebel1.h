@@ -361,14 +361,32 @@ private:
 	int _menuSelection; // 0..4 maps to return values 1..5
 	int _menuFrameCounter;
 
-	// Options submenu state
+	// Options submenu state — RunGameOptionsMenu (0x14B42)
+	static const int kOptionsItemCount = 9; // 8 options + BACK
 	bool _optionsActive;     // True when showing options instead of main menu
-	int _optionsSel;         // 0=difficulty, 1=turbulence, 2=back
+	int _optionsSel;         // 0..8 selected option row
 	bool _levelSelectActive; // True when showing level-select submenu
 	int _levelSelectSel;     // 0=Level1 ... N-1=Back
 	int _startLevel;         // 1-based start level for "Start New Game"
 
+	// Per-option state (matching original RunGameOptionsMenu globals)
+	bool _optMusicEnabled;    // DAT_22b7: music on/off
+	bool _optSfxEnabled;      // DAT_22b8: sfx+voice on/off
+	bool _optTextEnabled;     // DAT_22b9: dialogue text on/off
+	bool _optControlsYFlip;   // DAT_22be: Y-axis inversion
+	int  _optVolume;          // DAT_22c1: master volume 0..127
 	bool _turbulenceEnabled;  // Random per-frame jitter in deltaX (original has it on)
+
+	// High scores / TOP PILOTS display — data at DS:0x1D0
+	static const int kHighScoreCount = 10;
+	struct HighScoreEntry {
+		char name[20];   // 0x14 bytes per entry (includes '<' prefix)
+		int32 score;
+		byte gender;     // 0/1/2 → tech font glyph '{','|','}'
+	};
+	HighScoreEntry _highScores[kHighScoreCount];
+	bool _highScoresActive;  // True when showing TOP PILOTS overlay
+	void showHighScores();
 
 	// Shooting state — FUN_1CCA0 (0x1CCA0)
 	bool _playerFired;       // 0x7570: current fire-button state
