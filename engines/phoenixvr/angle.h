@@ -22,6 +22,7 @@
 #ifndef PHOENIXVR_ANGLE_H
 #define PHOENIXVR_ANGLE_H
 
+#include "common/util.h"
 #include "math/utils.h"
 #include "phoenixvr/math.h"
 
@@ -52,16 +53,37 @@ public:
 
 	float angle() const { return _angle; }
 
-	void set(float v) {
-		if (v > _rangeMax)
-			v = _rangeMax;
-		else if (v < _rangeMin)
-			v = _rangeMin;
-		auto range = _max - _min;
-		auto a = fmod(v - _min, range);
+	static float mod(float v, float min, float max) {
+		auto range = max - min;
+		auto a = std::fmod(v - min, range);
 		if (a < 0)
 			a += range;
-		_angle = a + _min;
+		return a + min;
+	}
+
+	float mod(float v) const {
+		return mod(v, _min, _max);
+	}
+
+	void set(float v) {
+		_angle = mod(v, _min, _max);
+		auto range = _max - _min;
+		auto min = _rangeMin, max = _rangeMax;
+		if (_angle >= min && _angle <= max)
+			return;
+		if (_angle >= min - range && _angle <= max - range)
+			return;
+		if (_angle >= min + range && _angle <= max + range)
+			return;
+
+		// out of bounds, find left or right
+		auto l0 = std::abs(_angle - _rangeMin);
+		auto l1 = std::abs(_angle - _rangeMin - range);
+		auto l = MIN(l0, l1);
+		auto r0 = std::abs(_rangeMax - _angle);
+		auto r1 = std::abs(range + _rangeMax - _angle);
+		auto r = MIN(r0, r1);
+		_angle = l < r ? _rangeMin : _rangeMax;
 	}
 
 	void add(float v) {
