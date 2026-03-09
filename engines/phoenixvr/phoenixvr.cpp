@@ -327,6 +327,8 @@ void PhoenixVREngine::playSound(const Common::String &sound, Audio::Mixer::Sound
 	}
 
 	if (music) {
+		if (!_currentMusic.empty())
+			stopSound(_currentMusic);
 		_currentMusic = sound;
 		_currentMusicVolume = volume;
 	}
