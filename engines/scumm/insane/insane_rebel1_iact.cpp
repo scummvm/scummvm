@@ -372,6 +372,12 @@ void InsaneRebel1::applyFrameObjectHitState(int16 targetIdx) {
 	if (targetIdx < 0)
 		return;
 
+	// Protected targets (shield generators in Level 4, etc.) can be hit
+	// repeatedly — skip event mask toggle. Original: DAT_00007732/7734 check
+	// in HandleGameOp5A.
+	if (targetIdx + 1 == _protectedTargetA || targetIdx + 1 == _protectedTargetB)
+		return;
+
 	const int byteIndex = targetIdx >> 3;
 	if (byteIndex < 0 || byteIndex >= 0x96 || byteIndex >= kFrameObjectStateBytes)
 		return;
@@ -1146,8 +1152,44 @@ void InsaneRebel1::updateAsteroidPhysics() {
 
 	_frameCounter++;
 
+	// Level 4 Phase 2: enable torpedo mode at frame 0x3E
 	if (_currentLevel == 3 && _levelGameplayPhase == 2 && _frameCounter == 0x3E)
 		_gameplayFlags75ff |= 2;
+
+	// Level 4 Phase 1: track shield generator hits per frame.
+	// Original (RunLevel4Flow): g_recentKillObjectIdPlus1 checked every frame.
+	// When enough hits accumulated (>0x30), generator is "destroyed" (clear protectedTarget).
+	// When both destroyed for 60 frames, phase ends.
+	if (_currentLevel == 3 && _levelGameplayPhase == 1) {
+		if (_lastHitTarget == _protectedTargetA && _protectedTargetA != 0)
+			_shieldGenHitsA++;
+		if (_lastHitTarget == _protectedTargetB && _protectedTargetB != 0)
+			_shieldGenHitsB++;
+
+		if (_shieldGenHitsA > 0x30)
+			_protectedTargetA = 0;
+		if (_shieldGenHitsB > 0x30)
+			_protectedTargetB = 0;
+
+		// Both destroyed: count down 60 frames then end phase
+		if (_protectedTargetA == 0 && _protectedTargetB == 0 &&
+			_shieldGenHitsA > 0x30 && _shieldGenHitsB > 0x30) {
+			_shieldGenHitsA++;  // reuse as countdown
+			if (_shieldGenHitsA > 0x30 + 0x3C)
+				_vm->_smushVideoShouldFinish = true;
+		}
+	}
+
+	// Level 15 Phase 2: enable torpedo and end on hit.
+	// Original (RunLevel1GameLoop): torpedo at frame 0x18A, ends when DAT_00007602 & 2.
+	if (_currentLevel == 14 && _levelGameplayPhase == 2) {
+		if (_frameCounter == 0x18A)
+			_gameplayFlags75ff |= 2;
+		if (_killCount > 0) {
+			_torpedoFired = true;
+			_vm->_smushVideoShouldFinish = true;
+		}
+	}
 
 	checkDynamicLevelBranch();
 

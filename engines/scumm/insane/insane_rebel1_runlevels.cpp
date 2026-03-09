@@ -367,12 +367,23 @@ bool InsaneRebel1::runLevel4() {
 		_killCount = 0;
 		_levelGameplayPhase = 0;
 
+		// Phase 1: Destroy two shield generators.
+		// Original sets DAT_00007732=0x39, DAT_00007734=0x3A — protected target IDs
+		// that can be hit repeatedly without event mask toggle.
+		_protectedTargetA = 0x39;
+		_protectedTargetB = 0x3A;
+		_shieldGenHitsA = 0;
+		_shieldGenHitsB = 0;
 		_levelGameplayPhase = 1;
 		playInteractiveVideo("LVL4/L4PLAY1.ANM");
+		_protectedTargetA = 0;
+		_protectedTargetB = 0;
 		if (_vm->shouldQuit())
 			return false;
 
 		if (_health >= 0) {
+			// Phase 2: Torpedo run — torpedo enabled at frame 0x3E by IACT handler.
+			// killCount > 0 = torpedo hit, killCount == 0 = missed.
 			_activeGameOpcode = 0;
 			_gameLatch5D = 0;
 			_gameLatch5F = 0;
@@ -385,6 +396,7 @@ bool InsaneRebel1::runLevel4() {
 		}
 
 		if (_health >= 0) {
+			// L4END1 = torpedo hit, L4END2 = torpedo missed
 			playCinematic((_killCount != 0) ? "LVL4/L4END1.ANM" : "LVL4/L4END2.ANM");
 			return !_vm->shouldQuit();
 		}
@@ -1016,6 +1028,431 @@ bool InsaneRebel1::runLevel10() {
 	return false;
 }
 
+// Level 11 flow (RunLevel11Flow, 0x19F67): Yavin Training
+// Turret-style level. Single interactive phase with kill-count retry.
+// Original: L11INTRO → L11PLAY (turret, killCount>4 to pass) → L11RETRY → retry/L11END
+bool InsaneRebel1::runLevel11() {
+	debug(1, "InsaneRebel1: Running level 11");
+
+	_currentLevel = 10;
+	loadLevelSprites(11);
+	loadTuningForLevel(10);
+
+	beginLevelTitleOverlay(10);
+	playCinematic("LVL11/L11INTRO.ANM");
+	if (_vm->shouldQuit())
+		return false;
+
+	while (!_vm->shouldQuit()) {
+		_flyControlMode = 1;
+		_health = kMaxHealth;
+		_damageFlags = 0;
+		_prevDamageFlags = 0;
+		_damageCooldown = 0;
+		_deathTimer = 0;
+		_screenFlash = 0;
+		_frameCounter = 0;
+		_gameCounter = 0;
+		_activeGameOpcode = 0;
+		_gameLatch5D = 0;
+		_gameLatch5F = 0;
+		_gameplayFlags75ff = 0;
+		_killCount = 0;
+		_targetCount = 0;
+		_prevTargetCount = 0;
+		_lastHitTarget = 0;
+		_shipPosX = kRA1CenterX;
+		_shipPosY = kRA1CenterY;
+		_shipDirIndex = 17;
+		_rollAccum = 0;
+		_liftSmooth = 0;
+		_posAccumX = 0;
+		_posAccumY = 0;
+		_perspectiveX = 0;
+		_perspectiveY = 0;
+		_levelGameplayPhase = 0;
+		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
+		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
+		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
+		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
+		_avgInputX = 0;
+		_avgInputY = 0;
+		_turretEmitterLeftX = 25;
+		_turretEmitterLeftY = 15;
+
+		while (!_vm->shouldQuit()) {
+			playInteractiveVideo("LVL11/L11PLAY.ANM");
+			if (_vm->shouldQuit())
+				return false;
+
+			if (_health < 0)
+				break;
+
+			// Original: killCount > 4 means pass
+			if (_killCount > 4)
+				break;
+
+			// Not enough kills — retry
+			playCinematic("LVL11/L11RETRY.ANM");
+			if (_vm->shouldQuit())
+				return false;
+		}
+
+		if (_health >= 0) {
+			playCinematic("LVL11/L11END.ANM");
+			return !_vm->shouldQuit();
+		}
+
+		if (_lives > 0) {
+			playCinematic("LVL11/L11NEW.ANM");
+			if (_vm->shouldQuit())
+				return false;
+			_lives--;
+			continue;
+		}
+
+		playCinematic("LVL11/L11DEATH.ANM");
+		return false;
+	}
+
+	return false;
+}
+
+// Level 12 flow (RunLevel12Flow, 0x1A2DD): TIE Attack
+// Single interactive phase with mid-level retry mechanism.
+// Original: L12INTRO → L12PLAY → (retry at specific frame) → L12END
+bool InsaneRebel1::runLevel12() {
+	debug(1, "InsaneRebel1: Running level 12");
+
+	_currentLevel = 11;
+	loadLevelSprites(12);
+	loadTuningForLevel(11);
+
+	beginLevelTitleOverlay(11);
+	playCinematic("LVL12/L12INTRO.ANM");
+	if (_vm->shouldQuit())
+		return false;
+
+	while (!_vm->shouldQuit()) {
+		_flyControlMode = 1;
+		_health = kMaxHealth;
+		_damageFlags = 0;
+		_prevDamageFlags = 0;
+		_damageCooldown = 0;
+		_deathTimer = 0;
+		_screenFlash = 0;
+		_frameCounter = 0;
+		_gameCounter = 0;
+		_activeGameOpcode = 0;
+		_gameLatch5D = 0;
+		_gameLatch5F = 0;
+		_gameplayFlags75ff = 0;
+		_killCount = 0;
+		_targetCount = 0;
+		_prevTargetCount = 0;
+		_lastHitTarget = 0;
+		_shipPosX = kRA1CenterX;
+		_shipPosY = kRA1CenterY;
+		_shipDirIndex = 17;
+		_rollAccum = 0;
+		_liftSmooth = 0;
+		_posAccumX = 0;
+		_posAccumY = 0;
+		_perspectiveX = 0;
+		_perspectiveY = 0;
+		_levelGameplayPhase = 0;
+		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
+		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
+		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
+		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
+		_avgInputX = 0;
+		_avgInputY = 0;
+
+		playInteractiveVideo("LVL12/L12PLAY.ANM");
+		if (_vm->shouldQuit())
+			return false;
+
+		if (_health >= 0) {
+			playCinematic("LVL12/L12END.ANM");
+			return !_vm->shouldQuit();
+		}
+
+		if (_lives > 0) {
+			playCinematic("LVL12/L12NEW.ANM");
+			if (_vm->shouldQuit())
+				return false;
+			_lives--;
+			continue;
+		}
+
+		playCinematic("LVL12/L12DEATH.ANM");
+		return false;
+	}
+
+	return false;
+}
+
+// Level 13 flow (RunLevel13Flow, 0x1A6E3): Death Star Surface
+// Flight level with enemy projectile system (original has 5-slot projectile tracking).
+// Original: L13INTRO → L13PLAY → L13END/L13NEW/L13DEATH
+bool InsaneRebel1::runLevel13() {
+	debug(1, "InsaneRebel1: Running level 13");
+
+	_currentLevel = 12;
+	loadLevelSprites(13);
+	loadTuningForLevel(12);
+
+	beginLevelTitleOverlay(12);
+	playCinematic("LVL13/L13INTRO.ANM");
+	if (_vm->shouldQuit())
+		return false;
+
+	while (!_vm->shouldQuit()) {
+		_flyControlMode = 1;
+		_health = kMaxHealth;
+		_damageFlags = 0;
+		_prevDamageFlags = 0;
+		_damageCooldown = 0;
+		_deathTimer = 0;
+		_screenFlash = 0;
+		_frameCounter = 0;
+		_gameCounter = 0;
+		_activeGameOpcode = 0;
+		_gameLatch5D = 0;
+		_gameLatch5F = 0;
+		_gameplayFlags75ff = 0;
+		_killCount = 0;
+		_targetCount = 0;
+		_prevTargetCount = 0;
+		_lastHitTarget = 0;
+		_shipPosX = kRA1CenterX;
+		_shipPosY = kRA1CenterY;
+		_shipDirIndex = 17;
+		_rollAccum = 0;
+		_liftSmooth = 0;
+		_posAccumX = 0;
+		_posAccumY = 0;
+		_perspectiveX = 0;
+		_perspectiveY = 0;
+		_levelGameplayPhase = 0;
+		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
+		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
+		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
+		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
+		_avgInputX = 0;
+		_avgInputY = 0;
+
+		playInteractiveVideo("LVL13/L13PLAY.ANM");
+		if (_vm->shouldQuit())
+			return false;
+
+		if (_health >= 0) {
+			playCinematic("LVL13/L13END.ANM");
+			return !_vm->shouldQuit();
+		}
+
+		if (_lives > 0) {
+			playCinematic("LVL13/L13NEW.ANM");
+			if (_vm->shouldQuit())
+				return false;
+			_lives--;
+			continue;
+		}
+
+		playCinematic("LVL13/L13DEATH.ANM");
+		return false;
+	}
+
+	return false;
+}
+
+// Level 14 flow (RunLevel14Flow, 0x1ACB0): Surface Cannon
+// Two interactive phases: L14PLAY (targeting cannons) + L14PLAY2 (exhaust port approach).
+// Original: L14INTRO → L14PLAY → L14PLAY2 → L14END/L14NEW/L14DEATH
+bool InsaneRebel1::runLevel14() {
+	debug(1, "InsaneRebel1: Running level 14");
+
+	_currentLevel = 13;
+	loadLevelSprites(14);
+	loadTuningForLevel(13);
+
+	beginLevelTitleOverlay(13);
+	playCinematic("LVL14/L14INTRO.ANM");
+	if (_vm->shouldQuit())
+		return false;
+
+	while (!_vm->shouldQuit()) {
+		_flyControlMode = 1;
+		_health = kMaxHealth;
+		_damageFlags = 0;
+		_prevDamageFlags = 0;
+		_damageCooldown = 0;
+		_deathTimer = 0;
+		_screenFlash = 0;
+		_frameCounter = 0;
+		_gameCounter = 0;
+		_activeGameOpcode = 0;
+		_gameLatch5D = 0;
+		_gameLatch5F = 0;
+		_gameplayFlags75ff = 0;
+		_killCount = 0;
+		_targetCount = 0;
+		_prevTargetCount = 0;
+		_lastHitTarget = 0;
+		_shipPosX = kRA1CenterX;
+		_shipPosY = kRA1CenterY;
+		_shipDirIndex = 17;
+		_rollAccum = 0;
+		_liftSmooth = 0;
+		_posAccumX = 0;
+		_posAccumY = 0;
+		_perspectiveX = 0;
+		_perspectiveY = 0;
+		_levelGameplayPhase = 0;
+		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
+		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
+		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
+		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
+		_avgInputX = 0;
+		_avgInputY = 0;
+
+		// Phase 1: targeting surface cannons
+		playInteractiveVideo("LVL14/L14PLAY.ANM");
+		if (_vm->shouldQuit())
+			return false;
+
+		if (_health >= 0) {
+			// Phase 2: exhaust port approach
+			_activeGameOpcode = 0;
+			_gameLatch5D = 0;
+			_gameLatch5F = 0;
+			_gameplayFlags75ff = 0;
+			_killCount = 0;
+
+			playInteractiveVideo("LVL14/L14PLAY2.ANM");
+			if (_vm->shouldQuit())
+				return false;
+		}
+
+		if (_health >= 0) {
+			playCinematic("LVL14/L14END.ANM");
+			return !_vm->shouldQuit();
+		}
+
+		if (_lives > 0) {
+			playCinematic("LVL14/L14NEW.ANM");
+			if (_vm->shouldQuit())
+				return false;
+			_lives--;
+			continue;
+		}
+
+		playCinematic("LVL14/L14DEATH.ANM");
+		return false;
+	}
+
+	return false;
+}
+
+// Level 15 flow (RunLevel1GameLoop, 0x1B283): Death Star Trench
+// Two interactive phases with mid-level cutscene.
+// Original: L15INTRO → L15PLAY1 (trench run) → L15INTR2 (torpedo lock cutscene)
+//   → L15PLAY2 (final approach + torpedo) → L15END1/L15NEW/L15DEATH
+bool InsaneRebel1::runLevel15() {
+	debug(1, "InsaneRebel1: Running level 15");
+
+	_currentLevel = 14;
+	loadLevelSprites(15);
+	loadTuningForLevel(14);
+
+	beginLevelTitleOverlay(14);
+	playCinematic("LVL15/L15INTRO.ANM");
+	if (_vm->shouldQuit())
+		return false;
+
+	while (!_vm->shouldQuit()) {
+		_flyControlMode = 1;
+		_health = kMaxHealth;
+		_damageFlags = 0;
+		_prevDamageFlags = 0;
+		_damageCooldown = 0;
+		_deathTimer = 0;
+		_screenFlash = 0;
+		_frameCounter = 0;
+		_gameCounter = 0;
+		_activeGameOpcode = 0;
+		_gameLatch5D = 0;
+		_gameLatch5F = 0;
+		_gameplayFlags75ff = 0;
+		_killCount = 0;
+		_targetCount = 0;
+		_prevTargetCount = 0;
+		_lastHitTarget = 0;
+		_shipPosX = kRA1CenterX;
+		_shipPosY = kRA1CenterY;
+		_shipDirIndex = 17;
+		_rollAccum = 0;
+		_liftSmooth = 0;
+		_posAccumX = 0;
+		_posAccumY = 0;
+		_perspectiveX = 0;
+		_perspectiveY = 0;
+		_levelGameplayPhase = 0;
+		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
+		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
+		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
+		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
+		_avgInputX = 0;
+		_avgInputY = 0;
+
+		// Phase 1: trench run
+		_levelGameplayPhase = 1;
+		playInteractiveVideo("LVL15/L15PLAY1.ANM");
+		if (_vm->shouldQuit())
+			return false;
+
+		if (_health >= 0) {
+			// Torpedo lock cutscene
+			playCinematic("LVL15/L15INTR2.ANM");
+			if (_vm->shouldQuit())
+				return false;
+
+			// Phase 2: final approach and torpedo shot.
+			// Original: torpedo enabled at frame 0x18A via _gameplayFlags75ff |= 2.
+			// _torpedoFired set by IACT handler when killCount > 0 (torpedo hits exhaust port).
+			_activeGameOpcode = 0;
+			_gameLatch5D = 0;
+			_gameLatch5F = 0;
+			_gameplayFlags75ff = 0;
+			_killCount = 0;
+			_torpedoFired = false;
+			_levelGameplayPhase = 2;
+
+			playInteractiveVideo("LVL15/L15PLAY2.ANM");
+			if (_vm->shouldQuit())
+				return false;
+		}
+
+		if (_health >= 0) {
+			playCinematic("LVL15/L15END1.ANM");
+			return !_vm->shouldQuit();
+		}
+
+		if (_lives > 0) {
+			playCinematic("LVL15/L15NEW.ANM");
+			if (_vm->shouldQuit())
+				return false;
+			_lives--;
+			continue;
+		}
+
+		playCinematic("LVL15/L15DEATH.ANM");
+		return false;
+	}
+
+	return false;
+}
+
 // Main game entry point — called from ScummEngine::go().
 // Matches original flow at 0x15597: intro → menu → level.
 void InsaneRebel1::runGame() {
@@ -1030,7 +1467,12 @@ void InsaneRebel1::runGame() {
 		&InsaneRebel1::runLevel7,
 		&InsaneRebel1::runLevel8,
 		&InsaneRebel1::runLevel9,
-		&InsaneRebel1::runLevel10
+		&InsaneRebel1::runLevel10,
+		&InsaneRebel1::runLevel11,
+		&InsaneRebel1::runLevel12,
+		&InsaneRebel1::runLevel13,
+		&InsaneRebel1::runLevel14,
+		&InsaneRebel1::runLevel15
 	};
 
 	// Play intro sequence (logo + opening)
