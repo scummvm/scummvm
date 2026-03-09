@@ -28,7 +28,7 @@ namespace Bolt {
 
 void XpLib::fileError(const char *message) {
 	stopCycle();
-	error(message);
+	error("%s", message);
 }
 
 Common::File *XpLib::openFile(const char *fileName, int16 flags) {

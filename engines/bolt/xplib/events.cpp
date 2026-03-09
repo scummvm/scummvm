@@ -323,6 +323,8 @@ void XpLib::handleKey(Common::KeyCode vkey, int16 down) {
 	case Common::KEYCODE_DOWN:
 		dirPtr = &_keyStateDown;
 		break; // VK_DOWN
+	default:
+		break;
 	}
 
 	if (dirPtr == nullptr)
