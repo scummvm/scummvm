@@ -787,6 +787,8 @@ void BoltEngine::handleEvent(int16 eventType, uint32 eventData) {
 					break;
 			}
 		}
+
+		break;
 	}
 
 	case etSound: {

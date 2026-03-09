@@ -49,7 +49,7 @@ bool BoltEngine::vLoad(void *dest, const char *name) {
 	char localName[82];
 	int16 recordOffset;
 
-	strcpy_s(localName, name);
+	Common::strcpy_s(localName, name);
 	uint32 nameLen = strlen(name);
 	if (!(nameLen & 1)) {
 		localName[nameLen] = ' ';
@@ -74,7 +74,7 @@ bool BoltEngine::vLoad(void *dest, const char *name) {
 bool BoltEngine::vSave(void *src, uint16 srcSize, const char *name) {
 	char localName[82];
 
-	strcpy_s(localName, name);
+	Common::strcpy_s(localName, name);
 	uint32 nameLen = strlen(name);
 	if (!(nameLen & 1)) {
 		localName[nameLen] = ' ';
@@ -113,7 +113,7 @@ bool BoltEngine::vDelete(const char *name) {
 	char localName[82];
 	int16 recordOffset;
 
-	strcpy_s(localName, name);
+	Common::strcpy_s(localName, name);
 	uint32 nameLen = strlen(name);
 	if (!(nameLen & 1)) {
 		localName[nameLen] = ' ';
