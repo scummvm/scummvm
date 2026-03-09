@@ -1046,13 +1046,17 @@ void InsaneRebel1::runGame() {
 
 		switch (menuResult) {
 		case 1: {
-			const int startLevel = CLIP<int>(_startLevel, 1, sizeof(kLevelRunners) / sizeof(kLevelRunners[0]));
+			// START NEW GAME — sequential play from _startLevel
+			const int numLevels = (int)(sizeof(kLevelRunners) / sizeof(kLevelRunners[0]));
+			const int startLevel = CLIP<int>(_startLevel, 1, numLevels);
 			bool completed = true;
 
 			for (int level = startLevel;
-				 level <= (int)(sizeof(kLevelRunners) / sizeof(kLevelRunners[0])) && completed && !_vm->shouldQuit();
+				 level <= numLevels && completed && !_vm->shouldQuit();
 				 ++level) {
 				completed = (this->*kLevelRunners[level - 1])();
+				if (completed && level < numLevels)
+					_startLevel = level + 1;
 			}
 			_currentLevel = 0;
 			break;
@@ -1071,11 +1075,17 @@ void InsaneRebel1::runGame() {
 			}
 			break;
 		}
+		case 4:
+			// CONTINUE DEMO — attract mode.
+			// Original shows TOP PILOTS (O1SCORE.ANM) then loops O1OPEN.ANM.
+			showHighScores();
+			if (!_vm->shouldQuit())
+				playCinematic("OPEN/O1OPEN.ANM");
+			break;
 		case 5:
 			// Exit
 			return;
 		default:
-			// Passcode, Demo — not yet implemented, return to menu
 			break;
 		}
 	}

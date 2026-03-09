@@ -634,6 +634,10 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY) {
 
 	inputX = CLIP<int16>(scaledX, -0xA0, 0xA0);
 	inputY = CLIP<int16>(scaledY, -127, 127);
+
+	// Controls Y-flip option (DAT_22be in original)
+	if (_optControlsYFlip)
+		inputY = -inputY;
 }
 
 // updateShipPhysics — FUN_1DEB5 (0x1DEB5). Accumulator-based position system.

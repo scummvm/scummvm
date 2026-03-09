@@ -20,8 +20,11 @@
  */
 
 #include "common/system.h"
+#include "common/config-manager.h"
 #include "common/events.h"
 #include "common/str.h"
+
+#include "audio/mixer.h"
 
 #include "scumm/scumm_v7.h"
 #include "scumm/smush/smush_player.h"
@@ -78,11 +81,35 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_UP:
 		case Common::KEYCODE_w:
-			_optionsSel = (_optionsSel + 2) % 3;
+			_optionsSel = (_optionsSel + kOptionsItemCount - 1) % kOptionsItemCount;
 			return true;
 		case Common::KEYCODE_DOWN:
 		case Common::KEYCODE_s:
-			_optionsSel = (_optionsSel + 1) % 3;
+			_optionsSel = (_optionsSel + 1) % kOptionsItemCount;
+			return true;
+		case Common::KEYCODE_LEFT:
+		case Common::KEYCODE_a:
+			// Volume down when on volume row (row 6)
+			if (_optionsSel == 6) {
+				_optVolume = MAX(0, _optVolume - 5);
+				_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType,
+					(_optVolume * Audio::Mixer::kMaxChannelVolume) / 127);
+				ConfMan.setInt("music_volume", (_optVolume * 256) / 127);
+				ConfMan.setInt("sfx_volume", (_optVolume * 256) / 127);
+				ConfMan.setInt("speech_volume", (_optVolume * 256) / 127);
+			}
+			return true;
+		case Common::KEYCODE_RIGHT:
+		case Common::KEYCODE_d:
+			// Volume up when on volume row (row 6)
+			if (_optionsSel == 6) {
+				_optVolume = MIN(127, _optVolume + 5);
+				_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType,
+					(_optVolume * Audio::Mixer::kMaxChannelVolume) / 127);
+				ConfMan.setInt("music_volume", (_optVolume * 256) / 127);
+				ConfMan.setInt("sfx_volume", (_optVolume * 256) / 127);
+				ConfMan.setInt("speech_volume", (_optVolume * 256) / 127);
+			}
 			return true;
 		case Common::KEYCODE_RETURN:
 		case Common::KEYCODE_KP_ENTER:
@@ -91,7 +118,7 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			_vm->_smushVideoShouldFinish = true;
 			return true;
 		case Common::KEYCODE_ESCAPE:
-			_optionsSel = 2;  // Back
+			_optionsSel = kOptionsItemCount - 1;  // Back
 			_menuConfirmed = true;
 			_vm->_smushVideoShouldFinish = true;
 			return true;
@@ -147,6 +174,13 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		}
 	}
 
+	// High scores: any key or click dismisses
+	if (_highScoresActive && (event.type == Common::EVENT_KEYDOWN ||
+		event.type == Common::EVENT_LBUTTONDOWN)) {
+		_vm->_smushVideoShouldFinish = true;
+		return true;
+	}
+
 	if (event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 		if (_player) {
 			debug("Rebel1: ESC pressed - skipping video");
@@ -180,27 +214,57 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 		drawFontBankString(dst, pitch, width, height, x, y, text);
 	};
 
+	if (_highScoresActive) {
+		// --- TOP PILOTS high score display ---
+		// Original renders over O1SCORE.ANM. Title appears after frame 20,
+		// entries fade in one per frame. We show all immediately.
+		const int titleW = getTalkTextWidth("TOP PILOTS");
+		drawTalkText((width - titleW) / 2, 10, "TOP PILOTS");
+
+		for (int i = 0; i < kHighScoreCount; i++) {
+			const int y = 25 + i * 14;
+			// Name (left side)
+			drawFontBankString(dst, pitch, width, height, 40, y, _highScores[i].name);
+			// Score (right side)
+			char scoreLine[32];
+			Common::sprintf_s(scoreLine, "<%ld", (long)_highScores[i].score);
+			drawFontBankString(dst, pitch, width, height, 220, y, scoreLine);
+		}
+		return;
+	}
+
 	if (_optionsActive) {
-		// --- Options submenu ---
+		// --- Options submenu (matching original RunGameOptionsMenu) ---
 		static const char *kDiffNames[3] = { "EASY", "NORMAL", "HARD" };
 
 		const int titleW = getTalkTextWidth("GAME OPTIONS");
-		drawTalkText((width - titleW) / 2, 36, "GAME OPTIONS");
+		drawTalkText((width - titleW) / 2, 30, "GAME OPTIONS");
 
-		// Build dynamic option strings
-		char diffLine[64];
-		snprintf(diffLine, sizeof(diffLine), "DIFFICULTY: %s", kDiffNames[CLIP(_difficulty, 0, 2)]);
-		const char *turbLine = _turbulenceEnabled ? "TURBULENCE: ON" : "TURBULENCE: OFF";
-		const char *kOptionsItems[3] = { diffLine, turbLine, "BACK" };
+		// Build dynamic option strings for each row
+		char diffLine[64], volLine[64];
+		Common::sprintf_s(diffLine, "DIFFICULTY IS %s", kDiffNames[CLIP(_difficulty, 0, 2)]);
+		Common::sprintf_s(volLine, "VOLUME AT %d PERCENT", (_optVolume * 100) / 127);
 
-		const int menuY = 60;
-		const int rowH = 16;
+		const char *optItems[kOptionsItemCount] = {
+			"EXIT MENU",
+			_optMusicEnabled  ? "MUSIC IS ON"             : "MUSIC IS OFF",
+			_optSfxEnabled    ? "SFX AND VOICE ARE ON"    : "SFX AND VOICE ARE OFF",
+			_optTextEnabled   ? "DIALOGUE TEXT IS ON"      : "DIALOGUE TEXT IS OFF",
+			_optControlsYFlip ? "CONTROLS ARE Y-FLIPPED"  : "CONTROLS ARE NORMAL",
+			_turbulenceEnabled ? "TURBULENCE IS ON"        : "TURBULENCE IS OFF",
+			volLine,
+			diffLine,
+			"BACK"
+		};
 
-		for (int i = 0; i < 3; i++) {
-			const int textW = getTalkTextWidth(kOptionsItems[i]);
+		const int menuY = 44;
+		const int rowH = 14;
+
+		for (int i = 0; i < kOptionsItemCount; i++) {
+			const int textW = getTalkTextWidth(optItems[i]);
 			const int textX = (width - textW) / 2;
 			const int y = menuY + i * rowH;
-			drawTalkText(textX, y + 1, kOptionsItems[i]);
+			drawTalkText(textX, y + 1, optItems[i]);
 
 			if (i == _optionsSel) {
 				byte highlightColor = ((_menuFrameCounter / 8) & 1) ? 248 : 240;
@@ -228,21 +292,21 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 		drawTalkText((width - titleW) / 2, 30, "LEVEL SELECT");
 
 		static const char *kLevelItems[kRA1LevelSelectItemCount] = {
-			" 1  FLIGHT TRAINING",
-			" 2  ASTEROID FIELD",
-			" 3  PLANET KOLAADOR",
-			" 4  STAR DESTROYER",
-			" 5  TATOOINE ATTACK",
-			" 6  ASTEROID CHASE",
-			" 7  PROBE DROIDS",
-			" 8  IMPERIAL WALKERS",
-			" 9  STORMTROOPERS",
-			"10  REBEL TRANSPORT",
-			"11  YAVIN TRAINING",
-			"12  TIE ATTACK",
-			"13  DEATH STAR SURFACE",
-			"14  SURFACE CANNON",
-			"15  DEATH STAR TRENCH",
+			" 1 TRAINING",
+			" 2 ASTEROIDS",
+			" 3 KOLAADOR",
+			" 4 STAR DESTR",
+			" 5 TATOOINE",
+			" 6 AST CHASE",
+			" 7 PROBES",
+			" 8 WALKERS",
+			" 9 TROOPERS",
+			"10 TRANSPORT",
+			"11 YAVIN",
+			"12 TIE ATK",
+			"13 DS SURFACE",
+			"14 CANNON",
+			"15 DS TRENCH",
 			"BACK"
 		};
 
@@ -379,17 +443,35 @@ void InsaneRebel1::runOptionsMenu() {
 
 		if (_menuConfirmed) {
 			switch (_optionsSel) {
-			case 0:
-				// Cycle difficulty
+			case 0: // EXIT MENU (same as BACK)
+				_optionsActive = false;
+				return;
+			case 1: // Toggle music
+				_optMusicEnabled = !_optMusicEnabled;
+				_vm->_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, !_optMusicEnabled);
+				break;
+			case 2: // Toggle SFX + Voice
+				_optSfxEnabled = !_optSfxEnabled;
+				_vm->_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, !_optSfxEnabled);
+				_vm->_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, !_optSfxEnabled);
+				break;
+			case 3: // Toggle dialogue text
+				_optTextEnabled = !_optTextEnabled;
+				ConfMan.setBool("subtitles", _optTextEnabled);
+				break;
+			case 4: // Toggle Y-flip controls
+				_optControlsYFlip = !_optControlsYFlip;
+				break;
+			case 5: // Toggle turbulence
+				_turbulenceEnabled = !_turbulenceEnabled;
+				break;
+			case 6: // Volume — adjusted via left/right in notifyEvent
+				break;
+			case 7: // Cycle difficulty
 				_difficulty = (_difficulty + 1) % 3;
 				loadTuningForLevel(0);
 				break;
-			case 1:
-				// Toggle turbulence
-				_turbulenceEnabled = !_turbulenceEnabled;
-				break;
-			case 2:
-				// Back to main menu
+			case 8: // BACK
 				_optionsActive = false;
 				return;
 			}
@@ -425,6 +507,17 @@ int InsaneRebel1::runLevelSelectMenu() {
 	}
 	_levelSelectActive = false;
 	return 0;
+}
+
+void InsaneRebel1::showHighScores() {
+	// Original plays O1SCORE.ANM with TOP PILOTS overlay, dismissable by any key.
+	_highScoresActive = true;
+	_menuActive = true;
+	_menuFrameCounter = 0;
+	clearVideoBuffer();
+	playCinematic("OPEN/O1SCORE.ANM");
+	_menuActive = false;
+	_highScoresActive = false;
 }
 
 } // End of namespace Scumm

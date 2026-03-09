@@ -287,6 +287,27 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_startLevel = 1;
 	_turbulenceEnabled = false;
 
+	// Options — read initial state from ScummVM mixer
+	_optMusicEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kMusicSoundType);
+	_optSfxEnabled = !_vm->_mixer->isSoundTypeMuted(Audio::Mixer::kSFXSoundType);
+	_optTextEnabled = true;
+	_optControlsYFlip = false;
+	_optVolume = _vm->_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) * 127 / Audio::Mixer::kMaxChannelVolume;
+
+	// Default high scores — from DS:0x1D0/0x298/0x2C0
+	static const struct { const char *name; int32 score; byte gender; } kDefaultScores[kHighScoreCount] = {
+		{"Vince",   10000, 2}, {"Tamlynn",  9000, 2}, {"Chip",    8000, 2},
+		{"Brett",    7000, 1}, {"Casey",    6000, 1}, {"Justin",  5000, 1},
+		{"Bill",     4000, 0}, {"Aaron",    3000, 0}, {"Mary",    2000, 0},
+		{"Ron",      1000, 0}
+	};
+	for (int i = 0; i < kHighScoreCount; i++) {
+		Common::sprintf_s(_highScores[i].name, "<%s", kDefaultScores[i].name);
+		_highScores[i].score = kDefaultScores[i].score;
+		_highScores[i].gender = kDefaultScores[i].gender;
+	}
+	_highScoresActive = false;
+
 	// Shooting/targeting state
 	_playerFired = false;
 	_fireCooldown = 0;
