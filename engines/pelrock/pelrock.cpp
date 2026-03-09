@@ -1027,6 +1027,11 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 					_alfredState.x = exit->targetX;
 					_alfredState.y = exit->targetY;
 					setScreenAndPrepare(exit->targetRoom, exit->dir);
+					// setScreen() resets the composite buffer to the bare background;
+					// place first-pass stickers now so they are present in the very
+					// first presentFrame() for the new room (avoids a one-frame flash
+					// without stickers).
+					placeStickersFirstPass();
 				}
 			}
 		} else {
