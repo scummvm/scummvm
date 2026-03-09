@@ -30,16 +30,26 @@
 namespace WaynesWorld {
 
 void WaynesWorldEngine::runIntro() {
-	if (!introPt1())
-		return;
-	if (!introPt2())
-		return;
-	if (!introPt3(false))
-		return;
-	if (!introPt4())
-		return;
-	if (!introPt3(true))
-		return;
+	bool continueFl = introPt1();
+
+	if (continueFl)
+		continueFl = introPt2();
+	
+	if (continueFl)
+		continueFl = introPt3(false);
+	
+	if (continueFl)
+		continueFl = introPt4();
+
+	if (continueFl)
+		continueFl = introPt3(false);
+
+	introPt5();
+
+	if (continueFl)
+		introPt6();
+
+	introPt7();
 }
 
 bool WaynesWorldEngine::introPt1() {
@@ -348,6 +358,21 @@ bool WaynesWorldEngine::introPt4() {
 	introPt4_cleanup();
 	
 	return retVal;
+}
+
+void WaynesWorldEngine::introPt5() {
+	delete _oanGxl;
+	_oanGxl = nullptr;
+}
+
+void WaynesWorldEngine::introPt6() {
+	warning("STUB - Intro pt 6");
+}
+
+void WaynesWorldEngine::introPt7() {
+	_midi->stopSong();
+	paletteFadeOut(0, 256, 4);
+	_screen->clear(0);
 }
 
 void WaynesWorldEngine::sub3009A(int textId) {

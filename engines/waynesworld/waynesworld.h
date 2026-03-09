@@ -125,6 +125,9 @@ private:
 	bool introPt2();
 	bool introPt3(bool flag);
 	bool introPt4();
+	void introPt5();
+	void introPt6();
+	void introPt7();
 
 	WWSurface *_introBackg1Image = nullptr;
 	WWSurface *_introWbodyImage[5] = {nullptr};
