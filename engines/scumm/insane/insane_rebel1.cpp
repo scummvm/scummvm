@@ -218,6 +218,10 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_perspectiveX = 0;
 	_perspectiveY = 0;
 	_projectionCurveExtent = 1;
+	_onFootCharX = 0;
+	_onFootCharY = 0;
+	_onFootAnimCounter = 0;
+	_onFootInitialized = false;
 	memset(_projectionTable, 0, sizeof(_projectionTable));
 
 	memset(_inputHistoryX, 0, sizeof(_inputHistoryX));

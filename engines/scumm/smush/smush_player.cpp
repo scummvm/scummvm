@@ -879,6 +879,7 @@ byte *SmushPlayer::getVideoPalette() {
 }
 
 void smushDecodeRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
+void smushDecodeRLEOpaque(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 void smushDecodeRA1Transparent(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 void smushDecodeUncompressed(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 void smushDecodeRA1Block(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize, uint8 param, uint16 parm2, int codec);
@@ -1201,8 +1202,13 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 		}
 		break;
 	case SMUSH_CODEC_RLE_ALT:
-		// Codec 3: all pixels opaque (pixel 0 is written)
-		smushDecodeRLE(_dst, adjustedSrc, left, top, width, height, pitch);
+		// Codec 3: all pixels opaque (pixel 0 is written).
+		// Original FUN_00010916 writes every byte including value 0.
+		if (isRA1()) {
+			smushDecodeRLEOpaque(_dst, adjustedSrc, left, top, width, height, pitch);
+		} else {
+			smushDecodeRLE(_dst, adjustedSrc, left, top, width, height, pitch);
+		}
 		break;
 	case SMUSH_CODEC_RA1_SCATTER:
 		// Codec 2: Scatter draw uses absolute buffer coords, not clipped FOBJ coords.
