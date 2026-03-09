@@ -126,6 +126,10 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 			_playerFired = true;
 			return true;
 		}
+		if (event.type == Common::EVENT_LBUTTONUP) {
+			_playerFired = false;
+			return true;
+		}
 	}
 
 	if (event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) {

@@ -325,6 +325,9 @@ static void renderSpriteWithFlags(byte *dst, int pitch, int width, int height,
 // RA1 decodes FOBJs at chunk coordinates, then displays a scrolled 320x200
 // window inside the 384x242 framebuffer.
 void InsaneRebel1::procPreRendering(byte *renderBitmap) {
+	_frameGameOpcodeMask = 0;
+	_frameDispatchFlags = 0;
+
 	if (_interactiveVideoActive && _player) {
 		// FUN_224FD stores absolute 320x200 window origin in a 384x242 frame:
 		// X in [0..0x40], Y in [0..0x2E], centered at (0x20,0x17).
@@ -356,14 +359,20 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	if (height == 0) height = _screenHeight;
 	int pitch = width;
 
-	const bool asteroidMode = (_activeGameOpcode == 0x0B);
+	const bool haveFrameGameOpcodes = (_frameGameOpcodeMask != 0);
+	const bool asteroidMode = hasFrameGameOpcode(0x0B) ||
+		(!haveFrameGameOpcodes && _activeGameOpcode == 0x0B);
 	if (asteroidMode) {
 		// First-person asteroid/surface handler — opcode 0x0B (FUN_1CDA7).
 		updateAsteroidPhysics();
 	} else {
-		const bool turretMode = (_activeGameOpcode == 0x08 || _activeGameOpcode == 0x0A);
-		const bool flightMode = (_activeGameOpcode == 0x07 || _activeGameOpcode == 0x09 ||
-								 _activeGameOpcode == 0x19 || _activeGameOpcode == 0x1A);
+		const bool turretMode = hasFrameGameOpcode(0x08) || hasFrameGameOpcode(0x0A) ||
+			(!haveFrameGameOpcodes && (_activeGameOpcode == 0x08 || _activeGameOpcode == 0x0A));
+		const bool flightMode = hasFrameGameOpcode(0x07) || hasFrameGameOpcode(0x09) ||
+			hasFrameGameOpcode(0x19) || hasFrameGameOpcode(0x1A) ||
+			(!haveFrameGameOpcodes &&
+				(_activeGameOpcode == 0x07 || _activeGameOpcode == 0x09 ||
+				 _activeGameOpcode == 0x19 || _activeGameOpcode == 0x1A));
 
 		// Dispatch movement path by GAME handler family:
 		//   0x08/0x0A -> FUN_1E6A7/FUN_1D79C (turret/cockpit)
@@ -378,6 +387,7 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		// (see 0x1626E/0x162EE -> 0x165DD and 0x1640B -> 0x16614), then plays crash video.
 		// Do not render the in-engine death overlay in this path; finish immediately.
 		if (_currentLevel == 0 && _health < 0) {
+			_fireCooldown = _playerFired ? 1 : 0;
 			_vm->_smushVideoShouldFinish = true;
 			return;
 		}
@@ -396,12 +406,18 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	}
 
 	// Assembly dispatch (FUN_1BE1B) only runs the targeting/shot overlay pipeline
-	// in handlers 0x09/0x0A/0x0B/0x1A. In LVL1 stage-2 samples, 0x08 drives
-	// turret mode and needs the same targeting overlays enabled.
+	// in handlers 0x09/0x0A/0x0B/0x1A. LVL1 stage-2 works because the stream emits
+	// both 0x0A and 0x08 in the same frame, not because 0x08 owns the overlay path.
 	const bool hasTargetingPipeline =
-		(_activeGameOpcode == 0x08 || _activeGameOpcode == 0x09 || _activeGameOpcode == 0x0A ||
-		 _activeGameOpcode == 0x0B || _activeGameOpcode == 0x1A);
+		hasFrameGameOpcode(0x09) || hasFrameGameOpcode(0x0A) ||
+		hasFrameGameOpcode(0x0B) || hasFrameGameOpcode(0x1A) ||
+		(!haveFrameGameOpcodes &&
+			(_activeGameOpcode == 0x09 || _activeGameOpcode == 0x0A ||
+			 _activeGameOpcode == 0x0B || _activeGameOpcode == 0x1A));
 	if (hasTargetingPipeline) {
+		const bool turretTargetingMode =
+			hasFrameGameOpcode(0x0A) ||
+			(!haveFrameGameOpcodes && _activeGameOpcode == 0x0A);
 		renderTargetBoxes(renderBitmap, pitch, width, height);
 		processShot();
 		for (int i = 0; i < kMaxShotSlots; i++) {
@@ -411,6 +427,17 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		renderLaserShots(renderBitmap, pitch, width, height);
 		renderGostSlots(renderBitmap, pitch, width, height);
 		renderTargeting(renderBitmap, pitch, width, height);
+
+		// FUN_1D79C (GAME 0x0A) owns the cursor center in stage-2 turret mode.
+		// The preceding overlay/shot pass uses the previous frame's cursor; the
+		// handler then publishes the next cursor position from the current
+		// ship-offset and camera state.
+		if (turretTargetingMode) {
+			const int16 shipOffsetX = (int16)(_posAccumX >> 8);
+			const int16 shipOffsetY = (int16)(_posAccumY >> 8);
+			_shipPosX = (int16)(kRA1CenterX + shipOffsetX);
+			_shipPosY = (int16)((kRA1CenterY + shipOffsetY - 0x23) - (shipOffsetY >> 3));
+		}
 	} else {
 		// Keep lock/target accumulators quiescent when current handler doesn't
 		// execute FUN_1C940/FUN_1CCA0/FUN_1C9CD/FUN_1CB22.
@@ -423,6 +450,7 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 
 	renderExplosions(renderBitmap, pitch, width, height);
 	renderHUD(renderBitmap, pitch, width, height);
+	_fireCooldown = _playerFired ? 1 : 0;
 }
 
 // renderTargetBoxes — FUN_1C940 (0x1C940). Per-target green box overlays.
@@ -459,7 +487,7 @@ void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) 
 	if (markerBank.numSprites > 0) {
 		// FUN_1CB22 can switch marker sets via DAT_75FF bit 1.
 		// Baseline RA1 targeting uses '^' and animation e..h.
-		const bool altMarkerSet = false;
+		const bool altMarkerSet = (_gameplayFlags75ff & 0x2) != 0;
 
 		// Lock indicator at fixed center positions:
 		// FUN_1CB22 draws marker strings at (0xA0,0x78) and (0xA0,0x7E).
