@@ -20,6 +20,7 @@
  */
 
 #include "common/file.h"
+#include "graphics/surface.h"
 
 #include "chamber/chamber.h"
 #include "chamber/common.h"
@@ -244,7 +245,7 @@ int16 loadVepciData() {
 	return loadFilesList(res_texts);
 }
 
-int16 loadFond(void) {
+Graphics::Surface *loadFond(void) {
 	return loadSplash("FOND.BIN");
 }
 
