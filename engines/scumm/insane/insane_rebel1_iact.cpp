@@ -830,12 +830,12 @@ void InsaneRebel1::updateShipPhysics() {
 	if (_health < 0 && _deathTimer > 0)
 		_deathTimer--;
 
-	// Health regeneration: +1 every 32 frames (from original asm)
+	// Health regeneration + survival bonus every 32 frames (UpdatePeriodicScoreAndHealth)
 	if ((_frameCounter & 0x1F) == 0) {
 		if (_health >= 0 && _health < kMaxHealth)
 			_health++;
 		if (_health >= 0)
-			_score += 1;
+			_score += _tuning.time;
 	}
 
 	// Screen flash decay
@@ -993,12 +993,12 @@ void InsaneRebel1::updateTurretPhysics() {
 	if (shipBank->numSprites > 0)
 		_shipDirIndex = CLIP<int16>((int16)dir, 0, shipBank->numSprites - 1);
 
-	// Regeneration via FUN_1BB0E call in this path.
+	// Regeneration + survival bonus via FUN_1BB0E call in this path.
 	if ((_frameCounter & 0x1F) == 0) {
 		if (_health >= 0 && _health < kMaxHealth)
 			_health++;
 		if (_health >= 0)
-			_score += 1;
+			_score += _tuning.time;
 	}
 
 	if (_screenFlash > 0)

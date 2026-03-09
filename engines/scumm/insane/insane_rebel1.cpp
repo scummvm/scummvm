@@ -36,89 +36,161 @@
 
 namespace Scumm {
 
-// Per-difficulty tuning tables from assault_data_3.bin
-// Indexed: difficulty * 0x28B + level * 0x1F + offset
-// Fields: roll, lift, slide, drift, snap, miss, wham, shot, kill
-static const int16 kTuningTable[10][3][9] = {
-	// Level 1 (Flight Training)
+// Per-difficulty tuning tables from assault_data_3.bin (also loadable from C:\rebltune.txt)
+// 21 sub-levels x 3 difficulties x 13 fields
+// Fields: roll, lift, slide, drift, snap, miss, wham, shot, kill, time, levelPts, bonus, flags
+static const int16 kTuningTable[21][3][13] = {
+	// Sub-level 0: "1A" (Flight Training - canyon flight)
 	{
-		{ 100, 100,  60, 110,   0,   0,  15,   0,   0 },  // Easy
-		{ 100, 105,  60, 115,   0,   0,  25,   0,   0 },  // Normal
-		{ 105, 110,  65, 120,   0,   0,  30,   0,   0 },  // Hard
+		{ 100, 100,  60, 110,   0,   0,  15,   0,   0,   5,  500,  100, 2048 },  // Easy
+		{ 100, 105,  60, 115,   0,   0,  25,   0,   0,   5, 1000,  200, 2048 },  // Normal
+		{ 105, 110,  65, 120,   0,   0,  30,   0,   0,  10, 1500,  500, 2050 },  // Hard
 	},
-	// Level 2 (Asteroid Field Training)
+	// Sub-level 1: "1B" (Flight Training - asteroid flight)
 	{
-		{ 100,  16, 120,   0,   7,   0,  15,   0,  25 },  // Easy
-		{ 100,  18, 120,   0,   5,   0,  20,   0,  50 },  // Normal
-		{ 100,  20, 150,   0,   1,   0,  25,   0,  75 },  // Hard
+		{ 100,  16, 120,   0,   7,   0,  15,   0,  25,   5,  500,  100, 3072 },  // Easy
+		{ 100,  18, 120,   0,   5,   0,  20,   0,  50,   5, 1000,  200, 3072 },  // Normal
+		{ 100,  20, 150,   0,   1,   0,  25,   0,  75,  10, 1500,  500, 3074 },  // Hard
 	},
-	// Level 3 (Planet Kolaador)
+	// Sub-level 2: "2" (Planet Kolaador)
 	{
-		{   0,   0,   0,   0,   4,  15,  25,   0,  25 },  // Easy
-		{   0,   0,   0,   0,   2,  18,  30,   0,  50 },  // Normal
-		{   0,   0,   0,   0,   0,  20,  35,   0,  75 },  // Hard
+		{   0,   0,   0,   0,   4,  15,  25,   0,  25,  10,  500,  100, 2048 },  // Easy
+		{   0,   0,   0,   0,   2,  18,  30,   0,  50,  10, 1000,  200, 2048 },  // Normal
+		{   0,   0,   0,   0,   0,  20,  35,   0,  75,  10, 1500,  500, 2050 },  // Hard
 	},
-	// Level 4 (Star Destroyer Attack)
+	// Sub-level 3: "3" (Star Destroyer Attack)
 	{
-		{  70, 100, 150,  90,   0,   0,  20,   0,   0 },  // Easy
-		{  72, 105, 155, 105,   0,   0,  25,   0,   0 },  // Normal
-		{  75, 110, 160, 110,   0,   0,  28,   0,   0 },  // Hard
+		{  70, 100, 150,  90,   0,   0,  20,   0,   0,   5, 1000,  100, 2048 },  // Easy
+		{  72, 105, 155, 105,   0,   0,  25,   0,   0,   5, 2000,  200, 2048 },  // Normal
+		{  75, 110, 160, 110,   0,   0,  28,   0,   0,  10, 3000,  500, 2050 },  // Hard
 	},
-	// Level 5 (Tatooine Attack)
+	// Sub-level 4: "4A" (Tatooine Attack)
 	{
-		{   0,   0,   0,   0,   2,  11,   0,   4,  25 },  // Easy
-		{   0,   0,   0,   0,   1,  25,   0,   6,  50 },  // Normal
-		{   0,   0,   0,   0,   1,  28,   0,   6,  75 },  // Hard
+		{   0,   0,   0,   0,   2,  11,   0,   4,  25,   5,  500,  750, 2048 },  // Easy
+		{   0,   0,   0,   0,   1,  25,   0,   6,  50,   5, 1000, 1500, 2048 },  // Normal
+		{   0,   0,   0,   0,   1,  28,   0,   6,  75,  10, 1500, 2000, 2050 },  // Hard
 	},
-	// Level 6 (Asteroid Field Chase)
+	// Sub-level 5: "4B" (Tatooine Attack part 2)
 	{
-		{   0,   0,   0,   0,   3,  20,   0,   2,  50 },  // Easy
-		{   0,   0,   0,   0,   1,  25,   0,   5, 100 },  // Normal
-		{   0,   0,   0,   0,   1,  28,   0,   6, 200 },  // Hard
+		{   0,   0,   0,   0,   3,  20,   0,   2,  50,   5,  500,  750, 2064 },  // Easy
+		{   0,   0,   0,   0,   1,  25,   0,   5, 100,   5, 1000, 1500, 2064 },  // Normal
+		{   0,   0,   0,   0,   1,  28,   0,   6, 200,  10, 1500, 2000, 2064 },  // Hard
 	},
-	// Level 7 (Imperial Probe Droids)
+	// Sub-level 6: "5A" (Imperial Probe Droids - speeder)
 	{
-		{  70, 150,  50,  25,  10,   0,  20,   0,  25 },  // Easy
-		{  72, 165, 155,  30,   8,   0,  30,   0,  50 },  // Normal
-		{ 110, 190,  55,  65,   3,   0,  33,   0,  75 },  // Hard
+		{  70, 150,  50,  25,  10,   0,  20,   0,  25,   5,  500,   15, 3072 },  // Easy
+		{  72, 165, 155,  30,   8,   0,  30,   0,  50,   5, 1000,   30, 3072 },  // Normal
+		{ 110, 190,  55,  65,   3,   0,  33,   0,  75,  10, 1500,   75, 3074 },  // Hard
 	},
-	// Level 8 (Imperial Walkers)
+	// Sub-level 7: "5B" (Imperial Walkers)
 	{
-		{   0,   0,   0,   0,   5,   0,   0,   2,  25 },  // Easy
-		{   0,   0,   0,   0,   3,   0,   0,   5,  50 },  // Normal
-		{   0,   0,   0,   0,   1,   0,   0,   6,  75 },  // Hard
+		{   0,   0,   0,   0,   5,   0,   0,   2,  25,   0,  500,   15, 2048 },  // Easy
+		{   0,   0,   0,   0,   3,   0,   0,   5,  50,   5, 1000,   30, 2048 },  // Normal
+		{   0,   0,   0,   0,   1,   0,   0,   6,  75,  10, 1500,   75, 2050 },  // Hard
 	},
-	// Level 9 (Stormtroopers)
+	// Sub-level 8: "6" (Stormtroopers)
 	{
-		{   0,   0,   0,   0,   2,  20,  20,   0,  25 },  // Easy
-		{   0,   0,   0,   0,   1,  25,  30,   0,  50 },  // Normal
-		{   0,   0,   0,   0,   0,  28,  33,   0,  75 },  // Hard
+		{   0,   0,   0,   0,   2,  20,  20,   0,  25,   5,  500,  100, 2048 },  // Easy
+		{   0,   0,   0,   0,   1,  25,  30,   0,  50,   5, 1000,  200, 2048 },  // Normal
+		{   0,   0,   0,   0,   0,  28,  33,   0,  75,  10, 1500,  500, 2050 },  // Hard
 	},
-	// Level 10 (Protect Rebel Transport)
+	// Sub-level 9: "7" (Protect Rebel Transport)
 	{
-		{ 100, 150, 150,  25,   7,   0,  12,   2,  50 },  // Easy
-		{ 100, 160, 200,  35,   4,   0,  30,   4, 100 },  // Normal
-		{ 100, 180, 250,  50,   3,   0,  33,   5, 100 },  // Hard
+		{ 100, 150, 150,  25,   7,   0,  12,   2,  50,   5,  500,  100, 3072 },  // Easy
+		{ 100, 160, 200,  35,   4,   0,  30,   4, 100,   5, 1000,  200, 3072 },  // Normal
+		{ 100, 180, 250,  50,   3,   0,  33,   5, 100,  10, 1500,  500, 3074 },  // Hard
+	},
+	// Sub-level 10: "8" (Death Star surface)
+	{
+		{   0,   0,   0,   0,   0,   0,  30,   0,  25,   0, 1000,  100, 3074 },  // Easy
+		{   0,   0,   0,   0,   0,   0,  36,   0,  50,   0, 2000,  200, 3074 },  // Normal
+		{   0,   0,   0,   0,   0,   0,  39,   0,  75,   0, 3000,  500, 3074 },  // Hard
+	},
+	// Sub-level 11: "9A" (Death Star turrets part 1)
+	{
+		{   0,   0,   0,   0,   4,   0,   0,  15,  25,   0, 1000,  100, 3074 },  // Easy
+		{   0,   0,   0,   0,   2,   0,   0,  25,  50,   0, 2000,  200, 3078 },  // Normal
+		{   0,   0,   0,   0,   0,   0,   0,  30,  75,   0, 3000,  500, 3078 },  // Hard
+	},
+	// Sub-level 12: "9B" (Death Star turrets part 2)
+	{
+		{   0,   0,   0,   0,   0,   0,   0,  15,  25,   0, 1000,  100, 3098 },  // Easy
+		{   0,   0,   0,   0,   0,   0,   0,  25,  50,   0, 2000,  200, 3098 },  // Normal
+		{   0,   0,   0,   0,   0,   0,   0,  30,  75,   0, 3000,  500, 3098 },  // Hard
+	},
+	// Sub-level 13: "10" (Death Star trench approach)
+	{
+		{   0,   0,   0,   0,   3,  10,   0,   5,  25,   5,  500,  200, 2048 },  // Easy
+		{   0,   0,   0,   0,   1,  16,   0,   5,  50,   5, 1000,  400, 2048 },  // Normal
+		{   0,   0,   0,   0,   0,  18,   0,   7,  75,  10, 1500, 1000, 2050 },  // Hard
+	},
+	// Sub-level 14: "11" (Death Star trench - speeder)
+	{
+		{  70, 150, 150,  25,  12,   0,  30,   0,  50,   5,  500,  200, 3072 },  // Easy
+		{  72, 165, 155,  30,   7,   0,  36,   0,  50,   5, 1000,  400, 3072 },  // Normal
+		{  75, 170, 160,  33,   3,   0,  39,   0,  75,  10, 1500, 1000, 3074 },  // Hard
+	},
+	// Sub-level 15: "12" (Death Star trench run)
+	{
+		{   0,   0,   0,   0,   4,  13,   0,   5,  25,   5,  500,  100, 2048 },  // Easy
+		{   0,   0,   0,   0,   2,  20,   0,   5,  50,   5, 1000,  200, 2048 },  // Normal
+		{   0,   0,   0,   0,   0,  23,   0,   5,  75,  10, 1500,  500, 2050 },  // Hard
+	},
+	// Sub-level 16: "13" (Asteroid belt chase)
+	{
+		{ 100,  16, 120,   0,  20,   0,  35,   8,  75,   5,  500,  100, 3072 },  // Easy
+		{ 100,  18, 120,   0,  18,   0,  36,  10, 100,   5, 1000,  200, 3072 },  // Normal
+		{ 100,  20, 150,   0,  15,   0,  39,  12, 200,  10, 1500,  500, 3074 },  // Hard
+	},
+	// Sub-level 17: "14A" (Star Destroyer attack 2 part 1)
+	{
+		{   0,   0,   0,   0,   0,  20,  35,   8,  25,   0, 1000,  100, 2048 },  // Easy
+		{   0,   0,   0,   0,   0,  27,  36,  12,  50,   0, 2000,  200, 2048 },  // Normal
+		{   0,   0,   0,   0,   0,  28,  39,  12,  75,   0, 3000,  500, 2050 },  // Hard
+	},
+	// Sub-level 18: "14B" (Star Destroyer attack 2 part 2)
+	{
+		{   0,   0,   0,   0,  10,  20,  35,   8,  25,   0, 1000,  100, 2048 },  // Easy
+		{   0,   0,   0,   0,   5,  25,  36,  10,  50,   0, 2000,  200, 2048 },  // Normal
+		{   0,   0,   0,   0,   4,  28,  39,  12,  75,   0, 3000,  500, 2050 },  // Hard
+	},
+	// Sub-level 19: "15A" (Death Star trench final part 1)
+	{
+		{   0,   0,   0,   0,   4,   0,  28,   3,  25,   5,  500,  100, 2048 },  // Easy
+		{   0,   0,   0,   0,   3,   0,  36,   3,  50,   5, 1000,  200, 2048 },  // Normal
+		{   0,   0,   0,   0,   3,   0,  39,   4,  75,  10, 1500,  500, 2050 },  // Hard
+	},
+	// Sub-level 20: "15B" (Death Star trench final part 2)
+	{
+		{   0,   0,   0,   0,   4,  10,  30,   3,  25,   5,  500,  100, 2048 },  // Easy
+		{   0,   0,   0,   0,   3,  20,  34,   3,  50,   5, 1000,  200, 2048 },  // Normal
+		{   0,   0,   0,   0,   2,  22,  35,   4,  75,  10, 1500,  500, 2050 },  // Hard
 	},
 };
-static const int kNumTunedLevels = 10;
+static const int kNumTunedLevels = 21;
 
 
 void InsaneRebel1::loadTuningForLevel(int level) {
 	int d = CLIP(_difficulty, 0, 2);
 	int l = CLIP(level, 0, kNumTunedLevels - 1);
-	_tuning.roll  = kTuningTable[l][d][0];
-	_tuning.lift  = kTuningTable[l][d][1];
-	_tuning.slide = kTuningTable[l][d][2];
-	_tuning.drift = kTuningTable[l][d][3];
-	_tuning.snap  = kTuningTable[l][d][4];
-	_tuning.miss  = kTuningTable[l][d][5];
-	_tuning.wham  = kTuningTable[l][d][6];
-	_tuning.shot  = kTuningTable[l][d][7];
-	_tuning.kill  = kTuningTable[l][d][8];
-	debug(1, "RA1: Loaded tuning level=%d diff=%d: roll=%d lift=%d slide=%d snap=%d miss=%d wham=%d shot=%d kill=%d",
-		level, d, _tuning.roll, _tuning.lift, _tuning.slide, _tuning.snap, _tuning.miss,
-		_tuning.wham, _tuning.shot, _tuning.kill);
+	_tuning.roll     = kTuningTable[l][d][0];
+	_tuning.lift     = kTuningTable[l][d][1];
+	_tuning.slide    = kTuningTable[l][d][2];
+	_tuning.drift    = kTuningTable[l][d][3];
+	_tuning.snap     = kTuningTable[l][d][4];
+	_tuning.miss     = kTuningTable[l][d][5];
+	_tuning.wham     = kTuningTable[l][d][6];
+	_tuning.shot     = kTuningTable[l][d][7];
+	_tuning.kill     = kTuningTable[l][d][8];
+	_tuning.time     = kTuningTable[l][d][9];
+	_tuning.levelPts = kTuningTable[l][d][10];
+	_tuning.bonus    = kTuningTable[l][d][11];
+	_tuning.flags    = kTuningTable[l][d][12];
+	debug(1, "RA1: Loaded tuning level=%d diff=%d: roll=%d lift=%d slide=%d drift=%d snap=%d "
+		"miss=%d wham=%d shot=%d kill=%d time=%d levelPts=%d bonus=%d flags=0x%x",
+		level, d, _tuning.roll, _tuning.lift, _tuning.slide, _tuning.drift, _tuning.snap,
+		_tuning.miss, _tuning.wham, _tuning.shot, _tuning.kill,
+		_tuning.time, _tuning.levelPts, _tuning.bonus, _tuning.flags);
 }
 
 InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
