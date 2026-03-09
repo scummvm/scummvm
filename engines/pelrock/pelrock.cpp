@@ -2085,9 +2085,6 @@ void PelrockEngine::setScreen(int roomNumber) {
 
 	_room->loadRoomMetadata(&roomFile, roomNumber);
 
-	_screen->markAllDirty();
-	_screen->update();
-
 	roomFile.close();
 	delete[] palette;
 }
@@ -2359,6 +2356,9 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 	case 53:
 	case 54:
 		initGodsSequences(_room->_currentRoomNumber);
+		if(roomNumber == 52) {
+			_room->addStickerToRoom(52, 105);
+		}
 		break;
 	default:
 		break;

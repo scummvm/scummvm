@@ -106,6 +106,10 @@ void RoomManager::addSticker(int stickerId, int persist) {
 void RoomManager::addStickerToRoom(byte room, int stickerId, int persist) {
 	Sticker sticker = g_engine->_res->getSticker(stickerId);
 	if (room == _currentRoomNumber && persist & PERSIST_TEMP) {
+		if(hasSticker(sticker.stickerIndex)) {
+			debug("Sticker %d already exists in room %d, skipping add", stickerId, room);
+			return;
+		}
 		_roomStickers.push_back(sticker);
 	}
 	if (persist & PERSIST_PERM) {

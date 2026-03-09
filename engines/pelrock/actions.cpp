@@ -2125,7 +2125,9 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 					_sound->playSound(_room->_roomSfx[1], 0);
 					smokeAnimation(kFlightRooms[flightIndex].spriteIdx, true);
 					_room->addStickerToRoom(_room->_currentRoomNumber, 127 + flightIndex);
-					if(_state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES) == 0b1111) {
+					_room->addStickerToRoom(52, 106 + flightIndex);
+
+					if(_state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES) == 15) { // all 4 spells successful
 						HotSpot hotspot = HotSpot();
 						hotspot.actionFlags = 0;
 						hotspot.extra = 999;
