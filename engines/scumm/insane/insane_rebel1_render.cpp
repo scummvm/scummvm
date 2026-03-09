@@ -383,10 +383,11 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			updateShipPhysics();
 		}
 
-		// LVL1 assembly flow exits gameplay loops as soon as health drops below 0
-		// (see 0x1626E/0x162EE -> 0x165DD and 0x1640B -> 0x16614), then plays crash video.
-		// Do not render the in-engine death overlay in this path; finish immediately.
-		if (_currentLevel == 0 && _health < 0) {
+		// Most RA1 gameplay loops exit the current interactive movie as soon as
+		// health drops below 0, then dispatch to the level-specific retry/death
+		// clip. LVL9's on-foot flow is the main exception: it keeps pumping while
+		// deathTimer > 1 before branching out of the current segment.
+		if (_health < 0 && _currentLevel != 8) {
 			_fireCooldown = _playerFired ? 1 : 0;
 			_vm->_smushVideoShouldFinish = true;
 			return;
