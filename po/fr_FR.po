@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-03-08 19:00+0000\n"
+"POT-Creation-Date: 2026-03-09 20:06+0000\n"
 "PO-Revision-Date: 2026-03-02 15:40+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -6675,7 +6675,7 @@ msgstr "Utilise le curseur à damier des modèles Apple II les plus récents"
 #: engines/griffon/metaengine.cpp:40 engines/hugo/metaengine.cpp:56
 #: engines/made/metaengine.cpp:51 engines/mm/metaengine.cpp:91
 #: engines/mortevielle/metaengine.cpp:37 engines/parallaction/metaengine.cpp:52
-#: engines/sci/detection_options.h:223 engines/scumm/dialogs.cpp:1245
+#: engines/sci/detection_options.h:223 engines/scumm/dialogs.cpp:1252
 #: engines/scumm/metaengine.cpp:872 engines/supernova/metaengine.cpp:53
 #: engines/wage/metaengine.cpp:51 engines/wintermute/metaengine.cpp:81
 msgid "Enable Text to Speech"
@@ -6687,7 +6687,7 @@ msgstr "Utiliser le synthétiseur vocal"
 #: engines/efh/metaengine.cpp:45 engines/gob/metaengine.cpp:58
 #: engines/got/metaengine.cpp:49 engines/hugo/metaengine.cpp:57
 #: engines/made/metaengine.cpp:52 engines/mm/metaengine.cpp:92
-#: engines/mortevielle/metaengine.cpp:38 engines/scumm/dialogs.cpp:1246
+#: engines/mortevielle/metaengine.cpp:38 engines/scumm/dialogs.cpp:1253
 #: engines/scumm/metaengine.cpp:873 engines/wintermute/metaengine.cpp:82
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "Utilise la synthèse vocale (si disponible) pour lire les textes du jeu"
@@ -6809,7 +6809,7 @@ msgstr "Ajoute un menu de vitesse (similaire à celui de la version PC)"
 #: engines/dreamweb/metaengine.cpp:36 engines/gob/metaengine.cpp:45
 #: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:51
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
-#: engines/scumm/dialogs.cpp:1226 engines/scumm/metaengine.cpp:821
+#: engines/scumm/dialogs.cpp:1233 engines/scumm/metaengine.cpp:821
 #: engines/tot/metaengine.cpp:37
 msgid "Enable copy protection"
 msgstr "Activer la protection anti-copie"
@@ -6818,7 +6818,7 @@ msgstr "Activer la protection anti-copie"
 #: engines/dreamweb/metaengine.cpp:37 engines/gob/metaengine.cpp:46
 #: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:52
 #: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
-#: engines/scumm/dialogs.cpp:1227 engines/scumm/metaengine.cpp:822
+#: engines/scumm/dialogs.cpp:1234 engines/scumm/metaengine.cpp:822
 msgid "Enable any copy protection that would otherwise be bypassed by default."
 msgstr ""
 "Active toute protection contre la copie qui serait autrement neutralisée par "
@@ -10896,7 +10896,7 @@ msgstr "Rapide"
 msgid "Normal"
 msgstr "Normal"
 
-#: engines/mohawk/dialogs.cpp:367 engines/scumm/dialogs.cpp:1575
+#: engines/mohawk/dialogs.cpp:367 engines/scumm/dialogs.cpp:1582
 msgid "Best"
 msgstr "Meilleur"
 
@@ -12353,11 +12353,20 @@ msgstr ""
 "utilisées sur les appareils Sega. Celles-ci sont nettement plus sombres, "
 "même s'il est difficile de savoir si c'était voulu ou non."
 
-#: engines/scumm/dialogs.cpp:1357
+#: engines/scumm/dialogs.cpp:1226
+msgid "Show wait cursor when paused"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:1227
+msgid ""
+"When paused, show the animated wait cursor from the original Sega CD version."
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:1364
 msgid "Overture Timing:"
 msgstr "Timing de l'ouverture :"
 
-#: engines/scumm/dialogs.cpp:1361
+#: engines/scumm/dialogs.cpp:1368
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
@@ -12365,18 +12374,18 @@ msgstr ""
 "Lorsque des musiques de remplacement sont utilisées, ajuste le moment où "
 "l'ouverture passe à la scène avec les logos Lucasfilm et Loom."
 
-#: engines/scumm/dialogs.cpp:1462
+#: engines/scumm/dialogs.cpp:1469
 msgid "Music Quality:"
 msgstr "Qualité des musiques :"
 
-#: engines/scumm/dialogs.cpp:1466
+#: engines/scumm/dialogs.cpp:1473
 msgid ""
 "Select music quality. The original lets you choose this from the Game menu."
 msgstr ""
 "Sélectionne la qualité des musiques. L'original vous permet de choisir cette "
 "qualité dans le menu du jeu."
 
-#: engines/scumm/dialogs.cpp:1467
+#: engines/scumm/dialogs.cpp:1474
 msgid ""
 "Select music quality. The original determines the basic setup by hardware "
 "detection and speed tests, but also allows changes through the Game menu to "
@@ -12386,46 +12395,46 @@ msgstr ""
 "base par détection du matériel et des tests de vitesse, mais permet aussi "
 "certains changements via le menu du jeu."
 
-#: engines/scumm/dialogs.cpp:1574 engines/scumm/dialogs.cpp:1575
+#: engines/scumm/dialogs.cpp:1581 engines/scumm/dialogs.cpp:1582
 msgid "auto"
 msgstr "auto"
 
-#: engines/scumm/dialogs.cpp:1574
+#: engines/scumm/dialogs.cpp:1581
 msgid "Low"
 msgstr "Basse"
 
-#: engines/scumm/dialogs.cpp:1574
+#: engines/scumm/dialogs.cpp:1581
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:75
 msgid "Medium"
 msgstr "Moyenne"
 
-#: engines/scumm/dialogs.cpp:1574
+#: engines/scumm/dialogs.cpp:1581
 msgid "High"
 msgstr "Elevée"
 
-#: engines/scumm/dialogs.cpp:1575
+#: engines/scumm/dialogs.cpp:1582
 msgid "Good"
 msgstr "Bonne"
 
-#: engines/scumm/dialogs.cpp:1575
+#: engines/scumm/dialogs.cpp:1582
 msgid "Better"
 msgstr "Meilleure"
 
-#: engines/scumm/dialogs.cpp:1576
+#: engines/scumm/dialogs.cpp:1583
 #, c-format
 msgid "Hardware Rating: %s   -   "
 msgstr "Note Matériel : %s   -   "
 
-#: engines/scumm/dialogs.cpp:1576
+#: engines/scumm/dialogs.cpp:1583
 #, c-format
 msgid "Quality Selection: %s"
 msgstr "Sélection de la qualité : %s"
 
-#: engines/scumm/dialogs.cpp:1590
+#: engines/scumm/dialogs.cpp:1597
 msgid "Playback Adjust:"
 msgstr "Ajustement du son :"
 
-#: engines/scumm/dialogs.cpp:1594
+#: engines/scumm/dialogs.cpp:1601
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
@@ -12434,11 +12443,11 @@ msgstr ""
 "départ du son de cette valeur. Utilisez cette option si vous entendez "
 "souvent des parties de sons incorrects."
 
-#: engines/scumm/dialogs.cpp:1697
+#: engines/scumm/dialogs.cpp:1707
 msgid "Intro Adjust:"
 msgstr "Ajustement de l'Intro :"
 
-#: engines/scumm/dialogs.cpp:1701
+#: engines/scumm/dialogs.cpp:1711
 msgid ""
 "When playing the intro track, play from this point in it. Use this if the "
 "music gets cut off prematurely, or if you are unhappy with the way the music "
@@ -12449,11 +12458,11 @@ msgstr ""
 "vous n'êtes pas satisfait de la façon dont la musique se synchronise avec "
 "l'intro."
 
-#: engines/scumm/dialogs.cpp:1710
+#: engines/scumm/dialogs.cpp:1720
 msgid "Outlook Adjust:"
 msgstr "Ajustement de l'accompagnement :"
 
-#: engines/scumm/dialogs.cpp:1714
+#: engines/scumm/dialogs.cpp:1724
 msgid ""
 "The outlook music is part of the intro track. Adjust the position in the "
 "track at which it starts playing. Use this if the music is cut off, or if "
@@ -12464,11 +12473,11 @@ msgstr ""
 "Utilisez cette fonction si la musique est coupée, ou si vous entendez une "
 "partie de la musique précédente."
 
-#: engines/scumm/dialogs.cpp:1837 engines/scumm/metaengine.cpp:773
+#: engines/scumm/dialogs.cpp:1860 engines/scumm/metaengine.cpp:773
 msgid "Load modded audio"
 msgstr "Charger de l'audio modifié"
 
-#: engines/scumm/dialogs.cpp:1837 engines/scumm/metaengine.cpp:774
+#: engines/scumm/dialogs.cpp:1860 engines/scumm/metaengine.cpp:774
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
@@ -12476,15 +12485,15 @@ msgstr ""
 "Remplace la musique, les effets sonores et les clips vocaux par des fichiers "
 "audio modifiés, s'ils sont disponibles."
 
-#: engines/scumm/dialogs.cpp:1842 engines/scumm/dialogs.cpp:1855
+#: engines/scumm/dialogs.cpp:1865 engines/scumm/dialogs.cpp:1878
 msgid "Multiplayer Server:"
 msgstr "Serveur Multijoueur :"
 
-#: engines/scumm/dialogs.cpp:1845
+#: engines/scumm/dialogs.cpp:1868
 msgid "Online Server:"
 msgstr "Serveur en ligne :"
 
-#: engines/scumm/dialogs.cpp:1846
+#: engines/scumm/dialogs.cpp:1869
 msgid ""
 "Address of the server to connect to for online play.  It must start with "
 "either \"https://\" or \"http://\" schemas."
@@ -12492,20 +12501,20 @@ msgstr ""
 "Adresse du serveur auquel se connecter pour jouer en ligne.  Celle-ci doit "
 "commencer par les termes \"https://\" ou \"http://\"."
 
-#: engines/scumm/dialogs.cpp:1848
+#: engines/scumm/dialogs.cpp:1871
 msgid "Enable online competitive mods"
 msgstr "Activer les mods en ligne compétitifs"
 
-#: engines/scumm/dialogs.cpp:1848
+#: engines/scumm/dialogs.cpp:1871
 msgid "Enables custom-made modifications intended for online competitive play."
 msgstr ""
 "Active les modifications personnalisées destinées au jeu en ligne compétitif."
 
-#: engines/scumm/dialogs.cpp:1858
+#: engines/scumm/dialogs.cpp:1881
 msgid "Enable connection to Multiplayer Server"
 msgstr "Activer la connexion au Serveur Multijoueur"
 
-#: engines/scumm/dialogs.cpp:1858
+#: engines/scumm/dialogs.cpp:1881
 msgid ""
 "Toggles the connection to the server that allows hosting and joining online "
 "multiplayer games over the Internet."
@@ -12513,26 +12522,26 @@ msgstr ""
 "Active la connexion au serveur qui permet d'héberger et de rejoindre des "
 "parties multijoueurs en ligne sur Internet."
 
-#: engines/scumm/dialogs.cpp:1859
+#: engines/scumm/dialogs.cpp:1882
 msgid "Host games over LAN"
 msgstr "Héberger des jeux en LAN"
 
-#: engines/scumm/dialogs.cpp:1859
+#: engines/scumm/dialogs.cpp:1882
 msgid "Allows the game sessions to be discovered over your local area network."
 msgstr "Permet aux sessions d'être découvertes sur votre réseau local."
 
 #. I18N: Moonbase Console is a program name
-#: engines/scumm/dialogs.cpp:1863
+#: engines/scumm/dialogs.cpp:1886
 msgid "Generate random maps"
 msgstr "Générer des cartes aléatoires"
 
-#: engines/scumm/dialogs.cpp:1863
+#: engines/scumm/dialogs.cpp:1886
 msgid "Allow random map generation (Based from Moonbase Console)."
 msgstr ""
 "Permet la génération de cartes aléatoires (basée depuis la console de la "
 "base lunaire)."
 
-#: engines/scumm/dialogs.cpp:1866
+#: engines/scumm/dialogs.cpp:1889
 msgid ""
 "Address of the server to connect to for hosting and joining online game "
 "sessions."
