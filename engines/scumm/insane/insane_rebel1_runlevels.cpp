@@ -1049,10 +1049,16 @@ void InsaneRebel1::runGame() {
 			// Game Options
 			runOptionsMenu();
 			break;
-		case 3:
-			// Level Select
-			runLevelSelectMenu();
+		case 3: {
+			// Level Select — launch directly
+			int selectedLevel = runLevelSelectMenu();
+			if (selectedLevel >= 1 && selectedLevel <= (int)(sizeof(kLevelRunners) / sizeof(kLevelRunners[0]))) {
+				_startLevel = selectedLevel;
+				(this->*kLevelRunners[selectedLevel - 1])();
+				_currentLevel = 0;
+			}
 			break;
+		}
 		case 5:
 			// Exit
 			return;

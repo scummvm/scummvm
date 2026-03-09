@@ -29,19 +29,34 @@
 
 namespace Scumm {
 
-static const int kRA1LevelSelectItemCount = 11;
-static const int kRA1LastImplementedLevel = 10;
+static const int kRA1LevelSelectItemCount = 16;  // 15 levels + BACK
+static const int kRA1LevelSelectRowsPerCol = 8;
+static const int kRA1NumLevels = 15;
 
 bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 	if (_menuActive && _levelSelectActive && event.type == Common::EVENT_KEYDOWN) {
+		int col = _levelSelectSel / kRA1LevelSelectRowsPerCol;
+		int row = _levelSelectSel % kRA1LevelSelectRowsPerCol;
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_UP:
 		case Common::KEYCODE_w:
-			_levelSelectSel = (_levelSelectSel + kRA1LevelSelectItemCount - 1) % kRA1LevelSelectItemCount;
+			row = (row + kRA1LevelSelectRowsPerCol - 1) % kRA1LevelSelectRowsPerCol;
+			_levelSelectSel = col * kRA1LevelSelectRowsPerCol + row;
 			return true;
 		case Common::KEYCODE_DOWN:
 		case Common::KEYCODE_s:
-			_levelSelectSel = (_levelSelectSel + 1) % kRA1LevelSelectItemCount;
+			row = (row + 1) % kRA1LevelSelectRowsPerCol;
+			_levelSelectSel = col * kRA1LevelSelectRowsPerCol + row;
+			return true;
+		case Common::KEYCODE_LEFT:
+		case Common::KEYCODE_a:
+			if (col > 0)
+				_levelSelectSel -= kRA1LevelSelectRowsPerCol;
+			return true;
+		case Common::KEYCODE_RIGHT:
+		case Common::KEYCODE_d:
+			if (col < 1)
+				_levelSelectSel += kRA1LevelSelectRowsPerCol;
 			return true;
 		case Common::KEYCODE_RETURN:
 		case Common::KEYCODE_KP_ENTER:
@@ -208,36 +223,42 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 	}
 
 	if (_levelSelectActive) {
-		// --- Level select submenu ---
+		// --- Level select submenu (two-column layout) ---
 		const int titleW = getTalkTextWidth("LEVEL SELECT");
-		drawTalkText((width - titleW) / 2, 36, "LEVEL SELECT");
+		drawTalkText((width - titleW) / 2, 30, "LEVEL SELECT");
 
-		const char *kLevelItems[kRA1LevelSelectItemCount] = {
-			"LEVEL 1: FLIGHT TRAINING",
-			"LEVEL 2: ASTEROID FIELD",
-			"LEVEL 3: PLANET KOLAADOR",
-			"LEVEL 4: STAR DESTROYER",
-			"LEVEL 5: TATOOINE ATTACK",
-			"LEVEL 6: ASTEROID CHASE",
-			"LEVEL 7: PROBE DROIDS",
-			"LEVEL 8: IMPERIAL WALKERS",
-			"LEVEL 9: STORMTROOPERS",
-			"LEVEL 10: REBEL TRANSPORT",
+		static const char *kLevelItems[kRA1LevelSelectItemCount] = {
+			" 1  FLIGHT TRAINING",
+			" 2  ASTEROID FIELD",
+			" 3  PLANET KOLAADOR",
+			" 4  STAR DESTROYER",
+			" 5  TATOOINE ATTACK",
+			" 6  ASTEROID CHASE",
+			" 7  PROBE DROIDS",
+			" 8  IMPERIAL WALKERS",
+			" 9  STORMTROOPERS",
+			"10  REBEL TRANSPORT",
+			"11  YAVIN TRAINING",
+			"12  TIE ATTACK",
+			"13  DEATH STAR SURFACE",
+			"14  SURFACE CANNON",
+			"15  DEATH STAR TRENCH",
 			"BACK"
 		};
 
-		const int menuY = 60;
-		const int rowH = 16;
+		const int menuY = 50;
+		const int rowH = 14;
+		const int leftColX = 8;
+		const int rightColX = width / 2 + 4;
 
 		for (int i = 0; i < kRA1LevelSelectItemCount; i++) {
+			const int col = i / kRA1LevelSelectRowsPerCol;
+			const int row = i % kRA1LevelSelectRowsPerCol;
+			const int textX = (col == 0) ? leftColX : rightColX;
+			const int y = menuY + row * rowH;
 			const int textW = getTalkTextWidth(kLevelItems[i]);
-			const int textX = (width - textW) / 2;
-			const int y = menuY + i * rowH;
-			drawTalkText(textX, y + 1, kLevelItems[i]);
 
-			if (i == _startLevel - 1) {
-				drawTalkText(textX - 12, y + 1, ">");
-			}
+			drawTalkText(textX, y + 1, kLevelItems[i]);
 
 			if (i == _levelSelectSel) {
 				byte highlightColor = ((_menuFrameCounter / 8) & 1) ? 248 : 240;
@@ -377,8 +398,8 @@ void InsaneRebel1::runOptionsMenu() {
 	_optionsActive = false;
 }
 
-void InsaneRebel1::runLevelSelectMenu() {
-	_levelSelectSel = CLIP(_startLevel - 1, 0, kRA1LastImplementedLevel - 1);
+int InsaneRebel1::runLevelSelectMenu() {
+	_levelSelectSel = CLIP(_startLevel - 1, 0, kRA1NumLevels - 1);
 	_levelSelectActive = true;
 
 	while (!_vm->shouldQuit()) {
@@ -393,17 +414,17 @@ void InsaneRebel1::runLevelSelectMenu() {
 			break;
 
 		if (_menuConfirmed) {
-			if (_levelSelectSel < kRA1LastImplementedLevel) {
-				_startLevel = _levelSelectSel + 1;
+			if (_levelSelectSel < kRA1NumLevels) {
 				_levelSelectActive = false;
-				return;
+				return _levelSelectSel + 1;  // 1-based level number
 			}
-
+			// BACK
 			_levelSelectActive = false;
-			return;
+			return 0;
 		}
 	}
 	_levelSelectActive = false;
+	return 0;
 }
 
 } // End of namespace Scumm
