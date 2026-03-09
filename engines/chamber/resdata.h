@@ -22,6 +22,8 @@
 #ifndef CHAMBER_RESDATA_H
 #define CHAMBER_RESDATA_H
 
+#include "graphics/surface.h"
+	
 namespace Chamber {
 
 typedef struct ResEntry_t {
@@ -91,7 +93,7 @@ uint16 saveFile(char *filename, byte *buffer, uint16 size);
 int16 loadFilesList(ResEntry_t *entries);
 
 int16 loadStaticData(void);
-int16 loadFond(void);
+Graphics::Surface *loadFond(void);
 int16 loadSpritesData(void);
 int16 loadPersData(void);
 
