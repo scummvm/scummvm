@@ -33,9 +33,7 @@
 // AUGraphNodeInfo APIs. The newer APIs are used by default, but we do need to
 // use the old ones when building for 10.4.
 #if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
-	#define USE_DEPRECATED_COREAUDIO_API 1
-#else
-	#define USE_DEPRECATED_COREAUDIO_API 0
+#define COREAUDIO_USE_PRE_LEOPARD_API
 #endif
 
 #include "common/config-manager.h"
@@ -48,6 +46,14 @@
 #include <CoreServices/CoreServices.h>
 #include <AudioToolbox/AUGraph.h>
 
+#ifdef COREAUDIO_USE_PRE_LEOPARD_API
+#define AUGraphAddNode(a, b, c)      AUGraphNewNode(a, b, 0, nullptr, c)
+#define AUGraphNodeInfo(a, b, c, d)  AUGraphGetNodeInfo(a, b, c, nullptr, nullptr, d)
+#endif
+
+#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6
+typedef ComponentDescription AudioComponentDescription;
+#endif
 
 // Activating the following switch disables reverb support in the CoreAudio
 // midi backend. Reverb will suck away a *lot* of CPU time, so on slower
@@ -74,7 +80,7 @@ public:
 	MidiDriver_CORE();
 	~MidiDriver_CORE();
 	int open() override;
-	bool isOpen() const override { return _auGraph != 0; }
+	bool isOpen() const override { return _auGraph != nullptr; }
 	void close() override;
 	void send(uint32 b) override;
 	void sysEx(const byte *msg, uint16 length) override;
@@ -86,19 +92,19 @@ private:
 };
 
 MidiDriver_CORE::MidiDriver_CORE()
-	: _auGraph(0) {
+	: _auGraph(nullptr) {
 }
 
 MidiDriver_CORE::~MidiDriver_CORE() {
 	if (_auGraph) {
 		AUGraphStop(_auGraph);
 		DisposeAUGraph(_auGraph);
-		_auGraph = 0;
+		_auGraph = nullptr;
 	}
 }
 
 int MidiDriver_CORE::open() {
-	OSStatus err = 0;
+	OSStatus err = noErr;
 
 	if (isOpen())
 		return MERR_ALREADY_OPEN;
@@ -107,11 +113,7 @@ int MidiDriver_CORE::open() {
 	RequireNoErr(NewAUGraph(&_auGraph));
 
 	AUNode outputNode, synthNode;
-#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6
-	ComponentDescription desc;
-#else
 	AudioComponentDescription desc;
-#endif
 
 	// The default output device
 	desc.componentType = kAudioUnitType_Output;
@@ -119,21 +121,13 @@ int MidiDriver_CORE::open() {
 	desc.componentManufacturer = kAudioUnitManufacturer_Apple;
 	desc.componentFlags = 0;
 	desc.componentFlagsMask = 0;
-#if USE_DEPRECATED_COREAUDIO_API
-	RequireNoErr(AUGraphNewNode(_auGraph, &desc, 0, NULL, &outputNode));
-#else
 	RequireNoErr(AUGraphAddNode(_auGraph, &desc, &outputNode));
-#endif
 
 	// The built-in default (softsynth) music device
 	desc.componentType = kAudioUnitType_MusicDevice;
 	desc.componentSubType = kAudioUnitSubType_DLSSynth;
 	desc.componentManufacturer = kAudioUnitManufacturer_Apple;
-#if USE_DEPRECATED_COREAUDIO_API
-	RequireNoErr(AUGraphNewNode(_auGraph, &desc, 0, NULL, &synthNode));
-#else
 	RequireNoErr(AUGraphAddNode(_auGraph, &desc, &synthNode));
-#endif
 
 	// Connect the softsynth to the default output
 	RequireNoErr(AUGraphConnectNodeInput(_auGraph, synthNode, 0, outputNode, 0));
@@ -143,11 +137,7 @@ int MidiDriver_CORE::open() {
 	RequireNoErr(AUGraphInitialize(_auGraph));
 
 	// Get the music device from the graph.
-#if USE_DEPRECATED_COREAUDIO_API
-	RequireNoErr(AUGraphGetNodeInfo(_auGraph, synthNode, NULL, NULL, NULL, &_synth));
-#else
-	RequireNoErr(AUGraphNodeInfo(_auGraph, synthNode, NULL, &_synth));
-#endif
+	RequireNoErr(AUGraphNodeInfo(_auGraph, synthNode, nullptr, &_synth));
 
 	// Load custom soundfont, if specified
 	if (ConfMan.hasKey("soundfont"))
@@ -159,6 +149,7 @@ int MidiDriver_CORE::open() {
 	// TODO: Make this customizable via a config key?
 	{
 		UInt32 usesReverb = 0;
+		// XXX: iOS might need kAudioUnitProperty_UsesInternalReverb instead?
 		AudioUnitSetProperty(_synth, kMusicDeviceProperty_UsesInternalReverb,
 			kAudioUnitScope_Global, 0, &usesReverb, sizeof(usesReverb));
 	}
@@ -173,7 +164,7 @@ bail:
 	if (_auGraph) {
 		AUGraphStop(_auGraph);
 		DisposeAUGraph(_auGraph);
-		_auGraph = 0;
+		_auGraph = nullptr;
 	}
 	return MERR_CANNOT_CONNECT;
 }
@@ -182,11 +173,11 @@ void MidiDriver_CORE::loadSoundFont(const char *soundfont) {
 	// TODO: We should really check whether the file contains an
 	// actual soundfont...
 
-	OSStatus err = 0;
+	OSStatus err = noErr;
 
-#if USE_DEPRECATED_COREAUDIO_API
+#ifdef COREAUDIO_USE_PRE_LEOPARD_API
 	FSRef fsref;
-	err = FSPathMakeRef((const UInt8 *)soundfont, &fsref, NULL);
+	err = FSPathMakeRef((const UInt8 *)soundfont, &fsref, nullptr);
 
 	if (err == noErr) {
 		err = AudioUnitSetProperty(
@@ -213,7 +204,7 @@ void MidiDriver_CORE::loadSoundFont(const char *soundfont) {
 	} else {
 		warning("Failed to allocate CFURLRef from '%s'", soundfont);
 	}
-#endif // USE_DEPRECATED_COREAUDIO_API
+#endif // COREAUDIO_USE_PRE_LEOPARD_API
 
 	if (err != noErr)
 		error("Failed loading custom SoundFont '%s' (error %ld)", soundfont, (long)err);
@@ -224,7 +215,7 @@ void MidiDriver_CORE::close() {
 	if (_auGraph) {
 		AUGraphStop(_auGraph);
 		DisposeAUGraph(_auGraph);
-		_auGraph = 0;
+		_auGraph = nullptr;
 	}
 }
 
