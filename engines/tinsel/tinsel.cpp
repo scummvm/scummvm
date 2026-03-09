@@ -905,7 +905,8 @@ const char *const TinselEngine::_sceneFiles[] = {
 
 TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc), _random("tinsel"),
-		_sound(0), _midiMusic(0), _pcmMusic(0), _bmv(0) {
+		_sound(0), _midiMusic(0), _pcmMusic(0), _bmv(0),
+		_memoryManagerInitialized(false) {
 	_vm = this;
 
 	_gameId = 0;
@@ -957,7 +958,9 @@ TinselEngine::~TinselEngine() {
 	delete _actor;
 	delete _config;
 
-	MemoryDeinit();
+	if (_memoryManagerInitialized) {
+		MemoryDeinit();
+	}
 
 	// Reset global vars
 	ResetVarsDrives();	// drives.cpp
@@ -1066,6 +1069,7 @@ Common::Error TinselEngine::run() {
 
 	// init memory manager
 	MemoryInit();
+	_memoryManagerInitialized = true;
 
 	// load user configuration
 	_vm->_config->readFromDisk();

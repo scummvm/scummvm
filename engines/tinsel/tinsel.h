@@ -210,6 +210,7 @@ public:
 	Notebook *_notebook = nullptr;
 	SystemReel *_systemReel = nullptr;
 	Spriter *_spriter = nullptr;
+	bool _memoryManagerInitialized;
 
 	KEYFPTR _keyHandler;
 
