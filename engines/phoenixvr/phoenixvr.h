@@ -155,6 +155,10 @@ public:
 		_angleX.setRange(min, max);
 	}
 
+	void resetYMax() {
+		_angleX.resetRange();
+	}
+
 	void setAngle(float x, float y) {
 		_angleX.set(y);
 		static const float baseX = -kPi2;

@@ -805,7 +805,13 @@ struct AngleYMax : public Script::Command {
 
 	void exec(Script::ExecutionContext &ctx) const override {
 		debug("angleymax %g %g", yMin, yMax);
-		g_engine->setYMax(yMin, yMax);
+		if (yMin != yMax) {
+			debug("angleymax %g %g", yMin, yMax);
+			g_engine->setYMax(yMin, yMax);
+		} else {
+			debug("angleymax: reset");
+			g_engine->resetYMax();
+		}
 	}
 };
 
