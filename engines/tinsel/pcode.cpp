@@ -174,6 +174,18 @@ static const byte fragment19[] = {
 	OP_IMM | OPSIZE8, 2,
 	OP_LIBCALL | OPSIZE8, 0x0f // Conversation(2), close conversation window
 };
+static const byte fragment20[] = {
+	OP_IMM | OPSIZE8, 35,
+	OP_LIBCALL | OPSIZE8, 0x29, // KillTag(35) - dragon polygon
+	OP_IMM | OPSIZE8, 9,
+	OP_LIBCALL | OPSIZE8, 0x26  // KillActor(9) - dragon actor
+};
+static const byte fragment21[] = {
+	OP_IMM | OPSIZE8, 35,
+	OP_LIBCALL | OPSIZE8, 0x43, // SetTag(35) - dragon polygon
+	OP_IMM | OPSIZE8, 9,
+	OP_LIBCALL | OPSIZE8, 0x3e  // SetActor(9) - dragon actor
+};
 
 #if NOIR_SKIP_INTRO
 static const byte fragment_noir_skip_intro_1[] = {
@@ -281,6 +293,18 @@ const WorkaroundEntry workaroundList[] = {
 	// The `SCANICON` switch statement is missing a handler, preventing
 	// the stop-conversation icon from working. Fixes bug #10661
 	{TINSEL_V1, false, false, Common::kPlatformUnknown, 553821320, 465, sizeof(fragment19), fragment19},
+
+	// DW1-GRA: Fixes Act 4 dragon appearing in town square before finale.
+	// The dragon is supposed to appear once all the items have been found,
+	// but instead it is always present. Clicking it glitches the game with
+	// animation from the final battle, revealing puzzle details and leaving
+	// Rincewind invisible. Entrance 2 attempts to kill the dragon's polygon,
+	// but it uses the wrong ID, and no attempt is made to remove the actor.
+	// We fix this by adding a `KillActor` call and a `KillTag` call with the
+	// actual polygon ID to the entrance 2 script. Entrance 1 is the finale,
+	// and requires `SetActor` and `SetTag` calls to restore the dragon.
+	{TINSEL_V1, false, false, Common::kPlatformUnknown, 0x0184eb36, 0, sizeof(fragment20), fragment20}, // Entrance 2
+	{TINSEL_V1, false, false, Common::kPlatformUnknown, 0x0184e86c, 0, sizeof(fragment21), fragment21}, // Entrance 1
 
 #if NOIR_SKIP_INTRO
 	// NOIR: Skip the menu and intro, and skip the first conversation.
