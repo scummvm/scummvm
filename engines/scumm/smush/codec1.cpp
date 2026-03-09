@@ -36,6 +36,7 @@ void smushDecodeRLE(byte *dst, const byte *src, int left, int top, int width, in
 	} while (--height);
 }
 
+
 /**
  * RA1 codec 1: RLE with transparency on pixel 0.
  * Same BOMP encoding as smushDecodeRLE but pixel value 0 is not written,

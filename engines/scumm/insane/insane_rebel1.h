@@ -240,6 +240,13 @@ private:
 	// 0x0B handler physics update (asteroid/surface levels)
 	void updateAsteroidPhysics();
 
+	// 0x19/0x1A on-foot handler (Level 9 Stormtroopers)
+	void updateOnFootPhysics();
+	int16 _onFootCharX;      // Character draw X (g_shipOffsetX in original)
+	int16 _onFootCharY;      // Character draw Y (g_shipOffsetY in original)
+	int16 _onFootAnimCounter; // DAT_0000828a: fire animation counter
+	bool _onFootInitialized;  // First-frame init flag for 0x19
+
 	// Current level index (0-based: 0=LVL1, 1=LVL2, etc.)
 	int _currentLevel;
 

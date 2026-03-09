@@ -128,7 +128,11 @@ bool SmushPlayerRebel1::handleGameFetch(int32 subSize, Common::SeekableReadStrea
 		if (_insane) {
 			InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
 			if (rebel1->isInteractiveVideoActive()) {
-				if (rebel1->getActiveGameOpcode() == 0x0B && _storedFobjWidth == _vm->_screenWidth) {
+				const uint16 gameOp = rebel1->getActiveGameOpcode();
+				// 0x0B (asteroid/surface) and 0x19/0x1A (on-foot) use SetCameraOffset
+				// directly — no projection-based FTCH placement.
+				if ((gameOp == 0x0B && _storedFobjWidth == _vm->_screenWidth) ||
+					gameOp == 0x19 || gameOp == 0x1A) {
 					left += _ra1ViewportOffsetX;
 					top += _ra1ViewportOffsetY;
 				} else {

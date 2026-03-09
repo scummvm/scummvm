@@ -371,21 +371,40 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	const bool haveFrameGameOpcodes = (_frameGameOpcodeMask != 0);
 	const bool asteroidMode = hasFrameGameOpcode(0x0B) ||
 		(!haveFrameGameOpcodes && _activeGameOpcode == 0x0B);
+	const bool onFootMode = hasFrameGameOpcode(0x19) || hasFrameGameOpcode(0x1A) ||
+		(!haveFrameGameOpcodes &&
+			(_activeGameOpcode == 0x19 || _activeGameOpcode == 0x1A));
 	if (asteroidMode) {
 		// First-person asteroid/surface handler — opcode 0x0B (FUN_1CDA7).
 		updateAsteroidPhysics();
+	} else if (onFootMode) {
+		// On-foot handler — opcodes 0x19/0x1A (Level 9 Stormtroopers)
+		updateOnFootPhysics();
+
+		if (_health < 0 && _deathTimer < 2) {
+			_fireCooldown = _playerFired ? 1 : 0;
+			_vm->_smushVideoShouldFinish = true;
+			return;
+		}
+
+		// Draw character sprite at on-foot position (DrawFobjGlyph with flag 0x80)
+		if (_shipBank.numSprites > 0 && _shipDirIndex >= 0 &&
+			_shipDirIndex < _shipBank.numSprites) {
+			const RA1Sprite &spr = _shipBank.sprites[_shipDirIndex];
+			int drawX = _onFootCharX + spr.xoffs;
+			int drawY = _onFootCharY + spr.yoffs;
+			renderSprite(renderBitmap, pitch, width, height, drawX, drawY, spr);
+		}
 	} else {
 		const bool turretMode = hasFrameGameOpcode(0x08) || hasFrameGameOpcode(0x0A) ||
 			(!haveFrameGameOpcodes && (_activeGameOpcode == 0x08 || _activeGameOpcode == 0x0A));
 		const bool flightMode = hasFrameGameOpcode(0x07) || hasFrameGameOpcode(0x09) ||
-			hasFrameGameOpcode(0x19) || hasFrameGameOpcode(0x1A) ||
 			(!haveFrameGameOpcodes &&
-				(_activeGameOpcode == 0x07 || _activeGameOpcode == 0x09 ||
-				 _activeGameOpcode == 0x19 || _activeGameOpcode == 0x1A));
+				(_activeGameOpcode == 0x07 || _activeGameOpcode == 0x09));
 
 		// Dispatch movement path by GAME handler family:
 		//   0x08/0x0A -> FUN_1E6A7/FUN_1D79C (turret/cockpit)
-		//   0x07/0x09/0x19/0x1A -> flight-family handlers
+		//   0x07/0x09 -> flight-family handlers
 		if (turretMode) {
 			updateTurretPhysics();
 		} else if (flightMode) {
@@ -394,9 +413,8 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 
 		// Most RA1 gameplay loops exit the current interactive movie as soon as
 		// health drops below 0, then dispatch to the level-specific retry/death
-		// clip. LVL9's on-foot flow is the main exception: it keeps pumping while
-		// deathTimer > 1 before branching out of the current segment.
-		if (_health < 0 && _currentLevel != 8) {
+		// clip.
+		if (_health < 0) {
 			_fireCooldown = _playerFired ? 1 : 0;
 			_vm->_smushVideoShouldFinish = true;
 			return;
@@ -410,9 +428,15 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// GAME handlers in the original update FUN_224FD during the same frame that
 	// the new control state is computed. Sync the current frame's viewport window
 	// before HUD/screen copy so 0x0B doesn't lag one frame behind the mouse.
+	// On-foot mode uses SetCameraOffset(0,0) — no viewport crop.
 	if (_player) {
-		_player->_ra1ViewportOffsetX = _perspectiveX;
-		_player->_ra1ViewportOffsetY = _perspectiveY;
+		if (onFootMode) {
+			_player->_ra1ViewportOffsetX = 0;
+			_player->_ra1ViewportOffsetY = 0;
+		} else {
+			_player->_ra1ViewportOffsetX = _perspectiveX;
+			_player->_ra1ViewportOffsetY = _perspectiveY;
+		}
 	}
 
 	// Assembly dispatch (FUN_1BE1B) only runs the targeting/shot overlay pipeline

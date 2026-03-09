@@ -787,7 +787,7 @@ bool InsaneRebel1::runLevel9() {
 		_lastHitTarget = 0;
 		_shipPosX = kRA1CenterX;
 		_shipPosY = kRA1CenterY;
-		_shipDirIndex = 17;
+		_shipDirIndex = 15;  // On-foot center direction
 		_rollAccum = 0;
 		_liftSmooth = 0;
 		_posAccumX = 0;
@@ -795,6 +795,10 @@ bool InsaneRebel1::runLevel9() {
 		_perspectiveX = 0;
 		_perspectiveY = 0;
 		_levelGameplayPhase = 0;
+		_onFootCharX = 0;
+		_onFootCharY = 0;
+		_onFootAnimCounter = 0;
+		_onFootInitialized = false;
 		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
 		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
 		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
@@ -821,6 +825,7 @@ bool InsaneRebel1::runLevel9() {
 			if (_health < 0)
 				break;
 
+			_gameplayFlags75fe |= 4;
 			const int side1 = (_shipPosX < kRA1CenterX) ? 0 : 1;
 			playCinematic(side1 == 0 ? "LVL9/L9PLAY2A.ANM" : "LVL9/L9PLAY2B.ANM");
 			if (_vm->shouldQuit())
@@ -863,6 +868,7 @@ bool InsaneRebel1::runLevel9() {
 			if (_health < 0)
 				break;
 
+			_gameplayFlags75fe |= 4;
 			const int side2 = (_shipPosX < kRA1CenterX) ? 0 : 1;
 			playCinematic(side2 == 0 ? "LVL9/L9PLAY4A.ANM" : "LVL9/L9PLAY4B.ANM");
 			if (_vm->shouldQuit())
@@ -891,6 +897,7 @@ bool InsaneRebel1::runLevel9() {
 				if (_health < 0)
 					break;
 
+				_gameplayFlags75fe |= 4;
 				const int side3 = (_shipPosX < kRA1CenterX) ? 0 : 1;
 				if (side3 == randPath3) {
 					playCinematic("LVL9/L9CUT6A.ANM");

@@ -791,7 +791,8 @@ void InsaneRebel1::updateShipPhysics() {
 	//   (_74CE + 0x20) * 5 / 0x41  → 0..4  (5 rows)
 	int vComponent = (_liftSmooth + 0x20) * 5 / 0x41;
 
-	_shipDirIndex = CLIP<int16>((int16)(vComponent + hComponent), 0, _shipBank.numSprites - 1);
+	if (_shipBank.numSprites > 0)
+		_shipDirIndex = CLIP<int16>((int16)(vComponent + hComponent), 0, _shipBank.numSprites - 1);
 
 	// --- Step 10: Damage/event bit synthesis + damage processing ---
 	// RA1 FUN_1B297-style latches from GAME opcodes:
@@ -1151,6 +1152,120 @@ void InsaneRebel1::updateAsteroidPhysics() {
 		_perspectiveX, _perspectiveY, _health, _screenFlash);
 }
 
+
+// updateOnFootPhysics — HandleGameOp19_OnFootSequence (0x19) + HandleGameOp1A_OnFootVariant (0x1A).
+// On-foot handler for Level 9 (Stormtroopers). Character walks left/right, crosshair tracks mouse.
+//
+// Original has TWO separate variable pairs:
+//   DAT_000041a0/41a2 = camera offset (SetCameraOffset, ProjectPointToScreen)
+//   g_perspectiveX/Y  = crosshair center (on-foot targeting)
+// Our _perspectiveX/_perspectiveY maps to the camera offset (DAT_000041a0/41a2).
+// The crosshair center (0xA3, 0x82) is a separate constant for on-foot mode.
+static const int16 kOnFootCenterX = 0xA3;  // g_perspectiveX in HandleGameOp19
+static const int16 kOnFootCenterY = 0x82;  // g_perspectiveY in HandleGameOp19
+
+void InsaneRebel1::updateOnFootPhysics() {
+	// --- First-frame initialization (0x19 counter==0) ---
+	if (!_onFootInitialized) {
+		_onFootInitialized = true;
+		_shipDirIndex = 15;       // Center facing
+		_onFootAnimCounter = 0;
+		_onFootCharX = 0;
+		_onFootCharY = 0;
+		_damageFlags = 0;
+		_prevDamageFlags = 0;
+		_damageCooldown = 0;
+
+		// SetCameraOffset(0,0) — no viewport crop for on-foot levels
+		_perspectiveX = 0;
+		_perspectiveY = 0;
+		resetProjectionTable();
+	}
+
+	// --- 0x19: Character walk animation + damage ---
+	// Track fire button for animation
+	if (!_playerFired)
+		_onFootAnimCounter = 0;
+	else
+		_onFootAnimCounter++;
+
+	// Walk direction state machine (from HandleGameOp19)
+	if (_shipDirIndex == 0) {
+		// Left edge: snap to center, step character left
+		_shipDirIndex = 15;
+		_onFootCharX -= 0x3A;
+	} else if (_shipDirIndex < 5) {
+		_shipDirIndex--;
+	} else if (_shipDirIndex < 10) {
+		_shipDirIndex++;
+	} else if (_shipDirIndex == 10) {
+		// Right edge: snap to center, step character right
+		_shipDirIndex = 15;
+		_onFootCharX += 0x3A;
+	} else if (_onFootAnimCounter < 5 && !_playerFired) {
+		// Aim direction from crosshair toward character (QuantizeDirection8Way)
+		int16 dx = _shipPosX - (_onFootCharX + kOnFootCenterX);
+		int16 aimDir = 0;
+		if (dx > 30)
+			aimDir = 4;
+		else if (dx > 10)
+			aimDir = 2;
+		else if (dx < -30)
+			aimDir = -4;
+		else if (dx < -10)
+			aimDir = -2;
+		_shipDirIndex = CLIP<int16>(aimDir + 15, 11, 19);
+	} else {
+		// Walking based on mouse input direction
+		int16 inputX = 0, inputY = 0;
+		preprocessMouseAxes(inputX, inputY);
+		if (inputX > 0x1E && _onFootCharX < 0x72)
+			_shipDirIndex = 6;  // Walk right
+		else if (inputX < -0x1E && _onFootCharX > -0x72)
+			_shipDirIndex = 4;  // Walk left
+	}
+
+	// --- 0x1A: Crosshair positioning (HandleGameOp1A_OnFootVariant) ---
+	// shipPosX/Y = mouse_input + crosshair_center + character_offset
+	int16 inputX = 0, inputY = 0;
+	preprocessMouseAxes(inputX, inputY);
+	inputX = CLIP<int16>(inputX, -100, 100);
+	int16 inputYNeg = CLIP<int16>((int16)(-inputY), -0x4B, 0x0F);
+	_shipPosX = inputX + kOnFootCenterX + _onFootCharX;
+	_shipPosY = inputYNeg + kOnFootCenterY + _onFootCharY - 0x32;
+
+	// --- Damage handling (from 0x19) ---
+	if (_damageFlags != 0 && _damageCooldown == 0 && _health >= 0 && _deathTimer < 1) {
+		_health -= _tuning.miss;  // On-foot uses DAT_00001b29 offset = miss tuning
+		if (_health < 0)
+			_deathTimer = 15;
+		_prevDamageFlags = _damageFlags;
+		_damageCooldown = 3;
+		_screenFlash = 5;
+	}
+
+	if (_damageCooldown > 0)
+		_damageCooldown--;
+
+	// Health regen + survival bonus (UpdatePeriodicScoreAndHealth)
+	if ((_frameCounter & 0x1F) == 0) {
+		if (_health >= 0 && _health < kMaxHealth)
+			_health++;
+		if (_health >= 0)
+			_score += _tuning.time;
+	}
+
+	_gameLatch5D = 0;
+	_gameLatch5F = 0;
+
+	if (_deathTimer > 1 && _health < 0)
+		_deathTimer--;
+	if (_screenFlash > 0)
+		_screenFlash--;
+
+	_damageFlags = 0;
+	_frameCounter++;
+}
 
 void InsaneRebel1::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
