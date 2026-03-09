@@ -55,7 +55,7 @@ public:
 
 	static float mod(float v, float min, float max) {
 		auto range = max - min;
-		auto a = std::fmod(v - min, range);
+		auto a = fmod(v - min, range);
 		if (a < 0)
 			a += range;
 		return a + min;
