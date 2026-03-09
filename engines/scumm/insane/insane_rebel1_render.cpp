@@ -856,7 +856,9 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 	int hudX = hudOriginX + bar.xoffs;
 	int hudY = hudOriginY + bar.yoffs;
 
-	// Draw the status bar background with transparency (pixel 0 = transparent)
+	// DOS RA1 draws the HUD plate through DrawFobjGlyph(..., flags=0x181),
+	// which selects the opaque blit path. Keep zero-valued pixels black instead
+	// of treating them as transparent.
 	if (bar.data && bar.width > 0 && bar.height > 0) {
 		int drawX = hudX, drawY = hudY, drawW = bar.width, drawH = bar.height;
 		int srcOffX = 0, srcOffY = 0;
@@ -868,11 +870,7 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 		for (int iy = 0; iy < drawH; iy++) {
 			const byte *s = bar.data + (srcOffY + iy) * bar.width + srcOffX;
 			byte *d = dst + (drawY + iy) * pitch + drawX;
-			for (int ix = 0; ix < drawW; ix++) {
-				byte px = s[ix];
-				if (px != 0)
-					d[ix] = px;
-			}
+			memcpy(d, s, drawW);
 		}
 
 		debug(5, "RA1 HUD: drawn at (%d,%d) size=%dx%d",
