@@ -1416,6 +1416,7 @@ void InsaneRebel1::processShot() {
 	_shotSlots[slot].centerY = shipCenterY;
 	_shotSlots[slot].variant = _shotAlternator;
 	_shotAlternator = 1 - _shotAlternator;
+	playSfx(kSfxLaserShot, 127, 0);
 
 	debug(5, "RA1 shot: slot=%d pos=(%d,%d)", slot, _shotSlots[slot].posX, _shotSlots[slot].posY);
 }
@@ -1474,6 +1475,11 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 						_score += _tuning.kill;
 						_killCount++;
 						applyFrameObjectHitState(targetIdx);
+						int16 hitCenterX = (left + right) / 2;
+						int16 hitCenterY = (top + bottom) / 2;
+						projectGameplayPoint(hitCenterX, hitCenterY);
+						const int sfxPan = CLIP((hitCenterX - kRA1CenterX) * 127 / kRA1CenterX, -127, 127);
+						playSfx(kSfxExplode, 127, sfxPan);
 
 						// Match FUN_1C0EF: snap in unprojected space, then project back
 						// into the current gameplay window before rendering the pointer.
