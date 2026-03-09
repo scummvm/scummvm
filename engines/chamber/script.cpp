@@ -2877,7 +2877,7 @@ static void AnimSaucer(void) {
 	}
 }
 
-extern int16 loadSplash(const char *filename);
+extern Graphics::Surface *loadSplash(const char *filename);
 
 /*
 TODO: check me
