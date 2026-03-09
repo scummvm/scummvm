@@ -372,7 +372,8 @@ Script::~Script() {
 }
 
 int Script::getWarp(const Common::String &name) const {
-	return _warpsIndex.getVal(name);
+	auto it = _warpsIndex.find(name);
+	return it != _warpsIndex.end() ? it->_value : -1;
 }
 
 Script::ConstWarpPtr Script::getWarp(int idx) const {

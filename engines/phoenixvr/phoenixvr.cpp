@@ -290,12 +290,30 @@ void PhoenixVREngine::setCursorDefault(int idx, const Common::String &path) {
 
 void PhoenixVREngine::setCursor(const Common::String &path, const Common::String &wname, int idx) {
 	debug("setCursor %s %s:%d", path.c_str(), wname.c_str(), idx);
-	_cursors[_script->getWarp(wname)][idx] = path;
+	auto warp = _script->getWarp(wname);
+	if (warp < 0) {
+		debug("no warp %s", wname.c_str());
+		return;
+	}
+	auto &cursors = _cursors[warp];
+	if (idx >= 0 && idx < static_cast<int>(cursors.size()))
+		cursors[idx] = path;
+	else
+		debug("index %d is out of range", idx);
 }
 
-void PhoenixVREngine::hideCursor(const Common::String &warp, int idx) {
-	debug("hide cursor %s:%d", warp.c_str(), idx);
-	_cursors[_script->getWarp(warp)][idx].clear();
+void PhoenixVREngine::hideCursor(const Common::String &wname, int idx) {
+	debug("hide cursor %s:%d", wname.c_str(), idx);
+	auto warp = _script->getWarp(wname);
+	if (warp < 0) {
+		debug("no warp %s", wname.c_str());
+		return;
+	}
+	auto &cursors = _cursors[warp];
+	if (idx >= 0 && idx < static_cast<int>(cursors.size()))
+		cursors[idx].clear();
+	else
+		debug("index %d is out of range", idx);
 }
 
 void PhoenixVREngine::declareVariable(const Common::String &name) {
