@@ -303,12 +303,14 @@ private:
 	// Path branching for levels with left/right alternative videos.
 	// Original sets nextSceneA/nextSceneB when GAME 0x07 counter == 394 (0x18A).
 	// We check ship position at that counter value to decide left vs right path.
-	static const int32 kPathBranchCounter = 394;  // GAME 0x07 field1 value
-	int32 _gameCounter;          // GAME 0x07 field1 — the original's _DAT_7740
-	bool _pathBranchEnabled;     // True when branching is active for this video
-	bool _rightPathSelected;     // True if player chose the right/easy path
-	int _levelRouteIndex;        // Current mid-level route/segment for branching levels
-	int _pendingRouteIndex;      // Next route requested by original frame-branch logic
+		static const int32 kPathBranchCounter = 394;  // GAME 0x07 field1 value
+		int32 _gameCounter;          // GAME 0x07 field1 — the original's _DAT_7740
+		bool _pathBranchEnabled;     // True when branching is active for this video
+		bool _rightPathSelected;     // True if player chose the right/easy path
+		int _levelRouteIndex;        // Current mid-level route/segment for branching levels
+		int _pendingRouteIndex;      // Next route requested by original frame-branch logic
+		int _levelRouteChoice;       // Level-local pending branch choice (0=none, 1=left, 2=right)
+		int _levelGameplayPhase;     // Level-local interactive phase (e.g. LVL4 PLAY1 vs PLAY2)
 
 	// Main menu / options state
 	void runOptionsMenu();

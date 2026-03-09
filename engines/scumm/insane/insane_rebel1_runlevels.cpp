@@ -300,7 +300,9 @@ bool InsaneRebel1::runLevel3() {
 		_activeGameOpcode = 0;
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
+		_gameplayFlags75ff = 0;
 		_killCount = 0;
+		_levelGameplayPhase = 0;
 		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
 		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
 		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
@@ -357,8 +359,11 @@ bool InsaneRebel1::runLevel4() {
 		_activeGameOpcode = 0;
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
+		_gameplayFlags75ff = 0;
 		_killCount = 0;
+		_levelGameplayPhase = 0;
 
+		_levelGameplayPhase = 1;
 		playInteractiveVideo("LVL4/L4PLAY1.ANM");
 		if (_vm->shouldQuit())
 			return false;
@@ -367,7 +372,9 @@ bool InsaneRebel1::runLevel4() {
 			_activeGameOpcode = 0;
 			_gameLatch5D = 0;
 			_gameLatch5F = 0;
+			_gameplayFlags75ff = 0;
 			_killCount = 0;
+			_levelGameplayPhase = 2;
 			playInteractiveVideo("LVL4/L4PLAY2.ANM");
 			if (_vm->shouldQuit())
 				return false;
@@ -418,7 +425,9 @@ bool InsaneRebel1::runLevel5() {
 		_activeGameOpcode = 0;
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
+		_gameplayFlags75ff = 0;
 		_killCount = 0;
+		_levelGameplayPhase = 0;
 		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
 		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
 		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
@@ -513,7 +522,9 @@ bool InsaneRebel1::runLevel6() {
 		_activeGameOpcode = 0;
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
+		_gameplayFlags75ff = 0;
 		_killCount = 0;
+		_levelGameplayPhase = 0;
 		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
 		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
 		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
@@ -578,6 +589,7 @@ bool InsaneRebel1::runLevel7() {
 		_activeGameOpcode = 0;
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
+		_gameplayFlags75ff = 0;
 		_killCount = 0;
 		_targetCount = 0;
 		_prevTargetCount = 0;
@@ -591,6 +603,7 @@ bool InsaneRebel1::runLevel7() {
 		_posAccumY = 0;
 		_perspectiveX = 0;
 		_perspectiveY = 0;
+		_levelGameplayPhase = 0;
 		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
 		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
 		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
@@ -668,6 +681,7 @@ bool InsaneRebel1::runLevel8() {
 		_activeGameOpcode = 0;
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
+		_gameplayFlags75ff = 0;
 		_killCount = 0;
 		_targetCount = 0;
 		_prevTargetCount = 0;
@@ -681,6 +695,7 @@ bool InsaneRebel1::runLevel8() {
 		_posAccumY = 0;
 		_perspectiveX = 0;
 		_perspectiveY = 0;
+		_levelGameplayPhase = 0;
 		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
 		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
 		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
@@ -756,6 +771,7 @@ bool InsaneRebel1::runLevel9() {
 		_activeGameOpcode = 0;
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
+		_gameplayFlags75ff = 0;
 		_killCount = 0;
 		_targetCount = 0;
 		_prevTargetCount = 0;
@@ -769,6 +785,7 @@ bool InsaneRebel1::runLevel9() {
 		_posAccumY = 0;
 		_perspectiveX = 0;
 		_perspectiveY = 0;
+		_levelGameplayPhase = 0;
 		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
 		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
 		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
@@ -931,6 +948,7 @@ bool InsaneRebel1::runLevel10() {
 		_activeGameOpcode = 0;
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
+		_gameplayFlags75ff = 0;
 		_killCount = 0;
 		_targetCount = 0;
 		_prevTargetCount = 0;
@@ -944,6 +962,7 @@ bool InsaneRebel1::runLevel10() {
 		_posAccumY = 0;
 		_perspectiveX = 0;
 		_perspectiveY = 0;
+		_levelGameplayPhase = 0;
 		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
 		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
 		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
@@ -1046,6 +1065,7 @@ void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) 
 	_player = splayer;
 	clearBit(0);
 	_interactiveVideoActive = true;
+	_levelRouteChoice = 0;
 	resetFrameObjectState();
 	_vm->_smushVideoShouldFinish = false;
 	splayer->setCurVideoFlags(0x28);
