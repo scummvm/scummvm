@@ -44,10 +44,10 @@ BarkerTable *BoltEngine::createBarker(int16 minIndex, int16 maxIndex) {
 	}
 
 	if (success) {
-		g_curErrorCode = 0;
+		_curErrorCode = 0;
 		return table;
 	} else {
-		g_curErrorCode = 1;
+		_curErrorCode = 1;
 		return nullptr;
 	}
 }
@@ -64,13 +64,13 @@ void BoltEngine::freeBarker(BarkerTable *table) {
 
 bool BoltEngine::registerSideShow(BarkerTable *table, SideShowHandler handler, int16 boothId) {
 	if (table->minIndex > boothId || table->maxIndex < boothId) {
-		g_curErrorCode = 5;
+		_curErrorCode = 5;
 		return false;
 	}
 
 	table->handlers[boothId - table->minIndex] = handler;
 
-	g_curErrorCode = 0;
+	_curErrorCode = 0;
 	return true;
 }
 
@@ -90,11 +90,11 @@ int16 BoltEngine::barker(BarkerTable *table, int16 startBooth) {
 		currentBooth = nextBooth;
 	}
 
-	return g_currentBoothId;
+	return _currentBoothId;
 }
 
 bool BoltEngine::checkError() {
-	return g_curErrorCode != 0;
+	return _curErrorCode != 0;
 }
 
 } // End of namespace Bolt

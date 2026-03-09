@@ -24,7 +24,7 @@
 namespace Bolt {
 
 void BoltEngine::swapPicHeader() {
-	byte *data = g_boltCurrentMemberEntry->dataPtr;
+	byte *data = _boltCurrentMemberEntry->dataPtr;
 	if (!data)
 		return;
 
@@ -33,7 +33,7 @@ void BoltEngine::swapPicHeader() {
 }
 
 void BoltEngine::swapAndResolvePicDesc() {
-	byte *data = g_boltCurrentMemberEntry->dataPtr;
+	byte *data = _boltCurrentMemberEntry->dataPtr;
 	if (!data)
 		return;
 
@@ -44,7 +44,7 @@ void BoltEngine::swapAndResolvePicDesc() {
 }
 
 void BoltEngine::swapFirstWord() {
-	byte *data = g_boltCurrentMemberEntry->dataPtr;
+	byte *data = _boltCurrentMemberEntry->dataPtr;
 	if (!data)
 		return;
 
@@ -52,7 +52,7 @@ void BoltEngine::swapFirstWord() {
 }
 
 void BoltEngine::swapFirstTwoWords() {
-	byte *data = g_boltCurrentMemberEntry->dataPtr;
+	byte *data = _boltCurrentMemberEntry->dataPtr;
 	if (!data)
 		return;
 
@@ -61,7 +61,7 @@ void BoltEngine::swapFirstTwoWords() {
 }
 
 void BoltEngine::swapFirstFourWords() {
-	byte *data = g_boltCurrentMemberEntry->dataPtr;
+	byte *data = _boltCurrentMemberEntry->dataPtr;
 	if (!data)
 		return;
 
@@ -72,7 +72,7 @@ void BoltEngine::swapFirstFourWords() {
 }
 
 void BoltEngine::swapSpriteHeader() {
-	byte *data = g_boltCurrentMemberEntry->dataPtr;
+	byte *data = _boltCurrentMemberEntry->dataPtr;
 	if (!data)
 		return;
 
@@ -84,8 +84,8 @@ void BoltEngine::swapSpriteHeader() {
 	WRITE_UINT16(data + 0x16, READ_BE_INT16(data + 0x16));
 
 	if (!(data[0] & 0x10)) {
-		uint32 idx = g_resolvedPtrs.size();
-		g_resolvedPtrs.push_back(data + 0x18);
+		uint32 idx = _resolvedPtrs.size();
+		_resolvedPtrs.push_back(data + 0x18);
 		WRITE_UINT32(data + 0x12, idx | 0x80000000);
 	}
 }

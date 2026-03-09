@@ -41,64 +41,64 @@ int16 BoltEngine::fredGame(int16 prevBooth) {
 bool BoltEngine::initFred() {
 	const char *path = assetPath("fred.blt");
 
-	if (!openBOLTLib(&g_fredBoltLib, &g_fredBoltCallbacks, path))
+	if (!openBOLTLib(&_fredBoltLib, &_fredBoltCallbacks, path))
 		return false;
 
-	if (!getBOLTGroup(g_fredBoltLib, 0, 1))
+	if (!getBOLTGroup(_fredBoltLib, 0, 1))
 		return false;
 
 	// Load assets...
-	g_fredBackground = memberAddr(g_fredBoltLib, (g_displayMode != 0) ? 5 : 4);
+	_fredBackground = memberAddr(_fredBoltLib, (_displayMode != 0) ? 5 : 4);
 
-	g_fredBalloonString = memberAddr(g_fredBoltLib, 6);
+	_fredBalloonString = memberAddr(_fredBoltLib, 6);
 
-	g_fredFacingLeftRect = memberAddr(g_fredBoltLib, 0);
-	g_fredFacingRightRect = memberAddr(g_fredBoltLib, 1);
-	g_fredTurningRect = memberAddr(g_fredBoltLib, 2);
-	g_fredBalloonRect = memberAddr(g_fredBoltLib, 3);
+	_fredFacingLeftRect = memberAddr(_fredBoltLib, 0);
+	_fredFacingRightRect = memberAddr(_fredBoltLib, 1);
+	_fredTurningRect = memberAddr(_fredBoltLib, 2);
+	_fredBalloonRect = memberAddr(_fredBoltLib, 3);
 
-	g_fredHelpEntries = memberAddr(g_fredBoltLib, 0x38);
-	g_fredPlayButton = memberAddr(g_fredBoltLib, 0x39);
-	g_fredTimer = 0;
+	_fredHelpEntries = memberAddr(_fredBoltLib, 0x38);
+	_fredPlayButton = memberAddr(_fredBoltLib, 0x39);
+	_fredTimer = 0;
 
 	for (int i = 0; i < 10; i++)
-		g_fredSprites[i] = memberAddr(g_fredBoltLib, 0x28 + i);
+		_fredSprites[i] = memberAddr(_fredBoltLib, 0x28 + i);
 
-	getFredSoundInfo(g_fredBoltLib, 0x3A, &g_fredSounds[0]);
-	getFredSoundInfo(g_fredBoltLib, 0x3B, &g_fredSounds[1]);
-	getFredSoundInfo(g_fredBoltLib, 0x3C, &g_fredSounds[2]);
-	getFredSoundInfo(g_fredBoltLib, 0x3D, &g_fredSounds[3]);
+	getFredSoundInfo(_fredBoltLib, 0x3A, &_fredSounds[0]);
+	getFredSoundInfo(_fredBoltLib, 0x3B, &_fredSounds[1]);
+	getFredSoundInfo(_fredBoltLib, 0x3C, &_fredSounds[2]);
+	getFredSoundInfo(_fredBoltLib, 0x3D, &_fredSounds[3]);
 
-	g_fredLoopSound = nullptr;
-	g_fredCurrentSound = nullptr;
-	g_fredPendingLoop = nullptr;
-	g_fredPendingOneShot = nullptr;
+	_fredLoopSound = nullptr;
+	_fredCurrentSound = nullptr;
+	_fredPendingLoop = nullptr;
+	_fredPendingOneShot = nullptr;
 
 	// Init Fred sprite struct...
-	g_fredSprite.flags = 1;
-	g_fredSprite.direction = 0;
-	g_fredSprite.xPos = 0xA000; // Fixed-point coordinate
-	g_fredSprite.yPos = 0x1600;	// Fixed-point coordinate
-	g_fredSprite.speed = 0x600;
-	g_fredSprite.pathTable = nullptr;
+	_fredSprite.flags = 1;
+	_fredSprite.direction = 0;
+	_fredSprite.xPos = 0xA000; // Fixed-point coordinate
+	_fredSprite.yPos = 0x1600;	// Fixed-point coordinate
+	_fredSprite.speed = 0x600;
+	_fredSprite.pathTable = nullptr;
 
-	setFredAnimMode(&g_fredSprite, 0);
+	setFredAnimMode(&_fredSprite, 0);
 
 	// Load save data...
-	if (!vLoad(&g_fredSaveData, g_fredSaveFile)) {
-		g_fredSaveData[0] = 0; // Balloon catch count
-		g_fredSaveData[1] = 0; // Level data group index, increments on level complete, caps at 9
-		g_fredSaveData[2] = 0; // Palette group index, increments on level complete, wraps at 10
+	if (!vLoad(&_fredSaveData, "FredBC")) {
+		_fredSaveData[0] = 0; // Balloon catch count
+		_fredSaveData[1] = 0; // Level data group index, increments on level complete, caps at 9
+		_fredSaveData[2] = 0; // Palette group index, increments on level complete, wraps at 10
 	}
 
-	if (!initFredLevel(g_fredSaveData[1], g_fredSaveData[2]))
+	if (!initFredLevel(_fredSaveData[1], _fredSaveData[2]))
 		return false;
 
-	g_fredLevelIndex = 0;
-	while (g_fredLevelIndex < g_fredSaveData[0]) {
-		FredEntityState *entry = g_fredEntitiesTable[g_fredLevelIndex + 1];
+	_fredLevelIndex = 0;
+	while (_fredLevelIndex < _fredSaveData[0]) {
+		FredEntityState *entry = _fredEntitiesTable[_fredLevelIndex + 1];
 		setFredAnimMode(entry, 10);
-		g_fredLevelIndex++;
+		_fredLevelIndex++;
 	}
 
 	// Flush timer events...
@@ -109,50 +109,50 @@ bool BoltEngine::initFred() {
 	_xp->setTransparency(false);
 
 	// Display background on back and front buffers...
-	displayColors(g_fredPalette, stBack, 0);
-	displayPic(g_fredBackground, g_displayX, g_displayY, stFront);
+	displayColors(_fredPalette, stBack, 0);
+	displayPic(_fredBackground, _displayX, _displayY, stFront);
 	_xp->updateDisplay();
 
 	_xp->setTransparency(true);
-	displayColors(g_fredPalette, stFront, 0);
-	displayColors(g_fredPalette, stBack, 1);
-	displayPic(g_fredBackground, g_displayX, g_displayY, stBack);
+	displayColors(_fredPalette, stFront, 0);
+	displayColors(_fredPalette, stBack, 1);
+	displayPic(_fredBackground, _displayX, _displayY, stBack);
 
 	renderFredScene();
 	_xp->updateDisplay();
 
-	_xp->startCycle(g_fredCycleSpecs);
+	_xp->startCycle(_fredCycleSpecs);
 	_xp->setFrameRate(15);
 
 	return true;
 }
 
 void BoltEngine::cleanUpFred() {
-	int16 savedLevel = g_fredSaveData[1]; // Level data group index
-	int16 savedPalette = g_fredSaveData[2]; // Palette group index
+	int16 savedLevel = _fredSaveData[1]; // Level data group index
+	int16 savedPalette = _fredSaveData[2]; // Palette group index
 
-	g_fredSaveData[0] = g_fredLevelIndex;
+	_fredSaveData[0] = _fredLevelIndex;
 
-	byte *levelPtr = g_fredLevelPtr;
-	if (READ_UINT16(levelPtr + 0x0A) <= g_fredLevelIndex) {
-		g_fredSaveData[1]++;
-		if (g_fredSaveData[1] >= 10)
-			g_fredSaveData[1] = 9;
+	byte *levelPtr = _fredLevelPtr;
+	if (READ_UINT16(levelPtr + 0x0A) <= _fredLevelIndex) {
+		_fredSaveData[1]++;
+		if (_fredSaveData[1] >= 10)
+			_fredSaveData[1] = 9;
 
-		g_fredSaveData[2]++;
-		if (g_fredSaveData[2] >= 10)
-			g_fredSaveData[2] = 0;
+		_fredSaveData[2]++;
+		if (_fredSaveData[2] >= 10)
+			_fredSaveData[2] = 0;
 
-		g_fredSaveData[0] = 0;
+		_fredSaveData[0] = 0;
 	}
 
-	vSave(&g_fredSaveData, sizeof(g_fredSaveData), g_fredSaveFile);
+	vSave(&_fredSaveData, sizeof(_fredSaveData), "FredBC");
 
 	_xp->stopCycle();
 	termFredLevel(savedLevel, savedPalette);
 
-	freeBOLTGroup(g_fredBoltLib, 0, 1);
-	closeBOLTLib(&g_fredBoltLib);
+	freeBOLTGroup(_fredBoltLib, 0, 1);
+	closeBOLTLib(&_fredBoltLib);
 
 	_xp->setFrameRate(0);
 	_xp->fillDisplay(0, stFront);
@@ -161,49 +161,49 @@ void BoltEngine::cleanUpFred() {
 
 bool BoltEngine::initFredLevel(int16 levelGroup, int16 palGroup) {
 	// Load level data group...
-	if (!getBOLTGroup(g_fredBoltLib, levelGroup * 0x200 + 0x100, 1))
+	if (!getBOLTGroup(_fredBoltLib, levelGroup * 0x200 + 0x100, 1))
 		return false;
 
 	// Load palette group...
-	if (!getBOLTGroup(g_fredBoltLib, palGroup * 0x200 + 0x200, 1)) {
-		freeBOLTGroup(g_fredBoltLib, levelGroup * 0x200 + 0x100, 1);
+	if (!getBOLTGroup(_fredBoltLib, palGroup * 0x200 + 0x200, 1)) {
+		freeBOLTGroup(_fredBoltLib, levelGroup * 0x200 + 0x100, 1);
 		return false;
 	}
 
 	// Level descriptor member...
-	g_fredLevelPtr = memberAddr(g_fredBoltLib, levelGroup * 0x200 + 0x100);
+	_fredLevelPtr = memberAddr(_fredBoltLib, levelGroup * 0x200 + 0x100);
 
 	// Palette member...
-	g_fredPalette = memberAddr(g_fredBoltLib, palGroup * 0x200 + 0x200);
+	_fredPalette = memberAddr(_fredBoltLib, palGroup * 0x200 + 0x200);
 
 	// Cycle data...
-	g_fredCycleRaw = memberAddr(g_fredBoltLib, palGroup * 0x200 + 0x20A);
-	boltCycleToXPCycle(g_fredCycleRaw, g_fredCycleSpecs);
+	_fredCycleRaw = memberAddr(_fredBoltLib, palGroup * 0x200 + 0x20A);
+	boltCycleToXPCycle(_fredCycleRaw, _fredCycleSpecs);
 
 	// Other resources...
-	g_fredBalloonSprite = memberAddr(g_fredBoltLib, palGroup * 0x200 + 0x209);
-	g_fredPathMatrix = memberAddr(g_fredBoltLib, levelGroup * 0x200 + 0x132);
-	g_fredRowBounds = memberAddr(g_fredBoltLib, levelGroup * 0x200 + 0x101);
+	_fredBalloonSprite = memberAddr(_fredBoltLib, palGroup * 0x200 + 0x209);
+	_fredPathMatrix = memberAddr(_fredBoltLib, levelGroup * 0x200 + 0x132);
+	_fredRowBounds = memberAddr(_fredBoltLib, levelGroup * 0x200 + 0x101);
 
 	// Allocate shuffle table: numRows * (numCols + 1)
-	uint16 numRows = READ_UINT16(g_fredLevelPtr + 4);
-	uint16 numCols = READ_UINT16(g_fredLevelPtr + 6);
+	uint16 numRows = READ_UINT16(_fredLevelPtr + 4);
+	uint16 numCols = READ_UINT16(_fredLevelPtr + 6);
 
-	g_fredShuffleTable = (byte *)_xp->allocMem(numRows * (numCols + 1));
-	if (!g_fredShuffleTable) {
+	_fredShuffleTable = (byte *)_xp->allocMem(numRows * (numCols + 1));
+	if (!_fredShuffleTable) {
 		termFredLevel(levelGroup, palGroup);
 		return false;
 	}
 
 	// Build and shuffle column indices for each row...
 	for (int16 row = 0; row < numRows; row++) {
-		numCols = READ_UINT16(g_fredLevelPtr + 6);
+		numCols = READ_UINT16(_fredLevelPtr + 6);
 		int16 stride = numCols + 1;
 		int16 rowBase = stride * row;
-		g_fredShuffleTable[rowBase] = 0;
+		_fredShuffleTable[rowBase] = 0;
 
 		for (int16 col = 0; col < numCols; col++) {
-			g_fredShuffleTable[rowBase + col + 1] = (byte)col;
+			_fredShuffleTable[rowBase + col + 1] = (byte)col;
 		}
 
 		// Fisher-Yates shuffle...
@@ -212,16 +212,16 @@ bool BoltEngine::initFredLevel(int16 levelGroup, int16 palGroup) {
 			int16 posA = rowBase + col + 1;
 			int16 posB = rowBase + randIdx + 1;
 
-			byte tmp = g_fredShuffleTable[posA];
-			g_fredShuffleTable[posA] = g_fredShuffleTable[posB];
-			g_fredShuffleTable[posB] = tmp;
+			byte tmp = _fredShuffleTable[posA];
+			_fredShuffleTable[posA] = _fredShuffleTable[posB];
+			_fredShuffleTable[posB] = tmp;
 		}
 	}
 
 	// Allocate balloon table...
-	uint16 numBalloons = READ_UINT16(g_fredLevelPtr + 0x0A);
-	g_fredEntitiesTable = (FredEntityState **)_xp->allocMem((numBalloons + 2) * sizeof(FredEntityState *));
-	if (!g_fredEntitiesTable) {
+	uint16 numBalloons = READ_UINT16(_fredLevelPtr + 0x0A);
+	_fredEntitiesTable = (FredEntityState **)_xp->allocMem((numBalloons + 2) * sizeof(FredEntityState *));
+	if (!_fredEntitiesTable) {
 		termFredLevel(levelGroup, palGroup);
 		return false;
 	}
@@ -236,17 +236,17 @@ bool BoltEngine::initFredLevel(int16 levelGroup, int16 palGroup) {
 		}
 
 		entry->flags = 0;
-		g_fredEntitiesTable[i + 1] = entry;
+		_fredEntitiesTable[i + 1] = entry;
 	}
 
 	// Sentinel: null pointer after last balloon...
-	g_fredEntitiesTable[numBalloons + 1] = nullptr;
+	_fredEntitiesTable[numBalloons + 1] = nullptr;
 
 	// First entry points to Fred's sprite...
-	g_fredEntitiesTable[0] = &g_fredSprite;
+	_fredEntitiesTable[0] = &_fredSprite;
 
 	// Allocate balloon type shuffle array...
-	uint16 numTypes = READ_UINT16(g_fredLevelPtr + 0x0C);
+	uint16 numTypes = READ_UINT16(_fredLevelPtr + 0x0C);
 	byte *typeShuf = (byte *)_xp->allocMem(numTypes);
 	if (!typeShuf) {
 		termFredLevel(levelGroup, palGroup);
@@ -270,49 +270,49 @@ bool BoltEngine::initFredLevel(int16 levelGroup, int16 palGroup) {
 
 		// Assign balloon type...
 		byte balloonType = typeShuf[i % numTypes] + 0x0B;
-		FredEntityState *balloonEntry = g_fredEntitiesTable[i + 1];
+		FredEntityState *balloonEntry = _fredEntitiesTable[i + 1];
 		setFredAnimMode(balloonEntry, balloonType);
 	}
 
 	_xp->freeMem(typeShuf);
 
-	g_fredBalloonSpawnDelay = calcBalloonSpawnDelay();
-	g_fredBalloonSearchIdx = 0;
-	g_fredLevelIndex = 0;
+	_fredBalloonSpawnDelay = calcBalloonSpawnDelay();
+	_fredBalloonSearchIdx = 0;
+	_fredLevelIndex = 0;
 
 	return true;
 }
 
 void BoltEngine::termFredLevel(int16 levelGroup, int16 palGroup) {
 	// Free balloon state structs...
-	if (g_fredEntitiesTable) {
-		uint16 numBalloons = READ_UINT16(g_fredLevelPtr + 0x0A);
+	if (_fredEntitiesTable) {
+		uint16 numBalloons = READ_UINT16(_fredLevelPtr + 0x0A);
 		for (int16 i = 0; i < numBalloons; i++) {
-			FredEntityState *entry = g_fredEntitiesTable[i + 1];
+			FredEntityState *entry = _fredEntitiesTable[i + 1];
 			if (entry) {
 				delete entry;
-				g_fredEntitiesTable[i + 1] = nullptr;
+				_fredEntitiesTable[i + 1] = nullptr;
 			}
 		}
 
-		delete[] g_fredEntitiesTable;
-		g_fredEntitiesTable = nullptr;
+		delete[] _fredEntitiesTable;
+		_fredEntitiesTable = nullptr;
 	}
 
 	// Free shuffle table...
-	if (g_fredShuffleTable) {
-		_xp->freeMem(g_fredShuffleTable);
-		g_fredShuffleTable = nullptr;
+	if (_fredShuffleTable) {
+		_xp->freeMem(_fredShuffleTable);
+		_fredShuffleTable = nullptr;
 	}
 
 	// Free BOLT groups...
-	freeBOLTGroup(g_fredBoltLib, palGroup * 0x200 + 0x200, 1);
-	freeBOLTGroup(g_fredBoltLib, levelGroup * 0x200 + 0x100, 1);
+	freeBOLTGroup(_fredBoltLib, palGroup * 0x200 + 0x200, 1);
+	freeBOLTGroup(_fredBoltLib, levelGroup * 0x200 + 0x100, 1);
 }
 
 void BoltEngine::swapFredAnimEntry() {
-	byte *data = g_boltCurrentMemberEntry->dataPtr;
-	uint32 decompSize = g_boltCurrentMemberEntry->decompSize;
+	byte *data = _boltCurrentMemberEntry->dataPtr;
+	uint32 decompSize = _boltCurrentMemberEntry->decompSize;
 	uint32 offset = 0;
 
 	while (offset < decompSize) {
@@ -323,8 +323,8 @@ void BoltEngine::swapFredAnimEntry() {
 }
 
 void BoltEngine::swapFredAnimDesc() {
-	byte *data = g_boltCurrentMemberEntry->dataPtr;
-	uint32 decompSize = g_boltCurrentMemberEntry->decompSize;
+	byte *data = _boltCurrentMemberEntry->dataPtr;
+	uint32 decompSize = _boltCurrentMemberEntry->decompSize;
 	uint32 offset = 0;
 	byte *ptr = data;
 	byte *colorCountPtr = data + 0x0E;
@@ -348,7 +348,7 @@ void BoltEngine::swapFredAnimDesc() {
 }
 
 void BoltEngine::swapFredLevelDesc() {
-	byte *data = g_boltCurrentMemberEntry->dataPtr;
+	byte *data = _boltCurrentMemberEntry->dataPtr;
 
 	WRITE_UINT16(data + 0x00, READ_BE_INT16(data + 0x00));
 	WRITE_UINT16(data + 0x02, READ_BE_INT16(data + 0x02));
@@ -366,7 +366,7 @@ int16 BoltEngine::playFred() {
 	int16 joystickX = 0;
 
 	// Show help on first play...
-	if (g_fredShowHelp != 0) {
+	if (_fredShowHelp != 0) {
 		if (!helpFred())
 			return 4;
 	}
@@ -389,8 +389,8 @@ int16 BoltEngine::playFred() {
 			case etMouseDown:
 			case etInactivity:
 				if (!allCaught) {
-					int16 helpMode = (g_fredSprite.animMode == 8 || g_fredSprite.animMode == 6) ? 1 : 0;
-					setFredAnimMode(&g_fredSprite, helpMode);
+					int16 helpMode = (_fredSprite.animMode == 8 || _fredSprite.animMode == 6) ? 1 : 0;
+					setFredAnimMode(&_fredSprite, helpMode);
 					if (!helpFred()) {
 						result = 4;
 						exitLoop = 1;
@@ -414,17 +414,17 @@ int16 BoltEngine::playFred() {
 		_xp->updateDisplay();
 
 		// Balloon spawn timer...
-		g_fredBalloonSpawnDelay--;
-		if (g_fredBalloonSpawnDelay == 0) {
+		_fredBalloonSpawnDelay--;
+		if (_fredBalloonSpawnDelay == 0) {
 			if (spawnBalloon())
-				g_fredBalloonSpawnDelay = calcBalloonSpawnDelay();
+				_fredBalloonSpawnDelay = calcBalloonSpawnDelay();
 			else
-				g_fredBalloonSpawnDelay = 1;
+				_fredBalloonSpawnDelay = 1;
 		}
 
 		// --- First pass: update Fred and balloons animations ---
 		int16 idx = 0;
-		FredEntityState *entry = g_fredEntitiesTable[idx];
+		FredEntityState *entry = _fredEntitiesTable[idx];
 		while (entry) {
 			if (entry->flags & 1) { // active
 				// Save previous position...
@@ -558,12 +558,12 @@ int16 BoltEngine::playFred() {
 			}
 
 			idx++;
-			entry = g_fredEntitiesTable[idx];
+			entry = _fredEntitiesTable[idx];
 		}
 
 		// --- Second pass: move balloons and Fred ---
 		idx = 0;
-		entry = g_fredEntitiesTable[idx];
+		entry = _fredEntitiesTable[idx];
 		while (entry) {
 			if (entry->flags & 1) {
 				int16 mode = entry->animMode;
@@ -623,7 +623,7 @@ int16 BoltEngine::playFred() {
 			}
 
 			idx++;
-			entry = g_fredEntitiesTable[idx];
+			entry = _fredEntitiesTable[idx];
 		}
 
 		// --- Skip collision check if all caught ---
@@ -632,20 +632,20 @@ int16 BoltEngine::playFred() {
 
 		// --- Get Fred's collision rect based on current mode ---
 		byte *fredRect;
-		switch (g_fredSprite.animMode) {
+		switch (_fredSprite.animMode) {
 		case 6:
 		case 8:
-			fredRect = g_fredFacingLeftRect; // facing/running left
+			fredRect = _fredFacingLeftRect; // facing/running left
 			break;
 		case 2:
 		case 4:
-			fredRect = g_fredFacingRightRect; // facing/running right
+			fredRect = _fredFacingRightRect; // facing/running right
 			break;
 		case 7:
-			fredRect = g_fredTurningRect; // turning left
+			fredRect = _fredTurningRect; // turning left
 			break;
 		case 3:
-			fredRect = g_fredTurningRect; // turning right
+			fredRect = _fredTurningRect; // turning right
 			break;
 		default:
 			fredRect = nullptr;
@@ -656,21 +656,21 @@ int16 BoltEngine::playFred() {
 			continue;
 
 		// Build Fred's bounding rect...
-		int16 fredX = ((int32)g_fredSprite.xPos >> 8) + READ_UINT16(fredRect);
-		int16 fredY = ((int32)g_fredSprite.yPos >> 8) + READ_UINT16(fredRect + 2);
+		int16 fredX = ((int32)_fredSprite.xPos >> 8) + READ_UINT16(fredRect);
+		int16 fredY = ((int32)_fredSprite.yPos >> 8) + READ_UINT16(fredRect + 2);
 		int16 fredW = READ_UINT16(fredRect + 4);
 		int16 fredH = READ_UINT16(fredRect + 6);
 
 		// --- Third pass: check collisions with balloons ---
 		idx = 0;
-		entry = g_fredEntitiesTable[idx];
+		entry = _fredEntitiesTable[idx];
 		while (entry) {
 			if ((entry->flags & 1) && entry->animMode == 0x0B) {
 				// Build balloon bounding rect...
-				int16 bx = ((int32)entry->xPos >> 8) + READ_UINT16(g_fredBalloonRect);
-				int16 by = ((int32)entry->yPos >> 8) + READ_UINT16(g_fredBalloonRect + 2);
-				int16 bw = READ_UINT16(g_fredBalloonRect + 4);
-				int16 bh = READ_UINT16(g_fredBalloonRect + 6);
+				int16 bx = ((int32)entry->xPos >> 8) + READ_UINT16(_fredBalloonRect);
+				int16 by = ((int32)entry->yPos >> 8) + READ_UINT16(_fredBalloonRect + 2);
+				int16 bw = READ_UINT16(_fredBalloonRect + 4);
+				int16 bh = READ_UINT16(_fredBalloonRect + 6);
 
 				// {x, y, w, h} rect overlap test...
 				Common::Rect balloonRect(bx, by, bx + bw, by + bh);
@@ -679,32 +679,32 @@ int16 BoltEngine::playFred() {
 				if (playerRect.intersects(balloonRect)) {
 					// Caught a balloon!
 					int16 catchMode;
-					if (g_fredSprite.animMode == 6 || g_fredSprite.animMode == 8 || g_fredSprite.animMode == 7)
+					if (_fredSprite.animMode == 6 || _fredSprite.animMode == 8 || _fredSprite.animMode == 7)
 						catchMode = 9; // catch facing left
 					else
 						catchMode = 5; // catch facing right
 
-					setFredAnimMode(&g_fredSprite, catchMode);
+					setFredAnimMode(&_fredSprite, catchMode);
 					setFredAnimMode(entry, 0x0A); // balloon disappearing
 
-					g_fredLevelIndex++;
-					if (g_fredLevelIndex >= READ_UINT16(g_fredLevelPtr + 0x0A)) {
+					_fredLevelIndex++;
+					if (_fredLevelIndex >= READ_UINT16(_fredLevelPtr + 0x0A)) {
 						allCaught = 1;
 						result = 0x10;
 					}
 
 					// Reset spawn timer...
 					if (spawnBalloon())
-						g_fredBalloonSpawnDelay = calcBalloonSpawnDelay();
+						_fredBalloonSpawnDelay = calcBalloonSpawnDelay();
 					else
-						g_fredBalloonSpawnDelay = 1;
+						_fredBalloonSpawnDelay = 1;
 
 					break; // Only catch one per frame...
 				}
 			}
 
 			idx++;
-			entry = g_fredEntitiesTable[idx];
+			entry = _fredEntitiesTable[idx];
 		}
 	}
 
@@ -714,7 +714,7 @@ int16 BoltEngine::playFred() {
 }
 
 int16 BoltEngine::helpFred() {
-	byte *firstEntry = getResolvedPtr(g_fredHelpEntries, 0);
+	byte *firstEntry = getResolvedPtr(_fredHelpEntries, 0);
 	byte *picDesc = getResolvedPtr(firstEntry, 4);
 
 	int16 cursorX = READ_UINT16(picDesc + 6) + READ_UINT16(picDesc + 0x0A) - 10;
@@ -729,10 +729,10 @@ int16 BoltEngine::helpFred() {
 	_xp->setInactivityTimer(0);
 	_xp->stopSound();
 
-	g_fredLoopSound = nullptr;
-	g_fredCurrentSound = nullptr;
-	g_fredPendingLoop = nullptr;
-	g_fredPendingOneShot = nullptr;
+	_fredLoopSound = nullptr;
+	_fredCurrentSound = nullptr;
+	_fredPendingLoop = nullptr;
+	_fredPendingOneShot = nullptr;
 
 	renderFredScene();
 
@@ -740,7 +740,7 @@ int16 BoltEngine::helpFred() {
 	int16 off = 0;
 	byte *entry;
 	while (true) {
-		entry = getResolvedPtr(g_fredHelpEntries, off);
+		entry = getResolvedPtr(_fredHelpEntries, off);
 		if (!entry)
 			break;
 		byte *pic = getResolvedPtr(entry, 4);
@@ -753,7 +753,7 @@ int16 BoltEngine::helpFred() {
 	// Save current palette for each entry, find playable entry...
 	off = 0;
 	while (true) {
-		entry = getResolvedPtr(g_fredHelpEntries, off);
+		entry = getResolvedPtr(_fredHelpEntries, off);
 		if (!entry)
 			break;
 
@@ -773,15 +773,15 @@ int16 BoltEngine::helpFred() {
 	_xp->showCursor();
 
 	// Highlight first entry...
-	g_fredHoveredEntry = getResolvedPtr(g_fredHelpEntries, 0);
-	hiliteFredHelpObject(getResolvedPtr(g_fredHelpEntries, 0), 1);
+	_fredHoveredEntry = getResolvedPtr(_fredHelpEntries, 0);
+	hiliteFredHelpObject(getResolvedPtr(_fredHelpEntries, 0), 1);
 
 	// Main help loop
 	while (exitResult == -1) {
 		// Handle audio playback...
 		if (isPlaying) {
 			if (!maintainAudioPlay(soundPending)) {
-				int16 highlight = (playableEntry == g_fredHoveredEntry) ? 1 : 0;
+				int16 highlight = (playableEntry == _fredHoveredEntry) ? 1 : 0;
 				hiliteFredHelpObject(playableEntry, highlight);
 				isPlaying = 0;
 			}
@@ -795,15 +795,15 @@ int16 BoltEngine::helpFred() {
 		switch (eventType) {
 		case etTimer: {
 			// Timer expired, toggle selected entry highlight...
-			if (!g_fredCurrentHelpObject)
+			if (!_fredCurrentHelpObject)
 				break;
 
-			if (g_fredTimer != eventData)
+			if (_fredTimer != eventData)
 				break;
 
-			g_fredTimer = _xp->startTimer(500);
+			_fredTimer = _xp->startTimer(500);
 
-			byte *sel = g_fredCurrentHelpObject;
+			byte *sel = _fredCurrentHelpObject;
 			int16 highlighted = (READ_UINT32(sel + 8) & 1) ? 0 : 1;
 			hiliteFredHelpObject(sel, highlighted);
 			break;
@@ -816,7 +816,7 @@ int16 BoltEngine::helpFred() {
 			off = 0;
 			byte *hitEntry = nullptr;
 			while (true) {
-				entry = getResolvedPtr(g_fredHelpEntries, off);
+				entry = getResolvedPtr(_fredHelpEntries, off);
 				if (!entry)
 					break;
 
@@ -835,20 +835,20 @@ int16 BoltEngine::helpFred() {
 			}
 
 			// Update hover state...
-			if (hitEntry == g_fredHoveredEntry)
+			if (hitEntry == _fredHoveredEntry)
 				break;
 
 			// Unhighlight previous...
-			if (g_fredHoveredEntry &&
-				g_fredHoveredEntry != g_fredCurrentHelpObject &&
-				!(g_fredHoveredEntry == playableEntry && isPlaying)) {
-				hiliteFredHelpObject(g_fredHoveredEntry, 0);
+			if (_fredHoveredEntry &&
+				_fredHoveredEntry != _fredCurrentHelpObject &&
+				!(_fredHoveredEntry == playableEntry && isPlaying)) {
+				hiliteFredHelpObject(_fredHoveredEntry, 0);
 			}
 
-			g_fredHoveredEntry = hitEntry;
+			_fredHoveredEntry = hitEntry;
 
 			// Highlight new...
-			if (hitEntry && hitEntry != g_fredCurrentHelpObject) {
+			if (hitEntry && hitEntry != _fredCurrentHelpObject) {
 				hiliteFredHelpObject(hitEntry, 1);
 			}
 
@@ -859,41 +859,41 @@ int16 BoltEngine::helpFred() {
 
 			// Stop current animation if playing...
 			if (isPlaying) {
-				if (g_fredTimer) {
-					_xp->killTimer(g_fredTimer);
-					g_fredTimer = 0;
+				if (_fredTimer) {
+					_xp->killTimer(_fredTimer);
+					_fredTimer = 0;
 				}
 
-				int16 hl = (playableEntry == g_fredHoveredEntry) ? 1 : 0;
+				int16 hl = (playableEntry == _fredHoveredEntry) ? 1 : 0;
 				hiliteFredHelpObject(playableEntry, hl);
 
-				hl = (g_fredCurrentHelpObject == g_fredHoveredEntry) ? 1 : 0;
-				hiliteFredHelpObject(g_fredCurrentHelpObject, hl);
+				hl = (_fredCurrentHelpObject == _fredHoveredEntry) ? 1 : 0;
+				hiliteFredHelpObject(_fredCurrentHelpObject, hl);
 
-				g_fredCurrentHelpObject = nullptr;
+				_fredCurrentHelpObject = nullptr;
 				stopAnimation();
 				isPlaying = 0;
 				justStopped = 1;
 			}
 
 			// Handle click on hovered entry...
-			if (!g_fredHoveredEntry)
+			if (!_fredHoveredEntry)
 				break;
 
-			uint32 entryType = READ_UINT32(g_fredHoveredEntry);
+			uint32 entryType = READ_UINT32(_fredHoveredEntry);
 
 			if (entryType == 0) {
 				// Exit help...
 				exitResult = 0;
 			} else if (entryType == 1) {
 				// Exit help and clear show-help flag...
-				g_fredShowHelp = 0;
+				_fredShowHelp = 0;
 				exitResult = 1;
 			} else if (entryType == 2) {
 				// Play animation...
 				if (!isPlaying && !justStopped) {
-					if (startAnimation(g_rtfHandle, 0x1B)) {
-						g_fredHelpStep = 0;
+					if (startAnimation(_rtfHandle, 0x1B)) {
+						_fredHelpStep = 0;
 						isPlaying = 1;
 					}
 				}
@@ -919,10 +919,10 @@ int16 BoltEngine::helpFred() {
 	// Restore all entries to highlight state matching hover
 	off = 0;
 	while (true) {
-		entry = getResolvedPtr(g_fredHelpEntries, off);
+		entry = getResolvedPtr(_fredHelpEntries, off);
 		if (!entry)
 			break;
-		int16 hl = (entry == g_fredHoveredEntry) ? 1 : 0;
+		int16 hl = (entry == _fredHoveredEntry) ? 1 : 0;
 		hiliteFredHelpObject(entry, hl);
 		off += 4;
 	}
@@ -932,7 +932,7 @@ int16 BoltEngine::helpFred() {
 	// Unhighlight all entries
 	off = 0;
 	while (true) {
-		entry = getResolvedPtr(g_fredHelpEntries, off);
+		entry = getResolvedPtr(_fredHelpEntries, off);
 		if (!entry)
 			break;
 		hiliteFredHelpObject(entry, 0);
@@ -967,37 +967,37 @@ void BoltEngine::hiliteFredHelpObject(byte *entry, int16 highlight) {
 }
 
 void BoltEngine::helpAnimStep() {
-	if (g_fredHelpStep < 0 || g_fredHelpStep >= 4)
+	if (_fredHelpStep < 0 || _fredHelpStep >= 4)
 		return;
 
 	// Unhighlight previous selected if not hovered...
-	int16 hl = (g_fredCurrentHelpObject == g_fredHoveredEntry) ? 1 : 0;
-	hiliteFredHelpObject(g_fredCurrentHelpObject, hl);
+	int16 hl = (_fredCurrentHelpObject == _fredHoveredEntry) ? 1 : 0;
+	hiliteFredHelpObject(_fredCurrentHelpObject, hl);
 
-	// On even steps, select entry from g_fredPlayButton table; on odd steps, deselect...
-	if (!(g_fredHelpStep & 1)) {
-		int16 idx = g_fredHelpStep >> 1;
-		g_fredCurrentHelpObject = getResolvedPtr(g_fredPlayButton, idx * 4);
+	// On even steps, select entry from _fredPlayButton table; on odd steps, deselect...
+	if (!(_fredHelpStep & 1)) {
+		int16 idx = _fredHelpStep >> 1;
+		_fredCurrentHelpObject = getResolvedPtr(_fredPlayButton, idx * 4);
 	} else {
-		g_fredCurrentHelpObject = nullptr;
+		_fredCurrentHelpObject = nullptr;
 	}
 
-	g_fredTimer = 0;
+	_fredTimer = 0;
 
 	// Highlight new selected entry...
-	hiliteFredHelpObject(g_fredCurrentHelpObject, 1);
+	hiliteFredHelpObject(_fredCurrentHelpObject, 1);
 
 	// Start/stop blink timer...
-	if (!(g_fredHelpStep & 1)) {
-		g_fredTimer = _xp->startTimer(500);
+	if (!(_fredHelpStep & 1)) {
+		_fredTimer = _xp->startTimer(500);
 	} else {
-		if (g_fredTimer) {
-			_xp->killTimer(g_fredTimer);
-			g_fredTimer = 0;
+		if (_fredTimer) {
+			_xp->killTimer(_fredTimer);
+			_fredTimer = 0;
 		}
 	}
 
-	g_fredHelpStep++;
+	_fredHelpStep++;
 }
 
 bool BoltEngine::spawnBalloon() {
@@ -1007,7 +1007,7 @@ bool BoltEngine::spawnBalloon() {
 
 	FredEntityState *entry;
 	while (true) {
-		entry = g_fredEntitiesTable[i];
+		entry = _fredEntitiesTable[i];
 		if (!entry)
 			break;
 
@@ -1022,12 +1022,12 @@ bool BoltEngine::spawnBalloon() {
 		return false;
 
 	// Find next free balloon slot starting from the search index...
-	int16 searchStart = g_fredBalloonSearchIdx;
+	int16 searchStart = _fredBalloonSearchIdx;
 	int16 wrapped = 0;
 	i = searchStart;
 
 	while (true) {
-		entry = g_fredEntitiesTable[i];
+		entry = _fredEntitiesTable[i];
 		if (!entry) {
 			wrapped = 1;
 			i = -1;
@@ -1046,22 +1046,22 @@ bool BoltEngine::spawnBalloon() {
 	if (i == searchStart && wrapped)
 		return false;
 
-	g_fredBalloonSearchIdx = i + 1;
+	_fredBalloonSearchIdx = i + 1;
 
 	// Pick row from shuffle table...
 	int16 row = selectBalloonRow();
 
-	uint16 numCols = READ_UINT16(g_fredLevelPtr + 6);
+	uint16 numCols = READ_UINT16(_fredLevelPtr + 6);
 	int16 stride = numCols + 1;
 	int16 rowBase = stride * row;
 
 	// Get next column from shuffle table...
-	byte *shuffleRow = g_fredShuffleTable + rowBase;
+	byte *shuffleRow = _fredShuffleTable + rowBase;
 	byte colCounter = shuffleRow[0];
-	byte col = g_fredShuffleTable[rowBase + colCounter + 1];
+	byte col = _fredShuffleTable[rowBase + colCounter + 1];
 
-	// Look up path table: g_fredPathMatrix[row][col]
-	byte *rowPaths = getResolvedPtr(g_fredPathMatrix, row * 4);
+	// Look up path table: _fredPathMatrix[row][col]
+	byte *rowPaths = getResolvedPtr(_fredPathMatrix, row * 4);
 	byte *pathTable = getResolvedPtr(rowPaths, col * 4);
 
 	// Assign path to balloon...
@@ -1088,25 +1088,25 @@ bool BoltEngine::spawnBalloon() {
 }
 
 int16 BoltEngine::calcBalloonSpawnDelay() {
-	int16 range = READ_UINT16(g_fredLevelPtr + 2);
-	int16 base = READ_UINT16(g_fredLevelPtr + 0);
+	int16 range = READ_UINT16(_fredLevelPtr + 2);
+	int16 base = READ_UINT16(_fredLevelPtr + 0);
 	return _xp->getRandom(range) + base;
 }
 
 int16 BoltEngine::selectBalloonRow() {
 	// Get Fred's center X position...
-	int32 fredX = g_fredSprite.xPos >> 8;
+	int32 fredX = _fredSprite.xPos >> 8;
 
 	// Get Fred's sprite width/2 to find center...
-	int16 frameIdx = g_fredSprite.frameIndex;
-	byte *spriteDesc = getResolvedPtr(g_fredSprite.animTable, frameIdx * 6);
+	int16 frameIdx = _fredSprite.frameIndex;
+	byte *spriteDesc = getResolvedPtr(_fredSprite.animTable, frameIdx * 6);
 	int16 halfWidth = READ_UINT16(spriteDesc + 0x0A) >> 1;
 	int16 fredCenter = (int16)fredX + halfWidth;
 
 	// Find which row Fred is in...
 	int16 row = 0;
-	byte *rowBounds = g_fredRowBounds; // Array of int16 x-values
-	uint16 numRows = READ_UINT16(g_fredLevelPtr + 4);
+	byte *rowBounds = _fredRowBounds; // Array of int16 x-values
+	uint16 numRows = READ_UINT16(_fredLevelPtr + 4);
 
 	while (row < numRows) {
 		if (READ_UINT16(rowBounds + row * 2) > fredCenter)
@@ -1115,7 +1115,7 @@ int16 BoltEngine::selectBalloonRow() {
 	}
 
 	// Pick random row, rejecting if too close to Fred's row...
-	int16 rowBias = READ_UINT16(g_fredLevelPtr + 8);
+	int16 rowBias = READ_UINT16(_fredLevelPtr + 8);
 	int16 randomRow;
 	do {
 		randomRow = _xp->getRandom(numRows);
@@ -1125,11 +1125,11 @@ int16 BoltEngine::selectBalloonRow() {
 }
 
 void BoltEngine::setFredAnimMode(FredEntityState *state, int16 mode) {
-	if (mode >= 0x0B && mode < 0x0B + (g_fredLevelPtr ? READ_UINT16(g_fredLevelPtr + 0x0C) : 0)) {
+	if (mode >= 0x0B && mode < 0x0B + (_fredLevelPtr ? READ_UINT16(_fredLevelPtr + 0x0C) : 0)) {
 		state->animMode = 0x0B;
 
 		int16 typeIdx = mode - 0x0B;
-		state->animTable = getResolvedPtr(g_fredBalloonSprite, typeIdx * 4);
+		state->animTable = getResolvedPtr(_fredBalloonSprite, typeIdx * 4);
 		state->frameIndex = 0;
 		state->frameCountdown = READ_UINT16(state->animTable + 4);
 		return;
@@ -1144,7 +1144,7 @@ void BoltEngine::setFredAnimMode(FredEntityState *state, int16 mode) {
 
 	// Standard Fred animation...
 	state->animMode = mode;
-	state->animTable = g_fredSprites[mode];
+	state->animTable = _fredSprites[mode];
 
 	state->frameIndex = 0;
 	state->frameCountdown = READ_UINT16(state->animTable + 4);
@@ -1152,22 +1152,22 @@ void BoltEngine::setFredAnimMode(FredEntityState *state, int16 mode) {
 	// Play sound based on mode...
 	switch (mode) {
 	case 3: // turn right
-		playFredSound(&g_fredSounds[2], nullptr);
+		playFredSound(&_fredSounds[2], nullptr);
 		break;
 	case 4: // run right
-		playFredSound(&g_fredSounds[0], &g_fredSounds[0]);
+		playFredSound(&_fredSounds[0], &_fredSounds[0]);
 		break;
 	case 5: // catch right
-		playFredSound(&g_fredSounds[3], nullptr);
+		playFredSound(&_fredSounds[3], nullptr);
 		break;
 	case 7: // turn left
-		playFredSound(&g_fredSounds[2], nullptr);
+		playFredSound(&_fredSounds[2], nullptr);
 		break;
 	case 8: // run left
-		playFredSound(&g_fredSounds[1], &g_fredSounds[1]);
+		playFredSound(&_fredSounds[1], &_fredSounds[1]);
 		break;
 	case 9: // catch left
-		playFredSound(&g_fredSounds[3], nullptr);
+		playFredSound(&_fredSounds[3], nullptr);
 		break;
 	default: // 0, 1, 2, 6
 		playFredSound(nullptr, nullptr);
@@ -1181,7 +1181,7 @@ void BoltEngine::renderFredScene() {
 	int16 idx = 0;
 
 	while (true) {
-		FredEntityState *entry = g_fredEntitiesTable[idx];
+		FredEntityState *entry = _fredEntitiesTable[idx];
 		if (!entry)
 			break;
 
@@ -1196,7 +1196,7 @@ void BoltEngine::renderFredScene() {
 
 			// If balloon (mode 0x0B), draw string below...
 			if (entry->animMode == 0x0B) {
-				displayPic(g_fredBalloonString, x + 10, y + 25, stFront);
+				displayPic(_fredBalloonString, x + 10, y + 25, stFront);
 			}
 		}
 
@@ -1210,23 +1210,23 @@ void BoltEngine::getFredSoundInfo(BOLTLib *lib, int16 memberId, SoundInfo *sound
 }
 
 void BoltEngine::playFredSound(SoundInfo *oneShot, SoundInfo *loop) {
-	g_fredPendingOneShot = oneShot;
-	g_fredPendingLoop = loop; 
+	_fredPendingOneShot = oneShot;
+	_fredPendingLoop = loop; 
 
-	if (g_fredLoopSound != nullptr || loop == nullptr) {
-		// Check if current loop is g_fredSounds[2] and new one-shot is g_fredSounds[1]
+	if (_fredLoopSound != nullptr || loop == nullptr) {
+		// Check if current loop is _fredSounds[2] and new one-shot is _fredSounds[1]
 		// (sound transition check)
-		if (g_fredCurrentSound == &g_fredSounds[3] && g_fredPendingOneShot == &g_fredSounds[2]) {
+		if (_fredCurrentSound == &_fredSounds[3] && _fredPendingOneShot == &_fredSounds[2]) {
 			// Allow transition without stopping...
 		} else {
-			g_fredLoopSound = nullptr;
-			g_fredCurrentSound = nullptr;
+			_fredLoopSound = nullptr;
+			_fredCurrentSound = nullptr;
 			_xp->stopSound();
 		}
 	}
 
 	// If there's a pending sound and nothing currently playing, trigger it!
-	if (g_fredPendingOneShot != nullptr && g_fredCurrentSound == nullptr) {
+	if (_fredPendingOneShot != nullptr && _fredCurrentSound == nullptr) {
 		updateFredSound();
 	}
 }
@@ -1234,29 +1234,29 @@ void BoltEngine::playFredSound(SoundInfo *oneShot, SoundInfo *loop) {
 void BoltEngine::updateFredSound() {
 	bool startLoop = false;
 
-	if (g_fredLoopSound != nullptr) {
+	if (_fredLoopSound != nullptr) {
 		// Loop sound active, continue with it...
-		g_fredCurrentSound = g_fredLoopSound;
-	} else if (g_fredPendingOneShot != nullptr) {
+		_fredCurrentSound = _fredLoopSound;
+	} else if (_fredPendingOneShot != nullptr) {
 		// Start pending one-shot...
-		g_fredCurrentSound = g_fredPendingOneShot;
-		g_fredLoopSound = g_fredPendingLoop;
-		startLoop = (g_fredPendingLoop != nullptr);
-		g_fredPendingLoop = 0;
-		g_fredPendingOneShot = 0;
+		_fredCurrentSound = _fredPendingOneShot;
+		_fredLoopSound = _fredPendingLoop;
+		startLoop = (_fredPendingLoop != nullptr);
+		_fredPendingLoop = 0;
+		_fredPendingOneShot = 0;
 	} else {
 		// Nothing to play...
-		g_fredCurrentSound = nullptr;
+		_fredCurrentSound = nullptr;
 	}
 
-	if (g_fredCurrentSound != nullptr) {
+	if (_fredCurrentSound != nullptr) {
 		// Play the current sound...
-		SoundInfo *snd = g_fredCurrentSound;
+		SoundInfo *snd = _fredCurrentSound;
 		_xp->playSound(snd->data, snd->size, 22050);
 
 		if (startLoop) {
 			// Queue loop sound twice...
-			SoundInfo *loopSnd = g_fredLoopSound;
+			SoundInfo *loopSnd = _fredLoopSound;
 			_xp->playSound(loopSnd->data, loopSnd->size, 22050);
 			_xp->playSound(loopSnd->data, loopSnd->size, 22050);
 		}

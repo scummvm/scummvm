@@ -27,7 +27,7 @@
 namespace Bolt {
 
 void XpLib::getPalette(int16 startIndex, int16 count, byte *destBuf) {
-	memcpy(destBuf, &g_paletteBuffer[startIndex * 3], count * 3);
+	memcpy(destBuf, &_paletteBuffer[startIndex * 3], count * 3);
 }
 
 void XpLib::setPalette(int16 count, int16 startIndex, byte *srcBuf) {
@@ -38,17 +38,17 @@ void XpLib::setPalette(int16 count, int16 startIndex, byte *srcBuf) {
 	}
 
 	if (count > 0) {
-		memcpy(&g_paletteBuffer[startIndex * 3], srcBuf, count * 3);
+		memcpy(&_paletteBuffer[startIndex * 3], srcBuf, count * 3);
 
 		// Apply brightness shift into shifted buffer...
-		const byte *src = &g_paletteBuffer[startIndex * 3];
-		byte *dst = &g_shiftedPaletteBuffer[startIndex * 3];
+		const byte *src = &_paletteBuffer[startIndex * 3];
+		byte *dst = &_shiftedPaletteBuffer[startIndex * 3];
 
 		for (uint16 i = 0; i < count * 3; i++)
-			dst[i] = src[i] >> g_brightnessShift;
+			dst[i] = src[i] >> _brightnessShift;
 
 		// Finally set the palette!
-		g_system->getPaletteManager()->setPalette(&g_shiftedPaletteBuffer[startIndex * 3], startIndex, count);
+		g_system->getPaletteManager()->setPalette(&_shiftedPaletteBuffer[startIndex * 3], startIndex, count);
 	}
 }
 
@@ -59,15 +59,15 @@ bool XpLib::startCycle(XPCycleState *specs) {
 
 	for (int16 i = 0; i < 4; i++) {
 		if (specs[i].startIndex == specs[i].endIndex) {
-			g_cycleStates[i].active = false;
+			_cycleStates[i].active = false;
 			continue;
 		}
 
-		g_cycleStates[i].startIndex = specs[i].startIndex;
-		g_cycleStates[i].endIndex = specs[i].endIndex;
-		g_cycleStates[i].delay = specs[i].delay;
-		g_cycleStates[i].nextFire = now + specs[i].delay;
-		g_cycleStates[i].active = true;
+		_cycleStates[i].startIndex = specs[i].startIndex;
+		_cycleStates[i].endIndex = specs[i].endIndex;
+		_cycleStates[i].delay = specs[i].delay;
+		_cycleStates[i].nextFire = now + specs[i].delay;
+		_cycleStates[i].active = true;
 	}
 
 	return true;
@@ -75,17 +75,17 @@ bool XpLib::startCycle(XPCycleState *specs) {
 
 void XpLib::cycleColors() {
 	for (int i = 0; i < 4; i++) {
-		if (!g_cycleStates[i].active)
+		if (!_cycleStates[i].active)
 			continue;
 
 		uint32 now = g_system->getMillis();
-		if (now < g_cycleStates[i].nextFire)
+		if (now < _cycleStates[i].nextFire)
 			continue;
 
-		g_cycleStates[i].nextFire = now + g_cycleStates[i].delay;
+		_cycleStates[i].nextFire = now + _cycleStates[i].delay;
 
-		int16 startIdx = g_cycleStates[i].startIndex;
-		int16 endIdx = g_cycleStates[i].endIndex;
+		int16 startIdx = _cycleStates[i].startIndex;
+		int16 endIdx = _cycleStates[i].endIndex;
 
 		if (startIdx < endIdx) {
 			int16 count = endIdx - startIdx + 1;
@@ -93,26 +93,26 @@ void XpLib::cycleColors() {
 				continue;
 
 			// Read current palette range...
-			getPalette(startIdx, count, &g_cycleTempPalette[3]);
+			getPalette(startIdx, count, &_cycleTempPalette[3]);
 
 			// Save last entry into first position...
-			memcpy(g_cycleTempPalette, &g_cycleTempPalette[count * 3], 3);
+			memcpy(_cycleTempPalette, &_cycleTempPalette[count * 3], 3);
 
 			// Write back shifted by one (swap buffer starts 3 bytes earlier)...
-			setPalette(count, startIdx, g_cycleTempPalette);
+			setPalette(count, startIdx, _cycleTempPalette);
 		} else if (startIdx > endIdx) {
 			int16 count = startIdx - endIdx + 1;
 			if (count > 19 || endIdx < 0 || startIdx > 255)
 				continue;
 
 			// Read current palette range...
-			getPalette(endIdx, count, g_cycleTempPalette);
+			getPalette(endIdx, count, _cycleTempPalette);
 
 			// Save first entry, append after last...
-			memcpy(&g_cycleTempPalette[count * 3], g_cycleTempPalette, 3);
+			memcpy(&_cycleTempPalette[count * 3], _cycleTempPalette, 3);
 
 			// Write back shifted by one (starts one entry later)...
-			setPalette(count, endIdx, &g_cycleTempPalette[3]);
+			setPalette(count, endIdx, &_cycleTempPalette[3]);
 		}
 
 		g_system->updateScreen();
@@ -121,27 +121,27 @@ void XpLib::cycleColors() {
 
 void XpLib::stopCycle() {
 	for (int16 i = 0; i < 4; i++) {
-		if (g_cycleStates[i].active) {
-			g_cycleStates[i].active = false;
+		if (_cycleStates[i].active) {
+			_cycleStates[i].active = false;
 		}
 	}
 }
 
 void XpLib::setScreenBrightness(uint8 percent) {
 	if (percent >= 100) {
-		g_brightnessShift = 0; // Full brightness
+		_brightnessShift = 0; // Full brightness
 	} else if (percent >= 50) {
-		g_brightnessShift = 1; // 50%
+		_brightnessShift = 1; // 50%
 	} else if (percent >= 25) {
-		g_brightnessShift = 2; // 25%
+		_brightnessShift = 2; // 25%
 	} else if (percent >= 12) {
-		g_brightnessShift = 3; // 12%
+		_brightnessShift = 3; // 12%
 	} else {
-		g_brightnessShift = 4; // Near black
+		_brightnessShift = 4; // Near black
 	}
 
 	// Re-apply entire palette with new brightness...
-	setPalette(256, 0, g_paletteBuffer);
+	setPalette(256, 0, _paletteBuffer);
 
 	g_system->updateScreen();
 }

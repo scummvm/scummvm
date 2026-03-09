@@ -24,7 +24,7 @@
 namespace Bolt {
 
 void BoltEngine::setAVBufferSize(uint32 bufSize) {
-	g_avTargetBufSize = bufSize;
+	_avTargetBufSize = bufSize;
 }
 
 bool BoltEngine::prepareAV(RTFResource *rtfHandle, int16 animIndex, int16 width, int16 height, int16 xOff, int16 yOff) {
@@ -61,7 +61,7 @@ bool BoltEngine::playAV(RTFResource *rtfHandle, int16 animIndex, int16 width, in
 	int16 eventType = 0;
 
 	// Init if not already loaded...
-	if (!g_avRingBuffer) {
+	if (!_avRingBuffer) {
 		if (!initAV(rtfHandle, animIndex, width, height, xOff, yOff)) {
 			cleanUpAV();
 			return false;
@@ -113,17 +113,17 @@ void BoltEngine::processPacket(RTFPacket *packet) {
 		int16 frameRate = packet->frameRate;
 
 		// Skip this frame if: low framerate, only 1 behind, or haven't accumulated enough...
-		if (frameRate <= 10 || packet->skipCount > 1 || g_avFrameAccum < g_avSkipLevel) {
-			g_avFrameAccum += packet->duration;
+		if (frameRate <= 10 || packet->skipCount > 1 || _avFrameAccum < _avSkipLevel) {
+			_avFrameAccum += packet->duration;
 			debug(4, "BoltEngine::processPacket(): Skipping frame...");
 			return;
 		}
 
 		// Adjust skip level based on how far behind we are...
-		if (g_avFrameAccum > g_avSkipLevel)
-			g_avSkipLevel = (g_avFrameAccum > 4) ? 4 : g_avFrameAccum;
+		if (_avFrameAccum > _avSkipLevel)
+			_avSkipLevel = (_avFrameAccum > 4) ? 4 : _avFrameAccum;
 
-		g_avFrameAccum = 0;
+		_avFrameAccum = 0;
 
 		int16 targetSkip;
 		if (frameRate <= 12)
@@ -136,17 +136,17 @@ void BoltEngine::processPacket(RTFPacket *packet) {
 			targetSkip = 1;
 
 		// If keeping up fine, stop skipping entirely...
-		if (g_avSkipLevel <= 1 && targetSkip == 1 && packet->skipCount == 0) {
-			g_avSkipLevel = 0;
+		if (_avSkipLevel <= 1 && targetSkip == 1 && packet->skipCount == 0) {
+			_avSkipLevel = 0;
 		} else {
 			// Ramp toward target skip level...
-			if (targetSkip > g_avSkipLevel)
-				g_avSkipLevel = targetSkip;
-			else if (targetSkip < g_avSkipLevel)
-				g_avSkipLevel--;
+			if (targetSkip > _avSkipLevel)
+				_avSkipLevel = targetSkip;
+			else if (targetSkip < _avSkipLevel)
+				_avSkipLevel--;
 		}
 	} else if (tag == MKTAG('r', 'l', '7', ' ') || tag == MKTAG('r', 'l', '7', 'f')) {
-		g_avFrameAccum = 0;
+		_avFrameAccum = 0;
 	}
 
 	// Process frame, palette and trigger packets...
@@ -171,9 +171,9 @@ void BoltEngine::processRL7(RTFPacket *packet) {
 	uint32 tag = packet->tag;
 
 	if (tag == MKTAG('R', 'L', '7', 'B')) {
-		displayDesc = &g_avBackBufDesc;
+		displayDesc = &_avBackBufDesc;
 	} else {
-		displayDesc = &g_avFrontBufDesc;
+		displayDesc = &_avFrontBufDesc;
 	}
 
 	switch (tag) {
@@ -202,19 +202,19 @@ void BoltEngine::processRL7(RTFPacket *packet) {
 
 	displayDesc->pixelData = packet->dataPtr;
 
-	_xp->displayPic(displayDesc, g_avDisplayX, g_avDisplayY, page);
+	_xp->displayPic(displayDesc, _avDisplayX, _avDisplayY, page);
 
 	if (updateDisplay)
 		_xp->updateDisplay();
 
-	g_avFrontBufDesc.palette = nullptr;
-	g_avFrontBufDesc.paletteStart = 0;
-	g_avFrontBufDesc.paletteCount = 0;
+	_avFrontBufDesc.palette = nullptr;
+	_avFrontBufDesc.paletteStart = 0;
+	_avFrontBufDesc.paletteCount = 0;
 
 	if (transparency) {
-		g_avBackBufDesc.palette = nullptr;
-		g_avBackBufDesc.paletteStart = 0;
-		g_avBackBufDesc.paletteCount = 0;
+		_avBackBufDesc.palette = nullptr;
+		_avBackBufDesc.paletteStart = 0;
+		_avBackBufDesc.paletteCount = 0;
 	}
 }
 
@@ -228,11 +228,11 @@ void BoltEngine::processPLTE(RTFPacket *packet) {
 	byte *palBuffer;
 
 	if (packet->tag == MKTAG('P', 'L', 'T', 'B')) {
-		desc = &g_avBackBufDesc;
-		palBuffer = g_avFrontPalette;
+		desc = &_avBackBufDesc;
+		palBuffer = _avFrontPalette;
 	} else {
-		desc = &g_avFrontBufDesc;
-		palBuffer = g_avBackPalette;
+		desc = &_avFrontBufDesc;
+		palBuffer = _avBackPalette;
 	}
 
 	desc->paletteStart = startIndex;
@@ -249,83 +249,83 @@ void BoltEngine::processPLTE(RTFPacket *packet) {
 }
 
 bool BoltEngine::initAV(RTFResource *rtfHandle, int16 animIndex, int16 width, int16 height, int16 xOff, int16 yOff) {
-	uint32 savedAllocSize = g_avTargetBufSize;
+	uint32 savedAllocSize = _avTargetBufSize;
 	uint32 allocSize = 0;
 
-	g_avTargetBufSize = 0xFA000; // ~1MB
+	_avTargetBufSize = 0xFA000; // ~1MB
 
-	g_avDisplayY = yOff;
-	g_avDisplayX = xOff;
+	_avDisplayY = yOff;
+	_avDisplayX = xOff;
 
-	g_avSavedInactivityTimer = _xp->setInactivityTimer(0);
-	g_avSavedScreenSaverTimer = _xp->setScreenSaverTimer(0);
+	_avSavedInactivityTimer = _xp->setInactivityTimer(0);
+	_avSavedScreenSaverTimer = _xp->setScreenSaverTimer(0);
 
-	g_avBackPalette = nullptr;
-	g_avFrontPalette = nullptr;
-	g_avFrameAccum = 0;
+	_avBackPalette = nullptr;
+	_avFrontPalette = nullptr;
+	_avFrameAccum = 0;
 
 	// Allocate two 384-byte palette buffers (128 RGB triplets each)
-	g_avBackPalette = (byte *)_xp->allocMem(128 * 3);
-	if (!g_avBackPalette)
+	_avBackPalette = (byte *)_xp->allocMem(128 * 3);
+	if (!_avBackPalette)
 		return false;
 
-	g_avFrontPalette = (byte *)_xp->allocMem(128 * 3);
-	if (!g_avFrontPalette)
+	_avFrontPalette = (byte *)_xp->allocMem(128 * 3);
+	if (!_avFrontPalette)
 		return false;
 
 	// Allocate ring buffer: try saved size, shrink by 50KB until 300KB minimum
 	allocSize = savedAllocSize;
 	do {
-		g_avRingBuffer = (byte *)_xp->tryAllocMem(allocSize);
-		if (g_avRingBuffer)
+		_avRingBuffer = (byte *)_xp->tryAllocMem(allocSize);
+		if (_avRingBuffer)
 			break;
 
 		allocSize -= 0xC800;
 	} while (allocSize >= 0x4B000);
 
-	if (!g_avRingBuffer) {
+	if (!_avRingBuffer) {
 		error("BoltEngine::initAV(): Not enough memory");
 		return false;
 	}
 
-	g_avBackBufDesc.width = width;
-	g_avFrontBufDesc.width = width;
-	g_avBackBufDesc.height = height;
-	g_avFrontBufDesc.height = height;
-	g_avBackBufDesc.flags = 1;
-	g_avFrontBufDesc.flags = 1;
-	g_avBackBufDesc.palette = nullptr;
-	g_avFrontBufDesc.palette = nullptr;
-	g_avBackBufDesc.paletteStart = 0;
-	g_avFrontBufDesc.paletteStart = 0;
-	g_avBackBufDesc.paletteCount = 0;
-	g_avFrontBufDesc.paletteCount = 0;
+	_avBackBufDesc.width = width;
+	_avFrontBufDesc.width = width;
+	_avBackBufDesc.height = height;
+	_avFrontBufDesc.height = height;
+	_avBackBufDesc.flags = 1;
+	_avFrontBufDesc.flags = 1;
+	_avBackBufDesc.palette = nullptr;
+	_avFrontBufDesc.palette = nullptr;
+	_avBackBufDesc.paletteStart = 0;
+	_avFrontBufDesc.paletteStart = 0;
+	_avBackBufDesc.paletteCount = 0;
+	_avFrontBufDesc.paletteCount = 0;
 
 	// Open and start streaming!
-	if (!playRTF(rtfHandle, animIndex, g_avRingBuffer, allocSize))
+	if (!playRTF(rtfHandle, animIndex, _avRingBuffer, allocSize))
 		return false;
 
 	return true;
 }
 
 void BoltEngine::cleanUpAV() {
-	if (g_avRingBuffer) {
-		_xp->freeMem(g_avRingBuffer);
-		g_avRingBuffer = nullptr;
+	if (_avRingBuffer) {
+		_xp->freeMem(_avRingBuffer);
+		_avRingBuffer = nullptr;
 	}
 
-	if (g_avFrontPalette) {
-		_xp->freeMem(g_avFrontPalette);
-		g_avFrontPalette = nullptr;
+	if (_avFrontPalette) {
+		_xp->freeMem(_avFrontPalette);
+		_avFrontPalette = nullptr;
 	}
 
-	if (g_avBackPalette) {
-		_xp->freeMem(g_avBackPalette);
-		g_avBackPalette = nullptr;
+	if (_avBackPalette) {
+		_xp->freeMem(_avBackPalette);
+		_avBackPalette = nullptr;
 	}
 
-	_xp->setInactivityTimer(g_avSavedInactivityTimer);
-	_xp->setScreenSaverTimer(g_avSavedScreenSaverTimer);
+	_xp->setInactivityTimer(_avSavedInactivityTimer);
+	_xp->setScreenSaverTimer(_avSavedScreenSaverTimer);
 }
 
 } // End of namespace Bolt

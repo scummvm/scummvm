@@ -24,24 +24,24 @@
 namespace Bolt {
 
 bool BoltEngine::initVRam(int16 poolSize) {
-	g_vramRecordCount = 0;
-	g_vramUsedBytes = 0;
+	_vramRecordCount = 0;
+	_vramUsedBytes = 0;
 
-	g_allocatedMemPool = (byte *)_xp->allocMem(poolSize);
-	if (!g_allocatedMemPool) {
-		g_curErrorCode = 1;
+	_allocatedMemPool = (byte *)_xp->allocMem(poolSize);
+	if (!_allocatedMemPool) {
+		_curErrorCode = 1;
 		return false;
 	}
 
-	g_allocatedMemPoolSize = poolSize;
-	g_curErrorCode = 0;
+	_allocatedMemPoolSize = poolSize;
+	_curErrorCode = 0;
 	return true;
 }
 
 void BoltEngine::freeVRam() {
-	if (g_allocatedMemPool) {
-		_xp->freeMem(g_allocatedMemPool);
-		g_allocatedMemPool = 0;
+	if (_allocatedMemPool) {
+		_xp->freeMem(_allocatedMemPool);
+		_allocatedMemPool = 0;
 	}
 }
 
@@ -58,7 +58,7 @@ bool BoltEngine::vLoad(void *dest, const char *name) {
 	}
 
 	if (!findRecord(localName, &recordOffset)) {
-		g_curErrorCode = 3;
+		_curErrorCode = 3;
 		return false;
 	}
 
@@ -67,7 +67,7 @@ bool BoltEngine::vLoad(void *dest, const char *name) {
 
 	memcpy(dest, addr, size);
 
-	g_curErrorCode = 0;
+	_curErrorCode = 0;
 	return true;
 }
 
@@ -87,12 +87,12 @@ bool BoltEngine::vSave(void *src, uint16 srcSize, const char *name) {
 
 	vDelete(localName);
 
-	if (entrySize + g_vramUsedBytes > g_allocatedMemPoolSize) {
-		g_curErrorCode = 4;
+	if (entrySize + _vramUsedBytes > _allocatedMemPoolSize) {
+		_curErrorCode = 4;
 		return 0;
 	}
 
-	byte *writePtr = &g_allocatedMemPool[g_vramUsedBytes];
+	byte *writePtr = &_allocatedMemPool[_vramUsedBytes];
 
 	WRITE_UINT16(writePtr, (uint16)entrySize);
 	WRITE_UINT16(writePtr + 2, (uint16)nameStorageLen);
@@ -103,9 +103,9 @@ bool BoltEngine::vSave(void *src, uint16 srcSize, const char *name) {
 
 	memcpy(writePtr, src, srcSize);
 
-	g_vramUsedBytes += entrySize;
-	g_vramRecordCount++;
-	g_curErrorCode = 0;
+	_vramUsedBytes += entrySize;
+	_vramRecordCount++;
+	_curErrorCode = 0;
 	return true;
 }
 
@@ -121,37 +121,37 @@ bool BoltEngine::vDelete(const char *name) {
 		localName[nameLen] = '\0';
 	}
 
-	g_curErrorCode = 3;
+	_curErrorCode = 3;
 
-	if (g_vramRecordCount == 0)
+	if (_vramRecordCount == 0)
 		return 0;
 
 	if (!findRecord(localName, &recordOffset))
 		return 0;
 
-	int16 entrySize = (int16)READ_UINT16(&g_allocatedMemPool[recordOffset]);
+	int16 entrySize = (int16)READ_UINT16(&_allocatedMemPool[recordOffset]);
 
-	if (recordOffset + entrySize < g_vramUsedBytes) {
-		memmove(g_allocatedMemPool + recordOffset,
-				g_allocatedMemPool + recordOffset + entrySize,
-				g_vramUsedBytes - (recordOffset + entrySize));
+	if (recordOffset + entrySize < _vramUsedBytes) {
+		memmove(_allocatedMemPool + recordOffset,
+				_allocatedMemPool + recordOffset + entrySize,
+				_vramUsedBytes - (recordOffset + entrySize));
 	}
 
-	g_vramUsedBytes -= entrySize;
-	g_vramRecordCount--;
-	g_curErrorCode = 0;
+	_vramUsedBytes -= entrySize;
+	_vramRecordCount--;
+	_curErrorCode = 0;
 	return true;
 }
 
 byte *BoltEngine::dataAddress(int16 recordOffset) {
-	byte *entry = &g_allocatedMemPool[recordOffset];
+	byte *entry = &_allocatedMemPool[recordOffset];
 
 	int16 nameStorageLen = (int16)READ_UINT16(entry + 2);
-	return &g_allocatedMemPool[recordOffset + 4 + nameStorageLen];
+	return &_allocatedMemPool[recordOffset + 4 + nameStorageLen];
 }
 
 uint16 BoltEngine::dataSize(int16 recordOffset) {
-	byte *entry = g_allocatedMemPool + recordOffset;
+	byte *entry = _allocatedMemPool + recordOffset;
 
 	int16 entrySize = (int16)READ_UINT16(entry);
 	int16 nameStorageLen = (int16)READ_UINT16(entry + 2);
@@ -160,9 +160,9 @@ uint16 BoltEngine::dataSize(int16 recordOffset) {
 
 bool BoltEngine::findRecord(const char *name, int16 *outOffset) {
 	int16 offset = 0;
-	byte *ptr = g_allocatedMemPool;
+	byte *ptr = _allocatedMemPool;
 
-	for (int16 i = 0; i < g_vramRecordCount; i++) {
+	for (int16 i = 0; i < _vramRecordCount; i++) {
 		char *entryName = (char *)&ptr[4];
 		if (strcmp(name, entryName) == 0) {
 			*outOffset = offset;
@@ -170,7 +170,7 @@ bool BoltEngine::findRecord(const char *name, int16 *outOffset) {
 		}
 
 		offset += (int16)READ_UINT16(ptr);
-		ptr = &g_allocatedMemPool[offset];
+		ptr = &_allocatedMemPool[offset];
 	}
 
 	return false;

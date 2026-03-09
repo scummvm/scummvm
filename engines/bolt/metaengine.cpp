@@ -58,8 +58,7 @@ Common::Error BoltMetaEngine::createInstance(OSystem *syst, Engine **engine, con
 }
 
 bool BoltMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return checkExtendedSaves(f) ||
-		(f == kSupportsLoadingDuringStartup);
+	return false; // No saving features whatsoever! :-)
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(BOLT)

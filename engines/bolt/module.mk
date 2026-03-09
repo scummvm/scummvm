@@ -12,7 +12,6 @@ MODULE_OBJS = \
 	booths\scooby.o \
 	booths\topcat.o \
 	booths\yogi.o \
-	console.o \
 	metaengine.o \
 	resource.o \
 	rtf.o \

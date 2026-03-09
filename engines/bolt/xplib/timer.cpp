@@ -25,21 +25,21 @@
 namespace Bolt {
 
 bool XpLib::initTimer() {
-	for (int i = 0; i < ARRAYSIZE(g_timers); i++)
-		g_timers[i].active = false;
+	for (int i = 0; i < ARRAYSIZE(_timers); i++)
+		_timers[i].active = false;
 
-	g_nextTimerId = 1;
-	g_timerInitialized = true;
+	_nextTimerId = 1;
+	_timerInitialized = true;
 
 	return true;
 }
 
 void XpLib::shutdownTimer() {
-	if (!g_timerInitialized) {
-		g_timerInitialized = false;
+	if (!_timerInitialized) {
+		_timerInitialized = false;
 
-		for (int i = 0; i < ARRAYSIZE(g_timers); i++) {
-			g_timers[i].active = false;
+		for (int i = 0; i < ARRAYSIZE(_timers); i++) {
+			_timers[i].active = false;
 		}
 	}
 }
@@ -47,16 +47,16 @@ void XpLib::shutdownTimer() {
 uint32 XpLib::startTimer(int16 delay) {
 	uint32 now = _bolt->_system->getMillis();
 
-	for (int i = 0; i < ARRAYSIZE(g_timers); i++) {
-		if (!g_timers[i].active) {
-			g_timers[i].id = g_nextTimerId++;
+	for (int i = 0; i < ARRAYSIZE(_timers); i++) {
+		if (!_timers[i].active) {
+			_timers[i].id = _nextTimerId++;
 
-			if (g_nextTimerId == 0)
-				g_nextTimerId = 1;
+			if (_nextTimerId == 0)
+				_nextTimerId = 1;
 
-			g_timers[i].deadline = now + delay;
-			g_timers[i].active = true;
-			return g_timers[i].id;
+			_timers[i].deadline = now + delay;
+			_timers[i].active = true;
+			return _timers[i].id;
 		}
 	}
 
@@ -66,18 +66,18 @@ uint32 XpLib::startTimer(int16 delay) {
 void XpLib::updateTimers() {
 	uint32 now = _bolt->_system->getMillis();
 
-	for (int i = 0; i < ARRAYSIZE(g_timers); i++) {
-		if (g_timers[i].active && now >= g_timers[i].deadline) {
-			g_timers[i].active = false;
-			handleTimer(g_timers[i].id);
+	for (int i = 0; i < ARRAYSIZE(_timers); i++) {
+		if (_timers[i].active && now >= _timers[i].deadline) {
+			_timers[i].active = false;
+			handleTimer(_timers[i].id);
 		}
 	}
 }
 
 bool XpLib::killTimer(uint32 timerId) {
-	for (int i = 0; i < ARRAYSIZE(g_timers); i++) {
-		if (g_timers[i].active && g_timers[i].id == timerId) {
-			g_timers[i].active = false;
+	for (int i = 0; i < ARRAYSIZE(_timers); i++) {
+		if (_timers[i].active && _timers[i].id == timerId) {
+			_timers[i].active = false;
 			return true;
 		}
 	}

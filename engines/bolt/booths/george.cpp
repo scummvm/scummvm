@@ -39,50 +39,50 @@ int16 BoltEngine::georgeGame(int16 prevBooth) {
 }
 
 bool BoltEngine::initGeorge() {
-	if (!openBOLTLib(&g_georgeBoltLib, &g_georgeBoltCallbacks, assetPath("george.blt")))
+	if (!openBOLTLib(&_georgeBoltLib, &_georgeBoltCallbacks, assetPath("george.blt")))
 		return false;
 
-	if (!getBOLTGroup(g_georgeBoltLib, 0, 1))
+	if (!getBOLTGroup(_georgeBoltLib, 0, 1))
 		return false;
 
-	g_georgeBgPic = memberAddr(g_georgeBoltLib, (g_displayMode != 0) ? 1 : 0);
-	g_georgeHelpObjects = memberAddr(g_georgeBoltLib, 0x1F);
-	g_georgeHelpSequence = memberAddr(g_georgeBoltLib, 0x20);
+	_georgeBgPic = memberAddr(_georgeBoltLib, (_displayMode != 0) ? 1 : 0);
+	_georgeHelpObjects = memberAddr(_georgeBoltLib, 0x1F);
+	_georgeHelpSequence = memberAddr(_georgeBoltLib, 0x20);
 
-	g_georgeCarPics[0] = memberAddr(g_georgeBoltLib, 0x10);
-	g_georgeCarPics[1] = memberAddr(g_georgeBoltLib, 0x11);
-	g_georgeCarPics[2] = memberAddr(g_georgeBoltLib, 0x12);
-	g_georgeCollisionRect = memberAddr(g_georgeBoltLib, 0x13);
+	_georgeCarPics[0] = memberAddr(_georgeBoltLib, 0x10);
+	_georgeCarPics[1] = memberAddr(_georgeBoltLib, 0x11);
+	_georgeCarPics[2] = memberAddr(_georgeBoltLib, 0x12);
+	_georgeCollisionRect = memberAddr(_georgeBoltLib, 0x13);
 
-	getGeorgeSoundInfo(g_georgeBoltLib, 0x16, &g_georgeSoundCarTumble, 6);
-	getGeorgeSoundInfo(g_georgeBoltLib, 0x15, &g_georgeSoundCarLoopHi, 0);
-	getGeorgeSoundInfo(g_georgeBoltLib, 0x14, &g_georgeSoundCarLoopLo, 0);
-	getGeorgeSoundInfo(g_georgeBoltLib, 0x17, &g_georgeSoundCarStartUp, 3);
-	getGeorgeSoundInfo(g_georgeBoltLib, 0x18, &g_georgeSoundCarGoesAway, 3);
+	getGeorgeSoundInfo(_georgeBoltLib, 0x16, &_georgeSoundCarTumble, 6);
+	getGeorgeSoundInfo(_georgeBoltLib, 0x15, &_georgeSoundCarLoopHi, 0);
+	getGeorgeSoundInfo(_georgeBoltLib, 0x14, &_georgeSoundCarLoopLo, 0);
+	getGeorgeSoundInfo(_georgeBoltLib, 0x17, &_georgeSoundCarStartUp, 3);
+	getGeorgeSoundInfo(_georgeBoltLib, 0x18, &_georgeSoundCarGoesAway, 3);
 
-	g_georgeSoundCurrent = nullptr;
-	g_georgeSoundToPlay = nullptr;
-	g_georgeSoundNext = nullptr;
-	g_georgeSoundQueued = nullptr;
-	g_georgeSoundChannelCounter = 0;
+	_georgeSoundCurrent = nullptr;
+	_georgeSoundToPlay = nullptr;
+	_georgeSoundNext = nullptr;
+	_georgeSoundQueued = nullptr;
+	_georgeSoundChannelCounter = 0;
 
 	// Load save data...
-	if (!vLoad(&g_georgeSaveData, g_georgeSaveFileName)) {
-		g_georgeSaveData[0] = 0;
-		g_georgeSaveData[1] = 0;
-		g_georgeSaveData[2] = 0;
+	if (!vLoad(&_georgeSaveData, "GeorgeBE")) {
+		_georgeSaveData[0] = 0;
+		_georgeSaveData[1] = 0;
+		_georgeSaveData[2] = 0;
 	}
 
-	if (!initGeorgeLevel(g_georgeSaveData[1], g_georgeSaveData[2])) {
-		freeBOLTGroup(g_georgeBoltLib, 0, 1);
+	if (!initGeorgeLevel(_georgeSaveData[1], _georgeSaveData[2])) {
+		freeBOLTGroup(_georgeBoltLib, 0, 1);
 		return false;
 	}
 
 	// Initialize satellites from list...
-	g_georgeCollectedSatellitesNum = 0;
-	while (g_georgeCollectedSatellitesNum < g_georgeSaveData[0]) {
-		setSatelliteAnimMode(g_georgeEntityList[g_georgeNumSatellites + g_georgeCollectedSatellitesNum], 4, 0);
-		g_georgeCollectedSatellitesNum++;
+	_georgeCollectedSatellitesNum = 0;
+	while (_georgeCollectedSatellitesNum < _georgeSaveData[0]) {
+		setSatelliteAnimMode(_georgeEntityList[_georgeNumSatellites + _georgeCollectedSatellitesNum], 4, 0);
+		_georgeCollectedSatellitesNum++;
 	}
 
 	// Drain timer events...
@@ -93,23 +93,23 @@ bool BoltEngine::initGeorge() {
 	_xp->setTransparency(false);
 
 	// Display palette and background to front...
-	displayColors(g_georgePalette, stBack, 0);
-	displayPic(g_georgeBgPic, g_displayX, g_displayY, stFront);
+	displayColors(_georgePalette, stBack, 0);
+	displayPic(_georgeBgPic, _displayX, _displayY, stFront);
 	_xp->updateDisplay();
 
 	_xp->setTransparency(true);
 
 	// Display palette to both surfaces...
-	displayColors(g_georgePalette, stFront, 0);
-	displayColors(g_georgePalette, stBack, 1);
+	displayColors(_georgePalette, stFront, 0);
+	displayColors(_georgePalette, stBack, 1);
 
 	// Display background to back surface...
-	displayPic(g_georgeBgPic, g_displayX, g_displayY, stBack);
+	displayPic(_georgeBgPic, _displayX, _displayY, stBack);
 
 	drawFlyingObjects();
 
 	_xp->updateDisplay();
-	_xp->startCycle(g_georgePalCycleSpecs);
+	_xp->startCycle(_georgePalCycleSpecs);
 	_xp->setFrameRate(12);
 
 	return true;
@@ -117,35 +117,35 @@ bool BoltEngine::initGeorge() {
 
 void BoltEngine::cleanUpGeorge() {
 	// Save current progress...
-	int16 savedLevel = g_georgeSaveData[1];
-	int16 savedVariant = g_georgeSaveData[2];
+	int16 savedLevel = _georgeSaveData[1];
+	int16 savedVariant = _georgeSaveData[2];
 
-	g_georgeSaveData[0] = g_georgeCollectedSatellitesNum;
+	_georgeSaveData[0] = _georgeCollectedSatellitesNum;
 
 	// Check if collection threshold for current level was met...
-	if (g_georgeCollectedSatellitesNum >= g_georgeThresholds[0]) {
+	if (_georgeCollectedSatellitesNum >= _georgeThresholds[0]) {
 		// Advance level...
-		g_georgeSaveData[1]++;
-		if (g_georgeSaveData[1] >= 10)
-			g_georgeSaveData[1] = 9;
+		_georgeSaveData[1]++;
+		if (_georgeSaveData[1] >= 10)
+			_georgeSaveData[1] = 9;
 
 		// Advance variant...
-		g_georgeSaveData[2]++;
-		if (g_georgeSaveData[2] >= 10)
-			g_georgeSaveData[2] = 0;
+		_georgeSaveData[2]++;
+		if (_georgeSaveData[2] >= 10)
+			_georgeSaveData[2] = 0;
 
 		// Reset collected count for next level...
-		g_georgeSaveData[0] = 0;
+		_georgeSaveData[0] = 0;
 	}
 
-	vSave(g_georgeSaveData, sizeof(g_georgeSaveData), g_georgeSaveFileName);
+	vSave(_georgeSaveData, sizeof(_georgeSaveData), "GeorgeBE");
 
 	_xp->stopCycle();
 
 	termGeorgeLevel(savedLevel, savedVariant);
 
-	freeBOLTGroup(g_georgeBoltLib, 0, 1);
-	closeBOLTLib(&g_georgeBoltLib);
+	freeBOLTGroup(_georgeBoltLib, 0, 1);
+	closeBOLTLib(&_georgeBoltLib);
 
 	_xp->setFrameRate(0);
 	_xp->fillDisplay(0, stFront);
@@ -156,33 +156,33 @@ bool BoltEngine::initGeorgeLevel(int16 level, int16 variant) {
 	int16 levelGroup = (level * 2) << 8 | 0x100;
 	int16 variantGroup = (variant * 2) << 8 | 0x200;
 
-	if (!getBOLTGroup(g_georgeBoltLib, levelGroup, 1))
+	if (!getBOLTGroup(_georgeBoltLib, levelGroup, 1))
 		return false;
 
-	if (!getBOLTGroup(g_georgeBoltLib, variantGroup, 1)) {
-		freeBOLTGroup(g_georgeBoltLib, levelGroup, 1);
+	if (!getBOLTGroup(_georgeBoltLib, variantGroup, 1)) {
+		freeBOLTGroup(_georgeBoltLib, levelGroup, 1);
 		return false;
 	}
 
-	g_georgeThresholds = (int16 *)memberAddr(g_georgeBoltLib, levelGroup);
-	g_georgePalette = memberAddr(g_georgeBoltLib, variantGroup);
-	g_georgePalCycleRawData = memberAddr(g_georgeBoltLib, variantGroup + 1);
-	boltCycleToXPCycle(g_georgePalCycleRawData, g_georgePalCycleSpecs);
+	_georgeThresholds = (int16 *)memberAddr(_georgeBoltLib, levelGroup);
+	_georgePalette = memberAddr(_georgeBoltLib, variantGroup);
+	_georgePalCycleRawData = memberAddr(_georgeBoltLib, variantGroup + 1);
+	boltCycleToXPCycle(_georgePalCycleRawData, _georgePalCycleSpecs);
 
-	g_georgeSatelliteGfx = memberAddr(g_georgeBoltLib, variantGroup + 0x12);
-	g_georgeAsteroidGfx = memberAddr(g_georgeBoltLib, variantGroup + 0x26);
-	g_georgeSatelliteThresholds = (int16 *)memberAddr(g_georgeBoltLib, levelGroup + 0x01);
-	g_georgeAsteroidThresholds = (int16 *)memberAddr(g_georgeBoltLib, levelGroup + 0x02);
-	g_georgeSatelliteCollisionRects = memberAddr(g_georgeBoltLib, variantGroup + 0x19);
-	g_georgeAsteroidCollisionRects = memberAddr(g_georgeBoltLib, variantGroup + 0x2A);
-	g_georgeSatellitePaths = memberAddr(g_georgeBoltLib, levelGroup + 0x27);
-	g_georgeAsteroidPaths = memberAddr(g_georgeBoltLib, levelGroup + 0x3C);
+	_georgeSatelliteGfx = memberAddr(_georgeBoltLib, variantGroup + 0x12);
+	_georgeAsteroidGfx = memberAddr(_georgeBoltLib, variantGroup + 0x26);
+	_georgeSatelliteThresholds = (int16 *)memberAddr(_georgeBoltLib, levelGroup + 0x01);
+	_georgeAsteroidThresholds = (int16 *)memberAddr(_georgeBoltLib, levelGroup + 0x02);
+	_georgeSatelliteCollisionRects = memberAddr(_georgeBoltLib, variantGroup + 0x19);
+	_georgeAsteroidCollisionRects = memberAddr(_georgeBoltLib, variantGroup + 0x2A);
+	_georgeSatellitePaths = memberAddr(_georgeBoltLib, levelGroup + 0x27);
+	_georgeAsteroidPaths = memberAddr(_georgeBoltLib, levelGroup + 0x3C);
 
 	// Allocate and build asteroid shuffle table...
-	int16 numAsteroidRows = g_georgeThresholds[3];
-	int16 numAsteroidCols = g_georgeThresholds[4];
-	g_georgeSatelliteShuffleTable = (byte *)_xp->allocMem((uint32)(numAsteroidCols + 1) * (numAsteroidRows));
-	if (!g_georgeSatelliteShuffleTable) {
+	int16 numAsteroidRows = _georgeThresholds[3];
+	int16 numAsteroidCols = _georgeThresholds[4];
+	_georgeSatelliteShuffleTable = (byte *)_xp->allocMem((uint32)(numAsteroidCols + 1) * (numAsteroidRows));
+	if (!_georgeSatelliteShuffleTable) {
 		termGeorgeLevel(level, variant);
 		return false;
 	}
@@ -190,76 +190,76 @@ bool BoltEngine::initGeorgeLevel(int16 level, int16 variant) {
 	// Fill each row with sequential values 0..numAsteroidCols, then shuffle...
 	for (int16 row = 0; row < numAsteroidRows; row++) {
 		int16 rowBase = (numAsteroidCols + 1) * row;
-		g_georgeSatelliteShuffleTable[rowBase] = 0;
+		_georgeSatelliteShuffleTable[rowBase] = 0;
 
 		for (int16 col = 0; col < numAsteroidCols; col++)
-			g_georgeSatelliteShuffleTable[rowBase + col + 1] = (byte)col;
+			_georgeSatelliteShuffleTable[rowBase + col + 1] = (byte)col;
 
 		// Fisher-Yates shuffle...
 		for (int16 i = 0; i < numAsteroidCols; i++) {
 			int16 j = _xp->getRandom(numAsteroidCols);
-			byte tmp = g_georgeSatelliteShuffleTable[rowBase + i + 1];
-			g_georgeSatelliteShuffleTable[rowBase + i + 1] = g_georgeSatelliteShuffleTable[rowBase + j + 1];
-			g_georgeSatelliteShuffleTable[rowBase + j + 1] = tmp;
+			byte tmp = _georgeSatelliteShuffleTable[rowBase + i + 1];
+			_georgeSatelliteShuffleTable[rowBase + i + 1] = _georgeSatelliteShuffleTable[rowBase + j + 1];
+			_georgeSatelliteShuffleTable[rowBase + j + 1] = tmp;
 		}
 	}
 
 	// Allocate and build satellite shuffle table...
-	int16 numSatelliteRows = g_georgeThresholds[9];
-	int16 numSatelliteCols = g_georgeThresholds[10];
-	g_georgeAsteroidShuffleTable = (byte *)_xp->allocMem((uint32)(numSatelliteCols + 1) * (numSatelliteRows));
-	if (!g_georgeAsteroidShuffleTable) {
+	int16 numSatelliteRows = _georgeThresholds[9];
+	int16 numSatelliteCols = _georgeThresholds[10];
+	_georgeAsteroidShuffleTable = (byte *)_xp->allocMem((uint32)(numSatelliteCols + 1) * (numSatelliteRows));
+	if (!_georgeAsteroidShuffleTable) {
 		termGeorgeLevel(level, variant);
 		return false;
 	}
 
 	for (int16 row = 0; row < numSatelliteRows; row++) {
 		int16 rowBase = (numSatelliteCols + 1) * row;
-		g_georgeAsteroidShuffleTable[rowBase] = 0;
+		_georgeAsteroidShuffleTable[rowBase] = 0;
 
 		for (int16 col = 0; col < numSatelliteCols; col++)
-			g_georgeAsteroidShuffleTable[rowBase + col + 1] = (byte)col;
+			_georgeAsteroidShuffleTable[rowBase + col + 1] = (byte)col;
 
 		for (int16 i = 0; i < numSatelliteCols; i++) {
 			int16 j = _xp->getRandom(numSatelliteCols);
-			byte tmp = g_georgeAsteroidShuffleTable[rowBase + i + 1];
-			g_georgeAsteroidShuffleTable[rowBase + i + 1] = g_georgeAsteroidShuffleTable[rowBase + j + 1];
-			g_georgeAsteroidShuffleTable[rowBase + j + 1] = tmp;
+			byte tmp = _georgeAsteroidShuffleTable[rowBase + i + 1];
+			_georgeAsteroidShuffleTable[rowBase + i + 1] = _georgeAsteroidShuffleTable[rowBase + j + 1];
+			_georgeAsteroidShuffleTable[rowBase + j + 1] = tmp;
 		}
 	}
 
 	// Compute satellite list indices...
-	g_georgeNumSatellites = 0;
-	int16 numSatellites = g_georgeThresholds[0];
-	g_georgeFirstAsteroidIdx = numSatellites;
+	_georgeNumSatellites = 0;
+	int16 numSatellites = _georgeThresholds[0];
+	_georgeFirstAsteroidIdx = numSatellites;
 
-	int16 numAsteroids = g_georgeThresholds[11];
+	int16 numAsteroids = _georgeThresholds[11];
 	if (numAsteroids < 1)
 		numAsteroids = 1;
 
-	g_georgeCarIdx = g_georgeFirstAsteroidIdx + numAsteroids;
-	g_georgeTotalSatellites = g_georgeCarIdx + 1;
+	_georgeCarIdx = _georgeFirstAsteroidIdx + numAsteroids;
+	_georgeTotalSatellites = _georgeCarIdx + 1;
 
 	// Allocate satellite list...
-	g_georgeEntityList = (GeorgeEntityState **)_xp->allocMem((g_georgeTotalSatellites + 1) * sizeof(GeorgeEntityState *));
-	if (!g_georgeEntityList) {
+	_georgeEntityList = (GeorgeEntityState **)_xp->allocMem((_georgeTotalSatellites + 1) * sizeof(GeorgeEntityState *));
+	if (!_georgeEntityList) {
 		termGeorgeLevel(level, variant);
 		return false;
 	}
 
-	for (int16 i = 0; i < g_georgeTotalSatellites; i++) {
-		g_georgeEntityList[i] = new GeorgeEntityState();
-		if (!g_georgeEntityList[i]) {
+	for (int16 i = 0; i < _georgeTotalSatellites; i++) {
+		_georgeEntityList[i] = new GeorgeEntityState();
+		if (!_georgeEntityList[i]) {
 			termGeorgeLevel(level, variant);
 			return false;
 		}
 
-		g_georgeEntityList[i]->flags = 0;
+		_georgeEntityList[i]->flags = 0;
 	}
 
-	g_georgeEntityList[g_georgeTotalSatellites] = nullptr;
+	_georgeEntityList[_georgeTotalSatellites] = nullptr;
 
-	GeorgeEntityState *carSat = g_georgeEntityList[g_georgeCarIdx];
+	GeorgeEntityState *carSat = _georgeEntityList[_georgeCarIdx];
 	assert(carSat);
 
 	carSat->flags = 1;
@@ -274,7 +274,7 @@ bool BoltEngine::initGeorgeLevel(int16 level, int16 variant) {
 	carSat->pathIndex = 0;
 	setGeorgeAnimMode(carSat, 0);
 
-	int32 numObjectTypes = g_georgeThresholds[6];
+	int32 numObjectTypes = _georgeThresholds[6];
 	byte *objShuf = (byte *)_xp->allocMem(numObjectTypes);
 	if (!objShuf) {
 		termGeorgeLevel(level, variant);
@@ -297,13 +297,13 @@ bool BoltEngine::initGeorgeLevel(int16 level, int16 variant) {
 		}
 
 		int16 animType = objShuf[i % numObjectTypes];
-		setSatelliteAnimMode(g_georgeEntityList[g_georgeNumSatellites + i], 3, animType);
+		setSatelliteAnimMode(_georgeEntityList[_georgeNumSatellites + i], 3, animType);
 	}
 
 	_xp->freeMem(objShuf);
 
 	// Allocate asteroid shuffled list...
-	int16 numAsteroidTypes = g_georgeThresholds[11];
+	int16 numAsteroidTypes = _georgeThresholds[11];
 	if (numAsteroidTypes < 1)
 		numAsteroidTypes = 1;
 
@@ -327,84 +327,84 @@ bool BoltEngine::initGeorgeLevel(int16 level, int16 variant) {
 		}
 
 		int16 animType = astShuf[i % numAsteroidTypes];
-		setAsteroidAnimMode(g_georgeEntityList[g_georgeFirstAsteroidIdx + i], 5, animType);
+		setAsteroidAnimMode(_georgeEntityList[_georgeFirstAsteroidIdx + i], 5, animType);
 	}
 
 	_xp->freeMem(astShuf);
 
 	// Allocate and load sound list for satellites...
-	g_georgeSatelliteSoundList = (SoundInfo **)_xp->allocMem(numObjectTypes * sizeof(SoundInfo *));
-	if (!g_georgeSatelliteSoundList) {
+	_georgeSatelliteSoundList = (SoundInfo **)_xp->allocMem(numObjectTypes * sizeof(SoundInfo *));
+	if (!_georgeSatelliteSoundList) {
 		termGeorgeLevel(level, variant);
 		return false;
 	}
 
 	for (int16 i = 0; i < numObjectTypes; i++) {
-		g_georgeSatelliteSoundList[i] = new SoundInfo();
-		if (!g_georgeSatelliteSoundList[i]) {
+		_georgeSatelliteSoundList[i] = new SoundInfo();
+		if (!_georgeSatelliteSoundList[i]) {
 			termGeorgeLevel(level, variant);
 			return false;
 		}
 
 		int16 member = variantGroup | ((i + 0x1A) & 0xFF);
-		getGeorgeSoundInfo(g_georgeBoltLib, member, g_georgeSatelliteSoundList[i], 6);
+		getGeorgeSoundInfo(_georgeBoltLib, member, _georgeSatelliteSoundList[i], 6);
 	}
 
-	g_georgeSatelliteWait = 1;
-	g_georgeSatelliteSearchIdx = 0;
-	g_georgeAsteroidSearchIdx = 0;
-	g_georgeAsteroidWait = getRandomAsteroidWait();
-	g_georgeHitSearchIdx = 0;
-	g_georgeCollectedSatellitesNum = 0;
+	_georgeSatelliteWait = 1;
+	_georgeSatelliteSearchIdx = 0;
+	_georgeAsteroidSearchIdx = 0;
+	_georgeAsteroidWait = getRandomAsteroidWait();
+	_georgeHitSearchIdx = 0;
+	_georgeCollectedSatellitesNum = 0;
 
 	return true;
 }
 
 void BoltEngine::termGeorgeLevel(int16 level, int16 variant) {
-	if (g_georgeEntityList) {
-		for (int16 i = 0; i < g_georgeTotalSatellites; i++) {
-			GeorgeEntityState *sat = g_georgeEntityList[i];
+	if (_georgeEntityList) {
+		for (int16 i = 0; i < _georgeTotalSatellites; i++) {
+			GeorgeEntityState *sat = _georgeEntityList[i];
 			if (sat) {
 				delete sat;
-				g_georgeEntityList[i] = nullptr;
+				_georgeEntityList[i] = nullptr;
 			}
 		}
 
-		_xp->freeMem(g_georgeEntityList);
-		g_georgeEntityList = nullptr;
+		_xp->freeMem(_georgeEntityList);
+		_georgeEntityList = nullptr;
 	}
 
-	if (g_georgeSatelliteSoundList) {
-		int32 numObjectTypes = g_georgeThresholds[6];
+	if (_georgeSatelliteSoundList) {
+		int32 numObjectTypes = _georgeThresholds[6];
 		for (int16 i = 0; i < numObjectTypes; i++) {
-			SoundInfo *snd = g_georgeSatelliteSoundList[i];
+			SoundInfo *snd = _georgeSatelliteSoundList[i];
 			if (snd) {
 				delete snd;
-				g_georgeSatelliteSoundList[i] = nullptr;
+				_georgeSatelliteSoundList[i] = nullptr;
 			}
 		}
 
-		_xp->freeMem(g_georgeSatelliteSoundList);
-		g_georgeSatelliteSoundList = nullptr;
+		_xp->freeMem(_georgeSatelliteSoundList);
+		_georgeSatelliteSoundList = nullptr;
 	}
 
-	if (g_georgeAsteroidShuffleTable) {
-		_xp->freeMem(g_georgeAsteroidShuffleTable);
-		g_georgeAsteroidShuffleTable = nullptr;
+	if (_georgeAsteroidShuffleTable) {
+		_xp->freeMem(_georgeAsteroidShuffleTable);
+		_georgeAsteroidShuffleTable = nullptr;
 	}
 
-	if (g_georgeSatelliteShuffleTable) {
-		_xp->freeMem(g_georgeSatelliteShuffleTable);
-		g_georgeSatelliteShuffleTable = nullptr;
+	if (_georgeSatelliteShuffleTable) {
+		_xp->freeMem(_georgeSatelliteShuffleTable);
+		_georgeSatelliteShuffleTable = nullptr;
 	}
 
-	freeBOLTGroup(g_georgeBoltLib, (variant * 2) << 8 | 0x200, 1);
-	freeBOLTGroup(g_georgeBoltLib, (level * 2) << 8 | 0x100, 1);
+	freeBOLTGroup(_georgeBoltLib, (variant * 2) << 8 | 0x200, 1);
+	freeBOLTGroup(_georgeBoltLib, (level * 2) << 8 | 0x100, 1);
 }
 
 void BoltEngine::swapGeorgeFrameArray() {
-	byte *data = g_boltCurrentMemberEntry->dataPtr;
-	uint32 size = g_boltCurrentMemberEntry->decompSize;
+	byte *data = _boltCurrentMemberEntry->dataPtr;
+	uint32 size = _boltCurrentMemberEntry->decompSize;
 	uint32 off = 0;
 
 	while ((int32)(size - off) > 0) {
@@ -415,8 +415,8 @@ void BoltEngine::swapGeorgeFrameArray() {
 }
 
 void BoltEngine::swapGeorgeHelpEntry() {
-	byte *data = g_boltCurrentMemberEntry->dataPtr;
-	uint32 size = g_boltCurrentMemberEntry->decompSize;
+	byte *data = _boltCurrentMemberEntry->dataPtr;
+	uint32 size = _boltCurrentMemberEntry->decompSize;
 	uint32 off = 0;
 	uint16 palCountOff = (uint16)(off + 0x10);
 
@@ -436,7 +436,7 @@ void BoltEngine::swapGeorgeHelpEntry() {
 }
 
 void BoltEngine::swapGeorgeThresholds() {
-	byte *data = g_boltCurrentMemberEntry->dataPtr;
+	byte *data = _boltCurrentMemberEntry->dataPtr;
 	for (int16 i = 0; i < 12; i++)
 		WRITE_UINT16(data + i * 2, READ_BE_UINT16(data + i * 2));
 }
@@ -449,7 +449,7 @@ int16 BoltEngine::playGeorge() {
 	int16 firstFrame = 1;
 	int32 joyY = 0;
 
-	if (g_georgeHelpActive) {
+	if (_georgeHelpActive) {
 		if (!helpGeorge())
 			return 7;
 	}
@@ -505,13 +505,13 @@ int16 BoltEngine::playGeorge() {
 		if (flyActive) {
 			if (firstFrame) {
 				firstFrame = 0;
-				playGeorgeSound(&g_georgeSoundCarStartUp, &g_georgeSoundCarLoopHi);
+				playGeorgeSound(&_georgeSoundCarStartUp, &_georgeSoundCarLoopHi);
 			}
 
 			if (joyY) {
 				flyActive = 0;
 			} else {
-				GeorgeEntityState *carSat = g_georgeEntityList[g_georgeCarIdx];
+				GeorgeEntityState *carSat = _georgeEntityList[_georgeCarIdx];
 				int16 carY = (int16)(carSat->y >> 8);
 
 				if (carY > 0xD0)
@@ -533,28 +533,28 @@ int16 BoltEngine::playGeorge() {
 			}
 		} else {
 			if (!winSeq) {
-				GeorgeEntityState *carSat = g_georgeEntityList[g_georgeCarIdx];
+				GeorgeEntityState *carSat = _georgeEntityList[_georgeCarIdx];
 				carSat->accelY = (joyY * 3) << 8;
 
-				if (--g_georgeSatelliteWait == 0) {
+				if (--_georgeSatelliteWait == 0) {
 					if (spawnSatellite())
-						g_georgeSatelliteWait = getRandomSatelliteWait();
+						_georgeSatelliteWait = getRandomSatelliteWait();
 					else
-						g_georgeSatelliteWait = 1;
+						_georgeSatelliteWait = 1;
 				}
 
-				if (--g_georgeAsteroidWait == 0) {
+				if (--_georgeAsteroidWait == 0) {
 					if (spawnAsteroid())
-						g_georgeAsteroidWait = getRandomAsteroidWait();
+						_georgeAsteroidWait = getRandomAsteroidWait();
 					else
-						g_georgeAsteroidWait = 1;
+						_georgeAsteroidWait = 1;
 				}
 			}
 		}
 
 		// ---- Pass 1: animate all satellites ----
 		for (int16 i = 0;; i++) {
-			GeorgeEntityState *sat = g_georgeEntityList[i];
+			GeorgeEntityState *sat = _georgeEntityList[i];
 			if (!sat)
 				break;
 			if (!(sat->flags & 1))
@@ -588,7 +588,7 @@ int16 BoltEngine::playGeorge() {
 
 		// ---- Pass 2: physics ----
 		for (int16 i = 0;; i++) {
-			GeorgeEntityState *sat = g_georgeEntityList[i];
+			GeorgeEntityState *sat = _georgeEntityList[i];
 			if (!sat)
 				break;
 			if (!(sat->flags & 1))
@@ -626,11 +626,11 @@ int16 BoltEngine::playGeorge() {
 
 				if (!winSeq) {
 					if (sat->velY <= 0) {
-						if (g_georgeSoundToPlay != &g_georgeSoundCarLoopHi)
-							playGeorgeSound(&g_georgeSoundCarLoopHi, &g_georgeSoundCarLoopHi);
+						if (_georgeSoundToPlay != &_georgeSoundCarLoopHi)
+							playGeorgeSound(&_georgeSoundCarLoopHi, &_georgeSoundCarLoopHi);
 					} else {
-						if (g_georgeSoundToPlay != &g_georgeSoundCarLoopLo)
-							playGeorgeSound(&g_georgeSoundCarLoopLo, &g_georgeSoundCarLoopLo);
+						if (_georgeSoundToPlay != &_georgeSoundCarLoopLo)
+							playGeorgeSound(&_georgeSoundCarLoopLo, &_georgeSoundCarLoopLo);
 					}
 				} else {
 					int32 xExit = (int32)0x1C2 << 8;
@@ -663,16 +663,16 @@ int16 BoltEngine::playGeorge() {
 
 		// ---- Pass 3: collision detection ----
 		if (!winSeq) {
-			GeorgeEntityState *carSat = g_georgeEntityList[g_georgeCarIdx];
+			GeorgeEntityState *carSat = _georgeEntityList[_georgeCarIdx];
 
 			byte *carFrameData = getResolvedPtr(carSat->animTable, carSat->frameIndex * 6);
-			int16 carX1 = (int16)(carSat->x >> 8) + READ_UINT16(g_georgeCollisionRect + 0x00) + READ_UINT16(carFrameData + 0x06);
-			int16 carY1 = (int16)(carSat->y >> 8) + READ_UINT16(g_georgeCollisionRect + 0x02) + READ_UINT16(carFrameData + 0x08);
-			int16 carW = READ_UINT16(g_georgeCollisionRect + 0x04);
-			int16 carH = READ_UINT16(g_georgeCollisionRect + 0x06);
+			int16 carX1 = (int16)(carSat->x >> 8) + READ_UINT16(_georgeCollisionRect + 0x00) + READ_UINT16(carFrameData + 0x06);
+			int16 carY1 = (int16)(carSat->y >> 8) + READ_UINT16(_georgeCollisionRect + 0x02) + READ_UINT16(carFrameData + 0x08);
+			int16 carW = READ_UINT16(_georgeCollisionRect + 0x04);
+			int16 carH = READ_UINT16(_georgeCollisionRect + 0x06);
 
 			for (int16 i = 0;; i++) {
-				GeorgeEntityState *sat = g_georgeEntityList[i];
+				GeorgeEntityState *sat = _georgeEntityList[i];
 				if (!sat)
 					break;
 
@@ -683,7 +683,7 @@ int16 BoltEngine::playGeorge() {
 					if (carSat->animMode != 0)
 						continue;
 
-					byte *collRect = getResolvedPtr(g_georgeSatelliteCollisionRects, sat->variant * 4);
+					byte *collRect = getResolvedPtr(_georgeSatelliteCollisionRects, sat->variant * 4);
 					byte *satFrameData = getResolvedPtr(sat->animTable, sat->frameIndex * 6);
 
 					int16 sx1 = (int16)(sat->x >> 8) + READ_UINT16(collRect + 0x00) + READ_UINT16(satFrameData + 0x06);
@@ -698,19 +698,19 @@ int16 BoltEngine::playGeorge() {
 
 					setGeorgeAnimMode(carSat, 1);
 					setSatelliteAnimMode(sat, 4, 0);
-					g_georgeCollectedSatellitesNum++;
+					_georgeCollectedSatellitesNum++;
 
 					if (spawnSatellite())
-						g_georgeSatelliteWait = getRandomSatelliteWait();
+						_georgeSatelliteWait = getRandomSatelliteWait();
 					else
-						g_georgeSatelliteWait = 1;
+						_georgeSatelliteWait = 1;
 
-					playGeorgeSound(g_georgeSatelliteSoundList[sat->variant], nullptr);
+					playGeorgeSound(_georgeSatelliteSoundList[sat->variant], nullptr);
 				} else if (sat->animMode == 5) {
 					if (carSat->animMode != 0 && carSat->animMode != 1)
 						continue;
 
-					byte *collRects = getResolvedPtr(g_georgeAsteroidCollisionRects, sat->variant * 4);
+					byte *collRects = getResolvedPtr(_georgeAsteroidCollisionRects, sat->variant * 4);
 					byte *satFrameData = getResolvedPtr(sat->animTable, sat->frameIndex * 6);
 
 					int16 sx1 = (int16)(sat->x >> 8) + READ_UINT16(collRects + 0x00) + READ_UINT16(satFrameData + 0x06);
@@ -726,31 +726,31 @@ int16 BoltEngine::playGeorge() {
 					setGeorgeAnimMode(carSat, 2);
 
 					if (confirmAsteroidHitTest())
-						g_georgeCollectedSatellitesNum--;
+						_georgeCollectedSatellitesNum--;
 
-					playGeorgeSound(&g_georgeSoundCarTumble, nullptr);
+					playGeorgeSound(&_georgeSoundCarTumble, nullptr);
 					break;
 				}
 			}
 		}
 
 		if (!winSeq) {
-			if (g_georgeCollectedSatellitesNum >= g_georgeThresholds[0]) {
-				if (g_georgeSoundToPlay &&
-					g_georgeSoundToPlay->priority > g_georgeSoundCarGoesAway.priority)
+			if (_georgeCollectedSatellitesNum >= _georgeThresholds[0]) {
+				if (_georgeSoundToPlay &&
+					_georgeSoundToPlay->priority > _georgeSoundCarGoesAway.priority)
 					continue;
 
-				if (g_georgeSoundQueued &&
-					g_georgeSoundQueued->priority > g_georgeSoundCarGoesAway.priority)
+				if (_georgeSoundQueued &&
+					_georgeSoundQueued->priority > _georgeSoundCarGoesAway.priority)
 					continue;
 
 				bool allDone = true;
 				for (int16 i = 0;; i++) {
-					GeorgeEntityState *sat = g_georgeEntityList[i];
+					GeorgeEntityState *sat = _georgeEntityList[i];
 					if (!sat)
 						break;
 
-					if (i == g_georgeCarIdx)
+					if (i == _georgeCarIdx)
 						continue;
 
 					if (sat->flags & 1) {
@@ -763,10 +763,10 @@ int16 BoltEngine::playGeorge() {
 					// We've won!
 					winSeq = 1;
 					returnCode = 0x10;
-					GeorgeEntityState *carSat = g_georgeEntityList[g_georgeCarIdx];
+					GeorgeEntityState *carSat = _georgeEntityList[_georgeCarIdx];
 					carSat->accelX = 0x200;
 					carSat->accelY = 0;
-					playGeorgeSound(&g_georgeSoundCarGoesAway, nullptr);
+					playGeorgeSound(&_georgeSoundCarGoesAway, nullptr);
 				}
 			}
 		}
@@ -780,7 +780,7 @@ int16 BoltEngine::playGeorge() {
 }
 
 int16 BoltEngine::helpGeorge() {
-	byte *firstObj = getResolvedPtr(g_georgeHelpObjects, 0);
+	byte *firstObj = getResolvedPtr(_georgeHelpObjects, 0);
 	byte *firstInfo = getResolvedPtr(firstObj, 0x04);
 	int16 curX = READ_UINT16(firstInfo + 0x06) + READ_UINT16(firstInfo + 0x0A) - 10;
 	int16 curY = READ_UINT16(firstInfo + 0x08) + READ_UINT16(firstInfo + 0x0C) - 10;
@@ -795,12 +795,12 @@ int16 BoltEngine::helpGeorge() {
 	_xp->setInactivityTimer(0);
 	_xp->stopSound();
 
-	g_georgeSoundCurrent = g_georgeSoundToPlay = g_georgeSoundNext = g_georgeSoundQueued = nullptr;
+	_georgeSoundCurrent = _georgeSoundToPlay = _georgeSoundNext = _georgeSoundQueued = nullptr;
 
 	drawFlyingObjects();
 
 	for (int16 i = 0;; i++) {
-		byte *obj = getResolvedPtr(g_georgeHelpObjects, i * 4);
+		byte *obj = getResolvedPtr(_georgeHelpObjects, i * 4);
 		if (!obj)
 			break;
 
@@ -811,7 +811,7 @@ int16 BoltEngine::helpGeorge() {
 	_xp->updateDisplay();
 
 	for (int16 i = 0;; i++) {
-		byte *obj = getResolvedPtr(g_georgeHelpObjects, i * 4);
+		byte *obj = getResolvedPtr(_georgeHelpObjects, i * 4);
 		if (!obj)
 			break;
 
@@ -827,15 +827,15 @@ int16 BoltEngine::helpGeorge() {
 	_xp->setCursorPos(curX, curY);
 	_xp->setCursorColor(0, 0, 0xFF);
 	_xp->showCursor();
-	g_georgeActiveHelpObject = getResolvedPtr(g_georgeHelpObjects, 0);
-	hiliteGeorgeHelpObject(g_georgeActiveHelpObject, 1);
+	_georgeActiveHelpObject = getResolvedPtr(_georgeHelpObjects, 0);
+	hiliteGeorgeHelpObject(_georgeActiveHelpObject, 1);
 
 	// ---- Event loop ----
 	while (!shouldQuit()) {
 		if (animPlaying) {
 			audioTick = maintainAudioPlay(audioTick);
 			if (!audioTick) {
-				bool sameAsHover = (hoveredObj == g_georgeActiveHelpObject);
+				bool sameAsHover = (hoveredObj == _georgeActiveHelpObject);
 				hiliteGeorgeHelpObject(hoveredObj, sameAsHover ? 1 : 0);
 				animPlaying = 0;
 			}
@@ -847,16 +847,16 @@ int16 BoltEngine::helpGeorge() {
 
 		switch (eventType) {
 		case etTimer: {
-			if (!g_georgePrevActiveHelpObject)
+			if (!_georgePrevActiveHelpObject)
 				break;
 
-			if (g_georgeHelpTimer != eventData)
+			if (_georgeHelpTimer != eventData)
 				break;
 
-			g_georgeHelpTimer = _xp->startTimer(500);
+			_georgeHelpTimer = _xp->startTimer(500);
 			
-				bool lit = !(READ_UINT32(g_georgePrevActiveHelpObject + 0x08) & 1u);
-				hiliteGeorgeHelpObject(g_georgePrevActiveHelpObject, lit ? 1 : 0);
+				bool lit = !(READ_UINT32(_georgePrevActiveHelpObject + 0x08) & 1u);
+				hiliteGeorgeHelpObject(_georgePrevActiveHelpObject, lit ? 1 : 0);
 			
 			break;
 		}
@@ -867,7 +867,7 @@ int16 BoltEngine::helpGeorge() {
 
 			byte *hit = nullptr;
 			for (int16 i = 0;; i++) {
-				byte *obj = getResolvedPtr(g_georgeHelpObjects, i * 4);
+				byte *obj = getResolvedPtr(_georgeHelpObjects, i * 4);
 				if (!obj)
 					break;
 
@@ -883,25 +883,25 @@ int16 BoltEngine::helpGeorge() {
 				}
 			}
 
-			if (hit == g_georgeActiveHelpObject)
+			if (hit == _georgeActiveHelpObject)
 				break;
 
-			if (g_georgeActiveHelpObject) {
-				if (g_georgeActiveHelpObject != g_georgePrevActiveHelpObject) {
-					bool keepLit = (g_georgeActiveHelpObject == hoveredObj && animPlaying);
+			if (_georgeActiveHelpObject) {
+				if (_georgeActiveHelpObject != _georgePrevActiveHelpObject) {
+					bool keepLit = (_georgeActiveHelpObject == hoveredObj && animPlaying);
 					if (!keepLit)
-						hiliteGeorgeHelpObject(g_georgeActiveHelpObject, 0);
+						hiliteGeorgeHelpObject(_georgeActiveHelpObject, 0);
 				}
 			}
 
-			g_georgeActiveHelpObject = hit;
+			_georgeActiveHelpObject = hit;
 			if (!hit)
 				break;
 
-			if (hit == g_georgePrevActiveHelpObject)
+			if (hit == _georgePrevActiveHelpObject)
 				break;
 
-			hiliteGeorgeHelpObject(g_georgeActiveHelpObject, 1);
+			hiliteGeorgeHelpObject(_georgeActiveHelpObject, 1);
 			break;
 		}
 
@@ -909,33 +909,33 @@ int16 BoltEngine::helpGeorge() {
 			animReady = 0;
 
 			if (animPlaying) {
-				if (g_georgeHelpTimer) {
-					_xp->killTimer(g_georgeHelpTimer);
-					g_georgeHelpTimer = 0;
+				if (_georgeHelpTimer) {
+					_xp->killTimer(_georgeHelpTimer);
+					_georgeHelpTimer = 0;
 				}
 
-				bool hovLit = (hoveredObj == g_georgeActiveHelpObject);
+				bool hovLit = (hoveredObj == _georgeActiveHelpObject);
 				hiliteGeorgeHelpObject(hoveredObj, hovLit ? 1 : 0);
-				bool actLit = (g_georgePrevActiveHelpObject == g_georgeActiveHelpObject);
-				hiliteGeorgeHelpObject(g_georgePrevActiveHelpObject, actLit ? 1 : 0);
+				bool actLit = (_georgePrevActiveHelpObject == _georgeActiveHelpObject);
+				hiliteGeorgeHelpObject(_georgePrevActiveHelpObject, actLit ? 1 : 0);
 
-				g_georgePrevActiveHelpObject = nullptr;
+				_georgePrevActiveHelpObject = nullptr;
 				stopAnimation();
 				animPlaying = 0;
 				animReady = 1;
 			}
 
-			if (!g_georgeActiveHelpObject)
+			if (!_georgeActiveHelpObject)
 				break;
 
-			switch (READ_UINT16(g_georgeActiveHelpObject)) {
+			switch (READ_UINT16(_georgeActiveHelpObject)) {
 			case 0:
 			case 1:
-				if (READ_UINT16(g_georgeActiveHelpObject) == 1) {
-					g_georgeHelpActive = 0;
+				if (READ_UINT16(_georgeActiveHelpObject) == 1) {
+					_georgeHelpActive = 0;
 				}
 
-				exitCode = READ_UINT16(g_georgeActiveHelpObject);
+				exitCode = READ_UINT16(_georgeActiveHelpObject);
 				break;
 			case 2:
 				if (animPlaying)
@@ -944,8 +944,8 @@ int16 BoltEngine::helpGeorge() {
 				if (animReady)
 					break;
 
-				if (startAnimation(g_rtfHandle, 30)) {
-					g_georgeHelpStep = 0;
+				if (startAnimation(_rtfHandle, 30)) {
+					_georgeHelpStep = 0;
 					animPlaying = 1;
 				}
 
@@ -974,18 +974,18 @@ int16 BoltEngine::helpGeorge() {
 
 			// Highlight hovered object, unhighlight the rest...
 			for (int16 i = 0;; i++) {
-				byte *obj = getResolvedPtr(g_georgeHelpObjects, i * 4);
+				byte *obj = getResolvedPtr(_georgeHelpObjects, i * 4);
 				if (!obj)
 					break;
 
-				bool isHovered = (obj == g_georgeActiveHelpObject);
+				bool isHovered = (obj == _georgeActiveHelpObject);
 				hiliteGeorgeHelpObject(obj, isHovered ? 1 : 0);
 			}
 			_xp->updateDisplay();
 
 			// Unhighlight all...
 			for (int16 i = 0;; i++) {
-				byte *obj = getResolvedPtr(g_georgeHelpObjects, i * 4);
+				byte *obj = getResolvedPtr(_georgeHelpObjects, i * 4);
 				if (!obj)
 					break;
 
@@ -1019,40 +1019,40 @@ void BoltEngine::hiliteGeorgeHelpObject(byte *entry, int16 highlight) {
 }
 
 void BoltEngine::advanceHelpAnimation() {
-	if (g_georgeHelpStep < 0 || g_georgeHelpStep >= 4)
+	if (_georgeHelpStep < 0 || _georgeHelpStep >= 4)
 		return;
 
-	bool isHovered = (g_georgePrevActiveHelpObject == g_georgeActiveHelpObject);
-	hiliteGeorgeHelpObject(g_georgePrevActiveHelpObject, isHovered ? 1 : 0);
+	bool isHovered = (_georgePrevActiveHelpObject == _georgeActiveHelpObject);
+	hiliteGeorgeHelpObject(_georgePrevActiveHelpObject, isHovered ? 1 : 0);
 
 	byte *newActive;
-	if (!(g_georgeHelpStep & 1)) {
-		newActive = getResolvedPtr(g_georgeHelpSequence, (g_georgeHelpStep >> 1) * 4);
+	if (!(_georgeHelpStep & 1)) {
+		newActive = getResolvedPtr(_georgeHelpSequence, (_georgeHelpStep >> 1) * 4);
 	} else {
 		newActive = nullptr;
 	}
 
-	g_georgePrevActiveHelpObject = newActive;
-	g_georgeHelpTimer = 0;
+	_georgePrevActiveHelpObject = newActive;
+	_georgeHelpTimer = 0;
 
-	hiliteGeorgeHelpObject(g_georgePrevActiveHelpObject, 1);
+	hiliteGeorgeHelpObject(_georgePrevActiveHelpObject, 1);
 
-	if (!(g_georgeHelpStep & 1)) {
-		g_georgeHelpTimer = _xp->startTimer(500);
+	if (!(_georgeHelpStep & 1)) {
+		_georgeHelpTimer = _xp->startTimer(500);
 	} else {
-		if (g_georgeHelpTimer) {
-			_xp->killTimer(g_georgeHelpTimer);
-			g_georgeHelpTimer = 0;
+		if (_georgeHelpTimer) {
+			_xp->killTimer(_georgeHelpTimer);
+			_georgeHelpTimer = 0;
 		}
 	}
 
-	g_georgeHelpStep++;
+	_georgeHelpStep++;
 }
 bool BoltEngine::spawnSatellite() {
 	// Count active satellites (type 3)...
 	int16 activeCount = 0;
 	for (int16 i = 0;; i++) {
-		GeorgeEntityState *sat = g_georgeEntityList[i];
+		GeorgeEntityState *sat = _georgeEntityList[i];
 		if (!sat)
 			break;
 
@@ -1065,13 +1065,13 @@ bool BoltEngine::spawnSatellite() {
 		return false;
 
 	// Find next inactive satellite slot...
-	int16 startIdx = g_georgeSatelliteSearchIdx;
+	int16 startIdx = _georgeSatelliteSearchIdx;
 	int16 idx = startIdx;
 	bool wrapped = false;
 	GeorgeEntityState *candidate = nullptr;
 
 	while (true) {
-		GeorgeEntityState *s = g_georgeEntityList[idx];
+		GeorgeEntityState *s = _georgeEntityList[idx];
 		if (!s) {
 			wrapped = true;
 			idx = -1;
@@ -1085,25 +1085,25 @@ bool BoltEngine::spawnSatellite() {
 			return false;
 	}
 
-	g_georgeSatelliteSearchIdx = idx + 1;
+	_georgeSatelliteSearchIdx = idx + 1;
 
 	// Get a shuffle-table row for this asteroid...
 	int16 row = getRandomAsteroidRow();
-	int16 numCols = g_georgeThresholds[4];
+	int16 numCols = _georgeThresholds[4];
 	int16 rowBase = (numCols + 1) * row;
-	int16 colIdx = g_georgeSatelliteShuffleTable[rowBase];
-	byte animIdx = g_georgeSatelliteShuffleTable[rowBase + colIdx + 1];
+	int16 colIdx = _georgeSatelliteShuffleTable[rowBase];
+	byte animIdx = _georgeSatelliteShuffleTable[rowBase + colIdx + 1];
 
 	// Get the motion path...
-	byte *rowPaths = getResolvedPtr(g_georgeSatellitePaths, row * 4);
+	byte *rowPaths = getResolvedPtr(_georgeSatellitePaths, row * 4);
 	byte *path = getResolvedPtr(rowPaths, animIdx * 4);
 
 	candidate->pathTable = path;
 
 	colIdx++;
-	g_georgeSatelliteShuffleTable[rowBase] = (byte)colIdx;
+	_georgeSatelliteShuffleTable[rowBase] = (byte)colIdx;
 	if (colIdx >= numCols)
-		g_georgeSatelliteShuffleTable[rowBase] = 0;
+		_georgeSatelliteShuffleTable[rowBase] = 0;
 
 	// Set initial position from pic's embedded coords...
 	candidate->pathIndex = 0;
@@ -1116,19 +1116,19 @@ bool BoltEngine::spawnSatellite() {
 }
 
 int16 BoltEngine::getRandomSatelliteWait() {
-	int16 range = g_georgeThresholds[2];
-	int16 topY = g_georgeThresholds[1];
+	int16 range = _georgeThresholds[2];
+	int16 topY = _georgeThresholds[1];
 	return _xp->getRandom(range) + topY;
 }
 
 int16 BoltEngine::getRandomAsteroidRow() {
-	GeorgeEntityState *carSat = g_georgeEntityList[g_georgeCarIdx];
+	GeorgeEntityState *carSat = _georgeEntityList[_georgeCarIdx];
 	int16 carY = carSat->y >> 8;
 
 	// Find which row the car is in by scanning frame Y thresholds...
-	int16 numRows = g_georgeThresholds[3];
+	int16 numRows = _georgeThresholds[3];
 	int16 carRow = 0;
-	int16 *thresholds = g_georgeSatelliteThresholds;
+	int16 *thresholds = _georgeSatelliteThresholds;
 
 	for (int16 i = 0; i < numRows; i++) {
 		if (thresholds[i] > carY)
@@ -1138,10 +1138,10 @@ int16 BoltEngine::getRandomAsteroidRow() {
 	}
 
 	// Pick a random row, retrying if too close to car's row...
-	int16 exclusionBand = g_georgeThresholds[5];
+	int16 exclusionBand = _georgeThresholds[5];
 	int16 randRow;
 	do {
-		randRow = _xp->getRandom(g_georgeThresholds[3]);
+		randRow = _xp->getRandom(_georgeThresholds[3]);
 	} while (randRow >= (carRow - exclusionBand) && randRow < (carRow + exclusionBand));
 
 	return randRow;
@@ -1149,12 +1149,12 @@ int16 BoltEngine::getRandomAsteroidRow() {
 
 bool BoltEngine::confirmAsteroidHitTest() {
 	GeorgeEntityState *candidate = nullptr;
-	int16 startIdx = g_georgeHitSearchIdx;
+	int16 startIdx = _georgeHitSearchIdx;
 	int16 idx = startIdx;
 	bool wrapped = false;
 
 	while (true) {
-		GeorgeEntityState *s = g_georgeEntityList[idx];
+		GeorgeEntityState *s = _georgeEntityList[idx];
 		if (!s) {
 			wrapped = true;
 			idx = -1;
@@ -1168,7 +1168,7 @@ bool BoltEngine::confirmAsteroidHitTest() {
 			return false;
 	}
 
-	g_georgeHitSearchIdx = idx + 1;
+	_georgeHitSearchIdx = idx + 1;
 
 	setSatelliteAnimMode(candidate, 3, candidate->variant);
 
@@ -1179,7 +1179,7 @@ bool BoltEngine::spawnAsteroid() {
 	// Count active asteroids (type 5)...
 	int16 activeCount = 0;
 	for (int16 i = 0;; i++) {
-		GeorgeEntityState *sat = g_georgeEntityList[i];
+		GeorgeEntityState *sat = _georgeEntityList[i];
 		if (!sat)
 			break;
 
@@ -1192,13 +1192,13 @@ bool BoltEngine::spawnAsteroid() {
 		return false;
 
 	// Find next inactive asteroid slot...
-	int16 startIdx = g_georgeAsteroidSearchIdx;
+	int16 startIdx = _georgeAsteroidSearchIdx;
 	int16 idx = startIdx;
 	bool wrapped = false;
 	GeorgeEntityState *candidate = nullptr;
 
 	while (true) {
-		GeorgeEntityState *s = g_georgeEntityList[idx];
+		GeorgeEntityState *s = _georgeEntityList[idx];
 		if (!s) {
 			wrapped = true;
 			idx = -1;
@@ -1212,24 +1212,24 @@ bool BoltEngine::spawnAsteroid() {
 			return false;
 	}
 
-	g_georgeAsteroidSearchIdx = idx + 1;
+	_georgeAsteroidSearchIdx = idx + 1;
 
 	// Get shuffle table row for this asteroid...
 	int16 row = getAsteroidRow();
-	int16 numCols = g_georgeThresholds[10];
+	int16 numCols = _georgeThresholds[10];
 	int16 rowBase = (numCols + 1) * row;
-	int16 colIdx = g_georgeAsteroidShuffleTable[rowBase];
-	byte animIdx = g_georgeAsteroidShuffleTable[rowBase + colIdx + 1];
+	int16 colIdx = _georgeAsteroidShuffleTable[rowBase];
+	byte animIdx = _georgeAsteroidShuffleTable[rowBase + colIdx + 1];
 
 	// Assign motion path...
-	byte *rowPaths = getResolvedPtr(g_georgeAsteroidPaths, row * 4);
+	byte *rowPaths = getResolvedPtr(_georgeAsteroidPaths, row * 4);
 	byte *path = getResolvedPtr(rowPaths, animIdx * 4);
 
 	candidate->pathTable = path;
 	colIdx++;
-	g_georgeAsteroidShuffleTable[rowBase] = (byte)colIdx;
+	_georgeAsteroidShuffleTable[rowBase] = (byte)colIdx;
 	if (colIdx >= numCols)
-		g_georgeAsteroidShuffleTable[rowBase] = 0;
+		_georgeAsteroidShuffleTable[rowBase] = 0;
 
 	// Set initial position from pic's embedded coords...
 	candidate->pathIndex = 0;
@@ -1242,19 +1242,19 @@ bool BoltEngine::spawnAsteroid() {
 }
 
 int16 BoltEngine::getRandomAsteroidWait() {
-    int16 base  = g_georgeThresholds[7];
-    int16 range = g_georgeThresholds[8];
+    int16 base  = _georgeThresholds[7];
+    int16 range = _georgeThresholds[8];
     return _xp->getRandom(range) + base;
 }
 
 int16 BoltEngine::getAsteroidRow() {
-	GeorgeEntityState *carSat = g_georgeEntityList[g_georgeCarIdx];
+	GeorgeEntityState *carSat = _georgeEntityList[_georgeCarIdx];
 	int16 carY = carSat->y >> 8;
 
 	// Find which row the car is in by scanning frame Y thresholds...
-	int16 numRows = g_georgeThresholds[9];
+	int16 numRows = _georgeThresholds[9];
 	int16 row = 0;
-	int16 *thresholds = g_georgeAsteroidThresholds;
+	int16 *thresholds = _georgeAsteroidThresholds;
 
 	for (int16 i = 0; i < numRows; i++) {
 		if (thresholds[i] > carY)
@@ -1269,7 +1269,7 @@ int16 BoltEngine::getAsteroidRow() {
 void BoltEngine::setGeorgeAnimMode(GeorgeEntityState *entity, int16 mode) {
 	entity->animMode = mode;
 	entity->variant = 0;
-	entity->animTable = g_georgeCarPics[mode];
+	entity->animTable = _georgeCarPics[mode];
 	entity->frameIndex = 0;
 	entity->frameCountdown = READ_UINT16(entity->animTable + 0x04);
 }
@@ -1284,7 +1284,7 @@ void BoltEngine::setSatelliteAnimMode(GeorgeEntityState *entity, int16 mode, int
 
 	entity->animMode = mode;
 	entity->variant = variant;
-	entity->animTable = getResolvedPtr(g_georgeSatelliteGfx, variant * 4);
+	entity->animTable = getResolvedPtr(_georgeSatelliteGfx, variant * 4);
 	entity->frameIndex = 0;
 	entity->frameCountdown = READ_UINT16(entity->animTable + 0x04);
 }
@@ -1292,7 +1292,7 @@ void BoltEngine::setSatelliteAnimMode(GeorgeEntityState *entity, int16 mode, int
 void BoltEngine::setAsteroidAnimMode(GeorgeEntityState *entity, int16 mode, int16 variant) {
 	entity->animMode = mode;
 	entity->variant = variant;
-	entity->animTable = getResolvedPtr(g_georgeAsteroidGfx, variant * 4);
+	entity->animTable = getResolvedPtr(_georgeAsteroidGfx, variant * 4);
 	entity->frameIndex = 0;
 	entity->frameCountdown = READ_UINT16(entity->animTable + 0x04);
 }
@@ -1301,7 +1301,7 @@ void BoltEngine::drawFlyingObjects() {
 	_xp->fillDisplay(0, stFront);
 
 	for (int16 i = 0;; i++) {
-		GeorgeEntityState *sat = g_georgeEntityList[i];
+		GeorgeEntityState *sat = _georgeEntityList[i];
 		if (!sat)
 			break;
 
@@ -1321,25 +1321,25 @@ void BoltEngine::getGeorgeSoundInfo(BOLTLib *boltLib, int16 member, SoundInfo *o
 	outInfo->data = memberAddr(boltLib, member);
 	outInfo->size = memberSize(boltLib, member);
 	outInfo->priority = priority;
-	outInfo->channel = g_georgeSoundChannelCounter++;
+	outInfo->channel = _georgeSoundChannelCounter++;
 }
 
 void BoltEngine::playGeorgeSound(SoundInfo *newSound, SoundInfo *nextSound) {
 	// If a queued sound exists and has higher priority than new sound, don't replace it...
-	if (newSound && g_georgeSoundQueued) {
-		if (g_georgeSoundQueued->priority > newSound->priority)
+	if (newSound && _georgeSoundQueued) {
+		if (_georgeSoundQueued->priority > newSound->priority)
 			return;
 	}
 
 	// Queue the new sounds...
-	g_georgeSoundQueued = newSound;
-	g_georgeSoundNext = nextSound;
+	_georgeSoundQueued = newSound;
+	_georgeSoundNext = nextSound;
 
 	// If currently playing sound has higher priority than new one, keep it...
-	if (g_georgeSoundToPlay && newSound) {
-		if (g_georgeSoundToPlay->priority > g_georgeSoundQueued->priority) {
+	if (_georgeSoundToPlay && newSound) {
+		if (_georgeSoundToPlay->priority > _georgeSoundQueued->priority) {
 			// If something is queued but nothing playing, kick off playback now...
-			if (g_georgeSoundQueued && !g_georgeSoundToPlay)
+			if (_georgeSoundQueued && !_georgeSoundToPlay)
 				updateGeorgeSound();
 
 			return;
@@ -1348,46 +1348,46 @@ void BoltEngine::playGeorgeSound(SoundInfo *newSound, SoundInfo *nextSound) {
 
 	// New sound wins...
 	_xp->stopSound();
-	g_georgeSoundCurrent = nullptr;
-	g_georgeSoundToPlay = nullptr;
+	_georgeSoundCurrent = nullptr;
+	_georgeSoundToPlay = nullptr;
 
 	// If something is queued but nothing playing, kick off playback now...
-	if (g_georgeSoundQueued && !g_georgeSoundToPlay)
+	if (_georgeSoundQueued && !_georgeSoundToPlay)
 		updateGeorgeSound();
 }
 
 void BoltEngine::updateGeorgeSound() {
 	int16 playBoth = 0;
 
-	if (g_georgeSoundCurrent != nullptr) {
+	if (_georgeSoundCurrent != nullptr) {
 		// Current sound still set, promote directly to play slot...
-		g_georgeSoundToPlay = g_georgeSoundCurrent;
-	} else if (g_georgeSoundQueued != nullptr) {
+		_georgeSoundToPlay = _georgeSoundCurrent;
+	} else if (_georgeSoundQueued != nullptr) {
 		// Nothing current, promote queued sound...
-		g_georgeSoundToPlay = g_georgeSoundQueued;
-		g_georgeSoundCurrent = g_georgeSoundNext;
+		_georgeSoundToPlay = _georgeSoundQueued;
+		_georgeSoundCurrent = _georgeSoundNext;
 
-		if (g_georgeSoundNext != nullptr)
+		if (_georgeSoundNext != nullptr)
 			playBoth = 1;
 
-		g_georgeSoundNext = nullptr;
-		g_georgeSoundQueued = nullptr;
+		_georgeSoundNext = nullptr;
+		_georgeSoundQueued = nullptr;
 	} else {
-		g_georgeSoundToPlay = nullptr;
+		_georgeSoundToPlay = nullptr;
 	}
 
-	if (g_georgeSoundToPlay == nullptr)
+	if (_georgeSoundToPlay == nullptr)
 		return;
 
 	// Play primary sound...
-	_xp->playSound(g_georgeSoundToPlay->data, g_georgeSoundToPlay->size, 22050);
+	_xp->playSound(_georgeSoundToPlay->data, _georgeSoundToPlay->size, 22050);
 
 	if (!playBoth)
 		return;
 
 	// Queue secondary sound twice...
-	_xp->playSound(g_georgeSoundCurrent->data, g_georgeSoundCurrent->size, 22050);
-	_xp->playSound(g_georgeSoundCurrent->data, g_georgeSoundCurrent->size, 22050);
+	_xp->playSound(_georgeSoundCurrent->data, _georgeSoundCurrent->size, 22050);
+	_xp->playSound(_georgeSoundCurrent->data, _georgeSoundCurrent->size, 22050);
 }
 
 } // End of namespace Bolt

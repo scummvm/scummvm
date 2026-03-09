@@ -39,105 +39,105 @@ int16 Bolt::BoltEngine::topCatGame(int16 prevBooth) {
 }
 
 bool BoltEngine::initTopCat() {
-	g_topCatRtfHandle = openRTF(assetPath(g_displayMode != 0 ? "topcatcr.av" : "topcatog.av"));
-	if (!g_topCatRtfHandle)
+	_topCatRtfHandle = openRTF(assetPath(_displayMode != 0 ? "topcatcr.av" : "topcatog.av"));
+	if (!_topCatRtfHandle)
 		return false;
 
-	g_topCatAvHandle = openRTF(assetPath("topcatau.av"));
-	if (!g_topCatAvHandle)
+	_topCatAvHandle = openRTF(assetPath("topcatau.av"));
+	if (!_topCatAvHandle)
 		return false;
 
-	if (!openBOLTLib(&g_topCatBoltLib, &g_topCatBoltCallbacks, assetPath("topcat.blt")))
+	if (!openBOLTLib(&_topCatBoltLib, &_topCatBoltCallbacks, assetPath("topcat.blt")))
 		return false;
 
-	if (!getBOLTGroup(g_topCatBoltLib, 0, 1))
+	if (!getBOLTGroup(_topCatBoltLib, 0, 1))
 		return false;
 
-	g_topCatBackgroundPalette = memberAddr(g_topCatBoltLib, 0x20);
-	g_topCatBackground = memberAddr(g_topCatBoltLib, g_displayMode != 0 ? 0x22 : 0x21);
-	g_topCatBackgroundAnimationPalette = memberAddr(g_topCatBoltLib, 0x00);
-	g_topCatGraphicsAssets = memberAddr(g_topCatBoltLib, g_displayMode != 0 ? 0x1E : 0x1D);
+	_topCatBackgroundPalette = memberAddr(_topCatBoltLib, 0x20);
+	_topCatBackground = memberAddr(_topCatBoltLib, _displayMode != 0 ? 0x22 : 0x21);
+	_topCatBackgroundAnimationPalette = memberAddr(_topCatBoltLib, 0x00);
+	_topCatGraphicsAssets = memberAddr(_topCatBoltLib, _displayMode != 0 ? 0x1E : 0x1D);
 
-	g_topCatBackgroundAnimFrame = 0;
+	_topCatBackgroundAnimFrame = 0;
 
 	// Count background anim frames...
-	g_topCatMaxBackgroundAnimFrames = 0;
-	while (getResolvedPtr(g_topCatGraphicsAssets, g_topCatMaxBackgroundAnimFrames * 4) != 0) {
-		g_topCatMaxBackgroundAnimFrames++;
+	_topCatMaxBackgroundAnimFrames = 0;
+	while (getResolvedPtr(_topCatGraphicsAssets, _topCatMaxBackgroundAnimFrames * 4) != 0) {
+		_topCatMaxBackgroundAnimFrames++;
 	}
 
-	g_topCatCurrentAnimType = 0;
-	g_topCatAnimStateMachineStep = 0;
-	g_topCatQueuedSoundFrames = 0;
-	g_topCatAnimQueueSize = 0;
+	_topCatCurrentAnimType = 0;
+	_topCatAnimStateMachineStep = 0;
+	_topCatQueuedSoundFrames = 0;
+	_topCatAnimQueueSize = 0;
 
-	g_topCatButtonsPalette = memberAddr(g_topCatBoltLib, 0x3D);
-	g_topCatBlinkEntries = memberAddr(g_topCatBoltLib, 0x3E);
+	_topCatButtonsPalette = memberAddr(_topCatBoltLib, 0x3D);
+	_topCatBlinkEntries = memberAddr(_topCatBoltLib, 0x3E);
 
-	g_topCatLightsPalette = memberAddr(g_topCatBoltLib, 0x31);
-	g_topCatBlinkSeqPtr = nullptr;
+	_topCatLightsPalette = memberAddr(_topCatBoltLib, 0x31);
+	_topCatBlinkSeqPtr = nullptr;
 
-	g_topCatSelectedChoiceOverlayGfx = memberAddr(g_topCatBoltLib, 0x26);
-	g_topCatCycleData = memberAddr(g_topCatBoltLib, 0x27);
-	boltCycleToXPCycle(g_topCatCycleData, g_topCatCycleSpecs);
+	_topCatSelectedChoiceOverlayGfx = memberAddr(_topCatBoltLib, 0x26);
+	_topCatCycleData = memberAddr(_topCatBoltLib, 0x27);
+	boltCycleToXPCycle(_topCatCycleData, _topCatCycleSpecs);
 
-	g_topCatChoiceCycleState->startIndex = 0;
-	g_topCatChoiceCycleState->endIndex = 0;
-	g_topCatChoiceCycleState->delay = 0;
-	g_topCatChoiceCycleState->nextFire = 0;
-	g_topCatChoiceCycleState->active = false;
+	_topCatChoiceCycleState->startIndex = 0;
+	_topCatChoiceCycleState->endIndex = 0;
+	_topCatChoiceCycleState->delay = 0;
+	_topCatChoiceCycleState->nextFire = 0;
+	_topCatChoiceCycleState->active = false;
 
-	g_topCatShuffledQuestions = memberAddr(g_topCatBoltLib, 0x32); // [60]
-	g_topCatShuffledAnswers = memberAddr(g_topCatBoltLib, 0x33); // [60]
-	g_topCatAnswersPermutations = memberAddr(g_topCatBoltLib, 0x34); // [60 * 3]
-	g_topCatAnswers = memberAddr(g_topCatBoltLib, 0x35);
-	g_topCatAnswersScreenPositions = memberAddr(g_topCatBoltLib, 0x36);
+	_topCatShuffledQuestions = memberAddr(_topCatBoltLib, 0x32); // [60]
+	_topCatShuffledAnswers = memberAddr(_topCatBoltLib, 0x33); // [60]
+	_topCatAnswersPermutations = memberAddr(_topCatBoltLib, 0x34); // [60 * 3]
+	_topCatAnswers = memberAddr(_topCatBoltLib, 0x35);
+	_topCatAnswersScreenPositions = memberAddr(_topCatBoltLib, 0x36);
 
-	if (vLoad(&g_topCatSavedScore, g_topCatSaveFileName)) {
-		g_topCatScore = g_topCatSavedScore;
+	if (vLoad(&_topCatSavedScore, "TopCatBF")) {
+		_topCatScore = _topCatSavedScore;
 	} else {
-		g_topCatScore = 0;
+		_topCatScore = 0;
 	}
 
-	if (vLoad(g_topCatSaveBuffer, g_topCatStaticSaveFileName)) {
-		g_topCatShuffledQuestionsArrayIdx = READ_BE_INT16(g_topCatSaveBuffer);
+	if (vLoad(_topCatSaveBuffer, "TopCatBFStatic")) {
+		_topCatShuffledQuestionsArrayIdx = READ_BE_INT16(_topCatSaveBuffer);
 
 		int offset;
-		for (int i = 0; i < ARRAYSIZE(g_topCatSavedShuffledQuestions); i++) {
+		for (int i = 0; i < ARRAYSIZE(_topCatSavedShuffledQuestions); i++) {
 			offset = sizeof(int16) + i;
-			g_topCatSavedShuffledQuestions[i] = g_topCatSaveBuffer[offset];
+			_topCatSavedShuffledQuestions[i] = _topCatSaveBuffer[offset];
 		}
 
-		for (int i = 0; i < ARRAYSIZE(g_topCatSavedShuffledAnswers); i++) {
-			offset = sizeof(g_topCatSavedShuffledQuestions) + sizeof(int16) + i;
-			g_topCatSavedShuffledAnswers[i] = g_topCatSaveBuffer[offset];
+		for (int i = 0; i < ARRAYSIZE(_topCatSavedShuffledAnswers); i++) {
+			offset = sizeof(_topCatSavedShuffledQuestions) + sizeof(int16) + i;
+			_topCatSavedShuffledAnswers[i] = _topCatSaveBuffer[offset];
 		}
 
-		for (int i = 0; i < ARRAYSIZE(g_topCatSavedAnswersPermutations); i++) {
-			offset = sizeof(g_topCatSavedShuffledAnswers) + sizeof(g_topCatSavedShuffledQuestions) + sizeof(int16) + i;
-			g_topCatSavedAnswersPermutations[i] = g_topCatSaveBuffer[offset];
+		for (int i = 0; i < ARRAYSIZE(_topCatSavedAnswersPermutations); i++) {
+			offset = sizeof(_topCatSavedShuffledAnswers) + sizeof(_topCatSavedShuffledQuestions) + sizeof(int16) + i;
+			_topCatSavedAnswersPermutations[i] = _topCatSaveBuffer[offset];
 		}
 
 		int16 answerOff = 0;
 		for (int16 i = 0; i < 60; i++) {
-			g_topCatShuffledQuestions[i] = g_topCatSavedShuffledQuestions[i];
-			g_topCatShuffledAnswers[i] = g_topCatSavedShuffledAnswers[i];
+			_topCatShuffledQuestions[i] = _topCatSavedShuffledQuestions[i];
+			_topCatShuffledAnswers[i] = _topCatSavedShuffledAnswers[i];
 
 			for (int16 j = 0; j < 3; j++) {
-				g_topCatAnswersPermutations[answerOff + j] = g_topCatSavedAnswersPermutations[answerOff + j];
+				_topCatAnswersPermutations[answerOff + j] = _topCatSavedAnswersPermutations[answerOff + j];
 			}
 
 			answerOff += 3;
 		}
 	} else {
-		g_topCatShuffledQuestionsArrayIdx = -1;
+		_topCatShuffledQuestionsArrayIdx = -1;
 		shuffleTopCatQuestions();
 		shuffleTopCatPermutations();
 	}
 
-	g_topCatBlinkTimer = 0;
+	_topCatBlinkTimer = 0;
 
-	getTopCatSoundInfo(g_topCatBoltLib, 0x1F, &g_topCatSoundInfo);
+	getTopCatSoundInfo(_topCatBoltLib, 0x1F, &_topCatSoundInfo);
 
 	uint32 dummy;
 	while (_xp->getEvent(etTimer, &dummy) != etTimer);
@@ -145,39 +145,39 @@ bool BoltEngine::initTopCat() {
 	_xp->stopCycle();
 	_xp->setTransparency(false);
 
-	displayColors(g_topCatBackgroundPalette, stFront, 0);
-	displayPic(g_topCatBackground, g_displayX, g_displayY, stFront);
+	displayColors(_topCatBackgroundPalette, stFront, 0);
+	displayPic(_topCatBackground, _displayX, _displayY, stFront);
 	_xp->updateDisplay();
 
 	_xp->setTransparency(true);
-	displayColors(g_topCatBackgroundAnimationPalette, stFront, 0);
-	displayPic(g_topCatBackground, g_displayX, g_displayY, stBack);
+	displayColors(_topCatBackgroundAnimationPalette, stFront, 0);
+	displayPic(_topCatBackground, _displayX, _displayY, stBack);
 
-	byte *firstBackgroundAnimFrame = getResolvedPtr(g_topCatGraphicsAssets, 0);
-	displayPic(firstBackgroundAnimFrame, g_displayX, g_displayY, stFront);
+	byte *firstBackgroundAnimFrame = getResolvedPtr(_topCatGraphicsAssets, 0);
+	displayPic(firstBackgroundAnimFrame, _displayX, _displayY, stFront);
 
-	displayColors(g_topCatBackgroundPalette, stBack, 0);
+	displayColors(_topCatBackgroundPalette, stBack, 0);
 
 	if (!setupNextQuestion())
 		return false;
 
 	_xp->updateDisplay();
 
-	g_topCatHoveredEntry = nullptr;
+	_topCatHoveredEntry = nullptr;
 
 	// Init button palettes...
 	int16 off = 0;
 	byte *entry;
 	while (true) {
-		entry = getResolvedPtr(g_topCatButtonsPalette, off);
+		entry = getResolvedPtr(_topCatButtonsPalette, off);
 		if (!entry)
 			break;
 
 		if (READ_UINT32(entry) == 1)
-			g_topCatHelpButton = entry;
+			_topCatHelpButton = entry;
 
 		if (READ_UINT32(entry) == 2)
-			g_topCatBackButton = entry;
+			_topCatBackButton = entry;
 
 		_xp->getPalette(READ_UINT16(entry + 0x0E), READ_UINT16(entry + 0x10), entry + 0x2E);
 		unpackColors(READ_UINT16(entry + 0x10), entry + 0x12);
@@ -188,7 +188,7 @@ bool BoltEngine::initTopCat() {
 	// Init light palelttes...
 	int16 lightOff = 0;
 	for (int16 i = 0; i < 6; i++) {
-		byte *lightEntry = getResolvedPtr(g_topCatLightsPalette, lightOff);
+		byte *lightEntry = getResolvedPtr(_topCatLightsPalette, lightOff);
 
 		int16 colorCount = READ_UINT16(lightEntry + 4);
 		int16 palStart = READ_UINT16(lightEntry);
@@ -204,7 +204,7 @@ bool BoltEngine::initTopCat() {
 	}
 
 	// Set lights based on saved score...
-	int16 litMask = (1 << g_topCatScore) - 1;
+	int16 litMask = (1 << _topCatScore) - 1;
 	setScoreLights(litMask);
 
 	return true;
@@ -214,63 +214,63 @@ void BoltEngine::cleanUpTopCat() {
 	_xp->stopSound();
 	_xp->stopCycle();
 
-	if (g_topCatScore < 6) {
-		byte questionIdx = g_topCatShuffledQuestions[g_topCatShuffledQuestionsArrayIdx];
-		g_topCatShuffledAnswers[questionIdx]--;
-		g_topCatShuffledQuestionsArrayIdx--;
+	if (_topCatScore < 6) {
+		byte questionIdx = _topCatShuffledQuestions[_topCatShuffledQuestionsArrayIdx];
+		_topCatShuffledAnswers[questionIdx]--;
+		_topCatShuffledQuestionsArrayIdx--;
 	} else {
-		g_topCatScore = 0;
+		_topCatScore = 0;
 	}
 
-	g_topCatSavedScore = g_topCatScore;
-	g_topCatSaveHistory = g_topCatShuffledQuestionsArrayIdx;
+	_topCatSavedScore = _topCatScore;
+	_topCatSaveHistory = _topCatShuffledQuestionsArrayIdx;
 
 	int16 answerOff = 0;
 	for (int16 i = 0; i < 60; i++) {
-		g_topCatSavedShuffledQuestions[i] = g_topCatShuffledQuestions[i];
-		g_topCatSavedShuffledAnswers[i] = g_topCatShuffledAnswers[i];
+		_topCatSavedShuffledQuestions[i] = _topCatShuffledQuestions[i];
+		_topCatSavedShuffledAnswers[i] = _topCatShuffledAnswers[i];
 
 		for (int16 j = 0; j < 3; j++) {
-			g_topCatSavedAnswersPermutations[answerOff + j] = g_topCatAnswersPermutations[answerOff + j];
+			_topCatSavedAnswersPermutations[answerOff + j] = _topCatAnswersPermutations[answerOff + j];
 		}
 
 		answerOff += 3;
 	}
 
-	memset(g_topCatSaveBuffer, 0, sizeof(g_topCatSaveBuffer));
+	memset(_topCatSaveBuffer, 0, sizeof(_topCatSaveBuffer));
 
-	WRITE_BE_INT16(g_topCatSaveBuffer, g_topCatSaveHistory);
+	WRITE_BE_INT16(_topCatSaveBuffer, _topCatSaveHistory);
 
 	int offset;
-	for (int i = 0; i < ARRAYSIZE(g_topCatSavedShuffledQuestions); i++) {
+	for (int i = 0; i < ARRAYSIZE(_topCatSavedShuffledQuestions); i++) {
 		offset = sizeof(int16) + i;
-		g_topCatSaveBuffer[offset] = g_topCatSavedShuffledQuestions[i];
+		_topCatSaveBuffer[offset] = _topCatSavedShuffledQuestions[i];
 	}
 
-	for (int i = 0; i < ARRAYSIZE(g_topCatSavedShuffledAnswers); i++) {
-		offset = sizeof(g_topCatSavedShuffledQuestions) + sizeof(int16) + i;
-		g_topCatSaveBuffer[offset] = g_topCatSavedShuffledAnswers[i];
+	for (int i = 0; i < ARRAYSIZE(_topCatSavedShuffledAnswers); i++) {
+		offset = sizeof(_topCatSavedShuffledQuestions) + sizeof(int16) + i;
+		_topCatSaveBuffer[offset] = _topCatSavedShuffledAnswers[i];
 	}
 
-	for (int i = 0; i < ARRAYSIZE(g_topCatSavedAnswersPermutations); i++) {
-		offset = sizeof(g_topCatSavedShuffledAnswers) + sizeof(g_topCatSavedShuffledQuestions) + sizeof(int16) + i;
-		g_topCatSaveBuffer[offset] = g_topCatSavedAnswersPermutations[i];
+	for (int i = 0; i < ARRAYSIZE(_topCatSavedAnswersPermutations); i++) {
+		offset = sizeof(_topCatSavedShuffledAnswers) + sizeof(_topCatSavedShuffledQuestions) + sizeof(int16) + i;
+		_topCatSaveBuffer[offset] = _topCatSavedAnswersPermutations[i];
 	}
 
-	vSave(&g_topCatSavedScore, sizeof(g_topCatSavedScore), g_topCatSaveFileName);
-	vSave(g_topCatSaveBuffer, sizeof(g_topCatSaveBuffer), g_topCatStaticSaveFileName);
+	vSave(&_topCatSavedScore, sizeof(_topCatSavedScore), "TopCatBF");
+	vSave(_topCatSaveBuffer, sizeof(_topCatSaveBuffer), "TopCatBFStatic");
 
-	freeBOLTGroup(g_topCatBoltLib, 0, 1);
-	closeBOLTLib(&g_topCatBoltLib);
+	freeBOLTGroup(_topCatBoltLib, 0, 1);
+	closeBOLTLib(&_topCatBoltLib);
 
-	if (g_topCatRtfHandle) {
-		closeRTF(g_topCatRtfHandle);
-		g_topCatRtfHandle = nullptr;
+	if (_topCatRtfHandle) {
+		closeRTF(_topCatRtfHandle);
+		_topCatRtfHandle = nullptr;
 	}
 
-	if (g_topCatAvHandle) {
-		closeRTF(g_topCatAvHandle);
-		g_topCatAvHandle = nullptr;
+	if (_topCatAvHandle) {
+		closeRTF(_topCatAvHandle);
+		_topCatAvHandle = nullptr;
 	}
 
 	// These currently erroneously clear some graphics while on the "win a letter"
@@ -309,23 +309,23 @@ int16 BoltEngine::playTopCat() {
 		}
 
 		case etTimer: { // Timer expired
-			if (eventData != g_topCatBlinkTimer)
+			if (eventData != _topCatBlinkTimer)
 				break;
 
-			if (!g_topCatBlinkEntry)
+			if (!_topCatBlinkEntry)
 				break;
 
-			g_topCatBlinkTimer = _xp->startTimer(500);
+			_topCatBlinkTimer = _xp->startTimer(500);
 
 			// Toggle highlight...
 			int16 highlight;
-			if (READ_UINT16(g_topCatBlinkEntry + 0x0C) & 1) {
+			if (READ_UINT16(_topCatBlinkEntry + 0x0C) & 1) {
 				highlight = 0;
 			} else {
 				highlight = 1;
 			}
 
-			highlightObject(g_topCatBlinkEntry, highlight);
+			highlightObject(_topCatBlinkEntry, highlight);
 			break;
 		}
 
@@ -339,7 +339,7 @@ int16 BoltEngine::playTopCat() {
 			int16 off = 0;
 
 			while (true) {
-				entry = getResolvedPtr(g_topCatButtonsPalette, off);
+				entry = getResolvedPtr(_topCatButtonsPalette, off);
 				if (!entry)
 					break;
 
@@ -359,37 +359,37 @@ int16 BoltEngine::playTopCat() {
 			}
 
 			// Unhighlight previous entry if needed...
-			if (g_topCatHoveredEntry != entry &&
-				g_topCatHoveredEntry != nullptr &&
-				g_topCatHoveredEntry != g_topCatBlinkEntry &&
-				g_topCatHoveredEntry != g_topCatBackButton) {
+			if (_topCatHoveredEntry != entry &&
+				_topCatHoveredEntry != nullptr &&
+				_topCatHoveredEntry != _topCatBlinkEntry &&
+				_topCatHoveredEntry != _topCatBackButton) {
 
-				if (g_topCatHoveredEntry == g_topCatHelpButton) {
-					if (g_topCatCurrentAnimType != 2)
-						highlightObject(g_topCatHoveredEntry, 0);
+				if (_topCatHoveredEntry == _topCatHelpButton) {
+					if (_topCatCurrentAnimType != 2)
+						highlightObject(_topCatHoveredEntry, 0);
 				} else {
-					byte *hovered = g_topCatHoveredEntry;
+					byte *hovered = _topCatHoveredEntry;
 					if (READ_UINT32(hovered) < 3 || READ_UINT32(hovered) >= 6)
-						highlightObject(g_topCatHoveredEntry, 0);
+						highlightObject(_topCatHoveredEntry, 0);
 				}
 			}
 
-			g_topCatHoveredEntry = entry;
+			_topCatHoveredEntry = entry;
 
 			// Highlight new entry if applicable...
 			if (!entry)
 				break;
 
-			if (entry == g_topCatBlinkEntry)
+			if (entry == _topCatBlinkEntry)
 				break;
 
-			if (entry == g_topCatBackButton)
+			if (entry == _topCatBackButton)
 				break;
 
 			if (READ_UINT32(entry) >= 3 && READ_UINT32(entry) < 6)
 				break;
 
-			highlightObject(g_topCatHoveredEntry, 1);
+			highlightObject(_topCatHoveredEntry, 1);
 			break;
 		}
 
@@ -403,7 +403,7 @@ int16 BoltEngine::playTopCat() {
 
 		case etSound: {
 			int16 soundType;
-			if (soundDataPtr >= g_topCatSoundInfo.data && soundDataPtr < g_topCatSoundInfo.data + g_topCatSoundInfo.size) {
+			if (soundDataPtr >= _topCatSoundInfo.data && soundDataPtr < _topCatSoundInfo.data + _topCatSoundInfo.size) {
 				soundType = 1;
 			} else {
 				soundType = 2;
@@ -419,9 +419,9 @@ int16 BoltEngine::playTopCat() {
 		case etInactivity: {
 			// Toggle blinking highlight...
 			int16 highlight;
-			if (g_topCatBlinkEntry == g_topCatHoveredEntry &&
-				g_topCatBlinkEntry != 0) {
-				if (READ_UINT32(g_topCatBlinkEntry) < 3 || READ_UINT32(g_topCatBlinkEntry) >= 6) {
+			if (_topCatBlinkEntry == _topCatHoveredEntry &&
+				_topCatBlinkEntry != 0) {
+				if (READ_UINT32(_topCatBlinkEntry) < 3 || READ_UINT32(_topCatBlinkEntry) >= 6) {
 					highlight = 1;
 				} else {
 					highlight = 0;
@@ -430,32 +430,32 @@ int16 BoltEngine::playTopCat() {
 				highlight = 0;
 			}
 
-			highlightObject(g_topCatBlinkEntry, highlight);
+			highlightObject(_topCatBlinkEntry, highlight);
 
 			// Set help button as new blinking entry...
-			g_topCatBlinkEntry = g_topCatHelpButton;
+			_topCatBlinkEntry = _topCatHelpButton;
 
-			if (g_topCatHelpButton != 0) {
-				if (READ_UINT32(g_topCatBlinkEntry) < 3 || READ_UINT32(g_topCatBlinkEntry) >= 6) {
-					g_topCatBlinkTimer = _xp->startTimer(500);
+			if (_topCatHelpButton != 0) {
+				if (READ_UINT32(_topCatBlinkEntry) < 3 || READ_UINT32(_topCatBlinkEntry) >= 6) {
+					_topCatBlinkTimer = _xp->startTimer(500);
 				} else {
-					g_topCatBlinkTimer = 0;
+					_topCatBlinkTimer = 0;
 				}
 			} else {
-				g_topCatBlinkTimer = 0;
+				_topCatBlinkTimer = 0;
 			}
 
-			highlightObject(g_topCatBlinkEntry, 1);
+			highlightObject(_topCatBlinkEntry, 1);
 			break;
 		}
 
 		case etTrigger: { // Palette cycle event
-			if (g_topCatCurrentAnimType == 2) {
+			if (_topCatCurrentAnimType == 2) {
 				// Toggle blinking highlight...
 				int16 highlight;
-				if (g_topCatBlinkEntry == g_topCatHoveredEntry &&
-					g_topCatBlinkEntry != 0) {
-					if (READ_UINT32(g_topCatBlinkEntry) < 3 || READ_UINT32(g_topCatBlinkEntry) >= 6) {
+				if (_topCatBlinkEntry == _topCatHoveredEntry &&
+					_topCatBlinkEntry != 0) {
+					if (READ_UINT32(_topCatBlinkEntry) < 3 || READ_UINT32(_topCatBlinkEntry) >= 6) {
 						highlight = 1;
 					} else {
 						highlight = 0;
@@ -464,45 +464,45 @@ int16 BoltEngine::playTopCat() {
 					highlight = 0;
 				}
 
-				highlightObject(g_topCatBlinkEntry, highlight);
+				highlightObject(_topCatBlinkEntry, highlight);
 
 				// Advance to next blinking entry...
-				if (g_topCatCycleStep & 1) {
-					g_topCatBlinkEntry = nullptr;
+				if (_topCatCycleStep & 1) {
+					_topCatBlinkEntry = nullptr;
 				} else {
-					g_topCatBlinkEntry = getResolvedPtr(g_topCatBlinkEntries, (g_topCatCycleStep >> 1) * 4);
+					_topCatBlinkEntry = getResolvedPtr(_topCatBlinkEntries, (_topCatCycleStep >> 1) * 4);
 				}
 
-				if (g_topCatBlinkEntry != 0) {
-					if (READ_UINT32(g_topCatBlinkEntry) < 3 || READ_UINT32(g_topCatBlinkEntry) >= 6) {
-						g_topCatBlinkTimer = _xp->startTimer(500);
+				if (_topCatBlinkEntry != 0) {
+					if (READ_UINT32(_topCatBlinkEntry) < 3 || READ_UINT32(_topCatBlinkEntry) >= 6) {
+						_topCatBlinkTimer = _xp->startTimer(500);
 					} else {
-						g_topCatBlinkTimer = 0;
+						_topCatBlinkTimer = 0;
 					}
 				} else {
-					g_topCatBlinkTimer = 0;
+					_topCatBlinkTimer = 0;
 				}
 
-				highlightObject(g_topCatBlinkEntry, 1);
-				g_topCatCycleStep++;
+				highlightObject(_topCatBlinkEntry, 1);
+				_topCatCycleStep++;
 
-			} else if (g_topCatCurrentAnimType == 3) {
+			} else if (_topCatCurrentAnimType == 3) {
 				// Unhighlight previous...
-				if (g_topCatCycleStep > 3) {
-					byte *prevEntry = getResolvedPtr(g_topCatButtonsPalette, (g_topCatCycleStep - 1) * 4);
+				if (_topCatCycleStep > 3) {
+					byte *prevEntry = getResolvedPtr(_topCatButtonsPalette, (_topCatCycleStep - 1) * 4);
 					highlightObject(prevEntry, 0);
 				} else {
-					highlightObject(g_topCatBackButton, 0);
+					highlightObject(_topCatBackButton, 0);
 				}
 
 				// Highlight next...
-				byte *nextEntry = getResolvedPtr(g_topCatButtonsPalette, g_topCatCycleStep * 4);
+				byte *nextEntry = getResolvedPtr(_topCatButtonsPalette, _topCatCycleStep * 4);
 				highlightObject(nextEntry, 1);
-				g_topCatCycleStep++;
-			} else if (g_topCatCurrentAnimType == 6) {
+				_topCatCycleStep++;
+			} else if (_topCatCurrentAnimType == 6) {
 				// Light blinking animation...
-				int16 mask = READ_UINT16(g_topCatBlinkSeqPtr);
-				g_topCatBlinkSeqPtr++;
+				int16 mask = READ_UINT16(_topCatBlinkSeqPtr);
+				_topCatBlinkSeqPtr++;
 
 				setScoreLights(mask);
 			}
@@ -514,8 +514,8 @@ int16 BoltEngine::playTopCat() {
 			break;
 		}
 
-		if (exitFlag && g_topCatAnimQueueSize == 0 && g_topCatCurrentAnimType == 1) {
-			if (g_topCatScore != 6)
+		if (exitFlag && _topCatAnimQueueSize == 0 && _topCatCurrentAnimType == 1) {
+			if (_topCatScore != 6)
 				_xp->hideCursor();
 
 			return result;
@@ -524,14 +524,14 @@ int16 BoltEngine::playTopCat() {
 }
 
 int16 BoltEngine::handleActionButton(int16 *result) {
-	int16 prevState = g_topCatCurrentAnimType;
+	int16 prevState = _topCatCurrentAnimType;
 
-	switch (g_topCatCurrentAnimType) {
+	switch (_topCatCurrentAnimType) {
 	case 2:
 	case 3:
 		stopAnimation();
 		_xp->stopSound();
-		g_topCatQueuedSoundFrames = 0;
+		_topCatQueuedSoundFrames = 0;
 		setAnimType(1);
 		break;
 
@@ -543,22 +543,22 @@ int16 BoltEngine::handleActionButton(int16 *result) {
 		break;
 	}
 
-	if (g_topCatAnimQueueSize != 0 && g_topCatHoveredEntry != 0) {
-		if (READ_UINT32(g_topCatHoveredEntry) != 0)
+	if (_topCatAnimQueueSize != 0 && _topCatHoveredEntry != 0) {
+		if (READ_UINT32(_topCatHoveredEntry) != 0)
 			return 0;
 	}
 
-	if (!g_topCatHoveredEntry)
+	if (!_topCatHoveredEntry)
 		return 0;
 
 	_xp->setInactivityTimer(30);
 
 	// If blinking entry is the help button, stop blinking...
-	if (g_topCatBlinkEntry == g_topCatHelpButton) {
+	if (_topCatBlinkEntry == _topCatHelpButton) {
 		int16 highlight;
-		if (g_topCatBlinkEntry == g_topCatHoveredEntry &&
-			g_topCatBlinkEntry != 0) {
-			if (READ_UINT32(g_topCatBlinkEntry) < 3 || READ_UINT32(g_topCatBlinkEntry) >= 6) {
+		if (_topCatBlinkEntry == _topCatHoveredEntry &&
+			_topCatBlinkEntry != 0) {
+			if (READ_UINT32(_topCatBlinkEntry) < 3 || READ_UINT32(_topCatBlinkEntry) >= 6) {
 				highlight = 1;
 			} else {
 				highlight = 0;
@@ -567,13 +567,13 @@ int16 BoltEngine::handleActionButton(int16 *result) {
 			highlight = 0;
 		}
 
-		highlightObject(g_topCatBlinkEntry, highlight);
-		g_topCatBlinkEntry = 0;
-		g_topCatBlinkTimer = 0;
-		highlightObject(g_topCatBlinkEntry, 1);
+		highlightObject(_topCatBlinkEntry, highlight);
+		_topCatBlinkEntry = 0;
+		_topCatBlinkTimer = 0;
+		highlightObject(_topCatBlinkEntry, 1);
 	}
 
-	int32 entryType = READ_UINT32(g_topCatHoveredEntry);
+	int32 entryType = READ_UINT32(_topCatHoveredEntry);
 
 	if (entryType == 0) {
 		*result = 8;
@@ -603,34 +603,34 @@ int16 BoltEngine::handleActionButton(int16 *result) {
 	int16 answerSlot = (int16)entryType - 3;
 
 	// Display overlay pic on the answer slot...
-	int16 selectedChoiceOverlayX = READ_UINT16(g_topCatAnswersScreenPositions + answerSlot * 4);
-	int16 selectedChoiceOverlayY = READ_UINT16(g_topCatAnswersScreenPositions + answerSlot * 4 + 2);
-	byte *selectedChoiceOverlayPic = getResolvedPtr(g_topCatSelectedChoiceOverlayGfx, answerSlot * 4);
+	int16 selectedChoiceOverlayX = READ_UINT16(_topCatAnswersScreenPositions + answerSlot * 4);
+	int16 selectedChoiceOverlayY = READ_UINT16(_topCatAnswersScreenPositions + answerSlot * 4 + 2);
+	byte *selectedChoiceOverlayPic = getResolvedPtr(_topCatSelectedChoiceOverlayGfx, answerSlot * 4);
 	displayPic(selectedChoiceOverlayPic, selectedChoiceOverlayX, selectedChoiceOverlayY, stBack);
 
 	_xp->updateDisplay();
 
 	// Start palette cycle on the answer slot overlay...
-	g_topCatChoiceCycleState[0].startIndex = g_topCatCycleSpecs[answerSlot].startIndex;
-	g_topCatChoiceCycleState[0].endIndex = g_topCatCycleSpecs[answerSlot].endIndex;
-	g_topCatChoiceCycleState[0].delay = g_topCatCycleSpecs[answerSlot].delay;
-	g_topCatChoiceCycleState[0].nextFire = g_topCatCycleSpecs[answerSlot].nextFire;
-	g_topCatChoiceCycleState[0].active = g_topCatCycleSpecs[answerSlot].active;
+	_topCatChoiceCycleState[0].startIndex = _topCatCycleSpecs[answerSlot].startIndex;
+	_topCatChoiceCycleState[0].endIndex = _topCatCycleSpecs[answerSlot].endIndex;
+	_topCatChoiceCycleState[0].delay = _topCatCycleSpecs[answerSlot].delay;
+	_topCatChoiceCycleState[0].nextFire = _topCatCycleSpecs[answerSlot].nextFire;
+	_topCatChoiceCycleState[0].active = _topCatCycleSpecs[answerSlot].active;
 
-	_xp->startCycle(g_topCatChoiceCycleState);
+	_xp->startCycle(_topCatChoiceCycleState);
 
 	// Check answer...
-	int8 correctAnswer = (int8)g_topCatAnswers[g_topCatCurrentAnswerIdx * 3];
+	int8 correctAnswer = (int8)_topCatAnswers[_topCatCurrentAnswerIdx * 3];
 
 	if (correctAnswer == answerSlot) {
 		// Correct! :-)
 		queueAnim(4, 0); // Correct answer animation
 		queueAnim(6, 0); // Blink the lights
 
-		g_topCatShuffledQuestions[g_topCatShuffledQuestionsArrayIdx] |= 0x80; // Answered!
-		g_topCatScore++;
+		_topCatShuffledQuestions[_topCatShuffledQuestionsArrayIdx] |= 0x80; // Answered!
+		_topCatScore++;
 
-		if (g_topCatScore == 6) {
+		if (_topCatScore == 6) {
 			queueAnim(6, 0); // Blink the lights
 			*result = 0x10;
 			return 1;
@@ -647,13 +647,13 @@ int16 BoltEngine::handleActionButton(int16 *result) {
 }
 
 void BoltEngine::queueAnim(int16 animType, int16 param) {
-	int16 slot = g_topCatAnimQueueSize;
-	g_topCatAnimQueueSize++;
+	int16 slot = _topCatAnimQueueSize;
+	_topCatAnimQueueSize++;
 
-	TopCatAnim *entry = &g_topCatAnimQueue[slot];
+	TopCatAnim *entry = &_topCatAnimQueue[slot];
 
-	if (g_topCatAnimQueueSize > 3) {
-		g_topCatAnimQueueSize--;
+	if (_topCatAnimQueueSize > 3) {
+		_topCatAnimQueueSize--;
 		return;
 	}
 
@@ -669,25 +669,25 @@ void BoltEngine::queueAnim(int16 animType, int16 param) {
 		break;
 
 	case 4: // Correct answer
-		entry->animIndex = g_topCatCorrectAnimIdx;
-		g_topCatCorrectAnimIdx++;
-		g_topCatCorrectAnimIdx %= 3;
+		entry->animIndex = _topCatCorrectAnimIdx;
+		_topCatCorrectAnimIdx++;
+		_topCatCorrectAnimIdx %= 3;
 		break;
 
 	case 5: // Wrong answer
-		entry->animIndex = g_topCatWrongAnimIdx + 3;
-		g_topCatWrongAnimIdx++;
-		g_topCatWrongAnimIdx %= 3;
+		entry->animIndex = _topCatWrongAnimIdx + 3;
+		_topCatWrongAnimIdx++;
+		_topCatWrongAnimIdx %= 3;
 		break;
 
 	case 6: // Score light
-		if (g_topCatScore < 6)
-			entry->animIndex = g_topCatScore + 1;
+		if (_topCatScore < 6)
+			entry->animIndex = _topCatScore + 1;
 		else
 			entry->animIndex = 0;
 
 		// Store blink sequence pointer from table
-		entry->seqPtr = g_topCatBlinkSeqTable[g_topCatScore];
+		entry->seqPtr = _topCatBlinkSeqTable[_topCatScore];
 		break;
 	}
 }
@@ -695,15 +695,15 @@ void BoltEngine::queueAnim(int16 animType, int16 param) {
 bool BoltEngine::maintainAnim(int16 soundEvent) {
 	int16 animDone = 0;
 
-	switch (g_topCatAnimStateMachineStep) {
+	switch (_topCatAnimStateMachineStep) {
 	case 0: // Waiting to start next anim
-		if (g_topCatAnimQueueSize == 0)
+		if (_topCatAnimQueueSize == 0)
 			break;
 
-		if (!startNextAnim(&g_topCatShouldPlayAnswerAnim))
+		if (!startNextAnim(&_topCatShouldPlayAnswerAnim))
 			return false;
 
-		g_topCatAnimStateMachineStep = 1;
+		_topCatAnimStateMachineStep = 1;
 		break;
 	case 1: // Filling RTF buffer
 		if (fillRTFBuffer()) {
@@ -711,51 +711,51 @@ bool BoltEngine::maintainAnim(int16 soundEvent) {
 				break;
 		}
 
-		g_topCatAnimStateMachineStep = 2;
+		_topCatAnimStateMachineStep = 2;
 		break;
 	case 2: // Waiting for sound sync
 		if (!soundEvent)
 			break;
 
-		if (g_topCatMaxBackgroundAnimFrames - g_topCatQueuedSoundFrames != g_topCatBackgroundAnimFrame)
+		if (_topCatMaxBackgroundAnimFrames - _topCatQueuedSoundFrames != _topCatBackgroundAnimFrame)
 			break;
 
 		flushRTFSoundQueue();
-		g_topCatAnimStateMachineStep = 3;
+		_topCatAnimStateMachineStep = 3;
 		break;
 	case 3: // Waiting for AV end
 	case 4: // Playing AV
-		if (g_topCatAnimStateMachineStep == 3) {
+		if (_topCatAnimStateMachineStep == 3) {
 			if (soundEvent != 2)
 				break;
 
-			g_topCatAnimStateMachineStep = 4;
-			g_topCatMaintainSoundFlag = 1;
+			_topCatAnimStateMachineStep = 4;
+			_topCatMaintainSoundFlag = 1;
 		}
 
 		int16 avResult;
-		if (g_topCatShouldPlayAnswerAnim != 0)
+		if (_topCatShouldPlayAnswerAnim != 0)
 			avResult = maintainAV(soundEvent == 2 ? 1 : 0);
 		else
 			avResult = maintainAudioPlay(soundEvent == 2 ? 1 : 0);
 
 		if (!avResult) { // AV finished
-			if (g_topCatShouldPlayAnswerAnim != 0) {
+			if (_topCatShouldPlayAnswerAnim != 0) {
 				// Display background anim frame...
-				byte *animFrame = getResolvedPtr(g_topCatGraphicsAssets, g_topCatBackgroundAnimFrame * 4);
-				displayPic(animFrame, g_displayX, g_displayY, stFront);
+				byte *animFrame = getResolvedPtr(_topCatGraphicsAssets, _topCatBackgroundAnimFrame * 4);
+				displayPic(animFrame, _displayX, _displayY, stFront);
 			}
 
 			animDone = 1;
 		} else {
 			// Check if idle sound needs maintaining...
-			if (g_topCatMaintainSoundFlag != 0) {
+			if (_topCatMaintainSoundFlag != 0) {
 				if (!isRTFPlaying()) {
-					int16 savedFrame = g_topCatBackgroundAnimFrame;
-					g_topCatBackgroundAnimFrame = 0;
+					int16 savedFrame = _topCatBackgroundAnimFrame;
+					_topCatBackgroundAnimFrame = 0;
 					maintainIdleSound(0);
-					g_topCatBackgroundAnimFrame = savedFrame;
-					g_topCatMaintainSoundFlag = 0;
+					_topCatBackgroundAnimFrame = savedFrame;
+					_topCatMaintainSoundFlag = 0;
 				}
 			}
 		}
@@ -764,14 +764,14 @@ bool BoltEngine::maintainAnim(int16 soundEvent) {
 	}
 
 	// Advance audio and the background animation together...
-	if (soundEvent == 1 || (soundEvent == 2 && g_topCatShouldPlayAnswerAnim == 0)) {
-		g_topCatBackgroundAnimFrame++;
-		if (g_topCatBackgroundAnimFrame >= g_topCatMaxBackgroundAnimFrames)
-			g_topCatBackgroundAnimFrame = 0;
+	if (soundEvent == 1 || (soundEvent == 2 && _topCatShouldPlayAnswerAnim == 0)) {
+		_topCatBackgroundAnimFrame++;
+		if (_topCatBackgroundAnimFrame >= _topCatMaxBackgroundAnimFrames)
+			_topCatBackgroundAnimFrame = 0;
 
 		if (soundEvent == 1) {
-			if (g_topCatAnimStateMachineStep == 3 || g_topCatAnimStateMachineStep == 4) {
-				g_topCatQueuedSoundFrames--;
+			if (_topCatAnimStateMachineStep == 3 || _topCatAnimStateMachineStep == 4) {
+				_topCatQueuedSoundFrames--;
 			} else {
 				maintainIdleSound(1);
 			}
@@ -780,8 +780,8 @@ bool BoltEngine::maintainAnim(int16 soundEvent) {
 		// If no pending sound event, display the next background anim frame...
 		uint32 peekData;
 		if (_xp->peekEvent(etSound, &peekData) != etSound) {
-			byte *backgroundFrame = getResolvedPtr(g_topCatGraphicsAssets, g_topCatBackgroundAnimFrame * 4);
-			displayPic(backgroundFrame, g_displayX, g_displayY, stFront);
+			byte *backgroundFrame = getResolvedPtr(_topCatGraphicsAssets, _topCatBackgroundAnimFrame * 4);
+			displayPic(backgroundFrame, _displayX, _displayY, stFront);
 			_xp->updateDisplay();
 		}
 	}
@@ -793,19 +793,19 @@ bool BoltEngine::maintainAnim(int16 soundEvent) {
 }
 
 void BoltEngine::maintainIdleSound(int16 decrement) {
-	byte *soundData = g_topCatSoundInfo.data;
-	int16 chunkSize = (int16)(g_topCatSoundInfo.size / g_topCatMaxBackgroundAnimFrames);
+	byte *soundData = _topCatSoundInfo.data;
+	int16 chunkSize = (int16)(_topCatSoundInfo.size / _topCatMaxBackgroundAnimFrames);
 
 	if (decrement)
-		g_topCatQueuedSoundFrames--;
+		_topCatQueuedSoundFrames--;
 
-	int16 idx = g_topCatBackgroundAnimFrame + g_topCatQueuedSoundFrames;
+	int16 idx = _topCatBackgroundAnimFrame + _topCatQueuedSoundFrames;
 
-	while (g_topCatQueuedSoundFrames < 10) {
-		g_topCatQueuedSoundFrames++;
+	while (_topCatQueuedSoundFrames < 10) {
+		_topCatQueuedSoundFrames++;
 
-		if (idx >= g_topCatMaxBackgroundAnimFrames)
-			idx -= g_topCatMaxBackgroundAnimFrames;
+		if (idx >= _topCatMaxBackgroundAnimFrames)
+			idx -= _topCatMaxBackgroundAnimFrames;
 
 		_xp->playSound(soundData + chunkSize * idx, chunkSize, 22050);
 		idx++;
@@ -813,10 +813,10 @@ void BoltEngine::maintainIdleSound(int16 decrement) {
 }
 
 bool BoltEngine::startNextAnim(int16 *playAnswerAnim) {
-	TopCatAnim *entry = &g_topCatAnimQueue[0];
+	TopCatAnim *entry = &_topCatAnimQueue[0];
 	bool startResult = false;
 
-	if (g_topCatAnimQueueSize == 0)
+	if (_topCatAnimQueueSize == 0)
 		return false;
 
 	// Setup next question, if requested...
@@ -828,68 +828,68 @@ bool BoltEngine::startNextAnim(int16 *playAnswerAnim) {
 			_xp->updateDisplay();
 		}
 
-		entry->animIndex = g_topCatCurrentAnswerIdx * 60 + g_topCatDrawnQuestionId + 7;
+		entry->animIndex = _topCatCurrentAnswerIdx * 60 + _topCatDrawnQuestionId + 7;
 	}
 
 	int16 animType = entry->animType;
 
 	if (animType == 6) {
 		// Score light animation
-		g_topCatBlinkSeqPtr = entry->seqPtr;
+		_topCatBlinkSeqPtr = entry->seqPtr;
 
 		*playAnswerAnim = 0;
-		startResult = startAnimation(g_topCatAvHandle, entry->animIndex);
+		startResult = startAnimation(_topCatAvHandle, entry->animIndex);
 	} else if (animType == 3) {
 		// Question audio
-		g_topCatCycleStep = 3;
+		_topCatCycleStep = 3;
 
 		*playAnswerAnim = 0;
-		startResult = startAnimation(g_topCatAvHandle, entry->animIndex);
+		startResult = startAnimation(_topCatAvHandle, entry->animIndex);
 	} else if (animType == 2) {
 		// Help audio
-		g_topCatCycleStep = 0;
+		_topCatCycleStep = 0;
 
 		*playAnswerAnim = 0;
-		startResult = startAnimation(g_rtfHandle, entry->animIndex);
+		startResult = startAnimation(_rtfHandle, entry->animIndex);
 	} else {
 		// Correct/wrong answer animations
 		*playAnswerAnim = 1;
 		setAVBufferSize(0x4B000);
-		startResult = prepareAV(g_topCatRtfHandle, entry->animIndex,
-								g_displayWidth, g_displayHeight,
-								g_displayX, g_displayY);
+		startResult = prepareAV(_topCatRtfHandle, entry->animIndex,
+								_displayWidth, _displayHeight,
+								_displayX, _displayY);
 	}
 
 	if (startResult) {
 		setAnimType(entry->animType);
 	} else {
-		g_topCatCurrentAnimType = 1;
-		g_topCatAnimStateMachineStep = 0;
+		_topCatCurrentAnimType = 1;
+		_topCatAnimStateMachineStep = 0;
 		maintainIdleSound(0);
 	}
 
 	// Shift queue: copy entries 1..n down to 0..n-1
-	for (int16 i = 1; i < g_topCatAnimQueueSize; i++) {
-		g_topCatAnimQueue[i - 1] = g_topCatAnimQueue[i];
+	for (int16 i = 1; i < _topCatAnimQueueSize; i++) {
+		_topCatAnimQueue[i - 1] = _topCatAnimQueue[i];
 	}
 
-	g_topCatAnimQueueSize--;
+	_topCatAnimQueueSize--;
 
 	return true;
 }
 
 void BoltEngine::setAnimType(int16 newType) {
-	if (g_topCatCurrentAnimType == newType)
+	if (_topCatCurrentAnimType == newType)
 		return;
 
 	// Clean-up the previous state...
-	switch (g_topCatCurrentAnimType) {
+	switch (_topCatCurrentAnimType) {
 	case 2: // Was playing the help audio
 		// Stop blinking entry
 		int16 highlight;
-		if (g_topCatBlinkEntry == g_topCatHoveredEntry &&
-			g_topCatBlinkEntry != 0) {
-			if (READ_UINT32(g_topCatBlinkEntry) < 3 || READ_UINT32(g_topCatBlinkEntry) >= 6) {
+		if (_topCatBlinkEntry == _topCatHoveredEntry &&
+			_topCatBlinkEntry != 0) {
+			if (READ_UINT32(_topCatBlinkEntry) < 3 || READ_UINT32(_topCatBlinkEntry) >= 6) {
 				highlight = 1;
 			} else {
 				highlight = 0;
@@ -898,20 +898,20 @@ void BoltEngine::setAnimType(int16 newType) {
 			highlight = 0;
 		}
 
-		highlightObject(g_topCatBlinkEntry, highlight);
+		highlightObject(_topCatBlinkEntry, highlight);
 
-		g_topCatBlinkEntry = 0;
-		g_topCatBlinkTimer = 0;
-		highlightObject(g_topCatBlinkEntry, 1);
+		_topCatBlinkEntry = 0;
+		_topCatBlinkTimer = 0;
+		highlightObject(_topCatBlinkEntry, 1);
 		break;
 
 	case 3: // Was playing the question audio
-		if (g_topCatCycleStep >= 3) {
-			byte *prevEntry = getResolvedPtr(g_topCatButtonsPalette, (g_topCatCycleStep - 1) * 4);
+		if (_topCatCycleStep >= 3) {
+			byte *prevEntry = getResolvedPtr(_topCatButtonsPalette, (_topCatCycleStep - 1) * 4);
 			highlightObject(prevEntry, 0);
 		}
 
-		highlightObject(g_topCatBackButton, 0);
+		highlightObject(_topCatBackButton, 0);
 		break;
 
 	case 4: // Correct answer anim
@@ -919,7 +919,7 @@ void BoltEngine::setAnimType(int16 newType) {
 
 	case 5: // Wrong answer anim
 	case 6: // Score lights
-		if (g_topCatScore != 6)
+		if (_topCatScore != 6)
 			_xp->showCursor();
 
 		break;
@@ -938,7 +938,7 @@ void BoltEngine::setAnimType(int16 newType) {
 		break;
 
 	case 3: // Question audio
-		highlightObject(g_topCatBackButton, 1);
+		highlightObject(_topCatBackButton, 1);
 		break;
 
 	case 4: // Correct answer anim
@@ -950,8 +950,8 @@ void BoltEngine::setAnimType(int16 newType) {
 		break;
 	}
 
-	g_topCatCurrentAnimType = newType;
-	g_topCatAnimStateMachineStep = 0;
+	_topCatCurrentAnimType = newType;
+	_topCatAnimStateMachineStep = 0;
 }
 
 void BoltEngine::highlightObject(byte *entry, int16 highlight) {
@@ -974,43 +974,43 @@ bool BoltEngine::setupNextQuestion() {
 
 	int16 attempts = 0;
 	while (attempts < 60) {
-		g_topCatShuffledQuestionsArrayIdx++;
-		if (g_topCatShuffledQuestionsArrayIdx >= 60)
-			g_topCatShuffledQuestionsArrayIdx = 0;
+		_topCatShuffledQuestionsArrayIdx++;
+		if (_topCatShuffledQuestionsArrayIdx >= 60)
+			_topCatShuffledQuestionsArrayIdx = 0;
 
-		g_topCatDrawnQuestionId = (int8)g_topCatShuffledQuestions[g_topCatShuffledQuestionsArrayIdx];
+		_topCatDrawnQuestionId = (int8)_topCatShuffledQuestions[_topCatShuffledQuestionsArrayIdx];
 
-		if ((g_topCatDrawnQuestionId & 0x80) == 0)
+		if ((_topCatDrawnQuestionId & 0x80) == 0)
 			break; // Found a question which hasn't been answered yet...
 
 		attempts++;
 	}
 
 	if (attempts >= 60) {
-		g_topCatShuffledQuestionsArrayIdx = -1;
+		_topCatShuffledQuestionsArrayIdx = -1;
 		shuffleTopCatQuestions();
 		shuffleTopCatPermutations();
 
 		for (int16 i = 0; i < 60; i++) {
-			g_topCatShuffledQuestions[i] &= 0x7F; // Remove "already answered" flag from all questions...
+			_topCatShuffledQuestions[i] &= 0x7F; // Remove "already answered" flag from all questions...
 		}
 
 		return setupNextQuestion();
 	}
 
-	g_topCatShuffledAnswers[g_topCatDrawnQuestionId]++;
-	if (g_topCatShuffledAnswers[g_topCatDrawnQuestionId] >= 3)
-		g_topCatShuffledAnswers[g_topCatDrawnQuestionId] = 0;
+	_topCatShuffledAnswers[_topCatDrawnQuestionId]++;
+	if (_topCatShuffledAnswers[_topCatDrawnQuestionId] >= 3)
+		_topCatShuffledAnswers[_topCatDrawnQuestionId] = 0;
 
-	int16 qIdx = g_topCatDrawnQuestionId;
-	int16 permutation = (int8)g_topCatShuffledAnswers[g_topCatDrawnQuestionId];
-	g_topCatCurrentAnswerIdx = (int8)g_topCatAnswersPermutations[qIdx * 3 + permutation];
+	int16 qIdx = _topCatDrawnQuestionId;
+	int16 permutation = (int8)_topCatShuffledAnswers[_topCatDrawnQuestionId];
+	_topCatCurrentAnswerIdx = (int8)_topCatAnswersPermutations[qIdx * 3 + permutation];
 
-	int16 groupId = g_topCatDrawnQuestionId * 0x100 + 0x100;
-	if (!getBOLTGroup(g_topCatBoltLib, groupId, 1))
+	int16 groupId = _topCatDrawnQuestionId * 0x100 + 0x100;
+	if (!getBOLTGroup(_topCatBoltLib, groupId, 1))
 		return false;
 
-	byte *questionsAnswersGfxTable = memberAddr(g_topCatBoltLib, g_topCatDrawnQuestionId * 0x100 + 0x104);
+	byte *questionsAnswersGfxTable = memberAddr(_topCatBoltLib, _topCatDrawnQuestionId * 0x100 + 0x104);
 
 	// Display question pic...
 	byte *questionPic = getResolvedPtr(questionsAnswersGfxTable, 0);
@@ -1019,10 +1019,10 @@ bool BoltEngine::setupNextQuestion() {
 	// Display the three answer choices...
 	int16 tableOff = 0;
 	for (int16 i = 0; i < 3; i++) {
-		int8 answerIdx = (int8)g_topCatAnswers[g_topCatCurrentAnswerIdx * 3 + i];
+		int8 answerIdx = (int8)_topCatAnswers[_topCatCurrentAnswerIdx * 3 + i];
 
-		int16 x = READ_UINT16(g_topCatAnswersScreenPositions + answerIdx * 4);
-		int16 y = READ_UINT16(g_topCatAnswersScreenPositions + answerIdx * 4 + 2);
+		int16 x = READ_UINT16(_topCatAnswersScreenPositions + answerIdx * 4);
+		int16 y = READ_UINT16(_topCatAnswersScreenPositions + answerIdx * 4 + 2);
 
 		int16 colorShift = (answerIdx - i) * 3;
 		byte *answerPic = getResolvedPtr(questionsAnswersGfxTable, tableOff + 4);
@@ -1032,7 +1032,7 @@ bool BoltEngine::setupNextQuestion() {
 		tableOff += 4;
 	}
 
-	freeBOLTGroup(g_topCatBoltLib, groupId, 1);
+	freeBOLTGroup(_topCatBoltLib, groupId, 1);
 
 	return true;
 }
@@ -1064,16 +1064,16 @@ void BoltEngine::shuffleTopCatQuestions() {
 	for (int16 i = 0; i < 60; i++) {
 		int16 randIdx = _xp->getRandom(60);
 
-		byte tmp = g_topCatShuffledQuestions[i];
-		g_topCatShuffledQuestions[i] = g_topCatShuffledQuestions[randIdx];
-		g_topCatShuffledQuestions[randIdx] = tmp;
+		byte tmp = _topCatShuffledQuestions[i];
+		_topCatShuffledQuestions[i] = _topCatShuffledQuestions[randIdx];
+		_topCatShuffledQuestions[randIdx] = tmp;
 
 		for (int16 j = 0; j < 3; j++) {
 			int16 randJ = _xp->getRandom(3);
 
-			byte aTmp = g_topCatAnswersPermutations[answerOff + j];
-			g_topCatAnswersPermutations[answerOff + j] = g_topCatAnswersPermutations[answerOff + randJ];
-			g_topCatAnswersPermutations[answerOff + randJ] = aTmp;
+			byte aTmp = _topCatAnswersPermutations[answerOff + j];
+			_topCatAnswersPermutations[answerOff + j] = _topCatAnswersPermutations[answerOff + randJ];
+			_topCatAnswersPermutations[answerOff + randJ] = aTmp;
 		}
 
 		answerOff += 3;
@@ -1085,18 +1085,18 @@ void BoltEngine::shuffleTopCatPermutations() {
 	for (int16 i = 0; i < 3; i++) {
 		int16 randIdx = _xp->getRandom(3);
 
-		int16 tmp = g_topCatPermTableA[i];
-		g_topCatPermTableA[i] = g_topCatPermTableA[randIdx];
-		g_topCatPermTableA[randIdx] = tmp;
+		int16 tmp = _topCatPermTableA[i];
+		_topCatPermTableA[i] = _topCatPermTableA[randIdx];
+		_topCatPermTableA[randIdx] = tmp;
 	}
 
 	// Shuffle second permutation table...
 	for (int16 i = 0; i < 3; i++) {
 		int16 randIdx = _xp->getRandom(3);
 
-		int16 tmp = g_topCatPermTableB[i];
-		g_topCatPermTableB[i] = g_topCatPermTableB[randIdx];
-		g_topCatPermTableB[randIdx] = tmp;
+		int16 tmp = _topCatPermTableB[i];
+		_topCatPermTableB[i] = _topCatPermTableB[randIdx];
+		_topCatPermTableB[randIdx] = tmp;
 	}
 }
 
@@ -1110,7 +1110,7 @@ void BoltEngine::setScoreLights(int16 litMask) {
 	int16 tableOff = 0;
 
 	while (tableOff < 0x18) {
-		byte *lightEntry = getResolvedPtr(g_topCatLightsPalette, tableOff);
+		byte *lightEntry = getResolvedPtr(_topCatLightsPalette, tableOff);
 
 		int16 palStart = READ_UINT16(lightEntry) + 0x80;
 		int16 colorCount = READ_UINT16(lightEntry + 4);
@@ -1133,8 +1133,8 @@ void BoltEngine::setScoreLights(int16 litMask) {
 }
 
 void BoltEngine::swapTopCatHelpEntry() {
-	byte *data = g_boltCurrentMemberEntry->dataPtr;
-	uint32 decompSize = g_boltCurrentMemberEntry->decompSize;
+	byte *data = _boltCurrentMemberEntry->dataPtr;
+	uint32 decompSize = _boltCurrentMemberEntry->decompSize;
 	int16 offset = 0;
 
 	while (offset < (int32)decompSize) {

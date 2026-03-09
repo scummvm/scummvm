@@ -20,9 +20,9 @@
  */
 
 #include "bolt/bolt.h"
-#include "graphics/framelimiter.h"
 #include "bolt/detection.h"
-#include "bolt/console.h"
+#include "bolt/xplib/xplib.h"
+
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -30,8 +30,6 @@
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/paletteman.h"
-
-#include "bolt/xplib/xplib.h"
 
 namespace Bolt {
 
@@ -60,36 +58,22 @@ Common::String BoltEngine::getGameId() const {
 Common::Error BoltEngine::run() {
 	ConfMan.registerDefault("extended_viewport", false);
 	if (ConfMan.hasKey("extended_viewport", _targetName)) {
-		g_extendedViewport = ConfMan.getBool("extended_viewport");
+		_extendedViewport = ConfMan.getBool("extended_viewport");
 	}
 
 	// Initialize paletted graphics mode
-	if (!g_extendedViewport) {
+	if (!_extendedViewport) {
 		initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 	} else {
 		initGraphics(EXTENDED_SCREEN_WIDTH, EXTENDED_SCREEN_HEIGHT);
 	}
 
 	if ((getFeatures() & ADGF_DEMO) != 0)
-		g_isDemo = true;
-
-	// Set the engine's debugger console
-	setDebugger(new Console());
+		_isDemo = true;
 
 	_xp->initialize();
 	boltMain();
 	_xp->terminate();
-
-	return Common::kNoError;
-}
-
-Common::Error BoltEngine::syncGame(Common::Serializer &s) {
-	// The Serializer has methods isLoading() and isSaving()
-	// if you need to specific steps; for example setting
-	// an array size after reading it's length, whereas
-	// for saving it would write the existing array's length
-	int dummy = 0;
-	s.syncAsUint32LE(dummy);
 
 	return Common::kNoError;
 }
@@ -108,56 +92,56 @@ void BoltEngine::boltMain() {
 	_xp->randomize();
 
 	if (allocResourceIndex()) {
-		g_boothsBoltLib = nullptr;
+		_boothsBoltLib = nullptr;
 
-		if (openBOLTLib(&g_boothsBoltLib, &g_boothsBoltCallbacks, assetPath("booths.blt"))) {
-			int16 chosenSpecId = g_extendedViewport ? 0 : 1;
+		if (openBOLTLib(&_boothsBoltLib, &_boothsBoltCallbacks, assetPath("booths.blt"))) {
+			int16 chosenSpecId = _extendedViewport ? 0 : 1;
 
-			if (_xp->setDisplaySpec(&g_displayMode, &g_displaySpecs[chosenSpecId])) {
-				assert(g_displayMode >= 0);
-				g_displayWidth = g_displaySpecs[g_displayMode].width;
-				g_displayHeight = g_displaySpecs[g_displayMode].height;
+			if (_xp->setDisplaySpec(&_displayMode, &_displaySpecs[chosenSpecId])) {
+				assert(_displayMode >= 0);
+				_displayWidth = _displaySpecs[_displayMode].width;
+				_displayHeight = _displaySpecs[_displayMode].height;
 
 				// Center within 384x240 virtual coordinate space...
-				g_displayX = (EXTENDED_SCREEN_WIDTH - g_displayWidth) / 2;
-				g_displayY = (EXTENDED_SCREEN_HEIGHT - g_displayHeight) / 2;
+				_displayX = (EXTENDED_SCREEN_WIDTH - _displayWidth) / 2;
+				_displayY = (EXTENDED_SCREEN_HEIGHT - _displayHeight) / 2;
 
-				_xp->setCoordSpec(g_displayX, g_displayY, g_displayWidth, g_displayHeight);
+				_xp->setCoordSpec(_displayX, _displayY, _displayWidth, _displayHeight);
 				
-				if (g_displayMode == 0) {
-					g_rtfHandle = openRTF(assetPath("cc_og.av"));
+				if (_displayMode == 0) {
+					_rtfHandle = openRTF(assetPath("cc_og.av"));
 				} else {
-					g_rtfHandle = openRTF(assetPath("cc_cr.av"));
+					_rtfHandle = openRTF(assetPath("cc_cr.av"));
 				}
 
-				if (g_rtfHandle) {
-					int16 boothGroupBase = g_isDemo ? 0x0E00 : 0x1700;
+				if (_rtfHandle) {
+					int16 boothGroupBase = _isDemo ? 0x0E00 : 0x1700;
 
-					if (!g_isDemo) {
-						playAV(g_rtfHandle, 0, g_displayWidth, g_displayHeight, g_displayX, g_displayY);
+					if (!_isDemo) {
+						playAV(_rtfHandle, 0, _displayWidth, _displayHeight, _displayX, _displayY);
 					}
 
-					boothSprite = getBOLTMember(g_boothsBoltLib, (g_displayMode != 0) ? (boothGroupBase + 1) : (boothGroupBase + 2));
+					boothSprite = getBOLTMember(_boothsBoltLib, (_displayMode != 0) ? (boothGroupBase + 1) : (boothGroupBase + 2));
 
 					_xp->setTransparency(false);
 
-					displayColors(getBOLTMember(g_boothsBoltLib, boothGroupBase), stFront, 0);
-					displayPic(boothSprite, g_displayX, g_displayY, stFront);
+					displayColors(getBOLTMember(_boothsBoltLib, boothGroupBase), stFront, 0);
+					displayPic(boothSprite, _displayX, _displayY, stFront);
 
 					_xp->updateDisplay();
 
-					displayColors(getBOLTMember(g_boothsBoltLib, boothGroupBase), stBack, 0);
-					displayPic(boothSprite, g_displayX, g_displayY, stBack);
+					displayColors(getBOLTMember(_boothsBoltLib, boothGroupBase), stBack, 0);
+					displayPic(boothSprite, _displayX, _displayY, stBack);
 
-					playAV(g_rtfHandle, g_isDemo ? 0 : 2, g_displayWidth, g_displayHeight, g_displayX, g_displayY);
+					playAV(_rtfHandle, _isDemo ? 0 : 2, _displayWidth, _displayHeight, _displayX, _displayY);
 
-					freeBOLTGroup(g_boothsBoltLib, boothGroupBase, 1);
+					freeBOLTGroup(_boothsBoltLib, boothGroupBase, 1);
 
-					if (getBOLTGroup(g_boothsBoltLib, 0, 1)) {
-						setCursorPict(memberAddr(g_boothsBoltLib, 0));
+					if (getBOLTGroup(_boothsBoltLib, 0, 1)) {
+						setCursorPict(memberAddr(_boothsBoltLib, 0));
 
 						if (initVRam(1500)) {
-							barkerTable = createBarker(2, g_isDemo ? 19 : 17);
+							barkerTable = createBarker(2, _isDemo ? 19 : 17);
 							if (barkerTable) {
 								// Register booth handlers...
 								registerSideShow(barkerTable, &BoltEngine::hucksBooth, 3);
@@ -175,12 +159,12 @@ void BoltEngine::boltMain() {
 								registerSideShow(barkerTable, &BoltEngine::topCatGame, 15);
 								registerSideShow(barkerTable, &BoltEngine::winALetter, 16);
 
-								if (g_isDemo) {
+								if (_isDemo) {
 									registerSideShow(barkerTable, &BoltEngine::displayDemoPict, 17);
 									registerSideShow(barkerTable, &BoltEngine::endDemo, 18);
 								}
 
-								g_lettersWon = 0;
+								_lettersWon = 0;
 								_xp->setScreenSaverTimer(1800);
 
 								// The barker function runs the main loop, starting at mainEntrance()...
@@ -196,13 +180,13 @@ void BoltEngine::boltMain() {
 		}
 	}
 
-	freeBOLTGroup(g_boothsBoltLib, 0, 1);
+	freeBOLTGroup(_boothsBoltLib, 0, 1);
 
-	if (g_boothsBoltLib != 0)
-		closeBOLTLib(&g_boothsBoltLib);
+	if (_boothsBoltLib != 0)
+		closeBOLTLib(&_boothsBoltLib);
 
-	if (g_rtfHandle != nullptr)
-		closeRTF(g_rtfHandle);
+	if (_rtfHandle != nullptr)
+		closeRTF(_rtfHandle);
 
 	freeVRam();
 	freeResourceIndex();
@@ -237,9 +221,9 @@ int16 BoltEngine::displayDemoPict(int16 prevBooth) {
 	_xp->stopCycle();
 	_xp->setTransparency(false);
 
-	int16 memberId = (g_displayMode != 0) ? 0x1002 : 0x1001;
-	displayPic(getBOLTMember(g_boothsBoltLib, memberId), g_displayX, g_displayY, stFront);
-	displayColors(getBOLTMember(g_boothsBoltLib, 0x1000), stFront, 0);
+	int16 memberId = (_displayMode != 0) ? 0x1002 : 0x1001;
+	displayPic(getBOLTMember(_boothsBoltLib, memberId), _displayX, _displayY, stFront);
+	displayColors(getBOLTMember(_boothsBoltLib, 0x1000), stFront, 0);
 
 	_xp->updateDisplay();
 

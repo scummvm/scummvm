@@ -99,166 +99,166 @@ void BoltEngine::closeRTF(RTFResource *rtf) {
 }
 
 bool BoltEngine::playRTF(RTFResource *rtfFile, int16 animIndex, byte *ringBuffer, int32 bufferSize) {
-	g_rtfFileHandle = rtfFile->fileHandle;
+	_rtfFileHandle = rtfFile->fileHandle;
 
 	if (animIndex >= rtfFile->entryCount)
 		return false;
 
 	uint32 *indexTable = rtfFile->indexTable;
-	if (!_xp->setFilePos(g_rtfFileHandle, indexTable[animIndex], 0))
+	if (!_xp->setFilePos(_rtfFileHandle, indexTable[animIndex], 0))
 		return false;
 
-	g_rtfChunkRemaining = 0;
-	g_rtfMidChunk = false;
+	_rtfChunkRemaining = 0;
+	_rtfMidChunk = false;
 
-	g_ringBufBase = ringBuffer;
-	g_ringBufWritePtr = ringBuffer;
-	g_ringBufSize = bufferSize;
-	g_ringBufFreeSpace = bufferSize;
+	_ringBufBase = ringBuffer;
+	_ringBufWritePtr = ringBuffer;
+	_ringBufSize = bufferSize;
+	_ringBufFreeSpace = bufferSize;
 
 	if (bufferSize >= 0x96000) {
-		g_ringBufLowWater = bufferSize - 0x4B000;
-		g_ringBufHighWater = bufferSize - 0x19000;
+		_ringBufLowWater = bufferSize - 0x4B000;
+		_ringBufHighWater = bufferSize - 0x19000;
 	} else {
-		g_ringBufLowWater = bufferSize - bufferSize / 2;
-		g_ringBufHighWater = bufferSize - bufferSize / 4;
+		_ringBufLowWater = bufferSize - bufferSize / 2;
+		_ringBufHighWater = bufferSize - bufferSize / 4;
 	}
 
-	g_ringBufUsed = 0;
-	g_rtfSoundActive = true;
-	g_rtfPlaybackTime = 0;
-	g_rtfCumulativeTime = 0;
-	g_rtfPendingFrame = nullptr;
-	g_rtfSoundQueueHead = nullptr;
-	g_rtfSoundPlayHead = nullptr;
-	g_rtfChunkListTail = nullptr;
-	g_rtfChunkListHead = nullptr;
-	g_rtfChunkCount = 0;
-	g_rtfQueuedSoundCount = 0;
-	g_rtfSoundTiming = 0;
+	_ringBufUsed = 0;
+	_rtfSoundActive = true;
+	_rtfPlaybackTime = 0;
+	_rtfCumulativeTime = 0;
+	_rtfPendingFrame = nullptr;
+	_rtfSoundQueueHead = nullptr;
+	_rtfSoundPlayHead = nullptr;
+	_rtfChunkListTail = nullptr;
+	_rtfChunkListHead = nullptr;
+	_rtfChunkCount = 0;
+	_rtfQueuedSoundCount = 0;
+	_rtfSoundTiming = 0;
 
-	g_rtfAnimStartOffset = indexTable[animIndex];
-	g_rtfNeedInitialFill = true;
+	_rtfAnimStartOffset = indexTable[animIndex];
+	_rtfNeedInitialFill = true;
 
 	return true;
 }
 
 bool BoltEngine::fillRTFBuffer() {
-	if (!g_rtfNeedInitialFill)
+	if (!_rtfNeedInitialFill)
 		return false;
 
-	if (g_ringBufFreeSpace > g_ringBufLowWater && g_rtfSoundActive) {
-		g_rtfSoundActive = readPacket();
+	if (_ringBufFreeSpace > _ringBufLowWater && _rtfSoundActive) {
+		_rtfSoundActive = readPacket();
 		return true;
 	}
 
-	g_rtfNeedInitialFill = false;
+	_rtfNeedInitialFill = false;
 	return false;
 }
 
 void BoltEngine::flushRTFSoundQueue() {
-	while (g_rtfQueuedSoundCount < 50 && g_rtfSoundQueueHead) {
-		RTFPacket *packet = g_rtfSoundQueueHead;
+	while (_rtfQueuedSoundCount < 50 && _rtfSoundQueueHead) {
+		RTFPacket *packet = _rtfSoundQueueHead;
 
 		if (packet->tag == MKTAG('A', '2', '2', '8')) {
-			g_rtfQueuedSoundCount++;
+			_rtfQueuedSoundCount++;
 			_xp->playSound(packet->dataPtr, packet->dataSize, 22050);
 
-			if (!g_rtfSoundPlayHead)
-				g_rtfSoundPlayHead = g_rtfSoundQueueHead;
+			if (!_rtfSoundPlayHead)
+				_rtfSoundPlayHead = _rtfSoundQueueHead;
 		}
 
-		g_rtfSoundQueueHead = packet->next;
+		_rtfSoundQueueHead = packet->next;
 	}
 }
 
 bool BoltEngine::maintainRTF(int16 mode, RTFPacket **outFrameData) {
-	if (!g_rtfFileHandle)
+	if (!_rtfFileHandle)
 		return false;
 
-	if (!g_ringBufBase)
+	if (!_ringBufBase)
 		return false;
 
 	if (outFrameData)
 		*outFrameData = nullptr;
 
 	// Initial buffer fill phase...
-	if (g_rtfNeedInitialFill) {
-		if (g_ringBufFreeSpace > g_ringBufLowWater && g_rtfSoundActive) {
-			g_rtfSoundActive = readPacket();
+	if (_rtfNeedInitialFill) {
+		if (_ringBufFreeSpace > _ringBufLowWater && _rtfSoundActive) {
+			_rtfSoundActive = readPacket();
 			return true;
 		}
 
-		g_rtfNeedInitialFill = false;
+		_rtfNeedInitialFill = false;
 	}
 
 	// Advance sound play head when a sound chunk finishes (mode != 0)
 	if (mode != 0) {
-		g_rtfQueuedSoundCount--;
-		g_rtfSoundTiming -= g_rtfSoundPlayHead->duration;
-		g_rtfPlaybackTime += g_rtfSoundPlayHead->duration;
+		_rtfQueuedSoundCount--;
+		_rtfSoundTiming -= _rtfSoundPlayHead->duration;
+		_rtfPlaybackTime += _rtfSoundPlayHead->duration;
 
 		// Walk to next A228 sound chunk
 		do {
-			g_rtfSoundPlayHead = g_rtfSoundPlayHead->next;
-			if (!g_rtfSoundPlayHead)
+			_rtfSoundPlayHead = _rtfSoundPlayHead->next;
+			if (!_rtfSoundPlayHead)
 				break;
-		} while (g_rtfSoundPlayHead->tag != MKTAG('A', '2', '2', '8'));
+		} while (_rtfSoundPlayHead->tag != MKTAG('A', '2', '2', '8'));
 	}
 
 	// Queue up to 50 pending sound chunks...
-	while (g_rtfQueuedSoundCount < 50 && g_rtfSoundQueueHead) {
-		if (g_rtfSoundQueueHead->tag == MKTAG('A', '2', '2', '8')) {
-			g_rtfQueuedSoundCount++;
-			_xp->playSound(g_rtfSoundQueueHead->dataPtr, g_rtfSoundQueueHead->dataSize, 22050);
+	while (_rtfQueuedSoundCount < 50 && _rtfSoundQueueHead) {
+		if (_rtfSoundQueueHead->tag == MKTAG('A', '2', '2', '8')) {
+			_rtfQueuedSoundCount++;
+			_xp->playSound(_rtfSoundQueueHead->dataPtr, _rtfSoundQueueHead->dataSize, 22050);
 
-			if (!g_rtfSoundPlayHead)
-				g_rtfSoundPlayHead = g_rtfSoundQueueHead;
+			if (!_rtfSoundPlayHead)
+				_rtfSoundPlayHead = _rtfSoundQueueHead;
 		}
 
-		g_rtfSoundQueueHead = g_rtfSoundQueueHead->next;
+		_rtfSoundQueueHead = _rtfSoundQueueHead->next;
 	}
 
-	if (g_rtfPendingFrame) {
-		freePacket(g_rtfPendingFrame);
-		g_rtfPendingFrame = nullptr;
+	if (_rtfPendingFrame) {
+		freePacket(_rtfPendingFrame);
+		_rtfPendingFrame = nullptr;
 	}
 
 	// Playback complete?
-	if (!g_rtfSoundActive && g_rtfChunkCount == 0) {
+	if (!_rtfSoundActive && _rtfChunkCount == 0) {
 		resetPlaybackState();
 		return false;
 	}
 
 	// Fill ring buffer if needed...
-	if (g_rtfSoundActive && g_ringBufFreeSpace > g_ringBufLowWater) {
-		g_rtfSoundActive = readPacket();
-		if (g_ringBufFreeSpace > g_ringBufHighWater)
+	if (_rtfSoundActive && _ringBufFreeSpace > _ringBufLowWater) {
+		_rtfSoundActive = readPacket();
+		if (_ringBufFreeSpace > _ringBufHighWater)
 			return true;
 	}
 
 	// Check if next video frame is due...
-	if (g_rtfChunkCount != 0 && (uint16)g_rtfChunkListHead->timestamp <= (uint16)g_rtfPlaybackTime) {
-		g_rtfPendingFrame = deQueuePacket();
+	if (_rtfChunkCount != 0 && (uint16)_rtfChunkListHead->timestamp <= (uint16)_rtfPlaybackTime) {
+		_rtfPendingFrame = deQueuePacket();
 
 		// If it's a sound chunk, just return...
-		if (g_rtfPendingFrame->tag == MKTAG('A', '2', '2', '8'))
+		if (_rtfPendingFrame->tag == MKTAG('A', '2', '2', '8'))
 			return true;
 
 		// Calculate frame timing: how late are we?
-		g_rtfPendingFrame->skipCount = g_rtfPlaybackTime - g_rtfPendingFrame->timestamp;
+		_rtfPendingFrame->skipCount = _rtfPlaybackTime - _rtfPendingFrame->timestamp;
 
 		// Bump skip count if buffer is low...
-		if (g_rtfSoundActive && g_ringBufFreeSpace > g_ringBufLowWater)
-			g_rtfPendingFrame->skipCount += 1;
+		if (_rtfSoundActive && _ringBufFreeSpace > _ringBufLowWater)
+			_rtfPendingFrame->skipCount += 1;
 
-		if (!g_rtfSoundActive)
-			g_rtfPendingFrame->frameRate = 50; // fixed rate, no sound
+		if (!_rtfSoundActive)
+			_rtfPendingFrame->frameRate = 50; // fixed rate, no sound
 		else
-			g_rtfPendingFrame->frameRate = g_rtfSoundTiming;
+			_rtfPendingFrame->frameRate = _rtfSoundTiming;
 
 		// Find next sound chunk in queue for timing info...
-		RTFPacket *chunk = g_rtfChunkListHead;
+		RTFPacket *chunk = _rtfChunkListHead;
 		while (chunk) {
 			if (chunk->tag == MKTAG('A', '2', '2', '8'))
 				break;
@@ -267,46 +267,46 @@ bool BoltEngine::maintainRTF(int16 mode, RTFPacket **outFrameData) {
 		}
 
 		if (chunk)
-			g_rtfPendingFrame->duration = chunk->duration;
+			_rtfPendingFrame->duration = chunk->duration;
 		else
-			g_rtfPendingFrame->duration = 0;
+			_rtfPendingFrame->duration = 0;
 
 		if (outFrameData)
-			*outFrameData = g_rtfPendingFrame;
+			*outFrameData = _rtfPendingFrame;
 
 		return true;
 	}
 
-	if (g_rtfSoundActive)
-		g_rtfSoundActive = readPacket();
+	if (_rtfSoundActive)
+		_rtfSoundActive = readPacket();
 
 	return true;
 }
 
 bool BoltEngine::isRTFPlaying() {
-	if (g_rtfSoundActive)
+	if (_rtfSoundActive)
 		return true;
 
-	if (g_rtfSoundQueueHead)
+	if (_rtfSoundQueueHead)
 		return true;
 
-	if (g_rtfQueuedSoundCount > 10)
+	if (_rtfQueuedSoundCount > 10)
 		return true;
 
 	return false;
 }
 
 bool BoltEngine::killRTF(uint32 *outFilePos) {
-	if (!g_rtfFileHandle)
+	if (!_rtfFileHandle)
 		return false;
 
-	if (!g_ringBufBase)
+	if (!_ringBufBase)
 		return false;
 
 	_xp->stopSound();
 	
 	if (outFilePos)
-		*outFilePos = g_rtfAnimStartOffset;
+		*outFilePos = _rtfAnimStartOffset;
 
 	return true;
 }
@@ -317,66 +317,66 @@ bool BoltEngine::readPacket() {
 	byte padByte;
 	byte *destPtr;
 
-	if (!g_rtfMidChunk) {
+	if (!_rtfMidChunk) {
 		// Read 8-byte chunk header...
 		bytesRead = 4;
-		if (!_xp->readFile(g_rtfFileHandle, &g_rtfChunkTag, &bytesRead) || bytesRead != 4)
+		if (!_xp->readFile(_rtfFileHandle, &_rtfChunkTag, &bytesRead) || bytesRead != 4)
 			return false;
 
 		bytesRead = 4;
-		if (!_xp->readFile(g_rtfFileHandle, &g_rtfChunkSize, &bytesRead) || bytesRead != 4)
+		if (!_xp->readFile(_rtfFileHandle, &_rtfChunkSize, &bytesRead) || bytesRead != 4)
 			return false;
 
-		g_rtfChunkTag = FROM_BE_32(g_rtfChunkTag);
-		g_rtfChunkSize = FROM_BE_32(g_rtfChunkSize);
+		_rtfChunkTag = FROM_BE_32(_rtfChunkTag);
+		_rtfChunkSize = FROM_BE_32(_rtfChunkSize);
 
 		// End-of-file marker: 'EOR '
-		if (g_rtfChunkTag == MKTAG('E', 'O', 'R',' '))
+		if (_rtfChunkTag == MKTAG('E', 'O', 'R',' '))
 			return false;
 
-		g_rtfChunkRemaining = g_rtfChunkSize;
-		g_rtfMidChunk = true;
-		g_rtfCurrentPacket = nullptr;
+		_rtfChunkRemaining = _rtfChunkSize;
+		_rtfMidChunk = true;
+		_rtfCurrentPacket = nullptr;
 	}
 
-	if (!g_rtfCurrentPacket) {
-		g_rtfCurrentPacket = allocPacket(g_rtfChunkSize);
-		if (!g_rtfCurrentPacket)
+	if (!_rtfCurrentPacket) {
+		_rtfCurrentPacket = allocPacket(_rtfChunkSize);
+		if (!_rtfCurrentPacket)
 			return true;
 
-		g_rtfCurrentPacket->tag = g_rtfChunkTag;
+		_rtfCurrentPacket->tag = _rtfChunkTag;
 	}
 
 	// Read up to 4096 bytes at a time...
-	readSize = (g_rtfChunkRemaining > 0x1000) ? 0x1000 : g_rtfChunkRemaining;
+	readSize = (_rtfChunkRemaining > 0x1000) ? 0x1000 : _rtfChunkRemaining;
 
 	if (readSize != 0) {
-		destPtr = &g_rtfCurrentPacket->dataPtr[g_rtfChunkSize - g_rtfChunkRemaining];
+		destPtr = &_rtfCurrentPacket->dataPtr[_rtfChunkSize - _rtfChunkRemaining];
 
 		bytesRead = readSize;
-		if (!_xp->readFile(g_rtfFileHandle, destPtr, &bytesRead))
+		if (!_xp->readFile(_rtfFileHandle, destPtr, &bytesRead))
 			return false;
 
-		g_rtfChunkRemaining -= bytesRead;
+		_rtfChunkRemaining -= bytesRead;
 	}
 
-	if (g_rtfChunkRemaining != 0)
+	if (_rtfChunkRemaining != 0)
 		return true; // More data to read...
 
 	// Chunk fully read!
-	g_rtfMidChunk = false;
+	_rtfMidChunk = false;
 
 	// Skip padding byte for odd-sized chunks...
-	if (g_rtfChunkSize & 1) {
+	if (_rtfChunkSize & 1) {
 		bytesRead = 1;
-		if (!_xp->readFile(g_rtfFileHandle, &padByte, &bytesRead))
+		if (!_xp->readFile(_rtfFileHandle, &padByte, &bytesRead))
 			return false;
 	}
 
 	// Finally update file position tracker...
-	g_rtfAnimStartOffset += g_rtfChunkSize + (g_rtfChunkSize & 1) + 8;
+	_rtfAnimStartOffset += _rtfChunkSize + (_rtfChunkSize & 1) + 8;
 
-	preProcessPacket(g_rtfCurrentPacket);
+	preProcessPacket(_rtfCurrentPacket);
 
 	return true;
 }
@@ -384,16 +384,16 @@ bool BoltEngine::readPacket() {
 void BoltEngine::preProcessPacket(RTFPacket *packet) {
 	if (packet->tag == MKTAG('A', '2', '2', '8')) {
 		// Sound chunk: attempt to play it immediately!
-		if (g_rtfQueuedSoundCount < 50 && !g_rtfNeedInitialFill) {
-			g_rtfQueuedSoundCount++;
+		if (_rtfQueuedSoundCount < 50 && !_rtfNeedInitialFill) {
+			_rtfQueuedSoundCount++;
 			_xp->playSound(packet->dataPtr, packet->dataSize, 22050);
 
-			if (!g_rtfSoundPlayHead)
-				g_rtfSoundPlayHead = packet;
+			if (!_rtfSoundPlayHead)
+				_rtfSoundPlayHead = packet;
 		} else {
 			// Can't play yet, mark queue head...
-			if (!g_rtfSoundQueueHead)
-				g_rtfSoundQueueHead = packet;
+			if (!_rtfSoundQueueHead)
+				_rtfSoundQueueHead = packet;
 		}
 
 		// Duration in hundredths of a second: dataSize / 2205 (22050 Hz / 10)
@@ -401,12 +401,12 @@ void BoltEngine::preProcessPacket(RTFPacket *packet) {
 		if (packet->duration == 0)
 			packet->duration = 1;
 
-		g_rtfCumulativeTime += packet->duration;
-		g_rtfSoundTiming += packet->duration;
+		_rtfCumulativeTime += packet->duration;
+		_rtfSoundTiming += packet->duration;
 	}
 
 	// Stamp packet with current timeline position...
-	packet->timestamp = g_rtfCumulativeTime;
+	packet->timestamp = _rtfCumulativeTime;
 
 	queuePacket(packet);
 }
@@ -418,37 +418,37 @@ void BoltEngine::queuePacket(RTFPacket *packet) {
 		  (packet->tag >> 8) & 0xFF,
 		  packet->tag & 0xFF);
 
-	if (g_rtfChunkListTail) {
-		g_rtfChunkListTail->next = packet;
+	if (_rtfChunkListTail) {
+		_rtfChunkListTail->next = packet;
 	} else {
-		g_rtfChunkListHead = packet;
+		_rtfChunkListHead = packet;
 	}
 
-	g_rtfChunkListTail = packet;
+	_rtfChunkListTail = packet;
 	packet->next = nullptr;
-	g_rtfChunkCount++;
+	_rtfChunkCount++;
 }
 
 RTFPacket *BoltEngine::deQueuePacket() {
-	if (g_rtfChunkListHead)
+	if (_rtfChunkListHead)
 		debug(5, "BoltEngine::deQueuePacket(): Dequeuing packet of type: %c%c%c%c",
-			  (g_rtfChunkListHead->tag >> 24) & 0xFF,
-			  (g_rtfChunkListHead->tag >> 16) & 0xFF,
-			  (g_rtfChunkListHead->tag >> 8) & 0xFF,
-			  g_rtfChunkListHead->tag & 0xFF);
+			  (_rtfChunkListHead->tag >> 24) & 0xFF,
+			  (_rtfChunkListHead->tag >> 16) & 0xFF,
+			  (_rtfChunkListHead->tag >> 8) & 0xFF,
+			  _rtfChunkListHead->tag & 0xFF);
 
-	RTFPacket *packet = g_rtfChunkListHead;
+	RTFPacket *packet = _rtfChunkListHead;
 
-	if (g_rtfChunkListHead) {
-		g_rtfChunkListHead = packet->next;
+	if (_rtfChunkListHead) {
+		_rtfChunkListHead = packet->next;
 
-		if (!g_rtfChunkListHead)
-			g_rtfChunkListTail = nullptr;
+		if (!_rtfChunkListHead)
+			_rtfChunkListTail = nullptr;
 
 		packet->next = nullptr;
 	}
 
-	g_rtfChunkCount--;
+	_rtfChunkCount--;
 	return packet;
 }
 
@@ -464,30 +464,30 @@ RTFPacket *BoltEngine::allocPacket(uint32 dataSize) {
 		totalSize = (totalSize + 4) & ~3;
 
 	// How much contiguous space from write pointer to end of buffer?
-	available = (uint32)(g_ringBufBase - g_ringBufWritePtr) + g_ringBufSize;
+	available = (uint32)(_ringBufBase - _ringBufWritePtr) + _ringBufSize;
 
-	if (available >= g_ringBufFreeSpace) {
-		available = g_ringBufFreeSpace;
+	if (available >= _ringBufFreeSpace) {
+		available = _ringBufFreeSpace;
 		freeAfterWrap = 0;
 	} else {
-		freeAfterWrap = g_ringBufFreeSpace - available;
+		freeAfterWrap = _ringBufFreeSpace - available;
 	}
 
 	if (available >= totalSize) {
-		allocPtr = g_ringBufWritePtr;
+		allocPtr = _ringBufWritePtr;
 	} else {
 		// Not enough space before the end: try wrapping to buffer start...
 		if (freeAfterWrap < totalSize)
 			return nullptr;
 
-		allocPtr = g_ringBufBase;
-		g_ringBufWritePtr = g_ringBufBase;
-		g_ringBufUsed = available;
-		g_ringBufFreeSpace -= available;
+		allocPtr = _ringBufBase;
+		_ringBufWritePtr = _ringBufBase;
+		_ringBufUsed = available;
+		_ringBufFreeSpace -= available;
 	}
 
-	g_ringBufWritePtr += totalSize;
-	g_ringBufFreeSpace -= totalSize;
+	_ringBufWritePtr += totalSize;
+	_ringBufFreeSpace -= totalSize;
 
 	// Init packet header and return...
 	RTFPacket *outPacket = new RTFPacket();
@@ -501,28 +501,28 @@ RTFPacket *BoltEngine::allocPacket(uint32 dataSize) {
 
 void BoltEngine::freePacket(RTFPacket *packet) {
 	// Return allocated size to free space...
-	g_ringBufFreeSpace += packet->allocSize;
+	_ringBufFreeSpace += packet->allocSize;
 
 	// Calculate distance from packet to buffer end...
-	uint32 distToEnd = g_ringBufSize - (packet->ringBufPtr - g_ringBufBase) - (packet->allocSize);
+	uint32 distToEnd = _ringBufSize - (packet->ringBufPtr - _ringBufBase) - (packet->allocSize);
 
 	// If this was the last packet before the wrap point, reclaim the gap!
-	if (distToEnd == g_ringBufUsed) {
-		g_ringBufFreeSpace += g_ringBufUsed;
-		g_ringBufUsed = 0;
+	if (distToEnd == _ringBufUsed) {
+		_ringBufFreeSpace += _ringBufUsed;
+		_ringBufUsed = 0;
 	}
 
 	// If buffer is completely empty, reset write pointer!
-	if (g_ringBufFreeSpace == g_ringBufSize)
-		g_ringBufWritePtr = g_ringBufBase;
+	if (_ringBufFreeSpace == _ringBufSize)
+		_ringBufWritePtr = _ringBufBase;
 
 	delete packet;
 }
 
 void BoltEngine::resetPlaybackState() {
-	g_rtfFileHandle = nullptr;
-	g_ringBufBase = nullptr;
-	g_rtfSoundActive = false;
+	_rtfFileHandle = nullptr;
+	_ringBufBase = nullptr;
+	_rtfSoundActive = false;
 }
 
 } // End of namespace Bolt

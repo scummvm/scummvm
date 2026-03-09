@@ -231,52 +231,52 @@ void BoltEngine::setSSpritePath(SSprite *sprite, byte *pathData, int16 pathCount
 }
 
 bool BoltEngine::inSSprite(SSprite *sprite, int16 x, int16 y) {
-	g_spriteCollTempX = sprite->collX;
-	g_spriteCollTempY = sprite->collY;
-	g_spriteCollTempW = sprite->collW;
-	g_spriteCollTempH = sprite->collH;
+	_spriteCollTempX = sprite->collX;
+	_spriteCollTempY = sprite->collY;
+	_spriteCollTempW = sprite->collW;
+	_spriteCollTempH = sprite->collH;
 
-	g_spriteScreenX = sprite->x + g_spriteCollTempX;
-	g_spriteScreenY = sprite->y + g_spriteCollTempY;
+	_spriteScreenX = sprite->x + _spriteCollTempX;
+	_spriteScreenY = sprite->y + _spriteCollTempY;
 
-	if ((uint16)x < (uint16)g_spriteScreenX)
+	if ((uint16)x < (uint16)_spriteScreenX)
 		return false;
 
-	if ((uint16)y < (uint16)g_spriteScreenY)
+	if ((uint16)y < (uint16)_spriteScreenY)
 		return false;
 
-	if ((uint16)(g_spriteScreenX + sprite->collW) < (uint16)x)
+	if ((uint16)(_spriteScreenX + sprite->collW) < (uint16)x)
 		return false;
 
-	if ((uint16)(g_spriteScreenY + sprite->collH) < (uint16)y)
+	if ((uint16)(_spriteScreenY + sprite->collH) < (uint16)y)
 		return false;
 
 	return true;
 }
 
 bool BoltEngine::sSpriteCollide(SSprite *spriteA, SSprite *spriteB) {
-	g_spriteCollTempA[0] = spriteA->collX;
-	g_spriteCollTempA[1] = spriteA->collY;
-	g_spriteCollTempA[2] = spriteA->collW;
-	g_spriteCollTempA[3] = spriteA->collH;
+	_spriteCollTempA[0] = spriteA->collX;
+	_spriteCollTempA[1] = spriteA->collY;
+	_spriteCollTempA[2] = spriteA->collW;
+	_spriteCollTempA[3] = spriteA->collH;
 
-	g_spriteCollTempB[0] = spriteB->collX;
-	g_spriteCollTempB[1] = spriteB->collY;
-	g_spriteCollTempB[2] = spriteB->collW;
-	g_spriteCollTempB[3] = spriteB->collH;
+	_spriteCollTempB[0] = spriteB->collX;
+	_spriteCollTempB[1] = spriteB->collY;
+	_spriteCollTempB[2] = spriteB->collW;
+	_spriteCollTempB[3] = spriteB->collH;
 
-	g_spriteScreenAX = spriteA->x + g_spriteCollTempA[0];
-	g_spriteScreenBX = spriteB->x + g_spriteCollTempB[0];
-	g_spriteScreenAY = spriteA->y + g_spriteCollTempA[1];
-	g_spriteScreenBY = spriteB->y + g_spriteCollTempB[1];
+	_spriteScreenAX = spriteA->x + _spriteCollTempA[0];
+	_spriteScreenBX = spriteB->x + _spriteCollTempB[0];
+	_spriteScreenAY = spriteA->y + _spriteCollTempA[1];
+	_spriteScreenBY = spriteB->y + _spriteCollTempB[1];
 
-	if ((uint16)(g_spriteScreenAX + g_spriteCollTempA[2]) < (uint16)g_spriteScreenBX)
+	if ((uint16)(_spriteScreenAX + _spriteCollTempA[2]) < (uint16)_spriteScreenBX)
 		return false;
-	if ((uint16)(g_spriteScreenAY + g_spriteCollTempA[3]) < (uint16)g_spriteScreenBY)
+	if ((uint16)(_spriteScreenAY + _spriteCollTempA[3]) < (uint16)_spriteScreenBY)
 		return false;
-	if ((uint16)(g_spriteScreenBX + g_spriteCollTempB[2]) < (uint16)g_spriteScreenAX)
+	if ((uint16)(_spriteScreenBX + _spriteCollTempB[2]) < (uint16)_spriteScreenAX)
 		return false;
-	if ((uint16)(g_spriteScreenBY + g_spriteCollTempB[3]) < (uint16)g_spriteScreenAY)
+	if ((uint16)(_spriteScreenBY + _spriteCollTempB[3]) < (uint16)_spriteScreenAY)
 		return false;
 
 	return true;

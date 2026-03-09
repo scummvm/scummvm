@@ -28,28 +28,28 @@ namespace Bolt {
 
 bool XpLib::initEvents() {
 	for (int16 i = 0; i < 40; i++) {
-		g_events[i].next = g_eventFreeList;
-		g_eventFreeList = &g_events[i];
+		_events[i].next = _eventFreeList;
+		_eventFreeList = &_events[i];
 	}
 
-	g_inactivityTimerId = 0;
-	g_inactivityTimeout = 0;
-	g_mouseButtonState = 0;
-	g_mouseButtonPrev = 0;
-	g_eventMouseMoved = 0;
-	g_eventKeyStates = 0;
+	_inactivityTimerId = 0;
+	_inactivityTimeout = 0;
+	_mouseButtonState = 0;
+	_mouseButtonPrev = 0;
+	_eventMouseMoved = 0;
+	_eventKeyStates = 0;
 
 	return true;
 }
 
 void XpLib::shutdownEvents() {
-	g_eventFreeList = nullptr;
-	g_eventQueueTail = nullptr;
-	g_eventQueueHead = nullptr;
+	_eventFreeList = nullptr;
+	_eventQueueTail = nullptr;
+	_eventQueueHead = nullptr;
 
-	if (g_inactivityTimerId != 0) {
-		killTimer(g_inactivityTimerId);
-		g_inactivityTimerId = 0;
+	if (_inactivityTimerId != 0) {
+		killTimer(_inactivityTimerId);
+		_inactivityTimerId = 0;
 	}
 }
 
@@ -57,7 +57,7 @@ int16 XpLib::getEvent(int16 filter, uint32 *outData, byte **outPtrData) {
 	pumpMessages();
 
 	// Search event queue for matching event type...
-	XPEvent *node = g_eventQueueHead;
+	XPEvent *node = _eventQueueHead;
 	if (filter != 0) {
 		while (node) {
 			if (node->type == filter)
@@ -79,8 +79,8 @@ int16 XpLib::getEvent(int16 filter, uint32 *outData, byte **outPtrData) {
 		*outPtrData = node->payloadPtr;
 
 	// Return node to free list...
-	node->next = g_eventFreeList;
-	g_eventFreeList = node;
+	node->next = _eventFreeList;
+	_eventFreeList = node;
 
 	return node->type;
 }
@@ -88,7 +88,7 @@ int16 XpLib::getEvent(int16 filter, uint32 *outData, byte **outPtrData) {
 int16 XpLib::peekEvent(int16 filter, uint32 *outData, byte **outPtrData) {
 	pumpMessages();
 
-	XPEvent *node = g_eventQueueHead;
+	XPEvent *node = _eventQueueHead;
 	if (filter != 0) {
 		while (node) {
 			if (node->type == filter)
@@ -112,14 +112,14 @@ void XpLib::unlinkEvent(XPEvent *node) {
 		XPEvent *prev = node->prev;
 		prev->next = node->next;
 	} else {
-		g_eventQueueHead = node->next;
+		_eventQueueHead = node->next;
 	}
 
 	if (node->next) {
 		XPEvent *next = node->next;
 		next->prev = node->prev;
 	} else {
-		g_eventQueueTail = node->prev;
+		_eventQueueTail = node->prev;
 	}
 }
 
@@ -127,15 +127,15 @@ void XpLib::enqueueEvent(XPEvent *node) {
 	// Append node to tail of event queue...
 	node->next = nullptr;
 
-	if (g_eventQueueTail) {
-		XPEvent *tail = g_eventQueueTail;
+	if (_eventQueueTail) {
+		XPEvent *tail = _eventQueueTail;
 		tail->next = node;
-		node->prev = g_eventQueueTail;
-		g_eventQueueTail = node;
+		node->prev = _eventQueueTail;
+		_eventQueueTail = node;
 	} else {
 		// Queue was empty...
-		g_eventQueueTail = node;
-		g_eventQueueHead = node;
+		_eventQueueTail = node;
+		_eventQueueHead = node;
 		node->prev = nullptr;
 	}
 }
@@ -155,10 +155,10 @@ void XpLib::pumpMessages() {
 	cycleColors();
 
 	// Check inactivity timeout...
-	if (g_inactivityDeadline != 0) {
+	if (_inactivityDeadline != 0) {
 		uint32 now = _bolt->_system->getMillis();
-		if (now > g_inactivityDeadline) {
-			g_inactivityDeadline = 0;
+		if (now > _inactivityDeadline) {
+			_inactivityDeadline = 0;
 			setCursorPos(160, 100);
 			postJoystickEvent(0, 0, 0);
 		}
@@ -172,8 +172,8 @@ void XpLib::pumpMessages() {
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
-			g_lastRegisteredMousePos.x = event.mouse.x;
-			g_lastRegisteredMousePos.y = event.mouse.y;
+			_lastRegisteredMousePos.x = event.mouse.x;
+			_lastRegisteredMousePos.y = event.mouse.y;
 			handleMouseMove(&mouseMoved);
 			break;
 
@@ -223,40 +223,40 @@ void XpLib::pumpMessages() {
 }
 
 void XpLib::handleTimer(uint32 timerId) {
-	if (timerId != g_inactivityTimerId) {
+	if (timerId != _inactivityTimerId) {
 		postEvent(etTimer, timerId);
 		return;
 	}
 
-	if (g_inactivityCountdown != 0) {
-		g_inactivityCountdown--;
-		if (g_inactivityCountdown == 0)
+	if (_inactivityCountdown != 0) {
+		_inactivityCountdown--;
+		if (_inactivityCountdown == 0)
 			postEvent(etInactivity, 0);
 	}
 
-	if (g_screensaverCountdown != 0) {
-		g_screensaverCountdown--;
-		if (g_screensaverCountdown == 0)
+	if (_screensaverCountdown != 0) {
+		_screensaverCountdown--;
+		if (_screensaverCountdown == 0)
 			activateScreenSaver();
 	}
 
-	if (g_inactivityCountdown != 0 || g_screensaverCountdown != 0) {
-		g_inactivityTimerId = startTimer(1000);
+	if (_inactivityCountdown != 0 || _screensaverCountdown != 0) {
+		_inactivityTimerId = startTimer(1000);
 	} else {
-		g_inactivityTimerId = 0;
+		_inactivityTimerId = 0;
 	}
 }
 
 void XpLib::handleMouseMove(bool *mouseMoved) {
 	resetInactivity();
 
-	if (g_eventKeyStates == eksMouseMode) {
+	if (_eventKeyStates == eksMouseMode) {
 		*mouseMoved = true;
 		int16 x, y;
 		readCursor(nullptr, &x, &y);
 		postEvent(etMouseMove, ((uint32)x << 16) | (int16)y);
-		g_eventMouseMoved = 0;
-	} else if (g_eventKeyStates == eksJoystickMode) {
+		_eventMouseMoved = 0;
+	} else if (_eventKeyStates == eksJoystickMode) {
 		int16 joyX, joyY;
 		readJoystick(&joyX, &joyY);
 
@@ -269,24 +269,24 @@ void XpLib::handleMouseMove(bool *mouseMoved) {
 		}
 
 		// Set inactivity deadline 100ms from now...
-		g_inactivityDeadline = _bolt->_system->getMillis() + 100;
+		_inactivityDeadline = _bolt->_system->getMillis() + 100;
 	}
 }
 
 void XpLib::handleMouseButton(int16 down, int16 button) {
 	resetInactivity();
 
-	if (g_eventKeyStates == eksMouseMode) {
+	if (_eventKeyStates == eksMouseMode) {
 		int16 x, y;
 		readCursor(nullptr, &x, &y);
 		postEvent(etMouseMove, ((uint32)x << 16) | (int16)y);
 	}
 
 	if (down) {
-		g_mouseButtonPrev |= (1 << button);
+		_mouseButtonPrev |= (1 << button);
 		postEvent(etMouseDown, (uint32)button);
 	} else {
-		g_mouseButtonPrev &= ~(1 << button);
+		_mouseButtonPrev &= ~(1 << button);
 		postEvent(etMouseUp, (uint32)button);
 	}
 }
@@ -295,14 +295,14 @@ void XpLib::handleKey(Common::KeyCode vkey, int16 down) {
 	resetInactivity();
 
 	if (vkey == Common::KEYCODE_ESCAPE) {
-		if (g_mouseButtonState != down) {
-			if (g_eventKeyStates == eksMouseMode) {
+		if (_mouseButtonState != down) {
+			if (_eventKeyStates == eksMouseMode) {
 				int16 x, y;
 				readCursor(nullptr, &x, &y);
 				postEvent(etMouseMove, ((uint32)x << 16) | (int16)y);
 			}
 
-			g_mouseButtonState = down;
+			_mouseButtonState = down;
 			postEvent(down ? etMouseDown : etMouseUp, 0);
 		}
 
@@ -312,16 +312,16 @@ void XpLib::handleKey(Common::KeyCode vkey, int16 down) {
 	int8 *dirPtr = nullptr;
 	switch (vkey) {
 	case Common::KEYCODE_LEFT:
-		dirPtr = &g_keyStateLeft;
+		dirPtr = &_keyStateLeft;
 		break; // VK_LEFT
 	case Common::KEYCODE_UP:
-		dirPtr = &g_keyStateUp;
+		dirPtr = &_keyStateUp;
 		break; // VK_UP
 	case Common::KEYCODE_RIGHT:
-		dirPtr = &g_keyStateRight;
+		dirPtr = &_keyStateRight;
 		break; // VK_RIGHT
 	case Common::KEYCODE_DOWN:
-		dirPtr = &g_keyStateDown;
+		dirPtr = &_keyStateDown;
 		break; // VK_DOWN
 	}
 
@@ -333,47 +333,47 @@ void XpLib::handleKey(Common::KeyCode vkey, int16 down) {
 
 	*dirPtr = (int8)down;
 
-	if (g_eventKeyStates == eksJoystickMode) {
-		int16 dx = g_keyStateRight - g_keyStateLeft;
-		int16 dy = g_keyStateDown - g_keyStateUp;
+	if (_eventKeyStates == eksJoystickMode) {
+		int16 dx = _keyStateRight - _keyStateLeft;
+		int16 dy = _keyStateDown - _keyStateUp;
 		postJoystickEvent(1, dx, dy);
 	}
 }
 
 void XpLib::postJoystickEvent(int16 source, int16 dx, int16 dy) {
-	g_eventMouseMoved = source;
+	_eventMouseMoved = source;
 
-	if (dx != g_lastJoystickX || dy != g_lastJoystickY) {
+	if (dx != _lastJoystickX || dy != _lastJoystickY) {
 		postEvent(etJoystick, ((uint32)dx << 16) | (uint16)dy);
-		g_lastJoystickX = dx;
-		g_lastJoystickY = dy;
+		_lastJoystickX = dx;
+		_lastJoystickY = dy;
 	}
 }
 
 void XpLib::postEvent(XPEventTypes type, uint32 data, byte *ptrData) {
 	if (type == etMouseMove) {
-		if (g_lastMouseEventData == data)
+		if (_lastMouseEventData == data)
 			return;
 
-		g_lastMouseEventData = data;
-		if (g_eventQueueTail && g_eventQueueTail->type == etMouseMove) {
-			g_eventQueueTail->payload = data;
+		_lastMouseEventData = data;
+		if (_eventQueueTail && _eventQueueTail->type == etMouseMove) {
+			_eventQueueTail->payload = data;
 			return;
 		}
 	}
 
 	XPEvent *node;
-	if (g_eventFreeList) {
+	if (_eventFreeList) {
 		// Allocate from free list...
-		node = g_eventFreeList;
-		g_eventFreeList = g_eventFreeList->next;
+		node = _eventFreeList;
+		_eventFreeList = _eventFreeList->next;
 	} else {
 		// Queue full: try to evict a droppable event...
 		if (!canDropEvent(type))
 			return;
 
 		// Walk queue from tail looking for droppable event...
-		node = g_eventQueueTail;
+		node = _eventQueueTail;
 		while (node) {
 			if (canDropEvent(node->type))
 				break;
@@ -382,7 +382,7 @@ void XpLib::postEvent(XPEventTypes type, uint32 data, byte *ptrData) {
 		}
 
 		if (!node)
-			node = g_eventQueueHead;
+			node = _eventQueueHead;
 
 		unlinkEvent(node);
 	}
@@ -411,13 +411,13 @@ bool XpLib::canDropEvent(int16 type) {
 }
 
 int16 XpLib::setInactivityTimer(int16 seconds) {
-	int16 prev = g_inactivityTimerValue;
+	int16 prev = _inactivityTimerValue;
 
-	g_inactivityTimerValue = seconds;
-	g_inactivityCountdown = seconds;
+	_inactivityTimerValue = seconds;
+	_inactivityCountdown = seconds;
 
-	if (seconds != 0 && g_inactivityTimerId == 0)
-		g_inactivityTimerId = startTimer(1000);
+	if (seconds != 0 && _inactivityTimerId == 0)
+		_inactivityTimerId = startTimer(1000);
 
 	// Drain any pending inactivity events from the queue...
 	uint32 payloadDummy;
@@ -429,60 +429,60 @@ int16 XpLib::setInactivityTimer(int16 seconds) {
 }
 
 int16 XpLib::setScreenSaverTimer(int16 seconds) {
-	int16 prev = g_screenSaverTimerValue;
+	int16 prev = _screenSaverTimerValue;
 
-	g_screenSaverTimerValue = seconds;
-	g_screensaverCountdown = seconds;
+	_screenSaverTimerValue = seconds;
+	_screensaverCountdown = seconds;
 
-	if (seconds != 0 && g_inactivityTimerId == 0)
-		g_inactivityTimerId = startTimer(1000);
+	if (seconds != 0 && _inactivityTimerId == 0)
+		_inactivityTimerId = startTimer(1000);
 
 	return prev;
 }
 
 void XpLib::activateScreenSaver() {
-	g_inactivityTimeout = 1;
+	_inactivityTimeout = 1;
 	setScreenBrightness(25); // Dim to 25%...
 }
 
 void XpLib::resetInactivity() {
-	if (g_inactivityTimeout != 0) {
+	if (_inactivityTimeout != 0) {
 		setScreenBrightness(100); // Restore full brightness...
-		g_inactivityTimeout = 0;
+		_inactivityTimeout = 0;
 	}
 
 	// Reset screensaver countdown
-	g_screensaverCountdown = g_screenSaverTimerValue;
+	_screensaverCountdown = _screenSaverTimerValue;
 
-	if (g_screenSaverTimerValue != 0 && g_inactivityTimerId == 0)
-		g_inactivityTimerId = startTimer(1000);
+	if (_screenSaverTimerValue != 0 && _inactivityTimerId == 0)
+		_inactivityTimerId = startTimer(1000);
 }
 
 bool XpLib::enableController() {
 	// Don't switch if already in mouse mode...
-	if (g_eventKeyStates == eksMouseMode)
+	if (_eventKeyStates == eksMouseMode)
 		return false;
 
-	g_eventKeyStates = eksJoystickMode;
+	_eventKeyStates = eksJoystickMode;
 	setCursorPos(160, 100);
 	return true;
 }
 
 void XpLib::disableController() {
-	g_eventKeyStates = eksInputOff;
-	g_inactivityDeadline = 0;
+	_eventKeyStates = eksInputOff;
+	_inactivityDeadline = 0;
 }
 
 void XpLib::enableMouse() {
-	g_eventKeyStates = eksMouseMode;
+	_eventKeyStates = eksMouseMode;
 }
 
 void XpLib::disableMouse() {
-	g_eventKeyStates = eksInputOff;
+	_eventKeyStates = eksInputOff;
 }
 
 int16 XpLib::getButtonState() {
-	return g_mouseButtonPrev | g_mouseButtonState;
+	return _mouseButtonPrev | _mouseButtonState;
 }
 
 } // End of namespace Bolt

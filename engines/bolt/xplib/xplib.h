@@ -227,7 +227,7 @@ public:
 
 protected:
 	BoltEngine *_bolt = nullptr;
-	bool g_xpInitialized = false;
+	bool _xpInitialized = false;
 
 	// Blit
 	void dirtyBlit(byte *src, byte *dst, uint16 width, uint16 height, byte *dirtyFlags);
@@ -239,26 +239,26 @@ protected:
 	void markCursorPixels(byte *buffer, uint32 count);
 
 	// Palette
-	XPCycleState g_cycleStates[4];
-	byte g_paletteBuffer[3 * 256];
-	byte g_shiftedPaletteBuffer[3 * 256];
-	byte g_cycleTempPalette[3 * 20];
-	uint32 g_cycleTimerIds[4];
-	int16 g_brightnessShift = 0;
+	XPCycleState _cycleStates[4];
+	byte _paletteBuffer[3 * 256];
+	byte _shiftedPaletteBuffer[3 * 256];
+	byte _cycleTempPalette[3 * 20];
+	uint32 _cycleTimerIds[4];
+	int16 _brightnessShift = 0;
 
 	// Cursor
 	bool initCursor();
 	void shutdownCursor();
 	void readJoystick(int16 *outX, int16 *outY);
 
-	byte g_cursorBuffer[16 * 16];
-	int16 g_cursorHotspotX = 0;
-	int16 g_cursorHotspotY = 0;
-	int16 g_lastCursorX = 0;
-	int16 g_lastCursorY = 0;
-	int16 g_cursorViewportWidth = 0;
-	int16 g_cursorViewportHeight = 0;
-	int16 g_cursorHidden = 1;
+	byte _cursorBuffer[16 * 16];
+	int16 _cursorHotspotX = 0;
+	int16 _cursorHotspotY = 0;
+	int16 _lastCursorX = 0;
+	int16 _lastCursorY = 0;
+	int16 _cursorViewportWidth = 0;
+	int16 _cursorViewportHeight = 0;
+	int16 _cursorHidden = 1;
 
 	// Events
 	bool initEvents();
@@ -278,26 +278,26 @@ protected:
 	void disableMouse();
 	int16 getButtonState();
 
-	XPEvent g_events[40];
+	XPEvent _events[40];
 
-	int8 g_keyStateLeft = 0;
-	int8 g_keyStateRight = 0;
-	int8 g_keyStateUp = 0;
-	int8 g_keyStateDown = 0;
-	int16 g_lastJoystickX = 0;
-	int16 g_lastJoystickY = 0;
-	int16 g_mouseButtonPrev = 0;
-	int16 g_mouseButtonState = 0;
-	int16 g_eventMouseMoved = 0;
-	int16 g_eventKeyStates = 0;
-	uint32 g_inactivityDeadline = 0;
+	int8 _keyStateLeft = 0;
+	int8 _keyStateRight = 0;
+	int8 _keyStateUp = 0;
+	int8 _keyStateDown = 0;
+	int16 _lastJoystickX = 0;
+	int16 _lastJoystickY = 0;
+	int16 _mouseButtonPrev = 0;
+	int16 _mouseButtonState = 0;
+	int16 _eventMouseMoved = 0;
+	int16 _eventKeyStates = 0;
+	uint32 _inactivityDeadline = 0;
 
-	XPEvent *g_eventQueueHead = nullptr;
-	XPEvent *g_eventQueueTail = nullptr;
-	XPEvent *g_eventFreeList = nullptr;
+	XPEvent *_eventQueueHead = nullptr;
+	XPEvent *_eventQueueTail = nullptr;
+	XPEvent *_eventFreeList = nullptr;
 
-	uint32 g_lastMouseEventData = 0;
-	Common::Point g_lastRegisteredMousePos;
+	uint32 _lastMouseEventData = 0;
+	Common::Point _lastRegisteredMousePos;
 
 	// Display
 	bool initDisplay();
@@ -320,38 +320,36 @@ protected:
 	void applyCursorPalette();
 	void prepareBackSurface();
 
-	Graphics::Screen *_screen = nullptr;
+	XPSurface _surfaces[2];
 
-	XPSurface g_surfaces[2];
+	int16 _virtualWidth = 0;
+	int16 _virtualHeight = 0;
+	int16 _currentDisplayPage = 0;
+	int16 _prevRenderFlags = 0;
+	int16 _renderFlags = 0;
+	int16 _frameRateFPS = 0;
+	int16 _overlayCount = 0;
+	int16 _prevDirtyCount = 0;
+	int16 _prevDirtyValid = 0;
+	int16 _surfaceWidth = 0;
+	int16 _surfaceHeight = 0;
+	int16 _viewportOffsetX = 0;
+	int16 _viewportOffsetY = 0;
+	uint32 _nextFrameTime = 0;
 
-	int16 g_virtualWidth = 0;
-	int16 g_virtualHeight = 0;
-	int16 g_currentDisplayPage = 0;
-	int16 g_prevRenderFlags = 0;
-	int16 g_renderFlags = 0;
-	int16 g_frameRateFPS = 0;
-	int16 g_overlayCount = 0;
-	int16 g_prevDirtyCount = 0;
-	int16 g_prevDirtyValid = 0;
-	int16 g_surfaceWidth = 0;
-	int16 g_surfaceHeight = 0;
-	int16 g_viewportOffsetX = 0;
-	int16 g_viewportOffsetY = 0;
-	uint32 g_nextFrameTime = 0;
+	Common::Rect _dirtyRects[30];
+	Common::Rect _prevDirtyRects[30];
+	Common::Rect _cursorRect;
+	Common::Rect _prevCursorRect;
+	Common::Rect _overlayCursorRect;
+	Common::Rect _prevOverlayCursorRect;
 
-	Common::Rect g_dirtyRects[30];
-	Common::Rect g_prevDirtyRects[30];
-	Common::Rect g_cursorRect;
-	Common::Rect g_prevCursorRect;
-	Common::Rect g_overlayCursorRect;
-	Common::Rect g_prevOverlayCursorRect;
+	byte *_vgaFramebuffer = nullptr;
+	byte *_rowDirtyFlags = nullptr;
+	byte _cursorBackgroundSaveBuffer[16 * 16];
 
-	byte *g_vgaFramebuffer = nullptr;
-	byte *g_rowDirtyFlags = nullptr;
-	byte g_cursorBackgroundSaveBuffer[16 * 16];
-
-	XPPicDesc g_cursorBackgroundSave;
-	XPPicDesc g_cursorSprite;
+	XPPicDesc _cursorBackgroundSave;
+	XPPicDesc _cursorSprite;
 
 	// File
 	void fileError(const char *message);
@@ -379,17 +377,17 @@ protected:
 	bool initTimer();
 	void shutdownTimer();
 
-	uint32 g_inactivityTimerId = 0;
-	int16 g_inactivityCountdown = 0;
-	int16 g_inactivityTimerValue = 0;
-	int16 g_screensaverCountdown = 0;
-	int16 g_screenSaverTimerValue = 0;
-	int16 g_inactivityTimeout = 0;
+	uint32 _inactivityTimerId = 0;
+	int16 _inactivityCountdown = 0;
+	int16 _inactivityTimerValue = 0;
+	int16 _screensaverCountdown = 0;
+	int16 _screenSaverTimerValue = 0;
+	int16 _inactivityTimeout = 0;
 
-	bool g_timerInitialized = false;
+	bool _timerInitialized = false;
 
-	XPTimer g_timers[128];
-	uint16 g_nextTimerId = 0;
+	XPTimer _timers[128];
+	uint16 _nextTimerId = 0;
 };
 
 } // End of namespace Bolt

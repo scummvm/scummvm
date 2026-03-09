@@ -87,20 +87,20 @@ void BoltEngine::decompress(byte *dest, uint32 decompSize, byte *src) {
 bool BoltEngine::libRead(Common::File *fileHandle, uint32 offset, byte *dest, uint32 size) {
 	uint32 bytesRead = size;
 
-	if (g_cachedFileHandle != fileHandle || g_cachedFilePos != offset) {
+	if (_cachedFileHandle != fileHandle || _cachedFilePos != offset) {
 		if (!_xp->setFilePos(fileHandle, offset, 0))
 			return false;
 	}
 
 	if (_xp->readFile(fileHandle, dest, &bytesRead)) {
 		if (bytesRead == size) {
-			g_cachedFileHandle = fileHandle;
-			g_cachedFilePos = offset + bytesRead;
+			_cachedFileHandle = fileHandle;
+			_cachedFilePos = offset + bytesRead;
 			return true;
 		}
 	}
 
-	g_cachedFileHandle = nullptr;
+	_cachedFileHandle = nullptr;
 	return false;
 }
 
@@ -112,31 +112,31 @@ void BoltEngine::resolveIt(uint32 *ref) {
 
 	uint32 swapped = FROM_BE_32(*ref);
 
-	byte *resolved = memberAddrOffset(g_boltCurrentLib, swapped);
+	byte *resolved = memberAddrOffset(_boltCurrentLib, swapped);
 
 	if (resolved != nullptr) {
-		uint32 idx = g_resolvedPtrs.size();
-		g_resolvedPtrs.push_back(resolved);
+		uint32 idx = _resolvedPtrs.size();
+		_resolvedPtrs.push_back(resolved);
 		*ref = idx | 0x80000000; // High bit marks as resolved index
 	} else {
 		// Target not loaded yet, queue for later...
 		*ref = swapped;
-		if (g_pendingFixupCount < g_resourceIndexCount) {
-			g_resourceIndex[g_pendingFixupCount] = ref;
-			g_pendingFixupCount++;
+		if (_pendingFixupCount < _resourceIndexCount) {
+			_resourceIndex[_pendingFixupCount] = ref;
+			_pendingFixupCount++;
 		}
 	}
 }
 
 void BoltEngine::resolvePendingFixups() {
-	while (g_pendingFixupCount > 0) {
-		g_pendingFixupCount--;
-		uint32 *ref = (uint32 *)g_resourceIndex[g_pendingFixupCount];
+	while (_pendingFixupCount > 0) {
+		_pendingFixupCount--;
+		uint32 *ref = (uint32 *)_resourceIndex[_pendingFixupCount];
 
-		byte *resolved = memberAddrOffset(g_boltCurrentLib, *ref);
+		byte *resolved = memberAddrOffset(_boltCurrentLib, *ref);
 
-		uint32 idx = g_resolvedPtrs.size();
-		g_resolvedPtrs.push_back(resolved);
+		uint32 idx = _resolvedPtrs.size();
+		_resolvedPtrs.push_back(resolved);
 		*ref = idx | 0x80000000;
 	}
 }
@@ -154,11 +154,11 @@ void BoltEngine::resolveFunction(uint32 *ref) {
 }
 
 void BoltEngine::resolveAllRefs() {
-	byte *data = g_boltCurrentMemberEntry->dataPtr;
+	byte *data = _boltCurrentMemberEntry->dataPtr;
 	if (data == nullptr)
 		return;
 
-	uint32 count = g_boltCurrentMemberEntry->decompSize / 4;
+	uint32 count = _boltCurrentMemberEntry->decompSize / 4;
 	uint32 *ptr = (uint32 *)data;
 	for (uint32 i = 0; i < count; i++) {
 		resolveIt(&ptr[i]);
@@ -172,7 +172,7 @@ byte *BoltEngine::getResolvedPtr(byte *data, int offset) {
 		return nullptr;
 
 	if (val & 0x80000000)
-		return g_resolvedPtrs[val & 0x7FFFFFFF];
+		return _resolvedPtrs[val & 0x7FFFFFFF];
 
 	return nullptr;
 }
@@ -184,11 +184,11 @@ bool BoltEngine::openBOLTLib(BOLTLib **libPtr, BOLTCallbacks *callbacks, const c
 	// If already open, bump reference count...
 	if (*libPtr) {
 		(*libPtr)->refCount++;
-		g_boltCurrentLib = *libPtr;
+		_boltCurrentLib = *libPtr;
 		return true;
 	}
 
-	g_boltCurrentLib = nullptr;
+	_boltCurrentLib = nullptr;
 
 	fileHandle = _xp->openFile(fileName, 1);
 	if (fileHandle) {
@@ -198,11 +198,11 @@ bool BoltEngine::openBOLTLib(BOLTLib **libPtr, BOLTCallbacks *callbacks, const c
 		if (libRead(fileHandle, 0, headerData, 16)) {
 			Common::SeekableReadStream *headerDataStream = new Common::MemoryReadStream(headerData, 16, DisposeAfterUse::NO);
 
-			headerDataStream->read(g_boltFileHeader.header, sizeof(g_boltFileHeader.header));
-			g_boltFileHeader.groupCount = headerDataStream->readByte();
-			g_boltFileHeader.groupDirOffset = headerDataStream->readUint32BE();
+			headerDataStream->read(_boltFileHeader.header, sizeof(_boltFileHeader.header));
+			_boltFileHeader.groupCount = headerDataStream->readByte();
+			_boltFileHeader.groupDirOffset = headerDataStream->readUint32BE();
 
-			groupCount = g_boltFileHeader.groupCount;
+			groupCount = _boltFileHeader.groupCount;
 			if (groupCount == 0)
 				groupCount = 256;
 
@@ -210,10 +210,10 @@ bool BoltEngine::openBOLTLib(BOLTLib **libPtr, BOLTCallbacks *callbacks, const c
 
 			*libPtr = new BOLTLib(groupCount);
 
-			g_boltCurrentLib = *libPtr;
-			if (g_boltCurrentLib) {
+			_boltCurrentLib = *libPtr;
+			if (_boltCurrentLib) {
 				(*libPtr)->refCount = 0;
-				(*libPtr)->groupCount = g_boltFileHeader.groupCount;
+				(*libPtr)->groupCount = _boltFileHeader.groupCount;
 				(*libPtr)->fileHandle = fileHandle;
 
 				(*libPtr)->callbacks.typeLoadCallbacks = callbacks->typeLoadCallbacks;
@@ -252,9 +252,9 @@ bool BoltEngine::openBOLTLib(BOLTLib **libPtr, BOLTCallbacks *callbacks, const c
 	if (fileHandle != 0)
 		_xp->closeFile(fileHandle);
 
-	if (g_boltCurrentLib != nullptr) {
-		_xp->freeMem(g_boltCurrentLib);
-		g_boltCurrentLib = nullptr;
+	if (_boltCurrentLib != nullptr) {
+		_xp->freeMem(_boltCurrentLib);
+		_boltCurrentLib = nullptr;
 	}
 
 	return false;
@@ -295,7 +295,7 @@ bool BoltEngine::attemptFreeIndex(BOLTLib *lib, int16 groupId) {
 	if (!groupEntry->memberData)
 		return true;
 
-	int16 memberCount = g_boltCurrentGroupEntry->memberCount;
+	int16 memberCount = _boltCurrentGroupEntry->memberCount;
 	if (memberCount == 0)
 		memberCount = 256;
 
@@ -312,70 +312,70 @@ bool BoltEngine::attemptFreeIndex(BOLTLib *lib, int16 groupId) {
 }
 
 bool BoltEngine::loadGroupDirectory() {
-	int16 memberCount = g_boltCurrentGroupEntry->memberCount;
+	int16 memberCount = _boltCurrentGroupEntry->memberCount;
 	if (memberCount == 0)
 		memberCount = 256;
 
-	if (g_boltCurrentGroupEntry->memberData) {
-		g_boltRawMemberData = g_boltCurrentGroupEntry->memberData;
+	if (_boltCurrentGroupEntry->memberData) {
+		_boltRawMemberData = _boltCurrentGroupEntry->memberData;
 		return true;
 	}
 
 	byte *rawMemberData = (byte *)_xp->allocMem((uint32)memberCount * 16 + 4);
-	g_boltRawMemberData = rawMemberData;
-	g_boltCurrentGroupEntry->memberData = g_boltRawMemberData;
+	_boltRawMemberData = rawMemberData;
+	_boltCurrentGroupEntry->memberData = _boltRawMemberData;
 
 	if (rawMemberData) {
-		if (libRead(g_boltCurrentLib->fileHandle, g_boltCurrentGroupEntry->memberDataOffset, rawMemberData + 4, (uint32)memberCount * 16)) {
+		if (libRead(_boltCurrentLib->fileHandle, _boltCurrentGroupEntry->memberDataOffset, rawMemberData + 4, (uint32)memberCount * 16)) {
 			Common::SeekableReadStream *memberEntryStream = new Common::MemoryReadStream(rawMemberData + 4, (uint32)memberCount * 16, DisposeAfterUse::NO);
 
 			for (int16 i = 0; i < memberCount; i++) {
-				g_boltCurrentGroupEntry->members[i].flags = memberEntryStream->readByte();
-				g_boltCurrentGroupEntry->members[i].preLoadCbIndex = memberEntryStream->readByte();
-				g_boltCurrentGroupEntry->members[i].preFreeCbIndex = memberEntryStream->readByte();
-				g_boltCurrentGroupEntry->members[i].typeCbIndex = memberEntryStream->readByte();
-				g_boltCurrentGroupEntry->members[i].decompSize = memberEntryStream->readUint32BE();
-				g_boltCurrentGroupEntry->members[i].fileOffset = memberEntryStream->readUint32BE();
-				g_boltCurrentGroupEntry->members[i].dataPtrPlaceholder = memberEntryStream->readUint32BE();
-				g_boltCurrentGroupEntry->members[i].dataPtr = nullptr;
+				_boltCurrentGroupEntry->members[i].flags = memberEntryStream->readByte();
+				_boltCurrentGroupEntry->members[i].preLoadCbIndex = memberEntryStream->readByte();
+				_boltCurrentGroupEntry->members[i].preFreeCbIndex = memberEntryStream->readByte();
+				_boltCurrentGroupEntry->members[i].typeCbIndex = memberEntryStream->readByte();
+				_boltCurrentGroupEntry->members[i].decompSize = memberEntryStream->readUint32BE();
+				_boltCurrentGroupEntry->members[i].fileOffset = memberEntryStream->readUint32BE();
+				_boltCurrentGroupEntry->members[i].dataPtrPlaceholder = memberEntryStream->readUint32BE();
+				_boltCurrentGroupEntry->members[i].dataPtr = nullptr;
 			}
 
 			delete memberEntryStream;
 
-			g_boltRawMemberData = g_boltCurrentGroupEntry->memberData;
+			_boltRawMemberData = _boltCurrentGroupEntry->memberData;
 			return true;
 		}
 	}
 
-	if (g_boltRawMemberData)
-		_xp->freeMem(g_boltRawMemberData);
+	if (_boltRawMemberData)
+		_xp->freeMem(_boltRawMemberData);
 
-	g_boltRawMemberData = nullptr;
-	g_boltCurrentGroupEntry->memberData = nullptr;
+	_boltRawMemberData = nullptr;
+	_boltCurrentGroupEntry->memberData = nullptr;
 	return false;
 }
 
 bool BoltEngine::getBOLTGroup(BOLTLib *lib, int16 groupId, int16 flags) {
-	g_boltLoadDepth++;
+	_boltLoadDepth++;
 	int16 resId = groupId & 0xFF00;
 
 	if (lib) {
-		g_boltCurrentLib = lib;
-		g_boltCurrentGroupEntry = &lib->groups[groupId >> 8];
+		_boltCurrentLib = lib;
+		_boltCurrentGroupEntry = &lib->groups[groupId >> 8];
 
-		int16 memberCount = g_boltCurrentGroupEntry->memberCount;
+		int16 memberCount = _boltCurrentGroupEntry->memberCount;
 		if (memberCount == 0)
 			memberCount = 256;
 
 		if (loadGroupDirectory()) {
-			if (g_boltCurrentGroupEntry->loadCbIndex != 0) {
-				lib->callbacks.groupLoadCallbacks[g_boltCurrentGroupEntry->loadCbIndex]();
+			if (_boltCurrentGroupEntry->loadCbIndex != 0) {
+				lib->callbacks.groupLoadCallbacks[_boltCurrentGroupEntry->loadCbIndex]();
 			}
 
 			for (int16 i = 0; i < memberCount; i++) {
 				if (!getBOLTMember(lib, resId)) {
 					freeBOLTGroup(lib, resId, 0);
-					g_boltLoadDepth--;
+					_boltLoadDepth--;
 					return false;
 				}
 
@@ -383,13 +383,13 @@ bool BoltEngine::getBOLTGroup(BOLTLib *lib, int16 groupId, int16 flags) {
 			}
 
 			resolvePendingFixups();
-			g_boltLoadDepth--;
+			_boltLoadDepth--;
 			return true;
 		}
 	}
 
 	freeBOLTGroup(lib, resId, 0);
-	g_boltLoadDepth--;
+	_boltLoadDepth--;
 	return false;
 }
 
@@ -397,17 +397,17 @@ void BoltEngine::freeBOLTGroup(BOLTLib *lib, int16 groupId, int16 flags) {
 	if (!lib)
 		return;
 
-	g_boltCurrentGroupEntry = &lib->groups[groupId >> 8];
-	g_boltRawMemberData = g_boltCurrentGroupEntry->memberData;
+	_boltCurrentGroupEntry = &lib->groups[groupId >> 8];
+	_boltRawMemberData = _boltCurrentGroupEntry->memberData;
 
-	if (g_boltCurrentGroupEntry->freeCbIndex != 0) {
-		lib->callbacks.groupFreeCallbacks[g_boltCurrentGroupEntry->freeCbIndex]();
+	if (_boltCurrentGroupEntry->freeCbIndex != 0) {
+		lib->callbacks.groupFreeCallbacks[_boltCurrentGroupEntry->freeCbIndex]();
 	}
 
-	if (!g_boltRawMemberData)
+	if (!_boltRawMemberData)
 		return;
 
-	int16 memberCount = g_boltCurrentGroupEntry->memberCount;
+	int16 memberCount = _boltCurrentGroupEntry->memberCount;
 	if (memberCount == 0)
 		memberCount = 256;
 
@@ -426,32 +426,32 @@ byte *BoltEngine::getBOLTMember(BOLTLib *lib, int16 resId) {
 	byte *tempBuf;
 
 	if (lib) {
-		g_boltCurrentLib = lib;
-		g_boltCurrentGroupEntry = &lib->groups[resId >> 8];
+		_boltCurrentLib = lib;
+		_boltCurrentGroupEntry = &lib->groups[resId >> 8];
 
-		int16 memberCount = g_boltCurrentGroupEntry->memberCount;
+		int16 memberCount = _boltCurrentGroupEntry->memberCount;
 		if (memberCount == 0)
 			memberCount = 256;
 
 		if (loadGroupDirectory()) {
-			g_boltCurrentMemberEntry = &g_boltCurrentGroupEntry->members[memberIndex];
+			_boltCurrentMemberEntry = &_boltCurrentGroupEntry->members[memberIndex];
 
-			if (g_boltCurrentMemberEntry->preLoadCbIndex != 0) {
-				lib->callbacks.memberLoadCallbacks[g_boltCurrentMemberEntry->preLoadCbIndex]();
+			if (_boltCurrentMemberEntry->preLoadCbIndex != 0) {
+				lib->callbacks.memberLoadCallbacks[_boltCurrentMemberEntry->preLoadCbIndex]();
 			}
 
-			if (g_boltCurrentMemberEntry->dataPtr != nullptr)
-				return g_boltCurrentMemberEntry->dataPtr;
+			if (_boltCurrentMemberEntry->dataPtr != nullptr)
+				return _boltCurrentMemberEntry->dataPtr;
 
-			g_boltCurrentMemberEntry->dataPtr = (byte *)_xp->allocMem(g_boltCurrentMemberEntry->decompSize);
-			if (g_boltCurrentMemberEntry->dataPtr) {
+			_boltCurrentMemberEntry->dataPtr = (byte *)_xp->allocMem(_boltCurrentMemberEntry->decompSize);
+			if (_boltCurrentMemberEntry->dataPtr) {
 				// Bit 3 in flags = uncompressed
-				if (g_boltCurrentMemberEntry->flags & 0x08) {
+				if (_boltCurrentMemberEntry->flags & 0x08) {
 					// Read directly into destination
-					if (!libRead(lib->fileHandle, g_boltCurrentMemberEntry->fileOffset, g_boltCurrentMemberEntry->dataPtr, g_boltCurrentMemberEntry->decompSize)) {
-						if (g_boltCurrentMemberEntry->dataPtr != nullptr) {
-							_xp->freeMem(g_boltCurrentMemberEntry->dataPtr);
-							g_boltCurrentMemberEntry->dataPtr = nullptr;
+					if (!libRead(lib->fileHandle, _boltCurrentMemberEntry->fileOffset, _boltCurrentMemberEntry->dataPtr, _boltCurrentMemberEntry->decompSize)) {
+						if (_boltCurrentMemberEntry->dataPtr != nullptr) {
+							_xp->freeMem(_boltCurrentMemberEntry->dataPtr);
+							_boltCurrentMemberEntry->dataPtr = nullptr;
 						}
 
 						return nullptr;
@@ -459,55 +459,55 @@ byte *BoltEngine::getBOLTMember(BOLTLib *lib, int16 resId) {
 				} else {
 					// Compressed member
 					if (memberIndex + 1 < memberCount) {
-						BOLTMemberEntry *nextEntry = &g_boltCurrentGroupEntry->members[memberIndex + 1];
+						BOLTMemberEntry *nextEntry = &_boltCurrentGroupEntry->members[memberIndex + 1];
 						compressedSize = nextEntry->fileOffset;
 					} else {
 						// Last entry: total = memberDirSize + memberDirOffset + memberDataOffset
 						warning("is this even working?");
-						compressedSize = (uint32)(memberCount * 16) + g_boltCurrentGroupEntry->memberDataOffset + g_boltCurrentGroupEntry->memberDirOffset;
+						compressedSize = (uint32)(memberCount * 16) + _boltCurrentGroupEntry->memberDataOffset + _boltCurrentGroupEntry->memberDirOffset;
 					}
 
-					compressedSize -= g_boltCurrentMemberEntry->fileOffset;
+					compressedSize -= _boltCurrentMemberEntry->fileOffset;
 
 					tempBuf = (byte *)_xp->allocMem(compressedSize);
 					if (!tempBuf) {
-						if (g_boltCurrentMemberEntry->dataPtr != nullptr) {
-							_xp->freeMem(g_boltCurrentMemberEntry->dataPtr);
-							g_boltCurrentMemberEntry->dataPtr = nullptr;
+						if (_boltCurrentMemberEntry->dataPtr != nullptr) {
+							_xp->freeMem(_boltCurrentMemberEntry->dataPtr);
+							_boltCurrentMemberEntry->dataPtr = nullptr;
 						}
 
 						return nullptr;
 					}
 
-					if (!libRead(lib->fileHandle, g_boltCurrentMemberEntry->fileOffset, tempBuf, compressedSize)) {
+					if (!libRead(lib->fileHandle, _boltCurrentMemberEntry->fileOffset, tempBuf, compressedSize)) {
 						_xp->freeMem(tempBuf);
 
-						if (g_boltCurrentMemberEntry->dataPtr != nullptr) {
-							_xp->freeMem(g_boltCurrentMemberEntry->dataPtr);
-							g_boltCurrentMemberEntry->dataPtr = nullptr;
+						if (_boltCurrentMemberEntry->dataPtr != nullptr) {
+							_xp->freeMem(_boltCurrentMemberEntry->dataPtr);
+							_boltCurrentMemberEntry->dataPtr = nullptr;
 						}
 
 						return nullptr;
 					}
 
-					decompress(g_boltCurrentMemberEntry->dataPtr, g_boltCurrentMemberEntry->decompSize, tempBuf);
+					decompress(_boltCurrentMemberEntry->dataPtr, _boltCurrentMemberEntry->decompSize, tempBuf);
 
 					_xp->freeMem(tempBuf);
 				}
 
-				lib->callbacks.typeLoadCallbacks[g_boltCurrentMemberEntry->typeCbIndex]();
+				lib->callbacks.typeLoadCallbacks[_boltCurrentMemberEntry->typeCbIndex]();
 
-				if (g_boltLoadDepth == 0)
+				if (_boltLoadDepth == 0)
 					resolvePendingFixups();
 
-				return g_boltCurrentMemberEntry->dataPtr;
+				return _boltCurrentMemberEntry->dataPtr;
 			}
 		}
 	}
 
-	if (g_boltCurrentMemberEntry->dataPtr != nullptr) {
-		_xp->freeMem(g_boltCurrentMemberEntry->dataPtr);
-		g_boltCurrentMemberEntry->dataPtr = nullptr;
+	if (_boltCurrentMemberEntry->dataPtr != nullptr) {
+		_xp->freeMem(_boltCurrentMemberEntry->dataPtr);
+		_boltCurrentMemberEntry->dataPtr = nullptr;
 	}
 
 	return nullptr;
@@ -517,25 +517,25 @@ bool BoltEngine::freeBOLTMember(BOLTLib *lib, int16 resId) {
 	if (!lib)
 		return true;
 
-	g_boltCurrentGroupEntry = &lib->groups[resId >> 8];
-	g_boltRawMemberData = g_boltCurrentGroupEntry->memberData;
+	_boltCurrentGroupEntry = &lib->groups[resId >> 8];
+	_boltRawMemberData = _boltCurrentGroupEntry->memberData;
 
-	if (g_boltRawMemberData == nullptr)
+	if (_boltRawMemberData == nullptr)
 		return true;
 
-	g_boltCurrentMemberEntry = &g_boltCurrentGroupEntry->members[(resId & 0xFF)];
+	_boltCurrentMemberEntry = &_boltCurrentGroupEntry->members[(resId & 0xFF)];
 
-	if (g_boltCurrentMemberEntry->preFreeCbIndex != 0) {
-		lib->callbacks.memberFreeCallbacks[g_boltCurrentMemberEntry->preFreeCbIndex]();
+	if (_boltCurrentMemberEntry->preFreeCbIndex != 0) {
+		lib->callbacks.memberFreeCallbacks[_boltCurrentMemberEntry->preFreeCbIndex]();
 	}
 
-	if (g_boltCurrentMemberEntry->dataPtr == nullptr)
+	if (_boltCurrentMemberEntry->dataPtr == nullptr)
 		return true;
 
-	lib->callbacks.typeFreeCallbacks[g_boltCurrentMemberEntry->typeCbIndex]();
+	lib->callbacks.typeFreeCallbacks[_boltCurrentMemberEntry->typeCbIndex]();
 
-	_xp->freeMem(g_boltCurrentMemberEntry->dataPtr);
-	g_boltCurrentMemberEntry->dataPtr = nullptr;
+	_xp->freeMem(_boltCurrentMemberEntry->dataPtr);
+	_boltCurrentMemberEntry->dataPtr = nullptr;
 
 	return true;
 }
@@ -599,26 +599,26 @@ byte *BoltEngine::groupAddr(BOLTLib *lib, int16 groupId) {
 }
 
 bool BoltEngine::allocResourceIndex() {
-	g_resourceIndex = (uint32 **)_xp->allocMem(g_resourceIndexCount * sizeof(uintptr));
-	if (!g_resourceIndex)
+	_resourceIndex = (uint32 **)_xp->allocMem(_resourceIndexCount * sizeof(uintptr));
+	if (!_resourceIndex)
 		return false;
 
 	return true;
 }
 
 void BoltEngine::freeResourceIndex() {
-	if (g_resourceIndex) {
-		_xp->freeMem(g_resourceIndex);
-		g_resourceIndex = nullptr;
+	if (_resourceIndex) {
+		_xp->freeMem(_resourceIndex);
+		_resourceIndex = nullptr;
 	}
 }
 
 void BoltEngine::swapAllWords() {
-	byte *data = g_boltCurrentMemberEntry->dataPtr;
+	byte *data = _boltCurrentMemberEntry->dataPtr;
 	if (!data)
 		return;
 
-	int16 count = int16(g_boltCurrentMemberEntry->decompSize / 2);
+	int16 count = int16(_boltCurrentMemberEntry->decompSize / 2);
 	for (int16 i = 0; i < count; i++) {
 		WRITE_UINT16(data, READ_BE_INT16(data));
 		data += 2;
@@ -626,41 +626,41 @@ void BoltEngine::swapAllWords() {
 }
 
 void BoltEngine::swapAllLongs() {
-	byte *data = g_boltCurrentMemberEntry->dataPtr;
+	byte *data = _boltCurrentMemberEntry->dataPtr;
 	if (!data)
 		return;
 
-	int16 count = (int16)(g_boltCurrentMemberEntry->decompSize / 4);
+	int16 count = (int16)(_boltCurrentMemberEntry->decompSize / 4);
 	for (int16 i = 0; i < count; i++) {
 		WRITE_UINT32(data, READ_BE_UINT32(data));
 		data += 4;
 	}
 }
 
-BOLTCallback BoltEngine::g_defaultTypeLoadCallbacks[25];
-BOLTCallback BoltEngine::g_defaultTypeFreeCallbacks[25];
-BOLTCallback BoltEngine::g_defaultMemberLoadCallbacks[25];
-BOLTCallback BoltEngine::g_defaultMemberFreeCallbacks[25];
-BOLTCallback BoltEngine::g_defaultGroupLoadCallbacks[25];
-BOLTCallback BoltEngine::g_defaultGroupFreeCallbacks[25];
+BOLTCallback BoltEngine::_defaultTypeLoadCallbacks[25];
+BOLTCallback BoltEngine::_defaultTypeFreeCallbacks[25];
+BOLTCallback BoltEngine::_defaultMemberLoadCallbacks[25];
+BOLTCallback BoltEngine::_defaultMemberFreeCallbacks[25];
+BOLTCallback BoltEngine::_defaultGroupLoadCallbacks[25];
+BOLTCallback BoltEngine::_defaultGroupFreeCallbacks[25];
 
-BOLTCallback BoltEngine::g_fredTypeLoadCallbacks[28];
-BOLTCallback BoltEngine::g_fredTypeFreeCallbacks[28];
+BOLTCallback BoltEngine::_fredTypeLoadCallbacks[28];
+BOLTCallback BoltEngine::_fredTypeFreeCallbacks[28];
 
-BOLTCallback BoltEngine::g_georgeTypeLoadCallbacks[28];
-BOLTCallback BoltEngine::g_georgeTypeFreeCallbacks[28];
+BOLTCallback BoltEngine::_georgeTypeLoadCallbacks[28];
+BOLTCallback BoltEngine::_georgeTypeFreeCallbacks[28];
 
-BOLTCallback BoltEngine::g_huckTypeLoadCallbacks[27];
-BOLTCallback BoltEngine::g_huckTypeFreeCallbacks[27];
+BOLTCallback BoltEngine::_huckTypeLoadCallbacks[27];
+BOLTCallback BoltEngine::_huckTypeFreeCallbacks[27];
 
-BOLTCallback BoltEngine::g_scoobyTypeLoadCallbacks[28];
-BOLTCallback BoltEngine::g_scoobyTypeFreeCallbacks[28];
+BOLTCallback BoltEngine::_scoobyTypeLoadCallbacks[28];
+BOLTCallback BoltEngine::_scoobyTypeFreeCallbacks[28];
 
-BOLTCallback BoltEngine::g_topCatTypeLoadCallbacks[26];
-BOLTCallback BoltEngine::g_topCatTypeFreeCallbacks[26];
+BOLTCallback BoltEngine::_topCatTypeLoadCallbacks[26];
+BOLTCallback BoltEngine::_topCatTypeFreeCallbacks[26];
 
-BOLTCallback BoltEngine::g_yogiTypeLoadCallbacks[27];
-BOLTCallback BoltEngine::g_yogiTypeFreeCallbacks[27];
+BOLTCallback BoltEngine::_yogiTypeLoadCallbacks[27];
+BOLTCallback BoltEngine::_yogiTypeFreeCallbacks[27];
 
 void BoltEngine::noOpCb() {}
 void BoltEngine::swapAllWordsCb() { ((BoltEngine *)g_engine)->swapAllWords(); }
@@ -695,208 +695,208 @@ void BoltEngine::swapYogiFirstWordCb() { ((BoltEngine *)g_engine)->swapYogiFirst
 
 void BoltEngine::initCallbacks() {
 	// --- BOOTHS ---
-	for (int i = 0; i < ARRAYSIZE(g_defaultTypeLoadCallbacks); i++) {
-		g_defaultTypeLoadCallbacks[i] = noOpCb;
+	for (int i = 0; i < ARRAYSIZE(_defaultTypeLoadCallbacks); i++) {
+		_defaultTypeLoadCallbacks[i] = noOpCb;
 	}
 
-	g_defaultTypeLoadCallbacks[2] = swapAllWordsCb;
-	g_defaultTypeLoadCallbacks[8] = swapSpriteHeaderCb;
-	g_defaultTypeLoadCallbacks[10] = swapPicHeaderCb;
-	g_defaultTypeLoadCallbacks[11] = swapAndResolvePicDescCb;
-	g_defaultTypeLoadCallbacks[12] = swapFirstTwoWordsCb;
-	g_defaultTypeLoadCallbacks[14] = swapFirstFourWordsCb;
+	_defaultTypeLoadCallbacks[2] = swapAllWordsCb;
+	_defaultTypeLoadCallbacks[8] = swapSpriteHeaderCb;
+	_defaultTypeLoadCallbacks[10] = swapPicHeaderCb;
+	_defaultTypeLoadCallbacks[11] = swapAndResolvePicDescCb;
+	_defaultTypeLoadCallbacks[12] = swapFirstTwoWordsCb;
+	_defaultTypeLoadCallbacks[14] = swapFirstFourWordsCb;
 
-	for (int i = 0; i < ARRAYSIZE(g_defaultTypeFreeCallbacks); i++) {
-		g_defaultTypeFreeCallbacks[i] = noOpCb;
+	for (int i = 0; i < ARRAYSIZE(_defaultTypeFreeCallbacks); i++) {
+		_defaultTypeFreeCallbacks[i] = noOpCb;
 	}
 
-	g_defaultTypeFreeCallbacks[8] = freeSpriteCleanUpCb;
+	_defaultTypeFreeCallbacks[8] = freeSpriteCleanUpCb;
 
-	for (int i = 0; i < ARRAYSIZE(g_defaultMemberLoadCallbacks); i++) {
-		g_defaultMemberLoadCallbacks[i] = noOpCb;
+	for (int i = 0; i < ARRAYSIZE(_defaultMemberLoadCallbacks); i++) {
+		_defaultMemberLoadCallbacks[i] = noOpCb;
 	}
 
-	for (int i = 0; i < ARRAYSIZE(g_defaultMemberFreeCallbacks); i++) {
-		g_defaultMemberFreeCallbacks[i] = noOpCb;
+	for (int i = 0; i < ARRAYSIZE(_defaultMemberFreeCallbacks); i++) {
+		_defaultMemberFreeCallbacks[i] = noOpCb;
 	}
 
-	for (int i = 0; i < ARRAYSIZE(g_defaultGroupLoadCallbacks); i++) {
-		g_defaultGroupLoadCallbacks[i] = noOpCb;
+	for (int i = 0; i < ARRAYSIZE(_defaultGroupLoadCallbacks); i++) {
+		_defaultGroupLoadCallbacks[i] = noOpCb;
 	}
 
-	for (int i = 0; i < ARRAYSIZE(g_defaultGroupFreeCallbacks); i++) {
-		g_defaultGroupFreeCallbacks[i] = noOpCb;
+	for (int i = 0; i < ARRAYSIZE(_defaultGroupFreeCallbacks); i++) {
+		_defaultGroupFreeCallbacks[i] = noOpCb;
 	}
 
-	g_boothsBoltCallbacks.typeLoadCallbacks = g_defaultTypeLoadCallbacks;
-	g_boothsBoltCallbacks.typeFreeCallbacks = g_defaultTypeFreeCallbacks;
-	g_boothsBoltCallbacks.memberLoadCallbacks = g_defaultMemberLoadCallbacks;
-	g_boothsBoltCallbacks.memberFreeCallbacks = g_defaultMemberFreeCallbacks;
-	g_boothsBoltCallbacks.groupLoadCallbacks = g_defaultGroupLoadCallbacks;
-	g_boothsBoltCallbacks.groupFreeCallbacks = g_defaultGroupFreeCallbacks;
+	_boothsBoltCallbacks.typeLoadCallbacks = _defaultTypeLoadCallbacks;
+	_boothsBoltCallbacks.typeFreeCallbacks = _defaultTypeFreeCallbacks;
+	_boothsBoltCallbacks.memberLoadCallbacks = _defaultMemberLoadCallbacks;
+	_boothsBoltCallbacks.memberFreeCallbacks = _defaultMemberFreeCallbacks;
+	_boothsBoltCallbacks.groupLoadCallbacks = _defaultGroupLoadCallbacks;
+	_boothsBoltCallbacks.groupFreeCallbacks = _defaultGroupFreeCallbacks;
 
 	// --- FRED ---
-	for (int i = 0; i < ARRAYSIZE(g_fredTypeLoadCallbacks); i++) {
-		g_fredTypeLoadCallbacks[i] = noOpCb;
+	for (int i = 0; i < ARRAYSIZE(_fredTypeLoadCallbacks); i++) {
+		_fredTypeLoadCallbacks[i] = noOpCb;
 	}
 
-	g_fredTypeLoadCallbacks[2] = swapAllWordsCb;
-	g_fredTypeLoadCallbacks[6] = resolveAllRefsCb;
-	g_fredTypeLoadCallbacks[8] = swapSpriteHeaderCb;
-	g_fredTypeLoadCallbacks[10] = swapPicHeaderCb;
-	g_fredTypeLoadCallbacks[11] = swapAndResolvePicDescCb;
-	g_fredTypeLoadCallbacks[12] = swapFirstTwoWordsCb;
-	g_fredTypeLoadCallbacks[14] = swapFirstFourWordsCb;
-	g_fredTypeLoadCallbacks[25] = swapFredAnimEntryCb;
-	g_fredTypeLoadCallbacks[26] = swapFredAnimDescCb;
-	g_fredTypeLoadCallbacks[27] = swapFredLevelDescCb;
+	_fredTypeLoadCallbacks[2] = swapAllWordsCb;
+	_fredTypeLoadCallbacks[6] = resolveAllRefsCb;
+	_fredTypeLoadCallbacks[8] = swapSpriteHeaderCb;
+	_fredTypeLoadCallbacks[10] = swapPicHeaderCb;
+	_fredTypeLoadCallbacks[11] = swapAndResolvePicDescCb;
+	_fredTypeLoadCallbacks[12] = swapFirstTwoWordsCb;
+	_fredTypeLoadCallbacks[14] = swapFirstFourWordsCb;
+	_fredTypeLoadCallbacks[25] = swapFredAnimEntryCb;
+	_fredTypeLoadCallbacks[26] = swapFredAnimDescCb;
+	_fredTypeLoadCallbacks[27] = swapFredLevelDescCb;
 
-	for (int i = 0; i < ARRAYSIZE(g_fredTypeFreeCallbacks); i++) {
-		g_fredTypeFreeCallbacks[i] = noOpCb;
+	for (int i = 0; i < ARRAYSIZE(_fredTypeFreeCallbacks); i++) {
+		_fredTypeFreeCallbacks[i] = noOpCb;
 	}
 
-	g_fredTypeFreeCallbacks[8] = freeSpriteCleanUpCb;
+	_fredTypeFreeCallbacks[8] = freeSpriteCleanUpCb;
 
-	g_fredBoltCallbacks.typeLoadCallbacks = g_fredTypeLoadCallbacks;
-	g_fredBoltCallbacks.typeFreeCallbacks = g_fredTypeFreeCallbacks;
-	g_fredBoltCallbacks.memberLoadCallbacks = g_defaultMemberLoadCallbacks;
-	g_fredBoltCallbacks.memberFreeCallbacks = g_defaultMemberFreeCallbacks;
-	g_fredBoltCallbacks.groupLoadCallbacks = g_defaultGroupLoadCallbacks;
-	g_fredBoltCallbacks.groupFreeCallbacks = g_defaultGroupFreeCallbacks;
+	_fredBoltCallbacks.typeLoadCallbacks = _fredTypeLoadCallbacks;
+	_fredBoltCallbacks.typeFreeCallbacks = _fredTypeFreeCallbacks;
+	_fredBoltCallbacks.memberLoadCallbacks = _defaultMemberLoadCallbacks;
+	_fredBoltCallbacks.memberFreeCallbacks = _defaultMemberFreeCallbacks;
+	_fredBoltCallbacks.groupLoadCallbacks = _defaultGroupLoadCallbacks;
+	_fredBoltCallbacks.groupFreeCallbacks = _defaultGroupFreeCallbacks;
 
 	// --- GEORGE ---
-	for (int i = 0; i < ARRAYSIZE(g_georgeTypeLoadCallbacks); i++) {
-		g_georgeTypeLoadCallbacks[i] = noOpCb;
+	for (int i = 0; i < ARRAYSIZE(_georgeTypeLoadCallbacks); i++) {
+		_georgeTypeLoadCallbacks[i] = noOpCb;
 	}
 
-	g_georgeTypeLoadCallbacks[2] = swapAllWordsCb;
-	g_georgeTypeLoadCallbacks[6] = resolveAllRefsCb;
-	g_georgeTypeLoadCallbacks[8] = swapSpriteHeaderCb;
-	g_georgeTypeLoadCallbacks[10] = swapPicHeaderCb;
-	g_georgeTypeLoadCallbacks[11] = swapAndResolvePicDescCb;
-	g_georgeTypeLoadCallbacks[12] = swapFirstTwoWordsCb;
-	g_georgeTypeLoadCallbacks[14] = swapFirstFourWordsCb;
-	g_georgeTypeLoadCallbacks[25] = swapGeorgeFrameArrayCb;
-	g_georgeTypeLoadCallbacks[26] = swapGeorgeHelpEntryCb;
-	g_georgeTypeLoadCallbacks[27] = swapGeorgeThresholdsCb;
+	_georgeTypeLoadCallbacks[2] = swapAllWordsCb;
+	_georgeTypeLoadCallbacks[6] = resolveAllRefsCb;
+	_georgeTypeLoadCallbacks[8] = swapSpriteHeaderCb;
+	_georgeTypeLoadCallbacks[10] = swapPicHeaderCb;
+	_georgeTypeLoadCallbacks[11] = swapAndResolvePicDescCb;
+	_georgeTypeLoadCallbacks[12] = swapFirstTwoWordsCb;
+	_georgeTypeLoadCallbacks[14] = swapFirstFourWordsCb;
+	_georgeTypeLoadCallbacks[25] = swapGeorgeFrameArrayCb;
+	_georgeTypeLoadCallbacks[26] = swapGeorgeHelpEntryCb;
+	_georgeTypeLoadCallbacks[27] = swapGeorgeThresholdsCb;
 
-	for (int i = 0; i < ARRAYSIZE(g_georgeTypeFreeCallbacks); i++) {
-		g_georgeTypeFreeCallbacks[i] = noOpCb;
+	for (int i = 0; i < ARRAYSIZE(_georgeTypeFreeCallbacks); i++) {
+		_georgeTypeFreeCallbacks[i] = noOpCb;
 	}
 
-	g_georgeTypeFreeCallbacks[8] = freeSpriteCleanUpCb;
+	_georgeTypeFreeCallbacks[8] = freeSpriteCleanUpCb;
 
-	g_georgeBoltCallbacks.typeLoadCallbacks = g_georgeTypeLoadCallbacks;
-	g_georgeBoltCallbacks.typeFreeCallbacks = g_georgeTypeFreeCallbacks;
-	g_georgeBoltCallbacks.memberLoadCallbacks = g_defaultMemberLoadCallbacks;
-	g_georgeBoltCallbacks.memberFreeCallbacks = g_defaultMemberFreeCallbacks;
-	g_georgeBoltCallbacks.groupLoadCallbacks = g_defaultGroupLoadCallbacks;
-	g_georgeBoltCallbacks.groupFreeCallbacks = g_defaultGroupFreeCallbacks;
+	_georgeBoltCallbacks.typeLoadCallbacks = _georgeTypeLoadCallbacks;
+	_georgeBoltCallbacks.typeFreeCallbacks = _georgeTypeFreeCallbacks;
+	_georgeBoltCallbacks.memberLoadCallbacks = _defaultMemberLoadCallbacks;
+	_georgeBoltCallbacks.memberFreeCallbacks = _defaultMemberFreeCallbacks;
+	_georgeBoltCallbacks.groupLoadCallbacks = _defaultGroupLoadCallbacks;
+	_georgeBoltCallbacks.groupFreeCallbacks = _defaultGroupFreeCallbacks;
 
 	// --- HUCK ---
-	for (int i = 0; i < ARRAYSIZE(g_huckTypeLoadCallbacks); i++) {
-		g_huckTypeLoadCallbacks[i] = noOpCb;
+	for (int i = 0; i < ARRAYSIZE(_huckTypeLoadCallbacks); i++) {
+		_huckTypeLoadCallbacks[i] = noOpCb;
 	}
 
-	g_huckTypeLoadCallbacks[2] = swapAllWordsCb;
-	g_huckTypeLoadCallbacks[6] = resolveAllRefsCb;
-	g_huckTypeLoadCallbacks[8] = swapSpriteHeaderCb;
-	g_huckTypeLoadCallbacks[10] = swapPicHeaderCb;
-	g_huckTypeLoadCallbacks[11] = swapAndResolvePicDescCb;
-	g_huckTypeLoadCallbacks[12] = swapFirstTwoWordsCb;
-	g_huckTypeLoadCallbacks[14] = swapFirstFourWordsCb;
-	g_huckTypeLoadCallbacks[25] = swapHuckWordArrayCb;
-	g_huckTypeLoadCallbacks[26] = swapHuckWordsCb;
+	_huckTypeLoadCallbacks[2] = swapAllWordsCb;
+	_huckTypeLoadCallbacks[6] = resolveAllRefsCb;
+	_huckTypeLoadCallbacks[8] = swapSpriteHeaderCb;
+	_huckTypeLoadCallbacks[10] = swapPicHeaderCb;
+	_huckTypeLoadCallbacks[11] = swapAndResolvePicDescCb;
+	_huckTypeLoadCallbacks[12] = swapFirstTwoWordsCb;
+	_huckTypeLoadCallbacks[14] = swapFirstFourWordsCb;
+	_huckTypeLoadCallbacks[25] = swapHuckWordArrayCb;
+	_huckTypeLoadCallbacks[26] = swapHuckWordsCb;
 
-	for (int i = 0; i < ARRAYSIZE(g_huckTypeFreeCallbacks); i++) {
-		g_huckTypeFreeCallbacks[i] = noOpCb;
+	for (int i = 0; i < ARRAYSIZE(_huckTypeFreeCallbacks); i++) {
+		_huckTypeFreeCallbacks[i] = noOpCb;
 	}
 
-	g_huckTypeFreeCallbacks[8] = freeSpriteCleanUpCb;
+	_huckTypeFreeCallbacks[8] = freeSpriteCleanUpCb;
 
-	g_huckBoltCallbacks.typeLoadCallbacks = g_huckTypeLoadCallbacks;
-	g_huckBoltCallbacks.typeFreeCallbacks = g_huckTypeFreeCallbacks;
-	g_huckBoltCallbacks.memberLoadCallbacks = g_defaultMemberLoadCallbacks;
-	g_huckBoltCallbacks.memberFreeCallbacks = g_defaultMemberFreeCallbacks;
-	g_huckBoltCallbacks.groupLoadCallbacks = g_defaultGroupLoadCallbacks;
-	g_huckBoltCallbacks.groupFreeCallbacks = g_defaultGroupFreeCallbacks;
+	_huckBoltCallbacks.typeLoadCallbacks = _huckTypeLoadCallbacks;
+	_huckBoltCallbacks.typeFreeCallbacks = _huckTypeFreeCallbacks;
+	_huckBoltCallbacks.memberLoadCallbacks = _defaultMemberLoadCallbacks;
+	_huckBoltCallbacks.memberFreeCallbacks = _defaultMemberFreeCallbacks;
+	_huckBoltCallbacks.groupLoadCallbacks = _defaultGroupLoadCallbacks;
+	_huckBoltCallbacks.groupFreeCallbacks = _defaultGroupFreeCallbacks;
 
 	// --- SCOOBY ---
-	for (int i = 0; i < ARRAYSIZE(g_scoobyTypeLoadCallbacks); i++) {
-		g_scoobyTypeLoadCallbacks[i] = noOpCb;
+	for (int i = 0; i < ARRAYSIZE(_scoobyTypeLoadCallbacks); i++) {
+		_scoobyTypeLoadCallbacks[i] = noOpCb;
 	}
 
-	g_scoobyTypeLoadCallbacks[8] = swapSpriteHeaderCb;
-	g_scoobyTypeLoadCallbacks[10] = swapPicHeaderCb;
-	g_scoobyTypeLoadCallbacks[11] = swapAndResolvePicDescCb;
-	g_scoobyTypeLoadCallbacks[12] = swapFirstTwoWordsCb;
-	g_scoobyTypeLoadCallbacks[26] = swapScoobyHelpEntryCb;
-	g_scoobyTypeLoadCallbacks[27] = swapScoobyWordArrayCb;
+	_scoobyTypeLoadCallbacks[8] = swapSpriteHeaderCb;
+	_scoobyTypeLoadCallbacks[10] = swapPicHeaderCb;
+	_scoobyTypeLoadCallbacks[11] = swapAndResolvePicDescCb;
+	_scoobyTypeLoadCallbacks[12] = swapFirstTwoWordsCb;
+	_scoobyTypeLoadCallbacks[26] = swapScoobyHelpEntryCb;
+	_scoobyTypeLoadCallbacks[27] = swapScoobyWordArrayCb;
 
-	for (int i = 0; i < ARRAYSIZE(g_scoobyTypeFreeCallbacks); i++) {
-		g_scoobyTypeFreeCallbacks[i] = noOpCb;
+	for (int i = 0; i < ARRAYSIZE(_scoobyTypeFreeCallbacks); i++) {
+		_scoobyTypeFreeCallbacks[i] = noOpCb;
 	}
 
-	g_scoobyTypeFreeCallbacks[8] = freeSpriteCleanUpCb;
+	_scoobyTypeFreeCallbacks[8] = freeSpriteCleanUpCb;
 
-	g_scoobyBoltCallbacks.typeLoadCallbacks = g_scoobyTypeLoadCallbacks;
-	g_scoobyBoltCallbacks.typeFreeCallbacks = g_scoobyTypeFreeCallbacks;
-	g_scoobyBoltCallbacks.memberLoadCallbacks = g_defaultMemberLoadCallbacks;
-	g_scoobyBoltCallbacks.memberFreeCallbacks = g_defaultMemberFreeCallbacks;
-	g_scoobyBoltCallbacks.groupLoadCallbacks = g_defaultGroupLoadCallbacks;
-	g_scoobyBoltCallbacks.groupFreeCallbacks = g_defaultGroupFreeCallbacks;
+	_scoobyBoltCallbacks.typeLoadCallbacks = _scoobyTypeLoadCallbacks;
+	_scoobyBoltCallbacks.typeFreeCallbacks = _scoobyTypeFreeCallbacks;
+	_scoobyBoltCallbacks.memberLoadCallbacks = _defaultMemberLoadCallbacks;
+	_scoobyBoltCallbacks.memberFreeCallbacks = _defaultMemberFreeCallbacks;
+	_scoobyBoltCallbacks.groupLoadCallbacks = _defaultGroupLoadCallbacks;
+	_scoobyBoltCallbacks.groupFreeCallbacks = _defaultGroupFreeCallbacks;
 
 	// --- TOPCAT ---
-	for (int i = 0; i < ARRAYSIZE(g_topCatTypeLoadCallbacks); i++) {
-		g_topCatTypeLoadCallbacks[i] = noOpCb;
+	for (int i = 0; i < ARRAYSIZE(_topCatTypeLoadCallbacks); i++) {
+		_topCatTypeLoadCallbacks[i] = noOpCb;
 	}
 
-	g_topCatTypeLoadCallbacks[2] = swapAllWordsCb;
-	g_topCatTypeLoadCallbacks[4] = swapAllLongsCb;
-	g_topCatTypeLoadCallbacks[6] = resolveAllRefsCb;
-	g_topCatTypeLoadCallbacks[8] = swapSpriteHeaderCb;
-	g_topCatTypeLoadCallbacks[10] = swapPicHeaderCb;
-	g_topCatTypeLoadCallbacks[11] = swapAndResolvePicDescCb;
-	g_topCatTypeLoadCallbacks[12] = swapFirstTwoWordsCb;
-	g_topCatTypeLoadCallbacks[25] = swapTopCatHelpEntryCb;
+	_topCatTypeLoadCallbacks[2] = swapAllWordsCb;
+	_topCatTypeLoadCallbacks[4] = swapAllLongsCb;
+	_topCatTypeLoadCallbacks[6] = resolveAllRefsCb;
+	_topCatTypeLoadCallbacks[8] = swapSpriteHeaderCb;
+	_topCatTypeLoadCallbacks[10] = swapPicHeaderCb;
+	_topCatTypeLoadCallbacks[11] = swapAndResolvePicDescCb;
+	_topCatTypeLoadCallbacks[12] = swapFirstTwoWordsCb;
+	_topCatTypeLoadCallbacks[25] = swapTopCatHelpEntryCb;
 
-	for (int i = 0; i < ARRAYSIZE(g_topCatTypeFreeCallbacks); i++) {
-		g_topCatTypeFreeCallbacks[i] = noOpCb;
+	for (int i = 0; i < ARRAYSIZE(_topCatTypeFreeCallbacks); i++) {
+		_topCatTypeFreeCallbacks[i] = noOpCb;
 	}
 
-	g_topCatTypeFreeCallbacks[8] = freeSpriteCleanUpCb;
+	_topCatTypeFreeCallbacks[8] = freeSpriteCleanUpCb;
 
-	g_topCatBoltCallbacks.typeLoadCallbacks = g_topCatTypeLoadCallbacks;
-	g_topCatBoltCallbacks.typeFreeCallbacks = g_topCatTypeFreeCallbacks;
-	g_topCatBoltCallbacks.memberLoadCallbacks = g_defaultMemberLoadCallbacks;
-	g_topCatBoltCallbacks.memberFreeCallbacks = g_defaultMemberFreeCallbacks;
-	g_topCatBoltCallbacks.groupLoadCallbacks = g_defaultGroupLoadCallbacks;
-	g_topCatBoltCallbacks.groupFreeCallbacks = g_defaultGroupFreeCallbacks;
+	_topCatBoltCallbacks.typeLoadCallbacks = _topCatTypeLoadCallbacks;
+	_topCatBoltCallbacks.typeFreeCallbacks = _topCatTypeFreeCallbacks;
+	_topCatBoltCallbacks.memberLoadCallbacks = _defaultMemberLoadCallbacks;
+	_topCatBoltCallbacks.memberFreeCallbacks = _defaultMemberFreeCallbacks;
+	_topCatBoltCallbacks.groupLoadCallbacks = _defaultGroupLoadCallbacks;
+	_topCatBoltCallbacks.groupFreeCallbacks = _defaultGroupFreeCallbacks;
 
 	// --- YOGI ---
-	for (int i = 0; i < ARRAYSIZE(g_yogiTypeLoadCallbacks); i++) {
-		g_yogiTypeLoadCallbacks[i] = noOpCb;
+	for (int i = 0; i < ARRAYSIZE(_yogiTypeLoadCallbacks); i++) {
+		_yogiTypeLoadCallbacks[i] = noOpCb;
 	}
 
-	g_yogiTypeLoadCallbacks[2] = swapAllWordsCb;
-	g_yogiTypeLoadCallbacks[8] = swapSpriteHeaderCb;
-	g_yogiTypeLoadCallbacks[10] = swapPicHeaderCb;
-	g_yogiTypeLoadCallbacks[14] = swapFirstFourWordsCb;
-	g_yogiTypeLoadCallbacks[25] = swapYogiFirstWordCb;
-	g_yogiTypeLoadCallbacks[26] = swapYogiAllWordsCb;
+	_yogiTypeLoadCallbacks[2] = swapAllWordsCb;
+	_yogiTypeLoadCallbacks[8] = swapSpriteHeaderCb;
+	_yogiTypeLoadCallbacks[10] = swapPicHeaderCb;
+	_yogiTypeLoadCallbacks[14] = swapFirstFourWordsCb;
+	_yogiTypeLoadCallbacks[25] = swapYogiFirstWordCb;
+	_yogiTypeLoadCallbacks[26] = swapYogiAllWordsCb;
 
-	for (int i = 0; i < ARRAYSIZE(g_yogiTypeFreeCallbacks); i++) {
-		g_yogiTypeFreeCallbacks[i] = noOpCb;
+	for (int i = 0; i < ARRAYSIZE(_yogiTypeFreeCallbacks); i++) {
+		_yogiTypeFreeCallbacks[i] = noOpCb;
 	}
 
-	g_yogiTypeFreeCallbacks[8] = freeSpriteCleanUpCb;
+	_yogiTypeFreeCallbacks[8] = freeSpriteCleanUpCb;
 
-	g_yogiBoltCallbacks.typeLoadCallbacks = g_yogiTypeLoadCallbacks;
-	g_yogiBoltCallbacks.typeFreeCallbacks = g_yogiTypeFreeCallbacks;
-	g_yogiBoltCallbacks.memberLoadCallbacks = g_defaultMemberLoadCallbacks;
-	g_yogiBoltCallbacks.memberFreeCallbacks = g_defaultMemberFreeCallbacks;
-	g_yogiBoltCallbacks.groupLoadCallbacks = g_defaultGroupLoadCallbacks;
-	g_yogiBoltCallbacks.groupFreeCallbacks = g_defaultGroupFreeCallbacks;
+	_yogiBoltCallbacks.typeLoadCallbacks = _yogiTypeLoadCallbacks;
+	_yogiBoltCallbacks.typeFreeCallbacks = _yogiTypeFreeCallbacks;
+	_yogiBoltCallbacks.memberLoadCallbacks = _defaultMemberLoadCallbacks;
+	_yogiBoltCallbacks.memberFreeCallbacks = _defaultMemberFreeCallbacks;
+	_yogiBoltCallbacks.groupLoadCallbacks = _defaultGroupLoadCallbacks;
+	_yogiBoltCallbacks.groupFreeCallbacks = _defaultGroupFreeCallbacks;
 }
 
 } // End of namespace Bolt

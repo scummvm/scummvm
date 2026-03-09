@@ -25,47 +25,47 @@
 namespace Bolt {
 
 bool XpLib::initDisplay() {
-	g_virtualWidth = (_bolt->g_extendedViewport) ? EXTENDED_SCREEN_WIDTH : SCREEN_WIDTH;
-	g_virtualHeight = (_bolt->g_extendedViewport) ? EXTENDED_SCREEN_HEIGHT : SCREEN_HEIGHT;
-	g_currentDisplayPage = stFront;
+	_virtualWidth = (_bolt->_extendedViewport) ? EXTENDED_SCREEN_WIDTH : SCREEN_WIDTH;
+	_virtualHeight = (_bolt->_extendedViewport) ? EXTENDED_SCREEN_HEIGHT : SCREEN_HEIGHT;
+	_currentDisplayPage = stFront;
 
 	// Create front and back display surfaces
-	if (!createSurface(&g_surfaces[stFront]))
+	if (!createSurface(&_surfaces[stFront]))
 		return false;
 
-	if (!createSurface(&g_surfaces[stBack]))
+	if (!createSurface(&_surfaces[stBack]))
 		return false;
 
 	fillDisplay(0, stFront);
 	fillDisplay(0, stBack);
 
-	g_prevRenderFlags = 0;
-	g_renderFlags = 0;
-	g_frameRateFPS = 0;
-	g_overlayCount = 0;
-	g_prevDirtyCount = 0;
-	g_prevDirtyValid = 0;
+	_prevRenderFlags = 0;
+	_renderFlags = 0;
+	_frameRateFPS = 0;
+	_overlayCount = 0;
+	_prevDirtyCount = 0;
+	_prevDirtyValid = 0;
 
-	g_cursorBackgroundSave.pixelData = g_cursorBackgroundSaveBuffer;
-	g_cursorBackgroundSave.width = 16;
-	g_cursorBackgroundSave.height = 16;
+	_cursorBackgroundSave.pixelData = _cursorBackgroundSaveBuffer;
+	_cursorBackgroundSave.width = 16;
+	_cursorBackgroundSave.height = 16;
 
 	return true;
 }
 
 void XpLib::shutdownDisplay() {
-	freeSurface(&g_surfaces[stFront]);
-	freeSurface(&g_surfaces[stBack]);
+	freeSurface(&_surfaces[stFront]);
+	freeSurface(&_surfaces[stBack]);
 	stopCycle();
 }
 
 bool XpLib::createSurface(XPSurface *surf) {
-	if (surf->mainPic.width == g_surfaceWidth && surf->mainPic.height == g_surfaceHeight)
+	if (surf->mainPic.width == _surfaceWidth && surf->mainPic.height == _surfaceHeight)
 		return true;
 
 	freeSurface(surf);
 
-	surf->mainPic.pixelData = (byte *)allocMem((uint32)g_surfaceWidth * (uint32)g_surfaceHeight);
+	surf->mainPic.pixelData = (byte *)allocMem((uint32)_surfaceWidth * (uint32)_surfaceHeight);
 	if (!surf->mainPic.pixelData)
 		return false;
 
@@ -73,8 +73,8 @@ bool XpLib::createSurface(XPSurface *surf) {
 	if (!surf->mainPic.palette)
 		return false;
 
-	surf->mainPic.width = g_surfaceWidth;
-	surf->mainPic.height = g_surfaceHeight;
+	surf->mainPic.width = _surfaceWidth;
+	surf->mainPic.height = _surfaceHeight;
 
 	for (int16 i = 0; i < 127 * 3; i += 3) {
 		surf->mainPic.palette[i] = 0;
@@ -106,46 +106,46 @@ void XpLib::freeSurface(XPSurface *surf) {
 
 bool XpLib::setDisplaySpec(int *outMode, DisplaySpecs *spec) {
 	*outMode = spec->id;
-	g_surfaceWidth = spec->width;
-	g_surfaceHeight = spec->height;
+	_surfaceWidth = spec->width;
+	_surfaceHeight = spec->height;
 
-	if (!createSurface(&g_surfaces[stFront]))
+	if (!createSurface(&_surfaces[stFront]))
 		return false;
 
-	if (!createSurface(&g_surfaces[stBack]))
+	if (!createSurface(&_surfaces[stBack]))
 		return false;
 
 	return true;
 }
 
 void XpLib::setCoordSpec(int16 x, int16 y, int16 width, int16 height) {
-	if (width == g_surfaceWidth && height == g_surfaceHeight) {
-		g_viewportOffsetX = x;
-		g_viewportOffsetY = y;
+	if (width == _surfaceWidth && height == _surfaceHeight) {
+		_viewportOffsetX = x;
+		_viewportOffsetY = y;
 	}
 }
 
 void XpLib::virtualToScreen(int16 *x, int16 *y) {
-	*x -= g_viewportOffsetX;
-	*y -= g_viewportOffsetY;
+	*x -= _viewportOffsetX;
+	*y -= _viewportOffsetY;
 }
 
 void XpLib::screenToVirtual(int16 *x, int16 *y) {
-	*x += g_viewportOffsetX;
-	*y += g_viewportOffsetY;
+	*x += _viewportOffsetX;
+	*y += _viewportOffsetY;
 }
 
 void XpLib::displayPic(XPPicDesc *pic, int16 x, int16 y, int16 page) {
-	XPSurface *surf = &g_surfaces[page];
+	XPSurface *surf = &_surfaces[page];
 
 	virtualToScreen(&x, &y);
 
 	// --- Pixel data ---
 	if (pic->pixelData) {
-		bool isFullScreen = (pic->width == g_surfaceWidth &&  pic->height == g_surfaceHeight);
+		bool isFullScreen = (pic->width == _surfaceWidth &&  pic->height == _surfaceHeight);
 
 		if (isFullScreen)
-			g_renderFlags |= RF_FULL_REDRAW; // Mark full-screen overwrite
+			_renderFlags |= RF_FULL_REDRAW; // Mark full-screen overwrite
 
 		// Full-screen transparent non-RLE overlayPic on surface 0: store as overlay source...
 		if (isFullScreen && page == stFront && (pic->flags & 1) && !(pic->flags & 2)) {
@@ -157,14 +157,14 @@ void XpLib::displayPic(XPPicDesc *pic, int16 x, int16 y, int16 page) {
 			surf->overlayPic.paletteCount = pic->paletteCount;
 			surf->overlayPic.flags = pic->flags;
 
-			g_renderFlags |= RF_OVERLAY_ACTIVE;
+			_renderFlags |= RF_OVERLAY_ACTIVE;
 		} else {
 			// Clear previous overlay if needed...
-			if ((g_renderFlags & RF_OVERLAY_ACTIVE) && page == stFront) {
+			if ((_renderFlags & RF_OVERLAY_ACTIVE) && page == stFront) {
 				if (!isFullScreen)
 					clipAndBlit(&surf->overlayPic, &surf->mainPic, 0, 0, nullptr);
 
-				g_renderFlags &= ~RF_OVERLAY_ACTIVE;
+				_renderFlags &= ~RF_OVERLAY_ACTIVE;
 			}
 
 			// Clip and blit to surface...
@@ -174,7 +174,7 @@ void XpLib::displayPic(XPPicDesc *pic, int16 x, int16 y, int16 page) {
 		}
 
 		// Mark page as dirty...
-		g_renderFlags |= (page != stFront) ? RF_BACK_DIRTY : RF_FRONT_DIRTY;
+		_renderFlags |= (page != stFront) ? RF_BACK_DIRTY : RF_FRONT_DIRTY;
 	}
 
 	// --- Palette data ---
@@ -208,7 +208,7 @@ void XpLib::displayPic(XPPicDesc *pic, int16 x, int16 y, int16 page) {
 
 		int16 dirtyFlag = (page != stFront) ? RF_BACK_PAL_DIRTY : RF_FRONT_PAL_DIRTY;
 
-		if (g_renderFlags & dirtyFlag) {
+		if (_renderFlags & dirtyFlag) {
 			// Merge dirty range...
 			if (surf->dirtyPalStart > adjStart)
 				surf->dirtyPalStart = adjStart;
@@ -219,7 +219,7 @@ void XpLib::displayPic(XPPicDesc *pic, int16 x, int16 y, int16 page) {
 			// First palette update, set range...
 			surf->dirtyPalStart = adjStart;
 			surf->dirtyPalEnd = palEnd;
-			g_renderFlags |= dirtyFlag;
+			_renderFlags |= dirtyFlag;
 		}
 	}
 }
@@ -286,32 +286,32 @@ bool XpLib::clipAndBlit(XPPicDesc *src, XPPicDesc *dest, int16 x, int16 y, Commo
 }
 
 void XpLib::addDirtyRect(Common::Rect *rect) {
-	if (g_renderFlags & RF_FULL_REDRAW)
+	if (_renderFlags & RF_FULL_REDRAW)
 		return; // Full-screen overwrite, no need to track...
 
-	if (g_overlayCount >= 30) {
-		g_renderFlags |= RF_FULL_REDRAW; // Too many rects, mark full dirty...
+	if (_overlayCount >= 30) {
+		_renderFlags |= RF_FULL_REDRAW; // Too many rects, mark full dirty...
 		return;
 	}
 
-	g_dirtyRects[g_overlayCount].left = rect->left;
-	g_dirtyRects[g_overlayCount].right = rect->right;
-	g_dirtyRects[g_overlayCount].top = rect->top;
-	g_dirtyRects[g_overlayCount].bottom = rect->bottom;
+	_dirtyRects[_overlayCount].left = rect->left;
+	_dirtyRects[_overlayCount].right = rect->right;
+	_dirtyRects[_overlayCount].top = rect->top;
+	_dirtyRects[_overlayCount].bottom = rect->bottom;
 
-	g_overlayCount++;
+	_overlayCount++;
 }
 
 void XpLib::setFrameRate(int16 fps) {
-	g_frameRateFPS = fps;
-	g_nextFrameTime = _bolt->_system->getMillis();
+	_frameRateFPS = fps;
+	_nextFrameTime = _bolt->_system->getMillis();
 }
 
 void XpLib::updateDisplay() {
-	if (g_cursorHidden == 0)
-		g_renderFlags |= RF_CURSOR_VISIBLE;
+	if (_cursorHidden == 0)
+		_renderFlags |= RF_CURSOR_VISIBLE;
 	else
-		g_renderFlags &= ~RF_CURSOR_VISIBLE;
+		_renderFlags &= ~RF_CURSOR_VISIBLE;
 
 	// This will call delayMillis (but must not call pollEvent, otherwise events get desynced)...
 	waitForFrameRate();
@@ -319,52 +319,52 @@ void XpLib::updateDisplay() {
 	handlePaletteTransitions();
 
 	// If back surface pixels changed, mark all with cursor bit and reset row flags...
-	if (g_renderFlags & RF_BACK_DIRTY) {
-		markCursorPixels(g_surfaces[stBack].mainPic.pixelData, (uint32)g_surfaces[stBack].mainPic.width * (uint32)g_surfaces[stBack].mainPic.height);
-		if (_bolt->g_extendedViewport) {
-			memset(g_rowDirtyFlags, 0, EXTENDED_SCREEN_HEIGHT);
+	if (_renderFlags & RF_BACK_DIRTY) {
+		markCursorPixels(_surfaces[stBack].mainPic.pixelData, (uint32)_surfaces[stBack].mainPic.width * (uint32)_surfaces[stBack].mainPic.height);
+		if (_bolt->_extendedViewport) {
+			memset(_rowDirtyFlags, 0, EXTENDED_SCREEN_HEIGHT);
 		} else {
-			memset(g_rowDirtyFlags, 0, SCREEN_HEIGHT);
+			memset(_rowDirtyFlags, 0, SCREEN_HEIGHT);
 		}
 	}
 
 	// Render to screen!
-	if (g_renderFlags & RF_OVERLAY_ACTIVE) {
+	if (_renderFlags & RF_OVERLAY_ACTIVE) {
 		overlayComposite(); // RLE overlay path
 	} else {
 		compositeToScreen(); // Standard dirty-rect path
 	}
 
 	// Save current state, clear per-frame flags...
-	g_prevRenderFlags = g_renderFlags;
-	g_renderFlags &= (RF_OVERLAY_ACTIVE | RF_DOUBLE_BUFFER); // Keep only overlay + double-buffer bits...
+	_prevRenderFlags = _renderFlags;
+	_renderFlags &= (RF_OVERLAY_ACTIVE | RF_DOUBLE_BUFFER); // Keep only overlay + double-buffer bits...
 
-	_bolt->_system->copyRectToScreen(g_vgaFramebuffer, g_virtualWidth, 0, 0, g_virtualWidth, g_virtualHeight);
+	_bolt->_system->copyRectToScreen(_vgaFramebuffer, _virtualWidth, 0, 0, _virtualWidth, _virtualHeight);
 	_bolt->_system->updateScreen();
 }
 
 void XpLib::waitForFrameRate() {
-	if (g_frameRateFPS == 0)
+	if (_frameRateFPS == 0)
 		return;
 
-	while (_bolt->_system->getMillis() < g_nextFrameTime) {
+	while (_bolt->_system->getMillis() < _nextFrameTime) {
 		_bolt->_system->delayMillis(16);
 	}
 
-	g_nextFrameTime = (uint32)(_bolt->_system->getMillis() + 1000 / (uint32)g_frameRateFPS);
+	_nextFrameTime = (uint32)(_bolt->_system->getMillis() + 1000 / (uint32)_frameRateFPS);
 }
 
 void XpLib::handlePaletteTransitions() {
 	// Only act if palette dirty flags are set alongside pixel dirty flags...
-	if (!((g_renderFlags & RF_FRONT_PAL_DIRTY) && (g_renderFlags & RF_FRONT_DIRTY)) &&
-		!((g_renderFlags & RF_BACK_PAL_DIRTY)  && (g_renderFlags & RF_BACK_DIRTY)))
+	if (!((_renderFlags & RF_FRONT_PAL_DIRTY) && (_renderFlags & RF_FRONT_DIRTY)) &&
+		!((_renderFlags & RF_BACK_PAL_DIRTY)  && (_renderFlags & RF_BACK_DIRTY)))
 		return;
 
 	// Build transition code: bit 0 = entering double-buffer, bit 1 = was double-buffer
 	int16 transition = 0;
-	if (g_renderFlags & RF_DOUBLE_BUFFER)
+	if (_renderFlags & RF_DOUBLE_BUFFER)
 		transition |= 1;
-	if (g_prevRenderFlags & RF_DOUBLE_BUFFER)
+	if (_prevRenderFlags & RF_DOUBLE_BUFFER)
 		transition |= 2;
 
 	switch (transition) {
@@ -375,15 +375,15 @@ void XpLib::handlePaletteTransitions() {
 
 	case 1: {
 		// Single -> Double
-		if (!(g_renderFlags & RF_BACK_PAL_DIRTY))
+		if (!(_renderFlags & RF_BACK_PAL_DIRTY))
 			break;
 
 		// Check if back surface palette actually differs from VGA palette...
-		XPSurface *back = &g_surfaces[stBack];
+		XPSurface *back = &_surfaces[stBack];
 		int16 count = back->dirtyPalEnd - back->dirtyPalStart + 1;
 		int16 surfOffset = (back->dirtyPalStart - back->mainPic.paletteStart) * 3;
 
-		if (memcmp(&g_paletteBuffer[back->dirtyPalStart * 3],
+		if (memcmp(&_paletteBuffer[back->dirtyPalStart * 3],
 				   back->mainPic.palette + surfOffset,
 				   count * 3) != 0)
 			break;
@@ -394,15 +394,15 @@ void XpLib::handlePaletteTransitions() {
 	
 	case 2: {
 		// Double -> Single
-		if (!(g_renderFlags & RF_FRONT_PAL_DIRTY))
+		if (!(_renderFlags & RF_FRONT_PAL_DIRTY))
 			break;
 
 		// Check if front surface palette differs from cursor palette page...
-		XPSurface *front = &g_surfaces[stFront];
+		XPSurface *front = &_surfaces[stFront];
 		int16 count = front->dirtyPalEnd - front->dirtyPalStart + 1;
 		int16 surfOffset = (front->dirtyPalStart - front->mainPic.paletteStart) * 3;
 
-		if (memcmp(&g_paletteBuffer[(front->dirtyPalStart + 128) * 3],
+		if (memcmp(&_paletteBuffer[(front->dirtyPalStart + 128) * 3],
 				   front->mainPic.palette + surfOffset,
 				   count * 3) != 0)
 			break;
@@ -419,8 +419,8 @@ void XpLib::handlePaletteTransitions() {
 
 void XpLib::flushPalette() {
 	// Front surface palette -> VGA indices 1-127
-	if (g_renderFlags & RF_FRONT_PAL_DIRTY) {
-		XPSurface *front = &g_surfaces[stFront];
+	if (_renderFlags & RF_FRONT_PAL_DIRTY) {
+		XPSurface *front = &_surfaces[stFront];
 		int16 start = front->dirtyPalStart;
 		int16 count = front->dirtyPalEnd - start + 1;
 		int16 offset = (start - front->mainPic.paletteStart) * 3;
@@ -428,8 +428,8 @@ void XpLib::flushPalette() {
 	}
 
 	// Back surface palette -> VGA indices 129-255 (start + 128)
-	if (g_renderFlags & RF_BACK_PAL_DIRTY) {
-		XPSurface *back = &g_surfaces[stBack];
+	if (_renderFlags & RF_BACK_PAL_DIRTY) {
+		XPSurface *back = &_surfaces[stBack];
 		int16 start = back->dirtyPalStart;
 		int16 count = back->dirtyPalEnd - start + 1;
 		int16 offset = (start - back->mainPic.paletteStart) * 3;
@@ -438,9 +438,9 @@ void XpLib::flushPalette() {
 }
 
 void XpLib::overlayComposite() {
-	bool pixelsDirty = (g_renderFlags & (RF_FRONT_DIRTY | RF_BACK_DIRTY)) != 0;
-	bool cursorNow = (g_renderFlags & RF_CURSOR_VISIBLE) != 0;
-	bool cursorPrev = (g_prevRenderFlags & RF_CURSOR_VISIBLE) != 0;
+	bool pixelsDirty = (_renderFlags & (RF_FRONT_DIRTY | RF_BACK_DIRTY)) != 0;
+	bool cursorNow = (_renderFlags & RF_CURSOR_VISIBLE) != 0;
+	bool cursorPrev = (_prevRenderFlags & RF_CURSOR_VISIBLE) != 0;
 
 	// Nothing changed at all, just flush the palette...
 	if (!pixelsDirty && !cursorNow && !cursorPrev) {
@@ -452,67 +452,67 @@ void XpLib::overlayComposite() {
 
 	// Decode RLE overlay onto front surface...
 	if (pixelsDirty) {
-		if (g_renderFlags & RF_DOUBLE_BUFFER) {
+		if (_renderFlags & RF_DOUBLE_BUFFER) {
 			// Double-buffer: RLE composite (transparent pixels from back surface)
 			rleCompositeBlit(
-				g_surfaces[stFront].overlayPic.pixelData,
-				g_surfaces[stBack].mainPic.pixelData,
-				g_surfaces[stFront].mainPic.pixelData,
-				g_virtualWidth, g_virtualHeight,
-				g_rowDirtyFlags);
+				_surfaces[stFront].overlayPic.pixelData,
+				_surfaces[stBack].mainPic.pixelData,
+				_surfaces[stFront].mainPic.pixelData,
+				_virtualWidth, _virtualHeight,
+				_rowDirtyFlags);
 		} else {
 			// Single-buffer: straight RLE decode to front
 			rleBlit(
-				g_surfaces[stFront].overlayPic.pixelData,
-				g_surfaces[stFront].overlayPic.width,
-				g_surfaces[stFront].mainPic.pixelData,
-				g_surfaces[stFront].mainPic.width,
-				g_virtualWidth, g_virtualHeight);
+				_surfaces[stFront].overlayPic.pixelData,
+				_surfaces[stFront].overlayPic.width,
+				_surfaces[stFront].mainPic.pixelData,
+				_surfaces[stFront].mainPic.width,
+				_virtualWidth, _virtualHeight);
 		}
 	}
 
 	// Draw cursor onto front surface...
 	if (cursorNow) {
-		cursorX = g_lastCursorX - g_cursorHotspotX;
-		cursorY = g_lastCursorY - g_cursorHotspotY;
+		cursorX = _lastCursorX - _cursorHotspotX;
+		cursorY = _lastCursorY - _cursorHotspotY;
 
 		// Save background under cursor...
-		clipAndBlit(&g_surfaces[stFront].mainPic, &g_cursorBackgroundSave,
+		clipAndBlit(&_surfaces[stFront].mainPic, &_cursorBackgroundSave,
 					  -cursorX, -cursorY, nullptr);
 
 		// Draw cursor sprite...
-		clipAndBlit(&g_cursorSprite, &g_surfaces[stFront].mainPic,
-					  cursorX, cursorY, &g_overlayCursorRect);
+		clipAndBlit(&_cursorSprite, &_surfaces[stFront].mainPic,
+					  cursorX, cursorY, &_overlayCursorRect);
 	}
 
 	flushPalette();
 
 	// Transfer front surface to main framebuffer...
 	if (pixelsDirty) {
-		if (g_renderFlags & RF_DOUBLE_BUFFER) {
+		if (_renderFlags & RF_DOUBLE_BUFFER) {
 			// Tracked blit: only copy rows that changed...
 			dirtyBlit(
-				g_surfaces[stFront].mainPic.pixelData,
-				g_vgaFramebuffer,
-				g_virtualWidth, g_virtualHeight,
-				g_rowDirtyFlags);
+				_surfaces[stFront].mainPic.pixelData,
+				_vgaFramebuffer,
+				_virtualWidth, _virtualHeight,
+				_rowDirtyFlags);
 		} else {
-			memcpy(g_vgaFramebuffer, g_surfaces[stFront].mainPic.pixelData,
-				   (uint32)g_virtualWidth * (uint32)g_virtualHeight);
+			memcpy(_vgaFramebuffer, _surfaces[stFront].mainPic.pixelData,
+				   (uint32)_virtualWidth * (uint32)_virtualHeight);
 		}
 	} else {
 		if (cursorNow)
-			compositeDirtyRects(&g_overlayCursorRect, 1);
+			compositeDirtyRects(&_overlayCursorRect, 1);
 
 		if (cursorPrev)
-			compositeDirtyRects(&g_prevOverlayCursorRect, 1);
+			compositeDirtyRects(&_prevOverlayCursorRect, 1);
 	}
 
 	// Save cursor rect and restore front surface
 	if (cursorNow) {
-		g_prevOverlayCursorRect = g_overlayCursorRect;
+		_prevOverlayCursorRect = _overlayCursorRect;
 
-		clipAndBlit(&g_cursorBackgroundSave, &g_surfaces[stFront].mainPic, cursorX, cursorY, nullptr);
+		clipAndBlit(&_cursorBackgroundSave, &_surfaces[stFront].mainPic, cursorX, cursorY, nullptr);
 	}
 }
 
@@ -520,116 +520,116 @@ void XpLib::compositeToScreen() {
 	int16 cursorX = 0, cursorY = 0;
 
 	// Draw cursor onto front surface...
-	if (g_renderFlags & RF_CURSOR_VISIBLE) {
-		cursorX = g_lastCursorX - g_cursorHotspotX;
-		cursorY = g_lastCursorY - g_cursorHotspotY;
+	if (_renderFlags & RF_CURSOR_VISIBLE) {
+		cursorX = _lastCursorX - _cursorHotspotX;
+		cursorY = _lastCursorY - _cursorHotspotY;
 
 		// Save background under cursor position...
-		clipAndBlit(&g_surfaces[stFront].mainPic, &g_cursorBackgroundSave, -cursorX, -cursorY, nullptr);
+		clipAndBlit(&_surfaces[stFront].mainPic, &_cursorBackgroundSave, -cursorX, -cursorY, nullptr);
 
 		// Draw cursor sprite at position...
-		clipAndBlit(&g_cursorSprite, &g_surfaces[stFront].mainPic, cursorX, cursorY, &g_cursorRect);
+		clipAndBlit(&_cursorSprite, &_surfaces[stFront].mainPic, cursorX, cursorY, &_cursorRect);
 	}
 
 	flushPalette();
 
-	if (!(g_renderFlags & RF_DOUBLE_BUFFER)) {
+	if (!(_renderFlags & RF_DOUBLE_BUFFER)) {
 		// SINGLE-BUFFER MODE
 
-		if (g_renderFlags & RF_FRONT_DIRTY) {
-			if (g_renderFlags & RF_FULL_REDRAW) {
+		if (_renderFlags & RF_FRONT_DIRTY) {
+			if (_renderFlags & RF_FULL_REDRAW) {
 				// Full-screen dirty, blit entire front surface to framebuffer...
-				blit(g_surfaces[stFront].mainPic.pixelData, g_surfaces[stFront].mainPic.width,
-					   g_vgaFramebuffer, g_virtualWidth,
-					   g_virtualWidth, g_virtualHeight);
+				blit(_surfaces[stFront].mainPic.pixelData, _surfaces[stFront].mainPic.width,
+					   _vgaFramebuffer, _virtualWidth,
+					   _virtualWidth, _virtualHeight);
 			} else {
 				// Partial dirty, blit changed rects only...
-				if (g_prevDirtyValid > 0) {
+				if (_prevDirtyValid > 0) {
 					mergeDirtyRects();
-					blitDirtyRects(g_prevDirtyRects, g_prevDirtyCount);
+					blitDirtyRects(_prevDirtyRects, _prevDirtyCount);
 				}
 
-				blitDirtyRects(g_dirtyRects, g_overlayCount);
+				blitDirtyRects(_dirtyRects, _overlayCount);
 
-				if (g_renderFlags & RF_CURSOR_VISIBLE)
-					blitDirtyRects(&g_cursorRect, 1);
+				if (_renderFlags & RF_CURSOR_VISIBLE)
+					blitDirtyRects(&_cursorRect, 1);
 
-				if (g_prevRenderFlags & RF_CURSOR_VISIBLE)
-					blitDirtyRects(&g_prevCursorRect, 1);
+				if (_prevRenderFlags & RF_CURSOR_VISIBLE)
+					blitDirtyRects(&_prevCursorRect, 1);
 			}
 		} else {
 			// No pixel changes - just cursor
-			if (g_renderFlags & RF_CURSOR_VISIBLE)
-				blitDirtyRects(&g_cursorRect, 1);
+			if (_renderFlags & RF_CURSOR_VISIBLE)
+				blitDirtyRects(&_cursorRect, 1);
 
-			if (g_prevRenderFlags & RF_CURSOR_VISIBLE)
-				blitDirtyRects(&g_prevCursorRect, 1);
+			if (_prevRenderFlags & RF_CURSOR_VISIBLE)
+				blitDirtyRects(&_prevCursorRect, 1);
 		}
 
 	} else {
 		// DOUBLE-BUFFER MODE
 
-		if (g_renderFlags & (RF_FRONT_DIRTY | RF_BACK_DIRTY)) {
-			if ((g_renderFlags & RF_FULL_REDRAW) ||
-				g_prevDirtyValid > 0 || g_overlayCount > 0) {
+		if (_renderFlags & (RF_FRONT_DIRTY | RF_BACK_DIRTY)) {
+			if ((_renderFlags & RF_FULL_REDRAW) ||
+				_prevDirtyValid > 0 || _overlayCount > 0) {
 				// Full composite...
-				compositeBlit(g_surfaces[stFront].mainPic.pixelData, g_surfaces[stBack].mainPic.pixelData,
-							  g_vgaFramebuffer, g_virtualWidth, g_virtualWidth, g_virtualHeight);
-				g_overlayCount = 0;
-				g_prevDirtyCount = 0;
+				compositeBlit(_surfaces[stFront].mainPic.pixelData, _surfaces[stBack].mainPic.pixelData,
+							  _vgaFramebuffer, _virtualWidth, _virtualWidth, _virtualHeight);
+				_overlayCount = 0;
+				_prevDirtyCount = 0;
 			} else {
 				// Partial composite...
-				if (g_prevDirtyValid > 0) {
+				if (_prevDirtyValid > 0) {
 					mergeDirtyRects();
-					compositeDirtyRects(g_prevDirtyRects, g_prevDirtyCount);
+					compositeDirtyRects(_prevDirtyRects, _prevDirtyCount);
 				}
 
-				compositeDirtyRects(g_dirtyRects, g_overlayCount);
+				compositeDirtyRects(_dirtyRects, _overlayCount);
 
-				if (g_renderFlags & RF_CURSOR_VISIBLE)
-					compositeDirtyRects(&g_cursorRect, 1);
+				if (_renderFlags & RF_CURSOR_VISIBLE)
+					compositeDirtyRects(&_cursorRect, 1);
 
-				if (g_prevRenderFlags & RF_CURSOR_VISIBLE)
-					compositeDirtyRects(&g_prevCursorRect, 1);
+				if (_prevRenderFlags & RF_CURSOR_VISIBLE)
+					compositeDirtyRects(&_prevCursorRect, 1);
 			}
 		} else {
-			if (g_renderFlags & RF_CURSOR_VISIBLE)
-				compositeDirtyRects(&g_cursorRect, 1);
+			if (_renderFlags & RF_CURSOR_VISIBLE)
+				compositeDirtyRects(&_cursorRect, 1);
 
-			if (g_prevRenderFlags & RF_CURSOR_VISIBLE)
-				compositeDirtyRects(&g_prevCursorRect, 1);
+			if (_prevRenderFlags & RF_CURSOR_VISIBLE)
+				compositeDirtyRects(&_prevCursorRect, 1);
 		}
 	}
 
 	// Save current dirty rects for next frame...
-	if (g_prevDirtyValid > 0) {
-		g_prevDirtyValid = 0;
-		if (g_overlayCount > 0) {
-			for (int i = 0; i < g_overlayCount; i++) {
-				g_prevDirtyRects[i] = g_dirtyRects[i];
+	if (_prevDirtyValid > 0) {
+		_prevDirtyValid = 0;
+		if (_overlayCount > 0) {
+			for (int i = 0; i < _overlayCount; i++) {
+				_prevDirtyRects[i] = _dirtyRects[i];
 			}
 		}
 
-		g_prevDirtyCount = g_overlayCount;
+		_prevDirtyCount = _overlayCount;
 	}
 
-	g_overlayCount = 0;
+	_overlayCount = 0;
 
 	// Save cursor state for next frame...
-	if (g_renderFlags & RF_CURSOR_VISIBLE) {
-		g_prevCursorRect = g_cursorRect;
+	if (_renderFlags & RF_CURSOR_VISIBLE) {
+		_prevCursorRect = _cursorRect;
 
 		// Restore front surface under cursor...
-		clipAndBlit(&g_cursorBackgroundSave, &g_surfaces[stFront].mainPic, cursorX, cursorY, nullptr);
+		clipAndBlit(&_cursorBackgroundSave, &_surfaces[stFront].mainPic, cursorX, cursorY, nullptr);
 	}
 }
 
 void XpLib::mergeDirtyRects() {
-	for (int16 i = 0; i < g_prevDirtyCount; i++) {
-		Common::Rect *prev = &g_prevDirtyRects[i];
+	for (int16 i = 0; i < _prevDirtyCount; i++) {
+		Common::Rect *prev = &_prevDirtyRects[i];
 
-		for (int16 j = 0; j < g_overlayCount; j++) {
-			Common::Rect *curr = &g_dirtyRects[j];
+		for (int16 j = 0; j < _overlayCount; j++) {
+			Common::Rect *curr = &_dirtyRects[j];
 
 			if (curr->right < 0)
 				continue; // A negative value indicates "already consumed"...
@@ -651,12 +651,12 @@ void XpLib::blitDirtyRects(Common::Rect *rects, int16 count) {
 		if (rect->right < 0) {
 			rect->right = -rect->right;
 		} else {
-			uint32 offset = rect->top * g_virtualWidth + rect->left;
+			uint32 offset = rect->top * _virtualWidth + rect->left;
 			int32 w = rect->right - rect->left;
 			int32 h = rect->bottom - rect->top;
 
-			blit(g_surfaces[stFront].mainPic.pixelData + offset, g_surfaces[stFront].mainPic.width,
-				 g_vgaFramebuffer + offset, g_virtualWidth,
+			blit(_surfaces[stFront].mainPic.pixelData + offset, _surfaces[stFront].mainPic.width,
+				 _vgaFramebuffer + offset, _virtualWidth,
 				 w, h);
 		}
 	}
@@ -669,49 +669,49 @@ void XpLib::compositeDirtyRects(Common::Rect *rects, int16 count) {
 		if (rect->right < 0) {
 			rect->right = -rect->right;
 		} else {
-			uint32 offset = rect->top * g_virtualWidth + rect->left;
+			uint32 offset = rect->top * _virtualWidth + rect->left;
 			int32 w = rect->right - rect->left;
 			int32 h = rect->bottom - rect->top;
 
 			compositeBlit(
-				g_surfaces[stFront].mainPic.pixelData + offset,
-				g_surfaces[stBack].mainPic.pixelData + offset,
-				g_vgaFramebuffer + offset,
-				g_virtualWidth, w, h);
+				_surfaces[stFront].mainPic.pixelData + offset,
+				_surfaces[stBack].mainPic.pixelData + offset,
+				_vgaFramebuffer + offset,
+				_virtualWidth, w, h);
 		}
 	}
 }
 
 void XpLib::applyCursorPalette() {
-	setPalette(127, 129, &g_paletteBuffer[3]);
-	markCursorPixels(g_vgaFramebuffer, (uint32)g_virtualWidth * (uint32)g_virtualHeight);
+	setPalette(127, 129, &_paletteBuffer[3]);
+	markCursorPixels(_vgaFramebuffer, (uint32)_virtualWidth * (uint32)_virtualHeight);
 }
 
 void XpLib::prepareBackSurface() {
 	XPPicDesc *src;
-	if (g_renderFlags & RF_OVERLAY_ACTIVE) {
-		src = &g_surfaces[stFront].overlayPic;
+	if (_renderFlags & RF_OVERLAY_ACTIVE) {
+		src = &_surfaces[stFront].overlayPic;
 	} else {
-		src = &g_surfaces[stFront].mainPic;
+		src = &_surfaces[stFront].mainPic;
 	}
 
-	clipAndBlit(src, &g_surfaces[stBack].mainPic, 0, 0, nullptr);
+	clipAndBlit(src, &_surfaces[stBack].mainPic, 0, 0, nullptr);
 
-	markCursorPixels(g_surfaces[stBack].mainPic.pixelData, (uint32)g_surfaces[stBack].mainPic.width * (uint32)g_surfaces[stBack].mainPic.height);
+	markCursorPixels(_surfaces[stBack].mainPic.pixelData, (uint32)_surfaces[stBack].mainPic.width * (uint32)_surfaces[stBack].mainPic.height);
 
-	memcpy(g_vgaFramebuffer, g_surfaces[stBack].mainPic.pixelData, (uint32)g_surfaces[stBack].mainPic.width * (uint32)g_surfaces[stBack].mainPic.height);
+	memcpy(_vgaFramebuffer, _surfaces[stBack].mainPic.pixelData, (uint32)_surfaces[stBack].mainPic.width * (uint32)_surfaces[stBack].mainPic.height);
 }
 
 void XpLib::setTransparency(bool toggle) {
 	if (toggle) {
-		g_renderFlags |= RF_DOUBLE_BUFFER; // Enables double-buffer compositing
+		_renderFlags |= RF_DOUBLE_BUFFER; // Enables double-buffer compositing
 	} else {
-		g_renderFlags &= ~RF_DOUBLE_BUFFER;
+		_renderFlags &= ~RF_DOUBLE_BUFFER;
 	}
 }
 
 void XpLib::fillDisplay(byte color, int16 page) {
-	XPSurface *surf = &g_surfaces[page];
+	XPSurface *surf = &_surfaces[page];
 	uint32 size = (uint32)surf->mainPic.width * (uint32)surf->mainPic.height;
 
 	// Back surface pixels have bit 7 set for cursor palette mapping...
@@ -720,11 +720,11 @@ void XpLib::fillDisplay(byte color, int16 page) {
 	memset(surf->mainPic.pixelData, fillVal, size);
 
 	// Mark page as pixel-dirty...
-	g_renderFlags |= (page != stFront) ? RF_BACK_DIRTY : RF_FRONT_DIRTY;
+	_renderFlags |= (page != stFront) ? RF_BACK_DIRTY : RF_FRONT_DIRTY;
 
 	// Clear overlay flag, signal full redraw needed...
-	g_renderFlags &= ~RF_OVERLAY_ACTIVE;
-	g_prevDirtyValid = 1;
+	_renderFlags &= ~RF_OVERLAY_ACTIVE;
+	_prevDirtyValid = 1;
 }
 
 } // End of namespace Bolt

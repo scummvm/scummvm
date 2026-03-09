@@ -57,37 +57,37 @@ bool BoltEngine::maintainAudioPlay(int16 mode) {
 bool BoltEngine::initAnim(RTFResource *rtf, int16 animIndex) {
 	int32 bufSize;
 
-	g_animPrevInactivityTimer = _xp->setInactivityTimer(0);
+	_animPrevInactivityTimer = _xp->setInactivityTimer(0);
 
 	// Try 80KB ring buffer, fall back to 40KB
 	bufSize = 0x14000;
-	g_animRingBuffer = (byte *)_xp->tryAllocMem(bufSize);
-	if (!g_animRingBuffer) {
+	_animRingBuffer = (byte *)_xp->tryAllocMem(bufSize);
+	if (!_animRingBuffer) {
 		bufSize = 0xA000;
-		g_animRingBuffer = (byte *)_xp->allocMem(bufSize);
+		_animRingBuffer = (byte *)_xp->allocMem(bufSize);
 	}
 
-	if (!g_animRingBuffer)
+	if (!_animRingBuffer)
 		return false;
 
-	if (!playRTF(rtf, animIndex, g_animRingBuffer, bufSize))
+	if (!playRTF(rtf, animIndex, _animRingBuffer, bufSize))
 		return false;
 
 	return true;
 }
 
 void BoltEngine::cleanUpAnim() {
-	if (g_animRingBuffer) {
-		_xp->freeMem(g_animRingBuffer);
-		g_animRingBuffer = nullptr;
+	if (_animRingBuffer) {
+		_xp->freeMem(_animRingBuffer);
+		_animRingBuffer = nullptr;
 	}
 
-	if (g_animFileHandle) {
-		_xp->closeFile(g_animFileHandle);
-		g_animFileHandle = nullptr;
+	if (_animFileHandle) {
+		_xp->closeFile(_animFileHandle);
+		_animFileHandle = nullptr;
 	}
 
-	_xp->setInactivityTimer(g_animPrevInactivityTimer);
+	_xp->setInactivityTimer(_animPrevInactivityTimer);
 }
 
 } // End of namespace Bolt

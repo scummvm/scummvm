@@ -34,8 +34,8 @@ void BoltEngine::startCycle(byte *cycleResource) {
 
 void BoltEngine::displayBooth(int16 page) {
 	_xp->setTransparency(page);
-	_xp->displayPic(&g_boothLetterSprite, g_displayX, g_displayY, page);
-	displayColors(g_boothPalCycleData, page, 0);
+	_xp->displayPic(&_boothLetterSprite, _displayX, _displayY, page);
+	displayColors(_boothPalCycleData, page, 0);
 
 	if (page != stFront)
 		_xp->fillDisplay(0, stFront);
@@ -46,7 +46,7 @@ void BoltEngine::displayBooth(int16 page) {
 void BoltEngine::playAVOverBooth(int16 animIndex) {
 	_xp->hideCursor();
 	displayBooth(stBack);
-	playAV(g_rtfHandle, animIndex, g_displayWidth, g_displayHeight, g_displayX, g_displayY);
+	playAV(_rtfHandle, animIndex, _displayWidth, _displayHeight, _displayX, _displayY);
 	displayBooth(stFront);
 	_xp->showCursor();
 }
@@ -65,7 +65,7 @@ int16 BoltEngine::hucksBooth(int16 prevBooth) {
 	case 2:
 		return 10; // default (play game)
 	case 3:
-		return g_isDemo ? 17 : 10; // play game
+		return _isDemo ? 17 : 10; // play game
 	default:
 		return 10;
 	}
@@ -85,7 +85,7 @@ int16 BoltEngine::fredsBooth(int16 prevBooth) {
 	case 2:
 		return 11;
 	case 3:
-		return g_isDemo ? 17 : 11;
+		return _isDemo ? 17 : 11;
 	default:
 		return 11;
 	}
@@ -105,7 +105,7 @@ int16 BoltEngine::scoobysBooth(int16 prevBooth) {
 	case 2:
 		return 12;
 	case 3:
-		if (g_isDemo && g_scoobyWins >= 2)
+		if (_isDemo && _scoobyWins >= 2)
 			return 17;
 
 		return 12;
@@ -128,7 +128,7 @@ int16 BoltEngine::yogisBooth(int16 prevBooth) {
 	case 2:
 		return 13;
 	case 3:
-		if (g_isDemo && g_yogiWins >= 2)
+		if (_isDemo && _yogiWins >= 2)
 			return 17;
 
 		return 13;
@@ -151,7 +151,7 @@ int16 BoltEngine::georgesBooth(int16 prevBooth) {
 	case 2:
 		return 14;
 	case 3:
-		if (g_isDemo && g_georgeWins >= 2)
+		if (_isDemo && _georgeWins >= 2)
 			return 17;
 
 		return 14;
@@ -174,7 +174,7 @@ int16 BoltEngine::topCatsBooth(int16 prevBooth) {
 	case 2:
 		return 15;
 	case 3:
-		return g_isDemo ? 17 : 15;
+		return _isDemo ? 17 : 15;
 	default:
 		return 15;
 	}
@@ -186,7 +186,7 @@ int16 BoltEngine::mainEntrance(int16 prevBooth) {
 
 	switch (result) {
 	case -1:
-		return g_isDemo ? 18 : 0; // exit
+		return _isDemo ? 18 : 0; // exit
 	case 0:
 		return 8; // left (TopCat)
 	case 1:
@@ -198,9 +198,9 @@ int16 BoltEngine::mainEntrance(int16 prevBooth) {
 	case 4:
 		return 9; // self
 	case 5:
-		return g_isDemo ? 18 : 0; // exit
+		return _isDemo ? 18 : 0; // exit
 	case 6:
-		return g_isDemo ? 18 : 9; // Case only available in the demo
+		return _isDemo ? 18 : 9; // Case only available in the demo
 	default:
 		return 9;
 	}
@@ -209,61 +209,61 @@ int16 BoltEngine::mainEntrance(int16 prevBooth) {
 bool BoltEngine::loadBooth(int16 boothId) {
 	switch (boothId) {
 	case 3:
-		if (g_boothLoadedMask & 0x01)
+		if (_boothLoadedMask & 0x01)
 			break;
-		if (!getBOLTGroup(g_boothsBoltLib, 0x100, 1))
+		if (!getBOLTGroup(_boothsBoltLib, 0x100, 1))
 			return false;
-		g_boothLoadedMask |= 0x01;
+		_boothLoadedMask |= 0x01;
 		break;
 
 	case 4:
-		if (g_boothLoadedMask & 0x02)
+		if (_boothLoadedMask & 0x02)
 			break;
-		if (!getBOLTGroup(g_boothsBoltLib, 0x200, 1))
+		if (!getBOLTGroup(_boothsBoltLib, 0x200, 1))
 			return false;
-		g_boothLoadedMask |= 0x02;
+		_boothLoadedMask |= 0x02;
 		break;
 
 	case 5:
-		if (g_boothLoadedMask & 0x04)
+		if (_boothLoadedMask & 0x04)
 			break;
-		if (!getBOLTGroup(g_boothsBoltLib, 0x300, 1))
+		if (!getBOLTGroup(_boothsBoltLib, 0x300, 1))
 			return false;
-		g_boothLoadedMask |= 0x04;
+		_boothLoadedMask |= 0x04;
 		break;
 
 	case 6:
-		if (g_boothLoadedMask & 0x08)
+		if (_boothLoadedMask & 0x08)
 			break;
-		if (!getBOLTGroup(g_boothsBoltLib, 0x400, 1))
+		if (!getBOLTGroup(_boothsBoltLib, 0x400, 1))
 			return false;
-		g_boothLoadedMask |= 0x08;
+		_boothLoadedMask |= 0x08;
 		break;
 
 	case 7:
-		if (g_boothLoadedMask & 0x10)
+		if (_boothLoadedMask & 0x10)
 			break;
-		if (!getBOLTGroup(g_boothsBoltLib, 0x500, 1))
+		if (!getBOLTGroup(_boothsBoltLib, 0x500, 1))
 			return false;
-		g_boothLoadedMask |= 0x10;
+		_boothLoadedMask |= 0x10;
 		break;
 
 	case 8:
-		if (g_boothLoadedMask & 0x20)
+		if (_boothLoadedMask & 0x20)
 			break;
-		if (!getBOLTGroup(g_boothsBoltLib, 0x600, 1))
+		if (!getBOLTGroup(_boothsBoltLib, 0x600, 1))
 			return false;
-		g_boothLoadedMask |= 0x20;
+		_boothLoadedMask |= 0x20;
 		break;
 
 	case 9:
-		if (g_boothLoadedMask & 0x40)
+		if (_boothLoadedMask & 0x40)
 			break;
-		if (!getBOLTGroup(g_boothsBoltLib, 0x700, 1))
+		if (!getBOLTGroup(_boothsBoltLib, 0x700, 1))
 			return false;
-		if (!getBOLTGroup(g_boothsBoltLib, 0x800 + (g_lettersWon << 8), 1))
+		if (!getBOLTGroup(_boothsBoltLib, 0x800 + (_lettersWon << 8), 1))
 			return false;
-		g_boothLoadedMask |= 0x40;
+		_boothLoadedMask |= 0x40;
 		break;
 	}
 
@@ -271,37 +271,37 @@ bool BoltEngine::loadBooth(int16 boothId) {
 }
 
 void BoltEngine::unloadBooth() {
-	if (g_boothLoadedMask & 0x01)
-		freeBOLTGroup(g_boothsBoltLib, 0x100, 1);
+	if (_boothLoadedMask & 0x01)
+		freeBOLTGroup(_boothsBoltLib, 0x100, 1);
 
-	if (g_boothLoadedMask & 0x02)
-		freeBOLTGroup(g_boothsBoltLib, 0x200, 1);
+	if (_boothLoadedMask & 0x02)
+		freeBOLTGroup(_boothsBoltLib, 0x200, 1);
 
-	if (g_boothLoadedMask & 0x04)
-		freeBOLTGroup(g_boothsBoltLib, 0x300, 1);
+	if (_boothLoadedMask & 0x04)
+		freeBOLTGroup(_boothsBoltLib, 0x300, 1);
 
-	if (g_boothLoadedMask & 0x08)
-		freeBOLTGroup(g_boothsBoltLib, 0x400, 1);
+	if (_boothLoadedMask & 0x08)
+		freeBOLTGroup(_boothsBoltLib, 0x400, 1);
 
-	if (g_boothLoadedMask & 0x10)
-		freeBOLTGroup(g_boothsBoltLib, 0x500, 1);
+	if (_boothLoadedMask & 0x10)
+		freeBOLTGroup(_boothsBoltLib, 0x500, 1);
 
-	if (g_boothLoadedMask & 0x20)
-		freeBOLTGroup(g_boothsBoltLib, 0x600, 1);
+	if (_boothLoadedMask & 0x20)
+		freeBOLTGroup(_boothsBoltLib, 0x600, 1);
 
-	if (g_boothLoadedMask & 0x40) {
-		freeBOLTGroup(g_boothsBoltLib, 0x800 + (g_lettersWon << 8), 1);
-		freeBOLTGroup(g_boothsBoltLib, 0x700, 1);
+	if (_boothLoadedMask & 0x40) {
+		freeBOLTGroup(_boothsBoltLib, 0x800 + (_lettersWon << 8), 1);
+		freeBOLTGroup(_boothsBoltLib, 0x700, 1);
 	}
 
-	g_boothLoadedMask = 0;
+	_boothLoadedMask = 0;
 }
 
 int16 BoltEngine::openBooth(int16 boothId) {
 	int16 baseResId;
 	int16 resId;
 
-	g_currentBoothScene = boothId;
+	_currentBoothScene = boothId;
 
 	if (!loadBooth(boothId))
 		return -1;
@@ -310,63 +310,63 @@ int16 BoltEngine::openBooth(int16 boothId) {
 
 	// Main entrance has more hotspots/animations than regular booths
 	if (boothId == 9) {
-		g_boothNumHotspots = 8;
-		g_boothNumAnimations = 7;
+		_boothNumHotspots = 8;
+		_boothNumAnimations = 7;
 	} else {
-		g_boothNumHotspots = 5;
-		g_boothNumAnimations = 4;
+		_boothNumHotspots = 5;
+		_boothNumAnimations = 4;
 	}
 
 	// Background scene descriptor
-	g_boothSceneDesc = memberAddr(g_boothsBoltLib, baseResId + 0x100);
+	_boothSceneDesc = memberAddr(_boothsBoltLib, baseResId + 0x100);
 
 	// Load 4 palette descriptors (at DS:0x13AC, members +0x105..+0x108)
 	resId = baseResId + 0x105;
 	for (int16 i = 0; i < 4; i++) {
-		g_boothHotPalDescs[i] = memberAddr(g_boothsBoltLib, resId);
+		_boothHotPalDescs[i] = memberAddr(_boothsBoltLib, resId);
 		resId++;
 	}
 
 	// Load animation descriptors
 	if (boothId == 9) {
-		for (int16 i = 0; i < g_boothNumAnimations; i++)
-			g_boothAnimDescs[i] = memberAddr(g_boothsBoltLib, 0x709 + i);
+		for (int16 i = 0; i < _boothNumAnimations; i++)
+			_boothAnimDescs[i] = memberAddr(_boothsBoltLib, 0x709 + i);
 	} else {
 		resId = baseResId + 0x109;
-		for (int16 i = 0; i < g_boothNumAnimations; i++) {
-			g_boothAnimDescs[i] = memberAddr(g_boothsBoltLib, resId);
+		for (int16 i = 0; i < _boothNumAnimations; i++) {
+			_boothAnimDescs[i] = memberAddr(_boothsBoltLib, resId);
 			resId++;
 		}
 	}
 
 	// Load hotspot descriptors
 	if (boothId == 9) {
-		for (int16 i = 0; i < g_boothNumHotspots; i++)
-			g_boothHotspotDescs[i] = memberToRect(memberAddr(g_boothsBoltLib, 0x710 + i));
+		for (int16 i = 0; i < _boothNumHotspots; i++)
+			_boothHotspotDescs[i] = memberToRect(memberAddr(_boothsBoltLib, 0x710 + i));
 	} else {
 		resId = baseResId + 0x10D;
-		for (int16 i = 0; i < g_boothNumHotspots; i++) {
-			g_boothHotspotDescs[i] = memberToRect(memberAddr(g_boothsBoltLib, resId));
+		for (int16 i = 0; i < _boothNumHotspots; i++) {
+			_boothHotspotDescs[i] = memberToRect(memberAddr(_boothsBoltLib, resId));
 			resId++;
 		}
 	}
 
 	if (boothId == 9) {
 		// Main entrance palette cycling data
-		g_boothPalCycleData = memberAddr(g_boothsBoltLib, 0x718);
+		_boothPalCycleData = memberAddr(_boothsBoltLib, 0x718);
 
 		// Letter marquee sprite (display mode selects variant)
-		byte *sprite = memberAddr(g_boothsBoltLib, (g_displayMode != 0 ? 0x801 : 0x800) + (g_lettersWon << 8));
-		boltPict2Pict(&g_boothLetterSprite, sprite);
+		byte *sprite = memberAddr(_boothsBoltLib, (_displayMode != 0 ? 0x801 : 0x800) + (_lettersWon << 8));
+		boltPict2Pict(&_boothLetterSprite, sprite);
 
 		// Visit sign sprite and its off variant
-		g_boothVisitSignOn = memberAddr(g_boothsBoltLib, 0x747);
-		g_boothVisitSignOff = memberAddr(g_boothsBoltLib, 0x748);
+		_boothVisitSignOn = memberAddr(_boothsBoltLib, 0x747);
+		_boothVisitSignOff = memberAddr(_boothsBoltLib, 0x748);
 	} else {
-		g_boothPalCycleData = memberAddr(g_boothsBoltLib, baseResId + 0x112);
+		_boothPalCycleData = memberAddr(_boothsBoltLib, baseResId + 0x112);
 
-		byte *sprite = memberAddr(g_boothsBoltLib, baseResId + (g_displayMode != 0 ? 0x114 : 0x113));
-		boltPict2Pict(&g_boothLetterSprite, sprite);
+		byte *sprite = memberAddr(_boothsBoltLib, baseResId + (_displayMode != 0 ? 0x114 : 0x113));
+		boltPict2Pict(&_boothLetterSprite, sprite);
 	}
 
 	displayBooth(stFront);
@@ -374,19 +374,19 @@ int16 BoltEngine::openBooth(int16 boothId) {
 	_xp->setCursorColor(255, 255, 255);
 
 	// First-time cursor position from resource data
-	if (g_needInitCursorPos) {
-		g_cursorX = (int16)READ_UINT16(memberAddr(g_boothsBoltLib, 1));
-		g_cursorY = (int16)READ_UINT16(memberAddr(g_boothsBoltLib, 2));
-		g_needInitCursorPos = false;
+	if (_needInitCursorPos) {
+		_cursorX = (int16)READ_UINT16(memberAddr(_boothsBoltLib, 1));
+		_cursorY = (int16)READ_UINT16(memberAddr(_boothsBoltLib, 2));
+		_needInitCursorPos = false;
 	}
 
-	_xp->setCursorPos(g_cursorX, g_cursorY);
+	_xp->setCursorPos(_cursorX, _cursorY);
 
 	flushInput();
 
-	if (g_isDemo && boothId == 9) {
-		g_helpFlag = 1;
-		g_helpTimer = _xp->startTimer(500);
+	if (_isDemo && boothId == 9) {
+		_helpFlag = 1;
+		_helpTimer = _xp->startTimer(500);
 	}
 
 	return boothEventLoop();
@@ -395,7 +395,7 @@ int16 BoltEngine::openBooth(int16 boothId) {
 void BoltEngine::closeBooth() {
 	uint16 buttonState;
 
-	_xp->readCursor(&buttonState, &g_cursorY, &g_cursorX);
+	_xp->readCursor(&buttonState, &_cursorY, &_cursorX);
 	flushInput();
 	_xp->fillDisplay(0, 0);
 	unloadBooth();
@@ -405,10 +405,10 @@ void BoltEngine::playTour() {
 	int16 playing = 1;
 
 	_xp->hideCursor();
-	g_tourStep = 0;
+	_tourStep = 0;
 
-	if (prepareAV(g_rtfHandle, 4 - (g_isDemo ? 3 : 0), g_displayWidth, g_displayHeight, g_displayX, g_displayY)) {
-		while (playing) {
+	if (prepareAV(_rtfHandle, 4 - (_isDemo ? 3 : 0), _displayWidth, _displayHeight, _displayX, _displayY)) {
+		while (playing && !shouldQuit()) {
 			playing = maintainAV(0);
 			if (!playing)
 				break;
@@ -432,6 +432,9 @@ void BoltEngine::playTour() {
 			}
 		}
 
+		if (shouldQuit())
+			stopAV();
+
 		_xp->stopCycle();
 		displayBooth(stFront);
 	}
@@ -440,10 +443,10 @@ void BoltEngine::playTour() {
 }
 
 void BoltEngine::finishPlayingHelp(int16 activeHotspot) {
-	g_helpPlaying = 0;
+	_helpPlaying = 0;
 
-	if (g_helpIsIdle != 0) {
-		g_helpIsIdle = 0;
+	if (_helpIsIdle != 0) {
+		_helpIsIdle = 0;
 	} else {
 		resetInactivityState();
 	}
@@ -454,12 +457,12 @@ void BoltEngine::finishPlayingHelp(int16 activeHotspot) {
 	if (activeHotspot != 1)
 		restoreColors(1);
 
-	if (activeHotspot != 2 && g_helpFlag == 0)
+	if (activeHotspot != 2 && _helpFlag == 0)
 		restoreColors(2);
 
-	g_keyLeft = 0;
+	_keyLeft = 0;
 
-	if (g_currentBoothScene == 9) {
+	if (_currentBoothScene == 9) {
 		if (activeHotspot != 7)
 			restoreColors(7);
 
@@ -469,14 +472,14 @@ void BoltEngine::finishPlayingHelp(int16 activeHotspot) {
 		if (activeHotspot != 6)
 			restoreColors(6);
 
-		g_keyRight = 0;
-		g_keyUp = 0;
-		g_keyDown = 0;
+		_keyRight = 0;
+		_keyUp = 0;
+		_keyDown = 0;
 	} else {
 		if (activeHotspot != 3)
 			restoreColors(3);
 
-		g_keyEnter = 0;
+		_keyEnter = 0;
 	}
 }
 
@@ -484,25 +487,25 @@ int16 BoltEngine::hotSpotActive(int16 hotspot) {
 	switch (hotspot) {
 	case 0:
 	case 1:
-		return g_keyLeft;
+		return _keyLeft;
 
 	case 2:
-		return (g_helpPlaying || g_helpFlag) ? 1 : 0;
+		return (_helpPlaying || _helpFlag) ? 1 : 0;
 
 	case 3:
-		return g_keyEnter;
+		return _keyEnter;
 
 	case 4:
 		return 0;
 
 	case 5:
-		return g_keyDown;
+		return _keyDown;
 
 	case 6:
-		return g_keyUp;
+		return _keyUp;
 
 	case 7:
-		return g_keyRight;
+		return _keyRight;
 
 	default:
 		return 0;
@@ -512,26 +515,26 @@ int16 BoltEngine::hotSpotActive(int16 hotspot) {
 void BoltEngine::hoverHotSpot() {
 	int16 i = 0;
 
-	while (i < g_boothNumHotspots) {
-		if (g_boothHotspotDescs[i].contains(g_cursorX, g_cursorY))
+	while (i < _boothNumHotspots) {
+		if (_boothHotspotDescs[i].contains(_cursorX, _cursorY))
 			break;
 
 		i++;
 	}
 
-	if (i == g_hoveredHotspot)
+	if (i == _hoveredHotspot)
 		return;
 
-	if (g_hoveredHotspot < g_boothNumHotspots) {
-		if (!hotSpotActive(g_hoveredHotspot))
-			restoreColors(g_hoveredHotspot);
+	if (_hoveredHotspot < _boothNumHotspots) {
+		if (!hotSpotActive(_hoveredHotspot))
+			restoreColors(_hoveredHotspot);
 	}
 
-	g_hoveredHotspot = i;
+	_hoveredHotspot = i;
 
-	if (i < g_boothNumHotspots) {
+	if (i < _boothNumHotspots) {
 		if (!hotSpotActive(i))
-			setColors(g_hoveredHotspot);
+			setColors(_hoveredHotspot);
 	}
 }
 
@@ -540,45 +543,45 @@ int16 BoltEngine::boothEventLoop() {
 	int16 exitCode = 0;
 
 	_xp->showCursor();
-	g_hoveredHotspot = -1;
+	_hoveredHotspot = -1;
 	hoverHotSpot();
 
 	_xp->setInactivityTimer(30);
 
 	while (exitCode == 0 && !shouldQuit()) {
-		if (g_helpPlaying != 0) {
-			g_helpPlaying = maintainAudioPlay(0);
-			if (g_helpPlaying == 0)
-				finishPlayingHelp(g_hoveredHotspot);
+		if (_helpPlaying != 0) {
+			_helpPlaying = maintainAudioPlay(0);
+			if (_helpPlaying == 0)
+				finishPlayingHelp(_hoveredHotspot);
 		}
 
 		eventData = 0;
 		switch (_xp->getEvent(etEmpty, &eventData)) {
 		case etTimer:
-			if (g_keyLeft == 0 && g_keyRight == 0 &&
-				g_keyUp == 0 && g_keyDown == 0 &&
-				g_keyEnter == 0 && g_helpFlag == 0)
+			if (_keyLeft == 0 && _keyRight == 0 &&
+				_keyUp == 0 && _keyDown == 0 &&
+				_keyEnter == 0 && _helpFlag == 0)
 				break;
 
-			if (g_keyReleased != 0) {
+			if (_keyReleased != 0) {
 				// Key release: restore hotspot colors
-				g_keyReleased = 0;
-				if (g_keyLeft != 0) {
+				_keyReleased = 0;
+				if (_keyLeft != 0) {
 					restoreColors(0);
 					restoreColors(1);
-				} else if (g_keyRight != 0) {
+				} else if (_keyRight != 0) {
 					restoreColors(7);
-				} else if (g_keyUp != 0) {
+				} else if (_keyUp != 0) {
 					restoreColors(6);
-				} else if (g_keyDown != 0) {
+				} else if (_keyDown != 0) {
 					restoreColors(5);
-				} else if (g_keyEnter != 0) {
+				} else if (_keyEnter != 0) {
 					restoreColors(3);
-				} else if (g_helpFlag != 0) {
+				} else if (_helpFlag != 0) {
 					restoreColors(2);
 
-					if (g_helpPlaying != 0) {
-						if (g_helpIsIdle == 0 || g_currentBoothScene != 9)
+					if (_helpPlaying != 0) {
+						if (_helpIsIdle == 0 || _currentBoothScene != 9)
 							break;
 					}
 
@@ -586,23 +589,23 @@ int16 BoltEngine::boothEventLoop() {
 				}
 			} else {
 				// Key press: highlight hotspot colors
-				g_keyReleased = 1;
-				if (g_keyLeft != 0) {
+				_keyReleased = 1;
+				if (_keyLeft != 0) {
 					setColors(0);
 					setColors(1);
-				} else if (g_keyRight != 0) {
+				} else if (_keyRight != 0) {
 					setColors(7);
-				} else if (g_keyUp != 0) {
+				} else if (_keyUp != 0) {
 					setColors(6);
-				} else if (g_keyDown != 0) {
+				} else if (_keyDown != 0) {
 					setColors(5);
-				} else if (g_keyEnter != 0) {
+				} else if (_keyEnter != 0) {
 					setColors(3);
-				} else if (g_helpFlag != 0) {
+				} else if (_helpFlag != 0) {
 					setColors(2);
 
-					if (g_helpPlaying != 0) {
-						if (g_helpIsIdle == 0 || g_currentBoothScene != 9)
+					if (_helpPlaying != 0) {
+						if (_helpIsIdle == 0 || _currentBoothScene != 9)
 							break;
 					}
 
@@ -610,32 +613,32 @@ int16 BoltEngine::boothEventLoop() {
 				}
 			}
 
-			g_helpTimer = _xp->startTimer(500);
+			_helpTimer = _xp->startTimer(500);
 			break;
 
 		case etMouseMove:
-			g_cursorX = (int16)(eventData >> 16);
-			g_cursorY = (int16)eventData;
+			_cursorX = (int16)(eventData >> 16);
+			_cursorY = (int16)eventData;
 			hoverHotSpot();
 			break;
 
 		case etMouseDown:
 		{
-			int16 prevHelp = g_helpPlaying;
-			if (g_helpPlaying != 0) {
+			int16 prevHelp = _helpPlaying;
+			if (_helpPlaying != 0) {
 				stopAnimation();
-				finishPlayingHelp(g_hoveredHotspot);
+				finishPlayingHelp(_hoveredHotspot);
 			}
 
-			if (prevHelp != 0 && g_hoveredHotspot == 2)
+			if (prevHelp != 0 && _hoveredHotspot == 2)
 				break;
 
-			if (g_hoveredHotspot == -1)
+			if (_hoveredHotspot == -1)
 				break;
 
-			exitCode = handleButtonPress(g_hoveredHotspot);
+			exitCode = handleButtonPress(_hoveredHotspot);
 			if (exitCode == 0) {
-				g_hoveredHotspot = -1;
+				_hoveredHotspot = -1;
 				hoverHotSpot();
 			}
 
@@ -643,43 +646,43 @@ int16 BoltEngine::boothEventLoop() {
 		}
 
 		case etSound:
-			if (g_helpPlaying != 0) {
-				g_helpPlaying = maintainAudioPlay(1);
-				if (g_helpPlaying == 0)
-					finishPlayingHelp(g_hoveredHotspot);
+			if (_helpPlaying != 0) {
+				_helpPlaying = maintainAudioPlay(1);
+				if (_helpPlaying == 0)
+					finishPlayingHelp(_hoveredHotspot);
 			}
 
 			break;
 
 		case etInactivity:
-			if (g_helpPlaying != 0)
+			if (_helpPlaying != 0)
 				break;
 
-			if (g_helpFlag == 0) {
-				g_helpFlag = 1;
-				g_helpTimer = _xp->startTimer(500);
-				if (g_idleHelpAudioAvailable != 0) {
+			if (_helpFlag == 0) {
+				_helpFlag = 1;
+				_helpTimer = _xp->startTimer(500);
+				if (_idleHelpAudioAvailable != 0) {
 					_xp->setInactivityTimer(30);
 					continue;
 				}
 			} else {
-				if (g_idleHelpAudioAvailable == 0)
+				if (_idleHelpAudioAvailable == 0)
 					break;
 
-				if (startAnimation(g_rtfHandle, g_isDemo ? 0x16 : 0x19)) {
-					g_idleHelpAudioAvailable = 0;
-					g_helpPlaying = 1;
-					g_helpIsIdle = 1;
+				if (startAnimation(_rtfHandle, _isDemo ? 0x16 : 0x19)) {
+					_idleHelpAudioAvailable = 0;
+					_helpPlaying = 1;
+					_helpIsIdle = 1;
 				}
 			}
 
 			break;
 
 		case etTrigger:
-			if (g_helpPlaying == 0)
+			if (_helpPlaying == 0)
 				break;
 
-			if (g_currentBoothScene == 9)
+			if (_currentBoothScene == 9)
 				mainEntranceHelpBlink();
 			else
 				boothHelpBlink();
@@ -693,37 +696,37 @@ int16 BoltEngine::boothEventLoop() {
 	}
 
 	_xp->hideCursor();
-	return g_hoveredHotspot;
+	return _hoveredHotspot;
 }
 
 void BoltEngine::resetInactivityState() {
-	if (g_helpTimer != 0) {
-		_xp->killTimer(g_helpTimer);
-		g_helpTimer = 0;
+	if (_helpTimer != 0) {
+		_xp->killTimer(_helpTimer);
+		_helpTimer = 0;
 	}
 
-	g_idleHelpAudioAvailable = 0;
+	_idleHelpAudioAvailable = 0;
 	_xp->setInactivityTimer(30);
 
-	if (g_helpFlag != 0) {
+	if (_helpFlag != 0) {
 		restoreColors(2);
-		if (g_currentBoothScene == 9)
+		if (_currentBoothScene == 9)
 			restoreColors(8);
 	}
 
-	g_helpFlag = 0;
+	_helpFlag = 0;
 }
 
 bool BoltEngine::handleButtonPress(int16 hotspot) {
 	byte savedLeftDoor[3];
 	byte savedRightDoor[3];
 
-	savedLeftDoor[0] = g_leftDoorNavTable[0];
-	savedLeftDoor[1] = g_leftDoorNavTable[1];
-	savedLeftDoor[2] = g_leftDoorNavTable[2];
-	savedRightDoor[0] = g_rightDoorNavTable[0];
-	savedRightDoor[1] = g_rightDoorNavTable[1];
-	savedRightDoor[2] = g_rightDoorNavTable[2];
+	savedLeftDoor[0] = _leftDoorNavTable[0];
+	savedLeftDoor[1] = _leftDoorNavTable[1];
+	savedLeftDoor[2] = _leftDoorNavTable[2];
+	savedRightDoor[0] = _rightDoorNavTable[0];
+	savedRightDoor[1] = _rightDoorNavTable[1];
+	savedRightDoor[2] = _rightDoorNavTable[2];
 
 	if (hotspot != -1)
 		resetInactivityState();
@@ -735,27 +738,27 @@ bool BoltEngine::handleButtonPress(int16 hotspot) {
 
 	case 2: {
 		int16 animId;
-		switch (g_currentBoothScene) {
+		switch (_currentBoothScene) {
 		case 3:
-			animId = g_isDemo ? 0x0F : 0x18;
+			animId = _isDemo ? 0x0F : 0x18;
 			break;
 		case 4:
-			animId = g_isDemo ? 0x10 : 0x12;
+			animId = _isDemo ? 0x10 : 0x12;
 			break;
 		case 5:
-			animId = g_isDemo ? 0x11 : 0x13;
+			animId = _isDemo ? 0x11 : 0x13;
 			break;
 		case 6:
-			animId = g_isDemo ? 0x12 : 0x14;
+			animId = _isDemo ? 0x12 : 0x14;
 			break;
 		case 7:
-			animId = g_isDemo ? 0x13 : 0x15;
+			animId = _isDemo ? 0x13 : 0x15;
 			break;
 		case 8:
-			animId = g_isDemo ? 0x14 : 0x16;
+			animId = _isDemo ? 0x14 : 0x16;
 			break;
 		case 9:
-			animId = g_isDemo ? 0x15 : 0x17;
+			animId = _isDemo ? 0x15 : 0x17;
 			break;
 		default:
 			animId = -1;
@@ -764,44 +767,44 @@ bool BoltEngine::handleButtonPress(int16 hotspot) {
 
 		bool ok = false;
 		if (animId != -1)
-			ok = startAnimation(g_rtfHandle, animId);
+			ok = startAnimation(_rtfHandle, animId);
 
 		if (ok) {
-			g_helpPlaying = 1;
+			_helpPlaying = 1;
 			setColors(2);
-			g_helpFlag = 0;
-			g_tourStep = 0;
+			_helpFlag = 0;
+			_tourStep = 0;
 		}
 
 		return false;
 	}
 
 	default:
-		if (g_currentBoothScene == 9) {
+		if (_currentBoothScene == 9) {
 			switch (hotspot) {
 			case 3:
 			case 4:
 			{
 				byte *navTable = (hotspot == 3) ? savedLeftDoor : savedRightDoor;
-				int8 boothOffset = (int8)navTable[g_lettersWon % 3];
-				playAVOverBooth(boothOffset + (g_isDemo ? 9 : 12));
+				int8 boothOffset = (int8)navTable[_lettersWon % 3];
+				playAVOverBooth(boothOffset + (_isDemo ? 9 : 12));
 				return false;
 			}
 
 			case 5:
-				if (g_isDemo) {
+				if (_isDemo) {
 					return true;
 				}
 
 				_xp->hideCursor();
 				displayBooth(stBack);
 
-				if (playAV(g_rtfHandle, 3, g_displayWidth, g_displayHeight, g_displayX, g_displayY) == 0) {
+				if (playAV(_rtfHandle, 3, _displayWidth, _displayHeight, _displayX, _displayY) == 0) {
 					fadeToBlack(1);
 					_xp->setTransparency(false);
-					displayPic(getBOLTMember(g_boothsBoltLib, g_displayMode ? 0x1802 : 0x1801), g_displayX, g_displayY, 0);
+					displayPic(getBOLTMember(_boothsBoltLib, _displayMode ? 0x1802 : 0x1801), _displayX, _displayY, 0);
 					_xp->updateDisplay();
-					displayColors(getBOLTMember(g_boothsBoltLib, 0x1800), stFront, 0);
+					displayColors(getBOLTMember(_boothsBoltLib, 0x1800), stFront, 0);
 					_xp->updateDisplay();
 
 					uint32 timer = _xp->startTimer(5000);
@@ -827,30 +830,30 @@ bool BoltEngine::handleButtonPress(int16 hotspot) {
 				vDelete("TopCatBF");
 				vDelete("Yogi");
 
-				g_huckWins = 0;
-				g_fredWins = 0;
-				g_scoobyWins = 0;
-				g_yogiWins = 0;
-				g_georgeWins = 0;
-				g_topCatWins = 0;
+				_huckWins = 0;
+				_fredWins = 0;
+				_scoobyWins = 0;
+				_yogiWins = 0;
+				_georgeWins = 0;
+				_topCatWins = 0;
 
 				displayBooth(stBack);
-				playAV(g_rtfHandle, 5 - (g_isDemo ? 3 : 0),
-					   g_displayWidth, g_displayHeight,
-					   g_displayX, g_displayY);
+				playAV(_rtfHandle, 5 - (_isDemo ? 3 : 0),
+					   _displayWidth, _displayHeight,
+					   _displayX, _displayY);
 
-				if (g_lettersWon != 0) {
-					freeBOLTGroup(g_boothsBoltLib, 0x800 + (g_lettersWon << 8), 1);
-					if (!getBOLTGroup(g_boothsBoltLib, 0x800, 1)) {
-						g_hoveredHotspot = -1;
+				if (_lettersWon != 0) {
+					freeBOLTGroup(_boothsBoltLib, 0x800 + (_lettersWon << 8), 1);
+					if (!getBOLTGroup(_boothsBoltLib, 0x800, 1)) {
+						_hoveredHotspot = -1;
 						return true;
 					}
 
-					boltPict2Pict(&g_boothLetterSprite, memberAddr(g_boothsBoltLib, g_displayMode ? 0x801 : 0x800));
+					boltPict2Pict(&_boothLetterSprite, memberAddr(_boothsBoltLib, _displayMode ? 0x801 : 0x800));
 				}
 
 				displayBooth(stFront);
-				g_lettersWon = 0;
+				_lettersWon = 0;
 				_xp->showCursor();
 				return false;
 
@@ -861,7 +864,7 @@ bool BoltEngine::handleButtonPress(int16 hotspot) {
 		} else {
 			switch (hotspot) {
 			case 3:
-				startCycle(g_boothSceneDesc);
+				startCycle(_boothSceneDesc);
 				_xp->startTimer(2000);
 				return true;
 
@@ -898,12 +901,12 @@ void BoltEngine::blastColors(byte **paletteTable, int16 index, int16 mode) {
 }
 
 void BoltEngine::setColors(int16 index) {
-	if (g_currentBoothScene == 9) {
+	if (_currentBoothScene == 9) {
 		switch (index) {
 		case 0:
 		case 1:
 		case 2:
-			blastColors(g_boothAnimDescs, index, 1);
+			blastColors(_boothAnimDescs, index, 1);
 			break;
 
 		case 3:
@@ -913,11 +916,11 @@ void BoltEngine::setColors(int16 index) {
 		case 5:
 		case 6:
 		case 7:
-			blastColors(g_boothAnimDescs, index - 2, 1);
+			blastColors(_boothAnimDescs, index - 2, 1);
 			break;
 
 		case 8:
-			displayPic(g_boothVisitSignOn, 0, 0, stFront);
+			displayPic(_boothVisitSignOn, 0, 0, stFront);
 			_xp->updateDisplay();
 			break;
 		}
@@ -926,33 +929,33 @@ void BoltEngine::setColors(int16 index) {
 		case 0:
 		case 1:
 		case 2:
-			blastColors(g_boothAnimDescs, index, 1);
+			blastColors(_boothAnimDescs, index, 1);
 			break;
 
 		case 3:
-			if (g_currentBoothScene == 9)
+			if (_currentBoothScene == 9)
 				break;
 
 			for (int16 i = 0; i < 4; i++)
-				blastColors(g_boothHotPalDescs, i, 1);
+				blastColors(_boothHotPalDescs, i, 1);
 
 			break;
 
 		case 4:
-			blastColors(g_boothAnimDescs, index - 1, 1);
+			blastColors(_boothAnimDescs, index - 1, 1);
 			break;
 		}
 	}
 }
 
 void BoltEngine::restoreColors(int16 index) {
-	if (g_currentBoothScene == 9) {
+	if (_currentBoothScene == 9) {
 		switch (index) {
 		case 0:
 		case 1:
 		case 2: {
-			byte *palData = g_savedPalettes[index];
-			byte *animDesc = g_boothAnimDescs[index];
+			byte *palData = _savedPalettes[index];
+			byte *animDesc = _boothAnimDescs[index];
 			_xp->setPalette((int16)READ_UINT16(animDesc + 2), (int16)READ_UINT16(animDesc), palData);
 			break;
 		}
@@ -964,14 +967,14 @@ void BoltEngine::restoreColors(int16 index) {
 		case 5:
 		case 6:
 		case 7: {
-			byte *palData = g_savedPalettes[index - 2];
-			byte *animDesc = g_boothAnimDescs[index - 2];
+			byte *palData = _savedPalettes[index - 2];
+			byte *animDesc = _boothAnimDescs[index - 2];
 			_xp->setPalette((int16)READ_UINT16(animDesc + 2), (int16)READ_UINT16(animDesc), palData);
 			break;
 		}
 
 		case 8:
-			displayPic(g_boothVisitSignOff, 0, 0, stFront);
+			displayPic(_boothVisitSignOff, 0, 0, stFront);
 			_xp->updateDisplay();
 			break;
 		}
@@ -980,24 +983,24 @@ void BoltEngine::restoreColors(int16 index) {
 		case 0:
 		case 1:
 		case 2: {
-			byte *palData = g_savedPalettes[index];
-			byte *animDesc = g_boothAnimDescs[index];
+			byte *palData = _savedPalettes[index];
+			byte *animDesc = _boothAnimDescs[index];
 			_xp->setPalette((int16)READ_UINT16(animDesc + 2), (int16)READ_UINT16(animDesc), palData);
 			break;
 		}
 
 		case 3:
 			for (int16 i = 0; i < 4; i++) {
-				byte *palData = g_savedHotPalettes[i];
-				byte *palDesc = g_boothHotPalDescs[i];
+				byte *palData = _savedHotPalettes[i];
+				byte *palDesc = _boothHotPalDescs[i];
 				_xp->setPalette((int16)READ_UINT16(palDesc + 2), (int16)READ_UINT16(palDesc), palData);
 			}
 			break;
 
 		case 4:
 		{
-			byte *palData = g_savedPalettes[index - 1];
-			byte *animDesc = g_boothAnimDescs[index - 1];
+			byte *palData = _savedPalettes[index - 1];
+			byte *animDesc = _boothAnimDescs[index - 1];
 			_xp->setPalette((int16)READ_UINT16(animDesc + 2), (int16)READ_UINT16(animDesc), palData);
 			break;
 		}
@@ -1006,20 +1009,20 @@ void BoltEngine::restoreColors(int16 index) {
 }
 
 void BoltEngine::loadColors() {
-	for (int16 i = 0; i < g_boothNumAnimations; i++) {
-		byte *animDesc = g_boothAnimDescs[i];
-		_xp->getPalette((int16)READ_UINT16(animDesc), (int16)READ_UINT16(animDesc + 2), g_savedPalettes[i]);
+	for (int16 i = 0; i < _boothNumAnimations; i++) {
+		byte *animDesc = _boothAnimDescs[i];
+		_xp->getPalette((int16)READ_UINT16(animDesc), (int16)READ_UINT16(animDesc + 2), _savedPalettes[i]);
 	}
 
-	if (g_currentBoothScene == 9) {
-		int16 last = g_boothNumAnimations - 1;
-		byte *animDesc = g_boothAnimDescs[last];
-		_xp->getPalette((int16)READ_UINT16(animDesc), (int16)READ_UINT16(animDesc + 2), g_savedPalettes[last]);
+	if (_currentBoothScene == 9) {
+		int16 last = _boothNumAnimations - 1;
+		byte *animDesc = _boothAnimDescs[last];
+		_xp->getPalette((int16)READ_UINT16(animDesc), (int16)READ_UINT16(animDesc + 2), _savedPalettes[last]);
 	}
 
 	for (int16 i = 0; i < 4; i++) {
-		byte *palDesc = g_boothHotPalDescs[i];
-		_xp->getPalette((int16)READ_UINT16(palDesc), (int16)READ_UINT16(palDesc + 2), g_savedHotPalettes[i]);
+		byte *palDesc = _boothHotPalDescs[i];
+		_xp->getPalette((int16)READ_UINT16(palDesc), (int16)READ_UINT16(palDesc + 2), _savedHotPalettes[i]);
 	}
 }
 
@@ -1029,116 +1032,116 @@ void BoltEngine::shiftColorMap(byte *colorMap, int16 delta) {
 }
 
 void BoltEngine::playBoothAV() {
-	switch (g_currentBoothScene) {
+	switch (_currentBoothScene) {
 	case 3:
-		playAVOverBooth(6 - (g_isDemo ? 3 : 0));
+		playAVOverBooth(6 - (_isDemo ? 3 : 0));
 		break;
 	case 4:
-		playAVOverBooth(7 - (g_isDemo ? 3 : 0));
+		playAVOverBooth(7 - (_isDemo ? 3 : 0));
 		break;
 	case 5:
-		playAVOverBooth(8 - (g_isDemo ? 3 : 0));
+		playAVOverBooth(8 - (_isDemo ? 3 : 0));
 		break;
 	case 6:
-		playAVOverBooth(9 - (g_isDemo ? 3 : 0));
+		playAVOverBooth(9 - (_isDemo ? 3 : 0));
 		break;
 	case 7:
-		playAVOverBooth(10 - (g_isDemo ? 3 : 0));
+		playAVOverBooth(10 - (_isDemo ? 3 : 0));
 		break;
 	case 8:
-		playAVOverBooth(11 - (g_isDemo ? 3 : 0));
+		playAVOverBooth(11 - (_isDemo ? 3 : 0));
 		break;
 	}
 }
 
 void BoltEngine::mainEntranceHelpBlink() {
-	g_tourStep++;
+	_tourStep++;
 
-	switch (g_tourStep) {
+	switch (_tourStep) {
 	case 1:
 		setColors(0);
 		setColors(1);
-		g_keyLeft = 1;
-		g_keyReleased = 1;
-		g_helpTimer = _xp->startTimer(500);
+		_keyLeft = 1;
+		_keyReleased = 1;
+		_helpTimer = _xp->startTimer(500);
 		break;
 
 	case 2:
-		g_keyLeft = 0;
-		g_keyReleased = 0;
+		_keyLeft = 0;
+		_keyReleased = 0;
 
-		if (!g_boothHotspotDescs[0].contains(g_cursorX, g_cursorY))
+		if (!_boothHotspotDescs[0].contains(_cursorX, _cursorY))
 			restoreColors(0);
 
-		if (!g_boothHotspotDescs[1].contains(g_cursorX, g_cursorY))
+		if (!_boothHotspotDescs[1].contains(_cursorX, _cursorY))
 			restoreColors(1);
 
 		return;
 
 	case 3:
 		setColors(7);
-		g_keyRight = 1;
-		g_keyReleased = 1;
-		g_helpTimer = _xp->startTimer(500);
+		_keyRight = 1;
+		_keyReleased = 1;
+		_helpTimer = _xp->startTimer(500);
 		break;
 
 	case 4:
-		g_keyRight = 0;
-		g_keyReleased = 0;
+		_keyRight = 0;
+		_keyReleased = 0;
 
-		if (!g_boothHotspotDescs[7] .contains(g_cursorX, g_cursorY))
+		if (!_boothHotspotDescs[7] .contains(_cursorX, _cursorY))
 			restoreColors(7);
 		return;
 
 	case 5:
 		setColors(6);
-		g_keyUp = 1;
-		g_keyReleased = 1;
-		g_helpTimer = _xp->startTimer(500);
+		_keyUp = 1;
+		_keyReleased = 1;
+		_helpTimer = _xp->startTimer(500);
 		break;
 
 	case 6:
-		g_keyUp = 0;
-		g_keyReleased = 0;
+		_keyUp = 0;
+		_keyReleased = 0;
 
-		if (!g_boothHotspotDescs[6].contains(g_cursorX, g_cursorY))
+		if (!_boothHotspotDescs[6].contains(_cursorX, _cursorY))
 			restoreColors(6);
 		return;
 
 	case 7:
 		setColors(5);
-		g_keyDown = 1;
-		g_keyReleased = 1;
-		g_helpTimer = _xp->startTimer(500);
+		_keyDown = 1;
+		_keyReleased = 1;
+		_helpTimer = _xp->startTimer(500);
 		break;
 
 	case 8:
-		g_keyDown = 0;
-		g_keyReleased = 0;
-		g_helpTimer = 0;
+		_keyDown = 0;
+		_keyReleased = 0;
+		_helpTimer = 0;
 
-		if (!g_boothHotspotDescs[5].contains(g_cursorX, g_cursorY))
+		if (!_boothHotspotDescs[5].contains(_cursorX, _cursorY))
 			restoreColors(5);
 		return;
 	}
 }
 
 void BoltEngine::boothHelpBlink() {
-	g_tourStep++;
+	_tourStep++;
 
-	switch (g_tourStep) {
+	switch (_tourStep) {
 	case 1:
 		setColors(3);
-		g_keyEnter = 1;
-		g_keyReleased = 1;
-		g_helpTimer = _xp->startTimer(500);
+		_keyEnter = 1;
+		_keyReleased = 1;
+		_helpTimer = _xp->startTimer(500);
 		break;
 
 	case 2:
-		g_keyEnter = 0;
-		g_keyReleased = 0;
+		_keyEnter = 0;
+		_keyReleased = 0;
 
-		if (!g_boothHotspotDescs[3].contains(g_cursorX, g_cursorY))
+		if (!_boothHotspotDescs[3].contains(_cursorX, _cursorY))
 			restoreColors(3);
 
 		return;
@@ -1146,20 +1149,20 @@ void BoltEngine::boothHelpBlink() {
 	case 3:
 		setColors(0);
 		setColors(1);
-		g_keyLeft = 1;
-		g_keyReleased = 1;
-		g_helpTimer = _xp->startTimer(500);
+		_keyLeft = 1;
+		_keyReleased = 1;
+		_helpTimer = _xp->startTimer(500);
 		break;
 
 	case 4:
-		g_keyLeft = 0;
-		g_keyReleased = 0;
-		g_helpTimer = 0;
+		_keyLeft = 0;
+		_keyReleased = 0;
+		_helpTimer = 0;
 
-		if (!g_boothHotspotDescs[0].contains(g_cursorX, g_cursorY))
+		if (!_boothHotspotDescs[0].contains(_cursorX, _cursorY))
 			restoreColors(0);
 
-		if (!g_boothHotspotDescs[1].contains(g_cursorX, g_cursorY))
+		if (!_boothHotspotDescs[1].contains(_cursorX, _cursorY))
 			restoreColors(1);
 
 		return;
@@ -1172,14 +1175,14 @@ void BoltEngine::tourPaletteCycleStep() {
 		-1,    0x736, 0x73B, 0x73F, 0x743, -1
 	};
 
-	g_tourStep++;
+	_tourStep++;
 
-	if ((g_tourStep & 1) == 0) {
+	if ((_tourStep & 1) == 0) {
 		_xp->stopCycle();
 		return;
 	}
 
-	int16 index = g_tourStep >> 1;
+	int16 index = _tourStep >> 1;
 	if (index > 13)
 		return;
 
@@ -1187,7 +1190,7 @@ void BoltEngine::tourPaletteCycleStep() {
 	if (resId == -1)
 		return;
 
-	startCycle(memberAddr(g_boothsBoltLib, resId));
+	startCycle(memberAddr(_boothsBoltLib, resId));
 }
 
 void BoltEngine::fadeToBlack(int16 steps) {
@@ -1237,61 +1240,61 @@ void BoltEngine::flushInput() {
 }
 
 int16 BoltEngine::winALetter(int16 prevBooth) {
-	g_lettersWon++;
+	_lettersWon++;
 
-	if (g_isDemo && g_lettersWon == 6)
+	if (_isDemo && _lettersWon == 6)
 		return 18;
 
-	if (g_lettersWon == 15) {
-		if (g_allLettersWonFlag) {
-			g_allLettersWonFlag = false;
-			g_lettersWon = 16;
+	if (_lettersWon == 15) {
+		if (_allLettersWonFlag) {
+			_allLettersWonFlag = false;
+			_lettersWon = 16;
 		} else {
-			g_allLettersWonFlag = true;
+			_allLettersWonFlag = true;
 		}
 	}
 
-	int16 avIndex = g_isDemo ? 25 : 31;
-	playAV(g_rtfHandle, g_lettersWon + avIndex, g_displayWidth, g_displayHeight, g_displayX, g_displayY);
+	int16 avIndex = _isDemo ? 25 : 31;
+	playAV(_rtfHandle, _lettersWon + avIndex, _displayWidth, _displayHeight, _displayX, _displayY);
 
-	if (g_lettersWon >= 15)
-		g_lettersWon = 0;
+	if (_lettersWon >= 15)
+		_lettersWon = 0;
 
 	// Return the booth front ID for the game just played
 	switch (prevBooth) {
 	case 10:
-		if (g_isDemo) {
-			g_huckWins++;
+		if (_isDemo) {
+			_huckWins++;
 		}
 
 		return 3; // HuckGame    -> HucksBooth
 	case 11:
-		if (g_isDemo) {
-			g_fredWins++;
+		if (_isDemo) {
+			_fredWins++;
 		}
 
 		return 4; // FredGame    -> FredsBooth
 	case 12:
-		if (g_isDemo) {
-			g_scoobyWins++;
+		if (_isDemo) {
+			_scoobyWins++;
 		}
 
 		return 5; // ScoobyGame  -> ScoobysBooth
 	case 13:
-		if (g_isDemo) {
-			g_yogiWins++;
+		if (_isDemo) {
+			_yogiWins++;
 		}
 
 		return 6; // YogiGame    -> YogisBooth
 	case 14:
-		if (g_isDemo) {
-			g_georgeWins++;
+		if (_isDemo) {
+			_georgeWins++;
 		}
 
 		return 7; // GeorgeGame  -> GeorgesBooth
 	case 15:
-		if (g_isDemo) {
-			g_topCatWins++;
+		if (_isDemo) {
+			_topCatWins++;
 		}
 
 		return 8; // TopCatGame  -> TopCatsBooth
@@ -1304,10 +1307,10 @@ int16 BoltEngine::endDemo(int16 prevBooth) {
 	_xp->hideCursor();
 	_xp->setTransparency(false);
 
-	int16 baseId = (g_displayMode != 0) ? 0x0801 : 0x0800;
-	int16 memberId = baseId + (g_lettersWon << 8);
-	displayPic(getBOLTMember(g_boothsBoltLib, memberId), g_displayX, g_displayY, stFront);
-	displayColors(getBOLTMember(g_boothsBoltLib, 0x718), stFront, 0);
+	int16 baseId = (_displayMode != 0) ? 0x0801 : 0x0800;
+	int16 memberId = baseId + (_lettersWon << 8);
+	displayPic(getBOLTMember(_boothsBoltLib, memberId), _displayX, _displayY, stFront);
+	displayColors(getBOLTMember(_boothsBoltLib, 0x718), stFront, 0);
 
 	_xp->updateDisplay();
 

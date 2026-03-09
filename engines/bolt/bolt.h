@@ -567,17 +567,11 @@ public:
 	 */
 	Common::String getGameId() const;
 
-	/**
-	 * Gets a random number
-	 */
-	uint32 getRandomNumber(uint maxNum) {
-		return _randomSource.getRandomNumber(maxNum);
-	}
-
 	bool hasFeature(EngineFeature f) const override {
 		return (f == kSupportsReturnToLauncher);
 	};
 
+	// This engine doesn't save anything!
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
 		return false;
 	}
@@ -585,30 +579,15 @@ public:
 		return false;
 	}
 
-	/**
-	 * Uses a serializer to allow implementing savegame
-	 * loading and saving using a single method
-	 */
-	Common::Error syncGame(Common::Serializer &s);
-
-	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override {
-		Common::Serializer s(nullptr, stream);
-		return syncGame(s);
-	}
-	Common::Error loadGameStream(Common::SeekableReadStream *stream) override {
-		Common::Serializer s(stream, nullptr);
-		return syncGame(s);
-	}
-
 protected:
-	DisplaySpecs g_displaySpecs[2] = {
+	DisplaySpecs _displaySpecs[2] = {
 		{0, 384, 240},
 		{1, 320, 200}
 	};
 
 	XpLib *_xp = nullptr;
-	bool g_extendedViewport = false;
-	bool g_isDemo = false;
+	bool _extendedViewport = false;
+	bool _isDemo = false;
 
 	// xpMain
 	void boltMain();
@@ -651,56 +630,56 @@ protected:
 	int16 winALetter(int16 prevBooth);
 	int16 endDemo(int16 prevBooth);
 
-	int16 g_lettersWon = 0;
-	bool g_allLettersWonFlag = false;
-	int g_displayMode = 0;
-	int32 g_displayX = 0;
-	int32 g_displayY = 0;
-	int32 g_displayWidth = 0;
-	int32 g_displayHeight = 0;
+	int16 _lettersWon = 0;
+	bool _allLettersWonFlag = false;
+	int _displayMode = 0;
+	int32 _displayX = 0;
+	int32 _displayY = 0;
+	int32 _displayWidth = 0;
+	int32 _displayHeight = 0;
 
-	int16 g_boothLoadedMask = 0;
-	int16 g_currentBoothScene = 0;
-	int16 g_boothNumHotspots = 0;
-	int16 g_boothNumAnimations = 0;
-	byte *g_boothSceneDesc = nullptr;
-	byte *g_boothHotPalDescs[4];
-	Common::Rect g_boothHotspotDescs[8]; 
-	byte *g_boothAnimDescs[7];
-	byte *g_boothAnimPalDescs[4];
-	byte g_savedPalettes[7][30];
-	byte g_savedHotPalettes[4][9];
-	byte *g_boothPalCycleData = nullptr;
-	XPPicDesc g_boothLetterSprite;
-	bool g_needInitCursorPos = true;
-	byte *g_boothVisitSignOn = nullptr;
-	byte *g_boothVisitSignOff = nullptr;
-	byte g_leftDoorNavTable[3] = {3, 2, 4};
-	byte g_rightDoorNavTable[3] = {1, 0, 5};
+	int16 _boothLoadedMask = 0;
+	int16 _currentBoothScene = 0;
+	int16 _boothNumHotspots = 0;
+	int16 _boothNumAnimations = 0;
+	byte *_boothSceneDesc = nullptr;
+	byte *_boothHotPalDescs[4];
+	Common::Rect _boothHotspotDescs[8]; 
+	byte *_boothAnimDescs[7];
+	byte *_boothAnimPalDescs[4];
+	byte _savedPalettes[7][30];
+	byte _savedHotPalettes[4][9];
+	byte *_boothPalCycleData = nullptr;
+	XPPicDesc _boothLetterSprite;
+	bool _needInitCursorPos = true;
+	byte *_boothVisitSignOn = nullptr;
+	byte *_boothVisitSignOff = nullptr;
+	byte _leftDoorNavTable[3]  = { 3, 2, 4 };
+	byte _rightDoorNavTable[3] = { 1, 0, 5 };
 
-	int16 g_cursorX = 0;
-	int16 g_cursorY = 0;
-	int16 g_hoveredHotspot = 0;
-	uint32 g_helpTimer = 0;
-	int16 g_keyReleased = 0;
-	int16 g_keyLeft = 0;
-	int16 g_keyRight = 0;
-	int16 g_keyUp = 0;
-	int16 g_keyDown = 0;
-	int16 g_helpFlag = 0;
-	int16 g_keyEnter = 0;
+	int16 _cursorX = 0;
+	int16 _cursorY = 0;
+	int16 _hoveredHotspot = 0;
+	uint32 _helpTimer = 0;
+	int16 _keyReleased = 0;
+	int16 _keyLeft = 0;
+	int16 _keyRight = 0;
+	int16 _keyUp = 0;
+	int16 _keyDown = 0;
+	int16 _helpFlag = 0;
+	int16 _keyEnter = 0;
 
-	int16 g_tourStep = 0;
-	int16 g_helpPlaying = 0;
-	int16 g_helpIsIdle = 0;
-	int16 g_idleHelpAudioAvailable = 1;
+	int16 _tourStep = 0;
+	int16 _helpPlaying = 0;
+	int16 _helpIsIdle = 0;
+	int16 _idleHelpAudioAvailable = 1;
 
-	int16 g_huckWins = 0;
-	int16 g_fredWins = 0;
-	int16 g_scoobyWins = 0;
-	int16 g_yogiWins = 0;
-	int16 g_georgeWins = 0;
-	int16 g_topCatWins = 0;
+	int16 _huckWins = 0;
+	int16 _fredWins = 0;
+	int16 _scoobyWins = 0;
+	int16 _yogiWins = 0;
+	int16 _georgeWins = 0;
+	int16 _topCatWins = 0;
 
 	// Barker
 	BarkerTable *createBarker(int16 minIndex, int16 maxIndex);
@@ -709,8 +688,8 @@ protected:
 	int16 barker(BarkerTable *table, int16 startBooth);
 	bool checkError();
 
-	int32 g_curErrorCode = 0;
-	int16 g_currentBoothId = 0;
+	int32 _curErrorCode = 0;
+	int16 _currentBoothId = 0;
 
 	// Utils
 	void displayColors(byte *palette, int16 page, int16 flags);
@@ -758,15 +737,15 @@ protected:
 	void swapAllWords();
 	void swapAllLongs();
 
-	BOLTLib *g_boothsBoltLib = nullptr;
-	BOLTCallbacks g_boothsBoltCallbacks;
+	BOLTLib *_boothsBoltLib = nullptr;
+	BOLTCallbacks _boothsBoltCallbacks;
 
-	static BOLTCallback g_defaultTypeLoadCallbacks[25];
-	static BOLTCallback g_defaultTypeFreeCallbacks[25];
-	static BOLTCallback g_defaultMemberLoadCallbacks[25];
-	static BOLTCallback g_defaultMemberFreeCallbacks[25];
-	static BOLTCallback g_defaultGroupLoadCallbacks[25];
-	static BOLTCallback g_defaultGroupFreeCallbacks[25];
+	static BOLTCallback _defaultTypeLoadCallbacks[25];
+	static BOLTCallback _defaultTypeFreeCallbacks[25];
+	static BOLTCallback _defaultMemberLoadCallbacks[25];
+	static BOLTCallback _defaultMemberFreeCallbacks[25];
+	static BOLTCallback _defaultGroupLoadCallbacks[25];
+	static BOLTCallback _defaultGroupFreeCallbacks[25];
 
 	static void noOpCb();
 
@@ -782,20 +761,20 @@ protected:
 
 	void initCallbacks();
 
-	int16 g_resourceIndexCount = 1000;
-	uint32 **g_resourceIndex = nullptr;
-	Common::Array<byte *> g_resolvedPtrs;
-	Common::File *g_cachedFileHandle = nullptr;
-	uint32 g_cachedFilePos = 0xFFFFFFFF;
-	BOLTLib *g_boltCurrentLib = nullptr;
-	BOLTHeader g_boltFileHeader;
-	BOLTGroupEntry *g_boltCurrentGroupEntry = nullptr;
-	int16 g_boltLoadDepth = 0;
-	byte *g_boltRawMemberData = nullptr;
-	BOLTMemberEntry *g_boltCurrentMemberEntry = nullptr;
-	int16 g_pendingFixupCount = 0;
+	int16 _resourceIndexCount = 1000;
+	uint32 **_resourceIndex = nullptr;
+	Common::Array<byte *> _resolvedPtrs;
+	Common::File *_cachedFileHandle = nullptr;
+	uint32 _cachedFilePos = 0xFFFFFFFF;
+	BOLTLib *_boltCurrentLib = nullptr;
+	BOLTHeader _boltFileHeader;
+	BOLTGroupEntry *_boltCurrentGroupEntry = nullptr;
+	int16 _boltLoadDepth = 0;
+	byte *_boltRawMemberData = nullptr;
+	BOLTMemberEntry *_boltCurrentMemberEntry = nullptr;
+	int16 _pendingFixupCount = 0;
 
-	// Game levelNumber
+	// Game state
 	bool initVRam(int16 poolSize);
 	void freeVRam();
 	bool vLoad(void *dest, const char *name);
@@ -805,10 +784,10 @@ protected:
 	uint16 dataSize(int16 recordOffset);
 	bool findRecord(const char *name, int16 *outOffset);
 
-	int32 g_vramRecordCount = 0;
-	int32 g_vramUsedBytes = 0;
-	byte *g_allocatedMemPool = nullptr;
-	uint32 g_allocatedMemPoolSize = 0;
+	int32 _vramRecordCount = 0;
+	int32 _vramUsedBytes = 0;
+	byte *_allocatedMemPool = nullptr;
+	uint32 _allocatedMemPoolSize = 0;
 
 	// RTF
 	RTFResource *openRTF(const char *fileName);
@@ -828,33 +807,33 @@ protected:
 	void resetPlaybackState();
 	void setAVBufferSize(uint32 bufSize);
 
-	RTFResource *g_rtfHandle = nullptr;
-	Common::File *g_rtfFileHandle = nullptr;
-	uint32 g_rtfChunkRemaining = 0;
-	bool g_rtfMidChunk = false;
-	RTFPacket *g_rtfCurrentPacket = nullptr;
-	byte *g_ringBufBase = nullptr;
-	byte *g_ringBufWritePtr = nullptr;
-	uint32 g_ringBufSize = 0;
-	uint32 g_ringBufFreeSpace = 0;
-	uint32 g_ringBufLowWater = 0;
-	uint32 g_ringBufHighWater = 0;
-	uint32 g_ringBufUsed = 0;
-	bool g_rtfSoundActive = false;
-	int16 g_rtfPlaybackTime = 0;
-	int16 g_rtfCumulativeTime = 0;
-	RTFPacket *g_rtfPendingFrame = nullptr;
-	RTFPacket *g_rtfSoundQueueHead = nullptr;
-	RTFPacket *g_rtfSoundPlayHead = nullptr;
-	RTFPacket *g_rtfChunkListTail = nullptr;
-	RTFPacket *g_rtfChunkListHead = nullptr;
-	int16 g_rtfChunkCount = 0;
-	int16 g_rtfQueuedSoundCount = 0;
-	int16 g_rtfSoundTiming = 0;
-	uint32 g_rtfAnimStartOffset = 0;
-	bool g_rtfNeedInitialFill = false;
-	uint32 g_rtfChunkTag = 0;
-	uint32 g_rtfChunkSize = 0;
+	RTFResource *_rtfHandle = nullptr;
+	Common::File *_rtfFileHandle = nullptr;
+	uint32 _rtfChunkRemaining = 0;
+	bool _rtfMidChunk = false;
+	RTFPacket *_rtfCurrentPacket = nullptr;
+	byte *_ringBufBase = nullptr;
+	byte *_ringBufWritePtr = nullptr;
+	uint32 _ringBufSize = 0;
+	uint32 _ringBufFreeSpace = 0;
+	uint32 _ringBufLowWater = 0;
+	uint32 _ringBufHighWater = 0;
+	uint32 _ringBufUsed = 0;
+	bool _rtfSoundActive = false;
+	int16 _rtfPlaybackTime = 0;
+	int16 _rtfCumulativeTime = 0;
+	RTFPacket *_rtfPendingFrame = nullptr;
+	RTFPacket *_rtfSoundQueueHead = nullptr;
+	RTFPacket *_rtfSoundPlayHead = nullptr;
+	RTFPacket *_rtfChunkListTail = nullptr;
+	RTFPacket *_rtfChunkListHead = nullptr;
+	int16 _rtfChunkCount = 0;
+	int16 _rtfQueuedSoundCount = 0;
+	int16 _rtfSoundTiming = 0;
+	uint32 _rtfAnimStartOffset = 0;
+	bool _rtfNeedInitialFill = false;
+	uint32 _rtfChunkTag = 0;
+	uint32 _rtfChunkSize = 0;
 
 	// AV
 	bool prepareAV(RTFResource *rtfHandle, int16 animIndex, int16 width, int16 height, int16 xOff, int16 yOff);
@@ -867,19 +846,19 @@ protected:
 	bool initAV(RTFResource *rtfHandle, int16 animIndex, int16 width, int16 height, int16 xOff, int16 yOff);
 	void cleanUpAV();
 
-	byte *g_avRingBuffer = nullptr;
-	uint32 g_avTargetBufSize = 0x0FA000;
-	int16 g_avSkipLevel = 0;
-	byte *g_avFrontPalette = nullptr;
-	byte *g_avBackPalette = nullptr;
-	uint32 g_avSavedInactivityTimer = 0;
-	uint32 g_avSavedScreenSaverTimer = 0;
-	int16 g_avFrameAccum = 0;
-	int16 g_avDisplayX = 0;
-	int16 g_avDisplayY = 0;
+	byte *_avRingBuffer = nullptr;
+	uint32 _avTargetBufSize = 0x0FA000;
+	int16 _avSkipLevel = 0;
+	byte *_avFrontPalette = nullptr;
+	byte *_avBackPalette = nullptr;
+	uint32 _avSavedInactivityTimer = 0;
+	uint32 _avSavedScreenSaverTimer = 0;
+	int16 _avFrameAccum = 0;
+	int16 _avDisplayX = 0;
+	int16 _avDisplayY = 0;
 
-	XPPicDesc g_avFrontBufDesc;
-	XPPicDesc g_avBackBufDesc;
+	XPPicDesc _avFrontBufDesc;
+	XPPicDesc _avBackBufDesc;
 
 	// Anim
 	bool startAnimation(RTFResource *rtf, int16 animIndex);
@@ -888,9 +867,9 @@ protected:
 	bool initAnim(RTFResource *rtf, int16 animIndex);
 	void cleanUpAnim();
 
-	int16 g_animPrevInactivityTimer = 0;
-	byte *g_animRingBuffer = nullptr;
-	Common::File *g_animFileHandle = nullptr;
+	int16 _animPrevInactivityTimer = 0;
+	byte *_animRingBuffer = nullptr;
+	Common::File *_animFileHandle = nullptr;
 
 	// SSprite
 	void setUpSSprite(SSprite *sprite, int16 frameCount, byte **frameData, int16 frameRate, int16 velocityX, int16 velocityY);
@@ -922,18 +901,18 @@ protected:
 	void freezeSSprite(SSprite *sprite);
 	void unfreezeSSprite(SSprite *sprite);
 
-	int16 g_spriteCollTempX = 0;
-	int16 g_spriteCollTempY = 0;
-	int16 g_spriteCollTempW = 0;
-	int16 g_spriteCollTempH = 0;
-	int16 g_spriteScreenX = 0;
-	int16 g_spriteScreenY = 0;
-	int16 g_spriteCollTempA[4] = { 0 };
-	int16 g_spriteCollTempB[4] = { 0 };
-	int16 g_spriteScreenAX = 0;
-	int16 g_spriteScreenAY = 0;
-	int16 g_spriteScreenBX = 0;
-	int16 g_spriteScreenBY = 0;
+	int16 _spriteCollTempX = 0;
+	int16 _spriteCollTempY = 0;
+	int16 _spriteCollTempW = 0;
+	int16 _spriteCollTempH = 0;
+	int16 _spriteScreenX = 0;
+	int16 _spriteScreenY = 0;
+	int16 _spriteCollTempA[4] = { 0 };
+	int16 _spriteCollTempB[4] = { 0 };
+	int16 _spriteScreenAX = 0;
+	int16 _spriteScreenAY = 0;
+	int16 _spriteScreenBX = 0;
+	int16 _spriteScreenBY = 0;
 
 	// --- MINIGAMES ---
 
@@ -964,54 +943,52 @@ protected:
 	static void swapFredAnimDescCb();
 	static void swapFredLevelDescCb();
 
-	BOLTLib *g_fredBoltLib = nullptr;
-	BOLTCallbacks g_fredBoltCallbacks;
+	BOLTLib *_fredBoltLib = nullptr;
+	BOLTCallbacks _fredBoltCallbacks;
 
-	static BOLTCallback g_fredTypeLoadCallbacks[28];
-	static BOLTCallback g_fredTypeFreeCallbacks[28];
+	static BOLTCallback _fredTypeLoadCallbacks[28];
+	static BOLTCallback _fredTypeFreeCallbacks[28];
 
-	byte *g_fredLevelPtr = nullptr;
-	byte *g_fredBackground = nullptr;
-	byte *g_fredBalloonString = nullptr;
-	byte *g_fredPalette = nullptr;
-	byte *g_fredFacingLeftRect = nullptr;
-	byte *g_fredFacingRightRect = nullptr;
-	byte *g_fredTurningRect = nullptr;
-	byte *g_fredBalloonRect = nullptr;
-	byte *g_fredHelpEntries = nullptr;
-	byte *g_fredPlayButton = nullptr;
-	byte *g_fredSprites[10] = { nullptr };
-	FredEntityState **g_fredEntitiesTable = nullptr;
+	byte *_fredLevelPtr = nullptr;
+	byte *_fredBackground = nullptr;
+	byte *_fredBalloonString = nullptr;
+	byte *_fredPalette = nullptr;
+	byte *_fredFacingLeftRect = nullptr;
+	byte *_fredFacingRightRect = nullptr;
+	byte *_fredTurningRect = nullptr;
+	byte *_fredBalloonRect = nullptr;
+	byte *_fredHelpEntries = nullptr;
+	byte *_fredPlayButton = nullptr;
+	byte *_fredSprites[10] = { nullptr };
+	FredEntityState **_fredEntitiesTable = nullptr;
 
-	byte *g_fredRowBounds = nullptr;
-	byte *g_fredShuffleTable = nullptr;
-	byte *g_fredCycleRaw = nullptr;
-	byte *g_fredBalloonSprite = nullptr;
-	byte *g_fredPathMatrix = nullptr;
-	byte *g_fredCurrentHelpObject = nullptr;
-	byte *g_fredHoveredEntry = nullptr;
+	byte *_fredRowBounds = nullptr;
+	byte *_fredShuffleTable = nullptr;
+	byte *_fredCycleRaw = nullptr;
+	byte *_fredBalloonSprite = nullptr;
+	byte *_fredPathMatrix = nullptr;
+	byte *_fredCurrentHelpObject = nullptr;
+	byte *_fredHoveredEntry = nullptr;
 
-	SoundInfo g_fredSounds[4];
+	SoundInfo _fredSounds[4];
 
-	SoundInfo *g_fredCurrentSound = nullptr;
-	SoundInfo *g_fredLoopSound = nullptr;
-	SoundInfo *g_fredPendingOneShot = nullptr;
-	SoundInfo *g_fredPendingLoop = nullptr;
+	SoundInfo *_fredCurrentSound = nullptr;
+	SoundInfo *_fredLoopSound = nullptr;
+	SoundInfo *_fredPendingOneShot = nullptr;
+	SoundInfo *_fredPendingLoop = nullptr;
 
-	FredEntityState g_fredSprite;
+	FredEntityState _fredSprite;
 
-	int16 g_fredSaveData[3] = { 0, 0, 0 };
-	int16 g_fredLevelIndex = 0;
+	int16 _fredSaveData[3] = { 0, 0, 0 };
+	int16 _fredLevelIndex = 0;
 
-	int16 g_fredBalloonSpawnDelay = 0;
-	int16 g_fredBalloonSearchIdx = 0;
-	uint32 g_fredTimer = 0;
-	int16 g_fredHelpStep = -1;
-	int16 g_fredShowHelp = 1;
+	int16 _fredBalloonSpawnDelay = 0;
+	int16 _fredBalloonSearchIdx = 0;
+	uint32 _fredTimer = 0;
+	int16 _fredHelpStep = -1;
+	int16 _fredShowHelp = 1;
 
-	XPCycleState g_fredCycleSpecs[4];
-
-	const char *g_fredSaveFile = "FredBC";
+	XPCycleState _fredCycleSpecs[4];
 
 	// --- GEORGE ---
 	int16 georgeGame(int16 prevBooth);
@@ -1045,61 +1022,60 @@ protected:
 	static void swapGeorgeHelpEntryCb();
 	static void swapGeorgeThresholdsCb();
 
-	BOLTLib *g_georgeBoltLib = nullptr;
-	BOLTCallbacks g_georgeBoltCallbacks;
+	BOLTLib *_georgeBoltLib = nullptr;
+	BOLTCallbacks _georgeBoltCallbacks;
 
-	static BOLTCallback g_georgeTypeLoadCallbacks[28];
-	static BOLTCallback g_georgeTypeFreeCallbacks[28];
+	static BOLTCallback _georgeTypeLoadCallbacks[28];
+	static BOLTCallback _georgeTypeFreeCallbacks[28];
 
-	byte *g_georgePrevActiveHelpObject = nullptr;
-	byte *g_georgeActiveHelpObject = nullptr;
-	int16 g_georgeHelpStep = -1;
-	int16 g_georgeHelpActive = 1;
-	const char *g_georgeSaveFileName = "GeorgeBE";
+	byte *_georgePrevActiveHelpObject = nullptr;
+	byte *_georgeActiveHelpObject = nullptr;
+	int16 _georgeHelpStep = -1;
+	int16 _georgeHelpActive = 1;
 
-	GeorgeEntityState **g_georgeEntityList = nullptr;
-	int16 g_georgeCarIdx = 0;
-	int16 g_georgeNumSatellites = 0;
-	int16 g_georgeFirstAsteroidIdx = 0;
-	int16 g_georgeTotalSatellites = 0;
-	byte *g_georgeCarPics[3] = { nullptr };
-	byte *g_georgeHelpObjects = nullptr;
-	byte *g_georgeHelpSequence = nullptr;
-	uint32 g_georgeHelpTimer = 0;
-	byte *g_georgeSatelliteShuffleTable = nullptr;
-	byte *g_georgeAsteroidShuffleTable = nullptr;
-	int16 *g_georgeSatelliteThresholds = nullptr;
-	int16 *g_georgeAsteroidThresholds = nullptr;
-	byte *g_georgeSatellitePaths = nullptr;
-	byte *g_georgeAsteroidPaths = nullptr;
-	byte *g_georgeCollisionRect = nullptr;
-	byte *g_georgeSatelliteCollisionRects = nullptr;
-	byte *g_georgeAsteroidCollisionRects = nullptr;
-	byte *g_georgeSatelliteGfx = nullptr;
-	byte *g_georgeAsteroidGfx = nullptr;
-	int16 g_georgeSatelliteWait = 0;
-	int16 g_georgeAsteroidWait = 0;
-	int16 g_georgeSatelliteSearchIdx = 0;
-	int16 g_georgeAsteroidSearchIdx = 0;
-	int16 g_georgeHitSearchIdx = 0;
-	byte *g_georgeBgPic = nullptr;
-	byte *g_georgePalette = nullptr;
-	byte *g_georgePalCycleRawData = nullptr;
-	XPCycleState g_georgePalCycleSpecs[4];
-	int16 g_georgeCollectedSatellitesNum = 0;
-	SoundInfo g_georgeSoundCarStartUp;
-	SoundInfo g_georgeSoundCarGoesAway;
-	SoundInfo g_georgeSoundCarLoopHi;
-	SoundInfo g_georgeSoundCarLoopLo;
-	SoundInfo g_georgeSoundCarTumble;
-	SoundInfo **g_georgeSatelliteSoundList = nullptr;
-	byte g_georgeSoundChannelCounter = 0;
-	SoundInfo *g_georgeSoundToPlay = nullptr;
-	SoundInfo *g_georgeSoundCurrent = nullptr;
-	SoundInfo *g_georgeSoundQueued = nullptr;
-	SoundInfo *g_georgeSoundNext = nullptr;
-	int16 g_georgeSaveData[3] = { 0 };
-	int16 *g_georgeThresholds = nullptr;
+	GeorgeEntityState **_georgeEntityList = nullptr;
+	int16 _georgeCarIdx = 0;
+	int16 _georgeNumSatellites = 0;
+	int16 _georgeFirstAsteroidIdx = 0;
+	int16 _georgeTotalSatellites = 0;
+	byte *_georgeCarPics[3] = { nullptr };
+	byte *_georgeHelpObjects = nullptr;
+	byte *_georgeHelpSequence = nullptr;
+	uint32 _georgeHelpTimer = 0;
+	byte *_georgeSatelliteShuffleTable = nullptr;
+	byte *_georgeAsteroidShuffleTable = nullptr;
+	int16 *_georgeSatelliteThresholds = nullptr;
+	int16 *_georgeAsteroidThresholds = nullptr;
+	byte *_georgeSatellitePaths = nullptr;
+	byte *_georgeAsteroidPaths = nullptr;
+	byte *_georgeCollisionRect = nullptr;
+	byte *_georgeSatelliteCollisionRects = nullptr;
+	byte *_georgeAsteroidCollisionRects = nullptr;
+	byte *_georgeSatelliteGfx = nullptr;
+	byte *_georgeAsteroidGfx = nullptr;
+	int16 _georgeSatelliteWait = 0;
+	int16 _georgeAsteroidWait = 0;
+	int16 _georgeSatelliteSearchIdx = 0;
+	int16 _georgeAsteroidSearchIdx = 0;
+	int16 _georgeHitSearchIdx = 0;
+	byte *_georgeBgPic = nullptr;
+	byte *_georgePalette = nullptr;
+	byte *_georgePalCycleRawData = nullptr;
+	XPCycleState _georgePalCycleSpecs[4];
+	int16 _georgeCollectedSatellitesNum = 0;
+	SoundInfo _georgeSoundCarStartUp;
+	SoundInfo _georgeSoundCarGoesAway;
+	SoundInfo _georgeSoundCarLoopHi;
+	SoundInfo _georgeSoundCarLoopLo;
+	SoundInfo _georgeSoundCarTumble;
+	SoundInfo **_georgeSatelliteSoundList = nullptr;
+	byte _georgeSoundChannelCounter = 0;
+	SoundInfo *_georgeSoundToPlay = nullptr;
+	SoundInfo *_georgeSoundCurrent = nullptr;
+	SoundInfo *_georgeSoundQueued = nullptr;
+	SoundInfo *_georgeSoundNext = nullptr;
+	int16 _georgeSaveData[3] = { 0 };
+	int16 *_georgeThresholds = nullptr;
 
 	// --- HUCK ---
 	void playSoundMapHuck(int16 memberId);
@@ -1133,38 +1109,38 @@ protected:
 	static void swapHuckWordArrayCb();
 	static void swapHuckWordsCb();
 
-	BOLTLib *g_huckBoltLib = nullptr;
-	BOLTCallbacks g_huckBoltCallbacks;
+	BOLTLib *_huckBoltLib = nullptr;
+	BOLTCallbacks _huckBoltCallbacks;
 
-	static BOLTCallback g_huckTypeLoadCallbacks[27];
-	static BOLTCallback g_huckTypeFreeCallbacks[27];
+	static BOLTCallback _huckTypeLoadCallbacks[27];
+	static BOLTCallback _huckTypeFreeCallbacks[27];
 
-	int16 g_huckSoundPlaying = 0;
-	int16 g_huckHotSpotCount = 0;
-	int16 g_huckActionState = 0;
-	uint32 g_huckScreensaverTimer = 0;
-	uint32 g_huckBlinkTimer = 0;
-	int16 g_huckScreensaverFlag = 0;
-	int16 g_huckBlinkFlag = 0;
-	uint32 g_huckShuffleTimer = 0;
-	int16 g_huckGlobal[30] = { 0 };
-	HuckState g_huckState;
-	byte *g_huckGiftPic = nullptr;
-	byte *g_huckBgPic = nullptr;
-	int16 g_huckGiftGroupId = 0;
-	int16 g_huckVariantGroupId = 0;
-	byte *g_huckBgDisplayPic = nullptr;
-	int16 g_huckScrollOffset = 0;
-	int16 g_huckPalRange[8] = { 0 };
-	int16 g_huckReturnBooth = 0;
-	int16 g_huckExitFlag = 0;
-	int16 g_huckCursorX = 0;
-	int16 g_huckCursorY = 0;
-	byte g_huckPalSave0[15] = { 0 };
-	byte g_huckPalHighlight0[15] = { 0 };
-	byte g_huckPalSave1[15] = { 0 };
-	byte g_huckPalHighlight1[15] = { 0 };
-	XPPicDesc g_huckScratchPic;
+	int16 _huckSoundPlaying = 0;
+	int16 _huckHotSpotCount = 0;
+	int16 _huckActionState = 0;
+	uint32 _huckScreensaverTimer = 0;
+	uint32 _huckBlinkTimer = 0;
+	int16 _huckScreensaverFlag = 0;
+	int16 _huckBlinkFlag = 0;
+	uint32 _huckShuffleTimer = 0;
+	int16 _huckGlobal[30] = { 0 };
+	HuckState _huckState;
+	byte *_huckGiftPic = nullptr;
+	byte *_huckBgPic = nullptr;
+	int16 _huckGiftGroupId = 0;
+	int16 _huckVariantGroupId = 0;
+	byte *_huckBgDisplayPic = nullptr;
+	int16 _huckScrollOffset = 0;
+	int16 _huckPalRange[8] = { 0 };
+	int16 _huckReturnBooth = 0;
+	int16 _huckExitFlag = 0;
+	int16 _huckCursorX = 0;
+	int16 _huckCursorY = 0;
+	byte _huckPalSave0[15] = { 0 };
+	byte _huckPalHighlight0[15] = { 0 };
+	byte _huckPalSave1[15] = { 0 };
+	byte _huckPalHighlight1[15] = { 0 };
+	XPPicDesc _huckScratchPic;
 
 	// --- SCOOBY ---
 	bool loadScoobyBaseAssets();
@@ -1203,43 +1179,43 @@ protected:
 	static void swapScoobyHelpEntryCb();
 	static void swapScoobyWordArrayCb();
 
-	BOLTLib *g_scoobyBoltLib = nullptr;
-	BOLTCallbacks g_scoobyBoltCallbacks;
+	BOLTLib *_scoobyBoltLib = nullptr;
+	BOLTCallbacks _scoobyBoltCallbacks;
 
-	static BOLTCallback g_scoobyTypeLoadCallbacks[28];
-	static BOLTCallback g_scoobyTypeFreeCallbacks[28];
+	static BOLTCallback _scoobyTypeLoadCallbacks[28];
+	static BOLTCallback _scoobyTypeFreeCallbacks[28];
 
-	int16 g_scoobySoundMode = 0;
-	int16 g_scoobySoundPlaying = 0;
-	int16 g_scoobyShowHelp = 1;
+	int16 _scoobySoundMode = 0;
+	int16 _scoobySoundPlaying = 0;
+	int16 _scoobyShowHelp = 1;
 
-	int16 g_scoobyLastInputDir = 0;
-	int16 g_scoobyTransitionFrom = 0;
-	int16 g_scoobyTransitionTarget = 0;
-	int16 g_scoobyTransitionVelX = 0;
-	int16 g_scoobyTransitionVelY = 0;
-	XPPicDesc g_scoobyTempPic;
-	byte g_scoobyGlobalSaveData[0x3C] = { 0 };
-	ScoobyState g_scoobyGameState;
-	SSprite g_scoobySprite;
-	byte *g_scoobyBaseData = nullptr;
-	byte *g_scoobyBgPic = nullptr;
-	byte *g_scoobyWallPicsA[4] = { nullptr };
-	byte *g_scoobyWallPicsB[5] = { nullptr };
-	ScoobyRect g_scoobyCellBounds[25];
-	Common::Point g_scoobyLevelStartXY[25];
-	byte *g_scoobyLevelData = nullptr;
-	int16 g_scoobySelectedGraphicsGroup = 0;
-	int16 g_scoobyDifficulty = 0;
-	int16 g_scoobyLevelCount = 0;
-	int16 g_scoobyMoveRequested = 0;
-	int16 g_scoobyTransitioning = 0;
-	int16 g_scoobyDesiredDir = 0;
-	int16 g_scoobyInputHoldCount = 0;
-	int16 g_scoobyWallAnimating = 0;
-	int16 g_scoobyWallAnimStep = 0;
-	int16 g_scoobyWallsToOpen = 0;
-	int16 g_scoobyWallsToClose = 0;
+	int16 _scoobyLastInputDir = 0;
+	int16 _scoobyTransitionFrom = 0;
+	int16 _scoobyTransitionTarget = 0;
+	int16 _scoobyTransitionVelX = 0;
+	int16 _scoobyTransitionVelY = 0;
+	XPPicDesc _scoobyTempPic;
+	byte _scoobyGlobalSaveData[0x3C] = { 0 };
+	ScoobyState _scoobyGameState;
+	SSprite _scoobySprite;
+	byte *_scoobyBaseData = nullptr;
+	byte *_scoobyBgPic = nullptr;
+	byte *_scoobyWallPicsA[4] = { nullptr };
+	byte *_scoobyWallPicsB[5] = { nullptr };
+	ScoobyRect _scoobyCellBounds[25];
+	Common::Point _scoobyLevelStartXY[25];
+	byte *_scoobyLevelData = nullptr;
+	int16 _scoobySelectedGraphicsGroup = 0;
+	int16 _scoobyDifficulty = 0;
+	int16 _scoobyLevelCount = 0;
+	int16 _scoobyMoveRequested = 0;
+	int16 _scoobyTransitioning = 0;
+	int16 _scoobyDesiredDir = 0;
+	int16 _scoobyInputHoldCount = 0;
+	int16 _scoobyWallAnimating = 0;
+	int16 _scoobyWallAnimStep = 0;
+	int16 _scoobyWallsToOpen = 0;
+	int16 _scoobyWallsToClose = 0;
 
 	// --- TOPCAT ---
 	int16 topCatGame(int16 prevBooth);
@@ -1263,71 +1239,69 @@ protected:
 
 	static void swapTopCatHelpEntryCb();
 
-	RTFResource *g_topCatRtfHandle = nullptr;
-	RTFResource *g_topCatAvHandle = nullptr;
-	BOLTLib *g_topCatBoltLib = nullptr;
-	BOLTCallbacks g_topCatBoltCallbacks;
+	RTFResource *_topCatRtfHandle = nullptr;
+	RTFResource *_topCatAvHandle = nullptr;
+	BOLTLib *_topCatBoltLib = nullptr;
+	BOLTCallbacks _topCatBoltCallbacks;
 
-	static BOLTCallback g_topCatTypeLoadCallbacks[26];
-	static BOLTCallback g_topCatTypeFreeCallbacks[26];
+	static BOLTCallback _topCatTypeLoadCallbacks[26];
+	static BOLTCallback _topCatTypeFreeCallbacks[26];
 
-	byte *g_topCatBackgroundPalette = nullptr;
-	byte *g_topCatBackground = nullptr;
-	byte *g_topCatBackgroundAnimationPalette = nullptr;
-	byte *g_topCatGraphicsAssets = nullptr;
+	byte *_topCatBackgroundPalette = nullptr;
+	byte *_topCatBackground = nullptr;
+	byte *_topCatBackgroundAnimationPalette = nullptr;
+	byte *_topCatGraphicsAssets = nullptr;
 
-	int16 g_topCatBackgroundAnimFrame = 0;
-	int16 g_topCatMaxBackgroundAnimFrames = 0;
-	int16 g_topCatCurrentAnimType = 0;
-	int16 g_topCatAnimStateMachineStep = 0;
-	int16 g_topCatAnimQueueSize = 0;
-	int16 g_topCatQueuedSoundFrames = 0;
-	byte *g_topCatButtonsPalette = nullptr;
-	byte *g_topCatBlinkEntries = nullptr;
-	byte *g_topCatLightsPalette = nullptr;
-	int16 *g_topCatBlinkSeqPtr = nullptr;
-	byte *g_topCatSelectedChoiceOverlayGfx = nullptr;
-	byte *g_topCatCycleData = nullptr;
-	XPCycleState g_topCatCycleSpecs[4];
-	byte *g_topCatShuffledQuestions = nullptr;
-	byte *g_topCatShuffledAnswers = nullptr;
-	byte *g_topCatAnswersPermutations = nullptr;
-	byte *g_topCatAnswers = nullptr;
-	byte *g_topCatAnswersScreenPositions = nullptr;
-	int16 g_topCatSavedScore = 0;
-	int16 g_topCatSaveHistory = 0;
-	const char *g_topCatSaveFileName = "TopCatBF";
-	const char *g_topCatStaticSaveFileName = "TopCatBFStatic";
-	int16 g_topCatScore = 0;
-	int16 g_topCatShuffledQuestionsArrayIdx = 0;
-	uint32 g_topCatBlinkTimer = 0;
-	SoundInfo g_topCatSoundInfo;
-	byte g_topCatSavedShuffledQuestions[60] = { 0 };
-	byte g_topCatSavedShuffledAnswers[60] = { 0 };
-	byte g_topCatSavedAnswersPermutations[60 * 3] = { 0 };
-	byte g_topCatSaveBuffer[302] = { 0 };
-	byte *g_topCatHoveredEntry = nullptr;
-	byte *g_topCatHelpButton = nullptr;
-	byte *g_topCatBackButton = nullptr;
-	byte *g_topCatBlinkEntry = nullptr;
-	int16 g_topCatCycleStep = 0;
-	int16 g_topCatDrawnQuestionId = 0;
-	int16 g_topCatCurrentAnswerIdx = 0;
-	XPCycleState g_topCatChoiceCycleState[4];
-	TopCatAnim g_topCatAnimQueue[3];
-	int16 g_topCatCorrectAnimIdx = 0;
-	int16 g_topCatWrongAnimIdx = 0;
-	int16 g_topCatShouldPlayAnswerAnim = 0;
-	int16 g_topCatMaintainSoundFlag = 0;
-	int16 g_topCatPermTableA[3] = { 0, 1, 2 };
-	int16 g_topCatPermTableB[3] = { 0, 1, 2 };
-	int16 g_topCatBlinkSeq0[5] = { 0x01, 0x00, 0x01, 0x00, 0x01 };
-	int16 g_topCatBlinkSeq1[5] = { 0x03, 0x01, 0x03, 0x01, 0x03 };
-	int16 g_topCatBlinkSeq2[5] = { 0x07, 0x03, 0x07, 0x03, 0x07 };
-	int16 g_topCatBlinkSeq3[5] = { 0x0F, 0x07, 0x0F, 0x07, 0x0F };
-	int16 g_topCatBlinkSeq4[5] = { 0x1F, 0x0F, 0x1F, 0x0F, 0x1F };
-	int16 g_topCatBlinkSeq5[5] = { 0x3F, 0x1F, 0x3F, 0x1F, 0x3F };
-	int16 g_topCatBlinkSeq6[25] = {
+	int16 _topCatBackgroundAnimFrame = 0;
+	int16 _topCatMaxBackgroundAnimFrames = 0;
+	int16 _topCatCurrentAnimType = 0;
+	int16 _topCatAnimStateMachineStep = 0;
+	int16 _topCatAnimQueueSize = 0;
+	int16 _topCatQueuedSoundFrames = 0;
+	byte *_topCatButtonsPalette = nullptr;
+	byte *_topCatBlinkEntries = nullptr;
+	byte *_topCatLightsPalette = nullptr;
+	int16 *_topCatBlinkSeqPtr = nullptr;
+	byte *_topCatSelectedChoiceOverlayGfx = nullptr;
+	byte *_topCatCycleData = nullptr;
+	XPCycleState _topCatCycleSpecs[4];
+	byte *_topCatShuffledQuestions = nullptr;
+	byte *_topCatShuffledAnswers = nullptr;
+	byte *_topCatAnswersPermutations = nullptr;
+	byte *_topCatAnswers = nullptr;
+	byte *_topCatAnswersScreenPositions = nullptr;
+	int16 _topCatSavedScore = 0;
+	int16 _topCatSaveHistory = 0;
+	int16 _topCatScore = 0;
+	int16 _topCatShuffledQuestionsArrayIdx = 0;
+	uint32 _topCatBlinkTimer = 0;
+	SoundInfo _topCatSoundInfo;
+	byte _topCatSavedShuffledQuestions[60] = { 0 };
+	byte _topCatSavedShuffledAnswers[60] = { 0 };
+	byte _topCatSavedAnswersPermutations[60 * 3] = { 0 };
+	byte _topCatSaveBuffer[302] = { 0 };
+	byte *_topCatHoveredEntry = nullptr;
+	byte *_topCatHelpButton = nullptr;
+	byte *_topCatBackButton = nullptr;
+	byte *_topCatBlinkEntry = nullptr;
+	int16 _topCatCycleStep = 0;
+	int16 _topCatDrawnQuestionId = 0;
+	int16 _topCatCurrentAnswerIdx = 0;
+	XPCycleState _topCatChoiceCycleState[4];
+	TopCatAnim _topCatAnimQueue[3];
+	int16 _topCatCorrectAnimIdx = 0;
+	int16 _topCatWrongAnimIdx = 0;
+	int16 _topCatShouldPlayAnswerAnim = 0;
+	int16 _topCatMaintainSoundFlag = 0;
+	int16 _topCatPermTableA[3] = { 0, 1, 2 };
+	int16 _topCatPermTableB[3] = { 0, 1, 2 };
+	int16 _topCatBlinkSeq0[5] = { 0x01, 0x00, 0x01, 0x00, 0x01 };
+	int16 _topCatBlinkSeq1[5] = { 0x03, 0x01, 0x03, 0x01, 0x03 };
+	int16 _topCatBlinkSeq2[5] = { 0x07, 0x03, 0x07, 0x03, 0x07 };
+	int16 _topCatBlinkSeq3[5] = { 0x0F, 0x07, 0x0F, 0x07, 0x0F };
+	int16 _topCatBlinkSeq4[5] = { 0x1F, 0x0F, 0x1F, 0x0F, 0x1F };
+	int16 _topCatBlinkSeq5[5] = { 0x3F, 0x1F, 0x3F, 0x1F, 0x3F };
+	int16 _topCatBlinkSeq6[25] = {
 		0x09, 0x12, 0x24, 0x09, 0x12, 0x24,
 		0x09, 0x12, 0x24, 0x09, 0x12, 0x24,
 		0x09, 0x12, 0x24, 0x09, 0x12, 0x24,
@@ -1335,10 +1309,10 @@ protected:
 		0x3F
 	};
 
-	int16 *g_topCatBlinkSeqTable[7] = {
-		g_topCatBlinkSeq0, g_topCatBlinkSeq1, g_topCatBlinkSeq2,
-		g_topCatBlinkSeq3, g_topCatBlinkSeq4, g_topCatBlinkSeq5,
-		g_topCatBlinkSeq6
+	int16 *_topCatBlinkSeqTable[7] = {
+		_topCatBlinkSeq0, _topCatBlinkSeq1, _topCatBlinkSeq2,
+		_topCatBlinkSeq3, _topCatBlinkSeq4, _topCatBlinkSeq5,
+		_topCatBlinkSeq6
 	};
 
 	// --- YOGI ---
@@ -1375,41 +1349,41 @@ protected:
 	static void swapYogiAllWordsCb();
 	static void swapYogiFirstWordCb();
 
-	BOLTLib *g_yogiBoltLib = nullptr;
-	BOLTCallbacks g_yogiBoltCallbacks;
+	BOLTLib *_yogiBoltLib = nullptr;
+	BOLTCallbacks _yogiBoltCallbacks;
 
-	static BOLTCallback g_yogiTypeLoadCallbacks[27];
-	static BOLTCallback g_yogiTypeFreeCallbacks[27];
+	static BOLTCallback _yogiTypeLoadCallbacks[27];
+	static BOLTCallback _yogiTypeFreeCallbacks[27];
 
-	int16 g_yogiSoundPlaying = 0;
-	int16 g_yogiSoundActive = 0;
-	int16 g_yogiHotSpotCount = 0;
-	int16 g_yogiAnimActive = 0;
-	uint32 g_yogiBlinkTimer1 = 0;
-	uint32 g_yogiBlinkTimer2 = 0;
-	int16 g_yogiBlinkState1 = 0;
-	int16 g_yogiBlinkState2 = 0;
-	int16 g_yogiGlobal[0xA0] = { 0 };
-	YogiState g_yogiState;
-	byte *g_yogiBasketPic = nullptr;
-	int16 g_yogiLevelGroupId = 0;
-	byte *g_yogiBgPic = nullptr;
-	byte *g_yogiNormalSprite = nullptr;
-	byte *g_yogiHlSprite = nullptr;
-	byte *g_yogiAnimSprite = nullptr;
-	int16 g_yogiSpriteStride = 0;
-	int16 g_yogiSpriteHeight = 0;
-	int16 g_yogiPalRange[8] = { 0 };
-	int16 g_yogiReturnBooth = 0;
-	int16 g_yogiExitFlag = 0;
-	int16 g_yogiLevelId = 0;
-	int16 g_yogiCursorX = 0;
-	int16 g_yogiCursorY = 0;
-	byte g_yogiPalSave0[15] = { 0 };
-	byte g_yogiPalHighlight0[15] = { 0 };
-	byte g_yogiPalSave1[15] = { 0 };
-	byte g_yogiPalHighlight1[15] = { 0 };
-	XPPicDesc g_yogiScratchBuf;
+	int16 _yogiSoundPlaying = 0;
+	int16 _yogiSoundActive = 0;
+	int16 _yogiHotSpotCount = 0;
+	int16 _yogiAnimActive = 0;
+	uint32 _yogiBlinkTimer1 = 0;
+	uint32 _yogiBlinkTimer2 = 0;
+	int16 _yogiBlinkState1 = 0;
+	int16 _yogiBlinkState2 = 0;
+	int16 _yogiGlobal[0xA0] = { 0 };
+	YogiState _yogiState;
+	byte *_yogiBasketPic = nullptr;
+	int16 _yogiLevelGroupId = 0;
+	byte *_yogiBgPic = nullptr;
+	byte *_yogiNormalSprite = nullptr;
+	byte *_yogiHlSprite = nullptr;
+	byte *_yogiAnimSprite = nullptr;
+	int16 _yogiSpriteStride = 0;
+	int16 _yogiSpriteHeight = 0;
+	int16 _yogiPalRange[8] = { 0 };
+	int16 _yogiReturnBooth = 0;
+	int16 _yogiExitFlag = 0;
+	int16 _yogiLevelId = 0;
+	int16 _yogiCursorX = 0;
+	int16 _yogiCursorY = 0;
+	byte _yogiPalSave0[15] = { 0 };
+	byte _yogiPalHighlight0[15] = { 0 };
+	byte _yogiPalSave1[15] = { 0 };
+	byte _yogiPalHighlight1[15] = { 0 };
+	XPPicDesc _yogiScratchBuf;
 };
 
 extern BoltEngine *g_engine;
