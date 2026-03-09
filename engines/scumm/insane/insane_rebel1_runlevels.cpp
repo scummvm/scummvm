@@ -223,7 +223,8 @@ bool InsaneRebel1::runLevel2() {
 
 	_currentLevel = 1;
 	loadLevelSprites(2);
-	loadTuningForLevel(1);
+	// DOS RunLevel2Flow launches L2PLAY.ANM with gameplay selector 2.
+	loadTuningForLevel(2);
 
 	playCinematic("LVL2/L2INTRO.ANM");
 	if (_vm->shouldQuit())
@@ -279,7 +280,8 @@ bool InsaneRebel1::runLevel3() {
 
 	_currentLevel = 2;
 	loadLevelSprites(3);
-	loadTuningForLevel(2);
+	// DOS RunLevel3Flow launches L3PLAY.ANM with gameplay selector 3.
+	loadTuningForLevel(3);
 
 	playCinematic("LVL3/L3INTRO.ANM");
 	if (_vm->shouldQuit())
@@ -335,7 +337,8 @@ bool InsaneRebel1::runLevel4() {
 
 	_currentLevel = 3;
 	loadLevelSprites(4);
-	loadTuningForLevel(3);
+	// DOS RunLevel4Flow launches L4PLAY1/2.ANM with gameplay selector 4.
+	loadTuningForLevel(4);
 
 	playCinematic("LVL4/L4INTRO.ANM");
 	if (_vm->shouldQuit())
