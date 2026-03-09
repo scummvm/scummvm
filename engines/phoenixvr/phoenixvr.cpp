@@ -359,6 +359,8 @@ void PhoenixVREngine::setVariable(const Common::String &name, int value) {
 }
 
 int PhoenixVREngine::getVariable(const Common::String &name) const {
+	if (getGameId() == "lochness" && name == "tumuAccpet")
+		return _variables.getVal("tumuAccept");
 	return _variables.getVal(name);
 }
 
