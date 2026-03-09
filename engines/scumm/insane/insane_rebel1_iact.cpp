@@ -34,6 +34,29 @@ static inline bool isL1Stage2DamageLatch(uint16 code) {
 	return code >= 6 && code <= 18;
 }
 
+static const int16 kLevel7BranchFrames[6][6] = {
+	{ -1,  78, 267, 398, 556, 630 },
+	{ -1, 187, 376, 507, 665, 739 },
+	{ -1, 187, 376, 507, 665, 739 },
+	{ -1,  -1,  -1, 284, 442, 516 },
+	{ -1,  -1,  -1, 143, 301, 375 },
+	{ -1, 112, 301, 432, 590, 664 }
+};
+
+static const int16 kLevel7BranchDir[6] = {
+	0, 1, 1, -1, 1, 1
+};
+
+static const int16 kLevel7BranchThreshold[6] = {
+	0, 170, 170, 160, 160, 160
+};
+
+static const int16 kLevel8BranchFrames[3][3] = {
+	{ 2588, 1709,  262 },
+	{ 2323, 1444,   -2 },
+	{  877,   -2,   -2 }
+};
+
 void InsaneRebel1::resetFrameObjectState() {
 	memset(_frameObjectState, 0, sizeof(_frameObjectState));
 	for (int i = 0x50; i < 0x96; i++)
@@ -138,6 +161,61 @@ void InsaneRebel1::rebuildProjectionTable(int16 curveStep, int16 curveExtent) {
 
 void InsaneRebel1::resetProjectionTable() {
 	rebuildProjectionTable(0, 1);
+}
+
+void InsaneRebel1::checkDynamicLevelBranch() {
+	if (!_interactiveVideoActive || _levelRouteIndex < 0 || _pendingRouteIndex >= 0 || _vm->_smushVideoShouldFinish)
+		return;
+
+	if (_currentLevel == 6) {
+		const int route = CLIP<int>(_levelRouteIndex, 0, 5);
+		for (int nextRoute = 1; nextRoute < 6; ++nextRoute) {
+			const int triggerFrame = kLevel7BranchFrames[route][nextRoute];
+			if (triggerFrame <= 0 || nextRoute == route || _frameCounter != (uint32)(triggerFrame - 1))
+				continue;
+
+			const bool takeBranch = (kLevel7BranchDir[nextRoute] > 0)
+				? (_shipPosX > kLevel7BranchThreshold[nextRoute])
+				: (_shipPosX < kLevel7BranchThreshold[nextRoute]);
+			if (!takeBranch)
+				continue;
+
+			_pendingRouteIndex = nextRoute;
+			_vm->_smushVideoShouldFinish = true;
+			debug(1, "RA1 L7 branch: route=%d -> %d at frame=%u shipX=%d",
+				route, nextRoute, (unsigned)_frameCounter, _shipPosX);
+			return;
+		}
+	}
+
+	if (_currentLevel == 7) {
+		const int route = CLIP<int>(_levelRouteIndex, 0, 2);
+		const int frame = (int)_frameCounter;
+		const int leftBlockedFrame = kLevel8BranchFrames[route][2];
+		const int rightBlockedFrame = kLevel8BranchFrames[route][1];
+		int nextRoute = -1;
+
+		for (int i = 0; i < 3; ++i) {
+			const int triggerFrame = kLevel8BranchFrames[route][i];
+			if (triggerFrame >= 0 && frame == triggerFrame) {
+				if (_shipPosX < kRA1CenterX) {
+					if (frame != leftBlockedFrame)
+						nextRoute = 1;
+				} else {
+					if (frame != rightBlockedFrame)
+						nextRoute = 2;
+				}
+				break;
+			}
+		}
+
+		if (nextRoute >= 0 && nextRoute != route) {
+			_pendingRouteIndex = nextRoute;
+			_vm->_smushVideoShouldFinish = true;
+			debug(1, "RA1 L8 branch: route=%d -> %d at frame=%u shipX=%d",
+				route, nextRoute, (unsigned)_frameCounter, _shipPosX);
+		}
+	}
 }
 
 void InsaneRebel1::projectGameplayPoint(int16 &x, int16 &y) const {
@@ -406,6 +484,8 @@ void InsaneRebel1::updateShipPhysics() {
 		_pathBranchEnabled = false;
 	}
 
+	checkDynamicLevelBranch();
+
 	debug(7, "RA1 ship: pos=(%d,%d) roll=%d lift=%d accX=%d accY=%d dir=%d health=%d corridor=[%d,%d]-[%d,%d]",
 		_shipPosX, _shipPosY, _rollAccum, _liftSmooth,
 		_posAccumX, _posAccumY, _shipDirIndex, _health,
@@ -666,6 +746,7 @@ void InsaneRebel1::updateAsteroidPhysics() {
 	resetProjectionTable();
 
 	_frameCounter++;
+	checkDynamicLevelBranch();
 
 	debug(7, "RA1 asteroid: pos=(%d,%d) avg=(%d,%d) view=(%d,%d) health=%d flash=%d",
 		_shipPosX, _shipPosY, _avgInputX, _avgInputY,

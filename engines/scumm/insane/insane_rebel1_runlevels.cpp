@@ -542,6 +542,436 @@ bool InsaneRebel1::runLevel6() {
 	return false;
 }
 
+bool InsaneRebel1::runLevel7() {
+	debug(1, "InsaneRebel1: Running level 7");
+
+	static const char *const kLevel7Segments[] = {
+		"LVL7/L7PLAY1.ANM",
+		"LVL7/L7PLAY2.ANM",
+		"LVL7/L7PLAY3.ANM",
+		"LVL7/L7PLAY4.ANM",
+		"LVL7/L7PLAY5.ANM",
+		"LVL7/L7PLAY6.ANM"
+	};
+
+	_currentLevel = 6;
+	loadLevelSprites(7);
+	loadTuningForLevel(6);
+
+	playCinematic("LVL7/L7INTRO.ANM");
+	if (_vm->shouldQuit())
+		return false;
+
+	while (!_vm->shouldQuit()) {
+		_flyControlMode = 3;
+		_health = kMaxHealth;
+		_damageFlags = 0;
+		_prevDamageFlags = 0;
+		_damageCooldown = 0;
+		_deathTimer = 0;
+		_screenFlash = 0;
+		_frameCounter = 0;
+		_gameCounter = 0;
+		_activeGameOpcode = 0;
+		_gameLatch5D = 0;
+		_gameLatch5F = 0;
+		_killCount = 0;
+		_targetCount = 0;
+		_prevTargetCount = 0;
+		_lastHitTarget = 0;
+		_shipPosX = kRA1CenterX;
+		_shipPosY = kRA1CenterY;
+		_shipDirIndex = 17;
+		_rollAccum = 0;
+		_liftSmooth = 0;
+		_posAccumX = 0;
+		_posAccumY = 0;
+		_perspectiveX = 0;
+		_perspectiveY = 0;
+		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
+		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
+		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
+		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
+		_avgInputX = 0;
+		_avgInputY = 0;
+
+		int route = 0;
+		while (!_vm->shouldQuit()) {
+			_levelRouteIndex = route;
+			_pendingRouteIndex = -1;
+			playInteractiveVideo(kLevel7Segments[route]);
+			if (_vm->shouldQuit())
+				return false;
+
+			if (_health < 0)
+				break;
+
+			if (_pendingRouteIndex < 0 || _pendingRouteIndex == route)
+				break;
+
+			route = _pendingRouteIndex;
+		}
+
+		_levelRouteIndex = -1;
+		_pendingRouteIndex = -1;
+
+		if (_health >= 0) {
+			playCinematic("LVL7/L7END.ANM");
+			return !_vm->shouldQuit();
+		}
+
+		if (_lives > 0) {
+			playCinematic("LVL7/L7NEW.ANM");
+			if (_vm->shouldQuit())
+				return false;
+			_lives--;
+			continue;
+		}
+
+		playCinematic("LVL7/L7DEATH.ANM");
+		return false;
+	}
+
+	return false;
+}
+
+bool InsaneRebel1::runLevel8() {
+	debug(1, "InsaneRebel1: Running level 8");
+
+	static const char *const kLevel8Routes[] = {
+		"LVL8/L8PLAY.ANM",
+		"LVL8/L8PLAY2.ANM",
+		"LVL8/L8PLAY3.ANM"
+	};
+
+	_currentLevel = 7;
+	loadLevelSprites(8);
+	loadTuningForLevel(7);
+
+	playCinematic("LVL8/L8INTRO.ANM");
+	if (_vm->shouldQuit())
+		return false;
+
+	while (!_vm->shouldQuit()) {
+		_flyControlMode = 3;
+		_health = kMaxHealth;
+		_damageFlags = 0;
+		_prevDamageFlags = 0;
+		_damageCooldown = 0;
+		_deathTimer = 0;
+		_screenFlash = 0;
+		_frameCounter = 0;
+		_gameCounter = 0;
+		_activeGameOpcode = 0;
+		_gameLatch5D = 0;
+		_gameLatch5F = 0;
+		_killCount = 0;
+		_targetCount = 0;
+		_prevTargetCount = 0;
+		_lastHitTarget = 0;
+		_shipPosX = kRA1CenterX;
+		_shipPosY = kRA1CenterY;
+		_shipDirIndex = 17;
+		_rollAccum = 0;
+		_liftSmooth = 0;
+		_posAccumX = 0;
+		_posAccumY = 0;
+		_perspectiveX = 0;
+		_perspectiveY = 0;
+		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
+		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
+		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
+		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
+		_avgInputX = 0;
+		_avgInputY = 0;
+
+		int route = 0;
+		while (!_vm->shouldQuit()) {
+			_levelRouteIndex = route;
+			_pendingRouteIndex = -1;
+			playInteractiveVideo(kLevel8Routes[route]);
+			if (_vm->shouldQuit())
+				return false;
+
+			if (_health < 0)
+				break;
+
+			if (_pendingRouteIndex < 0 || _pendingRouteIndex == route)
+				break;
+
+			route = _pendingRouteIndex;
+		}
+
+		_levelRouteIndex = -1;
+		_pendingRouteIndex = -1;
+
+		if (_health >= 0) {
+			playCinematic("LVL8/L8END.ANM");
+			return !_vm->shouldQuit();
+		}
+
+		if (_lives > 0) {
+			playCinematic("LVL8/L8NEW.ANM");
+			if (_vm->shouldQuit())
+				return false;
+			_lives--;
+			continue;
+		}
+
+		playCinematic("LVL8/L8DEATH.ANM");
+		return false;
+	}
+
+	return false;
+}
+
+bool InsaneRebel1::runLevel9() {
+	debug(1, "InsaneRebel1: Running level 9");
+
+	const int randPath1 = _vm->_rnd.getRandomNumber(1);
+	const int randPath2 = _vm->_rnd.getRandomNumber(1);
+	const int randPath3 = _vm->_rnd.getRandomNumber(1);
+
+	_currentLevel = 8;
+	loadLevelSprites(9);
+	loadTuningForLevel(8);
+
+	playCinematic("LVL9/L9INTRO.ANM");
+	if (_vm->shouldQuit())
+		return false;
+
+	while (!_vm->shouldQuit()) {
+		_flyControlMode = 0;
+		_health = kMaxHealth;
+		_damageFlags = 0;
+		_prevDamageFlags = 0;
+		_damageCooldown = 0;
+		_deathTimer = 0;
+		_screenFlash = 0;
+		_frameCounter = 0;
+		_gameCounter = 0;
+		_activeGameOpcode = 0;
+		_gameLatch5D = 0;
+		_gameLatch5F = 0;
+		_killCount = 0;
+		_targetCount = 0;
+		_prevTargetCount = 0;
+		_lastHitTarget = 0;
+		_shipPosX = kRA1CenterX;
+		_shipPosY = kRA1CenterY;
+		_shipDirIndex = 17;
+		_rollAccum = 0;
+		_liftSmooth = 0;
+		_posAccumX = 0;
+		_posAccumY = 0;
+		_perspectiveX = 0;
+		_perspectiveY = 0;
+		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
+		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
+		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
+		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
+		_avgInputX = 0;
+		_avgInputY = 0;
+
+		while (!_vm->shouldQuit()) {
+			playInteractiveVideo("LVL9/L9PLAY1.ANM");
+			if (_vm->shouldQuit())
+				return false;
+			if (_health < 0)
+				break;
+
+			playCinematic("LVL9/L9CUT1.ANM");
+			if (_vm->shouldQuit())
+				return false;
+
+			_shipPosX = kRA1CenterX;
+			_posAccumX = 0;
+			playInteractiveVideo("LVL9/L9PLAY2.ANM");
+			if (_vm->shouldQuit())
+				return false;
+			if (_health < 0)
+				break;
+
+			const int side1 = (_shipPosX < kRA1CenterX) ? 0 : 1;
+			playCinematic(side1 == 0 ? "LVL9/L9PLAY2A.ANM" : "LVL9/L9PLAY2B.ANM");
+			if (_vm->shouldQuit())
+				return false;
+
+			if (side1 == randPath1) {
+				playCinematic("LVL9/L9CUT2A.ANM");
+				if (_vm->shouldQuit())
+					return false;
+				continue;
+			}
+
+			playCinematic("LVL9/L9CUT2B.ANM");
+			if (_vm->shouldQuit())
+				return false;
+
+			playInteractiveVideo("LVL9/L9PLAY3A.ANM");
+			if (_vm->shouldQuit())
+				return false;
+			if (_health < 0)
+				break;
+
+			if (_killCount < 15) {
+				playInteractiveVideo("LVL9/L9PLAY3B.ANM");
+				if (_vm->shouldQuit())
+					return false;
+				if (_health < 0)
+					break;
+			}
+
+			playCinematic("LVL9/L9CUT3.ANM");
+			if (_vm->shouldQuit())
+				return false;
+
+			_shipPosX = kRA1CenterX;
+			_posAccumX = 0;
+			playInteractiveVideo("LVL9/L9PLAY4.ANM");
+			if (_vm->shouldQuit())
+				return false;
+			if (_health < 0)
+				break;
+
+			const int side2 = (_shipPosX < kRA1CenterX) ? 0 : 1;
+			playCinematic(side2 == 0 ? "LVL9/L9PLAY4A.ANM" : "LVL9/L9PLAY4B.ANM");
+			if (_vm->shouldQuit())
+				return false;
+
+			if (side2 == randPath2) {
+				playCinematic(side2 == 0 ? "LVL9/L9CUT4AX.ANM" : "LVL9/L9CUT4B.ANM");
+				if (_vm->shouldQuit())
+					return false;
+
+				playInteractiveVideo("LVL9/L9PLAY5.ANM");
+				if (_vm->shouldQuit())
+					return false;
+				if (_health < 0)
+					break;
+
+				playCinematic("LVL9/L9CUT5.ANM");
+				if (_vm->shouldQuit())
+					return false;
+
+				_shipPosX = kRA1CenterX;
+				_posAccumX = 0;
+				playInteractiveVideo("LVL9/L9PLAY6.ANM");
+				if (_vm->shouldQuit())
+					return false;
+				if (_health < 0)
+					break;
+
+				const int side3 = (_shipPosX < kRA1CenterX) ? 0 : 1;
+				if (side3 == randPath3) {
+					playCinematic("LVL9/L9CUT6A.ANM");
+					if (_vm->shouldQuit())
+						return false;
+					continue;
+				}
+
+				playCinematic("LVL9/L9CUT6B.ANM");
+				if (_vm->shouldQuit())
+					return false;
+			} else {
+				playCinematic(side2 == 0 ? "LVL9/L9CUT4A.ANM" : "LVL9/L9CUT4BX.ANM");
+				if (_vm->shouldQuit())
+					return false;
+			}
+
+			playInteractiveVideo("LVL9/L9PLAY7.ANM");
+			if (_vm->shouldQuit())
+				return false;
+			if (_health < 0)
+				break;
+
+			playCinematic("LVL9/L9END.ANM");
+			return !_vm->shouldQuit();
+		}
+
+		if (_lives > 0) {
+			playCinematic("LVL9/L9NEW.ANM");
+			if (_vm->shouldQuit())
+				return false;
+			_lives--;
+			continue;
+		}
+
+		playCinematic("LVL9/L9DEATH.ANM");
+		return false;
+	}
+
+	return false;
+}
+
+bool InsaneRebel1::runLevel10() {
+	debug(1, "InsaneRebel1: Running level 10");
+
+	_currentLevel = 9;
+	loadLevelSprites(10);
+	loadTuningForLevel(9);
+
+	playCinematic("LVL10/L10INTRO.ANM");
+	if (_vm->shouldQuit())
+		return false;
+
+	while (!_vm->shouldQuit()) {
+		_flyControlMode = 1;
+		_health = kMaxHealth;
+		_damageFlags = 0;
+		_prevDamageFlags = 0;
+		_damageCooldown = 0;
+		_deathTimer = 0;
+		_screenFlash = 0;
+		_frameCounter = 0;
+		_gameCounter = 0;
+		_activeGameOpcode = 0;
+		_gameLatch5D = 0;
+		_gameLatch5F = 0;
+		_killCount = 0;
+		_targetCount = 0;
+		_prevTargetCount = 0;
+		_lastHitTarget = 0;
+		_shipPosX = kRA1CenterX;
+		_shipPosY = kRA1CenterY;
+		_shipDirIndex = 17;
+		_rollAccum = 0;
+		_liftSmooth = 0;
+		_posAccumX = 0;
+		_posAccumY = 0;
+		_perspectiveX = 0;
+		_perspectiveY = 0;
+		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
+		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
+		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
+		memset(_viewHistoryY, 0, sizeof(_viewHistoryY));
+		_avgInputX = 0;
+		_avgInputY = 0;
+
+		playInteractiveVideo("LVL10/L10PLAY.ANM");
+		if (_vm->shouldQuit())
+			return false;
+
+		if (_health >= 0) {
+			playCinematic("LVL10/L10END.ANM");
+			return !_vm->shouldQuit();
+		}
+
+		if (_lives > 0) {
+			playCinematic("LVL10/L10NEW.ANM");
+			if (_vm->shouldQuit())
+				return false;
+			_lives--;
+			continue;
+		}
+
+		playCinematic("LVL10/L10DEATH.ANM");
+		return false;
+	}
+
+	return false;
+}
+
 // Main game entry point — called from ScummEngine::go().
 // Matches original flow at 0x15597: intro → menu → level.
 void InsaneRebel1::runGame() {
@@ -552,7 +982,11 @@ void InsaneRebel1::runGame() {
 		&InsaneRebel1::runLevel3,
 		&InsaneRebel1::runLevel4,
 		&InsaneRebel1::runLevel5,
-		&InsaneRebel1::runLevel6
+		&InsaneRebel1::runLevel6,
+		&InsaneRebel1::runLevel7,
+		&InsaneRebel1::runLevel8,
+		&InsaneRebel1::runLevel9,
+		&InsaneRebel1::runLevel10
 	};
 
 	// Play intro sequence (logo + opening)
