@@ -934,6 +934,8 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 TinselEngine::~TinselEngine() {
 	_system->getAudioCDManager()->stop();
 	delete _spriter;
+	delete _systemReel;
+	delete _notebook;
 	delete _cursor;
 	delete _bg;
 	delete _font;
