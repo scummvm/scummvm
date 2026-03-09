@@ -37,6 +37,13 @@ static inline int ra1OverlayViewOffsetX(const InsaneRebel1 *rebel1) {
 	return (rebel1->getActiveGameOpcode() == 0x0B) ? rebel1->getPerspectiveX() : 0;
 }
 
+static inline int ra1OverlayViewOffsetY(const InsaneRebel1 *rebel1) {
+	if (!rebel1 || !rebel1->isInteractiveVideoActive())
+		return 0;
+
+	return (rebel1->getActiveGameOpcode() == 0x0B) ? rebel1->getPerspectiveY() : 0;
+}
+
 static void drawBankString(const RA1SpriteBank &bank, byte *dst, int pitch, int width, int height,
 	int x, int y, const char *text) {
 	if (!dst || !text || bank.numSprites <= 0)
@@ -385,7 +392,7 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// before HUD/screen copy so 0x0B doesn't lag one frame behind the mouse.
 	if (_player) {
 		_player->_ra1ViewportOffsetX = _perspectiveX;
-		_player->_ra1ViewportOffsetY = asteroidMode ? 0 : _perspectiveY;
+		_player->_ra1ViewportOffsetY = _perspectiveY;
 	}
 
 	// Assembly dispatch (FUN_1BE1B) only runs the targeting/shot overlay pipeline
@@ -448,6 +455,7 @@ void InsaneRebel1::renderTargetBoxes(byte *dst, int pitch, int width, int height
 void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) {
 	const RA1SpriteBank &markerBank = (_techFontBank.numSprites > 0) ? _techFontBank : _hudFontBank;
 	const int overlayX = ra1OverlayViewOffsetX(this);
+	const int overlayY = ra1OverlayViewOffsetY(this);
 	if (markerBank.numSprites > 0) {
 		// FUN_1CB22 can switch marker sets via DAT_75FF bit 1.
 		// Baseline RA1 targeting uses '^' and animation e..h.
@@ -456,9 +464,9 @@ void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) 
 		// Lock indicator at fixed center positions:
 		// FUN_1CB22 draws marker strings at (0xA0,0x78) and (0xA0,0x7E).
 		if (_targetProximity > 0) {
-			drawCenteredBankGlyph(markerBank, dst, pitch, width, height, overlayX + 0xA0, 0x78, ']');
+			drawCenteredBankGlyph(markerBank, dst, pitch, width, height, overlayX + 0xA0, overlayY + 0x78, ']');
 			if (_targetProximity > 1)
-				drawCenteredBankGlyph(markerBank, dst, pitch, width, height, overlayX + 0xA0, 0x7E, 'a');
+				drawCenteredBankGlyph(markerBank, dst, pitch, width, height, overlayX + 0xA0, overlayY + 0x7E, 'a');
 		}
 
 		// Pointer glyph at current aim position. Original uses two variants:
@@ -470,7 +478,7 @@ void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) 
 		}
 
 		int cursorX = CLIP<int>(overlayX + _shipPosX, 0, width - 1);
-		int cursorY = CLIP<int>(_shipPosY, 0, height - 1);
+		int cursorY = CLIP<int>(overlayY + _shipPosY, 0, height - 1);
 		drawCenteredBankGlyph(markerBank, dst, pitch, width, height, cursorX, cursorY, marker[0]);
 	}
 
@@ -521,11 +529,12 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 	static const int kShotLerpByTimer[6] = { 0, 8, 7, 6, 4, 0 };
 	const int spritesPerSet = 5;
 	const int overlayX = ra1OverlayViewOffsetX(this);
+	const int overlayY = ra1OverlayViewOffsetY(this);
 	const int leftStartX = 0;
 	const int rightStartX = 0x13F; // 319
 	const bool turretMode = (_activeGameOpcode == 0x08 || _activeGameOpcode == 0x0A);
 	const int shipBaseX = turretMode ? (kRA1CenterX + (_perspectiveX - 0x20)) : _shipPosX;
-	const int shipBaseY = turretMode ? (kRA1CenterY + (_perspectiveY - 0x17)) : _shipPosY;
+	const int shipBaseY = turretMode ? (kRA1CenterY + (_perspectiveY - 0x17)) : (overlayY + _shipPosY);
 
 	for (int i = 0; i < kMaxShotSlots; i++) {
 		if (_shotSlots[i].timer > 0 && _shotSlots[i].timer <= spritesPerSet) {
@@ -533,7 +542,7 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 			const int lerp = kShotLerpByTimer[timer];
 			const int frame = spritesPerSet - timer;
 			const int targetX = CLIP<int>(overlayX + _shipPosX, 0, width - 1);
-			const int targetY = CLIP<int>(_shipPosY, 0, height - 1);
+			const int targetY = CLIP<int>(overlayY + _shipPosY, 0, height - 1);
 
 			if (turretMode) {
 				// FUN_1D79C chooses emitters in two ways:
@@ -583,20 +592,20 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 			}
 
 			// Fallback for non-turret handlers that still run shot overlays.
-			int leftStartY = 0x96;
-			int rightStartY = 0x96;
+			int leftStartY = overlayY + 0x96;
+			int rightStartY = overlayY + 0x96;
 			uint32 leftFlags = 0x83;
 			uint32 rightFlags = 0x2083;
 
 			if (_flyControlMode == 1) {
 				if (_shotSideToggle) {
 					leftFlags = 0x4083;
-					leftStartY = 0;
-					rightStartY = 0x96;
+					leftStartY = overlayY;
+					rightStartY = overlayY + 0x96;
 				} else {
 					rightFlags = 0x6083;
-					leftStartY = 0x96;
-					rightStartY = 0;
+					leftStartY = overlayY + 0x96;
+					rightStartY = overlayY;
 				}
 				if (timer == 1)
 					_shotSideToggle = !_shotSideToggle;
@@ -760,10 +769,11 @@ void InsaneRebel1::renderExplosions(byte *dst, int pitch, int width, int height)
 		return;
 
 	const int overlayX = ra1OverlayViewOffsetX(this);
+	const int overlayY = ra1OverlayViewOffsetY(this);
 	// In 0x08/0x0A turret handlers, explosion anchors use ship center
 	// (_74B6+_74BA, _74B8+_74BC), not pointer center (_74BE/_74C0).
 	int shipScreenX = overlayX + _shipPosX;
-	int shipScreenY = _shipPosY;
+	int shipScreenY = overlayY + _shipPosY;
 	if (_activeGameOpcode == 0x08 || _activeGameOpcode == 0x0A) {
 		shipScreenX = kRA1CenterX + (_perspectiveX - 0x20);
 		shipScreenY = kRA1CenterY + (_perspectiveY - 0x17);
@@ -840,11 +850,7 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 	int hudOriginY = 0;
 	if (_interactiveVideoActive && _player) {
 		hudOriginX = _player->_ra1ViewportOffsetX;
-		// Asteroid path (opcode 0x0B / FUN_1CDA7) applies Y correction through
-		// FUN_223FE coordinate transforms in the original renderer, not as a
-		// simple global framebuffer Y window shift.
-		if (_activeGameOpcode != 0x0B)
-			hudOriginY = _player->_ra1ViewportOffsetY;
+		hudOriginY = _player->_ra1ViewportOffsetY;
 	}
 
 	int hudX = hudOriginX + bar.xoffs;

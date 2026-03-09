@@ -87,6 +87,7 @@ public:
 	int getCurrentLevel() const { return _currentLevel; }
 	uint16 getActiveGameOpcode() const { return _activeGameOpcode; }
 	int16 getPerspectiveX() const { return _perspectiveX; }
+	int16 getPerspectiveY() const { return _perspectiveY; }
 	void projectGameplayPoint(int16 &x, int16 &y) const;
 	void unprojectGameplayPoint(int16 &x, int16 &y) const;
 	bool handleFrameObjectTarget(int16 objectId, int16 left, int16 top, int16 width, int16 height,

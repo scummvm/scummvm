@@ -2219,14 +2219,6 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 
 						int ra1ViewX = _ra1ViewportOffsetX;
 						int ra1ViewY = _ra1ViewportOffsetY;
-						if (_insane) {
-							InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
-							// Opcode 0x0B (FUN_1CDA7) uses FUN_223FE for Y compensation on
-							// transformed objects. A global framebuffer Y window shift causes
-							// floating HUD/perspective artifacts in L2 with current renderer.
-							if (rebel1->isInteractiveVideoActive() && rebel1->getActiveGameOpcode() == 0x0B)
-								ra1ViewY = 0;
-						}
 
 						const int srcX = CLIP(_scrollX + ra1ViewX, 0, _width - 1);
 						const int srcY = CLIP(_scrollY + ra1ViewY, 0, _height - 1);
