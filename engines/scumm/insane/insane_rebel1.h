@@ -86,6 +86,9 @@ public:
 	bool isInteractiveVideoActive() const { return _interactiveVideoActive; }
 	int getCurrentLevel() const { return _currentLevel; }
 	uint16 getActiveGameOpcode() const { return _activeGameOpcode; }
+	bool hasFrameGameOpcode(uint16 opcode) const {
+		return opcode < 32 && (_frameGameOpcodeMask & (1u << opcode)) != 0;
+	}
 	int16 getPerspectiveX() const { return _perspectiveX; }
 	int16 getPerspectiveY() const { return _perspectiveY; }
 	void projectGameplayPoint(int16 &x, int16 &y) const;
@@ -244,9 +247,11 @@ private:
 	int16 _turretEmitterLeftY;
 	int16 _turretEmitterRightX;
 	int16 _turretEmitterRightY;
-	// Last per-frame GAME movement handler opcode (0x07/0x08/0x09/0x0A/0x0B/0x1A).
-	// Used to mirror assembly handler-specific overlay pipeline behavior.
+	// Last per-frame GAME opcode observed in the current playback stream.
+	// Kept for legacy call sites; frame-accurate dispatch uses _frameGameOpcodeMask.
 	uint16 _activeGameOpcode;
+	uint32 _frameGameOpcodeMask;
+	uint16 _frameDispatchFlags;
 
 	// Difficulty (0=easy, 1=normal, 2=hard) — matches original DAT_22BC
 	int _difficulty;
@@ -322,8 +327,10 @@ private:
 	bool _turbulenceEnabled;  // Random per-frame jitter in deltaX (original has it on)
 
 	// Shooting state — FUN_1CCA0 (0x1CCA0)
-	bool _playerFired;       // 0x7570: fire button pressed this frame
-	int16 _fireCooldown;     // 0x757C: button-edge gate in original input pipeline
+	bool _playerFired;       // 0x7570: current fire-button state
+	int16 _fireCooldown;     // 0x757C: previous-frame fire-button state (edge gate)
+	uint16 _gameplayFlags75fe; // 0x75FE: gameplay mode flags
+	uint16 _gameplayFlags75ff; // 0x75FF: targeting / shot-style flags
 
 	// Explosion shot slots (2 slots) — FUN_1CCA0 (0x1CCA0)
 	static const int kMaxShotSlots = 2;

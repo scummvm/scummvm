@@ -27,11 +27,53 @@
 
 namespace Scumm {
 
-// LVL1 stage-2 0x5D damage/event codes observed in L1PLAY2.ANM.
-// Original DOS loop uses table/mask-driven latch routing before FUN_1E6A7;
-// in ScummVM's direct GAME dispatch path, map this known range explicitly.
+// LVL1 stage-2 0x5D damage/event codes. The gameplay stream exposes low record ids
+// (6..18), while the recovered outer loop compares the post-latch state against the
+// later translated values seen in the executable. Accept both representations.
 static inline bool isL1Stage2DamageLatch(uint16 code) {
-	return code >= 6 && code <= 18;
+	switch (code) {
+	case 0x0006:
+	case 0x0007:
+	case 0x0008:
+	case 0x0009:
+	case 0x000A:
+	case 0x000B:
+	case 0x000C:
+	case 0x000D:
+	case 0x000E:
+	case 0x000F:
+	case 0x0010:
+	case 0x0011:
+	case 0x0012:
+	case 0x0049:
+	case 0x004B:
+	case 0x004E:
+	case 0x0051:
+	case 0x0054:
+	case 0x005C:
+	case 0x005E:
+	case 0x0060:
+	case 0x0062:
+	case 0x0064:
+		return true;
+	default:
+		return false;
+	}
+}
+
+static inline bool isL1Stage2SweepDamage(uint16 frameCounter, int16 perspectiveX) {
+	switch (frameCounter) {
+	case 0x0034:
+	case 0x00ED:
+	case 0x0173:
+		return perspectiveX <= 0x28;
+	case 0x0088:
+	case 0x00FA:
+	case 0x0151:
+		return perspectiveX >= 0x18;
+	default:
+		return false;
+	}
 }
 
 static const int16 kLevel7BranchFrames[6][6] = {
@@ -239,14 +281,13 @@ void InsaneRebel1::unprojectGameplayPoint(int16 &x, int16 &y) const {
 
 // preprocessMouseAxes — FUN_231BE (0x231BE) centered-axis output law, adapted to
 // ScummVM's absolute 320x200 mouse space.
-// The original DOS path combines a full-scale centered axis term with an extra
-// mouse-bias term `(rawX-0x140)>>2`, `(rawY-100)>>1` maintained by
-// FUN_23115/FUN_231BE recenter globals. In ScummVM, mirroring the DOS recenter
-// box makes LVL2 control unusably constrained, so keep the FUN_231BE output law
-// (normalized axis + bias) but feed it directly from logical mouse coordinates.
-// That preserves the handler's expected `_DAT_756C/_DAT_756E` amplitude without
-// introducing the DOS safe-window box or extra latency.
+// Preserve the DOS bias/offset persistence and one-frame jump latch from
+// FUN_231BE, but avoid hard recentring the host mouse into the DOS safe window.
+// The actual frame-averaging behavior stays untouched.
 void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY) {
+	if (_mouseRecentering)
+		return;
+
 	int16 logicalX = (int16)CLIP<int>(_vm->_mouse.x, 0, 319);
 	int16 logicalY = (int16)CLIP<int>(_vm->_mouse.y, 0, 199);
 	const int16 rawX = (int16)(logicalX << 1);
@@ -255,19 +296,77 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY) {
 	const int16 deltaY = (int16)(logicalY - kRA1CenterY);
 	const int16 normX = (int16)(((int32)deltaX * 127) / 160);
 	const int16 normY = (int16)(((int32)deltaY * 127) / 100);
-	const int16 biasX = (int16)((rawX - 0x140) >> 2);
-	const int16 biasY = (int16)((rawY - 100) >> 1);
+	int16 biasX = (int16)((rawX + _mouseOffsetX - 0x140) >> 2);
+	int16 biasY = (int16)((rawY + _mouseOffsetY - 100) >> 1);
+
+	if (biasY < 0x65) {
+		const bool largeJump =
+			(_mousePrevBiasX + 0x14 < biasX) ||
+			(_mousePrevBiasY + 0x14 < biasY) ||
+			(biasX < _mousePrevBiasX - 0x14) ||
+			(biasY < _mousePrevBiasY - 0x14);
+		if (largeJump) {
+			if (!_mouseBiasLatch) {
+				biasX = _mousePrevBiasX;
+				biasY = _mousePrevBiasY;
+				_mouseBiasLatch = true;
+			}
+		} else {
+			_mouseBiasLatch = false;
+		}
+	} else {
+		biasX = _mousePrevBiasX;
+		biasY = _mousePrevBiasY;
+		_mouseBiasLatch = true;
+	}
+
 	const int16 scaledX = (int16)(normX + biasX);
 	const int16 scaledY = (int16)(normY + biasY);
 
-	_mouseBiasX = scaledX;
-	_mouseBiasY = scaledY;
-	_mousePrevBiasX = scaledX;
-	_mousePrevBiasY = scaledY;
-	_mouseBiasLatch = false;
-	_mouseRecentering = false;
-	_mouseOffsetX = 0;
-	_mouseOffsetY = 0;
+	_mouseBiasX = biasX;
+	_mouseBiasY = biasY;
+	_mousePrevBiasX = biasX;
+	_mousePrevBiasY = biasY;
+
+	int accumX = rawX + _mouseOffsetX;
+	if (accumX < 0xC0)
+		_mouseOffsetX = (int16)(0xC0 - rawX);
+	else if (accumX > 0x1C0)
+		_mouseOffsetX = (int16)(0x1C0 - rawX);
+
+	int accumY = rawY + _mouseOffsetY;
+	if (accumY < -0x1C)
+		_mouseOffsetY = (int16)(-0x1C - rawY);
+	else if (accumY > 0xE4)
+		_mouseOffsetY = (int16)(0xE4 - rawY);
+
+	accumX = rawX + _mouseOffsetX;
+	if (accumX < 0x145) {
+		if (accumX < 0x142) {
+			if (accumX < 0x13C)
+				_mouseOffsetX += 4;
+			else if (accumX < 0x13F)
+				_mouseOffsetX += 1;
+		} else {
+			_mouseOffsetX -= 1;
+		}
+	} else {
+		_mouseOffsetX -= 4;
+	}
+
+	accumY = rawY + _mouseOffsetY;
+	if (accumY < 0x69) {
+		if (accumY < 0x66) {
+			if (accumY < 0x60)
+				_mouseOffsetY += 4;
+			else if (accumY < 99)
+				_mouseOffsetY += 1;
+		} else {
+			_mouseOffsetY -= 1;
+		}
+	} else {
+		_mouseOffsetY -= 4;
+	}
 
 	inputX = CLIP<int16>(scaledX, -0xA0, 0xA0);
 	inputY = CLIP<int16>(scaledY, -127, 127);
@@ -515,13 +614,18 @@ void InsaneRebel1::updateTurretPhysics() {
 	// The 0x10/0x40 gates come from dispatcher arg4 (callback control bits),
 	// not from GAME payload fields.
 	const int32 counter = _gameCounter;
-	const byte modeFlags = 0;
+	const uint16 modeFlags = _frameDispatchFlags;
 
 	// RA1 latches consumed by handler family in FUN_1B297.
+	if (_currentLevel == 0 && _flyControlMode == 2 && isL1Stage2SweepDamage((uint16)counter, _perspectiveX))
+		_damageFlags |= 0x20;
 	if (_gameLatch5D == 0xFFFF || (_currentLevel == 0 && _flyControlMode == 2 &&
 		isL1Stage2DamageLatch(_gameLatch5D)))
 		_damageFlags |= 0x40;
-	if (_gameLatch5F != 0 && _vm->_rnd.getRandomNumber((uint16)(_gameLatch5F - 1)) == 0)
+	if (_gameLatch5F != 0 &&
+		((_currentLevel == 0 && _flyControlMode == 2)
+			? (_vm->_rnd.getRandomNumber(2) == 0)
+			: (_vm->_rnd.getRandomNumber((uint16)(_gameLatch5F - 1)) == 0)))
 		_damageFlags |= 0x80;
 
 	if (counter == 0) {
@@ -529,8 +633,6 @@ void InsaneRebel1::updateTurretPhysics() {
 		_posAccumY = 0;
 		_rollAccum = 0;
 		_liftSmooth = 0;
-		_shipPosX = kRA1CenterX;
-		_shipPosY = kRA1CenterY;
 		_damageFlags = 0;
 		_prevDamageFlags = 0;
 		_damageCooldown = 0;
@@ -585,12 +687,6 @@ void InsaneRebel1::updateTurretPhysics() {
 
 	const int16 offsetX = (int16)(_posAccumX >> 8);
 	const int16 offsetY = (int16)(_posAccumY >> 8);
-
-	// FUN_1D79C tail sets pointer center from offsets:
-	//   _74BE = _74B6 + _74BA
-	//   _74C0 = (_74B8 + _74BC - 0x23) - (_74BC >> 3)
-	_shipPosX = (int16)(kRA1CenterX + offsetX);
-	_shipPosY = (int16)((kRA1CenterY + offsetY - 0x23) - (offsetY >> 3));
 
 	_perspectiveX = CLIP<int16>((int16)(offsetX + 0x20), 0, 0x40);
 	_perspectiveY = CLIP<int16>((int16)(offsetY + 0x17), 0, 0x2E);
@@ -835,22 +931,41 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 		}
 
 		_activeGameOpcode = 0;
+		_frameGameOpcodeMask = 0;
+		_frameDispatchFlags = 0;
 		resetProjectionTable();
 		debug(5, "RA1 GAME 0x5E: reset state field1=%d mode=%d", (int32)param1, (int)_flyControlMode);
 		break;
 
 	case 0x5D:
-		_gameLatch5D = (uint16)param1;
+		if ((uint16)param1 == 0xFFFF) {
+			_gameLatch5D = 0xFFFF;
+		} else if (param1 > 0) {
+			const int bitIndex = (int)param1 - 1;
+			const int byteIndex = bitIndex >> 3;
+			if (byteIndex >= 0 && byteIndex < 0x96 &&
+				(_frameObjectState[byteIndex] & (byte)(0x80 >> (bitIndex & 7))) == 0) {
+				_gameLatch5D = (uint16)param1;
+			}
+		}
 		debug(5, "RA1 GAME 0x5D (link/event latch) param=%u", _gameLatch5D);
 		break;
 
 	case 0x5F:
-		_gameLatch5F = (uint16)param1;
+		if (param1 > 0) {
+			const int bitIndex = (int)param1 - 1;
+			const int byteIndex = bitIndex >> 3;
+			if (byteIndex >= 0 && byteIndex < 0x96 &&
+				(_frameObjectState[byteIndex] & (byte)(0x80 >> (bitIndex & 7))) == 0) {
+				_gameLatch5F = (uint16)param1;
+			}
+		}
 		debug(5, "RA1 GAME 0x5F (random-hit latch) param=%u", _gameLatch5F);
 		break;
 
 	case 0x07:
 		_activeGameOpcode = 0x07;
+		_frameGameOpcodeMask |= (1u << 0x07);
 		// Per-frame corridor data: f1=frame counter, f2=max frames, f3=drift bias, f4=unused
 		// f1 is the original's _DAT_7740 (game frame counter)
 		// f3 is the drift/wind parameter combined with tuning table
@@ -916,6 +1031,7 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 
 	case 0x0B:
 		_activeGameOpcode = 0x0B;
+		_frameGameOpcodeMask |= (1u << 0x0B);
 		// Asteroid/surface per-frame handler (FUN_1CDA7).
 		// field1 = frame counter, field2 = max frames
 		_gameCounter = param1;
@@ -958,6 +1074,7 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 	case 0x19:
 	case 0x1A:
 		_activeGameOpcode = (uint16)opcode;
+		_frameGameOpcodeMask |= (1u << opcode);
 		_gameCounter = param1;
 		if (subSize >= 20) {
 			uint32 param2 = b.readUint32BE();
@@ -977,7 +1094,7 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 // processShot — FUN_1CCA0 (0x1CCA0). Spawns shot into explosion slot when fired.
 // Called once per frame during interactive rendering.
 void InsaneRebel1::processShot() {
-	if (!_playerFired)
+	if (!_playerFired || _fireCooldown != 0)
 		return;
 
 	// Find first available slot (timer < 1 or > 5), matching FUN_1CCA0.
@@ -989,7 +1106,6 @@ void InsaneRebel1::processShot() {
 		}
 	}
 	if (slot < 0) {
-		_playerFired = false;
 		return;
 	}
 
@@ -998,15 +1114,13 @@ void InsaneRebel1::processShot() {
 	const int16 shipCenterX = turretMode ? (int16)(kRA1CenterX + (_perspectiveX - 0x20)) : _shipPosX;
 	const int16 shipCenterY = turretMode ? (int16)(kRA1CenterY + (_perspectiveY - 0x17)) : _shipPosY;
 
-	_shotSlots[slot].timer = 5;
+	_shotSlots[slot].timer = (_gameplayFlags75ff & 0x2) ? 2 : 5;
 	_shotSlots[slot].posX = _shipPosX;
 	_shotSlots[slot].posY = _shipPosY;
 	_shotSlots[slot].centerX = shipCenterX;
 	_shotSlots[slot].centerY = shipCenterY;
 	_shotSlots[slot].variant = _shotAlternator;
 	_shotAlternator = 1 - _shotAlternator;
-
-	_playerFired = false;
 
 	debug(5, "RA1 shot: slot=%d pos=(%d,%d)", slot, _shotSlots[slot].posX, _shotSlots[slot].posY);
 }

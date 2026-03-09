@@ -170,6 +170,8 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_turretEmitterRightX = 0;
 	_turretEmitterRightY = 0;
 	_activeGameOpcode = 0;
+	_frameGameOpcodeMask = 0;
+	_frameDispatchFlags = 0;
 
 	_health = kMaxHealth;
 	_lives = 3;
@@ -203,6 +205,8 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	// Shooting/targeting state
 	_playerFired = false;
 	_fireCooldown = 0;
+	_gameplayFlags75fe = 0;
+	_gameplayFlags75ff = 0;
 	memset(_shotSlots, 0, sizeof(_shotSlots));
 	_shotAlternator = 0;
 	_shotSideToggle = false;
