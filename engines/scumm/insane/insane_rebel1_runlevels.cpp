@@ -711,6 +711,11 @@ bool InsaneRebel1::runLevel8() {
 		_avgInputX = 0;
 		_avgInputY = 0;
 
+		// Walker-specific state — RunLevel8Flow (0x18546)
+		_walkerHealth = 100;
+		_walkerTimer = 0;
+		_walkerBranchChoice = 0;
+
 		int route = 0;
 		while (!_vm->shouldQuit()) {
 			_levelRouteIndex = route;

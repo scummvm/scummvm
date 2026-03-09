@@ -437,6 +437,13 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			_player->_ra1ViewportOffsetX = _perspectiveX;
 			_player->_ra1ViewportOffsetY = _perspectiveY;
 		}
+
+		// Screen shake — SetCameraOffset (0x224FD): random [-2,+2] jitter when
+		// _screenFlash > 0. Original uses RandScaleByte(5) - 2 for each axis.
+		if (_screenFlash > 0) {
+			_player->_ra1ViewportOffsetX += (int16)(_vm->_rnd.getRandomNumber(4) - 2);
+			_player->_ra1ViewportOffsetY += (int16)(_vm->_rnd.getRandomNumber(4) - 2);
+		}
 	}
 
 	// Assembly dispatch (FUN_1BE1B) only runs the targeting/shot overlay pipeline
@@ -485,12 +492,27 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	}
 
 	renderExplosions(renderBitmap, pitch, width, height);
+
+	// Level 8 (Imperial Walkers) — walker-specific state update + UI overlay.
+	// In the original, RunLevel8Flow runs the walker logic inline in the per-frame
+	// game loop. We call it from procPostRendering when _currentLevel == 7.
+	if (_currentLevel == 7) {
+		updateLevel8WalkerState();
+		renderLevel8Overlay(renderBitmap, pitch, width, height);
+	}
+
 	renderHUD(renderBitmap, pitch, width, height);
 	_fireCooldown = _playerFired ? 1 : 0;
 }
 
 // renderTargetBoxes — FUN_1C940 (0x1C940). Per-target green box overlays.
+// Original gates on g_hudDisableFlags (0x75FE) bit 1: skip when set (Hard difficulty).
 void InsaneRebel1::renderTargetBoxes(byte *dst, int pitch, int width, int height) {
+	if (_gameplayFlags75fe & 2) {
+		_prevTargetCount = _targetCount;
+		_targetCount = 0;
+		return;
+	}
 	const int overlayX = ra1OverlayViewOffsetX(this);
 	const RA1SpriteBank &markerBank = (_techFontBank.numSprites > 0) ? _techFontBank : _hudFontBank;
 	const bool projectTargetMarkers = (_activeGameOpcode == 0x0B);
@@ -552,8 +574,32 @@ void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) 
 	_lastHitTarget = 0;
 }
 
+// renderGostScorePopup — Per-kill score glyph from RenderGostOverlaySlots (0x1C9CD).
+// Maps kill score to tech-font glyph and draws it rising upward from the kill position.
+void InsaneRebel1::renderGostScorePopup(byte *dst, int pitch, int width, int height,
+										int16 centerX, int16 centerY, int16 frame) {
+	// Score-to-glyph mapping from original (0x1CA5D-0x1CACB)
+	char glyphChar = '\0';
+	uint16 scoreValue = (uint16)_tuning.kill;
+	if (scoreValue == 10)       glyphChar = 0x72;  // 'r'
+	else if (scoreValue == 25)  glyphChar = 0x74;  // 't'
+	else if (scoreValue == 50)  glyphChar = 0x73;  // 's'
+	else if (scoreValue == 100) glyphChar = 0x6F;  // 'o'
+	else if (scoreValue == 200) glyphChar = 0x70;  // 'p'
+	else if (scoreValue == 500) glyphChar = 0x71;  // 'q'
+
+	if (glyphChar == '\0')
+		return;
+
+	// Original: DrawStringEx(buf, colorMap, centerX-4, centerY-frame, 1, 100, 3, scoreText)
+	// "<<{glyph}" string selects tech font layer via the << markup
+	char scoreText[4] = { '<', '<', glyphChar, '\0' };
+	drawFontBankString(dst, pitch, width, height,
+					   centerX - 4, centerY - frame, scoreText);
+}
+
 // renderGostSlots — FUN_1C9CD (0x1C9CD). Hit explosion animations at target positions.
-// Renders explosion sprites from bangBank at each GOST slot's recorded position.
+// Renders explosion sprites from bangBank + per-kill score popup glyphs.
 void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) {
 	if (_bangBank.numSprites <= 0) {
 		// Warn if there are active GOST slots but no bang sprites to render
@@ -584,6 +630,13 @@ void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) 
 			int drawX = overlayX + centerX - spr.width / 2;
 			int drawY = centerY - spr.height / 2;
 			renderSprite(dst, pitch, width, height, drawX, drawY, spr);
+
+			// Per-kill score popup glyph — RenderGostOverlaySlots (0x1CA35)
+			// Suppressed in on-foot mode (combatModeFlags & 8)
+			if ((_gameplayFlags75fe & 8) == 0) {
+				renderGostScorePopup(dst, pitch, width, height,
+									overlayX + centerX, centerY, _gostSlots[i].frame);
+			}
 
 			_gostSlots[i].frame++;
 			if (_gostSlots[i].frame >= 10)
@@ -1126,6 +1179,253 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 		}
 	}
 
+}
+
+// Attack window frame tables — RunLevel8Flow (0x18546), data at 0x236D/0x2373/0x2379.
+// Each route has up to 3 attack windows. -2 means disabled.
+const int16 InsaneRebel1::kWalkerAttackWindow1[3] = { 2588, 2323, 877 };
+const int16 InsaneRebel1::kWalkerAttackWindow2[3] = { 1709, 1444, -2 };
+const int16 InsaneRebel1::kWalkerAttackWindow3[3] = { 262, -2, -2 };
+
+// Per-route walker damage frame tables — FUN_12fe1/FUN_130c9/FUN_13195.
+// type: 0=proximity(41,32), 1=offsetY(15), 2=offsetX(24), 3=proximity(40,31), 4=offsetY(31)
+const InsaneRebel1::WalkerDamageFrame InsaneRebel1::kWalkerDamageRoute0[] = {
+	{0x00CD, 2}, {0x00EF, 2}, {0x0294, 1}, {0x03A2, 2},
+	{0x04BE, 0}, {0x05C9, 2}, {0x076C, 0}, {0x085A, 4}, {0x096F, 2}
+};
+const int InsaneRebel1::kWalkerDamageRoute0Count = ARRAYSIZE(kWalkerDamageRoute0);
+
+const InsaneRebel1::WalkerDamageFrame InsaneRebel1::kWalkerDamageRoute1[] = {
+	{0x0189, 1}, {0x0297, 2}, {0x03B3, 0}, {0x04BE, 4},
+	{0x0661, 0}, {0x074F, 4}, {0x0864, 4}
+};
+const int InsaneRebel1::kWalkerDamageRoute1Count = ARRAYSIZE(kWalkerDamageRoute1);
+
+const InsaneRebel1::WalkerDamageFrame InsaneRebel1::kWalkerDamageRoute2[] = {
+	{0x00BB, 0}, {0x01A9, 4}, {0x02BE, 4}
+};
+const int InsaneRebel1::kWalkerDamageRoute2Count = ARRAYSIZE(kWalkerDamageRoute2);
+
+// updateLevel8WalkerState — Per-frame walker health + attack window + damage logic.
+// Called from procPostRendering when _currentLevel == 7.
+void InsaneRebel1::updateLevel8WalkerState() {
+	// Walker health computation — RunLevel8Flow (0x18634-0x18655)
+	if (_walkerHealth >= 11) {
+		_walkerHealth = (int16)(100 - (_killCount + (_killCount >> 2)));
+	} else if (_walkerHealth > 0 && (_frameCounter & 3) == 0) {
+		_walkerHealth--;
+	}
+
+	// Walker destroyed — exit interactive video (original loop: `while (sVar6 != 0)`)
+	if (_walkerHealth <= 0) {
+		_vm->_smushVideoShouldFinish = true;
+		return;
+	}
+
+	// Per-route damage check — FUN_12fe1/FUN_130c9/FUN_13195
+	int route = CLIP(_levelRouteIndex, 0, 2);
+	const WalkerDamageFrame *table;
+	int tableCount;
+	switch (route) {
+	case 0:  table = kWalkerDamageRoute0; tableCount = kWalkerDamageRoute0Count; break;
+	case 1:  table = kWalkerDamageRoute1; tableCount = kWalkerDamageRoute1Count; break;
+	default: table = kWalkerDamageRoute2; tableCount = kWalkerDamageRoute2Count; break;
+	}
+
+	uint16 fc = (uint16)_frameCounter;
+	for (int i = 0; i < tableCount; i++) {
+		if (fc != (uint16)table[i].frame)
+			continue;
+
+		int16 dx = _shipPosX - kRA1CenterX;  // distance from center
+		int16 dy = _shipPosY - kRA1CenterY;
+		if (dx < 0) dx = -dx;
+		if (dy < 0) dy = -dy;
+
+		bool hit = false;
+		switch (table[i].type) {
+		case 0: hit = (dx < 0x29 && dy < 0x20); break;  // proximity(41,32)
+		case 1: hit = (dy < 0x0F); break;                // offsetY(15)
+		case 2: hit = (dx < 0x18); break;                // offsetX(24)
+		case 3: hit = (dx < 0x28 && dy < 0x1F); break;   // proximity(40,31)
+		case 4: hit = (dy < 0x1F); break;                // offsetY(31)
+		default: break;
+		}
+
+		if (hit)
+			_damageFlags |= 0x20;
+		break;
+	}
+
+	// Attack window logic — RunLevel8Flow (0x18778-0x18B4A)
+	const int16 *windows[3] = {
+		&kWalkerAttackWindow1[route],
+		&kWalkerAttackWindow2[route],
+		&kWalkerAttackWindow3[route]
+	};
+	int16 frameNum = (int16)fc;
+
+	// Check if we're inside any attack window (window-100 < frame <= window)
+	bool inWindow = false;
+	for (int w = 0; w < 3; w++) {
+		int16 windowEnd = *windows[w];
+		if (windowEnd < 0) continue;
+		if (frameNum > windowEnd - 100 && frameNum <= windowEnd) {
+			inWindow = true;
+
+			// Reset timer at window start (first frame of window)
+			if (frameNum == windowEnd - 99)
+				_walkerTimer = 100;
+			break;
+		}
+	}
+
+	if (inWindow && _walkerBranchChoice == 0) {
+		_walkerTimer--;
+
+		// Check if we're in the directional phase (last 50 frames)
+		bool inDirectionalPhase = false;
+		for (int w = 0; w < 3; w++) {
+			int16 windowEnd = *windows[w];
+			if (windowEnd < 0) continue;
+			if (frameNum > windowEnd - 0x32 && frameNum <= windowEnd) {
+				inDirectionalPhase = true;
+				break;
+			}
+		}
+
+		if (inDirectionalPhase) {
+			// Player can choose direction during last 50 frames
+			if (_playerFired && _avgInputX == 0) {
+				_walkerBranchChoice = (_shipPosX < 0xA0) ? 1 : 2;
+			}
+		} else {
+			// Torpedo sound every 8 frames during targeting phase
+			if ((_frameCounter & 7) == 0)
+				playSfx(kSfxLockOn, 127, 0);
+		}
+	}
+
+	// At window boundary: decide route branch — RunLevel8Flow (0x18A7F-0x18B4A)
+	// Original: left branches unless at window3, right branches unless at window2.
+	for (int w = 0; w < 3; w++) {
+		int16 windowEnd = *windows[w];
+		if (windowEnd < 0) continue;
+		if (fc != (uint16)windowEnd) continue;
+
+		int newRoute = 0;
+		bool goLeft = (_walkerBranchChoice == 1) ||
+					  (_shipPosX < 0xA0 && _walkerBranchChoice != 2);
+
+		if (goLeft) {
+			// Left: branch to route 1 unless at window3 (w==2)
+			if (w != 2)
+				newRoute = 1;
+		} else {
+			// Right: branch to route 2 unless at window2 (w==1)
+			if (w != 1)
+				newRoute = 2;
+		}
+
+		if (newRoute != 0) {
+			_pendingRouteIndex = newRoute;
+			_vm->_smushVideoShouldFinish = true;
+		}
+		_walkerBranchChoice = 0;
+		break;
+	}
+}
+
+// renderLevel8Overlay — Walker-specific UI from RunLevel8Flow (0x18660-0x18A7E).
+// Draws walker health %, attack timer, directional arrows, and target reticle.
+// Original draws via DrawStringEx/FormatAndDrawText in screen-space (within viewport).
+// We draw into 384x242 buffer, so add viewport offset to convert screen→buffer coords.
+void InsaneRebel1::renderLevel8Overlay(byte *dst, int pitch, int width, int height) {
+	if (_currentLevel != 7)
+		return;
+
+	// Viewport offset: screen-space → buffer-space (same approach as renderHUD)
+	int viewX = _player ? _player->_ra1ViewportOffsetX : _perspectiveX;
+	int viewY = _player ? _player->_ra1ViewportOffsetY : _perspectiveY;
+
+	// Walker health display — "<<WALKER %d%%" at projected (0x61, 0x8D)
+	// Blinks when health < 16: only drawn when (frameCounter & 2) != 0
+	if (_walkerHealth > 0 && (_walkerHealth >= 16 || (_frameCounter & 2) != 0)) {
+		int16 projX = 0x61, projY = 0x8D;
+		projectGameplayPoint(projX, projY);
+		// Apply 1/4 parallax compensation (original: 0x61 - (projX - 0x61) >> 2)
+		projX = (int16)(0x61 - ((projX - 0x61) >> 2));
+		projY = (int16)(0x8D - ((projY - 0x8D) >> 2));
+
+		char walkerStr[24];
+		Common::sprintf_s(walkerStr, "<<WALKER %d%%%%", (int)_walkerHealth);
+		drawFontBankString(dst, pitch, width, height, viewX + projX, viewY + projY, walkerStr);
+	}
+
+	// Attack window overlay (timer + arrows/reticle)
+	int route = CLIP(_levelRouteIndex, 0, 2);
+	const int16 *windows[3] = {
+		&kWalkerAttackWindow1[route],
+		&kWalkerAttackWindow2[route],
+		&kWalkerAttackWindow3[route]
+	};
+	int16 frameNum = (int16)(uint16)_frameCounter;
+
+	bool inWindow = false;
+	bool inDirectionalPhase = false;
+	for (int w = 0; w < 3; w++) {
+		int16 windowEnd = *windows[w];
+		if (windowEnd < 0) continue;
+		if (frameNum > windowEnd - 100 && frameNum <= windowEnd) {
+			inWindow = true;
+			if (frameNum > windowEnd - 0x32 && frameNum <= windowEnd)
+				inDirectionalPhase = true;
+			break;
+		}
+	}
+
+	if (!inWindow || _walkerBranchChoice != 0)
+		return;
+
+	// Timer countdown — "<<TIME %d" at projected (0x62, 0x9C)
+	{
+		int16 projX = 0x62, projY = 0x9C;
+		projectGameplayPoint(projX, projY);
+		projX = (int16)(0x62 - ((projX - 0x62) >> 2));
+		projY = (int16)(0x9C - ((projY - 0x9C) >> 2));
+
+		char timerStr[16];
+		Common::sprintf_s(timerStr, "<<TIME %d", (int)_walkerTimer);
+		drawFontBankString(dst, pitch, width, height, viewX + projX, viewY + projY, timerStr);
+	}
+
+	if (inDirectionalPhase) {
+		// Directional arrows — projected from (0,0) with parallax compensation
+		int16 projX = 0, projY = 0;
+		projectGameplayPoint(projX, projY);
+		int16 px = (int16)(-(projX >> 2));
+		int16 py = (int16)(-(projY >> 2));
+
+		if (_shipPosX < 0xA0) {
+			// Left arrow "<<v"
+			drawFontBankString(dst, pitch, width, height,
+				viewX + 0xA6 + px, viewY + 0x92 + py, "<<v");
+		} else {
+			// Right arrow "<<u"
+			drawFontBankString(dst, pitch, width, height,
+				viewX + 0xA8 - px, viewY + 0x93 - py, "<<u");
+		}
+	} else {
+		// Target reticle — "<<w" at projected (0xA9, 0x9A), blinks on (frame & 4)
+		if ((_frameCounter & 4) == 0) {
+			int16 projX = 0, projY = 0;
+			projectGameplayPoint(projX, projY);
+			int16 drawX = (int16)(0xA9 - (projX >> 2));
+			int16 drawY = (int16)(0x9A - (projY >> 2));
+			drawFontBankString(dst, pitch, width, height,
+				viewX + drawX, viewY + drawY, "<<w");
+		}
+	}
 }
 
 // renderSprite — Simplified version of FUN_20BD3 (0x20BD3) glyph/sprite renderer.

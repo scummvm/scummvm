@@ -186,6 +186,9 @@ void InsaneRebel1::loadTuningForLevel(int level) {
 	_tuning.levelPts = kTuningTable[l][d][10];
 	_tuning.bonus    = kTuningTable[l][d][11];
 	_tuning.flags    = kTuningTable[l][d][12];
+	// initLevelFromTuning (0x13E7B) copies tuning flags into g_hudDisableFlags (0x75FE).
+	_gameplayFlags75fe = (uint16)_tuning.flags;
+
 	debug(1, "RA1: Loaded tuning level=%d diff=%d: roll=%d lift=%d slide=%d drift=%d snap=%d "
 		"miss=%d wham=%d shot=%d kill=%d time=%d levelPts=%d bonus=%d flags=0x%x",
 		level, d, _tuning.roll, _tuning.lift, _tuning.slide, _tuning.drift, _tuning.snap,
@@ -304,6 +307,9 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_gostSlotIdx = 0;
 	_killCount = 0;
 	_lastHitTarget = 0;
+	_walkerHealth = 100;
+	_walkerTimer = 0;
+	_walkerBranchChoice = 0;
 	resetFrameObjectState();
 
 	if (loadRA1Nut("SYS/TALKFONT.NUT", _hudFontBank)) {
