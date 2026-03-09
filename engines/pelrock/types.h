@@ -420,7 +420,6 @@ struct PaletteAnimFade {
 };
 
 struct Sticker {
-	int roomNumber;
 	int stickerIndex;
 	uint16 x;
 	uint16 y;

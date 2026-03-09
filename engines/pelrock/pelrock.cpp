@@ -46,6 +46,8 @@
 
 namespace Pelrock {
 
+static const uint32 kInventoryArrowsOffset = 3186048; // ALFRED.7 — inventory scroll arrows
+
 PelrockEngine *g_engine;
 
 PelrockEngine::PelrockEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
@@ -186,7 +188,7 @@ void PelrockEngine::loadInventoryArrows() {
 		error("Failed to open ALFRED.7 to load inventory arrows");
 		return;
 	}
-	alfred7.seek(3186048, SEEK_SET); // Offset for inventory arrows in ALFRED.7
+	alfred7.seek(kInventoryArrowsOffset, SEEK_SET); // Inventory arrows in ALFRED.7
 	_inventoryOverlayState.arrows[0] = new byte[20 * 60];
 	_inventoryOverlayState.arrows[1] = new byte[20 * 60];
 	alfred7.read(_inventoryOverlayState.arrows[0], 20 * 60);
@@ -704,7 +706,7 @@ void PelrockEngine::updateAnimations() {
 
 void PelrockEngine::presentFrame() {
 	_screen->blitFrom(_compositeBuffer);
-	paintDebugLayer();
+	// paintDebugLayer();
 	_screen->markAllDirty();
 }
 
@@ -2110,7 +2112,6 @@ void PelrockEngine::loadExtraScreenAndPresent(int screenIndex) {
 void PelrockEngine::waitForSpecialAnimation() {
 	while (!g_engine->shouldQuit() && !_res->_isSpecialAnimFinished) {
 		_events->pollEvent();
-		debug("Waiting for special animation to finish, current frame %d", _res->_currentSpecialAnim->curFrame);
 		renderScene(OVERLAY_NONE);
 		_screen->update();
 		g_system->delayMillis(10);

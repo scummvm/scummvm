@@ -27,6 +27,8 @@
 
 namespace Pelrock {
 
+static const uint32 kPaletteRemapOffset = 0x4C77C; // JUEGO.EXE — water-effect palette remap table
+
 RoomManager::RoomManager() {
 	_pixelsShadows = new byte[640 * 400];
 	loadWaterPaletteRemap();
@@ -46,7 +48,7 @@ void RoomManager::loadWaterPaletteRemap() {
 	if(!exe.open("JUEGO.EXE")) {
 		error("Couldnt find file JUEGO.EXE");
 	}
-	exe.seek(0x4C77C, SEEK_SET);
+	exe.seek(kPaletteRemapOffset, SEEK_SET);
 	exe.read(_paletteRemaps[4], 256);
 	exe.close();
 }

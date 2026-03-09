@@ -23,6 +23,8 @@
 
 namespace Pelrock {
 
+static const uint32 kLargeFontOffset = 0x7DC8; // ALFRED.7 — large font bitmap data
+
 LargeFont::LargeFont() : _fontData(nullptr) {
 }
 
@@ -36,7 +38,7 @@ bool LargeFont::load(const Common::String &filename) {
 		return false;
 	}
 
-	file.seek(0x7DC8, SEEK_SET);
+	file.seek(kLargeFontOffset, SEEK_SET);
 	const int numChars = 100;
 	const int charWidth = 12;
 	const int charHeight = 24;

@@ -25,37 +25,7 @@
 
 namespace Pelrock {
 
-static const uint32 cursor_offsets[5] = {
-	0x0FDDFD,
-	0x0FDCDD,
-	0x0FDF1D,
-	0x0FE33D,
-	0x367EF0};
-
-static const uint32 kBalloonFramesOffset = 2176936;
-static const uint32 kBalloonFramesSize = 24950;
-
-static const uint32 ALFRED7_ALFRED_COMB_R = 67768;
-static const uint32 ALFRED7_ALFRED_COMB_L = 88408;
-
-static const uint32 kAlternateSettingsMenuOffset = 910097;
-static const uint32 kAlternateSettingsPaletteOffset = 1038141; // 640 * 480
-static const uint32 kSettingsPaletteOffset = 0x2884c2;         // 640 * 480
-
-const uint32 kDescriptionBaseOffset = 0x4715D;
-const uint16 kNumDescriptions = 113;
-
-static const uint32 kInventoryDescriptionsOffset = 0x4715E;
-static const uint32 kInventoryDescriptionsSize = 7868;
-static const uint32 kMenuTextOffset = 0x49203;
-static const uint32 kMenuTextSize = 230;
-static const uint32 kAlfredResponsesOffset = 0x441DC;
-static const uint32 kConversationTerminatorOffset = 0x0492EE;
-static const uint32 kAlfredResponsesSize = 12143;
-static const uint32 kCreditsOffset = 0x49F60;
-static const uint32 kCreditsSize = 2540;
-
-static const uint32 pegatina_offsets[137] = {
+static const uint32 stickerOffsets[137] = {
 	0x000000, 0x00005B, 0x0000B6, 0x000298, 0x00047A, 0x0023C8, 0x004316, 0x004376,
 	0x005119, 0x005EBC, 0x0083ED, 0x008529, 0x0092C4, 0x00A3AA, 0x00B490, 0x00B6A6,
 	0x00C05A, 0x00CA0E, 0x00D3D0, 0x00D46E, 0x00F036, 0x00FB8F, 0x00FC55, 0x0119D7,
@@ -74,51 +44,6 @@ static const uint32 pegatina_offsets[137] = {
 	0x071854, 0x07274B, 0x073642, 0x074539, 0x075454, 0x0791DA, 0x07CF60, 0x07E4AB,
 	0x07ECED, 0x07F52F, 0x07FD71, 0x080591, 0x080B24, 0x080B84, 0x080F39, 0x0812F5,
 	0x0816B1};
-
-static const byte pegatina_rooms[140] = {
-	0, 0, 0, 0, 0, 0, 0,                            // Sprites 0-6: Room 0
-	2, 2,                                           // Sprites 7-8: Room 2
-	3, 3, 3, 3, 3, 3, 3, 3,                         // Sprites 9-16: Room 3
-	4, 4, 4, 4, 4,                                  // Sprites 17-21: Room 4
-	5, 5,                                           // Sprites 22-23: Room 5
-	7,                                              // Sprite 24: Room 7
-	8, 8,                                           // Sprites 25-26: Room 8
-	9, 9, 9, 9, 9,                                  // Sprites 27-31: Room 9
-	12, 12,                                         // Sprites 32-33: Room 12
-	13, 13, 13,                                     // Sprites 34-36: Room 13
-	12,                                             // Sprite 37: Room 12
-	15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, // Sprites 38-49: Room 15
-	16, 16,                                         // Sprites 50-51: Room 16
-	17, 17,                                         // Sprites 52-53: Room 17
-	19, 19, 19, 19, 19,                             // Sprites 54-58: Room 19
-
-	0, 0, 0, 0, 0, 0, 0, // Sprites 59-65: Room 0
-	33, 33,              // Sprites 66-67: Room 33
-	29, 29,              // Sprites 68-69: Room 29
-	0, 0, 0,             // Sprites 70-72: Room 0
-
-	34, 35, 31, 25,         // Sprites 73-76: Various rooms
-	31,                     // Sprite 77: Room 31
-	32,                     // Sprite 78: Room 32
-	21, 25,                 // Sprites 79-80: Rooms 21, 25
-	0,                      // Sprite 81: Room 0
-	0, 0, 0, 0, 0,          // Sprites 82-86: Room 0
-	4, 4, 4, 4,             // Sprites 87-90: Room 4
-	0, 0, 0, 0,             // Sprites 91-94: Room 0
-	0, 0, 0, 0, 0, 0,       // Sprites 95-100: Room 0
-	33, 33,                 // Sprites 101-102: Room 33
-	47, 47,                 // Sprites 103-104: Room 47
-	52, 52, 52, 52, 52,     // Sprites 105-109: Room 52
-	52, 52, 52, 52, 52, 52, // Sprites 110-115: Room 52
-	41,                     // Sprite 116: Room 41
-	0,                      // Sprite 117: Room 0
-	30,                     // Sprite 118: Room 30
-	44, 44, 44, 44,         // Sprites 119-122: Room 44
-	31,                     // Sprite 123: Room 31
-	46, 46,                 // Sprites 124-125: Room 46
-	31,                     // Sprite 126: Room 31
-	51, 52, 53, 54          // Sprites 127-130: Various rooms
-};
 
 enum TextIndices {
 	ESTAN_CERRADOS,
@@ -319,8 +244,9 @@ enum TextIndices {
 	LASPUERTAS_DELCIELO,
 };
 
-// Description offsets relative to kDescriptionBaseOffset
-static const uint16 description_offsets[kNumDescriptions] = {
+// Description offsets relative to base offset 0x4715D.
+// NOTE: unused dead code — kept for reference only.
+static const uint16 description_offsets[113] = {
 	0x0000, // Object 0: Historia de la Princesa Zenna y su amante insatisfecho
 	0x0058, // Object 1: Nombre: Alfred Pelrock
 	0x00C4, // Object 2: La tipica tarjeta por la que te sacan commisiones
@@ -500,28 +426,19 @@ static const ExtraImages extraScreens[] = {
 
 };
 
+// AlfredSpecialAnimOffset: POD struct (no constructors) to avoid global-constructor overhead.
+// Fields are ordered to match natural aggregate-initializer order.
+// size == 0 means "compute as numFrames * w * h" at load time.
 struct AlfredSpecialAnimOffset {
-	int numFrames = 0;
-	int w = 0;
-	int h = 0;
+	int numFrames;
+	int w;
+	int h;
 	int numBudas;
-	int loops;
 	int numAlfred;
 	uint32 offset;
-	int stride = 0;
-	uint32 size;
-	int speed = 2;
-
-	AlfredSpecialAnimOffset(int nF, int width, int height, int nBudas, int numAlfred, uint32 off, int loops, int speed = 2)
-		: numFrames(nF), w(width), h(height), numBudas(nBudas), numAlfred(numAlfred), offset(off), loops(loops), speed(speed) {
-		AlfredSpecialAnimOffset(nF, width, height, nBudas, numAlfred, off, loops, speed, width * height * nF);
-	}
-	AlfredSpecialAnimOffset(int nF, int width, int height, int nBudas, int numAlfred, uint32 off, int loops, int speed, uint32 sz)
-		: numFrames(nF), w(width), h(height), numBudas(nBudas), numAlfred(numAlfred), offset(off), loops(loops), size(sz), speed(speed) {
-		stride = w * h;
-	}
-	AlfredSpecialAnimOffset() {
-	}
+	int loops;
+	int speed;
+	uint32 size; // 0 = compute from numFrames * w * h
 };
 
 } // End of namespace Pelrock

@@ -28,6 +28,9 @@
 
 namespace Pelrock {
 
+static const uint32 kCDPlayerTrackNamesOffset = 301203;  // JUEGO.EXE — track name strings
+static const uint32 kCDPlayerControlsOffset   = 2214760; // ALFRED.7 — controls sprite
+
 CDPlayer::CDPlayer(PelrockEventManager *eventMan, ResourceManager *res, SoundManager *sound)
 	: _events(eventMan), _res(res), _sound(sound) {
 	init();
@@ -73,7 +76,7 @@ void CDPlayer::loadTrackNames() {
 	if (!juegoFile.open("JUEGO.EXE")) {
 		return;
 	}
-	juegoFile.seek(301203, SEEK_SET);
+	juegoFile.seek(kCDPlayerTrackNamesOffset, SEEK_SET);
 
 	for (int i = 0; i < 31; i++) {
 		trackNames[i] = juegoFile.readString(0, 30);
@@ -184,10 +187,10 @@ void CDPlayer::loadControls() {
 	if (!alfred7.open("ALFRED.7")) {
 		return;
 	}
-	alfred7.seek(2214760, SEEK_SET);
+	alfred7.seek(kCDPlayerControlsOffset, SEEK_SET);
 	byte *compressedData = nullptr;
 	size_t outSize = 0;
-	readUntilBuda(&alfred7, 2214760, compressedData, outSize);
+	readUntilBuda(&alfred7, kCDPlayerControlsOffset, compressedData, outSize);
 	byte *rawData = nullptr;
 
 	rleDecompress(compressedData, outSize, 0, 0, &rawData, true);

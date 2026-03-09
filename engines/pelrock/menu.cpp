@@ -31,6 +31,30 @@
 
 namespace Pelrock {
 
+// ALFRED.7 — alternate settings palette
+static const uint32 kSettingsPaletteOffset = 0x2884C2;
+
+// JUEGO.EXE — inventory object descriptions
+static const uint32 kInventoryDescriptionsOffset = 0x4715E;
+static const uint32 kInventoryDescriptionsSize   = 7868;
+
+// JUEGO.EXE — in-menu text strings
+static const uint32 kMenuTextOffset = 0x49203;
+static const uint32 kMenuTextSize   = 230;
+
+// ALFRED.7 — main menu background
+static const uint32 kMainMenuPart1Offset         = 2405266;
+static const uint32 kMainMenuPart1RawSize        = 65536; // first uncompressed chunk
+static const uint32 kMainMenuPart1CompressedSize = 29418; // following compressed tail
+static const uint32 kMainMenuPart2Offset         = 2500220;
+static const uint32 kMainMenuPart2RawSize        = 32768;
+static const uint32 kMainMenuPart2CompressedSize = 30288;
+static const uint32 kMainMenuPart3Offset         = 2563266;
+static const uint32 kMainMenuPart3Size           = 92160;
+
+// ALFRED.7 — menu buttons (save/load/sound/exit, one contiguous block)
+static const uint32 kMenuButtonsOffset = 3193376;
+
 Pelrock::MenuManager::MenuManager(Graphics::Screen *screen, PelrockEventManager *events, ResourceManager *res, SoundManager *sound) : _screen(screen), _events(events), _res(res), _sound(sound) {
 }
 
@@ -239,38 +263,38 @@ void MenuManager::loadMenu() {
 	}
 
 	uint32 curPos = 0;
-	alfred7.seek(2405266, SEEK_SET);
-	alfred7.read(_mainMenu.getPixels(), 65536);
+	alfred7.seek(kMainMenuPart1Offset, SEEK_SET);
+	alfred7.read(_mainMenu.getPixels(), kMainMenuPart1RawSize);
 
-	curPos += 65536;
+	curPos += kMainMenuPart1RawSize;
 
-	byte *compressedPart1 = new byte[29418];
-	alfred7.read(compressedPart1, 29418);
+	byte *compressedPart1 = new byte[kMainMenuPart1CompressedSize];
+	alfred7.read(compressedPart1, kMainMenuPart1CompressedSize);
 	byte *decompressedPart1 = nullptr;
-	size_t decompressedSize = rleDecompress(compressedPart1, 29418, 0, 0, &decompressedPart1, true);
+	size_t decompressedSize = rleDecompress(compressedPart1, kMainMenuPart1CompressedSize, 0, 0, &decompressedPart1, true);
 
 	memcpy((byte *)_mainMenu.getPixels() + curPos, decompressedPart1, decompressedSize);
 	curPos += decompressedSize;
 
 	delete[] compressedPart1;
 	delete[] decompressedPart1;
-	alfred7.seek(2500220, SEEK_SET);
-	alfred7.read((byte *)_mainMenu.getPixels() + curPos, 32768);
-	curPos += 32768;
-	byte *compressedPart2 = new byte[30288];
-	alfred7.read(compressedPart2, 30288);
+	alfred7.seek(kMainMenuPart2Offset, SEEK_SET);
+	alfred7.read((byte *)_mainMenu.getPixels() + curPos, kMainMenuPart2RawSize);
+	curPos += kMainMenuPart2RawSize;
+	byte *compressedPart2 = new byte[kMainMenuPart2CompressedSize];
+	alfred7.read(compressedPart2, kMainMenuPart2CompressedSize);
 	byte *decompressedPart2 = nullptr;
-	decompressedSize = rleDecompress(compressedPart2, 30288, 0, 0, &decompressedPart2, true);
+	decompressedSize = rleDecompress(compressedPart2, kMainMenuPart2CompressedSize, 0, 0, &decompressedPart2, true);
 
 	memcpy((byte *)_mainMenu.getPixels() + curPos, decompressedPart2, decompressedSize);
 	curPos += decompressedSize;
-	debug("Settings menu size loaded: %d, with last block %d", curPos, curPos + 92160);
+	debug("Settings menu size loaded: %d, with last block %d", curPos, curPos + (int)kMainMenuPart3Size);
 	delete[] compressedPart2;
 	delete[] decompressedPart2;
-	alfred7.seek(2563266, SEEK_SET);
-	alfred7.read((byte *)_mainMenu.getPixels() + curPos, 92160);
+	alfred7.seek(kMainMenuPart3Offset, SEEK_SET);
+	alfred7.read((byte *)_mainMenu.getPixels() + curPos, kMainMenuPart3Size);
 
-	readButton(alfred7, 3193376, _saveButtons, _saveGameRect);
+	readButton(alfred7, kMenuButtonsOffset, _saveButtons, _saveGameRect);
 	readButton(alfred7, alfred7.pos(), _loadButtons, _loadGameRect);
 	readButton(alfred7, alfred7.pos(), _soundsButtons, _soundsRect);
 	readButton(alfred7, alfred7.pos(), _exitToDosButtons, _exitToDosRect);
@@ -278,7 +302,7 @@ void MenuManager::loadMenu() {
 	readButton(alfred7, alfred7.pos(), _inventoryRightArrow, _invRight);
 	readButton(alfred7, alfred7.pos(), _savesUpArrows, _savesUp);
 	readButton(alfred7, alfred7.pos(), _savesDownArrows, _savesDown);
-	readButton(alfred7, 3214046, _questionMark, _questionMarkRect);
+	readButton(alfred7, kQuestionMarkOffset, _questionMark, _questionMarkRect);
 
 	_menuText = _menuTexts[0];
 	alfred7.close();

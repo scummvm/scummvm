@@ -32,6 +32,8 @@
 
 namespace Pelrock {
 
+static const uint32 kStatuePaletteDataOffset = 0x4C700; // JUEGO.EXE — statue palette animation data
+
 #define MASCULINE true
 #define FEMININE false
 
@@ -2268,7 +2270,7 @@ void PelrockEngine::animateStatuePaletteFade(bool reverse) {
 	}
 
 	// Read the palette data structure from JUEGO.EXE
-	exeFile.seek(0x4C700, SEEK_SET);
+	exeFile.seek(kStatuePaletteDataOffset, SEEK_SET);
 
 	StatuePaletteData paletteData;
 	paletteData.x = exeFile.readUint16LE();

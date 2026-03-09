@@ -29,6 +29,11 @@
 
 namespace Pelrock {
 
+static const uint32 kSpellbookImgOffset     = 1268719; // ALFRED.7 — spellbook sprite sheet start
+static const uint32 kSpellbookImgDataOffset = 1268723; // ALFRED.7 — compressed sprite data
+static const uint32 kSpellbookTextOffset    = 288285;  // JUEGO.EXE — spellbook page text
+static const uint32 kSpellbookTextSize      = 2861;
+
 SpellBook::SpellBook(PelrockEventManager *eventMan, ResourceManager *res)
 	: _palette(nullptr),
 	  _events(eventMan),
@@ -80,28 +85,28 @@ void SpellBook::selectPage(int page) {
 		return;
 	}
 
-	alfred7.seek(1268719, SEEK_SET);
+	alfred7.seek(kSpellbookImgOffset, SEEK_SET);
 	int w = 119;
 	int h = 99;
 	int nFrames = 13;
 	byte *compressedData = nullptr;
 	byte *spriteData = nullptr;
 	size_t outSize = 0;
-	readUntilBuda(&alfred7, 1268723, compressedData, outSize);
+	readUntilBuda(&alfred7, kSpellbookImgDataOffset, compressedData, outSize);
 	rleDecompress(compressedData, outSize, 0, w * h * nFrames, &spriteData, false);
 	_spell->image = new byte[w * h];
 	extractSingleFrame(spriteData, _spell->image, page, w, h);
 
-	juegoFile.seek(0x0004661D, SEEK_SET);
-	byte *textData = new byte[2861];
-	juegoFile.read(textData, 2861);
+	juegoFile.seek(kSpellbookTextOffset, SEEK_SET);
+	byte *textData = new byte[kSpellbookTextSize];
+	juegoFile.read(textData, kSpellbookTextSize);
 
-	for (int i = 0; i < 2861; ++i) {
+	for (int i = 0; i < (int)kSpellbookTextSize; ++i) {
 		if (textData[i] == 0x0D)
 			textData[i] = 23;
 	}
 
-	Common::Array<Common::StringArray> spells = _res->processTextData(textData, 2861, true);
+	Common::Array<Common::StringArray> spells = _res->processTextData(textData, kSpellbookTextSize, true);
 	_spell->text = spells[page];
 	delete[] compressedData;
 	delete[] spriteData;

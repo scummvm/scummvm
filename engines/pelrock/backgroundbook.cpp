@@ -28,6 +28,10 @@
 
 namespace Pelrock {
 
+static const uint32 kBgBookButtonsOffset = 3188448; // ALFRED.7 — UI buttons
+static const uint32 kRoomNamesOffset     = 299797;  // JUEGO.EXE — room name strings
+static const uint32 kRoomNamesSize       = 1297;
+
 BackgroundBook::BackgroundBook(PelrockEventManager *eventMan, ResourceManager *res, RoomManager *room)
 	: _events(eventMan), _res(res), _room(room) {
 	init();
@@ -117,8 +121,8 @@ void BackgroundBook::loadRoomNames() {
 		error("Couldnt find file JUEGO.EXE");
 	}
 
-	size_t namesSize = 1297;
-	juegoExe.seek(299797, SEEK_SET);
+	size_t namesSize = kRoomNamesSize;
+	juegoExe.seek(kRoomNamesOffset, SEEK_SET);
 	byte *namesData = new byte[namesSize];
 	juegoExe.read(namesData, namesSize);
 	uint32 pos = 0;
@@ -180,7 +184,7 @@ void BackgroundBook::loadButtons() {
 	if (!alfred7.open("ALFRED.7")) {
 		return;
 	}
-	alfred7.seek(3188448, SEEK_SET);
+	alfred7.seek(kBgBookButtonsOffset, SEEK_SET);
 	for (int i = 0; i < 2; i++) {
 		for (int j = 0; j < 2; j++) {
 			int w = _buttonRects[i].width();

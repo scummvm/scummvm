@@ -23,6 +23,8 @@
 
 namespace Pelrock {
 
+static const uint32 kSmallFontOffset = 0x8F32; // ALFRED.4 — small font bitmap data
+
 SmallFont::SmallFont() : _fontData(nullptr) {
 }
 
@@ -36,7 +38,7 @@ bool SmallFont::load(const Common::String &filename) {
 		return false;
 	}
 
-	file.seek(0x8F32, SEEK_SET);
+	file.seek(kSmallFontOffset, SEEK_SET);
 
 	const int dataSize = kNumChars * 8; // 256 characters, 8x8 pixels
 	debug("SmallFont::load: Loading font data of size %d from %s", dataSize, filename.c_str());
