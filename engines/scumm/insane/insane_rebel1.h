@@ -160,6 +160,9 @@ private:
 	// Audio
 	void initAudio(int sampleRate);
 	void terminateAudio();
+	void loadSfx();
+	void freeSfx();
+	void playSfx(int slot, int volume, int pan);
 	void queueAudioData(int trackIdx, uint8 *data, int32 size, int volume, int pan);
 public:
 	void drawFontBankString(byte *dst, int pitch, int width, int height, int x, int y, const char *text);
@@ -296,6 +299,20 @@ private:
 	Audio::SoundHandle _audioHandles[kMaxAudioTracks];
 	bool _audioTrackActive[kMaxAudioTracks];
 	int _audioSampleRate;
+	static const int kNumSfx = 8;
+	enum SfxSlot {
+		kSfxLaserShot = 0,
+		kSfxExplode = 1,
+		kSfxBoom = 2,
+		kSfxKlaxon = 3,
+		kSfxLockOn = 4,
+		kSfxAlert = 5,
+		kSfxBonus = 6,
+		kSfxBlast = 7
+	};
+	byte *_sfxData[kNumSfx];
+	uint32 _sfxSize[kNumSfx];
+	Audio::SoundHandle _sfxHandles[kNumSfx];
 
 	// True only while an interactive gameplay SMUSH is running.
 	bool _interactiveVideoActive;

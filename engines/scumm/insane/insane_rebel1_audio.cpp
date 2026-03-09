@@ -21,6 +21,8 @@
 
 #include "common/system.h"
 
+#include "scumm/file.h"
+
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "audio/mixer.h"
@@ -29,6 +31,17 @@
 #include "scumm/insane/insane_rebel1.h"
 
 namespace Scumm {
+
+static const char *const kRA1SfxFiles[8] = {
+	"SYS/LASRSHOT.SAD",
+	"SYS/EXPLODE.SAD",
+	"SYS/BOOM.SAD",
+	"SYS/KLAXON.SAD",
+	"SYS/LOCKON.SAD",
+	"SYS/ALERT.SAD",
+	"SYS/BONUS.SAD",
+	"SYS/BLAST.SAD"
+};
 
 // ---------------------------------------------------------------------------
 // Audio
@@ -52,6 +65,10 @@ void InsaneRebel1::terminateAudio() {
 			_audioStreams[i]->finish();
 			_audioStreams[i] = nullptr;
 		}
+	}
+
+	for (int i = 0; i < kNumSfx; i++) {
+		_vm->_mixer->stopHandle(_sfxHandles[i]);
 	}
 }
 
@@ -200,6 +217,99 @@ void InsaneRebel1::processAudioFrame(int16 feedSize) {
 		track.audioRemaining = dispatch.audioRemaining;
 		dispatch.state = track.state;
 	}
+}
+
+void InsaneRebel1::loadSfx() {
+	for (int i = 0; i < kNumSfx; i++) {
+		if (_sfxData[i] || _sfxSize[i] != 0)
+			continue;
+
+		ScummFile *file = _vm->instantiateScummFile();
+		_vm->openFile(*file, kRA1SfxFiles[i]);
+		if (!file->isOpen()) {
+			debug("InsaneRebel1::loadSfx: could not open %s", kRA1SfxFiles[i]);
+			delete file;
+			continue;
+		}
+
+		const uint32 fileSize = file->size();
+		if (fileSize < 16) {
+			debug("InsaneRebel1::loadSfx: %s too small (%u bytes)", kRA1SfxFiles[i], fileSize);
+			file->close();
+			delete file;
+			continue;
+		}
+
+		const uint32 tag = file->readUint32BE();
+		if (tag != MKTAG('S', 'A', 'U', 'D')) {
+			debug("InsaneRebel1::loadSfx: %s not a SAUD file (tag=0x%08x)", kRA1SfxFiles[i], tag);
+			file->close();
+			delete file;
+			continue;
+		}
+		file->readUint32BE();
+
+		bool foundSdat = false;
+		while (file->pos() + 8 <= (int64)fileSize) {
+			const uint32 chunkTag = file->readUint32BE();
+			const uint32 chunkSize = file->readUint32BE();
+			if (chunkTag == MKTAG('S', 'D', 'A', 'T')) {
+				const uint32 pcmSize = MIN(chunkSize, fileSize - (uint32)file->pos());
+				byte *pcm = (byte *)malloc(pcmSize);
+				if (pcm) {
+					file->read(pcm, pcmSize);
+					_sfxData[i] = pcm;
+					_sfxSize[i] = pcmSize;
+					debug("InsaneRebel1::loadSfx: loaded %s (%u bytes PCM)", kRA1SfxFiles[i], pcmSize);
+				}
+				foundSdat = true;
+				break;
+			}
+			file->seek(chunkSize, SEEK_CUR);
+		}
+
+		if (!foundSdat)
+			debug("InsaneRebel1::loadSfx: no SDAT chunk in %s", kRA1SfxFiles[i]);
+
+		file->close();
+		delete file;
+	}
+}
+
+void InsaneRebel1::freeSfx() {
+	for (int i = 0; i < kNumSfx; i++) {
+		_vm->_mixer->stopHandle(_sfxHandles[i]);
+		free(_sfxData[i]);
+		_sfxData[i] = nullptr;
+		_sfxSize[i] = 0;
+	}
+}
+
+void InsaneRebel1::playSfx(int slot, int volume, int pan) {
+	if (slot < 0 || slot >= kNumSfx || !_sfxData[slot] || _sfxSize[slot] == 0)
+		return;
+	if (_player && !_player->isChanActive(CHN_OTHER))
+		return;
+
+	_vm->_mixer->stopHandle(_sfxHandles[slot]);
+
+	byte *pcmCopy = (byte *)malloc(_sfxSize[slot]);
+	if (!pcmCopy)
+		return;
+	memcpy(pcmCopy, _sfxData[slot], _sfxSize[slot]);
+
+	Audio::SeekableAudioStream *stream = Audio::makeRawStream(
+		pcmCopy, _sfxSize[slot], 11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+	int mixVolume = CLIP(volume, 0, 127);
+	if (_player) {
+		const int baseVolume = (_player->_smushTrackVols[1] * mixVolume) >> 7;
+		mixVolume = (baseVolume * _player->_smushTrackVols[0]) / 127;
+	}
+	const int scaledVolume = (mixVolume * Audio::Mixer::kMaxChannelVolume) / 127;
+	const int clampedPan = CLIP(pan, -127, 127);
+
+	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[slot],
+		stream, -1, scaledVolume, clampedPan);
 }
 
 } // End of namespace Scumm

@@ -254,6 +254,9 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 
 	// Audio
 	initAudio(11025);
+	memset(_sfxData, 0, sizeof(_sfxData));
+	memset(_sfxSize, 0, sizeof(_sfxSize));
+	loadSfx();
 
 	// Null out Insane base class pointers that the default constructor doesn't initialize
 	_smush_roadrashRip = nullptr;
@@ -276,6 +279,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 InsaneRebel1::~InsaneRebel1() {
 	_vm->_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 	terminateAudio();
+	freeSfx();
 }
 
 } // End of namespace Scumm
