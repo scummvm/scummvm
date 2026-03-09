@@ -374,6 +374,7 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 		return;
 	}
 
+	_mixer->pauseAll(true);
 	Common::ScopedPtr<Graphics::Palette> palette;
 	if (dec->loadStream(stream.release())) {
 		dec->start();
@@ -415,6 +416,7 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 	} else {
 		warning("playMovie %s failed", movie.c_str());
 	}
+	_mixer->pauseAll(false);
 }
 
 void PhoenixVREngine::playAnimation(const Common::String &name, const Common::String &var, int varValue, float speed) {
