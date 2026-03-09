@@ -176,10 +176,7 @@ public:
 			auto a1 = toAngle(nextInt());
 			return CommandPtr(new SetAngle(a0, a1));
 		} else if (maybe("setnord=")) {
-			auto i0 = nextInt();
-			if (i0 > 4095)
-				i0 -= 8192;
-			auto a0 = toAngle(i0);
+			auto a0 = toAngle(nextInt());
 			return CommandPtr(new SetNord(a0));
 		} else if (keyword("interpolangle") || keyword("interpolanglezoom")) {
 			maybe(',');

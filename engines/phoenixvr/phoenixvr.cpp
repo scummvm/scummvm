@@ -60,7 +60,7 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 																					 _thumbnail(139, 103, _rgb565),
 																					 _lockKey(13),
 																					 _fov(kPi2),
-																					 _angleX(kPi),
+																					 _angleX(0),
 																					 _angleY(-kPi2),
 																					 _mixer(syst->getMixer()) {
 	g_engine = this;

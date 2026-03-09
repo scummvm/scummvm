@@ -1001,6 +1001,7 @@ struct SetNord : public Script::Command {
 	SetNord(float a) : angle(a) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
+		debug("setnord %g", angle);
 		g_engine->setNord(angle);
 	}
 };

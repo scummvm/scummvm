@@ -161,12 +161,11 @@ public:
 
 	void setAngle(float x, float y) {
 		_angleX.set(y);
-		static const float baseX = -kPi2;
-		_angleY.set(baseX + x);
+		_angleY.set(x - kPi2);
 	}
 
 	void setNord(float a) {
-		_angleX.set(a);
+		_angleX.add(a);
 	}
 
 	bool testSaveSlot(int idx) const;
