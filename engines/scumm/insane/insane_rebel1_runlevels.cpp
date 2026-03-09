@@ -445,10 +445,10 @@ bool InsaneRebel1::runLevel5() {
 
 		if (_killCount <= 2) {
 			if (_lives > 0) {
+				_lives--;
 				playCinematic("LVL5/L5RETRY.ANM");
 				if (_vm->shouldQuit())
 					return false;
-				_lives--;
 				continue;
 			}
 
