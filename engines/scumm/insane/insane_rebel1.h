@@ -124,6 +124,11 @@ private:
 	bool runLevel8();
 	bool runLevel9();
 	bool runLevel10();
+	bool runLevel11();
+	bool runLevel12();
+	bool runLevel13();
+	bool runLevel14();
+	bool runLevel15();
 
 	// Play a passive cinematic (no game callback, skippable)
 	// startFrame > 0: fast-forward (decode without display) to that frame
@@ -382,7 +387,7 @@ private:
 	struct HighScoreEntry {
 		char name[20];   // 0x14 bytes per entry (includes '<' prefix)
 		int32 score;
-		byte gender;     // 0/1/2 → tech font glyph '{','|','}'
+		byte difficulty;  // 0/1/2 → tech font glyph '{','|','}' (easy/normal/hard)
 	};
 	HighScoreEntry _highScores[kHighScoreCount];
 	bool _highScoresActive;  // True when showing TOP PILOTS overlay
@@ -432,6 +437,19 @@ private:
 
 	int16 _killCount;        // 0x75D0: targets destroyed this stage
 	int16 _lastHitTarget;    // 0x75D6: prevents double-hit on same target
+
+	// Protected target IDs — 0x7732/0x7734 in original
+	// Targets listed here can be hit repeatedly (no event mask toggle).
+	// Used by Level 4 (shield generators) and Level 15 (torpedo targets).
+	int16 _protectedTargetA; // 0x7732: protected objectId+1 (0=none)
+	int16 _protectedTargetB; // 0x7734: protected objectId+1 (0=none)
+
+	// Per-target hit counters for shield generator tracking (Level 4)
+	int16 _shieldGenHitsA;   // Hits on _protectedTargetA
+	int16 _shieldGenHitsB;   // Hits on _protectedTargetB
+
+	// Torpedo fired flag — set when torpedo hits in Phase 2 (Level 15)
+	bool _torpedoFired;      // 0x7602 bit 1 in original
 
 	// Level 8 walker-specific state — RunLevel8Flow (0x18546)
 	int16 _walkerHealth;     // Walker health percentage (0-100), init=100

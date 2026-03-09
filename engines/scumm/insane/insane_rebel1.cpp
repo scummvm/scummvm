@@ -186,8 +186,11 @@ void InsaneRebel1::loadTuningForLevel(int level) {
 	_tuning.levelPts = kTuningTable[l][d][10];
 	_tuning.bonus    = kTuningTable[l][d][11];
 	_tuning.flags    = kTuningTable[l][d][12];
-	// initLevelFromTuning (0x13E7B) copies tuning flags into g_hudDisableFlags (0x75FE).
+	// initLevelFromTuning (0x13E7B) copies tuning flags into g_hudDisableFlags (0x75FE)
+	// and clears protected targets (DAT_00007732/7734).
 	_gameplayFlags75fe = (uint16)_tuning.flags;
+	_protectedTargetA = 0;
+	_protectedTargetB = 0;
 
 	debug(1, "RA1: Loaded tuning level=%d diff=%d: roll=%d lift=%d slide=%d drift=%d snap=%d "
 		"miss=%d wham=%d shot=%d kill=%d time=%d levelPts=%d bonus=%d flags=0x%x",
@@ -295,7 +298,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_optVolume = _vm->_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) * 127 / Audio::Mixer::kMaxChannelVolume;
 
 	// Default high scores — from DS:0x1D0/0x298/0x2C0
-	static const struct { const char *name; int32 score; byte gender; } kDefaultScores[kHighScoreCount] = {
+	static const struct { const char *name; int32 score; byte difficulty; } kDefaultScores[kHighScoreCount] = {
 		{"Vince",   10000, 2}, {"Tamlynn",  9000, 2}, {"Chip",    8000, 2},
 		{"Brett",    7000, 1}, {"Casey",    6000, 1}, {"Justin",  5000, 1},
 		{"Bill",     4000, 0}, {"Aaron",    3000, 0}, {"Mary",    2000, 0},
@@ -304,7 +307,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	for (int i = 0; i < kHighScoreCount; i++) {
 		Common::sprintf_s(_highScores[i].name, "<%s", kDefaultScores[i].name);
 		_highScores[i].score = kDefaultScores[i].score;
-		_highScores[i].gender = kDefaultScores[i].gender;
+		_highScores[i].difficulty = kDefaultScores[i].difficulty;
 	}
 	_highScoresActive = false;
 
@@ -328,6 +331,11 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_gostSlotIdx = 0;
 	_killCount = 0;
 	_lastHitTarget = 0;
+	_protectedTargetA = 0;
+	_protectedTargetB = 0;
+	_shieldGenHitsA = 0;
+	_shieldGenHitsB = 0;
+	_torpedoFired = false;
 	_walkerHealth = 100;
 	_walkerTimer = 0;
 	_walkerBranchChoice = 0;

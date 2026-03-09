@@ -225,9 +225,12 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 			const int y = 25 + i * 14;
 			// Name (left side)
 			drawFontBankString(dst, pitch, width, height, 40, y, _highScores[i].name);
-			// Score (right side)
+			// Score + difficulty glyph (right side) — original format "<%ld %c"
+			// Difficulty byte 0/1/2 + 0x7B = '{','|','}' tech font glyphs (easy/normal/hard)
 			char scoreLine[32];
-			Common::sprintf_s(scoreLine, "<%ld", (long)_highScores[i].score);
+			Common::sprintf_s(scoreLine, "<%ld %c",
+				(long)_highScores[i].score,
+				(char)(_highScores[i].difficulty + 0x7B));
 			drawFontBankString(dst, pitch, width, height, 220, y, scoreLine);
 		}
 		return;
