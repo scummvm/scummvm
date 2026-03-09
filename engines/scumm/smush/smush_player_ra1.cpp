@@ -35,6 +35,22 @@
 
 namespace Scumm {
 
+static void ra1ApplyCenteredFetchPlacement(InsaneRebel1 *rebel1, int width, int height, int &left, int &top) {
+	int16 centerX = (int16)(left + (width >> 1));
+	int16 centerY = (int16)(top + (height >> 1));
+
+	rebel1->projectGameplayPoint(centerX, centerY);
+
+	const int projectedLeft = (int)centerX - (width >> 1);
+	const int projectedTop = (int)centerY - (height >> 1);
+
+	// RestoreStoredFramePatch routes FTCH through DispatchFobjCodec with flag 0x800.
+	// That path applies ProjectPointToScreen() to the center point, then only moves
+	// a quarter of the projected delta before decoding the stored FOBJ.
+	left -= ((projectedLeft - left) >> 2);
+	top -= ((projectedTop - top) >> 2);
+}
+
 SmushPlayerRebel1::SmushPlayerRebel1(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insane *insane)
 	: SmushPlayer(scumm, imuseDigital, insane) {
 	initGamePlayerFields();
@@ -111,9 +127,18 @@ bool SmushPlayerRebel1::handleGameFetch(int32 subSize, Common::SeekableReadStrea
 
 		if (_insane) {
 			InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
-			if (rebel1->isInteractiveVideoActive() && rebel1->getActiveGameOpcode() == 0x0B &&
-				_storedFobjWidth == _vm->_screenWidth) {
-				left += _ra1ViewportOffsetX;
+			if (rebel1->isInteractiveVideoActive()) {
+				if (rebel1->getActiveGameOpcode() == 0x0B && _storedFobjWidth == _vm->_screenWidth) {
+					left += _ra1ViewportOffsetX;
+				} else {
+					ra1ApplyCenteredFetchPlacement(rebel1, _storedFobjWidth, _storedFobjHeight, left, top);
+					// ScummVM currently emulates the RA1 camera with a source-window crop
+					// for interactive scenes. FTCH placement from the original executable
+					// is computed in fixed presentation space, so convert it back into the
+					// cropped buffer space used by the current renderer.
+					left += _ra1ViewportOffsetX;
+					top += _ra1ViewportOffsetY;
+				}
 			}
 		}
 
