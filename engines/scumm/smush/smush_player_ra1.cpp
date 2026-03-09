@@ -130,6 +130,7 @@ bool SmushPlayerRebel1::handleGameFetch(int32 subSize, Common::SeekableReadStrea
 			if (rebel1->isInteractiveVideoActive()) {
 				if (rebel1->getActiveGameOpcode() == 0x0B && _storedFobjWidth == _vm->_screenWidth) {
 					left += _ra1ViewportOffsetX;
+					top += _ra1ViewportOffsetY;
 				} else {
 					ra1ApplyCenteredFetchPlacement(rebel1, _storedFobjWidth, _storedFobjHeight, left, top);
 					// ScummVM currently emulates the RA1 camera with a source-window crop
