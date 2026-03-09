@@ -110,6 +110,7 @@ bool InsaneRebel1::runLevel1() {
 	loadTuningForLevel(0);
 	loadLevelSprites(1);
 
+	beginLevelTitleOverlay(0);
 	playCinematic("LVL1/L1HANGAR.ANM");
 	if (_vm->shouldQuit())
 		return false;
@@ -226,6 +227,7 @@ bool InsaneRebel1::runLevel2() {
 	// DOS RunLevel2Flow launches L2PLAY.ANM with gameplay selector 2.
 	loadTuningForLevel(2);
 
+	beginLevelTitleOverlay(1);
 	playCinematic("LVL2/L2INTRO.ANM");
 	if (_vm->shouldQuit())
 		return false;
@@ -283,6 +285,7 @@ bool InsaneRebel1::runLevel3() {
 	// DOS RunLevel3Flow launches L3PLAY.ANM with gameplay selector 3.
 	loadTuningForLevel(3);
 
+	beginLevelTitleOverlay(2);
 	playCinematic("LVL3/L3INTRO.ANM");
 	if (_vm->shouldQuit())
 		return false;
@@ -342,6 +345,7 @@ bool InsaneRebel1::runLevel4() {
 	// DOS RunLevel4Flow launches L4PLAY1/2.ANM with gameplay selector 4.
 	loadTuningForLevel(4);
 
+	beginLevelTitleOverlay(3);
 	playCinematic("LVL4/L4INTRO.ANM");
 	if (_vm->shouldQuit())
 		return false;
@@ -407,6 +411,7 @@ bool InsaneRebel1::runLevel5() {
 	loadLevelSprites(5);
 	loadTuningForLevel(4);
 
+	beginLevelTitleOverlay(4);
 	playCinematic("LVL5/L5INTRO.ANM");
 	if (_vm->shouldQuit())
 		return false;
@@ -505,6 +510,7 @@ bool InsaneRebel1::runLevel6() {
 	loadLevelSprites(6);
 	loadTuningForLevel(5);
 
+	beginLevelTitleOverlay(5);
 	playCinematic("LVL6/L6INTRO.ANM");
 	if (_vm->shouldQuit())
 		return false;
@@ -572,6 +578,7 @@ bool InsaneRebel1::runLevel7() {
 	loadLevelSprites(7);
 	loadTuningForLevel(6);
 
+	beginLevelTitleOverlay(6);
 	playCinematic("LVL7/L7INTRO.ANM");
 	if (_vm->shouldQuit())
 		return false;
@@ -664,6 +671,7 @@ bool InsaneRebel1::runLevel8() {
 	loadLevelSprites(8);
 	loadTuningForLevel(7);
 
+	beginLevelTitleOverlay(7);
 	playCinematic("LVL8/L8INTRO.ANM");
 	if (_vm->shouldQuit())
 		return false;
@@ -754,6 +762,7 @@ bool InsaneRebel1::runLevel9() {
 	loadLevelSprites(9);
 	loadTuningForLevel(8);
 
+	beginLevelTitleOverlay(8);
 	playCinematic("LVL9/L9INTRO.ANM");
 	if (_vm->shouldQuit())
 		return false;
@@ -931,6 +940,7 @@ bool InsaneRebel1::runLevel10() {
 	loadLevelSprites(10);
 	loadTuningForLevel(9);
 
+	beginLevelTitleOverlay(9);
 	playCinematic("LVL10/L10INTRO.ANM");
 	if (_vm->shouldQuit())
 		return false;
