@@ -272,7 +272,7 @@ struct Sprite {
 	uint16 stride; // 6-7
 	int numAnims;  // 8
 	int curAnimIndex = 0;
-	int8 zOrder; // 32-33
+	byte zOrder; // byte at file offset 23 (in-memory struct offset 0x21). Unsigned 0-254, 255=disabled
 
 	byte actionFlags;                  // 34
 	bool isHotspotDisabled;            // 38

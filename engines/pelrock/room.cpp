@@ -229,7 +229,7 @@ void RoomManager::disableSprite(byte roomNumber, byte spriteIndex, int persist) 
 		// array every frame so a raw array index is unreliable.
 		for (uint i = 0; i < _currentRoomAnims.size(); i++) {
 			if (_currentRoomAnims[i].index == spriteIndex) {
-				_currentRoomAnims[i].zOrder = -1;
+				_currentRoomAnims[i].zOrder = 255;
 				break;
 			}
 		}

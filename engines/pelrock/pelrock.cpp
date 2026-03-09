@@ -461,7 +461,7 @@ void PelrockEngine::passerByAnim(uint32 frameCount) {
 		PasserByAnim anim = _room->_passerByAnims->passerByAnims[animIndex];
 		if ((frameCount & anim.frameTrigger) == anim.frameTrigger) {
 			Sprite *sprite = _room->findSpriteByIndex(anim.spriteIndex);
-			if (sprite && sprite->zOrder == -1) {
+			if (sprite && sprite->zOrder == 255) {
 				debug("Starting passerby anim for sprite %d at index %d", anim.spriteIndex, animIndex);
 				sprite->zOrder = anim.targetZIndex;
 				sprite->curAnimIndex = 0;
@@ -485,7 +485,7 @@ void PelrockEngine::passerByAnim(uint32 frameCount) {
 			if (sprite->x >= anim.resetCoord) {
 				sprite->x = startX;
 				sprite->y = startY;
-				sprite->zOrder = -1;
+				sprite->zOrder = 255;
 				sprite->curAnimIndex = 0;
 				sprite->animData[0].curFrame = 0;
 				_room->_passerByAnims->latch = false;
@@ -496,7 +496,7 @@ void PelrockEngine::passerByAnim(uint32 frameCount) {
 			if (sprite->x <= anim.resetCoord) {
 				sprite->x = startX;
 				sprite->y = startY;
-				sprite->zOrder = -1;
+				sprite->zOrder = 255;
 				sprite->curAnimIndex = 0;
 				sprite->animData[0].curFrame = 0;
 				_room->_passerByAnims->latch = false;
@@ -506,7 +506,7 @@ void PelrockEngine::passerByAnim(uint32 frameCount) {
 			if (sprite->y >= anim.resetCoord) {
 				sprite->x = startX;
 				sprite->y = startY;
-				sprite->zOrder = -1;
+				sprite->zOrder = 255;
 				sprite->curAnimIndex = 0;
 				sprite->animData[0].curFrame = 0;
 				_room->_passerByAnims->latch = false;
@@ -678,7 +678,7 @@ void PelrockEngine::updateAnimations() {
 
 	// First pass: sprites behind Alfred (sprite zOrder > alfredZOrder)
 	for (uint i = 0; i < _room->_currentRoomAnims.size(); i++) {
-		if (_room->_currentRoomAnims[i].zOrder > alfredZOrder || _room->_currentRoomAnims[i].zOrder < 0) {
+		if (_room->_currentRoomAnims[i].zOrder > alfredZOrder || _room->_currentRoomAnims[i].zOrder == 255) {
 			// debug("Drawing anim %d with zOrder %d in first pass (behind Alfred)", i, _room->_currentRoomAnims[i].zOrder);
 			drawNextFrame(&_room->_currentRoomAnims[i]);
 		}
@@ -689,7 +689,7 @@ void PelrockEngine::updateAnimations() {
 
 	// Second pass: sprites in front of Alfred (sprite zOrder <= alfredZOrder)
 	for (uint i = 0; i < _room->_currentRoomAnims.size(); i++) {
-		if (_room->_currentRoomAnims[i].zOrder <= alfredZOrder && _room->_currentRoomAnims[i].zOrder >= 0) {
+		if (_room->_currentRoomAnims[i].zOrder <= alfredZOrder && _room->_currentRoomAnims[i].zOrder != 255) {
 			// debug("Drawing anim %d with zOrder %d in second pass (in front of Alfred)", i, _room->_currentRoomAnims[i].zOrder);
 			drawNextFrame(&_room->_currentRoomAnims[i]);
 		}
@@ -734,8 +734,8 @@ void PelrockEngine::paintDebugLayer() {
 	if (showSprites) {
 		for (uint i = 0; i < _room->_currentRoomAnims.size(); i++) {
 			Sprite sprite = _room->_currentRoomAnims[i];
-			if (sprite.zOrder < 0) {
-				// Skip sprites with negative zOrder (not rendered)
+			if (sprite.zOrder == 255) {
+				// Skip disabled sprites (zOrder 0xFF)
 				continue;
 			}
 			drawRect(_screen, sprite.x, sprite.y, sprite.w, sprite.h, 14);
@@ -1309,7 +1309,7 @@ void PelrockEngine::drawAlfred(byte *buf) {
 	}
 }
 
-void applyMovement(int16 *x, int16 *y, int8 *z, uint16 flags) {
+void applyMovement(int16 *x, int16 *y, byte *z, uint16 flags) {
 	// X-axis movement
 	if (flags & 0x10) {            // Bit 4: X movement enabled
 		int amount = flags & 0x07; // Bits 0-2: pixels per frame
@@ -1343,8 +1343,8 @@ void applyMovement(int16 *x, int16 *y, int8 *z, uint16 flags) {
 
 void PelrockEngine::drawNextFrame(Sprite *sprite) {
 	Anim &animData = sprite->animData[sprite->curAnimIndex];
-	if (sprite->zOrder == -1) {
-		// skips z0rder -1 sprites
+	if (sprite->zOrder == 255) {
+		// Skip disabled sprites (zOrder 0xFF = disabled in original game)
 		return;
 	}
 
@@ -1377,7 +1377,7 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 				animData.curLoop++;
 			} else {
 				if (sprite->disableAfterSequence && sprite->curAnimIndex == sprite->numAnims - 1) {
-					sprite->zOrder = -1;
+					sprite->zOrder = 255;
 					return;
 				}
 				animData.curFrame = 0;
@@ -2180,15 +2180,10 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			pigeons->curAnimIndex = 0;
 			pigeons->disableAfterSequence = true;
 			pigeons->animData[0].curFrame = 0;
-			while(!g_engine->shouldQuit() && pigeons->zOrder != -1) {
+			while(!g_engine->shouldQuit() && pigeons->zOrder != 255) {
 				_events->pollEvent();
 				renderScene();
 				_screen->update();
-				// debug("Pigeons animation, current anim index %d, current frame %d", pigeons->curAnimIndex, pigeons->animData[pigeons->curAnimIndex].curFrame);
-				// if(pigeons->curAnimIndex == 3 && pigeons->animData[3].curFrame == 3) {
-				// 	debug("Pigeons animation finished, hiding pigeons and enabling next part of the scene");
-				// 	pigeons->zOrder = -1;
-				// }
 				g_system->delayMillis(10);
 			}
 			_dialog->say(_res->_ingameTexts[PRACTICAR_MAS]);
@@ -2376,10 +2371,10 @@ void PelrockEngine::pyramidCollapse() {
 	// Original sprite table indices are offset by 2 from ScummVM indices due
 	// to the 2 header sprite slots in the room data.
 
-	// Hide NPC initially — binary sets sprite_2 field 0x21 = 0xFF (zOrder = -1)
+	// Hide NPC initially — binary sets sprite_2 field 0x21 = 0xFF (zOrder = 255)
 	Sprite *npc = _room->findSpriteByIndex(0);
 	if (npc)
-		npc->zOrder = -1;
+		npc->zOrder = 255;
 
 	// Start collapse animation — binary sets sprite_4 field 0x21 = 0xFE (zOrder = 254)
 	Sprite *collapseSprite = _room->findSpriteByIndex(2);
@@ -2398,7 +2393,7 @@ void PelrockEngine::pyramidCollapse() {
 		g_system->delayMillis(10);
 		collapseSprite = _room->findSpriteByIndex(2);
 		if (!collapseSprite || collapseSprite->animData[collapseSprite->curAnimIndex].curFrame >= 5) {
-			collapseSprite->zOrder = -1; // Hide collapse animation sprite after frame 5
+			collapseSprite->zOrder = 255; // Hide collapse animation sprite after frame 5
 			break;
 		}
 	}
@@ -2413,7 +2408,7 @@ void PelrockEngine::pyramidCollapse() {
 		Common::Rect copyRect(srcX, srcY, srcX + copyW, srcY + copyH);
 		_currentBackground.blitFrom(_compositeBuffer, copyRect, Common::Point(srcX, srcY));
 	}
-	_room->findSpriteByIndex(2)->zOrder = -1;
+	_room->findSpriteByIndex(2)->zOrder = 255;
 
 	_dialog->say(_res->_ingameTexts[YANOSEHACEONCOMOANTES]);
 	npc = _room->findSpriteByIndex(0);

@@ -917,7 +917,7 @@ void PelrockEngine::useBrickWithWindow(int inventoryObject, HotSpot *hotspot) {
 		renderScene(OVERLAY_NONE);
 		_room->findSpriteByIndex(7)->y -= 10;
 		if (_room->findSpriteByIndex(7)->y <= 70) {
-			_room->findSpriteByIndex(7)->zOrder = -1;
+			_room->findSpriteByIndex(7)->zOrder = 255;
 			break;
 		}
 		_screen->update();
@@ -1486,7 +1486,7 @@ void PelrockEngine::guardMovement() {
 			sprite->animData[0].movementFlags = 0x14; // Move left
 		}
 		if (sprite->x <= 327 && state == 2) {
-			sprite->zOrder = -1; // Hide sprite
+			sprite->zOrder = 255; // Hide sprite
 			break;
 		}
 		debug("Guard position: (%d, %d), state: %d", sprite->x, sprite->y, state);
@@ -1567,7 +1567,7 @@ void PelrockEngine::giveStoneToSlaves(int inventoryObject, HotSpot *hotspot) {
 	// drinking animation and sound
 	_sound->playSound(_room->_roomSfx[1], 2);
 
-	_room->findSpriteByIndex(0)->zOrder = -1;
+	_room->findSpriteByIndex(0)->zOrder = 255;
 
 	playSpecialAnim(1473360, true, mastersX - 6, mastersY - 1, 152, 83, 7);
 
@@ -1654,7 +1654,7 @@ void PelrockEngine::swimmingPoolCutscene(HotSpot *hotspot) {
 		bool didRender = renderScene(OVERLAY_NONE);
 
 		if (didRender) {
-			if (_room->findSpriteByIndex(swimmers[0].spriteIndex)->zOrder == -1) {
+			if (_room->findSpriteByIndex(swimmers[0].spriteIndex)->zOrder == 255) {
 				break;
 			}
 		}
@@ -1952,7 +1952,7 @@ void PelrockEngine::teleportToPrincess() {
 		thisSprite->animData[0].curFrame = 0;
 		thisSprite->zOrder = 200;
 
-		while (!shouldQuit() && _room->findSpriteByIndex(phase + 1)->zOrder != -1) {
+		while (!shouldQuit() && _room->findSpriteByIndex(phase + 1)->zOrder != 255) {
 			_events->pollEvent();
 			renderScene(OVERLAY_NONE);
 			_screen->update();
