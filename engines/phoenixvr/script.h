@@ -57,6 +57,8 @@ public:
 	struct Command {
 		virtual ~Command() {}
 		virtual void exec(ExecutionContext &ctx) const = 0;
+
+		static int valueOf(const Common::String &value);
 	};
 	using CommandPtr = Common::SharedPtr<Command>;
 

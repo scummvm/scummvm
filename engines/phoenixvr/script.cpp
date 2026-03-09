@@ -368,6 +368,12 @@ void Script::parseLine(const Common::String &line, uint lineno) {
 		error("invalid directive at line %u: %s", lineno, line.c_str());
 }
 
+int Script::Command::valueOf(const Common::String &value) {
+	if (!value.empty() && (Common::isDigit(value[0]) || value[0] == '-' || value[0] == '+'))
+		return atoi(value.c_str());
+	return g_engine->getVariable(value);
+}
+
 Script::~Script() {
 }
 

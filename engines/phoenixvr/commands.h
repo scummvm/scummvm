@@ -169,27 +169,27 @@ struct ChangeCurseur : public Script::Command {
 
 struct Add : public Script::Command {
 	Common::String dstVar;
-	Common::String srcVar;
-	int imm;
+	Common::String arg0;
+	Common::String arg1;
 
-	Add(const Common::Array<Common::String> &args) : dstVar(args[0]), srcVar(args[1]), imm(atoi(args[2].c_str())) {}
+	Add(const Common::Array<Common::String> &args) : dstVar(args[0]), arg0(args[1]), arg1(args[2]) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("add %s %s %d", dstVar.c_str(), srcVar.c_str(), imm);
-		g_engine->setVariable(dstVar, g_engine->getVariable(srcVar) + imm);
+		debug("add %s %s %s", dstVar.c_str(), arg0.c_str(), arg1.c_str());
+		g_engine->setVariable(dstVar, valueOf(arg0) + valueOf(arg1));
 	}
 };
 
 struct Sub : public Script::Command {
 	Common::String dstVar;
-	Common::String srcVar;
-	int imm;
+	Common::String arg0;
+	Common::String arg1;
 
-	Sub(const Common::Array<Common::String> &args) : dstVar(args[0]), srcVar(args[1]), imm(atoi(args[2].c_str())) {}
+	Sub(const Common::Array<Common::String> &args) : dstVar(args[0]), arg0(args[1]), arg1(args[2]) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("sub %s %s %d", dstVar.c_str(), srcVar.c_str(), imm);
-		g_engine->setVariable(dstVar, g_engine->getVariable(srcVar) - imm);
+		debug("sub %s %s %s", dstVar.c_str(), arg0.c_str(), arg1.c_str());
+		g_engine->setVariable(dstVar, valueOf(arg0) - valueOf(arg1));
 	}
 };
 
@@ -270,25 +270,26 @@ struct Cmp : public Script::Command {
 	Common::String negativeVar;
 	Common::String arg0;
 	Common::String op;
-	int arg1;
+	Common::String arg1;
 
 	Cmp(const Common::Array<Common::String> &args) : var(args[0]), negativeVar(args[1]),
-													 arg0(args[2]), op(args[3]), arg1(atoi(args[4].c_str())) {}
+													 arg0(args[2]), op(args[3]), arg1(args[4]) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("cmp %s %s %s %s %d", var.c_str(), negativeVar.c_str(), arg0.c_str(), op.c_str(), arg1);
+		debug("cmp %s %s %s %s %s", var.c_str(), negativeVar.c_str(), arg0.c_str(), op.c_str(), arg1.c_str());
 		bool r;
-		auto value0 = g_engine->getVariable(arg0);
+		auto value0 = valueOf(arg0);
+		auto value1 = valueOf(arg1);
 		if (op == "==") {
-			r = value0 == arg1;
+			r = value0 == value1;
 		} else if (op == "<") {
-			r = value0 < arg1;
+			r = value0 < value1;
 		} else if (op == "<=") {
-			r = value0 <= arg1;
+			r = value0 <= value1;
 		} else if (op == ">") {
-			r = value0 > arg1;
+			r = value0 > value1;
 		} else if (op == ">=") {
-			r = value0 >= arg1;
+			r = value0 >= value1;
 		} else {
 			error("invalid cmp op %s", op.c_str());
 		}
