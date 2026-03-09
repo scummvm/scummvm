@@ -117,6 +117,10 @@ private:
 	bool runLevel4();
 	bool runLevel5();
 	bool runLevel6();
+	bool runLevel7();
+	bool runLevel8();
+	bool runLevel9();
+	bool runLevel10();
 
 	// Play a passive cinematic (no game callback, skippable)
 	// startFrame > 0: fast-forward (decode without display) to that frame
@@ -131,6 +135,7 @@ private:
 	void preprocessMouseAxes(int16 &inputX, int16 &inputY);
 	void rebuildProjectionTable(int16 curveStep, int16 curveExtent);
 	void resetProjectionTable();
+	void checkDynamicLevelBranch();
 	void renderShip(byte *dst, int pitch, int width, int height);
 	void renderHUD(byte *dst, int pitch, int width, int height);
 	void renderMainMenuOverlay(byte *dst, int pitch, int width, int height);
@@ -297,6 +302,8 @@ private:
 	int32 _gameCounter;          // GAME 0x07 field1 — the original's _DAT_7740
 	bool _pathBranchEnabled;     // True when branching is active for this video
 	bool _rightPathSelected;     // True if player chose the right/easy path
+	int _levelRouteIndex;        // Current mid-level route/segment for branching levels
+	int _pendingRouteIndex;      // Next route requested by original frame-branch logic
 
 	// Main menu / options state
 	void runOptionsMenu();
@@ -309,7 +316,7 @@ private:
 	bool _optionsActive;     // True when showing options instead of main menu
 	int _optionsSel;         // 0=difficulty, 1=turbulence, 2=back
 	bool _levelSelectActive; // True when showing level-select submenu
-	int _levelSelectSel;     // 0=Level1, 1=Level2, 2=Back
+	int _levelSelectSel;     // 0=Level1 ... N-1=Back
 	int _startLevel;         // 1-based start level for "Start New Game"
 
 	bool _turbulenceEnabled;  // Random per-frame jitter in deltaX (original has it on)

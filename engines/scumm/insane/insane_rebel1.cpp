@@ -39,7 +39,7 @@ namespace Scumm {
 // Per-difficulty tuning tables from assault_data_3.bin
 // Indexed: difficulty * 0x28B + level * 0x1F + offset
 // Fields: roll, lift, slide, drift, snap, miss, wham, shot, kill
-static const int16 kTuningTable[6][3][9] = {
+static const int16 kTuningTable[10][3][9] = {
 	// Level 1 (Flight Training)
 	{
 		{ 100, 100,  60, 110,   0,   0,  15,   0,   0 },  // Easy
@@ -76,8 +76,32 @@ static const int16 kTuningTable[6][3][9] = {
 		{   0,   0,   0,   0,   1,  25,   0,   5, 100 },  // Normal
 		{   0,   0,   0,   0,   1,  28,   0,   6, 200 },  // Hard
 	},
+	// Level 7 (Imperial Probe Droids)
+	{
+		{  70, 150,  50,  25,  10,   0,  20,   0,  25 },  // Easy
+		{  72, 165, 155,  30,   8,   0,  30,   0,  50 },  // Normal
+		{ 110, 190,  55,  65,   3,   0,  33,   0,  75 },  // Hard
+	},
+	// Level 8 (Imperial Walkers)
+	{
+		{   0,   0,   0,   0,   5,   0,   0,   2,  25 },  // Easy
+		{   0,   0,   0,   0,   3,   0,   0,   5,  50 },  // Normal
+		{   0,   0,   0,   0,   1,   0,   0,   6,  75 },  // Hard
+	},
+	// Level 9 (Stormtroopers)
+	{
+		{   0,   0,   0,   0,   2,  20,  20,   0,  25 },  // Easy
+		{   0,   0,   0,   0,   1,  25,  30,   0,  50 },  // Normal
+		{   0,   0,   0,   0,   0,  28,  33,   0,  75 },  // Hard
+	},
+	// Level 10 (Protect Rebel Transport)
+	{
+		{ 100, 150, 150,  25,   7,   0,  12,   2,  50 },  // Easy
+		{ 100, 160, 200,  35,   4,   0,  30,   4, 100 },  // Normal
+		{ 100, 180, 250,  50,   3,   0,  33,   5, 100 },  // Hard
+	},
 };
-static const int kNumTunedLevels = 6;
+static const int kNumTunedLevels = 10;
 
 
 void InsaneRebel1::loadTuningForLevel(int level) {
@@ -163,6 +187,8 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_gameCounter = 0;
 	_pathBranchEnabled = false;
 	_rightPathSelected = false;
+	_levelRouteIndex = -1;
+	_pendingRouteIndex = -1;
 	_menuActive = false;
 	_menuConfirmed = false;
 	_menuSelection = 0;

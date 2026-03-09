@@ -29,8 +29,8 @@
 
 namespace Scumm {
 
-static const int kRA1LevelSelectItemCount = 7;
-static const int kRA1LastImplementedLevel = 6;
+static const int kRA1LevelSelectItemCount = 11;
+static const int kRA1LastImplementedLevel = 10;
 
 bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 	if (_menuActive && _levelSelectActive && event.type == Common::EVENT_KEYDOWN) {
@@ -215,6 +215,10 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 			"LEVEL 4: STAR DESTROYER",
 			"LEVEL 5: TATOOINE ATTACK",
 			"LEVEL 6: ASTEROID CHASE",
+			"LEVEL 7: PROBE DROIDS",
+			"LEVEL 8: IMPERIAL WALKERS",
+			"LEVEL 9: STORMTROOPERS",
+			"LEVEL 10: REBEL TRANSPORT",
 			"BACK"
 		};
 
