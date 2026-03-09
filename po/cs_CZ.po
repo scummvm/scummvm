@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-03-09 20:06+0000\n"
+"POT-Creation-Date: 2026-03-09 22:38+0000\n"
 "PO-Revision-Date: 2026-02-09 20:22+0000\n"
 "Last-Translator: AsciiWolf <mail@asciiwolf.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -14358,7 +14358,7 @@ msgstr "Vložte herní disk pro uložení/načtení"
 msgid "Go to end of save / load menu"
 msgstr "Vložte herní disk pro uložení/načtení"
 
-#: engines/tinsel/tinsel.cpp:1046
+#: engines/tinsel/tinsel.cpp:1051
 msgid "Discworld Noir needs ScummVM with TinyGL enabled"
 msgstr ""
 

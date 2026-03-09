@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-03-09 20:06+0000\n"
+"POT-Creation-Date: 2026-03-09 22:38+0000\n"
 "PO-Revision-Date: 2026-03-02 15:40+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -14357,7 +14357,7 @@ msgstr "Début dans le menu sauvegarder / charger"
 msgid "Go to end of save / load menu"
 msgstr "Fin dans le menu sauvegarder / charger"
 
-#: engines/tinsel/tinsel.cpp:1046
+#: engines/tinsel/tinsel.cpp:1051
 msgid "Discworld Noir needs ScummVM with TinyGL enabled"
 msgstr "Discworld Noir nécessite ScummVM avec TinyGL activé"
 

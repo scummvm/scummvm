@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-03-09 20:06+0000\n"
+"POT-Creation-Date: 2026-03-09 22:38+0000\n"
 "PO-Revision-Date: 2026-02-07 15:22+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -14478,7 +14478,7 @@ msgstr "Mene tallennus / lataus valikon alkuun"
 msgid "Go to end of save / load menu"
 msgstr "Mene tallennus / lataus valikon loppuun"
 
-#: engines/tinsel/tinsel.cpp:1046
+#: engines/tinsel/tinsel.cpp:1051
 msgid "Discworld Noir needs ScummVM with TinyGL enabled"
 msgstr "Discworld Noir tarvitsee ScummVM:n jossa TinyGL on päällä"
 
