@@ -248,6 +248,13 @@ void DirectorEngine::setVersion(uint16 version) {
 	_lingo->reloadBuiltIns();
 }
 
+#ifndef USE_IMGUI
+namespace DT {
+bool isMouseInputIgnored() { return false; }
+void setSelectedChannel(int channel) { }
+}
+#endif
+
 Common::Error DirectorEngine::run() {
 	debug("Starting v%d Director game", getVersion());
 
