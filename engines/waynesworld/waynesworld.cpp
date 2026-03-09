@@ -89,7 +89,7 @@ Common::Error WaynesWorldEngine::run() {
 	syncSoundSettings();
 
 	runIntro();
-
+	_introOngoing = false;
 	_fontWW = new GFTFont();
 	_fontWWInv = new GFTFont();
 	_fontBit5x7 = new GFTFont();
@@ -215,6 +215,9 @@ void WaynesWorldEngine::updateEvents() {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			_keyCode = event.kbd.keycode;
+			if (_keyCode == Common::KEYCODE_ESCAPE && _introOngoing) {
+				_escPressed = true;
+			}
 			break;
 		case Common::EVENT_KEYUP:
 			_keyCode = Common::KEYCODE_INVALID;
@@ -266,7 +269,7 @@ int WaynesWorldEngine::getRandom(int max) {
 
 void WaynesWorldEngine::waitMillis(uint millis) {
 	const uint32 waitTime = _system->getMillis() + millis;
-	while (_system->getMillis() < waitTime && !shouldQuit()) {
+	while (_system->getMillis() < waitTime && !shouldQuit() && !(_introOngoing && _escPressed)) {
 		updateEvents();
 		_system->updateScreen();
 		_system->delayMillis(10);

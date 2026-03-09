@@ -109,6 +109,9 @@ public:
 	bool _isSoundEnabled = true;
 	bool _isMusicEnabled = true;
 
+	bool _introOngoing = true;
+	bool _escPressed = false;
+
 private:
 	Graphics::PixelFormat _pixelFormat;
 
@@ -116,7 +119,8 @@ private:
 	Common::String _oldGUILanguage;
 #endif
 	void wwEffect(int arg0, int arg1, bool flag);
-	
+	void cleanPt3();
+
 	bool introPt1();
 	bool introPt2();
 	bool introPt3(bool flag);

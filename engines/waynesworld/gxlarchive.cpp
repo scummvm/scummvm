@@ -131,9 +131,9 @@ Image::PCXDecoder *GxlArchive::loadImage(const char *filename) {
 		searchName = Common::String(filename);
 	
 	Common::Path pathName = Common::Path(searchName);
-	if (!hasFile(pathName)) {
+	if (!hasFile(pathName))
 		error("loadImage() Could not find '%s'", filename);
-	}
+
 
 	Image::PCXDecoder *pcx = new Image::PCXDecoder();
 	Common::SeekableReadStream *pcxStr = createReadStreamForMember(Common::Path(filename));
