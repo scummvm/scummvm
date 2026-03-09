@@ -2209,7 +2209,7 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		break;
 	}
 	case 96: {
-		BackgroundBook book(_events, _res);
+		BackgroundBook book(_events, _res, _room);
 		book.run();
 		break;
 	}

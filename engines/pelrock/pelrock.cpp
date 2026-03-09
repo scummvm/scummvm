@@ -1809,7 +1809,7 @@ void PelrockEngine::gameLoop() {
 		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
 	}
 	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_b) {
-		BackgroundBook backgroundBook(_events, _res);
+		BackgroundBook backgroundBook(_events, _res, _room);
 		backgroundBook.run();
 		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
 	}
@@ -2074,7 +2074,7 @@ void PelrockEngine::setScreen(int roomNumber) {
 
 	byte *palette = new byte[256 * 3];
 	_room->getPalette(&roomFile, roomOffset, palette);
-
+	memcpy(_room->_roomPalette, palette, 768);
 	_currentBackground.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 	_room->getBackground(&roomFile, roomOffset, (byte *)_currentBackground.getPixels());
 

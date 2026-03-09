@@ -148,7 +148,7 @@ enum Buttons {
 	int kItemsPerPage = 22;
 
 public:
-	BackgroundBook(PelrockEventManager *eventMan, ResourceManager *res);
+	BackgroundBook(PelrockEventManager *eventMan, ResourceManager *res, RoomManager *room);
 	~BackgroundBook();
 
 	void run();
@@ -162,12 +162,15 @@ private:
 	void loadBackground();
 	void checkMouse(int x, int y);
 	BackgroundBook::Buttons isButtonClicked(int x, int y);
+	void showRoom(int roomIndex);
 	void cleanup();
 
 	PelrockEventManager *_events;
 	ResourceManager *_res;
+	RoomManager *_room;
 	Graphics::ManagedSurface _backgroundScreen;
 	Graphics::ManagedSurface _compositeScreen;
+	Graphics::ManagedSurface *thumbSurface = nullptr;
 	byte *_palette;
 	byte *_buttons[2][2];
 	Buttons _selectedButton = NO_BG_BUTTON;

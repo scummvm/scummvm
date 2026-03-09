@@ -66,7 +66,6 @@ void RoomManager::getPalette(Common::File *roomFile, int roomOffset, byte *palet
 		palette[i * 3 + 1] = palette[i * 3 + 1] << 2;
 		palette[i * 3 + 2] = palette[i * 3 + 2] << 2;
 	}
-	memcpy(_roomPalette, palette, 768);
 }
 
 void RoomManager::getBackground(Common::File *roomFile, int roomOffset, byte *background) {

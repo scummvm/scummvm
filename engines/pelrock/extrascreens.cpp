@@ -24,6 +24,7 @@
 #include "extrascreens.h"
 #include "pelrock/extrascreens.h"
 #include "pelrock/graphics.h"
+#include "pelrock/room.h"
 #include "pelrock/util.h"
 
 namespace Pelrock {
@@ -353,7 +354,7 @@ void CDPlayer::loadControls() {
 	delete[] rawData;
 }
 
-BackgroundBook::BackgroundBook(PelrockEventManager *eventMan, ResourceManager *res) : _events(eventMan), _res(res) {
+BackgroundBook::BackgroundBook(PelrockEventManager *eventMan, ResourceManager *res, RoomManager *room) : _events(eventMan), _res(res), _room(room) {
 	init();
 }
 
@@ -410,9 +411,11 @@ void BackgroundBook::checkMouse(int x, int y) {
 		int firstItem = _selectedPage * kItemsPerPage;
 		if (y >= 72 && y < 72 + (kItemsPerPage * g_engine->_smallFont->getFontHeight()) && x >= 37 && x <= 37 + 200) {
 			int itemIndex = (y - 72) / g_engine->_smallFont->getFontHeight();
-			if (firstItem + itemIndex < _roomNames.size()) {
-				Common::String roomName = _roomNames[firstItem + itemIndex];
-				debug("Selected room: %s", roomName.c_str());
+			int roomIndex = firstItem + itemIndex;
+			if (roomIndex < (int)_roomNames.size()) {
+				_events->_leftMouseClicked = false;
+				int finalRoomIndex = roomIndex < 10 ? roomIndex: roomIndex + 2;
+				showRoom(finalRoomIndex);
 			}
 		}
 
@@ -440,17 +443,14 @@ void BackgroundBook::loadRoomNames() {
 		error("Couldnt find file JUEGO.EXE");
 	}
 
-	size_t namesSize = 1335;
-	juegoExe.seek(0x49315, SEEK_SET);
+	size_t namesSize = 1297;
+	juegoExe.seek(299797, SEEK_SET);
 	byte *namesData = new byte[namesSize];
 	juegoExe.read(namesData, namesSize);
 	uint32 pos = 0;
 	Common::String currentName = "";
 	while (pos < namesSize) {
-		if (namesData[pos] == 0xFD &&
-			namesData[pos + 1] == 0x00 &&
-			namesData[pos + 2] == 0x08 &&
-			namesData[pos + 3] == 0x02) {
+		if (namesData[pos] == 0xFD) {
 			if (currentName.size() > 0) {
 				roomNames.push_back(currentName);
 			}
@@ -470,16 +470,17 @@ void BackgroundBook::loadRoomNames() {
 void BackgroundBook::drawScreen() {
 	_compositeScreen.blitFrom(_backgroundScreen);
 	drawButtons();
-	g_engine->_screen->blitFrom(_compositeScreen);
 
+	if(thumbSurface) {
+		_compositeScreen.blitFrom(*thumbSurface, Common::Point(338, 120));
+	}
+	g_engine->_screen->blitFrom(_compositeScreen);
 
 	int firstItem = _selectedPage * kItemsPerPage;
 	for(int i = 0; i < kItemsPerPage; i++) {
 		if(firstItem + i >= _roomNames.size()) {
 			break;
 		}
-		// g_engine->_graphics->drawColoredTexts(_compositeScreen, _roomNames[i], 37, 72 + (i * g_engine->_smallFont->getFontHeight()), 640, 0, Graphics::kTextAlignLeft);
-	// g_engine->_graphics->drawColoredTexts(_compositeScreen, _spell->text, textX, textY, 640, 0, g_engine->_smallFont);
 		g_engine->_smallFont->drawString(g_engine->_screen, _roomNames[firstItem + i], 37, 72 + (i * g_engine->_smallFont->getFontHeight()), 640, 2, Graphics::kTextAlignLeft);
 	}
 }
@@ -519,12 +520,43 @@ void BackgroundBook::loadButtons() {
 	alfred7.close();
 }
 
+void BackgroundBook::showRoom(int roomIndex) {
+	Common::File roomFile;
+	if (!roomFile.open(Common::Path("ALFRED.1"))) {
+		warning("BackgroundBook: Could not open ALFRED.1");
+		return;
+	}
+
+	int roomOffset = roomIndex * kRoomStructSize;
+	Graphics::ManagedSurface bgSurface(640, 400, Graphics::PixelFormat::createFormatCLUT8());
+
+	byte *roomPalette = new byte[256 * 3];
+	_room->getPalette(&roomFile, roomOffset, roomPalette);
+	_room->getBackground(&roomFile, roomOffset, (byte *)bgSurface.getPixels());
+	roomFile.close();
+
+	thumbSurface = bgSurface.scale(160, 100);
+	// Set room palette and display the background
+	g_system->getPaletteManager()->setPalette(roomPalette, 0, 256);
+
+	bgSurface.free();
+}
+
 void BackgroundBook::cleanup() {
 	_compositeScreen.free();
 	_backgroundScreen.free();
 	if (_palette) {
 		delete[] _palette;
 		_palette = nullptr;
+	}
+	for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < 2; j++) {
+			delete[] _buttons[i][j];
+		}
+	}
+	if (thumbSurface) {
+		thumbSurface->free();
+		thumbSurface = nullptr;
 	}
 }
 
