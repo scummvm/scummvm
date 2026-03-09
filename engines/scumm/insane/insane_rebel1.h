@@ -260,16 +260,22 @@ private:
 	int _difficulty;
 
 	// Per-difficulty tuning (from assault_data_3.bin, indexed: difficulty * 0x28B + level * 0x1F)
+	// Original game loads from C:\rebltune.txt; ScummVM uses hardcoded table.
+	// 21 sub-levels (1A,1B,2,3,4A,4B,5A,5B,6,7,8,9A,9B,10,11,12,13,14A,14B,15A,15B)
 	struct TuningParams {
-		int16 roll;    // 0x1B1B: horizontal speed/sensitivity
-		int16 lift;    // 0x1B1D: vertical speed/sensitivity
-		int16 slide;   // 0x1B1F: cross-axis coupling
-		int16 drift;   // 0x1B21: drift/turbulence multiplier
-		int16 snap;    // 0x1B23: hit radius for shooting targets
-		int16 miss;    // 0x1B25: obstacle collision damage (0x0B bit 0x40)
-		int16 wham;    // 0x1B27: light/wall damage
-		int16 shot;    // 0x1B29: heavy/projectile damage
-		int16 kill;    // 0x1B2B: score per target kill
+		int16 roll;      // +0x05: horizontal speed/sensitivity
+		int16 lift;      // +0x07: vertical speed/sensitivity
+		int16 slide;     // +0x09: cross-axis coupling
+		int16 drift;     // +0x0B: drift/turbulence multiplier
+		int16 snap;      // +0x0D: hit radius for shooting targets
+		int16 miss;      // +0x0F: obstacle collision damage (0x0B bit 0x40)
+		int16 wham;      // +0x11: light/wall damage
+		int16 shot;      // +0x13: heavy/projectile damage
+		int16 kill;      // +0x15: score per target kill
+		int16 time;      // +0x17: survival bonus (added every 32 frames)
+		int16 levelPts;  // +0x19: chapter completion bonus (RunChapterCompleteSummaryScreen)
+		int16 bonus;     // +0x1B: per-level bonus multiplier for kills/accuracy
+		int16 flags;     // +0x1D: level behavior flags (loaded into DAT_75FE at level init)
 	};
 	TuningParams _tuning;
 
