@@ -191,7 +191,6 @@ bool WaynesWorldEngine::introPt2() {
 	_demoPt2Surface = new WWSurface(320, 200);
 	_midi->stopSong();
 
-	// TODO add a check at each step to return false if ESC is pressed
 	return true;
 }
 
@@ -366,7 +365,65 @@ void WaynesWorldEngine::introPt5() {
 }
 
 void WaynesWorldEngine::introPt6() {
-	warning("STUB - Intro pt 6");
+	WWSurface *introPt6Surface[5] = {nullptr};
+	WWSurface *signBottomSurface = nullptr;
+	WWSurface *scrollSurface = nullptr;
+	
+	_escPressed = false;
+	
+	while (_sound->isSFXPlaying())
+		waitMillis(10);
+
+	if (_escPressed)
+		return;
+
+	GxlArchive *oa3Gxl = new GxlArchive("oa3");
+	oa3Gxl->dumpArchive(Common::Path("."));
+	for (int i = 0; i < 5; ++i) {
+		introPt6Surface[i] = new WWSurface(320, 200);
+		Common::String filename = Common::String::format("sign%d.pcx",  i);
+		drawImageToSurface(oa3Gxl, filename.c_str(), introPt6Surface[i], 0, 0);
+	}
+
+	_sound->playSound("sv14.snd", false);
+
+	for (int i = 0; i < 5; ++i) {
+		_screen->drawSurface(introPt6Surface[i], 0, 0);
+		waitMillis(100);
+		if (_escPressed) {
+			break;
+		}
+	}
+
+	if (!_escPressed) {
+		signBottomSurface = new WWSurface(320, 94);
+		drawImageToSurface(oa3Gxl, "signbot.pcx", signBottomSurface, 0, 0);
+	}
+
+	if (!_escPressed) {
+		_musicIndex = 1;
+		changeMusic();
+		waitSeconds(4);
+	}
+
+	if (!_escPressed) {
+		scrollSurface = new WWSurface(320, 200);
+
+		for (int i = 199; i > 106; --i) {
+			scrollSurface->copyRectToSurface((Graphics::Surface)*introPt6Surface[4], 0, 0, Common::Rect(0, 200 - i, 319, 200));
+			scrollSurface->copyRectToSurface((Graphics::Surface)*signBottomSurface, 0, i, Common::Rect(0, 0, 319, 200 - i));
+			_screen->drawSurface(scrollSurface, 0, 0);
+			if (_escPressed) {
+				break;
+			}
+		}
+	}
+
+	delete scrollSurface;
+	delete oa3Gxl;
+	delete signBottomSurface;
+	for (int i = 0; i < 5; ++i)
+		delete introPt6Surface[i];
 }
 
 void WaynesWorldEngine::introPt7() {
@@ -452,7 +509,7 @@ void WaynesWorldEngine::introPt4_init() {
 	_fontWW->loadFromFile("ww.gft");
 
 	while(_sound->isSFXPlaying())
-		waitMillis(30);;
+		waitMillis(30);
 	
 	_musicIndex = 2;
 	changeMusic();
