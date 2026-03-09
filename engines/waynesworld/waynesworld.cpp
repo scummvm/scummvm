@@ -575,8 +575,15 @@ void WaynesWorldEngine::drawSpiralEffect(Graphics::Surface *surface, int x, int 
 }
 
 void WaynesWorldEngine::drawRandomEffect(Graphics::Surface *surface, int x, int y, int grainWidth, int grainHeight) {
-	ScreenEffect screenEffect(this, surface, x, y, grainWidth, grainHeight);
-	screenEffect.drawRandomEffect();
+	if (surface)
+	{
+		ScreenEffect screenEffect(this, surface, x, y, grainWidth, grainHeight);
+		screenEffect.drawRandomEffect();
+	}
+	else
+	{
+		warning("%s() x:%d y:%d missing surface!", __func__, x, y);
+	}
 }
 
 Common::String WaynesWorldEngine::loadString(const char *filename, int index, int flag) {

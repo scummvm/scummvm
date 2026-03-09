@@ -7106,7 +7106,8 @@ void GameLogic::r31_displayCategories() {
 	GxlArchive *roomLib = _vm->_roomGxl;
 
 	WWSurface *screenImage = roomLib->loadRoomSurface("screen");
-	_vm->drawSpiralEffect(screenImage, 0, 0, 4, 4);
+	if (screenImage)
+		_vm->drawSpiralEffect(screenImage, 0, 0, 4, 4);
 	delete screenImage;
 	for (int categoryIndex = 0; categoryIndex < 5; categoryIndex++) {
 		Common::String categoryFilename = Common::String::format("cat%d", categoryIndex);

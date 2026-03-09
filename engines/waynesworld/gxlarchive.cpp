@@ -129,24 +129,46 @@ Image::PCXDecoder *GxlArchive::loadImage(const char *filename) {
 		searchName = Common::String::format("%s.PCX", filename);
 	else
 		searchName = Common::String(filename);
-	
+
 	Common::Path pathName = Common::Path(searchName);
 	if (!hasFile(pathName))
 		error("loadImage() Could not find '%s'", filename);
 
-
 	Image::PCXDecoder *pcx = new Image::PCXDecoder();
-	Common::SeekableReadStream *pcxStr = createReadStreamForMember(Common::Path(filename));
-	if (!pcx->loadStream(*pcxStr))
-		error("loadImage() Could not process '%s'", filename);
+	if (pcx)
+	{
+		Common::SeekableReadStream *pcxStr = createReadStreamForMember(Common::Path(filename));
+		if (pcxStr)
+		{
+			if (!pcx->loadStream(*pcxStr))
+				error("loadImage() Could not process '%s'", filename);
+		}
+		else
+		{
+			warning("loadImage() failed to create read stream for \"%s\"", filename);
+		}
+		delete pcxStr;
+	}
+	else
+	{
+		error("loadImage() failed to allocate PCX decoder!");
+	}
 
-	delete pcxStr;
-	
 	return pcx;
 }
 
 WWSurface *GxlArchive::loadSurfaceIntern(const char *filename) {
 	Image::PCXDecoder *imageDecoder = loadImage(filename);
+	if (imageDecoder == nullptr)
+	{
+		warning("%s() failed to load \"%s\"", __func__, filename);
+		return nullptr;
+	}
+	if (imageDecoder->getSurface() == nullptr)
+	{
+		warning("%s() failed to get surface data for \"%s\"", __func__, filename);
+		return nullptr;
+	}
 	WWSurface *surface = new WWSurface(imageDecoder->getSurface());
 	delete imageDecoder;
 	return surface;
