@@ -279,21 +279,35 @@ void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY) {
 void InsaneRebel1::updateShipPhysics() {
 	_frameCounter++;
 
+	// HandleGameOp07_ShipFlight resets the ship accumulators and camera when
+	// the GAME 0x07 frame counter enters at 0. Level 1 happened to work because
+	// its runlevel code pre-initialized the same state, but later 0x07-driven
+	// stages like L3 rely on the handler to do this reset itself.
+	if (_gameCounter == 0) {
+		_posAccumX = 0;
+		_posAccumY = 0;
+		_rollAccum = 0;
+		_liftSmooth = 0;
+		_shipPosX = kRA1CenterX;
+		_shipPosY = kRA1CenterY;
+		_damageFlags = 0;
+		_prevDamageFlags = 0;
+		_damageCooldown = 0;
+		_perspectiveX = 0x20;
+		_perspectiveY = 0x17;
+		resetProjectionTable();
+	}
+
 	// Decrement cooldown
 	if (_damageCooldown > 0)
 		_damageCooldown--;
 
-	// --- Step 1: Mouse input as offset from screen center ---
-	// Original: _DAT_756C (horizontal), _DAT_756E (vertical) in 320x200 space.
-	int16 mouseX = (int16)_vm->_mouse.x;
-	int16 mouseY = (int16)_vm->_mouse.y;
-	if (_player && _player->_width > 0 && _player->_height > 0 &&
-		(mouseX >= 320 || mouseY >= 200)) {
-		mouseX = (int16)((mouseX * 320) / _player->_width);
-		mouseY = (int16)((mouseY * 200) / _player->_height);
-	}
-	int16 inputX = (int16)(mouseX - 160);
-	int16 inputY = (int16)(mouseY - 100);
+	// --- Step 1: Gameplay axes from FUN_231BE ---
+	// HandleGameOp07_ShipFlight consumes the preprocessed axes in DAT_756C/756E,
+	// not raw mouse coordinates. Reuse the same centered-axis law here.
+	int16 inputX = 0;
+	int16 inputY = 0;
+	preprocessMouseAxes(inputX, inputY);
 	inputX = CLIP<int16>(inputX, -127, 127);
 	inputY = CLIP<int16>(inputY, -127, 127);
 
@@ -545,20 +559,13 @@ void InsaneRebel1::updateTurretPhysics() {
 
 	// FUN_1E6A7 movement gate: counter > 8 or flags bit 0x40.
 	if (counter > 8 || (modeFlags & 0x40)) {
-		int16 mouseX = (int16)_vm->_mouse.x;
-		int16 mouseY = (int16)_vm->_mouse.y;
-		if (_player && _player->_width > 0 && _player->_height > 0 &&
-			(mouseX >= 320 || mouseY >= 200)) {
-			mouseX = (int16)((mouseX * 320) / _player->_width);
-			mouseY = (int16)((mouseY * 200) / _player->_height);
-		}
-
-		// FUN_1F3F8/FUN_231BE preprocesses mouse deltas before FUN_1E6A7 consumes
-		// DAT_756C/DAT_756E. Keep X in 320-space then scale to ±127 (RA2 parity),
-		// Y clamped to ±127.
-		int16 rawInputX = CLIP<int16>((int16)(mouseX - 160), -160, 160);
-		int16 inputX = (int16)((rawInputX * 127) / 160);
-		int16 inputY = CLIP<int16>((int16)(mouseY - 100), -127, 127);
+		// FUN_1E6A7 consumes DAT_756C/DAT_756E from the shared input bridge,
+		// not raw mouse coordinates.
+		int16 inputX = 0;
+		int16 inputY = 0;
+		preprocessMouseAxes(inputX, inputY);
+		inputX = CLIP<int16>(inputX, -127, 127);
+		inputY = CLIP<int16>(inputY, -127, 127);
 
 		_rollAccum += (_tuning.roll * (int32)inputX) >> 4;
 		_rollAccum = (_rollAccum * 3) >> 2;
