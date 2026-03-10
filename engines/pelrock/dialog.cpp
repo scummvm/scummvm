@@ -206,6 +206,10 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 			_curSprite->isTalking = true;
 			xBasePos = _curSprite->x + _curSprite->w / 2;
 			yBasePos = _curSprite->y; // Above sprite, adjust for line
+
+			// Set NPC talk speed byte for original timing.
+			TalkingAnims *th = &g_engine->_room->_talkingAnimHeader;
+			g_engine->_npcTalkSpeedByte = _curSprite->talkingAnimIndex ? th->speedByteB : th->speedByteA;
 		}
 	}
 	displayDialogue(dialogueLines, speakerId, xBasePos, yBasePos); // Default position
@@ -243,6 +247,9 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 	uint32 pageTtlMs = calcPageTtlMs(dialogueLines[curPage]);
 	uint32 pageStartMs = g_system->getMillis();
 
+	if(speakerId != kAlfredColor) {
+		_isNPCTalking = true;
+	}
 	// Render loop - display text and wait for click or TTL
 	while (!g_engine->shouldQuit()) {
 		_events->pollEvent();
@@ -313,6 +320,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		_curSprite->isTalking = false;
 	}
 	_dialogActive = false;
+	_isNPCTalking = false;
 	g_engine->_alfredState.setState(ALFRED_IDLE);
 }
 

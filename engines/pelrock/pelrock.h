@@ -146,8 +146,10 @@ private:
 
 	bool _mouseDisabled = false;
 
-	// Original timing: toggles each game tick during walking/talking to halve animation speed
-	bool _halfSpeedToggle = false;
+	// Original timing: counter-based render-skip to replicate process_game_state(N) slowdown.
+	// _renderSkipAmount = N means skip N ticks, then render 1 → (1+N) ticks per render.
+	int _renderSkipAmount = 0;
+	int _renderSkipCounter = 0;
 
 	int _flightFrameCounter = 0;
 	int _flightSorcererSpriteIdx = -1;
@@ -173,6 +175,7 @@ public:
 	DialogManager *_dialog = nullptr;
 	AlfredState _alfredState;
 	ShakeEffectState _shakeEffectState;
+	byte _npcTalkSpeedByte = 0;
 	Graphics::ManagedSurface _compositeBuffer; // Working composition buffer
 	Graphics::ManagedSurface _currentBackground; // Clean background - NEVER modified
 	Graphics::ManagedSurface _bgScreen;
@@ -255,6 +258,8 @@ public:
 	void changeCursor(Cursor cursor);
 
 	void travelToEgypt();
+
+	bool shouldSkipFrame();
 
 	// Actions
 	void doExtraActions(int roomNumber);

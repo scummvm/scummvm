@@ -310,17 +310,22 @@ struct TalkingAnims {
 	byte hAnimA;
 	byte unknown3[2];
 	byte numFramesAnimA;
-	byte unknown4[5];
+	byte unknown4[4];         // slot 0 data pointer (unused in ScummVM)
+	byte speedByteA;          // slot 0 offset 0x12: controls NPC talk render rate (original: 2+speedByte ticks per render)
 
 	byte offsetXAnimB;
 	byte offsetYAnimB;
-	byte currentFrameAnimA;
 
 	byte wAnimB;
 	byte hAnimB;
-	byte unknown5;
+	byte unknown5[2];         // slot 1 stride (unused in ScummVM)
 	byte numFramesAnimB;
-	byte unknown6[29];
+	byte unknown7[4];         // slot 1 data pointer (unused in ScummVM)
+	byte speedByteB;          // slot 1 speed byte at file offset 30
+	byte unknown6[24];        // slots 2-3 (unused)
+
+	// Runtime fields (not read from file)
+	byte currentFrameAnimA;
 	byte currentFrameAnimB;
 
 	byte **animA = nullptr;

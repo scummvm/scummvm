@@ -1199,7 +1199,8 @@ void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
 	talkHeader.hAnimA = talkFile.readByte();
 	talkFile.read(&talkHeader.unknown3, 2);
 	talkHeader.numFramesAnimA = talkFile.readByte();
-	talkFile.read(&talkHeader.unknown4, 5);
+	talkFile.read(&talkHeader.unknown4, 4);
+	talkHeader.speedByteA = talkFile.readByte();
 
 	talkHeader.offsetXAnimB = talkFile.readByte();
 	talkHeader.offsetYAnimB = talkFile.readByte();
@@ -1207,7 +1208,9 @@ void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
 	talkHeader.hAnimB = talkFile.readByte();
 	talkFile.read(&talkHeader.unknown5, 2);
 	talkHeader.numFramesAnimB = talkFile.readByte();
-	talkFile.read(&talkHeader.unknown6, 29);
+	talkFile.read(&talkHeader.unknown7, 4);
+	talkHeader.speedByteB = talkFile.readByte();
+	talkFile.read(&talkHeader.unknown6, 24);
 	// debug("Talking anim header for room %d: spritePointer=%d, wA=%d, hA=%d, framesA=%d, wB=%d, hB=%d, framesB=%d", roomNumber, talkHeader.spritePointer, talkHeader.wAnimA, talkHeader.hAnimA, talkHeader.numFramesAnimA, talkHeader.wAnimB, talkHeader.hAnimB, talkHeader.numFramesAnimB);
 
 	if (talkHeader.spritePointer == 0) {

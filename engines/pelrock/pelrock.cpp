@@ -326,20 +326,39 @@ void PelrockEngine::travelToEgypt() {
 	_state->addInventoryItem(59);
 }
 
+bool PelrockEngine::shouldSkipFrame() {
+	if (isAlternateTiming()) {
+		return false; // never skip frames in alternate timing mode
+	}
+	int skipAmount = 0;
+	if (_alfredState.animState == ALFRED_WALKING) {
+		skipAmount = 1;
+	} else if (_dialog->_dialogActive) {
+		if (_alfredState.animState == ALFRED_TALKING) {
+			skipAmount = 1; // Alfred speaking
+		} else if (_dialog->_isNPCTalking && _npcTalkSpeedByte > 0) {
+			skipAmount = _npcTalkSpeedByte; // NPC speaking
+		}
+	}
+
+	if (skipAmount > 0) {
+		if (_renderSkipCounter < skipAmount) {
+			_renderSkipCounter++;
+			return true; // skip this tick
+		}
+		_renderSkipCounter = 0; // render this tick, reset
+	} else {
+		_renderSkipCounter = 0;
+	}
+	return false;
+}
+
 bool PelrockEngine::renderScene(int overlayMode) {
 
 	_chrono->updateChrono();
 	if (_chrono->_gameTick) {
-		if (!isAlternateTiming()) {
-			bool inHalfSpeedMode = (_alfredState.animState == ALFRED_WALKING) ||
-			                       (_dialog->_dialogActive && _alfredState.animState == ALFRED_TALKING);
-			if (inHalfSpeedMode) {
-				_halfSpeedToggle = !_halfSpeedToggle;
-				if (!_halfSpeedToggle)
-					return false; // skip this tick — animate at half speed
-			} else {
-				_halfSpeedToggle = false; // reset when leaving half-speed mode
-			}
+		if (shouldSkipFrame()) {
+			return false;
 		}
 
 		frameTriggers();
@@ -432,7 +451,6 @@ void PelrockEngine::maybeHaveDogPee() {
 		walkTo(152, _alfredState.y);
 		_isDogPeeing = false;
 	}
-
 }
 
 void PelrockEngine::maybePlayPostIntro() {
@@ -713,11 +731,20 @@ void PelrockEngine::talkTo(HotSpot *hotspot) {
 	}
 	changeCursor(DEFAULT);
 	debug("Talking to hotspot %d (%d) with extra %d", hotspot->index, hotspot->isSprite ? hotspot->index : hotspot->index - _room->_currentRoomAnims.size(), hotspot->extra);
+
+	// Set NPC talk speed byte for original timing
+	TalkingAnims *th = &_room->_talkingAnimHeader;
+	_npcTalkSpeedByte = animSet->talkingAnimIndex ? th->speedByteB : th->speedByteA;
+	debug("NPC talk speed byte: %d (slot %d)", _npcTalkSpeedByte, animSet->talkingAnimIndex);
+
 	_dialog->startConversation(_room->_conversationData, _room->_conversationDataSize, animSet->talkingAnimIndex, animSet);
+
+	// Conversation ended — clear NPC talk speed byte
+	_npcTalkSpeedByte = 0;
+	_renderSkipCounter = 0;
 }
 
 void PelrockEngine::lookAt(HotSpot *hotspot) {
-	debug("Looking at hotspot %d (%d) with extra %d", hotspot->index, hotspot->isSprite ? hotspot->index : hotspot->index - _room->_currentRoomAnims.size(), hotspot->extra);
 	_dialog->sayAlfred(_room->_currentRoomDescriptions[_currentHotspot->index]);
 	_actionPopupState.isActive = false;
 }
@@ -1181,7 +1208,6 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 	}
 }
 
-
 int PelrockEngine::isHotspotUnder(int x, int y) {
 
 	for (size_t i = 0; i < _room->_currentRoomHotspots.size(); i++) {
@@ -1335,7 +1361,10 @@ void PelrockEngine::animateTalkingNPC(Sprite *animSet) {
 	int h = index ? animHeader->hAnimB : animHeader->hAnimA;
 	int numFrames = index ? animHeader->numFramesAnimB : animHeader->numFramesAnimA;
 
-	if (_chrono->getFrameCount() % kTalkAnimationSpeed == 0) {
+	// In the original game, the render rate itself is throttled to match kTalkAnimationSpeed.
+	// When in "Alternate timing" mode, we use kTalkAnimationSpeed to avoid slowing down the game loop.
+	int npcTalkSpeed = isAlternateTiming() ? kTalkAnimationSpeed : 1;
+	if (_chrono->getFrameCount() % npcTalkSpeed == 0) {
 		if (index) {
 			animHeader->currentFrameAnimB++;
 		} else {
@@ -1490,7 +1519,6 @@ void PelrockEngine::gameLoop() {
 
 	_screen->update();
 }
-
 
 void PelrockEngine::computerLoop() {
 	Computer computer(_events);
@@ -1665,7 +1693,6 @@ void PelrockEngine::checkMouseHover() {
 		alfredDetected = true;
 		_hoveredMapLocation = "Alfred";
 	}
-
 
 	if (hotspotIndex != -1) {
 		hotspotDetected = true;
