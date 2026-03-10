@@ -348,18 +348,16 @@ void mcdc(uint16_t *dst, const uint16_t *src, int log2w,
 	int h = 1 << log2h;
 	if (Scale) {
 		for (int i = 0; i < h; ++i) {
-			auto *dst32 = reinterpret_cast<uint32_t *>(dst);
-			auto *src32 = reinterpret_cast<const uint32_t *>(src);
 			switch (log2w) {
 			case 3:
-				dst32[2] = src32[2] + dc;
-				dst32[3] = src32[3] + dc;
+				WRITE_UINT32(dst + 4, READ_UINT32(src + 4) + dc);
+				WRITE_UINT32(dst + 6, READ_UINT32(src + 6) + dc);
 				// fall through
 			case 2:
-				dst32[1] = src32[1] + dc;
+				WRITE_UINT32(dst + 2, READ_UINT32(src + 2) + dc);
 				// fall through
 			case 1:
-				dst32[0] = src32[0] + dc;
+				WRITE_UINT32(dst, READ_UINT32(src) + dc);
 				break;
 			case 0:
 				*dst = *src + dc;
@@ -369,17 +367,16 @@ void mcdc(uint16_t *dst, const uint16_t *src, int log2w,
 		}
 	} else {
 		for (int i = 0; i < h; ++i) {
-			auto *dst32 = reinterpret_cast<uint32_t *>(dst);
 			switch (log2w) {
 			case 3:
-				dst32[2] = dc;
-				dst32[3] = dc;
+				WRITE_UINT32(dst + 4, dc);
+				WRITE_UINT32(dst + 6, dc);
 				// fall through
 			case 2:
-				dst32[1] = dc;
+				WRITE_UINT32(dst + 2, dc);
 				// fall through
 			case 1:
-				dst32[0] = dc;
+				WRITE_UINT32(dst, dc);
 				break;
 			case 0:
 				*dst = dc;

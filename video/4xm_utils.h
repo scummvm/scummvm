@@ -54,6 +54,8 @@ HuffmanType loadStatistics(const byte *&huff, uint &offset) {
 void idct(int16_t block[64], int shift = 6);
 
 inline int readInt(int value, unsigned n) {
+	if (n == 0)
+		return 0;
 	if ((value & (1 << (n - 1))) == 0)
 		value += 1 - (1 << n);
 	return value;
