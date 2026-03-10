@@ -25,7 +25,33 @@
 
 namespace Colony {
 
+static const int kRobotTypeOrder[] = {
+	0,
+	kRobQueen,
+	kRobSnoop,
+	kRobDrone,
+	kRobSoldier,
+	kRobEye,
+	kRobPyramid,
+	kRobUPyramid,
+	kRobCube,
+	kRobMEye,
+	kRobMPyramid,
+	kRobMUPyramid,
+	kRobMCube,
+	kRobFEye,
+	kRobFPyramid,
+	kRobFUPyramid,
+	kRobFCube,
+	kRobSEye,
+	kRobSPyramid,
+	kRobSUPyramid,
+	kRobSCube
+};
+
 void ColonyEngine::loadMap(int mnum) {
+	saveLevelState();
+
 	Common::Path mapPath(Common::String::format("MAP.%d", mnum));
 	Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(mapPath);
 	if (!file) {
@@ -113,8 +139,10 @@ void ColonyEngine::loadMap(int mnum) {
 void ColonyEngine::createObject(int type, int xloc, int yloc, uint8 ang) {
 	Thing obj;
 	memset(&obj, 0, sizeof(obj));
+	const int lvl = MIN<int>(MAX<int>(_level - 1, 0), 5);
 	while (ang > 255)
 		ang -= 256;
+	obj.opcode = 3; // FORWARD
 	obj.alive = 1;
 	obj.visible = 0;
 	obj.type = type;
@@ -125,6 +153,28 @@ void ColonyEngine::createObject(int type, int xloc, int yloc, uint8 ang) {
 	obj.where.delta = 4;
 	obj.where.ang = ang;
 	obj.where.look = ang;
+	obj.where.lookx = 0;
+	obj.count = 0;
+	obj.time = 10 + (_randomSource.getRandomNumber(0x3F) & 0x3F);
+	obj.grow = 0;
+
+	if (type <= kBaseObject) {
+		int basePower = 0;
+		if (type == kRobQueen) {
+			if (_level == 7)
+				basePower = 32000;
+			else
+				basePower = 40 + ((_randomSource.getRandomNumber(0x5F) & 0x5F) << lvl);
+		} else if (type == kRobSoldier) {
+			basePower = 30 + ((_randomSource.getRandomNumber(0x1F) & 0x1F) << lvl);
+		} else {
+			basePower = 20 + ((_randomSource.getRandomNumber(0x0F) & 0x0F) << lvl);
+		}
+
+		obj.where.power[0] = basePower;
+		obj.where.power[1] = basePower;
+		obj.where.power[2] = basePower;
+	}
 
 	// Try to reuse a dead slot (starting after kMeNum)
 	int slot = -1;
@@ -146,6 +196,28 @@ void ColonyEngine::createObject(int type, int xloc, int yloc, uint8 ang) {
 		_robotArray[obj.where.xindex][obj.where.yindex] = (uint8)objNum;
 	if (slot + 1 > _robotNum)
 		_robotNum = slot + 1;
+}
+
+void ColonyEngine::saveLevelState() {
+	if (_level < 1 || _level > 7 || _gameMode != kModeColony)
+		return;
+
+	LevelData &ld = _levelData[_level - 1];
+	ld.visit = 1;
+	ld.queen = 0;
+	memset(ld.object, 0, sizeof(ld.object));
+
+	for (uint i = 0; i < _objects.size(); i++) {
+		const Thing &obj = _objects[i];
+		if (!obj.alive || obj.type <= 0 || obj.type > kBaseObject)
+			continue;
+
+		if (obj.type == kRobQueen)
+			ld.queen = 1;
+
+		if (ld.object[obj.type] < 255)
+			ld.object[obj.type]++;
+	}
 }
 
 // PATCH.C: DoPatch()  remove originals and install relocated objects.
@@ -291,6 +363,7 @@ void ColonyEngine::initRobots() {
 	if (_level == 1)
 		return;  // Level 1 has no robots
 
+	LevelData &ld = _levelData[_level - 1];
 	int maxrob;
 	switch (_level) {
 	case 2:  maxrob = 25; break;
@@ -303,13 +376,13 @@ void ColonyEngine::initRobots() {
 	if (lvl > 5)
 		lvl = 5;
 
-	for (int i = 1; i <= maxrob; i++) {
+	auto spawnType = [&](int type) {
 		uint8 ang = _randomSource.getRandomNumber(255);
 		int xloc, yloc;
 
 		// Find unoccupied cell (avoiding borders)
 		do {
-			if (_level == 7 && i == 1) {
+			if (_level == 7 && type == kRobQueen) {
 				// Queen on level 7 has fixed position
 				xloc = 27;
 				yloc = 10;
@@ -322,14 +395,27 @@ void ColonyEngine::initRobots() {
 		// Convert grid coords to world coords (center of cell)
 		int wxloc = (xloc << 8) + 128;
 		int wyloc = (yloc << 8) + 128;
+		createObject(type, wxloc, wyloc, ang);
+	};
 
+	if (ld.visit) {
+		for (uint i = 1; i < ARRAYSIZE(kRobotTypeOrder); i++) {
+			const int type = kRobotTypeOrder[i];
+			for (int count = 0; count < ld.object[type]; count++)
+				spawnType(type);
+		}
+		debugC(1, kColonyDebugMap, "initRobots: restored %d robot/object types on level %d", maxrob, _level);
+		return;
+	}
+
+	ld.queen = 1;
+	for (int i = 1; i <= maxrob; i++) {
 		int type;
-		if (i == 1)
+		if (i == 1) {
 			type = kRobQueen;
-		else if (i == 2)
+		} else if (i == 2) {
 			type = kRobSnoop;
-		else {
-			// Random type weighted by level difficulty
+		} else {
 			int rnd = _randomSource.getRandomNumber(lvl);
 			if (rnd > 5)
 				rnd = 5;
@@ -344,7 +430,7 @@ void ColonyEngine::initRobots() {
 			}
 		}
 
-		createObject(type, wxloc, wyloc, ang);
+		spawnType(type);
 	}
 
 	debugC(1, kColonyDebugMap, "initRobots: spawned %d robots on level %d", maxrob, _level);

@@ -444,10 +444,33 @@ Common::Error ColonyEngine::run() {
 	int mouseDX = 0, mouseDY = 0;
 	bool mouseMoved = false;
 	uint32 lastMoveTick = _system->getMillis();
+	uint32 lastBattleTick = lastMoveTick;
 	while (!shouldQuit()) {
 		_frameLimiter->startFrame();
-		if (_gameMode == kModeBattle)
+
+		auto qlog = [](int32 x) -> int {
+			int i = 0;
+			while (x > 0) {
+				x >>= 1;
+				i++;
+			}
+			return i;
+		};
+		const int warningLevel = 4;
+		const int lifePower = qlog(_me.power[1]);
+		const uint32 now = _system->getMillis();
+		if (lifePower <= warningLevel && !_sound->isPlaying() && now - _lastWarningChimeTime >= 250) {
+			_sound->play(Sound::kChime);
+			_lastWarningChimeTime = now;
+		}
+
+		// The original battle loop advanced AI on the game loop cadence, not
+		// every rendered frame. Running this at 60 fps makes enemies and
+		// projectiles several times more aggressive than DOS/Mac.
+		if (_gameMode == kModeBattle && now - lastBattleTick >= 66) {
+			lastBattleTick = now;
 			battleThink();
+		}
 
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
@@ -616,7 +639,6 @@ Common::Error ColonyEngine::run() {
 
 		// Apply continuous movement/rotation from held keys,
 		// throttled to ~15 ticks/sec to match original key-repeat feel
-		uint32 now = _system->getMillis();
 		if (now - lastMoveTick >= 66) {
 			lastMoveTick = now;
 			const int moveX = (_cost[_me.look] * (1 << _speedShift)) >> 4;

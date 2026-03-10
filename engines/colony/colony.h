@@ -289,6 +289,7 @@ struct PassPatch {
 struct LevelData {
 	uint8 visit;
 	uint8 queen;
+	uint8 object[kBaseObject + 1];
 	uint8 count;           // airlock open count (termination check)
 	uint8 size;            // number of saved wall changes (max 10)
 	uint8 location[10][3]; // [x, y, direction] of each changed wall
@@ -439,6 +440,7 @@ private:
 	uint32 _lastClickTime = 0;
 	uint32 _displayCount = 0; // Frame counter for COLOR wall animation (Mac: count)
 	uint32 _lastAnimUpdate = 0;
+	uint32 _lastWarningChimeTime = 0;
 	int _action0, _action1;
 	int _creature;
 
@@ -549,6 +551,7 @@ private:
 
 	// PATCH.C: object relocation + wall state persistence
 	void createObject(int type, int xloc, int yloc, uint8 ang);
+	void saveLevelState();
 	void doPatch();
 	void saveWall(int x, int y, int direction);
 	void getWall();
@@ -608,6 +611,9 @@ private:
 	bool drawPict(int resID);
 	bool loadAnimation(const Common::String &name);
 	void deleteAnimation();
+	void takeOff();
+	void gameOver(bool kill);
+	int countSavedCryos() const;
 	void playAnimation();
 	void updateAnimation();
 	void drawAnimation();
