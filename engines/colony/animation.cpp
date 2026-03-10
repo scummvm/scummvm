@@ -178,6 +178,16 @@ static uint32 packMacColorBG(const uint16 rgb[3]) {
 	       ((uint32)(rgb[1] >> 8) << 8) | (uint32)(rgb[2] >> 8);
 }
 
+static int getAnimationStateCount(const Common::Array<ComplexSprite *> &sprites, int num) {
+	num--;
+	if (num >= 0 && num < (int)sprites.size()) {
+		int count = (int)sprites[num]->objects.size();
+		return (count > 0) ? count : 1;
+	}
+
+	return 1;
+}
+
 bool ColonyEngine::loadAnimation(const Common::String &name) {
 	_animationName = name;
 	for (int i = 0; i < 6; i++)
@@ -890,7 +900,7 @@ void ColonyEngine::handleAnimationClick(int item) {
 		handleDoorClick(item);
 	} else if (_animationName == "airlock") {
 		handleAirlockClick(item);
-	} else if (_animationName == "elev") {
+	} else if (_animationName == "elev" || _animationName == "elevator" || _animationName == "elevator2") {
 		handleElevatorClick(item);
 	} else if (_animationName == "controls") {
 		handleControlsClick(item);
@@ -1116,51 +1126,74 @@ void ColonyEngine::handleSuitClick(int item) {
 }
 
 void ColonyEngine::handleDoorClick(int item) {
-	// DOS DoDoor: item==3 toggles door open/close, item==1 or (item==101 && door open) exits
+	const bool isMac = (getPlatform() == Common::kPlatformMacintosh);
+	const int doorFrames = getAnimationStateCount(_lSprites, 2);
+	int openStart = isMac ? 2 : 1;
+	int closeStart = isMac ? doorFrames - 1 : doorFrames;
+
+	if (openStart > doorFrames)
+		openStart = doorFrames;
+	if (closeStart < 1)
+		closeStart = 1;
+
+	// Original DoDoor() differs by platform:
+	// DOS uses a 3-state door, Mac uses a 5-state door.
 	if (item == 3) {
 		_sound->play(Sound::kDoor);
 		if (_doorOpen) {
-			for (int i = 3; i >= 1; i--) {
-				_doorOpen = !_doorOpen;
+			for (int i = closeStart; i >= 1; i--) {
 				setObjectState(2, i);
 				drawAnimation();
 				_gfx->copyToScreen();
 				_system->delayMillis(80);
 			}
 		} else {
-			for (int i = 1; i < 4; i++) {
-				_doorOpen = !_doorOpen;
+			for (int i = openStart; i <= doorFrames; i++) {
 				setObjectState(2, i);
 				drawAnimation();
 				_gfx->copyToScreen();
 				_system->delayMillis(80);
 			}
 		}
+		_doorOpen = !_doorOpen;
 	}
-	if (item == 1 || (item == 101 && objectState(2) == 3)) {
+	if ((item == 1 || item == 101) && _doorOpen) {
 		_animationResult = 1;
 		_animationRunning = false;
 	}
 }
 
 void ColonyEngine::handleAirlockClick(int item) {
-	// DOS DoAirLock: item==1 toggles airlock if power on && unlocked
-	// item==2 or (item==101 && airlock open) exits with pass-through
-	if ((item == 2 || item == 101) && _doorOpen) {
+	const bool isMac = (getPlatform() == Common::kPlatformMacintosh);
+	const int doorItem = isMac ? 3 : 2;
+	const int toggleItem = isMac ? 2 : 1;
+	const int exitItem = isMac ? 3 : 2;
+	const int doorFrames = getAnimationStateCount(_lSprites, doorItem);
+	int openStart = isMac ? 2 : 1;
+	int closeStart = isMac ? doorFrames - 1 : doorFrames;
+
+	if (openStart > doorFrames)
+		openStart = doorFrames;
+	if (closeStart < 1)
+		closeStart = 1;
+
+	// Original DoAirLock() also differs by platform:
+	// DOS uses sprite 2 as the 3-state door, Mac uses sprite 3 as the 5-state door.
+	if ((item == exitItem || item == 101) && _doorOpen) {
 		_animationResult = 1;
 		_animationRunning = false;
-	} else if (item == 1 && _corePower[_coreIndex] && _unlocked) {
+	} else if (item == toggleItem && _corePower[_coreIndex] && _unlocked) {
 		_sound->play(Sound::kAirlock);
 		if (_doorOpen) {
-			for (int i = 3; i >= 1; i--) {
-				setObjectState(2, i);
+			for (int i = closeStart; i >= 1; i--) {
+				setObjectState(doorItem, i);
 				drawAnimation();
 				_gfx->copyToScreen();
 				_system->delayMillis(80);
 			}
 		} else {
-			for (int i = 1; i < 4; i++) {
-				setObjectState(2, i);
+			for (int i = openStart; i <= doorFrames; i++) {
+				setObjectState(doorItem, i);
 				drawAnimation();
 				_gfx->copyToScreen();
 				_system->delayMillis(80);
@@ -1174,6 +1207,119 @@ void ColonyEngine::handleAirlockClick(int item) {
 }
 
 void ColonyEngine::handleElevatorClick(int item) {
+	const bool isMac = (getPlatform() == Common::kPlatformMacintosh);
+
+	if (isMac) {
+		if (_animationName == "elevator2") {
+			const int doorFrames3 = getAnimationStateCount(_lSprites, 3);
+			const int doorFrames4 = getAnimationStateCount(_lSprites, 4);
+			const int doorFrames = (doorFrames3 < doorFrames4) ? doorFrames3 : doorFrames4;
+			const int savedLevel = _level;
+
+			if (item >= 5 && item <= 9) {
+				int fl = item - 4;
+				if (fl == _elevatorFloor) {
+					setObjectState(item, 1);
+					drawAnimation();
+					_gfx->copyToScreen();
+				} else {
+					_sound->play(Sound::kElevator);
+					for (int i = doorFrames - 1; i >= 1; i--) {
+						setObjectState(3, i);
+						setObjectState(4, i);
+						drawAnimation();
+						_gfx->copyToScreen();
+						_system->delayMillis(80);
+					}
+
+					if (fl > _elevatorFloor) {
+						for (int i = _elevatorFloor; i <= fl; i++) {
+							_level = i + 1;
+							if (i >= 1)
+								setObjectState(2, i);
+							drawAnimation();
+							_gfx->copyToScreen();
+							_system->delayMillis(80);
+						}
+					} else {
+						for (int i = _elevatorFloor; i >= fl; i--) {
+							_level = i + 1;
+							if (i >= 1)
+								setObjectState(2, i);
+							drawAnimation();
+							_gfx->copyToScreen();
+							_system->delayMillis(80);
+						}
+					}
+
+					_elevatorFloor = fl;
+					_level = savedLevel;
+					_sound->play(Sound::kElevator);
+					for (int i = 2; i <= doorFrames; i++) {
+						setObjectState(3, i);
+						setObjectState(4, i);
+						drawAnimation();
+						_gfx->copyToScreen();
+						_system->delayMillis(80);
+					}
+					setObjectState(item, 1);
+					drawAnimation();
+					_gfx->copyToScreen();
+				}
+			} else if (item == 1 || item == 101) {
+				_level = savedLevel;
+				_animationRunning = false;
+			}
+			return;
+		}
+
+		const int doorFrames2 = getAnimationStateCount(_lSprites, 2);
+		const int doorFrames3 = getAnimationStateCount(_lSprites, 3);
+		const int doorFrames = (doorFrames2 < doorFrames3) ? doorFrames2 : doorFrames3;
+
+		if (item == 4) {
+			_sound->play(Sound::kElevator);
+			if (_doorOpen) {
+				for (int i = doorFrames - 1; i >= 1; i--) {
+					setObjectState(2, i);
+					setObjectState(3, i);
+					drawAnimation();
+					_gfx->copyToScreen();
+					_system->delayMillis(80);
+				}
+			} else {
+				for (int i = 2; i <= doorFrames; i++) {
+					setObjectState(2, i);
+					setObjectState(3, i);
+					drawAnimation();
+					_gfx->copyToScreen();
+					_system->delayMillis(80);
+				}
+			}
+			_doorOpen = !_doorOpen;
+		} else if (item == 1 || item == 101) {
+			if (_doorOpen) {
+				if (!loadAnimation("elevator2")) {
+					_animationRunning = false;
+					return;
+				}
+
+				_animationResult = 2;
+				_doorOpen = true;
+				if (_elevatorFloor >= 1)
+					setObjectState(2, _elevatorFloor);
+				setObjectState(3, 5);
+				setObjectState(4, 5);
+				drawAnimation();
+				_gfx->copyToScreen();
+			} else {
+				_animationResult = 0;
+				_animationRunning = false;
+			}
+		}
+		return;
+	}
+
 	// DOS DoElevator: two phases
 	// _doorOpen=false: Phase 1 (outside) - item==5 toggles doors
 	// _doorOpen=true: Phase 2 (inside) - items 6-10 select floor
