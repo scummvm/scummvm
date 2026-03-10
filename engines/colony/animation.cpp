@@ -1431,29 +1431,24 @@ void ColonyEngine::handleElevatorClick(int item) {
 void ColonyEngine::handleControlsClick(int item) {
 	switch (item) {
 	case 4: // Accelerator
-		if (_corePower[_coreIndex] >= 2 && _coreState[_coreIndex] == 0 && !_orbit) {
-			_orbit = 1;
-			debugC(1, kColonyDebugAnimation, "Taking off!");
-			// Animate the lever moving full range
-			for (int i = 1; i <= 6; i++) {
-				setObjectState(4, i);
-				drawAnimation();
-				_gfx->copyToScreen();
-				_system->delayMillis(30);
-			}
-			_animationRunning = false;
-			return; // Exit animation immediately on success
-		} else {
+		if (_corePower[_coreIndex] < 2 || _coreState[_coreIndex] != 0) {
 			debugC(1, kColonyDebugAnimation, "Accelerator failed: power=%d, state=%d", _corePower[_coreIndex], _coreState[_coreIndex]);
-			// Fail animation click
 			setObjectState(4, 1);
-			// dolSprite(3); // Animate lever moving and returning - handled by top dolSprite
 			for (int i = 6; i > 0; i--) {
 				setObjectState(4, i);
 				drawAnimation();
 				_gfx->copyToScreen();
 				_system->delayMillis(20);
 			}
+			break;
+		}
+
+		_animationRunning = false;
+		if (_orbit) {
+			gameOver(false);
+		} else {
+			takeOff();
+			_orbit = 1;
 		}
 		break;
 	case 5: // Emergency power
@@ -1473,6 +1468,13 @@ void ColonyEngine::handleControlsClick(int item) {
 		}
 		drawAnimation();
 		_gfx->copyToScreen();
+		break;
+	case 6: // Ship weapons
+		_animationRunning = false;
+		if (!_orbit)
+			terminateGame(true);
+		else
+			gameOver(true);
 		break;
 	case 7: // Damage report
 	{

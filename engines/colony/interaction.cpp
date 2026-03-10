@@ -283,9 +283,9 @@ void ColonyEngine::setPower(int p0, int p1, int p2) {
 	_me.power[2] = MAX<int32>(_me.power[2] + p2, 0);
 
 	if (_me.power[1] <= 0) {
-		// TODO: player death (Terminate)
 		debugC(1, kColonyDebugUI, "Player died! power=[%d,%d,%d]",
 			(int)_me.power[0], (int)_me.power[1], (int)_me.power[2]);
+		terminateGame(false);
 	}
 }
 
@@ -436,20 +436,32 @@ void ColonyEngine::destroyRobot(int num) {
 		num, obj.type, damage, (int)obj.where.power[1]);
 
 	if (obj.where.power[1] <= 0) {
-		if (obj.count != 0) {
+		if (obj.type == kRobQueen) {
+			obj.alive = 0;
+			const int gx = obj.where.xindex;
+			const int gy = obj.where.yindex;
+			if (gx >= 0 && gx < 32 && gy >= 0 && gy < 32)
+				_robotArray[gx][gy] = 0;
+			if (_level >= 1 && _level <= 7) {
+				_levelData[_level - 1].visit = 1;
+				_levelData[_level - 1].queen = 0;
+			}
+			_sound->play(Sound::kExplode);
+			debugC(1, kColonyDebugAnimation, "Queen destroyed on level %d", _level);
+		} else if (obj.count != 0) {
 			// Robot fully destroyed: remove and drop egg
 			obj.alive = 0;
 			int gx = obj.where.xindex;
 			int gy = obj.where.yindex;
 			if (gx >= 0 && gx < 32 && gy >= 0 && gy < 32)
 				_robotArray[gx][gy] = 0;
-			// TODO: explosion sound + visual, spawn egg (foodarray)
+			_sound->play(Sound::kExplode);
 			debugC(1, kColonyDebugAnimation, "Robot %d destroyed!", num);
 		} else {
 			// Robot regresses to egg form
 			obj.where.power[1] = 10 + ((_randomSource.getRandomNumber(15)) << _level);
+			obj.grow = -1;
 			obj.count = 0;
-			// TODO: set grow = -1, change to egg type
 			debugC(1, kColonyDebugAnimation, "Robot %d regressed to egg", num);
 		}
 	}

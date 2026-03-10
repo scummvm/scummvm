@@ -27,6 +27,7 @@
 #include "graphics/font.h"
 #include "graphics/fonts/dosfont.h"
 #include "graphics/fonts/macfont.h"
+#include "graphics/cursorman.h"
 #include "image/pict.h"
 #include <math.h>
 
@@ -671,16 +672,195 @@ bool ColonyEngine::drawPict(int resID) {
 }
 
 void ColonyEngine::terminateGame(bool blowup) {
-	debugC(1, kColonyDebugUI, "YOU HAVE BEEN TERMINATED! (blowup=%d)", blowup);
-	if (blowup)
-		_sound->play(Sound::kExplode);
+	Common::Rect savedScreenR = _screenR;
+	Common::Rect savedClip = _clip;
+	int savedCenterX = _centerX;
+	int savedCenterY = _centerY;
+
+	_screenR = Common::Rect(0, 0, _width, _height);
+	_clip = _screenR;
+	_centerX = _width / 2;
+	_centerY = _height / 2;
+
+	_mouseLocked = false;
+	_system->lockMouse(false);
+	_system->showMouse(true);
+	CursorMan.setDefaultArrowCursor(true);
+	CursorMan.showMouse(true);
+
+	debugC(1, kColonyDebugUI, "terminateGame(blowup=%d)", blowup);
+
+	_sound->stop();
+	_gfx->clear(_gfx->black());
+	_gfx->copyToScreen();
+
+	_sound->play(blowup ? Sound::kExplode : Sound::kOuch);
+
+	if (_sound->isPlaying()) {
+		bool inverted = false;
+		while (_sound->isPlaying() && !shouldQuit()) {
+			_gfx->clear(inverted ? _gfx->white() : _gfx->black());
+			_gfx->copyToScreen();
+			inverted = !inverted;
+			_system->delayMillis(50);
+		}
+	} else {
+		for (int i = 0; i < (blowup ? 8 : 4); i++) {
+			_gfx->clear((i & 1) ? _gfx->white() : _gfx->black());
+			_gfx->copyToScreen();
+			_system->delayMillis(50);
+		}
+	}
+
+	_sound->stop();
+	_gfx->clear(_gfx->black());
+	_gfx->copyToScreen();
 
 	const char *msg[] = {
-		"   YOU HAVE BEEN TERMINATED!   ",
-		" Type 'q' to quit the game.    ",
+		"YOU HAVE BEEN TERMINATED",
 		nullptr
 	};
 	printMessage(msg, true);
+
+	_screenR = savedScreenR;
+	_clip = savedClip;
+	_centerX = savedCenterX;
+	_centerY = savedCenterY;
+
+	_system->quit();
+}
+
+int ColonyEngine::countSavedCryos() const {
+	int saved = 0;
+
+	for (uint i = 0; i < _patches.size(); i++) {
+		if (_patches[i].type == kObjCryo && _patches[i].to.level == 1)
+			saved++;
+	}
+
+	return saved;
+}
+
+void ColonyEngine::takeOff() {
+	Common::Rect savedScreenR = _screenR;
+	Common::Rect savedClip = _clip;
+	int savedCenterX = _centerX;
+	int savedCenterY = _centerY;
+
+	_screenR = Common::Rect(0, 0, _width, _height);
+	_clip = _screenR;
+	_centerX = _width / 2;
+	_centerY = _height / 2;
+
+	debugC(1, kColonyDebugUI, "takeOff()");
+
+	_sound->stop();
+	_gfx->clear(_gfx->black());
+	_gfx->copyToScreen();
+
+	if (getPlatform() == Common::kPlatformMacintosh)
+		_sound->play(Sound::kMars);
+	else
+		_sound->play(Sound::kStars1);
+
+	makeStars(_screenR, 0);
+	_sound->stop();
+
+	_gfx->clear(_gfx->black());
+	_gfx->copyToScreen();
+
+	_screenR = savedScreenR;
+	_clip = savedClip;
+	_centerX = savedCenterX;
+	_centerY = savedCenterY;
+}
+
+void ColonyEngine::gameOver(bool kill) {
+	Common::Rect savedScreenR = _screenR;
+	Common::Rect savedClip = _clip;
+	int savedCenterX = _centerX;
+	int savedCenterY = _centerY;
+
+	_screenR = Common::Rect(0, 0, _width, _height);
+	_clip = _screenR;
+	_centerX = _width / 2;
+	_centerY = _height / 2;
+
+	_mouseLocked = false;
+	_system->lockMouse(false);
+	_system->showMouse(true);
+	CursorMan.setDefaultArrowCursor(true);
+	CursorMan.showMouse(true);
+
+	const int savedCryos = countSavedCryos();
+	int textEntry;
+
+	if (kill)
+		textEntry = (savedCryos == 6) ? 256 : (savedCryos > 0 ? 257 : 258);
+	else
+		textEntry = (savedCryos == 6) ? 259 : (savedCryos > 0 ? 260 : 261);
+
+	debugC(1, kColonyDebugUI, "gameOver(kill=%d, savedCryos=%d, text=%d)", kill, savedCryos, textEntry);
+
+	_sound->stop();
+	_gfx->clear(_gfx->black());
+	_gfx->copyToScreen();
+
+	if (kill) {
+		_sound->play(Sound::kPShot);
+		makeStars(_screenR, 0);
+		_sound->stop();
+		_sound->play(Sound::kExplode);
+		for (int i = 0; i < 4; i++) {
+			_gfx->clear((i & 1) ? _gfx->black() : _gfx->white());
+			_gfx->copyToScreen();
+			_system->delayMillis(50);
+		}
+	} else {
+		_sound->play(Sound::kStars4);
+		makeStars(_screenR, 0);
+		_sound->stop();
+	}
+
+	_gfx->clear(_gfx->black());
+	_gfx->copyToScreen();
+	doText(textEntry, 2);
+
+	_gfx->clear(_gfx->black());
+	_gfx->copyToScreen();
+	_sound->play(Sound::kStars4);
+	makeStars(_screenR, 0);
+	_sound->stop();
+
+	_gfx->clear(_gfx->black());
+	_gfx->copyToScreen();
+	timeSquare("...THE END...", nullptr);
+
+	_gfx->clear(_gfx->black());
+	_gfx->copyToScreen();
+	_sound->play(Sound::kExplode);
+	if (_sound->isPlaying()) {
+		while (_sound->isPlaying() && !shouldQuit()) {
+			_gfx->clear(_gfx->white());
+			_gfx->copyToScreen();
+			_system->delayMillis(50);
+			_gfx->clear(_gfx->black());
+			_gfx->copyToScreen();
+			_system->delayMillis(50);
+		}
+	} else {
+		for (int i = 0; i < 4; i++) {
+			_gfx->clear((i & 1) ? _gfx->black() : _gfx->white());
+			_gfx->copyToScreen();
+			_system->delayMillis(50);
+		}
+	}
+	_sound->stop();
+
+	_screenR = savedScreenR;
+	_clip = savedClip;
+	_centerX = savedCenterX;
+	_centerY = savedCenterY;
 
 	_system->quit();
 }
