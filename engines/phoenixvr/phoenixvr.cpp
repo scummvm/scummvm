@@ -1064,7 +1064,6 @@ Common::Error PhoenixVREngine::run() {
 			}
 		}
 		float dt = float(frameDuration) / 1000.0f;
-		debug("tick %g", dt);
 		tick(dt);
 
 		// Delay for a bit. All events loops should have a delay
