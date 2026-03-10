@@ -27,6 +27,183 @@
 
 namespace Colony {
 
+static const int kTunnelXT[] = {
+	4, 8, 8, 15, 16, 16, 16, 17, 20, 22,
+	22, 22, 25, 25, 28, 25, 25, 23, 20, 18,
+	18, 16, 14, 14, 13, 12, 10, 9, 7, 3,
+	1, 0, 0, -2, -6, -8, -10, -12, -14, -16,
+	-20, -20, -23, -20, -14, -8, -4, 0, 0, 0,
+	0, 0, 0, 0, 0, 0
+};
+
+static const int kTunnelYT[] = {
+	2, 2, 3, 3, 4, 4, 5, 5, 6, 6,
+	7, 8, 9, 10, 11, 12, 11, 9, 7, 6,
+	5, 4, 3, 2, 1, 1, 0, 0, -1, -2,
+	-3, -4, -5, -6, -6, -6, -7, -7, -8, -8,
+	-9, -9, -10, -11, -12, -12, -13, -14, -12, -10,
+	-7, -4, -2, 0, 0, 0, 0, 0, 0, 0
+};
+
+static const int kTunnelST[] = {
+	2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+	2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+	2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+	2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+	2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+	2, 2, 2, 2, 2, 2, 2, 2, 2, 2
+};
+
+static uint32 packTunnelMacColor(const uint16 rgb[3]) {
+	return 0xFF000000 | ((uint32)(rgb[0] >> 8) << 16) |
+	       ((uint32)(rgb[1] >> 8) << 8) | (uint32)(rgb[2] >> 8);
+}
+
+static void fillTunnelPattern(Renderer *gfx, const Common::Rect &rect, uint32 fg, uint32 bg, int pattern) {
+	if (rect.isEmpty())
+		return;
+
+	switch (pattern) {
+	case 4:
+		gfx->fillRect(rect, fg);
+		return;
+	case 0:
+		gfx->fillRect(rect, bg);
+		return;
+	default:
+		break;
+	}
+
+	if (pattern == 3)
+		gfx->fillRect(rect, fg);
+	else
+		gfx->fillRect(rect, bg);
+
+	for (int y = rect.top; y < rect.bottom; ++y) {
+		const int py = y - rect.top;
+
+		switch (pattern) {
+		case 1: {
+			const int start = rect.left + ((py & 1) ? 2 : 0);
+			for (int x = start; x < rect.right; x += 4)
+				gfx->setPixel(x, y, fg);
+			break;
+		}
+		case 2: {
+			const int start = rect.left + (py & 1);
+			for (int x = start; x < rect.right; x += 2)
+				gfx->setPixel(x, y, fg);
+			break;
+		}
+		case 3: {
+			const int start = rect.left + ((py & 1) ? 2 : 0);
+			for (int x = start; x < rect.right; x += 4)
+				gfx->setPixel(x, y, bg);
+			break;
+		}
+		default:
+			break;
+		}
+	}
+}
+
+static void projectTunnelPoint(const Common::Rect &rect, int pnt[2], int rox, int roy) {
+	if (roy <= 0)
+		roy = 1;
+
+	const int centerX = (rect.left + rect.right) >> 1;
+	const int centerY = (rect.top + rect.bottom) >> 1;
+	long p = centerX + (((long)rox) << 9) / roy;
+
+	if (p < -32000)
+		p = -32000;
+	else if (p > 32000)
+		p = 32000;
+
+	pnt[0] = (int)p;
+	pnt[1] = centerY - (((160 * 128) / roy) << 1);
+}
+
+enum {
+	kTunnelClipLeft = 1,
+	kTunnelClipRight = 2,
+	kTunnelClipTop = 4,
+	kTunnelClipBottom = 8
+};
+
+static int tunnelClipCode(const Common::Rect &rect, int x, int y) {
+	int code = 0;
+
+	if (x < rect.left)
+		code |= kTunnelClipLeft;
+	else if (x >= rect.right)
+		code |= kTunnelClipRight;
+
+	if (y < rect.top)
+		code |= kTunnelClipTop;
+	else if (y >= rect.bottom)
+		code |= kTunnelClipBottom;
+
+	return code;
+}
+
+static void drawTunnelLine(Renderer *gfx, const Common::Rect &rect, int x1, int y1, int x2, int y2, uint32 color) {
+	if (rect.isEmpty())
+		return;
+
+	int code1 = tunnelClipCode(rect, x1, y1);
+	int code2 = tunnelClipCode(rect, x2, y2);
+
+	while (true) {
+		if (!(code1 | code2)) {
+			gfx->drawLine(x1, y1, x2, y2, color);
+			return;
+		}
+
+		if (code1 & code2)
+			return;
+
+		const int codeOut = code1 ? code1 : code2;
+		double x = 0.0;
+		double y = 0.0;
+
+		if (codeOut & kTunnelClipBottom) {
+			if (y2 == y1)
+				return;
+			y = rect.bottom - 1;
+			x = x1 + (double)(x2 - x1) * (y - y1) / (double)(y2 - y1);
+		} else if (codeOut & kTunnelClipTop) {
+			if (y2 == y1)
+				return;
+			y = rect.top;
+			x = x1 + (double)(x2 - x1) * (y - y1) / (double)(y2 - y1);
+		} else if (codeOut & kTunnelClipRight) {
+			if (x2 == x1)
+				return;
+			x = rect.right - 1;
+			y = y1 + (double)(y2 - y1) * (x - x1) / (double)(x2 - x1);
+		} else {
+			if (x2 == x1)
+				return;
+			x = rect.left;
+			y = y1 + (double)(y2 - y1) * (x - x1) / (double)(x2 - x1);
+		}
+
+		const int ix = (int)round(x);
+		const int iy = (int)round(y);
+
+		if (codeOut == code1) {
+			x1 = ix;
+			y1 = iy;
+			code1 = tunnelClipCode(rect, x1, y1);
+		} else {
+			x2 = ix;
+			y2 = iy;
+			code2 = tunnelClipCode(rect, x2, y2);
+		}
+	}
+}
+
 int ColonyEngine::occupiedObjectAt(int x, int y, const Locate *pobject) {
 	if (x < 0 || x >= 32 || y < 0 || y >= 32)
 		return -1;
@@ -444,65 +621,156 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 	}
 }
 
+void ColonyEngine::playTunnelEffect(bool falling) {
+	// Original TUNNEL.C: falling into the reactor reuses the tunnel renderer
+	// with the falling flag set, which removes the tracks and shortens the run.
+	const Common::Rect effectRect(0, _menuBarHeight, _width, _height);
+	const bool macColor = (_renderMode == Common::kRenderMacintosh && _hasMacColors);
+	const int tunnelColor = 24; // c_tunnel
+	const int tunnelFrames = falling ? 10 : 49;
+	const uint32 fillFg = macColor ? packTunnelMacColor(_macColors[tunnelColor].fg) : 0;
+	const uint32 fillBg = macColor ? packTunnelMacColor(_macColors[tunnelColor].bg) : 0;
+	const uint32 lineColor = macColor ? 0xFF000000 : 15;
+	int troy = 180;
+	int cnt = 0;
+	int counter = falling ? 2 : kTunnelST[0];
+	int spd = 180 / counter;
+
+	_sound->play(Sound::kTunnel2);
+
+	for (int remaining = tunnelFrames; remaining > 0 && !shouldQuit(); ) {
+		if (!_sound->isPlaying())
+			_sound->play(Sound::kTunnel2);
+
+		if (macColor) {
+			fillTunnelPattern(_gfx, effectRect, fillFg, fillBg, _macColors[tunnelColor].pattern);
+		} else {
+			_gfx->fillRect(effectRect, 0);
+			_gfx->drawRect(effectRect, 15);
+		}
+
+		const int n = MIN<int>(remaining, 16);
+		const double fcnt = falling ? (double)counter / 2.0 : (double)counter / kTunnelST[cnt];
+		const int *pathX = &kTunnelXT[cnt];
+		const int *pathY = &kTunnelYT[cnt];
+		Common::Rect clipRect = effectRect;
+		int prevDL[3] = {0, 0, 0};
+		int prevDR[3] = {0, 0, 0};
+		int prevLT = 0;
+		int prevRT = 0;
+		int rox = -100;
+		int roy = troy;
+		int ty = 0;
+
+		for (int i = 0; i < n; ++i) {
+			int tx;
+			if (i == 0) {
+				tx = (int)((pathX[i] << 2) * fcnt);
+				ty = (int)(pathY[i] * fcnt);
+			} else {
+				tx = pathX[i] << 2;
+				ty += pathY[i];
+			}
+
+			rox += tx;
+
+			int dl[2];
+			int dr[2];
+			projectTunnelPoint(effectRect, dl, rox, roy);
+			projectTunnelPoint(effectRect, dr, rox + 200, roy);
+
+			int left[3] = {
+				dl[0],
+				dl[1] + ty,
+				effectRect.bottom - 1 - (dl[1] - effectRect.top) + ty
+			};
+			int right[3] = {
+				dr[0],
+				dr[1] + ty,
+				effectRect.bottom - 1 - (dr[1] - effectRect.top) + ty
+			};
+
+			drawTunnelLine(_gfx, clipRect, left[0], left[2], left[0], left[1], lineColor);
+			drawTunnelLine(_gfx, clipRect, left[0], left[1], right[0], right[1], lineColor);
+			drawTunnelLine(_gfx, clipRect, right[0], right[1], right[0], right[2], lineColor);
+
+			int lt = 0;
+			int rt = 0;
+			if (!falling) {
+				const int center = (left[0] + right[0]) >> 1;
+				lt = (left[0] + center) >> 1;
+				rt = (right[0] + center) >> 1;
+			} else {
+				drawTunnelLine(_gfx, clipRect, right[0], right[2], left[0], left[2], lineColor);
+			}
+
+			if (i > 0) {
+				drawTunnelLine(_gfx, clipRect, left[0], left[1], prevDL[0], prevDL[1], lineColor);
+				drawTunnelLine(_gfx, clipRect, right[0], right[1], prevDR[0], prevDR[1], lineColor);
+				drawTunnelLine(_gfx, clipRect, right[0], right[2], prevDR[0], prevDR[2], lineColor);
+				drawTunnelLine(_gfx, clipRect, left[0], left[2], prevDL[0], prevDL[2], lineColor);
+				if (!falling) {
+					drawTunnelLine(_gfx, clipRect, prevLT, prevDL[2], lt, left[2], lineColor);
+					drawTunnelLine(_gfx, clipRect, lt, left[2], rt, right[2], lineColor);
+					drawTunnelLine(_gfx, clipRect, rt, right[2], prevRT, prevDR[2], lineColor);
+				}
+			}
+
+			if (clipRect.bottom < right[2])
+				drawTunnelLine(_gfx, clipRect, clipRect.left, clipRect.bottom - 1, clipRect.right - 1, clipRect.bottom - 1, lineColor);
+
+			clipRect.left = MAX<int>(clipRect.left, left[0]);
+			clipRect.right = MIN<int>(clipRect.right, right[0]);
+			clipRect.top = MAX<int>(clipRect.top, left[1]);
+			clipRect.bottom = MIN<int>(clipRect.bottom, right[2]);
+			if (clipRect.bottom <= clipRect.top || clipRect.left >= clipRect.right)
+				break;
+
+			prevDL[0] = left[0];
+			prevDL[1] = left[1];
+			prevDL[2] = left[2];
+			prevDR[0] = right[0];
+			prevDR[1] = right[1];
+			prevDR[2] = right[2];
+			prevLT = lt;
+			prevRT = rt;
+			roy += 256;
+		}
+
+		_gfx->copyToScreen();
+		_system->delayMillis(50);
+
+		counter--;
+		troy -= spd;
+		if (counter == 0) {
+			troy = 180;
+			cnt++;
+			counter = falling ? 2 : kTunnelST[cnt];
+			spd = 256 / counter;
+			remaining--;
+		}
+	}
+
+	_sound->stop();
+}
+
 void ColonyEngine::fallThroughHole() {
-	// DOS tunnel(TRUE, mapdata) + GoTo(mapdata)
+	// DOS/Mac tunnel(TRUE, mapdata) + GoTo(mapdata)
 	// Called when player falls through a floor hole (SMHOLEFLR or LGHOLEFLR)
 	const uint8 *mapdata = _mapData[_me.xindex][_me.yindex][4];
 	int targetMap = mapdata[2];
 	int targetX = mapdata[3];
 	int targetY = mapdata[4];
+	const bool deadFall = (targetMap == 0 && targetX == 0 && targetY == 0);
 
-	if (targetMap == 0 && targetX == 0 && targetY == 0) {
-		terminateGame(false); // you're dead
-		return;
-	}
-
-	// DOS tunnel(TRUE,...): power damage from falling
+	// Original tunnel(TRUE): damage the player's three power bars.
 	int damage = -(_level << 7);
-	for (int i = 0; i < 3; i++)
-		_corePower[i] += damage;
+	setPower(damage, damage, damage);
+	playTunnelEffect(true);
 
-	_sound->play(Sound::kClatter);
-
-	// DOS tunnel(pt=TRUE): falling animation  nested rectangles shrinking toward
-	// center, simulating falling down a shaft. White outlines on black background.
-	// DOS runs 10 steps × 2 frames = 20 display frames at ~15fps = ~1.3 seconds.
-	// At 60fps we use 80 frames for the same duration, paced by the frame limiter.
-	{
-		const int cx = (_screenR.left + _screenR.right) / 2;
-		const int cy = (_screenR.top + _screenR.bottom) / 2;
-		const int hw = _screenR.width() / 2;
-		const int hh = _screenR.height() / 2;
-		const int totalFrames = 80;
-		const int maxRings = 10;
-
-		for (int frame = 0; frame < totalFrames && !shouldQuit(); frame++) {
-			_frameLimiter->startFrame();
-
-			_gfx->fillRect(_screenR, 0); // black background
-
-			float progress = (float)frame / totalFrames;
-
-			// Draw nested rectangles  outer ring shrinks in, inner rings follow
-			// The number of visible rings decreases as we fall deeper
-			int visibleRings = maxRings - (int)(progress * (maxRings - 1));
-			for (int ring = 0; ring < visibleRings; ring++) {
-				// Each ring's depth combines the overall fall progress with per-ring spacing
-				float depth = progress * 0.6f + (float)ring / (maxRings + 2.0f);
-				if (depth >= 1.0f)
-					break;
-				float scale = 1.0f - depth;
-				int rw = (int)(hw * scale);
-				int rh = (int)(hh * scale);
-				if (rw < 2 || rh < 2)
-					break;
-				Common::Rect r(cx - rw, cy - rh, cx + rw, cy + rh);
-				_gfx->drawRect(r, 15); // white outline
-			}
-
-			_frameLimiter->delayBeforeSwap();
-			_gfx->copyToScreen();
-		}
+	if (deadFall) {
+		terminateGame(false); // original tunnel(TRUE) still animates before death
+		return;
 	}
 
 	// DOS GoTo(): preserve sub-cell offset, move to destination
@@ -553,9 +821,8 @@ void ColonyEngine::checkCenter() {
 		fallThroughHole();
 		break;
 	case 5: // HOTFOOT  electric floor, damages power
-		// DOS: SetPower(-(5<<level),-(5<<level),-(5<<level))
-		for (int i = 0; i < 3; i++)
-			_corePower[i] -= (5 << _level);
+		_sound->play(Sound::kBzzz);
+		setPower(-(5 << _level), -(5 << _level), -(5 << _level));
 		break;
 	default:
 		break;
