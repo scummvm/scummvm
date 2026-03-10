@@ -489,9 +489,10 @@ public:
 	}
 
 	virtual bool visitFuncNode(FuncNode *node) {
-		const bool isBuiltin = g_lingo->_builtinCmds.contains(*node->name);
+		const bool isBuiltin = g_lingo->_builtinCmds.contains(*node->name) || g_lingo->_builtinFuncs.contains(*node->name);
 		const ImVec4 color = (ImVec4)ImColor(isBuiltin ? _state->theme->builtin_color : _state->theme->call_color);
 		ImGui::TextColored(color, "%s(", node->name->c_str());
+		maybeHighlightLastItem(*node->name);
 		if (!isBuiltin && ImGui::IsItemHovered() && ImGui::BeginTooltip()) {
 			ImGui::Text("Go to definition");
 			ImGui::EndTooltip();
@@ -505,21 +506,9 @@ public:
 				}
 			}
 
-			ScriptContext *context = getScriptContext(obj, _script.id, *node->name);
+			ScriptContext *context = resolveHandlerContext(obj, _script.id, *node->name);
 			if (context) {
-				ImGuiScript script = toImGuiScript(_script.type, CastMemberID(context->_id, _script.id.castLib), *node->name);
-				const Director::Movie *movie = g_director->getCurrentMovie();
-
-				int castId = context->_id;
-				bool childScript = false;
-				if (castId == -1) {
-					castId = movie->getCast()->getCastIdByScriptId(context->_parentNumber);
-					childScript = true;
-				}
-				script.byteOffsets = context->_functionByteOffsets[script.handlerId];
-				script.moviePath = _script.moviePath;
-
-				script.handlerName = formatHandlerName(context->_scriptId, castId, script.handlerId, context->_scriptType, childScript);
+				ImGuiScript script = buildImGuiHandlerScript(context, _script.id.castLib, *node->name, _script.moviePath);
 				setScriptToDisplay(script);
 				_state->_dbg._goToDefinition = true;
 			}
@@ -871,7 +860,7 @@ private:
 };
 
 void renderOldScriptAST(ImGuiScript &script, bool showByteCode, bool scrollTo) {
-    RenderOldScriptVisitor oldVisitor(script, scrollTo);
+	RenderOldScriptVisitor oldVisitor(script, scrollTo);
 	script.oldAst->accept(&oldVisitor);
 }
 

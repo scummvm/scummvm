@@ -160,6 +160,105 @@ ScriptContext *getScriptContext(uint32 nameIndex, CastMemberID id, Common::Strin
 	return nullptr;
 }
 
+static ScriptContext *findHandlerContext(Cast *cast, const Common::String &handlerName) {
+	if (!cast || !cast->_lingoArchive)
+		return nullptr;
+
+	for (int i = 0; i <= kMaxScriptType; i++) {
+		if (cast->_lingoArchive->scriptContexts[i].empty())
+			continue;
+		for (auto &scriptContext : cast->_lingoArchive->scriptContexts[i]) {
+			if (scriptContext._value && scriptContext._value->_functionHandlers.contains(handlerName))
+				return scriptContext._value;
+		}
+	}
+	return nullptr;
+}
+
+ScriptContext *resolveHandlerContext(int32 nameIndex, const CastMemberID &refId, const Common::String &handlerName) {
+	Movie *movie = g_director->getCurrentMovie();
+	if (!movie)
+		return nullptr;
+
+	Cast *cast = nullptr;
+	if (refId.castLib == SHARED_CAST_LIB) {
+		cast = movie->getSharedCast();
+	} else {
+		cast = movie->getCasts()->getVal(refId.castLib);
+	}
+
+	if (cast && cast->_lingoArchive && nameIndex >= 0 && (uint32)nameIndex < cast->_lingoArchive->names.size()) {
+		if (cast->_lingoArchive->names[nameIndex] != handlerName) {
+			ScriptContext *local = cast->_lingoArchive->findScriptContext(refId.member);
+			if (local && local->_functionHandlers.contains(handlerName))
+				return local;
+		}
+	}
+
+	if (ScriptContext *ctx = findHandlerContext(cast, handlerName))
+		return ctx;
+
+	Cast *shared = movie->getSharedCast();
+	if (shared && shared != cast) {
+		if (ScriptContext *ctx = findHandlerContext(shared, handlerName))
+			return ctx;
+	}
+
+	return nullptr;
+}
+
+ImGuiScript buildImGuiHandlerScript(ScriptContext *ctx, int castLibID, const Common::String &handlerName, const Common::String &moviePath) {
+	ImGuiScript script;
+	if (!ctx)
+		return script;
+
+	Movie *movie = g_director->getCurrentMovie();
+	Cast *cast = nullptr;
+	if (castLibID == SHARED_CAST_LIB) {
+		cast = movie ? movie->getSharedCast() : nullptr;
+	} else {
+		cast = movie ? movie->getCasts()->getVal(castLibID) : nullptr;
+	}
+
+	int castId = ctx->_id;
+	bool childScript = false;
+	if (castId == -1) {
+		childScript = true;
+		if (cast) {
+			castId = cast->getCastIdByScriptId(ctx->_parentNumber);
+		}
+	}
+
+	CastMemberID memberID(castId, castLibID);
+	script = toImGuiScript(ctx->_scriptType, memberID, handlerName);
+	script.byteOffsets = ctx->_functionByteOffsets[script.handlerId];
+	script.moviePath = moviePath;
+	script.handlerName = formatHandlerName(ctx->_scriptId, castId, script.handlerId, ctx->_scriptType, childScript);
+	return script;
+}
+
+void maybeHighlightLastItem(const Common::String &text) {
+	if (!_state)
+		return;
+	const Common::String &q = _state->_dbg._highlightQuery;
+	if (q.empty() || text.empty() || _state->_dbg._suppressHighlight)
+		return;
+
+	Common::String lower = text;
+	lower.toLowercase();
+	if (!lower.contains(q.c_str()))
+		return;
+
+	ImDrawList *dl = ImGui::GetWindowDrawList();
+	const ImVec2 min = ImGui::GetItemRectMin();
+	const ImVec2 max = ImGui::GetItemRectMax();
+	if (max.x <= min.x || max.y <= min.y)
+		return;
+
+	ImU32 col = IM_COL32(255, 230, 0, 90);
+	dl->AddRectFilled(min, max, col, 2.0f);
+}
+
 Director::Breakpoint *getBreakpoint(const Common::String &handlerName, uint16 scriptId, uint pc) {
 	auto &bps = g_lingo->getBreakpoints();
 	for (uint i = 0; i < bps.size(); i++) {

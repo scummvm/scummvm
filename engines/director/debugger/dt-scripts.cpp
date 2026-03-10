@@ -574,6 +574,10 @@ void showExecutionContext() {
 		updateCurrentScript();
 
 		if (scriptData->_showScript) {
+			// disable highlighting while rendering scripts in Execution Context
+			bool oldSuppress = _state->_dbg._suppressHighlight;
+			_state->_dbg._suppressHighlight = true;
+
 			ImGuiScript &current = scriptData->_scripts[scriptData->_current];
 
 			// Get all the handlers from the script
@@ -586,6 +590,7 @@ void showExecutionContext() {
 			ImGui::BeginDisabled(scriptData->_scripts.empty() || scriptData->_current == 0);
 			if (ImGui::Button(ICON_MS_ARROW_BACK)) {
 				scriptData->_current--;
+				_state->_dbg._goToDefinition = true;
 			}
 			ImGui::EndDisabled();
 			ImGui::SetItemTooltip("Backward");
@@ -594,6 +599,7 @@ void showExecutionContext() {
 			ImGui::BeginDisabled(scriptData->_current >= scriptData->_scripts.size() - 1);
 			if (ImGui::Button(ICON_MS_ARROW_FORWARD)) {
 				scriptData->_current++;
+				_state->_dbg._goToDefinition = true;
 			}
 			ImGui::EndDisabled();
 			ImGui::SetItemTooltip("Forward");
@@ -609,9 +615,11 @@ void showExecutionContext() {
 				for (uint i = 0; i < scriptData->_scripts.size(); i++) {
 					auto &script = scriptData->_scripts[i];
 					bool selected = i == scriptData->_current;
+					ImGui::PushID(i);
 					if (ImGui::Selectable(script.handlerName.c_str(), &selected)) {
 						scriptData->_current = i;
 					}
+					ImGui::PopID();
 				}
 				ImGui::EndCombo();
 			}
@@ -650,6 +658,7 @@ void showExecutionContext() {
 			scriptsRendered = true;
 
 			ImGui::EndChild();
+			_state->_dbg._suppressHighlight = oldSuppress;
 		}
 
 		ImGui::EndChild();
@@ -685,6 +694,8 @@ void showExecutionContext() {
 			updateCurrentScript();
 
 			if (scriptData->_showScript) {
+				bool oldSuppress = _state->_dbg._suppressHighlight;
+				_state->_dbg._suppressHighlight = true;
 				ImGuiScript &current = scriptData->_scripts[scriptData->_current];
 
 				// Get all the handlers from the script
@@ -766,6 +777,7 @@ void showExecutionContext() {
 
 				scriptsRendered = true;
 				ImGui::EndChild();
+				_state->_dbg._suppressHighlight = oldSuppress;
 			}
 
 			ImGui::EndChild();

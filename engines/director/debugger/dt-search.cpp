@@ -1,3 +1,24 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "backends/imgui/IconsMaterialSymbols.h"
 
 #include "graphics/macgui/mactext.h"
@@ -88,9 +109,8 @@ static void searchCast(Cast *cast, int castLibID, const Common::String &query, D
 
 				if (found) {
 					CastMemberID memberID(scriptContext._key, castLibID);
-					ImGuiScript script = toImGuiScript(scriptContext._value->_scriptType, memberID, functionHandler._key);
-					script.byteOffsets = scriptContext._value->_functionByteOffsets[script.handlerId];
-					script.moviePath = movie->getArchive()->getPathName().toString();
+					const Common::String moviePath = movie->getArchive()->getPathName().toString();
+					ImGuiScript script = buildImGuiHandlerScript(scriptContext._value, castLibID, functionHandler._key, moviePath);
 					Common::String handlerName;
 					if (functionHandler._value.ctx && functionHandler._value.ctx->_id)
 						handlerName = Common::String::format("%d:", functionHandler._value.ctx->_id);
@@ -131,6 +151,7 @@ void showSearchBar() {
 	ImGui::SetNextWindowSize(ImVec2(480, 240), ImGuiCond_FirstUseEver);
 
 	if (!ImGui::Begin("Search", &_state->_w.search)) {
+		_state->_dbg._highlightQuery = "";
 		ImGui::End();
 		return;
 	}
@@ -172,8 +193,14 @@ void showSearchBar() {
 			ImGui::PushID(i);
 			ImGui::TableNextRow();
 			ImGui::TableNextColumn();
-			if (ImGui::Selectable(script.handlerName.c_str()))
+			if (ImGui::Selectable(script.handlerName.c_str())) {
+				Common::String q(search.input);
+				q.toLowercase();
+				_state->_dbg._highlightQuery = q;
+
 				addToOpenHandlers(script);
+				_state->_dbg._goToDefinition = true;
+			}
 			ImGui::TableNextColumn();
 			ImGui::Text("%s", script.id.asString().c_str());
 			ImGui::PopID();
