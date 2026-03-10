@@ -58,7 +58,7 @@ static size_t read_stream_wrap(void *ptr, size_t size, size_t nmemb, void *datas
 
 static int seek_stream_wrap(void *datasource, ogg_int64_t offset, int whence) {
 	Common::SeekableReadStream *stream = (Common::SeekableReadStream *)datasource;
-	return stream->seek((int32)offset, whence) ? 0 : -1;
+	return stream->seek(offset, whence) ? 0 : -1;
 }
 
 static int close_stream_wrap(void *datasource) {
