@@ -771,12 +771,17 @@ void InsaneRebel1::updateShipPhysics() {
 		}
 	}
 
-	// --- Step 8: Perspective offsets ---
+	// --- Step 8: Perspective offsets (SetCameraOffset) ---
 	// FUN_1DEB5 computes these linearly from ship offsets:
 	//   viewX = clamp((_74BA + 0x20), 0, 0x40)
 	//   viewY = clamp((_74BC + 0x17), 0, 0x2E)
 	_perspectiveX = CLIP<int16>((int16)(_shipPosX - kRA1CenterX + 0x20), 0, 0x40);
 	_perspectiveY = CLIP<int16>((int16)(_shipPosY - kRA1CenterY + 0x17), 0, 0x2E);
+	// Screen shake: when enabled, add random ±2 jitter (original SetCameraOffset at 0x22514)
+	if (_screenShakeEnabled) {
+		_perspectiveX = CLIP<int16>((int16)(_perspectiveX + (_vm->_rnd.getRandomNumber(4) - 2)), 0, 0x40);
+		_perspectiveY = CLIP<int16>((int16)(_perspectiveY + (_vm->_rnd.getRandomNumber(4) - 2)), 0, 0x2E);
+	}
 
 	// FUN_1DEB5 updates the curve table via FUN_22549 after SetCameraOffset.
 	// The full DOS path blends a few roll-history terms; use the current roll
@@ -825,8 +830,14 @@ void InsaneRebel1::updateShipPhysics() {
 		if (_damageFlags & 0x16)
 			_health -= _tuning.wham;
 
-		if (_health < 0)
+		if (_health < 0) {
 			_deathTimer = kDeathTimerInit;
+			// g_deathCauseIndicator (0x772E) — set based on damage source
+			if (_damageFlags & 0x80)
+				_deathCauseIndicator = 2;  // Projectile hit death
+			else
+				_deathCauseIndicator = 1;  // Collision death
+		}
 
 		_prevDamageFlags = _damageFlags;
 		_damageCooldown = kDamageCooldownInit;
@@ -849,9 +860,11 @@ void InsaneRebel1::updateShipPhysics() {
 			_score += _tuning.time;
 	}
 
-	// Screen flash decay
-	if (_screenFlash > 0)
+	// Screen flash decay — screen shake follows flash (EnableScreenShake/DisableScreenShake at 0x224ED)
+	if (_screenFlash > 0) {
 		_screenFlash--;
+		_screenShakeEnabled = (_screenFlash > 0);
+	}
 
 	// Clear per-frame damage flags
 	_damageFlags = 0;
@@ -920,8 +933,13 @@ void InsaneRebel1::updateTurretPhysics() {
 		else
 			_health -= _tuning.wham;
 
-		if (_health < 0)
+		if (_health < 0) {
 			_deathTimer = kDeathTimerInit;
+			if (_damageFlags & 0x80)
+				_deathCauseIndicator = 2;
+			else
+				_deathCauseIndicator = 1;
+		}
 
 		_prevDamageFlags = _damageFlags;
 		_damageCooldown = kDamageCooldownInit;
@@ -1012,8 +1030,10 @@ void InsaneRebel1::updateTurretPhysics() {
 			_score += _tuning.time;
 	}
 
-	if (_screenFlash > 0)
+	if (_screenFlash > 0) {
 		_screenFlash--;
+		_screenShakeEnabled = (_screenFlash > 0);
+	}
 
 	_gameLatch5D = 0;
 	_gameLatch5F = 0;
@@ -1081,6 +1101,10 @@ void InsaneRebel1::updateAsteroidPhysics() {
 			_health -= _tuning.wham;
 		if (_health < 0) {
 			_deathTimer = 15;  // 0x0F — shorter than Level 1's 30
+			if (_damageFlags & 0x80)
+				_deathCauseIndicator = 2;
+			else
+				_deathCauseIndicator = 1;
 		}
 		_prevDamageFlags = _damageFlags;
 		_damageFlags = 0;
@@ -1095,9 +1119,10 @@ void InsaneRebel1::updateAsteroidPhysics() {
 		_deathTimer--;
 	}
 
-	// Screen flash countdown
+	// Screen flash countdown — screen shake follows flash
 	if (_screenFlash > 0) {
 		_screenFlash--;
+		_screenShakeEnabled = (_screenFlash > 0);
 	}
 
 	// --- Cursor and perspective smoothing (FUN_1CDA7) ---
@@ -1292,8 +1317,10 @@ void InsaneRebel1::updateOnFootPhysics() {
 	// On-foot uses single tuning value (DAT_00001b29 offset = miss) for all damage types.
 	if (_damageFlags != 0 && _damageCooldown == 0 && _health >= 0 && _deathTimer < 1) {
 		_health -= _tuning.miss;
-		if (_health < 0)
+		if (_health < 0) {
 			_deathTimer = 15;
+			_deathCauseIndicator = (_damageFlags & 0x80) ? 2 : 1;
+		}
 		_prevDamageFlags = _damageFlags;
 		_damageCooldown = 3;
 		_screenFlash = 5;
@@ -1315,8 +1342,10 @@ void InsaneRebel1::updateOnFootPhysics() {
 
 	if (_deathTimer > 1 && _health < 0)
 		_deathTimer--;
-	if (_screenFlash > 0)
+	if (_screenFlash > 0) {
 		_screenFlash--;
+		_screenShakeEnabled = (_screenFlash > 0);
+	}
 
 	_damageFlags = 0;
 	_frameCounter++;
@@ -1348,6 +1377,7 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 		_damageCooldown = 0;
 		_deathTimer = 0;
 		_screenFlash = 0;
+		_screenShakeEnabled = false;
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
 		_driftParam = 0;

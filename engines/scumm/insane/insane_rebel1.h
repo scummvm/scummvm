@@ -318,6 +318,11 @@ private:
 	int16 _deathTimer;           // 0x756A: death animation countdown (30 on death)
 	int16 _screenFlash;          // 0x7736: screen flash timer on hit
 	uint32 _frameCounter;        // 0x7740: global frame counter
+	bool _screenShakeEnabled;    // 0x41AC: when true, SetCameraOffset adds ±2 random jitter
+	byte _deathCauseIndicator;   // 0x772E: non-zero = player died; selects death animation variant
+	byte _hudRenderFlag;         // 0x7600: 0xFF when HUD should render (set by combat mode handlers)
+	byte _hudDirtyFlag;          // 0x7601: 0xFF after HUD redraw (set by renderHUD)
+	int16 _maxChapterUnlocked;   // 0x7730: highest chapter with valid passcode (0=none, set on completion)
 
 	static const int16 kMaxHealth = 98;
 	static const int16 kDeathTimerInit = 30;

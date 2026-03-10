@@ -368,6 +368,9 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	if (height == 0) height = _screenHeight;
 	int pitch = width;
 
+	// Set HUD render flag when interactive gameplay is active (0x7600)
+	_hudRenderFlag = 0xFF;
+
 	const bool haveFrameGameOpcodes = (_frameGameOpcodeMask != 0);
 	const bool asteroidMode = hasFrameGameOpcode(0x0B) ||
 		(!haveFrameGameOpcodes && _activeGameOpcode == 0x0B);
@@ -1179,6 +1182,7 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 		}
 	}
 
+	_hudDirtyFlag = 0xFF;  // Mark HUD as freshly drawn (0x7601)
 }
 
 // Attack window frame tables — RunLevel8Flow (0x18546), data at 0x236D/0x2373/0x2379.
