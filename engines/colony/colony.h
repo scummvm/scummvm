@@ -557,6 +557,16 @@ private:
 	uint32 readUint32(Common::SeekableReadStream &s);
 	int whichSprite(const Common::Point &p);
 	void handleAnimationClick(int item);
+	void handleDeskClick(int item);
+	void handleVanityClick(int item);
+	void handleSlidesClick(int item);
+	void handleTeleshowClick(int item);
+	void handleKeypadClick(int item);
+	void handleSuitClick(int item);
+	void handleDoorClick(int item);
+	void handleAirlockClick(int item);
+	void handleElevatorClick(int item);
+	void handleControlsClick(int item);
 	void dolSprite(int index);
 	void moveObject(int index);
 	void setObjectState(int num, int state);
