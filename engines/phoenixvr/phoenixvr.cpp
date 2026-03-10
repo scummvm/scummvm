@@ -606,14 +606,16 @@ void PhoenixVREngine::startTimer(float seconds) {
 }
 
 void PhoenixVREngine::pauseTimer(bool pause, bool deactivate) {
-	if (pause)
-		_timerFlags |= 2;
-	else
-		_timerFlags &= ~2;
-	if (deactivate)
-		_timerFlags &= ~4;
-	else
-		_timerFlags |= 4;
+	if (_timerFlags) {
+		if (pause)
+			_timerFlags |= 2;
+		else
+			_timerFlags &= ~2;
+		if (deactivate)
+			_timerFlags &= ~4;
+		else
+			_timerFlags |= 4;
+	}
 }
 
 void PhoenixVREngine::killTimer() {
