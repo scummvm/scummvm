@@ -38,6 +38,7 @@
 #include "tinsel/timers.h"	// for DwGetCurrentTime()
 #include "tinsel/tinsel.h"
 #include "tinsel/scene.h"
+#include "tinsel/strres.h"
 #include "tinsel/noir/lzss.h"
 
 namespace Tinsel {
@@ -314,7 +315,8 @@ void Handle::LoadFile(MEMHANDLE *pH) {
 FONT *Handle::GetFont(SCNHANDLE offset) {
 	byte *data = LockMem(offset);
 	const bool isBE = TinselV1Mac || TinselV1Saturn;
-	const uint32 size = ((TinselVersion == 3) ? 12 * 4 : 11 * 4) + 300 * 4;	// FONT struct size
+	const uint32 characterCount = GetFontCharacterCount(offset);
+	const uint32 size = ((TinselVersion == 3) ? 12 * 4 : 11 * 4) + characterCount * 4;	// FONT struct size
 	Common::MemoryReadStreamEndian *stream = new Common::MemoryReadStreamEndian(data, size, isBE);
 
 	FONT *font = new FONT();
@@ -330,12 +332,36 @@ FONT *Handle::GetFont(SCNHANDLE offset) {
 	font->fontInit.objX = stream->readSint32();
 	font->fontInit.objY = stream->readSint32();
 	font->fontInit.objZ = stream->readSint32();
-	for (int i = 0; i < 300; i++)
+	font->fontDef.resize(characterCount);
+	for (uint32 i = 0; i < characterCount; i++)
 		font->fontDef[i] = stream->readUint32();
 
 	delete stream;
 
 	return font;
+}
+
+uint32 Handle::GetFontCharacterCount(SCNHANDLE offset) const {
+	// All fonts have 256 characters, unless this is a multibyte language
+	if (!g_bMultiByte)
+		return 256;
+
+	// For multibyte languages, different platforms have different characters.
+	// There is only one font per font chunk, so we could use the font offset
+	// to read the chunk header, determine the chunk size, and calculate the
+	// character count. But since there are only three DW1 Japanese versions,
+	// for now we'll just hard-code their known values.
+	// TODO: Update this PSX number once we support its font format.
+	// Japanese PSX stores glyphs in MULTIBYT.FNT and appears to use a
+	// different font header that is larger than the normal header.
+	if (TinselV1Mac)
+		return 815;
+	if (TinselV1PSX)
+		return 667;
+	if (TinselV1Saturn)
+		return 662;
+
+	error("unknown mbs platform");
 }
 
 /**
