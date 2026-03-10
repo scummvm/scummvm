@@ -2102,7 +2102,12 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 	
 	float corners[4][3];
 	getWallFace3D(cellX, cellY, direction, corners);
+	const bool macMode = (_renderMode == Common::kRenderMacintosh);
 	const bool macColors = (_renderMode == Common::kRenderMacintosh && _hasMacColors);
+	const bool lit = (_corePower[_coreIndex] > 0);
+	const uint32 wallFeatureFill = macColors
+		? packMacColor(lit ? _macColors[8 + _level - 1].fg : _macColors[6].bg)
+		: (lit ? (macMode ? 255u : 7u) : 0u);
 
 	// Wall faces are already filled with level-specific color (c_char0+level-1.fg)
 	// by the wall grid in renderCorridor3D(). Features are drawn on top.
@@ -2119,14 +2124,13 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 
 	switch (map[0]) {
 	case kWallFeatureDoor: {
-		// EGA: vDKGRAY outlines; Mac B&W: black outlines + gray fills
-		const bool macMode = (_renderMode == Common::kRenderMacintosh);
 		const uint32 doorColor = macColors ? (uint32)0xFF000000 : (macMode ? 0 : 8);
 		bool shipLevel = (_level == 1 || _level == 5 || _level == 6);
 
 		if (shipLevel) {
 			static const float uSs[8] = { 0.375f, 0.250f, 0.250f, 0.375f, 0.625f, 0.750f, 0.750f, 0.625f };
 			static const float vSs[8] = { 0.125f, 0.250f, 0.750f, 0.875f, 0.875f, 0.750f, 0.250f, 0.125f };
+			const uint32 shipDoorColor = macColors ? (uint32)0xFF000000 : (macMode ? 0 : (_wireframe ? 8u : 0u));
 
 			if (macMode) {
 				if (map[1] != 0) {
@@ -2141,18 +2145,30 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 					// Open: fill with BLACK (passable opening)
 					_gfx->setWireframe(true, 0);
 					wallPolygon(corners, uSs, vSs, 8, 0);
-					_gfx->setWireframe(true, 255);
 				}
+			} else if (!_wireframe) {
+				if (map[1] != 0) {
+					const byte *stipple = setupMacPattern(_gfx, kPatternLtGray, 0, 15);
+					wallPolygon(corners, uSs, vSs, 8, 0);
+					if (stipple)
+						_gfx->setStippleData(nullptr);
+				} else {
+					_gfx->setWireframe(true, 0);
+					wallPolygon(corners, uSs, vSs, 8, 0);
+				}
+			} else {
+				_gfx->setWireframe(true);
+				wallPolygon(corners, uSs, vSs, 8, 8);
 			}
 
 			for (int i = 0; i < 8; i++)
-				wallLine(corners, uSs[i], vSs[i], uSs[(i + 1) % 8], vSs[(i + 1) % 8], doorColor);
+				wallLine(corners, uSs[i], vSs[i], uSs[(i + 1) % 8], vSs[(i + 1) % 8], shipDoorColor);
 
 			if (map[1] != 0) {
-				wallLine(corners, 0.375f, 0.25f, 0.375f, 0.75f, doorColor);
-				wallLine(corners, 0.375f, 0.75f, 0.625f, 0.75f, doorColor);
-				wallLine(corners, 0.625f, 0.75f, 0.625f, 0.25f, doorColor);
-				wallLine(corners, 0.625f, 0.25f, 0.375f, 0.25f, doorColor);
+				wallLine(corners, 0.375f, 0.25f, 0.375f, 0.75f, shipDoorColor);
+				wallLine(corners, 0.375f, 0.75f, 0.625f, 0.75f, shipDoorColor);
+				wallLine(corners, 0.625f, 0.75f, 0.625f, 0.25f, shipDoorColor);
+				wallLine(corners, 0.625f, 0.25f, 0.375f, 0.25f, shipDoorColor);
 			}
 		} else {
 			static const float xl = 0.25f, xr = 0.75f;
@@ -2189,7 +2205,6 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		break;
 	}
 	case kWallFeatureWindow: {
-		const bool macMode = (_renderMode == Common::kRenderMacintosh);
 		const uint32 winColor = macColors ? (uint32)0xFF000000 : (macMode ? 0 : 8);
 		float xl = 0.25f, xr = 0.75f;
 		float yb = 0.25f, yt = 0.75f;
@@ -2218,7 +2233,6 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 	}
 	case kWallFeatureShelves: {
 		// DOS drawbooks: recessed bookcase with 3D depth.
-		const bool macMode = (_renderMode == Common::kRenderMacintosh);
 		const uint32 shelfColor = macColors ? (uint32)0xFF000000 : (macMode ? 0 : 8);
 
 		// Mac: fill shelves area
@@ -2388,7 +2402,6 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		break;
 	case kWallFeatureGlyph: {
 		// DOS wireframe: PenColor(realcolor[vDKGRAY]) = 8
-		const bool macMode = (_renderMode == Common::kRenderMacintosh);
 		const uint32 glyphColor = macColors ? (uint32)0xFF000000 : (macMode ? 0 : 8);
 
 		// Mac: fill glyph area
@@ -2411,7 +2424,6 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		break;
 	}
 	case kWallFeatureElevator: {
-		const bool macMode = (_renderMode == Common::kRenderMacintosh);
 		const uint32 elevColor = macColors ? (uint32)0xFF000000 : (macMode ? 0 : 8);
 		float xl = 0.2f, xr = 0.8f;
 		float yb = 0.1f, yt = 0.9f;
@@ -2454,20 +2466,22 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		break;
 	}
 	case kWallFeatureAirlock: {
-		const bool macMode = (_renderMode == Common::kRenderMacintosh);
-		float pts[][2] = {{0.0f, 0.5f}, {0.15f, 0.85f}, {0.5f, 1.0f}, {0.85f, 0.85f},
-		                  {1.0f, 0.5f}, {0.85f, 0.15f}, {0.5f, 0.0f}, {0.15f, 0.15f}};
-		float u[8], v[8];
-		for (int i = 0; i < 8; i++) {
-			u[i] = 0.1f + pts[i][0] * 0.8f;
-			v[i] = 0.1f + pts[i][1] * 0.8f;
-		}
+		// Direct port of drawALOpen/drawALClosed from WALLFTRS.C / wallftrs.c.
+		// These are the exact split7x7 positions on the wall face.
+		static const float u[8] = {0.125f, 0.25f, 0.5f, 0.75f, 0.875f, 0.75f, 0.5f, 0.25f};
+		static const float v[8] = {0.5f, 0.75f, 0.875f, 0.75f, 0.5f, 0.25f, 0.125f, 0.25f};
+		static const float spokeU[8] = {0.375f, 0.5f, 0.625f, 0.625f, 0.625f, 0.5f, 0.375f, 0.375f};
+		static const float spokeV[8] = {0.625f, 0.625f, 0.625f, 0.5f, 0.375f, 0.375f, 0.375f, 0.5f};
+		static const float centerU = 0.5f;
+		static const float centerV = 0.5f;
+
 		if (map[1] == 0) {
-			// Open: black fill (passable opening)
-			_gfx->setWireframe(true, 0);
+			// Original drawALOpen: solid black opening on both DOS and Mac.
+			if (macMode || !_wireframe)
+				_gfx->setWireframe(true, 0);
+			else
+				_gfx->setWireframe(true);
 			wallPolygon(corners, u, v, 8, 0);
-			bool lit = (_corePower[_coreIndex] > 0);
-			_gfx->setWireframe(true, lit ? (macMode ? 255 : 7) : 0);
 		} else {
 			// Mac: fill airlock when closed
 			if (macMode) {
@@ -2478,6 +2492,11 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 					wallPolygon(corners, u, v, 8, 0);
 					_gfx->setStippleData(nullptr);
 				}
+			} else if (!_wireframe) {
+				const byte *stipple = setupMacPattern(_gfx, kPatternLtGray, 0, 15);
+				wallPolygon(corners, u, v, 8, 0);
+				if (stipple)
+					_gfx->setStippleData(nullptr);
 			}
 
 			const uint32 airlockColor = macColors ? (uint32)0xFF000000 : (macMode ? 0 : 8);
@@ -2485,15 +2504,9 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 				int n = (i + 1) % 8;
 				wallLine(corners, u[i], v[i], u[n], v[n], airlockColor);
 			}
-			if (macMode) {
-				// Mac: 8 radial lines from each vertex to center (drawALClosed)
-				float cu = 0.5f, cv = 0.5f;
-				for (int i = 0; i < 8; i++)
-					wallLine(corners, u[i], v[i], cu, cv, airlockColor);
-			} else {
-				// EGA: simple crosshairs
-				wallLine(corners, 0.1f, 0.5f, 0.9f, 0.5f, airlockColor);
-				wallLine(corners, 0.5f, 0.1f, 0.5f, 0.9f, airlockColor);
+			for (int i = 0; i < 8; i++) {
+				wallLine(corners, u[i], v[i], spokeU[i], spokeV[i], airlockColor);
+				wallLine(corners, spokeU[i], spokeV[i], centerU, centerV, airlockColor);
 			}
 		}
 		break;
@@ -2571,6 +2584,9 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 	default:
 		break;
 	}
+
+	_gfx->setStippleData(nullptr);
+	_gfx->setWireframe(true, wallFeatureFill);
 }
 
 void ColonyEngine::drawWallFeatures3D() {
