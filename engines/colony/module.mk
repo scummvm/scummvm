@@ -1,9 +1,14 @@
 MODULE := engines/colony
 
 MODULE_OBJS := \
+	animation.o \
 	colony.o \
 	gfx.o \
+	interaction.o \
+	intro.o \
+	map.o \
 	metaengine.o \
+	movement.o \
 	render.o \
 	renderer_opengl.o \
 	sound.o \
