@@ -19,6 +19,17 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Übersetzungen können jetzt direkt aus einem lokal vorliegenden Verzeichnis
      /po geladen werden. Das ist hilfreich für Übersetzer, da hier keine Neuerstellung
      der translations.dat-Datei erforderlich ist.
+   - Der Zeit- und Speicher-Bedarf für das Kompilieren der TinyGL-Komponente wurde
+     deutlich reduziert.
+
+ AGOS:
+   - Verbesserte Unterstützung für die Acorn-Versionen von Simon the Sorcerer.
+     Sowohl der originale Mauszeiger als auch das für die Musik verwendete Format
+     Desktop Tracker werden jetzt unterstützt.
+   - Verbesserte Genauigkeit der Schrift-Darstellung in der DOS-Version von
+     Personal Nightmare und der Amiga-Demoversion von Elvira 1.
+   - Fehlende Farb-Darstellung für Simons Sprite in der Acorn-Disketten-Demo
+     von Simon the Sorcerer 1 behoben.
 
  Bagel:
    - Verhalten der Enter-/Escape-Taste im Raten-Dialog in The Guessing Game korrigiert.
@@ -50,18 +61,46 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Skalierungs-Fehler in Untertiteln, Gegenständen, der Inventarleiste sowie des Hauptmenüs
      in Verbindung mit dem Widescreen-Mod vorgenommen.
 
+ QdEngine:
+   - Fehler bei der Wegfindung in optimierten (Release-) Versionen für Windows behoben.
+
  SCUMM:
-   - Unterstützung für den originalen Titel-Bildschirm hinzugefügt (funktioniert nur mit PRG-Dateien).
+   - Unterstützung für den originalen Titel-Bildschirm in Maniac Mansion hinzugefügt
+     (funktioniert nur mit PRG-Dateien).
    - Unterstützung für die originale Wiedergabe-Datei in der DOS-Version der 
      nicht-interaktiven Demo von Monkey Island 2 hinzugefügt.
+   - Originale Mauszeiger für die Apple II-Version von Maniac Mansion implementiert.
+   - Fehler behoben, der dafür sorgt, dass das Logo in der NES-Version von Maniac Mansion
+     im Intro stecken bleibt.
 
- TEENAGENT:
+ Sherlock:
+   - Gelegentlicher Absturz bei der Nutzung von Inventar-Items in Rose Tattoo behoben.
+   - Absturz behoben, der auftritt, wenn die Tastatur genutzt wird, während in Rose Tattoo Darts gespielt wird.
+   - Darstellung und Logik der Anzeigetafel der Darts-Spiele in Rose Tattoo korrigiert.
+
+ Teenagent:
    - Fehler "could not locate language block" beim Start der polnischen und russischen Versionen behoben.
+
+ Tinsel:
+   - Skript-Fehler in Akt 2 in Discworld 1 korrigiert, der dafür sorgt, dass die
+     Sprachausgabe der Amazone beendet wird, wenn der Seestern eine Münze wirft.
+   - Skript-Fehler in Akt 3 einiger früher Discworld 1-Versionen korrigiert, der
+     verursacht, dass der "calculate odds"-Button nicht immer gelöscht wird, wenn
+     die Wache nach Wahrscheinlichkeiten gefragt wird.
+   - Absturz in Akt 4 von Discworld 1 behoben, der auftritt, wenn mit (unsichtbaren)
+     City Guards interagiert wird. Der Absturz wird durch einen Skript-Fehler in einigen
+     frühen Versionen verursacht.
+   - Fehler in Discworld 1 behoben, der verursacht, dass das Fenster für Konversationen in
+     L-Space nicht geschlossen wird, wenn mit dem Bar-Mann gesprochen wurde.
 
  WAGE:
    - Kampf-System implementiert.
    - Korrektur mehrerer Darstellungsfehler.
    - Maus-Scrolling in Text-Fenstern implementiert.
+
+ macOS-Portierung:
+   - Unterstützung für die neuere Text-to-Speech API von macOS 10.14+ hinzugefügt.
+   - Unterstützung für das Hilfe-Menü und die Zwischenablage-Funktionen in macOS 10.4-10.5 wiederhergestellt.
 
  iOS-Portierung:
    - Unterstützung für Text-to-Speech hinzugefügt.
