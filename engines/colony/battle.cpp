@@ -28,6 +28,7 @@
 #include "colony/gfx.h"
 #include "colony/sound.h"
 #include "common/system.h"
+#include <math.h>
 
 namespace Colony {
 
@@ -38,6 +39,7 @@ static const int kBattleSize = 150;   // BSIZE: collision/spawn radius
 static const int kMaxQuad = 15;       // pyramids per quadrant
 static const int kTankMax = 24;       // turret pincer animation range
 static const int kFloor = 160;        // ground z-offset
+static const float kBattleFovY = 75.0f;
 
 // =====================================================================
 // Battle color constants (original Mac QuickDraw pattern indices)
@@ -62,6 +64,16 @@ static uint32 battleColor(int colorIdx) {
 	case kColorEyes:   return 0xFFCC0000; // red eyes
 	default: return 0xFFC0C0C0; // fallback light gray
 	}
+}
+
+static int battleHorizonY(const Common::Rect &screenR, int lookY) {
+	const float halfHeight = screenR.height() * 0.5f;
+	const float centerY = screenR.top + halfHeight;
+	const float clampedLookY = CLIP<float>((float)lookY, -63.5f, 63.5f);
+	const float pitchRad = clampedLookY * 2.0f * (float)M_PI / 256.0f;
+	const float focalY = halfHeight / tanf(kBattleFovY * (float)M_PI / 360.0f);
+
+	return (int)roundf(centerY - focalY * tanf(pitchRad));
 }
 
 // =====================================================================
@@ -404,21 +416,31 @@ void ColonyEngine::battleSet() {
 // Called before 3D rendering begins.
 // =====================================================================
 void ColonyEngine::battleBackdrop() {
+	const int horizonY = battleHorizonY(_screenR, _me.lookY);
+	const int skyBottom = CLIP<int>(horizonY, _screenR.top, _screenR.bottom);
+	const int pitchOffset = horizonY - _centerY;
+
 	// Sky gradient: dark blue at top → lighter blue toward horizon
-	int bandHeight = MAX(1, _centerY / 16);
 	for (int i = 0; i < 16; i++) {
+		const int bandTop = _screenR.top + ((skyBottom - _screenR.top) * i) / 16;
+		const int bandBottom = _screenR.top + ((skyBottom - _screenR.top) * (i + 1)) / 16;
+		if (bandBottom <= bandTop)
+			continue;
+
 		int blue = (i * 16);
-		if (blue > 255) blue = 255;
+		if (blue > 255)
+			blue = 255;
 		uint32 color = (0xFF << 24) | (0 << 16) | (0 << 8) | blue;
-		Common::Rect band(_screenR.left, _screenR.top + i * bandHeight,
-		                  _screenR.right, _screenR.top + (i + 1) * bandHeight);
+		Common::Rect band(_screenR.left, bandTop, _screenR.right, bandBottom);
 		_gfx->fillRect(band, color);
 	}
 
 	// Ground fill (below horizon)
 	uint32 groundColor = 0xFF404040;
-	Common::Rect ground(_screenR.left, _centerY, _screenR.right, _screenR.bottom);
-	_gfx->fillRect(ground, groundColor);
+	Common::Rect ground(_screenR.left, CLIP<int>(horizonY, _screenR.top, _screenR.bottom),
+	                    _screenR.right, _screenR.bottom);
+	if (ground.bottom > ground.top)
+		_gfx->fillRect(ground, groundColor);
 
 	// Mountain silhouette
 	uint32 mtColor = 0xFF606060;
@@ -433,7 +455,7 @@ void ColonyEngine::battleBackdrop() {
 	bool sunon = false;
 
 	int prevX = xloc;
-	int prevY = _centerY - _mountains[ang];
+	int prevY = horizonY - _mountains[ang];
 	for (int i = 0; i < 63; i += 2) {
 		xloc += 2 * _battledx;
 		uint8 prevAng = ang;
@@ -443,7 +465,7 @@ void ColonyEngine::battleBackdrop() {
 			sunx = xloc - _battledx;
 			sunon = true;
 		}
-		int curY = _centerY - _mountains[ang];
+		int curY = horizonY - _mountains[ang];
 		_gfx->drawLine(prevX, prevY, xloc, curY, mtColor);
 		prevX = xloc;
 		prevY = curY;
@@ -451,8 +473,8 @@ void ColonyEngine::battleBackdrop() {
 
 	// Sun
 	if (sunon && sunx >= 0) {
-		int ht = _centerY >> 3;
-		_gfx->fillEllipse(sunx, 5 + ht, ht, ht, 0xFFFFFF00);
+		int ht = _screenR.height() >> 4;
+		_gfx->fillEllipse(sunx, 5 + ht + pitchOffset, ht, ht, 0xFFFFFF00);
 	}
 }
 
@@ -666,15 +688,24 @@ void ColonyEngine::battleDrawTanks() {
 void ColonyEngine::renderBattle() {
 	_battleMaxP = 0;
 
-	// Phase 1: 2D backdrop (sky gradient, mountains, sun)
+	// Phase 1: 2D backdrop (sky gradient, mountains, sun) follows camera pitch
 	battleBackdrop();
 
-	// Phase 2: Begin 3D scene
-	// Camera at player position, eye level (z=0), looking in _me.look direction.
-	// Vertical look pitches 3D objects; backdrop (sky + ground) is 2D so it stays fixed.
+	// Phase 2: Begin 3D scene with the full battle camera transform.
 	_gfx->begin3D(_me.xloc, _me.yloc, 0, _me.look, _me.lookY, _screenR);
 
-	// 3D objects with depth testing (ground is part of 2D backdrop)
+	// Phase 3: Ground plane at z=-160.
+	{
+		uint32 groundColor = 0xFF404040;
+		_gfx->setDepthState(false, false);
+		_gfx->setWireframe(true, groundColor);
+		_gfx->draw3DQuad(-100000.0f, -100000.0f, -160.0f,
+		                  100000.0f, -100000.0f, -160.0f,
+		                  100000.0f,  100000.0f, -160.0f,
+		                 -100000.0f,  100000.0f, -160.0f, groundColor);
+	}
+
+	// Phase 4: 3D objects with depth testing.
 	_gfx->setDepthState(true, true);
 	_gfx->setDepthRange(0.0, 1.0);
 
