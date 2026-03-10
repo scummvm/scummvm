@@ -195,10 +195,8 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		if (_curSprite != nullptr) {
 			_curSprite->isTalking = false;
 		}
-		// Offset X position for Alfred to avoid overlapping with his sprite
+
 		xBasePos = g_engine->_alfredState.x;
-		// Original game: uses the scaled character height
-		// not the fixed kAlfredFrameHeight. _alfredState.h is updated by drawAlfred().
 		yBasePos = g_engine->_alfredState.y - g_engine->_alfredState.h; // Above scaled sprite top
 	} else {
 		g_engine->_alfredState.setState(ALFRED_IDLE);
