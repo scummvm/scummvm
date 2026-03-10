@@ -82,6 +82,7 @@ void ColonyEngine::loadMap(int mnum) {
 	memset(_mapData, 0, sizeof(_mapData));
 	memset(_robotArray, 0, sizeof(_robotArray));
 	memset(_foodArray, 0, sizeof(_foodArray));
+	memset(_dirXY, 0, sizeof(_dirXY));
 	_objects.clear();
 
 	// expand logic
@@ -122,6 +123,7 @@ void ColonyEngine::loadMap(int mnum) {
 		}
 	}
 	free(buffer);
+	_dynamicObjectBase = (int)_objects.size();
 	_level = mnum;
 	_me.type = kMeNum;
 
@@ -134,10 +136,11 @@ void ColonyEngine::loadMap(int mnum) {
 	debugC(1, kColonyDebugMap, "Successfully loaded map %d (objects: %d)", mnum, (int)_objects.size());
 }
 
-// PATCH.C: Create a new object in _objects and register in _robotArray.
-// Mirrors DOS CreateObject()  sets basic Thing fields for static objects.
-void ColonyEngine::createObject(int type, int xloc, int yloc, uint8 ang) {
-	Thing obj;
+void ColonyEngine::resetObjectSlot(int slot, int type, int xloc, int yloc, uint8 ang) {
+	if (slot < 0 || slot >= (int)_objects.size())
+		return;
+
+	Thing &obj = _objects[slot];
 	memset(&obj, 0, sizeof(obj));
 	const int lvl = MIN<int>(MAX<int>(_level - 1, 0), 5);
 	while (ang > 255)
@@ -176,26 +179,39 @@ void ColonyEngine::createObject(int type, int xloc, int yloc, uint8 ang) {
 		obj.where.power[2] = basePower;
 	}
 
-	// Try to reuse a dead slot (starting after kMeNum)
+	const int objNum = slot + 1;
+	if (obj.where.xindex >= 0 && obj.where.xindex < 32 &&
+	    obj.where.yindex >= 0 && obj.where.yindex < 32) {
+		if (type > kRobUPyramid && type < kRobQueen)
+			_foodArray[obj.where.xindex][obj.where.yindex] = (uint8)objNum;
+		else
+			_robotArray[obj.where.xindex][obj.where.yindex] = (uint8)objNum;
+	}
+	if (objNum > _robotNum)
+		_robotNum = objNum;
+}
+
+// PATCH.C: Create a new object in _objects and register in the proper grid.
+void ColonyEngine::createObject(int type, int xloc, int yloc, uint8 ang) {
+	if (_dynamicObjectBase < 0 || _dynamicObjectBase > (int)_objects.size())
+		_dynamicObjectBase = (int)_objects.size();
+
 	int slot = -1;
-	for (int j = kMeNum; j < (int)_objects.size(); j++) {
+	for (int j = _dynamicObjectBase; j < (int)_objects.size(); j++) {
 		if (!_objects[j].alive) {
 			slot = j;
 			break;
 		}
 	}
 	if (slot >= 0) {
-		_objects[slot] = obj;
+		resetObjectSlot(slot, type, xloc, yloc, ang);
 	} else {
+		Thing obj;
+		memset(&obj, 0, sizeof(obj));
 		_objects.push_back(obj);
 		slot = (int)_objects.size() - 1;
+		resetObjectSlot(slot, type, xloc, yloc, ang);
 	}
-	int objNum = slot + 1; // 1-based for _robotArray
-	if (obj.where.xindex >= 0 && obj.where.xindex < 32 &&
-	    obj.where.yindex >= 0 && obj.where.yindex < 32)
-		_robotArray[obj.where.xindex][obj.where.yindex] = (uint8)objNum;
-	if (slot + 1 > _robotNum)
-		_robotNum = slot + 1;
 }
 
 void ColonyEngine::saveLevelState() {
@@ -204,16 +220,13 @@ void ColonyEngine::saveLevelState() {
 
 	LevelData &ld = _levelData[_level - 1];
 	ld.visit = 1;
-	ld.queen = 0;
+	ld.queen = _allGrow ? 1 : 0;
 	memset(ld.object, 0, sizeof(ld.object));
 
 	for (uint i = 0; i < _objects.size(); i++) {
 		const Thing &obj = _objects[i];
 		if (!obj.alive || obj.type <= 0 || obj.type > kBaseObject)
 			continue;
-
-		if (obj.type == kRobQueen)
-			ld.queen = 1;
 
 		if (ld.object[obj.type] < 255)
 			ld.object[obj.type]++;
@@ -360,6 +373,7 @@ bool ColonyEngine::patchMapFrom(const PassPatch &from, uint8 *mapdata) {
 // Level 1 = no robots; Level 2 = 25; Level 3-4 = 30; Level 5-7 = 35.
 // Robot #1 = QUEEN, #2 = SNOOP, rest = random type weighted by level.
 void ColonyEngine::initRobots() {
+	_allGrow = false;
 	if (_level == 1)
 		return;  // Level 1 has no robots
 
@@ -390,7 +404,7 @@ void ColonyEngine::initRobots() {
 				xloc = 2 + _randomSource.getRandomNumber(26);  // 2..28
 				yloc = 2 + _randomSource.getRandomNumber(26);  // 2..28
 			}
-		} while (_robotArray[xloc][yloc] != 0);
+		} while (_robotArray[xloc][yloc] != 0 || _foodArray[xloc][yloc] != 0);
 
 		// Convert grid coords to world coords (center of cell)
 		int wxloc = (xloc << 8) + 128;
@@ -399,15 +413,24 @@ void ColonyEngine::initRobots() {
 	};
 
 	if (ld.visit) {
+		_allGrow = (ld.queen != 0);
 		for (uint i = 1; i < ARRAYSIZE(kRobotTypeOrder); i++) {
 			const int type = kRobotTypeOrder[i];
 			for (int count = 0; count < ld.object[type]; count++)
 				spawnType(type);
 		}
+		if (!_allGrow) {
+			for (uint i = 0; i < _objects.size(); i++) {
+				Thing &obj = _objects[i];
+				if (obj.alive && obj.type >= kRobEye && obj.type <= kRobUPyramid)
+					obj.grow = -1;
+			}
+		}
 		debugC(1, kColonyDebugMap, "initRobots: restored %d robot/object types on level %d", maxrob, _level);
 		return;
 	}
 
+	_allGrow = true;
 	ld.queen = 1;
 	for (int i = 1; i <= maxrob; i++) {
 		int type;

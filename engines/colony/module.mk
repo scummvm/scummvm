@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	render.o \
 	renderer_opengl.o \
 	sound.o \
+	think.o \
 	ui.o
 
 MODULE_DIRS += \

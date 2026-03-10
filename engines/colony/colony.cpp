@@ -87,6 +87,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	memset(_mapData, 0, sizeof(_mapData));
 	memset(_robotArray, 0, sizeof(_robotArray));
 	memset(_foodArray, 0, sizeof(_foodArray));
+	memset(_dirXY, 0, sizeof(_dirXY));
 
 	// PATCH.C init
 	memset(_levelData, 0, sizeof(_levelData));
@@ -444,6 +445,7 @@ Common::Error ColonyEngine::run() {
 	int mouseDX = 0, mouseDY = 0;
 	bool mouseMoved = false;
 	uint32 lastMoveTick = _system->getMillis();
+	uint32 lastColonyTick = lastMoveTick;
 	uint32 lastBattleTick = lastMoveTick;
 	while (!shouldQuit()) {
 		_frameLimiter->startFrame();
@@ -462,6 +464,11 @@ Common::Error ColonyEngine::run() {
 		if (lifePower <= warningLevel && !_sound->isPlaying() && now - _lastWarningChimeTime >= 250) {
 			_sound->play(Sound::kChime);
 			_lastWarningChimeTime = now;
+		}
+
+		if (_gameMode == kModeColony && now - lastColonyTick >= 66) {
+			lastColonyTick = now;
+			cThink();
 		}
 
 		// The original battle loop advanced AI on the game loop cadence, not

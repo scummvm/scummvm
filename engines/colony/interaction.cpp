@@ -428,6 +428,10 @@ void ColonyEngine::destroyRobot(int num) {
 	int weapons2 = _weapons * _weapons;
 	int damage = (epower0 * weapons2) << 1;
 
+	// shoot.c: if not already morphing, force the robot into its firing pose.
+	if (!obj.grow)
+		obj.opcode = 4; // FSHOOT
+
 	// Face robot towards player
 	obj.where.look = obj.where.ang = (uint8)(_me.ang + 128);
 
@@ -436,25 +440,19 @@ void ColonyEngine::destroyRobot(int num) {
 		num, obj.type, damage, (int)obj.where.power[1]);
 
 	if (obj.where.power[1] <= 0) {
-		if (obj.type == kRobQueen) {
-			obj.alive = 0;
-			const int gx = obj.where.xindex;
-			const int gy = obj.where.yindex;
-			if (gx >= 0 && gx < 32 && gy >= 0 && gy < 32)
-				_robotArray[gx][gy] = 0;
-			if (_level >= 1 && _level <= 7) {
-				_levelData[_level - 1].visit = 1;
-				_levelData[_level - 1].queen = 0;
-			}
-			_sound->play(Sound::kExplode);
-			debugC(1, kColonyDebugAnimation, "Queen destroyed on level %d", _level);
-		} else if (obj.count != 0) {
+		if (obj.count != 0) {
 			// Robot fully destroyed: remove and drop egg
 			obj.alive = 0;
 			int gx = obj.where.xindex;
 			int gy = obj.where.yindex;
-			if (gx >= 0 && gx < 32 && gy >= 0 && gy < 32)
-				_robotArray[gx][gy] = 0;
+			if (gx >= 0 && gx < 32 && gy >= 0 && gy < 32) {
+				if (obj.type > kRobUPyramid && obj.type < kRobQueen) {
+					if (_foodArray[gx][gy] == num)
+						_foodArray[gx][gy] = 0;
+				} else if (_robotArray[gx][gy] == num) {
+					_robotArray[gx][gy] = 0;
+				}
+			}
 			_sound->play(Sound::kExplode);
 			debugC(1, kColonyDebugAnimation, "Robot %d destroyed!", num);
 		} else {
