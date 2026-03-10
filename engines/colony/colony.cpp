@@ -90,6 +90,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 
 	// PATCH.C init
 	memset(_levelData, 0, sizeof(_levelData));
+	_levelData[1].count = 1; // original uses 1-based leveldata[2] for map 2
 	memset(_carryPatch, 0, sizeof(_carryPatch));
 	_carryType = 0;
 	_fl = 0;
@@ -160,6 +161,8 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_resMan = new Common::MacResManager();
 	_colorResMan = new Common::MacResManager();
 	initTrig();
+	battleInit();
+	battleSet();
 }
 
 

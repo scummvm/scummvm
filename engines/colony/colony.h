@@ -559,6 +559,7 @@ private:
 	void dropCarriedObject();
 	bool setDoorState(int x, int y, int direction, int state);
 	int openAdjacentDoors(int x, int y);
+	int goToDestination(const uint8 *map, Locate *pobject);
 	int tryPassThroughFeature(int fromX, int fromY, int direction, Locate *pobject);
 	void updateViewportLayout();
 	void drawDashboardStep1();
@@ -595,6 +596,10 @@ private:
 	int _animationResult;
 	bool _doorOpen;
 	int _elevatorFloor;
+	int _airlockX = -1;
+	int _airlockY = -1;
+	int _airlockDirection = -1;
+	bool _airlockTerminate = false;
 
 	void playIntro();
 	bool makeStars(const Common::Rect &r, int btn);

@@ -389,8 +389,9 @@ bool ColonyEngine::setDoorState(int x, int y, int direction, int state) {
 	if (wallType != kWallFeatureDoor && wallType != kWallFeatureAirlock)
 		return false;
 
+	const uint8 oldState = _mapData[x][y][direction][1];
 	_mapData[x][y][direction][1] = (uint8)state;
-	if (state == 0)
+	if (wallType == kWallFeatureDoor && state == 0)
 		_sound->play(Sound::kDoor);
 
 
@@ -425,6 +426,13 @@ bool ColonyEngine::setDoorState(int x, int y, int direction, int state) {
 
 	// Persist airlock state changes across level loads
 	if (wallType == kWallFeatureAirlock) {
+		if (oldState != state && _level >= 1 && _level <= 8) {
+			LevelData &ld = _levelData[_level - 1];
+			if (state == 0)
+				ld.count++;
+			else if (ld.count > 0)
+				ld.count--;
+		}
 		saveWall(x, y, direction);
 		if (nx >= 0 && nx < 31 && ny >= 0 && ny < 31 && opposite >= 0)
 			saveWall(nx, ny, opposite);
@@ -445,6 +453,70 @@ int ColonyEngine::openAdjacentDoors(int x, int y) {
 		}
 	}
 	return opened;
+}
+
+int ColonyEngine::goToDestination(const uint8 *map, Locate *pobject) {
+	if (!map)
+		return 0;
+
+	const int targetMap = map[2];
+	const int targetX = map[3];
+	const int targetY = map[4];
+
+	if (targetMap == 0 && targetX == 0 && targetY == 0)
+		return 1;
+
+	if (targetMap == 127) {
+		if (pobject != &_me)
+			return 0;
+
+		if (_orbit || !(_armor || _fl)) {
+			terminateGame(false);
+			return 0;
+		}
+
+		if (_me.xindex >= 0 && _me.xindex < 32 &&
+		    _me.yindex >= 0 && _me.yindex < 32)
+			_robotArray[_me.xindex][_me.yindex] = 0;
+
+		_gameMode = kModeBattle;
+		_projon = false;
+		_pcount = 0;
+		_me.xloc = targetX << 8;
+		_me.yloc = targetY << 8;
+		_me.xindex = targetX;
+		_me.yindex = targetY;
+		return 2;
+	}
+
+	if (targetMap == 100) {
+		doText(78, 0);
+		return 0;
+	}
+
+	if (targetX > 0 && targetX < 31 && targetY > 0 && targetY < 31) {
+		if (targetMap == 0 && _robotArray[targetX][targetY] != 0)
+			return 0;
+
+		const int xmod = pobject->xloc - (pobject->xindex << 8);
+		const int ymod = pobject->yloc - (pobject->yindex << 8);
+		_robotArray[pobject->xindex][pobject->yindex] = 0;
+		pobject->xloc = (targetX << 8) + xmod;
+		pobject->xindex = targetX;
+		pobject->yloc = (targetY << 8) + ymod;
+		pobject->yindex = targetY;
+	}
+
+	if (targetMap > 0 && targetMap != _level) {
+		loadMap(targetMap);
+		_coreIndex = (targetMap == 1) ? 0 : 1;
+	}
+
+	if (pobject->xindex >= 0 && pobject->xindex < 32 &&
+	    pobject->yindex >= 0 && pobject->yindex < 32)
+		_robotArray[pobject->xindex][pobject->yindex] = kMeNum;
+
+	return 2;
 }
 
 // Returns: 0 = blocked, 1 = can pass through normally, 2 = teleported (position already set)
@@ -479,28 +551,38 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 			return 0; // player didn't open the door
 		}
 	case kWallFeatureAirlock:
-		if (map[1] == 0)
-			return 1; // already open  pass through
-		if (pobject != &_me)
-			return 0;
+		if (pobject != &_me) {
+			if (map[1] || map[2] || map[3] || map[4])
+				return 0;
+			return 1;
+		}
 		// DOS DoAirLock: play airlock animation
 		{
 			if (!loadAnimation("airlock"))
 				return 0;
 			_animationResult = 0;
-			_doorOpen = false;
+			_airlockX = fromX;
+			_airlockY = fromY;
+			_airlockDirection = direction;
+			_airlockTerminate = false;
+			_doorOpen = (map[1] == 0);
 			if (getPlatform() == Common::kPlatformMacintosh) {
-				setObjectState(3, 1); // original Mac DoAirLock: closed airlock frame
-				setObjectState(2, 2); // control sprite starts in locked/closed state
+				setObjectState(3, _doorOpen ? 5 : 1);
+				setObjectState(2, _doorOpen ? 1 : 2);
 			} else {
-				setObjectState(2, 1); // original DOS DoAirLock: closed door frame
-				setObjectState(1, 1); // control sprite starts in locked/closed state
+				setObjectState(2, _doorOpen ? 3 : 1);
+				setObjectState(1, _doorOpen ? 2 : 1);
 			}
 			playAnimation();
-			if (_animationResult) {
-				setDoorState(fromX, fromY, direction, 0);
-				return 1;
+			_airlockX = -1;
+			_airlockY = -1;
+			_airlockDirection = -1;
+			if (_airlockTerminate) {
+				terminateGame(true);
+				return 0;
 			}
+			if (_animationResult)
+				return goToDestination(map, pobject);
 			return 0;
 		}
 
@@ -510,52 +592,17 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 		if (pobject != &_me)
 			return 0; // robots don't use stairs/tunnels
 
-		// DOS GoTo(): mapdata[2]=level, [3]=xcell, [4]=ycell
-		// Must copy values BEFORE loadMap, which overwrites _mapData
-		const int targetMap = map[2];
-		const int targetX = map[3];
-		const int targetY = map[4];
-
-		if (targetMap == 0 && targetX == 0 && targetY == 0)
-			return 1; // no destination data  just pass through
-
-		// Special cases from DOS
-		if (targetMap == 100) {
-			doText(78, 0); // Dimension error
-			return 0;
-		}
-
 		// Play appropriate sound
 		if (map[0] == kWallFeatureDnStairs)
 			_sound->play(Sound::kClatter);
-
-		// Move player to target position (preserve sub-cell offset like DOS)
-		if (targetX > 0 && targetX < 31 && targetY > 0 && targetY < 31) {
-			const int xmod = pobject->xloc - (pobject->xindex << 8);
-			const int ymod = pobject->yloc - (pobject->yindex << 8);
-			_robotArray[pobject->xindex][pobject->yindex] = 0;
-			pobject->xloc = (targetX << 8) + xmod;
-			pobject->xindex = targetX;
-			pobject->yloc = (targetY << 8) + ymod;
-			pobject->yindex = targetY;
+		const int result = goToDestination(map, pobject);
+		if (result == 2) {
+			debugC(1, kColonyDebugMove, "Level change via %s: level=%d pos=(%d,%d)",
+			      map[0] == kWallFeatureUpStairs ? "upstairs" :
+			      map[0] == kWallFeatureDnStairs ? "downstairs" : "tunnel",
+			      _level, pobject->xindex, pobject->yindex);
 		}
-
-		// Load new map if target level specified
-		if (targetMap > 0 && targetMap != _level) {
-			loadMap(targetMap);
-			// DOS: coreindex depends on level
-			_coreIndex = (targetMap == 1) ? 0 : 1;
-		}
-
-		if (pobject->xindex >= 0 && pobject->xindex < 32 &&
-		    pobject->yindex >= 0 && pobject->yindex < 32)
-			_robotArray[pobject->xindex][pobject->yindex] = kMeNum;
-
-		debugC(1, kColonyDebugMove, "Level change via %s: level=%d pos=(%d,%d)",
-		      map[0] == kWallFeatureUpStairs ? "upstairs" :
-		      map[0] == kWallFeatureDnStairs ? "downstairs" : "tunnel",
-		      _level, pobject->xindex, pobject->yindex);
-		return 2; // teleported
+		return result;
 	}
 
 	case kWallFeatureElevator: {
