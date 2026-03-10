@@ -476,51 +476,53 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 
 	Common::ScopedPtr<Common::SeekableReadStream> stream(open(movie));
 	if (!stream) {
-		warning("can't load movie %s", movie.c_str());
+		warning("can't open movie %s", movie.c_str());
+		return;
+	}
+	if (!dec->loadStream(stream.release())) {
+		warning("loading movie stream %s failed", movie.c_str());
 		return;
 	}
 
 	_mixer->pauseAll(true);
+	_system->lockMouse(false);
+	dec->start();
+
+	bool playing = true;
 	Common::ScopedPtr<Graphics::Palette> palette;
-	if (dec->loadStream(stream.release())) {
-		dec->start();
-
-		bool playing = true;
-		while (!shouldQuit() && playing && !dec->endOfVideo()) {
-			Common::Event event;
-			while (g_system->getEventManager()->pollEvent(event)) {
-				switch (event.type) {
-				case Common::EVENT_KEYDOWN: {
-					if (event.kbd.ascii == ' ') {
-						playing = false;
-					}
-					break;
+	while (!shouldQuit() && playing && !dec->endOfVideo()) {
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN: {
+				if (event.kbd.ascii == ' ') {
+					playing = false;
 				}
-
-				default:
-					break;
-				}
-			}
-			if (dec->needsUpdate()) {
-				auto *s = dec->decodeNextFrame();
-				if (dec->hasDirtyPalette()) {
-					palette.reset(new Graphics::Palette(dec->getPalette(), 256));
-				}
-				if (s) {
-					if (!s->format.isCLUT8() || palette)
-						_screen->simpleBlitFrom(*s, Graphics::FLIP_NONE, false, 0xff, palette.get());
-				}
+				break;
 			}
 
-			// Delay for a bit. All events loops should have a delay
-			// to prevent the system being unduly loaded
-			_frameLimiter.delayBeforeSwap();
-			_screen->update();
-			_frameLimiter.startFrame();
+			default:
+				break;
+			}
 		}
-	} else {
-		warning("playMovie %s failed", movie.c_str());
+		if (dec->needsUpdate()) {
+			auto *s = dec->decodeNextFrame();
+			if (dec->hasDirtyPalette()) {
+				palette.reset(new Graphics::Palette(dec->getPalette(), 256));
+			}
+			if (s) {
+				if (!s->format.isCLUT8() || palette)
+					_screen->simpleBlitFrom(*s, Graphics::FLIP_NONE, false, 0xff, palette.get());
+			}
+		}
+
+		// Delay for a bit. All events loops should have a delay
+		// to prevent the system being unduly loaded
+		_frameLimiter.delayBeforeSwap();
+		_screen->update();
+		_frameLimiter.startFrame();
 	}
+	_system->lockMouse(_vr.isVR());
 	_mixer->pauseAll(false);
 }
 
