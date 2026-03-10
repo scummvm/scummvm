@@ -291,6 +291,8 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 				return 0;
 			_animationResult = 0;
 			_doorOpen = false;
+			if (getPlatform() == Common::kPlatformMacintosh)
+				setObjectState(3, 2); // original Mac DoDoor: closed handle state
 			setObjectState(2, 1); // door starts closed
 			playAnimation();
 			if (_animationResult) {
@@ -310,8 +312,13 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 				return 0;
 			_animationResult = 0;
 			_doorOpen = false;
-			setObjectState(2, 1); // airlock starts closed
-			setObjectState(1, 1);
+			if (getPlatform() == Common::kPlatformMacintosh) {
+				setObjectState(3, 1); // original Mac DoAirLock: closed airlock frame
+				setObjectState(2, 2); // control sprite starts in locked/closed state
+			} else {
+				setObjectState(2, 1); // original DOS DoAirLock: closed door frame
+				setObjectState(1, 1); // control sprite starts in locked/closed state
+			}
 			playAnimation();
 			if (_animationResult) {
 				setDoorState(fromX, fromY, direction, 0);
