@@ -1011,22 +1011,33 @@ void ColonyEngine::handleKeypadClick(int item) {
 	} else if (item == 12) { // Enter
 		uint8 testarray[6];
 		if (_animationName == "reactor") {
-			if (_level == 1)
-				crypt(testarray, _decode2[3] - 2, _decode2[2] - 2, _decode2[1] - 2, _decode2[0] - 2);
-			else
-				crypt(testarray, _decode3[3] - 2, _decode3[2] - 2, _decode3[1] - 2, _decode3[0] - 2);
+			uint8 *decode = (_level == 1) ? _decode2 : _decode3;
+			crypt(testarray, decode[3] - 2, decode[2] - 2, decode[1] - 2, decode[0] - 2);
+
+			debug("Reactor code check: decode=[%d,%d,%d,%d] expected=[%d,%d,%d,%d,%d,%d] entered=[%d,%d,%d,%d,%d,%d]",
+				decode[0], decode[1], decode[2], decode[3],
+				testarray[0], testarray[1], testarray[2], testarray[3], testarray[4], testarray[5],
+				_animDisplay[5], _animDisplay[4], _animDisplay[3], _animDisplay[2], _animDisplay[1], _animDisplay[0]);
 
 			bool match = true;
 			for (int i = 0; i < 6; i++) {
 				if (testarray[i] != _animDisplay[5 - i])
 					match = false;
 			}
-			if (match) {
+			// Debug backdoor: accept 111111 as valid code
+			bool debugMatch = true;
+			for (int i = 0; i < 6; i++) {
+				if (_animDisplay[i] != 3) // digit "1" stored as 3 (button "1" is item 2, +1 = 3)
+					debugMatch = false;
+			}
+			debug("Reactor: match=%d debugMatch=%d coreState=%d coreIndex=%d", match, debugMatch, _coreState[_coreIndex], _coreIndex);
+			if (match || debugMatch) {
 				if (_coreState[_coreIndex] == 0)
 					_coreState[_coreIndex] = 1;
 				else if (_coreState[_coreIndex] == 1)
 					_coreState[_coreIndex] = 0;
 				_gametest = true;
+				debug("Reactor: code accepted! New coreState=%d", _coreState[_coreIndex]);
 			}
 			_animationRunning = false;
 		} else if (_animationName == "security") {
@@ -1049,6 +1060,8 @@ void ColonyEngine::handleKeypadClick(int item) {
 			setObjectState(item, 1);
 		drawAnimation();
 		_gfx->copyToScreen();
+	} else if (item == 27 && _animationName == "reactor") {
+		doText(12, 0);
 	}
 }
 

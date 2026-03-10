@@ -127,8 +127,10 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	}
 	for (int i = 0; i < 6; i++)
 		_animDisplay[i] = 1;
-	for (int i = 0; i < 2; i++)
-		_coreState[i] = _coreHeight[i] = 0;
+	for (int i = 0; i < 2; i++) {
+		_coreState[i] = 0;
+		_coreHeight[i] = 256;
+	}
 	for (int i = 0; i < 3; i++)
 		_corePower[i] = 0;
 	_coreIndex = 0;
