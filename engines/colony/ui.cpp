@@ -420,6 +420,11 @@ void ColonyEngine::drawDashboardMac() {
 
 // Draws the mini floor map into _headsUpRect (shared by Mac and DOS paths)
 void ColonyEngine::drawMiniMap(uint32 lineColor) {
+	if (_gameMode != kModeColony)
+		return;
+	if (_me.xindex < 0 || _me.xindex >= 32 || _me.yindex < 0 || _me.yindex >= 32)
+		return;
+
 	const int kFWALLType = 48;
 	const Common::Rect miniMapClip(_headsUpRect.left + 1, _headsUpRect.top + 1, _headsUpRect.right - 1, _headsUpRect.bottom - 1);
 	auto drawMiniMapLine = [&](int x1, int y1, int x2, int y2, uint32 color) {

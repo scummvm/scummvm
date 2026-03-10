@@ -865,8 +865,8 @@ void ColonyEngine::battleDrawTanks() {
 
 void ColonyEngine::battleThink() {
 	if (_projon) {
-		const int fx = battleNormalizeCoord(_battleProj.xloc + (_cost[_battleProj.ang] << 2));
-		const int fy = battleNormalizeCoord(_battleProj.yloc + (_sint[_battleProj.ang] << 2));
+		const int fx = battleNormalizeCoord(_battleProj.xloc + (_cost[_battleProj.ang] * 4));
+		const int fy = battleNormalizeCoord(_battleProj.yloc + (_sint[_battleProj.ang] * 4));
 		if (0 == (_pcount--))
 			_projon = false;
 		battleProjCommand(fx, fy);
@@ -965,8 +965,8 @@ void ColonyEngine::battleThink() {
 		_sound->play(Sound::kShoot);
 		_battleProj.ang = _bfight[shooter].ang;
 		_battleProj.look = _bfight[shooter].look;
-		_battleProj.xloc = battleNormalizeCoord(_bfight[shooter].xloc + (_cost[_battleProj.ang] << 1));
-		_battleProj.yloc = battleNormalizeCoord(_bfight[shooter].yloc + (_sint[_battleProj.ang] << 1));
+		_battleProj.xloc = battleNormalizeCoord(_bfight[shooter].xloc + (_cost[_battleProj.ang] * 2));
+		_battleProj.yloc = battleNormalizeCoord(_bfight[shooter].yloc + (_sint[_battleProj.ang] * 2));
 		_pcount = 10;
 		_projon = true;
 	}
