@@ -371,6 +371,7 @@ public:
 	bool waitForInput();
 	void checkCenter();
 	void fallThroughHole();
+	void playTunnelEffect(bool falling);
 
 	void doText(int entry, int center);
 	void inform(const char *text, bool hold);
