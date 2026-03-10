@@ -70,6 +70,7 @@ Debugger::Debugger(ColonyEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("give", WRAP_METHOD(Debugger, cmdGive));
 	registerCmd("power", WRAP_METHOD(Debugger, cmdPower));
 	registerCmd("core", WRAP_METHOD(Debugger, cmdCore));
+	registerCmd("battle", WRAP_METHOD(Debugger, cmdBattle));
 }
 
 bool Debugger::cmdTeleport(int argc, const char **argv) {
@@ -305,6 +306,39 @@ bool Debugger::cmdCore(int argc, const char **argv) {
 		debugPrintf("Core state:  [0]=%d  [1]=%d\n", _vm->_coreState[0], _vm->_coreState[1]);
 		debugPrintf("Core height: [0]=%d  [1]=%d\n", _vm->_coreHeight[0], _vm->_coreHeight[1]);
 	}
+	return true;
+}
+
+bool Debugger::cmdBattle(int argc, const char **argv) {
+	// Initialize battle data if not already done
+	_vm->battleInit();
+	_vm->battleSet();
+
+	// Place player just outside the entrance (Enter is at 16000, 16000)
+	// Original BattleCommand entrance check: x in [Enter.xloc-2*BSIZE, Enter.xloc)
+	// Spawn facing the entrance (angle ~96 = east-ish toward entrance)
+	_vm->_me.xloc = 16000 - 500;
+	_vm->_me.yloc = 16000;
+	_vm->_me.ang = 96;
+	_vm->_me.look = 96;
+
+	// Ensure suit and weapons are set up for combat
+	_vm->_me.power[0] = 256; // weapons power
+	_vm->_me.power[1] = 256; // life power
+	_vm->_me.power[2] = 256; // armor power
+	_vm->_weapons = 3;
+	_vm->_armor = 3;
+	_vm->_hasKeycard = true;
+
+	// Switch to battle mode
+	_vm->_gameMode = kModeBattle;
+	_vm->_level = 0;
+
+	debugPrintf("Entered battle mode at (%d, %d) ang=%d\n",
+	            _vm->_me.xloc, _vm->_me.yloc, _vm->_me.ang);
+	debugPrintf("Suit: power=[%d,%d,%d] weapons=%d armor=%d\n",
+	            (int)_vm->_me.power[0], (int)_vm->_me.power[1],
+	            (int)_vm->_me.power[2], _vm->_weapons, _vm->_armor);
 	return true;
 }
 

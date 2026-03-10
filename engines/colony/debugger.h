@@ -42,6 +42,7 @@ private:
 	bool cmdGive(int argc, const char **argv);
 	bool cmdPower(int argc, const char **argv);
 	bool cmdCore(int argc, const char **argv);
+	bool cmdBattle(int argc, const char **argv);
 };
 
 }

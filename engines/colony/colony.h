@@ -57,6 +57,11 @@ enum ColonyAction {
 	kActionFire
 };
 
+enum GameMode {
+	kModeColony = 2,
+	kModeBattle = 1
+};
+
 enum WallFeatureType {
 	kWallFeatureNone = 0,
 	kWallFeatureDoor = 2,
@@ -436,6 +441,21 @@ private:
 	int _action0, _action1;
 	int _creature;
 
+	// Battle state (battle.c)
+	int _gameMode = kModeColony;
+	Locate _bfight[16];           // 16 battle enemies
+	Locate _battleEnter;          // entrance structure
+	Locate _battleShip;           // shuttle
+	Locate _battleProj;           // enemy projectile
+	bool _projon = false;         // projectile active
+	int _pcount = 0;              // projectile countdown
+	int _mountains[256];          // mountain height profile
+	int _battledx = 0;            // mountain parallax divisor (Width/59)
+	int _battleRound = 0;         // AI round-robin counter
+	Locate *_battlePwh[100];      // visible object pointers (for hit detection)
+	int _battleMaxP = 0;          // count of visible objects
+	Locate _pyramids[4][4][15];   // pyramid obstacles: 4x4 quadrants, 15 each
+
 	// PATCH.C: object relocation + wall state persistence
 	Common::Array<PatchEntry> _patches;
 	PassPatch _carryPatch[2];   // [0]=forklift, [1]=carried object
@@ -512,6 +532,15 @@ private:
 	void setPower(int p0, int p1, int p2);
 	void cShoot();
 	void destroyRobot(int num);
+
+	// battle.c: outdoor battle system (OpenGL 3D)
+	void battleInit();
+	void battleSet();
+	void renderBattle();
+	void draw3DBattlePrism(const PrismPartDef &def, int worldX, int worldY, uint8 ang, int zShift = 0);
+	void battleBackdrop();
+	void battleDrawPyramids();
+	void battleDrawTanks();
 
 	// PATCH.C: object relocation + wall state persistence
 	void createObject(int type, int xloc, int yloc, uint8 ang);
