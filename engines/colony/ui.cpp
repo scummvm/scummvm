@@ -329,7 +329,8 @@ void ColonyEngine::drawDashboardMac() {
 			}
 			return i;
 		};
-		const int ePower[3] = { qlog(_corePower[0]), qlog(_corePower[1]), qlog(_corePower[2]) };
+		// power.c DrawInfo(): epower[i] = qlog(Me.power[i]) — player suit power, NOT corepower.
+		const int ePower[3] = { qlog(_me.power[0]), qlog(_me.power[1]), qlog(_me.power[2]) };
 		const bool trouble = (ePower[1] < 6);
 		int wantPictID;
 		if (_armor > 0)

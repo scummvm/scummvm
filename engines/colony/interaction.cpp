@@ -21,6 +21,7 @@
 
 #include "colony/colony.h"
 #include "colony/gfx.h"
+#include "colony/sound.h"
 #include "common/system.h"
 #include "common/debug.h"
 
@@ -271,6 +272,181 @@ void ColonyEngine::interactWithObject(int objNum) {
 		break;
 	default:
 		break;
+	}
+}
+
+// shoot.c SetPower(): adjust player's 3 power levels and update display.
+// p0=weapons delta, p1=life delta, p2=armor delta.
+void ColonyEngine::setPower(int p0, int p1, int p2) {
+	_me.power[0] = MAX<int32>(_me.power[0] + p0, 0);
+	_me.power[1] = MAX<int32>(_me.power[1] + p1, 0);
+	_me.power[2] = MAX<int32>(_me.power[2] + p2, 0);
+
+	if (_me.power[1] <= 0) {
+		// TODO: player death (Terminate)
+		debugC(1, kColonyDebugUI, "Player died! power=[%d,%d,%d]",
+			(int)_me.power[0], (int)_me.power[1], (int)_me.power[2]);
+	}
+}
+
+// shoot.c CShoot(): player fires weapon at screen center.
+// Traces a ray in the facing direction to find the first robot hit.
+void ColonyEngine::cShoot() {
+	if (_me.power[0] <= 0 || _weapons <= 0)
+		return;
+
+	_sound->play(Sound::kBang);
+
+	// Drain weapons power: -(1 << level) per shot
+	setPower(-(1 << _level), 0, 0);
+
+	// Draw crosshair flash via XOR lines on the 3D viewport
+	int cx = _screenR.left + _screenR.width() / 2;
+	int cy = _screenR.top + _screenR.height() / 2;
+	_gfx->setXorMode(true);
+	for (int r = 4; r <= 20; r += 4) {
+		_gfx->drawLine(cx - r, cy - r, cx + r, cy - r, 0xFFFFFF);
+		_gfx->drawLine(cx + r, cy - r, cx + r, cy + r, 0xFFFFFF);
+		_gfx->drawLine(cx + r, cy + r, cx - r, cy + r, 0xFFFFFF);
+		_gfx->drawLine(cx - r, cy + r, cx - r, cy - r, 0xFFFFFF);
+	}
+	_gfx->copyToScreen();
+	_system->updateScreen();
+	_system->delayMillis(30);
+	// XOR again to erase
+	for (int r = 4; r <= 20; r += 4) {
+		_gfx->drawLine(cx - r, cy - r, cx + r, cy - r, 0xFFFFFF);
+		_gfx->drawLine(cx + r, cy - r, cx + r, cy + r, 0xFFFFFF);
+		_gfx->drawLine(cx + r, cy + r, cx - r, cy + r, 0xFFFFFF);
+		_gfx->drawLine(cx - r, cy + r, cx - r, cy - r, 0xFFFFFF);
+	}
+	_gfx->setXorMode(false);
+
+	// Hit detection: find the closest visible robot in the player's aim direction.
+	// For each visible robot, compute the angle from the player to the robot and
+	// compare with the player's look direction. Pick the nearest matching robot.
+	int bestIdx = -1;
+	int bestDist = INT_MAX;
+
+	for (uint i = 0; i < _objects.size(); i++) {
+		const Thing &obj = _objects[i];
+		if (!obj.alive)
+			continue;
+		int t = obj.type;
+		// Skip non-shootable types: only robots and boss types are valid targets
+		bool isRobot = (t >= kRobEye && t <= kRobUPyramid) ||
+			t == kRobQueen || t == kRobDrone || t == kRobSoldier;
+		if (!isRobot)
+			continue;
+
+		int ox = obj.where.xindex;
+		int oy = obj.where.yindex;
+		if (ox < 0 || ox >= 31 || oy < 0 || oy >= 31 || !_visibleCell[ox][oy])
+			continue;
+
+		// Compute angle from player to robot (256-unit circle matching look direction)
+		int dx = obj.where.xloc - _me.xloc;
+		int dy = obj.where.yloc - _me.yloc;
+		int dist = (int)sqrtf((float)(dx * dx + dy * dy));
+		if (dist < 64)
+			continue; // too close (same cell)
+
+		// atan2 → 256-unit angle
+		float rad = atan2f((float)dy, (float)dx);
+		int angleToRobot = (int)(rad * 128.0f / (float)M_PI) & 0xFF;
+		int angleDiff = (int8)((uint8)angleToRobot - _me.look);
+
+		// Angular tolerance scales with distance: closer = wider cone
+		int threshold = CLIP(3000 / MAX(dist, 1), 2, 16);
+		if (abs(angleDiff) > threshold)
+			continue;
+
+		if (dist < bestDist) {
+			bestDist = dist;
+			bestIdx = (int)i + 1; // 1-based robot index
+		}
+	}
+
+	if (bestIdx > 0) {
+		// Check that the shot isn't blocked by a large object closer than the target
+		const Thing &target = _objects[bestIdx - 1];
+		bool blocked = false;
+		for (uint i = 0; i < _objects.size(); i++) {
+			const Thing &obj = _objects[i];
+			if (!obj.alive || (int)i + 1 == bestIdx)
+				continue;
+			int t = obj.type;
+			// These objects block shots
+			if (t == kObjForkLift || t == kObjTeleport || t == kObjPToilet ||
+				t == kObjBox2 || t == kObjReactor || t == kObjScreen) {
+				int dx = obj.where.xloc - _me.xloc;
+				int dy = obj.where.yloc - _me.yloc;
+				int objDist = (int)sqrtf((float)(dx * dx + dy * dy));
+				if (objDist < bestDist) {
+					float rad = atan2f((float)dy, (float)dx);
+					int angleToObj = (int)(rad * 128.0f / (float)M_PI) & 0xFF;
+					int angleDiff = (int8)((uint8)angleToObj - _me.look);
+					int threshold = CLIP(3000 / MAX(objDist, 1), 2, 16);
+					if (abs(angleDiff) <= threshold) {
+						blocked = true;
+						break;
+					}
+				}
+			}
+		}
+
+		if (!blocked) {
+			debugC(1, kColonyDebugAnimation, "CShoot: hit robot %d (type=%d, dist=%d)",
+				bestIdx, target.type, bestDist);
+			destroyRobot(bestIdx);
+		}
+	}
+}
+
+// shoot.c DestroyRobot(): player damages a robot.
+// Damage = (epower[0] * weapons^2) << 1. Robot dies when power[1] <= 0.
+void ColonyEngine::destroyRobot(int num) {
+	if (num <= 0 || num > (int)_objects.size())
+		return;
+
+	Thing &obj = _objects[num - 1];
+	if (!obj.alive)
+		return;
+
+	auto qlog = [](int32 x) -> int {
+		int i = 0;
+		while (x > 0) { x >>= 1; i++; }
+		return i;
+	};
+
+	int epower0 = qlog(_me.power[0]);
+	int weapons2 = _weapons * _weapons;
+	int damage = (epower0 * weapons2) << 1;
+
+	// Face robot towards player
+	obj.where.look = obj.where.ang = (uint8)(_me.ang + 128);
+
+	obj.where.power[1] -= damage;
+	debugC(1, kColonyDebugAnimation, "DestroyRobot(%d): type=%d damage=%d remaining_hp=%d",
+		num, obj.type, damage, (int)obj.where.power[1]);
+
+	if (obj.where.power[1] <= 0) {
+		if (obj.count != 0) {
+			// Robot fully destroyed: remove and drop egg
+			obj.alive = 0;
+			int gx = obj.where.xindex;
+			int gy = obj.where.yindex;
+			if (gx >= 0 && gx < 32 && gy >= 0 && gy < 32)
+				_robotArray[gx][gy] = 0;
+			// TODO: explosion sound + visual, spawn egg (foodarray)
+			debugC(1, kColonyDebugAnimation, "Robot %d destroyed!", num);
+		} else {
+			// Robot regresses to egg form
+			obj.where.power[1] = 10 + ((_randomSource.getRandomNumber(15)) << _level);
+			obj.count = 0;
+			// TODO: set grow = -1, change to egg type
+			debugC(1, kColonyDebugAnimation, "Robot %d regressed to egg", num);
+		}
 	}
 }
 

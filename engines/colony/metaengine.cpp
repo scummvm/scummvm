@@ -154,6 +154,12 @@ Common::KeymapArray ColonyMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_BACK");
 	engineKeyMap->addAction(act);
 
+	act = new Common::Action("FIRE", _("Fire weapon"));
+	act->setCustomEngineActionEvent(kActionFire);
+	act->addDefaultInputMapping("f");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
 	return Common::Keymap::arrayOf(engineKeyMap);
 }
 
