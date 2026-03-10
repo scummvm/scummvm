@@ -334,7 +334,10 @@ struct ComplexSprite {
 	ComplexSprite() : visible(false), current(0), xloc(0), yloc(0), acurrent(0), axloc(0), ayloc(0), type(0), frozen(0), locked(0), link(0), key(0), lock(0), onoff(true) {}
 };
 
+class Debugger;
+
 class ColonyEngine : public Engine {
+	friend class Debugger;
 public:
 	ColonyEngine(OSystem *syst, const ADGameDescription *gd);
 	virtual ~ColonyEngine();

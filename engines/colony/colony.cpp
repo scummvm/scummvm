@@ -20,6 +20,7 @@
  */
 
 #include "colony/colony.h"
+#include "colony/debugger.h"
 #include "colony/gfx.h"
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -144,6 +145,8 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	DebugMan.addDebugChannel(kColonyDebugMap, "map", "Map loading and robots");
 	DebugMan.addDebugChannel(kColonyDebugSound, "sound", "Sound and music");
 	DebugMan.addDebugChannel(kColonyDebugUI, "ui", "UI, text, and menus");
+
+	setDebugger(new Debugger(this));
 
 	_sound = new Sound(this);
 	_resMan = new Common::MacResManager();

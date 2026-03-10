@@ -3,6 +3,7 @@ MODULE := engines/colony
 MODULE_OBJS := \
 	animation.o \
 	colony.o \
+	debugger.o \
 	gfx.o \
 	interaction.o \
 	intro.o \
