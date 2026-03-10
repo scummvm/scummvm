@@ -143,7 +143,7 @@ bool Debugger::cmdTeleport(int argc, const char **argv) {
 	_vm->_robotArray[targetX][targetY] = kMeNum;
 
 	debugPrintf("Teleported to level %d at (%d, %d)\n", _vm->_level, targetX, targetY);
-	return true;
+	return false;
 }
 
 bool Debugger::cmdPos(int argc, const char **argv) {
@@ -339,7 +339,7 @@ bool Debugger::cmdBattle(int argc, const char **argv) {
 	debugPrintf("Suit: power=[%d,%d,%d] weapons=%d armor=%d\n",
 	            (int)_vm->_me.power[0], (int)_vm->_me.power[1],
 	            (int)_vm->_me.power[2], _vm->_weapons, _vm->_armor);
-	return true;
+	return false;
 }
 
 } // End of namespace Colony
