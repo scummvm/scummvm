@@ -1662,10 +1662,6 @@ void PelrockEngine::checkMouseHover() {
 		return;
 	}
 
-	if (isActionUnder(_events->_mouseX, _events->_mouseY) != NO_ACTION) {
-		hotspotDetected = false;
-	}
-
 	// Calculate walk target first (before checking anything else)
 	Common::Point walkTarget = calculateWalkTarget(_room->_currentRoomWalkboxes, _events->_mouseX, _events->_mouseY, hotspotDetected, hotspotDetected ? &_room->_currentRoomHotspots[hotspotIndex] : nullptr);
 
