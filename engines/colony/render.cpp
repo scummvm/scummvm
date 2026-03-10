@@ -2651,6 +2651,29 @@ bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj) {
 		case 1: if (_coreHeight[_coreIndex] > 0) _coreHeight[_coreIndex] -= 16; break;
 		case 2: _coreHeight[_coreIndex] = 0; break;
 		}
+		int height = _coreHeight[_coreIndex];
+
+		// Create modified point arrays for height animation.
+		// Core bottom hex (pts 6-11) slides up with height.
+		// When height=256 (closed), bottom matches top → core invisible.
+		// When height=0 (open), bottom at Z=32 → full core visible.
+		int modCorePts[12][3];
+		memcpy(modCorePts, kReactorCorePts, sizeof(modCorePts));
+		for (int i = 6; i < 12; i++)
+			modCorePts[i][2] = height + 32;
+
+		// Ring slides vertically with height.
+		// When height=256, ring at Z=256..288 (encasing core top).
+		// When height=0, ring at Z=0..32 (at base, core exposed).
+		int modRingPts[8][3];
+		memcpy(modRingPts, kReactorBasePts, sizeof(modRingPts));
+		for (int i = 0; i < 4; i++)
+			modRingPts[i][2] = height;
+		for (int i = 4; i < 8; i++)
+			modRingPts[i][2] = height + 32;
+
+		PrismPartDef modCoreDef = {12, modCorePts, 7, kReactorCoreSurf};
+		PrismPartDef modRingDef = {8, modRingPts, 6, kReactorBaseSurf};
 
 		// Ring color: cycles through 4 colors each frame
 		// Mac: c_color0..c_color3; DOS: 1+count%5
@@ -2666,16 +2689,16 @@ bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj) {
 		else
 			coreColor = kColorCCore;
 
-		// Part 2: base platform (static)
+		// Part 2: top cap (static, Z=288..320)
 		_gfx->setDepthRange(0.004, 1.0);
 		draw3DPrism(obj, kReactorParts[2], false);
-		// Part 1: ring (animated color)
+		// Part 1: ring (animated height + color)
 		_gfx->setDepthRange(0.002, 1.0);
-		draw3DPrism(obj, kReactorParts[1], false, ringColor);
-		// Part 0: core (animated color, only if not state 2)
+		draw3DPrism(obj, modRingDef, false, ringColor);
+		// Part 0: core (animated height + color, hidden in state 2)
 		if (_coreState[_coreIndex] < 2) {
 			_gfx->setDepthRange(0.0, 1.0);
-			draw3DPrism(obj, kReactorParts[0], false, coreColor);
+			draw3DPrism(obj, modCoreDef, false, coreColor);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
