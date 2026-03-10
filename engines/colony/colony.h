@@ -53,7 +53,8 @@ enum ColonyAction {
 	kActionToggleWireframe,
 	kActionToggleFullscreen,
 	kActionSkipIntro,
-	kActionEscape
+	kActionEscape,
+	kActionFire
 };
 
 enum WallFeatureType {
@@ -506,6 +507,11 @@ private:
 
 	int occupiedObjectAt(int x, int y, const Locate *pobject);
 	void interactWithObject(int objNum);
+
+	// shoot.c: shooting and power management
+	void setPower(int p0, int p1, int p2);
+	void cShoot();
+	void destroyRobot(int num);
 
 	// PATCH.C: object relocation + wall state persistence
 	void createObject(int type, int xloc, int yloc, uint8 ang);

@@ -103,6 +103,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_powerRect = Common::Rect(0, 0, 0, 0);
 
 	// DOS gameInit(): Me.ang=Me.look=32; Me.xloc=4400; Me.yloc=4400.
+	// intro.c: Me.power[0..2]=POWER(256); armor=SUIT(0); weapons=SUIT(0).
 	memset(&_me, 0, sizeof(_me));
 	_me.xloc = 4400;
 	_me.yloc = 4400;
@@ -111,6 +112,9 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_me.look = 32;
 	_me.ang = 32;
 	_me.type = kMeNum;
+	_me.power[0] = 256; // weapons power
+	_me.power[1] = 256; // life power
+	_me.power[2] = 256; // armor power
 
 	// Animation system init
 	_backgroundMask = nullptr;
@@ -131,8 +135,10 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 		_coreState[i] = 0;
 		_coreHeight[i] = 256;
 	}
-	for (int i = 0; i < 3; i++)
-		_corePower[i] = 0;
+	// intro.c: corepower[0]=0; corepower[1]=2; corepower[2]=0;
+	_corePower[0] = 0;
+	_corePower[1] = 2;
+	_corePower[2] = 0;
 	_coreIndex = 0;
 	_hasMacColors = false;
 	memset(_macColors, 0, sizeof(_macColors));
@@ -519,6 +525,9 @@ Common::Error ColonyEngine::run() {
 						}
 					}
 					break;
+				case kActionFire:
+					cShoot();
+					break;
 				case kActionEscape:
 					_system->lockMouse(false);
 					openMainMenuDialog();
@@ -569,6 +578,9 @@ Common::Error ColonyEngine::run() {
 				default:
 					break;
 				}
+			} else if (event.type == Common::EVENT_LBUTTONDOWN && _mouseLocked) {
+				// Left click = fire when mouselook is active
+				cShoot();
 			} else if (event.type == Common::EVENT_MOUSEMOVE) {
 				mouseDX += event.relMouse.x;
 				mouseDY += event.relMouse.y;
