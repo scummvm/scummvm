@@ -844,393 +844,431 @@ void ColonyEngine::handleAnimationClick(int item) {
 	}
 
 	if (_animationName == "desk") {
-		if (item >= 2 && item <= 5) {
-			int idx = item - 2;
-			uint8 *decode = (_level == 1) ? _decode2 : _decode3;
-			if (decode[idx] == 0) {
-				decode[idx] = (uint8)(2 + (_randomSource.getRandomNumber(3)));
-				_lSprites[item - 1]->current = decode[idx] - 1;
+		handleDeskClick(item);
+	} else if (_animationName == "vanity") {
+		handleVanityClick(item);
+	} else if (_animationName == "slides") {
+		handleSlidesClick(item);
+	} else if (_animationName == "teleshow") {
+		handleTeleshowClick(item);
+	} else if (_animationName == "reactor" || _animationName == "security") {
+		handleKeypadClick(item);
+	} else if (_animationName == "suit") {
+		handleSuitClick(item);
+	} else if (_animationName == "door" || _animationName == "bulkhead") {
+		handleDoorClick(item);
+	} else if (_animationName == "airlock") {
+		handleAirlockClick(item);
+	} else if (_animationName == "elev") {
+		handleElevatorClick(item);
+	} else if (_animationName == "controls") {
+		handleControlsClick(item);
+	}
+}
+
+void ColonyEngine::handleDeskClick(int item) {
+	if (item >= 2 && item <= 5) {
+		int idx = item - 2;
+		uint8 *decode = (_level == 1) ? _decode2 : _decode3;
+		if (decode[idx] == 0) {
+			decode[idx] = (uint8)(2 + (_randomSource.getRandomNumber(3)));
+			_lSprites[item - 1]->current = decode[idx] - 1;
+			drawAnimation();
+			_gfx->copyToScreen();
+		}
+	} else if (item == 7) { // Letter
+		if (_lSprites[6]->current > 0)
+			doText(_action1, 0);
+	} else if (item == 9) { // Clipboard
+		doText(_action1, 0);
+	} else if (item == 17) { // Screen
+		doText(_action0, 0);
+	} else if (item == 22) { // Book
+		doText(_action1, 0);
+	} else if (item == 24) { // Cigarette
+		doText(55, 0);
+		terminateGame(false);
+	} else if (item == 25) { // Post-it
+		doText(_action1, 0);
+	}
+}
+
+void ColonyEngine::handleVanityClick(int item) {
+	debug(0, "Vanity item %d clicked. Sprite type=%d frozen=%d locked=%d current=%d onoff=%d key=%d lock=%d size=%d",
+		item,
+		(item > 0 && item <= (int)_lSprites.size()) ? _lSprites[item-1]->type : -1,
+		(item > 0 && item <= (int)_lSprites.size()) ? _lSprites[item-1]->frozen : -1,
+		(item > 0 && item <= (int)_lSprites.size()) ? _lSprites[item-1]->locked : -1,
+		(item > 0 && item <= (int)_lSprites.size()) ? _lSprites[item-1]->current : -1,
+		(item > 0 && item <= (int)_lSprites.size()) ? (int)_lSprites[item-1]->onoff : -1,
+		(item > 0 && item <= (int)_lSprites.size()) ? _lSprites[item-1]->key : -1,
+		(item > 0 && item <= (int)_lSprites.size()) ? _lSprites[item-1]->lock : -1,
+		(item > 0 && item <= (int)_lSprites.size()) ? (int)_lSprites[item-1]->objects.size() : -1);
+	if (item == 12) { // Coffee cup - spill animation
+		if (!_doorOpen) { // reuse _doorOpen as "spilled" flag
+			for (int i = 1; i < 6; i++) {
+				setObjectState(12, i);
 				drawAnimation();
 				_gfx->copyToScreen();
+				_system->delayMillis(50);
 			}
-		} else if (item == 7) { // Letter
-			if (_lSprites[6]->current > 0)
-				doText(_action1, 0);
-		} else if (item == 9) { // Clipboard
-			doText(_action1, 0);
-		} else if (item == 17) { // Screen
-			doText(_action0, 0);
-		} else if (item == 22) { // Book
-			doText(_action1, 0);
-		} else if (item == 24) { // Cigarette
-			doText(55, 0);
-			terminateGame(false);
-		} else if (item == 25) { // Post-it
-			doText(_action1, 0);
+			_doorOpen = true;
 		}
-	} else if (_animationName == "vanity") {
-		debug(0, "Vanity item %d clicked. Sprite type=%d frozen=%d locked=%d current=%d onoff=%d key=%d lock=%d size=%d",
-			item,
-			(item > 0 && item <= (int)_lSprites.size()) ? _lSprites[item-1]->type : -1,
-			(item > 0 && item <= (int)_lSprites.size()) ? _lSprites[item-1]->frozen : -1,
-			(item > 0 && item <= (int)_lSprites.size()) ? _lSprites[item-1]->locked : -1,
-			(item > 0 && item <= (int)_lSprites.size()) ? _lSprites[item-1]->current : -1,
-			(item > 0 && item <= (int)_lSprites.size()) ? (int)_lSprites[item-1]->onoff : -1,
-			(item > 0 && item <= (int)_lSprites.size()) ? _lSprites[item-1]->key : -1,
-			(item > 0 && item <= (int)_lSprites.size()) ? _lSprites[item-1]->lock : -1,
-			(item > 0 && item <= (int)_lSprites.size()) ? (int)_lSprites[item-1]->objects.size() : -1);
-		if (item == 12) { // Coffee cup - spill animation
-			if (!_doorOpen) { // reuse _doorOpen as "spilled" flag
-				for (int i = 1; i < 6; i++) {
-					setObjectState(12, i);
+	} else if (item == 13) { // Paper
+		doText(_action0, 0);
+	} else if (item == 14) { // Badge
+		doText(80, 0);
+	} else if (item == 4) { // Diary
+		doText(_action0, 0);
+	} else if (item == 7) { // Book
+		doText(_action0, 0);
+	} else {
+		debug(0, "Vanity: unhandled item %d", item);
+	}
+}
+
+void ColonyEngine::handleSlidesClick(int item) {
+	if (item == 2) { // Speaker
+		doText(261 + _creature, 0);
+	} else if (item == 5) { // Prev
+		_creature--;
+		if (_creature == 0)
+			_creature = 8;
+		setObjectState(1, _creature);
+	} else if (item == 6) { // Next
+		_creature++;
+		if (_creature == 9)
+			_creature = 1;
+		setObjectState(1, _creature);
+	}
+}
+
+void ColonyEngine::handleTeleshowClick(int item) {
+	if (item == 2) { // Speaker
+		doText(269 + _creature, 0);
+	} else if (item == 5) { // Prev
+		_creature--;
+		if (_creature == 0)
+			_creature = 7;
+		setObjectState(1, _creature);
+	} else if (item == 6) { // Next
+		_creature++;
+		if (_creature == 8)
+			_creature = 1;
+		setObjectState(1, _creature);
+	}
+}
+
+void ColonyEngine::handleKeypadClick(int item) {
+	if (item >= 1 && item <= 10) {
+		for (int i = 5; i >= 1; i--)
+			_animDisplay[i] = _animDisplay[i - 1];
+		_animDisplay[0] = (uint8)(item + 1);
+		refreshAnimationDisplay();
+		drawAnimation();
+		_gfx->copyToScreen();
+		// Don't return, let dolSprite animate the button
+	} else if (item == 11) { // Clear
+		for (int i = 0; i < 6; i++)
+			_animDisplay[i] = 1;
+		// Reset keypad buttons to unpressed state
+		for (int i = 1; i <= 10; i++)
+			setObjectState(i, 1);
+		refreshAnimationDisplay();
+		drawAnimation();
+		_gfx->copyToScreen();
+	} else if (item == 12) { // Enter
+		uint8 testarray[6];
+		if (_animationName == "reactor") {
+			if (_level == 1)
+				crypt(testarray, _decode2[3] - 2, _decode2[2] - 2, _decode2[1] - 2, _decode2[0] - 2);
+			else
+				crypt(testarray, _decode3[3] - 2, _decode3[2] - 2, _decode3[1] - 2, _decode3[0] - 2);
+
+			bool match = true;
+			for (int i = 0; i < 6; i++) {
+				if (testarray[i] != _animDisplay[5 - i])
+					match = false;
+			}
+			if (match) {
+				if (_coreState[_coreIndex] == 0)
+					_coreState[_coreIndex] = 1;
+				else if (_coreState[_coreIndex] == 1)
+					_coreState[_coreIndex] = 0;
+				_gametest = true;
+			}
+			_animationRunning = false;
+		} else if (_animationName == "security") {
+			crypt(testarray, _decode1[0] - 2, _decode1[1] - 2, _decode1[2] - 2, _decode1[3] - 2);
+			bool match = true;
+			for (int i = 0; i < 6; i++) {
+				if (testarray[i] != _animDisplay[5 - i])
+					match = false;
+			}
+			if (match) {
+				_unlocked = true;
+				_gametest = true;
+			}
+			_animationRunning = false;
+		}
+	}
+	if (item <= 12) {
+		// setObjectState(item, 1); // Reset to ensure animation runs Off -> On - handled by dolSprite
+		if (item > 10) // Clear/Enter should return to Off
+			setObjectState(item, 1);
+		drawAnimation();
+		_gfx->copyToScreen();
+	}
+}
+
+void ColonyEngine::handleSuitClick(int item) {
+	if (item == 1) { // Armor
+		if (_armor == 3) {
+			for (int i = 6; i >= 1; i--) {
+				setObjectState(1, i);
+				setObjectState(3, i / 2 + 1);
+				drawAnimation();
+				_gfx->copyToScreen();
+				_system->delayMillis(30);
+			}
+			_armor = 0;
+		} else {
+			setObjectState(1, (_armor * 2 + 1) + 1); // intermediate/pressed
+			drawAnimation();
+			_gfx->copyToScreen();
+			_system->delayMillis(50);
+			_armor++;
+		}
+		setObjectState(1, _armor * 2 + 1); // target state
+		setObjectState(3, _armor + 1); // display state
+		drawAnimation();
+		_gfx->copyToScreen();
+		if (_armor == 3 && _weapons == 3)
+			_corePower[_coreIndex] = 2;
+	} else if (item == 2) { // Weapons
+		if (_weapons == 3) {
+			for (int i = 6; i >= 1; i--) {
+				setObjectState(2, i);
+				setObjectState(4, i / 2 + 1);
+				drawAnimation();
+				_gfx->copyToScreen();
+				_system->delayMillis(30);
+			}
+			_weapons = 0;
+		} else {
+			setObjectState(2, (_weapons * 2 + 1) + 1); // intermediate/pressed
+			drawAnimation();
+			_gfx->copyToScreen();
+			_system->delayMillis(50);
+			_weapons++;
+		}
+		setObjectState(2, _weapons * 2 + 1);
+		setObjectState(4, _weapons + 1);
+		drawAnimation();
+		_gfx->copyToScreen();
+		if (_armor == 3 && _weapons == 3)
+			_corePower[_coreIndex] = 2;
+	}
+}
+
+void ColonyEngine::handleDoorClick(int item) {
+	// DOS DoDoor: item==3 toggles door open/close, item==1 or (item==101 && door open) exits
+	if (item == 3) {
+		_sound->play(Sound::kDoor);
+		if (_doorOpen) {
+			for (int i = 3; i >= 1; i--) {
+				_doorOpen = !_doorOpen;
+				setObjectState(2, i);
+				drawAnimation();
+				_gfx->copyToScreen();
+				_system->delayMillis(80);
+			}
+		} else {
+			for (int i = 1; i < 4; i++) {
+				_doorOpen = !_doorOpen;
+				setObjectState(2, i);
+				drawAnimation();
+				_gfx->copyToScreen();
+				_system->delayMillis(80);
+			}
+		}
+	}
+	if (item == 1 || (item == 101 && objectState(2) == 3)) {
+		_animationResult = 1;
+		_animationRunning = false;
+	}
+}
+
+void ColonyEngine::handleAirlockClick(int item) {
+	// DOS DoAirLock: item==1 toggles airlock if power on && unlocked
+	// item==2 or (item==101 && airlock open) exits with pass-through
+	if ((item == 2 || item == 101) && _doorOpen) {
+		_animationResult = 1;
+		_animationRunning = false;
+	} else if (item == 1 && _corePower[_coreIndex] && _unlocked) {
+		_sound->play(Sound::kAirlock);
+		if (_doorOpen) {
+			for (int i = 3; i >= 1; i--) {
+				setObjectState(2, i);
+				drawAnimation();
+				_gfx->copyToScreen();
+				_system->delayMillis(80);
+			}
+		} else {
+			for (int i = 1; i < 4; i++) {
+				setObjectState(2, i);
+				drawAnimation();
+				_gfx->copyToScreen();
+				_system->delayMillis(80);
+			}
+		}
+		_doorOpen = !_doorOpen;
+	} else if (item == 101 && !_doorOpen) {
+		// Exit without opening
+		_animationRunning = false;
+	}
+}
+
+void ColonyEngine::handleElevatorClick(int item) {
+	// DOS DoElevator: two phases
+	// _doorOpen=false: Phase 1 (outside) - item==5 toggles doors
+	// _doorOpen=true: Phase 2 (inside) - items 6-10 select floor
+	// _animationResult tracks: 0=outside, 1=doors open, 2=inside
+	if (_animationResult < 2) {
+		// Phase 1: outside the elevator
+		if (item == 5) {
+			_sound->play(Sound::kElevator);
+			if (!_doorOpen) {
+				for (int i = 1; i < 4; i++) {
+					setObjectState(3, i);
+					setObjectState(4, i);
 					drawAnimation();
 					_gfx->copyToScreen();
-					_system->delayMillis(50);
+					_system->delayMillis(80);
 				}
 				_doorOpen = true;
+			} else {
+				for (int i = 3; i >= 1; i--) {
+					setObjectState(4, i);
+					setObjectState(3, i);
+					drawAnimation();
+					_gfx->copyToScreen();
+					_system->delayMillis(80);
+				}
+				_doorOpen = false;
 			}
-		} else if (item == 13) { // Paper
-			doText(_action0, 0);
-		} else if (item == 14) { // Badge
-			doText(80, 0);
-		} else if (item == 4) { // Diary
-			doText(_action0, 0);
-		} else if (item == 7) { // Book
-			doText(_action0, 0);
-		} else {
-			debug(0, "Vanity: unhandled item %d", item);
-		}
-	} else if (_animationName == "slides") {
-		if (item == 2) { // Speaker
-			doText(261 + _creature, 0);
-		} else if (item == 5) { // Prev
-			_creature--;
-			if (_creature == 0)
-				_creature = 8;
-			setObjectState(1, _creature);
-		} else if (item == 6) { // Next
-			_creature++;
-			if (_creature == 9)
-				_creature = 1;
-			setObjectState(1, _creature);
-		}
-	} else if (_animationName == "teleshow") {
-		if (item == 2) { // Speaker
-			doText(269 + _creature, 0);
-		} else if (item == 5) { // Prev
-			_creature--;
-			if (_creature == 0)
-				_creature = 7;
-			setObjectState(1, _creature);
-		} else if (item == 6) { // Next
-			_creature++;
-			if (_creature == 8)
-				_creature = 1;
-			setObjectState(1, _creature);
-		}
-	} else if (_animationName == "reactor" || _animationName == "security" || _animationName == "suit") {
-		if (item >= 1 && item <= 10 && _animationName != "suit") {
-			for (int i = 5; i >= 1; i--)
-				_animDisplay[i] = _animDisplay[i - 1];
-			_animDisplay[0] = (uint8)(item + 1);
-			refreshAnimationDisplay();
+		} else if (item == 2 || (item == 101 && _doorOpen)) {
+			// Enter the elevator (transition to phase 2)
+			_animationResult = 2;
+			setObjectOnOff(6, true);
+			setObjectOnOff(7, true);
+			setObjectOnOff(8, true);
+			setObjectOnOff(9, true);
+			setObjectOnOff(10, true);
+			setObjectOnOff(2, false);
+			setObjectOnOff(5, false);
 			drawAnimation();
 			_gfx->copyToScreen();
-			// Don't return, let dolSprite animate the button
-		} else if (item == 11 && _animationName != "suit") { // Clear
-			for (int i = 0; i < 6; i++)
-				_animDisplay[i] = 1;
-			// Reset keypad buttons to unpressed state
-			for (int i = 1; i <= 10; i++)
-				setObjectState(i, 1);
-			refreshAnimationDisplay();
-			drawAnimation();
-			_gfx->copyToScreen();
-		} else if (item == 12 && _animationName != "suit") { // Enter
-			uint8 testarray[6];
-			if (_animationName == "reactor") {
-				if (_level == 1)
-					crypt(testarray, _decode2[3] - 2, _decode2[2] - 2, _decode2[1] - 2, _decode2[0] - 2);
-				else
-					crypt(testarray, _decode3[3] - 2, _decode3[2] - 2, _decode3[1] - 2, _decode3[0] - 2);
-
-				bool match = true;
-				for (int i = 0; i < 6; i++) {
-					if (testarray[i] != _animDisplay[5 - i])
-						match = false;
-				}
-				if (match) {
-					if (_coreState[_coreIndex] == 0)
-						_coreState[_coreIndex] = 1;
-					else if (_coreState[_coreIndex] == 1)
-						_coreState[_coreIndex] = 0;
-					_gametest = true;
-				}
-				_animationRunning = false;
-			} else if (_animationName == "security") { // security
-				crypt(testarray, _decode1[0] - 2, _decode1[1] - 2, _decode1[2] - 2, _decode1[3] - 2);
-				bool match = true;
-				for (int i = 0; i < 6; i++) {
-					if (testarray[i] != _animDisplay[5 - i])
-						match = false;
-				}
-				if (match) {
-					_unlocked = true;
-					_gametest = true;
-				}
-				_animationRunning = false;
-			}
-		} else if (_animationName == "suit") {
-			if (item == 1) { // Armor
-				if (_armor == 3) {
-					for (int i = 6; i >= 1; i--) {
-						setObjectState(1, i);
-						setObjectState(3, i / 2 + 1);
-						drawAnimation();
-						_gfx->copyToScreen();
-						_system->delayMillis(30);
-					}
-					_armor = 0;
-				} else {
-					setObjectState(1, (_armor * 2 + 1) + 1); // intermediate/pressed
-					drawAnimation();
-					_gfx->copyToScreen();
-					_system->delayMillis(50);
-					_armor++;
-				}
-				setObjectState(1, _armor * 2 + 1); // target state
-				setObjectState(3, _armor + 1); // display state
-				drawAnimation();
-				_gfx->copyToScreen();
-				if (_armor == 3 && _weapons == 3)
-					_corePower[_coreIndex] = 2;
-			} else if (item == 2) { // Weapons
-				if (_weapons == 3) {
-					for (int i = 6; i >= 1; i--) {
-						setObjectState(2, i);
-						setObjectState(4, i / 2 + 1);
-						drawAnimation();
-						_gfx->copyToScreen();
-						_system->delayMillis(30);
-					}
-					_weapons = 0;
-				} else {
-					setObjectState(2, (_weapons * 2 + 1) + 1); // intermediate/pressed
-					drawAnimation();
-					_gfx->copyToScreen();
-					_system->delayMillis(50);
-					_weapons++;
-				}
-				setObjectState(2, _weapons * 2 + 1);
-				setObjectState(4, _weapons + 1);
-				drawAnimation();
-				_gfx->copyToScreen();
-				if (_armor == 3 && _weapons == 3)
-					_corePower[_coreIndex] = 2;
-			}
-		}
-		if (_animationName == "reactor" || _animationName == "security") {
-			if (item <= 12) {
-				// setObjectState(item, 1); // Reset to ensure animation runs Off -> On - handled by dolSprite
-				if (item > 10) // Clear/Enter should return to Off
-					setObjectState(item, 1);
-				drawAnimation();
-				_gfx->copyToScreen();
-			}
-		}
-	} else if (_animationName == "door" || _animationName == "bulkhead") {
-		// DOS DoDoor: item==3 toggles door open/close, item==1 or (item==101 && door open) exits
-		if (item == 3) {
-			_sound->play(Sound::kDoor);
-			if (_doorOpen) {
-				for (int i = 3; i >= 1; i--) {
-					_doorOpen = !_doorOpen;
-					setObjectState(2, i);
-					drawAnimation();
-					_gfx->copyToScreen();
-					_system->delayMillis(80);
-				}
-			} else {
-				for (int i = 1; i < 4; i++) {
-					_doorOpen = !_doorOpen;
-					setObjectState(2, i);
-					drawAnimation();
-					_gfx->copyToScreen();
-					_system->delayMillis(80);
-				}
-			}
-		}
-		if (item == 1 || (item == 101 && objectState(2) == 3)) {
-			_animationResult = 1;
-			_animationRunning = false;
-		}
-	} else if (_animationName == "airlock") {
-		// DOS DoAirLock: item==1 toggles airlock if power on && unlocked
-		// item==2 or (item==101 && airlock open) exits with pass-through
-		if ((item == 2 || item == 101) && _doorOpen) {
-			_animationResult = 1;
-			_animationRunning = false;
-		} else if (item == 1 && _corePower[_coreIndex] && _unlocked) {
-			_sound->play(Sound::kAirlock);
-			if (_doorOpen) {
-				for (int i = 3; i >= 1; i--) {
-					setObjectState(2, i);
-					drawAnimation();
-					_gfx->copyToScreen();
-					_system->delayMillis(80);
-				}
-			} else {
-				for (int i = 1; i < 4; i++) {
-					setObjectState(2, i);
-					drawAnimation();
-					_gfx->copyToScreen();
-					_system->delayMillis(80);
-				}
-			}
-			_doorOpen = !_doorOpen;
 		} else if (item == 101 && !_doorOpen) {
-			// Exit without opening
+			// Exit without entering
+			_animationResult = 0;
 			_animationRunning = false;
 		}
-	} else if (_animationName == "elev") {
-		// DOS DoElevator: two phases
-		// _doorOpen=false: Phase 1 (outside) - item==5 toggles doors
-		// _doorOpen=true: Phase 2 (inside) - items 6-10 select floor
-		// _animationResult tracks: 0=outside, 1=doors open, 2=inside
-		if (_animationResult < 2) {
-			// Phase 1: outside the elevator
-			if (item == 5) {
+	} else {
+		// Phase 2: inside  floor selection
+		if (item >= 6 && item <= 10) {
+			int fl = item - 5;
+			if (fl == _elevatorFloor) {
+				setObjectState(item, 1); // already on this floor
+			} else {
 				_sound->play(Sound::kElevator);
-				if (!_doorOpen) {
-					for (int i = 1; i < 4; i++) {
-						setObjectState(3, i);
-						setObjectState(4, i);
-						drawAnimation();
-						_gfx->copyToScreen();
-						_system->delayMillis(80);
-					}
-					_doorOpen = true;
-				} else {
-					for (int i = 3; i >= 1; i--) {
-						setObjectState(4, i);
-						setObjectState(3, i);
-						drawAnimation();
-						_gfx->copyToScreen();
-						_system->delayMillis(80);
-					}
-					_doorOpen = false;
+				for (int i = 3; i >= 1; i--) {
+					setObjectState(4, i);
+					setObjectState(3, i);
+					drawAnimation();
+					_gfx->copyToScreen();
+					_system->delayMillis(80);
 				}
-			} else if (item == 2 || (item == 101 && _doorOpen)) {
-				// Enter the elevator (transition to phase 2)
-				_animationResult = 2;
-				setObjectOnOff(6, true);
-				setObjectOnOff(7, true);
-				setObjectOnOff(8, true);
-				setObjectOnOff(9, true);
-				setObjectOnOff(10, true);
-				setObjectOnOff(2, false);
-				setObjectOnOff(5, false);
+				_elevatorFloor = fl;
+				for (int i = 1; i <= 3; i++) {
+					setObjectState(4, i);
+					setObjectState(3, i);
+					drawAnimation();
+					_gfx->copyToScreen();
+					_system->delayMillis(80);
+				}
+				setObjectState(item, 1);
+			}
+		} else if (item == 1 || item == 101) {
+			// Exit elevator
+			_animationRunning = false;
+		}
+	}
+}
+
+void ColonyEngine::handleControlsClick(int item) {
+	switch (item) {
+	case 4: // Accelerator
+		if (_corePower[_coreIndex] >= 2 && _coreState[_coreIndex] == 0 && !_orbit) {
+			_orbit = 1;
+			debug(0, "Taking off!");
+			// Animate the lever moving full range
+			for (int i = 1; i <= 6; i++) {
+				setObjectState(4, i);
 				drawAnimation();
 				_gfx->copyToScreen();
-			} else if (item == 101 && !_doorOpen) {
-				// Exit without entering
-				_animationResult = 0;
-				_animationRunning = false;
+				_system->delayMillis(30);
 			}
+			_animationRunning = false;
+			return; // Exit animation immediately on success
 		} else {
-			// Phase 2: inside  floor selection
-			if (item >= 6 && item <= 10) {
-				int fl = item - 5;
-				if (fl == _elevatorFloor) {
-					setObjectState(item, 1); // already on this floor
-				} else {
-					_sound->play(Sound::kElevator);
-					for (int i = 3; i >= 1; i--) {
-						setObjectState(4, i);
-						setObjectState(3, i);
-						drawAnimation();
-						_gfx->copyToScreen();
-						_system->delayMillis(80);
-					}
-					_elevatorFloor = fl;
-					for (int i = 1; i <= 3; i++) {
-						setObjectState(4, i);
-						setObjectState(3, i);
-						drawAnimation();
-						_gfx->copyToScreen();
-						_system->delayMillis(80);
-					}
-					setObjectState(item, 1);
-				}
-			} else if (item == 1 || item == 101) {
-				// Exit elevator
-				_animationRunning = false;
+			debug(0, "Accelerator failed: power=%d, state=%d", _corePower[_coreIndex], _coreState[_coreIndex]);
+			// Fail animation click
+			setObjectState(4, 1);
+			// dolSprite(3); // Animate lever moving and returning - handled by top dolSprite
+			for (int i = 6; i > 0; i--) {
+				setObjectState(4, i);
+				drawAnimation();
+				_gfx->copyToScreen();
+				_system->delayMillis(20);
 			}
 		}
-	} else if (_animationName == "controls") {
-		switch (item) {
-		case 4: // Accelerator
-			if (_corePower[_coreIndex] >= 2 && _coreState[_coreIndex] == 0 && !_orbit) {
-				_orbit = 1;
-				debug(0, "Taking off!");
-				// Animate the lever moving full range
-				for (int i = 1; i <= 6; i++) {
-					setObjectState(4, i);
-					drawAnimation();
-					_gfx->copyToScreen();
-					_system->delayMillis(30);
-				}
-				_animationRunning = false;
-				return; // Exit animation immediately on success
-			} else {
-				debug(0, "Accelerator failed: power=%d, state=%d", _corePower[_coreIndex], _coreState[_coreIndex]);
-				// Fail animation click
-				setObjectState(4, 1);
-				// dolSprite(3); // Animate lever moving and returning - handled by top dolSprite
-				for (int i = 6; i > 0; i--) {
-					setObjectState(4, i);
-					drawAnimation();
-					_gfx->copyToScreen();
-					_system->delayMillis(20);
-				}
-			}
-			break;
-		case 5: // Emergency power
-			// setObjectState(5, 1); // Reset to ensure animation runs Off -> On - handled by dolSprite
-			// dolSprite(4); // Animate the button press - handled by top dolSprite
-			if (_coreState[_coreIndex] < 2) {
-				if (_corePower[_coreIndex] == 0)
-					_corePower[_coreIndex] = 1;
-				else if (_corePower[_coreIndex] == 1)
-					_corePower[_coreIndex] = 0;
-			}
-			// Finalize visual state according to power settings
-			switch (_corePower[_coreIndex]) {
-			case 0: setObjectState(2, 1); setObjectState(5, 1); break;
-			case 1: setObjectState(2, 1); setObjectState(5, 2); break;
-			case 2: setObjectState(2, 2); setObjectState(5, 1); break;
-			}
-			drawAnimation();
-			_gfx->copyToScreen();
-			break;
-		case 7: // Damage report
-		{
-			// dolSprite(6); // Button animation - handled by top dolSprite
-			if (_corePower[_coreIndex] < 2) {
-				doText(15, 0); // Critical status
-			} else if (!_orbit) {
-				doText(49, 0); // Ready for liftoff
-			} else {
-				doText(66, 0); // Orbital stabilization
-			}
+		break;
+	case 5: // Emergency power
+		// setObjectState(5, 1); // Reset to ensure animation runs Off -> On - handled by dolSprite
+		// dolSprite(4); // Animate the button press - handled by top dolSprite
+		if (_coreState[_coreIndex] < 2) {
+			if (_corePower[_coreIndex] == 0)
+				_corePower[_coreIndex] = 1;
+			else if (_corePower[_coreIndex] == 1)
+				_corePower[_coreIndex] = 0;
+		}
+		// Finalize visual state according to power settings
+		switch (_corePower[_coreIndex]) {
+		case 0: setObjectState(2, 1); setObjectState(5, 1); break;
+		case 1: setObjectState(2, 1); setObjectState(5, 2); break;
+		case 2: setObjectState(2, 2); setObjectState(5, 1); break;
+		}
+		drawAnimation();
+		_gfx->copyToScreen();
+		break;
+	case 7: // Damage report
+	{
+		// dolSprite(6); // Button animation - handled by top dolSprite
+		if (_corePower[_coreIndex] < 2) {
+			doText(15, 0); // Critical status
+		} else if (!_orbit) {
+			doText(49, 0); // Ready for liftoff
+		} else {
+			doText(66, 0); // Orbital stabilization
+		}
 
-			setObjectState(7, 1); // Reset button
-			drawAnimation();
-			_gfx->copyToScreen();
-			break;
-		}
-			break;
-		}
+		setObjectState(7, 1); // Reset button
+		drawAnimation();
+		_gfx->copyToScreen();
+		break;
+	}
+		break;
 	}
 }
 
