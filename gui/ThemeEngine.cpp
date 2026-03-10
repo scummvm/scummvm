@@ -340,7 +340,7 @@ bool ThemeEngine::init() {
 	if (!_themeArchive && !_themeFile.empty()) {
 		Common::FSNode node(_themeFile);
 		if (node.isDirectory()) {
-			_themeArchive = new Common::FSDirectory(node);
+			_themeArchive = createUnpackedThemeArchive(node);
 		} else if (_themeFile.baseName().matchString("*.zip", true)) {
 			// TODO: Also use "node" directly?
 			// Look for the zip file via SearchMan
@@ -879,6 +879,9 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeId) {
 		warning("Corrupted 'THEMERC' file in theme '%s'", themeId.c_str());
 		return false;
 	}
+
+	if (!themeId.contains(".zip") && !themeId.contains(".ZIP"))
+		_themeName += " -unpacked";
 
 	Common::ArchiveMemberList members;
 	if (0 == _themeArchive->listMatchingMembers(members, "*.stx")) {
@@ -1904,6 +1907,14 @@ bool ThemeEngine::themeConfigUsable(const Common::ArchiveMember &member, Common:
 		}
 
 		delete zipArchive;
+	} else {
+		Common::FSNode dirNode(Common::Path(member.getName()));
+		if (dirNode.isDirectory()) {
+			Common::FSNode themeRcNode = dirNode.getChild("THEMERC");
+			if (themeRcNode.exists() && !themeRcNode.isDirectory()) {
+				stream.open(themeRcNode);
+			}
+		}
 	}
 
 	if (stream.isOpen()) {
@@ -1972,6 +1983,8 @@ void ThemeEngine::listUsableThemes(Common::List<ThemeDescriptor> &list) {
 
 	if (ConfMan.hasKey("themepath"))
 		listUsableThemes(Common::FSNode(ConfMan.getPath("themepath")), list);
+	else
+		listUsableThemes(Common::FSNode(Common::Path("gui/themes")), list);
 
 	listUsableThemes(SearchMan, list);
 
@@ -2018,6 +2031,51 @@ void ThemeEngine::listUsableThemes(Common::Archive &archive, Common::List<ThemeD
 	fileList.clear();
 }
 
+Common::Archive *ThemeEngine::createUnpackedThemeArchive(const Common::FSNode &themeDir) {
+	// Check if the directory has the THEMERC file
+	Common::FSNode themercNode = themeDir.getChild("THEMERC");
+	if (!themercNode.exists() || themercNode.isDirectory())
+		return 0;
+
+	Common::File themercFile;
+	if (!themercFile.open(themercNode))
+		return 0;
+
+	Common::SearchSet *archive = new Common::SearchSet();
+	archive->addDirectory(themeDir.getName(), themeDir, 0);
+
+	Common::String line;
+	int prio = 1;
+
+	// Parse the THEMERC file and extract the other directories
+	while (!themercFile.eos() && !themercFile.err()) {
+		line = themercFile.readLine();
+		line.trim();
+
+		if (line.hasPrefix("%using ")) {
+			Common::String themePath = line.substr(7);
+			themePath.trim();
+
+			Common::FSNode dir;
+			if (themePath.hasPrefix("../")) {
+				Common::String childPath = themePath.substr(3);
+				dir = themeDir.getParent().getChild(childPath);
+			} else {
+				dir = themeDir.getChild(themePath);
+			}
+
+			if (dir.exists() && dir.isDirectory()) {
+				archive->addDirectory(dir.getName(), dir, prio++);
+			} else {
+				debug("ThemeEngine: Parsed path from THEMERC doesn't exist");
+			}
+
+		}
+	}
+
+	return archive;
+}
+
 void ThemeEngine::listUsableThemes(const Common::FSNode &node, Common::List<ThemeDescriptor> &list, int depth) {
 	if (!node.exists() || !node.isReadable() || !node.isDirectory())
 		return;
@@ -2038,22 +2096,37 @@ void ThemeEngine::listUsableThemes(const Common::FSNode &node, Common::List<Them
 
 	Common::FSList fileList;
 	// Check all files. We need this to find all themes inside ZIP archives.
-	if (!node.getChildren(fileList, Common::FSNode::kListFilesOnly))
+	if (!node.getChildren(fileList, Common::FSNode::kListAll))
 		return;
 
 	for (auto &file : fileList) {
-		// We will only process zip files for now
-		if (!file.getPath().baseName().matchString("*.zip", true))
-			continue;
-
 		td.name.clear();
+		bool isUnpackedTheme = false;
+		if (!file.getPath().baseName().matchString("*.zip", true)) {
+
+			// 2. If it's NOT a zip, check if it's a directory with a THEMERC file
+			if (file.isDirectory()) {
+				Common::FSNode themercNode = file.getChild("THEMERC");
+				if (themercNode.exists() && !themercNode.isDirectory()) {
+					isUnpackedTheme = true;
+				} else {
+					continue; // Not a zip, and no THEMERC found. Skip.
+				}
+			} else {
+				continue; // Not a zip, and not a directory. Skip.
+			}
+		}
+
 		if (themeConfigUsable(file, td.name)) {
 			td.filename = file.getPath();
 			td.id = file.getName();
 
 			// If the name of the node object also contains
 			// the ".zip" suffix, we will strip it.
-			if (td.id.matchString("*.zip", true)) {
+			if (isUnpackedTheme) {
+				td.id += " -unpacked";
+				td.name += " -unpacked";
+			} else if (td.id.matchString("*.zip", true)) {
 				for (int j = 0; j < 4; ++j)
 					td.id.deleteLastChar();
 			}
@@ -2128,7 +2201,11 @@ Common::String ThemeEngine::getThemeId(const Common::Path &filename) {
 
 			return id;
 		} else {
-			return node.getName();
+			// unpacked theme we need to update the name with -unpacked
+			Common::String id = node.getName();
+			id.chop(1);
+			id += " -unpacked";
+			return id;
 		}
 	}
 
