@@ -128,6 +128,8 @@ bool InsaneRebel1::runLevel1() {
 		_damageCooldown = 0;
 		_deathTimer = 0;
 		_screenFlash = 0;
+		_screenShakeEnabled = false;
+		_deathCauseIndicator = 0;
 		_frameCounter = 0;
 		_gameCounter = 0;
 		_activeGameOpcode = 0;
@@ -189,6 +191,7 @@ bool InsaneRebel1::runLevel1() {
 
 				if (_killCount > 4) {
 					playCinematic("LVL1/L1END.ANM");
+					_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)1);
 					return !_vm->shouldQuit();
 				}
 
@@ -240,6 +243,8 @@ bool InsaneRebel1::runLevel2() {
 		_damageCooldown = 0;
 		_deathTimer = 0;
 		_screenFlash = 0;
+		_screenShakeEnabled = false;
+		_deathCauseIndicator = 0;
 		_frameCounter = 0;
 		_gameCounter = 0;
 		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
@@ -259,6 +264,7 @@ bool InsaneRebel1::runLevel2() {
 
 		if (_health >= 0) {
 			playCinematic("LVL2/L2END.ANM");
+			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)2);
 			return !_vm->shouldQuit();
 		}
 
@@ -298,6 +304,8 @@ bool InsaneRebel1::runLevel3() {
 		_damageCooldown = 0;
 		_deathTimer = 0;
 		_screenFlash = 0;
+		_screenShakeEnabled = false;
+		_deathCauseIndicator = 0;
 		_frameCounter = 0;
 		_gameCounter = 0;
 		_activeGameOpcode = 0;
@@ -319,6 +327,7 @@ bool InsaneRebel1::runLevel3() {
 
 		if (_health >= 0) {
 			playCinematic("LVL3/L3END.ANM");
+			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)3);
 			return !_vm->shouldQuit();
 		}
 
@@ -358,6 +367,8 @@ bool InsaneRebel1::runLevel4() {
 		_damageCooldown = 0;
 		_deathTimer = 0;
 		_screenFlash = 0;
+		_screenShakeEnabled = false;
+		_deathCauseIndicator = 0;
 		_frameCounter = 0;
 		_gameCounter = 0;
 		_activeGameOpcode = 0;
@@ -398,6 +409,7 @@ bool InsaneRebel1::runLevel4() {
 		if (_health >= 0) {
 			// L4END1 = torpedo hit, L4END2 = torpedo missed
 			playCinematic((_killCount != 0) ? "LVL4/L4END1.ANM" : "LVL4/L4END2.ANM");
+			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)4);
 			return !_vm->shouldQuit();
 		}
 
@@ -437,6 +449,8 @@ bool InsaneRebel1::runLevel5() {
 		_damageCooldown = 0;
 		_deathTimer = 0;
 		_screenFlash = 0;
+		_screenShakeEnabled = false;
+		_deathCauseIndicator = 0;
 		_frameCounter = 0;
 		_gameCounter = 0;
 		_activeGameOpcode = 0;
@@ -497,6 +511,7 @@ bool InsaneRebel1::runLevel5() {
 
 		if (_health >= 0) {
 			playCinematic("LVL5/L5END.ANM");
+			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)5);
 			return !_vm->shouldQuit();
 		}
 
@@ -535,6 +550,8 @@ bool InsaneRebel1::runLevel6() {
 		_damageCooldown = 0;
 		_deathTimer = 0;
 		_screenFlash = 0;
+		_screenShakeEnabled = false;
+		_deathCauseIndicator = 0;
 		_frameCounter = 0;
 		_gameCounter = 0;
 		_activeGameOpcode = 0;
@@ -556,6 +573,7 @@ bool InsaneRebel1::runLevel6() {
 
 		if (_health >= 0) {
 			playCinematic("LVL6/L6END.ANM");
+			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)6);
 			return !_vm->shouldQuit();
 		}
 
@@ -603,6 +621,8 @@ bool InsaneRebel1::runLevel7() {
 		_damageCooldown = 0;
 		_deathTimer = 0;
 		_screenFlash = 0;
+		_screenShakeEnabled = false;
+		_deathCauseIndicator = 0;
 		_frameCounter = 0;
 		_gameCounter = 0;
 		_activeGameOpcode = 0;
@@ -652,6 +672,7 @@ bool InsaneRebel1::runLevel7() {
 
 		if (_health >= 0) {
 			playCinematic("LVL7/L7END.ANM");
+			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)7);
 			return !_vm->shouldQuit();
 		}
 
@@ -696,6 +717,8 @@ bool InsaneRebel1::runLevel8() {
 		_damageCooldown = 0;
 		_deathTimer = 0;
 		_screenFlash = 0;
+		_screenShakeEnabled = false;
+		_deathCauseIndicator = 0;
 		_frameCounter = 0;
 		_gameCounter = 0;
 		_activeGameOpcode = 0;
@@ -728,6 +751,11 @@ bool InsaneRebel1::runLevel8() {
 		_walkerTimer = 0;
 		_walkerBranchChoice = 0;
 
+		// g_level8HitboxBuffer (0x7698) = _frameObjectState[150..299] filled with 0xFF.
+		// This enables all frame object event masks in the secondary half of the array,
+		// which the IACT 0x5A handler uses to gate walker-related frame objects.
+		memset(_frameObjectState + 150, 0xFF, 150);
+
 		int route = 0;
 		while (!_vm->shouldQuit()) {
 			_levelRouteIndex = route;
@@ -750,6 +778,7 @@ bool InsaneRebel1::runLevel8() {
 
 		if (_health >= 0) {
 			playCinematic("LVL8/L8END.ANM");
+			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)8);
 			return !_vm->shouldQuit();
 		}
 
@@ -792,6 +821,8 @@ bool InsaneRebel1::runLevel9() {
 		_damageCooldown = 0;
 		_deathTimer = 0;
 		_screenFlash = 0;
+		_screenShakeEnabled = false;
+		_deathCauseIndicator = 0;
 		_frameCounter = 0;
 		_gameCounter = 0;
 		_activeGameOpcode = 0;
@@ -939,6 +970,7 @@ bool InsaneRebel1::runLevel9() {
 				break;
 
 			playCinematic("LVL9/L9END.ANM");
+			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)9);
 			return !_vm->shouldQuit();
 		}
 
@@ -977,6 +1009,8 @@ bool InsaneRebel1::runLevel10() {
 		_damageCooldown = 0;
 		_deathTimer = 0;
 		_screenFlash = 0;
+		_screenShakeEnabled = false;
+		_deathCauseIndicator = 0;
 		_frameCounter = 0;
 		_gameCounter = 0;
 		_activeGameOpcode = 0;
@@ -1010,6 +1044,7 @@ bool InsaneRebel1::runLevel10() {
 
 		if (_health >= 0) {
 			playCinematic("LVL10/L10END.ANM");
+			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)10);
 			return !_vm->shouldQuit();
 		}
 
@@ -1051,6 +1086,8 @@ bool InsaneRebel1::runLevel11() {
 		_damageCooldown = 0;
 		_deathTimer = 0;
 		_screenFlash = 0;
+		_screenShakeEnabled = false;
+		_deathCauseIndicator = 0;
 		_frameCounter = 0;
 		_gameCounter = 0;
 		_activeGameOpcode = 0;
@@ -1100,6 +1137,7 @@ bool InsaneRebel1::runLevel11() {
 
 		if (_health >= 0) {
 			playCinematic("LVL11/L11END.ANM");
+			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)11);
 			return !_vm->shouldQuit();
 		}
 
@@ -1141,6 +1179,8 @@ bool InsaneRebel1::runLevel12() {
 		_damageCooldown = 0;
 		_deathTimer = 0;
 		_screenFlash = 0;
+		_screenShakeEnabled = false;
+		_deathCauseIndicator = 0;
 		_frameCounter = 0;
 		_gameCounter = 0;
 		_activeGameOpcode = 0;
@@ -1174,6 +1214,7 @@ bool InsaneRebel1::runLevel12() {
 
 		if (_health >= 0) {
 			playCinematic("LVL12/L12END.ANM");
+			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)12);
 			return !_vm->shouldQuit();
 		}
 
@@ -1215,6 +1256,8 @@ bool InsaneRebel1::runLevel13() {
 		_damageCooldown = 0;
 		_deathTimer = 0;
 		_screenFlash = 0;
+		_screenShakeEnabled = false;
+		_deathCauseIndicator = 0;
 		_frameCounter = 0;
 		_gameCounter = 0;
 		_activeGameOpcode = 0;
@@ -1248,6 +1291,7 @@ bool InsaneRebel1::runLevel13() {
 
 		if (_health >= 0) {
 			playCinematic("LVL13/L13END.ANM");
+			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)13);
 			return !_vm->shouldQuit();
 		}
 
@@ -1289,6 +1333,8 @@ bool InsaneRebel1::runLevel14() {
 		_damageCooldown = 0;
 		_deathTimer = 0;
 		_screenFlash = 0;
+		_screenShakeEnabled = false;
+		_deathCauseIndicator = 0;
 		_frameCounter = 0;
 		_gameCounter = 0;
 		_activeGameOpcode = 0;
@@ -1336,6 +1382,7 @@ bool InsaneRebel1::runLevel14() {
 
 		if (_health >= 0) {
 			playCinematic("LVL14/L14END.ANM");
+			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)14);
 			return !_vm->shouldQuit();
 		}
 
@@ -1378,6 +1425,8 @@ bool InsaneRebel1::runLevel15() {
 		_damageCooldown = 0;
 		_deathTimer = 0;
 		_screenFlash = 0;
+		_screenShakeEnabled = false;
+		_deathCauseIndicator = 0;
 		_frameCounter = 0;
 		_gameCounter = 0;
 		_activeGameOpcode = 0;
@@ -1435,6 +1484,7 @@ bool InsaneRebel1::runLevel15() {
 
 		if (_health >= 0) {
 			playCinematic("LVL15/L15END1.ANM");
+			_maxChapterUnlocked = MAX(_maxChapterUnlocked, (int16)15);
 			return !_vm->shouldQuit();
 		}
 

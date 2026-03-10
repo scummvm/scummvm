@@ -267,6 +267,11 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_deathTimer = 0;
 	_screenFlash = 0;
 	_frameCounter = 0;
+	_screenShakeEnabled = false;
+	_deathCauseIndicator = 0;
+	_hudRenderFlag = 0;
+	_hudDirtyFlag = 0;
+	_maxChapterUnlocked = 0;
 	_interactiveVideoActive = false;
 	_gameCounter = 0;
 		_pathBranchEnabled = false;
