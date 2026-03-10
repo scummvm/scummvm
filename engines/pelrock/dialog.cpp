@@ -128,17 +128,14 @@ void DialogManager::displayChoices(Common::Array<ChoiceOption> *choices, Graphic
 
 		if (bbox.contains(_events->_mouseX, _events->_mouseY)) {
 			choiceColor = 15;
-		} else if (leftArrowBox.contains(_events->_mouseX, _events->_mouseY)) {
+		} else if (leftArrowBox.contains(_events->_mouseX, _events->_mouseY)) { // scroll left
 			if (choice.charOffset > 0) {
 				choice.charOffset--;
 				choices->remove_at(i);
 				choices->insert_at(i, choice);
 			}
 			lArrowColor = 15;
-		} else if (rightArrowBox.contains(_events->_mouseX, _events->_mouseY)) {
-			if (i == 0) {
-				debug("First choice charOffset %d, text length %d", choice.charOffset, choice.text.size());
-			}
+		} else if (rightArrowBox.contains(_events->_mouseX, _events->_mouseY)) { // scroll right
 			if (choice.charOffset + 76 < choice.text.size()) {
 				choice.charOffset = choice.charOffset + 1;
 				choices->remove_at(i);
@@ -158,6 +155,11 @@ void DialogManager::displayChoices(Common::Array<ChoiceOption> *choices, Graphic
 	}
 }
 
+/**
+ * In order to display multi-line text whilst still centered we create a surface with
+ * the maxWidth + height then print the text onto that surface with the appropriate alignment,
+ * then blit that surface to the screen.
+ */
 Graphics::Surface DialogManager::getDialogueSurface(Common::Array<Common::String> dialogueLines, byte speakerId, Graphics::TextAlign alignment) {
 
 	int maxWidth = 0;
@@ -196,7 +198,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		}
 		// Offset X position for Alfred to avoid overlapping with his sprite
 		xBasePos = g_engine->_alfredState.x;
-		// Original game: uses the scaled character height (varies with perspective),
+		// Original game: uses the scaled character height
 		// not the fixed kAlfredFrameHeight. _alfredState.h is updated by drawAlfred().
 		yBasePos = g_engine->_alfredState.y - g_engine->_alfredState.h; // Above scaled sprite top
 	} else {
@@ -210,10 +212,22 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 	displayDialogue(dialogueLines, speakerId, xBasePos, yBasePos); // Default position
 }
 
+uint32 calcPageTtlMs(Common::Array<Common::String> dialogueLine) {
+    uint32 charCount = 0;
+    for (uint i = 0; i < dialogueLine.size(); i++) {
+        charCount += dialogueLine[i].size();
+    }
+    return charCount * kTickMs;
+}
+
 /**
- * Display dialogue text and wait for click to advance
- * @param text The text to display
- * @param speakerId The speaker ID which is used as color
+ * Display dialogue text and wait for click or TTL to advance.
+ *
+ * TTL ->  Each page auto-advances after (char_count * kTickMs) milliseconds.
+ * Where char_count = total visible characters on the page.
+ *
+ * Skip -> All dialogs are click-skippable unless _disableClickToAdvance flag is enabled; those
+ * dialogs still auto-advance via TTL.
  */
 void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>> dialogueLines, byte speakerId, int xBasePos, int yBasePos) {
 	if (dialogueLines.empty()) {
@@ -226,7 +240,11 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 	int curPage = 0;
 	bool fromIntro = g_engine->_state->getFlag(FLAG_FROM_INTRO) == true;
 	debug("Displaying dialog, from intro = %d", fromIntro);
-	// Render loop - display text and wait for click
+
+	uint32 pageTtlMs = calcPageTtlMs(dialogueLines[curPage]);
+	uint32 pageStartMs = g_system->getMillis();
+
+	// Render loop - display text and wait for click or TTL
 	while (!g_engine->shouldQuit()) {
 		_events->pollEvent();
 
@@ -262,17 +280,24 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		_screen->markAllDirty();
 		_screen->update();
 
-		if (_events->_leftMouseClicked) {
+		// Check if TTL expired for this page (always applies, even for _disableClickToAdvance)
+		bool ttlExpired = !fromIntro && (pageTtlMs > 0) && (g_system->getMillis() - pageStartMs >= pageTtlMs);
+
+		// Click-to-advance (disabled for special intro sequences)
+		bool clickAdvance = _events->_leftMouseClicked && !_disableClickToAdvance;
+		if (_events->_leftMouseClicked)
 			_events->_leftMouseClicked = false;
-			if (!_disableClickToAdvance) {
-				// debug("Dialogue click to advance, current page: %d, totalPages: %d", curPage, (int)dialogueLines.size());
+
+		if (clickAdvance || ttlExpired) {
 				if (curPage < (int)dialogueLines.size() - 1) {
 					curPage++;
+				pageStartMs = g_system->getMillis();
+				pageTtlMs = calcPageTtlMs(dialogueLines[curPage]);
 				} else {
 					_dismissDialog = true;
 				}
 			}
-		}
+
 		if (_dismissDialog) {
 			_dismissDialog = false;
 			break; // Exit dialogue if dismissed programmatically
