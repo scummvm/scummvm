@@ -41,6 +41,7 @@ void Toolbox::BeginUpdate(WindowRecord &theWindow) {
 
 void Toolbox::ClosePoly() {
 	warning("STUB: Toolbox::ClosePoly");
+	ShowPen();
 }
 
 void Toolbox::ClipRect(Common::Rect &r) {
@@ -316,6 +317,12 @@ void Toolbox::HideCursor() {
 	g_engine->_wm.replaceCursor(Graphics::MacGUIConstants::kMacCursorOff);
 }
 
+void Toolbox::HidePen() {
+	if (_port) {
+		_port->pnVis--;
+	}
+}
+
 void Toolbox::InitCursor() {
 	_cursorLevel = 0;
 	g_engine->_wm.replaceCursor(Graphics::MacGUIConstants::kMacCursorArrow);
@@ -411,8 +418,10 @@ void Toolbox::MoveTo(int16 h, int16 v) {
 }
 
 PolyHandle Toolbox::OpenPoly() {
+	HidePen();
 	warning("STUB: Toolbox::OpenPoly");
-	return 0;
+	PolyHandle handle(new Polygon());
+	return handle;
 }
 
 void Toolbox::OpenPort(GrafPtr port) {
@@ -523,6 +532,11 @@ void Toolbox::ShowCursor() {
 	}
 }
 
+void Toolbox::ShowPen() {
+	if (_port) {
+		_port->pnVis++;
+	}
+}
 
 
 } // namespace Fool

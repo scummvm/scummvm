@@ -44,12 +44,18 @@ struct Region {
 	Common::Rect rgnBBox;
 };
 
+struct Polygon {
+	uint16 polySize;
+	Common::Rect polyBBox;
+	Common::Array<Common::Point> polyPoints;
+};
+
 typedef Common::SharedPtr<Common::Array<byte>> Handle;
 typedef Common::SharedPtr<Region> RgnHandle;
 typedef Common::SharedPtr<Image::PICTDecoder> PicHandle;
 // BitMap is the monochrome surface format.
 typedef Common::SharedPtr<Graphics::ManagedSurface> BitMap;
-typedef Handle PolyHandle;
+typedef Common::SharedPtr<Polygon> PolyHandle;
 typedef uint32 ResType;
 typedef size_t Size;
 
@@ -688,6 +694,15 @@ public:
 	// subsequent call to ShowCursor.
 	void HideCursor();
 
+	// PROCEDURE HidePen;
+	// HidePen decrements the current grafPort's pnVis field, which is initialized to 0 by OpenPort;
+	// whenever pnVis is negative, the pen doesn't draw on the screen. PnVis keeps track of the
+	// number of times the pen has been hidden to compensate for nested calls to HidePen and ShowPen
+	// (below). Every call to HidePen should be balanced by a subsequent call to ShowPen. HidePen
+	// is called by OpenRgn, OpenPicture, and OpenPoly so that you can define regions, pictures, and
+	// polygons without drawing on the screen.
+	void HidePen();
+
 	// PROCEDURE InitCursor;
 	// InitCursor sets the current cursor to the standard arrow and sets the cursor level to 0, making
 	// the cursor visible. The cursor level keeps track of the number of times the cursor has been
@@ -860,6 +875,12 @@ public:
 	// ShowCursor have no effect.
 	void ShowCursor();
 
+	// PROCEDURE ShowPen;
+	// ShowPen increments the current grafPort's pnVis field, which may have been decremented by
+	// HidePen; if pnVis becomes 0, QuickDraw resumes drawing on the screen. Extra calls to
+	// ShowPen will increment pnVis beyond 0, so every call to ShowPen should be balanced by a call
+	// to HidePen. ShowPen is called by CloseRgn, ClosePicture, and ClosePoly.
+	void ShowPen();
 
 	// toolbox_text.cpp
 
