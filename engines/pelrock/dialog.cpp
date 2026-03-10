@@ -140,7 +140,6 @@ void DialogManager::displayChoices(Common::Array<ChoiceOption> *choices, Graphic
 				choice.charOffset = choice.charOffset + 1;
 				choices->remove_at(i);
 				choices->insert_at(i, choice);
-				debug("Right arrow clicked, new charOffset %d, text length %d", choice.charOffset, choice.text.size());
 			}
 			rArrowColor = 15;
 		}
@@ -289,21 +288,21 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 			_events->_leftMouseClicked = false;
 
 		if (clickAdvance || ttlExpired) {
-				if (curPage < (int)dialogueLines.size() - 1) {
-					curPage++;
+			if (curPage < (int)dialogueLines.size() - 1) {
+				curPage++;
 				pageStartMs = g_system->getMillis();
 				pageTtlMs = calcPageTtlMs(dialogueLines[curPage]);
-				} else {
-					_dismissDialog = true;
-				}
+			} else {
+				_dismissDialog = true;
 			}
+		}
 
 		if (_dismissDialog) {
 			_dismissDialog = false;
 			break; // Exit dialogue if dismissed programmatically
 		}
 
-		if(fromIntro && g_engine->_res->_isSpecialAnimFinished) {
+		if (fromIntro && g_engine->_res->_isSpecialAnimFinished) {
 			debug("Dismissing due to speciawl anim ending!");
 			break;
 		}

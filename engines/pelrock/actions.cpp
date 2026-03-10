@@ -1965,10 +1965,10 @@ void PelrockEngine::teleportToPrincess() {
 		_sound->playSound(_room->_roomSfx[3], 0);
 
 		// Draw 19 semi-transparent remapped lines
-		copyBackgroundToBuffer();
-		placeStickersFirstPass();
+		_graphics->copyBackgroundToBuffer();
+		_graphics->placeStickersFirstPass();
 		updateAnimations();
-		presentFrame();
+		_graphics->presentFrame();
 		_screen->update();
 
 		for (int i = 0; i < 19; i++) {
@@ -1982,7 +1982,7 @@ void PelrockEngine::teleportToPrincess() {
 		}
 
 		updateAnimations();
-		presentFrame();
+		_graphics->presentFrame();
 		_screen->update();
 
 		_events->pollEvent();
@@ -1991,10 +1991,10 @@ void PelrockEngine::teleportToPrincess() {
 
 		// Restore clean frame with sticker (lines gone)
 		_room->addSticker(stickers[phase]);
-		copyBackgroundToBuffer();
-		placeStickersFirstPass();
+		_graphics->copyBackgroundToBuffer();
+		_graphics->placeStickersFirstPass();
 		updateAnimations();
-		presentFrame();
+		_graphics->presentFrame();
 		_screen->update();
 		phase++;
 	}
@@ -2011,10 +2011,10 @@ void PelrockEngine::teleportToPrincess() {
 	}
 
 	_room->addSticker(115);
-	copyBackgroundToBuffer();
-	placeStickersFirstPass();
+	_graphics->copyBackgroundToBuffer();
+	_graphics->placeStickersFirstPass();
 	updateAnimations();
-	presentFrame();
+	_graphics->presentFrame();
 	_screen->update();
 
 	_dialog->say(_res->_ingameTexts[MAREDEDEU]);

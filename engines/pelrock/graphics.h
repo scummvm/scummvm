@@ -29,6 +29,8 @@
 #include "graphics/managed_surface.h"
 #include "graphics/screen.h"
 
+#include "pelrock/types.h"
+
 namespace Pelrock {
 
 class GraphicsManager {
@@ -36,16 +38,60 @@ public:
 	GraphicsManager();
 	~GraphicsManager();
 
+	// Overlay / palette utilities
 	Common::Point showOverlay(int height, Graphics::ManagedSurface &buf);
 	byte *grabBackgroundSlice(Graphics::ManagedSurface &buf, int x, int y, int w, int h);
 	void putBackgroundSlice(Graphics::ManagedSurface &buf, int x, int y, int w, int h, byte *slice);
 	void fadeToBlack(int stepSize);
 	void fadePaletteToTarget(byte *targetPalette, int stepSize);
 	void clearScreen();
+
+	// Text rendering
 	void drawColoredText(Graphics::ManagedSurface *screen, const Common::String &text, int x, int y, int w, byte &defaultColor, Graphics::Font *font);
 	void drawColoredText(Graphics::ManagedSurface &buf, const Common::String &text, int x, int y, int w, byte &defaultColor, Graphics::Font *font);
 	void drawColoredTexts(Graphics::ManagedSurface *surface, const Common::StringArray &text, int x, int y, int w, int yPadding, Graphics::Font *font);
 	void drawColoredTexts(Graphics::ManagedSurface &buf, const Common::StringArray &text, int x, int y, int w, int yPadding, Graphics::Font *font);
+
+	// Frame / background management
+	void copyBackgroundToBuffer();
+	void presentFrame();
+
+	// Sticker rendering
+	void placeStickersFirstPass();
+	void placeStickersSecondPass();
+	void placeSticker(Sticker sticker);
+
+	// Palette animations
+	void updatePaletteAnimations();
+	void animateFadePalette(PaletteAnim *anim);
+	void animateRotatePalette(PaletteAnim *anim);
+
+	/** Water reflection: mirrors buf pixels at (x,y) for water-palette pixels. */
+	void reflectionEffect(byte *buf, int x, int y, int width, int height);
+
+
+	// scaling
+	/**
+	 * Initializes _widthScalingTable / _heightScalingTable.
+	 * Must be called once during engine init, before any drawAlfred().
+	 */
+	void calculateScalingMasks();
+
+	/**
+	 * Returns the scaled width/height and scale parameters for Alfred at yPos.
+	 */
+	ScaleCalculation calculateScaling(int yPos, ScalingParams scalingParams);
+
+	/**
+	 * Scales a source frame (kAlfredFrameWidth × kAlfredFrameHeight) to
+	 * (finalWidth × finalHeight) using the pre-computed scaling tables.
+	 * Caller owns the returned buffer.
+	 */
+	byte *scale(int scaleY, int finalWidth, int finalHeight, byte *buf);
+
+	// Scaling look-up tables initialized by calculateScalingMasks().
+	Common::Array<Common::Array<int>> _widthScalingTable;
+	Common::Array<Common::Array<int>> _heightScalingTable;
 };
 
 } // End of namespace Pelrock

@@ -87,18 +87,9 @@ private:
 	int getScrollPositionForItem(int item);
 
 	void checkMouse();
-	void copyBackgroundToBuffer();
 	void updateAnimations();
-	void presentFrame();
-	void updatePaletteAnimations();
-	void paintDebugLayer();
-	void placeStickersFirstPass();
-	void placeStickersSecondPass();
-	void placeSticker(Sticker sticker);
 	void renderOverlay(int overlayMode);
 
-	void animateFadePalette(PaletteAnim *anim);
-	void animateRotatePalette(PaletteAnim *anim);
 	void doAction(VerbIcon action, HotSpot *hotspot);
 	void talkTo(HotSpot *hotspot);
 	void lookAt(HotSpot *hotspot);
@@ -127,20 +118,11 @@ private:
 	void checkMouseHover();
 	void checkMouseClick(int x, int y);
 	void checkLongMouseClick(int x, int y);
-
-	void calculateScalingMasks();
-	ScaleCalculation calculateScaling(int yPos, ScalingParams scalingParams);
-	byte *scale(int scaleY, int finalWidth, int finalHeight, byte *buf);
-
-	Common::Array<Common::Array<int>> _widthScalingTable;
-	Common::Array<Common::Array<int>> _heightScalingTable;
+	void paintDebugLayer();
 
 	// walking
 	int _currentStep = 0;
 	PathContext _currentContext = {nullptr, nullptr, 0, 0, 0};
-
-	Graphics::ManagedSurface _currentBackground; // Clean background - NEVER modified
-	Graphics::ManagedSurface _bgScreen;
 
 	ActionPopupState _actionPopupState;
 	InventoryOverlayState _inventoryOverlayState;
@@ -153,7 +135,6 @@ private:
 	QueuedAction _queuedAction = {NO_ACTION, -1, false, false};
 
 	bool showShadows = false;
-
 	bool shouldPlayIntro = false;
 	bool gameInitialized = false;
 	bool screenReady = false;
@@ -190,6 +171,8 @@ public:
 	AlfredState _alfredState;
 	ShakeEffectState _shakeEffectState;
 	Graphics::ManagedSurface _compositeBuffer; // Working composition buffer
+	Graphics::ManagedSurface _currentBackground; // Clean background - NEVER modified
+	Graphics::ManagedSurface _bgScreen;
 
 	GameStateData *_state = new GameStateData();
 
@@ -260,7 +243,6 @@ public:
 	void handleFlightRoomFrame();
 
 	void passerByAnim(uint32 frameCount);
-	void reflectionEffect(byte *buf, int x, int y, int width, int height);
 	void changeCursor(Cursor cursor);
 
 	void travelToEgypt();

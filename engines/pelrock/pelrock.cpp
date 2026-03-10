@@ -153,7 +153,7 @@ void PelrockEngine::init() {
 	_sound->loadSoundIndex();
 	_menu->loadMenu();
 
-	calculateScalingMasks();
+	_graphics->calculateScalingMasks();
 	_compositeBuffer.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 	_currentBackground.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 
@@ -330,21 +330,21 @@ bool PelrockEngine::renderScene(int overlayMode) {
 
 		playSoundIfNeeded();
 
-		copyBackgroundToBuffer();
+		_graphics->copyBackgroundToBuffer();
 
-		placeStickersFirstPass();
+		_graphics->placeStickersFirstPass();
 
 		updateAnimations();
 
-		placeStickersSecondPass();
+		_graphics->placeStickersSecondPass();
 
 		renderOverlay(overlayMode);
 
 		mouseHoverForMap();
 
-		presentFrame();
+		_graphics->presentFrame();
 
-		updatePaletteAnimations();
+		_graphics->updatePaletteAnimations();
 
 		// Execute deferred actions AFTER renderScene, so any scene changes
 		// (addSticker, disableSprite, etc.) are in place before the next frame's
@@ -515,54 +515,6 @@ void PelrockEngine::passerByAnim(uint32 frameCount) {
 	}
 }
 
-void PelrockEngine::reflectionEffect(byte *buf, int x, int y, int width, int height) {
-
-	// ScaleCalculation scaleCalc = calculateScaling(y + 50, _room->_scaleParams);
-
-	// // Update Alfred's scale state for use by other functions
-	// _alfredState.scaledX = scaleCalc.scaleX;
-	// _alfredState.scaledY = scaleCalc.scaleY;
-
-	// // Use the pre-calculated scaled dimensions from calculateScaling
-	// int finalHeight = scaleCalc.scaledHeight;
-	// int finalWidth = scaleCalc.scaledWidth;
-
-	// if (finalHeight <= 0) {
-	// 	finalHeight = 1;
-	// }
-	// if (finalWidth <= 0) {
-	// 	finalWidth = 1;
-	// }
-
-	// byte *finalBuf = scale(scaleCalc.scaleY, finalWidth, finalHeight, buf);
-	// height = finalHeight;
-	// width = finalWidth;
-
-	// Water reflection - draws mirrored sprite on water pixels
-	// Only sprite pixels 0-15 are reflected (checked via pixel & 0xF0 == 0)
-	for (int row = 0; row < height; row++) {
-		int reflectY = y + row;
-
-		if (reflectY >= 400)
-			break; // Screen boundary
-
-		for (int col = 0; col < width; col++) {
-			// byte pixel = finalBuf[(height - 1 - row) * width + col]; // Read from bottom up for mirror
-			byte pixel = buf[(height - 1 - row) * width + col]; // Read from bottom up for mirror
-			// Only reflect pixels 0-15 (high nibble must be 0)
-			if (pixel != 255 && (pixel & 0xF0) == 0) {
-				int px = x + col;
-				if (px >= 0 && px < 640) {
-					byte bgPixel = (byte)_compositeBuffer.getPixel(px, reflectY);
-					if (bgPixel >= 223 && bgPixel < 228) { // Is water (0xDF-0xE3)
-						_compositeBuffer.setPixel(px, reflectY, _room->_paletteRemaps[4][pixel]);
-					}
-				}
-			}
-		}
-	}
-}
-
 void PelrockEngine::executeAction(VerbIcon action, HotSpot *hotspot) {
 	debug("Executing action %d on hotspot %d", action, hotspot->extra);
 	if (action == ITEM) {
@@ -658,11 +610,6 @@ void PelrockEngine::checkMouse() {
 	}
 }
 
-void PelrockEngine::copyBackgroundToBuffer() {
-	// copy background to buffer
-	_compositeBuffer.blitFrom(_currentBackground);
-}
-
 // Calculate Alfred's z-order based on Y position
 // At Y=399 (bottom of screen): z = 10 (foreground)
 // At Y=0 (top of screen): z = 209 (background)
@@ -704,113 +651,6 @@ void PelrockEngine::updateAnimations() {
 	}
 }
 
-void PelrockEngine::presentFrame() {
-	_screen->blitFrom(_compositeBuffer);
-	// paintDebugLayer();
-	_screen->markAllDirty();
-}
-
-void PelrockEngine::updatePaletteAnimations() {
-	if (_room->_currentPaletteAnim != nullptr) {
-		if (_room->_currentPaletteAnim->paletteMode == 1) {
-			animateFadePalette(_room->_currentPaletteAnim);
-		} else {
-			animateRotatePalette(_room->_currentPaletteAnim);
-		}
-	}
-}
-
-void PelrockEngine::paintDebugLayer() {
-	bool showWalkboxes = true;
-
-	if (showWalkboxes) {
-		for (uint i = 0; i < _room->_currentRoomWalkboxes.size(); i++) {
-			WalkBox box = _room->_currentRoomWalkboxes[i];
-			drawRect(_screen, box.x, box.y, box.w, box.h, 13);
-		}
-	}
-
-	bool showSprites = true;
-	if (showSprites) {
-		for (uint i = 0; i < _room->_currentRoomAnims.size(); i++) {
-			Sprite sprite = _room->_currentRoomAnims[i];
-			if (sprite.zOrder == 255) {
-				// Skip disabled sprites (zOrder 0xFF)
-				continue;
-			}
-			drawRect(_screen, sprite.x, sprite.y, sprite.w, sprite.h, 14);
-			_smallFont->drawString(_screen, Common::String::format("S %d", sprite.index), sprite.x + 2, sprite.y, 640, 14);
-		}
-	}
-
-	bool showHotspots = true;
-	if (showHotspots) {
-		for (uint i = 0; i < _room->_currentRoomHotspots.size(); i++) {
-			HotSpot hotspot = _room->_currentRoomHotspots[i];
-			if (!hotspot.isEnabled || hotspot.isSprite)
-				continue;
-			drawRect(_screen, hotspot.x, hotspot.y, hotspot.w, hotspot.h, 12);
-			_smallFont->drawString(_screen, Common::String::format("HS %d - %d", hotspot.index - _room->_currentRoomAnims.size(), hotspot.extra), hotspot.x + 2, hotspot.y + 2, 640, 12);
-			// _smallFont->drawString(_screen, Common::String::format("x=%d", hotspot.extra), hotspot.x + 2, hotspot.y + 2 + 14, 640, 14);
-		}
-	}
-
-	bool showExits = true;
-	if (showExits) {
-		for (uint i = 0; i < _room->_currentRoomExits.size(); i++) {
-			Exit exit = _room->_currentRoomExits[i];
-			drawRect(_screen, exit.x, exit.y, exit.w, exit.h, 200 + i);
-			_smallFont->drawString(_screen, Common::String::format("Exit %d -> Room %d", i, exit.targetRoom), exit.x + 2, exit.y + 2, 640, 14);
-		}
-	}
-
-	drawPos(_screen, _alfredState.x, _alfredState.y, 13);
-	drawPos(_screen, _alfredState.x, _alfredState.y - kAlfredFrameHeight, 13);
-	drawPos(_screen, _curWalkTarget.x, _curWalkTarget.y, 100);
-
-	if (showShadows) {
-		_screen->copyRectToSurface(_room->_pixelsShadows, 640, 0, 0, 640, 400);
-	}
-	_smallFont->drawString(_screen, Common::String::format("Room number: %d", _room->_currentRoomNumber), 0, 4, 640, 13);
-	_smallFont->drawString(_screen, Common::String::format("Alfred pos: %d, %d (%d)", _alfredState.x, _alfredState.y, _alfredState.y - kAlfredFrameHeight), 0, 18, 640, 13);
-	_smallFont->drawString(_screen, Common::String::format("Frame number: %d", _chrono->getFrameCount()), 0, 30, 640, 13);
-}
-
-void PelrockEngine::placeStickersFirstPass() {
-	// also place temporary stickers
-	for (uint i = 0; i < _room->_roomStickers.size(); i++) {
-		Sticker sticker = _room->_roomStickers[i];
-		placeSticker(sticker);
-	}
-}
-
-void PelrockEngine::placeStickersSecondPass() {
-	// Some stickers need to be placed AFTER sprites, hardcoded in the original
-	if (_room->_currentRoomNumber == 3) {
-		for (uint i = 0; i < _state->stickersPerRoom[3].size(); i++) {
-			if (_state->stickersPerRoom[3][i].stickerIndex == 14) {
-				placeSticker(_state->stickersPerRoom[3][i]);
-				break;
-			}
-		}
-	}
-}
-
-void PelrockEngine::placeSticker(Sticker sticker) {
-	// Wrap sticker data as a surface and blit (no transparency - all pixels copied)
-	Graphics::Surface stickerSurf;
-	stickerSurf.init(sticker.w, sticker.h, sticker.w, sticker.stickerData, Graphics::PixelFormat::createFormatCLUT8());
-	// Clip to screen bounds
-	Common::Rect destRect(sticker.x, sticker.y, sticker.x + sticker.w, sticker.y + sticker.h);
-	Common::Rect screenRect(0, 0, 640, 400);
-	destRect.clip(screenRect);
-	if (destRect.isEmpty())
-		return;
-	Common::Rect srcRect(destRect.left - sticker.x, destRect.top - sticker.y,
-						 destRect.right - sticker.x, destRect.bottom - sticker.y);
-	_compositeBuffer.blitFrom(stickerSurf, srcRect, Common::Point(destRect.left, destRect.top));
-}
-
 void PelrockEngine::renderOverlay(int overlayMode) {
 	if (overlayMode == OVERLAY_CHOICES) {
 		_dialog->displayChoices(_dialog->_currentChoices, _compositeBuffer);
@@ -818,83 +658,6 @@ void PelrockEngine::renderOverlay(int overlayMode) {
 		pickupIconFlash();
 	} else if (overlayMode == OVERLAY_ACTION) {
 		showActionBalloon(_actionPopupState.x, _actionPopupState.y, _actionPopupState.curFrame);
-	}
-}
-
-void PelrockEngine::animateFadePalette(PaletteAnim *anim) {
-	// FADE palette animation - cycles a single palette entry between min/max RGB values
-	// Data layout (after loading from EXE):
-	//   data[0] = current R
-	//   data[1] = current G
-	//   data[2] = current B
-	//   data[3] = min R
-	//   data[4] = min G
-	//   data[5] = min B
-	//   data[6] = max R
-	//   data[7] = max G
-	//   data[8] = max B
-	//   data[9] = flags byte:
-	//             bits 0-1: R increment
-	//             bits 2-3: G increment
-	//             bits 4-5: B increment
-	//             bit 6: direction (0=decreasing toward min, 1=increasing toward max)
-
-	byte flags = anim->data[9];
-	// Increments are scaled by 4 (<<2) to match the shifted RGB values
-	byte rInc = (flags & 0x03) << 2;
-	byte gInc = ((flags >> 2) & 0x03) << 2;
-	byte bInc = ((flags >> 4) & 0x03) << 2;
-	bool increasing = (flags & 0x40) != 0;
-
-	if (increasing) {
-		// Increasing toward max values
-		anim->data[0] += rInc;
-		anim->data[1] += gInc;
-		anim->data[2] += bInc;
-		// Check if R reached max, then reverse direction
-		if (anim->data[0] >= anim->data[6]) {
-			anim->data[9] &= ~0x40; // Clear direction bit
-		}
-	} else {
-		// Decreasing toward min values
-		anim->data[0] -= rInc;
-		anim->data[1] -= gInc;
-		anim->data[2] -= bInc;
-		// Check if R reached min, then reverse direction
-		if (anim->data[0] <= anim->data[3]) {
-			anim->data[9] |= 0x40; // Set direction bit
-		}
-	}
-
-	_room->_roomPalette[anim->startIndex * 3] = anim->data[0];
-	_room->_roomPalette[anim->startIndex * 3 + 1] = anim->data[1];
-	_room->_roomPalette[anim->startIndex * 3 + 2] = anim->data[2];
-	g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
-}
-
-void PelrockEngine::animateRotatePalette(PaletteAnim *anim) {
-
-	if (anim->curFrame >= anim->data[1]) {
-		anim->curFrame = 0;
-		int colors = anim->paletteMode;
-		byte *paletteValues = new byte[colors * 3];
-		for (int i = 0; i < colors; i++) {
-			paletteValues[i * 3] = _room->_roomPalette[(anim->startIndex + i) * 3];
-			paletteValues[i * 3 + 1] = _room->_roomPalette[(anim->startIndex + i) * 3 + 1];
-			paletteValues[i * 3 + 2] = _room->_roomPalette[(anim->startIndex + i) * 3 + 2];
-		}
-		for (int i = 0; i < colors; i++) {
-			int srcIndex = (i + 1) % colors;
-			_room->_roomPalette[(anim->startIndex + i) * 3] = paletteValues[srcIndex * 3];
-			_room->_roomPalette[(anim->startIndex + i) * 3 + 1] = paletteValues[srcIndex * 3 + 1];
-			_room->_roomPalette[(anim->startIndex + i) * 3 + 2] = paletteValues[srcIndex * 3 + 2];
-		}
-		delete[] paletteValues;
-
-		g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
-
-	} else {
-		anim->curFrame++;
 	}
 }
 
@@ -1031,7 +794,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 					// place first-pass stickers now so they are present in the very
 					// first presentFrame() for the new room (avoids a one-frame flash
 					// without stickers).
-					placeStickersFirstPass();
+					_graphics->placeStickersFirstPass();
 				}
 			}
 		} else {
@@ -1165,95 +928,12 @@ void PelrockEngine::drawIdleFrame() {
 	}
 }
 
-byte *PelrockEngine::scale(int scaleY, int finalWidth, int finalHeight, byte *buf) {
-
-	// The scaling table is indexed by how many scanlines to skip (scaleY), not by final height
-	int scaleIndex = scaleY;
-	if (scaleIndex >= (int)_heightScalingTable.size()) {
-		scaleIndex = _heightScalingTable.size() - 1;
-	}
-	if (scaleIndex < 0) {
-		scaleIndex = 0;
-	}
-	int linesToSkip = kAlfredFrameHeight - finalHeight;
-
-	byte *finalBuf = new byte[finalWidth * finalHeight];
-
-	if (linesToSkip > 0) {
-		int skipInterval = kAlfredFrameHeight / linesToSkip;
-		Common::Array<float> idealSkipPositions;
-		for (int i = 0; i < linesToSkip; i++) {
-			float idealPos = (i + 0.5f) * skipInterval;
-			idealSkipPositions.push_back(idealPos);
-		}
-
-		Common::Array<int> tableSkipPositions;
-		for (int scanline = 0; scanline < kAlfredFrameHeight; scanline++) {
-			if (_heightScalingTable[scaleIndex][scanline] != 0) {
-				tableSkipPositions.push_back(scanline);
-			}
-		}
-
-		// for (size_t i = 0; i < tableSkipPositions.size(); i++) {
-		// }
-
-		Common::Array<int> skipTheseLines;
-		for (size_t i = 0; i < idealSkipPositions.size(); i++) {
-			float idealPos = idealSkipPositions[i];
-			int closest = -1;
-			int minDiff = INT32_MAX;
-			for (size_t j = 0; j < tableSkipPositions.size(); j++) {
-				int candidate = tableSkipPositions[j];
-				int diff = static_cast<int>(abs(candidate - idealPos));
-				if (diff < minDiff) {
-					minDiff = diff;
-					closest = candidate;
-				}
-			}
-			if (closest != -1) {
-				skipTheseLines.push_back(closest);
-			}
-			if (skipTheseLines.size() >= static_cast<size_t>(linesToSkip)) {
-				break;
-			}
-		}
-
-		int outY = 0;
-		for (int srcY = 0; srcY < kAlfredFrameHeight; srcY++) {
-			bool skipLine = false;
-			for (size_t skipIdx = 0; skipIdx < skipTheseLines.size(); ++skipIdx) {
-				if (skipTheseLines[skipIdx] == srcY) {
-					skipLine = true;
-					break;
-				}
-			}
-			if (!skipLine) {
-				for (int outX = 0; outX < finalWidth; outX++) {
-					int srcX = static_cast<int>(outX * kAlfredFrameWidth / finalWidth);
-					if (srcX >= kAlfredFrameWidth) {
-						srcX = kAlfredFrameWidth - 1;
-					}
-					int srcIndex = srcY * kAlfredFrameWidth + srcX;
-					int outIndex = outY * finalWidth + outX;
-					if (outIndex >= finalWidth * finalHeight || srcIndex >= kAlfredFrameWidth * kAlfredFrameHeight) {
-					} else
-						finalBuf[outIndex] = buf[srcIndex];
-				}
-				outY++;
-			}
-		}
-	} else {
-		Common::copy(buf, buf + (kAlfredFrameWidth * kAlfredFrameHeight), finalBuf);
-	}
-	return finalBuf;
-}
-
 /**
  * Scales and shades alfred sprite and draws it to the composite buffer
  */
 void PelrockEngine::drawAlfred(byte *buf) {
 
-	ScaleCalculation scaleCalc = calculateScaling(_alfredState.y, _room->_scaleParams);
+	ScaleCalculation scaleCalc = _graphics->calculateScaling(_alfredState.y, _room->_scaleParams);
 
 	// Use the pre-calculated scaled dimensions from calculateScaling
 	int finalHeight = scaleCalc.scaledHeight;
@@ -1270,7 +950,7 @@ void PelrockEngine::drawAlfred(byte *buf) {
 		finalWidth = 1;
 	}
 
-	byte *scaledBuf = scale(scaleCalc.scaleY, finalWidth, finalHeight, buf);
+	byte *scaledBuf = _graphics->scale(scaleCalc.scaleY, finalWidth, finalHeight, buf);
 	delete[] _alfredSprite;
 	_alfredSprite = scaledBuf;
 
@@ -1310,7 +990,7 @@ void PelrockEngine::drawAlfred(byte *buf) {
 	if ((_room->_currentRoomNumber == 25 || _room->_currentRoomNumber == 45) && _alfredState.y >= 299) {
 		// Offset from Alfred's feet to start of reflection
 		int yOffset = (_room->_currentRoomNumber == 45) ? 25 : 13;
-		reflectionEffect(_alfredSprite, _alfredState.x, _alfredState.y + yOffset, finalWidth, finalHeight);
+		_graphics->reflectionEffect(_alfredSprite, _alfredState.x, _alfredState.y + yOffset, finalWidth, finalHeight);
 	}
 }
 
@@ -1405,6 +1085,60 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 	}
 }
 
+void PelrockEngine::paintDebugLayer() {
+	bool showWalkboxes = true;
+
+	if (showWalkboxes) {
+		for (uint i = 0; i < _room->_currentRoomWalkboxes.size(); i++) {
+			WalkBox box = _room->_currentRoomWalkboxes[i];
+			drawRect(_screen, box.x, box.y, box.w, box.h, 13);
+		}
+	}
+
+	bool showSprites = true;
+	if (showSprites) {
+		for (uint i = 0; i < _room->_currentRoomAnims.size(); i++) {
+			Sprite sprite = _room->_currentRoomAnims[i];
+			if (sprite.zOrder == 255) {
+				continue;
+			}
+			drawRect(_screen, sprite.x, sprite.y, sprite.w, sprite.h, 14);
+			_smallFont->drawString(_screen, Common::String::format("S %d", sprite.index), sprite.x + 2, sprite.y, 640, 14);
+		}
+	}
+
+	bool showHotspots = true;
+	if (showHotspots) {
+		for (uint i = 0; i < _room->_currentRoomHotspots.size(); i++) {
+			HotSpot hotspot = _room->_currentRoomHotspots[i];
+			if (!hotspot.isEnabled || hotspot.isSprite)
+				continue;
+			drawRect(_screen, hotspot.x, hotspot.y, hotspot.w, hotspot.h, 12);
+			_smallFont->drawString(_screen, Common::String::format("HS %d - %d", hotspot.index - _room->_currentRoomAnims.size(), hotspot.extra), hotspot.x + 2, hotspot.y + 2, 640, 12);
+		}
+	}
+
+	bool showExits = true;
+	if (showExits) {
+		for (uint i = 0; i < _room->_currentRoomExits.size(); i++) {
+			Exit exit = _room->_currentRoomExits[i];
+			drawRect(_screen, exit.x, exit.y, exit.w, exit.h, 200 + i);
+			_smallFont->drawString(_screen, Common::String::format("Exit %d -> Room %d", i, exit.targetRoom), exit.x + 2, exit.y + 2, 640, 14);
+		}
+	}
+
+	drawPos(_screen, _alfredState.x, _alfredState.y, 13);
+	drawPos(_screen, _alfredState.x, _alfredState.y - kAlfredFrameHeight, 13);
+	drawPos(_screen, _curWalkTarget.x, _curWalkTarget.y, 100);
+
+	if (showShadows) {
+		_screen->copyRectToSurface(_room->_pixelsShadows, 640, 0, 0, 640, 400);
+	}
+	_smallFont->drawString(_screen, Common::String::format("Room number: %d", _room->_currentRoomNumber), 0, 4, 640, 13);
+	_smallFont->drawString(_screen, Common::String::format("Alfred pos: %d, %d (%d)", _alfredState.x, _alfredState.y, _alfredState.y - kAlfredFrameHeight), 0, 18, 640, 13);
+	_smallFont->drawString(_screen, Common::String::format("Frame number: %d", _chrono->getFrameCount()), 0, 30, 640, 13);
+}
+
 void PelrockEngine::checkLongMouseClick(int x, int y) {
 	_alfredState.idleFrameCounter = 0;
 	int hotspotIndex = isHotspotUnder(x, y);
@@ -1431,98 +1165,6 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 	}
 }
 
-void PelrockEngine::calculateScalingMasks() {
-
-	for (int scaleFactor = 0; scaleFactor < kAlfredFrameWidth; scaleFactor++) {
-		float step = kAlfredFrameWidth / (scaleFactor + 1.0f);
-		Common::Array<int> row;
-		float index = 0.0f;
-		int sourcePixel = 0;
-
-		while (index < kAlfredFrameWidth) {
-			row.push_back(sourcePixel);
-			index += step;
-			sourcePixel += 1;
-			if (sourcePixel >= kAlfredFrameWidth) {
-				sourcePixel = kAlfredFrameWidth - 1;
-			}
-		}
-
-		// Pad to exactly CHAR_WIDTH entries
-		while (row.size() < kAlfredFrameWidth) {
-			row.push_back(row.empty() ? 0 : row[row.size() - 1]);
-		}
-
-		_widthScalingTable.push_back(row);
-	}
-
-	for (int scaleFactor = 0; scaleFactor < kAlfredFrameHeight; scaleFactor++) {
-		float step = kAlfredFrameHeight / (scaleFactor + 1.0f);
-		Common::Array<int> row;
-		row.resize(kAlfredFrameHeight, 0);
-		float position = step;
-		int counter = 1;
-		while (position < kAlfredFrameHeight) {
-			int idx = static_cast<int>(round(position));
-			if (idx < kAlfredFrameHeight) {
-				row[idx] = counter;
-				counter++;
-			}
-			position += step;
-		}
-		_heightScalingTable.push_back(row);
-	}
-}
-
-ScaleCalculation PelrockEngine::calculateScaling(int yPos, ScalingParams scalingParams) {
-	// scaleY = amount to subtract from height (94 max for 0xFF mode)
-	// scaleX = amount to subtract from width (47 max for 0xFF mode, = scaleY/2)
-	int scaleY = 0;
-	int scaleX = 0;
-	if (scalingParams.scaleMode == 0xFF) {
-		// Maximum scaling - character is very small (used for bird's eye view maps)
-		scaleY = 0x5e; // 94
-		scaleX = 0x2f; // 47
-	} else if (scalingParams.scaleMode == 0xFE) {
-		// No scaling - full size character
-		scaleY = 0;
-		scaleX = 0;
-	} else if (scalingParams.scaleMode == 0) {
-		// Dynamic scaling based on Y position
-		if (scalingParams.yThreshold < yPos) {
-			// Below threshold - no scaling
-			scaleY = 0;
-			scaleX = 0;
-		} else {
-			if (scalingParams.scaleDivisor != 0) {
-				scaleY = (scalingParams.yThreshold - yPos) / scalingParams.scaleDivisor;
-				scaleX = scaleY / 2;
-			} else {
-				scaleY = 0;
-				scaleX = 0;
-			}
-		}
-	} else {
-		scaleY = 0;
-		scaleX = 0;
-	}
-
-	// Original game formula: actual dimensions = base - scale amount
-	int finalHeight = kAlfredFrameHeight - scaleY;
-	if (finalHeight < 1)
-		finalHeight = 1;
-
-	int finalWidth = kAlfredFrameWidth - scaleX;
-	if (finalWidth < 1)
-		finalWidth = 1;
-
-	ScaleCalculation scaleCalc;
-	scaleCalc.scaledHeight = finalHeight;
-	scaleCalc.scaledWidth = finalWidth;
-	scaleCalc.scaleY = scaleY;
-	scaleCalc.scaleX = scaleX;
-	return scaleCalc;
-}
 
 int PelrockEngine::isHotspotUnder(int x, int y) {
 
@@ -2068,7 +1710,7 @@ void PelrockEngine::setScreen(int roomNumber) {
 
 	_screen->clear();
 
-	copyBackgroundToBuffer();
+	_graphics->copyBackgroundToBuffer();
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 
 	_room->loadRoomMetadata(&roomFile, roomNumber);
