@@ -31,10 +31,10 @@ const ADGameDescription gameDescriptions[] = {
 		"pelrock",
 		nullptr,
 		AD_ENTRY1s("ALFRED.1", "ee0047cfcceece9c4f6a426245b6f449", 12915352),
-		Common::EN_ANY,
+		Common::ES_ESP,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_ALTERNATE_TIMING)
 	},
 
 	AD_TABLE_END_MARKER

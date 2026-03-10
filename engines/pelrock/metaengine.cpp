@@ -39,6 +39,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_ALTERNATE_TIMING,
+		{
+			_s("Alternate timing"),
+			_s("Use ScummVM's alternate animation timing instead of the original game's slower walking and talking speed"),
+			"alternate_timing",
+			false,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

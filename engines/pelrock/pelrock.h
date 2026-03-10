@@ -146,6 +146,9 @@ private:
 
 	bool _mouseDisabled = false;
 
+	// Original timing: toggles each game tick during walking/talking to halve animation speed
+	bool _halfSpeedToggle = false;
+
 	int _flightFrameCounter = 0;
 	int _flightSorcererSpriteIdx = -1;
 	bool _flightSorcererAppeared = false;
@@ -197,6 +200,12 @@ public:
 	uint32 getRandomNumber(uint maxNum) {
 		return _randomSource.getRandomNumber(maxNum);
 	}
+
+	/**
+	 * Returns true if "Alternate timing" option is enabled.
+	 * When false, the engine uses the original game's half-speed walking/talking timing.
+	 */
+	bool isAlternateTiming() const;
 
 	bool hasFeature(EngineFeature f) const override {
 		return (f == kSupportsLoadingDuringRuntime) ||

@@ -92,6 +92,10 @@ Common::String PelrockEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+bool PelrockEngine::isAlternateTiming() const {
+	return ConfMan.getBool("alternate_timing");
+}
+
 // Common::Array<Common::Array<Common::String>> wordWrap(Common::String text);
 
 Common::Error PelrockEngine::run() {
@@ -326,6 +330,18 @@ bool PelrockEngine::renderScene(int overlayMode) {
 
 	_chrono->updateChrono();
 	if (_chrono->_gameTick) {
+		if (!isAlternateTiming()) {
+			bool inHalfSpeedMode = (_alfredState.animState == ALFRED_WALKING) ||
+			                       (_dialog->_dialogActive && _alfredState.animState == ALFRED_TALKING);
+			if (inHalfSpeedMode) {
+				_halfSpeedToggle = !_halfSpeedToggle;
+				if (!_halfSpeedToggle)
+					return false; // skip this tick — animate at half speed
+			} else {
+				_halfSpeedToggle = false; // reset when leaving half-speed mode
+			}
+		}
+
 		frameTriggers();
 
 		playSoundIfNeeded();
@@ -1649,6 +1665,7 @@ void PelrockEngine::checkMouseHover() {
 		alfredDetected = true;
 		_hoveredMapLocation = "Alfred";
 	}
+
 
 	if (hotspotIndex != -1) {
 		hotspotDetected = true;
