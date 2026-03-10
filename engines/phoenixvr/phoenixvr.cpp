@@ -54,6 +54,7 @@ namespace PhoenixVR {
 PhoenixVREngine *g_engine;
 
 PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
+																					 _frameLimiter(g_system, kFPSLimit),
 																					 _gameDescription(gameDesc),
 																					 _randomSource("PhoenixVR"),
 																					 _rgb565(2, 5, 6, 5, 0, 11, 5, 0, 0),
@@ -212,7 +213,6 @@ void PhoenixVREngine::end() {
 
 void PhoenixVREngine::interpolateAngle(float x, float y, float speed, float zoom) {
 	debug("interpolateAngle %g,%g, speed: %g, zoom: %g", x, y, speed, zoom);
-	Graphics::FrameLimiter limiter(g_system, kFPSLimit);
 	unsigned frameDuration = 0;
 	static constexpr float kDuration = 4096 * 16 / 1000.0f;
 	auto x0 = _angleY.angle() + kPi2, y0 = _angleX.angle(), z0 = _fov;
@@ -256,9 +256,9 @@ void PhoenixVREngine::interpolateAngle(float x, float y, float speed, float zoom
 
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
-		limiter.delayBeforeSwap();
+		_frameLimiter.delayBeforeSwap();
 		_screen->update();
-		frameDuration = limiter.startFrame();
+		frameDuration = _frameLimiter.startFrame();
 		t += frameDuration / 1000.0f * speed;
 	}
 	setAngle(x, y);
@@ -268,7 +268,6 @@ void PhoenixVREngine::interpolateAngle(float x, float y, float speed, float zoom
 
 void PhoenixVREngine::until(const Common::String &var, int value) {
 	debug("until %s %d", var.c_str(), value);
-	Graphics::FrameLimiter limiter(g_system, kFPSLimit);
 	unsigned frameDuration = 0;
 	while (!shouldQuit() && getVariable(var) != value) {
 		Common::Event event;
@@ -282,9 +281,9 @@ void PhoenixVREngine::until(const Common::String &var, int value) {
 
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
-		limiter.delayBeforeSwap();
+		_frameLimiter.delayBeforeSwap();
 		_screen->update();
-		frameDuration = limiter.startFrame();
+		frameDuration = _frameLimiter.startFrame();
 	}
 }
 
@@ -292,7 +291,6 @@ void PhoenixVREngine::wait(float seconds) {
 	debug("wait %gs", seconds);
 	auto begin = g_system->getMillis();
 	unsigned millis = seconds * 1000;
-	Graphics::FrameLimiter limiter(g_system, kFPSLimit);
 	bool waiting = true;
 	unsigned frameDuration = 0;
 	while (!shouldQuit() && waiting && g_system->getMillis() - begin < millis) {
@@ -314,9 +312,9 @@ void PhoenixVREngine::wait(float seconds) {
 
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
-		limiter.delayBeforeSwap();
+		_frameLimiter.delayBeforeSwap();
 		_screen->update();
-		frameDuration = limiter.startFrame();
+		frameDuration = _frameLimiter.startFrame();
 	}
 }
 
@@ -488,7 +486,6 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 		dec->start();
 
 		bool playing = true;
-		Graphics::FrameLimiter limiter(g_system, kFPSLimit);
 		while (!shouldQuit() && playing && !dec->endOfVideo()) {
 			Common::Event event;
 			while (g_system->getEventManager()->pollEvent(event)) {
@@ -517,9 +514,9 @@ void PhoenixVREngine::playMovie(const Common::String &movie) {
 
 			// Delay for a bit. All events loops should have a delay
 			// to prevent the system being unduly loaded
-			limiter.delayBeforeSwap();
+			_frameLimiter.delayBeforeSwap();
 			_screen->update();
-			limiter.startFrame();
+			_frameLimiter.startFrame();
 		}
 	} else {
 		warning("playMovie %s failed", movie.c_str());
@@ -950,7 +947,6 @@ Common::Error PhoenixVREngine::run() {
 
 	Common::Event event;
 
-	Graphics::FrameLimiter limiter(g_system, kFPSLimit);
 	uint frameDuration = 0;
 	while (!shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(event)) {
@@ -1068,9 +1064,9 @@ Common::Error PhoenixVREngine::run() {
 
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
-		limiter.delayBeforeSwap();
+		_frameLimiter.delayBeforeSwap();
 		_screen->update();
-		frameDuration = limiter.startFrame();
+		frameDuration = _frameLimiter.startFrame();
 	}
 
 	return Common::kNoError;

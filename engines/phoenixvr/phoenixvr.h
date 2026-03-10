@@ -34,6 +34,7 @@
 #include "common/util.h"
 #include "engines/engine.h"
 #include "engines/savestate.h"
+#include "graphics/framelimiter.h"
 #include "graphics/screen.h"
 #include "video/video_decoder.h"
 
@@ -62,6 +63,7 @@ class PhoenixVREngine : public Engine {
 private:
 	static constexpr uint kFPSLimit = 60;
 
+	Graphics::FrameLimiter _frameLimiter;
 	Graphics::Screen *_screen = nullptr;
 	Common::Point _screenCenter;
 	const ADGameDescription *_gameDescription;
