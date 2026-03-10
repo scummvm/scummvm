@@ -56,6 +56,9 @@ Common::String BoltEngine::getGameId() const {
 }
 
 Common::Error BoltEngine::run() {
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "assets");
+
 	ConfMan.registerDefault("extended_viewport", false);
 	if (ConfMan.hasKey("extended_viewport", _targetName)) {
 		_extendedViewport = ConfMan.getBool("extended_viewport");
