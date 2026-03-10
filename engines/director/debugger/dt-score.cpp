@@ -385,7 +385,7 @@ static void drawSpriteInspector(Score *score, Cast *cast, uint numFrames) {
 		CastMember *castMember = nullptr;
 		bool shape = false;
 
-		if (_state->_selectedScoreCast.frame != -1)
+		if (_state->_selectedScoreCast.frame != -1 && !_state->_selectedScoreCast.isMainChannel)
 			sprite = score->_scoreCache[_state->_selectedScoreCast.frame]->_sprites[_state->_selectedScoreCast.channel];
 
 		if (sprite) {
@@ -940,8 +940,14 @@ static void drawMainChannelGrid(ImDrawList *dl, ImVec2 startPos, Score *score) {
 					break;
 				case kChScript: // open script in script editor
 					if (mc.actionId.member) {
-						ImGuiScript script = toImGuiScript(kScoreScript, mc.actionId, "");
-						addToOpenHandlers(script);
+						ScriptContext *ctx = getScriptContext(mc.actionId);
+						for (auto &handler : ctx->_functionHandlers) {
+							ImGuiScript script = toImGuiScript(kScoreScript, mc.actionId, handler._key);
+							script.byteOffsets = ctx->_functionByteOffsets[script.handlerId];
+							script.moviePath = g_director->getCurrentMovie()->getArchive()->getPathName().toString();
+							script.handlerName = formatHandlerName(ctx->_scriptId, mc.actionId.member, handler._key, kScoreScript, false);
+							addToOpenHandlers(script);
+						}
 					}
 					break;
 				}

@@ -103,14 +103,17 @@ public:
 			renderIndentation();
 		}
 
-		const ImVec4 color = (ImVec4)ImColor(g_lingo->_builtinCmds.contains(node.name) ? _state->theme->builtin_color : _state->theme->call_color);
+		bool builtIn = g_lingo->_builtinCmds.contains(node.name) || g_lingo->_builtinFuncs.contains(node.name);
+
+		const ImVec4 color = (ImVec4)ImColor( builtIn ? _state->theme->builtin_color : _state->theme->call_color);
 		ImGui::TextColored(color, "%s", node.name.c_str());
+		maybeHighlightLastItem(node.name);
 		// TODO: we should test Director::builtins too (but inaccessible)
-		if (!g_lingo->_builtinFuncs.contains(node.name) && ImGui::IsItemHovered() && ImGui::BeginTooltip()) {
+		if (!builtIn && ImGui::IsItemHovered() && ImGui::BeginTooltip()) {
 			ImGui::Text("Go to definition");
 			ImGui::EndTooltip();
 		}
-		if (!g_lingo->_builtinFuncs.contains(node.name) && ImGui::IsItemClicked()) {
+		if (!builtIn && ImGui::IsItemClicked()) {
 			int32 obj = 0;
 			for (uint i = 0; i < _script.bytecodeArray.size(); i++) {
 				if (node._startOffset == _script.bytecodeArray[i].pos) {
@@ -120,22 +123,9 @@ public:
 					break;
 				}
 			}
-			ScriptContext *context = getScriptContext(obj, _script.id, node.name);
-
+			ScriptContext *context = resolveHandlerContext(obj, _script.id, node.name);
 			if (context) {
-				ImGuiScript script = toImGuiScript(_script.type, CastMemberID(context->_id, _script.id.castLib), node.name);
-				const Director::Movie *movie = g_director->getCurrentMovie();
-
-				script.byteOffsets = context->_functionByteOffsets[script.handlerId];
-				script.moviePath = _script.moviePath;
-				int castId = context->_id;
-				bool childScript = false;
-				if (castId == -1) {
-					castId = movie->getCast()->getCastIdByScriptId(context->_parentNumber);
-					childScript = true;
-				}
-
-				script.handlerName = formatHandlerName(context->_scriptId, castId, script.handlerId, context->_scriptType, childScript);
+				ImGuiScript script = buildImGuiHandlerScript(context, _script.id.castLib, node.name, _script.moviePath);
 				setScriptToDisplay(script);
 				_state->_dbg._goToDefinition = true;
 			}
@@ -852,6 +842,7 @@ public:
 			renderIndentation();
 		}
 		ImGui::Text("%s", code._str.c_str());
+		maybeHighlightLastItem(code._str);
 	}
 
 private:
@@ -1123,6 +1114,7 @@ private:
 		renderLine(offset);
 		renderIndentation();
 		ImGui::TextColored(color, "%s", code.c_str());
+		maybeHighlightLastItem(code);
 	}
 
 	void writeByteCode(uint32 offset, const Common::String &code) {
