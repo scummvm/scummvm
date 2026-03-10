@@ -55,14 +55,14 @@ void Toolbox::CheckItem(MenuHandle &theMenu, uint16 item, bool checked) {
 		warning("Toolbox::CheckItem: empty menu handle");
 		return;
 	}
-	if (theMenu->menuData.size() < (uint)(item + 1)) {
+	if (theMenu->menuData.size() < (uint)(item)) {
 		warning("Toolbox::CheckItem: item %d out of range for menu %d", item, theMenu->menuID);
 		return;
 	}
 	if (_defaultMenu) {
 		Graphics::MacMenuItem *sub = _defaultMenu->getMenuItem(theMenu->menuID-1);
 		if (sub) {
-			Graphics::MacMenuItem *it = _defaultMenu->getSubMenuItem(sub, item);
+			Graphics::MacMenuItem *it = _defaultMenu->getSubMenuItem(sub, item-1);
 			if (it) {
 				it->checked = checked;
 			}
@@ -101,14 +101,14 @@ void Toolbox::DisableItem(MenuHandle &theMenu, uint16 item) {
 		warning("Toolbox::DisableItem: empty menu handle");
 		return;
 	}
-	if (theMenu->menuData.size() < (uint)(item + 1)) {
+	if (theMenu->menuData.size() < (uint)(item)) {
 		warning("Toolbox::DisableItem: item %d out of range for menu %d", item, theMenu->menuID);
 		return;
 	}
 	if (_defaultMenu) {
 		Graphics::MacMenuItem *sub = _defaultMenu->getMenuItem(theMenu->menuID-1);
 		if (sub) {
-			Graphics::MacMenuItem *it = _defaultMenu->getSubMenuItem(sub, item);
+			Graphics::MacMenuItem *it = _defaultMenu->getSubMenuItem(sub, item-1);
 			if (it) {
 				it->enabled = false;
 			}
@@ -132,14 +132,14 @@ void Toolbox::EnableItem(MenuHandle &theMenu, uint16 item) {
 		warning("Toolbox::EnableItem: empty menu handle");
 		return;
 	}
-	if (theMenu->menuData.size() < (uint)(item + 1)) {
+	if (theMenu->menuData.size() < (uint)(item)) {
 		warning("Toolbox::EnableItem: item %d out of range for menu %d", item, theMenu->menuID);
 		return;
 	}
 	if (_defaultMenu) {
 		Graphics::MacMenuItem *sub = _defaultMenu->getMenuItem(theMenu->menuID-1);
 		if (sub) {
-			Graphics::MacMenuItem *it = _defaultMenu->getSubMenuItem(sub, item);
+			Graphics::MacMenuItem *it = _defaultMenu->getSubMenuItem(sub, item-1);
 			if (it) {
 				it->enabled = true;
 			}
