@@ -138,10 +138,30 @@ static const DOSColorEntry g_dosColors[79] = {
 // Look up the DOS lsColor entry for a given ObjColor index.
 // Returns a fallback entry for out-of-range indices.
 static const DOSColorEntry &lookupDOSColor(int colorIdx) {
+	// DOS pcycle for animated reactor/suit: WHITE,LTGRAY,GRAY,DKGRAY,BLACK (bounce)
+	static const DOSColorEntry kHCore1 = {0, 0, 15, 15, 15, 1}; // WHITE
+	static const DOSColorEntry kHCore2 = {1, 8,  8, 15,  8, 3}; // LTGRAY
+	static const DOSColorEntry kHCore3 = {2, 8,  8,  7,  8, 3}; // GRAY
+	static const DOSColorEntry kHCore4 = {3, 0,  8,  8,  8, 1}; // DKGRAY
+	static const DOSColorEntry kCCoreEntry = {0, 0, 15, 15, 15, 1}; // WHITE (cold core)
 	static const DOSColorEntry fallback = {2, 0, 0, 0, 0, 1}; // GRAY monochrome
+
 	if (colorIdx >= 0 && colorIdx < 79)
 		return g_dosColors[colorIdx];
-	return fallback;
+	switch (colorIdx) {
+	case kColorHCore1: return kHCore1;
+	case kColorHCore2: return kHCore2;
+	case kColorHCore3: return kHCore3;
+	case kColorHCore4: return kHCore4;
+	case kColorCCore:  return kCCoreEntry;
+	// Ring animation colors: cycle through DOS EGA colors
+	// DOS reactor rings use color=1+count%5 → values 1-5 → cColor[1..5]
+	case kColorRainbow1: return g_dosColors[2];  // BLUE
+	case kColorRainbow2: return g_dosColors[3];  // GREEN
+	case kColorRainbow3: return g_dosColors[4];  // CYAN
+	case kColorRainbow4: return g_dosColors[5];  // RED
+	default: return fallback;
+	}
 }
 
 // Mac Classic dither patterns (from colorize.c cColor[].pattern).
@@ -262,6 +282,8 @@ static int mapObjColorToMacColor(int colorIdx) {
 	case kColorTeleDoor:  return 94;  // c_teledoor
 	case kColorRainbow1:  return 26;  // c_color0
 	case kColorRainbow2:  return 27;  // c_color1
+	case kColorRainbow3:  return 28;  // c_color2
+	case kColorRainbow4:  return 29;  // c_color3 (c_hole in Mac enum)
 	case kColorCube:      return 39;  // c_diamond (DOS cCUBE = diamond/octahedron alien)
 	case kColorDrone:     return 50;  // c_drone
 	case kColorClaw1:     return 54;  // c_jaws1
@@ -277,6 +299,12 @@ static int mapObjColorToMacColor(int colorIdx) {
 	case kColorUPyramid:  return 41;  // c_upyramid
 	case kColorShadow:    return 26;  // c_color0
 	case kColorWall:      return 6;   // c_dwall
+	// Animated reactor/power suit colors
+	case kColorHCore1:    return 107; // c_hcore1
+	case kColorHCore2:    return 108; // c_hcore2
+	case kColorHCore3:    return 109; // c_hcore3
+	case kColorHCore4:    return 110; // c_hcore4
+	case kColorCCore:     return 111; // c_ccore
 	default: return 6; // c_dwall fallback
 	}
 }
@@ -1292,7 +1320,7 @@ const uint8 *ColonyEngine::mapFeatureAt(int x, int y, int direction) const {
 	return _mapData[x][y][direction];
 }
 
-void ColonyEngine::draw3DPrism(const Thing &obj, const PrismPartDef &def, bool useLook) {
+void ColonyEngine::draw3DPrism(const Thing &obj, const PrismPartDef &def, bool useLook, int colorOverride) {
 	// +32 compensates for the original sine table's 45° phase offset.
 	// Object angles from game data were stored assuming that offset.
 	const uint8 ang = (useLook ? obj.where.look : obj.where.ang) + 32;
@@ -1301,7 +1329,7 @@ void ColonyEngine::draw3DPrism(const Thing &obj, const PrismPartDef &def, bool u
 	const bool lit = (_corePower[_coreIndex] > 0);
 
 	for (int i = 0; i < def.surfaceCount; i++) {
-		const int colorIdx = def.surfaces[i][0];
+		const int colorIdx = (colorOverride >= 0) ? colorOverride : def.surfaces[i][0];
 		const int n = def.surfaces[i][1];
 		if (n < 2)
 			continue;
@@ -2615,20 +2643,57 @@ bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj) {
 		_gfx->setDepthRange(0.0, 1.0);
 		draw3DPrism(obj, kBox2Parts[0], false); // top second
 		break;
-	case kObjReactor:
-		for (int i = 0; i < 3; i++) {
-			_gfx->setDepthRange((2 - i) * 0.002, 1.0);
-			draw3DPrism(obj, kReactorParts[i], false);
+	case kObjReactor: {
+		// MakeReactor: animate core height and ring/core surface colors.
+		// Core state: 0=closing, 1=opening, 2=open (core gone).
+		switch (_coreState[_coreIndex]) {
+		case 0: if (_coreHeight[_coreIndex] < 256) _coreHeight[_coreIndex] += 16; break;
+		case 1: if (_coreHeight[_coreIndex] > 0) _coreHeight[_coreIndex] -= 16; break;
+		case 2: _coreHeight[_coreIndex] = 0; break;
+		}
+
+		// Ring color: cycles through 4 colors each frame
+		// Mac: c_color0..c_color3; DOS: 1+count%5
+		static const int kRingColors[] = {kColorRainbow1, kColorRainbow2, kColorRainbow3, kColorRainbow4};
+		int ringColor = kRingColors[_displayCount % 4];
+
+		// Core color when powered: bouncing cycle through hcore colors
+		// Mac: pcycle = {c_hcore1, c_hcore2, c_hcore3, c_hcore4, c_hcore3, c_hcore2}
+		static const int kCoreCycle[] = {kColorHCore1, kColorHCore2, kColorHCore3, kColorHCore4, kColorHCore3, kColorHCore2};
+		int coreColor;
+		if (_corePower[_coreIndex] > 1)
+			coreColor = kCoreCycle[_displayCount % 6];
+		else
+			coreColor = kColorCCore;
+
+		// Part 2: base platform (static)
+		_gfx->setDepthRange(0.004, 1.0);
+		draw3DPrism(obj, kReactorParts[2], false);
+		// Part 1: ring (animated color)
+		_gfx->setDepthRange(0.002, 1.0);
+		draw3DPrism(obj, kReactorParts[1], false, ringColor);
+		// Part 0: core (animated color, only if not state 2)
+		if (_coreState[_coreIndex] < 2) {
+			_gfx->setDepthRange(0.0, 1.0);
+			draw3DPrism(obj, kReactorParts[0], false, coreColor);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
-	case kObjPowerSuit:
-		for (int i = 0; i < 5; i++) {
+	}
+	case kObjPowerSuit: {
+		// MakePowerSuit: part[4] (power source hexagon) surface[0] pulsates.
+		// Mac: pcycle[count%6]; DOS: pcycle[count%8]
+		static const int kSuitCycle[] = {kColorHCore1, kColorHCore2, kColorHCore3, kColorHCore4, kColorHCore3, kColorHCore2};
+		int sourceColor = kSuitCycle[_displayCount % 6];
+
+		for (int i = 0; i < 4; i++) {
 			_gfx->setDepthRange((4 - i) * 0.002, 1.0);
 			draw3DPrism(obj, kPowerSuitParts[i], false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
+		draw3DPrism(obj, kPowerSuitParts[4], false, sourceColor);
 		break;
+	}
 	case kObjTeleport:
 		draw3DPrism(obj, kTelePart, false);
 		break;

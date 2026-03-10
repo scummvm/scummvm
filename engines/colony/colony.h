@@ -180,6 +180,8 @@ enum ObjColor {
 	kColorWall = 77,
 	kColorRainbow1 = 80,
 	kColorRainbow2 = 81,
+	kColorRainbow3 = 82,
+	kColorRainbow4 = 83,
 	// Robot colors
 	kColorCube = 36,
 	kColorDrone = 42,
@@ -194,7 +196,13 @@ enum ObjColor {
 	kColorTopSnoop = 59,
 	kColorBottomSnoop = 60,
 	kColorUPyramid = 68,
-	kColorShadow = 74
+	kColorShadow = 74,
+	// Animated reactor/power suit colors (Mac: c_hcore1..c_hcore4, c_ccore, c_color0..c_color3)
+	kColorHCore1 = 100,
+	kColorHCore2 = 101,
+	kColorHCore3 = 102,
+	kColorHCore4 = 103,
+	kColorCCore = 104
 };
 
 enum {
@@ -483,7 +491,7 @@ public:
 	};
 
 private:
-	void draw3DPrism(const Thing &obj, const PrismPartDef &def, bool useLook);
+	void draw3DPrism(const Thing &obj, const PrismPartDef &def, bool useLook, int colorOverride = -1);
 	void draw3DLeaf(const Thing &obj, const PrismPartDef &def);
 	void draw3DSphere(const Thing &obj, int pt0x, int pt0y, int pt0z,
 	                  int pt1x, int pt1y, int pt1z, uint32 fillColor, uint32 outlineColor);
