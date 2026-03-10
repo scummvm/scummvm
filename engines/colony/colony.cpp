@@ -26,6 +26,7 @@
 #include "common/system.h"
 #include "common/util.h"
 #include "common/debug.h"
+#include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/keyboard.h"
 #include "engines/util.h"
@@ -137,6 +138,13 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_gametest = false;
 	_blackoutColor = 15; // Set to white (vINTWHITE) for better visibility in darkness
 
+	DebugMan.addDebugChannel(kColonyDebugMove, "move", "Movement and collision");
+	DebugMan.addDebugChannel(kColonyDebugRender, "render", "3D rendering and graphics");
+	DebugMan.addDebugChannel(kColonyDebugAnimation, "animation", "Animation and sprites");
+	DebugMan.addDebugChannel(kColonyDebugMap, "map", "Map loading and robots");
+	DebugMan.addDebugChannel(kColonyDebugSound, "sound", "Sound and music");
+	DebugMan.addDebugChannel(kColonyDebugUI, "ui", "UI, text, and menus");
+
 	_sound = new Sound(this);
 	_resMan = new Common::MacResManager();
 	_colorResMan = new Common::MacResManager();
@@ -209,7 +217,7 @@ void ColonyEngine::loadMacColors() {
 	}
 	delete file;
 	_hasMacColors = true;
-	debug("Loaded %d Mac colors", cnum);
+	debugC(1, kColonyDebugRender, "Loaded %d Mac colors", cnum);
 }
 
 void ColonyEngine::menuCommandsCallback(int action, Common::String &text, void *data) {
@@ -348,7 +356,7 @@ Common::Error ColonyEngine::run() {
 		}
 		// Try to open Color Colony for additional color PICT resources
 		if (!_colorResMan->open("(Color) Colony")) {
-			debug("Color Colony resource fork not found (optional)");
+			debugC(1, kColonyDebugRender, "Color Colony resource fork not found (optional)");
 		}
 		_sound->init();
 	}
@@ -374,7 +382,7 @@ Common::Error ColonyEngine::run() {
 
 	updateViewportLayout();
 	const Graphics::PixelFormat format = _system->getScreenFormat();
-	debug("Screen format: %d bytesPerPixel. Actual size: %dx%d", format.bytesPerPixel, _width, _height);
+	debugC(1, kColonyDebugRender, "Screen format: %d bytesPerPixel. Actual size: %dx%d", format.bytesPerPixel, _width, _height);
 
 	// Setup a palette with standard 16 colors followed by grayscale
 	byte pal[256 * 3];
@@ -481,7 +489,7 @@ Common::Error ColonyEngine::run() {
 					break;
 				case kActionToggleWireframe:
 					_wireframe = !_wireframe;
-					debug("Polyfill: %s", _wireframe ? "off (wireframe)" : "on (filled)");
+					debugC(1, kColonyDebugRender, "Polyfill: %s", _wireframe ? "off (wireframe)" : "on (filled)");
 					break;
 				case kActionToggleFullscreen:
 					if (_macMenu) {
@@ -551,7 +559,7 @@ Common::Error ColonyEngine::run() {
 				case Common::KEYCODE_4:
 				case Common::KEYCODE_5:
 					_speedShift = event.kbd.keycode - Common::KEYCODE_1 + 1;
-					debug("Speed: %d", _speedShift);
+					debugC(1, kColonyDebugUI, "Speed: %d", _speedShift);
 					break;
 				default:
 					break;

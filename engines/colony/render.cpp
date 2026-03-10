@@ -1350,7 +1350,7 @@ void ColonyEngine::draw3DPrism(const Thing &obj, const PrismPartDef &def, bool u
 				int pattern = _macColors[mIdx].pattern;
 				uint32 fg = packMacColor(_macColors[mIdx].fg);
 				uint32 bg = packMacColor(_macColors[mIdx].bg);
-				debug(5, "draw3DPrism Mac: colorIdx=%d mIdx=%d pat=%d fg=0x%08X bg=0x%08X lit=%d",
+				debugC(5, kColonyDebugRender, "draw3DPrism Mac: colorIdx=%d mIdx=%d pat=%d fg=0x%08X bg=0x%08X lit=%d",
 				      colorIdx, mIdx, pattern, fg, bg, lit);
 
 				if (!lit) {

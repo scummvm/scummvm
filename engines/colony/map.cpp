@@ -105,7 +105,7 @@ void ColonyEngine::loadMap(int mnum) {
 
 	if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
 		_robotArray[_me.xindex][_me.yindex] = kMeNum;
-	debug("Successfully loaded map %d (objects: %d)", mnum, (int)_objects.size());
+	debugC(1, kColonyDebugMap, "Successfully loaded map %d (objects: %d)", mnum, (int)_objects.size());
 }
 
 // PATCH.C: Create a new object in _objects and register in _robotArray.
@@ -347,7 +347,7 @@ void ColonyEngine::initRobots() {
 		createObject(type, wxloc, wyloc, ang);
 	}
 
-	debug("initRobots: spawned %d robots on level %d", maxrob, _level);
+	debugC(1, kColonyDebugMap, "initRobots: spawned %d robots on level %d", maxrob, _level);
 }
 
 } // End of namespace Colony
