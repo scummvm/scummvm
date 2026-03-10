@@ -166,12 +166,9 @@ public:
 			auto arg2 = nextInt();
 			return CommandPtr(new Fade(arg0, arg1, arg2));
 		} else if (maybe("setzoom=")) {
-			return CommandPtr(new SetZoom(nextInt()));
+			return CommandPtr(new SetZoom(toRadian(nextInt())));
 		} else if (maybe("setangle=") || keyword("setangle")) {
-			auto i0 = nextInt();
-			if (i0 > 4095)
-				i0 -= 8192;
-			auto a0 = toAngle(i0);
+			auto a0 = toAngle(nextInt());
 			expect(',');
 			auto a1 = toAngle(nextInt());
 			return CommandPtr(new SetAngle(a0, a1));
@@ -181,18 +178,18 @@ public:
 		} else if (keyword("interpolangle") || keyword("interpolanglezoom")) {
 			maybe(',');
 			maybe('=');
-			auto i0 = nextInt();
-			if (i0 > 4095)
-				i0 -= 8192;
-			auto a0 = toAngle(i0);
+			auto a0 = toAngle(nextInt());
 			expect(',');
 			auto a1 = toAngle(nextInt());
 			expect(',');
-			int unk = nextInt();
-			int zoom = 0;
+			float a2 = nextInt();
+			float a3 = 0;
 			if (maybe(','))
-				zoom = nextInt();
-			return CommandPtr(new InterpolAngle(a0, a1, unk, zoom));
+				a3 = nextInt();
+			// x, y, speed
+			// or
+			// x, y, zoom, speed
+			return CommandPtr(a3 != 0 ? new InterpolAngle(a0, a1, a3, toRadian(a2)) : new InterpolAngle(a0, a1, a2, 0));
 		} else if (maybe("anglexmax=")) {
 			return CommandPtr(new AngleXMax(toAngle(nextInt())));
 		} else if (maybe("angleymax=")) {

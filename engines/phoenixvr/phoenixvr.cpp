@@ -210,6 +210,62 @@ void PhoenixVREngine::end() {
 	}
 }
 
+void PhoenixVREngine::interpolateAngle(float x, float y, float speed, float zoom) {
+	debug("interpolateAngle %g,%g, speed: %g, zoom: %g", x, y, speed, zoom);
+	Graphics::FrameLimiter limiter(g_system, kFPSLimit);
+	unsigned frameDuration = 0;
+	static constexpr float kDuration = 4096 * 16 / 1000.0f;
+	auto x0 = _angleY.angle() + kPi2, y0 = _angleX.angle(), z0 = _fov;
+	auto dx = x - x0, dy = y - y0, dz = zoom - z0;
+	if (dy < -kPi)
+		dy += kTau;
+	if (dy > kPi)
+		dy -= kTau;
+	if (dx < -kPi)
+		dx += kTau;
+	if (dx > kPi)
+		dx -= kTau;
+	debug("dx: %g, dy: %g, dz: %g", dx, dy, dz);
+	float t = 0;
+	bool waiting = true;
+	while (!shouldQuit() && waiting && t < kDuration) {
+		auto t1 = t / kDuration; // normalise to 0..1 range
+		// angles are animated using square function, zoom is linear
+		auto t2 = t1 * t1;
+
+		setAngle(x0 + 0 * dx, y0 + t2 * dy);
+		if (zoom > 0) {
+			setZoom(z0 + t1 * dz);
+		}
+
+		renderVR(frameDuration / 1000.0f);
+
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN: {
+				if (event.kbd.ascii == ' ') {
+					waiting = false;
+				}
+				break;
+			}
+			default:
+				break;
+			}
+		}
+
+		// Delay for a bit. All events loops should have a delay
+		// to prevent the system being unduly loaded
+		limiter.delayBeforeSwap();
+		_screen->update();
+		frameDuration = limiter.startFrame();
+		t += frameDuration / 1000.0f * speed;
+	}
+	setAngle(x, y);
+	if (zoom > 0)
+		setZoom(zoom);
+}
+
 void PhoenixVREngine::until(const Common::String &var, int value) {
 	debug("until %s %d", var.c_str(), value);
 	Graphics::FrameLimiter limiter(g_system, kFPSLimit);
@@ -1008,6 +1064,7 @@ Common::Error PhoenixVREngine::run() {
 			}
 		}
 		float dt = float(frameDuration) / 1000.0f;
+		debug("tick %g", dt);
 		tick(dt);
 
 		// Delay for a bit. All events loops should have a delay

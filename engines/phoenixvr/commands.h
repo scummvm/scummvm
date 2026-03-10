@@ -953,8 +953,8 @@ struct LockKey : public Script::Command {
 };
 
 struct SetZoom : public Script::Command {
-	int fov;
-	SetZoom(int f) : fov(f) {}
+	float fov;
+	SetZoom(float f) : fov(f) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
 		g_engine->setZoom(fov);
@@ -1007,13 +1007,12 @@ struct SetNord : public Script::Command {
 };
 
 struct InterpolAngle : public Script::Command {
-	float x, y;
-	int unk;
-	int zoom;
-	InterpolAngle(float x_, float y_, int u, int z) : x(x_), y(y_), unk(u), zoom(z) {}
+	float x, y, speed, zoom;
+
+	InterpolAngle(float x_, float y_, float s, float z) : x(x_), y(y_), speed(s), zoom(z) {}
 
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("interpolangle %g,%g %d %d", x, y, unk, zoom);
+		g_engine->interpolateAngle(x, y, speed, zoom);
 	}
 };
 

@@ -138,9 +138,10 @@ public:
 	void killTimer();
 	void playAnimation(const Common::String &name, const Common::String &var, int varValue, float speed);
 	void stopAnimation(const Common::String &name);
-	void setZoom(int fov) {
-		_fov = kPi * fov / 180;
+	void setZoom(float fov) {
+		_fov = fov;
 	}
+	void interpolateAngle(float x, float y, float speed, float zoom);
 
 	void setXMax(float max) {
 		static const float baseX = -kPi2;

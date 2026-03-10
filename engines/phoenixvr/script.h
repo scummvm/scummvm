@@ -34,6 +34,9 @@ class SeekableReadStream;
 
 namespace PhoenixVR {
 namespace {
+inline float toRadian(float deg) {
+	return kPi * deg / 180;
+}
 inline float toAngle(int a) {
 	static const float angleToFloat = kPi / 4096.0f;
 	return angleToFloat * static_cast<float>(a);
