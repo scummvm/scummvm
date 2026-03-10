@@ -443,6 +443,9 @@ Common::Error ColonyEngine::run() {
 	uint32 lastMoveTick = _system->getMillis();
 	while (!shouldQuit()) {
 		_frameLimiter->startFrame();
+		if (_gameMode == kModeBattle)
+			battleThink();
+
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
 			// Let MacWindowManager handle menu events first
@@ -618,24 +621,21 @@ Common::Error ColonyEngine::run() {
 			const int rotSpeed = 1 << (_speedShift - 1);
 
 			if (_gameMode == kModeBattle) {
-				// Battle: direct movement, no wall collision
-				if (_moveForward) {
-					_me.xloc += moveX;
-					_me.yloc += moveY;
-				}
-				if (_moveBackward) {
-					_me.xloc -= moveX;
-					_me.yloc -= moveY;
-				}
+				if (_moveForward)
+					battleCommand(_me.xloc + moveX, _me.yloc + moveY);
+				if (_moveBackward)
+					battleCommand(_me.xloc - moveX, _me.yloc - moveY);
 				if (_strafeLeft) {
 					uint8 strafeAngle = (uint8)((int)_me.look + 64);
-					_me.xloc += (_cost[strafeAngle] * (1 << _speedShift)) >> 4;
-					_me.yloc += (_sint[strafeAngle] * (1 << _speedShift)) >> 4;
+					int sx = (_cost[strafeAngle] * (1 << _speedShift)) >> 4;
+					int sy = (_sint[strafeAngle] * (1 << _speedShift)) >> 4;
+					battleCommand(_me.xloc + sx, _me.yloc + sy);
 				}
 				if (_strafeRight) {
 					uint8 strafeAngle = (uint8)((int)_me.look - 64);
-					_me.xloc += (_cost[strafeAngle] * (1 << _speedShift)) >> 4;
-					_me.yloc += (_sint[strafeAngle] * (1 << _speedShift)) >> 4;
+					int sx = (_cost[strafeAngle] * (1 << _speedShift)) >> 4;
+					int sy = (_sint[strafeAngle] * (1 << _speedShift)) >> 4;
+					battleCommand(_me.xloc + sx, _me.yloc + sy);
 				}
 			} else {
 				if (_moveForward)
@@ -667,6 +667,7 @@ Common::Error ColonyEngine::run() {
 
 		if (_gameMode == kModeBattle) {
 			renderBattle();
+			drawDashboardStep1();
 			drawCrosshair();
 		} else {
 			_gfx->clear((_corePower[_coreIndex] > 0) ? 15 : 0);
