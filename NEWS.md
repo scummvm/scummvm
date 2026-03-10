@@ -96,6 +96,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Implemented combat system.
    - Numerous visual fixes.
    - Implemented mouse scrolling of text window.
+   - Implemented way to show startup screen and play startup sound for games
+     what have those files. There will be new items in the About menu.
 
  macOS port:
    - Added support for the newer Text-to-Speech API of macOS 10.14+.
