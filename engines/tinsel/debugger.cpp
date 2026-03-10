@@ -116,7 +116,7 @@ bool Console::cmd_scenes(int argc, const char **argv) {
 
 bool Console::cmd_scene(int argc, const char **argv) {
 	if (argc < 1 || argc > 3) {
-		debugPrintf("%s [scene_number [entry number]]\n", argv[0]);
+		debugPrintf("%s [scene [entry number]]\n", argv[0]);
 		debugPrintf("If no parameters are given, prints the current scene.\n");
 		debugPrintf("Otherwise changes to the specified scene number. Entry number defaults to 1 if none provided\n");
 		return true;
@@ -129,10 +129,30 @@ bool Console::cmd_scene(int argc, const char **argv) {
 		return true;
 	}
 
-	uint32 sceneNumber = (uint32)strToInt(argv[1]) << SCNHANDLE_SHIFT;
-	int entryNumber = (argc >= 3) ? strToInt(argv[2]) : 1;
+	// lookup scene by name first, then by number
+	uint32 sceneNumber = 0;
+	for (int i = 1; i < _vm->_handle->GetSceneCount(); i++) {
+		Common::String name = _vm->_handle->GetSceneName(i);
+		if (name.hasPrefixIgnoreCase(argv[1])) {
+			sceneNumber = i;
+			break;
+		}
+	}
+	if (sceneNumber == 0) {
+		sceneNumber = (uint32)strToInt(argv[1]);
+	}
+	if (!(1 <= sceneNumber && sceneNumber < (uint32)_vm->_handle->GetSceneCount())) {
+		debugPrintf("Invalid scene: %s\n", argv[1]);
+		return true;
+	}
 
-	SetNewScene(sceneNumber, entryNumber, TRANS_CUT);
+	int entryNumber = (argc >= 3) ? strToInt(argv[2]) : 1;
+	if (entryNumber < 1) {
+		debugPrintf("Invalid entry: %s\n", argv[2]);
+		return true;
+	}
+
+	SetNewScene(sceneNumber << SCNHANDLE_SHIFT, entryNumber, TRANS_CUT);
 	return false;
 }
 
