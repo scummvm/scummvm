@@ -19,30 +19,12 @@
  *
  */
 
-#include "backends/imgui/IconsMaterialSymbols.h"
-
-#include "graphics/macgui/mactext.h"
-
-#include "image/png.h"
-
-#include "common/debug.h"
-
 #include "director/director.h"
-#include "director/lingo/lingodec/context.h"
-#include "director/lingo/lingodec/script.h"
-#include "director/cast.h"
-#include "director/castmember/bitmap.h"
-#include "director/castmember/shape.h"
-#include "director/castmember/text.h"
-#include "director/debugger.h"
-#include "director/movie.h"
-#include "director/window.h"
-#include "director/score.h"
-#include "director/channel.h"
-#include "director/picture.h"
-
-#include "director/debugger/debugtools.h"
 #include "director/debugger/dt-internal.h"
+
+#include "director/cast.h"
+#include "director/castmember/text.h"
+#include "director/movie.h"
 
 namespace Director {
 namespace DT {
