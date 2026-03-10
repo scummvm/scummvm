@@ -51,7 +51,7 @@ const ADGameDescription gameDescriptions[] = {
 				   "cd2/Data/Script3.pak", "4f122b65627903da15b3f15156252c8d", 63979),
 		Common::EN_USA,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM | ADGF_CD | ADGF_TESTING,
+		ADGF_DROPPLATFORM | ADGF_CD | ADGF_UNSUPPORTED,
 		GUIO1(GUIO_NONE)
 	},
 
