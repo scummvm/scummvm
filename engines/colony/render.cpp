@@ -741,17 +741,17 @@ static const int kReactorCorePts[12][3] = {
 	{-40, 20, 32}, {0, 40, 32}, {40, 20, 32}, {40, -20, 32}, {0, -40, 32}, {-40, -20, 32}
 };
 static const int kReactorCoreSurf[7][8] = {
-	{kColorReactor, 4, 0, 1, 7, 6, 0, 0}, {kColorReactor, 4, 1, 2, 8, 7, 0, 0}, {kColorReactor, 4, 2, 3, 9, 8, 0, 0},
-	{kColorReactor, 4, 3, 4, 10, 9, 0, 0}, {kColorReactor, 4, 4, 5, 11, 10, 0, 0}, {kColorReactor, 4, 5, 0, 6, 11, 0, 0},
-	{kColorReactor, 6, 5, 4, 3, 2, 1, 0}
+	{kColorCCore, 4, 0, 1, 7, 6, 0, 0}, {kColorCCore, 4, 1, 2, 8, 7, 0, 0}, {kColorCCore, 4, 2, 3, 9, 8, 0, 0},
+	{kColorCCore, 4, 3, 4, 10, 9, 0, 0}, {kColorCCore, 4, 4, 5, 11, 10, 0, 0}, {kColorCCore, 4, 5, 0, 6, 11, 0, 0},
+	{kColorCCore, 6, 5, 4, 3, 2, 1, 0}
 };
 static const int kReactorBasePts[8][3] = {
 	{-128, 128, 0}, {128, 128, 0}, {128, -128, 0}, {-128, -128, 0},
 	{-128, 128, 32}, {128, 128, 32}, {128, -128, 32}, {-128, -128, 32}
 };
 static const int kReactorBaseSurf[6][8] = {
-	{kColorRainbow1, 4, 0, 3, 7, 4, 0, 0}, {kColorRainbow1, 4, 3, 2, 6, 7, 0, 0}, {kColorRainbow1, 4, 1, 0, 4, 5, 0, 0},
-	{kColorRainbow1, 4, 2, 1, 5, 6, 0, 0}, {kColorRainbow1, 4, 7, 6, 5, 4, 0, 0}, {kColorRainbow1, 4, 0, 1, 2, 3, 0, 0}
+	{kColorReactor, 4, 0, 3, 7, 4, 0, 0}, {kColorReactor, 4, 3, 2, 6, 7, 0, 0}, {kColorReactor, 4, 1, 0, 4, 5, 0, 0},
+	{kColorReactor, 4, 2, 1, 5, 6, 0, 0}, {kColorReactor, 4, 7, 6, 5, 4, 0, 0}, {kColorReactor, 4, 0, 1, 2, 3, 0, 0}
 };
 static const int kReactorTopPts[8][3] = {
 	{-128, 128, 288}, {128, 128, 288}, {128, -128, 288}, {-128, -128, 288},
@@ -763,12 +763,6 @@ static const Colony::ColonyEngine::PrismPartDef kBox2Parts[2] = {
 	{8, kBox2Pts, 4, kBox1Surf}, // Body (stacked on box1)
 	{8, kBox1Pts, 5, kBox1Surf}  // Lid (same geometry as box1 base)
 };
-static const Colony::ColonyEngine::PrismPartDef kReactorParts[3] = {
-	{12, kReactorCorePts, 7, kReactorCoreSurf},
-	{8, kReactorBasePts, 6, kReactorBaseSurf},
-	{8, kReactorTopPts, 6, kReactorBaseSurf}
-};
-
 // Bench: simple box (1 part). DOS INITOBJ.C InitBench.
 static const int kBenchPts[8][3] = {
 	{-60, 128, 0}, {60, 128, 0}, {60, -128, 0}, {-60, -128, 0},
@@ -1748,9 +1742,9 @@ void ColonyEngine::wallLine(const float corners[4][3], float u1, float v1, float
 
 // Draw a filled polygon on a wall face using normalized (u,v) coordinates
 void ColonyEngine::wallPolygon(const float corners[4][3], const float *u, const float *v, int count, uint32 color) {
-	float px[8], py[8], pz[8];
-	if (count > 8)
-		count = 8;
+	float px[64], py[64], pz[64];
+	if (count > 64)
+		count = 64;
 	for (int i = 0; i < count; i++) {
 		float p[3];
 		wallPoint(corners, u[i], v[i], p);
@@ -1759,70 +1753,208 @@ void ColonyEngine::wallPolygon(const float corners[4][3], const float *u, const 
 	_gfx->draw3DPolygon(px, py, pz, count, color);
 }
 
+static float signedArea2D(const float *x, const float *y, int count) {
+	float area = 0.0f;
+	for (int i = 0; i < count; ++i) {
+		const int next = (i + 1) % count;
+		area += x[i] * y[next] - x[next] * y[i];
+	}
+	return area * 0.5f;
+}
+
+static bool pointInTriangle2D(float px, float py, float ax, float ay, float bx, float by, float cx, float cy) {
+	const float d1 = (px - bx) * (ay - by) - (ax - bx) * (py - by);
+	const float d2 = (px - cx) * (by - cy) - (bx - cx) * (py - cy);
+	const float d3 = (px - ax) * (cy - ay) - (cx - ax) * (py - ay);
+	const bool hasNeg = (d1 < 0.0f) || (d2 < 0.0f) || (d3 < 0.0f);
+	const bool hasPos = (d1 > 0.0f) || (d2 > 0.0f) || (d3 > 0.0f);
+	return !(hasNeg && hasPos);
+}
+
+static const char *const kWallCharData[] = {
+	"\00",
+	"\02\10\02\00\03\00\03\01\02\01\10\02\02\03\02\03\06\02\06",
+	"\02\10\01\04\02\04\02\05\01\05\10\03\04\04\04\04\05\03\05",
+	"\04\10\01\00\02\00\02\05\01\05\10\03\00\04\00\04\05\03\05\10\00\01\05\01\05\02\00\02\10\00\03\05\03\05\04\00\04",
+	"\02\10\02\00\03\00\03\06\02\06\050\00\02\00\01\01\00\04\00\05\01\05\02\01\04\01\05\04\05\04\04\05\04\05\05\04\06\01\06\00\05\00\04\04\02\04\01\01\01\01\02",
+	"\03\10\01\00\06\05\05\06\00\01\032\01\03\02\03\03\04\03\05\02\06\01\06\00\05\00\04\01\03\01\05\02\05\02\04\01\04\032\04\00\05\00\06\01\06\02\05\03\04\03\03\02\03\01\04\00\04\02\05\02\05\01\04\01",
+	"\03\10\05\01\05\02\03\04\02\04\014\02\04\01\05\02\06\01\06\00\05\01\04\032\05\04\03\01\01\01\01\03\03\05\02\06\01\06\02\05\00\03\00\01\01\00\03\00\05\03",
+	"\01\10\02\04\03\05\03\06\02\06",
+	"\01\014\04\00\03\02\03\04\04\06\02\04\02\02",
+	"\01\014\02\00\04\02\04\04\02\06\03\04\03\02",
+	"\06\06\01\00\03\03\00\02\06\02\00\04\00\03\03\06\05\00\06\02\03\03\06\06\04\05\06\03\03\06\02\06\04\06\03\03\06\00\04\01\06\03\03",
+	"\02\10\02\00\03\00\03\05\02\05\10\00\02\05\02\05\03\00\03",
+	"\01\10\02\00\03\01\03\02\02\02",
+	"\01\10\00\02\05\02\05\03\00\03",
+	"\01\10\02\00\03\00\03\01\02\01",
+	"\01\10\01\00\06\05\05\06\00\01",
+	"\02\032\01\00\05\00\06\01\06\05\05\06\01\06\00\05\00\01\01\00\01\05\05\05\05\01\01\01\10\01\01\02\01\05\05\04\05",
+	"\01\026\01\00\04\00\04\01\03\01\03\06\02\06\01\05\01\04\02\04\02\01\01\01",
+	"\01\042\06\00\06\01\02\01\05\02\06\03\06\05\05\06\01\06\00\05\00\04\01\04\01\05\05\05\05\04\01\02\00\01\00\00",
+	"\01\054\00\02\00\01\01\00\05\00\06\01\06\02\05\03\06\04\06\05\05\06\01\06\00\05\00\04\01\04\01\05\05\05\05\04\04\03\05\02\05\01\01\01\01\02",
+	"\01\036\04\00\05\00\05\02\06\02\06\03\05\03\05\06\04\06\04\03\01\03\02\06\01\06\00\03\00\02\04\02",
+	"\01\044\00\02\00\01\01\00\05\00\06\01\06\03\05\04\01\04\02\05\06\05\06\06\01\06\00\04\00\03\05\03\05\01\01\01\01\02",
+	"\01\046\01\02\05\02\05\01\01\01\01\05\05\05\05\04\06\04\06\05\05\06\01\06\00\05\00\01\01\00\05\00\06\01\06\02\05\03\01\03",
+	"\01\020\02\00\03\00\03\03\06\06\00\06\00\05\04\05\02\03",
+	"\02\040\03\00\03\01\01\01\01\02\04\03\01\04\01\05\03\05\03\06\01\06\00\05\00\04\01\03\00\02\00\01\01\00\040\03\00\05\00\06\01\06\02\05\03\06\04\06\05\05\06\03\06\03\05\05\05\05\04\02\03\05\02\05\01\03\01",
+	"\01\046\00\02\00\01\01\00\05\00\06\01\06\05\05\06\01\06\00\05\00\04\01\03\05\03\05\04\01\04\01\05\05\05\05\01\01\01\01\02",
+	"\02\10\02\01\03\01\03\02\02\02\10\02\03\03\03\03\04\02\04",
+	"\02\10\02\00\03\01\03\02\02\02\10\02\03\03\03\03\04\02\04",
+	"\01\014\06\00\06\01\02\03\06\05\06\06\00\03",
+	"\02\10\00\01\05\01\05\02\00\02\10\00\03\05\03\05\04\00\04",
+	"\01\014\00\00\06\03\00\06\00\05\04\03\00\01",
+	"\02\10\02\00\03\00\03\01\02\01\030\02\02\03\02\05\04\05\05\04\06\01\06\00\05\00\04\01\04\01\05\04\05\04\04",
+	"\05\012\04\00\01\01\00\04\00\01\01\00\012\02\00\05\00\06\01\06\04\05\01\012\06\02\06\05\05\06\02\06\05\05\012\04\06\01\06\00\05\00\02\01\05\034\05\01\05\02\03\05\02\05\01\04\01\02\02\01\03\01\05\04\05\05\03\02\02\02\02\04\03\04",
+	"\01\034\03\06\04\06\06\00\05\00\04\02\02\02\01\00\00\00\02\06\03\06\03\05\02\03\04\03\03\05",
+	"\01\050\00\00\00\06\05\06\06\05\06\04\05\03\06\02\06\01\05\00\01\00\01\01\05\01\05\02\04\03\01\03\01\04\05\04\05\05\01\05\01\00",
+	"\01\040\06\02\06\01\05\00\01\00\00\01\00\05\01\06\05\06\06\05\06\04\05\04\05\05\01\05\01\01\05\01\05\02",
+	"\01\034\00\00\00\06\04\06\06\04\06\02\04\00\01\00\01\01\04\01\05\02\05\04\04\05\01\05\01\00",
+	"\01\030\00\00\00\06\06\06\06\05\01\05\01\04\04\04\04\03\01\03\01\01\06\01\06\00",
+	"\01\024\00\00\00\06\06\06\06\05\01\05\01\03\04\03\04\02\01\02\01\00",
+	"\01\044\03\03\06\03\06\01\05\00\01\00\00\01\00\05\01\06\05\06\06\05\06\04\05\04\05\05\01\05\01\01\05\01\05\02\03\02",
+	"\01\030\00\00\00\06\01\06\01\04\05\04\05\06\06\06\06\00\05\00\05\03\01\03\01\00",
+	"\01\030\01\00\01\01\02\01\02\05\01\05\01\06\04\06\04\05\03\05\03\01\04\01\04\00",
+	"\01\034\00\02\00\01\01\00\04\00\05\01\05\05\06\05\06\06\03\06\03\05\04\05\04\01\01\01\01\02",
+	"\01\026\00\00\00\06\01\06\01\04\04\06\06\06\02\03\06\00\04\00\01\02\01\00",
+	"\01\014\00\06\00\00\06\00\06\01\01\01\01\06",
+	"\01\030\00\00\00\06\01\06\03\04\05\06\06\06\06\00\05\00\05\04\03\03\01\04\01\00",
+	"\01\024\00\00\00\06\02\06\05\01\05\06\06\06\06\00\04\00\01\05\01\00",
+	"\01\032\00\01\00\05\01\06\05\06\06\05\06\01\05\00\01\00\00\01\05\01\05\05\01\05\01\01",
+	"\01\030\00\00\00\06\05\06\06\05\06\03\05\02\01\02\01\03\05\03\05\05\01\05\01\00",
+	"\02\036\04\00\01\00\00\01\00\05\01\06\05\06\06\05\06\02\04\00\04\02\05\02\05\05\01\05\01\01\04\01\014\06\00\06\01\05\02\04\02\04\01\05\00",
+	"\01\036\00\00\00\06\05\06\06\05\06\03\05\02\06\00\05\00\04\02\01\02\01\03\05\03\05\05\01\05\01\00",
+	"\01\054\00\02\00\01\01\00\05\00\06\01\06\02\05\03\01\04\01\05\05\05\05\04\06\04\06\05\05\06\01\06\00\05\00\04\01\03\05\02\05\01\01\01\01\02",
+	"\01\020\02\00\02\05\00\05\00\06\05\06\05\05\03\05\03\00",
+	"\01\024\00\06\00\01\01\00\05\00\06\01\06\06\05\06\05\01\01\01\01\06",
+	"\01\016\00\06\02\00\04\00\06\06\05\06\03\01\01\06",
+	"\01\030\00\06\01\00\02\00\03\02\04\00\05\00\06\06\05\06\04\02\03\04\02\02\01\06",
+	"\01\030\00\00\02\03\00\06\01\06\03\04\05\06\06\06\04\03\06\00\05\00\03\02\01\00",
+	"\02\014\00\06\02\03\02\00\03\00\03\03\01\06\10\02\03\03\03\05\06\04\06",
+	"\01\024\00\05\04\05\00\01\00\00\06\00\06\01\02\01\06\05\06\06\00\06",
+	"\01\020\04\00\02\00\02\06\04\06\04\05\03\05\03\01\04\01",
+	"\01\10\00\05\05\00\06\01\01\06",
+	"\01\020\02\00\02\01\03\01\03\05\02\05\02\06\04\06\04\00",
+	"\01\014\00\02\03\06\06\02\05\02\03\05\01\02",
+	"\01\10\00\01\06\01\06\02\00\02",
+	"\01\10\02\04\03\05\03\06\02\06",
+	"\04\06\03\04\03\05\04\06\024\00\02\00\04\01\05\02\05\03\04\04\05\05\05\06\04\05\04\04\02\012\00\02\04\02\04\01\02\00\01\00\014\02\01\04\04\05\02\06\02\05\00\04\00",
+	"\01\016\00\03\03\00\03\02\06\02\06\04\03\04\03\06",
+	"\01\016\00\02\00\04\03\04\03\06\06\03\03\00\03\02",
+	"\01\06\00\00\03\06\06\00",
+	"\03\06\01\00\05\00\03\03\06\03\03\00\03\01\06\06\03\03\06\03\05\06",
+};
+
 void ColonyEngine::wallChar(const float corners[4][3], uint8 cnum) {
-	// Character 'b' (right arrow) and 'c' (left arrow) coordinates on 0-6 grid
-	static const uint8 wallcharB[] = {7, 0,3, 3,0, 3,2, 6,2, 6,4, 3,4, 3,6};
-	static const uint8 wallcharC[] = {7, 0,2, 0,4, 3,4, 3,6, 6,3, 3,0, 3,2};
-	
-	const uint8 *data = nullptr;
-	if (cnum == 'b')
-		data = wallcharB;
-	else if (cnum == 'c')
-		data = wallcharC;
-	
-	if (data) {
-		int count = data[0];
-		float u[8], v[8];
-		for (int i = 0; i < count; i++) {
-			u[i] = 0.2f + (data[1 + i*2] / 6.0f) * 0.6f;
-			v[i] = 0.2f + (data[2 + i*2] / 6.0f) * 0.6f;
-		}
-		// Mac drawchar(): sets cc=c_char0+level-1, fg=black, pattern=WHITE.
-		// SuperPoly fills with BACKGROUND color = cColor[cc].b.
-		// B&W: bg=black. Color: bg=c_char0.bg (e.g., yellow for level 1).
-		// Arrow shapes are concave  GL_POLYGON only handles convex polys.
-		// Decompose into convex parts: triangle head + rectangle shaft.
-		if (_renderMode == Common::kRenderMacintosh) {
-			uint32 fillColor;
-			if (_hasMacColors) {
-				int cc = 8 + _level - 1; // c_char0 + level - 1
-				fillColor = packMacColor(_macColors[cc].bg);
-			} else {
-				fillColor = 0; // B&W: black
+	if (cnum < 0x20 || cnum > 0x65)
+		cnum = 0x20;
+
+	const uint8 *data = reinterpret_cast<const uint8 *>(kWallCharData[cnum - 0x20]);
+	if (!data || data[0] == 0)
+		return;
+
+	const bool macMode = (_renderMode == Common::kRenderMacintosh);
+	const bool macColors = (macMode && _hasMacColors);
+	const uint32 fillColor = macColors ? packMacColor(_macColors[8 + _level - 1].bg) : 0;
+	const uint32 lineColor = macColors ? (uint32)0xFF000000 : 0;
+
+	auto drawFilledCharPolygon = [&](const float *u, const float *v, int count) {
+		if (!macMode || count < 3)
+			return;
+
+		const float area = signedArea2D(u, v, count);
+		if (fabsf(area) < 0.0001f)
+			return;
+
+		int indices[32];
+		for (int i = 0; i < count; ++i)
+			indices[i] = i;
+
+		const bool ccw = area > 0.0f;
+		int remaining = count;
+		int guard = 0;
+
+		while (remaining > 3 && guard++ < 64) {
+			bool earFound = false;
+			for (int i = 0; i < remaining; ++i) {
+				const int prev = indices[(i + remaining - 1) % remaining];
+				const int curr = indices[i];
+				const int next = indices[(i + 1) % remaining];
+				const float cross = (u[curr] - u[prev]) * (v[next] - v[prev]) -
+					(v[curr] - v[prev]) * (u[next] - u[prev]);
+				if (ccw ? (cross <= 0.0001f) : (cross >= -0.0001f))
+					continue;
+
+				bool containsPoint = false;
+				for (int j = 0; j < remaining; ++j) {
+					const int test = indices[j];
+					if (test == prev || test == curr || test == next)
+						continue;
+					if (pointInTriangle2D(u[test], v[test], u[prev], v[prev], u[curr], v[curr], u[next], v[next])) {
+						containsPoint = true;
+						break;
+					}
+				}
+				if (containsPoint)
+					continue;
+
+				const float triU[3] = {u[prev], u[curr], u[next]};
+				const float triV[3] = {v[prev], v[curr], v[next]};
+				wallPolygon(corners, triU, triV, 3, fillColor);
+
+				for (int j = i; j < remaining - 1; ++j)
+					indices[j] = indices[j + 1];
+				--remaining;
+				earFound = true;
+				break;
 			}
-			_gfx->setWireframe(true, fillColor);
-			if (cnum == 'b') {
-				// Right arrow head: (0,3)-(3,0)-(3,6)
-				float hu[3] = {u[0], u[1], u[6]};
-				float hv[3] = {v[0], v[1], v[6]};
-				wallPolygon(corners, hu, hv, 3, fillColor);
-				// Right arrow shaft: (3,2)-(6,2)-(6,4)-(3,4)
-				float su[4] = {u[2], u[3], u[4], u[5]};
-				float sv[4] = {v[2], v[3], v[4], v[5]};
-				wallPolygon(corners, su, sv, 4, fillColor);
-			} else if (cnum == 'c') {
-				// Left arrow shaft: (0,2)-(0,4)-(3,4)-(3,2)
-				float su[4] = {u[0], u[1], u[2], u[6]};
-				float sv[4] = {v[0], v[1], v[2], v[6]};
-				wallPolygon(corners, su, sv, 4, fillColor);
-				// Left arrow head: (3,6)-(6,3)-(3,0)
-				float hu[3] = {u[3], u[4], u[5]};
-				float hv[3] = {v[3], v[4], v[5]};
-				wallPolygon(corners, hu, hv, 3, fillColor);
+
+			if (!earFound) {
+				for (int i = 1; i < remaining - 1; ++i) {
+					const float triU[3] = {u[indices[0]], u[indices[i]], u[indices[i + 1]]};
+					const float triV[3] = {v[indices[0]], v[indices[i]], v[indices[i + 1]]};
+					wallPolygon(corners, triU, triV, 3, fillColor);
+				}
+				return;
 			}
-			// Restore wall fill
-			uint32 wallFill = _hasMacColors
-				? packMacColor(_macColors[8 + _level - 1].fg)
-				: (uint32)255;
-			_gfx->setWireframe(true, wallFill);
 		}
-		// Outline in black (or vBLACK for EGA)
-		uint32 lineColor = (_hasMacColors && _renderMode == Common::kRenderMacintosh)
-			? (uint32)0xFF000000 : 0;
-		for (int i = 0; i < count; i++) {
-			int n = (i + 1) % count;
-			wallLine(corners, u[i], v[i], u[n], v[n], lineColor);
+
+		if (remaining == 3) {
+			const float triU[3] = {u[indices[0]], u[indices[1]], u[indices[2]]};
+			const float triV[3] = {v[indices[0]], v[indices[1]], v[indices[2]]};
+			wallPolygon(corners, triU, triV, 3, fillColor);
 		}
+	};
+
+	if (macMode)
+		_gfx->setWireframe(false);
+
+	int offset = 1;
+	for (int poly = 0; poly < data[0]; ++poly) {
+		const int coordCount = data[offset++];
+		int count = coordCount / 2;
+		if (count > 32)
+			count = 32;
+
+		float u[32], v[32];
+		for (int i = 0; i < count; ++i) {
+			u[i] = (float)data[offset + i * 2] / 6.0f;
+			v[i] = (float)data[offset + i * 2 + 1] / 6.0f;
+		}
+
+		drawFilledCharPolygon(u, v, count);
+		for (int i = 0; i < count; ++i) {
+			const int next = (i + 1) % count;
+			wallLine(corners, u[i], v[i], u[next], v[next], lineColor);
+		}
+
+		offset += coordCount;
+	}
+
+	if (macMode) {
+		const uint32 wallFill = _hasMacColors
+			? packMacColor(_macColors[8 + _level - 1].fg)
+			: (uint32)255;
+		_gfx->setWireframe(true, wallFill);
 	}
 }
 
@@ -2644,8 +2776,8 @@ bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj) {
 		draw3DPrism(obj, kBox2Parts[0], false); // top second
 		break;
 	case kObjReactor: {
-		// MakeReactor: animate core height and ring/core surface colors.
-		// Core state: 0=closing, 1=opening, 2=open (core gone).
+		// MakeReactor: animate core height and recolor only the original
+		// side faces. The reactor body stays c_reactor and the core cap stays c_ccore.
 		switch (_coreState[_coreIndex]) {
 		case 0: if (_coreHeight[_coreIndex] < 256) _coreHeight[_coreIndex] += 16; break;
 		case 1: if (_coreHeight[_coreIndex] > 0) _coreHeight[_coreIndex] -= 16; break;
@@ -2672,33 +2804,44 @@ bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj) {
 		for (int i = 4; i < 8; i++)
 			modRingPts[i][2] = height + 32;
 
-		PrismPartDef modCoreDef = {12, modCorePts, 7, kReactorCoreSurf};
-		PrismPartDef modRingDef = {8, modRingPts, 6, kReactorBaseSurf};
+		int modCoreSurf[7][8];
+		int modRingSurf[6][8];
+		int modTopSurf[6][8];
+		memcpy(modCoreSurf, kReactorCoreSurf, sizeof(modCoreSurf));
+		memcpy(modRingSurf, kReactorBaseSurf, sizeof(modRingSurf));
+		memcpy(modTopSurf, kReactorBaseSurf, sizeof(modTopSurf));
 
-		// Ring color: cycles through 4 colors each frame
-		// Mac: c_color0..c_color3; DOS: 1+count%5
+		// Mac MakeReactor(): first 4 ring/top faces cycle through c_color0..c_color3.
 		static const int kRingColors[] = {kColorRainbow1, kColorRainbow2, kColorRainbow3, kColorRainbow4};
-		int ringColor = kRingColors[_displayCount % 4];
+		const int ringColor = kRingColors[_displayCount % 4];
+		for (int i = 0; i < 4; ++i) {
+			modRingSurf[i][0] = ringColor;
+			modTopSurf[i][0] = ringColor;
+		}
 
-		// Core color when powered: bouncing cycle through hcore colors
-		// Mac: pcycle = {c_hcore1, c_hcore2, c_hcore3, c_hcore4, c_hcore3, c_hcore2}
+		// Only the 6 core side faces animate. The top face remains c_ccore.
 		static const int kCoreCycle[] = {kColorHCore1, kColorHCore2, kColorHCore3, kColorHCore4, kColorHCore3, kColorHCore2};
 		int coreColor;
 		if (_corePower[_coreIndex] > 1)
 			coreColor = kCoreCycle[_displayCount % 6];
 		else
 			coreColor = kColorCCore;
+		for (int i = 0; i < 6; ++i)
+			modCoreSurf[i][0] = coreColor;
 
-		// Part 2: top cap (static, Z=288..320)
+		PrismPartDef modCoreDef = {12, modCorePts, 7, modCoreSurf};
+		PrismPartDef modRingDef = {8, modRingPts, 6, modRingSurf};
+		PrismPartDef modTopDef = {8, kReactorTopPts, 6, modTopSurf};
+
+		// Depth separation matches the original draw order closely, but the
+		// per-face colors now follow MakeReactor() exactly.
 		_gfx->setDepthRange(0.004, 1.0);
-		draw3DPrism(obj, kReactorParts[2], false);
-		// Part 1: ring (animated height + color)
+		draw3DPrism(obj, modTopDef, false);
 		_gfx->setDepthRange(0.002, 1.0);
-		draw3DPrism(obj, modRingDef, false, ringColor);
-		// Part 0: core (animated height + color, hidden in state 2)
+		draw3DPrism(obj, modRingDef, false);
 		if (_coreState[_coreIndex] < 2) {
 			_gfx->setDepthRange(0.0, 1.0);
-			draw3DPrism(obj, modCoreDef, false, coreColor);
+			draw3DPrism(obj, modCoreDef, false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
