@@ -2,6 +2,7 @@ MODULE := engines/colony
 
 MODULE_OBJS := \
 	animation.o \
+	battle.o \
 	colony.o \
 	debugger.o \
 	gfx.o \

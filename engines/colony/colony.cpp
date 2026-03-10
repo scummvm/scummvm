@@ -593,6 +593,9 @@ Common::Error ColonyEngine::run() {
 		if (mouseMoved && _mouseLocked) {
 			if (mouseDX != 0) {
 				_me.look = (uint8)((int)_me.look - (mouseDX * _mouseSensitivity));
+				// In battle mode, body always faces look direction
+				if (_gameMode == kModeBattle)
+					_me.ang = _me.look;
 			}
 			if (mouseDY != 0) {
 				_me.lookY = (int8)CLIP<int>((int)_me.lookY - (mouseDY * _mouseSensitivity), -64, 64);
@@ -614,21 +617,43 @@ Common::Error ColonyEngine::run() {
 			const int moveY = (_sint[_me.look] * (1 << _speedShift)) >> 4;
 			const int rotSpeed = 1 << (_speedShift - 1);
 
-			if (_moveForward)
-				cCommand(_me.xloc + moveX, _me.yloc + moveY, true);
-			if (_moveBackward)
-				cCommand(_me.xloc - moveX, _me.yloc - moveY, true);
-			if (_strafeLeft) {
-				uint8 strafeAngle = (uint8)((int)_me.look + 64);
-				int sx = (_cost[strafeAngle] * (1 << _speedShift)) >> 4;
-				int sy = (_sint[strafeAngle] * (1 << _speedShift)) >> 4;
-				cCommand(_me.xloc + sx, _me.yloc + sy, true);
-			}
-			if (_strafeRight) {
-				uint8 strafeAngle = (uint8)((int)_me.look - 64);
-				int sx = (_cost[strafeAngle] * (1 << _speedShift)) >> 4;
-				int sy = (_sint[strafeAngle] * (1 << _speedShift)) >> 4;
-				cCommand(_me.xloc + sx, _me.yloc + sy, true);
+			if (_gameMode == kModeBattle) {
+				// Battle: direct movement, no wall collision
+				if (_moveForward) {
+					_me.xloc += moveX;
+					_me.yloc += moveY;
+				}
+				if (_moveBackward) {
+					_me.xloc -= moveX;
+					_me.yloc -= moveY;
+				}
+				if (_strafeLeft) {
+					uint8 strafeAngle = (uint8)((int)_me.look + 64);
+					_me.xloc += (_cost[strafeAngle] * (1 << _speedShift)) >> 4;
+					_me.yloc += (_sint[strafeAngle] * (1 << _speedShift)) >> 4;
+				}
+				if (_strafeRight) {
+					uint8 strafeAngle = (uint8)((int)_me.look - 64);
+					_me.xloc += (_cost[strafeAngle] * (1 << _speedShift)) >> 4;
+					_me.yloc += (_sint[strafeAngle] * (1 << _speedShift)) >> 4;
+				}
+			} else {
+				if (_moveForward)
+					cCommand(_me.xloc + moveX, _me.yloc + moveY, true);
+				if (_moveBackward)
+					cCommand(_me.xloc - moveX, _me.yloc - moveY, true);
+				if (_strafeLeft) {
+					uint8 strafeAngle = (uint8)((int)_me.look + 64);
+					int sx = (_cost[strafeAngle] * (1 << _speedShift)) >> 4;
+					int sy = (_sint[strafeAngle] * (1 << _speedShift)) >> 4;
+					cCommand(_me.xloc + sx, _me.yloc + sy, true);
+				}
+				if (_strafeRight) {
+					uint8 strafeAngle = (uint8)((int)_me.look - 64);
+					int sx = (_cost[strafeAngle] * (1 << _speedShift)) >> 4;
+					int sy = (_sint[strafeAngle] * (1 << _speedShift)) >> 4;
+					cCommand(_me.xloc + sx, _me.yloc + sy, true);
+				}
 			}
 			if (_rotateLeft) {
 				_me.ang += rotSpeed;
@@ -640,12 +665,16 @@ Common::Error ColonyEngine::run() {
 			}
 		}
 
-		_gfx->clear((_corePower[_coreIndex] > 0) ? 15 : 0);
-
-		corridor();
-		drawDashboardStep1();
-		drawCrosshair();
-		checkCenter();
+		if (_gameMode == kModeBattle) {
+			renderBattle();
+			drawCrosshair();
+		} else {
+			_gfx->clear((_corePower[_coreIndex] > 0) ? 15 : 0);
+			corridor();
+			drawDashboardStep1();
+			drawCrosshair();
+			checkCenter();
+		}
 
 		// Draw Mac menu bar overlay (render directly to our surface, skip WM's
 		// g_system->copyRectToScreen which conflicts with the OpenGL backend)
