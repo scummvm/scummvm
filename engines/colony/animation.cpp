@@ -384,10 +384,10 @@ void ColonyEngine::playAnimation() {
 			break;
 		}
 	} else if (_animationName == "vanity") {
-		debug(0, "Vanity init: action0=%d action1=%d level=%d weapons=%d armor=%d", _action0, _action1, _level, _weapons, _armor);
+		debugC(1, kColonyDebugAnimation, "Vanity init: action0=%d action1=%d level=%d weapons=%d armor=%d", _action0, _action1, _level, _weapons, _armor);
 		for (int i = 0; i < (int)_lSprites.size(); i++) {
 			ComplexSprite *ls = _lSprites[i];
-			debug(0, "  Vanity sprite %d: type=%d frozen=%d locked=%d current=%d onoff=%d key=%d lock=%d frames=%d",
+			debugC(1, kColonyDebugAnimation, "  Vanity sprite %d: type=%d frozen=%d locked=%d current=%d onoff=%d key=%d lock=%d frames=%d",
 				i + 1, ls->type, ls->frozen, ls->locked, ls->current, (int)ls->onoff, ls->key, ls->lock, (int)ls->objects.size());
 		}
 		// DOS DoVanity: set suit state on mirror display (object 1)
@@ -438,7 +438,7 @@ void ColonyEngine::playAnimation() {
 				// DOS: right-click exits animation (AnimControl returns FALSE on button-up)
 				_animationRunning = false;
 			} else if (event.type == Common::EVENT_MOUSEMOVE) {
-				debug(5, "Animation Mouse: %d, %d", event.mouse.x, event.mouse.y);
+				debugC(5, kColonyDebugAnimation, "Animation Mouse: %d, %d", event.mouse.x, event.mouse.y);
 			} else if (event.type == Common::EVENT_KEYDOWN) {
 				int item = 0;
 				if (event.kbd.keycode >= Common::KEYCODE_0 && event.kbd.keycode <= Common::KEYCODE_9) {
@@ -747,7 +747,7 @@ int ColonyEngine::whichSprite(const Common::Point &p) {
 	int oy = _screenR.top + (_screenR.height() - 264) / 2;
 	Common::Point pt(p.x - ox, p.y - oy);
 
-	debug(1, "Click at (%d, %d), relative (%d, %d)", p.x, p.y, pt.x, pt.y);
+	debugC(1, kColonyDebugAnimation, "Click at (%d, %d), relative (%d, %d)", p.x, p.y, pt.x, pt.y);
 
 	for (int i = _lSprites.size() - 1; i >= 0; i--) {
 		ComplexSprite *ls = _lSprites[i];
@@ -787,18 +787,18 @@ int ColonyEngine::whichSprite(const Common::Point &p) {
 					maskByte |= mask->data[mask->rowBytes * mask->height + maskIndex];
 				maskByte = maskByte >> shift;
 				if (!(maskByte & ((1 << mask->bits) - 1))) {
-					debug(0, "  Sprite %d (type=%d frz=%d): bbox hit but mask transparent at row=%d col=%d bits=%d align=%d",
+					debugC(1, kColonyDebugAnimation, "  Sprite %d (type=%d frz=%d): bbox hit but mask transparent at row=%d col=%d bits=%d align=%d",
 						i + 1, ls->type, ls->frozen, row, col, mask->bits, mask->align);
 					continue; // Transparent pixel, skip this sprite
 				}
 			} else {
-				debug(0, "  Sprite %d: mask index %d out of bounds (max %d)", i + 1, maskIndex, mask->rowBytes * mask->height);
+				debugC(1, kColonyDebugAnimation, "  Sprite %d: mask index %d out of bounds (max %d)", i + 1, maskIndex, mask->rowBytes * mask->height);
 			}
 		} else {
-			debug(0, "  Sprite %d: no mask data, using bbox", i + 1);
+			debugC(1, kColonyDebugAnimation, "  Sprite %d: no mask data, using bbox", i + 1);
 		}
 
-		debug(0, "Sprite %d HIT. type=%d frozen=%d Frame %d, Sprite %d. Box: (%d,%d,%d,%d)",
+		debugC(1, kColonyDebugAnimation, "Sprite %d HIT. type=%d frozen=%d Frame %d, Sprite %d. Box: (%d,%d,%d,%d)",
 			i + 1, ls->type, ls->frozen, cnum, spriteIdx, r.left, r.top, r.right, r.bottom);
 		return i + 1;
 	}
@@ -821,7 +821,7 @@ int ColonyEngine::whichSprite(const Common::Point &p) {
 				Common::Rect r = s->clip;
 				r.translate(xloc, yloc);
 
-				debug(2, "  Sprite %d: Frame=%d Box=(%d,%d,%d,%d)", i + 1,
+				debugC(2, kColonyDebugAnimation, "  Sprite %d: Frame=%d Box=(%d,%d,%d,%d)", i + 1,
 					cnum, r.left, r.top, r.right, r.bottom);
 			}
 		}
@@ -833,11 +833,11 @@ int ColonyEngine::whichSprite(const Common::Point &p) {
 void ColonyEngine::handleAnimationClick(int item) {
 	uint32 now = _system->getMillis();
 	if (now - _lastClickTime < 250) {
-		debug("Ignoring rapid click on item %d", item);
+		debugC(1, kColonyDebugAnimation, "Ignoring rapid click on item %d", item);
 		return;
 	}
 	_lastClickTime = now;
-	debug(0, "Animation click on item %d in %s", item, _animationName.c_str());
+	debugC(1, kColonyDebugAnimation, "Animation click on item %d in %s", item, _animationName.c_str());
 
 	if (item > 0) {
 		dolSprite(item - 1);
@@ -894,7 +894,7 @@ void ColonyEngine::handleDeskClick(int item) {
 }
 
 void ColonyEngine::handleVanityClick(int item) {
-	debug(0, "Vanity item %d clicked. Sprite type=%d frozen=%d locked=%d current=%d onoff=%d key=%d lock=%d size=%d",
+	debugC(1, kColonyDebugAnimation, "Vanity item %d clicked. Sprite type=%d frozen=%d locked=%d current=%d onoff=%d key=%d lock=%d size=%d",
 		item,
 		(item > 0 && item <= (int)_lSprites.size()) ? _lSprites[item-1]->type : -1,
 		(item > 0 && item <= (int)_lSprites.size()) ? _lSprites[item-1]->frozen : -1,
@@ -923,7 +923,7 @@ void ColonyEngine::handleVanityClick(int item) {
 	} else if (item == 7) { // Book
 		doText(_action0, 0);
 	} else {
-		debug(0, "Vanity: unhandled item %d", item);
+		debugC(1, kColonyDebugAnimation, "Vanity: unhandled item %d", item);
 	}
 }
 
@@ -1211,7 +1211,7 @@ void ColonyEngine::handleControlsClick(int item) {
 	case 4: // Accelerator
 		if (_corePower[_coreIndex] >= 2 && _coreState[_coreIndex] == 0 && !_orbit) {
 			_orbit = 1;
-			debug(0, "Taking off!");
+			debugC(1, kColonyDebugAnimation, "Taking off!");
 			// Animate the lever moving full range
 			for (int i = 1; i <= 6; i++) {
 				setObjectState(4, i);
@@ -1222,7 +1222,7 @@ void ColonyEngine::handleControlsClick(int item) {
 			_animationRunning = false;
 			return; // Exit animation immediately on success
 		} else {
-			debug(0, "Accelerator failed: power=%d, state=%d", _corePower[_coreIndex], _coreState[_coreIndex]);
+			debugC(1, kColonyDebugAnimation, "Accelerator failed: power=%d, state=%d", _corePower[_coreIndex], _coreState[_coreIndex]);
 			// Fail animation click
 			setObjectState(4, 1);
 			// dolSprite(3); // Animate lever moving and returning - handled by top dolSprite

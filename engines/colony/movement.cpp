@@ -127,7 +127,7 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 				if (r != -2)
 					return r;
 			}
-			debug("Collision South at x=%d y=%d", pobject->xindex, yind2);
+			debugC(1, kColonyDebugMove, "Collision South at x=%d y=%d", pobject->xindex, yind2);
 			_sound->play(Sound::kBang);
 			return -1;
 
@@ -140,7 +140,7 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 			if (r != -2)
 				return r;
 		}
-		debug("Collision North at x=%d y=%d", pobject->xindex, pobject->yindex);
+		debugC(1, kColonyDebugMove, "Collision North at x=%d y=%d", pobject->xindex, pobject->yindex);
 		_sound->play(Sound::kBang);
 		return -1;
 
@@ -155,7 +155,7 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 				if (r != -2)
 					return r;
 			}
-			debug("Collision East at x=%d y=%d", xind2, pobject->yindex);
+			debugC(1, kColonyDebugMove, "Collision East at x=%d y=%d", xind2, pobject->yindex);
 			_sound->play(Sound::kBang);
 			return -1;
 
@@ -168,7 +168,7 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 			if (r != -2)
 				return r;
 		}
-		debug("Collision West at x=%d y=%d", pobject->xindex, pobject->yindex);
+		debugC(1, kColonyDebugMove, "Collision West at x=%d y=%d", pobject->xindex, pobject->yindex);
 		_sound->play(Sound::kBang);
 		return -1;
 
@@ -178,24 +178,24 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 	if (xind2 > pobject->xindex) {
 		if (yind2 > pobject->yindex) {
 			if ((_wall[pobject->xindex][yind2] & 1) || (_wall[xind2][pobject->yindex] & 2) || (_wall[xind2][yind2] & 3)) {
-				debug("Collision Diagonal SE");
+				debugC(1, kColonyDebugMove, "Collision Diagonal SE");
 				return -1;
 			}
 		} else {
 			if ((_wall[pobject->xindex][pobject->yindex] & 1) || (_wall[xind2][yind2] & 2) || (_wall[xind2][pobject->yindex] & 3)) {
-				debug("Collision Diagonal NE");
+				debugC(1, kColonyDebugMove, "Collision Diagonal NE");
 				return -1;
 			}
 		}
 	} else {
 		if (yind2 > pobject->yindex) {
 			if ((_wall[xind2][yind2] & 1) || (_wall[pobject->xindex][pobject->yindex] & 2) || (_wall[pobject->xindex][yind2] & 3)) {
-				debug("Collision Diagonal SW");
+				debugC(1, kColonyDebugMove, "Collision Diagonal SW");
 				return -1;
 			}
 		} else {
 			if ((_wall[xind2][pobject->yindex] & 1) || (_wall[pobject->xindex][yind2] & 2) || (_wall[pobject->xindex][pobject->yindex] & 3)) {
-				debug("Collision Diagonal NW");
+				debugC(1, kColonyDebugMove, "Collision Diagonal NW");
 				return -1;
 			}
 		}
@@ -367,7 +367,7 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 		    pobject->yindex >= 0 && pobject->yindex < 32)
 			_robotArray[pobject->xindex][pobject->yindex] = kMeNum;
 
-		debug("Level change via %s: level=%d pos=(%d,%d)",
+		debugC(1, kColonyDebugMove, "Level change via %s: level=%d pos=(%d,%d)",
 		      map[0] == kWallFeatureUpStairs ? "upstairs" :
 		      map[0] == kWallFeatureDnStairs ? "downstairs" : "tunnel",
 		      _level, pobject->xindex, pobject->yindex);
@@ -421,7 +421,7 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 			    pobject->yindex >= 0 && pobject->yindex < 32)
 				_robotArray[pobject->xindex][pobject->yindex] = kMeNum;
 
-			debug("Elevator: level=%d pos=(%d,%d)", _level, pobject->xindex, pobject->yindex);
+			debugC(1, kColonyDebugMove, "Elevator: level=%d pos=(%d,%d)", _level, pobject->xindex, pobject->yindex);
 			return 2; // teleported
 		}
 		// Player entered but stayed on same floor  turn around
@@ -521,7 +521,7 @@ void ColonyEngine::fallThroughHole() {
 	if (targetMap > 0)
 		loadMap(targetMap);
 
-	debug("Fell through hole: level=%d pos=(%d,%d)", _level, _me.xindex, _me.yindex);
+	debugC(1, kColonyDebugMove, "Fell through hole: level=%d pos=(%d,%d)", _level, _me.xindex, _me.yindex);
 }
 
 void ColonyEngine::checkCenter() {

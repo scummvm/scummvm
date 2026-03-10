@@ -89,7 +89,7 @@ Graphics::Surface *ColonyEngine::loadPictSurface(int resID) {
 					result->setPixel(x, y, result->format.ARGBToColor(255, r, g, b));
 				}
 			}
-			debug("loadPictSurface(%d): %dx%d", resID, result->w, result->h);
+			debugC(1, kColonyDebugUI, "loadPictSurface(%d): %dx%d", resID, result->w, result->h);
 		}
 	}
 	delete pictStream;

@@ -56,12 +56,12 @@ void ColonyEngine::playIntro() {
 				// List available font resources for debugging
 				Common::MacResIDArray nfntIDs = _resMan->getResIDArray(MKTAG('N', 'F', 'N', 'T'));
 				Common::MacResIDArray fontIDs = _resMan->getResIDArray(MKTAG('F', 'O', 'N', 'T'));
-				debug("playIntro: FONT/NFNT %d not found. Available NFNT IDs: %d, FONT IDs: %d",
+				debugC(1, kColonyDebugUI, "playIntro: FONT/NFNT %d not found. Available NFNT IDs: %d, FONT IDs: %d",
 				      fontResID, nfntIDs.size(), fontIDs.size());
 				for (uint i = 0; i < nfntIDs.size(); i++)
-					debug("  NFNT %d", nfntIDs[i]);
+					debugC(1, kColonyDebugUI, "  NFNT %d", nfntIDs[i]);
 				for (uint i = 0; i < fontIDs.size(); i++)
-					debug("  FONT %d", fontIDs[i]);
+					debugC(1, kColonyDebugUI, "  FONT %d", fontIDs[i]);
 			}
 		}
 
@@ -609,7 +609,7 @@ bool ColonyEngine::drawPict(int resID) {
 		pictStream = _resMan->getResource(MKTAG('P', 'I', 'C', 'T'), (int16)resID);
 
 	if (!pictStream) {
-		debug("drawPict: PICT %d not found", resID);
+		debugC(1, kColonyDebugUI, "drawPict: PICT %d not found", resID);
 		return false;
 	}
 
@@ -630,7 +630,7 @@ bool ColonyEngine::drawPict(int resID) {
 			int clipX2 = x + surface->w - 1;
 			int clipY2 = y + surface->h - 1;
 
-			debug("drawPict(%d): %dx%d at (%d,%d), format=%dbpp, palette=%d entries",
+			debugC(1, kColonyDebugUI, "drawPict(%d): %dx%d at (%d,%d), format=%dbpp, palette=%d entries",
 			      resID, surface->w, surface->h, x, y,
 			      surface->format.bytesPerPixel * 8, pictPal.size());
 
@@ -671,7 +671,7 @@ bool ColonyEngine::drawPict(int resID) {
 }
 
 void ColonyEngine::terminateGame(bool blowup) {
-	debug(0, "YOU HAVE BEEN TERMINATED! (blowup=%d)", blowup);
+	debugC(1, kColonyDebugUI, "YOU HAVE BEEN TERMINATED! (blowup=%d)", blowup);
 	if (blowup)
 		_sound->play(Sound::kExplode);
 

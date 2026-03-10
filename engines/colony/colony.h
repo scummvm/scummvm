@@ -197,6 +197,15 @@ enum ObjColor {
 	kColorShadow = 74
 };
 
+enum {
+	kColonyDebugMove = 1 << 0,
+	kColonyDebugRender = 1 << 1,
+	kColonyDebugAnimation = 1 << 2,
+	kColonyDebugMap = 1 << 3,
+	kColonyDebugSound = 1 << 4,
+	kColonyDebugUI = 1 << 5,
+};
+
 // Mac menu action IDs (matching original Mac Colony menu structure)
 enum MenuAction {
 	kMenuActionAbout = 1,

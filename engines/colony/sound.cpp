@@ -38,7 +38,7 @@ void Sound::init() {
 	_resMan = new Common::MacResManager();
 	if (!_resMan->open("Zounds")) {
 		if (!_resMan->open("CData/Zounds")) {
-			debug("Could not open Zounds resource file");
+			debugC(1, kColonyDebugSound, "Could not open Zounds resource file");
 		}
 	}
 
@@ -47,7 +47,7 @@ void Sound::init() {
 	_appResMan = new Common::MacResManager();
 	if (!_appResMan->open("Colony")) {
 		if (!_appResMan->open("(Color) Colony")) {
-			debug("Could not open Colony resource file for sounds");
+			debugC(1, kColonyDebugSound, "Could not open Colony resource file for sounds");
 		}
 	}
 }
