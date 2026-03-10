@@ -536,6 +536,10 @@ private:
 	// battle.c: outdoor battle system (OpenGL 3D)
 	void battleInit();
 	void battleSet();
+	void battleThink();
+	void battleCommand(int xnew, int ynew);
+	void battleShoot();
+	void battleProjCommand(int xcheck, int ycheck);
 	void renderBattle();
 	void draw3DBattlePrism(const PrismPartDef &def, int worldX, int worldY, uint8 ang, int zShift = 0);
 	void battleBackdrop();

@@ -292,6 +292,11 @@ void ColonyEngine::setPower(int p0, int p1, int p2) {
 // shoot.c CShoot(): player fires weapon at screen center.
 // Traces a ray in the facing direction to find the first robot hit.
 void ColonyEngine::cShoot() {
+	if (_gameMode == kModeBattle) {
+		battleShoot();
+		return;
+	}
+
 	if (_me.power[0] <= 0 || _weapons <= 0)
 		return;
 
