@@ -23,6 +23,7 @@
 #ifndef TINSEL_TEXT_H     // prevent multiple includes
 #define TINSEL_TEXT_H
 
+#include "common/array.h"
 #include "common/coroutines.h"
 #include "tinsel/object.h"	// object manager defines
 
@@ -46,8 +47,8 @@ enum {
 
 /**
  * Text font data structure.
- * @note only the pointer is used so the size of fontDef[] is not important.
- * It is currently set at 300 because it suited me for debugging.
+ * Single byte string fonts have 256 fontDef handles.
+ * Multi byte string fonts have more, depending on the version.
  */
 struct FONT {
 	int xSpacing;			///< x spacing between characters
@@ -57,7 +58,7 @@ struct FONT {
 	int spaceSize;			///< x spacing to use for a space character
 	int baseColor;			///< base color which can be replaced, specific to Tinsel 3
 	OBJ_INIT fontInit;		///< structure used to init text objects
-	SCNHANDLE fontDef[300];	///< image handle array for all characters in the font
+	Common::Array<SCNHANDLE> fontDef; ///< image handle array for all characters in the font
 };
 
 

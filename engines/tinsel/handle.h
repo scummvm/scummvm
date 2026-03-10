@@ -50,6 +50,7 @@ public:
 	void SetupHandleTable();
 
 	FONT *GetFont(SCNHANDLE offset);
+	uint32 GetFontCharacterCount(SCNHANDLE offset) const;
 	PALETTE *GetPalette(SCNHANDLE offset);
 	const IMAGE *GetImage(SCNHANDLE offset);
 	void SetImagePalette(SCNHANDLE offset, SCNHANDLE palHandle);
