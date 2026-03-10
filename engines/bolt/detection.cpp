@@ -29,17 +29,14 @@
 #include "bolt/detection.h"
 #include "bolt/detection_tables.h"
 
-const DebugChannelDef BoltMetaEngineDetection::debugFlagList[] = {
-	{ Bolt::kDebugGraphics, "Graphics", "Graphics debug level" },
-	{ Bolt::kDebugPath, "Path", "Pathfinding debug level" },
-	{ Bolt::kDebugFilePath, "FilePath", "File path debug level" },
-	{ Bolt::kDebugScan, "Scan", "Scan for unrecognised games" },
-	{ Bolt::kDebugScript, "Script", "Enable debug script dump" },
-	DEBUG_CHANNEL_END
+static const char *const directoryGlobs[] = {
+	"ASSETS",
+	nullptr
 };
 
-BoltMetaEngineDetection::BoltMetaEngineDetection() : AdvancedMetaEngineDetection(
-	Bolt::gameDescriptions, Bolt::boltGames) {
+BoltMetaEngineDetection::BoltMetaEngineDetection() : AdvancedMetaEngineDetection(Bolt::gameDescriptions, Bolt::boltGames) {
+	_maxScanDepth = 2;
+	_directoryGlobs = directoryGlobs;
 }
 
 REGISTER_PLUGIN_STATIC(BOLT_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, BoltMetaEngineDetection);

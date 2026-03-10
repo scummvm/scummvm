@@ -26,14 +26,6 @@
 
 namespace Bolt {
 
-enum BoltDebugChannels {
-	kDebugGraphics = 1,
-	kDebugPath,
-	kDebugScan,
-	kDebugFilePath,
-	kDebugScript,
-};
-
 extern const PlainGameDescriptor boltGames[];
 
 extern const ADGameDescription gameDescriptions[];
@@ -43,8 +35,6 @@ extern const ADGameDescription gameDescriptions[];
 } // End of namespace Bolt
 
 class BoltMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
-	static const DebugChannelDef debugFlagList[];
-
 public:
 	BoltMetaEngineDetection();
 	~BoltMetaEngineDetection() override {}
@@ -54,15 +44,11 @@ public:
 	}
 
 	const char *getEngineName() const override {
-		return "Bolt";
+		return "Cartoon Carnival";
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "Bolt (C)";
-	}
-
-	const DebugChannelDef *getDebugChannels() const override {
-		return debugFlagList;
+		return "Hanna-Barbera's Cartoon Carnival (C) 1993-1995 Funhouse Design";
 	}
 };
 
