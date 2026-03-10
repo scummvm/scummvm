@@ -233,7 +233,7 @@ void PhoenixVREngine::interpolateAngle(float x, float y, float speed, float zoom
 		// angles are animated using square function, zoom is linear
 		auto t2 = t1 * t1;
 
-		setAngle(x0 + 0 * dx, y0 + t2 * dy);
+		setAngle(x0 + t2 * dx, y0 + t2 * dy);
 		if (zoom > 0) {
 			setZoom(z0 + t1 * dz);
 		}
