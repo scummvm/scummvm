@@ -30,6 +30,15 @@
 
 namespace Colony {
 
+static bool isBackdoorCode111111(const uint8 display[6]) {
+	for (int i = 0; i < 6; i++) {
+		if (display[i] != 3)
+			return false;
+	}
+
+	return true;
+}
+
 // Mac color indices from colordef.h enum (cColor[] table in Color256).
 enum {
 	mc_dwall = 6, mc_lwall = 7,
@@ -347,15 +356,24 @@ void ColonyEngine::playAnimation() {
 	CursorMan.showMouse(true);
 	_system->updateScreen();
 
-	if (_animationName == "security" && !_unlocked) {
-		for (int i = 0; i < 4; i++) {
-			_decode1[i] = (uint8)(2 + _randomSource.getRandomNumber(3));
-			setObjectState(27 + i, _decode1[i]);
-		}
-	} else if (_animationName == "reactor") {
+	if (_animationName == "reactor" || _animationName == "security") {
 		for (int i = 0; i < 6; i++) {
+			_animDisplay[i] = 1;
 			setObjectOnOff(14 + i * 2, false);
+			setObjectOnOff(13 + i * 2, true);
 			setObjectState(13 + i * 2, 1);
+		}
+	}
+
+	if (_animationName == "security") {
+		for (int i = 0; i < 4; i++)
+			setObjectState(27 + i, _unlocked ? _decode1[i] : 1);
+
+		if (!_unlocked) {
+			for (int i = 0; i < 4; i++) {
+				_decode1[i] = (uint8)(2 + _randomSource.getRandomNumber(3));
+				setObjectState(27 + i, _decode1[i]);
+			}
 		}
 	} else if (_animationName == "controls") {
 		switch (_corePower[_coreIndex]) {
@@ -1057,7 +1075,7 @@ void ColonyEngine::handleKeypadClick(int item) {
 				if (testarray[i] != _animDisplay[5 - i])
 					match = false;
 			}
-			if (match) {
+			if (match || isBackdoorCode111111(_animDisplay)) {
 				_unlocked = true;
 				_gametest = true;
 			}
@@ -1070,6 +1088,8 @@ void ColonyEngine::handleKeypadClick(int item) {
 			setObjectState(item, 1);
 		drawAnimation();
 		_gfx->copyToScreen();
+	} else if (item == 25 && _animationName == "security") {
+		doText(14, 0);
 	} else if (item == 27 && _animationName == "reactor") {
 		doText(12, 0);
 	}
@@ -1171,6 +1191,9 @@ void ColonyEngine::handleAirlockClick(int item) {
 	const int doorFrames = getAnimationStateCount(_lSprites, doorItem);
 	int openStart = isMac ? 2 : 1;
 	int closeStart = isMac ? doorFrames - 1 : doorFrames;
+	const uint8 *airlock = (_airlockX >= 0 && _airlockY >= 0 && _airlockDirection >= 0) ?
+		mapFeatureAt(_airlockX, _airlockY, _airlockDirection) : nullptr;
+	const bool locked = airlock ? (airlock[1] != 0) : !_doorOpen;
 
 	if (openStart > doorFrames)
 		openStart = doorFrames;
@@ -1179,18 +1202,20 @@ void ColonyEngine::handleAirlockClick(int item) {
 
 	// Original DoAirLock() also differs by platform:
 	// DOS uses sprite 2 as the 3-state door, Mac uses sprite 3 as the 5-state door.
-	if ((item == exitItem || item == 101) && _doorOpen) {
+	if ((item == exitItem || (!isMac && item == 101)) && !locked) {
 		_animationResult = 1;
 		_animationRunning = false;
-	} else if (item == toggleItem && _corePower[_coreIndex] && _unlocked) {
+	} else if (item == toggleItem && _corePower[_coreIndex] && _unlocked && airlock) {
 		_sound->play(Sound::kAirlock);
-		if (_doorOpen) {
+		if (!locked) {
 			for (int i = closeStart; i >= 1; i--) {
 				setObjectState(doorItem, i);
 				drawAnimation();
 				_gfx->copyToScreen();
 				_system->delayMillis(80);
 			}
+			setDoorState(_airlockX, _airlockY, _airlockDirection, 1);
+			_doorOpen = false;
 		} else {
 			for (int i = openStart; i <= doorFrames; i++) {
 				setObjectState(doorItem, i);
@@ -1198,10 +1223,17 @@ void ColonyEngine::handleAirlockClick(int item) {
 				_gfx->copyToScreen();
 				_system->delayMillis(80);
 			}
+
+			setDoorState(_airlockX, _airlockY, _airlockDirection, 0);
+			_doorOpen = true;
+			if (_level >= 1 && _level <= 8 && _levelData[_level - 1].count == 2) {
+				_airlockTerminate = true;
+				_animationResult = 0;
+				_animationRunning = false;
+				return;
+			}
 		}
-		_doorOpen = !_doorOpen;
-	} else if (item == 101 && !_doorOpen) {
-		// Exit without opening
+	} else if (item == 101) {
 		_animationRunning = false;
 	}
 }
