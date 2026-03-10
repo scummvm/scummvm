@@ -77,11 +77,11 @@ public:
 			return;
 
 		// out of bounds, find left or right
-		auto l0 = std::abs(_angle - _rangeMin);
-		auto l1 = std::abs(_angle - _rangeMin - range);
+		auto l0 = ABS(_angle - _rangeMin);
+		auto l1 = ABS(_angle - _rangeMin - range);
 		auto l = MIN(l0, l1);
-		auto r0 = std::abs(_rangeMax - _angle);
-		auto r1 = std::abs(range + _rangeMax - _angle);
+		auto r0 = ABS(_rangeMax - _angle);
+		auto r1 = ABS(range + _rangeMax - _angle);
 		auto r = MIN(r0, r1);
 		_angle = l < r ? _rangeMin : _rangeMax;
 	}

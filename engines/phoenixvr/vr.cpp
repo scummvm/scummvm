@@ -286,9 +286,9 @@ struct Cube {
 Cube toCube(float x, float y, float z) {
 	Cube cube = {};
 
-	float absX = fabs(x);
-	float absY = fabs(y);
-	float absZ = fabs(z);
+	float absX = ABS(x);
+	float absY = ABS(y);
+	float absZ = ABS(z);
 
 	bool isXPositive = x > 0;
 	bool isYPositive = y > 0;
