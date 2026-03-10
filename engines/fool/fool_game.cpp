@@ -784,8 +784,8 @@ void FoolGame::sub_128_178a(int16 unk2, int16 unk1) {
 			this->arr_i16_1d24[this->var_i16_30] |= 0x1;
 		}
 		// 128:1818
-		this->var_i16_34 = 3 + (this->var_i16_30 - 1)/0x10;
-		this->var_i16_36 = 1 + (this->var_i16_30 - 1) % 10;
+		this->var_i16_34 = 3 + ((this->var_i16_30 - 1) / 0x10);
+		this->var_i16_36 = 1 + ((this->var_i16_30 - 1) % 0x10);
 		this->var_str_172 = this->arr_str_195e8[this->var_i16_30] + g_zbasic->str(9);
 		g_zbasic->menu(this->var_i16_34, this->var_i16_36, 1, this->var_str_172);
 	}
@@ -996,6 +996,7 @@ void FoolGame::storyRenderPage() {
 	// erase lower controls on scroll
 	this->fillRect(0x127, 0x69, 0x138, 0x190, 0);
 	this->var_i16_7d0 = this->pageToChapter[this->storyNextPage];
+	// if we've solved a puzzle, fill the scroll with crazy patterns
 	if ((this->var_i16_7ce & 0x8) != 0) {
 		this->var_i16_7ce ^= 0x8;
 		this->sub_128_bde(1, 0, 0, 0, 1, 0);
@@ -1469,7 +1470,7 @@ void FoolGame::sub_128_3536() {
 		if (this->var_i16_7e6 != 0xa) {
 			this->var_str_af4 = g_zbasic->str(60); // The Fool's Errand
 			g_zbasic->writeFileStr(2, this->var_str_af4.encode(Common::kMacRoman));
-			g_zbasic->writeFileInt(2, this->var_i16_7d8);
+			g_zbasic->writeFileInt(2, this->storyNextPage);
 			g_zbasic->writeFileInt(2, this->var_i16_7e2);
 			g_zbasic->writeFileInt(2, this->var_i16_7ce);
 			g_zbasic->writeFileInt(2, this->var_i16_7d2);
@@ -1674,19 +1675,19 @@ void FoolGame::sub_128_39a0() {
 				}
 			}
 			// 128:3c04
-			this->var_i16_7d8 = 0;
+			this->storyNextPage = 0;
 			this->var_i16_68c = 0x42;
 			for (int i = 0x42; i <= 0x45; i++) {
-				for (int j = 1; j <= this->var_i16_7da; j++) {
+				for (int j = 1; j <= this->storyPageCount; j++) {
 					if (this->pageToChapter[j] == i) {
 						this->arr_i16_1b90[j] = 1;
-						if ((i == 0x42) && (this->var_i16_7d8 == 0)) {
-							this->var_i16_7d8 = j;
+						if ((i == 0x42) && (this->storyNextPage == 0)) {
+							this->storyNextPage = j;
 						}
 					}
 					// 128:3c6c
 					if (this->pageToChapter[j] < i) {
-						j = this->var_i16_7da;
+						j = this->storyPageCount;
 					}
 					// 128:3c8e
 				}
@@ -1724,7 +1725,39 @@ void FoolGame::sub_128_39a0() {
 }
 
 void FoolGame::sub_128_3de6() {
-	warning("STUB: %s", __func__);
+	// 128:3de6
+	if ((this->arr_i16_197c[this->var_i16_7d0] > 0) && ((this->arr_i16_1d24[this->arr_i16_197c[this->var_i16_7d0]] & 3) == 0)) {
+		this->storyNextPage = 0;
+		this->var_i16_7ce |= 8;
+		for (int i = 1; i <= this->storyPageCount; i++ ) {
+			// 128:3e56
+			if (this->pageToChapter[i] == this->arr_i16_197c[this->var_i16_7d0]) {
+				this->arr_i16_1b90[i] = 1;
+				if (this->storyNextPage == 0) {
+					this->storyNextPage = i;
+				}
+			}
+			// 128:3ea6
+			if (this->pageToChapter[i] - this->arr_i16_197c[this->var_i16_7d0] > 0) {
+				i = this->storyPageCount;
+			}
+			// 128:3eda
+		}
+		// 128:3eec
+		this->var_i16_7d0 = this->pageToChapter[this->storyNextPage];
+		this->var_i16_484 = 3 + ((this->var_i16_7d0 - 1) / 0x10);
+		this->var_i16_7e4 = 1 + ((this->var_i16_7d0 - 1) % 0x10);
+		if (this->arr_i16_197c[this->var_i16_7d0] == 0) {
+			this->var_i16_9f2 = 1;
+			this->arr_i16_1c5a[this->var_i16_7d0] = 0x64;
+		} else {
+		// 128:3f66
+			this->var_i16_9f2 = 2;
+		}
+		this->arr_i16_1d24[this->var_i16_7d0] |= (this->var_i16_9f2 + 4);
+		g_zbasic->menu(this->var_i16_484, this->var_i16_7e4, this->var_i16_9f2, Common::U32String());
+	}
+	// 128:3fb4
 }
 
 void FoolGame::sub_128_3fb6() {
@@ -1833,6 +1866,7 @@ void FoolGame::sub_128_4472() {
 		this->arr_i16_4758[2] = 0x8;
 	}
 	if (this->arr_i16_4758[0] == 0) {
+		// user clicked the puzzle button, zoom-fill with checkerboard
 		sub_128_962(0x130, 0x76, 0x130, 0x76, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, this->arr_i16_4758[1], (PatternMode)this->arr_i16_4758[2], 0x19);
 		return;
 	}
@@ -1842,10 +1876,83 @@ void FoolGame::sub_128_4472() {
 	g_toolbox->PenMode((PatternMode)this->arr_i16_4758[2]);
 	if (this->arr_i16_4758[5] == 0) {
 		// 128:456a
-		warning("STUB: %s", __func__);
+		this->arr_i16_4758[12] = 0x1d;
+		this->arr_i16_4758[6] = 0x4;
+		this->arr_i16_4758[7] = 0x7;
 	}
 	// 128:459a
-
+	if (this->arr_i16_4758[5] == 1) {
+		this->arr_i16_4758[12] = 0x2a;
+		this->arr_i16_4758[6] = 0x4;
+		this->arr_i16_4758[7] = 0x6;
+	}
+	// 128:45e4
+	g_toolbox->PenSize(this->arr_i16_4758[7], this->arr_i16_4758[6]);
+	if ((this->arr_i16_4758[4] == 0) && (this->arr_i16_4758[5] == 0)) {
+		this->arr_i16_4758[8] = 0xa7;
+		this->arr_i16_4758[9] = 0x109;
+		this->arr_i16_4758[10] = 0xa7;
+		this->arr_i16_4758[11] = 0x109;
+	}
+	// 128:467c
+	if ((this->arr_i16_4758[4] == 0) && (this->arr_i16_4758[5] == 1)) {
+		this->arr_i16_4758[8] = 0xb5;
+		this->arr_i16_4758[9] = 0x100;
+		this->arr_i16_4758[10] = 0xb5;
+		this->arr_i16_4758[11] = 0x100;
+	}
+	// 128:46f6
+	if (this->arr_i16_4758[4] == 1) {
+		this->arr_i16_4758[6] *= -1;
+		this->arr_i16_4758[7] *= -1;
+	}
+	// 128:4754
+	if ((this->arr_i16_4758[4] == 1) && (this->arr_i16_4758[5] == 0)) {
+		this->arr_i16_4758[8] = 0x2b;
+		this->arr_i16_4758[9] = 0x31;
+		this->arr_i16_4758[10] = 0x123;
+		this->arr_i16_4758[11] = 0x1e1;
+	}
+	// 128:47ce
+	if ((this->arr_i16_4758[4] == 1) && (this->arr_i16_4758[5] == 1)) {
+		this->arr_i16_4758[8] = 0x10;
+		this->arr_i16_4758[9] = -0x7;
+		this->arr_i16_4758[10] = 0x15a;
+		this->arr_i16_4758[11] = 0x207;
+	}
+	// 128:4850
+	if ((this->arr_i16_15e8[this->var_i16_7e2] == 0xd) || (this->arr_i16_15e8[this->var_i16_7e2] == 0xe)) {
+		this->fillRect(0x14f, 0, 0x156, 0x7, 1);
+		this->fillRect(0x14f, 0x1f9, 0x156, 0x200, 1);
+	}
+	// 128:48d6
+	for (int i = 0; i <= this->arr_i16_4758[12]; i++) {
+		this->arr_i16_4758[8] -= this->arr_i16_4758[6];
+		this->arr_i16_4758[9] -= this->arr_i16_4758[7];
+		this->arr_i16_4758[10] += this->arr_i16_4758[6];
+		this->arr_i16_4758[11] += this->arr_i16_4758[7];
+		if (this->arr_i16_4758[8] < 0x14) {
+			this->arr_i16_4758[8] = 0x14;
+		}
+		// 128:49e2
+		if (this->arr_i16_4758[3] == 0) {
+			this->arr_i16_4758[1] += 1;
+			if (this->arr_i16_4758[1] > 0x50) {
+				this->arr_i16_4758[1] = 1;
+			}
+			// 128:4a42
+			g_toolbox->PenPat(this->arr_pat_58f4[this->arr_i16_4758[1]]);
+		}
+		// 128:4a64
+		Common::Rect temp(this->arr_i16_4758[9], this->arr_i16_4758[8], this->arr_i16_4758[11], this->arr_i16_4758[10]);
+		g_toolbox->FrameRect(temp);
+		// add fake delay for drawing visibility
+		if ((i % 4) == 0) {
+			g_toolbox->Delay(0);
+		}
+	}
+	// 128:4a8e
+	g_toolbox->PenNormal();
 }
 
 // about screen
@@ -2723,11 +2830,6 @@ void FoolGame::sub_133_004() {
 		//this->arr_i16_47d8[this->var_i16_7cc*8 + this->var_i16_1aaa], this->var_str_c06
 	}
 	// 133:0356
-	warning("STUB: %s", __func__);
-}
-
-// mask reveal puzzle
-void FoolGame::sub_134_004() {
 	warning("STUB: %s", __func__);
 }
 

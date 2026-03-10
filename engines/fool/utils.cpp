@@ -89,7 +89,13 @@ Common::Rect blitMono(const BitMap &src, BitMap &dst, const BitMap &mask, const 
 }
 
 Common::Rect blitMono(const BitMap &src, BitMap &dst, const BitMap &mask, const Common::Point &dstPos, PatternMode mode) {
-	return blitMono(src, dst, mask, dstPos, (SourceMode)((int)mode & 0x7));
+	if ((mode >= 8) && (mode < 16)) {
+		// If the mode is one of the source transfer modes (or negative), no drawing is performed.
+		// Source: Inside Macintosh I-170
+		return blitMono(src, dst, mask, dstPos, (SourceMode)((int)mode & 0x7));
+	}
+	warning("blitMono: Called with an invalid PatternMode, ignoring");
+	return Common::Rect();
 }
 
 Graphics::ManagedSurface *createRemappedSurface(const Graphics::Surface *surface, const byte *palette, uint colorCount) {

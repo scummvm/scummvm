@@ -167,7 +167,8 @@ void FoolGame::sub_132_518() {
 	// change select area while mouse button held down
 	this->sub_132_67a();
 	// leave an XOR outline on the page for the selected block
-	g_toolbox->FrameRect(this->arr_rect_476e);
+	Common::Rect temp(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]);
+	g_toolbox->FrameRect(temp);
 	this->arr_i16_4758[0] -= this->var_i16_68a;
 	this->arr_i16_4758[1] -= this->var_i16_68c;
 
@@ -175,7 +176,8 @@ void FoolGame::sub_132_518() {
 	// move select area to new target
 	this->sub_132_962();
 	// remove XOR outline
-	g_toolbox->FrameRect(this->arr_rect_476e);
+	temp = Common::Rect(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]);
+	g_toolbox->FrameRect(temp);
 
 	this->sub_132_ed8();
 	this->sub_132_13ea();
@@ -208,15 +210,16 @@ void FoolGame::sub_132_67a() {
 			this->arr_i16_4758[7] = this->arr_i16_4758[1];
 		}
 		// 132:07b0
-		this->arr_rect_476e.top = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[2]*32 + this->arr_i16_4758[6]]].top;
+		this->arr_i16_4758[11] = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[2]*32 + this->arr_i16_4758[6]]].top;
 		// 132:080e
-		this->arr_rect_476e.left = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[2]*32 + this->arr_i16_4758[6]]].left;
-		this->arr_rect_476e.bottom = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[3]*32 + this->arr_i16_4758[7]]].bottom;
-		this->arr_rect_476e.right = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[3]*32 + this->arr_i16_4758[7]]].right;
+		this->arr_i16_4758[12] = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[2]*32 + this->arr_i16_4758[6]]].left;
+		this->arr_i16_4758[13] = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[3]*32 + this->arr_i16_4758[7]]].bottom;
+		this->arr_i16_4758[14] = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[3]*32 + this->arr_i16_4758[7]]].right;
+		Common::Rect temp(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]);
 		// 132:092e
-		g_toolbox->FrameRect(this->arr_rect_476e);
+		g_toolbox->FrameRect(temp);
 		this->sub_128_3da(2);
-		g_toolbox->FrameRect(this->arr_rect_476e);
+		g_toolbox->FrameRect(temp);
 		this->sub_128_3da(1);
 	} while (this->var_ev_46.what != kMouseUp);
 }
