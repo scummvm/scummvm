@@ -358,6 +358,11 @@ public:
 	virtual ~ColonyEngine();
 
 	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Platform getPlatform() const { return _gameDescription->platform; }
 
 	void initTrig();
