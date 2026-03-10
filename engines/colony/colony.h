@@ -386,11 +386,13 @@ private:
 	uint8 _mapData[31][31][5][5];
 	uint8 _robotArray[32][32];
 	uint8 _foodArray[32][32];
+	uint8 _dirXY[32][32];
 
 	Locate _me;
 	Common::Array<Thing> _objects;
 	int _level;
 	int _robotNum;
+	int _dynamicObjectBase = 0;
 
 	Renderer *_gfx;
 	Sound *_sound;
@@ -443,6 +445,8 @@ private:
 	uint32 _lastWarningChimeTime = 0;
 	int _action0, _action1;
 	int _creature;
+	bool _allGrow = false;
+	bool _suppressCollisionSound = false;
 
 	// Battle state (battle.c)
 	int _gameMode = kModeColony;
@@ -550,6 +554,7 @@ private:
 	void battleDrawTanks();
 
 	// PATCH.C: object relocation + wall state persistence
+	void resetObjectSlot(int slot, int type, int xloc, int yloc, uint8 ang);
 	void createObject(int type, int xloc, int yloc, uint8 ang);
 	void saveLevelState();
 	void doPatch();
@@ -646,6 +651,26 @@ private:
 	void refreshAnimationDisplay();
 	void crypt(uint8 sarray[6], int i, int j, int k, int l);
 	void terminateGame(bool blowup);
+
+	// think.c / shoot.c: colony robot AI, egg growth, and egg eating
+	void cThink();
+	void cubeThink(int num);
+	void pyramidThink(int num);
+	void upyramidThink(int num);
+	void eyeThink(int num);
+	void queenThink(int num);
+	void droneThink(int num);
+	void snoopThink(int num);
+	void eggThink(int num);
+	bool layEgg(int type, int xindex, int yindex);
+	void moveThink(int num);
+	void bigGrow(int num);
+	void growRobot(int num);
+	int scanForPlayer(int num);
+	void robotShoot(int num);
+	void meEat();
+	void respawnObject(int num, int type);
+	void notePlayerTrail(int oldX, int oldY, int newX, int newY);
 };
 
 } // End of namespace Colony

@@ -305,7 +305,8 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 					return r;
 			}
 			debugC(1, kColonyDebugMove, "Collision South at x=%d y=%d", pobject->xindex, yind2);
-			_sound->play(Sound::kBang);
+			if (!_suppressCollisionSound)
+				_sound->play(Sound::kBang);
 			return -1;
 
 		}
@@ -318,7 +319,8 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 				return r;
 		}
 		debugC(1, kColonyDebugMove, "Collision North at x=%d y=%d", pobject->xindex, pobject->yindex);
-		_sound->play(Sound::kBang);
+		if (!_suppressCollisionSound)
+			_sound->play(Sound::kBang);
 		return -1;
 
 	}
@@ -333,7 +335,8 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 					return r;
 			}
 			debugC(1, kColonyDebugMove, "Collision East at x=%d y=%d", xind2, pobject->yindex);
-			_sound->play(Sound::kBang);
+			if (!_suppressCollisionSound)
+				_sound->play(Sound::kBang);
 			return -1;
 
 		}
@@ -346,7 +349,8 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 				return r;
 		}
 		debugC(1, kColonyDebugMove, "Collision West at x=%d y=%d", pobject->xindex, pobject->yindex);
-		_sound->play(Sound::kBang);
+		if (!_suppressCollisionSound)
+			_sound->play(Sound::kBang);
 		return -1;
 
 	}
@@ -852,37 +856,53 @@ void ColonyEngine::checkCenter() {
 		return;
 
 	const uint8 cellType = _mapData[_me.xindex][_me.yindex][4][0];
-	if (cellType == 0)
-		return;
-
-	switch (cellType) {
-	case 1: { // SMHOLEFLR  small floor hole, must be near center
-		// DOS: xcheck=abs(xloc-(xindex<<8)); if(xcheck>64&&xcheck<192)
-		int xcheck = ABS(_me.xloc - (_me.xindex << 8));
-		int ycheck = ABS(_me.yloc - (_me.yindex << 8));
-		if (xcheck > 64 && xcheck < 192 && ycheck > 64 && ycheck < 192)
+	if (cellType != 0) {
+		switch (cellType) {
+		case 1: { // SMHOLEFLR  small floor hole, must be near center
+			// DOS: xcheck=abs(xloc-(xindex<<8)); if(xcheck>64&&xcheck<192)
+			int xcheck = ABS(_me.xloc - (_me.xindex << 8));
+			int ycheck = ABS(_me.yloc - (_me.yindex << 8));
+			if (xcheck > 64 && xcheck < 192 && ycheck > 64 && ycheck < 192)
+				fallThroughHole();
+			break;
+		}
+		case 2: // LGHOLEFLR  large floor hole, full cell
 			fallThroughHole();
-		break;
+			break;
+		case 5: // HOTFOOT  electric floor, damages power
+			_sound->play(Sound::kBzzz);
+			setPower(-(5 << _level), -(5 << _level), -(5 << _level));
+			break;
+		default:
+			break;
+		}
 	}
-	case 2: // LGHOLEFLR  large floor hole, full cell
-		fallThroughHole();
-		break;
-	case 5: // HOTFOOT  electric floor, damages power
-		_sound->play(Sound::kBzzz);
-		setPower(-(5 << _level), -(5 << _level), -(5 << _level));
-		break;
-	default:
-		break;
+
+	if (!_fl && _me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32) {
+		const uint8 foodNum = _foodArray[_me.xindex][_me.yindex];
+		if (foodNum > 0 && foodNum <= _objects.size() && _objects[foodNum - 1].type < kBaseObject) {
+			const int xcheck = ABS(_me.xloc - (_me.xindex << 8));
+			const int ycheck = ABS(_me.yloc - (_me.yindex << 8));
+			if (xcheck > 64 && xcheck < 192 && ycheck > 64 && ycheck < 192)
+				meEat();
+		}
 	}
 }
 
 void ColonyEngine::cCommand(int xnew, int ynew, bool allowInteraction) {
+	const int oldX = _me.xindex;
+	const int oldY = _me.yindex;
+
 	if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
 		_robotArray[_me.xindex][_me.yindex] = 0;
 
 	const int robot = checkwall(xnew, ynew, &_me);
 	if (robot > 0 && allowInteraction)
 		interactWithObject(robot);
+
+	if (_gameMode == kModeColony && oldX >= 0 && oldX < 32 && oldY >= 0 && oldY < 32 &&
+	    (oldX != _me.xindex || oldY != _me.yindex))
+		notePlayerTrail(oldX, oldY, _me.xindex, _me.yindex);
 
 	if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
 		_robotArray[_me.xindex][_me.yindex] = kMeNum;
