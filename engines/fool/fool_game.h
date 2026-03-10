@@ -142,7 +142,10 @@ public:
 	void sub_132_1444();
 
 	void sub_133_004();
+
+	// fool_reveal.cpp
 	void sub_134_004();
+
 	void sub_135_004();
 	void sub_136_004();
 	void sub_137_004();
@@ -225,8 +228,6 @@ private:
 	int16 var_i16_7d2;
 	int16 storyCurrentPage; // var_i16_7d4
 	int16 var_i16_7d6;
-	int16 var_i16_7d8;
-	int16 var_i16_7da;
 	int16 storyNextPage; // var_i16_7d8
 	int16 storyPageCount; // var_i16_7da
 	int16 selectedMenuChapter; // var_i16_7dc
@@ -326,8 +327,7 @@ private:
 	int16 arr_i16_3b38[0xc00]; // 96x32?
 	Common::Rect arr_rect_4338;
 	int16 arr_i16_4738[16];
-	int16 arr_i16_4758[11];
-	Common::Rect arr_rect_476e;
+	int16 arr_i16_4758[15];
 	Common::Rect arr_rect_4776;
 	int16 arr_i16_47d8[0x100];
 	int16 arr_i16_49d8[0x100];
@@ -356,6 +356,7 @@ private:
 	Common::Rect arr_rect_1910c;
 	PicHandle arr_i32_1912c[0x54];
 	PicHandle arr_i32_192c0[0x18];
+	PolyHandle arr_poly_192c0[0x18];
 	int32 arr_i32_19454[0x65];
 	Common::U32String arr_str_195e8[101]; // 0x20 each
 
