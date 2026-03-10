@@ -31,9 +31,15 @@
 
 namespace Pelrock {
 
-const int kQuestionMarkOffset = 3214046;
-const int kInvLeftArrowOffset = 3215906;
+const uint32 kQuestionMarkOffset = 3214046;
+const uint32 kInvLeftArrowOffset = 3215906;
+const uint32 kSoundControlOffset = 3037008;
+const uint32 kSoundMasterOffset = 	2662588;
+const uint32 kSoundMusicOffset = 2664746;
+const uint32 kSoundSfxOffset = 2667140;
 const int kTransparentColor = 15;
+// const int kTransparentColor = 195;
+const int kSoundControlsTransparentColor = 195;
 const uint32 kCreditsBackgroundOffset = 3271454;
 
 enum MenuButton {
@@ -46,6 +52,12 @@ enum MenuButton {
 	SAVE_GAME_BUTTON,
 	LOAD_GAME_BUTTON,
 	SOUNDS_BUTTON,
+	MASTER_LEFT_BUTTON,
+	MASTER_RIGHT_BUTTON,
+	SFX_LEFT_BUTTON,
+	SFX_RIGHT_BUTTON,
+	MUSIC_LEFT_BUTTON,
+	MUSIC_RIGHT_BUTTON,
 	NO_BUTTON
 };
 
@@ -220,6 +232,7 @@ private:
 	void loadMenuTexts();
 	void cleanUp();
 	void drawButtons();
+	void readButton(byte *rawData, uint32 offset, byte *outBuffer[2], int w, int h);
 	void readButton(Common::File &alfred7, uint32 offset, byte *outBuffer[2], Common::Rect rect);
 	MenuButton isButtonClicked(int x, int y);
 	Graphics::Screen *_screen = nullptr;
@@ -256,6 +269,31 @@ private:
 	Common::Rect _questionMarkRect = Common::Rect(Common::Point(217, 293), 31, 30);
 	byte *_questionMark[2] = {nullptr};
 
+	Common::Rect _masterVolumeLeftRect = Common::Rect(Common::Point(232, 252), 36, 28);
+	Common::Rect _masterVolumeRightRect = Common::Rect(Common::Point(268, 252), 31, 28);
+
+	Common::Rect _sfxVolumeLeftRect = Common::Rect(Common::Point(298, 252), 36, 28);
+	Common::Rect _sfxVolumeRightRect = Common::Rect(Common::Point(334, 252), 31, 28);
+
+	Common::Rect _musicVolumeLeftRect = Common::Rect(Common::Point(364, 252), 36, 28);
+	Common::Rect _musicVolumeRightRect = Common::Rect(Common::Point(400, 252), 31, 28);
+
+
+	byte *_soundControlArrowLeft[2] = {nullptr};
+	byte *_soundControlArrowRight[2] = {nullptr};
+
+	byte *_soundControlMasterIcon = nullptr;
+	byte *_soundControlSfxIcon = nullptr;
+	byte *_soundControlMusicIcon = nullptr;
+
+	Graphics::ManagedSurface _masterSoundIcon;
+	Graphics::ManagedSurface _sfxSoundIcon;
+	Graphics::ManagedSurface _musicSoundIcon;
+
+	float currentMasterVolumeScale = 1.0f;
+	float currentSfxVolumeScale = 1.0f;
+	float currentMusicVolumeScale = 1.0f;
+
 	Common::Array<Common::StringArray> _menuTexts;
 	// Temporary
 	int _selectedInvIndex = 0;
@@ -265,6 +303,7 @@ private:
 	Common::Array<Common::Point> _inventorySlots;
 
 	bool showButtons = true;
+	bool _showSoundOptions = false;
 };
 
 } // End of namespace Pelrock

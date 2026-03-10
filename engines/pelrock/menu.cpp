@@ -36,21 +36,21 @@ static const uint32 kSettingsPaletteOffset = 0x2884C2;
 
 // JUEGO.EXE — inventory object descriptions
 static const uint32 kInventoryDescriptionsOffset = 0x4715E;
-static const uint32 kInventoryDescriptionsSize   = 7868;
+static const uint32 kInventoryDescriptionsSize = 7868;
 
 // JUEGO.EXE — in-menu text strings
 static const uint32 kMenuTextOffset = 0x49203;
-static const uint32 kMenuTextSize   = 230;
+static const uint32 kMenuTextSize = 230;
 
 // ALFRED.7 — main menu background
-static const uint32 kMainMenuPart1Offset         = 2405266;
-static const uint32 kMainMenuPart1RawSize        = 65536; // first uncompressed chunk
+static const uint32 kMainMenuPart1Offset = 2405266;
+static const uint32 kMainMenuPart1RawSize = 65536;        // first uncompressed chunk
 static const uint32 kMainMenuPart1CompressedSize = 29418; // following compressed tail
-static const uint32 kMainMenuPart2Offset         = 2500220;
-static const uint32 kMainMenuPart2RawSize        = 32768;
+static const uint32 kMainMenuPart2Offset = 2500220;
+static const uint32 kMainMenuPart2RawSize = 32768;
 static const uint32 kMainMenuPart2CompressedSize = 30288;
-static const uint32 kMainMenuPart3Offset         = 2563266;
-static const uint32 kMainMenuPart3Size           = 92160;
+static const uint32 kMainMenuPart3Offset = 2563266;
+static const uint32 kMainMenuPart3Size = 92160;
 
 // ALFRED.7 — menu buttons (save/load/sound/exit, one contiguous block)
 static const uint32 kMenuButtonsOffset = 3193376;
@@ -86,7 +86,33 @@ MenuButton MenuManager::isButtonClicked(int x, int y) {
 	if (_savesDown.contains(x, y)) {
 		return SAVEGAME_NEXT_BUTTON;
 	}
+	if(_showSoundOptions) {
+		if(_masterVolumeLeftRect.contains(x, y)) {
+			return MASTER_LEFT_BUTTON;
+		}
+		if(_masterVolumeRightRect.contains(x, y)) {
+			return MASTER_RIGHT_BUTTON;
+		}
+		if(_sfxVolumeLeftRect.contains(x, y)) {
+			return SFX_LEFT_BUTTON;
+		}
+		if(_sfxVolumeRightRect.contains(x, y)) {
+			return SFX_RIGHT_BUTTON;
+		}
+		if(_musicVolumeLeftRect.contains(x, y)) {
+			return MUSIC_LEFT_BUTTON;
+		}
+		if(_musicVolumeRightRect.contains(x, y)) {
+			return MUSIC_RIGHT_BUTTON;
+		}
+	}
 	return NO_BUTTON; // Default fallback
+}
+
+Graphics::ManagedSurface scale(Graphics::ManagedSurface, const byte *original, float scale) {
+	Graphics::ManagedSurface newSurface = Graphics::ManagedSurface(66, 64, Graphics::PixelFormat::createFormatCLUT8());
+	memcpy(newSurface.getPixels(), original, 66 * 64);
+	return *newSurface.scale(66 * scale, 64 * scale);
 }
 
 bool MenuManager::checkMouseClick(int x, int y) {
@@ -107,6 +133,17 @@ bool MenuManager::checkMouseClick(int x, int y) {
 	}
 
 	MenuButton button = isButtonClicked(x, y);
+
+	if( button != MUSIC_LEFT_BUTTON &&
+		button != MUSIC_RIGHT_BUTTON &&
+		button != SFX_LEFT_BUTTON &&
+		button != SFX_RIGHT_BUTTON &&
+		button != MASTER_LEFT_BUTTON &&
+		button != MASTER_RIGHT_BUTTON
+	) {
+		_showSoundOptions = false;
+	}
+
 	switch (button) {
 	case QUESTION_MARK_BUTTON:
 		debug("Show credits");
@@ -129,6 +166,34 @@ bool MenuManager::checkMouseClick(int x, int y) {
 		break;
 	case EXIT_MENU_BUTTON:
 		g_engine->quitGame();
+		break;
+	case SOUNDS_BUTTON:
+		_showSoundOptions = true;
+		_menuText = Common::StringArray();
+		break;
+	case MASTER_LEFT_BUTTON:
+		currentMasterVolumeScale = MAX(0.4f, currentMasterVolumeScale - 0.1f);
+		_masterSoundIcon = scale(_masterSoundIcon, _soundControlMasterIcon, currentMasterVolumeScale);
+		break;
+	case MASTER_RIGHT_BUTTON:
+		currentMasterVolumeScale = MIN(1.0f, currentMasterVolumeScale + 0.1f);
+		_masterSoundIcon = scale(_masterSoundIcon, _soundControlMasterIcon, currentMasterVolumeScale);
+		break;
+	case SFX_LEFT_BUTTON:
+		currentSfxVolumeScale = MAX(0.4f, currentSfxVolumeScale - 0.1f);
+		_sfxSoundIcon = scale(_sfxSoundIcon, _soundControlSfxIcon, currentSfxVolumeScale);
+		break;
+	case SFX_RIGHT_BUTTON:
+		currentSfxVolumeScale = MIN(1.0f, currentSfxVolumeScale + 0.1f);
+		_sfxSoundIcon = scale(_sfxSoundIcon, _soundControlSfxIcon, currentSfxVolumeScale);
+		break;
+	case MUSIC_LEFT_BUTTON:
+		currentMusicVolumeScale = MAX(0.4f, currentMusicVolumeScale - 0.1f);
+		_musicSoundIcon = scale(_musicSoundIcon, _soundControlMusicIcon, currentMusicVolumeScale);
+		break;
+	case MUSIC_RIGHT_BUTTON:
+		currentMusicVolumeScale = MIN(1.0f, currentMusicVolumeScale + 0.1f);
+		_musicSoundIcon = scale(_musicSoundIcon, _soundControlMusicIcon, currentMusicVolumeScale);
 		break;
 	default:
 		break;
@@ -197,15 +262,16 @@ void MenuManager::menuLoop() {
 		_events->pollEvent();
 
 		if (_events->_leftMouseClicked) {
-			if(checkMouseClick(_events->_mouseX, _events->_mouseY)) {
+			if (checkMouseClick(_events->_mouseX, _events->_mouseY)) {
 				break;
 			}
 			_events->_leftMouseClicked = false;
 		}
-		if(_events->_rightMouseClicked) {
+		if (_events->_rightMouseClicked) {
 			break;
 		}
 		drawScreen();
+		drawPaletteSquares((byte *)_screen->getPixels(), _mainMenuPalette);
 		_screen->markAllDirty();
 		_screen->update();
 		g_system->delayMillis(10);
@@ -294,7 +360,6 @@ void MenuManager::loadMenu() {
 
 	memcpy((byte *)_mainMenu.getPixels() + curPos, decompressedPart2, decompressedSize);
 	curPos += decompressedSize;
-	debug("Settings menu size loaded: %d, with last block %d", curPos, curPos + (int)kMainMenuPart3Size);
 	delete[] compressedPart2;
 	delete[] decompressedPart2;
 	alfred7.seek(kMainMenuPart3Offset, SEEK_SET);
@@ -310,6 +375,42 @@ void MenuManager::loadMenu() {
 	readButton(alfred7, alfred7.pos(), _savesDownArrows, _savesDown);
 	readButton(alfred7, kQuestionMarkOffset, _questionMark, _questionMarkRect);
 
+	byte *soundArrowsData = nullptr;
+	size_t soundArrowsSize = 0;
+	rleDecompressSingleBuda(&alfred7, kSoundControlOffset, soundArrowsData, soundArrowsSize);
+
+	readButton(soundArrowsData, 0, _soundControlArrowLeft, 36, 28);
+	readButton(soundArrowsData, 36 * 28 * 2, _soundControlArrowRight, 31, 28);
+	delete[] soundArrowsData;
+
+	byte *soundIconMasterData = nullptr;
+	size_t soundIconMasterSize = 0;
+	rleDecompressSingleBuda(&alfred7, kSoundMasterOffset, soundIconMasterData, soundIconMasterSize);
+	_soundControlMasterIcon = new byte[66 * 64];
+	extractSingleFrame(soundIconMasterData, _soundControlMasterIcon, 0, 66, 64);
+	delete[] soundIconMasterData;
+
+	byte *soundIconSfxData = nullptr;
+	size_t soundIconSfxSize = 0;
+	rleDecompressSingleBuda(&alfred7, kSoundSfxOffset, soundIconSfxData, soundIconSfxSize);
+	_soundControlSfxIcon = new byte[66 * 64];
+	extractSingleFrame(soundIconSfxData, _soundControlSfxIcon, 0, 66, 64);
+	delete[] soundIconSfxData;
+
+	byte *soundIconMusicData = nullptr;
+	size_t soundIconMusicSize = 0;
+	rleDecompressSingleBuda(&alfred7, kSoundMusicOffset, soundIconMusicData, soundIconMusicSize);
+	_soundControlMusicIcon = new byte[66 * 64];
+	extractSingleFrame(soundIconMusicData, _soundControlMusicIcon, 0, 66, 64);
+	delete[] soundIconMusicData;
+
+	_masterSoundIcon = Graphics::ManagedSurface(66, 64, Graphics::PixelFormat::createFormatCLUT8());
+	_sfxSoundIcon = Graphics::ManagedSurface(66, 64, Graphics::PixelFormat::createFormatCLUT8());
+	_musicSoundIcon = Graphics::ManagedSurface(66, 64, Graphics::PixelFormat::createFormatCLUT8());
+	memcpy(_masterSoundIcon.getPixels(), _soundControlMasterIcon, 66 * 64);
+	memcpy(_sfxSoundIcon.getPixels(), _soundControlSfxIcon, 66 * 64);
+	memcpy(_musicSoundIcon.getPixels(), _soundControlMusicIcon, 66 * 64);
+
 	_menuText = _menuTexts[0];
 	alfred7.close();
 
@@ -318,12 +419,23 @@ void MenuManager::loadMenu() {
 	}
 }
 
+void MenuManager::readButton(byte *rawData, uint32 offset, byte *outBuffer[2], int w, int h) {
+	byte *buttonData = new byte[w * h * 2];
+	outBuffer[0] = new byte[w * h];
+	outBuffer[1] = new byte[w * h];
+	Common::copy(rawData + offset, rawData + offset + w * h * 2, buttonData);
+	extractSingleFrame(buttonData, outBuffer[0], 0, w, h);
+	extractSingleFrame(buttonData, outBuffer[1], 1, w, h);
+	delete[] buttonData;
+}
+
 void MenuManager::readButton(Common::File &alfred7, uint32 offset, byte *outBuffer[2], Common::Rect rect) {
 	alfred7.seek(offset, SEEK_SET);
 	byte *buttonData = new byte[rect.width() * rect.height() * 2];
-	alfred7.read(buttonData, rect.width() * rect.height() * 2);
 	outBuffer[0] = new byte[rect.width() * rect.height()];
 	outBuffer[1] = new byte[rect.width() * rect.height()];
+	alfred7.read(buttonData, rect.width() * rect.height() * 2);
+
 	extractSingleFrame(buttonData, outBuffer[0], 0, rect.width(), rect.height());
 	extractSingleFrame(buttonData, outBuffer[1], 1, rect.width(), rect.height());
 	delete[] buttonData;
@@ -354,6 +466,9 @@ void MenuManager::loadMenuTexts() {
 }
 
 void MenuManager::cleanUp() {
+	_masterSoundIcon.free();
+	_sfxSoundIcon.free();
+	_musicSoundIcon.free();
 }
 
 void MenuManager::drawButtons() {
@@ -390,6 +505,28 @@ void MenuManager::drawButtons() {
 
 	buf = button == SAVEGAME_NEXT_BUTTON ? _savesDownArrows[1] : _savesDownArrows[0];
 	drawSpriteToBuffer(_compositeBuffer, buf, _savesDown.left, _savesDown.top, _savesDown.width(), _savesDown.height(), kTransparentColor);
+
+	if(_showSoundOptions) {
+		// _compositeBuffer.transBlitFrom(_masterSoundIcon, Common::Point(233, 188), kSoundControlsTransparentColor);
+		// _compositeBuffer.transBlitFrom(_musicSoundIcon, Common::Point(299, 188), kSoundControlsTransparentColor);
+		// _compositeBuffer.transBlitFrom(_sfxSoundIcon, Common::Point(365, 188), kSoundControlsTransparentColor);
+		_compositeBuffer.transBlitFrom(_masterSoundIcon, Common::Point(266 - _masterSoundIcon.w /2 , 212 - _masterSoundIcon.h / 2), kSoundControlsTransparentColor);
+		_compositeBuffer.transBlitFrom(_musicSoundIcon, Common::Point(333 - _musicSoundIcon.w / 2, 212 - _musicSoundIcon.h / 2), kSoundControlsTransparentColor);
+		_compositeBuffer.transBlitFrom(_sfxSoundIcon, Common::Point(399 - _sfxSoundIcon.w / 2, 212 - _sfxSoundIcon.h / 2), kSoundControlsTransparentColor);
+
+		buf = button == MASTER_LEFT_BUTTON ? _soundControlArrowLeft[1] : _soundControlArrowLeft[0];
+		drawSpriteToBuffer(_compositeBuffer, buf, _masterVolumeLeftRect.left, _masterVolumeLeftRect.top, _masterVolumeLeftRect.width(), _masterVolumeLeftRect.height(), kSoundControlsTransparentColor);
+		buf = button == MASTER_RIGHT_BUTTON ? _soundControlArrowRight[1] : _soundControlArrowRight[0];
+		drawSpriteToBuffer(_compositeBuffer, buf, _masterVolumeRightRect.left, _masterVolumeRightRect.top, _masterVolumeRightRect.width(), _masterVolumeRightRect.height(), kSoundControlsTransparentColor);
+		buf = button == SFX_LEFT_BUTTON ? _soundControlArrowLeft[1] : _soundControlArrowLeft[0];
+		drawSpriteToBuffer(_compositeBuffer, buf, _sfxVolumeLeftRect.left, _sfxVolumeLeftRect.top, _sfxVolumeLeftRect.width(), _sfxVolumeLeftRect.height(), kSoundControlsTransparentColor);
+		buf = button == SFX_RIGHT_BUTTON ? _soundControlArrowRight[1] : _soundControlArrowRight[0];
+		drawSpriteToBuffer(_compositeBuffer, buf, _sfxVolumeRightRect.left, _sfxVolumeRightRect.top, _sfxVolumeRightRect.width(), _sfxVolumeRightRect.height(), kSoundControlsTransparentColor);
+		buf = button == MUSIC_LEFT_BUTTON ? _soundControlArrowLeft[1] : _soundControlArrowLeft[0];
+		drawSpriteToBuffer(_compositeBuffer, buf, _musicVolumeLeftRect.left, _musicVolumeLeftRect.top, _musicVolumeLeftRect.width(), _musicVolumeLeftRect.height(), kSoundControlsTransparentColor);
+		buf = button == MUSIC_RIGHT_BUTTON ? _soundControlArrowRight[1] : _soundControlArrowRight[0];
+		drawSpriteToBuffer(_compositeBuffer, buf, _musicVolumeRightRect.left, _musicVolumeRightRect.top, _musicVolumeRightRect.width(), _musicVolumeRightRect.height(), kSoundControlsTransparentColor);
+	}
 }
 
 Pelrock::MenuManager::~MenuManager() {
