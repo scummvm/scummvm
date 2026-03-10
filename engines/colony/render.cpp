@@ -177,6 +177,11 @@ enum MacPattern {
 	kPatternClear  = 5  // Outline only (no fill)
 };
 
+// Internal-only surface color for Mac wall helper objects (FWALL/CWALL).
+// In the original Mac renderer these use c_lwall/c_dwall, which are
+// special corridor-wall colors rather than normal material palette entries.
+static const int kColorCorridorWall = 1000;
+
 // GL_POLYGON_STIPPLE patterns: 32x32 bit arrays (128 bytes), tiled from 8x8 Mac patterns.
 // Bit=1 → fragment drawn (black foreground), bit=0 → fragment discarded (white background shows).
 // Mac QuickDraw convention: bit=1 = foreground (BLACK), bit=0 = background (WHITE).
@@ -1368,18 +1373,38 @@ void ColonyEngine::draw3DPrism(const Thing &obj, const PrismPartDef &def, bool u
 
 			if (_renderMode == Common::kRenderMacintosh && _hasMacColors) {
 				// Mac color rendering: follows SuperPoly() from calcrobo.c:429-505.
-				int mIdx = mapObjColorToMacColor(colorIdx);
-				int pattern = _macColors[mIdx].pattern;
-				uint32 fg = packMacColor(_macColors[mIdx].fg);
-				uint32 bg = packMacColor(_macColors[mIdx].bg);
-				debugC(5, kColonyDebugRender, "draw3DPrism Mac: colorIdx=%d mIdx=%d pat=%d fg=0x%08X bg=0x%08X lit=%d",
-				      colorIdx, mIdx, pattern, fg, bg, lit);
+				int pattern;
+				uint32 fg;
+				uint32 bg;
 
-				if (!lit) {
-					// Mac unlit: all non-wall surfaces fill solid black
-					fg = 0xFF000000;
-					bg = 0xFF000000;
-					pattern = 4; // force BLACK (solid fill)
+				if (colorIdx == kColorCorridorWall) {
+					// Original Mac calcrobo.c special-cases c_lwall/c_dwall:
+					// lit c_lwall uses the current corridor wall tint + black outline,
+					// unlit c_dwall collapses to a solid dark wall color.
+					pattern = 0; // WHITE pattern = solid bg fill + fg outline
+					if (lit) {
+						fg = 0xFF000000;
+						bg = packMacColor(_macColors[8 + _level - 1].fg);
+					} else {
+						bg = packMacColor(_macColors[6].bg);
+						fg = bg;
+					}
+					debugC(5, kColonyDebugRender, "draw3DPrism Mac corridor wall: fg=0x%08X bg=0x%08X lit=%d",
+					      fg, bg, lit);
+				} else {
+					int mIdx = mapObjColorToMacColor(colorIdx);
+					pattern = _macColors[mIdx].pattern;
+					fg = packMacColor(_macColors[mIdx].fg);
+					bg = packMacColor(_macColors[mIdx].bg);
+					debugC(5, kColonyDebugRender, "draw3DPrism Mac: colorIdx=%d mIdx=%d pat=%d fg=0x%08X bg=0x%08X lit=%d",
+					      colorIdx, mIdx, pattern, fg, bg, lit);
+
+					if (!lit) {
+						// Mac unlit: all non-wall surfaces fill solid black
+						fg = 0xFF000000;
+						bg = 0xFF000000;
+						pattern = 4; // force BLACK (solid fill)
+					}
 				}
 
 				if (pattern == 5) {
@@ -2724,10 +2749,16 @@ bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj) {
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
 	case kObjFWall:
-		draw3DPrism(obj, kFWallPart, false);
+		if (_renderMode == Common::kRenderMacintosh && _hasMacColors)
+			draw3DPrism(obj, kFWallPart, false, kColorCorridorWall);
+		else
+			draw3DPrism(obj, kFWallPart, false);
 		break;
 	case kObjCWall:
-		draw3DPrism(obj, kCWallPart, false);
+		if (_renderMode == Common::kRenderMacintosh && _hasMacColors)
+			draw3DPrism(obj, kCWallPart, false, kColorCorridorWall);
+		else
+			draw3DPrism(obj, kCWallPart, false);
 		break;
 	case kObjScreen:
 		draw3DPrism(obj, kScreenPart, false);
