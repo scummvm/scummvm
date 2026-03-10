@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	movement.o \
 	render.o \
 	renderer_opengl.o \
+	savegame.o \
 	sound.o \
 	think.o \
 	ui.o
