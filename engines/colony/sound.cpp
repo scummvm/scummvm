@@ -72,6 +72,9 @@ bool Sound::isPlaying() const {
 void Sound::play(int soundID) {
 	stop();
 
+	if (!_vm->isSoundEnabled())
+		return;
+
 	if (_vm->getPlatform() == Common::kPlatformMacintosh)
 		playMacSound(soundID);
 	else

@@ -553,6 +553,9 @@ void ColonyEngine::drawCrosshair() {
 		return;
 
 	const bool isMac = (_renderMode == Common::kRenderMacintosh);
+	if (isMac && _cursorShoot && !_mouseLocked && _weapons > 0)
+		return;
+
 	uint32 color;
 	if (isMac) {
 		// Mac: black when powered, gray when no weapons, white when armed but no power

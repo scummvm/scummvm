@@ -24,10 +24,12 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "common/debug.h"
+#include "common/translation.h"
 #include "graphics/font.h"
 #include "graphics/fonts/dosfont.h"
 #include "graphics/fonts/macfont.h"
 #include "graphics/cursorman.h"
+#include "gui/message.h"
 #include "image/pict.h"
 #include <math.h>
 
@@ -676,12 +678,14 @@ void ColonyEngine::terminateGame(bool blowup) {
 	Common::Rect savedClip = _clip;
 	int savedCenterX = _centerX;
 	int savedCenterY = _centerY;
+	const bool savedMouseLocked = _mouseLocked;
 
 	_screenR = Common::Rect(0, 0, _width, _height);
 	_clip = _screenR;
 	_centerX = _width / 2;
 	_centerY = _height / 2;
 
+	_animationRunning = false;
 	_mouseLocked = false;
 	_system->lockMouse(false);
 	_system->showMouse(true);
@@ -726,8 +730,31 @@ void ColonyEngine::terminateGame(bool blowup) {
 	_clip = savedClip;
 	_centerX = savedCenterX;
 	_centerY = savedCenterY;
+	while (!shouldQuit()) {
+		Common::U32StringArray altButtons;
+		altButtons.push_back(_("Load Game"));
+		altButtons.push_back(_("Quit"));
+		GUI::MessageDialog prompt(_("You have been terminated."), _("New Game"), altButtons);
 
-	_system->quit();
+		switch (runDialog(prompt)) {
+		case GUI::kMessageOK:
+			startNewGame();
+			_mouseLocked = savedMouseLocked;
+			updateMouseCapture(true);
+			return;
+		case GUI::kMessageAlt:
+			if (loadGameDialog()) {
+				_mouseLocked = savedMouseLocked;
+				updateMouseCapture(true);
+				return;
+			}
+			break;
+		case GUI::kMessageAlt + 1:
+		default:
+			quitGame();
+			return;
+		}
+	}
 }
 
 int ColonyEngine::countSavedCryos() const {

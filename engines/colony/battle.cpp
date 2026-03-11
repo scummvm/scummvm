@@ -1060,8 +1060,9 @@ void ColonyEngine::battleShoot() {
 	_sound->play(Sound::kBang);
 	setPower(-2, 0, 0);
 
-	const int cx = _centerX;
-	const int cy = _centerY;
+	const Common::Point aim = getAimPoint();
+	const int cx = aim.x;
+	const int cy = aim.y;
 	_gfx->setXorMode(true);
 	for (int i = 100; i < 900; i += 200) {
 		const int outer = CLIP<int>(kFloor * 128 / i, 0, 1000);
