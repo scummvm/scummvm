@@ -361,8 +361,12 @@ uint32 VM::Context::execute(uint32 scriptAddress, byte *storage) {
 
 		case OP_DIV:
 			ECX = EAX;
-            EAX.setVal( (int32)EDX.getVal() / (int32)ECX.getVal() );
-            EDX.setVal( (int32)EDX.getVal() % (int32)ECX.getVal() );
+			if (ECX.getVal() != 0) {
+				EAX.setVal( (int32)EDX.getVal() / (int32)ECX.getVal() );
+				EDX.setVal( (int32)EDX.getVal() % (int32)ECX.getVal() );
+			} else {
+				warning("Division by 0 at %x", ESI);
+			}
 			break;
 
 		case OP_MOV_EAX_BPTR_EDI:
