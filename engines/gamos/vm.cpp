@@ -424,7 +424,7 @@ uint32 VM::doScript(uint32 scriptAddress, byte *storage) {
 	if (_interrupt)
 		return 0;
 
-	for (int i = 0; i < THREADS_COUNT; i++) {
+	for (uint i = 0; i < THREADS_COUNT; i++) {
 		if (!_threads[i]._inUse) {
 			_threads[i]._inUse = true;
 			uint32 res = _threads[i].execute(scriptAddress, storage);
