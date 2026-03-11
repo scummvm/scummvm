@@ -306,14 +306,6 @@ extern "C" int ClassicProc3RendererShadowARM(
 #endif
 
 void BaseCostumeRenderer::byleRLEDecode(ByleRLEData &compData, int16 actorHitX, int16 actorHitY, bool *actorHitResult, const uint8 *xmap) {
-	const byte *mask, *src;
-	byte *dst;
-	byte len, maskbit;
-	int lastColumnX, y;
-	uint16 color, height, pcolor;
-	int scaleIndexY;
-	bool masked;
-
 #ifdef USE_ARM_COSTUME_ASM
 	if ((!_akosRendering && (_shadowMode & 0x20) == 0) &&
 		(actorHitResult == NULL) &&
@@ -336,17 +328,20 @@ void BaseCostumeRenderer::byleRLEDecode(ByleRLEData &compData, int16 actorHitX, 
 	}
 #endif /* USE_ARM_COSTUME_ASM */
 
-	lastColumnX = -1;
-	y = compData.y;
-	src = _srcPtr;
-	dst = compData.destPtr;
-	len = compData.repLen;
-	color = compData.repColor;
-	height = _height;
+	const byte *src = _srcPtr;
+	byte *dst = compData.destPtr;
 
-	scaleIndexY = compData.scaleYIndex;
-	maskbit = revBitMask(compData.x & 7);
-	mask = compData.maskPtr + compData.x / 8;
+	byte len = compData.repLen;
+	uint16 color = compData.repColor;
+
+	// reset every column
+	int lastColumnX = -1;
+	int y = compData.y;
+	uint16 height = _height;
+	int scaleIndexY = compData.scaleYIndex;
+
+	byte maskbit = revBitMask(compData.x & 7);
+	const byte *mask = compData.maskPtr + compData.x / 8;
 
 	if (len)
 		goto StartPos;
@@ -366,9 +361,9 @@ void BaseCostumeRenderer::byleRLEDecode(ByleRLEData &compData, int16 actorHitX, 
 						return;
 					}
 				} else {
-					masked = (y < compData.boundsRect.top || y >= compData.boundsRect.bottom)
-							 || (compData.x < compData.boundsRect.left || compData.x >= compData.boundsRect.right)
-							 || (compData.maskPtr && (*mask & maskbit));
+					const bool masked = (y < compData.boundsRect.top || y >= compData.boundsRect.bottom)
+						|| (compData.x < compData.boundsRect.left || compData.x >= compData.boundsRect.right)
+						|| (compData.maskPtr && (*mask & maskbit));
 					bool skipColumn = false;
 
 					if (color && !masked) {
