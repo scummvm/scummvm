@@ -226,6 +226,7 @@ public:
 	byte _mainMenuPalette[768] = {0};
 
 private:
+	void checkMouseDown(int x, int y);
 	bool checkMouseClick(int x, int y);
 	void showCredits();
 	bool selectInventoryItem(int i);
@@ -272,11 +273,11 @@ private:
 	Common::Rect _masterVolumeLeftRect = Common::Rect(Common::Point(232, 252), 36, 28);
 	Common::Rect _masterVolumeRightRect = Common::Rect(Common::Point(268, 252), 31, 28);
 
-	Common::Rect _sfxVolumeLeftRect = Common::Rect(Common::Point(298, 252), 36, 28);
-	Common::Rect _sfxVolumeRightRect = Common::Rect(Common::Point(334, 252), 31, 28);
+	Common::Rect _musicVolumeLeftRect = Common::Rect(Common::Point(298, 252), 36, 28);
+	Common::Rect _musicVolumeRightRect = Common::Rect(Common::Point(334, 252), 31, 28);
 
-	Common::Rect _musicVolumeLeftRect = Common::Rect(Common::Point(364, 252), 36, 28);
-	Common::Rect _musicVolumeRightRect = Common::Rect(Common::Point(400, 252), 31, 28);
+	Common::Rect _sfxVolumeLeftRect = Common::Rect(Common::Point(364, 252), 36, 28);
+	Common::Rect _sfxVolumeRightRect = Common::Rect(Common::Point(400, 252), 31, 28);
 
 
 	byte *_soundControlArrowLeft[2] = {nullptr};

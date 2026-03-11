@@ -86,23 +86,23 @@ MenuButton MenuManager::isButtonClicked(int x, int y) {
 	if (_savesDown.contains(x, y)) {
 		return SAVEGAME_NEXT_BUTTON;
 	}
-	if(_showSoundOptions) {
-		if(_masterVolumeLeftRect.contains(x, y)) {
+	if (_showSoundOptions) {
+		if (_masterVolumeLeftRect.contains(x, y)) {
 			return MASTER_LEFT_BUTTON;
 		}
-		if(_masterVolumeRightRect.contains(x, y)) {
+		if (_masterVolumeRightRect.contains(x, y)) {
 			return MASTER_RIGHT_BUTTON;
 		}
-		if(_sfxVolumeLeftRect.contains(x, y)) {
+		if (_sfxVolumeLeftRect.contains(x, y)) {
 			return SFX_LEFT_BUTTON;
 		}
-		if(_sfxVolumeRightRect.contains(x, y)) {
+		if (_sfxVolumeRightRect.contains(x, y)) {
 			return SFX_RIGHT_BUTTON;
 		}
-		if(_musicVolumeLeftRect.contains(x, y)) {
+		if (_musicVolumeLeftRect.contains(x, y)) {
 			return MUSIC_LEFT_BUTTON;
 		}
-		if(_musicVolumeRightRect.contains(x, y)) {
+		if (_musicVolumeRightRect.contains(x, y)) {
 			return MUSIC_RIGHT_BUTTON;
 		}
 	}
@@ -113,6 +113,39 @@ Graphics::ManagedSurface scale(Graphics::ManagedSurface, const byte *original, f
 	Graphics::ManagedSurface newSurface = Graphics::ManagedSurface(66, 64, Graphics::PixelFormat::createFormatCLUT8());
 	memcpy(newSurface.getPixels(), original, 66 * 64);
 	return *newSurface.scale(66 * scale, 64 * scale);
+}
+
+void MenuManager::checkMouseDown(int x, int y) {
+	if(!_events->_leftMouseButton) {
+		return;
+	}
+	MenuButton b = isButtonClicked(x, y);
+	switch (b) {
+	case MASTER_LEFT_BUTTON:
+		currentMasterVolumeScale = MAX(0.4f, currentMasterVolumeScale - 0.1f);
+		_masterSoundIcon = scale(_masterSoundIcon, _soundControlMasterIcon, currentMasterVolumeScale);
+		break;
+	case MASTER_RIGHT_BUTTON:
+		currentMasterVolumeScale = MIN(1.0f, currentMasterVolumeScale + 0.1f);
+		_masterSoundIcon = scale(_masterSoundIcon, _soundControlMasterIcon, currentMasterVolumeScale);
+		break;
+	case SFX_LEFT_BUTTON:
+		currentSfxVolumeScale = MAX(0.4f, currentSfxVolumeScale - 0.1f);
+		_sfxSoundIcon = scale(_sfxSoundIcon, _soundControlSfxIcon, currentSfxVolumeScale);
+		break;
+	case SFX_RIGHT_BUTTON:
+		currentSfxVolumeScale = MIN(1.0f, currentSfxVolumeScale + 0.1f);
+		_sfxSoundIcon = scale(_sfxSoundIcon, _soundControlSfxIcon, currentSfxVolumeScale);
+		break;
+	case MUSIC_LEFT_BUTTON:
+		currentMusicVolumeScale = MAX(0.4f, currentMusicVolumeScale - 0.1f);
+		_musicSoundIcon = scale(_musicSoundIcon, _soundControlMusicIcon, currentMusicVolumeScale);
+		break;
+	case MUSIC_RIGHT_BUTTON:
+		currentMusicVolumeScale = MIN(1.0f, currentMusicVolumeScale + 0.1f);
+		_musicSoundIcon = scale(_musicSoundIcon, _soundControlMusicIcon, currentMusicVolumeScale);
+		break;
+	}
 }
 
 bool MenuManager::checkMouseClick(int x, int y) {
@@ -134,13 +167,12 @@ bool MenuManager::checkMouseClick(int x, int y) {
 
 	MenuButton button = isButtonClicked(x, y);
 
-	if( button != MUSIC_LEFT_BUTTON &&
+	if (button != MUSIC_LEFT_BUTTON &&
 		button != MUSIC_RIGHT_BUTTON &&
 		button != SFX_LEFT_BUTTON &&
 		button != SFX_RIGHT_BUTTON &&
 		button != MASTER_LEFT_BUTTON &&
-		button != MASTER_RIGHT_BUTTON
-	) {
+		button != MASTER_RIGHT_BUTTON) {
 		_showSoundOptions = false;
 	}
 
@@ -171,29 +203,11 @@ bool MenuManager::checkMouseClick(int x, int y) {
 		_showSoundOptions = true;
 		_menuText = Common::StringArray();
 		break;
-	case MASTER_LEFT_BUTTON:
-		currentMasterVolumeScale = MAX(0.4f, currentMasterVolumeScale - 0.1f);
-		_masterSoundIcon = scale(_masterSoundIcon, _soundControlMasterIcon, currentMasterVolumeScale);
-		break;
-	case MASTER_RIGHT_BUTTON:
-		currentMasterVolumeScale = MIN(1.0f, currentMasterVolumeScale + 0.1f);
-		_masterSoundIcon = scale(_masterSoundIcon, _soundControlMasterIcon, currentMasterVolumeScale);
-		break;
 	case SFX_LEFT_BUTTON:
-		currentSfxVolumeScale = MAX(0.4f, currentSfxVolumeScale - 0.1f);
-		_sfxSoundIcon = scale(_sfxSoundIcon, _soundControlSfxIcon, currentSfxVolumeScale);
+		_sound->playSound("CAT_1ZZZ.SMP", -1);
 		break;
 	case SFX_RIGHT_BUTTON:
-		currentSfxVolumeScale = MIN(1.0f, currentSfxVolumeScale + 0.1f);
-		_sfxSoundIcon = scale(_sfxSoundIcon, _soundControlSfxIcon, currentSfxVolumeScale);
-		break;
-	case MUSIC_LEFT_BUTTON:
-		currentMusicVolumeScale = MAX(0.4f, currentMusicVolumeScale - 0.1f);
-		_musicSoundIcon = scale(_musicSoundIcon, _soundControlMusicIcon, currentMusicVolumeScale);
-		break;
-	case MUSIC_RIGHT_BUTTON:
-		currentMusicVolumeScale = MIN(1.0f, currentMusicVolumeScale + 0.1f);
-		_musicSoundIcon = scale(_musicSoundIcon, _soundControlMusicIcon, currentMusicVolumeScale);
+		_sound->playSound("CAT_1ZZZ.SMP", -1);
 		break;
 	default:
 		break;
@@ -260,7 +274,7 @@ void MenuManager::menuLoop() {
 	while (!g_engine->shouldQuit()) {
 
 		_events->pollEvent();
-
+		checkMouseDown(_events->_mouseX, _events->_mouseY);
 		if (_events->_leftMouseClicked) {
 			if (checkMouseClick(_events->_mouseX, _events->_mouseY)) {
 				break;
@@ -506,11 +520,11 @@ void MenuManager::drawButtons() {
 	buf = button == SAVEGAME_NEXT_BUTTON ? _savesDownArrows[1] : _savesDownArrows[0];
 	drawSpriteToBuffer(_compositeBuffer, buf, _savesDown.left, _savesDown.top, _savesDown.width(), _savesDown.height(), kTransparentColor);
 
-	if(_showSoundOptions) {
+	if (_showSoundOptions) {
 		// _compositeBuffer.transBlitFrom(_masterSoundIcon, Common::Point(233, 188), kSoundControlsTransparentColor);
 		// _compositeBuffer.transBlitFrom(_musicSoundIcon, Common::Point(299, 188), kSoundControlsTransparentColor);
 		// _compositeBuffer.transBlitFrom(_sfxSoundIcon, Common::Point(365, 188), kSoundControlsTransparentColor);
-		_compositeBuffer.transBlitFrom(_masterSoundIcon, Common::Point(266 - _masterSoundIcon.w /2 , 212 - _masterSoundIcon.h / 2), kSoundControlsTransparentColor);
+		_compositeBuffer.transBlitFrom(_masterSoundIcon, Common::Point(266 - _masterSoundIcon.w / 2, 212 - _masterSoundIcon.h / 2), kSoundControlsTransparentColor);
 		_compositeBuffer.transBlitFrom(_musicSoundIcon, Common::Point(333 - _musicSoundIcon.w / 2, 212 - _musicSoundIcon.h / 2), kSoundControlsTransparentColor);
 		_compositeBuffer.transBlitFrom(_sfxSoundIcon, Common::Point(399 - _sfxSoundIcon.w / 2, 212 - _sfxSoundIcon.h / 2), kSoundControlsTransparentColor);
 
