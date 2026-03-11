@@ -20,8 +20,20 @@
  */
 
 #include "colony/detection.h"
+#include "colony/colony.h"
 
 namespace Colony {
+
+static const DebugChannelDef debugFlagList[] = {
+	{ kColonyDebugMove, "move", "Movement and collision" },
+	{ kColonyDebugRender, "render", "3D rendering and graphics" },
+	{ kColonyDebugAnimation, "animation", "Animation and sprites" },
+	{ kColonyDebugMap, "map", "Map loading and robots" },
+	{ kColonyDebugSound, "sound", "Sound and music" },
+	{ kColonyDebugUI, "ui", "UI, text, and menus" },
+	{ kColonyDebugCombat, "combat", "Combat, damage, and power changes" },
+	DEBUG_CHANNEL_END
+};
 
 static const PlainGameDescriptor colonyGames[] = {
 	{"colony", "The Colony"},
@@ -70,6 +82,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Copyright (C) 1988 David A. Smith";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return Colony::debugFlagList;
 	}
 };
 

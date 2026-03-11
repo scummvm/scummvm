@@ -27,6 +27,7 @@
 #include "colony/colony.h"
 #include "colony/gfx.h"
 #include "colony/sound.h"
+#include "common/debug.h"
 #include "common/system.h"
 #include <math.h>
 
@@ -967,6 +968,10 @@ void ColonyEngine::battleThink() {
 		_battleProj.look = _bfight[shooter].look;
 		_battleProj.xloc = battleNormalizeCoord(_bfight[shooter].xloc + (_cost[_battleProj.ang] * 2));
 		_battleProj.yloc = battleNormalizeCoord(_bfight[shooter].yloc + (_sint[_battleProj.ang] * 2));
+		debugC(1, kColonyDebugCombat,
+			"battleEnemyShoot: enemy=%d pos=(%d,%d) ang=%d proj=(%d,%d)",
+			shooter, _bfight[shooter].xloc, _bfight[shooter].yloc, _battleProj.ang,
+			_battleProj.xloc, _battleProj.yloc);
 		_pcount = 10;
 		_projon = true;
 	}
@@ -1135,6 +1140,9 @@ void ColonyEngine::battleProjCommand(int xcheck, int ycheck) {
 
 	if (xcheck > _me.xloc - 200 && xcheck < _me.xloc + 200 &&
 	    ycheck > _me.yloc - 200 && ycheck < _me.yloc + 200) {
+		debugC(1, kColonyDebugCombat,
+			"battleProjHitPlayer: proj=(%d,%d) player=(%d,%d) delta=[-4,-4,-4]",
+			xcheck, ycheck, _me.xloc, _me.yloc);
 		setPower(-4, -4, -4);
 		_sound->play(Sound::kExplode);
 		_projon = false;

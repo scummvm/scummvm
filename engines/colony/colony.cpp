@@ -151,13 +151,6 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_gametest = false;
 	_blackoutColor = 15; // Set to white (vINTWHITE) for better visibility in darkness
 
-	DebugMan.addDebugChannel(kColonyDebugMove, "move", "Movement and collision");
-	DebugMan.addDebugChannel(kColonyDebugRender, "render", "3D rendering and graphics");
-	DebugMan.addDebugChannel(kColonyDebugAnimation, "animation", "Animation and sprites");
-	DebugMan.addDebugChannel(kColonyDebugMap, "map", "Map loading and robots");
-	DebugMan.addDebugChannel(kColonyDebugSound, "sound", "Sound and music");
-	DebugMan.addDebugChannel(kColonyDebugUI, "ui", "UI, text, and menus");
-
 	setDebugger(new Debugger(this));
 
 	_sound = new Sound(this);
