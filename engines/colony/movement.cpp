@@ -262,10 +262,14 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 	auto occupied = [&]() -> int {
 		return occupiedObjectAt(xind2, yind2, pobject);
 	};
-	auto moveTo = [&]() -> int {
+	auto moveTo = [&](uint8 trailCode = 0) -> int {
 		const int rnum = occupied();
 		if (rnum)
 			return rnum;
+		if (trailCode != 0 && pobject->type == kMeNum &&
+		    pobject->xindex >= 0 && pobject->xindex < 32 &&
+		    pobject->yindex >= 0 && pobject->yindex < 32)
+			_dirXY[pobject->xindex][pobject->yindex] = trailCode;
 		pobject->yindex = yind2;
 		pobject->xindex = xind2;
 		pobject->dx = xnew - pobject->xloc;
@@ -281,8 +285,26 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 		int r = tryPassThroughFeature(pobject->xindex, pobject->yindex, dir, pobject);
 		if (r == 2)
 			return 0; // teleported  position already updated by the feature
-		if (r == 1)
-			return moveTo();
+		if (r == 1) {
+			uint8 trailCode = 0;
+			switch (dir) {
+			case kDirNorth:
+				trailCode = 1;
+				break;
+			case kDirSouth:
+				trailCode = 5;
+				break;
+			case kDirEast:
+				trailCode = 3;
+				break;
+			case kDirWest:
+				trailCode = 7;
+				break;
+			default:
+				break;
+			}
+			return moveTo(trailCode);
+		}
 		return -2; // blocked, caller handles
 	};
 
@@ -298,7 +320,7 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 
 		if (yind2 > pobject->yindex) {
 			if (!(_wall[pobject->xindex][yind2] & 1))
-				return moveTo();
+				return moveTo(1);
 			{
 				int r = tryFeature(kDirNorth);
 				if (r != -2)
@@ -312,7 +334,7 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 		}
 
 		if (!(_wall[pobject->xindex][pobject->yindex] & 1))
-			return moveTo();
+			return moveTo(5);
 		{
 			int r = tryFeature(kDirSouth);
 			if (r != -2)
@@ -328,7 +350,7 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 	if (yind2 == pobject->yindex) {
 		if (xind2 > pobject->xindex) {
 			if (!(_wall[xind2][pobject->yindex] & 2))
-				return moveTo();
+				return moveTo(3);
 			{
 				int r = tryFeature(kDirEast);
 				if (r != -2)
@@ -342,7 +364,7 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 		}
 
 		if (!(_wall[pobject->xindex][pobject->yindex] & 2))
-			return moveTo();
+			return moveTo(7);
 		{
 			int r = tryFeature(kDirWest);
 			if (r != -2)
@@ -890,19 +912,12 @@ void ColonyEngine::checkCenter() {
 }
 
 void ColonyEngine::cCommand(int xnew, int ynew, bool allowInteraction) {
-	const int oldX = _me.xindex;
-	const int oldY = _me.yindex;
-
 	if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
 		_robotArray[_me.xindex][_me.yindex] = 0;
 
 	const int robot = checkwall(xnew, ynew, &_me);
 	if (robot > 0 && allowInteraction)
 		interactWithObject(robot);
-
-	if (_gameMode == kModeColony && oldX >= 0 && oldX < 32 && oldY >= 0 && oldY < 32 &&
-	    (oldX != _me.xindex || oldY != _me.yindex))
-		notePlayerTrail(oldX, oldY, _me.xindex, _me.yindex);
 
 	if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
 		_robotArray[_me.xindex][_me.yindex] = kMeNum;
