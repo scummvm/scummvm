@@ -23,7 +23,7 @@
 #define COLONY_RENDER_INTERNAL_H
 
 #include "colony/colony.h"
-#include "colony/gfx.h"
+#include "colony/renderer.h"
 
 namespace Colony {
 

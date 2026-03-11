@@ -29,7 +29,7 @@
 #include "common/rect.h"
 #include "graphics/framelimiter.h"
 #include "common/rendermode.h"
-#include "colony/gfx.h"
+#include "colony/renderer.h"
 #include "colony/sound.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macmenu.h"
