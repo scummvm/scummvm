@@ -40,8 +40,26 @@ void Toolbox::BeginUpdate(WindowRecord &theWindow) {
 }
 
 void Toolbox::ClosePoly() {
-	warning("STUB: Toolbox::ClosePoly");
 	ShowPen();
+	if (_port) {
+		if (_port->polySave) {
+			if (_port->polySave->polyPoints.size() >= 2) {
+				Common::Point p1 = _port->polySave->polyPoints[0];
+				Common::Point p2 = _port->polySave->polyPoints[1];
+				_port->polySave->polyBBox = Common::Rect(
+					p1.x < p2.x ? p1.x : p2.x,
+					p1.y < p2.y ? p1.y : p2.y,
+					p1.x < p2.x ? p2.x : p1.x,
+					p1.y < p2.y ? p2.y : p1.y
+				);
+				for (size_t i = 2; i < _port->polySave->polyPoints.size(); i++) {
+					_port->polySave->polyBBox.extend(_port->polySave->polyPoints[i]);
+				}
+				_port->polySave->polySize = _port->polySave->polyPoints.size();
+			}
+			_port->polySave = nullptr;
+		}
+	}
 }
 
 void Toolbox::ClipRect(Common::Rect &r) {
@@ -135,6 +153,12 @@ void Toolbox::DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect) {
 // - blit to target with blitMono
 // - add to target dirty rect list
 
+void Toolbox::ErasePoly(PolyHandle &poly) {
+	if (_port) {
+		_drawPoly(poly, _port->bkPat, kPatCopy, false, _port->fgColor, _port->bkColor);
+	}
+}
+
 void Toolbox::EraseRect(const Common::Rect &r) {
 	if (_port) {
 		_drawRect(r, _port->bkPat, kPatCopy, false, _port->fgColor, _port->bkColor);
@@ -154,6 +178,69 @@ void Toolbox::EndUpdate(WindowRecord &theWindow) {
 void Toolbox::FillOval(const Common::Rect &r, const Pattern &pat) {
 	warning("STUB: Toolbox::FillOval");
 }
+
+void Toolbox::_drawPoly(const PolyHandle &poly, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor) {
+	if (!poly) {
+		warning("_drawPoly: Polygon data not found, skipping");
+		return;
+	}
+	if (poly->polyPoints.size() < 2) {
+		warning("_drawPoly: need at least 2 points");
+		return;
+	}
+	if (_port && _port->pnVis == 0) {
+		Common::Rect bbox = poly->polyBBox;
+		Common::Rect destRect(bbox.width(), bbox.height());
+		// For thicker outlines, the shape will overflow the dimensions a little bit
+		destRect.right += _port->pnSize.x - 1;
+		destRect.bottom += _port->pnSize.y - 1;
+
+		BitMap intermediate(new Graphics::ManagedSurface(destRect.width(), destRect.height()));
+		BitMap mask(new Graphics::ManagedSurface(destRect.width(), destRect.height()));
+
+		Common::Point destPos(bbox.left, bbox.top);
+		Graphics::MacPatterns macpat({pat.data});
+
+		Graphics::MacPlotData pd(intermediate.get(), mask.get(), &macpat, 1, destPos.x, destPos.y, _port->pnSize, bkColor);
+		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
+
+		if (frame) {
+			for (int i = 0; i < (int)poly->polyPoints.size() - 1; i++) {
+				Common::Point p1 = poly->polyPoints[i] - destPos;
+				Common::Point p2 = poly->polyPoints[i+1] - destPos;
+				pm.drawLine(p1.x, p1.y, p2.x, p2.y, fgColor, &pd);
+			}
+		} else {
+			Common::Array<int> polyX;
+			Common::Array<int> polyY;
+			for (auto &it : poly->polyPoints) {
+				polyX.push_back(it.x - destPos.x);
+				polyY.push_back(it.y - destPos.y);
+				debugC(5, kDebugGraphics, "Toolbox::_drawPoly: (%d, %d)", it.x - destPos.x, it.y - destPos.y);
+			}
+			pm.drawPolygonScan(polyX.data(), polyY.data(), poly->polyPoints.size(), destRect, fgColor, &pd);
+		}
+
+
+		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, mode);
+
+		if (debugChannelSet(5, kDebugGraphics)) {
+			byte fakePal[768];
+			Common::fill(fakePal, fakePal+3, 0xff);
+			Common::fill(fakePal+3, fakePal+768, 0x00);
+			mask->rawSurface().debugPrint(5, 0, 0, 0, 0, -1, 512, fakePal);
+
+			debugC(5, kDebugGraphics, "Toolbox::_drawPoly: dstRect (%d, %d) %dx%d, pattern %s, mode %d, frame %d, fgColor %08x, bkColor %08x", dstRect.left, dstRect.top, dstRect.width(), dstRect.height(), pat.format().c_str(), mode, frame, fgColor, bkColor);
+		}
+
+		// Dirty rects check
+		if (_port->portBits == _defaultBits) {
+			_defaultWindow->addDirtyRect(dstRect);
+			_defaultWindow->setDirty(true);
+		}
+	}
+}
+
 
 void Toolbox::_drawRect(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor) {
 	if (!r.isValidRect()) {
@@ -231,9 +318,21 @@ void Toolbox::_drawRoundRect(const Common::Rect &r, const Pattern &pat, PatternM
 	}
 }
 
+void Toolbox::FillPoly(PolyHandle &poly, const Pattern &pat) {
+	if (_port) {
+		_drawPoly(poly, pat, kPatCopy, false, _port->fgColor, _port->bkColor);
+	}
+}
+
 void Toolbox::FillRect(const Common::Rect &r, const Pattern &pat) {
 	if (_port) {
 		_drawRect(r, pat, kPatCopy, false, _port->fgColor, _port->bkColor);
+	}
+}
+
+void Toolbox::FillRoundRect(const Common::Rect &r, uint16 ovalWidth, uint16 ovalHeight, const Pattern &pat) {
+	if (_port) {
+		_drawRoundRect(r, pat, kPatCopy, false, _port->fgColor, _port->bkColor, ovalWidth, ovalHeight);
 	}
 }
 
@@ -258,6 +357,12 @@ void Toolbox::FrameOval(const Common::Rect &r) {
 			_defaultWindow->addDirtyRect(dstRect);
 			_defaultWindow->setDirty(true);
 		}
+	}
+}
+
+void Toolbox::FramePoly(PolyHandle &poly) {
+	if (_port) {
+		_drawPoly(poly, _port->pnPat, _port->pnMode, true, _port->fgColor, _port->bkColor);
 	}
 }
 
@@ -345,6 +450,15 @@ void Toolbox::InvertOval(const Common::Rect &r) {
 	warning("STUB: Toolbox::InvertOval");
 }
 
+void Toolbox::InvertPoly(PolyHandle &poly) {
+	if (_port) {
+		// set pattern to full black
+		Pattern pat({0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff});
+		_drawPoly(poly, pat, kPatXor, false, g_engine->_wm._colorBlack, g_engine->_wm._colorWhite);
+	}
+}
+
+
 void Toolbox::InvertRect(const Common::Rect &r) {
 	if (_port) {
 		// set pattern to full black
@@ -362,8 +476,15 @@ void Toolbox::InvertRoundRect(const Common::Rect &r, uint16 ovalWidth, uint16 ov
 }
 
 
-void Toolbox::KillPoly(PolyHandle poly) {
-	warning("STUB: Toolbox::KillPoly");
+void Toolbox::KillPoly(PolyHandle &poly) {
+	// zero out the destination pointer
+	poly = nullptr;
+}
+
+void Toolbox::Line(int16 dh, int16 dv) {
+	if (_port) {
+		LineTo(_port->pnLoc.x + dh, _port->pnLoc.x + dv);
+	}
 }
 
 void Toolbox::LineTo(int16 h, int16 v) {
@@ -390,6 +511,14 @@ void Toolbox::LineTo(int16 h, int16 v) {
 
 	}
 	if (_port) {
+		// update polygon if we're in ypenPoly mode
+		if (_port->polySave) {
+			if (_port->polySave->polyPoints.size() == 0) {
+				_port->polySave->polyPoints.push_back(_port->pnLoc);
+			}
+			_port->polySave->polyPoints.push_back(Common::Point(h, v));
+		}
+
 		_port->pnLoc = Common::Point(h, v);
 	}
 }
@@ -419,8 +548,10 @@ void Toolbox::MoveTo(int16 h, int16 v) {
 
 PolyHandle Toolbox::OpenPoly() {
 	HidePen();
-	warning("STUB: Toolbox::OpenPoly");
 	PolyHandle handle(new Polygon());
+	if (_port) {
+		_port->polySave = handle;
+	}
 	return handle;
 }
 
@@ -439,8 +570,10 @@ void Toolbox::PaintOval(const Common::Rect &r) {
 	warning("STUB: Toolbox::PaintOval");
 }
 
-void Toolbox::PaintPoly(PolyHandle poly) {
-	warning("STUB: Toolbox::PaintPoly");
+void Toolbox::PaintPoly(PolyHandle &poly) {
+	if (_port) {
+		_drawPoly(poly, _port->pnPat, _port->pnMode, false, _port->fgColor, _port->bkColor);
+	}
 }
 
 void Toolbox::PaintRect(const Common::Rect &r) {
