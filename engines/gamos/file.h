@@ -73,10 +73,10 @@ public:
 
 
 private:
-	int32 _dirOffset;
+	int32 _dirOffset = 0;
 
-	byte _dirCount;
-	uint32 _dataOffset;
+	byte _dirCount = 0;
+	uint32 _dataOffset = 0;
 
 	Common::Array<GameFileDir> _directories;
 

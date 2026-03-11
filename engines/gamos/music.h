@@ -49,7 +49,7 @@ private:
 	uint32 _midiOp = 0; /* save midi event type between update cycles */
 	bool _midiMute = false;
 
-	uint8 _volume;
+	uint8 _volume = 255;
 
 public:
 

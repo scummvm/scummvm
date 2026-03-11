@@ -47,7 +47,10 @@ GamosEngine::GamosEngine(OSystem *syst, const GamosGameDescription *gameDesc) : 
 	_messageProc(this),
 	_vm(this, callbackVMCallDispatcher),
 	_txtInputVMAccess(_vm),
-	_randomSource("gamos") {}
+	_randomSource("gamos") {
+	for(uint i = 0; i < 256; i++)
+		_txtInputObjects[i] = nullptr;
+}
 
 GamosEngine::~GamosEngine() {
 	freeImages();
