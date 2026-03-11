@@ -34,14 +34,14 @@ static inline int ra1OverlayViewOffsetX(const InsaneRebel1 *rebel1) {
 	// In opcode 0x0B (FUN_1CDA7), marker/shot coordinates are in the gameplay
 	// window. Under ScummVM's FUN_224FD crop emulation, shift them into the
 	// 384-wide source buffer so they stay aligned after the source-window crop.
-	return (rebel1->getActiveGameOpcode() == 0x0B) ? rebel1->getPerspectiveX() : 0;
+	return (rebel1->getEffectiveGameOpcode() == 0x0B) ? rebel1->getPerspectiveX() : 0;
 }
 
 static inline int ra1OverlayViewOffsetY(const InsaneRebel1 *rebel1) {
 	if (!rebel1 || !rebel1->isInteractiveVideoActive())
 		return 0;
 
-	return (rebel1->getActiveGameOpcode() == 0x0B) ? rebel1->getPerspectiveY() : 0;
+	return (rebel1->getEffectiveGameOpcode() == 0x0B) ? rebel1->getPerspectiveY() : 0;
 }
 
 static void drawBankString(const RA1SpriteBank &bank, byte *dst, int pitch, int width, int height,
@@ -267,6 +267,44 @@ static const RA1ShotEmitterPair kRA1ShotEmitters251A[27] = {
 	{ -15, -14, 16, 5 }, { 0, -38, -14, 37 }
 };
 
+// DAT_25EC/DAT_25F0 and DAT_28BC in ASSAULT.EXE. GAME opcode 0x09 uses these
+// emitter offsets instead of the generic edge-beam fallback.
+static const RA1ShotEmitterPair kRA1FlightShotEmitters25EC[45] = {
+	{ -38, -14, 37, 6 }, { 37, -14, 37, 7 }, { 42, -11, -40, 11 }, { -37, -6, 38, 14 }, { -37, -5, 38, 15 },
+	{ -35, -19, 36, 11 }, { -35, -18, 35, 12 }, { -37, -15, 36, 16 }, { -37, -11, 34, 19 }, { -37, -10, 34, 20 },
+	{ -31, -24, 33, 16 }, { -31, -23, 33, 17 }, { -32, -19, 33, 22 }, { -34, -17, 29, 24 }, { -35, -15, 28, 25 },
+	{ -25, -28, 29, 21 }, { -25, -28, 29, 20 }, { -30, -25, 28, 27 }, { -30, -20, 24, 28 }, { -31, -19, 23, 29 },
+	{ -18, -31, 26, 25 }, { -18, -31, 25, 25 }, { -23, -28, 22, 30 }, { -25, -24, 18, 32 }, { -26, -24, 18, 32 },
+	{ 35, -19, -35, 12 }, { 36, -19, -35, 11 }, { 39, -16, -38, 16 }, { 37, -12, -35, 19 }, { 37, -11, -34, 20 },
+	{ 30, -23, -33, 17 }, { 31, -23, -33, 17 }, { 33, -20, -32, 21 }, { 35, -17, -29, 23 }, { 34, -17, -30, 24 },
+	{ 25, -28, -30, 21 }, { 26, -27, -28, 23 }, { 27, -25, -28, 25 }, { 29, -20, -24, 27 }, { 30, -22, -24, 28 },
+	{ 18, -32, -26, 25 }, { 19, -31, -25, 26 }, { 22, -28, -22, 29 }, { 25, -24, -19, 31 }, { 25, -24, -17, 31 }
+};
+
+static const RA1ShotEmitterPair kRA1FlightShotEmitters25F0[45] = {
+	{ 37, -14, -37, 6 }, { -38, -12, -36, 7 }, { -41, -10, 41, 10 }, { 39, -6, -36, 13 }, { 38, -5, -36, 15 },
+	{ 41, -8, -39, 1 }, { 40, -7, -38, 1 }, { 41, -4, -40, 5 }, { 39, -1, -40, 9 }, { 39, 1, -40, 10 },
+	{ -38, -5, 42, -3 }, { -39, -4, 42, -1 }, { -43, 0, 40, 2 }, { -41, 2, 39, 5 }, { -42, 4, 37, 6 },
+	{ -36, -10, 42, 4 }, { -36, -10, 42, 4 }, { -42, -6, 41, 9 }, { -41, -3, 37, 11 }, { -42, -2, 36, 12 },
+	{ -33, -15, 42, 10 }, { -33, -15, 42, 10 }, { -39, -12, 39, 14 }, { -39, -8, 36, 17 }, { -41, -8, 33, 17 },
+	{ -41, -8, 39, 1 }, { -40, -8, 40, 1 }, { -43, -4, 42, 4 }, { -39, 0, 41, 7 }, { -39, 1, 41, 9 },
+	{ 37, -4, -43, -1 }, { 39, -4, -42, -1 }, { 42, -1, -43, 3 }, { 42, 1, -39, 5 }, { 42, 2, -38, 6 },
+	{ 36, -10, -43, 5 }, { 38, -8, -41, 5 }, { 38, -7, -42, 8 }, { 41, -3, -37, 11 }, { 41, -4, -37, 11 },
+	{ 32, -15, -42, 10 }, { 34, -14, -40, 11 }, { 36, -12, -38, 13 }, { 39, -10, -35, 17 }, { 41, -9, -33, 17 }
+};
+
+static const RA1ShotEmitterPair kRA1FlightShotEmitters28BC[45] = {
+	{ -18, 0, 18, 0 }, { -18, -1, 18, 0 }, { -18, 0, 18, 0 }, { -18, 0, 17, 0 }, { -18, -1, 18, -1 },
+	{ -14, -3, 19, 3 }, { -15, -5, 20, 0 }, { -17, -4, 18, 1 }, { -15, -4, 18, 1 }, { -19, -4, 19, 2 },
+	{ -13, -9, 20, 2 }, { -16, -8, 19, 3 }, { -15, -9, 21, 3 }, { -14, -4, 18, 5 }, { -14, -2, 17, 6 },
+	{ -9, -11, 19, 1 }, { -8, -10, 21, 2 }, { -11, -11, 18, 3 }, { -13, -11, 20, 4 }, { -14, -9, 16, 4 },
+	{ -7, -13, 20, 4 }, { -10, -14, 19, 5 }, { -11, -14, 19, 5 }, { -10, -13, 18, 6 }, { -11, -11, 16, 6 },
+	{ 14, -5, -18, 0 }, { 16, -6, -19, -1 }, { 17, -5, -20, 1 }, { 17, -5, -19, 2 }, { 17, -2, -16, 2 },
+	{ 12, -8, -19, 3 }, { 13, -8, -19, 3 }, { 11, -7, -19, 3 }, { 14, -8, -17, 2 }, { 14, -7, -17, 3 },
+	{ -16, 3, 10, -12 }, { -20, 3, 11, -11 }, { -20, 4, 10, -10 }, { -17, 4, 12, -11 }, { -19, 3, 13, -11 },
+	{ -18, 3, 5, -13 }, { -17, 3, 7, -14 }, { -18, 3, 8, -15 }, { -19, 3, 9, -11 }, { -16, 5, 11, -11 }
+};
+
 // Small subset of FUN_20D43 draw flags used by RA1 shot sprites.
 static void renderSpriteWithFlags(byte *dst, int pitch, int width, int height,
 	int x, int y, const RA1Sprite &spr, uint32 flags) {
@@ -459,6 +497,9 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			(_activeGameOpcode == 0x09 || _activeGameOpcode == 0x0A ||
 			 _activeGameOpcode == 0x0B || _activeGameOpcode == 0x1A));
 	if (hasTargetingPipeline) {
+		const bool flightVariantTargetingMode =
+			hasFrameGameOpcode(0x09) ||
+			(!haveFrameGameOpcodes && _activeGameOpcode == 0x09);
 		const bool turretTargetingMode =
 			hasFrameGameOpcode(0x0A) ||
 			(!haveFrameGameOpcodes && _activeGameOpcode == 0x0A);
@@ -483,6 +524,8 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			const int16 shipOffsetY = (int16)(_posAccumY >> 8);
 			_shipPosX = (int16)(kRA1CenterX + shipOffsetX);
 			_shipPosY = (int16)((kRA1CenterY + shipOffsetY - 0x23) - (shipOffsetY >> 3));
+		} else if (flightVariantTargetingMode) {
+			updateFlightVariantCursor();
 		}
 	} else {
 		// Keep lock/target accumulators quiescent when current handler doesn't
@@ -518,7 +561,7 @@ void InsaneRebel1::renderTargetBoxes(byte *dst, int pitch, int width, int height
 	}
 	const int overlayX = ra1OverlayViewOffsetX(this);
 	const RA1SpriteBank &markerBank = (_techFontBank.numSprites > 0) ? _techFontBank : _hudFontBank;
-	const bool projectTargetMarkers = (_activeGameOpcode == 0x0B);
+	const bool projectTargetMarkers = (getEffectiveGameOpcode() == 0x0B);
 
 	for (int i = _targetCount - 1; i >= 0; --i) {
 		if (i >= kMaxTargetBoxes)
@@ -567,8 +610,8 @@ void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) 
 			marker[0] = (char)((altMarkerSet ? 'y' : 'e') + (_targetAnimCounter & 3));
 		}
 
-		int cursorX = CLIP<int>(overlayX + _shipPosX, 0, width - 1);
-		int cursorY = CLIP<int>(overlayY + _shipPosY, 0, height - 1);
+		int cursorX = CLIP<int>(overlayX + getGameplayCursorX(), 0, width - 1);
+		int cursorY = CLIP<int>(overlayY + getGameplayCursorY(), 0, height - 1);
 		drawCenteredBankGlyph(markerBank, dst, pitch, width, height, cursorX, cursorY, marker[0]);
 
 		if (altMarkerSet) {
@@ -624,7 +667,7 @@ void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) 
 	}
 
 	const int overlayX = ra1OverlayViewOffsetX(this);
-	const bool projectGostMarkers = (_activeGameOpcode == 0x0B);
+	const bool projectGostMarkers = (getEffectiveGameOpcode() == 0x0B);
 	for (int i = 0; i < kMaxGostSlots; i++) {
 		if (_gostSlots[i].targetId != 0 && _gostSlots[i].frame < 10) {
 			int sprIdx = _gostSlots[i].frame;
@@ -684,17 +727,20 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 	const int overlayY = ra1OverlayViewOffsetY(this);
 	const int leftStartX = 0;
 	const int rightStartX = 0x13F; // 319
-	const bool onFootMode = (_activeGameOpcode == 0x19 || _activeGameOpcode == 0x1A);
-	const bool turretMode = (_activeGameOpcode == 0x08 || _activeGameOpcode == 0x0A);
+	const uint16 effectiveOpcode = getEffectiveGameOpcode();
+	const bool onFootMode = (effectiveOpcode == 0x19 || effectiveOpcode == 0x1A);
+	const bool turretMode = (effectiveOpcode == 0x08 || effectiveOpcode == 0x0A);
+	const bool flightVariantMode = (effectiveOpcode == 0x09);
 	const int shipBaseX = turretMode ? (kRA1CenterX + (_perspectiveX - 0x20)) : _shipPosX;
-	const int shipBaseY = turretMode ? (kRA1CenterY + (_perspectiveY - 0x17)) : (overlayY + _shipPosY);
+	const int shipBaseY = turretMode ? (kRA1CenterY + (_perspectiveY - 0x17))
+		: (flightVariantMode ? _shipPosY : (overlayY + _shipPosY));
 
 	for (int i = 0; i < kMaxShotSlots; i++) {
 		if (_shotSlots[i].timer > 0 && _shotSlots[i].timer <= spritesPerSet) {
 			const int timer = _shotSlots[i].timer;
 			const int frame = spritesPerSet - timer;
-			const int targetX = CLIP<int>(overlayX + _shipPosX, 0, width - 1);
-			const int targetY = CLIP<int>(overlayY + _shipPosY, 0, height - 1);
+			const int targetX = CLIP<int>(overlayX + getGameplayCursorX(), 0, width - 1);
+			const int targetY = CLIP<int>(overlayY + getGameplayCursorY(), 0, height - 1);
 
 			if (onFootMode) {
 				// HandleGameOp1A_OnFootVariant: single beam from character to crosshair.
@@ -774,10 +820,51 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 				continue;
 			}
 
+			if (flightVariantMode) {
+				if ((_gameplayFlags75fe & 8) != 0)
+					continue;
+
+				if (_shipDirIndex < 0 || _shipDirIndex >= ARRAYSIZE(kRA1FlightShotEmitters28BC))
+					continue;
+
+				const RA1ShotEmitterPair &emit =
+					(_flyControlMode == 1)
+						? ((_shotSlots[i].variant != 0) ? kRA1FlightShotEmitters25EC[_shipDirIndex]
+														: kRA1FlightShotEmitters25F0[_shipDirIndex])
+						: kRA1FlightShotEmitters28BC[_shipDirIndex];
+				const int start1X = shipBaseX + emit.x1;
+				const int start1Y = shipBaseY + emit.y1;
+				const int start2X = shipBaseX + emit.x2;
+				const int start2Y = shipBaseY + emit.y2;
+				const int dir1 = ra1ShotDirection((int16)start1X, (int16)start1Y, (int16)targetX, (int16)targetY);
+				const int dir2 = ra1ShotDirection((int16)start2X, (int16)start2Y, (int16)targetX, (int16)targetY);
+				const int sprIdx1 = MIN<int>(ABS(dir1), _laserBank.numSprites - 1);
+				const int sprIdx2 = MIN<int>(ABS(dir2), _laserBank.numSprites - 1);
+				const uint32 flags1 = 0x83 | ((dir1 < 0) ? 0x2000 : 0);
+				const uint32 flags2 = 0x83 | ((dir2 < 0) ? 0x2000 : 0);
+				const int interp1X = start1X + (((targetX - start1X) * lerp) >> 3);
+				const int interp1Y = start1Y + (((targetY - start1Y) * lerp) >> 3);
+				const int interp2X = start2X + (((targetX - start2X) * lerp) >> 3);
+				const int interp2Y = start2Y + (((targetY - start2Y) * lerp) >> 3);
+
+				if (_currentLevel == 4) {
+					debug(1, "RA1 op09 shotRender: frame=%d timer=%d shipBase=(%d,%d) target=(%d,%d) emit1=(%d,%d) emit2=(%d,%d) dir=%d variant=%d mode=%d",
+						_gameCounter, timer, shipBaseX, shipBaseY, targetX, targetY,
+						start1X, start1Y, start2X, start2Y, _shipDirIndex,
+						_shotSlots[i].variant, _flyControlMode);
+				}
+
+				renderSpriteWithFlags(dst, pitch, width, height,
+					interp1X, interp1Y, _laserBank.sprites[sprIdx1], flags1);
+				renderSpriteWithFlags(dst, pitch, width, height,
+					interp2X, interp2Y, _laserBank.sprites[sprIdx2], flags2);
+				continue;
+			}
+
 			if (torpedoMode) {
-				const int trailY = overlayY + _shipPosY;
-				const int leftTrailX = overlayX + _shipPosX - 0x14 - (timer << 3);
-				const int rightTrailX = overlayX + _shipPosX + 0x14 + (timer << 3);
+				const int trailY = targetY;
+				const int leftTrailX = targetX - 0x14 - (timer << 3);
+				const int rightTrailX = targetX + 0x14 + (timer << 3);
 				const int leftWidth = getFontBankStringWidth(kRA1TorpedoTrailLeft);
 				const int rightWidth = getFontBankStringWidth(kRA1TorpedoTrailRight);
 				drawFontBankString(dst, pitch, width, height,
@@ -1010,11 +1097,13 @@ void InsaneRebel1::renderShip(byte *dst, int pitch, int width, int height) {
 
 	const RA1Sprite &spr = shipBank->sprites[_shipDirIndex];
 
-	// In 0x08/0x0A turret handlers, _shipPos holds pointer center (_74BE/_74C0),
-	// while ship sprite center is still (_74B6+_74BA, _74B8+_74BC).
+	// In 0x08/0x0A turret handlers, _shipPos holds targeting/cursor state, while
+	// the ship sprite is still anchored from camera perspective + ship drift
+	// offsets. Flight handlers already store the ship sprite center in _shipPos.
 	int shipScreenX = _shipPosX;
 	int shipScreenY = _shipPosY;
-	if (_activeGameOpcode == 0x08 || _activeGameOpcode == 0x0A) {
+	const uint16 effectiveOpcode = getEffectiveGameOpcode();
+	if (effectiveOpcode == 0x08 || effectiveOpcode == 0x0A) {
 		shipScreenX = kRA1CenterX + (_perspectiveX - 0x20);
 		shipScreenY = kRA1CenterY + (_perspectiveY - 0x17);
 	}
@@ -1033,11 +1122,13 @@ void InsaneRebel1::renderExplosions(byte *dst, int pitch, int width, int height)
 
 	const int overlayX = ra1OverlayViewOffsetX(this);
 	const int overlayY = ra1OverlayViewOffsetY(this);
-	// In 0x08/0x0A turret handlers, explosion anchors use ship center
-	// (_74B6+_74BA, _74B8+_74BC), not pointer center (_74BE/_74C0).
+	// In 0x08/0x0A turret handlers, explosion anchors use the ship center, not
+	// the targeting cursor stored in _shipPos. Flight handlers already keep the
+	// ship center in _shipPos.
 	int shipScreenX = overlayX + _shipPosX;
 	int shipScreenY = overlayY + _shipPosY;
-	if (_activeGameOpcode == 0x08 || _activeGameOpcode == 0x0A) {
+	const uint16 effectiveOpcode = getEffectiveGameOpcode();
+	if (effectiveOpcode == 0x08 || effectiveOpcode == 0x0A) {
 		shipScreenX = kRA1CenterX + (_perspectiveX - 0x20);
 		shipScreenY = kRA1CenterY + (_perspectiveY - 0x17);
 	}

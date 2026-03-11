@@ -86,6 +86,7 @@ public:
 	bool isInteractiveVideoActive() const { return _interactiveVideoActive; }
 	int getCurrentLevel() const { return _currentLevel; }
 	uint16 getActiveGameOpcode() const { return _activeGameOpcode; }
+	uint16 getEffectiveGameOpcode() const;
 	bool hasFrameGameOpcode(uint16 opcode) const {
 		return opcode < 32 && (_frameGameOpcodeMask & (1u << opcode)) != 0;
 	}
@@ -93,6 +94,10 @@ public:
 	int16 getPerspectiveY() const { return _perspectiveY; }
 	void projectGameplayPoint(int16 &x, int16 &y) const;
 	void unprojectGameplayPoint(int16 &x, int16 &y) const;
+	int16 getGameplayCursorX() const;
+	int16 getGameplayCursorY() const;
+	void setGameplayCursor(int16 x, int16 y);
+	void updateFlightVariantCursor();
 	bool handleFrameObjectTarget(int16 objectId, int16 left, int16 top, int16 width, int16 height,
 		int codec, uint8 &ra1Param);
 	void resetFrameObjectState();
@@ -201,6 +206,9 @@ private:
 	// Original: _DAT_74B6/_74B8 (base=160,100) + _DAT_74BA/_74BC (offset)
 	int16 _shipPosX;
 	int16 _shipPosY;
+	// GAME opcode 0x09 uses a separate aim cursor; other handlers target via _shipPos.
+	int16 _flightAimX;
+	int16 _flightAimY;
 
 	// Direction sprite index (5x7 grid = 35 sprites, vDir*7 + hDir)
 	int16 _shipDirIndex;
@@ -463,6 +471,7 @@ private:
 	// Per-target hit counters for shield generator tracking (Level 4)
 	int16 _shieldGenHitsA;   // Hits on _protectedTargetA
 	int16 _shieldGenHitsB;   // Hits on _protectedTargetB
+	int16 _level5SuccessFramesRemaining; // DOS RunLevel5Flow: 20-frame hold after the third kill
 
 	// Level 15 torpedo success latch. The original derives this from
 	// g_gameplayPhaseFlags bit 1, which is the primary object-state bit for object 7.

@@ -205,6 +205,8 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 
 	_shipPosX = kRA1CenterX;
 	_shipPosY = kRA1CenterY;
+	_flightAimX = kRA1CenterX;
+	_flightAimY = kRA1CenterY;
 	_shipDirIndex = 17;  // Center of 5x7 grid (2*7 + 3)
 
 	_corridorLeftX = kRA1MinX;
@@ -285,6 +287,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 		_pendingRouteIndex = -1;
 		_levelRouteChoice = 0;
 		_levelGameplayPhase = 0;
+		_level5SuccessFramesRemaining = 0;
 		_menuActive = false;
 	_introTextActive = false;
 	_introTextStartFrame = 0;
