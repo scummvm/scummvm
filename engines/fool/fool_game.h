@@ -145,6 +145,10 @@ public:
 
 	// fool_reveal.cpp
 	void sub_134_004();
+	void sub_134_67c();
+	void sub_134_74a();
+	void sub_134_7bc();
+	void sub_134_872();
 
 	void sub_135_004();
 	void sub_136_004();
@@ -300,6 +304,7 @@ private:
 	int16 var_i16_1aa6;
 	int16 var_i16_1aa8;
 	int16 var_i16_1aaa;
+	int16 var_i16_1aba;
 
 
 	// FIXME: bounds on the following are guessed! need to trace index range

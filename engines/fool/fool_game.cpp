@@ -377,11 +377,12 @@ void FoolGame::sub_128_4da(int16 unk1) {
 
 void FoolGame::sub_128_50e(int16 unk3, int16 unk2, int16 unk1) {
 	// 128:050e
+	// audio tone
 	this->var_i16_34 = unk1;
 	this->var_i16_32 = unk2;
 	this->var_i16_30 = unk3;
-	if (this->var_i16_378 != 1) {
-		g_zbasic->unk_6(this->var_i16_30, this->var_i16_32, 0x96, 0);
+	if (this->var_i16_378 == 1) {
+		g_zbasic->sound(this->var_i16_30, this->var_i16_32, 0x96, 0);
 		if (this->var_i16_34 == 1) {
 			while (g_zbasic->unk_5()) {
 				g_toolbox->Delay(1);
