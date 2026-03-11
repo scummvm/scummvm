@@ -124,8 +124,6 @@ bool MoviePlayer::playMovie(Common::File *file, uint32 offset, GamosEngine *gamo
 			}
 		}
 	}
-
-	return deinit();
 }
 
 bool MoviePlayer::error() {
