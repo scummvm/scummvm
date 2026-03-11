@@ -182,7 +182,7 @@ public:
 	Graphics::Surface _saveThumbnail;
 
 	GameStateData *_state = new GameStateData();
-	bool _saveAllowed = true;
+	bool _autoSaveAllowed = true;
 	SmallFont *_smallFont = nullptr;
 	LargeFont *_largeFont = nullptr;
 	DoubleSmallFont *_doubleSmallFont = nullptr;
@@ -221,7 +221,11 @@ public:
 		return true;
 	}
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return _saveAllowed;
+		return true;
+	}
+
+	bool canSaveAutosaveCurrently() override {
+		return _autoSaveAllowed;
 	}
 
 	/**

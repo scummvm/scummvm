@@ -23,6 +23,7 @@
 #define PELROCK_METAENGINE_H
 
 #include "engines/advancedDetector.h"
+#include "graphics/surface.h"
 
 class PelrockMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
@@ -38,6 +39,8 @@ public:
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
+
+	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 };
 
 #endif // PELROCK_METAENGINE_H

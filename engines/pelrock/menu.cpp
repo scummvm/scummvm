@@ -305,7 +305,7 @@ void MenuManager::menuLoop() {
 
 	//Save screenshot in case the user saves
 	saveScreenshot();
-	g_engine->_saveAllowed = false;
+	g_engine->_autoSaveAllowed = false;
 
 	g_system->getPaletteManager()->setPalette(_mainMenuPalette, 0, 256);
 	g_engine->changeCursor(DEFAULT);
@@ -342,7 +342,6 @@ void MenuManager::menuLoop() {
 			break;
 		}
 		drawScreen();
-		drawPaletteSquares((byte *)_screen->getPixels(), _mainMenuPalette);
 		_screen->markAllDirty();
 		_screen->update();
 		g_system->delayMillis(10);
@@ -351,7 +350,7 @@ void MenuManager::menuLoop() {
 	_events->_rightMouseClicked = false;
 	_events->_leftMouseClicked = false;
 	g_system->getPaletteManager()->setPalette(g_engine->_room->_roomPalette, 0, 256);
-	g_engine->_saveAllowed = true;
+	g_engine->_autoSaveAllowed = true;
 	cleanUp();
 }
 

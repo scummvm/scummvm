@@ -20,6 +20,7 @@
  */
 
 #include "common/translation.h"
+#include "graphics/thumbnail.h"
 
 #include "pelrock/metaengine.h"
 #include "pelrock/detection.h"
@@ -66,6 +67,15 @@ const ADExtraGuiOptionsMap *PelrockMetaEngine::getAdvancedExtraGuiOptions() cons
 Common::Error PelrockMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	*engine = new Pelrock::PelrockEngine(syst, desc);
 	return Common::kNoError;
+}
+
+void PelrockMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
+	Pelrock::PelrockEngine *engine = static_cast<Pelrock::PelrockEngine *>(g_engine);
+	if (engine && engine->_saveThumbnail.getPixels()) {
+		thumb.copyFrom(engine->_saveThumbnail);
+	} else {
+		Graphics::createThumbnail(thumb);
+	}
 }
 
 bool PelrockMetaEngine::hasFeature(MetaEngineFeature f) const {
