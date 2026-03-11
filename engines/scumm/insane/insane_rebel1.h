@@ -160,6 +160,7 @@ private:
 					  int x, int y, const RA1Sprite &sprite);
 	void updateGostSlotPosition(int16 targetIdx, int16 left, int16 top, int16 right, int16 bottom);
 	void applyFrameObjectHitState(int16 targetIdx);
+	bool isFrameObjectPrimarySet(int16 objectId) const;
 
 	// Shooting pipeline — FUN_1CCA0 (0x1CCA0) shot spawner,
 	// FUN_1C0EF (0x1C0EF) target detection, FUN_1C940 (0x1C940) shot processing
@@ -463,8 +464,9 @@ private:
 	int16 _shieldGenHitsA;   // Hits on _protectedTargetA
 	int16 _shieldGenHitsB;   // Hits on _protectedTargetB
 
-	// Torpedo fired flag — set when torpedo hits in Phase 2 (Level 15)
-	bool _torpedoFired;      // 0x7602 bit 1 in original
+	// Level 15 torpedo success latch. The original derives this from
+	// g_gameplayPhaseFlags bit 1, which is the primary object-state bit for object 7.
+	bool _torpedoFired;
 
 	// Level 8 walker-specific state — RunLevel8Flow (0x18546)
 	int16 _walkerHealth;     // Walker health percentage (0-100), init=100

@@ -393,8 +393,8 @@ bool InsaneRebel1::runLevel4() {
 			return false;
 
 		if (_health >= 0) {
-			// Phase 2: Torpedo run — torpedo enabled at frame 0x3E by IACT handler.
-			// killCount > 0 = torpedo hit, killCount == 0 = missed.
+			// Phase 2: torpedo run. The DOS loop enables torpedo mode at frame
+			// 0x3E and exits early as soon as killCount becomes nonzero.
 			_activeGameOpcode = 0;
 			_gameLatch5D = 0;
 			_gameLatch5F = 0;
@@ -1466,9 +1466,9 @@ bool InsaneRebel1::runLevel15() {
 			if (_vm->shouldQuit())
 				return false;
 
-			// Phase 2: final approach and torpedo shot.
-			// Original: torpedo enabled at frame 0x18A via _gameplayFlags75ff |= 2.
-			// _torpedoFired set by IACT handler when killCount > 0 (torpedo hits exhaust port).
+			// Phase 2: final approach and torpedo shot. The DOS flow enables
+			// torpedo mode at frame 0x18A and completes only after object-state
+			// bit 0x7602 & 2 is set by the exhaust-port hit.
 			_activeGameOpcode = 0;
 			_gameLatch5D = 0;
 			_gameLatch5F = 0;
@@ -1480,6 +1480,11 @@ bool InsaneRebel1::runLevel15() {
 			playInteractiveVideo("LVL15/L15PLAY2.ANM");
 			if (_vm->shouldQuit())
 				return false;
+		}
+
+		if (_health >= 0 && !_torpedoFired) {
+			debug(1, "InsaneRebel1: Level 15 torpedo run ended without exhaust-port hit");
+			return false;
 		}
 
 		if (_health >= 0) {

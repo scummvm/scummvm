@@ -542,6 +542,7 @@ void InsaneRebel1::renderTargetBoxes(byte *dst, int pitch, int width, int height
 // The original does not draw a hardcoded pixel cross; it renders glyph markers
 // whose state depends on _targetProximity.
 void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) {
+	static const char kRA1TorpedoIndicator[] = "<d";
 	const RA1SpriteBank &markerBank = (_techFontBank.numSprites > 0) ? _techFontBank : _hudFontBank;
 	const int overlayX = ra1OverlayViewOffsetX(this);
 	const int overlayY = ra1OverlayViewOffsetY(this);
@@ -569,6 +570,12 @@ void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) 
 		int cursorX = CLIP<int>(overlayX + _shipPosX, 0, width - 1);
 		int cursorY = CLIP<int>(overlayY + _shipPosY, 0, height - 1);
 		drawCenteredBankGlyph(markerBank, dst, pitch, width, height, cursorX, cursorY, marker[0]);
+
+		if (altMarkerSet) {
+			const int indicatorWidth = getFontBankStringWidth(kRA1TorpedoIndicator);
+			drawFontBankString(dst, pitch, width, height,
+				overlayX + 0xA0 - indicatorWidth / 2, overlayY + 0x6E, kRA1TorpedoIndicator);
+		}
 	}
 
 	// Save previous proximity for next frame
@@ -650,7 +657,11 @@ void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) 
 
 // renderLaserShots — FUN_1CDA7/FUN_1D79C/HandleGameOp1A shot visual path.
 void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height) {
-	if (_laserBank.numSprites <= 0)
+	static const char kRA1TorpedoTrailLeft[] = "<<&";
+	static const char kRA1TorpedoTrailRight[] = "<<'";
+	const bool torpedoMode = (_gameplayFlags75ff & 0x2) != 0;
+
+	if (_laserBank.numSprites <= 0 && !torpedoMode)
 		return;
 
 	// DAT_2407 lookup used by FUN_1CDA7/FUN_1D79C for timer 1..5 interpolation.
@@ -760,6 +771,19 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 					interp1X, interp1Y, _laserBank.sprites[sprIdx1], flags1);
 				renderSpriteWithFlags(dst, pitch, width, height,
 					interp2X, interp2Y, _laserBank.sprites[sprIdx2], flags2);
+				continue;
+			}
+
+			if (torpedoMode) {
+				const int trailY = overlayY + _shipPosY;
+				const int leftTrailX = overlayX + _shipPosX - 0x14 - (timer << 3);
+				const int rightTrailX = overlayX + _shipPosX + 0x14 + (timer << 3);
+				const int leftWidth = getFontBankStringWidth(kRA1TorpedoTrailLeft);
+				const int rightWidth = getFontBankStringWidth(kRA1TorpedoTrailRight);
+				drawFontBankString(dst, pitch, width, height,
+					leftTrailX - leftWidth / 2, trailY, kRA1TorpedoTrailLeft);
+				drawFontBankString(dst, pitch, width, height,
+					rightTrailX - rightWidth / 2, trailY, kRA1TorpedoTrailRight);
 				continue;
 			}
 
