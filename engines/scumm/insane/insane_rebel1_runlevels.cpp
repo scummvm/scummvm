@@ -438,7 +438,8 @@ bool InsaneRebel1::runLevel5() {
 
 	_currentLevel = 4;
 	loadLevelSprites(5);
-	loadTuningForLevel(4);
+	// DOS RunLevel5Flow passes segment 6 for L5PLAY and segment 7 for L5PLAY2.
+	loadTuningForLevel(6);
 
 	beginLevelTitleOverlay(4);
 	playCinematic("LVL5/L5INTRO.ANM");
@@ -447,6 +448,7 @@ bool InsaneRebel1::runLevel5() {
 
 	while (!_vm->shouldQuit()) {
 		loadRA1Nut("LVL5/L5LASER.NUT", _laserBank);
+		loadTuningForLevel(6);
 		_flyControlMode = 1;
 		_health = kMaxHealth;
 		_damageFlags = 0;
@@ -463,7 +465,20 @@ bool InsaneRebel1::runLevel5() {
 		_gameLatch5F = 0;
 		_gameplayFlags75ff = 0;
 		_killCount = 0;
-		_levelGameplayPhase = 0;
+		_targetCount = 0;
+		_prevTargetCount = 0;
+		_lastHitTarget = 0;
+		_shipPosX = kRA1CenterX;
+		_shipPosY = kRA1CenterY;
+		_shipDirIndex = 17;
+		_rollAccum = 0;
+		_liftSmooth = 0;
+		_posAccumX = 0;
+		_posAccumY = 0;
+		_perspectiveX = 0;
+		_perspectiveY = 0;
+		_levelGameplayPhase = 1;
+		_level5SuccessFramesRemaining = 0x14;
 		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
 		memset(_inputHistoryY, 0, sizeof(_inputHistoryY));
 		memset(_viewHistoryX, 0, sizeof(_viewHistoryX));
@@ -506,10 +521,13 @@ bool InsaneRebel1::runLevel5() {
 			return false;
 
 		loadRA1Nut("LVL5/L5LASER2.NUT", _laserBank);
+		loadTuningForLevel(7);
 		_activeGameOpcode = 0;
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
 		_killCount = 0;
+		_levelGameplayPhase = 2;
+		_level5SuccessFramesRemaining = 0;
 		playInteractiveVideo("LVL5/L5PLAY2.ANM");
 		if (_vm->shouldQuit())
 			return false;

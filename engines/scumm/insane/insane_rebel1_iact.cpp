@@ -44,6 +44,9 @@ static inline int16 smoothRebel1Op0BAnalogInput(int16 inputValue, int16 &filtere
 	return filteredValue;
 }
 
+static const int16 kRA1Op09AimXScale[5] = { 0, 44, 88, 128, 165 };
+static const int16 kRA1Op09AimYScale[5] = { 256, 252, 240, 221, 196 };
+
 // LVL1 stage-2 0x5D damage/event codes. The gameplay stream exposes low record ids
 // (6..18), while the recovered outer loop compares the post-latch state against the
 // later translated values seen in the executable. Accept both representations.
@@ -579,6 +582,70 @@ void InsaneRebel1::unprojectGameplayPoint(int16 &x, int16 &y) const {
 	x = (int16)(x + _perspectiveX);
 }
 
+uint16 InsaneRebel1::getEffectiveGameOpcode() const {
+	if (hasFrameGameOpcode(0x1A))
+		return 0x1A;
+	if (hasFrameGameOpcode(0x19))
+		return 0x19;
+	if (hasFrameGameOpcode(0x0B))
+		return 0x0B;
+	if (hasFrameGameOpcode(0x0A))
+		return 0x0A;
+	if (hasFrameGameOpcode(0x09))
+		return 0x09;
+	if (hasFrameGameOpcode(0x08))
+		return 0x08;
+	if (hasFrameGameOpcode(0x07))
+		return 0x07;
+
+	return _activeGameOpcode;
+}
+
+int16 InsaneRebel1::getGameplayCursorX() const {
+	return (getEffectiveGameOpcode() == 0x09) ? _flightAimX : _shipPosX;
+}
+
+int16 InsaneRebel1::getGameplayCursorY() const {
+	return (getEffectiveGameOpcode() == 0x09) ? _flightAimY : _shipPosY;
+}
+
+void InsaneRebel1::setGameplayCursor(int16 x, int16 y) {
+	if (getEffectiveGameOpcode() == 0x09) {
+		_flightAimX = x;
+		_flightAimY = y;
+	} else {
+		_shipPosX = x;
+		_shipPosY = y;
+	}
+}
+
+void InsaneRebel1::updateFlightVariantCursor() {
+	if (getEffectiveGameOpcode() != 0x09)
+		return;
+
+	const int bucket = CLIP<int>(ABS(_rollAccum) >> 8, 0, ARRAYSIZE(kRA1Op09AimXScale) - 1);
+	int32 xScale = kRA1Op09AimXScale[bucket];
+	if (_rollAccum > 0)
+		xScale = -xScale;
+
+	// Assembly-verified 0x09 layout:
+	//   ship sprite center = (_74B6 + _74BA, _74B8 + _74BC)
+	//   cursor center      = (_74BE, _74C0)
+	// In ScummVM the flight sprite center already lives in _shipPos.
+	const int16 shipBaseX = _shipPosX;
+	const int16 shipBaseY = _shipPosY;
+	const int32 liftTerm = (int32)_liftSmooth - 0x0F;
+	_flightAimX = CLIP<int32>(shipBaseX + ((liftTerm * xScale) >> 8), kRA1MinX, kRA1MaxX);
+	_flightAimY = CLIP<int32>(shipBaseY + ((liftTerm * kRA1Op09AimYScale[bucket]) >> 8),
+		kRA1MinY, kRA1MaxY);
+
+	if (_currentLevel == 4) {
+		debug(1, "RA1 op09 cursor: frame=%d shipBase=(%d,%d) shipPos=(%d,%d) aim=(%d,%d) roll=%d lift=%d bucket=%d dir=%d persp=(%d,%d)",
+			_gameCounter, shipBaseX, shipBaseY, _shipPosX, _shipPosY, _flightAimX, _flightAimY,
+			_rollAccum, _liftSmooth, bucket, _shipDirIndex, _perspectiveX, _perspectiveY);
+	}
+}
+
 // preprocessMouseAxes — FUN_231BE (0x231BE) centered-axis output law, adapted to
 // ScummVM's absolute 320x200 mouse space.
 // Preserve the DOS bias/offset persistence and one-frame jump latch from
@@ -736,6 +803,8 @@ void InsaneRebel1::updateShipPhysics() {
 		_liftSmooth = 0;
 		_shipPosX = kRA1CenterX;
 		_shipPosY = kRA1CenterY;
+		_flightAimX = kRA1CenterX;
+		_flightAimY = kRA1CenterY;
 		_damageFlags = 0;
 		_prevDamageFlags = 0;
 		_damageCooldown = 0;
@@ -1342,6 +1411,16 @@ void InsaneRebel1::updateAsteroidPhysics() {
 		}
 	}
 
+	// Level 5 Phase 1: DOS RunLevel5Flow exits L5PLAY only after killCount stays
+	// above 2 for 20 frontend frames. That countdown is carried by the runlevel,
+	// not by opcode 0x07 itself.
+	if (_currentLevel == 4 && _levelGameplayPhase == 1 &&
+		_level5SuccessFramesRemaining > 0 && _killCount > 2 && !_vm->_smushVideoShouldFinish) {
+		_level5SuccessFramesRemaining--;
+		if (_level5SuccessFramesRemaining == 0)
+			_vm->_smushVideoShouldFinish = true;
+	}
+
 	// Level 15 Phase 2: enable torpedo at frame 0x18A, expose the protected
 	// target IDs used by the original flow, and finish when object-state bit
 	// 0x7602 & 2 becomes set.
@@ -1736,8 +1815,13 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 			uint32 param2 = b.readUint32BE();
 			uint32 param3 = b.readUint32BE();
 			uint32 param4 = b.readUint32BE();
-			debug(5, "RA1 GAME 0x%02x: counter=%d params=(%d,%d,%d)",
-				opcode, _gameCounter, param2, param3, param4);
+			if (opcode == 0x09 && _currentLevel == 4) {
+				debug(1, "RA1 GAME 0x09: counter=%d params=(%d,%d,%d) opcodeMask=0x%08x",
+					_gameCounter, param2, param3, param4, _frameGameOpcodeMask);
+			} else {
+				debug(5, "RA1 GAME 0x%02x: counter=%d params=(%d,%d,%d)",
+					opcode, _gameCounter, param2, param3, param4);
+			}
 		}
 		break;
 
@@ -1755,7 +1839,8 @@ void InsaneRebel1::processShot() {
 
 	// On-foot mode: only spawn when in aiming stance (dirIndex 11-19) or flags force it.
 	// Original: if (((10 < g_shipDirIndex) && (g_shipDirIndex < 0x14)) || ((DAT_000075fe & 8) != 0))
-	const bool onFootMode = (_activeGameOpcode == 0x19 || _activeGameOpcode == 0x1A);
+	const uint16 effectiveOpcode = getEffectiveGameOpcode();
+	const bool onFootMode = (effectiveOpcode == 0x19 || effectiveOpcode == 0x1A);
 	if (onFootMode) {
 		if (!(_shipDirIndex > 10 && _shipDirIndex < 20) && !(_gameplayFlags75fe & 8))
 			return;
@@ -1777,7 +1862,7 @@ void InsaneRebel1::processShot() {
 	// On-foot: character position (g_shipOffsetX + g_perspectiveX)
 	// Turret: perspective-adjusted center
 	// Flight: cursor position
-	const bool turretMode = (_activeGameOpcode == 0x08 || _activeGameOpcode == 0x0A);
+	const bool turretMode = (effectiveOpcode == 0x08 || effectiveOpcode == 0x0A);
 	int16 originX, originY;
 	if (onFootMode) {
 		originX = _onFootCharX + kOnFootCenterX;
@@ -1790,17 +1875,25 @@ void InsaneRebel1::processShot() {
 		originY = _shipPosY;
 	}
 
+	const int16 cursorX = getGameplayCursorX();
+	const int16 cursorY = getGameplayCursorY();
 	_shotSlots[slot].timer = (_gameplayFlags75ff & 0x2) ? 2 : 5;
-	_shotSlots[slot].posX = _shipPosX;
-	_shotSlots[slot].posY = _shipPosY;
+	_shotSlots[slot].posX = cursorX;
+	_shotSlots[slot].posY = cursorY;
 	_shotSlots[slot].centerX = originX;
 	_shotSlots[slot].centerY = originY;
 	_shotSlots[slot].variant = _shotAlternator;
 	_shotAlternator = 1 - _shotAlternator;
 	playSfx((_gameplayFlags75ff & 0x2) ? kSfxAlert : kSfxLaserShot, 127, 0);
 
-	debug(5, "RA1 shot: slot=%d pos=(%d,%d) origin=(%d,%d)", slot,
-		_shotSlots[slot].posX, _shotSlots[slot].posY, originX, originY);
+	if (effectiveOpcode == 0x09 || _currentLevel == 4) {
+		debug(1, "RA1 shot: opcode=0x%02x frame=%d slot=%d cursor=(%d,%d) origin=(%d,%d) dir=%d mode=%d",
+			effectiveOpcode, _gameCounter, slot, cursorX, cursorY, originX, originY,
+			_shipDirIndex, _flyControlMode);
+	} else {
+		debug(5, "RA1 shot: slot=%d pos=(%d,%d) origin=(%d,%d)", slot,
+			cursorX, cursorY, originX, originY);
+	}
 }
 
 // checkTargetHit — FUN_1C0EF (0x1C0EF). AABB target detection with snap tolerance.
@@ -1808,8 +1901,8 @@ void InsaneRebel1::processShot() {
 // UnprojectScreenPoint(), then reprojects the snapped cursor center after a hit.
 void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 right, int16 bottom) {
 	int16 snap = _tuning.snap;
-	int16 curX = _shipPosX;
-	int16 curY = _shipPosY;
+	int16 curX = getGameplayCursorX();
+	int16 curY = getGameplayCursorY();
 	unprojectGameplayPoint(curX, curY);
 	const int slot = _targetCount;
 
@@ -1866,9 +1959,10 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 						// Match FUN_1C0EF: snap in unprojected space, then project back
 						// into the current gameplay window before rendering the pointer.
 						if (snap > 0) {
-							_shipPosX = (left + right) / 2;
-							_shipPosY = (top + bottom) / 2;
-							projectGameplayPoint(_shipPosX, _shipPosY);
+							int16 snappedX = (left + right) / 2;
+							int16 snappedY = (top + bottom) / 2;
+							projectGameplayPoint(snappedX, snappedY);
+							setGameplayCursor(snappedX, snappedY);
 						}
 
 						debug(3, "RA1 HIT: target=%d gost=%d pos=(%d,%d) score=%d kills=%d bangSprites=%d",
