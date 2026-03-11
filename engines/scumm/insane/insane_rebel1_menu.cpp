@@ -323,9 +323,29 @@ bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 		return true;
 	}
 
-	if (event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-		if (_player) {
-			debug("Rebel1: ESC pressed - skipping video");
+	if (event.type == Common::EVENT_KEYDOWN && _player) {
+		if (_interactiveVideoActive && !_menuActive &&
+			event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+			debug("Rebel1: ESC pressed during gameplay - opening ScummVM menu");
+			const bool wasPaused = _player->_paused;
+			if (!wasPaused)
+				_player->pause();
+			_vm->openMainMenuDialog();
+			if (!wasPaused)
+				_player->unpause();
+			return true;
+		}
+
+		if (_interactiveVideoActive && !_menuActive &&
+			event.kbd.keycode == Common::KEYCODE_s &&
+			event.kbd.hasFlags(Common::KBD_SHIFT)) {
+			debug("Rebel1: Shift+S pressed - skipping gameplay section");
+			_vm->_smushVideoShouldFinish = true;
+			return true;
+		}
+
+		if (!_interactiveVideoActive && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+			debug("Rebel1: ESC pressed - skipping cinematic");
 			_vm->_smushVideoShouldFinish = true;
 			return true;
 		}
