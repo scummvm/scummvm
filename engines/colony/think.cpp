@@ -157,45 +157,77 @@ void ColonyEngine::cThink() {
 }
 
 void ColonyEngine::cubeThink(int num) {
-	Thing &obj = _objects[num - 1];
-	obj.where.look = (uint8)(obj.where.look + 15);
+	if (num <= 0 || num > (int)_objects.size())
+		return;
+
+	_objects[num - 1].where.look = (uint8)(_objects[num - 1].where.look + 15);
 	moveThink(num);
-	obj.time--;
-	if (obj.time < 0 && layEgg(kRobMCube, obj.where.xindex, obj.where.yindex))
-		obj.time = 10 + (_randomSource.getRandomNumber(255) & 0xFF);
-	if (obj.grow)
+	if (num > (int)_objects.size())
+		return;
+
+	Thing *obj = &_objects[num - 1];
+	obj->time--;
+	const bool laidEgg = (obj->time < 0) && layEgg(kRobMCube, obj->where.xindex, obj->where.yindex);
+	obj = &_objects[num - 1];
+	if (laidEgg)
+		obj->time = 10 + (_randomSource.getRandomNumber(255) & 0xFF);
+	if (obj->grow)
 		bigGrow(num);
 }
 
 void ColonyEngine::pyramidThink(int num) {
-	Thing &obj = _objects[num - 1];
-	obj.where.look = (uint8)(obj.where.look + 15);
+	if (num <= 0 || num > (int)_objects.size())
+		return;
+
+	_objects[num - 1].where.look = (uint8)(_objects[num - 1].where.look + 15);
 	moveThink(num);
-	obj.time--;
-	if (obj.time < 0 && layEgg(kRobMPyramid, obj.where.xindex, obj.where.yindex))
-		obj.time = 10 + (_randomSource.getRandomNumber(255) & 0xFF);
-	if (obj.grow)
+	if (num > (int)_objects.size())
+		return;
+
+	Thing *obj = &_objects[num - 1];
+	obj->time--;
+	const bool laidEgg = (obj->time < 0) && layEgg(kRobMPyramid, obj->where.xindex, obj->where.yindex);
+	obj = &_objects[num - 1];
+	if (laidEgg)
+		obj->time = 10 + (_randomSource.getRandomNumber(255) & 0xFF);
+	if (obj->grow)
 		bigGrow(num);
 }
 
 void ColonyEngine::upyramidThink(int num) {
-	Thing &obj = _objects[num - 1];
-	obj.where.look = (uint8)(obj.where.look - 15);
+	if (num <= 0 || num > (int)_objects.size())
+		return;
+
+	_objects[num - 1].where.look = (uint8)(_objects[num - 1].where.look - 15);
 	moveThink(num);
-	obj.time--;
-	if (obj.time < 0 && layEgg(kRobMUPyramid, obj.where.xindex, obj.where.yindex))
-		obj.time = 10 + (_randomSource.getRandomNumber(255) & 0xFF);
-	if (obj.grow)
+	if (num > (int)_objects.size())
+		return;
+
+	Thing *obj = &_objects[num - 1];
+	obj->time--;
+	const bool laidEgg = (obj->time < 0) && layEgg(kRobMUPyramid, obj->where.xindex, obj->where.yindex);
+	obj = &_objects[num - 1];
+	if (laidEgg)
+		obj->time = 10 + (_randomSource.getRandomNumber(255) & 0xFF);
+	if (obj->grow)
 		bigGrow(num);
 }
 
 void ColonyEngine::eyeThink(int num) {
-	Thing &obj = _objects[num - 1];
+	if (num <= 0 || num > (int)_objects.size())
+		return;
+
 	moveThink(num);
-	obj.time--;
-	if (obj.time < 0 && layEgg(kRobMEye, obj.where.xindex, obj.where.yindex))
-		obj.time = 10 + (_randomSource.getRandomNumber(255) & 0xFF);
-	if (obj.grow)
+	if (num > (int)_objects.size())
+		return;
+
+	Thing *obj = &_objects[num - 1];
+	obj->time--;
+	const bool laidEgg = (obj->time < 0) && layEgg(kRobMEye, obj->where.xindex, obj->where.yindex);
+	obj = &_objects[num - 1];
+	if (laidEgg)
+		obj->time = 10 + (_randomSource.getRandomNumber(255) & 0xFF);
+	if (obj->grow)
 		bigGrow(num);
 }
 
@@ -209,35 +241,39 @@ void ColonyEngine::queenThink(int num) {
 	obj.where.look = (uint8)(obj.where.ang + obj.where.lookx);
 
 	if (obj.time < 0) {
+		const int eggX = obj.where.xindex;
+		const int eggY = obj.where.yindex;
+		bool laidEgg = false;
+
 		switch (_randomSource.getRandomNumber(3)) {
 		case 0:
-			if (layEgg(kRobMEye, obj.where.xindex, obj.where.yindex))
-				obj.time = 10 + (_randomSource.getRandomNumber(255) & 0xFF);
+			laidEgg = layEgg(kRobMEye, eggX, eggY);
 			break;
 		case 1:
-			if (layEgg(kRobMCube, obj.where.xindex, obj.where.yindex))
-				obj.time = 10 + (_randomSource.getRandomNumber(255) & 0xFF);
+			laidEgg = layEgg(kRobMCube, eggX, eggY);
 			break;
 		case 2:
-			if (layEgg(kRobMPyramid, obj.where.xindex, obj.where.yindex))
-				obj.time = 10 + (_randomSource.getRandomNumber(255) & 0xFF);
+			laidEgg = layEgg(kRobMPyramid, eggX, eggY);
 			break;
 		case 3:
-			if (layEgg(kRobMUPyramid, obj.where.xindex, obj.where.yindex))
-				obj.time = 10 + (_randomSource.getRandomNumber(255) & 0xFF);
+			laidEgg = layEgg(kRobMUPyramid, eggX, eggY);
 			break;
 		}
+
+		if (laidEgg)
+			_objects[num - 1].time = 10 + (_randomSource.getRandomNumber(255) & 0xFF);
 	}
 
-	if (!obj.grow)
+	Thing &updatedObj = _objects[num - 1];
+	if (!updatedObj.grow)
 		return;
 
-	if (obj.where.xindex >= 0 && obj.where.xindex < 32 &&
-	    obj.where.yindex >= 0 && obj.where.yindex < 32 &&
-	    _robotArray[obj.where.xindex][obj.where.yindex] == num)
-		_robotArray[obj.where.xindex][obj.where.yindex] = 0;
+	if (updatedObj.where.xindex >= 0 && updatedObj.where.xindex < 32 &&
+	    updatedObj.where.yindex >= 0 && updatedObj.where.yindex < 32 &&
+	    _robotArray[updatedObj.where.xindex][updatedObj.where.yindex] == num)
+		_robotArray[updatedObj.where.xindex][updatedObj.where.yindex] = 0;
 
-	obj.alive = 0;
+	updatedObj.alive = 0;
 	_allGrow = false;
 	_sound->play(Sound::kExplode);
 
@@ -640,8 +676,8 @@ int ColonyEngine::scanForPlayer(int num) {
 		fire.yloc = fireY;
 		fire.xindex = fireX >> 8;
 		fire.yindex = fireY >> 8;
-		fireX += (_cost[fire.ang] << 1);
-		fireY += (_sint[fire.ang] << 1);
+		fireX += _cost[fire.ang] * 2;
+		fireY += _sint[fire.ang] * 2;
 		_suppressCollisionSound = true;
 		collide = checkwall(fireX, fireY, &fire);
 		_suppressCollisionSound = false;
