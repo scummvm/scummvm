@@ -65,7 +65,14 @@ public:
 	void playSound(byte *soundData, uint32 size, int channel);
 	void stopAllSounds();
 	void stopSound(int channel);
-	void setVolume(int volume);
+
+	void setVolumeSfx(int volume);
+	void setVolumeMusic(int volume);
+	void setVolumeMaster(int volume);
+	int getVolumeSfx() const;
+	int getVolumeMusic() const;
+	int getVolumeMaster() const;
+
 	bool isPlaying() const;
 	bool isPlaying(int channel) const;
 	void loadSoundIndex();

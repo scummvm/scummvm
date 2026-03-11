@@ -58,6 +58,30 @@ static const uint32 kMenuButtonsOffset = 3193376;
 Pelrock::MenuManager::MenuManager(Graphics::Screen *screen, PelrockEventManager *events, ResourceManager *res, SoundManager *sound) : _screen(screen), _events(events), _res(res), _sound(sound) {
 }
 
+static int levelToMixerVolume(int level) {
+	return (level * 255) / 14;
+}
+
+static int mixerVolumeToLevel(int volume) {
+	return (volume * 14 + 127) / 255;
+}
+
+static float levelToScale(int level) {
+	return 0.4f + (level / 14.0f) * 0.6f;
+}
+
+static void rebuildSoundIcon(Graphics::ManagedSurface &target, const byte *source, int level) {
+	float s = levelToScale(level);
+	int newW = MAX(1, (int)(66 * s));
+	int newH = MAX(1, (int)(64 * s));
+	Graphics::ManagedSurface temp;
+	temp.create(66, 64, Graphics::PixelFormat::createFormatCLUT8());
+	memcpy(temp.getPixels(), source, 66 * 64);
+	Graphics::ManagedSurface *scaled = temp.scale(newW, newH, false);
+	target.copyFrom(*scaled);
+	delete scaled;
+}
+
 MenuButton MenuManager::isButtonClicked(int x, int y) {
 	if (_questionMarkRect.contains(x, y)) {
 		return QUESTION_MARK_BUTTON;
@@ -109,12 +133,6 @@ MenuButton MenuManager::isButtonClicked(int x, int y) {
 	return NO_BUTTON; // Default fallback
 }
 
-Graphics::ManagedSurface scale(Graphics::ManagedSurface, const byte *original, float scale) {
-	Graphics::ManagedSurface newSurface = Graphics::ManagedSurface(66, 64, Graphics::PixelFormat::createFormatCLUT8());
-	memcpy(newSurface.getPixels(), original, 66 * 64);
-	return *newSurface.scale(66 * scale, 64 * scale);
-}
-
 void MenuManager::checkMouseDown(int x, int y) {
 	if(!_events->_leftMouseButton) {
 		return;
@@ -122,28 +140,36 @@ void MenuManager::checkMouseDown(int x, int y) {
 	MenuButton b = isButtonClicked(x, y);
 	switch (b) {
 	case MASTER_LEFT_BUTTON:
-		currentMasterVolumeScale = MAX(0.4f, currentMasterVolumeScale - 0.1f);
-		_masterSoundIcon = scale(_masterSoundIcon, _soundControlMasterIcon, currentMasterVolumeScale);
+		_masterVolumeLevel = MAX(0, _masterVolumeLevel - 1);
+		_sound->setVolumeMaster(levelToMixerVolume(_masterVolumeLevel));
+		rebuildSoundIcon(_masterSoundIcon, _soundControlMasterIcon, _masterVolumeLevel);
 		break;
 	case MASTER_RIGHT_BUTTON:
-		currentMasterVolumeScale = MIN(1.0f, currentMasterVolumeScale + 0.1f);
-		_masterSoundIcon = scale(_masterSoundIcon, _soundControlMasterIcon, currentMasterVolumeScale);
+		_masterVolumeLevel = MIN(14, _masterVolumeLevel + 1);
+		_sound->setVolumeMaster(levelToMixerVolume(_masterVolumeLevel));
+		rebuildSoundIcon(_masterSoundIcon, _soundControlMasterIcon, _masterVolumeLevel);
 		break;
 	case SFX_LEFT_BUTTON:
-		currentSfxVolumeScale = MAX(0.4f, currentSfxVolumeScale - 0.1f);
-		_sfxSoundIcon = scale(_sfxSoundIcon, _soundControlSfxIcon, currentSfxVolumeScale);
+		_sfxVolumeLevel = MAX(0, _sfxVolumeLevel - 1);
+		_sound->setVolumeSfx(levelToMixerVolume(_sfxVolumeLevel));
+		rebuildSoundIcon(_sfxSoundIcon, _soundControlSfxIcon, _sfxVolumeLevel);
 		break;
 	case SFX_RIGHT_BUTTON:
-		currentSfxVolumeScale = MIN(1.0f, currentSfxVolumeScale + 0.1f);
-		_sfxSoundIcon = scale(_sfxSoundIcon, _soundControlSfxIcon, currentSfxVolumeScale);
+		_sfxVolumeLevel = MIN(14, _sfxVolumeLevel + 1);
+		_sound->setVolumeSfx(levelToMixerVolume(_sfxVolumeLevel));
+		rebuildSoundIcon(_sfxSoundIcon, _soundControlSfxIcon, _sfxVolumeLevel);
 		break;
 	case MUSIC_LEFT_BUTTON:
-		currentMusicVolumeScale = MAX(0.4f, currentMusicVolumeScale - 0.1f);
-		_musicSoundIcon = scale(_musicSoundIcon, _soundControlMusicIcon, currentMusicVolumeScale);
+		_musicVolumeLevel = MAX(0, _musicVolumeLevel - 1);
+		_sound->setVolumeMusic(levelToMixerVolume(_musicVolumeLevel));
+		rebuildSoundIcon(_musicSoundIcon, _soundControlMusicIcon, _musicVolumeLevel);
 		break;
 	case MUSIC_RIGHT_BUTTON:
-		currentMusicVolumeScale = MIN(1.0f, currentMusicVolumeScale + 0.1f);
-		_musicSoundIcon = scale(_musicSoundIcon, _soundControlMusicIcon, currentMusicVolumeScale);
+		_musicVolumeLevel = MIN(14, _musicVolumeLevel + 1);
+		_sound->setVolumeMusic(levelToMixerVolume(_musicVolumeLevel));
+		rebuildSoundIcon(_musicSoundIcon, _soundControlMusicIcon, _musicVolumeLevel);
+		break;
+	default:
 		break;
 	}
 }
@@ -160,10 +186,7 @@ bool MenuManager::checkMouseClick(int x, int y) {
 			return false;
 		}
 	}
-	if (!selectedItem) {
-		_selectedInvIndex = -1;
-		_menuText = _menuTexts[0];
-	}
+
 
 	MenuButton button = isButtonClicked(x, y);
 
@@ -174,6 +197,10 @@ bool MenuManager::checkMouseClick(int x, int y) {
 		button != MASTER_LEFT_BUTTON &&
 		button != MASTER_RIGHT_BUTTON) {
 		_showSoundOptions = false;
+		if (!selectedItem) {
+			_selectedInvIndex = -1;
+			_menuText = _menuTexts[0];
+		}
 	}
 
 	switch (button) {
@@ -270,7 +297,25 @@ void MenuManager::menuLoop() {
 
 	g_system->getPaletteManager()->setPalette(_mainMenuPalette, 0, 256);
 	g_engine->changeCursor(DEFAULT);
+	_showSoundOptions = false;
 	_menuText = _menuTexts[0];
+
+	// Initialize volume levels from current settings
+	_sfxVolumeLevel    = mixerVolumeToLevel(_sound->getVolumeSfx());
+	_musicVolumeLevel  = mixerVolumeToLevel(_sound->getVolumeMusic());
+	_masterVolumeLevel = mixerVolumeToLevel(_sound->getVolumeMaster());
+
+	debug("Initial master volume level: %d", _masterVolumeLevel);
+	debug("Initial SFX volume level: %d", _sfxVolumeLevel);
+	debug("Initial Music volume level: %d", _musicVolumeLevel);
+	_masterSoundIcon.create(66, 64, Graphics::PixelFormat::createFormatCLUT8());
+	_sfxSoundIcon.create(66, 64, Graphics::PixelFormat::createFormatCLUT8());
+	_musicSoundIcon.create(66, 64, Graphics::PixelFormat::createFormatCLUT8());
+
+	rebuildSoundIcon(_masterSoundIcon, _soundControlMasterIcon, _masterVolumeLevel);
+	rebuildSoundIcon(_sfxSoundIcon, _soundControlSfxIcon, _sfxVolumeLevel);
+	rebuildSoundIcon(_musicSoundIcon, _soundControlMusicIcon, _musicVolumeLevel);
+
 	while (!g_engine->shouldQuit()) {
 
 		_events->pollEvent();
@@ -418,12 +463,6 @@ void MenuManager::loadMenu() {
 	extractSingleFrame(soundIconMusicData, _soundControlMusicIcon, 0, 66, 64);
 	delete[] soundIconMusicData;
 
-	_masterSoundIcon = Graphics::ManagedSurface(66, 64, Graphics::PixelFormat::createFormatCLUT8());
-	_sfxSoundIcon = Graphics::ManagedSurface(66, 64, Graphics::PixelFormat::createFormatCLUT8());
-	_musicSoundIcon = Graphics::ManagedSurface(66, 64, Graphics::PixelFormat::createFormatCLUT8());
-	memcpy(_masterSoundIcon.getPixels(), _soundControlMasterIcon, 66 * 64);
-	memcpy(_sfxSoundIcon.getPixels(), _soundControlSfxIcon, 66 * 64);
-	memcpy(_musicSoundIcon.getPixels(), _soundControlMusicIcon, 66 * 64);
 
 	_menuText = _menuTexts[0];
 	alfred7.close();

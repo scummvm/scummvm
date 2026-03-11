@@ -291,9 +291,9 @@ private:
 	Graphics::ManagedSurface _sfxSoundIcon;
 	Graphics::ManagedSurface _musicSoundIcon;
 
-	float currentMasterVolumeScale = 1.0f;
-	float currentSfxVolumeScale = 1.0f;
-	float currentMusicVolumeScale = 1.0f;
+	int _masterVolumeLevel = 14;
+	int _sfxVolumeLevel = 14;
+	int _musicVolumeLevel = 14;
 
 	Common::Array<Common::StringArray> _menuTexts;
 	// Temporary

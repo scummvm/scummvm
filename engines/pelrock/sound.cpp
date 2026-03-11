@@ -24,6 +24,7 @@
 #include "audio/decoders/wave.h"
 #include "audio/mixer.h"
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/file.h"
@@ -294,8 +295,34 @@ void SoundManager::stopSound(int channel) {
 	}
 }
 
-void SoundManager::setVolume(int volume) {
-	// TODO: Set sound volume
+void SoundManager::setVolumeSfx(int volume) {
+	ConfMan.setInt("sfx_volume", volume);
+	g_engine->syncSoundSettings();
+}
+
+void SoundManager::setVolumeMusic(int volume) {
+	ConfMan.setInt("music_volume", volume);
+	g_engine->syncSoundSettings();
+}
+
+void SoundManager::setVolumeMaster(int volume) {
+	ConfMan.setInt("sfx_volume", volume);
+	ConfMan.setInt("music_volume", volume);
+	ConfMan.setInt("speech_volume", volume);
+	g_engine->syncSoundSettings();
+}
+
+int SoundManager::getVolumeSfx() const {
+	return ConfMan.getInt("sfx_volume");
+}
+
+int SoundManager::getVolumeMusic() const {
+	return ConfMan.getInt("music_volume");
+}
+
+int SoundManager::getVolumeMaster() const {
+	// Master is the minimum of the channel volumes
+	return MIN(ConfMan.getInt("sfx_volume"), ConfMan.getInt("music_volume"));
 }
 
 bool SoundManager::isPlaying() const {
