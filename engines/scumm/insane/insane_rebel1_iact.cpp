@@ -875,45 +875,7 @@ void InsaneRebel1::updateShipPhysics() {
 	_shipPosX = CLIP<int16>(_shipPosX, kRA1MinX, kRA1MaxX);
 	_shipPosY = CLIP<int16>(_shipPosY, kRA1MinY, kRA1MaxY);
 
-	// --- Step 7: Corridor collision (FUN_1C54D) ---
-	// Wall contact forces position accumulators to corridor edge and sets
-	// damage flags. Flag bit 0x10 (zone hit) suppresses damage bits only.
-	{
-		bool hasZoneHit = (_damageFlags & 0x10) != 0;
-
-			if (_shipPosX > _corridorRightX) {
-				_posAccumX = (int32)(_corridorRightX - kRA1CenterX) * 0x100;
-				_shipPosX = _corridorRightX;
-				if (!hasZoneHit) {
-					if (_rollAccum > -0x100)
-					_rollAccum = -0x100;  // Push left
-				_damageFlags |= 0x02;  // Right wall
-			}
-			}
-			if (_shipPosX < _corridorLeftX) {
-				_posAccumX = (int32)(_corridorLeftX - kRA1CenterX) * 0x100;
-				_shipPosX = _corridorLeftX;
-				if (!hasZoneHit) {
-					if (_rollAccum < 0x100)
-					_rollAccum = 0x100;   // Push right
-				_damageFlags |= 0x04;  // Left wall
-			}
-			}
-			if (_shipPosY < _corridorTopY) {
-				_posAccumY = (int32)(_corridorTopY - kRA1CenterY) * 0x100 + 0x100;
-				_shipPosY = _corridorTopY;
-				if (!hasZoneHit)
-					_damageFlags |= 0x01;
-			}
-			if (_shipPosY > _corridorBottomY) {
-				_posAccumY = (int32)(_corridorBottomY - kRA1CenterY) * 0x100 - 0x100;
-				_shipPosY = _corridorBottomY;
-				if (!hasZoneHit)
-					_damageFlags |= 0x08;
-		}
-	}
-
-	// --- Step 8: Perspective offsets (SetCameraOffset) ---
+	// --- Step 7: Perspective offsets (SetCameraOffset) ---
 	// FUN_1DEB5 computes these linearly from ship offsets:
 	//   viewX = clamp((_74BA + 0x20), 0, 0x40)
 	//   viewY = clamp((_74BC + 0x17), 0, 0x2E)
@@ -930,7 +892,7 @@ void InsaneRebel1::updateShipPhysics() {
 	// accumulator so side-looking still bends the gameplay projection.
 	rebuildProjectionTable(CLIP<int16>((int16)(-(_rollAccum >> 7)), -0x1A, 0x1A), 0x1A);
 
-	// --- Step 9: Direction sprite index (FUN_1DEB5 LAB_1e23e) ---
+	// --- Step 8: Direction sprite index (FUN_1DEB5 LAB_1e23e) ---
 	// Horizontal component from _74CA (rollAccum):
 	//   |rollAccum| <= 0x80: center (0)
 	//   rollAccum > 0x80:  ((rollAccum - 0x80) >> 8) * 5 + 5   (right: 5,10,15,20)
@@ -951,7 +913,7 @@ void InsaneRebel1::updateShipPhysics() {
 	if (_shipBank.numSprites > 0)
 		_shipDirIndex = CLIP<int16>((int16)(vComponent + hComponent), 0, _shipBank.numSprites - 1);
 
-	// --- Step 10: Damage/event bit synthesis + damage processing ---
+	// --- Step 9: Damage/event bit synthesis + damage processing ---
 	// RA1 FUN_1B297-style latches from GAME opcodes:
 	//   0x5D latch 0xFFFF -> bit 0x40 (obstacle/contact)
 	//   0x5F non-zero + RNG -> bit 0x80 (projectile-like hit)
@@ -1713,6 +1675,47 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 			_corridorTopY = centerY - corridorHeight / 2;
 			_corridorRightX = _corridorLeftX + corridorWidth;
 			_corridorBottomY = _corridorTopY + corridorHeight;
+
+			// Apply 0x0D immediately so it sees the same pre-physics ship state as
+			// the other per-frame GAME latches. Deferring this until after 0x07/0x09
+			// movement made right-wall hits fire too early when steering into a wall.
+			const bool suppressDirectionalDamage = (_damageFlags & 0x10) != 0;
+			const byte oldDirectionalFlags = _damageFlags & 0x0F;
+			if (_health >= 0) {
+				if (_shipPosX < _corridorLeftX) {
+					_posAccumX = (int32)(_corridorLeftX - kRA1CenterX) * 0x100;
+					if (!suppressDirectionalDamage) {
+						if (_rollAccum < 0x100)
+							_rollAccum = 0x100;
+						_damageFlags |= 0x04;
+					}
+				}
+				if (_shipPosX > _corridorRightX) {
+					_posAccumX = (int32)(_corridorRightX - kRA1CenterX) * 0x100;
+					if (!suppressDirectionalDamage) {
+						if (_rollAccum > -0x100)
+							_rollAccum = -0x100;
+						_damageFlags |= 0x02;
+					}
+				}
+				if (_shipPosY < _corridorTopY) {
+					_posAccumY = (int32)(_corridorTopY - kRA1CenterY) * 0x100 + 0x100;
+					if (!suppressDirectionalDamage)
+						_damageFlags |= 0x01;
+				}
+				if (_shipPosY > _corridorBottomY) {
+					_posAccumY = (int32)(_corridorBottomY - kRA1CenterY) * 0x100 - 0x100;
+					if (!suppressDirectionalDamage)
+						_damageFlags |= 0x08;
+				}
+			}
+			if ((_damageFlags & 0x0F) != oldDirectionalFlags) {
+				debug(1, "RA1 0x0D hit: ship=(%d,%d) corridor=[%d,%d]-[%d,%d] flags=0x%02x zoneSuppressed=%d",
+					_shipPosX, _shipPosY,
+					_corridorLeftX, _corridorTopY, _corridorRightX, _corridorBottomY,
+					_damageFlags, suppressDirectionalDamage ? 1 : 0);
+			}
+
 			debug(5, "RA1 GAME 0x0D: raw=[%d,%d]+(%d,%d) cam=(%d,%d) transformed=[%d,%d]-[%d,%d]",
 				corridorLeft, corridorTop, corridorWidth, corridorHeight,
 				_perspectiveX, _perspectiveY,
