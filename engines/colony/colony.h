@@ -364,8 +364,10 @@ public:
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+	void pauseEngineIntern(bool pause) override;
 	Common::Platform getPlatform() const { return _gameDescription->platform; }
 	bool isSoundEnabled() const { return _soundOn; }
+	const Graphics::Surface *getSavedScreen() const { return _savedScreen; }
 
 	void initTrig();
 	void loadMacColors();
@@ -406,6 +408,7 @@ private:
 	Sound *_sound;
 	Graphics::FrameLimiter *_frameLimiter;
 	Common::RenderMode _renderMode;
+	Graphics::Surface *_savedScreen = nullptr;
 
 
 	int _tsin, _tcos;

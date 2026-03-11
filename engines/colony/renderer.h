@@ -69,6 +69,7 @@ public:
 
 	// Overlay a RGBA software surface onto the GL framebuffer (for Mac menu bar).
 	virtual void drawSurface(const Graphics::Surface *surf, int x, int y) {}
+	virtual Graphics::Surface *getScreenshot() { return nullptr; }
 
 	// Convenience color accessors
 	uint32 white() const { return 255; }

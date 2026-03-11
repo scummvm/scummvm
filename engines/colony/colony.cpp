@@ -164,6 +164,10 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 
 ColonyEngine::~ColonyEngine() {
 	deleteAnimation();
+	if (_savedScreen) {
+		_savedScreen->free();
+		delete _savedScreen;
+	}
 	if (_pictPower) {
 		_pictPower->free();
 		delete _pictPower;
@@ -183,6 +187,21 @@ ColonyEngine::~ColonyEngine() {
 	delete _resMan;
 	delete _menuSurface;
 	delete _wm;
+}
+
+void ColonyEngine::pauseEngineIntern(bool pause) {
+	if (pause && _gfx && _level >= 1 && _level <= 7) {
+		if (_savedScreen) {
+			_savedScreen->free();
+			delete _savedScreen;
+		}
+		_savedScreen = _gfx->getScreenshot();
+	}
+
+	Engine::pauseEngineIntern(pause);
+
+	if (_frameLimiter)
+		_frameLimiter->pause(pause);
 }
 
 void ColonyEngine::loadMacColors() {
@@ -565,9 +584,16 @@ Common::Error ColonyEngine::run() {
 	// Frame limiter: target 60fps, like Freescape engine
 	_frameLimiter = new Graphics::FrameLimiter(_system, 60);
 
-	playIntro();
+	const int startupLoadSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+	if (startupLoadSlot >= 0) {
+		Common::Error status = loadGameState(startupLoadSlot);
+		if (status.getCode() != Common::kNoError)
+			return status;
+	} else {
+		playIntro();
+		loadMap(1); // Normal startup path begins on the first map after the intro
+	}
 
-	loadMap(1); // Try to load the first map
 	_mouseLocked = true;
 	updateMouseCapture(true);
 

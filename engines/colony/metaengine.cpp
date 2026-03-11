@@ -27,6 +27,8 @@
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
 #include "backends/keymapper/standard-actions.h"
+#include "graphics/scaler.h"
+#include "graphics/thumbnail.h"
 
 namespace Colony {
 
@@ -61,8 +63,23 @@ public:
 		return Common::kNoError;
 	}
 
+	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
+
+void ColonyMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
+	ColonyEngine *engine = (ColonyEngine *)g_engine;
+	if (!engine || !engine->getSavedScreen())
+		return;
+
+	Graphics::Surface *scaledSavedScreen = scale(*engine->getSavedScreen(), kThumbnailWidth, kThumbnailHeight2);
+	if (!scaledSavedScreen)
+		return;
+
+	thumb.copyFrom(*scaledSavedScreen);
+	scaledSavedScreen->free();
+	delete scaledSavedScreen;
+}
 
 Common::KeymapArray ColonyMetaEngine::initKeymaps(const char *target) const {
 	Common::Keymap *engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "colony", "The Colony");
