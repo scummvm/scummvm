@@ -234,7 +234,7 @@ struct GrafPort {
 	uint16 patStretch = 0;
 	PicHandle picSave;
 	RgnHandle rgnSave;
-	Handle polySave;
+	PolyHandle polySave;
 
 };
 typedef GrafPort * GrafPtr;
@@ -597,6 +597,12 @@ public:
 	// procedure draws the picture that you specify in the myPicture parameter.
 	void DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect);
 
+	// PROCEDURE ErasePoly (poly: PolyHandle);
+	// Using the patCopy pattern mode, the ErasePoly procedure draws the interior of the
+	// polygon whose handle you pass in the poly parameter with the background pattern for
+	// the current graphics port.
+	void ErasePoly(PolyHandle &poly);
+
 	// PROCEDURE EraseRect (r: Rect);
 	// Using the patCopy pattern mode, the EraseRect procedure draws the interior of the
 	// rectangle that you specify in the r parameter with the background pattern for the current
@@ -623,10 +629,22 @@ public:
 	// The grafPort's pnPat, pnMode, and bkPat are all ignored; the pen location is not changed.
 	void FillOval(const Common::Rect &r, const Pattern &pat);
 
+	// PROCEDURE FillPoly (poly: PolyHandle; pat: Pattern);
+	// Using the patCopy pattern mode, the FillPoly procedure draws the interior of the
+	// polygon whose handle you pass in the poly parameter with the pattern defined in the
+	// Pattern record that you specify in the pat parameter.
+	void FillPoly(PolyHandle &poly, const Pattern &pat);
+
 	// PROCEDURE FillRect (r: Rect; pat: Pattern);
 	// FillRect fills the specified rectangle with the given pattern (in patCopy mode). The grafPort's
 	// pnPat, pnMode, and bkPat are all ignored; the pen location is not changed.
 	void FillRect(const Common::Rect &r, const Pattern &pat);
+
+	// PROCEDURE FillRoundRect (r: Rect; ovalWidth, ovalHeight: INTEGER, pat: Pattern);
+	// FillRoundRect fills the specified rounded-comer rectangle with the given pattern (in patCopy
+	// mode). OvalWidth and ovalHeight specify the diameters of curvature for the corners. The
+	// grafPort's pnPat, pnMode, and bkPat are all ignored; the pen location is not changed.
+	void FillRoundRect(const Common::Rect &r, uint16 ovalWidth, uint16 ovalHeight, const Pattern &pat);
 
 	// PROCEDURE FrameArc (r: Rect; startAngle,arcAngle: INTEGER);
 	// FrameArc draws an arc of the oval that fits inside the specified rectangle, using the current
@@ -641,6 +659,12 @@ public:
 	// as the pen height. It's drawn with the pnPat, according to the pattern transfer mode specified by
 	// pnMode. The pen location is not changed by this procedure.
 	void FrameOval(const Common::Rect &r);
+
+	// PROCEDURE FramePoly (poly: PolyHandle);
+	// Using the current graphics port’s pen pattern, pattern mode, and size, the FramePoly
+	// procedure plays back the line-drawing commands that define the polygon whose handle
+	// you pass in the poly parameter.
+	void FramePoly(PolyHandle &poly);
 
 	// PROCEDURE FrameRect (r: Rect);
 	// FrameRect draws an outline just inside the specified rectangle, using the current grafPort's pen
@@ -723,6 +747,12 @@ public:
 	// bkPat are all ignored; the pen location is not changed.
 	void InvertOval(const Common::Rect &r);
 
+	// PROCEDURE InvertPoly (poly: PolyHandle);
+	// The InvertPoly procedure inverts the pixels enclosed by the polygon whose handle
+	// you pass in the poly parameter. Every white pixel becomes black and every black pixel
+	// becomes white.
+	void InvertPoly(PolyHandle &poly);
+
 	// PROCEDURE InvertRect (r: Rect);
 	// InvertRect inverts the pixels enclosed by the specified rectangle: Every white pixel becomes
 	// black and every black pixel becomes white. The grafPort's pnPat, pnMode, and bkPat are all
@@ -740,7 +770,14 @@ public:
 	// PROCEDURE KillPoly (poly: PolyHandle);
 	// KillPoly releases the memory occupied by the given polygon. Use this only when you're completely
 	// through with a polygon.
-	void KillPoly(PolyHandle poly);
+	void KillPoly(PolyHandle &poly);
+
+	// PROCEDURE Line(dh, dv: INTEGER);
+	// This procedure draws a line to the location that's a distance of dh horizontally and dv vertically
+	// from the current pen location; it calls LineTo(h+dh,v+dv), where (h,v) is the current location.
+	// The positive directions are to the right and down. The pen location becomes the coordinates of
+	// the end of the line after the line is drawn. See the "General Discussion of Drawing" section.
+	void Line(int16 dh, int16 dv);
 
 	// PROCEDURE LineTo (h,v: INTEGER);
 	// LineTo draws a line from the current pen location to the location specified (in local coordinates)
@@ -797,7 +834,7 @@ public:
 	// PaintPoly paints the specified polygon with the current grafPort's pen pattern and pen mode. The
 	// polygon is filled with the pnPat, according to the pattern transfer mode specified by pnMode.
 	// The pen location is not changed by this procedure.
-	void PaintPoly(PolyHandle poly);
+	void PaintPoly(PolyHandle &poly);
 
 	// PROCEDURE PaintRect (r: Rect);
 	// PaintRect paints the specified rectangle with the current grafPoit's pen pattern and mode. The
@@ -942,6 +979,7 @@ private:
 
 	void _pumpEvents();
 	void _updateScreen();
+	void _drawPoly(const PolyHandle &p, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor);
 	void _drawRect(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor);
 	void _drawRoundRect(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor, uint16 ovalWidth, uint16 ovalHeight);
 	void _copyBits(const BitMap &srcBits, const BitMap &mask, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, SourceMode mode, RgnHandle maskRgn);
