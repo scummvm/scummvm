@@ -1093,7 +1093,7 @@ struct Fade : public Script::Command {
 
 	Fade(int a0, int a1, int a2) : arg0(a0), arg1(a1), arg2(a2) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		debug("fade %d %d %d", arg0, arg1, arg2);
+		warning("fade %d %d %d", arg0, arg1, arg2);
 	}
 };
 
