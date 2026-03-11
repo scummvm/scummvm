@@ -233,7 +233,8 @@ void ColonyEngine::loadMacColors() {
 	uint32 vers = file->readUint32BE(); // Should be 'v1.0' = 0x76312E30
 	(void)vers; // Ignore
 	uint16 cnum = file->readUint16BE();
-	if (cnum > 145) cnum = 145;
+	if (cnum > 145)
+		cnum = 145;
 
 	for (int i = 0; i < cnum; i++) {
 		_macColors[i].fg[0] = file->readUint16BE();

@@ -1091,9 +1091,17 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		// MakeReactor: animate core height and recolor only the original
 		// side faces. The reactor body stays c_reactor and the core cap stays c_ccore.
 		switch (_coreState[_coreIndex]) {
-		case 0: if (_coreHeight[_coreIndex] < 256) _coreHeight[_coreIndex] += 16; break;
-		case 1: if (_coreHeight[_coreIndex] > 0) _coreHeight[_coreIndex] -= 16; break;
-		case 2: _coreHeight[_coreIndex] = 0; break;
+		case 0:
+			if (_coreHeight[_coreIndex] < 256)
+				_coreHeight[_coreIndex] += 16;
+			break;
+		case 1:
+			if (_coreHeight[_coreIndex] > 0)
+				_coreHeight[_coreIndex] -= 16;
+			break;
+		case 2:
+			_coreHeight[_coreIndex] = 0;
+			break;
 		}
 		int height = _coreHeight[_coreIndex];
 
