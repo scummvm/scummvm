@@ -740,25 +740,25 @@ bool BoltEngine::handleButtonPress(int16 hotspot) {
 		int16 animId;
 		switch (_currentBoothScene) {
 		case 3:
-			animId = _isDemo ? 0x0F : 0x18;
+			animId = _isDemo ? 0x0F : 0x12;
 			break;
 		case 4:
-			animId = _isDemo ? 0x10 : 0x12;
+			animId = _isDemo ? 0x10 : 0x13;
 			break;
 		case 5:
-			animId = _isDemo ? 0x11 : 0x13;
+			animId = _isDemo ? 0x11 : 0x14;
 			break;
 		case 6:
-			animId = _isDemo ? 0x12 : 0x14;
+			animId = _isDemo ? 0x12 : 0x15;
 			break;
 		case 7:
-			animId = _isDemo ? 0x13 : 0x15;
+			animId = _isDemo ? 0x13 : 0x16;
 			break;
 		case 8:
-			animId = _isDemo ? 0x14 : 0x16;
+			animId = _isDemo ? 0x14 : 0x17;
 			break;
 		case 9:
-			animId = _isDemo ? 0x15 : 0x17;
+			animId = _isDemo ? 0x15 : 0x18;
 			break;
 		default:
 			animId = -1;

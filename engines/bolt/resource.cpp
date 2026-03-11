@@ -147,8 +147,6 @@ void BoltEngine::resolveFunction(uint32 *ref) {
 		return;
 	}
 
-	// TODO!
-	warning("BoltEngine::resolveFunction(): TODO!");
 	uint16 index = (uint16)*ref;
 	*ref = index;
 }
@@ -272,7 +270,6 @@ bool BoltEngine::closeBOLTLib(BOLTLib **libPtr) {
 	int16 groupCount = (*libPtr)->groupCount;
 	if (groupCount == 0) {
 		groupCount = 256;
-		warning("DEBUG, closeBOLTLib(): CHECK FOR OVERFLOW ");
 	}
 
 	// Free all groups in reverse order...
@@ -463,7 +460,6 @@ byte *BoltEngine::getBOLTMember(BOLTLib *lib, int16 resId) {
 						compressedSize = nextEntry->fileOffset;
 					} else {
 						// Last entry: total = memberDirSize + memberDirOffset + memberDataOffset
-						warning("is this even working?");
 						compressedSize = (uint32)(memberCount * 16) + _boltCurrentGroupEntry->memberDataOffset + _boltCurrentGroupEntry->memberDirOffset;
 					}
 
