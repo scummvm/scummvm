@@ -31,6 +31,7 @@
 #include "common/events.h"
 #include "common/keyboard.h"
 #include "engines/util.h"
+#include "graphics/cursorman.h"
 #include "graphics/palette.h"
 #include "graphics/paletteman.h"
 #include <math.h>
@@ -48,6 +49,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_centerY = _height / 2;
 	_mouseSensitivity = 1;
 	_mouseLocked = false;
+	_mousePos = Common::Point(_centerX, _centerY);
 	_showDashBoard = true;
 	_crosshair = true;
 	_insight = false;
@@ -240,43 +242,95 @@ void ColonyEngine::menuCommandsCallback(int action, Common::String &text, void *
 	engine->handleMenuAction(action);
 }
 
+void ColonyEngine::syncMacMenuChecks() {
+	if (!_macMenu)
+		return;
+
+	Graphics::MacMenuItem *optionsMenu = _macMenu->getMenuItem(3);
+	if (!optionsMenu)
+		return;
+
+	if (Graphics::MacMenuItem *item = _macMenu->getSubMenuItem(optionsMenu, kMenuActionSound))
+		_macMenu->setCheckMark(item, _soundOn);
+	if (Graphics::MacMenuItem *item = _macMenu->getSubMenuItem(optionsMenu, kMenuActionCrosshair))
+		_macMenu->setCheckMark(item, _crosshair);
+	if (Graphics::MacMenuItem *item = _macMenu->getSubMenuItem(optionsMenu, kMenuActionPolyFill))
+		_macMenu->setCheckMark(item, !_wireframe);
+	if (Graphics::MacMenuItem *item = _macMenu->getSubMenuItem(optionsMenu, kMenuActionCursorShoot))
+		_macMenu->setCheckMark(item, _cursorShoot);
+}
+
+void ColonyEngine::updateMouseCapture(bool recenter) {
+	_system->lockMouse(_mouseLocked);
+	_system->showMouse(!_mouseLocked);
+	CursorMan.setDefaultArrowCursor();
+	CursorMan.showMouse(!_mouseLocked);
+
+	if (_mouseLocked && recenter) {
+		_mousePos = Common::Point(_centerX, _centerY);
+		_system->warpMouse(_centerX, _centerY);
+		_system->getEventManager()->purgeMouseEvents();
+	}
+}
+
+Common::Point ColonyEngine::getAimPoint() const {
+	if (_cursorShoot && !_mouseLocked) {
+		return Common::Point(CLIP<int>(_mousePos.x, _screenR.left, _screenR.right - 1),
+		                     CLIP<int>(_mousePos.y, _screenR.top, _screenR.bottom - 1));
+	}
+
+	return Common::Point(_centerX, _centerY);
+}
+
 void ColonyEngine::handleMenuAction(int action) {
 	switch (action) {
 	case kMenuActionAbout:
 		inform("The Colony\nCopyright 1988\nDavid A. Smith", true);
 		break;
 	case kMenuActionNew:
-		loadMap(1);
+		startNewGame();
 		break;
 	case kMenuActionOpen:
 		_system->lockMouse(false);
+		_system->showMouse(true);
+		CursorMan.setDefaultArrowCursor();
+		CursorMan.showMouse(true);
 		loadGameDialog();
-		_system->lockMouse(true);
-		_system->warpMouse(_centerX, _centerY);
-		_system->getEventManager()->purgeMouseEvents();
+		updateMouseCapture(true);
 		break;
 	case kMenuActionSave:
 	case kMenuActionSaveAs:
 		_system->lockMouse(false);
+		_system->showMouse(true);
+		CursorMan.setDefaultArrowCursor();
+		CursorMan.showMouse(true);
 		saveGameDialog();
-		_system->lockMouse(true);
-		_system->warpMouse(_centerX, _centerY);
-		_system->getEventManager()->purgeMouseEvents();
+		updateMouseCapture(true);
 		break;
 	case kMenuActionQuit:
 		quitGame();
 		break;
 	case kMenuActionSound:
-		// Sound toggle (TODO: implement sound on/off state)
+		_soundOn = !_soundOn;
+		if (!_soundOn)
+			_sound->stop();
+		syncMacMenuChecks();
 		break;
 	case kMenuActionCrosshair:
 		_crosshair = !_crosshair;
+		syncMacMenuChecks();
 		break;
 	case kMenuActionPolyFill:
 		_wireframe = !_wireframe;
+		syncMacMenuChecks();
 		break;
 	case kMenuActionCursorShoot:
-		// Toggle cursor-based shooting (not yet implemented)
+		_cursorShoot = !_cursorShoot;
+		if (_cursorShoot && _mouseLocked) {
+			_mouseLocked = false;
+			updateMouseCapture(false);
+		}
+		syncMacMenuChecks();
 		break;
 	default:
 		break;
@@ -347,6 +401,7 @@ void ColonyEngine::initMacMenus() {
 	_macMenu->addMenuItem(_macMenu->getSubmenu(nullptr, 0), "About The Colony", kMenuActionAbout);
 
 	_macMenu->calcDimensions();
+	syncMacMenuChecks();
 
 	_menuBarHeight = 20;
 }
@@ -358,6 +413,88 @@ void ColonyEngine::initTrig() {
 		_sint[i] = (int)roundf(128.0f * sinf(rad));
 		_cost[i] = (int)roundf(128.0f * cosf(rad));
 	}
+}
+
+void ColonyEngine::startNewGame() {
+	deleteAnimation();
+	_sound->stop();
+
+	memset(_wall, 0, sizeof(_wall));
+	memset(_mapData, 0, sizeof(_mapData));
+	memset(_robotArray, 0, sizeof(_robotArray));
+	memset(_foodArray, 0, sizeof(_foodArray));
+	memset(_dirXY, 0, sizeof(_dirXY));
+	_objects.clear();
+	_robotNum = 0;
+	_dynamicObjectBase = 0;
+
+	memset(_levelData, 0, sizeof(_levelData));
+	_levelData[1].count = 1;
+	memset(_carryPatch, 0, sizeof(_carryPatch));
+	_patches.clear();
+	_carryType = 0;
+	_fl = 0;
+	_level = 0;
+	_gameMode = kModeColony;
+	_hasKeycard = false;
+	_unlocked = false;
+	_weapons = 0;
+	_armor = 0;
+	_orbit = 0;
+	_allGrow = false;
+	_suppressCollisionSound = false;
+	_action0 = 0;
+	_action1 = 0;
+	_creature = 0;
+
+	_randomSource.setSeed(Common::RandomSource::generateNewSeed());
+
+	memset(&_me, 0, sizeof(_me));
+	_me.xloc = 4400;
+	_me.yloc = 4400;
+	_me.xindex = _me.xloc >> 8;
+	_me.yindex = _me.yloc >> 8;
+	_me.look = 32;
+	_me.ang = 32;
+	_me.type = kMeNum;
+	_me.power[0] = 256;
+	_me.power[1] = 256;
+	_me.power[2] = 256;
+
+	for (int i = 0; i < 4; i++)
+		_decode1[i] = _decode2[i] = _decode3[i] = 0;
+	for (int i = 0; i < 6; i++)
+		_animDisplay[i] = 1;
+	_coreState[0] = _coreState[1] = 0;
+	_coreHeight[0] = _coreHeight[1] = 256;
+	_corePower[0] = 0;
+	_corePower[1] = 2;
+	_corePower[2] = 0;
+	_coreIndex = 0;
+	_animationName.clear();
+	_backgroundActive = false;
+	_animationRunning = false;
+	_animationResult = 0;
+	_doorOpen = false;
+	_elevatorFloor = 0;
+	_airlockX = -1;
+	_airlockY = -1;
+	_airlockDirection = -1;
+	_airlockTerminate = false;
+	_lastClickTime = 0;
+	_displayCount = 0;
+	_lastAnimUpdate = 0;
+	_lastWarningChimeTime = 0;
+	_battleRound = 0;
+	_battleMaxP = 0;
+	_projon = false;
+	_pcount = 0;
+
+	battleInit();
+	updateViewportLayout();
+	loadMap(1);
+	battleSet();
+	_mousePos = Common::Point(_centerX, _centerY);
 }
 
 Common::Error ColonyEngine::run() {
@@ -439,8 +576,7 @@ Common::Error ColonyEngine::run() {
 
 	loadMap(1); // Try to load the first map
 	_mouseLocked = true;
-	_system->lockMouse(true);
-	_system->warpMouse(_centerX, _centerY);
+	updateMouseCapture(true);
 
 	int mouseDX = 0, mouseDY = 0;
 	bool mouseMoved = false;
@@ -488,14 +624,15 @@ Common::Error ColonyEngine::run() {
 					// WM consumed the event (menu interaction)
 					if (!wasMenuActive && _wm->isMenuActive()) {
 						_system->lockMouse(false);
+						_system->showMouse(true);
+						CursorMan.setDefaultArrowCursor();
+						CursorMan.showMouse(true);
 					}
 					continue;
 				}
 				if (wasMenuActive && !_wm->isMenuActive()) {
-					_system->lockMouse(_mouseLocked);
+					updateMouseCapture(true);
 					if (_mouseLocked) {
-						_system->warpMouse(_centerX, _centerY);
-						_system->getEventManager()->purgeMouseEvents();
 						mouseDX = mouseDY = 0;
 						mouseMoved = false;
 					}
@@ -552,10 +689,8 @@ Common::Error ColonyEngine::run() {
 						exitForklift();
 					else {
 						_mouseLocked = !_mouseLocked;
-						_system->lockMouse(_mouseLocked);
+						updateMouseCapture(true);
 						if (_mouseLocked) {
-							_system->warpMouse(_centerX, _centerY);
-							_system->getEventManager()->purgeMouseEvents();
 							mouseDX = mouseDY = 0;
 							mouseMoved = false;
 						}
@@ -566,13 +701,12 @@ Common::Error ColonyEngine::run() {
 					break;
 				case kActionEscape:
 					_system->lockMouse(false);
+					_system->showMouse(true);
+					CursorMan.setDefaultArrowCursor();
+					CursorMan.showMouse(true);
 					openMainMenuDialog();
 					_gfx->computeScreenViewport();
-					_system->lockMouse(_mouseLocked);
-					if (_mouseLocked) {
-						_system->warpMouse(_centerX, _centerY);
-						_system->getEventManager()->purgeMouseEvents();
-					}
+					updateMouseCapture(true);
 					break;
 				default:
 					break;
@@ -614,13 +748,15 @@ Common::Error ColonyEngine::run() {
 				default:
 					break;
 				}
-			} else if (event.type == Common::EVENT_LBUTTONDOWN && _mouseLocked) {
-				// Left click = fire when mouselook is active
+			} else if (event.type == Common::EVENT_LBUTTONDOWN && (_mouseLocked || _cursorShoot)) {
 				cShoot();
 			} else if (event.type == Common::EVENT_MOUSEMOVE) {
-				mouseDX += event.relMouse.x;
-				mouseDY += event.relMouse.y;
-				mouseMoved = true;
+				_mousePos = event.mouse;
+				if (_mouseLocked) {
+					mouseDX += event.relMouse.x;
+					mouseDY += event.relMouse.y;
+					mouseMoved = true;
+				}
 			} else if (event.type == Common::EVENT_SCREEN_CHANGED) {
 				_gfx->computeScreenViewport();
 			}

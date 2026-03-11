@@ -364,10 +364,12 @@ public:
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Platform getPlatform() const { return _gameDescription->platform; }
+	bool isSoundEnabled() const { return _soundOn; }
 
 	void initTrig();
 	void loadMacColors();
 	void loadMap(int mnum);
+	void startNewGame();
 	void corridor();
 	void quadrant();
 	int checkwall(int xnew, int ynew, Locate *pobject);
@@ -412,8 +414,10 @@ private:
 	int _width, _height;
 	int _mouseSensitivity;
 	bool _mouseLocked;
+	bool _soundOn = true;
 	bool _showDashBoard;
 	bool _crosshair;
+	bool _cursorShoot = false;
 	bool _insight;
 	bool _hasKeycard;
 	bool _unlocked;
@@ -432,6 +436,7 @@ private:
 	bool _rotateRight;
 
 	Common::RandomSource _randomSource;
+	Common::Point _mousePos;
 	uint8 _decode1[4];
 	uint8 _decode2[4];
 	uint8 _decode3[4];
@@ -524,11 +529,11 @@ public:
 	};
 
 private:
-	void draw3DPrism(const Thing &obj, const PrismPartDef &def, bool useLook, int colorOverride = -1);
+	void draw3DPrism(Thing &obj, const PrismPartDef &def, bool useLook, int colorOverride = -1, bool accumulateBounds = false);
 	void draw3DLeaf(const Thing &obj, const PrismPartDef &def);
-	void draw3DSphere(const Thing &obj, int pt0x, int pt0y, int pt0z,
-	                  int pt1x, int pt1y, int pt1z, uint32 fillColor, uint32 outlineColor);
-	bool drawStaticObjectPrisms3D(const Thing &obj);
+	void draw3DSphere(Thing &obj, int pt0x, int pt0y, int pt0z,
+	                  int pt1x, int pt1y, int pt1z, uint32 fillColor, uint32 outlineColor, bool accumulateBounds = false);
+	bool drawStaticObjectPrisms3D(Thing &obj);
 	void initRobots();
 	void renderCorridor3D();
 	void drawWallFeatures3D();
@@ -574,6 +579,9 @@ private:
 	int openAdjacentDoors(int x, int y);
 	int goToDestination(const uint8 *map, Locate *pobject);
 	int tryPassThroughFeature(int fromX, int fromY, int direction, Locate *pobject);
+	void syncMacMenuChecks();
+	void updateMouseCapture(bool recenter = true);
+	Common::Point getAimPoint() const;
 	void updateViewportLayout();
 	void drawDashboardStep1();
 	void drawDashboardMac();

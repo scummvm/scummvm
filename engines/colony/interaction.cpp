@@ -289,8 +289,8 @@ void ColonyEngine::setPower(int p0, int p1, int p2) {
 	}
 }
 
-// shoot.c CShoot(): player fires weapon at screen center.
-// Traces a ray in the facing direction to find the first robot hit.
+// shoot.c CShoot(): player fires weapon at the cursor or screen center.
+// Original hit detection uses the rendered object bounds on screen.
 void ColonyEngine::cShoot() {
 	if (_gameMode == kModeBattle) {
 		battleShoot();
@@ -306,8 +306,9 @@ void ColonyEngine::cShoot() {
 	setPower(-(1 << _level), 0, 0);
 
 	// Draw crosshair flash via XOR lines on the 3D viewport
-	int cx = _screenR.left + _screenR.width() / 2;
-	int cy = _screenR.top + _screenR.height() / 2;
+	const Common::Point aim = getAimPoint();
+	const int cx = aim.x;
+	const int cy = aim.y;
 	_gfx->setXorMode(true);
 	for (int r = 4; r <= 20; r += 4) {
 		_gfx->drawLine(cx - r, cy - r, cx + r, cy - r, 0xFFFFFF);
@@ -327,84 +328,45 @@ void ColonyEngine::cShoot() {
 	}
 	_gfx->setXorMode(false);
 
-	// Hit detection: find the closest visible robot in the player's aim direction.
-	// For each visible robot, compute the angle from the player to the robot and
-	// compare with the player's look direction. Pick the nearest matching robot.
 	int bestIdx = -1;
 	int bestDist = INT_MAX;
+	bool bestIsBlocker = false;
 
 	for (uint i = 0; i < _objects.size(); i++) {
 		const Thing &obj = _objects[i];
 		if (!obj.alive)
 			continue;
+
+		if (obj.where.xmn > obj.where.xmx || obj.where.zmn > obj.where.zmx)
+			continue;
+		if (obj.where.xmn > cx || obj.where.xmx < cx ||
+		    obj.where.zmn > cy || obj.where.zmx < cy)
+			continue;
+
 		int t = obj.type;
-		// Skip non-shootable types: only robots and boss types are valid targets
 		bool isRobot = (t >= kRobEye && t <= kRobUPyramid) ||
 			t == kRobQueen || t == kRobDrone || t == kRobSoldier;
-		if (!isRobot)
+		bool blocksShot = (t == kObjForkLift || t == kObjTeleport || t == kObjPToilet ||
+			t == kObjBox2 || t == kObjReactor || t == kObjScreen);
+		if (!isRobot && !blocksShot)
 			continue;
 
-		int ox = obj.where.xindex;
-		int oy = obj.where.yindex;
-		if (ox < 0 || ox >= 31 || oy < 0 || oy >= 31 || !_visibleCell[ox][oy])
-			continue;
-
-		// Compute angle from player to robot (256-unit circle matching look direction)
 		int dx = obj.where.xloc - _me.xloc;
 		int dy = obj.where.yloc - _me.yloc;
 		int dist = (int)sqrtf((float)(dx * dx + dy * dy));
-		if (dist < 64)
-			continue; // too close (same cell)
-
-		// atan2 → 256-unit angle
-		float rad = atan2f((float)dy, (float)dx);
-		int angleToRobot = (int)(rad * 128.0f / (float)M_PI) & 0xFF;
-		int angleDiff = (int8)((uint8)angleToRobot - _me.look);
-
-		// Angular tolerance scales with distance: closer = wider cone
-		int threshold = CLIP(3000 / MAX(dist, 1), 2, 16);
-		if (abs(angleDiff) > threshold)
-			continue;
 
 		if (dist < bestDist) {
 			bestDist = dist;
 			bestIdx = (int)i + 1; // 1-based robot index
+			bestIsBlocker = blocksShot;
 		}
 	}
 
-	if (bestIdx > 0) {
-		// Check that the shot isn't blocked by a large object closer than the target
+	if (bestIdx > 0 && !bestIsBlocker) {
 		const Thing &target = _objects[bestIdx - 1];
-		bool blocked = false;
-		for (uint i = 0; i < _objects.size(); i++) {
-			const Thing &obj = _objects[i];
-			if (!obj.alive || (int)i + 1 == bestIdx)
-				continue;
-			int t = obj.type;
-			// These objects block shots
-			if (t == kObjForkLift || t == kObjTeleport || t == kObjPToilet ||
-				t == kObjBox2 || t == kObjReactor || t == kObjScreen) {
-				int dx = obj.where.xloc - _me.xloc;
-				int dy = obj.where.yloc - _me.yloc;
-				int objDist = (int)sqrtf((float)(dx * dx + dy * dy));
-				if (objDist < bestDist) {
-					float rad = atan2f((float)dy, (float)dx);
-					int angleToObj = (int)(rad * 128.0f / (float)M_PI) & 0xFF;
-					int angleDiff = (int8)((uint8)angleToObj - _me.look);
-					int threshold = CLIP(3000 / MAX(objDist, 1), 2, 16);
-					if (abs(angleDiff) <= threshold) {
-						blocked = true;
-						break;
-					}
-				}
-			}
-		}
-
-		if (!blocked) {
-			debugC(1, kColonyDebugAnimation, "CShoot: hit robot %d (type=%d, dist=%d)",
-				bestIdx, target.type, bestDist);
-			destroyRobot(bestIdx);
-		}
+		debugC(1, kColonyDebugAnimation, "CShoot: hit robot %d (type=%d, dist=%d)",
+			bestIdx, target.type, bestDist);
+		destroyRobot(bestIdx);
 	}
 }
 

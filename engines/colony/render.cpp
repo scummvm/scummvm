@@ -1319,7 +1319,46 @@ const uint8 *ColonyEngine::mapFeatureAt(int x, int y, int direction) const {
 	return _mapData[x][y][direction];
 }
 
-void ColonyEngine::draw3DPrism(const Thing &obj, const PrismPartDef &def, bool useLook, int colorOverride) {
+static bool projectCorridorPoint(const Common::Rect &screenR, uint8 look, int8 lookY,
+                                 const int *sint, const int *cost, int camX, int camY,
+                                 float worldX, float worldY, float worldZ,
+                                 int &screenX, int &screenY) {
+	const float dx = worldX - camX;
+	const float dy = worldY - camY;
+	const float dz = worldZ;
+
+	const float sinYaw = sint[look] / 128.0f;
+	const float cosYaw = cost[look] / 128.0f;
+	const float side = dx * sinYaw - dy * cosYaw;
+	const float forward = dx * cosYaw + dy * sinYaw;
+
+	const float pitchRad = lookY * 2.0f * (float)M_PI / 256.0f;
+	const float sinPitch = sinf(pitchRad);
+	const float cosPitch = cosf(pitchRad);
+
+	const float eyeX = side;
+	const float eyeY = dz * cosPitch + forward * sinPitch;
+	const float eyeZ = dz * sinPitch - forward * cosPitch;
+	if (eyeZ >= -1.0f)
+		return false;
+
+	const float focal = (screenR.height() * 0.5f) / tanf(75.0f * (float)M_PI / 360.0f);
+	const float centerX = screenR.left + screenR.width() * 0.5f;
+	const float centerY = screenR.top + screenR.height() * 0.5f;
+
+	screenX = (int)roundf(centerX + (eyeX * focal / -eyeZ));
+	screenY = (int)roundf(centerY - (eyeY * focal / -eyeZ));
+	return true;
+}
+
+static void resetObjectBounds(const Common::Rect &screenR, Locate &loc) {
+	loc.xmn = screenR.right;
+	loc.xmx = screenR.left;
+	loc.zmn = screenR.bottom;
+	loc.zmx = screenR.top;
+}
+
+void ColonyEngine::draw3DPrism(Thing &obj, const PrismPartDef &def, bool useLook, int colorOverride, bool accumulateBounds) {
 	// +32 compensates for the original sine table's 45° phase offset.
 	// Object angles from game data were stored assuming that offset.
 	const uint8 ang = (useLook ? obj.where.look : obj.where.ang) + 32;
@@ -1354,6 +1393,17 @@ void ColonyEngine::draw3DPrism(const Thing &obj, const PrismPartDef &def, bool u
 			px[count] = (float)(rx + obj.where.xloc);
 			py[count] = (float)(ry + obj.where.yloc);
 			pz[count] = (float)(oz - 160); // Shift from floor-relative (z=0) to world (z=-160)
+			if (accumulateBounds) {
+				int sx = 0;
+				int sy = 0;
+				if (projectCorridorPoint(_screenR, _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc,
+				                         px[count], py[count], pz[count], sx, sy)) {
+					obj.where.xmn = MIN(obj.where.xmn, sx);
+					obj.where.xmx = MAX(obj.where.xmx, sx);
+					obj.where.zmn = MIN(obj.where.zmn, sy);
+					obj.where.zmx = MAX(obj.where.zmx, sy);
+				}
+			}
 			count++;
 		}
 
@@ -1506,9 +1556,9 @@ void ColonyEngine::draw3DLeaf(const Thing &obj, const PrismPartDef &def) {
 	}
 }
 
-void ColonyEngine::draw3DSphere(const Thing &obj, int pt0x, int pt0y, int pt0z,
+void ColonyEngine::draw3DSphere(Thing &obj, int pt0x, int pt0y, int pt0z,
                                 int pt1x, int pt1y, int pt1z,
-                                uint32 fillColor, uint32 outlineColor) {
+                                uint32 fillColor, uint32 outlineColor, bool accumulateBounds) {
 	// Sphere defined by two object-local points: pt0 (center bottom) and pt1 (center top).
 	// Center is midpoint, radius is half the distance (along z typically).
 	// Rendered as a billboard polygon facing the camera.
@@ -1561,6 +1611,20 @@ void ColonyEngine::draw3DSphere(const Thing &obj, int pt0x, int pt0y, int pt0z,
 		px[i] = cx + radius * (cosA * rightX);
 		py[i] = cy + radius * (cosA * rightY);
 		pz[i] = cz + radius * (sinA * upZ);
+	}
+
+	if (accumulateBounds) {
+		for (int i = 0; i < N; i++) {
+			int sx = 0;
+			int sy = 0;
+			if (projectCorridorPoint(_screenR, _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc,
+			                         px[i], py[i], pz[i], sx, sy)) {
+				obj.where.xmn = MIN(obj.where.xmn, sx);
+				obj.where.xmx = MAX(obj.where.xmx, sx);
+				obj.where.zmn = MIN(obj.where.zmn, sy);
+				obj.where.zmx = MAX(obj.where.zmx, sy);
+			}
+		}
 	}
 
 	if (_renderMode == Common::kRenderMacintosh && _hasMacColors) {
@@ -1687,9 +1751,10 @@ void ColonyEngine::computeVisibleCells() {
 
 void ColonyEngine::drawStaticObjects() {
 	for (uint i = 0; i < _objects.size(); i++) {
-		const Thing &obj = _objects[i];
+		Thing &obj = _objects[i];
 		if (!obj.alive)
 			continue;
+		resetObjectBounds(_screenR, obj.where);
 		int ox = obj.where.xindex;
 		int oy = obj.where.yindex;
 		if (ox < 0 || ox >= 32 || oy < 0 || oy >= 32 || !_visibleCell[ox][oy])
@@ -2722,67 +2787,75 @@ void ColonyEngine::renderCorridor3D() {
 	_gfx->setWireframe(false);
 }
 
-bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj) {
+bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
+	const auto drawPrism = [&](const PrismPartDef &def, bool useLook, int colorOverride = -1) {
+		draw3DPrism(obj, def, useLook, colorOverride, true);
+	};
+	const auto drawSphere = [&](int pt0x, int pt0y, int pt0z, int pt1x, int pt1y, int pt1z,
+	                            uint32 fillColor, uint32 outlineColor) {
+		draw3DSphere(obj, pt0x, pt0y, pt0z, pt1x, pt1y, pt1z, fillColor, outlineColor, true);
+	};
+
 	switch (obj.type) {
 	case kObjConsole:
-		draw3DPrism(obj, kConsolePart, false);
+		drawPrism(kConsolePart, false);
 		break;
 	case kObjCChair:
 		for (int i = 0; i < 5; i++) {
 			_gfx->setDepthRange((4 - i) * 0.002, 1.0);
-			draw3DPrism(obj, kCChairParts[i], false);
+			drawPrism(kCChairParts[i], false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
 	case kObjPlant:
 		// DOS MakePlant draw order: top pot, then green leaf lines, then pot on top.
-		draw3DPrism(obj, kPlantParts[1], false); // top pot (soil)
+		drawPrism(kPlantParts[1], false); // top pot (soil)
 		for (int i = 2; i < 8; i++)
 			draw3DLeaf(obj, kPlantParts[i]); // leaves as lines
-		draw3DPrism(obj, kPlantParts[0], false); // pot (drawn last, on top)
+		drawPrism(kPlantParts[0], false); // pot (drawn last, on top)
 		break;
 	case kObjCouch:
 	case kObjChair: {
 		const PrismPartDef *parts = (obj.type == kObjCouch) ? kCouchParts : kChairParts;
 		for (int i = 0; i < 4; i++) {
 			_gfx->setDepthRange((3 - i) * 0.002, 1.0);
-			draw3DPrism(obj, parts[i], false);
+			drawPrism(parts[i], false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
 	}
 	case kObjTV:
 		_gfx->setDepthRange(0.002, 1.0); // body base layer (pushed back)
-		draw3DPrism(obj, kTVParts[0], false);
+		drawPrism(kTVParts[0], false);
 		_gfx->setDepthRange(0.0, 1.0);   // screen on top of body face
-		draw3DPrism(obj, kTVParts[1], false);
+		drawPrism(kTVParts[1], false);
 		break;
 	case kObjDrawer:
 		for (int i = 0; i < 2; i++) {
 			_gfx->setDepthRange((1 - i) * 0.002, 1.0);
-			draw3DPrism(obj, kDrawerParts[i], false);
+			drawPrism(kDrawerParts[i], false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
 	case kObjFWall:
 		if (_renderMode == Common::kRenderMacintosh && _hasMacColors)
-			draw3DPrism(obj, kFWallPart, false, kColorCorridorWall);
+			drawPrism(kFWallPart, false, kColorCorridorWall);
 		else
-			draw3DPrism(obj, kFWallPart, false);
+			drawPrism(kFWallPart, false);
 		break;
 	case kObjCWall:
 		if (_renderMode == Common::kRenderMacintosh && _hasMacColors)
-			draw3DPrism(obj, kCWallPart, false, kColorCorridorWall);
+			drawPrism(kCWallPart, false, kColorCorridorWall);
 		else
-			draw3DPrism(obj, kCWallPart, false);
+			drawPrism(kCWallPart, false);
 		break;
 	case kObjScreen:
-		draw3DPrism(obj, kScreenPart, false);
+		drawPrism(kScreenPart, false);
 		break;
 	case kObjTable:
 		for (int i = 0; i < 2; i++) {
 			_gfx->setDepthRange((1 - i) * 0.002, 1.0);
-			draw3DPrism(obj, kTableParts[i], false);
+			drawPrism(kTableParts[i], false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
@@ -2791,7 +2864,7 @@ bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj) {
 		const PrismPartDef *parts = (obj.type == kObjBBed) ? kBBedParts : kBedParts;
 		for (int i = 0; i < 3; i++) {
 			_gfx->setDepthRange((2 - i) * 0.002, 1.0);
-			draw3DPrism(obj, parts[i], false);
+			drawPrism(parts[i], false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
@@ -2799,28 +2872,28 @@ bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj) {
 	case kObjDesk:
 		for (int i = 0; i < 10; i++) {
 			_gfx->setDepthRange((9 - i) * 0.002, 1.0);
-			draw3DPrism(obj, kDeskParts[i], false);
+			drawPrism(kDeskParts[i], false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
 	case kObjBox1:
-		draw3DPrism(obj, kBox1Part, false);
+		drawPrism(kBox1Part, false);
 		break;
 	case kObjBench:
-		draw3DPrism(obj, kBenchPart, false);
+		drawPrism(kBenchPart, false);
 		break;
 	case kObjCBench:
 		for (int i = 0; i < 2; i++) {
 			_gfx->setDepthRange((1 - i) * 0.002, 1.0);
-			draw3DPrism(obj, kCBenchParts[i], false);
+			drawPrism(kCBenchParts[i], false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
 	case kObjBox2:
 		_gfx->setDepthRange(0.002, 1.0);
-		draw3DPrism(obj, kBox2Parts[1], false); // base first
+		drawPrism(kBox2Parts[1], false); // base first
 		_gfx->setDepthRange(0.0, 1.0);
-		draw3DPrism(obj, kBox2Parts[0], false); // top second
+		drawPrism(kBox2Parts[0], false); // top second
 		break;
 	case kObjReactor: {
 		// MakeReactor: animate core height and recolor only the original
@@ -2883,12 +2956,12 @@ bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj) {
 		// Depth separation matches the original draw order closely, but the
 		// per-face colors now follow MakeReactor() exactly.
 		_gfx->setDepthRange(0.004, 1.0);
-		draw3DPrism(obj, modTopDef, false);
+		drawPrism(modTopDef, false);
 		_gfx->setDepthRange(0.002, 1.0);
-		draw3DPrism(obj, modRingDef, false);
+		drawPrism(modRingDef, false);
 		if (_coreState[_coreIndex] < 2) {
 			_gfx->setDepthRange(0.0, 1.0);
-			draw3DPrism(obj, modCoreDef, false);
+			drawPrism(modCoreDef, false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
@@ -2901,159 +2974,159 @@ bool ColonyEngine::drawStaticObjectPrisms3D(const Thing &obj) {
 
 		for (int i = 0; i < 4; i++) {
 			_gfx->setDepthRange((4 - i) * 0.002, 1.0);
-			draw3DPrism(obj, kPowerSuitParts[i], false);
+			drawPrism(kPowerSuitParts[i], false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
-		draw3DPrism(obj, kPowerSuitParts[4], false, sourceColor);
+		drawPrism(kPowerSuitParts[4], false, sourceColor);
 		break;
 	}
 	case kObjTeleport:
-		draw3DPrism(obj, kTelePart, false);
+		drawPrism(kTelePart, false);
 		break;
 	case kObjCryo:
 		_gfx->setDepthRange(0.002, 1.0);
-		draw3DPrism(obj, kCryoParts[1], false); // base first
+		drawPrism(kCryoParts[1], false); // base first
 		_gfx->setDepthRange(0.0, 1.0);
-		draw3DPrism(obj, kCryoParts[0], false); // top second
+		drawPrism(kCryoParts[0], false); // top second
 		break;
 	case kObjProjector:
 		// Projector sits on table  draw table first, then projector parts
 		_gfx->setDepthRange(0.008, 1.0);
-		draw3DPrism(obj, kTableParts[0], false); // table base
+		drawPrism(kTableParts[0], false); // table base
 		_gfx->setDepthRange(0.006, 1.0);
-		draw3DPrism(obj, kTableParts[1], false); // table top
+		drawPrism(kTableParts[1], false); // table top
 		_gfx->setDepthRange(0.004, 1.0);
-		draw3DPrism(obj, kProjectorParts[1], false); // stand
+		drawPrism(kProjectorParts[1], false); // stand
 		_gfx->setDepthRange(0.002, 1.0);
-		draw3DPrism(obj, kProjectorParts[0], false); // body
+		drawPrism(kProjectorParts[0], false); // body
 		_gfx->setDepthRange(0.0, 1.0);
-		draw3DPrism(obj, kProjectorParts[2], false); // lens
+		drawPrism(kProjectorParts[2], false); // lens
 		break;
 	case kObjTub:
 		for (int i = 0; i < 2; i++) {
 			_gfx->setDepthRange((1 - i) * 0.002, 1.0);
-			draw3DPrism(obj, kTubParts[i], false);
+			drawPrism(kTubParts[i], false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
 	case kObjSink:
 		for (int i = 0; i < 3; i++) {
 			_gfx->setDepthRange((2 - i) * 0.002, 1.0);
-			draw3DPrism(obj, kSinkParts[i], false);
+			drawPrism(kSinkParts[i], false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
 	case kObjToilet:
 		for (int i = 0; i < 4; i++) {
 			_gfx->setDepthRange((3 - i) * 0.002, 1.0);
-			draw3DPrism(obj, kToiletParts[i], false);
+			drawPrism(kToiletParts[i], false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
 	case kObjPToilet:
 		for (int i = 0; i < 5; i++) {
 			_gfx->setDepthRange((4 - i) * 0.002, 1.0);
-			draw3DPrism(obj, kPToiletParts[i], false);
+			drawPrism(kPToiletParts[i], false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
 	case kObjForkLift:
 		// Draw order: forks, arms, treads, cab (back-to-front)
 		_gfx->setDepthRange(0.010, 1.0);
-		draw3DPrism(obj, kForkliftParts[3], false); // FLLL (left fork)
+		drawPrism(kForkliftParts[3], false); // FLLL (left fork)
 		_gfx->setDepthRange(0.008, 1.0);
-		draw3DPrism(obj, kForkliftParts[2], false); // FLUL (left arm)
+		drawPrism(kForkliftParts[2], false); // FLUL (left arm)
 		_gfx->setDepthRange(0.006, 1.0);
-		draw3DPrism(obj, kForkliftParts[5], false); // FLLR (right fork)
+		drawPrism(kForkliftParts[5], false); // FLLR (right fork)
 		_gfx->setDepthRange(0.004, 1.0);
-		draw3DPrism(obj, kForkliftParts[4], false); // FLUR (right arm)
+		drawPrism(kForkliftParts[4], false); // FLUR (right arm)
 		_gfx->setDepthRange(0.002, 1.0);
-		draw3DPrism(obj, kForkliftParts[1], false); // treads
+		drawPrism(kForkliftParts[1], false); // treads
 		_gfx->setDepthRange(0.0, 1.0);
-		draw3DPrism(obj, kForkliftParts[0], false); // cab
+		drawPrism(kForkliftParts[0], false); // cab
 		break;
 	// === Robot types (1-20) ===
 	case kRobEye:
-		draw3DSphere(obj, 0, 0, 100, 0, 0, 200, 15, 15); // ball: white
-		draw3DPrism(obj, kEyeIrisDef, false);
-		draw3DPrism(obj, kEyePupilDef, false);
+		drawSphere(0, 0, 100, 0, 0, 200, 15, 15); // ball: white
+		drawPrism(kEyeIrisDef, false);
+		drawPrism(kEyePupilDef, false);
 		break;
 	case kRobPyramid:
-		draw3DPrism(obj, kPShadowDef, false);
-		draw3DPrism(obj, kPyramidBodyDef, false);
-		draw3DSphere(obj, 0, 0, 175, 0, 0, 200, 15, 15); // ball on top
-		draw3DPrism(obj, kPIrisDef, false);
-		draw3DPrism(obj, kPPupilDef, false);
+		drawPrism(kPShadowDef, false);
+		drawPrism(kPyramidBodyDef, false);
+		drawSphere(0, 0, 175, 0, 0, 200, 15, 15); // ball on top
+		drawPrism(kPIrisDef, false);
+		drawPrism(kPPupilDef, false);
 		break;
 	case kRobCube:
-		draw3DPrism(obj, kCubeBodyDef, false);
+		drawPrism(kCubeBodyDef, false);
 		break;
 	case kRobUPyramid:
-		draw3DPrism(obj, kUPShadowDef, false);
-		draw3DPrism(obj, kUPyramidBodyDef, false);
+		drawPrism(kUPShadowDef, false);
+		drawPrism(kUPyramidBodyDef, false);
 		break;
 	case kRobFEye:
-		draw3DSphere(obj, 0, 0, 0, 0, 0, 100, 15, 15);
-		draw3DPrism(obj, kFEyeIrisDef, false);
-		draw3DPrism(obj, kFEyePupilDef, false);
+		drawSphere(0, 0, 0, 0, 0, 100, 15, 15);
+		drawPrism(kFEyeIrisDef, false);
+		drawPrism(kFEyePupilDef, false);
 		break;
 	case kRobFPyramid:
-		draw3DPrism(obj, kFPyramidBodyDef, false);
+		drawPrism(kFPyramidBodyDef, false);
 		break;
 	case kRobFCube:
-		draw3DPrism(obj, kFCubeBodyDef, false);
+		drawPrism(kFCubeBodyDef, false);
 		break;
 	case kRobFUPyramid:
-		draw3DPrism(obj, kFUPyramidBodyDef, false);
+		drawPrism(kFUPyramidBodyDef, false);
 		break;
 	case kRobSEye:
-		draw3DSphere(obj, 0, 0, 0, 0, 0, 50, 15, 15);
-		draw3DPrism(obj, kSEyeIrisDef, false);
-		draw3DPrism(obj, kSEyePupilDef, false);
+		drawSphere(0, 0, 0, 0, 0, 50, 15, 15);
+		drawPrism(kSEyeIrisDef, false);
+		drawPrism(kSEyePupilDef, false);
 		break;
 	case kRobSPyramid:
-		draw3DPrism(obj, kSPyramidBodyDef, false);
+		drawPrism(kSPyramidBodyDef, false);
 		break;
 	case kRobSCube:
-		draw3DPrism(obj, kSCubeBodyDef, false);
+		drawPrism(kSCubeBodyDef, false);
 		break;
 	case kRobSUPyramid:
-		draw3DPrism(obj, kSUPyramidBodyDef, false);
+		drawPrism(kSUPyramidBodyDef, false);
 		break;
 	case kRobMEye:
-		draw3DSphere(obj, 0, 0, 0, 0, 0, 25, 15, 15);
-		draw3DPrism(obj, kMEyeIrisDef, false);
-		draw3DPrism(obj, kMEyePupilDef, false);
+		drawSphere(0, 0, 0, 0, 0, 25, 15, 15);
+		drawPrism(kMEyeIrisDef, false);
+		drawPrism(kMEyePupilDef, false);
 		break;
 	case kRobMPyramid:
-		draw3DPrism(obj, kMPyramidBodyDef, false);
+		drawPrism(kMPyramidBodyDef, false);
 		break;
 	case kRobMCube:
-		draw3DPrism(obj, kMCubeBodyDef, false);
+		drawPrism(kMCubeBodyDef, false);
 		break;
 	case kRobMUPyramid:
-		draw3DPrism(obj, kMUPyramidBodyDef, false);
+		drawPrism(kMUPyramidBodyDef, false);
 		break;
 	case kRobQueen:
-		draw3DPrism(obj, kQThoraxDef, false);
-		draw3DPrism(obj, kQAbdomenDef, false);
-		draw3DPrism(obj, kQLWingDef, false);
-		draw3DPrism(obj, kQRWingDef, false);
-		draw3DSphere(obj, 0, 0, 130, 0, 0, 155, 15, 15); // queen ball
-		draw3DPrism(obj, kQIrisDef, false);
-		draw3DPrism(obj, kQPupilDef, false);
+		drawPrism(kQThoraxDef, false);
+		drawPrism(kQAbdomenDef, false);
+		drawPrism(kQLWingDef, false);
+		drawPrism(kQRWingDef, false);
+		drawSphere(0, 0, 130, 0, 0, 155, 15, 15); // queen ball
+		drawPrism(kQIrisDef, false);
+		drawPrism(kQPupilDef, false);
 		break;
 	case kRobDrone:
 	case kRobSoldier:
-		draw3DPrism(obj, kDAbdomenDef, false);
-		draw3DPrism(obj, kDLLPincerDef, false);
-		draw3DPrism(obj, kDRRPincerDef, false);
-		draw3DPrism(obj, kDLEyeDef, false);
-		draw3DPrism(obj, kDREyeDef, false);
+		drawPrism(kDAbdomenDef, false);
+		drawPrism(kDLLPincerDef, false);
+		drawPrism(kDRRPincerDef, false);
+		drawPrism(kDLEyeDef, false);
+		drawPrism(kDREyeDef, false);
 		break;
 	case kRobSnoop:
-		draw3DPrism(obj, kSnoopAbdomenDef, false);
-		draw3DPrism(obj, kSnoopHeadDef, false);
+		drawPrism(kSnoopAbdomenDef, false);
+		drawPrism(kSnoopHeadDef, false);
 		break;
 	default:
 		return false;
