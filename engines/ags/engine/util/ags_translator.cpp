@@ -23,7 +23,6 @@
 
 #include "common/archive.h"
 #include "common/debug.h"
-#include "common/formats/json.h"
 #include "common/memstream.h"
 #include "common/path.h"
 #include "common/savefile.h"
@@ -44,16 +43,11 @@ void AgsTranslator::logMissingString(const Common::String &src) {
 		return;
 	_missingStrings[src] = true;
 
-	Common::String hexStr;
-	for (uint i = 0; i < src.size(); ++i) {
-		hexStr += Common::String::format("%02X ", (unsigned char)src[i]);
-	}
-
-	debug(0, "AGS Translation Missing: '%s' (Hex: %s)", src.c_str(), hexStr.c_str());
+	debug(0, "AGS Translation Missing: '%s'", src.c_str());
 }
 
 const char *AgsTranslator::getTranslation(const char *src) {
-	loadFromJsonIfPresent("translation_override.json");
+	loadFromPoIfPresent("translation_override.po");
 
 	if (!src || !*src)
 		return src;
@@ -65,12 +59,7 @@ const char *AgsTranslator::getTranslation(const char *src) {
 
 	const Common::String key = normalizeKey(Common::String(src));
 
-	// If the exact string is already a target translation value, it means
-	// AGS is re-translating an already translated string (e.g., in UI loops).
-	// We should just return it without parsing it as a missing original string.
-	// NOTE: We don't have a reverse lookup right now, but for simplicity we
-	// can just check values. Since checking all values every frame is O(N),
-	// we will add a reverse cache during JSON load!
+	// Check if we have a translation for the normalized original string.
 	if (_entries.contains(key)) {
 		return _entries[key].c_str();
 	}
@@ -86,7 +75,50 @@ const char *AgsTranslator::getTranslation(const char *src) {
 	return src;
 }
 
-bool AgsTranslator::loadFromJsonIfPresent(const Common::String &filename) {
+void AgsTranslator::storePoEntry(const Common::String &msgId, const Common::String &msgStr) {
+	if (!msgId.empty() && !msgStr.empty()) {
+		Common::String key = normalizeKey(msgId);
+		if (!key.empty()) {
+			_entries[key] = msgStr;
+			_translatedValues[msgStr] = true;
+		}
+	}
+}
+
+Common::String AgsTranslator::unescapePoString(const Common::String &s) {
+	Common::String result;
+	int start = 0, end = s.size();
+	if (s.size() >= 2 && s.firstChar() == '"' && s.lastChar() == '"') {
+		start = 1;
+		end = s.size() - 1;
+	}
+
+	for (int i = start; i < end; ++i) {
+		if (s[i] == '\\' && i + 1 < end) {
+			char nextChar = s[i + 1];
+			if (nextChar == 'n')
+				result += '\n';
+			else if (nextChar == 'r')
+				result += '\r';
+			else if (nextChar == 't')
+				result += '\t';
+			else if (nextChar == '\\')
+				result += '\\';
+			else if (nextChar == '"')
+				result += '"';
+			else {
+				result += '\\';
+				result += nextChar;
+			}
+			++i; // skip escaped char
+		} else {
+			result += s[i];
+		}
+	}
+	return result;
+}
+
+bool AgsTranslator::loadFromPoIfPresent(const Common::String &filename) {
 	if (_loaded)
 		return !_entries.empty();
 
@@ -99,36 +131,47 @@ bool AgsTranslator::loadFromJsonIfPresent(const Common::String &filename) {
 		return false;
 	}
 
-	Common::MemoryWriteStreamDynamic buffer(DisposeAfterUse::YES);
-	buffer.writeStream(rs, rs->size());
-	Common::JSON::zeroTerminateContents(buffer);
-	delete rs;
+	Common::String currentMsgId, currentMsgStr;
+	bool inMsgId = false;
+	bool inMsgStr = false;
 
-	Common::JSONValue *json = Common::JSON::parse((const char *)buffer.getData());
-	if (!json) {
-		warning("AGS Translator: failed to parse %s (invalid JSON)", filename.c_str());
-		return false;
-	}
+	while (!rs->eos() && !rs->err()) {
+		Common::String line = rs->readLine();
+		line.trim();
 
-	if (!json->isObject()) {
-		warning("AGS Translator: failed to parse %s (expected JSON object at root)", filename.c_str());
-		delete json;
-		return false;
-	}
+		if (line.empty() || line.hasPrefix("#"))
+			continue;
 
-	const Common::JSONObject &obj = json->asObject();
-	for (Common::JSONObject::const_iterator it = obj.begin(); it != obj.end(); ++it) {
-		if (it->_value->isString()) {
-			Common::String key = normalizeKey(it->_key);
-			if (!key.empty()) {
-				Common::String val = it->_value->asString();
-				_entries[key] = val;
-				_translatedValues[val] = true;
+		if (line.hasPrefix("msgid ")) {
+			// Save previous entry if any
+			if (!currentMsgId.empty() && !currentMsgStr.empty()) {
+				storePoEntry(currentMsgId, currentMsgStr);
+			}
+			inMsgId = true;
+			inMsgStr = false;
+			currentMsgId = unescapePoString(line.c_str() + 6);
+			currentMsgStr.clear();
+		} else if (line.hasPrefix("msgstr ")) {
+			inMsgId = false;
+			inMsgStr = true;
+			currentMsgStr = unescapePoString(line.c_str() + 7);
+		} else if (line.hasPrefix("\"")) {
+			// Multiline string
+			Common::String appendStr = unescapePoString(line);
+			if (inMsgId) {
+				currentMsgId += appendStr;
+			} else if (inMsgStr) {
+				currentMsgStr += appendStr;
 			}
 		}
 	}
 
-	delete json;
+	// Save the last entry
+	if (!currentMsgId.empty() && !currentMsgStr.empty()) {
+		storePoEntry(currentMsgId, currentMsgStr);
+	}
+
+	delete rs;
 	return !_entries.empty();
 }
 

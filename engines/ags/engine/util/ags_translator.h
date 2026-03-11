@@ -32,10 +32,10 @@ class AgsTranslator {
 public:
 	static AgsTranslator &getInstance();
 
-	// Loads translations from a UTF-8 JSON file that contains a flat object: { "src": "dst", ... }
+	// Loads translations from a .po file (e.g. translation_override.po).
 	// This allows users to provide fan-translations or string replacements without modifying game files.
 	// The file is optional; if missing, returns false.
-	bool loadFromJsonIfPresent(const Common::String &filename);
+	bool loadFromPoIfPresent(const Common::String &filename);
 
 	// Returns true and sets out if translation exists; otherwise false.
 	bool translate(const Common::String &src, Common::String &out) const;
@@ -50,7 +50,9 @@ private:
 	bool _loaded = false;
 
 	static Common::String normalizeKey(const Common::String &s);
+	static Common::String unescapePoString(const Common::String &s);
 
+	void storePoEntry(const Common::String &msgId, const Common::String &msgStr);
 	void logMissingString(const Common::String &src);
 };
 
