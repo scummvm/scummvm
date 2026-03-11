@@ -319,6 +319,18 @@ struct RectBase {
 	}
 
 	/**
+	 * Extend this rectangle so that it contains @p p.
+	 *
+	 * @param p The point to extend by.
+	 */
+	void extend(const ConcretePoint &p) {
+		left = MIN(left, p.x);
+		right = MAX(right, p.x);
+		top = MIN(top, p.y);
+		bottom = MAX(bottom, p.y);
+	}
+
+	/**
 	 * Extend this rectangle in all four directions by the given number of pixels.
 	 *
 	 * @param offset The size to grow by.
