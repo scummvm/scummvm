@@ -53,6 +53,7 @@ LilliputSound::LilliputSound() {
 	_fileNumb = 0;
 
 	_isGM = false;
+	_muted = false;
 
 	MidiPlayer::createDriver();
 
@@ -230,6 +231,7 @@ void LilliputSound::stopSound(Common::Point pos) {
 void LilliputSound::toggleOnOff() {
 	debugC(1, kDebugSound, "LilliputSound::toggleOnOff()");
 	warning("LilliputSound::toggleOnOff()");
+	_muted ? setVolume(0) : setVolume(_masterVolume);
 }
 
 void LilliputSound::update() {

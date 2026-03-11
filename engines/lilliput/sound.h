@@ -60,6 +60,7 @@ private:
 
 	void send(uint32 b) override;
 	void sendToChannel(byte channel, uint32 b) override;
+	bool _muted;
 };
 
 } // End of namespace Lilliput

@@ -30,9 +30,7 @@
 #include "engines/util.h"
 #include "graphics/cursorman.h"
 #include "graphics/paletteman.h"
-
 #include "lilliput/lilliput.h"
-#include "engines/util.h"
 #include "lilliput/script.h"
 #include "lilliput/sound.h"
 
@@ -254,6 +252,12 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_lastTime = 0;
 	_gameType = kGameTypeNone;
 	_platform = Common::kPlatformUnknown;
+
+    for (int i = 0; i < kActionCount; ++i)
+		_actionHotspot[i] = -1;
+
+	_walkDirection = -1;
+	_paused = false;
 }
 
 LilliputEngine::~LilliputEngine() {
@@ -263,12 +267,15 @@ LilliputEngine::~LilliputEngine() {
 }
 
 void LilliputEngine::update() {
+	pollEvent();
+	if (_paused)
+		return;
+
 	// update every 20 ms.
 	int currentTime = _system->getMillis();
 	if (currentTime - _lastTime > 20) {
 		_lastTime += ((currentTime - _lastTime) / 20) * 20;
 		newInt8();
-		pollEvent();
 		if (_displayGreenHand == true && _isCursorGreenHand == false) {
 			_isCursorGreenHand = true;
 			CursorMan.pushCursor(_greenCursor, 16, 16, 0, 0, 0);
@@ -279,7 +286,7 @@ void LilliputEngine::update() {
 
 		_system->copyRectToScreen((byte *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
 		_system->updateScreen();
-	}
+	}	
 }
 
 void LilliputEngine::newInt8() {
@@ -295,6 +302,10 @@ void LilliputEngine::newInt8() {
 		_animationTick ^= 1;
 		if (!_refreshScreenFlag)
 			displayRefreshScreen();
+	}
+	if (_walkDirection != -1) {
+		_characterDirectionArray[_host] = _walkDirection;
+		moveCharacterForward(_host, 1);
 	}
 }
 
@@ -1855,9 +1866,6 @@ void LilliputEngine::handleGameMouseClick() {
 	checkNumericCode();
 
 	bool forceReturnFl = false;
-	keyboard_handleInterfaceShortcuts(forceReturnFl);
-	if (forceReturnFl)
-		return;
 
 	if (_mouseButton == 0) {
 		if (!_mouseClicked)
@@ -2324,19 +2332,52 @@ void LilliputEngine::pollEvent() {
 			break;
 		case Common::EVENT_KEYUP:
 		case Common::EVENT_KEYDOWN: {
-			if ((event.type == _lastKeyPressed.type) && (event.kbd == _lastKeyPressed.kbd))
-				break;
+			bool isDown = (event.type == Common::EVENT_KEYDOWN);
+			Common::KeyCode key = event.kbd.keycode;
 
-			_lastKeyPressed = event;
+			if (key == Common::KEYCODE_a || key == Common::KEYCODE_s ||
+				key == Common::KEYCODE_z || key == Common::KEYCODE_x) {
+				if (isDown) {
+					if (key == Common::KEYCODE_a)
+						_walkDirection = 3; 
+					else if (key == Common::KEYCODE_s)
+						_walkDirection = 2; 
+					else if (key == Common::KEYCODE_z)
+						_walkDirection = 1; 
+					else if (key == Common::KEYCODE_x)
+						_walkDirection = 0;  
+				} else {
+					_walkDirection = -1; 
+				}
+
+				break;
+			}
 			int nextIndex = (_keyboard_nextIndex + 1) % 8;
 			if (_keyboard_oldIndex != nextIndex) {
 				_keyboard_buffer[_keyboard_nextIndex] = event;
 				_keyboard_nextIndex = nextIndex;
 			}
+			break;
+		}
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+		{
+			int action = event.customType;
+			bool start = (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START);
 
-			_lastEventType = event.type;
+			if (action >= kActionPause && action <= kActionRestart) {
+				handleSystemAction(action, start);
+			} else if (action >= 0 && action < kActionRestart) {
+				int hotspot = _actionHotspot[action];
+				if (hotspot >= 0 && hotspot < _interfaceHotspotNumb) {
+					if (start)
+						handleInterfaceHotspot(hotspot, 1); 
+					else
+						handleInterfaceHotspot(hotspot, 2); 
+				}
 			}
 			break;
+		}
 		default:
 			break;
 		}
@@ -2608,8 +2649,68 @@ void LilliputEngine::loadRules() {
 		}
 	}
 	f.close();
+	initActionHotspots();
 }
+void LilliputEngine::initActionHotspots() {
+	for (int i = 0; i < kActionCount; ++i)
+		_actionHotspot[i] = -1;
 
+	if (_gameType == kGameTypeRobin) {   
+		struct {
+			LilliputAction act;
+			Common::KeyCode key;
+		}
+		mapping[] = {
+			{kActionBow, Common::KEYCODE_RETURN},
+			{kActionEye, Common::KEYCODE_SPACE},
+			{kActionPause, Common::KEYCODE_p},
+			{kActionSave, Common::KEYCODE_F1},
+			{kActionLoad, Common::KEYCODE_F2},
+			{kActionToggleSound, Common::KEYCODE_F3},
+			{kActionRestart, Common::KEYCODE_F4}
+		};
+
+		for (auto &m : mapping) {
+			for (int i = 0; i < _interfaceHotspotNumb; ++i) {
+				if (_keyboardMapping[i] == m.key) {
+					_actionHotspot[m.act] = i;
+					break;
+				}
+			}
+		}
+	} else if (_gameType == kGameTypeRome) {  
+		struct {
+			LilliputAction act;
+			Common::KeyCode key;
+		}
+		mapping[] = {
+			{kActionUse, Common::KEYCODE_u},
+			{kActionDo, Common::KEYCODE_d}, 
+			{kActionWho, Common::KEYCODE_w},
+			{kActionMap, Common::KEYCODE_m},
+			{kActionFollow, Common::KEYCODE_f},
+			{kActionRvn, Common::KEYCODE_r}, 
+			{kActionQuit, Common::KEYCODE_q},
+			{kActionUnitI, Common::KEYCODE_c},
+			{kActionUnitII, Common::KEYCODE_v},
+			{kActionUnitIII, Common::KEYCODE_b},
+			{kActionUnitIV, Common::KEYCODE_n},
+			{kActionForm, Common::KEYCODE_f}, 
+			{kActionOrder, Common::KEYCODE_o},
+			{kActionStd, Common::KEYCODE_t},
+			{kActionMilSpace, Common::KEYCODE_SPACE},
+		};
+
+		for (auto &m : mapping) {
+			for (int i = 0; i < _interfaceHotspotNumb; ++i) {
+				if (_keyboardMapping[i] == m.key) {
+					_actionHotspot[m.act] = i;
+					break;
+				}
+			}
+		}
+	}
+}
 void LilliputEngine::displayVGAFile(const Common::Path &fileName) {
 	debugC(1, kDebugEngine, "displayVGAFile(%s)", fileName.toString().c_str());
 
@@ -2841,6 +2942,29 @@ bool LilliputEngine::_keyboard_checkKeyboard() {
 
 void LilliputEngine::_keyboard_resetKeyboardBuffer() {
 	_keyboard_nextIndex = _keyboard_oldIndex = 0;
+}
+void LilliputEngine::handleSystemAction(int action, bool start) {
+	if (!start)
+		return; 
+	switch (action) {
+	case kActionSave:
+		saveGameDialog();
+		break;
+	case kActionLoad:
+		loadGameDialog();
+		break;
+	case kActionToggleSound:
+		_soundHandler->toggleOnOff(); 
+		break;
+	case kActionRestart:
+		quitGame(); 
+		break;
+	case kActionPause:
+		_paused = !_paused;
+		break;
+	default:
+		break;
+	}
 }
 
 } // End of namespace Lilliput

@@ -27,11 +27,9 @@
 #include "lilliput/sound.h"
 #include "lilliput/stream.h"
 #include "lilliput/detection.h"
-
 #include "common/file.h"
 #include "common/rect.h"
 #include "common/events.h"
-
 #include "engines/engine.h"
 #include "graphics/surface.h"
 
@@ -66,6 +64,34 @@ enum InterfaceHotspotStatus {
 	kHotspotDisabled = 1,
 	kHotspotEnabled  = 2,
 	kHotspotSelected = 3
+};
+
+enum LilliputAction {
+	// Adventures of Robin Hood actions
+	kActionBow = 0,      
+	kActionEye,
+	kActionPause,
+	kActionSave,        
+	kActionLoad,         
+	kActionToggleSound, 
+	kActionRestart,
+	// Rome Pathway to Power actions
+	kActionUse,      
+	kActionDo,
+	kActionWho,
+	kActionMap,
+	kActionFollow,
+	kActionRvn,
+	kActionQuit,
+	kActionUnitI,   
+	kActionUnitII,  
+	kActionUnitIII,  
+	kActionUnitIV,   
+	kActionForm,     
+	kActionOrder,       
+	kActionStd,      
+	kActionMilSpace,
+	kActionCount
 };
 
 #define kSeqNone	0
@@ -367,6 +393,12 @@ private:
 	Common::Platform _platform;
 
 	void initialize();
+
+   int _actionHotspot[kActionCount]; // Map acion ID to hotspot index
+   int _walkDirection;               // -1 = none, 0 = right, 1 = up, 2 = down, 3 = left
+   bool _paused;
+   void initActionHotspots();
+   void handleSystemAction(int action, bool start); 
 };
 
 } // End of namespace Lilliput
