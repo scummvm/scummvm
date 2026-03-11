@@ -140,7 +140,7 @@ private:
 	void loadLevelSprites(int level);
 	void updateShipPhysics();
 	void updateTurretPhysics();
-	void preprocessMouseAxes(int16 &inputX, int16 &inputY);
+	void preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJoystick = nullptr);
 	void rebuildProjectionTable(int16 curveStep, int16 curveExtent);
 	void resetProjectionTable();
 	void checkDynamicLevelBranch();
@@ -240,14 +240,24 @@ private:
 	int16 _mouseOffsetX; // 0x9762-style accumulated recenter offset in DOS 640-space
 	int16 _mouseOffsetY; // 0x9760-style accumulated recenter offset in DOS 200-space
 	int16 _mouseBiasX;   // 0x9774: current preprocessed horizontal bias
-	int16 _mouseBiasY;   // 0x9772: current preprocessed vertical bias
-	int16 _mousePrevBiasX; // 0x9770: previous-frame biasX
-	int16 _mousePrevBiasY; // 0x976E: previous-frame biasY
-	bool _mouseBiasLatch;  // 0x4486: one-frame large-jump latch
-	bool _mouseRecentering; // 0x976D: suppress recursive updates during warp
+		int16 _mouseBiasY;   // 0x9772: current preprocessed vertical bias
+		int16 _mousePrevBiasX; // 0x9770: previous-frame biasX
+		int16 _mousePrevBiasY; // 0x976E: previous-frame biasY
+		bool _mouseBiasLatch;  // 0x4486: one-frame large-jump latch
+		bool _mouseRecentering; // 0x976D: suppress recursive updates during warp
+		int16 _joystickAxisX;   // Rebel-specific left-stick X captured from keymapper axis events
+		int16 _joystickAxisY;   // Rebel-specific left-stick Y captured from keymapper axis events
+		int16 _level2JoystickFilteredX; // Smoothed Level 2 analog X input
+		int16 _level2JoystickFilteredY; // Smoothed Level 2 analog Y input
+		enum InputSource {
+			kInputSourceMouse,
+			kInputSourceJoystickAnalog,
+			kInputSourceJoystickDigital
+		};
+		InputSource _activeInputSource;
 
-	// 0x0B handler physics update (asteroid/surface levels)
-	void updateAsteroidPhysics();
+		// 0x0B handler physics update (asteroid/surface levels)
+		void updateAsteroidPhysics();
 
 	// 0x19/0x1A on-foot handler (Level 9 Stormtroopers)
 	void updateOnFootPhysics();

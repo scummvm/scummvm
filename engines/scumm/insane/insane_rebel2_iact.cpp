@@ -651,10 +651,10 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 			// local_18 = ((DAT_0047a7e0 * 5 + 0x27b) * 0x40) / 0xfe
 			// local_1c = ((DAT_0047a7e2 * 5 + 0x27b) * 0x10) / 0xfe
 
-			// Map mouse position (-127 to 127 range) to ship target
-			// Mouse is 0-320, center is 160. Map to -127 to 127 range
-			int16 mouseOffsetX = (int16)((_vm->_mouse.x - 160) * 127 / 160);
-			int16 mouseOffsetY = (int16)((_vm->_mouse.y - 100) * 127 / 100);
+			// Map the effective aim position (-127 to 127 range) to the ship target.
+			Common::Point aimPos = getGameplayAimPoint();
+			int16 mouseOffsetX = (int16)((aimPos.x - 160) * 127 / 160);
+			int16 mouseOffsetY = (int16)((aimPos.y - 100) * 127 / 100);
 
 			// Clamp X offset to movement range limit (covered/shooting state)
 			// Based on FUN_00401234 lines 119-136
@@ -698,8 +698,8 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 
 			// Calculate ship direction indices for sprite selection
 			// Map mouse position to 5x7 direction grid (like Handler 7)
-			int16 mouseX = _vm->_mouse.x;
-			int16 mouseY = _vm->_mouse.y;
+			int16 mouseX = aimPos.x;
+			int16 mouseY = aimPos.y;
 
 			// Scale mouse if video is larger than 320x200
 			if (_player && _player->_width > 320) {
@@ -740,12 +740,13 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 			_shipDirectionIndex = _shipDirectionH * 7 + _shipDirectionV;
 		}
 
-		// Update firing state from mouse button
+		// Update firing state from mouse button or joystick fire action
 		// Mode 4 (autopilot) disables shooting - FUN_00401CCF line 82-84
 		if (_shipLevelMode == 4) {
 			_shipFiring = false;
 		} else {
-			_shipFiring = (_vm->VAR(_vm->VAR_LEFTBTN_HOLD) != 0);
+			_shipFiring = (_vm->VAR(_vm->VAR_LEFTBTN_HOLD) != 0) ||
+				_vm->getActionState(kScummActionInsaneAttack);
 		}
 
 		debug("Rebel2 Opcode 6 (Handler 8): mode=%d range=%d shipPos=(%d,%d) target=(%d,%d) firing=%d dir=(%d,%d,%d)",
@@ -805,8 +806,9 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		// DAT_0047a7e0 = mouseX - 160, DAT_0047a7e2 = mouseY - 100
 		// _vm->_mouse.x/y are in virtual screen coords (0-319, 0-199)
 		// consistent with handler 8 which uses _vm->_mouse.x directly.
-		int16 inputX = (int16)(_vm->_mouse.x - 160);  // DAT_0047a7e0
-		int16 inputY = (int16)(_vm->_mouse.y - 100);  // DAT_0047a7e2
+		Common::Point aimPos = getGameplayAimPoint();
+		int16 inputX = (int16)(aimPos.x - 160);  // DAT_0047a7e0
+		int16 inputY = (int16)(aimPos.y - 100);  // DAT_0047a7e2
 
 		// Clamp: mouse mode uses [-160, 160] for X, [-127, 127] for Y (lines 55-70)
 		if (inputX > 160)
@@ -1038,7 +1040,9 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		if (_shipDirectionIndex > 34)
 			_shipDirectionIndex = 34;
 
-		_shipFiring = (_flyControlMode == 2) && (_vm->VAR(_vm->VAR_LEFTBTN_HOLD) != 0);
+		_shipFiring = (_flyControlMode == 2) &&
+			((_vm->VAR(_vm->VAR_LEFTBTN_HOLD) != 0) ||
+			 _vm->getActionState(kScummActionInsaneAttack));
 
 		debug("Rebel2 H7: pos=(%d,%d) vel=%d vIn=%d dx=%d dir=%d mode=%d",
 			_flyShipScreenX, _flyShipScreenY, _smoothedVelocity,
@@ -1151,7 +1155,7 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 			if (_rebelDamageLevel == 5) {
 				// At max damage, check for direction change input
 				// For now, use mouse X position to determine direction
-				int16 mouseX = _vm->_mouse.x;
+				int16 mouseX = getGameplayAimPoint().x;
 				if (_player && _player->_width > 320) {
 					mouseX = (mouseX * 320) / _player->_width;
 				}
@@ -1371,10 +1375,11 @@ void InsaneRebel2::iactRebel2Opcode6(byte *renderBitmap, Common::SeekableReadStr
 		if (_rebelDamageLevel == 5) {
 			// Check for joystick/key input to change direction
 			// Simplified: use mouse position
-			if (_vm->_mouse.x > 75) {
+			int16 mouseX = getGameplayAimPoint().x;
+			if (mouseX > 235) {
 				_rebelFlightDir = 1;
 			}
-			if (_vm->_mouse.x < -75) {
+			if (mouseX < 85) {
 				_rebelFlightDir = 0;
 			}
 		}

@@ -755,9 +755,9 @@ int InsaneRebel2::runMainMenu() {
 			break;
 
 		case 2:  // Calibrate Joystick
-			debug("Rebel2: Calibrate Joystick selected");
-			// TODO: Implement joystick calibration (FUN_00425820)
-			// Plays O_CALIB.SAN with joystick calibration prompts
+			debug("Rebel2: Calibrate Joystick selected - no-op for modern joystick support");
+			// Modern controller support uses live keymapper actions; no explicit
+			// joystick calibration flow is required here.
 			break;
 
 		case 3:  // Continue Intro -> replay intro videos
@@ -1593,9 +1593,6 @@ int InsaneRebel2::processLevelSelectInput() {
 	bool isDifficultyMode = (_gameState == kStateDifficultySelect);
 	int &selection = isDifficultyMode ? _difficultySelection : _levelSelection;
 	int itemCount = isDifficultyMode ? 6 : _levelItemCount;
-
-	// Mouse hit Y positions — must match drawMenuItems() formula
-	const int baseY = itemCount * -5 + 0x68;
 
 	while (!_menuEventQueue.empty()) {
 		Common::Event event = _menuEventQueue.pop();

@@ -1102,6 +1102,110 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 		keymaps.push_back(insaneKeymap);
 	}
 
+	if (gameId == "rebel1") {
+		Keymap *rebel1Keymap = new Keymap(Keymap::kKeymapTypeGame, "scumm-rebel1", _("Rebel Assault controls"));
+
+		act = new Action("RA1UP", _("Aim up / menu up"));
+		act->setCustomEngineActionEvent(kScummActionInsaneUp);
+		act->addDefaultInputMapping("JOY_UP");
+		rebel1Keymap->addAction(act);
+
+		act = new Action("RA1DOWN", _("Aim down / menu down"));
+		act->setCustomEngineActionEvent(kScummActionInsaneDown);
+		act->addDefaultInputMapping("JOY_DOWN");
+		rebel1Keymap->addAction(act);
+
+		act = new Action("RA1LEFT", _("Aim left / menu left"));
+		act->setCustomEngineActionEvent(kScummActionInsaneLeft);
+		act->addDefaultInputMapping("JOY_LEFT");
+		rebel1Keymap->addAction(act);
+
+			act = new Action("RA1RIGHT", _("Aim right / menu right"));
+			act->setCustomEngineActionEvent(kScummActionInsaneRight);
+			act->addDefaultInputMapping("JOY_RIGHT");
+			rebel1Keymap->addAction(act);
+
+			act = new Action("RA1STICKUP", _("Stick up"));
+			act->setCustomBackendActionAxisEvent(kScummBackendActionRebel1AxisUp);
+			act->addDefaultInputMapping("JOY_LEFT_STICK_Y-");
+			rebel1Keymap->addAction(act);
+
+			act = new Action("RA1STICKDOWN", _("Stick down"));
+			act->setCustomBackendActionAxisEvent(kScummBackendActionRebel1AxisDown);
+			act->addDefaultInputMapping("JOY_LEFT_STICK_Y+");
+			rebel1Keymap->addAction(act);
+
+			act = new Action("RA1STICKLEFT", _("Stick left"));
+			act->setCustomBackendActionAxisEvent(kScummBackendActionRebel1AxisLeft);
+			act->addDefaultInputMapping("JOY_LEFT_STICK_X-");
+			rebel1Keymap->addAction(act);
+
+			act = new Action("RA1STICKRIGHT", _("Stick right"));
+			act->setCustomBackendActionAxisEvent(kScummBackendActionRebel1AxisRight);
+			act->addDefaultInputMapping("JOY_LEFT_STICK_X+");
+			rebel1Keymap->addAction(act);
+
+			act = new Action("RA1FIRE", _("Fire / select"));
+			act->setCustomEngineActionEvent(kScummActionInsaneAttack);
+			act->addDefaultInputMapping("JOY_A");
+			rebel1Keymap->addAction(act);
+
+		act = new Action("RA1BACK", _("Back / skip"));
+		act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
+		act->addDefaultInputMapping("JOY_B");
+		act->addDefaultInputMapping("JOY_Y");
+		act->addDefaultInputMapping("JOY_START");
+		rebel1Keymap->addAction(act);
+
+		keymaps.push_back(rebel1Keymap);
+	}
+
+	if (gameId == "rebel2") {
+		Keymap *rebel2Keymap = new Keymap(Keymap::kKeymapTypeGame, "scumm-rebel2", _("Rebel Assault II controls"));
+
+		act = new Action("RA2UP", _("Aim up / menu up"));
+		act->setCustomEngineActionEvent(kScummActionInsaneUp);
+		act->addDefaultInputMapping("JOY_UP");
+		act->addDefaultInputMapping("JOY_LEFT_STICK_Y-");
+		rebel2Keymap->addAction(act);
+
+		act = new Action("RA2DOWN", _("Aim down / menu down"));
+		act->setCustomEngineActionEvent(kScummActionInsaneDown);
+		act->addDefaultInputMapping("JOY_DOWN");
+		act->addDefaultInputMapping("JOY_LEFT_STICK_Y+");
+		rebel2Keymap->addAction(act);
+
+		act = new Action("RA2LEFT", _("Aim left / menu left"));
+		act->setCustomEngineActionEvent(kScummActionInsaneLeft);
+		act->addDefaultInputMapping("JOY_LEFT");
+		act->addDefaultInputMapping("JOY_LEFT_STICK_X-");
+		rebel2Keymap->addAction(act);
+
+		act = new Action("RA2RIGHT", _("Aim right / menu right"));
+		act->setCustomEngineActionEvent(kScummActionInsaneRight);
+		act->addDefaultInputMapping("JOY_RIGHT");
+		act->addDefaultInputMapping("JOY_LEFT_STICK_X+");
+		rebel2Keymap->addAction(act);
+
+		act = new Action("RA2FIRE", _("Fire / select"));
+		act->setCustomEngineActionEvent(kScummActionInsaneAttack);
+		act->addDefaultInputMapping("JOY_A");
+		rebel2Keymap->addAction(act);
+
+		act = new Action("RA2COVER", _("Cover / back"));
+		act->setCustomEngineActionEvent(kScummActionInsaneSwitch);
+		act->addDefaultInputMapping("JOY_B");
+		rebel2Keymap->addAction(act);
+
+		act = new Action("RA2BACK", _("Skip / menu"));
+		act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
+		act->addDefaultInputMapping("JOY_Y");
+		act->addDefaultInputMapping("JOY_START");
+		rebel2Keymap->addAction(act);
+
+		keymaps.push_back(rebel2Keymap);
+	}
+
 	return keymaps;
 }
 
