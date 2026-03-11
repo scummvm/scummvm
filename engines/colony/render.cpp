@@ -1843,22 +1843,66 @@ void ColonyEngine::wallPolygon(const float corners[4][3], const float *u, const 
 	_gfx->draw3DPolygon(px, py, pz, count, color);
 }
 
-static float signedArea2D(const float *x, const float *y, int count) {
-	float area = 0.0f;
-	for (int i = 0; i < count; ++i) {
-		const int next = (i + 1) % count;
-		area += x[i] * y[next] - x[next] * y[i];
-	}
-	return area * 0.5f;
+static bool nearlyEqual(float a, float b, float eps = 0.0001f) {
+	return fabsf(a - b) <= eps;
 }
 
-static bool pointInTriangle2D(float px, float py, float ax, float ay, float bx, float by, float cx, float cy) {
-	const float d1 = (px - bx) * (ay - by) - (ax - bx) * (py - by);
-	const float d2 = (px - cx) * (by - cy) - (bx - cx) * (py - cy);
-	const float d3 = (px - ax) * (cy - ay) - (cx - ax) * (py - ay);
-	const bool hasNeg = (d1 < 0.0f) || (d2 < 0.0f) || (d3 < 0.0f);
-	const bool hasPos = (d1 > 0.0f) || (d2 > 0.0f) || (d3 > 0.0f);
-	return !(hasNeg && hasPos);
+static void addSortedUniqueFloat(float *values, int &count, float value, float eps = 0.0001f) {
+	for (int i = 0; i < count; ++i) {
+		if (nearlyEqual(values[i], value, eps))
+			return;
+		if (value < values[i]) {
+			for (int j = count; j > i; --j)
+				values[j] = values[j - 1];
+			values[i] = value;
+			++count;
+			return;
+		}
+	}
+
+	values[count++] = value;
+}
+
+static bool segmentIntersection2D(float ax, float ay, float bx, float by,
+		float cx, float cy, float dx, float dy, float &ix, float &iy) {
+	const float den = (ax - bx) * (cy - dy) - (ay - by) * (cx - dx);
+	if (fabsf(den) < 0.0001f)
+		return false;
+
+	const float t = ((ax - cx) * (cy - dy) - (ay - cy) * (cx - dx)) / den;
+	const float u = ((ax - cx) * (ay - by) - (ay - cy) * (ax - bx)) / den;
+	if (t <= 0.0001f || t >= 0.9999f || u <= 0.0001f || u >= 0.9999f)
+		return false;
+
+	ix = ax + t * (bx - ax);
+	iy = ay + t * (by - ay);
+	return true;
+}
+
+static float edgeXAtY(float x0, float y0, float x1, float y1, float y) {
+	if (nearlyEqual(y0, y1))
+		return x0;
+
+	const float t = (y - y0) / (y1 - y0);
+	return x0 + (x1 - x0) * t;
+}
+
+struct WallCharSpan {
+	float xMid;
+	float xTop;
+	float xBottom;
+};
+
+static void sortWallCharSpans(WallCharSpan *spans, int count) {
+	for (int i = 1; i < count; ++i) {
+		WallCharSpan span = spans[i];
+		int j = i - 1;
+		while (j >= 0 && spans[j].xMid > span.xMid) {
+			spans[j + 1] = spans[j];
+			--j;
+		}
+		spans[j + 1] = span;
+	}
 }
 
 static const char *const kWallCharData[] = {
@@ -1951,67 +1995,70 @@ void ColonyEngine::wallChar(const float corners[4][3], uint8 cnum) {
 		if (!macMode || count < 3)
 			return;
 
-		const float area = signedArea2D(u, v, count);
-		if (fabsf(area) < 0.0001f)
-			return;
-
-		int indices[32];
+		float cuts[96];
+		int cutCount = 0;
 		for (int i = 0; i < count; ++i)
-			indices[i] = i;
+			addSortedUniqueFloat(cuts, cutCount, v[i]);
 
-		const bool ccw = area > 0.0f;
-		int remaining = count;
-		int guard = 0;
-
-		while (remaining > 3 && guard++ < 64) {
-			bool earFound = false;
-			for (int i = 0; i < remaining; ++i) {
-				const int prev = indices[(i + remaining - 1) % remaining];
-				const int curr = indices[i];
-				const int next = indices[(i + 1) % remaining];
-				const float cross = (u[curr] - u[prev]) * (v[next] - v[prev]) -
-					(v[curr] - v[prev]) * (u[next] - u[prev]);
-				if (ccw ? (cross <= 0.0001f) : (cross >= -0.0001f))
+		for (int i = 0; i < count; ++i) {
+			const int nextI = (i + 1) % count;
+			for (int j = i + 1; j < count; ++j) {
+				const int nextJ = (j + 1) % count;
+				if (j == i || j == nextI || nextJ == i)
+					continue;
+				if (i == 0 && nextJ == 0)
+					continue;
+				if ((nearlyEqual(u[i], u[j]) && nearlyEqual(v[i], v[j])) ||
+				    (nearlyEqual(u[i], u[nextJ]) && nearlyEqual(v[i], v[nextJ])) ||
+				    (nearlyEqual(u[nextI], u[j]) && nearlyEqual(v[nextI], v[j])) ||
+				    (nearlyEqual(u[nextI], u[nextJ]) && nearlyEqual(v[nextI], v[nextJ])))
 					continue;
 
-				bool containsPoint = false;
-				for (int j = 0; j < remaining; ++j) {
-					const int test = indices[j];
-					if (test == prev || test == curr || test == next)
-						continue;
-					if (pointInTriangle2D(u[test], v[test], u[prev], v[prev], u[curr], v[curr], u[next], v[next])) {
-						containsPoint = true;
-						break;
-					}
-				}
-				if (containsPoint)
-					continue;
-
-				const float triU[3] = {u[prev], u[curr], u[next]};
-				const float triV[3] = {v[prev], v[curr], v[next]};
-				wallPolygon(corners, triU, triV, 3, fillColor);
-
-				for (int j = i; j < remaining - 1; ++j)
-					indices[j] = indices[j + 1];
-				--remaining;
-				earFound = true;
-				break;
-			}
-
-			if (!earFound) {
-				for (int i = 1; i < remaining - 1; ++i) {
-					const float triU[3] = {u[indices[0]], u[indices[i]], u[indices[i + 1]]};
-					const float triV[3] = {v[indices[0]], v[indices[i]], v[indices[i + 1]]};
-					wallPolygon(corners, triU, triV, 3, fillColor);
-				}
-				return;
+				float ix, iy;
+				if (segmentIntersection2D(u[i], v[i], u[nextI], v[nextI], u[j], v[j], u[nextJ], v[nextJ], ix, iy))
+					addSortedUniqueFloat(cuts, cutCount, iy);
 			}
 		}
 
-		if (remaining == 3) {
-			const float triU[3] = {u[indices[0]], u[indices[1]], u[indices[2]]};
-			const float triV[3] = {v[indices[0]], v[indices[1]], v[indices[2]]};
-			wallPolygon(corners, triU, triV, 3, fillColor);
+		for (int band = 0; band < cutCount - 1; ++band) {
+			const float y0 = cuts[band];
+			const float y1 = cuts[band + 1];
+			if (y1 - y0 <= 0.0001f)
+				continue;
+
+			const float yMid = (y0 + y1) * 0.5f;
+			const float yTopSample = y0 + (y1 - y0) * 0.001f;
+			const float yBottomSample = y1 - (y1 - y0) * 0.001f;
+			WallCharSpan spans[32];
+			int spanCount = 0;
+
+			for (int i = 0; i < count; ++i) {
+				const int next = (i + 1) % count;
+				const float yA = v[i];
+				const float yB = v[next];
+				if (nearlyEqual(yA, yB))
+					continue;
+				if (!((yA <= yMid && yMid < yB) || (yB <= yMid && yMid < yA)))
+					continue;
+
+				spans[spanCount].xMid = edgeXAtY(u[i], yA, u[next], yB, yMid);
+				spans[spanCount].xTop = edgeXAtY(u[i], yA, u[next], yB, yTopSample);
+				spans[spanCount].xBottom = edgeXAtY(u[i], yA, u[next], yB, yBottomSample);
+				++spanCount;
+			}
+
+			if (spanCount < 2)
+				continue;
+
+			sortWallCharSpans(spans, spanCount);
+			for (int i = 0; i + 1 < spanCount; i += 2) {
+				if (spans[i + 1].xMid - spans[i].xMid <= 0.0001f)
+					continue;
+
+				const float quadU[4] = {spans[i].xTop, spans[i + 1].xTop, spans[i + 1].xBottom, spans[i].xBottom};
+				const float quadV[4] = {y0, y0, y1, y1};
+				wallPolygon(corners, quadU, quadV, 4, fillColor);
+			}
 		}
 	};
 
