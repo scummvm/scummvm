@@ -37,6 +37,148 @@ static const int kRA1LevelSelectRowsPerCol = 8;
 static const int kRA1NumLevels = 15;
 
 bool InsaneRebel1::notifyEvent(const Common::Event &event) {
+	if (event.type == Common::EVENT_MOUSEMOVE && !_mouseRecentering) {
+		_activeInputSource = kInputSourceMouse;
+	}
+
+	if (event.type == Common::EVENT_CUSTOM_BACKEND_ACTION_AXIS) {
+		_activeInputSource = kInputSourceJoystickAnalog;
+
+		switch (event.customType) {
+		case kScummBackendActionRebel1AxisUp:
+			if (event.joystick.position == 0 && _joystickAxisY < 0)
+				return true;
+			_joystickAxisY = event.joystick.position;
+			return true;
+		case kScummBackendActionRebel1AxisDown:
+			if (event.joystick.position == 0 && _joystickAxisY > 0)
+				return true;
+			_joystickAxisY = -event.joystick.position;
+			return true;
+		case kScummBackendActionRebel1AxisLeft:
+			if (event.joystick.position == 0 && _joystickAxisX > 0)
+				return true;
+			_joystickAxisX = -event.joystick.position;
+			return true;
+		case kScummBackendActionRebel1AxisRight:
+			if (event.joystick.position == 0 && _joystickAxisX < 0)
+				return true;
+			_joystickAxisX = event.joystick.position;
+			return true;
+		default:
+			break;
+		}
+	}
+
+	if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START ||
+		event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
+		const bool pressed = (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START);
+
+		if (pressed &&
+			(event.customType == kScummActionInsaneUp ||
+			 event.customType == kScummActionInsaneDown ||
+			 event.customType == kScummActionInsaneLeft ||
+			 event.customType == kScummActionInsaneRight)) {
+			_activeInputSource = kInputSourceJoystickDigital;
+		}
+
+		if (_highScoresActive && pressed && event.customType == kScummActionInsaneAttack) {
+			_vm->_smushVideoShouldFinish = true;
+			return true;
+		}
+
+		if (_menuActive && !_highScoresActive && pressed) {
+			if (_levelSelectActive) {
+				int col = _levelSelectSel / kRA1LevelSelectRowsPerCol;
+				int row = _levelSelectSel % kRA1LevelSelectRowsPerCol;
+
+				switch (event.customType) {
+				case kScummActionInsaneUp:
+					row = (row + kRA1LevelSelectRowsPerCol - 1) % kRA1LevelSelectRowsPerCol;
+					_levelSelectSel = col * kRA1LevelSelectRowsPerCol + row;
+					return true;
+				case kScummActionInsaneDown:
+					row = (row + 1) % kRA1LevelSelectRowsPerCol;
+					_levelSelectSel = col * kRA1LevelSelectRowsPerCol + row;
+					return true;
+				case kScummActionInsaneLeft:
+					if (col > 0)
+						_levelSelectSel -= kRA1LevelSelectRowsPerCol;
+					return true;
+				case kScummActionInsaneRight:
+					if (col < 1)
+						_levelSelectSel += kRA1LevelSelectRowsPerCol;
+					return true;
+				case kScummActionInsaneAttack:
+					_menuConfirmed = true;
+					_vm->_smushVideoShouldFinish = true;
+					return true;
+				default:
+					break;
+				}
+			}
+
+			if (_optionsActive) {
+				switch (event.customType) {
+				case kScummActionInsaneUp:
+					_optionsSel = (_optionsSel + kOptionsItemCount - 1) % kOptionsItemCount;
+					return true;
+				case kScummActionInsaneDown:
+					_optionsSel = (_optionsSel + 1) % kOptionsItemCount;
+					return true;
+				case kScummActionInsaneLeft:
+					if (_optionsSel == 6) {
+						_optVolume = MAX(0, _optVolume - 5);
+						_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType,
+							(_optVolume * Audio::Mixer::kMaxChannelVolume) / 127);
+						ConfMan.setInt("music_volume", (_optVolume * 256) / 127);
+						ConfMan.setInt("sfx_volume", (_optVolume * 256) / 127);
+						ConfMan.setInt("speech_volume", (_optVolume * 256) / 127);
+					}
+					return true;
+				case kScummActionInsaneRight:
+					if (_optionsSel == 6) {
+						_optVolume = MIN(127, _optVolume + 5);
+						_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType,
+							(_optVolume * Audio::Mixer::kMaxChannelVolume) / 127);
+						ConfMan.setInt("music_volume", (_optVolume * 256) / 127);
+						ConfMan.setInt("sfx_volume", (_optVolume * 256) / 127);
+						ConfMan.setInt("speech_volume", (_optVolume * 256) / 127);
+					}
+					return true;
+				case kScummActionInsaneAttack:
+					_menuConfirmed = true;
+					_vm->_smushVideoShouldFinish = true;
+					return true;
+				default:
+					break;
+				}
+			}
+
+			if (!_optionsActive && !_levelSelectActive) {
+				switch (event.customType) {
+				case kScummActionInsaneUp:
+					_menuSelection = (_menuSelection + 4) % 5;
+					return true;
+				case kScummActionInsaneDown:
+					_menuSelection = (_menuSelection + 1) % 5;
+					return true;
+				case kScummActionInsaneAttack:
+					_menuConfirmed = true;
+					_vm->_smushVideoShouldFinish = true;
+					return true;
+				default:
+					break;
+				}
+			}
+		}
+
+		if (_interactiveVideoActive && !_menuActive && event.customType == kScummActionInsaneAttack) {
+			_playerFired = pressed;
+			return true;
+		}
+	}
+
 	if (_menuActive && _levelSelectActive && event.type == Common::EVENT_KEYDOWN) {
 		int col = _levelSelectSel / kRA1LevelSelectRowsPerCol;
 		int row = _levelSelectSel % kRA1LevelSelectRowsPerCol;

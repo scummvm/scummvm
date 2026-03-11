@@ -546,9 +546,84 @@ InsaneRebel2::~InsaneRebel2() {
 // Handles ESC (skip) and SPACE (pause) regardless of menu state.
 // Pause behavior matches original FUN_405A21: SPACE pauses, ANY key unpauses.
 bool InsaneRebel2::notifyEvent(const Common::Event &event) {
-	if (event.type == Common::EVENT_KEYDOWN) {
-		SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 
+	if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START ||
+		event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
+		const bool pressed = (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START);
+
+		if (pressed && splayer && splayer->_paused && _gameState == kStateGameplay) {
+			debug("Rebel2: Joystick action while paused - unpausing");
+			if (_pauseOverlayActive) {
+				_vm->_system->getPaletteManager()->setPalette(_savedPausePalette, 0, 256);
+				_pauseOverlayActive = false;
+			}
+			splayer->unpause();
+			return true;
+		}
+
+		if (_menuInputActive && pressed) {
+			Common::KeyCode keycode = Common::KEYCODE_INVALID;
+
+			switch (_gameState) {
+			case kStateMainMenu:
+			case kStatePilotSelect:
+			case kStateDifficultySelect:
+			case kStateChapterSelect:
+			case kStateOptions:
+				switch (event.customType) {
+				case kScummActionInsaneUp:
+					keycode = Common::KEYCODE_UP;
+					break;
+				case kScummActionInsaneDown:
+					keycode = Common::KEYCODE_DOWN;
+					break;
+				case kScummActionInsaneLeft:
+					keycode = Common::KEYCODE_LEFT;
+					break;
+				case kScummActionInsaneRight:
+					keycode = Common::KEYCODE_RIGHT;
+					break;
+				case kScummActionInsaneAttack:
+					keycode = Common::KEYCODE_RETURN;
+					break;
+				case kScummActionInsaneSwitch:
+					keycode = Common::KEYCODE_ESCAPE;
+					break;
+				default:
+					break;
+				}
+				break;
+
+			case kStateTopPilots:
+				if (event.customType == kScummActionInsaneAttack)
+					keycode = Common::KEYCODE_RETURN;
+				else if (event.customType == kScummActionInsaneSwitch)
+					keycode = Common::KEYCODE_ESCAPE;
+				break;
+
+			default:
+				break;
+			}
+
+			if (keycode != Common::KEYCODE_INVALID) {
+				Common::Event syntheticEvent = Common::Event();
+				syntheticEvent.type = Common::EVENT_KEYDOWN;
+				syntheticEvent.kbd.keycode = keycode;
+				syntheticEvent.kbd.ascii = (keycode == Common::KEYCODE_RETURN) ? '\r' :
+					(keycode == Common::KEYCODE_ESCAPE) ? Common::ASCII_ESCAPE : 0;
+				_menuEventQueue.push(syntheticEvent);
+				return true;
+			}
+		}
+
+		if (event.customType == kScummActionInsaneAttack ||
+			event.customType == kScummActionInsaneSwitch) {
+			return true;
+		}
+	}
+
+	if (event.type == Common::EVENT_KEYDOWN) {
 		// When paused during gameplay, ANY key unpauses (FUN_405A21 line 360-365).
 		// ESC additionally opens the ScummVM menu (original: quit key exits level).
 		if (splayer && splayer->_paused && _gameState == kStateGameplay) {
@@ -1068,6 +1143,10 @@ int32 InsaneRebel2::processMouse() {
 	// Get button state directly from event manager (SCUMM VARs aren't updated during SMUSH)
 	// Bit 0 = left button, Bit 1 = right button, Bit 2 = middle button
 	uint32 currentButtons = _vm->_system->getEventManager()->getButtonState();
+	if (_vm->getActionState(kScummActionInsaneAttack))
+		currentButtons |= 1;
+	if (_vm->getActionState(kScummActionInsaneSwitch))
+		currentButtons |= 2;
 
 	// Edge detection for buttons
 	bool leftPressed = (currentButtons & 1) != 0;
@@ -1108,7 +1187,7 @@ int32 InsaneRebel2::processMouse() {
 	// - Other gameplay handlers fire while button is held; slot counters still rate-limit.
 	bool triggerShot = (_rebelHandler == 25) ? (leftPressed && !leftWasPressed) : leftPressed;
 	if (triggerShot && isShootingAllowed()) {
-		Common::Point mousePos(_vm->_mouse.x, _vm->_mouse.y);
+		Common::Point mousePos = getGameplayAimPoint();
 		debug("Rebel2 Click: Mouse=(%d,%d) Enemies=%d",
 			mousePos.x, mousePos.y, _enemies.size());
 
@@ -1242,6 +1321,32 @@ int32 InsaneRebel2::processMouse() {
 		}
 	}
 	return buttons;
+}
+
+Common::Point InsaneRebel2::getGameplayAimPoint() {
+	Common::Point aimPos(_vm->_mouse.x, _vm->_mouse.y);
+
+	if (_menuInputActive || _gameState != kStateGameplay)
+		return aimPos;
+
+	int dx = 0;
+	int dy = 0;
+
+	if (_vm->getActionState(kScummActionInsaneLeft))
+		dx--;
+	if (_vm->getActionState(kScummActionInsaneRight))
+		dx++;
+	if (_vm->getActionState(kScummActionInsaneUp))
+		dy--;
+	if (_vm->getActionState(kScummActionInsaneDown))
+		dy++;
+
+	if (dx || dy) {
+		aimPos.x = (dx < 0) ? 0 : (dx > 0) ? 319 : 160;
+		aimPos.y = (dy < 0) ? 0 : (dy > 0) ? 199 : 100;
+	}
+
+	return aimPos;
 }
 
 bool InsaneRebel2::isBitSet(int n) {

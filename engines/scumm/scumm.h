@@ -503,6 +503,13 @@ enum ScummAction {
 	kScummActionCount
 };
 
+enum ScummBackendAction {
+	kScummBackendActionRebel1AxisUp = 11000,
+	kScummBackendActionRebel1AxisDown,
+	kScummBackendActionRebel1AxisLeft,
+	kScummBackendActionRebel1AxisRight
+};
+
 extern const char *const insaneKeymapId;
 
 /**

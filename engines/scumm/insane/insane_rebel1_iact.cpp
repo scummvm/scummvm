@@ -20,12 +20,29 @@
  */
 
 #include "common/system.h"
+#include "common/config-manager.h"
 #include "common/endian.h"
 
 #include "scumm/scumm_v7.h"
 #include "scumm/insane/insane_rebel1.h"
 
 namespace Scumm {
+
+static inline int16 applyRebel1AnalogDeadzone(int16 axisValue) {
+	const int deadZone = MAX(0, ConfMan.getInt("joystick_deadzone")) * 1000;
+	return (ABS(axisValue) <= deadZone) ? 0 : axisValue;
+}
+
+static inline int16 smoothRebel1Op0BAnalogInput(int16 inputValue, int16 &filteredValue, int16 axisMax) {
+	const int delta = (int)inputValue - (int)filteredValue;
+	int step = delta / 10;
+
+	if (step == 0 && delta != 0)
+		step = (delta > 0) ? 1 : -1;
+
+	filteredValue = CLIP<int>(filteredValue + step, -axisMax, axisMax);
+	return filteredValue;
+}
 
 // LVL1 stage-2 0x5D damage/event codes. The gameplay stream exposes low record ids
 // (6..18), while the recovered outer loop compares the post-latch state against the
@@ -554,9 +571,52 @@ void InsaneRebel1::unprojectGameplayPoint(int16 &x, int16 &y) const {
 // Preserve the DOS bias/offset persistence and one-frame jump latch from
 // FUN_231BE, but avoid hard recentring the host mouse into the DOS safe window.
 // The actual frame-averaging behavior stays untouched.
-void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY) {
+void InsaneRebel1::preprocessMouseAxes(int16 &inputX, int16 &inputY, bool *usedJoystick) {
+	if (usedJoystick)
+		*usedJoystick = false;
+
 	if (_mouseRecentering)
 		return;
+
+	const int16 analogAxisX = applyRebel1AnalogDeadzone(_joystickAxisX);
+	const int16 analogAxisY = applyRebel1AnalogDeadzone(_joystickAxisY);
+	const int joyX =
+		(_vm->getActionState(kScummActionInsaneRight) ? 1 : 0) -
+		(_vm->getActionState(kScummActionInsaneLeft) ? 1 : 0);
+	const int joyY =
+		(_vm->getActionState(kScummActionInsaneUp) ? 1 : 0) -
+		(_vm->getActionState(kScummActionInsaneDown) ? 1 : 0);
+
+	if (_activeInputSource == kInputSourceJoystickAnalog) {
+		if (usedJoystick)
+			*usedJoystick = true;
+
+		if (analogAxisX != 0 || analogAxisY != 0) {
+			inputX = CLIP<int32>(((int32)analogAxisX * 127) / Common::JOYAXIS_MAX, -127, 127);
+			inputY = CLIP<int32>(((int32)analogAxisY * 127) / Common::JOYAXIS_MAX, -127, 127);
+		} else {
+			inputX = 0;
+			inputY = 0;
+		}
+
+		if (_optControlsYFlip)
+			inputY = -inputY;
+
+		return;
+	}
+
+	if (_activeInputSource == kInputSourceJoystickDigital || joyX != 0 || joyY != 0) {
+		if (usedJoystick)
+			*usedJoystick = true;
+
+		inputX = joyX * 127;
+		inputY = joyY * 127;
+
+		if (_optControlsYFlip)
+			inputY = -inputY;
+
+		return;
+	}
 
 	int16 logicalX = (int16)CLIP<int>(_vm->_mouse.x, 0, 319);
 	int16 logicalY = (int16)CLIP<int>(_vm->_mouse.y, 0, 199);
@@ -958,9 +1018,29 @@ void InsaneRebel1::updateTurretPhysics() {
 		// not raw mouse coordinates.
 		int16 inputX = 0;
 		int16 inputY = 0;
-		preprocessMouseAxes(inputX, inputY);
+		bool usedJoystick = false;
+		preprocessMouseAxes(inputX, inputY, &usedJoystick);
 		inputX = CLIP<int16>(inputX, -127, 127);
 		inputY = CLIP<int16>(inputY, -127, 127);
+		const int16 rawInputX = inputX;
+		const int16 rawInputY = inputY;
+
+		if (usedJoystick) {
+			// First-person turret/cockpit stages are noticeably more sensitive on
+			// joystick than on mouse, so damp only the joystick-driven input here.
+			inputX /= 2;
+			inputY /= 2;
+		}
+
+		debug("RA1 turret input: source=%s mouse=(%d,%d) actions(L,R,U,D)=(%d,%d,%d,%d) raw=(%d,%d) final=(%d,%d) level=%d mode=%d opcode=0x%X",
+			usedJoystick ? "joystick-actions" : "mouse-path",
+			_vm->_mouse.x, _vm->_mouse.y,
+			_vm->getActionState(kScummActionInsaneLeft),
+			_vm->getActionState(kScummActionInsaneRight),
+			_vm->getActionState(kScummActionInsaneUp),
+			_vm->getActionState(kScummActionInsaneDown),
+			rawInputX, rawInputY, inputX, inputY,
+			_currentLevel, _flyControlMode, _activeGameOpcode);
 
 		_rollAccum += (_tuning.roll * (int32)inputX) >> 4;
 		_rollAccum = (_rollAccum * 3) >> 2;
@@ -1129,9 +1209,48 @@ void InsaneRebel1::updateAsteroidPhysics() {
 	// _inputHistory* maps to 0x7580/0x7594, _viewHistory* to 0x75A8/0x75BC.
 	int16 inputX = 0;
 	int16 inputY = 0;
-	preprocessMouseAxes(inputX, inputY);
+	bool usedJoystick = false;
+	preprocessMouseAxes(inputX, inputY, &usedJoystick);
 	inputX = CLIP<int16>(inputX, -0xA0, 0xA0);
 	inputY = CLIP<int16>(inputY, -100, 100);
+	const int16 rawInputX = inputX;
+	const int16 rawInputY = inputY;
+	const bool op0BAnalogSmoothing = (_activeInputSource == kInputSourceJoystickAnalog);
+	const char *inputSourceName = "mouse-path";
+
+	if (_activeInputSource == kInputSourceJoystickAnalog)
+		inputSourceName = "joystick-analog";
+	else if (_activeInputSource == kInputSourceJoystickDigital)
+		inputSourceName = "joystick-dpad";
+
+	if (usedJoystick) {
+		// The 0x0B first-person handler is shared by multiple RA1 stages. Smooth
+		// analog stick input over time so these sections keep full reach without
+		// feeling hyper-sensitive, while leaving mouse behavior untouched.
+		if (op0BAnalogSmoothing) {
+			inputX = smoothRebel1Op0BAnalogInput(inputX, _level2JoystickFilteredX, 127);
+			inputY = smoothRebel1Op0BAnalogInput(inputY, _level2JoystickFilteredY, 100);
+		} else {
+			_level2JoystickFilteredX = 0;
+			_level2JoystickFilteredY = 0;
+			inputX /= 2;
+			inputY /= 2;
+		}
+	} else {
+		_level2JoystickFilteredX = 0;
+		_level2JoystickFilteredY = 0;
+	}
+
+	debug("RA1 asteroid input: source=%s axis=(%d,%d) mouse=(%d,%d) actions(L,R,U,D)=(%d,%d,%d,%d) raw=(%d,%d) final=(%d,%d) level=%d opcode=0x%X",
+		inputSourceName,
+		_joystickAxisX, _joystickAxisY,
+		_vm->_mouse.x, _vm->_mouse.y,
+		_vm->getActionState(kScummActionInsaneLeft),
+		_vm->getActionState(kScummActionInsaneRight),
+		_vm->getActionState(kScummActionInsaneUp),
+		_vm->getActionState(kScummActionInsaneDown),
+		rawInputX, rawInputY, inputX, inputY,
+		_currentLevel, _activeGameOpcode);
 
 	for (int i = kInputHistorySize - 1; i > 0; i--) {
 		_inputHistoryX[i] = _inputHistoryX[i - 1];
@@ -1399,6 +1518,8 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 		_mousePrevBiasY = 0;
 		_mouseBiasLatch = false;
 		_mouseRecentering = false;
+		_level2JoystickFilteredX = 0;
+		_level2JoystickFilteredY = 0;
 
 		// Shooting/targeting reset
 		_playerFired = false;

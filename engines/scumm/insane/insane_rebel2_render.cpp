@@ -1723,8 +1723,9 @@ void InsaneRebel2::checkCollisionZones() {
 	// Calculate aim position in centered coordinates.
 	// Original: local_10 = mouseOffset + 0xa0, then smoothed and clamped to [-0x34..0x34]
 	// Simplified mapping: mouse 0..320 → [-52..52], mouse 0..200 → [-45..45]
-	int16 aimX = (int16)((_vm->_mouse.x - 160) * 52 / 160);
-	int16 aimY = (int16)((100 - _vm->_mouse.y) * 45 / 100);
+	Common::Point aimPos = getGameplayAimPoint();
+	int16 aimX = (int16)((aimPos.x - 160) * 52 / 160);
+	int16 aimY = (int16)((100 - aimPos.y) * 45 / 100);
 
 	// Clamp to original ranges (DAT_0047a7fc < 1 path)
 	if (aimX > 0x34)
@@ -2233,8 +2234,9 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 		maxScrollY = 0;
 	
 	// Simple linear mapping: Center of screen corresponds to center of buffer
-	_viewX = (_vm->_mouse.x * maxScrollX) / _vm->_screenWidth;
-	_viewY = (_vm->_mouse.y * maxScrollY) / _vm->_screenHeight;
+	Common::Point aimPos = getGameplayAimPoint();
+	_viewX = (aimPos.x * maxScrollX) / _vm->_screenWidth;
+	_viewY = (aimPos.y * maxScrollY) / _vm->_screenHeight;
 	
 	_player->setScrollOffset(_viewX, _viewY);
 
@@ -2839,8 +2841,9 @@ void InsaneRebel2::renderTurretHudOverlays(byte *renderBitmap, int pitch, int wi
 		return;
 
 	// Calculate mouse offset (clamped to -127..127)
-	int mouseOffsetX = (_vm->_mouse.x - 160);
-	int mouseOffsetY = (_vm->_mouse.y - 100);
+	Common::Point aimPos = getGameplayAimPoint();
+	int mouseOffsetX = (aimPos.x - 160);
+	int mouseOffsetY = (aimPos.y - 100);
 	if (mouseOffsetX > 127)
 		mouseOffsetX = 127;
 	if (mouseOffsetX < -127)
@@ -3451,8 +3454,9 @@ void InsaneRebel2::renderHandler25Ship(byte *renderBitmap, int pitch, int width,
 			int16 areaBottom = (_corridorBottomY > 0) ? _corridorBottomY : 180;
 
 			// Get crosshair position (using mouse position scaled to game coords)
-			int16 crosshairX = _vm->_mouse.x;
-			int16 crosshairY = _vm->_mouse.y;
+			Common::Point aimPos = getGameplayAimPoint();
+			int16 crosshairX = aimPos.x;
+			int16 crosshairY = aimPos.y;
 			if (_player && _player->_width > 320) {
 				crosshairX = (crosshairX * 320) / _player->_width;
 				crosshairY = (crosshairY * 200) / _player->_height;
@@ -4220,7 +4224,8 @@ void InsaneRebel2::renderCrosshair(byte *renderBitmap, int pitch, int width, int
 	// Update target lock state and draw crosshair/reticle
 
 	// Target lock detection (DAT_00443676 equivalent)
-	Common::Point worldMousePos(_vm->_mouse.x + _viewX, _vm->_mouse.y + _viewY);
+	Common::Point aimPos = getGameplayAimPoint();
+	Common::Point worldMousePos(aimPos.x + _viewX, aimPos.y + _viewY);
 	bool targetLocked = false;
 
 	for (Common::List<enemy>::iterator it = _enemies.begin(); it != _enemies.end(); ++it) {
@@ -4270,8 +4275,8 @@ void InsaneRebel2::renderCrosshair(byte *renderBitmap, int pitch, int width, int
 		int ch = _smush_iconsNut->getCharHeight(reticleIndex);
 
 		// Calculate crosshair position
-		int crosshairX = _vm->_mouse.x - cw / 2 + _viewX;
-		int crosshairY = _vm->_mouse.y - ch / 2 + _viewY;
+		int crosshairX = aimPos.x - cw / 2 + _viewX;
+		int crosshairY = aimPos.y - ch / 2 + _viewY;
 
 		// Handler 25 (0x19): Add view offset to crosshair position
 		// From FUN_41DB5E lines 198-199: X = DAT_00457914 + DAT_0045790c, Y = DAT_00457916 + DAT_0045790e

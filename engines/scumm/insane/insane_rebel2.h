@@ -483,6 +483,7 @@ public:
 	
 
 	int32 processMouse() override;
+	Common::Point getGameplayAimPoint();
 	bool isBitSet(int n) override;
 	void setBit(int n) override;
 

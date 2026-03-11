@@ -244,6 +244,11 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_mousePrevBiasY = 0;
 	_mouseBiasLatch = false;
 	_mouseRecentering = false;
+	_joystickAxisX = 0;
+	_joystickAxisY = 0;
+	_level2JoystickFilteredX = 0;
+	_level2JoystickFilteredY = 0;
+	_activeInputSource = kInputSourceMouse;
 
 	_currentLevel = 0;
 	_flyControlMode = 0;
