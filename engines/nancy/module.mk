@@ -91,6 +91,7 @@ MODULE_OBJS = \
   renderobject.o \
   resource.o \
   sound.o \
+  sound_vorbis.o \
   util.o \
   video.o
 

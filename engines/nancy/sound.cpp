@@ -27,7 +27,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
-#include "audio/decoders/vorbis.h"
+#include "engines/nancy/sound_vorbis.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/sound.h"
@@ -222,7 +222,7 @@ Audio::SeekableAudioStream *SoundManager::makeHISStream(Common::SeekableReadStre
 	if (type == kSoundTypeRaw || type == kSoundTypeDiamondware)
 		return Audio::makeRawStream(subStream, overrideSamplesPerSec == 0 ? samplesPerSec : overrideSamplesPerSec, flags, DisposeAfterUse::YES);
 	else
-		return Audio::makeVorbisStream(subStream, DisposeAfterUse::YES);
+		return makeHISVorbisStream(subStream, DisposeAfterUse::YES);
 }
 
 SoundManager::SoundManager() : _shouldRecalculate(false), _mixer(g_system->getMixer()) {}

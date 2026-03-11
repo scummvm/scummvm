@@ -25,23 +25,12 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_fseek
 
 #include "audio/decoders/vorbis.h"
+#include "audio/decoders/vorbis_intern.h"
 
 #ifdef USE_VORBIS
 
-#include "common/ptr.h"
-#include "common/stream.h"
 #include "common/textconsole.h"
 #include "common/util.h"
-
-#include "audio/audiostream.h"
-
-#ifdef USE_TREMOR
-#include <tremor/ivorbisfile.h>
-#else
-#define OV_EXCLUDE_STATIC_CALLBACKS
-#include <vorbis/vorbisfile.h>
-#endif
-
 
 namespace Audio {
 
@@ -81,38 +70,6 @@ static const ov_callbacks g_stream_wrap = {
 #pragma mark --- Ogg Vorbis stream ---
 #pragma mark -
 
-
-class VorbisStream : public SeekableAudioStream {
-protected:
-	Common::DisposablePtr<Common::SeekableReadStream> _inStream;
-
-	bool _isStereo;
-	int _rate;
-
-	Timestamp _length;
-
-	OggVorbis_File _ovFile;
-
-	int16 _buffer[4096];
-	const int16 *_bufferEnd;
-	const int16 *_pos;
-
-public:
-	// startTime / duration are in milliseconds
-	VorbisStream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag dispose);
-	~VorbisStream();
-
-	int readBuffer(int16 *buffer, const int numSamples) override;
-
-	bool endOfData() const override		{ return _pos >= _bufferEnd; }
-	bool isStereo() const override		{ return _isStereo; }
-	int getRate() const override			{ return _rate; }
-
-	bool seek(const Timestamp &where) override;
-	Timestamp getLength() const override { return _length; }
-protected:
-	bool refill();
-};
 
 VorbisStream::VorbisStream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag dispose) :
 	_inStream(inStream, dispose),
