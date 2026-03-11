@@ -178,6 +178,7 @@ template<typename T>
 class MacDrawPrimitives : public Primitives {
 public:
 	void drawPoint(int x, int y, uint32 color, void *data) override;
+	void drawPolygonScan(const int *polyX, const int *polyY, int npoints, const Common::Rect &bbox, uint32 color, void *data) override;
 };
 
 template<typename T>
@@ -857,6 +858,49 @@ void MacDrawPrimitives<T>::drawPoint(int x, int y, uint32 color, void *data) {
 				}
 	}
 }
+
+// Based on public-domain code by Darel Rex Finley, 2007
+// https://alienryderflex.com/polygon_fill/
+// Basically the same as the one in Graphics::Primitives, only tweaked to produce similar output to QuickDraw.
+template<typename T>
+void MacDrawPrimitives<T>::drawPolygonScan(const int *polyX, const int *polyY, int npoints, const Common::Rect &bbox, uint32 color, void *data) {
+	int *nodeX = (int *)calloc(npoints, sizeof(int));
+	int i, j;
+
+	//  Loop through the rows of the image.
+	for (int pixelY = bbox.top; pixelY < bbox.bottom; pixelY++) {
+		//  Build a list of nodes.
+		int nodes = 0;
+		j = npoints - 1;
+
+		for (i = 0; i < npoints; i++) {
+			if ((polyY[i] <= pixelY && polyY[j] > pixelY) || (polyY[j] <= pixelY && polyY[i] > pixelY)) {
+				nodeX[nodes++] = (int)(polyX[i] + (double)(pixelY - polyY[i]) / (double)(polyY[j]-polyY[i]) *
+														(double)(polyX[j] - polyX[i]) + 0.5);
+			}
+			j = i;
+		}
+
+		//  Sort the nodes
+		Common::sort(nodeX, &nodeX[nodes]);
+
+		//  Fill the pixels between node pairs.
+		for (i = 0; i < nodes; i += 2) {
+			if (nodeX[i  ] >= bbox.right)
+				break;
+			if (nodeX[i + 1] > bbox.left) {
+				nodeX[i] = MAX<int16>(nodeX[i], bbox.left);
+				nodeX[i + 1] = MIN<int16>(nodeX[i + 1] - 1, bbox.right);
+				if (nodeX[i] < nodeX[i + 1])
+					drawHLine(nodeX[i], nodeX[i + 1], pixelY, color, data);
+			}
+		}
+	}
+
+	free(nodeX);
+}
+
+
 
 // TODO: implement for other bpp
 
