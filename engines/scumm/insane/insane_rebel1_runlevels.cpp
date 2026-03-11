@@ -47,6 +47,11 @@ void InsaneRebel1::playCinematic(const char *filename, int32 startFrame) {
 	if (startFrame > 0)
 		splayer->setFastForwardToFrame(startFrame);
 	splayer->play(filename, 12);
+
+	// Level-title text is only meant for the intro cinematic that armed it.
+	// Clear it even when the movie ended through ESC, so it cannot leak into
+	// the next cutscene or gameplay segment.
+	_introTextActive = false;
 }
 
 void InsaneRebel1::clearVideoBuffer() {
