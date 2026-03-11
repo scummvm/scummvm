@@ -205,28 +205,35 @@ bool MenuManager::checkMouseClick(int x, int y) {
 
 	switch (button) {
 	case QUESTION_MARK_BUTTON:
+		_sound->playSound("56ZZZZZZ.SMP", 0);
 		debug("Show credits");
 		_events->_leftMouseClicked = false;
 		showCredits();
 		break;
 	case INVENTORY_PREV_BUTTON:
+		_sound->playSound("56ZZZZZZ.SMP", 0);
 		if (_curInventoryPage > 0)
 			_curInventoryPage--;
 		break;
 	case INVENTORY_NEXT_BUTTON:
+		_sound->playSound("56ZZZZZZ.SMP", 0);
 		if ((_curInventoryPage + 1) * 4 < g_engine->_state->inventoryItems.size())
 			_curInventoryPage++;
 		break;
 	case SAVE_GAME_BUTTON:
+		_sound->playSound("11ZZZZZZ.SMP", 0);
 		return g_engine->saveGameDialog();
 		break;
 	case LOAD_GAME_BUTTON:
+		_sound->playSound("11ZZZZZZ.SMP", 0);
 		return g_engine->loadGameDialog();
 		break;
 	case EXIT_MENU_BUTTON:
+		_sound->playSound("11ZZZZZZ.SMP", 0);
 		g_engine->quitGame();
 		break;
 	case SOUNDS_BUTTON:
+		_sound->playSound("11ZZZZZZ.SMP", 0);
 		_showSoundOptions = true;
 		_menuText = Common::StringArray();
 		break;
@@ -560,9 +567,6 @@ void MenuManager::drawButtons() {
 	drawSpriteToBuffer(_compositeBuffer, buf, _savesDown.left, _savesDown.top, _savesDown.width(), _savesDown.height(), kTransparentColor);
 
 	if (_showSoundOptions) {
-		// _compositeBuffer.transBlitFrom(_masterSoundIcon, Common::Point(233, 188), kSoundControlsTransparentColor);
-		// _compositeBuffer.transBlitFrom(_musicSoundIcon, Common::Point(299, 188), kSoundControlsTransparentColor);
-		// _compositeBuffer.transBlitFrom(_sfxSoundIcon, Common::Point(365, 188), kSoundControlsTransparentColor);
 		_compositeBuffer.transBlitFrom(_masterSoundIcon, Common::Point(266 - _masterSoundIcon.w / 2, 212 - _masterSoundIcon.h / 2), kSoundControlsTransparentColor);
 		_compositeBuffer.transBlitFrom(_musicSoundIcon, Common::Point(333 - _musicSoundIcon.w / 2, 212 - _musicSoundIcon.h / 2), kSoundControlsTransparentColor);
 		_compositeBuffer.transBlitFrom(_sfxSoundIcon, Common::Point(399 - _sfxSoundIcon.w / 2, 212 - _sfxSoundIcon.h / 2), kSoundControlsTransparentColor);

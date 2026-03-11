@@ -217,9 +217,6 @@ void SoundManager::playSound(SonidoFile sound, int channel, int loopCount) {
 				_mixer->stopHandle(_sfxHandles[channel]);
 				debug("Stopped active sound on channel %d to play new sound %s", channel, sound.filename.c_str());
 			}
-			else {
-				debug("Warning: channel %d is already free when trying to play sound %s", channel, sound.filename.c_str());
-			}
 		}
 		Audio::AudioStream *finalStream = loopCount != -1 ? stream : Audio::makeLoopingAudioStream(stream, 0);
 

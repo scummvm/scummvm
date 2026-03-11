@@ -37,8 +37,7 @@ const uint32 kSoundControlOffset = 3037008;
 const uint32 kSoundMasterOffset = 	2662588;
 const uint32 kSoundMusicOffset = 2664746;
 const uint32 kSoundSfxOffset = 2667140;
-const int kTransparentColor = 15;
-// const int kTransparentColor = 195;
+const int kTransparentColor = 65;
 const int kSoundControlsTransparentColor = 195;
 const uint32 kCreditsBackgroundOffset = 3271454;
 
