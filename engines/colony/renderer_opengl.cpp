@@ -90,6 +90,7 @@ public:
 	}
 	void computeScreenViewport() override;
 	void drawSurface(const Graphics::Surface *surf, int x, int y) override;
+	Graphics::Surface *getScreenshot() override;
 
 private:
 	void useColor(uint32 color);
@@ -701,6 +702,18 @@ void OpenGLRenderer::drawSurface(const Graphics::Surface *surf, int x, int y) {
 void OpenGLRenderer::copyToScreen() {
 	glFlush();
 	_system->updateScreen();
+}
+
+Graphics::Surface *OpenGLRenderer::getScreenshot() {
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create(_screenViewport.width(), _screenViewport.height(),
+	                Graphics::PixelFormat::createFormatRGBA32());
+
+	glReadPixels(_screenViewport.left, _system->getHeight() - _screenViewport.bottom,
+	             _screenViewport.width(), _screenViewport.height(),
+	             GL_RGBA, GL_UNSIGNED_BYTE, surface->getPixels());
+	surface->flipVertical(Common::Rect(surface->w, surface->h));
+	return surface;
 }
 
 Renderer *createOpenGLRenderer(OSystem *system, int width, int height) {
