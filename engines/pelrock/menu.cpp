@@ -22,6 +22,7 @@
 #include "common/debug.h"
 #include "common/file.h"
 #include "graphics/paletteman.h"
+#include "graphics/thumbnail.h"
 
 #include "menu.h"
 #include "pelrock/menu.h"
@@ -302,6 +303,10 @@ bool MenuManager::selectInventoryItem(int i) {
 
 void MenuManager::menuLoop() {
 
+	//Save screenshot in case the user saves
+	saveScreenshot();
+	g_engine->_saveAllowed = false;
+
 	g_system->getPaletteManager()->setPalette(_mainMenuPalette, 0, 256);
 	g_engine->changeCursor(DEFAULT);
 	_showSoundOptions = false;
@@ -346,7 +351,13 @@ void MenuManager::menuLoop() {
 	_events->_rightMouseClicked = false;
 	_events->_leftMouseClicked = false;
 	g_system->getPaletteManager()->setPalette(g_engine->_room->_roomPalette, 0, 256);
+	g_engine->_saveAllowed = true;
 	cleanUp();
+}
+
+void MenuManager::saveScreenshot() {
+	g_engine->_saveThumbnail.free();
+	Graphics::createThumbnail(g_engine->_saveThumbnail);
 }
 
 void MenuManager::drawScreen() {

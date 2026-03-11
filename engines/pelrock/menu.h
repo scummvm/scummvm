@@ -219,6 +219,7 @@ public:
 	MenuManager(Graphics::Screen *screen, PelrockEventManager *events, ResourceManager *res, SoundManager *sound);
 	~MenuManager();
 	void menuLoop();
+	void saveScreenshot();
 	void drawScreen();
 	void drawInventoryIcons();
 	void loadMenu();

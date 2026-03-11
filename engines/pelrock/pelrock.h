@@ -179,9 +179,10 @@ public:
 	Graphics::ManagedSurface _compositeBuffer; // Working composition buffer
 	Graphics::ManagedSurface _currentBackground; // Clean background - NEVER modified
 	Graphics::ManagedSurface _bgScreen;
+	Graphics::Surface _saveThumbnail;
 
 	GameStateData *_state = new GameStateData();
-
+	bool _saveAllowed = true;
 	SmallFont *_smallFont = nullptr;
 	LargeFont *_largeFont = nullptr;
 	DoubleSmallFont *_doubleSmallFont = nullptr;
@@ -220,7 +221,7 @@ public:
 		return true;
 	}
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
-		return true;
+		return _saveAllowed;
 	}
 
 	/**
