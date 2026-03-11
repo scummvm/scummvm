@@ -695,7 +695,8 @@ void ColonyEngine::battleDrawTanks() {
 		int lPincerPts[4][3];
 		int nabs_lookx = (drone.lookx > 0) ? -drone.lookx : drone.lookx; // nabs
 		int lLook = nabs_lookx - 32;
-		if (lLook < 0) lLook += 256;
+		if (lLook < 0)
+			lLook += 256;
 		for (int j = 0; j < 4; j++) {
 			long tcos = _cost[(uint8)lLook];
 			long tsin = _sint[(uint8)lLook];
@@ -712,7 +713,8 @@ void ColonyEngine::battleDrawTanks() {
 		// Build animated right pincer vertices
 		int rPincerPts[4][3];
 		int rLook = ABS(drone.lookx) - 32;
-		if (rLook < 0) rLook += 256;
+		if (rLook < 0)
+			rLook += 256;
 		for (int j = 0; j < 4; j++) {
 			long tcos = _cost[(uint8)rLook];
 			long tsin = _sint[(uint8)rLook];

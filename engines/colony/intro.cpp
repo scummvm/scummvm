@@ -323,7 +323,8 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 		int s = (int16)(_randomSource.getRandomNumber(0xFFFF)) >> 7;
 		int c = (int16)(_randomSource.getRandomNumber(0xFFFF)) >> 7;
 		int d = _randomSource.getRandomNumber(MAXSTAR);
-		if (d < 1) d = 1;
+		if (d < 1)
+			d = 1;
 		int rr = rtable[d];
 		int xx = centerX + (int)(((long long)s * rr) >> 7);
 		int yy = centerY + (int)(((long long)c * rr) >> 7);
@@ -341,7 +342,8 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 
 	for (int i = 0; i < NSTARS; i++) {
 		int d = dist[i] = _randomSource.getRandomNumber(MAXSTAR);
-		if (d <= 0x030) d = dist[i] = MAXSTAR;
+		if (d <= 0x030)
+			d = dist[i] = MAXSTAR;
 		int s = xang[i] = (int16)(_randomSource.getRandomNumber(0xFFFF)) >> 7;
 		int c = yang[i] = (int16)(_randomSource.getRandomNumber(0xFFFF)) >> 7;
 
@@ -385,7 +387,8 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 			}
 
 			int d = (dist[i] -= deltapd);
-			if (d < 1) d = 1;
+			if (d < 1)
+				d = 1;
 			int rr = rtable[d];
 			xsave2[i] = centerX + (int)(((long long)s * rr) >> 7);
 			ysave2[i] = centerY + (int)(((long long)c * rr) >> 7);
@@ -399,7 +402,8 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 
 	// Fade-out phase: stars fly off without resetting (trails accumulate via XOR)
 	int nstars = 2 * ((MAXSTAR - 0x030) / deltapd);
-	if (nstars > 200) nstars = 200;
+	if (nstars > 200)
+		nstars = 200;
 	for (int k = 0; k < nstars; k++) {
 		if (checkSkipRequested()) {
 			_gfx->setXorMode(false);
@@ -411,7 +415,8 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 			int s = xang[i];
 			int c = yang[i];
 			dist[i] -= deltapd;
-			if (dist[i] <= 0x030) dist[i] = MAXSTAR;
+			if (dist[i] <= 0x030)
+				dist[i] = MAXSTAR;
 
 			if (d >= 1 && d <= MAXSTAR) {
 				int rr1 = rtable[d];
@@ -476,7 +481,8 @@ bool ColonyEngine::makeBlackHole() {
 			_gfx->setPalette(pal, 128, 1);
 
 			starcnt++;
-			if (starcnt == 8) starcnt = 0;
+			if (starcnt == 8)
+				starcnt = 0;
 
 			for (int j = 0; j < 256; j += 8) {
 				int idx = (j + starcnt) & 0xFF;
@@ -496,7 +502,8 @@ bool ColonyEngine::makeBlackHole() {
 			_gfx->copyToScreen();
 			_system->delayMillis(16);
 
-			if (checkSkipRequested()) return true;
+			if (checkSkipRequested())
+				return true;
 		}
 	}
 	_gfx->copyToScreen();
@@ -555,7 +562,8 @@ bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *m
 		_gfx->drawString(font, str, x, centery + 2, 176, Graphics::kTextAlignLeft);
 		_gfx->copyToScreen();
 
-		if (checkSkipRequested()) return true;
+		if (checkSkipRequested())
+			return true;
 		_system->delayMillis(8);
 	}
 
@@ -564,7 +572,8 @@ bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *m
 	//   while(!SoundDone()); StopSound(); PlayKlaxon(); InvertRect(&invrt);
 	_sound->stop(); // EndCSound()
 	for (int i = 0; i < 6; i++) {
-		if (checkSkipRequested()) return true;
+		if (checkSkipRequested())
+			return true;
 
 		// Wait for previous klaxon to finish
 		while (_sound->isPlaying() && !shouldQuit())
@@ -590,7 +599,8 @@ bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *m
 		_gfx->drawString(font, str, x, centery + 2, 176, Graphics::kTextAlignLeft);
 		_gfx->copyToScreen();
 
-		if (checkSkipRequested()) return true;
+		if (checkSkipRequested())
+			return true;
 		_system->delayMillis(8);
 	}
 
