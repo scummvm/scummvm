@@ -42,6 +42,7 @@
 #include "pelrock/offsets.h"
 #include "pelrock/pathfinding.h"
 #include "pelrock/pelrock.h"
+#include "pelrock/slidingpuzzle.h"
 #include "pelrock/util.h"
 
 namespace Pelrock {
@@ -1512,11 +1513,16 @@ void PelrockEngine::gameLoop() {
 	}
 
 	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_k) {
+		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
 		credits();
+	}
+	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_v) {
+		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
+		SlidingPuzzle puzzle(_events, _sound);
+		puzzle.run();
 	}
 
 	renderScene();
-
 	_screen->update();
 }
 

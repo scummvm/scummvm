@@ -42,22 +42,14 @@ void PelrockEventManager::pollEvent() {
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RETURN_TO_LAUNCHER:
 			return;
-
-		// case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-		// 	// handle action
-		// 	handleKey(_event);
-		// 	break;
-
-		// case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
-		// 	break;
 		case Common::EVENT_KEYDOWN:
 			changeGameSpeed(_event);
-			// _keyPressed = true;
 			_lastKeyEvent = _event.kbd.keycode;
+			_isKeydown = true;
 			break;
-		// 	return;
-		// case Common::EVENT_KEYUP:
-		// 	return;
+		case Common::EVENT_KEYUP:
+			_isKeydown = false;
+			return;
 		case Common::EVENT_LBUTTONDOWN:
 			if (_leftMouseButton == 0) {
 				_clickTime = g_system->getMillis();
@@ -68,10 +60,7 @@ void PelrockEventManager::pollEvent() {
 			break;
 		case Common::EVENT_LBUTTONUP:
 			if (_leftMouseButton == 1) {
-				// Don't treat as regular click if we're in popup selection mode
-				// if (!_popupSelectionMode) {
 				_leftMouseClicked = true;
-				// }
 				_releaseX = _event.mouse.x;
 				_releaseY = _event.mouse.y;
 				_longClicked = false;

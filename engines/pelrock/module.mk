@@ -22,6 +22,7 @@ MODULE_OBJS = \
 	graphics.o \
 	saveload.o \
 	spellbook.o \
+	slidingpuzzle.o \
 	cdplayer.o \
 	backgroundbook.o
 
