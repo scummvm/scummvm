@@ -113,8 +113,8 @@ int32 GameFile::readPackedInt() {
 		warning("readPackedInt skipped %d", skipsz);
 	}
 
-	static int32 negs[4] {0, -1, -1025, -263169};
-	static int32 adds[4] {0, 0x80, 0x480, 0x40480};
+	static int32 negs[5] {0, -1, -1025, -263169, 0x47f};
+	static int32 adds[5] {0, 0x80, 0x480, 0x40480, 0};
 
 	if (b & 0x20) {
 		val += (b & 3) * (1 << ((num << 3) & 0x1f));

@@ -1216,7 +1216,6 @@ void GamosEngine::readData2(const RawData &data) {
 		_messageProc._keyCodes[9] = KeyCodes::WIN_RETURN;
 		_messageProc._keyCodes[10] = KeyCodes::WIN_TAB;
 		_messageProc._keyCodes[11] = KeyCodes::WIN_INVALID;
-		_messageProc._keyCodes[12] = KeyCodes::WIN_INVALID;
 	}
 }
 
