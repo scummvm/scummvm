@@ -410,6 +410,19 @@ void InsaneRebel1::applyFrameObjectHitState(int16 targetIdx) {
 		_frameObjectState[altIndex] &= ~bit;
 }
 
+bool InsaneRebel1::isFrameObjectPrimarySet(int16 objectId) const {
+	if (objectId <= 0)
+		return false;
+
+	const int bitIndex = objectId - 1;
+	const int byteIndex = bitIndex >> 3;
+	if (byteIndex < 0 || byteIndex >= 0x96 || byteIndex >= kFrameObjectStateBytes)
+		return false;
+
+	const byte bit = (byte)(0x80 >> (bitIndex & 7));
+	return (_frameObjectState[byteIndex] & bit) != 0;
+}
+
 bool InsaneRebel1::handleFrameObjectTarget(int16 objectId, int16 left, int16 top, int16 width, int16 height,
 		int codec, uint8 &ra1Param) {
 	if (!_interactiveVideoActive)
@@ -1296,9 +1309,14 @@ void InsaneRebel1::updateAsteroidPhysics() {
 
 	_frameCounter++;
 
-	// Level 4 Phase 2: enable torpedo mode at frame 0x3E
-	if (_currentLevel == 3 && _levelGameplayPhase == 2 && _frameCounter == 0x3E)
-		_gameplayFlags75ff |= 2;
+	// Level 4 Phase 2: enable torpedo mode at frame 0x3E and finish as
+	// soon as the torpedo registers a hit. The DOS loop exits on killCount.
+	if (_currentLevel == 3 && _levelGameplayPhase == 2) {
+		if (_frameCounter == 0x3E)
+			_gameplayFlags75ff |= 2;
+		if (_killCount > 0)
+			_vm->_smushVideoShouldFinish = true;
+	}
 
 	// Level 4 Phase 1: track shield generator hits per frame.
 	// Original (RunLevel4Flow): g_recentKillObjectIdPlus1 checked every frame.
@@ -1324,12 +1342,16 @@ void InsaneRebel1::updateAsteroidPhysics() {
 		}
 	}
 
-	// Level 15 Phase 2: enable torpedo and end on hit.
-	// Original (RunLevel1GameLoop): torpedo at frame 0x18A, ends when DAT_00007602 & 2.
+	// Level 15 Phase 2: enable torpedo at frame 0x18A, expose the protected
+	// target IDs used by the original flow, and finish when object-state bit
+	// 0x7602 & 2 becomes set.
 	if (_currentLevel == 14 && _levelGameplayPhase == 2) {
-		if (_frameCounter == 0x18A)
+		if (_frameCounter == 0x18A) {
 			_gameplayFlags75ff |= 2;
-		if (_killCount > 0) {
+			_protectedTargetA = 0x67;
+			_protectedTargetB = 0x69;
+		}
+		if (isFrameObjectPrimarySet(7)) {
 			_torpedoFired = true;
 			_vm->_smushVideoShouldFinish = true;
 		}
@@ -1775,7 +1797,7 @@ void InsaneRebel1::processShot() {
 	_shotSlots[slot].centerY = originY;
 	_shotSlots[slot].variant = _shotAlternator;
 	_shotAlternator = 1 - _shotAlternator;
-	playSfx(kSfxLaserShot, 127, 0);
+	playSfx((_gameplayFlags75ff & 0x2) ? kSfxAlert : kSfxLaserShot, 127, 0);
 
 	debug(5, "RA1 shot: slot=%d pos=(%d,%d) origin=(%d,%d)", slot,
 		_shotSlots[slot].posX, _shotSlots[slot].posY, originX, originY);
