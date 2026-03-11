@@ -28,7 +28,9 @@ MidiMusic::MidiMusic() {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_PREFER_GM);
 
 	_driver = MidiDriver::createMidi(dev);
-	_driver->open();
+	int returnCode = _driver->open();
+	if (returnCode != 0)
+		error("MidiMusic::MidiMusic _driver->open() - Failed to open MIDI music driver - error code %d.", returnCode);
 	_driver->sendGMReset();
 }
 

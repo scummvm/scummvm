@@ -74,13 +74,14 @@ void GamosEngine::playVideo(const Common::String &video, const Common::Point &po
     if (SearchMan.hasFile(bmpPath)) {
         Common::File f;
         if (f.open(bmpPath)) {
-            bmp.loadStream(f);
-            f.close();
+            if (bmp.loadStream(f)) {
+                bkg = bmp.getSurface();
+                bkgPalette = bmp.getPalette().data();
+                bkgPaletteCount = bmp.getPalette().size();
+                loadbkg = true;
+            }
 
-            bkg = bmp.getSurface();
-            bkgPalette = bmp.getPalette().data();
-            bkgPaletteCount = bmp.getPalette().size();
-            loadbkg = true;
+            f.close();
         }
     }
 
