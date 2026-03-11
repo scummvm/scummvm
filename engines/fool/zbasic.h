@@ -291,7 +291,7 @@ public:
 
 	void unk_4(); // possibly quit?
 	int16 unk_5();
-	void unk_6(int16 unk1, int32 unk2, int16 unk3, int16 unk4);
+	void sound(int16 frequency, int32 duration, int16 volume, int16 voice);
 	void unk_10();
 	void unk_11(int16 unk1);
 	void unk_20();
