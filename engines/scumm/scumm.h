@@ -747,6 +747,7 @@ protected:
 
 	void initBanners();
 	Common::KeyState showBannerAndPause(int bannerId, int32 waitTime, const char *msg, ...);
+	bool showBannerAndPauseForTextInput(int bannerId, const char *prompt, Common::String &input, uint maxLength = 255);
 	Common::KeyState showOldStyleBannerAndPause(const char *msg, int color, int32 waitTime);
 	Common::KeyState printMessageAndPause(const char *msg, int color, int32 waitTime, bool drawOnSentenceLine);
 
@@ -875,8 +876,11 @@ public:
 		bool _sputmCmdActive = false;
 		byte _sputmCmdEnterCount = 0;
 		Common::String _sputmCmdBuf;
+		Common::String _name;
 		
-		bool tryLoadPlayback(ScummEngine *engine);
+		void reset();
+		bool tryLoadPlayback(ScummEngine *engine, const Common::Path &path = Common::Path("demo.rec"));
+		bool startPlayback(ScummEngine *engine);
 		void playbackPump(ScummEngine *engine);
 		
 		//MI2 DOS NI Demo specific playback helpers

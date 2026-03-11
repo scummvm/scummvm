@@ -26,6 +26,30 @@
 
 namespace Scumm {
 
+void ScummEngine::Playback::reset() {
+	_loaded = false;
+	_attempted = false;
+	_active = false;
+	_mi2DemoVarsApplied = false;
+	_events.clear();
+	_streamOff = 0;
+	_streamBytes = 0;
+	_nextIndex = 0;
+	_lastRoom = -1;
+	_hasPrevMbs = false;
+	_prevMbs = 0;
+	_firstInteractIndex = 0;
+	_firstInteractValid = false;
+	_curX = 0;
+	_curY = 0;
+	_pendingLUp = false;
+	_pendingRUp = false;
+	_sputmCmdActive = false;
+	_sputmCmdEnterCount = 0;
+	_sputmCmdBuf.clear();
+	_name.clear();
+}
+
 void ScummEngine::Playback::parseStream(const Common::Array<byte> &stream, Common::Array<FrameEvent> &outEvents) {
 	outEvents.clear();
 
@@ -81,7 +105,7 @@ bool ScummEngine::applyMi2NiDemoOverride() {
 }
 
 
-bool ScummEngine::Playback::tryLoadPlayback(ScummEngine *engine) {
+bool ScummEngine::Playback::tryLoadPlayback(ScummEngine *engine, const Common::Path &path) {
 	if (_loaded || _attempted)
 		return _loaded;
 
@@ -91,10 +115,12 @@ bool ScummEngine::Playback::tryLoadPlayback(ScummEngine *engine) {
 		return false;
 
 	Common::File f;
-	if (!f.open(Common::Path("demo.rec"))) {
-		warning("Playback: couldn't find demo.rec");
+	if (!f.open(path)) {
+		warning("Playback: couldn't open %s", path.toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
+
+	_name = path.toString(Common::Path::kNativeSeparator);
 
 	const uint32 fileSize = (uint32)f.size();
 	Common::Array<byte> buf;
@@ -171,6 +197,24 @@ bool ScummEngine::Playback::tryLoadPlayback(ScummEngine *engine) {
 	return _loaded;
 }
 
+bool ScummEngine::Playback::startPlayback(ScummEngine *engine) {
+	if (!engine || !_loaded || _events.empty())
+		return false;
+
+	_active = true;
+	_nextIndex = 0;
+	_hasPrevMbs = false;
+	_prevMbs = 0;
+	_pendingLUp = false;
+	_pendingRUp = false;
+	_sputmCmdActive = false;
+	_sputmCmdEnterCount = 0;
+	_sputmCmdBuf.clear();
+	_curX = engine->_mouse.x;
+	_curY = engine->_mouse.y;
+	return true;
+}
+
 void ScummEngine::Playback::mi2DemoArmPlaybackByRoom(ScummEngine *engine) {
 	if (!engine)
 		return;
@@ -190,7 +234,8 @@ void ScummEngine::Playback::mi2DemoArmPlaybackByRoom(ScummEngine *engine) {
 	}
 
 	if (room == 4) {
-		_active = true;
+		if (!_active)
+			startPlayback(engine);
 
 		if (!_mi2DemoVarsApplied) {
 			engine->applyMi2NiDemoOverride();
@@ -379,22 +424,12 @@ void ScummEngine::Playback::playbackPump(ScummEngine *engine) {
 	}
 
 	if (fev.key != 0) {
-		if (!handleMi2NIDemoSputmDebugKey(engine, fev.key)) {
-			Common::Event kev;
-			kev.type = Common::EVENT_KEYDOWN;
-			kev.kbd.flags = 0;
-			kev.kbd.ascii = (uint16)fev.key;
-			kev.kbd.keycode = (Common::KeyCode)((fev.key == 27) ? Common::KEYCODE_ESCAPE : (int)Common::KEYCODE_INVALID);
-			engine->parseEvent(kev);
-
-			Common::Event kup;
-			kup.type = Common::EVENT_KEYUP;
-			kup.kbd = kev.kbd;
-			engine->parseEvent(kup);
-		}
+		if (!handleMi2NIDemoSputmDebugKey(engine, fev.key))
+			engine->_mouseAndKeyboardStat = fev.key;
 	}
 
-	engine->_mouseAndKeyboardStat = (engine->_mouseAndKeyboardStat & ~MBS_MOUSE_MASK) | (cur & MBS_MOUSE_MASK);
+	if (fev.key == 0)
+		engine->_mouseAndKeyboardStat = (engine->_mouseAndKeyboardStat & ~MBS_MOUSE_MASK) | (cur & MBS_MOUSE_MASK);
 
 	_prevMbs = cur;
 	_hasPrevMbs = true;
