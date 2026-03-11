@@ -375,6 +375,7 @@ bool Debugger::cmdColony(int argc, const char **argv) {
 		_vm->_weapons = 3;
 		_vm->_armor = 3;
 		_vm->_hasKeycard = true;
+		_vm->_unlocked = true;
 		_vm->_orbit = 0;
 		_vm->_projon = false;
 		_vm->_pcount = 0;
@@ -392,6 +393,7 @@ bool Debugger::cmdColony(int argc, const char **argv) {
 	debugPrintf("Suit: power=[%d,%d,%d] weapons=%d armor=%d\n",
 	            (int)_vm->_me.power[0], (int)_vm->_me.power[1],
 	            (int)_vm->_me.power[2], _vm->_weapons, _vm->_armor);
+	debugPrintf("Security state forced to unlocked for colony debug entry\n");
 	return false;
 }
 

@@ -1201,6 +1201,13 @@ void ColonyEngine::handleAirlockClick(int item) {
 	if (closeStart < 1)
 		closeStart = 1;
 
+	debugC(1, kColonyDebugAnimation,
+		"Airlock click: item=%d locked=%d unlocked=%d core=%d levelCount=%d wall=(%d,%d,%d) dest=[%d,%d,%d]",
+		item, locked ? 1 : 0, _unlocked ? 1 : 0, _corePower[_coreIndex],
+		(_level >= 1 && _level <= 8) ? _levelData[_level - 1].count : -1,
+		_airlockX, _airlockY, _airlockDirection,
+		airlock ? airlock[2] : -1, airlock ? airlock[3] : -1, airlock ? airlock[4] : -1);
+
 	// Original DoAirLock() also differs by platform:
 	// DOS uses sprite 2 as the 3-state door, Mac uses sprite 3 as the 5-state door.
 	if ((item == exitItem || (!isMac && item == 101)) && !locked) {
@@ -1236,6 +1243,10 @@ void ColonyEngine::handleAirlockClick(int item) {
 				return;
 			}
 		}
+	} else if (item == toggleItem) {
+		debugC(1, kColonyDebugAnimation,
+			"Airlock toggle ignored: unlocked=%d core=%d airlockPtr=%d",
+			_unlocked ? 1 : 0, _corePower[_coreIndex], airlock ? 1 : 0);
 	} else if (item == 101) {
 		_animationRunning = false;
 	}
