@@ -19,37 +19,6 @@ static bool isEggType(int type) {
 	return type > kRobUPyramid && type < kRobQueen;
 }
 
-static uint8 trailCodeForDelta(int dx, int dy) {
-	if (dx > 1)
-		dx = 1;
-	else if (dx < -1)
-		dx = -1;
-
-	if (dy > 1)
-		dy = 1;
-	else if (dy < -1)
-		dy = -1;
-
-	if (dx > 0 && dy > 0)
-		return 1;
-	if (dx > 0 && dy == 0)
-		return 2;
-	if (dx > 0 && dy < 0)
-		return 3;
-	if (dx == 0 && dy < 0)
-		return 4;
-	if (dx < 0 && dy < 0)
-		return 5;
-	if (dx < 0 && dy == 0)
-		return 6;
-	if (dx < 0 && dy > 0)
-		return 7;
-	if (dx == 0 && dy > 0)
-		return 8;
-
-	return 0;
-}
-
 static int trailTargetAngle(uint8 code) {
 	switch (code) {
 	case 2:
@@ -71,17 +40,6 @@ static int trailTargetAngle(uint8 code) {
 	default:
 		return -1;
 	}
-}
-
-void ColonyEngine::notePlayerTrail(int oldX, int oldY, int newX, int newY) {
-	if (oldX < 0 || oldX >= 32 || oldY < 0 || oldY >= 32)
-		return;
-	if (newX < 0 || newX >= 32 || newY < 0 || newY >= 32)
-		return;
-
-	const uint8 code = trailCodeForDelta(newX - oldX, newY - oldY);
-	if (code != 0)
-		_dirXY[oldX][oldY] = code;
 }
 
 void ColonyEngine::respawnObject(int num, int type) {

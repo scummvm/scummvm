@@ -683,7 +683,6 @@ private:
 	void robotShoot(int num);
 	void meEat();
 	void respawnObject(int num, int type);
-	void notePlayerTrail(int oldX, int oldY, int newX, int newY);
 };
 
 } // End of namespace Colony
