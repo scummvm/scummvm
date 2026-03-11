@@ -21,7 +21,7 @@
 
 #include "colony/colony.h"
 #include "colony/debugger.h"
-#include "colony/gfx.h"
+#include "colony/renderer.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/system.h"

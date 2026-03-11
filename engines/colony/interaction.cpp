@@ -20,7 +20,7 @@
  */
 
 #include "colony/colony.h"
-#include "colony/gfx.h"
+#include "colony/renderer.h"
 #include "colony/sound.h"
 #include "common/system.h"
 #include "common/debug.h"

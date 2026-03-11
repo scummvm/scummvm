@@ -21,7 +21,7 @@
 
 #include "colony/colony.h"
 #include "colony/render_internal.h"
-#include "colony/gfx.h"
+#include "colony/renderer.h"
 #include "common/system.h"
 #include "common/util.h"
 #include "common/algorithm.h"
