@@ -49,6 +49,14 @@ static const int kRobotTypeOrder[] = {
 	kRobSCube
 };
 
+static void reservePlayerObjectSlot(Common::Array<Thing> &objects) {
+	if ((int)objects.size() == kMeNum - 1) {
+		Thing reserved;
+		memset(&reserved, 0, sizeof(reserved));
+		objects.push_back(reserved);
+	}
+}
+
 void ColonyEngine::loadMap(int mnum) {
 	saveLevelState();
 
@@ -110,6 +118,7 @@ void ColonyEngine::loadMap(int mnum) {
 							obj.where.yindex = j;
 							obj.where.ang = (uint8)(_mapData[i][j][4][2] + 32);
 							obj.where.look = obj.where.ang;
+							reservePlayerObjectSlot(_objects);
 							_objects.push_back(obj);
 							const int objNum = (int)_objects.size(); // 1-based, DOS-style robot slots
 							if (objNum > 0 && objNum < 256 && _robotArray[i][j] == 0)
@@ -198,6 +207,8 @@ void ColonyEngine::createObject(int type, int xloc, int yloc, uint8 ang) {
 
 	int slot = -1;
 	for (int j = _dynamicObjectBase; j < (int)_objects.size(); j++) {
+		if (j == kMeNum - 1)
+			continue;
 		if (!_objects[j].alive) {
 			slot = j;
 			break;
@@ -208,6 +219,7 @@ void ColonyEngine::createObject(int type, int xloc, int yloc, uint8 ang) {
 	} else {
 		Thing obj;
 		memset(&obj, 0, sizeof(obj));
+		reservePlayerObjectSlot(_objects);
 		_objects.push_back(obj);
 		slot = (int)_objects.size() - 1;
 		resetObjectSlot(slot, type, xloc, yloc, ang);

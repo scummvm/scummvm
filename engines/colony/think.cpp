@@ -467,6 +467,12 @@ void ColonyEngine::snoopThink(int num) {
 		if (collide == kMeNum) {
 			respawnObject(num, kRobSnoop);
 			_sound->play(Sound::kSlug);
+			debugC(1, kColonyDebugCombat,
+				"snoopHitPlayer: snoop=%d cell=(%d,%d) delta=[-%d,-%d,-%d]",
+				num, oldX, oldY,
+				(int)MIN<int32>((3 * _me.power[0]) / 4, 32000),
+				(int)MIN<int32>((3 * _me.power[1]) / 4, 32000),
+				(int)MIN<int32>((3 * _me.power[2]) / 4, 32000));
 			setPower(-(int)MIN<int32>((3 * _me.power[0]) / 4, 32000),
 				-(int)MIN<int32>((3 * _me.power[1]) / 4, 32000),
 				-(int)MIN<int32>((3 * _me.power[2]) / 4, 32000));
@@ -644,6 +650,10 @@ int ColonyEngine::scanForPlayer(int num) {
 	if (collide == kMeNum) {
 		obj.where.dx = (_me.xloc - fireX) >> 1;
 		obj.where.dy = (_me.yloc - fireY) >> 1;
+		debugC(1, kColonyDebugCombat,
+			"scanForPlayer: robot=%d type=%d from=(%d,%d) ang=%d sees player, aim=(%d,%d)",
+			num, obj.type, obj.where.xindex, obj.where.yindex, obj.where.ang,
+			(int)obj.where.dx, (int)obj.where.dy);
 	}
 
 	return collide;
@@ -669,6 +679,9 @@ void ColonyEngine::robotShoot(int num) {
 	const int epower2 = qlog(_me.power[2]);
 	const int armor2 = _armor * _armor;
 	int damage = 0;
+	int damage0 = 0;
+	int damage1 = 0;
+	int damage2 = 0;
 
 	obj.opcode = kOpcodeFShoot;
 	_sound->play(Sound::kShoot);
@@ -678,46 +691,68 @@ void ColonyEngine::robotShoot(int num) {
 		damage = epower2 * armor2 - (1 << _level);
 		if (damage > -_level)
 			damage = -_level;
-		setPower(damage, damage, damage);
+		damage0 = damage;
+		damage1 = damage;
+		damage2 = damage;
 		break;
 	case kRobPyramid:
 		damage = epower2 * armor2 - (1 << _level);
 		if (damage > -_level)
 			damage = -_level;
-		setPower(damage, -_level, -_level);
+		damage0 = damage;
+		damage1 = -_level;
+		damage2 = -_level;
 		break;
 	case kRobCube:
 		damage = epower2 * armor2 - (1 << _level);
 		if (damage > -_level)
 			damage = -_level;
-		setPower(-_level, damage, -_level);
+		damage0 = -_level;
+		damage1 = damage;
+		damage2 = -_level;
 		break;
 	case kRobUPyramid:
 		damage = epower2 * armor2 - (1 << _level);
 		if (damage > -_level)
 			damage = -_level;
-		setPower(-_level, -_level, damage);
+		damage0 = -_level;
+		damage1 = -_level;
+		damage2 = damage;
 		break;
 	case kRobQueen:
 		damage = epower2 * armor2 - ((_level == 1 || _level == 7) ? (3 << 10) : (3 << _level));
 		if (damage > -_level)
 			damage = -(1 << _level);
-		setPower(damage, damage, damage);
+		damage0 = damage;
+		damage1 = damage;
+		damage2 = damage;
 		break;
 	case kRobDrone:
 		damage = epower2 * armor2 - (4 << _level);
 		if (damage > -_level)
 			damage = -(_level << 1);
-		setPower(damage, damage, damage);
+		damage0 = damage;
+		damage1 = damage;
+		damage2 = damage;
 		break;
 	case kRobSoldier:
 		damage = epower2 * armor2 - (5 << _level);
 		if (damage > -_level)
 			damage = -(_level << 1);
-		setPower(damage, damage, damage);
+		damage0 = damage;
+		damage1 = damage;
+		damage2 = damage;
 		break;
 	default:
 		break;
+	}
+
+	if (damage0 != 0 || damage1 != 0 || damage2 != 0) {
+		debugC(1, kColonyDebugCombat,
+			"robotShoot: robot=%d type=%d cell=(%d,%d) ang=%d delta=[%d,%d,%d] player=(%d,%d)",
+			num, obj.type, obj.where.xindex, obj.where.yindex, obj.where.ang,
+			damage0, damage1, damage2, _me.xindex, _me.yindex);
+		setPower(damage0, damage1, damage2);
 	}
 }
 

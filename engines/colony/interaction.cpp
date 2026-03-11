@@ -278,9 +278,23 @@ void ColonyEngine::interactWithObject(int objNum) {
 // shoot.c SetPower(): adjust player's 3 power levels and update display.
 // p0=weapons delta, p1=life delta, p2=armor delta.
 void ColonyEngine::setPower(int p0, int p1, int p2) {
+	const int32 oldPower0 = _me.power[0];
+	const int32 oldPower1 = _me.power[1];
+	const int32 oldPower2 = _me.power[2];
+
 	_me.power[0] = MAX<int32>(_me.power[0] + p0, 0);
 	_me.power[1] = MAX<int32>(_me.power[1] + p1, 0);
 	_me.power[2] = MAX<int32>(_me.power[2] + p2, 0);
+
+	if (p0 != 0 || p1 != 0 || p2 != 0) {
+		debugC(1, kColonyDebugCombat,
+			"setPower: delta=[%d,%d,%d] from=[%d,%d,%d] to=[%d,%d,%d] mode=%s level=%d pos=(%d,%d)",
+			p0, p1, p2,
+			(int)oldPower0, (int)oldPower1, (int)oldPower2,
+			(int)_me.power[0], (int)_me.power[1], (int)_me.power[2],
+			_gameMode == kModeBattle ? "battle" : "colony",
+			_level, _me.xindex, _me.yindex);
+	}
 
 	if (_me.power[1] <= 0) {
 		debugC(1, kColonyDebugUI, "Player died! power=[%d,%d,%d]",

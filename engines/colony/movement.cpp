@@ -321,6 +321,8 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 		if (yind2 > pobject->yindex) {
 			if (!(_wall[pobject->xindex][yind2] & 1))
 				return moveTo(1);
+			if (pobject->type == 2)
+				return -1;
 			{
 				int r = tryFeature(kDirNorth);
 				if (r != -2)
@@ -335,6 +337,8 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 
 		if (!(_wall[pobject->xindex][pobject->yindex] & 1))
 			return moveTo(5);
+		if (pobject->type == 2)
+			return -1;
 		{
 			int r = tryFeature(kDirSouth);
 			if (r != -2)
@@ -351,6 +355,8 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 		if (xind2 > pobject->xindex) {
 			if (!(_wall[xind2][pobject->yindex] & 2))
 				return moveTo(3);
+			if (pobject->type == 2)
+				return -1;
 			{
 				int r = tryFeature(kDirEast);
 				if (r != -2)
@@ -365,6 +371,8 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 
 		if (!(_wall[pobject->xindex][pobject->yindex] & 2))
 			return moveTo(7);
+		if (pobject->type == 2)
+			return -1;
 		{
 			int r = tryFeature(kDirWest);
 			if (r != -2)
@@ -446,7 +454,7 @@ bool ColonyEngine::setDoorState(int x, int y, int direction, int state) {
 	}
 
 	if (nx >= 0 && nx < 31 && ny >= 0 && ny < 31 && opposite >= 0) {
-		if (_mapData[nx][ny][opposite][0] == wallType)
+		if (wallType == kWallFeatureAirlock || _mapData[nx][ny][opposite][0] == wallType)
 			_mapData[nx][ny][opposite][1] = (uint8)state;
 	}
 
@@ -838,6 +846,9 @@ void ColonyEngine::fallThroughHole() {
 
 	// Original tunnel(TRUE): damage the player's three power bars.
 	int damage = -(_level << 7);
+	debugC(1, kColonyDebugCombat,
+		"fallThroughHole: level=%d from=(%d,%d) deadFall=%d delta=[%d,%d,%d]",
+		_level, _me.xindex, _me.yindex, deadFall ? 1 : 0, damage, damage, damage);
 	setPower(damage, damage, damage);
 	playTunnelEffect(true);
 
@@ -893,6 +904,9 @@ void ColonyEngine::checkCenter() {
 			break;
 		case 5: // HOTFOOT  electric floor, damages power
 			_sound->play(Sound::kBzzz);
+			debugC(1, kColonyDebugCombat,
+				"hotfoot: level=%d cell=(%d,%d) delta=[%d,%d,%d]",
+				_level, _me.xindex, _me.yindex, -(5 << _level), -(5 << _level), -(5 << _level));
 			setPower(-(5 << _level), -(5 << _level), -(5 << _level));
 			break;
 		default:

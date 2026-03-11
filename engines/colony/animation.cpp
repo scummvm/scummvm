@@ -1191,9 +1191,10 @@ void ColonyEngine::handleAirlockClick(int item) {
 	const int doorFrames = getAnimationStateCount(_lSprites, doorItem);
 	int openStart = isMac ? 2 : 1;
 	int closeStart = isMac ? doorFrames - 1 : doorFrames;
-	const uint8 *airlock = (_airlockX >= 0 && _airlockY >= 0 && _airlockDirection >= 0) ?
-		mapFeatureAt(_airlockX, _airlockY, _airlockDirection) : nullptr;
-	const bool locked = airlock ? (airlock[1] != 0) : !_doorOpen;
+	uint8 *airlock = (_airlockX >= 0 && _airlockY >= 0 && _airlockDirection >= 0 &&
+		_airlockX < 31 && _airlockY < 31 && _airlockDirection < 5) ?
+		&_mapData[_airlockX][_airlockY][_airlockDirection][0] : nullptr;
+	bool locked = airlock ? (airlock[1] != 0) : !_doorOpen;
 
 	if (openStart > doorFrames)
 		openStart = doorFrames;
@@ -1216,6 +1217,7 @@ void ColonyEngine::handleAirlockClick(int item) {
 			}
 			setDoorState(_airlockX, _airlockY, _airlockDirection, 1);
 			_doorOpen = false;
+			locked = true;
 		} else {
 			for (int i = openStart; i <= doorFrames; i++) {
 				setObjectState(doorItem, i);
@@ -1226,6 +1228,7 @@ void ColonyEngine::handleAirlockClick(int item) {
 
 			setDoorState(_airlockX, _airlockY, _airlockDirection, 0);
 			_doorOpen = true;
+			locked = false;
 			if (_level >= 1 && _level <= 8 && _levelData[_level - 1].count == 2) {
 				_airlockTerminate = true;
 				_animationResult = 0;

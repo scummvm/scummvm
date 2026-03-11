@@ -218,6 +218,7 @@ enum {
 	kColonyDebugMap = 1 << 3,
 	kColonyDebugSound = 1 << 4,
 	kColonyDebugUI = 1 << 5,
+	kColonyDebugCombat = 1 << 6,
 };
 
 // Mac menu action IDs (matching original Mac Colony menu structure)
