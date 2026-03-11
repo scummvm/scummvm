@@ -251,7 +251,7 @@ bool BoltEngine::openBOLTLib(BOLTLib **libPtr, BOLTCallbacks *callbacks, const c
 		_xp->closeFile(fileHandle);
 
 	if (_boltCurrentLib != nullptr) {
-		_xp->freeMem(_boltCurrentLib);
+		delete _boltCurrentLib;
 		_boltCurrentLib = nullptr;
 	}
 
@@ -280,7 +280,7 @@ bool BoltEngine::closeBOLTLib(BOLTLib **libPtr) {
 	}
 
 	_xp->closeFile((*libPtr)->fileHandle);
-	_xp->freeMem(*libPtr);
+	delete *libPtr;
 	*libPtr = nullptr;
 
 	return true;

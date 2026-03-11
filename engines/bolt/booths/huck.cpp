@@ -638,7 +638,7 @@ void BoltEngine::giftSwap() {
 	int16 slotA = -1;
 	int16 slotB = 0;
 	int16 counter = -1;
-	for (int16 i = 0, j = 0; j <= READ_UINT16(_huckGiftPic); i++, j++) {
+	for (int16 i = 0, j = 0; j < READ_UINT16(_huckGiftPic); i++, j++) {
 		if (_huckState.drawTable2[j] != 0)
 			continue;
 

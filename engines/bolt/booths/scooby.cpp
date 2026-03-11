@@ -254,7 +254,7 @@ void BoltEngine::clearPictMSb(byte *pic) {
 	byte *pixelData = getResolvedPtr(pic, 0x12);
 	uint32 size = (uint32)READ_UINT16(pic + 0x0A) * (uint32)READ_UINT16(pic + 0x0C);
 
-	for (uint32 i = 0; i <= size; i++) {
+	for (uint32 i = 0; i < size; i++) {
 		pixelData[i] &= 0x7F;
 	}
 }
