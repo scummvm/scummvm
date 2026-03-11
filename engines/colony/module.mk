@@ -12,6 +12,8 @@ MODULE_OBJS := \
 	metaengine.o \
 	movement.o \
 	render.o \
+	render_features.o \
+	render_objects.o \
 	renderer_opengl.o \
 	savegame.o \
 	sound.o \
