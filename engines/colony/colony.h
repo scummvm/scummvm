@@ -583,6 +583,7 @@ private:
 	int openAdjacentDoors(int x, int y);
 	int goToDestination(const uint8 *map, Locate *pobject);
 	int tryPassThroughFeature(int fromX, int fromY, int direction, Locate *pobject);
+	void playTunnelAirlockEffect();
 	void syncMacMenuChecks();
 	void updateMouseCapture(bool recenter = true);
 	Common::Point getAimPoint() const;

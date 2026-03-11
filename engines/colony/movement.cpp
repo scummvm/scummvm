@@ -54,6 +54,8 @@ static const int kTunnelST[] = {
 	2, 2, 2, 2, 2, 2, 2, 2, 2, 2
 };
 
+static const int kTunnelStraight[60] = {0};
+
 static uint32 packTunnelMacColor(const uint16 rgb[3]) {
 	return 0xFF000000 | ((uint32)(rgb[0] >> 8) << 16) |
 	       ((uint32)(rgb[1] >> 8) << 8) | (uint32)(rgb[2] >> 8);
@@ -504,6 +506,8 @@ int ColonyEngine::goToDestination(const uint8 *map, Locate *pobject) {
 		if (pobject != &_me)
 			return 0;
 
+		playTunnelAirlockEffect();
+
 		if (_orbit || !(_armor || _fl)) {
 			terminateGame(false);
 			return 0;
@@ -699,6 +703,101 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 
 	default:
 		return 0;
+	}
+}
+
+void ColonyEngine::playTunnelAirlockEffect() {
+	const Common::Rect effectRect(0, _menuBarHeight, _width, _height);
+	const bool macColor = (_renderMode == Common::kRenderMacintosh && _hasMacColors);
+	const int tunnelColor = 24; // c_tunnel
+	const uint32 fillFg = macColor ? packTunnelMacColor(_macColors[tunnelColor].fg) : 0;
+	const uint32 fillBg = macColor ? packTunnelMacColor(_macColors[tunnelColor].bg) : 0;
+	const uint32 lineColor = macColor ? 0xFF000000 : 15;
+	int troy = 180;
+	int counter = 4;
+	int spd = 180 / counter;
+	int remaining = 5;
+
+	while (remaining > 0 && !shouldQuit()) {
+		if (macColor) {
+			fillTunnelPattern(_gfx, effectRect, fillFg, fillBg, _macColors[tunnelColor].pattern);
+		} else {
+			_gfx->fillRect(effectRect, 0);
+			_gfx->drawRect(effectRect, 15);
+		}
+
+		Common::Rect clipRect = effectRect;
+		int prevDL[3] = {0, 0, 0};
+		int prevDR[3] = {0, 0, 0};
+		int prevLT = 0;
+		int prevRT = 0;
+		int rox = -150;
+		int roy = troy;
+
+		for (int i = 0; i < remaining; ++i) {
+			int dl[2];
+			int dr[2];
+			projectTunnelPoint(effectRect, dl, rox, roy);
+			projectTunnelPoint(effectRect, dr, rox + 200, roy);
+
+			int left[3] = {
+				dl[0],
+				dl[1],
+				effectRect.bottom - 1 - (dl[1] - effectRect.top)
+			};
+			int right[3] = {
+				dr[0],
+				dr[1],
+				effectRect.bottom - 1 - (dr[1] - effectRect.top)
+			};
+
+			drawTunnelLine(_gfx, clipRect, left[0], left[2], left[0], left[1], lineColor);
+			drawTunnelLine(_gfx, clipRect, left[0], left[1], right[0], right[1], lineColor);
+			drawTunnelLine(_gfx, clipRect, right[0], right[1], right[0], right[2], lineColor);
+
+			const int center = (left[0] + right[0]) >> 1;
+			const int lt = (left[0] + center) >> 1;
+			const int rt = (right[0] + center) >> 1;
+
+			if (i > 0) {
+				drawTunnelLine(_gfx, clipRect, left[0], left[1], prevDL[0], prevDL[1], lineColor);
+				drawTunnelLine(_gfx, clipRect, right[0], right[1], prevDR[0], prevDR[1], lineColor);
+				drawTunnelLine(_gfx, clipRect, right[0], right[2], prevDR[0], prevDR[2], lineColor);
+				drawTunnelLine(_gfx, clipRect, left[0], left[2], prevDL[0], prevDL[2], lineColor);
+				drawTunnelLine(_gfx, clipRect, prevLT, prevDL[2], lt, left[2], lineColor);
+				drawTunnelLine(_gfx, clipRect, lt, left[2], rt, right[2], lineColor);
+				drawTunnelLine(_gfx, clipRect, rt, right[2], prevRT, prevDR[2], lineColor);
+			}
+
+			clipRect.left = MAX<int>(clipRect.left, left[0]);
+			clipRect.right = MIN<int>(clipRect.right, right[0]);
+			clipRect.top = MAX<int>(clipRect.top, left[1]);
+			clipRect.bottom = MIN<int>(clipRect.bottom, right[2]);
+			if (clipRect.bottom <= clipRect.top || clipRect.left >= clipRect.right)
+				break;
+
+			prevDL[0] = left[0];
+			prevDL[1] = left[1];
+			prevDL[2] = left[2];
+			prevDR[0] = right[0];
+			prevDR[1] = right[1];
+			prevDR[2] = right[2];
+			prevLT = lt;
+			prevRT = rt;
+			roy += 256;
+			rox += kTunnelStraight[i] << 2;
+		}
+
+		_gfx->copyToScreen();
+		_system->delayMillis(50);
+
+		troy -= spd;
+		counter--;
+		if (counter == 0) {
+			troy = 180;
+			counter = 4;
+			remaining--;
+		}
 	}
 }
 
