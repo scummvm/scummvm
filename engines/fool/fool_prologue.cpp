@@ -564,7 +564,7 @@ void FoolPrologue::sub_129_004() {
 	if (this->var_i32_1c0 < 0xd6d8) {
 		g_toolbox->InitCursor();
 		g_zbasic->get(0x0, 0x14, SCREEN_WIDTH, SCREEN_HEIGHT, this->arr_i32_41296[0], true);
-		g_zbasic->unk_6(0x19, 0x64, 0xff, 0x0);
+		g_zbasic->sound(0x19, 0x64, 0xff, 0x0);
 		this->fillRect(2, 0x46, 0x64, 0xdc, 0x19c);
 		this->fillRect(1, 0x4b, 0x69, 0xd7, 0x197);
 
@@ -636,7 +636,7 @@ void FoolPrologue::sub_129_004() {
 		if (this->var_i16_1c.red + this->var_i16_1c.blue + this->var_i16_1c.green != 0) {
 			g_toolbox->InitCursor();
 			g_zbasic->get(0x0, 0x14, SCREEN_WIDTH, SCREEN_HEIGHT, this->arr_i32_41296[0], true);
-			g_zbasic->unk_6(0x19, 0x64, 0xff, 0x00);
+			g_zbasic->sound(0x19, 0x64, 0xff, 0x00);
 			this->fillRect(2, 0x64, 0x82, 0xdc, 0x17e);
 			this->fillRect(1, 0x69, 0x87, 0xd7, 0x179);
 			this->fillRect(2, 0x6e, 0x8c, 0xd2, 0x174);

@@ -54,6 +54,9 @@ ZBasic::ZBasic(Toolbox *toolbox) : _toolbox(toolbox) {
 	_toolbox->_defaultBits = BitMap(new Graphics::ManagedSurface());
 	_toolbox->_defaultBits->copyFrom(*_window->getWindowSurface());
 	_window->setSurface(_toolbox->_defaultBits.get(), DisposeAfterUse::NO);
+	GrafPtr port(new GrafPort);
+	_toolbox->OpenPort(port);
+	_toolbox->SetPort(port);
 
 }
 
@@ -550,17 +553,17 @@ void ZBasic::window(int16 windowNumber, const Common::String &title, int16 x1, i
 	warning("STUB: ZBasic::window");
 }
 
+void ZBasic::unk_4() {
+	warning("STUB: ZBasic::unk_4");
+}
+
 int16 ZBasic::unk_5() {
 	warning("STUB: ZBasic::unk_5");
 	return 0;
 }
 
-void ZBasic::unk_4() {
-	warning("STUB: ZBasic::unk_4");
-}
-
-void ZBasic::unk_6(int16 unk1, int32 unk2, int16 unk3, int16 unk4) {
-	warning("STUB: ZBasic::unk_6");
+void ZBasic::sound(int16 frequency, int32 duration, int16 volume, int16 voice) {
+	warning("STUB: ZBasic::unk_6: frequency %d, duration %d, volume %d, voice %d", frequency, duration, volume, voice);
 }
 
 void ZBasic::unk_11(int16 unk1) {
@@ -623,7 +626,11 @@ void ZBasic::unk_158() {
 
 uint16 ZBasic::unk_310(const Common::U32String &unk1) {
 	uint16 result = 0;
+	if (unk1.size() == 0)
+		return result;
 	result |= unk1[0] << 8;
+	if (unk1.size() == 1)
+		return result;
 	result |= unk1[1];
 	return result;
 }
