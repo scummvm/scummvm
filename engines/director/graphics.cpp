@@ -763,7 +763,7 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 		const byte *msk = mask ? (const byte *)mask->getBasePtr(srcPoint.x, srcPoint.y) : nullptr;
 
 		if (srfMask) {
-			if (srcPoint.x >= srfMask->w)
+			if (srcPoint.y >= srfMask->h)
 				continue;
 
 			msk = (const byte *)srfMask->getBasePtr(srcPoint.x, srcPoint.y);
@@ -776,7 +776,7 @@ void DirectorPlotData::inkBlitSurface(Common::Rect &srcRect, const Graphics::Sur
 			}
 
 			// Do not try render beyond the mask bounds
-			if (srfMask && (srcPoint.y >= srfMask->h))
+			if (srfMask && (srcPoint.x >= srfMask->w))
 				continue;
 
 			if (!(mask || srfMask) || (msk && (*msk++))) {
