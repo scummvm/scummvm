@@ -58,21 +58,33 @@ RippedLetterPuzzleData::RippedLetterPuzzleData() :
 	playerHasTriedPuzzle(false) {}
 
 void RippedLetterPuzzleData::synchronize(Common::Serializer &ser) {
-	order.resize(24);
-	rotations.resize(24);
+	// Serialize through fixed size buffers so save or load never
+	// mutates the live puzzle state
+	Common::Array<int8> serializedOrder(24, -1);
+	Common::Array<byte> serializedRotations(24, 0);
+
+	for (uint i = 0; i < order.size() && i < serializedOrder.size(); ++i) {
+		serializedOrder[i] = order[i];
+	}
+
+	for (uint i = 0; i < rotations.size() && i < serializedRotations.size(); ++i) {
+		serializedRotations[i] = rotations[i];
+	}
 
 	// A piece may still be held while saving; make sure the saved data
 	// has it back in the last place it was picked up from
-	if (_pickedUpPieceID != -1) {
-		order[_pickedUpPieceLastPos] = _pickedUpPieceID;
-		rotations[_pickedUpPieceLastPos] = _pickedUpPieceRot;
-		_pickedUpPieceID = -1;
-		_pickedUpPieceLastPos = -1;
-		_pickedUpPieceRot = 0;
+	if (ser.isSaving() && _pickedUpPieceID != -1) {
+		serializedOrder[_pickedUpPieceLastPos] = _pickedUpPieceID;
+		serializedRotations[_pickedUpPieceLastPos] = _pickedUpPieceRot;
 	}
 
-	ser.syncArray(order.data(), order.size(), Common::Serializer::Byte);
-	ser.syncArray(rotations.data(), 24, Common::Serializer::Byte);
+	ser.syncArray(serializedOrder.data(), serializedOrder.size(), Common::Serializer::Byte);
+	ser.syncArray(serializedRotations.data(), serializedRotations.size(), Common::Serializer::Byte);
+
+	if (ser.isLoading()) {
+		order = serializedOrder;
+		rotations = serializedRotations;
+	}
 }
 
 TowerPuzzleData::TowerPuzzleData() {
