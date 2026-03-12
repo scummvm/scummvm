@@ -256,7 +256,7 @@ bool SlidingPuzzle::isSolved() const {
 
 // show the original background while a key is held.
 void SlidingPuzzle::showOriginalImage() {
-	// original game showed only the room background
+	// original game showed only the room background, we show the entire scene
 	g_engine->_screen->blitFrom(g_engine->_compositeBuffer);
 	g_engine->_screen->markAllDirty();
 	g_engine->_screen->update();

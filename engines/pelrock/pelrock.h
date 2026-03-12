@@ -118,7 +118,6 @@ private:
 	void checkMouseHover();
 	void checkMouseClick(int x, int y);
 	void checkLongMouseClick(int x, int y);
-	void paintDebugLayer();
 
 	// walking
 	int _currentStep = 0;
@@ -258,6 +257,7 @@ public:
 	void maybePlayPostIntro();
 	void shakeEffect();
 	void handleFlightRoomFrame();
+	void paintDebugLayer();
 
 	void passerByAnim(uint32 frameCount);
 	void changeCursor(Cursor cursor);
@@ -311,6 +311,7 @@ public:
 	void noOpAction(HotSpot *hotspot);
 	void noOpItem(int item, HotSpot *hotspot);
 	void useOnAlfred(int inventoryObject);
+	void sayRandomIncorrectResponse();
 	void chooseCorrectDoor();
 	void useCardWithATM(int inventoryObject, HotSpot *hotspot);
 	void useBrickWithWindow(int inventoryObject, HotSpot *hotspot);

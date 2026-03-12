@@ -21,7 +21,7 @@
 
 #include "graphics/paletteman.h"
 
-
+#include "pelrock.h"
 #include "pelrock/actions.h"
 #include "pelrock/backgroundbook.h"
 #include "pelrock/cdplayer.h"
@@ -746,8 +746,7 @@ void PelrockEngine::noOpItem(int item, HotSpot *hotspot) {
 	}
 	debug("No-op item %d with hotspot %d", item, hotspot->extra);
 	_alfredState.direction = ALFRED_DOWN;
-	byte response = (byte)getRandomNumber(12);
-	_dialog->say(_res->_ingameTexts[154 + response]);
+	sayRandomIncorrectResponse();
 }
 
 void PelrockEngine::openRoomDoor(HotSpot *hotspot) {
@@ -950,6 +949,7 @@ void PelrockEngine::useBrickWithWindow(int inventoryObject, HotSpot *hotspot) {
 	_room->addStickerToRoom(_room->_currentRoomNumber, 10, PERSIST_PERM);
 	_room->disableHotspot(_room->findHotspotByExtra(295)); // Disable storefront hotspot
 	_room->disableHotspot(_room->findHotspotByExtra(294)); // Disable window hotspot
+	_room->enableSprite(5, 100, PERSIST_PERM); // Enable fake teeth sprite
 	_disableAction = true;                                 // Prevent player from doing anything until they move Alfred
 	walkTo(630, _alfredState.y);
 }
@@ -2184,8 +2184,7 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 				_dialog->say(_res->_ingameTexts[NOTENGOPEGAMENTO]);
 			}
 		} else {
-			byte response = (byte)getRandomNumber(12);
-			_dialog->say(_res->_ingameTexts[154 + response]);
+			sayRandomIncorrectResponse();
 		}
 		break;
 	}
@@ -2226,13 +2225,16 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 			return;
 		}
 
-		byte response = (byte)getRandomNumber(12);
-		_dialog->say(_res->_ingameTexts[154 + response]);
+		sayRandomIncorrectResponse();
 		break;
 	}
 	}
 }
 
+void PelrockEngine::sayRandomIncorrectResponse() {
+	byte response = (byte)getRandomNumber(15);
+	_dialog->say(_res->_ingameTexts[154 + response]);
+}
 void PelrockEngine::chooseCorrectDoor() {
 	playAlfredSpecialAnim(1);
 	byte puertaBuena = _state->getFlag(FLAG_PUERTA_BUENA);
