@@ -499,8 +499,6 @@ void VR::renderVR(Graphics::Screen *screen, float ax, float ay, float fov, float
 					regX -= kTau;
 				for (auto &reg : regSet->getRegions()) {
 					if (reg.contains3D(regX, kTau - regY)) {
-						byte r, g, b;
-						_pic->format.colorToRGB(color, r, g, b);
 						x += dx;
 					}
 				}
