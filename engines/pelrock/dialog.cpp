@@ -481,6 +481,11 @@ uint32 DialogManager::parseChoices(const byte *data, uint32 dataSize, uint32 sta
 bool DialogManager::checkAllSubBranchesExhausted(const byte *data, uint32 dataSize, uint32 startPos, int currentChoiceLevel) {
 	uint32 pos = startPos;
 
+	// Fix for room 26 where an endless loop will happen due to buggy command codes that casued the conversation
+	// to go back with a single choice and thus repeating over and over.
+	int room = g_engine->_room->_currentRoomNumber;
+	bool f0IsBoundary = (room == 26 && currentChoiceLevel == 2 && startPos < dataSize && data[startPos] == 0x0C);
+
 	while (pos < dataSize) {
 		byte b = data[pos];
 
@@ -490,6 +495,13 @@ bool DialogManager::checkAllSubBranchesExhausted(const byte *data, uint32 dataSi
 		// past them to find all choices at the target level.
 		if (b == CTRL_ALT_END_MARKER_1 || b == CTRL_END_BRANCH ||
 			b == CTRL_ALT_SPEAKER_ROOT) {
+			break;
+		}
+
+		// For that one bug in room 26
+		// treat F0 as a boundary to prevent scanning past unreachable choices
+		if (b == CTRL_GO_BACK && f0IsBoundary) {
+			debug("checkAllSubBranchesExhausted: F0 boundary hit at pos %u (room %d fix)", pos, room);
 			break;
 		}
 
