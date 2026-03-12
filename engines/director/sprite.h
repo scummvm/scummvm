@@ -65,6 +65,38 @@ enum ThicknessFlags {
 	kTTweened   = 0x80,
 };
 
+// Director treats changes of sprites between score frames as deltas.
+// Only the delta is applied to what's on the screen.
+// If a sprite has the puppet flag, or a field has been autopuppeted,
+// then that will block the sprite/fields from being updated by the score.
+// In addition, the program can turn off the puppet flag at any time, which
+// will revert the sprite to whatever was in the score.
+
+// In order to keep a single frame read and copying pass, when reading the frame
+// data we keep track of what fields have changed, so that the frame can be
+// stored as a full copy but applied as a delta.
+
+enum SpriteCopyBackMask {
+	kSCBNoMask = -1,
+	kSCBScriptId = 0x00001,
+	kSCBSpriteType = 0x00002,
+	kSCBEnabled = 0x00004,
+	kSCBForeColor = 0x00008,
+	kSCBBackColor = 0x00010,
+	kSCBThickness = 0x00020,
+	kSCBInk = 0x00040,
+	kSCBPattern = 0x00080,
+	kSCBCastId = 0x00100,
+	kSCBStartPoint = 0x00200,
+	kSCBHeight = 0x00400,
+	kSCBWidth = 0x00800,
+	kSCBMoveable = 0x01000,
+	kSCBBlendAmount = 0x02000,
+	kSCBSpriteListIdx = 0x04000,
+	kSCBFlags = 0x08000,
+	kSCBAngle = 0x10000,
+};
+
 class Sprite {
 public:
 	Sprite(Frame *frame = nullptr);
@@ -118,6 +150,8 @@ public:
 	Movie *_movie;
 
 	Graphics::FloodFill *_matte; // matte for quickdraw shape
+
+	uint32 _copyBackMask;
 
 	CastMemberID _scriptId;
 	byte _colorcode; // x40 editable, 0x80 moveable
