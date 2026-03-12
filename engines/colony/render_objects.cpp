@@ -752,7 +752,7 @@ static const Colony::ColonyEngine::PrismPartDef kUPShadowDef = {4, kUPShadowPts,
 static const int kEyeIrisPts[4][3] = {
 	{60, 0, 140}, {60, 60, 200}, {60, 0, 260}, {60, -60, 200}
 };
-static const int kEyeIrisSurf[1][8] = {{kColorIris, 4, 0, 1, 2, 3, 0, 0}};
+static const int kEyeIrisSurf[1][8] = {{kColorEyeIris, 4, 0, 1, 2, 3, 0, 0}};
 static const int kEyePupilPts[4][3] = {
 	{66, 0, 175}, {66, 25, 200}, {66, 0, 225}, {66, -25, 200}
 };
@@ -850,7 +850,7 @@ static const Colony::ColonyEngine::PrismPartDef kMEyePupilDef = {4, kMEyePupilPt
 static const int kQIrisPts[4][3] = {
 	{15, 0, 140}, {15, 15, 155}, {15, 0, 170}, {15, -15, 155}
 };
-static const int kQIrisSurf[1][8] = {{kColorIris, 4, 0, 1, 2, 3, 0, 0}};
+static const int kQIrisSurf[1][8] = {{kColorQueenEye, 4, 0, 1, 2, 3, 0, 0}};
 static const int kQPupilPts[4][3] = {
 	{16, 0, 148}, {16, 6, 155}, {16, 0, 161}, {16, -6, 155}
 };
@@ -861,10 +861,10 @@ static const int kQAbdomenPts[9][3] = {
 	{0, 0, 150}, {0, 0, 110}, {0, 25, 130}, {0, -25, 130}
 };
 static const int kQAbdomenSurf[9][8] = {
-	{kColorQueen, 3, 0, 3, 1, 0, 0, 0}, {kColorQueen, 3, 0, 1, 4, 0, 0, 0},
-	{kColorQueen, 3, 0, 2, 3, 0, 0, 0}, {kColorQueen, 3, 0, 4, 2, 0, 0, 0},
-	{kColorQueen, 4, 1, 5, 8, 4, 1, 0}, {kColorQueen, 4, 1, 3, 7, 5, 1, 0},
-	{kColorQueen, 4, 2, 4, 8, 6, 2, 0}, {kColorQueen, 4, 2, 6, 7, 3, 2, 0},
+	{kColorQueenBody, 3, 0, 3, 1, 0, 0, 0}, {kColorQueenBody, 3, 0, 1, 4, 0, 0, 0},
+	{kColorQueenBody, 3, 0, 2, 3, 0, 0, 0}, {kColorQueenBody, 3, 0, 4, 2, 0, 0, 0},
+	{kColorQueenBody, 4, 1, 5, 8, 4, 1, 0}, {kColorQueenBody, 4, 1, 3, 7, 5, 1, 0},
+	{kColorQueenBody, 4, 2, 4, 8, 6, 2, 0}, {kColorQueenBody, 4, 2, 6, 7, 3, 2, 0},
 	{kColorClear, 4, 5, 7, 6, 8, 5, 0}
 };
 // Queen thorax
@@ -873,10 +873,10 @@ static const int kQThoraxPts[9][3] = {
 	{0, 0, 150}, {0, 0, 110}, {0, 25, 130}, {0, -25, 130}
 };
 static const int kQThoraxSurf[8][8] = {
-	{kColorQueen, 3, 0, 1, 3, 0, 0, 0}, {kColorQueen, 3, 0, 4, 1, 0, 0, 0},
-	{kColorQueen, 3, 0, 3, 2, 0, 0, 0}, {kColorQueen, 3, 0, 2, 4, 0, 0, 0},
-	{kColorQueen, 4, 1, 4, 8, 5, 1, 0}, {kColorQueen, 4, 1, 5, 7, 3, 1, 0},
-	{kColorQueen, 4, 2, 6, 8, 4, 2, 0}, {kColorQueen, 4, 2, 3, 7, 6, 2, 0}
+	{kColorQueenBody, 3, 0, 1, 3, 0, 0, 0}, {kColorQueenBody, 3, 0, 4, 1, 0, 0, 0},
+	{kColorQueenBody, 3, 0, 3, 2, 0, 0, 0}, {kColorQueenBody, 3, 0, 2, 4, 0, 0, 0},
+	{kColorQueenBody, 4, 1, 4, 8, 5, 1, 0}, {kColorQueenBody, 4, 1, 5, 7, 3, 1, 0},
+	{kColorQueenBody, 4, 2, 6, 8, 4, 2, 0}, {kColorQueenBody, 4, 2, 3, 7, 6, 2, 0}
 };
 // Queen wings
 static const int kQLWingPts[4][3] = {
@@ -925,13 +925,13 @@ static const int kDLEyePts[3][3] = {
 	{60, 0, 150}, {60, 50, 130}, {60, 25, 150}
 };
 static const int kDLEyeSurf[2][8] = {
-	{kColorEyes, 3, 0, 1, 2, 0, 0, 0}, {kColorEyes, 3, 0, 2, 1, 0, 0, 0}
+	{kColorDroneEye, 3, 0, 1, 2, 0, 0, 0}, {kColorDroneEye, 3, 0, 2, 1, 0, 0, 0}
 };
 static const int kDREyePts[3][3] = {
 	{60, 0, 150}, {60, -50, 130}, {60, -25, 150}
 };
 static const int kDREyeSurf[2][8] = {
-	{kColorEyes, 3, 0, 1, 2, 0, 0, 0}, {kColorEyes, 3, 0, 2, 1, 0, 0, 0}
+	{kColorDroneEye, 3, 0, 1, 2, 0, 0, 0}, {kColorDroneEye, 3, 0, 2, 1, 0, 0, 0}
 };
 
 static const Colony::ColonyEngine::PrismPartDef kDAbdomenDef = {6, kDAbdomenPts, 8, kDAbdomenSurf};
@@ -958,6 +958,19 @@ static const int kSnoopHeadSurf[3][8] = {
 static const Colony::ColonyEngine::PrismPartDef kSnoopAbdomenDef = {4, kSnoopAbdomenPts, 2, kSnoopAbdomenSurf};
 static const Colony::ColonyEngine::PrismPartDef kSnoopHeadDef = {4, kSnoopHeadPts, 3, kSnoopHeadSurf};
 
+static int wrapAngle256(int angle) {
+	angle %= 256;
+	return (angle < 0) ? (angle + 256) : angle;
+}
+
+static void rotatePoint(int angle, const int src[3], int dst[3], const int *cost, const int *sint) {
+	const long tcos = cost[angle];
+	const long tsin = sint[angle];
+	dst[0] = (int)(((long)src[0] * tcos - (long)src[1] * tsin) >> 7);
+	dst[1] = (int)(((long)src[0] * tsin + (long)src[1] * tcos) >> 7);
+	dst[2] = src[2];
+}
+
 static void resetObjectBounds(const Common::Rect &screenR, Locate &loc) {
 	loc.xmn = screenR.right;
 	loc.xmx = screenR.left;
@@ -980,13 +993,32 @@ void ColonyEngine::drawStaticObjects() {
 }
 
 bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
-	const auto drawPrism = [&](const PrismPartDef &def, bool useLook, int colorOverride = -1) {
-		draw3DPrism(obj, def, useLook, colorOverride, true);
+	const auto drawPrism = [&](const PrismPartDef &def, bool useLook, int colorOverride = -1, bool forceVisible = false) {
+		draw3DPrism(obj, def, useLook, colorOverride, true, forceVisible);
 	};
 	const auto drawSphere = [&](int pt0x, int pt0y, int pt0z, int pt1x, int pt1y, int pt1z,
 	                            uint32 fillColor, uint32 outlineColor) {
 		draw3DSphere(obj, pt0x, pt0y, pt0z, pt1x, pt1y, pt1z, fillColor, outlineColor, true);
 	};
+	const auto drawPrismFor = [&](Thing &thing, const PrismPartDef &def, bool useLook, int colorOverride = -1, bool forceVisible = false) {
+		draw3DPrism(thing, def, useLook, colorOverride, true, forceVisible);
+	};
+	const auto drawSphereFor = [&](Thing &thing, int pt0x, int pt0y, int pt0z, int pt1x, int pt1y, int pt1z,
+	                               uint32 fillColor, uint32 outlineColor) {
+		draw3DSphere(thing, pt0x, pt0y, pt0z, pt1x, pt1y, pt1z, fillColor, outlineColor, true);
+	};
+	const auto mergeBounds = [&](const Thing &thing) {
+		if (thing.where.xmn < obj.where.xmn)
+			obj.where.xmn = thing.where.xmn;
+		if (thing.where.xmx > obj.where.xmx)
+			obj.where.xmx = thing.where.xmx;
+		if (thing.where.zmn < obj.where.zmn)
+			obj.where.zmn = thing.where.zmn;
+		if (thing.where.zmx > obj.where.zmx)
+			obj.where.zmx = thing.where.zmx;
+	};
+	const int eyeballColor = (_level == 1 || _level == 7) ? kColorPupil : kColorEyeball;
+	const int pupilColor = (_level == 1 || _level == 7) ? kColorEyeball : kColorPupil;
 
 	switch (obj.type) {
 	case kObjConsole:
@@ -1247,16 +1279,20 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		break;
 	// === Robot types (1-20) ===
 	case kRobEye:
-		drawSphere(0, 0, 100, 0, 0, 200, 15, 15); // ball: white
+		if ((obj.where.xloc - _me.xloc) * (obj.where.xloc - _me.xloc) +
+		    (obj.where.yloc - _me.yloc) * (obj.where.yloc - _me.yloc) <= 64 * 64) {
+			break;
+		}
+		drawSphere(0, 0, 100, 0, 0, 200, eyeballColor, kColorBlack);
 		drawPrism(kEyeIrisDef, false);
-		drawPrism(kEyePupilDef, false);
+		drawPrism(kEyePupilDef, false, pupilColor);
 		break;
 	case kRobPyramid:
 		drawPrism(kPShadowDef, false);
 		drawPrism(kPyramidBodyDef, false);
-		drawSphere(0, 0, 175, 0, 0, 200, 15, 15); // ball on top
+		drawSphere(0, 0, 175, 0, 0, 200, eyeballColor, kColorBlack);
 		drawPrism(kPIrisDef, false);
-		drawPrism(kPPupilDef, false);
+		drawPrism(kPPupilDef, false, pupilColor);
 		break;
 	case kRobCube:
 		drawPrism(kCubeBodyDef, false);
@@ -1266,9 +1302,9 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		drawPrism(kUPyramidBodyDef, false);
 		break;
 	case kRobFEye:
-		drawSphere(0, 0, 0, 0, 0, 100, 15, 15);
+		drawSphere(0, 0, 0, 0, 0, 100, eyeballColor, kColorBlack);
 		drawPrism(kFEyeIrisDef, false);
-		drawPrism(kFEyePupilDef, false);
+		drawPrism(kFEyePupilDef, false, pupilColor);
 		break;
 	case kRobFPyramid:
 		drawPrism(kFPyramidBodyDef, false);
@@ -1280,9 +1316,9 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		drawPrism(kFUPyramidBodyDef, false);
 		break;
 	case kRobSEye:
-		drawSphere(0, 0, 0, 0, 0, 50, 15, 15);
+		drawSphere(0, 0, 0, 0, 0, 50, eyeballColor, kColorBlack);
 		drawPrism(kSEyeIrisDef, false);
-		drawPrism(kSEyePupilDef, false);
+		drawPrism(kSEyePupilDef, false, pupilColor);
 		break;
 	case kRobSPyramid:
 		drawPrism(kSPyramidBodyDef, false);
@@ -1294,9 +1330,9 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		drawPrism(kSUPyramidBodyDef, false);
 		break;
 	case kRobMEye:
-		drawSphere(0, 0, 0, 0, 0, 25, 15, 15);
-		drawPrism(kMEyeIrisDef, false);
-		drawPrism(kMEyePupilDef, false);
+		drawSphere(0, 0, 0, 0, 0, 25, eyeballColor, kColorBlack);
+		drawPrism(kMEyeIrisDef, false, kColorMiniEyeIris);
+		drawPrism(kMEyePupilDef, false, pupilColor);
 		break;
 	case kRobMPyramid:
 		drawPrism(kMPyramidBodyDef, false);
@@ -1308,21 +1344,82 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		drawPrism(kMUPyramidBodyDef, false);
 		break;
 	case kRobQueen:
-		drawPrism(kQThoraxDef, false);
-		drawPrism(kQAbdomenDef, false);
-		drawPrism(kQLWingDef, false);
-		drawPrism(kQRWingDef, false);
-		drawSphere(0, 0, 130, 0, 0, 155, 15, 15); // queen ball
-		drawPrism(kQIrisDef, false);
-		drawPrism(kQPupilDef, false);
+		{
+			const long s1 = _sint[obj.where.ang] >> 1;
+			const long c1 = _cost[obj.where.ang] >> 1;
+			const long s2 = s1 >> 1;
+			const long c2 = c1 >> 1;
+			const long eyeBaseX = obj.where.xloc + c1;
+			const long eyeBaseY = obj.where.yloc + s1;
+
+			Thing leftEye = obj;
+			leftEye.where.xloc = (int)(eyeBaseX - s2);
+			leftEye.where.yloc = (int)(eyeBaseY + c2);
+			resetObjectBounds(_screenR, leftEye.where);
+
+			Thing rightEye = obj;
+			rightEye.where.xloc = (int)(eyeBaseX + s2);
+			rightEye.where.yloc = (int)(eyeBaseY - c2);
+			resetObjectBounds(_screenR, rightEye.where);
+
+			const long leftDist = (leftEye.where.xloc - _me.xloc) * (leftEye.where.xloc - _me.xloc) +
+			                      (leftEye.where.yloc - _me.yloc) * (leftEye.where.yloc - _me.yloc);
+			const long rightDist = (rightEye.where.xloc - _me.xloc) * (rightEye.where.xloc - _me.xloc) +
+			                       (rightEye.where.yloc - _me.yloc) * (rightEye.where.yloc - _me.yloc);
+			const bool leftFirst = leftDist >= rightDist;
+			Thing &farEye = leftFirst ? leftEye : rightEye;
+			Thing &nearEye = leftFirst ? rightEye : leftEye;
+			const PrismPartDef &farWing = leftFirst ? kQLWingDef : kQRWingDef;
+			const PrismPartDef &nearWing = leftFirst ? kQRWingDef : kQLWingDef;
+			const int wingColor = (_renderMode != Common::kRenderMacintosh && _level == 7) ? kColorQueenWingRed : kColorClear;
+
+			drawPrism(farWing, false, wingColor, true);
+			drawSphereFor(farEye, 0, 0, 130, 0, 0, 155, eyeballColor, kColorBlack);
+			drawPrismFor(farEye, kQIrisDef, true);
+			drawPrismFor(farEye, kQPupilDef, true, pupilColor);
+			mergeBounds(farEye);
+
+			drawPrism(kQThoraxDef, false);
+			drawPrism(kQAbdomenDef, false);
+
+			drawPrism(nearWing, false, wingColor, true);
+			drawSphereFor(nearEye, 0, 0, 130, 0, 0, 155, eyeballColor, kColorBlack);
+			drawPrismFor(nearEye, kQIrisDef, true);
+			drawPrismFor(nearEye, kQPupilDef, true, pupilColor);
+			mergeBounds(nearEye);
+		}
 		break;
 	case kRobDrone:
-	case kRobSoldier:
 		drawPrism(kDAbdomenDef, false);
 		drawPrism(kDLLPincerDef, false);
 		drawPrism(kDRRPincerDef, false);
 		drawPrism(kDLEyeDef, false);
 		drawPrism(kDREyeDef, false);
+		break;
+	case kRobSoldier:
+		{
+			int leftPincerPts[4][3];
+			int rightPincerPts[4][3];
+			const int lookAmount = (obj.where.lookx < 0) ? -obj.where.lookx : obj.where.lookx;
+			const int leftLook = wrapAngle256(-lookAmount - 32);
+			const int rightLook = wrapAngle256(lookAmount - 32);
+
+			for (int i = 0; i < 4; ++i) {
+				rotatePoint(leftLook, kDLLPincerPts[i], leftPincerPts[i], _cost, _sint);
+				leftPincerPts[i][0] += 120;
+				rotatePoint(rightLook, kDRRPincerPts[i], rightPincerPts[i], _cost, _sint);
+				rightPincerPts[i][0] += 120;
+			}
+
+			const PrismPartDef leftPincerDef = {4, leftPincerPts, 4, kDLPincerSurf};
+			const PrismPartDef rightPincerDef = {4, rightPincerPts, 4, kDRPincerSurf};
+
+			drawPrism(kDAbdomenDef, false, kColorSoldierBody);
+			drawPrism(leftPincerDef, false);
+			drawPrism(rightPincerDef, false);
+			drawPrism(kDLEyeDef, false, kColorSoldierEye);
+			drawPrism(kDREyeDef, false, kColorSoldierEye);
+		}
 		break;
 	case kRobSnoop:
 		drawPrism(kSnoopAbdomenDef, false);
