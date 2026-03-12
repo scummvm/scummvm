@@ -1515,6 +1515,7 @@ void ColonyEngine::moveObject(int index) {
 		return;
 
 	ComplexSprite *ls = _lSprites[index];
+	const int objectFrames = (int)ls->objects.size();
 
 	// Build link group
 	Common::Array<int> linked;
@@ -1531,6 +1532,58 @@ void ColonyEngine::moveObject(int index) {
 	int ox = _screenR.left + (_screenR.width() - 416) / 2;
 	ox = (ox / 8) * 8;
 	int oy = _screenR.top + (_screenR.height() - 264) / 2;
+	int oldKeyTarget = -1;
+
+	auto findKeyTarget = [&](const Common::Point &screenPt) -> int {
+		if (!ls->key)
+			return -1;
+
+		const Common::Point pt(screenPt.x - ox, screenPt.y - oy);
+
+		for (int i = (int)_lSprites.size() - 1; i >= 0; --i) {
+			if (i == index || !_lSprites[i]->onoff || _lSprites[i]->lock != ls->key)
+				continue;
+
+			const ComplexSprite *target = _lSprites[i];
+			const int cnum = target->current;
+			if (cnum < 0 || cnum >= (int)target->objects.size())
+				continue;
+
+			const int spriteIdx = target->objects[cnum].spritenum;
+			if (spriteIdx < 0 || spriteIdx >= (int)_cSprites.size())
+				continue;
+
+			const Sprite *s = _cSprites[spriteIdx];
+			Common::Rect r = s->clip;
+			r.translate(target->xloc + target->objects[cnum].xloc,
+			            target->yloc + target->objects[cnum].yloc);
+
+			if (pt.x < r.left || pt.x > r.right || pt.y < r.top || pt.y > r.bottom)
+				continue;
+
+			const Image *mask = s->mask;
+			if (mask && mask->data) {
+				const int row = pt.y - r.top;
+				const int col = pt.x - r.left;
+				const int bitCol = (col + mask->align) * mask->bits;
+				const int maskIndex = row * mask->rowBytes + (bitCol / 8);
+
+				if (maskIndex < 0 || maskIndex >= mask->rowBytes * mask->height)
+					continue;
+
+				byte maskByte = mask->data[maskIndex];
+				if (mask->planes == 2)
+					maskByte |= mask->data[mask->rowBytes * mask->height + maskIndex];
+				maskByte >>= bitCol % 8;
+				if (!(maskByte & ((1 << mask->bits) - 1)))
+					continue;
+			}
+
+			return i;
+		}
+
+		return -1;
+	};
 
 	// Drag loop: track mouse while left button held.
 	// NOTE: The original DOS hides dragged sprites during drag (setObjectOnOff FALSE)
@@ -1564,6 +1617,32 @@ void ColonyEngine::moveObject(int index) {
 			for (uint i = 0; i < linked.size(); i++) {
 				_lSprites[linked[i]]->xloc += dx;
 				_lSprites[linked[i]]->yloc += dy;
+			}
+
+			// Original MoveObject/KeylSprite: dragging a "key" sprite over a matching
+			// lock sprite toggles that target between its first two states.
+			const int keyTarget = findKeyTarget(cur);
+			if (keyTarget >= 0 && keyTarget != oldKeyTarget) {
+				ComplexSprite *target = _lSprites[keyTarget];
+				if (target->current == 1) {
+					target->current--;
+					if (ls->type != 2 && objectFrames > 1) {
+						ls->current++;
+						if (ls->current >= objectFrames)
+							ls->current = 0;
+					}
+				} else if (target->current == 0) {
+					target->current++;
+					if (ls->type != 2 && objectFrames > 1) {
+						ls->current++;
+						if (ls->current >= objectFrames)
+							ls->current = 0;
+					}
+				}
+				debugC(1, kColonyDebugAnimation,
+					"moveObject: key sprite %d toggled lock sprite %d to state %d",
+					index + 1, keyTarget + 1, target->current + 1);
+				oldKeyTarget = keyTarget;
 			}
 
 			old = cur;
