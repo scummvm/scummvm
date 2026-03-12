@@ -991,6 +991,12 @@ void Score::updateSprites(RenderMode mode, bool withClean) {
 	}
 
 	createScriptInstances(_curFrameNumber);
+
+	// We've updated the channels from the frame, reset the copyback mask so that e.g.
+	// disabling the puppet flag copies all the data as expected.
+	for (auto &it : _currentFrame->_sprites) {
+		it->_copyBackMask = kSCBNoMask;
+	}
 }
 
 bool Score::renderPrePaletteCycle(RenderMode mode) {
@@ -2130,6 +2136,11 @@ bool Score::loadFrame(int frameNum, bool loadCast) {
 		// Reset sprite contents
 		for (auto &it : _currentFrame->_sprites)
 			it->reset();
+	}
+
+	// Zero out the copyback mask on all sprites, so we know what changed
+	for (auto &it : _currentFrame->_sprites) {
+		it->_copyBackMask = 0;
 	}
 
 	debugC(7, kDebugLoading, "****** Source frame %d to Destination frame %d, current offset 0x%x", sourceFrame, targetFrame, (uint32)_framesStream->pos());
