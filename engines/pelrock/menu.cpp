@@ -350,7 +350,6 @@ bool MenuManager::checkMainMenuMouse(int x, int y) {
 	case EXIT_MENU_BUTTON:
 		_sound->playSound("11ZZZZZZ.SMP", 0);
 		_menuState = EXIT_GAME;
-		// g_engine->quitGame();
 		break;
 	case SOUNDS_BUTTON:
 		_sound->playSound("11ZZZZZZ.SMP", 0);
@@ -743,7 +742,7 @@ void MenuManager::drawButtons() {
 }
 
 void MenuManager::drawConfirmation() {
-	_menuText = _menuTexts[4];
+	_menuText = _menuTexts[5];
 }
 
 void MenuManager::refreshSaveDescriptions() {
