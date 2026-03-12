@@ -208,7 +208,17 @@ enum ObjColor {
 	kColorHCore2 = 101,
 	kColorHCore3 = 102,
 	kColorHCore4 = 103,
-	kColorCCore = 104
+	kColorCCore = 104,
+	// Semantic robot colors that need platform- or level-specific mapping.
+	kColorEyeball = 105,
+	kColorEyeIris = 106,
+	kColorMiniEyeIris = 107,
+	kColorDroneEye = 108,
+	kColorSoldierBody = 109,
+	kColorSoldierEye = 110,
+	kColorQueenBody = 111,
+	kColorQueenEye = 112,
+	kColorQueenWingRed = 113
 };
 
 enum {
@@ -533,7 +543,7 @@ public:
 	};
 
 private:
-	void draw3DPrism(Thing &obj, const PrismPartDef &def, bool useLook, int colorOverride = -1, bool accumulateBounds = false);
+	void draw3DPrism(Thing &obj, const PrismPartDef &def, bool useLook, int colorOverride = -1, bool accumulateBounds = false, bool forceVisible = false);
 	void draw3DLeaf(const Thing &obj, const PrismPartDef &def);
 	void draw3DSphere(Thing &obj, int pt0x, int pt0y, int pt0z,
 	                  int pt1x, int pt1y, int pt1z, uint32 fillColor, uint32 outlineColor, bool accumulateBounds = false);
