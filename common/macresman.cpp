@@ -133,6 +133,7 @@ void MacResManager::close() {
 	delete[] _resTypes; _resTypes = nullptr;
 	delete _stream; _stream = nullptr;
 	_resMap.numTypes = 0;
+	_originalFileName.clear();
 }
 
 bool MacResManager::hasResFork() const {
@@ -626,9 +627,18 @@ bool MacResManager::loadFromAppleDouble(SeekableReadStream *stream) {
 			_resForkOffset = offset;
 			_mode = kResForkAppleDouble;
 			_resForkSize = length;
-			return load(stream);
+		} else if (id == 3 && length > 0) {
+			// Found the real name!
+			uint32 oldPos = stream->pos();
+			stream->seek(offset);
+			_originalFileName = stream->readString(0, length);
+			debug(1, "MacResManager: Extracted original filename '%s' from AppleDouble", _originalFileName.c_str());
+			stream->seek(oldPos);
 		}
 	}
+
+	if (_mode == kResForkAppleDouble)
+		return load(stream);
 
 	return false;
 }
@@ -788,6 +798,12 @@ bool MacResManager::loadFromMacBinary(SeekableReadStream *stream) {
 
 		if (_resForkOffset < 0)
 			return false;
+
+		byte nameLen = infoHeader[MBI_NAMELEN];
+		if (nameLen > 0) {
+			_originalFileName = Common::String((const char *)(infoHeader + MBI_NAMELEN + 1), nameLen);
+			debug(1, "MacResManager: Extracted original filename '%s' from MacBinary", _originalFileName.c_str());
+		}
 
 		_mode = kResForkMacBinary;
 		return load(stream);
