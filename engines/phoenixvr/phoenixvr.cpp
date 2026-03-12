@@ -267,6 +267,62 @@ void PhoenixVREngine::interpolateAngle(float x, float y, float speed, float zoom
 		setZoom(zoom);
 }
 
+void PhoenixVREngine::renderFade(int color) {
+	auto &format = _screen->format;
+	for (int y = 0; y != _screen->h; ++y) {
+		for (int x = 0; x != _screen->w; ++x) {
+			uint8 r, g, b;
+			format.colorToRGB(_screen->getPixel(x, y), r, g, b);
+			int ri = CLIP(static_cast<int>(r) + color, 0, 255);
+			int gi = CLIP(static_cast<int>(g) + color, 0, 255);
+			int bi = CLIP(static_cast<int>(b) + color, 0, 255);
+			_screen->setPixel(x, y, format.RGBToColor(ri, gi, bi));
+		}
+	}
+}
+
+void PhoenixVREngine::fade(int start, int stop, int speed) {
+	debug("fade %d %d speed: %d", start, stop, speed);
+
+	if (start == stop)
+		return;
+
+	bool waiting = true;
+	float pos = start, dt = 0;
+	bool increment = start < stop;
+	if (!increment)
+		speed = -speed;
+
+	float speedMs = speed * 1000.0f / 16;
+
+	while (!shouldQuit() && waiting && (increment ? pos < stop : pos > stop)) {
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN: {
+				if (event.kbd.ascii == ' ') {
+					waiting = false;
+				}
+				break;
+			}
+
+			default:
+				break;
+			}
+		}
+		renderVR(dt);
+		renderFade(pos);
+
+		pos += 1 + dt * speedMs;
+
+		// Delay for a bit. All events loops should have a delay
+		// to prevent the system being unduly loaded
+		_frameLimiter.delayBeforeSwap();
+		_screen->update();
+		dt = _frameLimiter.startFrame() / 1000.0f;
+	}
+}
+
 void PhoenixVREngine::until(const Common::String &var, int value) {
 	debug("until %s %d", var.c_str(), value);
 	unsigned frameDuration = 0;

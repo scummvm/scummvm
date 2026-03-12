@@ -147,6 +147,7 @@ public:
 		_fov = fov;
 	}
 	void interpolateAngle(float x, float y, float speed, float zoom);
+	void fade(int start, int stop, int speed);
 
 	void setXMax(float max) {
 		static const float baseX = -kPi2;
@@ -212,6 +213,7 @@ private:
 	void loadNextScript();
 	void renderVR(float dt);
 	void renderTimer();
+	void renderFade(int color);
 
 private:
 	bool _hasFocus = true;

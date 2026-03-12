@@ -1089,11 +1089,11 @@ struct StopSound3D : public Script::Command {
 };
 
 struct Fade : public Script::Command {
-	int arg0, arg1, arg2;
+	int start, stop, speed;
 
-	Fade(int a0, int a1, int a2) : arg0(a0), arg1(a1), arg2(a2) {}
+	Fade(int a0, int a1, int a2) : start(a0), stop(a1), speed(a2) {}
 	void exec(Script::ExecutionContext &ctx) const override {
-		warning("fade %d %d %d", arg0, arg1, arg2);
+		g_engine->fade(start, stop, speed);
 	}
 };
 
