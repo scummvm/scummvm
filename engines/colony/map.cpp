@@ -49,12 +49,30 @@ static const int kRobotTypeOrder[] = {
 	kRobSCube
 };
 
-static void reservePlayerObjectSlot(Common::Array<Thing> &objects) {
-	if ((int)objects.size() == kMeNum - 1) {
-		Thing reserved;
-		memset(&reserved, 0, sizeof(reserved));
-		objects.push_back(reserved);
-	}
+static const int kDynamicObjectLimit = kMeNum - 1;
+static const int kReservedPlayerSlotIndex = kMeNum - 1;
+static const int kStaticObjectStartIndex = kMeNum;
+static const int kMaxObjectSlots = 255;
+
+static void clearThing(Thing &thing) {
+	memset(&thing, 0, sizeof(thing));
+}
+
+static void ensureObjectLayout(Common::Array<Thing> &objects) {
+	const int oldSize = (int)objects.size();
+	if (oldSize >= kMeNum)
+		return;
+
+	objects.resize(kMeNum);
+	for (int i = oldSize; i < kMeNum; i++)
+		clearThing(objects[i]);
+}
+
+static void resetObjectLayout(Common::Array<Thing> &objects) {
+	objects.clear();
+	objects.resize(kMeNum);
+	for (int i = 0; i < kMeNum; i++)
+		clearThing(objects[i]);
 }
 
 void ColonyEngine::loadMap(int mnum) {
@@ -91,7 +109,7 @@ void ColonyEngine::loadMap(int mnum) {
 	memset(_robotArray, 0, sizeof(_robotArray));
 	memset(_foodArray, 0, sizeof(_foodArray));
 	memset(_dirXY, 0, sizeof(_dirXY));
-	_objects.clear();
+	resetObjectLayout(_objects);
 
 	// expand logic
 	int c = 0;
@@ -105,25 +123,29 @@ void ColonyEngine::loadMap(int mnum) {
 						for (int l = 0; l < 5; l++) {
 							_mapData[i][j][k][l] = buffer[c++];
 						}
-						// PACKIT.C: center feature type 6 marks static map objects.
-						if (k == 4 && _mapData[i][j][4][0] == 6 && i < 31 && j < 31) {
-							Thing obj;
-							memset(&obj, 0, sizeof(obj));
-							obj.alive = 1;
-							obj.visible = 0;
-							obj.type = _mapData[i][j][4][1] + kBaseObject;
-							obj.where.xloc = (i << 8) + 128;
-							obj.where.yloc = (j << 8) + 128;
-							obj.where.xindex = i;
-							obj.where.yindex = j;
-							obj.where.ang = (uint8)(_mapData[i][j][4][2] + 32);
-							obj.where.look = obj.where.ang;
-							reservePlayerObjectSlot(_objects);
-							_objects.push_back(obj);
-							const int objNum = (int)_objects.size(); // 1-based, DOS-style robot slots
-							if (objNum > 0 && objNum < 256 && _robotArray[i][j] == 0)
-								_robotArray[i][j] = (uint8)objNum;
-						}
+							// PACKIT.C: center feature type 6 marks static map objects.
+							if (k == 4 && _mapData[i][j][4][0] == 6 && i < 31 && j < 31) {
+								Thing obj;
+								clearThing(obj);
+								obj.alive = 1;
+								obj.visible = 0;
+								obj.type = _mapData[i][j][4][1] + kBaseObject;
+								obj.where.xloc = (i << 8) + 128;
+								obj.where.yloc = (j << 8) + 128;
+								obj.where.xindex = i;
+								obj.where.yindex = j;
+								obj.where.ang = (uint8)(_mapData[i][j][4][2] + 32);
+								obj.where.look = obj.where.ang;
+								if ((int)_objects.size() >= kMaxObjectSlots) {
+									warning("loadMap: object table full on level %d, skipping static object type %d at (%d,%d)",
+										mnum, obj.type, i, j);
+									continue;
+								}
+								_objects.push_back(obj);
+								const int objNum = (int)_objects.size(); // 1-based, DOS-style robot slots
+								if (objNum > 0 && objNum < 256 && _robotArray[i][j] == 0)
+									_robotArray[i][j] = (uint8)objNum;
+							}
 					} else {
 						_mapData[i][j][k][0] = 0;
 					}
@@ -132,7 +154,8 @@ void ColonyEngine::loadMap(int mnum) {
 		}
 	}
 	free(buffer);
-	_dynamicObjectBase = (int)_objects.size();
+	_dynamicObjectBase = kStaticObjectStartIndex;
+	_robotNum = MAX<int>(_robotNum, (int)_objects.size() + 1);
 	_level = mnum;
 	_me.type = kMeNum;
 
@@ -148,9 +171,13 @@ void ColonyEngine::loadMap(int mnum) {
 void ColonyEngine::resetObjectSlot(int slot, int type, int xloc, int yloc, uint8 ang) {
 	if (slot < 0 || slot >= (int)_objects.size())
 		return;
+	if (slot == kReservedPlayerSlotIndex) {
+		warning("resetObjectSlot: refusing to use reserved player slot for type %d on level %d", type, _level);
+		return;
+	}
 
 	Thing &obj = _objects[slot];
-	memset(&obj, 0, sizeof(obj));
+	clearThing(obj);
 	const int lvl = MIN<int>(MAX<int>(_level - 1, 0), 5);
 	while (ang > 255)
 		ang -= 256;
@@ -196,34 +223,53 @@ void ColonyEngine::resetObjectSlot(int slot, int type, int xloc, int yloc, uint8
 		else
 			_robotArray[obj.where.xindex][obj.where.yindex] = (uint8)objNum;
 	}
-	if (objNum > _robotNum)
-		_robotNum = objNum;
+	if (objNum >= _robotNum)
+		_robotNum = objNum + 1;
 }
 
 // PATCH.C: Create a new object in _objects and register in the proper grid.
-void ColonyEngine::createObject(int type, int xloc, int yloc, uint8 ang) {
-	if (_dynamicObjectBase < 0 || _dynamicObjectBase > (int)_objects.size())
-		_dynamicObjectBase = (int)_objects.size();
+bool ColonyEngine::createObject(int type, int xloc, int yloc, uint8 ang) {
+	ensureObjectLayout(_objects);
+	if (_dynamicObjectBase < kStaticObjectStartIndex || _dynamicObjectBase > (int)_objects.size())
+		_dynamicObjectBase = kStaticObjectStartIndex;
+	if (_robotNum < kMeNum + 1)
+		_robotNum = kMeNum + 1;
 
 	int slot = -1;
-	for (int j = _dynamicObjectBase; j < (int)_objects.size(); j++) {
-		if (j == kMeNum - 1)
-			continue;
-		if (!_objects[j].alive) {
-			slot = j;
-			break;
+	if (type <= kBaseObject) {
+		for (int j = 0; j < kDynamicObjectLimit; j++) {
+			if (!_objects[j].alive) {
+				slot = j;
+				break;
+			}
+		}
+		if (slot < 0) {
+			warning("createObject: no free dynamic slot for type %d on level %d", type, _level);
+			return false;
+		}
+	} else {
+		const int searchEnd = MIN<int>((int)_objects.size(), kMaxObjectSlots);
+		for (int j = _dynamicObjectBase; j < searchEnd; j++) {
+			if (!_objects[j].alive) {
+				slot = j;
+				break;
+			}
+		}
+		if (slot < 0) {
+			if ((int)_objects.size() >= kMaxObjectSlots) {
+				warning("createObject: object table full, cannot place type %d on level %d", type, _level);
+				return false;
+			}
+
+			Thing obj;
+			clearThing(obj);
+			_objects.push_back(obj);
+			slot = (int)_objects.size() - 1;
 		}
 	}
-	if (slot >= 0) {
-		resetObjectSlot(slot, type, xloc, yloc, ang);
-	} else {
-		Thing obj;
-		memset(&obj, 0, sizeof(obj));
-		reservePlayerObjectSlot(_objects);
-		_objects.push_back(obj);
-		slot = (int)_objects.size() - 1;
-		resetObjectSlot(slot, type, xloc, yloc, ang);
-	}
+
+	resetObjectSlot(slot, type, xloc, yloc, ang);
+	return true;
 }
 
 void ColonyEngine::saveLevelState() {
@@ -235,7 +281,8 @@ void ColonyEngine::saveLevelState() {
 	ld.queen = _allGrow ? 1 : 0;
 	memset(ld.object, 0, sizeof(ld.object));
 
-	for (uint i = 0; i < _objects.size(); i++) {
+	const int dynamicCount = MIN<int>((int)_objects.size(), kDynamicObjectLimit);
+	for (int i = 0; i < dynamicCount; i++) {
 		const Thing &obj = _objects[i];
 		if (!obj.alive || obj.type <= 0 || obj.type > kBaseObject)
 			continue;
@@ -260,11 +307,14 @@ void ColonyEngine::doPatch() {
 	// Pass 2: install objects that were moved to this level
 	for (uint i = 0; i < _patches.size(); i++) {
 		if (_level == _patches[i].to.level) {
-			createObject(
+			if (!createObject(
 				(int)_patches[i].type,
 				(int)_patches[i].to.xloc,
 				(int)_patches[i].to.yloc,
-				_patches[i].to.ang);
+				_patches[i].to.ang)) {
+				warning("doPatch: failed to restore patched object type %d on level %d",
+					(int)_patches[i].type, _level);
+			}
 		}
 	}
 }
@@ -421,7 +471,11 @@ void ColonyEngine::initRobots() {
 		// Convert grid coords to world coords (center of cell)
 		int wxloc = (xloc << 8) + 128;
 		int wyloc = (yloc << 8) + 128;
-		createObject(type, wxloc, wyloc, ang);
+		if (!createObject(type, wxloc, wyloc, ang)) {
+			warning("initRobots: failed to spawn type %d on level %d", type, _level);
+			return false;
+		}
+		return true;
 	};
 
 	if (ld.visit) {

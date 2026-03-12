@@ -579,7 +579,7 @@ private:
 
 	// PATCH.C: object relocation + wall state persistence
 	void resetObjectSlot(int slot, int type, int xloc, int yloc, uint8 ang);
-	void createObject(int type, int xloc, int yloc, uint8 ang);
+	bool createObject(int type, int xloc, int yloc, uint8 ang);
 	void saveLevelState();
 	void doPatch();
 	void saveWall(int x, int y, int direction);
@@ -690,6 +690,8 @@ private:
 	void droneThink(int num);
 	void snoopThink(int num);
 	void eggThink(int num);
+	int getColonyActiveRobotLimit() const;
+	void copyOverflowObjectToSlot(int num);
 	bool layEgg(int type, int xindex, int yindex);
 	void moveThink(int num);
 	void bigGrow(int num);

@@ -1065,7 +1065,10 @@ void ColonyEngine::exitForklift() {
 	yloc = (yloc >> 8);
 	yloc = (yloc << 8) + 128;
 
-	createObject(kObjForkLift, xloc, yloc, _me.ang);
+	if (!createObject(kObjForkLift, xloc, yloc, _me.ang)) {
+		warning("exitForklift: failed to place forklift on level %d at (%d,%d)", _level, xindex, yindex);
+		return;
+	}
 
 	PassPatch to;
 	to.level = _level;
@@ -1128,7 +1131,11 @@ void ColonyEngine::dropCarriedObject() {
 	yloc = (yloc >> 8);
 	yloc = (yloc << 8) + 128;
 
-	createObject(_carryType, xloc, yloc, ang);
+	if (!createObject(_carryType, xloc, yloc, ang)) {
+		warning("dropCarriedObject: failed to place type %d on level %d at (%d,%d)",
+			_carryType, _level, xindex, yindex);
+		return;
+	}
 
 	PassPatch to;
 	to.level = _level;

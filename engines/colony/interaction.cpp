@@ -428,10 +428,11 @@ void ColonyEngine::destroyRobot(int num) {
 				} else if (_robotArray[gx][gy] == num) {
 					_robotArray[gx][gy] = 0;
 				}
-			}
-			_sound->play(Sound::kExplode);
-			debugC(1, kColonyDebugAnimation, "Robot %d destroyed!", num);
-		} else {
+				}
+				_sound->play(Sound::kExplode);
+				copyOverflowObjectToSlot(num);
+				debugC(1, kColonyDebugAnimation, "Robot %d destroyed!", num);
+			} else {
 			// Robot regresses to egg form
 			obj.where.power[1] = 10 + ((_randomSource.getRandomNumber(15)) << _level);
 			obj.grow = -1;
