@@ -50,6 +50,7 @@ class Font;
 
 namespace PhoenixVR {
 
+class ARN;
 struct PhoenixVRGameDescription;
 struct GameState;
 
@@ -71,6 +72,7 @@ private:
 	Graphics::PixelFormat _pixelFormat;
 	Graphics::PixelFormat _rgb565;
 	Graphics::ManagedSurface _thumbnail;
+	Common::ScopedPtr<ARN> _arn;
 
 	// Engine APIs
 	Common::Error run() override;
@@ -208,6 +210,7 @@ private:
 	void tickTimer(float dt);
 	void loadNextScript();
 	void renderVR(float dt);
+	void renderTimer();
 
 private:
 	bool _hasFocus = true;
@@ -258,7 +261,7 @@ private:
 	static constexpr byte kPaused = 2;
 	static constexpr byte kActive = 4;
 	byte _timerFlags = 0;
-	float _timer = 0;
+	float _timer = 0, _initialTimer = 0;
 
 	Common::String _contextScript;
 	Common::String _contextLabel;

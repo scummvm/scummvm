@@ -39,6 +39,7 @@
 #include "graphics/palette.h"
 #include "image/gif.h"
 #include "image/pcx.h"
+#include "phoenixvr/arn.h"
 #include "phoenixvr/console.h"
 #include "phoenixvr/game_state.h"
 #include "phoenixvr/math.h"
@@ -602,6 +603,7 @@ void PhoenixVREngine::executeTest(int idx) {
 
 void PhoenixVREngine::startTimer(float seconds) {
 	_timer = seconds;
+	_initialTimer = seconds;
 	_timerFlags = 5;
 }
 
@@ -642,6 +644,28 @@ void PhoenixVREngine::tickTimer(float dt) {
 	}
 }
 
+void PhoenixVREngine::renderTimer() {
+	if (_timerFlags == 0 || !_arn)
+		return;
+	auto timerBg = _arn->get("cadre.bmp");
+	auto timerFg = _arn->get("cadreB.bmp");
+	if (!timerBg || !timerFg)
+		return;
+
+	// Loch-Ness rectangle for now.
+	// Necronomicon has timer in scripts, but does not contain bitmaps for timers.
+	Common::Rect bgRect{320, 16, 632, 44};
+	Common::Rect fgRect{333, 23, 619, 38};
+	assert(_initialTimer > 0);
+	auto timeLeft = _timer / _initialTimer;
+	fgRect.right = fgRect.left + fgRect.width() * timeLeft;
+	Common::Rect fgSrcRect{static_cast<short>(timerFg->w * timeLeft), timerFg->h};
+	if (!fgRect.isValidRect() || !fgSrcRect.isValidRect())
+		return;
+	_screen->blitFrom(*timerBg, bgRect.origin());
+	_screen->blitFrom(*timerFg, fgSrcRect, fgRect.origin());
+}
+
 void PhoenixVREngine::renderVR(float dt) {
 	_vr.render(_screen, _angleX.angle(), _angleY.angle(), _fov, dt, _showRegions ? _regSet.get() : nullptr);
 	if (_text) {
@@ -649,6 +673,7 @@ void PhoenixVREngine::renderVR(float dt) {
 		int16 y = _textRect.top + (_textRect.height() - _text->h) / 2;
 		_screen->blitFrom(*_text, {x, y});
 	}
+	renderTimer();
 }
 
 void PhoenixVREngine::saveVariables() {
@@ -885,6 +910,7 @@ void PhoenixVREngine::tick(float dt) {
 }
 
 Common::Error PhoenixVREngine::run() {
+	_arn.reset(ARN::create());
 	initGraphics(640, 480, &_pixelFormat);
 #ifdef USE_FREETYPE2
 	static const Common::String family("NotoSerif-Bold.ttf");
