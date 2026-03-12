@@ -268,6 +268,7 @@ public:
 	// intros
 	void runIntro(MVideo &video);
 	void runIntros(Videos &videos);
+	void runIntrosWithSubtitles(Videos &videos);
 	Common::HashMap<Filename, bool> _intros;
 
 	// levels

@@ -329,6 +329,19 @@ void HypnoEngine::runIntro(MVideo &video) {
 	g_system->hideOverlay();
 }
 
+void HypnoEngine::runIntrosWithSubtitles(Videos &videos) {
+	if (videos.empty())
+		return;
+
+	loadSubtitles(Common::Path(videos[0].path));
+	if (!_subtitles)
+		warning("Conversation: failed to load subtitles for video '%s'", videos[0].path.c_str());
+	runIntros(videos);
+	delete _subtitles;
+	_subtitles = nullptr;
+	g_system->hideOverlay();
+}
+
 void HypnoEngine::runCode(Code *code) { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::showCredits() { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::loadGame(const Common::String &nextLevel, int score, int puzzleDifficulty, int combatDifficulty) {
