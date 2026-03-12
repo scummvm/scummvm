@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "graphics/paletteman.h"
@@ -83,7 +84,37 @@ static void rebuildSoundIcon(Graphics::ManagedSurface &target, const byte *sourc
 	delete scaled;
 }
 
-MenuButton MenuManager::isButtonClicked(int x, int y) {
+SoundMenuButton MenuManager::isSoundMenuButtonUnder(int x, int y) {
+	if (_menuState != SOUND) {
+		return NO_SOUND_BUTTON;
+	}
+	if (_masterVolumeLeftRect.contains(x, y)) {
+		return MASTER_LEFT_BUTTON;
+	}
+	if (_masterVolumeRightRect.contains(x, y)) {
+		return MASTER_RIGHT_BUTTON;
+	}
+	if (_sfxVolumeLeftRect.contains(x, y)) {
+		return SFX_LEFT_BUTTON;
+	}
+	if (_sfxVolumeRightRect.contains(x, y)) {
+		return SFX_RIGHT_BUTTON;
+	}
+	if (_musicVolumeLeftRect.contains(x, y)) {
+		return MUSIC_LEFT_BUTTON;
+	}
+	if (_musicVolumeRightRect.contains(x, y)) {
+		return MUSIC_RIGHT_BUTTON;
+	}
+	return NO_SOUND_BUTTON; // Default fallback
+}
+
+MainMenuButton MenuManager::isMainMenuButtonUnder(int x, int y) {
+	if (_menuState != MAIN_MENU) {
+		debug("Not checking for main menu buttons because menu state is not MAIN_MENU");
+		return NO_MAIN_BUTTON;
+	}
+
 	if (_questionMarkRect.contains(x, y)) {
 		return QUESTION_MARK_BUTTON;
 	}
@@ -111,34 +142,14 @@ MenuButton MenuManager::isButtonClicked(int x, int y) {
 	if (_savesDown.contains(x, y)) {
 		return SAVEGAME_NEXT_BUTTON;
 	}
-	if (_showSoundOptions) {
-		if (_masterVolumeLeftRect.contains(x, y)) {
-			return MASTER_LEFT_BUTTON;
-		}
-		if (_masterVolumeRightRect.contains(x, y)) {
-			return MASTER_RIGHT_BUTTON;
-		}
-		if (_sfxVolumeLeftRect.contains(x, y)) {
-			return SFX_LEFT_BUTTON;
-		}
-		if (_sfxVolumeRightRect.contains(x, y)) {
-			return SFX_RIGHT_BUTTON;
-		}
-		if (_musicVolumeLeftRect.contains(x, y)) {
-			return MUSIC_LEFT_BUTTON;
-		}
-		if (_musicVolumeRightRect.contains(x, y)) {
-			return MUSIC_RIGHT_BUTTON;
-		}
-	}
-	return NO_BUTTON; // Default fallback
+	return NO_MAIN_BUTTON; // Default fallback
 }
 
 void MenuManager::checkMouseDown(int x, int y) {
-	if(!_events->_leftMouseButton) {
+	if (!_events->_leftMouseButton) {
 		return;
 	}
-	MenuButton b = isButtonClicked(x, y);
+	SoundMenuButton b = isSoundMenuButtonUnder(x, y);
 	switch (b) {
 	case MASTER_LEFT_BUTTON:
 		_masterVolumeLevel = MAX(0, _masterVolumeLevel - 1);
@@ -176,38 +187,55 @@ void MenuManager::checkMouseDown(int x, int y) {
 }
 
 bool MenuManager::checkMouseClick(int x, int y) {
+	debug("Checking mouse click at %d, %d, with menu state %d", x, y, _menuState);
 
-	bool selectedItem = false;
-	for (int i = 0; i < 4; i++) {
+	switch (_menuState) {
+	case MAIN_MENU: {
+		return checkMainMenuMouse(x, y);
+		break;
+	}
+	case SOUND: {
+		checkSoundMenuClick(x, y);
+		break;
+	}
+	case ORIGINAL_SAVE: {
 
-		Common::Rect itemRect = Common::Rect(_inventorySlots[i], 60, 60);
+		break;
+	}
+	case ORIGINAL_LOAD: {
+		break;
+	}
+	case EXIT_GAME: {
+		break;
+	}
+	}
+	return false;
+}
 
-		if (itemRect.contains(x, y)) {
-			selectedItem = selectInventoryItem(i);
-			return false;
-		}
+void MenuManager::checkSoundMenuClick(int x, int y) {
+	SoundMenuButton soundMenuButton = isSoundMenuButtonUnder(x, y);
+
+	if (soundMenuButton != MUSIC_LEFT_BUTTON &&
+		soundMenuButton != MUSIC_RIGHT_BUTTON &&
+		soundMenuButton != SFX_LEFT_BUTTON &&
+		soundMenuButton != SFX_RIGHT_BUTTON &&
+		soundMenuButton != MASTER_LEFT_BUTTON &&
+		soundMenuButton != MASTER_RIGHT_BUTTON) {
+		_menuState = MAIN_MENU;
+		_menuText = _menuTexts[0];
 	}
 
-
-	MenuButton button = isButtonClicked(x, y);
-
-	if (button != MUSIC_LEFT_BUTTON &&
-		button != MUSIC_RIGHT_BUTTON &&
-		button != SFX_LEFT_BUTTON &&
-		button != SFX_RIGHT_BUTTON &&
-		button != MASTER_LEFT_BUTTON &&
-		button != MASTER_RIGHT_BUTTON) {
-		_showSoundOptions = false;
-		if (!selectedItem) {
-			_selectedInvIndex = -1;
-			_menuText = _menuTexts[0];
-		}
+	if (soundMenuButton == SFX_LEFT_BUTTON || soundMenuButton == SFX_RIGHT_BUTTON) {
+		_sound->playSound("CAT_1ZZZ.SMP", -1);
 	}
+}
 
-	switch (button) {
+bool MenuManager::checkMainMenuMouse(int x, int y) {
+	debug("Checking main menu buttons");
+	MainMenuButton mainMenuButton = isMainMenuButtonUnder(x, y);
+	switch (mainMenuButton) {
 	case QUESTION_MARK_BUTTON:
 		_sound->playSound("56ZZZZZZ.SMP", 0);
-		debug("Show credits");
 		_events->_leftMouseClicked = false;
 		showCredits();
 		break;
@@ -223,26 +251,31 @@ bool MenuManager::checkMouseClick(int x, int y) {
 		break;
 	case SAVE_GAME_BUTTON:
 		_sound->playSound("11ZZZZZZ.SMP", 0);
-		return g_engine->saveGameDialog();
+		if (ConfMan.getBool("original_menus") == true) {
+			_menuState = ORIGINAL_SAVE;
+			_menuText = Common::StringArray();
+		} else {
+			return g_engine->saveGameDialog();
+		}
 		break;
 	case LOAD_GAME_BUTTON:
 		_sound->playSound("11ZZZZZZ.SMP", 0);
-		return g_engine->loadGameDialog();
+		if (ConfMan.getBool("original_menus") == true) {
+			_menuState = ORIGINAL_LOAD;
+			_menuText = Common::StringArray();
+		} else {
+			return g_engine->loadGameDialog();
+		}
 		break;
 	case EXIT_MENU_BUTTON:
 		_sound->playSound("11ZZZZZZ.SMP", 0);
-		g_engine->quitGame();
+		_menuState = EXIT_GAME;
+		// g_engine->quitGame();
 		break;
 	case SOUNDS_BUTTON:
 		_sound->playSound("11ZZZZZZ.SMP", 0);
-		_showSoundOptions = true;
+		_menuState = SOUND;
 		_menuText = Common::StringArray();
-		break;
-	case SFX_LEFT_BUTTON:
-		_sound->playSound("CAT_1ZZZ.SMP", -1);
-		break;
-	case SFX_RIGHT_BUTTON:
-		_sound->playSound("CAT_1ZZZ.SMP", -1);
 		break;
 	default:
 		break;
@@ -303,18 +336,18 @@ bool MenuManager::selectInventoryItem(int i) {
 
 void MenuManager::menuLoop() {
 
-	//Save screenshot in case the user saves
+	// Save screenshot in case the user saves
 	saveScreenshot();
 	g_engine->_autoSaveAllowed = false;
 
 	g_system->getPaletteManager()->setPalette(_mainMenuPalette, 0, 256);
 	g_engine->changeCursor(DEFAULT);
-	_showSoundOptions = false;
+	_menuState = MAIN_MENU;
 	_menuText = _menuTexts[0];
 
 	// Initialize volume levels from current settings
-	_sfxVolumeLevel    = mixerVolumeToLevel(_sound->getVolumeSfx());
-	_musicVolumeLevel  = mixerVolumeToLevel(_sound->getVolumeMusic());
+	_sfxVolumeLevel = mixerVolumeToLevel(_sound->getVolumeSfx());
+	_musicVolumeLevel = mixerVolumeToLevel(_sound->getVolumeMusic());
 	_masterVolumeLevel = mixerVolumeToLevel(_sound->getVolumeMaster());
 
 	debug("Initial master volume level: %d", _masterVolumeLevel);
@@ -333,14 +366,24 @@ void MenuManager::menuLoop() {
 		_events->pollEvent();
 		checkMouseDown(_events->_mouseX, _events->_mouseY);
 		if (_events->_leftMouseClicked) {
+			_events->_leftMouseClicked = false;
 			if (checkMouseClick(_events->_mouseX, _events->_mouseY)) {
 				break;
 			}
-			_events->_leftMouseClicked = false;
 		}
 		if (_events->_rightMouseClicked) {
 			break;
 		}
+		if (_menuState == EXIT_GAME) {
+			if (_events->_lastKeyEvent == Common::KEYCODE_s) {
+				g_engine->quitGame();
+			} else if (_events->_lastKeyEvent == Common::KEYCODE_n) {
+				_menuState = MAIN_MENU;
+				_menuText = _menuTexts[0];
+			}
+			_events->_lastKeyEvent = Common::KEYCODE_INVALID;
+		}
+
 		drawScreen();
 		_screen->markAllDirty();
 		_screen->update();
@@ -480,7 +523,6 @@ void MenuManager::loadMenu() {
 	extractSingleFrame(soundIconMusicData, _soundControlMusicIcon, 0, 66, 64);
 	delete[] soundIconMusicData;
 
-
 	_menuText = _menuTexts[0];
 	alfred7.close();
 
@@ -542,11 +584,42 @@ void MenuManager::cleanUp() {
 }
 
 void MenuManager::drawButtons() {
-	MenuButton button = NO_BUTTON;
-	if (_events->_leftMouseButton != 0) {
-		button = isButtonClicked(_events->_mouseX, _events->_mouseY);
+	// always draw main buttons
+	drawMainButtons();
+
+	switch (_menuState) {
+	case MAIN_MENU:
+		break;
+	case ORIGINAL_SAVE:
+		drawSaves();
+		break;
+	case ORIGINAL_LOAD:
+		drawSaves();
+		break;
+	case SOUND:
+		drawSoundControls();
+		break;
+	case EXIT_GAME:
+		drawConfirmation();
+		break;
 	}
-	byte *buf = button == QUESTION_MARK_BUTTON ? _questionMark[1] : _questionMark[0];
+}
+
+void MenuManager::drawConfirmation() {
+	_menuText = _menuTexts[4];
+}
+
+void MenuManager::drawSaves() {
+}
+
+void MenuManager::drawMainButtons() {
+	MainMenuButton button = NO_MAIN_BUTTON;
+	if (_events->_leftMouseButton != 0) {
+		button = isMainMenuButtonUnder(_events->_mouseX, _events->_mouseY);
+	}
+
+	byte *buf;
+	buf = button == QUESTION_MARK_BUTTON ? _questionMark[1] : _questionMark[0];
 	drawSpriteToBuffer(_compositeBuffer, buf, _questionMarkRect.left, _questionMarkRect.top, _questionMarkRect.width(), _questionMarkRect.height(), kTransparentColor);
 
 	buf = button == INVENTORY_PREV_BUTTON ? _inventoryLeftArrow[1] : _inventoryLeftArrow[0];
@@ -575,25 +648,30 @@ void MenuManager::drawButtons() {
 
 	buf = button == SAVEGAME_NEXT_BUTTON ? _savesDownArrows[1] : _savesDownArrows[0];
 	drawSpriteToBuffer(_compositeBuffer, buf, _savesDown.left, _savesDown.top, _savesDown.width(), _savesDown.height(), kTransparentColor);
+}
 
-	if (_showSoundOptions) {
-		_compositeBuffer.transBlitFrom(_masterSoundIcon, Common::Point(266 - _masterSoundIcon.w / 2, 212 - _masterSoundIcon.h / 2), kSoundControlsTransparentColor);
-		_compositeBuffer.transBlitFrom(_musicSoundIcon, Common::Point(333 - _musicSoundIcon.w / 2, 212 - _musicSoundIcon.h / 2), kSoundControlsTransparentColor);
-		_compositeBuffer.transBlitFrom(_sfxSoundIcon, Common::Point(399 - _sfxSoundIcon.w / 2, 212 - _sfxSoundIcon.h / 2), kSoundControlsTransparentColor);
-
-		buf = button == MASTER_LEFT_BUTTON ? _soundControlArrowLeft[1] : _soundControlArrowLeft[0];
-		drawSpriteToBuffer(_compositeBuffer, buf, _masterVolumeLeftRect.left, _masterVolumeLeftRect.top, _masterVolumeLeftRect.width(), _masterVolumeLeftRect.height(), kSoundControlsTransparentColor);
-		buf = button == MASTER_RIGHT_BUTTON ? _soundControlArrowRight[1] : _soundControlArrowRight[0];
-		drawSpriteToBuffer(_compositeBuffer, buf, _masterVolumeRightRect.left, _masterVolumeRightRect.top, _masterVolumeRightRect.width(), _masterVolumeRightRect.height(), kSoundControlsTransparentColor);
-		buf = button == SFX_LEFT_BUTTON ? _soundControlArrowLeft[1] : _soundControlArrowLeft[0];
-		drawSpriteToBuffer(_compositeBuffer, buf, _sfxVolumeLeftRect.left, _sfxVolumeLeftRect.top, _sfxVolumeLeftRect.width(), _sfxVolumeLeftRect.height(), kSoundControlsTransparentColor);
-		buf = button == SFX_RIGHT_BUTTON ? _soundControlArrowRight[1] : _soundControlArrowRight[0];
-		drawSpriteToBuffer(_compositeBuffer, buf, _sfxVolumeRightRect.left, _sfxVolumeRightRect.top, _sfxVolumeRightRect.width(), _sfxVolumeRightRect.height(), kSoundControlsTransparentColor);
-		buf = button == MUSIC_LEFT_BUTTON ? _soundControlArrowLeft[1] : _soundControlArrowLeft[0];
-		drawSpriteToBuffer(_compositeBuffer, buf, _musicVolumeLeftRect.left, _musicVolumeLeftRect.top, _musicVolumeLeftRect.width(), _musicVolumeLeftRect.height(), kSoundControlsTransparentColor);
-		buf = button == MUSIC_RIGHT_BUTTON ? _soundControlArrowRight[1] : _soundControlArrowRight[0];
-		drawSpriteToBuffer(_compositeBuffer, buf, _musicVolumeRightRect.left, _musicVolumeRightRect.top, _musicVolumeRightRect.width(), _musicVolumeRightRect.height(), kSoundControlsTransparentColor);
+void MenuManager::drawSoundControls() {
+	SoundMenuButton button = NO_SOUND_BUTTON;
+	if (_events->_leftMouseButton != 0) {
+		button = isSoundMenuButtonUnder(_events->_mouseX, _events->_mouseY);
 	}
+	byte *buf;
+	_compositeBuffer.transBlitFrom(_masterSoundIcon, Common::Point(266 - _masterSoundIcon.w / 2, 212 - _masterSoundIcon.h / 2), kSoundControlsTransparentColor);
+	_compositeBuffer.transBlitFrom(_musicSoundIcon, Common::Point(333 - _musicSoundIcon.w / 2, 212 - _musicSoundIcon.h / 2), kSoundControlsTransparentColor);
+	_compositeBuffer.transBlitFrom(_sfxSoundIcon, Common::Point(399 - _sfxSoundIcon.w / 2, 212 - _sfxSoundIcon.h / 2), kSoundControlsTransparentColor);
+
+	buf = button == MASTER_LEFT_BUTTON ? _soundControlArrowLeft[1] : _soundControlArrowLeft[0];
+	drawSpriteToBuffer(_compositeBuffer, buf, _masterVolumeLeftRect.left, _masterVolumeLeftRect.top, _masterVolumeLeftRect.width(), _masterVolumeLeftRect.height(), kSoundControlsTransparentColor);
+	buf = button == MASTER_RIGHT_BUTTON ? _soundControlArrowRight[1] : _soundControlArrowRight[0];
+	drawSpriteToBuffer(_compositeBuffer, buf, _masterVolumeRightRect.left, _masterVolumeRightRect.top, _masterVolumeRightRect.width(), _masterVolumeRightRect.height(), kSoundControlsTransparentColor);
+	buf = button == SFX_LEFT_BUTTON ? _soundControlArrowLeft[1] : _soundControlArrowLeft[0];
+	drawSpriteToBuffer(_compositeBuffer, buf, _sfxVolumeLeftRect.left, _sfxVolumeLeftRect.top, _sfxVolumeLeftRect.width(), _sfxVolumeLeftRect.height(), kSoundControlsTransparentColor);
+	buf = button == SFX_RIGHT_BUTTON ? _soundControlArrowRight[1] : _soundControlArrowRight[0];
+	drawSpriteToBuffer(_compositeBuffer, buf, _sfxVolumeRightRect.left, _sfxVolumeRightRect.top, _sfxVolumeRightRect.width(), _sfxVolumeRightRect.height(), kSoundControlsTransparentColor);
+	buf = button == MUSIC_LEFT_BUTTON ? _soundControlArrowLeft[1] : _soundControlArrowLeft[0];
+	drawSpriteToBuffer(_compositeBuffer, buf, _musicVolumeLeftRect.left, _musicVolumeLeftRect.top, _musicVolumeLeftRect.width(), _musicVolumeLeftRect.height(), kSoundControlsTransparentColor);
+	buf = button == MUSIC_RIGHT_BUTTON ? _soundControlArrowRight[1] : _soundControlArrowRight[0];
+	drawSpriteToBuffer(_compositeBuffer, buf, _musicVolumeRightRect.left, _musicVolumeRightRect.top, _musicVolumeRightRect.width(), _musicVolumeRightRect.height(), kSoundControlsTransparentColor);
 }
 
 Pelrock::MenuManager::~MenuManager() {

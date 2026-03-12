@@ -41,7 +41,7 @@ const int kTransparentColor = 65;
 const int kSoundControlsTransparentColor = 195;
 const uint32 kCreditsBackgroundOffset = 3271454;
 
-enum MenuButton {
+enum MainMenuButton {
 	QUESTION_MARK_BUTTON,
 	INVENTORY_PREV_BUTTON,
 	INVENTORY_NEXT_BUTTON,
@@ -51,13 +51,17 @@ enum MenuButton {
 	SAVE_GAME_BUTTON,
 	LOAD_GAME_BUTTON,
 	SOUNDS_BUTTON,
+	NO_MAIN_BUTTON
+};
+
+enum SoundMenuButton {
 	MASTER_LEFT_BUTTON,
 	MASTER_RIGHT_BUTTON,
 	SFX_LEFT_BUTTON,
 	SFX_RIGHT_BUTTON,
 	MUSIC_LEFT_BUTTON,
 	MUSIC_RIGHT_BUTTON,
-	NO_BUTTON
+	NO_SOUND_BUTTON
 };
 
 static const int kCreditsOrder[34] = {
@@ -215,6 +219,15 @@ static const char *inventorySounds[113] = {
 };
 
 class MenuManager {
+
+	enum MenuState {
+		MAIN_MENU,
+		SOUND,
+		ORIGINAL_SAVE,
+		ORIGINAL_LOAD,
+		EXIT_GAME
+	};
+
 public:
 	MenuManager(Graphics::Screen *screen, PelrockEventManager *events, ResourceManager *res, SoundManager *sound);
 	~MenuManager();
@@ -228,14 +241,22 @@ public:
 private:
 	void checkMouseDown(int x, int y);
 	bool checkMouseClick(int x, int y);
+void checkSoundMenuClick(int x, int y);
+	bool checkMainMenuMouse(int x, int y, bool &retFlag);
+	bool checkMainMenuMouse(int x, int y); // returns bool if its supposed to close the menu
 	void showCredits();
 	bool selectInventoryItem(int i);
 	void loadMenuTexts();
 	void cleanUp();
 	void drawButtons();
+	void drawConfirmation();
+	void drawSaves();
+	void drawMainButtons();
+	void drawSoundControls();
 	void readButton(byte *rawData, uint32 offset, byte *outBuffer[2], int w, int h);
 	void readButton(Common::File &alfred7, uint32 offset, byte *outBuffer[2], Common::Rect rect);
-	MenuButton isButtonClicked(int x, int y);
+	SoundMenuButton isSoundMenuButtonUnder(int x, int y);
+	MainMenuButton isMainMenuButtonUnder(int x, int y);
 	Graphics::Screen *_screen = nullptr;
 	PelrockEventManager *_events = nullptr;
 	ResourceManager *_res = nullptr;
@@ -304,7 +325,7 @@ private:
 	Common::Array<Common::Point> _inventorySlots;
 
 	bool showButtons = true;
-	bool _showSoundOptions = false;
+	MenuState _menuState = MAIN_MENU;
 };
 
 } // End of namespace Pelrock
