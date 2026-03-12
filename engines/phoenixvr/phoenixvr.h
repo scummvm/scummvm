@@ -54,7 +54,7 @@ class ARN;
 struct PhoenixVRGameDescription;
 struct GameState;
 
-enum struct RolloverType {
+enum struct RolloverType : uint8 {
 	Default,
 	Malette,
 	Secretaire
