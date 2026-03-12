@@ -107,6 +107,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  iOS port:
    - Added support for Text-to-Speech.
+   - Ported the CoreMIDI macOS feature to the iOS/tvOS ports, allowing the use
+     of external MIDI devices for output.
 
 #### 2026.1.0 "Like a version" (2026-01-31)
 
