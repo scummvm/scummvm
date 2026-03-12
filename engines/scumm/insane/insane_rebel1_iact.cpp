@@ -1613,6 +1613,12 @@ void InsaneRebel1::handleGameChunk(int32 subSize, Common::SeekableReadStream &b)
 		_frameGameOpcodeMask = 0;
 		_frameDispatchFlags = 0;
 		resetProjectionTable();
+
+		// RunLevel8Flow seeds the walker armor mask after the interactive segment
+		// has entered its runtime reset path, not before playback begins.
+		if (_currentLevel == 7)
+			memset(_frameObjectState + 150, 0xFF, 150);
+
 		debug(5, "RA1 GAME 0x5E: reset state field1=%d mode=%d", (int32)param1, (int)_flyControlMode);
 		break;
 
@@ -1937,8 +1943,10 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 			curY > top - snap && curY < bottom + snap) {
 			_targetProximity = 2;  // On-target
 
-			// Check if any active shot slot hits this target
-			if (_lastHitTarget != targetIdx + 1) {
+			// DOS uses g_recentKillObjectIdPlus1 as a frame-wide latch. Once one
+			// target is hit this frame, overlapping FOBJ layers must not consume the
+			// same shot again.
+			if (_lastHitTarget == 0) {
 				for (int i = 0; i < kMaxShotSlots; i++) {
 					if (_shotSlots[i].timer == 1) {  // Shot in final frame = impact
 						// Hit! Record in GOST slot for explosion animation
@@ -1953,6 +1961,32 @@ void InsaneRebel1::checkTargetHit(int16 targetIdx, int16 left, int16 top, int16 
 						_score += _tuning.kill;
 						_killCount++;
 						applyFrameObjectHitState(targetIdx);
+
+						if (_currentLevel == 7) {
+							Common::String damagedState;
+							Common::String hiddenState;
+							for (int objectId = 20; objectId <= 43; objectId++) {
+								const int bitIndex = objectId - 1;
+								const int byteIdx = bitIndex >> 3;
+								if (byteIdx < 0 || byteIdx >= 0x96 || byteIdx >= kFrameObjectStateBytes)
+									continue;
+
+								const byte stateBit = (byte)(0x80 >> (bitIndex & 7));
+								const int altIdx = byteIdx + 0x96;
+								const bool primarySet = (_frameObjectState[byteIdx] & stateBit) != 0;
+								const bool secondarySet = (altIdx < kFrameObjectStateBytes) &&
+									((_frameObjectState[altIdx] & stateBit) != 0);
+
+								if (primarySet)
+									hiddenState += Common::String::format("%d,", objectId);
+								else if (!secondarySet)
+									damagedState += Common::String::format("%d,", objectId);
+							}
+
+							debug(1, "RA1 L8 armor: hitObject=%d damaged=[%s] hidden=[%s]",
+								targetIdx + 1, damagedState.c_str(), hiddenState.c_str());
+						}
+
 						int16 hitCenterX = (left + right) / 2;
 						int16 hitCenterY = (top + bottom) / 2;
 						projectGameplayPoint(hitCenterX, hitCenterY);
