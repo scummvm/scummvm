@@ -1355,7 +1355,7 @@ void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b
 	assert(chunk_buffer);
 	b.read(chunk_buffer, chunk_size);
 
-	if (isRA2()) {
+	if (isRA1() || isRA2()) {
 		ra2RememberLastFobj(codec, chunk_buffer, chunk_size, left, top, width, height);
 	}
 
@@ -1398,7 +1398,7 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFrame(%d)", _frame);
 	uint8 *audioChunk = nullptr;
 	_skipNext = false;
-	if (isRA2())
+	if (isRA2() || isRA1())
 		_hasFrameFobjForGost = false;
 
 	bool interactiveRA1 = false;
@@ -1409,9 +1409,13 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 		const uint16 activeOpcode = rebel1->getActiveGameOpcode();
 		// Opcode 0x0B path (FUN_1CDA7) uses heavy partial-layer composition
 		// (codec1/2 + FTCH). Force clear there to avoid stale-trail ghosting.
-		// Keep a conservative fallback for early L2 frames before first 0x0B arrives.
+		// Keep conservative fallbacks for the early L2 frames before first 0x0B
+		// arrives and for L4PLAY2, whose static 320x180 FTCH background leaves the
+		// uncovered top band reliant on a clean frame base.
 		forceInteractiveClearRA1 = interactiveRA1 &&
-			(activeOpcode == 0x0B || (activeOpcode == 0 && rebel1->getCurrentLevel() == 1));
+			(activeOpcode == 0x0B ||
+			 (activeOpcode == 0 && rebel1->getCurrentLevel() == 1) ||
+			 _seekFile.equalsIgnoreCase("LVL4/L4PLAY2.ANM"));
 	}
 
 	// Keep the previous decoded frame (without post-render overlays) as delta source.
@@ -1531,7 +1535,9 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 			handleLoad(subSize, b);
 			break;
 		case MKTAG('G','O','S','T'):
-			if (isRA2() || isRA1())
+			if (isRA1())
+				ra1HandleGost(subSize, b);
+			else if (isRA2())
 				ra2HandleGost(subSize, b);
 			break;
 		// RA1-specific chunk types: skip gracefully
