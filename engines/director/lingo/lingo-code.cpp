@@ -1324,6 +1324,11 @@ Datum LC::compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2, 
 	// At least one of d1 and d2 must be an array
 	bool d1isArr = d1.isArray() || d1.type == PARRAY;
 	bool d2isArr = d2.isArray() || d2.type == PARRAY;
+	// As far as I can tell, D6 no longer does partial array or element-to-array comparison
+	if ((g_director->getVersion() >= 600) && (!(d1isArr && d2isArr))) {
+		return Datum(0);
+	}
+
 	uint32 d1size = d1.isArray() ? d1.u.farr->arr.size() : d1.type == PARRAY ? d1.u.parr->arr.size() : 0;
 	uint32 d2size = d2.isArray() ? d2.u.farr->arr.size() : d2.type == PARRAY ? d2.u.parr->arr.size() : 0;
 	// The calling convention of this checking function is a bit weird:
