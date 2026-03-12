@@ -806,6 +806,18 @@ ConversationEndResult DialogManager::checkConversationEnd(const byte *data, uint
 	byte controlByte = data[position];
 
 	if (controlByte == CTRL_END_CONVERSATION) {
+		// Bug in the original in room 45, root 1: The conversation data has F4 (END_CONV) after
+		// the opening NPC text instead of FD (END_TEXT), so the 3 choices that follow are
+		// unreachable. Treat F4 as FD specifically for this root to restore them.
+		int room = g_engine->_room->_currentRoomNumber;
+		uint32 peekPos = position + 1;
+		if (room == 45 && currentRoot == 1 &&
+			peekPos < dataSize &&
+			(data[peekPos] == kCtrlDialogueMarker || data[peekPos] == kCtrlDialogueMarkerOneoff)) {
+			debug("Room 45 Root 1: F4 followed by choice marker treated as FD (data bug workaround)");
+			result.nextPosition = position + 1;
+			return result;
+		}
 		debug("End of conversation marker found");
 		result.shouldEnd = true;
 		return result;
