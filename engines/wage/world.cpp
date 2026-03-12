@@ -140,7 +140,12 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	if ((resArray = resMan->getResIDArray(MKTAG('V','E','R','S'))).size() == 0)
 		return false;
 
-	_name = resMan->getBaseFileName().toString();
+	Common::String origName = resMan->getOriginalFileName();
+	if (!origName.empty()) {
+		_name = origName;
+	} else {
+		_name = resMan->getBaseFileName().toString();
+	}
 
 	if (resArray.size() > 1)
 		warning("Too many VERS resources");
@@ -356,6 +361,8 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 		for (uint i = 0; i < string.size() && string[i] != ';'; i++) // Read token
 			_aboutMenuItemName += string[i];
+
+		_aboutMenuItemName.trim();
 
 		debugC(1, kDebugLoading, "MENU: About: %s", toPrintable(_aboutMenuItemName).c_str());
 
