@@ -938,6 +938,53 @@ static void smushDecodeRA1SkipCopy(byte *dst, const byte *src, int left, int top
 }
 
 /**
+ * RA1 codec 23: Additive line-update overlay (FUN_10B40).
+ *
+ * Each line starts with a 16-bit row payload size followed by repeated
+ * [skip:u8][run:u8] pairs. Unlike codec 21, the run length is stored directly,
+ * not minus one. Instead of copying bytes from the stream, the decoder adds
+ * `(paletteBase - 0x30)` to the destination pixels already present in the
+ * framebuffer.
+ */
+static void smushDecodeRA1AdditiveLineUpdate(byte *dst, const byte *src, int left, int top, int width, int height,
+		int pitch, int bufWidth, int bufHeight, uint8 paletteBase) {
+	const uint8 colorDelta = (uint8)(paletteBase - 0x30);
+
+	for (int row = 0; row < height; row++) {
+		const uint16 lineSize = READ_LE_UINT16(src);
+		const byte *lineData = src + 2;
+		const byte *lineEnd = lineData + lineSize;
+		const int dstY = top + row;
+		int srcX = 0;
+
+		while (srcX < width && lineData < lineEnd) {
+			const int skip = *lineData++;
+			srcX += skip;
+			if (srcX >= width || lineData >= lineEnd)
+				break;
+
+			const int runLength = (int)(*lineData++);
+			const int dstStartX = left + srcX;
+			const int dstEndX = dstStartX + runLength;
+
+			if (dstY >= 0 && dstY < bufHeight) {
+				const int clippedStartX = MAX(dstStartX, 0);
+				const int clippedEndX = MIN(dstEndX, bufWidth);
+				if (clippedStartX < clippedEndX) {
+					byte *dstPixel = dst + dstY * pitch + clippedStartX;
+					for (int x = clippedStartX; x < clippedEndX; x++, dstPixel++)
+						*dstPixel = (byte)(*dstPixel + colorDelta);
+				}
+			}
+
+			srcX += runLength;
+		}
+
+		src += lineSize + 2;
+	}
+}
+
+/**
  * RA1 codec 2: Scatter/point draw (FUN_110D7).
  *
  * Draws individual pixels at accumulated offsets — used for starfield
@@ -1177,7 +1224,8 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	int origHeight = height;
 
 	int srcSkipY = 0;
-	if (isRA1() || isRA2()) {
+	const bool ra1AdditiveCodec = isRA1() && (codec == SMUSH_CODEC_SKIP_RLE);
+	if ((isRA1() || isRA2()) && !ra1AdditiveCodec) {
 		ra2AdjustFrameCoords(left, top, width, height, pitch, &srcSkipY);
 		if (width <= 0 || height <= 0)
 			return;
@@ -1240,6 +1288,15 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	case SMUSH_CODEC_LINE_UPDATE:
 		if (isRA1()) {
 			smushDecodeRA1SkipCopy(_dst, adjustedSrc, left, top, width, height, pitch);
+			break;
+		}
+		// Fall through for RA2
+	case SMUSH_CODEC_SKIP_RLE:
+		if (isRA1()) {
+			const int bufWidth = pitch;
+			const int bufHeight = (_dst == _specialBuffer) ? _height : _vm->_screenHeight;
+			smushDecodeRA1AdditiveLineUpdate(_dst, src, origLeft, origTop, origWidth, origHeight,
+				pitch, bufWidth, bufHeight, ra1Param);
 			break;
 		}
 		// Fall through for RA2
