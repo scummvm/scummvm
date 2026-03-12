@@ -109,7 +109,7 @@ private:
 	ConversationState initializeConversation(const byte *data, uint32 dataSize, byte npcIndex);
 	bool handleGoBack(const byte *data, Common::Stack<uint32> &positionStack, uint32 position, ConversationState &state);
 	uint32 readAndDisplayDialogue(const byte *data, uint32 dataSize, uint32 position);
-	ConversationEndResult checkConversationEnd(const byte *data, uint32 dataSize, uint32 position);
+	ConversationEndResult checkConversationEnd(const byte *data, uint32 dataSize, uint32 position, int currentRoot = -1);
 	void addGoodbyeOptionIfNeeded(Common::Array<ChoiceOption> *choices, int currentChoiceLevel, uint originalChoiceCount);
 	uint32 processChoiceSelection(const byte *data, uint32 dataSize, Common::Array<ChoiceOption> *choices, int selectedIndex, ConversationState &state);
 	void disableChoiceIfNeeded(Common::Array<Pelrock::ChoiceOption> *choices, int selectedIndex, const byte *data, uint32 dataSize, uint32 endPos, Pelrock::ConversationState &state);

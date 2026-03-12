@@ -572,7 +572,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 		}
 
 		if (!skipToChoices) {
-			ConversationEndResult endResult = checkConversationEnd(conversationData, dataSize, state.position);
+			ConversationEndResult endResult = checkConversationEnd(conversationData, dataSize, state.position, state.currentRoot);
 			// Dispatch action for both 0xF8 (action+end) and 0xEB (action+continue)
 			if (endResult.hasAction) {
 				g_engine->dialogActionTrigger(endResult.actionCode, g_engine->_room->_currentRoomNumber, state.currentRoot);
@@ -790,7 +790,7 @@ uint32 DialogManager::readAndDisplayDialogue(const byte *data, uint32 dataSize, 
 	return endPos;
 }
 
-ConversationEndResult DialogManager::checkConversationEnd(const byte *data, uint32 dataSize, uint32 position) {
+ConversationEndResult DialogManager::checkConversationEnd(const byte *data, uint32 dataSize, uint32 position, int currentRoot) {
 	ConversationEndResult result;
 	result.shouldEnd = false;
 	result.nextPosition = position;
