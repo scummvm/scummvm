@@ -191,8 +191,8 @@ private:
 	int _ra1ViewportOffsetX;
 	int _ra1ViewportOffsetY;
 
-	// RA2: Most recently decoded FOBJ in the current frame, used by GOST chunks
-	// to re-render the same sprite payload at a different position.
+	// RA1/RA2: Most recently decoded FOBJ in the current frame, used by GOST
+	// chunks to re-render the same sprite payload at a different position.
 	byte *_lastFobjData;
 	int32 _lastFobjDataSize;
 	int _lastFobjCodec;
@@ -361,6 +361,7 @@ private:
 						  int left, int top, int width, int height);
 	void ra2RememberLastFobj(int codec, const byte *data, int32 dataSize,
 							 int left, int top, int width, int height);
+	void ra1HandleGost(int32 subSize, Common::SeekableReadStream &b);
 	void ra2HandleGost(int32 subSize, Common::SeekableReadStream &b);
 	void ra2ResetDeltaPalette();
 	SmushFont *ra1GetFont(int font);

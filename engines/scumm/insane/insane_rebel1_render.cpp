@@ -367,10 +367,20 @@ void InsaneRebel1::procPreRendering(byte *renderBitmap) {
 	_frameDispatchFlags = 0;
 
 	if (_interactiveVideoActive && _player) {
-		// FUN_224FD stores absolute 320x200 window origin in a 384x242 frame:
-		// X in [0..0x40], Y in [0..0x2E], centered at (0x20,0x17).
-		_player->_ra1ViewportOffsetX = _perspectiveX;
-		_player->_ra1ViewportOffsetY = _perspectiveY;
+		const bool usePerspectiveViewport =
+			_activeGameOpcode == 0x07 || _activeGameOpcode == 0x08 ||
+			_activeGameOpcode == 0x09 || _activeGameOpcode == 0x0A ||
+			_activeGameOpcode == 0x0B;
+		// Only gameplay handlers that actually execute FUN_224FD own the scrolling
+		// 320x200 window inside the 384x242 buffer. Interactive movies with no
+		// GAME stream (for example LVL4/L4PLAY2.ANM) keep a static camera.
+		if (usePerspectiveViewport) {
+			_player->_ra1ViewportOffsetX = _perspectiveX;
+			_player->_ra1ViewportOffsetY = _perspectiveY;
+		} else {
+			_player->_ra1ViewportOffsetX = 0;
+			_player->_ra1ViewportOffsetY = 0;
+		}
 	} else if (_player) {
 		_player->_ra1ViewportOffsetX = 0;
 		_player->_ra1ViewportOffsetY = 0;
@@ -415,6 +425,11 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	const bool onFootMode = hasFrameGameOpcode(0x19) || hasFrameGameOpcode(0x1A) ||
 		(!haveFrameGameOpcodes &&
 			(_activeGameOpcode == 0x19 || _activeGameOpcode == 0x1A));
+	const bool turretMode = hasFrameGameOpcode(0x08) || hasFrameGameOpcode(0x0A) ||
+		(!haveFrameGameOpcodes && (_activeGameOpcode == 0x08 || _activeGameOpcode == 0x0A));
+	const bool flightMode = hasFrameGameOpcode(0x07) || hasFrameGameOpcode(0x09) ||
+		(!haveFrameGameOpcodes &&
+			(_activeGameOpcode == 0x07 || _activeGameOpcode == 0x09));
 	if (asteroidMode) {
 		// First-person asteroid/surface handler — opcode 0x0B (FUN_1CDA7).
 		updateAsteroidPhysics();
@@ -437,12 +452,6 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 			renderSprite(renderBitmap, pitch, width, height, drawX, drawY, spr);
 		}
 	} else {
-		const bool turretMode = hasFrameGameOpcode(0x08) || hasFrameGameOpcode(0x0A) ||
-			(!haveFrameGameOpcodes && (_activeGameOpcode == 0x08 || _activeGameOpcode == 0x0A));
-		const bool flightMode = hasFrameGameOpcode(0x07) || hasFrameGameOpcode(0x09) ||
-			(!haveFrameGameOpcodes &&
-				(_activeGameOpcode == 0x07 || _activeGameOpcode == 0x09));
-
 		// Dispatch movement path by GAME handler family:
 		//   0x08/0x0A -> FUN_1E6A7/FUN_1D79C (turret/cockpit)
 		//   0x07/0x09 -> flight-family handlers
@@ -471,7 +480,7 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// before HUD/screen copy so 0x0B doesn't lag one frame behind the mouse.
 	// On-foot mode uses SetCameraOffset(0,0) — no viewport crop.
 	if (_player) {
-		if (onFootMode) {
+		if (onFootMode || (!asteroidMode && !turretMode && !flightMode)) {
 			_player->_ra1ViewportOffsetX = 0;
 			_player->_ra1ViewportOffsetY = 0;
 		} else {

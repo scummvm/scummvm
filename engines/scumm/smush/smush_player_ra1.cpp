@@ -129,10 +129,12 @@ bool SmushPlayerRebel1::handleGameFetch(int32 subSize, Common::SeekableReadStrea
 			InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
 			if (rebel1->isInteractiveVideoActive()) {
 				const uint16 gameOp = rebel1->getActiveGameOpcode();
+				const bool fullWidthStoredPatch = (_storedFobjWidth == _vm->_screenWidth);
 				// 0x0B (asteroid/surface) and 0x19/0x1A (on-foot) use SetCameraOffset
-				// directly — no projection-based FTCH placement.
-				if ((gameOp == 0x0B && _storedFobjWidth == _vm->_screenWidth) ||
-					gameOp == 0x19 || gameOp == 0x1A) {
+				// directly — no projection-based FTCH placement. Level 4 phase 2
+				// also stores a full-width screen-space patch (320x180) that DOS
+				// restores without the centered 1/4 projection warp.
+				if (fullWidthStoredPatch || gameOp == 0x19 || gameOp == 0x1A) {
 					left += _ra1ViewportOffsetX;
 					top += _ra1ViewportOffsetY;
 				} else {
@@ -157,6 +159,50 @@ bool SmushPlayerRebel1::handleGameFetch(int32 subSize, Common::SeekableReadStrea
 	}
 
 	return true;
+}
+
+void SmushPlayer::ra1HandleGost(int32 subSize, Common::SeekableReadStream &b) {
+	if (subSize < 12) {
+		warning("SmushPlayer::ra1HandleGost: chunk too small (%d bytes)", subSize);
+		return;
+	}
+
+	const uint32 ghostType = b.readUint32BE();
+	const int32 ghostX = b.readSint32BE();
+	const int32 ghostY = b.readSint32BE();
+
+	if (!_hasFrameFobjForGost || _lastFobjData == nullptr || _lastFobjDataSize <= 0) {
+		debug("RA1 GOST: frame=%d ignored type=0x%08x pos=(%d,%d) (no current-frame FOBJ cached)",
+			_frame, ghostType, ghostX, ghostY);
+		return;
+	}
+
+	uint16 priorityFlags = 0;
+	switch (ghostType) {
+	case 0x1C:
+		priorityFlags = 0x2000;
+		break;
+	case 0x1D:
+		priorityFlags = 0x4000;
+		break;
+	case 0x1E:
+		priorityFlags = 0x6000;
+		break;
+	default:
+		debug("RA1 GOST: frame=%d ignored unknown type=0x%08x pos=(%d,%d)",
+			_frame, ghostType, ghostX, ghostY);
+		return;
+	}
+
+	debug("RA1 GOST: frame=%d type=0x%08x flags=0x%04x pos=(%d,%d) size=%dx%d codec=%d",
+		_frame, ghostType, priorityFlags, ghostX, ghostY,
+		_lastFobjWidth, _lastFobjHeight, _lastFobjCodec);
+
+	// DOS reuses the most recent FOBJ payload for RA1 GOST and places it at the
+	// absolute BE32 coordinates stored in the chunk. Priority bits are identified
+	// here but not yet modeled in the generic ScummVM decode path.
+	decodeFrameObject(_lastFobjCodec, _lastFobjData, ghostX, ghostY,
+		_lastFobjWidth, _lastFobjHeight, _lastFobjDataSize);
 }
 
 bool SmushPlayerRebel1::handleGameTextResource(uint32 subType, int32 subSize, Common::SeekableReadStream &b) {
@@ -185,6 +231,8 @@ bool SmushPlayerRebel1::handleGameAnimHeader(byte *headerContent) {
 		_specialBuffer = (byte *)calloc(bufSize, 1);
 		_specialBufferSize = bufSize;
 	}
+	if (_specialBuffer != nullptr)
+		memset(_specialBuffer, 0, bufSize);
 	_dst = _specialBuffer;
 	return true;
 }
