@@ -617,6 +617,9 @@ void Sprite::replaceFrom(Sprite *nextSprite) {
 		return;
 
 	_scriptId = nextSprite->_scriptId;
+	// Copy all the behavior scripts
+	_behaviors = nextSprite->_behaviors;
+	_spriteInfo = nextSprite->_spriteInfo;
 
 	if (_puppet) {
 		// Whole sprite is in puppet mode.
