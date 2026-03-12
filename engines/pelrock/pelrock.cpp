@@ -912,7 +912,6 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			// Scale special anim frame to Alfred size before drawing
 			drawSpriteToBuffer(_compositeBuffer, frame, _alfredState.x, _alfredState.y - _res->_currentSpecialAnim->h, _res->_currentSpecialAnim->w, _res->_currentSpecialAnim->h, 255);
 		}
-		debug("Playing special anim frame %d/%d, speed %d", _res->_currentSpecialAnim->curFrame, _res->_currentSpecialAnim->numFrames, _res->_currentSpecialAnim->speed);
 		if (_chrono->getFrameCount() % _res->_currentSpecialAnim->speed == 0) {
 			_res->_currentSpecialAnim->curFrame++;
 
@@ -1511,7 +1510,6 @@ void PelrockEngine::gameLoop() {
 		}
 		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
 	}
-
 	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_k) {
 		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
 		credits();

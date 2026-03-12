@@ -36,45 +36,45 @@ static const uint32 ALFRED7_ALFRED_COMB_R = 67768;
 static const uint32 ALFRED7_ALFRED_COMB_L = 88408;
 
 // ALFRED.4 — inventory icon pixel data
-static const uint32 kInventoryIconsOffset   = 42366;
+static const uint32 kInventoryIconsOffset = 42366;
 static const uint32 kInventoryIconsTailSize = 423656; // bytes trailing the icon block
 
 // ALFRED.7 — action-popup balloon frames
 static const uint32 kBalloonFramesOffset = 2176936;
-static const uint32 kBalloonFramesSize   = 24950; // compressed size
+static const uint32 kBalloonFramesSize = 24950; // compressed size
 
 // JUEGO.EXE — Alfred in-game text responses
-static const uint32 kAlfredResponsesOffset        = 0x441DC;
-static const uint32 kAlfredResponsesSize          = 12143;
+static const uint32 kAlfredResponsesOffset = 0x441DC;
+static const uint32 kAlfredResponsesSize = 12143;
 static const uint32 kConversationTerminatorOffset = 0x0492EE;
 
 // JUEGO.EXE — credits
 static const uint32 kCreditsOffset = 0x49F60;
-static const uint32 kCreditsSize   = 2540;
+static const uint32 kCreditsSize = 2540;
 
 // JUEGO.EXE — computer-screen text
 static const uint32 kComputerTextOffset = 0x0004901A;
-static const uint32 kComputerTextSize   = 490;
+static const uint32 kComputerTextSize = 490;
 
 // Alfred special animation data (file index given per entry in alfredSpecialAnims[])
-static const uint32 kAlfredAnimReadBookOffset       = 559685;  // 0  - READ BOOK
-static const uint32 kAlfredAnimReadRecipeOffset     = 578943;  // 1  - READ RECIPE
-static const uint32 kAlfredAnimElectricShock1Offset = 37000;   // 2  - ELECTRIC SHOCK 1
-static const uint32 kAlfredAnimElectricShock3Offset = 53106;   // 3  - ELECTRIC SHOCK 3
-static const uint32 kAlfredAnimThrowOffset          = 20724;   // 4  - Throw
-static const uint32 kAlfredAnimThrowSize            = 62480;   // 4  - Throw explicit size
-static const uint32 kAlfredAnimCrocodileOffset      = 1556540; // 5  - Crocodile
-static const uint32 kAlfredAnimManholeOffset        = 1583702; // 6  - Exit manhole
-static const uint32 kAlfredAnimClimbDownOffset      = 1761234; // 7  - Climbs down
-static const uint32 kAlfredAnimClimbUpOffset        = 1766378; // 8  - Climbs up
-static const uint32 kAlfredAnimExitTunnelOffset     = 1770196; // 9  - Exits tunnel
-static const uint32 kAlfredAnimWorkersOffset        = 1600956; // 10 - With workers
-static const uint32 kAlfredAnimMunheco1Offset       = 2060916; // 11 - Munheco 1
-static const uint32 kAlfredAnimMunheco2Offset       = 2115632; // 12 - Munheco 2
-static const uint32 kAlfredAnimMunheco3Offset       = 1526432; // 13 - Munheco 3
-static const uint32 kAlfredAnimDescamisaOffset      = 2972568; // 14 - Descamisa
-static const uint32 kAlfredAnimSecretPassageOffset  = 1749464; // 15 - Secret passage
-static const uint32 kAlfredAnimInBedOffset          = 3038454; // 16 - Alfred in bed
+static const uint32 kAlfredAnimReadBookOffset = 559685;       // 0  - READ BOOK
+static const uint32 kAlfredAnimReadRecipeOffset = 578943;     // 1  - READ RECIPE
+static const uint32 kAlfredAnimElectricShock1Offset = 37000;  // 2  - ELECTRIC SHOCK 1
+static const uint32 kAlfredAnimElectricShock3Offset = 53106;  // 3  - ELECTRIC SHOCK 3
+static const uint32 kAlfredAnimThrowOffset = 20724;           // 4  - Throw
+static const uint32 kAlfredAnimThrowSize = 62480;             // 4  - Throw explicit size
+static const uint32 kAlfredAnimCrocodileOffset = 1556540;     // 5  - Crocodile
+static const uint32 kAlfredAnimManholeOffset = 1583702;       // 6  - Exit manhole
+static const uint32 kAlfredAnimClimbDownOffset = 1761234;     // 7  - Climbs down
+static const uint32 kAlfredAnimClimbUpOffset = 1766378;       // 8  - Climbs up
+static const uint32 kAlfredAnimExitTunnelOffset = 1770196;    // 9  - Exits tunnel
+static const uint32 kAlfredAnimWorkersOffset = 1600956;       // 10 - With workers
+static const uint32 kAlfredAnimMunheco1Offset = 2060916;      // 11 - Munheco 1
+static const uint32 kAlfredAnimMunheco2Offset = 2115632;      // 12 - Munheco 2
+static const uint32 kAlfredAnimMunheco3Offset = 1526432;      // 13 - Munheco 3
+static const uint32 kAlfredAnimDescamisaOffset = 2972568;     // 14 - Descamisa
+static const uint32 kAlfredAnimSecretPassageOffset = 1749464; // 15 - Secret passage
+static const uint32 kAlfredAnimInBedOffset = 3038454;         // 16 - Alfred in bed
 
 ResourceManager::ResourceManager(/* args */) {
 	_inventoryIcons = new InventoryObject[69];
@@ -84,23 +84,23 @@ ResourceManager::ResourceManager(/* args */) {
 }
 
 const AlfredSpecialAnimOffset ResourceManager::alfredSpecialAnims[] = {
-	{10,  51, 102, 1, 7, kAlfredAnimReadBookOffset,       1, 2, 0},              // 0  - READ BOOK
-	{10,  51, 102, 1, 7, kAlfredAnimReadRecipeOffset,     1, 2, 0},              // 1  - READ RECIPE
-	{ 3,  45,  87, 0, 7, kAlfredAnimElectricShock1Offset, 1, 2, 0},              // 2  - ELECTRIC SHOCK 1
-	{ 2,  82,  58, 0, 7, kAlfredAnimElectricShock3Offset, 20, 1, 0},             // 3  - ELECTRIC SHOCK 3
-	{ 3,  71, 110, 1, 2, kAlfredAnimThrowOffset,          1, 1, kAlfredAnimThrowSize}, // 4  - Throw
-	{14, 171, 107, 1, 7, kAlfredAnimCrocodileOffset,      1, 2, 0},              // 5  - crocodile
-	{12, 113, 103, 1, 7, kAlfredAnimManholeOffset,        1, 2, 0},              // 6  - exit through manhole
-	{11,  33,  72, 1, 7, kAlfredAnimClimbDownOffset,      1, 2, 0},              // 7  - alfred climbs down
-	{ 9,  33,  72, 1, 7, kAlfredAnimClimbUpOffset,        1, 2, 0},              // 8  - alfred climbs up
-	{16, 158, 115, 0, 7, kAlfredAnimExitTunnelOffset,     1, 2, 0},              // 9  - alfred exits tunnel
-	{ 7, 208, 102, 0, 7, kAlfredAnimWorkersOffset,        1, 2, 0},              // 10 - alfred with workers
-	{23, 116, 124, 1, 7, kAlfredAnimMunheco1Offset,       1, 2, 0},              // 11 - Munheco 1
-	{18, 177, 124, 1, 7, kAlfredAnimMunheco2Offset,       1, 2, 0},              // 12 - Munheco 2
-	{11,  98, 138, 1, 7, kAlfredAnimMunheco3Offset,       1, 2, 0},              // 13 - Munheco 3
-	{ 4,  51, 102, 1, 7, kAlfredAnimDescamisaOffset,      1, 2, 0},              // 14 - descamisa
-	{13,  95,  99, 1, 7, kAlfredAnimSecretPassageOffset,  1, 2, 0},              // 15 - alfred enters secret passage
-	{14,  71,  66, 1, 7, kAlfredAnimInBedOffset,          1, 2, 0},              // 16 - Alfred in bed
+	{10, 51, 102, 1, 7, kAlfredAnimReadBookOffset, 1, 2, 0},                // 0  - READ BOOK
+	{10, 51, 102, 1, 7, kAlfredAnimReadRecipeOffset, 1, 2, 0},              // 1  - READ RECIPE
+	{3, 45, 87, 0, 7, kAlfredAnimElectricShock1Offset, 1, 2, 0},            // 2  - ELECTRIC SHOCK 1
+	{2, 82, 58, 0, 7, kAlfredAnimElectricShock3Offset, 20, 1, 0},           // 3  - ELECTRIC SHOCK 3
+	{3, 71, 110, 1, 2, kAlfredAnimThrowOffset, 1, 1, kAlfredAnimThrowSize}, // 4  - Throw
+	{14, 171, 107, 1, 7, kAlfredAnimCrocodileOffset, 1, 2, 0},              // 5  - crocodile
+	{12, 113, 103, 1, 7, kAlfredAnimManholeOffset, 1, 2, 0},                // 6  - exit through manhole
+	{11, 33, 72, 1, 7, kAlfredAnimClimbDownOffset, 1, 2, 0},                // 7  - alfred climbs down
+	{9, 33, 72, 1, 7, kAlfredAnimClimbUpOffset, 1, 2, 0},                   // 8  - alfred climbs up
+	{16, 158, 115, 0, 7, kAlfredAnimExitTunnelOffset, 1, 2, 0},             // 9  - alfred exits tunnel
+	{7, 208, 102, 0, 7, kAlfredAnimWorkersOffset, 1, 2, 0},                 // 10 - alfred with workers
+	{23, 116, 124, 1, 7, kAlfredAnimMunheco1Offset, 1, 2, 0},               // 11 - Munheco 1
+	{18, 177, 124, 1, 7, kAlfredAnimMunheco2Offset, 1, 2, 0},               // 12 - Munheco 2
+	{11, 98, 138, 1, 7, kAlfredAnimMunheco3Offset, 1, 2, 0},                // 13 - Munheco 3
+	{4, 51, 102, 1, 7, kAlfredAnimDescamisaOffset, 1, 2, 0},                // 14 - descamisa
+	{13, 95, 99, 1, 7, kAlfredAnimSecretPassageOffset, 1, 2, 0},            // 15 - alfred enters secret passage
+	{14, 71, 66, 1, 7, kAlfredAnimInBedOffset, 1, 2, 0},                    // 16 - Alfred in bed
 };
 
 ResourceManager::~ResourceManager() {
@@ -272,7 +272,6 @@ void ResourceManager::loadAlfredAnims() {
 	delete[] stdFramesPic;
 	delete[] completePic;
 	free(bufferFile);
-
 
 	Common::File alfred7;
 	if (!alfred7.open(Common::Path("ALFRED.7"))) {
@@ -458,7 +457,7 @@ Common::Array<Common::StringArray> ResourceManager::loadComputerText() {
 	exe.read(computerTextBuf, bufSize);
 	Common::Array<Common::StringArray> computerTexts = processTextData(computerTextBuf, bufSize);
 
-	for(int i = 0; i < computerTexts.size(); i++) {
+	for (int i = 0; i < computerTexts.size(); i++) {
 		debug("Computer text %d:", i);
 		Common::StringArray &lines = computerTexts[i];
 		for (int j = 0; j < lines.size(); j++) {
@@ -508,10 +507,10 @@ Common::Array<Common::StringArray> ResourceManager::processTextData(byte *data, 
 	Common::Array<Common::StringArray> texts;
 	while (pos < size) {
 		if (data[pos] == CTRL_END_TEXT) {
-				lines.push_back(desc);
-				texts.push_back(lines);
-				lines.clear();
-				desc = Common::String();
+			lines.push_back(desc);
+			texts.push_back(lines);
+			lines.clear();
+			desc = Common::String();
 			pos++;
 			continue;
 		}
@@ -525,12 +524,15 @@ Common::Array<Common::StringArray> ResourceManager::processTextData(byte *data, 
 			desc.append(1, '@');
 			desc.append(1, color);
 			pos += 2;
+			if (data[pos + 1] == 0x78 || data[pos + 2] == 0x78) {
+				pos += 2;
+			}
 
 			continue;
 		}
 
 		if (data[pos] == 0xC8 || data[pos] == 0xB1) {
-			if(!desc.empty() || data[pos] == 0xC8) {
+			if (!desc.empty() || data[pos] == 0xC8) {
 				lines.push_back(desc);
 			}
 			desc = Common::String();
