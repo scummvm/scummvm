@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-03-09 22:38+0000\n"
-"PO-Revision-Date: 2026-02-18 22:40+0000\n"
+"PO-Revision-Date: 2026-03-12 13:22+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -2634,10 +2634,8 @@ msgid "Save as image"
 msgstr "შენახვა გამოსახულების სახით"
 
 #: gui/printing-dialog.cpp:58
-#, fuzzy
-#| msgid "First page"
 msgid "Fit to page"
-msgstr "პირველი გვერდი"
+msgstr "გვერდში ჩატევა"
 
 #: gui/printing-dialog.cpp:60 backends/graphics/opengl/opengl-graphics.cpp:315
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:127
@@ -7241,34 +7239,24 @@ msgstr "გასვლის კითხვა"
 #. I18N: Here ALTered Item refers to the dice that has been altered/changed.
 #. In order to escape the dice game loop press Right/Left Alt
 #: engines/cge/metaengine.cpp:250
-#, fuzzy
-#| msgid "ALTered Item"
 msgid "ALTered item"
 msgstr "ალტერნატიული ნივთი"
 
 #: engines/cge/metaengine.cpp:257
-#, fuzzy
-#| msgid "Inventory item 1"
 msgid "Inventory item 1 (Select / Deselect)"
-msgstr "ინვენტარის ნივთი 1"
+msgstr "ინვენტარის ნივთი 1 (მონიშვნა / მონიშვნის მოხსნა)"
 
 #: engines/cge/metaengine.cpp:262
-#, fuzzy
-#| msgid "Inventory item 2"
 msgid "Inventory item 2 (Select / Deselect)"
-msgstr "ინვენტარის ნივთი 2"
+msgstr "ინვენტარის ნივთი 2 (მონიშვნა / მონიშვნის მოხსნა)"
 
 #: engines/cge/metaengine.cpp:267
-#, fuzzy
-#| msgid "Inventory item 3"
 msgid "Inventory item 3 (Select / Deselect)"
-msgstr "ინვენტარის ნივთი 3"
+msgstr "ინვენტარის ნივთი 3 (მონიშვნა / მონიშვნის მოხსნა)"
 
 #: engines/cge/metaengine.cpp:272
-#, fuzzy
-#| msgid "Inventory item 4"
 msgid "Inventory item 4 (Select / Deselect)"
-msgstr "ინვენტარის ნივთი 4"
+msgstr "ინვენტარის ნივთი 4 (მონიშვნა / მონიშვნის მოხსნა)"
 
 #: engines/cge/metaengine.cpp:277
 msgid "Inventory item 5 (Select / Deselect)"
@@ -8237,14 +8225,10 @@ msgid "Info menu"
 msgstr "ინფორმაციის მენიუ"
 
 #: engines/freescape/games/castle/castle.cpp:349
-#, fuzzy
-#| msgid "Select Prince"
 msgid "Select prince"
 msgstr "აირჩიეთ პრინცი"
 
 #: engines/freescape/games/castle/castle.cpp:354
-#, fuzzy
-#| msgid "Select Princess"
 msgid "Select princess"
 msgstr "აირჩიეთ პრინცესა"
 
@@ -8260,8 +8244,6 @@ msgstr "ხმის გადართვა"
 #: engines/freescape/games/dark/dark.cpp:223
 #: engines/freescape/games/driller/driller.cpp:147
 #: engines/freescape/games/eclipse/eclipse.cpp:259
-#, fuzzy
-#| msgid "Rotate Left"
 msgid "Rotate left"
 msgstr "მარცხნივ შებრუნება"
 
@@ -8269,8 +8251,6 @@ msgstr "მარცხნივ შებრუნება"
 #: engines/freescape/games/dark/dark.cpp:228
 #: engines/freescape/games/driller/driller.cpp:152
 #: engines/freescape/games/eclipse/eclipse.cpp:264
-#, fuzzy
-#| msgid "Rotate Right"
 msgid "Rotate right"
 msgstr "მარჯვნივ შებრუნება"
 
@@ -8280,8 +8260,6 @@ msgstr "ფორთხვა"
 
 #: engines/freescape/games/castle/castle.cpp:409
 #: engines/freescape/games/eclipse/eclipse.cpp:293
-#, fuzzy
-#| msgid "Face Forward"
 msgid "Face forward"
 msgstr "სახე წინ"
 
@@ -8300,51 +8278,37 @@ msgstr "გადაბრუნება მარჯვნივ"
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/dark/dark.cpp:244
 #: engines/freescape/games/driller/driller.cpp:158
-#, fuzzy
-#| msgid "Increase Turn Angle"
 msgid "Increase turn angle"
 msgstr "მობრუნების კუთხის გაზრდა"
 
 #: engines/freescape/games/dark/dark.cpp:249
 #: engines/freescape/games/driller/driller.cpp:163
-#, fuzzy
-#| msgid "Decrease Turn Angle"
 msgid "Decrease turn angle"
 msgstr "მობრუნების კუთხის შემცირება"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:255
 #: engines/freescape/games/driller/driller.cpp:169
-#, fuzzy
-#| msgid "Increase Step Size"
 msgid "Increase step size"
 msgstr "ნაბიჯის ზომის გაზრდა"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/dark/dark.cpp:261
 #: engines/freescape/games/driller/driller.cpp:175
-#, fuzzy
-#| msgid "Decrease Step Size"
 msgid "Decrease step size"
 msgstr "ნაბიჯის ზომის შემცირება"
 
 #: engines/freescape/games/dark/dark.cpp:266
 #: engines/freescape/games/driller/driller.cpp:180
-#, fuzzy
-#| msgid "Rise/Fly up"
 msgid "Rise / Fly up"
 msgstr "ადგომა/აფრენა"
 
 #: engines/freescape/games/dark/dark.cpp:272
 #: engines/freescape/games/driller/driller.cpp:196
-#, fuzzy
-#| msgid "Lower/Fly down"
 msgid "Lower / Fly down"
 msgstr "ქვემოთ ჩამოწევა/ჩამოფრენა"
 
 #: engines/freescape/games/dark/dark.cpp:278
-#, fuzzy
-#| msgid "Enable/Disable Jetpack"
 msgid "Enable / Disable jetpack"
 msgstr "ჯეტპაკის ჩართვა/გამორთვა"
 
@@ -8360,21 +8324,15 @@ msgstr "ბურღის ამოღება"
 
 #. I18N: Illustrates the angle at which you turn left or right.
 #: engines/freescape/games/eclipse/eclipse.cpp:270
-#, fuzzy
-#| msgid "Change Angle"
 msgid "Change angle"
 msgstr "კუთხის შეცვლა"
 
 #. I18N: STEP SIZE: Measures the size of one movement in the direction you are facing (1-250 standard distance units (SDUs))
 #: engines/freescape/games/eclipse/eclipse.cpp:276
-#, fuzzy
-#| msgid "Change Step Size"
 msgid "Change step size"
 msgstr "ნაბიჯის ზომის შეცვლა"
 
 #: engines/freescape/games/eclipse/eclipse.cpp:281
-#, fuzzy
-#| msgid "Toggle Height"
 msgid "Toggle height"
 msgstr "სიმაღლის გადართვა"
 
@@ -8387,10 +8345,8 @@ msgid "Rest"
 msgstr "პაუზა"
 
 #: engines/freescape/games/eclipse/eclipse.cpp:298
-#, fuzzy
-#| msgid "Flashlight"
 msgid "Toggle flashlight"
-msgstr "ფანარი"
+msgstr "ფანარის გადართვა"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -11935,10 +11891,8 @@ msgid "Enable demo/kiosk mode in the full retail version of Maniac Mansion."
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:839
-#, fuzzy
-#| msgid "Playback"
 msgid "Disable Playback"
-msgstr "დაკვრა"
+msgstr "დაკვრის გამორთვა"
 
 #: engines/scumm/metaengine.cpp:840
 msgid ""
@@ -12406,8 +12360,6 @@ msgid "Menu scrolling keymappings"
 msgstr "მენიუს გადახვევის კლავიატურის მალსახმობები"
 
 #: engines/sherlock/metaengine.cpp:784
-#, fuzzy
-#| msgid "save / load menu keymappings"
 msgid "Save / load menu keymappings"
 msgstr "მენიუს კლავიატურის მალსახმობების შენახვა/ჩატვირთვა"
 
@@ -12702,16 +12654,12 @@ msgid "Display all exits on current location"
 msgstr ""
 
 #: engines/stark/metaengine.cpp:306
-#, fuzzy
-#| msgid "Scroll list up"
 msgid "Scroll dialogs up"
-msgstr "სიის ახვევა"
+msgstr "დიალოგების სიის ახვევა"
 
 #: engines/stark/metaengine.cpp:312
-#, fuzzy
-#| msgid "Scroll list down"
 msgid "Scroll dialogs down"
-msgstr "სიის ჩამოხვევა"
+msgstr "დიალოგების სიის ჩამოხვევა"
 
 #: engines/stark/metaengine.cpp:318
 msgid "Go to next dialog"
