@@ -22,6 +22,7 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
+#include "engines/metaengine.h"
 #include "graphics/paletteman.h"
 #include "graphics/thumbnail.h"
 
@@ -56,6 +57,19 @@ static const uint32 kMainMenuPart3Size = 92160;
 
 // ALFRED.7 — menu buttons (save/load/sound/exit, one contiguous block)
 static const uint32 kMenuButtonsOffset = 3193376;
+
+static const uint32 kQuestionMarkOffset = 3214046;
+static const uint32 kInvLeftArrowOffset = 3215906;
+static const uint32 kSoundControlOffset = 3037008;
+static const uint32 kSoundMasterOffset = 2662588;
+static const uint32 kSoundMusicOffset = 2664746;
+static const uint32 kSoundSfxOffset = 2667140;
+static const int kTransparentColor = 65;
+static const int kSoundControlsTransparentColor = 195;
+static const uint32 kCreditsBackgroundOffset = 3271454;
+static const int16 kTextStartX = 227;
+static const int16 kTextStartY = 191;
+static const byte kNumberColor = 52;
 
 Pelrock::MenuManager::MenuManager(Graphics::Screen *screen, PelrockEventManager *events, ResourceManager *res, SoundManager *sound) : _screen(screen), _events(events), _res(res), _sound(sound) {
 }
@@ -111,7 +125,6 @@ SoundMenuButton MenuManager::isSoundMenuButtonUnder(int x, int y) {
 
 MainMenuButton MenuManager::isMainMenuButtonUnder(int x, int y) {
 	if (_menuState != MAIN_MENU) {
-		debug("Not checking for main menu buttons because menu state is not MAIN_MENU");
 		return NO_MAIN_BUTTON;
 	}
 
@@ -199,10 +212,72 @@ bool MenuManager::checkMouseClick(int x, int y) {
 		break;
 	}
 	case ORIGINAL_SAVE: {
-
+		// Pagination arrows
+		if (_savesUp.contains(x, y)) {
+			if (_saveGamePage > 0) {
+				_saveGamePage--;
+				_editingSaveSlot = -1;
+			}
+			break;
+		}
+		if (_savesDown.contains(x, y)) {
+			if ((_saveGamePage + 1) * 8 < 256) {
+				_saveGamePage++;
+				_editingSaveSlot = -1;
+			}
+			break;
+		}
+		// CANCEL
+		if (_cancelarRect.contains(x, y)) {
+			_editingSaveSlot = -1;
+			_menuState = MAIN_MENU;
+			_menuText = _menuTexts[0];
+			break;
+		}
+		// Save slot click: begin (or switch) editing
+		for (int i = 0; i < (int)_saveSlotRects.size(); i++) {
+			if (_saveSlotRects[i].contains(x, y)) {
+				int slot = _saveGamePage * 8 + i;
+				_editingSaveSlot = slot;
+				_editingName = _saveDescriptions[slot];
+				break;
+			}
+		}
 		break;
 	}
 	case ORIGINAL_LOAD: {
+		// Pagination arrows
+		if (_savesUp.contains(x, y)) {
+			if (_saveGamePage > 0)
+				_saveGamePage--;
+			break;
+		}
+		if (_savesDown.contains(x, y)) {
+			if ((_saveGamePage + 1) * 8 < 256)
+				_saveGamePage++;
+			break;
+		}
+		// CANCELAR
+		if (_cancelarRect.contains(x, y)) {
+			_menuState = MAIN_MENU;
+			_menuText = _menuTexts[0];
+			break;
+		}
+		// Save slot click: load if slot has a save
+		for (int i = 0; i < (int)_saveSlotRects.size(); i++) {
+			if (_saveSlotRects[i].contains(x, y)) {
+				int slot = _saveGamePage * 8 + i;
+				if (!_saveDescriptions[slot].empty()) {
+					g_engine->loadGameState(slot);
+					return true;
+				}
+				else {
+					_menuState = MAIN_MENU;
+					_menuText = _menuTexts[6];
+				}
+				break;
+			}
+		}
 		break;
 	}
 	case EXIT_GAME: {
@@ -252,6 +327,9 @@ bool MenuManager::checkMainMenuMouse(int x, int y) {
 	case SAVE_GAME_BUTTON:
 		_sound->playSound("11ZZZZZZ.SMP", 0);
 		if (ConfMan.getBool("original_menus") == true) {
+			_saveGamePage = 0;
+			_editingSaveSlot = -1;
+			refreshSaveDescriptions();
 			_menuState = ORIGINAL_SAVE;
 			_menuText = Common::StringArray();
 		} else {
@@ -261,6 +339,8 @@ bool MenuManager::checkMainMenuMouse(int x, int y) {
 	case LOAD_GAME_BUTTON:
 		_sound->playSound("11ZZZZZZ.SMP", 0);
 		if (ConfMan.getBool("original_menus") == true) {
+			_saveGamePage = 0;
+			refreshSaveDescriptions();
 			_menuState = ORIGINAL_LOAD;
 			_menuText = Common::StringArray();
 		} else {
@@ -334,6 +414,29 @@ bool MenuManager::selectInventoryItem(int i) {
 	return true;
 }
 
+void MenuManager::handleSaveMenuKey(Common::KeyCode key, uint16 ascii) {
+	if (key == Common::KEYCODE_ESCAPE) {
+		_editingSaveSlot = -1;
+		_menuState = MAIN_MENU;
+		_menuText = _menuTexts[0];
+		return;
+	}
+	if (_editingSaveSlot < 0)
+		return;
+
+	if (key == Common::KEYCODE_RETURN || key == Common::KEYCODE_KP_ENTER) {
+		// Commit save
+		g_engine->saveGameState(_editingSaveSlot, _editingName);
+		_saveDescriptions[_editingSaveSlot] = _editingName;
+		_editingSaveSlot = -1;
+	} else if (key == Common::KEYCODE_BACKSPACE) {
+		if (!_editingName.empty())
+			_editingName.deleteLastChar();
+	} else if (ascii >= 32 && ascii < 256 && ascii != 127) {
+		_editingName += (char)ascii;
+	}
+}
+
 void MenuManager::menuLoop() {
 
 	// Save screenshot in case the user saves
@@ -372,16 +475,35 @@ void MenuManager::menuLoop() {
 			}
 		}
 		if (_events->_rightMouseClicked) {
-			break;
-		}
-		if (_menuState == EXIT_GAME) {
-			if (_events->_lastKeyEvent == Common::KEYCODE_s) {
-				g_engine->quitGame();
-			} else if (_events->_lastKeyEvent == Common::KEYCODE_n) {
-				_menuState = MAIN_MENU;
-				_menuText = _menuTexts[0];
+			_events->_rightMouseClicked = false;
+			// In original save/load sub-menus only CANCELAR / ESC can exit
+			if (_menuState != ORIGINAL_SAVE && _menuState != ORIGINAL_LOAD) {
+				break;
 			}
+		}
+
+		// Keyboard handling
+		if (_events->_lastKeyEvent != Common::KEYCODE_INVALID) {
+			Common::KeyCode key = _events->_lastKeyEvent;
+			uint16 ascii = _events->_lastKeyAscii;
 			_events->_lastKeyEvent = Common::KEYCODE_INVALID;
+			_events->_lastKeyAscii = 0;
+
+			if (_menuState == ORIGINAL_SAVE) {
+				handleSaveMenuKey(key, ascii);
+			} else if (_menuState == ORIGINAL_LOAD) {
+				if (key == Common::KEYCODE_ESCAPE) {
+					_menuState = MAIN_MENU;
+					_menuText = _menuTexts[0];
+				}
+			} else if (_menuState == EXIT_GAME) {
+				if (key == Common::KEYCODE_s) {
+					g_engine->quitGame();
+				} else if (key == Common::KEYCODE_n) {
+					_menuState = MAIN_MENU;
+					_menuText = _menuTexts[0];
+				}
+			}
 		}
 
 		drawScreen();
@@ -412,7 +534,7 @@ void MenuManager::drawScreen() {
 	_screen->blitFrom(_compositeBuffer);
 	byte defaultColor = 255;
 	for (int i = 0; _menuText.size() > i; i++) {
-		g_engine->_graphics->drawColoredText(_screen, _menuText[i], 230, 200 + (i * 10), 200, defaultColor, g_engine->_smallFont);
+		g_engine->_graphics->drawColoredText(_screen, _menuText[i], kTextStartX, kTextStartY + (i * _textLineH), 200, defaultColor, g_engine->_smallFont);
 	}
 
 	drawText(g_engine->_smallFont, Common::String::format("%d,%d", _events->_mouseX, _events->_mouseY), 0, 0, 640, 13);
@@ -526,6 +648,7 @@ void MenuManager::loadMenu() {
 	_menuText = _menuTexts[0];
 	alfred7.close();
 
+	_textLineH = g_engine->_smallFont->getFontHeight();
 	for (int i = 0; i < 4; i++) {
 		_inventorySlots.push_back(Common::Point(140 + (82 * i), 115 - (8 * i)));
 	}
@@ -569,8 +692,22 @@ void MenuManager::loadMenuTexts() {
 	byte *textBuffer = new byte[kMenuTextSize];
 	exe.seek(kMenuTextOffset, SEEK_SET);
 	exe.read(textBuffer, kMenuTextSize);
-	_menuTexts = _res->processTextData(textBuffer, kMenuTextSize, true);
-
+	Common::Array<Common::StringArray> unprocessedMenuTexts;
+	unprocessedMenuTexts = _res->processTextData(textBuffer, kMenuTextSize, true);
+	_menuText = Common::StringArray();
+	for (int i = 0; i < (int)unprocessedMenuTexts.size(); i++) {
+		if (i == 1) {
+			Common::StringArray emptyText;
+			emptyText.push_back(unprocessedMenuTexts[i][0]);
+			Common::StringArray loadText;
+			loadText.push_back(unprocessedMenuTexts[i][1]);
+			_menuTexts.push_back(emptyText);
+			_menuTexts.push_back(loadText);
+		} else {
+			_menuTexts.push_back(unprocessedMenuTexts[i]);
+		}
+	}
+	debug("Menu texts size after processing: %d", (int)_menuTexts.size());
 	_menuText = _menuTexts[0];
 	delete[] textBuffer;
 
@@ -609,7 +746,74 @@ void MenuManager::drawConfirmation() {
 	_menuText = _menuTexts[4];
 }
 
+void MenuManager::refreshSaveDescriptions() {
+	_saveDescriptions.clear();
+	_saveDescriptions.resize(256);
+
+	SaveStateList saves = g_engine->getMetaEngine()->listSaves(ConfMan.getActiveDomainName().c_str());
+	for (const SaveStateDescriptor &desc : saves) {
+		int slot = desc.getSaveSlot();
+		if (slot >= 0 && slot < 256)
+			_saveDescriptions[slot] = desc.getDescription();
+	}
+}
 void MenuManager::drawSaves() {
+
+	// Compute the area for the overlay
+	const int startX = kTextStartX;
+	const int startY = kTextStartY;
+	const int overlayW = 216;
+	const int numSlots = 8;
+
+	// Headline: _menuTexts[1] = save, _menuTexts[2] = load
+	Common::StringArray headline;
+	if (_menuState == ORIGINAL_SAVE)
+		headline = _menuTexts[3];
+	else
+		headline = _menuTexts[2];
+	_menuText = headline;
+
+	_saveSlotRects.clear();
+
+	int y = startY + _textLineH;
+	const Common::Point mousePos(_events->_mouseX, _events->_mouseY);
+	for (int i = 0; i < numSlots; i++) {
+		int slot = _saveGamePage * numSlots + i;
+		Common::String slotText;
+		Common::String slotNumber = Common::String::format("%02d ", slot + 1);
+		int slotNumberWidth = g_engine->_smallFont->getStringWidth(slotNumber);
+
+		Common::Rect slotRect(startX - 2, y - 1, startX + overlayW - 2, y + _textLineH);
+		bool hovered = (_editingSaveSlot != slot) && slotRect.contains(mousePos);
+		byte textColor = hovered ? 18 : 0x0F;
+
+		if (_editingSaveSlot == slot) {
+			// Show editing cursor
+			slotText = Common::String::format("%s_", _editingName.c_str());
+			textColor = 244; // highlight colour for active editing
+			// Light highlight behind the editing row
+			_compositeBuffer.fillRect(Common::Rect(startX - 2, y - 1, startX + overlayW - 2, y + _textLineH), 1);
+		} else {
+			const Common::String &desc = _saveDescriptions[slot];
+			if (desc.empty())
+				slotText = Common::String::format("%s", _menuTexts[1][0].c_str());
+			else {
+				slotText = desc;
+				slotText.toUppercase();
+			}
+		}
+		drawText(_compositeBuffer, g_engine->_smallFont, slotNumber, startX, y, overlayW, kNumberColor);
+		drawText(_compositeBuffer, g_engine->_smallFont, slotText, startX + slotNumberWidth, y, overlayW - slotNumberWidth, textColor);
+
+		_saveSlotRects.push_back(slotRect);
+		y += _textLineH;
+	}
+
+	// CANCEL row
+	_cancelarRect = Common::Rect(startX - 2, y - 1, startX + overlayW - 2, y + _textLineH);
+	byte cancelColor = _cancelarRect.contains(mousePos) ? 18 : 0x0F;
+	Common::String cancelText = _menuTexts[4][0].substr(2, _menuTexts[4][0].size() - 2);
+	drawText(_compositeBuffer, g_engine->_smallFont, cancelText, startX, y, overlayW, cancelColor);
 }
 
 void MenuManager::drawMainButtons() {

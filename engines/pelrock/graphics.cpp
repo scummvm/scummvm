@@ -156,6 +156,7 @@ void GraphicsManager::drawColoredText(Graphics::ManagedSurface *screen, const Co
 		if (text[i] == '@' && i + 1 < text.size()) {
 			// Draw accumulated segment
 			if (!segment.empty()) {
+				debug("Drawing text segment '%s' at %d, %d with color %d", segment.c_str(), currentX, y, defaultColor);
 				font->drawString(screen, segment, currentX, y, w, defaultColor);
 				currentX += font->getStringWidth(segment);
 				segment.clear();

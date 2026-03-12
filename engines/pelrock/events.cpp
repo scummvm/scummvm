@@ -45,6 +45,7 @@ void PelrockEventManager::pollEvent() {
 		case Common::EVENT_KEYDOWN:
 			changeGameSpeed(_event);
 			_lastKeyEvent = _event.kbd.keycode;
+			_lastKeyAscii = _event.kbd.ascii;
 			_isKeydown = true;
 			break;
 		case Common::EVENT_KEYUP:

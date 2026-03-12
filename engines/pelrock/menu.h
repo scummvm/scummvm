@@ -31,16 +31,6 @@
 
 namespace Pelrock {
 
-const uint32 kQuestionMarkOffset = 3214046;
-const uint32 kInvLeftArrowOffset = 3215906;
-const uint32 kSoundControlOffset = 3037008;
-const uint32 kSoundMasterOffset = 	2662588;
-const uint32 kSoundMusicOffset = 2664746;
-const uint32 kSoundSfxOffset = 2667140;
-const int kTransparentColor = 65;
-const int kSoundControlsTransparentColor = 195;
-const uint32 kCreditsBackgroundOffset = 3271454;
-
 enum MainMenuButton {
 	QUESTION_MARK_BUTTON,
 	INVENTORY_PREV_BUTTON,
@@ -241,7 +231,7 @@ public:
 private:
 	void checkMouseDown(int x, int y);
 	bool checkMouseClick(int x, int y);
-void checkSoundMenuClick(int x, int y);
+	void checkSoundMenuClick(int x, int y);
 	bool checkMainMenuMouse(int x, int y, bool &retFlag);
 	bool checkMainMenuMouse(int x, int y); // returns bool if its supposed to close the menu
 	void showCredits();
@@ -255,6 +245,8 @@ void checkSoundMenuClick(int x, int y);
 	void drawSoundControls();
 	void readButton(byte *rawData, uint32 offset, byte *outBuffer[2], int w, int h);
 	void readButton(Common::File &alfred7, uint32 offset, byte *outBuffer[2], Common::Rect rect);
+	void refreshSaveDescriptions();
+	void handleSaveMenuKey(Common::KeyCode key, uint16 ascii);
 	SoundMenuButton isSoundMenuButtonUnder(int x, int y);
 	MainMenuButton isMainMenuButtonUnder(int x, int y);
 	Graphics::Screen *_screen = nullptr;
@@ -326,6 +318,15 @@ void checkSoundMenuClick(int x, int y);
 
 	bool showButtons = true;
 	MenuState _menuState = MAIN_MENU;
+	int _textLineH = 0;
+
+	// Save/Load sub-menu state
+	int _saveGamePage = 0;
+	int _editingSaveSlot = -1;       // -1 = not editing any slot
+	Common::String _editingName;     // name being typed for a save
+	Common::Rect _cancelarRect;      // hit-rect for the CANCELAR row
+	Common::Array<Common::Rect> _saveSlotRects; // hit-rects for the 8 visible save rows
+	Common::StringArray _saveDescriptions;       // indexed by slot 0-255
 };
 
 } // End of namespace Pelrock

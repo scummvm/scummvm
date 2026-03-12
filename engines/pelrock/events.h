@@ -45,6 +45,7 @@ public:
 	bool _rightMouseButton = false;
 	bool _isKeydown = false;
 	Common::KeyCode _lastKeyEvent = Common::KEYCODE_INVALID;
+	uint16 _lastKeyAscii = 0;
 	PelrockEventManager();
 	void pollEvent();
 	void waitForKey();
