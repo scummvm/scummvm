@@ -776,11 +776,6 @@ bool InsaneRebel1::runLevel8() {
 		_walkerTimer = 0;
 		_walkerBranchChoice = 0;
 
-		// g_level8HitboxBuffer (0x7698) = _frameObjectState[150..299] filled with 0xFF.
-		// This enables all frame object event masks in the secondary half of the array,
-		// which the IACT 0x5A handler uses to gate walker-related frame objects.
-		memset(_frameObjectState + 150, 0xFF, 150);
-
 		int route = 0;
 		while (!_vm->shouldQuit()) {
 			_levelRouteIndex = route;

@@ -461,7 +461,7 @@ private:
 	int16 _gostSlotIdx;      // 0x23EB: next slot to write (circular 0-9)
 
 	int16 _killCount;        // 0x75D0: targets destroyed this stage
-	int16 _lastHitTarget;    // 0x75D6: prevents double-hit on same target
+	int16 _lastHitTarget;    // 0x75D6: recent-kill latch, allows at most one hit per frame
 
 	// Protected target IDs — 0x7732/0x7734 in original
 	// Targets listed here can be hit repeatedly (no event mask toggle).
