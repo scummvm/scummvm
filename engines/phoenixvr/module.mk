@@ -1,6 +1,7 @@
 MODULE := engines/phoenixvr
 
 MODULE_OBJS = \
+	arn.o \
 	bigf.o \
 	game_state.o \
 	console.o \
