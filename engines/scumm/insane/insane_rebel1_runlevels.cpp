@@ -316,7 +316,7 @@ bool InsaneRebel1::runLevel3() {
 		_activeGameOpcode = 0;
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
-		_gameplayFlags75ff = 0;
+		resetGameplayFlagsFromTuning();
 		_killCount = 0;
 		_levelGameplayPhase = 0;
 		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
@@ -379,7 +379,7 @@ bool InsaneRebel1::runLevel4() {
 		_activeGameOpcode = 0;
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
-		_gameplayFlags75ff = 0;
+		resetGameplayFlagsFromTuning();
 		_killCount = 0;
 		_levelGameplayPhase = 0;
 
@@ -403,7 +403,7 @@ bool InsaneRebel1::runLevel4() {
 			_activeGameOpcode = 0;
 			_gameLatch5D = 0;
 			_gameLatch5F = 0;
-			_gameplayFlags75ff = 0;
+			resetGameplayFlagsFromTuning();
 			_killCount = 0;
 			_levelGameplayPhase = 2;
 			playInteractiveVideo("LVL4/L4PLAY2.ANM");
@@ -463,7 +463,7 @@ bool InsaneRebel1::runLevel5() {
 		_activeGameOpcode = 0;
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
-		_gameplayFlags75ff = 0;
+		resetGameplayFlagsFromTuning();
 		_killCount = 0;
 		_targetCount = 0;
 		_prevTargetCount = 0;
@@ -558,7 +558,9 @@ bool InsaneRebel1::runLevel6() {
 
 	_currentLevel = 5;
 	loadLevelSprites(6);
-	loadTuningForLevel(5);
+	// DOS RunLevel6Flow starts L6PLAY with PlayAnmFile(..., 8), so chapter 6
+	// uses tuning slot 8 ("6"), not the chapter-4B slot 5.
+	loadTuningForLevel(8);
 
 	beginLevelTitleOverlay(5);
 	playCinematic("LVL6/L6INTRO.ANM");
@@ -580,7 +582,7 @@ bool InsaneRebel1::runLevel6() {
 		_activeGameOpcode = 0;
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
-		_gameplayFlags75ff = 0;
+		resetGameplayFlagsFromTuning();
 		_killCount = 0;
 		_levelGameplayPhase = 0;
 		memset(_inputHistoryX, 0, sizeof(_inputHistoryX));
@@ -651,7 +653,7 @@ bool InsaneRebel1::runLevel7() {
 		_activeGameOpcode = 0;
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
-		_gameplayFlags75ff = 0;
+		resetGameplayFlagsFromTuning();
 		_killCount = 0;
 		_targetCount = 0;
 		_prevTargetCount = 0;
@@ -747,7 +749,7 @@ bool InsaneRebel1::runLevel8() {
 		_activeGameOpcode = 0;
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
-		_gameplayFlags75ff = 0;
+		resetGameplayFlagsFromTuning();
 		_killCount = 0;
 		_targetCount = 0;
 		_prevTargetCount = 0;
@@ -851,7 +853,7 @@ bool InsaneRebel1::runLevel9() {
 		_activeGameOpcode = 0;
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
-		_gameplayFlags75ff = 0;
+		resetGameplayFlagsFromTuning();
 		_killCount = 0;
 		_targetCount = 0;
 		_prevTargetCount = 0;
@@ -1039,7 +1041,7 @@ bool InsaneRebel1::runLevel10() {
 		_activeGameOpcode = 0;
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
-		_gameplayFlags75ff = 0;
+		resetGameplayFlagsFromTuning();
 		_killCount = 0;
 		_targetCount = 0;
 		_prevTargetCount = 0;
@@ -1116,7 +1118,7 @@ bool InsaneRebel1::runLevel11() {
 		_activeGameOpcode = 0;
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
-		_gameplayFlags75ff = 0;
+		resetGameplayFlagsFromTuning();
 		_killCount = 0;
 		_targetCount = 0;
 		_prevTargetCount = 0;
@@ -1209,7 +1211,7 @@ bool InsaneRebel1::runLevel12() {
 		_activeGameOpcode = 0;
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
-		_gameplayFlags75ff = 0;
+		resetGameplayFlagsFromTuning();
 		_killCount = 0;
 		_targetCount = 0;
 		_prevTargetCount = 0;
@@ -1286,7 +1288,7 @@ bool InsaneRebel1::runLevel13() {
 		_activeGameOpcode = 0;
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
-		_gameplayFlags75ff = 0;
+		resetGameplayFlagsFromTuning();
 		_killCount = 0;
 		_targetCount = 0;
 		_prevTargetCount = 0;
@@ -1363,7 +1365,7 @@ bool InsaneRebel1::runLevel14() {
 		_activeGameOpcode = 0;
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
-		_gameplayFlags75ff = 0;
+		resetGameplayFlagsFromTuning();
 		_killCount = 0;
 		_targetCount = 0;
 		_prevTargetCount = 0;
@@ -1395,7 +1397,7 @@ bool InsaneRebel1::runLevel14() {
 			_activeGameOpcode = 0;
 			_gameLatch5D = 0;
 			_gameLatch5F = 0;
-			_gameplayFlags75ff = 0;
+			resetGameplayFlagsFromTuning();
 			_killCount = 0;
 
 			playInteractiveVideo("LVL14/L14PLAY2.ANM");
@@ -1455,7 +1457,7 @@ bool InsaneRebel1::runLevel15() {
 		_activeGameOpcode = 0;
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
-		_gameplayFlags75ff = 0;
+		resetGameplayFlagsFromTuning();
 		_killCount = 0;
 		_targetCount = 0;
 		_prevTargetCount = 0;
@@ -1495,7 +1497,7 @@ bool InsaneRebel1::runLevel15() {
 			_activeGameOpcode = 0;
 			_gameLatch5D = 0;
 			_gameLatch5F = 0;
-			_gameplayFlags75ff = 0;
+			resetGameplayFlagsFromTuning();
 			_killCount = 0;
 			_torpedoFired = false;
 			_levelGameplayPhase = 2;
