@@ -71,6 +71,10 @@ public:
 	void stopAnimation(const Common::String &name);
 	Graphics::Surface &getSurface() { return *_pic->surfacePtr(); }
 	void showWaves() { _showWaves = true; }
+
+private:
+	template<typename ColorType>
+	void renderVR(Graphics::Screen *screen, float ax, float ay, float fov, float dt, RegionSet *regSet);
 };
 } // namespace PhoenixVR
 

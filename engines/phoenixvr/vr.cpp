@@ -421,6 +421,105 @@ void VR::Animation::render(Graphics::Surface &pic, float dt) {
 	}
 }
 
+template<typename ColorType>
+void VR::renderVR(Graphics::Screen *screen, float ax, float ay, float fov, float dt, RegionSet *regSet) {
+	auto w = g_system->getWidth();
+	auto h = g_system->getHeight();
+
+	// camera pose
+	using namespace Math;
+	Vector3d forward = Vector3d(
+						   cosf(ax) * sinf(-ay),
+						   sinf(ax) * sinf(-ay),
+						   cosf(-ay))
+						   .getNormalized();
+	Vector3d right = Vector3d::crossProduct(forward, Vector3d(0, 0, -1)).getNormalized();
+	Vector3d up = Vector3d::crossProduct(forward, right); // already normalized
+
+	// camera projection
+	float gx = tanf(fov / 2.0f), gy = gx * h / w;
+	Vector3d incrementX = right * (2 * gx / w);
+	Vector3d incrementY = up * (2 * gy / h);
+	Vector3d start = forward - right * gx - up * gy;
+	Vector3d line = start;
+	float regX = 0, regY = 0, regDX = 0, regDY = 0;
+	if (regSet) {
+		regY = ay - fov / 2;
+		regDX = fov / w;
+		regDY = fov / h;
+		if (regY < 0)
+			regY += kTau;
+	}
+	float hint = 0;
+	if (regSet) {
+		hint = fmod(_hint + dt * kTau, kTau);
+		_hint = hint;
+	}
+
+	if (_showWaves)
+		_wavesT += dt * 20;
+
+	ColorType *dstPixels = static_cast<ColorType *>(screen->getPixels());
+	const auto dstPixelsPitchIncrement = screen->pitch / sizeof(ColorType);
+	for (int dstY = 0; dstY != h; ++dstY, line += incrementY, dstPixels += dstPixelsPitchIncrement) {
+		if (regSet) {
+			regX = ax - fov / 2;
+			if (regX < 0)
+				regX += kTau;
+			if (regX >= kTau)
+				regX -= kTau;
+		}
+		ColorType *dst = dstPixels;
+		if (_showWaves) {
+			auto y = static_cast<int>(sin((dstY * 0.039269909f + _wavesT * 0.40000001f)) * -3);
+			if (dstY + y < 0)
+				y = 0;
+			else if (dstY + y >= screen->h)
+				y = screen->h - 1 - dstY;
+			dst += y * dstPixelsPitchIncrement;
+		}
+		Vector3d pixel = line;
+		int dx = regSet ? static_cast<int>(5 * cosf(hint + 100.0f * dstY / h)) : 0;
+
+		for (int dstX = 0; dstX != w; ++dstX, pixel += incrementX, ++dst) {
+			Vector3d ray = pixel.getNormalized();
+			auto cube = toCube(ray.x(), ray.y(), ray.z());
+			int srcX = static_cast<int>(512 * cube.x);
+			int srcY = static_cast<int>(512 * cube.y);
+			int tileId = cube.faceIdx * 4;
+			tileId += (srcY < 256) ? (srcX < 256 ? 0 : 1) : (srcX < 256 ? 3 : 2);
+			srcX &= 0xff;
+			srcY &= 0xff;
+			srcY += (tileId << 8);
+			auto color = _pic->getPixel(srcX, srcY);
+			int x = 0;
+			if (regSet) {
+				regX += regDX;
+				if (regX >= kTau)
+					regX -= kTau;
+				for (auto &reg : regSet->getRegions()) {
+					if (reg.contains3D(regX, kTau - regY)) {
+						byte r, g, b;
+						_pic->format.colorToRGB(color, r, g, b);
+						x += dx;
+					}
+				}
+				if (dstX + x < 0)
+					x = 0;
+				else if (dstX + x >= screen->w)
+					x = screen->w - 1 - dstX;
+			}
+			dst[x] = color;
+		}
+		if (regSet) {
+			regY += regDY;
+			if (regY >= kTau)
+				regY -= kTau;
+		}
+	}
+	screen->addDirtyRect(screen->getBounds());
+}
+
 void VR::render(Graphics::Screen *screen, float ax, float ay, float fov, float dt, RegionSet *regSet) {
 	if (!_pic) {
 		screen->clear();
@@ -443,99 +542,14 @@ void VR::render(Graphics::Screen *screen, float ax, float ay, float fov, float d
 			}
 		}
 	} else {
-		auto w = g_system->getWidth();
-		auto h = g_system->getHeight();
-
-		// camera pose
-		using namespace Math;
-		Vector3d forward = Vector3d(
-							   cosf(ax) * sinf(-ay),
-							   sinf(ax) * sinf(-ay),
-							   cosf(-ay))
-							   .getNormalized();
-		Vector3d right = Vector3d::crossProduct(forward, Vector3d(0, 0, -1)).getNormalized();
-		Vector3d up = Vector3d::crossProduct(forward, right); // already normalized
-
-		// camera projection
-		float gx = tanf(fov / 2.0f), gy = gx * h / w;
-		Vector3d incrementX = right * (2 * gx / w);
-		Vector3d incrementY = up * (2 * gy / h);
-		Vector3d start = forward - right * gx - up * gy;
-		Vector3d line = start;
-		float regX = 0, regY = 0, regDX = 0, regDY = 0;
-		if (regSet) {
-			regY = ay - fov / 2;
-			regDX = fov / w;
-			regDY = fov / h;
-			if (regY < 0)
-				regY += kTau;
+		switch (screen->format.bytesPerPixel) {
+		case 2:
+			renderVR<uint16>(screen, ax, ay, fov, dt, regSet);
+			break;
+		case 4:
+			renderVR<uint32>(screen, ax, ay, fov, dt, regSet);
+			break;
 		}
-		float hint = 0;
-		if (regSet) {
-			hint = fmod(_hint + dt * kTau, kTau);
-			_hint = hint;
-		}
-
-		if (_showWaves)
-			_wavesT += dt * 20;
-
-		for (int dstY = 0; dstY != h; ++dstY, line += incrementY) {
-			if (regSet) {
-				regX = ax - fov / 2;
-				if (regX < 0)
-					regX += kTau;
-				if (regX >= kTau)
-					regX -= kTau;
-			}
-			int y = dstY;
-			if (_showWaves) {
-				auto d = static_cast<int>(sin((dstY * 0.039269909f + _wavesT * 0.40000001f)) * -3);
-				y += d;
-				if (y < 0)
-					y = 0;
-				else if (y >= screen->h)
-					y = screen->h - 1;
-			}
-			Vector3d pixel = line;
-			int dx = regSet ? static_cast<int>(5 * cosf(hint + 100.0f * dstY / h)) : 0;
-
-			for (int dstX = 0; dstX != w; ++dstX, pixel += incrementX) {
-				Vector3d ray = pixel.getNormalized();
-				auto cube = toCube(ray.x(), ray.y(), ray.z());
-				int srcX = static_cast<int>(512 * cube.x);
-				int srcY = static_cast<int>(512 * cube.y);
-				int tileId = cube.faceIdx * 4;
-				tileId += (srcY < 256) ? (srcX < 256 ? 0 : 1) : (srcX < 256 ? 3 : 2);
-				srcX &= 0xff;
-				srcY &= 0xff;
-				srcY += (tileId << 8);
-				auto color = _pic->getPixel(srcX, srcY);
-				int x = dstX;
-				if (regSet) {
-					regX += regDX;
-					if (regX >= kTau)
-						regX -= kTau;
-					for (auto &reg : regSet->getRegions()) {
-						if (reg.contains3D(regX, kTau - regY)) {
-							byte r, g, b;
-							_pic->format.colorToRGB(color, r, g, b);
-							x += dx;
-						}
-					}
-				}
-				if (x < 0)
-					x = 0;
-				else if (x >= screen->w)
-					x = screen->w - 1;
-				screen->setPixel(x, y, color);
-			}
-			if (regSet) {
-				regY += regDY;
-				if (regY >= kTau)
-					regY -= kTau;
-			}
-		}
-		screen->addDirtyRect(screen->getBounds());
 	}
 }
 
