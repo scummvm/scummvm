@@ -63,6 +63,7 @@ enum struct RolloverType : uint8 {
 class PhoenixVREngine : public Engine {
 private:
 	static constexpr uint kFPSLimit = 60;
+	static constexpr float kMaxTick = 4.0f / kFPSLimit;
 
 	Graphics::FrameLimiter _frameLimiter;
 	Graphics::Screen *_screen = nullptr;
