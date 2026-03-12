@@ -1394,6 +1394,42 @@ void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b
 	free(chunk_buffer);
 }
 
+static bool ra1FrameHasGameChunk(Common::SeekableReadStream &b, int32 frameSize) {
+	const int64 frameStart = b.pos();
+	int32 remaining = frameSize;
+
+	while (remaining > 1) {
+		if ((b.pos() & 1) && remaining > 0) {
+			const byte pad = b.readByte();
+			if (pad == 0) {
+				remaining--;
+			} else {
+				b.seek(-1, SEEK_CUR);
+			}
+		}
+
+		if (remaining < 8)
+			break;
+
+		const uint32 subType = b.readUint32BE();
+		const int32 subSize = b.readUint32BE();
+		const int64 subDataPos = b.pos();
+
+		if (subType == MKTAG('F', 'R', 'M', 'E'))
+			break;
+		if (subType == MKTAG('G', 'A', 'M', 'E')) {
+			b.seek(frameStart, SEEK_SET);
+			return true;
+		}
+
+		remaining -= subSize + 8;
+		b.seek(subDataPos + subSize, SEEK_SET);
+	}
+
+	b.seek(frameStart, SEEK_SET);
+	return false;
+}
+
 void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFrame(%d)", _frame);
 	uint8 *audioChunk = nullptr;
@@ -1403,25 +1439,33 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 
 	bool interactiveRA1 = false;
 	bool forceInteractiveClearRA1 = false;
+	bool preserveFrameHistoryRA1 = false;
 	if (isRA1() && _insane) {
 		InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
 		interactiveRA1 = rebel1->isInteractiveVideoActive();
 		const uint16 activeOpcode = rebel1->getActiveGameOpcode();
 		// Opcode 0x0B path (FUN_1CDA7) uses heavy partial-layer composition
 		// (codec1/2 + FTCH). Force clear there to avoid stale-trail ghosting.
-		// Keep conservative fallbacks for the early L2 frames before first 0x0B
-		// arrives and for L4PLAY2, whose static 320x180 FTCH background leaves the
-		// uncovered top band reliant on a clean frame base.
+		// Keep a conservative fallback for the early L2 frames before first 0x0B
+		// arrives.
 		forceInteractiveClearRA1 = interactiveRA1 &&
 			(activeOpcode == 0x0B ||
-			 (activeOpcode == 0 && rebel1->getCurrentLevel() == 1) ||
-			 _seekFile.equalsIgnoreCase("LVL4/L4PLAY2.ANM"));
+			 (activeOpcode == 0 && rebel1->getCurrentLevel() == 1));
+
+		// The clean-frame cache only exists to strip gameplay overlays back out of
+		// the previous decoded frame before the next gameplay frame is composed.
+		// Transitional interactive clips like LVL4/L4PLAY2 have no GAME chunks in
+		// their FRME stream, so restoring the prior clean frame there just smears
+		// stale gameplay pixels into the cutscene.
+		preserveFrameHistoryRA1 = interactiveRA1 &&
+			!forceInteractiveClearRA1 &&
+			ra1FrameHasGameChunk(b, frameSize);
 	}
 
 	// Keep the previous decoded frame (without post-render overlays) as delta source.
 	// FUN_1FDBC (0x1FDBC) decodes frame data first; gameplay overlays from
 	// FUN_1BBCB/FUN_1CB22/FUN_1CDA7 are presentation-stage effects.
-	if (isRA1() && interactiveRA1 && !forceInteractiveClearRA1 &&
+	if (isRA1() && preserveFrameHistoryRA1 &&
 		_ra1HasCleanFrame && _ra1CleanFrame &&
 		_dst && _width > 0 && _height > 0) {
 		const int frameBytes = _width * _height;
@@ -1437,7 +1481,7 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 	// but passive cinematics in current implementation need a per-frame clear to
 	// avoid trails in intro/text sequences.
 	if (isRA1() && _dst && _width > 0 && _height > 0) {
-		if (!interactiveRA1 || forceInteractiveClearRA1)
+		if (!preserveFrameHistoryRA1)
 			memset(_dst, 0, _width * _height);
 	}
 
@@ -1672,7 +1716,7 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 		handleFrameObject(_ra1ObjOverlayDataSize, overlayStream);
 	}
 
-	if (isRA1() && interactiveRA1 && !forceInteractiveClearRA1 &&
+	if (isRA1() && preserveFrameHistoryRA1 &&
 		_dst && _width > 0 && _height > 0) {
 		const int frameBytes = _width * _height;
 		byte *newClean = (byte *)realloc(_ra1CleanFrame, frameBytes);
@@ -1684,7 +1728,7 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 		} else {
 			_ra1HasCleanFrame = false;
 		}
-	} else if (isRA1() && forceInteractiveClearRA1) {
+	} else if (isRA1()) {
 		_ra1HasCleanFrame = false;
 	}
 
