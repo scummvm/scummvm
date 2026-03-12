@@ -478,11 +478,10 @@ void VR::renderVR(Graphics::Screen *screen, float ax, float ay, float fov, float
 				y = screen->h - 1 - dstY;
 			dst += y * dstPixelsPitchIncrement;
 		}
-		Vector3d pixel = line;
+		Vector3d ray = line;
 		int dx = regSet ? static_cast<int>(5 * cosf(hint + 100.0f * dstY / h)) : 0;
 
-		for (int dstX = 0; dstX != w; ++dstX, pixel += incrementX, ++dst) {
-			Vector3d ray = pixel.getNormalized();
+		for (int dstX = 0; dstX != w; ++dstX, ray += incrementX, ++dst) {
 			auto cube = toCube(ray.x(), ray.y(), ray.z());
 			int srcX = static_cast<int>(512 * cube.x);
 			int srcY = static_cast<int>(512 * cube.y);
