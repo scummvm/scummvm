@@ -120,14 +120,15 @@ Common::Error PelrockEngine::run() {
 	// Set the engine's debugger console
 	setDebugger(new PelrockConsole(this));
 
+	_state->stateGame = shouldPlayIntro ? INTRO : GAME;
+
+	init();
+
 	// If a savegame was selected from the launcher, load it
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
-	_state->stateGame = shouldPlayIntro ? INTRO : GAME;
-
-	init();
 	while (!shouldQuit()) {
 		if (_state->stateGame == SETTINGS) {
 			_graphics->clearScreen();

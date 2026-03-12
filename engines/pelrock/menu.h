@@ -247,6 +247,7 @@ private:
 	void readButton(Common::File &alfred7, uint32 offset, byte *outBuffer[2], Common::Rect rect);
 	void refreshSaveDescriptions();
 	void handleSaveMenuKey(Common::KeyCode key, uint16 ascii);
+void backToMainMenu();
 	SoundMenuButton isSoundMenuButtonUnder(int x, int y);
 	MainMenuButton isMainMenuButtonUnder(int x, int y);
 	Graphics::Screen *_screen = nullptr;

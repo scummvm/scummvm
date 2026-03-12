@@ -202,7 +202,6 @@ void MenuManager::checkMouseDown(int x, int y) {
 }
 
 bool MenuManager::checkMouseClick(int x, int y) {
-	debug("Checking mouse click at %d, %d, with menu state %d", x, y, _menuState);
 
 	switch (_menuState) {
 	case MAIN_MENU: {
@@ -232,8 +231,7 @@ bool MenuManager::checkMouseClick(int x, int y) {
 		// CANCEL
 		if (_cancelarRect.contains(x, y)) {
 			_editingSaveSlot = -1;
-			_menuState = MAIN_MENU;
-			_menuText = _menuTexts[0];
+			backToMainMenu();
 			break;
 		}
 		// Save slot click: begin (or switch) editing
@@ -261,8 +259,7 @@ bool MenuManager::checkMouseClick(int x, int y) {
 		}
 		// CANCELAR
 		if (_cancelarRect.contains(x, y)) {
-			_menuState = MAIN_MENU;
-			_menuText = _menuTexts[0];
+			backToMainMenu();
 			break;
 		}
 		// Save slot click: load if slot has a save
@@ -271,6 +268,7 @@ bool MenuManager::checkMouseClick(int x, int y) {
 				int slot = _saveGamePage * 8 + i;
 				if (!_saveDescriptions[slot].empty()) {
 					g_engine->loadGameState(slot);
+					backToMainMenu();
 					return true;
 				}
 				else {
@@ -298,8 +296,8 @@ void MenuManager::checkSoundMenuClick(int x, int y) {
 		soundMenuButton != SFX_RIGHT_BUTTON &&
 		soundMenuButton != MASTER_LEFT_BUTTON &&
 		soundMenuButton != MASTER_RIGHT_BUTTON) {
-		_menuState = MAIN_MENU;
-		_menuText = _menuTexts[0];
+		backToMainMenu();
+		return;
 	}
 
 	if (soundMenuButton == SFX_LEFT_BUTTON || soundMenuButton == SFX_RIGHT_BUTTON) {
@@ -429,8 +427,7 @@ bool MenuManager::selectInventoryItem(int i) {
 void MenuManager::handleSaveMenuKey(Common::KeyCode key, uint16 ascii) {
 	if (key == Common::KEYCODE_ESCAPE) {
 		_editingSaveSlot = -1;
-		_menuState = MAIN_MENU;
-		_menuText = _menuTexts[0];
+		backToMainMenu();
 		return;
 	}
 	if (_editingSaveSlot < 0)
@@ -441,12 +438,18 @@ void MenuManager::handleSaveMenuKey(Common::KeyCode key, uint16 ascii) {
 		g_engine->saveGameState(_editingSaveSlot, _editingName);
 		_saveDescriptions[_editingSaveSlot] = _editingName;
 		_editingSaveSlot = -1;
+		backToMainMenu();
 	} else if (key == Common::KEYCODE_BACKSPACE) {
 		if (!_editingName.empty())
 			_editingName.deleteLastChar();
 	} else if (ascii >= 32 && ascii < 256 && ascii != 127) {
 		_editingName += (char)ascii;
 	}
+}
+
+void MenuManager::backToMainMenu() {
+	_menuState = MAIN_MENU;
+	_menuText = _menuTexts[0];
 }
 
 void MenuManager::menuLoop() {
@@ -457,8 +460,7 @@ void MenuManager::menuLoop() {
 
 	g_system->getPaletteManager()->setPalette(_mainMenuPalette, 0, 256);
 	g_engine->changeCursor(DEFAULT);
-	_menuState = MAIN_MENU;
-	_menuText = _menuTexts[0];
+	backToMainMenu();
 
 	// Initialize volume levels from current settings
 	_sfxVolumeLevel = mixerVolumeToLevel(_sound->getVolumeSfx());
@@ -505,15 +507,13 @@ void MenuManager::menuLoop() {
 				handleSaveMenuKey(key, ascii);
 			} else if (_menuState == ORIGINAL_LOAD) {
 				if (key == Common::KEYCODE_ESCAPE) {
-					_menuState = MAIN_MENU;
-					_menuText = _menuTexts[0];
+					backToMainMenu();
 				}
 			} else if (_menuState == EXIT_GAME) {
 				if (key == Common::KEYCODE_s) {
 					g_engine->quitGame();
 				} else if (key == Common::KEYCODE_n) {
-					_menuState = MAIN_MENU;
-					_menuText = _menuTexts[0];
+					backToMainMenu();
 				}
 			}
 		}
