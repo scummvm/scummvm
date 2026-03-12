@@ -690,7 +690,6 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		anim.targetZIndex = blank->zOrder + 1;
 		anim.resetCoord = blank->y;
 		anims->passerByAnims[0] = anim;
-		debug("Loaded passerby animation for room %d, direction = %d", roomNumber, anim.dir);
 		break;
 	}
 
@@ -843,8 +842,6 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 	default:
 		break;
 	}
-	if (anims != nullptr)
-		debug("Loaded passerby anims for room %d, count = %d", roomNumber, anims->numAnims);
 	return anims;
 }
 

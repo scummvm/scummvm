@@ -308,11 +308,11 @@ void MenuManager::checkSoundMenuClick(int x, int y) {
 bool MenuManager::checkMainMenuMouse(int x, int y) {
 
 	// Inventory items
-	bool selectedItem = false;
+
 	for (int i = 0; i < 4; i++) {
 		Common::Rect itemRect = Common::Rect(_inventorySlots[i], 60, 60);
 		if (itemRect.contains(x, y)) {
-			selectedItem = selectInventoryItem(i);
+			selectInventoryItem(i);
 			return false;
 		}
 	}

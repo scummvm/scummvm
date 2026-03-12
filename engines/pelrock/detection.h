@@ -40,6 +40,7 @@ extern const ADGameDescription gameDescriptions[];
 
 #define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
 #define GAMEOPTION_ALTERNATE_TIMING GUIO_GAMEOPTIONS2
+#define GAMEOPTION_PLAY_INTRO GUIO_GAMEOPTIONS3
 
 } // End of namespace Pelrock
 

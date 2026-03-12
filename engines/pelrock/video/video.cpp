@@ -70,7 +70,10 @@ void VideoManager::playIntro() {
 
 		ChunkHeader chunk;
 		readChunk(videoFile, chunk);
-		debug("Read chunk type %d at frame %d", chunk.chunkType, frameCounter);
+
+		if(_events->_lastKeyEvent == Common::KEYCODE_ESCAPE) {
+			break;
+		}
 
 		switch (chunk.chunkType) {
 		case 1:
@@ -133,11 +136,7 @@ void VideoManager::playIntro() {
 				_dialog->processColorAndTrim(lines, color);
 				Graphics::Surface s = _dialog->getDialogueSurface(lines, color);
 				_textSurface.transBlitFrom(s, Common::Point(subtitle->x, subtitle->y), 255);
-
-				drawPos(&_textSurface, subtitle->x, subtitle->y, color);
-				drawRect(&_textSurface, subtitle->x, subtitle->y,
-						 s.getRect().width(),
-						 s.getRect().height(), color);
+				s.free();
 			}
 
 			presentFrame();
@@ -285,15 +284,11 @@ void VideoManager::initMetadata() {
 			for (uint32 i = 0; i < numFiles; ++i) {
 				VoiceData sound;
 				Common::String filename = _introSndFile.readString();
-				// _introSndFile.skip(1);
 				sound.offset = _introSndFile.readUint32LE();
 				sound.length = _introSndFile.readUint32LE();
 				_sounds[filename] = sound;
-				debug("Loaded sound: '%s' (offset: %u, length: %u)", filename.c_str(), sound.offset, sound.length);
 			}
 		}
-
-		debug("Loaded %d sound entries", _sounds.size());
 	}
 
 	while (metadataFile.eos() == false) {
@@ -317,9 +312,6 @@ void VideoManager::initMetadata() {
 			}
 		}
 	}
-
-	debug("Loaded %d subtitles", _subtitles.size());
-	debug("Loaded %d speech files", _voiceEffect.size());
 
 	metadataFile.close();
 }
@@ -349,7 +341,6 @@ MusicEffect VideoManager::readMusicEffect(Common::File &metadataFile) {
 		}
 	}
 	music.trackNumber = atoi(buffer.c_str());
-	debug("Loaded music effect: frame %d, track %d", music.startFrame, music.trackNumber);
 	return music;
 }
 
@@ -378,7 +369,6 @@ AudioEffect VideoManager::readAudioEffect(Common::File &metadataFile) {
 		}
 	}
 	voice.filename = buffer;
-	debug("Loaded voice: frame %d, file '%s'", voice.startFrame, voice.filename.c_str());
 	return voice;
 }
 
@@ -389,8 +379,7 @@ Subtitle VideoManager::readSubtitle(Common::File &metadataFile) {
 	int valueIndex = 0;
 
 	// Skip spaces after "/t"
-	while (!metadataFile.eos() && metadataFile.readByte() == ' ')
-		;
+	while (!metadataFile.eos() && metadataFile.readByte() == ' ');
 	metadataFile.seek(-1, SEEK_CUR); // Step back one byte
 
 	// Parse 4 space-delimited numbers
@@ -412,7 +401,8 @@ Subtitle VideoManager::readSubtitle(Common::File &metadataFile) {
 			break;
 		}
 	}
-	metadataFile.skip(1); // Skip the extra space
+
+	// metadataFile.skip(1); // Skip the extra space
 
 	subtitle.startFrame = values[0];
 	subtitle.endFrame = values[1];
@@ -421,18 +411,34 @@ Subtitle VideoManager::readSubtitle(Common::File &metadataFile) {
 
 	// Read text until CRLF (0x0D 0x0A)
 	subtitle.text.clear();
-	while (!metadataFile.eos()) {
-		char c = metadataFile.readByte();
 
+	// skip leading spaces in subtitle tex
+	byte nextByte;
+	do {
+		nextByte = metadataFile.readByte();
+	} while (nextByte == ' ' && !metadataFile.eos());
+
+	if(nextByte == 0x08) {
+		subtitle.text += '@';
+	} else {
+		subtitle.text += decodeChar(nextByte);
+	}
+
+	while (!metadataFile.eos()) {
+
+		char c = metadataFile.readByte();
 		if (c == 0x0D) {
 			char next = metadataFile.readByte();
 			if (next == 0x0A) {
 				break;
 			} else {
-				subtitle.text += c;
-				subtitle.text += next;
+				subtitle.text += decodeChar(c);
+				subtitle.text += decodeChar(next);
 			}
 		} else {
+			if(c == 0x00) {
+				// do nothing
+			}
 			if (c == 0x08)
 				subtitle.text += '@';
 			else

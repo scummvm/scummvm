@@ -117,6 +117,9 @@ Common::Error PelrockEngine::run() {
 	_doubleSmallFont->load("ALFRED.4");
 	_videoManager = new VideoManager(_screen, _events, _chrono, _largeFont, _dialog, _sound);
 
+	bool playIntroFromConfig = ConfMan.getBool("play_intro");
+	bool hasLaunchedBefore = ConfMan.getBool("launched_before");
+	shouldPlayIntro = playIntroFromConfig || !hasLaunchedBefore;
 	// Set the engine's debugger console
 	setDebugger(new PelrockConsole(this));
 
@@ -138,7 +141,11 @@ Common::Error PelrockEngine::run() {
 			maybePlayPostIntro();
 			gameLoop();
 		} else if (_state->stateGame == INTRO) {
+			CursorMan.showMouse(false);
 			_videoManager->playIntro();
+			CursorMan.showMouse(true);
+			ConfMan.setBool("launched_before", true);
+			ConfMan.flushToDisk();
 			_state->setFlag(FLAG_FROM_INTRO, true);
 			_state->stateGame = GAME;
 		} else if (_state->stateGame == COMPUTER) {

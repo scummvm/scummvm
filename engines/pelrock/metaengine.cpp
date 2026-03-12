@@ -51,6 +51,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_PLAY_INTRO,
+		{
+			_s("Play intro"),
+			_s("Play the game's intro sequence. Plays automatically the first time the game is launched."),
+			"play_intro",
+			false,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
