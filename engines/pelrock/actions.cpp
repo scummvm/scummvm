@@ -204,7 +204,7 @@ const CombinationEntry combinationTable[] = {
 	{1, 309, &PelrockEngine::showIdToGuard},
 	{5, 309, &PelrockEngine::giveMoneyToGuard},
 	{7, 353, &PelrockEngine::useAmuletWithStatue},
-	{8, 353, &PelrockEngine::useSecretCodeWithStatue},
+	{8, 347, &PelrockEngine::useSecretCodeWithStatue},
 	{8, 358, &PelrockEngine::giveSecretCodeToLibrarian},
 	{4, 358, &PelrockEngine::useBrickWithLibrarian}, // Any hotspot in the lamppost will work
 	{76, 469, &PelrockEngine::usePumpkinWithRiver},
@@ -1128,13 +1128,16 @@ void PelrockEngine::useAmuletWithStatue(int inventoryObject, HotSpot *hotspot) {
 		walkTo(statueHotspot->x + statueHotspot->w / 2, statueHotspot->y + statueHotspot->h);
 		_sound->playSound(_room->_roomSfx[0]); // Magic sound
 		animateStatuePaletteFade(false);
+		_dialog->say(_res->_ingameTexts[ANDA]);
 		walkAndAction(statueHotspot, TALK);
 		waitForActionEnd();
 	}
 }
 
 void PelrockEngine::useSecretCodeWithStatue(int inventoryObject, HotSpot *hotspot) {
-	_dialog->say(_res->_ingameTexts[NOESAMIAQUIENDEBES], 1);
+	_dialog->say(_res->_ingameTexts[NOESAMIAQUIENDEBES]);
+	_dialog->say(_res->_ingameTexts[AQUIENENTONCES]);
+	_dialog->say(_res->_ingameTexts[LIBROSSECRETOS]);
 }
 
 void PelrockEngine::pickUpLetter(HotSpot *hotspot) {
