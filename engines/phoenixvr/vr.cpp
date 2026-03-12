@@ -486,14 +486,14 @@ void VR::renderVR(Graphics::Screen *screen, float ax, float ay, float fov, float
 			auto cube = toCube(ray.x(), ray.y(), ray.z());
 			int srcX = static_cast<int>(512 * cube.x);
 			int srcY = static_cast<int>(512 * cube.y);
-			int tileId = cube.faceIdx * 4;
+			int tileId = cube.faceIdx << 2;
 			tileId += (srcY < 256) ? (srcX < 256 ? 0 : 1) : (srcX < 256 ? 3 : 2);
 			srcX &= 0xff;
 			srcY &= 0xff;
 			srcY += (tileId << 8);
 			auto color = _pic->getPixel(srcX, srcY);
-			int x = 0;
 			if (regSet) {
+				int x = 0;
 				regX += regDX;
 				if (regX >= kTau)
 					regX -= kTau;
@@ -508,8 +508,9 @@ void VR::renderVR(Graphics::Screen *screen, float ax, float ay, float fov, float
 					x = 0;
 				else if (dstX + x >= screen->w)
 					x = screen->w - 1 - dstX;
-			}
-			dst[x] = color;
+				dst[x] = color;
+			} else
+				*dst = color;
 		}
 		if (regSet) {
 			regY += regDY;
