@@ -165,7 +165,7 @@ public:
 
 	void setAngle(float x, float y) {
 		_angleX.set(y);
-		_angleY.set(x - kPi2);
+		_angleY.set(kPi2 - x);
 	}
 
 	void setNord(float a) {
