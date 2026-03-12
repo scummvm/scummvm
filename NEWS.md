@@ -25,7 +25,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  AGOS:
    - Improved support of the Acorn releases of Simon the Sorcerer.
      Original cursor is now implemented, along with support of the
-     Desktop Tracker format used for its music.
+     Desktop Tracker format used for music.
    - Improved font rendering accuracy for DOS Personal Nightmare and
      the Amiga Elvira 1 demo.
    - Fixed Simon's sprite having no color in the Acorn floppy demo
@@ -89,6 +89,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      (original script bug).
    - Fixed crash when trying to interact with (invisible) City Guards in Act 4
      of Discworld 1, due to an original script oversight in early releases.
+   - Fixed dragon appearing too early in town square in Act 4 of Discworld 1
+     (original script bug in early releases).
    - Fixed conversation window not closing when being done talking with the
      barman in Discworld 1 L-Space (original script bug in early releases).
 
@@ -439,7 +441,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      slow down background music or other audio effects.
    - Fixed some audio volume changes not being triggered in some situations
      (e.g. automatic music volume drop during dev commentary or when a
-     characters speaks, in the Blackwell series).
+     character speaks, in the Blackwell series).
    - Added/updated detection entries for various AGS games.
 
  Asylum:
