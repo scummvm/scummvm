@@ -70,6 +70,8 @@ static const uint32 kCreditsBackgroundOffset = 3271454;
 static const int16 kTextStartX = 227;
 static const int16 kTextStartY = 191;
 static const byte kNumberColor = 52;
+static const byte kCursorChar = 0xDB;
+static const byte kWhiteColor = 0x0F;
 
 Pelrock::MenuManager::MenuManager(Graphics::Screen *screen, PelrockEventManager *events, ResourceManager *res, SoundManager *sound) : _screen(screen), _events(events), _res(res), _sound(sound) {
 }
@@ -784,14 +786,13 @@ void MenuManager::drawSaves() {
 
 		Common::Rect slotRect(startX - 2, y - 1, startX + overlayW - 2, y + _textLineH);
 		bool hovered = (_editingSaveSlot != slot) && slotRect.contains(mousePos);
-		byte textColor = hovered ? 18 : 0x0F;
+		byte textColor = hovered ? 18 : kWhiteColor;
 
 		if (_editingSaveSlot == slot) {
 			// Show editing cursor
-			slotText = Common::String::format("%s_", _editingName.c_str());
-			textColor = 244; // highlight colour for active editing
-			// Light highlight behind the editing row
-			_compositeBuffer.fillRect(Common::Rect(startX - 2, y - 1, startX + overlayW - 2, y + _textLineH), 1);
+			_editingName.toUppercase();
+			slotText = _editingName;
+			textColor = 18; // highlight colour for active editing
 		} else {
 			const Common::String &desc = _saveDescriptions[slot];
 			if (desc.empty())
@@ -804,13 +805,19 @@ void MenuManager::drawSaves() {
 		drawText(_compositeBuffer, g_engine->_smallFont, slotNumber, startX, y, overlayW, kNumberColor);
 		drawText(_compositeBuffer, g_engine->_smallFont, slotText, startX + slotNumberWidth, y, overlayW - slotNumberWidth, textColor);
 
+		if(_editingSaveSlot == slot) {
+			// Draw cursor
+			int cursorX = startX + slotNumberWidth + g_engine->_smallFont->getStringWidth(slotText);
+			drawText(_compositeBuffer, g_engine->_smallFont, Common::String(kCursorChar), cursorX, y, overlayW - (cursorX - startX), kWhiteColor);
+		}
+
 		_saveSlotRects.push_back(slotRect);
 		y += _textLineH;
 	}
 
 	// CANCEL row
 	_cancelarRect = Common::Rect(startX - 2, y - 1, startX + overlayW - 2, y + _textLineH);
-	byte cancelColor = _cancelarRect.contains(mousePos) ? 18 : 0x0F;
+	byte cancelColor = _cancelarRect.contains(mousePos) ? 18 : kWhiteColor;
 	Common::String cancelText = _menuTexts[4][0].substr(2, _menuTexts[4][0].size() - 2);
 	drawText(_compositeBuffer, g_engine->_smallFont, cancelText, startX, y, overlayW, cancelColor);
 }
