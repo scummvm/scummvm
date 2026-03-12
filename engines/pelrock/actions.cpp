@@ -740,7 +740,8 @@ void PelrockEngine::noOpAction(HotSpot *hotspot) {
 }
 
 void PelrockEngine::noOpItem(int item, HotSpot *hotspot) {
-	if (item >= 11 && item <= 47 && hotspot->extra == 358) {
+	// Original game checked against 47 instead of 58
+	if (item >= 11 && item <= 58 && hotspot->extra == 358) {
 		_state->removeInventoryItem(item);
 		_dialog->say(_res->_ingameTexts[DEACUERDO_2]);
 		return;
@@ -2237,12 +2238,12 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		break;
 	}
 	default: {
-		if (inventoryObject >= 11 && inventoryObject <= 47) {
+		// Original game incorrectly checked until object 47
+		if (inventoryObject >= 11 && inventoryObject <= 58) {
 			playAlfredSpecialAnim(0);
 			_dialog->say(_res->_ingameTexts[LIBRO_ABURRIDO]);
 			return;
 		}
-
 		sayRandomIncorrectResponse();
 		break;
 	}

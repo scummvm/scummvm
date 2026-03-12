@@ -308,7 +308,18 @@ void MenuManager::checkSoundMenuClick(int x, int y) {
 }
 
 bool MenuManager::checkMainMenuMouse(int x, int y) {
-	debug("Checking main menu buttons");
+
+	// Inventory items
+	bool selectedItem = false;
+	for (int i = 0; i < 4; i++) {
+		Common::Rect itemRect = Common::Rect(_inventorySlots[i], 60, 60);
+		if (itemRect.contains(x, y)) {
+			selectedItem = selectInventoryItem(i);
+			return false;
+		}
+	}
+
+	// Buttons
 	MainMenuButton mainMenuButton = isMainMenuButtonUnder(x, y);
 	switch (mainMenuButton) {
 	case QUESTION_MARK_BUTTON:
