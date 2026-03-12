@@ -323,6 +323,7 @@ private:
 	TuningParams _tuning;
 
 	void loadTuningForLevel(int level);
+	void resetGameplayFlagsFromTuning();
 
 	// Damage system (from Ghidra decompilation of FUN_1DEB5)
 	int16 _health;               // 0x7560: current health (init=98, negative=dead, max=98)

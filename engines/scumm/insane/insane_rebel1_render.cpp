@@ -433,6 +433,16 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	if (asteroidMode) {
 		// First-person asteroid/surface handler — opcode 0x0B (FUN_1CDA7).
 		updateAsteroidPhysics();
+
+		// DOS 0x0B loops test health after each frontend frame and leave the
+		// interactive movie as soon as it drops below zero. Mirror that here so
+		// asteroid/surface chapters transition to their retry/death clips like
+		// the other gameplay families do.
+		if (_health < 0) {
+			_fireCooldown = _playerFired ? 1 : 0;
+			_vm->_smushVideoShouldFinish = true;
+			return;
+		}
 	} else if (onFootMode) {
 		// On-foot handler — opcodes 0x19/0x1A (Level 9 Stormtroopers)
 		updateOnFootPhysics();
@@ -603,30 +613,36 @@ void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) 
 		// Baseline RA1 targeting uses '^' and animation e..h.
 		const bool altMarkerSet = (_gameplayFlags75ff & 0x2) != 0;
 
-		// Lock indicator at fixed center positions:
-		// FUN_1CB22 draws marker strings at (0xA0,0x78) and (0xA0,0x7E).
-		if (_targetProximity > 0) {
-			drawCenteredBankGlyph(markerBank, dst, pitch, width, height, overlayX + 0xA0, overlayY + 0x78, ']');
-			if (_targetProximity > 1)
-				drawCenteredBankGlyph(markerBank, dst, pitch, width, height, overlayX + 0xA0, overlayY + 0x7E, 'a');
+		// DAT_75FF bit 2 suppresses the fixed lock/readiness overlay.
+		if ((_gameplayFlags75ff & 0x4) == 0) {
+			// Lock indicator at fixed center positions:
+			// FUN_1CB22 draws marker strings at (0xA0,0x78) and (0xA0,0x7E).
+			if (_targetProximity > 0) {
+				drawCenteredBankGlyph(markerBank, dst, pitch, width, height, overlayX + 0xA0, overlayY + 0x78, ']');
+				if (_targetProximity > 1)
+					drawCenteredBankGlyph(markerBank, dst, pitch, width, height, overlayX + 0xA0, overlayY + 0x7E, 'a');
+			}
 		}
 
-		// Pointer glyph at current aim position. Original uses two variants:
-		// default marker ('^' or 'x') and animated lock marker (e..h or y..|).
-		char marker[2] = { (char)(altMarkerSet ? 'x' : '^'), '\0' };
-		if (_targetProximity > 1) {
-			_targetAnimCounter++;
-			marker[0] = (char)((altMarkerSet ? 'y' : 'e') + (_targetAnimCounter & 3));
-		}
+		// DAT_75FE bit 2 suppresses the cursor glyph entirely.
+		if ((_gameplayFlags75fe & 0x4) == 0) {
+			// Pointer glyph at current aim position. Original uses two variants:
+			// default marker ('^' or 'x') and animated lock marker (e..h or y..|).
+			char marker[2] = { (char)(altMarkerSet ? 'x' : '^'), '\0' };
+			if (_targetProximity > 1) {
+				_targetAnimCounter++;
+				marker[0] = (char)((altMarkerSet ? 'y' : 'e') + (_targetAnimCounter & 3));
+			}
 
-		int cursorX = CLIP<int>(overlayX + getGameplayCursorX(), 0, width - 1);
-		int cursorY = CLIP<int>(overlayY + getGameplayCursorY(), 0, height - 1);
-		drawCenteredBankGlyph(markerBank, dst, pitch, width, height, cursorX, cursorY, marker[0]);
+			int cursorX = CLIP<int>(overlayX + getGameplayCursorX(), 0, width - 1);
+			int cursorY = CLIP<int>(overlayY + getGameplayCursorY(), 0, height - 1);
+			drawCenteredBankGlyph(markerBank, dst, pitch, width, height, cursorX, cursorY, marker[0]);
 
-		if (altMarkerSet) {
-			const int indicatorWidth = getFontBankStringWidth(kRA1TorpedoIndicator);
-			drawFontBankString(dst, pitch, width, height,
-				overlayX + 0xA0 - indicatorWidth / 2, overlayY + 0x6E, kRA1TorpedoIndicator);
+			if (altMarkerSet) {
+				const int indicatorWidth = getFontBankStringWidth(kRA1TorpedoIndicator);
+				drawFontBankString(dst, pitch, width, height,
+					overlayX + 0xA0 - indicatorWidth / 2, overlayY + 0x6E, kRA1TorpedoIndicator);
+			}
 		}
 	}
 
@@ -694,8 +710,8 @@ void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) 
 			renderSprite(dst, pitch, width, height, drawX, drawY, spr);
 
 			// Per-kill score popup glyph — RenderGostOverlaySlots (0x1CA35)
-			// Suppressed in on-foot mode (combatModeFlags & 8)
-			if ((_gameplayFlags75fe & 8) == 0) {
+			// Suppressed when DAT_75FF bit 3 is set.
+			if ((_gameplayFlags75ff & 8) == 0) {
 				renderGostScorePopup(dst, pitch, width, height,
 									overlayX + centerX, centerY, _gostSlots[i].frame);
 			}

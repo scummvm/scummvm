@@ -186,9 +186,9 @@ void InsaneRebel1::loadTuningForLevel(int level) {
 	_tuning.levelPts = kTuningTable[l][d][10];
 	_tuning.bonus    = kTuningTable[l][d][11];
 	_tuning.flags    = kTuningTable[l][d][12];
-	// initLevelFromTuning (0x13E7B) copies tuning flags into g_hudDisableFlags (0x75FE)
-	// and clears protected targets (DAT_00007732/7734).
-	_gameplayFlags75fe = (uint16)_tuning.flags;
+	// initLevelFromTuning (0x13E7B) writes the 16-bit tuning flags word across
+	// 0x75FE/0x75FF, so we must preserve both bytes.
+	resetGameplayFlagsFromTuning();
 	_protectedTargetA = 0;
 	_protectedTargetB = 0;
 
@@ -197,6 +197,12 @@ void InsaneRebel1::loadTuningForLevel(int level) {
 		level, d, _tuning.roll, _tuning.lift, _tuning.slide, _tuning.drift, _tuning.snap,
 		_tuning.miss, _tuning.wham, _tuning.shot, _tuning.kill,
 		_tuning.time, _tuning.levelPts, _tuning.bonus, _tuning.flags);
+}
+
+void InsaneRebel1::resetGameplayFlagsFromTuning() {
+	const uint16 tuningFlags = (uint16)_tuning.flags;
+	_gameplayFlags75fe = tuningFlags & 0x00FF;
+	_gameplayFlags75ff = tuningFlags >> 8;
 }
 
 InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
