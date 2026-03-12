@@ -373,6 +373,9 @@ void RippedLetterPuzzle::handleInput(NancyInput &input) {
 
 							_pickedUpPiece.setVisible(true);
 							_pickedUpPiece.setTransparent(true);
+							// After a swap, the held piece must return
+							// to this slot on save or re-entry
+							_puzzleState->_pickedUpPieceLastPos = i;
 						}
 
 						SWAP<int8>(_puzzleState->order[i], _puzzleState->_pickedUpPieceID);
