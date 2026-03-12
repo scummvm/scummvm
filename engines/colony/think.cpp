@@ -42,6 +42,54 @@ static int trailTargetAngle(uint8 code) {
 	}
 }
 
+int ColonyEngine::getColonyActiveRobotLimit() const {
+	switch (_level) {
+	case 2:
+		return 25;
+	case 3:
+	case 4:
+		return 30;
+	case 5:
+	case 6:
+	case 7:
+		return 35;
+	default:
+		return 0;
+	}
+}
+
+void ColonyEngine::copyOverflowObjectToSlot(int num) {
+	const int activeLimit = getColonyActiveRobotLimit();
+	if (num <= 0 || num > activeLimit || num > kMeNum - 1 || num > (int)_objects.size())
+		return;
+
+	const int searchEnd = MIN<int>((int)_objects.size(), kMeNum - 1);
+	for (int objectNum = searchEnd; objectNum > activeLimit; --objectNum) {
+		if (objectNum == num)
+			continue;
+
+		Thing &source = _objects[objectNum - 1];
+		if (!source.alive)
+			continue;
+
+		if (source.where.xindex >= 0 && source.where.xindex < 32 &&
+		    source.where.yindex >= 0 && source.where.yindex < 32) {
+			if (isEggType(source.type)) {
+				if (_foodArray[source.where.xindex][source.where.yindex] == objectNum)
+					_foodArray[source.where.xindex][source.where.yindex] = (uint8)num;
+			} else if (_robotArray[source.where.xindex][source.where.yindex] == objectNum) {
+				_robotArray[source.where.xindex][source.where.yindex] = (uint8)num;
+			}
+		}
+
+		Thing replacement = source;
+		replacement.visible = 0;
+		_objects[num - 1] = replacement;
+		memset(&source, 0, sizeof(source));
+		return;
+	}
+}
+
 void ColonyEngine::respawnObject(int num, int type) {
 	if (num <= 0 || num > (int)_objects.size())
 		return;
@@ -75,11 +123,8 @@ void ColonyEngine::cThink() {
 	if (_gameMode != kModeColony)
 		return;
 
-	const int objectCount = (int)_objects.size();
-	for (int num = 1; num <= objectCount; ++num) {
-		if (num > (int)_objects.size())
-			break;
-
+	const int activeLimit = MIN<int>(getColonyActiveRobotLimit(), (int)_objects.size());
+	for (int num = 1; num <= activeLimit; ++num) {
 		const Thing &obj = _objects[num - 1];
 		if (!obj.alive || obj.type <= 0 || obj.type > kBaseObject)
 			continue;
@@ -264,6 +309,7 @@ void ColonyEngine::droneThink(int num) {
 			_robotArray[obj.where.xindex][obj.where.yindex] = 0;
 		obj.alive = 0;
 		_sound->play(Sound::kExplode);
+		copyOverflowObjectToSlot(num);
 	} else {
 		obj.type = kRobDrone;
 		obj.grow = 0;
@@ -307,8 +353,7 @@ bool ColonyEngine::layEgg(int type, int xindex, int yindex) {
 	    hasFood(xindex, yindex - 1))
 		return false;
 
-	createObject(type, (xindex << 8) + 128, (yindex << 8) + 128, _randomSource.getRandomNumber(255));
-	return true;
+	return createObject(type, (xindex << 8) + 128, (yindex << 8) + 128, _randomSource.getRandomNumber(255));
 }
 
 void ColonyEngine::moveThink(int num) {
@@ -768,6 +813,8 @@ void ColonyEngine::meEat() {
 	_foodArray[_me.xindex][_me.yindex] = 0;
 	obj.alive = 0;
 	_sound->play(Sound::kEat);
+	if (foodNum <= getColonyActiveRobotLimit())
+		copyOverflowObjectToSlot(foodNum);
 
 	switch (obj.type) {
 	case kRobMUPyramid:

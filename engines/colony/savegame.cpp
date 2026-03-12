@@ -23,7 +23,7 @@ namespace Colony {
 namespace {
 
 static const uint32 kSaveVersion = 1;
-static const uint32 kMaxSaveObjects = 255;
+static const uint32 kMaxSaveObjects = 4096;
 static const uint32 kMaxSavePatches = 100;
 
 Common::Error makeReadError(const char *msg) {
@@ -32,6 +32,11 @@ Common::Error makeReadError(const char *msg) {
 
 Common::Error makeWriteError(const char *msg) {
 	return Common::Error(Common::kWritingFailed, msg);
+}
+
+Common::Error makeCorruptSaveError(const char *reason) {
+	warning("Colony savegame load failed: %s", reason);
+	return makeReadError("Invalid or corrupt Colony savegame");
 }
 
 void writeRect(Common::WriteStream *stream, const Common::Rect &rect) {
@@ -226,6 +231,41 @@ bool validateGridReferences(const uint8 grid[32][32], uint32 objectCount, bool a
 	return true;
 }
 
+bool findInvalidGridReference(const uint8 grid[32][32], uint32 objectCount, bool allowPlayerMarker, int &invalidX, int &invalidY, uint8 &invalidValue) {
+	for (int y = 0; y < 32; y++) {
+		for (int x = 0; x < 32; x++) {
+			const uint8 value = grid[x][y];
+			if (value == 0)
+				continue;
+			if (allowPlayerMarker && value == kMeNum)
+				continue;
+			if (value > objectCount) {
+				invalidX = x;
+				invalidY = y;
+				invalidValue = value;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool findInvalidActiveObjectSlot(const Common::Array<Thing> &objects, uint32 &invalidObjectNum, int &invalidType) {
+	for (uint i = 0; i < objects.size(); i++) {
+		if (!objects[i].alive)
+			continue;
+
+		const uint32 objectNum = i + 1;
+		if (objectNum == (uint32)kMeNum || objectNum > 255) {
+			invalidObjectNum = objectNum;
+			invalidType = objects[i].type;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 } // namespace
 
 bool ColonyEngine::hasFeature(EngineFeature f) const {
@@ -357,8 +397,10 @@ Common::Error ColonyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 		return makeReadError("Could not open savegame stream");
 
 	const uint32 version = stream->readUint32LE();
-	if (version != kSaveVersion)
+	if (version != kSaveVersion) {
+		warning("Colony savegame load failed: unsupported version %u, expected %u", version, kSaveVersion);
 		return makeReadError("Unsupported Colony savegame version");
+	}
 
 	const int savedGameMode = stream->readSint32LE();
 	const int savedLevel = stream->readSint32LE();
@@ -367,7 +409,8 @@ Common::Error ColonyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	const uint32 savedSeed = stream->readUint32LE();
 
 	if ((savedGameMode != kModeColony && savedGameMode != kModeBattle) || savedLevel < 1 || savedLevel > 7)
-		return makeReadError("Invalid or corrupt Colony savegame");
+		return makeCorruptSaveError(Common::String::format("invalid header values: mode=%d level=%d robotNum=%d dynamicObjectBase=%d seed=%u",
+			savedGameMode, savedLevel, savedRobotNum, savedDynamicObjectBase, savedSeed).c_str());
 
 	_gameMode = savedGameMode;
 	_level = savedLevel;
@@ -404,7 +447,7 @@ Common::Error ColonyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 
 	const uint32 patchCount = stream->readUint32LE();
 	if (patchCount > kMaxSavePatches)
-		return makeReadError("Invalid or corrupt Colony savegame");
+		return makeCorruptSaveError(Common::String::format("patch count %u exceeds max %u", patchCount, kMaxSavePatches).c_str());
 	_patches.resize(patchCount);
 	for (uint i = 0; i < patchCount; i++)
 		_patches[i] = readPatchEntry(stream);
@@ -434,7 +477,7 @@ Common::Error ColonyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 
 	const uint32 objectCount = stream->readUint32LE();
 	if (objectCount > kMaxSaveObjects)
-		return makeReadError("Invalid or corrupt Colony savegame");
+		return makeCorruptSaveError(Common::String::format("object count %u exceeds max %u", objectCount, kMaxSaveObjects).c_str());
 	_objects.resize(objectCount);
 	for (uint i = 0; i < objectCount; i++)
 		_objects[i] = readThing(stream);
@@ -457,24 +500,46 @@ Common::Error ColonyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	}
 
 	if (stream->err())
-		return makeReadError("Invalid or corrupt Colony savegame");
+		return makeCorruptSaveError("stream read error while decoding save payload");
 
 	if (_coreIndex < 0 || _coreIndex > 1)
-		return makeReadError("Invalid or corrupt Colony savegame");
+		return makeCorruptSaveError(Common::String::format("core index out of range: %d", _coreIndex).c_str());
 	if (_weapons < 0 || _weapons > 3 || _armor < 0 || _armor > 3)
-		return makeReadError("Invalid or corrupt Colony savegame");
+		return makeCorruptSaveError(Common::String::format("equipment out of range: weapons=%d armor=%d", _weapons, _armor).c_str());
 	if (_fl < 0 || _fl > 2 || _orbit < 0 || _orbit > 1)
-		return makeReadError("Invalid or corrupt Colony savegame");
+		return makeCorruptSaveError(Common::String::format("status out of range: fl=%d orbit=%d", _fl, _orbit).c_str());
 	for (uint i = 0; i < ARRAYSIZE(_levelData); i++) {
 		if (_levelData[i].size > 10)
-			return makeReadError("Invalid or corrupt Colony savegame");
+			return makeCorruptSaveError(Common::String::format("levelData[%u].size out of range: %u", i, _levelData[i].size).c_str());
 	}
 	if (_dynamicObjectBase < 0 || _dynamicObjectBase > (int)_objects.size())
-		return makeReadError("Invalid or corrupt Colony savegame");
+		return makeCorruptSaveError(Common::String::format("dynamicObjectBase out of range: %d (objects=%u)", _dynamicObjectBase, objectCount).c_str());
 	if (_robotNum < kMeNum + 1 || _robotNum > 255)
-		return makeReadError("Invalid or corrupt Colony savegame");
-	if (!validateGridReferences(_robotArray, objectCount, true) || !validateGridReferences(_foodArray, objectCount, false))
-		return makeReadError("Invalid or corrupt Colony savegame");
+		return makeCorruptSaveError(Common::String::format("robotNum out of range: %d", _robotNum).c_str());
+	{
+		uint32 invalidObjectNum = 0;
+		int invalidType = 0;
+		if (findInvalidActiveObjectSlot(_objects, invalidObjectNum, invalidType)) {
+			return makeCorruptSaveError(Common::String::format("active object slot %u is not addressable by byte-sized grids (type=%d)",
+				invalidObjectNum, invalidType).c_str());
+		}
+	}
+	if (!validateGridReferences(_robotArray, objectCount, true)) {
+		int invalidX = -1;
+		int invalidY = -1;
+		uint8 invalidValue = 0;
+		findInvalidGridReference(_robotArray, objectCount, true, invalidX, invalidY, invalidValue);
+		return makeCorruptSaveError(Common::String::format("robot grid reference out of range at (%d,%d): value=%u objectCount=%u",
+			invalidX, invalidY, invalidValue, objectCount).c_str());
+	}
+	if (!validateGridReferences(_foodArray, objectCount, false)) {
+		int invalidX = -1;
+		int invalidY = -1;
+		uint8 invalidValue = 0;
+		findInvalidGridReference(_foodArray, objectCount, false, invalidX, invalidY, invalidValue);
+		return makeCorruptSaveError(Common::String::format("food grid reference out of range at (%d,%d): value=%u objectCount=%u",
+			invalidX, invalidY, invalidValue, objectCount).c_str());
+	}
 
 	deleteAnimation();
 	_animationName.clear();
