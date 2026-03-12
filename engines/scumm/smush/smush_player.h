@@ -83,7 +83,7 @@ namespace Scumm {
 #define SMUSH_CODEC_RA1_BLOCK    5    // RA1: Block-based frame codec (no skip)
 #define SMUSH_CODEC_UNCOMPRESSED 20
 #define SMUSH_CODEC_LINE_UPDATE  21   // RA2: Skip/copy with literal pixels
-#define SMUSH_CODEC_SKIP_RLE     23   // RA2: Skip/copy with embedded RLE
+#define SMUSH_CODEC_SKIP_RLE     23   // RA1: additive line-update overlay; RA2: skip/copy with embedded RLE
 #define SMUSH_CODEC_DELTA_BLOCKS 37
 #define SMUSH_CODEC_LINE_UPDATE2 44   // RA2: Variant of codec 21
 #define SMUSH_CODEC_RA2_BOMP     45   // RA2: BOMP RLE with variable header
