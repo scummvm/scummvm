@@ -305,6 +305,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_state->setCurrentRoot(4, 2, 0);
 		break;
 	case 259:
+		_dialog->say(_res->_ingameTexts[DEPIEDRANO_DEHIELO], 1);
 		_dialog->say(_res->_ingameTexts[NO_EMPECEMOS]);
 		break;
 	case 260:
@@ -870,10 +871,14 @@ void PelrockEngine::closeKitchenDoor(HotSpot *HotSpot) {
 void PelrockEngine::openKitchenDrawer(HotSpot *hotspot) {
 	if (!_state->getFlag(FLAG_JEFE_ENCARCELADO)) {
 		_dialog->say(_res->_ingameTexts[QUITA_ESAS_MANOS]);
-	} else {
+	} else if (!_state->getFlag(FLAG_RECIPE_TAKEN)) {
+		_state->setFlag(FLAG_RECIPE_TAKEN, true);
 		_room->addSticker(36);
 		addInventoryItem(63); // Add recipe
 		_dialog->say(_res->_ingameTexts[QUESESTO_RECETA]);
+	} else {
+		// Already took the recipe
+		_dialog->say(_res->_ingameTexts[YAESTA_ABIERTO]);
 	}
 }
 
@@ -1252,10 +1257,15 @@ void PelrockEngine::waitForSoundEnd(int channel) {
 
 void PelrockEngine::pickupSunflower(HotSpot *hotspot) {
 	if (_state->getFlag(FLAG_PARADOJA_RESUELTA) == false) {
-		_dialog->say(_res->_ingameTexts[OIGA]);
-		_state->setCurrentRoot(25, 26, 0);
-		walkAndAction(_room->findHotspotByExtra(467), TALK);
-		_state->setFlag(FLAG_RIDDLE_PRESENTED, true);
+		if (_state->getFlag(FLAG_RIDDLE_PRESENTED)) {
+			// try to take the sunflower before solving the riddle
+			_dialog->say(_res->_ingameTexts[LEESTOYVIGILANDO]);
+		} else {
+			_dialog->say(_res->_ingameTexts[OIGA]);
+			_state->setCurrentRoot(25, 26, 0);
+			walkAndAction(_room->findHotspotByExtra(467), TALK);
+			_state->setFlag(FLAG_RIDDLE_PRESENTED, true);
+		}
 	} else {
 		addInventoryItem(85);
 		_room->disableHotspot(hotspot);
@@ -2087,6 +2097,11 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		}
 		break;
 	case 88: {
+		if (_room->_currentRoomNumber != 28 &&
+			(_room->_currentRoomNumber < 51 || _room->_currentRoomNumber > 54)) {
+			_dialog->say(_res->_ingameTexts[AQUI_NO_NECESITO]);
+			break;
+		}
 		SpellBook spellBook(_events, _res);
 		playAlfredSpecialAnim(0);
 

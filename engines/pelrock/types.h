@@ -558,8 +558,9 @@ struct ResetEntry {
 #define FLAG_HA_USADO_AGUA 45
 #define FLAG_NUMERO_DE_COPAS 47
 #define FLAG_PIGEON_DEAD 61
+#define FLAG_RECIPE_TAKEN 62
 
-const int kNumGameFlags = 62;
+const int kNumGameFlags = 63;
 
 struct GameStateData {
 	byte flags[kNumGameFlags];
