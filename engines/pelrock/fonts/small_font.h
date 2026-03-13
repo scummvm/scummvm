@@ -44,8 +44,8 @@ public:
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
 	byte *_fontData;
-protected:
 
+protected:
 private:
 	static const int CHAR_WIDTH = 8;
 	static const int CHAR_HEIGHT = 8;

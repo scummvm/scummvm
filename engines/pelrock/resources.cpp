@@ -506,7 +506,7 @@ Common::Array<Common::StringArray> ResourceManager::processTextData(byte *data, 
 	Common::StringArray lines;
 	Common::Array<Common::StringArray> texts;
 	while (pos < size) {
-		if (data[pos] == CTRL_END_TEXT) {
+		if (data[pos] == kCtrlEndText) {
 			lines.push_back(desc);
 			texts.push_back(lines);
 			lines.clear();
@@ -519,7 +519,7 @@ Common::Array<Common::StringArray> ResourceManager::processTextData(byte *data, 
 			continue;
 		}
 
-		if (data[pos] == CTRL_SPEAKER_ID) {
+		if (data[pos] == kCtrlSpeakerId) {
 			byte color = data[pos + 1];
 			desc.append(1, '@');
 			desc.append(1, color);

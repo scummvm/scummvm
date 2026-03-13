@@ -58,7 +58,7 @@ bool LargeFont::load(const Common::String &filename) {
 	memset(_fontData, 0, dataSize);
 	for (int c = 0; c < numChars; c++) {
 		// Temporary bitmap for character + border
-		bool mask[paddedHeight][paddedWidth] = {false};
+		bool mask[paddedHeight][paddedWidth] = {{false}};
 		// Decode character pixels from rawFontData
 		int charOffset = c * 0x30;
 		for (int i = 0; i < charHeight; i++) {
@@ -72,7 +72,7 @@ bool LargeFont::load(const Common::String &filename) {
 			}
 		}
 		// adds a border mask to the original font
-		bool borderMask[paddedHeight][paddedWidth] = {false};
+		bool borderMask[paddedHeight][paddedWidth] = {{false}};
 
 		for (int y = 0; y < paddedHeight; y++) {
 			for (int x = 0; x < paddedWidth; x++) {

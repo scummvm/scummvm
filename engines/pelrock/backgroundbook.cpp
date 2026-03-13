@@ -29,8 +29,8 @@
 namespace Pelrock {
 
 static const uint32 kBgBookButtonsOffset = 3188448; // ALFRED.7 — UI buttons
-static const uint32 kRoomNamesOffset     = 299797;  // JUEGO.EXE — room name strings
-static const uint32 kRoomNamesSize       = 1297;
+static const uint32 kRoomNamesOffset = 299797;      // JUEGO.EXE — room name strings
+static const uint32 kRoomNamesSize = 1297;
 
 BackgroundBook::BackgroundBook(PelrockEventManager *eventMan, ResourceManager *res, RoomManager *room)
 	: _events(eventMan), _res(res), _room(room) {

@@ -34,39 +34,23 @@
 
 namespace Pelrock {
 
-// Control character codes (negative values in signed char)
-#define CHAR_SPACE 0x20                  /* ' ' */
-#define CTRL_SPEAKER_ID 0x08             /* Next byte is speaker ID (color) */
-const byte kCtrlEndText             = 0xFD; /* End of text segment */
-const byte kCtrlTextTerminator      = 0xFC; /* Text terminator */
-const byte kCtrlDialogueMarker      = 0xF1; /* Choice marker that sticks */
-const byte kCtrlDisabledChoice      = 0xFA; /* Disabled choice marker */
-const byte kCtrlPageBreakConv       = 0xF9; /* Page break in conversation */
-const byte kCtrlActionAndEnd        = 0xF8; /* Action trigger */
-const byte kCtrlEndBranch           = 0xF7; /* End of branch */
-const byte kCtrlLineContinue        = 0xF6; /* Line continue/newline */
-const byte kCtrlAltEndMarker1       = 0xF5; /* Alt end marker - do nothing */
-const byte kCtrlEndConversation     = 0xF4; /* End conversation and disable option */
-const byte kCtrlDialogueMarkerOneoff = 0xFB; /* Alt choice marker that disappears */
-const byte kCtrlGoBack              = 0xF0; /* Go back in conversation */
-const byte kCtrlActionAndContinue   = 0xEB; /* Action-and-continue: dispatch action, conversation keeps going (unlike 0xF8 which exits) */
-const byte kCtrlAltSpeakerRoot      = 0xFE; /* Separates conversations from different speakers */
-
-// Keep old names as aliases for compatibility
-#define CTRL_END_TEXT           kCtrlEndText
-#define CTRL_TEXT_TERMINATOR    kCtrlTextTerminator
-#define CTRL_DIALOGUE_MARKER    kCtrlDialogueMarker
-#define CTRL_DISABLED_CHOICE    kCtrlDisabledChoice
-#define CTRL_PAGE_BREAK_CONV    kCtrlPageBreakConv
-#define CTRL_ACTION_AND_END     kCtrlActionAndEnd
-#define CTRL_END_BRANCH         kCtrlEndBranch
-#define CTRL_LINE_CONTINUE      kCtrlLineContinue
-#define CTRL_ALT_END_MARKER_1   kCtrlAltEndMarker1
-#define CTRL_END_CONVERSATION   kCtrlEndConversation
-#define CTRL_DIALOGUE_MARKER_ONEOFF kCtrlDialogueMarkerOneoff
-#define CTRL_GO_BACK            kCtrlGoBack
-#define CTRL_ACTION_AND_CONTINUE kCtrlActionAndContinue
-#define CTRL_ALT_SPEAKER_ROOT   kCtrlAltSpeakerRoot
+// Control character codes
+const byte kCtrlSpace                = 0x20; /* ' ' */
+const byte kCtrlSpeakerId            = 0x08; /* Next byte is speaker ID (color) */
+const byte kCtrlEndText              = 0xFD; /* End of text segment */
+const byte kCtrlTextTerminator       = 0xFC; /* Text terminator */
+const byte kCtrlDialogueMarker       = 0xF1; /* Choice marker that sticks */
+const byte kCtrlDialogueMarkerOneoff = 0xFB; /* Choice marker that disappears after use */
+const byte kCtrlDisabledChoice       = 0xFA; /* Disabled choice marker, generally only after usage */
+const byte kCtrlPageBreakConv        = 0xF9; /* Page break in conversation */
+const byte kCtrlActionAndEnd         = 0xF8; /* Action trigger and end conversation */
+const byte kCtrlActionAndContinue    = 0xEB; /* Action-and-continue: dispatch action, conversation keeps going (unlike 0xF8 which exits) */
+const byte kCtrlEndBranch            = 0xF7; /* End of branch */
+const byte kCtrlLineContinue         = 0xF6; /* Line continue/newline */
+const byte kCtrlAltEndMarker1        = 0xF5; /* Alt end marker - do nothing */
+const byte kCtrlEndConversation      = 0xF4; /* End conversation and disable option */
+const byte kCtrlGoBack               = 0xF0; /* Go back in conversation */
+const byte kCtrlAltSpeakerRoot       = 0xFE; /* Separates conversations from different speakers */
 
 // Helper structures for conversation state management
 struct ConversationState {
@@ -84,13 +68,13 @@ struct ConversationEndResult {
 };
 
 class DialogManager {
-	const static int kMaxChoiceChars = 50; // Max characters to show for a choice option (for truncation)
-	const static int kArrowWidth = 8;      // Width of arrow character for scroll
-	const static int kChoicePadding = 16;  // padding for the choice text surface
+	const static int kArrowWidth = 8;     // Width of arrow character for scroll
+	const static int kChoicePadding = 16; // padding for the choice text surface
 private:
 	Graphics::Screen *_screen = nullptr;
 	PelrockEventManager *_events = nullptr;
 	GraphicsManager *_graphics = nullptr;
+	// Current talking sprite, to disable and replace with talking animation
 	Sprite *_curSprite = nullptr;
 
 	// Private helper functions for conversation parsing
@@ -100,10 +84,8 @@ private:
 	uint32 readTextBlock(const byte *data, uint32 dataSize, uint32 startPos, Common::String &outText, byte &outSpeakerId);
 	uint32 parseChoices(const byte *data, uint32 dataSize, uint32 startPos, Common::Array<ChoiceOption> *outChoices);
 	void setCurSprite(int index);
-	void checkMouse();
 	bool checkAllSubBranchesExhausted(const byte *data, uint32 dataSize, uint32 startPos, int currentChoiceLevel);
 
-	// Refactored helper functions for startConversation
 	uint32 skipControlBytes(const byte *data, uint32 dataSize, uint32 position);
 	uint32 peekNextMeaningfulByte(const byte *data, uint32 dataSize, uint32 position);
 	ConversationState initializeConversation(const byte *data, uint32 dataSize, byte npcIndex);
@@ -112,7 +94,7 @@ private:
 	ConversationEndResult checkConversationEnd(const byte *data, uint32 dataSize, uint32 position, int currentRoot = -1);
 	void addGoodbyeOptionIfNeeded(Common::Array<ChoiceOption> *choices, int currentChoiceLevel, uint originalChoiceCount);
 	uint32 processChoiceSelection(const byte *data, uint32 dataSize, Common::Array<ChoiceOption> *choices, int selectedIndex, ConversationState &state);
-	void disableChoiceIfNeeded(Common::Array<Pelrock::ChoiceOption> *choices, int selectedIndex, const byte *data, uint32 dataSize, uint32 endPos, Pelrock::ConversationState &state);
+	void maybeDisableChoice(Common::Array<Pelrock::ChoiceOption> *choices, int selectedIndex, const byte *data, uint32 dataSize, uint32 endPos, Pelrock::ConversationState &state);
 
 public:
 	DialogManager(Graphics::Screen *screen, PelrockEventManager *events, GraphicsManager *graphics);

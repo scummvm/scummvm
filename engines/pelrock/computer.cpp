@@ -37,7 +37,6 @@ Computer::Computer(PelrockEventManager *eventMan)
 	  _currentResult(0),
 	  _memorizedBookIndex(-1),
 	  _events(eventMan) {
-
 	init();
 }
 
@@ -78,8 +77,6 @@ void Computer::init() {
 		book.inventoryIndex = alfred7File.readByte() - 55;
 		book.shelf = alfred7File.readByte();
 		book.available = alfred7File.readByte() == 2;
-		// book.index = book.available ? index++ : -1;
-		// book.index2 = index2++;
 		_libraryBooks.push_back(book);
 	}
 
@@ -205,9 +202,9 @@ void Computer::drawScreen() {
 		int titlePlaceholderIndex = titleLine.findFirstOf("XXXX");
 
 		int titleIndex = 0;
-		while(titleIndex < book.title.size()) {
+		while (titleIndex < book.title.size()) {
 			Common::String thisLine;
-			if(titleIndex == 0) {
+			if (titleIndex == 0) {
 				thisLine = titleLine;
 				thisLine.replace(titlePlaceholderIndex, titleLine.size() - titlePlaceholderIndex, book.title[titleIndex]);
 			} else {
@@ -222,9 +219,9 @@ void Computer::drawScreen() {
 		int authorPlaceholderIndex = authorLine.findFirstOf("XXXX");
 		int authorIndex = 0;
 
-		while(authorIndex < book.author.size()) {
+		while (authorIndex < book.author.size()) {
 			Common::String thisLine;
-			if(authorIndex == 0) {
+			if (authorIndex == 0) {
 				thisLine = authorLine;
 				thisLine.replace(authorPlaceholderIndex, authorLine.size() - authorPlaceholderIndex, book.author[authorIndex]);
 			} else {
@@ -240,7 +237,7 @@ void Computer::drawScreen() {
 		genreLine.replace(genrePlaceholderIndex, genreLine.size() - genrePlaceholderIndex, book.genre);
 		g_engine->_graphics->drawColoredText(g_engine->_screen, genreLine, textX, textY + increment * 2, 340, defaultColor, g_engine->_smallFont);
 
-		// Situacion (location/availability)
+		// "Situacion" (location/availability)
 		Common::String situacionLine = _computerText[6][0];
 		int situacionPlaceholderIndex = situacionLine.findFirstOf("XXXX");
 		situacionLine.replace(situacionPlaceholderIndex, situacionLine.size() - situacionPlaceholderIndex, book.available ? _computerText[8][0] : _computerText[9][0]);
@@ -299,7 +296,7 @@ void Computer::handleResultsDisplay() {
 	if (_events->_lastKeyEvent == Common::KEYCODE_s) {
 		if (!_searchResults.empty()) {
 			_currentResult = (_currentResult + 1);
-			if(_currentResult >= _searchResults.size())
+			if (_currentResult >= _searchResults.size())
 				_state = STATE_MAIN_MENU;
 		}
 		_events->_lastKeyEvent = Common::KEYCODE_INVALID;
@@ -336,7 +333,6 @@ void Computer::memorizeBook(int bookIndex) {
 	g_engine->_state->selectedBookIndex = book.inventoryIndex;
 	g_engine->_state->bookLetter = book.title[0][0];
 
-	debug("Memorized book '%s' with index %d, shelf %d, letter %c", book.title[0].c_str(), g_engine->_state->selectedBookIndex, g_engine->_state->libraryShelf, g_engine->_state->bookLetter);
 }
 
 void Computer::performSearch() {
