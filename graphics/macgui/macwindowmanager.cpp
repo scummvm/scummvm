@@ -1382,6 +1382,52 @@ void MacWindowManager::replaceCursor(MacCursorType type, Cursor *cursor) {
 	replaceCursorType(type);
 }
 
+bool MacWindowManager::getBuiltInCursorData(MacCursorType type, const byte *&data, const byte *&paletteData,
+		const byte *&mask, int &w, int &h, int &hotspotX, int &hotspotY, int &transColor) {
+	data = nullptr;
+	paletteData = cursorPalette;
+	mask = nullptr;
+	w = 11;
+	h = 16;
+	hotspotX = 0;
+	hotspotY = 0;
+	transColor = 3;
+
+	switch (type) {
+	case kMacCursorArrow:
+		data = macCursorArrow;
+		hotspotX = 1;
+		hotspotY = 1;
+		return true;
+	case kMacCursorBeam:
+		data = macCursorBeam;
+		mask = macCursorBeamMask;
+		hotspotX = 3;
+		hotspotY = 8;
+		return true;
+	case kMacCursorCrossHair:
+		data = macCursorCrossHair;
+		hotspotX = 5;
+		hotspotY = 5;
+		return true;
+	case kMacCursorCrossBar:
+		data = macCursorCrossBar;
+		hotspotX = 4;
+		hotspotY = 4;
+		return true;
+	case kMacCursorWatch:
+		data = macCursorWatch;
+		hotspotX = 5;
+		hotspotY = 8;
+		return true;
+	case kMacCursorCustom:
+	case kMacCursorOff:
+		return false;
+	}
+
+	return false;
+}
+
 void MacWindowManager::pushCustomCursor(const byte *data, int w, int h, int hx, int hy, int transcolor) {
 	CursorMan.pushCursor(data, w, h, hx, hy, transcolor);
 	CursorMan.pushCursorPalette(cursorPalette, 0, 2);
