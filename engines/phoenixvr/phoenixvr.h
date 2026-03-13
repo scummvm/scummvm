@@ -213,6 +213,7 @@ private:
 	void renderVR(float dt);
 	void renderTimer();
 	void renderFade(int color);
+	void resetState();
 
 private:
 	bool _hasFocus = true;
