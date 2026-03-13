@@ -20,10 +20,10 @@
  */
 #include "common/events.h"
 
+#include "events.h"
 #include "pelrock/events.h"
 #include "pelrock/pelrock.h"
 #include "pelrock/util.h"
-#include "events.h"
 
 namespace Pelrock {
 

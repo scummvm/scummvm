@@ -55,56 +55,56 @@ enum SoundMenuButton {
 };
 
 static const int kCreditsOrder[34] = {
-	5, // PROGRAMACION
-	 8, // Juan Jose Gil
-	 20, // Jose Vicente Pons
-	 24, // LuisFer Fernandez
-	 22, // Fernando Perez
-	 7, // GRAFICOS
+	5,  // PROGRAMACION
+	8,  // Juan Jose Gil
+	20, // Jose Vicente Pons
+	24, // LuisFer Fernandez
+	22, // Fernando Perez
+	7,  // GRAFICOS
 	12, // Queral,
 	14, // Ana maria polo
 	18, // Juan Arocas
 	16, // Gost
 	26, // Astorga
 	28, // Santi Sanz
-	2, // Fernando Aparicio
-	11,// INTRODUCCION
+	2,  // Fernando Aparicio
+	11, // INTRODUCCION
 	12, // Queral,
 	26, // Astorga
 	28, // Santi Sanz
-	9, // MUSICA
-	6, // Rufino Acosta
+	9,  // MUSICA
+	6,  // Rufino Acosta
 	13, // GUION
-	8, // Juan Jose Gil
+	8,  // Juan Jose Gil
 	19, // DIALOGOS
-	4, // Vicent raul arnau,
-	8, // Juan Jose Gil,
+	4,  // Vicent raul arnau,
+	8,  // Juan Jose Gil,
 	21, // PROBADORES
-	0, //David Burgos
+	0,  // David Burgos
 	10, // Alberto Leon
-	1, // Carles Pons
-	3, // Roman Pons
+	1,  // Carles Pons
+	3,  // Roman Pons
 	25, // Andres Ruiz,
 	27, // Juan Jose Ruiz
 	23, // Marilo
 	15, // PRODUCCION
-	17 // DDM
+	17  // DDM
 };
 
 static const char *inventorySounds[113] = {
 
-	"HOJASZZZ.SMP", // 0 - Default leaf rustle
-	"11ZZZZZZ.SMP", // 1 -
+	"HOJASZZZ.SMP", // 0
 	"11ZZZZZZ.SMP",
 	"11ZZZZZZ.SMP",
-	"GLASS1ZZ.SMP", // 4 - Glass clink (brick)
 	"11ZZZZZZ.SMP",
-	"ELEC3ZZZ.SMP", // 6 - Electric zap
-	"REMATERL.SMP", // 7 - Rematerialize
-	"81ZZZZZZ.SMP", // 8 - (numbered SFX)
-	"11ZZZZZZ.SMP", // 9
-	"SSSHTZZZ.SMP", // 10 - Shushing
-	"HOJASZZZ.SMP", // 11 - Default leaf rustle
+	"GLASS1ZZ.SMP",
+	"11ZZZZZZ.SMP",
+	"ELEC3ZZZ.SMP",
+	"REMATERL.SMP",
+	"81ZZZZZZ.SMP",
+	"11ZZZZZZ.SMP",
+	"SSSHTZZZ.SMP", // 10
+	"HOJASZZZ.SMP",
 	"HOJASZZZ.SMP",
 	"HOJASZZZ.SMP",
 	"HOJASZZZ.SMP",
@@ -154,58 +154,58 @@ static const char *inventorySounds[113] = {
 	"HOJASZZZ.SMP",
 	"HOJASZZZ.SMP",
 	"BOTEZZZZ.SMP", // 60
-	"BOTEZZZZ.SMP", // 61
-	"BOTEZZZZ.SMP", // 62 - Bottle sound
-	"BELCHZZZ.SMP", // 63 - Belch
-	"BEAMZZZZ.SMP", // 64 - Beam/ray
-	"ELVIS1ZZ.SMP", // 65 - Elvis impression
-	"CAT_1ZZZ.SMP", // 66 - Cat sound
-	"BOOOOOIZ.SMP", // 67 - Boing
-	"DISCOSZZ.SMP", // 68 - Disco music
-	"MONORLZZ.SMP", // 69 - Monorail
+	"BOTEZZZZ.SMP",
+	"BOTEZZZZ.SMP",
+	"BELCHZZZ.SMP",
+	"BEAMZZZZ.SMP",
+	"ELVIS1ZZ.SMP",
+	"CAT_1ZZZ.SMP",
+	"BOOOOOIZ.SMP",
+	"DISCOSZZ.SMP",
+	"MONORLZZ.SMP",
 	"11ZZZZZZ.SMP", // 70
-	"11ZZZZZZ.SMP", // 71
-	"11ZZZZZZ.SMP", // 72
-	"CARACOLA.SMP", // 73 - Seashell
-	"11ZZZZZZ.SMP", // 74
-	"11ZZZZZZ.SMP", // 75
-	"WATER_2Z.SMP", // 76 - Water splash
-	"11ZZZZZZ.SMP", // 77
-	"11ZZZZZZ.SMP", // 78
-	"EEEEKZZZ.SMP", // 79 - Shriek
+	"11ZZZZZZ.SMP",
+	"11ZZZZZZ.SMP",
+	"CARACOLA.SMP",
+	"11ZZZZZZ.SMP",
+	"11ZZZZZZ.SMP",
+	"WATER_2Z.SMP",
+	"11ZZZZZZ.SMP",
+	"11ZZZZZZ.SMP",
+	"EEEEKZZZ.SMP",
 	"REMATERL.SMP", // 80 - Rematerialize
-	"11ZZZZZZ.SMP", // 81
-	"11ZZZZZZ.SMP", // 82
-	"ELVIS1ZZ.SMP", // 83 - Elvis impression
-	"RIMSHOTZ.SMP", // 84 - Rimshot
-	"11ZZZZZZ.SMP", // 85
-	"WATER_2Z.SMP", // 86 - Water splash
-	"MOTOSZZZ.SMP", // 87 - Motorcycle
+	"11ZZZZZZ.SMP",
+	"11ZZZZZZ.SMP",
+	"ELVIS1ZZ.SMP",
+	"RIMSHOTZ.SMP",
+	"11ZZZZZZ.SMP",
+	"WATER_2Z.SMP",
+	"MOTOSZZZ.SMP",
 	"HOJASZZZ.SMP",
-	"TWANGZZZ.SMP", // 89 - Twang
+	"TWANGZZZ.SMP",
 	"11ZZZZZZ.SMP", // 90
-	"QUAKE2ZZ.SMP", // 91 - Earthquake
-	"11ZZZZZZ.SMP", // 92
-	"SORBOZZZ.SMP", // 93 - Slurp
-	"BOTEZZZZ.SMP", // 94 - Bottle sound
-	"ELVIS1ZZ.SMP", // 95 - Elvis impression
-	"HOJASZZZ.SMP", // 96
-	"HOJASZZZ.SMP", // 97
-	"HOJASZZZ.SMP", // 98
-	"11ZZZZZZ.SMP", // 99
-	"LLAVESZZ.SMP", // 100 - Keys jingling
-	"HOJASZZZ.SMP", // 101
-	"11ZZZZZZ.SMP", // 102
-	"11ZZZZZZ.SMP", // 103
-	"EVLLAUGH.SMP", // 104 - Evil laugh
-	"11ZZZZZZ.SMP", // 105
-	"BURROLZZ.SMP", // 106 - Donkey bray
-	"11ZZZZZZ.SMP", // 107
-	"TWANGZZZ.SMP", // 108
-	"11ZZZZZZ.SMP", // 109
+	"QUAKE2ZZ.SMP",
+	"11ZZZZZZ.SMP",
+	"SORBOZZZ.SMP",
+	"BOTEZZZZ.SMP",
+	"ELVIS1ZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP",
+	"11ZZZZZZ.SMP",
+	"LLAVESZZ.SMP", // 100
+	"HOJASZZZ.SMP",
+	"11ZZZZZZ.SMP",
+	"11ZZZZZZ.SMP",
+	"EVLLAUGH.SMP",
+	"11ZZZZZZ.SMP",
+	"BURROLZZ.SMP",
+	"11ZZZZZZ.SMP",
+	"TWANGZZZ.SMP",
+	"11ZZZZZZ.SMP",
 	"TWANGZZZ.SMP", // 110
-	"ELVIS1ZZ.SMP", // 111 - Elvis impression
-	"SEX3ZZZZ.SMP"  // 112 - Suggestive sound
+	"ELVIS1ZZ.SMP",
+	"SEX3ZZZZ.SMP"
 };
 
 class MenuManager {
@@ -232,7 +232,6 @@ private:
 	void checkMouseDown(int x, int y);
 	bool checkMouseClick(int x, int y);
 	void checkSoundMenuClick(int x, int y);
-	bool checkMainMenuMouse(int x, int y, bool &retFlag);
 	bool checkMainMenuMouse(int x, int y); // returns bool if its supposed to close the menu
 	void showCredits();
 	bool selectInventoryItem(int i);
@@ -293,7 +292,6 @@ private:
 	Common::Rect _sfxVolumeLeftRect = Common::Rect(Common::Point(364, 252), 36, 28);
 	Common::Rect _sfxVolumeRightRect = Common::Rect(Common::Point(400, 252), 31, 28);
 
-
 	byte *_soundControlArrowLeft[2] = {nullptr};
 	byte *_soundControlArrowRight[2] = {nullptr};
 
@@ -323,11 +321,11 @@ private:
 
 	// Save/Load sub-menu state
 	int _saveGamePage = 0;
-	int _editingSaveSlot = -1;       // -1 = not editing any slot
-	Common::String _editingName;     // name being typed for a save
-	Common::Rect _cancelarRect;      // hit-rect for the CANCELAR row
+	int _editingSaveSlot = -1;                  // -1 = not editing any slot
+	Common::String _editingName;                // name being typed for a save
+	Common::Rect _cancelarRect;                 // hit-rect for the CANCELAR row
 	Common::Array<Common::Rect> _saveSlotRects; // hit-rects for the 8 visible save rows
-	Common::StringArray _saveDescriptions;       // indexed by slot 0-255
+	Common::StringArray _saveDescriptions;      // indexed by slot 0-255
 };
 
 } // End of namespace Pelrock

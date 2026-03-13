@@ -22,8 +22,8 @@
 #define PELROCK_GRAPHICS_H
 
 #include "common/array.h"
-#include "common/str-array.h"
 #include "common/scummsys.h"
+#include "common/str-array.h"
 
 #include "graphics/font.h"
 #include "graphics/managed_surface.h"
@@ -40,8 +40,6 @@ public:
 
 	// Overlay / palette utilities
 	Common::Point showOverlay(int height, Graphics::ManagedSurface &buf);
-	byte *grabBackgroundSlice(Graphics::ManagedSurface &buf, int x, int y, int w, int h);
-	void putBackgroundSlice(Graphics::ManagedSurface &buf, int x, int y, int w, int h, byte *slice);
 	void fadeToBlack(int stepSize);
 	void fadePaletteToTarget(byte *targetPalette, int stepSize);
 	void clearScreen();
@@ -69,12 +67,7 @@ public:
 	/** Water reflection: mirrors buf pixels at (x,y) for water-palette pixels. */
 	void reflectionEffect(byte *buf, int x, int y, int width, int height);
 
-
 	// scaling
-	/**
-	 * Initializes _widthScalingTable / _heightScalingTable.
-	 * Must be called once during engine init, before any drawAlfred().
-	 */
 	void calculateScalingMasks();
 
 	/**

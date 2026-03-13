@@ -49,30 +49,6 @@ Common::Point GraphicsManager::showOverlay(int height, Graphics::ManagedSurface 
 	return Common::Point(overlayX, overlayY);
 }
 
-byte *GraphicsManager::grabBackgroundSlice(Graphics::ManagedSurface &buf, int x, int y, int w, int h) {
-	byte *bg = new byte[w * h];
-	for (int j = 0; j < w; j++) {
-		for (int i = 0; i < h; i++) {
-			int idx = i * w + j;
-			if (y + i < 400 && x + j < 640) {
-				*(bg + idx) = (byte)buf.getPixel(x + j, y + i);
-			}
-		}
-	}
-	return bg;
-}
-
-void GraphicsManager::putBackgroundSlice(Graphics::ManagedSurface &buf, int x, int y, int w, int h, byte *slice) {
-	for (int i = 0; i < w; i++) {
-		for (int j = 0; j < h; j++) {
-			int index = (j * w + i);
-			if (x + i < 640 && y + j < 400) {
-				buf.setPixel(x + i, y + j, slice[index]);
-			}
-		}
-	}
-}
-
 void GraphicsManager::fadeToBlack(int stepSize) {
 	byte palette[768];
 	g_system->getPaletteManager()->grabPalette(palette, 0, 256);

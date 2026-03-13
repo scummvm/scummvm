@@ -129,7 +129,6 @@ MainMenuButton MenuManager::isMainMenuButtonUnder(int x, int y) {
 	if (_menuState != MAIN_MENU) {
 		return NO_MAIN_BUTTON;
 	}
-
 	if (_questionMarkRect.contains(x, y)) {
 		return QUESTION_MARK_BUTTON;
 	}
