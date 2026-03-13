@@ -313,7 +313,7 @@ void PhoenixVREngine::fade(int start, int stop, int speed) {
 		renderVR(dt);
 		renderFade(pos);
 
-		pos += 1 + dt * speedMs;
+		pos += dt * speedMs + ((speed >= 0) ? 1 : -1);
 
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
