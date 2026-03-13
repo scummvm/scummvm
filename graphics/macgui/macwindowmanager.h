@@ -333,6 +333,8 @@ private:
 
 public:
 	MacCursorType getCursorType() const;
+	static bool getBuiltInCursorData(MacCursorType type, const byte *&data, const byte *&palette,
+		const byte *&mask, int &w, int &h, int &hotspotX, int &hotspotY, int &transColor);
 
 	void pushCursor(MacCursorType type, Cursor *cursor = nullptr);
 	void replaceCursor(MacCursorType type, Cursor *cursor = nullptr);
