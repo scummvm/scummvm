@@ -2370,11 +2370,13 @@ void PelrockEngine::checkObjectsForPart2() {
 	if (_state->hasInventoryItem(17) &&
 		_state->hasInventoryItem(59) &&
 		_state->hasInventoryItem(24)) {
-		_room->addStickerToRoom(19, 54, PERSIST_BOTH);
-		_room->addStickerToRoom(19, 55, PERSIST_BOTH);
-		_room->addStickerToRoom(19, 56, PERSIST_BOTH);
-		_room->addStickerToRoom(19, 58, PERSIST_BOTH);
-		_state->setFlag(FLAG_AGENCIA_ABIERTA, true);
+		if(_state->getFlag(FLAG_AGENCIA_ABIERTA) == false) {
+			_room->addStickerToRoom(19, 54, PERSIST_BOTH);
+			_room->addStickerToRoom(19, 55, PERSIST_BOTH);
+			_room->addStickerToRoom(19, 56, PERSIST_BOTH);
+			_room->addStickerToRoom(19, 58, PERSIST_BOTH);
+			_state->setFlag(FLAG_AGENCIA_ABIERTA, true);
+		}
 	}
 }
 

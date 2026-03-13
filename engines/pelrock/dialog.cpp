@@ -279,7 +279,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		}
 
 		_screen->transBlitFrom(s, s.getRect(), Common::Point(xPos, yPos), 255);
-		drawPos(_screen, xPos, yPos, speakerId);
+		// drawPos(_screen, xPos, yPos, speakerId);
 
 		_screen->markAllDirty();
 		_screen->update();
@@ -1243,7 +1243,6 @@ Common::Array<Common::StringArray> DialogManager::wordWrap(Common::StringArray t
 	for (uint i = 0; i < texts.size(); i++) {
 		Common::String thisLine = texts[i];
 		Common::Array<Common::Array<Common::String>> wrapped = wordWrap(thisLine);
-		debug("Wrapped line %s, %d into %d pages", thisLine.c_str(), thisLine.size(), wrapped.size());
 		for (uint j = 0; j < wrapped.size(); j++) {
 			for (int k = 0; k < wrapped[j].size(); k++) {
 				if (currentLineNum < kMaxLines) {
