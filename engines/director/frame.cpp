@@ -324,7 +324,7 @@ void Frame::readSpriteD2(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 	}
 }
 
-void readSpriteDataD2(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition) {
+void readSpriteDataD2(Common::SeekableReadStreamEndian &stream, Sprite &sprite, int startPosition, int finishPosition) {
 	while (stream.pos() < finishPosition) {
 		switch (stream.pos() - startPosition) {
 		case 0:
@@ -647,7 +647,7 @@ void Frame::readSpriteD4(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 	}
 }
 
-void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition) {
+void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, int startPosition, int finishPosition) {
 	debugC(8, kDebugLoading, "stream.pos(): %0x, startPosition: %d, finishPosition: %d", (int)stream.pos(), startPosition, finishPosition);
 	while (stream.pos() < finishPosition) {
 		switch (stream.pos() - startPosition) {
@@ -988,7 +988,7 @@ void Frame::readSpriteD5(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 		sprite._width = sprite._height = 0;
 }
 
-void readSpriteDataD5(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition) {
+void readSpriteDataD5(Common::SeekableReadStreamEndian &stream, Sprite &sprite, int startPosition, int finishPosition) {
 	while (stream.pos() < finishPosition) {
 		switch (stream.pos() - startPosition) {
 		case 0:
@@ -1428,7 +1428,7 @@ void Frame::readSpriteD6(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 		sprite._width = sprite._height = 0;
 }
 
-void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition) {
+void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, int startPosition, int finishPosition) {
 	while (stream.pos() < finishPosition) {
 		switch (stream.pos() - startPosition) {
 		case 0:
@@ -1879,7 +1879,7 @@ void Frame::readSpriteD7(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 		sprite._width = sprite._height = 0;
 }
 
-void readSpriteDataD7(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition) {
+void readSpriteDataD7(Common::SeekableReadStreamEndian &stream, Sprite &sprite, int startPosition, int finishPosition) {
 	byte unk[12];
 
 	while (stream.pos() < finishPosition) {

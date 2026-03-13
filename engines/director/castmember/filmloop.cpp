@@ -226,7 +226,7 @@ void FilmLoopCastMember::loadFilmLoopDataD2(Common::SeekableReadStreamEndian &st
 
 		while (frameSize > 0) {
 			int msgWidth = stream.readByte() * 2;
-			int order = stream.readByte() * 2 - 0x20;
+			int order = stream.readByte() * 2;
 			frameSize -= 2;
 
 			int channel = order / channelSize;
