@@ -46,8 +46,10 @@ void FoolGame::sub_134_004() {
 		this->arr_i16_3738[i] = this->puzzlesReadByte();
 	}
 	// 134:00ce
+	// rack up polygon information
 	g_toolbox->SetPort(this->var_i32_f24);
 	this->arr_i16_1eb8[20] = 0;
+
 	for (int i = 1; i <= this->arr_i16_1eb8[15]; i++) {
 		this->var_i16_103a = this->puzzlesReadShort();
 		this->arr_poly_192c0[i] = g_toolbox->OpenPoly();
@@ -70,6 +72,7 @@ void FoolGame::sub_134_004() {
 	}
 	// 134:01ea
 	g_toolbox->SetPort(this->var_i32_0);
+
 	this->arr_i16_1eb8[17] = (0x1c2 / this->arr_i16_1eb8[15]);
 	this->arr_i16_1eb8[18] = 0x100 - ((this->arr_i16_1eb8[15] * this->arr_i16_1eb8[17]) / 2);
 	this->var_str_1272 = this->puzzlesReadString();
@@ -80,6 +83,7 @@ void FoolGame::sub_134_004() {
 	this->var_i16_1aba = this->arr_i16_1eb8[18];
 	g_zbasic->text(0, 0xc, 0, kSrcOr);
 	for (int i = 1; i <= this->arr_i16_1eb8[15]; i++) {
+		// play a random tone and draw each of the letter buttons in sequence
 		this->sub_128_50e(
 			g_zbasic->rndInt(0x3e8) + 0x19,
 			0x28,
