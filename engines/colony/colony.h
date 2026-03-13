@@ -398,6 +398,7 @@ public:
 	void inform(const char *text, bool hold);
 	void printMessage(const char *text[], bool hold);
 	void makeMessageRect(Common::Rect &r);
+	int runMacEndgameDialog(const Common::String &message);
 
 private:
 	const ADGameDescription *_gameDescription;

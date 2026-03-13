@@ -83,7 +83,7 @@ MacDialog::MacDialog(ManagedSurface *screen, MacWindowManager *wm, int width, Ma
 	_font = getDialogFont();
 
 	_tempSurface = new ManagedSurface();
-	_tempSurface->create(width + 1, height + 1, Graphics::PixelFormat::createFormatCLUT8());
+	_tempSurface->create(width + 1, height + 1, _screen ? _screen->format : _wm->_pixelformat);
 
 	_bbox.left = (_screen->w - width) / 2;
 	_bbox.top = (_screen->h - height) / 2;
@@ -119,7 +119,7 @@ void MacDialog::paint() {
 	Primitives &primitives = _wm->getDrawPrimitives();
 
 	MacPlotData pd(_screen, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorBlack, false);
-	primitives.drawFilledRect1(_bbox, kColorWhite, &pd);
+	primitives.drawFilledRect1(_bbox, _wm->_colorWhite, &pd);
 	_mactext->drawToPoint(_screen, Common::Point(_bbox.left + (_bbox.width() - _maxTextWidth)/2, _bbox.top + 16));
 	static int boxOutline[] = {1, 0, 0, 1, 1};
 	drawOutline(_bbox, boxOutline, ARRAYSIZE(boxOutline));
@@ -134,15 +134,15 @@ void MacDialog::paint() {
 			buttonOutline[0] = buttonOutline[1] = 0;
 		}
 
-		int color = kColorBlack;
+		uint32 color = _wm->_colorBlack;
 
 		if ((int)i == _pressedButton && _mouseOverPressedButton) {
 			Common::Rect bb(button->bounds.left + 5, button->bounds.top + 5,
 							button->bounds.right - 5, button->bounds.bottom - 5);
 
-			primitives.drawFilledRect1(bb, kColorBlack, &pd);
+			primitives.drawFilledRect1(bb, _wm->_colorBlack, &pd);
 
-			color = kColorWhite;
+			color = _wm->_colorWhite;
 		}
 		int w = _font->getStringWidth(button->text);
 		int x = button->bounds.left + (button->bounds.width() - w) / 2;
@@ -169,7 +169,7 @@ void MacDialog::drawOutline(Common::Rect &bounds, int *spec, int speclen) {
 	for (int i = 0; i < speclen; i++)
 		if (spec[i] != 0) {
 			Common::Rect r(bounds.left + i, bounds.top + i, bounds.right - i, bounds.bottom - i);
-			primitives.drawRect1(r, kColorBlack, &pd);
+			primitives.drawRect1(r, _wm->_colorBlack, &pd);
 		}
 }
 

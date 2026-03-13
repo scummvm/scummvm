@@ -29,11 +29,128 @@
 #include "graphics/fonts/dosfont.h"
 #include "graphics/fonts/macfont.h"
 #include "graphics/cursorman.h"
+#include "graphics/macgui/macdialog.h"
+#include "graphics/macgui/mactext.h"
 #include "gui/message.h"
 #include "image/pict.h"
 #include <math.h>
 
 namespace Colony {
+
+class ColonyMacDialog : public Graphics::MacDialog {
+public:
+	using Graphics::MacDialog::MacDialog;
+
+	int runWithRenderer(Renderer *gfx) {
+		if (!_screen || !gfx)
+			return Graphics::kMacDialogQuitRequested;
+
+		bool shouldQuitEngine = false;
+		bool shouldQuit = false;
+
+		_tempSurface->copyRectToSurface(_screen->getBasePtr(_bbox.left, _bbox.top), _screen->pitch,
+			0, 0, _bbox.width() + 1, _bbox.height() + 1);
+		_wm->pushCursor(Graphics::kMacCursorArrow, nullptr);
+		g_system->showMouse(true);
+		CursorMan.showMouse(true);
+
+		while (!shouldQuit) {
+			Common::Event event;
+
+			while (g_system->getEventManager()->pollEvent(event)) {
+				if (processEvent(event))
+					continue;
+
+				switch (event.type) {
+				case Common::EVENT_QUIT:
+					shouldQuitEngine = true;
+					shouldQuit = true;
+					break;
+				case Common::EVENT_MOUSEMOVE:
+					mouseMove(event.mouse.x, event.mouse.y);
+					break;
+				case Common::EVENT_LBUTTONDOWN:
+					mouseClick(event.mouse.x, event.mouse.y);
+					break;
+				case Common::EVENT_LBUTTONUP:
+					shouldQuit = mouseRaise(event.mouse.x, event.mouse.y);
+					break;
+				case Common::EVENT_KEYDOWN:
+					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+						_pressedButton = -1;
+						shouldQuit = true;
+					}
+					break;
+				default:
+					break;
+				}
+			}
+
+			if (_needsRedraw) {
+				paint();
+				gfx->drawSurface(&_screen->rawSurface(), 0, 0);
+				gfx->copyToScreen();
+			}
+
+			g_system->updateScreen();
+			g_system->delayMillis(10);
+		}
+
+		_screen->copyRectToSurface(_tempSurface->getBasePtr(0, 0), _tempSurface->pitch,
+			_bbox.left, _bbox.top, _bbox.width() + 1, _bbox.height() + 1);
+		gfx->drawSurface(&_screen->rawSurface(), 0, 0);
+		gfx->copyToScreen();
+		_wm->popCursor();
+
+		if (shouldQuitEngine)
+			return Graphics::kMacDialogQuitRequested;
+
+		return _pressedButton;
+	}
+};
+
+int ColonyEngine::runMacEndgameDialog(const Common::String &message) {
+	if (_renderMode != Common::kRenderMacintosh || !_wm || !_menuSurface || !_gfx)
+		return Graphics::kMacDialogQuitRequested;
+
+	if (_macMenu && _wm->isMenuActive())
+		_macMenu->closeMenu();
+
+	const uint32 black = _menuSurface->format.ARGBToColor(255, 0, 0, 0);
+	_menuSurface->fillRect(Common::Rect(0, 0, _menuSurface->w, _menuSurface->h), black);
+	_gfx->drawSurface(&_menuSurface->rawSurface(), 0, 0);
+	_gfx->copyToScreen();
+
+	const Common::String newGameLabel = _("New Game");
+	const Common::String loadGameLabel = _("Load Game");
+	const Common::String quitLabel = _("Quit");
+	Graphics::MacFont systemFont(Graphics::kMacFontSystem, 12);
+	const Graphics::Font *dialogFont = (_wm->_fontMan) ? _wm->_fontMan->getFont(systemFont) : nullptr;
+
+	const int buttonGap = 12;
+	const int buttonH = 28;
+	const int buttonPad = 26;
+	const int minButtonW = 68;
+	const int buttonW1 = MAX<int>(minButtonW, dialogFont ? dialogFont->getStringWidth(newGameLabel) + buttonPad : 80);
+	const int buttonW2 = MAX<int>(minButtonW, dialogFont ? dialogFont->getStringWidth(loadGameLabel) + buttonPad : 80);
+	const int buttonW3 = MAX<int>(minButtonW, dialogFont ? dialogFont->getStringWidth(quitLabel) + buttonPad : 80);
+	const int totalButtonsW = buttonW1 + buttonW2 + buttonW3 + buttonGap * 2;
+	const int maxTextWidth = CLIP<int>(_width - 48, 180, 280);
+
+	Graphics::MacText prompt(Common::U32String(message), _wm, &systemFont,
+		_wm->_colorBlack, _wm->_colorWhite, maxTextWidth, Graphics::kTextAlignCenter);
+
+	const int dialogW = MAX<int>(MAX<int>(220, totalButtonsW + 20), maxTextWidth + 20);
+	const int buttonY = prompt.getTextHeight() + 30;
+	const int startX = (dialogW - totalButtonsW) / 2;
+	Graphics::MacDialogButtonArray buttons;
+	buttons.push_back(new Graphics::MacDialogButton(newGameLabel.c_str(), startX, buttonY, buttonW1, buttonH));
+	buttons.push_back(new Graphics::MacDialogButton(loadGameLabel.c_str(), startX + buttonW1 + buttonGap, buttonY, buttonW2, buttonH));
+	buttons.push_back(new Graphics::MacDialogButton(quitLabel.c_str(), startX + buttonW1 + buttonGap + buttonW2 + buttonGap, buttonY, buttonW3, buttonH));
+
+	ColonyMacDialog dialog(_menuSurface, _wm, dialogW, &prompt, maxTextWidth, &buttons, 0);
+	return dialog.runWithRenderer(_gfx);
+}
 
 void ColonyEngine::playIntro() {
 	if (getPlatform() == Common::kPlatformMacintosh) {
@@ -740,6 +857,31 @@ void ColonyEngine::terminateGame(bool blowup) {
 	_clip = savedClip;
 	_centerX = savedCenterX;
 	_centerY = savedCenterY;
+
+	if (_renderMode == Common::kRenderMacintosh) {
+		while (!shouldQuit()) {
+			switch (runMacEndgameDialog(_("You have been terminated."))) {
+			case 0:
+				startNewGame();
+				_mouseLocked = savedMouseLocked;
+				updateMouseCapture(true);
+				return;
+			case 1:
+				if (loadGameDialog()) {
+					_mouseLocked = savedMouseLocked;
+					updateMouseCapture(true);
+					return;
+				}
+				break;
+			case Graphics::kMacDialogQuitRequested:
+			default:
+				quitGame();
+				return;
+			}
+		}
+		return;
+	}
+
 	while (!shouldQuit()) {
 		Common::U32StringArray altButtons;
 		altButtons.push_back(_("Load Game"));
