@@ -112,7 +112,17 @@ struct AngleX : Angle {
 };
 
 struct AngleY : Angle {
-	AngleY(float angle) : Angle(angle, -kPi, -Math::epsilon) {}
+	AngleY(float angle) : Angle(angle, -kPi, -Math::epsilon) {
+		resetRange();
+	}
+	void setRange(float min, float max) {
+		static const float baseX = -kPi2;
+		Angle::setRange(baseX + min, baseX + max);
+	}
+	void resetRange() {
+		static constexpr auto defaultRange = kPi * 0.375f;
+		setRange(-defaultRange, defaultRange);
+	}
 	void add(float v) {
 		v += angle();
 		if (v <= _min)

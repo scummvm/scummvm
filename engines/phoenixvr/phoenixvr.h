@@ -150,8 +150,7 @@ public:
 	void fade(int start, int stop, int speed);
 
 	void setXMax(float max) {
-		static const float baseX = -kPi2;
-		_angleY.setRange(baseX - max, baseX + max);
+		_angleY.setRange(-max, max);
 	}
 
 	// this is set to large values and effectively useless
