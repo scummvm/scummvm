@@ -12,6 +12,7 @@ MODULE_OBJS = \
 	toolbox_menu.o \
 	toolbox_quickdraw.o \
 	toolbox_resman.o \
+	toolbox_sound.o \
 	toolbox_text.o \
 	zbasic.o \
 	console.o \

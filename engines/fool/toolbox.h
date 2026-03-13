@@ -304,6 +304,27 @@ struct SFReply {
 	Common::String fName; // 10
 }; // total: 76
 
+enum SynthMode : int16 {
+	swMode = -1,	// square-wave
+	ftMode = 1,		// four-tone
+	ffMode = 0,		// free-form
+};
+
+struct Tone {
+	uint16 count;
+	uint16 amplitude;
+	uint16 duration;
+};
+
+struct SynthRec {
+	SynthMode mode;
+};
+typedef SynthRec * SynthPtr;
+
+struct SWSynthRec : SynthRec {
+	Common::Array<Tone> triplets;
+};
+
 class Toolbox {
 
 public:
@@ -354,6 +375,19 @@ public:
 	// PROCEDURE SFPutFile (where: Point; prompt: Str255; origName:
 	// Str255; dlgHook: ProcPtr; VAR reply: SFReply);
 	void SFPutFile(const Common::Point &where, const Common::U32String &prompt, const Common::U32String &origName, const ProcPtr &dlgHook, SFReply &reply);
+
+	// toolbox_sound.cpp
+
+	// PROCEDURE StartSound (synthRec: Ptr; numBytes: LONGINT; completionRtn: ProcPtr);
+	// StartSound begins producing the sound described by the synthesizer buffer pointed to by
+	// synthRec. NumBytes indicates the size of the synthesizer buffer (in bytes), and completionRtn
+	// points to a completion routine to be executed when the sound finishes:
+	// • If completionRtn is POINTER(-l), the sound will be produced synchronously.
+	// • If completionRtn is NIL, the sound will be produced asynchronously, but no completion
+	// routine will be executed.
+	// • Otherwise, the sound will be produced asynchronously and the routine pointed to by
+	// completionRtn will be executed when the sound finishes.
+	void StartSound(SynthPtr synthRec, uint32 numBytes, ProcPtr completionRtn);
 
 	// toolbox_resman.cpp
 

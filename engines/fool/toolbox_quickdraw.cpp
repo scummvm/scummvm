@@ -225,10 +225,10 @@ void Toolbox::_drawPoly(const PolyHandle &poly, const Pattern &pat, PatternMode 
 		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, mode);
 
 		if (debugChannelSet(5, kDebugGraphics)) {
-			byte fakePal[768];
-			Common::fill(fakePal, fakePal+3, 0xff);
-			Common::fill(fakePal+3, fakePal+768, 0x00);
-			mask->rawSurface().debugPrint(5, 0, 0, 0, 0, -1, 512, fakePal);
+			//byte fakePal[768];
+			//Common::fill(fakePal, fakePal+3, 0xff);
+			//Common::fill(fakePal+3, fakePal+768, 0x00);
+			//mask->rawSurface().debugPrint(5, 0, 0, 0, 0, -1, 512, fakePal);
 
 			debugC(5, kDebugGraphics, "Toolbox::_drawPoly: dstRect (%d, %d) %dx%d, pattern %s, mode %d, frame %d, fgColor %08x, bkColor %08x", dstRect.left, dstRect.top, dstRect.width(), dstRect.height(), pat.format().c_str(), mode, frame, fgColor, bkColor);
 		}
