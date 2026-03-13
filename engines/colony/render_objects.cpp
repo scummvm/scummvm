@@ -27,6 +27,95 @@ namespace Colony {
 // Must match the value in render_internal.h.
 static const int kColorCorridorWall = 1000;
 
+static uint32 packEyeOverlayMacColor(const uint16 rgb[3]) {
+	return 0xFF000000 | ((rgb[0] >> 8) << 16) | ((rgb[1] >> 8) << 8) | (rgb[2] >> 8);
+}
+
+static int mapEyeOverlayColorToMacColor(int colorIdx, int level) {
+	switch (colorIdx) {
+	case kColorPupil:        return 36; // c_pupil
+	case kColorEyeball:      return 34; // c_eyeball
+	case kColorEyeIris:      return 32; // c_eye
+	case kColorMiniEyeIris:  return 33; // c_meye
+	case kColorQueenEye:     return 49; // c_equeen
+	default:                 return 6;  // c_dwall fallback
+	}
+}
+
+static uint8 mapEyeOverlayColorToDOSFill(int colorIdx, int level) {
+	switch (colorIdx) {
+	case kColorBlack:
+	case kColorPupil:
+		return 0;
+	case kColorEyeball:
+		return 15;
+	case kColorEyeIris:
+	case kColorMiniEyeIris:
+	case kColorQueenEye:
+		return 1;
+	default:
+		if (colorIdx >= 0 && colorIdx <= 15)
+			return (uint8)colorIdx;
+		if (colorIdx == kColorQueenBody && level == 7)
+			return 15;
+		return 7;
+	}
+}
+
+static bool projectCorridorPointRaw(const Common::Rect &screenR, uint8 look, int8 lookY,
+                                    const int *sint, const int *cost, int camX, int camY,
+                                    float worldX, float worldY, float worldZ,
+                                    int &screenX, int &screenY) {
+	const float dx = worldX - camX;
+	const float dy = worldY - camY;
+	const float dz = worldZ;
+
+	const float sinYaw = sint[look] / 128.0f;
+	const float cosYaw = cost[look] / 128.0f;
+	const float side = dx * sinYaw - dy * cosYaw;
+	const float forward = dx * cosYaw + dy * sinYaw;
+
+	const float pitchRad = lookY * 2.0f * (float)M_PI / 256.0f;
+	const float sinPitch = sinf(pitchRad);
+	const float cosPitch = cosf(pitchRad);
+
+	const float eyeX = side;
+	const float eyeY = dz * cosPitch + forward * sinPitch;
+	const float eyeZ = dz * sinPitch - forward * cosPitch;
+	if (eyeZ >= -1.0f)
+		return false;
+
+	const float focal = (screenR.height() * 0.5f) / tanf(75.0f * (float)M_PI / 360.0f);
+	const float centerX = screenR.left + screenR.width() * 0.5f;
+	const float centerY = screenR.top + screenR.height() * 0.5f;
+
+	screenX = (int)roundf(centerX + (eyeX * focal / -eyeZ));
+	screenY = (int)roundf(centerY - (eyeY * focal / -eyeZ));
+	return true;
+}
+
+static bool isProjectedSurfaceVisible(const int *surface, int pointCount, const int *screenX, const int *screenY) {
+	if (pointCount < 3)
+		return false;
+
+	for (int i = 0; i < pointCount; ++i) {
+		const int cur = surface[i];
+		const int next = surface[(i + 1) % pointCount];
+		const int next2 = surface[(i + 2) % pointCount];
+		const long dx = screenX[cur] - screenX[next];
+		const long dy = screenY[cur] - screenY[next];
+		const long dxp = screenX[next2] - screenX[next];
+		const long dyp = screenY[next2] - screenY[next];
+		const long cross = dx * dyp - dy * dxp;
+		if (cross < 0)
+			return true;
+		if (cross > 0)
+			return false;
+	}
+
+	return false;
+}
+
 static const int kScreenPts[8][3] = {
 	{-16, 64, 0}, {16, 64, 0}, {16, -64, 0}, {-16, -64, 0},
 	{-16, 64, 288}, {16, 64, 288}, {16, -64, 288}, {-16, -64, 288}
@@ -1000,12 +1089,76 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 	                            uint32 fillColor, uint32 outlineColor) {
 		draw3DSphere(obj, pt0x, pt0y, pt0z, pt1x, pt1y, pt1z, fillColor, outlineColor, true);
 	};
-	const auto drawPrismFor = [&](Thing &thing, const PrismPartDef &def, bool useLook, int colorOverride = -1, bool forceVisible = false) {
-		draw3DPrism(thing, def, useLook, colorOverride, true, forceVisible);
-	};
 	const auto drawSphereFor = [&](Thing &thing, int pt0x, int pt0y, int pt0z, int pt1x, int pt1y, int pt1z,
 	                               uint32 fillColor, uint32 outlineColor) {
 		draw3DSphere(thing, pt0x, pt0y, pt0z, pt1x, pt1y, pt1z, fillColor, outlineColor, true);
+	};
+	const auto drawPrismOvalFor = [&](Thing &thing, const PrismPartDef &def, bool useLook, int colorOverride = -1) {
+		if (def.pointCount < 4 || def.surfaceCount < 1)
+			return;
+
+		const uint8 ang = (useLook ? thing.where.look : thing.where.ang) + 32;
+		const long rotCos = _cost[ang];
+		const long rotSin = _sint[ang];
+		int projectedX[32];
+		int projectedY[32];
+		bool projected[32];
+
+		assert(def.pointCount <= ARRAYSIZE(projectedX));
+
+		for (int i = 0; i < def.pointCount; ++i) {
+			const int ox = def.points[i][0];
+			const int oy = def.points[i][1];
+			const int oz = def.points[i][2];
+			const long rx = ((long)ox * rotCos - (long)oy * rotSin) >> 7;
+			const long ry = ((long)ox * rotSin + (long)oy * rotCos) >> 7;
+			projected[i] = projectCorridorPointRaw(_screenR, _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc,
+			                                       (float)(rx + thing.where.xloc), (float)(ry + thing.where.yloc), (float)(oz - 160),
+			                                       projectedX[i], projectedY[i]);
+		}
+
+		const int *surface = &def.surfaces[0][2];
+		const int pointCount = def.surfaces[0][1];
+		if (pointCount < 4)
+			return;
+		for (int i = 0; i < pointCount; ++i) {
+			const int pointIdx = surface[i];
+			if (pointIdx < 0 || pointIdx >= def.pointCount || !projected[pointIdx])
+				return;
+		}
+
+		if (!isProjectedSurfaceVisible(surface, pointCount, projectedX, projectedY))
+			return;
+
+		const int left = projectedX[3];
+		const int right = projectedX[1];
+		const int top = projectedY[2];
+		const int bottom = projectedY[0];
+		if (right <= left || bottom <= top)
+			return;
+
+		const int cx = (left + right) / 2;
+		const int cy = (top + bottom) / 2;
+		const int rx = MAX(1, (right - left) / 2);
+		const int ry = MAX(1, (bottom - top) / 2);
+		const int fillColorIdx = (colorOverride >= 0) ? colorOverride : def.surfaces[0][0];
+		uint32 fillColor;
+		if (_renderMode == Common::kRenderMacintosh && _hasMacColors) {
+			const int macColorIdx = mapEyeOverlayColorToMacColor(fillColorIdx, _level);
+			const bool useForeground = (fillColorIdx == kColorPupil || fillColorIdx == kColorBlack);
+			fillColor = packEyeOverlayMacColor(useForeground ? _macColors[macColorIdx].fg : _macColors[macColorIdx].bg);
+		} else {
+			fillColor = mapEyeOverlayColorToDOSFill(fillColorIdx, _level);
+		}
+		const uint32 outlineColor = (_renderMode == Common::kRenderMacintosh) ? 0xFF000000 : (uint32)kColorBlack;
+
+		_gfx->fillEllipse(cx, cy, rx, ry, fillColor);
+		_gfx->drawEllipse(cx, cy, rx, ry, outlineColor);
+
+		thing.where.xmn = MIN(thing.where.xmn, left);
+		thing.where.xmx = MAX(thing.where.xmx, right);
+		thing.where.zmn = MIN(thing.where.zmn, top);
+		thing.where.zmx = MAX(thing.where.zmx, bottom);
 	};
 	const auto mergeBounds = [&](const Thing &thing) {
 		if (thing.where.xmn < obj.where.xmn)
@@ -1284,15 +1437,15 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 			break;
 		}
 		drawSphere(0, 0, 100, 0, 0, 200, eyeballColor, kColorBlack);
-		drawPrism(kEyeIrisDef, false);
-		drawPrism(kEyePupilDef, false, pupilColor);
+		drawPrismOvalFor(obj, kEyeIrisDef, false);
+		drawPrismOvalFor(obj, kEyePupilDef, false, pupilColor);
 		break;
 	case kRobPyramid:
 		drawPrism(kPShadowDef, false);
 		drawPrism(kPyramidBodyDef, false);
 		drawSphere(0, 0, 175, 0, 0, 200, eyeballColor, kColorBlack);
-		drawPrism(kPIrisDef, false);
-		drawPrism(kPPupilDef, false, pupilColor);
+		drawPrismOvalFor(obj, kPIrisDef, false);
+		drawPrismOvalFor(obj, kPPupilDef, false, pupilColor);
 		break;
 	case kRobCube:
 		drawPrism(kCubeBodyDef, false);
@@ -1303,8 +1456,8 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		break;
 	case kRobFEye:
 		drawSphere(0, 0, 0, 0, 0, 100, eyeballColor, kColorBlack);
-		drawPrism(kFEyeIrisDef, false);
-		drawPrism(kFEyePupilDef, false, pupilColor);
+		drawPrismOvalFor(obj, kFEyeIrisDef, false);
+		drawPrismOvalFor(obj, kFEyePupilDef, false, pupilColor);
 		break;
 	case kRobFPyramid:
 		drawPrism(kFPyramidBodyDef, false);
@@ -1317,8 +1470,8 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		break;
 	case kRobSEye:
 		drawSphere(0, 0, 0, 0, 0, 50, eyeballColor, kColorBlack);
-		drawPrism(kSEyeIrisDef, false);
-		drawPrism(kSEyePupilDef, false, pupilColor);
+		drawPrismOvalFor(obj, kSEyeIrisDef, false);
+		drawPrismOvalFor(obj, kSEyePupilDef, false, pupilColor);
 		break;
 	case kRobSPyramid:
 		drawPrism(kSPyramidBodyDef, false);
@@ -1331,8 +1484,8 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		break;
 	case kRobMEye:
 		drawSphere(0, 0, 0, 0, 0, 25, eyeballColor, kColorBlack);
-		drawPrism(kMEyeIrisDef, false, kColorMiniEyeIris);
-		drawPrism(kMEyePupilDef, false, pupilColor);
+		drawPrismOvalFor(obj, kMEyeIrisDef, false, kColorMiniEyeIris);
+		drawPrismOvalFor(obj, kMEyePupilDef, false, pupilColor);
 		break;
 	case kRobMPyramid:
 		drawPrism(kMPyramidBodyDef, false);
@@ -1375,8 +1528,8 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 
 			drawPrism(farWing, false, wingColor, true);
 			drawSphereFor(farEye, 0, 0, 130, 0, 0, 155, eyeballColor, kColorBlack);
-			drawPrismFor(farEye, kQIrisDef, true);
-			drawPrismFor(farEye, kQPupilDef, true, pupilColor);
+			drawPrismOvalFor(farEye, kQIrisDef, true);
+			drawPrismOvalFor(farEye, kQPupilDef, true, pupilColor);
 			mergeBounds(farEye);
 
 			drawPrism(kQThoraxDef, false);
@@ -1384,8 +1537,8 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 
 			drawPrism(nearWing, false, wingColor, true);
 			drawSphereFor(nearEye, 0, 0, 130, 0, 0, 155, eyeballColor, kColorBlack);
-			drawPrismFor(nearEye, kQIrisDef, true);
-			drawPrismFor(nearEye, kQPupilDef, true, pupilColor);
+			drawPrismOvalFor(nearEye, kQIrisDef, true);
+			drawPrismOvalFor(nearEye, kQPupilDef, true, pupilColor);
 			mergeBounds(nearEye);
 		}
 		break;
