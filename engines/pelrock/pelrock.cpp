@@ -632,7 +632,11 @@ void PelrockEngine::checkMouse() {
 		} else if (_inventoryOverlayState.isActive && _inventoryOverlayState.posInInventorySelectionArea(_events->_releaseX, _events->_releaseY)) {
 			int item = checkMouseClickInventoryOverlay(_events->_releaseX, _events->_releaseY);
 			_state->selectedInventoryItem = item;
-			walkAndAction(_currentHotspot, ITEM);
+			if(_actionPopupState.isAlfredUnder) {
+				useOnAlfred(item);
+			} else if (_currentHotspot != nullptr) {
+				walkAndAction(_currentHotspot, ITEM);
+			}
 		} else {
 			// Released outside popup - just close it
 			_queuedAction = QueuedAction{NO_ACTION, -1, false, false};
@@ -1341,18 +1345,24 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 
 int PelrockEngine::getScrollPositionForItem(int item) {
 	int selectedIndex = -1;
+	// assign selectedIndex to the index of the item
 	for (size_t i = 0; i < _state->inventoryItems.size(); i++) {
 		if (_state->inventoryItems[i] == item) {
 			selectedIndex = i;
 			break;
 		}
 	}
+	// take the selectedIndex as the starting pos for calculatiom, it should ALWAYS be visible at the end of the overlay, if enough items
 	if (selectedIndex != -1) {
-		// put the selected item at the end in the overlay
-		if (_state->inventoryItems.size() > kInventoryPageSize) {
-			selectedIndex = CLIP(selectedIndex, 0, (int)_state->inventoryItems.size() - kInventoryPageSize);
+		if (selectedIndex < _inventoryOverlayState.invStartingPos) {
+			selectedIndex = selectedIndex; // scroll left to show the selected item
+		} else if (selectedIndex >= _inventoryOverlayState.invStartingPos + kInventoryPageSize) {
+			selectedIndex = selectedIndex - kInventoryPageSize + 1; // scroll right to show the selected item
+		} else {
+			selectedIndex = _inventoryOverlayState.invStartingPos; // no scrolling needed, keep current starting pos
 		}
 	}
+
 	return selectedIndex;
 }
 
@@ -1401,6 +1411,7 @@ Common::Point getPositionInOverlayForIndex(uint index) {
 
 void PelrockEngine::pickupIconFlash() {
 	uint invSize = _state->inventoryItems.size();
+	// focus on the last positionin the inventory, where the newly picked up item would be, if there is at least 1 item in the inventory
 	_inventoryOverlayState.invStartingPos = getScrollPositionForItem(_state->inventoryItems[invSize - 1]);
 	_inventoryOverlayState.flashingIconIndex = invSize - 1;
 	showInventoryOverlay();

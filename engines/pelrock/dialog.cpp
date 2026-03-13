@@ -501,7 +501,6 @@ bool DialogManager::checkAllSubBranchesExhausted(const byte *data, uint32 dataSi
 		// For that one bug in room 26
 		// treat F0 as a boundary to prevent scanning past unreachable choices
 		if (b == CTRL_GO_BACK && f0IsBoundary) {
-			debug("checkAllSubBranchesExhausted: F0 boundary hit at pos %u (room %d fix)", pos, room);
 			break;
 		}
 
