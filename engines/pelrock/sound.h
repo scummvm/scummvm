@@ -85,9 +85,6 @@ public:
 
 	/**
 	 * Check if ambient sound should play this frame.
-	 * @param frameCount Current game frame counter
-	 * @return Ambient slot offset (0-3) to play, or -1 if no sound this frame
-	 *         Add kAmbientSoundSlotBase (4) to get room sound index
 	 */
 	int tickAmbientSound(uint32 frameCount);
 

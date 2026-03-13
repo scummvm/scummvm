@@ -234,7 +234,7 @@ void SoundManager::playSound(byte *soundData, uint32 size, int channel) {
 	Audio::AudioStream *stream = Audio::makeRawStream(soundData, size, 11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 	if (stream) {
 		if (_mixer->isSoundHandleActive(_sfxHandles[channel])) {
-				_mixer->stopHandle(_sfxHandles[channel]);
+			_mixer->stopHandle(_sfxHandles[channel]);
 		}
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], stream, -1, _currentVolume, 0, DisposeAfterUse::YES);
 	}
@@ -362,7 +362,7 @@ void SoundManager::pauseMusic() {
 	uint32 elapsedFrames = elapsed * 75 / 1000;
 	_cdTrackStart += elapsedFrames; // advance the start offset
 	if (_cdTrackDuration > 0)
-    	_cdTrackDuration -= elapsedFrames; // shrink remaining duration
+		_cdTrackDuration -= elapsedFrames; // shrink remaining duration
 	g_system->getAudioCDManager()->stop();
 	_isPaused = true;
 }
@@ -374,13 +374,11 @@ bool SoundManager::isMusicPlaying() {
 void SoundManager::playMusicTrack(int trackNumber, bool loop) {
 	if (!_isPaused && _currentMusicTrack == trackNumber && isMusicPlaying()) {
 		// Already playing this track
-		debug("Track %d is already playing", trackNumber);
 		return;
 	}
 	_currentMusicTrack = trackNumber;
-	debug("Playing music track %d, loop=%d", trackNumber, loop);
 
-	if(!_isPaused) {
+	if (!_isPaused) {
 		_cdTrackStart = 0;
 		_cdTrackDuration = 0;
 		_cdPlayStartTime = g_system->getMillis();
@@ -404,7 +402,6 @@ void SoundManager::loadSoundIndex() {
 		return;
 	}
 	byte fileCount = sonidosFile.readByte();
-	debug("SONIDOS.DAT contains %u files", fileCount);
 	sonidosFile.skip(3); // Padding bytes
 
 	for (uint32 i = 0; i < fileCount; i++) {
@@ -421,12 +418,12 @@ void SoundManager::loadSoundIndex() {
 static const uint kAmbientCounterMask = 0x1F; // Trigger when (counter & mask) == mask
 
 int SoundManager::tickAmbientSound(uint32 frameCount) {
-	// Counter gate: only trigger every 32 frames when (counter & 0x1F) == 0x1F
+	// trigger every 32 frames
 	if ((frameCount & kAmbientCounterMask) != kAmbientCounterMask) {
 		return -1;
 	}
 
-	// 50% probability gate using ScummVM's random source
+	// 50% probability gate
 	if (g_engine->getRandomNumber(1) == 0) {
 		return -1;
 	}
@@ -434,7 +431,7 @@ int SoundManager::tickAmbientSound(uint32 frameCount) {
 	// Pick random ambient slot 0-3 (corresponds to room sound indices 4-7)
 	int ambientSlotOffset = g_engine->getRandomNumber(3);
 
-	return ambientSlotOffset; // Caller adds 4 to get room sound index
+	return ambientSlotOffset;
 }
 
 } // End of namespace Pelrock

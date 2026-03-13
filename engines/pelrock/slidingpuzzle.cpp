@@ -22,10 +22,10 @@
 #include "common/system.h"
 #include "graphics/paletteman.h"
 
-#include "pelrock/slidingpuzzle.h"
-#include "pelrock/pelrock.h"
 #include "pelrock/events.h"
+#include "pelrock/pelrock.h"
 #include "pelrock/room.h"
+#include "pelrock/slidingpuzzle.h"
 #include "pelrock/sound.h"
 
 namespace Pelrock {
@@ -50,8 +50,8 @@ SlidingPuzzle::~SlidingPuzzle() {
 
 void SlidingPuzzle::run() {
 	// calculate grid
-	_tileSize   = kTileSizes[_sizeIndex];
-	_gridWidth  = kPuzzleScreenWidth / _tileSize;
+	_tileSize = kTileSizes[_sizeIndex];
+	_gridWidth = kPuzzleScreenWidth / _tileSize;
 	_gridHeight = kPuzzleScreenHeight / _tileSize;
 	_totalTiles = _gridWidth * _gridHeight;
 
@@ -66,7 +66,7 @@ void SlidingPuzzle::run() {
 
 	_events->_lastKeyEvent = Common::KEYCODE_INVALID;
 
-	//Shuffle
+	// Shuffle
 	shuffleLoop();
 
 	// Guarantee the puzzle is solvable, fix it otherwise
@@ -163,13 +163,13 @@ void SlidingPuzzle::shuffleLoop() {
 
 	// scale tile swap with tile count
 	const int kBaseTileCount = (kPuzzleScreenWidth / kTileSizes[0]) *
-	                           (kPuzzleScreenHeight / kTileSizes[0]);
+							   (kPuzzleScreenHeight / kTileSizes[0]);
 	const int swapsPerFrame = MAX(1, _totalTiles / kBaseTileCount);
 
 	while (!g_engine->shouldQuit()) {
 		_events->pollEvent();
 
-		for (int s = 0; s < swapsPerFrame; s++) {
+		for (int i = 0; i < swapsPerFrame; i++) {
 			int a, b;
 			do {
 				a = g_engine->getRandomNumber(shuffleRange - 1);
@@ -231,7 +231,7 @@ bool SlidingPuzzle::handleClick(int screenX, int screenY) {
 	int emptyRow = _emptyPos / _gridWidth;
 	int emptyCol = _emptyPos % _gridWidth;
 	bool adjacent = (row == emptyRow && abs(col - emptyCol) == 1) ||
-	                (col == emptyCol && abs(row - emptyRow) == 1);
+					(col == emptyCol && abs(row - emptyRow) == 1);
 	if (!adjacent)
 		return false;
 

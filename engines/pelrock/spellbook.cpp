@@ -29,10 +29,10 @@
 
 namespace Pelrock {
 
-static const uint32 kSpellbookImgOffset     = 1268719; // ALFRED.7 — spellbook sprite sheet start
+static const uint32 kSpellbookImgOffset = 1268719;     // ALFRED.7 — spellbook sprite sheet start
 static const uint32 kSpellbookImgDataOffset = 1268723; // ALFRED.7 — compressed sprite data
-static const uint32 kSpellbookTextOffset    = 288285;  // JUEGO.EXE — spellbook page text
-static const uint32 kSpellbookTextSize      = 2861;
+static const uint32 kSpellbookTextOffset = 288285;     // JUEGO.EXE — spellbook page text
+static const uint32 kSpellbookTextSize = 2861;
 
 SpellBook::SpellBook(PelrockEventManager *eventMan, ResourceManager *res)
 	: _palette(nullptr),

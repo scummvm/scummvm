@@ -55,9 +55,9 @@ private:
 	int _tileSize;
 	int _gridWidth;
 	int _gridHeight;
-	int _totalTiles;       // gridWidth * gridHeight`
-	int _emptyPos;         // index of the empty (removed) tile
-	uint16 *_tileMap;      // logical position -> original tile index
+	int _totalTiles;  // gridWidth * gridHeight`
+	int _emptyPos;    // index of the empty (removed) tile
+	uint16 *_tileMap; // logical position -> original tile index
 
 	Graphics::ManagedSurface _puzzleBuffer;
 
