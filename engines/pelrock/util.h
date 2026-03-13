@@ -31,27 +31,21 @@
 
 namespace Pelrock {
 
-const int EXPECTED_SIZE = 640 * 400;
 size_t rleDecompress(const byte *data, size_t data_size, uint32 offset, uint32 size, byte **out_data, bool untilBuda = true);
 void readUntilBuda(Common::SeekableReadStream *stream, uint32 startPos, byte *&buffer, size_t &outSize);
 void rleDecompressSingleBuda(Common::SeekableReadStream *stream, uint32 startPos, byte *&buffer, size_t &outSize);
-void drawSpriteToBuffer(byte *buffer, int bufferWidth, byte *sprite, int x, int y, int width, int height, int transparentColor);
 void drawSpriteToBuffer(Graphics::ManagedSurface &dest, byte *sprite, int x, int y, int width, int height, int transparentColor);
-void blitSurfaceToBuffer(Graphics::Surface *surface, byte *buffer, int bufferWidth, int bufferHeight, int destX, int destY);
 void extractSingleFrame(byte *source, byte *dest, int frameIndex, int frameWidth, int frameHeight);
-void drawRect(Graphics::ManagedSurface *surface, int x, int y, int w, int h, byte color);
-void drawRect(Graphics::Surface *surface, int x, int y, int w, int h, byte color);
-void drawRect(byte *screenBuffer, int x, int y, int w, int h, byte color);
-void drawText(byte *screenBuffer, Graphics::Font *font, Common::String text, int x, int y, int w, byte color, Graphics::TextAlign align = Graphics::kTextAlignLeft);
+
 void drawText(Graphics::ManagedSurface &dest, Graphics::Font *font, Common::String text, int x, int y, int w, byte color, Graphics::TextAlign align = Graphics::kTextAlignLeft);
 void drawText(Graphics::Font *font, Common::String text, int x, int y, int w, byte color);
 Common::String joinStrings(const Common::Array<Common::String> &strings, const Common::String &separator);
-void drawPos(Graphics::ManagedSurface *surface, int x, int y, byte color);
 byte decodeChar(byte b);
 void changeGameSpeed(Common::Event e);
-Common::StringArray arrayOf(Common::String str);
-void invertSprite(byte *data, int w, int h);
-void drawPaletteSquares(byte *screenBuffer, byte *palette);
+
+// debug functions
+void drawRect(Graphics::ManagedSurface *surface, int x, int y, int w, int h, byte color);
+void drawPos(Graphics::ManagedSurface *surface, int x, int y, byte color);
 void drawPaletteSquares(Graphics::ManagedSurface &dest, byte *palette);
 
 static const int special_chars[] = {

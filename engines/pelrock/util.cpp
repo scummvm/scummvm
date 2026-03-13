@@ -31,69 +31,10 @@
 namespace Pelrock {
 
 void drawRect(Graphics::ManagedSurface *surface, int x, int y, int w, int h, byte color) {
-	// debug("Drawing rect at (%d,%d) w=%d h=%d color=%d", x, y, w, h, color);
 	surface->drawLine(x, y, x + w, y, color);
 	surface->drawLine(x, y + h, x + w, y + h, color);
 	surface->drawLine(x, y, x, y + h, color);
 	surface->drawLine(x + w, y, x + w, y + h, color);
-}
-
-void drawRect(Graphics::Surface *surface, int x, int y, int w, int h, byte color) {
-	surface->drawLine(x, y, x + w, y, color);
-	surface->drawLine(x, y + h, x + w, y + h, color);
-	surface->drawLine(x, y, x, y + h, color);
-	surface->drawLine(x + w, y, x + w, y + h, color);
-}
-
-void drawRect(byte *screenBuffer, int x, int y, int w, int h, byte color) {
-	Graphics::Surface surface;
-	surface.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
-	drawRect(&surface, 0, 0, w - 1, h, color);
-
-	for (int py = 0; py < h; py++) {
-		for (int px = 0; px < w; px++) {
-			int destIdx = (y + py) * 640 + (x + px);
-			int pixelColor = *((byte *)surface.getBasePtr(px, py));
-			if (pixelColor != 0)
-				screenBuffer[destIdx] = pixelColor;
-		}
-	}
-	surface.free();
-}
-
-void drawText(byte *screenBuffer, Graphics::Font *font, Common::String text, int x, int y, int w, byte color, Graphics::TextAlign align) {
-	Common::Rect rect = font->getBoundingBox(text.c_str());
-	Graphics::Surface surface;
-	int bboxW = rect.width();
-	int bboxH = rect.height();
-
-	surface.create(bboxW, bboxH, Graphics::PixelFormat::createFormatCLUT8());
-	surface.fillRect(Common::Rect(0, 0, bboxW, bboxH), 255);
-	if (x + bboxW > 640) {
-		x = 640 - bboxW - 2;
-	}
-	if (y + bboxH > 400) {
-		y = 400 - bboxH - 2;
-	}
-	if (x < 0) {
-		x = 0;
-	}
-	if (y < 0) {
-		y = 0;
-	}
-
-	// Draw main text on top
-	font->drawString(&surface, text.c_str(), 0, 0, bboxW, color, align);
-	// drawRect(surface, 0, 0, bboxW - 1, bboxH - 1, color);
-	for (int py = 0; py < bboxH; py++) {
-		for (int px = 0; px < bboxW; px++) {
-			int destIdx = (y + py) * 640 + (x + px);
-			int pixelColor = *((byte *)surface.getBasePtr(px, py));
-			if(pixelColor != 255 && destIdx >= 0 && destIdx < 256000)
-				screenBuffer[destIdx] = pixelColor;
-		}
-	}
-	surface.free();
 }
 
 void drawText(Graphics::Font *font, Common::String text, int x, int y, int w, byte color) {
@@ -273,48 +214,11 @@ void rleDecompressSingleBuda(Common::SeekableReadStream *stream, uint32 startPos
 	free(buffer);
 }
 
-// Helper function for transparent blitting
-void drawSpriteToBuffer(byte *buffer, int bufferWidth, byte *sprite, int x, int y, int width, int height, int transparentColor) {
-
-	for (int py = 0; py < height; py++) {
-		for (int px = 0; px < width; px++) {
-			int srcIdx = py * width + px;
-			byte pixel = sprite[srcIdx];
-
-			if (pixel != transparentColor) {
-				int destX = x + px;
-				int destY = y + py;
-
-				if (destX >= 0 && destX < 640 &&
-					destY >= 0 && destY < 400) {
-					buffer[destY * bufferWidth + destX] = pixel;
-				}
-			}
-		}
-	}
-}
-
 // ManagedSurface overload: wraps sprite data in a Surface and uses transBlitFrom
 void drawSpriteToBuffer(Graphics::ManagedSurface &dest, byte *sprite, int x, int y, int width, int height, int transparentColor) {
 	Graphics::Surface spriteSurf;
 	spriteSurf.init(width, height, width, sprite, Graphics::PixelFormat::createFormatCLUT8());
 	dest.transBlitFrom(spriteSurf, Common::Point(x, y), transparentColor);
-}
-
-void blitSurfaceToBuffer(Graphics::Surface *surface, byte *buffer, int bufferWidth, int bufferHeight, int destX, int destY) {
-	for (int y = 0; y < surface->h; y++) {
-		for (int x = 0; x < surface->w; x++) {
-			int px = destX + x;
-			int py = destY + y;
-			if (px >= 0 && px < bufferWidth && py >= 0 && py < bufferHeight) {
-
-				byte pixel = *((byte *)surface->getBasePtr(x, y));
-				if (pixel != 0) {
-					buffer[py * bufferWidth + px] = pixel;
-				}
-			}
-		}
-	}
 }
 
 void extractSingleFrame(byte *source, byte *dest, int frameIndex, int frameWidth, int frameHeight) {
@@ -372,55 +276,6 @@ void changeGameSpeed(Common::Event e) {
 		if (e.kbd.hasFlags(Common::KBD_CTRL)) {
 			if (e.kbd.keycode == Common::KEYCODE_f) {
 				g_engine->_chrono->changeSpeed();
-			}
-		}
-	}
-}
-
-Common::StringArray arrayOf(Common::String str) {
-	return Common::StringArray(1, str);
-}
-
-
-void invertSprite(byte *spriteBuf, int w, int h) {
-	// invert horizontal lines so character is upside down
-	for (int y = 0; y < h / 2; y++) {
-		for (int x = 0; x < w; x++) {
-			int topIndex = y * w + x;
-			int bottomIndex = (h - 1 - y) * w + x;
-			byte temp = spriteBuf[topIndex];
-			spriteBuf[topIndex] = spriteBuf[bottomIndex];
-			spriteBuf[bottomIndex] = temp;
-		}
-	}
-}
-
-void drawPaletteSquares(byte *screenBuffer, byte *palette) {
-	// Draw 3x3 squares for all 256 palette colors
-	// Arrange them in a 16x16 grid (256 colors)
-	const int squareSize = 6;
-	const int colorsPerRow = 16;
-	const int startX = 10;  // Left margin
-	const int startY = 10;  // Top margin
-	const int spacing = 1;  // Space between squares
-
-	for (int colorIndex = 0; colorIndex < 256; colorIndex++) {
-		int row = colorIndex / colorsPerRow;
-		int col = colorIndex % colorsPerRow;
-
-		int x = startX + col * (squareSize + spacing);
-		int y = startY + row * (squareSize + spacing);
-
-		// Draw the 3x3 square with the current color
-		for (int py = 0; py < squareSize; py++) {
-			for (int px = 0; px < squareSize; px++) {
-				int destX = x + px;
-				int destY = y + py;
-
-				// Bounds check
-				if (destX >= 0 && destX < 640 && destY >= 0 && destY < 400) {
-					screenBuffer[destY * 640 + destX] = colorIndex;
-				}
 			}
 		}
 	}

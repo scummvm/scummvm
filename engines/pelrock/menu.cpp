@@ -552,7 +552,7 @@ void MenuManager::drawScreen() {
 }
 
 void MenuManager::drawInventoryIcons() {
-	bool debugIcons = true;
+	bool debugIcons = false;
 	for (int i = 0; i < 4; i++) {
 		int itemIndex = _curInventoryPage * 4 + i;
 		if (g_engine->_state->inventoryItems.size() <= itemIndex)
