@@ -50,7 +50,6 @@ bool LargeFont::load(const Common::String &filename) {
 	const int dataSize = numChars * paddedHeight * paddedWidth; // 96 characters × 14 × 26 bytes
 	byte *rawFontData = new byte[numChars * 48];                // original format: 96 × 48 bytes
 	file.read(rawFontData, numChars * 48);
-	debug("LargeFont::load: Loading large font data from %s, size %d bytes", filename.c_str(), dataSize);
 	file.close();
 
 	delete[] _fontData;
@@ -72,7 +71,7 @@ bool LargeFont::load(const Common::String &filename) {
 				mask[i + pad][bit + 8 + pad] = (rowByte2 & (0x80 >> bit)) != 0;
 			}
 		}
-
+		// adds a border mask to the original font
 		bool borderMask[paddedHeight][paddedWidth] = {false};
 
 		for (int y = 0; y < paddedHeight; y++) {

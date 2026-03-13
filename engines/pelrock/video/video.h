@@ -30,10 +30,10 @@
 namespace Pelrock {
 
 struct ChunkHeader {
-    uint32 blockCount;      // +0x00: Number of 0x5000-byte blocks
-    uint32 dataOffset;      // +0x04: Varies by chunk type
-    byte   chunkType;       // +0x08: 1=RLE, 2=BlockCopy, 3=End, 4=Palette, 6=Special
-    // +0x0D: Frame data begins
+	uint32 blockCount; // +0x00: Number of 0x5000-byte blocks
+	uint32 dataOffset; // +0x04: Varies by chunk type
+	byte chunkType;    // +0x08: 1=RLE, 2=BlockCopy, 3=End, 4=Palette, 6=Special
+					   // +0x0D: Frame data begins
 	byte *data;
 };
 
@@ -67,7 +67,7 @@ static const uint32 chunkSize = 0x5000;
 static const int video_special_chars[] = {
 	0x83, // inverted ?
 	0x82, // inverted !
-	165, // capital N tilde
+	0xA5, // capital N tilde
 	0x80, // small n tilde
 	0x7F, // small u tilde
 	0x7E, // small o tilde
@@ -84,8 +84,7 @@ public:
 		ChronoManager *chrono,
 		LargeFont *largeFont,
 		DialogManager *dialog,
-		SoundManager *sound
-	);
+		SoundManager *sound);
 	~VideoManager();
 	void playIntro();
 
@@ -98,7 +97,7 @@ private:
 	SoundManager *_sound;
 	void loadPalette(ChunkHeader &chunk);
 	byte *decodeCopyBlock(byte *data, uint32 offset);
-    byte *decodeRLE(byte *data, size_t size, uint32 offset);
+	byte *decodeRLE(byte *data, size_t size, uint32 offset);
 	void readChunk(Common::SeekableReadStream &stream, ChunkHeader &chunk);
 	void processFrame(ChunkHeader &chunk, const int frameCount);
 	void presentFrame();

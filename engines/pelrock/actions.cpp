@@ -99,12 +99,6 @@ const ActionEntry actionTable[] = {
 	{310, PICKUP, &PelrockEngine::pickupFruit},
 	{311, PICKUP, &PelrockEngine::pickupFruit},
 
-	// // Room 5
-	// {},
-
-	// // Room 7
-	// {},
-
 	// Room 8
 	{355, OPEN, &PelrockEngine::openLibraryOutdoorsDoor},
 	{355, CLOSE, &PelrockEngine::closeLibraryOutdoorsDoor},
@@ -209,14 +203,14 @@ const CombinationEntry combinationTable[] = {
 	{7, 353, &PelrockEngine::useAmuletWithStatue},
 	{8, 347, &PelrockEngine::useSecretCodeWithStatue},
 	{8, 358, &PelrockEngine::giveSecretCodeToLibrarian},
-	{4, 358, &PelrockEngine::useBrickWithLibrarian}, // Any hotspot in the lamppost will work
+	{4, 358, &PelrockEngine::useBrickWithLibrarian},
 	{76, 469, &PelrockEngine::usePumpkinWithRiver},
 	{100, 650, &PelrockEngine::useKeyWithPortrait},
 	{83, 461, &PelrockEngine::useDollWithBed},
 	{84, 503, &PelrockEngine::giveMagazineToGuard},
 	{86, 500, &PelrockEngine::giveWaterToGuard},
 	{91, 601, &PelrockEngine::giveStoneToSlaves},
-	{92, 601, &PelrockEngine::giveStoneToSlaves}, // Item 92 = mud/clay, same handler
+	{92, 601, &PelrockEngine::giveStoneToSlaves},
 
 	// Room 35 (cauldron)
 	{90, 506, &PelrockEngine::magicFormula},
@@ -231,6 +225,9 @@ const CombinationEntry combinationTable[] = {
 	// End marker
 	{WILDCARD, WILDCARD, nullptr}};
 
+/**
+ * Convenience methods for open/close doors which usually have the same behavior
+ */
 void PelrockEngine::openDoor(HotSpot *hotspot, int exitIndex, int sticker, bool masculine, bool stayClosed) {
 	if (_room->hasSticker(sticker)) {
 		int text = masculine == MASCULINE ? YA_ABIERTO_M : YA_ABIERTA_F;
@@ -253,6 +250,9 @@ void PelrockEngine::closeDoor(HotSpot *hotspot, int exitIndex, int sticker, bool
 	_sound->playSound(_room->_roomSfx[1]);
 }
 
+/**
+ * Adds item to inventory but also shows the item overlay
+ */
 void PelrockEngine::addInventoryItem(int item) {
 	if (_state->inventoryItems.empty()) {
 		_state->selectedInventoryItem = item;
@@ -274,6 +274,9 @@ void PelrockEngine::addInventoryItem(int item) {
 	checkObjectsForPart2();
 }
 
+/**
+ * Every object from the store removes bill, adds item, cutscene happens.
+ */
 void PelrockEngine::buyFromStore(HotSpot *hotspot, int stickerId) {
 	if (_state->hasInventoryItem(5) == false) {
 		_dialog->say(_res->_ingameTexts[NOTENGODINERO]);
@@ -294,10 +297,10 @@ void PelrockEngine::buyFromStore(HotSpot *hotspot, int stickerId) {
 	}
 }
 
+// F8 commands on conversations
 void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte rootIndex) {
 	switch (actionTrigger) {
 	case 328:
-		debug("Setting current root to %d in room %d", rootIndex + 1, room);
 		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
 	case 329:
@@ -338,8 +341,8 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
 	case 273: {
-		WalkBox w1 = { 3, 436, 356, 4, 14, 0 };
-		WalkBox w2 = { 4, 440, 368,148, 2, 0 };
+		WalkBox w1 = {3, 436, 356, 4, 14, 0};
+		WalkBox w2 = {4, 440, 368, 148, 2, 0};
 
 		_room->addWalkbox(w1);
 		_room->addWalkbox(w2);
@@ -357,7 +360,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 278:
 		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
-	case 279:{
+	case 279: {
 		_state->removeInventoryItem(75);
 		travelToEgypt();
 
@@ -404,7 +407,6 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
 	case 348: {
-		// Anti-piracy punishment: corrupt screen + noise + crash
 		antiPiracyEffect();
 		break;
 	}
@@ -452,14 +454,13 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 352:
 	case 355:
 	case 291:
-		// a la carcel
 		toJail();
 		break;
 	case 356:
 		_state->setCurrentRoot(room, 3, 0);
 		break;
-	// end puta
-	//  sabio
+	// end hooker
+	//  hermit
 	case 366:
 		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
@@ -471,7 +472,6 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		walkAndAction(_room->findHotspotByExtra(467), TALK);
 		waitForActionEnd();
 		break;
-		// hasta aqui
 
 	case 357: // wrong answer: counter-- (min 0)
 	{
@@ -509,9 +509,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 361: // "no sé" (I don't know): no counter change, just advance
 		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
-	case 362: // special trigger: enables HIJODELAGRANPUTA cheat code
-		// Sets cheat_code_checking_enabled flag in original (0x495F3)
-		// TODO: Implement cheat code sequence checker in game loop
+	case 362:
 		_state->setFlag(FLAG_CHEAT_CODE_ENABLED, 1);
 		advanceQuotesConversation(rootIndex, room);
 		break;
@@ -666,7 +664,6 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_state->setCurrentRoot(45, 3, 0);
 		break;
 	case 30840:
-		// toJail()? not present in the game
 		break;
 
 	case 323:
@@ -744,12 +741,12 @@ void PelrockEngine::noOpAction(HotSpot *hotspot) {
 
 void PelrockEngine::noOpItem(int item, HotSpot *hotspot) {
 	// Original game checked against 47 instead of 58
+	// These are books in the library being returned to the librarian
 	if (item >= 11 && item <= 58 && hotspot->extra == 358) {
 		_state->removeInventoryItem(item);
 		_dialog->say(_res->_ingameTexts[DEACUERDO_2]);
 		return;
 	}
-	debug("No-op item %d with hotspot %d", item, hotspot->extra);
 	_alfredState.direction = ALFRED_DOWN;
 	sayRandomIncorrectResponse();
 }
@@ -823,8 +820,9 @@ void PelrockEngine::useCardWithATM(int inventoryObject, HotSpot *hotspot) {
 			}
 		}
 		if (billCount < 13) {
-			addInventoryItem(5);                     // 1000 pesetas bill
-			bool sayLine = getRandomNumber(15) == 1; // 1 in 15 chance to say the line about not having more money
+			addInventoryItem(5);
+			// 1 in every 15 times, the hooker will say "fancy a good time?"
+			bool sayLine = getRandomNumber(15) == 1;
 			if (sayLine) {
 				_dialog->say(_res->_ingameTexts[TEAPETECE_BUENRATO]);
 			}
@@ -839,7 +837,6 @@ void PelrockEngine::openMcDoor(HotSpot *hotspot) {
 }
 
 void PelrockEngine::closeMcDoor(HotSpot *hotspot) {
-	// FIXME: Impossible to close right now
 	closeDoor(hotspot, 2, 7, FEMININE, false);
 }
 
@@ -923,7 +920,7 @@ void PelrockEngine::useBrickWithWindow(int inventoryObject, HotSpot *hotspot) {
 	HotSpot *windowHotspot = _room->findHotspotByExtra(294);
 	brickSprite->x = 420;
 	brickSprite->y = 241;
-	brickSprite->zOrder = 10; // Make it visible
+	brickSprite->zOrder = 10;
 	while (!shouldQuit()) {
 		_events->pollEvent();
 		renderScene(OVERLAY_NONE);
@@ -937,7 +934,6 @@ void PelrockEngine::useBrickWithWindow(int inventoryObject, HotSpot *hotspot) {
 	}
 
 	debug("Brick hit the window");
-	// Add the broken window sticker
 	_room->addSticker(11);
 	_sound->playSound(_room->_roomSfx[2]); // Play glass breaking sound
 
@@ -956,10 +952,10 @@ void PelrockEngine::useBrickWithWindow(int inventoryObject, HotSpot *hotspot) {
 	_state->setFlag(FLAG_TIENDA_ABIERTA, true);
 	_room->addStickerToRoom(_room->_currentRoomNumber, 9, PERSIST_PERM);
 	_room->addStickerToRoom(_room->_currentRoomNumber, 10, PERSIST_PERM);
-	_room->disableHotspot(_room->findHotspotByExtra(295)); // Disable storefront hotspot
+	_room->disableHotspot(_room->findHotspotByExtra(295));
 	_room->disableHotspot(_room->findHotspotByExtra(294)); // Disable window hotspot
-	_room->enableSprite(5, 100, PERSIST_PERM); // Enable fake teeth sprite
-	_disableAction = true;                                 // Prevent player from doing anything until they move Alfred
+	_room->enableSprite(5, 100, PERSIST_PERM);             // Enable fake teeth sprite
+	_disableAction = true;                                 // Prevent player from doing anything until the action is done
 	walkTo(630, _alfredState.y);
 }
 
@@ -967,7 +963,7 @@ void PelrockEngine::moveCable(HotSpot *hotspot) {
 	_room->addSticker(15);
 	_room->addSticker(16);
 	_room->addSticker(17);
-	_room->addStickerToRoom(4, 20); // Room 4, sticker 20
+	_room->addStickerToRoom(4, 20);
 	_state->setFlag(FLAG_CABLES_PUESTOS, true);
 }
 
@@ -1049,7 +1045,7 @@ void PelrockEngine::pickCables(HotSpot *hotspot) {
 	// electric shock
 	int prevX = _alfredState.x;
 	_alfredState.x -= 20;
-	// original incorrectly played door closing sound here
+	// original incorrectly played door closing sound here!
 	_sound->playSound("ELEC3ZZZ.SMP", 0);
 	playAlfredSpecialAnim(3);
 	_alfredState.x = prevX;
@@ -1095,7 +1091,7 @@ void PelrockEngine::giveMoneyToGuard(int inventoryObject, HotSpot *hotspot) {
 	} else if (!_state->getFlag(FLAG_SOBORNO_PORTERO)) {
 		_state->setFlag(FLAG_SOBORNO_PORTERO, true);
 		_dialog->say(_res->_ingameTexts[MUYBIEN]);
-		_state->removeInventoryItem(5); // Remove 1000 pesetas bill
+		_state->removeInventoryItem(5);
 	}
 	if (_state->getFlag(FLAG_SOBORNO_PORTERO) && _state->getFlag(FLAG_GUARDIA_DNI_ENTREGADO)) {
 		unlockMuseum();
@@ -1213,7 +1209,7 @@ void PelrockEngine::openTravelAgencyDoor(HotSpot *hotspot) {
 	if (_state->getFlag(FLAG_AGENCIA_ABIERTA)) {
 		openDoor(hotspot, 1, 57, FEMININE, false);
 	}
-	// The game originally did nothing here
+	// The game originally already did nothing here
 }
 
 void PelrockEngine::closeTravelAgencyDoor(HotSpot *hotspot) {
@@ -1223,7 +1219,7 @@ void PelrockEngine::closeTravelAgencyDoor(HotSpot *hotspot) {
 void PelrockEngine::usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot) {
 	_state->removeInventoryItem(76);
 	addInventoryItem(86);
-	if(_state->getFlag(FLAG_CROCODILLO_ENCENDIDO) == false) {
+	if (_state->getFlag(FLAG_CROCODILLO_ENCENDIDO) == false) {
 		_sound->playMusicTrack(27);
 		checkIngredients();
 		_dialog->say(_res->_ingameTexts[CUIDADOIMPRUDENTE]);
@@ -1234,7 +1230,6 @@ void PelrockEngine::usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot) {
 		_sound->playSound(_room->_roomSfx[0], 0); // Belch
 		waitForSoundEnd();
 		_graphics->fadeToBlack(10);
-		// update conversaton state
 		_alfredState.x = 300;
 		_alfredState.y = 238;
 		waitForSoundEnd();
@@ -1353,9 +1348,7 @@ void PelrockEngine::closeEgyptMuseumDoor(HotSpot *hotspot) {
 void PelrockEngine::pushSymbol1(HotSpot *hotspot) {
 	if (_state->getFlag(FLAG_MIRA_SIMBOLO_FUERA_MUSEO) == true) {
 		byte symbolsPulled = _state->getFlag(FLAG_SYMBOLS_PUSHED);
-		debug("Current symbols pulled: %d", symbolsPulled);
 		_state->setFlag(FLAG_SYMBOLS_PUSHED, symbolsPulled | 0x1);
-		debug("New symbols pulled: %d", _state->getFlag(FLAG_SYMBOLS_PUSHED));
 		checkAllSymbols();
 	}
 }
@@ -1363,9 +1356,7 @@ void PelrockEngine::pushSymbol1(HotSpot *hotspot) {
 void PelrockEngine::pushSymbol2(HotSpot *hotspot) {
 	if (_state->getFlag(FLAG_MIRA_SIMBOLO_FUERA_MUSEO) == true) {
 		byte symbolsPulled = _state->getFlag(FLAG_SYMBOLS_PUSHED);
-		debug("Current symbols pulled: %d", symbolsPulled);
 		_state->setFlag(FLAG_SYMBOLS_PUSHED, symbolsPulled | 0x2);
-		debug("New symbols pulled: %d", _state->getFlag(FLAG_SYMBOLS_PUSHED));
 		checkAllSymbols();
 	}
 }
@@ -1373,9 +1364,7 @@ void PelrockEngine::pushSymbol2(HotSpot *hotspot) {
 void PelrockEngine::pushSymbol3(HotSpot *hotspot) {
 	if (_state->getFlag(FLAG_MIRA_SIMBOLO_FUERA_MUSEO) == true) {
 		byte symbolsPulled = _state->getFlag(FLAG_SYMBOLS_PUSHED);
-		debug("Current symbols pulled: %d", symbolsPulled);
 		_state->setFlag(FLAG_SYMBOLS_PUSHED, symbolsPulled | 0x4);
-		debug("New symbols pulled: %d", _state->getFlag(FLAG_SYMBOLS_PUSHED));
 		checkAllSymbols();
 	}
 }
@@ -1383,16 +1372,13 @@ void PelrockEngine::pushSymbol3(HotSpot *hotspot) {
 void PelrockEngine::pushSymbol4(HotSpot *hotspot) {
 	if (_state->getFlag(FLAG_MIRA_SIMBOLO_FUERA_MUSEO) == true) {
 		byte symbolsPulled = _state->getFlag(FLAG_SYMBOLS_PUSHED);
-		debug("Current symbols pulled: %d", symbolsPulled);
 		_state->setFlag(FLAG_SYMBOLS_PUSHED, symbolsPulled | 0x8);
-		debug("New symbols pulled: %d", _state->getFlag(FLAG_SYMBOLS_PUSHED));
 		checkAllSymbols();
 	}
 }
 
 void PelrockEngine::checkAllSymbols() {
 	byte symbolsPulled = _state->getFlag(FLAG_SYMBOLS_PUSHED);
-	debug("Checking symbols, current value: %d", symbolsPulled);
 	if (symbolsPulled == 0x0F) {
 		// Activates animation
 		_sound->playSound(_room->_roomSfx[0]);
@@ -1498,6 +1484,7 @@ void PelrockEngine::guardMovement() {
 	while (!shouldQuit()) {
 		_events->pollEvent();
 		renderScene();
+		// has the guard move right, up, left, then disappear behind the pyramid
 		if (sprite->x >= 339 && state == 0) {
 			state = 1;
 			sprite->animData[0].movementFlags = 0x240; // Move up
@@ -1510,7 +1497,6 @@ void PelrockEngine::guardMovement() {
 			sprite->zOrder = 255; // Hide sprite
 			break;
 		}
-		debug("Guard position: (%d, %d), state: %d", sprite->x, sprite->y, state);
 		_screen->update();
 		g_system->delayMillis(10);
 	}
@@ -1559,7 +1545,6 @@ void PelrockEngine::playSpecialAnim(uint32 offset, bool compressed, int x, int y
 		}
 		_screen->markAllDirty();
 		_screen->update();
-		// _events->waitForKey();
 		g_system->delayMillis(10);
 	}
 	animSurface.free();
@@ -1567,7 +1552,7 @@ void PelrockEngine::playSpecialAnim(uint32 offset, bool compressed, int x, int y
 }
 
 void PelrockEngine::giveStoneToSlaves(int inventoryObject, HotSpot *hotspot) {
-	// Remove whichever stone item was used (91 = Egyptian stone, 92 = mud/clay)
+	// Remove whichever stone item was used (91 = stone, 92 = mud/clay)
 	_state->removeInventoryItem(inventoryObject);
 
 	Sprite *masters = _room->findSpriteByExtra(600);
@@ -1729,7 +1714,6 @@ void PelrockEngine::pickUpStones(HotSpot *hotspot) {
 	} else {
 		addInventoryItem(91);
 		_state->setFlag(FLAG_PIEDRAS_COGIDAS, _state->getFlag(FLAG_PIEDRAS_COGIDAS) + 1);
-		debug("Piedras cogidas: %d", _state->getFlag(FLAG_PIEDRAS_COGIDAS));
 	}
 }
 
@@ -1785,7 +1769,7 @@ void PelrockEngine::useWigWithPot(int inventoryObject, HotSpot *hotspot) {
 
 void PelrockEngine::magicFormula(int inventoryObject, HotSpot *hotspot) {
 	_state->removeInventoryItem(inventoryObject);
-	if(inventoryObject == 86) {
+	if (inventoryObject == 86) {
 		addInventoryItem(76);
 	}
 	_state->setFlag(FLAG_FORMULA_MAGICA, _state->getFlag(FLAG_FORMULA_MAGICA) + 1);
@@ -1879,7 +1863,6 @@ void PelrockEngine::closeArchitectDoorFromInside(HotSpot *hotspot) {
 }
 
 void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
-	debug("Performing action trigger: %d", actionTrigger);
 	switch (actionTrigger) {
 	case 257: // look portrait
 		_sound->playMusicTrack(25, false);
@@ -1895,7 +1878,6 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 		_dialog->say(_res->_ingameTexts[TRABAJARIA_MEJOR_SI_NO_ME_MOLESTARA]);
 		break;
 	case 270:
-		// loadExtraScreenAndPresent(9);
 		_state->stateGame = COMPUTER;
 		break;
 	case 280:
@@ -2054,10 +2036,10 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 
 	debug("Using item %d on Alfred", inventoryObject);
 	switch (inventoryObject) {
-	case 9: // carta
+	case 9: // Letter
 		_dialog->say(_res->_ingameTexts[CORRESPONDENCIA_AJENA]);
 		break;
-	case 34: // Como hacerse rico...
+	case 34: // How to become rich book
 		_dialog->say(_res->_ingameTexts[PERIODICOSENSACIONALISTA], 1);
 		break;
 	case 63: // Recipe
@@ -2084,7 +2066,7 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		_dialog->say(_res->_ingameTexts[YASEEGIPCIO]);
 		_state->setFlag(FLAG_ALFRED_SABE_EGIPCIO, true);
 		break;
-	case 24:
+	case 24: // Encyclopedia
 		if (_state->getFlag(FLAG_RIDDLE_PRESENTED) == true) {
 			_dialog->say(_res->_ingameTexts[CAPITULOPARADOJAS]);
 			_state->setCurrentRoot(25, 44, 0);
@@ -2095,7 +2077,7 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 			_state->setCurrentRoot(14, 2, 0);
 		}
 		break;
-	case 64:
+	case 64: // Formula for time travel
 		playAlfredSpecialAnim(0);
 		loadExtraScreenAndPresent(5);
 		if (_state->getFlag(FLAG_ALFRED_SABE_EGIPCIO)) {
@@ -2104,7 +2086,7 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 			_dialog->say(_res->_ingameTexts[QUELASTIMA_NOSEEGIPCIO]);
 		}
 		break;
-	case 88: {
+	case 88: { // spellbook
 		if (_room->_currentRoomNumber != 28 &&
 			(_room->_currentRoomNumber < 51 || _room->_currentRoomNumber > 54)) {
 			_dialog->say(_res->_ingameTexts[AQUI_NO_NECESITO]);
@@ -2147,19 +2129,15 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 			case 54: {
 				_sound->playSound(_room->_roomSfx[8], 0);
 				_dialog->say(_res->_ingameTexts[DIOSHALCON + spell->page], 1);
-				debug("Flight spell cast in room %d, spell page: %d", _room->_currentRoomNumber, spell->page);
 				int flightIndex = _room->_currentRoomNumber - 51;
-				debug("Correct page for this spell is = %d", kFlightRooms[flightIndex].spellPage);
 				if (_flightSorcererAppeared && !_flightInBlockingAnim && spell->page == kFlightRooms[flightIndex].spellPage) {
 					_state->setFlag(FLAG_COMO_ESTAN_LOS_DIOSES, _state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES) | (1 << flightIndex));
-					debug("Flight spell successful, starting animation and updating state");
-					debug("Updated FLAG_COMO_ESTAN_LOS_DIOSES: %d", _state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES));
 					_sound->playSound(_room->_roomSfx[1], 0);
 					smokeAnimation(kFlightRooms[flightIndex].spriteIdx, true);
 					_room->addStickerToRoom(_room->_currentRoomNumber, 127 + flightIndex);
 					_room->addStickerToRoom(52, 106 + flightIndex);
 
-					if(_state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES) == 15) { // all 4 spells successful
+					if (_state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES) == 15) { // all 4 spells successful
 						HotSpot hotspot = HotSpot();
 						hotspot.actionFlags = 0;
 						hotspot.extra = 999;
@@ -2171,8 +2149,7 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 						hotspot.index = 8;
 						_room->changeHotspot(52, hotspot);
 					}
-				}
-				else {
+				} else {
 					_sound->playSound(_room->_roomSfx[2], 0);
 				}
 				break;
@@ -2192,7 +2169,7 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		_dialog->say(_res->_ingameTexts[PARECE_COMBINACION_CAJAFUERTE]);
 		_state->setFlag(FLAG_CLAVE_CAJA_FUERTE, true);
 		break;
-	case 108:
+	case 108: // glue + patches
 	case 109: {
 
 		if (_state->hasInventoryItem(110) == true) {
@@ -2219,14 +2196,14 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		loadExtraScreenAndPresent(7);
 		break;
 	}
-	case 97: {
+	case 97: { // pyramid map
 		playAlfredSpecialAnim(1);
 		loadExtraScreenAndPresent(11);
 		_dialog->say(_res->_ingameTexts[MEHANTOMADO_EL_PELO]);
 		_state->setCurrentRoot(43, 1, 0);
 		break;
 	}
-	case 98: {
+	case 98: { // correct pyramid blueprints
 		chooseCorrectDoor();
 		break;
 	}
@@ -2245,7 +2222,7 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		break;
 	}
 	default: {
-		// Original game incorrectly checked until object 47
+		// Original game incorrectly checked until object 47; Reading any book.
 		if (inventoryObject >= 11 && inventoryObject <= 58) {
 			playAlfredSpecialAnim(0);
 			_dialog->say(_res->_ingameTexts[LIBRO_ABURRIDO]);
@@ -2261,13 +2238,13 @@ void PelrockEngine::sayRandomIncorrectResponse() {
 	byte response = (byte)getRandomNumber(15);
 	_dialog->say(_res->_ingameTexts[154 + response]);
 }
+
 void PelrockEngine::chooseCorrectDoor() {
 	playAlfredSpecialAnim(1);
 	byte puertaBuena = _state->getFlag(FLAG_PUERTA_BUENA);
 	if (puertaBuena == 0) { // if not set yet, choose randomly
 		int choice = getRandomNumber(1);
 		_state->setFlag(FLAG_PUERTA_BUENA, choice + 1);
-		debug("Randomly chosen good door: %d", _state->getFlag(FLAG_PUERTA_BUENA));
 	}
 	puertaBuena = _state->getFlag(FLAG_PUERTA_BUENA);
 	Common::String doorText = _res->_izquierda;
@@ -2282,6 +2259,9 @@ void PelrockEngine::chooseCorrectDoor() {
 	_dialog->say(fullTextArray);
 }
 
+/**
+ * When using amulet with statue, the statue turns red-ish and then starts to talk.
+ */
 void PelrockEngine::animateStatuePaletteFade(bool reverse) {
 	struct StatuePaletteData {
 		uint16 x;           // 368
@@ -2324,10 +2304,8 @@ void PelrockEngine::animateStatuePaletteFade(bool reverse) {
 
 	exeFile.close();
 
-	// Animation parameters
-	const int numFrames = 7; // 7 step updates total
+	const int numFrames = 7;
 
-	// Get current palette
 	byte currentPalette[768];
 	memcpy(currentPalette, _room->_roomPalette, 768);
 
@@ -2342,7 +2320,6 @@ void PelrockEngine::animateStatuePaletteFade(bool reverse) {
 			for (int i = 0; i < 16; i++) {
 				byte paletteIndex = paletteData.indices[i];
 
-				// Determine source and target based on direction
 				byte *srcColor = reverse ? paletteData.target[i] : paletteData.source[i];
 				byte *dstColor = reverse ? paletteData.source[i] : paletteData.target[i];
 
@@ -2351,13 +2328,11 @@ void PelrockEngine::animateStatuePaletteFade(bool reverse) {
 				byte g6 = srcColor[1] + ((dstColor[1] - srcColor[1]) * frame) / numFrames;
 				byte b6 = srcColor[2] + ((dstColor[2] - srcColor[2]) * frame) / numFrames;
 
-				// Convert 6-bit VGA (0-63) to 8-bit (0-255) by shifting left 2 bits
 				currentPalette[paletteIndex * 3 + 0] = r6 << 2;
 				currentPalette[paletteIndex * 3 + 1] = g6 << 2;
 				currentPalette[paletteIndex * 3 + 2] = b6 << 2;
 			}
 
-			// Apply the palette
 			g_system->getPaletteManager()->setPalette(currentPalette, 0, 256);
 			frame++;
 		}
@@ -2374,7 +2349,7 @@ void PelrockEngine::checkObjectsForPart2() {
 	if (_state->hasInventoryItem(17) &&
 		_state->hasInventoryItem(59) &&
 		_state->hasInventoryItem(24)) {
-		if(_state->getFlag(FLAG_AGENCIA_ABIERTA) == false) {
+		if (_state->getFlag(FLAG_AGENCIA_ABIERTA) == false) {
 			_room->addStickerToRoom(19, 54, PERSIST_BOTH);
 			_room->addStickerToRoom(19, 55, PERSIST_BOTH);
 			_room->addStickerToRoom(19, 56, PERSIST_BOTH);
@@ -2393,9 +2368,7 @@ void PelrockEngine::waitForActionEnd() {
 }
 
 /**
- * Handler for picking up object with extra_id 472 in Room 28.
- * Loads a special palette from ALFRED.7 at offset 0x1610CE and
- * fades to it using the step-wise palette transition.
+ * Picking up matches in room 28 has the palette change to "lighten it up".
  */
 void PelrockEngine::pickUpMatches(HotSpot *hotspot) {
 
@@ -2468,7 +2441,6 @@ void PelrockEngine::antiPiracyEffect() {
 		_screen->update();
 		g_system->delayMillis(10);
 	}
-
 }
 
 } // End of namespace Pelrock

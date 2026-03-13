@@ -71,15 +71,13 @@ void VideoManager::playIntro() {
 		ChunkHeader chunk;
 		readChunk(videoFile, chunk);
 
-		if(_events->_lastKeyEvent == Common::KEYCODE_ESCAPE) {
+		if (_events->_lastKeyEvent == Common::KEYCODE_ESCAPE) {
 			break;
 		}
 
 		switch (chunk.chunkType) {
 		case 1:
 		case 2: {
-			// Visual frame: wait for chrono timing before presenting
-			// Fix Bug 2/3: only visual frames (types 1/2) participate in chrono gating
 			Subtitle *subtitle = getSubtitleForFrame(frameCounter);
 			int frameSkip = subtitle != nullptr ? 4 : 2;
 			while (!g_engine->shouldQuit() && _events->_lastKeyEvent != Common::KEYCODE_ESCAPE) {
@@ -90,11 +88,9 @@ void VideoManager::playIntro() {
 				g_system->delayMillis(10);
 			}
 
-			// Fix Bug 1: capture current frame BEFORE increment so audio fires at the correct frame
 			int currentFrame = frameCounter++;
 			processFrame(chunk, currentFrame);
 
-			// Fix Bug 1: all audio checks use currentFrame (not the already-incremented frameCounter)
 			if (_voiceEffect.contains(currentFrame)) {
 				// Wait for any playing voice to finish before starting new one
 				while (_sound->isPlaying(0)) {
@@ -127,9 +123,9 @@ void VideoManager::playIntro() {
 				_sound->playMusicTrack(music.trackNumber, true);
 			}
 
-			// Fix Bug 4: subtitles are suppressed in the blackout range (frames 571-669)
-			bool inBlackoutRange = (currentFrame >= 571 && currentFrame <= 669);
-			if (subtitle != nullptr && !inBlackoutRange) {
+			// subtitles are suppressed in the frame range 571-669)
+			bool skipSubs = (currentFrame >= 571 && currentFrame <= 669);
+			if (subtitle != nullptr && !skipSubs) {
 				Common::StringArray lines = _dialog->wordWrap(subtitle->text)[0];
 
 				byte color;
@@ -149,8 +145,7 @@ void VideoManager::playIntro() {
 			loadPalette(chunk);
 			break;
 		case 6:
-			// Fix Bug 3: type 6 is a timing pad. Original costs ~20ms per chunk.
-			// Do NOT gate on chrono — process immediately with a short delay.
+			// type 6 is merely wait for 20ms
 			g_system->delayMillis(20);
 			break;
 		default:
@@ -159,7 +154,6 @@ void VideoManager::playIntro() {
 		}
 	}
 
-	debug("Total frames played: %d", frameCounter);
 	videoFile.close();
 }
 
@@ -305,8 +299,7 @@ void VideoManager::initMetadata() {
 			} else if (nextChar == 'f') {
 				AudioEffect sfx = readAudioEffect(metadataFile);
 				_sfxEffect[sfx.startFrame] = sfx;
-			}
-			else if (nextChar == 'c') {
+			} else if (nextChar == 'c') {
 				MusicEffect music = readMusicEffect(metadataFile);
 				_musicEffect[music.startFrame] = music;
 			}
@@ -379,7 +372,8 @@ Subtitle VideoManager::readSubtitle(Common::File &metadataFile) {
 	int valueIndex = 0;
 
 	// Skip spaces after "/t"
-	while (!metadataFile.eos() && metadataFile.readByte() == ' ');
+	while (!metadataFile.eos() && metadataFile.readByte() == ' ')
+		;
 	metadataFile.seek(-1, SEEK_CUR); // Step back one byte
 
 	// Parse 4 space-delimited numbers
@@ -402,14 +396,11 @@ Subtitle VideoManager::readSubtitle(Common::File &metadataFile) {
 		}
 	}
 
-	// metadataFile.skip(1); // Skip the extra space
-
 	subtitle.startFrame = values[0];
 	subtitle.endFrame = values[1];
 	subtitle.x = values[2];
 	subtitle.y = values[3];
 
-	// Read text until CRLF (0x0D 0x0A)
 	subtitle.text.clear();
 
 	// skip leading spaces in subtitle tex
@@ -418,12 +409,13 @@ Subtitle VideoManager::readSubtitle(Common::File &metadataFile) {
 		nextByte = metadataFile.readByte();
 	} while (nextByte == ' ' && !metadataFile.eos());
 
-	if(nextByte == 0x08) {
+	if (nextByte == 0x08) {
 		subtitle.text += '@';
 	} else {
 		subtitle.text += decodeChar(nextByte);
 	}
 
+	// Read text until CRLF (0x0D 0x0A)
 	while (!metadataFile.eos()) {
 
 		char c = metadataFile.readByte();
@@ -436,7 +428,7 @@ Subtitle VideoManager::readSubtitle(Common::File &metadataFile) {
 				subtitle.text += decodeChar(next);
 			}
 		} else {
-			if(c == 0x00) {
+			if (c == 0x00) {
 				// do nothing
 			}
 			if (c == 0x08)

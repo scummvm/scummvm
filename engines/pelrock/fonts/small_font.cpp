@@ -41,7 +41,6 @@ bool SmallFont::load(const Common::String &filename) {
 	file.seek(kSmallFontOffset, SEEK_SET);
 
 	const int dataSize = kNumChars * 8; // 256 characters, 8x8 pixels
-	debug("SmallFont::load: Loading font data of size %d from %s", dataSize, filename.c_str());
 	_fontData = new byte[dataSize];
 	file.read(_fontData, dataSize);
 	file.close();

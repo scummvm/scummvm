@@ -29,11 +29,14 @@
 #include "pelrock/fonts/small_font.h"
 
 namespace Pelrock {
+
+/**
+ * Same as SmallFont but doubling the height of each character
+ */
 class DoubleSmallFont : public SmallFont {
 public:
 	DoubleSmallFont();
 	~DoubleSmallFont();
-
 
 	int getFontHeight() const override { return CHAR_HEIGHT; };
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
@@ -44,4 +47,3 @@ private:
 
 } // End of namespace Pelrock
 #endif
-

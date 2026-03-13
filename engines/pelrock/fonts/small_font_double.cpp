@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "common/debug.h"
 #include "pelrock/fonts/small_font_double.h"
+#include "common/debug.h"
 
 namespace Pelrock {
 
@@ -31,7 +31,6 @@ DoubleSmallFont::~DoubleSmallFont() {
 
 void DoubleSmallFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
 	if (!_fontData || chr > kNumChars - 1) {
-		// debug("DoubleSmallFont::drawChar: Invalid char %d", chr);
 		return;
 	}
 	int charOffset = chr * 8;
