@@ -27,7 +27,10 @@
 #include "common/file.h"
 #include "common/events.h"
 #include "graphics/palette.h"
+#include "graphics/fontman.h"
 #include "graphics/fonts/dosfont.h"
+#include "graphics/macgui/macfontmanager.h"
+#include "graphics/macgui/macwindowborder.h"
 #include "image/pict.h"
 #include <math.h>
 
@@ -41,6 +44,122 @@ static uint32 packRGB(byte r, byte g, byte b) {
 // Pack Mac 16-bit RGB into 32-bit ARGB.
 static uint32 packMacColorUI(const uint16 rgb[3]) {
 	return 0xFF000000 | ((rgb[0] >> 8) << 16) | ((rgb[1] >> 8) << 8) | (rgb[2] >> 8);
+}
+
+static bool drawMacTextPopup(Graphics::MacWindowManager *wm, Renderer *gfx,
+		int screenWidth, int screenHeight, int centerX, int centerY,
+		const Common::Array<Common::String> &lines, Graphics::TextAlign align, bool macColor) {
+	if (!gfx || lines.empty())
+		return false;
+
+	Graphics::MacFont systemFont(Graphics::kMacFontSystem, 12);
+	const Graphics::Font *font = (wm && wm->_fontMan) ? wm->_fontMan->getFont(systemFont) : nullptr;
+	if (!font)
+		font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	if (!font)
+		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	if (!font)
+		return false;
+
+	int textWidth = 0;
+	for (uint i = 0; i < lines.size(); ++i)
+		textWidth = MAX<int>(textWidth, font->getStringWidth(lines[i]));
+
+	const int fontHeight = MAX<int>(1, font->getFontHeight());
+	const int fontLeading = MAX<int>(0, font->getFontLeading());
+	const int topPad = 8;
+	const int bottomPad = 8;
+	const int sidePad = 12;
+	const int lineGap = MAX<int>(2, fontLeading);
+	const int lineStep = fontHeight + lineGap;
+	int popupWidth = CLIP<int>(textWidth + sidePad * 2, 96, MAX<int>(96, screenWidth - 16));
+	int popupHeight = topPad + bottomPad + fontHeight +
+		MAX<int>(0, (int)lines.size() - 1) * lineStep;
+	Common::Rect bounds(8, 24, screenWidth - 8, screenHeight - 8);
+	if (wm) {
+		Graphics::MacWindowBorder border;
+		border.setWindowManager(wm);
+		border.setBorderType(Graphics::kWindowWindow);
+		if (border.hasBorder(Graphics::kWindowBorderActive) && border.hasOffsets()) {
+			const Graphics::BorderOffsets &offsets = border.getOffset();
+			popupWidth = MAX<int>(border.getMinWidth(Graphics::kWindowBorderActive),
+				textWidth + sidePad * 2 + offsets.left + offsets.right);
+			popupHeight = MAX<int>(border.getMinHeight(Graphics::kWindowBorderActive),
+				topPad + bottomPad + fontHeight + MAX<int>(0, (int)lines.size() - 1) * lineStep +
+				offsets.top + offsets.bottom);
+
+			Common::Rect r(centerX - popupWidth / 2, centerY - popupHeight / 2,
+				centerX - popupWidth / 2 + popupWidth, centerY - popupHeight / 2 + popupHeight);
+			if (r.left < bounds.left)
+				r.translate(bounds.left - r.left, 0);
+			if (r.right > bounds.right)
+				r.translate(bounds.right - r.right, 0);
+			if (r.top < bounds.top)
+				r.translate(0, bounds.top - r.top);
+			if (r.bottom > bounds.bottom)
+				r.translate(0, bounds.bottom - r.bottom);
+
+			Graphics::ManagedSurface popup;
+			popup.create(popupWidth, popupHeight, wm->_pixelformat);
+			popup.fillRect(Common::Rect(0, 0, popupWidth, popupHeight), popup.format.ARGBToColor(0, 0, 0, 0));
+			Common::Rect inner(offsets.left, offsets.top, popupWidth - offsets.right, popupHeight - offsets.bottom);
+			inner.clip(Common::Rect(0, 0, popupWidth, popupHeight));
+			if (!inner.isEmpty())
+				popup.fillRect(inner, wm->_colorWhite);
+			border.blitBorderInto(popup, Graphics::kWindowBorderActive);
+
+			const int textX = inner.left + sidePad;
+			const int textY = inner.top + topPad;
+			const int textW = MAX<int>(1, inner.width() - sidePad * 2);
+			for (uint i = 0; i < lines.size(); ++i)
+				font->drawString(&popup, lines[i], textX, textY + (int)i * lineStep, textW, wm->_colorBlack, align);
+
+			gfx->drawSurface(&popup.rawSurface(), r.left, r.top);
+			gfx->copyToScreen();
+			popup.free();
+			return true;
+		}
+	}
+
+	Common::Rect r(centerX - popupWidth / 2, centerY - popupHeight / 2,
+		centerX - popupWidth / 2 + popupWidth, centerY - popupHeight / 2 + popupHeight);
+	if (r.left < bounds.left)
+		r.translate(bounds.left - r.left, 0);
+	if (r.right > bounds.right)
+		r.translate(bounds.right - r.right, 0);
+	if (r.top < bounds.top)
+		r.translate(0, bounds.top - r.top);
+	if (r.bottom > bounds.bottom)
+		r.translate(0, bounds.bottom - r.bottom);
+
+	const uint32 colBlack = macColor ? packRGB(0, 0, 0) : 0;
+	const uint32 colWhite = macColor ? packRGB(255, 255, 255) : 15;
+	const uint32 colShadow = macColor ? packRGB(96, 96, 96) : 0;
+
+	Common::Rect shadow = r;
+	shadow.translate(2, 2);
+	gfx->fillRect(shadow, colShadow);
+	gfx->fillRect(r, colWhite);
+	gfx->drawRect(r, colBlack);
+	Common::Rect inner = r;
+	inner.grow(-2);
+	if (!inner.isEmpty())
+		gfx->drawRect(inner, colBlack);
+
+	const int textLeft = r.left + sidePad;
+	const int textRight = r.right - sidePad;
+	const int textCenter = (textLeft + textRight) / 2;
+	const int startY = r.top + topPad;
+	for (uint i = 0; i < lines.size(); ++i) {
+		const int y = startY + (int)i * lineStep;
+		if (align == Graphics::kTextAlignCenter)
+			gfx->drawString(font, lines[i], textCenter, y, colBlack, Graphics::kTextAlignCenter);
+		else
+			gfx->drawString(font, lines[i], textLeft, y, colBlack, Graphics::kTextAlignLeft);
+	}
+
+	gfx->copyToScreen();
+	return true;
 }
 
 // Load a PICT resource from the Mac resource fork, returning a new RGB surface.
@@ -611,12 +730,21 @@ void ColonyEngine::printMessage(const char *text[], bool hold) {
 	int numLines = 0;
 	int width = 0;
 	Graphics::DosFont font;
+	Common::Array<Common::String> lines;
 
 	while (text[numLines] != nullptr) {
+		lines.push_back(text[numLines]);
 		int w = font.getStringWidth(text[numLines]);
 		if (w > width)
 			width = w;
 		numLines++;
+	}
+
+	if (_renderMode == Common::kRenderMacintosh && drawMacTextPopup(_wm, _gfx,
+			_width, _height, _centerX, _centerY, lines, Graphics::kTextAlignCenter, _hasMacColors)) {
+		if (hold)
+			waitForInput();
+		return;
 	}
 
 	int pxPerInchX = 72;
@@ -719,6 +847,7 @@ void ColonyEngine::doText(int entry, int center) {
 			width = w;
 	}
 	const char *kpress = "-Press Any Key to Continue-";
+	const char *kmore = "-More-";
 	int kw = font.getStringWidth(kpress);
 	if (kw > width)
 		width = kw;
@@ -728,6 +857,19 @@ void ColonyEngine::doText(int entry, int center) {
 	int maxlines = (_screenR.height() / lineheight) - 2;
 	if (maxlines > (int)lineArray.size())
 		maxlines = lineArray.size();
+
+	if (_renderMode == Common::kRenderMacintosh) {
+		Common::Array<Common::String> popupLines;
+		for (int i = 0; i < maxlines; ++i)
+			popupLines.push_back(lineArray[i]);
+		popupLines.push_back((int)lineArray.size() > maxlines ? kmore : kpress);
+		if (drawMacTextPopup(_wm, _gfx, _width, _height, _centerX, _centerY, popupLines,
+				center == 1 ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft, _hasMacColors)) {
+			waitForInput();
+			free(page);
+			return;
+		}
+	}
 
 	Common::Rect r;
 	r.top = _centerY - (((maxlines + 1) * lineheight / 2) + 4);
@@ -753,7 +895,7 @@ void ColonyEngine::doText(int entry, int center) {
 		}
 	}
 
-	_gfx->drawString(&font, (int)lineArray.size() > maxlines ? "-More-" : kpress, (r.left + r.right) / 2, r.top + 6 + maxlines * lineheight, 0, Graphics::kTextAlignCenter);
+	_gfx->drawString(&font, (int)lineArray.size() > maxlines ? kmore : kpress, (r.left + r.right) / 2, r.top + 6 + maxlines * lineheight, 0, Graphics::kTextAlignCenter);
 	_gfx->copyToScreen();
 
 	// Wait for key

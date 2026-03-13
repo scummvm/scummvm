@@ -284,10 +284,19 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 
 	// tryPassThroughFeature returns: 0=blocked, 1=pass through, 2=teleported (position already set)
 	auto tryFeature = [&](int dir) -> int {
+		const uint8 *feature = mapFeatureAt(pobject->xindex, pobject->yindex, dir);
 		int r = tryPassThroughFeature(pobject->xindex, pobject->yindex, dir, pobject);
 		if (r == 2)
 			return 0; // teleported  position already updated by the feature
 		if (r == 1) {
+			const int rnum = occupied();
+			if (rnum) {
+				const bool showDoorText = (pobject == &_me && feature &&
+					(feature[0] == kWallFeatureDoor || feature[0] == kWallFeatureAirlock));
+				if (showDoorText)
+					doText(75, 0);
+				return rnum;
+			}
 			uint8 trailCode = 0;
 			switch (dir) {
 			case kDirNorth:
@@ -305,7 +314,18 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 			default:
 				break;
 			}
-			return moveTo(trailCode);
+			if (trailCode != 0 && pobject->type == kMeNum &&
+			    pobject->xindex >= 0 && pobject->xindex < 32 &&
+			    pobject->yindex >= 0 && pobject->yindex < 32)
+				_dirXY[pobject->xindex][pobject->yindex] = trailCode;
+			pobject->yindex = yind2;
+			pobject->xindex = xind2;
+			pobject->dx = xnew - pobject->xloc;
+			pobject->dy = ynew - pobject->yloc;
+			pobject->xloc = xnew;
+			pobject->yloc = ynew;
+			clampToWalls(pobject);
+			return 0;
 		}
 		return -2; // blocked, caller handles
 	};
@@ -533,8 +553,11 @@ int ColonyEngine::goToDestination(const uint8 *map, Locate *pobject) {
 	}
 
 	if (targetX > 0 && targetX < 31 && targetY > 0 && targetY < 31) {
-		if (targetMap == 0 && _robotArray[targetX][targetY] != 0)
+		if (targetMap == 0 && _robotArray[targetX][targetY] != 0) {
+			if (pobject == &_me)
+				doText(75, 0);
 			return 0;
+		}
 
 		const int xmod = pobject->xloc - (pobject->xindex << 8);
 		const int ymod = pobject->yloc - (pobject->yindex << 8);
