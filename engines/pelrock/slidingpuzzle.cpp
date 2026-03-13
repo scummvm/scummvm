@@ -170,13 +170,14 @@ void SlidingPuzzle::shuffleLoop() {
 		_events->pollEvent();
 
 		for (int s = 0; s < swapsPerFrame; s++) {
-		int a, b;
-		do {
-			a = g_engine->getRandomNumber(shuffleRange - 1);
-			b = g_engine->getRandomNumber(shuffleRange - 1);
-		} while (a == b);
+			int a, b;
+			do {
+				a = g_engine->getRandomNumber(shuffleRange - 1);
+				b = g_engine->getRandomNumber(shuffleRange - 1);
+			} while (a == b);
 
-		swapTiles(a, b);
+			swapTiles(a, b);
+		}
 		present();
 		playTileSound();
 

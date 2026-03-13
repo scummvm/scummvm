@@ -19,6 +19,9 @@
  *
  */
 
+#include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
+#include "audio/mixer.h"
 #include "graphics/paletteman.h"
 
 #include "pelrock.h"
@@ -2407,94 +2410,59 @@ void PelrockEngine::pickUpMatches(HotSpot *hotspot) {
 }
 
 /**
- * Original behavior:
- * 1. Stop all sound
- * 2. Loop: corrupt the background buffer pointer with random values,
- *    copy garbage to screen, write sequential memory bytes to PC speaker
- *    port 0x61 to produce noise
- * 3. On keypress: divide by zero -> crash to DOS
- *
- * ScummVM behavior:
- * 1. Stop all sound
- * 2. Loop: fill screen with random pixels, play white noise
- * 3. On keypress: return to launcher
+ *  Simulates white noise and "crashes" the game
  */
 void PelrockEngine::antiPiracyEffect() {
 	_sound->stopAllSounds();
 	_sound->stopMusic();
 
-	// Generate a buffer of white noise for the PC speaker simulation
-	const int kNoiseLength = 16000;                // 1 second at 8kHz
-	byte *noiseData = new byte[kNoiseLength + 44]; // WAV header + data
-
-	// Write a minimal WAV header
-	memcpy(noiseData, "RIFF", 4);
-	WRITE_LE_UINT32(noiseData + 4, kNoiseLength + 36);
-	memcpy(noiseData + 8, "WAVE", 4);
-	memcpy(noiseData + 12, "fmt ", 4);
-	WRITE_LE_UINT32(noiseData + 16, 16);   // chunk size
-	WRITE_LE_UINT16(noiseData + 20, 1);    // PCM format
-	WRITE_LE_UINT16(noiseData + 22, 1);    // mono
-	WRITE_LE_UINT32(noiseData + 24, 8000); // sample rate
-	WRITE_LE_UINT32(noiseData + 28, 8000); // byte rate
-	WRITE_LE_UINT16(noiseData + 32, 1);    // block align
-	WRITE_LE_UINT16(noiseData + 34, 8);    // bits per sample
-	memcpy(noiseData + 36, "data", 4);
-	WRITE_LE_UINT32(noiseData + 40, kNoiseLength);
-
-	// Fill with random noise (simulating garbage bytes written to port 0x61)
-	byte curNoise = (byte)getRandomNumber(255);
+	// Generate noise
+	const int kNoiseLength = 8000; // ~1 second at 8000 Hz, will loop
+	byte *noiseData = (byte *)malloc(kNoiseLength);
 	for (int i = 0; i < kNoiseLength; i++) {
-		noiseData[44 + i] = curNoise;
-		bool changeNoise = getRandomNumber(10) < 2; // 20% chance to change noise value
-		if (changeNoise) {
-			curNoise = (byte)getRandomNumber(255);
-		}
+		noiseData[i] = (byte)((getRandomNumber(255)));
 	}
 
-	// Play the noise
-	_sound->playSound(noiseData, kNoiseLength + 44, 0);
+	// Create a looping raw audio stream with the random noise data
+	Audio::SeekableAudioStream *rawStream = Audio::makeRawStream(noiseData, kNoiseLength, 8000, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+	Audio::AudioStream *loopStream = Audio::makeLoopingAudioStream(rawStream, 0);
+
+	Audio::SoundHandle noiseHandle;
+	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &noiseHandle, loopStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
+
+	// Set a grayscale palette so random pixel values produce snow effect
+	byte grayPalette[256 * 3];
+	for (int i = 0; i < 256; i++) {
+		grayPalette[i * 3 + 0] = (byte)i; // R
+		grayPalette[i * 3 + 1] = (byte)i; // G
+		grayPalette[i * 3 + 2] = (byte)i; // B
+	}
+	g_system->getPaletteManager()->setPalette(grayPalette, 0, 256);
 
 	byte *screenPixels = (byte *)_screen->getPixels();
-	int screenSize = _screen->pitch * _screen->h;
-
-	// Clear any pending key event before starting the loop
-	_events->_lastKeyEvent = Common::KEYCODE_INVALID;
 
 	while (!shouldQuit()) {
 		_events->pollEvent();
 
 		if (_events->_lastKeyEvent != Common::KEYCODE_INVALID) {
-			break;
+			g_system->getMixer()->stopHandle(noiseHandle);
+			g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
+			// Original divides by zero to intentionally crash to DOS.
+			// We exit the game instead
+			g_engine->quitGame();
 		}
 
-		// generate random pixels on the screen (simulating corrupted video memory)
+		// generate white-noise like scene
+		int screenSize = 640 * 400;
 		for (int i = 0; i < screenSize; i++) {
 			screenPixels[i] = (byte)getRandomNumber(255);
 		}
 
-		// Regenerate noise periodically
-		for (int i = 0; i < kNoiseLength; i++) {
-			noiseData[44 + i] = curNoise;
-			bool changeNoise = getRandomNumber(10) < 2; // 20% chance to change noise value
-			if (changeNoise) {
-				curNoise = (byte)getRandomNumber(255);
-			}
-		}
-		if (!_sound->isPlaying()) {
-			_sound->playSound(noiseData, kNoiseLength + 44, 0);
-		}
-
 		_screen->markAllDirty();
 		_screen->update();
-		g_system->delayMillis(50);
+		g_system->delayMillis(10);
 	}
 
-	_sound->stopAllSounds();
-	delete[] noiseData;
-
-	// Return to launcher
-	Engine::quitGame();
 }
 
 } // End of namespace Pelrock

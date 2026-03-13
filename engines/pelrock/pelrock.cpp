@@ -1355,7 +1355,7 @@ int PelrockEngine::getScrollPositionForItem(int item) {
 	// take the selectedIndex as the starting pos for calculatiom, it should ALWAYS be visible at the end of the overlay, if enough items
 	if (selectedIndex != -1) {
 		if (selectedIndex < _inventoryOverlayState.invStartingPos) {
-			selectedIndex = selectedIndex; // scroll left to show the selected item
+			// do nothing
 		} else if (selectedIndex >= _inventoryOverlayState.invStartingPos + kInventoryPageSize) {
 			selectedIndex = selectedIndex - kInventoryPageSize + 1; // scroll right to show the selected item
 		} else {
@@ -1537,6 +1537,11 @@ void PelrockEngine::gameLoop() {
 		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
 		SlidingPuzzle puzzle(_events, _sound);
 		puzzle.run();
+	}
+
+	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_h) {
+		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
+		antiPiracyEffect();
 	}
 
 	renderScene();
