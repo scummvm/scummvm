@@ -291,6 +291,8 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 		_rightPathSelected = false;
 		_levelRouteIndex = -1;
 		_pendingRouteIndex = -1;
+		_pendingRouteStartFrame = 0;
+		_pendingRouteCutoverFrame = -1;
 		_levelRouteChoice = 0;
 		_levelGameplayPhase = 0;
 		_level5SuccessFramesRemaining = 0;

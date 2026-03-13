@@ -211,7 +211,9 @@ private:
 	bool _skipNext;
 	bool _ra2FastForwarding;  // Fast-forwarding RA2 BEG video to establish background
 	uint32 _frame;
+	uint32 _fastForwardFromFrame;  // First frame hidden by fast-forward (0 = hide from frame 0)
 	uint32 _fastForwardToFrame;  // RA1: skip display/audio until this frame (0 = disabled)
+	bool _preserveVideoStateOnNextPlay;
 
 	// RA2: Global FOBJ position offsets (DAT_00482c1c / DAT_00482c20 in original)
 	// Set by InsaneRebel2 during IACT opcode 6 processing, reset in procPostRendering.
@@ -279,6 +281,9 @@ public:
 	void setCurVideoFlags(int16 flags);
 	SmushMultiFont *getMultiFont() const { return _multiFont; }
 	void ensureMultiFont();
+	bool isFastForwardingCurrentFrame() const;
+	void setPreserveVideoStateOnNextPlay(bool preserve) { _preserveVideoStateOnNextPlay = preserve; }
+	void setFastForwardFromFrame(uint32 frame) { _fastForwardFromFrame = frame; }
 	void setFastForwardToFrame(uint32 frame) { _fastForwardToFrame = frame; }
 
 	// Masked regions - areas where video should not update (e.g., destroyed enemies)

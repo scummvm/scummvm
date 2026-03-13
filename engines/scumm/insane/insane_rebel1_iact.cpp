@@ -498,7 +498,22 @@ void InsaneRebel1::resetProjectionTable() {
 }
 
 void InsaneRebel1::checkDynamicLevelBranch() {
-	if (!_interactiveVideoActive || _levelRouteIndex < 0 || _pendingRouteIndex >= 0 || _vm->_smushVideoShouldFinish)
+	if (!_interactiveVideoActive || _levelRouteIndex < 0)
+		return;
+
+	if (_currentLevel == 6 && _pendingRouteIndex >= 0) {
+		if (!_vm->_smushVideoShouldFinish &&
+			_pendingRouteCutoverFrame >= 0 &&
+			_frameCounter >= (uint32)_pendingRouteCutoverFrame) {
+			_vm->_smushVideoShouldFinish = true;
+			debug(1, "RA1 L7 cutover: route=%d -> %d at frame=%u (resumeTimelineFrame=%d)",
+				_levelRouteIndex, _pendingRouteIndex, (unsigned)_frameCounter,
+				(int)_pendingRouteStartFrame);
+		}
+		return;
+	}
+
+	if (_pendingRouteIndex >= 0 || _vm->_smushVideoShouldFinish)
 		return;
 
 	if (_currentLevel == 6) {
@@ -515,9 +530,11 @@ void InsaneRebel1::checkDynamicLevelBranch() {
 				continue;
 
 			_pendingRouteIndex = nextRoute;
-			_vm->_smushVideoShouldFinish = true;
-			debug(1, "RA1 L7 branch: route=%d -> %d at frame=%u shipX=%d",
-				route, nextRoute, (unsigned)_frameCounter, _shipPosX);
+			_pendingRouteCutoverFrame = (int32)_frameCounter + 7;
+			_pendingRouteStartFrame = _pendingRouteCutoverFrame;
+			debug(1, "RA1 L7 branch: route=%d -> %d at frame=%u shipX=%d resumeTimelineFrame=%d cutoverFrame=%d",
+				route, nextRoute, (unsigned)_frameCounter, _shipPosX,
+				(int)_pendingRouteStartFrame, (int)_pendingRouteCutoverFrame);
 			return;
 		}
 	}

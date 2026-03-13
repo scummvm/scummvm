@@ -381,6 +381,8 @@ private:
 		bool _rightPathSelected;     // True if player chose the right/easy path
 		int _levelRouteIndex;        // Current mid-level route/segment for branching levels
 		int _pendingRouteIndex;      // Next route requested by original frame-branch logic
+		int32 _pendingRouteStartFrame; // Resume frame for branch-driven route switches
+		int32 _pendingRouteCutoverFrame; // Delayed inline route splice frame (Level 7 uses branchFrame + 7)
 		int _levelRouteChoice;       // Level-local pending branch choice (0=none, 1=left, 2=right)
 		int _levelGameplayPhase;     // Level-local interactive phase (e.g. LVL4 PLAY1 vs PLAY2)
 

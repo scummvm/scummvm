@@ -24,11 +24,124 @@
 #include "graphics/cursorman.h"
 #include "graphics/wincursor.h"
 
+#include "scumm/file.h"
 #include "scumm/scumm_v7.h"
 #include "scumm/smush/smush_player.h"
 #include "scumm/insane/insane_rebel1.h"
 
 namespace Scumm {
+
+struct RA1Level7ResumeSegment {
+	int16 timelineStart;
+	int16 timelineEnd;
+	int16 localStart;
+};
+
+static const RA1Level7ResumeSegment kLevel7ResumeSegments[6][4] = {
+	{
+		{    0,  638,   0 },
+		{ 1416, 1468, 639 },
+		{   -1,   -1,  -1 },
+		{   -1,   -1,  -1 }
+	},
+	{
+		{   80,  639, 189 },
+		{  691,  879,   0 },
+		{ 1416, 1468, 749 },
+		{   -1,   -1,  -1 }
+	},
+	{
+		{   80,  639, 189 },
+		{  777,  879,  86 },
+		{  880,  965,   0 },
+		{ 1416, 1468, 749 }
+	},
+	{
+		{  398,  639, 284 },
+		{ 1132, 1415,   0 },
+		{ 1416, 1468, 526 },
+		{   -1,   -1,  -1 }
+	},
+	{
+		{  398,  639, 143 },
+		{  966, 1076,   0 },
+		{ 1384, 1415, 111 },
+		{ 1416, 1468, 385 }
+	},
+	{
+		{   80,  639, 114 },
+		{  821,  879,  55 },
+		{ 1077, 1131,   0 },
+		{ 1416, 1468, 674 }
+	}
+};
+
+static int32 mapLevel7TimelineFrameToLocal(int route, int32 timelineFrame) {
+	if (timelineFrame <= 0)
+		return 0;
+
+	const int clampedRoute = CLIP<int>(route, 0, ARRAYSIZE(kLevel7ResumeSegments) - 1);
+	const RA1Level7ResumeSegment *segments = kLevel7ResumeSegments[clampedRoute];
+
+	for (int i = 0; i < ARRAYSIZE(kLevel7ResumeSegments[0]); ++i) {
+		const RA1Level7ResumeSegment &segment = segments[i];
+		if (segment.timelineStart < 0)
+			break;
+		if (timelineFrame < segment.timelineStart)
+			return segment.localStart;
+		if (timelineFrame <= segment.timelineEnd)
+			return segment.localStart + (timelineFrame - segment.timelineStart);
+	}
+
+	for (int i = ARRAYSIZE(kLevel7ResumeSegments[0]) - 1; i >= 0; --i) {
+		const RA1Level7ResumeSegment &segment = segments[i];
+		if (segment.timelineStart >= 0)
+			return segment.localStart;
+	}
+
+	return 0;
+}
+
+static int32 findAnimFrameChunkOffset(ScummEngine_v7 *vm, const char *filename, int32 targetFrame) {
+	if (targetFrame <= 0)
+		return 0;
+
+	ScummFile *file = vm->instantiateScummFile();
+	if (!vm->openFile(*file, Common::Path(filename))) {
+		delete file;
+		return -1;
+	}
+
+	int32 result = -1;
+	if (file->size() >= 8) {
+		file->readUint32BE();
+		file->readUint32BE();
+
+		int32 frameIndex = 0;
+		while (file->pos() + 8 <= file->size()) {
+			const int32 chunkOffset = (int32)file->pos();
+			const uint32 chunkTag = file->readUint32BE();
+			const int32 chunkSize = (int32)file->readUint32BE();
+			const int32 nextChunkOffset = chunkOffset + 8 + chunkSize + ((chunkSize & 1) ? 1 : 0);
+			if (nextChunkOffset < chunkOffset || nextChunkOffset > file->size())
+				break;
+
+			if (chunkTag == MKTAG('F', 'R', 'M', 'E')) {
+				if (frameIndex == targetFrame) {
+					result = chunkOffset;
+					break;
+				}
+				frameIndex++;
+			}
+
+			file->seek(nextChunkOffset, SEEK_SET);
+		}
+	}
+
+	file->close();
+	delete file;
+	return result;
+}
 
 // ---------------------------------------------------------------------------
 // Game flow (matching original at 0x15597)
@@ -44,8 +157,8 @@ void InsaneRebel1::playCinematic(const char *filename, int32 startFrame) {
 	_interactiveVideoActive = false;
 	_vm->_smushVideoShouldFinish = false;
 	splayer->setCurVideoFlags(0x28);  // Cinematic mode + buffer preserve
-	if (startFrame > 0)
-		splayer->setFastForwardToFrame(startFrame);
+	splayer->setFastForwardFromFrame(0);
+	splayer->setFastForwardToFrame(startFrame > 0 ? startFrame : 0);
 	splayer->play(filename, 12);
 
 	// Level-title text is only meant for the intro cinematic that armed it.
@@ -379,6 +492,7 @@ bool InsaneRebel1::runLevel4() {
 		_activeGameOpcode = 0;
 		_gameLatch5D = 0;
 		_gameLatch5F = 0;
+		_pendingRouteStartFrame = 0;
 		resetGameplayFlagsFromTuning();
 		_killCount = 0;
 		_levelGameplayPhase = 0;
@@ -676,10 +790,13 @@ bool InsaneRebel1::runLevel7() {
 		_avgInputY = 0;
 
 		int route = 0;
+		int32 routeStartFrame = 0;
 		while (!_vm->shouldQuit()) {
 			_levelRouteIndex = route;
 			_pendingRouteIndex = -1;
-			playInteractiveVideo(kLevel7Segments[route]);
+			_pendingRouteStartFrame = routeStartFrame;
+			_pendingRouteCutoverFrame = -1;
+			playInteractiveVideo(kLevel7Segments[route], routeStartFrame);
 			if (_vm->shouldQuit())
 				return false;
 
@@ -689,11 +806,17 @@ bool InsaneRebel1::runLevel7() {
 			if (_pendingRouteIndex < 0 || _pendingRouteIndex == route)
 				break;
 
+			// RunLevel7Flow arms the next route inline, lets the current route run for
+			// seven more gameplay frames, then opens the destination ANM while keeping
+			// the existing video state alive.
+			routeStartFrame = _pendingRouteStartFrame;
 			route = _pendingRouteIndex;
 		}
 
 		_levelRouteIndex = -1;
 		_pendingRouteIndex = -1;
+		_pendingRouteStartFrame = 0;
+		_pendingRouteCutoverFrame = -1;
 
 		if (_health >= 0) {
 			playCinematic("LVL7/L7END.ANM");
@@ -1611,6 +1734,9 @@ void InsaneRebel1::runGame() {
 // Play interactive gameplay video (with ship physics + HUD).
 void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) {
 	debug(1, "InsaneRebel1::playInteractiveVideo('%s', startFrame=%d)", filename, startFrame);
+	const bool resumingRoute = (startFrame > 0);
+	int32 videoStartFrame = 0;
+	int32 videoOffset = 0;
 
 	// Stop any leftover audio from previous video
 	terminateAudio();
@@ -1618,22 +1744,42 @@ void InsaneRebel1::playInteractiveVideo(const char *filename, int32 startFrame) 
 
 	SmushPlayer *splayer = _vm->_splayer;
 	_player = splayer;
-	clearBit(0);
+	if (!resumingRoute)
+		clearBit(0);
 	_interactiveVideoActive = true;
 	_levelRouteChoice = 0;
-	_onFootInitialized = false;  // Reset so each segment triggers counter==0 init
-	resetFrameObjectState();
+	if (!resumingRoute) {
+		_onFootInitialized = false;  // Reset so each segment triggers counter==0 init
+		resetFrameObjectState();
+	}
 	_vm->_smushVideoShouldFinish = false;
+	// Route resumes stay in the same gameplay flow in the original executable.
+	// Preserve the previous video/runtime state, but keep the destination clip
+	// fully interactive from its first visible frame.
+	splayer->setPreserveVideoStateOnNextPlay(resumingRoute);
 	splayer->setCurVideoFlags(0x28);
-	if (startFrame > 0)
-		splayer->setFastForwardToFrame(startFrame);
+	splayer->setFastForwardFromFrame(0);
+	splayer->setFastForwardToFrame(0);
+	if (_currentLevel == 6 && resumingRoute) {
+		videoStartFrame = mapLevel7TimelineFrameToLocal(_levelRouteIndex, startFrame);
+		videoOffset = findAnimFrameChunkOffset(_vm, filename, videoStartFrame);
+		if (videoOffset < 0) {
+			debug(1, "RA1 L7 resume: route=%d timelineFrame=%d localFrame=%d offset lookup failed",
+				_levelRouteIndex, (int)startFrame, (int)videoStartFrame);
+			videoStartFrame = 0;
+			videoOffset = 0;
+		} else {
+			debug(1, "RA1 L7 resume: route=%d timelineFrame=%d -> localFrame=%d offset=0x%x",
+				_levelRouteIndex, (int)startFrame, (int)videoStartFrame, (unsigned)videoOffset);
+		}
+	}
 
 	// Center mouse, hide system cursor (we draw our own), lock mouse to window
 	smush_warpMouse(160, 100, -1);
 	CursorMan.showMouse(false);
 	g_system->lockMouse(true);
 
-	splayer->play(filename, 12);
+	splayer->play(filename, 12, videoOffset, videoStartFrame);
 	_interactiveVideoActive = false;
 
 	g_system->lockMouse(false);

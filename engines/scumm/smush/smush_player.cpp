@@ -284,6 +284,9 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 	_height = 0;
 	_scrollX = 0;
 	_scrollY = 0;
+	_fastForwardFromFrame = 0;
+	_fastForwardToFrame = 0;
+	_preserveVideoStateOnNextPlay = false;
 
 	ra2InitFields();
 	_IACTpos = 0;
@@ -348,11 +351,16 @@ void SmushPlayer::init(int32 speed) {
 	_fobjOffsetY = 0;
 	_scrollX = 0;
 	_scrollY = 0;
+	_fastForwardFromFrame = 0;
 	_fastForwardToFrame = 0;
-	_ra1HasCleanFrame = false;
-	// RA1 OBJ overlay chunks are video-local. Reset cached overlay state for each
-	// new ANM so data from a previous segment isn't re-applied.
-	resetGameVideoState();
+	const bool preserveVideoState = _preserveVideoStateOnNextPlay;
+	_preserveVideoStateOnNextPlay = false;
+	if (!preserveVideoState) {
+		_ra1HasCleanFrame = false;
+		// RA1 OBJ overlay chunks are video-local. Reset cached overlay state for each
+		// new ANM unless the original route-switch path requested state preservation.
+		resetGameVideoState();
+	}
 
 	_vm->_smushVideoShouldFinish = false;
 	_vm->_smushActive = true;
@@ -377,6 +385,12 @@ void SmushPlayer::init(int32 speed) {
 	_vm->_mixer->stopHandle(*_compressedFileSoundHandle);
 	_vm->_mixer->stopHandle(*_IACTchannel);
 	_IACTpos = 0;
+}
+
+bool SmushPlayer::isFastForwardingCurrentFrame() const {
+	return (_fastForwardToFrame > _fastForwardFromFrame &&
+		_frame >= _fastForwardFromFrame &&
+		_frame < _fastForwardToFrame);
 }
 
 void SmushPlayer::release() {
@@ -1601,7 +1615,7 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 			handleZlibFrameObject(subSize, b);
 			break;
 		case MKTAG('P','S','A','D'):
-			if (!_compressedFileMode && _fastForwardToFrame == 0) {
+			if (!_compressedFileMode && !isFastForwardingCurrentFrame()) {
 				audioChunk = (uint8 *)malloc(subSize + 8);
 				b.seek(-8, SEEK_CUR);
 				b.read(audioChunk, subSize + 8);
@@ -1652,7 +1666,7 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 			// RA1 voice-over audio: same 12-byte header format as PSAD
 			// (3 × BE32: trackId, seqNum, param) followed by SAUD data.
 			// Feed to audio system identically to PSAD.
-			if (!_compressedFileMode && _fastForwardToFrame == 0) {
+			if (!_compressedFileMode && !isFastForwardingCurrentFrame()) {
 				audioChunk = (uint8 *)malloc(subSize + 8);
 				b.seek(-8, SEEK_CUR);
 				b.read(audioChunk, subSize + 8);
@@ -1725,7 +1739,7 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 							InsaneRebel1 *rebel1 = (InsaneRebel1 *)_vm->_insane;
 							rebel1->handleGameChunk(embSize, embStream);
 						} else if (embTag == MKTAG('P','S','A','D')) {
-							if (!_compressedFileMode && _fastForwardToFrame == 0) {
+							if (!_compressedFileMode && !isFastForwardingCurrentFrame()) {
 								uint8 *audioBuf = (uint8 *)malloc(embSize + 8);
 								memcpy(audioBuf, objBuf + objPos, embSize + 8);
 								feedAudio(audioBuf, 0, 127, 0, 0);
@@ -2201,9 +2215,15 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 	_seekPos = offset;
 	_seekFrame = startFrame;
 	_base = 0;
+	const uint32 fastForwardFromFrame = _fastForwardFromFrame;
+	const uint32 fastForwardToFrame = _fastForwardToFrame;
 
 	setupAnim(filename);
 	init(speed);
+	// Callers configure RA1 pre-roll before play(); preserve that target across
+	// init() so the playback loop can rebuild state up to the requested frame.
+	_fastForwardFromFrame = fastForwardFromFrame;
+	_fastForwardToFrame = fastForwardToFrame;
 
 	_startTime = _vm->_system->getMillis();
 	_startFrame = startFrame;
@@ -2228,9 +2248,10 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 	for (;;) {
 		bool skipFrame = false;
 
-		// RA1 fast-forward: process frames rapidly without display/audio
-		// until reaching the target frame. Used to skip recap sections.
-		bool fastForwarding = (_fastForwardToFrame > 0 && _frame < _fastForwardToFrame);
+		// RA1 pre-roll: process the configured hidden frame window rapidly
+		// without display/audio. Route splices can leave the first frames visible
+		// and only suppress the middle span before the resume target.
+		bool fastForwarding = isFastForwardingCurrentFrame();
 
 		if (fastForwarding) {
 			// Process frame immediately without timing
@@ -2276,9 +2297,10 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 
 		// When fast-forwarding completes, reset timing so playback
 		// starts from the correct point without trying to catch up.
-		if (_fastForwardToFrame > 0 && _frame >= _fastForwardToFrame) {
+		if (_fastForwardToFrame > _fastForwardFromFrame && _frame >= _fastForwardToFrame) {
 			_startFrame = _frame;
 			_startTime = _vm->_system->getMillis();
+			_fastForwardFromFrame = 0;
 			_fastForwardToFrame = 0;
 		}
 
