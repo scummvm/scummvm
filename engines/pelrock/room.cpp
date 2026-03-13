@@ -43,9 +43,9 @@ RoomManager::~RoomManager() {
 }
 
 void RoomManager::loadWaterPaletteRemap() {
-	//Extra remap for water effect
+	// Extra remap for water effect
 	Common::File exe;
-	if(!exe.open("JUEGO.EXE")) {
+	if (!exe.open("JUEGO.EXE")) {
 		error("Couldnt find file JUEGO.EXE");
 	}
 	exe.seek(kPaletteRemapOffset, SEEK_SET);
@@ -107,7 +107,7 @@ void RoomManager::addSticker(int stickerId, int persist) {
 void RoomManager::addStickerToRoom(byte room, int stickerId, int persist) {
 	Sticker sticker = g_engine->_res->getSticker(stickerId);
 	if (room == _currentRoomNumber && persist & PERSIST_TEMP) {
-		if(hasSticker(sticker.stickerIndex)) {
+		if (hasSticker(sticker.stickerIndex)) {
 			debug("Sticker %d already exists in room %d, skipping add", stickerId, room);
 			return;
 		}
@@ -216,7 +216,6 @@ void RoomManager::changeHotspot(byte room, HotSpot hotspot, int persist) {
 				_currentRoomHotspots[i] = hotspot;
 				break;
 			}
-			debug("Hotspot %d in room %d does not match changed hotspot inner index %d", _currentRoomHotspots[i].innerIndex, room, hotspot.innerIndex);
 		}
 	}
 	if (persist & PERSIST_PERM) {
@@ -249,9 +248,8 @@ void RoomManager::enableSprite(byte spriteIndex, byte zOrder, int persist) {
 }
 
 void RoomManager::enableSprite(byte roomNumber, byte spriteIndex, byte zOrder, int persist) {
-	for(int i =0; i < g_engine->_state->spriteChanges[roomNumber].size(); i++) {
+	for (int i = 0; i < g_engine->_state->spriteChanges[roomNumber].size(); i++) {
 		if (g_engine->_state->spriteChanges[roomNumber][i].spriteIndex == spriteIndex) {
-			debug("Removing sprite change for room %d, sprite index %d, zOrder %d", roomNumber, spriteIndex, g_engine->_state->spriteChanges[roomNumber][i].zIndex);
 			g_engine->_state->spriteChanges[roomNumber].remove_at(i);
 			break;
 		}
@@ -321,7 +319,6 @@ void RoomManager::addWalkbox(WalkBox walkbox, int persist) {
 		_currentRoomWalkboxes.push_back(walkbox);
 	}
 	if (persist & PERSIST_PERM) {
-		debug("Adding walkbox change for room %d, index %d, x=%d y=%d w=%d h=%d", _currentRoomNumber, walkbox.index, walkbox.x, walkbox.y, walkbox.w, walkbox.h);
 		g_engine->_state->roomWalkBoxChanges[_currentRoomNumber].push_back({_currentRoomNumber, walkbox.index, walkbox});
 	}
 }
@@ -347,7 +344,6 @@ Sprite *RoomManager::findSpriteByExtra(int16 extra) {
 HotSpot *RoomManager::findHotspotByIndex(byte index) {
 	for (uint i = 0; i < _currentRoomHotspots.size(); i++) {
 		if (!_currentRoomHotspots[i].isSprite && _currentRoomHotspots[i].innerIndex == index) {
-			debug("Found hotspot %d at index %d, extra = %d", index, i, _currentRoomHotspots[i].extra);
 			return &_currentRoomHotspots[i];
 		}
 	}
@@ -422,11 +418,6 @@ PaletteAnim *RoomManager::getPaletteAnimForRoom(int roomNumber) {
 	anim->paletteMode = exeFile.readByte();
 	exeFile.read(anim->data, 10);
 	if (anim->paletteMode == 1) {
-		// FADE mode: shift RGB values to convert from 6-bit VGA to 8-bit
-		// data[0-2] = current R,G,B
-		// data[3-5] = min R,G,B
-		// data[6-8] = max R,G,B
-		// data[9] = flags (R/G/B increments + direction) - NOT shifted
 		for (int i = 0; i < 9; i++) {
 			anim->data[i] = anim->data[i] << 2;
 		}
@@ -484,9 +475,6 @@ Common::Array<Exit> RoomManager::loadExits(byte *data, size_t size) {
 			}
 		}
 		exits.push_back(exit);
-		// debug("Exit %d: targetRoom=%d isEnabled=%d x=%d y=%d w=%d h=%d targetX=%d targetY=%d dir=%d",
-		// 	  i, exit.targetRoom, exit.isEnabled, exit.x, exit.y, exit.w, exit.h,
-		// 	  exit.targetX, exit.targetY, exit.dir);
 	}
 	return exits;
 }
@@ -507,7 +495,6 @@ Common::Array<HotSpot> RoomManager::loadHotspots(byte *data, size_t size) {
 			// if the hotspot has been changed, load the changed version
 			for (uint j = 0; j < g_engine->_state->roomHotSpotChanges[_currentRoomNumber].size(); j++) {
 				if (g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspotIndex == spot.innerIndex) {
-					debug("Hotspot %d has been changed, loading changed version, Hotspot x=%d, y = %d, extra = %d, isEnabled=%d", spot.innerIndex, g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot.x, g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot.y, g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot.extra, g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot.isEnabled);
 					hotspots.push_back(g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot);
 					isChanged = true;
 					break;
@@ -523,7 +510,6 @@ Common::Array<HotSpot> RoomManager::loadHotspots(byte *data, size_t size) {
 		spot.h = data[hotspotOffset + 6];
 		spot.isSprite = false;
 		spot.extra = READ_LE_INT16(data + hotspotOffset + 7);
-		debug("Hotspot %d: type=%d x=%d y=%d w=%d h=%d extra=%d, index =%d, isEnabled=%d", spot.innerIndex, spot.actionFlags, spot.x, spot.y, spot.w, spot.h, spot.extra, spot.innerIndex, spot.isEnabled);
 		hotspots.push_back(spot);
 	}
 
@@ -554,7 +540,6 @@ void RoomManager::resetConversationStates(byte roomNumber, byte *conversationDat
 			continue;
 		}
 		Common::copy(entry.data, entry.data + entry.dataSize, conversationData + entry.offset);
-		// delete[] entry.data;
 	}
 	alfredB.close();
 }
@@ -646,6 +631,9 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	delete[] pair12;
 }
 
+/**
+ * A number of rooms have a single passerby sprite that walks across the screen.
+ */
 int streetWalkerIndices[] = {
 	-1, // room 0,
 	5,  // room 1,
@@ -664,8 +652,8 @@ int streetWalkerIndices[] = {
 	2,  // room 14,
 	-1, // room 15,
 	2
-
 };
+
 RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 	RoomPasserBys *anims = nullptr;
 	switch (roomNumber) {
@@ -877,10 +865,6 @@ void RoomManager::init() {
 	if (!alfred8.open("ALFRED.8")) {
 		error("Couldnt find file ALFRED.8");
 	}
-	// _resetDataSize = alfred8.size();
-	// _resetData = new byte[_resetDataSize];
-	// alfred8.read(_resetData, _resetDataSize);
-	// alfred8.close();
 }
 
 void RoomManager::loadAnimationPixelData(Common::File *roomFile, int roomOffset, byte *&buffer, size_t &outSize) {
@@ -893,18 +877,15 @@ void RoomManager::loadAnimationPixelData(Common::File *roomFile, int roomOffset,
 	roomFile->seek(offset, SEEK_SET);
 	roomFile->read(pixelData, size);
 	if (offset > 0 && size > 0) {
-		if(_currentRoomNumber != 40) {
+		if (_currentRoomNumber != 40) {
 			outSize = rleDecompress(pixelData, size, 0, size, &buffer, true);
-		}
-		else {
+		} else {
 			// room 40 has uncompressed animation data for some reason
 			buffer = new byte[size];
 			Common::copy(pixelData, pixelData + size, buffer);
 			outSize = size;
 		}
 	}
-
-
 }
 
 Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pixelDataSize, byte *data, size_t size) {
@@ -930,16 +911,14 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 		sprite.numAnims = data[animOffset + 8];
 		sprite.zOrder = data[animOffset + 23];
 		sprite.extra = READ_LE_INT16(data + animOffset + 32);
-		debug("Sprite %d: x=%d y=%d w=%d h=%d stride=%d numAnims=%d zOrder=%d extra=%d", i, sprite.x, sprite.y, sprite.w, sprite.h, sprite.stride, sprite.numAnims, sprite.zOrder, sprite.extra);
 		sprite.actionFlags = data[animOffset + 34];
-		if(sprite.actionFlags & kActionMaskTalk) {
+		if (sprite.actionFlags & kActionMaskTalk) {
 			sprite.talkingAnimIndex = talkingAnims++;
 		}
 		sprite.isHotspotDisabled = data[animOffset + 38];
 		sprite.disableAfterSequence = data[animOffset + 39];
 		for (uint j = 0; j < spriteChanges.size(); j++) {
 			if (spriteChanges[j].spriteIndex == sprite.index) {
-				debug("Sprite %d has been changed, loading changed version with zOrder %d", sprite.index, spriteChanges[j].zIndex);
 				sprite.zOrder = spriteChanges[j].zIndex;
 				break;
 			}
@@ -966,27 +945,23 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 			anim.animData = new byte *[anim.nframes];
 			if (sprite.w > 0 && sprite.h > 0 && anim.nframes > 0) {
 				for (int k = 0; k < anim.nframes; k++) {
-					if(picOffset >= pixelDataSize) {
+					if (picOffset >= pixelDataSize) {
 						debug("Pixel data offset out of bounds for sprite %d anim %d, offset %u, size %lu", i, j, picOffset, pixelDataSize);
 						break;
 					}
 					anim.animData[k] = new byte[sprite.w * sprite.h];
-					// debug("Extracting frame %d for anim %d-%d, w=%d h=%d, pixelDataSize=%d, current offset %d", i, j, anim.nframes, sprite.w, sprite.h, pixelDataSize, picOffset);
 					extractSingleFrame(pixelData + picOffset, anim.animData[k], k, sprite.w, sprite.h);
 				}
 				sprite.animData[j] = anim;
-				// debug("  Anim %d-%d: x=%d y=%d w=%d h=%d nframes=%d loopCount=%d speed=%d", i, j, anim.x, anim.y, anim.w, anim.h, anim.nframes, anim.loopCount, anim.speed);
-				// debug("  Movement flags: 0x%04X", anim.movementFlags);
 				picOffset += totalBytesPerFrame;
 
-				if(_currentRoomNumber == 36 && i == 0) {
+				if (_currentRoomNumber == 36 && i == 0) {
 					// Room 36 sets its anim to 1 to appear idle and only enables anim later on
 					anim.nframes = 1;
 				}
 
 			} else {
 				continue;
-				// debug("Anim %d-%d: invalid dimensions, skipping", i, j);
 			}
 			sprite.animData[j] = anim;
 		}
@@ -1011,18 +986,15 @@ Common::Array<WalkBox> RoomManager::loadWalkboxes(byte *data, size_t size) {
 		int16 w = READ_LE_INT16(data + boxOffset + 4);
 		int16 h = READ_LE_INT16(data + boxOffset + 6);
 		byte flags = data[boxOffset + 8];
-		debug("Walkbox %d: x1=%d y1=%d w=%d h=%d", i, x1, y1, w, h);
 		WalkBox box;
 		box.index = i;
 		bool isChanged = false;
 		if (g_engine->_state->roomWalkBoxChanges.contains(_currentRoomNumber)) {
-			debug("Checking for changes to walkbox %d in room %d", i, _currentRoomNumber);
 			// if the walkbox has been changed, load the changed version
 			for (uint j = 0; j < g_engine->_state->roomWalkBoxChanges[_currentRoomNumber].size(); j++) {
 				if (g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkboxIndex == i) {
 					walkboxes.push_back(g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkbox);
 					isChanged = true;
-					debug("Walkbox %d has been changed, loading changed version, x1=%d y1=%d w=%d h=%d", i, g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkbox.x, g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkbox.y, g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkbox.w, g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkbox.h);
 					break;
 				}
 			}
@@ -1048,12 +1020,10 @@ Common::Array<WalkBox> RoomManager::loadWalkboxes(byte *data, size_t size) {
 				}
 			}
 			if (!found) {
-				debug("Adding new walkbox for room %d at index %d", _currentRoomNumber, g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkboxIndex);
 				walkboxes.push_back(g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkbox);
 			}
 		}
 	}
-	debug("Total walkboxes for room %d: %d", _currentRoomNumber, walkboxes.size());
 	return walkboxes;
 }
 
@@ -1111,12 +1081,14 @@ void RoomManager::loadConversationData(byte *pair12data, size_t pair12size, uint
 	}
 }
 
+/**
+ * Disables choices according to saved data
+ */
 void RoomManager::applyDisabledChoices(byte roomNumber, byte *conversationData, size_t conversationDataSize) {
 	Common::Array<ResetEntry> disabledBranches = g_engine->_state->disabledBranches[roomNumber];
 	if (disabledBranches.size() == 0) {
 		return;
 	}
-	debug("Disabling %d conversation branches for room %d", disabledBranches.size(), roomNumber);
 	for (uint i = 0; i < disabledBranches.size(); i++) {
 		ResetEntry resetEntry = disabledBranches[i];
 		applyDisabledChoice(resetEntry, conversationData, conversationDataSize);
@@ -1134,7 +1106,7 @@ void RoomManager::addDisabledChoice(ChoiceOption choice) {
 	debug("Adding disabled branch for room %d at offset %d (FA written at %d)",
 		  choice.room, choice.dataOffset, disableOffset);
 
-	debug("Disabled branch is: \"%s\"",  choice.text.c_str());
+	debug("Disabled branch is: \"%s\"", choice.text.c_str());
 	ResetEntry resetEntry = ResetEntry();
 	resetEntry.room = choice.room;
 	resetEntry.offset = disableOffset;
@@ -1208,7 +1180,6 @@ void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
 	talkFile.read(&talkHeader.unknown7, 4);
 	talkHeader.speedByteB = talkFile.readByte();
 	talkFile.read(&talkHeader.unknown6, 24);
-	// debug("Talking anim header for room %d: spritePointer=%d, wA=%d, hA=%d, framesA=%d, wB=%d, hB=%d, framesB=%d", roomNumber, talkHeader.spritePointer, talkHeader.wAnimA, talkHeader.hAnimA, talkHeader.numFramesAnimA, talkHeader.wAnimB, talkHeader.hAnimB, talkHeader.numFramesAnimB);
 
 	if (talkHeader.spritePointer == 0) {
 		debug("No talking animation for room %d", roomNumber);
@@ -1225,7 +1196,6 @@ void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
 	readUntilBuda(&talkFile, talkHeader.spritePointer, data, dataSize);
 	size_t decompressedSize = rleDecompress(data, dataSize, 0, dataSize, &decompressed);
 	free(data);
-	// debug("Decompressed talking anim A size: %zu, decompressed size: %zu", dataSize, decompressedSize);
 	for (int i = 0; i < talkHeader.numFramesAnimA; i++) {
 		talkHeader.animA[i] = new byte[talkHeader.wAnimA * talkHeader.hAnimA];
 		extractSingleFrame(decompressed, talkHeader.animA[i], i, talkHeader.wAnimA, talkHeader.hAnimA);
@@ -1236,7 +1206,6 @@ void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
 		for (int i = 0; i < talkHeader.numFramesAnimB; i++) {
 			talkHeader.animB[i] = new byte[talkHeader.wAnimB * talkHeader.hAnimB];
 			uint32 animBFrameOffset = animASize + (i * talkHeader.wAnimB * talkHeader.hAnimB);
-			// debug("Extracting talking anim B frame %d at offset %d, size = %d", i, animASize + (i * talkHeader.wAnimB * talkHeader.hAnimB), talkHeader.wAnimB * talkHeader.hAnimB);
 			if (animBFrameOffset + talkHeader.wAnimB * talkHeader.hAnimB >= decompressedSize) {
 				debug("Error: offset %d is beyond decompressed size %zu", animBFrameOffset, decompressedSize);
 				talkHeader.numFramesAnimB = 0;
@@ -1285,7 +1254,7 @@ byte *RoomManager::loadShadowMap(int roomNumber) {
 
 	byte *shadows = nullptr;
 	size_t decompressedSize = rleDecompress(compressed, compressedSize, 0, 640 * 400, &shadows);
-	if(decompressedSize == 0) {
+	if (decompressedSize == 0) {
 		debug("Failed to decompress shadow map for room %d", roomNumber);
 		shadows = nullptr;
 	}
@@ -1302,7 +1271,7 @@ void RoomManager::loadRemaps(int roomNumber) {
 		error("Couldnt find file ALFRED.9");
 	}
 
-	uint32 remapOffset =/* 0x200 + */(roomNumber * 1024);
+	uint32 remapOffset = /* 0x200 + */ (roomNumber * 1024);
 
 	remapFile.seek(remapOffset, SEEK_SET);
 	remapFile.read(_paletteRemaps[0], 256);
@@ -1310,7 +1279,6 @@ void RoomManager::loadRemaps(int roomNumber) {
 	remapFile.read(_paletteRemaps[2], 256);
 	remapFile.read(_paletteRemaps[3], 256);
 	remapFile.close();
-
 }
 
 byte RoomManager::loadMusicTrackForRoom(Common::File *roomFile, int roomOffset) {
@@ -1335,7 +1303,6 @@ Common::Array<byte> RoomManager::loadRoomSfx(Common::File *roomFile, int roomOff
 	for (int i = 0; i < kNumSfxPerRoom; i++) {
 		byte sfx = roomFile->readByte();
 		roomSfx[i] = sfx;
-		debug("SFX %d for room at offset %d is %d (%s)", i, roomOffset, sfx, SOUND_FILENAMES[sfx]);
 	}
 	return roomSfx;
 }

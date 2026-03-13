@@ -32,7 +32,7 @@ namespace Pelrock {
 static const int kNumSfxPerRoom = 9;
 static const int unpickableHotspotExtras[] = {
 	308, // lamppost cable
-	65, // objects in shop
+	65,  // objects in shop
 	66,
 	67,
 	68,
@@ -44,10 +44,8 @@ static const int unpickableHotspotExtras[] = {
 	74,
 	6,
 	7,
-	91, //mud and stone should only be picked under certain conditions!
-	92
-};
-
+	91, // mud and stone should only be picked under certain conditions!
+	92};
 
 #define PERSIST_TEMP 1
 #define PERSIST_PERM 2
@@ -58,7 +56,13 @@ public:
 	RoomManager();
 	~RoomManager();
 	void loadRoomMetadata(Common::File *roomFile, int roomNumber);
+	/**
+	 * Passer by animations are animations of characters that merely traverse the scene as ambient
+	 */
 	RoomPasserBys *loadPasserByAnims(int roomNumber);
+	/**
+	 * Treats sprites and hotspots the same.
+	 */
 	Common::Array<HotSpot> unifyHotspots(Common::Array<Pelrock::Sprite> &anims, Common::Array<Pelrock::HotSpot> &staticHotspots);
 	void loadRoomTalkingAnimations(int roomNumber);
 	void getPalette(Common::File *roomFile, int roomOffset, byte *palette);
@@ -113,9 +117,11 @@ public:
 	void applyDisabledChoice(ResetEntry entry, byte *conversationData, size_t conversationDataSize);
 	void addDisabledChoice(ChoiceOption choice);
 
-
+	/**
+	 * Will apply the default "take item with given extra" handler if returns true
+	 */
 	bool isPickableByExtra(uint16 extra) {
-		if(extra > 112)
+		if (extra > 112)
 			return false;
 		int size = sizeof(unpickableHotspotExtras) / sizeof(unpickableHotspotExtras[0]);
 		for (int i = 0; i < size; i++) {
@@ -124,12 +130,12 @@ public:
 		}
 		return true;
 	}
+
 	Sprite *findSpriteByIndex(byte index);
 	Sprite *findSpriteByExtra(int16 extra);
 	HotSpot *findHotspotByIndex(byte index);
 	HotSpot *findHotspotByExtra(uint16 extra);
 	PaletteAnim *getPaletteAnimForRoom(int roomNumber);
-
 
 	byte _currentRoomNumber = 0;
 	int _prevRoomNumber = -1;

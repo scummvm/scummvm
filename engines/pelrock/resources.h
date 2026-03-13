@@ -44,8 +44,17 @@ public:
 	void loadSettingsMenu();
 	void loadCursors();
 	void loadInteractionIcons();
+	/**
+	 * Loads standard Alfred animations
+	 */
 	void loadAlfredAnims();
+	/**
+	 * Loads some other special anims for NPCs
+	 */
 	void loadOtherSpecialAnim(uint32 offset, bool rleCompressed, byte *&buffer, size_t &bufferSize);
+	/**
+	 * Loads one of the pre-defined Special anims for alfred.
+	 */
 	void loadAlfredSpecialAnim(int numAnim, bool reverse = false);
 	void clearSpecialAnim();
 	void loadInventoryItems();
@@ -62,11 +71,11 @@ public:
 	byte *alfredIdle[4]; // 4 directions
 
 	byte **alfredWalkFrames[4]; // 4 arrays of arrays
-	byte **alfredCrawlFrames[4];
+	byte **alfredCrawlFrames[4];// 4 arrays of arrays
 	byte **alfredTalkFrames[4]; // 4 arrays of arrays
+	byte **alfredInteractFrames[4];
 
 	byte **alfredCombFrames[2];
-	byte **alfredInteractFrames[4];
 
 	byte *_cursorMasks[5];
 	byte *_verbIcons[9];

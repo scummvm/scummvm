@@ -1701,7 +1701,7 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 		isHotspotUnder = true;
 	}
 	_currentHotspot = isHotspotUnder ? &_room->_currentRoomHotspots[hotspotIndex] : nullptr;
-	Common::Point walkTarget = calculateWalkTarget(_room->_currentRoomWalkboxes, _events->_mouseX, _events->_mouseY, isHotspotUnder, _currentHotspot);
+	Common::Point walkTarget = calculateWalkTarget(_room->_currentRoomWalkboxes, _events->_mouseX, _events->_mouseY, _currentHotspot);
 	_curWalkTarget = walkTarget;
 
 	walkTo(walkTarget.x, walkTarget.y);
@@ -1738,7 +1738,7 @@ void PelrockEngine::checkMouseHover() {
 	}
 
 	// Calculate walk target first (before checking anything else)
-	Common::Point walkTarget = calculateWalkTarget(_room->_currentRoomWalkboxes, _events->_mouseX, _events->_mouseY, hotspotDetected, hotspotDetected ? &_room->_currentRoomHotspots[hotspotIndex] : nullptr);
+	Common::Point walkTarget = calculateWalkTarget(_room->_currentRoomWalkboxes, _events->_mouseX, _events->_mouseY, hotspotDetected ? &_room->_currentRoomHotspots[hotspotIndex] : nullptr);
 
 	// Check if walk target hits any exit
 	bool exitDetected = false;

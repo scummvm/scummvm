@@ -27,29 +27,6 @@
 
 namespace Pelrock {
 
-Common::String printMovementFlags(byte flags) {
-	Common::String result;
-	if (flags & kMoveHoriz) {
-		result += "HORIZ ";
-	}
-	if (flags & kMoveVert) {
-		result += "VERT ";
-	}
-	if (flags & kMoveDown) {
-		result += "DOWN ";
-	}
-	if (flags & kMoveLeft) {
-		result += "LEFT ";
-	}
-	if (flags & kMoveUp) {
-		result += "UP ";
-	}
-	if (flags & kMoveRight) {
-		result += "RIGHT ";
-	}
-	return result;
-}
-
 bool findPath(int sourceX, int sourceY, int targetX, int targetY, Common::Array<WalkBox> &walkboxes, PathContext *context, HotSpot *hotspot) {
 
 	if (context->pathBuffer == nullptr) {
@@ -61,15 +38,13 @@ bool findPath(int sourceX, int sourceY, int targetX, int targetY, Common::Array<
 
 	int startX = sourceX;
 	int startY = sourceY;
-	Common::Point target = calculateWalkTarget(walkboxes, targetX, targetY, 2, nullptr);
+	Common::Point target = calculateWalkTarget(walkboxes, targetX, targetY, nullptr);
 	targetX = target.x;
 	targetY = target.y;
-	// debug("Startx= %d, starty= %d, destx= %d, desty= %d", startX, startY, targetX, targetY);
 
 	byte startBox = findWalkboxForPoint(walkboxes, startX, startY);
 	byte destBox = findWalkboxForPoint(walkboxes, targetX, targetY);
 
-	// debug("Pathfinding from (%d, %d) in box %d to (%d, %d) in box %d\n", startX, startY, startBox, targetX, targetY, destBox);
 	// Check if both points are in valid walkboxes
 	if (startBox == 0xFF || destBox == 0xFF) {
 		debug("Error: Start or destination not in any walkbox\n");
@@ -101,10 +76,6 @@ bool findPath(int sourceX, int sourceY, int targetX, int targetY, Common::Array<
 	} else {
 		// Build walkbox path
 		context->pathLength = buildWalkboxPath(walkboxes, startBox, destBox, context->pathBuffer);
-		debug("Walkbox path to point");
-		for (int i = 0; i < context->pathLength; i++) {
-			// debug("Walkbox %d: %d", i, context->pathBuffer[i]);
-		}
 		if (context->pathLength == 0) {
 			debug("Error: No path found\n");
 			return false;
@@ -112,21 +83,16 @@ bool findPath(int sourceX, int sourceY, int targetX, int targetY, Common::Array<
 
 		// Generate movement steps
 		context->movementCount = generateMovementSteps(walkboxes, context->pathBuffer, context->pathLength, startX, startY, targetX, targetY, context->movementBuffer);
-		// for (int i = 0; i < context->movementCount; i++) {
-		// 	debug("Movement step %d: flags=\"%s\", dx=%d, dy=%d", i, printMovementFlags(context->movementBuffer[i].flags).c_str(), context->movementBuffer[i].distanceX, context->movementBuffer[i].distanceY);
-		// }
 	}
 	return true;
 }
 
-Common::Point calculateWalkTarget(Common::Array<WalkBox> &walkboxes,
-								  int sourceX, int sourceY,
-								  bool mouseHoverState,
-								  HotSpot *hotspot) {
+Common::Point calculateWalkTarget(Common::Array<WalkBox> &walkboxes, int sourceX, int sourceY, HotSpot *hotspot) {
 
-	if(hotspot != nullptr) {
+	if (hotspot != nullptr) {
+		// if there is a hotspot then the source is the center of the hotspot.
 		sourceX = hotspot->x + hotspot->w / 2;
-		sourceY = hotspot->y + hotspot->h;
+		sourceY = hotspot->y + hotspot->h / 2;
 	}
 
 	// Find nearest walkbox
@@ -151,7 +117,6 @@ Common::Point calculateWalkTarget(Common::Array<WalkBox> &walkboxes,
 			xDistance = sourceX - (walkboxes[i].x + walkboxes[i].w - 1);
 			xDirection = 0; // LEFT
 		}
-		// else: sourceX is inside, xDistance = 0
 
 		// Calculate Y distance with direction
 		if (sourceY < walkboxes[i].y) {
@@ -162,7 +127,6 @@ Common::Point calculateWalkTarget(Common::Array<WalkBox> &walkboxes,
 			yDistance = sourceY - (walkboxes[i].y + walkboxes[i].h - 1);
 			yDirection = 0; // UP
 		}
-		// else: sourceY is inside, yDistance = 0
 
 		uint32 totalDistance = xDistance + yDistance;
 
@@ -175,7 +139,7 @@ Common::Point calculateWalkTarget(Common::Array<WalkBox> &walkboxes,
 		}
 	}
 
-	// Step 3: Calculate final target point
+	// Calculate final target point
 	Common::Point target;
 
 	if (bestXDirection == 1) {
@@ -337,11 +301,11 @@ void calculateMovementToTarget(uint16 currentX, uint16 currentY, uint16 targetX,
  * Returns: number of movement steps generated
  */
 uint16 generateMovementSteps(Common::Array<WalkBox> &walkboxes,
-							   byte *pathBuffer,
-							   uint16 pathLength,
-							   uint16 startX, uint16 startY,
-							   uint16 destX, uint16 destY,
-							   MovementStep *movementBuffer) {
+							 byte *pathBuffer,
+							 uint16 pathLength,
+							 uint16 startX, uint16 startY,
+							 uint16 destX, uint16 destY,
+							 MovementStep *movementBuffer) {
 	uint16 currentX = startX;
 	uint16 currentY = startY;
 	uint16 movementIndex = 0;

@@ -30,15 +30,15 @@ namespace Pelrock {
 bool findPath(int sourceX, int sourceY, int targetX, int targetY, Common::Array<WalkBox> &walkboxes, PathContext *context, HotSpot *hotspot = nullptr);
 
 /**
- * Calculate the walk target point based on source coordinates and mouse hover state.
+ * Calculate the walk target point. This is used both for actually walking and for the mouse hover exit calculation. E.g. if the resulting walk target
+ * would lead to the character landing in an exit, the Exit cursor is shown.
  * @param walkboxes         Array of walkboxes in the current room.
- * @param sourceX           X coordinate of the source point (e.g., mouse position).
- * @param sourceY           Y coordinate of the source point (e.g., mouse position).
- * @param mouseHoverState   State indicating what the mouse is hovering over (0 = nothing, 1 = hotspot hover, 2 = hotspot click).
- * @param hotspot           Pointer to the hotspot being hovered over (if applicable).
+ * @param sourceX           X coordinate of the source point
+ * @param sourceY           Y coordinate of the source point
+ * @param hotspot           Pointer to the hotspot being hovered over (if any).
  * @return                  Calculated walk target point.
  */
-Common::Point calculateWalkTarget(Common::Array<WalkBox> &walkboxes, int sourceX, int sourceY, bool mouseHoverState, HotSpot *hotspot);
+Common::Point calculateWalkTarget(Common::Array<WalkBox> &walkboxes, int sourceX, int sourceY, HotSpot *hotspot);
 byte findWalkboxForPoint(Common::Array<WalkBox> &walkboxes, uint16 x, uint16 y);
 byte getAdjacentWalkbox(Common::Array<WalkBox> &walkboxes, byte current_box_index);
 uint16 buildWalkboxPath(Common::Array<WalkBox> &walkboxes, byte start_box, byte dest_box, byte *path_buffer);

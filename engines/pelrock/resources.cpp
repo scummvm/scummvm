@@ -69,9 +69,9 @@ static const uint32 kAlfredAnimClimbDownOffset = 1761234;     // 7  - Climbs dow
 static const uint32 kAlfredAnimClimbUpOffset = 1766378;       // 8  - Climbs up
 static const uint32 kAlfredAnimExitTunnelOffset = 1770196;    // 9  - Exits tunnel
 static const uint32 kAlfredAnimWorkersOffset = 1600956;       // 10 - With workers
-static const uint32 kAlfredAnimMunheco1Offset = 2060916;      // 11 - Munheco 1
-static const uint32 kAlfredAnimMunheco2Offset = 2115632;      // 12 - Munheco 2
-static const uint32 kAlfredAnimMunheco3Offset = 1526432;      // 13 - Munheco 3
+static const uint32 kAlfredAnimMunheco1Offset = 2060916;      // 11 - Doll 1
+static const uint32 kAlfredAnimMunheco2Offset = 2115632;      // 12 - Doll 2
+static const uint32 kAlfredAnimMunheco3Offset = 1526432;      // 13 - Doll 3
 static const uint32 kAlfredAnimDescamisaOffset = 2972568;     // 14 - Descamisa
 static const uint32 kAlfredAnimSecretPassageOffset = 1749464; // 15 - Secret passage
 static const uint32 kAlfredAnimInBedOffset = 3038454;         // 16 - Alfred in bed
@@ -95,10 +95,10 @@ const AlfredSpecialAnimOffset ResourceManager::alfredSpecialAnims[] = {
 	{9, 33, 72, 1, 7, kAlfredAnimClimbUpOffset, 1, 2, 0},                   // 8  - alfred climbs up
 	{16, 158, 115, 0, 7, kAlfredAnimExitTunnelOffset, 1, 2, 0},             // 9  - alfred exits tunnel
 	{7, 208, 102, 0, 7, kAlfredAnimWorkersOffset, 1, 2, 0},                 // 10 - alfred with workers
-	{23, 116, 124, 1, 7, kAlfredAnimMunheco1Offset, 1, 2, 0},               // 11 - Munheco 1
-	{18, 177, 124, 1, 7, kAlfredAnimMunheco2Offset, 1, 2, 0},               // 12 - Munheco 2
-	{11, 98, 138, 1, 7, kAlfredAnimMunheco3Offset, 1, 2, 0},                // 13 - Munheco 3
-	{4, 51, 102, 1, 7, kAlfredAnimDescamisaOffset, 1, 2, 0},                // 14 - descamisa
+	{23, 116, 124, 1, 7, kAlfredAnimMunheco1Offset, 1, 2, 0},               // 11 - Doll 1
+	{18, 177, 124, 1, 7, kAlfredAnimMunheco2Offset, 1, 2, 0},               // 12 - Doll 2
+	{11, 98, 138, 1, 7, kAlfredAnimMunheco3Offset, 1, 2, 0},                // 13 - Doll 3
+	{4, 51, 102, 1, 7, kAlfredAnimDescamisaOffset, 1, 2, 0},                // 14 - Taking off shirt
 	{13, 95, 99, 1, 7, kAlfredAnimSecretPassageOffset, 1, 2, 0},            // 15 - alfred enters secret passage
 	{14, 71, 66, 1, 7, kAlfredAnimInBedOffset, 1, 2, 0},                    // 16 - Alfred in bed
 };
@@ -351,7 +351,6 @@ void ResourceManager::loadAlfredSpecialAnim(int numAnim, bool reverse) {
 	uint32 size = anim.size == 0 ? anim.numFrames * anim.w * anim.h : anim.size;
 	_currentSpecialAnim->animData = new byte[size];
 	if (anim.numBudas > 0) {
-		debug("Loading special anim with budas: numBudas=%d, totalSize %d", anim.numBudas, size);
 		byte *thisBlock = nullptr;
 		size_t blockSize = 0;
 		readUntilBuda(&alfredFile, anim.offset, thisBlock, blockSize);
@@ -397,7 +396,6 @@ void ResourceManager::loadInventoryItems() {
 	for (int i = 0; i < 69; i++) {
 		_inventoryIcons[i].index = i;
 		extractSingleFrame(iconData, _inventoryIcons[i].iconData, i, 60, 60);
-		// _inventoryIcons[i].description = _inventoryDescriptions[i];
 	}
 	delete[] iconData;
 }
