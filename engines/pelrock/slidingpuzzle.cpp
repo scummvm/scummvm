@@ -160,9 +160,16 @@ void SlidingPuzzle::playTileSound() {
 
 void SlidingPuzzle::shuffleLoop() {
 	const int shuffleRange = _totalTiles - 1; // never touch the blank slot (N-1)
+
+	// scale tile swap with tile count
+	const int kBaseTileCount = (kPuzzleScreenWidth / kTileSizes[0]) *
+	                           (kPuzzleScreenHeight / kTileSizes[0]);
+	const int swapsPerFrame = MAX(1, _totalTiles / kBaseTileCount);
+
 	while (!g_engine->shouldQuit()) {
 		_events->pollEvent();
 
+		for (int s = 0; s < swapsPerFrame; s++) {
 		int a, b;
 		do {
 			a = g_engine->getRandomNumber(shuffleRange - 1);
