@@ -102,7 +102,7 @@ static const char *inventorySounds[113] = {
 	"ELEC3ZZZ.SMP", // 6 - Electric zap
 	"REMATERL.SMP", // 7 - Rematerialize
 	"81ZZZZZZ.SMP", // 8 - (numbered SFX)
-	"HOJASZZZ.SMP",
+	"11ZZZZZZ.SMP", // 9
 	"SSSHTZZZ.SMP", // 10 - Shushing
 	"HOJASZZZ.SMP", // 11 - Default leaf rustle
 	"HOJASZZZ.SMP",
@@ -163,46 +163,46 @@ static const char *inventorySounds[113] = {
 	"BOOOOOIZ.SMP", // 67 - Boing
 	"DISCOSZZ.SMP", // 68 - Disco music
 	"MONORLZZ.SMP", // 69 - Monorail
-	"HOJASZZZ.SMP",
-	"HOJASZZZ.SMP",
-	"HOJASZZZ.SMP",
+	"11ZZZZZZ.SMP", // 70
+	"11ZZZZZZ.SMP", // 71
+	"11ZZZZZZ.SMP", // 72
 	"CARACOLA.SMP", // 73 - Seashell
-	"HOJASZZZ.SMP",
-	"HOJASZZZ.SMP",
+	"11ZZZZZZ.SMP", // 74
+	"11ZZZZZZ.SMP", // 75
 	"WATER_2Z.SMP", // 76 - Water splash
-	"HOJASZZZ.SMP",
-	"HOJASZZZ.SMP",
+	"11ZZZZZZ.SMP", // 77
+	"11ZZZZZZ.SMP", // 78
 	"EEEEKZZZ.SMP", // 79 - Shriek
 	"REMATERL.SMP", // 80 - Rematerialize
-	"HOJASZZZ.SMP",
-	"HOJASZZZ.SMP",
+	"11ZZZZZZ.SMP", // 81
+	"11ZZZZZZ.SMP", // 82
 	"ELVIS1ZZ.SMP", // 83 - Elvis impression
 	"RIMSHOTZ.SMP", // 84 - Rimshot
-	"HOJASZZZ.SMP",
+	"11ZZZZZZ.SMP", // 85
 	"WATER_2Z.SMP", // 86 - Water splash
 	"MOTOSZZZ.SMP", // 87 - Motorcycle
 	"HOJASZZZ.SMP",
 	"TWANGZZZ.SMP", // 89 - Twang
-	"HOJASZZZ.SMP",
+	"11ZZZZZZ.SMP", // 90
 	"QUAKE2ZZ.SMP", // 91 - Earthquake
-	"HOJASZZZ.SMP",
+	"11ZZZZZZ.SMP", // 92
 	"SORBOZZZ.SMP", // 93 - Slurp
 	"BOTEZZZZ.SMP", // 94 - Bottle sound
 	"ELVIS1ZZ.SMP", // 95 - Elvis impression
-	"HOJASZZZ.SMP",
-	"HOJASZZZ.SMP",
-	"HOJASZZZ.SMP",
-	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP", // 96
+	"HOJASZZZ.SMP", // 97
+	"HOJASZZZ.SMP", // 98
+	"11ZZZZZZ.SMP", // 99
 	"LLAVESZZ.SMP", // 100 - Keys jingling
-	"HOJASZZZ.SMP",
-	"HOJASZZZ.SMP",
-	"HOJASZZZ.SMP",
+	"HOJASZZZ.SMP", // 101
+	"11ZZZZZZ.SMP", // 102
+	"11ZZZZZZ.SMP", // 103
 	"EVLLAUGH.SMP", // 104 - Evil laugh
-	"HOJASZZZ.SMP",
+	"11ZZZZZZ.SMP", // 105
 	"BURROLZZ.SMP", // 106 - Donkey bray
-	"HOJASZZZ.SMP",
+	"11ZZZZZZ.SMP", // 107
 	"TWANGZZZ.SMP", // 108
-	"HOJASZZZ.SMP",
+	"11ZZZZZZ.SMP", // 109
 	"TWANGZZZ.SMP", // 110
 	"ELVIS1ZZ.SMP", // 111 - Elvis impression
 	"SEX3ZZZZ.SMP"  // 112 - Suggestive sound
