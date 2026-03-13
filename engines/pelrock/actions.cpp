@@ -1230,9 +1230,9 @@ void PelrockEngine::usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot) {
 		_alfredState.x -= 10;
 		_alfredState.y += 20;
 		playAlfredSpecialAnim(5);
+		_alfredState.animState = ALFRED_SKIP_DRAWING;
 		_sound->playSound(_room->_roomSfx[0], 0); // Belch
 		waitForSoundEnd();
-		_alfredState.animState = ALFRED_SKIP_DRAWING;
 		_graphics->fadeToBlack(10);
 		// update conversaton state
 		_alfredState.x = 300;
