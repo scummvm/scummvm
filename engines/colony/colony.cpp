@@ -32,11 +32,91 @@
 #include "common/keyboard.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
+#include "graphics/maccursor.h"
 #include "graphics/palette.h"
 #include "graphics/paletteman.h"
 #include <math.h>
 
 namespace Colony {
+
+namespace {
+
+class OwnedCursor final : public Graphics::Cursor {
+public:
+	OwnedCursor(uint16 width, uint16 height, uint16 hotspotX, uint16 hotspotY, byte keyColor,
+			const byte *palette, byte paletteStart, uint16 paletteCount, bool hasMask)
+		: _width(width), _height(height), _hotspotX(hotspotX), _hotspotY(hotspotY),
+		  _keyColor(keyColor), _paletteStart(paletteStart), _paletteCount(paletteCount) {
+		_surface.resize((uint)_width * _height);
+		if (palette && paletteCount) {
+			_palette.resize(paletteCount * 3);
+			memcpy(_palette.data(), palette, paletteCount * 3);
+		}
+		if (hasMask)
+			_mask.resize((uint)_width * _height);
+	}
+
+	uint16 getWidth() const override { return _width; }
+	uint16 getHeight() const override { return _height; }
+	uint16 getHotspotX() const override { return _hotspotX; }
+	uint16 getHotspotY() const override { return _hotspotY; }
+	byte getKeyColor() const override { return _keyColor; }
+	const byte *getSurface() const override { return _surface.data(); }
+	const byte *getMask() const override { return _mask.empty() ? nullptr : _mask.data(); }
+	const byte *getPalette() const override { return _palette.empty() ? nullptr : _palette.data(); }
+	byte getPaletteStartIndex() const override { return _paletteStart; }
+	uint16 getPaletteCount() const override { return _paletteCount; }
+
+	Common::Array<byte> _surface;
+	Common::Array<byte> _palette;
+	Common::Array<byte> _mask;
+
+private:
+	uint16 _width;
+	uint16 _height;
+	uint16 _hotspotX;
+	uint16 _hotspotY;
+	byte _keyColor;
+	byte _paletteStart;
+	uint16 _paletteCount;
+};
+
+static int getMacCursorScaleFactor(OSystem *system) {
+	if (!system)
+		return 1;
+
+	return MAX(1, (int)floorf(system->getHiDPIScreenFactor() + 0.5f));
+}
+
+static Graphics::Cursor *createScaledCursor(const byte *srcSurface, const byte *srcMask,
+		uint16 srcWidth, uint16 srcHeight, uint16 hotspotX, uint16 hotspotY, byte keyColor,
+		const byte *palette, byte paletteStart, uint16 paletteCount, int scale) {
+	scale = MAX(1, scale);
+	OwnedCursor *cursor = new OwnedCursor(srcWidth * scale, srcHeight * scale, hotspotX * scale,
+		hotspotY * scale, keyColor, palette, paletteStart, paletteCount, srcMask != nullptr);
+
+	for (uint16 y = 0; y < cursor->getHeight(); ++y) {
+		const uint16 srcY = y / scale;
+		for (uint16 x = 0; x < cursor->getWidth(); ++x) {
+			const uint16 srcX = x / scale;
+			const uint srcOffset = srcY * srcWidth + srcX;
+			const uint dstOffset = y * cursor->getWidth() + x;
+			cursor->_surface[dstOffset] = srcSurface[srcOffset];
+			if (srcMask)
+				cursor->_mask[dstOffset] = srcMask[srcOffset];
+		}
+	}
+
+	return cursor;
+}
+
+static Graphics::Cursor *cloneAndScaleCursor(const Graphics::Cursor &src, int scale) {
+	return createScaledCursor(src.getSurface(), src.getMask(), src.getWidth(), src.getHeight(),
+		src.getHotspotX(), src.getHotspotY(), src.getKeyColor(), src.getPalette(),
+		src.getPaletteStartIndex(), src.getPaletteCount(), scale);
+}
+
+} // namespace
 
 ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst), _gameDescription(gd), _randomSource("colony") {
 	_level = 0;
@@ -183,6 +263,8 @@ ColonyEngine::~ColonyEngine() {
 	delete _frameLimiter;
 	delete _gfx;
 	delete _sound;
+	delete _macArrowCursor;
+	delete _macCrossCursor;
 	delete _colorResMan;
 	delete _resMan;
 	delete _menuSurface;
@@ -250,6 +332,95 @@ void ColonyEngine::loadMacColors() {
 	debugC(1, kColonyDebugRender, "Loaded %d Mac colors", cnum);
 }
 
+void ColonyEngine::loadMacCursorResources() {
+	delete _macArrowCursor;
+	_macArrowCursor = nullptr;
+	delete _macCrossCursor;
+	_macCrossCursor = nullptr;
+
+	if (getPlatform() != Common::kPlatformMacintosh) {
+		warning("Colony cursor: skipped Mac cursor load (platform=%d, resMan=%p)",
+			(int)getPlatform(), (void *)_resMan);
+		return;
+	}
+
+	struct CursorSource {
+		Common::MacResManager *resMan;
+		const char *label;
+	};
+
+	const CursorSource sources[] = {
+		{ _colorResMan, "color" },
+		{ _resMan, "base" }
+	};
+	const uint32 types[] = {
+		MKTAG('C', 'U', 'R', 'S'),
+		MKTAG('c', 'r', 's', 'r')
+	};
+	const char *typeNames[] = {
+		"CURS",
+		"crsr"
+	};
+	const int cursorScale = getMacCursorScaleFactor(_system);
+	const byte *arrowData = nullptr;
+	const byte *arrowPalette = nullptr;
+	const byte *arrowMask = nullptr;
+	int arrowWidth = 0;
+	int arrowHeight = 0;
+	int arrowHotspotX = 0;
+	int arrowHotspotY = 0;
+	int arrowTransColor = 0;
+
+	if (Graphics::MacWindowManager::getBuiltInCursorData(Graphics::kMacCursorArrow, arrowData, arrowPalette,
+			arrowMask, arrowWidth, arrowHeight, arrowHotspotX, arrowHotspotY, arrowTransColor)) {
+		_macArrowCursor = createScaledCursor(arrowData, arrowMask, arrowWidth, arrowHeight,
+			arrowHotspotX, arrowHotspotY, (byte)arrowTransColor, arrowPalette, 0, 2, cursorScale);
+		warning("Colony cursor: prepared shared Mac arrow cursor at %dx scale (%ux%u)",
+			cursorScale, _macArrowCursor->getWidth(), _macArrowCursor->getHeight());
+	}
+
+	for (uint sourceIdx = 0; sourceIdx < ARRAYSIZE(sources); ++sourceIdx) {
+		Common::MacResManager *resMan = sources[sourceIdx].resMan;
+		if (!resMan || !resMan->hasResFork())
+			continue;
+
+		for (uint typeIdx = 0; typeIdx < ARRAYSIZE(types); ++typeIdx) {
+			Common::SeekableReadStream *cursorStream = resMan->getResource(types[typeIdx], 1000);
+			if (!cursorStream)
+				continue;
+
+			warning("Colony cursor: found %s 1000 in %s resource fork (stream size=%u)",
+				typeNames[typeIdx], sources[sourceIdx].label, (uint)cursorStream->size());
+
+			Graphics::MacCursor *cursor = new Graphics::MacCursor();
+			const bool forceCURSFormat = (types[typeIdx] == MKTAG('C', 'U', 'R', 'S'));
+			if (!cursor->readFromStream(*cursorStream, false, 0xff, forceCURSFormat)) {
+				warning("Colony cursor: failed to decode %s 1000 from %s resource fork",
+					typeNames[typeIdx], sources[sourceIdx].label);
+				delete cursor;
+				cursor = nullptr;
+			} else {
+				Graphics::Cursor *scaledCursor = cloneAndScaleCursor(*cursor, cursorScale);
+				delete cursor;
+				cursor = nullptr;
+				_macCrossCursor = scaledCursor;
+				warning("Colony cursor: loaded %s 1000 from %s resource fork at %dx scale (%ux%u hotspot=%u,%u)",
+					typeNames[typeIdx], sources[sourceIdx].label,
+					cursorScale,
+					_macCrossCursor->getWidth(), _macCrossCursor->getHeight(),
+					_macCrossCursor->getHotspotX(), _macCrossCursor->getHotspotY());
+			}
+
+			delete cursorStream;
+			if (_macCrossCursor) {
+				return;
+			}
+		}
+	}
+
+	warning("Colony cursor: no Mac cursor resource 1000 found in color or base resource forks");
+}
+
 void ColonyEngine::menuCommandsCallback(int action, Common::String &text, void *data) {
 	ColonyEngine *engine = (ColonyEngine *)data;
 	engine->handleMenuAction(action);
@@ -276,7 +447,35 @@ void ColonyEngine::syncMacMenuChecks() {
 void ColonyEngine::updateMouseCapture(bool recenter) {
 	_system->lockMouse(_mouseLocked);
 	_system->showMouse(!_mouseLocked);
-	CursorMan.setDefaultArrowCursor();
+
+	int cursorMode = 0;
+
+	if (!_mouseLocked && _renderMode == Common::kRenderMacintosh && _wm) {
+		if (_macCrossCursor) {
+			cursorMode = 1;
+			_wm->replaceCursor(Graphics::kMacCursorCustom, _macCrossCursor);
+		} else if (_macArrowCursor) {
+			cursorMode = 2;
+			_wm->replaceCursor(Graphics::kMacCursorCustom, _macArrowCursor);
+		} else {
+			cursorMode = 2;
+			_wm->replaceCursor(Graphics::kMacCursorArrow);
+		}
+	} else {
+		CursorMan.setDefaultArrowCursor();
+	}
+
+	if (cursorMode != _lastLoggedCursorMode) {
+		if (cursorMode == 1) {
+			warning("Colony cursor: selecting Mac custom cross cursor");
+		} else if (cursorMode == 2) {
+			warning("Colony cursor: selecting Mac arrow cursor fallback");
+		} else {
+			warning("Colony cursor: selecting default arrow cursor (locked=%d, renderMode=%d, wm=%p)",
+				_mouseLocked ? 1 : 0, (int)_renderMode, (void *)_wm);
+		}
+		_lastLoggedCursorMode = cursorMode;
+	}
 	CursorMan.showMouse(!_mouseLocked);
 
 	if (_mouseLocked && recenter) {
@@ -523,6 +722,7 @@ Common::Error ColonyEngine::run() {
 		if (!_colorResMan->open("(Color) Colony")) {
 			debugC(1, kColonyDebugRender, "Color Colony resource fork not found (optional)");
 		}
+		loadMacCursorResources();
 		_sound->init();
 	}
 
