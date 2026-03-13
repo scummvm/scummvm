@@ -31,6 +31,7 @@
 #include "common/rendermode.h"
 #include "colony/renderer.h"
 #include "colony/sound.h"
+#include "graphics/cursor.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macmenu.h"
 
@@ -497,6 +498,9 @@ private:
 
 	MacColor _macColors[145];
 	bool _hasMacColors;
+	Graphics::Cursor *_macCrossCursor = nullptr;
+	Graphics::Cursor *_macArrowCursor = nullptr;
+	int _lastLoggedCursorMode = -1;
 
 	// Mac menu bar (MacWindowManager overlay)
 	Graphics::MacWindowManager *_wm;
@@ -504,6 +508,7 @@ private:
 	Graphics::ManagedSurface *_menuSurface;
 	int _menuBarHeight;
 	void initMacMenus();
+	void loadMacCursorResources();
 	void handleMenuAction(int action);
 	static void menuCommandsCallback(int action, Common::String &text, void *data);
 

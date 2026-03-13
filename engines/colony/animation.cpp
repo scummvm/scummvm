@@ -30,6 +30,40 @@
 
 namespace Colony {
 
+static void responsiveAnimationDelay(OSystem *system, uint32 delayMs) {
+	if (!system || delayMs == 0)
+		return;
+
+	Common::Array<Common::Event> deferredEvents;
+	uint mouseMoveCount = 0;
+	const uint32 start = system->getMillis();
+	uint32 elapsed = 0;
+	while (elapsed < delayMs) {
+		Common::Event event;
+		while (system->getEventManager()->pollEvent(event)) {
+			if (event.type == Common::EVENT_MOUSEMOVE) {
+				mouseMoveCount++;
+			} else {
+				deferredEvents.push_back(event);
+			}
+		}
+
+		system->updateScreen();
+		const uint32 slice = MIN<uint32>(2, delayMs - elapsed);
+		system->delayMillis(slice);
+		elapsed = system->getMillis() - start;
+	}
+
+	for (uint i = 0; i < deferredEvents.size(); ++i)
+		system->getEventManager()->pushEvent(deferredEvents[i]);
+
+	if (mouseMoveCount || !deferredEvents.empty()) {
+		debugC(5, kColonyDebugAnimation,
+			"responsiveAnimationDelay(%u): mouseMoves=%u deferred=%u",
+			delayMs, mouseMoveCount, (uint)deferredEvents.size());
+	}
+}
+
 static bool isBackdoorCode111111(const uint8 display[6]) {
 	for (int i = 0; i < 6; i++) {
 		if (display[i] != 3)
@@ -352,9 +386,18 @@ void ColonyEngine::playAnimation() {
 	_system->lockMouse(false);
 	_system->showMouse(true);
 	_system->warpMouse(_centerX, _centerY);
-	CursorMan.setDefaultArrowCursor(true);
+	const char *cursorName = "default arrow cursor";
+	if (_renderMode == Common::kRenderMacintosh && _macArrowCursor) {
+		cursorName = "Mac arrow cursor";
+		CursorMan.replaceCursor(_macArrowCursor);
+	} else {
+		CursorMan.setDefaultArrowCursor(true);
+	}
 	CursorMan.showMouse(true);
 	_system->updateScreen();
+	warning(
+		"Colony animation cursor: %s uses %s at center=(%d,%d)",
+		_animationName.c_str(), cursorName, _centerX, _centerY);
 
 	if (_animationName == "reactor" || _animationName == "security") {
 		for (int i = 0; i < 6; i++) {
@@ -482,10 +525,6 @@ void ColonyEngine::playAnimation() {
 	}
 
 	while (_animationRunning && !shouldQuit()) {
-		updateAnimation();
-		drawAnimation();
-		_gfx->copyToScreen();
-
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
 			if (event.type == Common::EVENT_LBUTTONDOWN) {
@@ -517,7 +556,11 @@ void ColonyEngine::playAnimation() {
 				}
 			}
 		}
-		_system->delayMillis(20);
+
+		updateAnimation();
+		drawAnimation();
+		_gfx->copyToScreen();
+		responsiveAnimationDelay(_system, 4);
 	}
 
 	_system->lockMouse(true);
@@ -969,7 +1012,7 @@ void ColonyEngine::handleVanityClick(int item) {
 				setObjectState(12, i);
 				drawAnimation();
 				_gfx->copyToScreen();
-				_system->delayMillis(50);
+				responsiveAnimationDelay(_system, 50);
 			}
 			_doorOpen = true;
 		}
@@ -1103,14 +1146,14 @@ void ColonyEngine::handleSuitClick(int item) {
 				setObjectState(3, i / 2 + 1);
 				drawAnimation();
 				_gfx->copyToScreen();
-				_system->delayMillis(30);
+				responsiveAnimationDelay(_system, 30);
 			}
 			_armor = 0;
 		} else {
 			setObjectState(1, (_armor * 2 + 1) + 1); // intermediate/pressed
 			drawAnimation();
 			_gfx->copyToScreen();
-			_system->delayMillis(50);
+			responsiveAnimationDelay(_system, 50);
 			_armor++;
 		}
 		setObjectState(1, _armor * 2 + 1); // target state
@@ -1126,14 +1169,14 @@ void ColonyEngine::handleSuitClick(int item) {
 				setObjectState(4, i / 2 + 1);
 				drawAnimation();
 				_gfx->copyToScreen();
-				_system->delayMillis(30);
+				responsiveAnimationDelay(_system, 30);
 			}
 			_weapons = 0;
 		} else {
 			setObjectState(2, (_weapons * 2 + 1) + 1); // intermediate/pressed
 			drawAnimation();
 			_gfx->copyToScreen();
-			_system->delayMillis(50);
+			responsiveAnimationDelay(_system, 50);
 			_weapons++;
 		}
 		setObjectState(2, _weapons * 2 + 1);
@@ -1165,14 +1208,14 @@ void ColonyEngine::handleDoorClick(int item) {
 				setObjectState(2, i);
 				drawAnimation();
 				_gfx->copyToScreen();
-				_system->delayMillis(80);
+				responsiveAnimationDelay(_system, 80);
 			}
 		} else {
 			for (int i = openStart; i <= doorFrames; i++) {
 				setObjectState(2, i);
 				drawAnimation();
 				_gfx->copyToScreen();
-				_system->delayMillis(80);
+				responsiveAnimationDelay(_system, 80);
 			}
 		}
 		_doorOpen = !_doorOpen;
@@ -1220,7 +1263,7 @@ void ColonyEngine::handleAirlockClick(int item) {
 				setObjectState(doorItem, i);
 				drawAnimation();
 				_gfx->copyToScreen();
-				_system->delayMillis(80);
+				responsiveAnimationDelay(_system, 80);
 			}
 			setDoorState(_airlockX, _airlockY, _airlockDirection, 1);
 			_doorOpen = false;
@@ -1230,7 +1273,7 @@ void ColonyEngine::handleAirlockClick(int item) {
 				setObjectState(doorItem, i);
 				drawAnimation();
 				_gfx->copyToScreen();
-				_system->delayMillis(80);
+				responsiveAnimationDelay(_system, 80);
 			}
 
 			setDoorState(_airlockX, _airlockY, _airlockDirection, 0);
@@ -1275,7 +1318,7 @@ void ColonyEngine::handleElevatorClick(int item) {
 						setObjectState(4, i);
 						drawAnimation();
 						_gfx->copyToScreen();
-						_system->delayMillis(80);
+						responsiveAnimationDelay(_system, 80);
 					}
 
 					if (fl > _elevatorFloor) {
@@ -1285,7 +1328,7 @@ void ColonyEngine::handleElevatorClick(int item) {
 								setObjectState(2, i);
 							drawAnimation();
 							_gfx->copyToScreen();
-							_system->delayMillis(80);
+							responsiveAnimationDelay(_system, 80);
 						}
 					} else {
 						for (int i = _elevatorFloor; i >= fl; i--) {
@@ -1294,7 +1337,7 @@ void ColonyEngine::handleElevatorClick(int item) {
 								setObjectState(2, i);
 							drawAnimation();
 							_gfx->copyToScreen();
-							_system->delayMillis(80);
+							responsiveAnimationDelay(_system, 80);
 						}
 					}
 
@@ -1306,7 +1349,7 @@ void ColonyEngine::handleElevatorClick(int item) {
 						setObjectState(4, i);
 						drawAnimation();
 						_gfx->copyToScreen();
-						_system->delayMillis(80);
+						responsiveAnimationDelay(_system, 80);
 					}
 					setObjectState(item, 1);
 					drawAnimation();
@@ -1331,7 +1374,7 @@ void ColonyEngine::handleElevatorClick(int item) {
 					setObjectState(3, i);
 					drawAnimation();
 					_gfx->copyToScreen();
-					_system->delayMillis(80);
+					responsiveAnimationDelay(_system, 80);
 				}
 			} else {
 				for (int i = 2; i <= doorFrames; i++) {
@@ -1339,7 +1382,7 @@ void ColonyEngine::handleElevatorClick(int item) {
 					setObjectState(3, i);
 					drawAnimation();
 					_gfx->copyToScreen();
-					_system->delayMillis(80);
+					responsiveAnimationDelay(_system, 80);
 				}
 			}
 			_doorOpen = !_doorOpen;
@@ -1380,7 +1423,7 @@ void ColonyEngine::handleElevatorClick(int item) {
 					setObjectState(4, i);
 					drawAnimation();
 					_gfx->copyToScreen();
-					_system->delayMillis(80);
+					responsiveAnimationDelay(_system, 80);
 				}
 				_doorOpen = true;
 			} else {
@@ -1389,7 +1432,7 @@ void ColonyEngine::handleElevatorClick(int item) {
 					setObjectState(3, i);
 					drawAnimation();
 					_gfx->copyToScreen();
-					_system->delayMillis(80);
+					responsiveAnimationDelay(_system, 80);
 				}
 				_doorOpen = false;
 			}
@@ -1423,7 +1466,7 @@ void ColonyEngine::handleElevatorClick(int item) {
 					setObjectState(3, i);
 					drawAnimation();
 					_gfx->copyToScreen();
-					_system->delayMillis(80);
+					responsiveAnimationDelay(_system, 80);
 				}
 				_elevatorFloor = fl;
 				for (int i = 1; i <= 3; i++) {
@@ -1431,7 +1474,7 @@ void ColonyEngine::handleElevatorClick(int item) {
 					setObjectState(3, i);
 					drawAnimation();
 					_gfx->copyToScreen();
-					_system->delayMillis(80);
+					responsiveAnimationDelay(_system, 80);
 				}
 				setObjectState(item, 1);
 			}
@@ -1452,7 +1495,7 @@ void ColonyEngine::handleControlsClick(int item) {
 				setObjectState(4, i);
 				drawAnimation();
 				_gfx->copyToScreen();
-				_system->delayMillis(20);
+				responsiveAnimationDelay(_system, 20);
 			}
 			break;
 		}
@@ -1655,7 +1698,7 @@ void ColonyEngine::moveObject(int index) {
 			drawComplexSprite(linked[i], ox, oy);
 		_gfx->copyToScreen();
 
-		_system->delayMillis(20);
+		responsiveAnimationDelay(_system, 4);
 	}
 
 	// Reset frame for non-type-2
@@ -1698,7 +1741,7 @@ void ColonyEngine::dolSprite(int index) {
 						}
 						drawAnimation();
 						_gfx->copyToScreen();
-						_system->delayMillis(50);
+						responsiveAnimationDelay(_system, 50);
 					}
 				} else {
 					// Open: animate from current up to max
@@ -1716,7 +1759,7 @@ void ColonyEngine::dolSprite(int index) {
 						}
 						drawAnimation();
 						_gfx->copyToScreen();
-						_system->delayMillis(50);
+						responsiveAnimationDelay(_system, 50);
 					}
 				}
 			}
@@ -1733,14 +1776,14 @@ void ColonyEngine::dolSprite(int index) {
 						ls->current--;
 						drawAnimation();
 						_gfx->copyToScreen();
-						_system->delayMillis(50);
+						responsiveAnimationDelay(_system, 50);
 					}
 				} else {
 					while (ls->current < maxFrames - 1) {
 						ls->current++;
 						drawAnimation();
 						_gfx->copyToScreen();
-						_system->delayMillis(50);
+						responsiveAnimationDelay(_system, 50);
 					}
 				}
 			} else {
@@ -1750,14 +1793,14 @@ void ColonyEngine::dolSprite(int index) {
 						ls->current--;
 						drawAnimation();
 						_gfx->copyToScreen();
-						_system->delayMillis(50);
+						responsiveAnimationDelay(_system, 50);
 					}
 				} else if (ls->current == 1) {
 					while (ls->current < maxFrames - 1) {
 						ls->current++;
 						drawAnimation();
 						_gfx->copyToScreen();
-						_system->delayMillis(50);
+						responsiveAnimationDelay(_system, 50);
 					}
 				}
 			}
