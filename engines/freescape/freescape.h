@@ -479,47 +479,27 @@ public:
 	// Sound
 	Audio::SoundHandle _soundFxHandle;
 	Audio::SoundHandle _musicHandle;
-	Audio::SoundHandle _movementSoundHandle;
-	Freescape::SizedPCSpeaker *_speaker;
+	Sound *_sound;
 
 	bool _syncSound;
 	bool _firstSound;
 	bool _usePrerecordedSounds;
-	void waitForSounds();
-	void stopAllSounds(Audio::SoundHandle &handle);
-	bool isPlayingSound();
-	void playSound(int index, bool sync, Audio::SoundHandle &handle);
+	void waitForSounds(Sound::Type type = Sound::kTypeNormal);
+	void stopAllSounds(Sound::Type type = Sound::kTypeNormal);
+	bool isPlayingSound(Sound::Type type = Sound::kTypeNormal);
+	void playSound(int index, bool sync, Sound::Type type = Sound::kTypeNormal);
 	void playWav(const Common::Path &filename);
 	void playMusic(const Common::Path &filename);
-	void queueSoundConst(double hzFreq, int duration);
-	void playSilence(int duration, bool sync);
-	void playSoundConst(double hzFreq, int duration, bool sync);
-	void playSoundSweepIncWL(double hzFreq1, double hzFreq2, double wlStepPerMS, int resolution, bool sync);
-	uint16 playSoundDOSSpeaker(uint16 startFrequency, soundSpeakerFx *speakerFxInfo);
-	void playSoundDOS(soundSpeakerFx *speakerFxInfo, bool sync, Audio::SoundHandle &handle);
 
-	void playSoundCPC(int index, Audio::SoundHandle &handle);
-	virtual void playSoundC64(int index);
-	virtual void playSoundFx(int index, bool sync);
-	virtual void loadSoundsFx(Common::SeekableReadStream *file, int offset, int number);
-	Common::HashMap<uint16, soundFx *> _soundsFx;
-	void loadSpeakerFxDOS(Common::SeekableReadStream *file, int offsetFreq, int offsetDuration, int numberSounds);
-	void loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxTable, int sfxData);
-	Common::HashMap<uint16, soundSpeakerFx *> _soundsSpeakerFx;
-
-	virtual void playSoundZX(int index, Audio::SoundHandle &handle);
-	void playSoundZX(Common::Array<soundUnitZX> *data, Audio::SoundHandle &handle);
-	Common::HashMap<uint16, Common::Array<soundUnitZX>*> _soundsSpeakerFxZX;
-
-	void loadSoundsCPC(Common::SeekableReadStream *file, int offsetTone, int sizeTone, int offsetEnvelope, int sizeEnvelope, int offsetSoundDef, int sizeSoundDef);
-	Common::Array<byte> _soundsCPCToneTable;
-	Common::Array<byte> _soundsCPCEnvelopeTable;
-	Common::Array<byte> _soundsCPCSoundDefTable;
-
-	void loadSoundsAmigaDemo(Common::SeekableReadStream *file, int offset, int numSounds);
+	virtual void playSoundFx(int index, bool sync, Sound::Type type = Sound::kTypeNormal) {}
+	Sound *loadSoundsFx(Common::SeekableReadStream *file, int offset, int number);
+	Sound *loadSoundsFxDOS(Common::SeekableReadStream *file, int offset, int number);
+	Sound *loadSpeakerFxDOS(Common::SeekableReadStream *file, int offsetFreq, int offsetDuration, int numberSounds);
+	Sound *loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxTable, int sfxData, int numberSounds);
+	Sound *loadSpeakerFxDrillerZX();
+	Sound *loadSoundsCPC(Common::SeekableReadStream *file, int offsetTone, int sizeTone, int offsetEnvelope, int sizeEnvelope, int offsetSoundDef, int sizeSoundDef);
+	Sound *loadSoundsAmigaDemo(Common::SeekableReadStream *file, int offset, int numSounds);
 	void playSoundAmiga(int index, Audio::SoundHandle &handle);
-	Common::Array<AmigaSfxEntry> _amigaSfxTable;
-	Common::Array<AmigaDmaSample> _amigaDmaSamples;
 
 	int _soundIndexShoot;
 	int _soundIndexCollide;

@@ -23,48 +23,27 @@
 #define FREESCAPE_SOUND_H
 
 #include "audio/softsynth/pcspk.h"
-#include "common/array.h"
 
 namespace Freescape {
-
-struct soundFx {
-	int size;
-	float sampleRate;
-	int repetitions;
-	byte *data;
-};
-
-struct soundUnitZX {
-	bool isRaw;
-	uint16 freqTimesSeconds;
-	uint16 tStates;
-	float rawFreq;
-	uint32 rawLengthus;
-	float multiplier;
-};
-
-struct soundSpeakerFx {
-	uint16 frequencyStart;
-	uint8 frequencyDuration;
-	uint8 frequencyStepsNumber;
-	uint16 frequencyStep;
-	uint8 repetitions;
-	Common::Array<struct soundSpeakerFx *>additionalSteps;
-};
-
-struct AmigaSfxEntry {
-	byte priority;
-	Common::Array<uint16> commands;
-};
-
-struct AmigaDmaSample {
-	Common::Array<int8> data;
-};
 
 // TODO: Migrate to Audio::PCSpeaker
 class SizedPCSpeaker : public Audio::PCSpeakerStream {
 public:
 	bool endOfStream() const override { return !isPlaying(); }
+};
+
+class Sound {
+public:
+	enum Type {
+		kTypeNormal,
+		kTypeMovement
+	};
+
+	virtual ~Sound() {}
+
+	virtual void playSound(int index, Type type) = 0;
+	virtual void stopSound(Type type) = 0;
+	virtual bool isPlayingSound(Type type) const = 0;
 };
 
 } // End of namespace Freescape

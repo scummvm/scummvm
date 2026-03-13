@@ -71,13 +71,11 @@ namespace Freescape {
  *     Byte 2: limit - ticks between each application
  */
 
-class CPCSfxStream : public Audio::AY8912Stream {
+// TODO: Remove direct inheritance from the mixer stream
+class CPCSound final : public Sound, private Audio::AY8912Stream {
 public:
-	CPCSfxStream(int index, const byte *soundDefTable, int soundDefTableSize,
-	             const byte *toneTable, const byte *envelopeTable, int rate = 44100)
-		: AY8912Stream(rate, 1000000),
-		  _soundDefTable(soundDefTable), _soundDefTableSize(soundDefTableSize),
-		  _toneTable(toneTable), _envelopeTable(envelopeTable) {
+	CPCSound(Audio::Mixer *mixer, int rate = 44100)
+		: AY8912Stream(rate, 1000000), _mixer(mixer) {
 		_finished = false;
 		_tickSampleCount = 0;
 
@@ -88,7 +86,38 @@ public:
 		setReg(6, 0x07);
 
 		memset(&_ch, 0, sizeof(_ch));
+	}
+
+	void loadSounds(Common::SeekableReadStream *file, int offsetTone, int sizeTone, int offsetEnvelope, int sizeEnvelope, int offsetSoundDef, int sizeSoundDef) {
+		_toneTable.resize(sizeTone);
+		file->seek(offsetTone);
+		file->read(_toneTable.data(), sizeTone);
+
+		_envelopeTable.resize(sizeEnvelope);
+		file->seek(offsetEnvelope);
+		file->read(_envelopeTable.data(), sizeEnvelope);
+
+		_soundDefTable.resize(sizeSoundDef);
+		file->seek(offsetSoundDef);
+		file->read(_soundDefTable.data(), sizeSoundDef);
+	}
+
+	void playSound(int index, Type type) override {
+		if (_soundDefTable.empty()) {
+			debugC(1, kFreescapeDebugMedia, "CPC sound tables not loaded");
+			return;
+		}
+		debugC(1, kFreescapeDebugMedia, "Playing CPC sound %d", index);
 		setupSound(index);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, toAudioStream(), -1, kFreescapeDefaultVolume, 0, DisposeAfterUse::NO);
+	}
+
+	void stopSound(Type type) override {
+		_mixer->stopHandle(_soundFxHandle);
+	}
+
+	bool isPlayingSound(Type type) const override {
+		return _mixer->isSoundHandleActive(_soundFxHandle);
 	}
 
 	int readBuffer(int16 *buffer, const int numSamples) override {
@@ -126,14 +155,16 @@ public:
 	bool endOfStream() const override { return _finished; }
 
 private:
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _soundFxHandle;
+
 	bool _finished;
 	int _tickSampleCount; // Samples generated in current tick
 
-	// Pointers to table data loaded from game binary (owned by FreescapeEngine)
-	const byte *_soundDefTable;
-	int _soundDefTableSize;      // Size in bytes (numSounds * 7)
-	const byte *_toneTable;      // Volume envelope data
-	const byte *_envelopeTable;  // Pitch sweep data
+	// Table data loaded from game binary
+	Common::Array<byte> _soundDefTable;
+	Common::Array<byte> _toneTable;      // Volume envelope data
+	Common::Array<byte> _envelopeTable;  // Pitch sweep data
 
 	/**
 	 * Channel state - mirrors the 23-byte per-channel structure
@@ -181,8 +212,9 @@ private:
 	}
 
 	void setupSound(int index) {
-		int maxSounds = _soundDefTableSize / 7;
+		int maxSounds = _soundDefTable.size() / 7;
 		if (index >= 1 && index <= maxSounds) {
+			_finished = false;
 			setupSub4760h(index);
 		} else {
 			_finished = true;
@@ -193,7 +225,7 @@ private:
 	 * Sound initialization - loads 7-byte entry and configures AY registers.
 	 */
 	void setupSub4760h(int soundNum) {
-		int maxSounds = _soundDefTableSize / 7;
+		int maxSounds = _soundDefTable.size() / 7;
 		if (soundNum < 1 || soundNum > maxSounds) {
 			_finished = true;
 			return;
@@ -292,8 +324,8 @@ private:
 			return;
 		}
 
-		const byte *toneRaw = _toneTable;
-		const byte *envRaw = _envelopeTable;
+		const byte *toneRaw = _toneTable.data();
+		const byte *envRaw = _envelopeTable.data();
 
 		// === PITCH UPDATE ===
 		_ch.pitchLimitCur--;
@@ -392,16 +424,10 @@ private:
 	}
 };
 
-void FreescapeEngine::playSoundCPC(int index, Audio::SoundHandle &handle) {
-	if (_soundsCPCSoundDefTable.empty()) {
-		debugC(1, kFreescapeDebugMedia, "CPC sound tables not loaded");
-		return;
-	}
-	debugC(1, kFreescapeDebugMedia, "Playing CPC sound %d", index);
-	CPCSfxStream *stream = new CPCSfxStream(index,
-		_soundsCPCSoundDefTable.data(), _soundsCPCSoundDefTable.size(),
-		_soundsCPCToneTable.data(), _soundsCPCEnvelopeTable.data());
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, stream->toAudioStream(), -1, kFreescapeDefaultVolume, 0, DisposeAfterUse::YES);
+Sound *FreescapeEngine::loadSoundsCPC(Common::SeekableReadStream *file, int offsetTone, int sizeTone, int offsetEnvelope, int sizeEnvelope, int offsetSoundDef, int sizeSoundDef) {
+	CPCSound *sound = new CPCSound(_mixer);
+	sound->loadSounds(file, offsetTone, sizeTone, offsetEnvelope, sizeEnvelope, offsetSoundDef, sizeSoundDef);
+	return sound;
 }
 
 } // namespace Freescape

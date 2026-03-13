@@ -74,7 +74,7 @@ void DarkEngine::loadAssetsAmigaFullGame() {
 	loadPalettes(stream, 0x2e528);
 	loadGlobalObjects(stream, 0x30f0 - 50, 24);
 	loadMessagesVariableSize(stream, 0x3d37, 66);
-	loadSoundsFx(stream, 0x34738 + 2, 11);
+	_sound = loadSoundsFx(stream, 0x34738 + 2, 11);
 
 	// Load HDSMUSIC.AM music data (Wally Beben custom engine)
 	// HDSMUSIC.AM is an embedded GEMDOS executable at stream offset $BA64

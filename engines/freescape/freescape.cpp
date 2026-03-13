@@ -78,7 +78,7 @@ byte getCPCPixel(byte cpc_byte, int index, bool mode1) {
 }
 
 FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
-	: Engine(syst), _gameDescription(gd), _gfx(nullptr) {
+	: Engine(syst), _gameDescription(gd), _gfx(nullptr), _sound(nullptr) {
 	if (!ConfMan.hasKey("render_mode") || ConfMan.get("render_mode").empty())
 		_renderMode = Common::kRenderEGA;
 	else
@@ -235,7 +235,6 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_viewArea = _fullscreenViewArea;
 	_rnd = new Common::RandomSource("freescape");
 	_gfx = nullptr;
-	_speaker = nullptr;
 	_savedScreen = nullptr;
 
 	_timerStarted = false;
@@ -278,6 +277,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 FreescapeEngine::~FreescapeEngine() {
 	removeTimers();
 	delete _rnd;
+	delete _sound;
 
 	if (_title && _title != _border) {
 		_title->free();
@@ -307,18 +307,10 @@ FreescapeEngine::~FreescapeEngine() {
 
 	delete _gfx;
 	delete _dataBundle;
-	delete _speaker;
 
 	for (auto &it : _indicators) {
 		it->free();
 		delete it;
-	}
-
-	for (auto &it : _soundsFx) {
-		if (it._value) {
-			free(it._value->data);
-			free(it._value);
-		}
 	}
 
 	if (_savedScreen) {
@@ -648,7 +640,7 @@ void FreescapeEngine::processInput() {
 				_savedScreen = nullptr;
 				break;
 			case kActionChangeMode:
-				playSound(_soundIndexCollide, false, _movementSoundHandle);
+				playSound(_soundIndexCollide, false, Sound::kTypeMovement);
 				_shootMode = !_shootMode;
 				centerCrossair();
 				if (!_shootMode) {
@@ -821,7 +813,6 @@ Common::Error FreescapeEngine::run() {
 	//_screenW = g_system->getWidth();
 	//_screenH = g_system->getHeight();
 	_gfx = createRenderer(_screenW, _screenH, _renderMode, ConfMan.getBool("authentic_graphics"));
-	_speaker = new SizedPCSpeaker();
 	_crossairPosition.x = _screenW / 2;
 	_crossairPosition.y = _screenH / 2;
 
@@ -975,32 +966,32 @@ bool FreescapeEngine::checkIfGameEnded() {
 		return false;
 
 	if (_gameStateVars[k8bitVariableShield] == 0) {
-		playSound(_soundIndexNoShield, true, _soundFxHandle);
+		playSound(_soundIndexNoShield, true);
 
 		if (!_noShieldMessage.empty())
 			insertTemporaryMessage(_noShieldMessage, _countdown - 2);
 		_gameStateControl = kFreescapeGameStateEnd;
 	} else if (_gameStateVars[k8bitVariableEnergy] == 0 && isDriller()) {
-		playSound(_soundIndexNoEnergy, true, _soundFxHandle);
+		playSound(_soundIndexNoEnergy, true);
 
 		if (!_noEnergyMessage.empty())
 			insertTemporaryMessage(_noEnergyMessage, _countdown - 2);
 		_gameStateControl = kFreescapeGameStateEnd;
 	} else if (_hasFallen) {
 		_hasFallen = false;
-		playSound(_soundIndexFallen, false, _soundFxHandle);
+		playSound(_soundIndexFallen, false);
 
 		if (!_fallenMessage.empty())
 			insertTemporaryMessage(_fallenMessage, _countdown - 4);
 		_gameStateControl = kFreescapeGameStateEnd;
 	} else if (_countdown <= 0) {
-		playSound(_soundIndexTimeout, false, _soundFxHandle);
+		playSound(_soundIndexTimeout, false);
 
 		if (!_timeoutMessage.empty())
 			insertTemporaryMessage(_timeoutMessage, _countdown - 4);
 		_gameStateControl = kFreescapeGameStateEnd;
 	} else if (_playerWasCrushed) {
-		playSound(_soundIndexCrushed, true, _soundFxHandle);
+		playSound(_soundIndexCrushed, true);
 
 		_playerWasCrushed = false;
 		if (!_crushedMessage.empty())
@@ -1010,7 +1001,7 @@ bool FreescapeEngine::checkIfGameEnded() {
 		// so no need to wait for the end of the game
 		_endGameDelayTicks = 0;
 	} else if (_forceEndGame) {
-		playSound(_soundIndexForceEndGame, true, _soundFxHandle);
+		playSound(_soundIndexForceEndGame, true);
 
 		_forceEndGame = false;
 		if (!_forceEndGameMessage.empty())

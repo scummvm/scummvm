@@ -29,6 +29,15 @@
 
 namespace Freescape {
 
+struct AmigaSfxEntry {
+	byte priority;
+	Common::Array<uint16> commands;
+};
+
+struct AmigaDmaSample {
+	Common::Array<int8> data;
+};
+
 /**
  * Amiga Sound Effect Synthesizer
  *
@@ -394,7 +403,31 @@ private:
 	}
 };
 
-void FreescapeEngine::loadSoundsAmigaDemo(Common::SeekableReadStream *file, int offset, int numSounds) {
+class SoundAmigaDemo final : public Sound {
+public:
+	SoundAmigaDemo(Audio::Mixer *mixer) : _mixer(mixer) {}
+
+	void loadSounds(Common::SeekableReadStream *file, int offset, int numSounds);
+
+	void playSound(int index, Type type) override;
+
+	void stopSound(Type type) override {
+		_mixer->stopHandle(_soundFxHandle);
+	}
+
+	bool isPlayingSound(Type type) const override {
+		return _mixer->isSoundHandleActive(_soundFxHandle);
+	}
+
+private:
+	Common::Array<AmigaSfxEntry> _amigaSfxTable;
+	Common::Array<AmigaDmaSample> _amigaDmaSamples;
+
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _soundFxHandle;
+};
+
+void SoundAmigaDemo::loadSounds(Common::SeekableReadStream *file, int offset, int numSounds) {
 	file->seek(offset);
 	_amigaSfxTable.clear();
 	for (int i = 0; i < numSounds; i++) {
@@ -437,7 +470,7 @@ void FreescapeEngine::loadSoundsAmigaDemo(Common::SeekableReadStream *file, int 
 	}
 }
 
-void FreescapeEngine::playSoundAmiga(int index, Audio::SoundHandle &handle) {
+void SoundAmigaDemo::playSound(int index, Type type) {
 	if (index < 0 || index >= (int)_amigaSfxTable.size()) {
 		debugC(1, kFreescapeDebugMedia, "Amiga sound %d out of range (have %d)", index, (int)_amigaSfxTable.size());
 		return;
@@ -453,9 +486,15 @@ void FreescapeEngine::playSoundAmiga(int index, Audio::SoundHandle &handle) {
 		index, entry.priority, (int)entry.commands.size());
 
 	AmigaSfxStream *stream = new AmigaSfxStream(entry.commands.data(), entry.commands.size(), &_amigaDmaSamples);
-	_mixer->stopHandle(handle);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, stream, -1,
+	_mixer->stopHandle(_soundFxHandle);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, stream, -1,
 		Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
+}
+
+Sound *FreescapeEngine::loadSoundsAmigaDemo(Common::SeekableReadStream *file, int offset, int numSounds) {
+	SoundAmigaDemo *sound = new SoundAmigaDemo(_mixer);
+	sound->loadSounds(file, offset, numSounds);
+	return sound;
 }
 
 } // namespace Freescape

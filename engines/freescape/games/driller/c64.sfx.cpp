@@ -78,11 +78,11 @@ void DrillerC64SFXPlayer::onTimer() {
 	sfxTick();
 }
 
-bool DrillerC64SFXPlayer::isSfxActive() const {
+bool DrillerC64SFXPlayer::isPlayingSound(Type type) const {
 	return (_v1Counter != 0xFF) || (_v3Counter != 0xFF) || (_noiseTimer != 0) || (_sfxPhase != 0);
 }
 
-void DrillerC64SFXPlayer::stopAllSfx() {
+void DrillerC64SFXPlayer::stopSound(Type type) {
 	_v1Counter = 0xFF;
 	_v3Counter = 0xFF;
 	_noiseTimer = 0;
@@ -279,7 +279,7 @@ void DrillerC64SFXPlayer::tickPhase() {
 
 // --- SFX dispatch ---
 
-void DrillerC64SFXPlayer::playSfx(int sfxIndex) {
+void DrillerC64SFXPlayer::playSound(int sfxIndex, Type type) {
 	debugC(1, kFreescapeDebugMedia, "DrillerC64SFX: Playing SFX %d", sfxIndex);
 
 	// Stop any ongoing SFX state before starting new one

@@ -37,6 +37,7 @@ enum {
 class EclipseEngine : public FreescapeEngine {
 public:
 	EclipseEngine(OSystem *syst, const ADGameDescription *gd);
+	~EclipseEngine() override;
 
 	void gotoArea(uint16 areaID, int entranceID) override;
 
@@ -96,8 +97,6 @@ public:
 	Common::String getScoreString(int score);
 	void drawScoreString(int score, int x, int y, uint32 front, uint32 back, Graphics::Surface *surface);
 
-	soundFx *load1bPCM(Common::SeekableReadStream *file, int offset);
-
 	Common::Array<byte> _musicData; // TEMUSIC.ST TEXT segment (Atari ST)
 
 	// Atari ST UI sprites (extracted from binary, pre-converted to target format)
@@ -135,11 +134,13 @@ public:
 
 	bool checkIfGameEnded() override;
 	void endGame() override;
-	void loadSoundsFx(Common::SeekableReadStream *file, int offset, int number) override;
-	void playSoundFx(int index, bool sync) override;
+	void playSoundFx(int index, bool sync, Sound::Type type = Sound::kTypeNormal) override;
 
 	Common::Error saveGameStreamExtended(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStreamExtended(Common::SeekableReadStream *stream) override;
+
+private:
+	Sound *_soundFx;
 };
 
 }

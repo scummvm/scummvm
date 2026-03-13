@@ -260,11 +260,11 @@ void DarkSideC64SFXPlayer::onTimer() {
 	sfxTick();
 }
 
-bool DarkSideC64SFXPlayer::isSfxActive() const {
+bool DarkSideC64SFXPlayer::isPlayingSound(Type type) const {
 	return _state != 0;
 }
 
-void DarkSideC64SFXPlayer::stopAllSfx() {
+void DarkSideC64SFXPlayer::stopSound(Type type) {
 	_state = 0;
 	silenceAll();
 }
@@ -340,7 +340,7 @@ void DarkSideC64SFXPlayer::setupSfx(int index) {
 	_state = 1;
 }
 
-void DarkSideC64SFXPlayer::playSfx(int sfxIndex) {
+void DarkSideC64SFXPlayer::playSound(int sfxIndex, Type type) {
 	// Guard: SFX indices are 1-based, table is 0-based
 	if (sfxIndex < 1 || sfxIndex > 25) {
 		debugC(1, kFreescapeDebugMedia, "Dark Side C64 SFX: invalid index %d", sfxIndex);

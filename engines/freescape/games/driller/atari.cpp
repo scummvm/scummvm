@@ -242,7 +242,7 @@ void DrillerEngine::loadAssetsAtariFullGame() {
 		loadGlobalObjects(stream, 0xd116, 8);
 		load8bitBinary(stream, 0x2afb8, 16);
 		loadPalettes(stream, 0x2ab76);
-		loadSoundsFx(stream, 0x30da6 + 0x147c, 25);
+		_sound = loadSoundsFx(stream, 0x30da6 + 0x147c, 25);
 	} else if (_variant & GF_ATARI_BUDGET) {
 		Common::File file;
 		file.open("x.prg");
@@ -267,7 +267,7 @@ void DrillerEngine::loadAssetsAtariFullGame() {
 			loadGlobalObjects(&file, 0xbccc - 0x1da, 8);
 			load8bitBinary(&file, 0x29b3c - 0x1d6, 16);
 			loadPalettes(&file, 0x296fa - 0x1d6);
-			loadSoundsFx(&file, 0x30da6 - 0x1d6, 25);
+			_sound = loadSoundsFx(&file, 0x30da6 - 0x1d6, 25);
 		} else {
 			_border = loadAndConvertNeoImage(stream, 0x1371a);
 			_title = loadAndConvertNeoImage(stream, 0x396);
@@ -283,7 +283,7 @@ void DrillerEngine::loadAssetsAtariFullGame() {
 			loadGlobalObjects(stream, 0xbccc, 8);
 			load8bitBinary(stream, 0x29b3c, 16);
 			loadPalettes(stream, 0x296fa);
-			loadSoundsFx(stream, 0x30da6, 25);
+			_sound = loadSoundsFx(stream, 0x30da6, 25);
 		}
 	} else
 		error("Unknown Atari ST Driller variant");
@@ -366,7 +366,7 @@ void DrillerEngine::loadAssetsAtariDemo() {
 	if (!file.isOpen())
 		error("Failed to open 'soundfx' executable for AtariST demo");
 
-	loadSoundsFx(&file, 0, 25);
+	_sound = loadSoundsFx(&file, 0, 25);
 
 	for (auto &area : _areaMap) {
 		// Center and pad each area name so we do not have to do it at each frame

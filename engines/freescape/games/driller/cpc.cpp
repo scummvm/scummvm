@@ -139,25 +139,11 @@ void DrillerEngine::loadAssetsCPCFullGame() {
 	if (!file.isOpen())
 		error("Failed to open DRILL.BIN");
 
-	loadSoundsCPC(&file, 0x23D2 + 0x80, 68, 0x2416 + 0x80, 104, 0x247E + 0x80, 140);
+	_sound = loadSoundsCPC(&file, 0x23D2 + 0x80, 68, 0x2416 + 0x80, 104, 0x247E + 0x80, 140);
 	loadMessagesFixedSize(&file, 0x214c, 14, 20);
 	loadFonts(&file, 0x5b69);
 	loadGlobalObjects(&file, 0x1d07, 8);
 	load8bitBinary(&file, 0x5ccb, 16);
-}
-
-void FreescapeEngine::loadSoundsCPC(Common::SeekableReadStream *file, int offsetTone, int sizeTone, int offsetEnvelope, int sizeEnvelope, int offsetSoundDef, int sizeSoundDef) {
-	_soundsCPCToneTable.resize(sizeTone);
-	file->seek(offsetTone);
-	file->read(_soundsCPCToneTable.data(), sizeTone);
-
-	_soundsCPCEnvelopeTable.resize(sizeEnvelope);
-	file->seek(offsetEnvelope);
-	file->read(_soundsCPCEnvelopeTable.data(), sizeEnvelope);
-
-	_soundsCPCSoundDefTable.resize(sizeSoundDef);
-	file->seek(offsetSoundDef);
-	file->read(_soundsCPCSoundDefTable.data(), sizeSoundDef);
 }
 
 void DrillerEngine::drawCPCUI(Graphics::Surface *surface) {

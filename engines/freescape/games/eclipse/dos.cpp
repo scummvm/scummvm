@@ -54,8 +54,8 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 			error("Failed to open TOTEE.EXE");
 
 		loadMessagesFixedSize(&file, 0x710f, 16, 20);
-		loadSoundsFx(&file, 0xd670, 5);
-		loadSpeakerFxDOS(&file, 0x7396 + 0x200, 0x72a1 + 0x200, 20);
+		_soundFx = loadSoundsFxDOS(&file, 0xd670, 5);
+		_sound = loadSpeakerFxDOS(&file, 0x7396 + 0x200, 0x72a1 + 0x200, 20);
 		loadFonts(&file, 0xd403);
 		load8bitBinary(&file, 0x3ce0, 16);
 
@@ -80,7 +80,7 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 			error("Failed to open TOTEC.EXE");
 
 		loadMessagesFixedSize(&file, 0x594f, 16, 20);
-		loadSoundsFx(&file, 0xb9f0, 5);
+		_soundFx = loadSoundsFxDOS(&file, 0xb9f0, 5);
 		loadFonts(&file, 0xb785);
 		load8bitBinary(&file, 0x2530, 4);
 		_border = load8bitBinImage(&file, 0x210);
@@ -174,57 +174,11 @@ void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {
 	drawCompass(surface, 229, 177, _yaw, 10, black);
 }
 
-soundFx *EclipseEngine::load1bPCM(Common::SeekableReadStream *file, int offset) {
-	soundFx *sound = (soundFx *)malloc(sizeof(soundFx));
-	file->seek(offset);
-	sound->size = file->readUint16LE();
-	debugC(1, kFreescapeDebugParser, "size: %d", sound->size);
-	sound->sampleRate = file->readUint16LE();
-	debugC(1, kFreescapeDebugParser, "sample rate?: %f", sound->sampleRate);
-
-	uint8 *data = (uint8 *)malloc(sound->size * sizeof(uint8) * 8);
-	for (int i = 0; i < sound->size; i++) {
-		uint8 byte = file->readByte();
-		for (int j = 0; j < 8; j++) {
-			data[8 * i + j] = byte & 1 ? 255 : 0;
-			byte = byte >> 1;
-		}
-	}
-	sound->size = sound->size * 8;
-	sound->data = (byte *)data;
-	return sound;
-}
-
-void EclipseEngine::loadSoundsFx(Common::SeekableReadStream *file, int offset, int number) {
-	if (isAmiga() || isAtariST()) {
-		FreescapeEngine::loadSoundsFx(file, offset, number);
-		return;
-	}
-
-	for (int i = 0; i < number; i++) {
-		_soundsFx[i] = load1bPCM(file, offset);
-		offset += (_soundsFx[i]->size / 8) + 4;
-	}
-}
-
-
-void EclipseEngine::playSoundFx(int index, bool sync) {
-	if (isAmiga() || isAtariST()) {
-		FreescapeEngine::playSoundFx(index, sync);
-		return;
-	}
-
-	if (_soundsFx.size() == 0) {
-		debugC(1, kFreescapeDebugMedia, "WARNING: Sounds are not loaded");
-		return;
-	}
-
-	int size = _soundsFx[index]->size;
-	//int sampleRate = _soundsFx[index]->sampleRate;
-	byte *data = _soundsFx[index]->data;
-
-	Audio::SeekableAudioStream *stream = Audio::makeRawStream(data, size, 11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, stream, -1, kFreescapeDefaultVolume / 10);
+void EclipseEngine::playSoundFx(int index, bool sync, Sound::Type type) {
+	if (_soundFx)
+		_soundFx->playSound(index, type);
+	else
+		playSound(index, sync, type);
 }
 
 

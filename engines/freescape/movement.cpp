@@ -228,7 +228,7 @@ void FreescapeEngine::shoot() {
 	if (_shootingFrames > 0) // No more than one shot at a time
 		return;
 
-	playSound(_soundIndexShoot, false, _movementSoundHandle);
+	playSound(_soundIndexShoot, false, Sound::kTypeMovement);
 	g_system->delayMillis(2);
 	_shootingFrames = 10;
 
@@ -517,7 +517,7 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 		if ((lastPosition - newPosition).length() < 1) { // Something is blocking the player
 			if (!executed && !isCastle())
 				setGameBit(31);
-			playSound(_soundIndexCollide, false, _movementSoundHandle);
+			playSound(_soundIndexCollide, false, Sound::kTypeMovement);
 		}
 		_position = newPosition;
 		return;
@@ -566,7 +566,7 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 		if (isEclipse()) // No need for an variable index, since these are special types of sound
 			playSoundFx(0, true);
 		else
-			playSound(_soundIndexFall, false, _movementSoundHandle);
+			playSound(_soundIndexFall, false, Sound::kTypeMovement);
 
 		if (_hasFallen)
 			stopMovement();
@@ -590,16 +590,16 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 
 	if (isSteppingUp)  {
 		//debug("Stepping up sound!");
-		if (!_mixer->isSoundHandleActive(_movementSoundHandle))
-			playSound(_soundIndexStepUp, false, _movementSoundHandle);
+		if (!isPlayingSound(Sound::kTypeMovement))
+			playSound(_soundIndexStepUp, false, Sound::kTypeMovement);
 	} else if (isSteppingDown) {
 		//debug("Stepping down sound!");
-		if (!_mixer->isSoundHandleActive(_movementSoundHandle))
-			playSound(_soundIndexStepDown, false, _movementSoundHandle);
+		if (!isPlayingSound(Sound::kTypeMovement))
+			playSound(_soundIndexStepDown, false, Sound::kTypeMovement);
 	} else if (isCollidingWithWall) {
 		//debug("Colliding with wall sound!");
-		if (!_mixer->isSoundHandleActive(_movementSoundHandle))
-			playSound(_soundIndexCollide, false, _movementSoundHandle);
+		if (!isPlayingSound(Sound::kTypeMovement))
+			playSound(_soundIndexCollide, false, Sound::kTypeMovement);
 	}
 
 	_position = newPosition;
@@ -623,7 +623,7 @@ bool FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, 
 	Object *collided = nullptr;
 	_gotoExecuted = false;
 
-	_speaker->stop();
+	stopAllSounds(Sound::kTypeMovement);
 
 	Math::Ray ray(newPosition, -_upVector);
 	collided = _currentArea->checkCollisionRay(ray, _playerHeight + 3);

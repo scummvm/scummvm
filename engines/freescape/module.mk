@@ -31,7 +31,6 @@ MODULE_OBJS := \
 	games/driller/cpc.o \
 	games/driller/dos.o \
 	games/driller/driller.o \
-	games/driller/sounds.o \
 	games/driller/zx.o \
 	games/eclipse/atari.o \
 	games/eclipse/atari.music.o \
@@ -57,6 +56,8 @@ MODULE_OBJS := \
 	sound/common.o \
 	sound/cpc.o \
 	sound/dos.o \
+	sound/fx.o \
+	sound/fx_dos.o \
 	sound/zx.o \
 	ui.o \
 	unpack.o \
