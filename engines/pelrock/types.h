@@ -628,6 +628,11 @@ struct GameStateData {
 		inventoryItems.push_back(id);
 	}
 
+	void clearInventory() {
+		inventoryItems.clear();
+		selectedInventoryItem = -1;
+	}
+
 	void removeInventoryItem(int id) {
 		for (uint i = 0; i < inventoryItems.size(); i++) {
 			if (inventoryItems[i] == id) {

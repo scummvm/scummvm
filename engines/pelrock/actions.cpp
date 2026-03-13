@@ -1790,9 +1790,13 @@ void PelrockEngine::magicFormula(int inventoryObject, HotSpot *hotspot) {
 	}
 	_state->setFlag(FLAG_FORMULA_MAGICA, _state->getFlag(FLAG_FORMULA_MAGICA) + 1);
 	if (_state->getFlag(FLAG_FORMULA_MAGICA) == 4) {
-
 		smokeAnimation(-1);
 		_alfredState.setState(ALFRED_IDLE);
+		_state->clearInventory();
+		_state->addInventoryItem(88);
+		_state->addInventoryItem(76);
+		_state->addInventoryItem(82);
+
 		setScreenAndPrepare(39, ALFRED_UP);
 	}
 }
