@@ -143,6 +143,7 @@ SoundManager::SoundManager(Audio::Mixer *mixer)
 	: _mixer(mixer), _currentVolume(128) {
 	// TODO: Initialize sound manager
 	g_system->getAudioCDManager()->open();
+	memset(_sfxSoundIndex, 0xFF, sizeof(_sfxSoundIndex));
 }
 
 SoundManager::~SoundManager() {
@@ -154,7 +155,9 @@ void SoundManager::playSound(byte index, int channel, int loopCount) {
 	// debug("Playing sound index %d (%s)", index, SOUND_FILENAMES[index]);
 	auto it = _soundMap.find(SOUND_FILENAMES[index]);
 	if (it != _soundMap.end()) {
-		playSound(it->_value, channel, loopCount);
+		int usedChannel = playSound(it->_value, channel, loopCount);
+		if (usedChannel >= 0 && usedChannel < kMaxChannels)
+			_sfxSoundIndex[usedChannel] = index;
 	} else {
 		debug("Sound file %s not found in sound map", SOUND_FILENAMES[index]);
 	}
@@ -169,11 +172,11 @@ void SoundManager::playSound(const char *filename, int channel, int loopCount) {
 	}
 }
 
-void SoundManager::playSound(SonidoFile sound, int channel, int loopCount) {
+int SoundManager::playSound(SonidoFile sound, int channel, int loopCount) {
 	Common::File sonidosFile;
 	if (!sonidosFile.open(Common::Path("SONIDOS.DAT"))) {
 		debug("Failed to open SONIDOS.DAT");
-		return;
+		return -1;
 	}
 
 	sonidosFile.seek(sound.offset, SEEK_SET);
@@ -206,7 +209,7 @@ void SoundManager::playSound(SonidoFile sound, int channel, int loopCount) {
 	} else {
 		debug("Unknown sound format on sound with name %s at offset %d, with size %d", sound.filename.c_str(), sound.offset, sound.size);
 		delete[] data;
-		return;
+		return -1;
 	}
 
 	if (stream) {
@@ -222,7 +225,9 @@ void SoundManager::playSound(SonidoFile sound, int channel, int loopCount) {
 		Audio::AudioStream *finalStream = loopCount != -1 ? stream : Audio::makeLoopingAudioStream(stream, 0);
 
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandles[channel], finalStream, -1, _currentVolume, 0, DisposeAfterUse::YES);
+		return channel;
 	}
+	return -1;
 }
 
 void SoundManager::playSound(byte *soundData, uint32 size, int channel) {
@@ -279,6 +284,14 @@ int SoundManager::findFreeChannel() {
 		}
 	}
 	return 0;
+}
+
+bool SoundManager::isSoundIndexPlaying(byte index) const {
+	for (int i = 0; i < kMaxChannels; i++) {
+		if (_sfxSoundIndex[i] == index && _mixer->isSoundHandleActive(_sfxHandles[i]))
+			return true;
+	}
+	return false;
 }
 
 void SoundManager::stopAllSounds() {

@@ -275,7 +275,10 @@ void PelrockEngine::playSoundIfNeeded() {
 		if (roomSoundIndex < _room->_roomSfx.size()) {
 			byte soundFileIndex = _room->_roomSfx[roomSoundIndex];
 			if (soundFileIndex != 0) { // 0 = NO_SOUND.SMP (disabled)
-				_sound->playSound(soundFileIndex);
+				// Don't play the same sound twice at the same time
+				if (!_sound->isSoundIndexPlaying(soundFileIndex)) {
+					_sound->playSound(soundFileIndex);
+				}
 			}
 		}
 	}

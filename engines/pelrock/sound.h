@@ -75,6 +75,7 @@ public:
 
 	bool isPlaying() const;
 	bool isPlaying(int channel) const;
+	bool isSoundIndexPlaying(byte index) const;
 	void loadSoundIndex();
 
 	bool isMusicPlaying();
@@ -94,7 +95,7 @@ public:
 	byte getCurrentMusicTrack() const { return _currentMusicTrack; }
 
 private:
-	void playSound(SonidoFile sound, int channel = -1, int loopCount = 1);
+	int playSound(SonidoFile sound, int channel = -1, int loopCount = 1);
 	SoundFormat detectFormat(byte *data, uint32 size);
 	int getSampleRate(byte *data, SoundFormat format);
 	int findFreeChannel();
@@ -104,6 +105,7 @@ private:
 	int _currentVolume;
 	Audio::SoundHandle _musicHandle;
 	Audio::SoundHandle _sfxHandles[kMaxChannels];
+	byte _sfxSoundIndex[kMaxChannels]; // tracks which sound index is on each channel (0xFF = none)
 	Common::HashMap<Common::String, SonidoFile> _soundMap;
 	bool _isPaused = false;
 	byte _currentMusicTrack = 0;
