@@ -47,6 +47,7 @@ private:
 	bool loadMenuItems();
 	Common::Error runQuickTips();
 	Common::Error runMainMenuStub();
+	Common::Error runRoomSetupStub(const Common::String &entranceName);
 	void renderQuickTipsScreen(const Common::String &tipText) const;
 	void renderMainMenuStub(int selectedItem, const Common::String &statusMessage) const;
 	bool handleSystemEvent(const Common::Event &event, Common::Error &result);

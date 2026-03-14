@@ -22,6 +22,7 @@
 #include "harvester/startup_flow.h"
 
 #include "common/debug.h"
+#include "common/endian.h"
 #include "common/events.h"
 #include "common/formats/ini-file.h"
 #include "common/memstream.h"
@@ -61,6 +62,10 @@ static const byte kTextColorHover = 251;
 static const byte kTextColorDim = 248;
 static const byte kShadowColor = 0;
 static const byte kPanelFillColor = 1;
+
+static byte expand6BitColor(byte value) {
+	return (value * 255 + 31) / 63;
+}
 
 static Common::Rect quickTipsExitRect() {
 	return Common::Rect(180, 280, 238, 291);
@@ -103,6 +108,33 @@ static void drawWrappedShadowedText(Graphics::Screen &screen, const Graphics::Fo
 	const int lineHeight = font.getFontHeight() + 2;
 	for (uint i = 0; i < lines.size(); ++i)
 		drawShadowedString(screen, font, lines[i], x, y + i * lineHeight, width, color);
+}
+
+static bool loadPaletteResource(ResourceManager &resources, const Common::String &path, byte *dest) {
+	Common::Array<byte> data;
+	if (!resources.loadFile(path, data) || data.size() < 256 * 3)
+		return false;
+
+	for (uint i = 0; i < 256 * 3; ++i)
+		dest[i] = expand6BitColor(data[i]);
+
+	return true;
+}
+
+static bool loadBitmapResource(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap) {
+	Common::Array<byte> data;
+	if (!resources.loadFile(path, data) || data.size() < 12)
+		return false;
+
+	bitmap.width = READ_LE_UINT32(data.data());
+	bitmap.height = READ_LE_UINT32(data.data() + 4);
+	const uint32 pixelCount = bitmap.width * bitmap.height;
+	if (bitmap.width == 0 || bitmap.height == 0 || data.size() < 12 + pixelCount)
+		return false;
+
+	bitmap.pixels.resize(pixelCount);
+	memcpy(bitmap.pixels.data(), data.data() + 12, pixelCount);
+	return true;
 }
 
 static Common::String trimAsciiLine(const Common::String &value) {
@@ -289,9 +321,22 @@ Common::Error StartupFlow::runMainMenuStub() {
 					if (_menuItems[selectedItem].equalsIgnoreCase("QUIT GAME"))
 						return Common::kNoError;
 
-					statusMessage = Common::String::format("%s is stubbed; room setup and gameplay loop are next.",
-						_menuItems[selectedItem].c_str());
-					needsRedraw = true;
+					if (_menuItems[selectedItem].equalsIgnoreCase("NEW GAME")) {
+						Common::Error roomError = runRoomSetupStub("START");
+						if (roomError.getCode() == Common::kReadingFailed) {
+							statusMessage = "Unable to resolve START room setup from HARVEST.SCR.";
+							needsRedraw = true;
+						} else if (roomError.getCode() != Common::kNoError) {
+							return roomError;
+						} else {
+							statusMessage = "Resolved START room handoff from HARVEST.SCR.";
+							needsRedraw = true;
+						}
+					} else {
+						statusMessage = Common::String::format("%s is stubbed; room setup and gameplay loop are next.",
+							_menuItems[selectedItem].c_str());
+						needsRedraw = true;
+					}
 				}
 				break;
 			case Common::EVENT_LBUTTONDOWN:
@@ -305,9 +350,101 @@ Common::Error StartupFlow::runMainMenuStub() {
 				if (_menuItems[selectedItem].equalsIgnoreCase("QUIT GAME"))
 					return Common::kNoError;
 
-				statusMessage = Common::String::format("%s is stubbed; room setup and gameplay loop are next.",
-					_menuItems[selectedItem].c_str());
+				if (_menuItems[selectedItem].equalsIgnoreCase("NEW GAME")) {
+					Common::Error roomError = runRoomSetupStub("START");
+					if (roomError.getCode() == Common::kReadingFailed) {
+						statusMessage = "Unable to resolve START room setup from HARVEST.SCR.";
+						needsRedraw = true;
+					} else if (roomError.getCode() != Common::kNoError) {
+						return roomError;
+					} else {
+						statusMessage = "Resolved START room handoff from HARVEST.SCR.";
+						needsRedraw = true;
+					}
+				} else {
+					statusMessage = Common::String::format("%s is stubbed; room setup and gameplay loop are next.",
+						_menuItems[selectedItem].c_str());
+					needsRedraw = true;
+				}
+				break;
+			default:
+				break;
+			}
+		}
+
+		limiter.delayBeforeSwap();
+		limiter.startFrame();
+	}
+
+	return Common::kNoError;
+}
+
+Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) {
+	Common::String roomName;
+	Common::String palettePath;
+	Common::String backgroundPath;
+	if (!_engine.getStartupScript()->resolveRoomSetup(entranceName, roomName, palettePath, backgroundPath))
+		return Common::kReadingFailed;
+
+	byte palette[256 * 3] = { 0 };
+	IndexedBitmap background;
+	if (!loadPaletteResource(*_engine.getResources(), palettePath, palette) ||
+		!loadBitmapResource(*_engine.getResources(), backgroundPath, background)) {
+		return Common::kReadingFailed;
+	}
+
+	Graphics::Screen *screen = _engine.getScreen();
+	const StartupArt *art = _engine.getStartupArt();
+	const Graphics::Font *titleFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	const Graphics::Font *bodyFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	if (!screen || !art || !titleFont || !bodyFont)
+		return Common::kNoError;
+
+	const Common::String statusMessage = Common::String::format(
+		"Resolved %s -> %s using %s and %s. Room setup is still stubbed.",
+		entranceName.c_str(), roomName.c_str(), palettePath.c_str(), backgroundPath.c_str());
+	bool needsRedraw = true;
+	Graphics::FrameLimiter limiter(g_system, 60);
+
+	while (!_engine.shouldQuit()) {
+		if (needsRedraw) {
+			screen->setPalette(palette);
+			screen->fillRect(screen->getBounds(), 0);
+			blitBitmap(*screen, background, 0, 0);
+
+			const Common::Rect panel(72, 336, 568, 468);
+			screen->fillRect(panel, kPanelFillColor);
+			drawShadowedString(*screen, *titleFont, Common::String::format("Room Setup Stub: %s", roomName.c_str()),
+				panel.left, 348, panel.width(), kTextColorNormal, Graphics::kTextAlignCenter);
+			drawWrappedShadowedText(*screen, *bodyFont, statusMessage, panel.left + 24, 386, panel.width() - 48,
+				kTextColorNormal);
+			drawShadowedString(*screen, *bodyFont, "Press Enter, Escape, or click to return to the menu stub.",
+				panel.left, 430, panel.width(), kTextColorDim, Graphics::kTextAlignCenter);
+
+			blitAnimationFrame(*screen, art->getPointerFrames(), 0, _mousePos.x, _mousePos.y);
+			screen->makeAllDirty();
+			screen->update();
+			needsRedraw = false;
+		}
+
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			Common::Error result = Common::kNoError;
+			if (handleSystemEvent(event, result))
+				return result;
+
+			switch (event.type) {
+			case Common::EVENT_MOUSEMOVE:
 				needsRedraw = true;
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+				return Common::kNoError;
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_RETURN ||
+					event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
+					event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					return Common::kNoError;
+				}
 				break;
 			default:
 				break;

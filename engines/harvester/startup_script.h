@@ -29,21 +29,54 @@ namespace Harvester {
 
 class ResourceManager;
 
+struct StartupEntranceRecord {
+	Common::String direction;
+	Common::String roomName;
+	Common::String entranceName;
+};
+
+struct StartupRoomRecord {
+	Common::String roomName;
+	Common::String palettePath;
+	Common::String onEnterCommand;
+	Common::String onExitCommand;
+	bool dimmable = false;
+};
+
+struct StartupObjectRecord {
+	Common::String ownerOrRoom;
+	Common::String objectName;
+	Common::String resourcePath;
+	Common::String identTextKey;
+	Common::String displayName;
+	bool visible = false;
+	bool active = false;
+};
+
 class StartupScript {
 public:
 	bool load(ResourceManager &resources);
 
 	const Common::String &getPath() const { return _path; }
 	const Common::Array<byte> &getData() const { return _data; }
+	const Common::Array<StartupEntranceRecord> &getEntrances() const { return _entrances; }
+	const Common::Array<StartupRoomRecord> &getRooms() const { return _rooms; }
+	const Common::Array<StartupObjectRecord> &getObjects() const { return _objects; }
 	bool isQuickTipsEnabled() const { return _quickTipsEnabled; }
 	void setQuickTipsEnabled(bool enabled) { _quickTipsEnabled = enabled; }
+	bool resolveRoomSetup(const Common::String &entranceName, Common::String &roomName,
+		Common::String &palettePath, Common::String &backgroundPath) const;
 
 private:
 	bool loadConfig(ResourceManager &resources);
 	void decode();
+	void parseTownRecords(ResourceManager &resources);
 
 	Common::String _path;
 	Common::Array<byte> _data;
+	Common::Array<StartupEntranceRecord> _entrances;
+	Common::Array<StartupRoomRecord> _rooms;
+	Common::Array<StartupObjectRecord> _objects;
 	bool _quickTipsEnabled = true;
 };
 
