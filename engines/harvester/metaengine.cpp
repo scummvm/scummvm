@@ -21,11 +21,33 @@
 
 #include "base/plugins.h"
 
+#include "common/translation.h"
+#include "harvester/detection.h"
 #include "harvester/metaengine.h"
 #include "harvester/harvester.h"
 
+static const ADExtraGuiOptionsMap gameGuiOptions[] = {
+	{
+		GAMEOPTION_GORE,
+		{
+			_s("Enable gore"),
+			_s("When disabled, the startup movie player follows the original GORE=NO censorship path."),
+			"gore",
+			true,
+			0,
+			0
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 const char *HarvesterMetaEngine::getName() const {
 	return "harvester";
+}
+
+const ADExtraGuiOptionsMap *HarvesterMetaEngine::getAdvancedExtraGuiOptions() const {
+	return gameGuiOptions;
 }
 
 Common::Error HarvesterMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

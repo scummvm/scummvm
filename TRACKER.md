@@ -2,6 +2,20 @@
 
 ## Last Confirmed Action
 
+- Closed the last ambiguous backend slot in `VesaModeBackend`.
+  - Renamed `callback_18` to `unused_callback` after an instruction-level scan showed the only indirect backend calls in the current binary are `blit_rect_callback` and `select_bank_for_scanline_callback` from `run_fst_sequence_player`; no callers use slot `+0x18`.
+  - Renamed the shared VGA/VESA no-op implementations to match that evidence:
+    - `noop_vga_unused_callback`
+    - `noop_vesa_640x400_unused_callback`
+    - `noop_vesa_640x480_unused_callback`
+    - `noop_vesa_800x600_unused_callback`
+    - `noop_vesa_1024x768_unused_callback`
+  - Saved `HARVEST.LE`.
+- Closed the remaining `run_fst_sequence_player` censorship gate from the binary through the ScummVM startup player.
+  - Renamed `g_gore_enabled` at `0xc0fbc` in Ghidra and saved `HARVEST.LE`.
+  - Confirmed `startup_main` defaults that persisted flag to `1` and clears it only when config key `GORE` equals `NO`.
+  - Confirmed `run_fst_sequence_player` only consults `g_fst_censorship_toggle_entries` when `g_gore_enabled == 0`, keeps advancing audio timing while censored, and keeps capturing later movie palettes so the next uncensored frame can restore the saved movie palette before decode when needed.
+  - ScummVM now exposes that path as a Harvester launcher option and mirrors the original behavior in `engines/harvester/fst_player.cpp` by toggling `GRAPHIC/OTHER/CENSORED.PCX` against the recovered 25-entry frame table.
 - Continued the remaining video-backend callback pass around `configure_video_surface`.
   - Recovered the hidden shared wrapper at `0x14f40` as `set_vesa_write_window_bank`; it is the write-window-fixed wrapper above `set_vesa_window_bank`.
   - Corrected the backend table itself from VESA-only to generic video-mode state:
@@ -98,11 +112,11 @@
   - The descriptor blob entry at `0xc0c98` points directly at this object, which confirms that the table-driven wrappers around `0x18380` / `0x183c0` / `0x183e0` / `0x18400` are operating on the current-bank driver context rather than on a `PcmSoundState`.
 - Current live-state counts:
   - `HARVEST.LE` currently has `774` total functions
-  - `417` have custom/documented names
-  - `357` still remain unnamed / `FUN_*`
+  - `418` have custom/documented names
+  - `356` still remain unnamed / `FUN_*`
 
 ## Next Suggested Action
 
 - Highest-value targets:
-  - if the video thread still needs more precision, resolve the last ambiguous backend slot at `VesaModeBackend.callback_18`, especially the shared VGA/VESA no-op at `0x11030` and any direct callers that still bypass typed `VideoSurfaceContext` uses
-  - otherwise shift back outward and recover the remaining `update_actor_runtime_state` consumers of the confirmed blocking-entity pointer at `+0x109c`, especially the read-side meaning of the four remembered blocker slots
+  - shift back outward and recover the remaining `update_actor_runtime_state` consumers of the confirmed blocking-entity pointer at `+0x109c`, especially the read-side meaning of the four remembered blocker slots
+  - if that thread stalls, revisit the still-unused `display_start_preset_callback` slot family to confirm whether it is fully dead in this binary or only dormant
