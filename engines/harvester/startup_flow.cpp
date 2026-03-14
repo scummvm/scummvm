@@ -380,17 +380,28 @@ Common::Error StartupFlow::runMainMenuStub() {
 }
 
 Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) {
-	Common::String roomName;
-	Common::String palettePath;
-	Common::String backgroundPath;
-	if (!_engine.getStartupScript()->resolveRoomSetup(entranceName, roomName, palettePath, backgroundPath))
+	StartupRoomSetupState state;
+	if (!_engine.getStartupScript()->resolveRoomSetupState(entranceName, state, *_engine.getResources()))
 		return Common::kReadingFailed;
 
 	byte palette[256 * 3] = { 0 };
 	IndexedBitmap background;
-	if (!loadPaletteResource(*_engine.getResources(), palettePath, palette) ||
-		!loadBitmapResource(*_engine.getResources(), backgroundPath, background)) {
+	if (!loadPaletteResource(*_engine.getResources(), state.palettePath, palette) ||
+		!loadBitmapResource(*_engine.getResources(), state.backgroundPath, background)) {
 		return Common::kReadingFailed;
+	}
+
+	struct OverlayBitmap {
+		StartupObjectRecord object;
+		IndexedBitmap bitmap;
+	};
+	Common::Array<OverlayBitmap> overlays;
+	for (const StartupObjectRecord &object : state.activeObjects) {
+		OverlayBitmap overlay;
+		overlay.object = object;
+		if (!loadBitmapResource(*_engine.getResources(), object.resourcePath, overlay.bitmap))
+			continue;
+		overlays.push_back(overlay);
 	}
 
 	Graphics::Screen *screen = _engine.getScreen();
@@ -400,9 +411,14 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 	if (!screen || !art || !titleFont || !bodyFont)
 		return Common::kNoError;
 
-	const Common::String statusMessage = Common::String::format(
-		"Resolved %s -> %s using %s and %s. Room setup is still stubbed.",
-		entranceName.c_str(), roomName.c_str(), palettePath.c_str(), backgroundPath.c_str());
+	Common::String statusMessage = Common::String::format(
+		"Resolved %s -> %s using %s and %s.",
+		entranceName.c_str(), state.roomName.c_str(), state.palettePath.c_str(), state.backgroundPath.c_str());
+	if (!state.musicPath.empty())
+		statusMessage += Common::String::format(" Music: %s.", state.musicPath.c_str());
+	if (!overlays.empty())
+		statusMessage += Common::String::format(" Startup overlays: %u.", (uint)overlays.size());
+	statusMessage += " Room setup is still stubbed.";
 	bool needsRedraw = true;
 	Graphics::FrameLimiter limiter(g_system, 60);
 
@@ -411,10 +427,12 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 			screen->setPalette(palette);
 			screen->fillRect(screen->getBounds(), 0);
 			blitBitmap(*screen, background, 0, 0);
+			for (const OverlayBitmap &overlay : overlays)
+				blitBitmap(*screen, overlay.bitmap, overlay.object.x, overlay.object.y);
 
 			const Common::Rect panel(72, 336, 568, 468);
 			screen->fillRect(panel, kPanelFillColor);
-			drawShadowedString(*screen, *titleFont, Common::String::format("Room Setup Stub: %s", roomName.c_str()),
+			drawShadowedString(*screen, *titleFont, Common::String::format("Room Setup Stub: %s", state.roomName.c_str()),
 				panel.left, 348, panel.width(), kTextColorNormal, Graphics::kTextAlignCenter);
 			drawWrappedShadowedText(*screen, *bodyFont, statusMessage, panel.left + 24, 386, panel.width() - 48,
 				kTextColorNormal);
