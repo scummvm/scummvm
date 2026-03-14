@@ -23,423 +23,249 @@
 
 #include "common/scummsys.h"
 
+#include "pelrock/types.h"
+
 namespace Pelrock {
 
-static const uint32 stickerOffsets[137] = {
-	0x000000, 0x00005B, 0x0000B6, 0x000298, 0x00047A, 0x0023C8, 0x004316, 0x004376,
-	0x005119, 0x005EBC, 0x0083ED, 0x008529, 0x0092C4, 0x00A3AA, 0x00B490, 0x00B6A6,
-	0x00C05A, 0x00CA0E, 0x00D3D0, 0x00D46E, 0x00F036, 0x00FB8F, 0x00FC55, 0x0119D7,
-	0x013759, 0x01391F, 0x014A9D, 0x015C1B, 0x017601, 0x018FE7, 0x019048, 0x0190A9,
-	0x01910A, 0x0197F4, 0x019EDE, 0x01A7EC, 0x01B0FA, 0x01B8C4, 0x01C644, 0x01D83A,
-	0x01E104, 0x01E8C6, 0x01F45D, 0x01FBBB, 0x02011D, 0x02052F, 0x020A95, 0x020E5B,
-	0x0210B3, 0x0216E6, 0x021D5E, 0x0233A3, 0x0249E8, 0x025777, 0x026506, 0x028E2B,
-	0x02B82F, 0x02C9D7, 0x02E4CA, 0x02FFBD, 0x03234A, 0x0346D7, 0x036A83, 0x038E2F,
-	0x03B18D, 0x03D4EB, 0x03DEC9, 0x03F813, 0x04115D, 0x045303, 0x0494A9, 0x04955F,
-	0x049615, 0x0496CB, 0x0499E1, 0x049EC7, 0x04A023, 0x04A447, 0x04BA6D, 0x04BFA1,
-	0x04CE33, 0x04CF09, 0x04DB3B, 0x052885, 0x0575CF, 0x05775B, 0x057D79, 0x058397,
-	0x058969, 0x058F50, 0x05A9DB, 0x05C561, 0x05C72E, 0x05C8FB, 0x05EAC1, 0x060C87,
-	0x060D19, 0x060E62, 0x061039, 0x0613C2, 0x061764, 0x061847, 0x062535, 0x062D4B,
-	0x064F11, 0x0670D7, 0x067381, 0x0675A9, 0x0677EF, 0x067A98, 0x067DDE, 0x068115,
-	0x0684E3, 0x068A76, 0x068F30, 0x0693C8, 0x0696AD, 0x06C2C9, 0x06C84D, 0x07095D,
-	0x071854, 0x07274B, 0x073642, 0x074539, 0x075454, 0x0791DA, 0x07CF60, 0x07E4AB,
-	0x07ECED, 0x07F52F, 0x07FD71, 0x080591, 0x080B24, 0x080B84, 0x080F39, 0x0812F5,
-	0x0816B1};
-
-enum TextIndices {
-	ESTAN_CERRADOS,
-	HOY_NO_DISPONIBLES,
-	YA_ABIERTO_M,
-	YA_CERRADO_M,
-	YA_ABIERTA_F,
-	YA_CERRADA_F,
-	HELADERIA_CERRADA,
-	POBRE_PERO_NO_HE_LLEGADO_A_ESO,
-	QUEBUENA_ESTA,
-	BOTONVERDEPARASACAR_BOTONVERDEPARACANCELAR,
-	PRIMEROMETA_TARJETA,
-	NOTENGOMASDINERO,
-	MEHEVUELTOAPINCHAR,
-	QUEHASIDOESO,
-	QUIENANDAAHI,
-	YOMEVOY,
-	TIENDA_CERRADA,
-	NOSE_ENTERARIA,
-	PRIMERO_ABRIRLO,
-	QUELOSCOJA_SUPADRE,
-	PRETENDEUSTED_SOBORNARME,
-	MUYBIEN_1,
-	CUANDOMELOPIDA,
-	DEACUERDO,
-	NECESITODNI,
-	QUE_RECIBO_ACAMBIO,
-	ESPOCO,
-	ALTO,
-	NIPARAEMPEZAR,
-	PARAQUE,
-	DEPIEDRANO_DEHIELO,
-	NO_EMPECEMOS,
-	CUERPO_DANONE,
-	CABEZA_HUECA,
-	ESO_LO_SERAS_TU,
-	DEMASIADO_NO_PUEDO_PENSAR,
-	UN_POCO_RESPETO,
-	NO_THEY_MAKEYOU_FAT,
-	RELOJ_HA_CAMBIADO,
-	CORRESPONDENCIA_AJENA,
-	ANDA,
-	TUCREES,
-	NOESAMIAQUIENDEBES,
-	AQUIENENTONCES,
-	LIBROSSECRETOS,
-	VENGA_ACA,
-	TODOS,
-	EL_LIBRO_NOESTA_AQUI,
-	TENDRE_DEJAR_LIBRO,
-	TRABAJARIA_MEJOR_SI_NO_ME_MOLESTARA,
-	REGALO_LIBRO_RECETAS,
-	YSI_METIRA_MAQUINA,
-	QUITA_ESAS_MANOS,
-	QUEASCO,
-	QUESESTO_RECETA,
-	YAESTA_ABIERTO,
-	VAESTAR_POCOFUERTE,
-	CUENTOPARECIDO,
-	COSASAPRENDIDO,
-	PERIODICOSENSACIONALISTA,
-	HOJAENTREPAGINAS,
-	NOENTIENDONADA,
-	NOTENGODINERO,
-	CUESTA1000,
-	AQUITIENE,
-	MUYBIEN,
-	YASEEGIPCIO,
-	QUELASTIMA_NOSEEGIPCIO,
-	FORMULAVIAJETIEMPO,
-	PARECECERRADO,
-	NOVIO2METROS,
-	GRANIDEA,
-	SELORECOMIENDO,
-	OIGAUSTED,
-	ESAMI,
-	VENGAAHORAMISMO,
-	CUIDADOIMPRUDENTE,
-	QUEOSCUROESTAESTO,
-	MENUDAAVENTURA,
-	NECESITOGASOLINA,
-	YANOSEHACEONCOMOANTES,
-	NADIELOHAVISTO,
-	AYAYAY,
-	OIGAUSTED2,
-	LEESTOYVIGILANDO,
-	OIGA,
-	CAPITULOPARADOJAS,
-	HAYQUECELEBRARLO,
-	PESADEMASIADO,
-	NINGUNATAMANHOAPROPIADO,
-	PARAQUECOGERBARRO,
-	BUENOCOGEREUNPOCO,
-	ABSOLUTAMENTECERRADO,
-	NOSETEOCURRAACERCARTE,
-	PUERTAAUTENTICA_IZQUIERDA,
-	OHMISALVADOR,
-	VOYPORTI_PRINCESA,
-	AMISBRAZOS,
-	DIOSMIOQUEESESTO,
-	QUEPASA,
-	OLVIDECERRARTRAMPILLA,
-	NOTEPREOCUPES_VOLVERE,
-	ALACONUSTED,
-	MEMEO,
-	POR5MINUTOS,
-	TALUEGOLUCAS,
-	SISUPIERA_COMBINACION,
-	PARECE_COMBINACION_CAJAFUERTE,
-	GRANCANTIDAD_DINERO,
-	TEAPETECE_BUENRATO,
-	YLOSCONDONES,
-	QUEASCO_CASIMEMEA,
-	HECHOELPRIMO,
-	MEHANTOMADO_EL_PELO,
-	PESADO_UNRATO,
-	TRAIDOR,
-	TUTIA,
-	LATUYA,
-	GORDO,
-	FIDEO,
-	LIMPIACULO,
-	CONTUTURBANTE,
-	OSO,
-	COMADREJA,
-	CABEZON,
-	TUABUELO,
-	TUMUJER,
-	PERDEDOR,
-	SOYMEJORQUETU,
-	TRAMPOSO,
-	MALPERDEDOR,
-	PARAUNAVEZ,
-	MEJORMELARGO,
-	NOTENGOPARCHES,
-	NOTENGOPEGAMENTO,
-	MUNECO_ARREGLADO,
-	MAREDEDEU,
-	PROBARLIBRO,
-	PRACTICAR_MAS,
-	AQUI_NO_NECESITO,
-	DIOSHALCON,
-	OHGRANOSIRIS,
-	HEMEAQUI,
-	OHSOBEK,
-	OHTOTH,
-	TODOSLASCOSAS,
-	HELLEGADOPURO,
-	DIOSDELATURBULENCIA,
-	OHANUBIS,
-	HEVENIDO,
-	HELLEGADOATI,
-	OHPTHA,
-	LASPUERTASDELCIELO,
-	VAYASUENHO,
-	PARAQUE_2,
-	YESO,
-	UNPOCODESESPERADO,
-	COMBINACIONESMEJORES,
-	NOSEQUEPRETENDES_CONESO,
-	COMO,
-	MUCHOSENTIDO,
-	PORPROBAR,
-	NOLOENTIENDO,
-	PARAESONOSIRVE,
-	PRUEBAOTRACOSA,
-	SIHOMBREQUEMAS,
-	NOSEQUEPRETENDES,
-	COSASRARAS,
-	ARTE_O_LOCURA,
-	UTILIDADES,
-	TITULOJUEGO,
-	MENSAJEOTRAEPOCA,
-	NOERAAUTENTICO,
-	PRIMERINGREDIENTE,
-	DOSINGREDIENTES,
-	TRESINGREDIENTES,
-	CUATROINGREDIENTES,
-	LIBRO_ABURRIDO,
-	DEACUERDO_2,
-	GAMBERROS,
-	QUIENYO,
-	PINTA_BUENAPERSONA,
-	DEMO_FINAL,
-	DIOSHALCON_2,
-	GRANOSIRIS,
-	HEMEAQUI_ISIS,
-	OHSOBEK_2,
-	OHTOTH_2,
-	PROTEGEN_MI_CUERPO,
-	HELLEGADO_PURO,
-	DIOSDELATURBULENCIA_2,
-	OHANUBIS_2,
-	HEVENIDO_2,
-	HELLEGADO_ATI,
-	OHPTHA_2,
-	LASPUERTAS_DELCIELO,
+// Indices to in game text responses in JUEGO.EXE
+enum TextStringId {
+	kTextEstanCerrados,
+	kTextHoyNoDisponibles,
+	kTextYaAbiertoM,
+	kTextYaCerradoM,
+	kTextYaAbiertaF,
+	kTextYaCerradaF,
+	kTextHeladeraCerrada,
+	kTextPobreNoHeLlegadoAEso,
+	kTextQueBuenaEsta,
+	kTextBotonVerdeParaSacarCancelar,
+	kTextPrimeroMetaTarjeta,
+	kTextNoTengoMasDinero,
+	kTextMeHeVueltoAPinchar,
+	kTextQueHaSidoEso,
+	kTextQuienAndaAhi,
+	kTextYoMeVoy,
+	kTextTiendaCerrada,
+	kTextNoseEnteraria,
+	kTextPrimeroAbrirlo,
+	kTextQueLosCojaSupadre,
+	kTextPretendeUstedSobornarme,
+	kTextMuyBien1,
+	kTextCuandoMeLoPida,
+	kTextDeAcuerdo,
+	kTextNecesitaDni,
+	kTextQueReciboACambio,
+	kTextEsPoco,
+	kTextAlto,
+	kTextNiParaEmpezar,
+	kTextParaQue,
+	kTextDePiedraNoDeHielo,
+	kTextNoEmpecemos,
+	kTextCuerpoDanone,
+	kTextCabezaHueca,
+	kTextEsoLoSerasTu,
+	kTextDemasiadoNoPuedoPensar,
+	kTextUnPocoRespeto,
+	kTextNoTheyMakeyouFat,
+	kTextRelojHaCambiado,
+	kTextCorrespondenciaAjena,
+	kTextAnda,
+	kTextTuCrees,
+	kTextNoEsAMiAQuienDebes,
+	kTextAQuienEntonces,
+	kTextLibrosSecretos,
+	kTextVengaAca,
+	kTextTodos,
+	kTextElLibroNoEstaAqui,
+	kTextTendreDejarLibro,
+	kTextTrabajariaMejorSiNoMeMolestara,
+	kTextRegaloLibroRecetas,
+	kTextYSiMeTiraMaquina,
+	kTextQuitaEsasManos,
+	kTextQueAsco,
+	kTextQuesEstoReceta,
+	kTextYaEstaAbierto,
+	kTextVaestarPocoFuerte,
+	kTextCuentoParecido,
+	kTextCosasAprendido,
+	kTextPeriodicoSensacionalista,
+	kTextHojaEntrePaginas,
+	kTextNoEntiendonada,
+	kTextNoTengoDinero,
+	kTextCuesta1000,
+	kTextAquiTiene,
+	kTextMuyBien,
+	kTextYaSeEgipcio,
+	kTextQueLastimaNoSeeEgipcio,
+	kTextFormulaViajeAlTiempo,
+	kTextPareceCerrado,
+	kTextNovio2Metros,
+	kTextGranIdea,
+	kTextSeLorecomiendo,
+	kTextOigaUsted,
+	kTextEsAMi,
+	kTextVengaAhoraMismo,
+	kTextCuidadoImprudente,
+	kTextQueOscuroEstaEsto,
+	kTextMenudaAventura,
+	kTextNecesitaGasolina,
+	kTextYaNoSeHaceOnComoAntes,
+	kTextNadieLaHaVisto,
+	kTextAyAyAy,
+	kTextOigaUsted2,
+	kTextLeEstoyVigilando,
+	kTextOiga,
+	kTextCapituloParadojas,
+	kTextHayQueCelebrarlo,
+	kTextPesaDemasiado,
+	kTextNingunaTamanhoApropiado,
+	kTextParaQueCogeBarro,
+	kTextBuenoCogereUnPoco,
+	kTextAbsolutamenteCerrado,
+	kTextNoSeTeCurraCercarte,
+	kTextPuertaAutenticaIzquierda,
+	kTextOhMiSalvador,
+	kTextVoyPoriPrincesa,
+	kTextAMisBrazos,
+	kTextDiosMioQueEsEsto,
+	kTextQuePasa,
+	kTextOlvideCerrarTrampilla,
+	kTextNotePreocupesVolvere,
+	kTextAlaConUsted,
+	kTextMeMeo,
+	kTextPor5Minutos,
+	kTextTaLuegoLucas,
+	kTextSiSupieraCombinacion,
+	kTextPareceCombinacionCajaFuerte,
+	kTextGranCantidadDinero,
+	kTextTeApeteceBuenRato,
+	kTextYLosCondones,
+	kTextQueAscoCasiMeMea,
+	kTextHechoElPrimo,
+	kTextMeHanTomadoElPelo,
+	kTextPesadoUnRato,
+	kTextTraidor,
+	kTextTuTia,
+	kTextLaTuya,
+	kTextGordo,
+	kTextFideo,
+	kTextLimpiaculos,
+	kTextConTuTurbante,
+	kTextOso,
+	kTextComadreja,
+	kTextCabezon,
+	kTextTuAbuelo,
+	kTextTuMujer,
+	kTextPerdedor,
+	kTextSoyMejorQueTu,
+	kTextTramposo,
+	kTextMalPerdedor,
+	kTextParaUnaVez,
+	kTextMejorMeLargo,
+	kTextNoTengoParches,
+	kTextNoTengoPegamento,
+	kTextMuecoArreglado,
+	kTextMareDeDou,
+	kTextProbarLibro,
+	kTextPracticarMas,
+	kTextAquiNoNecesito,
+	kTextDiosHalcon,
+	kTextOhGranOsiris,
+	kTextHemeAqui,
+	kTextOhSobek,
+	kTextOhToth,
+	kTextTodasLasCosas,
+	kTextHeLlegadoPuro,
+	kTextDiosDeLaTurbulencia,
+	kTextOhAnubis,
+	kTextHeVenido,
+	kTextHeLlegadoATi,
+	kTextOhPtha,
+	kTextLasPuertasDelCielo,
+	kTextVayaSuenho,
+	kTextParaQue2,
+	kTextYEso,
+	kTextUnPocoDeseperado,
+	kTextCombinacionesMejores,
+	kTextNoSeQuePretendeConEso,
+	kTextComo,
+	kTextMuchoSentido,
+	kTextPorProbar,
+	kTextNoLoEntiendo,
+	kTextParaEsoNoSirve,
+	kTextPruebaOtraCosa,
+	kTextSiHombrQueEmas,
+	kTextNoSeQuePretendes,
+	kTextCosasRaras,
+	kTextArteOLocura,
+	kTextUtilidades,
+	kTextTituloJuego,
+	kTextMensajeOtraEpoca,
+	kTextNoEraAutentico,
+	kTextPrimerIngrediente,
+	kTextDosIngredientes,
+	kTextTresIngredientes,
+	kTextCuatroIngredientes,
+	kTextLibroAburrido,
+	kTextDeAcuerdo2,
+	kTextGamberros,
+	kTextQuienYo,
+	kTextPintaBuenaPersona,
+	kTextDemoFinal,
+	kTextDiosHalcon2,
+	kTextGranOsiris,
+	kTextHemeAquiIsis,
+	kTextOhSobek2,
+	kTextOhToth2,
+	kTextProtigenMiCuerpo,
+	kTextHeLlegadoPuro2,
+	kTextDiosDeLaTurbulencia2,
+	kTextOhAnubis2,
+	kTextHeVenido2,
+	kTextHeLlegadoATi2,
+	kTextOhPtha2,
+	kTextLasPuertasDelCielo2,
 };
 
-// Description offsets relative to base offset 0x4715D.
-// NOTE: unused dead code — kept for reference only.
-static const uint16 description_offsets[113] = {
-	0x0000, // Object 0: Historia de la Princesa Zenna y su amante insatisfecho
-	0x0058, // Object 1: Nombre: Alfred Pelrock
-	0x00C4, // Object 2: La tipica tarjeta por la que te sacan commisiones
-	0x010E, // Object 3: Una pequeña foto de Alfred
-	0x012C, // Object 4: Un ladrillo
-	0x013B, // Object 5: 1000 pesetas
-	0x014B, // Object 6: Una alargadera con un extremo suelto
-	0x0173, // Object 7: Un amuleto egipcio con forma de escarabajo alado
-	0x01A7, // Object 8: Dice: OM OM RASKAMAMOM
-	0x01C1, // Object 9: Es una carta de la Asociacion Ra-Amoniana
-	0x020A, // Object 10: Un carnet de biblioteca
-	0x0247, // Object 11: Titulo: Canticos espirituales en formato *.zip
-	0x02B3, // Object 12: Titulo: Pasion Flagrante
-	0x0327, // Object 13: Titulo: El Valenciano en los comienzos del siglo XXI
-	0x039E, // Object 14: Titulo: El sistema inmunologico de los cefalopodos (v.I)
-	0x0412, // Object 15: Titulo: Dos y dos son 5
-	0x0493, // Object 16: Titulo: La parte creativa
-	0x057B, // Object 17: Titulo: Aprenda egipcio en 10 dias
-	0x065C, // Object 18: Titulo: Gato por liebre
-	0x06D8, // Object 19: Titulo: Enrique de Ofterdingeng
-
-	0x0753, // Object 20: Titulo: Hiper-cocina para solteros
-	0x07CE, // Object 21: Titulo: El camaleon humano
-	0x084E, // Object 22: Titulo: Psiquiatria Avanzada (vol. 8)
-	0x08CA, // Object 23: Titulo: Sistemas de alcantarillado en el siglo XV
-	0x0949, // Object 24: Titulo: Cartas de amor de Pol Pot a su novia
-	0x09CC, // Object 25: Titulo: El gran libro de las preposiciones
-	0x0A50, // Object 26: Titulo: Corazon, vida y muerte de un tenista
-	0x0ACC, // Object 27: Titulo: Analisis de la vida de los funcionarios
-	0x0B4D, // Object 28: Titulo: Ensayos sobre la putrefaccion
-	0x0BC9, // Object 29: Titulo: Cocinar bien es imposible
-	0x0C49, // Object 30: Titulo: 1000 formas de hacer sonar un claxon
-	0x0CC8, // Object 31: Titulo: El arte de la peluqueria
-	0x0D3B, // Object 32: Titulo: Analisis de las tramas de las mejores telecomedias
-	0x0DC7, // Object 33: Titulo: Tratado de las empanadillas
-	0x0E40, // Object 34: Titulo: Misterios de los numeros
-	0x0EBA, // Object 35: Titulo: Como vender mas
-	0x0F31, // Object 36: Titulo: Todos podemos estar de moda
-	0x0FAD, // Object 37: Titulo: La economia capitalista (Tomo VI)
-	0x102E, // Object 38: Titulo: Aventuras con mis hemorrides
-	0x10AB, // Object 39: Titulo: Automate. Tomo IV: Suicidio
-	0x1128, // Object 40: Titulo: El cienpies azul
-	0x11A1, // Object 41: Titulo: Guia sexual de la mosca
-	0x121E, // Object 42: Titulo: La Oveja. El gran misterio
-	0x1297, // Object 43: Titulo: Mi libro de cocina
-	0x1309, // Object 44: Titulo: Ariel
-	0x1377, // Object 45: Titulo: Matar cucarachas con la mirada
-	0x13F4, // Object 46: Titulo: Telepatia: Caso practico
-	0x1476, // Object 47: Titulo: Vida y obra de Paquirrin
-	0x14F4, // Object 48: Titulo: Odas para aliviar el estrenimiento
-	0x1577, // Object 49: Titulo: Mi vida en el gran mercado
-	0x15F4, // Object 50: Titulo: Oda al tocino
-	0x1669, // Object 51: Titulo: Como escribir una novela
-	0x16E0, // Object 52: Titulo: Recogiendo oro en las cloacas
-	0x175B, // Object 53: Titulo: Como comer bien. Tomo XXI. Entrantes
-	0x17DD, // Object 54: Titulo: No tengo nada mejor que hacer
-	0x185D, // Object 55: Titulo: Los Heraldos Negros
-	0x18D1, // Object 56: Titulo: La Piedra Rosetta
-	0x194A, // Object 57: Titulo: Fabulas de Ciencia Ficcion
-	0x19C3, // Object 58: Titulo: La musica amansa a las fieras
-
-	0x1A35, // Object 59: Un libro de recetas magicas
-	0x1A52, // Object 60: Un bote de tomate
-	0x1A70, // Object 61: Un bote de mostaza
-	0x1A8C, // Object 62: Salsa ultra-picante
-	0x1AA3, // Object 63: Receta de las hamburguesas de McDowells
-	0x1B2D, // Object 64: Un papiro con una inscripcion jeroglifica
-	0x1B53, // Object 65: Una guitarra española
-	0x1B8D, // Object 66: Un pez disecado
-	0x1BBE, // Object 67: Un osito de peluche
-	0x1C26, // Object 68: Unos discos antiguos
-	0x1C52, // Object 69: Un cerebro de mono
-	0x1C82, // Object 70: Novelas del salvaje oeste
-	0x1CB3, // Object 71: Una paleta
-	0x1CE1, // Object 72: Caramelos de todos los sabores
-	0x1CF9, // Object 73: Una caracola
-	0x1D24, // Object 74: Un sombrero
-	0x1D3F, // Object 75: 150000 pesetas
-	0x1D5C, // Object 76: Una calabaza para meter agua dentro
-	0x1D7A, // Object 77: Henna roja para el pelo
-	0x1DA3, // Object 78: Piramides de recuerdo
-	0x1DCC, // Object 79: Un chupa-chup de higo chumbo
-	0x1DE5, // Object 80: Un amuleto egipcio
-	0x1E00, // Object 81: El pelo de una princesa egipcia
-	0x1E49, // Object 82: Un mogollon de pasta
-	0x1E6B, // Object 83: Una replica de Elvis
-	0x1EA0, // Object 84: Aunque no sean piramides se puede decir que son monumentos
-	0x1EB9, // Object 85: Un girasol
-	0x1EE0, // Object 86: Una calabaza llena de agua
-	0x1F4F, // Object 87: Una motosierra
-	0x1FBE, // Object 88: Un libro de recetas magicas
-	0x1FD8, // Object 89: Una bota usada
-	0x1FFC, // Object 90: Una autentica piedra egipcia
-	0x2053, // Object 91: Una piedra egipcia
-	0x2071, // Object 92: Un poco de barro
-	0x2097, // Object 93: Licor de arena
-	0x20AE, // Object 94: Crema para el sol
-	0x20C6, // Object 95: Banda sonora de alfred pelrock
-	0x20E7, // Object 96: Un album de pantallas
-	0x2116, // Object 97: Plano de la piramide
-	0x2158, // Object 98: Plano detallado
-	0x2179, // Object 99: Es una peluca
-	0x218F, // Object 100: Una pequeña llave
-	0x21BE, // Object 101: Un trozo de papel con unos numeritos
-	0x21F1, // Object 102: Autenticas naranjas de Nules
-	0x220E, // Object 103: Un mogollon de naranjas de Nules
-	0x2236, // Object 104: No se haga el loco: Llameme !!!
-	0x2285, // Object 105: Folletos explicativos sobre el SIDA
-	0x22BE, // Object 106: Un pin que acredita mi sabiduria
-	0x22E2, // Object 107: Una bayeta para frotar lamparas magicas
-	0x2316, // Object 108: Parches ultra-fuertes
-	0x2337, // Object 109: Pegamento que te cagas
-	0x235A, // Object 110: Una replica de Alfred pinchada
-	0x2383, // Object 111: Una cinta del Rey Elvis
-	0x23A4, // Object 112: Una caja de condone
+// ALFRED.7 extra screen data (file offsets given per entry in extraScreens[])
+static const ExtraScreen extraScreens[] = {
+	{0x00007984, 0x000305A2, 8},      // 0 - Portrait above bed
+	{0x001A9EE, 0x00305A2, 8},        // 1 - Computer screen
+	{0x00647C3, 0x007B6B1, 4},        // 2 - Alfred circle
+	{0x006FBCD, 0x007B6B1, 8},        // 3 - Recipe
+	{0x007BA11, 0x0088745, 8},        // 4 - Newspaper
+	{0x009237B, 0x00B0EE7, 8},        // 5 - Tablet
+	{0x00B11F1, 0x00DE011, 8},        // 6 - Map
+	{0x00FFC47, 0x01180C9, 8},        // 7 - Girl book
+	{0x118649,  0x135A13, 8},         // 8 - Unknown
+	{0x152A88,  0x15BFC8, 8},         // 9 - Portrait
+	{0x299E0C,  0x2B3C3C, 8},         // 10 - CD
+	{0x2B3F1C,  0x2D5B18, 8},         // 11 - Pyramid map
+	{0x232B1A,  0x237C28, 8},         // 12 - CENSORED
+	{0x226358,  0x236AA8, 8},         // 13 - Background book
+	{0x2EBD12,  0x309E40, 8}          // 14 - Ending
 };
 
-struct ExtraImages {
-	uint32 offset;
-	uint32 paletteOffset;
-	byte numChunks;
-};
 
-static const ExtraImages extraScreens[] = {
-	{0x00, // 0 - Portrait above bed
-	 0x7984,
-	 8},
-	{0x1A9EE, // 1 - Computer screen
-	 0x305A2,
-	 8},
-	{0x647C3, // 2 - Alfred circle
-	 0x7B6B1,
-	 4},
-	{0x6FBCD, // 3 - Recipe
-	 0x7B6B1,
-	 8},
-	{0x7BA11, // 4 - Newspaper
-	 0x88745,
-	 8},
-	{0x9237B, // 5 - tablet
-	 0xB0EE7,
-	 8},
-	{0x000B11F1, // 6 - map
-	 0xDE011,
-	 8},
-	{0xFFC47, // 7 - girl book
-	 0x1180C9,
-	 8},
-	{1147849, // 8 - unknown
-	 1267955,
-	 8},
-	{0x152A88, // 9 - portrait
-	 0x15BFC8,
-	 8},
-	{2727564, // 10 - CD
-	 2833276,
-	 8},
-	{
-	2834044, // 11 - pyramid map
-	2971800,
-	8},
-	{
-	2306538, // 12 - CENSORED
-	2321064,
-	8
-	},
-	{
-	0x00226358, // 13 - Background book
-	0x00236AA8,
-	8
-	},
-	{
-	3058226, // 14 - Ending
-	3185280,
-	8
-	}
-
-};
-
-// AlfredSpecialAnimOffset: POD struct (no constructors) to avoid global-constructor overhead.
-// Fields are ordered to match natural aggregate-initializer order.
-// size == 0 means "compute as numFrames * w * h" at load time.
-struct AlfredSpecialAnimOffset {
-	int numFrames;
-	int w;
-	int h;
-	int numBudas;
-	int numAlfred;
-	uint32 offset;
-	int loops;
-	int speed;
-	uint32 size; // 0 = compute from numFrames * w * h
-};
+// Alfred.7 special animation data (file index given per entry in alfredSpecialAnims[])
+static const uint32 kAlfredAnimReadBookOffset = 559685;       // 0  - READ BOOK
+static const uint32 kAlfredAnimReadRecipeOffset = 578943;     // 1  - READ RECIPE
+static const uint32 kAlfredAnimElectricShock1Offset = 37000;  // 2  - ELECTRIC SHOCK 1
+static const uint32 kAlfredAnimElectricShock3Offset = 53106;  // 3  - ELECTRIC SHOCK 3
+static const uint32 kAlfredAnimThrowOffset = 20724;           // 4  - Throw
+static const uint32 kAlfredAnimThrowSize = 62480;             // 4  - Throw explicit size
+static const uint32 kAlfredAnimCrocodileOffset = 1556540;     // 5  - Crocodile
+static const uint32 kAlfredAnimManholeOffset = 1583702;       // 6  - Exit manhole
+static const uint32 kAlfredAnimClimbDownOffset = 1761234;     // 7  - Climbs down
+static const uint32 kAlfredAnimClimbUpOffset = 1766378;       // 8  - Climbs up
+static const uint32 kAlfredAnimExitTunnelOffset = 1770196;    // 9  - Exits tunnel
+static const uint32 kAlfredAnimWorkersOffset = 1600956;       // 10 - With workers
+static const uint32 kAlfredAnimMunheco1Offset = 2060916;      // 11 - Doll 1
+static const uint32 kAlfredAnimMunheco2Offset = 2115632;      // 12 - Doll 2
+static const uint32 kAlfredAnimMunheco3Offset = 1526432;      // 13 - Doll 3
+static const uint32 kAlfredAnimDescamisaOffset = 2972568;     // 14 - Descamisa
+static const uint32 kAlfredAnimSecretPassageOffset = 1749464; // 15 - Secret passage
+static const uint32 kAlfredAnimInBedOffset = 3038454;         // 16 - Alfred in bed
 
 } // End of namespace Pelrock
 #endif

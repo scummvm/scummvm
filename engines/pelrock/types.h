@@ -234,6 +234,27 @@ struct PathContext {
 	uint16 compressed_length;
 };
 
+struct ExtraScreen {
+	uint32 offset;
+	uint32 paletteOffset;
+	byte numChunks;
+};
+
+/**
+ * Struct for special or one-off animations that replace Alfred's regular animations.
+ */
+struct AlfredSpecialAnimOffset {
+	int numFrames;
+	int w;
+	int h;
+	int numBudas;
+	int numAlfred;
+	uint32 offset;
+	int loops;
+	int speed;
+	uint32 size; // 0 = compute from numFrames * w * h
+};
+
 /**
  * Each Anim has its own speed, loopCount and movement!
  */

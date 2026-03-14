@@ -56,25 +56,6 @@ static const uint32 kCreditsSize = 2540;
 static const uint32 kComputerTextOffset = 0x0004901A;
 static const uint32 kComputerTextSize = 490;
 
-// Alfred special animation data (file index given per entry in alfredSpecialAnims[])
-static const uint32 kAlfredAnimReadBookOffset = 559685;       // 0  - READ BOOK
-static const uint32 kAlfredAnimReadRecipeOffset = 578943;     // 1  - READ RECIPE
-static const uint32 kAlfredAnimElectricShock1Offset = 37000;  // 2  - ELECTRIC SHOCK 1
-static const uint32 kAlfredAnimElectricShock3Offset = 53106;  // 3  - ELECTRIC SHOCK 3
-static const uint32 kAlfredAnimThrowOffset = 20724;           // 4  - Throw
-static const uint32 kAlfredAnimThrowSize = 62480;             // 4  - Throw explicit size
-static const uint32 kAlfredAnimCrocodileOffset = 1556540;     // 5  - Crocodile
-static const uint32 kAlfredAnimManholeOffset = 1583702;       // 6  - Exit manhole
-static const uint32 kAlfredAnimClimbDownOffset = 1761234;     // 7  - Climbs down
-static const uint32 kAlfredAnimClimbUpOffset = 1766378;       // 8  - Climbs up
-static const uint32 kAlfredAnimExitTunnelOffset = 1770196;    // 9  - Exits tunnel
-static const uint32 kAlfredAnimWorkersOffset = 1600956;       // 10 - With workers
-static const uint32 kAlfredAnimMunheco1Offset = 2060916;      // 11 - Doll 1
-static const uint32 kAlfredAnimMunheco2Offset = 2115632;      // 12 - Doll 2
-static const uint32 kAlfredAnimMunheco3Offset = 1526432;      // 13 - Doll 3
-static const uint32 kAlfredAnimDescamisaOffset = 2972568;     // 14 - Descamisa
-static const uint32 kAlfredAnimSecretPassageOffset = 1749464; // 15 - Secret passage
-static const uint32 kAlfredAnimInBedOffset = 3038454;         // 16 - Alfred in bed
 
 ResourceManager::ResourceManager(/* args */) {
 	_inventoryIcons = new InventoryObject[69];
@@ -472,7 +453,7 @@ void ResourceManager::getExtraScreen(int screenIndex, byte *screenBuf, byte *pal
 	if (!alfred7.open("ALFRED.7")) {
 		error("Couldnt find file ALFRED.7");
 	}
-	ExtraImages screen = extraScreens[screenIndex];
+	ExtraScreen screen = extraScreens[screenIndex];
 	mergeRleBlocks(&alfred7, screen.offset, 8, screenBuf);
 	alfred7.seek(screen.paletteOffset, SEEK_SET);
 	alfred7.read(palette, 768);

@@ -412,7 +412,7 @@ bool PelrockEngine::renderScene(int overlayMode) {
 			if (_state->getFlag(FLAG_PUTA_250_VECES) == true) {
 				_numPressedX++;
 				if (_numPressedX == 250) {
-					_dialog->say(_res->_ingameTexts[YLOSCONDONES]);
+					_dialog->say(_res->_ingameTexts[kTextYLosCondones]);
 				}
 			}
 		}
@@ -458,7 +458,7 @@ void PelrockEngine::maybeHaveDogPee() {
 		dog->animData[0].nframes = 9;
 		dog->animData[0].curFrame = 0;
 
-		_dialog->say(_res->_ingameTexts[QUEASCO_CASIMEMEA]);
+		_dialog->say(_res->_ingameTexts[kTextQueAscoCasiMeMea]);
 		_currentHotspot = nullptr; // Clear so arrival direction isn't overridden by dog hotspot
 		walkTo(152, _alfredState.y);
 		_isDogPeeing = false;
@@ -474,7 +474,7 @@ void PelrockEngine::maybePlayPostIntro() {
 		_res->loadAlfredSpecialAnim(16, false);
 		_alfredState.animState = ALFRED_SPECIAL_ANIM;
 		_dialog->_disableClickToAdvance = true;
-		_dialog->say(_res->_ingameTexts[VAYASUENHO]);
+		_dialog->say(_res->_ingameTexts[kTextVayaSuenho]);
 		_dialog->_disableClickToAdvance = false;
 		waitForSpecialAnimation();
 		_graphics->fadeToBlack(20);
@@ -484,7 +484,7 @@ void PelrockEngine::maybePlayPostIntro() {
 		_alfredState.x = kAlfredInitialPosX;
 		_alfredState.y = kAlfredInitialPosY;
 		// setScreenAndPrepare(0, ALFRED_DOWN);
-		_dialog->say(_res->_ingameTexts[MENSAJEOTRAEPOCA]);
+		_dialog->say(_res->_ingameTexts[kTextMensajeOtraEpoca]);
 	}
 }
 
@@ -1856,9 +1856,9 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 	case 15:
 		if (_state->getFlag(FLAG_ENTRA_EN_TIENDA_PRIMERA_VEZ)) {
 			_state->setFlag(FLAG_ENTRA_EN_TIENDA_PRIMERA_VEZ, false);
-			_dialog->say(_res->_ingameTexts[GAMBERROS]);
-			_dialog->say(_res->_ingameTexts[QUIENYO]);
-			_dialog->say(_res->_ingameTexts[PINTA_BUENAPERSONA]);
+			_dialog->say(_res->_ingameTexts[kTextGamberros]);
+			_dialog->say(_res->_ingameTexts[kTextQuienYo]);
+			_dialog->say(_res->_ingameTexts[kTextPintaBuenaPersona]);
 			break;
 		}
 	case 19: {
@@ -1870,7 +1870,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		_room->findSpriteByIndex(1)->numAnims = 1;
 
 		if(_state->hasInventoryItem(88) && _state->getFlag(FLAG_PIGEON_DEAD) == false) {
-			_dialog->say(_res->_ingameTexts[PROBARLIBRO]);
+			_dialog->say(_res->_ingameTexts[kTextProbarLibro]);
 			playAlfredSpecialAnim(0);
 			Sprite *pigeons = _room->findSpriteByIndex(1);
 			pigeons->numAnims = 4;
@@ -1883,7 +1883,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 				_screen->update();
 				g_system->delayMillis(10);
 			}
-			_dialog->say(_res->_ingameTexts[PRACTICAR_MAS]);
+			_dialog->say(_res->_ingameTexts[kTextPracticarMas]);
 			_state->setFlag(FLAG_PIGEON_DEAD, true);
 		}
 		break;
@@ -1944,9 +1944,9 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			if (_state->getFlag(FLAG_SE_HA_PUESTO_EL_MUNECO) == true) {
 				_state->setCurrentRoot(26, 2, 1);
 			} else {
-				_dialog->say(_res->_ingameTexts[OIGAUSTED], 1);
-				_dialog->say(_res->_ingameTexts[ESAMI]);
-				_dialog->say(_res->_ingameTexts[VENGAAHORAMISMO], 1);
+				_dialog->say(_res->_ingameTexts[kTextOigaUsted], 1);
+				_dialog->say(_res->_ingameTexts[kTextEsAMi]);
+				_dialog->say(_res->_ingameTexts[kTextVengaAhoraMismo], 1);
 				_state->setCurrentRoot(26, 1, 1);
 				walkAndAction(_room->findHotspotByExtra(421), TALK);
 			}
@@ -1958,7 +1958,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			_dialog->_goodbyeDisabled = true;
 			_state->setFlag(FLAG_ROBA_PELO_PRINCESA, false);
 			_room->enableSprite(0, 200, PERSIST_TEMP);
-			_dialog->say(_res->_ingameTexts[OIGAUSTED]);
+			_dialog->say(_res->_ingameTexts[kTextOigaUsted]);
 			walkAndAction(_room->findHotspotByExtra(0), TALK);
 		}
 		break;
@@ -1998,16 +1998,16 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 
 		if (_state->getFlag(FLAG_END_OF_GAME) == true) {
 
-			_dialog->say(_res->_ingameTexts[OHMISALVADOR]);
-			_dialog->say(_res->_ingameTexts[VOYPORTI_PRINCESA]);
+			_dialog->say(_res->_ingameTexts[kTextOhMiSalvador]);
+			_dialog->say(_res->_ingameTexts[kTextVoyPoriPrincesa]);
 			_state->setCurrentRoot(48, 1, 0);
 			walkAndAction(_room->findHotspotByExtra(634), TALK);
 
 			endingScene();
 
 		} else if (_state->getFlag(FLAG_CORRECT_DOOR_CHOSEN) == true) {
-			_dialog->say(_res->_ingameTexts[OHMISALVADOR]);
-			_dialog->say(_res->_ingameTexts[VOYPORTI_PRINCESA]);
+			_dialog->say(_res->_ingameTexts[kTextOhMiSalvador]);
+			_dialog->say(_res->_ingameTexts[kTextVoyPoriPrincesa]);
 			_state->setFlag(FLAG_TRAMPILLA_ABIERTA, true);
 			walkAndAction(_room->findHotspotByExtra(634), TALK);
 			_room->addSticker(134);
@@ -2028,8 +2028,8 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			setScreenAndPrepare(49, ALFRED_UP);
 
 		} else {
-			_dialog->say(_res->_ingameTexts[OHMISALVADOR]);
-			_dialog->say(_res->_ingameTexts[VOYPORTI_PRINCESA]);
+			_dialog->say(_res->_ingameTexts[kTextOhMiSalvador]);
+			_dialog->say(_res->_ingameTexts[kTextVoyPoriPrincesa]);
 			// _state->setCurrentRoot(48, 0, 1);
 			HotSpot *fatMummy = nullptr;
 			for (uint i = 0; i < _room->_currentRoomHotspots.size(); i++) {
@@ -2110,7 +2110,7 @@ void PelrockEngine::pyramidCollapse() {
 	}
 	_room->findSpriteByIndex(2)->zOrder = 255;
 
-	_dialog->say(_res->_ingameTexts[YANOSEHACEONCOMOANTES]);
+	_dialog->say(_res->_ingameTexts[kTextYaNoSeHaceOnComoAntes]);
 	npc = _room->findSpriteByIndex(0);
 	if (npc)
 		npc->zOrder = 254;
@@ -2163,7 +2163,7 @@ void PelrockEngine::pyramidCollapse() {
 	if (npc)
 		npc->animData[npc->curAnimIndex].movementFlags = 0;
 
-	_dialog->say(_res->_ingameTexts[POR5MINUTOS], 0);
+	_dialog->say(_res->_ingameTexts[kTextPor5Minutos], 0);
 
 	_room->disableExit(36, 0);
 
@@ -2180,7 +2180,7 @@ void PelrockEngine::pyramidCollapse() {
 	pyramidHotspot->index = 7;
 	_room->disableHotspot(21, pyramidHotspot, PERSIST_BOTH);
 
-	_dialog->say(_res->_ingameTexts[TALUEGOLUCAS]);
+	_dialog->say(_res->_ingameTexts[kTextTaLuegoLucas]);
 
 	// Walk Alfred to right edge exit -> room 21
 	walkLoop(603, 212, ALFRED_RIGHT);
