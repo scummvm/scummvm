@@ -22,23 +22,11 @@
 #include "harvester/resources.h"
 
 #include "common/stream.h"
+#include "harvester/xfile_archive.h"
 
 namespace Harvester {
 
-ResourceManager::ResourceManager() {
-	reset();
-}
-
-ResourceManager::~ResourceManager() {
-	_search.clear();
-}
-
-void ResourceManager::reset() {
-	_search.clear();
-	_search.add("harvester-loose-files", &SearchMan, 0, false);
-}
-
-Common::String ResourceManager::normalizeResourcePath(const Common::String &path) const {
+Common::String normalizeHarvesterResourcePath(const Common::String &path) {
 	Common::String normalized(path);
 
 	for (uint i = 0; i < normalized.size(); ++i) {
@@ -56,6 +44,50 @@ Common::String ResourceManager::normalizeResourcePath(const Common::String &path
 		normalized.erase(0, 1);
 
 	return normalized;
+}
+
+ResourceManager::ResourceManager() {
+	reset();
+}
+
+ResourceManager::~ResourceManager() {
+	_search.clear();
+}
+
+void ResourceManager::reset() {
+	_search.clear();
+	_search.add("harvester-loose-files", &SearchMan, 0, false);
+}
+
+Common::String ResourceManager::normalizeResourcePath(const Common::String &path) const {
+	return normalizeHarvesterResourcePath(path);
+}
+
+bool ResourceManager::mountStartupArchives() {
+	static const struct {
+		const char *archiveName;
+		const char *indexPath;
+		const char *dataPath;
+		int priority;
+	} kArchiveSpecs[] = {
+		{ "harvester-xfile-1", "INDEX.001", "HARVEST.DAT", 30 },
+		{ "harvester-xfile-2", "INDEX.002", "SOUND.DAT", 29 },
+		{ "harvester-xfile-3", "INDEX.003", "HARVEST2.DAT", 28 }
+	};
+
+	bool mountedAny = false;
+	for (const auto &spec : kArchiveSpecs) {
+		XFileArchive *archive = new XFileArchive();
+		if (!archive->open(spec.indexPath, spec.dataPath)) {
+			delete archive;
+			continue;
+		}
+
+		mountArchive(spec.archiveName, archive, spec.priority, true);
+		mountedAny = true;
+	}
+
+	return mountedAny;
 }
 
 bool ResourceManager::hasFile(const Common::String &path) const {

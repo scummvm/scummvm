@@ -27,12 +27,15 @@
 
 namespace Harvester {
 
+Common::String normalizeHarvesterResourcePath(const Common::String &path);
+
 class ResourceManager {
 public:
 	ResourceManager();
 	~ResourceManager();
 
 	void reset();
+	bool mountStartupArchives();
 
 	bool hasFile(const Common::String &path) const;
 	Common::SeekableReadStream *openFile(const Common::String &path) const;

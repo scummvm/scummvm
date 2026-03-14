@@ -52,6 +52,7 @@ Common::String HarvesterEngine::getGameId() const {
 
 Common::Error HarvesterEngine::run() {
 	_resources = new ResourceManager();
+	_resources->mountStartupArchives();
 
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(320, 200);
