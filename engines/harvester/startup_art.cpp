@@ -25,14 +25,48 @@
 #include "common/endian.h"
 #include "common/system.h"
 #include "graphics/paletteman.h"
+#include "harvester/detection.h"
 #include "harvester/resources.h"
 
 namespace Harvester {
 
 namespace {
 
-static byte expand6BitColor(byte value) {
-	return (value * 255 + 31) / 63;
+static void getPaletteByteRange(const byte *palette, byte &minValue, byte &maxValue) {
+	minValue = 255;
+	maxValue = 0;
+
+	for (uint i = 0; i < 256 * 3; ++i) {
+		minValue = MIN(minValue, palette[i]);
+		maxValue = MAX(maxValue, palette[i]);
+	}
+}
+
+static uint32 hashPalette(const byte *palette) {
+	uint32 hash = 2166136261U;
+	for (uint i = 0; i < 256 * 3; ++i) {
+		hash ^= palette[i];
+		hash *= 16777619U;
+	}
+
+	return hash;
+}
+
+static void logPaletteSummary(const char *label, const Common::String &path, const byte *palette) {
+	if (!palette)
+		return;
+
+	byte minValue = 0;
+	byte maxValue = 0;
+	getPaletteByteRange(palette, minValue, maxValue);
+
+	debugC(1, kDebugGeneral,
+		"Harvester: %s '%s' bytes=%u range=[%u,%u] hash=%08x idx0=(%u,%u,%u) idx1=(%u,%u,%u) idx127=(%u,%u,%u) idx255=(%u,%u,%u)",
+		label, path.c_str(), 256U * 3U, minValue, maxValue, hashPalette(palette),
+		palette[0], palette[1], palette[2],
+		palette[3], palette[4], palette[5],
+		palette[127 * 3], palette[127 * 3 + 1], palette[127 * 3 + 2],
+		palette[255 * 3], palette[255 * 3 + 1], palette[255 * 3 + 2]);
 }
 
 static const int kInventoryX = 64;
@@ -92,6 +126,7 @@ void StartupArt::drawWaitFrame() const {
 	if (_waitFrames.empty() || !_waitFrames[0].isValid())
 		return;
 
+	logPaletteSummary("applying wait palette", "1:/GRAPHIC/PAL/WAIT.PAL", _waitPalette);
 	g_system->getPaletteManager()->setPalette(_waitPalette, 0, 256);
 	g_system->fillScreen(0);
 	blitBitmap(_inventoryBitmap, kInventoryX, kInventoryY);
@@ -107,9 +142,9 @@ bool StartupArt::loadPalette(ResourceManager &resources, const Common::String &p
 		return false;
 	}
 
-	for (uint i = 0; i < 256 * 3; ++i)
-		dest[i] = expand6BitColor(data[i]);
+	memcpy(dest, data.data(), 256 * 3);
 
+	logPaletteSummary("loaded palette", path, dest);
 	return true;
 }
 

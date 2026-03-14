@@ -2,6 +2,48 @@
 
 ## Last Confirmed Action
 
+- Closed the startup palette-format / cursor-animation clock pass.
+  - Confirmed by archive inspection that `WAIT.PAL`, `PCROOM.PAL`, and the rest of the indexed room palettes are exact 768-byte resources already storing 8-bit RGB triplets.
+  - Confirmed in Ghidra that `upload_palette_to_vga` shifts those palette bytes down to VGA DAC range instead of expanding 6-bit source values, which explains the bad startup colors in the current engine.
+  - Confirmed in Ghidra that runtime entity animation timing uses the centisecond DOS clock behind `get_elapsed_milliseconds`: `set_entity_animation_rate` stores `100 / rate`, and `tick_entity_visual_state` compares that interval against centisecond ticks.
+  - Patched the ScummVM startup palette loaders to keep the raw 8-bit palette bytes, switched runtime entity ticking over to a centisecond-style clock, and added targeted palette/cursor debug logs.
+- Closed the first low-byte facing-bank pass around runtime `+0x118c`.
+  - Confirmed `spawn_monster_entity_from_record` uses the low byte of `+0x118c` as the default facing-bank selector when the alternate `+0x118e` high-nibble bank is absent: `0x08` front, `0x10` left, `0x40` right, and `0x20` back.
+  - Confirmed the matching `+0x118e` high-nibble bits are the alternate initial stance banks for those same facings: `0x40` front, `0x10` left, `0x20` right, and `0x80` back.
+  - Confirmed `update_actor_runtime_state` reuses those `+0x118c` low-byte bits in the locomotion / turn-family entries rooted at states `4`, `7/0xf`, `8/0xe`, and `0xb`.
+  - Added Ghidra comments at `spawn_monster_entity_from_record` and `update_actor_runtime_state`, and saved `HARVEST.LE`.
+- Closed the first runtime capability-byte pass around `+0x118d` / `+0x118e`.
+  - Confirmed `spawn_monster_entity_from_record` seeds `+0x118c`, `+0x118d`, and `+0x118e` from ABM frame-count checks rather than from generic AI state.
+  - Confirmed `+0x118d` bits `0x08/0x10/0x20` gate attack-state pairs `0x16/0x19`, `0x17/0x1a`, and `0x18/0x1b`.
+  - Confirmed `+0x118d` bits `0x40/0x80` plus `+0x118e & 0x01` gate the hit-reaction state pairs `0x1c/0x1f`, `0x1d/0x20`, and `0x1e/0x21`, and `+0x118e` bits `0x02/0x04/0x08` gate the death-state families `0x28` through `0x33`.
+  - Added Ghidra comments at `spawn_monster_entity_from_record` and `update_actor_runtime_state`, and saved `HARVEST.LE`.
+- Closed the `+0x118c` damage-type / ranged-split pass.
+  - Confirmed `parse_monster_record` parses `MonsterRecord.damage_type` from `BLUDGE`, `SLASH`, and `PROJ` into the low-bit values `1`, `2`, and `4`.
+  - Confirmed runtime `+0x118c` is a mixed combat/capability mask, not a pure damage-type field: the player combat-avatar path seeds `0x00fffff8` before adding the low damage bits, while monster construction copies `MonsterRecord.damage_type` and then ORs extra low-byte availability bits from ABM frame counts.
+  - Confirmed `update_actor_runtime_state` keeps `(+0x118c & 4) == 0` on the close-range hit-resolution path, while class-5 attacks with bit `4` set use the separate ranged target-acquisition / ammo-count branch; close-range hits mirror attacker `+0x118c` into victim `+0x1188`.
+  - Added Ghidra comments at `parse_monster_record`, `spawn_player_combat_avatar`, and `update_actor_runtime_state`, and saved `HARVEST.LE`.
+- Closed the startup quick-tips / initial palette sequencing pass from `run_harvester_main_loop`.
+  - Confirmed the original binary seeds `"START"`, preloads `1:\graphic\pal\pcroom.pal` into `g_current_palette_buffer`, and enters `room_setup` before the quick-tips overlay is shown.
+  - Confirmed `run_quick_tips_screen` is a separate overlay path: it adds `1:\GRAPHIC\OTHER\TIPS.BM` and text entities on top of the already active room instead of resolving a standalone `QUICK_TIPS` room.
+  - That rules out the current startup stub's fake `resolveRoomSetupState("QUICK_TIPS")` path and narrows the palette mismatch to startup sequencing / palette application rather than to the basic `.PAL` or `.BM` file formats.
+- Closed the player-combat loadout attack-tuning pass.
+  - Confirmed `spawn_player_combat_avatar`, `set_player_combat_loadout`, and the monster-record-driven runtime reseed block all share the same attack cluster: `+0x1134` attack sample count, `+0x1148/+0x114c/+0x1150` attack sample slots, `+0x116c` attack-sound trigger frame offset, `+0x113c` attack contact frame offset, and `+0x1180` per-hit damage amount.
+  - Confirmed `update_actor_runtime_state` attack states `0x16` through `0x1b` randomly choose from that sample table at `anim_base + +0x116c`, then resolve the hit once `anim_base + +0x113c` is reached and subtract `+0x1180` from victim HP.
+  - Added Ghidra comments at `spawn_player_combat_avatar`, `set_player_combat_loadout`, and `update_actor_runtime_state`, and saved `HARVEST.LE`.
+- Closed the parser-name gap for the room-event combat-control opcodes.
+  - Confirmed `parse_command_record` maps `KILL_NPC -> 0x0c`, `KILL_PC -> 0x0d`, `MONSTERFY -> 0x0e`, `PAUSE_PC -> 0x25`, and `RESUME_PC -> 0x26`.
+  - That locks the room-event callers behind `queue_npc_death_or_monsterfy_transition` and the player damage-type path to stable parser names instead of raw case numbers.
+  - Added Ghidra comments at the parser, dispatcher, and NPC transition helper sites and saved `HARVEST.LE`.
+- Continued the runtime-entity NPC transition/loadout pass around `update_actor_runtime_state` and `set_player_combat_loadout`.
+  - Renamed `attach_abm_resource_to_entity` at `0x4c0f0`, `queue_npc_death_or_monsterfy_transition` at `0x53810`, and `teardown_monster_entity_runtime_state` at `0x541c0`.
+  - Confirmed `g_player_combat_loadout_abm_paths` at `0xc3eb4` is a direct 21-entry `pc0.abm` through `pc20.abm` table shared by the player combat-avatar spawn, reset, loadout-switch, and load-game restore paths.
+  - Confirmed runtime field `+0x1188` is a damage-type flag word: spawn helpers clear it, room-event helpers assign `BLUDGE = 1`, `SLASH = 2`, and `PROJ = 4`, and `update_actor_runtime_state` tests those bits during hit/death-state selection.
+  - Confirmed `+0x11b8` is still only written reciprocally in the close-range hit block and still has no recovered reader, so it remains unnamed.
+  - Saved `HARVEST.LE`.
+- Continued the runtime-entity room-event suppression pass around `+0x11b4`.
+  - Confirmed room-event action cases `0x25` / `0x26` set and clear `g_player + 0x11b4`.
+  - Confirmed `update_actor_runtime_state` consults that byte only for class-5 player combat-avatar updates and returns immediately while it is set; `run_harvester_main_loop` and `run_load_game_menu` clear it on return/reload paths.
+  - Added Ghidra comments at the key read/write sites and saved `HARVEST.LE`.
 - Continued the runtime-entity combat-link pass around the confirmed hit-reaction fields.
   - Renamed `apply_pending_entity_knockback` at `0x53770`.
   - Confirmed `update_actor_runtime_state` seeds victim `+0x11ac` with signed `-18` / `+18` and `+0x11b0 = 3` on confirmed hits, and the new helper copies that pending value into live shove slot `+0x1088` before decaying it toward zero.
@@ -135,11 +177,15 @@
   - The descriptor blob entry at `0xc0c98` points directly at this object, which confirms that the table-driven wrappers around `0x18380` / `0x183c0` / `0x183e0` / `0x18400` are operating on the current-bank driver context rather than on a `PcmSoundState`.
 - Current live-state counts:
   - `HARVEST.LE` currently has `774` total functions
-  - `421` have custom/documented names
-  - `353` still remain unnamed / `FUN_*`
+  - `423` have custom/documented names
+  - `351` still remain unnamed / `FUN_*`
 
 ## Next Suggested Action
 
+- Re-run the startup path with the new logs and verify two concrete points in one capture:
+  - `PCROOM.PAL` should now log raw values like `idx0=(0,0,56)` instead of the bogus expanded blue channel.
+  - The cursor should stay on sequence `7` while advancing frames `70..79` on a centisecond clock rather than racing every render tick.
+- If either behavior still diverges from DOS, take a fresh Ghidra pass through `room_setup` after the wait-transition flush and `flush_dirty_rects_to_screen` / `sync_cursor_entity_position` to compare exact first-frame ordering and palette upload order against the port.
 - Highest-value targets:
-  - continue outward on the unresolved reciprocal hit pointer at `+0x11b8`, starting from any downstream hit-reaction, death, or scripted-event consumers reachable from the confirmed attack-hit block
-  - if that thread stays cold, keep walking the neighboring runtime flag at `+0x11b4` and its remaining room-event/main-loop toggles
+  - continue outward on the remaining partial `+0x118c` semantics, especially the still-unresolved low-byte bit `0x80` and the high attack-picker gates `0x1000` / `0x10000`
+  - if that thread stays cold, revisit the unresolved reciprocal combat-link slot at `+0x11b8` from the confirmed close-range hit block

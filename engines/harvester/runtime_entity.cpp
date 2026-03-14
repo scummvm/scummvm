@@ -25,6 +25,7 @@
 #include "common/endian.h"
 #include "common/system.h"
 #include "graphics/screen.h"
+#include "harvester/detection.h"
 #include "harvester/resources.h"
 
 namespace Harvester {
@@ -36,6 +37,12 @@ static const char *const kCursorResourcePath = "1:/GRAPHIC/POINTERS/POINTERS.ABM
 static const float kCursorEntityZ = -100.0f;
 static const int kCursorAnimationRate = 10;
 static const int kFramesPerSequence = 10;
+static const uint32 kAnimationClockDivisorMs = 10;
+
+static uint32 getAnimationClockTicks() {
+	// The original runtime entity animation timer is driven from a centisecond DOS clock.
+	return g_system ? (g_system->getMillis() / kAnimationClockDivisorMs) : 0;
+}
 
 static void blitAnimationFrame(Graphics::Screen &screen, const Common::Array<AbmFrame> &frames, uint frameIndex,
 		int x, int y) {
@@ -207,6 +214,12 @@ void RuntimeEntity::setAnimationSequence(int sequence) {
 	_firstFrame = MIN<int>(sequence * kFramesPerSequence, (int)_frames.size() - 1);
 	_lastFrame = MIN<int>(_firstFrame + kFramesPerSequence - 1, (int)_frames.size() - 1);
 	advanceAnimationFrame(_firstFrame);
+
+	if (_classId == kRuntimeEntityClassCursor) {
+		debugC(1, kDebugGeneral,
+			"Harvester: cursor animation sequence=%d frames=%d..%d current=%d",
+			_animationSequence, _firstFrame, _lastFrame, _currentFrame);
+	}
 }
 
 void RuntimeEntity::configureHotspotBounds(int width, int height) {
@@ -468,6 +481,14 @@ RuntimeEntity *RuntimeEntityManager::spawnCursorEntity(const Common::Point &posi
 		_cursorEntity->setAnimationSequence(0);
 	if (_cursorEntity)
 		_cursorEntity->setHitTestMode(kRuntimeEntityHitTestNone);
+	if (_cursorEntity) {
+		const uint32 animationInterval = _cursorEntity->getAnimationRate() == 0 ? 0 :
+			(100U / (uint32)_cursorEntity->getAnimationRate());
+		debugC(1, kDebugGeneral,
+			"Harvester: spawned cursor entity rate=%d intervalTicks=%u clock=centiseconds frame=%d..%d pos=(%d,%d)",
+			_cursorEntity->getAnimationRate(), animationInterval, _cursorEntity->getCurrentFrame(),
+			_cursorEntity->getLastFrame(), position.x, position.y);
+	}
 
 	return _cursorEntity;
 }
@@ -528,7 +549,7 @@ void RuntimeEntityManager::showCursor() {
 }
 
 bool RuntimeEntityManager::tickSceneEntities() {
-	const uint32 now = g_system->getMillis();
+	const uint32 now = getAnimationClockTicks();
 	bool changed = false;
 
 	for (RuntimeEntity *entity : _sceneEntities)
@@ -543,7 +564,7 @@ bool RuntimeEntityManager::syncCursorEntityPosition(const Common::Point &positio
 
 	const bool moved = _cursorEntity->getX() != position.x || _cursorEntity->getY() != position.y;
 	_cursorEntity->setPosition(position.x, position.y, kCursorEntityZ);
-	return _cursorEntity->tickVisualState(g_system->getMillis()) || moved;
+	return _cursorEntity->tickVisualState(getAnimationClockTicks()) || moved;
 }
 
 void RuntimeEntityManager::drawCursor(Graphics::Screen &screen) const {
