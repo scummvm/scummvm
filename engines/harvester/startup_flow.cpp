@@ -33,6 +33,7 @@
 #include "harvester/detection.h"
 #include "harvester/harvester.h"
 #include "harvester/resources.h"
+#include "harvester/runtime_entity.h"
 #include "harvester/startup_art.h"
 #include "harvester/startup_script.h"
 
@@ -57,10 +58,7 @@ static const int kQuickTipTextWidth = 280;
 
 static const int kMenuStartY = 100;
 static const int kMenuLineSpacing = 28;
-static const uint kCursorSequence7FirstFrame = 70;
-static const uint kCursorSequence7LastFrame = 79;
-static const uint kCursorAnimationRate = 10;
-static const uint32 kCursorAnimationTickMs = 100 / kCursorAnimationRate;
+static const int kCursorSequence7 = 7;
 static const uint32 kPaletteFadeTickMs = 4;
 static const float kPaletteFadeStep = 0.1f;
 static const float kPaletteBrightnessBlack = 0.0f;
@@ -105,14 +103,6 @@ static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, in
 		return;
 
 	screen.copyRectToSurface(bitmap.pixels.data(), bitmap.width, x, y, bitmap.width, bitmap.height);
-}
-
-static void blitAnimationFrame(Graphics::Screen &screen, const Common::Array<AbmFrame> &frames, uint frameIndex, int x, int y) {
-	if (frameIndex >= frames.size() || !frames[frameIndex].isValid())
-		return;
-
-	const AbmFrame &frame = frames[frameIndex];
-	blitBitmap(screen, frame, x + frame.xOffset, y + frame.yOffset);
 }
 
 static void drawShadowedString(Graphics::Screen &screen, const Graphics::Font &font, const Common::String &text,
@@ -269,30 +259,6 @@ static Common::String trimAsciiLine(const Common::String &value) {
 	return value.substr(start, end - start);
 }
 
-static uint getStartupCursorSequenceFirstFrame(const StartupArt &art) {
-	const Common::Array<AbmFrame> &frames = art.getPointerFrames();
-	if (frames.empty())
-		return 0;
-
-	return MIN<uint>(kCursorSequence7FirstFrame, frames.size() - 1);
-}
-
-static uint getStartupCursorSequenceLastFrame(const StartupArt &art) {
-	const Common::Array<AbmFrame> &frames = art.getPointerFrames();
-	if (frames.empty())
-		return 0;
-
-	return MIN<uint>(kCursorSequence7LastFrame, frames.size() - 1);
-}
-
-static void drawStartupCursor(Graphics::Screen &screen, const StartupArt &art, const Common::Point &mousePos,
-		uint frameIndex, bool visible) {
-	if (!visible)
-		return;
-
-	blitAnimationFrame(screen, art.getPointerFrames(), frameIndex, mousePos.x, mousePos.y);
-}
-
 static bool loadQuickTipsScene(HarvesterEngine &engine, StartupRoomSceneResources &scene) {
 	StartupRoomSetupState state;
 	if (!engine.getStartupScript()->resolveRoomSetupState("QUICK_TIPS", state, *engine.getResources()))
@@ -302,7 +268,7 @@ static bool loadQuickTipsScene(HarvesterEngine &engine, StartupRoomSceneResource
 }
 
 static void renderQuickTipsScreen(HarvesterEngine &engine, const StartupRoomSceneResources &scene,
-		const Common::Point &mousePos, const Common::String &tipText, uint cursorFrameIndex, bool cursorVisible) {
+		const Common::Point &mousePos, const Common::String &tipText) {
 	Graphics::Screen *screen = engine.getScreen();
 	const StartupArt *art = engine.getStartupArt();
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
@@ -325,7 +291,8 @@ static void renderQuickTipsScreen(HarvesterEngine &engine, const StartupRoomScen
 		toggleRect.left, toggleRect.top, toggleRect.width(),
 		toggleRect.contains(mousePos) ? kTextColorHover : kTextColorNormal);
 
-	drawStartupCursor(*screen, *art, mousePos, cursorFrameIndex, cursorVisible);
+	if (engine.getRuntimeEntities())
+		engine.getRuntimeEntities()->drawCursor(*screen);
 	screen->makeAllDirty();
 	screen->update();
 }
@@ -340,7 +307,8 @@ bool StartupFlow::load() {
 }
 
 Common::Error StartupFlow::run() {
-	resetCursorAnimationSequence();
+	if (!ensureCursorEntity())
+		return Common::kReadingFailed;
 
 	Common::Error error = runQuickTips();
 	if (error.getCode() != Common::kNoError)
@@ -443,7 +411,7 @@ Common::Error StartupFlow::runQuickTips() {
 
 	while (!_engine.shouldQuit()) {
 		if (needsRedraw) {
-			renderQuickTipsScreen(_engine, scene, _mousePos, _quickTips[tipIndex], _cursorFrameIndex, _cursorVisible);
+			renderQuickTipsScreen(_engine, scene, _mousePos, _quickTips[tipIndex]);
 			needsRedraw = false;
 		}
 
@@ -489,13 +457,7 @@ Common::Error StartupFlow::runMainMenuStub() {
 	Common::String statusMessage = "Stub handoff after room_setup(\"QUICK_TIPS\") and before the main menu loop.";
 	int selectedItem = _menuItems.empty() ? -1 : 0;
 	bool needsRedraw = true;
-	const StartupArt *art = _engine.getStartupArt();
-	if (art) {
-		const uint firstFrame = getStartupCursorSequenceFirstFrame(*art);
-		const uint lastFrame = getStartupCursorSequenceLastFrame(*art);
-		if (_cursorFrameIndex < firstFrame || _cursorFrameIndex > lastFrame || !_cursorVisible)
-			resetCursorAnimationSequence();
-	}
+	resetCursorAnimationSequence();
 
 	while (!_engine.shouldQuit()) {
 		if (needsRedraw) {
@@ -678,7 +640,8 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 			drawShadowedString(*screen, *bodyFont, footerMessage,
 				panel.left, 430, panel.width(), kTextColorDim, Graphics::kTextAlignCenter);
 
-			drawStartupCursor(*screen, *art, _mousePos, _cursorFrameIndex, _cursorVisible);
+			if (_engine.getRuntimeEntities())
+				_engine.getRuntimeEntities()->drawCursor(*screen);
 			screen->makeAllDirty();
 			screen->update();
 			needsRedraw = false;
@@ -794,8 +757,19 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 	return Common::kNoError;
 }
 
+bool StartupFlow::ensureCursorEntity() {
+	RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
+	if (!runtimeEntities)
+		return false;
+	if (runtimeEntities->getCursorEntity())
+		return true;
+
+	return runtimeEntities->spawnCursorEntity(_mousePos) != nullptr;
+}
+
 Common::Error StartupFlow::beginRoomSetupTransition() {
-	_cursorVisible = false;
+	if (_engine.getRuntimeEntities())
+		_engine.getRuntimeEntities()->hideCursor();
 
 	const StartupArt *art = _engine.getStartupArt();
 	if (art)
@@ -844,45 +818,23 @@ bool StartupFlow::pumpTransitionEvents(Common::Error &result) {
 }
 
 void StartupFlow::resetCursorAnimationSequence() {
-	const StartupArt *art = _engine.getStartupArt();
-	if (!art) {
-		_cursorFrameIndex = 0;
-		_cursorNextFrameTick = 0;
-		_cursorVisible = false;
+	if (!ensureCursorEntity())
 		return;
-	}
 
-	_cursorFrameIndex = getStartupCursorSequenceFirstFrame(*art);
-	_cursorNextFrameTick = g_system->getMillis() + kCursorAnimationTickMs;
-	_cursorVisible = true;
+	RuntimeEntity *cursor = _engine.getRuntimeEntities()->getCursorEntity();
+	if (!cursor)
+		return;
+
+	cursor->setVisible(true);
+	cursor->setAnimationSequence(kCursorSequence7);
+	(void)_engine.getRuntimeEntities()->syncCursorEntityPosition(_mousePos);
 }
 
 bool StartupFlow::tickCursorAnimation() {
-	if (!_cursorVisible)
+	RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
+	if (!runtimeEntities)
 		return false;
-
-	const StartupArt *art = _engine.getStartupArt();
-	if (!art || art->getPointerFrames().empty())
-		return false;
-
-	const uint firstFrame = getStartupCursorSequenceFirstFrame(*art);
-	const uint lastFrame = getStartupCursorSequenceLastFrame(*art);
-	if (_cursorFrameIndex < firstFrame || _cursorFrameIndex > lastFrame)
-		_cursorFrameIndex = firstFrame;
-
-	if (firstFrame == lastFrame)
-		return false;
-
-	const uint32 now = g_system->getMillis();
-	if ((int32)(now - _cursorNextFrameTick) < 0)
-		return false;
-
-	do {
-		_cursorFrameIndex = (_cursorFrameIndex >= lastFrame) ? firstFrame : _cursorFrameIndex + 1;
-		_cursorNextFrameTick += kCursorAnimationTickMs;
-	} while ((int32)(now - _cursorNextFrameTick) >= 0);
-
-	return true;
+	return runtimeEntities->syncCursorEntityPosition(_mousePos);
 }
 
 void StartupFlow::renderMainMenuStub(int selectedItem, const Common::String &statusMessage) const {
@@ -918,7 +870,8 @@ void StartupFlow::renderMainMenuStub(int selectedItem, const Common::String &sta
 	drawShadowedString(*screen, *bodyFont, "Use mouse or arrow keys. Enter activates. Esc returns to launcher.",
 		panel.left, 404, panel.width(), kTextColorDim, Graphics::kTextAlignCenter);
 
-	drawStartupCursor(*screen, *art, _mousePos, _cursorFrameIndex, _cursorVisible);
+	if (_engine.getRuntimeEntities())
+		_engine.getRuntimeEntities()->drawCursor(*screen);
 	screen->makeAllDirty();
 	screen->update();
 }

@@ -374,6 +374,13 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - `spawn_cursor_entity` seeds the runtime cursor at sequence `0` / frames `0..9` with animation rate `10`; `room_setup` then switches `g_cursor_entity` to sequence `7`.
 - `sync_cursor_entity_position` at `0x799e0` repositions a runtime entity to the shared cursor coordinates and then advances its visual state through the normal entity animation tick path.
 - `flush_dirty_rects_to_screen` reads `g_cursor_entity` and calls `sync_cursor_entity_position` every frame before the dirty-rect blit work, so cursor placement is part of the normal render pipeline rather than a one-shot startup blit.
+- The shared runtime entity animation/timing cluster is now bounded enough to emulate conservatively:
+  - `+0x105c` stores the next animation tick deadline used by `tick_entity_visual_state`
+  - `+0x1060` stores the tick interval derived from `set_entity_animation_rate`
+  - `+0x1064` stores the current frame index
+  - `+0x1068` stores the caller-facing animation rate value
+  - `+0x106c` / `+0x1078` store the active sequence end/start frame indices
+  - `+0x112c` stores the active sequence index
 - `is_cursor_within_entity_bounds` at `0x4b670` is the rectangle-only cursor test for runtime entities.
 - `is_cursor_over_entity_hitmask` at `0x4b5b0` adds the per-pixel transparency test used by the main loop before interaction dispatch.
 
@@ -592,6 +599,10 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - `program_irq0_pit_divisor` at `0x8b1ad` masks IRQ0, programs PIT channel 0 through ports `0x43` / `0x40`, and then unmasks IRQ0 again.
     - `install_irq0_timer_handler` at `0x8b30d`, together with `mask_irq0_timer_interrupt` and `unmask_irq0_timer_interrupt`, is the low-level IRQ0 refresh path that reinstalls the recovered timer handler and restarts the counter.
     - The constant `0x1234dc` in the rate math is the PIT input clock `1193180`, which is what anchors the divisor and step-increment interpretation.
+    - `set_sound_state_sample_rate` at `0x183c0` is the recovered table-driven wrapper above that slot layer; it forwards the caller-provided rate into `set_sound_voice_sample_rate` using the state-local slot index at offset `+0x14`.
+    - `unlock_sound_driver_linear_regions` at `0x83c34` walks a fixed list of backend code/data ranges and calls DPMI `int 31h, ax=0601` through `unlock_linear_region_via_dpmi` on each one.
+    - `release_sound_driver_linear_region_locks` at `0x83f73` is the public wrapper that runs that unlock pass and clears the backing region-lock flag.
+    - `refresh_irq0_timer_handler_if_active` at `0x84e09` is the small guard wrapper that reruns the mask/install/unmask IRQ0 sequence only when the backend timer layer is active.
   - The higher-level streamed-music state on top of that backend is now explicit:
     - `g_music_stream_state` at `0xca1d4` is the persistent room/menu/game-over music stream object.
     - `g_current_music_path` caches the current music filename so room transitions and scripted overrides can restore it.

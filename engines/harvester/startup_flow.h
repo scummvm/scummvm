@@ -48,6 +48,7 @@ private:
 	Common::Error runQuickTips();
 	Common::Error runMainMenuStub();
 	Common::Error runRoomSetupStub(const Common::String &entranceName);
+	bool ensureCursorEntity();
 	Common::Error beginRoomSetupTransition();
 	Common::Error fadeInRoomScene(const byte *palette, float targetBrightness);
 	bool pumpTransitionEvents(Common::Error &result);
@@ -61,9 +62,6 @@ private:
 	Common::Array<Common::String> _quickTips;
 	Common::Array<Common::String> _menuItems;
 	Common::Point _mousePos;
-	uint _cursorFrameIndex = 0;
-	uint32 _cursorNextFrameTick = 0;
-	bool _cursorVisible = true;
 };
 
 } // End of namespace Harvester

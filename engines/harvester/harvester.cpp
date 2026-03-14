@@ -31,6 +31,7 @@
 #include "harvester/detection.h"
 #include "harvester/fst_player.h"
 #include "harvester/resources.h"
+#include "harvester/runtime_entity.h"
 #include "harvester/startup_art.h"
 #include "harvester/startup_flow.h"
 #include "harvester/startup_script.h"
@@ -50,6 +51,7 @@ HarvesterEngine::~HarvesterEngine() {
 	delete _startupText;
 	delete _startupArt;
 	delete _startupScript;
+	delete _runtimeEntities;
 	delete _resources;
 	delete _screen;
 	g_engine = nullptr;
@@ -107,6 +109,7 @@ Common::Error HarvesterEngine::run() {
 
 	_resources = new ResourceManager();
 	_resources->mountStartupArchives();
+	_runtimeEntities = new RuntimeEntityManager(*_resources);
 	_startupScript = new StartupScript();
 	if (!_startupScript->load(*_resources))
 		return Common::kReadingFailed;

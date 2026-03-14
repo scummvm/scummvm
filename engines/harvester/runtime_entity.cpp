@@ -1,0 +1,305 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "harvester/runtime_entity.h"
+
+#include "common/debug.h"
+#include "common/endian.h"
+#include "common/system.h"
+#include "graphics/screen.h"
+#include "harvester/resources.h"
+
+namespace Harvester {
+
+namespace {
+
+static const char *const kCursorEntityName = "MOUSE";
+static const char *const kCursorResourcePath = "1:/GRAPHIC/POINTERS/POINTERS.ABM";
+static const float kCursorEntityZ = -100.0f;
+static const int kCursorAnimationRate = 10;
+static const int kFramesPerSequence = 10;
+
+static void blitAnimationFrame(Graphics::Screen &screen, const Common::Array<AbmFrame> &frames, uint frameIndex,
+		int x, int y) {
+	if (frameIndex >= frames.size() || !frames[frameIndex].isValid())
+		return;
+
+	const AbmFrame &frame = frames[frameIndex];
+	screen.copyRectToSurface(frame.pixels.data(), frame.width, x + frame.xOffset, y + frame.yOffset,
+		frame.width, frame.height);
+}
+
+static bool decodeAnimationFrame(const byte *source, uint32 sourceSize, bool compressed, Common::Array<byte> &dest) {
+	if (!compressed) {
+		if (sourceSize < dest.size())
+			return false;
+
+		memcpy(dest.data(), source, dest.size());
+		return true;
+	}
+
+	uint32 srcOffset = 0;
+	uint32 dstOffset = 0;
+	while (srcOffset < sourceSize && dstOffset < dest.size()) {
+		const byte control = source[srcOffset++];
+		if ((control & 0x80) == 0) {
+			const uint32 literalCount = MIN<uint32>(control,
+				MIN<uint32>(sourceSize - srcOffset, dest.size() - dstOffset));
+			memcpy(dest.data() + dstOffset, source + srcOffset, literalCount);
+			srcOffset += literalCount;
+			dstOffset += literalCount;
+		} else {
+			if (srcOffset >= sourceSize)
+				return false;
+
+			const uint32 repeatCount = MIN<uint32>(control & 0x7f, dest.size() - dstOffset);
+			memset(dest.data() + dstOffset, source[srcOffset++], repeatCount);
+			dstOffset += repeatCount;
+		}
+	}
+
+	return dstOffset == dest.size();
+}
+
+} // End of anonymous namespace
+
+bool RuntimeEntity::loadAbmResource(ResourceManager &resources, const Common::String &path) {
+	Common::Array<byte> data;
+	if (!resources.loadFile(path, data) || data.size() < 8) {
+		warning("Harvester: unable to load runtime entity animation '%s'", path.c_str());
+		return false;
+	}
+
+	const uint32 frameCount = READ_LE_UINT32(data.data());
+	uint32 offset = 8;
+	_frames.resize(frameCount);
+
+	for (uint32 i = 0; i < frameCount; ++i) {
+		if (data.size() < offset + 25) {
+			warning("Harvester: short runtime ABM header in '%s'", path.c_str());
+			return false;
+		}
+
+		AbmFrame &frame = _frames[i];
+		frame.xOffset = (int32)READ_LE_UINT32(data.data() + offset);
+		frame.yOffset = (int32)READ_LE_UINT32(data.data() + offset + 4);
+		frame.width = READ_LE_UINT32(data.data() + offset + 8);
+		frame.height = READ_LE_UINT32(data.data() + offset + 12);
+		const bool compressed = data[offset + 16] != 0;
+		const uint32 sourceSize = READ_LE_UINT32(data.data() + offset + 17);
+		const uint32 pixelCount = frame.width * frame.height;
+		const uint32 payloadOffset = offset + 25;
+
+		if (frame.width == 0 || frame.height == 0 || data.size() < payloadOffset + sourceSize) {
+			warning("Harvester: invalid runtime ABM frame %u in '%s'", i, path.c_str());
+			return false;
+		}
+
+		frame.pixels.resize(pixelCount);
+		if (!decodeAnimationFrame(data.data() + payloadOffset, sourceSize, compressed, frame.pixels))
+			return false;
+
+		offset = payloadOffset + sourceSize;
+	}
+
+	_resourcePath = path;
+	_currentFrame = _frames.empty() ? -1 : 0;
+	_firstFrame = _currentFrame;
+	_lastFrame = _frames.empty() ? -1 : (int)_frames.size() - 1;
+	_animationEnabled = !_frames.empty();
+	return true;
+}
+
+void RuntimeEntity::setPosition(int x, int y, float z) {
+	_x = x;
+	_y = y;
+	_z = z;
+}
+
+void RuntimeEntity::setAnimationRate(int rate) {
+	if (rate == 0)
+		_animationTickInterval = 0;
+	else
+		_animationTickInterval = 100 / rate;
+
+	if (rate != _animationRate) {
+		_nextAnimationTick = 0;
+		_animationRate = rate;
+	}
+}
+
+void RuntimeEntity::setAnimationSequence(int sequence) {
+	if (_frames.empty() || sequence == _animationSequence)
+		return;
+
+	_animationSequence = sequence;
+	_looping = true;
+	_playBackwards = false;
+	_animationEnabled = true;
+	_firstFrame = MIN<int>(sequence * kFramesPerSequence, (int)_frames.size() - 1);
+	_lastFrame = MIN<int>(_firstFrame + kFramesPerSequence - 1, (int)_frames.size() - 1);
+	advanceAnimationFrame(_firstFrame);
+}
+
+bool RuntimeEntity::tickVisualState(uint32 now) {
+	if (!_animationEnabled || _currentFrame < 0 || _animationTickInterval == 0)
+		return false;
+	if (now < _nextAnimationTick)
+		return false;
+
+	bool advanced = false;
+	do {
+		advanceAnimationFrame(_playBackwards ? -1 : -2);
+		_nextAnimationTick = now + _animationTickInterval;
+		advanced = true;
+	} while (_animationTickInterval != 0 && now >= _nextAnimationTick);
+
+	return advanced;
+}
+
+void RuntimeEntity::draw(Graphics::Screen &screen) const {
+	if (!_visible || _currentFrame < 0)
+		return;
+
+	blitAnimationFrame(screen, _frames, _currentFrame, _x, _y);
+}
+
+void RuntimeEntity::advanceAnimationFrame(int directive) {
+	if (_frames.empty())
+		return;
+
+	if (directive == -1) {
+		--_currentFrame;
+		if (_currentFrame >= _firstFrame)
+			return;
+
+		if (!_looping) {
+			_currentFrame = _firstFrame;
+			if (_classId == kRuntimeEntityClassAnimation)
+				_animationEnabled = false;
+			return;
+		}
+
+		if (!_pingPong) {
+			_currentFrame = _lastFrame;
+			return;
+		}
+
+		_playBackwards = false;
+		_currentFrame = _firstFrame;
+		return;
+	}
+
+	if (directive == -2) {
+		++_currentFrame;
+		if (_currentFrame <= _lastFrame)
+			return;
+
+		if (!_looping) {
+			_currentFrame = _lastFrame;
+			if (_classId == kRuntimeEntityClassAnimation)
+				_animationEnabled = false;
+			return;
+		}
+
+		if (_pingPong) {
+			_playBackwards = true;
+			_currentFrame = _lastFrame;
+			return;
+		}
+
+		_currentFrame = _firstFrame;
+		return;
+	}
+
+	_currentFrame = CLIP<int>(directive, 0, (int)_frames.size() - 1);
+}
+
+RuntimeEntityManager::RuntimeEntityManager(ResourceManager &resources) : _resources(resources) {
+}
+
+RuntimeEntityManager::~RuntimeEntityManager() {
+	clear();
+}
+
+void RuntimeEntityManager::clear() {
+	for (RuntimeEntity *entity : _entities)
+		delete entity;
+	_entities.clear();
+	_cursorEntity = nullptr;
+}
+
+RuntimeEntity *RuntimeEntityManager::spawnAbmEntityFromResource(const Common::String &name,
+		const Common::String &resourcePath, int classId, const Common::Point &position, float z,
+		int animationRate, bool looping, bool pingPong) {
+	RuntimeEntity *entity = new RuntimeEntity();
+	if (!entity->loadAbmResource(_resources, resourcePath)) {
+		delete entity;
+		return nullptr;
+	}
+
+	entity->setName(name);
+	entity->setClassId(classId);
+	entity->setPosition(position.x, position.y, z);
+	entity->setLooping(looping);
+	entity->setPingPong(pingPong);
+	entity->setAnimationRate(animationRate);
+	_entities.push_back(entity);
+	return entity;
+}
+
+RuntimeEntity *RuntimeEntityManager::spawnCursorEntity(const Common::Point &position) {
+	if (_cursorEntity)
+		return _cursorEntity;
+
+	_cursorEntity = spawnAbmEntityFromResource(kCursorEntityName, kCursorResourcePath,
+		kRuntimeEntityClassCursor, position, kCursorEntityZ, kCursorAnimationRate, true, false);
+	if (_cursorEntity)
+		_cursorEntity->setAnimationSequence(0);
+
+	return _cursorEntity;
+}
+
+void RuntimeEntityManager::hideCursor() {
+	if (_cursorEntity)
+		_cursorEntity->setVisible(false);
+}
+
+void RuntimeEntityManager::showCursor() {
+	if (_cursorEntity)
+		_cursorEntity->setVisible(true);
+}
+
+bool RuntimeEntityManager::syncCursorEntityPosition(const Common::Point &position) {
+	if (!_cursorEntity)
+		return false;
+
+	const bool moved = _cursorEntity->getX() != position.x || _cursorEntity->getY() != position.y;
+	_cursorEntity->setPosition(position.x, position.y, kCursorEntityZ);
+	return _cursorEntity->tickVisualState(g_system->getMillis()) || moved;
+}
+
+void RuntimeEntityManager::drawCursor(Graphics::Screen &screen) const {
+	if (_cursorEntity)
+		_cursorEntity->draw(screen);
+}
+
+} // End of namespace Harvester
