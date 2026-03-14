@@ -142,18 +142,22 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - `printf_ascii` prints the copyright line through `g_stdout_stream` after the `puts_ascii` version banner.
     - `set_random_seed` seeds `g_random_seed` from the first startup tick, and `next_random_value` is the 15-bit LCG step used by script/random branches.
     - `configure_video_surface` swaps `g_video_surface_context` between the normal gameplay surface and the narrower FST playback surface before the movie path hands off to `run_fst_sequence_player`.
-  - The VESA backend records behind that selector are now bounded as four 8bpp banked-mode descriptors:
+  - The video backend records behind that selector are now bounded as one linear VGA descriptor plus four 8bpp banked VESA descriptors:
+    - `g_vga_mode_320x200_8bpp`
     - `g_vesa_mode_640x400_8bpp`
     - `g_vesa_mode_640x480_8bpp`
     - `g_vesa_mode_800x600_8bpp`
     - `g_vesa_mode_1024x768_8bpp`
-    - `g_vesa_video_mode_backends` is the pointer table `configure_video_surface` scans to match width / height / pixel format.
+    - `g_video_mode_backends` is the 6-entry pointer table `configure_video_surface` scans to match width / height / pixel format; it contains those five concrete backends plus the sentinel that terminates the probe loop.
     - `configure_video_surface` matches each descriptor on width / height / bpp / backend class, calls the descriptor's probe and activate callbacks, and tears down the previously active backend through the record's shutdown callback before switching.
-    - `VesaModeBackend` is now a typed 64-byte descriptor record with confirmed width/height/pixel-format fields, probe/activate/shutdown/display-start callbacks, pixel read/write callbacks, the shared blit callback, and the runtime bank/window fields consumed by FST playback.
+    - `VesaModeBackend` is now a typed 64-byte video-mode descriptor record despite the legacy name.
+      - Confirmed fields now include width/height/pixel-format, probe/activate/shutdown callbacks, the display-start preset callback, pixel read/write callbacks, `fill_horizontal_span_callback`, `fill_rect_callback`, `blit_rect_callback`, and the runtime bank/window fields consumed by FST playback.
+      - The VGA `320x200x8` record makes the generic callback roles explicit through `probe_vga_320x200_mode`, `activate_vga_320x200_mode`, `write_vga_320x200_pixel`, `read_vga_320x200_pixel`, `fill_vga_320x200_horizontal_span`, `fill_vga_320x200_rect`, and `blit_vga_320x200_rect`.
     - `VideoSurfaceContext` is now a typed 16-byte context that caches the active backend pointer plus the selected width/height/bpp/class.
     - The mixed Borland runtime descriptor block also binds `set_vesa_video_mode_3` and `reset_video_surface_context` to `g_video_surface_context`; that pair is the small lifecycle wrapper layer above the shared context object.
   - The shared VESA helper layer is now partially named:
     - `query_vesa_controller_info` validates the controller signature through BIOS `int 10h AX=4f00`.
+    - `set_vesa_write_window_bank` is the write-window-fixed wrapper above `set_vesa_window_bank`.
     - `set_vesa_video_mode` checks the current VESA mode with `AX=4f03` and only issues `AX=4f02` when a switch is required.
     - `set_vesa_window_bank` is the shared `AX=4f05` wrapper used by the banked blitters and single-pixel helpers.
     - `set_vesa_display_start` is the shared `AX=4f07` wrapper used by the per-mode display-start preset callbacks.
