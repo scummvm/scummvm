@@ -901,8 +901,10 @@ void PhoenixVREngine::tick(float dt) {
 		_nextWarp = -1;
 
 		{
-			Common::ScopedPtr<Common::SeekableReadStream> stream(open(_warp->vrFile));
-			if (stream) {
+			Common::String origName;
+			Common::ScopedPtr<Common::SeekableReadStream> stream(open(_warp->vrFile, &origName));
+			bool isVr = origName.empty() || origName.hasSuffixIgnoreCase(".vr");
+			if (stream && isVr) {
 				_vr = VR::loadStatic(_pixelFormat, *stream);
 				if (_vr.isVR()) {
 					_mousePos = _screenCenter;
