@@ -44,6 +44,8 @@ struct StartupRoomRecord {
 };
 
 struct StartupObjectRecord {
+	int x = 0;
+	int y = 0;
 	Common::String ownerOrRoom;
 	Common::String objectName;
 	Common::String resourcePath;
@@ -51,6 +53,28 @@ struct StartupObjectRecord {
 	Common::String displayName;
 	bool visible = false;
 	bool active = false;
+};
+
+struct StartupFlagRecord {
+	Common::String name;
+	bool value = false;
+};
+
+struct StartupCommandRecord {
+	Common::String triggerTag;
+	Common::String opcodeName;
+	Common::String arg1;
+	Common::String arg2;
+	Common::String arg3;
+	Common::String arg4;
+};
+
+struct StartupRoomSetupState {
+	Common::String roomName;
+	Common::String palettePath;
+	Common::String backgroundPath;
+	Common::String musicPath;
+	Common::Array<StartupObjectRecord> activeObjects;
 };
 
 class StartupScript {
@@ -62,10 +86,12 @@ public:
 	const Common::Array<StartupEntranceRecord> &getEntrances() const { return _entrances; }
 	const Common::Array<StartupRoomRecord> &getRooms() const { return _rooms; }
 	const Common::Array<StartupObjectRecord> &getObjects() const { return _objects; }
+	const Common::Array<StartupFlagRecord> &getFlags() const { return _flags; }
+	const Common::Array<StartupCommandRecord> &getCommands() const { return _commands; }
 	bool isQuickTipsEnabled() const { return _quickTipsEnabled; }
 	void setQuickTipsEnabled(bool enabled) { _quickTipsEnabled = enabled; }
-	bool resolveRoomSetup(const Common::String &entranceName, Common::String &roomName,
-		Common::String &palettePath, Common::String &backgroundPath) const;
+	bool resolveRoomSetupState(const Common::String &entranceName, StartupRoomSetupState &state,
+		ResourceManager &resources) const;
 
 private:
 	bool loadConfig(ResourceManager &resources);
@@ -77,6 +103,8 @@ private:
 	Common::Array<StartupEntranceRecord> _entrances;
 	Common::Array<StartupRoomRecord> _rooms;
 	Common::Array<StartupObjectRecord> _objects;
+	Common::Array<StartupFlagRecord> _flags;
+	Common::Array<StartupCommandRecord> _commands;
 	bool _quickTipsEnabled = true;
 };
 

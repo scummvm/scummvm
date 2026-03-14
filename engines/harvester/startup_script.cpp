@@ -21,6 +21,8 @@
 
 #include "harvester/startup_script.h"
 
+#include <cstdlib>
+
 #include "common/debug.h"
 #include "common/formats/ini-file.h"
 #include "common/memstream.h"
@@ -78,6 +80,8 @@ bool StartupScript::load(ResourceManager &resources) {
 	_entrances.clear();
 	_rooms.clear();
 	_objects.clear();
+	_flags.clear();
+	_commands.clear();
 	_quickTipsEnabled = true;
 
 	loadConfig(resources);
@@ -135,6 +139,8 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 	_entrances.clear();
 	_rooms.clear();
 	_objects.clear();
+	_flags.clear();
+	_commands.clear();
 
 	auto parseLine = [&](const Common::String &rawLine) {
 		const Common::String line = trimAsciiLine(rawLine);
@@ -148,7 +154,8 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 
 		uint tagIndex = tokens.size();
 		for (uint i = 0; i < tokens.size(); ++i) {
-			if (tokens[i] == "ENTRANCE" || tokens[i] == "ROOM" || tokens[i] == "OBJECT") {
+			if (tokens[i] == "ENTRANCE" || tokens[i] == "ROOM" || tokens[i] == "OBJECT" ||
+				tokens[i] == "FLAG" || tokens[i] == "COMMAND") {
 				tagIndex = i;
 				break;
 			}
@@ -157,6 +164,44 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 			return;
 
 		const Common::String &tag = tokens[tagIndex];
+		if (tag == "FLAG") {
+			if (tokens.size() < tagIndex + 3)
+				return;
+
+			StartupFlagRecord flag;
+			flag.name = tokens[tagIndex + 1];
+			flag.value = tokens[tagIndex + 2].equalsIgnoreCase("T");
+			if (!flag.name.empty())
+				_flags.push_back(flag);
+			return;
+		}
+
+		if (tag == "COMMAND") {
+			if (tokens.size() < tagIndex + 6)
+				return;
+
+			StartupCommandRecord command;
+			command.triggerTag = tokens[tagIndex + 1];
+			command.opcodeName = tokens[tagIndex + 2];
+			command.arg1 = resources.normalizeResourcePath(tokens[tagIndex + 3]);
+			command.arg2 = tokens[tagIndex + 4];
+			command.arg3 = tokens[tagIndex + 5];
+			command.arg4 = tokens.size() > tagIndex + 6 ? tokens[tagIndex + 6] : Common::String();
+
+			// Only path-like operands should be normalized.
+			if (!command.opcodeName.equalsIgnoreCase("SPOOL_MUSIC") &&
+				!command.opcodeName.equalsIgnoreCase("GOFLIC") &&
+				!command.opcodeName.equalsIgnoreCase("START_WAV") &&
+				!command.opcodeName.equalsIgnoreCase("LOAD_WAV") &&
+				!command.opcodeName.equalsIgnoreCase("START_SINGLE_WAV")) {
+				command.arg1 = tokens[tagIndex + 3];
+			}
+
+			if (!command.triggerTag.empty() && !command.opcodeName.empty())
+				_commands.push_back(command);
+			return;
+		}
+
 		if (tag == "ENTRANCE") {
 			if (tokens.size() < tagIndex + 4)
 				return;
@@ -189,6 +234,10 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 			return;
 
 		StartupObjectRecord object;
+		if (tagIndex >= 2) {
+			object.x = atoi(tokens[0].c_str());
+			object.y = atoi(tokens[1].c_str());
+		}
 		object.ownerOrRoom = tokens[tagIndex + 1];
 		object.objectName = tokens[tagIndex + 2];
 		object.resourcePath = resources.normalizeResourcePath(tokens[tagIndex + 3]);
@@ -216,15 +265,14 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 
 	parseLine(line);
 
-	debug(1, "Harvester: parsed %u entrances, %u rooms, %u objects from '%s'",
-		(uint)_entrances.size(), (uint)_rooms.size(), (uint)_objects.size(), _path.c_str());
+	debug(1, "Harvester: parsed %u entrances, %u rooms, %u objects, %u flags, %u commands from '%s'",
+		(uint)_entrances.size(), (uint)_rooms.size(), (uint)_objects.size(),
+		(uint)_flags.size(), (uint)_commands.size(), _path.c_str());
 }
 
-bool StartupScript::resolveRoomSetup(const Common::String &entranceName, Common::String &roomName,
-		Common::String &palettePath, Common::String &backgroundPath) const {
-	roomName.clear();
-	palettePath.clear();
-	backgroundPath.clear();
+bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, StartupRoomSetupState &state,
+		ResourceManager &resources) const {
+	state = StartupRoomSetupState();
 
 	const StartupEntranceRecord *entrance = nullptr;
 	for (const StartupEntranceRecord &candidate : _entrances) {
@@ -265,9 +313,111 @@ bool StartupScript::resolveRoomSetup(const Common::String &entranceName, Common:
 	if (!background)
 		return false;
 
-	roomName = room->roomName;
-	palettePath = room->palettePath;
-	backgroundPath = background->resourcePath;
+	state.roomName = room->roomName;
+	state.palettePath = room->palettePath;
+	state.backgroundPath = background->resourcePath;
+
+	Common::Array<StartupFlagRecord> resolvedFlags = _flags;
+	auto getFlagValue = [&](const Common::String &flagName) {
+		for (const StartupFlagRecord &flag : resolvedFlags) {
+			if (flag.name.equalsIgnoreCase(flagName))
+				return flag.value;
+		}
+		return false;
+	};
+	auto setFlagValue = [&](const Common::String &flagName, bool value) {
+		for (StartupFlagRecord &flag : resolvedFlags) {
+			if (flag.name.equalsIgnoreCase(flagName)) {
+				flag.value = value;
+				return;
+			}
+		}
+
+		StartupFlagRecord flag;
+		flag.name = flagName;
+		flag.value = value;
+		resolvedFlags.push_back(flag);
+	};
+	auto addObject = [&](const Common::String &ownerOrRoom, const Common::String &objectName) {
+		for (const StartupObjectRecord &candidate : _objects) {
+			if (!candidate.ownerOrRoom.equalsIgnoreCase(ownerOrRoom) ||
+				!candidate.objectName.equalsIgnoreCase(objectName) ||
+				candidate.resourcePath.empty() ||
+				!candidate.resourcePath.hasSuffixIgnoreCase(".BM")) {
+				continue;
+			}
+
+			for (const StartupObjectRecord &activeObject : state.activeObjects) {
+				if (activeObject.ownerOrRoom.equalsIgnoreCase(candidate.ownerOrRoom) &&
+					activeObject.objectName.equalsIgnoreCase(candidate.objectName)) {
+					return;
+				}
+			}
+
+			state.activeObjects.push_back(candidate);
+			return;
+		}
+	};
+	auto removeObject = [&](const Common::String &ownerOrRoom, const Common::String &objectName) {
+		for (uint i = 0; i < state.activeObjects.size(); ++i) {
+			if (state.activeObjects[i].ownerOrRoom.equalsIgnoreCase(ownerOrRoom) &&
+				state.activeObjects[i].objectName.equalsIgnoreCase(objectName)) {
+				state.activeObjects.remove_at(i);
+				return;
+			}
+		}
+	};
+	auto findCommand = [&](const Common::String &tag) -> const StartupCommandRecord * {
+		for (const StartupCommandRecord &command : _commands) {
+			if (command.triggerTag.equalsIgnoreCase(tag))
+				return &command;
+		}
+		return nullptr;
+	};
+
+	Common::String currentTag = room->onEnterCommand;
+	for (uint step = 0; step < 128 && !currentTag.empty(); ++step) {
+		const StartupCommandRecord *command = findCommand(currentTag);
+		if (!command) {
+			debug(1, "Harvester: unresolved startup command tag '%s' for room '%s'",
+				currentTag.c_str(), room->roomName.c_str());
+			break;
+		}
+
+		if (command->opcodeName.equalsIgnoreCase("CHECK_FLAG")) {
+			currentTag = getFlagValue(command->arg1) ? command->arg2 : command->arg3;
+			continue;
+		}
+
+		if (command->opcodeName.equalsIgnoreCase("SET_FLAG")) {
+			setFlagValue(command->arg1, command->arg2.equalsIgnoreCase("T"));
+			currentTag = command->arg4;
+			continue;
+		}
+
+		if (command->opcodeName.equalsIgnoreCase("SPOOL_MUSIC")) {
+			state.musicPath = resources.normalizeResourcePath(command->arg1);
+			currentTag = command->arg4;
+			continue;
+		}
+
+		if (command->opcodeName.equalsIgnoreCase("ADD")) {
+			addObject(command->arg1, command->arg2);
+			currentTag = command->arg4;
+			continue;
+		}
+
+		if (command->opcodeName.equalsIgnoreCase("DELETE")) {
+			removeObject(command->arg1, command->arg2);
+			currentTag = command->arg4;
+			continue;
+		}
+
+		debug(1, "Harvester: unsupported startup command '%s' for tag '%s'",
+			command->opcodeName.c_str(), command->triggerTag.c_str());
+		break;
+	}
+
 	return true;
 }
 
