@@ -73,8 +73,8 @@ struct StartupRoomSceneResources {
 	StartupRoomSetupState state;
 	byte palette[256 * 3] = { 0 };
 	IndexedBitmap background;
-	Common::Array<StartupObjectRecord> drawableObjects;
-	Common::Array<StartupAnimRecord> drawableAnimations;
+	Common::Array<StartupObjectRecord> sceneObjects;
+	Common::Array<StartupAnimRecord> sceneAnimations;
 	float targetPaletteBrightness = 1.0f;
 };
 
@@ -164,25 +164,39 @@ static bool loadBitmapResource(ResourceManager &resources, const Common::String 
 	return true;
 }
 
-static Common::Rect getObjectBounds(const StartupObjectRecord &object) {
-	if (object.right > object.left && object.bottom > object.top)
-		return Common::Rect(object.left, object.top, object.right, object.bottom);
+static Common::Rect getHotspotBounds(const StartupObjectRecord &object) {
+	if (object.boundsX2 > object.currentX && object.boundsY2 > object.currentY)
+		return Common::Rect(object.currentX, object.currentY, object.boundsX2 + 1, object.boundsY2 + 1);
 
 	return Common::Rect();
 }
 
-static void queueDrawableRoomObject(const StartupObjectRecord &object, Common::Array<StartupObjectRecord> &drawableObjects) {
-	if (object.resourcePath.empty() || !object.resourcePath.hasSuffixIgnoreCase(".BM"))
+static Common::String resolveSceneObjectSpritePath(const StartupObjectRecord &object) {
+	const bool atInitialPlacement = object.currentX == object.initialX &&
+		object.currentY == object.initialY &&
+		object.currentOwnerOrRoom.equalsIgnoreCase(object.initialOwnerOrRoom);
+	if (!object.altSpritePath.empty() &&
+		(!atInitialPlacement || object.currentOwnerOrRoom.equalsIgnoreCase("INVENTORY")))
+		return object.altSpritePath;
+
+	return object.spritePath;
+}
+
+static void queueVisibleSceneObject(const StartupObjectRecord &object, const Common::String &backgroundPath,
+		Common::Array<StartupObjectRecord> &sceneObjects) {
+	if (!object.visible)
+		return;
+	if (!backgroundPath.empty() && object.spritePath.equalsIgnoreCase(backgroundPath))
 		return;
 
-	for (const StartupObjectRecord &drawable : drawableObjects) {
-		if (drawable.ownerOrRoom.equalsIgnoreCase(object.ownerOrRoom) &&
-			drawable.objectName.equalsIgnoreCase(object.objectName)) {
+	for (const StartupObjectRecord &sceneObject : sceneObjects) {
+		if (sceneObject.currentOwnerOrRoom.equalsIgnoreCase(object.currentOwnerOrRoom) &&
+			sceneObject.objectName.equalsIgnoreCase(object.objectName)) {
 			return;
 		}
 	}
 
-	drawableObjects.push_back(object);
+	sceneObjects.push_back(object);
 }
 
 static bool loadRoomSceneResources(const StartupRoomSetupState &state, ResourceManager &resources, StartupRoomSceneResources &scene) {
@@ -194,18 +208,16 @@ static bool loadRoomSceneResources(const StartupRoomSetupState &state, ResourceM
 		return false;
 	}
 
-	Common::Array<StartupObjectRecord> drawableObjects;
-	for (const StartupObjectRecord &object : state.roomObjects) {
-		if (object.visible)
-			queueDrawableRoomObject(object, drawableObjects);
-	}
+	Common::Array<StartupObjectRecord> sceneObjects;
+	for (const StartupObjectRecord &object : state.roomObjects)
+		queueVisibleSceneObject(object, state.backgroundPath, sceneObjects);
 	for (const StartupObjectRecord &object : state.activeObjects)
-		queueDrawableRoomObject(object, drawableObjects);
+		queueVisibleSceneObject(object, state.backgroundPath, sceneObjects);
 
-	scene.drawableObjects = drawableObjects;
+	scene.sceneObjects = sceneObjects;
 	for (const StartupAnimRecord &anim : state.roomAnimations) {
 		if (anim.active || anim.visible)
-			scene.drawableAnimations.push_back(anim);
+			scene.sceneAnimations.push_back(anim);
 	}
 
 	return true;
@@ -220,26 +232,27 @@ static void drawRoomScene(HarvesterEngine &engine, Graphics::Screen &screen, con
 		engine.getRuntimeEntities()->drawSceneEntities(screen);
 }
 
-static const StartupObjectRecord *findObjectAtPoint(const Common::Array<StartupObjectRecord> &objects, const Common::Point &point) {
-	for (int i = (int)objects.size() - 1; i >= 0; --i) {
-		const StartupObjectRecord &object = objects[(uint)i];
-		if (!object.active)
-			continue;
-
-		const Common::Rect bounds = getObjectBounds(object);
-		if (!bounds.isEmpty() && bounds.contains(point))
+static const StartupObjectRecord *findSceneObjectByName(const Common::Array<StartupObjectRecord> &objects,
+		const Common::String &objectName) {
+	for (const StartupObjectRecord &object : objects) {
+		if (object.objectName.equalsIgnoreCase(objectName))
 			return &object;
 	}
 
 	return nullptr;
 }
 
-static const StartupObjectRecord *findRoomObjectAtPoint(const StartupRoomSetupState &state, const Common::Point &point) {
-	const StartupObjectRecord *object = findObjectAtPoint(state.activeObjects, point);
-	if (object)
-		return object;
+static const StartupObjectRecord *findRoomObjectAtPoint(HarvesterEngine &engine,
+		const Common::Array<StartupObjectRecord> &sceneObjects, const Common::Point &point) {
+	RuntimeEntityManager *runtimeEntities = engine.getRuntimeEntities();
+	if (!runtimeEntities)
+		return nullptr;
 
-	return findObjectAtPoint(state.roomObjects, point);
+	const RuntimeEntity *entity = runtimeEntities->findTopSceneEntityAt(point, kRuntimeEntityClassObject);
+	if (!entity)
+		return nullptr;
+
+	return findSceneObjectByName(sceneObjects, entity->getName());
 }
 
 static Common::String trimAsciiLine(const Common::String &value) {
@@ -389,7 +402,7 @@ Common::Error StartupFlow::runQuickTips() {
 
 	Graphics::Screen *screen = _engine.getScreen();
 	if (screen) {
-		if (!populateRoomSceneEntities(scene.drawableObjects, scene.drawableAnimations))
+		if (!populateRoomSceneEntities(scene.sceneObjects, scene.sceneAnimations))
 			return Common::kReadingFailed;
 
 		drawRoomScene(_engine, *screen, scene, kPaletteBrightnessBlack);
@@ -578,7 +591,7 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 	if (!screen || !art || !titleFont || !bodyFont)
 		return Common::kNoError;
 
-	if (!populateRoomSceneEntities(scene.drawableObjects, scene.drawableAnimations))
+	if (!populateRoomSceneEntities(scene.sceneObjects, scene.sceneAnimations))
 		return Common::kReadingFailed;
 
 	drawRoomScene(_engine, *screen, scene, kPaletteBrightnessBlack);
@@ -596,10 +609,10 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 		entranceName.c_str(), state.roomName.c_str(), state.palettePath.c_str(), state.backgroundPath.c_str());
 	if (!state.musicPath.empty())
 		statusMessage += Common::String::format(" Music: %s.", state.musicPath.c_str());
-	if (!scene.drawableObjects.empty())
-		statusMessage += Common::String::format(" Visible scene objects: %u.", (uint)scene.drawableObjects.size());
-	if (!scene.drawableAnimations.empty())
-		statusMessage += Common::String::format(" Room anims: %u.", (uint)scene.drawableAnimations.size());
+	if (!scene.sceneObjects.empty())
+		statusMessage += Common::String::format(" Visible scene objects: %u.", (uint)scene.sceneObjects.size());
+	if (!scene.sceneAnimations.empty())
+		statusMessage += Common::String::format(" Room anims: %u.", (uint)scene.sceneAnimations.size());
 	statusMessage += " Click an active hotspot to follow its startup command chain.";
 	const Common::String baseStatusMessage = statusMessage;
 	StartupResolvedText inspectText;
@@ -613,32 +626,32 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 		if (needsRedraw) {
 			drawRoomScene(_engine, *screen, scene, scene.targetPaletteBrightness);
 
-			const Common::Rect panel(72, 336, 568, 468);
-			screen->fillRect(panel, kPanelFillColor);
-			drawShadowedString(*screen, *titleFont, Common::String::format("Room Setup Stub: %s", state.roomName.c_str()),
-				panel.left, 348, panel.width(), kTextColorNormal, Graphics::kTextAlignCenter);
-			Common::String hoverMessage;
-			Common::String footerMessage = "Press Enter or Escape to return to the menu stub.";
-			if (showingInspectText) {
-				hoverMessage = inspectText.value;
-				footerMessage = inspectCanDismiss ? "Click, Enter, or Escape to dismiss this inspect text."
-					: "Release the mouse button, then click again to dismiss this inspect text.";
-				drawShadowedString(*screen, *bodyFont, Common::String::format("Inspect: %s", inspectObjectLabel.c_str()),
-					panel.left, 372, panel.width(), kTextColorHover, Graphics::kTextAlignCenter);
-			} else {
-				const StartupObjectRecord *hoveredObject = findRoomObjectAtPoint(state, _mousePos);
-				if (hoveredObject) {
-					hoverMessage = _engine.getStartupScript()->resolveObjectLabel(*hoveredObject);
-					if (!hoveredObject->interactionCommandTag.empty())
-						hoverMessage += " Click to follow the scripted startup interaction.";
-					else if (!_engine.getStartupScript()->resolveObjectInspectText(*hoveredObject, inspectText))
-						inspectText = StartupResolvedText();
-					else
-						hoverMessage += " Click to inspect.";
+				const Common::Rect panel(72, 336, 568, 468);
+				screen->fillRect(panel, kPanelFillColor);
+				drawShadowedString(*screen, *titleFont, Common::String::format("Room Setup Stub: %s", state.roomName.c_str()),
+					panel.left, 348, panel.width(), kTextColorNormal, Graphics::kTextAlignCenter);
+				Common::String hoverMessage;
+				Common::String footerMessage = "Press Enter or Escape to return to the menu stub.";
+				if (showingInspectText) {
+					hoverMessage = inspectText.value;
+					footerMessage = inspectCanDismiss ? "Click, Enter, or Escape to dismiss this inspect text."
+						: "Release the mouse button, then click again to dismiss this inspect text.";
+					drawShadowedString(*screen, *bodyFont, Common::String::format("Inspect: %s", inspectObjectLabel.c_str()),
+						panel.left, 372, panel.width(), kTextColorHover, Graphics::kTextAlignCenter);
+				} else {
+					const StartupObjectRecord *hoveredObject = findRoomObjectAtPoint(_engine, scene.sceneObjects, _mousePos);
+					if (hoveredObject) {
+						hoverMessage = _engine.getStartupScript()->resolveObjectLabel(*hoveredObject);
+						if (!hoveredObject->actionTag.empty())
+							hoverMessage += " Click to follow the scripted startup interaction.";
+						else if (!_engine.getStartupScript()->resolveObjectInspectText(*hoveredObject, inspectText))
+							inspectText = StartupResolvedText();
+						else
+							hoverMessage += " Click to inspect.";
+					}
 				}
-			}
-			if (hoverMessage.empty())
-				hoverMessage = statusMessage;
+				if (hoverMessage.empty())
+					hoverMessage = statusMessage;
 
 			drawWrappedShadowedText(*screen, *bodyFont, hoverMessage, panel.left + 24, 386, panel.width() - 48,
 				kTextColorNormal);
@@ -679,12 +692,12 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 					break;
 				}
 
-				const StartupObjectRecord *clickedObject = findRoomObjectAtPoint(state, _mousePos);
-				if (!clickedObject) {
-					statusMessage = "No active startup hotspot under the cursor.";
-					needsRedraw = true;
-					break;
-				}
+					const StartupObjectRecord *clickedObject = findRoomObjectAtPoint(_engine, scene.sceneObjects, _mousePos);
+					if (!clickedObject) {
+						statusMessage = "No active startup hotspot under the cursor.";
+						needsRedraw = true;
+						break;
+					}
 
 				const Common::String objectLabel = _engine.getStartupScript()->resolveObjectLabel(*clickedObject);
 				StartupInteractionResult interaction;
@@ -708,25 +721,25 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 					statusMessage += Common::String::format(" Sound: %s (%s).", interaction.soundPath.c_str(),
 						soundStarted ? "playing" : "load failed");
 				}
-				needsRedraw = true;
+					needsRedraw = true;
 
-				if (!interaction.nextRoomName.empty()) {
-					Common::Error roomError = runRoomSetupStub(interaction.nextRoomName);
-					if (roomError.getCode() == Common::kReadingFailed) {
-						(void)populateRoomSceneEntities(scene.drawableObjects, scene.drawableAnimations);
-						resetCursorAnimationSequence();
-						statusMessage = Common::String::format("Unable to resolve closeup room '%s'.",
-							interaction.nextRoomName.c_str());
-						needsRedraw = true;
-					} else if (roomError.getCode() != Common::kNoError) {
-						return roomError;
-					} else {
-						(void)populateRoomSceneEntities(scene.drawableObjects, scene.drawableAnimations);
-						resetCursorAnimationSequence();
-						statusMessage = Common::String::format("Returned from %s.", interaction.nextRoomName.c_str());
-						needsRedraw = true;
+					if (!interaction.nextRoomName.empty()) {
+						Common::Error roomError = runRoomSetupStub(interaction.nextRoomName);
+						if (roomError.getCode() == Common::kReadingFailed) {
+							(void)populateRoomSceneEntities(scene.sceneObjects, scene.sceneAnimations);
+							resetCursorAnimationSequence();
+							statusMessage = Common::String::format("Unable to resolve closeup room '%s'.",
+								interaction.nextRoomName.c_str());
+							needsRedraw = true;
+						} else if (roomError.getCode() != Common::kNoError) {
+							return roomError;
+						} else {
+							(void)populateRoomSceneEntities(scene.sceneObjects, scene.sceneAnimations);
+							resetCursorAnimationSequence();
+							statusMessage = Common::String::format("Returned from %s.", interaction.nextRoomName.c_str());
+							needsRedraw = true;
+						}
 					}
-				}
 				break;
 			}
 			case Common::EVENT_KEYDOWN:
@@ -784,16 +797,26 @@ bool StartupFlow::populateRoomSceneEntities(const Common::Array<StartupObjectRec
 
 	runtimeEntities->clearSceneEntities();
 	for (const StartupObjectRecord &object : drawableObjects) {
-		if (!runtimeEntities->spawnSceneBitmapEntity(object.objectName, object.resourcePath,
-				Common::Point(object.left, object.top), 0.0f)) {
+		RuntimeEntity *entity = nullptr;
+		const Common::String spritePath = resolveSceneObjectSpritePath(object);
+		if (!spritePath.empty() && spritePath.hasSuffixIgnoreCase(".BM")) {
+			entity = runtimeEntities->spawnSceneBitmapEntity(object.objectName, spritePath,
+				Common::Point(object.currentX, object.currentY), (float)object.currentZ);
+		} else {
+			const Common::Rect hotspotBounds = getHotspotBounds(object);
+			if (!hotspotBounds.isEmpty())
+				entity = runtimeEntities->spawnSceneHotspotEntity(object.objectName, hotspotBounds, (float)object.currentZ);
+		}
+
+		if (!entity) {
 			debug(1, "Harvester: unable to spawn room object entity '%s' from '%s'",
-				object.objectName.c_str(), object.resourcePath.c_str());
+				object.objectName.c_str(), spritePath.c_str());
 		}
 	}
 	for (const StartupAnimRecord &anim : drawableAnimations) {
 		if (!runtimeEntities->spawnSceneAnimationEntity(anim.animName, anim.resourcePath,
-				Common::Point(anim.x, anim.y), 0.0f, anim.animationRate, anim.active, anim.visible,
-				anim.looping, anim.backward, anim.pingPong, anim.initialFrame)) {
+				Common::Point(anim.x, anim.y), (float)anim.z, anim.frameDelay, anim.active, anim.visible,
+				anim.looping, anim.backward, anim.pingPong)) {
 			debug(1, "Harvester: unable to spawn room anim entity '%s' from '%s'",
 				anim.animName.c_str(), anim.resourcePath.c_str());
 		}
