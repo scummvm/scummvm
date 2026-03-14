@@ -324,9 +324,9 @@ bool RuntimeEntity::overlapsEntity(const RuntimeEntity &other) const {
 		return false;
 	if (!hasOpaqueFrame() || !other.hasOpaqueFrame())
 		return false;
-	if (_classId == kRuntimeEntityClassAnimation || _classId == kRuntimeEntityClassBackground ||
+	if (_classId == kRuntimeEntityClassCursor || _classId == kRuntimeEntityClassBackground ||
 		_classId == kRuntimeEntityClassRectHotspot || _classId == kRuntimeEntityClassRectHotspot19 ||
-		other._classId == kRuntimeEntityClassAnimation || other._classId == kRuntimeEntityClassBackground ||
+		other._classId == kRuntimeEntityClassCursor || other._classId == kRuntimeEntityClassBackground ||
 		other._classId == kRuntimeEntityClassRectHotspot || other._classId == kRuntimeEntityClassRectHotspot19) {
 		return false;
 	}
