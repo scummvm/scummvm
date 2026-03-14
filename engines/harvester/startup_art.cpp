@@ -41,10 +41,6 @@ static const int kLogoX = 160;
 static const int kLogoY = 0;
 static const int kWaitX = 250;
 static const int kWaitY = 160;
-static const int kQuickTipsOverlayX = 167;
-static const int kQuickTipsOverlayY = 200;
-static const int kCursorX = 320;
-static const int kCursorY = 200;
 
 static const char *const kTextboxPaths[] = {
 	"1:/GRAPHIC/OTHER/TEXTBOX1.BM",
@@ -69,9 +65,6 @@ bool StartupArt::load(ResourceManager &resources) {
 	_ammoIcons.clear();
 	_inventoryBitmap = IndexedBitmap();
 	_logoBitmap = IndexedBitmap();
-	_pcRoomBitmap = IndexedBitmap();
-	_pcRoomMaskA = IndexedBitmap();
-	_pcRoomMaskB = IndexedBitmap();
 	_tipsBitmap = IndexedBitmap();
 
 	return loadPalette(resources, "1:/GRAPHIC/PAL/WAIT.PAL", _waitPalette) &&
@@ -94,13 +87,7 @@ bool StartupArt::loadQuickTipsResources(ResourceManager &resources) {
 			return false;
 	}
 
-	return loadAnimation(resources, "1:/GRAPHIC/MONSTERS/PC/PC0.ABM", _pcActorFrames) &&
-	       loadPalette(resources, "1:/GRAPHIC/PAL/PCROOM.PAL", _pcRoomPalette) &&
-	       loadBitmap(resources, "1:/GRAPHIC/ROOMS/PCROOM.BM", _pcRoomBitmap) &&
-	       loadBitmap(resources, "1:/GRAPHIC/MASKS/PCRPRTA.BM", _pcRoomMaskA) &&
-	       loadBitmap(resources, "1:/GRAPHIC/MASKS/PCRPRTB.BM", _pcRoomMaskB) &&
-	       loadAnimation(resources, "1:/GRAPHIC/ROOMANIM/PCRMCLOK.ABM", _pcRoomClockFrames) &&
-	       loadBitmap(resources, "1:/GRAPHIC/OTHER/TIPS.BM", _tipsBitmap);
+	return loadBitmap(resources, "1:/GRAPHIC/OTHER/TIPS.BM", _tipsBitmap);
 }
 
 void StartupArt::drawWaitFrame() const {
@@ -112,18 +99,6 @@ void StartupArt::drawWaitFrame() const {
 	blitBitmap(_inventoryBitmap, kInventoryX, kInventoryY);
 	blitBitmap(_logoBitmap, kLogoX, kLogoY);
 	blitAnimationFrame(_waitFrames, 0, kWaitX, kWaitY);
-	g_system->updateScreen();
-}
-
-void StartupArt::drawQuickTipsScreen() const {
-	if (!_pcRoomBitmap.isValid())
-		return;
-
-	g_system->getPaletteManager()->setPalette(_pcRoomPalette, 0, 256);
-	g_system->fillScreen(0);
-	blitBitmap(_pcRoomBitmap, 0, 0);
-	blitBitmap(_tipsBitmap, kQuickTipsOverlayX, kQuickTipsOverlayY);
-	blitAnimationFrame(_pointerFrames, 0, kCursorX, kCursorY);
 	g_system->updateScreen();
 }
 

@@ -85,6 +85,7 @@ struct StartupRoomSetupState {
 	Common::String palettePath;
 	Common::String backgroundPath;
 	Common::String musicPath;
+	float paletteBrightness = 1.0f;
 	Common::Array<StartupObjectRecord> activeObjects;
 	Common::Array<StartupObjectRecord> roomObjects;
 };

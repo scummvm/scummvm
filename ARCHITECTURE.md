@@ -1,0 +1,655 @@
+# HARVEST.LE Reverse Engineering Notes
+
+## Scope
+
+This file captures preliminary reverse-engineering findings for `HARVEST.LE` from the entry point through the main startup path and into room/event transitions. Names below reflect what has already been applied in Ghidra when confidence was high.
+
+## Startup Chain
+
+- `_entry` at `0x810e8` is only an LE loader thunk.
+- `watcom_le_crt_startup` at `0x81160` is Watcom DOS-extender CRT setup. It captures the command tail and environment block, counts `NO87=` overrides, clears startup/BSS state, runs init callbacks, and hands off to C startup.
+- `run_init_callbacks_by_priority` at `0x888a6` walks a 6-byte callback table and executes pending init callbacks in priority order.
+- `crt_initialize_and_run_program` at `0x88856` finishes CRT setup and transfers control into the program startup path.
+- `startup_main` at `0x10010` is the first game-specific startup routine. It stores `argc/argv`, resolves `TEMP` / `TMP` / `.\` working paths, loads options such as `FX_VOLUME`, `MUSIC_VOLUME`, `GAMMA`, `CLICK`, and `QUICK_TIPS`, handles the `Z.EXE` CLI/help path, and then enters the normal game startup chain.
+
+## Resource Layer
+
+- `initialize_extended_file_system` at `0x1c640` performs one-time setup for the game's extended/XFILE resource system.
+- The routine copies startup/config path strings, resolves the configured `CD_ROM` root, and builds in-memory entry lists for numbered resource sets.
+- `shutdown_extended_file_system` at `0x1ca80` is the teardown half of that subsystem.
+  - It closes open numbered-set handles, frees the per-set path strings and entry lists, clears the cached lookup tables, and drops the initialized flag so `initialize_extended_file_system` can rebuild the state.
+- The global cache state for that subsystem is now partially explicit:
+  - `g_extended_file_system_initialized` gates the one-time init/teardown pair.
+  - `g_xfile_set_root_paths[10]` stores the per-set root/path strings used to locate numbered resource sets.
+  - `g_xfile_set_handles[10]` stores the open handles for those numbered resource sets.
+  - `g_xfile_set_entry_lists[10]` stores the linked-list heads for the per-set in-memory entry catalogs.
+  - `g_xfile_set_read_offsets[10]` caches the current archive read offset per set so `xfile_read` can avoid redundant seeks.
+  - `g_xfile_stream_slots[16]` is the transient stream table shared by dialogue voice, music, sound-effect, and script/resource loads that read through the XFILE abstraction.
+- The in-memory XFILE cache records are now typed:
+  - `XFileEntryListNode` is an 8-byte linked-list node with `entry` and `next` pointers.
+  - `XFileArchiveEntry` is the 0x94-byte per-file record copied from either the numbered set index file or the inline archive headers. The confirmed fields are:
+    - `signature[4]`
+    - `path[0x80]`
+    - `archive_offset`
+    - `stored_size`
+    - `packed_flag`
+    - `unpacked_size`
+- `xfile_size` at `0x1cc80` returns file sizes either from mounted archive entries or from direct CD-ROM paths.
+- `build_cdrom_path` at `0x1ed80` resolves the configured `CD_ROM` root and appends a caller-supplied relative asset path into the shared direct-file path buffer used by FST and other non-archive loads.
+- `xfile_read` at `0x1cde0` reads through the same abstraction. It supports direct file reads and numbered archive-backed entries, including a packed-entry decode path.
+- The XFILE stream helpers are now explicit:
+  - `open_xfile_stream` at `0x1e530` reserves one of 16 transient stream slots, either binds it to a direct CD-ROM file handle or maps it onto an archive entry inside a numbered set, and seeds the slot's start/current/end offsets.
+  - `read_xfile_stream` at `0x1e750` is the chunked reader for those transient slots. Archive-backed reads reuse `g_xfile_set_read_offsets` to avoid redundant seeks and clamp reads to the mapped entry range.
+  - `seek_xfile_stream` at `0x1e900` repositions an XFILE stream slot relative to its mapped entry start, current position, or end; direct-file slots delegate to the lower handle-layer seek helper.
+  - `close_xfile_stream` at `0x1e710` releases a transient stream slot and closes the direct file handle when the slot is not archive-backed.
+- The lower DOS file-handle layer under both XFILE and the game's buffered FILE-stream helpers is now named:
+  - `open_file_handle` at `0x81576`
+  - `open_file_handle_with_flags` at `0x8159a`
+  - `seek_file_handle` at `0x81ecf`
+  - `read_file_handle` at `0x81f63`
+  - `get_file_handle_size` at `0x85d65`
+  - `close_file_handle` at `0x887ad`
+- The buffered FILE-stream layer above those raw handles is now explicit:
+  - `FileStream` is a typed 0x1a-byte buffered stream record with `cursor`, `buffer_count`, `buffer_base`, `flags`, `file_handle`, `buffer_size`, an inline one-byte fallback buffer, and a temp-file id byte.
+  - `FileStreamListNode` is the 8-byte linked-list node used to track active and recycled stream descriptors.
+  - `g_file_stream_slots` at `0xc52f4` is the 20-slot static stream table; `g_stdout_stream` and `g_stderr_stream` are the confirmed standard output/error slots inside that table.
+  - `g_open_file_stream_nodes` and `g_free_file_stream_nodes` are the active/recycled descriptor lists used when the runtime allocates or releases stream objects.
+  - `open_file_stream` allocates a `FileStream`, parses mode strings through `parse_file_stream_mode_flags`, opens the backing DOS handle, and seeks to end when the mode starts with `a`.
+  - `close_file_stream` tears the stream down through `shutdown_file_stream` and `close_and_release_file_stream`.
+  - `seek_file_stream`, `rewind_file_stream`, `flush_file_stream`, and `tell_file_stream` are the standard buffered positioning/flush helpers over that layer.
+  - `ensure_file_stream_buffer` allocates the backing buffer on demand, falling back to the inline one-byte buffer when heap allocation fails.
+  - `printf_ascii`, `fprintf_ascii`, `vfprintf_ascii`, `sprintf_ascii`, and `format_ascii_to_callback` are the shared ASCII formatting layer built on top of those streams.
+  - `write_c_string_to_file_stream` and `write_char_to_file_stream` are the low-level emitters used by `puts_ascii` and the formatting callbacks.
+  - `is_file_handle_device`, `get_cached_file_handle_flags`, and `set_cached_file_handle_flags` cache DOS handle/device state under that stream layer.
+  - `write_text_file_handle` is the translated text-mode DOS write path used by the save/load menus; it expands `\n` to `\r\n` unless the cached handle flags mark the handle as binary and seeks to end first when the append bit is set.
+  - `sync_file_stream_device_flags` is the bridge from newly opened buffered streams into that cached DOS handle flag table; it queries `int 21h AX=4400` through `is_file_handle_device` and mirrors the device bit into the stream's local flags.
+- The protected-mode/DPMI support under those DOS-facing helpers is now partially explicit:
+  - `DpmiInt31RegisterBlock` is the confirmed 0x2c-byte register marshalling block used by the recovered `int 31h` helper path.
+  - `InterruptRegisterState` is the 0x1c-byte general-register snapshot used by the software-interrupt path; the confirmed fields are `eax`, `ebx`, `ecx`, `edx`, `esi`, `edi`, and `carry_mask`.
+  - `SegmentRegisterSnapshot` is the 0x0c-byte companion segment snapshot used by that same path; the confirmed fields are `es`, `cs`, `ss`, `ds`, `fs`, and `gs`.
+  - `call_dpmi_service_with_reg_block` loads `DS`, `ES`, `EDI`, `ESI`, `EDX`, and `ECX` from that block, issues `int 31h` with caller-supplied `AX`/`BX`, then writes the post-call `EAX`, `ECX`, `EDX`, and flags back into the same block.
+  - `get_selector_base_address` is the `int 31h AX=0006` wrapper that returns the linear base for a protected-mode selector.
+  - `get_code_segment_selector` and `get_stack_segment_selector` are the tiny selector helpers used when the runtime needs to derive lockable linear addresses from the current code or stack segment.
+  - `set_linear_region_lock_state` wraps DPMI services `0x0600` / `0x0601` over a linear base/length pair, and `lock_linear_region` / `unlock_linear_region` are its direct public wrappers.
+  - `g_software_interrupt_stub_table` at `0x89acc` is the 256-entry `INT n ; RET` stub table used by the generic software-interrupt core.
+  - `dispatch_interrupt_stub_with_state` loads `ES` / `DS` from `SegmentRegisterSnapshot`, restores `EAX`..`EDI` from `InterruptRegisterState`, and returns directly into the selected `INT n ; RET` stub.
+  - `invoke_interrupt_stub_and_store_state` is the post-dispatch collector that snapshots `EAX`..`EDI`, the carry bit, and the updated `ES` / `DS` values back into those same state records.
+  - `invoke_software_interrupt_with_state` is the public wrapper over that stub-table path.
+  - `allocate_dos_memory_block` and `free_dos_memory_block` are the `int 31h AX=0100` / `AX=0101` helpers used by the VESA probe path to allocate and release conventional-memory buffers.
+  - `DpmiRealModeCallStructure` is the confirmed 0x32-byte DPMI `AX=0300` real-mode register frame: `edi`, `esi`, `ebp`, `reserved_0c`, `ebx`, `edx`, `ecx`, `eax`, `flags`, `es`, `ds`, `fs`, `gs`, `ip`, `cs`, `sp`, `ss`.
+  - `g_dpmi_real_mode_call_structure` at `0xa0000` is the shared instance of that structure used by the mouse, VESA BIOS, and MSCDEX probe paths.
+  - `simulate_real_mode_interrupt` and `simulate_real_mode_interrupt_with_stack_words` marshal `int 31h AX=0300` around that shared real-mode frame, with the second helper exposing the caller-supplied stack-word count.
+  - Those helpers are used by `install_keyboard_irq1_handler` / `remove_keyboard_irq1_handler` to lock the IRQ1 handler code and shared scancode state, by `initialize_pcm_sound_state` to lock live PCM buffers, and by the video/runtime setup path to lock persistent surface state once.
+- The temporary DOS critical-error path used by CD-ROM probing is now explicit:
+  - `install_dos_critical_error_handler` installs `dos_critical_error_handler` on `int 24h` through DOS `AH=25h` and stores a caller-supplied far callback in `g_dos_critical_error_callback_far`.
+  - `dos_critical_error_handler` snapshots the interrupted stack in `g_dos_critical_error_saved_stack_far`, records the current DOS critical-error context, and then invokes that caller callback.
+  - `dos_critical_error_handler_iret_thunk` is the chained return stub that invokes the stored callback, restores the saved stack, and resumes the interrupted DOS path with `IRETD`.
+  - `dos_find_first_with_dta` is the disc-probe helper that sets a temporary DTA with DOS `AH=1Ah`, performs `findfirst` via `AH=4Eh`, and is used by `match_requested_game_disc` and `prompt_for_cdrom_disc_change` to read the inserted disc label.
+  - `copy_dos_current_dta_record` is the DOS 9 compatibility helper under that path; it queries the current DTA pointer with `AH=2Fh` and copies the 0x2b-byte record into the caller's buffer after `findfirst`.
+  - `store_segment_registers` is the small support helper used by `invoke_real_mode_interrupt` to seed its segment snapshot before handing off to the still-untyped real-mode interrupt core.
+  - `probe_mscdex_installation_status` uses `int 2Fh AX=1100h` with the documented `DADAh` stack signature to probe MSCDEX installation state during startup.
+  - `get_mscdex_first_drive_index` uses `int 2Fh AX=1500h` and returns the starting CD-ROM drive index from `g_dpmi_real_mode_call_structure.ecx` when MSCDEX reports one or more installed drives in `ebx`.
+  - `get_mscdex_version_bcd` uses `int 2Fh AX=150Ch` and returns the MSCDEX version number from `g_dpmi_real_mode_call_structure.ebx`.
+- `prompt_for_cdrom_disc_change` at `0x488a0` is the user-facing disc-swap / drive-not-ready path reached from menus and scripted transitions.
+  - It stops the active music stream, frees dialogue/XFILE cache state, shows the `CD-ROM DRIVE NOT READY!` / `PLEASE TRY AGAIN...` prompt, then reruns `shutdown_extended_file_system`, `initialize_extended_file_system`, and the `dialogue.idx` reopen path once the requested disc becomes available.
+
+## Town Script Runtime
+
+- `initialize_town_script_runtime` at `0x42fc0` bootstraps the game's town script system.
+- It builds a `cold(%s)` startup expression from the configured `TOWN` value.
+- It loads the town script blob through XFILE and deobfuscates it by XORing bytes with `0xAA` except CR/LF.
+- The function then registers a large vocabulary of words/primitives, including `create`, `lit`, `var`, `const`, `if`, `else`, `branch`, `quote`, `.quote`, `do_do`, `do_loop`, and related operators.
+- This strongly suggests a compact Forth-like or stack-based scripting runtime rather than a simple linear bytecode interpreter.
+
+## Confirmed Cold-Start Resource Order
+
+- `startup_main` at `0x10010` enters the normal game boot path in this order:
+  - `initialize_extended_file_system`
+  - `initialize_town_script_runtime`
+  - `run_harvester_main_loop`
+- Before the XFILE mount, the runtime opens `CONFIG.INI`, `menu.ini`, `hmidet.386`, `SOUND.CFG`, and `hmidrv.386`; that stage is configuration, mouse setup, and HMI sound-driver bootstrap rather than archive resource loading.
+- `initialize_extended_file_system` mounts numbered resource sets before any script or UI bootstrap runs. The observed cold-start order is:
+  - `HARVEST.DAT` then `INDEX.001`
+  - `SOUND.DAT` then `INDEX.002`
+  - `HARVEST2.DAT` then `INDEX.003`
+- The sidecar `INDEX.00N` files are read as repeated `0x94`-byte records, matching the confirmed `XFileArchiveEntry` size.
+- `xfile_read` and `xfile_size` use two distinct path modes:
+  - `<digit>:\...` paths are archive-backed lookups through the numbered sets mounted by `initialize_extended_file_system`
+  - bare relative paths are opened directly from the configured `CD_ROM` root
+- `initialize_town_script_runtime` next opens `HARVEST.SCR`, loads the full script blob through XFILE, and XOR-deobfuscates it in memory before registering the script vocabulary.
+- `run_harvester_main_loop` begins its presentation bootstrap by playing three direct-path FST sequences in this exact order:
+  - `GRAPHIC\FST\VIRGLOGO.FST`
+  - `GRAPHIC\FST\FVLOGO.FST`
+  - `GRAPHIC\FST\INTROFIN.FST`
+- After the FST logo/intro playback, the startup path begins loading archive-backed UI resources from set 1, including:
+  - `1:\graphic\pal\wait.pal`
+  - `1:\graphic\other\wait.abm`
+  - `1:\graphic\pointers\pointers.abm`
+  - `1:\graphic\other\inventry.bm`
+  - `1:\graphic\other\harvlogo.bm`
+- Only after the FST playback does the main-loop startup open direct-path dialogue/font assets such as `dialogue.idx`, `graphic\font\harvfont.cft`, `graphic\font\harvfnt2.cft`, `graphic\font\textfont.cft`, `graphic\font\textfnt2.cft`, `graphic\font\medfont1.cft`, and `graphic\font\medfont2.cft`.
+
+## Main Loop
+
+- `run_harvester_main_loop` at `0x6dc70` is the primary Harvester boot and gameplay loop.
+- It prints the `Running Harvester v1.0` banner.
+- It loads startup art and UI resources including logo FSTs, palettes, fonts, textbox art, cursor resources, and room-object art.
+- On the cold-start path it only seeds the first town transition: after the world-record parsers and script runtime have populated the live record lists, it preloads `POINTERS.ABM`, stores the spawned cursor entity, preloads the initial room palette into `g_current_palette_buffer`, and then hands off to `room_setup("QUICK_TIPS")`.
+- It seeds the initial `START` state, enters the main loop, processes state-driven transitions and interactions, and performs cleanup on shutdown.
+  - The startup-side helpers hanging directly off that path are now bounded:
+    - `printf_ascii` prints the copyright line through `g_stdout_stream` after the `puts_ascii` version banner.
+    - `set_random_seed` seeds `g_random_seed` from the first startup tick, and `next_random_value` is the 15-bit LCG step used by script/random branches.
+    - `configure_video_surface` swaps `g_video_surface_context` between the normal gameplay surface and the narrower FST playback surface before the movie path hands off to `run_fst_sequence_player`.
+  - The VESA backend records behind that selector are now bounded as four 8bpp banked-mode descriptors:
+    - `g_vesa_mode_640x400_8bpp`
+    - `g_vesa_mode_640x480_8bpp`
+    - `g_vesa_mode_800x600_8bpp`
+    - `g_vesa_mode_1024x768_8bpp`
+    - `g_vesa_video_mode_backends` is the pointer table `configure_video_surface` scans to match width / height / pixel format.
+    - `configure_video_surface` matches each descriptor on width / height / bpp / backend class, calls the descriptor's probe and activate callbacks, and tears down the previously active backend through the record's shutdown callback before switching.
+    - `VesaModeBackend` is now a typed 64-byte descriptor record with confirmed width/height/pixel-format fields, probe/activate/shutdown/display-start callbacks, pixel read/write callbacks, the shared blit callback, and the runtime bank/window fields consumed by FST playback.
+    - `VideoSurfaceContext` is now a typed 16-byte context that caches the active backend pointer plus the selected width/height/bpp/class.
+  - The shared VESA helper layer is now partially named:
+    - `query_vesa_controller_info` validates the controller signature through BIOS `int 10h AX=4f00`.
+    - `set_vesa_video_mode` checks the current VESA mode with `AX=4f03` and only issues `AX=4f02` when a switch is required.
+    - `set_vesa_window_bank` is the shared `AX=4f05` wrapper used by the banked blitters and single-pixel helpers.
+    - `set_vesa_display_start` is the shared `AX=4f07` wrapper used by the per-mode display-start preset callbacks.
+    - `initialize_vesa_banked_mode` probes and installs a banked VESA mode by mode number, builds the per-scanline bank/offset tables, and initializes the active read/write windows.
+    - `restore_text_mode_3` restores BIOS text mode 3 for the current backend.
+    - `noop_vesa_mode_shutdown` is the no-op teardown callback used by the 640x400, 640x480, and 800x600 descriptor records.
+    - The per-mode callback sets are now explicit for the four descriptor records: each record carries a probe helper, an activation helper, a display-start preset helper, and single-pixel read/write helpers for its specific geometry.
+    - `fill_vesa_banked_rect` fills a rectangular byte region in banked VRAM using the per-scanline bank split tables.
+    - `blit_vesa_banked_rect` is the shared rectangle blitter used by the VESA mode records.
+    - `select_vesa_bank_for_scanline` adjusts the active bank/window based on a scanline index.
+
+## Room And Event Flow
+
+- `room_setup` at `0x73540` is confirmed by in-binary debug strings:
+  - `room_setup(): no START entrance`
+  - `room_setup() ERROR: No such room defined %s`
+  - `room_setup: loading_game / current_music_file = %s`
+- `room_setup` resolves the requested room or `START` entrance, finds the matching room definition, loads the room palette, instantiates exits / hotspots / overlays / room actors, positions the player, runs room-enter handlers, and updates the current music file.
+- `g_current_palette_buffer` at `0xd6084` is the shared room/menu palette buffer used by `run_harvester_main_loop`, `room_setup`, `dispatch_room_event_actions`, inventory/help screens, and the CD prompt path.
+  - `room_setup` first resolves the target room / entrance and, when `g_current_room_def->palette_path` is non-null, rereads that room palette into `g_current_palette_buffer`.
+  - It then reloads `WAIT.PAL` and `WAIT.ABM`, hides the cursor entity, flushes the wait transition, uploads the wait palette, builds the room entities, and only after that uploads the room palette from `g_current_palette_buffer`.
+  - After the initial black upload, `room_setup` uses `ramp_palette_brightness` at `0x23a30` to fade `g_current_palette_buffer` in from black. The helper steps brightness in `0.1` increments on an approximately 4 ms timer and also drives the room dimming path when the room is marked dimmable and `DAY_FLAG` is clear.
+- `upload_palette_to_vga` at `0x22770` writes a caller-supplied RGB palette to the VGA DAC, forces palette index 0 to black, and applies a caller-supplied brightness scalar before clamping each channel to the hardware `0x3f` range.
+- `ramp_palette_brightness` at `0x23a30` is the shared timed palette ramp helper.
+  - `room_setup` uses it as a fade-in from `0.0` to either `1.0` or the dimmed target `0.6`.
+  - The helper updates music stream state between palette uploads instead of blocking in a tight delay loop.
+- `dispatch_room_event_actions` at `0x60ee0` interprets action records keyed by a tag string. It is used by `room_setup`, the main loop, and nested action groups.
+- `dispatch_room_event_actions` supports:
+  - Conditional branching between alternate action tags
+  - Recursive dispatch of named action groups
+  - Room transitions via `room_setup`
+  - Palette and fade mode changes
+  - FST / cutscene style playback
+  - Sound and music loading / playback / stop operations
+  - Object, hotspot, overlay, and room actor visibility or active-state changes
+  - Combat/stat side effects such as damage-type selection and player stat increments
+  - Save-game handoff through the `SAVE_GAME` marker
+
+## World Record Parsers
+
+- `register_world_record_parsers` at `0x60350` registers parser callbacks for the script/world record tags:
+  - `ANIM`
+  - `COMMAND`
+  - `ENTRANCE`
+  - `EXEC_LIST`
+  - `FLAG`
+  - `HEAD`
+  - `MAP_ENTRANCE`
+  - `MAP_LOCATION`
+  - `MONSTER`
+  - `NPC`
+  - `OBJECT`
+  - `REGION`
+  - `ROOM`
+  - `TEXT`
+  - `TIMER`
+  - `USEITEM`
+- The registered callbacks are now individually named in Ghidra:
+  - `parse_anim_record` at `0x5e120`
+  - `parse_command_record` at `0x5e410`
+  - `parse_entrance_record` at `0x5eb80`
+  - `parse_exec_list_record` at `0x5ecb0`
+  - `parse_flag_record` at `0x5ed80`
+  - `parse_head_record` at `0x5ee20`
+  - `parse_map_entrance_record` at `0x5ef20`
+  - `parse_map_location_record` at `0x5efb0`
+  - `parse_monster_record` at `0x5f080`
+  - `parse_npc_record` at `0x5f7e0`
+  - `parse_object_record` at `0x5fa40`
+  - `parse_region_record` at `0x5fd30`
+  - `parse_room_record` at `0x5fea0`
+  - `parse_text_record` at `0x600b0`
+  - `parse_timer_record` at `0x60160`
+  - `parse_useitem_record` at `0x602c0`
+- This parser registry is the clearest anchor for the global linked-list heads used by `room_setup`, `dispatch_room_event_actions`, inventory handling, and dialogue.
+
+## Record Lists
+
+- `g_command_records` at `0xd5a94` is the `COMMAND` list consumed by `dispatch_room_event_actions`.
+- `g_room_entrances` at `0xd5a98` is the `ENTRANCE` list. Each record carries at least:
+  - Entrance tag name at `+0x14`
+  - Destination room name at `+0x10`
+  - Facing/orientation at `+0x0c`
+  - Next pointer at `+0x18`
+- `g_current_room_entrance` at `0xd5a9c` tracks the active entrance/spawn marker.
+- `g_exec_list_records` at `0xd5aa0` is the `EXEC_LIST` list.
+- `g_flag_records` at `0xd5aa4` is the `FLAG` list used by `get_flag_value` / `set_flag_value`.
+- `g_head_records` at `0xd5aa8` is the `HEAD` list used by the dialogue/head UI system.
+- `g_town_map_entrypoints` at `0xd5aac` is the `MAP_ENTRANCE` list.
+- `g_town_map_hotspots` at `0xd5ab0` is the `MAP_LOCATION` list used by the town map selector.
+- `g_monster_records` at `0xd5ab4` is the `MONSTER` list.
+- `g_npc_records` at `0xd5ab8` is the `NPC` list.
+- `g_object_records` at `0xd5abc` is the `OBJECT` list.
+- `g_region_records` at `0xd5ac0` is the `REGION` list.
+- `g_current_room_def` at `0xd5ac4` tracks the current `ROOM` record.
+- `g_room_definitions` at `0xd5ac8` is the `ROOM` list. Observed high-confidence fields:
+  - Enter/action tag at `+0x24`
+  - Room name at `+0x2c`
+  - Current music filename at `+0x30`
+  - Palette filename/resource at `+0x34`
+  - Next pointer at `+0x48`
+- `g_text_records` at `0xd5acc` is the `TEXT` list.
+- `g_timer_records` at `0xd5ad0` is the `TIMER` list.
+- `g_useitem_records` at `0xd5ad4` is the `USEITEM` list.
+- `g_pending_room_name` at `0xd60a4` is the pending next-room string consumed by the main loop.
+
+## Menus And UI States
+
+- `run_main_menu` at `0x67390` is the main-title/menu state.
+  - It loads `main_menu_1` through `main_menu_6` strings from the text system.
+  - It builds the menu UI, highlights selections, and branches into startup options.
+- `run_load_game_menu` at `0x64910` is the load-game UI.
+  - It loads `loadgame.pal` and `loadgame.bm`.
+  - It enumerates `GAME_01` through `GAME_25` slots and reads slot names from the save file.
+- `run_save_game_menu` at `0x632c0` is the matching save-game UI.
+  - It loads `savegame.pal` and `savegame.bm`.
+  - It enumerates the same 25 save slots and supports text entry for save names.
+  - The object-state portion of the slot format persists only `object_name`, `current_x`, `current_y`, `current_z`, `current_owner_or_room`, `visible`, and `ident_shown`; the other object heap strings are reloaded from world data rather than restored from the save blob.
+
+## Map And Dialogue Helpers
+
+- `resolve_room_entrance` at `0x62d80` first searches `g_room_entrances` by entrance tag, then falls back to `g_town_map_entrypoints`.
+  - On direct entrance matches it updates `g_pending_room_name`.
+  - On map-entry matches it launches the town map selector and then updates the pending room / player position from the chosen destination.
+- `select_town_map_destination` at `0x66460` is the town-map travel UI.
+  - It loads `harvmap.pal` and `harvmap1.bm` through `harvmap4.bm`.
+  - It seeds the initial map panel from `g_town_map_entrypoints`.
+  - It uses `g_town_map_hotspots` to resolve the selected destination back into a named entrance record.
+- `get_flag_value` at `0x7c790` and `set_flag_value` at `0x7c7e0` are the core `FLAG` accessors used throughout startup, room setup, and event dispatch.
+- `run_npc_dialogue` at `0x79e50` is the conversation/head UI for named NPCs.
+  - It validates the NPC through `g_npc_records`.
+  - It uses `g_head_records` to resolve portrait variants and keyword/head assets.
+  - It drives the textbox / keyword / voice interaction loop until the exchange completes or is interrupted.
+  - `g_talk_to_handler_entries` at `0xc2e88` is the fixed pre-dialogue talk-to dispatch table used by this path.
+    - Each record is `0x24` bytes: a 32-byte NPC/object name token followed by a handler function pointer at `+0x20`.
+    - `has_talk_to_handler_for_name` at `0x3a160` linearly scans that table until the empty-name terminator and is used by `run_harvester_main_loop`, `run_inventory_screen`, and `handle_target_interaction` to decide whether a target can enter NPC dialogue.
+    - `dispatch_talk_to_handler_for_name` at `0x39f80` formats `talk_to(%s)` into the shared scratch buffer, finds the matching table entry by name, and calls the per-entry handler before `run_npc_dialogue` continues with the portrait/text loop.
+    - The indirect table targets are now explicit talk-to handlers, including `handle_talk_to_authority`, `handle_talk_to_beggar`, `handle_talk_to_boyle`, `handle_talk_to_buster`, `handle_talk_to_butcher`, `handle_talk_to_dwayne`, `handle_talk_to_karin`, `handle_talk_to_mom`, `handle_talk_to_mr_potts`, `handle_talk_to_mrs_potts`, and the remaining named NPC variants exposed by the same table.
+    - Direct table inspection also recovered handler starts that Ghidra had left undefined:
+      - `handle_talk_to_mr_potts` at `0x26000` is the shared target for `MR_POTTS`, `MR_POTTS_CEM10`, and `MR_POTTS_HALL`.
+      - `handle_talk_to_mrs_potts` at `0x2ee70` is the shared target for `MRS_POTTS` and `MRS_POTTS_ST_BEDRM`.
+      - Additional table targets that were still undefined are now explicit handlers: `handle_talk_to_whaley`, `handle_talk_to_moynahan`, `handle_talk_to_swell`, `handle_talk_to_priest`, `handle_talk_to_phelps`, `handle_talk_to_nude_man`, `handle_talk_to_valet`, `handle_talk_to_vet`, `handle_talk_to_wasp_woman`, `handle_talk_to_sergeant`, `handle_talk_to_pta_mom`, `handle_talk_to_stephanie`, `handle_talk_to_pastorelli`, `handle_talk_to_ryder`, `handle_talk_to_sparky`, and `handle_talk_to_parsons`.
+      - Shared-address alias groups now confirmed from the table include `MOYNAHAN` / `MOYNAHAN_MBLM`, `PTA_MOM1` through `PTA_MOM5`, and `RYDER` / `RYDER_TV_OUT`.
+      - The apparent `FUN_0002f7fd` helper is only an overlapping inner keyword-loop region inside `handle_talk_to_mrs_potts`, not the dispatch-table target itself.
+- `load_dialogue_response_line` at `0x3a1a0` is the indexed `dialog.rsp` line loader used by the talk-to handlers.
+  - It opens the ASCII `dialog.rsp` file, reads forward to the requested zero-based line index, strips the trailing CR/LF, and returns the shared `g_dialogue_response_line_buffer`.
+  - Handlers such as `handle_talk_to_dwayne`, `handle_talk_to_hank`, and `handle_talk_to_mom` use it to map keyword-menu selections back to concrete topic strings before branching.
+- The shared dialogue evidence/topic state shims behind those handlers are now partially explicit:
+  - `get_set_boyle_gascan_application_state` at `0x38240` is the Boyle-local `GASCAN` state bit that gates the hidden gas-can-for-application continuation.
+  - `get_set_discussed_note_checkbook_evidence` at `0x38330` gates the shared `NOTE` / `NOTE_PHOTOCOPY` / `CHECKBOOK` / `CHECKBOOK_PHOTOCOPY` evidence path used by Dwayne, Edna, Herrill, Johnson, Mom, and related handlers.
+  - `get_set_discussed_tv_deed_evidence` at `0x38340` gates the `TV_DEED` / `TV_DEED_PHOTOCOPY` evidence path used by Edna, Herrill, Johnson, and Mom.
+  - `get_set_discussed_ledger_evidence` at `0x38350` gates the shared dual-ledger evidence path reached when `HAVE_BOTH_LEDGERS` is set.
+  - `get_set_discussed_casket_photo_evidence` at `0x38360` gates the `CASKET_PHOTO` / `CASKET_PHOTOCOPY` evidence path shared across Boyle, Dwayne, Edna, Hank, Herrill, Johnson, Mom, and others.
+  - `get_set_discussed_whaley_herrill_photo` at `0x38370` gates the shared `PHOTO_OF_WHALEY_HERRILL` evidence path.
+  - `get_set_discussed_karin_purse` at `0x38390` gates Dwayne's `K_PURSE` evidence state and the later `KARIN_FOUND_DEAD` follow-up that depends on whether he has seen the purse yet.
+  - `get_set_dwayne_pending_karin_alive_followup` at `0x38260` is a Dwayne-local state bit set by the `BRING_KARIN_TO_SHERIFF` / `KARIN_FOUND_ALIVE` path, then read and cleared when the delayed next-day follow-up bark triggers.
+  - `get_set_dwayne_discussed_boyles_button` at `0x38320` is the Dwayne-local `BOYLES_BUTTON` evidence bit; `handle_talk_to_dwayne` sets it when shown the button, and nearby hidden dialogue logic reads it at `0x2d262`.
+  - `get_set_mom_father_topic_state` at `0x383b0` is a Mom-local state bit set from the `FATHER` keyword branch.
+  - `get_set_mom_good_cause_day5_state` at `0x383c0` is a Mom-local day-5 `GOOD CAUSE` state bit; the visible caller currently reads it, but the concrete setter is still outside the recovered call graph.
+  - `get_set_dad_meat_permission_state` at `0x38400` is the Dad-local `MEAT_PERMISSION0` state bit read on the related item branch.
+  - `get_set_shared_dialogue_state_d2f04` at `0x383e0` is a neutral shared wrapper over `g_shared_dialogue_state_d2f04`; raw call tracing shows it is used from hidden regions in Moynahan, Mr. Potts, Johnson, Phelps, Butcher, Dad, McKnight, Loomis, Edna, Sparky, and Dwayne, but the surrounding subtitle lines still span too many unrelated topics for a stronger semantic rename.
+  - `get_set_wasp_woman_mom_dialogue_state_d2f10` at `0x38420` is a neutral two-handler wrapper over `g_wasp_woman_mom_dialogue_state_d2f10`; raw calls only appear in the hidden Wasp Woman and Mom regions, with nearby `dialog.rsp` anchors in the `Sparky/Wasp Woman` and `SPARKY` / `P.T.A.` keyword cluster, but the exact shared topic is still unresolved.
+  - `get_set_discussed_mr_potts_tuesday_night_alibi` at `0x38440` is set on the hidden `handle_talk_to_mr_potts` Tuesday-night branch and later read by Johnson and Stephanie; Stephanie's hidden `0x4980` line, "Pottsdam lied. He said he stayed home Tuesday night.", makes the semantics explicit.
+  - `get_set_discussed_mrs_potts_tuesday_night_alibi` at `0x38460` is set on the hidden `handle_talk_to_mrs_potts` Tuesday-night branch and later read by Stephanie; the hidden `0x4984` / `0x4989` / `0x498f` exchange anchors it to Mrs. Potts's version of Pottsdam's Tuesday-night alibi.
+  - `get_set_confronted_mr_potts_about_spyhole` at `0x384a0` is set on the hidden `handle_talk_to_mr_potts` spyhole confrontation and later read by Stephanie; the paired `0x2d35` / `0x2d39` / `0x2d3e` and `0x4a12` / `0x4a19` / `0x4a1e` / `0x4a23` subtitle lines make the semantics explicit.
+  - `get_set_discussed_lodge_topic` at `0x384c0` is the shared Lodge-topic flag set from the `dialog.rsp` keyword lines used by Dwayne, Hank, and Mom.
+  - `get_set_dwayne_whaley_discipline_followup_state` at `0x38500` is a Dwayne-local follow-up state bit read just before the `0x34b3` Miss Whaley school-discipline exchange and its immediate `0x79` response menu.
+  - Each helper is a tiny read/write shim over a dedicated global (`g_discussed_note_checkbook_evidence`, `g_discussed_tv_deed_evidence`, `g_discussed_ledger_evidence`, `g_discussed_casket_photo_evidence`, `g_discussed_whaley_herrill_photo`, `g_discussed_karin_purse`, `g_discussed_lodge_topic`).
+- Boyle's hidden `GASCAN` return branch is now explicit through `get_set_boyle_gascan_application_state` at `0x38240`.
+  - When that state is nonzero, `handle_talk_to_boyle` plays the `0x1f2` / `0x1f6` / `0x1fa` / `0x206` exchange, removes `GASCAN` from inventory, awards `LODGE_APPLICATION`, and sets `HAVE_LODGE_APP`.
+- The adjacent `0x383d0`-`0x384e0` range is now confirmed to be another overlapping run of tiny read/write dialogue-state wrappers over globals in the same contiguous block (`0xd2f00` through `0xd2f28`).
+  - `get_set_sergeant_completed_first_task_state` at `0x384e0` is the Sergeant-local bit set on the `SCRATCHED_TUCKER` branch immediately before dialogue `0x420d` ("So, you have completed your first task.").
+  - The same block also contains the recovered Pottsdam alibi bits at `0x38440` and `0x38460`, so it is no longer Sergeant-only even though several remaining wrappers in that span are still only identified by locality.
+  - `handle_talk_to_sergeant` calls into that run for quest-driven lines tied to `REMAINS`, `INVITE`, `BARBER_POLE`, `BOLTCLTH`, `SCRATCHED_TUCKER`, and `COMPLETED_LODGE_APPLICATION`.
+  - `handle_talk_to_dad` also reads the neighboring `FUN_00038400` wrapper on the `MEAT_PERMISSION0` item path.
+  - The wrapper mechanics are confirmed, but most of the remaining local quest-state semantics in that run are still left unnamed pending stronger caller/readback evidence from the hidden no-function regions.
+- `reset_all_talk_to_handler_state` at `0x3a0b0` is the startup/menu bulk reset for the talk-to subsystem.
+  - It calls the per-NPC talk-to reset helpers plus `reset_shared_talk_to_discussion_state` before the handlers are reused.
+- `reset_shared_talk_to_discussion_state` at `0x38530` zeroes the contiguous shared dialogue-state block behind the `get_set_discussed_*` wrappers and related talk-to follow-up flags.
+- `get_current_story_day_index` at `0x38bc0` collapses the `DAY_n` / `NIGHT_n` flags into a single numeric day index and is used by the dialogue handlers to suppress repeat barks or unlock later-day follow-ups.
+- `load_dialogue_index` at `0x79a20` parses `dialogue.idx` into `g_dialogue_index_entries`.
+  - The table is now typed as `DialogueIndexEntry[3000]`, with each entry storing `wav_id`, `text_offset`, and `text_length`.
+  - `play_dialogue_line` binary-searches that table by WAV id, seeks through `g_dialogue_idx_handle`, and reads the subtitle text by offset/length.
+- `play_dialogue_line` at `0x7a690` is the inner dialogue-line player.
+  - It resolves a `VOICE` asset, finds subtitle text for the WAV id, updates current head/textbox visuals, and waits for playback or interruption to finish.
+  - `decode_xor_aa_text_buffer` at `0x42f80` is the simple subtitle/text deobfuscator used by that path; it XORs each byte with `0xaa` while leaving CR/LF untouched.
+  - The live portrait globals used by that path are now explicit:
+    - `g_dialogue_head_left_entity` is the left-side spawned head bitmap entity created by `run_npc_dialogue`.
+    - `g_dialogue_head_right_entity` is the matching right-side head bitmap entity.
+    - `g_dialogue_head_bitmap_path` is the shared path buffer used by `run_npc_dialogue` and `play_dialogue_line` when selecting the current head bitmap resource.
+  - `reload_bitmap_entity_pixels_from_resource` at `0x4b7a0` refreshes the pixel payload of an already spawned bitmap entity from a same-sized XFILE bitmap resource; `play_dialogue_line` uses it to swap the currently visible left or right head portrait without respawning the entity.
+- `handle_target_interaction` at `0x7ff50` is the high-level click/use dispatcher for world targets.
+  - It can branch into NPC dialogue, inventory transfer, `USEITEM` actions, or generic fallback responses depending on the clicked entity and current item state.
+- `show_target_ident_text` at `0x80270` renders `IDENT` text for the current target by resolving the matching `TEXT` record and showing it until dismissal.
+
+## Keyboard Input
+
+- `keyboard_irq1_handler` at `0x48460` is the custom IRQ1 keyboard handler.
+  - It reads scan codes from port `0x60`, updates `g_last_keyboard_scancode` plus the `g_keyboard_scancode_pressed` table, clears key-release events by masking bit `0x80`, and acknowledges the PIC with `out 0x20, 0x20`.
+- `install_keyboard_irq1_handler` at `0x484f0` and `remove_keyboard_irq1_handler` at `0x485b0` lock/unlock the handler code and data, zero the scan-code table, and install/remove interrupt vector `9`.
+- `dos_get_interrupt_vector` at `0x866f8` and `dos_set_interrupt_vector` at `0x8672c` are the DOS `int 21h` AH=`35h` / AH=`25h` wrappers used by that install/remove path.
+- The recovered input bytes now separate into concrete scan-code slots:
+  - `g_input_up_pressed` / `g_input_left_pressed` / `g_input_right_pressed` / `g_input_down_pressed` are the `0x48` / `0x4b` / `0x4d` / `0x50` slots in `g_keyboard_scancode_pressed`.
+  - `g_input_right_shift_pressed` at `0xd5942` is scan code `0x36` and is the reverse-step modifier used by `update_player_combat_avatar_state`.
+  - `g_player_attack_pressed` at `0xd5929` is the scan-code `0x1d` slot consumed by the player-combat attack path.
+
+## Pointer / Cursor Input
+
+- `g_mouse_driver_present` at `0xd5971` gates all observed `int 33h` mouse-service calls.
+  - `run_harvester_main_loop`, `select_town_map_destination`, `run_save_game_menu`, `run_load_game_menu`, `run_main_menu`, and `FUN_00072550` all test it before setting mouse bounds or pushing a new cursor position through `int 33h`.
+- `g_cursor_screen_x` / `g_cursor_screen_y` at `0xd5978` / `0xd597c` are the shared cursor coordinates.
+  - Menus, dialogue, inventory, town-map travel, and runtime target-hit helpers all consume them directly for screen-space hit testing.
+  - Keyboard-driven UI motion also writes these globals and then mirrors the result back into the DOS mouse driver when `g_mouse_driver_present` is nonzero.
+- `g_input_mouse_primary_pressed` at `0xd5974` and `g_input_mouse_secondary_pressed` at `0xd5972` are the current pointer-button state bytes.
+  - Confirmation/selection loops consume the primary byte.
+  - Cancel/back paths consume the secondary byte.
+  - Input-release loops in `dispatch_room_event_actions`, `play_dialogue_line`, and menu states wait until both bytes and `g_last_keyboard_scancode` have returned to zero.
+- `g_cursor_entity` at `0xd6094` stores the active runtime cursor entity.
+- `spawn_cursor_entity` at `0x79920` instantiates the `MOUSE` runtime entity from `graphic\\pointers\\pointers.abm` at `g_cursor_screen_x` / `g_cursor_screen_y`.
+- `set_entity_animation_sequence` at `0x79990` maps cursor sequence indices to 10-frame runs, so room sequence `7` is pointer frames `70..79` in `POINTERS.ABM`.
+- `spawn_cursor_entity` seeds the runtime cursor at sequence `0` / frames `0..9` with animation rate `10`; `room_setup` then switches `g_cursor_entity` to sequence `7`.
+- `sync_cursor_entity_position` at `0x799e0` repositions a runtime entity to the shared cursor coordinates and then advances its visual state through the normal entity animation tick path.
+- `flush_dirty_rects_to_screen` reads `g_cursor_entity` and calls `sync_cursor_entity_position` every frame before the dirty-rect blit work, so cursor placement is part of the normal render pipeline rather than a one-shot startup blit.
+- `is_cursor_within_entity_bounds` at `0x4b670` is the rectangle-only cursor test for runtime entities.
+- `is_cursor_over_entity_hitmask` at `0x4b5b0` adds the per-pixel transparency test used by the main loop before interaction dispatch.
+
+## Idle Animation Timing
+
+- `g_idle_animation_activity_timestamp` at `0xd5968` is one side of the main-loop idle timer input.
+  - `keyboard_irq1_handler` updates it from the shared tick source on IRQ1 activity.
+  - `run_harvester_main_loop` also refreshes it after `show_target_ident_text`, which prevents the idle animation branch from immediately retriggering after the IDENT prompt is dismissed.
+- `g_idle_animation_reset_timestamp` at `0xd5980` is the non-IRQ reset side of the same timer.
+  - `room_setup`, `run_save_game_menu`, `run_load_game_menu`, the intro/logo sequence helper, the main-menu return path, and the idle-animation cleanup path all refresh it from the current tick source.
+- `g_idle_animation_trigger_time` at `0xd60c4` is the computed threshold for the `IDLE_ANIM` room-animation path.
+  - `run_harvester_main_loop` recomputes it as `max(g_idle_animation_activity_timestamp, g_idle_animation_reset_timestamp) + 3000`, skips the branch in excluded rooms, and otherwise spawns `IDLE_ANIM` from `graphic\\roomanim\\pcloun02.abm`.
+  - After the idle animation exits, the main loop re-arms the threshold by another 3000 ticks.
+- `show_pause_message` at `0x797c0` renders the `HARVESTER IS PAUSED` overlay and backdates both idle timestamps by `0xc1c`, allowing the idle-animation gate to become eligible again immediately after pause dismissal.
+
+## CD-ROM Media Check
+
+- `startup_main` now verifies MSCDEX directly before the rest of game startup:
+  - `probe_mscdex_installation_status` is the initial install-state probe.
+  - `get_mscdex_first_drive_index` caches the base CD-ROM drive index for later disc-label path construction.
+  - `get_mscdex_version_bcd` records the detected MSCDEX version for later runtime checks.
+- `g_cdrom_drive_not_ready` at `0xd596c` is the status byte used by `prompt_for_cdrom_disc_change`'s CD/media prompt loop.
+  - When it is nonzero, the function raises the `CD-ROM DRIVE NOT READY!` and `PLEASE TRY AGAIN...` messages.
+  - The callback registered at `0x48890` is the only recovered producer-side writer so far.
+
+## Struct Recovery
+
+- Shared runtime constructor layer now identified:
+  - `initialize_entity_common_fields` at `0x4ab70` seeds the common runtime entity header from register/stack arguments for `name`, `x`, `y`, `z`, a class/type argument, and one extra init argument.
+  - `spawn_abm_entity_base` at `0x4b890` calls `initialize_entity_common_fields`, loads an ABM/bitmap resource through XFILE, decodes its frames, and seeds common animation state.
+  - `spawn_monster_entity_base` at `0x4d140` layers monster-specific blood/effect and combat/AI state on top of `spawn_abm_entity_base`.
+  - `advance_entity_animation_frame` at `0x4c8a0` advances or forces the active frame/sequence, applies loop/ping-pong behavior, updates motion, and clamps X movement to the current active bounds.
+- The constructor helpers called by `room_setup` are now named:
+  - `spawn_object_entity_from_record` at `0x4aee0`
+  - `spawn_region_entity_from_record` at `0x4b2e0`
+  - `spawn_anim_entity_from_record` at `0x4bbe0`
+  - `spawn_npc_entity_from_record` at `0x4cd00`
+  - `spawn_monster_entity_from_record` at `0x53a10`
+- `CommandRecord` is now stable enough to use directly in the event interpreter:
+  - `opcode`, `trigger_tag`, `arg1`..`arg4`, `runtime_flag`, `next`
+- `EntranceRecord` is stable and drives room transitions and save/load handoff:
+  - `pos_x`, `pos_y`, `pos_z`, `facing`, `room_name`, `entrance_name`, `next`
+- `HeadRecord` is now explicit:
+  - `head_id`, `portrait_path`, `next`
+- `FlagRecord` is now explicit:
+  - `flag_name`, `value`, `next`
+- `ObjectRecord` now has a confirmed position/ownership split:
+  - `initial_x`, `initial_y`, `initial_z`
+  - `current_x`, `current_y`, `current_z`
+  - `bounds_x2`, `bounds_y2`
+  - `action_tag`, `sprite_path`, `alt_sprite_path`, `object_name`, `ident_text_key`, `inventory_text_key`
+  - `current_owner_or_room`, `initial_owner_or_room`, `interaction_label`
+  - parser booleans are `operatable` and `visible`
+  - `runtime_flag_4e` is initialized from `visible`
+  - `inventory_text_key` is the `TEXT` lookup used by the inventory screen tooltip/description panel.
+  - `ident_shown` defaults true when `ident_text_key` is missing, is copied into the runtime object entity, and is set after the IDENT text has been shown or when an object is moved into inventory.
+  - `action_tag` was corrected from the older `pickup_action_tag` label: the main loop dispatches it on initial object activation, on successful carry/pickup into inventory, and on later carried-object activation, so the field is broader than pickup-only handling.
+  - Save/load only persists the mutable object state: `current_x`, `current_y`, `current_z`, `current_owner_or_room`, `visible`, and `ident_shown`, keyed by `object_name`.
+  - `interaction_label` is copied into the runtime object entity and drives the main-loop hover / use prompt text; a `NULL_ID` label suppresses prompt generation.
+  - `z_extent` is copied into the runtime object entity at offset `+0x20`; `FUN_0004cae0` uses the live interval `[entity + 0x1c, entity + 0x1c + 0x20]` before the 2D overlap test, which confirms that the field participates in third-axis collision gating.
+  - `field_40` is a heap string freed by `free_loaded_world_data`, but no confirmed live consumer has been recovered yet.
+- `RegionRecord` is now structurally clear:
+  - `min_x`, `min_y`, `max_x`, `max_y`, `floor_z`, `ceiling_z`
+  - `facing`, `region_name`, `room_name`, `action_tag`
+  - `start_enabled`, `runtime_enabled`, `flag_2a`, `next`
+- `NpcRecord` now has stable placement/runtime fields:
+  - `pos_x`, `pos_y`, `pos_z`, `frame_delay`
+  - `model_path`, `npc_name`, `room_name`, `audio_path`, `entity_init_arg`
+  - `runtime_spawned`, `runtime_actor`
+  - parser booleans are `active` and `visible`; a third byte mirrors `visible` at load time and appears to be the persisted visibility state
+  - `monsterfy_target_name` is consumed by the `change2monster` / monsterfy path in `FUN_0004d750`
+  - `on_death_action_tag` is dispatched when the NPC dies without transforming
+- `MonsterRecord` now has stable placement/spawn state and resource fields:
+  - `pos_x`, `pos_y`, `pos_z`, `engage_distance`
+  - `damage_amount`, `initial_hit_points`, `current_hit_points`
+  - `damage_type`, `facing`, `runtime_actor`
+  - `sprite_path`, `monster_name`, `room_name`
+  - sound slots:
+    - `attack_sound_1` through `attack_sound_3`
+    - `hit_sound_1` through `hit_sound_3`
+    - `footstep_sound_left`, `footstep_sound_right`, `death_sound`
+  - `min_x_bound`, `max_x_bound`
+  - parser booleans are `active` and `visible`; `visible` drives actor spawn/remove in `SET_MONSTER`, while `active` is copied into the live actor's `0x52` state byte
+  - `on_death_action_tag` is dispatched when the monster finishes its death/remove state
+  - `damage_amount` is copied into the live actor state at `+0x1180` and is subtracted from target HP on a successful hit; the player combat avatar seeds the same slot from weapon presets.
+  - `field_70` is the attack-sound trigger frame
+  - `field_78` is the walk / footstep-sound trigger frame
+  - `saved_enabled`, `runtime_spawned`, `next`
+  - `current_hit_points` is the save/load-persisted monster HP field; parser initialization copies `initial_hit_points` into it.
+  - `min_x_bound` defaults to `0x14` and `max_x_bound` defaults to `0x26b` when omitted by the parser.
+  - The sound-slot mapping is confirmed both by `spawn_monster_entity_from_record` and by the player combat avatar builder, which installs the same runtime sound layout explicitly.
+  - `field_38`, `field_3c`, `field_44`, and `field_48` are heap strings freed during world teardown, but no confirmed live consumers have been recovered yet.
+  - `field_74` and `field_7c` are copied into live runtime slots `+0x1170` and `+0x1178`, but the current binary only writes those slots; no read-side consumers were recovered.
+  - Remaining unknowns include `field_1c`, `field_38`, `field_3c`, `field_44`, `field_48`, `field_74`, `field_7c`
+- `AnimRecord` now has stable owner/resource identity plus mirrored runtime state:
+  - `pos_x`, `pos_y`, `pos_z`, `frame_delay`
+  - `room_name`, `anim_path`, `anim_name`
+  - script booleans: `active`, `visible`, `loop`, `backward`, `ping_pong`, `remove`
+  - runtime mirrors `runtime_active`, `runtime_visible`, `runtime_state`
+- `TextRecord` now has stable string identity:
+  - `text_id`, `panel_id`, `text_value`, `next`
+  - The parser normalizes `_` to space characters in `text_value`
+- `DialogueIndexEntry` is now explicit:
+  - `wav_id`, `text_offset`, `text_length`
+- `DirtyRectNode` is now explicit:
+  - `left`, `top`, `right`, `bottom`, `next`
+- `RawBitmap` is now explicit:
+  - `width`, `height`, `pixels`
+- `TimerRecord` now has stable timing/key fields:
+  - `initial_value`, `current_value`, `timer_name`, `arg1`, `arg2`, `enabled`, `next`
+  - parser booleans are `loop` and `global`
+- `UseItemRecord` is stable:
+  - `item_name`, `target_name`, `action_tag`, `next`
+- `RoomRecord` is partly recovered:
+  - stable fields: `room_index`, `min_z`, `max_z`, `max_z_screen_y`, `min_z_screen_y`, `full_scale_z`, `perspective_scale`, `max_z_scale_percent`, `z_velocity_step`, `on_enter_tag`, `on_exit_tag`, `room_name`, `music_path`, `palette_path`, `dimmable`, `next`
+  - `max_z_screen_y` / `min_z_screen_y` define the screen-Y band that maps cursor position to room depth between `max_z` and `min_z`
+  - `full_scale_z` is the room Z depth where entities remain at 100% sprite scale.
+  - `max_z_scale_percent` is the sprite scale percentage at `max_z`; the parser derives `perspective_scale` from `(100 - max_z_scale_percent) / (max_z - full_scale_z)`, and the runtime applies it with the additional `0.01` factor stored at `0xbed80`.
+  - `z_velocity_step` is the room-specific vertical movement increment used by the main actor state machine
+  - the trailing unknown room slots at `field_38`, `field_3c`, and `field_40` are confirmed `char *` fields.
+  - parser order is now explicit: after `room_name` and `music_path`, the parser reads three additional strings into `field_38`, `field_3c`, and `field_40`, then reads the separately validated `palette_path`, then the `dimmable` token, then `on_enter_tag` / `on_exit_tag`.
+  - `free_loaded_world_data` frees `palette_path`, `field_38`, `field_3c`, and `field_40` as room-owned strings, which confirms that the old `runtime_40` interpretation was wrong.
+
+## Helper Functions
+
+- `strcmp_ascii` at `0x86430` is a fast `strcmp`-style helper that returns `0` on equality.
+- `atoi_decimal` at `0x869d4` is a small decimal parser used heavily by the room event system.
+- `rescale_entity_sprite_for_depth` at `0x4b440` rescales an entity sprite from the current room depth model.
+  - It applies the room-wide depth slope derived from `full_scale_z`, `max_z_scale_percent`, and `max_z`, rescales the backing bitmap, and updates the runtime width / height / anchor offsets.
+- `set_entity_screen_position` at `0x4b6f0` writes the live entity screen-space `x`, `y`, and depth/z anchor used by overlap and render ordering.
+- `do_entity_screen_bounds_overlap` at `0x4b700` is the rectangle-only overlap test used before the more specific cursor-hit and actor/region gating paths.
+- `hide_entity_visual` at `0x4c260` and `show_entity_visual` at `0x4c290` are the nested runtime visibility wrappers for render entities.
+  - `hide_entity_visual` decrements the visibility nesting and removes the entity from `g_render_entity_list` only on the transition to hidden.
+  - `show_entity_visual` increments the nesting and, when the entity becomes visible again, refreshes the current frame bitmap and re-adds it to `g_render_entity_list`.
+- `spawn_scaled_abm_entity_from_resource` at `0x4bda0` is the scale-managed variant of `spawn_abm_entity_from_resource`.
+  - It loads the same ABM resource format, but additionally marks the runtime entity for depth scaling and seeds the live sprite-scale field before the first `show_entity_visual` / render-list add.
+  - `run_harvester_main_loop` uses it for `IDLE_ANIM` with `graphic\\roomanim\\pcloun02.abm`, copying the live player avatar's current scale so the temporary idle actor inherits the same room-depth sizing.
+- `tick_monster_entity_runtime` at `0x54140` is the class-6 monster wrapper around `update_actor_runtime_state`.
+  - `run_harvester_main_loop` uses it for live monster entities, and the wrapper tears down the runtime object when the shared actor state machine reports removal.
+- `spawn_player_combat_avatar` at `0x54220` reuses the monster runtime entity base for the player during combat / weapon-view mode.
+  - It seeds player HP/state and installs the weapon-dependent attack / hit / footstep / death sounds.
+- `set_player_combat_loadout` at `0x55c10` applies the persisted player combat loadout selection stored at live actor field `+0x11bc`.
+  - It is called by the inventory UI when the player changes weapons and by save/load restoration when the saved selection differs from the current live one.
+  - It tears down the current attack sound bank, loads the new weapon-dependent attack sounds, reloads the `pc*.abm` actor art, and refreshes the player combat avatar's attack tuning.
+  - The ABM path table it indexes is now labeled `g_player_combat_loadout_abm_paths` at `0xc3eb4`.
+- `sync_player_combat_weapon_resource_icons` at `0x792c0` updates the HUD resource-icon strip/count pair for the current player combat loadout.
+  - The loadout-to-resource mapping now confirmed from `set_player_combat_loadout` is:
+    - `2`: nailgun
+    - `3`: shotgun shells
+    - `4`: `9GUN` bullet strip (`MMBULLET%i`, `bullet.bm`)
+    - `5`: `38GUN` shotshell strip (`SHOTSHEL%i`, `shotshel.bm`)
+    - `0xe`: chainsaw fuel
+  - The corresponding globals are now named `g_nailgun_ammo_icon_strip`, `g_shotgun_shell_icon_strip`, `g_9gun_bullet_icon_strip`, `g_38gun_shotshell_icon_strip`, `g_chainsaw_fuel_icon_strip`, their matching count fields, and `g_visible_weapon_resource_icon_count`.
+- `teardown_player_combat_avatar` at `0x55010` removes the live player combat avatar and frees its weapon-dependent runtime resources before a rebuild or shutdown path.
+- `check_player_region_interaction` at `0x559e0` scans `g_region_records` for the first enabled region whose bounds overlap the live player avatar and whose facing gate matches the player's orientation.
+  - On success it returns the matching `RegionRecord *` so the main loop can dispatch the region's `action_tag`.
+- `reset_player_combat_avatar` at `0x56a40` is the player-avatar reset helper used on teardown / restart paths.
+  - It zeroes transient combat/runtime state, restores the default health/state baseline, and if the current loadout is non-default it rebuilds the player combat avatar back through loadout `0`.
+- `update_actor_runtime_state` at `0x4d750` is the shared per-frame actor state machine for live actor entities.
+  - It is called from `run_harvester_main_loop`, the dialogue/response/keyword modal loops, and the player-combat wrapper, so actor motion/combat continues advancing while blocking UI is active.
+  - It handles class-4/5/6 actor entities, advances animation/state transitions, maintains pursuit spacing against the player using `engage_distance`, applies room Z bounds and vertical motion, fires frame-timed sound hooks, resolves hit damage through `damage_amount`, and returns `0` when the caller should remove the actor entity from the world list.
+  - It also contains the confirmed NPC-to-monster replacement path used by the `change2monster` flow.
+  - Runtime bytes `+0x11a1` and `+0x11a0` are now bounded separately:
+    - `+0x11a1` is the actor dispatch-state byte; `update_actor_runtime_state` switches on it directly.
+    - `+0x11a0` is the latched animation/state byte; it is usually mirrored into `+0x11a1` on direct state changes, but remains distinct during entry, turn, and terminal sequences.
+  - The state families are now bounded at a subsystem level:
+    - `0` / `4` are the room-`min_z` locomotion family.
+    - `3` / `0xb` are the room-`max_z` locomotion family.
+    - `1` / `7` and `2` / `0xe` are the two opposing horizontal locomotion families.
+    - `5`, `6`, `9`, `0xa`, `0xc`, `0xd`, `0x10`, and `0x11` are bridging turn/transition handlers between those locomotion families.
+    - `0x16` through `0x1b` are attack states; on a confirmed hit they assign victim states `0x1c` through `0x21` via `attacker_state + 6`, which bounds `0x1c` through `0x21` as hit-reaction states.
+    - `0x28` through `0x33` are death-animation entry states. They play the actor death sound, run the final animation bank, and fall into terminal state `0x38`.
+    - `0x35` is the NPC death / monsterfy transition state, and `0x38` is the terminal dead / removed state that dispatches `on_death_action_tag`.
+- `update_player_combat_avatar_state` at `0x553a0` is the player-side wrapper around `update_actor_runtime_state`.
+  - It reads combat input globals, translates them into desired player actor states, updates the player combat avatar, and then delegates the shared animation/combat resolution to `update_actor_runtime_state`.
+  - Shared input globals recovered from both the town-map UI and player-combat wrapper are now named:
+    - `g_input_up_pressed` at `0xd5954`
+    - `g_input_left_pressed` at `0xd5957`
+    - `g_input_right_pressed` at `0xd5959`
+    - `g_input_down_pressed` at `0xd595c`
+  - `g_player_attack_pressed` at `0xd5929` is the player-only combat input that selects attack states `0x16` through `0x1b`, and `g_player_attack_cooldown_deadline` at `0xd5a74` rate-limits repeated attack entry.
+  - The same wrapper also confirms that live actor field `+0x11bc` is the player combat loadout selection: it is seeded by `spawn_player_combat_avatar`, changed by `set_player_combat_loadout`, and serialized through the save/load path.
+  - `g_input_right_shift_pressed` at `0xd5942` is the separate Right Shift modifier gate, not a duplicate attack input.
+  - Under that gate, `g_input_up_pressed` selects states `0x12` / `0x13` by facing, and those states apply horizontal velocity `-16` / `+16`, opposite the current facing family. That bounds `0x12` / `0x13` as fast reverse-step states.
+  - The paired down-input states `0x14` / `0x15` are selected from the same modifier gate and use the slower signed horizontal speeds `-8` / `+8`, again opposite the current facing family. That bounds `0x14` / `0x15` as the slower reverse-step pair.
+  - States `0x39` and `0x3a` are now bounded as forced horizontal shove states. They install fixed left/right-facing animation banks, drive `x` velocity as `-8` / `+8`, and fall back to locomotion states `1` / `2` once the actor hits world bounds or a blocking entity.
+- `set_object_visibility_for_owner_or_room` at `0x62f10` updates an object's `visible` byte for a specific owner/room string and synchronizes the live entity when that location is currently active.
+  - Callers pass `EBX = 1` for show and `EBX = 0` for hide; the helper is used by room-event opcodes and by the inventory-status panel toggles.
+- `is_object_in_inventory` at `0x7c870` checks whether a named object exists, is currently owned by `INVENTORY`, and is visible.
+- `add_object_to_inventory` at `0x7c8b0` moves a named object into `INVENTORY`, forces it visible, and marks its IDENT text as already shown.
+- `dispatch_action_tag_if_set` at `0x7cb80` is a tiny guard thunk that jumps into `dispatch_room_event_actions` only when the supplied action-tag pointer is non-null.
+- `run_inventory_screen` at `0x7df10` is the inventory UI loop.
+  - It lays out carried objects, shows `inventory_text_key` strings from `TEXT` records, handles use-on-target dispatch, and swaps the status panel object based on current health.
+- `run_game_over_screen` at `0x7c540` is the death/game-over UI branch reached from the main loop after the player combat avatar enters its terminal failure path.
+- The low-level PCM/sample helpers are now bounded:
+  - `load_sound_sample` at `0x18470` loads a one-shot sample through XFILE, accepting raw `WAVE` data or `FCMP`-compressed audio, and seeds the sample format/rate metadata used by the audio backend.
+  - `start_sound_state_playback` at `0x197b0` allocates a backend voice slot for an initialized `PcmSoundState` and records the active playback token in that state.
+  - `is_sound_state_playing` at `0x198e0` polls whether the recorded voice/token pair for a `PcmSoundState` is still active.
+  - `stop_sound_state_playback` at `0x19840` stops the active backend voice for a `PcmSoundState` without freeing the sample data.
+  - `free_sound_effect_sample` at `0x18a30` stops any active playback and releases the loaded sample buffer.
+  - The backend state those helpers rely on is now partially explicit:
+    - `g_sound_driver_initialized` gates all recovered backend voice/sample operations.
+    - `g_sound_voice_bank_index` selects the current bank inside `g_sound_voice_slot_refs`.
+    - `g_sound_voice_slot_refs` at `0xc445c` is a banked table of 32 six-byte far pointers to backend voice control blocks per bank.
+    - `g_sound_voice_token_counter` increments on each new playback start and is copied into both the sample state and the backend voice block to invalidate stale slot handles.
+  - The slot-level backend helpers are now named:
+    - `allocate_sound_voice_slot` at `0x82f06`
+    - `is_sound_voice_slot_stopped` at `0x85bf1`
+    - `stop_sound_voice_slot` at `0x8351f`
+    - `set_sound_voice_volume` at `0x85510`
+    - `get_sound_voice_playback_position` at `0x856e6`
+  - The backend timer/rate control path is now explicit:
+    - `set_sound_voice_sample_rate` at `0x85050` stores a requested playback rate in `g_sound_voice_sample_rates`, recomputes the per-voice fixed-point step in `g_sound_voice_step_increments`, and lowers the shared mixer divisor when a faster voice requires it.
+    - `clear_sound_voice_sample_rate` at `0x851c8` clears one voice's requested rate, recomputes the highest remaining active rate across the 16 backend voice slots, and rebuilds the shared divisor/step table.
+    - `set_sound_mixer_timer_divisor` at `0x853a1` writes `g_sound_mixer_timer_divisor` and immediately calls `program_irq0_pit_divisor`.
+    - `program_irq0_pit_divisor` at `0x8b1ad` masks IRQ0, programs PIT channel 0 through ports `0x43` / `0x40`, and then unmasks IRQ0 again.
+    - `install_irq0_timer_handler` at `0x8b30d`, together with `mask_irq0_timer_interrupt` and `unmask_irq0_timer_interrupt`, is the low-level IRQ0 refresh path that reinstalls the recovered timer handler and restarts the counter.
+    - The constant `0x1234dc` in the rate math is the PIT input clock `1193180`, which is what anchors the divisor and step-increment interpretation.
+  - The higher-level streamed-music state on top of that backend is now explicit:
+    - `g_music_stream_state` at `0xca1d4` is the persistent room/menu/game-over music stream object.
+    - `g_current_music_path` caches the current music filename so room transitions and scripted overrides can restore it.
+    - `g_music_volume_level_index` indexes `g_audio_volume_curve`, the shared 16-bit volume ramp table used by both steady-state music volume and the fade helpers.
+    - `PcmSoundState` is the confirmed 0x88-byte base header shared by music streams and one-shot PCM/sample playback.
+      - The recovered fields are the active voice slot/token, ring-buffer pointer/segment/size, current volume-curve value, backend PCM flags, sample rate, and output bits per sample.
+    - `MusicStreamState` extends that base with the backing file handle/size, refill/pause bytes, fade controller fields, decoded chunk buffer pointer, embedded `ImaAdpcmDecodeState`, the raw 14-byte `FCMP` header buffer, the transient compressed chunk buffer, and the cached current path string.
+    - `ImaAdpcmDecodeState` is the embedded 0x30-byte `FCMP` decode sub-structure at `MusicStreamState+0xbc`.
+      - The recovered fields are the source/destination far pointers, compressed and decoded byte counts, nibble index, predictor, delta, cached source byte, current nibble, step size, step index, and output bits per sample.
+  - The stream-layer helpers are now named:
+    - `start_music_stream` at `0x1bfc0` swaps to a new room/menu music file, opens the backing XFILE stream, primes the first audio chunk, and allocates a backend voice slot.
+    - `update_music_stream` at `0x1b9a0` is the per-frame pump used by menus, dialogue waits, room logic, and the main loop; it refills stream buffers and applies pending volume ramps.
+    - `pause_music_stream` at `0x1a620` stops the active voice without closing the underlying stream.
+    - `resume_music_stream` at `0x1a740` restarts a previously paused music stream.
+    - `fade_in_music_stream` at `0x1adf0` and `fade_out_music_stream` at `0x1b3b0` are the paired ramp controllers used by town-map and scripted transition paths.
+    - `set_music_stream_volume` at `0x19950` updates the live stream volume against the active backend voice.
+    - `get_sound_state_playback_position` at `0x199f0` returns the current playback cursor for an active `PcmSoundState` and is used by the FST movie player for A/V pacing.
+  - The shared PCM setup helpers beneath the sample and movie paths are now explicit:
+    - `initialize_sound_state_defaults` zeros the generic sound-state header used by dialogue-line playback and FST one-shots, then seeds the default volume-curve entry and baseline flags.
+    - `initialize_pcm_sound_state` allocates and zeroes the ring/sample buffer for a PCM stream, seeds sample rate / sample width metadata, and installs the default effects-volume curve entry.
+    - `get_pcm_byte_rate` returns `sample_rate * (bits_per_sample / 8)` for an initialized sound state.
+    - `queue_pcm_chunk_into_ring_buffer` copies a decoded PCM chunk into the shared ring buffer without overwriting the live playback cursor reported by the backend voice slot.
+    - The `FCMP` compressed-audio path is now bounded as IMA ADPCM:
+      - `initialize_ima_adpcm_decode_state` resets the embedded decode-state predictor, nibble index, and initial step values before a new compressed stream begins.
+      - `decode_ima_adpcm_chunk` expands `FCMP` payload bytes into 8-bit or 16-bit PCM using `g_ima_adpcm_index_adjust_table` and `g_ima_adpcm_step_table`.
+    - `set_sound_state_driver_control_handle`, `set_sound_state_driver_control_value`, `set_driver_control_entry_value`, and `g_sound_driver_control_entry_refs` expose a second, driver-side control indirection table:
+      - the sound state stores a handle/index at offset `+0x18`
+      - the wrapper path uses that handle to write a 16-bit value into offset `+4` of the selected driver control entry
+      - the exact gameplay meaning of that control value is still unresolved, but the indirection itself is confirmed
+  - `load_dialogue_voice_sample` at `0x191d0` is the `play_dialogue_line`-specific loader that accepts either `WAVE` or `FCMP` voice assets and prepares them for one-shot playback through the shared sample backend.
+  - `stop_sound_state_and_close_stream_file` at `0x1c4e0` is the shared cleanup path that stops active backend playback for a sound state and closes its backing stream/file handle at offset `+0x88`.
+  - `run_fst_sequence_player` at `0x12b00` is the inner FST decoder/player reached from `play_fst_sequence`.
+    - It reads the FST frame table, optional audio payload, performs the actual frame decode loop, and uses `get_sound_state_playback_position` to keep movie frames aligned with the loaded soundtrack.
+    - `upload_vga_palette` at `0x482c0` is the shared 256-entry VGA DAC upload helper used by the FST player when it restores or swaps palette pages.
+    - `load_pcx_bitmap` at `0x4a230` is the direct-file `PCX` loader used by the FST censorship path; it reads the whole file through XFILE, RLE-decodes the `0x80`-byte-header payload into a `RawBitmap`, trims oversized stride bytes, and optionally uploads the trailing 256-color palette.
+- `run_harvester_main_loop` maintains `g_current_interaction_text`, `g_pending_interaction_text`, and `g_interaction_text_entity` for hover / use prompts.
+  - It allocates both 100-byte text buffers during startup, formats prompts such as `Examine %s`, `Talk to %s`, `Pick up the %s`, `Operate the %s`, and `Use %s on %s`, suppresses prompts when the active label is `NULL_ID`, and only rebuilds the rendered label when the pending text differs from the current text.
+- `run_text_entry_dialog` at `0x59fe0` is the shared keyboard text-entry helper.
+  - It is called from the save-game UI and the dialogue keyword UI, allocates a caller-sized entry buffer, handles keyboard editing and cancel/accept paths, and returns the entered string or `NULL`.
+- `spawn_text_entity` at `0x59c00` and `spawn_text_entry_entity` at `0x59f40` are the shared rendered-text constructors for menus, prompts, quick tips, and dialogue UI.
+  - They consume the `load_font_resource` font blobs, attach their results to `g_render_entity_list`, and rely on `g_dirty_rect_list` plus `flush_dirty_rects_to_screen` for incremental redraw.
+- `run_dialogue_response_menu` at `0x7af10` is the slash-delimited response list UI used by the NPC dialogue system.
+- `run_dialogue_keyword_menu` at `0x7ba40` is the slash-delimited keyword menu plus free-text `Other` path used by the NPC dialogue system.
+
+## Current Blockers
+
+- The remaining work is no longer list recovery. The blocker is semantic naming for fields whose shape is clear but whose gameplay meaning is still ambiguous.
+- The main unresolved clusters are:
+  - `MonsterRecord.field_1c`, which is still an untyped numeric field with no confirmed consumer
+  - `MonsterRecord.field_38`, `field_3c`, `field_44`, and `field_48`, which are bounded as monster-owned heap strings but still have no confirmed live consumers
+  - `MonsterRecord.field_74` and `field_7c`, which are copied into live runtime slots at `+0x1170` and `+0x1178`; constructor/reset writes were recovered, but no read-side consumers were found in the current binary
+  - the exact persisted-visibility semantics of `NpcRecord.saved_visible`
+  - `ObjectRecord.field_34`, which is a parsed heap string but is still absent from the direct `find_object_record_by_name` consumers and from the object save/load blob
+  - `ObjectRecord.field_40`, which is now bounded as an object-owned heap string, but still has no confirmed live consumer
+  - `RoomRecord` remaining string fields at `field_38`, `field_3c`, `field_40`
+  - `TextRecord.field_00` / `field_04`
+- The monster frame slots at `field_74` and `field_7c` are now more tightly bounded: they are copied into the shared runtime sound-trigger area (`+0x1170` and `+0x1178`) by the monster and player constructors, but no confirmed consumers have been recovered yet, so they remain unnamed.
+- The remaining actor-state work is narrower now:
+  - the shared input/UI bytes at `0xd596c` and `0xd5971` through `0xd597c`; the keyboard producer side is now resolved through the IRQ1 handler, but the mouse/button producer path is still not named
+- On March 13, 2026 I resumed with a live bridge and used Java Ghidra scripts to push the recovered struct names back into `HARVEST.LE`.
+- The active Ghidra session is still not PyGhidra-enabled, so Python scripts remain unavailable inside Ghidra. That is no longer a hard blocker, but it makes broad decompiler-search automation heavier and pushes this pass toward narrower Java-script or endpoint-driven searches.

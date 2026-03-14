@@ -34,6 +34,8 @@ static const char *const kStartupConfigPath = "CONFIG.INI";
 static const char *const kConfigSectionName = "harvester";
 static const char *const kDefaultTownScript = "HARVEST.SCR";
 static const byte kTownScriptXorKey = 0xaa;
+static const float kDefaultPaletteBrightness = 1.0f;
+static const float kDimmedPaletteBrightness = 0.6f;
 
 static Common::String trimAsciiLine(const Common::String &value) {
 	uint start = 0;
@@ -444,6 +446,10 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 			command->opcodeName.c_str(), command->triggerTag.c_str());
 		break;
 	}
+
+	state.paletteBrightness = (room->dimmable && !getFlagValue("DAY_FLAG"))
+		? kDimmedPaletteBrightness
+		: kDefaultPaletteBrightness;
 
 	return true;
 }

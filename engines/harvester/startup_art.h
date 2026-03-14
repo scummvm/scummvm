@@ -48,15 +48,12 @@ public:
 	bool load(ResourceManager &resources);
 	bool loadQuickTipsResources(ResourceManager &resources);
 	void drawWaitFrame() const;
-	void drawQuickTipsScreen() const;
 
 	const byte *getWaitPalette() const { return _waitPalette; }
-	const byte *getPcRoomPalette() const { return _pcRoomPalette; }
 	const Common::Array<AbmFrame> &getWaitFrames() const { return _waitFrames; }
 	const Common::Array<AbmFrame> &getPointerFrames() const { return _pointerFrames; }
 	const IndexedBitmap &getInventoryBitmap() const { return _inventoryBitmap; }
 	const IndexedBitmap &getLogoBitmap() const { return _logoBitmap; }
-	const IndexedBitmap &getPcRoomBitmap() const { return _pcRoomBitmap; }
 	const IndexedBitmap &getTipsBitmap() const { return _tipsBitmap; }
 
 private:
@@ -68,18 +65,12 @@ private:
 	void blitAnimationFrame(const Common::Array<AbmFrame> &frames, uint frameIndex, int x, int y) const;
 
 	byte _waitPalette[256 * 3] = { 0 };
-	byte _pcRoomPalette[256 * 3] = { 0 };
 	Common::Array<AbmFrame> _waitFrames;
 	Common::Array<AbmFrame> _pointerFrames;
-	Common::Array<AbmFrame> _pcRoomClockFrames;
-	Common::Array<AbmFrame> _pcActorFrames;
 	Common::Array<IndexedBitmap> _textboxes;
 	Common::Array<IndexedBitmap> _ammoIcons;
 	IndexedBitmap _inventoryBitmap;
 	IndexedBitmap _logoBitmap;
-	IndexedBitmap _pcRoomBitmap;
-	IndexedBitmap _pcRoomMaskA;
-	IndexedBitmap _pcRoomMaskB;
 	IndexedBitmap _tipsBitmap;
 };
 
