@@ -214,7 +214,7 @@ private:
 	void renderTimer();
 	void renderFade(int color);
 	void resetState();
-	const Graphics::Font *getFont(int size) const;
+	const Graphics::Font *getFont(int size, bool bold) const;
 
 private:
 	bool _hasFocus = true;

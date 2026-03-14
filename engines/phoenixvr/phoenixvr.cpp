@@ -765,7 +765,7 @@ void PhoenixVREngine::loadVariables() {
 	_variableSnapshot.clear();
 }
 
-const Graphics::Font *PhoenixVREngine::getFont(int size) const {
+const Graphics::Font *PhoenixVREngine::getFont(int size, bool bold) const {
 #ifdef USE_FREETYPE2
 	if (size < 14)
 		return _font12.get();
@@ -820,7 +820,7 @@ void PhoenixVREngine::rollover(int textId, RolloverType type) {
 		}
 	}
 
-	auto *font = getFont(size);
+	auto *font = getFont(size, bold);
 
 	if (!font)
 		return;
