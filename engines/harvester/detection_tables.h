@@ -27,12 +27,10 @@ const PlainGameDescriptor harvesterGames[] = {
 };
 
 const ADGameDescription gameDescriptions[] = {
-	// Placeholder detection entry from the scaffold. Replace this with a real
-	// Harvester signature before expecting launcher detection to succeed.
 	{
 		"harvester",
 		nullptr,
-		AD_ENTRY1s("file1.bin", "00000000000000000000000000000000", 11111),
+		AD_ENTRY1s("harvest.exe", "f2a8689edf91552dd0baa35ecc325c0a", 1173079),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,

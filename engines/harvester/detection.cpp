@@ -26,6 +26,7 @@
 
 const DebugChannelDef HarvesterMetaEngineDetection::debugFlagList[] = {
 	{ Harvester::kDebugGeneral, "general", "General debug level" },
+	{ Harvester::kDebugResources, "resources", "Resource loading" },
 	DEBUG_CHANNEL_END
 };
 
