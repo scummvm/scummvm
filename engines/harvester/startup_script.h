@@ -52,6 +52,7 @@ struct StartupObjectRecord {
 	Common::String objectName;
 	Common::String resourcePath;
 	Common::String identTextKey;
+	Common::String interactionCommandTag;
 	Common::String displayName;
 	bool visible = false;
 	bool active = false;
@@ -86,6 +87,11 @@ struct StartupRoomSetupState {
 	Common::Array<StartupObjectRecord> roomObjects;
 };
 
+struct StartupInteractionResult {
+	Common::String soundPath;
+	Common::String nextRoomName;
+};
+
 class StartupScript {
 public:
 	bool load(ResourceManager &resources);
@@ -102,6 +108,7 @@ public:
 	void setQuickTipsEnabled(bool enabled) { _quickTipsEnabled = enabled; }
 	bool resolveRoomSetupState(const Common::String &entranceName, StartupRoomSetupState &state,
 		ResourceManager &resources) const;
+	bool resolveObjectInteraction(const StartupObjectRecord &object, StartupInteractionResult &result) const;
 	Common::String resolveObjectLabel(const StartupObjectRecord &object) const;
 
 private:
