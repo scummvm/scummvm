@@ -51,7 +51,6 @@ public:
 
 	const byte *getWaitPalette() const { return _waitPalette; }
 	const Common::Array<AbmFrame> &getWaitFrames() const { return _waitFrames; }
-	const Common::Array<AbmFrame> &getPointerFrames() const { return _pointerFrames; }
 	const IndexedBitmap &getInventoryBitmap() const { return _inventoryBitmap; }
 	const IndexedBitmap &getLogoBitmap() const { return _logoBitmap; }
 	const IndexedBitmap &getTipsBitmap() const { return _tipsBitmap; }
@@ -66,7 +65,6 @@ private:
 
 	byte _waitPalette[256 * 3] = { 0 };
 	Common::Array<AbmFrame> _waitFrames;
-	Common::Array<AbmFrame> _pointerFrames;
 	Common::Array<IndexedBitmap> _textboxes;
 	Common::Array<IndexedBitmap> _ammoIcons;
 	IndexedBitmap _inventoryBitmap;

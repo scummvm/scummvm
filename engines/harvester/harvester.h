@@ -34,6 +34,7 @@ struct ADGameDescription;
 namespace Harvester {
 
 class ResourceManager;
+class RuntimeEntityManager;
 class StartupScript;
 class StartupArt;
 class StartupText;
@@ -70,6 +71,7 @@ public:
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
 	ResourceManager *getResources() const { return _resources; }
+	RuntimeEntityManager *getRuntimeEntities() const { return _runtimeEntities; }
 	Graphics::Screen *getScreen() const { return _screen; }
 	StartupScript *getStartupScript() const { return _startupScript; }
 	StartupArt *getStartupArt() const { return _startupArt; }
@@ -85,6 +87,7 @@ private:
 	Audio::SoundHandle _startupSoundHandle;
 	Graphics::Screen *_screen = nullptr;
 	ResourceManager *_resources = nullptr;
+	RuntimeEntityManager *_runtimeEntities = nullptr;
 	StartupScript *_startupScript = nullptr;
 	StartupArt *_startupArt = nullptr;
 	StartupText *_startupText = nullptr;

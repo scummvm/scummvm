@@ -60,7 +60,6 @@ static const char *const kAmmoIconPaths[] = {
 
 bool StartupArt::load(ResourceManager &resources) {
 	_waitFrames.clear();
-	_pointerFrames.clear();
 	_textboxes.clear();
 	_ammoIcons.clear();
 	_inventoryBitmap = IndexedBitmap();
@@ -69,7 +68,6 @@ bool StartupArt::load(ResourceManager &resources) {
 
 	return loadPalette(resources, "1:/GRAPHIC/PAL/WAIT.PAL", _waitPalette) &&
 	       loadAnimation(resources, "1:/GRAPHIC/OTHER/WAIT.ABM", _waitFrames) &&
-	       loadAnimation(resources, "1:/GRAPHIC/POINTERS/POINTERS.ABM", _pointerFrames) &&
 	       loadBitmap(resources, "1:/GRAPHIC/OTHER/INVENTRY.BM", _inventoryBitmap) &&
 	       loadBitmap(resources, "1:/GRAPHIC/OTHER/HARVLOGO.BM", _logoBitmap);
 }
