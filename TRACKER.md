@@ -2,6 +2,29 @@
 
 ## Last Confirmed Action
 
+- Continued the runtime-entity combat-link pass around the confirmed hit-reaction fields.
+  - Renamed `apply_pending_entity_knockback` at `0x53770`.
+  - Confirmed `update_actor_runtime_state` seeds victim `+0x11ac` with signed `-18` / `+18` and `+0x11b0 = 3` on confirmed hits, and the new helper copies that pending value into live shove slot `+0x1088` before decaying it toward zero.
+  - `+0x11b8` is still only written reciprocally in that hit block and still has no recovered consumer, so it remains unnamed.
+  - Saved `HARVEST.LE`.
+- Continued the runtime-entity combat-avatar field pass around `update_player_combat_avatar_state`.
+  - Renamed `teardown_entity_runtime_state` at `0x55030` and added plate comments at the shared cleanup and player-combat helper sites.
+  - Confirmed live actor field `+0x11bc` is the player combat loadout / equipped weapon id from `spawn_player_combat_avatar`, `set_player_combat_loadout`, the inventory weapon-selection path, save/load restoration, and `sync_player_combat_weapon_resource_icons`.
+  - Confirmed `+0x1160` / `+0x1164` are the alternating movement-step sample slots and `+0x1168` is the death sample slot; monster/NPC spawn helpers seed the same fields, so they are shared runtime-actor sound slots rather than player-only state.
+  - Saved `HARVEST.LE`.
+- Closed the remaining `VesaModeBackend.display_start_preset_callback` pass.
+  - Renamed that struct field to `unused_display_start_preset_callback` in Ghidra and saved `HARVEST.LE`.
+  - Confirmed the four `set_vesa_*_display_start_preset` helpers have no code callers; they only remain as data references from the backend records.
+  - Confirmed `configure_video_surface` only dispatches the probe/activate/shutdown slots, and the per-mode activate helpers go straight into `initialize_vesa_banked_mode`, so this preset slot is dead in the current binary.
+- Closed the remaining `update_actor_runtime_state` blocker-slot pass.
+  - Confirmed `tick_entity_visual_state` writes the current opaque overlap blocker at runtime offset `+0x109c`, and `update_actor_runtime_state` consumes that slot as the current blocker in the directional avoid branches.
+  - The four remembered blocker slots now have explicit directional meaning from the branch-local state writes plus the signed movement deltas:
+    - `+0x108c` upward blocker history
+    - `+0x1090` downward blocker history
+    - `+0x1094` leftward blocker history
+    - `+0x1098` rightward blocker history
+  - `set_object_visibility_for_owner_or_room` clears those four slots individually when a hidden entity still matches one of the remembered blockers, which confirms they are persistent blocker pointers rather than generic movement flags.
+  - Added Ghidra plate/decompiler comments at the key read/write sites and saved `HARVEST.LE`.
 - Closed the last ambiguous backend slot in `VesaModeBackend`.
   - Renamed `callback_18` to `unused_callback` after an instruction-level scan showed the only indirect backend calls in the current binary are `blit_rect_callback` and `select_bank_for_scanline_callback` from `run_fst_sequence_player`; no callers use slot `+0x18`.
   - Renamed the shared VGA/VESA no-op implementations to match that evidence:
@@ -112,11 +135,11 @@
   - The descriptor blob entry at `0xc0c98` points directly at this object, which confirms that the table-driven wrappers around `0x18380` / `0x183c0` / `0x183e0` / `0x18400` are operating on the current-bank driver context rather than on a `PcmSoundState`.
 - Current live-state counts:
   - `HARVEST.LE` currently has `774` total functions
-  - `418` have custom/documented names
-  - `356` still remain unnamed / `FUN_*`
+  - `421` have custom/documented names
+  - `353` still remain unnamed / `FUN_*`
 
 ## Next Suggested Action
 
 - Highest-value targets:
-  - shift back outward and recover the remaining `update_actor_runtime_state` consumers of the confirmed blocking-entity pointer at `+0x109c`, especially the read-side meaning of the four remembered blocker slots
-  - if that thread stalls, revisit the still-unused `display_start_preset_callback` slot family to confirm whether it is fully dead in this binary or only dormant
+  - continue outward on the unresolved reciprocal hit pointer at `+0x11b8`, starting from any downstream hit-reaction, death, or scripted-event consumers reachable from the confirmed attack-hit block
+  - if that thread stays cold, keep walking the neighboring runtime flag at `+0x11b4` and its remaining room-event/main-loop toggles
