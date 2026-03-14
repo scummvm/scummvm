@@ -2,6 +2,28 @@
 
 ## Last Confirmed Action
 
+- Continued the remaining video-backend callback pass around `configure_video_surface`.
+  - Recovered the hidden shared wrapper at `0x14f40` as `set_vesa_write_window_bank`; it is the write-window-fixed wrapper above `set_vesa_window_bank`.
+  - Corrected the backend table itself from VESA-only to generic video-mode state:
+    - `g_video_mode_backends` at `0xc3bcc` is now typed as a 6-entry pointer table
+    - the table contains five concrete backends plus the sentinel used by `configure_video_surface`
+    - the extra non-VESA record at `0xc0fd4` is now labeled `g_vga_mode_320x200_8bpp`
+  - Created and named the previously undefined VGA backend entrypoints from that `320x200x8` record:
+    - `probe_vga_320x200_mode`
+    - `activate_vga_320x200_mode`
+    - `noop_vga_mode_shutdown`
+    - `write_vga_320x200_pixel`
+    - `read_vga_320x200_pixel`
+    - `fill_vga_320x200_horizontal_span`
+    - `fill_vga_320x200_rect`
+    - `blit_vga_320x200_rect`
+  - Renamed the confirmed `VesaModeBackend` fill slots from generic offsets to `fill_horizontal_span_callback` and `fill_rect_callback`.
+  - The per-mode VESA slot at offset `+0x18` is still unresolved semantically, but all four VESA targets are now explicitly bounded as no-op stubs:
+    - `noop_vesa_640x400_callback_18`
+    - `noop_vesa_640x480_callback_18`
+    - `noop_vesa_800x600_callback_18`
+    - `noop_vesa_1024x768_callback_18`
+  - Saved `HARVEST.LE`.
 - Continued `run_fst_sequence_player` into the banked VESA row-flush path.
   - Renamed and typed the runtime banked-mode tables and state in Ghidra:
     - `g_vesa_scanline_start_bank_indices` as `ushort[1024]` at `0xc7fca`
@@ -75,12 +97,12 @@
     - `+0x20` overlaps the existing `g_sound_driver_initialized`
   - The descriptor blob entry at `0xc0c98` points directly at this object, which confirms that the table-driven wrappers around `0x18380` / `0x183c0` / `0x183e0` / `0x18400` are operating on the current-bank driver context rather than on a `PcmSoundState`.
 - Current live-state counts:
-  - `HARVEST.LE` currently has `764` total functions
-  - `404` have custom/documented names
-  - `360` still remain unnamed / `FUN_*`
+  - `HARVEST.LE` currently has `774` total functions
+  - `417` have custom/documented names
+  - `357` still remain unnamed / `FUN_*`
 
 ## Next Suggested Action
 
 - Highest-value targets:
-  - if the FST/video thread still needs more precision, recover the remaining banked-mode callback slot around `0x14f40` and the still-unnamed VESA backend function-pointer fields that sit beside `select_bank_for_scanline_callback`
+  - if the video thread still needs more precision, resolve the last ambiguous backend slot at `VesaModeBackend.callback_18`, especially the shared VGA/VESA no-op at `0x11030` and any direct callers that still bypass typed `VideoSurfaceContext` uses
   - otherwise shift back outward and recover the remaining `update_actor_runtime_state` consumers of the confirmed blocking-entity pointer at `+0x109c`, especially the read-side meaning of the four remembered blocker slots
