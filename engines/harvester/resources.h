@@ -19,46 +19,32 @@
  *
  */
 
-#ifndef HARVESTER_DETECTION_H
-#define HARVESTER_DETECTION_H
+#ifndef HARVESTER_RESOURCES_H
+#define HARVESTER_RESOURCES_H
 
-#include "engines/advancedDetector.h"
+#include "common/archive.h"
+#include "common/array.h"
 
 namespace Harvester {
 
-enum HarvesterDebugChannels {
-	kDebugGeneral   = 1 << 0,
-	kDebugResources = 1 << 1
+class ResourceManager {
+public:
+	ResourceManager();
+	~ResourceManager();
+
+	void reset();
+
+	bool hasFile(const Common::String &path) const;
+	Common::SeekableReadStream *openFile(const Common::String &path) const;
+	bool loadFile(const Common::String &path, Common::Array<byte> &data) const;
+
+	Common::String normalizeResourcePath(const Common::String &path) const;
+	void mountArchive(const Common::String &name, Common::Archive *archive, int priority = 10, bool autoFree = true);
+
+private:
+	Common::SearchSet _search;
 };
-
-extern const PlainGameDescriptor harvesterGames[];
-
-extern const ADGameDescription gameDescriptions[];
 
 } // End of namespace Harvester
 
-class HarvesterMetaEngineDetection : public AdvancedMetaEngineDetection<ADGameDescription> {
-	static const DebugChannelDef debugFlagList[];
-
-public:
-	HarvesterMetaEngineDetection();
-	~HarvesterMetaEngineDetection() override {}
-
-	const char *getName() const override {
-		return "harvester";
-	}
-
-	const char *getEngineName() const override {
-		return "Harvester";
-	}
-
-	const char *getOriginalCopyright() const override {
-		return "Harvester (C) DigiFX Interactive";
-	}
-
-	const DebugChannelDef *getDebugChannels() const override {
-		return debugFlagList;
-	}
-};
-
-#endif // HARVESTER_DETECTION_H
+#endif // HARVESTER_RESOURCES_H

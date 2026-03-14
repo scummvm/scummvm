@@ -29,6 +29,7 @@
 #include "graphics/paletteman.h"
 #include "harvester/console.h"
 #include "harvester/detection.h"
+#include "harvester/resources.h"
 
 namespace Harvester {
 
@@ -40,6 +41,7 @@ HarvesterEngine::HarvesterEngine(OSystem *syst, const ADGameDescription *gameDes
 }
 
 HarvesterEngine::~HarvesterEngine() {
+	delete _resources;
 	delete _screen;
 	g_engine = nullptr;
 }
@@ -49,6 +51,8 @@ Common::String HarvesterEngine::getGameId() const {
 }
 
 Common::Error HarvesterEngine::run() {
+	_resources = new ResourceManager();
+
 	// Initialize 320x200 paletted graphics mode
 	initGraphics(320, 200);
 	_screen = new Graphics::Screen();

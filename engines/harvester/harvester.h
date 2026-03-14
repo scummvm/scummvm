@@ -32,6 +32,8 @@ struct ADGameDescription;
 
 namespace Harvester {
 
+class ResourceManager;
+
 class HarvesterEngine : public Engine {
 public:
 	HarvesterEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -63,10 +65,13 @@ public:
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
+	ResourceManager *getResources() const { return _resources; }
+
 private:
 	const ADGameDescription *const _gameDescription;
 	Common::RandomSource _randomSource;
 	Graphics::Screen *_screen = nullptr;
+	ResourceManager *_resources = nullptr;
 };
 
 extern HarvesterEngine *g_engine;
