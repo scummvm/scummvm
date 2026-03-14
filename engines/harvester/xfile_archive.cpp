@@ -21,11 +21,13 @@
 
 #include "harvester/xfile_archive.h"
 
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/ptr.h"
 #include "common/stream.h"
 #include "common/substream.h"
+#include "harvester/detection.h"
 #include "harvester/resources.h"
 
 namespace Harvester {
@@ -48,28 +50,34 @@ bool XFileArchive::open(const Common::String &indexPath, const Common::String &d
 	close();
 
 	Common::ScopedPtr<Common::SeekableReadStream> indexStream(SearchMan.createReadStreamForMember(Common::Path(indexPath, '/')));
-	if (!indexStream)
+	if (!indexStream) {
+		debugC(1, kDebugResources, "Harvester: missing archive index %s", indexPath.c_str());
 		return false;
+	}
 
 	_dataPath = Common::Path(dataPath, '/');
 	if (!SearchMan.hasFile(_dataPath)) {
+		debugC(1, kDebugResources, "Harvester: missing archive data %s", dataPath.c_str());
 		close();
 		return false;
 	}
 
 	const uint32 fileCount = indexStream->size() / kEntrySize;
 	for (uint32 i = 0; i < fileCount; ++i) {
-		if (indexStream->readUint32LE() != kSignatureXfle) {
+		if (indexStream->readUint32BE() != kSignatureXfle) {
+			debugC(1, kDebugResources, "Harvester: invalid XFLE signature in %s at entry %u", indexPath.c_str(), i);
 			close();
 			return false;
 		}
 
-		Common::String resourcePath;
-		for (uint32 j = 0; j < 0x80; ++j) {
-			const char c = indexStream->readByte();
-			if (c != '\0')
-				resourcePath += c;
-		}
+		char resourcePathBuffer[0x80];
+		indexStream->read(resourcePathBuffer, sizeof(resourcePathBuffer));
+
+		uint32 resourcePathLength = 0;
+		while (resourcePathLength < sizeof(resourcePathBuffer) && resourcePathBuffer[resourcePathLength] != '\0')
+			++resourcePathLength;
+
+		Common::String resourcePath(resourcePathBuffer, resourcePathLength);
 
 		Entry entry;
 		entry._archiveOffset = indexStream->readUint32LE();
@@ -81,6 +89,8 @@ bool XFileArchive::open(const Common::String &indexPath, const Common::String &d
 		if (!normalized.empty())
 			_entries[Common::Path(normalized, '/')] = entry;
 	}
+
+	debugC(1, kDebugResources, "Harvester: indexed %u members from %s", (uint)_entries.size(), indexPath.c_str());
 
 	return !_entries.empty();
 }
