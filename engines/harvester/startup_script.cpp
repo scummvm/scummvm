@@ -82,6 +82,7 @@ bool StartupScript::load(ResourceManager &resources) {
 	_objects.clear();
 	_flags.clear();
 	_commands.clear();
+	_texts.clear();
 	_quickTipsEnabled = true;
 
 	loadConfig(resources);
@@ -141,6 +142,7 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 	_objects.clear();
 	_flags.clear();
 	_commands.clear();
+	_texts.clear();
 
 	auto parseLine = [&](const Common::String &rawLine) {
 		const Common::String line = trimAsciiLine(rawLine);
@@ -155,7 +157,7 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 		uint tagIndex = tokens.size();
 		for (uint i = 0; i < tokens.size(); ++i) {
 			if (tokens[i] == "ENTRANCE" || tokens[i] == "ROOM" || tokens[i] == "OBJECT" ||
-				tokens[i] == "FLAG" || tokens[i] == "COMMAND") {
+				tokens[i] == "FLAG" || tokens[i] == "COMMAND" || tokens[i] == "TEXT") {
 				tagIndex = i;
 				break;
 			}
@@ -202,6 +204,23 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 			return;
 		}
 
+		if (tag == "TEXT") {
+			if (tokens.size() < tagIndex + 4)
+				return;
+
+			StartupTextRecord textRecord;
+			textRecord.key = tokens[tagIndex + 1];
+			textRecord.boxName = tokens[tagIndex + 2];
+			textRecord.value = tokens[tagIndex + 3];
+			for (uint i = 0; i < textRecord.value.size(); ++i) {
+				if (textRecord.value[i] == '_')
+					textRecord.value.setChar(' ', i);
+			}
+			if (!textRecord.key.empty())
+				_texts.push_back(textRecord);
+			return;
+		}
+
 		if (tag == "ENTRANCE") {
 			if (tokens.size() < tagIndex + 4)
 				return;
@@ -234,9 +253,11 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 			return;
 
 		StartupObjectRecord object;
-		if (tagIndex >= 2) {
-			object.x = atoi(tokens[0].c_str());
-			object.y = atoi(tokens[1].c_str());
+		if (tagIndex >= 4) {
+			object.left = atoi(tokens[0].c_str());
+			object.top = atoi(tokens[1].c_str());
+			object.right = atoi(tokens[2].c_str());
+			object.bottom = atoi(tokens[3].c_str());
 		}
 		object.ownerOrRoom = tokens[tagIndex + 1];
 		object.objectName = tokens[tagIndex + 2];
@@ -265,9 +286,9 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 
 	parseLine(line);
 
-	debug(1, "Harvester: parsed %u entrances, %u rooms, %u objects, %u flags, %u commands from '%s'",
+	debug(1, "Harvester: parsed %u entrances, %u rooms, %u objects, %u flags, %u commands, %u texts from '%s'",
 		(uint)_entrances.size(), (uint)_rooms.size(), (uint)_objects.size(),
-		(uint)_flags.size(), (uint)_commands.size(), _path.c_str());
+		(uint)_flags.size(), (uint)_commands.size(), (uint)_texts.size(), _path.c_str());
 }
 
 bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, StartupRoomSetupState &state,
@@ -316,6 +337,10 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 	state.roomName = room->roomName;
 	state.palettePath = room->palettePath;
 	state.backgroundPath = background->resourcePath;
+	for (const StartupObjectRecord &object : _objects) {
+		if (object.ownerOrRoom.equalsIgnoreCase(room->roomName))
+			state.roomObjects.push_back(object);
+	}
 
 	Common::Array<StartupFlagRecord> resolvedFlags = _flags;
 	auto getFlagValue = [&](const Common::String &flagName) {
@@ -419,6 +444,22 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 	}
 
 	return true;
+}
+
+Common::String StartupScript::resolveObjectLabel(const StartupObjectRecord &object) const {
+	if (!object.identTextKey.empty()) {
+		for (const StartupTextRecord &textRecord : _texts) {
+			if (textRecord.key.equalsIgnoreCase(object.identTextKey))
+				return textRecord.value;
+		}
+	}
+
+	Common::String label = object.displayName;
+	for (uint i = 0; i < label.size(); ++i) {
+		if (label[i] == '_')
+			label.setChar(' ', i);
+	}
+	return label;
 }
 
 } // End of namespace Harvester

@@ -44,8 +44,10 @@ struct StartupRoomRecord {
 };
 
 struct StartupObjectRecord {
-	int x = 0;
-	int y = 0;
+	int left = 0;
+	int top = 0;
+	int right = 0;
+	int bottom = 0;
 	Common::String ownerOrRoom;
 	Common::String objectName;
 	Common::String resourcePath;
@@ -69,12 +71,19 @@ struct StartupCommandRecord {
 	Common::String arg4;
 };
 
+struct StartupTextRecord {
+	Common::String key;
+	Common::String boxName;
+	Common::String value;
+};
+
 struct StartupRoomSetupState {
 	Common::String roomName;
 	Common::String palettePath;
 	Common::String backgroundPath;
 	Common::String musicPath;
 	Common::Array<StartupObjectRecord> activeObjects;
+	Common::Array<StartupObjectRecord> roomObjects;
 };
 
 class StartupScript {
@@ -88,10 +97,12 @@ public:
 	const Common::Array<StartupObjectRecord> &getObjects() const { return _objects; }
 	const Common::Array<StartupFlagRecord> &getFlags() const { return _flags; }
 	const Common::Array<StartupCommandRecord> &getCommands() const { return _commands; }
+	const Common::Array<StartupTextRecord> &getTexts() const { return _texts; }
 	bool isQuickTipsEnabled() const { return _quickTipsEnabled; }
 	void setQuickTipsEnabled(bool enabled) { _quickTipsEnabled = enabled; }
 	bool resolveRoomSetupState(const Common::String &entranceName, StartupRoomSetupState &state,
 		ResourceManager &resources) const;
+	Common::String resolveObjectLabel(const StartupObjectRecord &object) const;
 
 private:
 	bool loadConfig(ResourceManager &resources);
@@ -105,6 +116,7 @@ private:
 	Common::Array<StartupObjectRecord> _objects;
 	Common::Array<StartupFlagRecord> _flags;
 	Common::Array<StartupCommandRecord> _commands;
+	Common::Array<StartupTextRecord> _texts;
 	bool _quickTipsEnabled = true;
 };
 

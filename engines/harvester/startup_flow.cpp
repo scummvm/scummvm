@@ -137,6 +137,13 @@ static bool loadBitmapResource(ResourceManager &resources, const Common::String 
 	return true;
 }
 
+static Common::Rect getObjectBounds(const StartupObjectRecord &object) {
+	if (object.right > object.left && object.bottom > object.top)
+		return Common::Rect(object.left, object.top, object.right, object.bottom);
+
+	return Common::Rect();
+}
+
 static Common::String trimAsciiLine(const Common::String &value) {
 	uint start = 0;
 	uint end = value.size();
@@ -428,13 +435,24 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 			screen->fillRect(screen->getBounds(), 0);
 			blitBitmap(*screen, background, 0, 0);
 			for (const OverlayBitmap &overlay : overlays)
-				blitBitmap(*screen, overlay.bitmap, overlay.object.x, overlay.object.y);
+				blitBitmap(*screen, overlay.bitmap, overlay.object.left, overlay.object.top);
 
 			const Common::Rect panel(72, 336, 568, 468);
 			screen->fillRect(panel, kPanelFillColor);
 			drawShadowedString(*screen, *titleFont, Common::String::format("Room Setup Stub: %s", state.roomName.c_str()),
 				panel.left, 348, panel.width(), kTextColorNormal, Graphics::kTextAlignCenter);
-			drawWrappedShadowedText(*screen, *bodyFont, statusMessage, panel.left + 24, 386, panel.width() - 48,
+			Common::String hoverMessage;
+			for (const StartupObjectRecord &object : state.roomObjects) {
+				const Common::Rect bounds = getObjectBounds(object);
+				if (!bounds.isEmpty() && bounds.contains(_mousePos)) {
+					hoverMessage = _engine.getStartupScript()->resolveObjectLabel(object);
+					break;
+				}
+			}
+			if (hoverMessage.empty())
+				hoverMessage = statusMessage;
+
+			drawWrappedShadowedText(*screen, *bodyFont, hoverMessage, panel.left + 24, 386, panel.width() - 48,
 				kTextColorNormal);
 			drawShadowedString(*screen, *bodyFont, "Press Enter, Escape, or click to return to the menu stub.",
 				panel.left, 430, panel.width(), kTextColorDim, Graphics::kTextAlignCenter);
