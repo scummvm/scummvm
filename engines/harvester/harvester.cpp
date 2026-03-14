@@ -71,6 +71,10 @@ Common::Error HarvesterEngine::run() {
 		"GRAPHIC/FST/FVLOGO.FST",
 		"GRAPHIC/FST/INTROFIN.FST"
 	};
+	Graphics::ModeList modes;
+	modes.push_back(Graphics::Mode(320, 200));
+	modes.push_back(Graphics::Mode(640, 480));
+	initGraphicsModes(modes);
 
 	_resources = new ResourceManager();
 	_resources->mountStartupArchives();
@@ -101,6 +105,10 @@ Common::Error HarvesterEngine::run() {
 	_startupText = new StartupText();
 	if (!_startupText->load(*_resources))
 		return Common::kReadingFailed;
+
+	if (!_startupArt->loadQuickTipsResources(*_resources))
+		return Common::kReadingFailed;
+	_startupArt->drawQuickTipsScreen();
 
 	// If a savegame was selected from the launcher, load it
 	int saveSlot = ConfMan.getInt("save_slot");
