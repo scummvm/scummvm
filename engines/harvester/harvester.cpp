@@ -33,6 +33,7 @@
 #include "harvester/resources.h"
 #include "harvester/startup_art.h"
 #include "harvester/startup_script.h"
+#include "harvester/startup_text.h"
 
 namespace Harvester {
 
@@ -44,6 +45,7 @@ HarvesterEngine::HarvesterEngine(OSystem *syst, const ADGameDescription *gameDes
 }
 
 HarvesterEngine::~HarvesterEngine() {
+	delete _startupText;
 	delete _startupArt;
 	delete _startupScript;
 	delete _resources;
@@ -86,20 +88,16 @@ Common::Error HarvesterEngine::run() {
 		return Common::kReadingFailed;
 	_startupArt->drawWaitFrame();
 
+	_startupText = new StartupText();
+	if (!_startupText->load(*_resources))
+		return Common::kReadingFailed;
+
 	// If a savegame was selected from the launcher, load it
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
-	// Draw a series of boxes on screen as a sample
-	for (int i = 0; i < 100; ++i)
-		_screen->frameRect(Common::Rect(i, i, 320 - i, 200 - i), i);
-	_screen->update();
-
-	// Simple event handling loop
-	byte pal[256 * 3] = { 0 };
 	Common::Event e;
-	int offset = 0;
 
 	Graphics::FrameLimiter limiter(g_system, 60);
 	while (!shouldQuit()) {
@@ -113,15 +111,7 @@ Common::Error HarvesterEngine::run() {
 			}
 		}
 
-		// Cycle through a simple palette
-		++offset;
-		for (int i = 0; i < 256; ++i)
-			pal[i * 3 + 1] = (i + offset) % 256;
-		g_system->getPaletteManager()->setPalette(pal, 0, 256);
-		// Delay for a bit. All events loops should have a delay
-		// to prevent the system being unduly loaded
 		limiter.delayBeforeSwap();
-		_screen->update();
 		limiter.startFrame();
 	}
 

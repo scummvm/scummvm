@@ -35,6 +35,7 @@ namespace Harvester {
 class ResourceManager;
 class StartupScript;
 class StartupArt;
+class StartupText;
 
 class HarvesterEngine : public Engine {
 public:
@@ -70,6 +71,7 @@ public:
 	ResourceManager *getResources() const { return _resources; }
 	StartupScript *getStartupScript() const { return _startupScript; }
 	StartupArt *getStartupArt() const { return _startupArt; }
+	StartupText *getStartupText() const { return _startupText; }
 
 private:
 	const ADGameDescription *const _gameDescription;
@@ -78,6 +80,7 @@ private:
 	ResourceManager *_resources = nullptr;
 	StartupScript *_startupScript = nullptr;
 	StartupArt *_startupArt = nullptr;
+	StartupText *_startupText = nullptr;
 };
 
 extern HarvesterEngine *g_engine;
