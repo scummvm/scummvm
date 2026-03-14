@@ -22,6 +22,7 @@
 #ifndef HARVESTER_H
 #define HARVESTER_H
 
+#include "audio/mixer.h"
 #include "common/error.h"
 #include "common/random.h"
 #include "common/serializer.h"
@@ -73,12 +74,15 @@ public:
 	StartupScript *getStartupScript() const { return _startupScript; }
 	StartupArt *getStartupArt() const { return _startupArt; }
 	StartupText *getStartupText() const { return _startupText; }
+	bool playStartupSound(const Common::String &path);
+	void stopStartupSound();
 
 private:
 	void setDisplayMode(int width, int height);
 
 	const ADGameDescription *const _gameDescription;
 	Common::RandomSource _randomSource;
+	Audio::SoundHandle _startupSoundHandle;
 	Graphics::Screen *_screen = nullptr;
 	ResourceManager *_resources = nullptr;
 	StartupScript *_startupScript = nullptr;
