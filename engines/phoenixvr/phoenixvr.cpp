@@ -761,6 +761,19 @@ void PhoenixVREngine::loadVariables() {
 	_variableSnapshot.clear();
 }
 
+const Graphics::Font *PhoenixVREngine::getFont(int size) const {
+#ifdef USE_FREETYPE2
+	if (size < 14)
+		return _font12.get();
+	else if (size < 18)
+		return _font14.get();
+	else
+		return _font18.get();
+#else
+	return FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+#endif
+}
+
 void PhoenixVREngine::rollover(int textId, RolloverType type) {
 	Common::Rect dstRect;
 	int size = 12;
@@ -803,17 +816,7 @@ void PhoenixVREngine::rollover(int textId, RolloverType type) {
 		}
 	}
 
-	const Graphics::Font *font = nullptr;
-#ifdef USE_FREETYPE2
-	if (size < 14)
-		font = _font12.get();
-	else if (size < 18)
-		font = _font14.get();
-	else
-		font = _font18.get();
-#else
-	font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-#endif
+	auto *font = getFont(size);
 
 	if (!font)
 		return;
