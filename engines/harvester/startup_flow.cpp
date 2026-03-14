@@ -72,7 +72,6 @@ static const byte kPanelFillColor = 1;
 struct StartupRoomSceneResources {
 	StartupRoomSetupState state;
 	byte palette[256 * 3] = { 0 };
-	IndexedBitmap background;
 	Common::Array<StartupObjectRecord> sceneObjects;
 	Common::Array<StartupAnimRecord> sceneAnimations;
 	float targetPaletteBrightness = 1.0f;
@@ -148,22 +147,6 @@ static bool loadPaletteResource(ResourceManager &resources, const Common::String
 	return true;
 }
 
-static bool loadBitmapResource(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap) {
-	Common::Array<byte> data;
-	if (!resources.loadFile(path, data) || data.size() < 12)
-		return false;
-
-	bitmap.width = READ_LE_UINT32(data.data());
-	bitmap.height = READ_LE_UINT32(data.data() + 4);
-	const uint32 pixelCount = bitmap.width * bitmap.height;
-	if (bitmap.width == 0 || bitmap.height == 0 || data.size() < 12 + pixelCount)
-		return false;
-
-	bitmap.pixels.resize(pixelCount);
-	memcpy(bitmap.pixels.data(), data.data() + 12, pixelCount);
-	return true;
-}
-
 static Common::Rect getHotspotBounds(const StartupObjectRecord &object) {
 	if (object.boundsX2 > object.currentX && object.boundsY2 > object.currentY)
 		return Common::Rect(object.currentX, object.currentY, object.boundsX2 + 1, object.boundsY2 + 1);
@@ -182,11 +165,20 @@ static Common::String resolveSceneObjectSpritePath(const StartupObjectRecord &ob
 	return object.spritePath;
 }
 
-static void queueVisibleSceneObject(const StartupObjectRecord &object, const Common::String &backgroundPath,
-		Common::Array<StartupObjectRecord> &sceneObjects) {
+static bool isBackgroundSceneObject(const StartupObjectRecord &object, const RuntimeEntity &entity) {
+	return object.initialX == 0 && object.initialY == 0 &&
+		entity.getBoundsWidth() == 640 && entity.getBoundsHeight() == 480;
+}
+
+static int resolveSceneObjectClass(const StartupObjectRecord &object, const RuntimeEntity *entity) {
+	if (entity)
+		return isBackgroundSceneObject(object, *entity) ? kRuntimeEntityClassBackground : kRuntimeEntityClassObject;
+
+	return object.actionTag.empty() ? kRuntimeEntityClassDisabledHotspot : kRuntimeEntityClassRectHotspot;
+}
+
+static void queueVisibleSceneObject(const StartupObjectRecord &object, Common::Array<StartupObjectRecord> &sceneObjects) {
 	if (!object.visible)
-		return;
-	if (!backgroundPath.empty() && object.spritePath.equalsIgnoreCase(backgroundPath))
 		return;
 
 	for (const StartupObjectRecord &sceneObject : sceneObjects) {
@@ -203,16 +195,15 @@ static bool loadRoomSceneResources(const StartupRoomSetupState &state, ResourceM
 	scene = StartupRoomSceneResources();
 	scene.state = state;
 	scene.targetPaletteBrightness = state.paletteBrightness;
-	if (!loadPaletteResource(resources, state.palettePath, scene.palette) ||
-		!loadBitmapResource(resources, state.backgroundPath, scene.background)) {
+	if (!loadPaletteResource(resources, state.palettePath, scene.palette)) {
 		return false;
 	}
 
 	Common::Array<StartupObjectRecord> sceneObjects;
 	for (const StartupObjectRecord &object : state.roomObjects)
-		queueVisibleSceneObject(object, state.backgroundPath, sceneObjects);
+		queueVisibleSceneObject(object, sceneObjects);
 	for (const StartupObjectRecord &object : state.activeObjects)
-		queueVisibleSceneObject(object, state.backgroundPath, sceneObjects);
+		queueVisibleSceneObject(object, sceneObjects);
 
 	scene.sceneObjects = sceneObjects;
 	for (const StartupAnimRecord &anim : state.roomAnimations) {
@@ -227,7 +218,6 @@ static void drawRoomScene(HarvesterEngine &engine, Graphics::Screen &screen, con
 		float brightness) {
 	setScaledPalette(screen, scene.palette, brightness);
 	screen.fillRect(screen.getBounds(), 0);
-	blitBitmap(screen, scene.background, 0, 0);
 	if (engine.getRuntimeEntities())
 		engine.getRuntimeEntities()->drawSceneEntities(screen);
 }
@@ -248,7 +238,7 @@ static const StartupObjectRecord *findRoomObjectAtPoint(HarvesterEngine &engine,
 	if (!runtimeEntities)
 		return nullptr;
 
-	const RuntimeEntity *entity = runtimeEntities->findTopSceneEntityAt(point, kRuntimeEntityClassObject);
+	const RuntimeEntity *entity = runtimeEntities->findTopSceneEntityAt(point);
 	if (!entity)
 		return nullptr;
 
@@ -707,6 +697,8 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 						showingInspectText = true;
 						inspectCanDismiss = false;
 						statusMessage = Common::String::format("Showing inspect text for %s.", objectLabel.c_str());
+					} else if (objectLabel.empty()) {
+						statusMessage = "No active startup hotspot under the cursor.";
 					} else {
 						statusMessage = Common::String::format("%s has no supported startup interaction yet.",
 							objectLabel.c_str());
@@ -811,7 +803,12 @@ bool StartupFlow::populateRoomSceneEntities(const Common::Array<StartupObjectRec
 		if (!entity) {
 			debug(1, "Harvester: unable to spawn room object entity '%s' from '%s'",
 				object.objectName.c_str(), spritePath.c_str());
+			continue;
 		}
+
+		entity->setClassId(resolveSceneObjectClass(object, entity->hasFrames() ? entity : nullptr));
+		entity->setAnchorMode(kRuntimeEntityAnchorTopLeft);
+		entity->setZExtent((float)object.zExtent);
 	}
 	for (const StartupAnimRecord &anim : drawableAnimations) {
 		if (!runtimeEntities->spawnSceneAnimationEntity(anim.animName, anim.resourcePath,
