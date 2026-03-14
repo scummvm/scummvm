@@ -76,6 +76,7 @@ public:
 	StartupScript *getStartupScript() const { return _startupScript; }
 	StartupArt *getStartupArt() const { return _startupArt; }
 	StartupText *getStartupText() const { return _startupText; }
+	bool isGoreEnabled() const;
 	bool playStartupSound(const Common::String &path);
 	void stopStartupSound();
 

@@ -24,6 +24,8 @@
 
 #include "engines/advancedDetector.h"
 
+#define GAMEOPTION_GORE GUIO_GAMEOPTIONS1
+
 namespace Harvester {
 
 enum HarvesterDebugChannels {

@@ -151,7 +151,8 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - `g_video_mode_backends` is the 6-entry pointer table `configure_video_surface` scans to match width / height / pixel format; it contains those five concrete backends plus the sentinel that terminates the probe loop.
     - `configure_video_surface` matches each descriptor on width / height / bpp / backend class, calls the descriptor's probe and activate callbacks, and tears down the previously active backend through the record's shutdown callback before switching.
     - `VesaModeBackend` is now a typed 64-byte video-mode descriptor record despite the legacy name.
-      - Confirmed fields now include width/height/pixel-format, probe/activate/shutdown callbacks, the display-start preset callback, pixel read/write callbacks, `fill_horizontal_span_callback`, `fill_rect_callback`, `blit_rect_callback`, and the runtime bank/window fields consumed by FST playback.
+      - Confirmed fields now include width/height/pixel-format, probe/activate/shutdown callbacks, `unused_callback`, the display-start preset callback, pixel read/write callbacks, `fill_horizontal_span_callback`, `fill_rect_callback`, `blit_rect_callback`, and the runtime bank/window fields consumed by FST playback.
+      - `unused_callback` is now explicitly bounded as dead slot baggage in this binary: the concrete VGA/VESA implementations are all no-op stubs, and an instruction-level scan only found indirect backend calls through `blit_rect_callback` and `select_bank_for_scanline_callback`.
       - The VGA `320x200x8` record makes the generic callback roles explicit through `probe_vga_320x200_mode`, `activate_vga_320x200_mode`, `write_vga_320x200_pixel`, `read_vga_320x200_pixel`, `fill_vga_320x200_horizontal_span`, `fill_vga_320x200_rect`, and `blit_vga_320x200_rect`.
     - `VideoSurfaceContext` is now a typed 16-byte context that caches the active backend pointer plus the selected width/height/bpp/class.
     - The mixed Borland runtime descriptor block also binds `set_vesa_video_mode_3` and `reset_video_surface_context` to `g_video_surface_context`; that pair is the small lifecycle wrapper layer above the shared context object.
@@ -716,6 +717,10 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - `g_fst_censorship_toggle_entries` at `0xc1014` is now typed as `FstCensorshipToggleEntry[25]`.
       - Each `0x118`-byte entry contains a movie basename in `sequence_name[0x100]` followed by six `toggle_frame_indices`.
       - `run_fst_sequence_player` scans those records by basename and, on matching frame indices, toggles between restoring the saved palette and blitting `GRAPHIC\\OTHER\\CENSORED.PCX`.
+    - `g_gore_enabled` at `0xc0fbc` is the persisted `GORE` setting gate for that censorship path.
+      - `startup_main` defaults it to `1` and only clears it when the config value `GORE` equals `NO`.
+      - `run_fst_sequence_player` only consults `g_fst_censorship_toggle_entries` when `g_gore_enabled == 0`.
+      - While censorship is active, the player keeps advancing audio timing and still captures later movie palette chunks into the saved movie palette buffer, but it skips the normal frame decode/blit until a later toggle restores the movie view.
     - `upload_vga_palette` at `0x482c0` is the shared 256-entry VGA DAC upload helper used by the FST player when it restores or swaps palette pages.
     - `load_pcx_bitmap` at `0x4a230` is the direct-file `PCX` loader used by the FST censorship path; it reads the whole file through XFILE, RLE-decodes the `0x80`-byte-header payload into a `RawBitmap`, trims oversized stride bytes, and optionally uploads the trailing 256-color palette.
 - `run_harvester_main_loop` maintains `g_current_interaction_text`, `g_pending_interaction_text`, and `g_interaction_text_entity` for hover / use prompts.

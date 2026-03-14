@@ -61,6 +61,10 @@ Common::String HarvesterEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+bool HarvesterEngine::isGoreEnabled() const {
+	return !ConfMan.hasKey("gore") || ConfMan.getBool("gore");
+}
+
 bool HarvesterEngine::playStartupSound(const Common::String &path) {
 	stopStartupSound();
 	if (path.empty() || !_resources)
