@@ -1025,6 +1025,8 @@ Common::Error PhoenixVREngine::run() {
 	// try load level-specific script first (amerzone)
 	if (setNextLevel())
 		_loaded = false; // reset flag or interface.vr will skip menu
+	else if (gameIdMatches("lochness"))
+		setNextScript("first.lst");
 	else
 		setNextScript("script.lst");
 
