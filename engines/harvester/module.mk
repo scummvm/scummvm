@@ -3,6 +3,7 @@ MODULE := engines/harvester
 MODULE_OBJS = \
 	harvester.o \
 	console.o \
+	fst_player.o \
 	metaengine.o \
 	resources.o \
 	startup_script.o \
