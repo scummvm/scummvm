@@ -39,11 +39,13 @@ static byte expand6BitColor(byte value) {
 
 bool StartupArt::load(ResourceManager &resources) {
 	_waitFrames.clear();
+	_pointerFrames.clear();
 	_inventoryBitmap = IndexedBitmap();
 	_logoBitmap = IndexedBitmap();
 
 	return loadPalette(resources, "1:/GRAPHIC/PAL/WAIT.PAL", _waitPalette) &&
 	       loadAnimation(resources, "1:/GRAPHIC/OTHER/WAIT.ABM", _waitFrames) &&
+	       loadAnimation(resources, "1:/GRAPHIC/POINTERS/POINTERS.ABM", _pointerFrames) &&
 	       loadBitmap(resources, "1:/GRAPHIC/OTHER/INVENTRY.BM", _inventoryBitmap) &&
 	       loadBitmap(resources, "1:/GRAPHIC/OTHER/HARVLOGO.BM", _logoBitmap);
 }
@@ -52,12 +54,29 @@ void StartupArt::drawWaitFrame() const {
 	if (_waitFrames.empty() || !_waitFrames[0].isValid())
 		return;
 
-	const AbmFrame &frame = _waitFrames[0];
-	const int x = MAX<int>(0, (320 - (int)frame.width) / 2);
-	const int y = MAX<int>(0, (200 - (int)frame.height) / 2);
-
 	g_system->getPaletteManager()->setPalette(_waitPalette, 0, 256);
-	g_system->copyRectToScreen(frame.pixels.data(), frame.width, x, y, frame.width, frame.height);
+
+	const int screenWidth = g_system->getWidth();
+	const int screenHeight = g_system->getHeight();
+	g_system->fillScreen(0);
+
+	if (_inventoryBitmap.isValid()) {
+		const int inventoryX = MAX<int>(0, (screenWidth - (int)_inventoryBitmap.width) / 2);
+		const int inventoryY = MAX<int>(0, (screenHeight - (int)_inventoryBitmap.height) / 2);
+		g_system->copyRectToScreen(_inventoryBitmap.pixels.data(), _inventoryBitmap.width, inventoryX, inventoryY,
+			_inventoryBitmap.width, _inventoryBitmap.height);
+	}
+
+	if (_logoBitmap.isValid()) {
+		const int logoX = MAX<int>(0, (screenWidth - (int)_logoBitmap.width) / 2);
+		g_system->copyRectToScreen(_logoBitmap.pixels.data(), _logoBitmap.width, logoX, 0,
+			_logoBitmap.width, _logoBitmap.height);
+	}
+
+	const AbmFrame &frame = _waitFrames[0];
+	const int waitX = MAX<int>(0, (screenWidth - (int)frame.width) / 2);
+	const int waitY = MAX<int>(0, (screenHeight - (int)frame.height) / 2);
+	g_system->copyRectToScreen(frame.pixels.data(), frame.width, waitX, waitY, frame.width, frame.height);
 	g_system->updateScreen();
 }
 
