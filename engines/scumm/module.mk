@@ -105,11 +105,6 @@ MODULE_OBJS += \
 	debugger/resource.o
 endif
 
-ifdef USE_ARM_COSTUME_ASM
-MODULE_OBJS += \
-	proc3ARM.o
-endif
-
 ifdef ENABLE_SCUMM_7_8
 MODULE_OBJS += \
 	nut_renderer.o \
