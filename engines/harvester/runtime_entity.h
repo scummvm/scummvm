@@ -38,13 +38,23 @@ class ResourceManager;
 enum RuntimeEntityClass {
 	kRuntimeEntityClassObject = 0,
 	kRuntimeEntityClassAnimation = 1,
-	kRuntimeEntityClassCursor = 2
+	kRuntimeEntityClassCursor = 2,
+	kRuntimeEntityClassBackground = 3,
+	kRuntimeEntityClassRectHotspot = 0x15,
+	kRuntimeEntityClassDisabledHotspot = 0x16,
+	kRuntimeEntityClassRectHotspot18 = 0x18,
+	kRuntimeEntityClassRectHotspot19 = 0x19
 };
 
 enum RuntimeEntityHitTestMode {
 	kRuntimeEntityHitTestNone = 0,
 	kRuntimeEntityHitTestBounds = 1,
 	kRuntimeEntityHitTestOpaquePixels = 2
+};
+
+enum RuntimeEntityAnchorMode {
+	kRuntimeEntityAnchorTopLeft = 0,
+	kRuntimeEntityAnchorCentered = 1
 };
 
 class RuntimeEntity {
@@ -57,6 +67,9 @@ public:
 
 	void setClassId(int classId) { _classId = classId; }
 	int getClassId() const { return _classId; }
+	void setAnchorMode(RuntimeEntityAnchorMode anchorMode) { _anchorMode = anchorMode; }
+	void setZExtent(float zExtent) { _zExtent = zExtent; }
+	float getZExtent() const { return _zExtent; }
 
 	void setLooping(bool looping) { _looping = looping; }
 	void setPingPong(bool pingPong) { _pingPong = pingPong; }
@@ -78,14 +91,20 @@ public:
 	int getAnimationSequence() const { return _animationSequence; }
 	void configureHotspotBounds(int width, int height);
 	void setHitTestMode(RuntimeEntityHitTestMode mode) { _hitTestMode = mode; }
+	int getBoundsWidth() const { return _boundsWidth; }
+	int getBoundsHeight() const { return _boundsHeight; }
 
 	bool hasFrames() const { return !_frames.empty(); }
 	bool tickVisualState(uint32 now);
 	void draw(Graphics::Screen &screen) const;
 	bool hitTest(const Common::Point &point) const;
+	bool overlapsEntity(const RuntimeEntity &other) const;
 
 private:
+	Common::Point getDrawOrigin() const;
 	Common::Rect getFrameRect() const;
+	bool hasOpaqueFrame() const;
+	bool isOpaqueAt(const Common::Point &point) const;
 	void advanceAnimationFrame(int directive);
 
 	Common::String _name;
@@ -111,6 +130,8 @@ private:
 	int _boundsWidth = 0;
 	int _boundsHeight = 0;
 	RuntimeEntityHitTestMode _hitTestMode = kRuntimeEntityHitTestNone;
+	RuntimeEntityAnchorMode _anchorMode = kRuntimeEntityAnchorTopLeft;
+	float _zExtent = 0.0f;
 };
 
 class RuntimeEntityManager {

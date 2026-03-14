@@ -81,6 +81,12 @@ static bool decodeAnimationFrame(const byte *source, uint32 sourceSize, bool com
 
 } // End of anonymous namespace
 
+static bool isRectangleOnlyHitClass(int classId) {
+	return classId == kRuntimeEntityClassRectHotspot ||
+		classId == kRuntimeEntityClassRectHotspot18 ||
+		classId == kRuntimeEntityClassRectHotspot19;
+}
+
 bool RuntimeEntity::loadBitmapResource(ResourceManager &resources, const Common::String &path) {
 	Common::Array<byte> data;
 	if (!resources.loadFile(path, data) || data.size() < 12) {
@@ -231,33 +237,58 @@ bool RuntimeEntity::tickVisualState(uint32 now) {
 	return advanced;
 }
 
+Common::Point RuntimeEntity::getDrawOrigin() const {
+	if (!_frames.empty() && _currentFrame >= 0 && (uint)_currentFrame < _frames.size()) {
+		const AbmFrame &frame = _frames[(uint)_currentFrame];
+		int drawX = _x;
+		int drawY = _y;
+		if (_anchorMode == kRuntimeEntityAnchorCentered) {
+			drawX -= (int)frame.width / 2;
+			drawY -= (int)frame.height / 2;
+		}
+
+		return Common::Point(drawX + frame.xOffset, drawY + frame.yOffset);
+	}
+
+	int drawX = _x;
+	int drawY = _y;
+	if (_anchorMode == kRuntimeEntityAnchorCentered) {
+		drawX -= _boundsWidth / 2;
+		drawY -= _boundsHeight / 2;
+	}
+
+	return Common::Point(drawX, drawY);
+}
+
 void RuntimeEntity::draw(Graphics::Screen &screen) const {
 	if (!_visible || !_drawEnabled || _currentFrame < 0)
 		return;
 
-	blitAnimationFrame(screen, _frames, _currentFrame, _x, _y);
+	const Common::Point drawOrigin = getDrawOrigin();
+	blitAnimationFrame(screen, _frames, _currentFrame, drawOrigin.x, drawOrigin.y);
 }
 
 Common::Rect RuntimeEntity::getFrameRect() const {
+	const Common::Point drawOrigin = getDrawOrigin();
 	if (!_frames.empty() && _currentFrame >= 0 && (uint)_currentFrame < _frames.size()) {
 		const AbmFrame &frame = _frames[(uint)_currentFrame];
-		return Common::Rect(_x + frame.xOffset, _y + frame.yOffset,
-			_x + frame.xOffset + frame.width, _y + frame.yOffset + frame.height);
+		return Common::Rect(drawOrigin.x, drawOrigin.y,
+			drawOrigin.x + frame.width, drawOrigin.y + frame.height);
 	}
 
-	return Common::Rect(_x, _y, _x + _boundsWidth, _y + _boundsHeight);
+	return Common::Rect(drawOrigin.x, drawOrigin.y, drawOrigin.x + _boundsWidth, drawOrigin.y + _boundsHeight);
 }
 
-bool RuntimeEntity::hitTest(const Common::Point &point) const {
-	if (_hitTestMode == kRuntimeEntityHitTestNone)
+bool RuntimeEntity::hasOpaqueFrame() const {
+	return !_frames.empty() && _currentFrame >= 0 && (uint)_currentFrame < _frames.size();
+}
+
+bool RuntimeEntity::isOpaqueAt(const Common::Point &point) const {
+	if (!hasOpaqueFrame())
 		return false;
 
 	const Common::Rect bounds = getFrameRect();
 	if (!bounds.contains(point))
-		return false;
-	if (_hitTestMode != kRuntimeEntityHitTestOpaquePixels)
-		return true;
-	if (_frames.empty() || _currentFrame < 0 || (uint)_currentFrame >= _frames.size())
 		return false;
 
 	const AbmFrame &frame = _frames[(uint)_currentFrame];
@@ -267,6 +298,62 @@ bool RuntimeEntity::hitTest(const Common::Point &point) const {
 		return false;
 
 	return frame.pixels[(uint)relativeY * frame.width + (uint)relativeX] != 0;
+}
+
+bool RuntimeEntity::hitTest(const Common::Point &point) const {
+	if (!_visible)
+		return false;
+	if (_classId == kRuntimeEntityClassDisabledHotspot)
+		return false;
+	if (_classId == kRuntimeEntityClassBackground)
+		return true;
+	if (_hitTestMode == kRuntimeEntityHitTestNone)
+		return false;
+
+	const Common::Rect bounds = getFrameRect();
+	if (!bounds.contains(point))
+		return false;
+	if (_hitTestMode != kRuntimeEntityHitTestOpaquePixels || isRectangleOnlyHitClass(_classId))
+		return true;
+
+	return isOpaqueAt(point);
+}
+
+bool RuntimeEntity::overlapsEntity(const RuntimeEntity &other) const {
+	if (this == &other || !_visible || !other._visible)
+		return false;
+	if (!hasOpaqueFrame() || !other.hasOpaqueFrame())
+		return false;
+	if (_classId == kRuntimeEntityClassAnimation || _classId == kRuntimeEntityClassBackground ||
+		_classId == kRuntimeEntityClassRectHotspot || _classId == kRuntimeEntityClassRectHotspot19 ||
+		other._classId == kRuntimeEntityClassAnimation || other._classId == kRuntimeEntityClassBackground ||
+		other._classId == kRuntimeEntityClassRectHotspot || other._classId == kRuntimeEntityClassRectHotspot19) {
+		return false;
+	}
+
+	const float thisZMax = _z + _zExtent;
+	const float otherZMax = other._z + other._zExtent;
+	if (thisZMax < other._z || otherZMax < _z)
+		return false;
+
+	const Common::Rect thisRect = getFrameRect();
+	const Common::Rect otherRect = other.getFrameRect();
+	const int left = MAX(thisRect.left, otherRect.left);
+	const int top = MAX(thisRect.top, otherRect.top);
+	const int right = MIN(thisRect.right, otherRect.right);
+	const int bottom = MIN(thisRect.bottom, otherRect.bottom);
+	if (left >= right || top >= bottom)
+		return false;
+
+	for (int y = top; y < bottom; ++y) {
+		for (int x = left; x < right; ++x) {
+			const Common::Point point(x, y);
+			if (isOpaqueAt(point) && other.isOpaqueAt(point))
+				return true;
+		}
+	}
+
+	return false;
 }
 
 void RuntimeEntity::advanceAnimationFrame(int directive) {
@@ -413,6 +500,8 @@ RuntimeEntity *RuntimeEntityManager::spawnSceneAnimationEntity(const Common::Str
 	if (!entity)
 		return nullptr;
 
+	entity->setAnchorMode(kRuntimeEntityAnchorCentered);
+	entity->setZExtent(3.0f);
 	entity->setVisible(visible);
 	entity->setPlayBackwards(playBackwards);
 	entity->setHitTestMode(kRuntimeEntityHitTestNone);
