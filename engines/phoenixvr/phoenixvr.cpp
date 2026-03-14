@@ -163,6 +163,10 @@ bool PhoenixVREngine::setNextLevel() {
 		debug("next level is %s", level.c_str());
 		setNextScript(Common::String::format("%s\\%s.lst", level.c_str(), _gameDescription->gameId));
 		_loaded = true;
+
+		// reset flag or interface.vr will skip menu
+		if (_currentLevel == 1)
+			_loaded = false;
 		return true;
 	} else
 		return false;
@@ -1029,9 +1033,9 @@ Common::Error PhoenixVREngine::run() {
 	}
 
 	// try load level-specific script first (amerzone)
-	if (setNextLevel())
-		_loaded = false; // reset flag or interface.vr will skip menu
-	else if (gameIdMatches("lochness"))
+	if (gameIdMatches("amerzone")) {
+		setNextScript("intro.lst");
+	} else if (gameIdMatches("lochness"))
 		setNextScript("first.lst");
 	else
 		setNextScript("script.lst");
