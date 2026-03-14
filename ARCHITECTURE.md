@@ -151,8 +151,9 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - `g_video_mode_backends` is the 6-entry pointer table `configure_video_surface` scans to match width / height / pixel format; it contains those five concrete backends plus the sentinel that terminates the probe loop.
     - `configure_video_surface` matches each descriptor on width / height / bpp / backend class, calls the descriptor's probe and activate callbacks, and tears down the previously active backend through the record's shutdown callback before switching.
     - `VesaModeBackend` is now a typed 64-byte video-mode descriptor record despite the legacy name.
-      - Confirmed fields now include width/height/pixel-format, probe/activate/shutdown callbacks, `unused_callback`, the display-start preset callback, pixel read/write callbacks, `fill_horizontal_span_callback`, `fill_rect_callback`, `blit_rect_callback`, and the runtime bank/window fields consumed by FST playback.
+      - Confirmed fields now include width/height/pixel-format, probe/activate/shutdown callbacks, `unused_callback`, `unused_display_start_preset_callback`, pixel read/write callbacks, `fill_horizontal_span_callback`, `fill_rect_callback`, `blit_rect_callback`, and the runtime bank/window fields consumed by FST playback.
       - `unused_callback` is now explicitly bounded as dead slot baggage in this binary: the concrete VGA/VESA implementations are all no-op stubs, and an instruction-level scan only found indirect backend calls through `blit_rect_callback` and `select_bank_for_scanline_callback`.
+      - `unused_display_start_preset_callback` is also dead in this binary: the four `set_vesa_*_display_start_preset` helpers only survive as data references from the backend records, while `configure_video_surface` only dispatches the probe/activate/shutdown slots and the per-mode activate helpers call `initialize_vesa_banked_mode` directly.
       - The VGA `320x200x8` record makes the generic callback roles explicit through `probe_vga_320x200_mode`, `activate_vga_320x200_mode`, `write_vga_320x200_pixel`, `read_vga_320x200_pixel`, `fill_vga_320x200_horizontal_span`, `fill_vga_320x200_rect`, and `blit_vga_320x200_rect`.
     - `VideoSurfaceContext` is now a typed 16-byte context that caches the active backend pointer plus the selected width/height/bpp/class.
     - The mixed Borland runtime descriptor block also binds `set_vesa_video_mode_3` and `reset_video_surface_context` to `g_video_surface_context`; that pair is the small lifecycle wrapper layer above the shared context object.
@@ -546,7 +547,13 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - Class `3`, `0x15`, and `0x19` are skipped by that entity/entity overlap path.
   - On collision it stores the blocking render-entity pointer at runtime offset `+0x109c`; the confirmed read-side consumers of that slot are in `update_actor_runtime_state`.
 - `update_actor_runtime_state` reuses that blocking-entity slot in two confirmed ways:
-  - In the directional movement states it treats `+0x109c` as the current blocker, ignores null/hidden/self-recent blockers, and otherwise cancels the current move state, zeros the movement deltas, and copies the blocker into one of the per-direction remembered-blocker slots at `+0x108c` / `+0x1090` / `+0x1094` / `+0x1098`.
+  - In the directional movement states it treats `+0x109c` as the current blocker, ignores null/hidden/self-recent blockers, and otherwise cancels the current move state, zeros the movement deltas, and copies the blocker into one of four directional blocker-history slots.
+  - The directional mapping is now explicit from the branch-local state writes and signed movement deltas:
+    - `+0x108c` is the upward blocker-history slot
+    - `+0x1090` is the downward blocker-history slot
+    - `+0x1094` is the leftward blocker-history slot
+    - `+0x1098` is the rightward blocker-history slot
+  - `set_object_visibility_for_owner_or_room` clears those four slots individually when a hidden entity still matches one of the remembered blockers, which confirms that they are persistent blocker pointers rather than generic movement flags.
   - In the close-range attack/grapple states it treats `+0x109c` as the current target entity, links the attacker/target pair through runtime field `+0x11b8`, mirrors the attacker's current depth into the target, and can force the target into a reaction / death sequence depending on the target class and active scene flags.
 - `hide_entity_visual` at `0x4c260` and `show_entity_visual` at `0x4c290` are the nested runtime visibility wrappers for render entities.
   - `hide_entity_visual` decrements the visibility nesting and removes the entity from `g_render_entity_list` only on the transition to hidden.
@@ -563,6 +570,10 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `run_harvester_main_loop` uses it for live monster entities, and the wrapper tears down the runtime object when the shared actor state machine reports removal.
 - `spawn_player_combat_avatar` at `0x54220` reuses the monster runtime entity base for the player during combat / weapon-view mode.
   - It seeds player HP/state and installs the weapon-dependent attack / hit / footstep / death sounds.
+  - The same setup now bounds four live actor runtime fields tightly enough to treat them as confirmed:
+    - `+0x11bc` is the selected player combat loadout / equipped weapon id.
+    - `+0x1160` and `+0x1164` are the alternating movement-step sample slots.
+    - `+0x1168` is the death sample slot.
 - `set_player_combat_loadout` at `0x55c10` applies the persisted player combat loadout selection stored at live actor field `+0x11bc`.
   - It is called by the inventory UI when the player changes weapons and by save/load restoration when the saved selection differs from the current live one.
   - It tears down the current attack sound bank, loads the new weapon-dependent attack sounds, reloads the `pc*.abm` actor art, and refreshes the player combat avatar's attack tuning.
@@ -576,6 +587,8 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - `0xe`: chainsaw fuel
   - The corresponding globals are now named `g_nailgun_ammo_icon_strip`, `g_shotgun_shell_icon_strip`, `g_9gun_bullet_icon_strip`, `g_38gun_shotshell_icon_strip`, `g_chainsaw_fuel_icon_strip`, their matching count fields, and `g_visible_weapon_resource_icon_count`.
 - `teardown_player_combat_avatar` at `0x55010` removes the live player combat avatar and frees its weapon-dependent runtime resources before a rebuild or shutdown path.
+- `teardown_entity_runtime_state` at `0x55030` is the shared runtime-entity cleanup layer under the combat-avatar teardown/rebuild paths.
+  - It clears the linked spawned actor at `+0x11a8`, frees the runtime sound/sample fields from `+0x1148` through `+0x1168`, resets the entity to a hidden offscreen idle state, and frees the current bitmap buffers without freeing the outer runtime-entity allocation.
 - `check_player_region_interaction` at `0x559e0` scans `g_region_records` for the first enabled region whose bounds overlap the live player avatar and whose facing gate matches the player's orientation.
   - On success it returns the matching `RegionRecord *` so the main loop can dispatch the region's `action_tag`.
 - `reset_player_combat_avatar` at `0x56a40` is the player-avatar reset helper used on teardown / restart paths.
@@ -595,6 +608,9 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - `0x16` through `0x1b` are attack states; on a confirmed hit they assign victim states `0x1c` through `0x21` via `attacker_state + 6`, which bounds `0x1c` through `0x21` as hit-reaction states.
     - `0x28` through `0x33` are death-animation entry states. They play the actor death sound, run the final animation bank, and fall into terminal state `0x38`.
     - `0x35` is the NPC death / monsterfy transition state, and `0x38` is the terminal dead / removed state that dispatches `on_death_action_tag`.
+- `apply_pending_entity_knockback` at `0x53770` is the shared hit-reaction helper called by both `tick_monster_entity_runtime` and `update_player_combat_avatar_state`.
+  - Confirmed hit resolution inside `update_actor_runtime_state` seeds the victim's pending knockback pair as a signed shove at `+0x11ac` (`-18` or `+18`) plus decay step `+0x11b0 = 3`.
+  - The helper copies that pending value into the live shove slot at `+0x1088` when idle, then decays the pending value toward zero.
 - `update_player_combat_avatar_state` at `0x553a0` is the player-side wrapper around `update_actor_runtime_state`.
   - It reads combat input globals, translates them into desired player actor states, updates the player combat avatar, and then delegates the shared animation/combat resolution to `update_actor_runtime_state`.
   - Shared input globals recovered from both the town-map UI and player-combat wrapper are now named:
