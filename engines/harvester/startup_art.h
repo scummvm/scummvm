@@ -51,10 +51,13 @@ public:
 	void drawQuickTipsScreen() const;
 
 	const byte *getWaitPalette() const { return _waitPalette; }
+	const byte *getPcRoomPalette() const { return _pcRoomPalette; }
 	const Common::Array<AbmFrame> &getWaitFrames() const { return _waitFrames; }
 	const Common::Array<AbmFrame> &getPointerFrames() const { return _pointerFrames; }
 	const IndexedBitmap &getInventoryBitmap() const { return _inventoryBitmap; }
 	const IndexedBitmap &getLogoBitmap() const { return _logoBitmap; }
+	const IndexedBitmap &getPcRoomBitmap() const { return _pcRoomBitmap; }
+	const IndexedBitmap &getTipsBitmap() const { return _tipsBitmap; }
 
 private:
 	bool loadPalette(ResourceManager &resources, const Common::String &path, byte *dest) const;

@@ -41,8 +41,8 @@ static const int kLogoX = 160;
 static const int kLogoY = 0;
 static const int kWaitX = 250;
 static const int kWaitY = 160;
-static const int kQuickTipsOverlayX = 177;
-static const int kQuickTipsOverlayY = 85;
+static const int kQuickTipsOverlayX = 167;
+static const int kQuickTipsOverlayY = 200;
 static const int kCursorX = 320;
 static const int kCursorY = 200;
 

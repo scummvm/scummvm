@@ -19,34 +19,45 @@
  *
  */
 
-#ifndef HARVESTER_STARTUP_SCRIPT_H
-#define HARVESTER_STARTUP_SCRIPT_H
+#ifndef HARVESTER_STARTUP_FLOW_H
+#define HARVESTER_STARTUP_FLOW_H
 
 #include "common/array.h"
+#include "common/error.h"
+#include "common/rect.h"
 #include "common/str.h"
+
+namespace Common {
+struct Event;
+}
 
 namespace Harvester {
 
-class ResourceManager;
+class HarvesterEngine;
 
-class StartupScript {
+class StartupFlow {
 public:
-	bool load(ResourceManager &resources);
+	explicit StartupFlow(HarvesterEngine &engine);
 
-	const Common::String &getPath() const { return _path; }
-	const Common::Array<byte> &getData() const { return _data; }
-	bool isQuickTipsEnabled() const { return _quickTipsEnabled; }
-	void setQuickTipsEnabled(bool enabled) { _quickTipsEnabled = enabled; }
+	bool load();
+	Common::Error run();
 
 private:
-	bool loadConfig(ResourceManager &resources);
-	void decode();
+	bool loadQuickTips();
+	bool loadMenuItems();
+	Common::Error runQuickTips();
+	Common::Error runMainMenuStub();
+	void renderQuickTipsScreen(const Common::String &tipText) const;
+	void renderMainMenuStub(int selectedItem, const Common::String &statusMessage) const;
+	bool handleSystemEvent(const Common::Event &event, Common::Error &result);
+	int getMenuItemAt(const Common::Point &mousePos) const;
 
-	Common::String _path;
-	Common::Array<byte> _data;
-	bool _quickTipsEnabled = true;
+	HarvesterEngine &_engine;
+	Common::Array<Common::String> _quickTips;
+	Common::Array<Common::String> _menuItems;
+	Common::Point _mousePos;
 };
 
 } // End of namespace Harvester
 
-#endif // HARVESTER_STARTUP_SCRIPT_H
+#endif // HARVESTER_STARTUP_FLOW_H
