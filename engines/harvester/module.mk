@@ -4,7 +4,8 @@ MODULE_OBJS = \
 	harvester.o \
 	console.o \
 	metaengine.o \
-	resources.o
+	resources.o \
+	xfile_archive.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_HARVESTER), DYNAMIC_PLUGIN)
