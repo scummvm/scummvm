@@ -324,26 +324,32 @@ void Frame::readSpriteD2(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 	}
 }
 
-void readSpriteDataD2(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition) {
+void readSpriteDataD2(Common::SeekableReadStreamEndian &stream, Sprite &sprite, int startPosition, int finishPosition) {
 	while (stream.pos() < finishPosition) {
 		switch (stream.pos() - startPosition) {
 		case 0:
 			sprite._scriptId = CastMemberID(stream.readByte(), DEFAULT_CAST_LIB);
+			sprite._copyBackMask |= kSCBCastId;
 			break;
 		case 1:
 			sprite._spriteType = (SpriteType)stream.readByte();
 			sprite._enabled = sprite._spriteType != kInactiveSprite;
+			sprite._copyBackMask |= kSCBSpriteType;
+			sprite._copyBackMask |= kSCBEnabled;
 			break;
 		case 2:
 			// Normalize D2 and D3 colors from -128 ... 127 to 0 ... 255.
 			sprite._foreColor = g_director->transformColor(stream.readByte() ^ 0x80);
+			sprite._copyBackMask |= kSCBForeColor;
 			break;
 		case 3:
 			// Normalize D2 and D3 colors from -128 ... 127 to 0 ... 255.
 			sprite._backColor = g_director->transformColor(stream.readByte() ^ 0x80);
+			sprite._copyBackMask |= kSCBBackColor;
 			break;
 		case 4:
 			sprite._thickness = stream.readByte() & 0x7f;
+			sprite._copyBackMask |= kSCBThickness;
 			break;
 		case 5:
 			sprite._inkData = stream.readByte();
@@ -351,6 +357,7 @@ void readSpriteDataD2(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
 			sprite._trails = sprite._inkData & 0x40 ? true : false;
 			sprite._stretch = sprite._inkData & 0x80 ? true : false;
+			sprite._copyBackMask |= kSCBInk;
 			break;
 		case 6:
 			if (sprite.isQDShape()) {
@@ -360,18 +367,23 @@ void readSpriteDataD2(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 				sprite._pattern = 0;
 				sprite._castId = CastMemberID(stream.readUint16(), DEFAULT_CAST_LIB);
 			}
+			sprite._copyBackMask |= kSCBCastId;
 			break;
 		case 8:
 			sprite._startPoint.y = (int16)stream.readUint16();
+			sprite._copyBackMask |= kSCBStartPoint;
 			break;
 		case 10:
 			sprite._startPoint.x = (int16)stream.readUint16();
+			sprite._copyBackMask |= kSCBStartPoint;
 			break;
 		case 12:
 			sprite._height = (int16)stream.readUint16();
+			sprite._copyBackMask |= kSCBHeight;
 			break;
 		case 14:
 			sprite._width = (int16)stream.readUint16();
+			sprite._copyBackMask |= kSCBWidth;
 			break;
 		default:
 			// This means that a `case` label has to be split at this position
@@ -635,7 +647,7 @@ void Frame::readSpriteD4(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 	}
 }
 
-void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition) {
+void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, int startPosition, int finishPosition) {
 	debugC(8, kDebugLoading, "stream.pos(): %0x, startPosition: %d, finishPosition: %d", (int)stream.pos(), startPosition, finishPosition);
 	while (stream.pos() < finishPosition) {
 		switch (stream.pos() - startPosition) {
@@ -647,15 +659,20 @@ void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 		case 1:
 			sprite._spriteType = (SpriteType)stream.readByte();
 			sprite._enabled = sprite._spriteType != kInactiveSprite;
+			sprite._copyBackMask |= kSCBSpriteType;
+			sprite._copyBackMask |= kSCBEnabled;
 			break;
 		case 2:
 			sprite._foreColor = g_director->transformColor((uint8)stream.readByte());
+			sprite._copyBackMask |= kSCBForeColor;
 			break;
 		case 3:
 			sprite._backColor = g_director->transformColor((uint8)stream.readByte());
+			sprite._copyBackMask |= kSCBBackColor;
 			break;
 		case 4:
 			sprite._thickness = stream.readByte();
+			sprite._copyBackMask |= kSCBThickness;
 			break;
 		case 5:
 			sprite._inkData = stream.readByte();
@@ -663,28 +680,36 @@ void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
 			sprite._trails = sprite._inkData & 0x40 ? true : false;
 			sprite._stretch = sprite._inkData & 0x80 ? true : false;
+			sprite._copyBackMask |= kSCBInk;
 			break;
 		case 6:
 			if (sprite.isQDShape()) {
 				sprite._pattern = stream.readUint16();
+				sprite._copyBackMask |= kSCBPattern;
 			} else {
 				sprite._castId = CastMemberID(stream.readUint16(), DEFAULT_CAST_LIB);
+				sprite._copyBackMask |= kSCBCastId;
 			}
 			break;
 		case 8:
 			sprite._startPoint.y = (int16)stream.readUint16();
+			sprite._copyBackMask |= kSCBStartPoint;
 			break;
 		case 10:
 			sprite._startPoint.x = (int16)stream.readUint16();
+			sprite._copyBackMask |= kSCBStartPoint;
 			break;
 		case 12:
 			sprite._height = (int16)stream.readUint16();
+			sprite._copyBackMask |= kSCBHeight;
 			break;
 		case 14:
 			sprite._width = (int16)stream.readUint16();
+			sprite._copyBackMask |= kSCBWidth;
 			break;
 		case 16:
 			sprite._scriptId = CastMemberID(stream.readUint16(), DEFAULT_CAST_LIB);
+			sprite._copyBackMask |= kSCBScriptId;
 			break;
 		case 18:
 			// & 0x0f scorecolor
@@ -696,10 +721,11 @@ void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 
 			sprite._editable = ((sprite._colorcode & 0x40) == 0x40);
 			sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
-			sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
+			sprite._copyBackMask |= kSCBMoveable;
 			break;
 		case 19:
 			sprite._blendAmount = stream.readByte();
+			sprite._copyBackMask |= kSCBBlendAmount;
 			break;
 		default:
 			// This means that a `case` label has to be split at this position
@@ -962,11 +988,12 @@ void Frame::readSpriteD5(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 		sprite._width = sprite._height = 0;
 }
 
-void readSpriteDataD5(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition) {
+void readSpriteDataD5(Common::SeekableReadStreamEndian &stream, Sprite &sprite, int startPosition, int finishPosition) {
 	while (stream.pos() < finishPosition) {
 		switch (stream.pos() - startPosition) {
 		case 0:
 			sprite._spriteType = (SpriteType)stream.readByte();
+			sprite._copyBackMask |= kSCBSpriteType;
 			break;
 		case 1:
 			sprite._inkData = stream.readByte();
@@ -974,44 +1001,55 @@ void readSpriteDataD5(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
 			sprite._trails = sprite._inkData & 0x40 ? true : false;
 			sprite._stretch = sprite._inkData & 0x80 ? true : false;
+			sprite._copyBackMask |= kSCBInk;
 			break;
 		case 2: {
 				int castLib = stream.readSint16();
 				sprite._castId = CastMemberID(sprite._castId.member, castLib);
+				sprite._copyBackMask |= kSCBCastId;
 			}
 			break;
 		case 4: {
 				uint16 memberID = stream.readUint16();
 				sprite._castId = CastMemberID(memberID, sprite._castId.castLib);  // Inherit castLib from previous frame
+				sprite._copyBackMask |= kSCBCastId;
 			}
 			break;
 		case 6: {
 				int scriptCastLib = stream.readSint16();
 				sprite._scriptId = CastMemberID(sprite._scriptId.member, scriptCastLib);
+				sprite._copyBackMask |= kSCBCastId;
 			}
 			break;
 		case 8: {
 				uint16 scriptMemberID = stream.readUint16();
 				sprite._scriptId = CastMemberID(scriptMemberID, sprite._scriptId.castLib);  // Inherit castLib from previous frame
+				sprite._copyBackMask |= kSCBScriptId;
 			}
 			break;
 		case 10:
 			sprite._foreColor = g_director->transformColor((uint8)stream.readByte());
+			sprite._copyBackMask |= kSCBForeColor;
 			break;
 		case 11:
 			sprite._backColor = g_director->transformColor((uint8)stream.readByte());
+			sprite._copyBackMask |= kSCBBackColor;
 			break;
 		case 12:
 			sprite._startPoint.y = (int16)stream.readUint16();
+			sprite._copyBackMask |= kSCBStartPoint;
 			break;
 		case 14:
 			sprite._startPoint.x = (int16)stream.readUint16();
+			sprite._copyBackMask |= kSCBStartPoint;
 			break;
 		case 16:
 			sprite._height = (int16)stream.readUint16();
+			sprite._copyBackMask |= kSCBHeight;
 			break;
 		case 18:
 			sprite._width = (int16)stream.readUint16();
+			sprite._copyBackMask |= kSCBWidth;
 			break;
 		case 20:
 			// & 0x0f scorecolor
@@ -1024,12 +1062,15 @@ void readSpriteDataD5(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			sprite._editable = ((sprite._colorcode & 0x40) == 0x40);
 			sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
 			sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
+			sprite._copyBackMask |= kSCBMoveable;
 			break;
 		case 21:
 			sprite._blendAmount = stream.readByte();
+			sprite._copyBackMask |= kSCBBlendAmount;
 			break;
 		case 22:
 			sprite._thickness = stream.readByte();
+			sprite._copyBackMask |= kSCBThickness;
 			break;
 		case 23:
 			(void)stream.readByte(); // unused
@@ -1387,12 +1428,13 @@ void Frame::readSpriteD6(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 		sprite._width = sprite._height = 0;
 }
 
-void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition) {
+void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, int startPosition, int finishPosition) {
 	while (stream.pos() < finishPosition) {
 		switch (stream.pos() - startPosition) {
 		case 0:
 			sprite._spriteType = (SpriteType)stream.readByte();
 			debugC(6, kDebugLoading, "    sprite._spriteType: %d", sprite._spriteType);
+			sprite._copyBackMask |= kSCBSpriteType;
 			break;
 		case 1:
 			sprite._inkData = stream.readByte();
@@ -1400,6 +1442,7 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
 			sprite._trails = sprite._inkData & 0x40 ? true : false;
 			sprite._stretch = sprite._inkData & 0x80 ? true : false;
+			sprite._copyBackMask |= kSCBInk;
 
 			debugC(6, kDebugLoading, "    sprite._inkData: 0x%02x", sprite._inkData);
 			debugC(6, kDebugLoading, "    sprite._ink: %d", sprite._ink);
@@ -1407,52 +1450,58 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			debugC(6, kDebugLoading, "    sprite._stretch: %d", sprite._stretch);
 			break;
 		case 2:
-			if (sprite._puppet || sprite.getAutoPuppet(kAPForeColor)) {
-				stream.readByte();
-			} else {
-				sprite._foreColor = g_director->transformColor((uint8)stream.readByte());
+			sprite._foreColor = g_director->transformColor((uint8)stream.readByte());
+			sprite._copyBackMask |= kSCBForeColor;
 
-				debugC(6, kDebugLoading, "    sprite._foreColor: 0x%02x", sprite._foreColor);
-			}
+			debugC(6, kDebugLoading, "    sprite._foreColor: 0x%02x", sprite._foreColor);
 			break;
 		case 3:
 			sprite._backColor = g_director->transformColor((uint8)stream.readByte());
+			sprite._copyBackMask |= kSCBBackColor;
 			debugC(6, kDebugLoading, "    sprite._backColor: 0x%02x", sprite._backColor);
 			break;
 		case 4: {
 				int castLib = stream.readSint16();
 				sprite._castId = CastMemberID(sprite._castId.member, castLib);
+				sprite._copyBackMask |= kSCBCastId;
 				debugC(6, kDebugLoading, "    sprite._castId: %d", sprite._castId.member);
 			}
 			break;
 		case 6: {
 				uint16 memberID = stream.readUint16();
 				sprite._castId = CastMemberID(memberID, sprite._castId.castLib);  // Inherit castLib from previous frame
+				sprite._copyBackMask |= kSCBCastId;
 				debugC(6, kDebugLoading, "    sprite._castId: %d", sprite._castId.member);
 			}
 			break;
 		case 8:
 			sprite._spriteListIdx = stream.readUint32();
+			sprite._copyBackMask |= kSCBSpriteListIdx;
 			debugC(6, kDebugLoading, "    sprite._spriteListIdx: %d", sprite._spriteListIdx);
 			break;
 		case 10: // This field could be optimized
 			sprite._spriteListIdx = stream.readUint16();
+			sprite._copyBackMask |= kSCBSpriteListIdx;
 			debugC(6, kDebugLoading, "    sprite._spriteListIdx (16): %d", sprite._spriteListIdx);
 			break;
 		case 12:
 			sprite._startPoint.y = (int16)stream.readUint16();
+			sprite._copyBackMask |= kSCBStartPoint;
 			debugC(6, kDebugLoading, "    sprite._startPoint.y: %d", sprite._startPoint.y);
 			break;
 		case 14:
 			sprite._startPoint.x = (int16)stream.readUint16();
+			sprite._copyBackMask |= kSCBStartPoint;
 			debugC(6, kDebugLoading, "    sprite._startPoint.x: %d", sprite._startPoint.x);
 			break;
 		case 16:
 			sprite._height = (int16)stream.readUint16();
+			sprite._copyBackMask |= kSCBHeight;
 			debugC(6, kDebugLoading, "    sprite._height: %d", sprite._height);
 			break;
 		case 18:
 			sprite._width = (int16)stream.readUint16();
+			sprite._copyBackMask |= kSCBWidth;
 			debugC(6, kDebugLoading, "    sprite._width: %d", sprite._width);
 			break;
 		case 20:
@@ -1466,6 +1515,7 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			sprite._editable = ((sprite._colorcode & 0x40) == 0x40);
 			sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
 			sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
+			sprite._copyBackMask |= kSCBMoveable;
 
 			debugC(6, kDebugLoading, "    sprite._colorcode: 0x%02x", sprite._colorcode);
 			debugC(6, kDebugLoading, "    sprite._editable: %d", sprite._editable);
@@ -1473,10 +1523,12 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			break;
 		case 21:
 			sprite._blendAmount = stream.readByte();
+			sprite._copyBackMask |= kSCBBlendAmount;
 			debugC(6, kDebugLoading, "    sprite._blendAmount: %d", sprite._blendAmount);
 			break;
 		case 22:
 			sprite._thickness = stream.readByte();
+			sprite._copyBackMask |= kSCBThickness;
 			debugC(6, kDebugLoading, "    sprite._thickness: %d", sprite._thickness);
 			break;
 		case 23:
@@ -1827,170 +1879,121 @@ void Frame::readSpriteD7(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 		sprite._width = sprite._height = 0;
 }
 
-void readSpriteDataD7(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition) {
+void readSpriteDataD7(Common::SeekableReadStreamEndian &stream, Sprite &sprite, int startPosition, int finishPosition) {
 	byte unk[12];
 
 	while (stream.pos() < finishPosition) {
 		switch (stream.pos() - startPosition) {
 		case 0:
-			if (sprite._puppet) {
-				stream.readByte();
-			} else {
-				sprite._spriteType = (SpriteType)stream.readByte();
-			}
+			sprite._spriteType = (SpriteType)stream.readByte();
+			sprite._copyBackMask |= kSCBSpriteType;
 			break;
 		case 1:
-			if (sprite._puppet || sprite.getAutoPuppet(kAPInk)) {
-				stream.readByte();
-			} else {
-				sprite._inkData = stream.readByte();
+			sprite._inkData = stream.readByte();
 
-				sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
-				sprite._trails = sprite._inkData & 0x40 ? true : false;
-				sprite._stretch = sprite._inkData & 0x80 ? true : false;
-			}
+			sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
+			sprite._trails = sprite._inkData & 0x40 ? true : false;
+			sprite._stretch = sprite._inkData & 0x80 ? true : false;
+			sprite._copyBackMask |= kSCBInk;
 			break;
 		case 2:
-			if (sprite._puppet || sprite.getAutoPuppet(kAPForeColor)) {
-				stream.readByte();
-			} else {
-				sprite._foreColor = g_director->transformColor((uint8)stream.readByte());
-			}
+			sprite._foreColor = g_director->transformColor((uint8)stream.readByte());
+			sprite._copyBackMask |= kSCBForeColor;
 			break;
 		case 3:
-			if (sprite._puppet || sprite.getAutoPuppet(kAPBackColor)) {
-				stream.readByte();
-			} else {
-				sprite._backColor = g_director->transformColor((uint8)stream.readByte());
-			}
+			sprite._backColor = g_director->transformColor((uint8)stream.readByte());
+			sprite._copyBackMask |= kSCBBackColor;
 			break;
 		case 4:
-			if (sprite._puppet || sprite.getAutoPuppet(kAPCast)) {
-				stream.readSint16();
-			} else {
+			{
 				int castLib = stream.readSint16();
 				sprite._castId = CastMemberID(sprite._castId.member, castLib);
+				sprite._copyBackMask |= kSCBCastId;
 			}
 			break;
 		case 6:
-			if (sprite._puppet || sprite.getAutoPuppet(kAPCast)) {
-				stream.readUint16();
-			} else {
+			{
 				uint16 memberID = stream.readUint16();
 				sprite._castId = CastMemberID(memberID, sprite._castId.castLib);  // Inherit castLib from previous frame
+				sprite._copyBackMask |= kSCBCastId;
 			}
 			break;
 		case 8:
-			if (sprite._puppet || sprite.getAutoPuppet(kAPCast)) {
-				stream.readUint32();
-			} else {
-				sprite._spriteListIdx = stream.readUint32();
-			}
+			sprite._spriteListIdx = stream.readUint32();
+			sprite._copyBackMask |= kSCBSpriteListIdx;
 			break;
 		case 10: // This field could be optimized
-			if (sprite._puppet || sprite.getAutoPuppet(kAPCast)) {
-				stream.readUint16();
-			} else {
-				sprite._spriteListIdx = stream.readUint16();
-			}
+			sprite._spriteListIdx = stream.readUint16();
+			sprite._copyBackMask |= kSCBSpriteListIdx;
 			break;
 		case 12:
-			if (sprite._puppet || sprite.getAutoPuppet(kAPLoc)) {
-				stream.readUint16();
-			} else {
-				sprite._startPoint.y = (int16)stream.readUint16();
-			}
+			sprite._startPoint.y = (int16)stream.readUint16();
+			sprite._copyBackMask |= kSCBStartPoint;
 			break;
 		case 14:
-			if (sprite._puppet || sprite.getAutoPuppet(kAPLoc)) {
-				stream.readUint16();
-			} else {
-				sprite._startPoint.x = (int16)stream.readUint16();
-			}
+			sprite._startPoint.x = (int16)stream.readUint16();
+			sprite._copyBackMask |= kSCBStartPoint;
 			break;
 		case 16:
-			if (sprite._puppet || sprite.getAutoPuppet(kAPHeight)) {
-				stream.readUint16();
-			} else {
-				sprite._height = (int16)stream.readUint16();
-			}
+			sprite._height = (int16)stream.readUint16();
+			sprite._copyBackMask |= kSCBHeight;
 			break;
 		case 18:
-			if (sprite._puppet || sprite.getAutoPuppet(kAPWidth)) {
-				stream.readUint16();
-			} else {
-				sprite._width = (int16)stream.readUint16();
-			}
+			sprite._width = (int16)stream.readUint16();
+			sprite._copyBackMask |= kSCBWidth;
 			break;
 		case 20:
-			if (sprite._puppet || sprite.getAutoPuppet(kAPMoveable)) {
-				stream.readByte();
-			} else {
-				// & 0x0f scorecolor
-				// 0x10 forecolor is rgb
-				// 0x20 bgcolor is rgb
-				// 0x40 editable
-				// 0x80 moveable
-				sprite._colorcode = stream.readByte();
+			// & 0x0f scorecolor
+			// 0x10 forecolor is rgb
+			// 0x20 bgcolor is rgb
+			// 0x40 editable
+			// 0x80 moveable
+			sprite._colorcode = stream.readByte();
 
-				sprite._editable = ((sprite._colorcode & 0x40) == 0x40);
-				sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
-				sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
-			}
+			sprite._editable = ((sprite._colorcode & 0x40) == 0x40);
+			sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
+			sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
+			sprite._copyBackMask |= kSCBMoveable;
 			break;
 		case 21:
-			if (sprite._puppet) {
-				stream.readByte();
-			} else {
-				sprite._blendAmount = stream.readByte();
-			}
+			sprite._blendAmount = stream.readByte();
+			sprite._copyBackMask |= kSCBBlendAmount;
 			break;
 		case 22:
-			if (sprite._puppet) {
-				stream.readByte();
-			} else {
-				sprite._thickness = stream.readByte();
-			}
+			sprite._thickness = stream.readByte();
+			sprite._copyBackMask |= kSCBThickness;
 			break;
 		case 23:
 			sprite._flags = stream.readByte();
+			sprite._flags |= kSCBFlags;
 			break;
 		case 24:
-			if (sprite._puppet || sprite.getAutoPuppet(kAPForeColor)) {
-				stream.readByte();
-			} else {
-				sprite._fgColorG = (uint8)stream.readByte();
-			}
+			sprite._fgColorG = (uint8)stream.readByte();
+			sprite._flags |= kSCBForeColor;
 			break;
 		case 25:
-			if (sprite._puppet || sprite.getAutoPuppet(kAPBackColor)) {
-				stream.readByte();
-			} else {
-				sprite._bgColorG = (uint8)stream.readByte();
-			}
+			sprite._bgColorG = (uint8)stream.readByte();
+			sprite._flags |= kSCBBackColor;
 			break;
 		case 26:
-			if (sprite._puppet || sprite.getAutoPuppet(kAPForeColor)) {
-				stream.readByte();
-			} else {
-				sprite._fgColorB = (uint8)stream.readByte();
-			}
+			sprite._fgColorB = (uint8)stream.readByte();
+			sprite._flags |= kSCBForeColor;
 			break;
 		case 27:
-			if (sprite._puppet || sprite.getAutoPuppet(kAPBackColor)) {
-				stream.readByte();
-			} else {
-				sprite._bgColorB = (uint8)stream.readByte();
-			}
+			sprite._bgColorB = (uint8)stream.readByte();
+			sprite._flags |= kSCBBackColor;
 			break;
 		case 28:
 			sprite._angleRot = stream.readUint32();
+			sprite._flags |= kSCBAngle;
 			break;
 		case 30:	// half of the field
 			sprite._angleRot = stream.readUint16();
+			sprite._flags |= kSCBAngle;
 			break;
 		case 32:
 			sprite._angleSkew = stream.readUint32();
+			sprite._flags |= kSCBAngle;
 			break;
 		case 36:
 			stream.read(unk, 12); // alignment bytes

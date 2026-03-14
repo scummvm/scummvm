@@ -5501,12 +5501,12 @@ class PyCdlib:
         else:
             use_rr = False
             if 'joliet_path' in kwargs:
-                rec = self._get_joliet_entry(self._normalize_joliet_path(kwargs['joliet_path']), kwargs.get('encoding'))
+                rec = self._get_joliet_entry(self._normalize_joliet_path(kwargs['joliet_path']), kwargs.get('encoding', 'utf-16_be'))
             elif 'rr_path' in kwargs:
-                rec = self._get_rr_entry(utils.normpath(kwargs['rr_path']), kwargs.get('encoding'))
+                rec = self._get_rr_entry(utils.normpath(kwargs['rr_path']), kwargs.get('encoding', 'utf-8'))
                 use_rr = True
             else:
-                rec = self._get_iso_entry(utils.normpath(kwargs['iso_path']), kwargs.get('encoding'))
+                rec = self._get_iso_entry(utils.normpath(kwargs['iso_path']), kwargs.get('encoding', 'utf-8'))
 
             for c in _yield_children(rec, use_rr):  # pylint: disable=use-yield-from
                 yield c
@@ -5566,12 +5566,12 @@ class PyCdlib:
             raise pycdlibexception.PyCdlibInvalidInput("Must specify one, and only one of 'iso_path', 'rr_path', 'joliet_path', or 'udf_path'")
 
         if 'joliet_path' in kwargs:
-            return self._get_joliet_entry(self._normalize_joliet_path(kwargs['joliet_path']), kwargs.get("encoding"))
+            return self._get_joliet_entry(self._normalize_joliet_path(kwargs['joliet_path']), kwargs.get("encoding", "utf-16_be"))
         if 'rr_path' in kwargs:
-            return self._get_rr_entry(utils.normpath(kwargs['rr_path']), kwargs.get("encoding"))
+            return self._get_rr_entry(utils.normpath(kwargs['rr_path']), kwargs.get("encoding", "utf-8"))
         if 'udf_path' in kwargs:
             return self._get_udf_entry(kwargs['udf_path'])
-        return self._get_iso_entry(utils.normpath(kwargs['iso_path']), kwargs.get("encoding"))
+        return self._get_iso_entry(utils.normpath(kwargs['iso_path']), kwargs.get("encoding", "utf-8"))
 
     def add_isohybrid(self, part_entry=1, mbr_id=None, part_offset=0,
                       geometry_sectors=32, geometry_heads=64, part_type=None,
