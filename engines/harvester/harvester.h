@@ -33,6 +33,7 @@ struct ADGameDescription;
 namespace Harvester {
 
 class ResourceManager;
+class StartupScript;
 
 class HarvesterEngine : public Engine {
 public:
@@ -66,12 +67,14 @@ public:
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
 	ResourceManager *getResources() const { return _resources; }
+	StartupScript *getStartupScript() const { return _startupScript; }
 
 private:
 	const ADGameDescription *const _gameDescription;
 	Common::RandomSource _randomSource;
 	Graphics::Screen *_screen = nullptr;
 	ResourceManager *_resources = nullptr;
+	StartupScript *_startupScript = nullptr;
 };
 
 extern HarvesterEngine *g_engine;

@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	console.o \
 	metaengine.o \
 	resources.o \
+	startup_script.o \
 	xfile_archive.o
 
 # This module can be built as a plugin
