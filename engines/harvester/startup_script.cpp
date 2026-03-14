@@ -262,6 +262,8 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 		object.ownerOrRoom = tokens[tagIndex + 1];
 		object.objectName = tokens[tagIndex + 2];
 		object.resourcePath = resources.normalizeResourcePath(tokens[tagIndex + 3]);
+		object.inventoryBitmapPath = resources.normalizeResourcePath(tokens[tagIndex + 4]);
+		object.shortTextKey = tokens[tagIndex + 6];
 		object.identTextKey = tokens[tagIndex + 8];
 		object.visible = tokens[tagIndex + 9].equalsIgnoreCase("T");
 		object.active = tokens[tagIndex + 10].equalsIgnoreCase("T");
@@ -528,20 +530,48 @@ bool StartupScript::resolveObjectInteraction(const StartupObjectRecord &object, 
 	return !result.nextRoomName.empty() || !result.soundPath.empty();
 }
 
-Common::String StartupScript::resolveObjectLabel(const StartupObjectRecord &object) const {
-	if (!object.identTextKey.empty()) {
-		for (const StartupTextRecord &textRecord : _texts) {
-			if (textRecord.key.equalsIgnoreCase(object.identTextKey))
-				return textRecord.value;
-		}
+const StartupTextRecord *StartupScript::findTextRecord(const Common::String &key) const {
+	if (key.empty())
+		return nullptr;
+
+	for (const StartupTextRecord &textRecord : _texts) {
+		if (textRecord.key.equalsIgnoreCase(key))
+			return &textRecord;
 	}
+
+	return nullptr;
+}
+
+bool StartupScript::resolveObjectInspectText(const StartupObjectRecord &object, StartupResolvedText &text) const {
+	text = StartupResolvedText();
+
+	const StartupTextRecord *textRecord = findTextRecord(object.identTextKey);
+	if (!textRecord)
+		return false;
+
+	text.boxName = textRecord->boxName;
+	text.value = textRecord->value;
+	return !text.value.empty();
+}
+
+Common::String StartupScript::resolveObjectLabel(const StartupObjectRecord &object) const {
+	const StartupTextRecord *textRecord = findTextRecord(object.shortTextKey);
+	if (textRecord && !textRecord->value.empty())
+		return textRecord->value;
 
 	Common::String label = object.displayName;
 	for (uint i = 0; i < label.size(); ++i) {
 		if (label[i] == '_')
 			label.setChar(' ', i);
 	}
-	return label;
+	if (!label.empty())
+		return label;
+
+	textRecord = findTextRecord(object.identTextKey);
+	if (textRecord)
+		return textRecord->value;
+
+	return Common::String();
 }
 
 } // End of namespace Harvester
