@@ -461,6 +461,11 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 	if (!overlays.empty())
 		statusMessage += Common::String::format(" Visible scene objects: %u.", (uint)overlays.size());
 	statusMessage += " Click an active hotspot to follow its startup command chain.";
+	const Common::String baseStatusMessage = statusMessage;
+	StartupResolvedText inspectText;
+	Common::String inspectObjectLabel;
+	bool showingInspectText = false;
+	bool inspectCanDismiss = false;
 	bool needsRedraw = true;
 	Graphics::FrameLimiter limiter(g_system, 60);
 
@@ -477,18 +482,31 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 			drawShadowedString(*screen, *titleFont, Common::String::format("Room Setup Stub: %s", state.roomName.c_str()),
 				panel.left, 348, panel.width(), kTextColorNormal, Graphics::kTextAlignCenter);
 			Common::String hoverMessage;
-			const StartupObjectRecord *hoveredObject = findRoomObjectAtPoint(state, _mousePos);
-			if (hoveredObject) {
-				hoverMessage = _engine.getStartupScript()->resolveObjectLabel(*hoveredObject);
-				if (!hoveredObject->interactionCommandTag.empty())
-					hoverMessage += " Click to follow the scripted startup interaction.";
+			Common::String footerMessage = "Press Enter or Escape to return to the menu stub.";
+			if (showingInspectText) {
+				hoverMessage = inspectText.value;
+				footerMessage = inspectCanDismiss ? "Click, Enter, or Escape to dismiss this inspect text."
+					: "Release the mouse button, then click again to dismiss this inspect text.";
+				drawShadowedString(*screen, *bodyFont, Common::String::format("Inspect: %s", inspectObjectLabel.c_str()),
+					panel.left, 372, panel.width(), kTextColorHover, Graphics::kTextAlignCenter);
+			} else {
+				const StartupObjectRecord *hoveredObject = findRoomObjectAtPoint(state, _mousePos);
+				if (hoveredObject) {
+					hoverMessage = _engine.getStartupScript()->resolveObjectLabel(*hoveredObject);
+					if (!hoveredObject->interactionCommandTag.empty())
+						hoverMessage += " Click to follow the scripted startup interaction.";
+					else if (!_engine.getStartupScript()->resolveObjectInspectText(*hoveredObject, inspectText))
+						inspectText = StartupResolvedText();
+					else
+						hoverMessage += " Click to inspect.";
+				}
 			}
 			if (hoverMessage.empty())
 				hoverMessage = statusMessage;
 
 			drawWrappedShadowedText(*screen, *bodyFont, hoverMessage, panel.left + 24, 386, panel.width() - 48,
 				kTextColorNormal);
-			drawShadowedString(*screen, *bodyFont, "Press Enter or Escape to return to the menu stub.",
+			drawShadowedString(*screen, *bodyFont, footerMessage,
 				panel.left, 430, panel.width(), kTextColorDim, Graphics::kTextAlignCenter);
 
 			blitAnimationFrame(*screen, art->getPointerFrames(), 0, _mousePos.x, _mousePos.y);
@@ -507,7 +525,23 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 			case Common::EVENT_MOUSEMOVE:
 				needsRedraw = true;
 				break;
+			case Common::EVENT_LBUTTONUP:
+				if (showingInspectText)
+					inspectCanDismiss = true;
+				break;
 			case Common::EVENT_LBUTTONDOWN: {
+				if (showingInspectText) {
+					if (inspectCanDismiss) {
+						showingInspectText = false;
+						inspectCanDismiss = false;
+						inspectText = StartupResolvedText();
+						inspectObjectLabel.clear();
+						statusMessage = baseStatusMessage;
+						needsRedraw = true;
+					}
+					break;
+				}
+
 				const StartupObjectRecord *clickedObject = findRoomObjectAtPoint(state, _mousePos);
 				if (!clickedObject) {
 					statusMessage = "No active startup hotspot under the cursor.";
@@ -518,8 +552,15 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 				const Common::String objectLabel = _engine.getStartupScript()->resolveObjectLabel(*clickedObject);
 				StartupInteractionResult interaction;
 				if (!_engine.getStartupScript()->resolveObjectInteraction(*clickedObject, interaction)) {
-					statusMessage = Common::String::format("%s has no supported startup interaction yet.",
-						objectLabel.c_str());
+					if (_engine.getStartupScript()->resolveObjectInspectText(*clickedObject, inspectText)) {
+						inspectObjectLabel = objectLabel;
+						showingInspectText = true;
+						inspectCanDismiss = false;
+						statusMessage = Common::String::format("Showing inspect text for %s.", objectLabel.c_str());
+					} else {
+						statusMessage = Common::String::format("%s has no supported startup interaction yet.",
+							objectLabel.c_str());
+					}
 					needsRedraw = true;
 					break;
 				}
@@ -548,6 +589,21 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 				break;
 			}
 			case Common::EVENT_KEYDOWN:
+				if (showingInspectText) {
+					if (event.kbd.keycode == Common::KEYCODE_RETURN ||
+						event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
+						event.kbd.keycode == Common::KEYCODE_ESCAPE ||
+						event.kbd.keycode == Common::KEYCODE_SPACE) {
+						showingInspectText = false;
+						inspectCanDismiss = false;
+						inspectText = StartupResolvedText();
+						inspectObjectLabel.clear();
+						statusMessage = baseStatusMessage;
+						needsRedraw = true;
+					}
+					break;
+				}
+
 				if (event.kbd.keycode == Common::KEYCODE_RETURN ||
 					event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
 					event.kbd.keycode == Common::KEYCODE_ESCAPE) {

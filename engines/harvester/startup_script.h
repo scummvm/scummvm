@@ -51,6 +51,8 @@ struct StartupObjectRecord {
 	Common::String ownerOrRoom;
 	Common::String objectName;
 	Common::String resourcePath;
+	Common::String inventoryBitmapPath;
+	Common::String shortTextKey;
 	Common::String identTextKey;
 	Common::String interactionCommandTag;
 	Common::String displayName;
@@ -92,6 +94,11 @@ struct StartupInteractionResult {
 	Common::String nextRoomName;
 };
 
+struct StartupResolvedText {
+	Common::String boxName;
+	Common::String value;
+};
+
 class StartupScript {
 public:
 	bool load(ResourceManager &resources);
@@ -109,12 +116,14 @@ public:
 	bool resolveRoomSetupState(const Common::String &entranceName, StartupRoomSetupState &state,
 		ResourceManager &resources) const;
 	bool resolveObjectInteraction(const StartupObjectRecord &object, StartupInteractionResult &result) const;
+	bool resolveObjectInspectText(const StartupObjectRecord &object, StartupResolvedText &text) const;
 	Common::String resolveObjectLabel(const StartupObjectRecord &object) const;
 
 private:
 	bool loadConfig(ResourceManager &resources);
 	void decode();
 	void parseTownRecords(ResourceManager &resources);
+	const StartupTextRecord *findTextRecord(const Common::String &key) const;
 
 	Common::String _path;
 	Common::Array<byte> _data;
