@@ -262,9 +262,10 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 		object.ownerOrRoom = tokens[tagIndex + 1];
 		object.objectName = tokens[tagIndex + 2];
 		object.resourcePath = resources.normalizeResourcePath(tokens[tagIndex + 3]);
+		object.identTextKey = tokens[tagIndex + 8];
 		object.visible = tokens[tagIndex + 9].equalsIgnoreCase("T");
 		object.active = tokens[tagIndex + 10].equalsIgnoreCase("T");
-		object.identTextKey = tokens[tagIndex + 11];
+		object.interactionCommandTag = tokens[tagIndex + 11];
 		object.displayName = tokens[tagIndex + 12];
 		if (!object.ownerOrRoom.empty() && !object.objectName.empty())
 			_objects.push_back(object);
@@ -322,7 +323,6 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 	const StartupObjectRecord *background = nullptr;
 	for (const StartupObjectRecord &candidate : _objects) {
 		if (!candidate.ownerOrRoom.equalsIgnoreCase(room->roomName) ||
-			!candidate.objectName.equalsIgnoreCase(room->roomName) ||
 			!candidate.resourcePath.hasPrefixIgnoreCase("GRAPHIC/ROOMS/") ||
 			!candidate.resourcePath.hasSuffixIgnoreCase(".BM")) {
 			continue;
@@ -444,6 +444,88 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 	}
 
 	return true;
+}
+
+bool StartupScript::resolveObjectInteraction(const StartupObjectRecord &object, StartupInteractionResult &result) const {
+	result = StartupInteractionResult();
+	if (object.interactionCommandTag.empty())
+		return false;
+
+	Common::Array<StartupFlagRecord> resolvedFlags = _flags;
+	auto getFlagValue = [&](const Common::String &flagName) {
+		for (const StartupFlagRecord &flag : resolvedFlags) {
+			if (flag.name.equalsIgnoreCase(flagName))
+				return flag.value;
+		}
+		return false;
+	};
+	auto setFlagValue = [&](const Common::String &flagName, bool value) {
+		for (StartupFlagRecord &flag : resolvedFlags) {
+			if (flag.name.equalsIgnoreCase(flagName)) {
+				flag.value = value;
+				return;
+			}
+		}
+
+		StartupFlagRecord flag;
+		flag.name = flagName;
+		flag.value = value;
+		resolvedFlags.push_back(flag);
+	};
+	auto findCommand = [&](const Common::String &tag) -> const StartupCommandRecord * {
+		for (const StartupCommandRecord &command : _commands) {
+			if (command.triggerTag.equalsIgnoreCase(tag))
+				return &command;
+		}
+		return nullptr;
+	};
+
+	Common::String currentTag = object.interactionCommandTag;
+	for (uint step = 0; step < 128 && !currentTag.empty(); ++step) {
+		const StartupCommandRecord *command = findCommand(currentTag);
+		if (!command) {
+			debug(1, "Harvester: unresolved interaction command tag '%s' for object '%s'",
+				currentTag.c_str(), object.objectName.c_str());
+			break;
+		}
+
+		if (command->opcodeName.equalsIgnoreCase("CHECK_FLAG")) {
+			currentTag = getFlagValue(command->arg1) ? command->arg2 : command->arg3;
+			continue;
+		}
+
+		if (command->opcodeName.equalsIgnoreCase("SET_FLAG")) {
+			setFlagValue(command->arg1, command->arg2.equalsIgnoreCase("T"));
+			currentTag = command->arg4;
+			continue;
+		}
+
+		if (command->opcodeName.equalsIgnoreCase("START_WAV") ||
+			command->opcodeName.equalsIgnoreCase("LOAD_WAV") ||
+			command->opcodeName.equalsIgnoreCase("START_SINGLE_WAV")) {
+			if (result.soundPath.empty())
+				result.soundPath = command->arg1;
+			currentTag = command->arg4;
+			continue;
+		}
+
+		if (command->opcodeName.equalsIgnoreCase("SPOOL_MUSIC")) {
+			currentTag = command->arg4;
+			continue;
+		}
+
+		if (command->opcodeName.equalsIgnoreCase("CLOSEUP") ||
+			command->opcodeName.equalsIgnoreCase("CHANGE_ROOM")) {
+			result.nextRoomName = command->arg1;
+			return !result.nextRoomName.empty() || !result.soundPath.empty();
+		}
+
+		debug(1, "Harvester: unsupported interaction command '%s' for tag '%s'",
+			command->opcodeName.c_str(), command->triggerTag.c_str());
+		break;
+	}
+
+	return !result.nextRoomName.empty() || !result.soundPath.empty();
 }
 
 Common::String StartupScript::resolveObjectLabel(const StartupObjectRecord &object) const {

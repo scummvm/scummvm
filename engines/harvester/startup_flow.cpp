@@ -144,6 +144,20 @@ static Common::Rect getObjectBounds(const StartupObjectRecord &object) {
 	return Common::Rect();
 }
 
+static const StartupObjectRecord *findRoomObjectAtPoint(const StartupRoomSetupState &state, const Common::Point &point) {
+	for (int i = (int)state.roomObjects.size() - 1; i >= 0; --i) {
+		const StartupObjectRecord &object = state.roomObjects[(uint)i];
+		if (!object.active)
+			continue;
+
+		const Common::Rect bounds = getObjectBounds(object);
+		if (!bounds.isEmpty() && bounds.contains(point))
+			return &object;
+	}
+
+	return nullptr;
+}
+
 static Common::String trimAsciiLine(const Common::String &value) {
 	uint start = 0;
 	uint end = value.size();
@@ -425,7 +439,7 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 		statusMessage += Common::String::format(" Music: %s.", state.musicPath.c_str());
 	if (!overlays.empty())
 		statusMessage += Common::String::format(" Startup overlays: %u.", (uint)overlays.size());
-	statusMessage += " Room setup is still stubbed.";
+	statusMessage += " Click an active hotspot to follow its startup command chain.";
 	bool needsRedraw = true;
 	Graphics::FrameLimiter limiter(g_system, 60);
 
@@ -442,19 +456,18 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 			drawShadowedString(*screen, *titleFont, Common::String::format("Room Setup Stub: %s", state.roomName.c_str()),
 				panel.left, 348, panel.width(), kTextColorNormal, Graphics::kTextAlignCenter);
 			Common::String hoverMessage;
-			for (const StartupObjectRecord &object : state.roomObjects) {
-				const Common::Rect bounds = getObjectBounds(object);
-				if (!bounds.isEmpty() && bounds.contains(_mousePos)) {
-					hoverMessage = _engine.getStartupScript()->resolveObjectLabel(object);
-					break;
-				}
+			const StartupObjectRecord *hoveredObject = findRoomObjectAtPoint(state, _mousePos);
+			if (hoveredObject) {
+				hoverMessage = _engine.getStartupScript()->resolveObjectLabel(*hoveredObject);
+				if (!hoveredObject->interactionCommandTag.empty())
+					hoverMessage += " Click to follow the scripted startup interaction.";
 			}
 			if (hoverMessage.empty())
 				hoverMessage = statusMessage;
 
 			drawWrappedShadowedText(*screen, *bodyFont, hoverMessage, panel.left + 24, 386, panel.width() - 48,
 				kTextColorNormal);
-			drawShadowedString(*screen, *bodyFont, "Press Enter, Escape, or click to return to the menu stub.",
+			drawShadowedString(*screen, *bodyFont, "Press Enter or Escape to return to the menu stub.",
 				panel.left, 430, panel.width(), kTextColorDim, Graphics::kTextAlignCenter);
 
 			blitAnimationFrame(*screen, art->getPointerFrames(), 0, _mousePos.x, _mousePos.y);
@@ -473,8 +486,43 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 			case Common::EVENT_MOUSEMOVE:
 				needsRedraw = true;
 				break;
-			case Common::EVENT_LBUTTONDOWN:
-				return Common::kNoError;
+			case Common::EVENT_LBUTTONDOWN: {
+				const StartupObjectRecord *clickedObject = findRoomObjectAtPoint(state, _mousePos);
+				if (!clickedObject) {
+					statusMessage = "No active startup hotspot under the cursor.";
+					needsRedraw = true;
+					break;
+				}
+
+				const Common::String objectLabel = _engine.getStartupScript()->resolveObjectLabel(*clickedObject);
+				StartupInteractionResult interaction;
+				if (!_engine.getStartupScript()->resolveObjectInteraction(*clickedObject, interaction)) {
+					statusMessage = Common::String::format("%s has no supported startup interaction yet.",
+						objectLabel.c_str());
+					needsRedraw = true;
+					break;
+				}
+
+				statusMessage = Common::String::format("Following %s.", objectLabel.c_str());
+				if (!interaction.soundPath.empty())
+					statusMessage += Common::String::format(" Sound: %s.", interaction.soundPath.c_str());
+				needsRedraw = true;
+
+				if (!interaction.nextRoomName.empty()) {
+					Common::Error roomError = runRoomSetupStub(interaction.nextRoomName);
+					if (roomError.getCode() == Common::kReadingFailed) {
+						statusMessage = Common::String::format("Unable to resolve closeup room '%s'.",
+							interaction.nextRoomName.c_str());
+						needsRedraw = true;
+					} else if (roomError.getCode() != Common::kNoError) {
+						return roomError;
+					} else {
+						statusMessage = Common::String::format("Returned from %s.", interaction.nextRoomName.c_str());
+						needsRedraw = true;
+					}
+				}
+				break;
+			}
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode == Common::KEYCODE_RETURN ||
 					event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
