@@ -69,16 +69,12 @@ static const byte kTextColorDim = 248;
 static const byte kShadowColor = 0;
 static const byte kPanelFillColor = 1;
 
-struct StartupSceneOverlay {
-	StartupObjectRecord object;
-	IndexedBitmap bitmap;
-};
-
 struct StartupRoomSceneResources {
 	StartupRoomSetupState state;
 	byte palette[256 * 3] = { 0 };
 	IndexedBitmap background;
-	Common::Array<StartupSceneOverlay> overlays;
+	Common::Array<StartupObjectRecord> drawableObjects;
+	Common::Array<StartupAnimRecord> drawableAnimations;
 	float targetPaletteBrightness = 1.0f;
 };
 
@@ -206,23 +202,22 @@ static bool loadRoomSceneResources(const StartupRoomSetupState &state, ResourceM
 	for (const StartupObjectRecord &object : state.activeObjects)
 		queueDrawableRoomObject(object, drawableObjects);
 
-	for (const StartupObjectRecord &object : drawableObjects) {
-		StartupSceneOverlay overlay;
-		overlay.object = object;
-		if (!loadBitmapResource(resources, object.resourcePath, overlay.bitmap))
-			continue;
-		scene.overlays.push_back(overlay);
+	scene.drawableObjects = drawableObjects;
+	for (const StartupAnimRecord &anim : state.roomAnimations) {
+		if (anim.active || anim.visible)
+			scene.drawableAnimations.push_back(anim);
 	}
 
 	return true;
 }
 
-static void drawRoomScene(Graphics::Screen &screen, const StartupRoomSceneResources &scene, float brightness) {
+static void drawRoomScene(HarvesterEngine &engine, Graphics::Screen &screen, const StartupRoomSceneResources &scene,
+		float brightness) {
 	setScaledPalette(screen, scene.palette, brightness);
 	screen.fillRect(screen.getBounds(), 0);
 	blitBitmap(screen, scene.background, 0, 0);
-	for (const StartupSceneOverlay &overlay : scene.overlays)
-		blitBitmap(screen, overlay.bitmap, overlay.object.left, overlay.object.top);
+	if (engine.getRuntimeEntities())
+		engine.getRuntimeEntities()->drawSceneEntities(screen);
 }
 
 static const StartupObjectRecord *findObjectAtPoint(const Common::Array<StartupObjectRecord> &objects, const Common::Point &point) {
@@ -275,7 +270,7 @@ static void renderQuickTipsScreen(HarvesterEngine &engine, const StartupRoomScen
 	if (!screen || !art || !font)
 		return;
 
-	drawRoomScene(*screen, scene, scene.targetPaletteBrightness);
+	drawRoomScene(engine, *screen, scene, scene.targetPaletteBrightness);
 	blitBitmap(*screen, art->getTipsBitmap(), kQuickTipsOverlayX, kQuickTipsOverlayY);
 
 	drawWrappedShadowedText(*screen, *font, tipText, kQuickTipTextX, kQuickTipTextY, kQuickTipTextWidth, kTextColorNormal);
@@ -394,7 +389,10 @@ Common::Error StartupFlow::runQuickTips() {
 
 	Graphics::Screen *screen = _engine.getScreen();
 	if (screen) {
-		drawRoomScene(*screen, scene, kPaletteBrightnessBlack);
+		if (!populateRoomSceneEntities(scene.drawableObjects, scene.drawableAnimations))
+			return Common::kReadingFailed;
+
+		drawRoomScene(_engine, *screen, scene, kPaletteBrightnessBlack);
 		screen->makeAllDirty();
 		screen->update();
 
@@ -442,7 +440,7 @@ Common::Error StartupFlow::runQuickTips() {
 			}
 		}
 
-		if (tickCursorAnimation())
+		if (tickRuntimeEntities())
 			needsRedraw = true;
 
 		limiter.delayBeforeSwap();
@@ -457,6 +455,8 @@ Common::Error StartupFlow::runMainMenuStub() {
 	Common::String statusMessage = "Stub handoff after room_setup(\"QUICK_TIPS\") and before the main menu loop.";
 	int selectedItem = _menuItems.empty() ? -1 : 0;
 	bool needsRedraw = true;
+	if (_engine.getRuntimeEntities())
+		_engine.getRuntimeEntities()->clearSceneEntities();
 	resetCursorAnimationSequence();
 
 	while (!_engine.shouldQuit()) {
@@ -548,7 +548,7 @@ Common::Error StartupFlow::runMainMenuStub() {
 			}
 		}
 
-		if (tickCursorAnimation())
+		if (tickRuntimeEntities())
 			needsRedraw = true;
 
 		limiter.delayBeforeSwap();
@@ -578,7 +578,10 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 	if (!screen || !art || !titleFont || !bodyFont)
 		return Common::kNoError;
 
-	drawRoomScene(*screen, scene, kPaletteBrightnessBlack);
+	if (!populateRoomSceneEntities(scene.drawableObjects, scene.drawableAnimations))
+		return Common::kReadingFailed;
+
+	drawRoomScene(_engine, *screen, scene, kPaletteBrightnessBlack);
 	screen->makeAllDirty();
 	screen->update();
 
@@ -593,8 +596,10 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 		entranceName.c_str(), state.roomName.c_str(), state.palettePath.c_str(), state.backgroundPath.c_str());
 	if (!state.musicPath.empty())
 		statusMessage += Common::String::format(" Music: %s.", state.musicPath.c_str());
-	if (!scene.overlays.empty())
-		statusMessage += Common::String::format(" Visible scene objects: %u.", (uint)scene.overlays.size());
+	if (!scene.drawableObjects.empty())
+		statusMessage += Common::String::format(" Visible scene objects: %u.", (uint)scene.drawableObjects.size());
+	if (!scene.drawableAnimations.empty())
+		statusMessage += Common::String::format(" Room anims: %u.", (uint)scene.drawableAnimations.size());
 	statusMessage += " Click an active hotspot to follow its startup command chain.";
 	const Common::String baseStatusMessage = statusMessage;
 	StartupResolvedText inspectText;
@@ -606,7 +611,7 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 
 	while (!_engine.shouldQuit()) {
 		if (needsRedraw) {
-			drawRoomScene(*screen, scene, scene.targetPaletteBrightness);
+			drawRoomScene(_engine, *screen, scene, scene.targetPaletteBrightness);
 
 			const Common::Rect panel(72, 336, 568, 468);
 			screen->fillRect(panel, kPanelFillColor);
@@ -708,12 +713,16 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 				if (!interaction.nextRoomName.empty()) {
 					Common::Error roomError = runRoomSetupStub(interaction.nextRoomName);
 					if (roomError.getCode() == Common::kReadingFailed) {
+						(void)populateRoomSceneEntities(scene.drawableObjects, scene.drawableAnimations);
+						resetCursorAnimationSequence();
 						statusMessage = Common::String::format("Unable to resolve closeup room '%s'.",
 							interaction.nextRoomName.c_str());
 						needsRedraw = true;
 					} else if (roomError.getCode() != Common::kNoError) {
 						return roomError;
 					} else {
+						(void)populateRoomSceneEntities(scene.drawableObjects, scene.drawableAnimations);
+						resetCursorAnimationSequence();
 						statusMessage = Common::String::format("Returned from %s.", interaction.nextRoomName.c_str());
 						needsRedraw = true;
 					}
@@ -747,7 +756,7 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 			}
 		}
 
-		if (tickCursorAnimation())
+		if (tickRuntimeEntities())
 			needsRedraw = true;
 
 		limiter.delayBeforeSwap();
@@ -765,6 +774,32 @@ bool StartupFlow::ensureCursorEntity() {
 		return true;
 
 	return runtimeEntities->spawnCursorEntity(_mousePos) != nullptr;
+}
+
+bool StartupFlow::populateRoomSceneEntities(const Common::Array<StartupObjectRecord> &drawableObjects,
+		const Common::Array<StartupAnimRecord> &drawableAnimations) {
+	RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
+	if (!runtimeEntities)
+		return false;
+
+	runtimeEntities->clearSceneEntities();
+	for (const StartupObjectRecord &object : drawableObjects) {
+		if (!runtimeEntities->spawnSceneBitmapEntity(object.objectName, object.resourcePath,
+				Common::Point(object.left, object.top), 0.0f)) {
+			debug(1, "Harvester: unable to spawn room object entity '%s' from '%s'",
+				object.objectName.c_str(), object.resourcePath.c_str());
+		}
+	}
+	for (const StartupAnimRecord &anim : drawableAnimations) {
+		if (!runtimeEntities->spawnSceneAnimationEntity(anim.animName, anim.resourcePath,
+				Common::Point(anim.x, anim.y), 0.0f, anim.animationRate, anim.active, anim.visible,
+				anim.looping, anim.backward, anim.pingPong, anim.initialFrame)) {
+			debug(1, "Harvester: unable to spawn room anim entity '%s' from '%s'",
+				anim.animName.c_str(), anim.resourcePath.c_str());
+		}
+	}
+
+	return true;
 }
 
 Common::Error StartupFlow::beginRoomSetupTransition() {
@@ -830,11 +865,11 @@ void StartupFlow::resetCursorAnimationSequence() {
 	(void)_engine.getRuntimeEntities()->syncCursorEntityPosition(_mousePos);
 }
 
-bool StartupFlow::tickCursorAnimation() {
+bool StartupFlow::tickRuntimeEntities() {
 	RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
 	if (!runtimeEntities)
 		return false;
-	return runtimeEntities->syncCursorEntityPosition(_mousePos);
+	return runtimeEntities->tickSceneEntities() || runtimeEntities->syncCursorEntityPosition(_mousePos);
 }
 
 void StartupFlow::renderMainMenuStub(int selectedItem, const Common::String &statusMessage) const {

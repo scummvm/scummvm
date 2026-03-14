@@ -172,6 +172,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - `g_current_palette_buffer` at `0xd6084` is the shared room/menu palette buffer used by `run_harvester_main_loop`, `room_setup`, `dispatch_room_event_actions`, inventory/help screens, and the CD prompt path.
   - `room_setup` first resolves the target room / entrance and, when `g_current_room_def->palette_path` is non-null, rereads that room palette into `g_current_palette_buffer`.
   - It then reloads `WAIT.PAL` and `WAIT.ABM`, hides the cursor entity, flushes the wait transition, uploads the wait palette, builds the room entities, and only after that uploads the room palette from `g_current_palette_buffer`.
+  - Once the wait transition is flushed, `room_setup` rebuilds the room render list in this order: matching enabled regions, room timers, visible object records whose `current_owner_or_room` matches the room, then room `ANIM` records whose `active` or `visible` state is set.
   - After the initial black upload, `room_setup` uses `ramp_palette_brightness` at `0x23a30` to fade `g_current_palette_buffer` in from black. The helper steps brightness in `0.1` increments on an approximately 4 ms timer and also drives the room dimming path when the room is marked dimmable and `DAY_FLAG` is clear.
 - `upload_palette_to_vga` at `0x22770` writes a caller-supplied RGB palette to the VGA DAC, forces palette index 0 to black, and applies a caller-supplied brightness scalar before clamping each channel to the hardware `0x3f` range.
 - `ramp_palette_brightness` at `0x23a30` is the shared timed palette ramp helper.
@@ -476,10 +477,11 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `field_74` and `field_7c` are copied into live runtime slots `+0x1170` and `+0x1178`, but the current binary only writes those slots; no read-side consumers were recovered.
   - Remaining unknowns include `field_1c`, `field_38`, `field_3c`, `field_44`, `field_48`, `field_74`, `field_7c`
 - `AnimRecord` now has stable owner/resource identity plus mirrored runtime state:
-  - `pos_x`, `pos_y`, `pos_z`, `frame_delay`
+  - leading numeric field at `+0x00` still unresolved
+  - `pos_x`, `pos_y`, `frame_delay`
   - `room_name`, `anim_path`, `anim_name`
   - script booleans: `active`, `visible`, `loop`, `backward`, `ping_pong`, `remove`
-  - runtime mirrors `runtime_active`, `runtime_visible`, `runtime_state`
+  - `room_setup` and room teardown reuse the same live bytes as runtime state: `active`, `visible`, and `runtime_state`
 - `TextRecord` now has stable string identity:
   - `text_id`, `panel_id`, `text_value`, `next`
   - The parser normalizes `_` to space characters in `text_value`
@@ -599,10 +601,18 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - `program_irq0_pit_divisor` at `0x8b1ad` masks IRQ0, programs PIT channel 0 through ports `0x43` / `0x40`, and then unmasks IRQ0 again.
     - `install_irq0_timer_handler` at `0x8b30d`, together with `mask_irq0_timer_interrupt` and `unmask_irq0_timer_interrupt`, is the low-level IRQ0 refresh path that reinstalls the recovered timer handler and restarts the counter.
     - The constant `0x1234dc` in the rate math is the PIT input clock `1193180`, which is what anchors the divisor and step-increment interpretation.
-    - `set_sound_state_sample_rate` at `0x183c0` is the recovered table-driven wrapper above that slot layer; it forwards the caller-provided rate into `set_sound_voice_sample_rate` using the state-local slot index at offset `+0x14`.
+    - `set_selected_sound_voice_sample_rate` at `0x183c0` is the recovered wrapper above that slot layer; it forwards the caller-provided rate into `set_sound_voice_sample_rate` using the selected voice-slot index stored at offset `+0x14` of the driver callback context.
     - `unlock_sound_driver_linear_regions` at `0x83c34` walks a fixed list of backend code/data ranges and calls DPMI `int 31h, ax=0601` through `unlock_linear_region_via_dpmi` on each one.
     - `release_sound_driver_linear_region_locks` at `0x83f73` is the public wrapper that runs that unlock pass and clears the backing region-lock flag.
     - `refresh_irq0_timer_handler_if_active` at `0x84e09` is the small guard wrapper that reruns the mask/install/unmask IRQ0 sequence only when the backend timer layer is active.
+    - `count_active_sound_voice_slots_in_bank` at `0x85b68` counts the backend voice slots within one bank whose status word at `+0x30` still carries the active `0x8000` bit.
+    - The callback object rooted at `0xca194` is now partially constrained:
+      - offset `+0x18` overlaps `g_sound_voice_bank_index`
+      - offset `+0x20` overlaps `g_sound_driver_initialized`
+      - `set_selected_sound_driver_control_value` at `0x183e0` writes a 16-bit value through `set_driver_control_entry_value` for the currently selected bank/control index when the backend is initialized
+      - `count_active_sound_voice_slots_for_selected_bank` at `0x18400` returns the active-slot count for that same selected bank
+      - `release_selected_sound_bank_resources` at `0x18380` clears the selected voice-rate entry, releases the selected bank through `release_sound_bank_resources`, refreshes IRQ0 timing state, and then drops the linear-region locks
+    - `release_sound_bank_resources` at `0x84873` is the shared bank teardown helper beneath that callback layer; it frees the bank's transient DOS buffer when present, clears per-bank tables, and may trigger the additional DPMI unlock/free path depending on the hidden caller flag.
   - The higher-level streamed-music state on top of that backend is now explicit:
     - `g_music_stream_state` at `0xca1d4` is the persistent room/menu/game-over music stream object.
     - `g_current_music_path` caches the current music filename so room transitions and scripted overrides can restore it.
@@ -628,9 +638,9 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - The `FCMP` compressed-audio path is now bounded as IMA ADPCM:
       - `initialize_ima_adpcm_decode_state` resets the embedded decode-state predictor, nibble index, and initial step values before a new compressed stream begins.
       - `decode_ima_adpcm_chunk` expands `FCMP` payload bytes into 8-bit or 16-bit PCM using `g_ima_adpcm_index_adjust_table` and `g_ima_adpcm_step_table`.
-    - `set_sound_state_driver_control_handle`, `set_sound_state_driver_control_value`, `set_driver_control_entry_value`, and `g_sound_driver_control_entry_refs` expose a second, driver-side control indirection table:
-      - the sound state stores a handle/index at offset `+0x18`
-      - the wrapper path uses that handle to write a 16-bit value into offset `+4` of the selected driver control entry
+    - `set_sound_state_driver_control_handle`, `set_driver_control_entry_value`, and `g_sound_driver_control_entry_refs` expose a second, driver-side control indirection table:
+      - `set_sound_state_driver_control_handle` stores a handle/index into the per-sound-state field at offset `+0x18` and marks the state with the recovered `0x40` flag at `+0x35`
+      - the separate driver callback object at `0xca194` reuses that same low-level `set_driver_control_entry_value` helper through `set_selected_sound_driver_control_value`
       - the exact gameplay meaning of that control value is still unresolved, but the indirection itself is confirmed
   - `load_dialogue_voice_sample` at `0x191d0` is the `play_dialogue_line`-specific loader that accepts either `WAVE` or `FCMP` voice assets and prepares them for one-shot playback through the shared sample backend.
   - `stop_sound_state_and_close_stream_file` at `0x1c4e0` is the shared cleanup path that stops active backend playback for a sound state and closes its backing stream/file handle at offset `+0x88`.
