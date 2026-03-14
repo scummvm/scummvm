@@ -417,7 +417,28 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 		IndexedBitmap bitmap;
 	};
 	Common::Array<OverlayBitmap> overlays;
-	for (const StartupObjectRecord &object : state.activeObjects) {
+	Common::Array<StartupObjectRecord> drawableObjects;
+	auto queueDrawableObject = [&](const StartupObjectRecord &object) {
+		if (object.resourcePath.empty() || !object.resourcePath.hasSuffixIgnoreCase(".BM"))
+			return;
+
+		for (const StartupObjectRecord &drawable : drawableObjects) {
+			if (drawable.ownerOrRoom.equalsIgnoreCase(object.ownerOrRoom) &&
+				drawable.objectName.equalsIgnoreCase(object.objectName)) {
+				return;
+			}
+		}
+
+		drawableObjects.push_back(object);
+	};
+	for (const StartupObjectRecord &object : state.roomObjects) {
+		if (object.visible)
+			queueDrawableObject(object);
+	}
+	for (const StartupObjectRecord &object : state.activeObjects)
+		queueDrawableObject(object);
+
+	for (const StartupObjectRecord &object : drawableObjects) {
 		OverlayBitmap overlay;
 		overlay.object = object;
 		if (!loadBitmapResource(*_engine.getResources(), object.resourcePath, overlay.bitmap))
@@ -438,7 +459,7 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 	if (!state.musicPath.empty())
 		statusMessage += Common::String::format(" Music: %s.", state.musicPath.c_str());
 	if (!overlays.empty())
-		statusMessage += Common::String::format(" Startup overlays: %u.", (uint)overlays.size());
+		statusMessage += Common::String::format(" Visible scene objects: %u.", (uint)overlays.size());
 	statusMessage += " Click an active hotspot to follow its startup command chain.";
 	bool needsRedraw = true;
 	Graphics::FrameLimiter limiter(g_system, 60);
