@@ -31,6 +31,7 @@
 #include "harvester/detection.h"
 #include "harvester/fst_player.h"
 #include "harvester/resources.h"
+#include "harvester/startup_art.h"
 #include "harvester/startup_script.h"
 
 namespace Harvester {
@@ -43,6 +44,7 @@ HarvesterEngine::HarvesterEngine(OSystem *syst, const ADGameDescription *gameDes
 }
 
 HarvesterEngine::~HarvesterEngine() {
+	delete _startupArt;
 	delete _startupScript;
 	delete _resources;
 	delete _screen;
@@ -78,6 +80,11 @@ Common::Error HarvesterEngine::run() {
 		if (!fstPlayer.play(path))
 			return Common::kReadingFailed;
 	}
+
+	_startupArt = new StartupArt();
+	if (!_startupArt->load(*_resources))
+		return Common::kReadingFailed;
+	_startupArt->drawWaitFrame();
 
 	// If a savegame was selected from the launcher, load it
 	int saveSlot = ConfMan.getInt("save_slot");

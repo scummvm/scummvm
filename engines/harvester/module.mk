@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	fst_player.o \
 	metaengine.o \
 	resources.o \
+	startup_art.o \
 	startup_script.o \
 	xfile_archive.o
 
