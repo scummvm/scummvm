@@ -21,7 +21,9 @@
 
 #include "harvester/resources.h"
 
+#include "common/debug.h"
 #include "common/stream.h"
+#include "harvester/detection.h"
 #include "harvester/xfile_archive.h"
 
 namespace Harvester {
@@ -79,11 +81,13 @@ bool ResourceManager::mountStartupArchives() {
 	for (const auto &spec : kArchiveSpecs) {
 		XFileArchive *archive = new XFileArchive();
 		if (!archive->open(spec.indexPath, spec.dataPath)) {
+			debugC(1, kDebugResources, "Harvester: failed to mount %s + %s", spec.indexPath, spec.dataPath);
 			delete archive;
 			continue;
 		}
 
 		mountArchive(spec.archiveName, archive, spec.priority, true);
+		debugC(1, kDebugResources, "Harvester: mounted %s + %s", spec.indexPath, spec.dataPath);
 		mountedAny = true;
 	}
 
@@ -100,7 +104,9 @@ Common::SeekableReadStream *ResourceManager::openFile(const Common::String &path
 	if (normalized.empty())
 		return nullptr;
 
-	return _search.createReadStreamForMember(Common::Path(normalized, '/'));
+	Common::SeekableReadStream *stream = _search.createReadStreamForMember(Common::Path(normalized, '/'));
+	debugC(3, kDebugResources, "Harvester: openFile('%s' -> '%s') %s", path.c_str(), normalized.c_str(), stream ? "hit" : "miss");
+	return stream;
 }
 
 bool ResourceManager::loadFile(const Common::String &path, Common::Array<byte> &data) const {
