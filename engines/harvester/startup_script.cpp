@@ -49,6 +49,16 @@ static Common::String trimAsciiLine(const Common::String &value) {
 	return value.substr(start, end - start);
 }
 
+static Common::String normalizeInteractionLabel(const Common::String &value) {
+	Common::String label = value;
+	for (uint i = 0; i < label.size(); ++i) {
+		if (label[i] == '_')
+			label.setChar(' ', i);
+	}
+
+	return label;
+}
+
 static void tokenizeTownScriptLine(const Common::String &line, Common::Array<Common::String> &tokens) {
 	tokens.clear();
 
@@ -253,54 +263,66 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 			return;
 		}
 
-		if (tag == "ANIM") {
-			if (tokens.size() < tagIndex + 10)
+			if (tag == "ANIM") {
+				if (tokens.size() < tagIndex + 10)
+					return;
+
+				StartupAnimRecord anim;
+				if (tagIndex >= 4) {
+					anim.x = atoi(tokens[0].c_str());
+					anim.y = atoi(tokens[1].c_str());
+					anim.z = atoi(tokens[2].c_str());
+					anim.frameDelay = atoi(tokens[3].c_str());
+				}
+				anim.roomName = tokens[tagIndex + 1];
+				anim.resourcePath = resources.normalizeResourcePath(tokens[tagIndex + 2]);
+				anim.animName = tokens[tagIndex + 3];
+				anim.active = tokens[tagIndex + 4].equalsIgnoreCase("T");
+				anim.visible = tokens[tagIndex + 5].equalsIgnoreCase("T");
+				anim.looping = tokens[tagIndex + 6].equalsIgnoreCase("T");
+				anim.backward = tokens[tagIndex + 7].equalsIgnoreCase("T");
+				anim.pingPong = tokens[tagIndex + 8].equalsIgnoreCase("T");
+				anim.remove = tokens[tagIndex + 9].equalsIgnoreCase("T");
+				anim.runtimeActive = anim.active;
+				anim.runtimeVisible = anim.visible;
+				if (!anim.roomName.empty() && !anim.resourcePath.empty() && !anim.animName.empty())
+					_animations.push_back(anim);
+				return;
+			}
+
+			if (tokens.size() < tagIndex + 13)
 				return;
 
-			StartupAnimRecord anim;
-			if (tagIndex >= 4) {
-				anim.initialFrame = atoi(tokens[0].c_str());
-				anim.x = atoi(tokens[1].c_str());
-				anim.y = atoi(tokens[2].c_str());
-				anim.animationRate = atoi(tokens[3].c_str());
+			StartupObjectRecord object;
+			if (tagIndex >= 6) {
+				object.initialX = atoi(tokens[0].c_str());
+				object.initialY = atoi(tokens[1].c_str());
+				object.boundsX2 = atoi(tokens[2].c_str());
+				object.boundsY2 = atoi(tokens[3].c_str());
+				object.initialZ = atoi(tokens[4].c_str());
+				object.zExtent = atoi(tokens[5].c_str());
 			}
-			anim.roomName = tokens[tagIndex + 1];
-			anim.resourcePath = resources.normalizeResourcePath(tokens[tagIndex + 2]);
-			anim.animName = tokens[tagIndex + 3];
-			anim.active = tokens[tagIndex + 4].equalsIgnoreCase("T");
-			anim.visible = tokens[tagIndex + 5].equalsIgnoreCase("T");
-			anim.looping = tokens[tagIndex + 6].equalsIgnoreCase("T");
-			anim.backward = tokens[tagIndex + 7].equalsIgnoreCase("T");
-			anim.pingPong = tokens[tagIndex + 8].equalsIgnoreCase("T");
-			anim.remove = tokens[tagIndex + 9].equalsIgnoreCase("T");
-			if (!anim.roomName.empty() && !anim.resourcePath.empty() && !anim.animName.empty())
-				_animations.push_back(anim);
-			return;
-		}
-
-		if (tokens.size() < tagIndex + 13)
-			return;
-
-		StartupObjectRecord object;
-		if (tagIndex >= 4) {
-			object.left = atoi(tokens[0].c_str());
-			object.top = atoi(tokens[1].c_str());
-			object.right = atoi(tokens[2].c_str());
-			object.bottom = atoi(tokens[3].c_str());
-		}
-		object.ownerOrRoom = tokens[tagIndex + 1];
-		object.objectName = tokens[tagIndex + 2];
-		object.resourcePath = resources.normalizeResourcePath(tokens[tagIndex + 3]);
-		object.inventoryBitmapPath = resources.normalizeResourcePath(tokens[tagIndex + 4]);
-		object.shortTextKey = tokens[tagIndex + 6];
-		object.identTextKey = tokens[tagIndex + 8];
-		object.visible = tokens[tagIndex + 9].equalsIgnoreCase("T");
-		object.active = tokens[tagIndex + 10].equalsIgnoreCase("T");
-		object.interactionCommandTag = tokens[tagIndex + 11];
-		object.displayName = tokens[tagIndex + 12];
-		if (!object.ownerOrRoom.empty() && !object.objectName.empty())
-			_objects.push_back(object);
-	};
+			object.currentX = object.initialX;
+			object.currentY = object.initialY;
+			object.currentZ = object.initialZ;
+			object.initialOwnerOrRoom = tokens[tagIndex + 1];
+			object.objectName = tokens[tagIndex + 2];
+			object.spritePath = resources.normalizeResourcePath(tokens[tagIndex + 3]);
+			object.altSpritePath = resources.normalizeResourcePath(tokens[tagIndex + 4]);
+			object.field40 = tokens[tagIndex + 5];
+			object.inventoryTextKey = tokens[tagIndex + 6];
+			object.field34 = tokens[tagIndex + 7];
+			object.identTextKey = tokens[tagIndex + 8];
+			object.operatable = tokens[tagIndex + 9].equalsIgnoreCase("T");
+			object.visible = tokens[tagIndex + 10].equalsIgnoreCase("T");
+			object.actionTag = tokens[tagIndex + 11];
+			object.interactionLabel = tokens[tagIndex + 12];
+			object.currentOwnerOrRoom = object.initialOwnerOrRoom;
+			object.runtimeVisible = object.visible;
+			object.identShown = object.identTextKey.empty();
+			if (!object.initialOwnerOrRoom.empty() && !object.objectName.empty())
+				_objects.push_back(object);
+		};
 
 	Common::String line;
 	for (uint i = 0; i < _data.size(); ++i) {
@@ -353,9 +375,9 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 
 	const StartupObjectRecord *background = nullptr;
 	for (const StartupObjectRecord &candidate : _objects) {
-		if (!candidate.ownerOrRoom.equalsIgnoreCase(room->roomName) ||
-			!candidate.resourcePath.hasPrefixIgnoreCase("GRAPHIC/ROOMS/") ||
-			!candidate.resourcePath.hasSuffixIgnoreCase(".BM")) {
+		if (!candidate.currentOwnerOrRoom.equalsIgnoreCase(room->roomName) ||
+			!candidate.spritePath.hasPrefixIgnoreCase("GRAPHIC/ROOMS/") ||
+			!candidate.spritePath.hasSuffixIgnoreCase(".BM")) {
 			continue;
 		}
 
@@ -367,9 +389,9 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 
 	state.roomName = room->roomName;
 	state.palettePath = room->palettePath;
-	state.backgroundPath = background->resourcePath;
+	state.backgroundPath = background->spritePath;
 	for (const StartupObjectRecord &object : _objects) {
-		if (object.ownerOrRoom.equalsIgnoreCase(room->roomName))
+		if (object.currentOwnerOrRoom.equalsIgnoreCase(room->roomName))
 			state.roomObjects.push_back(object);
 	}
 	for (const StartupAnimRecord &anim : _animations) {
@@ -400,27 +422,27 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 	};
 	auto addObject = [&](const Common::String &ownerOrRoom, const Common::String &objectName) {
 		for (const StartupObjectRecord &candidate : _objects) {
-			if (!candidate.ownerOrRoom.equalsIgnoreCase(ownerOrRoom) ||
-				!candidate.objectName.equalsIgnoreCase(objectName) ||
-				candidate.resourcePath.empty() ||
-				!candidate.resourcePath.hasSuffixIgnoreCase(".BM")) {
+			if (!candidate.initialOwnerOrRoom.equalsIgnoreCase(ownerOrRoom) ||
+				!candidate.objectName.equalsIgnoreCase(objectName)) {
 				continue;
 			}
 
 			for (const StartupObjectRecord &activeObject : state.activeObjects) {
-				if (activeObject.ownerOrRoom.equalsIgnoreCase(candidate.ownerOrRoom) &&
+				if (activeObject.currentOwnerOrRoom.equalsIgnoreCase(ownerOrRoom) &&
 					activeObject.objectName.equalsIgnoreCase(candidate.objectName)) {
 					return;
 				}
 			}
 
-			state.activeObjects.push_back(candidate);
+			StartupObjectRecord object = candidate;
+			object.currentOwnerOrRoom = ownerOrRoom;
+			state.activeObjects.push_back(object);
 			return;
 		}
 	};
 	auto removeObject = [&](const Common::String &ownerOrRoom, const Common::String &objectName) {
 		for (uint i = 0; i < state.activeObjects.size(); ++i) {
-			if (state.activeObjects[i].ownerOrRoom.equalsIgnoreCase(ownerOrRoom) &&
+			if (state.activeObjects[i].currentOwnerOrRoom.equalsIgnoreCase(ownerOrRoom) &&
 				state.activeObjects[i].objectName.equalsIgnoreCase(objectName)) {
 				state.activeObjects.remove_at(i);
 				return;
@@ -487,7 +509,7 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 
 bool StartupScript::resolveObjectInteraction(const StartupObjectRecord &object, StartupInteractionResult &result) const {
 	result = StartupInteractionResult();
-	if (object.interactionCommandTag.empty())
+	if (object.actionTag.empty())
 		return false;
 
 	Common::Array<StartupFlagRecord> resolvedFlags = _flags;
@@ -519,7 +541,7 @@ bool StartupScript::resolveObjectInteraction(const StartupObjectRecord &object, 
 		return nullptr;
 	};
 
-	Common::String currentTag = object.interactionCommandTag;
+	Common::String currentTag = object.actionTag;
 	for (uint step = 0; step < 128 && !currentTag.empty(); ++step) {
 		const StartupCommandRecord *command = findCommand(currentTag);
 		if (!command) {
@@ -592,21 +614,16 @@ bool StartupScript::resolveObjectInspectText(const StartupObjectRecord &object, 
 }
 
 Common::String StartupScript::resolveObjectLabel(const StartupObjectRecord &object) const {
-	const StartupTextRecord *textRecord = findTextRecord(object.shortTextKey);
+	if (!object.interactionLabel.empty() && !object.interactionLabel.equalsIgnoreCase("NULL_ID"))
+		return normalizeInteractionLabel(object.interactionLabel);
+
+	const StartupTextRecord *textRecord = findTextRecord(object.identTextKey);
 	if (textRecord && !textRecord->value.empty())
 		return textRecord->value;
 
-	Common::String label = object.displayName;
-	for (uint i = 0; i < label.size(); ++i) {
-		if (label[i] == '_')
-			label.setChar(' ', i);
-	}
-	if (!label.empty())
+	Common::String label = normalizeInteractionLabel(object.objectName);
+	if (!label.empty() && !label.equalsIgnoreCase("NULL ID"))
 		return label;
-
-	textRecord = findTextRecord(object.identTextKey);
-	if (textRecord)
-		return textRecord->value;
 
 	return Common::String();
 }

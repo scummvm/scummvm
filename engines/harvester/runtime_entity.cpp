@@ -107,6 +107,10 @@ bool RuntimeEntity::loadBitmapResource(ResourceManager &resources, const Common:
 	_firstFrame = 0;
 	_lastFrame = 0;
 	_animationEnabled = false;
+	_drawEnabled = true;
+	_boundsWidth = frame.width;
+	_boundsHeight = frame.height;
+	_hitTestMode = kRuntimeEntityHitTestOpaquePixels;
 	return true;
 }
 
@@ -154,6 +158,10 @@ bool RuntimeEntity::loadAbmResource(ResourceManager &resources, const Common::St
 	_firstFrame = _currentFrame;
 	_lastFrame = _frames.empty() ? -1 : (int)_frames.size() - 1;
 	_animationEnabled = !_frames.empty();
+	_drawEnabled = true;
+	_boundsWidth = _frames.empty() ? 0 : _frames[0].width;
+	_boundsHeight = _frames.empty() ? 0 : _frames[0].height;
+	_hitTestMode = kRuntimeEntityHitTestOpaquePixels;
 	return true;
 }
 
@@ -195,6 +203,18 @@ void RuntimeEntity::setAnimationSequence(int sequence) {
 	advanceAnimationFrame(_firstFrame);
 }
 
+void RuntimeEntity::configureHotspotBounds(int width, int height) {
+	_frames.clear();
+	_currentFrame = -1;
+	_firstFrame = -1;
+	_lastFrame = -1;
+	_animationEnabled = false;
+	_drawEnabled = false;
+	_boundsWidth = MAX(width, 1);
+	_boundsHeight = MAX(height, 1);
+	_hitTestMode = kRuntimeEntityHitTestBounds;
+}
+
 bool RuntimeEntity::tickVisualState(uint32 now) {
 	if (!_animationEnabled || _currentFrame < 0 || _animationTickInterval == 0)
 		return false;
@@ -212,10 +232,41 @@ bool RuntimeEntity::tickVisualState(uint32 now) {
 }
 
 void RuntimeEntity::draw(Graphics::Screen &screen) const {
-	if (!_visible || _currentFrame < 0)
+	if (!_visible || !_drawEnabled || _currentFrame < 0)
 		return;
 
 	blitAnimationFrame(screen, _frames, _currentFrame, _x, _y);
+}
+
+Common::Rect RuntimeEntity::getFrameRect() const {
+	if (!_frames.empty() && _currentFrame >= 0 && (uint)_currentFrame < _frames.size()) {
+		const AbmFrame &frame = _frames[(uint)_currentFrame];
+		return Common::Rect(_x + frame.xOffset, _y + frame.yOffset,
+			_x + frame.xOffset + frame.width, _y + frame.yOffset + frame.height);
+	}
+
+	return Common::Rect(_x, _y, _x + _boundsWidth, _y + _boundsHeight);
+}
+
+bool RuntimeEntity::hitTest(const Common::Point &point) const {
+	if (_hitTestMode == kRuntimeEntityHitTestNone)
+		return false;
+
+	const Common::Rect bounds = getFrameRect();
+	if (!bounds.contains(point))
+		return false;
+	if (_hitTestMode != kRuntimeEntityHitTestOpaquePixels)
+		return true;
+	if (_frames.empty() || _currentFrame < 0 || (uint)_currentFrame >= _frames.size())
+		return false;
+
+	const AbmFrame &frame = _frames[(uint)_currentFrame];
+	const int relativeX = point.x - bounds.left;
+	const int relativeY = point.y - bounds.top;
+	if (relativeX < 0 || relativeY < 0 || relativeX >= (int)frame.width || relativeY >= (int)frame.height)
+		return false;
+
+	return frame.pixels[(uint)relativeY * frame.width + (uint)relativeX] != 0;
 }
 
 void RuntimeEntity::advanceAnimationFrame(int directive) {
@@ -328,6 +379,8 @@ RuntimeEntity *RuntimeEntityManager::spawnCursorEntity(const Common::Point &posi
 		kRuntimeEntityClassCursor, position, kCursorEntityZ, kCursorAnimationRate, true, false);
 	if (_cursorEntity)
 		_cursorEntity->setAnimationSequence(0);
+	if (_cursorEntity)
+		_cursorEntity->setHitTestMode(kRuntimeEntityHitTestNone);
 
 	return _cursorEntity;
 }
@@ -337,13 +390,24 @@ RuntimeEntity *RuntimeEntityManager::spawnSceneBitmapEntity(const Common::String
 	RuntimeEntity *entity = spawnBitmapEntityFromResource(name, resourcePath, kRuntimeEntityClassObject,
 		position, z);
 	if (entity)
-		_sceneEntities.push_back(entity);
+		insertSceneEntity(entity);
+	return entity;
+}
+
+RuntimeEntity *RuntimeEntityManager::spawnSceneHotspotEntity(const Common::String &name,
+		const Common::Rect &bounds, float z) {
+	RuntimeEntity *entity = new RuntimeEntity();
+	entity->setName(name);
+	entity->setClassId(kRuntimeEntityClassObject);
+	entity->setPosition(bounds.left, bounds.top, z);
+	entity->configureHotspotBounds(bounds.width(), bounds.height());
+	insertSceneEntity(entity);
 	return entity;
 }
 
 RuntimeEntity *RuntimeEntityManager::spawnSceneAnimationEntity(const Common::String &name,
 		const Common::String &resourcePath, const Common::Point &position, float z, int animationRate,
-		bool active, bool visible, bool looping, bool playBackwards, bool pingPong, int initialFrame) {
+		bool active, bool visible, bool looping, bool playBackwards, bool pingPong) {
 	RuntimeEntity *entity = spawnAbmEntityFromResource(name, resourcePath, kRuntimeEntityClassAnimation,
 		position, z, animationRate, looping, pingPong);
 	if (!entity)
@@ -351,9 +415,8 @@ RuntimeEntity *RuntimeEntityManager::spawnSceneAnimationEntity(const Common::Str
 
 	entity->setVisible(visible);
 	entity->setPlayBackwards(playBackwards);
-	if (initialFrame >= 0)
-		entity->setCurrentFrame(initialFrame);
-	else if (playBackwards)
+	entity->setHitTestMode(kRuntimeEntityHitTestNone);
+	if (playBackwards)
 		entity->setCurrentFrame(entity->getLastFrame());
 	else
 		entity->setCurrentFrame(0);
@@ -361,7 +424,7 @@ RuntimeEntity *RuntimeEntityManager::spawnSceneAnimationEntity(const Common::Str
 	if (!active && !visible)
 		entity->setVisible(false);
 
-	_sceneEntities.push_back(entity);
+	insertSceneEntity(entity);
 	return entity;
 }
 
@@ -402,6 +465,25 @@ void RuntimeEntityManager::drawCursor(Graphics::Screen &screen) const {
 void RuntimeEntityManager::drawSceneEntities(Graphics::Screen &screen) const {
 	for (RuntimeEntity *entity : _sceneEntities)
 		entity->draw(screen);
+}
+
+const RuntimeEntity *RuntimeEntityManager::findTopSceneEntityAt(const Common::Point &point, int classIdFilter) const {
+	for (int i = (int)_sceneEntities.size() - 1; i >= 0; --i) {
+		const RuntimeEntity *entity = _sceneEntities[(uint)i];
+		if (classIdFilter >= 0 && entity->getClassId() != classIdFilter)
+			continue;
+		if (entity->hitTest(point))
+			return entity;
+	}
+
+	return nullptr;
+}
+
+void RuntimeEntityManager::insertSceneEntity(RuntimeEntity *entity) {
+	uint insertIndex = 0;
+	while (insertIndex < _sceneEntities.size() && _sceneEntities[insertIndex]->getZ() >= entity->getZ())
+		++insertIndex;
+	_sceneEntities.insert_at(insertIndex, entity);
 }
 
 } // End of namespace Harvester

@@ -44,27 +44,37 @@ struct StartupRoomRecord {
 };
 
 struct StartupObjectRecord {
-	int left = 0;
-	int top = 0;
-	int right = 0;
-	int bottom = 0;
-	Common::String ownerOrRoom;
+	int initialX = 0;
+	int initialY = 0;
+	int initialZ = 0;
+	int currentX = 0;
+	int currentY = 0;
+	int currentZ = 0;
+	int boundsX2 = 0;
+	int boundsY2 = 0;
+	int zExtent = 0;
+	Common::String actionTag;
+	Common::String spritePath;
+	Common::String altSpritePath;
 	Common::String objectName;
-	Common::String resourcePath;
-	Common::String inventoryBitmapPath;
-	Common::String shortTextKey;
+	Common::String field34;
 	Common::String identTextKey;
-	Common::String interactionCommandTag;
-	Common::String displayName;
+	Common::String currentOwnerOrRoom;
+	Common::String field40;
+	Common::String inventoryTextKey;
+	Common::String initialOwnerOrRoom;
+	Common::String interactionLabel;
+	bool operatable = false;
 	bool visible = false;
-	bool active = false;
+	bool runtimeVisible = false;
+	bool identShown = false;
 };
 
 struct StartupAnimRecord {
-	int initialFrame = 0;
 	int x = 0;
 	int y = 0;
-	int animationRate = 0;
+	int z = 0;
+	int frameDelay = 0;
 	Common::String roomName;
 	Common::String resourcePath;
 	Common::String animName;
@@ -74,6 +84,9 @@ struct StartupAnimRecord {
 	bool backward = false;
 	bool pingPong = false;
 	bool remove = false;
+	bool runtimeActive = false;
+	bool runtimeVisible = false;
+	int runtimeState = -1;
 };
 
 struct StartupFlagRecord {

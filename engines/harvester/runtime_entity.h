@@ -41,6 +41,12 @@ enum RuntimeEntityClass {
 	kRuntimeEntityClassCursor = 2
 };
 
+enum RuntimeEntityHitTestMode {
+	kRuntimeEntityHitTestNone = 0,
+	kRuntimeEntityHitTestBounds = 1,
+	kRuntimeEntityHitTestOpaquePixels = 2
+};
+
 class RuntimeEntity {
 public:
 	bool loadBitmapResource(ResourceManager &resources, const Common::String &path);
@@ -70,12 +76,16 @@ public:
 	int getLastFrame() const { return _lastFrame; }
 	void setAnimationSequence(int sequence);
 	int getAnimationSequence() const { return _animationSequence; }
+	void configureHotspotBounds(int width, int height);
+	void setHitTestMode(RuntimeEntityHitTestMode mode) { _hitTestMode = mode; }
 
 	bool hasFrames() const { return !_frames.empty(); }
 	bool tickVisualState(uint32 now);
 	void draw(Graphics::Screen &screen) const;
+	bool hitTest(const Common::Point &point) const;
 
 private:
+	Common::Rect getFrameRect() const;
 	void advanceAnimationFrame(int directive);
 
 	Common::String _name;
@@ -97,6 +107,10 @@ private:
 	bool _playBackwards = false;
 	bool _animationEnabled = true;
 	bool _visible = true;
+	bool _drawEnabled = true;
+	int _boundsWidth = 0;
+	int _boundsHeight = 0;
+	RuntimeEntityHitTestMode _hitTestMode = kRuntimeEntityHitTestNone;
 };
 
 class RuntimeEntityManager {
@@ -113,9 +127,10 @@ public:
 	RuntimeEntity *spawnCursorEntity(const Common::Point &position);
 	RuntimeEntity *spawnSceneBitmapEntity(const Common::String &name, const Common::String &resourcePath,
 		const Common::Point &position, float z);
+	RuntimeEntity *spawnSceneHotspotEntity(const Common::String &name, const Common::Rect &bounds, float z);
 	RuntimeEntity *spawnSceneAnimationEntity(const Common::String &name, const Common::String &resourcePath,
 		const Common::Point &position, float z, int animationRate, bool active, bool visible, bool looping,
-		bool playBackwards, bool pingPong, int initialFrame);
+		bool playBackwards, bool pingPong);
 	RuntimeEntity *getCursorEntity() const { return _cursorEntity; }
 	void hideCursor();
 	void showCursor();
@@ -123,8 +138,11 @@ public:
 	bool syncCursorEntityPosition(const Common::Point &position);
 	void drawSceneEntities(Graphics::Screen &screen) const;
 	void drawCursor(Graphics::Screen &screen) const;
+	const RuntimeEntity *findTopSceneEntityAt(const Common::Point &point, int classIdFilter = -1) const;
 
 private:
+	void insertSceneEntity(RuntimeEntity *entity);
+
 	ResourceManager &_resources;
 	Common::Array<RuntimeEntity *> _sceneEntities;
 	RuntimeEntity *_cursorEntity = nullptr;
