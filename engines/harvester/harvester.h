@@ -74,6 +74,8 @@ public:
 	StartupText *getStartupText() const { return _startupText; }
 
 private:
+	void setDisplayMode(int width, int height);
+
 	const ADGameDescription *const _gameDescription;
 	Common::RandomSource _randomSource;
 	Graphics::Screen *_screen = nullptr;

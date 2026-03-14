@@ -57,6 +57,14 @@ Common::String HarvesterEngine::getGameId() const {
 	return _gameDescription->gameId;
 }
 
+void HarvesterEngine::setDisplayMode(int width, int height) {
+	delete _screen;
+	_screen = nullptr;
+
+	initGraphics(width, height);
+	_screen = new Graphics::Screen();
+}
+
 Common::Error HarvesterEngine::run() {
 	static const char *const kIntroPaths[] = {
 		"GRAPHIC/FST/VIRGLOGO.FST",
@@ -70,9 +78,8 @@ Common::Error HarvesterEngine::run() {
 	if (!_startupScript->load(*_resources))
 		return Common::kReadingFailed;
 
-	// Initialize 320x200 paletted graphics mode
-	initGraphics(320, 200);
-	_screen = new Graphics::Screen();
+	// The intro FST files play on the narrower startup movie surface.
+	setDisplayMode(320, 200);
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
@@ -82,6 +89,9 @@ Common::Error HarvesterEngine::run() {
 		if (!fstPlayer.play(path))
 			return Common::kReadingFailed;
 	}
+
+	// The original executable switches back to the gameplay UI surface after INTROFIN.FST.
+	setDisplayMode(640, 480);
 
 	_startupArt = new StartupArt();
 	if (!_startupArt->load(*_resources))
