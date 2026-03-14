@@ -433,7 +433,7 @@ void PelrockEngine::mouseHoverForMap() {
 void PelrockEngine::frameTriggers() {
 	uint32 frameCount = _chrono->getFrameCount();
 	passerByAnim(frameCount);
-	handleFlightRoomFrame();
+	handleFightRoomFrame();
 	shakeEffect();
 	maybeHaveDogPee();
 }
@@ -2406,17 +2406,17 @@ void PelrockEngine::credits() {
 
 void PelrockEngine::initGodsSequences(int roomNumber) {
 	int idx = roomNumber - 51;
-	_flightFrameCounter = 0;
-	_flightSorcererSpriteIdx = kFlightRooms[idx].spriteIdx;
-	_flightSorcererAppeared = false;
-	_flightSpellCast = false;
-	_flightSpellFrameCounter = 0;
-	_flightInBlockingAnim = false;
+	_fightFrameCounter = 0;
+	_fightSorcererSpriteIdx = kFightRooms[idx].spriteIdx;
+	_fightSorcererAppeared = false;
+	_fightSpellCast = false;
+	_fightSpellFrameCounter = 0;
+	_fightInBlockingAnim = false;
 
-	_room->disableSprite(_flightSorcererSpriteIdx);
+	_room->disableSprite(_fightSorcererSpriteIdx);
 }
 
-void PelrockEngine::handleFlightRoomFrame() {
+void PelrockEngine::handleFightRoomFrame() {
 	int room = _room->_currentRoomNumber;
 	if (room < 51 || room > 54)
 		return;
@@ -2428,44 +2428,44 @@ void PelrockEngine::handleFlightRoomFrame() {
 	}
 
 	// Guard against reentrance from blocking animation loops calling renderScene
-	if (_flightInBlockingAnim)
+	if (_fightInBlockingAnim)
 		return;
 
 	if (_alfredState.animState != ALFRED_IDLE || _actionPopupState.isActive) {
 		return;
 	}
-	_flightFrameCounter++;
+	_fightFrameCounter++;
 
 	// Phase 1: NPC appearance at tick 64
-	if (!_flightSorcererAppeared && _flightFrameCounter >= 64) {
+	if (!_fightSorcererAppeared && _fightFrameCounter >= 64) {
 		_sound->playSound(_room->_roomSfx[0]);
-		_flightSorcererAppeared = true;
-		_flightInBlockingAnim = true;
-		_room->findSpriteByIndex(_flightSorcererSpriteIdx)->animData[0].nframes = 1;
-		smokeAnimation(_flightSorcererSpriteIdx, false);
-		_flightInBlockingAnim = false;
+		_fightSorcererAppeared = true;
+		_fightInBlockingAnim = true;
+		_room->findSpriteByIndex(_fightSorcererSpriteIdx)->animData[0].nframes = 1;
+		smokeAnimation(_fightSorcererSpriteIdx, false);
+		_fightInBlockingAnim = false;
 		return;
 	}
 
 	// Phase 2: spell trigger at tick 104 (64 + 40)
-	if (_flightSorcererAppeared && !_flightSpellCast && _flightFrameCounter >= 104) {
-		debug("spell cast triggered for room %d at frame %d", room, _flightFrameCounter);
-		_flightSpellCast = true;
-		_flightSpellFrameCounter = 0;
+	if (_fightSorcererAppeared && !_fightSpellCast && _fightFrameCounter >= 104) {
+		debug("spell cast triggered for room %d at frame %d", room, _fightFrameCounter);
+		_fightSpellCast = true;
+		_fightSpellFrameCounter = 0;
 	}
 
 	// Phase 3: wait 40 ticks after spell trigger, then cast
-	if (_flightSpellCast) {
-		debug("in spell cast phase for room %d at frame %d", room, _flightFrameCounter);
-		_flightSpellFrameCounter++;
-		if (_flightSpellFrameCounter >= 40 && !(_state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES) & (1 << idx))) {
-			debug("spell cast animation starting for room %d at frame %d, flag is %d", room, _flightFrameCounter, _state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES));
-			_flightInBlockingAnim = true;
+	if (_fightSpellCast) {
+		debug("in spell cast phase for room %d at frame %d", room, _fightFrameCounter);
+		_fightSpellFrameCounter++;
+		if (_fightSpellFrameCounter >= 40 && !(_state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES) & (1 << idx))) {
+			debug("spell cast animation starting for room %d at frame %d, flag is %d", room, _fightFrameCounter, _state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES));
+			_fightInBlockingAnim = true;
 
-			int spellFrames = kFlightRooms[idx].spellFrames;
+			int spellFrames = kFightRooms[idx].spellFrames;
 			int framesDone = 0;
-			_room->findSpriteByIndex(_flightSorcererSpriteIdx)->animData[0].nframes = kFlightRooms[idx].spellFrames;
-			_room->findSpriteByIndex(_flightSorcererSpriteIdx)->animData[0].speed = 1;
+			_room->findSpriteByIndex(_fightSorcererSpriteIdx)->animData[0].nframes = kFightRooms[idx].spellFrames;
+			_room->findSpriteByIndex(_fightSorcererSpriteIdx)->animData[0].speed = 1;
 			_sound->playSound(_room->_roomSfx[1]);
 			while (!shouldQuit() && framesDone < spellFrames) {
 				_events->pollEvent();
@@ -2474,10 +2474,10 @@ void PelrockEngine::handleFlightRoomFrame() {
 				_screen->update();
 				g_system->delayMillis(10);
 			}
-			_room->findSpriteByIndex(_flightSorcererSpriteIdx)->animData[0].nframes = 1;
+			_room->findSpriteByIndex(_fightSorcererSpriteIdx)->animData[0].nframes = 1;
 			smokeAnimation(-1, true);
 
-			_flightInBlockingAnim = false;
+			_fightInBlockingAnim = false;
 
 			_alfredState.x = 294;
 			_alfredState.y = 387;

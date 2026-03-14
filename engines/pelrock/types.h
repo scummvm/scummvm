@@ -29,6 +29,9 @@
 
 namespace Pelrock {
 
+/**
+ * Cursor types when hovering over hotspots
+ */
 enum Cursor {
 	DEFAULT,
 	HOTSPOT,
@@ -37,6 +40,9 @@ enum Cursor {
 	COMBINATION
 };
 
+/**
+ * Actions masks on hotspots, matching against these gives us the available actions.
+ */
 const byte kActionMaskNone = 0;
 const byte kActionMaskOpen = 1;
 const byte kActionMaskClose = 2;
@@ -60,26 +66,20 @@ enum VerbIcon {
 	NO_ACTION
 };
 
-const uint32 kLongClickDuration = 500; // 500ms for long click
 const int kCursorWidth = 16;
 const int kCursorHeight = 18;
 const int kCursorSize = 288; // 16 * 18
-const int kRoomStructSize = 104;
-const int kTalkingAnimHeaderSize = 55;
-const int kNumRooms = 56;
+
 const int kVerbIconWidth = 60;
 const int kVerbIconHeight = 60;
 const int kNumVerbIcons = 9;
+
 const int kBalloonWidth = 247;
 const int kBalloonHeight = 112;
 const int kBalloonFrames = 4;
-const int kTextCharDisplayTime = 100; // 10ms per character
-const int kVerbIconPadding = 20;
 
 const int kAlfredFrameWidth = 51;
 const int kAlfredFrameHeight = 102;
-
-const int kChoiceHeight = 16; // Height of each choice line in pixels
 
 const int kTalkAnimationSpeed = 2;   // Frames per update
 const int kAlfredAnimationSpeed = 2; // Frames per update
@@ -101,9 +101,6 @@ const byte kMoveVert = 0x0C;  // Vertical movement mask
 const int kMaxPathLength = 100;
 const int kMaxMovementSteps = 100; // 500 bytes / 5 bytes per step
 const byte kPathEnd = 0xFF;        // End of path marker
-
-const int kMaxCharsPerLine = 0x2F; // 47 characters
-const int kMaxLines = 5;           // Maximum number of lines per page
 
 const byte kAlfredColor = 0x0D;
 
@@ -237,6 +234,9 @@ struct PathContext {
 	uint16 compressed_length;
 };
 
+/**
+ * Each Anim has its own speed, loopCount and movement!
+ */
 struct Anim {
 	int nframes;
 	int curFrame = 0;
@@ -257,14 +257,12 @@ struct Exit {
 	uint16 targetRoom;
 	int16 targetX;
 	int16 targetY;
-	uint16 targetDir;
 	AlfredDirection dir;
 	byte isEnabled;
 };
 
 struct Sprite {
-	byte index; // number of the animation in the rooms
-	byte type;
+	byte index;    // number of the animation in the rooms
 	int16 x;       // 0
 	int16 y;       // 2
 	int w;         // 4
@@ -272,8 +270,7 @@ struct Sprite {
 	uint16 stride; // 6-7
 	int numAnims;  // 8
 	int curAnimIndex = 0;
-	byte zOrder; // byte at file offset 23 (in-memory struct offset 0x21). Unsigned 0-254, 255=disabled
-
+	byte zOrder;                       // byte at file offset 23
 	byte actionFlags;                  // 34
 	bool isHotspotDisabled;            // 38
 	bool disableAfterSequence = false; // 39
@@ -310,19 +307,19 @@ struct TalkingAnims {
 	byte hAnimA;
 	byte unknown3[2];
 	byte numFramesAnimA;
-	byte unknown4[4];         // slot 0 data pointer (unused in ScummVM)
-	byte speedByteA;          // slot 0 offset 0x12: controls NPC talk render rate (original: 2+speedByte ticks per render)
+	byte unknown4[4]; // slot 0 data pointer (unused in ScummVM)
+	byte speedByteA;  // slot 0 offset 0x12: controls NPC talk render rate (original: 2+speedByte ticks per render)
 
 	byte offsetXAnimB;
 	byte offsetYAnimB;
 
 	byte wAnimB;
 	byte hAnimB;
-	byte unknown5[2];         // slot 1 stride (unused in ScummVM)
+	byte unknown5[2]; // slot 1 stride (unused in ScummVM)
 	byte numFramesAnimB;
-	byte unknown7[4];         // slot 1 data pointer (unused in ScummVM)
-	byte speedByteB;          // slot 1 speed byte at file offset 30
-	byte unknown6[24];        // slots 2-3 (unused)
+	byte unknown7[4];  // slot 1 data pointer (unused in ScummVM)
+	byte speedByteB;   // slot 1 speed byte at file offset 30
+	byte unknown6[24]; // slots 2-3 (unused)
 
 	// Runtime fields (not read from file)
 	byte currentFrameAnimA;
@@ -706,7 +703,7 @@ struct SaveGameData {
 	GameStateData *gameState = nullptr;
 };
 
-struct FlightRoomCfg {
+struct FightRoomCfg {
 	int roomNumber;
 	int spriteIdx;
 	int appearFrames;
@@ -714,7 +711,7 @@ struct FlightRoomCfg {
 	int spellPage;
 };
 
-static const FlightRoomCfg kFlightRooms[] = {
+static const FightRoomCfg kFightRooms[] = {
 	{51, 1, 31, 17, 8}, // room 51
 	{52, 0, 30, 13, 4}, // room 52
 	{53, 1, 30, 13, 0}, // room 53

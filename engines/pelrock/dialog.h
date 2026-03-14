@@ -52,6 +52,10 @@ const byte kCtrlEndConversation      = 0xF4; /* End conversation and disable opt
 const byte kCtrlGoBack               = 0xF0; /* Go back in conversation */
 const byte kCtrlAltSpeakerRoot       = 0xFE; /* Separates conversations from different speakers */
 
+const int kChoiceHeight = 16; 		// Height of each choice line in pixels
+const int kMaxCharsPerLine = 47; 	// 47 characters
+const int kMaxLines = 5;			// Maximum number of lines per page
+
 // Helper structures for conversation state management
 struct ConversationState {
 	uint32 position;

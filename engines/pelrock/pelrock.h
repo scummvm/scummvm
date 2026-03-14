@@ -150,12 +150,12 @@ private:
 	int _renderSkipAmount = 0;
 	int _renderSkipCounter = 0;
 
-	int _flightFrameCounter = 0;
-	int _flightSorcererSpriteIdx = -1;
-	bool _flightSorcererAppeared = false;
-	bool _flightSpellCast = false;
-	int _flightSpellFrameCounter = 0;
-	bool _flightInBlockingAnim = false;
+	int _fightFrameCounter = 0;
+	int _fightSorcererSpriteIdx = -1;
+	bool _fightSorcererAppeared = false;
+	bool _fightSpellCast = false;
+	int _fightSpellFrameCounter = 0;
+	bool _fightInBlockingAnim = false;
 	bool _disableAmbientSounds = false;
 	bool _isDogPeeing = false;
 	bool _disableAction = false;
@@ -256,7 +256,7 @@ public:
 	void maybeHaveDogPee();
 	void maybePlayPostIntro();
 	void shakeEffect();
-	void handleFlightRoomFrame();
+	void handleFightRoomFrame();
 	void paintDebugLayer();
 
 	void passerByAnim(uint32 frameCount);

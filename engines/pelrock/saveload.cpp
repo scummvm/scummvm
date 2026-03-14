@@ -42,7 +42,6 @@ void syncExit(Common::Serializer &s, Exit &exit) {
 	s.syncAsUint16LE(exit.targetRoom);
 	s.syncAsSint16LE(exit.targetX);
 	s.syncAsSint16LE(exit.targetY);
-	s.syncAsUint16LE(exit.targetDir);
 	s.syncAsByte((byte &)exit.dir);
 	s.syncAsByte(exit.isEnabled);
 }

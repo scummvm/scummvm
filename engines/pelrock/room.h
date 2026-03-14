@@ -29,6 +29,8 @@
 
 namespace Pelrock {
 
+static const int kRoomStructSize = 104;
+static const int kTalkingAnimHeaderSize = 55;
 static const int kNumSfxPerRoom = 9;
 static const int unpickableHotspotExtras[] = {
 	308, // lamppost cable

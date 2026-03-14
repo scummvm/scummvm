@@ -2130,10 +2130,10 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 				_sound->playSound(_room->_roomSfx[8], 0);
 				_dialog->say(_res->_ingameTexts[DIOSHALCON + spell->page], 1);
 				int flightIndex = _room->_currentRoomNumber - 51;
-				if (_flightSorcererAppeared && !_flightInBlockingAnim && spell->page == kFlightRooms[flightIndex].spellPage) {
+				if (_fightSorcererAppeared && !_fightInBlockingAnim && spell->page == kFightRooms[flightIndex].spellPage) {
 					_state->setFlag(FLAG_COMO_ESTAN_LOS_DIOSES, _state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES) | (1 << flightIndex));
 					_sound->playSound(_room->_roomSfx[1], 0);
-					smokeAnimation(kFlightRooms[flightIndex].spriteIdx, true);
+					smokeAnimation(kFightRooms[flightIndex].spriteIdx, true);
 					_room->addStickerToRoom(_room->_currentRoomNumber, 127 + flightIndex);
 					_room->addStickerToRoom(52, 106 + flightIndex);
 
