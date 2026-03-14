@@ -69,6 +69,7 @@ public:
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
 	ResourceManager *getResources() const { return _resources; }
+	Graphics::Screen *getScreen() const { return _screen; }
 	StartupScript *getStartupScript() const { return _startupScript; }
 	StartupArt *getStartupArt() const { return _startupArt; }
 	StartupText *getStartupText() const { return _startupText; }

@@ -22,16 +22,15 @@
 #include "harvester/harvester.h"
 
 #include "common/config-manager.h"
-#include "common/events.h"
 #include "common/system.h"
 #include "engines/util.h"
-#include "graphics/framelimiter.h"
 #include "graphics/paletteman.h"
 #include "harvester/console.h"
 #include "harvester/detection.h"
 #include "harvester/fst_player.h"
 #include "harvester/resources.h"
 #include "harvester/startup_art.h"
+#include "harvester/startup_flow.h"
 #include "harvester/startup_script.h"
 #include "harvester/startup_text.h"
 
@@ -109,32 +108,17 @@ Common::Error HarvesterEngine::run() {
 
 	if (!_startupArt->loadQuickTipsResources(*_resources))
 		return Common::kReadingFailed;
-	_startupArt->drawQuickTipsScreen();
 
 	// If a savegame was selected from the launcher, load it
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
-	Common::Event e;
+	StartupFlow startupFlow(*this);
+	if (!startupFlow.load())
+		return Common::kReadingFailed;
 
-	Graphics::FrameLimiter limiter(g_system, 60);
-	while (!shouldQuit()) {
-		while (g_system->getEventManager()->pollEvent(e)) {
-			switch (e.type) {
-			case Common::EVENT_QUIT:
-			case Common::EVENT_RETURN_TO_LAUNCHER:
-				return Common::kNoError;
-			default:
-				break;
-			}
-		}
-
-		limiter.delayBeforeSwap();
-		limiter.startFrame();
-	}
-
-	return Common::kNoError;
+	return startupFlow.run();
 }
 
 bool HarvesterEngine::hasFeature(EngineFeature f) const {

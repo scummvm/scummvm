@@ -36,6 +36,7 @@ static const byte kTownScriptXorKey = 0xaa;
 bool StartupScript::load(ResourceManager &resources) {
 	_path = kDefaultTownScript;
 	_data.clear();
+	_quickTipsEnabled = true;
 
 	loadConfig(resources);
 
@@ -70,6 +71,10 @@ bool StartupScript::loadConfig(ResourceManager &resources) {
 	Common::String townPath;
 	if (config.getKey("TOWN", kConfigSectionName, townPath))
 		_path = resources.normalizeResourcePath(townPath);
+
+	Common::String quickTipsValue;
+	if (config.getKey("QUICK_TIPS", kConfigSectionName, quickTipsValue))
+		_quickTipsEnabled = quickTipsValue.equalsIgnoreCase("ON");
 
 	return true;
 }

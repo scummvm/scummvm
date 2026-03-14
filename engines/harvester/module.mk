@@ -7,6 +7,7 @@ MODULE_OBJS = \
 	metaengine.o \
 	resources.o \
 	startup_art.o \
+	startup_flow.o \
 	startup_script.o \
 	startup_text.o \
 	xfile_archive.o
