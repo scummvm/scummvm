@@ -697,9 +697,18 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - `FstFileHeader` is now a confirmed 0x20-byte header with fields `magic`, `width`, `height`, `max_frame_size`, `frame_count`, `frame_rate`, `sample_rate`, and `bits_per_sample`.
     - `FstFrameIndexEntry` is the 6-byte per-frame index record `{ video_size, audio_size }`; `run_fst_sequence_player` reads `frame_count` of them immediately after the header and then reads `video_size + audio_size` bytes for each frame.
     - It configures `g_video_surface_context` from the header width/height at 8bpp backend class `1`, seeds PCM playback from the header sample rate / bits per sample, computes `bytes_per_frame = get_pcm_byte_rate(...) / frame_rate`, and uses `get_sound_state_playback_position` to keep movie frames aligned with the loaded soundtrack.
+    - The frame loop queues each frame's PCM chunk before decode/blit and then waits until the cumulative playback cursor reaches the current frame's byte target; timer pacing is only the silent fallback.
+    - `initialize_vesa_banked_mode` precomputes the banked-surface row tables that the movie decoder relies on:
+      - `g_vesa_scanline_start_bank_indices` at `0xc7fca` gives the starting write-window bank for each possible scanline
+      - `g_vesa_scanline_window_offsets` at `0xc87cc` gives the in-window linear offset for that scanline's left edge
+      - `g_vesa_scanline_bank_split_x` at `0xc97cc` is `-1` when the full row fits in one bank, otherwise it is the first `x` coordinate that spills into the next bank
     - The per-frame payload begins with a 16-bit bit-count, followed by the packed bitstream and then the block payload bytes.
       - The first bit controls whether a 256-color VGA palette chunk is present.
+      - Each 4x4 tile then consumes one changed/unchanged bit, and changed tiles consume one raw-vs-two-color-mask bit before reading either 16 raw pixels or 4 mask bytes.
       - The frame body then decodes 4x4 tiles either from raw 16-byte pixel blocks or from compact 4-byte two-color mask blocks before blitting through the active VESA backend.
+      - On banked VESA surfaces, the decoder handles those same 4x4 tiles in 4-scanline bands:
+        - if all four rows in the current band have `split_x == -1`, it writes directly into the mapped VESA window
+        - otherwise it expands the 4-row band into a temporary scratch buffer and then flushes each row in one or two pieces across the bank boundary, advancing banks through `select_bank_for_scanline_callback`
     - `g_fst_censorship_toggle_entries` at `0xc1014` is now typed as `FstCensorshipToggleEntry[25]`.
       - Each `0x118`-byte entry contains a movie basename in `sequence_name[0x100]` followed by six `toggle_frame_indices`.
       - `run_fst_sequence_player` scans those records by basename and, on matching frame indices, toggles between restoring the saved palette and blitting `GRAPHIC\\OTHER\\CENSORED.PCX`.
