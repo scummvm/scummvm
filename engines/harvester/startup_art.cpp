@@ -35,13 +35,44 @@ static byte expand6BitColor(byte value) {
 	return (value * 255 + 31) / 63;
 }
 
+static const int kInventoryX = 64;
+static const int kInventoryY = 48;
+static const int kLogoX = 160;
+static const int kLogoY = 0;
+static const int kWaitX = 250;
+static const int kWaitY = 160;
+static const int kQuickTipsOverlayX = 177;
+static const int kQuickTipsOverlayY = 85;
+static const int kCursorX = 320;
+static const int kCursorY = 200;
+
+static const char *const kTextboxPaths[] = {
+	"1:/GRAPHIC/OTHER/TEXTBOX1.BM",
+	"1:/GRAPHIC/OTHER/TEXTBOX2.BM",
+	"1:/GRAPHIC/OTHER/TEXTBOX3.BM",
+	"1:/GRAPHIC/OTHER/TEXTBOX4.BM"
+};
+
+static const char *const kAmmoIconPaths[] = {
+	"1:/GRAPHIC/ROOMOBJ/BULLET.BM",
+	"1:/GRAPHIC/OTHER/SHOTSHEL.BM",
+	"1:/GRAPHIC/ROOMOBJ/NAIL.BM",
+	"1:/GRAPHIC/ROOMOBJ/GASCAN.BM"
+};
+
 } // End of anonymous namespace
 
 bool StartupArt::load(ResourceManager &resources) {
 	_waitFrames.clear();
 	_pointerFrames.clear();
+	_textboxes.clear();
+	_ammoIcons.clear();
 	_inventoryBitmap = IndexedBitmap();
 	_logoBitmap = IndexedBitmap();
+	_pcRoomBitmap = IndexedBitmap();
+	_pcRoomMaskA = IndexedBitmap();
+	_pcRoomMaskB = IndexedBitmap();
+	_tipsBitmap = IndexedBitmap();
 
 	return loadPalette(resources, "1:/GRAPHIC/PAL/WAIT.PAL", _waitPalette) &&
 	       loadAnimation(resources, "1:/GRAPHIC/OTHER/WAIT.ABM", _waitFrames) &&
@@ -50,33 +81,49 @@ bool StartupArt::load(ResourceManager &resources) {
 	       loadBitmap(resources, "1:/GRAPHIC/OTHER/HARVLOGO.BM", _logoBitmap);
 }
 
+bool StartupArt::loadQuickTipsResources(ResourceManager &resources) {
+	_textboxes.resize(ARRAYSIZE(kTextboxPaths));
+	for (uint i = 0; i < _textboxes.size(); ++i) {
+		if (!loadBitmap(resources, kTextboxPaths[i], _textboxes[i]))
+			return false;
+	}
+
+	_ammoIcons.resize(ARRAYSIZE(kAmmoIconPaths));
+	for (uint i = 0; i < _ammoIcons.size(); ++i) {
+		if (!loadBitmap(resources, kAmmoIconPaths[i], _ammoIcons[i]))
+			return false;
+	}
+
+	return loadAnimation(resources, "1:/GRAPHIC/MONSTERS/PC/PC0.ABM", _pcActorFrames) &&
+	       loadPalette(resources, "1:/GRAPHIC/PAL/PCROOM.PAL", _pcRoomPalette) &&
+	       loadBitmap(resources, "1:/GRAPHIC/ROOMS/PCROOM.BM", _pcRoomBitmap) &&
+	       loadBitmap(resources, "1:/GRAPHIC/MASKS/PCRPRTA.BM", _pcRoomMaskA) &&
+	       loadBitmap(resources, "1:/GRAPHIC/MASKS/PCRPRTB.BM", _pcRoomMaskB) &&
+	       loadAnimation(resources, "1:/GRAPHIC/ROOMANIM/PCRMCLOK.ABM", _pcRoomClockFrames) &&
+	       loadBitmap(resources, "1:/GRAPHIC/OTHER/TIPS.BM", _tipsBitmap);
+}
+
 void StartupArt::drawWaitFrame() const {
 	if (_waitFrames.empty() || !_waitFrames[0].isValid())
 		return;
 
 	g_system->getPaletteManager()->setPalette(_waitPalette, 0, 256);
-
-	const int screenWidth = g_system->getWidth();
-	const int screenHeight = g_system->getHeight();
 	g_system->fillScreen(0);
+	blitBitmap(_inventoryBitmap, kInventoryX, kInventoryY);
+	blitBitmap(_logoBitmap, kLogoX, kLogoY);
+	blitAnimationFrame(_waitFrames, 0, kWaitX, kWaitY);
+	g_system->updateScreen();
+}
 
-	if (_inventoryBitmap.isValid()) {
-		const int inventoryX = MAX<int>(0, (screenWidth - (int)_inventoryBitmap.width) / 2);
-		const int inventoryY = MAX<int>(0, (screenHeight - (int)_inventoryBitmap.height) / 2);
-		g_system->copyRectToScreen(_inventoryBitmap.pixels.data(), _inventoryBitmap.width, inventoryX, inventoryY,
-			_inventoryBitmap.width, _inventoryBitmap.height);
-	}
+void StartupArt::drawQuickTipsScreen() const {
+	if (!_pcRoomBitmap.isValid())
+		return;
 
-	if (_logoBitmap.isValid()) {
-		const int logoX = MAX<int>(0, (screenWidth - (int)_logoBitmap.width) / 2);
-		g_system->copyRectToScreen(_logoBitmap.pixels.data(), _logoBitmap.width, logoX, 0,
-			_logoBitmap.width, _logoBitmap.height);
-	}
-
-	const AbmFrame &frame = _waitFrames[0];
-	const int waitX = MAX<int>(0, (screenWidth - (int)frame.width) / 2);
-	const int waitY = MAX<int>(0, (screenHeight - (int)frame.height) / 2);
-	g_system->copyRectToScreen(frame.pixels.data(), frame.width, waitX, waitY, frame.width, frame.height);
+	g_system->getPaletteManager()->setPalette(_pcRoomPalette, 0, 256);
+	g_system->fillScreen(0);
+	blitBitmap(_pcRoomBitmap, 0, 0);
+	blitBitmap(_tipsBitmap, kQuickTipsOverlayX, kQuickTipsOverlayY);
+	blitAnimationFrame(_pointerFrames, 0, kCursorX, kCursorY);
 	g_system->updateScreen();
 }
 
@@ -152,7 +199,7 @@ bool StartupArt::loadAnimation(ResourceManager &resources, const Common::String 
 		offset = payloadOffset + sourceSize;
 	}
 
-	debug(1, "Harvester: loaded %u WAIT.ABM frames", (uint)frames.size());
+	debug(1, "Harvester: loaded %u frames from '%s'", (uint)frames.size(), path.c_str());
 	return true;
 }
 
@@ -186,6 +233,21 @@ bool StartupArt::decodeAnimationFrame(const byte *source, uint32 sourceSize, boo
 	}
 
 	return dstOffset == dest.size();
+}
+
+void StartupArt::blitBitmap(const IndexedBitmap &bitmap, int x, int y) const {
+	if (!bitmap.isValid())
+		return;
+
+	g_system->copyRectToScreen(bitmap.pixels.data(), bitmap.width, x, y, bitmap.width, bitmap.height);
+}
+
+void StartupArt::blitAnimationFrame(const Common::Array<AbmFrame> &frames, uint frameIndex, int x, int y) const {
+	if (frameIndex >= frames.size() || !frames[frameIndex].isValid())
+		return;
+
+	const AbmFrame &frame = frames[frameIndex];
+	blitBitmap(frame, x + frame.xOffset, y + frame.yOffset);
 }
 
 } // End of namespace Harvester

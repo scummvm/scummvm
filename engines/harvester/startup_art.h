@@ -46,7 +46,9 @@ struct AbmFrame : IndexedBitmap {
 class StartupArt {
 public:
 	bool load(ResourceManager &resources);
+	bool loadQuickTipsResources(ResourceManager &resources);
 	void drawWaitFrame() const;
+	void drawQuickTipsScreen() const;
 
 	const byte *getWaitPalette() const { return _waitPalette; }
 	const Common::Array<AbmFrame> &getWaitFrames() const { return _waitFrames; }
@@ -59,12 +61,23 @@ private:
 	bool loadBitmap(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap) const;
 	bool loadAnimation(ResourceManager &resources, const Common::String &path, Common::Array<AbmFrame> &frames) const;
 	bool decodeAnimationFrame(const byte *source, uint32 sourceSize, bool compressed, Common::Array<byte> &dest) const;
+	void blitBitmap(const IndexedBitmap &bitmap, int x, int y) const;
+	void blitAnimationFrame(const Common::Array<AbmFrame> &frames, uint frameIndex, int x, int y) const;
 
 	byte _waitPalette[256 * 3] = { 0 };
+	byte _pcRoomPalette[256 * 3] = { 0 };
 	Common::Array<AbmFrame> _waitFrames;
 	Common::Array<AbmFrame> _pointerFrames;
+	Common::Array<AbmFrame> _pcRoomClockFrames;
+	Common::Array<AbmFrame> _pcActorFrames;
+	Common::Array<IndexedBitmap> _textboxes;
+	Common::Array<IndexedBitmap> _ammoIcons;
 	IndexedBitmap _inventoryBitmap;
 	IndexedBitmap _logoBitmap;
+	IndexedBitmap _pcRoomBitmap;
+	IndexedBitmap _pcRoomMaskA;
+	IndexedBitmap _pcRoomMaskB;
+	IndexedBitmap _tipsBitmap;
 };
 
 } // End of namespace Harvester
