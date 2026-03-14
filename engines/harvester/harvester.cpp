@@ -29,6 +29,7 @@
 #include "graphics/paletteman.h"
 #include "harvester/console.h"
 #include "harvester/detection.h"
+#include "harvester/fst_player.h"
 #include "harvester/resources.h"
 #include "harvester/startup_script.h"
 
@@ -53,6 +54,12 @@ Common::String HarvesterEngine::getGameId() const {
 }
 
 Common::Error HarvesterEngine::run() {
+	static const char *const kIntroPaths[] = {
+		"GRAPHIC/FST/VIRGLOGO.FST",
+		"GRAPHIC/FST/FVLOGO.FST",
+		"GRAPHIC/FST/INTROFIN.FST"
+	};
+
 	_resources = new ResourceManager();
 	_resources->mountStartupArchives();
 	_startupScript = new StartupScript();
@@ -65,6 +72,12 @@ Common::Error HarvesterEngine::run() {
 
 	// Set the engine's debugger console
 	setDebugger(new Console());
+
+	FstPlayer fstPlayer(*this);
+	for (const char *path : kIntroPaths) {
+		if (!fstPlayer.play(path))
+			return Common::kReadingFailed;
+	}
 
 	// If a savegame was selected from the launcher, load it
 	int saveSlot = ConfMan.getInt("save_slot");
