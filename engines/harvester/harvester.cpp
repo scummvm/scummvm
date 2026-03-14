@@ -63,6 +63,7 @@ void HarvesterEngine::setDisplayMode(int width, int height) {
 
 	initGraphics(width, height);
 	_screen = new Graphics::Screen();
+	debugC(1, kDebugGeneral, "Harvester: switched display mode to %dx%d", width, height);
 }
 
 Common::Error HarvesterEngine::run() {
