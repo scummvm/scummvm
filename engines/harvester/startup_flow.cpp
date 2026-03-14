@@ -525,8 +525,11 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 				}
 
 				statusMessage = Common::String::format("Following %s.", objectLabel.c_str());
-				if (!interaction.soundPath.empty())
-					statusMessage += Common::String::format(" Sound: %s.", interaction.soundPath.c_str());
+				if (!interaction.soundPath.empty()) {
+					const bool soundStarted = _engine.playStartupSound(interaction.soundPath);
+					statusMessage += Common::String::format(" Sound: %s (%s).", interaction.soundPath.c_str(),
+						soundStarted ? "playing" : "load failed");
+				}
 				needsRedraw = true;
 
 				if (!interaction.nextRoomName.empty()) {

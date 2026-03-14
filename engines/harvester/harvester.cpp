@@ -21,6 +21,8 @@
 
 #include "harvester/harvester.h"
 
+#include "audio/audiostream.h"
+#include "audio/decoders/wave.h"
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "engines/util.h"
@@ -44,6 +46,7 @@ HarvesterEngine::HarvesterEngine(OSystem *syst, const ADGameDescription *gameDes
 }
 
 HarvesterEngine::~HarvesterEngine() {
+	stopStartupSound();
 	delete _startupText;
 	delete _startupArt;
 	delete _startupScript;
@@ -54,6 +57,32 @@ HarvesterEngine::~HarvesterEngine() {
 
 Common::String HarvesterEngine::getGameId() const {
 	return _gameDescription->gameId;
+}
+
+bool HarvesterEngine::playStartupSound(const Common::String &path) {
+	stopStartupSound();
+	if (path.empty() || !_resources)
+		return false;
+
+	Common::SeekableReadStream *stream = _resources->openFile(path);
+	if (!stream) {
+		warning("Harvester: unable to load startup sound '%s'", path.c_str());
+		return false;
+	}
+
+	Audio::SeekableAudioStream *audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+	if (!audioStream) {
+		warning("Harvester: unable to decode startup sound '%s'", path.c_str());
+		return false;
+	}
+
+	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_startupSoundHandle, audioStream);
+	return true;
+}
+
+void HarvesterEngine::stopStartupSound() {
+	if (g_system && g_system->getMixer())
+		g_system->getMixer()->stopHandle(_startupSoundHandle);
 }
 
 void HarvesterEngine::setDisplayMode(int width, int height) {
