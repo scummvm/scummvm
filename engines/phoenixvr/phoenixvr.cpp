@@ -926,6 +926,7 @@ void PhoenixVREngine::tick(float dt) {
 		else
 			warning("no default script!");
 		_restarted = false;
+		return;
 	}
 
 	if (_nextTest >= 0) {
