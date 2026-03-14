@@ -26,6 +26,7 @@
 #include "common/events.h"
 #include "common/formats/ini-file.h"
 #include "common/memstream.h"
+#include "common/system.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/framelimiter.h"
@@ -56,12 +57,32 @@ static const int kQuickTipTextWidth = 280;
 
 static const int kMenuStartY = 100;
 static const int kMenuLineSpacing = 28;
+static const uint kCursorSequence7FirstFrame = 70;
+static const uint kCursorSequence7LastFrame = 79;
+static const uint kCursorAnimationRate = 10;
+static const uint32 kCursorAnimationTickMs = 100 / kCursorAnimationRate;
+static const uint32 kPaletteFadeTickMs = 4;
+static const float kPaletteFadeStep = 0.1f;
+static const float kPaletteBrightnessBlack = 0.0f;
 
 static const byte kTextColorNormal = 255;
 static const byte kTextColorHover = 251;
 static const byte kTextColorDim = 248;
 static const byte kShadowColor = 0;
 static const byte kPanelFillColor = 1;
+
+struct StartupSceneOverlay {
+	StartupObjectRecord object;
+	IndexedBitmap bitmap;
+};
+
+struct StartupRoomSceneResources {
+	StartupRoomSetupState state;
+	byte palette[256 * 3] = { 0 };
+	IndexedBitmap background;
+	Common::Array<StartupSceneOverlay> overlays;
+	float targetPaletteBrightness = 1.0f;
+};
 
 static byte expand6BitColor(byte value) {
 	return (value * 255 + 31) / 63;
@@ -110,6 +131,26 @@ static void drawWrappedShadowedText(Graphics::Screen &screen, const Graphics::Fo
 		drawShadowedString(screen, font, lines[i], x, y + i * lineHeight, width, color);
 }
 
+static void buildScaledPalette(const byte *source, float brightness, byte *dest) {
+	memset(dest, 0, 256 * 3);
+	if (!source)
+		return;
+
+	for (uint color = 1; color < 256; ++color) {
+		for (uint channel = 0; channel < 3; ++channel) {
+			const uint index = color * 3 + channel;
+			const int scaled = (int)(source[index] * brightness + 0.5f);
+			dest[index] = (byte)MIN<int>(scaled, 255);
+		}
+	}
+}
+
+static void setScaledPalette(Graphics::Screen &screen, const byte *palette, float brightness) {
+	byte scaledPalette[256 * 3];
+	buildScaledPalette(palette, brightness, scaledPalette);
+	screen.setPalette(scaledPalette);
+}
+
 static bool loadPaletteResource(ResourceManager &resources, const Common::String &path, byte *dest) {
 	Common::Array<byte> data;
 	if (!resources.loadFile(path, data) || data.size() < 256 * 3)
@@ -144,9 +185,59 @@ static Common::Rect getObjectBounds(const StartupObjectRecord &object) {
 	return Common::Rect();
 }
 
-static const StartupObjectRecord *findRoomObjectAtPoint(const StartupRoomSetupState &state, const Common::Point &point) {
-	for (int i = (int)state.roomObjects.size() - 1; i >= 0; --i) {
-		const StartupObjectRecord &object = state.roomObjects[(uint)i];
+static void queueDrawableRoomObject(const StartupObjectRecord &object, Common::Array<StartupObjectRecord> &drawableObjects) {
+	if (object.resourcePath.empty() || !object.resourcePath.hasSuffixIgnoreCase(".BM"))
+		return;
+
+	for (const StartupObjectRecord &drawable : drawableObjects) {
+		if (drawable.ownerOrRoom.equalsIgnoreCase(object.ownerOrRoom) &&
+			drawable.objectName.equalsIgnoreCase(object.objectName)) {
+			return;
+		}
+	}
+
+	drawableObjects.push_back(object);
+}
+
+static bool loadRoomSceneResources(const StartupRoomSetupState &state, ResourceManager &resources, StartupRoomSceneResources &scene) {
+	scene = StartupRoomSceneResources();
+	scene.state = state;
+	scene.targetPaletteBrightness = state.paletteBrightness;
+	if (!loadPaletteResource(resources, state.palettePath, scene.palette) ||
+		!loadBitmapResource(resources, state.backgroundPath, scene.background)) {
+		return false;
+	}
+
+	Common::Array<StartupObjectRecord> drawableObjects;
+	for (const StartupObjectRecord &object : state.roomObjects) {
+		if (object.visible)
+			queueDrawableRoomObject(object, drawableObjects);
+	}
+	for (const StartupObjectRecord &object : state.activeObjects)
+		queueDrawableRoomObject(object, drawableObjects);
+
+	for (const StartupObjectRecord &object : drawableObjects) {
+		StartupSceneOverlay overlay;
+		overlay.object = object;
+		if (!loadBitmapResource(resources, object.resourcePath, overlay.bitmap))
+			continue;
+		scene.overlays.push_back(overlay);
+	}
+
+	return true;
+}
+
+static void drawRoomScene(Graphics::Screen &screen, const StartupRoomSceneResources &scene, float brightness) {
+	setScaledPalette(screen, scene.palette, brightness);
+	screen.fillRect(screen.getBounds(), 0);
+	blitBitmap(screen, scene.background, 0, 0);
+	for (const StartupSceneOverlay &overlay : scene.overlays)
+		blitBitmap(screen, overlay.bitmap, overlay.object.left, overlay.object.top);
+}
+
+static const StartupObjectRecord *findObjectAtPoint(const Common::Array<StartupObjectRecord> &objects, const Common::Point &point) {
+	for (int i = (int)objects.size() - 1; i >= 0; --i) {
+		const StartupObjectRecord &object = objects[(uint)i];
 		if (!object.active)
 			continue;
 
@@ -156,6 +247,14 @@ static const StartupObjectRecord *findRoomObjectAtPoint(const StartupRoomSetupSt
 	}
 
 	return nullptr;
+}
+
+static const StartupObjectRecord *findRoomObjectAtPoint(const StartupRoomSetupState &state, const Common::Point &point) {
+	const StartupObjectRecord *object = findObjectAtPoint(state.activeObjects, point);
+	if (object)
+		return object;
+
+	return findObjectAtPoint(state.roomObjects, point);
 }
 
 static Common::String trimAsciiLine(const Common::String &value) {
@@ -170,6 +269,67 @@ static Common::String trimAsciiLine(const Common::String &value) {
 	return value.substr(start, end - start);
 }
 
+static uint getStartupCursorSequenceFirstFrame(const StartupArt &art) {
+	const Common::Array<AbmFrame> &frames = art.getPointerFrames();
+	if (frames.empty())
+		return 0;
+
+	return MIN<uint>(kCursorSequence7FirstFrame, frames.size() - 1);
+}
+
+static uint getStartupCursorSequenceLastFrame(const StartupArt &art) {
+	const Common::Array<AbmFrame> &frames = art.getPointerFrames();
+	if (frames.empty())
+		return 0;
+
+	return MIN<uint>(kCursorSequence7LastFrame, frames.size() - 1);
+}
+
+static void drawStartupCursor(Graphics::Screen &screen, const StartupArt &art, const Common::Point &mousePos,
+		uint frameIndex, bool visible) {
+	if (!visible)
+		return;
+
+	blitAnimationFrame(screen, art.getPointerFrames(), frameIndex, mousePos.x, mousePos.y);
+}
+
+static bool loadQuickTipsScene(HarvesterEngine &engine, StartupRoomSceneResources &scene) {
+	StartupRoomSetupState state;
+	if (!engine.getStartupScript()->resolveRoomSetupState("QUICK_TIPS", state, *engine.getResources()))
+		return false;
+
+	return loadRoomSceneResources(state, *engine.getResources(), scene);
+}
+
+static void renderQuickTipsScreen(HarvesterEngine &engine, const StartupRoomSceneResources &scene,
+		const Common::Point &mousePos, const Common::String &tipText, uint cursorFrameIndex, bool cursorVisible) {
+	Graphics::Screen *screen = engine.getScreen();
+	const StartupArt *art = engine.getStartupArt();
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	if (!screen || !art || !font)
+		return;
+
+	drawRoomScene(*screen, scene, scene.targetPaletteBrightness);
+	blitBitmap(*screen, art->getTipsBitmap(), kQuickTipsOverlayX, kQuickTipsOverlayY);
+
+	drawWrappedShadowedText(*screen, *font, tipText, kQuickTipTextX, kQuickTipTextY, kQuickTipTextWidth, kTextColorNormal);
+	const Common::Rect exitRect = quickTipsExitRect();
+	const Common::Rect nextRect = quickTipsNextRect();
+	const Common::Rect toggleRect = quickTipsToggleRect();
+	drawShadowedString(*screen, *font, "Exit", exitRect.left, exitRect.top, exitRect.width(),
+		exitRect.contains(mousePos) ? kTextColorHover : kTextColorNormal);
+	drawShadowedString(*screen, *font, "Next", nextRect.left, nextRect.top, nextRect.width(),
+		nextRect.contains(mousePos) ? kTextColorHover : kTextColorNormal);
+	drawShadowedString(*screen, *font,
+		engine.getStartupScript()->isQuickTipsEnabled() ? "Show_Tips_ON" : "Show_Tips_OFF",
+		toggleRect.left, toggleRect.top, toggleRect.width(),
+		toggleRect.contains(mousePos) ? kTextColorHover : kTextColorNormal);
+
+	drawStartupCursor(*screen, *art, mousePos, cursorFrameIndex, cursorVisible);
+	screen->makeAllDirty();
+	screen->update();
+}
+
 } // End of anonymous namespace
 
 StartupFlow::StartupFlow(HarvesterEngine &engine) : _engine(engine), _mousePos(320, 200) {
@@ -180,6 +340,8 @@ bool StartupFlow::load() {
 }
 
 Common::Error StartupFlow::run() {
+	resetCursorAnimationSequence();
+
 	Common::Error error = runQuickTips();
 	if (error.getCode() != Common::kNoError)
 		return error;
@@ -254,13 +416,34 @@ Common::Error StartupFlow::runQuickTips() {
 	if (!_engine.getStartupScript()->isQuickTipsEnabled() || _quickTips.empty())
 		return Common::kNoError;
 
+	Common::Error transitionError = beginRoomSetupTransition();
+	if (transitionError.getCode() != Common::kNoError)
+		return transitionError;
+
+	StartupRoomSceneResources scene;
+	if (!loadQuickTipsScene(_engine, scene))
+		return Common::kReadingFailed;
+
+	Graphics::Screen *screen = _engine.getScreen();
+	if (screen) {
+		drawRoomScene(*screen, scene, kPaletteBrightnessBlack);
+		screen->makeAllDirty();
+		screen->update();
+
+		transitionError = fadeInRoomScene(scene.palette, scene.targetPaletteBrightness);
+		if (transitionError.getCode() != Common::kNoError)
+			return transitionError;
+	}
+
+	resetCursorAnimationSequence();
+
 	uint tipIndex = _engine.getRandomNumber(_quickTips.size() - 1);
 	bool needsRedraw = true;
 	Graphics::FrameLimiter limiter(g_system, 60);
 
 	while (!_engine.shouldQuit()) {
 		if (needsRedraw) {
-			renderQuickTipsScreen(_quickTips[tipIndex]);
+			renderQuickTipsScreen(_engine, scene, _mousePos, _quickTips[tipIndex], _cursorFrameIndex, _cursorVisible);
 			needsRedraw = false;
 		}
 
@@ -291,6 +474,9 @@ Common::Error StartupFlow::runQuickTips() {
 			}
 		}
 
+		if (tickCursorAnimation())
+			needsRedraw = true;
+
 		limiter.delayBeforeSwap();
 		limiter.startFrame();
 	}
@@ -300,9 +486,16 @@ Common::Error StartupFlow::runQuickTips() {
 
 Common::Error StartupFlow::runMainMenuStub() {
 	Graphics::FrameLimiter limiter(g_system, 60);
-	Common::String statusMessage = "Stub handoff after room_setup(\"START\", \"QUICK_TIPS\").";
+	Common::String statusMessage = "Stub handoff after room_setup(\"QUICK_TIPS\") and before the main menu loop.";
 	int selectedItem = _menuItems.empty() ? -1 : 0;
 	bool needsRedraw = true;
+	const StartupArt *art = _engine.getStartupArt();
+	if (art) {
+		const uint firstFrame = getStartupCursorSequenceFirstFrame(*art);
+		const uint lastFrame = getStartupCursorSequenceLastFrame(*art);
+		if (_cursorFrameIndex < firstFrame || _cursorFrameIndex > lastFrame || !_cursorVisible)
+			resetCursorAnimationSequence();
+	}
 
 	while (!_engine.shouldQuit()) {
 		if (needsRedraw) {
@@ -393,6 +586,9 @@ Common::Error StartupFlow::runMainMenuStub() {
 			}
 		}
 
+		if (tickCursorAnimation())
+			needsRedraw = true;
+
 		limiter.delayBeforeSwap();
 		limiter.startFrame();
 	}
@@ -405,46 +601,13 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 	if (!_engine.getStartupScript()->resolveRoomSetupState(entranceName, state, *_engine.getResources()))
 		return Common::kReadingFailed;
 
-	byte palette[256 * 3] = { 0 };
-	IndexedBitmap background;
-	if (!loadPaletteResource(*_engine.getResources(), state.palettePath, palette) ||
-		!loadBitmapResource(*_engine.getResources(), state.backgroundPath, background)) {
+	Common::Error transitionError = beginRoomSetupTransition();
+	if (transitionError.getCode() != Common::kNoError)
+		return transitionError;
+
+	StartupRoomSceneResources scene;
+	if (!loadRoomSceneResources(state, *_engine.getResources(), scene))
 		return Common::kReadingFailed;
-	}
-
-	struct OverlayBitmap {
-		StartupObjectRecord object;
-		IndexedBitmap bitmap;
-	};
-	Common::Array<OverlayBitmap> overlays;
-	Common::Array<StartupObjectRecord> drawableObjects;
-	auto queueDrawableObject = [&](const StartupObjectRecord &object) {
-		if (object.resourcePath.empty() || !object.resourcePath.hasSuffixIgnoreCase(".BM"))
-			return;
-
-		for (const StartupObjectRecord &drawable : drawableObjects) {
-			if (drawable.ownerOrRoom.equalsIgnoreCase(object.ownerOrRoom) &&
-				drawable.objectName.equalsIgnoreCase(object.objectName)) {
-				return;
-			}
-		}
-
-		drawableObjects.push_back(object);
-	};
-	for (const StartupObjectRecord &object : state.roomObjects) {
-		if (object.visible)
-			queueDrawableObject(object);
-	}
-	for (const StartupObjectRecord &object : state.activeObjects)
-		queueDrawableObject(object);
-
-	for (const StartupObjectRecord &object : drawableObjects) {
-		OverlayBitmap overlay;
-		overlay.object = object;
-		if (!loadBitmapResource(*_engine.getResources(), object.resourcePath, overlay.bitmap))
-			continue;
-		overlays.push_back(overlay);
-	}
 
 	Graphics::Screen *screen = _engine.getScreen();
 	const StartupArt *art = _engine.getStartupArt();
@@ -453,13 +616,23 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 	if (!screen || !art || !titleFont || !bodyFont)
 		return Common::kNoError;
 
+	drawRoomScene(*screen, scene, kPaletteBrightnessBlack);
+	screen->makeAllDirty();
+	screen->update();
+
+	transitionError = fadeInRoomScene(scene.palette, scene.targetPaletteBrightness);
+	if (transitionError.getCode() != Common::kNoError)
+		return transitionError;
+
+	resetCursorAnimationSequence();
+
 	Common::String statusMessage = Common::String::format(
 		"Resolved %s -> %s using %s and %s.",
 		entranceName.c_str(), state.roomName.c_str(), state.palettePath.c_str(), state.backgroundPath.c_str());
 	if (!state.musicPath.empty())
 		statusMessage += Common::String::format(" Music: %s.", state.musicPath.c_str());
-	if (!overlays.empty())
-		statusMessage += Common::String::format(" Visible scene objects: %u.", (uint)overlays.size());
+	if (!scene.overlays.empty())
+		statusMessage += Common::String::format(" Visible scene objects: %u.", (uint)scene.overlays.size());
 	statusMessage += " Click an active hotspot to follow its startup command chain.";
 	const Common::String baseStatusMessage = statusMessage;
 	StartupResolvedText inspectText;
@@ -471,11 +644,7 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 
 	while (!_engine.shouldQuit()) {
 		if (needsRedraw) {
-			screen->setPalette(palette);
-			screen->fillRect(screen->getBounds(), 0);
-			blitBitmap(*screen, background, 0, 0);
-			for (const OverlayBitmap &overlay : overlays)
-				blitBitmap(*screen, overlay.bitmap, overlay.object.left, overlay.object.top);
+			drawRoomScene(*screen, scene, scene.targetPaletteBrightness);
 
 			const Common::Rect panel(72, 336, 568, 468);
 			screen->fillRect(panel, kPanelFillColor);
@@ -509,7 +678,7 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 			drawShadowedString(*screen, *bodyFont, footerMessage,
 				panel.left, 430, panel.width(), kTextColorDim, Graphics::kTextAlignCenter);
 
-			blitAnimationFrame(*screen, art->getPointerFrames(), 0, _mousePos.x, _mousePos.y);
+			drawStartupCursor(*screen, *art, _mousePos, _cursorFrameIndex, _cursorVisible);
 			screen->makeAllDirty();
 			screen->update();
 			needsRedraw = false;
@@ -615,6 +784,9 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 			}
 		}
 
+		if (tickCursorAnimation())
+			needsRedraw = true;
+
 		limiter.delayBeforeSwap();
 		limiter.startFrame();
 	}
@@ -622,35 +794,95 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 	return Common::kNoError;
 }
 
-void StartupFlow::renderQuickTipsScreen(const Common::String &tipText) const {
-	Graphics::Screen *screen = _engine.getScreen();
+Common::Error StartupFlow::beginRoomSetupTransition() {
+	_cursorVisible = false;
+
 	const StartupArt *art = _engine.getStartupArt();
-	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	if (!screen || !art || !font)
-		return;
+	if (art)
+		art->drawWaitFrame();
 
-	screen->setPalette(art->getPcRoomPalette());
-	screen->fillRect(screen->getBounds(), 0);
+	Common::Error result = Common::kNoError;
+	if (pumpTransitionEvents(result))
+		return result;
 
-	blitBitmap(*screen, art->getPcRoomBitmap(), 0, 0);
-	blitBitmap(*screen, art->getTipsBitmap(), kQuickTipsOverlayX, kQuickTipsOverlayY);
+	return Common::kNoError;
+}
 
-	drawWrappedShadowedText(*screen, *font, tipText, kQuickTipTextX, kQuickTipTextY, kQuickTipTextWidth, kTextColorNormal);
-	const Common::Rect exitRect = quickTipsExitRect();
-	const Common::Rect nextRect = quickTipsNextRect();
-	const Common::Rect toggleRect = quickTipsToggleRect();
-	drawShadowedString(*screen, *font, "Exit", exitRect.left, exitRect.top, exitRect.width(),
-		exitRect.contains(_mousePos) ? kTextColorHover : kTextColorNormal);
-	drawShadowedString(*screen, *font, "Next", nextRect.left, nextRect.top, nextRect.width(),
-		nextRect.contains(_mousePos) ? kTextColorHover : kTextColorNormal);
-	drawShadowedString(*screen, *font,
-		_engine.getStartupScript()->isQuickTipsEnabled() ? "Show_Tips_ON" : "Show_Tips_OFF",
-		toggleRect.left, toggleRect.top, toggleRect.width(),
-		toggleRect.contains(_mousePos) ? kTextColorHover : kTextColorNormal);
+Common::Error StartupFlow::fadeInRoomScene(const byte *palette, float targetBrightness) {
+	Graphics::Screen *screen = _engine.getScreen();
+	if (!screen || !palette)
+		return Common::kNoError;
 
-	blitAnimationFrame(*screen, art->getPointerFrames(), 0, _mousePos.x, _mousePos.y);
+	for (float brightness = kPaletteFadeStep; brightness < targetBrightness; brightness += kPaletteFadeStep) {
+		setScaledPalette(*screen, palette, brightness);
+		screen->makeAllDirty();
+		screen->update();
+
+		const uint32 nextTick = g_system->getMillis() + kPaletteFadeTickMs;
+		while ((int32)(nextTick - g_system->getMillis()) > 0) {
+			Common::Error result = Common::kNoError;
+			if (pumpTransitionEvents(result))
+				return result;
+			g_system->delayMillis(1);
+		}
+	}
+
+	setScaledPalette(*screen, palette, targetBrightness);
 	screen->makeAllDirty();
 	screen->update();
+	return Common::kNoError;
+}
+
+bool StartupFlow::pumpTransitionEvents(Common::Error &result) {
+	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event)) {
+		if (handleSystemEvent(event, result))
+			return true;
+	}
+
+	return false;
+}
+
+void StartupFlow::resetCursorAnimationSequence() {
+	const StartupArt *art = _engine.getStartupArt();
+	if (!art) {
+		_cursorFrameIndex = 0;
+		_cursorNextFrameTick = 0;
+		_cursorVisible = false;
+		return;
+	}
+
+	_cursorFrameIndex = getStartupCursorSequenceFirstFrame(*art);
+	_cursorNextFrameTick = g_system->getMillis() + kCursorAnimationTickMs;
+	_cursorVisible = true;
+}
+
+bool StartupFlow::tickCursorAnimation() {
+	if (!_cursorVisible)
+		return false;
+
+	const StartupArt *art = _engine.getStartupArt();
+	if (!art || art->getPointerFrames().empty())
+		return false;
+
+	const uint firstFrame = getStartupCursorSequenceFirstFrame(*art);
+	const uint lastFrame = getStartupCursorSequenceLastFrame(*art);
+	if (_cursorFrameIndex < firstFrame || _cursorFrameIndex > lastFrame)
+		_cursorFrameIndex = firstFrame;
+
+	if (firstFrame == lastFrame)
+		return false;
+
+	const uint32 now = g_system->getMillis();
+	if ((int32)(now - _cursorNextFrameTick) < 0)
+		return false;
+
+	do {
+		_cursorFrameIndex = (_cursorFrameIndex >= lastFrame) ? firstFrame : _cursorFrameIndex + 1;
+		_cursorNextFrameTick += kCursorAnimationTickMs;
+	} while ((int32)(now - _cursorNextFrameTick) >= 0);
+
+	return true;
 }
 
 void StartupFlow::renderMainMenuStub(int selectedItem, const Common::String &statusMessage) const {
@@ -686,7 +918,7 @@ void StartupFlow::renderMainMenuStub(int selectedItem, const Common::String &sta
 	drawShadowedString(*screen, *bodyFont, "Use mouse or arrow keys. Enter activates. Esc returns to launcher.",
 		panel.left, 404, panel.width(), kTextColorDim, Graphics::kTextAlignCenter);
 
-	blitAnimationFrame(*screen, art->getPointerFrames(), 0, _mousePos.x, _mousePos.y);
+	drawStartupCursor(*screen, *art, _mousePos, _cursorFrameIndex, _cursorVisible);
 	screen->makeAllDirty();
 	screen->update();
 }
