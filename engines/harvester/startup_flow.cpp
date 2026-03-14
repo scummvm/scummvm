@@ -77,8 +77,40 @@ struct StartupRoomSceneResources {
 	float targetPaletteBrightness = 1.0f;
 };
 
-static byte expand6BitColor(byte value) {
-	return (value * 255 + 31) / 63;
+static void getPaletteByteRange(const byte *palette, byte &minValue, byte &maxValue) {
+	minValue = 255;
+	maxValue = 0;
+
+	for (uint i = 0; i < 256 * 3; ++i) {
+		minValue = MIN(minValue, palette[i]);
+		maxValue = MAX(maxValue, palette[i]);
+	}
+}
+
+static uint32 hashPalette(const byte *palette) {
+	uint32 hash = 2166136261U;
+	for (uint i = 0; i < 256 * 3; ++i) {
+		hash ^= palette[i];
+		hash *= 16777619U;
+	}
+
+	return hash;
+}
+
+static void logScenePaletteSummary(const char *label, const StartupRoomSceneResources &scene, float brightness) {
+	const byte *palette = scene.palette;
+	byte minValue = 0;
+	byte maxValue = 0;
+	getPaletteByteRange(palette, minValue, maxValue);
+
+	debugC(1, kDebugGeneral,
+		"Harvester: %s room='%s' palette='%s' bytes=%u range=[%u,%u] brightness=%.2f hash=%08x idx0=(%u,%u,%u) idx1=(%u,%u,%u) idx127=(%u,%u,%u) idx255=(%u,%u,%u)",
+		label, scene.state.roomName.c_str(), scene.state.palettePath.c_str(), 256U * 3U, minValue, maxValue,
+		(double)brightness, hashPalette(palette),
+		palette[0], palette[1], palette[2],
+		palette[3], palette[4], palette[5],
+		palette[127 * 3], palette[127 * 3 + 1], palette[127 * 3 + 2],
+		palette[255 * 3], palette[255 * 3 + 1], palette[255 * 3 + 2]);
 }
 
 static Common::Rect quickTipsExitRect() {
@@ -141,8 +173,16 @@ static bool loadPaletteResource(ResourceManager &resources, const Common::String
 	if (!resources.loadFile(path, data) || data.size() < 256 * 3)
 		return false;
 
-	for (uint i = 0; i < 256 * 3; ++i)
-		dest[i] = expand6BitColor(data[i]);
+	memcpy(dest, data.data(), 256 * 3);
+
+	byte minValue = 0;
+	byte maxValue = 0;
+	getPaletteByteRange(dest, minValue, maxValue);
+	debugC(1, kDebugGeneral,
+		"Harvester: decoded room palette '%s' bytes=%u range=[%u,%u] idx0=(%u,%u,%u) idx255=(%u,%u,%u)",
+		path.c_str(), (uint)data.size(), minValue, maxValue,
+		dest[0], dest[1], dest[2],
+		dest[255 * 3], dest[255 * 3 + 1], dest[255 * 3 + 2]);
 
 	return true;
 }
@@ -211,6 +251,12 @@ static bool loadRoomSceneResources(const StartupRoomSetupState &state, ResourceM
 			scene.sceneAnimations.push_back(anim);
 	}
 
+	debugC(1, kDebugGeneral,
+		"Harvester: loadRoomSceneResources room='%s' palette='%s' background='%s' brightness=%.2f objects=%u activeObjects=%u sceneObjects=%u anims=%u visibleAnims=%u",
+		state.roomName.c_str(), state.palettePath.c_str(), state.backgroundPath.c_str(), (double)state.paletteBrightness,
+		(uint)state.roomObjects.size(), (uint)state.activeObjects.size(), (uint)scene.sceneObjects.size(),
+		(uint)state.roomAnimations.size(), (uint)scene.sceneAnimations.size());
+
 	return true;
 }
 
@@ -259,7 +305,8 @@ static Common::String trimAsciiLine(const Common::String &value) {
 
 static bool loadQuickTipsScene(HarvesterEngine &engine, StartupRoomSceneResources &scene) {
 	StartupRoomSetupState state;
-	if (!engine.getStartupScript()->resolveRoomSetupState("QUICK_TIPS", state, *engine.getResources()))
+	// The original startup path enters the START room first and overlays quick tips on top of it.
+	if (!engine.getStartupScript()->resolveRoomSetupState("START", state, *engine.getResources()))
 		return false;
 
 	return loadRoomSceneResources(state, *engine.getResources(), scene);
@@ -395,10 +442,12 @@ Common::Error StartupFlow::runQuickTips() {
 		if (!populateRoomSceneEntities(scene.sceneObjects, scene.sceneAnimations))
 			return Common::kReadingFailed;
 
+		logScenePaletteSummary("quick tips scene palette", scene, kPaletteBrightnessBlack);
 		drawRoomScene(_engine, *screen, scene, kPaletteBrightnessBlack);
 		screen->makeAllDirty();
 		screen->update();
 
+		logScenePaletteSummary("quick tips fade target", scene, scene.targetPaletteBrightness);
 		transitionError = fadeInRoomScene(scene.palette, scene.targetPaletteBrightness);
 		if (transitionError.getCode() != Common::kNoError)
 			return transitionError;
@@ -584,10 +633,12 @@ Common::Error StartupFlow::runRoomSetupStub(const Common::String &entranceName) 
 	if (!populateRoomSceneEntities(scene.sceneObjects, scene.sceneAnimations))
 		return Common::kReadingFailed;
 
+	logScenePaletteSummary("room setup stub palette", scene, kPaletteBrightnessBlack);
 	drawRoomScene(_engine, *screen, scene, kPaletteBrightnessBlack);
 	screen->makeAllDirty();
 	screen->update();
 
+	logScenePaletteSummary("room setup fade target", scene, scene.targetPaletteBrightness);
 	transitionError = fadeInRoomScene(scene.palette, scene.targetPaletteBrightness);
 	if (transitionError.getCode() != Common::kNoError)
 		return transitionError;

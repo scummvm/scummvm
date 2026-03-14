@@ -136,7 +136,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - `run_harvester_main_loop` at `0x6dc70` is the primary Harvester boot and gameplay loop.
 - It prints the `Running Harvester v1.0` banner.
 - It loads startup art and UI resources including logo FSTs, palettes, fonts, textbox art, cursor resources, and room-object art.
-- On the cold-start path it only seeds the first town transition: after the world-record parsers and script runtime have populated the live record lists, it preloads `POINTERS.ABM`, stores the spawned cursor entity, preloads the initial room palette into `g_current_palette_buffer`, and then hands off to `room_setup("QUICK_TIPS")`.
+- On the cold-start path it only seeds the first town transition: after the world-record parsers and script runtime have populated the live record lists, it preloads `POINTERS.ABM`, stores the spawned cursor entity, preloads the initial `START -> PCROOM` room palette into `g_current_palette_buffer`, and then hands off to `room_setup("START")`; the quick-tips screen is a later overlay on top of that live room scene rather than a standalone room handoff.
 - It seeds the initial `START` state, enters the main loop, processes state-driven transitions and interactions, and performs cleanup on shutdown.
   - The startup-side helpers hanging directly off that path are now bounded:
     - `printf_ascii` prints the copyright line through `g_stdout_stream` after the `puts_ascii` version banner.
@@ -182,8 +182,9 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `room_setup` first resolves the target room / entrance and, when `g_current_room_def->palette_path` is non-null, rereads that room palette into `g_current_palette_buffer`.
   - It then reloads `WAIT.PAL` and `WAIT.ABM`, hides the cursor entity, flushes the wait transition, uploads the wait palette, builds the room entities, and only after that uploads the room palette from `g_current_palette_buffer`.
   - Once the wait transition is flushed, `room_setup` rebuilds the room render list in this order: matching enabled regions, room timers, visible object records whose `current_owner_or_room` matches the room, then room `ANIM` records whose `active` or `visible` state is set.
-  - After the initial black upload, `room_setup` uses `ramp_palette_brightness` at `0x23a30` to fade `g_current_palette_buffer` in from black. The helper steps brightness in `0.1` increments on an approximately 4 ms timer and also drives the room dimming path when the room is marked dimmable and `DAY_FLAG` is clear.
+  - After the initial black upload, `room_setup` uses `ramp_palette_brightness` at `0x23a30` to fade `g_current_palette_buffer` in from black. The helper steps brightness in `0.1` increments against the shared centisecond clock from `get_elapsed_milliseconds()` while also driving the room dimming path when the room is marked dimmable and `DAY_FLAG` is clear.
 - `upload_palette_to_vga` at `0x22770` writes a caller-supplied RGB palette to the VGA DAC, forces palette index 0 to black, and applies a caller-supplied brightness scalar before clamping each channel to the hardware `0x3f` range.
+  - Archive inspection plus the helper body confirm the room/menu `.PAL` resources are already stored as 768-byte 8-bit RGB triplets; the upload path shifts those bytes down to VGA `0..63` before brightness scaling instead of expanding 6-bit source values.
 - `ramp_palette_brightness` at `0x23a30` is the shared timed palette ramp helper.
   - `room_setup` uses it as a fade-in from `0.0` to either `1.0` or the dimmed target `0.6`.
   - The helper updates music stream state between palette uploads instead of blocking in a tight delay loop.
@@ -234,7 +235,13 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `parse_room_record` at `0x5fea0`
   - `parse_text_record` at `0x600b0`
   - `parse_timer_record` at `0x60160`
-  - `parse_useitem_record` at `0x602c0`
+- `parse_command_record` now has enough parser evidence to anchor the room-event combat-control opcodes directly.
+  - `KILL_NPC -> 0x0c`
+  - `KILL_PC -> 0x0d`
+  - `MONSTERFY -> 0x0e`
+  - `PAUSE_PC -> 0x25`
+  - `RESUME_PC -> 0x26`
+- `parse_useitem_record` at `0x602c0`
 - This parser registry is the clearest anchor for the global linked-list heads used by `room_setup`, `dispatch_room_event_actions`, inventory handling, and dialogue.
 
 ## Record Lists
@@ -387,6 +394,8 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - `sync_cursor_entity_position` at `0x799e0` repositions a runtime entity to the shared cursor coordinates and then advances its visual state through the normal entity animation tick path.
 - `flush_dirty_rects_to_screen` reads `g_cursor_entity` and calls `sync_cursor_entity_position` every frame before the dirty-rect blit work, so cursor placement is part of the normal render pipeline rather than a one-shot startup blit.
 - The shared runtime entity animation/timing cluster is now bounded enough to emulate conservatively:
+  - `get_elapsed_milliseconds` at `0x82102` is misnamed; it derives elapsed time from the DOS clock in centiseconds.
+  - `set_entity_animation_rate` therefore stores centisecond intervals as `100 / rate`, so the cursor's recovered rate `10` advances once every `0.1` seconds rather than every `10` wall-clock milliseconds.
   - `+0x105c` stores the next animation tick deadline used by `tick_entity_visual_state`
   - `+0x1060` stores the tick interval derived from `set_entity_animation_rate`
   - `+0x1064` stores the current frame index
@@ -486,6 +495,19 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - parser booleans are `active` and `visible`; `visible` drives actor spawn/remove in `SET_MONSTER`, while `active` is copied into the live actor's `0x52` state byte
   - `on_death_action_tag` is dispatched when the monster finishes its death/remove state
   - `damage_amount` is copied into the live actor state at `+0x1180` and is subtracted from target HP on a successful hit; the player combat avatar seeds the same slot from weapon presets.
+  - `damage_type` is parsed from the strings `BLUDGE`, `SLASH`, and `PROJ` into the low-bit values `1`, `2`, and `4`.
+  - Monster construction copies that `damage_type` word into live actor `+0x118c` before OR-ing extra low-byte animation/capability bits from the loaded ABM frame banks; the player combat-avatar path reuses the same low damage bits on top of its own `0x00fffff8` base mask.
+  - `spawn_monster_entity_from_record` also derives the neighboring runtime capability bytes `+0x118d` and `+0x118e` directly from ABM frame-count checks, so those bytes are animation-bank availability flags rather than generic AI state.
+  - The low byte of runtime `+0x118c` now has partial facing-bank semantics from that same spawn selector:
+    - `0x08` = front-facing base bank
+    - `0x10` = left-facing base bank
+    - `0x40` = right-facing base bank
+    - `0x20` = back-facing base bank
+  - The high nibble of runtime `+0x118e` provides alternate initial stance banks for those same facings:
+    - `0x40` = front-facing alternate bank
+    - `0x10` = left-facing alternate bank
+    - `0x20` = right-facing alternate bank
+    - `0x80` = back-facing alternate bank
   - `field_70` is the attack-sound trigger frame
   - `field_78` is the walk / footstep-sound trigger frame
   - `saved_enabled`, `runtime_spawned`, `next`
@@ -566,6 +588,15 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - `spawn_scaled_abm_entity_from_resource` at `0x4bda0` is the scale-managed variant of `spawn_abm_entity_from_resource`.
   - It loads the same ABM resource format, but additionally marks the runtime entity for depth scaling and seeds the live sprite-scale field before the first `show_entity_visual` / render-list add.
   - `run_harvester_main_loop` uses it for `IDLE_ANIM` with `graphic\\roomanim\\pcloun02.abm`, copying the live player avatar's current scale so the temporary idle actor inherits the same room-depth sizing.
+- `attach_abm_resource_to_entity` at `0x4c0f0` is the shared decoded-ABM binding layer under the runtime-entity spawners and combat-avatar reloads.
+  - It stores the decoded ABM blob on the live entity, builds the per-frame pointer table, allocates the current frame bitmap storage, and seeds animation frame `0`.
+  - Callers now confirmed from the binary are `spawn_abm_entity_base`, `spawn_abm_entity_from_resource`, `spawn_scaled_abm_entity_from_resource`, `spawn_anim_entity_from_record`, `set_player_combat_loadout`, and `reset_player_combat_avatar`.
+- `queue_npc_death_or_monsterfy_transition` at `0x53810` is the small helper that queues runtime actor state `0x35` for a live NPC target.
+  - `parse_command_record` now confirms the room-event callers are `KILL_NPC` and `MONSTERFY`.
+  - It is also shared by the close-range NPC hit path inside `update_actor_runtime_state`.
+  - It clears live byte `+0x50`, preserves the current animation bank, and reseeds the current animation frame after forcing state `0x35`.
+- `teardown_monster_entity_runtime_state` at `0x541c0` is the monster-specific wrapper over the shared runtime-entity teardown path.
+  - `destroy_entity_list` and `dispatch_room_event_actions` use it only on class-6 monster removal flows.
 - `tick_monster_entity_runtime` at `0x54140` is the class-6 monster wrapper around `update_actor_runtime_state`.
   - `run_harvester_main_loop` uses it for live monster entities, and the wrapper tears down the runtime object when the shared actor state machine reports removal.
 - `spawn_player_combat_avatar` at `0x54220` reuses the monster runtime entity base for the player during combat / weapon-view mode.
@@ -574,10 +605,18 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - `+0x11bc` is the selected player combat loadout / equipped weapon id.
     - `+0x1160` and `+0x1164` are the alternating movement-step sample slots.
     - `+0x1168` is the death sample slot.
+  - The same writer path now also bounds the loadout-specific attack cluster:
+    - `+0x1134` is the attack sample count.
+    - `+0x1148`, `+0x114c`, and `+0x1150` are the attack sample slots.
+    - `+0x116c` is the attack-sound trigger frame offset.
+    - `+0x113c` is the attack contact frame offset.
+    - `+0x1180` is the per-hit damage amount.
 - `set_player_combat_loadout` at `0x55c10` applies the persisted player combat loadout selection stored at live actor field `+0x11bc`.
   - It is called by the inventory UI when the player changes weapons and by save/load restoration when the saved selection differs from the current live one.
   - It tears down the current attack sound bank, loads the new weapon-dependent attack sounds, reloads the `pc*.abm` actor art, and refreshes the player combat avatar's attack tuning.
+  - The tuning it refreshes matches the spawn path exactly: `+0x1134` attack sample count, `+0x1148/+0x114c/+0x1150` attack sample slots, `+0x116c` attack-sound trigger frame offset, `+0x113c` attack contact frame offset, and `+0x1180` per-hit damage amount.
   - The ABM path table it indexes is now labeled `g_player_combat_loadout_abm_paths` at `0xc3eb4`.
+  - That table is now bounded as a direct 21-entry loadout map from ids `0..0x14` to `1:\\graphic\\monsters\\pc\\pc0.abm` through `1:\\graphic\\monsters\\pc\\pc20.abm`.
 - `sync_player_combat_weapon_resource_icons` at `0x792c0` updates the HUD resource-icon strip/count pair for the current player combat loadout.
   - The loadout-to-resource mapping now confirmed from `set_player_combat_loadout` is:
     - `2`: nailgun
@@ -597,6 +636,33 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - It is called from `run_harvester_main_loop`, the dialogue/response/keyword modal loops, and the player-combat wrapper, so actor motion/combat continues advancing while blocking UI is active.
   - It handles class-4/5/6 actor entities, advances animation/state transitions, maintains pursuit spacing against the player using `engage_distance`, applies room Z bounds and vertical motion, fires frame-timed sound hooks, resolves hit damage through `damage_amount`, and returns `0` when the caller should remove the actor entity from the world list.
   - It also contains the confirmed NPC-to-monster replacement path used by the `change2monster` flow.
+  - The attack-state reader side is now bounded directly from states `0x16` through `0x1b`:
+    - it treats `+0x1134` as the attack sample count and randomly selects from `+0x1148/+0x114c/+0x1150`
+    - it plays the selected attack sample when `current_frame == anim_base + +0x116c`
+    - it waits until `current_frame >= anim_base + +0x113c` before resolving contact
+    - on a confirmed hit it subtracts attacker `+0x1180` from victim HP
+  - Runtime dword `+0x118c` is now bounded as a mixed combat/capability mask rather than as a pure damage-type field.
+    - its low bits carry the attack damage type (`1 = BLUDGE`, `2 = SLASH`, `4 = PROJ`)
+    - the player combat-avatar path seeds it with `0x00fffff8` before adding those low bits, while monster construction copies `MonsterRecord.damage_type` and then ORs extra low-byte availability bits from ABM frame counts
+    - in the player attack path, `(+0x118c & 4) == 0` stays on the close-range hit-resolution branch, while class-5 attacks with bit `4` set use the separate ranged target-acquisition / ammo-count branch; the chainsaw fuel check is a separate loadout-specific pre-branch case
+    - its confirmed low-byte facing-bank bits are `0x08` front, `0x10` left, `0x40` right, and `0x20` back; monster spawn uses those as the default initial stance banks when the matching alternate `+0x118e` high-nibble bank is absent
+    - the same low-byte bits are later consumed by the locomotion/turn-family entries rooted at states `4`, `7/0xf`, `8/0xe`, and `0xb`
+  - Runtime byte `+0x118d` is an attack / hit-reaction bank-availability byte.
+    - bits `0x08`, `0x10`, and `0x20` gate the attack-state pairs `0x16/0x19`, `0x17/0x1a`, and `0x18/0x1b`
+    - bits `0x40` and `0x80`, together with `+0x118e & 0x01`, gate the hit-reaction state pairs `0x1c/0x1f`, `0x1d/0x20`, and `0x1e/0x21`
+  - Runtime byte `+0x118e` is the death-bank availability byte, with one shared hit-reaction gate in its low bit.
+    - bit `0x01` is the third hit-reaction gate used by states `0x1e/0x21`
+    - bits `0x02`, `0x04`, and `0x08` gate the death-state families `0x28/0x29/0x2e/0x2f`, `0x2a/0x2b/0x30/0x31`, and `0x2c/0x2d/0x32/0x33`
+  - Runtime byte `+0x11b4` is now bounded for the player-combat path:
+    - `parse_command_record` maps room-event commands `PAUSE_PC` / `RESUME_PC` to action cases `0x25` / `0x26`, and those cases set and clear `g_player + 0x11b4`
+    - `update_actor_runtime_state` consults that byte only for class-5 player combat-avatar updates and returns early while it is set
+    - `run_harvester_main_loop` and `run_load_game_menu` clear it on return/reload paths
+  - Runtime dword `+0x1188` is a damage-type flag field.
+    - `spawn_npc_entity_from_record` and `spawn_monster_entity_base` clear it to `0`.
+    - `KILL_NPC` and `KILL_PC` assign `1`, `2`, and `4` for `BLUDGE`, `SLASH`, and `PROJ`.
+    - close-range hit resolution mirrors attacker `+0x118c` into victim `+0x1188`, and the death-state selector only consults the low damage-type bits there
+    - `update_actor_runtime_state` tests those bits during hit-reaction and death-state selection.
+  - Runtime dword `+0x11b8` is still only written reciprocally inside the close-range hit-resolution block and still has no recovered reader, so it remains an unresolved reciprocal combat-link slot.
   - Runtime bytes `+0x11a1` and `+0x11a0` are now bounded separately:
     - `+0x11a1` is the actor dispatch-state byte; `update_actor_runtime_state` switches on it directly.
     - `+0x11a0` is the latched animation/state byte; it is usually mirrored into `+0x11a1` on direct state changes, but remains distinct during entry, turn, and terminal sequences.
