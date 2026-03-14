@@ -2,6 +2,28 @@
 
 ## Last Confirmed Action
 
+- Continued `run_fst_sequence_player` into the banked VESA row-flush path.
+  - Renamed and typed the runtime banked-mode tables and state in Ghidra:
+    - `g_vesa_scanline_start_bank_indices` as `ushort[1024]` at `0xc7fca`
+    - `g_vesa_scanline_window_offsets` as `int[1024]` at `0xc87cc`
+    - `g_vesa_scanline_bank_split_x` as `short[1024]` at `0xc97cc`
+    - `g_vesa_window_granularity_kb`, `g_vesa_window_size_kb`, `g_vesa_bytes_per_scanline`, `g_vesa_read_window_index`, `g_vesa_write_window_index`, `g_vesa_read_window_segment_base`, `g_vesa_write_window_segment_base`, `g_vesa_current_write_bank_index`, `g_vesa_mode_width`, `g_vesa_mode_height`, and `g_vesa_window_size_bytes`
+  - Confirmed `initialize_vesa_banked_mode` precomputes, for each possible scanline, the starting bank index, the in-window linear offset for the left edge, and a signed split-`x` sentinel that stays `-1` when the whole row fits inside one bank.
+  - Confirmed the remaining banked branch inside `run_fst_sequence_player` is a 4-scanline-band fallback, not a different tile codec:
+    - if all four rows in the current band have `split_x == -1`, tiles expand directly into the mapped VESA window
+    - otherwise the same 4x4 tiles expand into a temporary 4-row scratch band and then flush row-by-row across the bank boundary using the precomputed scanline tables plus `select_bank_for_scanline_callback`
+  - Renamed the key FST locals in Ghidra so the decoder state now reads as `frame_index_table`, `frame_payload_buffer`, `frame_bitstream_cursor`, `frame_block_payload_cursor`, `frameband_dst`, and `banked_frameband_scratch`.
+  - Saved `HARVEST.LE`.
+- Continued `run_fst_sequence_player` into the per-frame pacing and tile-decode path.
+  - The inner movie loop now converges cleanly enough to rule out a block-format mismatch in the current engine:
+    - one frame-level palette-present bit
+    - then, per 4x4 tile, one changed/unchanged bit and one raw-vs-mask bit for changed tiles
+    - changed tiles expand from either 16 raw pixels or 4 bytes `{ color0, color1, mask16 }`
+  - Confirmed the original movie pacing is audio-driven when PCM is present.
+    - `run_fst_sequence_player` computes `bytes_per_frame = get_pcm_byte_rate(...) / frame_rate`
+    - it queues each frame's audio chunk before decode/blit
+    - it then waits on `get_sound_state_playback_position` against the cumulative byte target before presenting the next frame
+  - ScummVM now follows that recovered pacing rule in `engines/harvester/fst_player.cpp`, using mixer elapsed time for PCM-backed FST playback and keeping the timer path only for silent movies.
 - Continued the `run_fst_sequence_player` pass far enough to formalize the on-disk movie layout and the special-case censorship side table.
   - Created the exact FST types in Ghidra:
     - `FstFileHeader` size `0x20`
@@ -60,5 +82,5 @@
 ## Next Suggested Action
 
 - Highest-value targets:
-  - continue `run_fst_sequence_player` into the inner frame decoder, especially the 4x4 block expansion path and the banked-blit branch around the scanline-bank callback
-  - if the inner decode loop still resists clean factoring, shift back outward and recover the remaining `update_actor_runtime_state` consumers of the confirmed blocking-entity pointer at `+0x109c`
+  - if the FST/video thread still needs more precision, recover the remaining banked-mode callback slot around `0x14f40` and the still-unnamed VESA backend function-pointer fields that sit beside `select_bank_for_scanline_callback`
+  - otherwise shift back outward and recover the remaining `update_actor_runtime_state` consumers of the confirmed blocking-entity pointer at `+0x109c`, especially the read-side meaning of the four remembered blocker slots

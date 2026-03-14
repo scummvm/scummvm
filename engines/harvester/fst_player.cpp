@@ -105,6 +105,26 @@ static bool pumpVideoEvents(HarvesterEngine &vm, bool &skipRequested) {
 	return !vm.shouldQuit();
 }
 
+static bool waitForAudioSync(HarvesterEngine &vm, Audio::Mixer &mixer, Audio::SoundHandle audioHandle,
+		uint64 targetPlaybackBytes, uint32 audioByteRate, bool &skipRequested) {
+	if (audioByteRate == 0)
+		return true;
+
+	const uint32 targetPlaybackMs = (uint32)((targetPlaybackBytes * 1000ULL) / audioByteRate);
+	while (!skipRequested) {
+		if (!pumpVideoEvents(vm, skipRequested))
+			return false;
+		if (skipRequested || !mixer.isSoundHandleActive(audioHandle))
+			return true;
+		if (mixer.getSoundElapsedTime(audioHandle) >= targetPlaybackMs)
+			return true;
+
+		g_system->delayMillis(1);
+	}
+
+	return true;
+}
+
 static void decodeMaskBlock(byte *dest, int pitch, const byte *source) {
 	const byte color0 = source[0];
 	const byte color1 = source[1];
@@ -228,6 +248,10 @@ bool FstPlayer::play(const Common::String &path) {
 	bool audioStarted = false;
 	bool skipRequested = false;
 	uint32 nextFrameTime = g_system->getMillis();
+	const uint32 audioByteRate = hasPcmAudio ? header.sampleRate * 2 : 0;
+	const uint32 audioBytesPerFrame = (audioByteRate != 0 && header.frameRate != 0) ? audioByteRate / header.frameRate : 0;
+	uint64 nextAudioSyncBytes = 0;
+	Audio::Mixer *mixer = g_system->getMixer();
 
 	for (uint32 frameIndex = 0; frameIndex < header.frameCount; ++frameIndex) {
 		const uint32 totalFrameSize = frames[frameIndex].videoSize + frames[frameIndex].audioSize;
@@ -248,11 +272,14 @@ bool FstPlayer::play(const Common::String &path) {
 				Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
 
 			if (!audioStarted) {
-				g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &audioHandle, audioStream, -1,
+				mixer->playStream(Audio::Mixer::kSFXSoundType, &audioHandle, audioStream, -1,
 					Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 				audioStarted = true;
 			}
 		}
+
+		if (audioStarted && !waitForAudioSync(_vm, *mixer, audioHandle, nextAudioSyncBytes, audioByteRate, skipRequested))
+			break;
 
 		if (!decodeFrame(header, frameData, pixels, palette)) {
 			warning("Harvester: unable to decode '%s' frame %u", path.c_str(), frameIndex);
@@ -263,11 +290,15 @@ bool FstPlayer::play(const Common::String &path) {
 		g_system->copyRectToScreen(pixels.data(), header.width, 0, 0, header.width, header.height);
 		g_system->updateScreen();
 
-		nextFrameTime += 1000 / header.frameRate;
-		while (!skipRequested && g_system->getMillis() < nextFrameTime) {
-			if (!pumpVideoEvents(_vm, skipRequested))
-				break;
-			g_system->delayMillis(1);
+		if (audioStarted && audioBytesPerFrame != 0) {
+			nextAudioSyncBytes += audioBytesPerFrame;
+		} else {
+			nextFrameTime += 1000 / header.frameRate;
+			while (!skipRequested && g_system->getMillis() < nextFrameTime) {
+				if (!pumpVideoEvents(_vm, skipRequested))
+					break;
+				g_system->delayMillis(1);
+			}
 		}
 
 		if (!pumpVideoEvents(_vm, skipRequested) || skipRequested)
@@ -275,7 +306,7 @@ bool FstPlayer::play(const Common::String &path) {
 	}
 
 	if (audioStarted)
-		g_system->getMixer()->stopHandle(audioHandle);
+		mixer->stopHandle(audioHandle);
 	delete audioStream;
 
 	return !_vm.shouldQuit();
