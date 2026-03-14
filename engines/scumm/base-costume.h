@@ -113,12 +113,9 @@ protected:
 public:
 	struct ByleRLEData {
 		// Parameters for the original ("V1") costume codec.
-		// These ones are accessed from ARM code. Don't reorder.
 		int x;
 		int y;
 		const byte *scaleTable;
-		int height;
-		int width;
 		int skipWidth;
 		byte *destPtr;
 		const byte *maskPtr;
@@ -126,7 +123,6 @@ public:
 		byte mask, shr;
 		byte repColor;
 		byte repLen;
-		// These ones aren't accessed from ARM code.
 		Common::Rect boundsRect;
 		int scaleXIndex, scaleYIndex;
 		int scaleIndexMask;

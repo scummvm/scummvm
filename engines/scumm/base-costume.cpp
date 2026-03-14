@@ -278,56 +278,12 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 		return 2;
 	}
 
-	compData.width = _out.w;
-	compData.height = _out.h;
 	compData.destPtr = (byte *)_out.getBasePtr(compData.x, compData.y);
 
 	return drawFlag;
 }
 
-#ifdef USE_ARM_COSTUME_ASM
-
-#ifndef IPHONE
-#define ClassicProc3RendererShadowARM _ClassicProc3RendererShadowARM
-#endif
-
-extern "C" int ClassicProc3RendererShadowARM(
-	int _scaleY,
-	BaseCostumeRenderer::ByleRLEData *compData,
-	int pitch,
-	const byte *src,
-	int height,
-	int _scaleX,
-	int _scaleIndexX,
-	byte *_shadowTable,
-	uint16 _palette[32],
-	int32 _numStrips,
-	int _scaleIndexY);
-#endif
-
 void BaseCostumeRenderer::byleRLEDecode(ByleRLEData &compData, int16 actorHitX, int16 actorHitY, bool *actorHitResult, const uint8 *xmap) {
-#ifdef USE_ARM_COSTUME_ASM
-	if ((!_akosRendering && (_shadowMode & 0x20) == 0) &&
-		(actorHitResult == NULL) &&
-		(compData.maskPtr != NULL) &&
-		(_shadowTable != NULL))
-	{
-		compData.scaleXIndex = (byte)ClassicProc3RendererShadowARM(
-			_scaleY,
-			&compData,
-			_out.pitch,
-			_srcPtr,
-			_height,
-			_scaleX,
-			compData.scaleXIndex,
-			_shadowTable,
-			_palette,
-			_numStrips,
-			compData.scaleYIndex);
-		return;
-	}
-#endif /* USE_ARM_COSTUME_ASM */
-
 	const byte *src = _srcPtr;
 	byte *dst = compData.destPtr;
 
