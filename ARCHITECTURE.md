@@ -100,6 +100,8 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - It loads the town script blob through XFILE and deobfuscates it by XORing bytes with `0xAA` except CR/LF.
 - The function then registers a large vocabulary of words/primitives, including `create`, `lit`, `var`, `const`, `if`, `else`, `branch`, `quote`, `.quote`, `do_do`, `do_loop`, and related operators.
 - This strongly suggests a compact Forth-like or stack-based scripting runtime rather than a simple linear bytecode interpreter.
+- `g_town_script_runtime_state` at `0xd3050` is the 0x20-byte base state block zeroed by `reset_town_script_runtime_state` at `0x48000`.
+  - The mixed Borland runtime descriptor block still binds a no-op paired callback above it, but the owning state object itself is now explicit from the `initialize_town_script_runtime` and `run_town_script_interpreter` xrefs.
 
 ## Confirmed Cold-Start Resource Order
 
@@ -149,6 +151,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - `configure_video_surface` matches each descriptor on width / height / bpp / backend class, calls the descriptor's probe and activate callbacks, and tears down the previously active backend through the record's shutdown callback before switching.
     - `VesaModeBackend` is now a typed 64-byte descriptor record with confirmed width/height/pixel-format fields, probe/activate/shutdown/display-start callbacks, pixel read/write callbacks, the shared blit callback, and the runtime bank/window fields consumed by FST playback.
     - `VideoSurfaceContext` is now a typed 16-byte context that caches the active backend pointer plus the selected width/height/bpp/class.
+    - The mixed Borland runtime descriptor block also binds `set_vesa_video_mode_3` and `reset_video_surface_context` to `g_video_surface_context`; that pair is the small lifecycle wrapper layer above the shared context object.
   - The shared VESA helper layer is now partially named:
     - `query_vesa_controller_info` validates the controller signature through BIOS `int 10h AX=4f00`.
     - `set_vesa_video_mode` checks the current VESA mode with `AX=4f03` and only issues `AX=4f02` when a switch is required.
@@ -352,6 +355,8 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - `keyboard_irq1_handler` at `0x48460` is the custom IRQ1 keyboard handler.
   - It reads scan codes from port `0x60`, updates `g_last_keyboard_scancode` plus the `g_keyboard_scancode_pressed` table, clears key-release events by masking bit `0x80`, and acknowledges the PIC with `out 0x20, 0x20`.
 - `install_keyboard_irq1_handler` at `0x484f0` and `remove_keyboard_irq1_handler` at `0x485b0` lock/unlock the handler code and data, zero the scan-code table, and install/remove interrupt vector `9`.
+- `install_keyboard_irq1_handler_state` at `0x48700` and `remove_keyboard_irq1_handler_state` at `0x48660` are the explicit-state forms of that same path.
+  - `g_keyboard_irq1_handler_state` at `0xd5900` is the small backing object that caches the previous IRQ1 vector and the installed flag used by the text-entry/dialogue code and the mixed Borland runtime descriptor block.
 - `dos_get_interrupt_vector` at `0x866f8` and `dos_set_interrupt_vector` at `0x8672c` are the DOS `int 21h` AH=`35h` / AH=`25h` wrappers used by that install/remove path.
 - The recovered input bytes now separate into concrete scan-code slots:
   - `g_input_up_pressed` / `g_input_left_pressed` / `g_input_right_pressed` / `g_input_down_pressed` are the `0x48` / `0x4b` / `0x4d` / `0x50` slots in `g_keyboard_scancode_pressed`.
@@ -384,6 +389,9 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `+0x112c` stores the active sequence index
 - `is_cursor_within_entity_bounds` at `0x4b670` is the rectangle-only cursor test for runtime entities.
 - `is_cursor_over_entity_hitmask` at `0x4b5b0` adds the per-pixel transparency test used by the main loop before interaction dispatch.
+  - Class `0x16` skips the cursor gate entirely.
+  - Classes `0x15`, `0x18`, and `0x19` stop at the rectangle gate and do not require an opaque pixel.
+  - Class `3` bypasses the cursor bounds/mask checks and acts as the room-background fallback entity when nothing higher in the render list matches.
 
 ## Idle Animation Timing
 
@@ -420,6 +428,9 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `spawn_anim_entity_from_record` at `0x4bbe0`
   - `spawn_npc_entity_from_record` at `0x4cd00`
   - `spawn_monster_entity_from_record` at `0x53a10`
+  - `spawn_object_entity_from_record` promotes sprite-backed objects whose initial coordinates are `(0, 0)` and whose loaded bitmap is `640x480` to runtime class `3`, the room-background object class.
+  - Hotspot-only objects with no action tag become class `0x16`; the other hotspot-only objects become class `0x15`.
+  - `spawn_anim_entity_from_record` immediately drives `show_entity_visual`, so room `ANIM` records use the centered anchor path during room setup, while room bitmap objects are inserted at their record `x` / `y` without that initial recentering step.
 - `CommandRecord` is now stable enough to use directly in the event interpreter:
   - `opcode`, `trigger_tag`, `arg1`..`arg4`, `runtime_flag`, `next`
 - `EntranceRecord` is stable and drives room transitions and save/load handoff:
@@ -443,6 +454,8 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `interaction_label` is copied into the runtime object entity and drives the main-loop hover / use prompt text; a `NULL_ID` label suppresses prompt generation.
   - `z_extent` is copied into the runtime object entity at offset `+0x20`; `FUN_0004cae0` uses the live interval `[entity + 0x1c, entity + 0x1c + 0x20]` before the 2D overlap test, which confirms that the field participates in third-axis collision gating.
   - `field_40` is a heap string freed by `free_loaded_world_data`, but no confirmed live consumer has been recovered yet.
+  - `spawn_object_entity_from_record` uses `sprite_path` while the object remains at its initial position / owner outside `INVENTORY`, otherwise it switches to `alt_sprite_path`.
+  - When `sprite_path` is null, the same helper allocates a rectangle-only hotspot from `current_x`, `current_y`, `bounds_x2`, and `bounds_y2` instead of a bitmap-backed render entity.
 - `RegionRecord` is now structurally clear:
   - `min_x`, `min_y`, `max_x`, `max_y`, `floor_z`, `ceiling_z`
   - `facing`, `region_name`, `room_name`, `action_tag`
@@ -476,12 +489,11 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `field_38`, `field_3c`, `field_44`, and `field_48` are heap strings freed during world teardown, but no confirmed live consumers have been recovered yet.
   - `field_74` and `field_7c` are copied into live runtime slots `+0x1170` and `+0x1178`, but the current binary only writes those slots; no read-side consumers were recovered.
   - Remaining unknowns include `field_1c`, `field_38`, `field_3c`, `field_44`, `field_48`, `field_74`, `field_7c`
-- `AnimRecord` now has stable owner/resource identity plus mirrored runtime state:
-  - leading numeric field at `+0x00` still unresolved
-  - `pos_x`, `pos_y`, `frame_delay`
+- `AnimRecord` now has stable placement/resource identity plus mirrored runtime state:
+  - `pos_x`, `pos_y`, `pos_z`, `frame_delay`
   - `room_name`, `anim_path`, `anim_name`
   - script booleans: `active`, `visible`, `loop`, `backward`, `ping_pong`, `remove`
-  - `room_setup` and room teardown reuse the same live bytes as runtime state: `active`, `visible`, and `runtime_state`
+  - `room_setup` and room teardown reuse the same live bytes as runtime state: `runtime_active`, `runtime_visible`, and `runtime_state`
 - `TextRecord` now has stable string identity:
   - `text_id`, `panel_id`, `text_value`, `next`
   - The parser normalizes `_` to space characters in `text_value`
@@ -513,10 +525,32 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - `rescale_entity_sprite_for_depth` at `0x4b440` rescales an entity sprite from the current room depth model.
   - It applies the room-wide depth slope derived from `full_scale_z`, `max_z_scale_percent`, and `max_z`, rescales the backing bitmap, and updates the runtime width / height / anchor offsets.
 - `set_entity_screen_position` at `0x4b6f0` writes the live entity screen-space `x`, `y`, and depth/z anchor used by overlap and render ordering.
+- `update_visible_entity_screen_position` at `0x4c860` is the visible-entity wrapper used by `sync_cursor_entity_position`.
+  - It only runs while the entity's visibility nesting count is nonnegative.
+  - It forwards the entity plus the shared dirty-rect list into `update_render_entity_screen_position`, using the entity's live anchor offsets when deriving the new screen-space position.
+- `add_entity_to_render_list` at `0x5c130` inserts render entities in descending live-depth order from offset `+0x1c`, rescales them before insertion, and merges the affected dirty rect into `g_dirty_rect_list`.
+- `update_render_entity_screen_position` at `0x5cc10` is the shared screen-position updater for live render entities.
+  - When the depth/z anchor is unchanged, it keeps the entity in place in the render list and merges the old/new screen rectangles into `g_dirty_rect_list`.
+  - When the depth/z anchor changes, it removes the entity from `g_render_entity_list`, rewrites the live `x` / `y` / `z`, rescales the sprite for depth, reinserts the entity in depth order, and then merges the new dirty region.
+  - It uses `do_rects_overlap` at `0x5e0d0` and `compute_rect_area` at `0x5e0c0` to decide when dirty rectangles should be merged.
 - `do_entity_screen_bounds_overlap` at `0x4b700` is the rectangle-only overlap test used before the more specific cursor-hit and actor/region gating paths.
+- `tick_entity_visual_state` at `0x4cae0` is the shared entity animation/collision step for render-list classes below the actor layer.
+  - For moving/entity-overlap users it first checks whether the live depth intervals `[z, z + z_extent]` overlap.
+  - Only after that Z gate does it call `do_entity_screen_bounds_overlap`.
+  - The final collision confirmation is `FUN_0004a9e0`, which compares two live bitmap payloads and only reports overlap when both pixels are nonzero.
+  - Class `3`, `0x15`, and `0x19` are skipped by that entity/entity overlap path.
+  - On collision it stores the blocking render-entity pointer at runtime offset `+0x109c`; the confirmed read-side consumers of that slot are in `update_actor_runtime_state`.
+- `update_actor_runtime_state` reuses that blocking-entity slot in two confirmed ways:
+  - In the directional movement states it treats `+0x109c` as the current blocker, ignores null/hidden/self-recent blockers, and otherwise cancels the current move state, zeros the movement deltas, and copies the blocker into one of the per-direction remembered-blocker slots at `+0x108c` / `+0x1090` / `+0x1094` / `+0x1098`.
+  - In the close-range attack/grapple states it treats `+0x109c` as the current target entity, links the attacker/target pair through runtime field `+0x11b8`, mirrors the attacker's current depth into the target, and can force the target into a reaction / death sequence depending on the target class and active scene flags.
 - `hide_entity_visual` at `0x4c260` and `show_entity_visual` at `0x4c290` are the nested runtime visibility wrappers for render entities.
   - `hide_entity_visual` decrements the visibility nesting and removes the entity from `g_render_entity_list` only on the transition to hidden.
   - `show_entity_visual` increments the nesting and, when the entity becomes visible again, refreshes the current frame bitmap and re-adds it to `g_render_entity_list`.
+  - The recentering path only runs when the internal anchor flag at `+0x4f` is clear.
+  - That path subtracts half the current bitmap width and height from the stored screen position and subtracts half `z_extent` from the live depth before the render-list update.
+- `is_cursor_within_entity_bounds` at `0x4b670` is the rectangle gate for runtime entities; class `0x16` skips hit-testing entirely.
+- `is_cursor_over_entity_hitmask` at `0x4b5b0` adds the transparent-pixel test on top of that rectangle gate.
+  - Runtime classes `0x15`, `0x18`, and `0x19` bypass the per-pixel transparency check and behave as rectangle-only hotspots.
 - `spawn_scaled_abm_entity_from_resource` at `0x4bda0` is the scale-managed variant of `spawn_abm_entity_from_resource`.
   - It loads the same ABM resource format, but additionally marks the runtime entity for depth scaling and seeds the live sprite-scale field before the first `show_entity_visual` / render-list add.
   - `run_harvester_main_loop` uses it for `IDLE_ANIM` with `graphic\\roomanim\\pcloun02.abm`, copying the live player avatar's current scale so the temporary idle actor inherits the same room-depth sizing.
@@ -607,12 +641,26 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - `refresh_irq0_timer_handler_if_active` at `0x84e09` is the small guard wrapper that reruns the mask/install/unmask IRQ0 sequence only when the backend timer layer is active.
     - `count_active_sound_voice_slots_in_bank` at `0x85b68` counts the backend voice slots within one bank whose status word at `+0x30` still carries the active `0x8000` bit.
     - The callback object rooted at `0xca194` is now partially constrained:
+      - `g_sound_driver_callback_context` at `0xca194` is now typed as a minimal `SoundDriverCallbackContext`
+      - offset `+0x14` is `selected_voice_slot_index`; it is also labeled at `0xca1a8` as `g_selected_sound_voice_slot_index`
       - offset `+0x18` overlaps `g_sound_voice_bank_index`
       - offset `+0x20` overlaps `g_sound_driver_initialized`
+      - the descriptor blob at `0xc0c98` points at this callback object directly, which is what ties the table-driven wrappers back to the current-bank driver context
       - `set_selected_sound_driver_control_value` at `0x183e0` writes a 16-bit value through `set_driver_control_entry_value` for the currently selected bank/control index when the backend is initialized
       - `count_active_sound_voice_slots_for_selected_bank` at `0x18400` returns the active-slot count for that same selected bank
       - `release_selected_sound_bank_resources` at `0x18380` clears the selected voice-rate entry, releases the selected bank through `release_sound_bank_resources`, refreshes IRQ0 timing state, and then drops the linear-region locks
+      - the shared packed callback adapter at `0x81448` is now `report_undefined_constructor_or_destructor_called`; it emits the exact runtime string `undefined constructor or destructor called!` and aborts through the Borland runtime error path.
+      - the smaller packed descriptor entries at `0xc0ccc`, `0xc0cec`, and `0xc0d0c` are therefore mixed Borland object-lifecycle records rather than a PCM-only callback table:
+        - each `0x20`-byte entry begins with `3`, then a direct callback pointer and a state-object pointer
+        - the trailing callback/size fields are stored as 24-bit values left-shifted by 8 inside 32-bit slots
+        - those packed fields resolve to an object-specific secondary callback, the shared undefined-ctor/dtor adapter, the direct callback again, and the state size
+        - representative entries pair `set_vesa_video_mode_3` / `reset_video_surface_context` with `g_video_surface_context` and size `0x10`, `FUN_00047ff0` / `reset_town_script_runtime_state` with `g_town_script_runtime_state` and size `0x20`, and `remove_keyboard_irq1_handler_state` / `install_keyboard_irq1_handler_state` with `g_keyboard_irq1_handler_state` and size `0x8`
+      - the first music-facing entry at `0xc0c90` is an extended variant of that same packed format: it binds `release_selected_sound_bank_resources` to `g_sound_driver_callback_context` and `release_music_stream_buffers` at `0x1a440` to `g_music_stream_state`, but the remaining packed size/order fields still do not type cleanly enough to formalize as a struct
     - `release_sound_bank_resources` at `0x84873` is the shared bank teardown helper beneath that callback layer; it frees the bank's transient DOS buffer when present, clears per-bank tables, and may trigger the additional DPMI unlock/free path depending on the hidden caller flag.
+    - The special teardown branch inside `release_sound_bank_resources` is now bounded as an `int 0x4B` service path:
+      - `call_int4b_service_8108_with_temp_dos_block` at `0x84c87` frees an existing LDT selector, allocates a temporary 32-paragraph DOS block via DPMI `int 31h, ax=0100`, copies the 16-byte `g_int4b_service_8108_request_template` into that block, simulates interrupt `0x4B` with `AX=0x8108` through `g_int4b_real_mode_registers`, and then frees the DOS block again
+      - `simulate_int4b_service_8107_and_test_status_flag` at `0x874f0` and `simulate_int4b_service_8108` at `0x8755c` are the paired simulated-real-mode wrappers for services `0x8107` and `0x8108`; the exact driver semantics behind those services are still unresolved
+      - `allocate_dos_memory_block_via_dpmi`, `free_dos_memory_block_selector_via_dpmi`, and `free_ldt_selector_via_dpmi` are the supporting DPMI helpers beneath that path
   - The higher-level streamed-music state on top of that backend is now explicit:
     - `g_music_stream_state` at `0xca1d4` is the persistent room/menu/game-over music stream object.
     - `g_current_music_path` caches the current music filename so room transitions and scripted overrides can restore it.
@@ -625,6 +673,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - The stream-layer helpers are now named:
     - `start_music_stream` at `0x1bfc0` swaps to a new room/menu music file, opens the backing XFILE stream, primes the first audio chunk, and allocates a backend voice slot.
     - `update_music_stream` at `0x1b9a0` is the per-frame pump used by menus, dialogue waits, room logic, and the main loop; it refills stream buffers and applies pending volume ramps.
+    - `release_music_stream_buffers` at `0x1a440` frees the stream's decode/ring buffers, unlocks their linear regions, and stops the active voice slot if that slot/token still belongs to the stream.
     - `pause_music_stream` at `0x1a620` stops the active voice without closing the underlying stream.
     - `resume_music_stream` at `0x1a740` restarts a previously paused music stream.
     - `fade_in_music_stream` at `0x1adf0` and `fade_out_music_stream` at `0x1b3b0` are the paired ramp controllers used by town-map and scripted transition paths.
@@ -645,7 +694,15 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `load_dialogue_voice_sample` at `0x191d0` is the `play_dialogue_line`-specific loader that accepts either `WAVE` or `FCMP` voice assets and prepares them for one-shot playback through the shared sample backend.
   - `stop_sound_state_and_close_stream_file` at `0x1c4e0` is the shared cleanup path that stops active backend playback for a sound state and closes its backing stream/file handle at offset `+0x88`.
   - `run_fst_sequence_player` at `0x12b00` is the inner FST decoder/player reached from `play_fst_sequence`.
-    - It reads the FST frame table, optional audio payload, performs the actual frame decode loop, and uses `get_sound_state_playback_position` to keep movie frames aligned with the loaded soundtrack.
+    - `FstFileHeader` is now a confirmed 0x20-byte header with fields `magic`, `width`, `height`, `max_frame_size`, `frame_count`, `frame_rate`, `sample_rate`, and `bits_per_sample`.
+    - `FstFrameIndexEntry` is the 6-byte per-frame index record `{ video_size, audio_size }`; `run_fst_sequence_player` reads `frame_count` of them immediately after the header and then reads `video_size + audio_size` bytes for each frame.
+    - It configures `g_video_surface_context` from the header width/height at 8bpp backend class `1`, seeds PCM playback from the header sample rate / bits per sample, computes `bytes_per_frame = get_pcm_byte_rate(...) / frame_rate`, and uses `get_sound_state_playback_position` to keep movie frames aligned with the loaded soundtrack.
+    - The per-frame payload begins with a 16-bit bit-count, followed by the packed bitstream and then the block payload bytes.
+      - The first bit controls whether a 256-color VGA palette chunk is present.
+      - The frame body then decodes 4x4 tiles either from raw 16-byte pixel blocks or from compact 4-byte two-color mask blocks before blitting through the active VESA backend.
+    - `g_fst_censorship_toggle_entries` at `0xc1014` is now typed as `FstCensorshipToggleEntry[25]`.
+      - Each `0x118`-byte entry contains a movie basename in `sequence_name[0x100]` followed by six `toggle_frame_indices`.
+      - `run_fst_sequence_player` scans those records by basename and, on matching frame indices, toggles between restoring the saved palette and blitting `GRAPHIC\\OTHER\\CENSORED.PCX`.
     - `upload_vga_palette` at `0x482c0` is the shared 256-entry VGA DAC upload helper used by the FST player when it restores or swaps palette pages.
     - `load_pcx_bitmap` at `0x4a230` is the direct-file `PCX` loader used by the FST censorship path; it reads the whole file through XFILE, RLE-decodes the `0x80`-byte-header payload into a `RawBitmap`, trims oversized stride bytes, and optionally uploads the trailing 256-color palette.
 - `run_harvester_main_loop` maintains `g_current_interaction_text`, `g_pending_interaction_text`, and `g_interaction_text_entity` for hover / use prompts.
