@@ -750,6 +750,8 @@ private:
 	static void listUsableThemes(const Common::FSNode &node, Common::List<ThemeDescriptor> &list, int depth = -1);
 	static void listUsableThemes(Common::Archive &archive, Common::List<ThemeDescriptor> &list);
 
+	Common::Archive *createUnpackedThemeArchive(const Common::FSNode &themeDir);
+
 protected:
 	OSystem *_system; /** Global system object. */
 
