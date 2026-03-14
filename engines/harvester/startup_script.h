@@ -60,6 +60,22 @@ struct StartupObjectRecord {
 	bool active = false;
 };
 
+struct StartupAnimRecord {
+	int initialFrame = 0;
+	int x = 0;
+	int y = 0;
+	int animationRate = 0;
+	Common::String roomName;
+	Common::String resourcePath;
+	Common::String animName;
+	bool active = false;
+	bool visible = false;
+	bool looping = false;
+	bool backward = false;
+	bool pingPong = false;
+	bool remove = false;
+};
+
 struct StartupFlagRecord {
 	Common::String name;
 	bool value = false;
@@ -88,6 +104,7 @@ struct StartupRoomSetupState {
 	float paletteBrightness = 1.0f;
 	Common::Array<StartupObjectRecord> activeObjects;
 	Common::Array<StartupObjectRecord> roomObjects;
+	Common::Array<StartupAnimRecord> roomAnimations;
 };
 
 struct StartupInteractionResult {
@@ -109,6 +126,7 @@ public:
 	const Common::Array<StartupEntranceRecord> &getEntrances() const { return _entrances; }
 	const Common::Array<StartupRoomRecord> &getRooms() const { return _rooms; }
 	const Common::Array<StartupObjectRecord> &getObjects() const { return _objects; }
+	const Common::Array<StartupAnimRecord> &getAnimations() const { return _animations; }
 	const Common::Array<StartupFlagRecord> &getFlags() const { return _flags; }
 	const Common::Array<StartupCommandRecord> &getCommands() const { return _commands; }
 	const Common::Array<StartupTextRecord> &getTexts() const { return _texts; }
@@ -131,6 +149,7 @@ private:
 	Common::Array<StartupEntranceRecord> _entrances;
 	Common::Array<StartupRoomRecord> _rooms;
 	Common::Array<StartupObjectRecord> _objects;
+	Common::Array<StartupAnimRecord> _animations;
 	Common::Array<StartupFlagRecord> _flags;
 	Common::Array<StartupCommandRecord> _commands;
 	Common::Array<StartupTextRecord> _texts;

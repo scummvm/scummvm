@@ -81,6 +81,35 @@ static bool decodeAnimationFrame(const byte *source, uint32 sourceSize, bool com
 
 } // End of anonymous namespace
 
+bool RuntimeEntity::loadBitmapResource(ResourceManager &resources, const Common::String &path) {
+	Common::Array<byte> data;
+	if (!resources.loadFile(path, data) || data.size() < 12) {
+		warning("Harvester: unable to load runtime entity bitmap '%s'", path.c_str());
+		return false;
+	}
+
+	AbmFrame frame;
+	frame.width = READ_LE_UINT32(data.data());
+	frame.height = READ_LE_UINT32(data.data() + 4);
+	const uint32 pixelCount = frame.width * frame.height;
+	if (frame.width == 0 || frame.height == 0 || data.size() < 12 + pixelCount) {
+		warning("Harvester: invalid runtime bitmap '%s'", path.c_str());
+		return false;
+	}
+
+	frame.pixels.resize(pixelCount);
+	memcpy(frame.pixels.data(), data.data() + 12, pixelCount);
+
+	_frames.clear();
+	_frames.push_back(frame);
+	_resourcePath = path;
+	_currentFrame = 0;
+	_firstFrame = 0;
+	_lastFrame = 0;
+	_animationEnabled = false;
+	return true;
+}
+
 bool RuntimeEntity::loadAbmResource(ResourceManager &resources, const Common::String &path) {
 	Common::Array<byte> data;
 	if (!resources.loadFile(path, data) || data.size() < 8) {
@@ -144,6 +173,13 @@ void RuntimeEntity::setAnimationRate(int rate) {
 		_nextAnimationTick = 0;
 		_animationRate = rate;
 	}
+}
+
+void RuntimeEntity::setCurrentFrame(int frame) {
+	if (_frames.empty())
+		return;
+
+	advanceAnimationFrame(frame);
 }
 
 void RuntimeEntity::setAnimationSequence(int sequence) {
@@ -241,10 +277,15 @@ RuntimeEntityManager::~RuntimeEntityManager() {
 }
 
 void RuntimeEntityManager::clear() {
-	for (RuntimeEntity *entity : _entities)
-		delete entity;
-	_entities.clear();
+	clearSceneEntities();
+	delete _cursorEntity;
 	_cursorEntity = nullptr;
+}
+
+void RuntimeEntityManager::clearSceneEntities() {
+	for (RuntimeEntity *entity : _sceneEntities)
+		delete entity;
+	_sceneEntities.clear();
 }
 
 RuntimeEntity *RuntimeEntityManager::spawnAbmEntityFromResource(const Common::String &name,
@@ -262,7 +303,20 @@ RuntimeEntity *RuntimeEntityManager::spawnAbmEntityFromResource(const Common::St
 	entity->setLooping(looping);
 	entity->setPingPong(pingPong);
 	entity->setAnimationRate(animationRate);
-	_entities.push_back(entity);
+	return entity;
+}
+
+RuntimeEntity *RuntimeEntityManager::spawnBitmapEntityFromResource(const Common::String &name,
+		const Common::String &resourcePath, int classId, const Common::Point &position, float z) {
+	RuntimeEntity *entity = new RuntimeEntity();
+	if (!entity->loadBitmapResource(_resources, resourcePath)) {
+		delete entity;
+		return nullptr;
+	}
+
+	entity->setName(name);
+	entity->setClassId(classId);
+	entity->setPosition(position.x, position.y, z);
 	return entity;
 }
 
@@ -278,6 +332,39 @@ RuntimeEntity *RuntimeEntityManager::spawnCursorEntity(const Common::Point &posi
 	return _cursorEntity;
 }
 
+RuntimeEntity *RuntimeEntityManager::spawnSceneBitmapEntity(const Common::String &name,
+		const Common::String &resourcePath, const Common::Point &position, float z) {
+	RuntimeEntity *entity = spawnBitmapEntityFromResource(name, resourcePath, kRuntimeEntityClassObject,
+		position, z);
+	if (entity)
+		_sceneEntities.push_back(entity);
+	return entity;
+}
+
+RuntimeEntity *RuntimeEntityManager::spawnSceneAnimationEntity(const Common::String &name,
+		const Common::String &resourcePath, const Common::Point &position, float z, int animationRate,
+		bool active, bool visible, bool looping, bool playBackwards, bool pingPong, int initialFrame) {
+	RuntimeEntity *entity = spawnAbmEntityFromResource(name, resourcePath, kRuntimeEntityClassAnimation,
+		position, z, animationRate, looping, pingPong);
+	if (!entity)
+		return nullptr;
+
+	entity->setVisible(visible);
+	entity->setPlayBackwards(playBackwards);
+	if (initialFrame >= 0)
+		entity->setCurrentFrame(initialFrame);
+	else if (playBackwards)
+		entity->setCurrentFrame(entity->getLastFrame());
+	else
+		entity->setCurrentFrame(0);
+
+	if (!active && !visible)
+		entity->setVisible(false);
+
+	_sceneEntities.push_back(entity);
+	return entity;
+}
+
 void RuntimeEntityManager::hideCursor() {
 	if (_cursorEntity)
 		_cursorEntity->setVisible(false);
@@ -286,6 +373,16 @@ void RuntimeEntityManager::hideCursor() {
 void RuntimeEntityManager::showCursor() {
 	if (_cursorEntity)
 		_cursorEntity->setVisible(true);
+}
+
+bool RuntimeEntityManager::tickSceneEntities() {
+	const uint32 now = g_system->getMillis();
+	bool changed = false;
+
+	for (RuntimeEntity *entity : _sceneEntities)
+		changed |= entity->tickVisualState(now);
+
+	return changed;
 }
 
 bool RuntimeEntityManager::syncCursorEntityPosition(const Common::Point &position) {
@@ -300,6 +397,11 @@ bool RuntimeEntityManager::syncCursorEntityPosition(const Common::Point &positio
 void RuntimeEntityManager::drawCursor(Graphics::Screen &screen) const {
 	if (_cursorEntity)
 		_cursorEntity->draw(screen);
+}
+
+void RuntimeEntityManager::drawSceneEntities(Graphics::Screen &screen) const {
+	for (RuntimeEntity *entity : _sceneEntities)
+		entity->draw(screen);
 }
 
 } // End of namespace Harvester

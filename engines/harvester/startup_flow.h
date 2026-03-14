@@ -26,6 +26,7 @@
 #include "common/error.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "harvester/startup_script.h"
 
 namespace Common {
 struct Event;
@@ -49,11 +50,13 @@ private:
 	Common::Error runMainMenuStub();
 	Common::Error runRoomSetupStub(const Common::String &entranceName);
 	bool ensureCursorEntity();
+	bool populateRoomSceneEntities(const Common::Array<StartupObjectRecord> &drawableObjects,
+		const Common::Array<StartupAnimRecord> &drawableAnimations);
 	Common::Error beginRoomSetupTransition();
 	Common::Error fadeInRoomScene(const byte *palette, float targetBrightness);
 	bool pumpTransitionEvents(Common::Error &result);
 	void resetCursorAnimationSequence();
-	bool tickCursorAnimation();
+	bool tickRuntimeEntities();
 	void renderMainMenuStub(int selectedItem, const Common::String &statusMessage) const;
 	bool handleSystemEvent(const Common::Event &event, Common::Error &result);
 	int getMenuItemAt(const Common::Point &mousePos) const;

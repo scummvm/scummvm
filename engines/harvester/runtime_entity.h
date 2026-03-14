@@ -36,12 +36,14 @@ namespace Harvester {
 class ResourceManager;
 
 enum RuntimeEntityClass {
+	kRuntimeEntityClassObject = 0,
 	kRuntimeEntityClassAnimation = 1,
 	kRuntimeEntityClassCursor = 2
 };
 
 class RuntimeEntity {
 public:
+	bool loadBitmapResource(ResourceManager &resources, const Common::String &path);
 	bool loadAbmResource(ResourceManager &resources, const Common::String &path);
 
 	void setName(const Common::String &name) { _name = name; }
@@ -52,6 +54,7 @@ public:
 
 	void setLooping(bool looping) { _looping = looping; }
 	void setPingPong(bool pingPong) { _pingPong = pingPong; }
+	void setPlayBackwards(bool playBackwards) { _playBackwards = playBackwards; }
 	void setVisible(bool visible) { _visible = visible; }
 	bool isVisible() const { return _visible; }
 
@@ -62,6 +65,9 @@ public:
 
 	void setAnimationRate(int rate);
 	int getAnimationRate() const { return _animationRate; }
+	void setCurrentFrame(int frame);
+	int getCurrentFrame() const { return _currentFrame; }
+	int getLastFrame() const { return _lastFrame; }
 	void setAnimationSequence(int sequence);
 	int getAnimationSequence() const { return _animationSequence; }
 
@@ -99,18 +105,28 @@ public:
 	~RuntimeEntityManager();
 
 	void clear();
+	void clearSceneEntities();
 	RuntimeEntity *spawnAbmEntityFromResource(const Common::String &name, const Common::String &resourcePath,
 		int classId, const Common::Point &position, float z, int animationRate, bool looping, bool pingPong);
+	RuntimeEntity *spawnBitmapEntityFromResource(const Common::String &name, const Common::String &resourcePath,
+		int classId, const Common::Point &position, float z);
 	RuntimeEntity *spawnCursorEntity(const Common::Point &position);
+	RuntimeEntity *spawnSceneBitmapEntity(const Common::String &name, const Common::String &resourcePath,
+		const Common::Point &position, float z);
+	RuntimeEntity *spawnSceneAnimationEntity(const Common::String &name, const Common::String &resourcePath,
+		const Common::Point &position, float z, int animationRate, bool active, bool visible, bool looping,
+		bool playBackwards, bool pingPong, int initialFrame);
 	RuntimeEntity *getCursorEntity() const { return _cursorEntity; }
 	void hideCursor();
 	void showCursor();
+	bool tickSceneEntities();
 	bool syncCursorEntityPosition(const Common::Point &position);
+	void drawSceneEntities(Graphics::Screen &screen) const;
 	void drawCursor(Graphics::Screen &screen) const;
 
 private:
 	ResourceManager &_resources;
-	Common::Array<RuntimeEntity *> _entities;
+	Common::Array<RuntimeEntity *> _sceneEntities;
 	RuntimeEntity *_cursorEntity = nullptr;
 };
 

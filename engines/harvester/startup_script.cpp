@@ -82,6 +82,7 @@ bool StartupScript::load(ResourceManager &resources) {
 	_entrances.clear();
 	_rooms.clear();
 	_objects.clear();
+	_animations.clear();
 	_flags.clear();
 	_commands.clear();
 	_texts.clear();
@@ -142,6 +143,7 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 	_entrances.clear();
 	_rooms.clear();
 	_objects.clear();
+	_animations.clear();
 	_flags.clear();
 	_commands.clear();
 	_texts.clear();
@@ -158,7 +160,7 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 
 		uint tagIndex = tokens.size();
 		for (uint i = 0; i < tokens.size(); ++i) {
-			if (tokens[i] == "ENTRANCE" || tokens[i] == "ROOM" || tokens[i] == "OBJECT" ||
+			if (tokens[i] == "ANIM" || tokens[i] == "ENTRANCE" || tokens[i] == "ROOM" || tokens[i] == "OBJECT" ||
 				tokens[i] == "FLAG" || tokens[i] == "COMMAND" || tokens[i] == "TEXT") {
 				tagIndex = i;
 				break;
@@ -251,6 +253,31 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 			return;
 		}
 
+		if (tag == "ANIM") {
+			if (tokens.size() < tagIndex + 10)
+				return;
+
+			StartupAnimRecord anim;
+			if (tagIndex >= 4) {
+				anim.initialFrame = atoi(tokens[0].c_str());
+				anim.x = atoi(tokens[1].c_str());
+				anim.y = atoi(tokens[2].c_str());
+				anim.animationRate = atoi(tokens[3].c_str());
+			}
+			anim.roomName = tokens[tagIndex + 1];
+			anim.resourcePath = resources.normalizeResourcePath(tokens[tagIndex + 2]);
+			anim.animName = tokens[tagIndex + 3];
+			anim.active = tokens[tagIndex + 4].equalsIgnoreCase("T");
+			anim.visible = tokens[tagIndex + 5].equalsIgnoreCase("T");
+			anim.looping = tokens[tagIndex + 6].equalsIgnoreCase("T");
+			anim.backward = tokens[tagIndex + 7].equalsIgnoreCase("T");
+			anim.pingPong = tokens[tagIndex + 8].equalsIgnoreCase("T");
+			anim.remove = tokens[tagIndex + 9].equalsIgnoreCase("T");
+			if (!anim.roomName.empty() && !anim.resourcePath.empty() && !anim.animName.empty())
+				_animations.push_back(anim);
+			return;
+		}
+
 		if (tokens.size() < tagIndex + 13)
 			return;
 
@@ -291,8 +318,8 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 
 	parseLine(line);
 
-	debug(1, "Harvester: parsed %u entrances, %u rooms, %u objects, %u flags, %u commands, %u texts from '%s'",
-		(uint)_entrances.size(), (uint)_rooms.size(), (uint)_objects.size(),
+	debug(1, "Harvester: parsed %u entrances, %u rooms, %u objects, %u anims, %u flags, %u commands, %u texts from '%s'",
+		(uint)_entrances.size(), (uint)_rooms.size(), (uint)_objects.size(), (uint)_animations.size(),
 		(uint)_flags.size(), (uint)_commands.size(), (uint)_texts.size(), _path.c_str());
 }
 
@@ -344,6 +371,10 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 	for (const StartupObjectRecord &object : _objects) {
 		if (object.ownerOrRoom.equalsIgnoreCase(room->roomName))
 			state.roomObjects.push_back(object);
+	}
+	for (const StartupAnimRecord &anim : _animations) {
+		if (anim.roomName.equalsIgnoreCase(room->roomName))
+			state.roomAnimations.push_back(anim);
 	}
 
 	Common::Array<StartupFlagRecord> resolvedFlags = _flags;
