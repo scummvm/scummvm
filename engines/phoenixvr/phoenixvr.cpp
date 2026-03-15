@@ -409,7 +409,7 @@ bool PhoenixVREngine::goToWarp(const Common::String &warp, bool savePrev) {
 		_nextWarp = _script->getWarp(warp);
 
 	_hoverIndex = -1;
-	if (savePrev && !gameIdMatches("amerzone")) {
+	if (savePrev) {
 		assert(_warpIdx >= 0);
 		_prevWarp = _warpIdx;
 		// saving thumbnail
