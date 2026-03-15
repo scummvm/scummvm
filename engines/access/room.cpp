@@ -796,7 +796,7 @@ void Room::executeCommand(int commandId) {
 			break;
 		case 4:
 			events.setCursor(CURSOR_ARROW);
-			if (_vm->_inventory->newDisplayInv() == 2) {
+			if (_vm->_inventory->displayInv() == 2) {
 				commandOff();
 				return;
 			}
@@ -820,17 +820,19 @@ void Room::executeCommand(int commandId) {
 		assert(_vm->getGameID() == kGameNoctropolis);
 		// See the code in NoctRoomEngine::afterDoCommandsTick
 		if (commandId == Noctropolis::kNoctCmdInventory) {
-			/*
 			while (!_vm->shouldQuitOrRestart()) {
-				runInventory();
+				Noctropolis::NoctropolisEngine *vm = (Noctropolis::NoctropolisEngine *)_vm;
+				vm->_inventory->displayInv();
 				//debug("getVariable(99) = %d", getVariable(99));
-				if (getVariable(99) == 62) {
-					runComicSpecialIssue();
-				} else if (getVariable(99) != 255) {
-					_inventoryScript->runLabel(getVariable(99));
+				if (_vm->_flags[99] == 62) {
+					vm->doSpecialComic();
+				} else if (_vm->_flags[99] != 255) {
+					vm->_invScript->_sequence = _vm->_flags[99];
+					vm->_invScript->searchForSequence();
+					vm->_invScript->executeScript();
 				} else
 					break;
-			}*/
+			}
 			warning("TODO: Implement Noctropolis inventory");
 		} else {
 			if (_vm->_exitBox)

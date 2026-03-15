@@ -24,6 +24,7 @@
 #include "access/amazon/amazon_resources.h"
 #include "access/amazon/amazon_room.h"
 #include "access/amazon/amazon_scripts.h"
+#include "access/amazon/amazon_inventory.h"
 
 namespace Access {
 
@@ -97,6 +98,7 @@ void AmazonEngine::configSelect() {
 }
 
 void AmazonEngine::initObjects() {
+	_inventory = new AmazonInventory(this);
 	_room = new AmazonRoom(this);
 	_scripts = new AmazonScripts(this);
 
