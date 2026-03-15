@@ -22,12 +22,13 @@
 #ifndef _ANDROID_H_
 #define _ANDROID_H_
 
+#include <android/log.h>
+
 #include "backends/platform/android/portdefs.h"
 #include "common/fs.h"
 #include "common/archive.h"
 #include "common/mutex.h"
 #include "common/ustr.h"
-#include "audio/mixer_intern.h"
 #include "backends/modular-backend.h"
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/fs/posix/posix-fs-factory.h"
@@ -37,8 +38,6 @@
 #include "engines/engine.h"
 
 #include <pthread.h>
-
-#include <android/log.h>
 
 // toggles start
 //#define ANDROID_DEBUG_ENTER
@@ -97,7 +96,7 @@ extern void checkGlError(const char *expr, const char *file, int line);
 
 void *androidGLgetProcAddress(const char *name);
 
-class OSystem_Android : public ModularGraphicsBackend, Common::EventSource {
+class OSystem_Android : public ModularGraphicsBackend, public ModularMixerBackend, Common::EventSource {
 private:
 	static const int kQueuedInputEventDelay = 50;
 
@@ -129,10 +128,6 @@ private:
 		}
 	};
 
-	// passed from the dark side
-	int _audio_sample_rate;
-	int _audio_buffer_size;
-
 	int _screen_changeid;
 
 	pthread_t _main_thread;
@@ -140,12 +135,8 @@ private:
 	bool _timer_thread_exit;
 	pthread_t _timer_thread;
 
-	bool _audio_thread_exit;
-	pthread_t _audio_thread;
-
 	bool _virtkeybd_on;
 
-	Audio::MixerImpl *_mixer;
 	timeval _startTime;
 
 	PauseToken _pauseToken;
@@ -185,7 +176,7 @@ private:
 #endif
 
 	static void *timerThreadFunc(void *arg);
-	static void *audioThreadFunc(void *arg);
+	void initAudio();
 	Common::String getSystemProperty(const char *name) const;
 
 	Common::WriteStream *createLogFileForAppending();
@@ -211,7 +202,7 @@ public:
 		SHOW_ON_SCREEN_ALL = 0xffffffff,
 	};
 
-	OSystem_Android(int audio_sample_rate, int audio_buffer_size);
+	OSystem_Android();
 	virtual ~OSystem_Android();
 
 	void initBackend() override;
@@ -259,7 +250,6 @@ public:
 
 	void setWindowCaption(const Common::U32String &caption) override;
 
-	Audio::Mixer *getMixer() override;
 	void getTimeAndDate(TimeDate &td, bool skipRecord = false) const override;
 	void logMessage(LogMessageType::Type type, const char *message) override;
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
