@@ -2,6 +2,13 @@
 
 ## Last Confirmed Action
 
+- Closed the startup room-loop verification pass with a bounded local probe.
+  - Added opt-in Harvester debug probes behind `harvester_debug_skip_startup_movies` and `harvester_debug_probe_startup_room` so the local capture can skip the intro FST trio and log room-loop facts without changing the default startup path.
+  - Using `/Users/alex/Temp/harvester_overlay_ugy21l06` with `QUICK_TIPS=OFF` plus `/Users/alex/Temp/harvester_probe_scummvm.ini`, the bounded run in `/Users/alex/Temp/harvester_startup_probe.log` now reaches `resolveRoomSetupState('START') -> room='PCROOM' entrance='START' spawn=(360,405,15) facing=1`.
+  - Confirmed the startup cursor reaches `sequence=7 frames=70..79 current=70`, and the runtime cursor blit preserves all `232` transparent pixels in frame `71`, matching the palette-index-`0` transparency fix rather than the old black-backed cursor path.
+  - Confirmed Steve is present in `PCROOM` at the `START` entrance: the probe logs `spawned startup player actor ... pos=(360,405,15) facing=1 frame=14`, and the live entity check reports `visible=1`, `intersects_screen=1`, and `opaque_pixels=3143`.
+  - Confirmed the direct room-loop handoff resolves active startup interactions: the probe hits `PC_DRESR1` at `(142,339)`, resolves label `dresser`, keeps action tag `COM1A`, and reports a supported interaction into closeup room `PCDRWR`.
+  - Rebuilt `build-vscode-harvester-debug/scummvm` successfully; Ghidra function counts remain unchanged.
 - Closed the startup room-loop / player-presence pass.
   - Confirmed in Ghidra that `run_harvester_main_loop` stores the live player actor before the first `room_setup`, and `room_setup` later re-adds that actor from `DAT_000d5bd4` using the active entrance coordinates/facing instead of constructing a fresh PCROOM-local NPC.
   - Confirmed `room_setup` seeds exact startup-facing frames `0x3b`, `0x0e`, `0x2c`, and `0x28` for entrance-facing values `0`, `1`, `2`, and `3`.
@@ -205,6 +212,6 @@
 ## Next Suggested Action
 
 - Highest-value targets:
-  - run the normal startup capture and verify three concrete points in one pass: transparent cursor background, Steve visible in `PCROOM` at the `START` entrance, and preserved hotspot hover/click behavior through the direct quick-tips -> room-loop handoff
-  - if player placement is still off, take a focused Ghidra pass through `set_entity_screen_position` / `rescale_entity_sprite_for_depth` callsites to recover the exact screen-position math before porting movement
-  - port `show_target_ident_text` / `handle_target_interaction` behavior into the room loop so hover text and click dispatch can move off the current prototype overlay
+  - port `show_target_ident_text` / `handle_target_interaction` behavior into the room loop so the verified `PCROOM` hover/click path can move off the current prototype overlay text
+  - once that path is in place, rerun the bounded startup probe and a normal startup capture to confirm the dresser `COM1A -> PCDRWR` interaction follows the same status/message flow as the original room loop
+  - if player placement regresses during that port, take a focused Ghidra pass through `set_entity_screen_position` / `rescale_entity_sprite_for_depth` callsites to recover the exact screen-position math before touching movement

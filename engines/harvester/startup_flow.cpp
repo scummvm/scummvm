@@ -21,6 +21,7 @@
 
 #include "harvester/startup_flow.h"
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/events.h"
@@ -277,6 +278,11 @@ static bool loadRoomSceneResources(const StartupRoomSetupState &state, ResourceM
 	return true;
 }
 
+static bool shouldRunStartupRoomProbe() {
+	return ConfMan.hasKey("harvester_debug_probe_startup_room") &&
+		ConfMan.getBool("harvester_debug_probe_startup_room");
+}
+
 static void drawRoomScene(HarvesterEngine &engine, Graphics::Screen &screen, const StartupRoomSceneResources &scene,
 		float brightness) {
 	setScaledPalette(screen, scene.palette, brightness);
@@ -306,6 +312,106 @@ static const StartupObjectRecord *findRoomObjectAtPoint(HarvesterEngine &engine,
 		return nullptr;
 
 	return findSceneObjectByName(sceneObjects, entity->getName());
+}
+
+static bool findRoomObjectProbePoint(HarvesterEngine &engine, const Common::Array<StartupObjectRecord> &sceneObjects,
+		const StartupObjectRecord &object, Common::Point &probePoint) {
+	const Common::Rect bounds = getHotspotBounds(object);
+	if (bounds.isEmpty())
+		return false;
+
+	const Common::Point center((bounds.left + bounds.right - 1) / 2, (bounds.top + bounds.bottom - 1) / 2);
+	const Common::Point corners[] = {
+		center,
+		Common::Point(bounds.left, bounds.top),
+		Common::Point(bounds.right - 1, bounds.top),
+		Common::Point(bounds.left, bounds.bottom - 1),
+		Common::Point(bounds.right - 1, bounds.bottom - 1)
+	};
+	for (const Common::Point &candidate : corners) {
+		const StartupObjectRecord *hit = findRoomObjectAtPoint(engine, sceneObjects, candidate);
+		if (hit && hit->objectName.equalsIgnoreCase(object.objectName)) {
+			probePoint = candidate;
+			return true;
+		}
+	}
+
+	const int xStep = MAX<int>(1, bounds.width() / 6);
+	const int yStep = MAX<int>(1, bounds.height() / 6);
+	for (int y = bounds.top; y < bounds.bottom; y += yStep) {
+		for (int x = bounds.left; x < bounds.right; x += xStep) {
+			const Common::Point candidate(x, y);
+			const StartupObjectRecord *hit = findRoomObjectAtPoint(engine, sceneObjects, candidate);
+			if (hit && hit->objectName.equalsIgnoreCase(object.objectName)) {
+				probePoint = candidate;
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+static void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneResources &scene,
+		const Common::String &entranceName, Common::Point &mousePos) {
+	RuntimeEntityManager *runtimeEntities = engine.getRuntimeEntities();
+	StartupScript *startupScript = engine.getStartupScript();
+	if (!runtimeEntities || !startupScript)
+		return;
+
+	if (const RuntimeEntity *cursor = runtimeEntities->getCursorEntity()) {
+		uint32 framePixels = 0;
+		uint32 transparentPixels = 0;
+		uint32 preservedPixels = 0;
+		if (cursor->measureCurrentFrameTransparency(framePixels, transparentPixels, preservedPixels)) {
+			debugC(1, kDebugGeneral,
+				"Harvester: startup probe cursor sequence=%d frame=%d pixels=%u transparent_pixels=%u preserved_pixels=%u",
+				cursor->getAnimationSequence(), cursor->getCurrentFrame(), framePixels, transparentPixels, preservedPixels);
+		}
+	}
+
+	if (const RuntimeEntity *player = runtimeEntities->findSceneEntityByName(kPlayerActorEntityName)) {
+		uint32 framePixels = 0;
+		uint32 transparentPixels = 0;
+		uint32 preservedPixels = 0;
+		(void)player->measureCurrentFrameTransparency(framePixels, transparentPixels, preservedPixels);
+		const Common::Rect playerRect = player->getScreenRect();
+		const Common::Rect screenRect(0, 0, 640, 480);
+		debugC(1, kDebugGeneral,
+			"Harvester: startup probe player room='%s' entrance='%s' frame=%d rect=(%d,%d)-(%d,%d) visible=%d intersects_screen=%d opaque_pixels=%u",
+			scene.state.roomName.c_str(), entranceName.c_str(), player->getCurrentFrame(),
+			playerRect.left, playerRect.top, playerRect.right, playerRect.bottom,
+			player->isVisible(), playerRect.intersects(screenRect), framePixels - transparentPixels);
+	}
+
+	for (const StartupObjectRecord &object : scene.sceneObjects) {
+		if (getHotspotBounds(object).isEmpty())
+			continue;
+
+		Common::Point probePoint;
+		if (!findRoomObjectProbePoint(engine, scene.sceneObjects, object, probePoint))
+			continue;
+
+		const StartupObjectRecord *hoveredObject = findRoomObjectAtPoint(engine, scene.sceneObjects, probePoint);
+		if (!hoveredObject)
+			continue;
+
+		mousePos = probePoint;
+		const Common::String objectLabel = startupScript->resolveObjectLabel(*hoveredObject);
+		StartupInteractionResult interaction;
+		StartupResolvedText inspectText;
+		const bool hasInteraction = startupScript->resolveObjectInteraction(*hoveredObject, interaction);
+		const bool hasInspectText = startupScript->resolveObjectInspectText(*hoveredObject, inspectText);
+		debugC(1, kDebugGeneral,
+			"Harvester: startup probe hotspot room='%s' object='%s' point=(%d,%d) label='%s' action_tag='%s' interaction=%d next_room='%s' inspect=%d",
+			scene.state.roomName.c_str(), hoveredObject->objectName.c_str(), probePoint.x, probePoint.y,
+			objectLabel.c_str(), hoveredObject->actionTag.c_str(), hasInteraction,
+			interaction.nextRoomName.c_str(), hasInspectText);
+		return;
+	}
+
+	debugC(1, kDebugGeneral, "Harvester: startup probe found no interactive hotspot in room '%s'",
+		scene.state.roomName.c_str());
 }
 
 static Common::String trimAsciiLine(const Common::String &value) {
@@ -678,6 +784,9 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 	bool inspectCanDismiss = false;
 	bool needsRedraw = true;
 	Graphics::FrameLimiter limiter(g_system, 60);
+
+	if (shouldRunStartupRoomProbe())
+		logStartupRoomProbe(_engine, scene, entranceName, _mousePos);
 
 	while (!_engine.shouldQuit()) {
 		if (needsRedraw) {
