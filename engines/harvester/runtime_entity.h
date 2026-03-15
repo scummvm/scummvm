@@ -93,6 +93,8 @@ public:
 	void setHitTestMode(RuntimeEntityHitTestMode mode) { _hitTestMode = mode; }
 	int getBoundsWidth() const { return _boundsWidth; }
 	int getBoundsHeight() const { return _boundsHeight; }
+	bool getCurrentFrameMetrics(int &width, int &height, int &xOffset, int &yOffset) const;
+	void setDepthScale(float scale);
 	Common::Rect getScreenRect() const;
 
 	bool hasFrames() const { return !_frames.empty(); }
@@ -109,10 +111,13 @@ private:
 	bool hasOpaqueFrame() const;
 	bool isOpaqueAt(const Common::Point &point) const;
 	void advanceAnimationFrame(int directive);
+	void updateBoundsFromCurrentFrame();
+	void rebuildScaledFrames();
 
 	Common::String _name;
 	Common::String _resourcePath;
 	Common::Array<AbmFrame> _frames;
+	Common::Array<AbmFrame> _baseFrames;
 	int _classId = 0;
 	int _x = 0;
 	int _y = 0;
@@ -135,6 +140,7 @@ private:
 	RuntimeEntityHitTestMode _hitTestMode = kRuntimeEntityHitTestNone;
 	RuntimeEntityAnchorMode _anchorMode = kRuntimeEntityAnchorTopLeft;
 	float _zExtent = 0.0f;
+	float _depthScale = 1.0f;
 };
 
 class RuntimeEntityManager {
@@ -166,6 +172,7 @@ public:
 	void drawCursor(Graphics::Screen &screen) const;
 	const RuntimeEntity *findTopSceneEntityAt(const Common::Point &point, int classIdFilter = -1) const;
 	const RuntimeEntity *findSceneEntityByName(const Common::String &name) const;
+	RuntimeEntity *findSceneEntityByName(const Common::String &name);
 
 private:
 	void insertSceneEntity(RuntimeEntity *entity);

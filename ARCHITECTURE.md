@@ -11,6 +11,8 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - `run_init_callbacks_by_priority` at `0x888a6` walks a 6-byte callback table and executes pending init callbacks in priority order.
 - `crt_initialize_and_run_program` at `0x88856` finishes CRT setup and transfers control into the program startup path.
 - `startup_main` at `0x10010` is the first game-specific startup routine. It stores `argc/argv`, resolves `TEMP` / `TMP` / `.\` working paths, loads options such as `FX_VOLUME`, `MUSIC_VOLUME`, `GAMMA`, `CLICK`, and `QUICK_TIPS`, handles the `Z.EXE` CLI/help path, and then enters the normal game startup chain.
+- `run_quick_tips_screen` at `0x6c890` is the startup quick-tips overlay shown on top of the already loaded `START -> PCROOM` room state.
+  - It spawns the bottom action labels through `spawn_text_entity`, renders all three actions in color `0xc3`, and resolves the toggle through the `TEXT` records so `Show_Tips_ON` / `Show_Tips_OFF` display their text values rather than the raw keys.
 
 ## Resource Layer
 
@@ -820,6 +822,8 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - `load_pcx_bitmap` at `0x4a230` is the direct-file `PCX` loader used by the FST censorship path; it reads the whole file through XFILE, RLE-decodes the `0x80`-byte-header payload into a `RawBitmap`, trims oversized stride bytes, and optionally uploads the trailing 256-color palette.
 - `run_harvester_main_loop` maintains `g_current_interaction_text`, `g_pending_interaction_text`, and `g_interaction_text_entity` for hover / use prompts.
   - It allocates both 100-byte text buffers during startup, formats prompts such as `Examine %s`, `Talk to %s`, `Pick up the %s`, `Operate the %s`, and `Use %s on %s`, suppresses prompts when the active label is `NULL_ID`, and only rebuilds the rendered label when the pending text differs from the current text.
+  - It also drives the room-loop cursor classification: sequence `0` for walkable floor-band movement, `1` for inspect / IDENT-first targets, `2` for talk, `4` for operate, `5` for pickup / use-item, `6` for region or room-transition targets, and `7` for neutral hover.
+  - Empty-floor clicks map the cursor's screen `x` directly into the player move target and derive the target depth from the current room's `max_z_screen_y` / `min_z_screen_y` movement band; the same loop also accepts directional-key movement.
 - `run_text_entry_dialog` at `0x59fe0` is the shared keyboard text-entry helper.
   - It is called from the save-game UI and the dialogue keyword UI, allocates a caller-sized entry buffer, handles keyboard editing and cancel/accept paths, and returns the entered string or `NULL`.
 - `spawn_text_entity` at `0x59c00` and `spawn_text_entry_entity` at `0x59f40` are the shared rendered-text constructors for menus, prompts, quick tips, and dialogue UI.
