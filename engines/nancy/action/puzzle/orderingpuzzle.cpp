@@ -462,7 +462,7 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 	if (_itemsStayDown && g_nancy->_sound->isSoundPlaying(_pushDownSound)) {
 		canClick = false;
 	} else if (_puzzleType == kPiano) {
-		for (int i = 0; i < _hotspots.size(); ++i) {
+		for (uint i = 0; i < _hotspots.size(); ++i) {
 			if (_downItems[i]) {
 				canClick = false;
 				break;
