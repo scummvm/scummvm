@@ -19,9 +19,12 @@
  *
  */
 
+#include <cstring>
+
 #include "harvester/harvester.h"
 
 #include "audio/audiostream.h"
+#include "audio/decoders/adpcm.h"
 #include "audio/decoders/wave.h"
 #include "common/config-manager.h"
 #include "common/system.h"
@@ -46,6 +49,37 @@ static bool shouldSkipStartupMoviesForDebug() {
 		ConfMan.getBool("harvester_debug_skip_startup_movies");
 }
 
+static Audio::SeekableAudioStream *openStartupAudioStream(ResourceManager &resources, const Common::String &path) {
+	Common::SeekableReadStream *stream = resources.openFile(path);
+	if (!stream)
+		return nullptr;
+
+	if (stream->size() >= 14) {
+		char magic[4];
+		stream->read(magic, sizeof(magic));
+		if (!memcmp(magic, "FCMP", sizeof(magic))) {
+			const uint32 payloadSizeFromHeader = stream->readUint32LE();
+			const uint32 sampleRate = stream->readUint32LE();
+			const uint16 bitsPerSample = stream->readUint16LE();
+			const uint32 availablePayloadSize = stream->size() - 14;
+			const uint32 payloadSize = payloadSizeFromHeader != 0
+				? MIN<uint32>(payloadSizeFromHeader, availablePayloadSize)
+				: availablePayloadSize;
+
+			if (sampleRate == 0 || bitsPerSample != 16 || payloadSize == 0) {
+				delete stream;
+				return nullptr;
+			}
+
+			return Audio::makeADPCMStream(stream, DisposeAfterUse::YES, payloadSize,
+				Audio::kADPCMDVI, sampleRate, 1);
+		}
+	}
+
+	stream->seek(0);
+	return Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+}
+
 } // End of anonymous namespace
 
 HarvesterEngine *g_engine = nullptr;
@@ -56,6 +90,7 @@ HarvesterEngine::HarvesterEngine(OSystem *syst, const ADGameDescription *gameDes
 }
 
 HarvesterEngine::~HarvesterEngine() {
+	stopStartupMusic();
 	stopStartupSound();
 	delete _startupText;
 	delete _startupArt;
@@ -74,18 +109,41 @@ bool HarvesterEngine::isGoreEnabled() const {
 	return !ConfMan.hasKey("gore") || ConfMan.getBool("gore");
 }
 
-bool HarvesterEngine::playStartupSound(const Common::String &path) {
-	stopStartupSound();
-	if (path.empty() || !_resources)
+bool HarvesterEngine::playStartupMusic(const Common::String &path) {
+	if (path.empty() || !_resources || !g_system || !g_system->getMixer())
 		return false;
 
-	Common::SeekableReadStream *stream = _resources->openFile(path);
-	if (!stream) {
-		warning("Harvester: unable to load startup sound '%s'", path.c_str());
+	const Common::String normalizedPath = _resources->normalizeResourcePath(path);
+	if (_startupMusicPath.equalsIgnoreCase(normalizedPath) &&
+			g_system->getMixer()->isSoundHandleActive(_startupMusicHandle)) {
+		return true;
+	}
+
+	Audio::SeekableAudioStream *audioStream = openStartupAudioStream(*_resources, path);
+	if (!audioStream) {
+		warning("Harvester: unable to decode startup music '%s'", path.c_str());
 		return false;
 	}
 
-	Audio::SeekableAudioStream *audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+	stopStartupMusic();
+	g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_startupMusicHandle,
+		Audio::makeLoopingAudioStream(audioStream, 0));
+	_startupMusicPath = normalizedPath;
+	return true;
+}
+
+void HarvesterEngine::stopStartupMusic() {
+	if (g_system && g_system->getMixer())
+		g_system->getMixer()->stopHandle(_startupMusicHandle);
+	_startupMusicPath.clear();
+}
+
+bool HarvesterEngine::playStartupSound(const Common::String &path) {
+	stopStartupSound();
+	if (path.empty() || !_resources || !g_system || !g_system->getMixer())
+		return false;
+
+	Audio::SeekableAudioStream *audioStream = openStartupAudioStream(*_resources, path);
 	if (!audioStream) {
 		warning("Harvester: unable to decode startup sound '%s'", path.c_str());
 		return false;

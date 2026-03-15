@@ -664,6 +664,8 @@ bool StartupScript::resolveObjectInteraction(const StartupObjectRecord &object, 
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("SPOOL_MUSIC")) {
+			if (result.musicPath.empty())
+				result.musicPath = command->arg1;
 			currentTag = command->arg4;
 			continue;
 		}
@@ -671,7 +673,7 @@ bool StartupScript::resolveObjectInteraction(const StartupObjectRecord &object, 
 		if (command->opcodeName.equalsIgnoreCase("CLOSEUP") ||
 			command->opcodeName.equalsIgnoreCase("CHANGE_ROOM")) {
 			result.nextRoomName = command->arg1;
-			return !result.nextRoomName.empty() || !result.soundPath.empty();
+			return !result.nextRoomName.empty() || !result.musicPath.empty() || !result.soundPath.empty();
 		}
 
 		debug(1, "Harvester: unsupported interaction command '%s' for tag '%s'",
@@ -679,7 +681,7 @@ bool StartupScript::resolveObjectInteraction(const StartupObjectRecord &object, 
 		break;
 	}
 
-	return !result.nextRoomName.empty() || !result.soundPath.empty();
+	return !result.nextRoomName.empty() || !result.musicPath.empty() || !result.soundPath.empty();
 }
 
 const StartupTextRecord *StartupScript::findTextRecord(const Common::String &key) const {
