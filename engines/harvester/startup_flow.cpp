@@ -796,21 +796,27 @@ static void drawRoomInspectText(Graphics::Screen &screen, const StartupArt &art,
 		kIdentTextColor);
 }
 
+static bool unlocksRoomObjectInteractionAfterInitialExamine(const StartupObjectRecord &object,
+		StartupScript &startupScript) {
+	return object.operatable || startupScript.isPickupObject(object);
+}
+
 static int resolveRoomObjectCursorSequence(const StartupObjectRecord &object, StartupScript &startupScript) {
 	if (object.objectName.equalsIgnoreCase("EXIT_BM") || object.objectName.equalsIgnoreCase("EXIT_HS"))
 		return kCursorSequenceTransition;
-	if (startupScript.isPickupObject(object))
-		return kCursorSequencePickup;
 
 	StartupResolvedText inspectText;
-	if (object.operatable && startupScript.hasObjectInteraction(object))
+	const bool pickupObject = startupScript.isPickupObject(object);
+	if (!object.identShown && unlocksRoomObjectInteractionAfterInitialExamine(object, startupScript))
+		return kCursorSequenceExamine;
+	if (pickupObject)
+		return kCursorSequencePickup;
+	if (object.operatable)
 		return kCursorSequenceOperate;
-	if (!object.identShown && startupScript.resolveObjectInspectText(object, inspectText))
+	if (startupScript.resolveObjectInspectText(object, inspectText))
 		return kCursorSequenceExamine;
 
 	if (startupScript.hasObjectInteraction(object))
-		return kCursorSequenceExamine;
-	if (startupScript.resolveObjectInspectText(object, inspectText))
 		return kCursorSequenceExamine;
 
 	return kCursorSequenceNeutral;
@@ -2157,15 +2163,21 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 				StartupResolvedText resolvedInspectText;
 				const bool hasInspectText =
 					_engine.getStartupScript()->resolveObjectInspectText(*clickedObject, resolvedInspectText);
-				const bool isPickupObject = _engine.getStartupScript()->isPickupObject(*clickedObject);
+				const bool unlocksAfterInitialExamine =
+					unlocksRoomObjectInteractionAfterInitialExamine(*clickedObject, *_engine.getStartupScript());
 				const bool canShowInspectText = hasInspectText &&
 					resolveInspectTextboxBitmap(*art, resolvedInspectText);
-				if (!isPickupObject && !clickedObject->identShown && canShowInspectText) {
-					inspectText = resolvedInspectText;
+				if (!clickedObject->identShown && unlocksAfterInitialExamine) {
 					clickedObject->identShown = true;
 					_engine.getStartupScript()->markObjectIdentShown(*clickedObject);
-					showingInspectText = true;
-					inspectCanDismiss = false;
+					if (canShowInspectText) {
+						inspectText = resolvedInspectText;
+						showingInspectText = true;
+						inspectCanDismiss = false;
+					} else if (hasInspectText) {
+						debug(1, "Harvester: unsupported IDENT textbox '%s' for object '%s'",
+							resolvedInspectText.boxName.c_str(), clickedObject->objectName.c_str());
+					}
 					playerState.hasMoveTarget = false;
 					playerState.turnActive = false;
 					playerState.turnTargetFacing = -1;
