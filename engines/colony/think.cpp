@@ -85,7 +85,7 @@ void ColonyEngine::copyOverflowObjectToSlot(int num) {
 		Thing replacement = source;
 		replacement.visible = 0;
 		_objects[num - 1] = replacement;
-		memset(&source, 0, sizeof(source));
+		source = Thing();
 		return;
 	}
 }

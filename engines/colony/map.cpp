@@ -55,7 +55,7 @@ static const int kStaticObjectStartIndex = kMeNum;
 static const int kMaxObjectSlots = 255;
 
 static void clearThing(Thing &thing) {
-	memset(&thing, 0, sizeof(thing));
+	thing = Thing();
 }
 
 static void ensureObjectLayout(Common::Array<Thing> &objects) {
@@ -91,9 +91,8 @@ void ColonyEngine::loadMap(int mnum) {
 	}
 
 	file->readUint32BE(); // "DAVE" header
-	int16 mapDefs[10];
 	for (int i = 0; i < 10; i++) {
-		mapDefs[i] = file->readSint16BE();
+		file->readSint16BE(); // skip map defs
 	}
 
 	uint16 bLength = file->readUint16BE();
@@ -179,8 +178,6 @@ void ColonyEngine::resetObjectSlot(int slot, int type, int xloc, int yloc, uint8
 	Thing &obj = _objects[slot];
 	clearThing(obj);
 	const int lvl = MIN<int>(MAX<int>(_level - 1, 0), 5);
-	while (ang > 255)
-		ang -= 256;
 	obj.opcode = 3; // FORWARD
 	obj.alive = 1;
 	obj.visible = 0;

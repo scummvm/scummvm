@@ -1082,7 +1082,7 @@ void ColonyEngine::drawStaticObjects() {
 }
 
 bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
-	const auto drawPrism = [&](const PrismPartDef &def, bool useLook, int colorOverride = -1, bool forceVisible = false) {
+	const auto drawPrism = [&](const PrismPartDef &def, bool useLook, int colorOverride, bool forceVisible) {
 		draw3DPrism(obj, def, useLook, colorOverride, true, forceVisible);
 	};
 	const auto drawSphere = [&](int pt0x, int pt0y, int pt0z, int pt1x, int pt1y, int pt1z,
@@ -1093,7 +1093,7 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 	                               uint32 fillColor, uint32 outlineColor) {
 		draw3DSphere(thing, pt0x, pt0y, pt0z, pt1x, pt1y, pt1z, fillColor, outlineColor, true);
 	};
-	const auto drawPrismOvalFor = [&](Thing &thing, const PrismPartDef &def, bool useLook, int colorOverride = -1) {
+	const auto drawPrismOvalFor = [&](Thing &thing, const PrismPartDef &def, bool useLook, int colorOverride) {
 		if (def.pointCount < 4 || def.surfaceCount < 1)
 			return;
 
@@ -1175,64 +1175,64 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 
 	switch (obj.type) {
 	case kObjConsole:
-		drawPrism(kConsolePart, false);
+		drawPrism(kConsolePart, false, -1, false);
 		break;
 	case kObjCChair:
 		for (int i = 0; i < 5; i++) {
 			_gfx->setDepthRange((4 - i) * 0.002, 1.0);
-			drawPrism(kCChairParts[i], false);
+			drawPrism(kCChairParts[i], false, -1, false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
 	case kObjPlant:
 		// DOS MakePlant draw order: top pot, then green leaf lines, then pot on top.
-		drawPrism(kPlantParts[1], false); // top pot (soil)
+		drawPrism(kPlantParts[1], false, -1, false); // top pot (soil)
 		for (int i = 2; i < 8; i++)
 			draw3DLeaf(obj, kPlantParts[i]); // leaves as lines
-		drawPrism(kPlantParts[0], false); // pot (drawn last, on top)
+		drawPrism(kPlantParts[0], false, -1, false); // pot (drawn last, on top)
 		break;
 	case kObjCouch:
 	case kObjChair: {
 		const PrismPartDef *parts = (obj.type == kObjCouch) ? kCouchParts : kChairParts;
 		for (int i = 0; i < 4; i++) {
 			_gfx->setDepthRange((3 - i) * 0.002, 1.0);
-			drawPrism(parts[i], false);
+			drawPrism(parts[i], false, -1, false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
 	}
 	case kObjTV:
 		_gfx->setDepthRange(0.002, 1.0); // body base layer (pushed back)
-		drawPrism(kTVParts[0], false);
+		drawPrism(kTVParts[0], false, -1, false);
 		_gfx->setDepthRange(0.0, 1.0);   // screen on top of body face
-		drawPrism(kTVParts[1], false);
+		drawPrism(kTVParts[1], false, -1, false);
 		break;
 	case kObjDrawer:
 		for (int i = 0; i < 2; i++) {
 			_gfx->setDepthRange((1 - i) * 0.002, 1.0);
-			drawPrism(kDrawerParts[i], false);
+			drawPrism(kDrawerParts[i], false, -1, false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
 	case kObjFWall:
 		if (_renderMode == Common::kRenderMacintosh && _hasMacColors)
-			drawPrism(kFWallPart, false, kColorCorridorWall);
+			drawPrism(kFWallPart, false, kColorCorridorWall, false);
 		else
-			drawPrism(kFWallPart, false);
+			drawPrism(kFWallPart, false, -1, false);
 		break;
 	case kObjCWall:
 		if (_renderMode == Common::kRenderMacintosh && _hasMacColors)
-			drawPrism(kCWallPart, false, kColorCorridorWall);
+			drawPrism(kCWallPart, false, kColorCorridorWall, false);
 		else
-			drawPrism(kCWallPart, false);
+			drawPrism(kCWallPart, false, -1, false);
 		break;
 	case kObjScreen:
-		drawPrism(kScreenPart, false);
+		drawPrism(kScreenPart, false, -1, false);
 		break;
 	case kObjTable:
 		for (int i = 0; i < 2; i++) {
 			_gfx->setDepthRange((1 - i) * 0.002, 1.0);
-			drawPrism(kTableParts[i], false);
+			drawPrism(kTableParts[i], false, -1, false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
@@ -1241,7 +1241,7 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		const PrismPartDef *parts = (obj.type == kObjBBed) ? kBBedParts : kBedParts;
 		for (int i = 0; i < 3; i++) {
 			_gfx->setDepthRange((2 - i) * 0.002, 1.0);
-			drawPrism(parts[i], false);
+			drawPrism(parts[i], false, -1, false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
@@ -1249,28 +1249,28 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 	case kObjDesk:
 		for (int i = 0; i < 10; i++) {
 			_gfx->setDepthRange((9 - i) * 0.002, 1.0);
-			drawPrism(kDeskParts[i], false);
+			drawPrism(kDeskParts[i], false, -1, false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
 	case kObjBox1:
-		drawPrism(kBox1Part, false);
+		drawPrism(kBox1Part, false, -1, false);
 		break;
 	case kObjBench:
-		drawPrism(kBenchPart, false);
+		drawPrism(kBenchPart, false, -1, false);
 		break;
 	case kObjCBench:
 		for (int i = 0; i < 2; i++) {
 			_gfx->setDepthRange((1 - i) * 0.002, 1.0);
-			drawPrism(kCBenchParts[i], false);
+			drawPrism(kCBenchParts[i], false, -1, false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
 	case kObjBox2:
 		_gfx->setDepthRange(0.002, 1.0);
-		drawPrism(kBox2Parts[1], false); // base first
+		drawPrism(kBox2Parts[1], false, -1, false); // base first
 		_gfx->setDepthRange(0.0, 1.0);
-		drawPrism(kBox2Parts[0], false); // top second
+		drawPrism(kBox2Parts[0], false, -1, false); // top second
 		break;
 	case kObjReactor: {
 		// MakeReactor: animate core height and recolor only the original
@@ -1341,12 +1341,12 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		// Depth separation matches the original draw order closely, but the
 		// per-face colors now follow MakeReactor() exactly.
 		_gfx->setDepthRange(0.004, 1.0);
-		drawPrism(modTopDef, false);
+		drawPrism(modTopDef, false, -1, false);
 		_gfx->setDepthRange(0.002, 1.0);
-		drawPrism(modRingDef, false);
+		drawPrism(modRingDef, false, -1, false);
 		if (_coreState[_coreIndex] < 2) {
 			_gfx->setDepthRange(0.0, 1.0);
-			drawPrism(modCoreDef, false);
+			drawPrism(modCoreDef, false, -1, false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
@@ -1359,76 +1359,76 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 
 		for (int i = 0; i < 4; i++) {
 			_gfx->setDepthRange((4 - i) * 0.002, 1.0);
-			drawPrism(kPowerSuitParts[i], false);
+			drawPrism(kPowerSuitParts[i], false, -1, false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
-		drawPrism(kPowerSuitParts[4], false, sourceColor);
+		drawPrism(kPowerSuitParts[4], false, sourceColor, false);
 		break;
 	}
 	case kObjTeleport:
-		drawPrism(kTelePart, false);
+		drawPrism(kTelePart, false, -1, false);
 		break;
 	case kObjCryo:
 		_gfx->setDepthRange(0.002, 1.0);
-		drawPrism(kCryoParts[1], false); // base first
+		drawPrism(kCryoParts[1], false, -1, false); // base first
 		_gfx->setDepthRange(0.0, 1.0);
-		drawPrism(kCryoParts[0], false); // top second
+		drawPrism(kCryoParts[0], false, -1, false); // top second
 		break;
 	case kObjProjector:
 		// Projector sits on table  draw table first, then projector parts
 		_gfx->setDepthRange(0.008, 1.0);
-		drawPrism(kTableParts[0], false); // table base
+		drawPrism(kTableParts[0], false, -1, false); // table base
 		_gfx->setDepthRange(0.006, 1.0);
-		drawPrism(kTableParts[1], false); // table top
+		drawPrism(kTableParts[1], false, -1, false); // table top
 		_gfx->setDepthRange(0.004, 1.0);
-		drawPrism(kProjectorParts[1], false); // stand
+		drawPrism(kProjectorParts[1], false, -1, false); // stand
 		_gfx->setDepthRange(0.002, 1.0);
-		drawPrism(kProjectorParts[0], false); // body
+		drawPrism(kProjectorParts[0], false, -1, false); // body
 		_gfx->setDepthRange(0.0, 1.0);
-		drawPrism(kProjectorParts[2], false); // lens
+		drawPrism(kProjectorParts[2], false, -1, false); // lens
 		break;
 	case kObjTub:
 		for (int i = 0; i < 2; i++) {
 			_gfx->setDepthRange((1 - i) * 0.002, 1.0);
-			drawPrism(kTubParts[i], false);
+			drawPrism(kTubParts[i], false, -1, false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
 	case kObjSink:
 		for (int i = 0; i < 3; i++) {
 			_gfx->setDepthRange((2 - i) * 0.002, 1.0);
-			drawPrism(kSinkParts[i], false);
+			drawPrism(kSinkParts[i], false, -1, false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
 	case kObjToilet:
 		for (int i = 0; i < 4; i++) {
 			_gfx->setDepthRange((3 - i) * 0.002, 1.0);
-			drawPrism(kToiletParts[i], false);
+			drawPrism(kToiletParts[i], false, -1, false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
 	case kObjPToilet:
 		for (int i = 0; i < 5; i++) {
 			_gfx->setDepthRange((4 - i) * 0.002, 1.0);
-			drawPrism(kPToiletParts[i], false);
+			drawPrism(kPToiletParts[i], false, -1, false);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
 	case kObjForkLift:
 		// Draw order: forks, arms, treads, cab (back-to-front)
 		_gfx->setDepthRange(0.010, 1.0);
-		drawPrism(kForkliftParts[3], false); // FLLL (left fork)
+		drawPrism(kForkliftParts[3], false, -1, false); // FLLL (left fork)
 		_gfx->setDepthRange(0.008, 1.0);
-		drawPrism(kForkliftParts[2], false); // FLUL (left arm)
+		drawPrism(kForkliftParts[2], false, -1, false); // FLUL (left arm)
 		_gfx->setDepthRange(0.006, 1.0);
-		drawPrism(kForkliftParts[5], false); // FLLR (right fork)
+		drawPrism(kForkliftParts[5], false, -1, false); // FLLR (right fork)
 		_gfx->setDepthRange(0.004, 1.0);
-		drawPrism(kForkliftParts[4], false); // FLUR (right arm)
+		drawPrism(kForkliftParts[4], false, -1, false); // FLUR (right arm)
 		_gfx->setDepthRange(0.002, 1.0);
-		drawPrism(kForkliftParts[1], false); // treads
+		drawPrism(kForkliftParts[1], false, -1, false); // treads
 		_gfx->setDepthRange(0.0, 1.0);
-		drawPrism(kForkliftParts[0], false); // cab
+		drawPrism(kForkliftParts[0], false, -1, false); // cab
 		break;
 	// === Robot types (1-20) ===
 	case kRobEye:
@@ -1437,50 +1437,50 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 			break;
 		}
 		drawSphere(0, 0, 100, 0, 0, 200, eyeballColor, kColorBlack);
-		drawPrismOvalFor(obj, kEyeIrisDef, false);
+		drawPrismOvalFor(obj, kEyeIrisDef, false, -1);
 		drawPrismOvalFor(obj, kEyePupilDef, false, pupilColor);
 		break;
 	case kRobPyramid:
-		drawPrism(kPShadowDef, false);
-		drawPrism(kPyramidBodyDef, false);
+		drawPrism(kPShadowDef, false, -1, false);
+		drawPrism(kPyramidBodyDef, false, -1, false);
 		drawSphere(0, 0, 175, 0, 0, 200, eyeballColor, kColorBlack);
-		drawPrismOvalFor(obj, kPIrisDef, false);
+		drawPrismOvalFor(obj, kPIrisDef, false, -1);
 		drawPrismOvalFor(obj, kPPupilDef, false, pupilColor);
 		break;
 	case kRobCube:
-		drawPrism(kCubeBodyDef, false);
+		drawPrism(kCubeBodyDef, false, -1, false);
 		break;
 	case kRobUPyramid:
-		drawPrism(kUPShadowDef, false);
-		drawPrism(kUPyramidBodyDef, false);
+		drawPrism(kUPShadowDef, false, -1, false);
+		drawPrism(kUPyramidBodyDef, false, -1, false);
 		break;
 	case kRobFEye:
 		drawSphere(0, 0, 0, 0, 0, 100, eyeballColor, kColorBlack);
-		drawPrismOvalFor(obj, kFEyeIrisDef, false);
+		drawPrismOvalFor(obj, kFEyeIrisDef, false, -1);
 		drawPrismOvalFor(obj, kFEyePupilDef, false, pupilColor);
 		break;
 	case kRobFPyramid:
-		drawPrism(kFPyramidBodyDef, false);
+		drawPrism(kFPyramidBodyDef, false, -1, false);
 		break;
 	case kRobFCube:
-		drawPrism(kFCubeBodyDef, false);
+		drawPrism(kFCubeBodyDef, false, -1, false);
 		break;
 	case kRobFUPyramid:
-		drawPrism(kFUPyramidBodyDef, false);
+		drawPrism(kFUPyramidBodyDef, false, -1, false);
 		break;
 	case kRobSEye:
 		drawSphere(0, 0, 0, 0, 0, 50, eyeballColor, kColorBlack);
-		drawPrismOvalFor(obj, kSEyeIrisDef, false);
+		drawPrismOvalFor(obj, kSEyeIrisDef, false, -1);
 		drawPrismOvalFor(obj, kSEyePupilDef, false, pupilColor);
 		break;
 	case kRobSPyramid:
-		drawPrism(kSPyramidBodyDef, false);
+		drawPrism(kSPyramidBodyDef, false, -1, false);
 		break;
 	case kRobSCube:
-		drawPrism(kSCubeBodyDef, false);
+		drawPrism(kSCubeBodyDef, false, -1, false);
 		break;
 	case kRobSUPyramid:
-		drawPrism(kSUPyramidBodyDef, false);
+		drawPrism(kSUPyramidBodyDef, false, -1, false);
 		break;
 	case kRobMEye:
 		drawSphere(0, 0, 0, 0, 0, 25, eyeballColor, kColorBlack);
@@ -1488,13 +1488,13 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		drawPrismOvalFor(obj, kMEyePupilDef, false, pupilColor);
 		break;
 	case kRobMPyramid:
-		drawPrism(kMPyramidBodyDef, false);
+		drawPrism(kMPyramidBodyDef, false, -1, false);
 		break;
 	case kRobMCube:
-		drawPrism(kMCubeBodyDef, false);
+		drawPrism(kMCubeBodyDef, false, -1, false);
 		break;
 	case kRobMUPyramid:
-		drawPrism(kMUPyramidBodyDef, false);
+		drawPrism(kMUPyramidBodyDef, false, -1, false);
 		break;
 	case kRobQueen:
 		{
@@ -1528,26 +1528,26 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 
 			drawPrism(farWing, false, wingColor, true);
 			drawSphereFor(farEye, 0, 0, 130, 0, 0, 155, eyeballColor, kColorBlack);
-			drawPrismOvalFor(farEye, kQIrisDef, true);
+			drawPrismOvalFor(farEye, kQIrisDef, true, -1);
 			drawPrismOvalFor(farEye, kQPupilDef, true, pupilColor);
 			mergeBounds(farEye);
 
-			drawPrism(kQThoraxDef, false);
-			drawPrism(kQAbdomenDef, false);
+			drawPrism(kQThoraxDef, false, -1, false);
+			drawPrism(kQAbdomenDef, false, -1, false);
 
 			drawPrism(nearWing, false, wingColor, true);
 			drawSphereFor(nearEye, 0, 0, 130, 0, 0, 155, eyeballColor, kColorBlack);
-			drawPrismOvalFor(nearEye, kQIrisDef, true);
+			drawPrismOvalFor(nearEye, kQIrisDef, true, -1);
 			drawPrismOvalFor(nearEye, kQPupilDef, true, pupilColor);
 			mergeBounds(nearEye);
 		}
 		break;
 	case kRobDrone:
-		drawPrism(kDAbdomenDef, false);
-		drawPrism(kDLLPincerDef, false);
-		drawPrism(kDRRPincerDef, false);
-		drawPrism(kDLEyeDef, false);
-		drawPrism(kDREyeDef, false);
+		drawPrism(kDAbdomenDef, false, -1, false);
+		drawPrism(kDLLPincerDef, false, -1, false);
+		drawPrism(kDRRPincerDef, false, -1, false);
+		drawPrism(kDLEyeDef, false, -1, false);
+		drawPrism(kDREyeDef, false, -1, false);
 		break;
 	case kRobSoldier:
 		{
@@ -1567,16 +1567,16 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 			const PrismPartDef leftPincerDef = {4, leftPincerPts, 4, kDLPincerSurf};
 			const PrismPartDef rightPincerDef = {4, rightPincerPts, 4, kDRPincerSurf};
 
-			drawPrism(kDAbdomenDef, false, kColorSoldierBody);
-			drawPrism(leftPincerDef, false);
-			drawPrism(rightPincerDef, false);
-			drawPrism(kDLEyeDef, false, kColorSoldierEye);
-			drawPrism(kDREyeDef, false, kColorSoldierEye);
+			drawPrism(kDAbdomenDef, false, kColorSoldierBody, false);
+			drawPrism(leftPincerDef, false, -1, false);
+			drawPrism(rightPincerDef, false, -1, false);
+			drawPrism(kDLEyeDef, false, kColorSoldierEye, false);
+			drawPrism(kDREyeDef, false, kColorSoldierEye, false);
 		}
 		break;
 	case kRobSnoop:
-		drawPrism(kSnoopAbdomenDef, false);
-		drawPrism(kSnoopHeadDef, false);
+		drawPrism(kSnoopAbdomenDef, false, -1, false);
+		drawPrism(kSnoopHeadDef, false, -1, false);
 		break;
 	default:
 		return false;

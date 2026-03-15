@@ -115,7 +115,7 @@ static void projectTunnelPoint(const Common::Rect &rect, int pnt[2], int rox, in
 
 	const int centerX = (rect.left + rect.right) >> 1;
 	const int centerY = (rect.top + rect.bottom) >> 1;
-	long p = centerX + (((long)rox) << 9) / roy;
+	long p = centerX + (((long)rox) * 512) / roy;
 
 	if (p < -32000)
 		p = -32000;
@@ -264,7 +264,7 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 	auto occupied = [&]() -> int {
 		return occupiedObjectAt(xind2, yind2, pobject);
 	};
-	auto moveTo = [&](uint8 trailCode = 0) -> int {
+	auto moveTo = [&](uint8 trailCode) -> int {
 		const int rnum = occupied();
 		if (rnum)
 			return rnum;
@@ -434,7 +434,7 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 		}
 	}
 
-	return moveTo();
+	return moveTo(0);
 }
 
 bool ColonyEngine::setDoorState(int x, int y, int direction, int state) {
