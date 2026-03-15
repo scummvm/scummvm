@@ -1324,9 +1324,10 @@ static void positionPlayerIdleAnimationEntity(const StartupRoomSetupState &state
 	if (!playerState.entity)
 		return;
 
+	const Common::Rect playerRect = playerState.entity->getScreenRect();
 	idleEntity.setAnchorMode(kRuntimeEntityAnchorTopLeft);
 	idleEntity.setDepthScale(computeActorDepthScale(state, playerState.z));
-	idleEntity.setPosition(playerState.entity->getX(), playerState.entity->getY() + kRoomPlayerIdleYOffset, playerState.z);
+	idleEntity.setPosition(playerRect.left, playerRect.top + kRoomPlayerIdleYOffset, playerState.z);
 }
 
 static RuntimeEntity *ensurePlayerIdleAnimationEntity(HarvesterEngine &engine,
@@ -1341,7 +1342,8 @@ static RuntimeEntity *ensurePlayerIdleAnimationEntity(HarvesterEngine &engine,
 
 	idleState.entity = runtimeEntities->spawnSceneAnimationEntity(
 		kPlayerIdleAnimationEntityName, kPlayerIdleAnimationResourcePath,
-		Common::Point(playerState.entity->getX(), playerState.entity->getY() + kRoomPlayerIdleYOffset),
+		Common::Point(playerState.entity->getScreenRect().left,
+			playerState.entity->getScreenRect().top + kRoomPlayerIdleYOffset),
 		playerState.z, 0, false, false, false, false, false);
 	if (!idleState.entity)
 		return nullptr;
