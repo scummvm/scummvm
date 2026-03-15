@@ -156,6 +156,7 @@ bool StartupScript::load(ResourceManager &resources) {
 	_flags.clear();
 	_commands.clear();
 	_texts.clear();
+	_useItems.clear();
 	_quickTipsEnabled = true;
 
 	loadConfig(resources);
@@ -218,6 +219,7 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 	_flags.clear();
 	_commands.clear();
 	_texts.clear();
+	_useItems.clear();
 
 	auto parseLine = [&](const Common::String &rawLine) {
 		const Common::String line = trimAsciiLine(rawLine);
@@ -232,7 +234,7 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 		uint tagIndex = tokens.size();
 		for (uint i = 0; i < tokens.size(); ++i) {
 			if (tokens[i] == "ANIM" || tokens[i] == "ENTRANCE" || tokens[i] == "ROOM" || tokens[i] == "OBJECT" ||
-				tokens[i] == "FLAG" || tokens[i] == "COMMAND" || tokens[i] == "TEXT") {
+				tokens[i] == "FLAG" || tokens[i] == "COMMAND" || tokens[i] == "TEXT" || tokens[i] == "USEITEM") {
 				tagIndex = i;
 				break;
 			}
@@ -293,6 +295,20 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 			}
 			if (!textRecord.key.empty())
 				_texts.push_back(textRecord);
+			return;
+		}
+
+		if (tag == "USEITEM") {
+			if (tokens.size() < tagIndex + 5)
+				return;
+
+			StartupUseItemRecord useItem;
+			useItem.itemName = tokens[tagIndex + 1];
+			useItem.ownerOrRoom = tokens[tagIndex + 2];
+			useItem.targetName = tokens[tagIndex + 3];
+			useItem.actionTag = tokens[tagIndex + 4];
+			if (!useItem.itemName.empty() && !useItem.targetName.empty())
+				_useItems.push_back(useItem);
 			return;
 		}
 
@@ -423,9 +439,9 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 
 	parseLine(line);
 
-	debug(1, "Harvester: parsed %u entrances, %u rooms, %u objects, %u anims, %u flags, %u commands, %u texts from '%s'",
+	debug(1, "Harvester: parsed %u entrances, %u rooms, %u objects, %u anims, %u flags, %u commands, %u texts, %u useitems from '%s'",
 		(uint)_entrances.size(), (uint)_rooms.size(), (uint)_objects.size(), (uint)_animations.size(),
-		(uint)_flags.size(), (uint)_commands.size(), (uint)_texts.size(), _path.c_str());
+		(uint)_flags.size(), (uint)_commands.size(), (uint)_texts.size(), (uint)_useItems.size(), _path.c_str());
 }
 
 bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, StartupRoomSetupState &state,
@@ -538,6 +554,20 @@ bool StartupScript::resolveObjectInteraction(const StartupObjectRecord &object, 
 		result.mutatedRuntimeState || hasActionableCommandChain(object.actionTag);
 }
 
+bool StartupScript::resolveUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target,
+		StartupInteractionResult &result) {
+	result = StartupInteractionResult();
+
+	const StartupUseItemRecord *useItem = findUseItemRecord(itemName, target);
+	if (!useItem)
+		return false;
+
+	executeCommandChain(useItem->actionTag, "useitem command",
+		Common::String::format("%s -> %s", itemName.c_str(), target.objectName.c_str()), true,
+		&result.musicPath, &result.audioCommands, &result.nextRoomName, &result.mutatedRuntimeState);
+	return true;
+}
+
 bool StartupScript::isPickupObject(const StartupObjectRecord &object) const {
 	return object.operatable &&
 		!object.altSpritePath.empty() &&
@@ -553,6 +583,19 @@ bool StartupScript::hasObjectInteraction(const StartupObjectRecord &object) cons
 	return hasActionableCommandChain(object.actionTag);
 }
 
+bool StartupScript::hasUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target) const {
+	return findUseItemRecord(itemName, target) != nullptr;
+}
+
+void StartupScript::getVisibleInventoryObjects(Common::Array<StartupObjectRecord> &objects) const {
+	objects.clear();
+
+	for (const StartupObjectRecord &object : _runtimeObjects) {
+		if (object.currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName) && object.visible)
+			objects.push_back(object);
+	}
+}
+
 void StartupScript::markObjectIdentShown(const StartupObjectRecord &object) {
 	if (StartupObjectRecord *runtimeObject = findRuntimeObject(object.currentOwnerOrRoom, object.objectName))
 		runtimeObject->identShown = true;
@@ -565,6 +608,28 @@ const StartupEntranceRecord *StartupScript::findEntranceRecord(const Common::Str
 	for (const StartupEntranceRecord &entrance : _entrances) {
 		if (entrance.entranceName.equalsIgnoreCase(entranceName))
 			return &entrance;
+	}
+
+	return nullptr;
+}
+
+const StartupUseItemRecord *StartupScript::findUseItemRecord(const Common::String &itemName,
+		const StartupObjectRecord &target) const {
+	if (itemName.empty() || target.objectName.empty())
+		return nullptr;
+
+	for (const StartupUseItemRecord &useItem : _useItems) {
+		if (!useItem.itemName.equalsIgnoreCase(itemName) ||
+			!useItem.targetName.equalsIgnoreCase(target.objectName)) {
+			continue;
+		}
+
+		if (!useItem.ownerOrRoom.empty() &&
+			!useItem.ownerOrRoom.equalsIgnoreCase(target.currentOwnerOrRoom)) {
+			continue;
+		}
+
+		return &useItem;
 	}
 
 	return nullptr;
@@ -653,6 +718,20 @@ StartupAnimRecord *StartupScript::findRuntimeAnim(const Common::String &animName
 	}
 
 	return nullptr;
+}
+
+bool StartupScript::addRuntimeObjectToInventory(const Common::String &objectName) {
+	StartupObjectRecord *runtimeObject = findRuntimeObject(Common::String(), objectName);
+	if (!runtimeObject)
+		return false;
+
+	const bool changed = !runtimeObject->currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName) ||
+		!runtimeObject->visible || !runtimeObject->runtimeVisible || !runtimeObject->identShown;
+	runtimeObject->currentOwnerOrRoom = kInventoryOwnerName;
+	runtimeObject->visible = true;
+	runtimeObject->runtimeVisible = true;
+	runtimeObject->identShown = true;
+	return changed;
 }
 
 bool StartupScript::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupEntranceRecord *entrance,
@@ -833,6 +912,12 @@ void StartupScript::executeCommandChain(const Common::String &initialTag, const 
 			continue;
 		}
 
+		if (command->opcodeName.equalsIgnoreCase("ADD2INV")) {
+			noteMutation(addRuntimeObjectToInventory(command->arg1));
+			currentTag = command->arg4;
+			continue;
+		}
+
 		if (command->opcodeName.equalsIgnoreCase("SET_ANIM")) {
 			StartupAnimRecord *runtimeAnim = findRuntimeAnim(command->arg1);
 			if (!runtimeAnim) {
@@ -892,6 +977,7 @@ bool StartupScript::hasActionableCommandChain(const Common::String &initialTag) 
 			command->opcodeName.equalsIgnoreCase("SPOOL_MUSIC") ||
 			command->opcodeName.equalsIgnoreCase("ADD") ||
 			command->opcodeName.equalsIgnoreCase("DELETE") ||
+			command->opcodeName.equalsIgnoreCase("ADD2INV") ||
 			command->opcodeName.equalsIgnoreCase("SET_ANIM") ||
 			command->opcodeName.equalsIgnoreCase("CLOSEUP") ||
 			command->opcodeName.equalsIgnoreCase("CHANGE_ROOM")) {
@@ -933,6 +1019,12 @@ bool StartupScript::resolveObjectInspectText(const StartupObjectRecord &object, 
 }
 
 Common::String StartupScript::resolveObjectLabel(const StartupObjectRecord &object) const {
+	if (object.currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName)) {
+		const StartupTextRecord *inventoryText = findTextRecord(object.inventoryTextKey);
+		if (inventoryText && !inventoryText->value.empty())
+			return inventoryText->value;
+	}
+
 	if (!object.interactionLabel.empty() && !object.interactionLabel.equalsIgnoreCase("NULL_ID"))
 		return normalizeInteractionLabel(object.interactionLabel);
 

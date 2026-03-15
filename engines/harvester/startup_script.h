@@ -125,6 +125,13 @@ struct StartupTextRecord {
 	Common::String value;
 };
 
+struct StartupUseItemRecord {
+	Common::String itemName;
+	Common::String ownerOrRoom;
+	Common::String targetName;
+	Common::String actionTag;
+};
+
 enum StartupAudioCommandType {
 	kStartupAudioCommandStartWav,
 	kStartupAudioCommandStartSingleWav,
@@ -190,6 +197,7 @@ public:
 	const Common::Array<StartupFlagRecord> &getFlags() const { return _flags; }
 	const Common::Array<StartupCommandRecord> &getCommands() const { return _commands; }
 	const Common::Array<StartupTextRecord> &getTexts() const { return _texts; }
+	const Common::Array<StartupUseItemRecord> &getUseItems() const { return _useItems; }
 	bool isQuickTipsEnabled() const { return _quickTipsEnabled; }
 	void setQuickTipsEnabled(bool enabled) { _quickTipsEnabled = enabled; }
 	void resetRuntimeState();
@@ -199,8 +207,12 @@ public:
 		StartupRoomSetupState &state) const;
 	bool executeRoomExitCommands(const Common::String &roomName, Common::Array<StartupAudioCommand> &audioCommands);
 	bool resolveObjectInteraction(const StartupObjectRecord &object, StartupInteractionResult &result);
+	bool resolveUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target,
+		StartupInteractionResult &result);
 	bool isPickupObject(const StartupObjectRecord &object) const;
 	bool hasObjectInteraction(const StartupObjectRecord &object) const;
+	bool hasUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target) const;
+	void getVisibleInventoryObjects(Common::Array<StartupObjectRecord> &objects) const;
 	void markObjectIdentShown(const StartupObjectRecord &object);
 	bool resolveObjectInspectText(const StartupObjectRecord &object, StartupResolvedText &text) const;
 	Common::String resolveObjectLabel(const StartupObjectRecord &object) const;
@@ -214,10 +226,12 @@ private:
 	const StartupRoomRecord *findRoomRecord(const Common::String &roomName) const;
 	const StartupCommandRecord *findCommandRecord(const Common::String &tag) const;
 	const StartupTextRecord *findTextRecord(const Common::String &key) const;
+	const StartupUseItemRecord *findUseItemRecord(const Common::String &itemName, const StartupObjectRecord &target) const;
 	const StartupFlagRecord *findRuntimeFlag(const Common::String &flagName) const;
 	StartupFlagRecord *findRuntimeFlag(const Common::String &flagName);
 	StartupObjectRecord *findRuntimeObject(const Common::String &ownerOrRoom, const Common::String &objectName);
 	StartupAnimRecord *findRuntimeAnim(const Common::String &animName);
+	bool addRuntimeObjectToInventory(const Common::String &objectName);
 	bool buildRuntimeRoomState(const StartupRoomRecord &room, const StartupEntranceRecord *entrance,
 		StartupRoomSetupState &state) const;
 	void executeCommandChain(const Common::String &initialTag, const char *contextLabel,
@@ -235,6 +249,7 @@ private:
 	Common::Array<StartupFlagRecord> _flags;
 	Common::Array<StartupCommandRecord> _commands;
 	Common::Array<StartupTextRecord> _texts;
+	Common::Array<StartupUseItemRecord> _useItems;
 	Common::Array<StartupFlagRecord> _runtimeFlags;
 	Common::Array<StartupObjectRecord> _runtimeObjects;
 	Common::Array<StartupAnimRecord> _runtimeAnimations;

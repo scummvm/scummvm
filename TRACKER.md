@@ -15,17 +15,17 @@
 
 ## Last Confirmed Action
 
-- Confirmed in Ghidra how native startup closeups and pickup hotspots differ from ordinary object interactions.
-  - `spawn_object_entity_from_record()` drives pickup cursor state from the object record's alternate inventory sprite path, while `run_harvester_main_loop()` uses that flag to select the native `Pick up the %s` prompt instead of `Operate the %s`.
-  - The native click path moves pickup targets into `INVENTORY` by changing the object record's owner, not by toggling visibility.
-  - `room_setup()` injects the global `EXIT_BM` and `EXIT_HS` objects whenever the room is entered in closeup mode, which explains the exit sign shown over rooms such as `PCDRWR`.
+- Confirmed in Ghidra how native startup inventory transfers work beyond the implicit pickup rule.
+  - `run_inventory_screen()` lays out visible `INVENTORY` objects, tracks the selected inventory item state, cancels that state on secondary click, and applies the selected item against either inventory targets or room targets while the inventory panel is open.
+  - `add_object_to_inventory()` moves named objects into `INVENTORY` and marks them visible/active there, which is the native backend used by script-driven `ADD2INV`.
+  - `g_useitem_records` stores `item_name`, `owner_or_room`, `target_name`, and `action_tag`; matching `USEITEM` records dispatch room event actions, while clicking a pickup-class room target with an item selected still picks the target up first.
 - Patched the startup stub to mirror that native behavior.
-  - Startup pickup targets now use the pickup cursor, move into `INVENTORY` on click, and rebuild the current room from runtime state so items such as `PC_PEN` and `QUARTER` disappear from the closeup after pickup.
-  - Closeup rooms without an entrance now materialize the global exit sign/hotspot pair, and clicking that exit unwinds back to the parent room through the existing recursive room-loop restore path so the player returns to the coordinates they had before entering the closeup.
+  - `HARVEST.SCR` parsing now includes `USEITEM`, startup command execution now applies `ADD2INV`, and actionable-command probing treats `ADD2INV` as a real interaction for cursor selection.
+  - The startup inventory overlay opens on `I`, keeps the selected item inside the overlay loop, and routes clicks against inventory or room targets through the native pickup-first / `USEITEM` precedence so script-driven transfers can mutate the runtime room and inventory state.
 
 ## Next Suggested Action
 
-1. Confirm and implement the remaining native inventory transfer paths exposed in `HARVEST.SCR`, especially script-driven `ADD2INV` and `USEITEM` flows that go beyond the implicit pickup rule.
+1. Runtime-test the newly wired startup inventory flows against DOSBox, especially `PC_PEN` on `LODGE_APPLICATION` and `DOLLY` on `PC_CABNET`, and fix any prompt/cursor mismatches that still appear.
 2. Parse startup NPC and timer records from `HARVEST.SCR`, then add persistent runtime state for the remaining confirmed exit and interaction opcodes: `SET_NPC`, `SET_TIMER`, and `KILL_TIMER`.
 3. Confirm the native side effects of those opcodes in Ghidra before naming any new runtime structures or script helpers.
 4. Parse `REGION` records from `HARVEST.SCR` into the startup script layer.
