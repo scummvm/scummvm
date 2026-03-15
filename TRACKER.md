@@ -15,21 +15,21 @@
 
 ## Last Confirmed Action
 
-- Confirmed in Ghidra that the native startup path keeps mutable town-script runtime state beyond room-local audio.
-  - `initialize_town_script_runtime` is called from the startup path before `room_setup`, which aligns with the native `ADD`/`DELETE` and `SET_ANIM` behavior observed in decoded `HARVEST.SCR`.
-  - Native room transitions still dispatch the current room's `on_exit_tag` before the destination room is resolved and loaded.
-  - Decoded startup exit chains such as `CEM10_EXITCOM0`, `DNALFT_EXITCOM`, and `SCH_HALL_EXITCOM` include `SET_FLAG`, `SET_NPC`, `SET_TIMER`, `KILL_TIMER`, `SET_ANIM`, `ADD`, `DELETE`, `DELETE_WAV`, and `CHECK_FLAG`.
-- Patched the startup stub to persist the runtime state that the current engine can model directly.
-  - `StartupScript` now keeps mutable runtime copies of flags, objects, and animations instead of rebuilding them from `_flags`, `_objects`, and `_animations` on every query.
-  - `resolveRoomSetupState()` mutates that runtime state through room-enter commands, `executeRoomExitCommands()` now applies room-exit chains at handoff time, and `materializeRoomState()` rebuilds the current room from live runtime state without re-running room-enter commands.
-  - `runRoomLoop()` now refreshes the current room from runtime state after same-room command mutations and after nested room unwind, preserving the player's current placement while carrying forward `SET_FLAG`, `ADD`, `DELETE`, and `SET_ANIM`.
+- Confirmed in Ghidra how native startup closeups and pickup hotspots differ from ordinary object interactions.
+  - `spawn_object_entity_from_record()` drives pickup cursor state from the object record's alternate inventory sprite path, while `run_harvester_main_loop()` uses that flag to select the native `Pick up the %s` prompt instead of `Operate the %s`.
+  - The native click path moves pickup targets into `INVENTORY` by changing the object record's owner, not by toggling visibility.
+  - `room_setup()` injects the global `EXIT_BM` and `EXIT_HS` objects whenever the room is entered in closeup mode, which explains the exit sign shown over rooms such as `PCDRWR`.
+- Patched the startup stub to mirror that native behavior.
+  - Startup pickup targets now use the pickup cursor, move into `INVENTORY` on click, and rebuild the current room from runtime state so items such as `PC_PEN` and `QUARTER` disappear from the closeup after pickup.
+  - Closeup rooms without an entrance now materialize the global exit sign/hotspot pair, and clicking that exit unwinds back to the parent room through the existing recursive room-loop restore path so the player returns to the coordinates they had before entering the closeup.
 
 ## Next Suggested Action
 
-1. Parse startup NPC and timer records from `HARVEST.SCR`, then add persistent runtime state for the remaining confirmed exit and interaction opcodes: `SET_NPC`, `SET_TIMER`, and `KILL_TIMER`.
-2. Confirm the native side effects of those opcodes in Ghidra before naming any new runtime structures or script helpers.
-3. Parse `REGION` records from `HARVEST.SCR` into the startup script layer.
-4. Mirror native startup transition handling for class `0x19` region entities.
+1. Confirm and implement the remaining native inventory transfer paths exposed in `HARVEST.SCR`, especially script-driven `ADD2INV` and `USEITEM` flows that go beyond the implicit pickup rule.
+2. Parse startup NPC and timer records from `HARVEST.SCR`, then add persistent runtime state for the remaining confirmed exit and interaction opcodes: `SET_NPC`, `SET_TIMER`, and `KILL_TIMER`.
+3. Confirm the native side effects of those opcodes in Ghidra before naming any new runtime structures or script helpers.
+4. Parse `REGION` records from `HARVEST.SCR` into the startup script layer.
+5. Mirror native startup transition handling for class `0x19` region entities.
   - Spawn enabled region hotspots from `room_setup` state.
   - Drive cursor sequence `6` over active regions.
   - Gate region activation on player overlap plus facing, following `check_player_region_interaction`.

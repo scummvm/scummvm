@@ -646,11 +646,16 @@ static void drawRoomInspectText(Graphics::Screen &screen, const StartupArt &art,
 }
 
 static int resolveRoomObjectCursorSequence(const StartupObjectRecord &object, StartupScript &startupScript) {
+	if (object.objectName.equalsIgnoreCase("EXIT_BM") || object.objectName.equalsIgnoreCase("EXIT_HS"))
+		return kCursorSequenceTransition;
+	if (startupScript.isPickupObject(object))
+		return kCursorSequencePickup;
+
 	StartupResolvedText inspectText;
+	if (object.operatable && startupScript.hasObjectInteraction(object))
+		return kCursorSequenceOperate;
 	if (!object.identShown && startupScript.resolveObjectInspectText(object, inspectText))
 		return kCursorSequenceExamine;
-	if (object.operatable)
-		return kCursorSequenceOperate;
 
 	if (startupScript.hasObjectInteraction(object))
 		return kCursorSequenceExamine;
@@ -1682,13 +1687,20 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 					}
 					break;
 				}
+				if (clickedObject->objectName.equalsIgnoreCase("EXIT_BM") ||
+					clickedObject->objectName.equalsIgnoreCase("EXIT_HS")) {
+					if (!runRoomExitCommands())
+						return Common::kReadingFailed;
+					return Common::kNoError;
+				}
 
 				StartupResolvedText resolvedInspectText;
 				const bool hasInspectText =
 					_engine.getStartupScript()->resolveObjectInspectText(*clickedObject, resolvedInspectText);
+				const bool isPickupObject = _engine.getStartupScript()->isPickupObject(*clickedObject);
 				const bool canShowInspectText = hasInspectText &&
 					resolveInspectTextboxBitmap(*art, resolvedInspectText);
-				if (!clickedObject->identShown && canShowInspectText) {
+				if (!isPickupObject && !clickedObject->identShown && canShowInspectText) {
 					inspectText = resolvedInspectText;
 					clickedObject->identShown = true;
 					_engine.getStartupScript()->markObjectIdentShown(*clickedObject);
