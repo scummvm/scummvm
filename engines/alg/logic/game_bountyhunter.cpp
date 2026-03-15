@@ -878,10 +878,10 @@ void GameBountyHunter::iconReset() {
 
 void GameBountyHunter::iconSetup() {
     uint16 usedFlags = 0;
-    _iconOrder[0] = randomUnusedInt(4, &usedFlags, -1);
-    _iconOrder[1] = randomUnusedInt(4, &usedFlags, -1);
-    _iconOrder[2] = randomUnusedInt(4, &usedFlags, -1);
-    _iconOrder[3] = randomUnusedInt(4, &usedFlags, -1);
+    _iconOrder[0] = randomUnusedInt(4, &usedFlags, (uint16)-1);
+    _iconOrder[1] = randomUnusedInt(4, &usedFlags, (uint16)-1);
+    _iconOrder[2] = randomUnusedInt(4, &usedFlags, (uint16)-1);
+    _iconOrder[3] = randomUnusedInt(4, &usedFlags, (uint16)-1);
     _iconOffset = 0;
     _iconCounter = 0;
 }
@@ -960,7 +960,7 @@ uint16 GameBountyHunter::randomUnusedInt(uint8 max, uint16 *mask, uint16 exclude
 	uint16 randomNum = 0;
 	// find an unused random number
 	while (true) {
-		randomNum = _rnd->getRandomNumber(max - 1);
+		randomNum = static_cast<uint16>(_rnd->getRandomNumber(max - 1));
 		// check if bit is already used
 		uint16 bit = 1 << randomNum;
 		if (!((*mask & bit) || randomNum == exclude)) {
