@@ -309,7 +309,7 @@ int PopUpDialog::findItem(int x, int y) const {
 		entry = (y - 2) / _lineHeight;
 		if (_twoColumns && x > _w / 2)
 			entry += _entriesPerColumn;
-		if (entry >= _entries.size())
+		if (entry >= static_cast<int>(_entries.size()))
 			entry = -1;
 	}
 	return entry;
