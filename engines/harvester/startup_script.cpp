@@ -519,30 +519,45 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 			break;
 		}
 
+		debugC(1, kDebugScene,
+			"Harvester: room setup command room='%s' step=%u tag='%s' opcode='%s' args=['%s','%s','%s','%s']",
+			room->roomName.c_str(), step, currentTag.c_str(), command->opcodeName.c_str(),
+			command->arg1.c_str(), command->arg2.c_str(), command->arg3.c_str(), command->arg4.c_str());
+
 		if (command->opcodeName.equalsIgnoreCase("CHECK_FLAG")) {
+			debugC(1, kDebugScene, "Harvester: room setup flag '%s' -> %d",
+				command->arg1.c_str(), getFlagValue(command->arg1));
 			currentTag = getFlagValue(command->arg1) ? command->arg2 : command->arg3;
 			continue;
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("SET_FLAG")) {
+			debugC(1, kDebugScene, "Harvester: room setup set flag '%s' = %d",
+				command->arg1.c_str(), command->arg2.equalsIgnoreCase("T"));
 			setFlagValue(command->arg1, command->arg2.equalsIgnoreCase("T"));
 			currentTag = command->arg4;
 			continue;
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("SPOOL_MUSIC")) {
+			debugC(1, kDebugScene, "Harvester: room setup spool music '%s'",
+				command->arg1.c_str());
 			state.musicPath = resources.normalizeResourcePath(command->arg1);
 			currentTag = command->arg4;
 			continue;
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("ADD")) {
+			debugC(1, kDebugScene, "Harvester: room setup add object owner='%s' object='%s'",
+				command->arg1.c_str(), command->arg2.c_str());
 			addObject(command->arg1, command->arg2);
 			currentTag = command->arg4;
 			continue;
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("DELETE")) {
+			debugC(1, kDebugScene, "Harvester: room setup delete object owner='%s' object='%s'",
+				command->arg1.c_str(), command->arg2.c_str());
 			removeObject(command->arg1, command->arg2);
 			currentTag = command->arg4;
 			continue;
@@ -556,6 +571,23 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 	state.paletteBrightness = (room->dimmable && !getFlagValue("DAY_FLAG"))
 		? kDimmedPaletteBrightness
 		: kDefaultPaletteBrightness;
+
+	for (const StartupObjectRecord &object : state.roomObjects) {
+		debugC(1, kDebugScene,
+			"Harvester: room setup room object room='%s' object='%s' owner='%s' visible=%d runtimeVisible=%d sprite='%s' alt='%s' pos=(%d,%d,%d) bounds=(%d,%d)-(%d,%d) action='%s'",
+			state.roomName.c_str(), object.objectName.c_str(), object.currentOwnerOrRoom.c_str(),
+			object.visible, object.runtimeVisible, object.spritePath.c_str(), object.altSpritePath.c_str(),
+			object.currentX, object.currentY, object.currentZ,
+			object.currentX, object.currentY, object.boundsX2, object.boundsY2, object.actionTag.c_str());
+	}
+	for (const StartupObjectRecord &object : state.activeObjects) {
+		debugC(1, kDebugScene,
+			"Harvester: room setup active object room='%s' object='%s' owner='%s' visible=%d runtimeVisible=%d sprite='%s' alt='%s' pos=(%d,%d,%d) bounds=(%d,%d)-(%d,%d) action='%s'",
+			state.roomName.c_str(), object.objectName.c_str(), object.currentOwnerOrRoom.c_str(),
+			object.visible, object.runtimeVisible, object.spritePath.c_str(), object.altSpritePath.c_str(),
+			object.currentX, object.currentY, object.currentZ,
+			object.currentX, object.currentY, object.boundsX2, object.boundsY2, object.actionTag.c_str());
+	}
 
 	debugC(1, kDebugGeneral,
 		"Harvester: resolveRoomSetupState('%s') -> room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u activeObjects=%u roomAnims=%u",

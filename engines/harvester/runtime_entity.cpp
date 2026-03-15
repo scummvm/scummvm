@@ -260,6 +260,27 @@ void RuntimeEntity::setCurrentFrame(int frame) {
 	advanceAnimationFrame(frame);
 }
 
+void RuntimeEntity::setAnimationFrameRange(int firstFrame, int lastFrame, bool looping) {
+	if (_frames.empty())
+		return;
+
+	firstFrame = CLIP<int>(firstFrame, 0, (int)_frames.size() - 1);
+	lastFrame = CLIP<int>(lastFrame, 0, (int)_frames.size() - 1);
+	if (lastFrame < firstFrame)
+		SWAP(firstFrame, lastFrame);
+
+	_animationSequence = -1;
+	_looping = looping;
+	_playBackwards = false;
+	_firstFrame = firstFrame;
+	_lastFrame = lastFrame;
+	_animationEnabled = looping && firstFrame != lastFrame;
+	if (_currentFrame < _firstFrame || _currentFrame > _lastFrame)
+		advanceAnimationFrame(_firstFrame);
+	else
+		updateBoundsFromCurrentFrame();
+}
+
 void RuntimeEntity::setAnimationSequence(int sequence) {
 	if (_frames.empty() || sequence == _animationSequence)
 		return;
@@ -714,6 +735,11 @@ RuntimeEntity *RuntimeEntityManager::spawnSceneActorEntity(const Common::String 
 	entity->setZExtent(3.0f);
 	entity->setHitTestMode(kRuntimeEntityHitTestNone);
 	entity->setCurrentFrame(initialFrame);
+	debugC(1, kDebugScene,
+		"Harvester: spawned scene actor '%s' resource='%s' frames=0..%d initial_frame=%d animation_rate=%d sequence=%d pos=(%d,%d,z=%.2f)",
+		name.c_str(), resourcePath.c_str(), entity->getLastFrame(), initialFrame,
+		entity->getAnimationRate(), entity->getAnimationSequence(),
+		position.x, position.y, (double)z);
 	insertSceneEntity(entity);
 	return entity;
 }
