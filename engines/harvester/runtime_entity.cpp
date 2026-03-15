@@ -19,6 +19,8 @@
  *
  */
 
+#include <math.h>
+
 #include "harvester/runtime_entity.h"
 
 #include "common/debug.h"
@@ -40,6 +42,30 @@ static const int kCursorAnimationRate = 10;
 static const int kFramesPerSequence = 10;
 static const uint32 kAnimationClockDivisorMs = 10;
 static const byte kTransparentPaletteIndex = 0;
+
+static int roundToInt(float value) {
+	return value >= 0.0f ? (int)floorf(value + 0.5f) : (int)ceilf(value - 0.5f);
+}
+
+static int scaleDimension(uint32 value, float scale) {
+	return MAX<int>(roundToInt((float)value * scale), 1);
+}
+
+static void scaleIndexedBitmapNearest(const IndexedBitmap &source, IndexedBitmap &dest,
+		int scaledWidth, int scaledHeight) {
+	dest.width = (uint32)scaledWidth;
+	dest.height = (uint32)scaledHeight;
+	dest.pixels.resize((uint32)scaledWidth * (uint32)scaledHeight);
+
+	for (int y = 0; y < scaledHeight; ++y) {
+		const uint32 srcY = MIN<uint32>(((uint32)y * source.height) / (uint32)scaledHeight, source.height - 1);
+		for (int x = 0; x < scaledWidth; ++x) {
+			const uint32 srcX = MIN<uint32>(((uint32)x * source.width) / (uint32)scaledWidth, source.width - 1);
+			dest.pixels[(uint32)y * (uint32)scaledWidth + (uint32)x] =
+				source.pixels[srcY * source.width + srcX];
+		}
+	}
+}
 
 static uint32 getAnimationClockTicks() {
 	// The original runtime entity animation timer is driven from a centisecond DOS clock.
@@ -144,14 +170,15 @@ bool RuntimeEntity::loadBitmapResource(ResourceManager &resources, const Common:
 
 	_frames.clear();
 	_frames.push_back(frame);
+	_baseFrames = _frames;
 	_resourcePath = path;
 	_currentFrame = 0;
 	_firstFrame = 0;
 	_lastFrame = 0;
 	_animationEnabled = false;
 	_drawEnabled = true;
-	_boundsWidth = frame.width;
-	_boundsHeight = frame.height;
+	_depthScale = 1.0f;
+	updateBoundsFromCurrentFrame();
 	_hitTestMode = kRuntimeEntityHitTestOpaquePixels;
 	return true;
 }
@@ -196,13 +223,14 @@ bool RuntimeEntity::loadAbmResource(ResourceManager &resources, const Common::St
 	}
 
 	_resourcePath = path;
+	_baseFrames = _frames;
 	_currentFrame = _frames.empty() ? -1 : 0;
 	_firstFrame = _currentFrame;
 	_lastFrame = _frames.empty() ? -1 : (int)_frames.size() - 1;
 	_animationEnabled = !_frames.empty();
 	_drawEnabled = true;
-	_boundsWidth = _frames.empty() ? 0 : _frames[0].width;
-	_boundsHeight = _frames.empty() ? 0 : _frames[0].height;
+	_depthScale = 1.0f;
+	updateBoundsFromCurrentFrame();
 	_hitTestMode = kRuntimeEntityHitTestOpaquePixels;
 	return true;
 }
@@ -253,6 +281,7 @@ void RuntimeEntity::setAnimationSequence(int sequence) {
 
 void RuntimeEntity::configureHotspotBounds(int width, int height) {
 	_frames.clear();
+	_baseFrames.clear();
 	_currentFrame = -1;
 	_firstFrame = -1;
 	_lastFrame = -1;
@@ -261,6 +290,34 @@ void RuntimeEntity::configureHotspotBounds(int width, int height) {
 	_boundsWidth = MAX(width, 1);
 	_boundsHeight = MAX(height, 1);
 	_hitTestMode = kRuntimeEntityHitTestBounds;
+	_depthScale = 1.0f;
+}
+
+bool RuntimeEntity::getCurrentFrameMetrics(int &width, int &height, int &xOffset, int &yOffset) const {
+	if (_frames.empty() || _currentFrame < 0 || (uint)_currentFrame >= _frames.size())
+		return false;
+
+	const AbmFrame &frame = _frames[(uint)_currentFrame];
+	width = (int)frame.width;
+	height = (int)frame.height;
+	xOffset = frame.xOffset;
+	yOffset = frame.yOffset;
+	return true;
+}
+
+void RuntimeEntity::setDepthScale(float scale) {
+	if (_frames.empty())
+		return;
+
+	const float newScale = scale > 0.0f ? scale : 1.0f;
+	if (fabsf(_depthScale - newScale) < 0.0001f)
+		return;
+
+	if (_baseFrames.empty())
+		_baseFrames = _frames;
+
+	_depthScale = newScale;
+	rebuildScaledFrames();
 }
 
 bool RuntimeEntity::tickVisualState(uint32 now) {
@@ -441,48 +498,91 @@ void RuntimeEntity::advanceAnimationFrame(int directive) {
 	if (directive == -1) {
 		--_currentFrame;
 		if (_currentFrame >= _firstFrame)
-			return;
+			goto done;
 
 		if (!_looping) {
 			_currentFrame = _firstFrame;
 			if (_classId == kRuntimeEntityClassAnimation)
 				_animationEnabled = false;
-			return;
+			goto done;
 		}
 
 		if (!_pingPong) {
 			_currentFrame = _lastFrame;
-			return;
+			goto done;
 		}
 
 		_playBackwards = false;
 		_currentFrame = _firstFrame;
-		return;
+		goto done;
 	}
 
 	if (directive == -2) {
 		++_currentFrame;
 		if (_currentFrame <= _lastFrame)
-			return;
+			goto done;
 
 		if (!_looping) {
 			_currentFrame = _lastFrame;
 			if (_classId == kRuntimeEntityClassAnimation)
 				_animationEnabled = false;
-			return;
+			goto done;
 		}
 
 		if (_pingPong) {
 			_playBackwards = true;
 			_currentFrame = _lastFrame;
-			return;
+			goto done;
 		}
 
 		_currentFrame = _firstFrame;
-		return;
+		goto done;
 	}
 
 	_currentFrame = CLIP<int>(directive, 0, (int)_frames.size() - 1);
+
+done:
+	updateBoundsFromCurrentFrame();
+}
+
+void RuntimeEntity::updateBoundsFromCurrentFrame() {
+	if (_frames.empty()) {
+		_boundsWidth = 0;
+		_boundsHeight = 0;
+		return;
+	}
+
+	const int frameIndex = (_currentFrame >= 0 && (uint)_currentFrame < _frames.size()) ? _currentFrame : 0;
+	_boundsWidth = (int)_frames[(uint)frameIndex].width;
+	_boundsHeight = (int)_frames[(uint)frameIndex].height;
+}
+
+void RuntimeEntity::rebuildScaledFrames() {
+	if (_baseFrames.empty()) {
+		_frames.clear();
+		updateBoundsFromCurrentFrame();
+		return;
+	}
+
+	if (fabsf(_depthScale - 1.0f) < 0.0001f) {
+		_frames = _baseFrames;
+		updateBoundsFromCurrentFrame();
+		return;
+	}
+
+	_frames.resize(_baseFrames.size());
+	for (uint i = 0; i < _baseFrames.size(); ++i) {
+		const AbmFrame &source = _baseFrames[i];
+		AbmFrame &scaled = _frames[i];
+		const int scaledWidth = scaleDimension(source.width, _depthScale);
+		const int scaledHeight = scaleDimension(source.height, _depthScale);
+
+		scaleIndexedBitmapNearest(source, scaled, scaledWidth, scaledHeight);
+		scaled.xOffset = roundToInt((float)source.xOffset * _depthScale);
+		scaled.yOffset = roundToInt((float)source.yOffset * _depthScale);
+	}
+
+	updateBoundsFromCurrentFrame();
 }
 
 RuntimeEntityManager::RuntimeEntityManager(ResourceManager &resources) : _resources(resources) {
@@ -671,6 +771,15 @@ const RuntimeEntity *RuntimeEntityManager::findTopSceneEntityAt(const Common::Po
 
 const RuntimeEntity *RuntimeEntityManager::findSceneEntityByName(const Common::String &name) const {
 	for (const RuntimeEntity *entity : _sceneEntities) {
+		if (entity->getName().equalsIgnoreCase(name))
+			return entity;
+	}
+
+	return nullptr;
+}
+
+RuntimeEntity *RuntimeEntityManager::findSceneEntityByName(const Common::String &name) {
+	for (RuntimeEntity *entity : _sceneEntities) {
 		if (entity->getName().equalsIgnoreCase(name))
 			return entity;
 	}

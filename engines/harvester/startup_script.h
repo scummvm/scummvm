@@ -40,7 +40,19 @@ struct StartupEntranceRecord {
 };
 
 struct StartupRoomRecord {
+	int minZ = 0;
+	int maxZ = 0;
+	int maxZScreenY = 0;
+	int minZScreenY = 0;
+	int fullScaleZ = 0;
+	int maxZScalePercent = 100;
+	float perspectiveScale = 0.0f;
+	float zVelocityStep = 1.0f;
 	Common::String roomName;
+	Common::String musicPath;
+	Common::String field38;
+	Common::String field3c;
+	Common::String field40;
 	Common::String palettePath;
 	Common::String onEnterCommand;
 	Common::String onExitCommand;
@@ -119,6 +131,14 @@ struct StartupRoomSetupState {
 	Common::String palettePath;
 	Common::String backgroundPath;
 	Common::String musicPath;
+	int roomMinZ = 0;
+	int roomMaxZ = 0;
+	int roomMaxZScreenY = 0;
+	int roomMinZScreenY = 0;
+	int roomFullScaleZ = 0;
+	int roomMaxZScalePercent = 100;
+	float roomPerspectiveScale = 0.0f;
+	float roomZVelocityStep = 1.0f;
 	bool hasEntrance = false;
 	int playerSpawnX = 0;
 	int playerSpawnY = 0;
@@ -160,6 +180,7 @@ public:
 	bool resolveObjectInteraction(const StartupObjectRecord &object, StartupInteractionResult &result) const;
 	bool resolveObjectInspectText(const StartupObjectRecord &object, StartupResolvedText &text) const;
 	Common::String resolveObjectLabel(const StartupObjectRecord &object) const;
+	Common::String resolveTextValue(const Common::String &key) const;
 
 private:
 	bool loadConfig(ResourceManager &resources);

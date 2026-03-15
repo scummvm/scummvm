@@ -2,6 +2,20 @@
 
 ## Last Confirmed Action
 
+- Closed the startup quick-tips label/value, hotspot cursor, and room-band movement pass against the native main loop.
+  - Confirmed in Ghidra that `run_quick_tips_screen` at `0x6c890` renders the bottom `Exit`, `Next`, and toggle actions in color `0xc3`, and that the toggle label resolves through the `TEXT` records instead of displaying the raw `Show_Tips_ON` / `Show_Tips_OFF` keys.
+  - Confirmed in Ghidra that `run_harvester_main_loop` classifies hover targets into cursor sequences `0` walk, `1` inspect, `2` talk, `4` operate, `5` pickup/use, `6` transition/region, and `7` neutral, and that empty-floor clicks map directly into room-band movement targets with the same loop also honoring directional-key movement.
+  - Patched the startup stub accordingly:
+    - quick tips now resolve `Show_Tips_ON` / `Show_Tips_OFF` through `resolveTextValue()` and render the bottom actions in the native red `0xc3`
+    - the room loop now ignores the background hitmask, derives hover prompts/cursor sequences from the active startup objects, and treats the room movement band as walkable floor with click-to-walk plus arrow-key movement
+    - the startup stub now uses the native IDENT textbox bitmaps and inset/color layout instead of the old placeholder inspect panel
+  - Rebuilt `build-vscode-harvester-debug/scummvm` successfully.
+  - The bounded probe in `/Users/alex/Temp/harvester_startup_probe.log` now confirms all three room-loop checks in one pass:
+    - hotspot hover resolves `PC_DRESR1` with `prompt='Examine dresser'` and `cursor_sequence=1`
+    - empty floor at `(48,350)` is now recognized with `cursor_sequence=0`
+    - the movement preview reaches `final_rect=(219,234)-(246,373) z=23.00`, proving the click-to-walk placement path is live
+  - A separate no-probe capture against `/Users/alex/Downloads/Harvester_1996/HARVEST/iso/Harvester` with `QUICK_TIPS=ON` logs `Harvester: quick tips labels exit='Exit' next='Next' toggle='Show Tips ON'` in `/Users/alex/Temp/harvester_quicktips.log`, confirming the toggle now resolves to the text value rather than the label key.
+  - Ghidra function counts remain unchanged: `774` total functions, `423` named/documented, `351` still `FUN_*`.
 - Closed the startup IDENT textbox modal pass against the native main-loop helpers.
   - Traced the native caller sites in `run_harvester_main_loop`: click interaction still dispatches through `handle_target_interaction` at `0x6f9b3`, while the modal inspect helper `show_target_ident_text` is reached from `0x70c0f` and `0x7189e` after the current target has been resolved and gated on its "ident shown" byte.
   - Exposed the already loaded startup textbox bitmaps in `StartupArt` and replaced the room-loop placeholder inspect panel with the confirmed IDENT textbox path:
@@ -238,6 +252,6 @@
 ## Next Suggested Action
 
 - Highest-value targets:
-  - add a bounded input replay or one-shot debug hook for the first `PC_DRESR1` click so the new ScummVM modal path can be confirmed end-to-end: first click shows `BOX1` IDENT text, second click follows `COM1A -> PCDRWR`
-  - after that live click-path verification, continue tracing the native bottom-screen hover text entity path around the existing `spawn_text_entity` / `destroy_text_entity` calls so the current prompt-string overlay can be replaced with the original label lifecycle
-  - if the live dresser replay exposes further room-loop regressions, trace the remaining `handle_target_interaction` side paths (generic responses, inventory pickup/use-item dispatch, and NPC dialogue gating) before broadening movement or click-to-walk work
+  - replace the current bottom-screen prompt overlay with the native `g_current_interaction_text` / `g_pending_interaction_text` / `g_interaction_text_entity` lifecycle around `spawn_text_entity` / `destroy_text_entity`
+  - trace the startup-room locomotion branch in `run_harvester_main_loop` and `update_actor_runtime_state` far enough to recover the native walk/stand animation state handling, since the current startup click-to-walk path only mirrors placement and facing
+  - if that movement/state pass stays too broad, add a bounded input replay for the first `PC_DRESR1` click so the IDENT-first then `COM1A -> PCDRWR` path can be confirmed end-to-end before widening room-loop coverage

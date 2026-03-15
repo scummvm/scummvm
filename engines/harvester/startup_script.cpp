@@ -273,7 +273,23 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 				return;
 
 			StartupRoomRecord room;
+			if (tagIndex >= 6) {
+				room.minZ = atoi(tokens[0].c_str());
+				room.maxZ = atoi(tokens[1].c_str());
+				room.maxZScreenY = atoi(tokens[2].c_str());
+				room.minZScreenY = atoi(tokens[3].c_str());
+				room.fullScaleZ = atoi(tokens[4].c_str());
+				room.maxZScalePercent = atoi(tokens[5].c_str());
+				if (room.maxZ != room.fullScaleZ) {
+					room.perspectiveScale = ((100.0f - (float)room.maxZScalePercent) /
+						(float)(room.maxZ - room.fullScaleZ)) * 0.01f;
+				}
+			}
 			room.roomName = tokens[tagIndex + 1];
+			room.musicPath = resources.normalizeResourcePath(tokens[tagIndex + 2]);
+			room.field38 = tokens[tagIndex + 3];
+			room.field3c = tokens[tagIndex + 4];
+			room.field40 = tokens[tagIndex + 5];
 			room.palettePath = resources.normalizeResourcePath(tokens[tagIndex + 6]);
 			room.dimmable = tokens[tagIndex + 7].equalsIgnoreCase("T");
 			room.onEnterCommand = tokens[tagIndex + 8];
@@ -410,6 +426,15 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 	state.roomName = room->roomName;
 	state.palettePath = room->palettePath;
 	state.backgroundPath = background->spritePath;
+	state.roomMinZ = room->minZ;
+	state.roomMaxZ = room->maxZ;
+	state.roomMaxZScreenY = room->maxZScreenY;
+	state.roomMinZScreenY = room->minZScreenY;
+	state.roomFullScaleZ = room->fullScaleZ;
+	state.roomMaxZScalePercent = room->maxZScalePercent;
+	state.roomPerspectiveScale = room->perspectiveScale;
+	state.roomZVelocityStep = room->zVelocityStep;
+	state.musicPath = room->musicPath;
 	if (entrance) {
 		state.entranceName = entrance->entranceName;
 		state.hasEntrance = true;
@@ -662,6 +687,14 @@ Common::String StartupScript::resolveObjectLabel(const StartupObjectRecord &obje
 		return label;
 
 	return Common::String();
+}
+
+Common::String StartupScript::resolveTextValue(const Common::String &key) const {
+	const StartupTextRecord *textRecord = findTextRecord(key);
+	if (textRecord && !textRecord->value.empty())
+		return textRecord->value;
+
+	return normalizeInteractionLabel(key);
 }
 
 } // End of namespace Harvester
