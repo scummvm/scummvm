@@ -137,6 +137,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - It prints the `Running Harvester v1.0` banner.
 - It loads startup art and UI resources including logo FSTs, palettes, fonts, textbox art, cursor resources, and room-object art.
 - On the cold-start path it only seeds the first town transition: after the world-record parsers and script runtime have populated the live record lists, it preloads `POINTERS.ABM`, stores the spawned cursor entity, preloads the initial `START -> PCROOM` room palette into `g_current_palette_buffer`, and then hands off to `room_setup("START")`; the quick-tips screen is a later overlay on top of that live room scene rather than a standalone room handoff.
+- That same cold-start path also stores the live player actor before the first room transition; `room_setup` later re-adds that existing actor to the room render list instead of constructing a fresh PCROOM-local record.
 - It seeds the initial `START` state, enters the main loop, processes state-driven transitions and interactions, and performs cleanup on shutdown.
   - The startup-side helpers hanging directly off that path are now bounded:
     - `printf_ascii` prints the copyright line through `g_stdout_stream` after the `puts_ascii` version banner.
@@ -180,8 +181,12 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - `room_setup` resolves the requested room or `START` entrance, finds the matching room definition, loads the room palette, instantiates exits / hotspots / overlays / room actors, positions the player, runs room-enter handlers, and updates the current music file.
 - `g_current_palette_buffer` at `0xd6084` is the shared room/menu palette buffer used by `run_harvester_main_loop`, `room_setup`, `dispatch_room_event_actions`, inventory/help screens, and the CD prompt path.
   - `room_setup` first resolves the target room / entrance and, when `g_current_room_def->palette_path` is non-null, rereads that room palette into `g_current_palette_buffer`.
-  - It then reloads `WAIT.PAL` and `WAIT.ABM`, hides the cursor entity, flushes the wait transition, uploads the wait palette, builds the room entities, and only after that uploads the room palette from `g_current_palette_buffer`.
+  - It then reloads `WAIT.PAL` and `WAIT.ABM`, hides the cursor entity, flushes the wait transition while the cursor is hidden, re-shows the cursor, uploads the wait palette, builds the room entities, and only after that uploads the room palette from `g_current_palette_buffer`.
   - Once the wait transition is flushed, `room_setup` rebuilds the room render list in this order: matching enabled regions, room timers, visible object records whose `current_owner_or_room` matches the room, then room `ANIM` records whose `active` or `visible` state is set.
+  - On the player-present branch it then re-adds the stored live player actor from `DAT_000d5bd4`, places it from `g_current_room_entrance`, and seeds exact facing frames `0x3b`, `0x0e`, `0x2c`, and `0x28` for entrance-facing values `0`, `1`, `2`, and `3`.
+  - Before the live room flush it explicitly resets the cursor entity to animation sequence `7`.
+  - The final room palette/upload order is now explicit: after optional room-enter handlers, `room_setup` uploads `g_current_palette_buffer` and then calls `flush_dirty_rects_to_screen`.
+  - `flush_dirty_rects_to_screen` begins by calling `sync_cursor_entity_position(g_cursor_entity)`, so the first cursor sync / animation tick after room construction happens under the room palette rather than before that upload.
   - After the initial black upload, `room_setup` uses `ramp_palette_brightness` at `0x23a30` to fade `g_current_palette_buffer` in from black. The helper steps brightness in `0.1` increments against the shared centisecond clock from `get_elapsed_milliseconds()` while also driving the room dimming path when the room is marked dimmable and `DAY_FLAG` is clear.
 - `upload_palette_to_vga` at `0x22770` writes a caller-supplied RGB palette to the VGA DAC, forces palette index 0 to black, and applies a caller-supplied brightness scalar before clamping each channel to the hardware `0x3f` range.
   - Archive inspection plus the helper body confirm the room/menu `.PAL` resources are already stored as 768-byte 8-bit RGB triplets; the upload path shifts those bytes down to VGA `0..63` before brightness scaling instead of expanding 6-bit source values.
@@ -406,6 +411,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - `is_cursor_over_entity_hitmask` at `0x4b5b0` adds the per-pixel transparency test used by the main loop before interaction dispatch.
   - Class `0x16` skips the cursor gate entirely.
   - Classes `0x15`, `0x18`, and `0x19` stop at the rectangle gate and do not require an opaque pixel.
+  - For the normal sprite classes, palette index `0` fails that hitmask test and therefore behaves as transparent.
   - Class `3` bypasses the cursor bounds/mask checks and acts as the room-background fallback entity when nothing higher in the render list matches.
 
 ## Idle Animation Timing
@@ -503,11 +509,16 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - `0x10` = left-facing base bank
     - `0x40` = right-facing base bank
     - `0x20` = back-facing base bank
+    - `0x80` is still only bounded as the separate case-1 stance/turn-family gate; monster construction derives it from the ABM frame slot reached through live actor pointer `+0x84`
   - The high nibble of runtime `+0x118e` provides alternate initial stance banks for those same facings:
     - `0x40` = front-facing alternate bank
     - `0x10` = left-facing alternate bank
     - `0x20` = right-facing alternate bank
     - `0x80` = back-facing alternate bank
+  - `update_actor_runtime_state` now also confirms two higher `+0x118c` bits are attack-family compatibility gates rather than locomotion flags:
+    - attacker `0x1000` must be set before attack states `0x17/0x1a` can be chosen
+    - target `0x10000` must be set before attack states `0x18/0x1b` can be chosen
+    - the player combat-avatar base mask `0x00fffff8` keeps both bits set by default
   - `field_70` is the attack-sound trigger frame
   - `field_78` is the walk / footstep-sound trigger frame
   - `saved_enabled`, `runtime_spawned`, `next`
@@ -647,6 +658,8 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - in the player attack path, `(+0x118c & 4) == 0` stays on the close-range hit-resolution branch, while class-5 attacks with bit `4` set use the separate ranged target-acquisition / ammo-count branch; the chainsaw fuel check is a separate loadout-specific pre-branch case
     - its confirmed low-byte facing-bank bits are `0x08` front, `0x10` left, `0x40` right, and `0x20` back; monster spawn uses those as the default initial stance banks when the matching alternate `+0x118e` high-nibble bank is absent
     - the same low-byte bits are later consumed by the locomotion/turn-family entries rooted at states `4`, `7/0xf`, `8/0xe`, and `0xb`
+    - low-byte bit `0x80` is still only bounded as the separate case-1 stance/turn-family availability gate: state-family `1` refuses its own idle/turn transitions unless that bit is present, and monster spawn derives it from the ABM frame slot exposed through live actor pointer `+0x84`
+    - outside the low byte, `0x1000` and `0x10000` are confirmed close-range attack-picker gates rather than generic locomotion bits: attacker `0x1000` is required before states `0x17/0x1a` can be chosen, while target `0x10000` is required before states `0x18/0x1b` can be chosen; the player combat-avatar base mask keeps both bits set
   - Runtime byte `+0x118d` is an attack / hit-reaction bank-availability byte.
     - bits `0x08`, `0x10`, and `0x20` gate the attack-state pairs `0x16/0x19`, `0x17/0x1a`, and `0x18/0x1b`
     - bits `0x40` and `0x80`, together with `+0x118e & 0x01`, gate the hit-reaction state pairs `0x1c/0x1f`, `0x1d/0x20`, and `0x1e/0x21`

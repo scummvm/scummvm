@@ -38,6 +38,7 @@ static const float kCursorEntityZ = -100.0f;
 static const int kCursorAnimationRate = 10;
 static const int kFramesPerSequence = 10;
 static const uint32 kAnimationClockDivisorMs = 10;
+static const byte kTransparentPaletteIndex = 0;
 
 static uint32 getAnimationClockTicks() {
 	// The original runtime entity animation timer is driven from a centisecond DOS clock.
@@ -50,8 +51,8 @@ static void blitAnimationFrame(Graphics::Screen &screen, const Common::Array<Abm
 		return;
 
 	const AbmFrame &frame = frames[frameIndex];
-	screen.copyRectToSurface(frame.pixels.data(), frame.width, x + frame.xOffset, y + frame.yOffset,
-		frame.width, frame.height);
+	screen.copyRectToSurfaceWithKey(frame.pixels.data(), frame.width,
+		x + frame.xOffset, y + frame.yOffset, frame.width, frame.height, kTransparentPaletteIndex);
 }
 
 static bool decodeAnimationFrame(const byte *source, uint32 sourceSize, bool compressed, Common::Array<byte> &dest) {
@@ -534,6 +535,21 @@ RuntimeEntity *RuntimeEntityManager::spawnSceneAnimationEntity(const Common::Str
 	if (!active && !visible)
 		entity->setVisible(false);
 
+	insertSceneEntity(entity);
+	return entity;
+}
+
+RuntimeEntity *RuntimeEntityManager::spawnSceneActorEntity(const Common::String &name,
+		const Common::String &resourcePath, const Common::Point &position, float z, int initialFrame) {
+	RuntimeEntity *entity = spawnAbmEntityFromResource(name, resourcePath, kRuntimeEntityClassObject,
+		position, z, 0, false, false);
+	if (!entity)
+		return nullptr;
+
+	entity->setAnchorMode(kRuntimeEntityAnchorCentered);
+	entity->setZExtent(3.0f);
+	entity->setHitTestMode(kRuntimeEntityHitTestNone);
+	entity->setCurrentFrame(initialFrame);
 	insertSceneEntity(entity);
 	return entity;
 }

@@ -26,6 +26,7 @@
 #include "common/debug.h"
 #include "common/formats/ini-file.h"
 #include "common/memstream.h"
+#include "harvester/detection.h"
 #include "harvester/resources.h"
 
 namespace Harvester {
@@ -57,6 +58,19 @@ static Common::String normalizeInteractionLabel(const Common::String &value) {
 	}
 
 	return label;
+}
+
+static int parseEntranceFacing(const Common::String &direction) {
+	if (direction.equalsIgnoreCase("FRONT"))
+		return 0;
+	if (direction.equalsIgnoreCase("LEFT"))
+		return 1;
+	if (direction.equalsIgnoreCase("RIGHT"))
+		return 2;
+	if (direction.equalsIgnoreCase("BACK"))
+		return 3;
+
+	return -1;
 }
 
 static void tokenizeTownScriptLine(const Common::String &line, Common::Array<Common::String> &tokens) {
@@ -240,7 +254,13 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 				return;
 
 			StartupEntranceRecord entrance;
+			if (tagIndex >= 3) {
+				entrance.posX = atoi(tokens[0].c_str());
+				entrance.posY = atoi(tokens[1].c_str());
+				entrance.posZ = atoi(tokens[2].c_str());
+			}
 			entrance.direction = tokens[tagIndex + 1];
+			entrance.facing = parseEntranceFacing(entrance.direction);
 			entrance.roomName = tokens[tagIndex + 2];
 			entrance.entranceName = tokens[tagIndex + 3];
 			if (!entrance.roomName.empty() && !entrance.entranceName.empty())
@@ -390,6 +410,14 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 	state.roomName = room->roomName;
 	state.palettePath = room->palettePath;
 	state.backgroundPath = background->spritePath;
+	if (entrance) {
+		state.entranceName = entrance->entranceName;
+		state.hasEntrance = true;
+		state.playerSpawnX = entrance->posX;
+		state.playerSpawnY = entrance->posY;
+		state.playerSpawnZ = entrance->posZ;
+		state.playerFacing = entrance->facing;
+	}
 	for (const StartupObjectRecord &object : _objects) {
 		if (object.currentOwnerOrRoom.equalsIgnoreCase(room->roomName))
 			state.roomObjects.push_back(object);
@@ -503,6 +531,14 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 	state.paletteBrightness = (room->dimmable && !getFlagValue("DAY_FLAG"))
 		? kDimmedPaletteBrightness
 		: kDefaultPaletteBrightness;
+
+	debugC(1, kDebugGeneral,
+		"Harvester: resolveRoomSetupState('%s') -> room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u activeObjects=%u roomAnims=%u",
+		entranceName.c_str(), state.roomName.c_str(), state.entranceName.c_str(),
+		state.playerSpawnX, state.playerSpawnY, state.playerSpawnZ, state.playerFacing,
+		state.palettePath.c_str(), state.backgroundPath.c_str(), state.musicPath.c_str(),
+		(double)state.paletteBrightness, (uint)state.roomObjects.size(),
+		(uint)state.activeObjects.size(), (uint)state.roomAnimations.size());
 
 	return true;
 }

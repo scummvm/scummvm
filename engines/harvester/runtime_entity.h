@@ -152,6 +152,8 @@ public:
 	RuntimeEntity *spawnSceneAnimationEntity(const Common::String &name, const Common::String &resourcePath,
 		const Common::Point &position, float z, int animationRate, bool active, bool visible, bool looping,
 		bool playBackwards, bool pingPong);
+	RuntimeEntity *spawnSceneActorEntity(const Common::String &name, const Common::String &resourcePath,
+		const Common::Point &position, float z, int initialFrame);
 	RuntimeEntity *getCursorEntity() const { return _cursorEntity; }
 	void hideCursor();
 	void showCursor();

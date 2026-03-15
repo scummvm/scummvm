@@ -2,6 +2,28 @@
 
 ## Last Confirmed Action
 
+- Closed the startup room-loop / player-presence pass.
+  - Confirmed in Ghidra that `run_harvester_main_loop` stores the live player actor before the first `room_setup`, and `room_setup` later re-adds that actor from `DAT_000d5bd4` using the active entrance coordinates/facing instead of constructing a fresh PCROOM-local NPC.
+  - Confirmed `room_setup` seeds exact startup-facing frames `0x3b`, `0x0e`, `0x2c`, and `0x28` for entrance-facing values `0`, `1`, `2`, and `3`.
+  - Confirmed `is_cursor_over_entity_hitmask` treats palette index `0` as transparent for normal sprite classes, which explains the black-backed cursor regression when the port blits raw indexed pixels.
+  - Patched the engine to key runtime-entity rendering on palette index `0`, parse entrance spawn/facing state from `HARVEST.SCR`, spawn the startup player actor from `1:\GRAPHIC\MONSTERS\PC\PC0.ABM`, and hand startup straight into the interactive room loop after quick tips.
+  - Built `build-vscode-harvester-debug/scummvm` successfully and left the Ghidra function counts unchanged.
+- Closed the native startup verification capture with the complete local data set.
+  - Using `/Users/alex/Downloads/Harvester_1996/HARVEST/iso/Harvester`, the local ScummVM run mounted `INDEX.001` / `INDEX.002` / `INDEX.003`, loaded `HARVEST.SCR`, and reached the startup room handoff normally.
+  - Confirmed in `/Users/alex/Temp/harvester_startup_native.log` that the startup palette path now logs `decoded room palette 'GRAPHIC/PAL/PCROOM.PAL' ... idx0=(0,0,56)`, matching the expected raw 8-bit palette bytes rather than the old expanded-blue mismatch.
+  - Confirmed in the same native capture that the cursor reaches `sequence=7 frames=70..79 current=70`, matching the centisecond-timed cursor sequencing expected from the binary.
+  - This removes the local startup data-path blocker; function counts remain unchanged.
+- Closed the startup room-setup ordering fallback pass.
+  - Tried the native ScummVM startup capture first, but the available local data set only contains `HARVEST2.DAT`; `INDEX.001`, `INDEX.002`, `INDEX.003`, and `HARVEST.SCR` are missing, so the engine never reaches the palette / cursor startup path in this environment.
+  - Confirmed in Ghidra that `room_setup` flushes the wait transition while the cursor is hidden, then re-shows the cursor and uploads `WAIT.PAL`.
+  - Confirmed the first live room flush happens in the opposite order: after room construction and optional `on_enter` handlers, `room_setup` uploads `g_current_palette_buffer` and only then calls `flush_dirty_rects_to_screen`.
+  - Confirmed `flush_dirty_rects_to_screen` always begins by calling `sync_cursor_entity_position(g_cursor_entity)`, so the first cursor sync / animation tick after room construction happens under the room palette, not before it; `room_setup` also resets the cursor entity to animation sequence `7` before that final flush.
+  - Added Ghidra comments at `room_setup`, saved `HARVEST.LE`, and left function counts unchanged.
+- Closed the next partial `+0x118c` capability-bit pass.
+  - Confirmed `update_actor_runtime_state` uses the higher `+0x118c` bits `0x1000` and `0x10000` as close-range attack-family compatibility gates rather than as generic locomotion flags: attacker `0x1000` is required before states `0x17/0x1a` can be chosen, while target `0x10000` is required before states `0x18/0x1b` can be chosen.
+  - Confirmed the player combat-avatar base mask `0x00fffff8` keeps both of those higher `+0x118c` gates set by default.
+  - Narrowed low-byte `+0x118c` bit `0x80` to the separate case-1 stance / turn-family gate: state-family `1` refuses its own transitions unless the bit is present, and the monster spawn path derives it from the ABM frame slot reached through live actor pointer `+0x84`.
+  - Added Ghidra comments at `update_actor_runtime_state`, and saved `HARVEST.LE`.
 - Closed the startup palette-format / cursor-animation clock pass.
   - Confirmed by archive inspection that `WAIT.PAL`, `PCROOM.PAL`, and the rest of the indexed room palettes are exact 768-byte resources already storing 8-bit RGB triplets.
   - Confirmed in Ghidra that `upload_palette_to_vga` shifts those palette bytes down to VGA DAC range instead of expanding 6-bit source values, which explains the bad startup colors in the current engine.
@@ -182,10 +204,7 @@
 
 ## Next Suggested Action
 
-- Re-run the startup path with the new logs and verify two concrete points in one capture:
-  - `PCROOM.PAL` should now log raw values like `idx0=(0,0,56)` instead of the bogus expanded blue channel.
-  - The cursor should stay on sequence `7` while advancing frames `70..79` on a centisecond clock rather than racing every render tick.
-- If either behavior still diverges from DOS, take a fresh Ghidra pass through `room_setup` after the wait-transition flush and `flush_dirty_rects_to_screen` / `sync_cursor_entity_position` to compare exact first-frame ordering and palette upload order against the port.
 - Highest-value targets:
-  - continue outward on the remaining partial `+0x118c` semantics, especially the still-unresolved low-byte bit `0x80` and the high attack-picker gates `0x1000` / `0x10000`
-  - if that thread stays cold, revisit the unresolved reciprocal combat-link slot at `+0x11b8` from the confirmed close-range hit block
+  - run the normal startup capture and verify three concrete points in one pass: transparent cursor background, Steve visible in `PCROOM` at the `START` entrance, and preserved hotspot hover/click behavior through the direct quick-tips -> room-loop handoff
+  - if player placement is still off, take a focused Ghidra pass through `set_entity_screen_position` / `rescale_entity_sprite_for_depth` callsites to recover the exact screen-position math before porting movement
+  - port `show_target_ident_text` / `handle_target_interaction` behavior into the room loop so hover text and click dispatch can move off the current prototype overlay
