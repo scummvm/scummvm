@@ -50,6 +50,10 @@ static const char *const kMenuSectionName = "menu";
 
 static const int kInventoryX = 64;
 static const int kInventoryY = 48;
+static const int kInventoryItemStartX = 73;
+static const int kInventoryItemStartY = 115;
+static const int kInventoryItemMaxRight = 564;
+static const int kInventoryItemSpacing = 5;
 static const int kLogoX = 160;
 static const int kLogoY = 0;
 static const int kQuickTipsOverlayX = 167;
@@ -130,6 +134,20 @@ struct StartupRoomHoverState {
 	const StartupObjectRecord *object = nullptr;
 	Common::String promptText;
 	int cursorSequence = kCursorSequenceNeutral;
+};
+
+struct StartupInventoryVisual {
+	StartupObjectRecord object;
+	IndexedBitmap bitmap;
+	Common::Rect bounds;
+	bool hasBitmap = false;
+};
+
+struct StartupInventoryOverlayState {
+	Common::Array<StartupInventoryVisual> items;
+	bool open = false;
+	Common::String selectedItemName;
+	Common::String promptText;
 };
 
 struct StartupRoomIdleAnimationState {
@@ -481,6 +499,126 @@ static Common::String resolveSceneObjectSpritePath(const StartupObjectRecord &ob
 		return object.altSpritePath;
 
 	return object.spritePath;
+}
+
+static bool loadBitmapResource(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap) {
+	Common::Array<byte> data;
+	if (!resources.loadFile(path, data) || data.size() < 12)
+		return false;
+
+	bitmap = IndexedBitmap();
+	bitmap.width = READ_LE_UINT32(data.data());
+	bitmap.height = READ_LE_UINT32(data.data() + 4);
+	const uint32 pixelCount = bitmap.width * bitmap.height;
+	if (bitmap.width == 0 || bitmap.height == 0 || data.size() < 12 + pixelCount)
+		return false;
+
+	bitmap.pixels.resize(pixelCount);
+	memcpy(bitmap.pixels.data(), data.data() + 12, pixelCount);
+	return true;
+}
+
+static bool isInventoryExitObject(const StartupObjectRecord &object) {
+	return object.objectName.equalsIgnoreCase("INV_EXIT");
+}
+
+static bool isInventoryStatusObject(const StartupObjectRecord &object) {
+	return object.objectName.hasPrefixIgnoreCase("INV_STAT");
+}
+
+static bool buildInventoryVisuals(StartupScript &startupScript, ResourceManager &resources,
+		Common::Array<StartupInventoryVisual> &items) {
+	items.clear();
+
+	Common::Array<StartupObjectRecord> inventoryObjects;
+	startupScript.getVisibleInventoryObjects(inventoryObjects);
+	int nextX = kInventoryItemStartX;
+	int nextY = kInventoryItemStartY;
+	int rowHeight = 0;
+
+	for (const StartupObjectRecord &inventoryObject : inventoryObjects) {
+		StartupInventoryVisual visual;
+		visual.object = inventoryObject;
+
+		if (isInventoryExitObject(inventoryObject)) {
+			visual.bounds = getHotspotBounds(inventoryObject);
+			items.push_back(visual);
+			continue;
+		}
+		if (isInventoryStatusObject(inventoryObject))
+			continue;
+
+		const Common::String spritePath = resolveSceneObjectSpritePath(inventoryObject);
+		if (!spritePath.empty() && loadBitmapResource(resources, spritePath, visual.bitmap)) {
+			visual.hasBitmap = true;
+			if (nextX + (int)visual.bitmap.width > kInventoryItemMaxRight) {
+				nextX = kInventoryItemStartX;
+				nextY += rowHeight + kInventoryItemSpacing;
+				rowHeight = 0;
+			}
+
+			visual.object.currentX = nextX;
+			visual.object.currentY = nextY;
+			visual.bounds = Common::Rect(nextX, nextY, nextX + visual.bitmap.width, nextY + visual.bitmap.height);
+			nextX += visual.bitmap.width + kInventoryItemSpacing;
+			rowHeight = MAX<int>(rowHeight, visual.bitmap.height);
+		} else {
+			visual.bounds = getHotspotBounds(inventoryObject);
+		}
+
+		items.push_back(visual);
+	}
+
+	return true;
+}
+
+static const StartupInventoryVisual *findInventoryVisualAtPoint(
+		const Common::Array<StartupInventoryVisual> &items, const Common::Point &point) {
+	for (int i = (int)items.size() - 1; i >= 0; --i) {
+		if (items[i].bounds.contains(point))
+			return &items[i];
+	}
+
+	return nullptr;
+}
+
+static Common::String buildUseItemPrompt(const Common::String &itemLabel, const Common::String &targetLabel) {
+	if (itemLabel.empty())
+		return Common::String();
+	if (targetLabel.empty())
+		return Common::String::format("Use %s on ...", itemLabel.c_str());
+
+	return Common::String::format("Use %s on %s", itemLabel.c_str(), targetLabel.c_str());
+}
+
+static Common::Rect getInventoryPanelBounds(const StartupArt &art) {
+	const IndexedBitmap &bitmap = art.getInventoryBitmap();
+	return Common::Rect(kInventoryX, kInventoryY,
+		kInventoryX + (int)bitmap.width, kInventoryY + (int)bitmap.height);
+}
+
+static void drawInventoryOverlay(Graphics::Screen &screen, const StartupArt &art, StartupScript &startupScript,
+		const Graphics::Font &font, const Common::Array<StartupInventoryVisual> &items,
+		const Common::String &selectedItemName, const Common::String &promptText) {
+	blitBitmap(screen, art.getInventoryBitmap(), kInventoryX, kInventoryY);
+
+	for (const StartupInventoryVisual &item : items) {
+		if (item.hasBitmap && item.bitmap.isValid())
+			blitBitmap(screen, item.bitmap, item.object.currentX, item.object.currentY);
+	}
+
+	Common::String overlayPrompt = promptText;
+	if (overlayPrompt.empty() && !selectedItemName.empty()) {
+		for (const StartupInventoryVisual &item : items) {
+			if (item.object.objectName.equalsIgnoreCase(selectedItemName)) {
+				overlayPrompt = buildUseItemPrompt(startupScript.resolveObjectLabel(item.object), Common::String());
+				break;
+			}
+		}
+	}
+
+	if (!overlayPrompt.empty())
+		drawShadowedString(screen, font, overlayPrompt, 0, 462, 640, kRoomPromptColor, Graphics::kTextAlignCenter);
 }
 
 static void logSceneObjectSelection(const char *decision, const char *source, const StartupObjectRecord &object,
@@ -1547,7 +1685,9 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 	bool moveRight = false;
 	bool moveUp = false;
 	bool moveDown = false;
+	StartupInventoryOverlayState inventoryState;
 	StartupRoomIdleAnimationState idleState;
+	bool needsRedraw = true;
 	auto resetIdleState = [&]() {
 		idleState = StartupRoomIdleAnimationState();
 		idleState.activityTick = getRuntimeClockTicks();
@@ -1555,6 +1695,67 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 		updatePlayerIdleTrigger(idleState);
 	};
 	resetIdleState();
+	auto refreshInventoryState = [&]() {
+		if (!buildInventoryVisuals(*_engine.getStartupScript(), *_engine.getResources(), inventoryState.items))
+			return false;
+
+		if (inventoryState.selectedItemName.empty())
+			return true;
+
+		for (const StartupInventoryVisual &item : inventoryState.items) {
+			if (item.object.objectName.equalsIgnoreCase(inventoryState.selectedItemName))
+				return true;
+		}
+
+		inventoryState.selectedItemName.clear();
+		inventoryState.promptText.clear();
+		return true;
+	};
+	auto resolveSelectedInventoryLabel = [&]() {
+		if (inventoryState.selectedItemName.empty())
+			return Common::String();
+
+		for (const StartupInventoryVisual &item : inventoryState.items) {
+			if (item.object.objectName.equalsIgnoreCase(inventoryState.selectedItemName))
+				return _engine.getStartupScript()->resolveObjectLabel(item.object);
+		}
+
+		Common::Array<StartupObjectRecord> inventoryObjects;
+		_engine.getStartupScript()->getVisibleInventoryObjects(inventoryObjects);
+		for (const StartupObjectRecord &item : inventoryObjects) {
+			if (item.objectName.equalsIgnoreCase(inventoryState.selectedItemName))
+				return _engine.getStartupScript()->resolveObjectLabel(item);
+		}
+
+		return normalizeHarvesterResourcePath(inventoryState.selectedItemName);
+	};
+	auto clearInventorySelection = [&]() {
+		if (inventoryState.selectedItemName.empty() && inventoryState.promptText.empty())
+			return false;
+
+		inventoryState.selectedItemName.clear();
+		inventoryState.promptText.clear();
+		return true;
+	};
+	auto closeInventoryOverlay = [&]() {
+		bool changed = clearInventorySelection();
+		if (inventoryState.open)
+			changed = true;
+		inventoryState.open = false;
+		return changed;
+	};
+	auto openInventoryOverlay = [&]() {
+		moveLeft = false;
+		moveRight = false;
+		moveUp = false;
+		moveDown = false;
+		playerState.hasMoveTarget = false;
+		playerState.turnActive = false;
+		playerState.turnTargetFacing = -1;
+		inventoryState.open = true;
+		inventoryState.promptText.clear();
+		return refreshInventoryState();
+	};
 	auto refreshCurrentScene = [&](bool preservePlayerPlacement) {
 		const Common::Array<StartupAudioCommand> entryAudioCommands = scene.state.audioCommands;
 		StartupRoomSetupState refreshedState;
@@ -1589,7 +1790,7 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 		playerState.turnTargetFacing = -1;
 		resetIdleState();
 		resetCursorAnimationSequence();
-		return true;
+		return refreshInventoryState();
 	};
 	auto runRoomExitCommands = [&]() {
 		Common::Array<StartupAudioCommand> exitAudioCommands;
@@ -1598,7 +1799,69 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 		executeStartupAudioCommands(exitAudioCommands);
 		return true;
 	};
-	bool needsRedraw = true;
+	auto handleInteractionResult = [&](const StartupInteractionResult &interaction) -> Common::Error {
+		playerState.hasMoveTarget = false;
+		playerState.turnActive = false;
+		playerState.turnTargetFacing = -1;
+
+		Common::String restoreMusicPath = _engine.getStartupMusicPath();
+		if (!interaction.musicPath.empty()) {
+			(void)_engine.playStartupMusic(interaction.musicPath);
+			restoreMusicPath = _engine.getStartupMusicPath();
+		}
+		executeStartupAudioCommands(interaction.audioCommands);
+
+		if (!interaction.nextRoomName.empty()) {
+			if (!runRoomExitCommands())
+				return Common::kReadingFailed;
+
+			Common::Error roomError = runRoomLoop(interaction.nextRoomName);
+			if (roomError.getCode() != Common::kReadingFailed &&
+				roomError.getCode() != Common::kNoError) {
+				return roomError;
+			}
+
+			if (!refreshCurrentScene(true))
+				return Common::kReadingFailed;
+
+			executeStartupAudioCommands(scene.state.audioCommands);
+			if (!restoreMusicPath.empty())
+				(void)_engine.playStartupMusic(restoreMusicPath);
+			else
+				_engine.stopStartupMusic();
+		} else if (interaction.mutatedRuntimeState) {
+			if (!refreshCurrentScene(true))
+				return Common::kReadingFailed;
+		}
+
+		return Common::kNoError;
+	};
+	auto handleInventoryTargetInteraction = [&](const StartupObjectRecord &target, bool preferPickup) -> Common::Error {
+		if (inventoryState.selectedItemName.empty())
+			return Common::kNoError;
+
+		StartupInteractionResult interaction;
+		bool handled = false;
+		if (preferPickup && _engine.getStartupScript()->isPickupObject(target))
+			handled = _engine.getStartupScript()->resolveObjectInteraction(target, interaction);
+		else
+			handled = _engine.getStartupScript()->resolveUseItemInteraction(
+				inventoryState.selectedItemName, target, interaction);
+		if (!handled)
+			return Common::kNoError;
+
+		clearInventorySelection();
+		Common::Error interactionError = handleInteractionResult(interaction);
+		if (interactionError.getCode() != Common::kNoError)
+			return interactionError;
+		if (!refreshInventoryState())
+			return Common::kReadingFailed;
+
+		needsRedraw = true;
+		return Common::kNoError;
+	};
+	if (!refreshInventoryState())
+		return Common::kReadingFailed;
 	Graphics::FrameLimiter limiter(g_system, 60);
 
 	if (shouldRunStartupRoomProbe())
@@ -1606,20 +1869,49 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 
 	while (!_engine.shouldQuit()) {
 		if (needsRedraw) {
-			const bool suppressHover = showingInspectText || idleState.active || idleState.exiting;
-			const StartupRoomHoverState hoverState = suppressHover
+			const Common::Rect inventoryPanelBounds = getInventoryPanelBounds(*art);
+			const bool inventoryPanelContainsMouse = inventoryState.open && inventoryPanelBounds.contains(_mousePos);
+			const bool suppressHover = showingInspectText || idleState.active || idleState.exiting ||
+				(inventoryState.open && (inventoryPanelContainsMouse || inventoryState.selectedItemName.empty()));
+			StartupRoomHoverState hoverState = suppressHover
 				? StartupRoomHoverState()
 				: resolveRoomHoverState(_engine, scene.state, scene.sceneObjects, _mousePos);
+			Common::String promptText;
+			if (inventoryState.open) {
+				const StartupInventoryVisual *inventoryHover = findInventoryVisualAtPoint(inventoryState.items, _mousePos);
+				if (!inventoryState.selectedItemName.empty()) {
+					Common::String targetLabel;
+					if (inventoryHover && !isInventoryExitObject(inventoryHover->object) &&
+						!isInventoryStatusObject(inventoryHover->object)) {
+						targetLabel = _engine.getStartupScript()->resolveObjectLabel(inventoryHover->object);
+					} else if (!inventoryPanelContainsMouse && hoverState.object) {
+						targetLabel = _engine.getStartupScript()->resolveObjectLabel(*hoverState.object);
+					}
+					promptText = buildUseItemPrompt(resolveSelectedInventoryLabel(), targetLabel);
+				} else if (inventoryHover) {
+					promptText = _engine.getStartupScript()->resolveObjectLabel(inventoryHover->object);
+				}
+				inventoryState.promptText = promptText;
+				hoverState.cursorSequence = kCursorSequenceNeutral;
+			} else {
+				promptText = hoverState.promptText;
+			}
 			if (RuntimeEntity *cursor = runtimeEntities ? runtimeEntities->getCursorEntity() : nullptr) {
-				cursor->setAnimationSequence(suppressHover ? kCursorSequenceNeutral : hoverState.cursorSequence);
+				cursor->setAnimationSequence(
+					(showingInspectText || idleState.active || idleState.exiting || inventoryState.open)
+						? kCursorSequenceNeutral
+						: hoverState.cursorSequence);
 			}
 
 			drawRoomScene(_engine, *screen, scene, scene.targetPaletteBrightness);
+			if (inventoryState.open)
+				drawInventoryOverlay(*screen, *art, *_engine.getStartupScript(), *bodyFont,
+					inventoryState.items, inventoryState.selectedItemName, inventoryState.promptText);
 
 			if (showingInspectText) {
 				drawRoomInspectText(*screen, *art, *bodyFont, inspectText);
-			} else if (!hoverState.promptText.empty()) {
-				drawShadowedString(*screen, *bodyFont, hoverState.promptText,
+			} else if (!promptText.empty()) {
+				drawShadowedString(*screen, *bodyFont, promptText,
 					0, 462, 640, kRoomPromptColor, Graphics::kTextAlignCenter);
 			}
 
@@ -1647,6 +1939,11 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 						needsRedraw = true;
 					break;
 				}
+				if (inventoryState.open) {
+					if (clearInventorySelection() || closeInventoryOverlay())
+						needsRedraw = true;
+					break;
+				}
 				break;
 			case Common::EVENT_LBUTTONUP:
 				if (showingInspectText)
@@ -1667,6 +1964,60 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 						inspectText = StartupResolvedText();
 						needsRedraw = true;
 					}
+					break;
+				}
+
+				const Common::Rect inventoryPanelBounds = getInventoryPanelBounds(*art);
+				if (inventoryState.open) {
+					const StartupInventoryVisual *inventoryHover =
+						findInventoryVisualAtPoint(inventoryState.items, _mousePos);
+					if (inventoryHover) {
+						if (isInventoryExitObject(inventoryHover->object)) {
+							if (closeInventoryOverlay())
+								needsRedraw = true;
+							break;
+						}
+
+						if (inventoryState.selectedItemName.empty()) {
+							inventoryState.selectedItemName = inventoryHover->object.objectName;
+							inventoryState.promptText = buildUseItemPrompt(
+								resolveSelectedInventoryLabel(), Common::String());
+							needsRedraw = true;
+							break;
+						}
+
+						if (!inventoryHover->object.objectName.equalsIgnoreCase(inventoryState.selectedItemName)) {
+							Common::Error interactionError =
+								handleInventoryTargetInteraction(inventoryHover->object, false);
+							if (interactionError.getCode() != Common::kNoError)
+								return interactionError;
+						}
+						needsRedraw = true;
+						break;
+					}
+
+					if (!inventoryState.selectedItemName.empty()) {
+						const StartupRoomHoverState useHoverState = resolveRoomHoverState(
+							_engine, scene.state, scene.sceneObjects, _mousePos);
+						const StartupObjectRecord *roomTarget = useHoverState.object
+							? findSceneObjectByName(scene.sceneObjects, useHoverState.object->objectName)
+							: nullptr;
+						if (roomTarget) {
+							Common::Error interactionError =
+								handleInventoryTargetInteraction(*roomTarget, true);
+							if (interactionError.getCode() != Common::kNoError)
+								return interactionError;
+							needsRedraw = true;
+							break;
+						}
+					}
+
+					if (!inventoryPanelBounds.contains(_mousePos) && !inventoryState.selectedItemName.empty()) {
+						needsRedraw = true;
+						break;
+					}
+					if (!inventoryPanelBounds.contains(_mousePos) && closeInventoryOverlay())
+						needsRedraw = true;
 					break;
 				}
 
@@ -1727,40 +2078,10 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 					break;
 				}
 
-				playerState.hasMoveTarget = false;
-				playerState.turnActive = false;
-				playerState.turnTargetFacing = -1;
-				Common::String restoreMusicPath = _engine.getStartupMusicPath();
-				if (!interaction.musicPath.empty()) {
-					(void)_engine.playStartupMusic(interaction.musicPath);
-					restoreMusicPath = _engine.getStartupMusicPath();
-				}
-				executeStartupAudioCommands(interaction.audioCommands);
+				Common::Error interactionError = handleInteractionResult(interaction);
+				if (interactionError.getCode() != Common::kNoError)
+					return interactionError;
 				needsRedraw = true;
-
-				if (!interaction.nextRoomName.empty()) {
-					if (!runRoomExitCommands())
-						return Common::kReadingFailed;
-
-					Common::Error roomError = runRoomLoop(interaction.nextRoomName);
-					if (roomError.getCode() != Common::kReadingFailed &&
-						roomError.getCode() != Common::kNoError) {
-						return roomError;
-					}
-
-					if (!refreshCurrentScene(true))
-						return Common::kReadingFailed;
-
-					executeStartupAudioCommands(scene.state.audioCommands);
-					if (!restoreMusicPath.empty())
-						(void)_engine.playStartupMusic(restoreMusicPath);
-					else
-						_engine.stopStartupMusic();
-				} else if (interaction.mutatedRuntimeState) {
-					if (!refreshCurrentScene(true))
-						return Common::kReadingFailed;
-					needsRedraw = true;
-				}
 				break;
 			}
 			case Common::EVENT_KEYDOWN:
@@ -1774,6 +2095,26 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 					break;
 				}
 
+				notePlayerActivity(idleState);
+				if (idleState.active || idleState.exiting) {
+					if (requestPlayerIdleAnimationExit(scene.state, playerState, idleState))
+						needsRedraw = true;
+					break;
+				}
+
+				if (inventoryState.open) {
+					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+						if (clearInventorySelection() || closeInventoryOverlay())
+							needsRedraw = true;
+					} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
+							event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
+							event.kbd.keycode == Common::KEYCODE_i) {
+						if (closeInventoryOverlay())
+							needsRedraw = true;
+					}
+					break;
+				}
+
 				if (event.kbd.keycode == Common::KEYCODE_LEFT)
 					moveLeft = true;
 				else if (event.kbd.keycode == Common::KEYCODE_RIGHT)
@@ -1782,11 +2123,10 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 					moveUp = true;
 				else if (event.kbd.keycode == Common::KEYCODE_DOWN)
 					moveDown = true;
-
-				notePlayerActivity(idleState);
-				if (idleState.active || idleState.exiting) {
-					if (requestPlayerIdleAnimationExit(scene.state, playerState, idleState))
-						needsRedraw = true;
+				else if (event.kbd.keycode == Common::KEYCODE_i) {
+					if (!openInventoryOverlay())
+						return Common::kReadingFailed;
+					needsRedraw = true;
 					break;
 				}
 
