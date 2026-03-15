@@ -72,6 +72,7 @@ static const uint32 kPaletteFadeTickMs = 4;
 static const float kPaletteFadeStep = 0.1f;
 static const float kPaletteBrightnessBlack = 0.0f;
 static const float kRoomPlayerMoveStep = 4.0f;
+static const int kRoomPlayerWalkAnimationRate = 17;
 
 static const byte kIdentTextColor = 0xd3;
 static const byte kTextColorNormal = 255;
@@ -116,6 +117,16 @@ struct StartupRoomHoverState {
 	int cursorSequence = kCursorSequenceNeutral;
 };
 
+struct PlayerAnimationRange {
+	PlayerAnimationRange() {}
+	PlayerAnimationRange(int walkFirstFrame, int walkLastFrame, int idleFrame)
+		: walkFirstFrame(walkFirstFrame), walkLastFrame(walkLastFrame), idleFrame(idleFrame) {}
+
+	int walkFirstFrame = 0;
+	int walkLastFrame = 0;
+	int idleFrame = 0;
+};
+
 static int roundToInt(float value) {
 	return value >= 0.0f ? (int)floorf(value + 0.5f) : (int)ceilf(value - 0.5f);
 }
@@ -132,6 +143,21 @@ static int resolvePlayerFacingFrame(int facing) {
 		return 0x28;
 	default:
 		return 0x0e;
+	}
+}
+
+static PlayerAnimationRange resolvePlayerAnimationRange(int facing) {
+	switch (facing) {
+	case 0:
+		return PlayerAnimationRange{ 0x00, 0x09, 0x3b };
+	case 1:
+		return PlayerAnimationRange{ 0x0f, 0x18, 0x0e };
+	case 2:
+		return PlayerAnimationRange{ 0x2d, 0x36, 0x2c };
+	case 3:
+		return PlayerAnimationRange{ 0x1e, 0x27, 0x28 };
+	default:
+		return PlayerAnimationRange{ 0x00, 0x09, 0x3b };
 	}
 }
 
@@ -345,30 +371,62 @@ static Common::String resolveSceneObjectSpritePath(const StartupObjectRecord &ob
 	return object.spritePath;
 }
 
+static void logSceneObjectSelection(const char *decision, const char *source, const StartupObjectRecord &object,
+		const Common::String &detail = Common::String()) {
+	const Common::Rect hotspotBounds = getHotspotBounds(object);
+	const Common::String resolvedSpritePath = resolveSceneObjectSpritePath(object);
+	debugC(1, kDebugScene,
+		"Harvester: scene object %s source='%s' object='%s' owner='%s' visible=%d runtimeVisible=%d sprite='%s' alt='%s' resolved='%s' pos=(%d,%d,%d) bounds=(%d,%d)-(%d,%d) action='%s' detail='%s'",
+		decision, source, object.objectName.c_str(), object.currentOwnerOrRoom.c_str(),
+		object.visible, object.runtimeVisible, object.spritePath.c_str(), object.altSpritePath.c_str(),
+		resolvedSpritePath.c_str(),
+		object.currentX, object.currentY, object.currentZ,
+		hotspotBounds.left, hotspotBounds.top, hotspotBounds.right, hotspotBounds.bottom,
+		object.actionTag.c_str(), detail.c_str());
+}
+
 static bool isBackgroundSceneObject(const StartupObjectRecord &object, const RuntimeEntity &entity) {
 	return object.initialX == 0 && object.initialY == 0 &&
 		entity.getBoundsWidth() == 640 && entity.getBoundsHeight() == 480;
 }
 
-static int resolveSceneObjectClass(const StartupObjectRecord &object, const RuntimeEntity *entity) {
+static bool isInteractiveSceneHotspot(const StartupObjectRecord &object, StartupScript *startupScript) {
+	if (object.operatable || !object.actionTag.empty())
+		return true;
+	if (!startupScript)
+		return false;
+
+	StartupResolvedText inspectText;
+	return startupScript->resolveObjectInspectText(object, inspectText);
+}
+
+static int resolveSceneObjectClass(const StartupObjectRecord &object, const RuntimeEntity *entity,
+		StartupScript *startupScript) {
 	if (entity)
 		return isBackgroundSceneObject(object, *entity) ? kRuntimeEntityClassBackground : kRuntimeEntityClassObject;
 
-	return object.actionTag.empty() ? kRuntimeEntityClassDisabledHotspot : kRuntimeEntityClassRectHotspot;
+	return isInteractiveSceneHotspot(object, startupScript)
+		? kRuntimeEntityClassRectHotspot
+		: kRuntimeEntityClassDisabledHotspot;
 }
 
-static void queueVisibleSceneObject(const StartupObjectRecord &object, Common::Array<StartupObjectRecord> &sceneObjects) {
-	if (!object.visible)
+static void queueVisibleSceneObject(const char *source, const StartupObjectRecord &object,
+		Common::Array<StartupObjectRecord> &sceneObjects) {
+	if (!object.visible) {
+		logSceneObjectSelection("skipped", source, object, "visible=0");
 		return;
+	}
 
 	for (const StartupObjectRecord &sceneObject : sceneObjects) {
 		if (sceneObject.currentOwnerOrRoom.equalsIgnoreCase(object.currentOwnerOrRoom) &&
 			sceneObject.objectName.equalsIgnoreCase(object.objectName)) {
+			logSceneObjectSelection("skipped", source, object, "duplicate owner/object");
 			return;
 		}
 	}
 
 	sceneObjects.push_back(object);
+	logSceneObjectSelection("queued", source, object);
 }
 
 static bool loadRoomSceneResources(const StartupRoomSetupState &state, ResourceManager &resources, StartupRoomSceneResources &scene) {
@@ -381,9 +439,9 @@ static bool loadRoomSceneResources(const StartupRoomSetupState &state, ResourceM
 
 	Common::Array<StartupObjectRecord> sceneObjects;
 	for (const StartupObjectRecord &object : state.roomObjects)
-		queueVisibleSceneObject(object, sceneObjects);
+		queueVisibleSceneObject("room", object, sceneObjects);
 	for (const StartupObjectRecord &object : state.activeObjects)
-		queueVisibleSceneObject(object, sceneObjects);
+		queueVisibleSceneObject("active", object, sceneObjects);
 
 	scene.sceneObjects = sceneObjects;
 	for (const StartupAnimRecord &anim : state.roomAnimations) {
@@ -532,14 +590,44 @@ static StartupRoomHoverState resolveRoomHoverState(HarvesterEngine &engine, cons
 	return hoverState;
 }
 
-static bool setPlayerFacingFrame(StartupRoomPlayerState &playerState, int facing) {
+static bool setPlayerIdleAnimation(StartupRoomPlayerState &playerState, int facing) {
 	if (!playerState.entity)
 		return false;
-	if (playerState.facing == facing)
+
+	const PlayerAnimationRange range = resolvePlayerAnimationRange(facing);
+	const bool changed = playerState.facing != facing ||
+		playerState.entity->getCurrentFrame() != range.idleFrame ||
+		playerState.entity->getAnimationRate() != 0;
+	playerState.facing = facing;
+	playerState.entity->setAnimationRate(0);
+	playerState.entity->setAnimationFrameRange(range.idleFrame, range.idleFrame, false);
+	playerState.entity->setCurrentFrame(range.idleFrame);
+	if (changed) {
+		debugC(1, kDebugScene,
+			"Harvester: player idle animation facing=%d frame=%d",
+			facing, range.idleFrame);
+	}
+	return changed;
+}
+
+static bool setPlayerWalkAnimation(StartupRoomPlayerState &playerState, int facing) {
+	if (!playerState.entity)
+		return false;
+
+	const PlayerAnimationRange range = resolvePlayerAnimationRange(facing);
+	const int currentFrame = playerState.entity->getCurrentFrame();
+	const bool alreadyWalking = playerState.facing == facing &&
+		playerState.entity->getAnimationRate() == kRoomPlayerWalkAnimationRate &&
+		currentFrame >= range.walkFirstFrame && currentFrame <= range.walkLastFrame;
+	if (alreadyWalking)
 		return false;
 
 	playerState.facing = facing;
-	playerState.entity->setCurrentFrame(resolvePlayerFacingFrame(facing));
+	playerState.entity->setAnimationFrameRange(range.walkFirstFrame, range.walkLastFrame, true);
+	playerState.entity->setAnimationRate(kRoomPlayerWalkAnimationRate);
+	debugC(1, kDebugScene,
+		"Harvester: player walk animation facing=%d frames=%d..%d rate=%d",
+		facing, range.walkFirstFrame, range.walkLastFrame, kRoomPlayerWalkAnimationRate);
 	return true;
 }
 
@@ -549,6 +637,10 @@ static void setPlayerMoveTarget(const StartupRoomSetupState &state, StartupRoomP
 	playerState.targetX = CLIP<int>(targetX, 0, 639);
 	playerState.targetY = clampRoomMovementY(state, targetBottomY);
 	playerState.targetZ = mapRoomScreenYToDepth(state, playerState.targetY);
+	debugC(1, kDebugScene,
+		"Harvester: player move target room='%s' current=(%d,%d,z=%.2f) target=(%d,%d,z=%.2f)",
+		state.roomName.c_str(), playerState.centerX, playerState.bottomY, (double)playerState.z,
+		playerState.targetX, playerState.targetY, (double)playerState.targetZ);
 }
 
 static bool stepPlayerMoveTarget(const StartupRoomSetupState &state, StartupRoomPlayerState &playerState) {
@@ -558,23 +650,30 @@ static bool stepPlayerMoveTarget(const StartupRoomSetupState &state, StartupRoom
 	const float dx = (float)(playerState.targetX - playerState.centerX);
 	const float dy = (float)(playerState.targetY - playerState.bottomY);
 	const float distance = sqrtf(dx * dx + dy * dy);
+	const int moveFacing = distance > 0.0f
+		? resolveFacingFromMovementDelta((int)dx, (int)dy)
+		: playerState.facing;
 	if (distance <= kRoomPlayerMoveStep) {
 		playerState.centerX = playerState.targetX;
 		playerState.bottomY = playerState.targetY;
 		playerState.z = playerState.targetZ;
 		playerState.hasMoveTarget = false;
+		(void)setPlayerIdleAnimation(playerState, moveFacing);
 	} else {
+		(void)setPlayerWalkAnimation(playerState, moveFacing);
 		playerState.centerX += roundToInt((dx / distance) * kRoomPlayerMoveStep);
 		playerState.bottomY += roundToInt((dy / distance) * kRoomPlayerMoveStep);
 		playerState.bottomY = clampRoomMovementY(state, playerState.bottomY);
 		playerState.z = mapRoomScreenYToDepth(state, playerState.bottomY);
 	}
-
-	(void)setPlayerFacingFrame(playerState,
-		resolveFacingFromMovementDelta(playerState.targetX - playerState.centerX,
-			playerState.targetY - playerState.bottomY));
-	return applyRoomActorPlacement(state, *playerState.entity,
+	const bool placed = applyRoomActorPlacement(state, *playerState.entity,
 		playerState.centerX, playerState.bottomY, playerState.z);
+	debugC(playerState.hasMoveTarget ? 2 : 1, kDebugScene,
+		"Harvester: player move step room='%s' pos=(%d,%d,z=%.2f) target=(%d,%d,z=%.2f) facing=%d frame=%d active=%d placed=%d",
+		state.roomName.c_str(), playerState.centerX, playerState.bottomY, (double)playerState.z,
+		playerState.targetX, playerState.targetY, (double)playerState.targetZ,
+		playerState.facing, playerState.entity->getCurrentFrame(), playerState.hasMoveTarget, placed);
+	return placed;
 }
 
 static bool stepPlayerKeyboardMovement(const StartupRoomSetupState &state, StartupRoomPlayerState &playerState,
@@ -588,13 +687,18 @@ static bool stepPlayerKeyboardMovement(const StartupRoomSetupState &state, Start
 		return false;
 
 	playerState.hasMoveTarget = false;
+	(void)setPlayerWalkAnimation(playerState, resolveFacingFromMovementDelta(dx, dy));
 	playerState.centerX = CLIP<int>(playerState.centerX + roundToInt(dx * kRoomPlayerMoveStep), 0, 639);
 	playerState.bottomY = clampRoomMovementY(state,
 		playerState.bottomY + roundToInt(dy * kRoomPlayerMoveStep));
 	playerState.z = mapRoomScreenYToDepth(state, playerState.bottomY);
-	(void)setPlayerFacingFrame(playerState, resolveFacingFromMovementDelta(dx, dy));
-	return applyRoomActorPlacement(state, *playerState.entity,
+	const bool placed = applyRoomActorPlacement(state, *playerState.entity,
 		playerState.centerX, playerState.bottomY, playerState.z);
+	debugC(2, kDebugScene,
+		"Harvester: player keyboard move room='%s' delta=(%d,%d) pos=(%d,%d,z=%.2f) facing=%d frame=%d placed=%d",
+		state.roomName.c_str(), dx, dy, playerState.centerX, playerState.bottomY, (double)playerState.z,
+		playerState.facing, playerState.entity->getCurrentFrame(), placed);
+	return placed;
 }
 
 static bool findRoomObjectProbePoint(HarvesterEngine &engine, const Common::Array<StartupObjectRecord> &sceneObjects,
@@ -1176,6 +1280,11 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 
 				const StartupRoomHoverState hoverState = resolveRoomHoverState(
 					_engine, scene.state, scene.sceneObjects, _mousePos);
+				debugC(1, kDebugScene,
+					"Harvester: room click room='%s' mouse=(%d,%d) object='%s' cursor_sequence=%d prompt='%s'",
+					scene.state.roomName.c_str(), _mousePos.x, _mousePos.y,
+					hoverState.object ? hoverState.object->objectName.c_str() : "",
+					hoverState.cursorSequence, hoverState.promptText.c_str());
 				StartupObjectRecord *clickedObject = hoverState.object
 					? findSceneObjectByName(scene.sceneObjects, hoverState.object->objectName)
 					: nullptr;
@@ -1295,6 +1404,9 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 			needsRedraw = true;
 		else if (stepPlayerMoveTarget(scene.state, playerState))
 			needsRedraw = true;
+		else if (!moveLeft && !moveRight && !moveUp && !moveDown && !playerState.hasMoveTarget &&
+				playerState.entity && playerState.facing >= 0 && setPlayerIdleAnimation(playerState, playerState.facing))
+			needsRedraw = true;
 
 		if (tickRuntimeEntities())
 			needsRedraw = true;
@@ -1320,6 +1432,7 @@ bool StartupFlow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 		const Common::Array<StartupObjectRecord> &drawableObjects,
 		const Common::Array<StartupAnimRecord> &drawableAnimations) {
 	RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
+	StartupScript *startupScript = _engine.getStartupScript();
 	if (!runtimeEntities)
 		return false;
 
@@ -1327,24 +1440,39 @@ bool StartupFlow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 	for (const StartupObjectRecord &object : drawableObjects) {
 		RuntimeEntity *entity = nullptr;
 		const Common::String spritePath = resolveSceneObjectSpritePath(object);
+		const Common::Rect hotspotBounds = getHotspotBounds(object);
 		if (!spritePath.empty() && spritePath.hasSuffixIgnoreCase(".BM")) {
 			entity = runtimeEntities->spawnSceneBitmapEntity(object.objectName, spritePath,
 				Common::Point(object.currentX, object.currentY), (float)object.currentZ);
 		} else {
-			const Common::Rect hotspotBounds = getHotspotBounds(object);
 			if (!hotspotBounds.isEmpty())
 				entity = runtimeEntities->spawnSceneHotspotEntity(object.objectName, hotspotBounds, (float)object.currentZ);
 		}
 
 		if (!entity) {
+			debugC(1, kDebugScene,
+				"Harvester: scene entity skipped room='%s' object='%s' resolved='%s' bounds=(%d,%d)-(%d,%d) reason='%s'",
+				state.roomName.c_str(), object.objectName.c_str(), spritePath.c_str(),
+				hotspotBounds.left, hotspotBounds.top, hotspotBounds.right, hotspotBounds.bottom,
+				spritePath.empty() || !spritePath.hasSuffixIgnoreCase(".BM")
+					? "no_bitmap_and_no_hotspot_bounds"
+					: "spawn_failed");
 			debug(1, "Harvester: unable to spawn room object entity '%s' from '%s'",
 				object.objectName.c_str(), spritePath.c_str());
 			continue;
 		}
 
-		entity->setClassId(resolveSceneObjectClass(object, entity->hasFrames() ? entity : nullptr));
+		entity->setClassId(resolveSceneObjectClass(object, entity->hasFrames() ? entity : nullptr, startupScript));
 		entity->setAnchorMode(kRuntimeEntityAnchorTopLeft);
 		entity->setZExtent((float)object.zExtent);
+		const Common::Rect entityRect = entity->getScreenRect();
+		debugC(1, kDebugScene,
+			"Harvester: scene entity spawned room='%s' object='%s' type='%s' class=0x%x pos=(%d,%d,z=%.2f) rect=(%d,%d)-(%d,%d) sprite='%s' action='%s' operatable=%d ident='%s'",
+			state.roomName.c_str(), object.objectName.c_str(),
+			entity->hasFrames() ? "bitmap" : "hotspot", entity->getClassId(),
+			entity->getX(), entity->getY(), (double)entity->getZ(),
+			entityRect.left, entityRect.top, entityRect.right, entityRect.bottom,
+			spritePath.c_str(), object.actionTag.c_str(), object.operatable, object.identTextKey.c_str());
 	}
 	for (const StartupAnimRecord &anim : drawableAnimations) {
 		if (!runtimeEntities->spawnSceneAnimationEntity(anim.animName, anim.resourcePath,

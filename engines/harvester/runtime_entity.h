@@ -87,6 +87,7 @@ public:
 	void setCurrentFrame(int frame);
 	int getCurrentFrame() const { return _currentFrame; }
 	int getLastFrame() const { return _lastFrame; }
+	void setAnimationFrameRange(int firstFrame, int lastFrame, bool looping);
 	void setAnimationSequence(int sequence);
 	int getAnimationSequence() const { return _animationSequence; }
 	void configureHotspotBounds(int width, int height);

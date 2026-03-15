@@ -30,7 +30,8 @@ namespace Harvester {
 
 enum HarvesterDebugChannels {
 	kDebugGeneral   = 1 << 0,
-	kDebugResources = 1 << 1
+	kDebugResources = 1 << 1,
+	kDebugScene     = 1 << 2
 };
 
 extern const PlainGameDescriptor harvesterGames[];
