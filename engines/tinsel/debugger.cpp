@@ -152,6 +152,7 @@ bool Console::cmd_scene(int argc, const char **argv) {
 		return true;
 	}
 
+	EndDw1Intro();
 	SetNewScene(sceneNumber << SCNHANDLE_SHIFT, entryNumber, TRANS_CUT);
 	return false;
 }

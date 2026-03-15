@@ -99,7 +99,7 @@ extern int NewestSavedGame();
 
 // in SCENE.CPP
 extern void setshowpos();
-extern int g_sceneCtr;
+extern void ResetDw1Intro();
 
 // in TINSEL.CPP
 extern void SetCdChangeScene(SCNHANDLE hScene);
@@ -1477,9 +1477,6 @@ void NewScene(CORO_PARAM, SCNHANDLE scene, int entrance, int transition) {
 	else
 		GetControl(CONTROL_STARTOFF);
 
-	if (TinselVersion == 1)
-		++g_sceneCtr;
-
 	// Prevent code subsequent to this call running before scene changes
 	if (CoroScheduler.getCurrentPID() != PID_MASTER_SCR)
 		CORO_KILL_SELF();
@@ -2505,7 +2502,11 @@ void FnRestartGame() {
 	StopSample();
 
 	g_bRestart = true;
-	g_sceneCtr = 0;
+	if (!TinselV1PSX) {
+		// Reset the DW1 intro detection unless PSX.
+		// PSX scripts restart directly to the title screen.
+		ResetDw1Intro();
+	}
 }
 
 /**

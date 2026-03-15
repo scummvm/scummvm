@@ -90,6 +90,11 @@ void SendSceneTinselProcess(TINSEL_EVENT event);
 
 void SetView(int id, int scale);
 
+bool InDw1Intro();
+void EndDw1Intro();
+void ResetDw1Intro();
+bool WasDw1IntroSkipped();
+
 } // End of namespace Tinsel
 
 #endif	// TINSEL_SCENE_H

@@ -78,6 +78,9 @@ public:
 
 	int CdNumber(SCNHANDLE offset);
 
+	// Used for skipping DW1 introduction
+	SCNHANDLE GetDw1TitleSceneHandle() { return _dw1TitleSceneHandle; }
+
 	// Noir
 	SCNHANDLE FindLanguageSceneHandle(const char *fileName);
 
@@ -106,6 +109,8 @@ private:
 	Common::File *_cdGraphStream;
 
 	Common::Path _szCdPlayFile;
+
+	SCNHANDLE _dw1TitleSceneHandle;
 };
 
 } // End of namespace Tinsel

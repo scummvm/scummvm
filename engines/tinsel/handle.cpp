@@ -67,7 +67,8 @@ enum {
 #define MEMFLAGS(x) ((TinselVersion == 3) ? x->flags2 : x->filesize)
 #define MEMFLAGSET(x, mask) ((TinselVersion == 3) ? x->flags2 |= mask : x->filesize |= mask)
 
-Handle::Handle() : _handleTable(0), _numHandles(0), _cdPlayHandle((uint32)-1), _cdBaseHandle(0), _cdTopHandle(0), _cdGraphStream(nullptr) {
+Handle::Handle() : _handleTable(0), _numHandles(0), _cdPlayHandle((uint32)-1), _cdBaseHandle(0), _cdTopHandle(0), _cdGraphStream(nullptr),
+	_dw1TitleSceneHandle(0) {
 }
 
 Handle::~Handle() {
@@ -164,6 +165,19 @@ void Handle::SetupHandleTable() {
 
 			// make sure memory allocated
 			assert(pH->_node);
+		}
+	}
+
+	// Detect DW1 title scene handle for introduction skipping
+	if (TinselVersion == 1) {
+		// PSX versions swapped the title and turtle scene order
+		const char *titleSceneName = TinselV1PSX ? "turtle." : "title.";
+		const int sceneNameLength = strlen(titleSceneName);
+		for (i = 0; i < _numHandles; i++) {
+			if (!scumm_strnicmp(_handleTable[i].szName, titleSceneName, sceneNameLength)) {
+				_dw1TitleSceneHandle = i << SCNHANDLE_SHIFT;
+				break;
+			}
 		}
 	}
 }

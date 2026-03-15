@@ -41,6 +41,9 @@ namespace Tinsel {
 
 extern int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pic, RESUME_STATE *pResumeState);
 
+// in SCENE.CPP
+extern bool InDw1Intro();
+
 //----------------- LOCAL DEFINES --------------------
 
 #define	GLOBALS_FILENAME	"gdata"		// name of globals file
@@ -957,14 +960,20 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 			break;
 
 		case OP_ESCON:
-			g_bNoPause = true;
-			ic->escOn = true;
-			ic->myEscape = GetEscEvents();
+			// Ignore EscapeOn during DW1 intro. We implement our own skipping.
+			if (!InDw1Intro()) {
+				g_bNoPause = true;
+				ic->escOn = true;
+				ic->myEscape = GetEscEvents();
+			}
 			break;
 
 		case OP_ESCOFF:
-			ic->escOn = false;
-			ic->myEscape = 0;
+			// Ignore EscapeOff during DW1 intro. We implement our own skipping.
+			if (!InDw1Intro()) {
+				ic->escOn = false;
+				ic->myEscape = 0;
+			}
 			break;
 
 		case OP_NOOP:
