@@ -75,7 +75,9 @@ static const char *const kPlayerActorResourcePath = "1:/GRAPHIC/MONSTERS/PC/PC0.
 static const uint32 kPaletteFadeTickMs = 4;
 static const float kPaletteFadeStep = 0.1f;
 static const float kPaletteBrightnessBlack = 0.0f;
-static const float kRoomPlayerMoveStep = 4.0f;
+static const float kRoomPlayerHorizontalMoveBase = 8.0f;
+static const int kRoomRegionTargetXBias = 10;
+static const float kRoomDepthCompareEpsilon = 0.01f;
 static const int kRoomPlayerWalkAnimationRate = 17;
 
 static const byte kIdentTextColor = 0xd3;
@@ -121,7 +123,6 @@ struct StartupRoomPlayerState {
 	int facing = -1;
 	bool hasMoveTarget = false;
 	int targetX = 0;
-	int targetY = 0;
 	float targetZ = 0.0f;
 	bool turnActive = false;
 	int turnTargetFacing = -1;
@@ -282,6 +283,29 @@ static float mapRoomScreenYToDepth(const StartupRoomSetupState &state, int scree
 		(state.roomMinZScreenY - state.roomMaxZScreenY));
 }
 
+static float clampRoomDepth(const StartupRoomSetupState &state, float z) {
+	if (!roomSupportsMovementBand(state))
+		return z;
+
+	return CLIP<float>(z,
+		(float)MIN(state.roomMinZ, state.roomMaxZ),
+		(float)MAX(state.roomMinZ, state.roomMaxZ));
+}
+
+static int mapRoomDepthToScreenY(const StartupRoomSetupState &state, float z) {
+	if (!roomSupportsMovementBand(state))
+		return state.playerSpawnY;
+
+	if (state.roomMaxZ == state.roomMinZ)
+		return clampRoomMovementY(state, state.playerSpawnY);
+
+	const float clampedZ = clampRoomDepth(state, z);
+	const float offset = ((float)state.roomMaxZ - clampedZ) *
+		(float)(state.roomMinZScreenY - state.roomMaxZScreenY) /
+		(float)(state.roomMaxZ - state.roomMinZ);
+	return clampRoomMovementY(state, state.roomMaxZScreenY + roundToInt(offset));
+}
+
 static float computeActorDepthScale(const StartupRoomSetupState &state, float z) {
 	float scale = 1.0f;
 	if (state.roomPerspectiveScale != 0.0f) {
@@ -336,6 +360,140 @@ static int resolveFacingFromMovementDelta(int dx, int dy) {
 	if (dy < 0)
 		return 3;
 	return 0;
+}
+
+static int resolveFacingFromRoomMovement(const StartupRoomSetupState &state,
+		int fromCenterX, float fromZ, int toCenterX, float toZ) {
+	return resolveFacingFromMovementDelta(
+		toCenterX - fromCenterX,
+		mapRoomDepthToScreenY(state, toZ) - mapRoomDepthToScreenY(state, fromZ));
+}
+
+static int computeRoomPlayerHorizontalStep(const StartupRoomSetupState &state, float z) {
+	return MAX<int>(1, roundToInt(computeActorDepthScale(state, z) * kRoomPlayerHorizontalMoveBase));
+}
+
+static float computeRoomPlayerDepthStep(const StartupRoomSetupState &state) {
+	return state.roomZVelocityStep > 0.0f ? state.roomZVelocityStep : 1.0f;
+}
+
+static int stepTowardsInt(int current, int target, int step) {
+	if (step <= 0 || current == target)
+		return current;
+	if (current < target)
+		return MIN(current + step, target);
+	return MAX(current - step, target);
+}
+
+static float stepTowardsFloat(float current, float target, float step) {
+	if (step <= 0.0f || fabsf(target - current) <= kRoomDepthCompareEpsilon)
+		return target;
+	if (current < target)
+		return MIN(current + step, target);
+	return MAX(current - step, target);
+}
+
+static bool doesPlayerOverlapRoomBlocker(HarvesterEngine &engine,
+		const Common::Array<StartupObjectRecord> &sceneObjects,
+		const Common::Array<StartupAnimRecord> &sceneAnimations, const RuntimeEntity &playerEntity) {
+	RuntimeEntityManager *runtimeEntities = engine.getRuntimeEntities();
+	if (!runtimeEntities)
+		return false;
+
+	for (const StartupObjectRecord &object : sceneObjects) {
+		const RuntimeEntity *entity = runtimeEntities->findSceneEntityByName(object.objectName);
+		if (entity && playerEntity.overlapsEntity(*entity))
+			return true;
+	}
+
+	for (const StartupAnimRecord &anim : sceneAnimations) {
+		const RuntimeEntity *entity = runtimeEntities->findSceneEntityByName(anim.animName);
+		if (entity && playerEntity.overlapsEntity(*entity))
+			return true;
+	}
+
+	return false;
+}
+
+static bool isPlayerMovementBlocked(HarvesterEngine &engine, const StartupRoomSetupState &state,
+		const Common::Array<StartupObjectRecord> &sceneObjects,
+		const Common::Array<StartupAnimRecord> &sceneAnimations,
+		StartupRoomPlayerState &playerState, int candidateCenterX, float candidateZ) {
+	if (!playerState.entity)
+		return true;
+
+	const int oldCenterX = playerState.centerX;
+	const int oldBottomY = playerState.bottomY;
+	const float oldZ = playerState.z;
+	const int candidateBottomY = mapRoomDepthToScreenY(state, candidateZ);
+	if (!applyRoomActorPlacement(state, *playerState.entity,
+			candidateCenterX, candidateBottomY, candidateZ)) {
+		(void)applyRoomActorPlacement(state, *playerState.entity, oldCenterX, oldBottomY, oldZ);
+		return true;
+	}
+
+	const bool blocked = doesPlayerOverlapRoomBlocker(engine, sceneObjects, sceneAnimations, *playerState.entity);
+	(void)applyRoomActorPlacement(state, *playerState.entity, oldCenterX, oldBottomY, oldZ);
+	return blocked;
+}
+
+static bool tryApplyPlayerMovement(HarvesterEngine &engine, const StartupRoomSetupState &state,
+		const Common::Array<StartupObjectRecord> &sceneObjects,
+		const Common::Array<StartupAnimRecord> &sceneAnimations,
+		StartupRoomPlayerState &playerState, int candidateCenterX, float candidateZ) {
+	if (!playerState.entity)
+		return false;
+
+	candidateCenterX = CLIP<int>(candidateCenterX, 0, 639);
+	candidateZ = clampRoomDepth(state, candidateZ);
+	if (candidateCenterX == playerState.centerX &&
+			fabsf(candidateZ - playerState.z) <= kRoomDepthCompareEpsilon) {
+		return false;
+	}
+	if (isPlayerMovementBlocked(engine, state, sceneObjects, sceneAnimations,
+			playerState, candidateCenterX, candidateZ)) {
+		return false;
+	}
+
+	playerState.centerX = candidateCenterX;
+	playerState.z = candidateZ;
+	playerState.bottomY = mapRoomDepthToScreenY(state, candidateZ);
+	return applyRoomActorPlacement(state, *playerState.entity,
+		playerState.centerX, playerState.bottomY, playerState.z);
+}
+
+static void setPlayerMoveTarget(const StartupRoomSetupState &state, StartupRoomPlayerState &playerState,
+		int targetX, float targetZ) {
+	playerState.hasMoveTarget = true;
+	playerState.targetX = CLIP<int>(targetX, 0, 639);
+	playerState.targetZ = clampRoomDepth(state, targetZ);
+	debugC(1, kDebugScene,
+		"Harvester: player move target room='%s' current=(%d,%d,z=%.2f) target=(%d,%d,z=%.2f)",
+		state.roomName.c_str(), playerState.centerX, playerState.bottomY, (double)playerState.z,
+		playerState.targetX, mapRoomDepthToScreenY(state, playerState.targetZ), (double)playerState.targetZ);
+}
+
+static void setPlayerMoveTargetFromScreenPoint(const StartupRoomSetupState &state,
+		StartupRoomPlayerState &playerState, int targetX, int targetBottomY) {
+	setPlayerMoveTarget(state, playerState, targetX,
+		mapRoomScreenYToDepth(state, clampRoomMovementY(state, targetBottomY)));
+}
+
+static int resolveRegionTargetX(const StartupRegionRecord &region, const StartupRoomPlayerState &playerState) {
+	const Common::Rect bounds(region.left, region.top, region.right + 1, region.bottom + 1);
+	int targetX = bounds.left + bounds.width() / 2;
+	if (playerState.entity && targetX + kRoomRegionTargetXBias < playerState.entity->getScreenRect().right)
+		targetX -= kRoomRegionTargetXBias;
+	return CLIP<int>(targetX, 0, 639);
+}
+
+static float resolveRegionTargetZ(const StartupRegionRecord &region) {
+	if (region.desiredFacing == 0)
+		return (float)region.maxZ;
+	if (region.desiredFacing == 3)
+		return (float)region.minZ;
+
+	return (float)(region.minZ + (region.maxZ - region.minZ) / 2);
 }
 
 static uint32 getRuntimeClockTicks() {
@@ -1033,80 +1191,132 @@ static bool updatePlayerTurnAnimationState(StartupRoomPlayerState &playerState) 
 	return true;
 }
 
-static void setPlayerMoveTarget(const StartupRoomSetupState &state, StartupRoomPlayerState &playerState,
-		int targetX, int targetBottomY) {
-	playerState.hasMoveTarget = true;
-	playerState.targetX = CLIP<int>(targetX, 0, 639);
-	playerState.targetY = clampRoomMovementY(state, targetBottomY);
-	playerState.targetZ = mapRoomScreenYToDepth(state, playerState.targetY);
-	debugC(1, kDebugScene,
-		"Harvester: player move target room='%s' current=(%d,%d,z=%.2f) target=(%d,%d,z=%.2f)",
-		state.roomName.c_str(), playerState.centerX, playerState.bottomY, (double)playerState.z,
-		playerState.targetX, playerState.targetY, (double)playerState.targetZ);
-}
-
-static bool stepPlayerMoveTarget(const StartupRoomSetupState &state, StartupRoomPlayerState &playerState) {
+static bool stepPlayerMoveTarget(HarvesterEngine &engine, const StartupRoomSetupState &state,
+		const Common::Array<StartupObjectRecord> &sceneObjects,
+		const Common::Array<StartupAnimRecord> &sceneAnimations,
+		StartupRoomPlayerState &playerState) {
 	if (!playerState.entity || !playerState.hasMoveTarget || playerState.turnActive)
 		return false;
 
-	const float dx = (float)(playerState.targetX - playerState.centerX);
-	const float dy = (float)(playerState.targetY - playerState.bottomY);
-	const float distance = sqrtf(dx * dx + dy * dy);
-	const int moveFacing = distance > 0.0f
-		? resolveFacingFromMovementDelta((int)dx, (int)dy)
-		: playerState.facing;
-	if (distance <= kRoomPlayerMoveStep) {
-		playerState.centerX = playerState.targetX;
-		playerState.bottomY = playerState.targetY;
+	if (playerState.centerX == playerState.targetX &&
+			fabsf(playerState.z - playerState.targetZ) <= kRoomDepthCompareEpsilon) {
+		playerState.hasMoveTarget = false;
+		return setPlayerIdleAnimation(playerState, playerState.facing >= 0 ? playerState.facing : 0);
+	}
+
+	const int previousCenterX = playerState.centerX;
+	const float previousZ = playerState.z;
+	const int targetBottomY = mapRoomDepthToScreenY(state, playerState.targetZ);
+	const int moveFacing = resolveFacingFromMovementDelta(
+		playerState.targetX - playerState.centerX, targetBottomY - playerState.bottomY);
+	const int horizontalStep = computeRoomPlayerHorizontalStep(state, playerState.z);
+	const float depthStep = computeRoomPlayerDepthStep(state);
+	const int candidateCenterX = stepTowardsInt(playerState.centerX, playerState.targetX, horizontalStep);
+	const float candidateZ = stepTowardsFloat(playerState.z, playerState.targetZ, depthStep);
+
+	bool moved = tryApplyPlayerMovement(engine, state, sceneObjects, sceneAnimations,
+		playerState, candidateCenterX, candidateZ);
+	if (!moved && candidateCenterX != previousCenterX) {
+		moved = tryApplyPlayerMovement(engine, state, sceneObjects, sceneAnimations,
+			playerState, candidateCenterX, previousZ);
+	}
+	if (!moved && fabsf(candidateZ - previousZ) > kRoomDepthCompareEpsilon) {
+		moved = tryApplyPlayerMovement(engine, state, sceneObjects, sceneAnimations,
+			playerState, previousCenterX, candidateZ);
+	}
+	if (!moved) {
+		playerState.hasMoveTarget = false;
+		return setPlayerIdleAnimation(playerState, playerState.facing >= 0 ? playerState.facing : moveFacing);
+	}
+
+	const int actualFacing = resolveFacingFromRoomMovement(
+		state, previousCenterX, previousZ, playerState.centerX, playerState.z);
+	(void)setPlayerWalkAnimation(playerState, actualFacing);
+	if (playerState.centerX == playerState.targetX &&
+			fabsf(playerState.z - playerState.targetZ) <= kRoomDepthCompareEpsilon) {
+		playerState.bottomY = mapRoomDepthToScreenY(state, playerState.targetZ);
 		playerState.z = playerState.targetZ;
 		playerState.hasMoveTarget = false;
-		(void)setPlayerIdleAnimation(playerState, moveFacing);
-	} else {
-		(void)setPlayerWalkAnimation(playerState, moveFacing);
-		playerState.centerX += roundToInt((dx / distance) * kRoomPlayerMoveStep);
-		playerState.bottomY += roundToInt((dy / distance) * kRoomPlayerMoveStep);
-		playerState.bottomY = clampRoomMovementY(state, playerState.bottomY);
-		playerState.z = mapRoomScreenYToDepth(state, playerState.bottomY);
+		(void)setPlayerIdleAnimation(playerState, actualFacing);
 	}
-	const bool placed = applyRoomActorPlacement(state, *playerState.entity,
-		playerState.centerX, playerState.bottomY, playerState.z);
 	debugC(playerState.hasMoveTarget ? 2 : 1, kDebugScene,
-		"Harvester: player move step room='%s' pos=(%d,%d,z=%.2f) target=(%d,%d,z=%.2f) facing=%d frame=%d active=%d placed=%d",
+		"Harvester: player move step room='%s' pos=(%d,%d,z=%.2f) target=(%d,%d,z=%.2f) facing=%d frame=%d active=%d moved=%d",
 		state.roomName.c_str(), playerState.centerX, playerState.bottomY, (double)playerState.z,
-		playerState.targetX, playerState.targetY, (double)playerState.targetZ,
-		playerState.facing, playerState.entity->getCurrentFrame(), playerState.hasMoveTarget, placed);
-	return placed;
+		playerState.targetX, mapRoomDepthToScreenY(state, playerState.targetZ), (double)playerState.targetZ,
+		playerState.facing, playerState.entity->getCurrentFrame(), playerState.hasMoveTarget, moved);
+	return true;
 }
 
-static bool stepPlayerKeyboardMovement(const StartupRoomSetupState &state, StartupRoomPlayerState &playerState,
-		bool moveLeft, bool moveRight, bool moveUp, bool moveDown) {
+static bool stepPlayerKeyboardMovement(HarvesterEngine &engine, const StartupRoomSetupState &state,
+		const Common::Array<StartupObjectRecord> &sceneObjects,
+		const Common::Array<StartupAnimRecord> &sceneAnimations,
+		StartupRoomPlayerState &playerState, bool moveLeft, bool moveRight, bool moveUp, bool moveDown) {
 	if (!playerState.entity || !roomSupportsMovementBand(state))
 		return false;
 
-	const int dx = (moveRight ? 1 : 0) - (moveLeft ? 1 : 0);
-	const int dy = (moveDown ? 1 : 0) - (moveUp ? 1 : 0);
-	if (dx == 0 && dy == 0)
+	const int horizontalInput = (moveRight ? 1 : 0) - (moveLeft ? 1 : 0);
+	const int verticalInput = (moveDown ? 1 : 0) - (moveUp ? 1 : 0);
+	if (horizontalInput == 0 && verticalInput == 0)
 		return false;
 	if (playerState.turnActive)
 		return false;
 
-	const int desiredFacing = resolveFacingFromMovementDelta(dx, dy);
+	const int previousCenterX = playerState.centerX;
+	const float previousZ = playerState.z;
+	const int horizontalStep = computeRoomPlayerHorizontalStep(state, playerState.z);
+	const float depthStep = computeRoomPlayerDepthStep(state);
+	int candidateCenterX = CLIP<int>(playerState.centerX + horizontalInput * horizontalStep, 0, 639);
+	float candidateZ = playerState.z;
+	if (verticalInput != 0) {
+		const float positiveZ = clampRoomDepth(state, playerState.z + depthStep);
+		const float negativeZ = clampRoomDepth(state, playerState.z - depthStep);
+		const int positiveY = mapRoomDepthToScreenY(state, positiveZ);
+		const int negativeY = mapRoomDepthToScreenY(state, negativeZ);
+		if (verticalInput < 0) {
+			if (positiveY < playerState.bottomY)
+				candidateZ = positiveZ;
+			else if (negativeY < playerState.bottomY)
+				candidateZ = negativeZ;
+		} else {
+			if (positiveY > playerState.bottomY)
+				candidateZ = positiveZ;
+			else if (negativeY > playerState.bottomY)
+				candidateZ = negativeZ;
+		}
+	}
+	if (candidateCenterX == playerState.centerX &&
+			fabsf(candidateZ - playerState.z) <= kRoomDepthCompareEpsilon) {
+		return false;
+	}
+
+	const int desiredFacing = resolveFacingFromRoomMovement(
+		state, playerState.centerX, playerState.z, candidateCenterX, candidateZ);
 	if (desiredFacing != playerState.facing && startPlayerTurnAnimation(playerState, desiredFacing))
 		return true;
 
 	playerState.hasMoveTarget = false;
-	(void)setPlayerWalkAnimation(playerState, desiredFacing);
-	playerState.centerX = CLIP<int>(playerState.centerX + roundToInt(dx * kRoomPlayerMoveStep), 0, 639);
-	playerState.bottomY = clampRoomMovementY(state,
-		playerState.bottomY + roundToInt(dy * kRoomPlayerMoveStep));
-	playerState.z = mapRoomScreenYToDepth(state, playerState.bottomY);
-	const bool placed = applyRoomActorPlacement(state, *playerState.entity,
-		playerState.centerX, playerState.bottomY, playerState.z);
+	bool moved = tryApplyPlayerMovement(engine, state, sceneObjects, sceneAnimations,
+		playerState, candidateCenterX, candidateZ);
+	if (!moved && candidateCenterX != previousCenterX) {
+		moved = tryApplyPlayerMovement(engine, state, sceneObjects, sceneAnimations,
+			playerState, candidateCenterX, previousZ);
+	}
+	if (!moved && fabsf(candidateZ - previousZ) > kRoomDepthCompareEpsilon) {
+		moved = tryApplyPlayerMovement(engine, state, sceneObjects, sceneAnimations,
+			playerState, previousCenterX, candidateZ);
+	}
+	if (!moved)
+		return false;
+
+	const int actualFacing = resolveFacingFromRoomMovement(
+		state, previousCenterX, previousZ, playerState.centerX, playerState.z);
+	(void)setPlayerWalkAnimation(playerState, actualFacing);
 	debugC(2, kDebugScene,
-		"Harvester: player keyboard move room='%s' delta=(%d,%d) pos=(%d,%d,z=%.2f) facing=%d frame=%d placed=%d",
-		state.roomName.c_str(), dx, dy, playerState.centerX, playerState.bottomY, (double)playerState.z,
-		playerState.facing, playerState.entity->getCurrentFrame(), placed);
-	return placed;
+		"Harvester: player keyboard move room='%s' input=(%d,%d) pos=(%d,%d,z=%.2f) facing=%d frame=%d moved=%d",
+		state.roomName.c_str(), horizontalInput, verticalInput,
+		playerState.centerX, playerState.bottomY, (double)playerState.z,
+		playerState.facing, playerState.entity->getCurrentFrame(), moved);
+	return true;
 }
 
 static void positionPlayerIdleAnimationEntity(const StartupRoomSetupState &state,
@@ -1384,9 +1594,9 @@ static void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneR
 				probePlayer.bottomY = scene.state.playerSpawnY;
 				probePlayer.z = (float)scene.state.playerSpawnZ;
 				probePlayer.facing = scene.state.playerFacing;
-				setPlayerMoveTarget(scene.state, probePlayer, floorProbe.x, floorProbe.y);
+				setPlayerMoveTargetFromScreenPoint(scene.state, probePlayer, floorProbe.x, floorProbe.y);
 				for (int i = 0; i < 32 && probePlayer.hasMoveTarget; ++i)
-					(void)stepPlayerMoveTarget(scene.state, probePlayer);
+					(void)stepPlayerMoveTarget(engine, scene.state, scene.sceneObjects, scene.sceneAnimations, probePlayer);
 
 				const Common::Rect movedRect = player->getScreenRect();
 				debugC(1, kDebugGeneral,
@@ -2055,8 +2265,8 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 		if (doesPlayerOverlapRegion(*playerState.entity, region))
 			return;
 
-		int targetBottomY = region.bottom;
-		setPlayerMoveTarget(scene.state, playerState, (region.left + region.right) / 2, targetBottomY);
+		setPlayerMoveTarget(scene.state, playerState,
+			resolveRegionTargetX(region, playerState), resolveRegionTargetZ(region));
 	};
 	auto runRegionInteraction = [&](const StartupRegionRecord &region) -> Common::Error {
 		StartupInteractionResult interaction;
@@ -2288,7 +2498,7 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 				if (!clickedObject) {
 					pendingRegionName.clear();
 					if (hoverState.cursorSequence == kCursorSequenceWalk && playerState.entity) {
-						setPlayerMoveTarget(scene.state, playerState, _mousePos.x, _mousePos.y);
+						setPlayerMoveTargetFromScreenPoint(scene.state, playerState, _mousePos.x, _mousePos.y);
 						needsRedraw = true;
 					}
 					break;
@@ -2434,10 +2644,12 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 			needsRedraw = true;
 
 		if (!idleState.active && !idleState.exiting) {
-			if (stepPlayerKeyboardMovement(scene.state, playerState, moveLeft, moveRight, moveUp, moveDown)) {
+			if (stepPlayerKeyboardMovement(_engine, scene.state, scene.sceneObjects, scene.sceneAnimations,
+					playerState, moveLeft, moveRight, moveUp, moveDown)) {
 				notePlayerActivity(idleState);
 				needsRedraw = true;
-			} else if (stepPlayerMoveTarget(scene.state, playerState)) {
+			} else if (stepPlayerMoveTarget(_engine, scene.state, scene.sceneObjects, scene.sceneAnimations,
+					playerState)) {
 				notePlayerActivity(idleState);
 				needsRedraw = true;
 			} else if (!moveLeft && !moveRight && !moveUp && !moveDown && !playerState.hasMoveTarget &&
