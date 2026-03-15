@@ -77,6 +77,9 @@ public:
 	StartupArt *getStartupArt() const { return _startupArt; }
 	StartupText *getStartupText() const { return _startupText; }
 	bool isGoreEnabled() const;
+	const Common::String &getStartupMusicPath() const { return _startupMusicPath; }
+	bool playStartupMusic(const Common::String &path);
+	void stopStartupMusic();
 	bool playStartupSound(const Common::String &path);
 	void stopStartupSound();
 
@@ -85,7 +88,9 @@ private:
 
 	const ADGameDescription *const _gameDescription;
 	Common::RandomSource _randomSource;
+	Audio::SoundHandle _startupMusicHandle;
 	Audio::SoundHandle _startupSoundHandle;
+	Common::String _startupMusicPath;
 	Graphics::Screen *_screen = nullptr;
 	ResourceManager *_resources = nullptr;
 	RuntimeEntityManager *_runtimeEntities = nullptr;

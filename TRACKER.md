@@ -1,257 +1,35 @@
 # TRACKER
 
+## Current Focus
+
+- Ghidra-backed startup engine alignment from `run_harvester_main_loop`
+- Match the native startup room idle/movement behavior before expanding further subsystem coverage
+- Keep symbol recovery and engine changes tied to direct script data, call sites, and visible side effects
+
+## Progress
+
+- Program: `HARVEST.LE`
+- Total functions: `774`
+- Named/documented: `468`
+- Still `FUN_*` / undocumented: `306`
+
 ## Last Confirmed Action
 
-- Closed the startup quick-tips label/value, hotspot cursor, and room-band movement pass against the native main loop.
-  - Confirmed in Ghidra that `run_quick_tips_screen` at `0x6c890` renders the bottom `Exit`, `Next`, and toggle actions in color `0xc3`, and that the toggle label resolves through the `TEXT` records instead of displaying the raw `Show_Tips_ON` / `Show_Tips_OFF` keys.
-  - Confirmed in Ghidra that `run_harvester_main_loop` classifies hover targets into cursor sequences `0` walk, `1` inspect, `2` talk, `4` operate, `5` pickup/use, `6` transition/region, and `7` neutral, and that empty-floor clicks map directly into room-band movement targets with the same loop also honoring directional-key movement.
-  - Patched the startup stub accordingly:
-    - quick tips now resolve `Show_Tips_ON` / `Show_Tips_OFF` through `resolveTextValue()` and render the bottom actions in the native red `0xc3`
-    - the room loop now ignores the background hitmask, derives hover prompts/cursor sequences from the active startup objects, and treats the room movement band as walkable floor with click-to-walk plus arrow-key movement
-    - the startup stub now uses the native IDENT textbox bitmaps and inset/color layout instead of the old placeholder inspect panel
-  - Rebuilt `build-vscode-harvester-debug/scummvm` successfully.
-  - The bounded probe in `/Users/alex/Temp/harvester_startup_probe.log` now confirms all three room-loop checks in one pass:
-    - hotspot hover resolves `PC_DRESR1` with `prompt='Examine dresser'` and `cursor_sequence=1`
-    - empty floor at `(48,350)` is now recognized with `cursor_sequence=0`
-    - the movement preview reaches `final_rect=(219,234)-(246,373) z=23.00`, proving the click-to-walk placement path is live
-  - A separate no-probe capture against `/Users/alex/Downloads/Harvester_1996/HARVEST/iso/Harvester` with `QUICK_TIPS=ON` logs `Harvester: quick tips labels exit='Exit' next='Next' toggle='Show Tips ON'` in `/Users/alex/Temp/harvester_quicktips.log`, confirming the toggle now resolves to the text value rather than the label key.
-  - Ghidra function counts remain unchanged: `774` total functions, `423` named/documented, `351` still `FUN_*`.
-- Closed the startup IDENT textbox modal pass against the native main-loop helpers.
-  - Traced the native caller sites in `run_harvester_main_loop`: click interaction still dispatches through `handle_target_interaction` at `0x6f9b3`, while the modal inspect helper `show_target_ident_text` is reached from `0x70c0f` and `0x7189e` after the current target has been resolved and gated on its "ident shown" byte.
-  - Exposed the already loaded startup textbox bitmaps in `StartupArt` and replaced the room-loop placeholder inspect panel with the confirmed IDENT textbox path:
-    - `BOX1`..`BOX4` now map to `TEXTBOX1.BM`..`TEXTBOX4.BM`
-    - the popup uses the native shared panel position `(85,177)`
-    - IDENT text is rendered with the native `+10,+5` inset and color `0xd3`
-  - Tightened the room-loop modal dismissal path to the confirmed helper behavior: the first click must be released before dismissal is allowed, and once shown the popup dismisses on a fresh click or `Esc` instead of the old `Enter` / `Space` placeholder behavior.
-  - Rebuilt `build-vscode-harvester-debug/scummvm` successfully.
-  - The bounded capture in `/Users/alex/Temp/harvester_startup_probe_modal.log` still reaches `START -> PCROOM`, keeps the corrected startup player placement `screen_base=(182,208)` / `rect=(346,257)-(375,405)`, and still resolves `PC_DRESR1` with `prompt='Examine dresser'`, `cursor_sequence=1`, `action_tag='COM1A'`, and `next_room='PCDRWR'`.
-  - The no-probe capture in `/Users/alex/Temp/harvester_startup_noprobe_modal.log` still reaches the same startup handoff and advances the cursor to sequence `7`, so the textbox-modal port did not regress the default room entry.
-  - Live click replay for the modal textbox itself is still unverified; the current confirmation is from the native control-flow trace, the script/resource mapping (`PC_DRESR1_LTEXT -> BOX1`), and the successful local rebuild/captures rather than from an automated input recording.
-  - Ghidra function counts remain unchanged: `774` total functions, `423` named/documented, `351` still `FUN_*`.
-- Closed the native startup actor world-to-screen / depth-placement port.
-  - Extended the startup room parser to carry the native room depth fields (`min_z`, `max_z`, `max_z_screen_y`, `min_z_screen_y`, `full_scale_z`, `max_z_scale_percent`, and derived `perspective_scale`) plus the room music path through `resolveRoomSetupState`.
-  - Updated the startup player handoff to mirror the native two-pass `room_setup` placement: compute `screen_x = spawn_x - x_offset - width / 2` and `screen_y = spawn_y - height - y_offset`, store that screen-space base point, rescale the ABM for depth, then recompute the same screen-space base point from the scaled metrics.
-  - Rebuilt `build-vscode-harvester-debug/scummvm` successfully.
-  - The bounded probe in `/Users/alex/Temp/harvester_startup_probe_new.log` now shows `startup player placement ... screen_base=(182,208) size=29x148 offsets=(164,49) scale=0.970` and `startup probe player ... rect=(346,257)-(375,405)`, replacing the old bad rect `(514,380)-(544,533)` while keeping the player bottom at entrance `y=405`.
-  - The same bounded probe still resolves `PC_DRESR1` at `(142,339)` with `action_tag='COM1A'` and `next_room='PCDRWR'`, so the direct startup room-loop interaction handoff remains intact.
-  - A no-probe startup capture in `/Users/alex/Temp/harvester_startup_noprobe.log` also reaches `START -> PCROOM`, applies the same `screen_base=(182,208)` / `scale=0.970` placement, and advances the cursor to sequence `7`, so the fix is not dependent on the probe hook.
-  - Ghidra function counts remain unchanged.
-- Closed the startup player-display root-cause pass against Ghidra.
-  - The local startup logs already showed the actor resource and entrance state were present: `PC0.ABM` loads, `resolveRoomSetupState('START')` resolves `PCROOM`, and the player spawn stays `(360,405,15)` facing `1`.
-  - Ghidra now confirms the missing native behavior is screen placement, not loading. In `room_setup`, the player path re-adds `DAT_000d5bd4`, computes `screen_y = entrance_y - sprite_height - y_offset`, computes `screen_x = entrance_x - x_offset - sprite_width / 2`, calls `set_entity_screen_position`, rescales with `rescale_entity_sprite_for_depth`, then repeats the same placement with the scaled metrics.
-  - The current port is still treating the entrance coordinates as direct screen pixels and adding ABM frame offsets during draw, which matches the bad startup probe rectangle `(514,380)-(544,533)` from the same `(360,405,15)` entrance and explains why Steve loads but is not visibly placed in the room.
-  - This narrows the regression to the missing native world-to-screen / depth-rescale path for startup actors; archive loading, palette upload, quick tips, and room-loop dispatch are not the blocker.
-  - Ghidra function counts remain unchanged.
-- Closed the startup room-loop verification pass with a bounded local probe.
-  - Added opt-in Harvester debug probes behind `harvester_debug_skip_startup_movies` and `harvester_debug_probe_startup_room` so the local capture can skip the intro FST trio and log room-loop facts without changing the default startup path.
-  - Using `/Users/alex/Temp/harvester_overlay_ugy21l06` with `QUICK_TIPS=OFF` plus `/Users/alex/Temp/harvester_probe_scummvm.ini`, the bounded run in `/Users/alex/Temp/harvester_startup_probe.log` now reaches `resolveRoomSetupState('START') -> room='PCROOM' entrance='START' spawn=(360,405,15) facing=1`.
-  - Confirmed the startup cursor reaches `sequence=7 frames=70..79 current=70`, and the runtime cursor blit preserves all `232` transparent pixels in frame `71`, matching the palette-index-`0` transparency fix rather than the old black-backed cursor path.
-  - Confirmed Steve is present in `PCROOM` at the `START` entrance: the probe logs `spawned startup player actor ... pos=(360,405,15) facing=1 frame=14`, and the live entity check reports `visible=1`, `intersects_screen=1`, and `opaque_pixels=3143`.
-  - Confirmed the direct room-loop handoff resolves active startup interactions: the probe hits `PC_DRESR1` at `(142,339)`, resolves label `dresser`, keeps action tag `COM1A`, and reports a supported interaction into closeup room `PCDRWR`.
-  - Rebuilt `build-vscode-harvester-debug/scummvm` successfully; Ghidra function counts remain unchanged.
-- Closed the startup room-loop / player-presence pass.
-  - Confirmed in Ghidra that `run_harvester_main_loop` stores the live player actor before the first `room_setup`, and `room_setup` later re-adds that actor from `DAT_000d5bd4` using the active entrance coordinates/facing instead of constructing a fresh PCROOM-local NPC.
-  - Confirmed `room_setup` seeds exact startup-facing frames `0x3b`, `0x0e`, `0x2c`, and `0x28` for entrance-facing values `0`, `1`, `2`, and `3`.
-  - Confirmed `is_cursor_over_entity_hitmask` treats palette index `0` as transparent for normal sprite classes, which explains the black-backed cursor regression when the port blits raw indexed pixels.
-  - Patched the engine to key runtime-entity rendering on palette index `0`, parse entrance spawn/facing state from `HARVEST.SCR`, spawn the startup player actor from `1:\GRAPHIC\MONSTERS\PC\PC0.ABM`, and hand startup straight into the interactive room loop after quick tips.
-  - Built `build-vscode-harvester-debug/scummvm` successfully and left the Ghidra function counts unchanged.
-- Closed the native startup verification capture with the complete local data set.
-  - Using `/Users/alex/Downloads/Harvester_1996/HARVEST/iso/Harvester`, the local ScummVM run mounted `INDEX.001` / `INDEX.002` / `INDEX.003`, loaded `HARVEST.SCR`, and reached the startup room handoff normally.
-  - Confirmed in `/Users/alex/Temp/harvester_startup_native.log` that the startup palette path now logs `decoded room palette 'GRAPHIC/PAL/PCROOM.PAL' ... idx0=(0,0,56)`, matching the expected raw 8-bit palette bytes rather than the old expanded-blue mismatch.
-  - Confirmed in the same native capture that the cursor reaches `sequence=7 frames=70..79 current=70`, matching the centisecond-timed cursor sequencing expected from the binary.
-  - This removes the local startup data-path blocker; function counts remain unchanged.
-- Closed the startup room-setup ordering fallback pass.
-  - Tried the native ScummVM startup capture first, but the available local data set only contains `HARVEST2.DAT`; `INDEX.001`, `INDEX.002`, `INDEX.003`, and `HARVEST.SCR` are missing, so the engine never reaches the palette / cursor startup path in this environment.
-  - Confirmed in Ghidra that `room_setup` flushes the wait transition while the cursor is hidden, then re-shows the cursor and uploads `WAIT.PAL`.
-  - Confirmed the first live room flush happens in the opposite order: after room construction and optional `on_enter` handlers, `room_setup` uploads `g_current_palette_buffer` and only then calls `flush_dirty_rects_to_screen`.
-  - Confirmed `flush_dirty_rects_to_screen` always begins by calling `sync_cursor_entity_position(g_cursor_entity)`, so the first cursor sync / animation tick after room construction happens under the room palette, not before it; `room_setup` also resets the cursor entity to animation sequence `7` before that final flush.
-  - Added Ghidra comments at `room_setup`, saved `HARVEST.LE`, and left function counts unchanged.
-- Closed the next partial `+0x118c` capability-bit pass.
-  - Confirmed `update_actor_runtime_state` uses the higher `+0x118c` bits `0x1000` and `0x10000` as close-range attack-family compatibility gates rather than as generic locomotion flags: attacker `0x1000` is required before states `0x17/0x1a` can be chosen, while target `0x10000` is required before states `0x18/0x1b` can be chosen.
-  - Confirmed the player combat-avatar base mask `0x00fffff8` keeps both of those higher `+0x118c` gates set by default.
-  - Narrowed low-byte `+0x118c` bit `0x80` to the separate case-1 stance / turn-family gate: state-family `1` refuses its own transitions unless the bit is present, and the monster spawn path derives it from the ABM frame slot reached through live actor pointer `+0x84`.
-  - Added Ghidra comments at `update_actor_runtime_state`, and saved `HARVEST.LE`.
-- Closed the startup palette-format / cursor-animation clock pass.
-  - Confirmed by archive inspection that `WAIT.PAL`, `PCROOM.PAL`, and the rest of the indexed room palettes are exact 768-byte resources already storing 8-bit RGB triplets.
-  - Confirmed in Ghidra that `upload_palette_to_vga` shifts those palette bytes down to VGA DAC range instead of expanding 6-bit source values, which explains the bad startup colors in the current engine.
-  - Confirmed in Ghidra that runtime entity animation timing uses the centisecond DOS clock behind `get_elapsed_milliseconds`: `set_entity_animation_rate` stores `100 / rate`, and `tick_entity_visual_state` compares that interval against centisecond ticks.
-  - Patched the ScummVM startup palette loaders to keep the raw 8-bit palette bytes, switched runtime entity ticking over to a centisecond-style clock, and added targeted palette/cursor debug logs.
-- Closed the first low-byte facing-bank pass around runtime `+0x118c`.
-  - Confirmed `spawn_monster_entity_from_record` uses the low byte of `+0x118c` as the default facing-bank selector when the alternate `+0x118e` high-nibble bank is absent: `0x08` front, `0x10` left, `0x40` right, and `0x20` back.
-  - Confirmed the matching `+0x118e` high-nibble bits are the alternate initial stance banks for those same facings: `0x40` front, `0x10` left, `0x20` right, and `0x80` back.
-  - Confirmed `update_actor_runtime_state` reuses those `+0x118c` low-byte bits in the locomotion / turn-family entries rooted at states `4`, `7/0xf`, `8/0xe`, and `0xb`.
-  - Added Ghidra comments at `spawn_monster_entity_from_record` and `update_actor_runtime_state`, and saved `HARVEST.LE`.
-- Closed the first runtime capability-byte pass around `+0x118d` / `+0x118e`.
-  - Confirmed `spawn_monster_entity_from_record` seeds `+0x118c`, `+0x118d`, and `+0x118e` from ABM frame-count checks rather than from generic AI state.
-  - Confirmed `+0x118d` bits `0x08/0x10/0x20` gate attack-state pairs `0x16/0x19`, `0x17/0x1a`, and `0x18/0x1b`.
-  - Confirmed `+0x118d` bits `0x40/0x80` plus `+0x118e & 0x01` gate the hit-reaction state pairs `0x1c/0x1f`, `0x1d/0x20`, and `0x1e/0x21`, and `+0x118e` bits `0x02/0x04/0x08` gate the death-state families `0x28` through `0x33`.
-  - Added Ghidra comments at `spawn_monster_entity_from_record` and `update_actor_runtime_state`, and saved `HARVEST.LE`.
-- Closed the `+0x118c` damage-type / ranged-split pass.
-  - Confirmed `parse_monster_record` parses `MonsterRecord.damage_type` from `BLUDGE`, `SLASH`, and `PROJ` into the low-bit values `1`, `2`, and `4`.
-  - Confirmed runtime `+0x118c` is a mixed combat/capability mask, not a pure damage-type field: the player combat-avatar path seeds `0x00fffff8` before adding the low damage bits, while monster construction copies `MonsterRecord.damage_type` and then ORs extra low-byte availability bits from ABM frame counts.
-  - Confirmed `update_actor_runtime_state` keeps `(+0x118c & 4) == 0` on the close-range hit-resolution path, while class-5 attacks with bit `4` set use the separate ranged target-acquisition / ammo-count branch; close-range hits mirror attacker `+0x118c` into victim `+0x1188`.
-  - Added Ghidra comments at `parse_monster_record`, `spawn_player_combat_avatar`, and `update_actor_runtime_state`, and saved `HARVEST.LE`.
-- Closed the startup quick-tips / initial palette sequencing pass from `run_harvester_main_loop`.
-  - Confirmed the original binary seeds `"START"`, preloads `1:\graphic\pal\pcroom.pal` into `g_current_palette_buffer`, and enters `room_setup` before the quick-tips overlay is shown.
-  - Confirmed `run_quick_tips_screen` is a separate overlay path: it adds `1:\GRAPHIC\OTHER\TIPS.BM` and text entities on top of the already active room instead of resolving a standalone `QUICK_TIPS` room.
-  - That rules out the current startup stub's fake `resolveRoomSetupState("QUICK_TIPS")` path and narrows the palette mismatch to startup sequencing / palette application rather than to the basic `.PAL` or `.BM` file formats.
-- Closed the player-combat loadout attack-tuning pass.
-  - Confirmed `spawn_player_combat_avatar`, `set_player_combat_loadout`, and the monster-record-driven runtime reseed block all share the same attack cluster: `+0x1134` attack sample count, `+0x1148/+0x114c/+0x1150` attack sample slots, `+0x116c` attack-sound trigger frame offset, `+0x113c` attack contact frame offset, and `+0x1180` per-hit damage amount.
-  - Confirmed `update_actor_runtime_state` attack states `0x16` through `0x1b` randomly choose from that sample table at `anim_base + +0x116c`, then resolve the hit once `anim_base + +0x113c` is reached and subtract `+0x1180` from victim HP.
-  - Added Ghidra comments at `spawn_player_combat_avatar`, `set_player_combat_loadout`, and `update_actor_runtime_state`, and saved `HARVEST.LE`.
-- Closed the parser-name gap for the room-event combat-control opcodes.
-  - Confirmed `parse_command_record` maps `KILL_NPC -> 0x0c`, `KILL_PC -> 0x0d`, `MONSTERFY -> 0x0e`, `PAUSE_PC -> 0x25`, and `RESUME_PC -> 0x26`.
-  - That locks the room-event callers behind `queue_npc_death_or_monsterfy_transition` and the player damage-type path to stable parser names instead of raw case numbers.
-  - Added Ghidra comments at the parser, dispatcher, and NPC transition helper sites and saved `HARVEST.LE`.
-- Continued the runtime-entity NPC transition/loadout pass around `update_actor_runtime_state` and `set_player_combat_loadout`.
-  - Renamed `attach_abm_resource_to_entity` at `0x4c0f0`, `queue_npc_death_or_monsterfy_transition` at `0x53810`, and `teardown_monster_entity_runtime_state` at `0x541c0`.
-  - Confirmed `g_player_combat_loadout_abm_paths` at `0xc3eb4` is a direct 21-entry `pc0.abm` through `pc20.abm` table shared by the player combat-avatar spawn, reset, loadout-switch, and load-game restore paths.
-  - Confirmed runtime field `+0x1188` is a damage-type flag word: spawn helpers clear it, room-event helpers assign `BLUDGE = 1`, `SLASH = 2`, and `PROJ = 4`, and `update_actor_runtime_state` tests those bits during hit/death-state selection.
-  - Confirmed `+0x11b8` is still only written reciprocally in the close-range hit block and still has no recovered reader, so it remains unnamed.
-  - Saved `HARVEST.LE`.
-- Continued the runtime-entity room-event suppression pass around `+0x11b4`.
-  - Confirmed room-event action cases `0x25` / `0x26` set and clear `g_player + 0x11b4`.
-  - Confirmed `update_actor_runtime_state` consults that byte only for class-5 player combat-avatar updates and returns immediately while it is set; `run_harvester_main_loop` and `run_load_game_menu` clear it on return/reload paths.
-  - Added Ghidra comments at the key read/write sites and saved `HARVEST.LE`.
-- Continued the runtime-entity combat-link pass around the confirmed hit-reaction fields.
-  - Renamed `apply_pending_entity_knockback` at `0x53770`.
-  - Confirmed `update_actor_runtime_state` seeds victim `+0x11ac` with signed `-18` / `+18` and `+0x11b0 = 3` on confirmed hits, and the new helper copies that pending value into live shove slot `+0x1088` before decaying it toward zero.
-  - `+0x11b8` is still only written reciprocally in that hit block and still has no recovered consumer, so it remains unnamed.
-  - Saved `HARVEST.LE`.
-- Continued the runtime-entity combat-avatar field pass around `update_player_combat_avatar_state`.
-  - Renamed `teardown_entity_runtime_state` at `0x55030` and added plate comments at the shared cleanup and player-combat helper sites.
-  - Confirmed live actor field `+0x11bc` is the player combat loadout / equipped weapon id from `spawn_player_combat_avatar`, `set_player_combat_loadout`, the inventory weapon-selection path, save/load restoration, and `sync_player_combat_weapon_resource_icons`.
-  - Confirmed `+0x1160` / `+0x1164` are the alternating movement-step sample slots and `+0x1168` is the death sample slot; monster/NPC spawn helpers seed the same fields, so they are shared runtime-actor sound slots rather than player-only state.
-  - Saved `HARVEST.LE`.
-- Closed the remaining `VesaModeBackend.display_start_preset_callback` pass.
-  - Renamed that struct field to `unused_display_start_preset_callback` in Ghidra and saved `HARVEST.LE`.
-  - Confirmed the four `set_vesa_*_display_start_preset` helpers have no code callers; they only remain as data references from the backend records.
-  - Confirmed `configure_video_surface` only dispatches the probe/activate/shutdown slots, and the per-mode activate helpers go straight into `initialize_vesa_banked_mode`, so this preset slot is dead in the current binary.
-- Closed the remaining `update_actor_runtime_state` blocker-slot pass.
-  - Confirmed `tick_entity_visual_state` writes the current opaque overlap blocker at runtime offset `+0x109c`, and `update_actor_runtime_state` consumes that slot as the current blocker in the directional avoid branches.
-  - The four remembered blocker slots now have explicit directional meaning from the branch-local state writes plus the signed movement deltas:
-    - `+0x108c` upward blocker history
-    - `+0x1090` downward blocker history
-    - `+0x1094` leftward blocker history
-    - `+0x1098` rightward blocker history
-  - `set_object_visibility_for_owner_or_room` clears those four slots individually when a hidden entity still matches one of the remembered blockers, which confirms they are persistent blocker pointers rather than generic movement flags.
-  - Added Ghidra plate/decompiler comments at the key read/write sites and saved `HARVEST.LE`.
-- Closed the last ambiguous backend slot in `VesaModeBackend`.
-  - Renamed `callback_18` to `unused_callback` after an instruction-level scan showed the only indirect backend calls in the current binary are `blit_rect_callback` and `select_bank_for_scanline_callback` from `run_fst_sequence_player`; no callers use slot `+0x18`.
-  - Renamed the shared VGA/VESA no-op implementations to match that evidence:
-    - `noop_vga_unused_callback`
-    - `noop_vesa_640x400_unused_callback`
-    - `noop_vesa_640x480_unused_callback`
-    - `noop_vesa_800x600_unused_callback`
-    - `noop_vesa_1024x768_unused_callback`
-  - Saved `HARVEST.LE`.
-- Closed the remaining `run_fst_sequence_player` censorship gate from the binary through the ScummVM startup player.
-  - Renamed `g_gore_enabled` at `0xc0fbc` in Ghidra and saved `HARVEST.LE`.
-  - Confirmed `startup_main` defaults that persisted flag to `1` and clears it only when config key `GORE` equals `NO`.
-  - Confirmed `run_fst_sequence_player` only consults `g_fst_censorship_toggle_entries` when `g_gore_enabled == 0`, keeps advancing audio timing while censored, and keeps capturing later movie palettes so the next uncensored frame can restore the saved movie palette before decode when needed.
-  - ScummVM now exposes that path as a Harvester launcher option and mirrors the original behavior in `engines/harvester/fst_player.cpp` by toggling `GRAPHIC/OTHER/CENSORED.PCX` against the recovered 25-entry frame table.
-- Continued the remaining video-backend callback pass around `configure_video_surface`.
-  - Recovered the hidden shared wrapper at `0x14f40` as `set_vesa_write_window_bank`; it is the write-window-fixed wrapper above `set_vesa_window_bank`.
-  - Corrected the backend table itself from VESA-only to generic video-mode state:
-    - `g_video_mode_backends` at `0xc3bcc` is now typed as a 6-entry pointer table
-    - the table contains five concrete backends plus the sentinel used by `configure_video_surface`
-    - the extra non-VESA record at `0xc0fd4` is now labeled `g_vga_mode_320x200_8bpp`
-  - Created and named the previously undefined VGA backend entrypoints from that `320x200x8` record:
-    - `probe_vga_320x200_mode`
-    - `activate_vga_320x200_mode`
-    - `noop_vga_mode_shutdown`
-    - `write_vga_320x200_pixel`
-    - `read_vga_320x200_pixel`
-    - `fill_vga_320x200_horizontal_span`
-    - `fill_vga_320x200_rect`
-    - `blit_vga_320x200_rect`
-  - Renamed the confirmed `VesaModeBackend` fill slots from generic offsets to `fill_horizontal_span_callback` and `fill_rect_callback`.
-  - The per-mode VESA slot at offset `+0x18` is still unresolved semantically, but all four VESA targets are now explicitly bounded as no-op stubs:
-    - `noop_vesa_640x400_callback_18`
-    - `noop_vesa_640x480_callback_18`
-    - `noop_vesa_800x600_callback_18`
-    - `noop_vesa_1024x768_callback_18`
-  - Saved `HARVEST.LE`.
-- Continued `run_fst_sequence_player` into the banked VESA row-flush path.
-  - Renamed and typed the runtime banked-mode tables and state in Ghidra:
-    - `g_vesa_scanline_start_bank_indices` as `ushort[1024]` at `0xc7fca`
-    - `g_vesa_scanline_window_offsets` as `int[1024]` at `0xc87cc`
-    - `g_vesa_scanline_bank_split_x` as `short[1024]` at `0xc97cc`
-    - `g_vesa_window_granularity_kb`, `g_vesa_window_size_kb`, `g_vesa_bytes_per_scanline`, `g_vesa_read_window_index`, `g_vesa_write_window_index`, `g_vesa_read_window_segment_base`, `g_vesa_write_window_segment_base`, `g_vesa_current_write_bank_index`, `g_vesa_mode_width`, `g_vesa_mode_height`, and `g_vesa_window_size_bytes`
-  - Confirmed `initialize_vesa_banked_mode` precomputes, for each possible scanline, the starting bank index, the in-window linear offset for the left edge, and a signed split-`x` sentinel that stays `-1` when the whole row fits inside one bank.
-  - Confirmed the remaining banked branch inside `run_fst_sequence_player` is a 4-scanline-band fallback, not a different tile codec:
-    - if all four rows in the current band have `split_x == -1`, tiles expand directly into the mapped VESA window
-    - otherwise the same 4x4 tiles expand into a temporary 4-row scratch band and then flush row-by-row across the bank boundary using the precomputed scanline tables plus `select_bank_for_scanline_callback`
-  - Renamed the key FST locals in Ghidra so the decoder state now reads as `frame_index_table`, `frame_payload_buffer`, `frame_bitstream_cursor`, `frame_block_payload_cursor`, `frameband_dst`, and `banked_frameband_scratch`.
-  - Saved `HARVEST.LE`.
-- Continued `run_fst_sequence_player` into the per-frame pacing and tile-decode path.
-  - The inner movie loop now converges cleanly enough to rule out a block-format mismatch in the current engine:
-    - one frame-level palette-present bit
-    - then, per 4x4 tile, one changed/unchanged bit and one raw-vs-mask bit for changed tiles
-    - changed tiles expand from either 16 raw pixels or 4 bytes `{ color0, color1, mask16 }`
-  - Confirmed the original movie pacing is audio-driven when PCM is present.
-    - `run_fst_sequence_player` computes `bytes_per_frame = get_pcm_byte_rate(...) / frame_rate`
-    - it queues each frame's audio chunk before decode/blit
-    - it then waits on `get_sound_state_playback_position` against the cumulative byte target before presenting the next frame
-  - ScummVM now follows that recovered pacing rule in `engines/harvester/fst_player.cpp`, using mixer elapsed time for PCM-backed FST playback and keeping the timer path only for silent movies.
-- Continued the `run_fst_sequence_player` pass far enough to formalize the on-disk movie layout and the special-case censorship side table.
-  - Created the exact FST types in Ghidra:
-    - `FstFileHeader` size `0x20`
-    - `FstFrameIndexEntry` size `0x6`
-    - `FstCensorshipToggleEntry` size `0x118`
-  - Applied `FstCensorshipToggleEntry[25]` at `0xc1014` and labeled it `g_fst_censorship_toggle_entries`.
-    - The record layout is now explicit: `sequence_name[0x100]` plus six 32-bit `toggle_frame_indices`.
-    - `run_fst_sequence_player` scans those 25 entries by FST basename and, on matching frame indices, toggles between restoring the saved palette and blitting `GRAPHIC\\OTHER\\CENSORED.PCX`.
-  - Confirmed the top-level FST playback layout from the binary call setup:
-    - a `0x20`-byte header
-    - `frame_count` frame-index records of `6` bytes each
-    - per-frame reads of `video_size + audio_size`
-    - audio pacing based on `get_pcm_byte_rate(...) / frame_rate`
-- Extended the runtime-entity pass into the shared movement/update helpers.
-  - Renamed `update_visible_entity_screen_position` at `0x4c860`, `update_render_entity_screen_position` at `0x5cc10`, `do_rects_overlap` at `0x5e0d0`, and `compute_rect_area` at `0x5e0c0`.
-  - `update_render_entity_screen_position` now has a bounded role: when depth is unchanged it only updates dirty rectangles for the old/new screen bounds, and when depth changes it removes the entity from the render list, rescales it, reinserts it by depth, and merges the resulting dirty region.
-  - A scripted scan of offset `+0x109c` confirmed that the collision/blocking-entity pointer written by `tick_entity_visual_state` is consumed by `update_actor_runtime_state`; no separate movement subsystem has shown up yet.
-- Closed the shared packed-callback adapter pass and reclassified the remaining `0xc0c70` records as mixed Borland object-lifecycle descriptors rather than as one more PCM-only callback table.
-  - Created and renamed `report_undefined_constructor_or_destructor_called` at `0x81448`.
-    - It emits the exact string `undefined constructor or destructor called!` through the Borland runtime fatal path, which is what identifies the shared packed adapter field as an undefined ctor/dtor fallback.
-  - Renamed the recovered lifecycle helpers bound by those mixed records:
-    - `set_vesa_video_mode_3` at `0x3c8a0`
-    - `reset_video_surface_context` at `0x3c8c0`
-    - `reset_town_script_runtime_state` at `0x48000`
-    - `install_keyboard_irq1_handler_state` at `0x48700`
-    - `remove_keyboard_irq1_handler_state` at `0x48660`
-  - Labeled the newly explicit state objects:
-    - `g_town_script_runtime_state` at `0xd3050`
-    - `g_keyboard_irq1_handler_state` at `0xd5900`
-  - The remaining unresolved first record at `0xc0c90` is still an extended music/callback-context variant, but the adapter pass itself is now exhausted cleanly.
-- Extended the PCM descriptor-blob pass with one new high-confidence stream helper and a bounded record shape.
-  - Created and renamed `release_music_stream_buffers` at `0x1a440`.
-    - The code frees the music stream's decode/ring buffers, unlocks their linear regions, and stops the active voice slot only when the slot/token still matches that stream.
-    - The current table xref at `0xc0c9c` is what ties that callback back to `g_music_stream_state` at `0xca1d4`.
-  - The smaller packed records at `0xc0ccc`, `0xc0cec`, and `0xc0d0c` now have a confirmed repeated shape:
-    - direct callback pointer
-    - state-object pointer
-    - secondary callback, shared adapter `0x81448`, repeated direct callback, and state size, all packed as 24-bit values shifted left by 8 inside 32-bit slots
-  - The first entry at `0xc0c90` is an extended music/callback-context variant of that layout, but its remaining packed size/order fields still do not converge cleanly enough for a formal struct.
-- Confirmed and implemented the next room-setup runtime-entity slice.
-  - `tick_entity_visual_state` now has a bounded collision path: Z-interval overlap first, then screen-bounds overlap, then opaque-pixel overlap.
-  - `spawn_object_entity_from_record` classifies `640x480` bitmap objects rooted at initial `(0, 0)` as class `3` room backgrounds, and classifies hotspot-only objects as `0x15` / `0x16`.
-  - `show_entity_visual` only applies the centered-anchor path when the internal `+0x4f` flag is clear, which separates the centered `ANIM` path from the top-left room-object spawn path.
-- Typed the callback/driver object rooted at `0xca194` conservatively enough to stop conflating it with `PcmSoundState`.
-  - `g_sound_driver_callback_context` at `0xca194` is now typed as a minimal `SoundDriverCallbackContext`.
-  - The proven fields are now explicit in the type and labels:
-    - `+0x14` is `selected_voice_slot_index`, also labeled as `g_selected_sound_voice_slot_index` at `0xca1a8`
-    - `+0x18` overlaps the existing `g_sound_voice_bank_index`
-    - `+0x20` overlaps the existing `g_sound_driver_initialized`
-  - The descriptor blob entry at `0xc0c98` points directly at this object, which confirms that the table-driven wrappers around `0x18380` / `0x183c0` / `0x183e0` / `0x18400` are operating on the current-bank driver context rather than on a `PcmSoundState`.
-- Current live-state counts:
-  - `HARVEST.LE` currently has `774` total functions
-  - `423` have custom/documented names
-  - `351` still remain unnamed / `FUN_*`
+- Traced the native startup-room audio paths in Ghidra and aligned the startup engine with the confirmed split between looping room music and one-shot samples.
+  - `room_setup` starts `g_current_room_def->music_path` through `start_music_stream(&g_music_stream_state, ...)` and caches the active filename in `g_current_music_path`.
+  - `dispatch_room_event_actions` opcode `0x19` is the scripted music-spool path; it starts a replacement stream immediately and updates `g_current_music_path` without requiring a room transition.
+  - `dispatch_room_event_actions` opcodes `0x1b` and `0x2b` load one-shot samples through `load_sound_sample` / `start_sound_state_playback`, separate from the persistent music stream.
+  - `SOUND/MUSIC/MORNING2.CMP` is an `FCMP` file with a 14-byte header (`magic`, compressed payload size, sample rate, decoded bits-per-sample) followed by raw DVI/IMA ADPCM payload.
+- Patched the startup ScummVM path to mirror that split.
+  - Added looping startup-room music playback on top of `FCMP`/`CMP` and `WAV` decoding.
+  - Room-entry `musicPath` now starts persistent background music, while interaction-triggered `SPOOL_MUSIC` commands now swap that background stream without reusing the one-shot sample handle.
+  - One-shot startup sounds continue to use their own handle so room music can continue underneath them.
 
 ## Next Suggested Action
 
-- Highest-value targets:
-  - replace the current bottom-screen prompt overlay with the native `g_current_interaction_text` / `g_pending_interaction_text` / `g_interaction_text_entity` lifecycle around `spawn_text_entity` / `destroy_text_entity`
-  - trace the startup-room locomotion branch in `run_harvester_main_loop` and `update_actor_runtime_state` far enough to recover the native walk/stand animation state handling, since the current startup click-to-walk path only mirrors placement and facing
-  - if that movement/state pass stays too broad, add a bounded input replay for the first `PC_DRESR1` click so the IDENT-first then `COM1A -> PCDRWR` path can be confirmed end-to-end before widening room-loop coverage
+1. Recover the native startup/event opcode split for `LOAD_WAV`, `START_WAV`, and `START_SINGLE_WAV` so the stub can mirror the rotating versus dedicated sound-sample slots instead of collapsing every effect to one handle.
+2. Parse `REGION` records from `HARVEST.SCR` into the startup script layer.
+3. Mirror native startup transition handling for class `0x19` region entities.
+  - Spawn enabled region hotspots from `room_setup` state.
+  - Drive cursor sequence `6` over active regions.
+  - Gate region activation on player overlap plus facing, following `check_player_region_interaction`.

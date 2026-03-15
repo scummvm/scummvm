@@ -151,6 +151,7 @@ struct StartupRoomSetupState {
 };
 
 struct StartupInteractionResult {
+	Common::String musicPath;
 	Common::String soundPath;
 	Common::String nextRoomName;
 };
