@@ -39,6 +39,15 @@
 
 namespace Harvester {
 
+namespace {
+
+static bool shouldSkipStartupMoviesForDebug() {
+	return ConfMan.hasKey("harvester_debug_skip_startup_movies") &&
+		ConfMan.getBool("harvester_debug_skip_startup_movies");
+}
+
+} // End of anonymous namespace
+
 HarvesterEngine *g_engine = nullptr;
 
 HarvesterEngine::HarvesterEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
@@ -124,10 +133,14 @@ Common::Error HarvesterEngine::run() {
 	// Set the engine's debugger console
 	setDebugger(new Console());
 
-	FstPlayer fstPlayer(*this);
-	for (const char *path : kIntroPaths) {
-		if (!fstPlayer.play(path))
-			return Common::kReadingFailed;
+	if (shouldSkipStartupMoviesForDebug()) {
+		debugC(1, kDebugGeneral, "Harvester: debug skip enabled for startup intro FST playback");
+	} else {
+		FstPlayer fstPlayer(*this);
+		for (const char *path : kIntroPaths) {
+			if (!fstPlayer.play(path))
+				return Common::kReadingFailed;
+		}
 	}
 
 	// The original executable switches back to the gameplay UI surface after INTROFIN.FST.

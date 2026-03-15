@@ -24,6 +24,7 @@
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/system.h"
+#include "graphics/blit.h"
 #include "graphics/screen.h"
 #include "harvester/detection.h"
 #include "harvester/resources.h"
@@ -51,8 +52,35 @@ static void blitAnimationFrame(Graphics::Screen &screen, const Common::Array<Abm
 		return;
 
 	const AbmFrame &frame = frames[frameIndex];
-	screen.copyRectToSurfaceWithKey(frame.pixels.data(), frame.width,
-		x + frame.xOffset, y + frame.yOffset, frame.width, frame.height, kTransparentPaletteIndex);
+	int destX = x + frame.xOffset;
+	int destY = y + frame.yOffset;
+	int srcX = 0;
+	int srcY = 0;
+	int width = (int)frame.width;
+	int height = (int)frame.height;
+
+	if (destX < 0) {
+		srcX = -destX;
+		width += destX;
+		destX = 0;
+	}
+	if (destY < 0) {
+		srcY = -destY;
+		height += destY;
+		destY = 0;
+	}
+	if (destX >= screen.w || destY >= screen.h || width <= 0 || height <= 0)
+		return;
+
+	width = MIN<int>(width, screen.w - destX);
+	height = MIN<int>(height, screen.h - destY);
+	if (width <= 0 || height <= 0)
+		return;
+
+	const byte *src = frame.pixels.data() + srcY * frame.width + srcX;
+	byte *dst = (byte *)screen.getBasePtr(destX, destY);
+	Graphics::keyBlit(dst, src, screen.pitch, frame.width, width, height,
+		screen.format.bytesPerPixel, kTransparentPaletteIndex);
 }
 
 static bool decodeAnimationFrame(const byte *source, uint32 sourceSize, bool compressed, Common::Array<byte> &dest) {
@@ -274,6 +302,10 @@ Common::Point RuntimeEntity::getDrawOrigin() const {
 	return Common::Point(drawX, drawY);
 }
 
+Common::Rect RuntimeEntity::getScreenRect() const {
+	return getFrameRect();
+}
+
 void RuntimeEntity::draw(Graphics::Screen &screen) const {
 	if (!_visible || !_drawEnabled || _currentFrame < 0)
 		return;
@@ -368,6 +400,38 @@ bool RuntimeEntity::overlapsEntity(const RuntimeEntity &other) const {
 	}
 
 	return false;
+}
+
+bool RuntimeEntity::measureCurrentFrameTransparency(uint32 &framePixels, uint32 &transparentPixels,
+		uint32 &preservedPixels) const {
+	framePixels = 0;
+	transparentPixels = 0;
+	preservedPixels = 0;
+
+	if (!hasOpaqueFrame())
+		return false;
+
+	const AbmFrame &frame = _frames[(uint)_currentFrame];
+	framePixels = frame.width * frame.height;
+	Common::Array<byte> opaqueMask;
+	opaqueMask.resize(framePixels);
+	for (uint32 i = 0; i < framePixels; ++i)
+		opaqueMask[i] = frame.pixels[i] == kTransparentPaletteIndex ? 0 : 1;
+
+	Common::Array<byte> probeSurface;
+	probeSurface.resize(framePixels);
+	memset(probeSurface.data(), 0x7f, probeSurface.size());
+	Graphics::keyBlit(probeSurface.data(), opaqueMask.data(), frame.width, frame.width,
+		frame.width, frame.height, 1, kTransparentPaletteIndex);
+
+	for (uint32 i = 0; i < framePixels; ++i) {
+		if (frame.pixels[i] == kTransparentPaletteIndex)
+			++transparentPixels;
+		if (probeSurface[i] == 0x7f)
+			++preservedPixels;
+	}
+
+	return true;
 }
 
 void RuntimeEntity::advanceAnimationFrame(int directive) {
@@ -599,6 +663,15 @@ const RuntimeEntity *RuntimeEntityManager::findTopSceneEntityAt(const Common::Po
 		if (classIdFilter >= 0 && entity->getClassId() != classIdFilter)
 			continue;
 		if (entity->hitTest(point))
+			return entity;
+	}
+
+	return nullptr;
+}
+
+const RuntimeEntity *RuntimeEntityManager::findSceneEntityByName(const Common::String &name) const {
+	for (const RuntimeEntity *entity : _sceneEntities) {
+		if (entity->getName().equalsIgnoreCase(name))
 			return entity;
 	}
 

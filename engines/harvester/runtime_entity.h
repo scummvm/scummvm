@@ -93,12 +93,15 @@ public:
 	void setHitTestMode(RuntimeEntityHitTestMode mode) { _hitTestMode = mode; }
 	int getBoundsWidth() const { return _boundsWidth; }
 	int getBoundsHeight() const { return _boundsHeight; }
+	Common::Rect getScreenRect() const;
 
 	bool hasFrames() const { return !_frames.empty(); }
 	bool tickVisualState(uint32 now);
 	void draw(Graphics::Screen &screen) const;
 	bool hitTest(const Common::Point &point) const;
 	bool overlapsEntity(const RuntimeEntity &other) const;
+	bool measureCurrentFrameTransparency(uint32 &framePixels, uint32 &transparentPixels,
+		uint32 &preservedPixels) const;
 
 private:
 	Common::Point getDrawOrigin() const;
@@ -162,6 +165,7 @@ public:
 	void drawSceneEntities(Graphics::Screen &screen) const;
 	void drawCursor(Graphics::Screen &screen) const;
 	const RuntimeEntity *findTopSceneEntityAt(const Common::Point &point, int classIdFilter = -1) const;
+	const RuntimeEntity *findSceneEntityByName(const Common::String &name) const;
 
 private:
 	void insertSceneEntity(RuntimeEntity *entity);
