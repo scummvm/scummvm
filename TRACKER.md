@@ -15,22 +15,21 @@
 
 ## Last Confirmed Action
 
-- Confirmed in Ghidra how native startup room exits and entrance placement are wired.
-  - `room_setup()` resolves the requested `ENTRANCE` record and applies its three integer fields directly as player `x`, `y`, and `z`, using `set_entity_screen_position()` with `(entrance_x - frame_x_offset - width / 2, entrance_y - height - frame_y_offset, entrance_z)` before and after `rescale_entity_sprite_for_depth()`.
-  - The `START` and `PC_ROOM_HOUSE_START` entries in `HARVEST.SCR` both point to `PCROOM` at `(360,405,15)` facing `LEFT`, so native room setup does not add any extra centering offset beyond the entrance record itself.
-  - `PCDOOR` is just a mask object with interaction label `NULL_ID`; the actual bedroom exit is `REGION "PCX1"` with command tag `PCEXIT1`, and `run_harvester_main_loop()` only gives class `0x19` regions cursor sequence `6` with no prompt text.
-  - `check_player_region_interaction()` requires screen-rect overlap, z-range overlap, a matching facing, and `start_enabled != 0` before dispatching the region command chain.
-- Patched the startup stub to mirror that native split.
-  - `HARVEST.SCR` `REGION` records are now parsed into the startup script layer and materialized into room state.
-  - Startup room hover/click now prefers active regions over neutral `NULL_ID` masks, so `PCDOOR` no longer fabricates a prompt while `PCX1` drives the transition cursor and room-change command path.
-  - The startup room loop now keeps a pending region target, waits for player overlap plus facing, and only then dispatches the region command chain, matching the native closeup/door transition shape more closely.
+- Confirmed in Ghidra how native startup-room locomotion is driven.
+  - `run_harvester_main_loop()` does not walk to a screen-space `y`; floor clicks store player target `x = g_cursor_screen_x` and player target `z` derived from `g_cursor_screen_y` via the active room's `min_z`, `max_z`, `max_z_screen_y`, and `min_z_screen_y`.
+  - Region clicks also target `x/z`, not hotspot-bottom `y`. For class `0x19` regions the native path uses the region center, subtracts `10` pixels when that center is left of the player's current horizontal footprint, and chooses target `z` from the region by desired facing: `0 -> max_z`, `3 -> min_z`, otherwise midpoint.
+  - `update_actor_runtime_state()` uses depth-scaled horizontal movement (`round(depth_scale * 8.0f)`) and a separate room-depth step (`z +=/-= 1.0f`, matching the startup room state's `zVelocityStep` default) rather than a flat screen-space speed.
+  - `tick_entity_visual_state()` and the actor update path constrain movement through opaque overlap blockers plus z-range overlap; the native startup walk bounds are not script walk boxes.
+- Patched the startup stub to follow that recovered model.
+  - Startup movement targets now track `x/z`, with screen `y` derived back from room depth when placing the player sprite.
+  - Mouse floor clicks, keyboard movement, and pending region transitions now use depth-scaled horizontal stepping, room-depth stepping, and opaque overlap checks against spawned room objects and animations.
+  - Region transitions now use the recovered native target placement instead of walking to `region.bottom`, which keeps `PCX1`-style exits aligned with the bedroom/closeup handoff path.
 
 ## Next Suggested Action
 
-1. Runtime-test `PCROOM` against DOSBox with the new region path, especially the `PCDOOR` hover, the `PCX1` transition cursor, and the player restore point after returning from closeups.
-2. Compare startup player placement visually in `PCROOM` after confirming the native `START` coordinates above; if it still reads too far left, the remaining mismatch is in runtime sprite metrics or render anchoring rather than script-room setup.
-3. Revisit native locomotion in `update_actor_runtime_state()` and the main loop before changing movement speed or walk bounds.
-  - The current startup stub still uses direct screen-space interpolation and does not mirror the native movement-state machine, blocker history, or z-aware overlap tests.
-  - Any further speed or walk-area changes should come from that recovered actor-state path, not from ad hoc constants.
+1. Runtime-test `PCROOM`, `PCX1`, and `PCDRWR` against DOSBox with the new movement path, focusing on spawn placement, walk speed, blocker stops, and the restore point after returning from closeups.
+2. Recover more of `update_actor_runtime_state()` if obstacle navigation still differs.
+  - The startup stub now matches native target axes, step sizes, and opaque blocking, but it still stops/slide-tests directly instead of reproducing the native blocker-history detour slots at `+0x108c`, `+0x1090`, `+0x1094`, `+0x1098`, and `+0x109c`.
+3. Confirm whether startup room records ever override the default `zVelocityStep = 1.0f`; the current startup parser still relies on the struct default rather than a recovered script field.
 4. Flesh out the room-menu stub now that `Esc` reaches the correct native entry point, especially the per-item behaviors inside `run_main_menu()` such as resume/save/load/options/quit gating.
 5. Parse startup NPC and timer records from `HARVEST.SCR`, then add persistent runtime state for the remaining confirmed exit and interaction opcodes: `SET_NPC`, `SET_TIMER`, and `KILL_TIMER`.
