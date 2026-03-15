@@ -664,7 +664,7 @@ void RaycastLevelBuilder::writeDoors(uint startX, uint startY, uint themeID) {
 					} else if (	!(_wallMap[(y + 1) * _fullWidth + x])				&&
 								(_wallMap[(y - 1) * _fullWidth + x] & kWall)	&&
 								(_wallMap[(y + 2) * _fullWidth + x] & kWall)	&&
-								!(_wallMap[y * _fullWidth + x + 1])					&&
+								!(_wallMap[y * _fullWidth + x - 1])					&&
 								!(_wallMap[y * _fullWidth + x - 2])					&&
 								!(_wallMap[y * _fullWidth + x + 1])					&&
 								!(_wallMap[y * _fullWidth + x + 2])					&&
