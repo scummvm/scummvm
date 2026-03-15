@@ -1471,6 +1471,14 @@ void PhoenixVREngine::drawSlot(int idx, int face, int x, int y) {
 		srcRect.bottom = src->h;
 		dst.copyRectToSurface(*src, x, (tileY + 3) * 256, srcRect);
 	}
+	auto *font = getFont(12, false);
+	static int kMargin = 10;
+	if (font) {
+		auto color = dst.format.RGBToColor(0, 0, 0);
+		auto dstY = splitV ? (tileY + 3) * 256 - srcSplitY : y;
+		font->drawString(&dst, state.info, x, dstY + kMargin + src->h, src->w, color, Graphics::TextAlign::kTextAlignCenter);
+	}
+
 	src->free();
 	delete src;
 }
