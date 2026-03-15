@@ -15,22 +15,23 @@
 
 ## Last Confirmed Action
 
-- Confirmed in Ghidra how the native startup room loop reaches both the game menu and the inventory screen.
-  - `run_harvester_main_loop()` routes `g_last_keyboard_scancode == 1` (`Esc`) into `run_main_menu()`, not a room-exit path, and `run_main_menu()` reads the same `main_menu_1..6` entries from `MENU.INI` that the startup stub already loads.
-  - The same loop routes `g_last_keyboard_scancode == 0x17` (`I`) into `run_inventory_screen()`, and it also calls `run_inventory_screen()` when the clicked entity is class `5` and the player avatar animation is idle/complete.
-  - In the native hover scan, entity class `5` uses cursor sequence `1`, which matches a player-avatar hotspot rather than a walk target or ordinary room object.
+- Confirmed in Ghidra how native startup pickup objects are gated behind a first-pass examine click.
+  - `spawn_object_entity_from_record()` copies the object record's alternate inventory-sprite presence into entity byte `+9`, the operatable flag into entity byte `+0xb`, and the persistent identified-state byte at object offset `+0x4f` into entity byte `+10`.
+  - In `run_harvester_main_loop()`, room objects with pickup or operate capability stay on cursor sequence `1` while entity byte `+10` is clear; once it is set, the same hover path switches to cursor sequence `5` for pickup-capable objects and cursor sequence `4` for non-pickup operatable objects.
+  - Clicking that initial examine cursor calls `show_target_ident_text()`, then writes entity byte `+10 = 1` and persists object byte `+0x4f = 1`, so the next hover/click uses the unlocked pickup or operate path even if no IDENT panel was shown.
 - Patched the startup stub to mirror that native behavior.
-  - The startup player actor now has a dedicated hit-testable player class so clicking directly on the avatar opens the inventory overlay only when the actor is idle, matching the native class-`5` gate.
-  - `Esc` in the startup room loop now opens a dedicated room-menu stub backed by the existing `MENU.INI` entries instead of incorrectly unwinding the room loop as if it were a closeup exit.
+  - Startup pickup-capable and operatable room objects now resolve to the examine cursor until their first examine click marks them identified.
+  - That first click now attempts to show the IDENT textbox when supported, but it still unlocks the object's later pickup or operate cursor even if the IDENT lookup has no usable panel, matching the native writeback behavior.
 
 ## Next Suggested Action
 
-1. Runtime-test the startup room menu and player-click inventory entry against DOSBox, and adjust prompt/cursor behavior if the player hotspot needs a native text label rather than just the cursor change.
-2. Flesh out the room-menu stub now that `Esc` reaches the correct native entry point, especially the per-item behaviors inside `run_main_menu()` such as resume/save/load/options/quit gating.
-3. Parse startup NPC and timer records from `HARVEST.SCR`, then add persistent runtime state for the remaining confirmed exit and interaction opcodes: `SET_NPC`, `SET_TIMER`, and `KILL_TIMER`.
-4. Confirm the native side effects of those opcodes in Ghidra before naming any new runtime structures or script helpers.
-5. Parse `REGION` records from `HARVEST.SCR` into the startup script layer.
-6. Mirror native startup transition handling for class `0x19` region entities.
+1. Runtime-test first-click IDENT gating on startup pickup objects such as `PC_PEN` against DOSBox, especially the exact cursor/prompt transition after dismissing the textbox.
+2. Confirm whether any startup objects use the native "unlock on first examine" path without a valid IDENT panel, then mirror any edge-case prompt behavior if the current stub differs.
+3. Flesh out the room-menu stub now that `Esc` reaches the correct native entry point, especially the per-item behaviors inside `run_main_menu()` such as resume/save/load/options/quit gating.
+4. Parse startup NPC and timer records from `HARVEST.SCR`, then add persistent runtime state for the remaining confirmed exit and interaction opcodes: `SET_NPC`, `SET_TIMER`, and `KILL_TIMER`.
+5. Confirm the native side effects of those opcodes in Ghidra before naming any new runtime structures or script helpers.
+6. Parse `REGION` records from `HARVEST.SCR` into the startup script layer.
+7. Mirror native startup transition handling for class `0x19` region entities.
   - Spawn enabled region hotspots from `room_setup` state.
   - Drive cursor sequence `6` over active regions.
   - Gate region activation on player overlap plus facing, following `check_player_region_interaction`.
