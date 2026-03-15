@@ -19,13 +19,16 @@
  *
  */
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+#include "common/translation.h"
 #include "engines/advancedDetector.h"
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
-
 #include "lilliput/lilliput.h"
 #include "lilliput/detection.h"
 
@@ -64,6 +67,7 @@ public:
 		else
 			return Common::String::format("%s-%02d.SAV", target, saveGameIdx);
 	}
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 Common::Error LilliputMetaEngine::createInstance(OSystem *syst, Engine **engine, const LilliputGameDescription *gd) const {
@@ -185,6 +189,151 @@ SaveStateDescriptor LilliputMetaEngine::querySaveMetaInfos(const char *target, i
 
 bool LilliputMetaEngine::removeSaveState(const char *target, int slot) const {
 	return g_system->getSavefileManager()->removeSavefile(getSavegameFile(slot, target));
+}
+
+Common::KeymapArray LilliputMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Lilliput;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "lilliput-default", "Default keymappings");
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Left click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Right click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SAVE", _("Save Game"));
+	act->setCustomEngineActionEvent(kActionSave);
+	act->addDefaultInputMapping("F1");
+	act->addDefaultInputMapping("JOY_Y");
+	gameKeyMap->addAction(act);
+
+	act = new Action("LOAD", _("Load Game"));
+	act->setCustomEngineActionEvent(kActionLoad);
+	act->addDefaultInputMapping("F2");
+	act->addDefaultInputMapping("JOY_X");
+	gameKeyMap->addAction(act);
+
+	act = new Action("TOGGLE_SOUND", _("Toggle Sound"));
+	act->setCustomEngineActionEvent(kActionToggleSound);
+	act->addDefaultInputMapping("F3");
+	act->addDefaultInputMapping("JOY_B");
+	gameKeyMap->addAction(act);
+
+	act = new Action("RESTART", _("Restart Game"));
+	act->setCustomEngineActionEvent(kActionRestart);
+	act->addDefaultInputMapping("F4");
+	act->addDefaultInputMapping("JOY_BACK");
+	gameKeyMap->addAction(act);
+
+	act = new Action("PAUSE", _("Pause Game"));
+	act->setCustomEngineActionEvent(kActionPause);
+	act->addDefaultInputMapping("p");
+	act->addDefaultInputMapping("JOY_START");
+	gameKeyMap->addAction(act);
+
+	act = new Action("BOW", _("Bow"));
+	act->setCustomEngineActionEvent(kActionBow);
+	act->addDefaultInputMapping("RETURN");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	gameKeyMap->addAction(act);
+
+	act = new Action("EYE", _("Eye"));
+	act->setCustomEngineActionEvent(kActionEye);
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	gameKeyMap->addAction(act);
+
+	act = new Action("USE", _("Use"));
+	act->setCustomEngineActionEvent(kActionUse);
+	act->addDefaultInputMapping("u");
+	act->addDefaultInputMapping("JOY_X");
+	gameKeyMap->addAction(act);
+
+	act = new Action("DO", _("Do"));
+	act->setCustomEngineActionEvent(kActionDo);
+	act->addDefaultInputMapping("d");
+	gameKeyMap->addAction(act);
+
+	act = new Action("WHO", _("Who"));
+	act->setCustomEngineActionEvent(kActionWho);
+	act->addDefaultInputMapping("w");
+	gameKeyMap->addAction(act);
+
+	act = new Action("MAP", _("Map"));
+	act->setCustomEngineActionEvent(kActionMap);
+	act->addDefaultInputMapping("m");
+	gameKeyMap->addAction(act);
+
+	act = new Action("FOLLOW", _("Follow"));
+	act->setCustomEngineActionEvent(kActionFollow);
+	act->addDefaultInputMapping("f");
+	gameKeyMap->addAction(act);
+
+	act = new Action("RVN", _("Rvn"));
+	act->setCustomEngineActionEvent(kActionRvn);
+	act->addDefaultInputMapping("r");
+	gameKeyMap->addAction(act);
+
+	act = new Action("QUIT", _("Quit"));
+	act->setCustomEngineActionEvent(kActionQuit);
+	act->addDefaultInputMapping("q");
+	gameKeyMap->addAction(act);
+
+	act = new Action("UNIT_I", _("Unit I"));
+	act->setCustomEngineActionEvent(kActionUnitI);
+	act->addDefaultInputMapping("c");
+	gameKeyMap->addAction(act);
+
+	act = new Action("UNIT_II", _("Unit II"));
+	act->setCustomEngineActionEvent(kActionUnitII);
+	act->addDefaultInputMapping("v");
+	gameKeyMap->addAction(act);
+
+	act = new Action("UNIT_III", _("Unit III"));
+	act->setCustomEngineActionEvent(kActionUnitIII);
+	act->addDefaultInputMapping("b");
+	gameKeyMap->addAction(act);
+
+	act = new Action("UNIT_IV", _("Unit IV"));
+	act->setCustomEngineActionEvent(kActionUnitIV);
+	act->addDefaultInputMapping("n");
+	gameKeyMap->addAction(act);
+
+	act = new Action("FORM", _("Form"));
+	act->setCustomEngineActionEvent(kActionForm);
+	act->addDefaultInputMapping("f");
+	gameKeyMap->addAction(act);
+
+	act = new Action("ORDER", _("Order"));
+	act->setCustomEngineActionEvent(kActionOrder);
+	act->addDefaultInputMapping("o");
+	gameKeyMap->addAction(act);
+
+	act = new Action("STD", _("Standard"));
+	act->setCustomEngineActionEvent(kActionStd);
+	act->addDefaultInputMapping("t");
+	gameKeyMap->addAction(act);
+
+	act = new Action("MIL_SPACE", _("Military Space"));
+	act->setCustomEngineActionEvent(kActionMilSpace);
+	act->addDefaultInputMapping("SPACE");
+	gameKeyMap->addAction(act);
+
+	KeymapArray keymaps(2);
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = gameKeyMap;
+
+	return keymaps;
 }
 
 } // End of namespace Lilliput
