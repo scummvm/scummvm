@@ -2,6 +2,32 @@
 
 ## Last Confirmed Action
 
+- Closed the startup IDENT textbox modal pass against the native main-loop helpers.
+  - Traced the native caller sites in `run_harvester_main_loop`: click interaction still dispatches through `handle_target_interaction` at `0x6f9b3`, while the modal inspect helper `show_target_ident_text` is reached from `0x70c0f` and `0x7189e` after the current target has been resolved and gated on its "ident shown" byte.
+  - Exposed the already loaded startup textbox bitmaps in `StartupArt` and replaced the room-loop placeholder inspect panel with the confirmed IDENT textbox path:
+    - `BOX1`..`BOX4` now map to `TEXTBOX1.BM`..`TEXTBOX4.BM`
+    - the popup uses the native shared panel position `(85,177)`
+    - IDENT text is rendered with the native `+10,+5` inset and color `0xd3`
+  - Tightened the room-loop modal dismissal path to the confirmed helper behavior: the first click must be released before dismissal is allowed, and once shown the popup dismisses on a fresh click or `Esc` instead of the old `Enter` / `Space` placeholder behavior.
+  - Rebuilt `build-vscode-harvester-debug/scummvm` successfully.
+  - The bounded capture in `/Users/alex/Temp/harvester_startup_probe_modal.log` still reaches `START -> PCROOM`, keeps the corrected startup player placement `screen_base=(182,208)` / `rect=(346,257)-(375,405)`, and still resolves `PC_DRESR1` with `prompt='Examine dresser'`, `cursor_sequence=1`, `action_tag='COM1A'`, and `next_room='PCDRWR'`.
+  - The no-probe capture in `/Users/alex/Temp/harvester_startup_noprobe_modal.log` still reaches the same startup handoff and advances the cursor to sequence `7`, so the textbox-modal port did not regress the default room entry.
+  - Live click replay for the modal textbox itself is still unverified; the current confirmation is from the native control-flow trace, the script/resource mapping (`PC_DRESR1_LTEXT -> BOX1`), and the successful local rebuild/captures rather than from an automated input recording.
+  - Ghidra function counts remain unchanged: `774` total functions, `423` named/documented, `351` still `FUN_*`.
+- Closed the native startup actor world-to-screen / depth-placement port.
+  - Extended the startup room parser to carry the native room depth fields (`min_z`, `max_z`, `max_z_screen_y`, `min_z_screen_y`, `full_scale_z`, `max_z_scale_percent`, and derived `perspective_scale`) plus the room music path through `resolveRoomSetupState`.
+  - Updated the startup player handoff to mirror the native two-pass `room_setup` placement: compute `screen_x = spawn_x - x_offset - width / 2` and `screen_y = spawn_y - height - y_offset`, store that screen-space base point, rescale the ABM for depth, then recompute the same screen-space base point from the scaled metrics.
+  - Rebuilt `build-vscode-harvester-debug/scummvm` successfully.
+  - The bounded probe in `/Users/alex/Temp/harvester_startup_probe_new.log` now shows `startup player placement ... screen_base=(182,208) size=29x148 offsets=(164,49) scale=0.970` and `startup probe player ... rect=(346,257)-(375,405)`, replacing the old bad rect `(514,380)-(544,533)` while keeping the player bottom at entrance `y=405`.
+  - The same bounded probe still resolves `PC_DRESR1` at `(142,339)` with `action_tag='COM1A'` and `next_room='PCDRWR'`, so the direct startup room-loop interaction handoff remains intact.
+  - A no-probe startup capture in `/Users/alex/Temp/harvester_startup_noprobe.log` also reaches `START -> PCROOM`, applies the same `screen_base=(182,208)` / `scale=0.970` placement, and advances the cursor to sequence `7`, so the fix is not dependent on the probe hook.
+  - Ghidra function counts remain unchanged.
+- Closed the startup player-display root-cause pass against Ghidra.
+  - The local startup logs already showed the actor resource and entrance state were present: `PC0.ABM` loads, `resolveRoomSetupState('START')` resolves `PCROOM`, and the player spawn stays `(360,405,15)` facing `1`.
+  - Ghidra now confirms the missing native behavior is screen placement, not loading. In `room_setup`, the player path re-adds `DAT_000d5bd4`, computes `screen_y = entrance_y - sprite_height - y_offset`, computes `screen_x = entrance_x - x_offset - sprite_width / 2`, calls `set_entity_screen_position`, rescales with `rescale_entity_sprite_for_depth`, then repeats the same placement with the scaled metrics.
+  - The current port is still treating the entrance coordinates as direct screen pixels and adding ABM frame offsets during draw, which matches the bad startup probe rectangle `(514,380)-(544,533)` from the same `(360,405,15)` entrance and explains why Steve loads but is not visibly placed in the room.
+  - This narrows the regression to the missing native world-to-screen / depth-rescale path for startup actors; archive loading, palette upload, quick tips, and room-loop dispatch are not the blocker.
+  - Ghidra function counts remain unchanged.
 - Closed the startup room-loop verification pass with a bounded local probe.
   - Added opt-in Harvester debug probes behind `harvester_debug_skip_startup_movies` and `harvester_debug_probe_startup_room` so the local capture can skip the intro FST trio and log room-loop facts without changing the default startup path.
   - Using `/Users/alex/Temp/harvester_overlay_ugy21l06` with `QUICK_TIPS=OFF` plus `/Users/alex/Temp/harvester_probe_scummvm.ini`, the bounded run in `/Users/alex/Temp/harvester_startup_probe.log` now reaches `resolveRoomSetupState('START') -> room='PCROOM' entrance='START' spawn=(360,405,15) facing=1`.
@@ -212,6 +238,6 @@
 ## Next Suggested Action
 
 - Highest-value targets:
-  - port `show_target_ident_text` / `handle_target_interaction` behavior into the room loop so the verified `PCROOM` hover/click path can move off the current prototype overlay text
-  - once that path is in place, rerun the bounded startup probe and a normal startup capture to confirm the dresser `COM1A -> PCDRWR` interaction follows the same status/message flow as the original room loop
-  - if player placement regresses during that port, take a focused Ghidra pass through `set_entity_screen_position` / `rescale_entity_sprite_for_depth` callsites to recover the exact screen-position math before touching movement
+  - add a bounded input replay or one-shot debug hook for the first `PC_DRESR1` click so the new ScummVM modal path can be confirmed end-to-end: first click shows `BOX1` IDENT text, second click follows `COM1A -> PCDRWR`
+  - after that live click-path verification, continue tracing the native bottom-screen hover text entity path around the existing `spawn_text_entity` / `destroy_text_entity` calls so the current prompt-string overlay can be replaced with the original label lifecycle
+  - if the live dresser replay exposes further room-loop regressions, trace the remaining `handle_target_interaction` side paths (generic responses, inventory pickup/use-item dispatch, and NPC dialogue gating) before broadening movement or click-to-walk work

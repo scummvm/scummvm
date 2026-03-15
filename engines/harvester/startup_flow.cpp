@@ -19,6 +19,8 @@
  *
  */
 
+#include <math.h>
+
 #include "harvester/startup_flow.h"
 
 #include "common/config-manager.h"
@@ -60,17 +62,33 @@ static const int kQuickTipTextWidth = 280;
 static const int kMenuStartY = 100;
 static const int kMenuLineSpacing = 28;
 static const int kCursorSequence7 = 7;
+static const int kIdentTextboxX = 85;
+static const int kIdentTextboxY = 177;
+static const int kIdentTextboxTextInsetX = 10;
+static const int kIdentTextboxTextInsetY = 5;
 static const char *const kPlayerActorEntityName = "PLAYER";
 static const char *const kPlayerActorResourcePath = "1:/GRAPHIC/MONSTERS/PC/PC0.ABM";
 static const uint32 kPaletteFadeTickMs = 4;
 static const float kPaletteFadeStep = 0.1f;
 static const float kPaletteBrightnessBlack = 0.0f;
+static const float kRoomPlayerMoveStep = 4.0f;
 
+static const byte kIdentTextColor = 0xd3;
 static const byte kTextColorNormal = 255;
 static const byte kTextColorHover = 251;
 static const byte kTextColorDim = 248;
 static const byte kShadowColor = 0;
 static const byte kPanelFillColor = 1;
+static const byte kQuickTipActionColor = 0xc3;
+static const byte kRoomPromptColor = 0xce;
+
+static const int kCursorSequenceWalk = 0;
+static const int kCursorSequenceExamine = 1;
+static const int kCursorSequenceTalk = 2;
+static const int kCursorSequenceOperate = 4;
+static const int kCursorSequencePickup = 5;
+static const int kCursorSequenceTransition = 6;
+static const int kCursorSequenceNeutral = 7;
 
 struct StartupRoomSceneResources {
 	StartupRoomSetupState state;
@@ -79,6 +97,28 @@ struct StartupRoomSceneResources {
 	Common::Array<StartupAnimRecord> sceneAnimations;
 	float targetPaletteBrightness = 1.0f;
 };
+
+struct StartupRoomPlayerState {
+	RuntimeEntity *entity = nullptr;
+	int centerX = 0;
+	int bottomY = 0;
+	float z = 0.0f;
+	int facing = -1;
+	bool hasMoveTarget = false;
+	int targetX = 0;
+	int targetY = 0;
+	float targetZ = 0.0f;
+};
+
+struct StartupRoomHoverState {
+	const StartupObjectRecord *object = nullptr;
+	Common::String promptText;
+	int cursorSequence = kCursorSequenceNeutral;
+};
+
+static int roundToInt(float value) {
+	return value >= 0.0f ? (int)floorf(value + 0.5f) : (int)ceilf(value - 0.5f);
+}
 
 static int resolvePlayerFacingFrame(int facing) {
 	switch (facing) {
@@ -93,6 +133,88 @@ static int resolvePlayerFacingFrame(int facing) {
 	default:
 		return 0x0e;
 	}
+}
+
+static bool roomSupportsMovementBand(const StartupRoomSetupState &state) {
+	return state.roomMaxZScreenY >= 0 &&
+		state.roomMinZScreenY >= state.roomMaxZScreenY;
+}
+
+static int clampRoomMovementY(const StartupRoomSetupState &state, int screenY) {
+	if (!roomSupportsMovementBand(state))
+		return screenY;
+
+	return CLIP<int>(screenY, state.roomMaxZScreenY, state.roomMinZScreenY);
+}
+
+static float mapRoomScreenYToDepth(const StartupRoomSetupState &state, int screenY) {
+	if (!roomSupportsMovementBand(state))
+		return (float)state.playerSpawnZ;
+
+	if (screenY <= state.roomMaxZScreenY)
+		return (float)state.roomMaxZ;
+	if (screenY >= state.roomMinZScreenY)
+		return (float)state.roomMinZ;
+
+	return (float)(state.roomMaxZ - ((state.roomMaxZ - state.roomMinZ) *
+		(screenY - state.roomMaxZScreenY)) /
+		(state.roomMinZScreenY - state.roomMaxZScreenY));
+}
+
+static float computeActorDepthScale(const StartupRoomSetupState &state, float z) {
+	float scale = 1.0f;
+	if (state.roomPerspectiveScale != 0.0f) {
+		scale -= (z - (float)state.roomFullScaleZ) * state.roomPerspectiveScale;
+		if (scale <= 0.0f)
+			scale = 1.0f;
+	}
+
+	return scale;
+}
+
+static void setRoomActorScreenPosition(RuntimeEntity &entity, int centerX, int bottomY, float z,
+		int width, int height, int xOffset, int yOffset) {
+	entity.setPosition(centerX - xOffset - width / 2, bottomY - height - yOffset, z);
+}
+
+static bool applyRoomActorPlacement(const StartupRoomSetupState &state, RuntimeEntity &entity,
+		int centerX, int bottomY, float z, const Common::String *entranceName = nullptr) {
+	int width = 0;
+	int height = 0;
+	int xOffset = 0;
+	int yOffset = 0;
+	if (!entity.getCurrentFrameMetrics(width, height, xOffset, yOffset))
+		return false;
+
+	entity.setAnchorMode(kRuntimeEntityAnchorTopLeft);
+	setRoomActorScreenPosition(entity, centerX, bottomY, z, width, height, xOffset, yOffset);
+
+	const float depthScale = computeActorDepthScale(state, z);
+	entity.setDepthScale(depthScale);
+	if (!entity.getCurrentFrameMetrics(width, height, xOffset, yOffset))
+		return false;
+	setRoomActorScreenPosition(entity, centerX, bottomY, z, width, height, xOffset, yOffset);
+
+	if (entranceName) {
+		debugC(1, kDebugGeneral,
+			"Harvester: startup player placement entrance='%s' spawn=(%d,%d,%d) screen_base=(%d,%d) size=%dx%d offsets=(%d,%d) scale=%.3f",
+			entranceName->c_str(), centerX, bottomY, roundToInt(z),
+			entity.getX(), entity.getY(), width, height, xOffset, yOffset, (double)depthScale);
+	}
+	return true;
+}
+
+static bool applyStartupActorPlacement(const StartupRoomSetupState &state, RuntimeEntity &entity) {
+	return applyRoomActorPlacement(state, entity,
+		state.playerSpawnX, state.playerSpawnY, (float)state.playerSpawnZ, &state.entranceName);
+}
+
+static int resolveFacingFromMovementDelta(int dx, int dy) {
+	if (ABS(dx) > ABS(dy))
+		return dx < 0 ? 1 : 2;
+	if (dy < 0)
+		return 3;
+	return 0;
 }
 
 static void getPaletteByteRange(const byte *palette, byte &minValue, byte &maxValue) {
@@ -301,6 +423,16 @@ static const StartupObjectRecord *findSceneObjectByName(const Common::Array<Star
 	return nullptr;
 }
 
+static StartupObjectRecord *findSceneObjectByName(Common::Array<StartupObjectRecord> &objects,
+		const Common::String &objectName) {
+	for (StartupObjectRecord &object : objects) {
+		if (object.objectName.equalsIgnoreCase(objectName))
+			return &object;
+	}
+
+	return nullptr;
+}
+
 static const StartupObjectRecord *findRoomObjectAtPoint(HarvesterEngine &engine,
 		const Common::Array<StartupObjectRecord> &sceneObjects, const Common::Point &point) {
 	RuntimeEntityManager *runtimeEntities = engine.getRuntimeEntities();
@@ -310,8 +442,159 @@ static const StartupObjectRecord *findRoomObjectAtPoint(HarvesterEngine &engine,
 	const RuntimeEntity *entity = runtimeEntities->findTopSceneEntityAt(point);
 	if (!entity)
 		return nullptr;
+	if (entity->getClassId() == kRuntimeEntityClassBackground)
+		return nullptr;
 
 	return findSceneObjectByName(sceneObjects, entity->getName());
+}
+
+static const IndexedBitmap *resolveInspectTextboxBitmap(const StartupArt &art, const StartupResolvedText &text) {
+	if (text.boxName.equalsIgnoreCase("BOX1"))
+		return art.getTextboxBitmap(0);
+	if (text.boxName.equalsIgnoreCase("BOX2"))
+		return art.getTextboxBitmap(1);
+	if (text.boxName.equalsIgnoreCase("BOX3"))
+		return art.getTextboxBitmap(2);
+	if (text.boxName.equalsIgnoreCase("BOX4"))
+		return art.getTextboxBitmap(3);
+
+	return nullptr;
+}
+
+static void drawRoomInspectText(Graphics::Screen &screen, const StartupArt &art, const Graphics::Font &font,
+		const StartupResolvedText &inspectText) {
+	const IndexedBitmap *textbox = resolveInspectTextboxBitmap(art, inspectText);
+	if (!textbox || !textbox->isValid())
+		return;
+
+	blitBitmap(screen, *textbox, kIdentTextboxX, kIdentTextboxY);
+	drawWrappedShadowedText(screen, font, inspectText.value,
+		kIdentTextboxX + kIdentTextboxTextInsetX,
+		kIdentTextboxY + kIdentTextboxTextInsetY,
+		MAX<int>(0, (int)textbox->width - (kIdentTextboxTextInsetX + 2)),
+		kIdentTextColor);
+}
+
+static int resolveRoomObjectCursorSequence(const StartupObjectRecord &object, StartupScript &startupScript) {
+	StartupResolvedText inspectText;
+	if (!object.identShown && startupScript.resolveObjectInspectText(object, inspectText))
+		return kCursorSequenceExamine;
+	if (object.operatable)
+		return kCursorSequenceOperate;
+
+	StartupInteractionResult interaction;
+	if (startupScript.resolveObjectInteraction(object, interaction))
+		return kCursorSequenceExamine;
+	if (startupScript.resolveObjectInspectText(object, inspectText))
+		return kCursorSequenceExamine;
+
+	return kCursorSequenceNeutral;
+}
+
+static Common::String buildRoomObjectPrompt(const StartupObjectRecord &object, StartupScript &startupScript,
+		int cursorSequence) {
+	const Common::String label = startupScript.resolveObjectLabel(object);
+	if (label.empty())
+		return Common::String();
+
+	if (cursorSequence == kCursorSequenceOperate)
+		return Common::String::format("Operate the %s", label.c_str());
+	if (cursorSequence == kCursorSequencePickup)
+		return Common::String::format("Pick up the %s", label.c_str());
+	if (cursorSequence == kCursorSequenceTalk)
+		return Common::String::format("Talk to %s", label.c_str());
+	if (cursorSequence == kCursorSequenceTransition)
+		return Common::String::format("Go to %s", label.c_str());
+
+	return Common::String::format("Examine %s", label.c_str());
+}
+
+static StartupRoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const StartupRoomSetupState &state,
+		const Common::Array<StartupObjectRecord> &sceneObjects, const Common::Point &mousePos) {
+	StartupRoomHoverState hoverState;
+	StartupScript *startupScript = engine.getStartupScript();
+	if (!startupScript)
+		return hoverState;
+
+	hoverState.object = findRoomObjectAtPoint(engine, sceneObjects, mousePos);
+	if (hoverState.object) {
+		hoverState.cursorSequence = resolveRoomObjectCursorSequence(*hoverState.object, *startupScript);
+		hoverState.promptText = buildRoomObjectPrompt(*hoverState.object, *startupScript, hoverState.cursorSequence);
+		return hoverState;
+	}
+
+	if (roomSupportsMovementBand(state) &&
+		mousePos.y >= state.roomMaxZScreenY &&
+		mousePos.y <= state.roomMinZScreenY) {
+		hoverState.cursorSequence = kCursorSequenceWalk;
+	}
+
+	return hoverState;
+}
+
+static bool setPlayerFacingFrame(StartupRoomPlayerState &playerState, int facing) {
+	if (!playerState.entity)
+		return false;
+	if (playerState.facing == facing)
+		return false;
+
+	playerState.facing = facing;
+	playerState.entity->setCurrentFrame(resolvePlayerFacingFrame(facing));
+	return true;
+}
+
+static void setPlayerMoveTarget(const StartupRoomSetupState &state, StartupRoomPlayerState &playerState,
+		int targetX, int targetBottomY) {
+	playerState.hasMoveTarget = true;
+	playerState.targetX = CLIP<int>(targetX, 0, 639);
+	playerState.targetY = clampRoomMovementY(state, targetBottomY);
+	playerState.targetZ = mapRoomScreenYToDepth(state, playerState.targetY);
+}
+
+static bool stepPlayerMoveTarget(const StartupRoomSetupState &state, StartupRoomPlayerState &playerState) {
+	if (!playerState.entity || !playerState.hasMoveTarget)
+		return false;
+
+	const float dx = (float)(playerState.targetX - playerState.centerX);
+	const float dy = (float)(playerState.targetY - playerState.bottomY);
+	const float distance = sqrtf(dx * dx + dy * dy);
+	if (distance <= kRoomPlayerMoveStep) {
+		playerState.centerX = playerState.targetX;
+		playerState.bottomY = playerState.targetY;
+		playerState.z = playerState.targetZ;
+		playerState.hasMoveTarget = false;
+	} else {
+		playerState.centerX += roundToInt((dx / distance) * kRoomPlayerMoveStep);
+		playerState.bottomY += roundToInt((dy / distance) * kRoomPlayerMoveStep);
+		playerState.bottomY = clampRoomMovementY(state, playerState.bottomY);
+		playerState.z = mapRoomScreenYToDepth(state, playerState.bottomY);
+	}
+
+	(void)setPlayerFacingFrame(playerState,
+		resolveFacingFromMovementDelta(playerState.targetX - playerState.centerX,
+			playerState.targetY - playerState.bottomY));
+	return applyRoomActorPlacement(state, *playerState.entity,
+		playerState.centerX, playerState.bottomY, playerState.z);
+}
+
+static bool stepPlayerKeyboardMovement(const StartupRoomSetupState &state, StartupRoomPlayerState &playerState,
+		bool moveLeft, bool moveRight, bool moveUp, bool moveDown) {
+	if (!playerState.entity || !roomSupportsMovementBand(state))
+		return false;
+
+	const int dx = (moveRight ? 1 : 0) - (moveLeft ? 1 : 0);
+	const int dy = (moveDown ? 1 : 0) - (moveUp ? 1 : 0);
+	if (dx == 0 && dy == 0)
+		return false;
+
+	playerState.hasMoveTarget = false;
+	playerState.centerX = CLIP<int>(playerState.centerX + roundToInt(dx * kRoomPlayerMoveStep), 0, 639);
+	playerState.bottomY = clampRoomMovementY(state,
+		playerState.bottomY + roundToInt(dy * kRoomPlayerMoveStep));
+	playerState.z = mapRoomScreenYToDepth(state, playerState.bottomY);
+	(void)setPlayerFacingFrame(playerState, resolveFacingFromMovementDelta(dx, dy));
+	return applyRoomActorPlacement(state, *playerState.entity,
+		playerState.centerX, playerState.bottomY, playerState.z);
 }
 
 static bool findRoomObjectProbePoint(HarvesterEngine &engine, const Common::Array<StartupObjectRecord> &sceneObjects,
@@ -400,13 +683,62 @@ static void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneR
 		const Common::String objectLabel = startupScript->resolveObjectLabel(*hoveredObject);
 		StartupInteractionResult interaction;
 		StartupResolvedText inspectText;
+		const StartupRoomHoverState hoverState = resolveRoomHoverState(engine, scene.state, scene.sceneObjects, probePoint);
 		const bool hasInteraction = startupScript->resolveObjectInteraction(*hoveredObject, interaction);
 		const bool hasInspectText = startupScript->resolveObjectInspectText(*hoveredObject, inspectText);
 		debugC(1, kDebugGeneral,
-			"Harvester: startup probe hotspot room='%s' object='%s' point=(%d,%d) label='%s' action_tag='%s' interaction=%d next_room='%s' inspect=%d",
+			"Harvester: startup probe hotspot room='%s' object='%s' point=(%d,%d) label='%s' prompt='%s' cursor_sequence=%d action_tag='%s' interaction=%d next_room='%s' inspect=%d",
 			scene.state.roomName.c_str(), hoveredObject->objectName.c_str(), probePoint.x, probePoint.y,
-			objectLabel.c_str(), hoveredObject->actionTag.c_str(), hasInteraction,
+			objectLabel.c_str(), hoverState.promptText.c_str(), hoverState.cursorSequence,
+			hoveredObject->actionTag.c_str(), hasInteraction,
 			interaction.nextRoomName.c_str(), hasInspectText);
+
+		if (roomSupportsMovementBand(scene.state)) {
+			Common::Point floorProbe;
+			bool foundFloorProbe = false;
+			for (int y = scene.state.roomMaxZScreenY; y <= scene.state.roomMinZScreenY && !foundFloorProbe; y += 12) {
+				for (int x = 48; x < 592; x += 16) {
+					const StartupRoomHoverState candidateHover = resolveRoomHoverState(
+						engine, scene.state, scene.sceneObjects, Common::Point(x, y));
+					if (candidateHover.cursorSequence == kCursorSequenceWalk) {
+						floorProbe = Common::Point(x, y);
+						foundFloorProbe = true;
+						break;
+					}
+				}
+			}
+
+			const StartupRoomHoverState floorHover = foundFloorProbe
+				? resolveRoomHoverState(engine, scene.state, scene.sceneObjects, floorProbe)
+				: StartupRoomHoverState();
+			debugC(1, kDebugGeneral,
+				"Harvester: startup probe floor room='%s' point=(%d,%d) found=%d cursor_sequence=%d prompt='%s'",
+				scene.state.roomName.c_str(), floorProbe.x, floorProbe.y, foundFloorProbe,
+				floorHover.cursorSequence, floorHover.promptText.c_str());
+
+			RuntimeEntity *player = runtimeEntities->findSceneEntityByName(kPlayerActorEntityName);
+			if (player && foundFloorProbe && floorHover.cursorSequence == kCursorSequenceWalk) {
+				StartupRoomPlayerState probePlayer;
+				probePlayer.entity = player;
+				probePlayer.centerX = scene.state.playerSpawnX;
+				probePlayer.bottomY = scene.state.playerSpawnY;
+				probePlayer.z = (float)scene.state.playerSpawnZ;
+				probePlayer.facing = scene.state.playerFacing;
+				setPlayerMoveTarget(scene.state, probePlayer, floorProbe.x, floorProbe.y);
+				for (int i = 0; i < 32 && probePlayer.hasMoveTarget; ++i)
+					(void)stepPlayerMoveTarget(scene.state, probePlayer);
+
+				const Common::Rect movedRect = player->getScreenRect();
+				debugC(1, kDebugGeneral,
+					"Harvester: startup probe movement room='%s' target=(%d,%d) final_rect=(%d,%d)-(%d,%d) z=%.2f",
+					scene.state.roomName.c_str(), floorProbe.x, floorProbe.y,
+					movedRect.left, movedRect.top, movedRect.right, movedRect.bottom, (double)probePlayer.z);
+
+				player->setCurrentFrame(resolvePlayerFacingFrame(scene.state.playerFacing));
+				(void)applyRoomActorPlacement(scene.state, *player,
+					scene.state.playerSpawnX, scene.state.playerSpawnY, (float)scene.state.playerSpawnZ);
+			}
+		}
 		return;
 	}
 
@@ -440,7 +772,8 @@ static void renderQuickTipsScreen(HarvesterEngine &engine, const StartupRoomScen
 	Graphics::Screen *screen = engine.getScreen();
 	const StartupArt *art = engine.getStartupArt();
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	if (!screen || !art || !font)
+	StartupScript *startupScript = engine.getStartupScript();
+	if (!screen || !art || !font || !startupScript)
 		return;
 
 	drawRoomScene(engine, *screen, scene, scene.targetPaletteBrightness);
@@ -450,14 +783,14 @@ static void renderQuickTipsScreen(HarvesterEngine &engine, const StartupRoomScen
 	const Common::Rect exitRect = quickTipsExitRect();
 	const Common::Rect nextRect = quickTipsNextRect();
 	const Common::Rect toggleRect = quickTipsToggleRect();
+	const Common::String toggleLabel = startupScript->resolveTextValue(
+		startupScript->isQuickTipsEnabled() ? "Show_Tips_ON" : "Show_Tips_OFF");
 	drawShadowedString(*screen, *font, "Exit", exitRect.left, exitRect.top, exitRect.width(),
-		exitRect.contains(mousePos) ? kTextColorHover : kTextColorNormal);
+		kQuickTipActionColor);
 	drawShadowedString(*screen, *font, "Next", nextRect.left, nextRect.top, nextRect.width(),
-		nextRect.contains(mousePos) ? kTextColorHover : kTextColorNormal);
-	drawShadowedString(*screen, *font,
-		engine.getStartupScript()->isQuickTipsEnabled() ? "Show_Tips_ON" : "Show_Tips_OFF",
-		toggleRect.left, toggleRect.top, toggleRect.width(),
-		toggleRect.contains(mousePos) ? kTextColorHover : kTextColorNormal);
+		kQuickTipActionColor);
+	drawShadowedString(*screen, *font, toggleLabel,
+		toggleRect.left, toggleRect.top, toggleRect.width(), kQuickTipActionColor);
 
 	if (engine.getRuntimeEntities())
 		engine.getRuntimeEntities()->drawCursor(*screen);
@@ -577,6 +910,11 @@ Common::Error StartupFlow::runQuickTips() {
 	}
 
 	resetCursorAnimationSequence();
+
+	debugC(1, kDebugGeneral,
+		"Harvester: quick tips labels exit='Exit' next='Next' toggle='%s'",
+		_engine.getStartupScript()->resolveTextValue(
+			_engine.getStartupScript()->isQuickTipsEnabled() ? "Show_Tips_ON" : "Show_Tips_OFF").c_str());
 
 	uint tipIndex = _engine.getRandomNumber(_quickTips.size() - 1);
 	bool needsRedraw = true;
@@ -748,9 +1086,8 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 
 	Graphics::Screen *screen = _engine.getScreen();
 	const StartupArt *art = _engine.getStartupArt();
-	const Graphics::Font *titleFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 	const Graphics::Font *bodyFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	if (!screen || !art || !titleFont || !bodyFont)
+	if (!screen || !art || !bodyFont)
 		return Common::kNoError;
 
 	if (!populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations))
@@ -767,21 +1104,20 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 		return transitionError;
 
 	resetCursorAnimationSequence();
-
-	Common::String statusMessage = Common::String::format(
-		"Entered %s via %s. Move the cursor over active hotspots and click to inspect or follow startup room transitions.",
-		state.roomName.c_str(), entranceName.c_str());
-	if (!state.musicPath.empty())
-		statusMessage += Common::String::format(" Music: %s.", state.musicPath.c_str());
-	if (!scene.sceneObjects.empty())
-		statusMessage += Common::String::format(" Visible scene objects: %u.", (uint)scene.sceneObjects.size());
-	if (!scene.sceneAnimations.empty())
-		statusMessage += Common::String::format(" Room anims: %u.", (uint)scene.sceneAnimations.size());
-	const Common::String baseStatusMessage = statusMessage;
+	RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
+	StartupRoomPlayerState playerState;
+	playerState.entity = runtimeEntities ? runtimeEntities->findSceneEntityByName(kPlayerActorEntityName) : nullptr;
+	playerState.centerX = state.playerSpawnX;
+	playerState.bottomY = state.playerSpawnY;
+	playerState.z = (float)state.playerSpawnZ;
+	playerState.facing = state.playerFacing;
 	StartupResolvedText inspectText;
-	Common::String inspectObjectLabel;
 	bool showingInspectText = false;
 	bool inspectCanDismiss = false;
+	bool moveLeft = false;
+	bool moveRight = false;
+	bool moveUp = false;
+	bool moveDown = false;
 	bool needsRedraw = true;
 	Graphics::FrameLimiter limiter(g_system, 60);
 
@@ -790,52 +1126,24 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 
 	while (!_engine.shouldQuit()) {
 		if (needsRedraw) {
-			drawRoomScene(_engine, *screen, scene, scene.targetPaletteBrightness);
-			const StartupObjectRecord *hoveredObject = showingInspectText ? nullptr :
-				findRoomObjectAtPoint(_engine, scene.sceneObjects, _mousePos);
-			Common::String hoverMessage;
-			if (hoveredObject) {
-				hoverMessage = _engine.getStartupScript()->resolveObjectLabel(*hoveredObject);
-				if (!hoveredObject->actionTag.empty())
-					hoverMessage += " Click to follow the scripted startup interaction.";
-				else if (!_engine.getStartupScript()->resolveObjectInspectText(*hoveredObject, inspectText))
-					inspectText = StartupResolvedText();
-				else
-					hoverMessage += " Click to inspect.";
+			const StartupRoomHoverState hoverState = showingInspectText
+				? StartupRoomHoverState()
+				: resolveRoomHoverState(_engine, scene.state, scene.sceneObjects, _mousePos);
+			if (RuntimeEntity *cursor = runtimeEntities ? runtimeEntities->getCursorEntity() : nullptr) {
+				cursor->setAnimationSequence(showingInspectText ? kCursorSequenceNeutral : hoverState.cursorSequence);
 			}
-			if (hoverMessage.empty())
-				hoverMessage = statusMessage;
 
-			const Common::Rect headerPanel(16, 16, 624, 84);
-			screen->fillRect(headerPanel, kPanelFillColor);
-			drawShadowedString(*screen, *titleFont, state.roomName,
-				headerPanel.left + 16, headerPanel.top + 8, headerPanel.width() - 32,
-				kTextColorNormal, Graphics::kTextAlignCenter);
-			drawWrappedShadowedText(*screen, *bodyFont, hoverMessage,
-				headerPanel.left + 16, headerPanel.top + 34, headerPanel.width() - 32, kTextColorNormal);
+			drawRoomScene(_engine, *screen, scene, scene.targetPaletteBrightness);
 
 			if (showingInspectText) {
-				const Common::Rect inspectPanel(56, 338, 584, 468);
-				const Common::String footerMessage = inspectCanDismiss
-					? "Click, Enter, Space, or Escape to dismiss."
-					: "Release the mouse button, then click again to dismiss.";
-				screen->fillRect(inspectPanel, kPanelFillColor);
-				drawShadowedString(*screen, *titleFont,
-					Common::String::format("Inspect: %s", inspectObjectLabel.c_str()),
-					inspectPanel.left, inspectPanel.top + 10, inspectPanel.width(),
-					kTextColorHover, Graphics::kTextAlignCenter);
-				drawWrappedShadowedText(*screen, *bodyFont, inspectText.value,
-					inspectPanel.left + 20, inspectPanel.top + 40, inspectPanel.width() - 40, kTextColorNormal);
-				drawShadowedString(*screen, *bodyFont, footerMessage,
-					inspectPanel.left, inspectPanel.bottom - 20, inspectPanel.width(),
-					kTextColorDim, Graphics::kTextAlignCenter);
-			} else {
-				drawShadowedString(*screen, *bodyFont, "Esc exits this prototype room loop.",
-					0, 458, 640, kTextColorDim, Graphics::kTextAlignCenter);
+				drawRoomInspectText(*screen, *art, *bodyFont, inspectText);
+			} else if (!hoverState.promptText.empty()) {
+				drawShadowedString(*screen, *bodyFont, hoverState.promptText,
+					0, 462, 640, kRoomPromptColor, Graphics::kTextAlignCenter);
 			}
 
-			if (_engine.getRuntimeEntities())
-				_engine.getRuntimeEntities()->drawCursor(*screen);
+			if (runtimeEntities)
+				runtimeEntities->drawCursor(*screen);
 			screen->makeAllDirty();
 			screen->update();
 			needsRedraw = false;
@@ -861,80 +1169,106 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 						showingInspectText = false;
 						inspectCanDismiss = false;
 						inspectText = StartupResolvedText();
-						inspectObjectLabel.clear();
-						statusMessage = baseStatusMessage;
 						needsRedraw = true;
 					}
 					break;
 				}
 
-					const StartupObjectRecord *clickedObject = findRoomObjectAtPoint(_engine, scene.sceneObjects, _mousePos);
-					if (!clickedObject) {
-						statusMessage = "No active startup hotspot under the cursor.";
+				const StartupRoomHoverState hoverState = resolveRoomHoverState(
+					_engine, scene.state, scene.sceneObjects, _mousePos);
+				StartupObjectRecord *clickedObject = hoverState.object
+					? findSceneObjectByName(scene.sceneObjects, hoverState.object->objectName)
+					: nullptr;
+				if (!clickedObject) {
+					if (hoverState.cursorSequence == kCursorSequenceWalk && playerState.entity) {
+						setPlayerMoveTarget(scene.state, playerState, _mousePos.x, _mousePos.y);
 						needsRedraw = true;
-						break;
 					}
+					break;
+				}
 
-				const Common::String objectLabel = _engine.getStartupScript()->resolveObjectLabel(*clickedObject);
+				StartupResolvedText resolvedInspectText;
+				const bool hasInspectText =
+					_engine.getStartupScript()->resolveObjectInspectText(*clickedObject, resolvedInspectText);
+				const bool canShowInspectText = hasInspectText &&
+					resolveInspectTextboxBitmap(*art, resolvedInspectText);
+				if (!clickedObject->identShown && canShowInspectText) {
+					inspectText = resolvedInspectText;
+					clickedObject->identShown = true;
+					showingInspectText = true;
+					inspectCanDismiss = false;
+					playerState.hasMoveTarget = false;
+					needsRedraw = true;
+					break;
+				}
+
 				StartupInteractionResult interaction;
 				if (!_engine.getStartupScript()->resolveObjectInteraction(*clickedObject, interaction)) {
-					if (_engine.getStartupScript()->resolveObjectInspectText(*clickedObject, inspectText)) {
-						inspectObjectLabel = objectLabel;
+					if (canShowInspectText) {
+						inspectText = resolvedInspectText;
 						showingInspectText = true;
 						inspectCanDismiss = false;
-						statusMessage = Common::String::format("Showing inspect text for %s.", objectLabel.c_str());
-					} else if (objectLabel.empty()) {
-						statusMessage = "No active startup hotspot under the cursor.";
-					} else {
-						statusMessage = Common::String::format("%s has no supported startup interaction yet.",
-							objectLabel.c_str());
+					} else if (hasInspectText) {
+						debug(1, "Harvester: unsupported IDENT textbox '%s' for object '%s'",
+							resolvedInspectText.boxName.c_str(), clickedObject->objectName.c_str());
 					}
 					needsRedraw = true;
 					break;
 				}
 
-				statusMessage = Common::String::format("Following %s.", objectLabel.c_str());
+				playerState.hasMoveTarget = false;
 				if (!interaction.soundPath.empty()) {
-					const bool soundStarted = _engine.playStartupSound(interaction.soundPath);
-					statusMessage += Common::String::format(" Sound: %s (%s).", interaction.soundPath.c_str(),
-						soundStarted ? "playing" : "load failed");
+					(void)_engine.playStartupSound(interaction.soundPath);
 				}
-					needsRedraw = true;
+				needsRedraw = true;
 
-					if (!interaction.nextRoomName.empty()) {
-						Common::Error roomError = runRoomLoop(interaction.nextRoomName);
-						if (roomError.getCode() == Common::kReadingFailed) {
-							(void)populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations);
-							resetCursorAnimationSequence();
-							statusMessage = Common::String::format("Unable to resolve closeup room '%s'.",
-								interaction.nextRoomName.c_str());
-							needsRedraw = true;
-						} else if (roomError.getCode() != Common::kNoError) {
-							return roomError;
-						} else {
-							(void)populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations);
-							resetCursorAnimationSequence();
-							statusMessage = Common::String::format("Returned from %s.", interaction.nextRoomName.c_str());
-							needsRedraw = true;
-						}
+				if (!interaction.nextRoomName.empty()) {
+					Common::Error roomError = runRoomLoop(interaction.nextRoomName);
+					if (roomError.getCode() == Common::kReadingFailed) {
+						(void)populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations);
+						resetCursorAnimationSequence();
+						playerState.entity = runtimeEntities ? runtimeEntities->findSceneEntityByName(kPlayerActorEntityName) : nullptr;
+						playerState.centerX = state.playerSpawnX;
+						playerState.bottomY = state.playerSpawnY;
+						playerState.z = (float)state.playerSpawnZ;
+						playerState.facing = state.playerFacing;
+						playerState.hasMoveTarget = false;
+						needsRedraw = true;
+					} else if (roomError.getCode() != Common::kNoError) {
+						return roomError;
+					} else {
+						(void)populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations);
+						resetCursorAnimationSequence();
+						playerState.entity = runtimeEntities ? runtimeEntities->findSceneEntityByName(kPlayerActorEntityName) : nullptr;
+						playerState.centerX = state.playerSpawnX;
+						playerState.bottomY = state.playerSpawnY;
+						playerState.z = (float)state.playerSpawnZ;
+						playerState.facing = state.playerFacing;
+						playerState.hasMoveTarget = false;
+						needsRedraw = true;
 					}
+				}
 				break;
 			}
 			case Common::EVENT_KEYDOWN:
 				if (showingInspectText) {
-					if (event.kbd.keycode == Common::KEYCODE_RETURN ||
-						event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
-						event.kbd.keycode == Common::KEYCODE_ESCAPE ||
-						event.kbd.keycode == Common::KEYCODE_SPACE) {
+					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 						showingInspectText = false;
 						inspectCanDismiss = false;
 						inspectText = StartupResolvedText();
-						inspectObjectLabel.clear();
-						statusMessage = baseStatusMessage;
 						needsRedraw = true;
 					}
 					break;
 				}
+
+				if (event.kbd.keycode == Common::KEYCODE_LEFT)
+					moveLeft = true;
+				else if (event.kbd.keycode == Common::KEYCODE_RIGHT)
+					moveRight = true;
+				else if (event.kbd.keycode == Common::KEYCODE_UP)
+					moveUp = true;
+				else if (event.kbd.keycode == Common::KEYCODE_DOWN)
+					moveDown = true;
 
 				if (event.kbd.keycode == Common::KEYCODE_RETURN ||
 					event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
@@ -942,10 +1276,25 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 					return Common::kNoError;
 				}
 				break;
+			case Common::EVENT_KEYUP:
+				if (event.kbd.keycode == Common::KEYCODE_LEFT)
+					moveLeft = false;
+				else if (event.kbd.keycode == Common::KEYCODE_RIGHT)
+					moveRight = false;
+				else if (event.kbd.keycode == Common::KEYCODE_UP)
+					moveUp = false;
+				else if (event.kbd.keycode == Common::KEYCODE_DOWN)
+					moveDown = false;
+				break;
 			default:
 				break;
 			}
 		}
+
+		if (stepPlayerKeyboardMovement(scene.state, playerState, moveLeft, moveRight, moveUp, moveDown))
+			needsRedraw = true;
+		else if (stepPlayerMoveTarget(scene.state, playerState))
+			needsRedraw = true;
 
 		if (tickRuntimeEntities())
 			needsRedraw = true;
@@ -1013,6 +1362,10 @@ bool StartupFlow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 		if (!player) {
 			debug(1, "Harvester: unable to spawn startup player actor from '%s'", kPlayerActorResourcePath);
 		} else {
+			if (!applyStartupActorPlacement(state, *player)) {
+				debug(1, "Harvester: unable to apply startup player placement for entrance '%s'",
+					state.entranceName.c_str());
+			}
 			debugC(1, kDebugGeneral,
 				"Harvester: spawned startup player actor '%s' entrance='%s' pos=(%d,%d,%d) facing=%d frame=%d",
 				kPlayerActorResourcePath, state.entranceName.c_str(),

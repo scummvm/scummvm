@@ -54,6 +54,9 @@ public:
 	const IndexedBitmap &getInventoryBitmap() const { return _inventoryBitmap; }
 	const IndexedBitmap &getLogoBitmap() const { return _logoBitmap; }
 	const IndexedBitmap &getTipsBitmap() const { return _tipsBitmap; }
+	const IndexedBitmap *getTextboxBitmap(uint index) const {
+		return index < _textboxes.size() ? &_textboxes[index] : nullptr;
+	}
 
 private:
 	bool loadPalette(ResourceManager &resources, const Common::String &path, byte *dest) const;
