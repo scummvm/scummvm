@@ -132,6 +132,7 @@ struct StartupRoomPlayerState {
 
 struct StartupRoomHoverState {
 	const StartupObjectRecord *object = nullptr;
+	const RuntimeEntity *playerEntity = nullptr;
 	Common::String promptText;
 	int cursorSequence = kCursorSequenceNeutral;
 };
@@ -756,6 +757,18 @@ static const StartupObjectRecord *findRoomObjectAtPoint(HarvesterEngine &engine,
 	return findSceneObjectByName(sceneObjects, entity->getName());
 }
 
+static const RuntimeEntity *findRoomPlayerAtPoint(HarvesterEngine &engine, const Common::Point &point) {
+	RuntimeEntityManager *runtimeEntities = engine.getRuntimeEntities();
+	if (!runtimeEntities)
+		return nullptr;
+
+	const RuntimeEntity *entity = runtimeEntities->findTopSceneEntityAt(point);
+	if (!entity || entity->getClassId() != kRuntimeEntityClassPlayer)
+		return nullptr;
+
+	return entity;
+}
+
 static const IndexedBitmap *resolveInspectTextboxBitmap(const StartupArt &art, const StartupResolvedText &text) {
 	if (text.boxName.equalsIgnoreCase("BOX1"))
 		return art.getTextboxBitmap(0);
@@ -824,10 +837,15 @@ static Common::String buildRoomObjectPrompt(const StartupObjectRecord &object, S
 static StartupRoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const StartupRoomSetupState &state,
 		const Common::Array<StartupObjectRecord> &sceneObjects, const Common::Point &mousePos) {
 	StartupRoomHoverState hoverState;
+	if (const RuntimeEntity *playerEntity = findRoomPlayerAtPoint(engine, mousePos)) {
+		hoverState.playerEntity = playerEntity;
+		hoverState.cursorSequence = kCursorSequenceExamine;
+		return hoverState;
+	}
+
 	StartupScript *startupScript = engine.getStartupScript();
 	if (!startupScript)
 		return hoverState;
-
 	hoverState.object = findRoomObjectAtPoint(engine, sceneObjects, mousePos);
 	if (hoverState.object) {
 		hoverState.cursorSequence = resolveRoomObjectCursorSequence(*hoverState.object, *startupScript);
@@ -1633,6 +1651,85 @@ Common::Error StartupFlow::runMainMenuStub() {
 	return Common::kNoError;
 }
 
+Common::Error StartupFlow::runRoomMenuStub() {
+	Graphics::FrameLimiter limiter(g_system, 60);
+	Common::String statusMessage =
+		"Native Esc enters run_main_menu(); room-menu actions still need a dedicated implementation.";
+	int selectedItem = _menuItems.empty() ? -1 : 0;
+	bool needsRedraw = true;
+	resetCursorAnimationSequence();
+
+	while (!_engine.shouldQuit()) {
+		if (needsRedraw) {
+			renderRoomMenuStub(selectedItem, statusMessage);
+			needsRedraw = false;
+		}
+
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			Common::Error result = Common::kNoError;
+			if (handleSystemEvent(event, result))
+				return result;
+
+			switch (event.type) {
+			case Common::EVENT_MOUSEMOVE: {
+				const int hoveredItem = getMenuItemAt(_mousePos);
+				if (hoveredItem != -1 && hoveredItem != selectedItem) {
+					selectedItem = hoveredItem;
+					needsRedraw = true;
+				}
+				break;
+			}
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+					return Common::kNoError;
+
+				if (_menuItems.empty())
+					break;
+
+				if (event.kbd.keycode == Common::KEYCODE_UP) {
+					selectedItem = (selectedItem + _menuItems.size() - 1) % _menuItems.size();
+					needsRedraw = true;
+				} else if (event.kbd.keycode == Common::KEYCODE_DOWN) {
+					selectedItem = (selectedItem + 1) % _menuItems.size();
+					needsRedraw = true;
+				} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
+						event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
+					statusMessage = Common::String::format(
+						"%s is still stubbed here; Esc resumes gameplay.",
+						_menuItems[selectedItem].c_str());
+					needsRedraw = true;
+				}
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+				if (_menuItems.empty())
+					break;
+
+				selectedItem = getMenuItemAt(_mousePos);
+				if (selectedItem == -1)
+					break;
+
+				statusMessage = Common::String::format(
+					"%s is still stubbed here; Esc resumes gameplay.",
+					_menuItems[selectedItem].c_str());
+				needsRedraw = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
+		if (runtimeEntities && runtimeEntities->syncCursorEntityPosition(_mousePos))
+			needsRedraw = true;
+
+		limiter.delayBeforeSwap();
+		limiter.startFrame();
+	}
+
+	return Common::kNoError;
+}
+
 Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 	StartupRoomSetupState state;
 	if (!_engine.getStartupScript()->resolveRoomSetupState(entranceName, state, *_engine.getResources()))
@@ -2028,6 +2125,18 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 					scene.state.roomName.c_str(), _mousePos.x, _mousePos.y,
 					hoverState.object ? hoverState.object->objectName.c_str() : "",
 					hoverState.cursorSequence, hoverState.promptText.c_str());
+				if (hoverState.playerEntity) {
+					if (!playerState.entity || hoverState.playerEntity != playerState.entity ||
+						idleState.active || idleState.exiting ||
+						playerState.hasMoveTarget || playerState.turnActive ||
+						playerState.entity->getAnimationRate() != 0) {
+						break;
+					}
+					if (!openInventoryOverlay())
+						return Common::kReadingFailed;
+					needsRedraw = true;
+					break;
+				}
 				StartupObjectRecord *clickedObject = hoverState.object
 					? findSceneObjectByName(scene.sceneObjects, hoverState.object->objectName)
 					: nullptr;
@@ -2128,11 +2237,25 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 						return Common::kReadingFailed;
 					needsRedraw = true;
 					break;
+				} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					moveLeft = false;
+					moveRight = false;
+					moveUp = false;
+					moveDown = false;
+					playerState.hasMoveTarget = false;
+					playerState.turnActive = false;
+					playerState.turnTargetFacing = -1;
+					Common::Error menuError = runRoomMenuStub();
+					if (menuError.getCode() != Common::kNoError)
+						return menuError;
+					resetCursorAnimationSequence();
+					resetIdleState();
+					needsRedraw = true;
+					break;
 				}
 
 				if (event.kbd.keycode == Common::KEYCODE_RETURN ||
-					event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
-					event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
 					if (!runRoomExitCommands())
 						return Common::kReadingFailed;
 					return Common::kNoError;
@@ -2264,6 +2387,8 @@ bool StartupFlow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 		if (!player) {
 			debug(1, "Harvester: unable to spawn startup player actor from '%s'", kPlayerActorResourcePath);
 		} else {
+			player->setClassId(kRuntimeEntityClassPlayer);
+			player->setHitTestMode(kRuntimeEntityHitTestOpaquePixels);
 			if (!applyStartupActorPlacement(state, *player)) {
 				debug(1, "Harvester: unable to apply startup player placement for entrance '%s'",
 					state.entranceName.c_str());
@@ -2385,6 +2510,45 @@ void StartupFlow::renderMainMenuStub(int selectedItem, const Common::String &sta
 	drawWrappedShadowedText(*screen, *bodyFont, statusMessage, panel.left + 24, 360, panel.width() - 48,
 		kTextColorNormal);
 	drawShadowedString(*screen, *bodyFont, "Use mouse or arrow keys. Enter activates. Esc returns to launcher.",
+		panel.left, 404, panel.width(), kTextColorDim, Graphics::kTextAlignCenter);
+
+	if (_engine.getRuntimeEntities())
+		_engine.getRuntimeEntities()->drawCursor(*screen);
+	screen->makeAllDirty();
+	screen->update();
+}
+
+void StartupFlow::renderRoomMenuStub(int selectedItem, const Common::String &statusMessage) const {
+	Graphics::Screen *screen = _engine.getScreen();
+	const StartupArt *art = _engine.getStartupArt();
+	const Graphics::Font *titleFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	const Graphics::Font *bodyFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	if (!screen || !art || !titleFont || !bodyFont)
+		return;
+
+	screen->setPalette(art->getWaitPalette());
+	screen->fillRect(screen->getBounds(), 0);
+	blitBitmap(*screen, art->getInventoryBitmap(), kInventoryX, kInventoryY);
+	blitBitmap(*screen, art->getLogoBitmap(), kLogoX, kLogoY);
+
+	const Common::Rect panel(96, 96, 544, 432);
+	screen->fillRect(panel, kPanelFillColor);
+
+	drawShadowedString(*screen, *titleFont, "Game Menu Stub", panel.left, 110, panel.width(),
+		kTextColorNormal, Graphics::kTextAlignCenter);
+
+	for (uint i = 0; i < _menuItems.size(); ++i) {
+		const int itemY = kMenuStartY + (int)i * kMenuLineSpacing;
+		const byte color = ((int)i == selectedItem) ? kTextColorHover : kTextColorNormal;
+		drawShadowedString(*screen, *bodyFont, _menuItems[i], panel.left, itemY, panel.width(), color,
+			Graphics::kTextAlignCenter);
+	}
+
+	drawShadowedString(*screen, *bodyFont, "Native Esc routes through run_main_menu().", panel.left, 330,
+		panel.width(), kTextColorDim, Graphics::kTextAlignCenter);
+	drawWrappedShadowedText(*screen, *bodyFont, statusMessage, panel.left + 24, 360, panel.width() - 48,
+		kTextColorNormal);
+	drawShadowedString(*screen, *bodyFont, "Use mouse or arrow keys. Esc resumes gameplay.",
 		panel.left, 404, panel.width(), kTextColorDim, Graphics::kTextAlignCenter);
 
 	if (_engine.getRuntimeEntities())
