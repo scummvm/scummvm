@@ -105,6 +105,22 @@ struct StartupAnimRecord {
 	int runtimeState = -1;
 };
 
+struct StartupRegionRecord {
+	int left = 0;
+	int top = 0;
+	int right = 0;
+	int bottom = 0;
+	int minZ = 0;
+	int maxZ = 0;
+	int desiredFacing = -1;
+	Common::String regionName;
+	Common::String direction;
+	Common::String roomName;
+	Common::String actionTag;
+	bool startEnabled = false;
+	bool cursorEnabled = false;
+};
+
 struct StartupFlagRecord {
 	Common::String name;
 	bool value = false;
@@ -169,6 +185,7 @@ struct StartupRoomSetupState {
 	Common::Array<StartupObjectRecord> activeObjects;
 	Common::Array<StartupObjectRecord> roomObjects;
 	Common::Array<StartupAnimRecord> roomAnimations;
+	Common::Array<StartupRegionRecord> roomRegions;
 	Common::Array<StartupAudioCommand> audioCommands;
 };
 
@@ -194,6 +211,7 @@ public:
 	const Common::Array<StartupRoomRecord> &getRooms() const { return _rooms; }
 	const Common::Array<StartupObjectRecord> &getObjects() const { return _objects; }
 	const Common::Array<StartupAnimRecord> &getAnimations() const { return _animations; }
+	const Common::Array<StartupRegionRecord> &getRegions() const { return _regions; }
 	const Common::Array<StartupFlagRecord> &getFlags() const { return _flags; }
 	const Common::Array<StartupCommandRecord> &getCommands() const { return _commands; }
 	const Common::Array<StartupTextRecord> &getTexts() const { return _texts; }
@@ -207,6 +225,7 @@ public:
 		StartupRoomSetupState &state) const;
 	bool executeRoomExitCommands(const Common::String &roomName, Common::Array<StartupAudioCommand> &audioCommands);
 	bool resolveObjectInteraction(const StartupObjectRecord &object, StartupInteractionResult &result);
+	bool resolveRegionInteraction(const StartupRegionRecord &region, StartupInteractionResult &result);
 	bool resolveUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target,
 		StartupInteractionResult &result);
 	bool isPickupObject(const StartupObjectRecord &object) const;
@@ -246,6 +265,7 @@ private:
 	Common::Array<StartupRoomRecord> _rooms;
 	Common::Array<StartupObjectRecord> _objects;
 	Common::Array<StartupAnimRecord> _animations;
+	Common::Array<StartupRegionRecord> _regions;
 	Common::Array<StartupFlagRecord> _flags;
 	Common::Array<StartupCommandRecord> _commands;
 	Common::Array<StartupTextRecord> _texts;

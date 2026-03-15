@@ -153,6 +153,7 @@ bool StartupScript::load(ResourceManager &resources) {
 	_rooms.clear();
 	_objects.clear();
 	_animations.clear();
+	_regions.clear();
 	_flags.clear();
 	_commands.clear();
 	_texts.clear();
@@ -216,6 +217,7 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 	_rooms.clear();
 	_objects.clear();
 	_animations.clear();
+	_regions.clear();
 	_flags.clear();
 	_commands.clear();
 	_texts.clear();
@@ -234,6 +236,7 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 		uint tagIndex = tokens.size();
 		for (uint i = 0; i < tokens.size(); ++i) {
 			if (tokens[i] == "ANIM" || tokens[i] == "ENTRANCE" || tokens[i] == "ROOM" || tokens[i] == "OBJECT" ||
+				tokens[i] == "REGION" ||
 				tokens[i] == "FLAG" || tokens[i] == "COMMAND" || tokens[i] == "TEXT" || tokens[i] == "USEITEM") {
 				tagIndex = i;
 				break;
@@ -362,65 +365,90 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 			return;
 		}
 
-			if (tag == "ANIM") {
-				if (tokens.size() < tagIndex + 10)
-					return;
-
-				StartupAnimRecord anim;
-				if (tagIndex >= 4) {
-					anim.x = atoi(tokens[0].c_str());
-					anim.y = atoi(tokens[1].c_str());
-					anim.z = atoi(tokens[2].c_str());
-					anim.frameDelay = atoi(tokens[3].c_str());
-				}
-				anim.roomName = tokens[tagIndex + 1];
-				anim.resourcePath = resources.normalizeResourcePath(tokens[tagIndex + 2]);
-				anim.animName = tokens[tagIndex + 3];
-				anim.active = tokens[tagIndex + 4].equalsIgnoreCase("T");
-				anim.visible = tokens[tagIndex + 5].equalsIgnoreCase("T");
-				anim.looping = tokens[tagIndex + 6].equalsIgnoreCase("T");
-				anim.backward = tokens[tagIndex + 7].equalsIgnoreCase("T");
-				anim.pingPong = tokens[tagIndex + 8].equalsIgnoreCase("T");
-				anim.remove = tokens[tagIndex + 9].equalsIgnoreCase("T");
-				anim.runtimeActive = anim.active;
-				anim.runtimeVisible = anim.visible;
-				if (!anim.roomName.empty() && !anim.resourcePath.empty() && !anim.animName.empty())
-					_animations.push_back(anim);
-				return;
-			}
-
-			if (tokens.size() < tagIndex + 13)
+		if (tag == "REGION") {
+			if (tokens.size() < tagIndex + 7)
 				return;
 
-			StartupObjectRecord object;
+			StartupRegionRecord region;
 			if (tagIndex >= 6) {
-				object.initialX = atoi(tokens[0].c_str());
-				object.initialY = atoi(tokens[1].c_str());
-				object.boundsX2 = atoi(tokens[2].c_str());
-				object.boundsY2 = atoi(tokens[3].c_str());
-				object.initialZ = atoi(tokens[4].c_str());
-				object.zExtent = atoi(tokens[5].c_str());
+				region.left = atoi(tokens[0].c_str());
+				region.top = atoi(tokens[1].c_str());
+				region.right = atoi(tokens[2].c_str());
+				region.bottom = atoi(tokens[3].c_str());
+				region.minZ = atoi(tokens[4].c_str());
+				region.maxZ = atoi(tokens[5].c_str());
 			}
-			object.currentX = object.initialX;
-			object.currentY = object.initialY;
-			object.currentZ = object.initialZ;
-			object.initialOwnerOrRoom = tokens[tagIndex + 1];
-			object.objectName = tokens[tagIndex + 2];
-			object.spritePath = resources.normalizeResourcePath(tokens[tagIndex + 3]);
-			object.altSpritePath = resources.normalizeResourcePath(tokens[tagIndex + 4]);
-			object.field40 = tokens[tagIndex + 5];
-			object.inventoryTextKey = tokens[tagIndex + 6];
-			object.field34 = tokens[tagIndex + 7];
-			object.identTextKey = tokens[tagIndex + 8];
-			object.operatable = tokens[tagIndex + 9].equalsIgnoreCase("T");
-			object.visible = tokens[tagIndex + 10].equalsIgnoreCase("T");
-			object.actionTag = tokens[tagIndex + 11];
-			object.interactionLabel = tokens[tagIndex + 12];
-			object.currentOwnerOrRoom = object.initialOwnerOrRoom;
-			object.runtimeVisible = object.visible;
-			object.identShown = object.identTextKey.empty();
-			if (!object.initialOwnerOrRoom.empty() && !object.objectName.empty())
-				_objects.push_back(object);
+			region.regionName = tokens[tagIndex + 1];
+			region.direction = tokens[tagIndex + 2];
+			region.desiredFacing = parseEntranceFacing(region.direction);
+			region.roomName = tokens[tagIndex + 3];
+			region.actionTag = tokens[tagIndex + 4];
+			region.startEnabled = tokens[tagIndex + 5].equalsIgnoreCase("T");
+			region.cursorEnabled = tokens[tagIndex + 6].equalsIgnoreCase("T");
+			if (!region.roomName.empty() && !region.regionName.empty())
+				_regions.push_back(region);
+			return;
+		}
+
+		if (tag == "ANIM") {
+			if (tokens.size() < tagIndex + 10)
+				return;
+
+			StartupAnimRecord anim;
+			if (tagIndex >= 4) {
+				anim.x = atoi(tokens[0].c_str());
+				anim.y = atoi(tokens[1].c_str());
+				anim.z = atoi(tokens[2].c_str());
+				anim.frameDelay = atoi(tokens[3].c_str());
+			}
+			anim.roomName = tokens[tagIndex + 1];
+			anim.resourcePath = resources.normalizeResourcePath(tokens[tagIndex + 2]);
+			anim.animName = tokens[tagIndex + 3];
+			anim.active = tokens[tagIndex + 4].equalsIgnoreCase("T");
+			anim.visible = tokens[tagIndex + 5].equalsIgnoreCase("T");
+			anim.looping = tokens[tagIndex + 6].equalsIgnoreCase("T");
+			anim.backward = tokens[tagIndex + 7].equalsIgnoreCase("T");
+			anim.pingPong = tokens[tagIndex + 8].equalsIgnoreCase("T");
+			anim.remove = tokens[tagIndex + 9].equalsIgnoreCase("T");
+			anim.runtimeActive = anim.active;
+			anim.runtimeVisible = anim.visible;
+			if (!anim.roomName.empty() && !anim.resourcePath.empty() && !anim.animName.empty())
+				_animations.push_back(anim);
+			return;
+		}
+
+		if (tokens.size() < tagIndex + 13)
+			return;
+
+		StartupObjectRecord object;
+		if (tagIndex >= 6) {
+			object.initialX = atoi(tokens[0].c_str());
+			object.initialY = atoi(tokens[1].c_str());
+			object.boundsX2 = atoi(tokens[2].c_str());
+			object.boundsY2 = atoi(tokens[3].c_str());
+			object.initialZ = atoi(tokens[4].c_str());
+			object.zExtent = atoi(tokens[5].c_str());
+		}
+		object.currentX = object.initialX;
+		object.currentY = object.initialY;
+		object.currentZ = object.initialZ;
+		object.initialOwnerOrRoom = tokens[tagIndex + 1];
+		object.objectName = tokens[tagIndex + 2];
+		object.spritePath = resources.normalizeResourcePath(tokens[tagIndex + 3]);
+		object.altSpritePath = resources.normalizeResourcePath(tokens[tagIndex + 4]);
+		object.field40 = tokens[tagIndex + 5];
+		object.inventoryTextKey = tokens[tagIndex + 6];
+		object.field34 = tokens[tagIndex + 7];
+		object.identTextKey = tokens[tagIndex + 8];
+		object.operatable = tokens[tagIndex + 9].equalsIgnoreCase("T");
+		object.visible = tokens[tagIndex + 10].equalsIgnoreCase("T");
+		object.actionTag = tokens[tagIndex + 11];
+		object.interactionLabel = tokens[tagIndex + 12];
+		object.currentOwnerOrRoom = object.initialOwnerOrRoom;
+		object.runtimeVisible = object.visible;
+		object.identShown = object.identTextKey.empty();
+		if (!object.initialOwnerOrRoom.empty() && !object.objectName.empty())
+			_objects.push_back(object);
 		};
 
 	Common::String line;
@@ -439,8 +467,9 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 
 	parseLine(line);
 
-	debug(1, "Harvester: parsed %u entrances, %u rooms, %u objects, %u anims, %u flags, %u commands, %u texts, %u useitems from '%s'",
+	debug(1, "Harvester: parsed %u entrances, %u rooms, %u objects, %u anims, %u regions, %u flags, %u commands, %u texts, %u useitems from '%s'",
 		(uint)_entrances.size(), (uint)_rooms.size(), (uint)_objects.size(), (uint)_animations.size(),
+		(uint)_regions.size(),
 		(uint)_flags.size(), (uint)_commands.size(), (uint)_texts.size(), (uint)_useItems.size(), _path.c_str());
 }
 
@@ -469,12 +498,13 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 		state.musicPath = musicPath;
 
 	debugC(1, kDebugGeneral,
-		"Harvester: resolveRoomSetupState('%s') -> room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u activeObjects=%u roomAnims=%u mutated=%d",
+		"Harvester: resolveRoomSetupState('%s') -> room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u activeObjects=%u roomAnims=%u roomRegions=%u mutated=%d",
 		entranceName.c_str(), state.roomName.c_str(), state.entranceName.c_str(),
 		state.playerSpawnX, state.playerSpawnY, state.playerSpawnZ, state.playerFacing,
 		state.palettePath.c_str(), state.backgroundPath.c_str(), state.musicPath.c_str(),
 		(double)state.paletteBrightness, (uint)state.roomObjects.size(),
-		(uint)state.activeObjects.size(), (uint)state.roomAnimations.size(), mutatedRuntimeState);
+		(uint)state.activeObjects.size(), (uint)state.roomAnimations.size(),
+		(uint)state.roomRegions.size(), mutatedRuntimeState);
 
 	return true;
 }
@@ -552,6 +582,17 @@ bool StartupScript::resolveObjectInteraction(const StartupObjectRecord &object, 
 
 	return !result.nextRoomName.empty() || !result.musicPath.empty() || !result.audioCommands.empty() ||
 		result.mutatedRuntimeState || hasActionableCommandChain(object.actionTag);
+}
+
+bool StartupScript::resolveRegionInteraction(const StartupRegionRecord &region, StartupInteractionResult &result) {
+	result = StartupInteractionResult();
+	if (region.actionTag.empty())
+		return false;
+
+	executeCommandChain(region.actionTag, "region command", region.regionName, true,
+		&result.musicPath, &result.audioCommands, &result.nextRoomName, &result.mutatedRuntimeState);
+	return !result.nextRoomName.empty() || !result.musicPath.empty() || !result.audioCommands.empty() ||
+		result.mutatedRuntimeState || hasActionableCommandChain(region.actionTag);
 }
 
 bool StartupScript::resolveUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target,
@@ -791,6 +832,10 @@ bool StartupScript::buildRuntimeRoomState(const StartupRoomRecord &room, const S
 		if (anim.roomName.equalsIgnoreCase(room.roomName))
 			state.roomAnimations.push_back(anim);
 	}
+	for (const StartupRegionRecord &region : _regions) {
+		if (region.roomName.equalsIgnoreCase(room.roomName) && region.startEnabled)
+			state.roomRegions.push_back(region);
+	}
 
 	const StartupFlagRecord *dayFlag = findRuntimeFlag("DAY_FLAG");
 	state.paletteBrightness = (room.dimmable && (!dayFlag || !dayFlag->value))
@@ -807,11 +852,11 @@ bool StartupScript::buildRuntimeRoomState(const StartupRoomRecord &room, const S
 	}
 
 	debugC(1, kDebugGeneral,
-		"Harvester: materializeRoomState room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u roomAnims=%u",
+		"Harvester: materializeRoomState room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u roomAnims=%u roomRegions=%u",
 		state.roomName.c_str(), state.entranceName.c_str(), state.playerSpawnX, state.playerSpawnY,
 		state.playerSpawnZ, state.playerFacing, state.palettePath.c_str(), state.backgroundPath.c_str(),
 		state.musicPath.c_str(), (double)state.paletteBrightness,
-		(uint)state.roomObjects.size(), (uint)state.roomAnimations.size());
+		(uint)state.roomObjects.size(), (uint)state.roomAnimations.size(), (uint)state.roomRegions.size());
 
 	return true;
 }
@@ -1027,6 +1072,8 @@ Common::String StartupScript::resolveObjectLabel(const StartupObjectRecord &obje
 
 	if (!object.interactionLabel.empty() && !object.interactionLabel.equalsIgnoreCase("NULL_ID"))
 		return normalizeInteractionLabel(object.interactionLabel);
+	if (object.interactionLabel.equalsIgnoreCase("NULL_ID"))
+		return Common::String();
 
 	const StartupTextRecord *textRecord = findTextRecord(object.identTextKey);
 	if (textRecord && !textRecord->value.empty())

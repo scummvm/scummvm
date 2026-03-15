@@ -15,23 +15,22 @@
 
 ## Last Confirmed Action
 
-- Confirmed in Ghidra how native startup pickup objects are gated behind a first-pass examine click.
-  - `spawn_object_entity_from_record()` copies the object record's alternate inventory-sprite presence into entity byte `+9`, the operatable flag into entity byte `+0xb`, and the persistent identified-state byte at object offset `+0x4f` into entity byte `+10`.
-  - In `run_harvester_main_loop()`, room objects with pickup or operate capability stay on cursor sequence `1` while entity byte `+10` is clear; once it is set, the same hover path switches to cursor sequence `5` for pickup-capable objects and cursor sequence `4` for non-pickup operatable objects.
-  - Clicking that initial examine cursor calls `show_target_ident_text()`, then writes entity byte `+10 = 1` and persists object byte `+0x4f = 1`, so the next hover/click uses the unlocked pickup or operate path even if no IDENT panel was shown.
-- Patched the startup stub to mirror that native behavior.
-  - Startup pickup-capable and operatable room objects now resolve to the examine cursor until their first examine click marks them identified.
-  - That first click now attempts to show the IDENT textbox when supported, but it still unlocks the object's later pickup or operate cursor even if the IDENT lookup has no usable panel, matching the native writeback behavior.
+- Confirmed in Ghidra how native startup room exits and entrance placement are wired.
+  - `room_setup()` resolves the requested `ENTRANCE` record and applies its three integer fields directly as player `x`, `y`, and `z`, using `set_entity_screen_position()` with `(entrance_x - frame_x_offset - width / 2, entrance_y - height - frame_y_offset, entrance_z)` before and after `rescale_entity_sprite_for_depth()`.
+  - The `START` and `PC_ROOM_HOUSE_START` entries in `HARVEST.SCR` both point to `PCROOM` at `(360,405,15)` facing `LEFT`, so native room setup does not add any extra centering offset beyond the entrance record itself.
+  - `PCDOOR` is just a mask object with interaction label `NULL_ID`; the actual bedroom exit is `REGION "PCX1"` with command tag `PCEXIT1`, and `run_harvester_main_loop()` only gives class `0x19` regions cursor sequence `6` with no prompt text.
+  - `check_player_region_interaction()` requires screen-rect overlap, z-range overlap, a matching facing, and `start_enabled != 0` before dispatching the region command chain.
+- Patched the startup stub to mirror that native split.
+  - `HARVEST.SCR` `REGION` records are now parsed into the startup script layer and materialized into room state.
+  - Startup room hover/click now prefers active regions over neutral `NULL_ID` masks, so `PCDOOR` no longer fabricates a prompt while `PCX1` drives the transition cursor and room-change command path.
+  - The startup room loop now keeps a pending region target, waits for player overlap plus facing, and only then dispatches the region command chain, matching the native closeup/door transition shape more closely.
 
 ## Next Suggested Action
 
-1. Runtime-test first-click IDENT gating on startup pickup objects such as `PC_PEN` against DOSBox, especially the exact cursor/prompt transition after dismissing the textbox.
-2. Confirm whether any startup objects use the native "unlock on first examine" path without a valid IDENT panel, then mirror any edge-case prompt behavior if the current stub differs.
-3. Flesh out the room-menu stub now that `Esc` reaches the correct native entry point, especially the per-item behaviors inside `run_main_menu()` such as resume/save/load/options/quit gating.
-4. Parse startup NPC and timer records from `HARVEST.SCR`, then add persistent runtime state for the remaining confirmed exit and interaction opcodes: `SET_NPC`, `SET_TIMER`, and `KILL_TIMER`.
-5. Confirm the native side effects of those opcodes in Ghidra before naming any new runtime structures or script helpers.
-6. Parse `REGION` records from `HARVEST.SCR` into the startup script layer.
-7. Mirror native startup transition handling for class `0x19` region entities.
-  - Spawn enabled region hotspots from `room_setup` state.
-  - Drive cursor sequence `6` over active regions.
-  - Gate region activation on player overlap plus facing, following `check_player_region_interaction`.
+1. Runtime-test `PCROOM` against DOSBox with the new region path, especially the `PCDOOR` hover, the `PCX1` transition cursor, and the player restore point after returning from closeups.
+2. Compare startup player placement visually in `PCROOM` after confirming the native `START` coordinates above; if it still reads too far left, the remaining mismatch is in runtime sprite metrics or render anchoring rather than script-room setup.
+3. Revisit native locomotion in `update_actor_runtime_state()` and the main loop before changing movement speed or walk bounds.
+  - The current startup stub still uses direct screen-space interpolation and does not mirror the native movement-state machine, blocker history, or z-aware overlap tests.
+  - Any further speed or walk-area changes should come from that recovered actor-state path, not from ad hoc constants.
+4. Flesh out the room-menu stub now that `Esc` reaches the correct native entry point, especially the per-item behaviors inside `run_main_menu()` such as resume/save/load/options/quit gating.
+5. Parse startup NPC and timer records from `HARVEST.SCR`, then add persistent runtime state for the remaining confirmed exit and interaction opcodes: `SET_NPC`, `SET_TIMER`, and `KILL_TIMER`.

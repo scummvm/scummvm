@@ -109,6 +109,7 @@ struct StartupRoomSceneResources {
 	byte palette[256 * 3] = { 0 };
 	Common::Array<StartupObjectRecord> sceneObjects;
 	Common::Array<StartupAnimRecord> sceneAnimations;
+	Common::Array<StartupRegionRecord> sceneRegions;
 	float targetPaletteBrightness = 1.0f;
 };
 
@@ -132,6 +133,7 @@ struct StartupRoomPlayerState {
 
 struct StartupRoomHoverState {
 	const StartupObjectRecord *object = nullptr;
+	const StartupRegionRecord *region = nullptr;
 	const RuntimeEntity *playerEntity = nullptr;
 	Common::String promptText;
 	int cursorSequence = kCursorSequenceNeutral;
@@ -491,6 +493,13 @@ static Common::Rect getHotspotBounds(const StartupObjectRecord &object) {
 	return Common::Rect();
 }
 
+static Common::Rect getRegionBounds(const StartupRegionRecord &region) {
+	if (region.right > region.left && region.bottom > region.top)
+		return Common::Rect(region.left, region.top, region.right + 1, region.bottom + 1);
+
+	return Common::Rect();
+}
+
 static Common::String resolveSceneObjectSpritePath(const StartupObjectRecord &object) {
 	const bool atInitialPlacement = object.currentX == object.initialX &&
 		object.currentY == object.initialY &&
@@ -699,12 +708,13 @@ static bool loadRoomSceneResources(const StartupRoomSetupState &state, ResourceM
 		if (anim.active || anim.visible)
 			scene.sceneAnimations.push_back(anim);
 	}
+	scene.sceneRegions = state.roomRegions;
 
 	debugC(1, kDebugGeneral,
-		"Harvester: loadRoomSceneResources room='%s' palette='%s' background='%s' brightness=%.2f objects=%u activeObjects=%u sceneObjects=%u anims=%u visibleAnims=%u",
+		"Harvester: loadRoomSceneResources room='%s' palette='%s' background='%s' brightness=%.2f objects=%u activeObjects=%u sceneObjects=%u anims=%u visibleAnims=%u regions=%u",
 		state.roomName.c_str(), state.palettePath.c_str(), state.backgroundPath.c_str(), (double)state.paletteBrightness,
 		(uint)state.roomObjects.size(), (uint)state.activeObjects.size(), (uint)scene.sceneObjects.size(),
-		(uint)state.roomAnimations.size(), (uint)scene.sceneAnimations.size());
+		(uint)state.roomAnimations.size(), (uint)scene.sceneAnimations.size(), (uint)scene.sceneRegions.size());
 
 	return true;
 }
@@ -732,6 +742,16 @@ static const StartupObjectRecord *findSceneObjectByName(const Common::Array<Star
 	return nullptr;
 }
 
+static const StartupRegionRecord *findSceneRegionByName(const Common::Array<StartupRegionRecord> &regions,
+		const Common::String &regionName) {
+	for (const StartupRegionRecord &region : regions) {
+		if (region.regionName.equalsIgnoreCase(regionName))
+			return &region;
+	}
+
+	return nullptr;
+}
+
 static StartupObjectRecord *findSceneObjectByName(Common::Array<StartupObjectRecord> &objects,
 		const Common::String &objectName) {
 	for (StartupObjectRecord &object : objects) {
@@ -748,13 +768,48 @@ static const StartupObjectRecord *findRoomObjectAtPoint(HarvesterEngine &engine,
 	if (!runtimeEntities)
 		return nullptr;
 
-	const RuntimeEntity *entity = runtimeEntities->findTopSceneEntityAt(point);
-	if (!entity)
-		return nullptr;
-	if (entity->getClassId() == kRuntimeEntityClassBackground)
+	const RuntimeEntity *topEntity = nullptr;
+	for (const StartupObjectRecord &object : sceneObjects) {
+		if (object.objectName.empty())
+			continue;
+
+		const RuntimeEntity *entity = runtimeEntities->findSceneEntityByName(object.objectName);
+		if (!entity || !entity->hitTest(point))
+			continue;
+		if (entity->getClassId() == kRuntimeEntityClassBackground ||
+			entity->getClassId() == kRuntimeEntityClassPlayer ||
+			entity->getClassId() == kRuntimeEntityClassRectHotspot19) {
+			continue;
+		}
+		if (!topEntity || entity->getZ() <= topEntity->getZ())
+			topEntity = entity;
+	}
+	if (!topEntity)
 		return nullptr;
 
-	return findSceneObjectByName(sceneObjects, entity->getName());
+	return findSceneObjectByName(sceneObjects, topEntity->getName());
+}
+
+static const StartupRegionRecord *findRoomRegionAtPoint(HarvesterEngine &engine,
+		const Common::Array<StartupRegionRecord> &sceneRegions, const Common::Point &point) {
+	RuntimeEntityManager *runtimeEntities = engine.getRuntimeEntities();
+	if (!runtimeEntities)
+		return nullptr;
+
+	const RuntimeEntity *topEntity = nullptr;
+	for (const StartupRegionRecord &region : sceneRegions) {
+		const RuntimeEntity *entity = runtimeEntities->findSceneEntityByName(region.regionName);
+		if (!entity || !entity->hitTest(point))
+			continue;
+		if (entity->getClassId() != kRuntimeEntityClassRectHotspot19)
+			continue;
+		if (!topEntity || entity->getZ() <= topEntity->getZ())
+			topEntity = entity;
+	}
+	if (!topEntity)
+		return nullptr;
+
+	return findSceneRegionByName(sceneRegions, topEntity->getName());
 }
 
 static const RuntimeEntity *findRoomPlayerAtPoint(HarvesterEngine &engine, const Common::Point &point) {
@@ -840,8 +895,24 @@ static Common::String buildRoomObjectPrompt(const StartupObjectRecord &object, S
 	return Common::String::format("Examine %s", label.c_str());
 }
 
+static bool doesPlayerFacingMatchRegion(int playerFacing, const StartupRegionRecord &region) {
+	return region.desiredFacing < 0 || playerFacing == region.desiredFacing;
+}
+
+static bool doesPlayerOverlapRegion(const RuntimeEntity &playerEntity, const StartupRegionRecord &region) {
+	const Common::Rect regionBounds = getRegionBounds(region);
+	if (regionBounds.isEmpty())
+		return false;
+	if (!playerEntity.getScreenRect().intersects(regionBounds))
+		return false;
+
+	const float playerMaxZ = playerEntity.getZ() + playerEntity.getZExtent();
+	return playerMaxZ >= (float)region.minZ && (float)region.maxZ >= playerEntity.getZ();
+}
+
 static StartupRoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const StartupRoomSetupState &state,
-		const Common::Array<StartupObjectRecord> &sceneObjects, const Common::Point &mousePos) {
+		const Common::Array<StartupObjectRecord> &sceneObjects,
+		const Common::Array<StartupRegionRecord> &sceneRegions, const Common::Point &mousePos) {
 	StartupRoomHoverState hoverState;
 	if (const RuntimeEntity *playerEntity = findRoomPlayerAtPoint(engine, mousePos)) {
 		hoverState.playerEntity = playerEntity;
@@ -853,9 +924,17 @@ static StartupRoomHoverState resolveRoomHoverState(HarvesterEngine &engine, cons
 	if (!startupScript)
 		return hoverState;
 	hoverState.object = findRoomObjectAtPoint(engine, sceneObjects, mousePos);
+	hoverState.region = findRoomRegionAtPoint(engine, sceneRegions, mousePos);
 	if (hoverState.object) {
 		hoverState.cursorSequence = resolveRoomObjectCursorSequence(*hoverState.object, *startupScript);
 		hoverState.promptText = buildRoomObjectPrompt(*hoverState.object, *startupScript, hoverState.cursorSequence);
+		if (hoverState.cursorSequence != kCursorSequenceNeutral || !hoverState.promptText.empty())
+			return hoverState;
+	}
+	if (hoverState.region && hoverState.region->cursorEnabled) {
+		hoverState.object = nullptr;
+		hoverState.cursorSequence = kCursorSequenceTransition;
+		hoverState.promptText.clear();
 		return hoverState;
 	}
 
@@ -1263,7 +1342,8 @@ static void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneR
 		mousePos = probePoint;
 		const Common::String objectLabel = startupScript->resolveObjectLabel(*hoveredObject);
 		StartupResolvedText inspectText;
-		const StartupRoomHoverState hoverState = resolveRoomHoverState(engine, scene.state, scene.sceneObjects, probePoint);
+		const StartupRoomHoverState hoverState = resolveRoomHoverState(
+			engine, scene.state, scene.sceneObjects, scene.sceneRegions, probePoint);
 		const bool hasInteraction = startupScript->hasObjectInteraction(*hoveredObject);
 		const bool hasInspectText = startupScript->resolveObjectInspectText(*hoveredObject, inspectText);
 		debugC(1, kDebugGeneral,
@@ -1279,7 +1359,7 @@ static void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneR
 			for (int y = scene.state.roomMaxZScreenY; y <= scene.state.roomMinZScreenY && !foundFloorProbe; y += 12) {
 				for (int x = 48; x < 592; x += 16) {
 					const StartupRoomHoverState candidateHover = resolveRoomHoverState(
-						engine, scene.state, scene.sceneObjects, Common::Point(x, y));
+						engine, scene.state, scene.sceneObjects, scene.sceneRegions, Common::Point(x, y));
 					if (candidateHover.cursorSequence == kCursorSequenceWalk) {
 						floorProbe = Common::Point(x, y);
 						foundFloorProbe = true;
@@ -1289,7 +1369,7 @@ static void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneR
 			}
 
 			const StartupRoomHoverState floorHover = foundFloorProbe
-				? resolveRoomHoverState(engine, scene.state, scene.sceneObjects, floorProbe)
+				? resolveRoomHoverState(engine, scene.state, scene.sceneObjects, scene.sceneRegions, floorProbe)
 				: StartupRoomHoverState();
 			debugC(1, kDebugGeneral,
 				"Harvester: startup probe floor room='%s' point=(%d,%d) found=%d cursor_sequence=%d prompt='%s'",
@@ -1788,6 +1868,7 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 	bool moveRight = false;
 	bool moveUp = false;
 	bool moveDown = false;
+	Common::String pendingRegionName;
 	StartupInventoryOverlayState inventoryState;
 	StartupRoomIdleAnimationState idleState;
 	bool needsRedraw = true;
@@ -1852,6 +1933,7 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 		moveRight = false;
 		moveUp = false;
 		moveDown = false;
+		pendingRegionName.clear();
 		playerState.hasMoveTarget = false;
 		playerState.turnActive = false;
 		playerState.turnTargetFacing = -1;
@@ -1891,6 +1973,7 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 		playerState.hasMoveTarget = false;
 		playerState.turnActive = false;
 		playerState.turnTargetFacing = -1;
+		pendingRegionName.clear();
 		resetIdleState();
 		resetCursorAnimationSequence();
 		return refreshInventoryState();
@@ -1906,6 +1989,7 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 		playerState.hasMoveTarget = false;
 		playerState.turnActive = false;
 		playerState.turnTargetFacing = -1;
+		pendingRegionName.clear();
 
 		Common::String restoreMusicPath = _engine.getStartupMusicPath();
 		if (!interaction.musicPath.empty()) {
@@ -1963,6 +2047,51 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 		needsRedraw = true;
 		return Common::kNoError;
 	};
+	auto queueRegionInteraction = [&](const StartupRegionRecord &region) {
+		pendingRegionName = region.regionName;
+		if (!playerState.entity)
+			return;
+
+		if (doesPlayerOverlapRegion(*playerState.entity, region))
+			return;
+
+		int targetBottomY = region.bottom;
+		setPlayerMoveTarget(scene.state, playerState, (region.left + region.right) / 2, targetBottomY);
+	};
+	auto runRegionInteraction = [&](const StartupRegionRecord &region) -> Common::Error {
+		StartupInteractionResult interaction;
+		if (!_engine.getStartupScript()->resolveRegionInteraction(region, interaction))
+			return Common::kNoError;
+
+		Common::Error interactionError = handleInteractionResult(interaction);
+		if (interactionError.getCode() != Common::kNoError)
+			return interactionError;
+
+		if (!refreshInventoryState())
+			return Common::kReadingFailed;
+		needsRedraw = true;
+		return Common::kNoError;
+	};
+	auto tryActivatePendingRegion = [&]() -> Common::Error {
+		if (pendingRegionName.empty() || !playerState.entity)
+			return Common::kNoError;
+
+		const StartupRegionRecord *region = findSceneRegionByName(scene.sceneRegions, pendingRegionName);
+		if (!region || !region->startEnabled) {
+			pendingRegionName.clear();
+			return Common::kNoError;
+		}
+		if (!doesPlayerOverlapRegion(*playerState.entity, *region))
+			return Common::kNoError;
+		if (!doesPlayerFacingMatchRegion(playerState.facing, *region)) {
+			if (!playerState.hasMoveTarget && !playerState.turnActive && region->desiredFacing >= 0)
+				(void)startPlayerTurnAnimation(playerState, region->desiredFacing);
+			return Common::kNoError;
+		}
+
+		pendingRegionName.clear();
+		return runRegionInteraction(*region);
+	};
 	if (!refreshInventoryState())
 		return Common::kReadingFailed;
 	Graphics::FrameLimiter limiter(g_system, 60);
@@ -1978,7 +2107,7 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 				(inventoryState.open && (inventoryPanelContainsMouse || inventoryState.selectedItemName.empty()));
 			StartupRoomHoverState hoverState = suppressHover
 				? StartupRoomHoverState()
-				: resolveRoomHoverState(_engine, scene.state, scene.sceneObjects, _mousePos);
+				: resolveRoomHoverState(_engine, scene.state, scene.sceneObjects, scene.sceneRegions, _mousePos);
 			Common::String promptText;
 			if (inventoryState.open) {
 				const StartupInventoryVisual *inventoryHover = findInventoryVisualAtPoint(inventoryState.items, _mousePos);
@@ -2042,6 +2171,7 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 						needsRedraw = true;
 					break;
 				}
+				pendingRegionName.clear();
 				if (inventoryState.open) {
 					if (clearInventorySelection() || closeInventoryOverlay())
 						needsRedraw = true;
@@ -2101,7 +2231,7 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 
 					if (!inventoryState.selectedItemName.empty()) {
 						const StartupRoomHoverState useHoverState = resolveRoomHoverState(
-							_engine, scene.state, scene.sceneObjects, _mousePos);
+							_engine, scene.state, scene.sceneObjects, scene.sceneRegions, _mousePos);
 						const StartupObjectRecord *roomTarget = useHoverState.object
 							? findSceneObjectByName(scene.sceneObjects, useHoverState.object->objectName)
 							: nullptr;
@@ -2125,11 +2255,12 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 				}
 
 				const StartupRoomHoverState hoverState = resolveRoomHoverState(
-					_engine, scene.state, scene.sceneObjects, _mousePos);
+					_engine, scene.state, scene.sceneObjects, scene.sceneRegions, _mousePos);
 				debugC(1, kDebugScene,
-					"Harvester: room click room='%s' mouse=(%d,%d) object='%s' cursor_sequence=%d prompt='%s'",
+					"Harvester: room click room='%s' mouse=(%d,%d) object='%s' region='%s' cursor_sequence=%d prompt='%s'",
 					scene.state.roomName.c_str(), _mousePos.x, _mousePos.y,
 					hoverState.object ? hoverState.object->objectName.c_str() : "",
+					hoverState.region ? hoverState.region->regionName.c_str() : "",
 					hoverState.cursorSequence, hoverState.promptText.c_str());
 				if (hoverState.playerEntity) {
 					if (!playerState.entity || hoverState.playerEntity != playerState.entity ||
@@ -2143,16 +2274,26 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 					needsRedraw = true;
 					break;
 				}
+				if (hoverState.region && playerState.entity) {
+					queueRegionInteraction(*hoverState.region);
+					Common::Error interactionError = tryActivatePendingRegion();
+					if (interactionError.getCode() != Common::kNoError)
+						return interactionError;
+					needsRedraw = true;
+					break;
+				}
 				StartupObjectRecord *clickedObject = hoverState.object
 					? findSceneObjectByName(scene.sceneObjects, hoverState.object->objectName)
 					: nullptr;
 				if (!clickedObject) {
+					pendingRegionName.clear();
 					if (hoverState.cursorSequence == kCursorSequenceWalk && playerState.entity) {
 						setPlayerMoveTarget(scene.state, playerState, _mousePos.x, _mousePos.y);
 						needsRedraw = true;
 					}
 					break;
 				}
+				pendingRegionName.clear();
 				if (clickedObject->objectName.equalsIgnoreCase("EXIT_BM") ||
 					clickedObject->objectName.equalsIgnoreCase("EXIT_HS")) {
 					if (!runRoomExitCommands())
@@ -2254,6 +2395,7 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 					moveRight = false;
 					moveUp = false;
 					moveDown = false;
+					pendingRegionName.clear();
 					playerState.hasMoveTarget = false;
 					playerState.turnActive = false;
 					playerState.turnTargetFacing = -1;
@@ -2314,6 +2456,9 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 				needsRedraw = true;
 			}
 		}
+		Common::Error pendingRegionError = tryActivatePendingRegion();
+		if (pendingRegionError.getCode() != Common::kNoError)
+			return pendingRegionError;
 
 		if (tickRuntimeEntities())
 			needsRedraw = true;
@@ -2341,11 +2486,37 @@ bool StartupFlow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 		const Common::Array<StartupObjectRecord> &drawableObjects,
 		const Common::Array<StartupAnimRecord> &drawableAnimations) {
 	RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
-	StartupScript *startupScript = _engine.getStartupScript();
 	if (!runtimeEntities)
 		return false;
 
 	runtimeEntities->clearSceneEntities();
+	for (const StartupRegionRecord &region : state.roomRegions) {
+		const Common::Rect regionBounds = getRegionBounds(region);
+		if (regionBounds.isEmpty())
+			continue;
+
+		RuntimeEntity *entity = runtimeEntities->spawnSceneHotspotEntity(
+			region.regionName, regionBounds, (float)region.minZ);
+		if (!entity) {
+			debugC(1, kDebugScene,
+				"Harvester: scene region skipped room='%s' region='%s' bounds=(%d,%d)-(%d,%d) z=[%d,%d]",
+				state.roomName.c_str(), region.regionName.c_str(),
+				regionBounds.left, regionBounds.top, regionBounds.right, regionBounds.bottom,
+				region.minZ, region.maxZ);
+			continue;
+		}
+
+		entity->setClassId(kRuntimeEntityClassRectHotspot19);
+		entity->setAnchorMode(kRuntimeEntityAnchorTopLeft);
+		entity->setZExtent((float)MAX(0, region.maxZ - region.minZ));
+		if (!region.cursorEnabled)
+			entity->setHitTestMode(kRuntimeEntityHitTestNone);
+		debugC(1, kDebugScene,
+			"Harvester: scene region spawned room='%s' region='%s' class=0x%x bounds=(%d,%d)-(%d,%d) z=[%d,%d] facing=%d cursor=%d action='%s'",
+			state.roomName.c_str(), region.regionName.c_str(), entity->getClassId(),
+			regionBounds.left, regionBounds.top, regionBounds.right, regionBounds.bottom,
+			region.minZ, region.maxZ, region.desiredFacing, region.cursorEnabled, region.actionTag.c_str());
+	}
 	for (const StartupObjectRecord &object : drawableObjects) {
 		RuntimeEntity *entity = nullptr;
 		const Common::String spritePath = resolveSceneObjectSpritePath(object);
@@ -2371,7 +2542,7 @@ bool StartupFlow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 			continue;
 		}
 
-		entity->setClassId(resolveSceneObjectClass(object, entity->hasFrames() ? entity : nullptr, startupScript));
+		entity->setClassId(resolveSceneObjectClass(object, entity->hasFrames() ? entity : nullptr, _engine.getStartupScript()));
 		entity->setAnchorMode(kRuntimeEntityAnchorTopLeft);
 		entity->setZExtent((float)object.zExtent);
 		const Common::Rect entityRect = entity->getScreenRect();
