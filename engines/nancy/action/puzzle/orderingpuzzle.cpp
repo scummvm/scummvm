@@ -459,8 +459,15 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 	}
 
 	bool canClick = true;
-	if ((_itemsStayDown || _puzzleType == kPiano) && g_nancy->_sound->isSoundPlaying(_pushDownSound)) {
+	if (_itemsStayDown && g_nancy->_sound->isSoundPlaying(_pushDownSound)) {
 		canClick = false;
+	} else if (_puzzleType == kPiano) {
+		for (int i = 0; i < _hotspots.size(); ++i) {
+			if (_downItems[i]) {
+				canClick = false;
+				break;
+			}
+		}
 	}
 
 	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
