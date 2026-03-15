@@ -3234,9 +3234,9 @@ void ScummEngine::scummLoop_updateScummVars() {
 	// MI2 NI DOS Demo, start playback if demo.rec was loaded succesfully.
 	if ((_game.id == GID_MONKEY2) && (_game.features & GF_DEMO) && (_game.platform == Common::kPlatformDOS) && !ConfMan.getBool("disable_mi2_ni_demo")) {
 		_playback.mi2DemoArmPlaybackByRoom(this);
-		if (_playback._active)
-			_playback.playbackPump(this);
 	}
+	if (_playback._active)
+		_playback.playbackPump(this);
 	if (_game.version == 7) {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
 		VAR(VAR_CAMERA_POS_Y) = camera._cur.y;

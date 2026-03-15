@@ -969,6 +969,32 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 	bool isNES = _game.platform == Common::kPlatformNES;
 	bool inSaveRoom = false;
 	bool canToggleSmoothing = _macScreen && _game.version > 3 && _game.heversion == 0;
+	const bool canOpenPlaybackPrompt =
+		_game.platform == Common::kPlatformDOS &&
+		(_game.id == GID_MONKEY || _game.id == GID_MONKEY2 || _game.id == GID_INDY4);
+
+	if (canOpenPlaybackPrompt && lastKeyHit.keycode == Common::KEYCODE_F10 && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
+		if (_playback._active) {
+			const Common::String playbackName = _playback._name;
+			_playback.reset();
+			clearClickedStatus();
+			showBannerAndPause(1, -1, "Done with record/playback of '%s'", playbackName.c_str());
+			return;
+		}
+
+		Common::String playbackFile;
+
+		if (showBannerAndPauseForTextInput(1, "Enter playback file name: ", playbackFile, 63)) {
+			_playback.reset();
+			if (_playback.tryLoadPlayback(this, Common::Path(playbackFile, Common::Path::kNoSeparator))) {
+				_playback.startPlayback(this);
+			} else {
+				clearClickedStatus();
+				showBannerAndPause(1, -1, "Can't open playback file '%s'", playbackFile.c_str());
+			}
+		}
+		return;
+	}
 
 	// The following check is used by v3 games which have writable savegame names
 	// and also support some key combinations which in our case are mapped to SHIFT-<letter>
