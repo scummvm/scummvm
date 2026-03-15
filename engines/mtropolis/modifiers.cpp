@@ -2433,6 +2433,9 @@ bool KeyboardMessengerModifier::checkKeyEventTrigger(Runtime *runtime, Common::E
 		resolvedType = kArrowUp;
 		break;
 	case Common::KEYCODE_DOWN:
+		resolvedType = kArrowDown;
+		break;
+	case Common::KEYCODE_DELETE:
 		resolvedType = kDelete;
 		break;
 	default:
