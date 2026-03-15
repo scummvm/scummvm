@@ -73,6 +73,51 @@ static int parseEntranceFacing(const Common::String &direction) {
 	return -1;
 }
 
+static bool appendStartupAudioCommand(const StartupCommandRecord &command, Common::Array<StartupAudioCommand> &commands) {
+	if (command.opcodeName.equalsIgnoreCase("START_WAV")) {
+		StartupAudioCommand audioCommand;
+		audioCommand.type = kStartupAudioCommandStartWav;
+		audioCommand.path = command.arg1;
+		commands.push_back(audioCommand);
+		return true;
+	}
+
+	if (command.opcodeName.equalsIgnoreCase("START_SINGLE_WAV")) {
+		StartupAudioCommand audioCommand;
+		audioCommand.type = kStartupAudioCommandStartSingleWav;
+		audioCommand.path = command.arg1;
+		commands.push_back(audioCommand);
+		return true;
+	}
+
+	if (command.opcodeName.equalsIgnoreCase("LOAD_WAV")) {
+		StartupAudioCommand audioCommand;
+		audioCommand.type = kStartupAudioCommandLoadWav;
+		audioCommand.path = command.arg1;
+		audioCommand.slot = command.arg2.empty() ? -1 : atoi(command.arg2.c_str());
+		commands.push_back(audioCommand);
+		return true;
+	}
+
+	if (command.opcodeName.equalsIgnoreCase("PLAY_WAV")) {
+		StartupAudioCommand audioCommand;
+		audioCommand.type = kStartupAudioCommandPlayWav;
+		audioCommand.slot = command.arg1.empty() ? -1 : atoi(command.arg1.c_str());
+		commands.push_back(audioCommand);
+		return true;
+	}
+
+	if (command.opcodeName.equalsIgnoreCase("DELETE_WAV")) {
+		StartupAudioCommand audioCommand;
+		audioCommand.type = kStartupAudioCommandDeleteWav;
+		audioCommand.slot = command.arg1.empty() ? -1 : atoi(command.arg1.c_str());
+		commands.push_back(audioCommand);
+		return true;
+	}
+
+	return false;
+}
+
 static void tokenizeTownScriptLine(const Common::String &line, Common::Array<Common::String> &tokens) {
 	tokens.clear();
 
@@ -547,6 +592,11 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 			continue;
 		}
 
+		if (appendStartupAudioCommand(*command, state.audioCommands)) {
+			currentTag = command->arg4;
+			continue;
+		}
+
 		if (command->opcodeName.equalsIgnoreCase("ADD")) {
 			debugC(1, kDebugScene, "Harvester: room setup add object owner='%s' object='%s'",
 				command->arg1.c_str(), command->arg2.c_str());
@@ -654,11 +704,7 @@ bool StartupScript::resolveObjectInteraction(const StartupObjectRecord &object, 
 			continue;
 		}
 
-		if (command->opcodeName.equalsIgnoreCase("START_WAV") ||
-			command->opcodeName.equalsIgnoreCase("LOAD_WAV") ||
-			command->opcodeName.equalsIgnoreCase("START_SINGLE_WAV")) {
-			if (result.soundPath.empty())
-				result.soundPath = command->arg1;
+		if (appendStartupAudioCommand(*command, result.audioCommands)) {
 			currentTag = command->arg4;
 			continue;
 		}
@@ -673,7 +719,7 @@ bool StartupScript::resolveObjectInteraction(const StartupObjectRecord &object, 
 		if (command->opcodeName.equalsIgnoreCase("CLOSEUP") ||
 			command->opcodeName.equalsIgnoreCase("CHANGE_ROOM")) {
 			result.nextRoomName = command->arg1;
-			return !result.nextRoomName.empty() || !result.musicPath.empty() || !result.soundPath.empty();
+			return !result.nextRoomName.empty() || !result.musicPath.empty() || !result.audioCommands.empty();
 		}
 
 		debug(1, "Harvester: unsupported interaction command '%s' for tag '%s'",
@@ -681,7 +727,7 @@ bool StartupScript::resolveObjectInteraction(const StartupObjectRecord &object, 
 		break;
 	}
 
-	return !result.nextRoomName.empty() || !result.musicPath.empty() || !result.soundPath.empty();
+	return !result.nextRoomName.empty() || !result.musicPath.empty() || !result.audioCommands.empty();
 }
 
 const StartupTextRecord *StartupScript::findTextRecord(const Common::String &key) const {

@@ -56,6 +56,7 @@ private:
 	Common::Error beginRoomSetupTransition();
 	Common::Error fadeInRoomScene(const byte *palette, float targetBrightness);
 	bool pumpTransitionEvents(Common::Error &result);
+	void executeStartupAudioCommands(const Common::Array<StartupAudioCommand> &commands);
 	void resetCursorAnimationSequence();
 	bool tickRuntimeEntities();
 	void renderMainMenuStub(int selectedItem, const Common::String &statusMessage) const;
