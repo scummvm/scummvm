@@ -27,6 +27,7 @@
 #include "audio/decoders/adpcm.h"
 #include "audio/decoders/wave.h"
 #include "common/config-manager.h"
+#include "common/memstream.h"
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/paletteman.h"
@@ -49,8 +50,7 @@ static bool shouldSkipStartupMoviesForDebug() {
 		ConfMan.getBool("harvester_debug_skip_startup_movies");
 }
 
-static Audio::SeekableAudioStream *openStartupAudioStream(ResourceManager &resources, const Common::String &path) {
-	Common::SeekableReadStream *stream = resources.openFile(path);
+static Audio::SeekableAudioStream *decodeStartupAudioStream(Common::SeekableReadStream *stream) {
 	if (!stream)
 		return nullptr;
 
@@ -78,6 +78,10 @@ static Audio::SeekableAudioStream *openStartupAudioStream(ResourceManager &resou
 
 	stream->seek(0);
 	return Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+}
+
+static Audio::SeekableAudioStream *openStartupAudioStream(ResourceManager &resources, const Common::String &path) {
+	return decodeStartupAudioStream(resources.openFile(path));
 }
 
 } // End of anonymous namespace
@@ -138,8 +142,52 @@ void HarvesterEngine::stopStartupMusic() {
 	_startupMusicPath.clear();
 }
 
+bool HarvesterEngine::executeStartupAudioCommand(const StartupAudioCommand &command) {
+	switch (command.type) {
+	case kStartupAudioCommandStartWav:
+		return playStartupSound(command.path);
+	case kStartupAudioCommandStartSingleWav:
+		return playStartupSingleSound(command.path);
+	case kStartupAudioCommandLoadWav:
+		return loadStartupSound(command.slot, command.path);
+	case kStartupAudioCommandPlayWav:
+		return playStartupLoadedSound(command.slot);
+	case kStartupAudioCommandDeleteWav:
+		return deleteStartupLoadedSound(command.slot);
+	default:
+		return false;
+	}
+}
+
 bool HarvesterEngine::playStartupSound(const Common::String &path) {
-	stopStartupSound();
+	if (path.empty() || !_resources || !g_system || !g_system->getMixer())
+		return false;
+
+	const Common::String normalizedPath = _resources->normalizeResourcePath(path);
+	for (int i = 0; i < ARRAYSIZE(_startupSoundPaths); ++i) {
+		if (_startupSoundPaths[i].equalsIgnoreCase(normalizedPath)) {
+			stopStartupSoundHandle(_startupSoundHandles[i]);
+			_startupSoundPaths[i].clear();
+		}
+	}
+
+	_startupSoundSlotIndex = (_startupSoundSlotIndex + 1) % ARRAYSIZE(_startupSoundHandles);
+	stopStartupSoundHandle(_startupSoundHandles[_startupSoundSlotIndex]);
+
+	Audio::SeekableAudioStream *audioStream = openStartupAudioStream(*_resources, path);
+	if (!audioStream) {
+		warning("Harvester: unable to decode startup sound '%s'", path.c_str());
+		return false;
+	}
+
+	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType,
+		&_startupSoundHandles[_startupSoundSlotIndex], audioStream);
+	_startupSoundPaths[_startupSoundSlotIndex] = normalizedPath;
+	return true;
+}
+
+bool HarvesterEngine::playStartupSingleSound(const Common::String &path) {
+	stopStartupSoundHandle(_startupSingleSoundHandle);
 	if (path.empty() || !_resources || !g_system || !g_system->getMixer())
 		return false;
 
@@ -149,13 +197,79 @@ bool HarvesterEngine::playStartupSound(const Common::String &path) {
 		return false;
 	}
 
-	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_startupSoundHandle, audioStream);
+	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_startupSingleSoundHandle, audioStream);
+	return true;
+}
+
+bool HarvesterEngine::loadStartupSound(int slot, const Common::String &path) {
+	if (!validateStartupLoadedSoundSlot(slot) || path.empty() || !_resources)
+		return false;
+
+	stopStartupSoundHandle(_startupLoadedSoundHandles[slot]);
+	_startupLoadedSoundPaths[slot].clear();
+	_startupLoadedSoundData[slot].clear();
+
+	if (!_resources->loadFile(path, _startupLoadedSoundData[slot])) {
+		warning("Harvester: unable to load startup sound '%s' into slot %d", path.c_str(), slot);
+		return false;
+	}
+
+	_startupLoadedSoundPaths[slot] = _resources->normalizeResourcePath(path);
+	return true;
+}
+
+bool HarvesterEngine::playStartupLoadedSound(int slot) {
+	if (!validateStartupLoadedSoundSlot(slot) || !g_system || !g_system->getMixer())
+		return false;
+	if (_startupLoadedSoundData[slot].empty())
+		return false;
+
+	stopStartupSoundHandle(_startupLoadedSoundHandles[slot]);
+
+	Common::SeekableReadStream *stream = new Common::MemoryReadStream(
+		_startupLoadedSoundData[slot].data(), _startupLoadedSoundData[slot].size(), DisposeAfterUse::NO);
+	Audio::SeekableAudioStream *audioStream = decodeStartupAudioStream(stream);
+	if (!audioStream) {
+		warning("Harvester: unable to decode startup sound slot %d ('%s')",
+			slot, _startupLoadedSoundPaths[slot].c_str());
+		return false;
+	}
+
+	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_startupLoadedSoundHandles[slot], audioStream);
+	return true;
+}
+
+bool HarvesterEngine::deleteStartupLoadedSound(int slot) {
+	if (!validateStartupLoadedSoundSlot(slot))
+		return false;
+
+	stopStartupSoundHandle(_startupLoadedSoundHandles[slot]);
+	_startupLoadedSoundPaths[slot].clear();
+	_startupLoadedSoundData[slot].clear();
 	return true;
 }
 
 void HarvesterEngine::stopStartupSound() {
+	stopStartupSoundHandle(_startupSingleSoundHandle);
+	for (int i = 0; i < ARRAYSIZE(_startupSoundHandles); ++i) {
+		stopStartupSoundHandle(_startupSoundHandles[i]);
+		_startupSoundPaths[i].clear();
+	}
+	for (int i = 0; i < ARRAYSIZE(_startupLoadedSoundHandles); ++i) {
+		stopStartupSoundHandle(_startupLoadedSoundHandles[i]);
+		_startupLoadedSoundPaths[i].clear();
+		_startupLoadedSoundData[i].clear();
+	}
+	_startupSoundSlotIndex = -1;
+}
+
+void HarvesterEngine::stopStartupSoundHandle(Audio::SoundHandle &handle) {
 	if (g_system && g_system->getMixer())
-		g_system->getMixer()->stopHandle(_startupSoundHandle);
+		g_system->getMixer()->stopHandle(handle);
+}
+
+bool HarvesterEngine::validateStartupLoadedSoundSlot(int slot) const {
+	return slot >= 0 && slot < ARRAYSIZE(_startupLoadedSoundHandles);
 }
 
 void HarvesterEngine::setDisplayMode(int width, int height) {

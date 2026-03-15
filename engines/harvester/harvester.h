@@ -22,12 +22,14 @@
 #ifndef HARVESTER_H
 #define HARVESTER_H
 
+#include "common/array.h"
 #include "audio/mixer.h"
 #include "common/error.h"
 #include "common/random.h"
 #include "common/serializer.h"
 #include "engines/engine.h"
 #include "graphics/screen.h"
+#include "harvester/startup_script.h"
 
 struct ADGameDescription;
 
@@ -80,17 +82,30 @@ public:
 	const Common::String &getStartupMusicPath() const { return _startupMusicPath; }
 	bool playStartupMusic(const Common::String &path);
 	void stopStartupMusic();
+	bool executeStartupAudioCommand(const StartupAudioCommand &command);
 	bool playStartupSound(const Common::String &path);
+	bool playStartupSingleSound(const Common::String &path);
+	bool loadStartupSound(int slot, const Common::String &path);
+	bool playStartupLoadedSound(int slot);
+	bool deleteStartupLoadedSound(int slot);
 	void stopStartupSound();
 
 private:
 	void setDisplayMode(int width, int height);
+	void stopStartupSoundHandle(Audio::SoundHandle &handle);
+	bool validateStartupLoadedSoundSlot(int slot) const;
 
 	const ADGameDescription *const _gameDescription;
 	Common::RandomSource _randomSource;
 	Audio::SoundHandle _startupMusicHandle;
-	Audio::SoundHandle _startupSoundHandle;
+	Audio::SoundHandle _startupSingleSoundHandle;
 	Common::String _startupMusicPath;
+	int _startupSoundSlotIndex = -1;
+	Common::String _startupSoundPaths[8];
+	Audio::SoundHandle _startupSoundHandles[8];
+	Common::String _startupLoadedSoundPaths[4];
+	Common::Array<byte> _startupLoadedSoundData[4];
+	Audio::SoundHandle _startupLoadedSoundHandles[4];
 	Graphics::Screen *_screen = nullptr;
 	ResourceManager *_resources = nullptr;
 	RuntimeEntityManager *_runtimeEntities = nullptr;

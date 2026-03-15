@@ -125,6 +125,20 @@ struct StartupTextRecord {
 	Common::String value;
 };
 
+enum StartupAudioCommandType {
+	kStartupAudioCommandStartWav,
+	kStartupAudioCommandStartSingleWav,
+	kStartupAudioCommandLoadWav,
+	kStartupAudioCommandPlayWav,
+	kStartupAudioCommandDeleteWav
+};
+
+struct StartupAudioCommand {
+	StartupAudioCommandType type = kStartupAudioCommandStartWav;
+	Common::String path;
+	int slot = -1;
+};
+
 struct StartupRoomSetupState {
 	Common::String entranceName;
 	Common::String roomName;
@@ -148,12 +162,13 @@ struct StartupRoomSetupState {
 	Common::Array<StartupObjectRecord> activeObjects;
 	Common::Array<StartupObjectRecord> roomObjects;
 	Common::Array<StartupAnimRecord> roomAnimations;
+	Common::Array<StartupAudioCommand> audioCommands;
 };
 
 struct StartupInteractionResult {
 	Common::String musicPath;
-	Common::String soundPath;
 	Common::String nextRoomName;
+	Common::Array<StartupAudioCommand> audioCommands;
 };
 
 struct StartupResolvedText {

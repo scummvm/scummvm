@@ -1457,6 +1457,7 @@ Common::Error StartupFlow::runMainMenuStub() {
 				if (_menuItems[selectedItem].equalsIgnoreCase("NEW GAME")) {
 					Common::Error roomError = runRoomLoop("START");
 					_engine.stopStartupMusic();
+					_engine.stopStartupSound();
 					if (roomError.getCode() == Common::kReadingFailed) {
 						statusMessage = "Unable to resolve START room setup from HARVEST.SCR.";
 						needsRedraw = true;
@@ -1520,6 +1521,7 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 		return transitionError;
 
 	resetCursorAnimationSequence();
+	executeStartupAudioCommands(scene.state.audioCommands);
 	if (!scene.state.musicPath.empty())
 		(void)_engine.playStartupMusic(scene.state.musicPath);
 	RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
@@ -1671,9 +1673,7 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 					(void)_engine.playStartupMusic(interaction.musicPath);
 					restoreMusicPath = _engine.getStartupMusicPath();
 				}
-				if (!interaction.soundPath.empty()) {
-					(void)_engine.playStartupSound(interaction.soundPath);
-				}
+				executeStartupAudioCommands(interaction.audioCommands);
 				needsRedraw = true;
 
 				if (!interaction.nextRoomName.empty()) {
@@ -1934,6 +1934,11 @@ bool StartupFlow::pumpTransitionEvents(Common::Error &result) {
 	}
 
 	return false;
+}
+
+void StartupFlow::executeStartupAudioCommands(const Common::Array<StartupAudioCommand> &commands) {
+	for (const StartupAudioCommand &command : commands)
+		(void)_engine.executeStartupAudioCommand(command);
 }
 
 void StartupFlow::resetCursorAnimationSequence() {
