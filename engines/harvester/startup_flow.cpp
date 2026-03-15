@@ -109,6 +109,12 @@ struct StartupRoomPlayerState {
 	int targetX = 0;
 	int targetY = 0;
 	float targetZ = 0.0f;
+	bool turnActive = false;
+	int turnTargetFacing = -1;
+	int turnFirstFrame = -1;
+	int turnLastFrame = -1;
+	int turnEndFrame = -1;
+	bool turnPlayBackwards = false;
 };
 
 struct StartupRoomHoverState {
@@ -125,6 +131,16 @@ struct PlayerAnimationRange {
 	int walkFirstFrame = 0;
 	int walkLastFrame = 0;
 	int idleFrame = 0;
+};
+
+struct PlayerTurnAnimationRange {
+	PlayerTurnAnimationRange() {}
+	PlayerTurnAnimationRange(int firstFrame, int lastFrame, bool playBackwards)
+		: firstFrame(firstFrame), lastFrame(lastFrame), playBackwards(playBackwards) {}
+
+	int firstFrame = 0;
+	int lastFrame = 0;
+	bool playBackwards = false;
 };
 
 static int roundToInt(float value) {
@@ -159,6 +175,44 @@ static PlayerAnimationRange resolvePlayerAnimationRange(int facing) {
 	default:
 		return PlayerAnimationRange{ 0x00, 0x09, 0x3b };
 	}
+}
+
+static bool resolvePlayerTurnAnimationRange(int fromFacing, int toFacing, PlayerTurnAnimationRange &range) {
+	// Ghidra confirms stationary startup keyboard turn states between the locomotion banks.
+	if (fromFacing == 0 && toFacing == 1) {
+		range = PlayerTurnAnimationRange{ 0x0a, 0x0e, true };
+		return true;
+	}
+	if (fromFacing == 1 && toFacing == 0) {
+		range = PlayerTurnAnimationRange{ 0x0a, 0x0e, false };
+		return true;
+	}
+	if (fromFacing == 1 && toFacing == 3) {
+		range = PlayerTurnAnimationRange{ 0x19, 0x1d, true };
+		return true;
+	}
+	if (fromFacing == 3 && toFacing == 1) {
+		range = PlayerTurnAnimationRange{ 0x19, 0x1d, false };
+		return true;
+	}
+	if (fromFacing == 3 && toFacing == 2) {
+		range = PlayerTurnAnimationRange{ 0x28, 0x2c, true };
+		return true;
+	}
+	if (fromFacing == 2 && toFacing == 3) {
+		range = PlayerTurnAnimationRange{ 0x28, 0x2c, false };
+		return true;
+	}
+	if (fromFacing == 2 && toFacing == 0) {
+		range = PlayerTurnAnimationRange{ 0x37, 0x3b, true };
+		return true;
+	}
+	if (fromFacing == 0 && toFacing == 2) {
+		range = PlayerTurnAnimationRange{ 0x37, 0x3b, false };
+		return true;
+	}
+
+	return false;
 }
 
 static bool roomSupportsMovementBand(const StartupRoomSetupState &state) {
@@ -631,6 +685,51 @@ static bool setPlayerWalkAnimation(StartupRoomPlayerState &playerState, int faci
 	return true;
 }
 
+static bool startPlayerTurnAnimation(StartupRoomPlayerState &playerState, int targetFacing) {
+	if (!playerState.entity || playerState.facing < 0 || playerState.facing == targetFacing)
+		return false;
+
+	PlayerTurnAnimationRange range;
+	if (!resolvePlayerTurnAnimationRange(playerState.facing, targetFacing, range))
+		return false;
+
+	playerState.turnActive = true;
+	playerState.turnTargetFacing = targetFacing;
+	playerState.turnFirstFrame = range.firstFrame;
+	playerState.turnLastFrame = range.lastFrame;
+	playerState.turnEndFrame = range.playBackwards ? range.firstFrame : range.lastFrame;
+	playerState.turnPlayBackwards = range.playBackwards;
+	playerState.entity->setAnimationFrameRange(range.firstFrame, range.lastFrame, false);
+	playerState.entity->setPlayBackwards(range.playBackwards);
+	playerState.entity->setAnimationRate(kRoomPlayerWalkAnimationRate);
+	playerState.entity->setCurrentFrame(range.playBackwards ? range.lastFrame : range.firstFrame);
+	debugC(1, kDebugScene,
+		"Harvester: player turn animation from=%d to=%d frames=%d..%d backwards=%d rate=%d",
+		playerState.facing, targetFacing, range.firstFrame, range.lastFrame,
+		range.playBackwards, kRoomPlayerWalkAnimationRate);
+	return true;
+}
+
+static bool updatePlayerTurnAnimationState(StartupRoomPlayerState &playerState) {
+	if (!playerState.turnActive || !playerState.entity)
+		return false;
+	if (playerState.entity->getCurrentFrame() != playerState.turnEndFrame)
+		return false;
+
+	playerState.turnActive = false;
+	playerState.facing = playerState.turnTargetFacing;
+	playerState.turnTargetFacing = -1;
+	playerState.turnFirstFrame = -1;
+	playerState.turnLastFrame = -1;
+	playerState.turnEndFrame = -1;
+	playerState.turnPlayBackwards = false;
+	playerState.entity->setAnimationRate(0);
+	debugC(1, kDebugScene,
+		"Harvester: player turn complete facing=%d frame=%d",
+		playerState.facing, playerState.entity->getCurrentFrame());
+	return true;
+}
+
 static void setPlayerMoveTarget(const StartupRoomSetupState &state, StartupRoomPlayerState &playerState,
 		int targetX, int targetBottomY) {
 	playerState.hasMoveTarget = true;
@@ -644,7 +743,7 @@ static void setPlayerMoveTarget(const StartupRoomSetupState &state, StartupRoomP
 }
 
 static bool stepPlayerMoveTarget(const StartupRoomSetupState &state, StartupRoomPlayerState &playerState) {
-	if (!playerState.entity || !playerState.hasMoveTarget)
+	if (!playerState.entity || !playerState.hasMoveTarget || playerState.turnActive)
 		return false;
 
 	const float dx = (float)(playerState.targetX - playerState.centerX);
@@ -685,9 +784,15 @@ static bool stepPlayerKeyboardMovement(const StartupRoomSetupState &state, Start
 	const int dy = (moveDown ? 1 : 0) - (moveUp ? 1 : 0);
 	if (dx == 0 && dy == 0)
 		return false;
+	if (playerState.turnActive)
+		return false;
+
+	const int desiredFacing = resolveFacingFromMovementDelta(dx, dy);
+	if (desiredFacing != playerState.facing && startPlayerTurnAnimation(playerState, desiredFacing))
+		return true;
 
 	playerState.hasMoveTarget = false;
-	(void)setPlayerWalkAnimation(playerState, resolveFacingFromMovementDelta(dx, dy));
+	(void)setPlayerWalkAnimation(playerState, desiredFacing);
 	playerState.centerX = CLIP<int>(playerState.centerX + roundToInt(dx * kRoomPlayerMoveStep), 0, 639);
 	playerState.bottomY = clampRoomMovementY(state,
 		playerState.bottomY + roundToInt(dy * kRoomPlayerMoveStep));
@@ -1215,6 +1320,8 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 	playerState.bottomY = state.playerSpawnY;
 	playerState.z = (float)state.playerSpawnZ;
 	playerState.facing = state.playerFacing;
+	playerState.turnActive = false;
+	playerState.turnTargetFacing = -1;
 	StartupResolvedText inspectText;
 	bool showingInspectText = false;
 	bool inspectCanDismiss = false;
@@ -1307,6 +1414,8 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 					showingInspectText = true;
 					inspectCanDismiss = false;
 					playerState.hasMoveTarget = false;
+					playerState.turnActive = false;
+					playerState.turnTargetFacing = -1;
 					needsRedraw = true;
 					break;
 				}
@@ -1326,6 +1435,8 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 				}
 
 				playerState.hasMoveTarget = false;
+				playerState.turnActive = false;
+				playerState.turnTargetFacing = -1;
 				if (!interaction.soundPath.empty()) {
 					(void)_engine.playStartupSound(interaction.soundPath);
 				}
@@ -1342,6 +1453,8 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 						playerState.z = (float)state.playerSpawnZ;
 						playerState.facing = state.playerFacing;
 						playerState.hasMoveTarget = false;
+						playerState.turnActive = false;
+						playerState.turnTargetFacing = -1;
 						needsRedraw = true;
 					} else if (roomError.getCode() != Common::kNoError) {
 						return roomError;
@@ -1354,6 +1467,8 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 						playerState.z = (float)state.playerSpawnZ;
 						playerState.facing = state.playerFacing;
 						playerState.hasMoveTarget = false;
+						playerState.turnActive = false;
+						playerState.turnTargetFacing = -1;
 						needsRedraw = true;
 					}
 				}
@@ -1400,11 +1515,15 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 			}
 		}
 
+		if (updatePlayerTurnAnimationState(playerState))
+			needsRedraw = true;
+
 		if (stepPlayerKeyboardMovement(scene.state, playerState, moveLeft, moveRight, moveUp, moveDown))
 			needsRedraw = true;
 		else if (stepPlayerMoveTarget(scene.state, playerState))
 			needsRedraw = true;
 		else if (!moveLeft && !moveRight && !moveUp && !moveDown && !playerState.hasMoveTarget &&
+				!playerState.turnActive &&
 				playerState.entity && playerState.facing >= 0 && setPlayerIdleAnimation(playerState, playerState.facing))
 			needsRedraw = true;
 
