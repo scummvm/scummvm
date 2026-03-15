@@ -199,6 +199,7 @@ public:
 		StartupRoomSetupState &state) const;
 	bool executeRoomExitCommands(const Common::String &roomName, Common::Array<StartupAudioCommand> &audioCommands);
 	bool resolveObjectInteraction(const StartupObjectRecord &object, StartupInteractionResult &result);
+	bool isPickupObject(const StartupObjectRecord &object) const;
 	bool hasObjectInteraction(const StartupObjectRecord &object) const;
 	void markObjectIdentShown(const StartupObjectRecord &object);
 	bool resolveObjectInspectText(const StartupObjectRecord &object, StartupResolvedText &text) const;

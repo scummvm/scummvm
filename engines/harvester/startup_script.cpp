@@ -34,6 +34,7 @@ namespace Harvester {
 static const char *const kStartupConfigPath = "CONFIG.INI";
 static const char *const kConfigSectionName = "harvester";
 static const char *const kDefaultTownScript = "HARVEST.SCR";
+static const char *const kInventoryOwnerName = "INVENTORY";
 static const byte kTownScriptXorKey = 0xaa;
 static const float kDefaultPaletteBrightness = 1.0f;
 static const float kDimmedPaletteBrightness = 0.6f;
@@ -517,8 +518,18 @@ bool StartupScript::executeRoomExitCommands(const Common::String &roomName,
 
 bool StartupScript::resolveObjectInteraction(const StartupObjectRecord &object, StartupInteractionResult &result) {
 	result = StartupInteractionResult();
+
+	if (isPickupObject(object)) {
+		if (StartupObjectRecord *runtimeObject = findRuntimeObject(object.currentOwnerOrRoom, object.objectName)) {
+			if (!runtimeObject->currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName)) {
+				runtimeObject->currentOwnerOrRoom = kInventoryOwnerName;
+				runtimeObject->identShown = true;
+				result.mutatedRuntimeState = true;
+			}
+		}
+	}
 	if (object.actionTag.empty())
-		return false;
+		return result.mutatedRuntimeState;
 
 	executeCommandChain(object.actionTag, "interaction command", object.objectName, true,
 		&result.musicPath, &result.audioCommands, &result.nextRoomName, &result.mutatedRuntimeState);
@@ -527,7 +538,15 @@ bool StartupScript::resolveObjectInteraction(const StartupObjectRecord &object, 
 		result.mutatedRuntimeState || hasActionableCommandChain(object.actionTag);
 }
 
+bool StartupScript::isPickupObject(const StartupObjectRecord &object) const {
+	return object.operatable &&
+		!object.altSpritePath.empty() &&
+		!object.currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName);
+}
+
 bool StartupScript::hasObjectInteraction(const StartupObjectRecord &object) const {
+	if (isPickupObject(object))
+		return true;
 	if (object.actionTag.empty())
 		return false;
 
@@ -677,6 +696,17 @@ bool StartupScript::buildRuntimeRoomState(const StartupRoomRecord &room, const S
 	for (const StartupObjectRecord &object : _runtimeObjects) {
 		if (object.currentOwnerOrRoom.equalsIgnoreCase(room.roomName))
 			state.roomObjects.push_back(object);
+	}
+	if (!state.hasEntrance) {
+		static const char *const kCloseupExitObjects[] = { "EXIT_BM", "EXIT_HS" };
+		for (const char *name : kCloseupExitObjects) {
+			for (const StartupObjectRecord &object : _runtimeObjects) {
+				if (object.objectName.equalsIgnoreCase(name)) {
+					state.roomObjects.push_back(object);
+					break;
+				}
+			}
+		}
 	}
 	for (const StartupAnimRecord &anim : _runtimeAnimations) {
 		if (anim.roomName.equalsIgnoreCase(room.roomName))
