@@ -90,6 +90,15 @@ static const int kCursorSequenceOperate = 4;
 static const int kCursorSequencePickup = 5;
 static const int kCursorSequenceTransition = 6;
 static const int kCursorSequenceNeutral = 7;
+static const char *const kPlayerIdleAnimationEntityName = "IDLE_ANIM";
+static const char *const kPlayerIdleAnimationResourcePath = "1:/GRAPHIC/ROOMANIM/PCLOUN02.ABM";
+static const uint32 kRuntimeClockDivisorMs = 10;
+static const uint32 kRoomPlayerIdleDelayTicks = 3000;
+static const int kRoomPlayerIdleAnimationRate = 30;
+static const int kRoomPlayerIdleLoopStartFrame = 0x0f;
+static const int kRoomPlayerIdleLoopLastFrame = 0xb2;
+static const int kRoomPlayerIdleExitLastFrame = 0xbf;
+static const int kRoomPlayerIdleYOffset = 4;
 
 struct StartupRoomSceneResources {
 	StartupRoomSetupState state;
@@ -121,6 +130,17 @@ struct StartupRoomHoverState {
 	const StartupObjectRecord *object = nullptr;
 	Common::String promptText;
 	int cursorSequence = kCursorSequenceNeutral;
+};
+
+struct StartupRoomIdleAnimationState {
+	RuntimeEntity *entity = nullptr;
+	int restoreFacing = -1;
+	uint32 activityTick = 0;
+	uint32 resetTick = 0;
+	uint32 triggerTick = 0;
+	bool active = false;
+	bool loopStarted = false;
+	bool exiting = false;
 };
 
 struct PlayerAnimationRange {
@@ -295,6 +315,44 @@ static int resolveFacingFromMovementDelta(int dx, int dy) {
 	if (dy < 0)
 		return 3;
 	return 0;
+}
+
+static uint32 getRuntimeClockTicks() {
+	return g_system ? (g_system->getMillis() / kRuntimeClockDivisorMs) : 0;
+}
+
+static bool isIdleAnimationExcludedRoom(const Common::String &roomName) {
+	static const char *const kExcludedRooms[] = {
+		"JAWS",
+		"SUPPLY1",
+		"SUPPLY2",
+		"SUPPLY3",
+		"LAVAPIT",
+		"RMNBATH",
+		"SERGENTRM",
+		"CHAP2"
+	};
+
+	for (const char *excludedRoom : kExcludedRooms) {
+		if (roomName.equalsIgnoreCase(excludedRoom))
+			return true;
+	}
+
+	return false;
+}
+
+static void updatePlayerIdleTrigger(StartupRoomIdleAnimationState &idleState) {
+	idleState.triggerTick = MAX(idleState.activityTick, idleState.resetTick) + kRoomPlayerIdleDelayTicks;
+}
+
+static void notePlayerActivity(StartupRoomIdleAnimationState &idleState) {
+	idleState.activityTick = getRuntimeClockTicks();
+	updatePlayerIdleTrigger(idleState);
+}
+
+static void notePlayerIdleReset(StartupRoomIdleAnimationState &idleState) {
+	idleState.resetTick = getRuntimeClockTicks();
+	updatePlayerIdleTrigger(idleState);
 }
 
 static void getPaletteByteRange(const byte *palette, byte &minValue, byte &maxValue) {
@@ -804,6 +862,154 @@ static bool stepPlayerKeyboardMovement(const StartupRoomSetupState &state, Start
 		state.roomName.c_str(), dx, dy, playerState.centerX, playerState.bottomY, (double)playerState.z,
 		playerState.facing, playerState.entity->getCurrentFrame(), placed);
 	return placed;
+}
+
+static void positionPlayerIdleAnimationEntity(const StartupRoomSetupState &state,
+		const StartupRoomPlayerState &playerState, RuntimeEntity &idleEntity) {
+	if (!playerState.entity)
+		return;
+
+	idleEntity.setAnchorMode(kRuntimeEntityAnchorTopLeft);
+	idleEntity.setDepthScale(computeActorDepthScale(state, playerState.z));
+	idleEntity.setPosition(playerState.entity->getX(), playerState.entity->getY() + kRoomPlayerIdleYOffset, playerState.z);
+}
+
+static RuntimeEntity *ensurePlayerIdleAnimationEntity(HarvesterEngine &engine,
+		const StartupRoomSetupState &state, const StartupRoomPlayerState &playerState,
+		StartupRoomIdleAnimationState &idleState) {
+	if (idleState.entity || !playerState.entity)
+		return idleState.entity;
+
+	RuntimeEntityManager *runtimeEntities = engine.getRuntimeEntities();
+	if (!runtimeEntities)
+		return nullptr;
+
+	idleState.entity = runtimeEntities->spawnSceneAnimationEntity(
+		kPlayerIdleAnimationEntityName, kPlayerIdleAnimationResourcePath,
+		Common::Point(playerState.entity->getX(), playerState.entity->getY() + kRoomPlayerIdleYOffset),
+		playerState.z, 0, false, false, false, false, false);
+	if (!idleState.entity)
+		return nullptr;
+
+	positionPlayerIdleAnimationEntity(state, playerState, *idleState.entity);
+	idleState.entity->setVisible(false);
+	debugC(1, kDebugScene,
+		"Harvester: spawned player idle animation '%s' room='%s' frames=0..%d",
+		kPlayerIdleAnimationResourcePath, state.roomName.c_str(), idleState.entity->getLastFrame());
+	return idleState.entity;
+}
+
+static bool finishPlayerIdleAnimation(const StartupRoomSetupState &state, StartupRoomPlayerState &playerState,
+		StartupRoomIdleAnimationState &idleState) {
+	if (!idleState.active)
+		return false;
+
+	if (idleState.entity) {
+		idleState.entity->setVisible(false);
+		idleState.entity->setAnimationRate(0);
+		idleState.entity->setCurrentFrame(0);
+		positionPlayerIdleAnimationEntity(state, playerState, *idleState.entity);
+	}
+	if (playerState.entity) {
+		playerState.entity->setVisible(true);
+		if (idleState.restoreFacing >= 0)
+			(void)setPlayerIdleAnimation(playerState, idleState.restoreFacing);
+	}
+
+	idleState.active = false;
+	idleState.loopStarted = false;
+	idleState.exiting = false;
+	idleState.restoreFacing = -1;
+	notePlayerIdleReset(idleState);
+	debugC(1, kDebugScene,
+		"Harvester: player idle animation finished room='%s' facing=%d",
+		state.roomName.c_str(), playerState.facing);
+	return true;
+}
+
+static bool requestPlayerIdleAnimationExit(const StartupRoomSetupState &state,
+		StartupRoomPlayerState &playerState, StartupRoomIdleAnimationState &idleState) {
+	if (!idleState.active || idleState.exiting || !idleState.entity)
+		return false;
+
+	const int lastFrame = idleState.entity->getLastFrame();
+	const int exitStartFrame = MIN(lastFrame, kRoomPlayerIdleLoopLastFrame);
+	const int exitLastFrame = MIN(lastFrame, kRoomPlayerIdleExitLastFrame);
+	if (exitLastFrame <= exitStartFrame)
+		return finishPlayerIdleAnimation(state, playerState, idleState);
+
+	positionPlayerIdleAnimationEntity(state, playerState, *idleState.entity);
+	idleState.exiting = true;
+	idleState.entity->setAnimationFrameRange(exitStartFrame, exitLastFrame, false);
+	idleState.entity->setCurrentFrame(exitStartFrame);
+	idleState.entity->setAnimationRate(kRoomPlayerIdleAnimationRate);
+	debugC(1, kDebugScene,
+		"Harvester: player idle animation exit room='%s' frames=%d..%d rate=%d",
+		state.roomName.c_str(), exitStartFrame, exitLastFrame, kRoomPlayerIdleAnimationRate);
+	return true;
+}
+
+static bool startPlayerIdleAnimation(HarvesterEngine &engine, const StartupRoomSetupState &state,
+		StartupRoomPlayerState &playerState, StartupRoomIdleAnimationState &idleState) {
+	if (!playerState.entity || idleState.active || isIdleAnimationExcludedRoom(state.roomName))
+		return false;
+
+	RuntimeEntity *idleEntity = ensurePlayerIdleAnimationEntity(engine, state, playerState, idleState);
+	if (!idleEntity)
+		return false;
+
+	const int lastFrame = idleEntity->getLastFrame();
+	const int loopLastFrame = MIN(lastFrame, kRoomPlayerIdleLoopLastFrame);
+	positionPlayerIdleAnimationEntity(state, playerState, *idleEntity);
+	idleState.restoreFacing = playerState.facing;
+	idleState.active = true;
+	idleState.loopStarted = false;
+	idleState.exiting = false;
+	idleEntity->setVisible(true);
+	idleEntity->setAnimationFrameRange(0, loopLastFrame, false);
+	idleEntity->setCurrentFrame(0);
+	idleEntity->setAnimationRate(kRoomPlayerIdleAnimationRate);
+	playerState.hasMoveTarget = false;
+	playerState.turnActive = false;
+	playerState.turnTargetFacing = -1;
+	playerState.entity->setVisible(false);
+	debugC(1, kDebugScene,
+		"Harvester: player idle animation start room='%s' facing=%d frames=%d..%d rate=%d trigger_tick=%u",
+		state.roomName.c_str(), idleState.restoreFacing, 0, loopLastFrame,
+		kRoomPlayerIdleAnimationRate, idleState.triggerTick);
+	return true;
+}
+
+static bool updatePlayerIdleAnimation(const StartupRoomSetupState &state, StartupRoomPlayerState &playerState,
+		StartupRoomIdleAnimationState &idleState) {
+	if (!idleState.active || !idleState.entity)
+		return false;
+
+	const int lastFrame = idleState.entity->getLastFrame();
+	const int loopLastFrame = MIN(lastFrame, kRoomPlayerIdleLoopLastFrame);
+	if (!idleState.exiting && !idleState.loopStarted &&
+			idleState.entity->getCurrentFrame() >= loopLastFrame) {
+		const int loopStartFrame = MIN(lastFrame, kRoomPlayerIdleLoopStartFrame);
+		idleState.loopStarted = true;
+		if (loopStartFrame < loopLastFrame) {
+			idleState.entity->setAnimationFrameRange(loopStartFrame, loopLastFrame, true);
+			idleState.entity->setCurrentFrame(loopStartFrame);
+			idleState.entity->setAnimationRate(kRoomPlayerIdleAnimationRate);
+		}
+		debugC(1, kDebugScene,
+			"Harvester: player idle animation loop room='%s' frames=%d..%d rate=%d",
+			state.roomName.c_str(), loopStartFrame, loopLastFrame, kRoomPlayerIdleAnimationRate);
+		return true;
+	}
+
+	if (!idleState.exiting)
+		return false;
+
+	const int exitLastFrame = MIN(lastFrame, kRoomPlayerIdleExitLastFrame);
+	if (idleState.entity->getCurrentFrame() < exitLastFrame)
+		return false;
+
+	return finishPlayerIdleAnimation(state, playerState, idleState);
 }
 
 static bool findRoomObjectProbePoint(HarvesterEngine &engine, const Common::Array<StartupObjectRecord> &sceneObjects,
@@ -1329,6 +1535,10 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 	bool moveRight = false;
 	bool moveUp = false;
 	bool moveDown = false;
+	StartupRoomIdleAnimationState idleState;
+	idleState.activityTick = getRuntimeClockTicks();
+	idleState.resetTick = idleState.activityTick;
+	updatePlayerIdleTrigger(idleState);
 	bool needsRedraw = true;
 	Graphics::FrameLimiter limiter(g_system, 60);
 
@@ -1337,11 +1547,12 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 
 	while (!_engine.shouldQuit()) {
 		if (needsRedraw) {
-			const StartupRoomHoverState hoverState = showingInspectText
+			const bool suppressHover = showingInspectText || idleState.active || idleState.exiting;
+			const StartupRoomHoverState hoverState = suppressHover
 				? StartupRoomHoverState()
 				: resolveRoomHoverState(_engine, scene.state, scene.sceneObjects, _mousePos);
 			if (RuntimeEntity *cursor = runtimeEntities ? runtimeEntities->getCursorEntity() : nullptr) {
-				cursor->setAnimationSequence(showingInspectText ? kCursorSequenceNeutral : hoverState.cursorSequence);
+				cursor->setAnimationSequence(suppressHover ? kCursorSequenceNeutral : hoverState.cursorSequence);
 			}
 
 			drawRoomScene(_engine, *screen, scene, scene.targetPaletteBrightness);
@@ -1370,11 +1581,26 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 			case Common::EVENT_MOUSEMOVE:
 				needsRedraw = true;
 				break;
+			case Common::EVENT_RBUTTONDOWN:
+				notePlayerActivity(idleState);
+				if (idleState.active || idleState.exiting) {
+					if (requestPlayerIdleAnimationExit(scene.state, playerState, idleState))
+						needsRedraw = true;
+					break;
+				}
+				break;
 			case Common::EVENT_LBUTTONUP:
 				if (showingInspectText)
 					inspectCanDismiss = true;
 				break;
 			case Common::EVENT_LBUTTONDOWN: {
+				notePlayerActivity(idleState);
+				if (idleState.active || idleState.exiting) {
+					if (requestPlayerIdleAnimationExit(scene.state, playerState, idleState))
+						needsRedraw = true;
+					break;
+				}
+
 				if (showingInspectText) {
 					if (inspectCanDismiss) {
 						showingInspectText = false;
@@ -1494,6 +1720,13 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 				else if (event.kbd.keycode == Common::KEYCODE_DOWN)
 					moveDown = true;
 
+				notePlayerActivity(idleState);
+				if (idleState.active || idleState.exiting) {
+					if (requestPlayerIdleAnimationExit(scene.state, playerState, idleState))
+						needsRedraw = true;
+					break;
+				}
+
 				if (event.kbd.keycode == Common::KEYCODE_RETURN ||
 					event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
 					event.kbd.keycode == Common::KEYCODE_ESCAPE) {
@@ -1518,16 +1751,33 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 		if (updatePlayerTurnAnimationState(playerState))
 			needsRedraw = true;
 
-		if (stepPlayerKeyboardMovement(scene.state, playerState, moveLeft, moveRight, moveUp, moveDown))
-			needsRedraw = true;
-		else if (stepPlayerMoveTarget(scene.state, playerState))
-			needsRedraw = true;
-		else if (!moveLeft && !moveRight && !moveUp && !moveDown && !playerState.hasMoveTarget &&
-				!playerState.turnActive &&
-				playerState.entity && playerState.facing >= 0 && setPlayerIdleAnimation(playerState, playerState.facing))
-			needsRedraw = true;
+		if (!idleState.active && !idleState.exiting) {
+			if (stepPlayerKeyboardMovement(scene.state, playerState, moveLeft, moveRight, moveUp, moveDown)) {
+				notePlayerActivity(idleState);
+				needsRedraw = true;
+			} else if (stepPlayerMoveTarget(scene.state, playerState)) {
+				notePlayerActivity(idleState);
+				needsRedraw = true;
+			} else if (!moveLeft && !moveRight && !moveUp && !moveDown && !playerState.hasMoveTarget &&
+					!playerState.turnActive &&
+					playerState.entity && playerState.facing >= 0 &&
+					setPlayerIdleAnimation(playerState, playerState.facing)) {
+				needsRedraw = true;
+			}
+
+			if (!showingInspectText && !moveLeft && !moveRight && !moveUp && !moveDown &&
+					!playerState.hasMoveTarget && !playerState.turnActive &&
+					playerState.entity && playerState.facing >= 0 &&
+					!isIdleAnimationExcludedRoom(scene.state.roomName) &&
+					getRuntimeClockTicks() > idleState.triggerTick &&
+					startPlayerIdleAnimation(_engine, scene.state, playerState, idleState)) {
+				needsRedraw = true;
+			}
+		}
 
 		if (tickRuntimeEntities())
+			needsRedraw = true;
+		if (updatePlayerIdleAnimation(scene.state, playerState, idleState))
 			needsRedraw = true;
 
 		limiter.delayBeforeSwap();

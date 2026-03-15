@@ -274,7 +274,7 @@ void RuntimeEntity::setAnimationFrameRange(int firstFrame, int lastFrame, bool l
 	_playBackwards = false;
 	_firstFrame = firstFrame;
 	_lastFrame = lastFrame;
-	_animationEnabled = looping && firstFrame != lastFrame;
+	_animationEnabled = firstFrame != lastFrame;
 	if (_currentFrame < _firstFrame || _currentFrame > _lastFrame)
 		advanceAnimationFrame(_firstFrame);
 	else
@@ -523,8 +523,7 @@ void RuntimeEntity::advanceAnimationFrame(int directive) {
 
 		if (!_looping) {
 			_currentFrame = _firstFrame;
-			if (_classId == kRuntimeEntityClassAnimation)
-				_animationEnabled = false;
+			_animationEnabled = false;
 			goto done;
 		}
 
@@ -545,8 +544,7 @@ void RuntimeEntity::advanceAnimationFrame(int directive) {
 
 		if (!_looping) {
 			_currentFrame = _lastFrame;
-			if (_classId == kRuntimeEntityClassAnimation)
-				_animationEnabled = false;
+			_animationEnabled = false;
 			goto done;
 		}
 
