@@ -559,17 +559,29 @@ void PICTDecoder::unpackBits(Common::SeekableReadStream &stream, bool compressed
 		_outputSurface->create(_imageRect.width(), _imageRect.height(), Graphics::PixelFormat::createFormatCLUT8());
 	}
 
+	// Bounds rect: the bitmap's native coordinate space
 	int y1 = stream.readSint16BE();
 	int x1 = stream.readSint16BE();
 	int y2 = stream.readSint16BE();
 	int x2 = stream.readSint16BE();
 
 	stream.skip(8); // srcRect
-	stream.skip(8); // dstRect
+
+	// dstRect: where the bitmap maps to in the PICT's coordinate space.
+	// When bounds differs from picFrame (e.g., bitmap at screen coords
+	// mapped to picFrame origin), we need dstRect for correct placement.
+	int dstTop = stream.readSint16BE();
+	int dstLeft = stream.readSint16BE();
+	stream.skip(4); // dstBottom, dstRight (not needed)
 	stream.skip(2); // mode
 
 	if (hasRegion)
 		stream.skip(stream.readUint16BE() - 2);
+
+	// Compute offset: map bitmap coords (bounds) to output surface coords
+	// via dstRect and _imageRect (picFrame).
+	int yOff = dstTop - _imageRect.top - y1;
+	int xOff = dstLeft - _imageRect.left - x1;
 
 	Common::Rect outputRect(_outputSurface->w, _outputSurface->h);
 
@@ -577,10 +589,10 @@ void PICTDecoder::unpackBits(Common::SeekableReadStream &stream, bool compressed
 		Common::BitStream8MSB bs(stream);
 
 		for (int y = y1; y < y2; y++) {
-			int yPos = y - _imageRect.top;
+			int yPos = y + yOff;
 
 			for (int x = x1; x < x2; x++) {
-				int xPos = x - _imageRect.left;
+				int xPos = x + xOff;
 
 				uint bit = bs.getBit();
 
@@ -593,7 +605,7 @@ void PICTDecoder::unpackBits(Common::SeekableReadStream &stream, bool compressed
 	}
 
 	for (int y = y1; y < y2; y++) {
-		int yPos = y - _imageRect.top;
+		int yPos = y + yOff;
 		int x = x1;
 
 		byte rowBytes = stream.readByte();
@@ -621,7 +633,7 @@ void PICTDecoder::unpackBits(Common::SeekableReadStream &stream, bool compressed
 			Common::BitStream8MSB bs(ms);
 
 			for (int i = 0; i < 8 * bufLen; i++) {
-				int xPos = x - _imageRect.left;
+				int xPos = x + xOff;
 				uint bit = bs.getBit();
 
 				if (outputRect.contains(xPos, yPos))

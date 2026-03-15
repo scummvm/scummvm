@@ -94,6 +94,7 @@ enum {
 	kWMModeNoCursorOverride     = (1 << 12),
 	kWMModeForceMacBorder       = (1 << 13),
 	kWMModeForceMacFonts        = (1 << 14), // Enforce Mac fonts even when there are viable TTF substitutions
+	kWMModeNoSystemRedraw       = (1 << 15), // Skip g_system->copyRectToScreen (for 3D game backends)
 };
 
 }
@@ -332,6 +333,8 @@ private:
 
 public:
 	MacCursorType getCursorType() const;
+	static bool getBuiltInCursorData(MacCursorType type, const byte *&data, const byte *&palette,
+		const byte *&mask, int &w, int &h, int &hotspotX, int &hotspotY, int &transColor);
 
 	void pushCursor(MacCursorType type, Cursor *cursor = nullptr);
 	void replaceCursor(MacCursorType type, Cursor *cursor = nullptr);
