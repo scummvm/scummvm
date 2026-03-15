@@ -163,6 +163,7 @@ struct StartupRoomSetupState {
 	Common::Array<StartupObjectRecord> roomObjects;
 	Common::Array<StartupAnimRecord> roomAnimations;
 	Common::Array<StartupAudioCommand> audioCommands;
+	Common::Array<StartupAudioCommand> exitAudioCommands;
 };
 
 struct StartupInteractionResult {

@@ -618,6 +618,41 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 		break;
 	}
 
+	currentTag = room->onExitCommand;
+	for (uint step = 0; step < 128 && !currentTag.empty(); ++step) {
+		const StartupCommandRecord *command = findCommand(currentTag);
+		if (!command) {
+			debug(1, "Harvester: unresolved startup room-exit command tag '%s' for room '%s'",
+				currentTag.c_str(), room->roomName.c_str());
+			break;
+		}
+
+		debugC(1, kDebugScene,
+			"Harvester: room exit command room='%s' step=%u tag='%s' opcode='%s' args=['%s','%s','%s','%s']",
+			room->roomName.c_str(), step, currentTag.c_str(), command->opcodeName.c_str(),
+			command->arg1.c_str(), command->arg2.c_str(), command->arg3.c_str(), command->arg4.c_str());
+
+		if (command->opcodeName.equalsIgnoreCase("CHECK_FLAG")) {
+			currentTag = getFlagValue(command->arg1) ? command->arg2 : command->arg3;
+			continue;
+		}
+
+		if (command->opcodeName.equalsIgnoreCase("SET_FLAG")) {
+			setFlagValue(command->arg1, command->arg2.equalsIgnoreCase("T"));
+			currentTag = command->arg4;
+			continue;
+		}
+
+		if (appendStartupAudioCommand(*command, state.exitAudioCommands)) {
+			currentTag = command->arg4;
+			continue;
+		}
+
+		// Preserve the confirmed teardown audio chain even when later exit opcodes
+		// still depend on broader persistent startup script state we do not model yet.
+		currentTag = command->arg4;
+	}
+
 	state.paletteBrightness = (room->dimmable && !getFlagValue("DAY_FLAG"))
 		? kDimmedPaletteBrightness
 		: kDefaultPaletteBrightness;

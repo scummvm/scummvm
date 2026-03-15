@@ -1677,38 +1677,29 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 				needsRedraw = true;
 
 				if (!interaction.nextRoomName.empty()) {
+					executeStartupAudioCommands(scene.state.exitAudioCommands);
 					Common::Error roomError = runRoomLoop(interaction.nextRoomName);
+					if (roomError.getCode() != Common::kReadingFailed &&
+						roomError.getCode() != Common::kNoError) {
+						return roomError;
+					}
+
+					(void)populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations);
+					resetCursorAnimationSequence();
+					executeStartupAudioCommands(scene.state.audioCommands);
 					if (!restoreMusicPath.empty())
 						(void)_engine.playStartupMusic(restoreMusicPath);
 					else
 						_engine.stopStartupMusic();
-					if (roomError.getCode() == Common::kReadingFailed) {
-						(void)populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations);
-						resetCursorAnimationSequence();
-						playerState.entity = runtimeEntities ? runtimeEntities->findSceneEntityByName(kPlayerActorEntityName) : nullptr;
-						playerState.centerX = state.playerSpawnX;
-						playerState.bottomY = state.playerSpawnY;
-						playerState.z = (float)state.playerSpawnZ;
-						playerState.facing = state.playerFacing;
-						playerState.hasMoveTarget = false;
-						playerState.turnActive = false;
-						playerState.turnTargetFacing = -1;
-						needsRedraw = true;
-					} else if (roomError.getCode() != Common::kNoError) {
-						return roomError;
-					} else {
-						(void)populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations);
-						resetCursorAnimationSequence();
-						playerState.entity = runtimeEntities ? runtimeEntities->findSceneEntityByName(kPlayerActorEntityName) : nullptr;
-						playerState.centerX = state.playerSpawnX;
-						playerState.bottomY = state.playerSpawnY;
-						playerState.z = (float)state.playerSpawnZ;
-						playerState.facing = state.playerFacing;
-						playerState.hasMoveTarget = false;
-						playerState.turnActive = false;
-						playerState.turnTargetFacing = -1;
-						needsRedraw = true;
-					}
+					playerState.entity = runtimeEntities ? runtimeEntities->findSceneEntityByName(kPlayerActorEntityName) : nullptr;
+					playerState.centerX = state.playerSpawnX;
+					playerState.bottomY = state.playerSpawnY;
+					playerState.z = (float)state.playerSpawnZ;
+					playerState.facing = state.playerFacing;
+					playerState.hasMoveTarget = false;
+					playerState.turnActive = false;
+					playerState.turnTargetFacing = -1;
+					needsRedraw = true;
 				}
 				break;
 			}
@@ -1742,6 +1733,7 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 				if (event.kbd.keycode == Common::KEYCODE_RETURN ||
 					event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
 					event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					executeStartupAudioCommands(scene.state.exitAudioCommands);
 					return Common::kNoError;
 				}
 				break;
