@@ -96,11 +96,7 @@ void ColonyEngine::loadMap(int mnum) {
 	}
 
 	uint16 bLength = file->readUint16BE();
-	uint8 *buffer = (uint8 *)malloc(bLength);
-	if (!buffer) {
-		delete file;
-		error("Out of memory loading map");
-	}
+	uint8 *buffer = new uint8[bLength];
 	file->read(buffer, bLength);
 	delete file;
 
@@ -152,7 +148,7 @@ void ColonyEngine::loadMap(int mnum) {
 			}
 		}
 	}
-	free(buffer);
+	delete[] buffer;
 	_dynamicObjectBase = kStaticObjectStartIndex;
 	_robotNum = MAX<int>(_robotNum, (int)_objects.size() + 1);
 	_level = mnum;

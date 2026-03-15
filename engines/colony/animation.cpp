@@ -769,8 +769,8 @@ Image *ColonyEngine::loadImage(Common::SeekableReadStream &file) {
 		// from the stream to keep file position aligned.
 		uint32 bsize = readUint32(file);
 		size = readUint32(file);
-		im->data = (byte *)malloc(size);
-		byte *packed = (byte *)calloc(bsize + 8, 1); // +8 matches original NewPtr(bsize+8)
+		im->data = new byte[size];
+		byte *packed = new byte[bsize + 8](); // +8 matches original NewPtr(bsize+8)
 		file.read(packed, bsize);
 		// Decompress: exact match of Mac UnPackBytes(src, dst, len).
 		// Buffer is pairs of (count, value). Count is decremented in-place;
@@ -786,10 +786,10 @@ Image *ColonyEngine::loadImage(Common::SeekableReadStream &file) {
 				(*sp)--;
 			}
 		}
-		free(packed);
+		delete[] packed;
 	} else {
 		size = readUint32(file);
-		im->data = (byte *)malloc(size);
+		im->data = new byte[size];
 		file.read(im->data, size);
 	}
 	return im;

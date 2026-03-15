@@ -814,7 +814,7 @@ void ColonyEngine::doText(int entry, int center) {
 		return;
 	}
 
-	byte *page = (byte *)malloc(ch + 1);
+	byte *page = new byte[ch + 1];
 	file->seek(offset);
 	file->read(page, ch);
 	delete file;
@@ -866,7 +866,7 @@ void ColonyEngine::doText(int entry, int center) {
 		if (drawMacTextPopup(_wm, _gfx, _width, _height, _centerX, _centerY, popupLines,
 				center == 1 ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft, _hasMacColors)) {
 			waitForInput();
-			free(page);
+			delete[] page;
 			return;
 		}
 	}
@@ -901,7 +901,7 @@ void ColonyEngine::doText(int entry, int center) {
 	// Wait for key
 	waitForInput();
 
-	free(page);
+	delete[] page;
 }
 
 bool ColonyEngine::clipLineToRect(int &x1, int &y1, int &x2, int &y2, const Common::Rect &clip) const {

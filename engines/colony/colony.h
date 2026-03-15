@@ -324,7 +324,7 @@ struct Image {
 	byte *data;
 
 	Image() : width(0), height(0), align(0), rowBytes(0), bits(0), planes(0), data(nullptr) {}
-	~Image() { free(data); }
+	~Image() { delete[] data; }
 };
 
 struct Sprite {

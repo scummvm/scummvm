@@ -333,7 +333,7 @@ bool Sound::playResource(int resID) {
 
 	snd->seek(42);
 	uint32 dataSize = snd->size() - 42;
-	byte *data = (byte *)malloc(dataSize);
+	byte *data = new byte[dataSize];
 	snd->read(data, dataSize);
 	delete snd;
 
