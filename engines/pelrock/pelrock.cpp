@@ -271,7 +271,7 @@ void PelrockEngine::playSoundIfNeeded() {
 	int ambientSlotOffset = _sound->tickAmbientSound(_chrono->getFrameCount());
 	if (ambientSlotOffset >= 0) {
 		// Convert to room sound index: slots 12-15 = room indices 4-7
-		int roomSoundIndex = kAmbientSoundSlotBase + ambientSlotOffset;
+		byte roomSoundIndex = kAmbientSoundSlotBase + ambientSlotOffset;
 		if (roomSoundIndex < _room->_roomSfx.size()) {
 			byte soundFileIndex = _room->_roomSfx[roomSoundIndex];
 			if (soundFileIndex != 0) { // 0 = NO_SOUND.SMP (disabled)
@@ -1660,7 +1660,7 @@ VerbIcon PelrockEngine::isActionUnder(int x, int y) {
 	}*/
 	Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
 	int loopEnd = _state->selectedInventoryItem != -1 ? actions.size() + 1 : actions.size();
-	for (int i = 0; i < loopEnd; i++) {
+	for (uint i = 0; i < loopEnd; i++) {
 		Common::Point p = getPositionInBalloonForIndex(i, _actionPopupState.x, _actionPopupState.y);
 		Common::Rect actionRect = Common::Rect(p.x, p.y, p.x + kVerbIconWidth, p.y + kVerbIconHeight);
 		if (i == actions.size()) {
@@ -1727,7 +1727,7 @@ void PelrockEngine::checkMouseHover() {
 
 	if (hotspotIndex != -1) {
 		hotspotDetected = true;
-		if (hotspotIndex < _room->_currentRoomDescriptions.size())
+		if (hotspotIndex < (int)_room->_currentRoomDescriptions.size())
 			_hoveredMapLocation = _room->_currentRoomDescriptions[hotspotIndex].text;
 	} else if (!alfredDetected) {
 		_hoveredMapLocation = "";
@@ -1859,8 +1859,8 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			_dialog->say(_res->_ingameTexts[kTextGamberros]);
 			_dialog->say(_res->_ingameTexts[kTextQuienYo]);
 			_dialog->say(_res->_ingameTexts[kTextPintaBuenaPersona]);
-			break;
 		}
+		break;
 	case 19: {
 		Sprite *dog = _room->findSpriteByIndex(2);
 		dog->animData[0].nframes = 9;
@@ -1901,8 +1901,8 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			_room->addStickerToRoom(38, 123, PERSIST_TEMP);
 			_alfredState.x = x;
 			_alfredState.y = y;
-			break;
 		}
+		break;
 	}
 	case 32: {
 		if (_room->_prevRoomNumber == 31) {
@@ -1914,6 +1914,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			_alfredState.x = x;
 			_alfredState.y = y;
 		}
+		break;
 	}
 	case 27: {
 		if (_room->_prevRoomNumber == 33) {
@@ -1935,8 +1936,8 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			_res->getPaletteForRoom28(palette);
 			g_system->getPaletteManager()->setPalette(palette, 0, 256);
 			Common::copy(palette, palette + 768, _room->_roomPalette);
-			break;
 		}
+		break;
 	}
 	case 26: {
 		if (_state->getFlag(FLAG_A_LA_CARCEL) == true) {
@@ -2325,7 +2326,7 @@ void PelrockEngine::credits() {
 	Common::Array<Common::StringArray> creditTexts = _res->getCredits();
 	Common::Array<int> creditsSpeakerId;
 	// Preprocess credit texts: extract speaker IDs and apply word wrapping
-	for(int i = 0; i < creditTexts.size(); i++) {
+	for(uint i = 0; i < creditTexts.size(); i++) {
 		byte speakerId;
 		_dialog->processColorAndTrim(creditTexts[i], speakerId);
 		creditsSpeakerId.push_back(speakerId);

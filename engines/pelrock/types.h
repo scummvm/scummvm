@@ -146,8 +146,8 @@ struct AlfredSpecialAnim {
 	int curLoop = 0;
 	uint32 size = 0;
 	int speed = 2;
-	AlfredSpecialAnim(int nF, int width, int height, int nBudas, uint32 off, int loopCount, uint32 sz, int spd = 2)
-		: numFrames(nF), w(width), h(height), loopCount(loopCount), size(sz), speed(spd) {
+	AlfredSpecialAnim(int nF, int width, int height, int nBudas, uint32 off, int lCount, uint32 sz, int spd = 2)
+		: numFrames(nF), w(width), h(height), loopCount(lCount), size(sz), speed(spd) {
 		stride = w * h;
 	}
 
@@ -485,7 +485,7 @@ struct RoomPasserBys {
 	byte currentAnimIndex = 0;
 	byte numAnims = 0;
 	bool latch = false;
-	RoomPasserBys(byte roomNum, byte numAnims) : roomNumber(roomNum), numAnims(numAnims) {}
+	RoomPasserBys(byte roomNum, byte nAnims) : roomNumber(roomNum), numAnims(nAnims) {}
 };
 
 /**
@@ -500,7 +500,7 @@ struct ChoiceOption {
 	bool shouldDisableOnSelect = false;
 	bool hasConversationEndMarker = false;
 	bool isTerminator = false;
-	int charOffset = 0;
+	uint charOffset = 0;
 
 	ChoiceOption() : choiceIndex(-1), dataOffset(0) {}
 };

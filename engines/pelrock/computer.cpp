@@ -163,7 +163,7 @@ void Computer::drawScreen() {
 	case STATE_MAIN_MENU: {
 		int textY = 97;
 		int textX = 225;
-		for (int i = 0; _computerText[0].size() > i; i++) {
+		for (uint i = 0; _computerText[0].size() > i; i++) {
 			Common::String line = _computerText[0][i];
 			g_engine->_graphics->drawColoredText(g_engine->_screen, line, textX, textY + i * _lineHeight, 200, defaultColor, g_engine->_smallFont);
 		}
@@ -172,7 +172,7 @@ void Computer::drawScreen() {
 
 	case STATE_SEARCH_BY_TITLE:
 	case STATE_SEARCH_BY_AUTHOR:
-		for (int i = 0; _computerText[1].size() > i; i++) {
+		for (uint i = 0; _computerText[1].size() > i; i++) {
 			Common::String line = _computerText[1][i];
 			g_engine->_graphics->drawColoredText(g_engine->_screen, line, 172, 258 + i * _lineHeight, 200, defaultColor, g_engine->_smallFont);
 		}
@@ -201,7 +201,7 @@ void Computer::drawScreen() {
 		Common::String titleLine = _computerText[3][0];
 		int titlePlaceholderIndex = titleLine.findFirstOf("XXXX");
 
-		int titleIndex = 0;
+		uint titleIndex = 0;
 		while (titleIndex < book.title.size()) {
 			Common::String thisLine;
 			if (titleIndex == 0) {
@@ -217,7 +217,7 @@ void Computer::drawScreen() {
 		// Author
 		Common::String authorLine = _computerText[4][0];
 		int authorPlaceholderIndex = authorLine.findFirstOf("XXXX");
-		int authorIndex = 0;
+		uint authorIndex = 0;
 
 		while (authorIndex < book.author.size()) {
 			Common::String thisLine;
@@ -338,7 +338,7 @@ void Computer::memorizeBook(int bookIndex) {
 void Computer::performSearch() {
 	_searchResults.clear();
 
-	for (int i = 0; i < _libraryBooks.size(); i++) {
+	for (uint i = 0; i < _libraryBooks.size(); i++) {
 		Common::String searchField = _searchType == 0 ? _libraryBooks[i].title[0] : _libraryBooks[i].author[0];
 
 		// Check if first letter matches (case-insensitive)

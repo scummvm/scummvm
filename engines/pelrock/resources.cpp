@@ -436,13 +436,6 @@ Common::Array<Common::StringArray> ResourceManager::loadComputerText() {
 	exe.read(computerTextBuf, bufSize);
 	Common::Array<Common::StringArray> computerTexts = processTextData(computerTextBuf, bufSize);
 
-	for (int i = 0; i < computerTexts.size(); i++) {
-		debug("Computer text %d:", i);
-		Common::StringArray &lines = computerTexts[i];
-		for (int j = 0; j < lines.size(); j++) {
-			debug("  Line %d: '%s'", j, lines[j].c_str());
-		}
-	}
 	delete[] computerTextBuf;
 
 	exe.close();
@@ -480,7 +473,7 @@ Common::Array<Common::StringArray> ResourceManager::getCredits() {
 }
 
 Common::Array<Common::StringArray> ResourceManager::processTextData(byte *data, size_t size, bool decode) {
-	int pos = 0;
+	uint pos = 0;
 	Common::String desc = "";
 	Common::StringArray lines;
 	Common::Array<Common::StringArray> texts;

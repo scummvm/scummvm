@@ -45,7 +45,7 @@ bool PelrockConsole::cmdRemoveSticker(int argc, const char **argv) {
 		return true;
 	}
 	int stickerId = atoi(argv[1]);
-	for(int i = 0; i < g_engine->_state->stickersPerRoom[g_engine->_room->_currentRoomNumber].size(); i++) {
+	for(uint i = 0; i < g_engine->_state->stickersPerRoom[g_engine->_room->_currentRoomNumber].size(); i++) {
 		if (g_engine->_state->stickersPerRoom[g_engine->_room->_currentRoomNumber][i].stickerIndex == stickerId) {
 			g_engine->_state->stickersPerRoom[g_engine->_room->_currentRoomNumber].remove_at(i);
 			debugPrintf("Removed sticker %d from room %d\n", stickerId, g_engine->_room->_currentRoomNumber);

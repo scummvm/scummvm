@@ -1130,9 +1130,9 @@ bool isEndMarker(byte char_byte) {
 	return char_byte == kCtrlEndText || char_byte == kCtrlEndConversation || char_byte == kCtrlActionAndEnd || char_byte == kCtrlGoBack;
 }
 
-int calculateWordLength(Common::String text, int startPos, bool &isEnd) {
+int calculateWordLength(Common::String text, uint startPos, bool &isEnd) {
 	int wordLength = 0;
-	int pos = startPos;
+	uint pos = startPos;
 	while (pos < text.size()) {
 		char char_byte = text[pos];
 		if (char_byte == kCtrlSpace || isEndMarker(char_byte)) {
@@ -1169,7 +1169,7 @@ Common::Array<Common::Array<Common::String>> DialogManager::wordWrap(Common::Str
 	Common::Array<Common::String> currentPage;
 	Common::Array<Common::String> currentLine;
 	int charsRemaining = kMaxCharsPerLine;
-	int position = 0;
+	uint position = 0;
 	int currentLineNum = 0;
 	while (position < text.size()) {
 		bool isEnd = false;
@@ -1251,7 +1251,7 @@ Common::Array<Common::StringArray> DialogManager::wordWrap(Common::StringArray t
 		Common::String thisLine = texts[i];
 		Common::Array<Common::Array<Common::String>> wrapped = wordWrap(thisLine);
 		for (uint j = 0; j < wrapped.size(); j++) {
-			for (int k = 0; k < wrapped[j].size(); k++) {
+			for (uint k = 0; k < wrapped[j].size(); k++) {
 				if (currentLineNum < kMaxLines) {
 					currentPage.push_back(wrapped[j][k]);
 					currentLineNum++;

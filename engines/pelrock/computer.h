@@ -78,7 +78,7 @@ private:
 	int _searchType = 0; // 0 = title, 1 = author
 	Common::Array<int> _searchResults;
 	Common::Array<LibraryBook> _libraryBooks;
-	int _currentResult;
+	uint _currentResult;
 	int _memorizedBookIndex; // Index of book that was memorized (-1 if none)
 	int _lineHeight;
 	Common::String _titleMsg;
