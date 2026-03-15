@@ -174,6 +174,42 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - `blit_vesa_banked_rect` is the shared rectangle blitter used by the VESA mode records.
     - `select_vesa_bank_for_scanline` adjusts the active bank/window based on a scanline index.
 
+## Render Entity Runtime
+
+**Confidence:** High
+
+**Evidence**
+- `spawn_scaled_abm_entity_from_resource`, `attach_abm_resource_to_entity`, `show_entity_visual`, `hide_entity_visual`, `rescale_entity_sprite_for_depth`, `tick_entity_visual_state`, and `update_actor_runtime_state` all operate on the same `0x11bc` runtime record.
+- Recovered helper types now line up with the code paths that materialize and animate those entities:
+  - `BitmapBuffer` is the 12-byte `{ width, height, pixels }` bitmap header allocated by `attach_abm_resource_to_entity` and reused by `show_entity_visual` / `rescale_entity_sprite_for_depth`.
+  - `AbmFrameHeader` matches the packed per-frame ABM prefix consumed by `attach_abm_resource_to_entity` and `show_entity_visual`.
+  - `DirtyRectNode` is the 20-byte linked-list node used by the render-list dirty-rect merge path.
+  - `ActorWaypoint[10]` is the fixed 10-entry waypoint array starting at `RenderEntityRuntime + 0x10ac`.
+- Switching the simple entity helpers to Borland `__fastcall` makes the shared entity pointer recover cleanly in decompilation, which confirms that:
+  - `tick_entity_visual_state` writes the current opaque overlap blocker at `+0x109c`
+  - `update_actor_runtime_state` uses four directional blocker-history slots at `+0x108c`, `+0x1090`, `+0x1094`, and `+0x1098`
+  - `attach_abm_resource_to_entity` builds a `1024`-entry frame-header table at `+0x5c`
+
+**Key Functions**
+- `spawn_scaled_abm_entity_from_resource`
+- `attach_abm_resource_to_entity`
+- `show_entity_visual`
+- `hide_entity_visual`
+- `rescale_entity_sprite_for_depth`
+- `tick_entity_visual_state`
+- `update_actor_runtime_state`
+
+**Key Data**
+- `RenderEntityRuntime`
+- `BitmapBuffer`
+- `AbmFrameHeader`
+- `DirtyRectNode`
+- `ActorWaypoint[10]`
+- `g_render_entity_list`
+
+**Notes**
+- The current typed runtime record cleanly covers render placement, animation timing, waypoint storage, and blocker-history detours.
+- The actor-only tail from `+0x1134` through `+0x118e` is still only partially typed, but it now clearly contains combat/use-state sound slots and facing-bank flags rather than generic render state.
 ## Room And Event Flow
 
 - `room_setup` at `0x73540` is confirmed by in-binary debug strings:

@@ -3,7 +3,7 @@
 ## Current Focus
 
 - Ghidra-backed startup engine alignment from `run_harvester_main_loop`
-- Match the native startup room idle/movement behavior before expanding further subsystem coverage
+- Use the recovered render/entity runtime to remove raw actor offsets from the remaining startup/combat movement paths
 - Keep symbol recovery and engine changes tied to direct script data, call sites, and visible side effects
 
 ## Progress
@@ -15,20 +15,29 @@
 
 ## Last Confirmed Action
 
-- Confirmed in Ghidra how the native player idle overlay is spawned and timed.
-  - `run_harvester_main_loop()` waits until `max(activity_timestamp, reset_timestamp) + 3000`, turns the player to facing `0`, then spawns `IDLE_ANIM` from `1:\GRAPHIC\ROOMANIM\PCLOUN02.ABM` at the player render entity's current screen `x`, current screen `y + 4`, and current `z`.
-  - The native idle overlay runs at animation rate `0x1e` (`30`), loops by jumping from frame `0xb2` back to `0x0f`, and exits by running from `0xb2` through `0xbf` before removing the overlay and showing the player entity again.
-  - These timings match the current startup constants; the remaining placement-sensitive part was how the overlay anchor was derived from the rendered player position.
-- Patched the startup stub to mirror that placement more closely.
-  - The startup idle overlay now anchors to the player entity's current rendered screen rect (`left/top + 4`) instead of the entity's pre-offset internal coordinates, which avoids the visible screen drift caused by ABM frame offsets moving under a fixed internal origin.
-  - The startup idle timing stays at the native `30` rate with the existing `0x0f`/`0xb2`/`0xbf` frame gates.
+- Recovered the shared render/entity runtime layout in Ghidra around `spawn_scaled_abm_entity_from_resource()`, `attach_abm_resource_to_entity()`, `hide_entity_visual()`, `tick_entity_visual_state()`, and `update_actor_runtime_state()`.
+  - Confirmed helper types:
+    - `BitmapBuffer` is the 12-byte runtime bitmap header `{ width, height, pixels }`.
+    - `AbmFrameHeader` is the packed ABM frame header prefix `{ x_offset, y_offset, width, height, compressed_flag, encoded_size }`.
+    - `DirtyRectNode` is the 20-byte dirty-rect list node `{ left, top, right, bottom, next }`.
+    - `ActorWaypoint[10]` is the 10-entry actor waypoint array at `RenderEntityRuntime + 0x10ac`.
+  - Confirmed `RenderEntityRuntime` fields now typed in Ghidra include:
+    - bitmap pointers and render placement at `+0x00 .. +0x48`
+    - animation timing/state at `+0x105c .. +0x1084`
+    - directional blocker history slots at `+0x108c`, `+0x1090`, `+0x1094`, `+0x1098`
+    - the current opaque overlap blocker at `+0x109c`
+    - movement/waypoint state at `+0x10a0 .. +0x1124`
+  - Switching the simple entity helpers to Borland `__fastcall` made the entity pointer resolve correctly in decompilation, which in turn exposed the blocker-history detour logic directly inside `update_actor_runtime_state()`.
+- No engine code changed in this pass.
+  - This was a Ghidra-first recovery pass to establish the runtime structure before any further startup/combat movement changes.
 
 ## Next Suggested Action
 
-1. Recover the render/entity runtime structure around `spawn_scaled_abm_entity_from_resource()`, `hide_entity_visual()`, `update_render_entity_screen_position()`, `tick_entity_visual_state()`, and `update_actor_runtime_state()`.
-  - That struct is now the highest-leverage missing piece: it governs actor screen anchoring, frame offsets, hitmasks, z overlap, blocker-history detours, and the remaining startup/combat avatar behavior that still reads as raw offsets in Ghidra.
-2. Runtime-test `PCROOM`, `PCX1`, and `PCDRWR` against DOSBox with the new movement and idle-overlay path, focusing on spawn placement, walk speed, blocker stops, idle stability, and the restore point after returning from closeups.
-3. Recover more of `update_actor_runtime_state()` if obstacle navigation still differs.
-  - The startup stub now matches native target axes, step sizes, opaque blocking, and idle-overlay placement, but it still stops/slide-tests directly instead of reproducing the native blocker-history detour slots at `+0x108c`, `+0x1090`, `+0x1094`, `+0x1098`, and `+0x109c`.
+1. Recover `update_render_entity_screen_position()` and `set_entity_screen_position()` precisely enough to eliminate the remaining raw screen-anchor/dirty-rect offsets.
+  - The helper cluster is now on the right shared runtime struct, but those position-update helpers still have calling/storage oddities that prevent the decompiler from expressing all arguments cleanly.
+2. Continue typing the actor-only tail of `RenderEntityRuntime` from `+0x1134` through `+0x118e`.
+  - That range now clearly holds combat/use-state sample slots, attack timing, and facing-bank flags, and typing it would clean up both combat logic and the remaining locomotion detour states.
+3. Runtime-test `PCROOM`, `PCX1`, and `PCDRWR` against DOSBox with the recovered blocker-history model in mind.
+  - The startup stub can now be compared against confirmed native detour states instead of guessed movement constants.
 4. Confirm whether startup room records ever override the default `zVelocityStep = 1.0f`; the current startup parser still relies on the struct default rather than a recovered script field.
 5. Flesh out the room-menu stub now that `Esc` reaches the correct native entry point, especially the per-item behaviors inside `run_main_menu()` such as resume/save/load/options/quit gating.
