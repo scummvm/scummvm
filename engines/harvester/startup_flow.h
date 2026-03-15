@@ -48,9 +48,10 @@ private:
 	bool loadMenuItems();
 	Common::Error runQuickTips();
 	Common::Error runMainMenuStub();
-	Common::Error runRoomSetupStub(const Common::String &entranceName);
+	Common::Error runRoomLoop(const Common::String &entranceName);
 	bool ensureCursorEntity();
-	bool populateRoomSceneEntities(const Common::Array<StartupObjectRecord> &drawableObjects,
+	bool populateRoomSceneEntities(const StartupRoomSetupState &state,
+		const Common::Array<StartupObjectRecord> &drawableObjects,
 		const Common::Array<StartupAnimRecord> &drawableAnimations);
 	Common::Error beginRoomSetupTransition();
 	Common::Error fadeInRoomScene(const byte *palette, float targetBrightness);

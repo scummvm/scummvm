@@ -30,6 +30,10 @@ namespace Harvester {
 class ResourceManager;
 
 struct StartupEntranceRecord {
+	int posX = 0;
+	int posY = 0;
+	int posZ = 0;
+	int facing = -1;
 	Common::String direction;
 	Common::String roomName;
 	Common::String entranceName;
@@ -110,10 +114,16 @@ struct StartupTextRecord {
 };
 
 struct StartupRoomSetupState {
+	Common::String entranceName;
 	Common::String roomName;
 	Common::String palettePath;
 	Common::String backgroundPath;
 	Common::String musicPath;
+	bool hasEntrance = false;
+	int playerSpawnX = 0;
+	int playerSpawnY = 0;
+	int playerSpawnZ = 0;
+	int playerFacing = -1;
 	float paletteBrightness = 1.0f;
 	Common::Array<StartupObjectRecord> activeObjects;
 	Common::Array<StartupObjectRecord> roomObjects;
