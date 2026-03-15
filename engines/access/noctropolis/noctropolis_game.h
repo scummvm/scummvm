@@ -65,6 +65,8 @@ public:
 	bool _loadFlag;
 	byte _minigameCurrentConfig[9];
 
+	Scripts *_invScript;
+
 	void doTravel();
 	void setStilettoPos();
 
@@ -93,8 +95,6 @@ private:
 	void doFlashLogo();
 	void doPublisherLogo();
 	void initVariables();
-
-	Scripts *_invScript;
 };
 
 } // end namespace Noctropolis

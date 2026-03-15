@@ -720,7 +720,6 @@ void NoctropolisEngine::doSpecialComic() {
 }
 
 
-
 } // end namespace Noctropolis
 
 } // end namespace Access

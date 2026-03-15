@@ -1,51 +1,74 @@
-#include "common/array.h"
-#include "common/endian.h"
-#include "common/file.h"
-#include "common/func.h"
-#include "common/util.h"
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
-#include "access/access_noctropolis.h"
-#include "access/graphics.h"
-#include "access/resource.h"
+#include "access/noctropolis/noctropolis_inventory.h"
+#include "access/access.h"
+#include "access/resources.h"
 
 namespace Access {
 
-void AccessEngine_Noctropolis::runInventory() {
+namespace Noctropolis {
 
-	const byte kDownArrow	= 1;
-	const byte kUpArrow		= 2;
+NoctropolisInventory::NoctropolisInventory(AccessEngine *vm) : InventoryManager(vm) {
+}
+
+
+int NoctropolisInventory::displayInv() {
+	int selectedItem = -1;
+	warning("TODO: finish NoctropolisInventory::displayInv");
+	/*
+	const byte kDownArrow   = 1;
+	const byte kUpArrow     = 2;
 
 	int hoveredItem = -1;
 	byte slotItems[20];
 	Common::Array<byte> items;
 	SpriteResource *inventorySprites;
 	StringResource *inventoryItemNames;
-	int selectedItem = -1;
 	GrabRect savedRect;
 	bool upArrow, downArrow;
 	uint prevInventoryTopItemIndex = -1;
 
 	if (!_keepInventoryPosition) {
 		int16 warpMouseX, warpMouseY;
-		_inventoryBaseX = clipMouseCenter(_mouseX, 252, 640, warpMouseX);
-		_inventoryBaseY = clipMouseCenter(_mouseY, 220, 400, warpMouseY);
+		_inventoryBaseX = clipMouseCenter(_vm->_events->_mousePos.x, 252, 640, warpMouseX);
+		_inventoryBaseY = clipMouseCenter(_vm->_events->_mousePos.y, 220, 400, warpMouseY);
 		_keepInventoryPosition = true;
-		if (warpMouseX != _mouseX || warpMouseY != _mouseY)
+		if (warpMouseX != _vm->_events->_mousePos.x || warpMouseY != _vm->_events->_mousePos.y)
 			_system->warpMouse(warpMouseX, warpMouseY);
 	}
 
 	// TODO: Maybe move/load these globally?
 
 	inventorySprites = new SpriteResource();
-	_res->load(inventorySprites, "INV.AP");
-	
+	_vm->_res->load(inventorySprites, "INV.AP");
+
 	inventoryItemNames = new StringResource();
-	_res->load(inventoryItemNames, GID_NOCTROPOLIS, kResStringTable, 3);
-	
+	_vm->_res->load(inventoryItemNames, GID_NOCTROPOLIS, kResStringTable, 3);
+
 	// Build the list of available inventory items
-	for (int i = 0; i < 256; i++)
+	for (int i = 0; i < 256; i++) {
 		if (getInventoryItem(i) == 1)
 			items.push_back(i);
+	}
 
 	_vgaScreen->lock();
 	// Grab screen background
@@ -58,15 +81,15 @@ void AccessEngine_Noctropolis::runInventory() {
 
 	while (selectedItem == -1) {
 
-		int x = _mouseX - _inventoryBaseX - 23;
-		int y = _mouseY - _inventoryBaseY - 26;
+		int x = _events->_mousePos.x - _inventoryBaseX - 23;
+		int y = _events->_mousePos.y - _inventoryBaseY - 26;
 
 		if (prevInventoryTopItemIndex != _inventoryTopItemIndex) {
 
 			int slotIndex = 0, slotCount = 20, skipIndex = 0;
 
 			memset(slotItems, 0, 20);
-			
+
 			prevInventoryTopItemIndex = _inventoryTopItemIndex;
 			upArrow = false;
 			downArrow = false;
@@ -105,14 +128,14 @@ void AccessEngine_Noctropolis::runInventory() {
 			_vgaScreen->unlock();
 
 		}
-		
+
 		// Support the mouse wheel for scrolling through the inventory items
 		if (upArrow && _mouseWheelDelta < 0) {
 			_inventoryTopItemIndex = MAX<int>(_inventoryTopItemIndex - 1, 0);
 		} else if (downArrow && _mouseWheelDelta > 0) {
 			_inventoryTopItemIndex = MIN<int>(_inventoryTopItemIndex + 1, items.size());
 		}
-		
+
 		if (x >= 0 && x < 205 && y >= 0 && y < 152) {
 			int slotIndex = (x / 41) + (y / 38) * 5;
 			int item = slotItems[slotIndex];
@@ -130,9 +153,9 @@ void AccessEngine_Noctropolis::runInventory() {
 
 			if (leftMouseButton()) {
 				if (item == kDownArrow)
-	 				_inventoryTopItemIndex = MIN<int>(_inventoryTopItemIndex + 1, items.size());
+					_inventoryTopItemIndex = MIN<int>(_inventoryTopItemIndex + 1, items.size());
 				else if (item == kUpArrow)
-	 				_inventoryTopItemIndex = MAX<int>(_inventoryTopItemIndex - 1, 0);
+					_inventoryTopItemIndex = MAX<int>(_inventoryTopItemIndex - 1, 0);
 				else
 					selectedItem = item;
 				waitUntilLeftButtonIsReleased();
@@ -150,8 +173,8 @@ void AccessEngine_Noctropolis::runInventory() {
 		updateScreen();
 
 	}
-	
-	setVariable(99, selectedItem);
+
+	_flags[99] = selectedItem;
 
 	// Restore screen background
 	_vgaScreen->lock();
@@ -160,7 +183,12 @@ void AccessEngine_Noctropolis::runInventory() {
 
 	delete inventorySprites;
 	delete inventoryItemNames;
-	
+	*/
+
+	return selectedItem;
 }
 
-}
+
+} // end namespace Noctropolis
+
+} // end namespace Access

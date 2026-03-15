@@ -23,6 +23,7 @@ MODULE_OBJS := \
 	sound.o \
 	video.o \
 	amazon/amazon_game.o \
+	amazon/amazon_inventory.o \
 	amazon/amazon_logic.o \
 	amazon/amazon_player.o \
 	amazon/amazon_resources.o \
@@ -30,6 +31,7 @@ MODULE_OBJS := \
 	amazon/amazon_scripts.o \
 	martian/martian_duct.o \
 	martian/martian_game.o \
+	martian/martian_inventory.o \
 	martian/martian_player.o \
 	martian/martian_resources.o \
 	martian/martian_room.o \
@@ -37,8 +39,9 @@ MODULE_OBJS := \
 	noctropolis/noctropolis_comicviewer.o \
 	noctropolis/noctropolis_font.o \
 	noctropolis/noctropolis_game.o \
-	noctropolis/noctropolis_player.o \
+	noctropolis/noctropolis_inventory.o \
 	noctropolis/noctropolis_last_comic.o \
+	noctropolis/noctropolis_player.o \
 	noctropolis/noctropolis_resources.o \
 	noctropolis/noctropolis_room.o \
 	noctropolis/noctropolis_scripts.o \

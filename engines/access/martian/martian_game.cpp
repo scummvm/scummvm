@@ -24,6 +24,7 @@
 #include "access/martian/martian_resources.h"
 #include "access/martian/martian_room.h"
 #include "access/martian/martian_scripts.h"
+#include "access/martian/martian_inventory.h"
 #include "access/amazon/amazon_resources.h"
 
 namespace Access {
@@ -42,6 +43,7 @@ MartianEngine::~MartianEngine() {
 }
 
 void MartianEngine::initObjects() {
+	_inventory = new MartianInventory(this);
 	_room = new MartianRoom(this);
 	_scripts = new MartianScripts(this);
 }

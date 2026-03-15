@@ -760,7 +760,7 @@ void Scripts::cmdDispInv_v1() {
 
 void Scripts::cmdDispInv_v2() {
 	debugC(1, kDebugScripts, "cmdDispInv_v2()");
-	_vm->_inventory->newDisplayInv();
+	_vm->_inventory->displayInv();
 	_vm->_events->forceSetCursor(CURSOR_ARROW);
 }
 

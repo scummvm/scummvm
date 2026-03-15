@@ -82,33 +82,27 @@ private:
 	Common::StringArray _tempLOff;
 	int _boxNum;
 
-	void savedFields();
-
-	void restoreFields();
-
-	void initFields();
-
-	void getList();
-
-	void showAllItems();
-
-	void putInvIcon(int itemIndex, int itemId);
-
-	void chooseItem();
-
-	void freeInvCells();
-
 	int coordIndexOf() const;
-
-	void saveScreens();
-
-	void restoreScreens();
 
 	void outlineIcon(int itemIndex);
 
 	void combineItems();
 
 	void zoomIcon(int zoomItem, int backItem, int zoomBox, bool shrink);
+
+	void putInvIcon(int itemIndex, int itemId);
+
+protected:
+	void initFields();
+	void getList();
+	void saveScreens();
+	void savedFields();
+	void showAllItems();
+	void restoreFields();
+	void chooseItem();
+	void freeInvCells();
+	void restoreScreens();
+
 public:
 	Common::Array<InventoryEntry> _inv;
 	int _startInvItem;
@@ -128,8 +122,7 @@ public:
 
 	void refreshInventory();
 
-	int newDisplayInv();
-	int displayInv();
+	virtual int displayInv() = 0;
 
 	/**
 	* Synchronize savegame data
